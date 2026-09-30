@@ -1,4 +1,4 @@
-//! 将 Enhanced Input 动作路由到对应控制者的角色意图。
+//! 注册 Enhanced Input 动作；键盘意图按控制者路由，鼠标观察动作由相机模块消费。
 
 use bevy::prelude::*;
 use bevy_enhanced_input::prelude::{Cancel, Press, *};
@@ -29,6 +29,11 @@ pub struct GameplayContext;
 #[derive(InputAction)]
 #[action_output(Vec2)]
 pub struct MoveAction;
+
+/// 鼠标观察动作，输出本帧汇总位移，由相机 Observer 直接处理。
+#[derive(InputAction)]
+#[action_output(Vec2)]
+pub struct LookAction;
 
 /// 每次按下产生一次跳跃请求。
 #[derive(InputAction)]
@@ -73,6 +78,14 @@ fn keyboard_context() -> impl Bundle {
         GamepadDevice::None,
         actions!(GameplayContext[
             (
+                Action::<LookAction>::new(),
+                ActionSettings {
+                    consume_input: true,
+                    ..default()
+                },
+                bindings![Binding::mouse_motion()],
+            ),
+            (
                 Action::<MoveAction>::new(),
                 ActionSettings {
                     consume_input: true,
@@ -116,7 +129,12 @@ fn record_movement(
     let Ok(mut intent) = characters.get_mut(controlled.0) else {
         return;
     };
-    intent.movement = event.value;
+    if intent.movement != event.value {
+        info!(target: "demo::input", controller = ?event.context, character = ?controlled.0,
+            before = ?intent.movement, after = ?event.value, reason = "move_action",
+            "Character movement input changed");
+        intent.movement = event.value;
+    }
 }
 
 fn clear_completed_movement(
@@ -130,7 +148,12 @@ fn clear_completed_movement(
     let Ok(mut intent) = characters.get_mut(controlled.0) else {
         return;
     };
-    intent.movement = Vec2::ZERO;
+    if intent.movement != Vec2::ZERO {
+        info!(target: "demo::input", controller = ?event.context, character = ?controlled.0,
+            before = ?intent.movement, after = ?Vec2::ZERO, reason = "move_action_completed",
+            "Character movement input changed");
+        intent.movement = Vec2::ZERO;
+    }
 }
 
 fn clear_cancelled_movement(
@@ -144,7 +167,12 @@ fn clear_cancelled_movement(
     let Ok(mut intent) = characters.get_mut(controlled.0) else {
         return;
     };
-    intent.movement = Vec2::ZERO;
+    if intent.movement != Vec2::ZERO {
+        info!(target: "demo::input", controller = ?event.context, character = ?controlled.0,
+            before = ?intent.movement, after = ?Vec2::ZERO, reason = "move_action_cancelled",
+            "Character movement input changed");
+        intent.movement = Vec2::ZERO;
+    }
 }
 
 /// 一次性请求保留到固定步消费，即使本渲染帧没有固定步也不会丢失。

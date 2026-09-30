@@ -1,5 +1,6 @@
 //! 使用简易资产启动移动、跳跃和木箱拾取原型。
 
+mod camera;
 mod gameplay;
 mod input;
 mod scene;
@@ -7,6 +8,7 @@ mod session_log;
 mod settings;
 
 use bevy::{log::LogPlugin, prelude::*, window::PresentMode};
+use camera::CameraControlPlugin;
 use gameplay::GameplayPlugin;
 use input::PlayerInputPlugin;
 use scene::PrototypeScenePlugin;
@@ -31,7 +33,7 @@ fn main() -> AppExit {
             })
             .set(WindowPlugin {
                 primary_window: Some(Window {
-                    // 避免垂直同步把 120 FPS 上限额外限制为显示器的刷新率。
+                    // 避免垂直同步把玩家设置的帧率上限额外限制为显示器的刷新率。
                     present_mode: PresentMode::AutoNoVsync,
                     ..default()
                 }),
@@ -51,6 +53,7 @@ fn main() -> AppExit {
             SettingsPlugin,
             GameplayPlugin,
             PlayerInputPlugin,
+            CameraControlPlugin,
             PrototypeScenePlugin,
         ))
         .run();
