@@ -1,6 +1,8 @@
-# Issue tracker: GitHub
+# 任务跟踪约定
 
 本仓库的需求、缺陷和 PRD 记录在 [fedoraiver/demo 的 GitHub Issues](https://github.com/fedoraiver/demo/issues)。
+
+本文件维护目标仓库和操作约定。长期玩法与方案记录在 [游戏设计](../game-design.md)；具体任务进度、缺陷及一次变更的验证结果记录在对应 Issue 或 PR。
 
 使用已连接的 GitHub 工具或已登录的 `gh` CLI 操作。使用 CLI 时显式指定 `--repo fedoraiver/demo`，并通过 `git remote -v` 核对目标仓库。
 

@@ -3,13 +3,14 @@
 use bevy::prelude::*;
 
 use crate::{
+    camera::{ControlsCamera, MouseLookState, OrbitCamera},
     gameplay::{
         Character, CharacterIntent, CharacterMotion, Parcel, Pickable, PlayerId, PrototypeConfig,
     },
     input::spawn_keyboard_controller,
 };
 
-/// 生成平地、占位角色和木箱，并提供固定角度的跟随镜头。
+/// 生成平地、占位角色、木箱和与控制者关联的自由视角镜头。
 pub struct PrototypeScenePlugin;
 
 impl Plugin for PrototypeScenePlugin {
@@ -20,17 +21,8 @@ impl Plugin for PrototypeScenePlugin {
                 brightness: 250.0,
                 ..default()
             })
-            .add_systems(Startup, spawn_scene)
-            .add_systems(Update, follow_camera);
+            .add_systems(Startup, spawn_scene);
     }
-}
-
-/// 每个相机单独保存目标，后续多个本地视角无需依赖唯一玩家查询。
-#[derive(Component)]
-struct CameraFollow {
-    target: Entity,
-    offset: Vec3,
-    look_height: f32,
 }
 
 /// 创建业务根实体和可替换的视觉子实体；角色根位置对应脚底，木箱根对应中心。
@@ -134,20 +126,22 @@ fn spawn_scene(
         ));
     }
 
-    let camera_offset = Vec3::new(0.0, 6.0, 8.0);
-    let look_height = 0.8;
     let start_position = Vec3::new(0.0, config.ground_y, 0.0);
-    commands.spawn((
-        Name::new("Prototype follow camera"),
-        Camera3d::default(),
-        CameraFollow {
-            target: character,
-            offset: camera_offset,
-            look_height,
-        },
-        Transform::from_translation(start_position + camera_offset)
-            .looking_at(start_position + Vec3::Y * look_height, Vec3::Y),
-    ));
+    let orbit = OrbitCamera::new(character);
+    let camera_transform = orbit.transform(start_position);
+    let camera = commands
+        .spawn((
+            Name::new("Prototype orbit camera"),
+            Camera3d::default(),
+            orbit,
+            MouseLookState::default(),
+            camera_transform,
+        ))
+        .id();
+    commands.entity(controller).insert(ControlsCamera(camera));
+    info!(target: "demo::camera", ?camera, ?character, ?controller,
+        position = ?camera_transform.translation, reason = "scene_startup",
+        "Orbit camera spawned");
 
     info!(
         target: "demo::scene",
@@ -166,21 +160,6 @@ fn spawn_scene(
         "Wooden crate spawned"
     );
     info!(target: "demo::scene", config = ?*config, "Prototype scene initialized");
-}
-
-/// 更新各相机的目标位置；显式互斥过滤避免读写 Transform 的查询冲突。
-fn follow_camera(
-    characters: Query<&Transform, With<Character>>,
-    mut cameras: Query<(&CameraFollow, &mut Transform), Without<Character>>,
-) {
-    for (follow, mut camera_transform) in &mut cameras {
-        let Ok(character_transform) = characters.get(follow.target) else {
-            continue;
-        };
-        let position = character_transform.translation;
-        camera_transform.translation = position + follow.offset;
-        camera_transform.look_at(position + Vec3::Y * follow.look_height, Vec3::Y);
-    }
 }
 
 #[cfg(test)]
@@ -204,7 +183,6 @@ mod tests {
         app.finish();
         app.cleanup();
         app.world_mut().run_schedule(Startup);
-        app.world_mut().run_schedule(Update);
 
         let world = app.world_mut();
         let character = world
@@ -247,62 +225,20 @@ mod tests {
         );
         assert_eq!(
             world
-                .query_filtered::<&CameraFollow, With<Camera3d>>()
+                .query_filtered::<&OrbitCamera, With<Camera3d>>()
                 .single(world)
                 .unwrap()
                 .target,
             character
         );
-    }
-
-    #[test]
-    fn cameras_follow_their_own_characters() {
-        let mut app = App::new();
-        app.add_systems(Update, follow_camera);
-        let first_position = Vec3::new(3.0, 1.0, -2.0);
-        let second_position = Vec3::new(-4.0, 0.0, 7.0);
-        let first_character = app
-            .world_mut()
-            .spawn((Character, Transform::from_translation(first_position)))
-            .id();
-        let second_character = app
-            .world_mut()
-            .spawn((Character, Transform::from_translation(second_position)))
-            .id();
-        let offset = Vec3::new(0.0, 6.0, 8.0);
-        let first_camera = app
-            .world_mut()
-            .spawn((
-                CameraFollow {
-                    target: first_character,
-                    offset,
-                    look_height: 0.8,
-                },
-                Transform::default(),
-            ))
-            .id();
-        let second_camera = app
-            .world_mut()
-            .spawn((
-                CameraFollow {
-                    target: second_character,
-                    offset,
-                    look_height: 0.8,
-                },
-                Transform::default(),
-            ))
-            .id();
-
-        app.update();
-
-        for (camera, position) in [
-            (first_camera, first_position),
-            (second_camera, second_position),
-        ] {
-            let transform = app.world().get::<Transform>(camera).unwrap();
-            assert_eq!(transform.translation, position + offset);
-            let expected_direction = (position + Vec3::Y * 0.8 - transform.translation).normalize();
-            assert!(transform.forward().dot(expected_direction) > 0.999);
-        }
+        let controlled_camera = world
+            .query_filtered::<&ControlsCamera, With<GameplayContext>>()
+            .single(world)
+            .unwrap()
+            .0;
+        assert_eq!(
+            world.get::<OrbitCamera>(controlled_camera).unwrap().target,
+            character
+        );
     }
 }

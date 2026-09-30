@@ -8,22 +8,72 @@ use std::{
 };
 
 use bevy::{prelude::*, time::TimeSystems};
-use serde::Deserialize;
+use serde::{Deserialize, Deserializer, de::Error};
 
 /// 全局玩家设置；非零类型保证帧率上限始终能够转换为等待间隔。
 #[derive(Resource, Debug, Deserialize)]
 #[serde(default, deny_unknown_fields)]
 pub struct GameSettings {
-    /// 渲染循环每秒最多更新的次数，不影响 `Time<Fixed>`。
+    /// 渲染循环每秒最多更新的次数，默认 60，配置值不得低于 60；不影响 `Time<Fixed>`。
+    #[serde(deserialize_with = "deserialize_max_fps")]
     pub max_fps: NonZeroU32,
+    /// 自由视角的鼠标灵敏度与纵轴方向。
+    pub camera: CameraSettings,
 }
 
 impl Default for GameSettings {
     fn default() -> Self {
         Self {
-            max_fps: NonZeroU32::new(120).unwrap(),
+            max_fps: NonZeroU32::new(60).unwrap(),
+            camera: CameraSettings::default(),
         }
     }
+}
+
+/// 自由视角配置；旧配置缺少本节或字段时使用默认值。
+#[derive(Debug, Clone, Copy, Deserialize)]
+#[serde(default, deny_unknown_fields)]
+pub struct CameraSettings {
+    /// 每像素对应的旋转弧度，必须是有限的正数。
+    #[serde(deserialize_with = "deserialize_mouse_sensitivity")]
+    pub mouse_sensitivity: f32,
+    /// 是否反转鼠标纵向移动对应的俯仰方向。
+    pub invert_y: bool,
+}
+
+impl Default for CameraSettings {
+    fn default() -> Self {
+        Self {
+            mouse_sensitivity: 0.003,
+            invert_y: false,
+        }
+    }
+}
+
+fn deserialize_max_fps<'de, D>(deserializer: D) -> Result<NonZeroU32, D::Error>
+where
+    D: Deserializer<'de>,
+{
+    let value = NonZeroU32::deserialize(deserializer)?;
+    // 在加载边界检查下限，避免低于支持范围的配置进入限帧系统。
+    if value.get() < 60 {
+        return Err(D::Error::custom("max_fps must be at least 60"));
+    }
+    Ok(value)
+}
+
+fn deserialize_mouse_sensitivity<'de, D>(deserializer: D) -> Result<f32, D::Error>
+where
+    D: Deserializer<'de>,
+{
+    let value = f32::deserialize(deserializer)?;
+    // 在加载边界拒绝无效角速度，避免非有限值进入 Transform 的旋转计算。
+    if !value.is_finite() || value <= 0.0 {
+        return Err(D::Error::custom(
+            "camera mouse_sensitivity must be finite and greater than zero",
+        ));
+    }
+    Ok(value)
 }
 
 impl GameSettings {
@@ -46,7 +96,9 @@ impl GameSettings {
                     operation = "load_settings",
                     path = %path.display(),
                     %error,
-                    fallback_max_fps = 120,
+                    fallback_max_fps = Self::default().max_fps.get(),
+                    fallback_camera_mouse_sensitivity = CameraSettings::default().mouse_sensitivity,
+                    fallback_camera_invert_y = CameraSettings::default().invert_y,
                     reason = "settings_load_failed",
                     "Failed to load game settings; using defaults"
                 );
@@ -57,6 +109,8 @@ impl GameSettings {
             target: "demo::settings",
             path = %path.display(),
             max_fps = settings.max_fps.get(),
+            camera_mouse_sensitivity = settings.camera.mouse_sensitivity,
+            camera_invert_y = settings.camera.invert_y,
             "Game settings initialized"
         );
         settings
@@ -138,13 +192,19 @@ mod tests {
 
     #[test]
     fn defaults_and_json_validate_frame_rate_limit() {
-        assert_eq!(GameSettings::default().max_fps.get(), 120);
+        assert_eq!(GameSettings::default().max_fps.get(), 60);
         let omitted: GameSettings = serde_json::from_str("{}").unwrap();
-        assert_eq!(omitted.max_fps.get(), 120);
-        let custom: GameSettings = serde_json::from_str(r#"{"max_fps": 144}"#).unwrap();
-        assert_eq!(custom.max_fps.get(), 144);
+        assert_eq!(omitted.max_fps.get(), 60);
+        for max_fps in [60, 120, 144] {
+            let json = format!(r#"{{"max_fps": {max_fps}}}"#);
+            let custom: GameSettings = serde_json::from_str(&json).unwrap();
+            assert_eq!(custom.max_fps.get(), max_fps);
+        }
         for invalid in [
             r#"{"max_fps": 0}"#,
+            r#"{"max_fps": 1}"#,
+            r#"{"max_fps": 30}"#,
+            r#"{"max_fps": 59}"#,
             r#"{"max_fps": -60}"#,
             r#"{"max_fps": 60.5}"#,
             r#"{"max_fps": "120"}"#,
@@ -155,16 +215,70 @@ mod tests {
     }
 
     #[test]
+    fn camera_settings_default_legacy_and_custom_values() {
+        let defaults = GameSettings::default();
+        assert_eq!(defaults.camera.mouse_sensitivity, 0.003);
+        assert!(!defaults.camera.invert_y);
+        for legacy in ["{}", r#"{"max_fps": 144}"#, r#"{"camera": {}}"#] {
+            let settings: GameSettings = serde_json::from_str(legacy).unwrap();
+            assert_eq!(settings.camera.mouse_sensitivity, 0.003);
+            assert!(!settings.camera.invert_y);
+        }
+        let custom: GameSettings =
+            serde_json::from_str(r#"{"camera": {"mouse_sensitivity": 0.006, "invert_y": true}}"#)
+                .unwrap();
+        assert_eq!(custom.camera.mouse_sensitivity, 0.006);
+        assert!(custom.camera.invert_y);
+        let partial: GameSettings =
+            serde_json::from_str(r#"{"camera": {"invert_y": true}}"#).unwrap();
+        assert_eq!(partial.camera.mouse_sensitivity, 0.003);
+        assert!(partial.camera.invert_y);
+    }
+
+    #[test]
+    fn invalid_camera_settings_fall_back_without_overwriting_file() {
+        let path =
+            std::env::temp_dir().join(format!("demo-camera-settings-{}.json", Uuid::new_v4()));
+        for invalid in [
+            r#"{"max_fps": 240, "camera": {"mouse_sensitivity": 0}}"#,
+            r#"{"max_fps": 240, "camera": {"mouse_sensitivity": -0.003}}"#,
+            r#"{"max_fps": 240, "camera": {"mouse_sensitivity": 1e39}}"#,
+            r#"{"max_fps": 240, "camera": {"mouse_sensitivity": "NaN"}}"#,
+            r#"{"max_fps": 240, "camera": {"invert_y": 1}}"#,
+            r#"{"max_fps": 240, "camera": {"sensitivity": 0.003}}"#,
+        ] {
+            assert!(serde_json::from_str::<GameSettings>(invalid).is_err());
+            fs::write(&path, invalid).unwrap();
+            let settings = GameSettings::load(&path);
+            assert_eq!(settings.max_fps.get(), 60);
+            assert_eq!(settings.camera.mouse_sensitivity, 0.003);
+            assert!(!settings.camera.invert_y);
+            assert_eq!(fs::read_to_string(&path).unwrap(), invalid);
+        }
+        fs::remove_file(path).unwrap();
+    }
+
+    #[test]
     fn settings_file_and_failure_fallback_preserve_original_contents() {
         let path = std::env::temp_dir().join(format!("demo-settings-{}.json", Uuid::new_v4()));
-        assert_eq!(GameSettings::load(&path).max_fps.get(), 120);
+        assert_eq!(GameSettings::load(&path).max_fps.get(), 60);
         assert!(!path.exists());
         fs::write(&path, r#"{"max_fps": 240}"#).unwrap();
         assert_eq!(GameSettings::load(&path).max_fps.get(), 240);
-        let invalid = r#"{"max_fps": 0}"#;
-        fs::write(&path, invalid).unwrap();
-        assert_eq!(GameSettings::load(&path).max_fps.get(), 120);
-        assert_eq!(fs::read_to_string(&path).unwrap(), invalid);
+        for invalid in [
+            r#"{"max_fps": 0}"#,
+            r#"{"max_fps": 1}"#,
+            r#"{"max_fps": 30}"#,
+            r#"{"max_fps": 59}"#,
+        ] {
+            fs::write(&path, invalid).unwrap();
+            assert_eq!(
+                read_settings(&path).unwrap_err().kind(),
+                io::ErrorKind::InvalidData
+            );
+            assert_eq!(GameSettings::load(&path).max_fps.get(), 60);
+            assert_eq!(fs::read_to_string(&path).unwrap(), invalid);
+        }
         fs::remove_file(path).unwrap();
     }
 
@@ -197,7 +311,7 @@ mod tests {
             .add_plugins(SettingsPlugin);
         app.update();
         let timestep = app.world().resource::<Time<Fixed>>().timestep();
-        app.world_mut().resource_mut::<GameSettings>().max_fps = NonZeroU32::new(30).unwrap();
+        app.world_mut().resource_mut::<GameSettings>().max_fps = NonZeroU32::new(120).unwrap();
         app.update();
         let fixed = app.world().resource::<Time<Fixed>>();
         assert_eq!(fixed.timestep(), timestep);

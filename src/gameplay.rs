@@ -14,9 +14,13 @@ pub struct ControlsCharacter(#[entities] pub Entity);
 #[derive(Component)]
 pub struct Character;
 
-/// 来自控制者的玩法意图；离散请求保留至固定更新消费。
+/// 来自控制者的玩法意图；输入状态跨帧保留，供固定步模拟读取。
+///
+/// PreUpdate 与 FixedUpdate 不一一对应：移动轴持续有效，跳跃和交互请求只消费一次。
+/// 输入 Observer 仅更新意图，不按输入事件次数积分位置，避免运动速度依赖渲染帧率。
 #[derive(Component, Default)]
 pub struct CharacterIntent {
+    /// 角色局部水平输入轴：x 表示左右横移，y 表示前后移动。
     pub movement: Vec2,
     pub jump_pending: bool,
     pub interact_pending: bool,
@@ -77,6 +81,13 @@ impl Default for PrototypeConfig {
 /// 注册原型的固定步模拟；不依赖窗口或渲染插件。
 pub struct GameplayPlugin;
 
+/// 固定步玩法的调度阶段，外部系统可在模拟前同步角色朝向。
+#[derive(SystemSet, Clone, Copy, Debug, PartialEq, Eq, Hash)]
+pub enum GameplaySystems {
+    /// 移动、跳跃、交互和持有物同步共享同一固定步。
+    Simulate,
+}
+
 impl Plugin for GameplayPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<PrototypeConfig>()
@@ -90,7 +101,8 @@ impl Plugin for GameplayPlugin {
                     sync_held_objects,
                 )
                     // 拾取命令在跟随系统之前应用，使新关系在同一固定步可见。
-                    .chain(),
+                    .chain()
+                    .in_set(GameplaySystems::Simulate),
             );
     }
 }
@@ -99,10 +111,11 @@ fn log_configuration(config: Res<PrototypeConfig>) {
     info!(?config, "Prototype gameplay initialized");
 }
 
-/// 将移动意图转换为水平速度，斜向移动保持与单轴相同的最高速度。
+/// 将角色局部移动轴转换为世界速度，斜向移动保持与单轴相同的最高速度。
 fn move_characters(
     time: Res<Time<Fixed>>,
     config: Res<PrototypeConfig>,
+    mut next_velocity_log_time: Local<f64>,
     mut characters: Query<
         (
             Entity,
@@ -113,23 +126,26 @@ fn move_characters(
         With<Character>,
     >,
 ) {
+    let elapsed = time.elapsed_secs_f64();
     for (entity, intent, mut motion, mut transform) in &mut characters {
         let axes = intent.movement.clamp_length_max(1.0);
-        let velocity = Vec3::new(axes.x, 0.0, -axes.y) * config.move_speed;
+        // 朝向在此系统之前由视角系统同步；横移和后退只改变速度，不改变角色朝向。
+        let velocity = transform.rotation * Vec3::new(axes.x, 0.0, -axes.y) * config.move_speed;
         if velocity != motion.horizontal_velocity {
-            info!(
-                ?entity,
-                before = ?motion.horizontal_velocity,
-                after = ?velocity,
-                reason = "movement_input_changed",
-                "Character horizontal velocity changed"
-            );
+            // 连续转向会逐固定步改变速度，调试日志每 0.5 模拟秒最多采样一次；离散输入由输入模块记录。
+            if elapsed >= *next_velocity_log_time {
+                debug!(
+                    ?entity,
+                    before = ?motion.horizontal_velocity,
+                    after = ?velocity,
+                    reason = "movement_or_facing_changed",
+                    "Character horizontal velocity changed"
+                );
+                *next_velocity_log_time = elapsed + 0.5;
+            }
             motion.horizontal_velocity = velocity;
         }
         transform.translation += velocity * time.delta_secs();
-        if velocity.length_squared() > 0.0 {
-            transform.look_to(velocity, Vec3::Y);
-        }
     }
 }
 
@@ -262,7 +278,8 @@ fn handle_interaction(
 }
 
 /// 持箱使用世界空间位置，自定义关系不改变箱子的 Transform 父子层级。
-fn sync_held_objects(
+/// 固定步在交互命令应用后同步；相机插件也在逐帧转向后注册此系统，补齐无固定步的帧。
+pub(crate) fn sync_held_objects(
     config: Res<PrototypeConfig>,
     characters: Query<&Transform, (With<Character>, Without<Pickable>)>,
     mut items: Query<(&HeldBy, &mut Transform), (With<Pickable>, Without<Character>)>,
@@ -342,6 +359,84 @@ mod tests {
         assert!(straight_position.z < 0.0);
         assert_eq!(straight_position.x, 0.0);
         assert!(diagonal_position.x > 0.0);
+    }
+
+    #[test]
+    fn held_forward_input_follows_character_yaw_across_fixed_steps() {
+        let mut app = test_app();
+        let character = spawn_character(
+            &mut app,
+            Vec3::ZERO,
+            CharacterIntent {
+                movement: Vec2::Y,
+                ..default()
+            },
+        );
+        step(&mut app);
+        let first_position = app.world().get::<Transform>(character).unwrap().translation;
+        let rotation = Quat::from_rotation_y(std::f32::consts::FRAC_PI_2);
+        app.world_mut()
+            .get_mut::<Transform>(character)
+            .unwrap()
+            .rotation = rotation;
+
+        // 固定步可多次读取同一移动意图，转动视角后无需新的按键事件即可改变世界方向。
+        step(&mut app);
+        let transform = app.world().get::<Transform>(character).unwrap();
+        let displacement = transform.translation - first_position;
+        let distance = app.world().resource::<PrototypeConfig>().move_speed / 60.0;
+        assert!(displacement.abs_diff_eq(-Vec3::X * distance, 0.0001));
+        assert_eq!(transform.rotation, rotation);
+        assert_eq!(
+            app.world()
+                .get::<CharacterIntent>(character)
+                .unwrap()
+                .movement,
+            Vec2::Y
+        );
+        assert!(
+            app.world()
+                .get::<CharacterMotion>(character)
+                .unwrap()
+                .horizontal_velocity
+                .abs_diff_eq(
+                    -Vec3::X * app.world().resource::<PrototypeConfig>().move_speed,
+                    0.0001,
+                )
+        );
+    }
+
+    #[test]
+    fn strafing_and_backing_up_use_local_axes_without_changing_facing() {
+        let mut app = test_app();
+        let rotation = Quat::from_rotation_y(std::f32::consts::FRAC_PI_2);
+        let distance = app.world().resource::<PrototypeConfig>().move_speed / 60.0;
+        for (axes, direction) in [
+            (Vec2::X, -Vec3::Z),
+            (-Vec2::X, Vec3::Z),
+            (-Vec2::Y, Vec3::X),
+        ] {
+            let character = spawn_character(
+                &mut app,
+                Vec3::ZERO,
+                CharacterIntent {
+                    movement: axes,
+                    ..default()
+                },
+            );
+            app.world_mut()
+                .get_mut::<Transform>(character)
+                .unwrap()
+                .rotation = rotation;
+            step(&mut app);
+            let transform = app.world().get::<Transform>(character).unwrap();
+            assert!(
+                transform
+                    .translation
+                    .abs_diff_eq(direction * distance, 0.0001)
+            );
+            assert_eq!(transform.rotation, rotation);
+        }
     }
 
     #[test]
