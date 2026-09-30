@@ -82,3 +82,17 @@
 - [Bevy 0.19.1：系统顺序与调度配置](https://docs.rs/bevy/0.19.1/bevy/ecs/schedule/trait.IntoScheduleConfigs.html)
 - [Bevy 0.19.1：Plugin](https://docs.rs/bevy/0.19.1/bevy/app/trait.Plugin.html)
 - [Flecs：实体与组件概念（仅作跨框架概念参考）](https://www.flecs.dev/flecs/EntitiesComponents.html)
+
+## Agent skills
+
+### Issue tracker
+
+需求、缺陷和 PRD 使用 GitHub Issues，仓库为 `fedoraiver/demo`。参见 [任务跟踪约定](docs/agents/issue-tracker.md)。
+
+### Triage labels
+
+使用五个默认分诊标签：`needs-triage`、`needs-info`、`ready-for-agent`、`ready-for-human`、`wontfix`。参见 [标签映射](docs/agents/triage-labels.md)。
+
+### Domain docs
+
+采用多上下文布局：根目录 `CONTEXT-MAP.md` 索引子项目，各子项目分别记录术语和架构决策。参见 [领域文档约定](docs/agents/domain.md)。
