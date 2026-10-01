@@ -1,18 +1,25 @@
-//! 原型场景与占位资产；业务实体保持独立，后续只需替换视觉子实体。
+//! BSN 组合业务实体和视觉层级；地图实例化并完成静态碰撞后才生成动态玩家。
 
-use avian3d::prelude::{Collider, RigidBody};
-use bevy::prelude::*;
+use std::collections::BTreeMap;
+
+use avian3d::prelude::{Collider, RigidBody, TrimeshFlags};
+use bevy::{prelude::*, world_serialization::WorldInstanceReady};
+use serde::Deserialize;
 
 use crate::{
+    art_assets::{ArtAssets, ArtLoadState, ItemModel},
     camera::{CharacterVisual, ControlsCamera, MouseLookState, OrbitCamera},
+    character_animation::CourierVisual,
     gameplay::{
-        Character, CharacterIntent, CharacterMotion, Parcel, Pickable, PlayerId, PrototypeConfig,
+        CarryGrip, Character, CharacterIntent, CharacterMotion, Parcel, Pickable, PlayerId,
+        PrototypeConfig,
     },
     input::spawn_keyboard_controller,
+    island_recovery::SpawnPoint,
     physics::{character_body, parcel_body, world_collision_layers},
 };
 
-/// 生成带碰撞的平地与墙体、占位角色、木箱和与控制者关联的自由视角镜头。
+/// 完整海岛装配和导入边界；输入、模拟、动作和落水规则分别由各自插件处理。
 pub struct PrototypeScenePlugin;
 
 impl Plugin for PrototypeScenePlugin {
@@ -23,302 +30,504 @@ impl Plugin for PrototypeScenePlugin {
                 brightness: 250.0,
                 ..default()
             })
-            .add_systems(Startup, spawn_scene);
+            .add_systems(Startup, spawn_lighting)
+            .add_observer(mark_island_ready)
+            // 每一步应用延迟标记与碰撞命令，下一步才能观察完整的装配结果。
+            .add_systems(Update, (begin_island, prepare_island, spawn_actors).chain());
     }
 }
 
-/// 创建业务根实体和可替换的视觉子实体；角色根位置对应脚底，木箱根对应中心。
-fn spawn_scene(
+#[derive(Component, Default, Clone)]
+struct IslandMap;
+#[derive(Component)]
+struct IslandPending;
+#[derive(Component)]
+struct ActorsSpawned;
+
+/// 展示 NPC 保留在地图内，不挂玩家运动和输入组件。
+#[derive(Component)]
+pub(crate) struct DisplayNpc;
+
+/// 静态碰撞独立于美术网格，随原始实例层级清理，不改动其视觉姿态。
+#[derive(Component, Default, Clone)]
+pub(crate) struct IslandCollider;
+
+#[derive(Clone)]
+struct ItemPlacement {
+    model: ItemModel,
+    pose: Transform,
+}
+
+#[derive(Component)]
+struct IslandReady {
+    player: Transform,
+    items: Vec<ItemPlacement>,
+}
+
+/// source_asset 仅在导入边界转换为业务组件，玩法系统不依赖模型名称。
+#[derive(Deserialize)]
+struct MapAsset {
+    source_asset: String,
+    category: String,
+}
+
+fn lighting_scene() -> impl Scene {
+    bsn! {
+        Name("Island daylight")
+        DirectionalLight { illuminance: 12_000.0, shadow_maps_enabled: true }
+        template_value(Transform::from_xyz(6.0, 10.0, 8.0).looking_at(Vec3::ZERO, Vec3::Y))
+    }
+}
+
+fn spawn_lighting(mut commands: Commands) {
+    commands.spawn_scene(lighting_scene());
+    // 加载期间提供一个相机；准备好后复用同一实体，避免短暂出现两台主相机。
+    commands.spawn_scene(bsn! {
+        Name("Island loading camera")
+        Camera3d
+        LoadingCamera
+        template_value(Transform::from_xyz(-1.8, 6.0, 11.5).looking_at(Vec3::new(-1.8, 0.8, 3.5), Vec3::Y))
+    });
+}
+
+#[derive(Component, Default, Clone)]
+struct LoadingCamera;
+
+fn island_scene(scene: Handle<WorldAsset>) -> impl Scene {
+    bsn! { Name("Courier island") IslandMap WorldAssetRoot(scene) }
+}
+
+fn begin_island(
     mut commands: Commands,
-    config: Res<PrototypeConfig>,
-    mut meshes: ResMut<Assets<Mesh>>,
-    mut materials: ResMut<Assets<StandardMaterial>>,
+    assets: Res<ArtAssets>,
+    gltfs: Res<Assets<Gltf>>,
+    mut state: ResMut<ArtLoadState>,
+    maps: Query<(), With<IslandMap>>,
 ) {
-    // 地面使用有厚度的静态盒体，顶面保持原有高度，视觉和碰撞共用同一尺寸。
-    let ground_dimensions = Vec3::new(200.0, 1.0, 200.0);
-    let ground_position = Vec3::new(0.0, config.ground_y - ground_dimensions.y * 0.5, 0.0);
-    let ground = commands
-        .spawn((
-            Name::new("Prototype ground"),
-            RigidBody::Static,
-            Collider::cuboid(
-                ground_dimensions.x,
-                ground_dimensions.y,
-                ground_dimensions.z,
-            ),
-            world_collision_layers(),
-            Mesh3d(meshes.add(Cuboid::from_size(ground_dimensions))),
-            MeshMaterial3d(materials.add(StandardMaterial {
-                base_color: Color::srgb(0.55, 0.66, 0.47),
-                perceptual_roughness: 1.0,
-                ..default()
-            })),
-            Transform::from_translation(ground_position),
-        ))
-        .id();
-
-    // 墙体远离出生角色和初始木箱，提供可以直接观察速度、阻挡和持物碰撞的目标。
-    let wall_dimensions = Vec3::new(4.0, 2.5, 0.5);
-    let wall_position = Vec3::new(0.0, config.ground_y + wall_dimensions.y * 0.5, -5.0);
-    let wall = commands
-        .spawn((
-            Name::new("Prototype collision wall"),
-            RigidBody::Static,
-            Collider::cuboid(wall_dimensions.x, wall_dimensions.y, wall_dimensions.z),
-            world_collision_layers(),
-            Mesh3d(meshes.add(Cuboid::from_size(wall_dimensions))),
-            MeshMaterial3d(materials.add(StandardMaterial {
-                base_color: Color::srgb(0.55, 0.57, 0.60),
-                perceptual_roughness: 0.95,
-                ..default()
-            })),
-            Transform::from_translation(wall_position),
-        ))
-        .id();
-    for (entity, dimensions, position) in [
-        (ground, ground_dimensions, ground_position),
-        (wall, wall_dimensions, wall_position),
-    ] {
-        info!(target: "demo::scene", ?entity, ?dimensions, ?position,
-            body_type = "static", reason = "scene_startup", "World collider spawned");
+    if *state != ArtLoadState::Ready || !maps.is_empty() {
+        return;
     }
+    let Some(scene) = gltfs
+        .get(&assets.island)
+        .and_then(|gltf| gltf.scenes.first())
+    else {
+        *state = ArtLoadState::Failed;
+        error!(target: "demo::scene", reason = "missing_map_scene", "Island initialization failed");
+        return;
+    };
+    let entity = commands.spawn_scene(island_scene(scene.clone())).id();
+    info!(target: "demo::scene", ?entity, reason = "assets_ready", "Island scene requested");
+}
 
-    commands.spawn((
-        Name::new("Prototype daylight"),
-        DirectionalLight {
-            illuminance: 12_000.0,
-            shadow_maps_enabled: true,
-            ..default()
+fn mark_island_ready(
+    ready: On<WorldInstanceReady>,
+    mut commands: Commands,
+    maps: Query<(), (With<IslandMap>, Without<IslandReady>)>,
+) {
+    if maps.contains(ready.entity) {
+        commands.entity(ready.entity).insert(IslandPending);
+    }
+}
+
+/// 在资源 CPU 几何可用时构建碰撞；全部成功后才提交，失败时不创建动态玩家。
+fn prepare_island(
+    mut commands: Commands,
+    maps: Query<Entity, With<IslandPending>>,
+    children: Query<&Children>,
+    metadata: Query<(&GltfExtras, &Transform)>,
+    nodes: Query<(&Transform, Option<&Name>, Option<&Mesh3d>)>,
+    meshes: Res<Assets<Mesh>>,
+    mut state: ResMut<ArtLoadState>,
+) {
+    if *state != ArtLoadState::Ready {
+        return;
+    }
+    for map in &maps {
+        let mut player = None;
+        let mut items = Vec::new();
+        let mut remove = Vec::new();
+        let mut npcs = Vec::new();
+        let mut colliders = Vec::new();
+        let mut ramps = Vec::new();
+        let mut floors = Vec::new();
+        let mut ramp_count = 0;
+        let mut terrain_found = false;
+        for instance in children.iter_descendants(map) {
+            let Ok((extras, pose)) = metadata.get(instance) else {
+                continue;
+            };
+            let Ok(asset) = serde_json::from_str::<MapAsset>(&extras.value) else {
+                continue;
+            };
+            match asset.source_asset.as_str() {
+                "chr_courier" => {
+                    player = Some(*pose);
+                    remove.push(instance);
+                }
+                "prop_parcel_standard" | "prop_parcel_fragile" | "prop_crate" => {
+                    if asset.source_asset == "prop_crate" {
+                        // 展示位置穿进站点墙体与柜台；整体移入柜台和货架之间的净空，保留布局和朝向。
+                        let mut pose = *pose;
+                        pose.translation += Vec3::new(0.8, 0.165, -2.06);
+                        items.push(ItemPlacement {
+                            model: ItemModel::WoodenCrate,
+                            pose,
+                        });
+                    }
+                    remove.push(instance);
+                }
+                _ if asset.category == "characters" => npcs.push(instance),
+                _ => {
+                    let mut geometry = CollisionGeometry::default();
+                    if let Err(error) = collect_geometry(
+                        instance,
+                        Mat4::IDENTITY,
+                        false,
+                        "",
+                        &asset.source_asset,
+                        &children,
+                        &nodes,
+                        &meshes,
+                        &mut geometry,
+                    ) {
+                        *state = ArtLoadState::Failed;
+                        error!(target: "demo::scene", ?instance, asset = asset.source_asset,
+                            %error, reason = "collision_geometry_failed", "Island initialization failed");
+                        return;
+                    }
+                    if let Some(bounds) = geometry.floor_bounds {
+                        floors.push(transform_bounds(bounds, pose.to_matrix()));
+                    }
+                    if !geometry.indices.is_empty() {
+                        match Collider::try_trimesh_with_config(
+                            geometry.vertices,
+                            geometry.indices,
+                            TrimeshFlags::MERGE_DUPLICATE_VERTICES
+                                | TrimeshFlags::FIX_INTERNAL_EDGES,
+                        ) {
+                            Ok(collider) => colliders.push((instance, collider)),
+                            Err(error) => {
+                                *state = ArtLoadState::Failed;
+                                error!(target: "demo::scene", ?instance, asset = asset.source_asset,
+                                    %error, reason = "collider_build_failed", "Island initialization failed");
+                                return;
+                            }
+                        }
+                        terrain_found |= asset.source_asset == "env_island_terrain";
+                    }
+                    for (min, max) in geometry.ramps.into_values() {
+                        ramps.push((instance, *pose, min, max));
+                    }
+                }
+            }
+        }
+        let Some(mut player) = player.filter(|_| terrain_found) else {
+            *state = ArtLoadState::Failed;
+            error!(target: "demo::scene", reason = "missing_player_or_terrain", "Island initialization failed");
+            return;
+        };
+        for (parent, pose, mut min, mut max) in ramps {
+            let inverse = pose.to_matrix().inverse();
+            let center_x = (min.x + max.x) * 0.5;
+            let floor = floors
+                .iter()
+                .map(|&bounds| transform_bounds(bounds, inverse))
+                .filter(|(floor_min, floor_max)| {
+                    (floor_min.x..=floor_max.x).contains(&center_x)
+                        && (0.0..=0.3).contains(&(floor_max.y - max.y))
+                        && (floor_max.z - min.z).abs() < 1.0
+                })
+                .min_by(|(_, a), (_, b)| (a.z - min.z).abs().total_cmp(&(b.z - min.z).abs()));
+            let Some((_, floor_max)) = floor else {
+                *state = ArtLoadState::Failed;
+                error!(target: "demo::scene", ?parent, reason = "missing_entry_floor", "Island initialization failed");
+                return;
+            };
+            // 台阶与地板间仍有空隙和 18cm 高差；连接实际前缘并重叠 5cm，避免走入室内时腾空。
+            min.z = floor_max.z - 0.05;
+            max.y = floor_max.y;
+            colliders.push((parent, stair_ramp(min, max)));
+            ramp_count += 1;
+        }
+        player.translation.y += 0.03;
+        for (model, offset) in [
+            (ItemModel::StandardParcel, Vec3::new(0.0, 0.3, -1.3)),
+            (ItemModel::FragileParcel, Vec3::new(1.2, 0.3, -1.3)),
+        ] {
+            items.push(ItemPlacement {
+                model,
+                pose: Transform::from_translation(player.translation + offset),
+            });
+        }
+        let collider_count = colliders.len();
+        for (parent, collider) in colliders {
+            commands.spawn_scene(bsn! {
+                Name("Island static collider")
+                IslandCollider
+                template_value(RigidBody::Static)
+                template_value(collider)
+                template_value(world_collision_layers())
+                ChildOf(parent)
+            });
+        }
+        for &entity in &remove {
+            commands.entity(entity).despawn();
+        }
+        for &entity in &npcs {
+            commands.entity(entity).insert(DisplayNpc);
+        }
+        commands
+            .entity(map)
+            .remove::<IslandPending>()
+            .insert(IslandReady { player, items });
+        info!(target: "demo::scene", ?map, collider_count, ramp_count,
+            npc_count = npcs.len(), replaced_instances = remove.len(),
+            reason = "map_geometry_ready", "Island colliders ready");
+    }
+}
+
+#[derive(Default)]
+struct CollisionGeometry {
+    vertices: Vec<Vec3>,
+    indices: Vec<[u32; 3]>,
+    ramps: BTreeMap<String, (Vec3, Vec3)>,
+    floor_bounds: Option<(Vec3, Vec3)>,
+}
+
+/// 包围体沿实例变换转换坐标，供不同美术根之间的入口连接匹配。
+fn transform_bounds((min, max): (Vec3, Vec3), matrix: Mat4) -> (Vec3, Vec3) {
+    let mut lower = Vec3::splat(f32::INFINITY);
+    let mut upper = Vec3::splat(f32::NEG_INFINITY);
+    for x in [min.x, max.x] {
+        for y in [min.y, max.y] {
+            for z in [min.z, max.z] {
+                let point = matrix.transform_point3(Vec3::new(x, y, z));
+                lower = lower.min(point);
+                upper = upper.max(point);
+            }
+        }
+    }
+    (lower, upper)
+}
+
+/// 坐标累积使用本地 Transform，不假设场景就绪事件时已完成本帧 GlobalTransform 传播。
+fn collect_geometry(
+    entity: Entity,
+    parent_matrix: Mat4,
+    include_transform: bool,
+    part_name: &str,
+    asset: &str,
+    children: &Query<&Children>,
+    nodes: &Query<(&Transform, Option<&Name>, Option<&Mesh3d>)>,
+    meshes: &Assets<Mesh>,
+    geometry: &mut CollisionGeometry,
+) -> Result<(), String> {
+    let (transform, name, mesh) = nodes.get(entity).map_err(|error| error.to_string())?;
+    // glTF 原语是命名节点的子实体；碰撞分类沿用父节点的美术部件名，忽略原语名。
+    let part_name = if mesh.is_none() {
+        name.map_or(part_name, |name| name.as_str())
+    } else {
+        part_name
+    };
+    let matrix = if include_transform {
+        parent_matrix * transform.to_matrix()
+    } else {
+        parent_matrix
+    };
+    if let Some(mesh) = mesh {
+        let ramp = stair_group(asset, part_name);
+        if ramp.is_some() || solid_mesh(asset, part_name) {
+            let mesh = meshes
+                .get(&mesh.0)
+                .ok_or_else(|| "Collision mesh unavailable".to_owned())?;
+            for triangle in mesh.triangles().map_err(|error| error.to_string())? {
+                let vertices = triangle
+                    .vertices
+                    .map(|point| matrix.transform_point3(point));
+                if asset.starts_with("bld_")
+                    && (part_name.contains("Floor_board_") || part_name.contains("Hut floor board"))
+                {
+                    let bounds = geometry.floor_bounds.get_or_insert((
+                        Vec3::splat(f32::INFINITY),
+                        Vec3::splat(f32::NEG_INFINITY),
+                    ));
+                    for &point in &vertices {
+                        bounds.0 = bounds.0.min(point);
+                        bounds.1 = bounds.1.max(point);
+                    }
+                }
+                if let Some(group) = &ramp {
+                    let bounds = geometry
+                        .ramps
+                        .entry(group.clone())
+                        .or_insert((Vec3::splat(f32::INFINITY), Vec3::splat(f32::NEG_INFINITY)));
+                    for point in vertices {
+                        bounds.0 = bounds.0.min(point);
+                        bounds.1 = bounds.1.max(point);
+                    }
+                } else {
+                    let start = geometry.vertices.len() as u32;
+                    geometry.vertices.extend(vertices);
+                    geometry.indices.push([start, start + 1, start + 2]);
+                }
+            }
+        }
+    }
+    if let Ok(children_of_entity) = children.get(entity) {
+        for &child in children_of_entity {
+            collect_geometry(
+                child, matrix, true, part_name, asset, children, nodes, meshes, geometry,
+            )?;
+        }
+    }
+    Ok(())
+}
+
+/// 模型命名只在美术导入边界解释，草、海水、叶片和人物不会成为隐形障碍。
+fn solid_mesh(asset: &str, name: &str) -> bool {
+    if asset.starts_with("bld_") || asset == "env_island_terrain" || asset == "env_dock" {
+        return true;
+    }
+    if asset == "env_stairs_railings" {
+        return stair_group(asset, name).is_none();
+    }
+    if asset.starts_with("prop_palm_") {
+        return name.contains("Bent trunk segment");
+    }
+    matches!(
+        asset,
+        "prop_mailbox" | "prop_bench" | "prop_planter" | "prop_street_lamp" | "prop_dock_bollard"
+    )
+}
+
+fn stair_group(asset: &str, name: &str) -> Option<String> {
+    if asset != "env_stairs_railings" || !(name.contains("_step_") || name.contains("Home_steps_"))
+    {
+        return None;
+    }
+    name.rsplit_once('_').map(|(group, _)| group.to_owned())
+}
+
+fn stair_ramp(min: Vec3, max: Vec3) -> Collider {
+    let front = max.z + 0.36;
+    let bottom = min.y - 0.05;
+    // 楔体顶从地面升到平台，向前延长一踏面；所有当前入口朝导出坐标 +Z。
+    Collider::convex_hull(vec![
+        Vec3::new(min.x, bottom, front),
+        Vec3::new(max.x, bottom, front),
+        Vec3::new(min.x, bottom, min.z),
+        Vec3::new(max.x, bottom, min.z),
+        Vec3::new(min.x, max.y, min.z),
+        Vec3::new(max.x, max.y, min.z),
+        Vec3::new(min.x, min.y, front),
+        Vec3::new(max.x, min.y, front),
+    ])
+    .expect("Stair bounds must produce a non-degenerate ramp")
+}
+
+fn courier_visual(scene: Handle<WorldAsset>, gltf: Handle<Gltf>) -> impl Scene {
+    bsn! { Name("Courier visual") CharacterVisual CourierVisual(gltf) WorldAssetRoot(scene) }
+}
+
+fn courier_scene(pose: Transform, scene: Handle<WorldAsset>, gltf: Handle<Gltf>) -> impl Scene {
+    bsn! {
+        Name("Courier")
+        Character
+        CharacterIntent
+        CharacterMotion { grounded: false }
+        SpawnPoint(pose)
+        template_value(pose)
+        Visibility
+        Children [courier_visual(scene, gltf)]
+    }
+}
+
+fn carryable_scene(model: ItemModel, pose: Transform, scene: Handle<WorldAsset>) -> impl Scene {
+    let grip = Vec3::new(
+        0.0,
+        1.3,
+        if model == ItemModel::WoodenCrate {
+            -0.62
+        } else {
+            -0.48
         },
-        Transform::from_xyz(6.0, 10.0, 8.0).looking_at(Vec3::ZERO, Vec3::Y),
-    ));
-
-    let character = commands
-        .spawn((
-            Name::new("Prototype character"),
-            Character,
-            CharacterIntent::default(),
-            CharacterMotion { grounded: true },
-            character_body(&config),
-            Transform::from_xyz(0.0, config.ground_y, 0.0),
-            Visibility::default(),
-        ))
-        .id();
-
-    // 只标记人物的视觉子实体，第一人称隐藏模型时保留角色业务根和独立的持有物。
-    commands.spawn((
-        Name::new("Placeholder body"),
-        CharacterVisual,
-        Mesh3d(meshes.add(Capsule3d::new(0.32, 0.8))),
-        MeshMaterial3d(materials.add(Color::srgb(0.12, 0.35, 0.74))),
-        Transform::from_xyz(0.0, 0.72, 0.0),
-        ChildOf(character),
-    ));
-    commands.spawn((
-        Name::new("Placeholder head"),
-        CharacterVisual,
-        Mesh3d(meshes.add(Sphere::new(0.24))),
-        MeshMaterial3d(materials.add(Color::srgb(0.94, 0.77, 0.59))),
-        Transform::from_xyz(0.0, 1.65, 0.0),
-        ChildOf(character),
-    ));
-    // 角色的局部 -Z 是前方，标记帮助观察移动后朝向是否正确。
-    commands.spawn((
-        Name::new("Placeholder facing marker"),
-        CharacterVisual,
-        Mesh3d(meshes.add(Cuboid::new(0.16, 0.12, 0.16))),
-        MeshMaterial3d(materials.add(Color::srgb(0.99, 0.70, 0.18))),
-        Transform::from_xyz(0.0, 1.64, -0.24),
-        ChildOf(character),
-    ));
-
-    let player_id = PlayerId(1);
-    let controller = spawn_keyboard_controller(&mut commands, player_id, character);
-    let parcel_position = Vec3::new(0.0, config.ground_y + config.parcel_half_height, -1.3);
-    let parcel = commands
-        .spawn((
-            Name::new("Prototype parcel"),
-            Parcel,
-            Pickable,
-            parcel_body(&config),
-            Transform::from_translation(parcel_position),
-            Visibility::default(),
-        ))
-        .id();
-    let crate_size = config.parcel_half_height * 2.0;
-    commands.spawn((
-        Name::new("Placeholder wooden crate"),
-        Mesh3d(meshes.add(Cuboid::from_length(crate_size))),
-        MeshMaterial3d(materials.add(StandardMaterial {
-            base_color: Color::srgb(0.48, 0.27, 0.11),
-            perceptual_roughness: 0.95,
-            ..default()
-        })),
-        Transform::default(),
-        ChildOf(parcel),
-    ));
-    let strip_mesh = meshes.add(Cuboid::new(crate_size + 0.02, 0.07, crate_size + 0.02));
-    let strip_material = materials.add(Color::srgb(0.71, 0.47, 0.22));
-    for height in [-crate_size * 0.3, crate_size * 0.3] {
-        commands.spawn((
-            Name::new("Placeholder crate strip"),
-            Mesh3d(strip_mesh.clone()),
-            MeshMaterial3d(strip_material.clone()),
-            Transform::from_xyz(0.0, height, 0.0),
-            ChildOf(parcel),
-        ));
+    );
+    bsn! {
+        Name({model.name()})
+        Parcel
+        Pickable
+        CarryGrip(grip)
+        template_value(model)
+        SpawnPoint(pose)
+        template_value(pose)
+        Visibility
+        Children [(Name("Carryable visual") WorldAssetRoot(scene))]
     }
+}
 
-    let start_position = Vec3::new(0.0, config.ground_y, 0.0);
-    let orbit = OrbitCamera::new(character);
-    let camera_transform = orbit.transform(start_position);
-    let camera = commands
-        .spawn((
-            Name::new("Prototype orbit camera"),
-            Camera3d::default(),
+fn spawn_actors(
+    mut commands: Commands,
+    maps: Query<(Entity, &IslandReady), Without<ActorsSpawned>>,
+    config: Res<PrototypeConfig>,
+    assets: Res<ArtAssets>,
+    gltfs: Res<Assets<Gltf>>,
+    loading_camera: Query<Entity, With<LoadingCamera>>,
+) {
+    for (map, placement) in &maps {
+        let courier = &gltfs
+            .get(&assets.courier)
+            .expect("Ready courier must be loaded")
+            .scenes[0];
+        // BSN 负责实体结构；已有无窗口物理回归的 Bundle 工厂继续统一刚体参数。
+        let character = commands
+            .spawn_scene(courier_scene(
+                placement.player,
+                courier.clone(),
+                assets.courier.clone(),
+            ))
+            .insert(character_body(&config))
+            .id();
+        let controller = spawn_keyboard_controller(&mut commands, PlayerId(1), character);
+        for item in &placement.items {
+            let scene = gltfs
+                .get(assets.item(item.model))
+                .expect("Ready item must be loaded")
+                .scenes[0]
+                .clone();
+            let mut entity = commands.spawn_scene(carryable_scene(item.model, item.pose, scene));
+            entity.insert(parcel_body(&config));
+            if item.model == ItemModel::WoodenCrate {
+                // 木箱边框超出纸箱尺寸，中心偏移来自导出几何，视觉与碰撞使用相同米制比例。
+                entity.insert(Collider::compound(vec![(
+                    Vec3::new(0.0, 0.01625, 0.01625),
+                    Quat::IDENTITY,
+                    Collider::cuboid(0.84, 0.6825, 0.8145),
+                )]));
+            }
+            let parcel = entity.id();
+            info!(target: "demo::scene", ?parcel, model = item.model.name(), position = ?item.pose.translation,
+                reason = "island_ready", "Carryable item spawned");
+        }
+        let orbit = OrbitCamera::new(character);
+        let camera_transform = orbit.transform(placement.player.translation);
+        let camera = loading_camera
+            .single()
+            .expect("One loading camera must exist");
+        commands.entity(camera).remove::<LoadingCamera>().insert((
+            Name::new("Courier orbit camera"),
             orbit,
             MouseLookState::default(),
             camera_transform,
-        ))
-        .id();
-    commands.entity(controller).insert(ControlsCamera(camera));
-    info!(target: "demo::camera", ?camera, ?character, ?controller,
-        position = ?camera_transform.translation, perspective = "third_person", reason = "scene_startup",
-        "Orbit camera spawned");
-
-    info!(
-        target: "demo::scene",
-        player_id = player_id.0,
-        ?character,
-        ?controller,
-        position = ?start_position,
-        reason = "scene_startup",
-        "Character and local controller spawned"
-    );
-    info!(
-        target: "demo::scene",
-        ?parcel,
-        position = ?parcel_position,
-        reason = "scene_startup",
-        "Wooden crate spawned"
-    );
-    info!(target: "demo::scene", config = ?*config, "Prototype scene initialized");
+        ));
+        commands.entity(controller).insert(ControlsCamera(camera));
+        commands.entity(map).insert(ActorsSpawned);
+        info!(target: "demo::camera", ?camera, ?character, ?controller,
+            position = ?camera_transform.translation, perspective = "third_person", reason = "island_ready", "Orbit camera spawned");
+        info!(target: "demo::scene", ?character, ?controller, player_id = 1,
+            position = ?placement.player.translation, reason = "island_ready", "Character and local controller spawned");
+    }
 }
 
 #[cfg(test)]
-mod tests {
-    use super::*;
-
-    use avian3d::prelude::CollisionLayers;
-    use bevy_enhanced_input::prelude::{EnhancedInputPlugin, InputContextAppExt};
-
-    use crate::{gameplay::ControlsCharacter, input::GameplayContext};
-
-    #[test]
-    fn startup_assembles_independent_roots_with_replaceable_visuals() {
-        // 只注册资源与输入上下文，然后直接运行场景调度，不加载窗口或渲染插件。
-        let mut app = App::new();
-        app.init_resource::<Assets<Mesh>>()
-            .init_resource::<Assets<StandardMaterial>>()
-            .init_resource::<PrototypeConfig>()
-            // 复用可见性插件的组件要求，不加载渲染器或窗口后端。
-            .register_required_components::<Mesh3d, Visibility>()
-            .add_plugins(EnhancedInputPlugin)
-            .add_input_context::<GameplayContext>()
-            .add_plugins(PrototypeScenePlugin);
-        app.finish();
-        app.cleanup();
-        app.world_mut().run_schedule(Startup);
-
-        let world = app.world_mut();
-        let character = world
-            .query_filtered::<Entity, With<Character>>()
-            .single(world)
-            .unwrap();
-        let parcel = world
-            .query_filtered::<Entity, With<Parcel>>()
-            .single(world)
-            .unwrap();
-        let (player_id, controlled_character) = world
-            .query_filtered::<(&PlayerId, &ControlsCharacter), With<GameplayContext>>()
-            .single(world)
-            .map(|(id, controlled)| (*id, controlled.0))
-            .unwrap();
-        assert_eq!(player_id, PlayerId(1));
-        assert_eq!(controlled_character, character);
-        assert!(world.get::<Pickable>(parcel).is_some());
-
-        for root in [character, parcel] {
-            assert_eq!(world.get::<RigidBody>(root), Some(&RigidBody::Dynamic));
-            assert!(world.get::<Collider>(root).is_some());
-            assert!(world.get::<CollisionLayers>(root).is_some());
-            assert!(world.get::<ChildOf>(root).is_none());
-            assert!(world.get::<Mesh3d>(root).is_none());
-            assert!(world.get::<CharacterVisual>(root).is_none());
-            let children = world.get::<Children>(root).unwrap();
-            assert!(!children.is_empty());
-            for &child in children {
-                assert_eq!(world.get::<ChildOf>(child).unwrap().parent(), root);
-                assert!(world.get::<Mesh3d>(child).is_some());
-                assert!(world.get::<Character>(child).is_none());
-                assert!(world.get::<Parcel>(child).is_none());
-                assert!(world.get::<RigidBody>(child).is_none());
-                assert!(world.get::<Collider>(child).is_none());
-                assert_eq!(
-                    world.get::<CharacterVisual>(child).is_some(),
-                    root == character
-                );
-                assert_eq!(world.get::<Visibility>(child), Some(&Visibility::Inherited));
-            }
-        }
-        let config = world.resource::<PrototypeConfig>();
-        assert_eq!(
-            world.get::<Transform>(character).unwrap().translation.y,
-            config.ground_y
-        );
-        assert_eq!(
-            world.get::<Transform>(parcel).unwrap().translation.y,
-            config.ground_y + config.parcel_half_height
-        );
-        assert_eq!(
-            world
-                .query_filtered::<&OrbitCamera, With<Camera3d>>()
-                .single(world)
-                .unwrap()
-                .target,
-            character
-        );
-        let controlled_camera = world
-            .query_filtered::<&ControlsCamera, With<GameplayContext>>()
-            .single(world)
-            .unwrap()
-            .0;
-        assert_eq!(
-            world.get::<OrbitCamera>(controlled_camera).unwrap().target,
-            character
-        );
-
-        let ground_y = world.resource::<PrototypeConfig>().ground_y;
-        let static_solids: Vec<_> = world
-            .query::<(&RigidBody, &Collider, &CollisionLayers, &Transform, &Mesh3d)>()
-            .iter(world)
-            .filter(|(body, ..)| **body == RigidBody::Static)
-            .collect();
-        assert_eq!(static_solids.len(), 2);
-        for (_, collider, layers, transform, _) in static_solids {
-            assert_eq!(*layers, world_collision_layers());
-            let half_extents = collider.shape().as_cuboid().unwrap().half_extents;
-            if transform.translation.z == 0.0 {
-                // 地面碰撞顶面与角色脚底高度一致，不能让厚度把角色埋入地面。
-                assert_eq!(transform.translation.y + half_extents.y, ground_y);
-                assert_eq!(half_extents.x, 100.0);
-                assert_eq!(half_extents.z, 100.0);
-            } else {
-                // 障碍墙落在地面上，且没有与初始角色或箱体重叠。
-                assert_eq!(transform.translation.y - half_extents.y, ground_y);
-                assert_eq!(transform.translation.z, -5.0);
-                assert!(transform.translation.z + half_extents.z < -1.3 - 0.5);
-            }
-        }
-    }
-}
+#[path = "scene_tests.rs"]
+mod tests;

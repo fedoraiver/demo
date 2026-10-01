@@ -6,18 +6,22 @@
 
 | 视图 | 独立 SVG | 阅读重点 |
 | --- | --- | --- |
-| App 总览 | [总览](ecs-overview.svg) | 插件装配、启动、逐帧阶段和主要数据流。 |
-| 调度与读写 | [调度](ecs-schedules.svg) | 固定控制力、Avian 解算与回写、插值后显示、命令同步点及输入/检查器阶段。 |
-| 实体关系 | [实体与组件](ecs-relationships.svg) | 动态角色和快递、静态地面/墙体、物理与呈现组件、实体引用及生命周期。 |
-| 事件与 Observer | [通信](ecs-events.svg) | 七个输入 Observer、意图消费、视角请求、窗口与碰撞缓冲消息。 |
+| App 总览 | [总览](ecs-overview.svg) | 实际插件装配、资源请求、海岛准备、固定模拟与逐帧显示。 |
+| 调度与读写 | [调度](ecs-schedules.svg) | 资源轮询、海岛与动画两条 Update 链、实例化、落水恢复、Avian 解算、插值和检查器阶段。 |
+| 实体关系 | [实体与组件](ecs-relationships.svg) | 动态角色与五件可搬物、海岛静态碰撞、NPC、GLB 视觉/骨骼、实体引用及生命周期。 |
+| 事件与 Observer | [通信](ecs-events.svg) | 七个输入与两个实例就绪 Observer、窗口/碰撞消息，以及外部文件/控制台后台日志。 |
 
 粗实线表示执行先后；蓝虚线表示读取，绿实线表示写入，橙虚线表示事件触发。紫虚线表示普通 `Entity` 引用，紫实线表示 Bevy 关系。框的类型标签和颜色用于区分实体、组件、系统、Observer、共享资源、系统私有状态及引擎概览。
 
-图按当前单角色原型的源码整理，包含 Avian 0.7.0 动态角色、物理持握、第一／第三人称切换和世界检查器。实体框按角色汇总组件，可选组件并非始终同时存在；静态地面与墙体归入世界碰撞实体，省略日光等背景实体。引擎集合、检查器与渲染子应用只展示相关流程，不代表引擎全部系统的精确全序。源码入口对项目类型指向声明，对框架类型指向项目内的使用或注册位置。
+图按当前海岛原型的源码整理，包含运行 GLB 加载、BSN 装配、四名展示 NPC、主角命名动画、Avian 0.7.0 动态角色、五件可搬物、落水恢复、第一／第三人称切换、世界检查器与后台会话日志。实体框按角色汇总组件，可选组件并非始终同时存在；静态碰撞与原美术实例分离，沿地图层级清理。业务根、直属视觉根和 GLB 网格/骨骼节点分别表达，省略日光等背景实体。引擎集合、资产实例化、骨骼动画、检查器与渲染子应用只展示相关流程，不穷举 loader、引擎内部缓存、骨骼系统或 GPU 批次，不代表引擎全部系统的精确全序。源码入口对项目类型指向声明，对框架类型指向项目内的使用或注册位置。
 
 固定模拟为 60 Hz，每个渲染帧可能执行 0～N 次。默认渲染上限为 60 FPS，允许配置的最低上限为 60；实际帧率仍取决于运行性能。Observer 按匹配事件触发，不由注册顺序组成流水线；Enhanced Input 的 `Apply` 与 ECS 命令应用是两个步骤。
 
-`FixedUpdate` 准备控制力、跳跃冲量和弹簧持握；Avian 在 `FixedPostUpdate` 执行物理求解与回写，`FixedLast` 记录插值终点。固定循环后的 `RunFixedMainLoop` 在 `Ease` 之后同步朝向、`HeldTarget`、镜头和可见性，再执行 `UpdateEasingTick`。`Position`／速度是实际物理状态，`Transform` 是插值呈现；`HeldTarget` 只供呈现检查，施力另读真实物理位置。拿起与释放不瞬移箱体，释放保留动量，失效持有关系会恢复自由碰撞并自然下落。`Forces` 是 `QueryData`，`SpatialQuery` 是 `SystemParam`，均不作为组件列出。
+资源轮询、海岛装配链和主角动画链分别运行在 `Update`，彼此没有显式全序；海岛与动画链各自在依赖处应用延迟命令。`SpawnScene` 实例化 `WorldAssetRoot` 并触发 `WorldInstanceReady`，后续 `Update` 消费各自待准备标记。玩家和物品在资源与静态碰撞均准备好后生成；加载相机复用为玩家相机。
+
+`FixedUpdate` 先落水恢复，再按当前视角同步朝向，随后准备控制力、跳跃冲量和弹簧持握；重力同步也在模拟前，但与恢复/朝向无额外全序。恢复暂停插值跨过零固定步帧，下一 `FixedFirst` 在 `Reset` 与 `UpdateStart` 之间仅清理本模块添加的暂停。Avian 在 `FixedPostUpdate` 求解与回写，`FixedLast` 记录插值终点。固定循环后的 `RunFixedMainLoop` 在 `Ease` 之后同步朝向、`HeldTarget`、镜头和可见性，再执行 `UpdateEasingTick`。`PostUpdate` 的骨骼动画先于变换传播，检查器仍是独立分支。
+
+`Position`／速度是实际物理状态，`Transform` 是插值呈现；`HeldTarget` 只供呈现检查，施力另读真实物理位置，模拟与显示共同读取物品 `CarryGrip`。拿起与释放不瞬移箱体，释放保留动量，失效持有关系会恢复自由碰撞并自然下落。`Forces`、`RecoverableBody` 是 `QueryData`，`SpatialQuery` 是 `SystemParam`；导入布局辅助值、动画节点/状态辅助值以及日志线程/队列均不作为玩法 ECS 组件列出。
 
 [ecs-data.json](ecs-data.json) 保存经过源码核对的清单，[build-ecs.mjs](build-ecs.mjs) 生成交付文件，[source-viewer.mjs](source-viewer.mjs) 将清单引用文件的完整文本内嵌到源码查看页。架构图的清单、布局、关系、源码入口及生成校验统一归下面的 Agent Hook 维护职责；普通代码开发任务不逐次手动维护或刷新。分享时保留 `ecs-architecture.html` 和 `ecs-source.html` 的相对位置。
 
