@@ -108,7 +108,6 @@ impl Plugin for GameplayPlugin {
             .register_type::<Pickable>()
             .register_type::<PrototypeConfig>()
             .init_resource::<PrototypeConfig>()
-            .add_systems(Startup, log_configuration)
             .add_systems(
                 FixedUpdate,
                 (
@@ -122,10 +121,6 @@ impl Plugin for GameplayPlugin {
                     .in_set(GameplaySystems::Simulate),
             );
     }
-}
-
-fn log_configuration(config: Res<PrototypeConfig>) {
-    info!(?config, "Prototype gameplay initialized");
 }
 
 /// 将角色局部移动轴转换为世界速度，斜向移动保持与单轴相同的最高速度。

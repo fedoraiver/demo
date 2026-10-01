@@ -123,7 +123,6 @@ pub struct SettingsPlugin;
 impl Plugin for SettingsPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<GameSettings>()
-            .add_systems(Startup, log_simulation_timestep)
             // 等待在时间与业务系统之前完成；固定步仍由引擎时钟驱动，不改写模拟时间步。
             .add_systems(First, limit_frame_rate.before(TimeSystems));
     }
@@ -140,14 +139,6 @@ fn read_settings(path: &Path) -> io::Result<GameSettings> {
     let contents = fs::read_to_string(path)?;
     serde_json::from_str(&contents)
         .map_err(|error| io::Error::new(io::ErrorKind::InvalidData, error))
-}
-
-fn log_simulation_timestep(time: Res<Time<Fixed>>) {
-    info!(
-        target: "demo::settings",
-        simulation_hz = 1.0 / time.timestep().as_secs_f64(),
-        "Fixed simulation timestep initialized"
-    );
 }
 
 /// 只补足上一帧起点以来剩余的间隔；计算本身已超时时立即继续，不叠加等待。
