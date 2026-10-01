@@ -3,22 +3,26 @@
 use bevy::{ecs::relationship::RelationshipTarget, prelude::*};
 
 /// 独立于运行时实体标识的玩家身份，便于后续多人输入路由。
-#[derive(Component, Clone, Copy, Debug, PartialEq, Eq, Hash)]
+#[derive(Component, Reflect, Clone, Copy, Debug, PartialEq, Eq, Hash)]
+#[reflect(Component)]
 pub struct PlayerId(pub u64);
 
 /// 控制者当前操作的角色；输入设备和角色状态分别存储。
-#[derive(Component)]
+#[derive(Component, Reflect)]
+#[reflect(Component)]
 pub struct ControlsCharacter(#[entities] pub Entity);
 
 /// 具有移动和跳跃能力的角色。
-#[derive(Component)]
+#[derive(Component, Reflect)]
+#[reflect(Component)]
 pub struct Character;
 
 /// 来自控制者的玩法意图；输入状态跨帧保留，供固定步模拟读取。
 ///
 /// PreUpdate 与 FixedUpdate 不一一对应：移动轴持续有效，跳跃和交互请求只消费一次。
 /// 输入 Observer 仅更新意图，不按输入事件次数积分位置，避免运动速度依赖渲染帧率。
-#[derive(Component, Default)]
+#[derive(Component, Reflect, Default)]
+#[reflect(Component)]
 pub struct CharacterIntent {
     /// 角色局部水平输入轴：x 表示左右横移，y 表示前后移动。
     pub movement: Vec2,
@@ -27,7 +31,8 @@ pub struct CharacterIntent {
 }
 
 /// 角色的实际运动状态，位置与朝向由 Transform 保存。
-#[derive(Component, Default)]
+#[derive(Component, Reflect, Default)]
+#[reflect(Component)]
 pub struct CharacterMotion {
     pub horizontal_velocity: Vec3,
     pub vertical_velocity: f32,
@@ -35,11 +40,13 @@ pub struct CharacterMotion {
 }
 
 /// 快递身份，当前使用木箱作为占位模型。
-#[derive(Component)]
+#[derive(Component, Reflect)]
+#[reflect(Component)]
 pub struct Parcel;
 
 /// 允许被拾取的能力标签。
-#[derive(Component)]
+#[derive(Component, Reflect)]
+#[reflect(Component)]
 pub struct Pickable;
 
 /// 物体的持有者；只由交互系统插入或移除。
@@ -53,7 +60,8 @@ pub struct HeldBy(Entity);
 pub struct HoldingItems(Vec<Entity>);
 
 /// 原型的运动、平地和持箱参数。
-#[derive(Resource, Clone, Debug)]
+#[derive(Resource, Reflect, Clone, Debug)]
+#[reflect(Resource)]
 pub struct PrototypeConfig {
     pub move_speed: f32,
     pub jump_speed: f32,
@@ -90,7 +98,16 @@ pub enum GameplaySystems {
 
 impl Plugin for GameplayPlugin {
     fn build(&self, app: &mut App) {
-        app.init_resource::<PrototypeConfig>()
+        // 反射元数据让检查器能够读取玩法组件与资源；持有关系仍由 Bevy 关系钩子维护。
+        app.register_type::<PlayerId>()
+            .register_type::<ControlsCharacter>()
+            .register_type::<Character>()
+            .register_type::<CharacterIntent>()
+            .register_type::<CharacterMotion>()
+            .register_type::<Parcel>()
+            .register_type::<Pickable>()
+            .register_type::<PrototypeConfig>()
+            .init_resource::<PrototypeConfig>()
             .add_systems(Startup, log_configuration)
             .add_systems(
                 FixedUpdate,

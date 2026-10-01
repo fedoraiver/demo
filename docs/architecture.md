@@ -16,6 +16,14 @@
 
 依赖声明和锁定版本分别见 [Cargo.toml](../Cargo.toml) 和 [Cargo.lock](../Cargo.lock)。
 
+## 世界检查器
+
+`main` 在默认插件之后依次注册 `EguiPlugin` 和 `WorldInspectorPlugin`，检查器复用主窗口与当前相机，在 `EguiPrimaryContextPass` 中展示实体、资源和资产。插件自身的独占世界访问用于通用反射检查，项目不另建世界扫描或数据镜像。`main` 在 `Startup` 注册 `log_world_inspector`，通过统一日志记录 `World inspector enabled`。
+
+鼠标仍被游戏捕获时，`filter_captured_egui_input` 在 Egui 收集输入后、开始本帧之前过滤面板交互，补齐 Egui 内部残留按键的释放并清除拖拽和文本焦点。这样隐藏光标即使位于面板上也不会误编辑字段或中断玩家输入；Esc 当帧直接放行面板输入，原生键鼠资源仍供 Enhanced Input 使用。
+
+玩法组件、`PrototypeConfig` 和相机状态注册 Bevy 反射元数据，让检查器直接访问 ECS 数据。`HeldBy`／`HoldingItems` 不开放反射修改，反向索引继续由 Bevy 的关系钩子维护；鼠标捕获状态不开放反射编辑。检查器编辑仅影响内存中的本次会话。
+
 ## 实体与状态归属
 
 - **控制者实体**保存 `PlayerId`、`GameplayContext`、设备绑定、`ControlsCharacter` 和 `ControlsCamera`。`PlayerId` 表达业务身份，两个控制组件使用运行时 `Entity` 指向角色与相机。
@@ -55,13 +63,15 @@
 
 `sync_character_visibility` 在镜头更新后按有效控制关联和模式更新角色视觉子实体的 `Visibility`：第一人称隐藏对应的 `CharacterVisual`，切回第三人称时恢复。相机或控制者丢失、关联不再有效时也恢复人物显示，避免模型停留在隐藏状态。
 
-鼠标捕获是窗口生命周期处理：当前 `sync_mouse_capture` 直接读取 Esc 的 `ButtonInput`、`MouseButtonInput` 和 `WindowFocused`，结合控制关联与目标是否存在更新 `MouseLookState` 和光标设置。捕获恢复当帧跳过观察位移，避免自由光标阶段的位移造成镜头跳转。它在底层 `InputSystems` 之后、`EnhancedInputSystems::Prepare` 之前执行，捕获状态在动作评估前生效。
+鼠标捕获是窗口生命周期处理：`sync_mouse_capture` 直接读取 Esc 的 `ButtonInput`、`MouseButtonInput` 和 `WindowFocused`，结合控制关联与目标是否存在更新 `MouseLookState` 和光标设置。它在底层 `InputSystems` 与 `EguiPreUpdateSet::BeginPass` 之后、`EnhancedInputSystems::Prepare` 之前执行。默认主 Egui 上下文使用多遍 UI 调度，本帧界面在 `PostUpdate` 处理；输入同步读取最近一次 UI 的拖拽、文本焦点和菜单状态，并用当前窗口物理光标位置命中已有面板布局，避免同帧移入面板并点击时重新捕获鼠标。捕获恢复当帧跳过观察位移，避免自由光标阶段的位移造成镜头跳转。
+
+操作检查器时通过 `ContextActivity<GameplayContext>` 停用输入上下文，而不清空全局底层键盘资源；延迟命令在动作准备前应用。停用触发动作完成或取消，已有移动意图归零，单次动作继续遵循 `require_reset` 的松键要求。Esc 释放后未操作检查器时保留原有键盘控制，包括 I 切换视角。
 
 ## 调度与模拟边界
 
 | 阶段 | 数据变换与执行依赖 |
 | --- | --- |
-| `Startup` | 生成场景并记录玩法配置、固定时间步与姿态同步阶段及顺序。 |
+| `Startup` | `PrototypeScenePlugin` 生成场景；玩法、设置和相机插件分别注册玩法配置、固定时间步与姿态同步日志，`main` 注册检查器启用日志。这些系统之间没有显式顺序依赖。 |
 | `First` | `limit_frame_rate.before(TimeSystems)` 在引擎更新时钟前补足帧间剩余时间。 |
 | `PreUpdate` | 更新鼠标捕获，Enhanced Input 评估动作并通过 Observer 更新意图、观察角度或切换请求；`apply_perspective_toggle.after(EnhancedInputSystems::Apply)` 在本帧动作应用完成后切换模式。 |
 | `FixedUpdate` | `sync_character_facing.before(GameplaySystems::Simulate)` 先同步角色朝向，再依次执行移动、跳跃与重力、交互、持物跟随。 |
@@ -111,6 +121,8 @@
 随后通过 Bevy `LogPlugin::custom_layer` 添加文件输出，保留 Bevy 的默认控制台配置和日志过滤，文件层关闭 ANSI 颜色。临时写入器资源在插件构建时取出，由日志 layer 和会话守护对象持有，不作为玩法共享状态。文件写入锁只保护外部 I/O。
 
 写入器在每次写入后刷新；`LogPlugin` 初始化后记录会话开始与版本，设置、场景、输入、相机和玩法模块记录各自关键变化。panic hook 尽力记录错误并同步文件，然后调用原有 hook；`App::run` 返回后记录退出结果并刷新，守护对象释放时再次刷新。panic 日志通过已安装的 subscriber 输出，不能保证覆盖日志插件就绪前的异常或进程被强制终止的情况。
+
+`GameplayPlugin`、`SettingsPlugin` 和 `CameraControlPlugin` 分别在 `Startup` 注册 `log_configuration`、`log_simulation_timestep` 和 `log_pose_synchronization`，`main` 注册 `log_world_inspector`。前两个分别只读 `PrototypeConfig` 和 `Time<Fixed>`，后两个记录当前装配采用的固定约定；这些日志不依赖已生成实体，系统之间没有显式执行顺序。日志 target 分别为 `demo::gameplay`、`demo::settings`、`demo::camera` 和 `demo::inspector`；会话文件和退出刷新仍由 `session_log` 管理。
 
 相机插件在 `Startup` 通过统一日志设施记录 `Camera pose synchronization configured`，字段 `simulation_schedule="FixedUpdate"`、`presentation_schedule="Update"` 和 `presentation_order="character_facing_held_objects_camera_visibility"` 说明显示同步的阶段与顺序，便于排查持箱转动或视角切换时的不同步问题。相机初始化记录 `perspective="third_person"`；每次有效切换以 `info` 级别记录 `Camera perspective changed`，包含 `perspective_before`、`perspective_after`、`yaw`、`pitch_before`、`pitch_after` 和 `reason="toggle_perspective_action"`。
 

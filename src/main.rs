@@ -8,6 +8,7 @@ mod session_log;
 mod settings;
 
 use bevy::{log::LogPlugin, prelude::*, window::PresentMode};
+use bevy_inspector_egui::{bevy_egui::EguiPlugin, quick::WorldInspectorPlugin};
 use camera::CameraControlPlugin;
 use gameplay::GameplayPlugin;
 use input::PlayerInputPlugin;
@@ -50,12 +51,16 @@ fn main() -> AppExit {
         // 固定步只控制移动、重力和交互模拟，独立于玩家设置的渲染上限。
         .insert_resource(Time::<Fixed>::from_hz(60.0))
         .add_plugins((
+            // 检查器复用同一主窗口与相机，Egui 必须先于世界检查器注册。
+            EguiPlugin::default(),
+            WorldInspectorPlugin::new(),
             SettingsPlugin,
             GameplayPlugin,
             PlayerInputPlugin,
             CameraControlPlugin,
             PrototypeScenePlugin,
         ))
+        .add_systems(Startup, log_world_inspector)
         .run();
 
     if let Err(error) = session.record_exit(&exit) {
@@ -63,4 +68,10 @@ fn main() -> AppExit {
         return AppExit::error();
     }
     exit
+}
+
+/// 检查器的启用信息沿用统一会话日志，方便核对本次调试环境。
+fn log_world_inspector() {
+    info!(target: "demo::inspector", plugin = "WorldInspectorPlugin", reason = "initialization",
+        "World inspector enabled");
 }
