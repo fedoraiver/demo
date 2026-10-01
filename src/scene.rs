@@ -1,5 +1,6 @@
 //! 原型场景与占位资产；业务实体保持独立，后续只需替换视觉子实体。
 
+use avian3d::prelude::{Collider, RigidBody};
 use bevy::prelude::*;
 
 use crate::{
@@ -8,9 +9,10 @@ use crate::{
         Character, CharacterIntent, CharacterMotion, Parcel, Pickable, PlayerId, PrototypeConfig,
     },
     input::spawn_keyboard_controller,
+    physics::{character_body, parcel_body, world_collision_layers},
 };
 
-/// 生成平地、占位角色、木箱和与控制者关联的自由视角镜头。
+/// 生成带碰撞的平地与墙体、占位角色、木箱和与控制者关联的自由视角镜头。
 pub struct PrototypeScenePlugin;
 
 impl Plugin for PrototypeScenePlugin {
@@ -32,16 +34,54 @@ fn spawn_scene(
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<StandardMaterial>>,
 ) {
-    commands.spawn((
-        Name::new("Prototype ground"),
-        Mesh3d(meshes.add(Plane3d::default().mesh().size(200.0, 200.0))),
-        MeshMaterial3d(materials.add(StandardMaterial {
-            base_color: Color::srgb(0.55, 0.66, 0.47),
-            perceptual_roughness: 1.0,
-            ..default()
-        })),
-        Transform::from_xyz(0.0, config.ground_y, 0.0),
-    ));
+    // 地面使用有厚度的静态盒体，顶面保持原有高度，视觉和碰撞共用同一尺寸。
+    let ground_dimensions = Vec3::new(200.0, 1.0, 200.0);
+    let ground_position = Vec3::new(0.0, config.ground_y - ground_dimensions.y * 0.5, 0.0);
+    let ground = commands
+        .spawn((
+            Name::new("Prototype ground"),
+            RigidBody::Static,
+            Collider::cuboid(
+                ground_dimensions.x,
+                ground_dimensions.y,
+                ground_dimensions.z,
+            ),
+            world_collision_layers(),
+            Mesh3d(meshes.add(Cuboid::from_size(ground_dimensions))),
+            MeshMaterial3d(materials.add(StandardMaterial {
+                base_color: Color::srgb(0.55, 0.66, 0.47),
+                perceptual_roughness: 1.0,
+                ..default()
+            })),
+            Transform::from_translation(ground_position),
+        ))
+        .id();
+
+    // 墙体远离出生角色和初始木箱，提供可以直接观察速度、阻挡和持物碰撞的目标。
+    let wall_dimensions = Vec3::new(4.0, 2.5, 0.5);
+    let wall_position = Vec3::new(0.0, config.ground_y + wall_dimensions.y * 0.5, -5.0);
+    let wall = commands
+        .spawn((
+            Name::new("Prototype collision wall"),
+            RigidBody::Static,
+            Collider::cuboid(wall_dimensions.x, wall_dimensions.y, wall_dimensions.z),
+            world_collision_layers(),
+            Mesh3d(meshes.add(Cuboid::from_size(wall_dimensions))),
+            MeshMaterial3d(materials.add(StandardMaterial {
+                base_color: Color::srgb(0.55, 0.57, 0.60),
+                perceptual_roughness: 0.95,
+                ..default()
+            })),
+            Transform::from_translation(wall_position),
+        ))
+        .id();
+    for (entity, dimensions, position) in [
+        (ground, ground_dimensions, ground_position),
+        (wall, wall_dimensions, wall_position),
+    ] {
+        info!(target: "demo::scene", ?entity, ?dimensions, ?position,
+            body_type = "static", reason = "scene_startup", "World collider spawned");
+    }
 
     commands.spawn((
         Name::new("Prototype daylight"),
@@ -58,10 +98,8 @@ fn spawn_scene(
             Name::new("Prototype character"),
             Character,
             CharacterIntent::default(),
-            CharacterMotion {
-                grounded: true,
-                ..default()
-            },
+            CharacterMotion { grounded: true },
+            character_body(&config),
             Transform::from_xyz(0.0, config.ground_y, 0.0),
             Visibility::default(),
         ))
@@ -102,6 +140,7 @@ fn spawn_scene(
             Name::new("Prototype parcel"),
             Parcel,
             Pickable,
+            parcel_body(&config),
             Transform::from_translation(parcel_position),
             Visibility::default(),
         ))
@@ -170,6 +209,7 @@ fn spawn_scene(
 mod tests {
     use super::*;
 
+    use avian3d::prelude::CollisionLayers;
     use bevy_enhanced_input::prelude::{EnhancedInputPlugin, InputContextAppExt};
 
     use crate::{gameplay::ControlsCharacter, input::GameplayContext};
@@ -209,6 +249,9 @@ mod tests {
         assert!(world.get::<Pickable>(parcel).is_some());
 
         for root in [character, parcel] {
+            assert_eq!(world.get::<RigidBody>(root), Some(&RigidBody::Dynamic));
+            assert!(world.get::<Collider>(root).is_some());
+            assert!(world.get::<CollisionLayers>(root).is_some());
             assert!(world.get::<ChildOf>(root).is_none());
             assert!(world.get::<Mesh3d>(root).is_none());
             assert!(world.get::<CharacterVisual>(root).is_none());
@@ -219,6 +262,8 @@ mod tests {
                 assert!(world.get::<Mesh3d>(child).is_some());
                 assert!(world.get::<Character>(child).is_none());
                 assert!(world.get::<Parcel>(child).is_none());
+                assert!(world.get::<RigidBody>(child).is_none());
+                assert!(world.get::<Collider>(child).is_none());
                 assert_eq!(
                     world.get::<CharacterVisual>(child).is_some(),
                     root == character
@@ -252,5 +297,28 @@ mod tests {
             world.get::<OrbitCamera>(controlled_camera).unwrap().target,
             character
         );
+
+        let ground_y = world.resource::<PrototypeConfig>().ground_y;
+        let static_solids: Vec<_> = world
+            .query::<(&RigidBody, &Collider, &CollisionLayers, &Transform, &Mesh3d)>()
+            .iter(world)
+            .filter(|(body, ..)| **body == RigidBody::Static)
+            .collect();
+        assert_eq!(static_solids.len(), 2);
+        for (_, collider, layers, transform, _) in static_solids {
+            assert_eq!(*layers, world_collision_layers());
+            let half_extents = collider.shape().as_cuboid().unwrap().half_extents;
+            if transform.translation.z == 0.0 {
+                // 地面碰撞顶面与角色脚底高度一致，不能让厚度把角色埋入地面。
+                assert_eq!(transform.translation.y + half_extents.y, ground_y);
+                assert_eq!(half_extents.x, 100.0);
+                assert_eq!(half_extents.z, 100.0);
+            } else {
+                // 障碍墙落在地面上，且没有与初始角色或箱体重叠。
+                assert_eq!(transform.translation.y - half_extents.y, ground_y);
+                assert_eq!(transform.translation.z, -5.0);
+                assert!(transform.translation.z + half_extents.z < -1.3 - 0.5);
+            }
+        }
     }
 }

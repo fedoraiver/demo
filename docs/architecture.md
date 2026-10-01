@@ -8,9 +8,10 @@
 | --- | --- |
 | [main.rs](../src/main.rs) | 组装应用与插件，先准备会话日志，再加载设置；指定固定 60 Hz 模拟和窗口策略，退出后记录结果并刷新日志。 |
 | [input.rs](../src/input.rs) | 注册 `bevy_enhanced_input`、`GameplayContext` 和输入动作；创建键盘控制者，按动作的 `context` 路由角色意图。 |
-| [camera.rs](../src/camera.rs) | 管理相机控制关联、视角模式、环绕状态和鼠标捕获；处理观察与视角切换动作，固定步同步角色朝向，逐帧按角色朝向、持物、镜头、人物可见性的顺序同步显示状态。 |
-| [gameplay.rs](../src/gameplay.rs) | 定义玩家身份、角色与快递组件、持有关系和原型参数；固定步执行移动、跳跃、重力与拿放，提供固定步和逐帧共用的持物同步系统。 |
-| [scene.rs](../src/scene.rs) | 启动时生成地面、光照、角色、木箱、控制者和相机；创建可替换的视觉子实体。 |
+| [camera.rs](../src/camera.rs) | 管理相机控制关联、视角模式、环绕状态和鼠标捕获；处理观察与视角切换动作，固定步同步角色朝向，物理插值后逐帧同步朝向、持握目标、镜头和人物可见性。 |
+| [gameplay.rs](../src/gameplay.rs) | 定义玩家身份、角色与快递组件、持有关系和原型参数；固定步查询接地、施加移动力、跳跃冲量与持握力并执行拿放，固定步和逐帧共用持握目标同步。 |
+| [physics.rs](../src/physics.rs) | 注册 Avian3D 物理插件、重力和碰撞层，构建角色与箱体物理组件，并记录接触开始和结束日志。 |
+| [scene.rs](../src/scene.rs) | 启动时生成带静态碰撞的地面与墙体、光照、动态角色与木箱、控制者和相机；创建可替换的视觉子实体。 |
 | [settings.rs](../src/settings.rs) | 加载、校验玩家设置，失败时保留原文件并回退默认值；在时间更新之前限制渲染循环频率。 |
 | [startup_log.rs](../src/startup_log.rs) | 通过 `StartupLogPlugin` 集中注册四项启动日志，只读玩法配置与固定时间步，并记录姿态同步约定和检查器启用信息。 |
 | [session_log.rs](../src/session_log.rs) | 创建独立会话文件，扩展 Bevy 日志输出，记录会话生命周期和 panic 上下文，并负责刷新。 |
@@ -28,12 +29,14 @@
 ## 实体与状态归属
 
 - **控制者实体**保存 `PlayerId`、`GameplayContext`、设备绑定、`ControlsCharacter` 和 `ControlsCamera`。`PlayerId` 表达业务身份，两个控制组件使用运行时 `Entity` 指向角色与相机。
-- **角色业务实体**保存 `Character`、`CharacterIntent`、`CharacterMotion` 和 `Transform`。移动能力与控制设备分离；位置和朝向由 `Transform` 唯一保存，角色根位置对应脚底。
-- **快递业务实体**保存 `Parcel`、`Pickable` 和 `Transform`，被持有时增加 `HeldBy`。快递根位置对应木箱中心；拾取系统按 `Pickable` 能力过滤，不依赖名称或模型。
+- **角色业务实体**保存 `Character`、`CharacterIntent`、`CharacterMotion`、动态 `RigidBody`、胶囊 `Collider` 和 Avian 运动组件。移动能力与控制设备分离；物理位置与速度由 Avian 管理，`Transform` 用于插值呈现，角色根位置对应脚底。锁定刚体旋转避免碰撞后倾倒，水平朝向仍由视角系统控制。
+- **快递业务实体**保存 `Parcel`、`Pickable`、动态 `RigidBody`、方盒 `Collider` 和 Avian 运动组件，被持有时增加 `HeldBy` 与 `HeldTarget`。快递根位置对应木箱中心；拾取系统按 `Pickable` 能力过滤，不依赖名称或模型。
 - **相机实体**保存 `OrbitCamera`、`MouseLookState`、`Camera3d` 和 `Transform`。`OrbitCamera` 保存目标、`CameraPerspective` 视角模式、共享水平角、各模式的俯仰角和跟随参数，实际位置与朝向写入 `Transform`。
 - **共享资源**为 `PrototypeConfig` 与 `GameSettings`；限帧计时和连续数据日志采样使用各系统的 `Local`。
 
 场景当前只创建 `PlayerId(1)` 对应的一名键盘控制者、一名角色、一件木箱快递和一台相机。数据结构支持按控制者路由，不代表已经实现多人、联机或分屏。
+
+地面是 `200 × 1 × 200` 的静态盒体，顶面在 `PrototypeConfig.ground_y`；前方 `z = -5` 处有一面 `4 × 2.5 × 0.5` 的可见静态墙，便于验证人物阻挡、箱体碰撞和物理持握。地面范围有限，当前没有越界后自动回到出生点的流程。
 
 人物模型和木箱模型分别通过 `ChildOf` 挂在业务实体下。人物视觉子实体带有 `CharacterVisual` 标记，第一人称只隐藏当前相机目标的人物视觉，不隐藏角色业务实体或木箱。玩法查询操作业务实体，视觉网格和材质留在子实体，替换美术不必改变移动或拾取流程。持有关系与视觉父子关系相互独立。
 
@@ -54,7 +57,7 @@
 ```text
 鼠标位移 / I 键 → 观察 / 视角切换动作 → ControlsCamera → OrbitCamera
                                       ├→ 固定步角色水平朝向
-                                      └→ Update 角色朝向 → 持物 Transform → 相机 Transform → 人物 Visibility
+                                      └→ RunFixedMainLoop 物理插值 → 角色朝向 → HeldTarget → 相机 Transform → 人物 Visibility
                                                   → PostUpdate 视觉子实体 GlobalTransform
 ```
 
@@ -72,20 +75,24 @@
 
 | 阶段 | 数据变换与执行依赖 |
 | --- | --- |
-| `Startup` | `PrototypeScenePlugin` 生成场景；`StartupLogPlugin` 注册玩法配置、固定时间步、姿态同步约定与检查器启用日志。五个系统之间没有显式顺序依赖。 |
+| `Startup` | `PrototypeScenePlugin` 生成场景；`StartupLogPlugin` 注册玩法配置、固定时间步、姿态同步约定与检查器启用日志。启动日志不依赖已生成实体。 |
 | `First` | `limit_frame_rate.before(TimeSystems)` 在引擎更新时钟前补足帧间剩余时间。 |
 | `PreUpdate` | 更新鼠标捕获，Enhanced Input 评估动作并通过 Observer 更新意图、观察角度或切换请求；`apply_perspective_toggle.after(EnhancedInputSystems::Apply)` 在本帧动作应用完成后切换模式。 |
-| `FixedUpdate` | `sync_character_facing.before(GameplaySystems::Simulate)` 先同步角色朝向，再依次执行移动、跳跃与重力、交互、持物跟随。 |
-| `Update` | `CameraControlPlugin` 注册 `(sync_character_facing, gameplay::sync_held_objects, follow_orbit_camera, sync_character_visibility).chain()`，依次同步角色朝向、持物、镜头和人物可见性。 |
+| `FixedUpdate` | `sync_character_facing.before(GameplaySystems::Simulate)` 先同步角色朝向，再更新重力与接地状态、施加移动力和跳跃冲量、执行交互、同步持握目标并施加持握力。相关系统通过显式顺序共享同一步状态。 |
+| `FixedPostUpdate` | Avian 的 `PhysicsPlugins` 执行固定物理步，积分速度与位姿并求解接触和碰撞；`PhysicsSystems::Writeback` 之后再次更新接地并采样实际速度。 |
+| `FixedLast` | Avian 记录本固定步的插值端点，供渲染帧呈现使用。 |
+| `RunFixedMainLoop` 固定循环之后 | `CameraControlPlugin` 的显示同步链在 `TransformEasingSystems::Ease` 之后、`UpdateEasingTick` 之前执行；使用本帧插值位置，依次同步角色朝向、`HeldTarget`、镜头和人物可见性。 |
 | `PostUpdate` | Bevy 的变换传播根据业务根实体 `Transform` 更新模型子实体的 `GlobalTransform`，可见性传播应用人物视觉状态，供渲染使用。 |
 
 相机与玩法的固定步顺序由显式依赖表达；跨阶段数据流依赖 Bevy 默认主调度，`PreUpdate` 结束时应用动作命令后进入固定循环。一次渲染帧可以没有固定步，也可以有多个固定步，因此输入 Observer 不直接积分角色位置。
 
-角色朝向与持物同步保留在 `FixedUpdate`，保证本步移动和交互使用最新水平朝向；`Update` 再同步一次显示姿态与人物可见性，保证没有固定步的帧也能让角色、持物和镜头使用相同视角，第一人称切换当帧不会保留遮挡镜头的人物模型。逐帧同步不运行移动、重力或交互，不额外推进模拟时间。在渲染上限高于固定模拟频率时，如果只逐帧更新镜头，持物会沿用上一固定步的姿态，在连续转动视角时出现交替滞后的画面；顺序同步后，模型子实体在同一帧的 `PostUpdate` 获得更新后的世界变换。
+角色朝向与持握目标同步保留在 `FixedUpdate`。物理持握施力直接读取持有者的 Avian `Position` 与最新水平朝向计算模拟目标，`HeldTarget` 仅用于呈现检查和检查器，不作为物理解算的位置来源，避免把插值状态反馈进模拟。角色使用 `TranslationInterpolation`，木箱使用 `TransformInterpolation`；固定循环后的显示链在插值完成后再次同步目标、镜头和人物可见性，使没有固定步的帧也能使用本帧视角与呈现位置。该链不直接搬动箱体、不施力或消费请求，不额外推进模拟时间。`PostUpdate` 再传播实际业务根实体的呈现姿态，保证木箱视觉子实体与箱体根一致。
 
-玩法系统使用 `Time<Fixed>` 积分运动。移动轴先限制长度再转换为角色局部方向，保证斜向移动不会更快；跳跃与重力在同一固定步处理，并在配置的平面高度着陆。
+`GameplayPlugin` 注册 `DemoPhysicsPlugin`，后者安装 Avian 默认固定调度的 `PhysicsPlugins`。项目不再手动积分角色位移或把角色高度夹到 `ground_y`：Avian 统一处理重力、速度积分与碰撞。接地通过脚底球体 shape cast 和地面法线判断，探测按角色的真实碰撞层过滤支撑物，持握箱不会作为角色支撑面；跳跃请求只在接地时施加一次向上冲量，侧面碰墙不能充当地面。移动轴先限制长度再转换为水平目标速度，通过力加速或减速，空中操控力度低于接地时；碰撞与外力可以改变实际速度，斜向输入不会提高目标速度。
 
-渲染循环上限和固定 60 Hz 模拟分别管理。限帧系统只等待剩余间隔，超时后从实际帧起点重新计时；`WinitSettings::continuous()` 避免窗口失焦时额外套用默认更新频率。窗口使用 `AutoNoVsync`，但平台可能回退。当前没有移动插值、镜头碰撞、滚轮缩放或通用物理碰撞系统。
+当前默认参数为目标速度 `4.5 m/s`、接地加速度 `30 m/s²`、松键制动加速度 `45 m/s²`、空中加速度 `6 m/s²`、重力 `9.81 m/s²`、跳跃速度 `5 m/s`、角色质量 `75 kg`，胶囊高度 `1.9 m`、半径 `0.32 m`。箱体质量为 `3 kg`；持握使用 `3 Hz`、阻尼比 `1` 的弹簧阻尼力，最大拉力为 `450 N`。这些参数在 `PrototypeConfig` 中定义，重力每个固定步同步到物理资源；检查器编辑只影响当前会话。
+
+渲染循环上限和固定 60 Hz 模拟分别管理。限帧系统只等待剩余间隔，超时后从实际帧起点重新计时；`WinitSettings::continuous()` 避免窗口失焦时额外套用默认更新频率。窗口使用 `AutoNoVsync`，但平台可能回退。当前已启用物理运动插值与刚体碰撞，尚无镜头碰撞、滚轮缩放或自动跨越台阶的角色控制规则。
 
 ### 持箱转向错位的经验
 
@@ -93,27 +100,33 @@
 
 原测试在鼠标输入后的 `app.update()` 返回时，没有立即检查姿态，而是先主动补跑一次固定步。补跑使人物与箱子追上镜头，掩盖了真实渲染帧已经发生的错位。回归测试必须检查每个实际帧末的状态，具体方法见[避免测试掩盖帧间错位](testing.md#避免测试掩盖帧间错位)。
 
-本次修复保留固定步的模拟顺序，同时在 `Update` 明确建立“人物水平朝向 → 持物姿态 → 相机”的同步链，再由 `PostUpdate` 传播视觉子实体的世界变换。该链只同步当前角度对应的姿态，移动、重力和拿放仍由固定步执行；放下后的物体因已移除 `HeldBy`，不会继续跟随。
+当时的修复保留固定步的模拟顺序，同时在 `Update` 明确建立“人物水平朝向 → 持物姿态 → 相机”的同步链，再由 `PostUpdate` 传播视觉子实体的世界变换。该链只同步当前角度对应的姿态，移动、重力和拿放仍由固定步执行；放下后的物体因已移除 `HeldBy`，不会继续跟随。
 
 用户已通过实际游玩反馈确认，持箱转动视角的虚影消失。反馈仅确认这一现象，未单独提供 60／120 FPS 或完整验收清单的执行结果。后续增加手持工具、武器或其他随角色转向的附件时，也应核对本帧的角度来源、附件姿态和相机是否一致；通用约束见[固定模拟与逐帧显示的一致性](development.md#固定模拟与逐帧显示的一致性)。
+
+接入 Avian 后，物理持握允许箱体因惯性和碰撞暂时偏离目标。当前回归检查持握目标是否在本帧同步、实际箱体根与视觉子实体是否一致，不要求箱体瞬间等于目标。显示同步移到固定循环后的插值阶段，仍保留实际 `app.update()` 返回后立即断言的测试边界。
 
 ## 持有关系与生命周期
 
 `HeldBy` 是快递到持有者的自定义 Bevy 关系，`HoldingItems` 是 Bevy 自动维护的反向索引。业务系统插入或移除 `HeldBy`，只读取反向索引。
 
-交互系统在范围内选择距离最近的未持有 `Pickable`；已有持有物时，取反向索引中的第一件放到人物面前的地面。跟随系统按持有者世界位置和朝向更新物体 `Transform`，不把快递设为角色的视觉子实体。
+交互系统在范围内选择距离最近的未持有 `Pickable`，射线检查阻挡，防止隔墙抓箱；已有持有物时，取反向索引中的第一件解除持握。拿起和释放都不瞬移箱体，释放保留当前位置、线速度与角速度，后续由重力、惯性和碰撞推进。
 
-玩法系统通过 `.chain()` 建立顺序，并在交互与跟随之间应用延迟命令，使本步新建立的持有关系立即被跟随系统看见。当前业务按一次持有一件实现，关系容器本身可存多件，尚无多件携带规则。
+玩法系统通过 `.chain()` 建立顺序，并在交互与目标同步、施力之间应用延迟命令，使本步新建立的持有关系立即可见。交互系统为本批次拾取维护临时预留集合，防止命令尚未应用时两个角色重复占用同一箱体。当前业务按一次持有一件实现，关系容器本身可存多件，尚无多件携带规则。
 
-`sync_held_objects` 在固定步和逐帧同步中复用，只根据当前有效的 `HeldBy` 计算位置与朝向，不消费输入或积分运动。放下后关系已移除，后续转动视角不会让地面的快递继续跟随角色；视觉子实体仍通过自己的业务根实体传播变换。
+`sync_held_objects` 在固定步和逐帧同步中复用，只根据当前有效的 `HeldBy` 计算 `HeldTarget` 的位置与朝向，不消费输入、积分运动或写箱体 `Transform`。固定步的持握系统按目标误差施加弹簧阻尼力与角加速度，并向角色施加相反的力；箱体始终为动态刚体，受阻时保留真实碰撞结果。
+
+`GamePhysicsLayer` 分为 `World`、`Character`、`Parcel`。自由箱体与三层碰撞；持有期间忽略 `Character` 层，避免手前目标与角色自身互撞，保留 `World` 与 `Parcel` 碰撞。目前场景只有一个角色，因此这一过滤暂不区分持有者与其他角色。释放后恢复自由箱体的碰撞层。
+
+当持有者销毁或持有关系异常解除时，清理失效目标并恢复自由碰撞。箱体一直保留动态刚体和重力，因此会继续自然下落；不依赖释放时把箱体放到地面的兜底瞬移。清理记录失效关联及原因日志。
 
 下列边界继续暂缓，未纳入当前原型的实现与验收范围：
 
 | 场景 | 当前限制 |
 | --- | --- |
-| 多个角色在同一固定步请求拿起同一个木箱 | 尚无集中裁决、同批次占用预留和多人抢箱规则。 |
-| 角色退出或被销毁时仍持有木箱 | 尚无销毁前主动放下木箱的业务流程及离开原因日志；仅保留 Bevy 关系自身的生命周期维护。 |
-| 持有关系被异常解除后，木箱留在空中 | 尚无自由物体落地兜底或异常关系恢复流程。 |
+| 多个角色在同一固定步请求拿起同一个木箱 | 已有同批次预留防止重复占用；尚无多人公平裁决与联机抢箱规则。 |
+| 角色退出或被销毁时仍持有木箱 | 已有失效目标清理与自然释放；尚无角色退出前的主动交接业务流程。 |
+| 多角色持有碰撞过滤 | 当前忽略整个 `Character` 层，尚未实现只忽略持有者的细分规则。 |
 
 ## 会话日志实现
 
@@ -125,6 +138,6 @@
 
 `StartupLogPlugin` 集中注册 `log_configuration`、`log_simulation_timestep`、`log_pose_synchronization` 和 `log_world_inspector` 四个 `Startup` 系统；前两个分别只读 `PrototypeConfig` 和 `Time<Fixed>`，后两个记录当前装配采用的固定约定。资源继续由玩法插件和主入口准备，日志插件不创建默认配置，也不添加功能插件。四条日志之间及其与场景生成之间没有显式执行顺序，均不依赖已生成实体。各条日志保留原来的 `demo::gameplay`、`demo::settings`、`demo::camera` 和 `demo::inspector` target，日志过滤与查找路径保持一致；会话文件和退出刷新仍由 `session_log` 管理。
 
-其中 `log_pose_synchronization` 通过统一日志设施记录 `Camera pose synchronization configured`，字段 `simulation_schedule="FixedUpdate"`、`presentation_schedule="Update"` 和 `presentation_order="character_facing_held_objects_camera_visibility"` 说明显示同步的阶段与顺序，便于排查持箱转动或视角切换时的不同步问题。相机初始化记录 `perspective="third_person"`；每次有效切换以 `info` 级别记录 `Camera perspective changed`，包含 `perspective_before`、`perspective_after`、`yaw`、`pitch_before`、`pitch_after` 和 `reason="toggle_perspective_action"`。
+其中 `log_pose_synchronization` 通过统一日志设施记录 `Camera pose synchronization configured`，字段 `simulation_schedule="FixedUpdate"`、`grip_force_schedule="FixedUpdate"`、`physics_schedule="FixedPostUpdate"`、`presentation_schedule="RunFixedMainLoop"` 和 `presentation_order="interpolation_character_facing_hold_target_camera_visibility"` 说明模拟与显示同步的阶段和顺序，便于排查持箱转动或视角切换时的不同步问题。相机初始化记录 `perspective="third_person"`；每次有效切换以 `info` 级别记录 `Camera perspective changed`，包含 `perspective_before`、`perspective_after`、`yaw`、`pitch_before`、`pitch_after` 和 `reason="toggle_perspective_action"`。
 
 连续角度和世界速度按 `debug` 级别最多每 0.5 秒采样一次，离散输入与鼠标捕获变化使用 `info`。日志查找见 [README](../README.md)，过滤设置见 [开发规范](development.md#日志排查)，用户验收步骤见 [验证指南](testing.md)。
