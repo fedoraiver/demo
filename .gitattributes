@@ -1,0 +1,6 @@
+# 音频来源证据、配方和清单按原字节保存，避免自动换行破坏记录中的 SHA-256。
+assets/audio/** -text whitespace=cr-at-eol
+# 第三方许可证副本保留原有制表符和行尾空白，不对来源证据做格式清理。
+assets/audio/sources/*-License.txt -whitespace
+# 清单包含生成器自身的哈希，因此检出也不能改变其换行。
+scripts/audio_pipeline.py -text

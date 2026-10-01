@@ -9,7 +9,7 @@
 | [main.rs](../src/main.rs) | 组装英文菜单、游戏与检查器插件，先准备会话日志，再加载设置；指定固定 60 Hz 模拟和窗口策略，退出后记录结果并刷新日志。 |
 | [app_flow.rs](../src/app_flow.rs) | 管理主菜单／游戏状态与运行／暂停子状态，清理玩法输入并暂停或恢复时间；暂停保留玩法实体。 |
 | [ui/mod.rs](../src/ui/mod.rs) | 定义菜单页面、返回来源、焦点、设置分类与语义请求，注册 UI 插件和更新顺序。 |
-| [ui/navigation.rs](../src/ui/navigation.rs) | Enhanced Input 处理菜单键盘与手柄动作，Bevy UI 处理鼠标命中；统一消费请求、切换页面及保存和应用设置。 |
+| [ui/navigation.rs](../src/ui/navigation.rs) | Enhanced Input 处理菜单键盘与手柄动作，Bevy UI 处理鼠标命中；统一消费请求、切换页面及保存和应用设置，并根据实际焦点变化与接受结果发出菜单音效消息。 |
 | [ui/screens.rs](../src/ui/screens.rs)、[ui/widgets.rs](../src/ui/widgets.rs)、[ui/theme.rs](../src/ui/theme.rs) | 用 BSN 声明页面与控件树，复用字体、颜色和间距；系统更新焦点、设置说明与滚动位置。 |
 | [ui/backdrop.rs](../src/ui/backdrop.rs) | 主菜单的独立 GLB 展示舞台、相机与光照；启动快递员展示动画，记录资产加载失败。 |
 | [input.rs](../src/input.rs) | 注册 `bevy_enhanced_input`、`GameplayContext` 和玩法／调试动作；创建键盘控制者，按动作的 `context` 路由角色意图。 |
@@ -20,6 +20,8 @@
 | [settings.rs](../src/settings.rs) | 加载、校验、编辑草稿和保存玩家设置，失败时保留原文件；在时间更新之前限制渲染循环频率。 |
 | [startup_log.rs](../src/startup_log.rs) | 通过 `StartupLogPlugin` 集中注册四项启动日志，只读玩法配置与固定时间步，并记录姿态同步约定和检查器启用信息。 |
 | [session_log.rs](../src/session_log.rs) | 创建独立会话文件，扩展 Bevy 日志输出，记录会话生命周期和 panic 上下文，并负责刷新。 |
+| [audio_events.rs](../src/audio_events.rs) | 注册反馈消息，观察真实落地碰撞与持续持握误差；独立于声音设备，供最小物理测试复用。 |
+| [audio.rs](../src/audio.rs) | 以嵌入的音频清单预加载 Kira 资产，通过 UI/SFX 通道播放，处理冷却、并发、失败日志和退出停止。 |
 
 依赖声明和锁定版本分别见 [Cargo.toml](../Cargo.toml) 和 [Cargo.lock](../Cargo.lock)。
 
@@ -162,6 +164,20 @@ UI 控件与主菜单舞台使用 Bevy 0.19 的 `bsn!`、`bsn_list!` 和返回 `
 | 多个角色在同一固定步请求拿起同一个木箱 | 已有同批次预留防止重复占用；尚无多人公平裁决与联机抢箱规则。 |
 | 角色退出或被销毁时仍持有木箱 | 已有失效目标清理与自然释放；尚无角色退出前的主动交接业务流程。 |
 | 多角色持有碰撞过滤 | 当前忽略整个 `Character` 层，尚未实现只忽略持有者的细分规则。 |
+
+## 音效数据流
+
+`GameplayPlugin` 注册 `SoundEventsPlugin`。拾取与主动释放只在 `handle_interaction` 接受操作后，用 `Commands::write_message` 和关系变更一起提交 `SoundRequest`。固定步链的同步点保证关系和消息同时可见，失败尝试不会产生成功反馈。释放提示与真正的落地是两个事件。
+
+菜单复用同一 `SoundRequest` 消息。真实键盘／手柄导航改变焦点，或真实鼠标移动进入已有可操作按钮时发送 `MenuHover`；静止光标、按钮内移动、页面重建产生的 `Hovered` 和单按钮页面导航不产生悬停音。集中请求消费系统每帧只接受一项 `UiRequest`，只在开始、打开页面、改变分类、实际调整设置、恢复默认或成功应用等有效结果后发送 `MenuConfirm`。`Back`、恢复运行和返回主菜单发送 `MenuCancel`，游戏中按 Esc 打开暂停发送 `MenuConfirm`；设置保存失败也用 `MenuCancel`，不借用交付失败事件。无效动作、当前分类重选和设置边界不发声。鼠标确认请求在下一次 `PreUpdate` 被接受后发出反馈；`Update` 的指针悬停反馈由后续播放系统同帧消费。
+
+`warn_hold_strain` 在 `FixedUpdate` 的 `GameplaySystems::Simulate` 之后读取角色与包裹的模拟 `Position`，按最新水平朝向计算手前目标，检查持续误差。新持握有 0.5 秒宽限；距离超过 0.65 米持续 0.35 秒触发一次，降到 0.45 米以下才重置。系统的 `Local` 只保存当前持握包裹的时间与锁存状态，解除关系或销毁后清理；这是音频提示阈值，不代表新增失稳玩法规则。
+
+`emit_parcel_land` 在 `FixedPostUpdate` 的 `PhysicsSystems::StepSimulation` 之后读取只读 `ContactGraph`，逐步检查活动与休眠的真实支撑接触。只有未持握的 `Parcel`，在向上支撑法线至少 0.65、法向求解冲量至少 1.8 kg·m/s 时发出落地事件，并锁存到完全失去支撑；侧墙、轻微接触和持续静置不发出。Avian 的预测接触可能在实际撞击前产生 `CollisionStart`，因此不能只在开始事件当步检查冲量，否则会漏掉后续实际落地。现有碰撞日志继续独立读取开始与结束消息。
+
+落地和持握警告收集系统受 `gameplay_running` 条件限制，主菜单和暂停时不产生新的玩法反馈。默认主调度在固定模拟后进入 `Update`。`GameAudioPlugin` 在 `UiSystems::Style` 之后连续消费短音请求，清理已停止的实例，再按清单冷却、单事件并发和全局四个声音上限排队；其中为 UI 预留一条，SFX 最多占用三条。冷却使用 `Time<Real>`，暂停冻结虚拟时间不会阻断菜单反馈。Kira `Queued` 状态同样计入并发；尚未加载的音效直接略过，避免稍后重放过期交互。第一版为全局二维反馈，尚无距离衰减或方位，菜单音量设置仍为占位。固定线性总音量为 0.25，清单线性音量乘入后换算为 Kira 0.26 的分贝 API。UI 与 SFX 使用独立类型通道，退出时停止；`Quit` 直接退出，不等待确认音播完。Bevy 内建音频插件在主入口关闭，避免两个后端同时初始化设备。
+
+清单在编译时嵌入，文件路径相对 `assets`，启动时校验映射和策略，再由 `AssetServer` 加载。清单无效只禁用声音并记录错误，素材加载错误包含实际路径与外部错误；修改清单后需要重新编译。合成环境底声只供试听，不预加载、不自动循环。交接、推车、弹开和交付的 `SoundCue` 供未来业务结果发送，当前没有伪造触发器。资源与事件表见 [音频管线](audio.md)。无窗口测试不安装 `GameAudioPlugin`，因此不会打开音频设备。
 
 ## 会话日志实现
 

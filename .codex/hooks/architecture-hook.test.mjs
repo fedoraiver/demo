@@ -95,6 +95,24 @@ test('partial first architecture installation without a model blocks the commit'
   assert.equal(f.reports()[0].status, 'failed');
 });
 
+test('missing staged geometry checker blocks the commit without changing index or artifacts', () => {
+  const f = fixture();
+  f.commit('installed geometry checker');
+  const originalHead = f.git(['rev-parse', 'HEAD']).stdout;
+  const originalOutputs = outputPaths.map(f.read);
+  // 工作区仍有文件也不能替代候选索引中的校验依赖。
+  const geometry = 'docs/diagrams/diagram-geometry.mjs';
+  f.git(['rm', '--cached', geometry]);
+  assert.equal(fs.existsSync(path.join(f.directory, geometry)), true);
+  const tree = f.git(['write-tree']).stdout;
+  const result = f.commit('missing staged geometry checker', [], 1);
+  assert.match(result.stderr, /Missing staged architecture input: docs\/diagrams\/diagram-geometry\.mjs/);
+  assert.equal(f.git(['write-tree']).stdout, tree);
+  assert.equal(f.git(['rev-parse', 'HEAD']).stdout, originalHead);
+  assert.deepEqual(outputPaths.map(f.read), originalOutputs);
+  assert.equal(f.reports().filter(report => report.status === 'failed').length, 1);
+});
+
 test('removing an installed model blocks the commit even when all diagrams are removed from the index', () => {
   const f = fixture();
   f.commit('installed architecture snapshot');
