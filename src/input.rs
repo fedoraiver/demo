@@ -223,10 +223,17 @@ fn request_interaction(
 mod tests {
     use std::time::Duration;
 
-    use bevy::{ecs::relationship::RelationshipTarget, input::InputPlugin};
+    use avian3d::prelude::{LinearVelocity, Physics, Position, RigidBody};
+    use bevy::{
+        ecs::relationship::RelationshipTarget, input::InputPlugin, time::TimeUpdateStrategy,
+    };
 
-    use crate::gameplay::{
-        CharacterMotion, GameplayPlugin, HoldingItems, Pickable, PrototypeConfig,
+    use crate::{
+        gameplay::{
+            CharacterMotion, GameplayPlugin, HeldBy, HeldTarget, HoldingItems, Parcel, Pickable,
+            PrototypeConfig,
+        },
+        physics::{character_body, ground_body, parcel_body},
     };
 
     use super::*;
@@ -464,36 +471,61 @@ mod tests {
     }
 
     #[test]
-    fn keyboard_actions_drive_fixed_step_pickup_jump_and_following() {
-        // 串起实际输入与玩法插件，显式推进固定步；不加载场景或窗口插件。
+    fn keyboard_actions_drive_physics_pickup_jump_and_release() {
+        // 实际 app.update 同时经过玩法和物理固定调度，不补跑系统掩盖帧末状态。
         let mut app = App::new();
         app.add_plugins((
             MinimalPlugins,
+            TransformPlugin,
             InputPlugin,
             PlayerInputPlugin,
             GameplayPlugin,
-        ));
+        ))
+        .insert_resource(Time::<Fixed>::from_hz(60.0))
+        .insert_resource(TimeUpdateStrategy::ManualDuration(Duration::from_secs_f64(
+            1.0 / 60.0,
+        )));
         app.finish();
         app.cleanup();
+        let config = app.world().resource::<PrototypeConfig>().clone();
+        app.world_mut().spawn((
+            Transform::from_xyz(0.0, config.ground_y, 0.0),
+            ground_body(&config),
+        ));
         let character = app
             .world_mut()
             .spawn((
                 Character,
                 CharacterIntent::default(),
-                CharacterMotion {
-                    grounded: true,
-                    ..default()
-                },
+                CharacterMotion::default(),
                 Transform::default(),
+                character_body(&config),
             ))
             .id();
         let item = app
             .world_mut()
-            .spawn((Pickable, Transform::from_xyz(0.0, 0.3, -1.0)))
+            .spawn((
+                Parcel,
+                Pickable,
+                Transform::from_xyz(0.0, config.parcel_half_height, -1.0),
+                parcel_body(&config),
+            ))
             .id();
         app.world_mut()
             .spawn((ControlsCharacter(character), keyboard_context()));
-        app.update();
+        // 接地由真实碰撞探测建立，测试不预先伪造 grounded。
+        for _ in 0..30 {
+            app.update();
+        }
+        assert!(
+            app.world()
+                .get::<CharacterMotion>(character)
+                .unwrap()
+                .grounded
+        );
+        let character_before = app.world().get::<Position>(character).unwrap().0;
+        let item_before = app.world().get::<Position>(item).unwrap().0;
+        let physics_before = app.world().resource::<Time<Physics>>().elapsed();
 
         {
             let mut keys = app.world_mut().resource_mut::<ButtonInput<KeyCode>>();
@@ -501,14 +533,9 @@ mod tests {
             keys.press(KeyCode::KeyW);
             keys.press(KeyCode::Space);
         }
-        app.world_mut().run_schedule(PreUpdate);
-        let intent = app.world().get::<CharacterIntent>(character).unwrap();
-        assert!(intent.jump_pending && intent.interact_pending);
-        app.world_mut()
-            .resource_mut::<Time<Fixed>>()
-            .advance_by(Duration::from_secs_f64(1.0 / 60.0));
-        app.world_mut().run_schedule(FixedUpdate);
+        app.update();
 
+        assert!(app.world().resource::<Time<Physics>>().elapsed() > physics_before);
         assert_eq!(
             app.world()
                 .get::<HoldingItems>(character)
@@ -519,34 +546,69 @@ mod tests {
         );
         let intent = app.world().get::<CharacterIntent>(character).unwrap();
         assert!(!intent.jump_pending && !intent.interact_pending);
-        let character_before = *app.world().get::<Transform>(character).unwrap();
-        let item_before = *app.world().get::<Transform>(item).unwrap();
-        assert!(character_before.translation.y > 0.0);
-        assert!(character_before.translation.z < 0.0);
-        let offset = app.world().resource::<PrototypeConfig>().hold_offset;
-        assert!(item_before.translation.abs_diff_eq(
-            character_before.translation + character_before.rotation * offset,
-            0.0001,
-        ));
+        let character_after = app.world().get::<Position>(character).unwrap().0;
+        let item_after = app.world().get::<Position>(item).unwrap().0;
+        assert!(character_after.y > character_before.y);
+        assert!(character_after.z < character_before.z);
+        assert!(app.world().get::<LinearVelocity>(character).unwrap().y > 0.0);
+        assert_eq!(
+            app.world().get::<RigidBody>(item),
+            Some(&RigidBody::Dynamic)
+        );
+        // 拾取只建立目标和施力，第一步木箱仍与目标有间距，不能瞬移到手中。
+        let target = app.world().get::<HeldTarget>(item).unwrap();
+        assert!(item_after.distance(target.translation) > 0.1);
 
+        for _ in 0..12 {
+            app.update();
+            let intent = app.world().get::<CharacterIntent>(character).unwrap();
+            assert!(!intent.jump_pending && !intent.interact_pending);
+            assert!(app.world().get::<HeldBy>(item).is_some());
+        }
+        assert!(
+            app.world()
+                .get::<Position>(item)
+                .unwrap()
+                .0
+                .distance(item_before)
+                > 0.1
+        );
+
+        // 松开后再次按 E 才释放；下一物理步仍保留已有水平速度并自然积分。
         {
             let mut keys = app.world_mut().resource_mut::<ButtonInput<KeyCode>>();
             keys.release(KeyCode::Space);
             keys.release(KeyCode::KeyE);
         }
-        app.world_mut().run_schedule(PreUpdate);
+        app.update();
+        let release_position = app.world().get::<Position>(item).unwrap().0;
+        let release_velocity = Vec3::new(2.0, 1.0, -1.0);
+        app.world_mut().get_mut::<LinearVelocity>(item).unwrap().0 = release_velocity;
         app.world_mut()
-            .resource_mut::<Time<Fixed>>()
-            .advance_by(Duration::from_secs_f64(1.0 / 60.0));
-        app.world_mut().run_schedule(FixedUpdate);
-        let character_after = app.world().get::<Transform>(character).unwrap();
-        let item_after = app.world().get::<Transform>(item).unwrap();
-        assert!(character_after.translation.z < character_before.translation.z);
+            .resource_mut::<ButtonInput<KeyCode>>()
+            .press(KeyCode::KeyE);
+        app.update();
+
+        assert!(app.world().get::<HeldBy>(item).is_none());
+        assert!(app.world().get::<HeldTarget>(item).is_none());
         assert!(
-            (item_after.translation - item_before.translation).abs_diff_eq(
-                character_after.translation - character_before.translation,
-                0.0001,
-            )
+            app.world()
+                .get::<HoldingItems>(character)
+                .is_none_or(|items| items.is_empty())
         );
+        let velocity_after_release = app.world().get::<LinearVelocity>(item).unwrap().0;
+        assert!((velocity_after_release.x - release_velocity.x).abs() < 0.05);
+        assert!((velocity_after_release.z - release_velocity.z).abs() < 0.05);
+        assert!(app.world().get::<Position>(item).unwrap().0.x > release_position.x);
+        for _ in 0..3 {
+            app.update();
+            assert!(app.world().get::<HeldBy>(item).is_none());
+            assert!(
+                !app.world()
+                    .get::<CharacterIntent>(character)
+                    .unwrap()
+                    .interact_pending
+            );
+        }
     }
 }
