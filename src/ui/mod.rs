@@ -8,7 +8,10 @@ mod widgets;
 
 use bevy::prelude::*;
 
-use crate::settings::{SettingsDraft, SettingsFile};
+use crate::{
+    audio_events::SoundRequest,
+    settings::{SettingsDraft, SettingsFile},
+};
 
 /// 当前菜单页面；设置和帮助不改变游戏会话的生命周期。
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
@@ -110,6 +113,7 @@ impl Plugin for GameUiPlugin {
             .init_resource::<SettingsDraft>()
             .init_resource::<SettingsFile>()
             .add_message::<UiRequest>()
+            .add_message::<SoundRequest>()
             .configure_sets(Update, (UiSystems::Build, UiSystems::Style).chain());
         navigation::register(app);
         screens::register(app);

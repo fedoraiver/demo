@@ -1,6 +1,8 @@
 //! 组装英文菜单与小岛快递原型，并覆盖完整会话的文件日志。
 
 mod app_flow;
+mod audio;
+mod audio_events;
 mod camera;
 mod gameplay;
 mod input;
@@ -14,6 +16,7 @@ mod startup_log;
 mod ui;
 
 use app_flow::{AppFlowPlugin, gameplay_running};
+use audio::GameAudioPlugin;
 use bevy::{log::LogPlugin, prelude::*, window::PresentMode};
 use bevy_inspector_egui::{bevy_egui::EguiPlugin, quick::WorldInspectorPlugin};
 use camera::CameraControlPlugin;
@@ -37,6 +40,9 @@ fn main() -> AppExit {
 
     app.add_plugins(
         DefaultPlugins
+            .build()
+            // 播放统一交给 Kira，避免两套音频插件同时打开输出设备。
+            .disable::<bevy::audio::AudioPlugin>()
             .set(LogPlugin {
                 custom_layer: session_log::file_layer,
                 ..default()
@@ -67,6 +73,7 @@ fn main() -> AppExit {
             AppFlowPlugin,
             SettingsPlugin,
             GameplayPlugin,
+            GameAudioPlugin,
             PlayerInputPlugin,
             CameraControlPlugin,
             PrototypeScenePlugin,

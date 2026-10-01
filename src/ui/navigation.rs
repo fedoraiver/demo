@@ -5,6 +5,7 @@ use bevy_enhanced_input::prelude::{Press, *};
 
 use crate::{
     app_flow::{AppState, PlayState},
+    audio_events::{SoundCue, SoundRequest},
     settings::{GameSettings, SettingsDraft, SettingsFile},
 };
 
@@ -103,21 +104,28 @@ fn step_focus(
     menu: &MenuState,
     focus: &mut MenuFocus,
     source: &mut MenuInputSource,
-    buttons: &Query<&MenuButton>,
+    buttons: &Query<(Entity, &MenuButton)>,
     direction: i32,
-) {
+) -> Option<Entity> {
     if menu.page == MenuPage::Hidden {
-        return;
+        return None;
     }
     let count = buttons
         .iter()
-        .map(|button| button.index + 1)
+        .map(|(_, button)| button.index + 1)
         .max()
         .unwrap_or(0);
     if count > 0 {
         *source = MenuInputSource::Navigation;
+        let before = focus.0;
         focus.0 = (focus.0 as i32 + direction).rem_euclid(count as i32) as usize;
+        if focus.0 != before {
+            return buttons
+                .iter()
+                .find_map(|(entity, button)| (button.index == focus.0).then_some(entity));
+        }
     }
+    None
 }
 
 fn previous(
@@ -125,9 +133,12 @@ fn previous(
     menu: Res<MenuState>,
     mut focus: ResMut<MenuFocus>,
     mut source: ResMut<MenuInputSource>,
-    buttons: Query<&MenuButton>,
+    buttons: Query<(Entity, &MenuButton)>,
+    mut sounds: MessageWriter<SoundRequest>,
 ) {
-    step_focus(&menu, &mut focus, &mut source, &buttons, -1);
+    if let Some(entity) = step_focus(&menu, &mut focus, &mut source, &buttons, -1) {
+        sounds.write(SoundRequest::new(SoundCue::MenuHover, entity));
+    }
 }
 
 fn next(
@@ -135,9 +146,12 @@ fn next(
     menu: Res<MenuState>,
     mut focus: ResMut<MenuFocus>,
     mut source: ResMut<MenuInputSource>,
-    buttons: Query<&MenuButton>,
+    buttons: Query<(Entity, &MenuButton)>,
+    mut sounds: MessageWriter<SoundRequest>,
 ) {
-    step_focus(&menu, &mut focus, &mut source, &buttons, 1);
+    if let Some(entity) = step_focus(&menu, &mut focus, &mut source, &buttons, 1) {
+        sounds.write(SoundRequest::new(SoundCue::MenuHover, entity));
+    }
 }
 
 fn adjust_focused(
@@ -216,9 +230,11 @@ fn pointer_interaction(
     mut focus: ResMut<MenuFocus>,
     mut source: ResMut<MenuInputSource>,
     windows: Query<&Window, With<PrimaryWindow>>,
-    buttons: Query<(&MenuButton, Ref<Interaction>)>,
+    buttons: Query<(Entity, &MenuButton, Ref<Interaction>)>,
     mut requests: MessageWriter<UiRequest>,
+    mut sounds: MessageWriter<SoundRequest>,
     mut previous_cursor: Local<Option<Vec2>>,
+    mut previous_hover: Local<Option<Entity>>,
 ) {
     // 原生 UI 重建也会产生 Hovered；只用窗口位置变化识别真实鼠标导航，避免抢走键盘焦点。
     // 底层位置只区分悬停来源，键盘与手柄动作仍由 Enhanced Input 处理，点击仍用 Interaction。
@@ -226,15 +242,25 @@ fn pointer_interaction(
     let pointer_moved = cursor != *previous_cursor;
     *previous_cursor = cursor;
     if menu.page == MenuPage::Hidden {
+        *previous_hover = None;
         return;
     }
     // 移到空白或离开窗口也切回鼠标模式，避免上次鼠标序号继续被画成键盘焦点。
     if pointer_moved {
         *source = MenuInputSource::Pointer;
     }
-    for (button, interaction) in &buttons {
+    let hovered = buttons
+        .iter()
+        .find_map(|(entity, _, interaction)| (*interaction != Interaction::None).then_some(entity));
+    for (entity, button, interaction) in &buttons {
         match *interaction {
-            Interaction::Hovered if pointer_moved => focus.0 = button.index,
+            Interaction::Hovered if pointer_moved => {
+                focus.0 = button.index;
+                // 同一按钮内移动、点击释放与新页面初始悬停都不重复发出焦点音。
+                if *previous_hover != Some(entity) && !interaction.is_added() {
+                    sounds.write(SoundRequest::new(SoundCue::MenuHover, entity));
+                }
+            }
             Interaction::Pressed if interaction.is_changed() => {
                 *source = MenuInputSource::Pointer;
                 focus.0 = button.index;
@@ -243,6 +269,7 @@ fn pointer_interaction(
             _ => {}
         }
     }
+    *previous_hover = hovered;
 }
 
 fn open_page(menu: &mut MenuState, focus: &mut MenuFocus, page: MenuPage) {
@@ -263,6 +290,8 @@ fn handle_requests(
     mut app_state: ResMut<NextState<AppState>>,
     mut play_state: ResMut<NextState<PlayState>>,
     mut exits: MessageWriter<AppExit>,
+    controllers: Query<Entity, With<MenuContext>>,
+    mut sounds: MessageWriter<SoundRequest>,
 ) {
     let action = requests.read().map(|request| request.0).next();
     requests.clear();
@@ -270,6 +299,7 @@ fn handle_requests(
         return;
     };
     let before = menu.page;
+    let mut cue = SoundCue::MenuConfirm;
     match action {
         UiAction::StartGame if menu.page == MenuPage::Main => app_state.set(AppState::InGame),
         UiAction::OpenSettings if matches!(menu.page, MenuPage::Main | MenuPage::Pause) => {
@@ -283,20 +313,33 @@ fn handle_requests(
         UiAction::Quit if menu.page == MenuPage::Main => {
             exits.write(AppExit::Success);
         }
-        UiAction::Resume if menu.page == MenuPage::Pause => play_state.set(PlayState::Running),
-        UiAction::ReturnToMenu if menu.page == MenuPage::Pause => app_state.set(AppState::MainMenu),
+        UiAction::Resume if menu.page == MenuPage::Pause => {
+            play_state.set(PlayState::Running);
+            cue = SoundCue::MenuCancel;
+        }
+        UiAction::ReturnToMenu if menu.page == MenuPage::Pause => {
+            app_state.set(AppState::MainMenu);
+            cue = SoundCue::MenuCancel;
+        }
         UiAction::Back => match menu.page {
             MenuPage::Hidden => play_state.set(PlayState::Paused),
-            MenuPage::Pause => play_state.set(PlayState::Running),
+            MenuPage::Pause => {
+                play_state.set(PlayState::Running);
+                cue = SoundCue::MenuCancel;
+            }
             MenuPage::Settings | MenuPage::Help => {
                 *draft = SettingsDraft::from_settings(&settings);
                 menu.page = menu.return_page;
                 menu.status = None;
                 focus.0 = 0;
+                cue = SoundCue::MenuCancel;
             }
-            MenuPage::Main => {}
+            MenuPage::Main => return,
         },
         UiAction::SelectTab(tab) if menu.page == MenuPage::Settings => {
+            if menu.tab == tab {
+                return;
+            }
             menu.tab = tab;
             menu.status = None;
             focus.0 = match tab {
@@ -307,7 +350,11 @@ fn handle_requests(
             };
         }
         UiAction::Adjust(key, direction) if menu.page == MenuPage::Settings => {
+            let before = (draft.max_fps, draft.mouse_sensitivity, draft.invert_y);
             draft.adjust(key, direction);
+            if before == (draft.max_fps, draft.mouse_sensitivity, draft.invert_y) {
+                return;
+            }
             menu.status = None;
         }
         UiAction::RestoreDefaults if menu.page == MenuPage::Settings => {
@@ -331,10 +378,17 @@ fn handle_requests(
                 Err(error) => {
                     error!(target: "demo::settings", path = %path.0.display(), %error, operation = "apply_settings", "Failed to save settings");
                     menu.status = Some("Could not save settings. Your changes are still available; try Apply again.".into());
+                    cue = SoundCue::MenuCancel;
                 }
             }
         }
         _ => return,
+    }
+    // 只对本帧真正消费并接受的语义请求反馈，鼠标与确认键并存也只产生一次。
+    if let Ok(source) = controllers.single() {
+        sounds.write(SoundRequest::new(cue, source));
+        info!(target: "demo::ui", event = cue.id(), ?source, action = ?action,
+            reason = "handled_ui_request", "Menu audio cue emitted");
     }
     if before != menu.page {
         info!(target: "demo::ui", page_before = ?before, page_after = ?menu.page, reason = ?action, "Menu page changed");
@@ -374,6 +428,7 @@ mod tests {
         .init_resource::<SettingsFile>()
         .init_resource::<MenuInputSource>()
         .add_message::<UiRequest>()
+        .add_message::<SoundRequest>()
         .add_message::<AppExit>()
         .insert_resource(TimeUpdateStrategy::ManualDuration(
             std::time::Duration::from_millis(16),
@@ -391,6 +446,160 @@ mod tests {
     fn request(app: &mut App, action: UiAction) {
         app.world_mut().write_message(UiRequest(action));
         app.update();
+    }
+
+    fn drain_sounds(app: &mut App) -> Vec<SoundCue> {
+        app.world_mut()
+            .resource_mut::<Messages<SoundRequest>>()
+            .drain()
+            .map(|request| request.cue)
+            .collect()
+    }
+
+    #[test]
+    fn menu_sounds_follow_accepted_requests_and_skip_no_ops() {
+        let mut app = test_app();
+        request(&mut app, UiAction::Back);
+        request(&mut app, UiAction::ApplySettings);
+        assert!(drain_sounds(&mut app).is_empty());
+
+        // 同帧多种输入只消费首项，声音与最终接受的菜单动作对应。
+        app.world_mut()
+            .write_message(UiRequest(UiAction::OpenSettings));
+        app.world_mut().write_message(UiRequest(UiAction::OpenHelp));
+        app.update();
+        assert_eq!(drain_sounds(&mut app), [SoundCue::MenuConfirm]);
+        request(&mut app, UiAction::SelectTab(SettingsTab::Graphics));
+        request(&mut app, UiAction::Adjust(SettingKey::FrameRate, -1));
+        assert!(drain_sounds(&mut app).is_empty());
+        request(&mut app, UiAction::SelectTab(SettingsTab::Controls));
+        assert_eq!(drain_sounds(&mut app), [SoundCue::MenuConfirm]);
+        request(&mut app, UiAction::Adjust(SettingKey::InvertY, 1));
+        assert_eq!(drain_sounds(&mut app), [SoundCue::MenuConfirm]);
+        request(&mut app, UiAction::RestoreDefaults);
+        assert_eq!(drain_sounds(&mut app), [SoundCue::MenuConfirm]);
+        request(&mut app, UiAction::Back);
+        assert_eq!(drain_sounds(&mut app), [SoundCue::MenuCancel]);
+
+        request(&mut app, UiAction::StartGame);
+        assert_eq!(drain_sounds(&mut app), [SoundCue::MenuConfirm]);
+        request(&mut app, UiAction::Back);
+        assert_eq!(drain_sounds(&mut app), [SoundCue::MenuConfirm]);
+        assert!(app.world().resource::<Time<Virtual>>().is_paused());
+        request(&mut app, UiAction::OpenHelp);
+        assert_eq!(drain_sounds(&mut app), [SoundCue::MenuConfirm]);
+        // 帮助页只有返回按钮，导航不会切换目标，也不发出焦点音。
+        app.world_mut()
+            .resource_mut::<ButtonInput<KeyCode>>()
+            .press(KeyCode::ArrowDown);
+        app.update();
+        assert!(drain_sounds(&mut app).is_empty());
+        app.world_mut()
+            .resource_mut::<ButtonInput<KeyCode>>()
+            .release(KeyCode::ArrowDown);
+        request(&mut app, UiAction::Back);
+        assert_eq!(drain_sounds(&mut app), [SoundCue::MenuCancel]);
+        request(&mut app, UiAction::Resume);
+        assert_eq!(drain_sounds(&mut app), [SoundCue::MenuCancel]);
+        request(&mut app, UiAction::Back);
+        drain_sounds(&mut app);
+        request(&mut app, UiAction::ReturnToMenu);
+        assert_eq!(drain_sounds(&mut app), [SoundCue::MenuCancel]);
+    }
+
+    #[test]
+    fn enhanced_input_emits_one_hover_or_confirm_per_press() {
+        let mut app = test_app();
+        app.world_mut()
+            .resource_mut::<ButtonInput<KeyCode>>()
+            .press(KeyCode::ArrowDown);
+        app.update();
+        assert_eq!(drain_sounds(&mut app), [SoundCue::MenuHover]);
+        for _ in 0..3 {
+            app.update();
+            assert!(drain_sounds(&mut app).is_empty());
+        }
+        app.world_mut()
+            .resource_mut::<ButtonInput<KeyCode>>()
+            .release(KeyCode::ArrowDown);
+        app.world_mut()
+            .resource_mut::<ButtonInput<KeyCode>>()
+            .press(KeyCode::Enter);
+        app.update();
+        assert_eq!(drain_sounds(&mut app), [SoundCue::MenuConfirm]);
+        for _ in 0..3 {
+            app.update();
+            assert!(drain_sounds(&mut app).is_empty());
+        }
+        let window = app
+            .world_mut()
+            .query_filtered::<Entity, With<PrimaryWindow>>()
+            .single(app.world())
+            .unwrap();
+        app.world_mut().get_mut::<Window>(window).unwrap().focused = false;
+        app.world_mut()
+            .resource_mut::<ButtonInput<KeyCode>>()
+            .press(KeyCode::ArrowDown);
+        app.update();
+        assert!(drain_sounds(&mut app).is_empty());
+    }
+
+    #[test]
+    fn pointer_sound_requires_entering_an_existing_button() {
+        // 只运行真实指针系统与 ECS 交互状态，不创建窗口后端或音频设备。
+        let mut app = App::new();
+        app.init_resource::<MenuState>()
+            .init_resource::<MenuFocus>()
+            .init_resource::<MenuInputSource>()
+            .add_message::<UiRequest>()
+            .add_message::<SoundRequest>()
+            .add_systems(Update, pointer_interaction);
+        let mut window = Window::default();
+        window.set_cursor_position(Some(Vec2::new(80.0, 80.0)));
+        let window = app.world_mut().spawn((window, PrimaryWindow)).id();
+        let button = app
+            .world_mut()
+            .spawn((MenuButton::default(), Interaction::None))
+            .id();
+        app.update();
+        let mut presses = 0;
+        for (interaction, x, expected) in [
+            (Interaction::Hovered, 82.0, vec![SoundCue::MenuHover]),
+            (Interaction::Hovered, 84.0, vec![]),
+            (Interaction::None, 86.0, vec![]),
+            (Interaction::Hovered, 88.0, vec![SoundCue::MenuHover]),
+            (Interaction::Pressed, 88.0, vec![]),
+            (Interaction::Pressed, 88.0, vec![]),
+            (Interaction::Hovered, 90.0, vec![]),
+        ] {
+            let mut current = app.world_mut().get_mut::<Interaction>(button).unwrap();
+            if *current != interaction {
+                *current = interaction;
+            }
+            app.world_mut()
+                .get_mut::<Window>(window)
+                .unwrap()
+                .set_cursor_position(Some(Vec2::new(x, 80.0)));
+            app.update();
+            assert_eq!(drain_sounds(&mut app), expected);
+            presses += app
+                .world_mut()
+                .resource_mut::<Messages<UiRequest>>()
+                .drain()
+                .count();
+        }
+        assert_eq!(presses, 1);
+        app.world_mut().despawn(button);
+        app.world_mut()
+            .spawn((MenuButton::default(), Interaction::Hovered));
+        app.world_mut()
+            .get_mut::<Window>(window)
+            .unwrap()
+            .set_cursor_position(Some(Vec2::new(92.0, 80.0)));
+        app.update();
+        assert!(drain_sounds(&mut app).is_empty());
+        app.update();
+        assert!(drain_sounds(&mut app).is_empty());
     }
 
     fn assert_button_highlight(app: &App, entity: Entity, highlighted: bool) {
@@ -585,6 +794,7 @@ mod tests {
             .init_resource::<MenuFocus>()
             .init_resource::<MenuInputSource>()
             .add_message::<UiRequest>()
+            .add_message::<SoundRequest>()
             .add_systems(Update, pointer_interaction);
         let mut window = Window::default();
         window.set_cursor_position(Some(Vec2::new(80.0, 80.0)));
@@ -669,12 +879,14 @@ mod tests {
             .iter(app.world())
             .find_map(|(entity, button)| (button.action == UiAction::Back).then_some(entity))
             .unwrap();
+        drain_sounds(&mut app);
 
         // 同一帧键盘返回与旧页按钮的点击并存；真实 Build 必须先清理旧按钮。
         *app.world_mut().get_mut::<Interaction>(old_back).unwrap() = Interaction::Pressed;
         app.world_mut().write_message(UiRequest(UiAction::Back));
         app.update();
         assert!(app.world().get_entity(old_back).is_err());
+        assert_eq!(drain_sounds(&mut app), [SoundCue::MenuCancel]);
         assert_eq!(app.world().resource::<MenuState>().page, MenuPage::Pause);
         assert_eq!(
             *app.world().resource::<State<PlayState>>().get(),
@@ -683,6 +895,7 @@ mod tests {
 
         // 检查帧末后再推进一帧，防止残留 Back 在暂停页被解释为 Resume。
         app.update();
+        assert!(drain_sounds(&mut app).is_empty());
         assert_eq!(app.world().resource::<MenuState>().page, MenuPage::Pause);
         assert_eq!(
             *app.world().resource::<State<PlayState>>().get(),
@@ -708,7 +921,9 @@ mod tests {
         assert_eq!(app.world().resource::<SettingsDraft>().max_fps, 60);
         request(&mut app, UiAction::OpenSettings);
         request(&mut app, UiAction::Adjust(SettingKey::FrameRate, 1));
+        drain_sounds(&mut app);
         request(&mut app, UiAction::ApplySettings);
+        assert_eq!(drain_sounds(&mut app), [SoundCue::MenuConfirm]);
         assert_eq!(app.world().resource::<GameSettings>().max_fps.get(), 90);
         assert_eq!(GameSettings::load(&path).max_fps.get(), 90);
         std::fs::remove_file(&path).unwrap();
@@ -717,7 +932,9 @@ mod tests {
         app.world_mut()
             .insert_resource(SettingsFile(path.parent().unwrap().to_path_buf()));
         request(&mut app, UiAction::Adjust(SettingKey::FrameRate, 1));
+        drain_sounds(&mut app);
         request(&mut app, UiAction::ApplySettings);
+        assert_eq!(drain_sounds(&mut app), [SoundCue::MenuCancel]);
         assert_eq!(app.world().resource::<GameSettings>().max_fps.get(), 90);
         assert_eq!(app.world().resource::<SettingsDraft>().max_fps, 120);
         assert!(
