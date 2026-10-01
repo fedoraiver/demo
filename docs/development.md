@@ -42,6 +42,13 @@ ECS 是架构模式，并无适用于所有引擎的统一强制规范。本文�
 - 查询访问冲突应通过拆分系统、明确互斥过滤条件或必要的 `ParamSet` 解决，不用 `unsafe` 或随意添加锁掩盖问题。
 - 常规业务优先使用普通系统。确需独占 `&mut World` 的系统时，说明原因并限制其范围。
 
+## 场景与 UI 装配规范
+
+- 新增或修改场景、UI 和其他实体层级装配时，尽量采用 BSN（Bevy Scene Notation）风格的声明式代码，清晰表达组件、初始数据和子实体关系。
+- 优先使用当前 Bevy 版本支持的 Rust 内嵌 `bsn!` 及可组合场景函数；按职责提取小型可复用结构，减少冗长、重复的逐实体装配代码。具体语法以项目依赖版本的官方文档为准。
+- BSN 用于声明结构与初始数据；运行时状态变化、输入、交互和逐帧更新继续通过 ECS 系统或 Observer 实现，保持装配与行为职责清晰。
+- 运行时动态构造、第三方 UI（如 Egui 工具面板）或当前 API 不适合 BSN 表达时，可以使用普通 `Commands` 或对应框架的原生 API，并在相关中文注释中简要说明设计原因。该优先级适用于本次涉及的新增或修改部分，存量代码按实际维护需要逐步调整。
+
 ## 输入处理规范
 
 - 新增或修改输入处理时，优先使用项目已有的 `bevy_enhanced_input` 插件；先评估动作、绑定、上下文和动作事件能否表达需求，具体 API 使用项目依赖版本。
@@ -158,7 +165,7 @@ Remove-Item Env:RUST_LOG -ErrorAction SilentlyContinue
 | 变更内容 | 应更新的文档 |
 | --- | --- |
 | 用户操作、配置、当前可用能力和使用限制 | [README](../README.md) |
-| 工程规范及输入处理优先级 | 本文；同步核对根 AGENTS 的强约束摘要 |
+| 工程规范、输入处理及场景与 UI 装配约定 | 本文；同步核对根 AGENTS 的强约束摘要 |
 | 当前模块职责、数据流、调度和实现理由 | [架构说明](architecture.md) |
 | 检查命令、无窗口测试范围和用户验收步骤 | [验证指南](testing.md) |
 | 玩法目标、已确认设计和待定方案 | [游戏设计](game-design.md) |
@@ -182,6 +189,7 @@ Remove-Item Env:RUST_LOG -ErrorAction SilentlyContinue
 - [Bevy ECS 0.19.1：Commands 与延迟结构变更](https://docs.rs/bevy_ecs/0.19.1/bevy_ecs/system/struct.Commands.html)
 - [Bevy 0.19.1：系统顺序与调度配置](https://docs.rs/bevy/0.19.1/bevy/ecs/schedule/trait.IntoScheduleConfigs.html)
 - [Bevy 0.19.1：Plugin](https://docs.rs/bevy/0.19.1/bevy/app/trait.Plugin.html)
+- [Bevy 0.19.1：BSN 声明式场景语法](https://docs.rs/bevy/0.19.1/bevy/scene/prelude/macro.bsn.html)
 - [Flecs：实体与组件概念（仅作跨框架概念参考）](https://www.flecs.dev/flecs/EntitiesComponents.html)
 - [bevy_enhanced_input 0.26.0：动作、绑定、上下文与动作响应](https://docs.rs/bevy_enhanced_input/0.26.0/bevy_enhanced_input/)
 
