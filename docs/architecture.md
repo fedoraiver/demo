@@ -8,7 +8,7 @@
 | --- | --- |
 | [main.rs](../src/main.rs) | 组装应用与插件，先准备会话日志，再加载设置；指定固定 60 Hz 模拟和窗口策略，退出后记录结果并刷新日志。 |
 | [input.rs](../src/input.rs) | 注册 `bevy_enhanced_input`、`GameplayContext` 和输入动作；创建键盘控制者，按动作的 `context` 路由角色意图。 |
-| [camera.rs](../src/camera.rs) | 管理相机控制关联、环绕状态和鼠标捕获；处理观察动作，固定步同步角色朝向，逐帧按角色朝向、持物、镜头的顺序同步显示姿态。 |
+| [camera.rs](../src/camera.rs) | 管理相机控制关联、视角模式、环绕状态和鼠标捕获；处理观察与视角切换动作，固定步同步角色朝向，逐帧按角色朝向、持物、镜头、人物可见性的顺序同步显示状态。 |
 | [gameplay.rs](../src/gameplay.rs) | 定义玩家身份、角色与快递组件、持有关系和原型参数；固定步执行移动、跳跃、重力与拿放，提供固定步和逐帧共用的持物同步系统。 |
 | [scene.rs](../src/scene.rs) | 启动时生成地面、光照、角色、木箱、控制者和相机；创建可替换的视觉子实体。 |
 | [settings.rs](../src/settings.rs) | 加载、校验玩家设置，失败时保留原文件并回退默认值；在时间更新之前限制渲染循环频率。 |
@@ -21,16 +21,16 @@
 - **控制者实体**保存 `PlayerId`、`GameplayContext`、设备绑定、`ControlsCharacter` 和 `ControlsCamera`。`PlayerId` 表达业务身份，两个控制组件使用运行时 `Entity` 指向角色与相机。
 - **角色业务实体**保存 `Character`、`CharacterIntent`、`CharacterMotion` 和 `Transform`。移动能力与控制设备分离；位置和朝向由 `Transform` 唯一保存，角色根位置对应脚底。
 - **快递业务实体**保存 `Parcel`、`Pickable` 和 `Transform`，被持有时增加 `HeldBy`。快递根位置对应木箱中心；拾取系统按 `Pickable` 能力过滤，不依赖名称或模型。
-- **相机实体**保存 `OrbitCamera`、`MouseLookState`、`Camera3d` 和 `Transform`。`OrbitCamera` 保存目标、环绕角和跟随参数，实际位置与朝向写入 `Transform`。
+- **相机实体**保存 `OrbitCamera`、`MouseLookState`、`Camera3d` 和 `Transform`。`OrbitCamera` 保存目标、`CameraPerspective` 视角模式、共享水平角、各模式的俯仰角和跟随参数，实际位置与朝向写入 `Transform`。
 - **共享资源**为 `PrototypeConfig` 与 `GameSettings`；限帧计时和连续数据日志采样使用各系统的 `Local`。
 
 场景当前只创建 `PlayerId(1)` 对应的一名键盘控制者、一名角色、一件木箱快递和一台相机。数据结构支持按控制者路由，不代表已经实现多人、联机或分屏。
 
-人物模型和木箱模型分别通过 `ChildOf` 挂在业务实体下。玩法查询操作业务实体，视觉网格和材质留在子实体，替换美术不必改变移动或拾取流程。持有关系与视觉父子关系相互独立。
+人物模型和木箱模型分别通过 `ChildOf` 挂在业务实体下。人物视觉子实体带有 `CharacterVisual` 标记，第一人称只隐藏当前相机目标的人物视觉，不隐藏角色业务实体或木箱。玩法查询操作业务实体，视觉网格和材质留在子实体，替换美术不必改变移动或拾取流程。持有关系与视觉父子关系相互独立。
 
 ## 输入与相机数据流
 
-`PlayerInputPlugin` 使用 `bevy_enhanced_input` 注册四个动作：`MoveAction`、`LookAction`、`JumpAction`、`InteractAction`。设备绑定位于控制者的 `GameplayContext`，Observer 从事件的 `context` 查到对应控制目标，再写入目标状态。
+`PlayerInputPlugin` 使用 `bevy_enhanced_input` 注册五个动作：`MoveAction`、`LookAction`、`JumpAction`、`InteractAction`、`TogglePerspectiveAction`。设备绑定位于控制者的 `GameplayContext`，Observer 从事件的 `context` 查到对应控制目标，再写入目标状态。
 
 移动、跳跃和交互沿下面的路径进入固定模拟：
 
@@ -40,16 +40,20 @@
 
 `CharacterIntent.movement` 保存持续有效的移动轴，动作完成或取消时归零。跳跃和交互使用 `Press` 与 `require_reset` 产生单次请求，Observer 将相应的 `pending` 置为 `true`，固定步通过 `std::mem::take` 消费并清除。没有固定步的渲染帧不会丢失请求；消费前的同类请求会合并为一次布尔请求，当前没有动作队列。
 
-观察动作直接更新相机持续状态：
+观察动作直接更新相机持续状态，视角切换动作先写入相机上的单次请求，再于本帧动作应用完成后消费：
 
 ```text
-鼠标位移 → Fire<LookAction> → ControlsCamera → OrbitCamera
+鼠标位移 / I 键 → 观察 / 视角切换动作 → ControlsCamera → OrbitCamera
                                       ├→ 固定步角色水平朝向
-                                      └→ Update 角色朝向 → 持物 Transform → 相机 Transform
+                                      └→ Update 角色朝向 → 持物 Transform → 相机 Transform → 人物 Visibility
                                                   → PostUpdate 视觉子实体 GlobalTransform
 ```
 
-`on_camera_look` 根据灵敏度和 Y 轴设置换算角度，不另存 `CameraLookIntent`，也不乘帧时间或固定步时间。镜头保持固定距离，俯仰限制在 `5°..80°`；人物只使用水平环绕角。初始镜头相对脚底偏移为 `(0, 6, 8)`，观察中心位于脚底上方 `0.8`。
+`on_camera_look` 根据灵敏度和 Y 轴设置换算角度，不另存 `CameraLookIntent`，也不乘帧时间或固定步时间。默认第三人称保持固定环绕距离，俯仰限制在 `5°..80°`；初始镜头相对脚底偏移为 `(0, 6, 8)`，观察中心位于脚底上方 `0.8`。第一人称镜头位于脚底上方 `1.65`，首次俯仰角为 `0°`，之后限制在 `-85°..85°`。两种模式共享水平角并分别保存俯仰角，人物朝向和移动只使用水平角。
+
+`TogglePerspectiveAction` 默认绑定 I，使用 `Press` 与 `require_reset` 保证每次按下只切换一次，长按不重复。`request_perspective_toggle` Observer 验证窗口聚焦、控制关联和目标有效后，将请求保存到 `OrbitCamera.toggle_requested_by`；`apply_perspective_toggle` 在 `PreUpdate` 的 `EnhancedInputSystems::Apply` 之后消费请求并切换同一台相机的模式。因此同帧鼠标位移先作用于原模式，切换后恢复目标模式记住的俯仰角，不依赖动作遍历顺序；首次进入第一人称仍为平视。切换在本帧完成，不修改鼠标捕获、角色位置或玩法请求。Esc 释放鼠标后仍可切换视角，失焦时忽略切换。
+
+`sync_character_visibility` 在镜头更新后按有效控制关联和模式更新角色视觉子实体的 `Visibility`：第一人称隐藏对应的 `CharacterVisual`，切回第三人称时恢复。相机或控制者丢失、关联不再有效时也恢复人物显示，避免模型停留在隐藏状态。
 
 鼠标捕获是窗口生命周期处理：当前 `sync_mouse_capture` 直接读取 Esc 的 `ButtonInput`、`MouseButtonInput` 和 `WindowFocused`，结合控制关联与目标是否存在更新 `MouseLookState` 和光标设置。捕获恢复当帧跳过观察位移，避免自由光标阶段的位移造成镜头跳转。它在底层 `InputSystems` 之后、`EnhancedInputSystems::Prepare` 之前执行，捕获状态在动作评估前生效。
 
@@ -59,14 +63,14 @@
 | --- | --- |
 | `Startup` | 生成场景并记录玩法配置、固定时间步与姿态同步阶段及顺序。 |
 | `First` | `limit_frame_rate.before(TimeSystems)` 在引擎更新时钟前补足帧间剩余时间。 |
-| `PreUpdate` | 更新鼠标捕获，Enhanced Input 评估动作并通过 Observer 更新意图或环绕角。 |
+| `PreUpdate` | 更新鼠标捕获，Enhanced Input 评估动作并通过 Observer 更新意图、观察角度或切换请求；`apply_perspective_toggle.after(EnhancedInputSystems::Apply)` 在本帧动作应用完成后切换模式。 |
 | `FixedUpdate` | `sync_character_facing.before(GameplaySystems::Simulate)` 先同步角色朝向，再依次执行移动、跳跃与重力、交互、持物跟随。 |
-| `Update` | `CameraControlPlugin` 注册 `(sync_character_facing, gameplay::sync_held_objects, follow_orbit_camera).chain()`，依次同步角色朝向、持物和镜头。 |
-| `PostUpdate` | Bevy 的变换传播根据业务根实体 `Transform` 更新模型子实体的 `GlobalTransform`，供渲染使用。 |
+| `Update` | `CameraControlPlugin` 注册 `(sync_character_facing, gameplay::sync_held_objects, follow_orbit_camera, sync_character_visibility).chain()`，依次同步角色朝向、持物、镜头和人物可见性。 |
+| `PostUpdate` | Bevy 的变换传播根据业务根实体 `Transform` 更新模型子实体的 `GlobalTransform`，可见性传播应用人物视觉状态，供渲染使用。 |
 
 相机与玩法的固定步顺序由显式依赖表达；跨阶段数据流依赖 Bevy 默认主调度，`PreUpdate` 结束时应用动作命令后进入固定循环。一次渲染帧可以没有固定步，也可以有多个固定步，因此输入 Observer 不直接积分角色位置。
 
-角色朝向与持物同步保留在 `FixedUpdate`，保证本步移动和交互使用最新水平朝向；`Update` 再同步一次显示姿态，保证没有固定步的帧也能让角色、持物和镜头使用相同视角。逐帧同步不运行移动、重力或交互，不额外推进模拟时间。在渲染上限高于固定模拟频率时，如果只逐帧更新镜头，持物会沿用上一固定步的姿态，在连续转动视角时出现交替滞后的画面；顺序同步后，模型子实体在同一帧的 `PostUpdate` 获得更新后的世界变换。
+角色朝向与持物同步保留在 `FixedUpdate`，保证本步移动和交互使用最新水平朝向；`Update` 再同步一次显示姿态与人物可见性，保证没有固定步的帧也能让角色、持物和镜头使用相同视角，第一人称切换当帧不会保留遮挡镜头的人物模型。逐帧同步不运行移动、重力或交互，不额外推进模拟时间。在渲染上限高于固定模拟频率时，如果只逐帧更新镜头，持物会沿用上一固定步的姿态，在连续转动视角时出现交替滞后的画面；顺序同步后，模型子实体在同一帧的 `PostUpdate` 获得更新后的世界变换。
 
 玩法系统使用 `Time<Fixed>` 积分运动。移动轴先限制长度再转换为角色局部方向，保证斜向移动不会更快；跳跃与重力在同一固定步处理，并在配置的平面高度着陆。
 
@@ -108,6 +112,6 @@
 
 写入器在每次写入后刷新；`LogPlugin` 初始化后记录会话开始与版本，设置、场景、输入、相机和玩法模块记录各自关键变化。panic hook 尽力记录错误并同步文件，然后调用原有 hook；`App::run` 返回后记录退出结果并刷新，守护对象释放时再次刷新。panic 日志通过已安装的 subscriber 输出，不能保证覆盖日志插件就绪前的异常或进程被强制终止的情况。
 
-相机插件在 `Startup` 通过统一日志设施记录 `Camera pose synchronization configured`，字段 `simulation_schedule="FixedUpdate"`、`presentation_schedule="Update"` 和 `presentation_order="character_facing_held_objects_camera"` 说明姿态同步的阶段与顺序，便于排查持箱转动视角时的不同步问题。
+相机插件在 `Startup` 通过统一日志设施记录 `Camera pose synchronization configured`，字段 `simulation_schedule="FixedUpdate"`、`presentation_schedule="Update"` 和 `presentation_order="character_facing_held_objects_camera_visibility"` 说明显示同步的阶段与顺序，便于排查持箱转动或视角切换时的不同步问题。相机初始化记录 `perspective="third_person"`；每次有效切换以 `info` 级别记录 `Camera perspective changed`，包含 `perspective_before`、`perspective_after`、`yaw`、`pitch_before`、`pitch_after` 和 `reason="toggle_perspective_action"`。
 
 连续角度和世界速度按 `debug` 级别最多每 0.5 秒采样一次，离散输入与鼠标捕获变化使用 `info`。日志查找见 [README](../README.md)，过滤设置见 [开发规范](development.md#日志排查)，用户验收步骤见 [验证指南](testing.md)。
