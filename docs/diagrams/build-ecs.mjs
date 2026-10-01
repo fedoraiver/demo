@@ -12,6 +12,97 @@ const systems = Object.fromEntries(model.systems.map(s => [s.id, s]));
 const entities = Object.fromEntries(model.entities.map(e => [e.id, e]));
 const registry = {};
 const views = [];
+let nodeBoxes = new Map();
+let edgeSpecs = [];
+// 连线延迟到整个视图收集完成后定位：同侧出线和入线共同分配 n+1 等分槽位。
+function boxAttributes(id, x, y, width, height, container = false) {
+  if (nodeBoxes.has(id)) throw new Error('Duplicate geometry box: ' + id);
+  nodeBoxes.set(id, { id, x, y, width, height, container });
+  return 'data-box-id="' + esc(id) + '"' + (container ? ' data-box-container="true"' : '');
+}
+const normal = side => ({ left: [-1, 0], right: [1, 0], top: [0, -1], bottom: [0, 1] }[side]);
+function port(anchor) {
+  const box = nodeBoxes.get(anchor.box), f = anchor.slot / (anchor.count + 1);
+  return { left: [box.x, box.y + box.height * f], right: [box.x + box.width, box.y + box.height * f], top: [box.x + box.width * f, box.y], bottom: [box.x + box.width * f, box.y + box.height] }[anchor.side];
+}
+function endpoint(point, next) {
+  // 实际矩形边界决定所属节点；语义 data-connect 中的其它引用不能冒充几何端点。
+  const candidates = [];
+  for (const box of nodeBoxes.values()) for (const side of ['left', 'right', 'top', 'bottom']) {
+    const onSide = side === 'left' || side === 'right'
+      ? Math.abs(point[0] - (box.x + (side === 'right' ? box.width : 0))) < .01 && point[1] >= box.y && point[1] <= box.y + box.height
+      : Math.abs(point[1] - (box.y + (side === 'bottom' ? box.height : 0))) < .01 && point[0] >= box.x && point[0] <= box.x + box.width;
+    if (onSide) { const n = normal(side), outward = (next[0] - point[0]) * n[0] + (next[1] - point[1]) * n[1]; candidates.push({ box: box.id, side, score: (box.container ? 0 : 10) + (outward > 0 ? 1 : 0) }); }
+  }
+  candidates.sort((a, b) => b.score - a.score);
+  return candidates.length ? { box: candidates[0].box, side: candidates[0].side } : null;
+}
+function orthogonalRoute(spec) {
+  const old = spec.points, start = spec.source ? port(spec.source) : old[0], end = spec.target ? port(spec.target) : old.at(-1);
+  let points;
+  if (old.length <= 3) {
+    // 一条直线的两端槽位可能不再对齐；保留法向出口，用走线中点接上两端。
+    if (spec.source && spec.target && normal(spec.source.side)[0] && normal(spec.target.side)[0]) {
+      const mid = old.length === 3 ? old[1][0] : (start[0] + end[0]) / 2;
+      points = [start, [mid, start[1]], [mid, end[1]], end];
+    } else if (spec.source && spec.target && normal(spec.source.side)[1] && normal(spec.target.side)[1]) {
+      const mid = old.length === 3 ? old[1][1] : (start[1] + end[1]) / 2;
+      points = [start, [start[0], mid], [end[0], mid], end];
+    } else if (spec.source && !spec.target) {
+      const n = normal(spec.source.side), projection = (old[1][0] - old[0][0]) * n[0] + (old[1][1] - old[0][1]) * n[1];
+      const distance = projection > 0 ? projection : 32;
+      points = [start, [start[0] + n[0] * distance, start[1] + n[1] * distance], ...old.slice(2, -1), end];
+    } else if (!spec.source && spec.target) {
+      const n = normal(spec.target.side), projection = (old.at(-2)[0] - old.at(-1)[0]) * n[0] + (old.at(-2)[1] - old.at(-1)[1]) * n[1];
+      const distance = projection > 0 ? projection : 32;
+      points = [start, ...old.slice(1, -2), [end[0] + n[0] * distance, end[1] + n[1] * distance], end];
+    } else points = old.map(p => [...p]);
+  } else points = old.map(p => [...p]);
+  points[0] = start; points[points.length - 1] = end;
+  if (spec.source && old.length > 3) {
+    const n = normal(spec.source.side), projection = (old[1][0] - old[0][0]) * n[0] + (old[1][1] - old[0][1]) * n[1];
+    const distance = projection > 0 ? projection : 32;
+    points[1] = [start[0] + n[0] * distance, start[1] + n[1] * distance];
+  }
+  if (spec.target && old.length > 3) {
+    const n = normal(spec.target.side), distance = Math.max(32, (old.at(-2)[0] - old.at(-1)[0]) * n[0] + (old.at(-2)[1] - old.at(-1)[1]) * n[1]);
+    points[points.length - 2] = [end[0] + n[0] * distance, end[1] + n[1] * distance];
+  }
+  // 调整首末段后，只补正交拐点；框外分叉和汇合仍使用原来的真实连接坐标。
+  const routed = [points[0]];
+  for (let i = 1; i < points.length; i++) {
+    const previous = routed.at(-1), current = points[i];
+    if (previous[0] !== current[0] && previous[1] !== current[1]) routed.push([previous[0], current[1]]);
+    if (routed.at(-1)[0] !== current[0] || routed.at(-1)[1] !== current[1]) routed.push(current);
+  }
+  // 去掉同方向冗余点与回头段，避免等分调整留下不可辨认的短折线。
+  const simplified = [];
+  for (const point of routed) {
+    while (simplified.length >= 2) {
+      const a = simplified.at(-2), b = simplified.at(-1);
+      if ((a[0] === b[0] && b[0] === point[0]) || (a[1] === b[1] && b[1] === point[1])) simplified.pop(); else break;
+    }
+    simplified.push(point);
+  }
+  return simplified;
+}
+function resolveEdges() {
+  const sides = new Map();
+  for (const spec of edgeSpecs) {
+    spec.source = endpoint(spec.points[0], spec.points[1]);
+    spec.target = endpoint(spec.points.at(-1), spec.points.at(-2));
+    for (const [end, point] of [['source', spec.points[0]], ['target', spec.points.at(-1)]]) if (spec[end]) {
+      const anchor = spec[end], key = anchor.box + ':' + anchor.side;
+      if (!sides.has(key)) sides.set(key, []);
+      sides.get(key).push({ anchor, coordinate: point[normal(anchor.side)[0] ? 1 : 0] });
+    }
+  }
+  for (const group of sides.values()) {
+    group.sort((a, b) => a.coordinate - b.coordinate);
+    group.forEach((entry, i) => Object.assign(entry.anchor, { slot: i + 1, count: group.length }));
+  }
+  for (const spec of edgeSpecs) spec.points = orthogonalRoute(spec);
+}
 function text(x, y, value, cls = 'body', anchor = 'start') { return `<text x="${x}" y="${y}" class="${cls}" text-anchor="${anchor}">${esc(value)}</text>`; }
 function lines(x, y, values, cls = 'body', step = 25) { return values.map((s, i) => text(x, y + i * step, s, cls)).join(''); }
 function fitted(x, y, value, width, cls = 'body') {
@@ -20,17 +111,18 @@ function fitted(x, y, value, width, cls = 'body') {
   return text(x, y, value, cls).replace('<text ', `<text ${estimate > width ? `textLength="${width}" lengthAdjust="spacingAndGlyphs" ` : ''}`);
 }
 function compact(x, y, w, h, id, name, kind = 'component') {
-  return `<g class="node ${kind}" ${register(id, registry[id] || { name, kind })}><rect x="${x}" y="${y}" width="${w}" height="${h}" rx="4" fill="${kind === 'component' ? '#f2faf5' : '#fff'}" stroke="${colors[kind] || colors.system}"/>${fitted(x + 12, y + h / 2 + 6, name, w - 24, 'node-title')}</g>`;
+  return `<g class="node ${kind}" ${register(id, registry[id] || { name, kind })}><rect ${boxAttributes(id, x, y, w, h)} x="${x}" y="${y}" width="${w}" height="${h}" rx="4" fill="${kind === 'component' ? '#f2faf5' : '#fff'}" stroke="${colors[kind] || colors.system}"/>${fitted(x + 12, y + h / 2 + 6, name, w - 24, 'node-title')}</g>`;
 }
 function register(id, data) { registry[id] = data; return `data-id="${esc(id)}" tabindex="0" role="button" aria-label="${esc(data.name || data.title || id)}"`; }
-function frame(x, y, w, h, label, subtitle = '', tone = '#526477') {
-  return `<g><rect x="${x}" y="${y}" width="${w}" height="${h}" rx="12" fill="#fff" stroke="${tone}" stroke-width="1.5"/><path d="M${x},${y + 57}H${x + w}" stroke="#dae2e8"/>${fitted(x + 20, y + 30, label, w - 40, 'group-title')}${subtitle ? fitted(x + 20, y + 49, subtitle, w - 40, 'small') : ''}</g>`;
+function frame(x, y, w, h, label, subtitle = '', tone = '#526477', geometryId = null) {
+  return `<g><rect ${geometryId ? boxAttributes(geometryId, x, y, w, h, true) : ''} x="${x}" y="${y}" width="${w}" height="${h}" rx="12" fill="#fff" stroke="${tone}" stroke-width="1.5"/><path d="M${x},${y + 57}H${x + w}" stroke="#dae2e8"/>${fitted(x + 20, y + 30, label, w - 40, 'group-title')}${subtitle ? fitted(x + 20, y + 49, subtitle, w - 40, 'small') : ''}</g>`;
 }
 function card(x, y, w, h, id, title, rows = [], kind = 'system', extra = '') {
   const data = registry[id] || { id, name: title, kind, description: rows.join('；') };
   const color = colors[kind] || colors.system;
   const stereotype = { system: 'System', observer: 'Observer', engine: 'Engine', sync: 'Commands / Sync', resource: 'Resource', local: 'Local', external: 'External I/O', event: 'EntityEvent', message: 'Message', component: 'Component', entity: 'Entity' }[kind] || kind;
-  const shape = kind === 'event' ? `<path d="M${x},${y}H${x + w - 18}L${x + w},${y + h / 2}L${x + w - 18},${y + h}H${x}Z" fill="#fff8ed" stroke="${color}" stroke-width="1.7"/>` : `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${kind === 'observer' ? 20 : kind === 'system' || kind === 'engine' ? 10 : 3}" fill="${kind === 'component' ? '#f2faf5' : kind === 'observer' ? '#f8f3fc' : kind === 'resource' ? '#fffaf0' : '#fff'}" stroke="${color}" stroke-width="1.7" ${kind === 'local' ? 'stroke-dasharray="5 4"' : ''}/>`;
+  // 类型由标签与颜色表达；矩形避免 EntityEvent 装饰尖角成为连线出口。
+  const shape = `<rect ${boxAttributes(id, x, y, w, h)} x="${x}" y="${y}" width="${w}" height="${h}" rx="${kind === 'observer' ? 20 : kind === 'system' || kind === 'engine' ? 10 : 3}" fill="${kind === 'component' ? '#f2faf5' : kind === 'observer' ? '#f8f3fc' : kind === 'resource' ? '#fffaf0' : kind === 'event' ? '#fff8ed' : '#fff'}" stroke="${color}" stroke-width="1.7" ${kind === 'local' ? 'stroke-dasharray="5 4"' : ''}/>`;
   return `<g class="node ${kind}" ${register(id, data)}>${shape}${kind === 'observer' ? `<rect x="${x + 5}" y="${y + 5}" width="${w - 10}" height="${h - 10}" rx="16" fill="none" stroke="${color}" stroke-opacity=".28"/>` : ''}${text(x + 14, y + 21, `«${stereotype}»`, 'stereotype')}${fitted(x + 14, y + 48, title, w - 34, 'node-title')}${rows.map((r, i) => fitted(x + 14, y + 73 + i * 23, r, w - 34, extra || 'body')).join('')}</g>`;
 }
 const brief = {
@@ -46,19 +138,32 @@ function system(x, y, w, id, extraRows = null, height = 112) {
   return card(x, y, w, height, id, displayNames[id] || s.name, extraRows || [brief[id] || s.description], s.kind, 'small');
 }
 function edge(points, label = '', kind = 'order', labelPoint = null, ids = [], arrow = true) {
+  const index = edgeSpecs.length;
+  edgeSpecs.push({ points, label, kind, labelPoint, ids, arrow });
+  return '<!--edge-' + index + '-->';
+}
+function renderEdge(spec) {
+  const { points, label, kind, labelPoint, ids, arrow } = spec;
   const c = { order: '#324153', read: '#2d72ad', write: '#288554', trigger: '#bf651e', reference: '#7b65a6', relationship: '#7b65a6', registration: '#89939f' }[kind] || '#324153';
   const d = points.map((p, i) => `${i ? 'L' : 'M'}${p[0]},${p[1]}`).join(' ');
   const dash = ['read', 'trigger', 'reference', 'registration'].includes(kind) ? 'stroke-dasharray="6 5"' : '';
   const midpoint = labelPoint || points[Math.floor(points.length / 2)];
   const width = Math.max(44, [...label].reduce((n, c) => n + (c.charCodeAt(0) > 255 ? 17 : 9), 0) + 16);
   // 汇合支线只表达连接；仅进入目标节点的末段带箭头，避免把汇合点误读为目标。
-  return `<g class="edge ${kind}" data-connect="${esc(ids.join('|'))}"><path d="${d}" stroke="${c}" stroke-width="${kind === 'order' ? 2.7 : 2}" fill="none" ${dash} ${arrow ? `marker-end="url(#arrow-${kind})"` : ''}/>${label ? `<rect x="${midpoint[0] - width / 2}" y="${midpoint[1] - 13}" width="${width}" height="24" rx="4" fill="#fffdf9"/>${text(midpoint[0], midpoint[1] + 4, label, 'edge-label', 'middle')}` : ''}</g>`;
+  return `<g class="edge ${kind}" data-connect="${esc(ids.join('|'))}" data-source-anchor="${esc(JSON.stringify(spec.source))}" data-target-anchor="${esc(JSON.stringify(spec.target))}"><path d="${d}" stroke="${c}" stroke-width="${kind === 'order' ? 2.7 : 2}" fill="none" ${dash} ${arrow ? `marker-end="url(#arrow-${kind})"` : ''}/>${label ? `<rect x="${midpoint[0] - width / 2}" y="${midpoint[1] - 13}" width="${width}" height="24" rx="4" fill="#fffdf9"/>${text(midpoint[0], midpoint[1] + 4, label, 'edge-label', 'middle')}` : ''}</g>`;
 }
 function svg(name, width, height, body) {
   const markers = ['order', 'read', 'write', 'trigger', 'reference', 'relationship', 'registration'].map(k => { const c = { order: '#324153', read: '#2d72ad', write: '#288554', trigger: '#bf651e', reference: '#7b65a6', relationship: '#7b65a6', registration: '#89939f' }[k]; return `<marker id="arrow-${k}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10" fill="${c}"/></marker>`; }).join('');
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" role="img" aria-labelledby="title"><title id="title">${esc(name)}</title><defs>${markers}<style>text{font-family:'Segoe UI','Microsoft YaHei',sans-serif;fill:#263648}.body{font-size:18px}.small{font-size:15px;fill:#576779}.stereotype{font-size:13px;fill:#687886;letter-spacing:.6px}.node-title{font-size:19px;font-weight:600}.group-title{font-size:21px;font-weight:600}.edge-label{font-size:16px}.page-title{font-size:32px;font-weight:650}.section-title{font-size:24px;font-weight:650}.note{font-size:17px;fill:#526477}.node{cursor:pointer}.node:focus{outline:none}.node.selected>rect,.node.selected>path{stroke:#db7521;stroke-width:4}.node.dim{opacity:.20}.edge.dim{opacity:.13}.edge.focused>path{stroke-width:3.5}</style></defs><rect width="100%" height="100%" fill="#f7f8fa"/>${text(36, 48, name, 'page-title')}${body}</svg>`;
 }
-function save(id, label, width, height, body, summary) { const content = svg(label, width, height, body); fs.writeFileSync(path.join(dir, `ecs-${id}.svg`), content); views.push({ id, label, width, height, svg: content, summary }); }
+function save(id, label, width, height, body, summary) {
+  resolveEdges();
+  const rendered = body.replace(/<!--edge-(\d+)-->/g, (_, index) => renderEdge(edgeSpecs[Number(index)]));
+  const content = svg(label, width, height, rendered);
+  fs.writeFileSync(path.join(dir, `ecs-${id}.svg`), content);
+  views.push({ id, label, width, height, svg: content, summary });
+  nodeBoxes = new Map(); edgeSpecs = [];
+}
 
 // 总览：保留最重要的执行路径和数据路径，完整函数在细节视图展开。
 let b = text(36, 78, '先沿粗箭头看执行顺序，再沿 R / W 看数据；点击卡片查看源码与完整访问声明。', 'note');
@@ -83,7 +188,7 @@ const phases = [
   { x: 2220, w: 330, name: 'Update', note: '每个渲染帧的音频输出', rows: ['加载失败日志 → 播放请求', '→ AppExit 时停止 UI / SFX', 'Kira 排队不改变玩法状态'] },
   { x: 2585, w: 330, name: 'PostUpdate', note: '本帧变换 / UI 后处理', rows: ['Transform → GlobalTransform', '检查器 UI 为同阶段独立分支', '→ 渲染子应用'] },
 ];
-phases.forEach(p => { b += frame(p.x, 382, p.w, 180, p.name, `«Schedule» · ${p.note}`); b += p.rows.map((r, i) => fitted(p.x + 17, 469 + i * 31, r, p.w - 34)).join(''); });
+phases.forEach((p, i) => { b += frame(p.x, 382, p.w, 180, p.name, `«Schedule» · ${p.note}`, '#526477', `phase-${i}`); b += p.rows.map((r, i) => fitted(p.x + 17, 469 + i * 31, r, p.w - 34)).join(''); });
 phases.slice(0, -1).forEach((p, i) => b += edge([[p.x + p.w, 420], [phases[i + 1].x, 420]]));
 // 固定循环说明放在阶段卡片上方，避开下方的数据读写连线。
 b += text(36, 371, 'FixedFirst → FixedUpdate → FixedPostUpdate → FixedLast 每帧 0～N 次；零固定步帧仍完成插值后显示链。', 'note');
@@ -99,11 +204,11 @@ data.forEach(d => { registry[d.id] = { id: d.id, name: d.name, kind: 'Component'
 registry['resource.GameSettings'] = model.resources.find(r => r.id === 'resource.GameSettings');
 b += card(30, 697, 330, 151, 'resource.GameSettings', '共享 Resource', ['GameSettings：帧率 / 相机', 'PrototypeConfig / Gravity：物理', 'max_fps ≥ 60；默认 60'], 'resource', 'small');
 b += edge([[195, 697], [195, 562]], 'R 设置', 'read', [195, 630], ['resource.GameSettings', 'frame_limit']);
-b += edge([[560, 562], [560, 697]], 'W 意图', 'write', [560, 630], ['observe_move', 'character.CharacterIntent']);
+b += edge([[560, 562], [560, 600], [560, 697]], 'W 意图', 'write', [560, 645], ['observe_move', 'character.CharacterIntent']);
 b += edge([[650,562],[650,675],[1950,675],[1950,697]], 'W 角度 / 模式', 'write', [1670,675], ['observe_look','perspective_apply','camera.OrbitCamera']);
-b += edge([[725, 754], [745, 754], [745, 582], [790, 582], [790, 562]], 'R 意图', 'read', [745, 649], ['character.CharacterIntent', 'movement']);
+b += edge([[725, 754], [745, 754], [745, 610], [790, 610], [790, 562]], 'R 意图', 'read', [745, 649], ['character.CharacterIntent', 'movement']);
 b += edge([[1290, 562], [1290, 648], [925,648], [925,697]], 'W 物理状态', 'write', [1120,648], ['physics_step', 'character.Position']);
-b += edge([[2020, 697], [2020, 562]], 'R 角度', 'read', [2020, 640], ['camera.OrbitCamera', 'facing_update']);
+b += edge([[2020, 697], [2020, 562]], 'R 角度', 'read', [2075, 655], ['camera.OrbitCamera', 'facing_update']);
 b += edge([[2750, 562], [2750, 697]], 'W 世界变换', 'write', [2750, 641], ['transform_propagate', 'visual.GlobalTransform']);
 b += text(36, 900, '图例：粗箭头＝执行顺序　R 蓝虚线＝读取　W 绿实线＝写入　Event 橙虚线＝触发　紫线＝引用 / 关系', 'note');
 b += '</g>';
@@ -124,7 +229,7 @@ b+=card(1440,1060,520,155,'resource.SoundBank','SoundBank',['预加载句柄与�
 registry['audio-output']={name:'Update / Kira 播放输出',kind:'Engine',description:'读取 SoundRequest，检查加载/冷却/并发后向类型通道排队；AppExit 时停止。',reads:['resource.SoundBank','resource.SoundRequestMessages','resource.UiAudioChannel','resource.SfxAudioChannel'],source:systems.audio_play.source};
 b+=card(2090,1060,825,155,'audio-output','Update → Kira UI / SFX',['失败日志 → 播放请求 → 退出停止','线性音量乘 0.25 后转为 dB','ambience 只供试听，不自动播放'],'engine','small');
 b+=edge([[680,1138],[800,1138]],'W','write',[740,1138],['audio-producers','resource.SoundRequestMessages']);
-b+=edge([[1320,1215],[1320,1250],[2502,1250],[2502,1215]],'R 请求','read',[1980,1250],['resource.SoundRequestMessages','audio-output']);
+b+=edge([[1320,1137.5],[1380,1137.5],[1380,1250],[2502.5,1250],[2502.5,1215]],'R 请求','read',[1980,1250],['resource.SoundRequestMessages','audio-output']);
 b+=edge([[1960,1138],[2090,1138]],'R','read',[2025,1138],['resource.SoundBank','audio-output']);
 b+=edge([[2090,1182],[1960,1182]],'W','write',[2025,1182],['audio-output','resource.SoundBank']);
 save('overview', '当前 App · ECS 总览', 2955, 1305, b, '输入 → 固定模拟 → 插值后显示 → Update 音频 → 世界变换与渲染。');
@@ -144,7 +249,7 @@ const columns = [
 ];
 const accessName = value => value.split('.').pop().replace(/\s*\(.*/, '');
 function accessRows(id) { const s = systems[id]; const summarize = values => { const rank = v => v.startsWith('resource.') ? 1 : v.startsWith('local.') ? 2 : 0; const sorted = [...values].sort((a,b)=>rank(a)-rank(b)); return sorted.map(accessName).slice(0,2).join(' / ') + (values.length>2?' …':''); }; return [brief[id] || s.description, ...(s.reads.length ? [`R ${summarize(s.reads)}`] : []), ...(s.writes.length ? [`W ${summarize(s.writes)}`] : [])].slice(0, 3); }
-columns.forEach(col => { const nodeWidth = col.nodeWidth ?? col.w - 30, centerX = col.x + 15 + nodeWidth / 2; b += frame(col.x, 112, col.w, 1980, col.phase, `«Schedule» · ${col.note}`); col.ids.forEach((id, i) => {
+columns.forEach((col, index) => { const nodeWidth = col.nodeWidth ?? col.w - 30, centerX = col.x + 15 + nodeWidth / 2; b += frame(col.x, 112, col.w, 1980, col.phase, `«Schedule» · ${col.note}`, '#526477', `lane-${index}`); col.ids.forEach((id, i) => {
   b += system(col.x + 15, 193 + i * 160, nodeWidth, id, accessRows(id), 130);
   if (i) b += edge([[centerX, 163 + i * 160], [centerX, 193 + i * 160]]);
  }); });
@@ -206,7 +311,7 @@ const entityBoxes = [
 const primaryComponents = { controller: ['PlayerId', 'GameplayContext', 'ContextActivity', 'ControlsCharacter', 'ControlsCamera', 'Actions', 'GamepadDevice'], action: ['Action', 'ActionSettings', 'ActionOf', 'Bindings', 'Press'], binding: ['Binding', 'BindingOf'], character: ['Character', 'CharacterIntent', 'CharacterMotion', 'RigidBody', 'Collider', 'Position', 'LinearVelocity', 'Transform', 'CollisionLayers', 'LockedAxes', 'TranslationInterpolation', 'HoldingItems', 'Children'], parcel: ['Parcel', 'Pickable', 'RigidBody', 'Collider', 'Position', 'LinearVelocity', 'AngularVelocity', 'Transform', 'CollisionLayers', 'HeldBy', 'HeldTarget', 'TransformInterpolation', 'Children'], camera: ['OrbitCamera', 'MouseLookState', 'Camera3d', 'Transform'], world: ['RigidBody','Collider','CollisionLayers','Transform','Mesh3d','MeshMaterial3d'], visual: ['CharacterVisual', 'Mesh3d', 'MeshMaterial3d', 'Transform', 'GlobalTransform', 'ChildOf'], window: ['PrimaryWindow', 'Window', 'CursorOptions'] };
 entityBoxes.forEach(box => { const e = entities[box.id]; registry[`entity-${e.id}`] = { ...e, name: e.name, kind: 'Entity' };
   const shortName = {visual:'视觉子实体',action:'动作',binding:'输入绑定',controller:'控制者',character:'角色',parcel:'木箱快递',camera:'相机',world:'静态地面 / 墙体',window:'主窗口'}[e.id];
-  b += `<g class="node entity" ${register(`entity-${e.id}`, registry[`entity-${e.id}`])}>${frame(box.x, box.y, box.w, box.h, `«Entity» ${shortName}`, e.id==='visual'?'6 个：人物 3、木箱 3':`当前数量：${e.count}`, colors.entity)}</g>`;
+  b += `<g class="node entity" ${register(`entity-${e.id}`, registry[`entity-${e.id}`])}>${frame(box.x, box.y, box.w, box.h, `«Entity» ${shortName}`, e.id==='visual'?'6 个：人物 3、木箱 3':`当前数量：${e.count}`, colors.entity, `entity-${e.id}`)}</g>`;
   const key = c => c.name.split('<')[0].split(' ')[0];
   const visible = e.components.filter(c => primaryComponents[e.id].includes(key(c))).sort((a, b) => primaryComponents[e.id].indexOf(key(a)) - primaryComponents[e.id].indexOf(key(b)));
   e.components.forEach(c => registry[c.id] = { ...c, kind: 'Component', owner: e.name });
@@ -216,22 +321,22 @@ entityBoxes.forEach(box => { const e = entities[box.id]; registry[`entity-${e.id
   });
   b += text(box.x + 16, box.y + box.h - 12, `完整清单：${e.components.length} 项组件 · 点击实体查看`, 'small');
 });
-b += edge([[540, 214], [390, 214]], 'ActionOf', 'relationship', [465, 212], ['entity-action', 'entity-controller']);
-b += text(408, 247, '← Actions', 'small');
-b += text(408, 272, '反向索引', 'small');
-b += edge([[1050, 214], [900, 214]], 'BindingOf', 'relationship', [975, 212], ['entity-binding', 'entity-action']);
-b += text(921, 247, '← Bindings', 'small');
-b += text(921, 272, '反向索引', 'small');
-b += edge([[152, 462], [152, 650]], 'ControlsCharacter', 'reference', [152, 566], ['entity-controller', 'entity-character']);
-b += edge([[326, 462], [326, 493], [1230, 493], [1230, 650]], 'ControlsCamera', 'reference', [778, 493], ['entity-controller', 'entity-camera']);
+b += edge([[540, 214], [390, 214]], 'ActionOf', 'relationship', [465, 315], ['entity-action', 'entity-controller']);
+b += text(408, 344, '← Actions', 'small');
+b += text(408, 369, '反向索引', 'small');
+b += edge([[1050, 214], [900, 214]], 'BindingOf', 'relationship', [975, 299], ['entity-binding', 'entity-action']);
+b += text(921, 327, '← Bindings', 'small');
+b += text(921, 352, '反向索引', 'small');
+b += edge([[152, 462], [152, 535], [152, 650]], 'ControlsCharacter', 'reference', [150, 610], ['entity-controller', 'entity-character']);
+b += edge([[326, 462], [326, 493], [170, 493], [170, 570], [1230, 570], [1230, 650]], 'ControlsCamera', 'reference', [778, 570], ['entity-controller', 'entity-camera']);
 b += edge([[1350, 650], [1350, 546], [370, 546], [370, 462]], 'toggle_requested_by（临时）', 'reference', [875, 546], ['entity-camera', 'entity-controller']);
 b += edge([[1143, 650], [1143, 600], [273, 600], [273, 650]], 'OrbitCamera.target', 'reference', [735, 600], ['entity-camera', 'entity-character']);
-b += edge([[540, 810], [390, 810]], 'HeldBy', 'relationship', [465, 808], ['entity-parcel', 'entity-character']);
-b += text(399, 848, '← HoldingItems', 'small');
-b += text(407, 873, '无 linked_spawn', 'small');
-b += edge([[157, 1540], [157, 1250]], 'ChildOf：人物模型', 'relationship', [157, 1400], ['entity-visual', 'entity-character']);
+b += edge([[540, 810], [390, 810]], 'HeldBy', 'relationship', [465, 925], ['entity-parcel', 'entity-character']);
+b += text(399, 986, '← HoldingItems', 'small');
+b += text(407, 1011, '无 linked_spawn', 'small');
+b += edge([[157, 1540], [157, 1250]], 'ChildOf：人物模型', 'relationship', [210, 1400], ['entity-visual', 'entity-character']);
 // 标签靠近下方横线，避开 Resource 框的边界与竖向走线。
-b += edge([[390, 1687], [965, 1687], [965, 1230], [900,1230]], 'ChildOf：箱子模型', 'relationship', [690, 1655], ['entity-visual', 'entity-parcel']);
+b += edge([[390,1717.5],[430,1717.5],[430,1680],[965,1680],[965,957.5],[900,957.5]], 'ChildOf：箱子模型', 'relationship', [690, 1655], ['entity-visual', 'entity-parcel']);
 b += frame(540, 1910, 870, 228, '关系的基数与生命周期', '这里只描述当前源码声明的行为。');
 b += lines(561, 1994, ['HeldBy：每箱 0..1 位持有者；HoldingItems 容器允许 0..N，当前业务一次持一件。', 'ActionOf / BindingOf / ChildOf 声明 linked_spawn；HeldBy 不连带销毁箱体。', '失效持有者 / 异常解除：移除 HeldTarget、恢复自由碰撞，动态箱体自然下落。', 'Position / Velocity 为物理状态，Transform 为插值呈现；视觉子实体无刚体。', '持握使用反作用力，仍参与世界碰撞；持握箱当前忽略全部 Character 层。'], 'small', 27);
 b += frame(540, 1300, 360, 338, '«Resource / Local» 数据范围', 'Resource 共享；Local 属于某个系统。');
@@ -298,8 +403,8 @@ b+=edge([[424,2225],[468,2225]],'','write',null,['audio_strain','resource.SoundR
 b+=edge([[424,2395],[468,2395],[468,2225]],'','write',null,['audio_land','resource.SoundRequestMessages'],false);
 b+=edge([[468,2225],[512,2225]],'','write',null,['interaction','audio_strain','audio_land','resource.SoundRequestMessages']);
 b+=edge([[868,2225],[971,2225]],'读取','read',[919,2225],['resource.SoundRequestMessages','audio_play']);
-b+=edge([[1214,2090],[1214,2160]],'R','read',[1214,2125],['resource.SoundBank','audio_play']);
-b+=edge([[1315,2160],[1315,2090]],'W','write',[1315,2125],['audio_play','resource.SoundBank']);
+b+=edge([[1214,2090],[1214,2160]],'R','read',[1133,2125],['resource.SoundBank','audio_play']);
+b+=edge([[1315,2160],[1315,2090]],'W','write',[1295,2125],['audio_play','resource.SoundBank']);
 b+=edge([[1214,2290],[1214,2350]],'排队','write',[1214,2320],['audio_play','kira-output']);
 b+=text(52,2516,'当前接入：pickup / release / land / instability_warning；菜单、交接、推车、弹开、交付 cue 仅预留。','small');
 b+=text(52,2551,'反馈测试只安装消息与最小物理 App；Kira 输出仅在用户启动游戏时安装。','small');

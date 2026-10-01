@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { isDeepStrictEqual } from 'node:util';
+import { checkSvgGeometry } from './diagram-geometry.mjs';
 
 const viewIds = ['overview', 'schedules', 'relationships', 'events'];
 
@@ -46,6 +47,7 @@ export function checkArchitecture(root) {
     seenViews.add(view.id);
     requireCondition(typeof view.svg === 'string', `Missing SVG in architecture view: ${view.id}`);
     requireCondition(fs.readFileSync(path.join(directory, `ecs-${view.id}.svg`), 'utf8') === view.svg, `SVG artifact mismatch: ${view.id}`);
+    try { checkSvgGeometry(view.svg); } catch (error) { throw new Error(`Invalid SVG geometry in ${view.id}: ${error.message}`); }
     for (const id of attributeValues(view.svg, 'data-id')) {
       requireCondition(Object.hasOwn(registry, id), `Unknown node reference in ${view.id}: ${id}`);
       visibleIds.add(id);
