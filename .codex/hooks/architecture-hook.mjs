@@ -10,7 +10,7 @@ const defaultRoot = path.resolve(path.dirname(filename), '../..');
 const diagramDirectory = 'docs/diagrams';
 const outputs = ['ecs-architecture.html', 'ecs-source.html', 'ecs-overview.svg',
   'ecs-schedules.svg', 'ecs-relationships.svg', 'ecs-events.svg'];
-const inputs = ['ecs-data.json', 'build-ecs.mjs', 'source-viewer.mjs', 'check-ecs.mjs'];
+const inputs = ['ecs-data.json', 'build-ecs.mjs', 'source-viewer.mjs', 'check-ecs.mjs', 'diagram-geometry.mjs'];
 const hash = value => crypto.createHash('sha256').update(value).digest('hex');
 const normalizedText = value => value.toString('utf8').replaceAll('\r\n', '\n');
 function runGit(root, args, { allowFailure = false, input } = {}) {

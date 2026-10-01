@@ -5,6 +5,7 @@ use bevy::{ecs::relationship::RelationshipTarget, prelude::*};
 use std::collections::HashSet;
 
 use crate::app_flow::gameplay_running;
+use crate::audio_events::{SoundCue, SoundEventsPlugin, SoundRequest};
 use crate::physics::{DemoPhysicsPlugin, held_collision_layers, parcel_collision_layers};
 
 /// 独立于运行时实体标识的玩家身份，便于后续多人输入路由。
@@ -138,7 +139,7 @@ impl Plugin for GameplayPlugin {
             .register_type::<HeldTarget>()
             .register_type::<PrototypeConfig>()
             .init_resource::<PrototypeConfig>()
-            .add_plugins(DemoPhysicsPlugin)
+            .add_plugins((DemoPhysicsPlugin, SoundEventsPlugin))
             .add_systems(
                 FixedUpdate,
                 (
@@ -329,6 +330,8 @@ fn handle_interaction(
                     .entity(item)
                     .remove::<(HeldBy, HeldTarget)>()
                     .insert(parcel_collision_layers());
+                // 延迟消息与解除关系一起提交，播放者只能收到已接受的交互结果。
+                commands.write_message(SoundRequest::new(SoundCue::ParcelRelease, item));
                 info!(?character, ?item, position = ?item_position.0, velocity = ?velocity.0,
                     angular_velocity = ?angular_velocity.0, before = "held", after = "free",
                     reason = "interact_action_release", "Wooden crate released");
@@ -372,6 +375,7 @@ fn handle_interaction(
                 },
                 held_collision_layers(),
             ));
+            commands.write_message(SoundRequest::new(SoundCue::ParcelPickup, item));
             info!(
                 ?character,
                 ?item,

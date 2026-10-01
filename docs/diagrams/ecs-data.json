@@ -1,6 +1,6 @@
 {
   "title": "当前原型的 ECS 架构",
-  "snapshot_note": "按英文 BSN 菜单、主菜单/游戏/暂停生命周期与 Avian 0.7.0 物理原型维护；正式 HTML/SVG/源码快照由本次 pre-commit 从候选索引生成。",
+  "snapshot_note": "按英文 BSN 菜单、主菜单/游戏/暂停生命周期、Avian 0.7.0 与 bevy_kira_audio 0.26.0 音效管线维护；正式 HTML/SVG/源码快照由本次 pre-commit 从候选索引生成。",
   "systems": [
     {
       "id": "startup_spawn",
@@ -704,7 +704,7 @@
       ],
       "source": {
         "path": "src/gameplay.rs",
-        "line": 233
+        "line": 234
       }
     },
     {
@@ -753,7 +753,7 @@
       ],
       "source": {
         "path": "src/gameplay.rs",
-        "line": 263
+        "line": 264
       }
     },
     {
@@ -792,7 +792,8 @@
         "local.PickupReservations",
         "parcel.HeldBy",
         "parcel.HeldTarget",
-        "parcel.CollisionLayers"
+        "parcel.CollisionLayers",
+        "resource.SoundRequestMessages"
       ],
       "filters": [
         "角色：(With<Character>, Without<Pickable>)",
@@ -800,16 +801,19 @@
         "已持有物：(With<Pickable>, With<HeldBy>, Without<Character>)",
         "run_if(gameplay_running)：AppState::InGame 且 PlayState::Running；独立无状态测试兼容运行。"
       ],
-      "events": [],
+      "events": [
+        "Commands::write_message：parcel_pickup / parcel_release"
+      ],
       "notes": [
         "结构变更使用 Commands；不直接修改箱体 Position、Transform、线速度或角速度。",
         "Local<HashSet<Entity>> 每次调用清空，在延迟命令应用前预留本批次已拾取箱体。",
         "射线检查拾取路径，隔墙或有其他遮挡时不拾取；当前业务一次持有一件。",
-        "SpatialQuery 的实际访问为 Query<Position,Rotation,Collider>、Query<ColliderAabb> 与 Res<ColliderTrees>；它是 SystemParam，不是资源。"
+        "SpatialQuery 的实际访问为 Query<Position,Rotation,Collider>、Query<ColliderAabb> 与 Res<ColliderTrees>；它是 SystemParam，不是资源。",
+        "声音消息只在成功接受操作后与关系变更一起提交；延迟同步后才能被播放系统消费，失败尝试没有成功提示。"
       ],
       "source": {
         "path": "src/gameplay.rs",
-        "line": 300
+        "line": 301
       }
     },
     {
@@ -818,13 +822,14 @@
       "kind": "sync",
       "phase": "FixedUpdate（0..N 步）",
       "module": "bevy_ecs",
-      "description": "应用拿放命令，更新持有关系、呈现目标和碰撞层，使失效清理读到本步关系。",
+      "description": "应用拿放命令，更新持有关系、呈现目标和碰撞层，使失效清理读到本步关系。同时提交已接受操作的声音消息。",
       "reads": [],
       "writes": [
         "parcel.HeldBy",
         "character.HoldingItems",
         "parcel.HeldTarget",
-        "parcel.CollisionLayers"
+        "parcel.CollisionLayers",
+        "resource.SoundRequestMessages"
       ],
       "filters": [],
       "events": [],
@@ -834,7 +839,7 @@
       ],
       "source": {
         "path": "src/gameplay.rs",
-        "line": 154
+        "line": 155
       }
     },
     {
@@ -866,7 +871,7 @@
       ],
       "source": {
         "path": "src/gameplay.rs",
-        "line": 421
+        "line": 425
       }
     },
     {
@@ -933,7 +938,7 @@
       ],
       "source": {
         "path": "src/gameplay.rs",
-        "line": 421
+        "line": 425
       }
     },
     {
@@ -1380,7 +1385,7 @@
       ],
       "source": {
         "path": "src/gameplay.rs",
-        "line": 169
+        "line": 170
       }
     },
     {
@@ -1431,7 +1436,7 @@
       ],
       "source": {
         "path": "src/gameplay.rs",
-        "line": 169
+        "line": 170
       }
     },
     {
@@ -1488,7 +1493,7 @@
       ],
       "source": {
         "path": "src/gameplay.rs",
-        "line": 395
+        "line": 399
       }
     },
     {
@@ -1512,7 +1517,7 @@
       ],
       "source": {
         "path": "src/gameplay.rs",
-        "line": 154
+        "line": 155
       }
     },
     {
@@ -1578,7 +1583,7 @@
       ],
       "source": {
         "path": "src/gameplay.rs",
-        "line": 435
+        "line": 439
       }
     },
     {
@@ -1609,7 +1614,7 @@
       ],
       "source": {
         "path": "src/gameplay.rs",
-        "line": 475
+        "line": 479
       }
     },
     {
@@ -1969,7 +1974,7 @@
       ],
       "source": {
         "path": "src/ui/navigation.rs",
-        "line": 65
+        "line": 66
       }
     },
     {
@@ -1995,7 +2000,7 @@
       ],
       "source": {
         "path": "src/ui/navigation.rs",
-        "line": 87
+        "line": 88
       }
     },
     {
@@ -2004,13 +2009,14 @@
       "kind": "system",
       "phase": "PreUpdate · after(EnhancedInputSystems::Apply)",
       "module": "ui",
-      "description": "每帧消费一项 UiRequest，导航页面、开始/暂停/恢复/结束会话，编辑草稿并保存应用真实设置。",
+      "description": "每帧消费一项 UiRequest，导航页面、开始/暂停/恢复/结束会话，编辑草稿并保存应用真实设置。接受的动作发送确认或返回声音；无效请求、当前分类和边界调整静音。",
       "reads": [
         "resource.UiRequestMessages",
         "resource.MenuState",
         "resource.GameSettings",
         "resource.SettingsDraft",
-        "resource.SettingsFile"
+        "resource.SettingsFile",
+        "menu_controller.MenuContext"
       ],
       "writes": [
         "resource.UiRequestMessages",
@@ -2019,18 +2025,23 @@
         "resource.SettingsDraft",
         "resource.GameSettings",
         "resource.AppState",
-        "resource.PlayState"
+        "resource.PlayState",
+        "resource.SoundRequestMessages",
+        "resource.AppExitMessages"
       ],
       "filters": [],
-      "events": [],
+      "events": [
+        "写入 SoundRequest：menu_confirm / menu_cancel"
+      ],
       "notes": [
         "写 NextState 而非直接执行状态系统；随后的 StateTransition 在固定循环之前生效。",
         "鼠标 Update 请求在下一次 PreUpdate 消费；读取第一项后清空其余，避免页面穿透。",
-        "Quit 写 AppExit::Success；保存失败只写提示，不替换当前生效设置。"
+        "Quit 写 AppExit::Success；保存失败只写提示，不替换当前生效设置。",
+        "MenuConfirm 用于有效操作及打开暂停；MenuCancel 用于恢复/返回、离开子页和保存失败。每帧仅反馈第一项接受的 UiRequest，source 使用唯一菜单控制者。"
       ],
       "source": {
         "path": "src/ui/navigation.rs",
-        "line": 256
+        "line": 283
       }
     },
     {
@@ -2039,29 +2050,37 @@
       "kind": "system",
       "phase": "Update · Build之后 / Style之前",
       "module": "ui",
-      "description": "读取原生 Interaction 产生共享请求，按真实窗口光标变化区分鼠标与键盘焦点。",
+      "description": "读取原生 Interaction 产生共享请求，按真实窗口光标变化区分鼠标与键盘焦点。真实鼠标进入新按钮时发送 MenuHover。",
       "reads": [
         "resource.MenuState",
         "window.Window",
         "menu_button.MenuButton",
-        "menu_button.Interaction"
+        "menu_button.Interaction",
+        "local.MenuPointerCursor",
+        "local.MenuPointerHover"
       ],
       "writes": [
         "resource.MenuFocus",
         "resource.MenuInputSource",
-        "resource.UiRequestMessages"
+        "resource.UiRequestMessages",
+        "resource.SoundRequestMessages",
+        "local.MenuPointerCursor",
+        "local.MenuPointerHover"
       ],
       "filters": [
         "With<PrimaryWindow>"
       ],
-      "events": [],
+      "events": [
+        "写入 SoundRequest：menu_hover"
+      ],
       "notes": [
         "只读窗口位置区分来源，点击仍使用 Interaction；不重复读取 MouseButton。",
-        "页面 Build 先销毁旧按钮并应用命令，防止旧页面 Back 补发；Hidden 不处理按钮。"
+        "页面 Build 先销毁旧按钮并应用命令，防止旧页面 Back 补发；Hidden 不处理按钮。",
+        "按钮内移动、按下后释放和页面重建初始 Hovered 不重复发声；Local 保存上次窗口位置与悬停实体。"
       ],
       "source": {
         "path": "src/ui/navigation.rs",
-        "line": 214
+        "line": 228
       }
     },
     {
@@ -2287,7 +2306,7 @@
       "kind": "observer",
       "phase": "匹配事件触发时",
       "module": "ui",
-      "description": "向上循环选择可操作按钮。",
+      "description": "向上循环选择可操作按钮。实际焦点变化时发送 MenuHover。",
       "reads": [
         "resource.MenuState",
         "resource.MenuFocus",
@@ -2295,18 +2314,21 @@
       ],
       "writes": [
         "resource.MenuFocus",
-        "resource.MenuInputSource"
+        "resource.MenuInputSource",
+        "resource.SoundRequestMessages"
       ],
       "filters": [],
       "events": [
-        "响应 EntityEvent：Fire<PreviousAction>"
+        "响应 EntityEvent：Fire<PreviousAction>",
+        "写入 SoundRequest：menu_hover"
       ],
       "notes": [
-        "Hidden 页面忽略；占位控件不在 MenuButton 查询内。"
+        "Hidden 页面忽略；占位控件不在 MenuButton 查询内。",
+        "只有目标按钮发生变化才发声；单按钮页、Hidden 和占位节点不产生焦点音。"
       ],
       "source": {
         "path": "src/ui/navigation.rs",
-        "line": 123
+        "line": 131
       }
     },
     {
@@ -2315,7 +2337,7 @@
       "kind": "observer",
       "phase": "匹配事件触发时",
       "module": "ui",
-      "description": "向下循环选择可操作按钮。",
+      "description": "向下循环选择可操作按钮。实际焦点变化时发送 MenuHover。",
       "reads": [
         "resource.MenuState",
         "resource.MenuFocus",
@@ -2323,18 +2345,21 @@
       ],
       "writes": [
         "resource.MenuFocus",
-        "resource.MenuInputSource"
+        "resource.MenuInputSource",
+        "resource.SoundRequestMessages"
       ],
       "filters": [],
       "events": [
-        "响应 EntityEvent：Fire<NextAction>"
+        "响应 EntityEvent：Fire<NextAction>",
+        "写入 SoundRequest：menu_hover"
       ],
       "notes": [
-        "Hidden 页面忽略；占位控件不在 MenuButton 查询内。"
+        "Hidden 页面忽略；占位控件不在 MenuButton 查询内。",
+        "只有目标按钮发生变化才发声；单按钮页、Hidden 和占位节点不产生焦点音。"
       ],
       "source": {
         "path": "src/ui/navigation.rs",
-        "line": 133
+        "line": 144
       }
     },
     {
@@ -2362,7 +2387,7 @@
       ],
       "source": {
         "path": "src/ui/navigation.rs",
-        "line": 160
+        "line": 174
       }
     },
     {
@@ -2390,7 +2415,7 @@
       ],
       "source": {
         "path": "src/ui/navigation.rs",
-        "line": 174
+        "line": 188
       }
     },
     {
@@ -2418,7 +2443,7 @@
       ],
       "source": {
         "path": "src/ui/navigation.rs",
-        "line": 188
+        "line": 202
       }
     },
     {
@@ -2442,7 +2467,7 @@
       ],
       "source": {
         "path": "src/ui/navigation.rs",
-        "line": 204
+        "line": 218
       }
     },
     {
@@ -2496,6 +2521,191 @@
         "path": "src/ui/backdrop.rs",
         "line": 146
       }
+    },
+    {
+      "id": "audio_preload",
+      "name": "preload_sounds",
+      "kind": "system",
+      "phase": "Startup",
+      "module": "audio",
+      "description": "检查嵌入清单后预加载 UI/SFX 短音，将事件映射与播放策略保存到 SoundBank。",
+      "reads": [
+        "resource.AssetServer"
+      ],
+      "writes": [
+        "resource.SoundBank"
+      ],
+      "filters": [],
+      "events": [],
+      "notes": [
+        "清单无效时只禁用反馈并写日志；不会改变玩法状态。",
+        "合成 ambience 只供试听，不随场景自动播放。"
+      ],
+      "source": {
+        "path": "src/audio.rs",
+        "line": 130
+      }
+    },
+    {
+      "id": "audio_load_failures",
+      "name": "log_load_failures",
+      "kind": "system",
+      "phase": "Update · after(UiSystems::Style)",
+      "module": "audio",
+      "description": "消费 Kira AudioSource 加载失败消息，记录原始路径与错误。",
+      "reads": [
+        "resource.AudioLoadFailures"
+      ],
+      "writes": [],
+      "filters": [],
+      "events": [
+        "读取 AssetLoadFailedEvent<AudioSource>（Message）"
+      ],
+      "notes": [
+        "由 Bevy 资产系统发出；失败日志先于播放请求处理。",
+        "完整音频链在 UiSystems::Style 之后执行，因此同帧鼠标焦点消息可被播放系统消费。"
+      ],
+      "source": {
+        "path": "src/audio.rs",
+        "line": 169
+      }
+    },
+    {
+      "id": "audio_play",
+      "name": "play_requests",
+      "kind": "system",
+      "phase": "Update · after(UiSystems::Style)",
+      "module": "audio",
+      "description": "消费已接受的 SoundRequest；按加载状态、冷却与实例限额排队到 UI 或 SFX 通道。",
+      "reads": [
+        "resource.SoundRequestMessages",
+        "resource.TimeReal",
+        "resource.AudioSources",
+        "resource.UiAudioChannel",
+        "resource.SfxAudioChannel"
+      ],
+      "writes": [
+        "resource.SoundBank",
+        "resource.UiAudioChannel",
+        "resource.SfxAudioChannel"
+      ],
+      "filters": [],
+      "events": [
+        "读取 SoundRequest（Message）"
+      ],
+      "notes": [
+        "通道通过共享 Res 访问，其内部播放命令队列产生副作用；不是组件修改。",
+        "总并发 4，SFX 最多 3，为菜单保留 1 个名额；Queued 也计入并发，Stopped 实例从 SoundBank 清理。",
+        "每种事件的清单音量乘总线性增益 0.25，再转换为 Kira 0.26 的 dB。",
+        "加载中或达到限额的消息直接丢弃；source Entity 只用于日志，不读取实体组件。",
+        "完整音频链在 UiSystems::Style 之后执行，因此同帧鼠标焦点消息可被播放系统消费。",
+        "使用 Time<Real> 计算冷却，暂停冻结虚拟时间时菜单声音仍能再次触发。"
+      ],
+      "source": {
+        "path": "src/audio.rs",
+        "line": 188
+      }
+    },
+    {
+      "id": "audio_stop",
+      "name": "stop_on_exit",
+      "kind": "system",
+      "phase": "Update · after(UiSystems::Style)",
+      "module": "audio",
+      "description": "在 AppExit 消息到达时停止 UI 与 SFX 通道并写统一会话日志。",
+      "reads": [
+        "resource.AppExitMessages",
+        "resource.UiAudioChannel",
+        "resource.SfxAudioChannel"
+      ],
+      "writes": [
+        "resource.UiAudioChannel",
+        "resource.SfxAudioChannel"
+      ],
+      "filters": [],
+      "events": [
+        "读取 AppExit（Message）"
+      ],
+      "notes": [
+        "与失败日志、播放请求通过 .chain() 顺序运行；退出消息读取后发停止命令。",
+        "完整音频链在 UiSystems::Style 之后执行，因此同帧鼠标焦点消息可被播放系统消费。"
+      ],
+      "source": {
+        "path": "src/audio.rs",
+        "line": 255
+      }
+    },
+    {
+      "id": "audio_strain",
+      "name": "warn_hold_strain",
+      "kind": "system",
+      "phase": "FixedUpdate · after(GameplaySystems::Simulate)",
+      "module": "audio_events",
+      "description": "根据持有者真实 Position 与最新朝向检查包裹持续偏差，发出一次失稳提示。",
+      "reads": [
+        "resource.TimeFixed",
+        "resource.PrototypeConfig",
+        "character.Position",
+        "character.Transform",
+        "parcel.HeldBy",
+        "parcel.Position",
+        "local.HoldStrain"
+      ],
+      "writes": [
+        "local.HoldStrain",
+        "resource.SoundRequestMessages"
+      ],
+      "filters": [
+        "持有者：With<Character>",
+        "包裹：With<Parcel>，查询 HeldBy"
+      ],
+      "events": [
+        "写入 SoundRequest：instability_warning"
+      ],
+      "notes": [
+        "新持握宽限 0.5 秒；误差 >0.65 米持续 0.35 秒警告，降至 <0.45 米重新布防。",
+        "Local 只保留当前持握包裹；解除关系或销毁后清理，不新增玩法状态。",
+        "此观察位于本固定步玩法链之后、物理解算之前。",
+        "run_if(gameplay_running)：仅 InGame / Running 收集反馈；没有状态资源的最小物理测试保持可用。"
+      ],
+      "source": {
+        "path": "src/audio_events.rs",
+        "line": 162
+      }
+    },
+    {
+      "id": "audio_land",
+      "name": "emit_parcel_land",
+      "kind": "system",
+      "phase": "FixedPostUpdate · after(PhysicsSystems::StepSimulation)",
+      "module": "audio_events",
+      "description": "逐步检查真实支撑接触和冲量，在自由包裹落地时发出一次声音请求。",
+      "reads": [
+        "resource.ContactGraph",
+        "parcel.Parcel",
+        "parcel.HeldBy",
+        "local.LandingContacts"
+      ],
+      "writes": [
+        "local.LandingContacts",
+        "resource.SoundRequestMessages"
+      ],
+      "filters": [
+        "(With<Parcel>, Without<HeldBy>)"
+      ],
+      "events": [
+        "写入 SoundRequest：parcel_land"
+      ],
+      "notes": [
+        "检查活动与休眠接触；向上支撑法线 y≥0.65 且总法向冲量≥1.8 才提示。",
+        "锁存到完全离开支撑，避免预测接触漏声、静置或休眠后重复提示；墙面不充当落地。",
+        "只 after(StepSimulation)；与碰撞日志、Writeback 后接地与速度观察没有额外全序。",
+        "run_if(gameplay_running)：仅 InGame / Running 收集反馈；没有状态资源的最小物理测试保持可用。"
+      ],
+      "source": {
+        "path": "src/audio_events.rs",
+        "line": 108
+      }
     }
   ],
   "entities": [
@@ -2526,7 +2736,7 @@
           "description": "独立于运行时 Entity 的业务身份。",
           "source": {
             "path": "src/gameplay.rs",
-            "line": 13
+            "line": 14
           }
         },
         {
@@ -2560,7 +2770,7 @@
           "description": "普通实体引用，指向受控角色。",
           "source": {
             "path": "src/gameplay.rs",
-            "line": 18
+            "line": 19
           }
         },
         {
@@ -2650,7 +2860,7 @@
           "description": "标识具有角色运动能力的实体。",
           "source": {
             "path": "src/gameplay.rs",
-            "line": 23
+            "line": 24
           }
         },
         {
@@ -2664,7 +2874,7 @@
           "description": "持续移动轴与一次性跳跃、交互请求跨帧保存。固定步消费布尔请求。",
           "source": {
             "path": "src/gameplay.rs",
-            "line": 31
+            "line": 32
           }
         },
         {
@@ -2676,7 +2886,7 @@
           "description": "支撑探测派生的接地状态；不再复制水平/竖直速度，实际速度读取 LinearVelocity。",
           "source": {
             "path": "src/gameplay.rs",
-            "line": 41
+            "line": 42
           }
         },
         {
@@ -2738,7 +2948,7 @@
           "description": "HeldBy 的自动反向索引，仅在关系需要时存在；业务读取第一件持有物，容器本身可容纳多件。",
           "source": {
             "path": "src/gameplay.rs",
-            "line": 63
+            "line": 64
           }
         },
         {
@@ -3028,7 +3238,7 @@
           "description": "快递身份标记。",
           "source": {
             "path": "src/gameplay.rs",
-            "line": 48
+            "line": 49
           }
         },
         {
@@ -3038,7 +3248,7 @@
           "description": "可拾取能力标记；交互系统按此能力选择物体。",
           "source": {
             "path": "src/gameplay.rs",
-            "line": 53
+            "line": 54
           }
         },
         {
@@ -3100,7 +3310,7 @@
           "description": "可选关系组件，仅持有时存在；指向持有者，增删通过 Commands 延迟执行。",
           "source": {
             "path": "src/gameplay.rs",
-            "line": 58
+            "line": 59
           }
         },
         {
@@ -3413,7 +3623,7 @@
           "description": "持握时的呈现检查目标，镜头显示链更新；物理施力不读取它。",
           "source": {
             "path": "src/gameplay.rs",
-            "line": 68
+            "line": 69
           }
         },
         {
@@ -3423,7 +3633,7 @@
           "description": "可选外部传感器标签；当前场景未设置，接地过滤显式排除。",
           "source": {
             "path": "src/gameplay.rs",
-            "line": 169
+            "line": 170
           }
         },
         {
@@ -3578,7 +3788,7 @@
           "description": "EguiContext 要求的组件；控制上下文输入与输出处理，当前保留插件默认值。",
           "source": {
             "path": "src/main.rs",
-            "line": 65
+            "line": 71
           }
         },
         {
@@ -3590,7 +3800,7 @@
           "description": "UI 输入缓冲组件，包含映射后的窗口输入；不是玩法 Resource 或动作意图。",
           "source": {
             "path": "src/main.rs",
-            "line": 65
+            "line": 71
           }
         },
         {
@@ -3602,7 +3812,7 @@
           "description": "EguiPlugin::default() 默认启用多轮 UI 计算，PrimaryEguiContext 钩子附加此组件；PostUpdate 的引擎循环据此调用 UI Schedule。",
           "source": {
             "path": "src/main.rs",
-            "line": 65
+            "line": 71
           }
         },
         {
@@ -3614,7 +3824,7 @@
           "description": "UI 计算输出，由多轮上下文循环写入并交给插件输出、渲染处理。",
           "source": {
             "path": "src/main.rs",
-            "line": 65
+            "line": 71
           }
         },
         {
@@ -3763,7 +3973,7 @@
           "description": "主窗口；sync_mouse_capture 读取焦点及当前物理光标，并用 Egui 缓存的面板层命中区域区别游戏区点击。AutoNoVsync 可能由平台回退。",
           "source": {
             "path": "src/main.rs",
-            "line": 45
+            "line": 51
           }
         },
         {
@@ -3773,7 +3983,7 @@
           "description": "标识鼠标捕获系统要求唯一的主窗口。",
           "source": {
             "path": "src/main.rs",
-            "line": 45
+            "line": 51
           }
         },
         {
@@ -4191,7 +4401,7 @@
           "description": "独立 Enhanced Input 上下文标记。",
           "source": {
             "path": "src/ui/navigation.rs",
-            "line": 14
+            "line": 15
           }
         },
         {
@@ -4203,7 +4413,7 @@
           "description": "高于玩法上下文，防止同一按键重复消费。",
           "source": {
             "path": "src/ui/navigation.rs",
-            "line": 74
+            "line": 75
           }
         },
         {
@@ -4215,7 +4425,7 @@
           "description": "sync_context 按窗口聚焦替换启用状态。",
           "source": {
             "path": "src/ui/navigation.rs",
-            "line": 87
+            "line": 88
           }
         },
         {
@@ -4227,7 +4437,7 @@
           "description": "接受手柄菜单按钮，键盘绑定同时有效。",
           "source": {
             "path": "src/ui/navigation.rs",
-            "line": 75
+            "line": 76
           }
         },
         {
@@ -4239,7 +4449,7 @@
           "description": "actions! 创建六个 Action<A> 与键盘/手柄绑定；每个动作 consume_input 与 require_reset。动作/绑定实体由输入插件关系管理，未在这里逐个展开。",
           "source": {
             "path": "src/ui/navigation.rs",
-            "line": 76
+            "line": 77
           }
         }
       ]
@@ -4257,7 +4467,7 @@
           "description": "仅清理菜单页面，不改变展示舞台或玩法会话。",
           "source": {
             "path": "src/ui/mod.rs",
-            "line": 89
+            "line": 92
           }
         },
         {
@@ -4315,7 +4525,7 @@
           "description": "业务动作与连续导航序号，不依赖按钮文字或实体名。",
           "source": {
             "path": "src/ui/mod.rs",
-            "line": 82
+            "line": 85
           }
         },
         {
@@ -4337,7 +4547,7 @@
           "description": "原生命中后产生相同 UiRequest，离开恢复纸色。",
           "source": {
             "path": "src/ui/navigation.rs",
-            "line": 214
+            "line": 228
           }
         },
         {
@@ -4807,7 +5017,7 @@
       "description": "共享动态刚体、运动控制、重力、拾取与弹簧持握参数；检查器修改只影响当前会话。",
       "source": {
         "path": "src/gameplay.rs",
-        "line": 76
+        "line": 77
       }
     },
     {
@@ -4820,7 +5030,7 @@
       "description": "固定 60 Hz 模拟时钟，由引擎固定循环推进；每个渲染帧执行 0..N 个固定步。帧率上限不会修改此时间步。",
       "source": {
         "path": "src/main.rs",
-        "line": 62
+        "line": 68
       }
     },
     {
@@ -4841,10 +5051,10 @@
       "fields": [
         "真实时间 delta / elapsed"
       ],
-      "description": "引擎真实时钟；Enhanced Input 的 ContextTime 可读取，与 Time 的自动阶段语义不同。",
+      "description": "引擎真实时钟；Enhanced Input 的 ContextTime 可读取，与 Time 的自动阶段语义不同。音频节流也使用此时钟，暂停时仍前进。",
       "source": {
         "path": "src/main.rs",
-        "line": 38
+        "line": 41
       }
     },
     {
@@ -4881,7 +5091,7 @@
       "description": "引擎从 MouseButtonInput 更新；输入框架可读取，但当前没有鼠标按钮玩法绑定。",
       "source": {
         "path": "src/main.rs",
-        "line": 38
+        "line": 41
       }
     },
     {
@@ -4905,7 +5115,7 @@
       "description": "底层窗口键盘消息，由引擎输入系统读取；缓冲通信不是触发式 Observer。",
       "source": {
         "path": "src/main.rs",
-        "line": 38
+        "line": 41
       }
     },
     {
@@ -4917,7 +5127,7 @@
       "description": "引擎输入系统据此释放残留按键状态。",
       "source": {
         "path": "src/main.rs",
-        "line": 38
+        "line": 41
       }
     },
     {
@@ -4956,7 +5166,7 @@
       "description": "底层鼠标位移消息，由引擎汇总为 AccumulatedMouseMotion。",
       "source": {
         "path": "src/main.rs",
-        "line": 38
+        "line": 41
       }
     },
     {
@@ -5017,7 +5227,7 @@
       "description": "主循环采用连续更新策略，帧间等待由 limit_frame_rate 负责。",
       "source": {
         "path": "src/main.rs",
-        "line": 60
+        "line": 66
       }
     },
     {
@@ -5092,7 +5302,7 @@
       "description": "只属于 log_character_velocity 的采样计时；解算/接地更新后每 0.5 模拟秒采样。",
       "source": {
         "path": "src/gameplay.rs",
-        "line": 475
+        "line": 479
       }
     },
     {
@@ -5116,7 +5326,7 @@
       "description": "引擎反射注册表；GameplayPlugin 注册玩法数据，CameraControlPlugin 另注册 ControlsCamera、CharacterVisual、CameraPerspective、OrbitCamera。检查器访问内存 ECS 数据；HeldBy、HoldingItems、MouseLookState 未开放反射编辑，切换请求字段标记 reflect(ignore)。",
       "source": {
         "path": "src/gameplay.rs",
-        "line": 131
+        "line": 132
       }
     },
     {
@@ -5132,7 +5342,7 @@
       "description": "Egui 插件全局配置。默认创建主相机上下文，默认不吸收或清空 Bevy 底层输入；项目通过 ContextActivity 隔离游戏动作。",
       "source": {
         "path": "src/main.rs",
-        "line": 65
+        "line": 71
       }
     },
     {
@@ -5142,7 +5352,7 @@
       "description": "EguiPlugin 默认多轮模式的标记 Resource；主上下文插入钩子据此要求 EguiMultipassSchedule。",
       "source": {
         "path": "src/main.rs",
-        "line": 65
+        "line": 71
       }
     },
     {
@@ -5169,7 +5379,7 @@
       "description": "Avian 碰撞树加速资源；SpatialQuery 只读 ColliderTrees 与实际 Position/Rotation/Collider/ColliderAabb，供接地和拾取查询。",
       "source": {
         "path": "src/gameplay.rs",
-        "line": 169
+        "line": 170
       }
     },
     {
@@ -5219,7 +5429,7 @@
       "description": "handle_interaction 每次调用清空并预留，防止同批次延迟拾取重复占用。",
       "source": {
         "path": "src/gameplay.rs",
-        "line": 300
+        "line": 301
       }
     },
     {
@@ -5261,7 +5471,7 @@
       "description": "保存 Main/Hidden/Settings/Help/Pause 页面、四个设置分类、返回来源与英文提示；不等同于 AppState。",
       "source": {
         "path": "src/ui/mod.rs",
-        "line": 36
+        "line": 39
       }
     },
     {
@@ -5273,7 +5483,7 @@
       "description": "可操作按钮的连续序号；未实现的灰色占位不进入焦点列表。",
       "source": {
         "path": "src/ui/mod.rs",
-        "line": 45
+        "line": 48
       }
     },
     {
@@ -5286,7 +5496,7 @@
       "description": "控制可见焦点来源；鼠标离开取消悬停，键盘/手柄仍可保持焦点序号。",
       "source": {
         "path": "src/ui/mod.rs",
-        "line": 49
+        "line": 52
       }
     },
     {
@@ -5338,7 +5548,7 @@
       "description": "鼠标与菜单 Enhanced Input 共享的缓冲请求；PreUpdate 每帧消费第一项并清空其余，防止旧页面穿透。",
       "source": {
         "path": "src/ui/mod.rs",
-        "line": 93
+        "line": 96
       }
     },
     {
@@ -5382,8 +5592,10 @@
     {
       "id": "resource.AssetServer",
       "name": "AssetServer",
-      "fields": [],
-      "description": "共享资产加载服务；菜单字体、GLB 与动画使用其句柄，BSN 不重复异步加载页面。",
+      "fields": [
+        "异步资产请求与加载状态"
+      ],
+      "description": "共享资产加载服务；菜单字体、GLB、动画和 Kira AudioSource 使用其句柄，BSN 不重复异步加载页面。",
       "source": {
         "path": "src/ui/backdrop.rs",
         "line": 36
@@ -5414,6 +5626,176 @@
         "path": "src/app_flow.rs",
         "line": 143
       }
+    },
+    {
+      "id": "resource.SoundRequestMessages",
+      "name": "Messages<SoundRequest>",
+      "fields": [
+        "cue: SoundCue",
+        "source: Entity"
+      ],
+      "description": "SoundEventsPlugin 与 GameUiPlugin 注册的反馈缓冲；菜单焦点/确认/返回与四种物理反馈已接入，其余五种 cue 仅预留映射。",
+      "source": {
+        "path": "src/audio_events.rs",
+        "line": 68
+      }
+    },
+    {
+      "id": "resource.SoundBank",
+      "name": "SoundBank",
+      "fields": [
+        "sounds: HashMap<SoundCue, LoadedSound>",
+        "voices: Vec<Voice>",
+        "last_played: HashMap<SoundCue, f64>"
+      ],
+      "description": "共享的短音句柄、清单策略、实例生命周期与最近获准时间；LoadedSound/Voice 是普通 Rust 数据，不是组件或资源。",
+      "source": {
+        "path": "src/audio.rs",
+        "line": 124
+      }
+    },
+    {
+      "id": "resource.UiAudioChannel",
+      "name": "AudioChannel<UiTrack>",
+      "fields": [
+        "类型化 UI 通道与内部播放命令队列"
+      ],
+      "description": "bevy_kira_audio 0.26.0 创建的共享通道；UiTrack 是 add_audio_channel 使用的 Resource 标记。",
+      "source": {
+        "path": "src/audio.rs",
+        "line": 32
+      }
+    },
+    {
+      "id": "resource.SfxAudioChannel",
+      "name": "AudioChannel<SfxTrack>",
+      "fields": [
+        "类型化 SFX 通道与内部播放命令队列"
+      ],
+      "description": "Kira SFX 通道；播放系统用共享 Res 排队，退出系统发出停止命令。",
+      "source": {
+        "path": "src/audio.rs",
+        "line": 33
+      }
+    },
+    {
+      "id": "resource.UiTrack",
+      "name": "UiTrack",
+      "fields": [],
+      "description": "无字段的 UI 通道类型标记，derive(Resource)；项目不直接访问独立 UiTrack 实例。",
+      "source": {
+        "path": "src/audio.rs",
+        "line": 25
+      }
+    },
+    {
+      "id": "resource.SfxTrack",
+      "name": "SfxTrack",
+      "fields": [],
+      "description": "无字段的 SFX 通道类型标记，derive(Resource)；项目不直接访问独立 SfxTrack 实例。",
+      "source": {
+        "path": "src/audio.rs",
+        "line": 27
+      }
+    },
+    {
+      "id": "resource.AudioSources",
+      "name": "Assets<AudioSource>",
+      "fields": [
+        "Kira StaticSoundData 与资产句柄"
+      ],
+      "description": "Kira 插件安装资产加载器；播放系统只读检查短音是否已加载。",
+      "source": {
+        "path": "src/audio.rs",
+        "line": 192
+      }
+    },
+    {
+      "id": "resource.AudioLoadFailures",
+      "name": "Messages<AssetLoadFailedEvent<AudioSource>>",
+      "fields": [
+        "path / error / id"
+      ],
+      "description": "Bevy 资产加载失败缓冲，由 log_load_failures 的独立 MessageReader 消费。",
+      "source": {
+        "path": "src/audio.rs",
+        "line": 169
+      }
+    },
+    {
+      "id": "resource.AppExitMessages",
+      "name": "Messages<AppExit>",
+      "fields": [
+        "AppExit 状态"
+      ],
+      "description": "引擎退出缓冲消息；stop_on_exit 在 main 的会话日志刷新之前停止 Kira 通道。",
+      "source": {
+        "path": "src/audio.rs",
+        "line": 256
+      }
+    },
+    {
+      "id": "resource.ContactGraph",
+      "name": "ContactGraph",
+      "fields": [
+        "活动/休眠接触对、流形法线与法向冲量"
+      ],
+      "description": "Avian 接触图；声音检测只读实际求解结果，不依赖离散 CollisionStart 消息。",
+      "source": {
+        "path": "src/audio_events.rs",
+        "line": 109
+      }
+    },
+    {
+      "id": "local.LandingContacts",
+      "name": "Local<LandingContacts>",
+      "fields": [
+        "supported: HashSet<Entity>",
+        "reported: HashSet<Entity>"
+      ],
+      "description": "emit_parcel_land 的支撑集合与一次落地锁存；每步更新，完全离开支撑时解除 reported。",
+      "source": {
+        "path": "src/audio_events.rs",
+        "line": 103
+      }
+    },
+    {
+      "id": "local.HoldStrain",
+      "name": "Local<HashMap<Entity, HoldStrain>>",
+      "fields": [
+        "holder: Option<Entity>",
+        "age / strained_for: f32",
+        "warned: bool"
+      ],
+      "description": "warn_hold_strain 的包裹持握计时与滞回锁存；解除持握或无效持有者时清理。",
+      "source": {
+        "path": "src/audio_events.rs",
+        "line": 155
+      }
+    },
+    {
+      "id": "local.MenuPointerCursor",
+      "name": "Local<Option<Vec2>> · previous_cursor",
+      "fields": [
+        "上一帧主窗口光标位置"
+      ],
+      "description": "pointer_interaction 私有的指针移动检测；不表示共享输入资源。",
+      "source": {
+        "path": "src/ui/navigation.rs",
+        "line": 228
+      }
+    },
+    {
+      "id": "local.MenuPointerHover",
+      "name": "Local<Option<Entity>> · previous_hover",
+      "fields": [
+        "上一帧悬停/按下的按钮实体"
+      ],
+      "description": "pointer_interaction 私有的悬停锁存；区分真实进入新按钮与按钮内移动、点击释放、重建初始悬停。",
+      "source": {
+        "path": "src/ui/navigation.rs",
+        "line": 228
+      }
     }
   ],
   "relationships": [
@@ -5429,7 +5811,7 @@
       "description": "普通 Entity 引用；#[entities] 用于实体映射，不提供反向索引或连带销毁。",
       "source": {
         "path": "src/gameplay.rs",
-        "line": 18
+        "line": 19
       }
     },
     {
@@ -5534,7 +5916,7 @@
       "description": "自定义关系，无 linked_spawn；人物销毁不会销毁箱体，失效目标清理恢复自由碰撞，动态刚体自然下落。",
       "source": {
         "path": "src/gameplay.rs",
-        "line": 58
+        "line": 59
       }
     },
     {
@@ -5728,15 +6110,16 @@
   ],
   "startup_notes": [
     "main 先准备独立会话日志，再配置 DefaultPlugins、主窗口与日志输出；插入 GameSettings、continuous 窗口策略及固定 60 Hz Time<Fixed>。",
-    "插件依次装配 EguiPlugin、受 gameplay_running 限制的 WorldInspectorPlugin、AppFlowPlugin、设置/玩法/输入/相机/场景插件、GameUiPlugin 与 StartupLogPlugin；注册顺序不是系统执行顺序。",
-    "AppState 默认 MainMenu；PlayState 仅在 InGame 存在。Startup 创建持久 MenuContext 控制者并输出四项启动日志，不创建物理角色或快递。",
+    "插件依次装配 EguiPlugin、受 gameplay_running 限制的 WorldInspectorPlugin、AppFlowPlugin、设置/玩法/音频/输入/相机/场景插件、GameUiPlugin 与 StartupLogPlugin；注册顺序不是系统执行顺序。",
+    "AppState 默认 MainMenu；PlayState 仅在 InGame 存在。Startup 创建持久 MenuContext 控制者、预加载短音并输出四项启动日志，不创建物理角色或快递。",
     "StateTransition 紧随 PreUpdate：MainMenu 入口设置页面、停用玩法输入并生成独立展示舞台；InGame 入口才由 spawn_scene 生成物理原型，Running 入口隐藏菜单并恢复时间。",
     "Pause 入口保留 InGame 与全部玩法实体，清意图、停用上下文、释放光标并冻结虚拟/物理时钟；返回 MainMenu 时 DespawnOnExit(InGame) 与 ChildOf 清理业务根及视觉子树。",
     "GameplayContext 有六个动作/九条绑定，MenuContext 独立有六个动作和键盘/手柄绑定。F3 释放检查器光标，Esc 经菜单动作负责暂停/返回。",
     "主菜单展示树拥有独立 Camera3d、IsDefaultUiCamera 与 PrimaryEguiContext；进入游戏后舞台退出，玩法相机接管，不创建第二个游戏窗口。",
-    "GameUiPlugin 初始化页面/焦点/输入来源、设置草稿与保存路径、UiRequest 消息和字体主题；BSN 声明控件树，系统处理输入、状态、设置与视觉更新。",
+    "GameUiPlugin 初始化页面/焦点/输入来源、设置草稿与保存路径、UiRequest 消息和字体主题；BSN 声明控件树，系统处理输入、状态、设置与视觉更新。同样注册 SoundRequest，使菜单最小 App 不依赖音频设备。",
     "GameplayPlugin 安装 DemoPhysicsPlugin 与 PhysicsPlugins，物理调度仍为 FixedPostUpdate；独立无状态测试兼容运行，但实际应用玩法和相机同步仅在 Running 执行。",
-    "SessionWriter 初始化后交给日志输出层；SessionLogGuard 由 main 持有，App::run 返回后记录退出并刷新。日志不是存档或玩法 ECS 消息。"
+    "SessionWriter 初始化后交给日志输出层；SessionLogGuard 由 main 持有，App::run 返回后记录退出并刷新。日志不是存档或玩法 ECS 消息。",
+    "GameplayPlugin 内部注册 SoundEventsPlugin 与 SoundRequest；GameAudioPlugin 独立安装 Kira 0.26.0、两个类型通道与 SoundBank，DefaultPlugins 显式禁用 Bevy 默认 AudioPlugin，避免双输出设备。"
   ],
   "general_notes": [
     "systems 的固定 ID 用于布局。kind=engine 是引擎或输入框架阶段的概览，kind=sync 是延迟命令应用点，kind=observer 是触发式响应，其余为项目系统。",
@@ -5772,6 +6155,9 @@
     "可操作按钮带 Button/MenuButton；Continue、Multiplayer 及未实现设置是静态 Coming Soon 节点，不带动作、不保存虚构设置、不参与键盘序号。",
     "状态类型 AppState/PlayState 对应 State 与 NextState 资源；MenuPage/SettingsTab 是 MenuState 内部值。UiRequest 是缓冲 Message，Fire/Pointer/WorldInstanceReady 是触发事件，不混用图例。",
     "展示 WorldAssetRoot 异步展开 GLB，字体使用预加载句柄；BSN 构造辅助函数不是 Schedule 系统。模型 Ready 与滚动回调用 on(...) 在具体实体注册 Observer。",
-    "文字叶节点保留默认自动最小宽度，避免 Bevy 0.19 在自动横排测量中把显式 min_width:0 解析为零宽；布局计算与真实字形的无窗口回归不替代用户最终视觉验收。"
+    "文字叶节点保留默认自动最小宽度，避免 Bevy 0.19 在自动横排测量中把显式 min_width:0 解析为零宽；布局计算与真实字形的无窗口回归不替代用户最终视觉验收。",
+    "SoundRequest 是缓冲 Message，由真实菜单焦点、接受的菜单请求、成功拿放命令、固定步持握观察与真实支撑撞击写入；Update 在 UI Style 后播放，不从原始按键猜测业务成功。",
+    "音频观察和物理规则分开：警告只提示不改变持握；落地锁存涵盖活动与休眠支撑，暂停/主菜单不采集。Kira 输出与无设备事件测试分开；12 种 cue 中菜单三种及物理四种已接入，交接、推车、弹开与交付共五种预留。",
+    "GameAudioPlugin 的 Update 链在 UiSystems::Style 后显式运行 log_load_failures → play_requests → stop_on_exit；节流用 Time<Real>，总并发 4、SFX 最多 3。与 Kira 内部系统不指定额外全序，通道排队后由插件消费。"
   ]
 }
