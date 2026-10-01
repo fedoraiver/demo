@@ -1,0 +1,745 @@
+{
+  "checked_at_utc": "2026-10-01T07:22:52.991468+00:00",
+  "root": "D:\\demo",
+  "files": [
+    {
+      "file": "assets\\models\\buildings\\bld_courier_station.glb",
+      "bytes": 1272760,
+      "meshes": 279,
+      "nodes": 280,
+      "vertices": 29228,
+      "triangles": 33642,
+      "skins": 0,
+      "skinned_nodes": 0,
+      "animations": [],
+      "root_origin_y_up_m": [
+        0,
+        0,
+        0
+      ],
+      "surface_orientation": {},
+      "status": "passed"
+    },
+    {
+      "file": "assets\\models\\buildings\\bld_music_shop.glb",
+      "bytes": 1469444,
+      "meshes": 242,
+      "nodes": 243,
+      "vertices": 34182,
+      "triangles": 41968,
+      "skins": 0,
+      "skinned_nodes": 0,
+      "animations": [],
+      "root_origin_y_up_m": [
+        0,
+        0,
+        0
+      ],
+      "surface_orientation": {},
+      "status": "passed"
+    },
+    {
+      "file": "assets\\models\\buildings\\bld_pizza_shop.glb",
+      "bytes": 1991148,
+      "meshes": 208,
+      "nodes": 209,
+      "vertices": 46668,
+      "triangles": 65440,
+      "skins": 0,
+      "skinned_nodes": 0,
+      "animations": [],
+      "root_origin_y_up_m": [
+        0,
+        0,
+        0
+      ],
+      "surface_orientation": {},
+      "status": "passed"
+    },
+    {
+      "file": "assets\\models\\buildings\\bld_residential_a.glb",
+      "bytes": 676776,
+      "meshes": 435,
+      "nodes": 436,
+      "vertices": 10440,
+      "triangles": 5220,
+      "skins": 0,
+      "skinned_nodes": 0,
+      "animations": [],
+      "root_origin_y_up_m": [
+        0,
+        0,
+        0
+      ],
+      "art_asset_structure": {
+        "height_m": 3.7725003247007027,
+        "floorboards": 22,
+        "front_wallboards": 55,
+        "wood_materials": [
+          "ci_weathered_dark",
+          "ci_weathered_wood",
+          "ci_wood_gray"
+        ]
+      },
+      "surface_orientation": {},
+      "status": "passed"
+    },
+    {
+      "file": "assets\\models\\buildings\\bld_residential_b.glb",
+      "bytes": 667340,
+      "meshes": 429,
+      "nodes": 430,
+      "vertices": 10296,
+      "triangles": 5148,
+      "skins": 0,
+      "skinned_nodes": 0,
+      "animations": [],
+      "root_origin_y_up_m": [
+        0,
+        0,
+        0
+      ],
+      "art_asset_structure": {
+        "height_m": 3.7325003715810086,
+        "floorboards": 22,
+        "front_wallboards": 53,
+        "wood_materials": [
+          "ci_weathered_dark",
+          "ci_weathered_wood",
+          "ci_wood_gray"
+        ]
+      },
+      "surface_orientation": {},
+      "status": "passed"
+    },
+    {
+      "file": "assets\\models\\characters\\chr_courier.glb",
+      "bytes": 368380,
+      "meshes": 59,
+      "nodes": 78,
+      "vertices": 4868,
+      "triangles": 2072,
+      "skins": 1,
+      "skinned_nodes": 59,
+      "animations": [
+        "Carry_Idle",
+        "Idle",
+        "Walk"
+      ],
+      "root_origin_y_up_m": [
+        0,
+        0,
+        0
+      ],
+      "feet_min_y_m": 0.0,
+      "height_m": 1.909999966621399,
+      "bounds_y_up_m": [
+        [
+          -0.3665124773979187,
+          0.0,
+          -0.21908599138259888
+        ],
+        [
+          0.3665124773979187,
+          1.909999966621399,
+          0.16899999976158142
+        ]
+      ],
+      "surface_orientation": {},
+      "status": "passed"
+    },
+    {
+      "file": "assets\\models\\characters\\chr_dispatcher.glb",
+      "bytes": 376024,
+      "meshes": 72,
+      "nodes": 91,
+      "vertices": 5468,
+      "triangles": 2356,
+      "skins": 1,
+      "skinned_nodes": 72,
+      "animations": [],
+      "root_origin_y_up_m": [
+        0,
+        0,
+        0
+      ],
+      "feet_min_y_m": 0.0,
+      "height_m": 1.909999966621399,
+      "bounds_y_up_m": [
+        [
+          -0.3665124773979187,
+          0.0,
+          -0.21908599138259888
+        ],
+        [
+          0.36651235818862915,
+          1.909999966621399,
+          0.16899999976158142
+        ]
+      ],
+      "surface_orientation": {},
+      "status": "passed"
+    },
+    {
+      "file": "assets\\models\\characters\\chr_music_clerk.glb",
+      "bytes": 369244,
+      "meshes": 70,
+      "nodes": 89,
+      "vertices": 5396,
+      "triangles": 2252,
+      "skins": 1,
+      "skinned_nodes": 70,
+      "animations": [],
+      "root_origin_y_up_m": [
+        0,
+        0,
+        0
+      ],
+      "feet_min_y_m": 0.0,
+      "height_m": 1.940000057220459,
+      "bounds_y_up_m": [
+        [
+          -0.36651235818862915,
+          0.0,
+          -0.20500001311302185
+        ],
+        [
+          0.3665124773979187,
+          1.940000057220459,
+          0.13099998235702515
+        ]
+      ],
+      "surface_orientation": {},
+      "status": "passed"
+    },
+    {
+      "file": "assets\\models\\characters\\chr_pizza_clerk.glb",
+      "bytes": 346844,
+      "meshes": 64,
+      "nodes": 83,
+      "vertices": 5111,
+      "triangles": 2185,
+      "skins": 1,
+      "skinned_nodes": 64,
+      "animations": [],
+      "root_origin_y_up_m": [
+        0,
+        0,
+        0
+      ],
+      "feet_min_y_m": 0.0,
+      "height_m": 1.909999966621399,
+      "bounds_y_up_m": [
+        [
+          -0.36651238799095154,
+          0.0,
+          -0.21908599138259888
+        ],
+        [
+          0.36651238799095154,
+          1.909999966621399,
+          0.16899999976158142
+        ]
+      ],
+      "surface_orientation": {},
+      "status": "passed"
+    },
+    {
+      "file": "assets\\models\\characters\\chr_resident.glb",
+      "bytes": 355324,
+      "meshes": 64,
+      "nodes": 83,
+      "vertices": 5252,
+      "triangles": 2212,
+      "skins": 1,
+      "skinned_nodes": 64,
+      "animations": [],
+      "root_origin_y_up_m": [
+        0,
+        0,
+        0
+      ],
+      "feet_min_y_m": 0.0,
+      "height_m": 1.940000057220459,
+      "bounds_y_up_m": [
+        [
+          -0.3665124773979187,
+          0.0,
+          -0.20500001311302185
+        ],
+        [
+          0.3665124773979187,
+          1.940000057220459,
+          0.20894736051559448
+        ]
+      ],
+      "surface_orientation": {},
+      "status": "passed"
+    },
+    {
+      "file": "assets\\models\\environment\\env_dock.glb",
+      "bytes": 154600,
+      "meshes": 46,
+      "nodes": 47,
+      "vertices": 3696,
+      "triangles": 1768,
+      "skins": 0,
+      "skinned_nodes": 0,
+      "animations": [],
+      "root_origin_y_up_m": [
+        0,
+        0,
+        0
+      ],
+      "surface_orientation": {},
+      "status": "passed"
+    },
+    {
+      "file": "assets\\models\\environment\\env_island_terrain.glb",
+      "bytes": 69388,
+      "meshes": 20,
+      "nodes": 21,
+      "vertices": 1593,
+      "triangles": 547,
+      "skins": 0,
+      "skinned_nodes": 0,
+      "animations": [],
+      "root_origin_y_up_m": [
+        0,
+        0,
+        0
+      ],
+      "surface_orientation": {
+        "faceted_coastal_cliffs": {
+          "triangles": 162,
+          "correct_winding": 162,
+          "correct_normals": 162
+        },
+        "island_surface": {
+          "triangles": 25,
+          "correct_winding": 25,
+          "correct_normals": 25
+        }
+      },
+      "status": "passed"
+    },
+    {
+      "file": "assets\\models\\environment\\env_ocean.glb",
+      "bytes": 270760,
+      "meshes": 286,
+      "nodes": 287,
+      "vertices": 2888,
+      "triangles": 1498,
+      "skins": 0,
+      "skinned_nodes": 0,
+      "animations": [],
+      "root_origin_y_up_m": [
+        0,
+        0,
+        0
+      ],
+      "surface_orientation": {
+        "ocean_base": {
+          "triangles": 2,
+          "correct_winding": 2,
+          "correct_normals": 2
+        },
+        "turquoise_shallows": {
+          "triangles": 108,
+          "correct_winding": 108,
+          "correct_normals": 108
+        }
+      },
+      "status": "passed"
+    },
+    {
+      "file": "assets\\models\\environment\\env_stairs_railings.glb",
+      "bytes": 245188,
+      "meshes": 130,
+      "nodes": 131,
+      "vertices": 4488,
+      "triangles": 2168,
+      "skins": 0,
+      "skinned_nodes": 0,
+      "animations": [],
+      "root_origin_y_up_m": [
+        0,
+        0,
+        0
+      ],
+      "surface_orientation": {},
+      "status": "passed"
+    },
+    {
+      "file": "assets\\models\\environment\\env_wilderness_details.glb",
+      "bytes": 169664,
+      "meshes": 72,
+      "nodes": 73,
+      "vertices": 3430,
+      "triangles": 1216,
+      "skins": 0,
+      "skinned_nodes": 0,
+      "animations": [],
+      "root_origin_y_up_m": [
+        0,
+        0,
+        0
+      ],
+      "surface_orientation": {},
+      "status": "passed"
+    },
+    {
+      "file": "assets\\models\\environment\\prop_broadleaf_tree.glb",
+      "bytes": 33252,
+      "meshes": 15,
+      "nodes": 16,
+      "vertices": 594,
+      "triangles": 240,
+      "skins": 0,
+      "skinned_nodes": 0,
+      "animations": [],
+      "root_origin_y_up_m": [
+        0,
+        0,
+        0
+      ],
+      "surface_orientation": {},
+      "status": "passed"
+    },
+    {
+      "file": "assets\\models\\environment\\prop_grass_clump.glb",
+      "bytes": 21096,
+      "meshes": 13,
+      "nodes": 14,
+      "vertices": 416,
+      "triangles": 182,
+      "skins": 0,
+      "skinned_nodes": 0,
+      "animations": [],
+      "root_origin_y_up_m": [
+        0,
+        0,
+        0
+      ],
+      "surface_orientation": {},
+      "status": "passed"
+    },
+    {
+      "file": "assets\\models\\environment\\prop_palm_crooked.glb",
+      "bytes": 192216,
+      "meshes": 53,
+      "nodes": 54,
+      "vertices": 5914,
+      "triangles": 2464,
+      "skins": 0,
+      "skinned_nodes": 0,
+      "animations": [],
+      "root_origin_y_up_m": [
+        0,
+        0,
+        0
+      ],
+      "art_asset_structure": {
+        "height_m": 6.767104625701904,
+        "trunk_segments": 8,
+        "leaf_fronds": 9
+      },
+      "surface_orientation": {},
+      "status": "passed"
+    },
+    {
+      "file": "assets\\models\\environment\\prop_palm_leaning.glb",
+      "bytes": 180280,
+      "meshes": 51,
+      "nodes": 52,
+      "vertices": 5548,
+      "triangles": 2316,
+      "skins": 0,
+      "skinned_nodes": 0,
+      "animations": [],
+      "root_origin_y_up_m": [
+        0,
+        0,
+        0
+      ],
+      "art_asset_structure": {
+        "height_m": 6.365265369415283,
+        "trunk_segments": 8,
+        "leaf_fronds": 8
+      },
+      "surface_orientation": {},
+      "status": "passed"
+    },
+    {
+      "file": "assets\\models\\environment\\prop_palm_young.glb",
+      "bytes": 163492,
+      "meshes": 45,
+      "nodes": 46,
+      "vertices": 5026,
+      "triangles": 2092,
+      "skins": 0,
+      "skinned_nodes": 0,
+      "animations": [],
+      "root_origin_y_up_m": [
+        0,
+        0,
+        0
+      ],
+      "art_asset_structure": {
+        "height_m": 5.4432597160339355,
+        "trunk_segments": 7,
+        "leaf_fronds": 7
+      },
+      "surface_orientation": {},
+      "status": "passed"
+    },
+    {
+      "file": "assets\\models\\environment\\prop_pine_tree.glb",
+      "bytes": 49652,
+      "meshes": 24,
+      "nodes": 25,
+      "vertices": 970,
+      "triangles": 436,
+      "skins": 0,
+      "skinned_nodes": 0,
+      "animations": [],
+      "root_origin_y_up_m": [
+        0,
+        0,
+        0
+      ],
+      "surface_orientation": {},
+      "status": "passed"
+    },
+    {
+      "file": "assets\\models\\environment\\prop_shrub.glb",
+      "bytes": 14612,
+      "meshes": 5,
+      "nodes": 6,
+      "vertices": 300,
+      "triangles": 100,
+      "skins": 0,
+      "skinned_nodes": 0,
+      "animations": [],
+      "root_origin_y_up_m": [
+        0,
+        0,
+        0
+      ],
+      "surface_orientation": {},
+      "status": "passed"
+    },
+    {
+      "file": "assets\\models\\environment\\prop_wild_grass_patch.glb",
+      "bytes": 64112,
+      "meshes": 1,
+      "nodes": 2,
+      "vertices": 2272,
+      "triangles": 994,
+      "skins": 0,
+      "skinned_nodes": 0,
+      "animations": [],
+      "root_origin_y_up_m": [
+        0,
+        0,
+        0
+      ],
+      "surface_orientation": {},
+      "status": "passed"
+    },
+    {
+      "file": "assets\\models\\props\\prop_bench.glb",
+      "bytes": 31732,
+      "meshes": 20,
+      "nodes": 21,
+      "vertices": 480,
+      "triangles": 240,
+      "skins": 0,
+      "skinned_nodes": 0,
+      "animations": [],
+      "root_origin_y_up_m": [
+        0,
+        0,
+        0
+      ],
+      "surface_orientation": {},
+      "status": "passed"
+    },
+    {
+      "file": "assets\\models\\props\\prop_crate.glb",
+      "bytes": 86956,
+      "meshes": 40,
+      "nodes": 41,
+      "vertices": 1664,
+      "triangles": 768,
+      "skins": 0,
+      "skinned_nodes": 0,
+      "animations": [],
+      "root_origin_y_up_m": [
+        0,
+        0,
+        0
+      ],
+      "surface_orientation": {},
+      "status": "passed"
+    },
+    {
+      "file": "assets\\models\\props\\prop_dock_bollard.glb",
+      "bytes": 20140,
+      "meshes": 9,
+      "nodes": 10,
+      "vertices": 360,
+      "triangles": 204,
+      "skins": 0,
+      "skinned_nodes": 0,
+      "animations": [],
+      "root_origin_y_up_m": [
+        0,
+        0,
+        0
+      ],
+      "surface_orientation": {},
+      "status": "passed"
+    },
+    {
+      "file": "assets\\models\\props\\prop_mailbox.glb",
+      "bytes": 184852,
+      "meshes": 8,
+      "nodes": 9,
+      "vertices": 4254,
+      "triangles": 6872,
+      "skins": 0,
+      "skinned_nodes": 0,
+      "animations": [],
+      "root_origin_y_up_m": [
+        0,
+        0,
+        0
+      ],
+      "surface_orientation": {},
+      "status": "passed"
+    },
+    {
+      "file": "assets\\models\\props\\prop_parcel_fragile.glb",
+      "bytes": 789100,
+      "meshes": 36,
+      "nodes": 37,
+      "vertices": 18217,
+      "triangles": 29603,
+      "skins": 0,
+      "skinned_nodes": 0,
+      "animations": [],
+      "root_origin_y_up_m": [
+        0,
+        0,
+        0
+      ],
+      "surface_orientation": {},
+      "status": "passed"
+    },
+    {
+      "file": "assets\\models\\props\\prop_parcel_standard.glb",
+      "bytes": 1056672,
+      "meshes": 32,
+      "nodes": 33,
+      "vertices": 24614,
+      "triangles": 40494,
+      "skins": 0,
+      "skinned_nodes": 0,
+      "animations": [],
+      "root_origin_y_up_m": [
+        0,
+        0,
+        0
+      ],
+      "surface_orientation": {},
+      "status": "passed"
+    },
+    {
+      "file": "assets\\models\\props\\prop_planter.glb",
+      "bytes": 24896,
+      "meshes": 15,
+      "nodes": 16,
+      "vertices": 432,
+      "triangles": 198,
+      "skins": 0,
+      "skinned_nodes": 0,
+      "animations": [],
+      "root_origin_y_up_m": [
+        0,
+        0,
+        0
+      ],
+      "surface_orientation": {},
+      "status": "passed"
+    },
+    {
+      "file": "assets\\models\\props\\prop_street_lamp.glb",
+      "bytes": 27224,
+      "meshes": 13,
+      "nodes": 14,
+      "vertices": 464,
+      "triangles": 234,
+      "skins": 0,
+      "skinned_nodes": 0,
+      "animations": [],
+      "root_origin_y_up_m": [
+        0,
+        0,
+        0
+      ],
+      "surface_orientation": {},
+      "status": "passed"
+    },
+    {
+      "file": "assets\\maps\\courier_island.glb",
+      "bytes": 10624868,
+      "meshes": 2724,
+      "nodes": 4638,
+      "vertices": 216559,
+      "triangles": 215105,
+      "skins": 5,
+      "skinned_nodes": 329,
+      "animations": [],
+      "map_art_requirements": {
+        "palm_instances": 31,
+        "wild_grass_instances": 110,
+        "wooden_building_instances": {
+          "bld_courier_station": 1,
+          "bld_music_shop": 1,
+          "bld_pizza_shop": 1,
+          "bld_residential_a": 1,
+          "bld_residential_b": 1
+        }
+      },
+      "surface_orientation": {
+        "faceted_coastal_cliffs": {
+          "triangles": 162,
+          "correct_winding": 162,
+          "correct_normals": 162
+        },
+        "island_surface": {
+          "triangles": 25,
+          "correct_winding": 25,
+          "correct_normals": 25
+        },
+        "ocean_base": {
+          "triangles": 2,
+          "correct_winding": 2,
+          "correct_normals": 2
+        },
+        "turquoise_shallows": {
+          "triangles": 108,
+          "correct_winding": 108,
+          "correct_normals": 108
+        }
+      },
+      "status": "passed"
+    }
+  ],
+  "errors": [],
+  "manifest": "art\\asset_manifest.json",
+  "expected_asset_count": 31,
+  "status": "passed",
+  "files_checked": 32
+}
