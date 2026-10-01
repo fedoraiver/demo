@@ -1,0 +1,1451 @@
+{
+  "schema_version": 1,
+  "created_date": "2026-10-01",
+  "policy": {
+    "budget": 0,
+    "paid_generation_api": false,
+    "external_license_allowlist": [
+      "CC0-1.0"
+    ],
+    "preview_to_lossless_conversion": false,
+    "ambience_default_enabled": false,
+    "subjective_listening_status": "not_performed",
+    "game_runtime_status": "not_performed"
+  },
+  "reuse_audit": {
+    "checked_date": "2026-10-01",
+    "result": "no_reusable_audio_found_in_readable_asset_paths",
+    "paths": [
+      "D:/demo/assets",
+      "D:/demo/art",
+      "D:/.codex/worktrees/3775/demo/assets"
+    ],
+    "limitations": [
+      "Original worktree assets directory does not exist.",
+      "D:/demo/art/scripts, D:/demo/art/blender and D:/demo/art/previews could not be read (access denied). No files were changed in other worktrees."
+    ]
+  },
+  "events": [
+    {
+      "id": "menu",
+      "title": "菜单",
+      "asset_ids": [
+        "menu_hover",
+        "menu_confirm",
+        "menu_cancel"
+      ],
+      "trigger_contract": "Focus change, confirm, and cancel; attach only when a menu exists.",
+      "availability": "reserved"
+    },
+    {
+      "id": "parcel_pickup",
+      "title": "拾取",
+      "asset_ids": [
+        "parcel_pickup"
+      ],
+      "trigger_contract": "Successful pickup after the held relationship is visible.",
+      "availability": "current_gameplay"
+    },
+    {
+      "id": "parcel_release",
+      "title": "放下",
+      "asset_ids": [
+        "parcel_release"
+      ],
+      "trigger_contract": "Successful voluntary release; this does not imply ground contact.",
+      "availability": "current_gameplay"
+    },
+    {
+      "id": "parcel_handoff",
+      "title": "交接",
+      "asset_ids": [
+        "parcel_handoff"
+      ],
+      "trigger_contract": "Accepted parcel transfer between distinct holders; a failed attempt is silent.",
+      "availability": "reserved"
+    },
+    {
+      "id": "parcel_land",
+      "title": "包裹落地",
+      "asset_ids": [
+        "parcel_land"
+      ],
+      "trigger_contract": "Inspect actual parcel support contacts each FixedPostUpdate. For a non-held parcel, upward support normal.y >= 0.65 and normal impulse >= 1.8 kg m/s trigger once; latch until all supporting contacts end, including sleeping contacts. Predictive or initial low-impulse contacts do not consume the later real impact.",
+      "availability": "current_physics"
+    },
+    {
+      "id": "cart_collision",
+      "title": "推车碰撞",
+      "asset_ids": [
+        "cart_collision"
+      ],
+      "trigger_contract": "New cart obstacle impact above threshold; current generic metal asset is a placeholder.",
+      "availability": "reserved"
+    },
+    {
+      "id": "character_bounce",
+      "title": "角色弹开",
+      "asset_ids": [
+        "character_bounce"
+      ],
+      "trigger_contract": "An explicit bounce gameplay transition; ordinary wall blocking is not a bounce.",
+      "availability": "reserved"
+    },
+    {
+      "id": "instability_warning",
+      "title": "失稳警告",
+      "asset_ids": [
+        "instability_warning"
+      ],
+      "trigger_contract": "After 0.5 s pickup grace, held-position error > 0.65 m for 0.35 s enters warning. Recovery requires error < 0.45 m; cooldown 1 s. Normal initial pickup inertia is suppressed.",
+      "availability": "current_physics_threshold"
+    },
+    {
+      "id": "delivery_success",
+      "title": "交付成功",
+      "asset_ids": [
+        "delivery_success"
+      ],
+      "trigger_contract": "An order is accepted and settled once at its correct recipient.",
+      "availability": "reserved"
+    },
+    {
+      "id": "delivery_failure",
+      "title": "交付失败",
+      "asset_ids": [
+        "delivery_failure"
+      ],
+      "trigger_contract": "A delivery attempt is rejected; preserve the parcel for retry.",
+      "availability": "reserved"
+    },
+    {
+      "id": "ambience_island_placeholder",
+      "title": "环境音候选",
+      "asset_ids": [
+        "ambience_island_placeholder"
+      ],
+      "trigger_contract": "Audition-only synthetic loop. Do not enable by default.",
+      "availability": "audition_only"
+    }
+  ],
+  "assets": [
+    {
+      "id": "ambience_island_placeholder",
+      "event_ids": [
+        "ambience_island_placeholder"
+      ],
+      "title": "合成环境底纹候选：非实录海浪，默认关闭",
+      "category": "ambience",
+      "path": "audio/ambience/ambience_island_placeholder.wav",
+      "kind": "procedural",
+      "format": {
+        "container": "wav",
+        "codec": "pcm_s16le",
+        "lossy": false,
+        "provenance": "original locally synthesized PCM",
+        "sample_rate": 44100,
+        "channels": 1,
+        "bit_depth": 16
+      },
+      "source": {
+        "page": null,
+        "author": "demo project local procedural generator",
+        "license": "project-original",
+        "license_version": null,
+        "acquired_date": null,
+        "created_date": "2026-10-01",
+        "note": "No external samples; rights remain with the project. This is not a third-party CC0 claim."
+      },
+      "generator": {
+        "path": "scripts/audio_pipeline.py",
+        "version": "1.0.0",
+        "config": "assets/audio/generation.json",
+        "recipe": "periodic_breeze",
+        "seed": 17008,
+        "parameters": {
+          "recipe": "periodic_breeze",
+          "seed": 17008,
+          "duration_seconds": 6,
+          "target_peak": 0.08,
+          "harmonics": [
+            {
+              "cycles": 47,
+              "amplitude": 0.2
+            },
+            {
+              "cycles": 131,
+              "amplitude": 0.16
+            },
+            {
+              "cycles": 283,
+              "amplitude": 0.14
+            },
+            {
+              "cycles": 439,
+              "amplitude": 0.12
+            },
+            {
+              "cycles": 673,
+              "amplitude": 0.1
+            },
+            {
+              "cycles": 977,
+              "amplitude": 0.08
+            },
+            {
+              "cycles": 1429,
+              "amplitude": 0.06
+            },
+            {
+              "cycles": 1987,
+              "amplitude": 0.045
+            },
+            {
+              "cycles": 2791,
+              "amplitude": 0.025
+            },
+            {
+              "cycles": 3889,
+              "amplitude": 0.015
+            }
+          ]
+        }
+      },
+      "processing": [
+        "local mathematical synthesis using recorded recipe and per-asset seed",
+        "remove DC mean",
+        "edge fade for one-shots only",
+        "scale to recorded target peak",
+        "quantize once to signed PCM16 WAV"
+      ],
+      "playback": {
+        "volume": 0.25,
+        "cooldown_seconds": 0,
+        "max_instances": 1,
+        "looped": true
+      },
+      "sha256": "6df0a7e3d2601daa656ee7155d3c494888d05a863d7f7a586a82bdfd629ca2a6",
+      "quality": {
+        "id": "ambience_island_placeholder",
+        "path": "audio/ambience/ambience_island_placeholder.wav",
+        "status": "pass",
+        "warnings": [],
+        "codec": "pcm_s16le",
+        "sample_rate": 44100,
+        "channels": 1,
+        "frames": 264600,
+        "duration_seconds": 6.0,
+        "peak_amplitude": 0.07998657,
+        "peak_dbfs": -21.94,
+        "rms_dbfs": -31.602,
+        "head_silence_seconds": 0.0,
+        "tail_silence_seconds": 0.0,
+        "clipped_samples": 0,
+        "dc_amplitude": 0.0,
+        "loop_seam": {
+          "boundary_delta": 6.104e-05,
+          "slope_delta": 0.0,
+          "listening_status": "not_performed",
+          "method": "sample boundary and first derivative; no subjective claim"
+        },
+        "sha256": "6df0a7e3d2601daa656ee7155d3c494888d05a863d7f7a586a82bdfd629ca2a6",
+        "hash_match": true,
+        "original_release_bytes_match": null,
+        "regenerated_bytes_match": true
+      }
+    },
+    {
+      "id": "cart_collision",
+      "event_ids": [
+        "cart_collision"
+      ],
+      "title": "推车碰撞：通用金属撞击占位",
+      "category": "sfx",
+      "path": "audio/sfx/cart_collision.ogg",
+      "kind": "external_release",
+      "format": {
+        "container": "ogg",
+        "codec": "vorbis",
+        "lossy": true,
+        "provenance": "official release OGG (not a web preview, not asserted lossless)"
+      },
+      "source": {
+        "id": "kenney_impact-sounds",
+        "page": "https://kenney.nl/assets/impact-sounds",
+        "download": "https://kenney.nl/media/pages/assets/impact-sounds/87b4ddecda-1677589768/kenney_impact-sounds.zip",
+        "author": "Kenney",
+        "pack_version": "1.0",
+        "license": "CC0",
+        "license_version": "1.0 Universal",
+        "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "acquired_date": "2026-10-01",
+        "original_entry": "Audio/impactMetal_medium_000.ogg",
+        "license_evidence": "audio/sources/kenney_impact-sounds-License.txt"
+      },
+      "generator": null,
+      "processing": [
+        "extract official ZIP entry unchanged",
+        "rename only; no decoding, transcoding, trimming or normalization of delivered bytes",
+        "apply volume only at playback"
+      ],
+      "playback": {
+        "volume": 0.45,
+        "cooldown_seconds": 0.25,
+        "max_instances": 2,
+        "looped": false
+      },
+      "sha256": "a96f879fec0864a8938e0c745b6996a6c5679c16a234ce31a01cc995e8401003",
+      "quality": {
+        "id": "cart_collision",
+        "path": "audio/sfx/cart_collision.ogg",
+        "status": "pass",
+        "warnings": [],
+        "codec": "vorbis",
+        "sample_rate": 44100,
+        "channels": 2,
+        "frames": 11857,
+        "duration_seconds": 0.268866,
+        "peak_amplitude": 0.87536001,
+        "peak_dbfs": -1.156,
+        "rms_dbfs": -21.549,
+        "head_silence_seconds": 2.3e-05,
+        "tail_silence_seconds": 0.0,
+        "clipped_samples": 0,
+        "dc_amplitude": 4.51e-06,
+        "loop_seam": null,
+        "sha256": "a96f879fec0864a8938e0c745b6996a6c5679c16a234ce31a01cc995e8401003",
+        "hash_match": true,
+        "original_release_bytes_match": true,
+        "regenerated_bytes_match": null
+      }
+    },
+    {
+      "id": "character_bounce",
+      "event_ids": [
+        "character_bounce"
+      ],
+      "title": "角色弹开：低音回弹",
+      "category": "sfx",
+      "path": "audio/sfx/character_bounce.wav",
+      "kind": "procedural",
+      "format": {
+        "container": "wav",
+        "codec": "pcm_s16le",
+        "lossy": false,
+        "provenance": "original locally synthesized PCM",
+        "sample_rate": 44100,
+        "channels": 1,
+        "bit_depth": 16
+      },
+      "source": {
+        "page": null,
+        "author": "demo project local procedural generator",
+        "license": "project-original",
+        "license_version": null,
+        "acquired_date": null,
+        "created_date": "2026-10-01",
+        "note": "No external samples; rights remain with the project. This is not a third-party CC0 claim."
+      },
+      "generator": {
+        "path": "scripts/audio_pipeline.py",
+        "version": "1.0.0",
+        "config": "assets/audio/generation.json",
+        "recipe": "sine_notes",
+        "seed": 17004,
+        "parameters": {
+          "recipe": "sine_notes",
+          "seed": 17004,
+          "duration_seconds": 0.32,
+          "notes": [
+            {
+              "start_seconds": 0,
+              "duration_seconds": 0.29,
+              "frequency_start_hz": 230,
+              "frequency_end_hz": 95,
+              "attack_seconds": 0.005,
+              "release_seconds": 0.02,
+              "decay": 3,
+              "second_harmonic": 0.3,
+              "amplitude": 1
+            }
+          ],
+          "edge_fade_seconds": 0.003,
+          "target_peak": 0.48
+        }
+      },
+      "processing": [
+        "local mathematical synthesis using recorded recipe and per-asset seed",
+        "remove DC mean",
+        "edge fade for one-shots only",
+        "scale to recorded target peak",
+        "quantize once to signed PCM16 WAV"
+      ],
+      "playback": {
+        "volume": 0.7,
+        "cooldown_seconds": 0.25,
+        "max_instances": 2,
+        "looped": false
+      },
+      "sha256": "80760ac634fa657ff6d5abbf415a1983593b858dacea0d5fd4f8934f4293985c",
+      "quality": {
+        "id": "character_bounce",
+        "path": "audio/sfx/character_bounce.wav",
+        "status": "pass",
+        "warnings": [],
+        "codec": "pcm_s16le",
+        "sample_rate": 44100,
+        "channels": 1,
+        "frames": 14112,
+        "duration_seconds": 0.32,
+        "peak_amplitude": 0.47998047,
+        "peak_dbfs": -6.376,
+        "rms_dbfs": -18.055,
+        "head_silence_seconds": 0.000227,
+        "tail_silence_seconds": 0.030998,
+        "clipped_samples": 0,
+        "dc_amplitude": 0.00014436,
+        "loop_seam": null,
+        "sha256": "80760ac634fa657ff6d5abbf415a1983593b858dacea0d5fd4f8934f4293985c",
+        "hash_match": true,
+        "original_release_bytes_match": null,
+        "regenerated_bytes_match": true
+      }
+    },
+    {
+      "id": "delivery_failure",
+      "event_ids": [
+        "delivery_failure"
+      ],
+      "title": "交付失败：下行双音",
+      "category": "sfx",
+      "path": "audio/sfx/delivery_failure.wav",
+      "kind": "procedural",
+      "format": {
+        "container": "wav",
+        "codec": "pcm_s16le",
+        "lossy": false,
+        "provenance": "original locally synthesized PCM",
+        "sample_rate": 44100,
+        "channels": 1,
+        "bit_depth": 16
+      },
+      "source": {
+        "page": null,
+        "author": "demo project local procedural generator",
+        "license": "project-original",
+        "license_version": null,
+        "acquired_date": null,
+        "created_date": "2026-10-01",
+        "note": "No external samples; rights remain with the project. This is not a third-party CC0 claim."
+      },
+      "generator": {
+        "path": "scripts/audio_pipeline.py",
+        "version": "1.0.0",
+        "config": "assets/audio/generation.json",
+        "recipe": "sine_notes",
+        "seed": 17007,
+        "parameters": {
+          "recipe": "sine_notes",
+          "seed": 17007,
+          "duration_seconds": 0.43,
+          "notes": [
+            {
+              "start_seconds": 0,
+              "duration_seconds": 0.2,
+              "frequency_start_hz": 392,
+              "frequency_end_hz": 370,
+              "attack_seconds": 0.005,
+              "release_seconds": 0.02,
+              "decay": 1,
+              "second_harmonic": 0.15,
+              "amplitude": 1
+            },
+            {
+              "start_seconds": 0.18,
+              "duration_seconds": 0.22,
+              "frequency_start_hz": 293.665,
+              "frequency_end_hz": 260,
+              "attack_seconds": 0.005,
+              "release_seconds": 0.02,
+              "decay": 2,
+              "second_harmonic": 0.15,
+              "amplitude": 0.8
+            }
+          ],
+          "edge_fade_seconds": 0.003,
+          "target_peak": 0.48
+        }
+      },
+      "processing": [
+        "local mathematical synthesis using recorded recipe and per-asset seed",
+        "remove DC mean",
+        "edge fade for one-shots only",
+        "scale to recorded target peak",
+        "quantize once to signed PCM16 WAV"
+      ],
+      "playback": {
+        "volume": 0.65,
+        "cooldown_seconds": 0.5,
+        "max_instances": 2,
+        "looped": false
+      },
+      "sha256": "1f0ec1a30fee5a683aa3c3d67ce71a309cab36bfa23681374771363ca25f375a",
+      "quality": {
+        "id": "delivery_failure",
+        "path": "audio/sfx/delivery_failure.wav",
+        "status": "pass",
+        "warnings": [],
+        "codec": "pcm_s16le",
+        "sample_rate": 44100,
+        "channels": 1,
+        "frames": 18963,
+        "duration_seconds": 0.43,
+        "peak_amplitude": 0.47998047,
+        "peak_dbfs": -6.376,
+        "rms_dbfs": -15.166,
+        "head_silence_seconds": 0.000454,
+        "tail_silence_seconds": 0.031202,
+        "clipped_samples": 0,
+        "dc_amplitude": 2.154e-05,
+        "loop_seam": null,
+        "sha256": "1f0ec1a30fee5a683aa3c3d67ce71a309cab36bfa23681374771363ca25f375a",
+        "hash_match": true,
+        "original_release_bytes_match": null,
+        "regenerated_bytes_match": true
+      }
+    },
+    {
+      "id": "delivery_success",
+      "event_ids": [
+        "delivery_success"
+      ],
+      "title": "交付成功：上行三音",
+      "category": "sfx",
+      "path": "audio/sfx/delivery_success.wav",
+      "kind": "procedural",
+      "format": {
+        "container": "wav",
+        "codec": "pcm_s16le",
+        "lossy": false,
+        "provenance": "original locally synthesized PCM",
+        "sample_rate": 44100,
+        "channels": 1,
+        "bit_depth": 16
+      },
+      "source": {
+        "page": null,
+        "author": "demo project local procedural generator",
+        "license": "project-original",
+        "license_version": null,
+        "acquired_date": null,
+        "created_date": "2026-10-01",
+        "note": "No external samples; rights remain with the project. This is not a third-party CC0 claim."
+      },
+      "generator": {
+        "path": "scripts/audio_pipeline.py",
+        "version": "1.0.0",
+        "config": "assets/audio/generation.json",
+        "recipe": "sine_notes",
+        "seed": 17006,
+        "parameters": {
+          "recipe": "sine_notes",
+          "seed": 17006,
+          "duration_seconds": 0.65,
+          "notes": [
+            {
+              "start_seconds": 0,
+              "duration_seconds": 0.22,
+              "frequency_start_hz": 523.251,
+              "frequency_end_hz": 523.251,
+              "attack_seconds": 0.005,
+              "release_seconds": 0.02,
+              "decay": 2,
+              "second_harmonic": 0.15,
+              "amplitude": 1
+            },
+            {
+              "start_seconds": 0.18,
+              "duration_seconds": 0.22,
+              "frequency_start_hz": 659.255,
+              "frequency_end_hz": 659.255,
+              "attack_seconds": 0.005,
+              "release_seconds": 0.02,
+              "decay": 2,
+              "second_harmonic": 0.15,
+              "amplitude": 0.85
+            },
+            {
+              "start_seconds": 0.36,
+              "duration_seconds": 0.26,
+              "frequency_start_hz": 783.991,
+              "frequency_end_hz": 783.991,
+              "attack_seconds": 0.005,
+              "release_seconds": 0.02,
+              "decay": 2,
+              "second_harmonic": 0.15,
+              "amplitude": 0.75
+            }
+          ],
+          "edge_fade_seconds": 0.003,
+          "target_peak": 0.48
+        }
+      },
+      "processing": [
+        "local mathematical synthesis using recorded recipe and per-asset seed",
+        "remove DC mean",
+        "edge fade for one-shots only",
+        "scale to recorded target peak",
+        "quantize once to signed PCM16 WAV"
+      ],
+      "playback": {
+        "volume": 0.7,
+        "cooldown_seconds": 0.5,
+        "max_instances": 2,
+        "looped": false
+      },
+      "sha256": "243f61e30203f4b8e3f025d50b94e3273690bf068c3219d30326626dcb36f56e",
+      "quality": {
+        "id": "delivery_success",
+        "path": "audio/sfx/delivery_success.wav",
+        "status": "pass",
+        "warnings": [],
+        "codec": "pcm_s16le",
+        "sample_rate": 44100,
+        "channels": 1,
+        "frames": 28665,
+        "duration_seconds": 0.65,
+        "peak_amplitude": 0.47998047,
+        "peak_dbfs": -6.376,
+        "rms_dbfs": -16.508,
+        "head_silence_seconds": 0.000249,
+        "tail_silence_seconds": 0.030408,
+        "clipped_samples": 0,
+        "dc_amplitude": 1.002e-05,
+        "loop_seam": null,
+        "sha256": "243f61e30203f4b8e3f025d50b94e3273690bf068c3219d30326626dcb36f56e",
+        "hash_match": true,
+        "original_release_bytes_match": null,
+        "regenerated_bytes_match": true
+      }
+    },
+    {
+      "id": "instability_warning",
+      "event_ids": [
+        "instability_warning"
+      ],
+      "title": "失稳警告：双脉冲",
+      "category": "sfx",
+      "path": "audio/sfx/instability_warning.wav",
+      "kind": "procedural",
+      "format": {
+        "container": "wav",
+        "codec": "pcm_s16le",
+        "lossy": false,
+        "provenance": "original locally synthesized PCM",
+        "sample_rate": 44100,
+        "channels": 1,
+        "bit_depth": 16
+      },
+      "source": {
+        "page": null,
+        "author": "demo project local procedural generator",
+        "license": "project-original",
+        "license_version": null,
+        "acquired_date": null,
+        "created_date": "2026-10-01",
+        "note": "No external samples; rights remain with the project. This is not a third-party CC0 claim."
+      },
+      "generator": {
+        "path": "scripts/audio_pipeline.py",
+        "version": "1.0.0",
+        "config": "assets/audio/generation.json",
+        "recipe": "sine_notes",
+        "seed": 17005,
+        "parameters": {
+          "recipe": "sine_notes",
+          "seed": 17005,
+          "duration_seconds": 0.3,
+          "notes": [
+            {
+              "start_seconds": 0,
+              "duration_seconds": 0.11,
+              "frequency_start_hz": 760,
+              "frequency_end_hz": 740,
+              "attack_seconds": 0.005,
+              "release_seconds": 0.02,
+              "decay": 1,
+              "second_harmonic": 0.15,
+              "amplitude": 1
+            },
+            {
+              "start_seconds": 0.16,
+              "duration_seconds": 0.11,
+              "frequency_start_hz": 760,
+              "frequency_end_hz": 740,
+              "attack_seconds": 0.005,
+              "release_seconds": 0.02,
+              "decay": 1,
+              "second_harmonic": 0.15,
+              "amplitude": 0.8
+            }
+          ],
+          "edge_fade_seconds": 0.003,
+          "target_peak": 0.48
+        }
+      },
+      "processing": [
+        "local mathematical synthesis using recorded recipe and per-asset seed",
+        "remove DC mean",
+        "edge fade for one-shots only",
+        "scale to recorded target peak",
+        "quantize once to signed PCM16 WAV"
+      ],
+      "playback": {
+        "volume": 0.5,
+        "cooldown_seconds": 1,
+        "max_instances": 2,
+        "looped": false
+      },
+      "sha256": "0435f8481353c8cca0273c40274e955f9f81f0b4cd217ff94bc86d6a21bef76f",
+      "quality": {
+        "id": "instability_warning",
+        "path": "audio/sfx/instability_warning.wav",
+        "status": "pass",
+        "warnings": [],
+        "codec": "pcm_s16le",
+        "sample_rate": 44100,
+        "channels": 1,
+        "frames": 13230,
+        "duration_seconds": 0.3,
+        "peak_amplitude": 0.47998047,
+        "peak_dbfs": -6.376,
+        "rms_dbfs": -15.61,
+        "head_silence_seconds": 0.000204,
+        "tail_silence_seconds": 0.030136,
+        "clipped_samples": 0,
+        "dc_amplitude": 7.43e-06,
+        "loop_seam": null,
+        "sha256": "0435f8481353c8cca0273c40274e955f9f81f0b4cd217ff94bc86d6a21bef76f",
+        "hash_match": true,
+        "original_release_bytes_match": null,
+        "regenerated_bytes_match": true
+      }
+    },
+    {
+      "id": "parcel_handoff",
+      "event_ids": [
+        "parcel_handoff"
+      ],
+      "title": "交接：两个柔和交替音",
+      "category": "sfx",
+      "path": "audio/sfx/parcel_handoff.wav",
+      "kind": "procedural",
+      "format": {
+        "container": "wav",
+        "codec": "pcm_s16le",
+        "lossy": false,
+        "provenance": "original locally synthesized PCM",
+        "sample_rate": 44100,
+        "channels": 1,
+        "bit_depth": 16
+      },
+      "source": {
+        "page": null,
+        "author": "demo project local procedural generator",
+        "license": "project-original",
+        "license_version": null,
+        "acquired_date": null,
+        "created_date": "2026-10-01",
+        "note": "No external samples; rights remain with the project. This is not a third-party CC0 claim."
+      },
+      "generator": {
+        "path": "scripts/audio_pipeline.py",
+        "version": "1.0.0",
+        "config": "assets/audio/generation.json",
+        "recipe": "sine_notes",
+        "seed": 17003,
+        "parameters": {
+          "recipe": "sine_notes",
+          "seed": 17003,
+          "duration_seconds": 0.27,
+          "notes": [
+            {
+              "start_seconds": 0,
+              "duration_seconds": 0.13,
+              "frequency_start_hz": 660,
+              "frequency_end_hz": 660,
+              "attack_seconds": 0.005,
+              "release_seconds": 0.02,
+              "decay": 2,
+              "second_harmonic": 0.15,
+              "amplitude": 1
+            },
+            {
+              "start_seconds": 0.12,
+              "duration_seconds": 0.12,
+              "frequency_start_hz": 880,
+              "frequency_end_hz": 880.0,
+              "attack_seconds": 0.005,
+              "release_seconds": 0.02,
+              "decay": 2,
+              "second_harmonic": 0.15,
+              "amplitude": 0.7
+            }
+          ],
+          "edge_fade_seconds": 0.003,
+          "target_peak": 0.48
+        }
+      },
+      "processing": [
+        "local mathematical synthesis using recorded recipe and per-asset seed",
+        "remove DC mean",
+        "edge fade for one-shots only",
+        "scale to recorded target peak",
+        "quantize once to signed PCM16 WAV"
+      ],
+      "playback": {
+        "volume": 0.65,
+        "cooldown_seconds": 0.15,
+        "max_instances": 2,
+        "looped": false
+      },
+      "sha256": "7851238b157cb089af6e22874be1cbb57ab429036b44c20f72c9e43bf095722e",
+      "quality": {
+        "id": "parcel_handoff",
+        "path": "audio/sfx/parcel_handoff.wav",
+        "status": "pass",
+        "warnings": [],
+        "codec": "pcm_s16le",
+        "sample_rate": 44100,
+        "channels": 1,
+        "frames": 11907,
+        "duration_seconds": 0.27,
+        "peak_amplitude": 0.47998047,
+        "peak_dbfs": -6.376,
+        "rms_dbfs": -17.091,
+        "head_silence_seconds": 0.000181,
+        "tail_silence_seconds": 0.030499,
+        "clipped_samples": 0,
+        "dc_amplitude": 2.609e-05,
+        "loop_seam": null,
+        "sha256": "7851238b157cb089af6e22874be1cbb57ab429036b44c20f72c9e43bf095722e",
+        "hash_match": true,
+        "original_release_bytes_match": null,
+        "regenerated_bytes_match": true
+      }
+    },
+    {
+      "id": "parcel_land",
+      "event_ids": [
+        "parcel_land"
+      ],
+      "title": "包裹落地：木质撞击",
+      "category": "sfx",
+      "path": "audio/sfx/parcel_land.ogg",
+      "kind": "external_release",
+      "format": {
+        "container": "ogg",
+        "codec": "vorbis",
+        "lossy": true,
+        "provenance": "official release OGG (not a web preview, not asserted lossless)"
+      },
+      "source": {
+        "id": "kenney_impact-sounds",
+        "page": "https://kenney.nl/assets/impact-sounds",
+        "download": "https://kenney.nl/media/pages/assets/impact-sounds/87b4ddecda-1677589768/kenney_impact-sounds.zip",
+        "author": "Kenney",
+        "pack_version": "1.0",
+        "license": "CC0",
+        "license_version": "1.0 Universal",
+        "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "acquired_date": "2026-10-01",
+        "original_entry": "Audio/impactWood_medium_000.ogg",
+        "license_evidence": "audio/sources/kenney_impact-sounds-License.txt"
+      },
+      "generator": null,
+      "processing": [
+        "extract official ZIP entry unchanged",
+        "rename only; no decoding, transcoding, trimming or normalization of delivered bytes",
+        "apply volume only at playback"
+      ],
+      "playback": {
+        "volume": 0.45,
+        "cooldown_seconds": 0.15,
+        "max_instances": 2,
+        "looped": false
+      },
+      "sha256": "1723a9fd25103ed41af06054814e84e65f4a772bac86ab2dc927da93d9592ff5",
+      "quality": {
+        "id": "parcel_land",
+        "path": "audio/sfx/parcel_land.ogg",
+        "status": "pass",
+        "warnings": [],
+        "codec": "vorbis",
+        "sample_rate": 44100,
+        "channels": 2,
+        "frames": 14543,
+        "duration_seconds": 0.329773,
+        "peak_amplitude": 0.88774341,
+        "peak_dbfs": -1.034,
+        "rms_dbfs": -22.565,
+        "head_silence_seconds": 0.0,
+        "tail_silence_seconds": 0.0,
+        "clipped_samples": 0,
+        "dc_amplitude": 4.089e-05,
+        "loop_seam": null,
+        "sha256": "1723a9fd25103ed41af06054814e84e65f4a772bac86ab2dc927da93d9592ff5",
+        "hash_match": true,
+        "original_release_bytes_match": true,
+        "regenerated_bytes_match": null
+      }
+    },
+    {
+      "id": "parcel_pickup",
+      "event_ids": [
+        "parcel_pickup"
+      ],
+      "title": "拾取：上行双音",
+      "category": "sfx",
+      "path": "audio/sfx/parcel_pickup.wav",
+      "kind": "procedural",
+      "format": {
+        "container": "wav",
+        "codec": "pcm_s16le",
+        "lossy": false,
+        "provenance": "original locally synthesized PCM",
+        "sample_rate": 44100,
+        "channels": 1,
+        "bit_depth": 16
+      },
+      "source": {
+        "page": null,
+        "author": "demo project local procedural generator",
+        "license": "project-original",
+        "license_version": null,
+        "acquired_date": null,
+        "created_date": "2026-10-01",
+        "note": "No external samples; rights remain with the project. This is not a third-party CC0 claim."
+      },
+      "generator": {
+        "path": "scripts/audio_pipeline.py",
+        "version": "1.0.0",
+        "config": "assets/audio/generation.json",
+        "recipe": "sine_notes",
+        "seed": 17001,
+        "parameters": {
+          "recipe": "sine_notes",
+          "seed": 17001,
+          "duration_seconds": 0.22,
+          "notes": [
+            {
+              "start_seconds": 0,
+              "duration_seconds": 0.11,
+              "frequency_start_hz": 620,
+              "frequency_end_hz": 740,
+              "attack_seconds": 0.005,
+              "release_seconds": 0.02,
+              "decay": 2,
+              "second_harmonic": 0.15,
+              "amplitude": 1
+            },
+            {
+              "start_seconds": 0.1,
+              "duration_seconds": 0.1,
+              "frequency_start_hz": 930,
+              "frequency_end_hz": 1050,
+              "attack_seconds": 0.005,
+              "release_seconds": 0.02,
+              "decay": 2,
+              "second_harmonic": 0.15,
+              "amplitude": 0.7
+            }
+          ],
+          "edge_fade_seconds": 0.003,
+          "target_peak": 0.48
+        }
+      },
+      "processing": [
+        "local mathematical synthesis using recorded recipe and per-asset seed",
+        "remove DC mean",
+        "edge fade for one-shots only",
+        "scale to recorded target peak",
+        "quantize once to signed PCM16 WAV"
+      ],
+      "playback": {
+        "volume": 0.65,
+        "cooldown_seconds": 0.15,
+        "max_instances": 2,
+        "looped": false
+      },
+      "sha256": "2f356e84aeaab3b90393bceba8d88a47f0c464bc7a9a90b96f5bc83ec207f632",
+      "quality": {
+        "id": "parcel_pickup",
+        "path": "audio/sfx/parcel_pickup.wav",
+        "status": "pass",
+        "warnings": [],
+        "codec": "pcm_s16le",
+        "sample_rate": 44100,
+        "channels": 1,
+        "frames": 9702,
+        "duration_seconds": 0.22,
+        "peak_amplitude": 0.47998047,
+        "peak_dbfs": -6.376,
+        "rms_dbfs": -16.879,
+        "head_silence_seconds": 0.000454,
+        "tail_silence_seconds": 0.020431,
+        "clipped_samples": 0,
+        "dc_amplitude": 5.351e-05,
+        "loop_seam": null,
+        "sha256": "2f356e84aeaab3b90393bceba8d88a47f0c464bc7a9a90b96f5bc83ec207f632",
+        "hash_match": true,
+        "original_release_bytes_match": null,
+        "regenerated_bytes_match": true
+      }
+    },
+    {
+      "id": "parcel_release",
+      "event_ids": [
+        "parcel_release"
+      ],
+      "title": "放下：短下行音",
+      "category": "sfx",
+      "path": "audio/sfx/parcel_release.wav",
+      "kind": "procedural",
+      "format": {
+        "container": "wav",
+        "codec": "pcm_s16le",
+        "lossy": false,
+        "provenance": "original locally synthesized PCM",
+        "sample_rate": 44100,
+        "channels": 1,
+        "bit_depth": 16
+      },
+      "source": {
+        "page": null,
+        "author": "demo project local procedural generator",
+        "license": "project-original",
+        "license_version": null,
+        "acquired_date": null,
+        "created_date": "2026-10-01",
+        "note": "No external samples; rights remain with the project. This is not a third-party CC0 claim."
+      },
+      "generator": {
+        "path": "scripts/audio_pipeline.py",
+        "version": "1.0.0",
+        "config": "assets/audio/generation.json",
+        "recipe": "sine_notes",
+        "seed": 17002,
+        "parameters": {
+          "recipe": "sine_notes",
+          "seed": 17002,
+          "duration_seconds": 0.14,
+          "notes": [
+            {
+              "start_seconds": 0,
+              "duration_seconds": 0.14,
+              "frequency_start_hz": 510,
+              "frequency_end_hz": 260,
+              "attack_seconds": 0.005,
+              "release_seconds": 0.02,
+              "decay": 2,
+              "second_harmonic": 0.15,
+              "amplitude": 1
+            }
+          ],
+          "edge_fade_seconds": 0.003,
+          "target_peak": 0.48
+        }
+      },
+      "processing": [
+        "local mathematical synthesis using recorded recipe and per-asset seed",
+        "remove DC mean",
+        "edge fade for one-shots only",
+        "scale to recorded target peak",
+        "quantize once to signed PCM16 WAV"
+      ],
+      "playback": {
+        "volume": 0.5,
+        "cooldown_seconds": 0.15,
+        "max_instances": 2,
+        "looped": false
+      },
+      "sha256": "6e90aebc0a5ee7c128161c47f2db00aad48291f4fa4f35b2cdc11aa64fcd5058",
+      "quality": {
+        "id": "parcel_release",
+        "path": "audio/sfx/parcel_release.wav",
+        "status": "pass",
+        "warnings": [],
+        "codec": "pcm_s16le",
+        "sample_rate": 44100,
+        "channels": 1,
+        "frames": 6174,
+        "duration_seconds": 0.14,
+        "peak_amplitude": 0.47998047,
+        "peak_dbfs": -6.376,
+        "rms_dbfs": -15.537,
+        "head_silence_seconds": 0.000272,
+        "tail_silence_seconds": 0.001497,
+        "clipped_samples": 0,
+        "dc_amplitude": 3.303e-05,
+        "loop_seam": null,
+        "sha256": "6e90aebc0a5ee7c128161c47f2db00aad48291f4fa4f35b2cdc11aa64fcd5058",
+        "hash_match": true,
+        "original_release_bytes_match": null,
+        "regenerated_bytes_match": true
+      }
+    },
+    {
+      "id": "menu_cancel",
+      "event_ids": [
+        "menu_cancel"
+      ],
+      "title": "菜单返回",
+      "category": "ui",
+      "path": "audio/ui/menu_cancel.ogg",
+      "kind": "external_release",
+      "format": {
+        "container": "ogg",
+        "codec": "vorbis",
+        "lossy": true,
+        "provenance": "official release OGG (not a web preview, not asserted lossless)"
+      },
+      "source": {
+        "id": "kenney_interface-sounds",
+        "page": "https://kenney.nl/assets/interface-sounds",
+        "download": "https://kenney.nl/media/pages/assets/interface-sounds/fa43c1dd4d-1677589452/kenney_interface-sounds.zip",
+        "author": "Kenney",
+        "pack_version": "1.0",
+        "license": "CC0",
+        "license_version": "1.0 Universal",
+        "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "acquired_date": "2026-10-01",
+        "original_entry": "Audio/back_001.ogg",
+        "license_evidence": "audio/sources/kenney_interface-sounds-License.txt"
+      },
+      "generator": null,
+      "processing": [
+        "extract official ZIP entry unchanged",
+        "rename only; no decoding, transcoding, trimming or normalization of delivered bytes",
+        "apply volume only at playback"
+      ],
+      "playback": {
+        "volume": 0.36,
+        "cooldown_seconds": 0.15,
+        "max_instances": 2,
+        "looped": false
+      },
+      "sha256": "07db973f79f6ae0f2edc34561e7592e24d0577455919fb602cb8ecc0da991dcf",
+      "quality": {
+        "id": "menu_cancel",
+        "path": "audio/ui/menu_cancel.ogg",
+        "status": "pass",
+        "warnings": [],
+        "codec": "vorbis",
+        "sample_rate": 44100,
+        "channels": 1,
+        "frames": 2689,
+        "duration_seconds": 0.060975,
+        "peak_amplitude": 0.89581555,
+        "peak_dbfs": -0.956,
+        "rms_dbfs": -21.248,
+        "head_silence_seconds": 4.5e-05,
+        "tail_silence_seconds": 0.003084,
+        "clipped_samples": 0,
+        "dc_amplitude": 3.347e-05,
+        "loop_seam": null,
+        "sha256": "07db973f79f6ae0f2edc34561e7592e24d0577455919fb602cb8ecc0da991dcf",
+        "hash_match": true,
+        "original_release_bytes_match": true,
+        "regenerated_bytes_match": null
+      }
+    },
+    {
+      "id": "menu_confirm",
+      "event_ids": [
+        "menu_confirm"
+      ],
+      "title": "菜单确认",
+      "category": "ui",
+      "path": "audio/ui/menu_confirm.ogg",
+      "kind": "external_release",
+      "format": {
+        "container": "ogg",
+        "codec": "vorbis",
+        "lossy": true,
+        "provenance": "official release OGG (not a web preview, not asserted lossless)"
+      },
+      "source": {
+        "id": "kenney_interface-sounds",
+        "page": "https://kenney.nl/assets/interface-sounds",
+        "download": "https://kenney.nl/media/pages/assets/interface-sounds/fa43c1dd4d-1677589452/kenney_interface-sounds.zip",
+        "author": "Kenney",
+        "pack_version": "1.0",
+        "license": "CC0",
+        "license_version": "1.0 Universal",
+        "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "acquired_date": "2026-10-01",
+        "original_entry": "Audio/confirmation_001.ogg",
+        "license_evidence": "audio/sources/kenney_interface-sounds-License.txt"
+      },
+      "generator": null,
+      "processing": [
+        "extract official ZIP entry unchanged",
+        "rename only; no decoding, transcoding, trimming or normalization of delivered bytes",
+        "apply volume only at playback"
+      ],
+      "playback": {
+        "volume": 0.42,
+        "cooldown_seconds": 0.15,
+        "max_instances": 2,
+        "looped": false
+      },
+      "sha256": "063564703b6094d70718a3e787a55cc9141611e4ecd6b6637f8828f79b4a8c3a",
+      "quality": {
+        "id": "menu_confirm",
+        "path": "audio/ui/menu_confirm.ogg",
+        "status": "pass",
+        "warnings": [],
+        "codec": "vorbis",
+        "sample_rate": 44100,
+        "channels": 1,
+        "frames": 12782,
+        "duration_seconds": 0.289841,
+        "peak_amplitude": 0.89848465,
+        "peak_dbfs": -0.93,
+        "rms_dbfs": -11.313,
+        "head_silence_seconds": 4.5e-05,
+        "tail_silence_seconds": 0.0,
+        "clipped_samples": 0,
+        "dc_amplitude": 6.63e-06,
+        "loop_seam": null,
+        "sha256": "063564703b6094d70718a3e787a55cc9141611e4ecd6b6637f8828f79b4a8c3a",
+        "hash_match": true,
+        "original_release_bytes_match": true,
+        "regenerated_bytes_match": null
+      }
+    },
+    {
+      "id": "menu_hover",
+      "event_ids": [
+        "menu_hover"
+      ],
+      "title": "菜单焦点",
+      "category": "ui",
+      "path": "audio/ui/menu_hover.ogg",
+      "kind": "external_release",
+      "format": {
+        "container": "ogg",
+        "codec": "vorbis",
+        "lossy": true,
+        "provenance": "official release OGG (not a web preview, not asserted lossless)"
+      },
+      "source": {
+        "id": "kenney_interface-sounds",
+        "page": "https://kenney.nl/assets/interface-sounds",
+        "download": "https://kenney.nl/media/pages/assets/interface-sounds/fa43c1dd4d-1677589452/kenney_interface-sounds.zip",
+        "author": "Kenney",
+        "pack_version": "1.0",
+        "license": "CC0",
+        "license_version": "1.0 Universal",
+        "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "acquired_date": "2026-10-01",
+        "original_entry": "Audio/click_001.ogg",
+        "license_evidence": "audio/sources/kenney_interface-sounds-License.txt"
+      },
+      "generator": null,
+      "processing": [
+        "extract official ZIP entry unchanged",
+        "rename only; no decoding, transcoding, trimming or normalization of delivered bytes",
+        "apply volume only at playback"
+      ],
+      "playback": {
+        "volume": 0.3,
+        "cooldown_seconds": 0.075,
+        "max_instances": 2,
+        "looped": false
+      },
+      "sha256": "ccfb7fa0cccdd9faec0eb16033c732b1e308d139d80f799161495d58f7adcdb9",
+      "quality": {
+        "id": "menu_hover",
+        "path": "audio/ui/menu_hover.ogg",
+        "status": "pass",
+        "warnings": [],
+        "codec": "vorbis",
+        "sample_rate": 44100,
+        "channels": 1,
+        "frames": 4283,
+        "duration_seconds": 0.09712,
+        "peak_amplitude": 0.85570669,
+        "peak_dbfs": -1.354,
+        "rms_dbfs": -26.396,
+        "head_silence_seconds": 0.0,
+        "tail_silence_seconds": 0.0,
+        "clipped_samples": 0,
+        "dc_amplitude": 0.00021765,
+        "loop_seam": null,
+        "sha256": "ccfb7fa0cccdd9faec0eb16033c732b1e308d139d80f799161495d58f7adcdb9",
+        "hash_match": true,
+        "original_release_bytes_match": true,
+        "regenerated_bytes_match": null
+      }
+    }
+  ],
+  "sources": [
+    {
+      "id": "kenney_interface-sounds",
+      "title": "Interface Sounds",
+      "pack_version": "1.0",
+      "author": "Kenney",
+      "page": "https://kenney.nl/assets/interface-sounds",
+      "download": "https://kenney.nl/media/pages/assets/interface-sounds/fa43c1dd4d-1677589452/kenney_interface-sounds.zip",
+      "license": "CC0",
+      "license_version": "1.0 Universal",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "status": "downloaded",
+      "acquired_date": "2026-10-01",
+      "archive_bytes": 834536,
+      "archive_sha256": "f2193d072726d6758a5f7871b2dcc54dcce0d5c35c6f0a62f92549b327c81232",
+      "archive_cache": "tmp/audio/downloads/kenney_interface-sounds.zip",
+      "license_evidence": "audio/sources/kenney_interface-sounds-License.txt",
+      "license_evidence_sha256": "f7966c773bbed0eca6a9c75081c44a178b38eae112724dbb5fdfbd4192d118a9",
+      "selected_files": [
+        {
+          "id": "menu_hover",
+          "original_entry": "Audio/click_001.ogg",
+          "original_sha256": "ccfb7fa0cccdd9faec0eb16033c732b1e308d139d80f799161495d58f7adcdb9",
+          "output_sha256": "ccfb7fa0cccdd9faec0eb16033c732b1e308d139d80f799161495d58f7adcdb9"
+        },
+        {
+          "id": "menu_confirm",
+          "original_entry": "Audio/confirmation_001.ogg",
+          "original_sha256": "063564703b6094d70718a3e787a55cc9141611e4ecd6b6637f8828f79b4a8c3a",
+          "output_sha256": "063564703b6094d70718a3e787a55cc9141611e4ecd6b6637f8828f79b4a8c3a"
+        },
+        {
+          "id": "menu_cancel",
+          "original_entry": "Audio/back_001.ogg",
+          "original_sha256": "07db973f79f6ae0f2edc34561e7592e24d0577455919fb602cb8ecc0da991dcf",
+          "output_sha256": "07db973f79f6ae0f2edc34561e7592e24d0577455919fb602cb8ecc0da991dcf"
+        }
+      ],
+      "processing": [
+        "download official full release ZIP",
+        "extract selected OGG bytes unchanged",
+        "copy release License.txt unchanged"
+      ]
+    },
+    {
+      "id": "kenney_impact-sounds",
+      "title": "Impact Sounds",
+      "pack_version": "1.0",
+      "author": "Kenney",
+      "page": "https://kenney.nl/assets/impact-sounds",
+      "download": "https://kenney.nl/media/pages/assets/impact-sounds/87b4ddecda-1677589768/kenney_impact-sounds.zip",
+      "license": "CC0",
+      "license_version": "1.0 Universal",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "status": "downloaded",
+      "acquired_date": "2026-10-01",
+      "archive_bytes": 800850,
+      "archive_sha256": "029d734af1582474edf3a694d1b0cebc97c1c152f2f39fa34d4c2bafc5de77f8",
+      "archive_cache": "tmp/audio/downloads/kenney_impact-sounds.zip",
+      "license_evidence": "audio/sources/kenney_impact-sounds-License.txt",
+      "license_evidence_sha256": "b49aa9c56b04528b95913de13e506a0f7c5e807b9925db9bfef86af1f91120db",
+      "selected_files": [
+        {
+          "id": "parcel_land",
+          "original_entry": "Audio/impactWood_medium_000.ogg",
+          "original_sha256": "1723a9fd25103ed41af06054814e84e65f4a772bac86ab2dc927da93d9592ff5",
+          "output_sha256": "1723a9fd25103ed41af06054814e84e65f4a772bac86ab2dc927da93d9592ff5"
+        },
+        {
+          "id": "cart_collision",
+          "original_entry": "Audio/impactMetal_medium_000.ogg",
+          "original_sha256": "a96f879fec0864a8938e0c745b6996a6c5679c16a234ce31a01cc995e8401003",
+          "output_sha256": "a96f879fec0864a8938e0c745b6996a6c5679c16a234ce31a01cc995e8401003"
+        }
+      ],
+      "processing": [
+        "download official full release ZIP",
+        "extract selected OGG bytes unchanged",
+        "copy release License.txt unchanged"
+      ]
+    }
+  ],
+  "pending_sources": [
+    {
+      "id": "island_sea",
+      "title": "Sea-waves medium 01-090714.wav",
+      "page": "https://freesound.org/people/ra_gun/sounds/77467/",
+      "author": "ra_gun",
+      "license": "CC0",
+      "license_version": "1.0 Universal",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "reviewed_date": "2026-10-01",
+      "acquired_date": null,
+      "status": "not_downloaded",
+      "use": "ocean ambience",
+      "download_requires": "Freesound login",
+      "listed_original_format": {
+        "container": "wav",
+        "sample_rate": 48000,
+        "channels": 2,
+        "bit_depth": 16,
+        "duration_seconds": 25.965
+      },
+      "caveat": "Page metadata checked only. Original file, fidelity, noise floor and loop suitability not verified; preview must not be substituted."
+    },
+    {
+      "id": "island_wind",
+      "title": "Gentle wind",
+      "page": "https://freesound.org/people/fthgurdy/sounds/528944/",
+      "author": "fthgurdy",
+      "license": "CC0",
+      "license_version": "1.0 Universal",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "reviewed_date": "2026-10-01",
+      "acquired_date": null,
+      "status": "not_downloaded",
+      "use": "wind ambience",
+      "download_requires": "Freesound login",
+      "listed_original_format": {
+        "container": "wav",
+        "sample_rate": 44100,
+        "channels": 2,
+        "bit_depth": 16,
+        "duration_seconds": 9.531
+      },
+      "caveat": "Page metadata checked only. Original file, fidelity, noise floor and loop suitability not verified; preview must not be substituted."
+    },
+    {
+      "id": "cart_roll",
+      "title": "cart.wav",
+      "page": "https://freesound.org/people/mariiao2/sounds/232799/",
+      "author": "mariiao2",
+      "license": "CC0",
+      "license_version": "1.0 Universal",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "reviewed_date": "2026-10-01",
+      "acquired_date": null,
+      "status": "not_downloaded",
+      "use": "cart rolling; collision suitability not confirmed",
+      "download_requires": "Freesound login",
+      "listed_original_format": {
+        "container": "wav",
+        "sample_rate": 44100,
+        "channels": 2,
+        "bit_depth": 16,
+        "duration_seconds": 4.092
+      },
+      "caveat": "Page metadata checked only. Original file, fidelity, noise floor and loop suitability not verified; preview must not be substituted."
+    }
+  ],
+  "generator_environment": {
+    "version": "1.0.0",
+    "python": "3.11.15",
+    "dependencies": "Python standard library only",
+    "platform": "Windows-10-10.0.26300-SP0",
+    "script_sha256": "12f2ba625b7e1db681c57ab99587d886712a3454de322764f3acac8111579d5c",
+    "config_sha256": "0bf4bfcf8c64ca2333d088391e3e70375e801272ec321e32ac5e9c3e17f8ee83"
+  }
+}
