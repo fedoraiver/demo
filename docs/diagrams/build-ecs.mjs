@@ -45,13 +45,14 @@ function system(x, y, w, id, extraRows = null, height = 112) {
   registry[id] = s;
   return card(x, y, w, height, id, displayNames[id] || s.name, extraRows || [brief[id] || s.description], s.kind, 'small');
 }
-function edge(points, label = '', kind = 'order', labelPoint = null, ids = []) {
+function edge(points, label = '', kind = 'order', labelPoint = null, ids = [], arrow = true) {
   const c = { order: '#324153', read: '#2d72ad', write: '#288554', trigger: '#bf651e', reference: '#7b65a6', relationship: '#7b65a6', registration: '#89939f' }[kind] || '#324153';
   const d = points.map((p, i) => `${i ? 'L' : 'M'}${p[0]},${p[1]}`).join(' ');
   const dash = ['read', 'trigger', 'reference', 'registration'].includes(kind) ? 'stroke-dasharray="6 5"' : '';
   const midpoint = labelPoint || points[Math.floor(points.length / 2)];
   const width = Math.max(44, [...label].reduce((n, c) => n + (c.charCodeAt(0) > 255 ? 17 : 9), 0) + 16);
-  return `<g class="edge ${kind}" data-connect="${esc(ids.join('|'))}"><path d="${d}" stroke="${c}" stroke-width="${kind === 'order' ? 2.7 : 2}" fill="none" ${dash} marker-end="url(#arrow-${kind})"/>${label ? `<rect x="${midpoint[0] - width / 2}" y="${midpoint[1] - 13}" width="${width}" height="24" rx="4" fill="#fffdf9"/>${text(midpoint[0], midpoint[1] + 4, label, 'edge-label', 'middle')}` : ''}</g>`;
+  // 汇合支线只表达连接；仅进入目标节点的末段带箭头，避免把汇合点误读为目标。
+  return `<g class="edge ${kind}" data-connect="${esc(ids.join('|'))}"><path d="${d}" stroke="${c}" stroke-width="${kind === 'order' ? 2.7 : 2}" fill="none" ${dash} ${arrow ? `marker-end="url(#arrow-${kind})"` : ''}/>${label ? `<rect x="${midpoint[0] - width / 2}" y="${midpoint[1] - 13}" width="${width}" height="24" rx="4" fill="#fffdf9"/>${text(midpoint[0], midpoint[1] + 4, label, 'edge-label', 'middle')}` : ''}</g>`;
 }
 function svg(name, width, height, body) {
   const markers = ['order', 'read', 'write', 'trigger', 'reference', 'relationship', 'registration'].map(k => { const c = { order: '#324153', read: '#2d72ad', write: '#288554', trigger: '#bf651e', reference: '#7b65a6', relationship: '#7b65a6', registration: '#89939f' }[k]; return `<marker id="arrow-${k}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10" fill="${c}"/></marker>`; }).join('');
@@ -83,7 +84,8 @@ const phases = [
 ];
 phases.forEach(p => { b += frame(p.x, 382, p.w, 180, p.name, `«Schedule» · ${p.note}`); b += p.rows.map((r, i) => fitted(p.x + 17, 469 + i * 31, r, p.w - 34)).join(''); });
 phases.slice(0, -1).forEach((p, i) => b += edge([[p.x + p.w, 420], [phases[i + 1].x, 420]]));
-b += text(770, 609, 'FixedFirst → FixedUpdate → FixedPostUpdate → FixedLast 每帧 0～N 次；零固定步帧仍完成插值后显示链。', 'note');
+// 固定循环说明放在阶段卡片上方，避开下方的数据读写连线。
+b += text(36, 371, 'FixedFirst → FixedUpdate → FixedPostUpdate → FixedLast 每帧 0～N 次；零固定步帧仍完成插值后显示链。', 'note');
 const data = [
   { id: 'character.CharacterIntent', x: 395, w: 330, name: 'CharacterIntent', rows: ['movement：持续输入', 'jump_pending / interact_pending', '固定步消费后清除请求'] },
   { id: 'character.Position', x: 760, w: 330, name: '真实物理状态', rows: ['Position / Rotation / Velocity', 'CharacterMotion：仅 grounded', 'Transform：插值呈现位置'] },
@@ -115,16 +117,17 @@ const columns = [
   { x: 30, w: 300, phase: 'First', note: '每帧一次', ids: ['frame_limit', 'time_update'] },
   { x: 375, w: 420, phase: 'PreUpdate', note: '每帧一次；响应输入', ids: [] },
   { x: 840, w: 420, phase: 'FixedFirst / FixedUpdate', note: '60 Hz · 每帧 0～N 次', ids: [] },
-  { x: 1305, w: 410, phase: 'FixedPostUpdate', note: 'Avian 默认物理解算', ids: ['physics_prepare','physics_step','physics_writeback','grounded_after','velocity_log'] },
+  // 保持卡片宽度，给独立碰撞日志支线预留右侧走线槽。
+  { x: 1305, w: 430, nodeWidth: 380, phase: 'FixedPostUpdate', note: 'Avian 默认物理解算', ids: ['physics_prepare','physics_step','physics_writeback','grounded_after','velocity_log'] },
   { x: 1760, w: 330, phase: 'FixedLast', note: '每个固定步末尾', ids: ['easing_end'] },
   { x: 2135, w: 380, phase: '固定循环之后', note: 'RunFixedMainLoop · AfterFixedMainLoop', ids: ['easing_apply','facing_update','held_update','camera_follow','visibility_update','easing_tick'] },
   { x: 2560, w: 390, phase: 'PostUpdate / 渲染', note: '其前经过普通 Update', ids: [] },
 ];
 const accessName = value => value.split('.').pop().replace(/\s*\(.*/, '');
 function accessRows(id) { const s = systems[id]; const summarize = values => { const rank = v => v.startsWith('resource.') ? 1 : v.startsWith('local.') ? 2 : 0; const sorted = [...values].sort((a,b)=>rank(a)-rank(b)); return sorted.map(accessName).slice(0,2).join(' / ') + (values.length>2?' …':''); }; return [brief[id] || s.description, ...(s.reads.length ? [`R ${summarize(s.reads)}`] : []), ...(s.writes.length ? [`W ${summarize(s.writes)}`] : [])].slice(0, 3); }
-columns.forEach(col => { b += frame(col.x, 112, col.w, 1980, col.phase, `«Schedule» · ${col.note}`); col.ids.forEach((id, i) => {
-  b += system(col.x + 15, 193 + i * 160, col.w - 30, id, accessRows(id), 130);
-  if (i) b += edge([[col.x + col.w / 2, 163 + i * 160], [col.x + col.w / 2, 193 + i * 160]]);
+columns.forEach(col => { const nodeWidth = col.nodeWidth ?? col.w - 30, centerX = col.x + 15 + nodeWidth / 2; b += frame(col.x, 112, col.w, 1980, col.phase, `«Schedule» · ${col.note}`); col.ids.forEach((id, i) => {
+  b += system(col.x + 15, 193 + i * 160, nodeWidth, id, accessRows(id), 130);
+  if (i) b += edge([[centerX, 163 + i * 160], [centerX, 193 + i * 160]]);
  }); });
 // 这里只展开和捕获逻辑有关的输入集合；主 UI 的多轮执行另列于 PostUpdate。
 [['input_update','InputSystems'],['egui_input','Egui · ProcessInput'],['filter_egui_input','filter_captured_egui_input'],['egui_begin','Egui · BeginPass（集合边界）']].forEach(([id,label],i)=>{registry[id]=systems[id];b+=compact(390,193+i*50,390,28,id,label,systems[id].kind);b+=edge([[585,221+i*50],[585,i===3?400:243+i*50]],'','order',null,[id,i===3?'mouse_capture':['egui_input','filter_egui_input','egui_begin'][i]]);});
@@ -137,17 +140,22 @@ b += text(399, 1339, 'UI 捕获停用 GameplayContext；', 'small');
 b += text(399, 1365, '动作 Complete / Cancel 清除移动轴。', 'small');
 b += system(855, 193, 390, 'easing_reset', [brief.easing_reset], 96);
 // 重力与朝向都在玩法链之前，但二者没有显式先后依赖。
-b += system(855, 320, 187, 'gravity_sync', [brief.gravity_sync], 96);
-b += system(1058, 320, 187, 'facing_fixed', ['水平 yaw → 朝向'], 96);
-b += edge([[948,416],[948,440],[1050,440],[1050,470]],'','order',null,['gravity_sync','grounded_fixed']);
-b += edge([[1151,416],[1151,440],[1050,440]],'','order',null,['facing_fixed','grounded_fixed']);
-b += text(860, 455, '二者无彼此顺序；下方为显式玩法链', 'small');
+// 两卡和下方玩法链整体下移，分叉末段留出 46px；约 19px 的箭头头部之外仍有可见竖线。
+b += system(855, 360, 187, 'gravity_sync', [brief.gravity_sync], 96);
+b += system(1058, 360, 187, 'facing_fixed', ['水平 yaw → 朝向'], 96);
+b += edge([[948,456],[948,480],[1050,480]],'','order',null,['gravity_sync','grounded_fixed'],false);
+b += edge([[1151,456],[1151,480],[1050,480]],'','order',null,['facing_fixed','grounded_fixed'],false);
+b += edge([[1050,480],[1050,510]],'','order',null,['gravity_sync','facing_fixed','grounded_fixed']);
+// 说明分居汇合点两侧，不遮挡指向玩法链的竖线与箭头。
+b += text(860, 502, '二者无彼此顺序', 'small');
+b += text(1080, 502, '下方为显式玩法链', 'small');
 const fixedNodes = ['grounded_fixed','movement','gravity','interaction','held_apply','orphan_cleanup','orphan_apply','held_fixed','grip_forces'];
-fixedNodes.forEach((id,i)=>{const y=470+i*160;b+=system(855,y,390,id,accessRows(id),130);if(i)b+=edge([[1050,y-30],[1050,y]],'','order',null,[fixedNodes[i-1],id]);});
-b += edge([[1050,289],[1050,302],[948,302],[948,320]],'','order',null,['easing_reset','gravity_sync']);
-b += edge([[1050,302],[1151,302],[1151,320]],'','order',null,['easing_reset','facing_fixed']);
+fixedNodes.forEach((id,i)=>{const y=510+i*160;b+=system(855,y,390,id,accessRows(id),130);if(i)b+=edge([[1050,y-30],[1050,y]],'','order',null,[fixedNodes[i-1],id]);});
+b += edge([[1050,289],[1050,314],[948,314],[948,360]],'','order',null,['easing_reset','gravity_sync']);
+b += edge([[1050,314],[1151,314],[1151,360]],'','order',null,['easing_reset','facing_fixed']);
 b += system(1320, 1170, 380, 'collision_log', accessRows('collision_log'), 130);
-b += edge([[1695,415],[1702,415],[1702,1135],[1510,1135],[1510,1170]],'仅 after(StepSimulation)','order',[1510,1135],['physics_step','collision_log']);
+// 支线从卡片边缘出发，绕过中间节点；标签放在线外，保留转折及箭头的连续走线。
+b += edge([[1700,415],[1723,415],[1723,1135],[1510,1135],[1510,1170]],'仅 after(StepSimulation)','order',[1510,1100],['physics_step','collision_log']);
 b += text(1324, 1350, '碰撞日志与 Writeback 后观察无全序', 'small');
 b += system(2575, 193, 320, 'transform_propagate', ['R 根 Transform / ChildOf', 'W GlobalTransform（另有可见性传播）'], 118);
 b += system(2575, 365, 320, 'inspector_pass', ['反射读取 / 编辑实体、资源与资产', 'multipass：界面可在此多轮处理'], 118);
@@ -185,9 +193,11 @@ entityBoxes.forEach(box => { const e = entities[box.id]; registry[`entity-${e.id
   b += text(box.x + 16, box.y + box.h - 12, `完整清单：${e.components.length} 项组件 · 点击实体查看`, 'small');
 });
 b += edge([[540, 214], [390, 214]], 'ActionOf', 'relationship', [465, 212], ['entity-action', 'entity-controller']);
-b += text(417, 247, '← Actions 反向索引', 'small');
+b += text(408, 247, '← Actions', 'small');
+b += text(408, 272, '反向索引', 'small');
 b += edge([[1050, 214], [900, 214]], 'BindingOf', 'relationship', [975, 212], ['entity-binding', 'entity-action']);
-b += text(926, 247, '← Bindings 反向索引', 'small');
+b += text(921, 247, '← Bindings', 'small');
+b += text(921, 272, '反向索引', 'small');
 b += edge([[152, 462], [152, 650]], 'ControlsCharacter', 'reference', [152, 566], ['entity-controller', 'entity-character']);
 b += edge([[326, 462], [326, 493], [1230, 493], [1230, 650]], 'ControlsCamera', 'reference', [778, 493], ['entity-controller', 'entity-camera']);
 b += edge([[1350, 650], [1350, 546], [370, 546], [370, 462]], 'toggle_requested_by（临时）', 'reference', [875, 546], ['entity-camera', 'entity-controller']);
@@ -196,7 +206,8 @@ b += edge([[540, 810], [390, 810]], 'HeldBy', 'relationship', [465, 808], ['enti
 b += text(399, 848, '← HoldingItems', 'small');
 b += text(407, 873, '无 linked_spawn', 'small');
 b += edge([[157, 1540], [157, 1250]], 'ChildOf：人物模型', 'relationship', [157, 1400], ['entity-visual', 'entity-character']);
-b += edge([[390, 1687], [965, 1687], [965, 1230], [900,1230]], 'ChildOf：箱子模型', 'relationship', [965, 1560], ['entity-visual', 'entity-parcel']);
+// 标签靠近下方横线，避开 Resource 框的边界与竖向走线。
+b += edge([[390, 1687], [965, 1687], [965, 1230], [900,1230]], 'ChildOf：箱子模型', 'relationship', [690, 1655], ['entity-visual', 'entity-parcel']);
 b += frame(540, 1910, 870, 228, '关系的基数与生命周期', '这里只描述当前源码声明的行为。');
 b += lines(561, 1994, ['HeldBy：每箱 0..1 位持有者；HoldingItems 容器允许 0..N，当前业务一次持一件。', 'ActionOf / BindingOf / ChildOf 声明 linked_spawn；HeldBy 不连带销毁箱体。', '失效持有者 / 异常解除：移除 HeldTarget、恢复自由碰撞，动态箱体自然下落。', 'Position / Velocity 为物理状态，Transform 为插值呈现；视觉子实体无刚体。', '持握使用反作用力，仍参与世界碰撞；持握箱当前忽略全部 Character 层。'], 'small', 27);
 b += frame(540, 1300, 360, 305, '«Resource / Local» 数据范围', 'Resource 共享；Local 属于某个系统。');
@@ -257,6 +268,8 @@ const state = JSON.stringify({ model, registry, views }).replace(/</g, '\\u003c'
 const html = `<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Crect width='10' height='10' rx='2' fill='%23234f80'/%3E%3C/svg%3E"><title>demo · ECS 架构</title><style>
 .node.entity.selected>g>rect{stroke:#db7521;stroke-width:4}.side .data-link{padding:2px 5px;max-width:100%;text-align:left;font:12px/1.55 Consolas,monospace;overflow-wrap:anywhere;border:0;background:#f0f3f7;color:#234f80}.side .data-link:hover{background:#dcebf9}.side details{margin-top:20px}.side summary{cursor:pointer;color:#5c7086}
 .side a.source{display:block;color:#234f80;text-decoration:underline;text-underline-offset:3px}.side a.source:hover{background:#dcebf9}.side a.source:focus-visible{outline:3px solid #a8c8ee}
+/* 画布用于平移和节点点击，禁选范围包含 SVG 文字；详情与源码仍可正常复制。 */
+.canvas,.canvas *{-webkit-user-select:none;user-select:none}
 *{box-sizing:border-box}body{margin:0;background:#f5f6f8;color:#263648;font:14px/1.6 'Segoe UI','Microsoft YaHei',sans-serif}button,input{font:inherit}button{cursor:pointer;border:1px solid #d8e0e7;border-radius:8px;background:white;color:inherit;padding:7px 13px}button:hover{background:#edf4fa}button:focus-visible,input:focus-visible{outline:3px solid #a8c8ee}header{padding:19px 26px 13px;border-bottom:1px solid #dfe5ec;background:white}header h1{font-size:25px;margin:0;letter-spacing:-.5px}.eyebrow{font-size:11px;color:#76859b;letter-spacing:2px}.sub{margin:4px 0 0;color:#67788b}.toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:13px 22px;background:#fff}.tabs{display:flex;gap:6px;flex-wrap:wrap}.tabs button.active{background:#234f80;color:white;border-color:#234f80}.tools{display:flex;gap:6px;align-items:center;margin-left:auto}.tools input{width:205px;padding:8px 10px;border:1px solid #d8e0e7;border-radius:8px}.tools span{width:44px;text-align:center;color:#6c7b8d}.workspace{display:grid;grid-template-columns:minmax(0,1fr) 312px;gap:14px;padding:0 20px 20px;height:calc(100vh - 170px);min-height:500px}.canvas-wrap{background:#f7f8fa;border:1px solid #d9e1e8;border-radius:14px;position:relative;overflow:hidden;display:flex;flex-direction:column}.caption{padding:11px 16px;background:#fff;border-bottom:1px solid #e1e6ec;color:#68798c;flex:0 0 auto}.canvas{position:relative;flex:1;overflow:hidden;touch-action:none;cursor:grab}.canvas.dragging{cursor:grabbing}.diagram{position:absolute;left:0;top:0;transform-origin:0 0}.diagram svg{display:block}.canvas-hint{position:absolute;bottom:9px;left:12px;pointer-events:none;background:#ffffffde;padding:3px 8px;border-radius:6px;color:#7a8796;font-size:12px}.side{overflow:auto;background:white;border:1px solid #d9e1e8;border-radius:14px;padding:20px}.side h2{font-size:18px;margin:0 0 12px}.side h3{font-size:13px;margin:20px 0 7px;color:#5c7086}.side p{margin:8px 0}.side code{font:12px/1.55 Consolas,monospace;overflow-wrap:anywhere;background:#f0f3f7;padding:2px 4px;border-radius:4px}.side ul{padding-left:18px;margin:6px 0}.side li{margin:4px 0;overflow-wrap:anywhere}.badge{display:inline-block;border:1px solid #dbe4eb;background:#f3f6fa;border-radius:20px;padding:2px 9px;font-size:11px;color:#617387;margin-bottom:8px}.legend{display:grid;gap:8px}.legend div{display:flex;gap:10px;align-items:center}.line{display:inline-block;width:33px;border-top:3px solid #324153}.line.read{border-color:#2d72ad;border-top-style:dashed}.line.write{border-color:#288554}.line.event{border-color:#bf651e;border-top-style:dashed}.line.ref{border-color:#7b65a6;border-top-style:dashed}.line.rel{border-color:#7b65a6}.footnote{font-size:12px;color:#718195}.reset{margin-top:15px;width:100%}.source{font-size:12px;color:#6c7e91;padding:8px;background:#f3f6f9;border-radius:7px;overflow-wrap:anywhere}.empty{color:#8390a0}.help{padding:8px 12px;background:#f9f6ee;border-left:3px solid #caa772;border-radius:4px;font-size:12px}footer{display:none}@media(max-width:1000px){.workspace{grid-template-columns:1fr;height:auto;min-height:0}.canvas-wrap{height:75vh;min-height:490px}.side{max-height:450px}.tools{margin-left:0}.toolbar{padding:10px 20px}.workspace{padding:0 12px 12px}header{padding:15px 20px}}
 </style></head><body><header><div class="eyebrow">DEMO / ECS ARCHITECTURE · V1</div><h1>从输入到画面，当前 App 如何运作</h1><p class="sub">UML 风格的实体、组件、系统与关系 · 基于生成时的源码快照 · 不执行游戏</p></header><div class="toolbar"><nav class="tabs" aria-label="架构视图"><button data-view="overview" class="active">总览</button><button data-view="schedules">调度与读写</button><button data-view="relationships">实体关系</button><button data-view="events">事件与 Observer</button></nav><div class="tools"><input id="search" placeholder="搜索系统、组件或字段" aria-label="搜索架构节点"><button id="zoom-out" aria-label="缩小">−</button><span id="zoom-label">100%</span><button id="zoom-in" aria-label="放大">＋</button><button id="fit">适合窗口</button><button id="export">导出 SVG</button></div></div><main class="workspace"><section class="canvas-wrap"><div id="caption" class="caption"></div><div id="canvas" class="canvas"><div id="diagram" class="diagram"></div><div class="canvas-hint">滚轮缩放 · 拖动平移 · 点击卡片查看数据与源码</div></div></section><aside id="details" class="side" aria-live="polite"></aside></main><script id="architecture-data" type="application/json">${state}</script><script>
 const DATA=JSON.parse(document.getElementById('architecture-data').textContent);const canvas=document.getElementById('canvas'),diagram=document.getElementById('diagram'),details=document.getElementById('details');let view=DATA.views[0],scale=1,panX=0,panY=0,selected=null,drag=null;
@@ -273,7 +286,22 @@ function switchView(id){view=DATA.views.find(v=>v.id===id);if(!view)return;docum
 function zoom(factor,x=canvas.clientWidth/2,y=canvas.clientHeight/2){const old=scale;scale=Math.min(2.4,Math.max(.2,scale*factor));panX=x-(x-panX)*scale/old;panY=y-(y-panY)*scale/old;transform()}
 document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>switchView(b.dataset.view));document.getElementById('fit').onclick=fit;document.getElementById('zoom-in').onclick=()=>zoom(1.2);document.getElementById('zoom-out').onclick=()=>zoom(1/1.2);
 canvas.addEventListener('wheel',e=>{e.preventDefault();const r=canvas.getBoundingClientRect();zoom(e.deltaY<0?1.12:1/1.12,e.clientX-r.left,e.clientY-r.top)},{passive:false});
-canvas.addEventListener('pointerdown',e=>{if(e.button!==0)return;drag={x:e.clientX,y:e.clientY,px:panX,py:panY,moved:false};canvas.setPointerCapture(e.pointerId)});canvas.addEventListener('pointermove',e=>{if(!drag)return;const dx=e.clientX-drag.x,dy=e.clientY-drag.y;if(Math.abs(dx)+Math.abs(dy)>4)drag.moved=true;if(drag.moved){panX=drag.px+dx;panY=drag.py+dy;canvas.classList.add('dragging');transform()}});canvas.addEventListener('pointerup',e=>{if(drag&&!drag.moved){const n=document.elementFromPoint(e.clientX,e.clientY)?.closest('[data-id]');select(n?n.dataset.id:null)}drag=null;canvas.classList.remove('dragging')});canvas.addEventListener('pointercancel',()=>{drag=null;canvas.classList.remove('dragging')});
+canvas.addEventListener('pointerdown',e=>{
+  if(e.button!==0)return;
+  // 自定义平移接管左键手势，阻止浏览器同时开始文字选择或原生拖动。
+  e.preventDefault();
+  drag={x:e.clientX,y:e.clientY,px:panX,py:panY,moved:false};canvas.setPointerCapture(e.pointerId);
+});
+canvas.addEventListener('pointermove',e=>{if(!drag)return;const dx=e.clientX-drag.x,dy=e.clientY-drag.y;if(Math.abs(dx)+Math.abs(dy)>4)drag.moved=true;if(drag.moved){panX=drag.px+dx;panY=drag.py+dy;canvas.classList.add('dragging');transform()}});
+canvas.addEventListener('pointerup',e=>{
+  if(drag&&!drag.moved){
+    const n=document.elementFromPoint(e.clientX,e.clientY)?.closest('[data-id]');
+    // pointerdown 取消了默认聚焦；点击节点时补回焦点，保留 Enter / 空格操作。
+    n?.focus({preventScroll:true});select(n?n.dataset.id:null);
+  }
+  drag=null;canvas.classList.remove('dragging');
+});
+canvas.addEventListener('pointercancel',()=>{drag=null;canvas.classList.remove('dragging')});
 diagram.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){const n=e.target.closest('[data-id]');if(n){e.preventDefault();select(n.dataset.id)}}});document.getElementById('search').addEventListener('input',e=>{const q=e.target.value.trim().toLowerCase();selected=null;const hits=[];diagram.querySelectorAll('[data-id]').forEach(n=>{const d=DATA.registry[n.dataset.id],hit=!q||JSON.stringify(d).toLowerCase().includes(q);n.classList.toggle('dim',!hit);n.classList.toggle('selected',!!q&&hit);if(hit)hits.push(n.dataset.id)});diagram.querySelectorAll('.edge').forEach(n=>n.classList.remove('dim','focused'));if(q){details.innerHTML='<span class="badge">搜索结果</span><h2>'+hits.length+' 个匹配节点</h2><p>当前视图中匹配的卡片已高亮。点击卡片查看详情。</p><p class="footnote">搜索仅覆盖当前视图；可切换其他视图继续查找。</p>'}else guide()});
 document.getElementById('export').onclick=()=>{const blob=new Blob([view.svg],{type:'image/svg+xml;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='ecs-'+view.id+'.svg';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)};window.addEventListener('resize',fit);switchView('overview');
 </script></body></html>`;
