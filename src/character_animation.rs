@@ -7,7 +7,10 @@ use bevy::{
     ecs::relationship::RelationshipTarget, prelude::*, world_serialization::WorldInstanceReady,
 };
 
-use crate::gameplay::{Character, HoldingItems};
+use crate::{
+    app_flow::gameplay_running,
+    gameplay::{Character, HoldingItems},
+};
 
 const WALK_SPEED_THRESHOLD: f32 = 0.15;
 const TRANSITION_DURATION: Duration = Duration::from_millis(180);
@@ -71,7 +74,9 @@ impl Plugin for CharacterAnimationPlugin {
         app.add_observer(mark_courier_animation_ready).add_systems(
             Update,
             // 初始化插入的关联和过渡组件须在同帧切换系统运行前可见。
-            (initialize_ready_couriers, sync_courier_animation).chain(),
+            (initialize_ready_couriers, sync_courier_animation)
+                .chain()
+                .run_if(gameplay_running),
         );
     }
 }

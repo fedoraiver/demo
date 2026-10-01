@@ -12,6 +12,104 @@ const systems = Object.fromEntries(model.systems.map(s => [s.id, s]));
 const entities = Object.fromEntries(model.entities.map(e => [e.id, e]));
 const registry = {};
 const views = [];
+// 共享资源提前进入注册表，便于不同视图复用同一份点击详情。
+model.resources.forEach(resource => registry[resource.id] = resource);
+Object.assign(registry, systems);
+model.entities.forEach(entity=>{
+  registry[`entity-${entity.id}`]={...entity,kind:'Entity'};
+  entity.components.forEach(component=>registry[component.id]={...component,kind:'Component',owner:entity.name});
+});
+let nodeBoxes = new Map();
+let edgeSpecs = [];
+// 连线延迟到整个视图收集完成后定位：同侧出线和入线共同分配 n+1 等分槽位。
+function boxAttributes(id, x, y, width, height, container = false) {
+  if (nodeBoxes.has(id)) throw new Error('Duplicate geometry box: ' + id);
+  nodeBoxes.set(id, { id, x, y, width, height, container });
+  return 'data-box-id="' + esc(id) + '"' + (container ? ' data-box-container="true"' : '');
+}
+const normal = side => ({ left: [-1, 0], right: [1, 0], top: [0, -1], bottom: [0, 1] }[side]);
+function port(anchor) {
+  const box = nodeBoxes.get(anchor.box), f = anchor.slot / (anchor.count + 1);
+  return { left: [box.x, box.y + box.height * f], right: [box.x + box.width, box.y + box.height * f], top: [box.x + box.width * f, box.y], bottom: [box.x + box.width * f, box.y + box.height] }[anchor.side];
+}
+function endpoint(point, next) {
+  // 实际矩形边界决定所属节点；语义 data-connect 中的其它引用不能冒充几何端点。
+  const candidates = [];
+  for (const box of nodeBoxes.values()) for (const side of ['left', 'right', 'top', 'bottom']) {
+    const onSide = side === 'left' || side === 'right'
+      ? Math.abs(point[0] - (box.x + (side === 'right' ? box.width : 0))) < .01 && point[1] >= box.y && point[1] <= box.y + box.height
+      : Math.abs(point[1] - (box.y + (side === 'bottom' ? box.height : 0))) < .01 && point[0] >= box.x && point[0] <= box.x + box.width;
+    if (onSide) { const n = normal(side), outward = (next[0] - point[0]) * n[0] + (next[1] - point[1]) * n[1]; candidates.push({ box: box.id, side, score: (box.container ? 0 : 10) + (outward > 0 ? 1 : 0) }); }
+  }
+  candidates.sort((a, b) => b.score - a.score);
+  return candidates.length ? { box: candidates[0].box, side: candidates[0].side } : null;
+}
+function orthogonalRoute(spec) {
+  const old = spec.points, start = spec.source ? port(spec.source) : old[0], end = spec.target ? port(spec.target) : old.at(-1);
+  let points;
+  if (old.length <= 3) {
+    // 一条直线的两端槽位可能不再对齐；保留法向出口，用走线中点接上两端。
+    if (spec.source && spec.target && normal(spec.source.side)[0] && normal(spec.target.side)[0]) {
+      const mid = old.length === 3 ? old[1][0] : (start[0] + end[0]) / 2;
+      points = [start, [mid, start[1]], [mid, end[1]], end];
+    } else if (spec.source && spec.target && normal(spec.source.side)[1] && normal(spec.target.side)[1]) {
+      const mid = old.length === 3 ? old[1][1] : (start[1] + end[1]) / 2;
+      points = [start, [start[0], mid], [end[0], mid], end];
+    } else if (spec.source && !spec.target) {
+      const n = normal(spec.source.side), projection = (old[1][0] - old[0][0]) * n[0] + (old[1][1] - old[0][1]) * n[1];
+      const distance = projection > 0 ? projection : 32;
+      points = [start, [start[0] + n[0] * distance, start[1] + n[1] * distance], ...old.slice(2, -1), end];
+    } else if (!spec.source && spec.target) {
+      const n = normal(spec.target.side), projection = (old.at(-2)[0] - old.at(-1)[0]) * n[0] + (old.at(-2)[1] - old.at(-1)[1]) * n[1];
+      const distance = projection > 0 ? projection : 32;
+      points = [start, ...old.slice(1, -2), [end[0] + n[0] * distance, end[1] + n[1] * distance], end];
+    } else points = old.map(p => [...p]);
+  } else points = old.map(p => [...p]);
+  points[0] = start; points[points.length - 1] = end;
+  if (spec.source && old.length > 3) {
+    const n = normal(spec.source.side), projection = (old[1][0] - old[0][0]) * n[0] + (old[1][1] - old[0][1]) * n[1];
+    const distance = projection > 0 ? projection : 32;
+    points[1] = [start[0] + n[0] * distance, start[1] + n[1] * distance];
+  }
+  if (spec.target && old.length > 3) {
+    const n = normal(spec.target.side), distance = Math.max(32, (old.at(-2)[0] - old.at(-1)[0]) * n[0] + (old.at(-2)[1] - old.at(-1)[1]) * n[1]);
+    points[points.length - 2] = [end[0] + n[0] * distance, end[1] + n[1] * distance];
+  }
+  // 调整首末段后，只补正交拐点；框外分叉和汇合仍使用原来的真实连接坐标。
+  const routed = [points[0]];
+  for (let i = 1; i < points.length; i++) {
+    const previous = routed.at(-1), current = points[i];
+    if (previous[0] !== current[0] && previous[1] !== current[1]) routed.push([previous[0], current[1]]);
+    if (routed.at(-1)[0] !== current[0] || routed.at(-1)[1] !== current[1]) routed.push(current);
+  }
+  // 去掉同方向冗余点与回头段，避免等分调整留下不可辨认的短折线。
+  const simplified = [];
+  for (const point of routed) {
+    while (simplified.length >= 2) {
+      const a = simplified.at(-2), b = simplified.at(-1);
+      if ((a[0] === b[0] && b[0] === point[0]) || (a[1] === b[1] && b[1] === point[1])) simplified.pop(); else break;
+    }
+    simplified.push(point);
+  }
+  return simplified;
+}
+function resolveEdges() {
+  const sides = new Map();
+  for (const spec of edgeSpecs) {
+    spec.source = endpoint(spec.points[0], spec.points[1]);
+    spec.target = endpoint(spec.points.at(-1), spec.points.at(-2));
+    for (const [end, point] of [['source', spec.points[0]], ['target', spec.points.at(-1)]]) if (spec[end]) {
+      const anchor = spec[end], key = anchor.box + ':' + anchor.side;
+      if (!sides.has(key)) sides.set(key, []);
+      sides.get(key).push({ anchor, coordinate: point[normal(anchor.side)[0] ? 1 : 0] });
+    }
+  }
+  for (const group of sides.values()) {
+    group.sort((a, b) => a.coordinate - b.coordinate);
+    group.forEach((entry, i) => Object.assign(entry.anchor, { slot: i + 1, count: group.length }));
+  }
+  for (const spec of edgeSpecs) spec.points = orthogonalRoute(spec);
+}
 function text(x, y, value, cls = 'body', anchor = 'start') { return `<text x="${x}" y="${y}" class="${cls}" text-anchor="${anchor}">${esc(value)}</text>`; }
 function lines(x, y, values, cls = 'body', step = 25) { return values.map((s, i) => text(x, y + i * step, s, cls)).join(''); }
 function fitted(x, y, value, width, cls = 'body') {
@@ -20,45 +118,76 @@ function fitted(x, y, value, width, cls = 'body') {
   return text(x, y, value, cls).replace('<text ', `<text ${estimate > width ? `textLength="${width}" lengthAdjust="spacingAndGlyphs" ` : ''}`);
 }
 function compact(x, y, w, h, id, name, kind = 'component') {
-  return `<g class="node ${kind}" ${register(id, registry[id] || { name, kind })}><rect x="${x}" y="${y}" width="${w}" height="${h}" rx="4" fill="${kind === 'component' ? '#f2faf5' : '#fff'}" stroke="${colors[kind] || colors.system}"/>${fitted(x + 12, y + h / 2 + 6, name, w - 24, 'node-title')}</g>`;
+  return `<g class="node ${kind}" ${register(id, registry[id] || { name, kind })}><rect ${boxAttributes(id, x, y, w, h)} x="${x}" y="${y}" width="${w}" height="${h}" rx="4" fill="${kind === 'component' ? '#f2faf5' : '#fff'}" stroke="${colors[kind] || colors.system}"/>${fitted(x + 12, y + h / 2 + 6, name, w - 24, 'node-title')}</g>`;
 }
 function register(id, data) { registry[id] = data; return `data-id="${esc(id)}" tabindex="0" role="button" aria-label="${esc(data.name || data.title || id)}"`; }
-function frame(x, y, w, h, label, subtitle = '', tone = '#526477') {
-  return `<g><rect x="${x}" y="${y}" width="${w}" height="${h}" rx="12" fill="#fff" stroke="${tone}" stroke-width="1.5"/><path d="M${x},${y + 57}H${x + w}" stroke="#dae2e8"/>${fitted(x + 20, y + 30, label, w - 40, 'group-title')}${subtitle ? fitted(x + 20, y + 49, subtitle, w - 40, 'small') : ''}</g>`;
+function frame(x, y, w, h, label, subtitle = '', tone = '#526477', geometryId = null) {
+  return `<g><rect ${geometryId ? boxAttributes(geometryId, x, y, w, h, true) : ''} x="${x}" y="${y}" width="${w}" height="${h}" rx="12" fill="#fff" stroke="${tone}" stroke-width="1.5"/><path d="M${x},${y + 57}H${x + w}" stroke="#dae2e8"/>${fitted(x + 20, y + 30, label, w - 40, 'group-title')}${subtitle ? fitted(x + 20, y + 49, subtitle, w - 40, 'small') : ''}</g>`;
 }
 function card(x, y, w, h, id, title, rows = [], kind = 'system', extra = '') {
   const data = registry[id] || { id, name: title, kind, description: rows.join('；') };
   const color = colors[kind] || colors.system;
   const stereotype = { system: 'System', observer: 'Observer', engine: 'Engine', sync: 'Commands / Sync', resource: 'Resource', local: 'Local', external: 'External I/O', event: 'EntityEvent', message: 'Message', component: 'Component', entity: 'Entity' }[kind] || kind;
-  const shape = kind === 'event' ? `<path d="M${x},${y}H${x + w - 18}L${x + w},${y + h / 2}L${x + w - 18},${y + h}H${x}Z" fill="#fff8ed" stroke="${color}" stroke-width="1.7"/>` : `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${kind === 'observer' ? 20 : kind === 'system' || kind === 'engine' ? 10 : 3}" fill="${kind === 'component' ? '#f2faf5' : kind === 'observer' ? '#f8f3fc' : kind === 'resource' ? '#fffaf0' : '#fff'}" stroke="${color}" stroke-width="1.7" ${kind === 'local' ? 'stroke-dasharray="5 4"' : ''}/>`;
+  // 类型由标签与颜色表达；矩形避免 EntityEvent 装饰尖角成为连线出口。
+  const shape = `<rect ${boxAttributes(id, x, y, w, h)} x="${x}" y="${y}" width="${w}" height="${h}" rx="${kind === 'observer' ? 20 : kind === 'system' || kind === 'engine' ? 10 : 3}" fill="${kind === 'component' ? '#f2faf5' : kind === 'observer' ? '#f8f3fc' : kind === 'resource' ? '#fffaf0' : kind === 'event' ? '#fff8ed' : '#fff'}" stroke="${color}" stroke-width="1.7" ${kind === 'local' ? 'stroke-dasharray="5 4"' : ''}/>`;
   return `<g class="node ${kind}" ${register(id, data)}>${shape}${kind === 'observer' ? `<rect x="${x + 5}" y="${y + 5}" width="${w - 10}" height="${h - 10}" rx="16" fill="none" stroke="${color}" stroke-opacity=".28"/>` : ''}${text(x + 14, y + 21, `«${stereotype}»`, 'stereotype')}${fitted(x + 14, y + 48, title, w - 34, 'node-title')}${rows.map((r, i) => fitted(x + 14, y + 73 + i * 23, r, w - 34, extra || 'body')).join('')}</g>`;
 }
 const brief = {
  frame_limit:'按设置等待帧间剩余时间',time_update:'更新引擎时间与固定步累积',input_update:'更新键鼠状态与窗口输入消息',mouse_capture:'窗口 / Egui 命中 → 捕获与上下文',enhanced_prepare:'准备有效输入上下文和绑定',enhanced_evaluate:'评估绑定、条件和动作状态',input_apply:'写动作输出，排入 trigger 命令',
  facing_fixed:'按相机 yaw 同步人物朝向',movement:'输入 / 实际速度 → 有上限的控制力',gravity:'消费跳跃请求 → 一次向上冲量',interaction:'射线 / 范围 → 拾取或保留动量释放',held_apply:'应用持握关系、目标与碰撞层',held_fixed:'角色呈现姿态 → HeldTarget',facing_update:'保留插值位置，同步本帧 yaw',held_update:'更新呈现目标，不搬箱或施力',camera_follow:'插值位置 + 观察状态 → 镜头',visibility_update:'视角模式 → 人物模型可见性',perspective_apply:'消费请求，切换第一 / 第三人称',
  gravity_sync:'配置变化 → Gravity',grounded_fixed:'脚底 shape cast → 接地状态',grounded_after:'物理回写后重新探测接地',orphan_cleanup:'失效持有者 / 关系 → 自由碰撞',orphan_apply:'应用失效清理命令',grip_forces:'真实 Position / 速度 → 弹簧与反作用力',velocity_log:'解算后实际速度 → 采样日志',collision_log:'CollisionStart / End → 文件日志',physics_prepare:'准备物理位姿、质量与碰撞数据',physics_step:'积分 / 接触 / 子步求解 → 真实运动',physics_writeback:'Position / Rotation → Transform',easing_reset:'FixedFirst：重置并记录插值起点',easing_end:'FixedLast：记录物理步插值终点',easing_apply:'固定循环后按 overstep 插值',easing_tick:'显示同步后记录变化 tick',
- transform_propagate:'根 Transform → 子 GlobalTransform',render:'提取 ECS 数据，准备并绘制画面',observe_move:'路由到角色，更新持续移动轴',observe_complete:'移动完成，将轴归零',observe_cancel:'移动取消，将轴归零',observe_jump:'路由到角色，设置跳跃请求',observe_interact:'路由到角色，设置交互请求',observe_look:'有效捕获时更新当前模式角度',observe_perspective:'记录请求来源，稍后统一切换'
+ transform_propagate:'根 Transform → 子 GlobalTransform',render:'提取 ECS 数据，准备并绘制画面',observe_move:'路由到角色，更新持续移动轴',observe_complete:'移动完成，将轴归零',observe_cancel:'移动取消，将轴归零',observe_jump:'路由到角色，设置跳跃请求',observe_interact:'路由到角色，设置交互请求',observe_look:'有效捕获时更新当前模式角度',observe_perspective:'记录请求来源，稍后统一切换',audio_preload:'清单契约 → 短音加载与映射',audio_load_failures:'资产加载失败 → 会话日志',audio_play:'请求 / 加载 / 冷却 / 并发 → 播放队列',audio_stop:'AppExit → UI / SFX 通道停止',audio_strain:'持续持握误差 → 一次警告',audio_land:'真实支撑冲量 → 一次落地反馈'
 };
 const displayNames = { time_update:'TimeSystems',input_update:'InputSystems',enhanced_prepare:'Enhanced Input · Prepare',enhanced_evaluate:'Enhanced Input · Update',input_apply:'Enhanced Input · Apply',held_apply:'ApplyDeferred · 持有关系',capture_apply:'ApplyDeferred · 上下文',inspector_pass:'World Inspector · UI Pass',transform_propagate:'Transform · Propagate',render:'RenderApp · 渲染概览' };
+Object.assign(brief, {
+  flow_enter_menu: 'MainMenu：展示主菜单并恢复展示动画时间',
+  flow_pause: 'Paused：保存返回来源，展示暂停菜单',
+  flow_suspend: '停物理，暂停另停虚拟时间；清意图并释放光标',
+  flow_resume: 'Running：恢复时间，重新捕获并跳过鼠标位移',
+  menu_spawn_controller: '创建菜单输入控制者及 Enhanced Input 绑定',
+  menu_sync_context: '窗口焦点 → MenuContext；Hidden 仍保留 Esc',
+  menu_handle_requests: '消费菜单消息 → 页面 / 设置 / NextState',
+  menu_rebuild: '页面变化 → BSN 重建 UI 实体树',
+  menu_pointer: '真实鼠标移动切输入来源；进入 / 离开同步悬停',
+  menu_style: 'Interaction / 导航焦点 → 按钮纸色或黄色',
+  menu_description: '当前设置焦点 → 右侧解释文字',
+  menu_scroll_focus: '键盘 / 手柄焦点 → 可见滚动范围',
+  menu_asset_failures: '资产加载失败 → 英文会话日志',
+  menu_backdrop_spawn: '真实 GLB 展台 / 独立菜单相机；无地图碰撞',
+  observe_release_pointer: 'F3：释放光标，保持 Running 和检查器',
+});
 function system(x, y, w, id, extraRows = null, height = 112) {
   const s = systems[id]; if (!s) throw new Error(`Missing system ${id}`);
   registry[id] = s;
   return card(x, y, w, height, id, displayNames[id] || s.name, extraRows || [brief[id] || s.description], s.kind, 'small');
 }
 function edge(points, label = '', kind = 'order', labelPoint = null, ids = [], arrow = true) {
+  const index = edgeSpecs.length;
+  edgeSpecs.push({ points, label, kind, labelPoint, ids, arrow });
+  return '<!--edge-' + index + '-->';
+}
+function renderEdge(spec) {
+  const { points, label, kind, labelPoint, ids, arrow } = spec;
   const c = { order: '#324153', read: '#2d72ad', write: '#288554', trigger: '#bf651e', reference: '#7b65a6', relationship: '#7b65a6', registration: '#89939f' }[kind] || '#324153';
   const d = points.map((p, i) => `${i ? 'L' : 'M'}${p[0]},${p[1]}`).join(' ');
   const dash = ['read', 'trigger', 'reference', 'registration'].includes(kind) ? 'stroke-dasharray="6 5"' : '';
   const midpoint = labelPoint || points[Math.floor(points.length / 2)];
   const width = Math.max(44, [...label].reduce((n, c) => n + (c.charCodeAt(0) > 255 ? 17 : 9), 0) + 16);
   // 汇合支线只表达连接；仅进入目标节点的末段带箭头，避免把汇合点误读为目标。
-  return `<g class="edge ${kind}" data-connect="${esc(ids.join('|'))}"><path d="${d}" stroke="${c}" stroke-width="${kind === 'order' ? 2.7 : 2}" fill="none" ${dash} ${arrow ? `marker-end="url(#arrow-${kind})"` : ''}/>${label ? `<rect x="${midpoint[0] - width / 2}" y="${midpoint[1] - 13}" width="${width}" height="24" rx="4" fill="#fffdf9"/>${text(midpoint[0], midpoint[1] + 4, label, 'edge-label', 'middle')}` : ''}</g>`;
+  return `<g class="edge ${kind}" data-connect="${esc(ids.join('|'))}" data-source-anchor="${esc(JSON.stringify(spec.source))}" data-target-anchor="${esc(JSON.stringify(spec.target))}"><path d="${d}" stroke="${c}" stroke-width="${kind === 'order' ? 2.7 : 2}" fill="none" ${dash} ${arrow ? `marker-end="url(#arrow-${kind})"` : ''}/>${label ? `<rect x="${midpoint[0] - width / 2}" y="${midpoint[1] - 13}" width="${width}" height="24" rx="4" fill="#fffdf9"/>${text(midpoint[0], midpoint[1] + 4, label, 'edge-label', 'middle')}` : ''}</g>`;
 }
 function svg(name, width, height, body) {
   const markers = ['order', 'read', 'write', 'trigger', 'reference', 'relationship', 'registration'].map(k => { const c = { order: '#324153', read: '#2d72ad', write: '#288554', trigger: '#bf651e', reference: '#7b65a6', relationship: '#7b65a6', registration: '#89939f' }[k]; return `<marker id="arrow-${k}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10" fill="${c}"/></marker>`; }).join('');
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" role="img" aria-labelledby="title"><title id="title">${esc(name)}</title><defs>${markers}<style>text{font-family:'Segoe UI','Microsoft YaHei',sans-serif;fill:#263648}.body{font-size:18px}.small{font-size:15px;fill:#576779}.stereotype{font-size:13px;fill:#687886;letter-spacing:.6px}.node-title{font-size:19px;font-weight:600}.group-title{font-size:21px;font-weight:600}.edge-label{font-size:16px}.page-title{font-size:32px;font-weight:650}.section-title{font-size:24px;font-weight:650}.note{font-size:17px;fill:#526477}.node{cursor:pointer}.node:focus{outline:none}.node.selected>rect,.node.selected>path{stroke:#db7521;stroke-width:4}.node.dim{opacity:.20}.edge.dim{opacity:.13}.edge.focused>path{stroke-width:3.5}</style></defs><rect width="100%" height="100%" fill="#f7f8fa"/>${text(36, 48, name, 'page-title')}${body}</svg>`;
 }
-function save(id, label, width, height, body, summary) { const content = svg(label, width, height, body); fs.writeFileSync(path.join(dir, `ecs-${id}.svg`), content); views.push({ id, label, width, height, svg: content, summary }); }
+function save(id, label, width, height, body, summary) {
+  resolveEdges();
+  const rendered = body.replace(/<!--edge-(\d+)-->/g, (_, index) => renderEdge(edgeSpecs[Number(index)]));
+  const content = svg(label, width, height, rendered);
+  fs.writeFileSync(path.join(dir, `ecs-${id}.svg`), content);
+  views.push({ id, label, width, height, svg: content, summary });
+  nodeBoxes = new Map(); edgeSpecs = [];
+}
 
 // 总览：保留最重要的执行路径和数据路径，完整函数在细节视图展开。
 let b = text(36, 78, '先沿粗箭头看执行顺序，再沿 R / W 看数据；点击卡片查看源码与完整访问声明。', 'note');
@@ -66,15 +195,15 @@ registry['app-main'] = { name:'main / App',kind:'App',description:'创建 App �
 b += `<g class="node entity" ${register('app-main',registry['app-main'])}>${frame(30, 102, 1500, 224, '«App» main：装配应用与共享 World', 'Plugin 负责注册；下方位置不代表插件内部系统的执行先后。')}</g>`;
 const mainLines = fs.readFileSync(path.join(dir, '../../src/main.rs'), 'utf8').split('\n');
 const pluginDescriptions = {
-  DefaultPlugins:'引擎输入、窗口、时间、资产、动画、变换、渲染与统一日志。', EguiPlugin:'准备 Egui 上下文与界面绘制。', WorldInspectorPlugin:'通过反射检查 ECS，复用当前窗口与相机。', SettingsPlugin:'设置资源与限帧。', GameplayPlugin:'玩法资源、反射类型和固定模拟链。', PlayerInputPlugin:'输入上下文、动作与角色意图 Observer。', CameraControlPlugin:'相机 Observer、捕获、视角与姿态同步。', ArtAssetsPlugin:'五份运行 GLB 强句柄、加载状态与失败报告。', CharacterAnimationPlugin:'主角命名动作绑定与实际速度/持物切换。', IslandRecoveryPlugin:'固定步落水恢复与临时插值暂停生命周期。', PrototypeScenePlugin:'BSN 海岛准备、静态碰撞与动态业务装配。', StartupLogPlugin:'集中注册四项只读启动日志。'
+  DefaultPlugins:'引擎输入、窗口、时间、资产、动画、变换、渲染与统一日志。', EguiPlugin:'准备 Egui 上下文与界面绘制。', WorldInspectorPlugin:'通过反射检查 ECS；仅 Running 显示。', AppFlowPlugin:'主菜单/游戏/暂停生命周期与时间门控。', GameUiPlugin:'BSN 页面、菜单输入、草稿与展示舞台。', GameAudioPlugin:'Kira 预加载、策略、UI/SFX 输出与退出停止。', SettingsPlugin:'设置资源与限帧。', GameplayPlugin:'玩法资源、反射类型和固定模拟链。', PlayerInputPlugin:'输入上下文、动作与角色意图 Observer。', CameraControlPlugin:'相机 Observer、捕获、视角与姿态同步。', ArtAssetsPlugin:'五份运行 GLB 强句柄、加载状态与失败报告。', CharacterAnimationPlugin:'主角命名动作绑定与实际速度/持物切换。', IslandRecoveryPlugin:'固定步落水恢复与临时插值暂停生命周期。', PrototypeScenePlugin:'BSN 海岛准备、静态碰撞与动态业务装配。', StartupLogPlugin:'集中注册四项只读启动日志。'
 };
 // 候选索引可能只包含部分功能；插件只从该版本 main 的实际装配位置读取。
 const plugins = Object.keys(pluginDescriptions).map(name => ({name, line:mainLines.findIndex(l => l.trim() === name || l.trim().startsWith(name + ',') || l.trim().startsWith(name + '::')) + 1})).filter(plugin => plugin.line > 0);
 registry['app-main'].source.line = mainLines.findIndex(l=>l.startsWith('fn main('))+1;
 plugins.forEach(({name,line}, i) => { const id = `plugin-${name}`; registry[id] = { id, name, kind:'Plugin', description:pluginDescriptions[name], notes:['注册顺序不等于系统执行顺序。', ...(name.includes('Egui') || name.includes('Inspector') ? ['EguiPlugin 必须先于 WorldInspectorPlugin 构建。'] : [])], source:{path:'src/main.rs',line} }; b += compact(44 + (i % 5) * 296, 165 + Math.floor(i / 5) * 52, 284, 42, id, name, 'plugin'); });
 b += '<g transform="translate(0 104)">';
-b += frame(30, 240, 1500, 108, '«Schedule» Startup · 启动一次', '生成日光/加载相机并记录启动与资源请求；各系统无彼此顺序，阶段结束应用命令。');
-const startupIds = ['startup_spawn','startup_assets','startup_config','startup_timestep','startup_pose','startup_inspector'].filter(id => systems[id]);
+b += frame(30, 240, 1500, 108, '«Schedule» Startup · 启动一次', '菜单控制者、短音、美术请求与四项日志无彼此顺序；进入 InGame 才生成加载视图。');
+const startupIds = ['menu_spawn_controller','audio_preload','startup_assets','startup_config','startup_timestep','startup_inspector'].filter(id => systems[id]);
 startupIds.forEach((id, i) => { registry[id] = systems[id]; b += compact(48 + i * 246, 303, 232, 32, id, systems[id].name, 'system'); });
 const phases = [
   { x: 30, w: 330, name: 'First', note: '每个渲染帧', rows: ['限帧 → 时间更新', '默认上限 60 FPS；最低 60', 'Local：帧间计时'] },
@@ -86,7 +215,7 @@ const phases = [
   { x: 2220, w: 330, name: 'Update / SpawnScene', note: '资源与实例的异步准备', rows: ['资源轮询；海岛三步装配链', '主角动画绑定 → 状态切换', 'SpawnScene 实例化 / 就绪事件'] },
   { x: 2585, w: 330, name: 'PostUpdate', note: '骨骼动画与最终变换', rows: ['Animation → Transform传播', '检查器 UI 为独立分支', '→ 渲染子应用'] },
 ];
-phases.forEach(p => { b += frame(p.x, 382, p.w, 180, p.name, `«Schedule» · ${p.note}`); b += p.rows.map((r, i) => fitted(p.x + 17, 469 + i * 31, r, p.w - 34)).join(''); });
+phases.forEach((p, phaseIndex) => { b += frame(p.x, 382, p.w, 180, p.name, `«Schedule» · ${p.note}`, '#526477', `phase-${phaseIndex}`); b += p.rows.map((r, i) => fitted(p.x + 17, 469 + i * 31, r, p.w - 34)).join(''); });
 phases.slice(0, -1).forEach((p, i) => b += edge([[p.x + p.w, 420], [phases[i + 1].x, 420]]));
 // 固定循环说明放在阶段卡片上方，避开下方的数据读写连线。
 b += text(36, 371, 'FixedFirst → FixedUpdate → FixedPostUpdate → FixedLast 每帧 0～N 次；零固定步帧仍完成插值后显示链。', 'note');
@@ -111,9 +240,45 @@ b += edge([[2750, 562], [2750, 697]], 'W 世界变换', 'write', [2750, 641], ['
 b += text(36, 900, '图例：粗箭头＝执行顺序　R 蓝虚线＝读取　W 绿实线＝写入　Event 橙虚线＝触发　紫线＝引用 / 关系', 'note');
 b += '</g>';
 // GameplayPlugin 内部安装物理插件，不把内部注册伪装成 main 的额外插件。
-const nestedPlugins = [['DemoPhysicsPlugin','src/gameplay.rs','add_plugins(DemoPhysicsPlugin)'],['PhysicsPlugins::default()','src/physics.rs','add_plugins(PhysicsPlugins::default())']];
+const nestedPlugins = [['DemoPhysicsPlugin','src/gameplay.rs','add_plugins((DemoPhysicsPlugin, SoundEventsPlugin))'],['PhysicsPlugins::default()','src/physics.rs','add_plugins(PhysicsPlugins::default())']];
 nestedPlugins.forEach(([name,file,needle],i)=>{const id=`plugin-physics-${i}`;registry[id]={name,kind:'Plugin',description:i?'Avian 默认 FixedPostUpdate 求解及物理插值插件。':'GameplayPlugin 内部安装，注册重力同步和碰撞日志。',notes:['内部插件注册关系；不表示系统执行顺序。'],source:{path:file,line:fs.readFileSync(path.join(dir,'../..',file),'utf8').split('\n').findIndex(line=>line.includes(needle))+1}};b+=card(1575+i*505,112,475,135,id,name,['GameplayPlugin → DemoPhysicsPlugin → Avian'],'engine','small');});
-save('overview', '当前 App · ECS 总览', 2955, 1039, b, '输入 → 固定控制力 → Avian 求解 → 插值 → 本帧显示 → 世界变换与渲染。');
+// 状态门控单独成区，避免将暂停误画成销毁并重建玩法场景。
+b += frame(30, 1060, 2520, 410, 'AppFlow · 状态、场景与输入门控', 'AppState 控制场景生命周期；PlayState 是 InGame 内的子状态；MenuState 保存页面与返回来源。');
+b += card(55, 1145, 700, 160, 'resource.AppState', 'MainMenu', ['OnEnter：show_main_menu → suspend_input', '生成菜单 GLB 展台；玩法输入 / 物理停用', 'Start Game → InGame，加载海岛，再等待碰撞就绪生成角色'], 'resource', 'small');
+b += card(935, 1145, 700, 160, 'resource.PlayState', 'InGame / Running', ['OnEnter(InGame)：spawn_lighting，建立加载视图', 'OnEnter(Running)：恢复时间与光标捕获', 'GameplayContext、固定玩法、Inspector 有效'], 'resource', 'small');
+b += card(1815, 1145, 700, 160, 'state-paused', 'InGame / Paused', ['OnEnter：show_pause_menu → suspend_input', 'Time<Virtual> / Time<Physics> 暂停并清本帧 delta', '保留业务实体；释放光标，隐藏 Inspector'], 'engine', 'small');
+b += edge([[755,1225],[935,1225]], 'Start Game', 'order', [845,1225], ['resource.AppState','resource.PlayState','startup_spawn']);
+b += edge([[1635,1225],[1815,1225]], 'Esc', 'trigger', [1725,1225], ['resource.PlayState','state-paused','flow_pause']);
+b += edge([[2040,1305],[2040,1345],[1285,1345],[1285,1305]], 'Resume：保留原场景', 'order', [1620,1345], ['state-paused','flow_resume','resource.PlayState']);
+b += edge([[2320,1305],[2320,1415],[405,1415],[405,1305]], 'Return to Main Menu：退出 InGame 时清理业务根', 'order', [1285,1415], ['state-paused','resource.AppState']);
+b += frame(30, 1510, 2520, 310, 'Update · BSN 页面与鼠标 / 导航状态', 'UI 实体树更新后才处理指针，再更新显示；Style 组内系统不虚构串行顺序。');
+b += system(55, 1595, 700, 'menu_rebuild', ['MenuState / UiTheme → UI 实体树', '自动宽度 Text 保留自然测量'], 130);
+b += system(935, 1595, 700, 'menu_pointer', ['真实鼠标移动（含空白）→ Pointer', '进入高亮、离开恢复；按钮点击排入消息'], 130);
+b += system(1815, 1595, 700, 'menu_style', ['鼠标模式按 Interaction；导航模式按 MenuFocus', 'Apply / 当前 Tab 无常驻黄色'], 130);
+b += edge([[755,1660],[935,1660]], 'Build →', 'order', [845,1660], ['menu_rebuild','menu_pointer']);
+b += edge([[1635,1660],[1815,1660]], 'Pointer → Style', 'order', [1725,1660], ['menu_pointer','menu_style']);
+b += text(55, 1770, 'MenuInputSource：Pointer / Navigation；键盘或手柄实际导航后显示焦点。设置只在 Apply 成功后热生效并保存，取消丢弃草稿。', 'note');
+// 音频插件装配和反馈路径单独列出；它们不建立新的玩法实体。
+registry['plugin-sound-events']={name:'SoundEventsPlugin',kind:'Plugin',description:'GameplayPlugin 内部注册声音消息和无设备的物理反馈观察。',source:{path:'src/gameplay.rs',line:fs.readFileSync(path.join(dir,'../../src/gameplay.rs'),'utf8').split('\n').findIndex(l=>l.includes('add_plugins((DemoPhysicsPlugin, SoundEventsPlugin))'))+1}};
+registry['plugin-kira']={name:'KiraAudioPlugin',kind:'Plugin',description:'GameAudioPlugin 安装 Kira 0.26.0；DefaultPlugins 禁用 Bevy 默认 AudioPlugin。',source:{path:'src/audio.rs',line:fs.readFileSync(path.join(dir,'../../src/audio.rs'),'utf8').split('\n').findIndex(l=>l.includes('app.add_plugins(KiraAudioPlugin)'))+1}};
+b+=card(1575,278,475,116,'plugin-sound-events','SoundEventsPlugin',['GameplayPlugin 内部：反馈收集'],'engine','small');
+b+=card(2080,278,475,116,'plugin-kira','KiraAudioPlugin',['GameAudioPlugin 内部：设备输出'],'engine','small');
+model.resources.forEach(r=>registry[r.id]=r);
+b+=text(36,1845,'菜单确认实际焦点 / 接受的操作，玩法确认物理结果；缓冲 Message 交给 UI Style 之后的 Update 播放。','note');
+registry['audio-producers']={name:'已接入的反馈生产者',kind:'System group',description:'菜单真实焦点与接受的语义操作、成功拿起/释放、真实落地和持续持握偏差。',notes:['菜单三种与玩法四种 cue 已产生；交接、推车、弹开与交付共五种映射预留。'],source:systems.interaction.source};
+b+=card(30,1885,650,155,'audio-producers','菜单 / 玩法反馈生产者',['MenuHover / MenuConfirm / MenuCancel','拿起 / 释放 / 落地 / 持握失稳','反馈不改变物理规则'],'system','small');
+b+=card(800,1885,520,155,'resource.SoundRequestMessages','SoundRequest 消息',['cue：稳定事件标识','source：仅记录 Entity','延迟拿放消息与关系一起生效'],'message','small');
+b+=card(1440,1885,520,155,'resource.SoundBank','SoundBank',['预加载句柄与清单策略','Time<Real>：暂停时冷却仍前进','总并发 4；SFX 最多 3，菜单保留 1'],'resource','small');
+registry['audio-output']={name:'Update / Kira 播放输出',kind:'Engine',description:'读取 SoundRequest，检查加载/冷却/并发后向类型通道排队；AppExit 时停止。',reads:['resource.SoundBank','resource.SoundRequestMessages','resource.UiAudioChannel','resource.SfxAudioChannel'],source:systems.audio_play.source};
+b+=card(2090,1885,825,155,'audio-output','UI Style → Update → Kira UI / SFX',['失败日志 → 播放请求 → 退出停止','线性音量乘 0.25 后转为 dB','ambience 只供试听，不自动播放'],'engine','small');
+b+=edge([[680,1963],[800,1963]],'W','write',[740,1963],['audio-producers','resource.SoundRequestMessages']);
+b+=edge([[1320,1962.5],[1380,1962.5],[1380,2075],[2502.5,2075],[2502.5,2040]],'R 请求','read',[1980,2075],['resource.SoundRequestMessages','audio-output']);
+b+=edge([[1960,1963],[2090,1963]],'R','read',[2025,1963],['resource.SoundBank','audio-output']);
+b+=edge([[2090,2007],[1960,2007]],'W','write',[2025,2007],['audio-output','resource.SoundBank']);
+b+=edge([[1285,1725],[1285,1790],[1060,1790],[1060,1885]],'W MenuHover','write',[1060,1790],['menu_pointer','resource.SoundRequestMessages']);
+b+=edge([[2515,1660],[2890,1660],[2890,1835],[2710,1835],[2710,1885]],'after(Style)','order',[2810,1835],['menu_style','audio-output']);
+
+save('overview', '当前 App · ECS 总览', 2955, 2130, b, '输入 → 固定控制力 → Avian 求解 → 插值 → 本帧显示 → 世界变换与渲染。');
 
 // 时序视图：每个注册实例单独呈现，R/W 在卡片内列摘要，点击显示完整读写项。
 b = text(36, 80, '系统卡片中的 R / W 是访问摘要；同一函数在不同 Schedule 中有两个注册实例。', 'note');
@@ -130,7 +295,7 @@ const columns = [
 ];
 const accessName = value => value.split('.').pop().replace(/\s*\(.*/, '');
 function accessRows(id) { const s = systems[id]; const summarize = values => { const rank = v => v.startsWith('resource.') ? 1 : v.startsWith('local.') ? 2 : 0; const sorted = [...values].sort((a,b)=>rank(a)-rank(b)); return sorted.map(accessName).slice(0,2).join(' / ') + (values.length>2?' …':''); }; return [brief[id] || s.description, ...(s.reads.length ? [`R ${summarize(s.reads)}`] : []), ...(s.writes.length ? [`W ${summarize(s.writes)}`] : [])].slice(0, 3); }
-columns.forEach(col => { const nodeWidth = col.nodeWidth ?? col.w - 30, centerX = col.x + 15 + nodeWidth / 2; b += frame(col.x, 112, col.w, 2250, col.phase, `«Schedule» · ${col.note}`); col.ids.forEach((id, i) => {
+columns.forEach(col => { const nodeWidth = col.nodeWidth ?? col.w - 30, centerX = col.x + 15 + nodeWidth / 2; b += frame(col.x, 112, col.w, 2520, col.phase, `«Schedule» · ${col.note}`, '#526477', `schedule-${col.phase}`); col.ids.forEach((id, i) => {
   b += system(col.x + 15, 193 + i * 160, nodeWidth, id, accessRows(id), 130);
   if (i) b += edge([[centerX, 163 + i * 160], [centerX, 193 + i * 160]]);
  }); });
@@ -138,7 +303,7 @@ columns.forEach(col => { const nodeWidth = col.nodeWidth ?? col.w - 30, centerX 
 [['input_update','InputSystems'],['egui_input','Egui · ProcessInput'],['filter_egui_input','filter_captured_egui_input'],['egui_begin','Egui · BeginPass（集合边界）']].forEach(([id,label],i)=>{registry[id]=systems[id];b+=compact(390,193+i*50,390,28,id,label,systems[id].kind);b+=edge([[585,221+i*50],[585,i===3?400:243+i*50]],'','order',null,[id,i===3?'mouse_capture':['egui_input','filter_egui_input','egui_begin'][i]]);});
 const preNodes = [ ['mouse_capture', 400, 130], ['capture_apply', 555, 96], ['enhanced_prepare', 676, 96], ['enhanced_evaluate', 797, 96], ['input_apply', 918, 106], ['event_apply', 1049, 106], ['perspective_apply', 1180, 130] ];
 systems.event_apply = { id:'event_apply', name:'ApplyDeferred · 动作事件', kind:'sync', phase:'PreUpdate', description:'应用 Enhanced Input 排入的 trigger 命令，此时触发匹配 Observer。', reads:[], writes:['character.CharacterIntent','camera.OrbitCamera'], filters:[], events:model.observers.filter(o=>o.system.startsWith('observe_')).map(o=>o.event), notes:['这是命令同步点，不是 EnhancedInputSystems::Apply。','apply_perspective_toggle.after(EnhancedInputSystems::Apply) 建立依赖；常规调度在需要时自动应用延迟命令。','Observer 之间没有注册顺序所保证的串行依赖。'], source:systems.perspective_apply.source };
-brief.event_apply = '应用 trigger 命令 → 七个 Observer';
+brief.event_apply = '应用 trigger 命令 → 匹配动作 Observer';
 brief.capture_apply = '应用 ContextActivity 替换';
 preNodes.forEach(([id,y,h],i)=>{b += system(390,y,390,id,h===130?accessRows(id):[brief[id] || systems[id].description],h);if(i){const previous=preNodes[i-1];b+=edge([[585,previous[1]+previous[2]],[585,y]],'','order',null,[previous[0],id]);}});
 b += text(399, 1339, 'UI 捕获停用 GameplayContext；', 'small');
@@ -162,7 +327,7 @@ if (systems.water_recover && systems.interpolation_resume && systems.easing_star
   b += edge([[948,910],[948,940],[1050,940]],'','order',null,['gravity_sync','grounded_fixed'],false);
   b += edge([[1151,910],[1151,940],[1050,940]],'','order',null,['facing_fixed','grounded_fixed'],false);
   b += edge([[1050,940],[1050,975]],'','order',null,['gravity_sync','facing_fixed','grounded_fixed']);
-  const fixedNodes = ['grounded_fixed','movement','gravity','interaction','held_apply','orphan_cleanup','orphan_apply','held_fixed','grip_forces'];
+  const fixedNodes = ['grounded_fixed','movement','gravity','interaction','held_apply','orphan_cleanup','orphan_apply','held_fixed','grip_forces','audio_strain'];
   fixedNodes.forEach((id,i)=>{const y=975+i*155;b+=system(855,y,390,id,accessRows(id),130);if(i)b+=edge([[1050,y-25],[1050,y]],'','order',null,[fixedNodes[i-1],id]);});
 } else {
   b += system(855,193,390,'easing_reset',[brief.easing_reset],96);
@@ -173,14 +338,15 @@ if (systems.water_recover && systems.interpolation_resume && systems.easing_star
   b += edge([[1050,480],[1050,510]],'','order',null,['gravity_sync','facing_fixed','grounded_fixed']);
   b += text(860,502,'二者无彼此顺序','small');
   b += text(1080,502,'下方为显式玩法链','small');
-  const fixedNodes = ['grounded_fixed','movement','gravity','interaction','held_apply','orphan_cleanup','orphan_apply','held_fixed','grip_forces'];
+  const fixedNodes = ['grounded_fixed','movement','gravity','interaction','held_apply','orphan_cleanup','orphan_apply','held_fixed','grip_forces','audio_strain'];
   fixedNodes.forEach((id,i)=>{const y=510+i*160;b+=system(855,y,390,id,accessRows(id),130);if(i)b+=edge([[1050,y-30],[1050,y]],'','order',null,[fixedNodes[i-1],id]);});
   b += edge([[1050,289],[1050,314],[948,314],[948,360]],'','order',null,['easing_reset','gravity_sync']);
   b += edge([[1050,314],[1151,314],[1151,360]],'','order',null,['easing_reset','facing_fixed']);
 }
 b += system(1320, 1170, 380, 'collision_log', accessRows('collision_log'), 130);
 // 支线从卡片边缘出发，绕过中间节点；标签放在线外，保留转折及箭头的连续走线。
-b += edge([[1700,415],[1723,415],[1723,1135],[1510,1135],[1510,1170]],'仅 after(StepSimulation)','order',[1510,1100],['physics_step','collision_log']);
+b += edge([[1700,415],[1723,415],[1723,1415]],'','order',null,['physics_step','collision_log','audio_land'],false);
+b += edge([[1723,1135],[1510,1135],[1510,1170]],'after(StepSimulation)','order',[1510,1100],['physics_step','collision_log']);
 b += text(1324, 1350, '碰撞日志与 Writeback 后观察无全序', 'small');
 // 新增行为只绘制候选模型中实际存在的 ID，分步提交不会提前展示后续系统。
 if (systems.asset_poll) b += system(2575,193,440,'asset_poll',['Loading → Ready / Failed','递归依赖就绪；状态变化才记录'],118);
@@ -195,16 +361,57 @@ const postX=3090;
 if(systems.animation_engine){b+=system(postX,193,320,'animation_engine',['推进图与过渡 → 骨骼 Transform'],118);b+=edge([[3250,311],[3250,370]],'before(Propagate)','order',[3165,341],['animation_engine','transform_propagate']);}
 b += system(postX,370,320,'transform_propagate',['R 根 Transform / ChildOf','W GlobalTransform / 可见性'],118);
 b += system(postX,585,320,'inspector_pass',['反射读取 / 编辑实体、资源与资产','multipass：每帧可多轮处理'],118);
-b += text(3099,546,'UI 与动画/变换未指定完整全序','small');
+b += text(3099,546,'Running 显示检查器；无分支全序','small');
 b += edge([[3410,429],[3450,429],[3450,780],[3330,780],[3330,825]],'','order',null,['transform_propagate','render']);
 b += edge([[3250,703],[3250,825]],'','order',null,['inspector_pass','render']);
 b += system(postX,825,320,'render',['Extract → Prepare → Render','RenderApp 是相关子应用概览'],118);
 columns.slice(0, -1).forEach((col, i) => b += edge([[col.x + col.w, 144], [columns[i + 1].x, 144]]));
-b += text(43, 2410, 'Startup 只准备日光/加载相机与日志；Update 资源和静态碰撞准备成功后生成动态业务根。', 'note');
-b += text(43, 2444, 'Commands 同步点用琥珀色框；碰撞日志与回写后接地/采样只有各自明确的依赖。', 'note');
-b += text(43, 2478, '固定循环每帧 0～N 次；AfterFixedMainLoop 的 Ease → 显示链 → UpdateEasingTick 每帧执行。', 'note');
-b += text(43, 2512, 'HeldTarget 仅呈现检查；物理施力直接读 Position，不读取插值目标，不把箱体直接搬到手前。', 'note');
-save('schedules', '调度泳道 · 系统与数据访问', 3515, 2555, b, '固定控制 → 物理解算 → 插值后显示；点击查看完整访问，框架集合为概览。');
+b += text(43, 2590, 'OnEnter(InGame) 只准备日光/加载相机；Running 的 Update 资源和静态碰撞就绪后生成动态根。', 'note');
+b += text(43, 2624, 'Commands 同步点用琥珀色框；碰撞日志与回写后接地/采样只有各自明确的依赖。', 'note');
+b += text(43, 2658, '固定循环每帧 0～N 次；AfterFixedMainLoop 的 Ease → 显示链 → UpdateEasingTick 每帧执行。', 'note');
+b += text(43, 2692, 'HeldTarget 仅呈现检查；物理施力直接读 Position，不读取插值目标，不把箱体直接搬到手前。', 'note');
+// 原物理解算支线保持独立；落地音效只依赖实际 StepSimulation。
+b += system(1320, 1460, 380, 'audio_land', accessRows('audio_land'), 130);
+b += edge([[1723,1415],[1510,1415],[1510,1460]],'after(StepSimulation)','order',[1510,1385],['physics_step','audio_land']);
+b += text(1324, 1635, '落地 / 日志 / Writeback 无额外全序', 'small');
+// 生命周期、菜单与播放独立展开，避免改变海岛准备或动画链的读法。
+b += frame(30, 2740, 680, 535, 'Startup · 持久输入与预加载', '系统彼此无串行约束；实际玩法场景不在 Startup。');
+['menu_spawn_controller','startup_assets','startup_pose','startup_timestep','startup_inspector','audio_preload'].forEach((id,i)=>{
+  b += system(50+i%2*330,2825+Math.floor(i/2)*150,310,id,[brief[id]||systems[id].description],110);
+});
+b += frame(750,2740,680,535,'PreUpdate · 菜单上下文与消息','上下文在 Prepare 前；请求消费在动作 Apply 后。');
+b += system(770,2825,640,'menu_sync_context',accessRows('menu_sync_context'),130);
+b += system(770,3015,640,'menu_handle_requests',accessRows('menu_handle_requests'),130);
+b += text(777,3230,'UiRequest → 页面 / 草稿 / NextState / 退出。','small');
+b += frame(1470,2740,1480,535,'StateTransition · 生命周期','MainMenu / Paused 的页面系统在 suspend_input 前；不同状态入口无串行链。');
+['flow_enter_menu','flow_pause','flow_suspend','flow_resume','startup_spawn','menu_backdrop_spawn'].forEach((id,i)=>{
+  b += system(1490+i%3*485,2825+Math.floor(i/3)*200,455,id,[brief[id]||systems[id].description,systems[id].phase],130);
+});
+b += text(1495,3200,'InGame 退出清理业务根和海岛；MainMenu 退出清理展台。Paused 保留原会话。','small');
+b += frame(30,3310,2920,560,'Update · Build → Pointer → Style','页面结构命令先应用；Style 内的样式、说明和焦点滚动无彼此全序。');
+b += system(55,3395,790,'menu_rebuild',accessRows('menu_rebuild'),130);
+b += system(1045,3395,790,'menu_pointer',accessRows('menu_pointer'),130);
+b += card(2035,3395,890,130,'ui-style-set','UiSystems::Style',['在 Pointer 之后运行三个显示系统','输入来源区分 Pointer / Navigation'],'engine','small');
+b += edge([[845,3460],[1045,3460]],'应用 UI 命令','order',[945,3460],['menu_rebuild','menu_pointer']);
+b += edge([[1835,3460],[2035,3460]],'Pointer → Style','order',[1935,3460],['menu_pointer','ui-style-set']);
+['menu_style','menu_description','menu_scroll_focus'].forEach((id,i)=>{
+  const x=2035+i*300;
+  b += system(x,3630,290,id,[brief[id]],115);
+  b += edge([[x+145,3525],[x+145,3630]],'','registration',null,['ui-style-set',id]);
+});
+b += system(55,3630,790,'menu_asset_failures',accessRows('menu_asset_failures'),130);
+b += card(1045,3630,790,130,'resource.MenuInputSource','菜单输入来源',['Navigation：实际导航显示焦点','Pointer：真实移动、点击或离开窗口接管','文字保留自然测量；Apply / Tab 不常驻黄'],'resource','small');
+b += frame(3010,2740,465,1130,'Update · Kira 输出','after(UiSystems::Style)，暂停菜单仍可发声。');
+['audio_load_failures','audio_play','audio_stop'].forEach((id,i)=>{
+  const y=2825+i*225;
+  b += system(3025,y,435,id,accessRows(id),150);
+  if(i)b += edge([[3242.5,y-75],[3242.5,y]],'chain','order',[3300,y-40],[['audio_load_failures','audio_play'][i-1],id]);
+});
+b += text(3025,3560,'Time<Real> / 加载 / 冷却 / 并发','small');
+b += text(3025,3590,'UI ≤ 4；SFX ≤ 3；排队计入','small');
+b += text(55,3900,'Running 门控海岛准备、主角动画、落水恢复、固定玩法与显示链；菜单和音频继续逐帧处理。','note');
+
+save('schedules', '调度泳道 · 系统与数据访问', 3515, 3935, b, '固定控制 → 物理解算 → 插值后显示；点击查看完整访问，框架集合为概览。');
 
 // 关系视图：矩形容器表达实体，内嵌组件；普通 Entity 引用与 Bevy 关系单独标注。
 b = text(36, 80, '按实体角色汇总关键组件，可选组件并非始终存在；虚线＝普通引用，紫实线＝Bevy 关系。', 'note');
@@ -224,7 +431,7 @@ const primaryComponents = {
 };
 entityBoxes.forEach(box=>{const e=entities[box.id];registry[`entity-${e.id}`]={...e,name:e.name,kind:'Entity'};
   const shortName={visual:'直属 GLB 视觉根',action:'动作',binding:'输入绑定',controller:'控制者',character:'角色',parcel:'五件可搬物',camera:'同一相机',world:'海岛静态碰撞',window:'主窗口',island:'海岛实例根',npc:'地图展示 NPC',animation_player:'主角播放器节点',model_node:'GLB 网格/骨骼节点'}[e.id];
-  b+=`<g class="node entity" ${register(`entity-${e.id}`,registry[`entity-${e.id}`])}>${frame(box.x,box.y,box.w,box.h,`«Entity» ${shortName}`,`数量：${e.count}`,colors.entity)}</g>`;
+  b+=`<g class="node entity" ${register(`entity-${e.id}`,registry[`entity-${e.id}`])}>${frame(box.x,box.y,box.w,box.h,`«Entity» ${shortName}`,`数量：${e.count}`,colors.entity, `entity-${e.id}`)}</g>`;
   const key=c=>c.name.split('<')[0].split(' ')[0];
   const visible=e.components.filter(c=>primaryComponents[e.id].includes(key(c))).sort((a,b)=>primaryComponents[e.id].indexOf(key(a))-primaryComponents[e.id].indexOf(key(b)));
   e.components.forEach(c=>registry[c.id]={...c,kind:'Component',owner:e.name});
@@ -264,10 +471,37 @@ if(entities.animation_player){
   b+=edge([[1510,1210],[1448,1210],[1448,2242],[332,2242],[332,2210]],'CourierVisual 内的播放器子树','relationship',[1080,2242],['entity-animation_player','entity-visual']);
   b+=edge([[1510,995],[1432,995],[1432,621],[355,621],[355,650]],'CourierAnimation.character','reference',[920,621],['entity-animation_player','entity-character']);
 }
-save('relationships', '实体 · 组件归属与关系', 2200, 2555, b, '真实物理状态、插值呈现和持握目标分离；点击组件查看字段及源码入口。');
+// 菜单实体在海岛和骨骼层级右侧独立展开，省略中间 BSN 布局容器。
+const menuEntityBoxes=[
+ {id:'menu_controller',x:2250,y:112,w:430,h:350},{id:'menu_root',x:2780,y:112,w:430,h:350},
+ {id:'menu_scroll',x:2250,y:560,w:430,h:430},{id:'menu_button',x:2780,y:560,w:430,h:430},
+ {id:'menu_backdrop',x:2250,y:1100,w:430,h:380},{id:'menu_camera',x:2780,y:1100,w:430,h:380},
+ {id:'menu_model',x:2250,y:1630,w:430,h:430},{id:'menu_text',x:2780,y:1630,w:430,h:430},
+];
+menuEntityBoxes.forEach(box=>{
+ const e=entities[box.id],id=`entity-${e.id}`;registry[id]={...e,kind:'Entity'};
+ b += `<g class="node entity" ${register(id,registry[id])}>${frame(box.x,box.y,box.w,box.h,`«Entity» ${e.name}`,`数量：${e.count}`,colors.entity,id)}</g>`;
+ e.components.slice(0,Math.floor((box.h-110)/34)).forEach((c,i)=>b+=compact(box.x+15,box.y+71+i*34,box.w-30,30,c.id,c.name));
+ b += text(box.x+16,box.y+box.h-12,`完整清单：${e.components.length} 项 · 点击查看`,'small');
+});
+b += edge([[2465,560],[2465,515],[2995,515]],'','relationship',null,['entity-menu_scroll','entity-menu_root'],false);
+b += edge([[2995,560],[2995,515]],'','relationship',null,['entity-menu_button','entity-menu_root'],false);
+b += edge([[2995,515],[2995,462]],'','relationship',null,['entity-menu_scroll','entity-menu_button','entity-menu_root']);
+b += text(2485,499,'Children / ChildOf 子树（中间容器省略）','small');
+b += text(2270,1030,'MenuContext 复用 ActionOf / BindingOf；Coming Soon 无 MenuButton。','small');
+b += edge([[2780,1250],[2680,1250]],'ChildOf','relationship',[2730,1250],['entity-menu_camera','entity-menu_backdrop']);
+b += edge([[2465,1630],[2465,1480]],'ChildOf 子树','relationship',[2465,1555],['entity-menu_model','entity-menu_backdrop']);
+b += text(2800,1530,'MainMenu 退出清理展台；','small');
+b += text(2800,1557,'页面重建仅清 MenuRoot 子树。','small');
+b += frame(2250,2160,960,405,'«Resource / Message» 菜单、生命周期与音频','草稿与生效配置分开；菜单展示 GLB 与可碰撞海岛是不同实体树。');
+const menuResourceIds=['resource.AppState','resource.PlayState','resource.MenuState','resource.MenuFocus','resource.MenuInputSource','resource.SettingsDraft','resource.SettingsFile','resource.UiTheme','resource.UiRequestMessages','resource.TimePhysics','resource.SoundBank','resource.UiAudioChannel','resource.SfxAudioChannel'];
+menuResourceIds.forEach((id,i)=>b+=compact(2270+i%2*465,2245+Math.floor(i/2)*40,440,32,id,registry[id].name,'resource'));
+b += text(2270,2540,'Paused 保留 1 主角 + 5 物品 + 海岛；Return to Main Menu 清理整个会话。','small');
+
+save('relationships', '实体 · 组件归属与关系', 3230, 2600, b, '真实物理状态、插值呈现和持握目标分离；点击组件查看字段及源码入口。');
 
 // 通信视图：输入动作事件、全局 Observer 与窗口缓冲消息保持不同路线。
-b = text(36, 80, `${model.observers.length} 个 Observer（七个输入，另含实例就绪）由匹配事件触发；它们不是按 add_observer 的注册顺序组成流水线。`, 'note');
+b = text(36, 80, `${model.observers.length} 个 Observer（玩法／菜单动作、滚轮与实例就绪）由匹配事件触发；它们不是按 add_observer 的注册顺序组成流水线。`, 'note');
 b += frame(30, 112, 1460, 154, '输入动作 · PreUpdate 中由 Enhanced Input 评估', '事件携带 context（控制者实体）、action（动作实体）和 value（动作输出）。');
 b += lines(50, 200, ['设备绑定 → Prepare → Update → Apply → Commands::trigger(EntityEvent) → 应用命令 → 匹配 Observer', 'Fire / Complete / Cancel 是触发式 EntityEvent；它们不经过 MessageReader 的消息缓冲。'], 'body', 32);
 const eventRows = [
@@ -290,9 +524,9 @@ const route = ['event.context → 控制者','ControlsCharacter → 角色','↓
 b += route.map((r,i)=>fitted(1257,392+i*38,r,216,'small')).join('');
 b += text(45, 1273, '移动轴持续保留至 Complete / Cancel；跳跃与交互的同类未消费请求会合并为一次。', 'note');
 b += frame(30, 1320, 1460, 280, '窗口通信 · 缓冲 Message、输入 Resource 与 Egui 上下文', '窗口消息有独立读取游标；UI 占用通过输入上下文停用，避免与玩法动作重复触发。');
-registry['window-messages'] = { name: 'WindowFocused / MouseButtonInput', kind: 'Message', description: 'Bevy 的窗口消息缓冲，由 sync_mouse_capture 的 MessageReader 读取。', notes:['缓冲不是永久业务队列。','Esc 来自 ButtonInput<KeyCode>；当前 Window 光标与 Egui 已缓存 UI 状态参与点击归属判定。'], source:systems.mouse_capture.source };
-b += card(50, 1410, 374, 130, 'window-messages', '窗口消息缓冲', ['WindowFocused / MouseButtonInput', 'MessageReader 读取', 'Esc / Window / Egui 另由参数访问'], 'message', 'small');
-b += system(512, 1410, 356, 'mouse_capture', ['R 消息 / Esc / Window / Egui', 'W MouseLookState / CursorOptions', 'Commands：ContextActivity 开 / 关'], 130);
+registry['window-messages'] = { name: 'WindowFocused / MouseButtonInput', kind: 'Message', description: 'Bevy 的窗口消息缓冲，由 sync_mouse_capture 的 MessageReader 读取。', notes:['缓冲不是永久业务队列。','Esc 使用菜单 BackAction；F3 使用 GameplayContext 的 ReleasePointerAction，Window 光标与 Egui 状态仅用于捕获。'], source:systems.mouse_capture.source };
+b += card(50, 1410, 374, 130, 'window-messages', '窗口消息缓冲', ['WindowFocused / MouseButtonInput', 'MessageReader 读取', 'Window / Egui 状态另由参数访问'], 'message', 'small');
+b += system(512, 1410, 356, 'mouse_capture', ['R 消息 / Window / Egui / AppState', 'W MouseLookState / CursorOptions', 'Commands：ContextActivity 开 / 关'], 130);
 registry['capture-state'] = { name:'捕获与输入上下文',kind:'Component',description:'捕获与焦点状态写入相机和窗口；UI 占用通过 Commands 改变控制者的 ContextActivity，命令在动作 Prepare 前应用。',writes:systems.mouse_capture.writes,notes:systems.mouse_capture.notes,source:systems.mouse_capture.source };
 b += card(971, 1410, 486, 130, 'capture-state', '捕获与输入上下文', ['MouseLookState：active / skip_motion / focused', 'CursorOptions：visible / grab_mode', 'ContextActivity：ACTIVE / INACTIVE（延迟命令）'], 'component', 'small');
 b += edge([[424, 1474], [512, 1474]], '读取', 'read', [468, 1474], ['window-messages', 'mouse_capture']);
@@ -332,10 +566,74 @@ if(queuedLogging){
   b+=text(52,2775,'Drop：Shutdown 后拒绝新记录，排空已接受记录并 join；失败仍反馈，worker panic 避免等待自身。','small');
   b+=text(52,2808,'日志与存档分别管理；这里不展开线程/队列内部类型为 ECS 节点，也不表示实机 FPS 已验收。','small');
 }
-save('events','事件 · Observer · Message',1520,queuedLogging?2875:2350,b,'输入 EntityEvent、实例就绪、窗口/碰撞 Message 与外部后台日志分别建模。');
+// 调试释放由独立玩法动作响应，Esc 走菜单动作。
+b += frame(30,2890,1460,230,'调试释放光标 · GameplayContext','F3 保持 Running，释放检查器光标；Esc 属于菜单 BackAction。');
+const releasePointer=model.observers.find(o=>o.system==='observe_release_pointer');
+registry['event-observe_release_pointer']={name:releasePointer.event,kind:'EntityEvent',description:releasePointer.description};
+b += card(50,2975,374,110,'event-observe_release_pointer',releasePointer.event,['F3 → context 控制者'],'event','small');
+b += system(512,2975,356,'observe_release_pointer',[brief.observe_release_pointer],110);
+registry['result-observe_release_pointer']={...systems.observe_release_pointer,name:'调试释放捕获',kind:'Component write'};
+b += card(971,2975,486,110,'result-observe_release_pointer','相机 / 窗口捕获状态',['active = false；skip_motion = true','visible = true；grab_mode = None'],'component','small');
+b += edge([[424,3030],[512,3030]],'触发','trigger',[468,3030],['event-observe_release_pointer','observe_release_pointer']);
+b += edge([[868,3030],[971,3030]],'W','write',[919,3030],['observe_release_pointer','result-observe_release_pointer']);
+// 菜单动作、指针滚轮与菜单模型就绪事件单独列出。
+const existingEvents=new Set([...eventRows.map(([id])=>id),'observe_release_pointer','island_ready_observer','courier_ready_observer']);
+const menuEvents=model.observers.filter(o=>!existingEvents.has(o.system));
+const menuEventStep=148,menuEventBottom=306+menuEvents.length*menuEventStep;
+b += frame(1540,112,1470,menuEventBottom-112,'菜单动作 / UI 滚动 / GLB 就绪','六个菜单动作来自 Enhanced Input；滚轮来自原生 UI，模型就绪来自 WorldAssetRoot。');
+b += lines(1560,200,['MenuContext 优先级 10；consume_input 避免同键被两种上下文重复消费。','Hidden 仍保留 Back（Esc）暂停；方向和确认在隐藏页面返回。'],'body',32);
+menuEvents.forEach((o,i)=>{
+ const id=o.system,y=306+i*menuEventStep,s=systems[id],action=o.event.startsWith('Fire<');
+ registry[`event-${id}`]={name:o.event,kind:'EntityEvent',description:o.description,notes:[o.target]};
+ b += card(1552,y,312,118,`event-${id}`,o.event,[action?'target：MenuContext 控制者':o.event.startsWith('Pointer')?'target：MenuScroll 视口':'target：菜单快递员 GLB 根'],'event','small');
+ b += system(1944,y,335,id,[s.description],118);
+ const resultId=`result-${id}`;registry[resultId]={name:`${s.name} 输出`,kind:'Data write',description:s.description,reads:s.reads,writes:s.writes,notes:s.notes,source:s.source};
+ b += card(2366,y,345,118,resultId,action?'菜单共享数据':o.event.startsWith('Pointer')?'ScrollPosition':'动画播放与图句柄',s.writes.slice(0,2).map(v=>`W ${accessName(v)}`),action?'resource':'component','small');
+ b += edge([[1864,y+59],[1944,y+59]],'触发','trigger',[1904,y+59],[`event-${id}`,id]);
+ b += edge([[2279,y+59],[2366,y+59]],'W','write',[2322,y+59],[id,resultId,...s.writes]);
+});
+b += frame(2750,306,250,menuEventBottom-346,'路由与消费','事件分别匹配真实目标。');
+b += ['Previous / Next','↓ MenuFocus','＋ Navigation 来源','','Left / Right / Confirm','Back（含 Esc）','↓ UiRequest Message','↓ PreUpdate 统一消费','','指针点击写同一队列','滚轮只改视口位置','','WorldInstanceReady','↓ 遍历菜单 GLB 骨架','AnimationPlayer 循环播放'].map((v,i)=>fitted(2767,392+i*38,v,216,'small')).join('');
+const requestY=menuEventBottom+45;
+b += frame(1540,requestY,1470,525,'UiRequest · 页面、设置与状态','消息消费集中于 PreUpdate；焦点、滚动和动画直接更新 ECS。');
+b += card(1560,requestY+85,360,130,'resource.UiRequestMessages','UiRequest 消息缓冲',['Confirm / Adjust / Back','与指针点击共用 UiAction'],'message','small');
+b += system(2040,requestY+85,430,'menu_handle_requests',['消费请求 → 页面 / 草稿 / NextState','接受的操作 → MenuConfirm / Cancel'],130);
+b += card(2600,requestY+85,385,130,'resource.SettingsDraft','设置草稿',['Apply：保存成功才生效','Back：丢弃；失败保留原文件'],'resource','small');
+b += edge([[1920,requestY+150],[2040,requestY+150]],'读取','read',[1980,requestY+150],['resource.UiRequestMessages','menu_handle_requests']);
+b += edge([[2470,requestY+150],[2600,requestY+150]],'W 草稿','write',[2535,requestY+150],['menu_handle_requests','resource.SettingsDraft']);
+b += card(1560,requestY+320,660,130,'resource.MenuState','页面与返回来源',['Main / Hidden / Pause / Settings / Help','设置和帮助保留 return_page'],'resource','small');
+b += card(2335,requestY+320,650,130,'ui-next-state','NextState → StateTransition',['Start Game / ReturnToMenu：AppState','Pause / Resume：PlayState'],'engine','small');
+b += edge([[2145,requestY+215],[2145,requestY+265],[1890,requestY+265],[1890,requestY+320]],'W 页面','write',[1890,requestY+265],['menu_handle_requests','resource.MenuState']);
+b += edge([[2370,requestY+215],[2370,requestY+265],[2660,requestY+265],[2660,requestY+320]],'状态请求','write',[2660,requestY+265],['menu_handle_requests','ui-next-state']);
+// 声音缓冲在真实语义/物理结果之后产生；不通过声音驱动物理。
+b += frame(30,3150,2980,550,'SoundRequest · 真实结果到 Kira 输出','菜单焦点/接受的操作、拿放、持续持握偏差与真实支撑触地；预留映射不会自动产生声音。');
+b += system(50,3235,374,'audio_strain',['真实 Position / CarryGrip → 持握偏差','Local 宽限 / 持续计时 / 滞回锁存'],130);
+b += system(50,3420,374,'audio_land',['ContactGraph：支撑法线与冲量','Running 中收集；离开支撑才解锁'],130);
+b += card(512,3235,356,130,'resource.SoundRequestMessages','SoundRequest 缓冲',['cue：稳定事件名','source：只记录 Entity'],'message','small');
+b += system(971,3235,486,'audio_play',['R 请求 / 资产 / 策略 / Time<Real>','W SoundBank；排队 UI / SFX 命令'],130);
+b += card(1600,3235,550,130,'resource.SoundBank','SoundBank',['预加载句柄、冷却与声音实例','总并发 4；SFX 最多 3'],'resource','small');
+registry['kira-output']={name:'Kira UI / SFX 通道',kind:'Engine',description:'类型 AudioChannel 消费排队命令，AppExit 停止；环境底声仅供试听。',source:systems.audio_play.source};
+b += card(2290,3235,690,130,'kira-output','Kira UI / SFX 通道',['设备输出；退出统一停止','ambience 不自动播放'],'engine','small');
+b += edge([[424,3300],[468,3300]],'','write',null,['audio_strain','resource.SoundRequestMessages'],false);
+b += edge([[424,3485],[468,3485],[468,3300]],'','write',null,['audio_land','resource.SoundRequestMessages'],false);
+b += edge([[468,3300],[512,3300]],'W','write',[490,3300],['audio_strain','audio_land','interaction','resource.SoundRequestMessages']);
+b += edge([[868,3300],[971,3300]],'读取','read',[919,3300],['resource.SoundRequestMessages','audio_play']);
+b += edge([[1600,3280],[1457,3280]],'R 策略','read',[1530,3280],['resource.SoundBank','audio_play']);
+b += edge([[1457,3320],[1600,3320]],'W 实例','write',[1530,3320],['audio_play','resource.SoundBank']);
+b += edge([[1214,3365],[1214,3580],[2635,3580],[2635,3365]],'排队播放','write',[1960,3580],['audio_play','kira-output']);
+b += text(55,3650,'拿放声音随延迟关系命令一起生效；真实菜单焦点变动发 MenuHover，接受操作发 MenuConfirm / MenuCancel。','note');
+
+save('events','事件 · Observer · Message',3040,Math.max(3750,menuEventBottom+700),b,'输入 EntityEvent、实例就绪、窗口/碰撞 Message 与外部后台日志分别建模。');
 
 // 源码与图同时生成快照，让网页和离线文件都能打开完整源码并定位行号。
-const sourcePaths = [...new Set(Object.values(registry).map(d => d.source?.path).filter(Boolean))].sort();
+function sourceReferences(value, result = new Set()) {
+  if (value && typeof value === 'object') {
+    if (value.source?.path) result.add(value.source.path);
+    Object.values(value).forEach(child=>sourceReferences(child,result));
+  }
+  return result;
+}
+const sourcePaths = [...sourceReferences({model,registry})].sort();
 writeSourceViewer({ outputDirectory: dir, sources: sourcePaths.map(sourcePath => ({ path: sourcePath, text: fs.readFileSync(path.resolve(dir, '../..', sourcePath), 'utf8') })) });
 
 // UI 使用内嵌数据和 SVG，离线打开不依赖网络、字体 CDN 或第三方脚本。

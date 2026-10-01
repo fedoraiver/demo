@@ -7,6 +7,7 @@ use bevy::{prelude::*, world_serialization::WorldInstanceReady};
 use serde::Deserialize;
 
 use crate::{
+    app_flow::{AppState, gameplay_running},
     art_assets::{ArtAssets, ArtLoadState, ItemModel},
     camera::{CharacterVisual, ControlsCamera, MouseLookState, OrbitCamera},
     character_animation::CourierVisual,
@@ -19,7 +20,7 @@ use crate::{
     physics::{character_body, parcel_body, world_collision_layers},
 };
 
-/// 完整海岛装配和导入边界；输入、模拟、动作和落水规则分别由各自插件处理。
+/// 游戏入口建立加载视图，就绪后装配完整海岛；退出时清理整套业务与视觉实体。
 pub struct PrototypeScenePlugin;
 
 impl Plugin for PrototypeScenePlugin {
@@ -30,10 +31,20 @@ impl Plugin for PrototypeScenePlugin {
                 brightness: 250.0,
                 ..default()
             })
-            .add_systems(Startup, spawn_lighting)
+            // 独立无窗口场景测试不安装应用状态，沿用一次性启动入口。
+            .add_systems(
+                Startup,
+                spawn_lighting.run_if(not(resource_exists::<State<AppState>>)),
+            )
+            .add_systems(OnEnter(AppState::InGame), spawn_lighting)
             .add_observer(mark_island_ready)
             // 每一步应用延迟标记与碰撞命令，下一步才能观察完整的装配结果。
-            .add_systems(Update, (begin_island, prepare_island, spawn_actors).chain());
+            .add_systems(
+                Update,
+                (begin_island, prepare_island, spawn_actors)
+                    .chain()
+                    .run_if(gameplay_running),
+            );
     }
 }
 
@@ -74,6 +85,7 @@ struct MapAsset {
 fn lighting_scene() -> impl Scene {
     bsn! {
         Name("Island daylight")
+        template_value(DespawnOnExit(AppState::InGame))
         DirectionalLight { illuminance: 12_000.0, shadow_maps_enabled: true }
         template_value(Transform::from_xyz(6.0, 10.0, 8.0).looking_at(Vec3::ZERO, Vec3::Y))
     }
@@ -85,6 +97,9 @@ fn spawn_lighting(mut commands: Commands) {
     commands.spawn_scene(bsn! {
         Name("Island loading camera")
         Camera3d
+        IsDefaultUiCamera
+        bevy_inspector_egui::bevy_egui::PrimaryEguiContext
+        template_value(DespawnOnExit(AppState::InGame))
         LoadingCamera
         template_value(Transform::from_xyz(-1.8, 6.0, 11.5).looking_at(Vec3::new(-1.8, 0.8, 3.5), Vec3::Y))
     });
@@ -94,7 +109,10 @@ fn spawn_lighting(mut commands: Commands) {
 struct LoadingCamera;
 
 fn island_scene(scene: Handle<WorldAsset>) -> impl Scene {
-    bsn! { Name("Courier island") IslandMap WorldAssetRoot(scene) }
+    bsn! {
+        Name("Courier island") IslandMap WorldAssetRoot(scene)
+        template_value(DespawnOnExit(AppState::InGame))
+    }
 }
 
 fn begin_island(
@@ -485,9 +503,12 @@ fn spawn_actors(
                 courier.clone(),
                 assets.courier.clone(),
             ))
-            .insert(character_body(&config))
+            .insert((character_body(&config), DespawnOnExit(AppState::InGame)))
             .id();
         let controller = spawn_keyboard_controller(&mut commands, PlayerId(1), character);
+        commands
+            .entity(controller)
+            .insert(DespawnOnExit(AppState::InGame));
         for item in &placement.items {
             let scene = gltfs
                 .get(assets.item(item.model))
@@ -495,7 +516,7 @@ fn spawn_actors(
                 .scenes[0]
                 .clone();
             let mut entity = commands.spawn_scene(carryable_scene(item.model, item.pose, scene));
-            entity.insert(parcel_body(&config));
+            entity.insert((parcel_body(&config), DespawnOnExit(AppState::InGame)));
             if item.model == ItemModel::WoodenCrate {
                 // 木箱边框超出纸箱尺寸，中心偏移来自导出几何，视觉与碰撞使用相同米制比例。
                 entity.insert(Collider::compound(vec![(

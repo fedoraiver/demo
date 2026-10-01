@@ -1,6 +1,9 @@
-//! 组装美术海岛、物理搬运、视角、动画与落水恢复。
+//! 组装英文菜单、美术海岛、物理搬运与音效，并覆盖完整会话的文件日志。
 
+mod app_flow;
 mod art_assets;
+mod audio;
+mod audio_events;
 mod camera;
 mod character_animation;
 mod gameplay;
@@ -13,8 +16,11 @@ mod scene;
 mod session_log;
 mod settings;
 mod startup_log;
+mod ui;
 
+use app_flow::{AppFlowPlugin, gameplay_running};
 use art_assets::ArtAssetsPlugin;
+use audio::GameAudioPlugin;
 use bevy::{log::LogPlugin, prelude::*, window::PresentMode};
 use bevy_inspector_egui::{bevy_egui::EguiPlugin, quick::WorldInspectorPlugin};
 use camera::CameraControlPlugin;
@@ -25,6 +31,7 @@ use island_recovery::IslandRecoveryPlugin;
 use scene::PrototypeScenePlugin;
 use settings::{GameSettings, SettingsPlugin};
 use startup_log::StartupLogPlugin;
+use ui::GameUiPlugin;
 
 fn main() -> AppExit {
     let mut app = App::new();
@@ -39,6 +46,9 @@ fn main() -> AppExit {
 
     app.add_plugins(
         DefaultPlugins
+            .build()
+            // 播放统一交给 Kira，避免两套音频插件同时打开输出设备。
+            .disable::<bevy::audio::AudioPlugin>()
             .set(LogPlugin {
                 custom_layer: session_log::file_layer,
                 fmt_layer: session_log::console_layer,
@@ -46,6 +56,7 @@ fn main() -> AppExit {
             })
             .set(WindowPlugin {
                 primary_window: Some(Window {
+                    title: "Island Courier".into(),
                     // 避免垂直同步把玩家设置的帧率上限额外限制为显示器的刷新率。
                     present_mode: PresentMode::AutoNoVsync,
                     ..default()
@@ -65,15 +76,18 @@ fn main() -> AppExit {
         .add_plugins((
             // 检查器复用同一主窗口与相机，Egui 必须先于世界检查器注册。
             EguiPlugin::default(),
-            WorldInspectorPlugin::new(),
+            WorldInspectorPlugin::new().run_if(gameplay_running),
+            AppFlowPlugin,
             SettingsPlugin,
             GameplayPlugin,
+            GameAudioPlugin,
             PlayerInputPlugin,
             CameraControlPlugin,
             ArtAssetsPlugin,
             CharacterAnimationPlugin,
             IslandRecoveryPlugin,
             PrototypeScenePlugin,
+            GameUiPlugin,
             StartupLogPlugin,
         ))
         .run();

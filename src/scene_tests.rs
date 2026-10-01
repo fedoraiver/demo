@@ -3,8 +3,8 @@
 use std::time::{Duration, Instant};
 
 use avian3d::prelude::{
-    ColliderAabb, ColliderOf, CollisionLayers, LinearVelocity, NoTranslationEasing, Position,
-    RayHitData, Rotation, ShapeCastConfig, ShapeHitData, Sleeping, SpatialQuery,
+    ColliderAabb, ColliderOf, CollisionLayers, LinearVelocity, NoTranslationEasing, PhysicsTime,
+    Position, RayHitData, Rotation, ShapeCastConfig, ShapeHitData, Sleeping, SpatialQuery,
     SpatialQueryFilter,
 };
 use bevy::{
@@ -31,14 +31,14 @@ use crate::{
 };
 
 fn asset_app() -> App {
-    build_asset_app(false, None)
+    build_asset_app(false, None, false)
 }
 
 fn physics_asset_app() -> App {
-    build_asset_app(true, None)
+    build_asset_app(true, None, false)
 }
 
-fn build_asset_app(with_physics: bool, asset_path: Option<String>) -> App {
+fn build_asset_app(with_physics: bool, asset_path: Option<String>, with_session: bool) -> App {
     let mut app = App::new();
     app.add_plugins((
         MinimalPlugins,
@@ -65,6 +65,10 @@ fn build_asset_app(with_physics: bool, asset_path: Option<String>) -> App {
         CharacterAnimationPlugin,
         PrototypeScenePlugin,
     ));
+    if with_session {
+        app.add_plugins(crate::app_flow::AppFlowPlugin)
+            .init_resource::<Time<avian3d::prelude::Physics>>();
+    }
     if with_physics {
         // 加载过程不推进固定步；不装落水恢复，穿地失败不能被回出生点掩盖。
         // GameplayPlugin 只安装 ECS 运动和 DemoPhysicsPlugin，也让坡道回归使用实际控制力。
@@ -195,6 +199,205 @@ fn wait_until(app: &mut App, mut ready: impl FnMut(&mut World) -> bool) {
         }
         assert!(Instant::now() < deadline, "Asset loading timed out");
         std::thread::yield_now();
+    }
+}
+
+/// 真实海岛跨菜单状态装配；同时检查异步等待、暂停与所有场景后代的退出清理。
+#[test]
+fn island_sessions_wait_for_assets_survive_pause_and_clean_up_on_menu_return() {
+    use std::collections::HashSet;
+
+    use crate::{
+        app_flow::PlayState,
+        ui::{MenuPage, MenuState},
+    };
+    use bevy::ecs::resource::IsResource;
+
+    let mut app = build_asset_app(false, None, true);
+    app.update();
+    let mut entities = app
+        .world_mut()
+        .query_filtered::<Entity, Without<IsResource>>();
+    let initial: HashSet<_> = entities.iter(app.world()).collect();
+    assert_eq!(app.world().resource::<MenuState>().page, MenuPage::Main);
+    assert!(
+        app.world_mut()
+            .query::<&Camera3d>()
+            .iter(app.world())
+            .next()
+            .is_none()
+    );
+
+    // 先进入加载视图，再立即返回；不能遗留灯光或等待中的相机。
+    app.world_mut()
+        .resource_mut::<NextState<AppState>>()
+        .set(AppState::InGame);
+    app.update();
+    assert!(
+        app.world_mut()
+            .query::<&Character>()
+            .iter(app.world())
+            .next()
+            .is_none()
+    );
+    assert_eq!(
+        app.world_mut()
+            .query::<&LoadingCamera>()
+            .iter(app.world())
+            .count(),
+        1
+    );
+    app.world_mut()
+        .resource_mut::<NextState<AppState>>()
+        .set(AppState::MainMenu);
+    app.update();
+    assert_eq!(entities.iter(app.world()).collect::<HashSet<_>>(), initial);
+
+    // 资源全局加载完成后仍处于菜单，不得偷偷装配海岛或生成玩家。
+    wait_until(&mut app, |world| {
+        *world.resource::<ArtLoadState>() == ArtLoadState::Ready
+    });
+    assert!(
+        app.world_mut()
+            .query::<&IslandMap>()
+            .iter(app.world())
+            .next()
+            .is_none()
+    );
+
+    // 资源 Ready 后确定地图已经请求、业务尚未装配，再暂停并取消这次加载。
+    app.world_mut()
+        .resource_mut::<NextState<AppState>>()
+        .set(AppState::InGame);
+    app.update();
+    assert_eq!(
+        app.world_mut()
+            .query::<&IslandMap>()
+            .iter(app.world())
+            .count(),
+        1
+    );
+    assert_eq!(
+        app.world_mut()
+            .query::<&Character>()
+            .iter(app.world())
+            .count(),
+        0
+    );
+    app.world_mut()
+        .resource_mut::<NextState<PlayState>>()
+        .set(PlayState::Paused);
+    for _ in 0..3 {
+        app.update();
+    }
+    assert_eq!(
+        app.world_mut()
+            .query::<&Character>()
+            .iter(app.world())
+            .count(),
+        0
+    );
+    assert_eq!(
+        app.world_mut().query::<&Parcel>().iter(app.world()).count(),
+        0
+    );
+    assert_eq!(
+        app.world_mut()
+            .query::<&LoadingCamera>()
+            .iter(app.world())
+            .count(),
+        1
+    );
+    app.world_mut()
+        .resource_mut::<NextState<AppState>>()
+        .set(AppState::MainMenu);
+    for _ in 0..3 {
+        app.update();
+    }
+    assert_eq!(entities.iter(app.world()).collect::<HashSet<_>>(), initial);
+
+    for _ in 0..2 {
+        app.world_mut()
+            .resource_mut::<NextState<AppState>>()
+            .set(AppState::InGame);
+        wait_until(&mut app, |world| {
+            world.query::<&Character>().iter(world).count() == 1
+                && world.query::<&SkinnedMesh>().iter(world).count() > 0
+        });
+        let character = app
+            .world_mut()
+            .query_filtered::<Entity, With<Character>>()
+            .single(app.world())
+            .unwrap();
+        let parcels: HashSet<_> = app
+            .world_mut()
+            .query_filtered::<Entity, With<Parcel>>()
+            .iter(app.world())
+            .collect();
+        assert_eq!(parcels.len(), 5);
+        assert_eq!(
+            app.world_mut()
+                .query::<&Camera3d>()
+                .iter(app.world())
+                .count(),
+            1
+        );
+        let mut intent = app
+            .world_mut()
+            .get_mut::<CharacterIntent>(character)
+            .unwrap();
+        intent.movement = Vec2::Y;
+        intent.jump_pending = true;
+        intent.interact_pending = true;
+        app.world_mut()
+            .resource_mut::<NextState<PlayState>>()
+            .set(PlayState::Paused);
+        app.update();
+        let intent = app.world().get::<CharacterIntent>(character).unwrap();
+        assert_eq!(intent.movement, Vec2::ZERO);
+        assert!(!intent.jump_pending && !intent.interact_pending);
+        assert!(
+            app.world()
+                .resource::<Time<avian3d::prelude::Physics>>()
+                .is_paused()
+        );
+        assert_eq!(app.world().resource::<MenuState>().page, MenuPage::Pause);
+        app.world_mut()
+            .resource_mut::<NextState<PlayState>>()
+            .set(PlayState::Running);
+        app.update();
+        assert!(app.world().get::<Character>(character).is_some());
+        assert_eq!(
+            app.world_mut()
+                .query::<&Character>()
+                .iter(app.world())
+                .count(),
+            1
+        );
+        assert_eq!(
+            app.world_mut()
+                .query_filtered::<Entity, With<Parcel>>()
+                .iter(app.world())
+                .collect::<HashSet<_>>(),
+            parcels,
+        );
+        assert_eq!(
+            app.world_mut()
+                .query::<&Camera3d>()
+                .iter(app.world())
+                .count(),
+            1
+        );
+        assert_eq!(app.world().resource::<MenuState>().page, MenuPage::Hidden);
+
+        app.world_mut()
+            .resource_mut::<NextState<AppState>>()
+            .set(AppState::MainMenu);
+        // WorldInstance 等异步展开也要观察到清理后的根，不能仅检查业务组件数量。
+        for _ in 0..3 {
+            app.update();
+        }
+        assert_eq!(entities.iter(app.world()).collect::<HashSet<_>>(), initial);
     }
 }
 
@@ -864,7 +1067,11 @@ fn missing_art_assets_fail_without_spawning_gameplay_entities() {
         .join("scene-assets-tests")
         .join(uuid::Uuid::new_v4().to_string());
     std::fs::create_dir_all(&empty_assets).unwrap();
-    let mut app = build_asset_app(false, Some(empty_assets.to_string_lossy().into_owned()));
+    let mut app = build_asset_app(
+        false,
+        Some(empty_assets.to_string_lossy().into_owned()),
+        false,
+    );
     let deadline = Instant::now() + Duration::from_secs(30);
     loop {
         app.update();
