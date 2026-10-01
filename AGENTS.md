@@ -5,6 +5,7 @@
 ## 必读文档
 
 - 修改代码前，必须读取 [开发规范](docs/development.md)、[当前架构](docs/architecture.md) 中相关说明和 [验证指南](docs/testing.md)。
+- 修改 UI、BSN 布局或按钮交互时，重点核对 [UI 布局与高亮规范](docs/development.md#ui-布局与高亮规范) 和 [文字布局与高亮回归](docs/testing.md#文字布局与高亮回归)，防止文字零宽与输入来源混淆再次出现。
 - 处理玩法需求时，读取 [游戏设计](docs/game-design.md) 和相关 Issue，区分已确认设定、设计建议与待确认事项。游戏当前可用能力以 [README](README.md) 为入口，实际实现以源码为准。
 - 仅修改文档时，读取受影响的文档及开发规范中的文档维护约定，检查内容与链接。
 - 处理工单、分诊或领域文档时，按下方 `Agent skills` 入口读取对应适配约定。

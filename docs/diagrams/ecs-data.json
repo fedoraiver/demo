@@ -1,29 +1,33 @@
 {
   "title": "当前原型的 ECS 架构",
-  "snapshot_note": "源码结构快照：海岛资源装配、动态搬运、主角动画、落水恢复、CCD 与后台会话日志；不表示已完成游戏运行或视觉验收。",
+  "snapshot_note": "源码结构快照：英文菜单／暂停、真实海岛资源装配、五件动态可搬物、主角动画、落水恢复、CCD、Kira 音效与后台会话日志；不表示已完成游戏运行或游戏视觉验收。",
   "systems": [
     {
       "id": "startup_spawn",
       "name": "spawn_lighting",
       "kind": "system",
-      "phase": "Startup",
+      "phase": "OnEnter(AppState::InGame)；无状态测试使用 Startup",
       "module": "scene",
-      "description": "BSN 生成日光与加载相机；此时不生成动态角色和物品。",
+      "description": "进入游戏会话时以 BSN 创建日光与加载相机；资源与海岛静态碰撞准备成功后由 Update 链复用相机并生成动态业务实体。",
       "reads": [],
       "writes": [
         "camera.Camera3d",
         "camera.LoadingCamera",
-        "camera.Transform"
+        "camera.Transform",
+        "camera.DespawnOnExit",
+        "camera.IsDefaultUiCamera",
+        "camera.PrimaryEguiContext"
       ],
       "filters": [],
       "events": [],
       "notes": [
-        "准备完成后复用加载相机实体，不临时创建第二台主相机。",
-        "启动场景命令在阶段结束应用，四项启动日志与资源请求日志无彼此顺序。"
+        "日光与加载相机标记 DespawnOnExit(InGame)；退出会话清理，暂停不重建。",
+        "准备完成后复用加载相机，不创建第二台玩法相机。",
+        "最小无窗口测试未安装 State<AppState> 时沿用 Startup 入口。"
       ],
       "source": {
         "path": "src/scene.rs",
-        "line": 82
+        "line": 94
       }
     },
     {
@@ -112,7 +116,7 @@
       ],
       "source": {
         "path": "src/settings.rs",
-        "line": 145
+        "line": 281
       }
     },
     {
@@ -174,7 +178,7 @@
       "kind": "system",
       "phase": "PreUpdate",
       "module": "camera",
-      "description": "根据窗口焦点、当前物理光标、Egui 状态和控制关联更新捕获，并排入 GameplayContext 的启停命令。",
+      "description": "按窗口焦点、当前游戏状态、控制关联与检查器占用统一更新捕获和 GameplayContext；主菜单与暂停始终释放光标。",
       "reads": [
         "resource.ButtonInputKeyCode",
         "resource.MouseButtonInputMessages",
@@ -185,7 +189,9 @@
         "camera.OrbitCamera",
         "camera.MouseLookState",
         "camera.EguiContext",
-        "controller.ContextActivity"
+        "controller.ContextActivity",
+        "resource.AppState",
+        "resource.PlayState"
       ],
       "writes": [
         "window.CursorOptions",
@@ -208,13 +214,13 @@
         "CursorOptions 与 MouseLookState 在系统中直接更新；ContextActivity 是不可变组件，替换通过 Commands 延迟执行，必须在 Prepare 前应用。",
         "EguiContext 以 &mut 查询，writes 表示调度层面的可变访问权限；此系统只查询 UI 状态，不构建面板或修改检查器字段。",
         "点击当前 UI 面板、拖拽仍占用指针或弹窗打开时，不把左键视为恢复游戏捕获；当前 Window 光标命中已缓存的 UI 层。",
-        "UI 要求键盘、弹窗、指针拖拽或自由鼠标悬于面板时停用整个 GameplayContext；失焦或关联失效也停用。Esc 单独释放且没有 UI 占用时仍保留键盘动作。",
+        "UI 要求键盘、弹窗、指针拖拽或自由鼠标悬于面板时停用整个 GameplayContext；失焦或关联失效也停用。Esc 的暂停业务由菜单 Enhanced Input 执行；底层 Esc 只处理光标生命周期。",
         "停用动作上下文不清空 ButtonInput；动作完成或取消清除持续移动轴，重新启用继续遵循按钮动作的 require_reset。",
         "默认主上下文是 multipass，BeginPass 系统过滤掉它；此依赖是集合边界，不表示主检查器已经完成本帧 UI。实际 EguiPrimaryContextPass 由 PostUpdate 循环调用。"
       ],
       "source": {
         "path": "src/camera.rs",
-        "line": 251
+        "line": 288
       }
     },
     {
@@ -368,7 +374,7 @@
       ],
       "source": {
         "path": "src/input.rs",
-        "line": 136
+        "line": 151
       }
     },
     {
@@ -397,7 +403,7 @@
       ],
       "source": {
         "path": "src/input.rs",
-        "line": 155
+        "line": 170
       }
     },
     {
@@ -426,7 +432,7 @@
       ],
       "source": {
         "path": "src/input.rs",
-        "line": 174
+        "line": 189
       }
     },
     {
@@ -454,7 +460,7 @@
       ],
       "source": {
         "path": "src/input.rs",
-        "line": 194
+        "line": 209
       }
     },
     {
@@ -482,7 +488,7 @@
       ],
       "source": {
         "path": "src/input.rs",
-        "line": 208
+        "line": 223
       }
     },
     {
@@ -517,7 +523,7 @@
       ],
       "source": {
         "path": "src/camera.rs",
-        "line": 403
+        "line": 453
       }
     },
     {
@@ -531,7 +537,9 @@
         "controller.ControlsCharacter",
         "controller.ControlsCamera",
         "camera.OrbitCamera",
-        "character.Transform"
+        "character.Transform",
+        "resource.AppState",
+        "resource.PlayState"
       ],
       "writes": [
         "character.Transform"
@@ -539,7 +547,8 @@
       "filters": [
         "控制者：With<GameplayContext>",
         "角色：With<Character>",
-        "要求 OrbitCamera.target == ControlsCharacter.0"
+        "要求 OrbitCamera.target == ControlsCharacter.0",
+        "run_if(gameplay_running)：AppState::InGame 且 PlayState::Running；独立无状态测试兼容运行。"
       ],
       "events": [],
       "notes": [
@@ -549,7 +558,7 @@
       ],
       "source": {
         "path": "src/camera.rs",
-        "line": 488
+        "line": 538
       }
     },
     {
@@ -575,7 +584,9 @@
         "character.LockedAxes",
         "character.VelocityIntegrationData",
         "character.AccumulatedLocalAcceleration",
-        "character.SleepTimer"
+        "character.SleepTimer",
+        "resource.AppState",
+        "resource.PlayState"
       ],
       "writes": [
         "character.LinearVelocity",
@@ -585,7 +596,8 @@
         "character.SleepTimer"
       ],
       "filters": [
-        "With<Character>"
+        "With<Character>",
+        "run_if(gameplay_running)：AppState::InGame 且 PlayState::Running；独立无状态测试兼容运行。"
       ],
       "events": [],
       "notes": [
@@ -595,7 +607,7 @@
       ],
       "source": {
         "path": "src/gameplay.rs",
-        "line": 236
+        "line": 240
       }
     },
     {
@@ -619,7 +631,9 @@
         "character.LockedAxes",
         "character.VelocityIntegrationData",
         "character.AccumulatedLocalAcceleration",
-        "character.SleepTimer"
+        "character.SleepTimer",
+        "resource.AppState",
+        "resource.PlayState"
       ],
       "writes": [
         "character.CharacterIntent",
@@ -631,7 +645,8 @@
         "character.SleepTimer"
       ],
       "filters": [
-        "With<Character>"
+        "With<Character>",
+        "run_if(gameplay_running)：AppState::InGame 且 PlayState::Running；独立无状态测试兼容运行。"
       ],
       "events": [],
       "notes": [
@@ -641,7 +656,7 @@
       ],
       "source": {
         "path": "src/gameplay.rs",
-        "line": 266
+        "line": 270
       }
     },
     {
@@ -671,30 +686,37 @@
         "world.Position",
         "world.Rotation",
         "world.Collider",
-        "world.ColliderAabb"
+        "world.ColliderAabb",
+        "resource.AppState",
+        "resource.PlayState"
       ],
       "writes": [
         "character.CharacterIntent",
         "local.PickupReservations",
         "parcel.HeldBy",
         "parcel.HeldTarget",
-        "parcel.CollisionLayers"
+        "parcel.CollisionLayers",
+        "resource.SoundRequestMessages"
       ],
       "filters": [
         "角色：(With<Character>, Without<Pickable>)",
         "候选物：(With<Pickable>, Without<HeldBy>, Without<Character>)",
-        "已持有物：(With<Pickable>, With<HeldBy>, Without<Character>)"
+        "已持有物：(With<Pickable>, With<HeldBy>, Without<Character>)",
+        "run_if(gameplay_running)：AppState::InGame 且 PlayState::Running；独立无状态测试兼容运行。"
       ],
-      "events": [],
+      "events": [
+        "Commands::write_message：parcel_pickup / parcel_release"
+      ],
       "notes": [
         "结构变更使用 Commands；不直接修改箱体 Position、Transform、线速度或角速度。",
         "Local<HashSet<Entity>> 每次调用清空，在延迟命令应用前预留本批次已拾取箱体。",
         "射线检查拾取路径，隔墙或有其他遮挡时不拾取；当前业务一次持有一件。",
-        "SpatialQuery 的实际访问为 Query<Position,Rotation,Collider>、Query<ColliderAabb> 与 Res<ColliderTrees>；它是 SystemParam，不是资源。"
+        "SpatialQuery 的实际访问为 Query<Position,Rotation,Collider>、Query<ColliderAabb> 与 Res<ColliderTrees>；它是 SystemParam，不是资源。",
+        "声音消息只在成功接受操作后与关系变更一起提交；延迟同步后才能被播放系统消费，失败尝试没有成功提示。"
       ],
       "source": {
         "path": "src/gameplay.rs",
-        "line": 303
+        "line": 307
       }
     },
     {
@@ -703,13 +725,14 @@
       "kind": "sync",
       "phase": "FixedUpdate（0..N 步）",
       "module": "bevy_ecs",
-      "description": "应用拿放命令，更新持有关系、呈现目标和碰撞层，使失效清理读到本步关系。",
+      "description": "应用拿放命令，更新持有关系、呈现目标和碰撞层，使失效清理读到本步关系。同时提交已接受操作的声音消息。",
       "reads": [],
       "writes": [
         "parcel.HeldBy",
         "character.HoldingItems",
         "parcel.HeldTarget",
-        "parcel.CollisionLayers"
+        "parcel.CollisionLayers",
+        "resource.SoundRequestMessages"
       ],
       "filters": [],
       "events": [],
@@ -719,7 +742,7 @@
       ],
       "source": {
         "path": "src/gameplay.rs",
-        "line": 153
+        "line": 155
       }
     },
     {
@@ -733,14 +756,17 @@
         "resource.PrototypeConfig",
         "character.Transform",
         "parcel.HeldBy",
-        "parcel.CarryGrip"
+        "parcel.CarryGrip",
+        "resource.AppState",
+        "resource.PlayState"
       ],
       "writes": [
         "parcel.HeldTarget"
       ],
       "filters": [
         "角色：(With<Character>, Without<Pickable>)",
-        "物体：(With<Pickable>, Without<Character>)，具有 HeldBy 与 HeldTarget"
+        "物体：(With<Pickable>, Without<Character>)，具有 HeldBy 与 HeldTarget",
+        "run_if(gameplay_running)：AppState::InGame 且 PlayState::Running；独立无状态测试兼容运行。"
       ],
       "events": [],
       "notes": [
@@ -750,7 +776,7 @@
       ],
       "source": {
         "path": "src/gameplay.rs",
-        "line": 424
+        "line": 431
       }
     },
     {
@@ -764,7 +790,9 @@
         "controller.ControlsCharacter",
         "controller.ControlsCamera",
         "camera.OrbitCamera",
-        "character.Transform"
+        "character.Transform",
+        "resource.AppState",
+        "resource.PlayState"
       ],
       "writes": [
         "character.Transform"
@@ -772,7 +800,8 @@
       "filters": [
         "控制者：With<GameplayContext>",
         "角色：With<Character>",
-        "要求 OrbitCamera.target == ControlsCharacter.0"
+        "要求 OrbitCamera.target == ControlsCharacter.0",
+        "run_if(gameplay_running)：AppState::InGame 且 PlayState::Running；独立无状态测试兼容运行。"
       ],
       "events": [],
       "notes": [
@@ -782,7 +811,7 @@
       ],
       "source": {
         "path": "src/camera.rs",
-        "line": 488
+        "line": 538
       }
     },
     {
@@ -796,14 +825,17 @@
         "resource.PrototypeConfig",
         "character.Transform",
         "parcel.HeldBy",
-        "parcel.CarryGrip"
+        "parcel.CarryGrip",
+        "resource.AppState",
+        "resource.PlayState"
       ],
       "writes": [
         "parcel.HeldTarget"
       ],
       "filters": [
         "角色：(With<Character>, Without<Pickable>)",
-        "物体：(With<Pickable>, Without<Character>)，具有 HeldBy 与 HeldTarget"
+        "物体：(With<Pickable>, Without<Character>)，具有 HeldBy 与 HeldTarget",
+        "run_if(gameplay_running)：AppState::InGame 且 PlayState::Running；独立无状态测试兼容运行。"
       ],
       "events": [],
       "notes": [
@@ -813,7 +845,7 @@
       ],
       "source": {
         "path": "src/gameplay.rs",
-        "line": 424
+        "line": 431
       }
     },
     {
@@ -825,14 +857,17 @@
       "description": "读取本帧已经插值的角色 Transform 和模式角度，更新同一台镜头。",
       "reads": [
         "character.Transform",
-        "camera.OrbitCamera"
+        "camera.OrbitCamera",
+        "resource.AppState",
+        "resource.PlayState"
       ],
       "writes": [
         "camera.Transform"
       ],
       "filters": [
         "角色：With<Character>",
-        "相机查询：Without<Character>，具有 OrbitCamera 与 Transform；没有额外 With<Camera3d> 过滤"
+        "相机查询：Without<Character>，具有 OrbitCamera 与 Transform；没有额外 With<Camera3d> 过滤",
+        "run_if(gameplay_running)：AppState::InGame 且 PlayState::Running；独立无状态测试兼容运行。"
       ],
       "events": [],
       "notes": [
@@ -841,7 +876,7 @@
       ],
       "source": {
         "path": "src/camera.rs",
-        "line": 511
+        "line": 561
       }
     },
     {
@@ -932,11 +967,11 @@
       ],
       "notes": [
         "写 toggle_requested_by，不直接改变 perspective；不依赖其他 Observer 注册顺序。",
-        "focused=true 是 Observer 接受条件；正常设备输入还须 GameplayContext 启用。Esc 释放本身不禁用键盘，UI 占用会停用整个上下文。"
+        "focused=true 是 Observer 接受条件；实际设备输入还须 GameplayContext 启用。F3 释放后仍可切换视角，主菜单、暂停与检查器占用停用玩法上下文。"
       ],
       "source": {
         "path": "src/camera.rs",
-        "line": 442
+        "line": 492
       }
     },
     {
@@ -947,13 +982,16 @@
       "module": "camera",
       "description": "在所有动作写回和事件命令应用后，取出请求并切换同一相机的视角模式。",
       "reads": [
-        "camera.OrbitCamera"
+        "camera.OrbitCamera",
+        "resource.AppState",
+        "resource.PlayState"
       ],
       "writes": [
         "camera.OrbitCamera"
       ],
       "filters": [
-        "具有 OrbitCamera"
+        "具有 OrbitCamera",
+        "run_if(gameplay_running)：AppState::InGame 且 PlayState::Running；独立无状态测试兼容运行。"
       ],
       "events": [],
       "notes": [
@@ -963,7 +1001,7 @@
       ],
       "source": {
         "path": "src/camera.rs",
-        "line": 469
+        "line": 519
       }
     },
     {
@@ -978,7 +1016,9 @@
         "controller.ControlsCamera",
         "camera.OrbitCamera",
         "visual.ChildOf",
-        "visual.Visibility"
+        "visual.Visibility",
+        "resource.AppState",
+        "resource.PlayState"
       ],
       "writes": [
         "visual.Visibility"
@@ -987,7 +1027,8 @@
         "视觉：With<CharacterVisual>",
         "控制者：With<GameplayContext>",
         "按 ChildOf 查所属角色并确认 OrbitCamera.target 匹配",
-        "角色：Query<(), With<Character>>，检查所属业务角色存在"
+        "角色：Query<(), With<Character>>，检查所属业务角色存在",
+        "run_if(gameplay_running)：AppState::InGame 且 PlayState::Running；独立无状态测试兼容运行。"
       ],
       "events": [],
       "notes": [
@@ -996,7 +1037,7 @@
       ],
       "source": {
         "path": "src/camera.rs",
-        "line": 523
+        "line": 573
       }
     },
     {
@@ -1089,7 +1130,7 @@
       ],
       "source": {
         "path": "src/camera.rs",
-        "line": 162
+        "line": 164
       }
     },
     {
@@ -1122,7 +1163,9 @@
         "resource.PrototypeConfig",
         "camera.EguiInput",
         "camera.EguiContextSettings",
-        "camera.EguiMultipassSchedule"
+        "camera.EguiMultipassSchedule",
+        "resource.AppState",
+        "resource.PlayState"
       ],
       "writes": [
         "camera.EguiContext",
@@ -1149,7 +1192,8 @@
       ],
       "filters": [
         "UI：With<PrimaryEguiContext>",
-        "独占 &mut World，按运行时反射注册动态访问数据"
+        "独占 &mut World，按运行时反射注册动态访问数据",
+        "run_if(gameplay_running)：AppState::InGame 且 PlayState::Running；独立无状态测试兼容运行。"
       ],
       "events": [],
       "notes": [
@@ -1192,11 +1236,12 @@
         "读取尚未由后续捕获系统更新的 CursorOptions，但单独读取 Esc.just_pressed，使释放当帧立即放行 UI。",
         "清空映射后的 EguiInput.events，再补仍按住的 UI 按键和指针释放事件、PointerGone；调用 stop_dragging 与 surrender_focus 清理 UI 状态。",
         "不清空 Bevy ButtonInput，不写角色意图或相机观察角，也不隐藏检查器；窗口原始焦点字段仍保留。",
-        "默认主 UI 为 multipass，过滤后的 EguiInput 最终由 PostUpdate 的 UI 循环消费，而非由 PreUpdate BeginPass 系统消费。"
+        "默认主 UI 为 multipass，过滤后的 EguiInput 最终由 PostUpdate 的 UI 循环消费，而非由 PreUpdate BeginPass 系统消费。",
+        "检查器仅在 Running 绘制；F3 的 ReleasePointerAction 释放光标后可操作检查器。"
       ],
       "source": {
         "path": "src/camera.rs",
-        "line": 193
+        "line": 230
       }
     },
     {
@@ -1227,14 +1272,17 @@
         "world.Position",
         "world.Rotation",
         "world.Collider",
-        "world.ColliderAabb"
+        "world.ColliderAabb",
+        "resource.AppState",
+        "resource.PlayState"
       ],
       "writes": [
         "character.CharacterMotion"
       ],
       "filters": [
         "With<Character>",
-        "碰撞体查询：Option<CollisionLayers>、Has<HeldBy>、Has<Sensor>"
+        "碰撞体查询：Option<CollisionLayers>、Has<HeldBy>、Has<Sensor>",
+        "run_if(gameplay_running)：AppState::InGame 且 PlayState::Running；独立无状态测试兼容运行。"
       ],
       "events": [],
       "notes": [
@@ -1244,7 +1292,7 @@
       ],
       "source": {
         "path": "src/gameplay.rs",
-        "line": 172
+        "line": 176
       }
     },
     {
@@ -1275,14 +1323,17 @@
         "world.Position",
         "world.Rotation",
         "world.Collider",
-        "world.ColliderAabb"
+        "world.ColliderAabb",
+        "resource.AppState",
+        "resource.PlayState"
       ],
       "writes": [
         "character.CharacterMotion"
       ],
       "filters": [
         "With<Character>",
-        "碰撞体查询：Option<CollisionLayers>、Has<HeldBy>、Has<Sensor>"
+        "碰撞体查询：Option<CollisionLayers>、Has<HeldBy>、Has<Sensor>",
+        "run_if(gameplay_running)：AppState::InGame 且 PlayState::Running；独立无状态测试兼容运行。"
       ],
       "events": [],
       "notes": [
@@ -1292,7 +1343,7 @@
       ],
       "source": {
         "path": "src/gameplay.rs",
-        "line": 172
+        "line": 176
       }
     },
     {
@@ -1329,7 +1380,9 @@
       "reads": [
         "character.Character",
         "parcel.HeldTarget",
-        "parcel.HeldBy"
+        "parcel.HeldBy",
+        "resource.AppState",
+        "resource.PlayState"
       ],
       "writes": [
         "parcel.HeldBy",
@@ -1338,7 +1391,8 @@
       ],
       "filters": [
         "角色：With<Character>",
-        "物体：With<HeldTarget>，HeldBy 可选"
+        "物体：With<HeldTarget>，HeldBy 可选",
+        "run_if(gameplay_running)：AppState::InGame 且 PlayState::Running；独立无状态测试兼容运行。"
       ],
       "events": [],
       "notes": [
@@ -1346,7 +1400,7 @@
       ],
       "source": {
         "path": "src/gameplay.rs",
-        "line": 398
+        "line": 405
       }
     },
     {
@@ -1370,7 +1424,7 @@
       ],
       "source": {
         "path": "src/gameplay.rs",
-        "line": 153
+        "line": 155
       }
     },
     {
@@ -1408,7 +1462,9 @@
         "parcel.VelocityIntegrationData",
         "parcel.AccumulatedLocalAcceleration",
         "parcel.SleepTimer",
-        "parcel.CarryGrip"
+        "parcel.CarryGrip",
+        "resource.AppState",
+        "resource.PlayState"
       ],
       "writes": [
         "character.LinearVelocity",
@@ -1424,7 +1480,8 @@
       ],
       "filters": [
         "角色：(With<Character>, Without<Pickable>)",
-        "箱体：(With<Pickable>, Without<Character>)，具有 HeldBy"
+        "箱体：(With<Pickable>, Without<Character>)，具有 HeldBy",
+        "run_if(gameplay_running)：AppState::InGame 且 PlayState::Running；独立无状态测试兼容运行。"
       ],
       "events": [],
       "notes": [
@@ -1435,7 +1492,7 @@
       ],
       "source": {
         "path": "src/gameplay.rs",
-        "line": 442
+        "line": 449
       }
     },
     {
@@ -1449,13 +1506,16 @@
         "resource.TimeFixed",
         "character.LinearVelocity",
         "character.CharacterMotion",
-        "local.VelocityLog"
+        "local.VelocityLog",
+        "resource.AppState",
+        "resource.PlayState"
       ],
       "writes": [
         "local.VelocityLog"
       ],
       "filters": [
-        "With<Character>"
+        "With<Character>",
+        "run_if(gameplay_running)：AppState::InGame 且 PlayState::Running；独立无状态测试兼容运行。"
       ],
       "events": [],
       "notes": [
@@ -1463,7 +1523,7 @@
       ],
       "source": {
         "path": "src/gameplay.rs",
-        "line": 486
+        "line": 493
       }
     },
     {
@@ -1752,7 +1812,9 @@
         "resource.ArtAssets",
         "resource.AssetsGltf",
         "resource.ArtLoadState",
-        "island.IslandMap"
+        "island.IslandMap",
+        "resource.AppState",
+        "resource.PlayState"
       ],
       "writes": [
         "resource.ArtLoadState",
@@ -1760,17 +1822,19 @@
         "island.WorldAssetRoot"
       ],
       "filters": [
-        "With<IslandMap>"
+        "With<IslandMap>",
+        "run_if(gameplay_running)：AppState::InGame 且 PlayState::Running；无状态测试仍可运行。"
       ],
       "events": [],
       "description": "五份资源就绪且地图不存在时请求海岛实例。",
       "notes": [
         "begin_island → prepare_island → spawn_actors 使用 chain，延迟结构命令在依赖处应用。",
-        "仅请求 WorldAssetRoot；模板请求不等于静态碰撞已就绪。"
+        "仅请求 WorldAssetRoot；模板请求不等于静态碰撞已就绪。",
+        "InGame 根实体使用 DespawnOnExit；地图和视觉后代使用 ChildOf 随根清理。"
       ],
       "source": {
         "path": "src/scene.rs",
-        "line": 100
+        "line": 118
       }
     },
     {
@@ -1800,7 +1864,7 @@
       ],
       "source": {
         "path": "src/scene.rs",
-        "line": 122
+        "line": 140
       }
     },
     {
@@ -1816,7 +1880,9 @@
         "model_node.Transform",
         "model_node.Mesh3d",
         "resource.AssetsMesh",
-        "resource.ArtLoadState"
+        "resource.ArtLoadState",
+        "resource.AppState",
+        "resource.PlayState"
       ],
       "writes": [
         "resource.ArtLoadState",
@@ -1830,7 +1896,8 @@
         "npc.DisplayNpc"
       ],
       "filters": [
-        "With<IslandPending>"
+        "With<IslandPending>",
+        "run_if(gameplay_running)：AppState::InGame 且 PlayState::Running；无状态测试仍可运行。"
       ],
       "events": [],
       "description": "导入元数据与 CPU 几何，构建静态三角碰撞及入口坡道。",
@@ -1842,7 +1909,7 @@
       ],
       "source": {
         "path": "src/scene.rs",
-        "line": 133
+        "line": 151
       }
     },
     {
@@ -1856,7 +1923,9 @@
         "resource.PrototypeConfig",
         "resource.ArtAssets",
         "resource.AssetsGltf",
-        "camera.LoadingCamera"
+        "camera.LoadingCamera",
+        "resource.AppState",
+        "resource.PlayState"
       ],
       "writes": [
         "island.ActorsSpawned",
@@ -1875,18 +1944,20 @@
         "camera.MouseLookState"
       ],
       "filters": [
-        "Without<ActorsSpawned>"
+        "Without<ActorsSpawned>",
+        "run_if(gameplay_running)：AppState::InGame 且 PlayState::Running；无状态测试仍可运行。"
       ],
       "events": [],
       "description": "碰撞命令可见后生成一名玩家、五件物品与控制者，复用加载相机。",
       "notes": [
         "玩家和可搬物是独立世界根，不是地图的子实体。",
         "业务根保存刚体；直属视觉根通过 BSN Children 挂接 GLB 模板。",
-        "普通纸箱、易碎纸箱、三只木箱复用同一玩法能力，偏移来自 CarryGrip。"
+        "普通纸箱、易碎纸箱、三只木箱复用同一玩法能力，偏移来自 CarryGrip。",
+        "InGame 根实体使用 DespawnOnExit；地图和视觉后代使用 ChildOf 随根清理。"
       ],
       "source": {
         "path": "src/scene.rs",
-        "line": 468
+        "line": 486
       }
     },
     {
@@ -1913,7 +1984,7 @@
       ],
       "source": {
         "path": "src/character_animation.rs",
-        "line": 79
+        "line": 84
       }
     },
     {
@@ -1930,7 +2001,9 @@
         "character.LinearVelocity",
         "character.HoldingItems",
         "resource.AssetsGltf",
-        "animation_player.AnimationPlayer"
+        "animation_player.AnimationPlayer",
+        "resource.AppState",
+        "resource.PlayState"
       ],
       "writes": [
         "resource.AssetsAnimationGraph",
@@ -1942,7 +2015,8 @@
       ],
       "filters": [
         "With<CourierAnimationPending>",
-        "With<Character>"
+        "With<Character>",
+        "run_if(gameplay_running)：AppState::InGame 且 PlayState::Running；无状态测试仍可运行。"
       ],
       "events": [],
       "description": "遍历主角视觉子树，按动作名称创建图并绑定实际播放器。",
@@ -1953,7 +2027,7 @@
       ],
       "source": {
         "path": "src/character_animation.rs",
-        "line": 92
+        "line": 97
       }
     },
     {
@@ -1965,7 +2039,9 @@
       "reads": [
         "character.LinearVelocity",
         "character.HoldingItems",
-        "animation_player.CourierAnimation"
+        "animation_player.CourierAnimation",
+        "resource.AppState",
+        "resource.PlayState"
       ],
       "writes": [
         "animation_player.AnimationPlayer",
@@ -1974,7 +2050,8 @@
         "animation_player.AnimationGraphHandle"
       ],
       "filters": [
-        "With<Character>"
+        "With<Character>",
+        "run_if(gameplay_running)：AppState::InGame 且 PlayState::Running；无状态测试仍可运行。"
       ],
       "events": [],
       "description": "实际水平速度选择 Idle / Walk，持物优先 Carry_Idle。",
@@ -1985,7 +2062,7 @@
       ],
       "source": {
         "path": "src/character_animation.rs",
-        "line": 190
+        "line": 195
       }
     },
     {
@@ -1999,7 +2076,9 @@
         "parcel.SpawnPoint",
         "parcel.HeldBy",
         "character.Position",
-        "parcel.Position"
+        "parcel.Position",
+        "resource.AppState",
+        "resource.PlayState"
       ],
       "writes": [
         "character.Position",
@@ -2026,7 +2105,8 @@
       ],
       "filters": [
         "Or<(With<Character>, With<Pickable>)>",
-        "SpawnPoint 必须存在"
+        "SpawnPoint 必须存在",
+        "run_if(gameplay_running)：AppState::InGame 且 PlayState::Running；无状态测试仍可运行。"
       ],
       "events": [],
       "description": "物理 y < -1.5 时回各自出生姿态，清除速度与单次请求，解除持握。",
@@ -2038,7 +2118,7 @@
       ],
       "source": {
         "path": "src/island_recovery.rs",
-        "line": 78
+        "line": 81
       }
     },
     {
@@ -2049,7 +2129,9 @@
       "phase": "FixedFirst",
       "reads": [
         "character.ResumeInterpolation",
-        "parcel.ResumeInterpolation"
+        "parcel.ResumeInterpolation",
+        "resource.AppState",
+        "resource.PlayState"
       ],
       "writes": [
         "character.ResumeInterpolation",
@@ -2060,7 +2142,8 @@
         "parcel.NoRotationEasing"
       ],
       "filters": [
-        "ResumeInterpolation"
+        "ResumeInterpolation",
+        "run_if(gameplay_running)：AppState::InGame 且 PlayState::Running；无状态测试仍可运行。"
       ],
       "events": [],
       "description": "下一固定步清理本模块添加的插值暂停，再从恢复位置采样。",
@@ -2069,7 +2152,7 @@
       ],
       "source": {
         "path": "src/island_recovery.rs",
-        "line": 145
+        "line": 148
       }
     },
     {
@@ -2145,6 +2228,873 @@
         "引擎集合概览，实际内部插值系统不逐项穷举。"
       ],
       "source": null
+    },
+    {
+      "id": "flow_enter_menu",
+      "name": "show_main_menu",
+      "kind": "system",
+      "phase": "OnEnter(AppState::MainMenu) · StateTransition",
+      "module": "app_flow",
+      "description": "设置 Main 页面与返回来源，重置焦点，恢复展示动画的虚拟时间。",
+      "reads": [
+        "resource.AppTransitionMessages",
+        "resource.TimeVirtual"
+      ],
+      "writes": [
+        "resource.MenuState",
+        "resource.MenuFocus",
+        "resource.TimeVirtual"
+      ],
+      "filters": [],
+      "events": [],
+      "notes": [
+        "与 suspend_input 使用 chain；展示动画继续运行，物理时间单独停用。"
+      ],
+      "source": {
+        "path": "src/app_flow.rs",
+        "line": 72
+      }
+    },
+    {
+      "id": "flow_pause",
+      "name": "show_pause_menu",
+      "kind": "system",
+      "phase": "OnEnter(PlayState::Paused) · StateTransition",
+      "module": "app_flow",
+      "description": "打开 Pause 页面并重置焦点；不退出 InGame，也不生成或销毁玩法实体。",
+      "reads": [],
+      "writes": [
+        "resource.MenuState",
+        "resource.MenuFocus"
+      ],
+      "filters": [],
+      "events": [],
+      "notes": [
+        "与 suspend_input 使用 chain。"
+      ],
+      "source": {
+        "path": "src/app_flow.rs",
+        "line": 90
+      }
+    },
+    {
+      "id": "flow_suspend",
+      "name": "suspend_input",
+      "kind": "system",
+      "phase": "OnEnter(MainMenu / Paused) · StateTransition",
+      "module": "app_flow",
+      "description": "清空玩家意图、停用玩法输入、释放光标，并冻结物理时间；Paused 还冻结虚拟时间。",
+      "reads": [
+        "resource.MenuState",
+        "resource.TimeVirtual",
+        "resource.TimePhysics"
+      ],
+      "writes": [
+        "resource.TimeVirtual",
+        "resource.TimePhysics",
+        "character.CharacterIntent",
+        "controller.ContextActivity",
+        "camera.MouseLookState",
+        "window.CursorOptions"
+      ],
+      "filters": [],
+      "events": [],
+      "notes": [
+        "立即 advance_by(Duration::ZERO)，防止 Avian 沿用上一帧物理 delta；ContextActivity 通过 Commands 延迟替换。"
+      ],
+      "source": {
+        "path": "src/app_flow.rs",
+        "line": 99
+      }
+    },
+    {
+      "id": "flow_resume",
+      "name": "resume_game",
+      "kind": "system",
+      "phase": "OnEnter(PlayState::Running) · StateTransition",
+      "module": "app_flow",
+      "description": "隐藏菜单，恢复虚拟与物理时间，标记相机重新捕获且跳过自由光标位移。",
+      "reads": [
+        "resource.PlayTransitionMessages",
+        "resource.TimeVirtual",
+        "resource.TimePhysics"
+      ],
+      "writes": [
+        "resource.MenuState",
+        "resource.TimeVirtual",
+        "resource.TimePhysics",
+        "camera.MouseLookState"
+      ],
+      "filters": [],
+      "events": [],
+      "notes": [
+        "首次进入 InGame 的 Running 与暂停恢复复用此入口；sync_mouse_capture 在后续输入准备恢复上下文。"
+      ],
+      "source": {
+        "path": "src/app_flow.rs",
+        "line": 138
+      }
+    },
+    {
+      "id": "menu_spawn_controller",
+      "name": "spawn_menu_controller",
+      "kind": "system",
+      "phase": "Startup",
+      "module": "ui",
+      "description": "创建持久菜单控制者与六个 Enhanced Input 动作及键盘/手柄绑定。",
+      "reads": [],
+      "writes": [
+        "menu_controller.MenuContext",
+        "menu_controller.ContextPriority",
+        "menu_controller.ContextActivity",
+        "menu_controller.GamepadDevice",
+        "menu_controller.Actions"
+      ],
+      "filters": [],
+      "events": [],
+      "notes": [
+        "菜单控制者不使用 DespawnOnExit，跨游戏会话保留。"
+      ],
+      "source": {
+        "path": "src/ui/navigation.rs",
+        "line": 66
+      }
+    },
+    {
+      "id": "menu_sync_context",
+      "name": "sync_context",
+      "kind": "system",
+      "phase": "PreUpdate",
+      "module": "ui",
+      "description": "按主窗口聚焦替换 MenuContext 启用状态。",
+      "reads": [
+        "window.Window",
+        "menu_controller.ContextActivity"
+      ],
+      "writes": [
+        "menu_controller.ContextActivity"
+      ],
+      "filters": [
+        "With<PrimaryWindow>"
+      ],
+      "events": [],
+      "notes": [
+        "after(InputSystems), before(EnhancedInputSystems::Prepare)；Commands 替换不可变组件。"
+      ],
+      "source": {
+        "path": "src/ui/navigation.rs",
+        "line": 88
+      }
+    },
+    {
+      "id": "menu_handle_requests",
+      "name": "handle_requests",
+      "kind": "system",
+      "phase": "PreUpdate · after(EnhancedInputSystems::Apply)",
+      "module": "ui",
+      "description": "每帧消费一项 UiRequest，导航页面、开始/暂停/恢复/结束会话，编辑草稿并保存应用真实设置。接受的动作发送确认或返回声音；无效请求、当前分类和边界调整静音。",
+      "reads": [
+        "resource.UiRequestMessages",
+        "resource.MenuState",
+        "resource.GameSettings",
+        "resource.SettingsDraft",
+        "resource.SettingsFile",
+        "menu_controller.MenuContext"
+      ],
+      "writes": [
+        "resource.UiRequestMessages",
+        "resource.MenuState",
+        "resource.MenuFocus",
+        "resource.SettingsDraft",
+        "resource.GameSettings",
+        "resource.AppState",
+        "resource.PlayState",
+        "resource.SoundRequestMessages",
+        "resource.AppExitMessages"
+      ],
+      "filters": [],
+      "events": [
+        "写入 SoundRequest：menu_confirm / menu_cancel"
+      ],
+      "notes": [
+        "写 NextState 而非直接执行状态系统；随后的 StateTransition 在固定循环之前生效。",
+        "鼠标 Update 请求在下一次 PreUpdate 消费；读取第一项后清空其余，避免页面穿透。",
+        "Quit 写 AppExit::Success；保存失败只写提示，不替换当前生效设置。",
+        "MenuConfirm 用于有效操作及打开暂停；MenuCancel 用于恢复/返回、离开子页和保存失败。每帧仅反馈第一项接受的 UiRequest，source 使用唯一菜单控制者。"
+      ],
+      "source": {
+        "path": "src/ui/navigation.rs",
+        "line": 283
+      }
+    },
+    {
+      "id": "menu_pointer",
+      "name": "pointer_interaction",
+      "kind": "system",
+      "phase": "Update · Build之后 / Style之前",
+      "module": "ui",
+      "description": "读取原生 Interaction 产生共享请求，按真实窗口光标变化区分鼠标与键盘焦点。真实鼠标进入新按钮时发送 MenuHover。",
+      "reads": [
+        "resource.MenuState",
+        "window.Window",
+        "menu_button.MenuButton",
+        "menu_button.Interaction",
+        "local.MenuPointerCursor",
+        "local.MenuPointerHover"
+      ],
+      "writes": [
+        "resource.MenuFocus",
+        "resource.MenuInputSource",
+        "resource.UiRequestMessages",
+        "resource.SoundRequestMessages",
+        "local.MenuPointerCursor",
+        "local.MenuPointerHover"
+      ],
+      "filters": [
+        "With<PrimaryWindow>"
+      ],
+      "events": [
+        "写入 SoundRequest：menu_hover"
+      ],
+      "notes": [
+        "只读窗口位置区分来源，点击仍使用 Interaction；不重复读取 MouseButton。",
+        "页面 Build 先销毁旧按钮并应用命令，防止旧页面 Back 补发；Hidden 不处理按钮。",
+        "按钮内移动、按下后释放和页面重建初始 Hovered 不重复发声；Local 保存上次窗口位置与悬停实体。"
+      ],
+      "source": {
+        "path": "src/ui/navigation.rs",
+        "line": 228
+      }
+    },
+    {
+      "id": "menu_rebuild",
+      "name": "rebuild_page",
+      "kind": "system",
+      "phase": "Update · UiSystems::Build",
+      "module": "ui",
+      "description": "页面、草稿或窗口宽度变化时销毁旧根并声明新的 BSN 页面；Hidden 只清理。",
+      "reads": [
+        "resource.MenuState",
+        "resource.SettingsDraft",
+        "resource.UiTheme",
+        "window.Window",
+        "menu_root.MenuRoot"
+      ],
+      "writes": [
+        "menu_root.MenuRoot",
+        "menu_root.Node",
+        "menu_root.Children",
+        "menu_root.GlobalZIndex",
+        "menu_button.MenuButton",
+        "menu_button.Node",
+        "menu_scroll.MenuScroll",
+        "menu_scroll.ScrollPosition",
+        "menu_text.Text",
+        "menu_text.TextFont",
+        "menu_text.TextColor",
+        "menu_text.Node"
+      ],
+      "filters": [
+        "With<PrimaryWindow>",
+        "With<MenuRoot>"
+      ],
+      "events": [],
+      "notes": [
+        "Build/Style 通过系统集 chain；结构 Commands 在读取新按钮前同步。",
+        "字体句柄预加载，BSN 不发独立异步页面任务；焦点变化不重建页面。"
+      ],
+      "source": {
+        "path": "src/ui/screens.rs",
+        "line": 29
+      }
+    },
+    {
+      "id": "menu_style",
+      "name": "style_buttons",
+      "kind": "system",
+      "phase": "Update · UiSystems::Style",
+      "module": "ui",
+      "description": "按输入来源更新所有可操作按钮的纸色/金色背景与深色焦点边框，鼠标离开恢复。",
+      "reads": [
+        "resource.MenuFocus",
+        "resource.MenuInputSource",
+        "menu_button.MenuButton",
+        "menu_button.Interaction"
+      ],
+      "writes": [
+        "menu_button.BackgroundColor",
+        "menu_button.BorderColor"
+      ],
+      "filters": [],
+      "events": [],
+      "notes": [
+        "Apply 与分类按钮复用同一规则；只有颜色变化时写入。"
+      ],
+      "source": {
+        "path": "src/ui/screens.rs",
+        "line": 556
+      }
+    },
+    {
+      "id": "menu_description",
+      "name": "update_description",
+      "kind": "system",
+      "phase": "Update · UiSystems::Style",
+      "module": "ui",
+      "description": "从聚焦设置按钮读取说明，更新右侧标题与正文文本。",
+      "reads": [
+        "resource.MenuFocus",
+        "menu_button.MenuButton",
+        "menu_button.SettingDescription",
+        "menu_text.DescriptionTitle",
+        "menu_text.DescriptionBody"
+      ],
+      "writes": [
+        "menu_text.Text"
+      ],
+      "filters": [
+        "Or<(With<DescriptionTitle>, With<DescriptionBody>)>"
+      ],
+      "events": [],
+      "notes": [
+        "只更新 Text 变化的说明节点，不修改 Children 或重建页面。"
+      ],
+      "source": {
+        "path": "src/ui/screens.rs",
+        "line": 590
+      }
+    },
+    {
+      "id": "menu_scroll_focus",
+      "name": "scroll_focused_button",
+      "kind": "system",
+      "phase": "Update · UiSystems::Style",
+      "module": "ui",
+      "description": "等待真实布局后，沿 ChildOf 找视口，把键盘焦点按钮滚入可视范围。",
+      "reads": [
+        "resource.MenuFocus",
+        "menu_button.MenuButton",
+        "menu_scroll.ComputedNode",
+        "menu_scroll.UiGlobalTransform",
+        "menu_button.ComputedNode",
+        "menu_button.UiGlobalTransform"
+      ],
+      "writes": [
+        "menu_scroll.ScrollPosition"
+      ],
+      "filters": [
+        "With<MenuScroll>"
+      ],
+      "events": [],
+      "notes": [
+        "布局尚无有效尺寸时等待下一帧；物理 UI 坐标通过 inverse_scale_factor 转逻辑滚动位置。"
+      ],
+      "source": {
+        "path": "src/ui/screens.rs",
+        "line": 613
+      }
+    },
+    {
+      "id": "menu_backdrop_spawn",
+      "name": "spawn_backdrop",
+      "kind": "system",
+      "phase": "OnEnter(AppState::MainMenu) · StateTransition",
+      "module": "ui",
+      "description": "声明独立海岛 GLB 展示舞台、相机、日光与 Carry_Idle 动画图。",
+      "reads": [
+        "resource.AssetServer",
+        "resource.AppState"
+      ],
+      "writes": [
+        "resource.AssetsAnimationGraph",
+        "menu_backdrop.MenuBackdrop",
+        "menu_backdrop.DespawnOnExit",
+        "menu_backdrop.Children",
+        "menu_backdrop.Transform",
+        "menu_backdrop.Visibility",
+        "menu_camera.Camera3d",
+        "menu_camera.IsDefaultUiCamera",
+        "menu_camera.PrimaryEguiContext",
+        "menu_camera.Transform",
+        "menu_camera.ChildOf",
+        "menu_model.WorldAssetRoot",
+        "menu_model.CourierAnimation",
+        "menu_model.Transform"
+      ],
+      "filters": [],
+      "events": [],
+      "notes": [
+        "DespawnOnExit(MainMenu) 通过 ChildOf 清理展示树；暂停复用玩法相机而不生成展示舞台。"
+      ],
+      "source": {
+        "path": "src/ui/backdrop.rs",
+        "line": 36
+      }
+    },
+    {
+      "id": "menu_asset_failures",
+      "name": "log_asset_failures",
+      "kind": "system",
+      "phase": "Update",
+      "module": "ui",
+      "description": "读取 models/ 与 ui/ 资产加载失败消息，写入统一会话日志。",
+      "reads": [
+        "resource.AssetLoadFailedMessages"
+      ],
+      "writes": [],
+      "filters": [],
+      "events": [],
+      "notes": [
+        "独立 MessageReader 游标，不触发 UI 行为，也不自动启动游戏。"
+      ],
+      "source": {
+        "path": "src/ui/backdrop.rs",
+        "line": 179
+      }
+    },
+    {
+      "id": "observe_release_pointer",
+      "name": "release_pointer_for_inspector",
+      "kind": "observer",
+      "phase": "匹配事件触发时",
+      "module": "camera",
+      "description": "F3 按下经控制者路由释放光标并跳过运动，为检查器交互做准备；保持游戏运行。",
+      "reads": [
+        "controller.ControlsCamera",
+        "window.Window"
+      ],
+      "writes": [
+        "camera.MouseLookState",
+        "window.CursorOptions"
+      ],
+      "filters": [
+        "With<GameplayContext>",
+        "With<PrimaryWindow>",
+        "window.focused"
+      ],
+      "events": [
+        "响应 EntityEvent：Fire<ReleasePointerAction>"
+      ],
+      "notes": [
+        "require_reset 与 Press 保证按住不重复；下一帧统一捕获系统处理恢复。"
+      ],
+      "source": {
+        "path": "src/camera.rs",
+        "line": 200
+      }
+    },
+    {
+      "id": "observe_menu_previous",
+      "name": "previous",
+      "kind": "observer",
+      "phase": "匹配事件触发时",
+      "module": "ui",
+      "description": "向上循环选择可操作按钮。实际焦点变化时发送 MenuHover。",
+      "reads": [
+        "resource.MenuState",
+        "resource.MenuFocus",
+        "menu_button.MenuButton"
+      ],
+      "writes": [
+        "resource.MenuFocus",
+        "resource.MenuInputSource",
+        "resource.SoundRequestMessages"
+      ],
+      "filters": [],
+      "events": [
+        "响应 EntityEvent：Fire<PreviousAction>",
+        "写入 SoundRequest：menu_hover"
+      ],
+      "notes": [
+        "Hidden 页面忽略；占位控件不在 MenuButton 查询内。",
+        "只有目标按钮发生变化才发声；单按钮页、Hidden 和占位节点不产生焦点音。"
+      ],
+      "source": {
+        "path": "src/ui/navigation.rs",
+        "line": 131
+      }
+    },
+    {
+      "id": "observe_menu_next",
+      "name": "next",
+      "kind": "observer",
+      "phase": "匹配事件触发时",
+      "module": "ui",
+      "description": "向下循环选择可操作按钮。实际焦点变化时发送 MenuHover。",
+      "reads": [
+        "resource.MenuState",
+        "resource.MenuFocus",
+        "menu_button.MenuButton"
+      ],
+      "writes": [
+        "resource.MenuFocus",
+        "resource.MenuInputSource",
+        "resource.SoundRequestMessages"
+      ],
+      "filters": [],
+      "events": [
+        "响应 EntityEvent：Fire<NextAction>",
+        "写入 SoundRequest：menu_hover"
+      ],
+      "notes": [
+        "Hidden 页面忽略；占位控件不在 MenuButton 查询内。",
+        "只有目标按钮发生变化才发声；单按钮页、Hidden 和占位节点不产生焦点音。"
+      ],
+      "source": {
+        "path": "src/ui/navigation.rs",
+        "line": 144
+      }
+    },
+    {
+      "id": "observe_menu_left",
+      "name": "left",
+      "kind": "observer",
+      "phase": "匹配事件触发时",
+      "module": "ui",
+      "description": "向左调整当前聚焦的真实设置字段。",
+      "reads": [
+        "resource.MenuState",
+        "resource.MenuFocus",
+        "menu_button.MenuButton"
+      ],
+      "writes": [
+        "resource.MenuInputSource",
+        "resource.UiRequestMessages"
+      ],
+      "filters": [],
+      "events": [
+        "响应 EntityEvent：Fire<LeftAction>"
+      ],
+      "notes": [
+        "Observer 只写请求；设置与状态变化由 handle_requests 统一消费。"
+      ],
+      "source": {
+        "path": "src/ui/navigation.rs",
+        "line": 174
+      }
+    },
+    {
+      "id": "observe_menu_right",
+      "name": "right",
+      "kind": "observer",
+      "phase": "匹配事件触发时",
+      "module": "ui",
+      "description": "向右调整当前聚焦的真实设置字段。",
+      "reads": [
+        "resource.MenuState",
+        "resource.MenuFocus",
+        "menu_button.MenuButton"
+      ],
+      "writes": [
+        "resource.MenuInputSource",
+        "resource.UiRequestMessages"
+      ],
+      "filters": [],
+      "events": [
+        "响应 EntityEvent：Fire<RightAction>"
+      ],
+      "notes": [
+        "Observer 只写请求；设置与状态变化由 handle_requests 统一消费。"
+      ],
+      "source": {
+        "path": "src/ui/navigation.rs",
+        "line": 188
+      }
+    },
+    {
+      "id": "observe_menu_confirm",
+      "name": "confirm",
+      "kind": "observer",
+      "phase": "匹配事件触发时",
+      "module": "ui",
+      "description": "确认当前聚焦按钮的 UiAction。",
+      "reads": [
+        "resource.MenuState",
+        "resource.MenuFocus",
+        "menu_button.MenuButton"
+      ],
+      "writes": [
+        "resource.MenuInputSource",
+        "resource.UiRequestMessages"
+      ],
+      "filters": [],
+      "events": [
+        "响应 EntityEvent：Fire<ConfirmAction>"
+      ],
+      "notes": [
+        "Observer 只写请求；设置与状态变化由 handle_requests 统一消费。"
+      ],
+      "source": {
+        "path": "src/ui/navigation.rs",
+        "line": 202
+      }
+    },
+    {
+      "id": "observe_menu_back",
+      "name": "back",
+      "kind": "observer",
+      "phase": "匹配事件触发时",
+      "module": "ui",
+      "description": "产生 Back 请求；Hidden 时为暂停、Pause 时为恢复，子页面按返回来源返回。",
+      "reads": [],
+      "writes": [
+        "resource.MenuInputSource",
+        "resource.UiRequestMessages"
+      ],
+      "filters": [],
+      "events": [
+        "响应 EntityEvent：Fire<BackAction>"
+      ],
+      "notes": [
+        "Esc 与手柄 Back/Start 复用同一动作；不另读底层按键触发业务。"
+      ],
+      "source": {
+        "path": "src/ui/navigation.rs",
+        "line": 218
+      }
+    },
+    {
+      "id": "observe_menu_scroll",
+      "name": "scroll_menu",
+      "kind": "observer",
+      "phase": "匹配事件触发时",
+      "module": "ui",
+      "description": "原生 UI 滚轮事件在当前 MenuScroll 视口更新夹紧滚动位置并停止继续冒泡。",
+      "reads": [
+        "menu_scroll.ComputedNode"
+      ],
+      "writes": [
+        "menu_scroll.ScrollPosition"
+      ],
+      "filters": [],
+      "events": [
+        "响应 EntityEvent：Pointer<Scroll>"
+      ],
+      "notes": [
+        "BSN on(scroll_menu) 注册在视口实体上；不重复读取底层滚轮。"
+      ],
+      "source": {
+        "path": "src/ui/widgets.rs",
+        "line": 347
+      }
+    },
+    {
+      "id": "observe_courier_ready",
+      "name": "play_courier_animation",
+      "kind": "observer",
+      "phase": "匹配事件触发时",
+      "module": "ui",
+      "description": "展示快递员 GLB 展开后查找骨架 AnimationPlayer，循环播放 Carry_Idle 并插入动画图句柄。",
+      "reads": [
+        "menu_model.CourierAnimation",
+        "menu_model.Children"
+      ],
+      "writes": [
+        "menu_model.AnimationPlayer",
+        "menu_model.AnimationGraphHandle"
+      ],
+      "filters": [],
+      "events": [
+        "响应 EntityEvent：WorldInstanceReady"
+      ],
+      "notes": [
+        "BSN on(play_courier_animation) 注册在快递员模型根；图句柄用 Commands 延迟插入真实播放器子实体。"
+      ],
+      "source": {
+        "path": "src/ui/backdrop.rs",
+        "line": 146
+      }
+    },
+    {
+      "id": "audio_preload",
+      "name": "preload_sounds",
+      "kind": "system",
+      "phase": "Startup",
+      "module": "audio",
+      "description": "检查嵌入清单后预加载 UI/SFX 短音，将事件映射与播放策略保存到 SoundBank。",
+      "reads": [
+        "resource.AssetServer"
+      ],
+      "writes": [
+        "resource.SoundBank"
+      ],
+      "filters": [],
+      "events": [],
+      "notes": [
+        "清单无效时只禁用反馈并写日志；不会改变玩法状态。",
+        "合成 ambience 只供试听，不随场景自动播放。"
+      ],
+      "source": {
+        "path": "src/audio.rs",
+        "line": 130
+      }
+    },
+    {
+      "id": "audio_load_failures",
+      "name": "log_load_failures",
+      "kind": "system",
+      "phase": "Update · after(UiSystems::Style)",
+      "module": "audio",
+      "description": "消费 Kira AudioSource 加载失败消息，记录原始路径与错误。",
+      "reads": [
+        "resource.AudioLoadFailures"
+      ],
+      "writes": [],
+      "filters": [],
+      "events": [
+        "读取 AssetLoadFailedEvent<AudioSource>（Message）"
+      ],
+      "notes": [
+        "由 Bevy 资产系统发出；失败日志先于播放请求处理。",
+        "完整音频链在 UiSystems::Style 之后执行，因此同帧鼠标焦点消息可被播放系统消费。"
+      ],
+      "source": {
+        "path": "src/audio.rs",
+        "line": 169
+      }
+    },
+    {
+      "id": "audio_play",
+      "name": "play_requests",
+      "kind": "system",
+      "phase": "Update · after(UiSystems::Style)",
+      "module": "audio",
+      "description": "消费已接受的 SoundRequest；按加载状态、冷却与实例限额排队到 UI 或 SFX 通道。",
+      "reads": [
+        "resource.SoundRequestMessages",
+        "resource.TimeReal",
+        "resource.AudioSources",
+        "resource.UiAudioChannel",
+        "resource.SfxAudioChannel"
+      ],
+      "writes": [
+        "resource.SoundBank",
+        "resource.UiAudioChannel",
+        "resource.SfxAudioChannel"
+      ],
+      "filters": [],
+      "events": [
+        "读取 SoundRequest（Message）"
+      ],
+      "notes": [
+        "通道通过共享 Res 访问，其内部播放命令队列产生副作用；不是组件修改。",
+        "总并发 4，SFX 最多 3，为菜单保留 1 个名额；Queued 也计入并发，Stopped 实例从 SoundBank 清理。",
+        "每种事件的清单音量乘总线性增益 0.25，再转换为 Kira 0.26 的 dB。",
+        "加载中或达到限额的消息直接丢弃；source Entity 只用于日志，不读取实体组件。",
+        "完整音频链在 UiSystems::Style 之后执行，因此同帧鼠标焦点消息可被播放系统消费。",
+        "使用 Time<Real> 计算冷却，暂停冻结虚拟时间时菜单声音仍能再次触发。"
+      ],
+      "source": {
+        "path": "src/audio.rs",
+        "line": 188
+      }
+    },
+    {
+      "id": "audio_stop",
+      "name": "stop_on_exit",
+      "kind": "system",
+      "phase": "Update · after(UiSystems::Style)",
+      "module": "audio",
+      "description": "在 AppExit 消息到达时停止 UI 与 SFX 通道并写统一会话日志。",
+      "reads": [
+        "resource.AppExitMessages",
+        "resource.UiAudioChannel",
+        "resource.SfxAudioChannel"
+      ],
+      "writes": [
+        "resource.UiAudioChannel",
+        "resource.SfxAudioChannel"
+      ],
+      "filters": [],
+      "events": [
+        "读取 AppExit（Message）"
+      ],
+      "notes": [
+        "与失败日志、播放请求通过 .chain() 顺序运行；退出消息读取后发停止命令。",
+        "完整音频链在 UiSystems::Style 之后执行，因此同帧鼠标焦点消息可被播放系统消费。"
+      ],
+      "source": {
+        "path": "src/audio.rs",
+        "line": 255
+      }
+    },
+    {
+      "id": "audio_strain",
+      "name": "warn_hold_strain",
+      "kind": "system",
+      "phase": "FixedUpdate · after(GameplaySystems::Simulate)",
+      "module": "audio_events",
+      "description": "根据持有者真实 Position 与最新朝向检查包裹持续偏差，发出一次失稳提示。",
+      "reads": [
+        "resource.TimeFixed",
+        "resource.PrototypeConfig",
+        "character.Position",
+        "character.Transform",
+        "parcel.HeldBy",
+        "parcel.Position",
+        "local.HoldStrain",
+        "resource.AppState",
+        "resource.PlayState",
+        "parcel.CarryGrip"
+      ],
+      "writes": [
+        "local.HoldStrain",
+        "resource.SoundRequestMessages"
+      ],
+      "filters": [
+        "持有者：With<Character>",
+        "包裹：With<Parcel>，查询 HeldBy"
+      ],
+      "events": [
+        "写入 SoundRequest：instability_warning"
+      ],
+      "notes": [
+        "新持握宽限 0.5 秒；误差 >0.65 米持续 0.35 秒警告，降至 <0.45 米重新布防。",
+        "Local 只保留当前持握包裹；解除关系或销毁后清理，不新增玩法状态。",
+        "此观察位于本固定步玩法链之后、物理解算之前。",
+        "run_if(gameplay_running)：仅 InGame / Running 收集反馈；没有状态资源的最小物理测试保持可用。",
+        "持握目标优先读取物品 CarryGrip；未配置时回退 PrototypeConfig.hold_offset，与物理和呈现使用同一偏移来源。"
+      ],
+      "source": {
+        "path": "src/audio_events.rs",
+        "line": 162
+      }
+    },
+    {
+      "id": "audio_land",
+      "name": "emit_parcel_land",
+      "kind": "system",
+      "phase": "FixedPostUpdate · after(PhysicsSystems::StepSimulation)",
+      "module": "audio_events",
+      "description": "逐步检查真实支撑接触和冲量，在自由包裹落地时发出一次声音请求。",
+      "reads": [
+        "resource.ContactGraph",
+        "parcel.Parcel",
+        "parcel.HeldBy",
+        "local.LandingContacts",
+        "resource.AppState",
+        "resource.PlayState"
+      ],
+      "writes": [
+        "local.LandingContacts",
+        "resource.SoundRequestMessages"
+      ],
+      "filters": [
+        "(With<Parcel>, Without<HeldBy>)"
+      ],
+      "events": [
+        "写入 SoundRequest：parcel_land"
+      ],
+      "notes": [
+        "检查活动与休眠接触；向上支撑法线 y≥0.65 且总法向冲量≥1.8 才提示。",
+        "锁存到完全离开支撑，避免预测接触漏声、静置或休眠后重复提示；墙面不充当落地。",
+        "只 after(StepSimulation)；与碰撞日志、Writeback 后接地与速度观察没有额外全序。",
+        "run_if(gameplay_running)：仅 InGame / Running 收集反馈；没有状态资源的最小物理测试保持可用。"
+      ],
+      "source": {
+        "path": "src/audio_events.rs",
+        "line": 108
+      }
     }
   ],
   "entities": [
@@ -2152,7 +3102,7 @@
       "id": "controller",
       "name": "键盘控制者",
       "count": 1,
-      "description": "输入上下文实体，保存 PlayerId(1)、设备选择和控制目标。控制者与角色、相机是独立实体。",
+      "description": "输入上下文实体，保存 PlayerId(1)、设备选择和控制目标。控制者与角色、相机是独立实体。 仅在 InGame 存在，Paused 保留；退出 InGame 时清理。",
       "components": [
         {
           "id": "controller.Name",
@@ -2163,7 +3113,7 @@
           "description": "用于日志与调试的控制者名称。",
           "source": {
             "path": "src/input.rs",
-            "line": 64
+            "line": 69
           }
         },
         {
@@ -2175,7 +3125,7 @@
           "description": "独立于运行时 Entity 的业务身份。",
           "source": {
             "path": "src/gameplay.rs",
-            "line": 12
+            "line": 14
           }
         },
         {
@@ -2197,7 +3147,7 @@
           "description": "当前上下文不用手柄；键盘与鼠标绑定不受此项关闭。",
           "source": {
             "path": "src/input.rs",
-            "line": 83
+            "line": 88
           }
         },
         {
@@ -2209,7 +3159,7 @@
           "description": "普通实体引用，指向受控角色。",
           "source": {
             "path": "src/gameplay.rs",
-            "line": 17
+            "line": 19
           }
         },
         {
@@ -2221,7 +3171,7 @@
           "description": "普通实体引用，指向受控相机。",
           "source": {
             "path": "src/camera.rs",
-            "line": 25
+            "line": 26
           }
         },
         {
@@ -2230,10 +3180,10 @@
           "fields": [
             "动作实体集合: Vec<Entity>"
           ],
-          "description": "ActionOf<GameplayContext> 的反向索引，由关系机制维护；插件可为动作评估排序，业务代码不手工插删索引。当前关联五个动作。",
+          "description": "ActionOf<GameplayContext> 自动反向索引，当前六个玩法/调试动作。MenuContext 是独立持久控制者。",
           "source": {
             "path": "src/input.rs",
-            "line": 84
+            "line": 89
           }
         },
         {
@@ -2254,10 +3204,22 @@
           "fields": [
             "active: bool"
           ],
-          "description": "注册输入上下文时要求的不可变组件，默认启用；sync_mouse_capture 在检查器占用输入、窗口失焦或控制关联失效时通过 Commands 替换其状态。停用后的动作完成或取消使移动轴归零，重启仍遵循 require_reset。",
+          "description": "菜单/暂停、失焦、控制关联失效或检查器占用输入时，通过 Commands 替换为停用；动作完成/取消清零意图，恢复遵循 require_reset。",
           "source": {
             "path": "src/input.rs",
             "line": 15
+          }
+        },
+        {
+          "id": "controller.DespawnOnExit",
+          "name": "DespawnOnExit",
+          "fields": [
+            "AppState::InGame"
+          ],
+          "description": "状态退出销毁此根；内置 ChildOf 子树随根清理。",
+          "source": {
+            "path": "src/scene.rs",
+            "line": 144
           }
         }
       ]
@@ -2266,7 +3228,7 @@
       "id": "character",
       "name": "角色业务根实体",
       "count": 1,
-      "description": "动态角色根对应脚底。Position/Rotation 与速度由 Avian 管理；Transform 是插值呈现，水平朝向受镜头控制。",
+      "description": "动态角色根对应脚底。Position/Rotation 与速度由 Avian 管理；Transform 是插值呈现，水平朝向受镜头控制。 仅在 InGame 存在，Paused 保留；退出 InGame 时清理。",
       "components": [
         {
           "id": "character.Name",
@@ -2287,7 +3249,7 @@
           "description": "标识具有角色运动能力的实体。",
           "source": {
             "path": "src/gameplay.rs",
-            "line": 22
+            "line": 24
           }
         },
         {
@@ -2301,7 +3263,7 @@
           "description": "持续移动轴与一次性跳跃、交互请求跨帧保存。固定步消费布尔请求。",
           "source": {
             "path": "src/gameplay.rs",
-            "line": 30
+            "line": 32
           }
         },
         {
@@ -2313,7 +3275,7 @@
           "description": "支撑探测派生的接地状态；不再复制水平/竖直速度，实际速度读取 LinearVelocity。",
           "source": {
             "path": "src/gameplay.rs",
-            "line": 40
+            "line": 42
           }
         },
         {
@@ -2375,7 +3337,7 @@
           "description": "HeldBy 的自动反向索引，仅在关系需要时存在；业务读取第一件持有物，容器本身可容纳多件。",
           "source": {
             "path": "src/gameplay.rs",
-            "line": 67
+            "line": 69
           }
         },
         {
@@ -2639,7 +3601,7 @@
           "description": "每个业务根独立保存出生姿态。",
           "source": {
             "path": "src/island_recovery.rs",
-            "line": 26
+            "line": 27
           }
         },
         {
@@ -2652,7 +3614,7 @@
           "description": "记录本次恢复临时添加的暂停项。",
           "source": {
             "path": "src/island_recovery.rs",
-            "line": 54
+            "line": 57
           }
         },
         {
@@ -2673,6 +3635,18 @@
           "source": {
             "path": "src/island_recovery.rs",
             "line": 78
+          }
+        },
+        {
+          "id": "character.DespawnOnExit",
+          "name": "DespawnOnExit",
+          "fields": [
+            "AppState::InGame"
+          ],
+          "description": "状态退出销毁此根；内置 ChildOf 子树随根清理。",
+          "source": {
+            "path": "src/scene.rs",
+            "line": 103
           }
         }
       ]
@@ -2702,7 +3676,7 @@
           "description": "快递身份标记。",
           "source": {
             "path": "src/gameplay.rs",
-            "line": 47
+            "line": 49
           }
         },
         {
@@ -2712,7 +3686,7 @@
           "description": "可拾取能力标记；交互系统按此能力选择物体。",
           "source": {
             "path": "src/gameplay.rs",
-            "line": 52
+            "line": 54
           }
         },
         {
@@ -2774,7 +3748,7 @@
           "description": "可选关系组件，仅持有时存在；指向持有者，增删通过 Commands 延迟执行。",
           "source": {
             "path": "src/gameplay.rs",
-            "line": 62
+            "line": 64
           }
         },
         {
@@ -3091,7 +4065,7 @@
           "description": "持握时的呈现检查目标，镜头显示链更新；物理施力不读取它。",
           "source": {
             "path": "src/gameplay.rs",
-            "line": 72
+            "line": 74
           }
         },
         {
@@ -3101,7 +4075,7 @@
           "description": "可选外部传感器标签；当前场景未设置，接地过滤显式排除。",
           "source": {
             "path": "src/gameplay.rs",
-            "line": 166
+            "line": 170
           }
         },
         {
@@ -3125,7 +4099,7 @@
           "description": "每个业务根独立保存出生姿态。",
           "source": {
             "path": "src/island_recovery.rs",
-            "line": 26
+            "line": 27
           }
         },
         {
@@ -3138,7 +4112,7 @@
           "description": "记录本次恢复临时添加的暂停项。",
           "source": {
             "path": "src/island_recovery.rs",
-            "line": 54
+            "line": 57
           }
         },
         {
@@ -3170,7 +4144,7 @@
           "description": "模拟施力与显示目标共同读取。",
           "source": {
             "path": "src/gameplay.rs",
-            "line": 57
+            "line": 59
           }
         },
         {
@@ -3183,6 +4157,18 @@
           "source": {
             "path": "src/art_assets.rs",
             "line": 15
+          }
+        },
+        {
+          "id": "parcel.DespawnOnExit",
+          "name": "DespawnOnExit",
+          "fields": [
+            "AppState::InGame"
+          ],
+          "description": "状态退出销毁此根；内置 ChildOf 子树随根清理。",
+          "source": {
+            "path": "src/scene.rs",
+            "line": 149
           }
         }
       ]
@@ -3234,7 +4220,7 @@
           "description": "持续视角状态与切换请求；默认第三人称偏移 (0, 6, 8)、观察中心高 0.8，俯仰 5°..80°；第一人称眼高 1.65、首次俯仰 0°、范围 -85°..85°。",
           "source": {
             "path": "src/camera.rs",
-            "line": 51
+            "line": 52
           }
         },
         {
@@ -3247,10 +4233,10 @@
             "target_available: bool",
             "focused: bool"
           ],
-          "description": "鼠标捕获、目标可用与本帧焦点状态；恢复捕获当帧跳过观察。Esc 释放鼠标本身不关闭键盘动作；窗口 UI 占用输入另经 ContextActivity 停用整个 GameplayContext。",
+          "description": "鼠标捕获、初始化、跳过位移、目标可用与聚焦状态。主菜单与暂停强制释放；F3 释放后未操作检查器时仍可使用玩法键盘，检查器占用由 ContextActivity 停用整个 GameplayContext。",
           "source": {
             "path": "src/camera.rs",
-            "line": 127
+            "line": 128
           }
         },
         {
@@ -3285,19 +4271,19 @@
           "fields": [
             "ctx: egui::Context"
           ],
-          "description": "EguiPlugin 自动附加到首个相机，内部保存共享 UI 状态。sync_mouse_capture 可变查询面板层、指针和焦点状态；filter_captured_egui_input 在游戏捕获期间终止 UI 拖拽并移除 UI 键盘焦点。",
+          "description": "显式 PrimaryEguiContext 要求 EguiContext；保存共享 UI 状态。捕获系统查询面板、指针和焦点，过滤系统在游戏捕获期间终止 UI 拖拽并移除 UI 键盘焦点。",
           "source": {
             "path": "src/camera.rs",
-            "line": 267
+            "line": 304
           }
         },
         {
           "id": "camera.PrimaryEguiContext",
           "name": "PrimaryEguiContext",
           "fields": [],
-          "description": "主 UI 上下文标记，位于当前相机实体而非 Window 实体；要求 EguiContext。",
+          "description": "场景显式标记玩法相机；主菜单退出时展示相机已清理，设置与暂停继续复用当前相机。",
           "source": {
-            "path": "src/main.rs",
+            "path": "src/scene.rs",
             "line": 67
           }
         },
@@ -3359,7 +4345,29 @@
           "description": "加载期间相机身份，准备后移除。",
           "source": {
             "path": "src/scene.rs",
-            "line": 94
+            "line": 109
+          }
+        },
+        {
+          "id": "camera.DespawnOnExit",
+          "name": "DespawnOnExit",
+          "fields": [
+            "AppState::InGame"
+          ],
+          "description": "状态退出销毁此根；内置 ChildOf 子树随根清理。",
+          "source": {
+            "path": "src/scene.rs",
+            "line": 187
+          }
+        },
+        {
+          "id": "camera.IsDefaultUiCamera",
+          "name": "IsDefaultUiCamera",
+          "fields": [],
+          "description": "游戏会话中的 Bevy UI 默认相机。",
+          "source": {
+            "path": "src/scene.rs",
+            "line": 188
           }
         }
       ]
@@ -3439,7 +4447,7 @@
           "description": "仅三个角色视觉子实体具有此标记；第一人称隐藏对应角色模型，独立木箱模型不被隐藏。",
           "source": {
             "path": "src/camera.rs",
-            "line": 46
+            "line": 47
           }
         },
         {
@@ -3451,7 +4459,7 @@
           "description": "仅主角直属视觉根携带，作为动画绑定入口。",
           "source": {
             "path": "src/character_animation.rs",
-            "line": 17
+            "line": 20
           }
         },
         {
@@ -3461,7 +4469,7 @@
           "description": "实例就绪后等待命名动画绑定。",
           "source": {
             "path": "src/character_animation.rs",
-            "line": 21
+            "line": 24
           }
         },
         {
@@ -3486,6 +4494,30 @@
           "source": {
             "path": "src/scene.rs",
             "line": 428
+          }
+        },
+        {
+          "id": "visual.Mesh3d",
+          "name": "Mesh3d",
+          "fields": [
+            "0: Handle<Mesh>"
+          ],
+          "description": "仅持有网格资产句柄；资产本体在 Assets<Mesh> 资源中。",
+          "source": {
+            "path": "src/scene.rs",
+            "line": 116
+          }
+        },
+        {
+          "id": "visual.MeshMaterial3d",
+          "name": "MeshMaterial3d<StandardMaterial>",
+          "fields": [
+            "0: Handle<StandardMaterial>"
+          ],
+          "description": "仅持有材质资产句柄。",
+          "source": {
+            "path": "src/scene.rs",
+            "line": 117
           }
         }
       ]
@@ -3532,7 +4564,7 @@
           "description": "捕获时隐藏并抓取，释放时显示；不代表玩法动作绑定。",
           "source": {
             "path": "src/camera.rs",
-            "line": 255
+            "line": 292
           }
         }
       ]
@@ -3540,8 +4572,8 @@
     {
       "id": "action",
       "name": "动作实体",
-      "count": 5,
-      "description": "五个实体分别保存 Action<LookAction>、Action<MoveAction>、Action<JumpAction>、Action<InteractAction>、Action<TogglePerspectiveAction>。InputAction 标记类型不是组件，真正组件是 Action<A>。",
+      "count": 6,
+      "description": "GameplayContext 的六个动作实体：Look、Move、Jump、Interact、TogglePerspective、ReleasePointer。另一个 MenuContext 独立拥有六个菜单动作，未混入该类别。InputAction 标记不是组件，组件为 Action<A>。",
       "components": [
         {
           "id": "action.Name",
@@ -3552,7 +4584,7 @@
           "description": "Action<A> 要求的动作名称，用于插件诊断。",
           "source": {
             "path": "src/input.rs",
-            "line": 86
+            "line": 91
           }
         },
         {
@@ -3563,12 +4595,13 @@
             "MoveAction 的输出: Vec2",
             "JumpAction 的输出: bool",
             "InteractAction 的输出: bool",
-            "TogglePerspectiveAction 的输出: bool"
+            "TogglePerspectiveAction 的输出: bool",
+            "ReleasePointerAction 的输出: bool"
           ],
-          "description": "五个实体各持有一个具体泛型实例；插件 Apply 阶段写入输出。",
+          "description": "六个 GameplayContext 动作各持有一个具体泛型实例；插件 Apply 写入输出。",
           "source": {
             "path": "src/input.rs",
-            "line": 86
+            "line": 91
           }
         },
         {
@@ -3579,10 +4612,10 @@
             "require_reset: bool",
             "consume_input: bool"
           ],
-          "description": "五个动作 consume_input=true；JumpAction、InteractAction、TogglePerspectiveAction 的 require_reset=true，其余保持默认。消费只影响动作评估，不改写底层输入资源。",
+          "description": "六个动作 consume_input=true；Jump、Interact、TogglePerspective、ReleasePointer 使用 require_reset=true，其余保持默认。消费只影响动作评估。",
           "source": {
             "path": "src/input.rs",
-            "line": 87
+            "line": 92
           }
         },
         {
@@ -3594,7 +4627,7 @@
           "description": "动作到控制者上下文的关系；actions! 建立关系，Actions<GameplayContext> 为自动反向索引。",
           "source": {
             "path": "src/input.rs",
-            "line": 84
+            "line": 89
           }
         },
         {
@@ -3603,10 +4636,10 @@
           "fields": [
             "绑定实体集合: Vec<Entity>"
           ],
-          "description": "BindingOf 的自动反向索引；MoveAction 四条，其余四个动作各一条。",
+          "description": "BindingOf 自动反向索引；MoveAction 四条，其余五个 GameplayContext 动作各一条。",
           "source": {
             "path": "src/input.rs",
-            "line": 91
+            "line": 96
           }
         },
         {
@@ -3616,10 +4649,10 @@
             "actuation: f32",
             "actuated: bool（内部状态）"
           ],
-          "description": "仅三个按钮动作具有此条件组件；按下越过阈值触发一次，按住不反复触发。",
+          "description": "四个按钮动作使用 Press；每次按下触发一次，按住不重复。",
           "source": {
             "path": "src/input.rs",
-            "line": 108
+            "line": 113
           }
         },
         {
@@ -3631,7 +4664,7 @@
           "description": "动作评估产生的类型擦除输出；当前使用 Bool 与 Axis2D。",
           "source": {
             "path": "src/input.rs",
-            "line": 86
+            "line": 91
           }
         },
         {
@@ -3643,7 +4676,7 @@
           "description": "动作本次评估状态；由插件维护。",
           "source": {
             "path": "src/input.rs",
-            "line": 86
+            "line": 91
           }
         },
         {
@@ -3655,7 +4688,7 @@
           "description": "决定本次 Apply 需要排入哪些动作事件；不是 Message 队列。",
           "source": {
             "path": "src/input.rs",
-            "line": 86
+            "line": 91
           }
         },
         {
@@ -3668,7 +4701,7 @@
           "description": "动作持续与触发计时，由插件评估更新。",
           "source": {
             "path": "src/input.rs",
-            "line": 86
+            "line": 91
           }
         },
         {
@@ -3683,7 +4716,7 @@
           "description": "Action<A> 要求的模拟输入状态，正常游戏默认禁用；测试可使用。",
           "source": {
             "path": "src/input.rs",
-            "line": 86
+            "line": 91
           }
         },
         {
@@ -3695,7 +4728,7 @@
           "description": "Action<A> 要求的类型擦除适配，Apply 阶段将 ActionValue 写入具体组件并排入事件。",
           "source": {
             "path": "src/input.rs",
-            "line": 86
+            "line": 91
           }
         },
         {
@@ -3704,10 +4737,10 @@
           "fields": [
             "输入条件评估函数表"
           ],
-          "description": "三个带 Press 的动作具有此适配；插件据此访问并更新 Press。",
+          "description": "四个带 Press 的动作具有此适配；插件访问并更新条件。",
           "source": {
             "path": "src/input.rs",
-            "line": 108
+            "line": 113
           }
         }
       ]
@@ -3715,8 +4748,8 @@
     {
       "id": "binding",
       "name": "绑定实体",
-      "count": 8,
-      "description": "一条 MouseMotion、四条 WASD、Space、E、I 各一条。每条绑定关联一个动作；WASD 使用 Cardinal 生成轴转换。",
+      "count": 9,
+      "description": "GameplayContext：MouseMotion 一条、WASD 四条，Space/E/I/F3 各一条。菜单的键盘与手柄绑定属于独立 MenuContext。",
       "components": [
         {
           "id": "binding.Binding",
@@ -3728,7 +4761,7 @@
           "description": "此原型使用的枚举变体；设备输入映射与动作组件分离。",
           "source": {
             "path": "src/input.rs",
-            "line": 91
+            "line": 96
           }
         },
         {
@@ -3740,7 +4773,7 @@
           "description": "绑定到动作的关系组件，Bindings 为自动反向索引。",
           "source": {
             "path": "src/input.rs",
-            "line": 91
+            "line": 96
           }
         },
         {
@@ -3752,7 +4785,7 @@
           "description": "Binding 要求的内部组件，用于动作 require_reset 的首次激活判断。",
           "source": {
             "path": "src/input.rs",
-            "line": 91
+            "line": 96
           }
         },
         {
@@ -3766,7 +4799,7 @@
           "description": "WASD 的负方向绑定所需的符号转换，只有相应绑定具有。",
           "source": {
             "path": "src/input.rs",
-            "line": 99
+            "line": 104
           }
         },
         {
@@ -3778,7 +4811,7 @@
           "description": "WASD 的前后方向将标量映射到二维 Y 轴，只有相应绑定具有。",
           "source": {
             "path": "src/input.rs",
-            "line": 99
+            "line": 104
           }
         },
         {
@@ -3790,7 +4823,7 @@
           "description": "有 Negate 或 SwizzleAxis 的绑定具有此适配。",
           "source": {
             "path": "src/input.rs",
-            "line": 99
+            "line": 104
           }
         }
       ]
@@ -3894,7 +4927,7 @@
           "description": "地图静态碰撞标签。",
           "source": {
             "path": "src/scene.rs",
-            "line": 53
+            "line": 64
           }
         },
         {
@@ -3924,7 +4957,7 @@
           "description": "海岛身份。",
           "source": {
             "path": "src/scene.rs",
-            "line": 41
+            "line": 52
           }
         },
         {
@@ -3934,7 +4967,7 @@
           "description": "实例就绪，等待 CPU 几何准备。",
           "source": {
             "path": "src/scene.rs",
-            "line": 43
+            "line": 54
           }
         },
         {
@@ -3947,7 +4980,7 @@
           "description": "静态碰撞与布局已准备。",
           "source": {
             "path": "src/scene.rs",
-            "line": 62
+            "line": 73
           }
         },
         {
@@ -3957,7 +4990,7 @@
           "description": "业务角色已生成，防止重复。",
           "source": {
             "path": "src/scene.rs",
-            "line": 45
+            "line": 56
           }
         },
         {
@@ -3979,6 +5012,18 @@
             "path": "src/scene.rs",
             "line": 96
           }
+        },
+        {
+          "id": "island.DespawnOnExit",
+          "name": "DespawnOnExit<AppState>",
+          "description": "进入 InGame 时创建，退出 InGame 时清理；Paused 保留本次会话。",
+          "fields": [
+            "AppState::InGame"
+          ],
+          "source": {
+            "path": "src/scene.rs",
+            "line": 100
+          }
         }
       ]
     },
@@ -3995,7 +5040,7 @@
           "description": "导入边界识别展示 NPC。",
           "source": {
             "path": "src/scene.rs",
-            "line": 49
+            "line": 60
           }
         },
         {
@@ -4029,7 +5074,7 @@
           "description": "只保存播放器关联与当前动作；辅助值不是 ECS 组件。",
           "source": {
             "path": "src/character_animation.rs",
-            "line": 43
+            "line": 46
           }
         },
         {
@@ -4177,11 +5222,601 @@
         {
           "id": "model_node.AnimationTargetId",
           "name": "AnimationTargetId",
-          "fields": ["0: Uuid"],
+          "fields": [
+            "0: Uuid"
+          ],
           "description": "GLB 骨骼/曲线目标 ID，由动画加载器生成，AnimationSystems 按 ID 匹配曲线。",
           "source": {
             "path": "src/character_animation.rs",
             "line": 92
+          }
+        }
+      ]
+    },
+    {
+      "id": "menu_controller",
+      "name": "菜单输入控制者",
+      "count": 1,
+      "description": "Startup 创建，跨主菜单和玩法会话保留；独立 MenuContext 接收键盘和任意手柄，隐藏页面只允许 Back 表达暂停。",
+      "components": [
+        {
+          "id": "menu_controller.MenuContext",
+          "name": "MenuContext",
+          "fields": [],
+          "description": "独立 Enhanced Input 上下文标记。",
+          "source": {
+            "path": "src/ui/navigation.rs",
+            "line": 15
+          }
+        },
+        {
+          "id": "menu_controller.ContextPriority",
+          "name": "ContextPriority",
+          "fields": [
+            "MenuContext: usize = 10"
+          ],
+          "description": "高于玩法上下文，防止同一按键重复消费。",
+          "source": {
+            "path": "src/ui/navigation.rs",
+            "line": 75
+          }
+        },
+        {
+          "id": "menu_controller.ContextActivity",
+          "name": "ContextActivity",
+          "fields": [
+            "MenuContext: bool"
+          ],
+          "description": "sync_context 按窗口聚焦替换启用状态。",
+          "source": {
+            "path": "src/ui/navigation.rs",
+            "line": 88
+          }
+        },
+        {
+          "id": "menu_controller.GamepadDevice",
+          "name": "GamepadDevice",
+          "fields": [
+            "Any"
+          ],
+          "description": "接受手柄菜单按钮，键盘绑定同时有效。",
+          "source": {
+            "path": "src/ui/navigation.rs",
+            "line": 76
+          }
+        },
+        {
+          "id": "menu_controller.Actions",
+          "name": "Actions",
+          "fields": [
+            "Previous / Next / Left / Right / Confirm / Back"
+          ],
+          "description": "actions! 创建六个 Action<A> 与键盘/手柄绑定；每个动作 consume_input 与 require_reset。动作/绑定实体由输入插件关系管理，未在这里逐个展开。",
+          "source": {
+            "path": "src/ui/navigation.rs",
+            "line": 77
+          }
+        }
+      ]
+    },
+    {
+      "id": "menu_root",
+      "name": "BSN 菜单页面根",
+      "count": "0..1",
+      "description": "MenuState、草稿或窗口宽度变化时重建；Hidden 销毁页面，子页面返回来源由 MenuState 管理。",
+      "components": [
+        {
+          "id": "menu_root.MenuRoot",
+          "name": "MenuRoot",
+          "fields": [],
+          "description": "仅清理菜单页面，不改变展示舞台或玩法会话。",
+          "source": {
+            "path": "src/ui/mod.rs",
+            "line": 92
+          }
+        },
+        {
+          "id": "menu_root.Node",
+          "name": "Node",
+          "fields": [
+            "width/height: 100%",
+            "flex_direction: Column"
+          ],
+          "description": "顶层页面布局，内容滚动区域与固定页脚分开。",
+          "source": {
+            "path": "src/ui/screens.rs",
+            "line": 64
+          }
+        },
+        {
+          "id": "menu_root.GlobalZIndex",
+          "name": "GlobalZIndex",
+          "fields": [
+            "0: 100"
+          ],
+          "description": "菜单显示在展示场景与玩法画面上。",
+          "source": {
+            "path": "src/ui/screens.rs",
+            "line": 62
+          }
+        },
+        {
+          "id": "menu_root.Children",
+          "name": "Children",
+          "fields": [
+            "页面内容/控件/页脚子树"
+          ],
+          "description": "BSN 声明式层级，间接子节点逐层使用 ChildOf。",
+          "source": {
+            "path": "src/ui/screens.rs",
+            "line": 73
+          }
+        }
+      ]
+    },
+    {
+      "id": "menu_button",
+      "name": "可操作菜单按钮",
+      "count": "0..11",
+      "description": "英文菜单、分类、设置箭头与底部按钮；Coming Soon 展示节点不带 Button 或 MenuButton。",
+      "components": [
+        {
+          "id": "menu_button.MenuButton",
+          "name": "MenuButton",
+          "fields": [
+            "action: UiAction",
+            "index: usize"
+          ],
+          "description": "业务动作与连续导航序号，不依赖按钮文字或实体名。",
+          "source": {
+            "path": "src/ui/mod.rs",
+            "line": 85
+          }
+        },
+        {
+          "id": "menu_button.Button",
+          "name": "Button",
+          "fields": [],
+          "description": "Bevy 原生 UI 按钮命中。",
+          "source": {
+            "path": "src/ui/widgets.rs",
+            "line": 90
+          }
+        },
+        {
+          "id": "menu_button.Interaction",
+          "name": "Interaction",
+          "fields": [
+            "None / Hovered / Pressed"
+          ],
+          "description": "原生命中后产生相同 UiRequest，离开恢复纸色。",
+          "source": {
+            "path": "src/ui/navigation.rs",
+            "line": 228
+          }
+        },
+        {
+          "id": "menu_button.Node",
+          "name": "Node",
+          "fields": [
+            "尺寸/间距/边框/折行"
+          ],
+          "description": "BSN 控件布局；文字叶节点保留自然宽度。",
+          "source": {
+            "path": "src/ui/widgets.rs",
+            "line": 82
+          }
+        },
+        {
+          "id": "menu_button.BackgroundColor",
+          "name": "BackgroundColor",
+          "fields": [
+            "PAPER / GOLD / pressed"
+          ],
+          "description": "style_buttons 按输入来源与 Interaction 更新。",
+          "source": {
+            "path": "src/ui/screens.rs",
+            "line": 556
+          }
+        },
+        {
+          "id": "menu_button.BorderColor",
+          "name": "BorderColor",
+          "fields": [
+            "CREAM / INK"
+          ],
+          "description": "悬停/键盘焦点时使用深色边框。",
+          "source": {
+            "path": "src/ui/screens.rs",
+            "line": 556
+          }
+        },
+        {
+          "id": "menu_button.SettingDescription",
+          "name": "SettingDescription",
+          "fields": [
+            "title: &str",
+            "body: &str"
+          ],
+          "description": "实际设置的箭头携带说明；焦点更新右侧文本，不重建页面。",
+          "source": {
+            "path": "src/ui/widgets.rs",
+            "line": 9
+          }
+        },
+        {
+          "id": "menu_button.ComputedNode",
+          "name": "ComputedNode",
+          "fields": [
+            "size / content_size"
+          ],
+          "description": "原生布局后的按钮几何，用于焦点滚入。",
+          "source": {
+            "path": "src/ui/screens.rs",
+            "line": 615
+          }
+        },
+        {
+          "id": "menu_button.UiGlobalTransform",
+          "name": "UiGlobalTransform",
+          "fields": [
+            "affine: Affine2"
+          ],
+          "description": "与视口坐标比较按钮上下边界。",
+          "source": {
+            "path": "src/ui/screens.rs",
+            "line": 615
+          }
+        }
+      ]
+    },
+    {
+      "id": "menu_scroll",
+      "name": "页面滚动视口",
+      "count": "0..1",
+      "description": "页面高度不足时保留控件大小，由原生 UI Scroll 与键盘焦点滚入共同更新位置。",
+      "components": [
+        {
+          "id": "menu_scroll.MenuScroll",
+          "name": "MenuScroll",
+          "fields": [],
+          "description": "滚动视口标记。",
+          "source": {
+            "path": "src/ui/widgets.rs",
+            "line": 16
+          }
+        },
+        {
+          "id": "menu_scroll.ScrollPosition",
+          "name": "ScrollPosition",
+          "fields": [
+            "0: Vec2"
+          ],
+          "description": "指针滚轮或焦点滚入按内容范围夹紧。",
+          "source": {
+            "path": "src/ui/widgets.rs",
+            "line": 342
+          }
+        },
+        {
+          "id": "menu_scroll.ComputedNode",
+          "name": "ComputedNode",
+          "fields": [
+            "size / content_size / inverse_scale_factor"
+          ],
+          "description": "布局计算结果，用于滚动范围与坐标转换。",
+          "source": {
+            "path": "src/ui/screens.rs",
+            "line": 613
+          }
+        },
+        {
+          "id": "menu_scroll.UiGlobalTransform",
+          "name": "UiGlobalTransform",
+          "fields": [
+            "affine: Affine2"
+          ],
+          "description": "与按钮比较可视区上下边界。",
+          "source": {
+            "path": "src/ui/screens.rs",
+            "line": 613
+          }
+        },
+        {
+          "id": "menu_scroll.Node",
+          "name": "Node",
+          "fields": [
+            "overflow: scroll_y",
+            "flex_grow: 1",
+            "flex_basis: 0"
+          ],
+          "description": "只占顶层剩余高度，页脚保留可视空间。",
+          "source": {
+            "path": "src/ui/widgets.rs",
+            "line": 328
+          }
+        }
+      ]
+    },
+    {
+      "id": "menu_backdrop",
+      "name": "主菜单展示舞台根",
+      "count": "0..1",
+      "description": "OnEnter(MainMenu) 创建独立海岛展示；仅复用 GLB 与动画，没有玩法控制器或物理实体。",
+      "components": [
+        {
+          "id": "menu_backdrop.MenuBackdrop",
+          "name": "MenuBackdrop",
+          "fields": [],
+          "description": "舞台根标记。",
+          "source": {
+            "path": "src/ui/backdrop.rs",
+            "line": 19
+          }
+        },
+        {
+          "id": "menu_backdrop.DespawnOnExit",
+          "name": "DespawnOnExit",
+          "fields": [
+            "AppState::MainMenu"
+          ],
+          "description": "离开主菜单时连带销毁相机、灯光与 GLB 子树。",
+          "source": {
+            "path": "src/ui/backdrop.rs",
+            "line": 51
+          }
+        },
+        {
+          "id": "menu_backdrop.Children",
+          "name": "Children",
+          "fields": [
+            "菜单相机/日光/11个模型根"
+          ],
+          "description": "BSN 展示树；设置和帮助沿用舞台。",
+          "source": {
+            "path": "src/ui/backdrop.rs",
+            "line": 54
+          }
+        },
+        {
+          "id": "menu_backdrop.Transform",
+          "name": "Transform",
+          "fields": [],
+          "description": "为视觉父子变换提供根。",
+          "source": {
+            "path": "src/ui/backdrop.rs",
+            "line": 52
+          }
+        },
+        {
+          "id": "menu_backdrop.Visibility",
+          "name": "Visibility",
+          "fields": [],
+          "description": "通过父子树传播展示可见性。",
+          "source": {
+            "path": "src/ui/backdrop.rs",
+            "line": 53
+          }
+        }
+      ]
+    },
+    {
+      "id": "menu_camera",
+      "name": "主菜单展示相机",
+      "count": "0..1",
+      "description": "只属于 MainMenu 展示舞台；进入游戏时清理并由玩法相机接管菜单与检查器上下文。",
+      "components": [
+        {
+          "id": "menu_camera.Camera3d",
+          "name": "Camera3d",
+          "fields": [],
+          "description": "3D GLB 展示镜头。",
+          "source": {
+            "path": "src/ui/backdrop.rs",
+            "line": 111
+          }
+        },
+        {
+          "id": "menu_camera.IsDefaultUiCamera",
+          "name": "IsDefaultUiCamera",
+          "fields": [],
+          "description": "菜单与子页面复用的默认 UI 相机。",
+          "source": {
+            "path": "src/ui/backdrop.rs",
+            "line": 115
+          }
+        },
+        {
+          "id": "menu_camera.PrimaryEguiContext",
+          "name": "PrimaryEguiContext",
+          "fields": [],
+          "description": "显式主上下文；主菜单检查器受 gameplay_running 条件隐藏。",
+          "source": {
+            "path": "src/ui/backdrop.rs",
+            "line": 116
+          }
+        },
+        {
+          "id": "menu_camera.Transform",
+          "name": "Transform",
+          "fields": [
+            "position / look_at"
+          ],
+          "description": "为左侧 UI 留白，右侧展示快递员与据点。",
+          "source": {
+            "path": "src/ui/backdrop.rs",
+            "line": 130
+          }
+        },
+        {
+          "id": "menu_camera.ChildOf",
+          "name": "ChildOf",
+          "fields": [
+            "menu_backdrop"
+          ],
+          "description": "舞台根的直接子实体，根销毁时连带清理。",
+          "source": {
+            "path": "src/ui/backdrop.rs",
+            "line": 55
+          }
+        }
+      ]
+    },
+    {
+      "id": "menu_model",
+      "name": "菜单 GLB 模型与动画子树",
+      "count": "0..11个模型根 + GLB子树",
+      "description": "地形、海水、物流站、快递员、包裹与植物；独立展示不创建玩法刚体或碰撞。",
+      "components": [
+        {
+          "id": "menu_model.WorldAssetRoot",
+          "name": "WorldAssetRoot",
+          "fields": [
+            "GLB#Scene0"
+          ],
+          "description": "异步展开真实美术资产，展开完成发 WorldInstanceReady。",
+          "source": {
+            "path": "src/ui/backdrop.rs",
+            "line": 135
+          }
+        },
+        {
+          "id": "menu_model.CourierAnimation",
+          "name": "CourierAnimation",
+          "fields": [
+            "graph: Handle<AnimationGraph>",
+            "node: AnimationNodeIndex"
+          ],
+          "description": "只在展示快递员 GLB 根保存 Carry_Idle 图与索引。",
+          "source": {
+            "path": "src/ui/backdrop.rs",
+            "line": 23
+          }
+        },
+        {
+          "id": "menu_model.AnimationPlayer",
+          "name": "AnimationPlayer",
+          "fields": [
+            "当前图节点/播放状态"
+          ],
+          "description": "由 GLB 骨架子实体提供；Ready Observer 循环播放。",
+          "source": {
+            "path": "src/ui/backdrop.rs",
+            "line": 146
+          }
+        },
+        {
+          "id": "menu_model.AnimationGraphHandle",
+          "name": "AnimationGraphHandle",
+          "fields": [
+            "0: Handle<AnimationGraph>"
+          ],
+          "description": "Ready Observer 用 Commands 插入真实 AnimationPlayer 所在子实体。",
+          "source": {
+            "path": "src/ui/backdrop.rs",
+            "line": 163
+          }
+        },
+        {
+          "id": "menu_model.Transform",
+          "name": "Transform",
+          "fields": [
+            "translation / rotation"
+          ],
+          "description": "模型根与携带包裹使用局部位置。",
+          "source": {
+            "path": "src/ui/backdrop.rs",
+            "line": 135
+          }
+        },
+        {
+          "id": "menu_model.Children",
+          "name": "Children",
+          "fields": [
+            "GLB展开树/携带包裹"
+          ],
+          "description": "快递员的独立包裹附件保持角色本地持握位置。",
+          "source": {
+            "path": "src/ui/backdrop.rs",
+            "line": 82
+          }
+        }
+      ]
+    },
+    {
+      "id": "menu_text",
+      "name": "菜单文字叶节点",
+      "count": "按页面内容生成",
+      "description": "BSN 文本保留真实字体与自然宽度；标题、按钮、按键框、编号和正文由独立 Text 节点显示。设置说明标记只在对应两个节点存在。",
+      "components": [
+        {
+          "id": "menu_text.Text",
+          "name": "Text",
+          "fields": [
+            "0: String"
+          ],
+          "description": "正文/标题实际文本；说明系统按焦点更新对应叶节点。",
+          "source": {
+            "path": "src/ui/widgets.rs",
+            "line": 36
+          }
+        },
+        {
+          "id": "menu_text.TextFont",
+          "name": "TextFont",
+          "fields": [
+            "font: FontSource",
+            "font_size: FontSize"
+          ],
+          "description": "UiTheme 标题/正文字体句柄与响应式字号。",
+          "source": {
+            "path": "src/ui/widgets.rs",
+            "line": 37
+          }
+        },
+        {
+          "id": "menu_text.TextColor",
+          "name": "TextColor",
+          "fields": [
+            "0: Color"
+          ],
+          "description": "纸色/深墨色文字，区分正文与静态占位。",
+          "source": {
+            "path": "src/ui/widgets.rs",
+            "line": 41
+          }
+        },
+        {
+          "id": "menu_text.DescriptionTitle",
+          "name": "DescriptionTitle",
+          "fields": [],
+          "description": "仅设置说明标题的身份标记。",
+          "source": {
+            "path": "src/ui/screens.rs",
+            "line": 13
+          }
+        },
+        {
+          "id": "menu_text.DescriptionBody",
+          "name": "DescriptionBody",
+          "fields": [],
+          "description": "仅设置说明正文的身份标记。",
+          "source": {
+            "path": "src/ui/screens.rs",
+            "line": 16
+          }
+        },
+        {
+          "id": "menu_text.Node",
+          "name": "Node",
+          "fields": [
+            "自动最小宽度",
+            "flex_shrink: 1"
+          ],
+          "description": "保留内在宽度，Column 正文仍正常折行。",
+          "source": {
+            "path": "src/ui/widgets.rs",
+            "line": 43
           }
         }
       ]
@@ -4199,7 +5834,7 @@
       "description": "全局玩家设置；配置帧率须为不小于 60 的整数，120 是合法自定义值。无效文件警告并回退默认 60，保留原文件；CameraSettings 是嵌套值，不是另一个 Resource。",
       "source": {
         "path": "src/settings.rs",
-        "line": 16
+        "line": 17
       }
     },
     {
@@ -4227,7 +5862,7 @@
       "description": "共享动态刚体、运动控制、重力、拾取与弹簧持握参数；检查器修改只影响当前会话。",
       "source": {
         "path": "src/gameplay.rs",
-        "line": 80
+        "line": 82
       }
     },
     {
@@ -4252,7 +5887,7 @@
       "description": "引擎按当前阶段提供的通用时钟；PreUpdate 使用虚拟时间，固定阶段切换为固定时间。观察日志采样读取此资源，但鼠标角度不乘 delta。",
       "source": {
         "path": "src/camera.rs",
-        "line": 405
+        "line": 455
       }
     },
     {
@@ -4261,7 +5896,7 @@
       "fields": [
         "真实时间 delta / elapsed"
       ],
-      "description": "引擎真实时钟；Enhanced Input 的 ContextTime 可读取，与 Time 的自动阶段语义不同。",
+      "description": "引擎真实时钟；Enhanced Input 的 ContextTime 可读取，与 Time 的自动阶段语义不同。音频节流也使用此时钟，暂停时仍前进。",
       "source": {
         "path": "src/main.rs",
         "line": 41
@@ -4274,9 +5909,9 @@
         "虚拟时间 delta / elapsed",
         "暂停与缩放状态"
       ],
-      "description": "引擎游戏时钟，为固定步累计时间提供来源。",
+      "description": "引擎游戏时钟，为固定步累计时间提供来源。 主菜单保持运行以播放展示动画；暂停游戏时冻结，恢复 Running 时继续。",
       "source": {
-        "path": "src/main.rs",
+        "path": "src/app_flow.rs",
         "line": 41
       }
     },
@@ -4289,7 +5924,7 @@
       "description": "引擎从 KeyboardInput 等缓冲消息更新。动作评估读取，鼠标捕获另读 Esc 处理窗口生命周期。",
       "source": {
         "path": "src/camera.rs",
-        "line": 193
+        "line": 230
       }
     },
     {
@@ -4313,7 +5948,7 @@
       "description": "引擎汇总本帧 MouseMotion；LookAction 使用像素位移。",
       "source": {
         "path": "src/input.rs",
-        "line": 91
+        "line": 96
       }
     },
     {
@@ -4351,7 +5986,7 @@
       "description": "引擎输入系统与 sync_mouse_capture 各自持有独立读取游标；后者只检查窗口左键按下以恢复捕获。",
       "source": {
         "path": "src/camera.rs",
-        "line": 194
+        "line": 231
       }
     },
     {
@@ -4364,7 +5999,7 @@
       "description": "窗口焦点缓冲消息；CameraControlPlugin 注册并由鼠标捕获系统读取。",
       "source": {
         "path": "src/camera.rs",
-        "line": 146
+        "line": 147
       }
     },
     {
@@ -4500,7 +6135,7 @@
       "description": "只属于 limit_frame_rate 系统实例的局部等待和日志去重状态，不是共享 Resource。",
       "source": {
         "path": "src/settings.rs",
-        "line": 133
+        "line": 269
       }
     },
     {
@@ -4524,7 +6159,7 @@
       "description": "只属于 on_camera_look Observer 系统实例，最多每 0.5 秒记录一次连续角度变化。",
       "source": {
         "path": "src/camera.rs",
-        "line": 406
+        "line": 456
       }
     },
     {
@@ -4627,7 +6262,7 @@
       "description": "插值插件追踪 Transform 外部变更；显示链写朝向后才更新 tick。",
       "source": {
         "path": "src/camera.rs",
-        "line": 187
+        "line": 193
       }
     },
     {
@@ -4672,7 +6307,9 @@
       "id": "resource.AssetServer",
       "name": "AssetServer",
       "kind": "Resource",
-      "fields": [],
+      "fields": [
+        "异步资产请求与加载状态"
+      ],
       "description": "加载并查询递归依赖。",
       "source": {
         "path": "src/art_assets.rs",
@@ -4705,11 +6342,358 @@
       "id": "resource.AssetsAnimationGraph",
       "name": "Assets<AnimationGraph>",
       "kind": "Resource",
-      "fields": [],
+      "fields": [
+        "AnimationGraph 资产集合"
+      ],
       "description": "主角动画绑定时添加动作图。",
       "source": {
         "path": "src/character_animation.rs",
         "line": 92
+      }
+    },
+    {
+      "id": "resource.AppState",
+      "name": "State<AppState> / NextState<AppState>",
+      "fields": [
+        "MainMenu（默认）",
+        "InGame"
+      ],
+      "description": "唯一应用状态；只进入/退出 InGame 生成/销毁玩法会话，菜单子页面不改变它。",
+      "source": {
+        "path": "src/app_flow.rs",
+        "line": 22
+      }
+    },
+    {
+      "id": "resource.PlayState",
+      "name": "State<PlayState> / NextState<PlayState>",
+      "fields": [
+        "Running（默认）",
+        "Paused",
+        "source: AppState::InGame"
+      ],
+      "description": "State<PlayState> 是 InGame 内的 Running / Paused 子状态，只在 InGame 存在；NextState<PlayState> 在插件注册时初始化并跨会话保留，用于菜单请求后续状态切换。",
+      "source": {
+        "path": "src/app_flow.rs",
+        "line": 31
+      },
+      "notes": [
+        "退出 InGame 移除当前 State<PlayState>；NextState<PlayState> 不随会话移除。",
+        "菜单 handle_requests 在 MainMenu 仍可访问 NextState<PlayState>；请求由后续 StateTransition 消费。"
+      ]
+    },
+    {
+      "id": "resource.MenuState",
+      "name": "MenuState",
+      "fields": [
+        "page: MenuPage",
+        "tab: SettingsTab",
+        "return_page: MenuPage",
+        "status: Option<String>"
+      ],
+      "description": "保存 Main/Hidden/Settings/Help/Pause 页面、四个设置分类、返回来源与英文提示；不等同于 AppState。",
+      "source": {
+        "path": "src/ui/mod.rs",
+        "line": 39
+      }
+    },
+    {
+      "id": "resource.MenuFocus",
+      "name": "MenuFocus",
+      "fields": [
+        "0: usize"
+      ],
+      "description": "可操作按钮的连续序号；未实现的灰色占位不进入焦点列表。",
+      "source": {
+        "path": "src/ui/mod.rs",
+        "line": 48
+      }
+    },
+    {
+      "id": "resource.MenuInputSource",
+      "name": "MenuInputSource",
+      "fields": [
+        "Pointer（默认）",
+        "Navigation"
+      ],
+      "description": "控制可见焦点来源；鼠标离开取消悬停，键盘/手柄仍可保持焦点序号。",
+      "source": {
+        "path": "src/ui/mod.rs",
+        "line": 52
+      }
+    },
+    {
+      "id": "resource.SettingsDraft",
+      "name": "SettingsDraft",
+      "fields": [
+        "max_fps: u32",
+        "mouse_sensitivity: f32",
+        "invert_y: bool"
+      ],
+      "description": "菜单独立草稿，打开设置复制当前值；Apply 保存成功后才替换 GameSettings，Back 丢弃，失败保留草稿。",
+      "source": {
+        "path": "src/settings.rs",
+        "line": 66
+      }
+    },
+    {
+      "id": "resource.SettingsFile",
+      "name": "SettingsFile",
+      "fields": [
+        "0: PathBuf = settings.json"
+      ],
+      "description": "设置文件路径；保存使用根 tmp/settings-save 唯一临时文件、同步关闭后 rename，错误保留原文件。",
+      "source": {
+        "path": "src/settings.rs",
+        "line": 56
+      }
+    },
+    {
+      "id": "resource.UiTheme",
+      "name": "UiTheme",
+      "fields": [
+        "heading: Handle<Font>",
+        "body: Handle<Font>",
+        "scale: f32"
+      ],
+      "description": "一次加载标题/正文字体；响应窗口宽度缩放，页面 BSN 引用既有句柄。",
+      "source": {
+        "path": "src/ui/theme.rs",
+        "line": 14
+      }
+    },
+    {
+      "id": "resource.UiRequestMessages",
+      "name": "Messages<UiRequest>",
+      "fields": [
+        "0: UiAction"
+      ],
+      "description": "鼠标与菜单 Enhanced Input 共享的缓冲请求；PreUpdate 每帧消费第一项并清空其余，防止旧页面穿透。",
+      "source": {
+        "path": "src/ui/mod.rs",
+        "line": 96
+      }
+    },
+    {
+      "id": "resource.TimePhysics",
+      "name": "Time<Physics>",
+      "fields": [
+        "paused: bool",
+        "delta: Duration"
+      ],
+      "description": "主菜单与暂停时冻结并立即清零 delta；Running 恢复；模拟时间与固定调度配置是不同资源。",
+      "source": {
+        "path": "src/app_flow.rs",
+        "line": 103
+      }
+    },
+    {
+      "id": "resource.AssetLoadFailedMessages",
+      "name": "Messages<UntypedAssetLoadFailedEvent>",
+      "fields": [
+        "path: AssetPath",
+        "error: AssetLoadError"
+      ],
+      "description": "菜单资产失败日志的缓冲消息；读取 models/ 与 ui/ 路径，不作为 Observer 事件。",
+      "source": {
+        "path": "src/ui/backdrop.rs",
+        "line": 179
+      }
+    },
+    {
+      "id": "resource.AppTransitionMessages",
+      "name": "Messages<StateTransitionEvent<AppState>>",
+      "fields": [
+        "exited: Option<AppState>",
+        "entered: Option<AppState>"
+      ],
+      "description": "应用状态转换的缓冲日志输入，由 show_main_menu 的独立 MessageReader 读取。",
+      "source": {
+        "path": "src/app_flow.rs",
+        "line": 76
+      }
+    },
+    {
+      "id": "resource.PlayTransitionMessages",
+      "name": "Messages<StateTransitionEvent<PlayState>>",
+      "fields": [
+        "exited: Option<PlayState>",
+        "entered: Option<PlayState>"
+      ],
+      "description": "游戏子状态转换的缓冲日志输入，由 resume_game 的独立 MessageReader 读取。",
+      "source": {
+        "path": "src/app_flow.rs",
+        "line": 143
+      }
+    },
+    {
+      "id": "resource.SoundRequestMessages",
+      "name": "Messages<SoundRequest>",
+      "fields": [
+        "cue: SoundCue",
+        "source: Entity"
+      ],
+      "description": "SoundEventsPlugin 与 GameUiPlugin 注册的反馈缓冲；菜单焦点/确认/返回与四种物理反馈已接入，其余五种 cue 仅预留映射。",
+      "source": {
+        "path": "src/audio_events.rs",
+        "line": 68
+      }
+    },
+    {
+      "id": "resource.SoundBank",
+      "name": "SoundBank",
+      "fields": [
+        "sounds: HashMap<SoundCue, LoadedSound>",
+        "voices: Vec<Voice>",
+        "last_played: HashMap<SoundCue, f64>"
+      ],
+      "description": "共享的短音句柄、清单策略、实例生命周期与最近获准时间；LoadedSound/Voice 是普通 Rust 数据，不是组件或资源。",
+      "source": {
+        "path": "src/audio.rs",
+        "line": 124
+      }
+    },
+    {
+      "id": "resource.UiAudioChannel",
+      "name": "AudioChannel<UiTrack>",
+      "fields": [
+        "类型化 UI 通道与内部播放命令队列"
+      ],
+      "description": "bevy_kira_audio 0.26.0 创建的共享通道；UiTrack 是 add_audio_channel 使用的 Resource 标记。",
+      "source": {
+        "path": "src/audio.rs",
+        "line": 32
+      }
+    },
+    {
+      "id": "resource.SfxAudioChannel",
+      "name": "AudioChannel<SfxTrack>",
+      "fields": [
+        "类型化 SFX 通道与内部播放命令队列"
+      ],
+      "description": "Kira SFX 通道；播放系统用共享 Res 排队，退出系统发出停止命令。",
+      "source": {
+        "path": "src/audio.rs",
+        "line": 33
+      }
+    },
+    {
+      "id": "resource.UiTrack",
+      "name": "UiTrack",
+      "fields": [],
+      "description": "无字段的 UI 通道类型标记，derive(Resource)；项目不直接访问独立 UiTrack 实例。",
+      "source": {
+        "path": "src/audio.rs",
+        "line": 25
+      }
+    },
+    {
+      "id": "resource.SfxTrack",
+      "name": "SfxTrack",
+      "fields": [],
+      "description": "无字段的 SFX 通道类型标记，derive(Resource)；项目不直接访问独立 SfxTrack 实例。",
+      "source": {
+        "path": "src/audio.rs",
+        "line": 27
+      }
+    },
+    {
+      "id": "resource.AudioSources",
+      "name": "Assets<AudioSource>",
+      "fields": [
+        "Kira StaticSoundData 与资产句柄"
+      ],
+      "description": "Kira 插件安装资产加载器；播放系统只读检查短音是否已加载。",
+      "source": {
+        "path": "src/audio.rs",
+        "line": 192
+      }
+    },
+    {
+      "id": "resource.AudioLoadFailures",
+      "name": "Messages<AssetLoadFailedEvent<AudioSource>>",
+      "fields": [
+        "path / error / id"
+      ],
+      "description": "Bevy 资产加载失败缓冲，由 log_load_failures 的独立 MessageReader 消费。",
+      "source": {
+        "path": "src/audio.rs",
+        "line": 169
+      }
+    },
+    {
+      "id": "resource.AppExitMessages",
+      "name": "Messages<AppExit>",
+      "fields": [
+        "AppExit 状态"
+      ],
+      "description": "引擎退出缓冲消息；stop_on_exit 在 main 的会话日志刷新之前停止 Kira 通道。",
+      "source": {
+        "path": "src/audio.rs",
+        "line": 256
+      }
+    },
+    {
+      "id": "resource.ContactGraph",
+      "name": "ContactGraph",
+      "fields": [
+        "活动/休眠接触对、流形法线与法向冲量"
+      ],
+      "description": "Avian 接触图；声音检测只读实际求解结果，不依赖离散 CollisionStart 消息。",
+      "source": {
+        "path": "src/audio_events.rs",
+        "line": 109
+      }
+    },
+    {
+      "id": "local.LandingContacts",
+      "name": "Local<LandingContacts>",
+      "fields": [
+        "supported: HashSet<Entity>",
+        "reported: HashSet<Entity>"
+      ],
+      "description": "emit_parcel_land 的支撑集合与一次落地锁存；每步更新，完全离开支撑时解除 reported。",
+      "source": {
+        "path": "src/audio_events.rs",
+        "line": 103
+      }
+    },
+    {
+      "id": "local.HoldStrain",
+      "name": "Local<HashMap<Entity, HoldStrain>>",
+      "fields": [
+        "holder: Option<Entity>",
+        "age / strained_for: f32",
+        "warned: bool"
+      ],
+      "description": "warn_hold_strain 的包裹持握计时与滞回锁存；解除持握或无效持有者时清理。",
+      "source": {
+        "path": "src/audio_events.rs",
+        "line": 155
+      }
+    },
+    {
+      "id": "local.MenuPointerCursor",
+      "name": "Local<Option<Vec2>> · previous_cursor",
+      "fields": [
+        "上一帧主窗口光标位置"
+      ],
+      "description": "pointer_interaction 私有的指针移动检测；不表示共享输入资源。",
+      "source": {
+        "path": "src/ui/navigation.rs",
+        "line": 228
+      }
+    },
+    {
+      "id": "local.MenuPointerHover",
+      "name": "Local<Option<Entity>> · previous_hover",
+      "fields": [
+        "上一帧悬停/按下的按钮实体"
+      ],
+      "description": "pointer_interaction 私有的悬停锁存；区分真实进入新按钮与按钮内移动、点击释放、重建初始悬停。",
+      "source": {
+        "path": "src/ui/navigation.rs",
+        "line": 228
       }
     }
   ],
@@ -4726,7 +6710,7 @@
       "description": "普通 Entity 引用；#[entities] 用于实体映射，不提供反向索引或连带销毁。",
       "source": {
         "path": "src/gameplay.rs",
-        "line": 17
+        "line": 19
       }
     },
     {
@@ -4741,7 +6725,7 @@
       "description": "普通 Entity 引用，由场景生成补入控制者。",
       "source": {
         "path": "src/camera.rs",
-        "line": 25
+        "line": 26
       }
     },
     {
@@ -4756,7 +6740,7 @@
       "description": "相机目标引用必须与同一控制者的 ControlsCharacter 一致，朝向系统才会同步。",
       "source": {
         "path": "src/camera.rs",
-        "line": 51
+        "line": 52
       }
     },
     {
@@ -4766,12 +6750,12 @@
       "name": "ActionOf<GameplayContext>",
       "kind": "relationship",
       "reverse": "controller.Actions",
-      "cardinality": "每个动作关联 1 个上下文；当前每个控制者有 5 个动作，结构允许 0..N",
+      "cardinality": "每个 GameplayContext 动作关联 1 个上下文；当前每个玩法控制者有 6 个动作，结构允许 0..N",
       "linked_spawn": true,
       "description": "插件关系；销毁上下文会连带销毁其动作实体，反向索引由 Bevy 自动维护。",
       "source": {
         "path": "src/input.rs",
-        "line": 84
+        "line": 89
       }
     },
     {
@@ -4786,7 +6770,7 @@
       "description": "插件关系；销毁动作会连带销毁其绑定实体。",
       "source": {
         "path": "src/input.rs",
-        "line": 91
+        "line": 96
       }
     },
     {
@@ -4831,7 +6815,7 @@
       "description": "自定义关系，无 linked_spawn；人物销毁不会销毁箱体，失效目标清理恢复自由碰撞，动态刚体自然下落。",
       "source": {
         "path": "src/gameplay.rs",
-        "line": 62
+        "line": 64
       }
     },
     {
@@ -4846,7 +6830,7 @@
       "description": "可选普通 Entity 引用，Observer 记录请求来源，apply_perspective_toggle 同帧取出；不是持久控制关系，不提供反向索引或生命周期绑定。",
       "source": {
         "path": "src/camera.rs",
-        "line": 51
+        "line": 52
       }
     },
     {
@@ -4892,6 +6876,81 @@
       "source": {
         "path": "src/character_animation.rs",
         "line": 43
+      }
+    },
+    {
+      "id": "menu_camera_child",
+      "from": "menu_camera",
+      "to": "menu_backdrop",
+      "name": "ChildOf",
+      "kind": "relationship",
+      "reverse": "menu_backdrop.Children",
+      "cardinality": "每个展示相机属于一个舞台根",
+      "linked_spawn": true,
+      "description": "BSN 直接子节点；退出 MainMenu 清理舞台时相机与主上下文一同销毁。",
+      "source": {
+        "path": "src/ui/backdrop.rs",
+        "line": 55
+      }
+    },
+    {
+      "id": "menu_models_child",
+      "from": "menu_model",
+      "to": "menu_backdrop",
+      "name": "ChildOf 层级",
+      "kind": "relationship",
+      "reverse": "menu_backdrop.Children",
+      "cardinality": "11个模型根及其间接 GLB/包裹子树归属一个展示舞台",
+      "linked_spawn": true,
+      "description": "图按视觉类别汇总多层真实 ChildOf；携带包裹直接属于快递员，GLB 子树逐层挂接，不能解释为所有节点直接指向舞台。",
+      "source": {
+        "path": "src/ui/backdrop.rs",
+        "line": 36
+      }
+    },
+    {
+      "id": "menu_page_hierarchy",
+      "from": "menu_button",
+      "to": "menu_root",
+      "name": "ChildOf 层级",
+      "kind": "relationship",
+      "reverse": "menu_root.Children",
+      "cardinality": "每个可操作按钮通过页面内容与布局层归属唯一当前页面",
+      "linked_spawn": true,
+      "description": "聚合多层 BSN 子树，不宣称按钮直接 ChildOf 页面根；重建或 Hidden 时沿层级清理。",
+      "source": {
+        "path": "src/ui/screens.rs",
+        "line": 29
+      }
+    },
+    {
+      "id": "menu_scroll_hierarchy",
+      "from": "menu_scroll",
+      "to": "menu_root",
+      "name": "ChildOf",
+      "kind": "relationship",
+      "reverse": "menu_root.Children",
+      "cardinality": "当前页面内容视口直接属于 MenuRoot",
+      "linked_spawn": true,
+      "description": "page_area 的 MenuScroll 是根内容子节点，固定页脚为并列兄弟节点。",
+      "source": {
+        "path": "src/ui/screens.rs",
+        "line": 80
+      }
+    },
+    {
+      "id": "menu_text_hierarchy",
+      "from": "menu_text",
+      "to": "menu_root",
+      "name": "ChildOf 层级",
+      "kind": "relationship",
+      "reverse": "menu_root.Children",
+      "cardinality": "每个文字叶节点经控件/布局层属于当前页面",
+      "linked_spawn": true,
+      "description": "聚合多层 BSN 子树；文字可以直接属于按钮、按键框、编号块或正文容器，根清理时沿层级销毁。",
+      "source": {
+        "path": "src/ui/widgets.rs",
+        "line": 28
       }
     }
   ],
@@ -4949,20 +7008,75 @@
       "system": "courier_ready_observer",
       "target": "CourierVisual 根",
       "description": "标记主角视觉，随后 Update 绑定命名动作。"
+    },
+    {
+      "event": "Fire<ReleasePointerAction>",
+      "system": "observe_release_pointer",
+      "target": "事件 context 的 GameplayContext 控制者",
+      "description": "F3 按下经控制者路由释放光标并跳过运动，为检查器交互做准备；保持游戏运行。"
+    },
+    {
+      "event": "Fire<PreviousAction>",
+      "system": "observe_menu_previous",
+      "target": "MenuContext 动作事件",
+      "description": "向上循环选择可操作按钮。"
+    },
+    {
+      "event": "Fire<NextAction>",
+      "system": "observe_menu_next",
+      "target": "MenuContext 动作事件",
+      "description": "向下循环选择可操作按钮。"
+    },
+    {
+      "event": "Fire<LeftAction>",
+      "system": "observe_menu_left",
+      "target": "MenuContext 动作事件",
+      "description": "向左调整当前聚焦的真实设置字段。"
+    },
+    {
+      "event": "Fire<RightAction>",
+      "system": "observe_menu_right",
+      "target": "MenuContext 动作事件",
+      "description": "向右调整当前聚焦的真实设置字段。"
+    },
+    {
+      "event": "Fire<ConfirmAction>",
+      "system": "observe_menu_confirm",
+      "target": "MenuContext 动作事件",
+      "description": "确认当前聚焦按钮的 UiAction。"
+    },
+    {
+      "event": "Fire<BackAction>",
+      "system": "observe_menu_back",
+      "target": "MenuContext 动作事件",
+      "description": "产生 Back 请求；Hidden 时为暂停、Pause 时为恢复，子页面按返回来源返回。"
+    },
+    {
+      "event": "Pointer<Scroll>",
+      "system": "observe_menu_scroll",
+      "target": "事件 entity 的 MenuScroll 视口",
+      "description": "原生 UI 滚轮事件在当前 MenuScroll 视口更新夹紧滚动位置并停止继续冒泡。"
+    },
+    {
+      "event": "WorldInstanceReady",
+      "system": "observe_courier_ready",
+      "target": "展示快递员 WorldAssetRoot",
+      "description": "展示快递员 GLB 展开后查找骨架 AnimationPlayer，循环播放 Carry_Idle 并插入动画图句柄。"
     }
   ],
   "startup_notes": [
-    "main 先创建 App 与会话日志，再配置 DefaultPlugins 的 LogPlugin：文件 custom_layer 与控制台 fmt_layer 分别使用后台线程；不将队列和线程当玩法 ECS 资源。",
-    "功能插件包含 EguiPlugin、WorldInspectorPlugin、SettingsPlugin、GameplayPlugin、PlayerInputPlugin、CameraControlPlugin、ArtAssetsPlugin、CharacterAnimationPlugin、IslandRecoveryPlugin、PrototypeScenePlugin、StartupLogPlugin；插件注册顺序不定义系统全序。",
-    "ArtAssetsPlugin 初始化五份 assets/ GLB 强句柄并启动加载，Startup 仅记录请求；海岛碰撞准备另有门槛。art/ 制作源不参与运行依赖。",
-    "Startup 生成日光和一台加载相机，四项启动日志与资源请求日志无彼此顺序。Ready 后 Update 请求海岛 WorldAssetRoot，SpawnScene 实例化后触发 WorldInstanceReady。",
-    "海岛 Update 链 begin_island → prepare_island → spawn_actors 在依赖处应用延迟命令。全部静态碰撞成功后才生成一名角色、一名控制者、普通/易碎纸箱与三只木箱，复用加载相机。",
-    "NPC 四名继续留在地图原始层级；玩家和五件动态物品是独立业务根，每根有直属 GLB 视觉根。地图和物品 GLB 节点数量不是固定的六个测试网格。",
-    "主角 WorldInstanceReady 标记 pending，Update initialize_ready_couriers → sync_courier_animation 绑定命名动作，读取真实水平速度与持有关系；无根运动，未给 NPC 添加玩法动画系统。",
-    "Scene/Bundle 工厂与 MapAsset、ItemPlacement、CollisionGeometry、CourierAnimationNodes/State、RecoverableBody 是辅助数据或 QueryData，不作为 Component/Resource 列出。",
-    "SessionWriter 与 ConsoleWriter 只在 LogPlugin 构建期间临时传递，随后由 layer 持有；SessionLogGuard 是 main 持有的 Rust 对象。两路无界队列、独立 worker，退出 Flush，Drop Shutdown 排空并 join；panic 优先文件 sync_data，关闭同步 stderr 错误回退。",
-    "EguiPlugin 在 WorldInspectorPlugin 之前构建；默认附加到第一台加载相机，准备后复用同一实体，不另建游戏窗口。",
-    "GameplayPlugin 内部注册 DemoPhysicsPlugin → PhysicsPlugins::default()，物理默认 FixedPostUpdate；main 不重复注册。"
+    "main 创建 App 与独立会话日志；DefaultPlugins 禁用 Bevy 默认 AudioPlugin，由 Kira 提供音频设备输出。",
+    "EguiPlugin 先于 WorldInspectorPlugin；检查器只在 InGame / Running 显示。功能插件装配顺序不等于系统全序。",
+    "AppFlowPlugin 默认进入 MainMenu；当前 State<PlayState> 只在 InGame 存在，NextState<PlayState> 从插件注册起跨会话保留。Startup 创建持久 MenuContext 控制者、预加载短音、记录四项启动日志与美术请求。",
+    "ArtAssetsPlugin 保持五份运行 GLB 强句柄，Update 轮询 Loading / Ready / Failed；地图 CPU 网格保留以生成静态碰撞。",
+    "OnEnter(InGame) 创建日光和加载相机。Running 的 Update 海岛链 begin_island → prepare_island → spawn_actors 在各依赖处应用延迟命令。",
+    "海岛资源与全部静态碰撞就绪后生成一名主角、一名控制者、普通纸箱与易碎纸箱各一件及三只木箱，并复用加载相机。NPC 沿原地图层级保留。",
+    "Pause 清空玩法意图、停用上下文、释放光标并冻结虚拟与物理时间，保留全部会话实体；返回 MainMenu 用 DespawnOnExit(InGame) / ChildOf 清理。",
+    "菜单相机与独立 GLB 展示舞台属于 MainMenu；退出主菜单后销毁，由玩法相机接管 UI 与 Egui 上下文。",
+    "主角 WorldInstanceReady 添加 pending；Update initialize_ready_couriers → sync_courier_animation 读取真实速度与持有关系，仅在 Running 绑定和切换命名动画。",
+    "GameplayPlugin 内部安装 DemoPhysicsPlugin、Avian PhysicsPlugins 和无设备 SoundEventsPlugin；GameAudioPlugin 安装 Kira 0.26.0。",
+    "BSN 与 Bundle 辅助数据、MapAsset / ItemPlacement、动画节点和 QueryData 不作为独立玩法 ECS 组件列出。",
+    "统一 tracing 的文件与控制台各有后台线程和无界队列，属于外部 I/O；SessionLogGuard 由 main 持有，退出 Flush，Drop 排空并 join，panic 文件屏障 sync_data。"
   ],
   "general_notes": [
     "systems 的固定 ID 用于布局。kind=engine 是引擎或输入框架阶段的概览，kind=sync 是延迟命令应用点，kind=observer 是触发式响应，其余为项目系统。",
@@ -4971,7 +7085,6 @@
     "source.path 使用仓库相对路径。项目类型引用声明行，引擎或插件类型引用项目内的使用、生成或注册行；kind=engine 概览 source=null。父图应把这些位置标为源码入口，不能宣称是引擎类型定义。",
     "RunFixedMainLoop 每个渲染帧执行 0..N 次固定阶段；固定步不是渲染帧的一对一后续步骤。当前 fixed 为 60 Hz，默认渲染上限 60 FPS，自定义上限可高于 60，性能不足也可能低于上限。",
     "EnhancedInputSystems::Apply 写入动作输出并调用 Commands::trigger；这个 Apply 阶段不是 ECS 的 ApplyDeferred。排入的动作事件在下一命令同步点触发，默认 PreUpdate 完成时已经应用，随后固定循环可读到最新意图。",
-    "World::trigger 在调用期间触发 Observer；Commands::trigger 延迟到命令应用。Observer 注册先后不定义执行顺序；不得把七个业务 Observer 排成串行链。Fire、Complete、Cancel 包含 context、action 与动作值，当前路由使用 context。视角请求通过随后有显式依赖的系统消费。",
     "MouseButtonInput、WindowFocused 等是缓冲 Message，拥有独立读取游标，默认缓冲不是永久队列。Enhanced Input 的 Fire、Complete、Cancel 是触发式 EntityEvent；两类通信必须使用不同图例。",
     "跳跃与交互用布尔请求跨零固定步帧保留，固定步用 mem::take 消费一次；多次到达而尚未消费的同类请求会合并。移动轴保持到 Complete 或 Cancel；镜头角度直接按本帧像素位移更新，不积分角色位置。",
     "同一 Schedule 的 .before/.after/.chain 才表达先后；数据访问冲突、元组顺序、插件注册顺序及 .in_set 本身都不定义完整执行顺序，跨 Schedule 的先后来自主调度顺序。",
@@ -4981,8 +7094,6 @@
     "世界检查器由 EguiPlugin 与 WorldInspectorPlugin 提供，数据留在 ECS 内，通过反射动态读取和可选编辑。Egui 输入映射、BeginPass 集合与嵌套 EguiPrimaryContextPass 以概览节点表示；未展开全部输入、提取和绘制系统。",
     "PreUpdate 的已核对相关路线为 InputSystems → Egui ProcessInput → filter_captured_egui_input → Egui BeginPass 集合 → sync_mouse_capture → 自动 ApplyDeferred → EnhancedInput Prepare → Update → Apply → 事件命令应用 → apply_perspective_toggle。只描述相关显式依赖，未展开全部引擎系统。",
     "EguiPlugin::default() 默认 multipass=true；主上下文的 EguiPrimaryContextPass 在 PostUpdate 的上下文循环内部运行，可一帧多轮。PreUpdate BeginPass 排序边界不等于主检查器 UI 在该时刻开始或完成。",
-    "PostUpdate 的 UI 嵌套 Schedule 与变换传播都属于本帧后处理，但源码与已核对插件未建立二者的显式顺序。应画成并行分支或同阶段无序节点，避免将 UI 动态反射编辑包装成与模拟保证同步的过程。",
-    "UI 输入隔离用不可变 ContextActivity 的延迟替换，不清空共享底层键鼠资源；窗口捕获、动作上下文启用与视角模式是三份不同状态。Esc 释放不直接停用键盘动作，检查器占用才停用整个 GameplayContext。",
     "EguiInput 内部的 egui::Event 只是 UI RawInput 的事件枚举，不等同于 Bevy ECS Event、EntityEvent 或缓冲 Message。捕获期间的 UI 过滤与 UI 占用时的 GameplayContext 停用构成两个方向的输入边界。",
     "Avian 0.7 默认在 FixedPostUpdate 执行 Prepare → StepSimulation（嵌套 PhysicsSchedule 与求解子步）→ Writeback；接地与速度日志链 after(Writeback)。碰撞日志只 after(StepSimulation)，与回写链不设额外顺序。",
     "Position/Rotation/LinearVelocity/AngularVelocity 是真实物理状态；Transform 为插值呈现。HeldTarget 仅显示检查，持握施力直接由 holder.position() 与当前水平朝向计算，不能把插值目标回输模拟。",
@@ -4997,7 +7108,21 @@
     "角色 NON_LINEAR CCD 速度门槛 8m/s 与 0.1rad/s，常规运动由推测接触覆盖；非零 yaw 下不能用 LINEAR 替代。纸箱与木箱保持默认零门槛非线性扫掠。",
     "CarryGrip 是每件物品的握持偏移，模拟与显示共同读取，缺省回退 PrototypeConfig.hold_offset。持物仍动态，不瞬移，不将 HeldTarget 输入物理解算。",
     "FixedLast 记录插值终点，AfterFixedMainLoop 的 Ease → 朝向 → HeldTarget → 镜头 → 可见性 → UpdateEasingTick 每帧执行。PostUpdate 的 AnimationSystems before(TransformSystems::Propagate)，检查器为未设全序的独立分支。",
-    "事件视图保留七个输入 EntityEvent Observer，并单列两个 WorldInstanceReady Observer。窗口/碰撞仍是缓冲 Message；tracing 队列属于外部输出，不是 Bevy Event/Message。",
-    "引擎资产实例化、AnimationSystems 与 GLB 层级为相关流程概览，未准确展开的全部 loader/骨骼内部系统、内部动画缓存、渲染批次、灯光组件与 GPU 流程不声称完整建模。"
+    "引擎资产实例化、AnimationSystems 与 GLB 层级为相关流程概览，未准确展开的全部 loader/骨骼内部系统、内部动画缓存、渲染批次、灯光组件与 GPU 流程不声称完整建模。",
+    "World::trigger 在调用期间触发 Observer；Commands::trigger 在命令应用时触发。玩法/相机的八个动作 Observer 与菜单六个动作 Observer、指针滚动及模型 Ready Observer 按事件响应，不组成注册顺序流水线。",
+    "RenderApp 包含提取、准备、排序与 GPU 渲染等步骤，也可能使用流水线；render 节点是渲染概览，不是紧接 PostUpdate 的单个普通系统。日志通过 tracing 文件输出，不是 ECS Event 或 Message。",
+    "PreUpdate 相关依赖：InputSystems 后更新 MenuContext；Egui ProcessInput → 过滤 → BeginPass → 捕获/命令应用在 Enhanced Prepare 前。动作 Apply 后消费菜单与视角请求，二者未设置彼此顺序；StateTransition 随后在固定循环前执行。",
+    "菜单与暂停强制停用 GameplayContext；检查器占用、失焦或关联失效也停用。F3 释放光标后未操作检查器仍可使用玩法键盘；Esc 的业务暂停由菜单 Enhanced Input 处理，底层读取仅负责光标生命周期。",
+    "项目固定准备链：update_grounded → move_characters → jump_characters → handle_interaction → release_orphaned_items → sync_held_objects → apply_grip_forces。sync_gravity 与 sync_character_facing 均 before(GameplaySystems::Simulate)，二者无彼此顺序。",
+    "插值边界：FixedFirst 重置起点 → 物理步 → FixedLast 记录终点 → RunFixedMainLoop / AfterFixedMainLoop 的 Ease → 朝向 → HeldTarget → 相机 → 可见性 → UpdateEasingTick。零固定步帧仍完成插值后的显示链。",
+    "菜单 Update 顺序为 UiSystems::Build → 延迟命令同步 → pointer_interaction → UiSystems::Style。Style 中样式、说明与焦点滚入没有彼此显式全序；原生 UI PostUpdate 计算布局，焦点滚入等待有效尺寸。",
+    "可操作按钮带 Button/MenuButton；Continue、Multiplayer 及未实现设置是静态 Coming Soon 节点，不带动作、不保存虚构设置、不参与键盘序号。",
+    "状态类型 AppState/PlayState 对应 State 与 NextState 资源；MenuPage/SettingsTab 是 MenuState 内部值。UiRequest 是缓冲 Message，Fire/Pointer/WorldInstanceReady 是触发事件，不混用图例。",
+    "展示 WorldAssetRoot 异步展开 GLB，字体使用预加载句柄；BSN 构造辅助函数不是 Schedule 系统。模型 Ready 与滚动回调用 on(...) 在具体实体注册 Observer。",
+    "文字叶节点保留默认自动最小宽度，避免 Bevy 0.19 在自动横排测量中把显式 min_width:0 解析为零宽；布局计算与真实字形的无窗口回归不替代用户最终视觉验收。",
+    "SoundRequest 是缓冲 Message，由真实菜单焦点、接受的菜单请求、成功拿放命令、固定步持握观察与真实支撑撞击写入；Update 在 UI Style 后播放，不从原始按键猜测业务成功。",
+    "音频观察和物理规则分开：警告只提示不改变持握；落地锁存涵盖活动与休眠支撑，暂停/主菜单不采集。Kira 输出与无设备事件测试分开；12 种 cue 中菜单三种及物理四种已接入，交接、推车、弹开与交付共五种预留。",
+    "GameAudioPlugin 的 Update 链在 UiSystems::Style 后显式运行 log_load_failures → play_requests → stop_on_exit；节流用 Time<Real>，总并发 4、SFX 最多 3。与 Kira 内部系统不指定额外全序，通道排队后由插件消费。",
+    "实例就绪共有地图、玩法主角和菜单快递员三种 Observer；动态事件数量以清单为准。菜单与 Kira 的时间门控不会改变海岛资产、落水恢复、CarryGrip 或 NON_LINEAR CCD 规则。"
   ]
 }

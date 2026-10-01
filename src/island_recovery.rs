@@ -11,6 +11,7 @@ use bevy::{
 };
 
 use crate::{
+    app_flow::gameplay_running,
     gameplay::{
         Character, CharacterIntent, CharacterMotion, GameplaySystems, HeldBy, HeldTarget, Pickable,
     },
@@ -36,7 +37,8 @@ impl Plugin for IslandRecoveryPlugin {
                 // 先清除旧插值端点，再恢复采样，不能让完成旧插值的系统把实体拖回海中。
                 resume_interpolation
                     .after(TransformEasingSystems::Reset)
-                    .before(TransformEasingSystems::UpdateStart),
+                    .before(TransformEasingSystems::UpdateStart)
+                    .run_if(gameplay_running),
             )
             .add_systems(
                 FixedUpdate,
@@ -44,7 +46,8 @@ impl Plugin for IslandRecoveryPlugin {
                 // 延迟关系命令在模拟前同步，确保当步交互和持握施力看见解除结果。
                 recover_from_water
                     .before(crate::camera::sync_character_facing)
-                    .before(GameplaySystems::Simulate),
+                    .before(GameplaySystems::Simulate)
+                    .run_if(gameplay_running),
             );
     }
 }

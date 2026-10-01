@@ -1,0 +1,629 @@
+{
+  "generator_version": "1.0.0",
+  "created_date": "2026-10-01",
+  "sources": [
+    {
+      "id": "kenney_interface-sounds",
+      "title": "Interface Sounds",
+      "pack_version": "1.0",
+      "author": "Kenney",
+      "page": "https://kenney.nl/assets/interface-sounds",
+      "download": "https://kenney.nl/media/pages/assets/interface-sounds/fa43c1dd4d-1677589452/kenney_interface-sounds.zip",
+      "license": "CC0",
+      "license_version": "1.0 Universal",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/"
+    },
+    {
+      "id": "kenney_impact-sounds",
+      "title": "Impact Sounds",
+      "pack_version": "1.0",
+      "author": "Kenney",
+      "page": "https://kenney.nl/assets/impact-sounds",
+      "download": "https://kenney.nl/media/pages/assets/impact-sounds/87b4ddecda-1677589768/kenney_impact-sounds.zip",
+      "license": "CC0",
+      "license_version": "1.0 Universal",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/"
+    }
+  ],
+  "external_assets": [
+    {
+      "id": "menu_hover",
+      "title": "菜单焦点",
+      "path": "audio/ui/menu_hover.ogg",
+      "category": "ui",
+      "original_entry": "Audio/click_001.ogg",
+      "source_id": "kenney_interface-sounds",
+      "playback": {
+        "volume": 0.3,
+        "cooldown_seconds": 0.075,
+        "max_instances": 2,
+        "looped": false
+      }
+    },
+    {
+      "id": "menu_confirm",
+      "title": "菜单确认",
+      "path": "audio/ui/menu_confirm.ogg",
+      "category": "ui",
+      "original_entry": "Audio/confirmation_001.ogg",
+      "source_id": "kenney_interface-sounds",
+      "playback": {
+        "volume": 0.42,
+        "cooldown_seconds": 0.15,
+        "max_instances": 2,
+        "looped": false
+      }
+    },
+    {
+      "id": "menu_cancel",
+      "title": "菜单返回",
+      "path": "audio/ui/menu_cancel.ogg",
+      "category": "ui",
+      "original_entry": "Audio/back_001.ogg",
+      "source_id": "kenney_interface-sounds",
+      "playback": {
+        "volume": 0.36,
+        "cooldown_seconds": 0.15,
+        "max_instances": 2,
+        "looped": false
+      }
+    },
+    {
+      "id": "parcel_land",
+      "title": "包裹落地：木质撞击",
+      "path": "audio/sfx/parcel_land.ogg",
+      "category": "sfx",
+      "original_entry": "Audio/impactWood_medium_000.ogg",
+      "source_id": "kenney_impact-sounds",
+      "playback": {
+        "volume": 0.45,
+        "cooldown_seconds": 0.15,
+        "max_instances": 2,
+        "looped": false
+      }
+    },
+    {
+      "id": "cart_collision",
+      "title": "推车碰撞：通用金属撞击占位",
+      "path": "audio/sfx/cart_collision.ogg",
+      "category": "sfx",
+      "original_entry": "Audio/impactMetal_medium_000.ogg",
+      "source_id": "kenney_impact-sounds",
+      "playback": {
+        "volume": 0.45,
+        "cooldown_seconds": 0.25,
+        "max_instances": 2,
+        "looped": false
+      }
+    }
+  ],
+  "procedural_assets": [
+    {
+      "id": "parcel_pickup",
+      "title": "拾取：上行双音",
+      "category": "sfx",
+      "path": "audio/sfx/parcel_pickup.wav",
+      "recipe": "sine_notes",
+      "seed": 17001,
+      "duration_seconds": 0.22,
+      "notes": [
+        {
+          "start_seconds": 0,
+          "duration_seconds": 0.11,
+          "frequency_start_hz": 620,
+          "frequency_end_hz": 740,
+          "attack_seconds": 0.005,
+          "release_seconds": 0.02,
+          "decay": 2,
+          "second_harmonic": 0.15,
+          "amplitude": 1
+        },
+        {
+          "start_seconds": 0.1,
+          "duration_seconds": 0.1,
+          "frequency_start_hz": 930,
+          "frequency_end_hz": 1050,
+          "attack_seconds": 0.005,
+          "release_seconds": 0.02,
+          "decay": 2,
+          "second_harmonic": 0.15,
+          "amplitude": 0.7
+        }
+      ],
+      "edge_fade_seconds": 0.003,
+      "target_peak": 0.48,
+      "playback": {
+        "volume": 0.65,
+        "cooldown_seconds": 0.15,
+        "max_instances": 2,
+        "looped": false
+      }
+    },
+    {
+      "id": "parcel_release",
+      "title": "放下：短下行音",
+      "category": "sfx",
+      "path": "audio/sfx/parcel_release.wav",
+      "recipe": "sine_notes",
+      "seed": 17002,
+      "duration_seconds": 0.14,
+      "notes": [
+        {
+          "start_seconds": 0,
+          "duration_seconds": 0.14,
+          "frequency_start_hz": 510,
+          "frequency_end_hz": 260,
+          "attack_seconds": 0.005,
+          "release_seconds": 0.02,
+          "decay": 2,
+          "second_harmonic": 0.15,
+          "amplitude": 1
+        }
+      ],
+      "edge_fade_seconds": 0.003,
+      "target_peak": 0.48,
+      "playback": {
+        "volume": 0.5,
+        "cooldown_seconds": 0.15,
+        "max_instances": 2,
+        "looped": false
+      }
+    },
+    {
+      "id": "parcel_handoff",
+      "title": "交接：两个柔和交替音",
+      "category": "sfx",
+      "path": "audio/sfx/parcel_handoff.wav",
+      "recipe": "sine_notes",
+      "seed": 17003,
+      "duration_seconds": 0.27,
+      "notes": [
+        {
+          "start_seconds": 0,
+          "duration_seconds": 0.13,
+          "frequency_start_hz": 660,
+          "frequency_end_hz": 660,
+          "attack_seconds": 0.005,
+          "release_seconds": 0.02,
+          "decay": 2,
+          "second_harmonic": 0.15,
+          "amplitude": 1
+        },
+        {
+          "start_seconds": 0.12,
+          "duration_seconds": 0.12,
+          "frequency_start_hz": 880,
+          "frequency_end_hz": 880.0,
+          "attack_seconds": 0.005,
+          "release_seconds": 0.02,
+          "decay": 2,
+          "second_harmonic": 0.15,
+          "amplitude": 0.7
+        }
+      ],
+      "edge_fade_seconds": 0.003,
+      "target_peak": 0.48,
+      "playback": {
+        "volume": 0.65,
+        "cooldown_seconds": 0.15,
+        "max_instances": 2,
+        "looped": false
+      }
+    },
+    {
+      "id": "character_bounce",
+      "title": "角色弹开：低音回弹",
+      "category": "sfx",
+      "path": "audio/sfx/character_bounce.wav",
+      "recipe": "sine_notes",
+      "seed": 17004,
+      "duration_seconds": 0.32,
+      "notes": [
+        {
+          "start_seconds": 0,
+          "duration_seconds": 0.29,
+          "frequency_start_hz": 230,
+          "frequency_end_hz": 95,
+          "attack_seconds": 0.005,
+          "release_seconds": 0.02,
+          "decay": 3,
+          "second_harmonic": 0.3,
+          "amplitude": 1
+        }
+      ],
+      "edge_fade_seconds": 0.003,
+      "target_peak": 0.48,
+      "playback": {
+        "volume": 0.7,
+        "cooldown_seconds": 0.25,
+        "max_instances": 2,
+        "looped": false
+      }
+    },
+    {
+      "id": "instability_warning",
+      "title": "失稳警告：双脉冲",
+      "category": "sfx",
+      "path": "audio/sfx/instability_warning.wav",
+      "recipe": "sine_notes",
+      "seed": 17005,
+      "duration_seconds": 0.3,
+      "notes": [
+        {
+          "start_seconds": 0,
+          "duration_seconds": 0.11,
+          "frequency_start_hz": 760,
+          "frequency_end_hz": 740,
+          "attack_seconds": 0.005,
+          "release_seconds": 0.02,
+          "decay": 1,
+          "second_harmonic": 0.15,
+          "amplitude": 1
+        },
+        {
+          "start_seconds": 0.16,
+          "duration_seconds": 0.11,
+          "frequency_start_hz": 760,
+          "frequency_end_hz": 740,
+          "attack_seconds": 0.005,
+          "release_seconds": 0.02,
+          "decay": 1,
+          "second_harmonic": 0.15,
+          "amplitude": 0.8
+        }
+      ],
+      "edge_fade_seconds": 0.003,
+      "target_peak": 0.48,
+      "playback": {
+        "volume": 0.5,
+        "cooldown_seconds": 1,
+        "max_instances": 2,
+        "looped": false
+      }
+    },
+    {
+      "id": "delivery_success",
+      "title": "交付成功：上行三音",
+      "category": "sfx",
+      "path": "audio/sfx/delivery_success.wav",
+      "recipe": "sine_notes",
+      "seed": 17006,
+      "duration_seconds": 0.65,
+      "notes": [
+        {
+          "start_seconds": 0,
+          "duration_seconds": 0.22,
+          "frequency_start_hz": 523.251,
+          "frequency_end_hz": 523.251,
+          "attack_seconds": 0.005,
+          "release_seconds": 0.02,
+          "decay": 2,
+          "second_harmonic": 0.15,
+          "amplitude": 1
+        },
+        {
+          "start_seconds": 0.18,
+          "duration_seconds": 0.22,
+          "frequency_start_hz": 659.255,
+          "frequency_end_hz": 659.255,
+          "attack_seconds": 0.005,
+          "release_seconds": 0.02,
+          "decay": 2,
+          "second_harmonic": 0.15,
+          "amplitude": 0.85
+        },
+        {
+          "start_seconds": 0.36,
+          "duration_seconds": 0.26,
+          "frequency_start_hz": 783.991,
+          "frequency_end_hz": 783.991,
+          "attack_seconds": 0.005,
+          "release_seconds": 0.02,
+          "decay": 2,
+          "second_harmonic": 0.15,
+          "amplitude": 0.75
+        }
+      ],
+      "edge_fade_seconds": 0.003,
+      "target_peak": 0.48,
+      "playback": {
+        "volume": 0.7,
+        "cooldown_seconds": 0.5,
+        "max_instances": 2,
+        "looped": false
+      }
+    },
+    {
+      "id": "delivery_failure",
+      "title": "交付失败：下行双音",
+      "category": "sfx",
+      "path": "audio/sfx/delivery_failure.wav",
+      "recipe": "sine_notes",
+      "seed": 17007,
+      "duration_seconds": 0.43,
+      "notes": [
+        {
+          "start_seconds": 0,
+          "duration_seconds": 0.2,
+          "frequency_start_hz": 392,
+          "frequency_end_hz": 370,
+          "attack_seconds": 0.005,
+          "release_seconds": 0.02,
+          "decay": 1,
+          "second_harmonic": 0.15,
+          "amplitude": 1
+        },
+        {
+          "start_seconds": 0.18,
+          "duration_seconds": 0.22,
+          "frequency_start_hz": 293.665,
+          "frequency_end_hz": 260,
+          "attack_seconds": 0.005,
+          "release_seconds": 0.02,
+          "decay": 2,
+          "second_harmonic": 0.15,
+          "amplitude": 0.8
+        }
+      ],
+      "edge_fade_seconds": 0.003,
+      "target_peak": 0.48,
+      "playback": {
+        "volume": 0.65,
+        "cooldown_seconds": 0.5,
+        "max_instances": 2,
+        "looped": false
+      }
+    },
+    {
+      "id": "ambience_island_placeholder",
+      "title": "合成环境底纹候选：非实录海浪，默认关闭",
+      "category": "ambience",
+      "path": "audio/ambience/ambience_island_placeholder.wav",
+      "recipe": "periodic_breeze",
+      "seed": 17008,
+      "duration_seconds": 6,
+      "target_peak": 0.08,
+      "harmonics": [
+        {
+          "cycles": 47,
+          "amplitude": 0.2
+        },
+        {
+          "cycles": 131,
+          "amplitude": 0.16
+        },
+        {
+          "cycles": 283,
+          "amplitude": 0.14
+        },
+        {
+          "cycles": 439,
+          "amplitude": 0.12
+        },
+        {
+          "cycles": 673,
+          "amplitude": 0.1
+        },
+        {
+          "cycles": 977,
+          "amplitude": 0.08
+        },
+        {
+          "cycles": 1429,
+          "amplitude": 0.06
+        },
+        {
+          "cycles": 1987,
+          "amplitude": 0.045
+        },
+        {
+          "cycles": 2791,
+          "amplitude": 0.025
+        },
+        {
+          "cycles": 3889,
+          "amplitude": 0.015
+        }
+      ],
+      "playback": {
+        "volume": 0.25,
+        "cooldown_seconds": 0,
+        "max_instances": 1,
+        "looped": true
+      }
+    }
+  ],
+  "events": [
+    {
+      "id": "menu",
+      "title": "菜单",
+      "asset_ids": [
+        "menu_hover",
+        "menu_confirm",
+        "menu_cancel"
+      ],
+      "trigger_contract": "menu_hover: real keyboard/gamepad focus changes or pointer movement entering an existing actionable button; stationary pointers, movement within a button, rebuilt hover states and single-button navigation are silent. menu_confirm: accepted start, page open, tab change, actual setting adjustment, restore defaults, successful Apply, pause open or Quit. menu_cancel: Back, Resume, return to main menu or failed Apply; never delivery_failure. Consume one accepted UI request per frame; invalid requests, reselected tabs and setting limits are silent. Cooldowns use real time while paused; Quit does not wait for playback.",
+      "availability": "current_ui"
+    },
+    {
+      "id": "parcel_pickup",
+      "title": "拾取",
+      "asset_ids": [
+        "parcel_pickup"
+      ],
+      "trigger_contract": "Successful pickup after the held relationship is visible.",
+      "availability": "current_gameplay"
+    },
+    {
+      "id": "parcel_release",
+      "title": "放下",
+      "asset_ids": [
+        "parcel_release"
+      ],
+      "trigger_contract": "Successful voluntary release; this does not imply ground contact.",
+      "availability": "current_gameplay"
+    },
+    {
+      "id": "parcel_handoff",
+      "title": "交接",
+      "asset_ids": [
+        "parcel_handoff"
+      ],
+      "trigger_contract": "Accepted parcel transfer between distinct holders; a failed attempt is silent.",
+      "availability": "reserved"
+    },
+    {
+      "id": "parcel_land",
+      "title": "包裹落地",
+      "asset_ids": [
+        "parcel_land"
+      ],
+      "trigger_contract": "Inspect actual parcel support contacts each FixedPostUpdate. For a non-held parcel, upward support normal.y >= 0.65 and normal impulse >= 1.8 kg m/s trigger once; latch until all supporting contacts end, including sleeping contacts. Predictive or initial low-impulse contacts do not consume the later real impact.",
+      "availability": "current_physics"
+    },
+    {
+      "id": "cart_collision",
+      "title": "推车碰撞",
+      "asset_ids": [
+        "cart_collision"
+      ],
+      "trigger_contract": "New cart obstacle impact above threshold; current generic metal asset is a placeholder.",
+      "availability": "reserved"
+    },
+    {
+      "id": "character_bounce",
+      "title": "角色弹开",
+      "asset_ids": [
+        "character_bounce"
+      ],
+      "trigger_contract": "An explicit bounce gameplay transition; ordinary wall blocking is not a bounce.",
+      "availability": "reserved"
+    },
+    {
+      "id": "instability_warning",
+      "title": "失稳警告",
+      "asset_ids": [
+        "instability_warning"
+      ],
+      "trigger_contract": "After 0.5 s pickup grace, held-position error > 0.65 m for 0.35 s enters warning. Recovery requires error < 0.45 m; cooldown 1 s. Normal initial pickup inertia is suppressed.",
+      "availability": "current_physics_threshold"
+    },
+    {
+      "id": "delivery_success",
+      "title": "交付成功",
+      "asset_ids": [
+        "delivery_success"
+      ],
+      "trigger_contract": "An order is accepted and settled once at its correct recipient.",
+      "availability": "reserved"
+    },
+    {
+      "id": "delivery_failure",
+      "title": "交付失败",
+      "asset_ids": [
+        "delivery_failure"
+      ],
+      "trigger_contract": "A delivery attempt is rejected; preserve the parcel for retry.",
+      "availability": "reserved"
+    },
+    {
+      "id": "ambience_island_placeholder",
+      "title": "环境音候选",
+      "asset_ids": [
+        "ambience_island_placeholder"
+      ],
+      "trigger_contract": "Audition-only synthetic loop. Do not enable by default.",
+      "availability": "audition_only"
+    }
+  ],
+  "pending_sources": [
+    {
+      "id": "island_sea",
+      "title": "Sea-waves medium 01-090714.wav",
+      "page": "https://freesound.org/people/ra_gun/sounds/77467/",
+      "author": "ra_gun",
+      "license": "CC0",
+      "license_version": "1.0 Universal",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "reviewed_date": "2026-10-01",
+      "acquired_date": null,
+      "status": "not_downloaded",
+      "use": "ocean ambience",
+      "download_requires": "Freesound login",
+      "listed_original_format": {
+        "container": "wav",
+        "sample_rate": 48000,
+        "channels": 2,
+        "bit_depth": 16,
+        "duration_seconds": 25.965
+      },
+      "caveat": "Page metadata checked only. Original file, fidelity, noise floor and loop suitability not verified; preview must not be substituted."
+    },
+    {
+      "id": "island_wind",
+      "title": "Gentle wind",
+      "page": "https://freesound.org/people/fthgurdy/sounds/528944/",
+      "author": "fthgurdy",
+      "license": "CC0",
+      "license_version": "1.0 Universal",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "reviewed_date": "2026-10-01",
+      "acquired_date": null,
+      "status": "not_downloaded",
+      "use": "wind ambience",
+      "download_requires": "Freesound login",
+      "listed_original_format": {
+        "container": "wav",
+        "sample_rate": 44100,
+        "channels": 2,
+        "bit_depth": 16,
+        "duration_seconds": 9.531
+      },
+      "caveat": "Page metadata checked only. Original file, fidelity, noise floor and loop suitability not verified; preview must not be substituted."
+    },
+    {
+      "id": "cart_roll",
+      "title": "cart.wav",
+      "page": "https://freesound.org/people/mariiao2/sounds/232799/",
+      "author": "mariiao2",
+      "license": "CC0",
+      "license_version": "1.0 Universal",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "reviewed_date": "2026-10-01",
+      "acquired_date": null,
+      "status": "not_downloaded",
+      "use": "cart rolling; collision suitability not confirmed",
+      "download_requires": "Freesound login",
+      "listed_original_format": {
+        "container": "wav",
+        "sample_rate": 44100,
+        "channels": 2,
+        "bit_depth": 16,
+        "duration_seconds": 4.092
+      },
+      "caveat": "Page metadata checked only. Original file, fidelity, noise floor and loop suitability not verified; preview must not be substituted."
+    }
+  ],
+  "reuse_audit": {
+    "checked_date": "2026-10-01",
+    "result": "no_reusable_audio_found_in_readable_asset_paths",
+    "paths": [
+      "D:/demo/assets",
+      "D:/demo/art",
+      "D:/.codex/worktrees/3775/demo/assets"
+    ],
+    "limitations": [
+      "Original worktree assets directory does not exist.",
+      "D:/demo/art/scripts, D:/demo/art/blender and D:/demo/art/previews could not be read (access denied). No files were changed in other worktrees."
+    ]
+  },
+  "quality_limits": {
+    "silence_amplitude": 0.001,
+    "max_head_silence_seconds": 0.025,
+    "max_tail_silence_seconds": 0.1,
+    "clipping_amplitude": 0.999969482421875,
+    "max_dc_amplitude": 0.002,
+    "max_loop_boundary_delta": 0.01,
+    "max_loop_slope_delta": 0.01
+  }
+}
