@@ -6,8 +6,13 @@
 
 | 模块 | 当前职责 |
 | --- | --- |
-| [main.rs](../src/main.rs) | 组装应用与插件，先准备会话日志，再加载设置；指定固定 60 Hz 模拟和窗口策略，退出后记录结果并刷新日志。 |
-| [input.rs](../src/input.rs) | 注册 `bevy_enhanced_input`、`GameplayContext` 和输入动作；创建键盘控制者，按动作的 `context` 路由角色意图。 |
+| [main.rs](../src/main.rs) | 组装英文菜单、游戏与检查器插件，先准备会话日志，再加载设置；指定固定 60 Hz 模拟和窗口策略，退出后记录结果并刷新日志。 |
+| [app_flow.rs](../src/app_flow.rs) | 管理主菜单／游戏状态与运行／暂停子状态，清理玩法输入并暂停或恢复时间；暂停保留玩法实体。 |
+| [ui/mod.rs](../src/ui/mod.rs) | 定义菜单页面、返回来源、焦点、设置分类与语义请求，注册 UI 插件和更新顺序。 |
+| [ui/navigation.rs](../src/ui/navigation.rs) | Enhanced Input 处理菜单键盘与手柄动作，Bevy UI 处理鼠标命中；统一消费请求、切换页面及保存和应用设置，并根据实际焦点变化与接受结果发出菜单音效消息。 |
+| [ui/screens.rs](../src/ui/screens.rs)、[ui/widgets.rs](../src/ui/widgets.rs)、[ui/theme.rs](../src/ui/theme.rs) | 用 BSN 声明页面与控件树，复用字体、颜色和间距；系统更新焦点、设置说明与滚动位置。 |
+| [ui/backdrop.rs](../src/ui/backdrop.rs) | 主菜单的独立 GLB 展示舞台、相机与光照；启动快递员展示动画，记录资产加载失败。 |
+| [input.rs](../src/input.rs) | 注册 `bevy_enhanced_input`、`GameplayContext` 和玩法／调试动作；创建键盘控制者，按动作的 `context` 路由角色意图。 |
 | [camera.rs](../src/camera.rs) | 管理相机控制关联、视角模式、环绕状态和鼠标捕获；处理观察与视角切换动作，固定步同步角色朝向，物理插值后逐帧同步朝向、持握目标、镜头和人物可见性。 |
 | [gameplay.rs](../src/gameplay.rs) | 定义玩家身份、角色与快递组件、持有关系和原型参数；固定步查询接地、施加移动力、跳跃冲量与持握力并执行拿放，固定步和逐帧共用持握目标同步。 |
 | [physics.rs](../src/physics.rs) | 注册 Avian3D 物理插件、重力和碰撞层，构建角色与箱体物理组件，并记录接触开始和结束日志。 |
@@ -15,17 +20,47 @@
 | [scene.rs](../src/scene.rs) | `PrototypeScenePlugin` 使用 Rust 内嵌 BSN `scene` 函数装配场景；处理地图实例就绪、展示实体替换和结构碰撞生成，资源及碰撞准备完成后生成动态角色、物品、控制者和相机。 |
 | [character_animation.rs](../src/character_animation.rs) | `CharacterAnimationPlugin` 为主角 GLB 绑定命名动画，根据真实水平速度与持有关系选择动作，并管理过渡与关联清理。 |
 | [island_recovery.rs](../src/island_recovery.rs) | `IslandRecoveryPlugin` 根据物理位置检测落水，使用实体的 `SpawnPoint` 恢复玩家与可搬物品，解除持握并清理运动状态。 |
-| [settings.rs](../src/settings.rs) | 加载、校验玩家设置，失败时保留原文件并回退默认值；在时间更新之前限制渲染循环频率。 |
+| [settings.rs](../src/settings.rs) | 加载、校验、编辑草稿和保存玩家设置，失败时保留原文件；在时间更新之前限制渲染循环频率。 |
 | [startup_log.rs](../src/startup_log.rs) | 通过 `StartupLogPlugin` 集中注册四项启动日志，只读玩法配置与固定时间步，并记录姿态同步约定和检查器启用信息。 |
 | [session_log.rs](../src/session_log.rs) | 创建独立会话文件，管理文件与控制台后台输出，记录会话生命周期和 panic 上下文，并负责排空、刷新与关闭线程。 |
+| [audio_events.rs](../src/audio_events.rs) | 注册反馈消息，观察真实落地碰撞与持续持握误差；独立于声音设备，供最小物理测试复用。 |
+| [audio.rs](../src/audio.rs) | 以嵌入的音频清单预加载 Kira 资产，通过 UI/SFX 通道播放，处理冷却、并发、失败日志和退出停止。 |
 
 依赖声明和锁定版本分别见 [Cargo.toml](../Cargo.toml) 和 [Cargo.lock](../Cargo.lock)。
 
+## 菜单与会话生命周期
+
+`AppState` 只有 `MainMenu` 与 `InGame`。`PlayState` 是仅在 `InGame` 存在的 `Running / Paused` 子状态。`PrototypeScenePlugin` 在 `OnEnter(AppState::InGame)` 生成光照和加载相机，重置本次场景准备状态；`Update` 仅在 `gameplay_running` 时推进地图装配、碰撞准备和动态实体生成。地图根、独立业务根、控制者、相机和灯光使用 `DespawnOnExit(AppState::InGame)`，退出会话时清理；NPC、碰撞与视觉子树沿地图根或业务根的 `ChildOf` 一同销毁。全局 `ArtAssets` 强句柄与 `ArtLoadState` 跨会话保留，重新开始复用已加载资产并建立新的地图实例。暂停不退出 `InGame`，因此不重新生成角色、箱体或持有关系，也不推进尚未完成的场景装配。
+
+`MenuState` 保存 `Main / Hidden / Settings / Help / Pause` 页面、设置分类、返回页面与提示文本；`MenuFocus` 独立保存可操作按钮序号，`MenuInputSource` 区分鼠标与键盘／手柄导航来源。设置和帮助只切换页面，返回主菜单来源时仍在主菜单，返回暂停来源时仍暂停。`SettingsDraft` 是独立草稿，`Back` 丢弃未应用修改；`Apply` 先校验并保存，成功才替换 `GameSettings`，失败保留生效设置和草稿。
+
+菜单控制者的 `MenuContext` 使用较高优先级与 `require_reset`，接收方向键、Enter、Esc 和手柄菜单按键。鼠标经 Bevy UI `Interaction` 发出相同 `UiRequest`。集中处理系统每帧消费一项请求，避免同帧两种输入重复触发。键盘动作在 `PreUpdate` 的 `EnhancedInputSystems::Apply` 后处理，`StateTransition` 随后执行；`Update` 先重建页面并应用旧树销毁，再读取鼠标点击，避免旧页面的 `Back` 穿透新页面。鼠标请求交给下一次 `PreUpdate` 消费。窗口光标位置仅用于判断真实鼠标移动，静止光标造成的新 `Hovered` 不抢走键盘焦点。
+
+按钮样式由当前输入来源决定：鼠标模式只高亮实际悬停或按下的按钮，离开后恢复纸色；键盘／手柄实际导航时显示 `MenuFocus`。鼠标真实移动即切回鼠标模式，包括移到空白区域，因此离开按钮不会留下导航高亮。`Apply` 与当前设置分类不另设常驻黄色样式；帮助编号的黄色装饰节点不参与按钮交互。
+
+进入暂停时 `suspend_input` 清空角色意图、停用 `GameplayContext`、释放鼠标，并暂停 `Time<Virtual>` 与 `Time<Physics>`。物理增量立即归零，避免 Avian 使用前一步的非零增量再模拟一次。玩法系统、相机姿态同步、主角动画状态更新与落水恢复受 `gameplay_running` 条件限制；菜单渲染与输入仍可处理。恢复运行时重新启用时间，相机在下一次输入准备时恢复捕获并跳过自由光标位移。主菜单保持虚拟时间运行以播放展示动画，物理时间仍暂停。无窗口测试未安装应用状态时，`gameplay_running` 允许必要的独立玩法系统执行。
+
+`Continue`、`Multiplayer` 和未实现设置项只声明灰色 `Coming Soon` 展示节点，不包含 `Button`、`MenuButton` 或业务动作，因而不会进入鼠标行为或键盘焦点列表。当前可用项与完整占位清单以 [README](../README.md#菜单与占位功能) 为准。
+
+## BSN 页面与菜单展示资产
+
+UI 控件与主菜单舞台使用 Bevy 0.19 的 `bsn!`、`bsn_list!` 和返回 `impl Scene` 的辅助函数声明。页面结构与组件数据由 BSN 创建，交互、焦点、设置应用和跨实体行为仍由 ECS 系统负责。`rebuild_page` 在页面、草稿或窗口宽度变化时清理旧 `MenuRoot` 并生成新树；焦点变化只更新按钮颜色与说明。字号按窗口宽度缩放，窄窗口折行，高度不足由滚动区域和焦点滚入系统处理。
+
+自动宽度的 `Text` 节点保留文本的自然测量，避免短文字在可收缩布局中被压成零宽。键帽、帧率值、按钮标题和帮助编号都使用这一规则；容器按实际布局需要设置尺寸与折行约束。BSN 组件检查不能代替最终字体与排版的用户目测，重点检查短标签和数字是否完整可见。
+
+文字零宽与鼠标离开后高亮残留的原因及预防要求统一见 [UI 布局与高亮规范](development.md#ui-布局与高亮规范)，对应的字体测量、悬停循环和输入来源回归见 [文字布局与高亮回归](testing.md#文字布局与高亮回归)。
+
+主菜单的 `MenuBackdrop` 使用 `DespawnOnExit(AppState::MainMenu)` 管理相机、光照和真实美术模型。它由独立快递员、快递站、地形、海水、植物与包裹 GLB 组成；设置和帮助沿用这个舞台，暂停沿用当前玩法相机。菜单相机标记 `IsDefaultUiCamera` 与 `PrimaryEguiContext`，进入游戏时随舞台销毁，玩法相机接管界面。
+
+模型通过 `WorldAssetRoot` 加载原有 `#Scene0`；快递员 `WorldInstanceReady` 后查找骨架中的 `AnimationPlayer` 并循环播放索引 0 的 `Carry_Idle`。展示包裹是独立模型附件，没有角色控制器、Avian 刚体或玩法持有关系。菜单舞台与使用 `assets/maps/courier_island.glb` 的可游玩海岛分别装配；菜单模型不参与玩法碰撞或配送业务。字体资源与资产准备约定见 [README](../README.md#美术与字体准备)。
+
+保存设置前校验与序列化完整 `GameSettings`，然后在根 `tmp/settings-save/` 写入唯一临时文件、同步并关闭句柄，再用 `rename` 替换目标文件。替换失败时保留原文件并清理临时产物；临时文件与设置及会话日志各自管理。菜单步进范围不收紧 JSON 的原有有效范围，打开设置保留有效自定义值，实际调整相应字段后才进入菜单范围。
+
 ## 世界检查器
 
-`main` 在默认插件之后依次注册 `EguiPlugin` 和 `WorldInspectorPlugin`，检查器复用主窗口与当前相机，在 `EguiPrimaryContextPass` 中展示实体、资源和资产。插件自身的独占世界访问用于通用反射检查，项目不另建世界扫描或数据镜像。`StartupLogPlugin` 在启动时通过统一日志记录 `World inspector enabled`。
+`main` 在默认插件之后依次注册 `EguiPlugin` 和 `WorldInspectorPlugin::run_if(gameplay_running)`，检查器只在游戏运行时显示，主菜单与暂停时隐藏。它复用主窗口与当前相机，在 `EguiPrimaryContextPass` 中展示实体、资源和资产。插件自身的独占世界访问用于通用反射检查，项目不另建世界扫描或数据镜像。`StartupLogPlugin` 在启动时通过统一日志记录 `World inspector enabled`，表示插件已注册，并不表示启动主菜单显示检查器。
 
-鼠标仍被游戏捕获时，`filter_captured_egui_input` 在 Egui 收集输入后、开始本帧之前过滤面板交互，补齐 Egui 内部残留按键的释放并清除拖拽和文本焦点。这样隐藏光标即使位于面板上也不会误编辑字段或中断玩家输入；Esc 当帧直接放行面板输入，原生键鼠资源仍供 Enhanced Input 使用。
+鼠标仍被游戏捕获时，`filter_captured_egui_input` 在 Egui 收集输入后、开始本帧之前过滤面板交互，补齐 Egui 内部残留按键的释放并清除拖拽和文本焦点。这样隐藏光标即使位于面板上也不会误编辑字段或中断玩家输入。F3 的 `ReleasePointerAction` 由相机 Observer 释放光标以操作检查器，游戏仍保持运行；Esc 通过菜单动作进入暂停。
 
 玩法组件、`PrototypeConfig` 和相机状态注册 Bevy 反射元数据，让检查器直接访问 ECS 数据。`HeldBy`／`HoldingItems` 不开放反射修改，反向索引继续由 Bevy 的关系钩子维护；鼠标捕获状态不开放反射编辑。检查器编辑仅影响内存中的本次会话。
 
@@ -35,7 +70,7 @@
 - **角色业务实体**保存 `Character`、`CharacterIntent`、`CharacterMotion`、`SpawnPoint`、动态 `RigidBody`、胶囊 `Collider` 和 Avian 运动组件。移动能力与控制设备分离；物理位置与速度由 Avian 管理，`Transform` 用于插值呈现，角色根位置对应脚底。锁定刚体旋转避免碰撞后倾倒，水平朝向仍由视角系统控制。
 - **快递业务实体**保存 `Parcel`、`Pickable`、`CarryGrip`、`SpawnPoint`、动态 `RigidBody`、方盒 `Collider` 和 Avian 运动组件，被持有时增加 `HeldBy` 与 `HeldTarget`。纸箱与木箱根位置对应模型中心，碰撞体按实际尺寸与轴心对齐；拾取系统按 `Pickable` 能力过滤，不依赖名称或模型。
 - **相机实体**保存 `OrbitCamera`、`MouseLookState`、`Camera3d` 和 `Transform`。`OrbitCamera` 保存目标、`CameraPerspective` 视角模式、共享水平角、各模式的俯仰角和跟随参数，实际位置与朝向写入 `Transform`。
-- **共享资源**包括 `PrototypeConfig`、`GameSettings`、`ArtAssets` 与 `ArtLoadState`；限帧计时和连续数据日志采样使用各系统的 `Local`。
+- **共享资源**包括 `PrototypeConfig`、`GameSettings`、`SettingsDraft`、`SettingsFile`、菜单状态与焦点、`ArtAssets` 与 `ArtLoadState`；限帧计时和连续数据日志采样使用各系统的 `Local`。
 
 场景创建 `PlayerId(1)` 对应的一名键盘控制者、一名角色、普通纸箱与易碎纸箱各一件、三件木箱和一台相机。地图中的调度员、Pizza 店员、Music 店员和居民保留为展示角色，不加入玩家控制和配送业务。数据结构支持按控制者路由，不代表已经实现多人、联机或分屏。
 
@@ -47,7 +82,7 @@
 
 运行资源来自 `assets/maps/courier_island.glb`，以及 `assets/models/characters/chr_courier.glb`、`assets/models/props/prop_parcel_standard.glb`、`prop_parcel_fragile.glb` 和 `prop_crate.glb`。制作源与预览保留在 [art/](../art/)，运行时不依赖 Blender。模型使用米制、glTF 的 Y-up 坐标；角色朝本地 `-Z`，根位于脚底，纸箱和木箱的原点位于中心。
 
-`ArtAssetsPlugin` 在插件构建时初始化 `ArtAssets`，其 `FromWorld` 发起五份 GLB 的异步加载；强句柄覆盖模型生命周期。`ArtLoadState` 独立保存 `Loading`、`Ready`、`Failed` 状态，`Update` 检查模型及递归依赖是否完成或失败。`Startup` 只记录加载请求并生成光照和加载相机；`PrototypeScenePlugin` 在 `ArtLoadState::Ready` 后使用 Rust 内嵌的 BSN `scene` 函数装配地图与实体组合，地图实例的 `WorldInstanceReady` 到达后再处理已展开的模型层级。导出的 `source_asset` 元数据仅用于装配阶段识别美术实例，之后的玩法查询使用业务组件，不把名称或美术元数据作为玩家身份。
+`ArtAssetsPlugin` 在插件构建时初始化 `ArtAssets`，其 `FromWorld` 发起五份 GLB 的异步加载；强句柄覆盖模型生命周期。`ArtLoadState` 独立保存 `Loading`、`Ready`、`Failed` 状态，`Update` 检查模型及递归依赖是否完成或失败，主菜单期间也可完成加载。`Startup` 记录加载请求；`PrototypeScenePlugin` 在进入游戏时建立光照和加载相机，运行且 `ArtLoadState::Ready` 后使用 Rust 内嵌的 BSN `scene` 函数装配地图与实体组合，地图实例的 `WorldInstanceReady` 到达后再处理已展开的模型层级。导出的 `source_asset` 元数据仅用于装配阶段识别美术实例，之后的玩法查询使用业务组件，不把名称或美术元数据作为玩家身份。
 
 地图 GLB 已包含静态持箱主角、易碎纸箱和三只木箱。装配流程移除这些展示实例及其子层级，并用独立 GLB 重建业务实体，避免同一位置出现重复模型或重复碰撞。四名 NPC 保留；柜台、货架纸箱和商店摆件继续作为固定装饰，没有 `Pickable`。资产场景就绪、所需模型就绪和实际碰撞生成都完成后，才创建玩家与可搬物品，避免先掉入尚未准备的地形。
 
@@ -59,7 +94,7 @@
 
 ## 输入与相机数据流
 
-`PlayerInputPlugin` 使用 `bevy_enhanced_input` 注册五个动作：`MoveAction`、`LookAction`、`JumpAction`、`InteractAction`、`TogglePerspectiveAction`。设备绑定位于控制者的 `GameplayContext`，Observer 从事件的 `context` 查到对应控制目标，再写入目标状态。
+`PlayerInputPlugin` 使用 `bevy_enhanced_input` 注册 `MoveAction`、`LookAction`、`JumpAction`、`InteractAction`、`TogglePerspectiveAction` 和调试用的 `ReleasePointerAction`。设备绑定位于控制者的 `GameplayContext`，Observer 从事件的 `context` 查到对应控制目标，再写入目标状态。
 
 移动、跳跃和交互沿下面的路径进入固定模拟：
 
@@ -80,31 +115,32 @@
 
 `on_camera_look` 根据灵敏度和 Y 轴设置换算角度，不另存 `CameraLookIntent`，也不乘帧时间或固定步时间。默认第三人称保持固定环绕距离，俯仰限制在 `5°..80°`；初始镜头相对脚底偏移为 `(0, 6, 8)`，观察中心位于脚底上方 `0.8`。第一人称镜头位于脚底上方 `1.65`，首次俯仰角为 `0°`，之后限制在 `-85°..85°`。两种模式共享水平角并分别保存俯仰角，人物朝向和移动只使用水平角。
 
-`TogglePerspectiveAction` 默认绑定 I，使用 `Press` 与 `require_reset` 保证每次按下只切换一次，长按不重复。`request_perspective_toggle` Observer 验证窗口聚焦、控制关联和目标有效后，将请求保存到 `OrbitCamera.toggle_requested_by`；`apply_perspective_toggle` 在 `PreUpdate` 的 `EnhancedInputSystems::Apply` 之后消费请求并切换同一台相机的模式。因此同帧鼠标位移先作用于原模式，切换后恢复目标模式记住的俯仰角，不依赖动作遍历顺序；首次进入第一人称仍为平视。切换在本帧完成，不修改鼠标捕获、角色位置或玩法请求。Esc 释放鼠标后仍可切换视角，失焦时忽略切换。
+`TogglePerspectiveAction` 默认绑定 I，使用 `Press` 与 `require_reset` 保证每次按下只切换一次，长按不重复。`request_perspective_toggle` Observer 验证窗口聚焦、控制关联和目标有效后，将请求保存到 `OrbitCamera.toggle_requested_by`；`apply_perspective_toggle` 在 `PreUpdate` 的 `EnhancedInputSystems::Apply` 之后消费请求并切换同一台相机的模式。因此同帧鼠标位移先作用于原模式，切换后恢复目标模式记住的俯仰角，不依赖动作遍历顺序；首次进入第一人称仍为平视。切换在本帧完成，不修改鼠标捕获、角色位置或玩法请求。F3 释放光标后，未操作检查器时仍可切换视角；失焦或暂停时忽略切换。
 
 `sync_character_visibility` 在镜头更新后按有效控制关联和模式更新角色视觉子实体的 `Visibility`：第一人称隐藏对应的 `CharacterVisual`，切回第三人称时恢复。相机或控制者丢失、关联不再有效时也恢复人物显示，避免模型停留在隐藏状态。
 
-鼠标捕获是窗口生命周期处理：`sync_mouse_capture` 直接读取 Esc 的 `ButtonInput`、`MouseButtonInput` 和 `WindowFocused`，结合控制关联与目标是否存在更新 `MouseLookState` 和光标设置。它在底层 `InputSystems` 与 `EguiPreUpdateSet::BeginPass` 之后、`EnhancedInputSystems::Prepare` 之前执行。默认主 Egui 上下文使用多遍 UI 调度，本帧界面在 `PostUpdate` 处理；输入同步读取最近一次 UI 的拖拽、文本焦点和菜单状态，并用当前窗口物理光标位置命中已有面板布局，避免同帧移入面板并点击时重新捕获鼠标。捕获恢复当帧跳过观察位移，避免自由光标阶段的位移造成镜头跳转。
+鼠标捕获是窗口生命周期处理：`sync_mouse_capture` 直接读取用于及时释放光标的 Esc、`MouseButtonInput` 和 `WindowFocused`，并结合应用状态、控制关联与目标是否存在更新 `MouseLookState` 和光标设置。Esc 的业务暂停只经菜单 Enhanced Input 路径执行，底层读取不再触发另一套暂停行为。捕获同步在底层 `InputSystems` 与 `EguiPreUpdateSet::BeginPass` 之后、`EnhancedInputSystems::Prepare` 之前执行。默认主 Egui 上下文使用多遍 UI 调度，本帧界面在 `PostUpdate` 处理；输入同步读取最近一次 UI 的拖拽、文本焦点和检查器菜单状态，并用当前窗口物理光标位置命中已有面板布局，避免同帧移入面板并点击时重新捕获鼠标。捕获恢复当帧跳过观察位移，避免自由光标阶段的位移造成镜头跳转。
 
-操作检查器时通过 `ContextActivity<GameplayContext>` 停用输入上下文，而不清空全局底层键盘资源；延迟命令在动作准备前应用。停用触发动作完成或取消，已有移动意图归零，单次动作继续遵循 `require_reset` 的松键要求。Esc 释放后未操作检查器时保留原有键盘控制，包括 I 切换视角。
+操作检查器时通过 `ContextActivity<GameplayContext>` 停用输入上下文，而不清空全局底层键盘资源；延迟命令在动作准备前应用。停用触发动作完成或取消，已有移动意图归零，单次动作继续遵循 `require_reset` 的松键要求。F3 释放后未操作检查器时保留原有键盘控制，包括 I 切换视角；主菜单和暂停强制停用玩法输入，点击菜单背景不能重新捕获鼠标。
 
 ## 调度与模拟边界
 
 | 阶段 | 数据变换与执行依赖 |
 | --- | --- |
 | 插件构建 | 初始化 `ArtAssets`，由 `FromWorld` 发起五份 GLB 加载；初始化独立的 `ArtLoadState`。 |
-| `Startup` | 记录加载请求并生成光照和加载相机；`StartupLogPlugin` 注册玩法配置、固定时间步、姿态同步约定与检查器启用日志。启动日志不依赖已生成实体。 |
+| `Startup` | 记录加载请求并创建菜单输入控制者；`StartupLogPlugin` 注册玩法配置、固定时间步、姿态同步约定与检查器启用日志。启动日志不依赖已生成玩法实体。 |
 | `First` | `limit_frame_rate.before(TimeSystems)` 在引擎更新时钟前补足帧间剩余时间。 |
-| `PreUpdate` | 更新鼠标捕获，Enhanced Input 评估动作并通过 Observer 更新意图、观察角度或切换请求；`apply_perspective_toggle.after(EnhancedInputSystems::Apply)` 在本帧动作应用完成后切换模式。 |
+| `PreUpdate` | 更新鼠标捕获和菜单上下文，Enhanced Input 评估动作并通过 Observer 更新意图、观察角度或切换请求；动作应用后消费菜单请求及视角切换请求。 |
+| `StateTransition` | 紧随 `PreUpdate`；主菜单入口生成展示舞台，游戏入口准备海岛会话的光照和加载相机，暂停入口清意图并冻结时间，退出状态清理对应实体。 |
 | `FixedFirst` | 落水恢复的插值清理在 `TransformEasingSystems::Reset` 之后、`UpdateStart` 之前执行；只移除上次恢复临时添加的暂停组件，让本固定步从恢复后的位置重新采样。 |
 | `FixedUpdate` | `recover_from_water` 明确在 `sync_character_facing` 与 `GameplaySystems::Simulate` 之前执行；恢复出生姿态后，本步先按当前相机水平角同步角色朝向，再进入模拟。恢复解除关系的延迟命令在模拟前可见。随后更新重力与接地状态、施加移动力和跳跃冲量、执行交互、同步持握目标并施加持握力。相关系统通过显式顺序共享同一步状态。 |
-| `FixedPostUpdate` | Avian 的 `PhysicsPlugins` 执行固定物理步，积分速度与位姿并求解接触和碰撞；`PhysicsSystems::Writeback` 之后再次更新接地并采样实际速度。 |
+| `FixedPostUpdate` | Avian 的 `PhysicsPlugins` 执行固定物理步，积分速度与位姿并求解接触和碰撞；`PhysicsSystems::Writeback` 之后再次更新接地并采样实际速度。真实支撑接触的落地音效收集在 `PhysicsSystems::StepSimulation` 之后执行。 |
 | `FixedLast` | Avian 记录本固定步的插值端点，供渲染帧呈现使用。 |
 | `RunFixedMainLoop` 固定循环之后 | `CameraControlPlugin` 的显示同步链在 `TransformEasingSystems::Ease` 之后、`UpdateEasingTick` 之前执行；使用本帧插值位置，依次同步角色朝向、`HeldTarget`、镜头和人物可见性。 |
-| `Update` | 检查美术加载状态；`ArtLoadState::Ready` 后按装配地图、准备结构碰撞、生成业务实体的链路推进。主角动作读取固定模拟后的实际速度与持有关系。 |
-| `PostUpdate` | Bevy 的变换传播根据业务根实体 `Transform` 更新模型子实体的 `GlobalTransform`，可见性传播应用人物视觉状态，供渲染使用。 |
+| `Update` | 检查美术加载状态；游戏运行且 `ArtLoadState::Ready` 后按装配地图、准备结构碰撞、生成业务实体的链路推进。主角动作读取固定模拟后的实际速度与持有关系。UI 按页面与草稿变化重建 BSN 树并应用延迟命令，再读取鼠标命中，最后更新样式、说明与滚动；音效播放在 UI 样式之后消费请求。 |
+| `PostUpdate` | Bevy 的变换传播根据业务根实体 `Transform` 更新模型子实体的 `GlobalTransform`，可见性传播应用人物视觉状态，供渲染使用；Egui 仅在游戏运行时绘制检查器。 |
 
-相机与玩法的固定步顺序由显式依赖表达；跨阶段数据流依赖 Bevy 默认主调度，`PreUpdate` 结束时应用动作命令后进入固定循环。一次渲染帧可以没有固定步，也可以有多个固定步，因此输入 Observer 不直接积分角色位置。
+相机与玩法的固定步顺序由显式依赖表达；跨阶段数据流依赖 Bevy 默认主调度，`PreUpdate` 结束时应用动作命令，完成状态转换后进入固定循环。玩法模拟和相机姿态同步只在 `Running` 执行。一次渲染帧可以没有固定步，也可以有多个固定步，因此输入 Observer 不直接积分角色位置。
 
 角色朝向与持握目标同步保留在 `FixedUpdate`。物理持握施力直接读取持有者的 Avian `Position` 与最新水平朝向计算模拟目标，`HeldTarget` 仅用于呈现检查和检查器，不作为物理解算的位置来源，避免把插值状态反馈进模拟。角色使用 `TranslationInterpolation`，木箱使用 `TransformInterpolation`；固定循环后的显示链在插值完成后再次同步目标、镜头和人物可见性，使没有固定步的帧也能使用本帧视角与呈现位置。该链不直接搬动箱体、不施力或消费请求，不额外推进模拟时间。`PostUpdate` 再传播实际业务根实体的呈现姿态，保证木箱视觉子实体与箱体根一致。
 
@@ -163,6 +199,20 @@
 恢复同时写入物理位姿与呈现 `Transform`，唤醒休眠刚体，并用 `NoTranslationEasing`、`NoRotationEasing` 暂停跨岛插值；暂停保持到下一固定步，因此连续没有固定步的渲染帧不会重新显示海中的旧位置。下一次 `FixedFirst` 的 `resume_interpolation` 在 `TransformEasingSystems::Reset` 之后、`UpdateStart` 之前清理本模块临时添加的暂停项，保留此前已有的暂停组件，再从新位置采样。恢复后物理位置已经离开阈值区，不会在连续更新中重复触发同一次恢复。
 
 恢复属于异常位置的生命周期处理，普通释放仍保留实际位置与速度，日志为 `Carryable item picked up`、`Carryable item released`。加载状态、地图准备、动态实体生成、动画初始化及动作变化、落水恢复均通过统一会话日志记录；动画状态采用 `Idle`、`Walk`、`Carry_Idle` 等英文值。恢复消息为 `Entity recovered after entering water`，含 `position_before`、`position_after` 和 `reason="water_recovery"`；失败路径保留资源路径和原始错误。可复用检查与用户验收见 [验证指南](testing.md)。
+
+## 音效数据流
+
+`GameplayPlugin` 注册 `SoundEventsPlugin`。拾取与主动释放只在 `handle_interaction` 接受操作后，用 `Commands::write_message` 和关系变更一起提交 `SoundRequest`。固定步链的同步点保证关系和消息同时可见，失败尝试不会产生成功反馈。释放提示与真正的落地是两个事件。
+
+菜单复用同一 `SoundRequest` 消息。真实键盘／手柄导航改变焦点，或真实鼠标移动进入已有可操作按钮时发送 `MenuHover`；静止光标、按钮内移动、页面重建产生的 `Hovered` 和单按钮页面导航不产生悬停音。集中请求消费系统每帧只接受一项 `UiRequest`，只在开始、打开页面、改变分类、实际调整设置、恢复默认或成功应用等有效结果后发送 `MenuConfirm`。`Back`、恢复运行和返回主菜单发送 `MenuCancel`，游戏中按 Esc 打开暂停发送 `MenuConfirm`；设置保存失败也用 `MenuCancel`，不借用交付失败事件。无效动作、当前分类重选和设置边界不发声。鼠标确认请求在下一次 `PreUpdate` 被接受后发出反馈；`Update` 的指针悬停反馈由后续播放系统同帧消费。
+
+`warn_hold_strain` 在 `FixedUpdate` 的 `GameplaySystems::Simulate` 之后读取角色与包裹的模拟 `Position`，按最新水平朝向与物品的 `CarryGrip` 计算手前目标，和实际持握施力使用同一偏移来源，检查持续误差。新持握有 0.5 秒宽限；距离超过 0.65 米持续 0.35 秒触发一次，降到 0.45 米以下才重置。系统的 `Local` 只保存当前持握包裹的时间与锁存状态，解除关系或销毁后清理；这是音频提示阈值，不代表新增失稳玩法规则。
+
+`emit_parcel_land` 在 `FixedPostUpdate` 的 `PhysicsSystems::StepSimulation` 之后读取只读 `ContactGraph`，逐步检查活动与休眠的真实支撑接触。只有未持握的 `Parcel`，在向上支撑法线至少 0.65、法向求解冲量至少 1.8 kg·m/s 时发出落地事件，并锁存到完全失去支撑；侧墙、轻微接触和持续静置不发出。Avian 的预测接触可能在实际撞击前产生 `CollisionStart`，因此不能只在开始事件当步检查冲量，否则会漏掉后续实际落地。现有碰撞日志继续独立读取开始与结束消息。
+
+落地和持握警告收集系统受 `gameplay_running` 条件限制，主菜单和暂停时不产生新的玩法反馈。默认主调度在固定模拟后进入 `Update`。`GameAudioPlugin` 在 `UiSystems::Style` 之后连续消费短音请求，清理已停止的实例，再按清单冷却、单事件并发和全局四个声音上限排队；其中为 UI 预留一条，SFX 最多占用三条。冷却使用 `Time<Real>`，暂停冻结虚拟时间不会阻断菜单反馈。Kira `Queued` 状态同样计入并发；尚未加载的音效直接略过，避免稍后重放过期交互。第一版为全局二维反馈，尚无距离衰减或方位，菜单音量设置仍为占位。固定线性总音量为 0.25，清单线性音量乘入后换算为 Kira 0.26 的分贝 API。UI 与 SFX 使用独立类型通道，退出时停止；`Quit` 直接退出，不等待确认音播完。Bevy 内建音频插件在主入口关闭，避免两个后端同时初始化设备。
+
+清单在编译时嵌入，文件路径相对 `assets`，启动时校验映射和策略，再由 `AssetServer` 加载。清单无效只禁用声音并记录错误，素材加载错误包含实际路径与外部错误；修改清单后需要重新编译。合成环境底声只供试听，不预加载、不自动循环。交接、推车、弹开和交付的 `SoundCue` 供未来业务结果发送，当前没有伪造触发器。资源与事件表见 [音频管线](audio.md)。无窗口测试不安装 `GameAudioPlugin`，因此不会打开音频设备。
 
 ## 会话日志实现
 

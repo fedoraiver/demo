@@ -4,6 +4,8 @@ use avian3d::prelude::*;
 use bevy::{ecs::relationship::RelationshipTarget, prelude::*};
 use std::collections::HashSet;
 
+use crate::app_flow::gameplay_running;
+use crate::audio_events::{SoundCue, SoundEventsPlugin, SoundRequest};
 use crate::physics::{DemoPhysicsPlugin, held_collision_layers, parcel_collision_layers};
 
 /// 独立于运行时实体标识的玩家身份，便于后续多人输入路由。
@@ -143,7 +145,7 @@ impl Plugin for GameplayPlugin {
             .register_type::<HeldTarget>()
             .register_type::<PrototypeConfig>()
             .init_resource::<PrototypeConfig>()
-            .add_plugins(DemoPhysicsPlugin)
+            .add_plugins((DemoPhysicsPlugin, SoundEventsPlugin))
             .add_systems(
                 FixedUpdate,
                 (
@@ -157,13 +159,15 @@ impl Plugin for GameplayPlugin {
                 )
                     // 拿放的关系与碰撞层命令必须在本步施力前可见。
                     .chain()
-                    .in_set(GameplaySystems::Simulate),
+                    .in_set(GameplaySystems::Simulate)
+                    .run_if(gameplay_running),
             )
             .add_systems(
                 FixedPostUpdate,
                 (update_grounded, log_character_velocity)
                     .chain()
-                    .after(PhysicsSystems::Writeback),
+                    .after(PhysicsSystems::Writeback)
+                    .run_if(gameplay_running),
             );
     }
 }
@@ -332,6 +336,8 @@ fn handle_interaction(
                     .entity(item)
                     .remove::<(HeldBy, HeldTarget)>()
                     .insert(parcel_collision_layers());
+                // 延迟消息与解除关系一起提交，播放者只能收到已接受的交互结果。
+                commands.write_message(SoundRequest::new(SoundCue::ParcelRelease, item));
                 info!(?character, ?item, position = ?item_position.0, velocity = ?velocity.0,
                     angular_velocity = ?angular_velocity.0, before = "held", after = "free",
                     reason = "interact_action_release", "Carryable item released");
@@ -375,6 +381,7 @@ fn handle_interaction(
                 },
                 held_collision_layers(),
             ));
+            commands.write_message(SoundRequest::new(SoundCue::ParcelPickup, item));
             info!(
                 ?character,
                 ?item,
