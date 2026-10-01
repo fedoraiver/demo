@@ -1,0 +1,10 @@
+#!/bin/sh
+# 提交前生成并校验架构图，只暂存生成产物；失败时阻止本次提交。
+project_root=$(git rev-parse --show-toplevel) || exit 1
+if [ "${OS:-}" = "Windows_NT" ]; then
+    exec powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$project_root/.codex/hooks/architecture-hook.ps1" pre-commit
+else
+    # Unix 的父进程是本次 Git；启动时间校验码用于区分后续复用的进程号。
+    git_started=$(LC_ALL=C ps -p "$PPID" -o lstart= | cksum | cut -d ' ' -f 1)
+    exec node "$project_root/.codex/hooks/architecture-hook.mjs" pre-commit "$PPID-$git_started"
+fi
