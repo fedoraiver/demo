@@ -8,6 +8,7 @@ avian3d = { version = "0.7.0", default-features = false, features = ["3d", "f32"
 bevy = "0.19.1"
 bevy-inspector-egui = { version = "0.37.0", features = ["highlight_changes"] }
 bevy_enhanced_input = "0.26.0"
+bevy_kira_audio = { version = "=0.26.0", default-features = false, features = ["ogg", "wav"] }
 serde = { version = "1.0.229", features = ["derive"] }
 serde_json = "1.0.151"
 uuid = { version = "1.26.1", features = ["v4"] }

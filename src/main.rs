@@ -1,5 +1,7 @@
 //! 使用简易资产启动移动、跳跃和木箱拾取原型。
 
+mod audio;
+mod audio_events;
 mod camera;
 mod gameplay;
 mod input;
@@ -11,6 +13,7 @@ mod session_log;
 mod settings;
 mod startup_log;
 
+use audio::GameAudioPlugin;
 use bevy::{log::LogPlugin, prelude::*, window::PresentMode};
 use bevy_inspector_egui::{bevy_egui::EguiPlugin, quick::WorldInspectorPlugin};
 use camera::CameraControlPlugin;
@@ -33,6 +36,9 @@ fn main() -> AppExit {
 
     app.add_plugins(
         DefaultPlugins
+            .build()
+            // 播放统一交给 Kira，避免两套音频插件同时打开输出设备。
+            .disable::<bevy::audio::AudioPlugin>()
             .set(LogPlugin {
                 custom_layer: session_log::file_layer,
                 ..default()
@@ -61,6 +67,7 @@ fn main() -> AppExit {
             WorldInspectorPlugin::new(),
             SettingsPlugin,
             GameplayPlugin,
+            GameAudioPlugin,
             PlayerInputPlugin,
             CameraControlPlugin,
             PrototypeScenePlugin,

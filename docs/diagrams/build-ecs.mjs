@@ -37,7 +37,7 @@ const brief = {
  frame_limit:'按设置等待帧间剩余时间',time_update:'更新引擎时间与固定步累积',input_update:'更新键鼠状态与窗口输入消息',mouse_capture:'窗口 / Egui 命中 → 捕获与上下文',enhanced_prepare:'准备有效输入上下文和绑定',enhanced_evaluate:'评估绑定、条件和动作状态',input_apply:'写动作输出，排入 trigger 命令',
  facing_fixed:'按相机 yaw 同步人物朝向',movement:'输入 / 实际速度 → 有上限的控制力',gravity:'消费跳跃请求 → 一次向上冲量',interaction:'射线 / 范围 → 拾取或保留动量释放',held_apply:'应用持握关系、目标与碰撞层',held_fixed:'角色呈现姿态 → HeldTarget',facing_update:'保留插值位置，同步本帧 yaw',held_update:'更新呈现目标，不搬箱或施力',camera_follow:'插值位置 + 观察状态 → 镜头',visibility_update:'视角模式 → 人物模型可见性',perspective_apply:'消费请求，切换第一 / 第三人称',
  gravity_sync:'配置变化 → Gravity',grounded_fixed:'脚底 shape cast → 接地状态',grounded_after:'物理回写后重新探测接地',orphan_cleanup:'失效持有者 / 关系 → 自由碰撞',orphan_apply:'应用失效清理命令',grip_forces:'真实 Position / 速度 → 弹簧与反作用力',velocity_log:'解算后实际速度 → 采样日志',collision_log:'CollisionStart / End → 文件日志',physics_prepare:'准备物理位姿、质量与碰撞数据',physics_step:'积分 / 接触 / 子步求解 → 真实运动',physics_writeback:'Position / Rotation → Transform',easing_reset:'FixedFirst：重置并记录插值起点',easing_end:'FixedLast：记录物理步插值终点',easing_apply:'固定循环后按 overstep 插值',easing_tick:'显示同步后记录变化 tick',
- transform_propagate:'根 Transform → 子 GlobalTransform',render:'提取 ECS 数据，准备并绘制画面',observe_move:'路由到角色，更新持续移动轴',observe_complete:'移动完成，将轴归零',observe_cancel:'移动取消，将轴归零',observe_jump:'路由到角色，设置跳跃请求',observe_interact:'路由到角色，设置交互请求',observe_look:'有效捕获时更新当前模式角度',observe_perspective:'记录请求来源，稍后统一切换'
+ transform_propagate:'根 Transform → 子 GlobalTransform',render:'提取 ECS 数据，准备并绘制画面',observe_move:'路由到角色，更新持续移动轴',observe_complete:'移动完成，将轴归零',observe_cancel:'移动取消，将轴归零',observe_jump:'路由到角色，设置跳跃请求',observe_interact:'路由到角色，设置交互请求',observe_look:'有效捕获时更新当前模式角度',observe_perspective:'记录请求来源，稍后统一切换',audio_preload:'清单契约 → 短音加载与映射',audio_load_failures:'资产加载失败 → 会话日志',audio_play:'请求 / 加载 / 冷却 / 并发 → 播放队列',audio_stop:'AppExit → UI / SFX 通道停止',audio_strain:'持续持握误差 → 一次警告',audio_land:'真实支撑冲量 → 一次落地反馈'
 };
 const displayNames = { time_update:'TimeSystems',input_update:'InputSystems',enhanced_prepare:'Enhanced Input · Prepare',enhanced_evaluate:'Enhanced Input · Update',input_apply:'Enhanced Input · Apply',held_apply:'ApplyDeferred · 持有关系',capture_apply:'ApplyDeferred · 上下文',inspector_pass:'World Inspector · UI Pass',transform_propagate:'Transform · Propagate',render:'RenderApp · 渲染概览' };
 function system(x, y, w, id, extraRows = null, height = 112) {
@@ -64,15 +64,15 @@ function save(id, label, width, height, body, summary) { const content = svg(lab
 let b = text(36, 78, '先沿粗箭头看执行顺序，再沿 R / W 看数据；点击卡片查看源码与完整访问声明。', 'note');
 registry['app-main'] = { name:'main / App',kind:'App',description:'创建 App 与会话日志，配置默认插件，加载设置，装配功能插件后进入主循环。退出时记录结果并刷新日志。',notes:model.startup_notes,source:{path:'src/main.rs',line:17} };
 b += `<g class="node entity" ${register('app-main',registry['app-main'])}>${frame(30, 102, 1500, 170, '«App» main：装配应用与共享 World', 'Plugin 负责注册；下方位置不代表插件内部系统的执行先后。')}</g>`;
-const plugins = ['DefaultPlugins', 'EguiPlugin', 'WorldInspectorPlugin', 'SettingsPlugin', 'GameplayPlugin', 'PlayerInputPlugin', 'CameraControlPlugin', 'PrototypeScenePlugin', 'StartupLogPlugin'];
-const pluginNotes = ['引擎输入、窗口、时间、变换、渲染与日志。','准备 Egui 上下文与界面绘制。','通过反射检查 ECS；复用当前窗口与相机。','设置资源与限帧。','玩法资源、反射类型和固定模拟链。','输入上下文、动作与角色意图 Observer。','相机 Observer、捕获、视角与姿态同步。','共享场景资源与 Startup 场景生成。','集中注册四项只读启动日志，沿用现有日志 target。'];
+const plugins = ['DefaultPlugins', 'EguiPlugin', 'WorldInspectorPlugin', 'SettingsPlugin', 'GameplayPlugin', 'GameAudioPlugin', 'PlayerInputPlugin', 'CameraControlPlugin', 'PrototypeScenePlugin', 'StartupLogPlugin'];
+const pluginNotes = ['引擎输入、窗口、时间、变换、渲染与日志。','准备 Egui 上下文与界面绘制。','通过反射检查 ECS；复用当前窗口与相机。','设置资源与限帧。','玩法资源、反射类型和固定模拟链。','Kira 输出、预加载、短音限制与退出停止。','输入上下文、动作与角色意图 Observer。','相机 Observer、捕获、视角与姿态同步。','共享场景资源与 Startup 场景生成。','集中注册四项只读启动日志，沿用现有日志 target。'];
 const mainLines = fs.readFileSync(path.join(dir, '../../src/main.rs'), 'utf8').split('\n');
 registry['app-main'].source.line = mainLines.findIndex(l=>l.startsWith('fn main('))+1;
-// 九个插件分两行展示，保留标题可读宽度；后续总览内容整体下移以避开新增行。
+// 十个插件分两行展示，保留标题可读宽度；后续总览内容整体下移以避开新增行。
 plugins.forEach((name, i) => { const id = `plugin-${name}`; const line = mainLines.findIndex(l => l.trim() === name || l.trim().startsWith(name + ',') || l.trim().startsWith(name + '::')) + 1; registry[id] = { id, name, kind: 'Plugin', description: pluginNotes[i], notes: ['注册顺序不等于系统执行顺序。', ...(name.includes('Egui') || name.includes('Inspector') ? ['EguiPlugin 必须先于 WorldInspectorPlugin 构建。'] : [])], source: { path: 'src/main.rs', line } }; b += compact(44 + (i % 5) * 296, 165 + Math.floor(i / 5) * 52, 284, 42, id, name, 'plugin'); });
 b += '<g transform="translate(0 52)">';
-b += frame(30, 240, 1500, 108, '«Schedule» Startup · 启动一次', '场景插件生成场景，启动日志插件注册四项日志；五个系统无彼此顺序约束，阶段结束应用场景命令。');
-['startup_spawn', 'startup_config', 'startup_timestep', 'startup_pose', 'startup_inspector'].forEach((id, i) => { registry[id] = systems[id]; b += compact(48 + i * 293, 303, 274, 32, id, systems[id].name, 'system'); });
+b += frame(30, 240, 1500, 108, '«Schedule» Startup · 启动一次', '场景插件生成场景，启动日志插件注册四项日志；六个系统无彼此顺序约束，阶段结束应用场景命令。');
+['startup_spawn', 'startup_config', 'startup_timestep', 'startup_pose', 'startup_inspector', 'audio_preload'].forEach((id, i) => { registry[id] = systems[id]; b += compact(48 + i * 246, 303, 228, 32, id, systems[id].name, 'system'); });
 const phases = [
   { x: 30, w: 330, name: 'First', note: '每个渲染帧', rows: ['限帧 → 时间更新', '默认上限 60 FPS；最低 60', 'Local：帧间计时'] },
   { x: 395, w: 330, name: 'PreUpdate', note: '输入与界面准备', rows: ['捕获 / 上下文 → 动作评估', '事件 → 意图 / 观察角度', '本帧消费视角切换请求'] },
@@ -80,7 +80,8 @@ const phases = [
   { x: 1125, w: 330, name: 'FixedPostUpdate', note: 'Avian 默认物理阶段', rows: ['Prepare → StepSimulation', '→ Writeback → 接地 / 速度日志', '真实位置 / 速度 / 碰撞'] },
   { x: 1490, w: 330, name: 'FixedLast', note: '固定步末尾', rows: ['记录本步插值终点', '角色：平移插值', '箱体：完整 Transform 插值'] },
   { x: 1855, w: 330, name: '固定循环之后', note: 'RunFixedMainLoop · 每帧', rows: ['Ease → 朝向 → HeldTarget', '→ 镜头 → 可见性', '→ UpdateEasingTick'] },
-  { x: 2220, w: 330, name: 'PostUpdate', note: '其前经过普通 Update', rows: ['Transform → GlobalTransform', '检查器 UI 为同阶段独立分支', '→ 渲染子应用'] },
+  { x: 2220, w: 330, name: 'Update', note: '每个渲染帧的音频输出', rows: ['加载失败日志 → 播放请求', '→ AppExit 时停止 UI / SFX', 'Kira 排队不改变玩法状态'] },
+  { x: 2585, w: 330, name: 'PostUpdate', note: '本帧变换 / UI 后处理', rows: ['Transform → GlobalTransform', '检查器 UI 为同阶段独立分支', '→ 渲染子应用'] },
 ];
 phases.forEach(p => { b += frame(p.x, 382, p.w, 180, p.name, `«Schedule» · ${p.note}`); b += p.rows.map((r, i) => fitted(p.x + 17, 469 + i * 31, r, p.w - 34)).join(''); });
 phases.slice(0, -1).forEach((p, i) => b += edge([[p.x + p.w, 420], [phases[i + 1].x, 420]]));
@@ -92,7 +93,7 @@ const data = [
   { id: 'parcel.HeldTarget', x: 1125, w: 330, name: 'HeldTarget / 物理持握', rows: ['目标仅供呈现检查', '施力另读真实 Position', '实际箱体可滞后 / 受碰撞阻挡'] },
   { id: 'world.Collider', x: 1490, w: 330, name: '静态世界碰撞', rows: ['地面与墙体两个盒形刚体', 'World / Character / Parcel', '持握箱忽略 Character 层'] },
   { id: 'camera.OrbitCamera', x: 1855, w: 330, name: 'OrbitCamera', rows: ['目标 / 模式 / yaw / 两组 pitch', '镜头读本帧插值后角色位置', '相机 Transform：最终姿态'] },
-  { id: 'visual.GlobalTransform', x: 2220, w: 330, name: '视觉子实体', rows: ['Mesh3d / 材质，无物理体', 'ChildOf → 业务根实体', 'GlobalTransform → 渲染'] },
+  { id: 'visual.GlobalTransform', x: 2585, w: 330, name: '视觉子实体', rows: ['Mesh3d / 材质，无物理体', 'ChildOf → 业务根实体', 'GlobalTransform → 渲染'] },
 ];
 data.forEach(d => { registry[d.id] = { id: d.id, name: d.name, kind: 'Component', description: d.rows.join('；') }; b += card(d.x, 697, d.w, 151, d.id, d.name, d.rows, 'component', 'small'); });
 registry['resource.GameSettings'] = model.resources.find(r => r.id === 'resource.GameSettings');
@@ -103,13 +104,30 @@ b += edge([[650,562],[650,675],[1950,675],[1950,697]], 'W 角度 / 模式', 'wri
 b += edge([[725, 754], [745, 754], [745, 582], [790, 582], [790, 562]], 'R 意图', 'read', [745, 649], ['character.CharacterIntent', 'movement']);
 b += edge([[1290, 562], [1290, 648], [925,648], [925,697]], 'W 物理状态', 'write', [1120,648], ['physics_step', 'character.Position']);
 b += edge([[2020, 697], [2020, 562]], 'R 角度', 'read', [2020, 640], ['camera.OrbitCamera', 'facing_update']);
-b += edge([[2385, 562], [2385, 697]], 'W 世界变换', 'write', [2385, 641], ['transform_propagate', 'visual.GlobalTransform']);
+b += edge([[2750, 562], [2750, 697]], 'W 世界变换', 'write', [2750, 641], ['transform_propagate', 'visual.GlobalTransform']);
 b += text(36, 900, '图例：粗箭头＝执行顺序　R 蓝虚线＝读取　W 绿实线＝写入　Event 橙虚线＝触发　紫线＝引用 / 关系', 'note');
 b += '</g>';
 // GameplayPlugin 内部安装物理插件，不把内部注册伪装成 main 的额外插件。
-const nestedPlugins = [['DemoPhysicsPlugin','src/gameplay.rs','add_plugins(DemoPhysicsPlugin)'],['PhysicsPlugins::default()','src/physics.rs','add_plugins(PhysicsPlugins::default())']];
+const nestedPlugins = [['DemoPhysicsPlugin','src/gameplay.rs','add_plugins((DemoPhysicsPlugin, SoundEventsPlugin))'],['PhysicsPlugins::default()','src/physics.rs','add_plugins(PhysicsPlugins::default())']];
 nestedPlugins.forEach(([name,file,needle],i)=>{const id=`plugin-physics-${i}`;registry[id]={name,kind:'Plugin',description:i?'Avian 默认 FixedPostUpdate 求解及物理插值插件。':'GameplayPlugin 内部安装，注册重力同步和碰撞日志。',notes:['内部插件注册关系；不表示系统执行顺序。'],source:{path:file,line:fs.readFileSync(path.join(dir,'../..',file),'utf8').split('\n').findIndex(line=>line.includes(needle))+1}};b+=card(1575+i*505,112,475,135,id,name,['GameplayPlugin → DemoPhysicsPlugin → Avian'],'engine','small');});
-save('overview', '当前 App · ECS 总览', 2590, 987, b, '输入 → 固定控制力 → Avian 求解 → 插值 → 本帧显示 → 世界变换与渲染。');
+// 音频插件装配和反馈路径单独列出；它们不建立新的玩法实体。
+registry['plugin-sound-events']={name:'SoundEventsPlugin',kind:'Plugin',description:'GameplayPlugin 内部注册声音消息和无设备的物理反馈观察。',source:{path:'src/gameplay.rs',line:fs.readFileSync(path.join(dir,'../../src/gameplay.rs'),'utf8').split('\n').findIndex(l=>l.includes('add_plugins((DemoPhysicsPlugin, SoundEventsPlugin))'))+1}};
+registry['plugin-kira']={name:'KiraAudioPlugin',kind:'Plugin',description:'GameAudioPlugin 安装 Kira 0.26.0；DefaultPlugins 禁用 Bevy 默认 AudioPlugin。',source:{path:'src/audio.rs',line:fs.readFileSync(path.join(dir,'../../src/audio.rs'),'utf8').split('\n').findIndex(l=>l.includes('app.add_plugins(KiraAudioPlugin)'))+1}};
+b+=card(1575,278,475,116,'plugin-sound-events','SoundEventsPlugin',['GameplayPlugin 内部：反馈收集'],'engine','small');
+b+=card(2080,278,475,116,'plugin-kira','KiraAudioPlugin',['GameAudioPlugin 内部：设备输出'],'engine','small');
+model.resources.forEach(r=>registry[r.id]=r);
+b+=text(36,1020,'反馈先确认业务结果，再用缓冲 Message 跨固定步交给 Update 播放。','note');
+registry['audio-producers']={name:'已接入的反馈生产者',kind:'System group',description:'成功拿起/释放、真实落地、持续持握偏差；只有确认发生的结果发声。',notes:['菜单、交接、推车、弹开与交付 cue 仅预留，尚未产生。'],source:systems.interaction.source};
+b+=card(30,1060,650,155,'audio-producers','玩法反馈生产者',['成功拿起 / 主动释放','真实支撑撞击 / 持握失稳提示','固定阶段；不改变物理规则'],'system','small');
+b+=card(800,1060,520,155,'resource.SoundRequestMessages','SoundRequest 消息',['cue：稳定事件标识','source：仅记录 Entity','延迟拿放消息与关系一起生效'],'message','small');
+b+=card(1440,1060,520,155,'resource.SoundBank','SoundBank',['预加载句柄与清单策略','获准时间 / 实例生命周期','总并发 4；Queued 也占限额'],'resource','small');
+registry['audio-output']={name:'Update / Kira 播放输出',kind:'Engine',description:'读取 SoundRequest，检查加载/冷却/并发后向类型通道排队；AppExit 时停止。',reads:['resource.SoundBank','resource.SoundRequestMessages','resource.UiAudioChannel','resource.SfxAudioChannel'],source:systems.audio_play.source};
+b+=card(2090,1060,825,155,'audio-output','Update → Kira UI / SFX',['失败日志 → 播放请求 → 退出停止','线性音量乘 0.25 后转为 dB','ambience 只供试听，不自动播放'],'engine','small');
+b+=edge([[680,1138],[800,1138]],'W','write',[740,1138],['audio-producers','resource.SoundRequestMessages']);
+b+=edge([[1320,1215],[1320,1250],[2502,1250],[2502,1215]],'R 请求','read',[1980,1250],['resource.SoundRequestMessages','audio-output']);
+b+=edge([[1960,1138],[2090,1138]],'R','read',[2025,1138],['resource.SoundBank','audio-output']);
+b+=edge([[2090,1182],[1960,1182]],'W','write',[2025,1182],['audio-output','resource.SoundBank']);
+save('overview', '当前 App · ECS 总览', 2955, 1305, b, '输入 → 固定模拟 → 插值后显示 → Update 音频 → 世界变换与渲染。');
 
 // 时序视图：每个注册实例单独呈现，R/W 在卡片内列摘要，点击显示完整读写项。
 b = text(36, 80, '系统卡片中的 R / W 是访问摘要；同一函数在不同 Schedule 中有两个注册实例。', 'note');
@@ -121,7 +139,8 @@ const columns = [
   { x: 1305, w: 430, nodeWidth: 380, phase: 'FixedPostUpdate', note: 'Avian 默认物理解算', ids: ['physics_prepare','physics_step','physics_writeback','grounded_after','velocity_log'] },
   { x: 1760, w: 330, phase: 'FixedLast', note: '每个固定步末尾', ids: ['easing_end'] },
   { x: 2135, w: 380, phase: '固定循环之后', note: 'RunFixedMainLoop · AfterFixedMainLoop', ids: ['easing_apply','facing_update','held_update','camera_follow','visibility_update','easing_tick'] },
-  { x: 2560, w: 390, phase: 'PostUpdate / 渲染', note: '其前经过普通 Update', ids: [] },
+  { x: 2560, w: 390, phase: 'Update · 音频', note: '每帧一次；不改变模拟', ids: ['audio_load_failures','audio_play','audio_stop'] },
+  { x: 3005, w: 390, phase: 'PostUpdate / 渲染', note: '本帧变换 / UI 后处理', ids: [] },
 ];
 const accessName = value => value.split('.').pop().replace(/\s*\(.*/, '');
 function accessRows(id) { const s = systems[id]; const summarize = values => { const rank = v => v.startsWith('resource.') ? 1 : v.startsWith('local.') ? 2 : 0; const sorted = [...values].sort((a,b)=>rank(a)-rank(b)); return sorted.map(accessName).slice(0,2).join(' / ') + (values.length>2?' …':''); }; return [brief[id] || s.description, ...(s.reads.length ? [`R ${summarize(s.reads)}`] : []), ...(s.writes.length ? [`W ${summarize(s.writes)}`] : [])].slice(0, 3); }
@@ -135,6 +154,7 @@ const preNodes = [ ['mouse_capture', 400, 130], ['capture_apply', 555, 96], ['en
 systems.event_apply = { id:'event_apply', name:'ApplyDeferred · 动作事件', kind:'sync', phase:'PreUpdate', description:'应用 Enhanced Input 排入的 trigger 命令，此时触发匹配 Observer。', reads:[], writes:['character.CharacterIntent','camera.OrbitCamera'], filters:[], events:model.observers.map(o=>o.event), notes:['这是命令同步点，不是 EnhancedInputSystems::Apply。','apply_perspective_toggle.after(EnhancedInputSystems::Apply) 建立依赖；常规调度在需要时自动应用延迟命令。','Observer 之间没有注册顺序所保证的串行依赖。'], source:systems.perspective_apply.source };
 brief.event_apply = '应用 trigger 命令 → 七个 Observer';
 brief.capture_apply = '应用 ContextActivity 替换';
+brief.held_apply = '关系 / 碰撞层 / 已接受声音消息生效';
 preNodes.forEach(([id,y,h],i)=>{b += system(390,y,390,id,h===130?accessRows(id):[brief[id] || systems[id].description],h);if(i){const previous=preNodes[i-1];b+=edge([[585,previous[1]+previous[2]],[585,y]],'','order',null,[previous[0],id]);}});
 b += text(399, 1339, 'UI 捕获停用 GameplayContext；', 'small');
 b += text(399, 1365, '动作 Complete / Cancel 清除移动轴。', 'small');
@@ -149,27 +169,31 @@ b += edge([[1050,480],[1050,510]],'','order',null,['gravity_sync','facing_fixed'
 // 说明分居汇合点两侧，不遮挡指向玩法链的竖线与箭头。
 b += text(860, 502, '二者无彼此顺序', 'small');
 b += text(1080, 502, '下方为显式玩法链', 'small');
-const fixedNodes = ['grounded_fixed','movement','gravity','interaction','held_apply','orphan_cleanup','orphan_apply','held_fixed','grip_forces'];
+const fixedNodes = ['grounded_fixed','movement','gravity','interaction','held_apply','orphan_cleanup','orphan_apply','held_fixed','grip_forces','audio_strain'];
 fixedNodes.forEach((id,i)=>{const y=510+i*160;b+=system(855,y,390,id,accessRows(id),130);if(i)b+=edge([[1050,y-30],[1050,y]],'','order',null,[fixedNodes[i-1],id]);});
 b += edge([[1050,289],[1050,314],[948,314],[948,360]],'','order',null,['easing_reset','gravity_sync']);
 b += edge([[1050,314],[1151,314],[1151,360]],'','order',null,['easing_reset','facing_fixed']);
 b += system(1320, 1170, 380, 'collision_log', accessRows('collision_log'), 130);
 // 支线从卡片边缘出发，绕过中间节点；标签放在线外，保留转折及箭头的连续走线。
-b += edge([[1700,415],[1723,415],[1723,1135],[1510,1135],[1510,1170]],'仅 after(StepSimulation)','order',[1510,1100],['physics_step','collision_log']);
+b += edge([[1700,415],[1723,415],[1723,1415]],'','order',null,['physics_step','collision_log','audio_land'],false);
+b += edge([[1723,1135],[1510,1135],[1510,1170]],'after(StepSimulation)','order',[1510,1100],['physics_step','collision_log']);
+b += system(1320,1460,380,'audio_land',accessRows('audio_land'),130);
+b += edge([[1723,1415],[1510,1415],[1510,1460]],'after(StepSimulation)','order',[1510,1388],['physics_step','audio_land']);
+b += text(1324,1640,'落地 / 日志 / Writeback 观察无额外全序','small');
 b += text(1324, 1350, '碰撞日志与 Writeback 后观察无全序', 'small');
-b += system(2575, 193, 320, 'transform_propagate', ['R 根 Transform / ChildOf', 'W GlobalTransform（另有可见性传播）'], 118);
-b += system(2575, 365, 320, 'inspector_pass', ['反射读取 / 编辑实体、资源与资产', 'multipass：界面可在此多轮处理'], 118);
-b += text(2584, 340, '相关分支并列；彼此未指定全序', 'small');
+b += system(3020, 193, 320, 'transform_propagate', ['R 根 Transform / ChildOf', 'W GlobalTransform（另有可见性传播）'], 118);
+b += system(3020, 365, 320, 'inspector_pass', ['反射读取 / 编辑实体、资源与资产', 'multipass：界面可在此多轮处理'], 118);
+b += text(3029, 340, '相关分支并列；彼此未指定全序', 'small');
 // 两条渲染分支使用独立入口，右侧留出走线空间，避免沿卡片边框或合并箭头。
-b += edge([[2895, 252], [2928, 252], [2928, 566], [2815, 566], [2815, 610]], '', 'order', null, ['transform_propagate','render']);
-b += edge([[2735, 483], [2735, 610]], '', 'order', null, ['inspector_pass','render']);
-b += system(2575, 610, 320, 'render', ['Extract → Prepare → Render', 'RenderApp 是子应用，不是单个系统'], 118);
+b += edge([[3340, 252], [3373, 252], [3373, 566], [3260, 566], [3260, 610]], '', 'order', null, ['transform_propagate','render']);
+b += edge([[3180, 483], [3180, 610]], '', 'order', null, ['inspector_pass','render']);
+b += system(3020, 610, 320, 'render', ['Extract → Prepare → Render', 'RenderApp 是子应用，不是单个系统'], 118);
 columns.slice(0, -1).forEach((col, i) => b += edge([[col.x + col.w, 144], [columns[i + 1].x, 144]]));
-b += text(43, 2140, 'Startup：场景生成与四项日志无彼此顺序；物理主体和碰撞体位于业务根实体。', 'note');
+b += text(43, 2140, 'Startup：场景生成、四项日志与音频预加载无彼此顺序；物理主体和碰撞体位于业务根实体。', 'note');
 b += text(43, 2174, 'Commands 同步点用琥珀色框；碰撞日志与回写后接地/采样只有各自明确的依赖。', 'note');
 b += text(43, 2208, '固定循环每帧 0～N 次；AfterFixedMainLoop 的 Ease → 显示链 → UpdateEasingTick 每帧执行。', 'note');
 b += text(43, 2242, 'HeldTarget 仅呈现检查；物理施力直接读 Position，不读取插值目标，不把箱体直接搬到手前。', 'note');
-save('schedules', '调度泳道 · 系统与数据访问', 2990, 2285, b, '固定控制 → 物理解算 → 插值后显示；点击查看完整访问，框架集合为概览。');
+save('schedules', '调度泳道 · 系统与数据访问', 3435, 2285, b, '固定控制 → 物理解算 → 插值后显示；点击查看完整访问，框架集合为概览。');
 
 // 关系视图：矩形容器表达实体，内嵌组件；普通 Entity 引用与 Bevy 关系单独标注。
 b = text(36, 80, '按实体角色汇总关键组件，可选组件并非始终存在；虚线＝普通引用，紫实线＝Bevy 关系。', 'note');
@@ -210,11 +234,13 @@ b += edge([[157, 1540], [157, 1250]], 'ChildOf：人物模型', 'relationship', 
 b += edge([[390, 1687], [965, 1687], [965, 1230], [900,1230]], 'ChildOf：箱子模型', 'relationship', [690, 1655], ['entity-visual', 'entity-parcel']);
 b += frame(540, 1910, 870, 228, '关系的基数与生命周期', '这里只描述当前源码声明的行为。');
 b += lines(561, 1994, ['HeldBy：每箱 0..1 位持有者；HoldingItems 容器允许 0..N，当前业务一次持一件。', 'ActionOf / BindingOf / ChildOf 声明 linked_spawn；HeldBy 不连带销毁箱体。', '失效持有者 / 异常解除：移除 HeldTarget、恢复自由碰撞，动态箱体自然下落。', 'Position / Velocity 为物理状态，Transform 为插值呈现；视觉子实体无刚体。', '持握使用反作用力，仍参与世界碰撞；持握箱当前忽略全部 Character 层。'], 'small', 27);
-b += frame(540, 1300, 360, 305, '«Resource / Local» 数据范围', 'Resource 共享；Local 属于某个系统。');
+b += frame(540, 1300, 360, 338, '«Resource / Local» 数据范围', 'Resource 共享；Local 属于某个系统。');
 model.resources.forEach(r => registry[r.id] = r);
-['resource.GameSettings','resource.PrototypeConfig','resource.TimeFixed','resource.Gravity','resource.ColliderTrees'].forEach((id,i)=>{const r=registry[id];b+=compact(554,1370+i*33,332,28,id,r.name,'resource');});
-b += text(557, 1560, '预留集合 / 采样计时：Local', 'small');
-b += text(557, 1588, 'LastEasingTick：插值共享 Resource', 'small');
+['resource.GameSettings','resource.PrototypeConfig','resource.TimeFixed','resource.Gravity','resource.ColliderTrees','resource.ContactGraph'].forEach((id,i)=>{const r=registry[id];b+=compact(554,1370+i*33,332,28,id,r.name,'resource');});
+b += text(557, 1593, '预留集合 / 采样计时：Local', 'small');
+b += text(557, 1621, 'LastEasingTick：插值共享 Resource', 'small');
+b += frame(540,1720,360,168,'«Resource» 音频数据','警告 / 落地锁存各属于系统 Local。');
+['resource.SoundBank','resource.UiAudioChannel','resource.SfxAudioChannel'].forEach((id,i)=>{const r=registry[id];b+=compact(554,1791+i*33,332,28,id,r.name,'resource');});
 save('relationships', '实体 · 组件归属与关系', 1450, 2175, b, '真实物理状态、插值呈现和持握目标分离；点击组件查看字段及源码入口。');
 
 // 通信视图：输入动作事件、全局 Observer 与窗口缓冲消息保持不同路线。
@@ -257,7 +283,27 @@ registry['physics-file-log']={name:'会话文件日志',kind:'External I/O',desc
 b += card(971,1720,486,100,'physics-file-log','统一会话日志',['碰撞双方、原因、时间与级别'],'external','small');
 b += edge([[424,1770],[512,1770]],'读取','read',[468,1770],['physics-messages','collision_log']);
 b += edge([[868,1770],[971,1770]],'日志','write',[919,1770],['collision_log','physics-file-log']);
-save('events', '事件 · Observer · Message', 1520, 1880, b, '输入使用 EntityEvent / Observer；窗口与碰撞分别使用缓冲 Message；输出共用会话日志。');
+// 三个生产者汇入同一个缓冲消息；汇合支线不带箭头，不暗示生产者之间有顺序。
+b+=frame(30,1890,1460,710,'音效反馈 · 缓冲 SoundRequest → Update / Kira','只发送已发生的业务结果；输入 Observer 不直接播放成功声音。');
+b+=system(50,1990,374,'interaction',['Commands：成功拾取 / 释放','关系变更与 SoundRequest 同步提交'],130);
+b+=system(50,2160,374,'audio_strain',['真实 Position / 朝向 → 持握偏差','Local 宽限 / 持续计时 / 滞回锁存'],130);
+b+=system(50,2330,374,'audio_land',['ContactGraph：支撑法线与冲量','Local 锁存至完全离开支撑'],130);
+b+=card(512,2160,356,130,'resource.SoundRequestMessages','SoundRequest',['cue：SoundCue（12 种映射）','source：Entity，仅用于日志','MessageReader；默认缓冲非永久队列'],'message','small');
+b+=card(971,1990,486,100,'resource.SoundBank','SoundBank',['句柄 / 清单策略 / 实例与时间'],'resource','small');
+b+=system(971,2160,486,'audio_play',['R 请求 / 资产 / 策略 / 时钟','W SoundBank；排队 UI / SFX 命令','冷却 / 并发 / 加载限制'],130);
+registry['kira-output']={name:'Kira UI / SFX 通道',kind:'Engine',description:'类型化 AudioChannel 接收排队播放命令；声音实例与加载失败共用统一日志。',reads:['resource.UiAudioChannel','resource.SfxAudioChannel'],notes:['总并发 4；Queued 计入并发。','当前未自动播放 ambience。'],source:systems.audio_play.source};
+b+=card(971,2350,486,130,'kira-output','Kira UI / SFX',['类型化通道消费排队播放命令','AppExit → 停止两个通道','声音初始化 / 跳过 / 失败写会话日志'],'engine','small');
+b+=edge([[424,2055],[468,2055],[468,2225]],'','write',null,['interaction','resource.SoundRequestMessages'],false);
+b+=edge([[424,2225],[468,2225]],'','write',null,['audio_strain','resource.SoundRequestMessages'],false);
+b+=edge([[424,2395],[468,2395],[468,2225]],'','write',null,['audio_land','resource.SoundRequestMessages'],false);
+b+=edge([[468,2225],[512,2225]],'','write',null,['interaction','audio_strain','audio_land','resource.SoundRequestMessages']);
+b+=edge([[868,2225],[971,2225]],'读取','read',[919,2225],['resource.SoundRequestMessages','audio_play']);
+b+=edge([[1214,2090],[1214,2160]],'R','read',[1214,2125],['resource.SoundBank','audio_play']);
+b+=edge([[1315,2160],[1315,2090]],'W','write',[1315,2125],['audio_play','resource.SoundBank']);
+b+=edge([[1214,2290],[1214,2350]],'排队','write',[1214,2320],['audio_play','kira-output']);
+b+=text(52,2516,'当前接入：pickup / release / land / instability_warning；菜单、交接、推车、弹开、交付 cue 仅预留。','small');
+b+=text(52,2551,'反馈测试只安装消息与最小物理 App；Kira 输出仅在用户启动游戏时安装。','small');
+save('events', '事件 · Observer · Message', 1520, 2640, b, '输入使用 EntityEvent / Observer；窗口、碰撞与声音反馈使用缓冲 Message；Kira 消费声音请求。');
 
 // 源码与图同时生成快照，让网页和离线文件都能打开完整源码并定位行号。
 const sourcePaths = [...new Set(Object.values(registry).map(d => d.source?.path).filter(Boolean))].sort();

@@ -1,0 +1,313 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Demo 音效试听台</title>
+  <style>
+    :root { color-scheme: dark; --bg:#101615; --panel:#192220; --line:#34413b; --text:#edf2e9; --muted:#aab8ad; --accent:#b5ed99; --warm:#f2cb87; }
+    * { box-sizing:border-box; }
+    body { margin:0; background:var(--bg); color:var(--text); font:15px/1.6 system-ui,"Microsoft YaHei",sans-serif; }
+    button,input,select { font:inherit; }
+    button,label.import { cursor:pointer; }
+    button { border:1px solid var(--line); border-radius:9px; background:var(--panel); color:var(--text); padding:9px 15px; }
+    button:hover { border-color:var(--accent); }
+    button:disabled { cursor:default; opacity:.45; }
+    button:focus-visible,a:focus-visible,input:focus-visible,label.import:focus-within { outline:2px solid var(--accent); outline-offset:4px; }
+    a { color:var(--accent); text-underline-offset:3px; }
+    main { max-width:1180px; margin:auto; padding:42px 30px 210px; }
+    .eyebrow { margin:0 0 12px; color:var(--accent); font:12px/1.3 ui-monospace,Consolas,monospace; letter-spacing:2px; }
+    h1 { font-size:clamp(30px,4vw,44px); line-height:1.2; letter-spacing:-1px; margin:0 0 16px; }
+    .intro { color:var(--muted); max-width:700px; margin:0; }
+    .header { display:flex; justify-content:space-between; gap:24px; align-items:flex-start; }
+    .edition { color:var(--muted); border:1px solid var(--line); border-radius:9px; padding:10px 15px; white-space:nowrap; font:12px/1.8 ui-monospace,Consolas,monospace; }
+    .summary { display:flex; flex-wrap:wrap; gap:10px; margin:28px 0; }
+    .pill { border:1px solid var(--line); border-radius:30px; padding:6px 14px; color:var(--muted); font-size:13px; }
+    .pill strong { color:var(--text); margin-right:6px; }
+    .tools { display:flex; gap:10px; align-items:center; flex-wrap:wrap; padding:18px 0; border-top:1px solid var(--line); }
+    .search { flex:1; min-width:220px; background:var(--panel); color:var(--text); border:1px solid var(--line); border-radius:9px; padding:9px 14px; }
+    .import { border:1px solid var(--line); border-radius:9px; padding:9px 15px; }
+    .import input { position:absolute; width:1px; height:1px; overflow:hidden; opacity:0; }
+    .hint { margin:4px 0 24px; color:var(--muted); font-size:12px; }
+    .tabs { display:flex; gap:8px; margin-bottom:26px; flex-wrap:wrap; }
+    .tabs button { border-radius:25px; padding:7px 17px; }
+    .tabs button[aria-pressed="true"] { background:var(--accent); border-color:var(--accent); color:#162215; }
+    section { margin-top:32px; }
+    .section-head { display:flex; justify-content:space-between; align-items:baseline; gap:15px; margin-bottom:16px; }
+    h2 { font-size:22px; margin:0; letter-spacing:-.3px; }
+    .section-head span { color:var(--muted); font-size:13px; }
+    .cards { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; }
+    .card { min-width:0; background:var(--panel); border:1px solid var(--line); border-radius:13px; padding:22px; }
+    .card.playing { border-color:var(--accent); box-shadow:inset 3px 0 var(--accent); }
+    .card-top { display:flex; justify-content:space-between; gap:16px; align-items:flex-start; }
+    .card h3 { margin:0 0 5px; font-size:20px; }
+    .card code,.mono { font:12px/1.6 ui-monospace,Consolas,monospace; overflow-wrap:anywhere; }
+    .card code { color:var(--muted); }
+    .play { background:var(--accent); color:#142011; border-color:var(--accent); white-space:nowrap; min-width:76px; }
+    .labels { display:flex; gap:6px; flex-wrap:wrap; margin:15px 0; }
+    .tag { font-size:11px; border:1px solid var(--line); color:var(--muted); padding:2px 8px; border-radius:4px; }
+    .tag.synthetic { color:var(--warm); border-color:#665838; }
+    .facts { display:grid; grid-template-columns:1fr 1fr; gap:5px 15px; font-size:12px; color:var(--muted); }
+    .facts strong { color:var(--text); font-weight:500; }
+    details { margin-top:17px; border-top:1px solid var(--line); padding-top:12px; }
+    summary { cursor:pointer; color:var(--muted); font-size:13px; }
+    dl { display:grid; grid-template-columns:80px 1fr; gap:8px 12px; margin:16px 0 0; font-size:12px; }
+    dt { color:var(--muted); }
+    dd { margin:0; min-width:0; overflow-wrap:anywhere; }
+    pre { white-space:pre-wrap; overflow-wrap:anywhere; color:var(--muted); font:11px/1.6 ui-monospace,Consolas,monospace; background:#121b17; border-radius:6px; padding:12px; margin:10px 0 0; max-height:330px; overflow:auto; }
+    .empty,.notice { border:1px dashed var(--line); border-radius:12px; padding:24px; color:var(--muted); }
+    .notice { border-color:#655636; background:#211f17; color:#dcccaf; margin:24px 0; }
+    .candidates { display:grid; gap:12px; }
+    .candidate { border:1px solid var(--line); border-radius:10px; padding:16px 20px; }
+    .candidate h3 { font-size:15px; margin:0 0 5px; }
+    .candidate p { color:var(--muted); font-size:13px; margin:5px 0; }
+    .table-wrap { overflow:auto; border:1px solid var(--line); border-radius:11px; }
+    table { border-collapse:collapse; width:100%; font-size:13px; }
+    th,td { text-align:left; padding:13px 18px; border-bottom:1px solid var(--line); vertical-align:top; }
+    th { color:var(--muted); font-weight:500; background:var(--panel); white-space:nowrap; }
+    tr:last-child td { border-bottom:0; }
+    td:last-child { color:var(--muted); }
+    .player { position:fixed; bottom:0; left:0; right:0; border-top:1px solid var(--line); background:#17221fee; backdrop-filter:blur(18px); padding:18px 30px; z-index:5; }
+    .player-inner { max-width:1120px; margin:auto; display:grid; grid-template-columns:minmax(150px,1fr) minmax(240px,1.4fr) auto; gap:20px; align-items:center; }
+    .now { font-size:15px; margin:0; }
+    .player-status { color:var(--muted); font-size:12px; margin:3px 0 0; }
+    audio { width:100%; height:38px; }
+    .player-options { display:flex; gap:15px; align-items:center; font-size:12px; }
+    .volume { width:92px; accent-color:var(--accent); }
+    input[type="checkbox"] { accent-color:var(--accent); }
+    .footer-note { margin:34px 0 0; color:var(--muted); font-size:12px; }
+    .status-error { color:#ffb4a8; }
+    @media(max-width:780px) { main { padding:25px 18px 245px; } .header { display:block; } .edition { display:inline-block; margin-top:22px; } .cards { grid-template-columns:1fr; } .player { padding:14px 18px; } .player-inner { grid-template-columns:1fr; gap:9px; } .player-options { justify-content:space-between; } .section-head { display:block; } }
+    @media(prefers-reduced-motion:no-preference) { button,.card { transition:border-color .15s,background .15s; } }
+  </style>
+</head>
+<body>
+  <main>
+    <header class="header">
+      <div>
+        <p class="eyebrow">DEMO / AUDIO WORKBENCH</p>
+        <h1>音效试听台</h1>
+        <p class="intro">逐个检查反馈、来源与音质。点击播放才会发声，每次只播放一个声音；默认音量为 40%。合成音与真实录音在清单中分别标记。</p>
+      </div>
+      <div class="edition">FIRST PASS · ZERO BUDGET<br><span id="edition-date">等待清单</span></div>
+    </header>
+    <div class="summary" id="summary" aria-label="素材统计"></div>
+    <div class="tools">
+      <input id="search" class="search" type="search" placeholder="搜索名称、事件或文件…" aria-label="搜索素材">
+      <button id="reload" type="button">刷新清单</button>
+      <label class="import">导入 manifest<input id="import" type="file" accept=".json,application/json" aria-label="导入音频 manifest JSON"></label>
+      <a href="ATTRIBUTION.md">许可记录</a>
+      <a href="audio_manifest.json">Manifest</a>
+    </div>
+    <p id="manifest-status" class="hint" role="status">读取本地快照…</p>
+    <div class="tabs" role="group" aria-label="按类别筛选">
+      <button type="button" data-category="all" aria-pressed="true">全部</button>
+      <button type="button" data-category="ui" aria-pressed="false">UI / 菜单</button>
+      <button type="button" data-category="sfx" aria-pressed="false">SFX / 反馈</button>
+      <button type="button" data-category="ambience" aria-pressed="false">Ambience / 环境</button>
+    </div>
+    <div id="asset-sections"></div>
+    <section>
+      <div class="section-head"><h2>事件覆盖</h2><span>清单中的接入状态与真实素材缺口</span></div>
+      <div class="table-wrap"><table><thead><tr><th>事件</th><th>试听素材</th><th>当前状态 / 备注</th></tr></thead><tbody id="events"></tbody></table></div>
+    </section>
+    <section>
+      <div class="section-head"><h2>真实声音候选</h2><span>仅供后续选材，未取得的声音不提供播放</span></div>
+      <div class="candidates" id="candidates"></div>
+    </section>
+    <p class="footer-note">指标由文件分析生成，不等同于人耳验收。试听时请检查起止噪声、音量与循环接缝；游戏内的距离感、触发时机和混音由用户启动游戏确认。本页没有游戏进程或联网音频依赖。</p>
+  </main>
+  <footer class="player" aria-label="音频播放器">
+    <div class="player-inner">
+      <div><p id="now" class="now">选择一个声音</p><p id="player-status" class="player-status" role="status">Ready · 未播放</p></div>
+      <audio id="audio" controls preload="none" aria-label="当前声音播放控制"></audio>
+      <div class="player-options">
+        <label>音量 <input id="volume" class="volume" type="range" min="0" max="1" step="0.01" value="0.4" aria-label="试听音量"><output id="volume-value">40%</output></label>
+        <label><input id="loop" type="checkbox" disabled> 循环</label>
+        <button id="stop" type="button" disabled>停止</button>
+      </div>
+    </div>
+  </footer>
+  <script src="audition_data.js"></script>
+  <script>
+    "use strict";
+    const audio = document.getElementById("audio");
+    const ui = Object.fromEntries(["summary","edition-date","manifest-status","asset-sections","events","candidates","now","player-status","volume","volume-value","loop","stop","search","reload","import"].map(id => [id,document.getElementById(id)]));
+    const categoryNames = {ui:"UI / 菜单",sfx:"SFX / 反馈",ambience:"Ambience / 环境"};
+    let manifest = null;
+    let category = "all";
+    let current = null;
+    let playRequest = 0;
+    audio.volume = Number(ui.volume.value);
+
+    function node(tag,text,className) {
+      const item = document.createElement(tag);
+      if (text !== undefined && text !== null) item.textContent = String(text);
+      if (className) item.className = className;
+      return item;
+    }
+    function asText(value) {
+      if (value === null || value === undefined || value === "") return "—";
+      return typeof value === "object" ? JSON.stringify(value) : String(value);
+    }
+    function sourceLink(value) {
+      if (!value) return node("span","—");
+      try {
+        const url = new URL(value);
+        if (!["https:","http:"].includes(url.protocol)) throw new Error("Invalid source URL");
+        const link = node("a",value); link.href = url.href; link.target = "_blank"; link.rel = "noopener noreferrer"; return link;
+      } catch { return node("span",value); }
+    }
+    function assetUrl(asset) {
+      // 导入清单只允许 audio 目录内的相对素材；不自动连接远程预览或其他本地目录。
+      const path = String(asset.path || "").replace(/^audio\//,"");
+      if (!path || /[\\:?#]/.test(path) || path.startsWith("/") || path.split("/").some(part => part === ".." || part === ".")) throw new Error("Invalid asset path");
+      if (!["ui","sfx","ambience"].includes(path.split("/")[0])) throw new Error("Invalid asset category path");
+      return path.split("/").map(encodeURIComponent).join("/");
+    }
+    function detailRow(list,title,value,isLink=false) {
+      list.append(node("dt",title));
+      const description = node("dd");
+      description.append(isLink ? sourceLink(value) : node("span",asText(value)));
+      list.append(description);
+    }
+    function qualitySummary(asset) {
+      const quality = asset.quality || {};
+      const format = asset.format || {};
+      const duration = quality.duration_seconds ?? format.duration_seconds ?? asset.duration_seconds;
+      const rate = format.sample_rate_hz ?? format.sample_rate ?? quality.sample_rate_hz ?? quality.sample_rate;
+      const peak = quality.peak_dbfs ?? quality.peak_db_fs;
+      const clipping = quality.clipped_samples ?? quality.clipping_samples;
+      return [["时长",duration === undefined ? "见指标详情" : `${Number(duration).toFixed(3)} s`], ["采样率",rate === undefined ? asText(format.container ?? format) : `${rate} Hz`], ["峰值",peak === undefined ? "见指标详情" : `${Number(peak).toFixed(2)} dBFS`], ["削波样本",clipping === undefined ? "见指标详情" : clipping], ["开头静音",quality.head_silence_seconds === undefined ? "见指标详情" : `${(Number(quality.head_silence_seconds)*1000).toFixed(2)} ms`], ["结尾静音",quality.tail_silence_seconds === undefined ? "见指标详情" : `${(Number(quality.tail_silence_seconds)*1000).toFixed(2)} ms`]];
+    }
+    function renderAsset(asset) {
+      const card = node("article",null,"card"); card.dataset.assetId = asset.id;
+      if (current?.id === asset.id && !audio.paused) card.classList.add("playing");
+      const top = node("div",null,"card-top"); const heading = node("div");
+      heading.append(node("h3",asset.title || asset.id),node("code",asset.path));
+      const play = node("button","▶ 播放","play"); play.type = "button"; play.setAttribute("aria-label",`播放 ${asset.title || asset.id}`);
+      play.addEventListener("click",() => playAsset(asset));
+      top.append(heading,play); card.append(top);
+      const labels = node("div",null,"labels");
+      labels.append(node("span",asset.kind === "procedural" ? "本地合成" : "外部素材",`tag${asset.kind === "procedural" ? " synthetic" : ""}`));
+      labels.append(node("span",asText(asset.source?.license),"tag"));
+      const fidelity = asset.format?.lossy === true ? "有损发行文件" : asset.format?.lossy === false ? asset.kind === "procedural" ? "本地合成 PCM" : "无损文件" : "保真信息见记录";
+      labels.append(node("span",`${asText(asset.format?.container).toUpperCase()} / ${fidelity}`,"tag"));
+      labels.append(node("span",asset.playback?.looped ? "循环素材" : "单次反馈","tag"));
+      for (const event of asset.event_ids || []) labels.append(node("span",event,"tag"));
+      card.append(labels);
+      const facts = node("div",null,"facts");
+      for (const [label,value] of qualitySummary(asset)) { const fact = node("div",`${label}  `); fact.append(node("strong",value)); facts.append(fact); }
+      card.append(facts);
+      const details = node("details"); details.append(node("summary","来源、参数与质检指标"));
+      const list = node("dl"); const source = asset.source || {};
+      detailRow(list,"来源页面",source.page,true); detailRow(list,"作者",source.author);
+      detailRow(list,"许可证",`${asText(source.license)}${source.license_version ? ` / ${source.license_version}` : ""}`);
+      detailRow(list,asset.kind === "procedural" ? "生成日期" : "取得日期",asset.kind === "procedural" ? source.created_date : source.acquired_date);
+      if (source.pack_version) detailRow(list,"素材包版本",source.pack_version);
+      if (source.note) detailRow(list,"来源说明",source.note);
+      detailRow(list,"素材身份",asset.kind);
+      detailRow(list,"处理步骤",(asset.processing || []).join(" → "));
+      detailRow(list,"SHA-256",asset.sha256); details.append(list);
+      if (asset.generator) { details.append(node("p","生成参数 / 版本 / 随机种子","hint"),node("pre",JSON.stringify(asset.generator,null,2))); }
+      details.append(node("p","格式与客观质检","hint"),node("pre",JSON.stringify({format:asset.format,quality:asset.quality,playback:asset.playback},null,2)));
+      card.append(details); return card;
+    }
+    function renderAssets() {
+      ui["asset-sections"].replaceChildren();
+      const query = ui.search.value.trim().toLowerCase();
+      for (const [key,title] of Object.entries(categoryNames)) {
+        if (category !== "all" && category !== key) continue;
+        const assets = (manifest?.assets || []).filter(asset => asset.category === key && [asset.id,asset.title,asset.path,...(asset.event_ids || [])].join(" ").toLowerCase().includes(query));
+        const section = node("section"); const heading = node("div",null,"section-head");
+        heading.append(node("h2",title),node("span",`${assets.length} 个声音`)); section.append(heading);
+        if (assets.length) { const cards = node("div",null,"cards"); assets.forEach(asset => cards.append(renderAsset(asset))); section.append(cards); }
+        else section.append(node("div",query ? "没有匹配的素材。" : key === "ambience" ? "当前没有环境循环素材。真实录音仍待选择与取得；下方候选仅是来源页面。" : "当前清单没有此类别的素材。","empty"));
+        ui["asset-sections"].append(section);
+      }
+    }
+    function renderMetadata() {
+      ui.summary.replaceChildren();
+      const assets = manifest.assets || [];
+      for (const [count,title] of [[assets.length,"个素材"],[(manifest.events || []).length,"个事件"],[assets.filter(asset => asset.kind === "procedural").length,"个本地合成"],[assets.filter(asset => asset.kind !== "procedural").length,"个外部素材"]]) {
+        const item = node("span",null,"pill"); item.append(node("strong",count),document.createTextNode(title)); ui.summary.append(item);
+      }
+      ui["edition-date"].textContent = `清单 · ${manifest.created_date || manifest.generated_on || "日期未记录"}`;
+      ui.events.replaceChildren();
+      for (const event of manifest.events || []) {
+        const row = node("tr"); const eventId = event.id ?? event.event_id;
+        const matches = assets.filter(asset => (event.asset_ids || []).includes(asset.id) || (asset.event_ids || []).includes(eventId));
+        const title = event.title ?? event.name ?? eventId;
+        const availability = {reserved:"预留：玩法尚未接入",current_gameplay:"当前玩法事件",current_physics:"当前物理事件",current_physics_threshold:"当前物理阈值反馈",audition_only:"仅试听，默认关闭"}[event.availability] || event.availability;
+        const remarks = [availability,event.notes ?? event.trigger_contract ?? event.status ?? event.integration_status ?? event.trigger].filter(Boolean).map(asText).join(" · ") || "详见 manifest 事件记录";
+        row.append(node("td",`${title} (${eventId})`),node("td",matches.map(asset => asset.title || asset.id).join(" / ") || "待取得"),node("td",asText(remarks))); ui.events.append(row);
+      }
+      ui.candidates.replaceChildren();
+      for (const candidate of manifest.pending_sources || []) {
+        const item = node("article",null,"candidate");
+        item.append(node("h3",candidate.title ?? candidate.name ?? candidate.id ?? "待取得的真实声音"));
+        item.append(node("p","候选页面 · 未下载 / 未记录取得日期，不属于已取得素材"));
+        const url = candidate.page ?? candidate.url ?? candidate.source?.page;
+        if (url) item.append(sourceLink(url));
+        item.append(node("pre",JSON.stringify(candidate,null,2))); ui.candidates.append(item);
+      }
+      if (!ui.candidates.children.length) ui.candidates.append(node("div","清单中没有待取得来源记录。","empty"));
+    }
+    function setManifest(data,label) {
+      if (!data || !Array.isArray(data.assets)) throw new Error("Manifest must contain an assets array");
+      data.assets.forEach(asset => { if (!asset.id) throw new Error("Asset ID is required"); assetUrl(asset); });
+      if (new Set(data.assets.map(asset => asset.id)).size !== data.assets.length) throw new Error("Asset IDs must be unique");
+      stop(); manifest = data; renderMetadata(); renderAssets();
+      ui["manifest-status"].textContent = label; ui["manifest-status"].classList.remove("status-error");
+    }
+    function playerStatus(message,error=false) { ui["player-status"].textContent = message; ui["player-status"].classList.toggle("status-error",error); }
+    function updatePlaying() {
+      document.querySelectorAll(".card").forEach(card => card.classList.toggle("playing",card.dataset.assetId === current?.id && !audio.paused));
+    }
+    function stop() {
+      playRequest++; audio.pause(); audio.removeAttribute("src"); audio.load(); current = null;
+      ui.loop.checked = false; ui.loop.disabled = true; audio.loop = false; ui.stop.disabled = true;
+      ui.now.textContent = "选择一个声音"; playerStatus("Ready · 未播放"); updatePlaying();
+    }
+    async function playAsset(asset) {
+      // 全页复用单一 Audio 元素；切换素材先中止旧请求，防止多声音叠加。
+      stop(); const request = ++playRequest; current = asset;
+      ui.now.textContent = asset.title || asset.id; ui.stop.disabled = false;
+      ui.loop.disabled = !asset.playback?.looped; ui.loop.checked = Boolean(asset.playback?.looped); audio.loop = ui.loop.checked;
+      audio.src = assetUrl(asset); playerStatus("Loading · 读取本地音频");
+      try { await audio.play(); if (request === playRequest) playerStatus(`Playing · ${asset.playback?.looped ? "循环素材" : "单次反馈"}`); }
+      catch(error) { if (request === playRequest) playerStatus(`Playback failed: ${error.message}`,true); }
+      updatePlaying();
+    }
+    async function reloadManifest() {
+      if (location.protocol === "file:") { ui["manifest-status"].textContent = "file:// 使用随附快照。更新素材后运行 build_audition_index.py，或导入新 manifest；导入不会复制音频，请保持页面与 ui/sfx/ambience 目录相邻。"; return; }
+      try {
+        const response = await fetch("audio_manifest.json",{cache:"no-store"});
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        setManifest(await response.json(),"HTTP manifest 已读取；音频保持本地路径。");
+      } catch(error) { ui["manifest-status"].textContent = `Manifest load failed: ${error.message}`; ui["manifest-status"].classList.add("status-error"); }
+    }
+    ui.stop.addEventListener("click",stop);
+    ui.volume.addEventListener("input",() => { audio.volume = Number(ui.volume.value); ui["volume-value"].textContent = `${Math.round(audio.volume * 100)}%`; });
+    ui.loop.addEventListener("change",() => { audio.loop = Boolean(current?.playback?.looped && ui.loop.checked); if (current && !audio.paused) playerStatus(audio.loop ? "Playing · 循环素材" : "Playing · 单次播放"); });
+    ui.search.addEventListener("input",renderAssets); ui.reload.addEventListener("click",reloadManifest);
+    document.querySelectorAll("[data-category]").forEach(button => button.addEventListener("click",() => {
+      category = button.dataset.category; document.querySelectorAll("[data-category]").forEach(tab => tab.setAttribute("aria-pressed",String(tab === button))); renderAssets();
+    }));
+    ui.import.addEventListener("change",async () => {
+      const file = ui.import.files[0]; if (!file) return;
+      try { setManifest(JSON.parse(await file.text()),`已导入 ${file.name}；素材仍从本页 ui/sfx/ambience 子目录读取。`); }
+      catch(error) { ui["manifest-status"].textContent = `Manifest import failed: ${error.message}`; ui["manifest-status"].classList.add("status-error"); }
+      ui.import.value = "";
+    });
+    audio.addEventListener("play",() => { playerStatus(audio.loop ? "Playing · 循环素材" : "Playing · 单次反馈"); updatePlaying(); });
+    audio.addEventListener("pause",() => { if (current) playerStatus("Paused · 已暂停"); updatePlaying(); });
+    audio.addEventListener("ended",() => { playerStatus("Ended · 播放完成"); updatePlaying(); });
+    audio.addEventListener("error",() => { if (current) playerStatus(`Audio load failed: ${audio.error?.message || "File missing or unsupported codec"}`,true); });
+    document.addEventListener("keydown",event => { if (event.key === "Escape") stop(); });
+    try { setManifest(window.AUDIO_MANIFEST,"本地快照已读取；file:// 可直接逐项播放。刷新快照：python scripts/build_audition_index.py。"); }
+    catch(error) { ui["manifest-status"].textContent = `Snapshot unavailable: ${error.message}. Import audio_manifest.json or run build_audition_index.py.`; ui["manifest-status"].classList.add("status-error"); renderAssets(); }
+    if (location.protocol !== "file:") reloadManifest();
+  </script>
+</body>
+</html>
