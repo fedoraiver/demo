@@ -3,7 +3,7 @@
 use bevy::prelude::*;
 
 use crate::{
-    camera::{ControlsCamera, MouseLookState, OrbitCamera},
+    camera::{CharacterVisual, ControlsCamera, MouseLookState, OrbitCamera},
     gameplay::{
         Character, CharacterIntent, CharacterMotion, Parcel, Pickable, PlayerId, PrototypeConfig,
     },
@@ -67,8 +67,10 @@ fn spawn_scene(
         ))
         .id();
 
+    // 只标记人物的视觉子实体，第一人称隐藏模型时保留角色业务根和独立的持有物。
     commands.spawn((
         Name::new("Placeholder body"),
+        CharacterVisual,
         Mesh3d(meshes.add(Capsule3d::new(0.32, 0.8))),
         MeshMaterial3d(materials.add(Color::srgb(0.12, 0.35, 0.74))),
         Transform::from_xyz(0.0, 0.72, 0.0),
@@ -76,6 +78,7 @@ fn spawn_scene(
     ));
     commands.spawn((
         Name::new("Placeholder head"),
+        CharacterVisual,
         Mesh3d(meshes.add(Sphere::new(0.24))),
         MeshMaterial3d(materials.add(Color::srgb(0.94, 0.77, 0.59))),
         Transform::from_xyz(0.0, 1.65, 0.0),
@@ -84,6 +87,7 @@ fn spawn_scene(
     // 角色的局部 -Z 是前方，标记帮助观察移动后朝向是否正确。
     commands.spawn((
         Name::new("Placeholder facing marker"),
+        CharacterVisual,
         Mesh3d(meshes.add(Cuboid::new(0.16, 0.12, 0.16))),
         MeshMaterial3d(materials.add(Color::srgb(0.99, 0.70, 0.18))),
         Transform::from_xyz(0.0, 1.64, -0.24),
@@ -140,7 +144,7 @@ fn spawn_scene(
         .id();
     commands.entity(controller).insert(ControlsCamera(camera));
     info!(target: "demo::camera", ?camera, ?character, ?controller,
-        position = ?camera_transform.translation, reason = "scene_startup",
+        position = ?camera_transform.translation, perspective = "third_person", reason = "scene_startup",
         "Orbit camera spawned");
 
     info!(
@@ -177,6 +181,8 @@ mod tests {
         app.init_resource::<Assets<Mesh>>()
             .init_resource::<Assets<StandardMaterial>>()
             .init_resource::<PrototypeConfig>()
+            // 复用可见性插件的组件要求，不加载渲染器或窗口后端。
+            .register_required_components::<Mesh3d, Visibility>()
             .add_plugins(EnhancedInputPlugin)
             .add_input_context::<GameplayContext>()
             .add_plugins(PrototypeScenePlugin);
@@ -205,6 +211,7 @@ mod tests {
         for root in [character, parcel] {
             assert!(world.get::<ChildOf>(root).is_none());
             assert!(world.get::<Mesh3d>(root).is_none());
+            assert!(world.get::<CharacterVisual>(root).is_none());
             let children = world.get::<Children>(root).unwrap();
             assert!(!children.is_empty());
             for &child in children {
@@ -212,6 +219,11 @@ mod tests {
                 assert!(world.get::<Mesh3d>(child).is_some());
                 assert!(world.get::<Character>(child).is_none());
                 assert!(world.get::<Parcel>(child).is_none());
+                assert_eq!(
+                    world.get::<CharacterVisual>(child).is_some(),
+                    root == character
+                );
+                assert_eq!(world.get::<Visibility>(child), Some(&Visibility::Inherited));
             }
         }
         let config = world.resource::<PrototypeConfig>();

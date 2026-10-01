@@ -1,4 +1,4 @@
-//! 注册 Enhanced Input 动作；键盘意图按控制者路由，鼠标观察动作由相机模块消费。
+//! 注册 Enhanced Input 动作；键盘意图按控制者路由，观察与视角切换动作由相机模块消费。
 
 use bevy::prelude::*;
 use bevy_enhanced_input::prelude::{Cancel, Press, *};
@@ -11,7 +11,7 @@ pub struct PlayerInputPlugin;
 impl Plugin for PlayerInputPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugins(EnhancedInputPlugin)
-            // 默认在 PreUpdate 评估，先记录意图，再由 FixedUpdate 消费。
+            // 默认在 PreUpdate 评估；玩法请求交给 FixedUpdate，相机动作在同帧更新。
             .add_input_context::<GameplayContext>()
             .add_observer(record_movement)
             .add_observer(clear_completed_movement)
@@ -45,6 +45,11 @@ pub struct JumpAction;
 #[action_output(bool)]
 pub struct InteractAction;
 
+/// 每次按下请求切换第一人称与第三人称，由相机 Observer 接收，再由同帧系统消费。
+#[derive(InputAction)]
+#[action_output(bool)]
+pub struct TogglePerspectiveAction;
+
 /// 为指定玩家与角色创建键盘控制者，返回本次运行的控制者实体。
 ///
 /// 场景只为获得键盘控制权的玩家调用一次；后续手柄或远程控制者单独配置。
@@ -67,7 +72,7 @@ pub fn spawn_keyboard_controller(
         player_id = id,
         ?controller,
         ?character,
-        "Keyboard controller spawned: WASD to move, Space to jump, E to pick up or drop"
+        "Keyboard controller spawned: WASD to move, Space to jump, E to pick up or drop, I to toggle perspective"
     );
     controller
 }
@@ -112,6 +117,16 @@ fn keyboard_context() -> impl Bundle {
                 },
                 Press::default(),
                 bindings![KeyCode::KeyE],
+            ),
+            (
+                Action::<TogglePerspectiveAction>::new(),
+                ActionSettings {
+                    consume_input: true,
+                    require_reset: true,
+                    ..default()
+                },
+                Press::default(),
+                bindings![KeyCode::KeyI],
             ),
         ]),
     )
@@ -393,6 +408,59 @@ mod tests {
         let intent = app.world().get::<CharacterIntent>(character).unwrap();
         assert!(intent.jump_pending);
         assert!(intent.interact_pending);
+    }
+
+    #[test]
+    fn perspective_key_fires_once_per_press() {
+        // 只观察实际键盘绑定产生的动作，验证长按不会重复切换。
+        #[derive(Resource, Default)]
+        struct PerspectivePresses(u32);
+
+        fn count_perspective_presses(
+            _event: On<Fire<TogglePerspectiveAction>>,
+            mut presses: ResMut<PerspectivePresses>,
+        ) {
+            presses.0 += 1;
+        }
+
+        let mut app = App::new();
+        app.add_plugins((MinimalPlugins, InputPlugin, PlayerInputPlugin))
+            .init_resource::<PerspectivePresses>()
+            .add_observer(count_perspective_presses);
+        app.finish();
+        app.cleanup();
+        // 上下文激活时已按住 I，require_reset 应阻止意外切换，直到松开后重新按下。
+        app.world_mut()
+            .resource_mut::<ButtonInput<KeyCode>>()
+            .press(KeyCode::KeyI);
+        app.world_mut().spawn(keyboard_context());
+        for _ in 0..3 {
+            app.update();
+        }
+        assert_eq!(app.world().resource::<PerspectivePresses>().0, 0);
+
+        app.world_mut()
+            .resource_mut::<ButtonInput<KeyCode>>()
+            .release(KeyCode::KeyI);
+        app.update();
+
+        app.world_mut()
+            .resource_mut::<ButtonInput<KeyCode>>()
+            .press(KeyCode::KeyI);
+        for _ in 0..3 {
+            app.update();
+        }
+        assert_eq!(app.world().resource::<PerspectivePresses>().0, 1);
+
+        app.world_mut()
+            .resource_mut::<ButtonInput<KeyCode>>()
+            .release(KeyCode::KeyI);
+        app.update();
+        app.world_mut()
+            .resource_mut::<ButtonInput<KeyCode>>()
+            .press(KeyCode::KeyI);
+        app.update();
+        assert_eq!(app.world().resource::<PerspectivePresses>().0, 2);
     }
 
     #[test]
