@@ -144,7 +144,6 @@ impl Plugin for CameraControlPlugin {
             .register_type::<OrbitCamera>()
             .add_message::<WindowFocused>()
             .add_observer(on_camera_look)
-            .add_systems(Startup, log_pose_synchronization)
             .add_observer(request_perspective_toggle)
             .add_systems(
                 PreUpdate,
@@ -184,14 +183,6 @@ impl Plugin for CameraControlPlugin {
                     .chain(),
             );
     }
-}
-
-/// 将模拟和逐帧姿态同步的调度约定写入统一会话日志，便于排查帧率相关问题。
-fn log_pose_synchronization() {
-    info!(target: "demo::camera", simulation_schedule = "FixedUpdate",
-        presentation_schedule = "Update",
-        presentation_order = "character_facing_held_objects_camera_visibility", reason = "initialization",
-        "Camera pose synchronization configured");
 }
 
 /// 游戏捕获鼠标时检查器仍显示，但不能接收藏在面板上的光标点击或角色操作按键。

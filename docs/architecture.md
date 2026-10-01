@@ -12,13 +12,14 @@
 | [gameplay.rs](../src/gameplay.rs) | 定义玩家身份、角色与快递组件、持有关系和原型参数；固定步执行移动、跳跃、重力与拿放，提供固定步和逐帧共用的持物同步系统。 |
 | [scene.rs](../src/scene.rs) | 启动时生成地面、光照、角色、木箱、控制者和相机；创建可替换的视觉子实体。 |
 | [settings.rs](../src/settings.rs) | 加载、校验玩家设置，失败时保留原文件并回退默认值；在时间更新之前限制渲染循环频率。 |
+| [startup_log.rs](../src/startup_log.rs) | 通过 `StartupLogPlugin` 集中注册四项启动日志，只读玩法配置与固定时间步，并记录姿态同步约定和检查器启用信息。 |
 | [session_log.rs](../src/session_log.rs) | 创建独立会话文件，扩展 Bevy 日志输出，记录会话生命周期和 panic 上下文，并负责刷新。 |
 
 依赖声明和锁定版本分别见 [Cargo.toml](../Cargo.toml) 和 [Cargo.lock](../Cargo.lock)。
 
 ## 世界检查器
 
-`main` 在默认插件之后依次注册 `EguiPlugin` 和 `WorldInspectorPlugin`，检查器复用主窗口与当前相机，在 `EguiPrimaryContextPass` 中展示实体、资源和资产。插件自身的独占世界访问用于通用反射检查，项目不另建世界扫描或数据镜像。`main` 在 `Startup` 注册 `log_world_inspector`，通过统一日志记录 `World inspector enabled`。
+`main` 在默认插件之后依次注册 `EguiPlugin` 和 `WorldInspectorPlugin`，检查器复用主窗口与当前相机，在 `EguiPrimaryContextPass` 中展示实体、资源和资产。插件自身的独占世界访问用于通用反射检查，项目不另建世界扫描或数据镜像。`StartupLogPlugin` 在启动时通过统一日志记录 `World inspector enabled`。
 
 鼠标仍被游戏捕获时，`filter_captured_egui_input` 在 Egui 收集输入后、开始本帧之前过滤面板交互，补齐 Egui 内部残留按键的释放并清除拖拽和文本焦点。这样隐藏光标即使位于面板上也不会误编辑字段或中断玩家输入；Esc 当帧直接放行面板输入，原生键鼠资源仍供 Enhanced Input 使用。
 
@@ -71,7 +72,7 @@
 
 | 阶段 | 数据变换与执行依赖 |
 | --- | --- |
-| `Startup` | `PrototypeScenePlugin` 生成场景；玩法、设置和相机插件分别注册玩法配置、固定时间步与姿态同步日志，`main` 注册检查器启用日志。这些系统之间没有显式顺序依赖。 |
+| `Startup` | `PrototypeScenePlugin` 生成场景；`StartupLogPlugin` 注册玩法配置、固定时间步、姿态同步约定与检查器启用日志。五个系统之间没有显式顺序依赖。 |
 | `First` | `limit_frame_rate.before(TimeSystems)` 在引擎更新时钟前补足帧间剩余时间。 |
 | `PreUpdate` | 更新鼠标捕获，Enhanced Input 评估动作并通过 Observer 更新意图、观察角度或切换请求；`apply_perspective_toggle.after(EnhancedInputSystems::Apply)` 在本帧动作应用完成后切换模式。 |
 | `FixedUpdate` | `sync_character_facing.before(GameplaySystems::Simulate)` 先同步角色朝向，再依次执行移动、跳跃与重力、交互、持物跟随。 |
@@ -122,8 +123,8 @@
 
 写入器在每次写入后刷新；`LogPlugin` 初始化后记录会话开始与版本，设置、场景、输入、相机和玩法模块记录各自关键变化。panic hook 尽力记录错误并同步文件，然后调用原有 hook；`App::run` 返回后记录退出结果并刷新，守护对象释放时再次刷新。panic 日志通过已安装的 subscriber 输出，不能保证覆盖日志插件就绪前的异常或进程被强制终止的情况。
 
-`GameplayPlugin`、`SettingsPlugin` 和 `CameraControlPlugin` 分别在 `Startup` 注册 `log_configuration`、`log_simulation_timestep` 和 `log_pose_synchronization`，`main` 注册 `log_world_inspector`。前两个分别只读 `PrototypeConfig` 和 `Time<Fixed>`，后两个记录当前装配采用的固定约定；这些日志不依赖已生成实体，系统之间没有显式执行顺序。日志 target 分别为 `demo::gameplay`、`demo::settings`、`demo::camera` 和 `demo::inspector`；会话文件和退出刷新仍由 `session_log` 管理。
+`StartupLogPlugin` 集中注册 `log_configuration`、`log_simulation_timestep`、`log_pose_synchronization` 和 `log_world_inspector` 四个 `Startup` 系统；前两个分别只读 `PrototypeConfig` 和 `Time<Fixed>`，后两个记录当前装配采用的固定约定。资源继续由玩法插件和主入口准备，日志插件不创建默认配置，也不添加功能插件。四条日志之间及其与场景生成之间没有显式执行顺序，均不依赖已生成实体。各条日志保留原来的 `demo::gameplay`、`demo::settings`、`demo::camera` 和 `demo::inspector` target，日志过滤与查找路径保持一致；会话文件和退出刷新仍由 `session_log` 管理。
 
-相机插件在 `Startup` 通过统一日志设施记录 `Camera pose synchronization configured`，字段 `simulation_schedule="FixedUpdate"`、`presentation_schedule="Update"` 和 `presentation_order="character_facing_held_objects_camera_visibility"` 说明显示同步的阶段与顺序，便于排查持箱转动或视角切换时的不同步问题。相机初始化记录 `perspective="third_person"`；每次有效切换以 `info` 级别记录 `Camera perspective changed`，包含 `perspective_before`、`perspective_after`、`yaw`、`pitch_before`、`pitch_after` 和 `reason="toggle_perspective_action"`。
+其中 `log_pose_synchronization` 通过统一日志设施记录 `Camera pose synchronization configured`，字段 `simulation_schedule="FixedUpdate"`、`presentation_schedule="Update"` 和 `presentation_order="character_facing_held_objects_camera_visibility"` 说明显示同步的阶段与顺序，便于排查持箱转动或视角切换时的不同步问题。相机初始化记录 `perspective="third_person"`；每次有效切换以 `info` 级别记录 `Camera perspective changed`，包含 `perspective_before`、`perspective_after`、`yaw`、`pitch_before`、`pitch_after` 和 `reason="toggle_perspective_action"`。
 
 连续角度和世界速度按 `debug` 级别最多每 0.5 秒采样一次，离散输入与鼠标捕获变化使用 `info`。日志查找见 [README](../README.md)，过滤设置见 [开发规范](development.md#日志排查)，用户验收步骤见 [验证指南](testing.md)。

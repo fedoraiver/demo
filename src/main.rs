@@ -6,6 +6,7 @@ mod input;
 mod scene;
 mod session_log;
 mod settings;
+mod startup_log;
 
 use bevy::{log::LogPlugin, prelude::*, window::PresentMode};
 use bevy_inspector_egui::{bevy_egui::EguiPlugin, quick::WorldInspectorPlugin};
@@ -14,6 +15,7 @@ use gameplay::GameplayPlugin;
 use input::PlayerInputPlugin;
 use scene::PrototypeScenePlugin;
 use settings::{GameSettings, SettingsPlugin};
+use startup_log::StartupLogPlugin;
 
 fn main() -> AppExit {
     let mut app = App::new();
@@ -59,8 +61,8 @@ fn main() -> AppExit {
             PlayerInputPlugin,
             CameraControlPlugin,
             PrototypeScenePlugin,
+            StartupLogPlugin,
         ))
-        .add_systems(Startup, log_world_inspector)
         .run();
 
     if let Err(error) = session.record_exit(&exit) {
@@ -68,10 +70,4 @@ fn main() -> AppExit {
         return AppExit::error();
     }
     exit
-}
-
-/// 检查器的启用信息沿用统一会话日志，方便核对本次调试环境。
-fn log_world_inspector() {
-    info!(target: "demo::inspector", plugin = "WorldInspectorPlugin", reason = "initialization",
-        "World inspector enabled");
 }
