@@ -14,8 +14,9 @@ use bevy_inspector_egui::bevy_egui::{
 };
 
 use crate::{
+    app_flow::{AppState, PlayState, gameplay_running},
     gameplay::{Character, ControlsCharacter, GameplaySystems, sync_held_objects},
-    input::{GameplayContext, LookAction, TogglePerspectiveAction},
+    input::{GameplayContext, LookAction, ReleasePointerAction, TogglePerspectiveAction},
     settings::GameSettings,
 };
 
@@ -125,9 +126,9 @@ impl OrbitCamera {
 /// 每个本地相机的鼠标捕获状态；恢复捕获的那帧不处理自由光标阶段的增量。
 #[derive(Component, Default)]
 pub struct MouseLookState {
-    active: bool,
-    initialized: bool,
-    skip_motion: bool,
+    pub(crate) active: bool,
+    pub(crate) initialized: bool,
+    pub(crate) skip_motion: bool,
     target_available: bool,
     /// 焦点消息与窗口最终状态共同决定本帧能否切换；检查器另通过输入上下文屏蔽动作。
     focused: bool,
@@ -146,6 +147,7 @@ impl Plugin for CameraControlPlugin {
             .add_message::<WindowFocused>()
             .add_observer(on_camera_look)
             .add_observer(request_perspective_toggle)
+            .add_observer(release_pointer_for_inspector)
             .add_systems(
                 PreUpdate,
                 filter_captured_egui_input
@@ -164,12 +166,16 @@ impl Plugin for CameraControlPlugin {
             .add_systems(
                 PreUpdate,
                 // 所有动作 Observer 完成后再切换，避免 I 与鼠标同帧时依赖动作遍历顺序。
-                apply_perspective_toggle.after(EnhancedInputSystems::Apply),
+                apply_perspective_toggle
+                    .after(EnhancedInputSystems::Apply)
+                    .run_if(gameplay_running),
             )
             .add_systems(
                 FixedUpdate,
                 // 默认 Main 在 PreUpdate 结束时应用动作命令，再进入固定步；此处只规定固定步内顺序。
-                sync_character_facing.before(GameplaySystems::Simulate),
+                sync_character_facing
+                    .before(GameplaySystems::Simulate)
+                    .run_if(gameplay_running),
             )
             .add_systems(
                 RunFixedMainLoop,
@@ -184,8 +190,39 @@ impl Plugin for CameraControlPlugin {
                     .chain()
                     .in_set(RunFixedMainLoopSystems::AfterFixedMainLoop)
                     .after(TransformEasingSystems::Ease)
-                    .before(TransformEasingSystems::UpdateEasingTick),
+                    .before(TransformEasingSystems::UpdateEasingTick)
+                    .run_if(gameplay_running),
             );
+    }
+}
+
+/// 检查器释放使用动作事件；相机捕获系统继续负责下一帧上下文与点击恢复。
+fn release_pointer_for_inspector(
+    event: On<Fire<ReleasePointerAction>>,
+    controllers: Query<&ControlsCamera, With<GameplayContext>>,
+    mut cameras: Query<&mut MouseLookState>,
+    mut windows: Query<(&Window, &mut CursorOptions), With<PrimaryWindow>>,
+) {
+    let Ok(controlled) = controllers.get(event.context) else {
+        return;
+    };
+    let Ok(mut capture) = cameras.get_mut(controlled.0) else {
+        return;
+    };
+    let Ok((window, mut cursor)) = windows.single_mut() else {
+        return;
+    };
+    if !window.focused {
+        return;
+    }
+    let was_captured = capture.active;
+    capture.active = false;
+    capture.skip_motion = true;
+    cursor.visible = true;
+    cursor.grab_mode = CursorGrabMode::None;
+    if was_captured {
+        info!(target: "demo::camera", camera = ?controlled.0, before = "captured", after = "released",
+            reason = "inspector_release_action", "Mouse look capture changed");
     }
 }
 
@@ -266,7 +303,15 @@ fn sync_mouse_capture(
     characters: Query<(), With<Character>>,
     mut cameras: Query<(Entity, &OrbitCamera, &mut MouseLookState)>,
     mut egui_contexts: Query<&mut EguiContext, With<PrimaryEguiContext>>,
+    app_state: Option<Res<State<AppState>>>,
+    play_state: Option<Res<State<PlayState>>>,
 ) {
+    let running = app_state.as_ref().is_none_or(|state| {
+        *state.get() == AppState::InGame
+            && play_state
+                .as_ref()
+                .is_some_and(|state| *state.get() == PlayState::Running)
+    });
     let Ok((window_entity, window, mut cursor)) = windows.single_mut() else {
         focus_events.clear();
         button_events.clear();
@@ -336,7 +381,10 @@ fn sync_mouse_capture(
         state.target_available = available;
         state.focused = window.focused && !lost_focus;
         let before = state.active;
-        let reason = if !available {
+        let reason = if !running {
+            state.active = false;
+            "menu_open"
+        } else if !available {
             state.active = false;
             "camera_binding_unavailable"
         } else if lost_focus || !window.focused {
@@ -372,9 +420,10 @@ fn sync_mouse_capture(
     } else {
         CursorGrabMode::None
     };
-    // Esc 单独释放鼠标仍保留原有键盘操作；操作检查器时才停用整个动作上下文，取消事件会清空移动轴。
+    // 菜单与暂停停用玩法；Esc 的菜单动作由 Enhanced Input 处理，这里的底层判断只负责光标生命周期。
     // ContextActivity 是不可变组件，按实际变化插入，使 require_reset 保留重新启用前的按键释放边界。
-    let gameplay_active = window.focused
+    let gameplay_active = running
+        && window.focused
         && !lost_focus
         && !wants_keyboard
         && !popup_open
@@ -394,6 +443,7 @@ fn sync_mouse_capture(
                 before = **activity, after, reason = if after { "gameplay_input_resumed" }
                     else if !window.focused || lost_focus { "window_focus_lost" }
                     else if !available { "camera_binding_unavailable" }
+                    else if !running { "menu_open" }
                     else { "inspector_input" }, "Gameplay input context activity changed");
         }
     }
@@ -682,6 +732,50 @@ mod tests {
             state,
             window,
         });
+    }
+
+    #[test]
+    fn f3_releases_pointer_and_click_recapture_skips_free_cursor_motion() {
+        // 使用实际 F3 绑定验证调试释放；窗口仍只是 ECS 数据，不创建桌面窗口。
+        let (mut app, window, _, camera, _) = test_app();
+        let yaw = app.world().get::<OrbitCamera>(camera).unwrap().yaw;
+        app.world_mut().write_message(KeyboardInput {
+            key_code: KeyCode::F3,
+            logical_key: Key::F3,
+            state: ButtonState::Pressed,
+            text: None,
+            repeat: false,
+            window,
+        });
+        app.update();
+        assert!(!app.world().get::<MouseLookState>(camera).unwrap().active);
+        assert!(app.world().get::<CursorOptions>(window).unwrap().visible);
+        assert_eq!(
+            app.world().get::<CursorOptions>(window).unwrap().grab_mode,
+            CursorGrabMode::None
+        );
+        for _ in 0..3 {
+            mouse_motion(&mut app, Vec2::new(50.0, 20.0));
+            app.update();
+            assert_eq!(app.world().get::<OrbitCamera>(camera).unwrap().yaw, yaw);
+        }
+        app.world_mut().write_message(KeyboardInput {
+            key_code: KeyCode::F3,
+            logical_key: Key::F3,
+            state: ButtonState::Released,
+            text: None,
+            repeat: false,
+            window,
+        });
+        mouse_button(&mut app, window, ButtonState::Pressed);
+        mouse_motion(&mut app, Vec2::new(200.0, 100.0));
+        app.update();
+        assert!(app.world().get::<MouseLookState>(camera).unwrap().active);
+        assert_eq!(app.world().get::<OrbitCamera>(camera).unwrap().yaw, yaw);
+        mouse_button(&mut app, window, ButtonState::Released);
+        mouse_motion(&mut app, Vec2::new(10.0, 0.0));
+        app.update();
+        assert_ne!(app.world().get::<OrbitCamera>(camera).unwrap().yaw, yaw);
     }
 
     fn escape(app: &mut App, window: Entity, state: ButtonState) {

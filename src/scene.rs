@@ -4,6 +4,7 @@ use avian3d::prelude::{Collider, RigidBody};
 use bevy::prelude::*;
 
 use crate::{
+    app_flow::AppState,
     camera::{CharacterVisual, ControlsCamera, MouseLookState, OrbitCamera},
     gameplay::{
         Character, CharacterIntent, CharacterMotion, Parcel, Pickable, PlayerId, PrototypeConfig,
@@ -12,7 +13,7 @@ use crate::{
     physics::{character_body, parcel_body, world_collision_layers},
 };
 
-/// 生成带碰撞的平地与墙体、占位角色、木箱和与控制者关联的自由视角镜头。
+/// 进入游戏会话时生成原型，返回主菜单统一清理业务根与视觉子树。
 pub struct PrototypeScenePlugin;
 
 impl Plugin for PrototypeScenePlugin {
@@ -23,7 +24,7 @@ impl Plugin for PrototypeScenePlugin {
                 brightness: 250.0,
                 ..default()
             })
-            .add_systems(Startup, spawn_scene);
+            .add_systems(OnEnter(AppState::InGame), spawn_scene);
     }
 }
 
@@ -40,6 +41,7 @@ fn spawn_scene(
     let ground = commands
         .spawn((
             Name::new("Prototype ground"),
+            DespawnOnExit(AppState::InGame),
             RigidBody::Static,
             Collider::cuboid(
                 ground_dimensions.x,
@@ -63,6 +65,7 @@ fn spawn_scene(
     let wall = commands
         .spawn((
             Name::new("Prototype collision wall"),
+            DespawnOnExit(AppState::InGame),
             RigidBody::Static,
             Collider::cuboid(wall_dimensions.x, wall_dimensions.y, wall_dimensions.z),
             world_collision_layers(),
@@ -85,6 +88,7 @@ fn spawn_scene(
 
     commands.spawn((
         Name::new("Prototype daylight"),
+        DespawnOnExit(AppState::InGame),
         DirectionalLight {
             illuminance: 12_000.0,
             shadow_maps_enabled: true,
@@ -96,6 +100,7 @@ fn spawn_scene(
     let character = commands
         .spawn((
             Name::new("Prototype character"),
+            DespawnOnExit(AppState::InGame),
             Character,
             CharacterIntent::default(),
             CharacterMotion { grounded: true },
@@ -134,10 +139,14 @@ fn spawn_scene(
 
     let player_id = PlayerId(1);
     let controller = spawn_keyboard_controller(&mut commands, player_id, character);
+    commands
+        .entity(controller)
+        .insert(DespawnOnExit(AppState::InGame));
     let parcel_position = Vec3::new(0.0, config.ground_y + config.parcel_half_height, -1.3);
     let parcel = commands
         .spawn((
             Name::new("Prototype parcel"),
+            DespawnOnExit(AppState::InGame),
             Parcel,
             Pickable,
             parcel_body(&config),
@@ -175,6 +184,9 @@ fn spawn_scene(
     let camera = commands
         .spawn((
             Name::new("Prototype orbit camera"),
+            DespawnOnExit(AppState::InGame),
+            IsDefaultUiCamera,
+            bevy_inspector_egui::bevy_egui::PrimaryEguiContext,
             Camera3d::default(),
             orbit,
             MouseLookState::default(),
@@ -215,7 +227,7 @@ mod tests {
     use crate::{gameplay::ControlsCharacter, input::GameplayContext};
 
     #[test]
-    fn startup_assembles_independent_roots_with_replaceable_visuals() {
+    fn game_entry_assembles_independent_roots_with_replaceable_visuals() {
         // 只注册资源与输入上下文，然后直接运行场景调度，不加载窗口或渲染插件。
         let mut app = App::new();
         app.init_resource::<Assets<Mesh>>()
@@ -225,7 +237,9 @@ mod tests {
             .register_required_components::<Mesh3d, Visibility>()
             .add_plugins(EnhancedInputPlugin)
             .add_input_context::<GameplayContext>()
-            .add_plugins(PrototypeScenePlugin);
+            .add_plugins(PrototypeScenePlugin)
+            // 装配回归直接执行构造系统；生命周期由 app_flow 的真实状态转换回归覆盖。
+            .add_systems(Startup, spawn_scene);
         app.finish();
         app.cleanup();
         app.world_mut().run_schedule(Startup);

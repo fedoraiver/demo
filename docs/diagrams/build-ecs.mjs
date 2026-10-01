@@ -12,6 +12,13 @@ const systems = Object.fromEntries(model.systems.map(s => [s.id, s]));
 const entities = Object.fromEntries(model.entities.map(e => [e.id, e]));
 const registry = {};
 const views = [];
+// 共享资源提前进入注册表，便于不同视图复用同一份点击详情。
+model.resources.forEach(resource => registry[resource.id] = resource);
+Object.assign(registry, systems);
+model.entities.forEach(entity=>{
+  registry[`entity-${entity.id}`]={...entity,kind:'Entity'};
+  entity.components.forEach(component=>registry[component.id]={...component,kind:'Component',owner:entity.name});
+});
 function text(x, y, value, cls = 'body', anchor = 'start') { return `<text x="${x}" y="${y}" class="${cls}" text-anchor="${anchor}">${esc(value)}</text>`; }
 function lines(x, y, values, cls = 'body', step = 25) { return values.map((s, i) => text(x, y + i * step, s, cls)).join(''); }
 function fitted(x, y, value, width, cls = 'body') {
@@ -40,6 +47,23 @@ const brief = {
  transform_propagate:'根 Transform → 子 GlobalTransform',render:'提取 ECS 数据，准备并绘制画面',observe_move:'路由到角色，更新持续移动轴',observe_complete:'移动完成，将轴归零',observe_cancel:'移动取消，将轴归零',observe_jump:'路由到角色，设置跳跃请求',observe_interact:'路由到角色，设置交互请求',observe_look:'有效捕获时更新当前模式角度',observe_perspective:'记录请求来源，稍后统一切换'
 };
 const displayNames = { time_update:'TimeSystems',input_update:'InputSystems',enhanced_prepare:'Enhanced Input · Prepare',enhanced_evaluate:'Enhanced Input · Update',input_apply:'Enhanced Input · Apply',held_apply:'ApplyDeferred · 持有关系',capture_apply:'ApplyDeferred · 上下文',inspector_pass:'World Inspector · UI Pass',transform_propagate:'Transform · Propagate',render:'RenderApp · 渲染概览' };
+Object.assign(brief, {
+  flow_enter_menu: 'MainMenu：展示主菜单并恢复展示动画时间',
+  flow_pause: 'Paused：保存返回来源，展示暂停菜单',
+  flow_suspend: '停物理，暂停另停虚拟时间；清意图并释放光标',
+  flow_resume: 'Running：恢复时间，重新捕获并跳过鼠标位移',
+  menu_spawn_controller: '创建菜单输入控制者及 Enhanced Input 绑定',
+  menu_sync_context: '窗口焦点 → MenuContext；Hidden 仍保留 Esc',
+  menu_handle_requests: '消费菜单消息 → 页面 / 设置 / NextState',
+  menu_rebuild: '页面变化 → BSN 重建 UI 实体树',
+  menu_pointer: '真实鼠标移动切输入来源；进入 / 离开同步悬停',
+  menu_style: 'Interaction / 导航焦点 → 按钮纸色或黄色',
+  menu_description: '当前设置焦点 → 右侧解释文字',
+  menu_scroll_focus: '键盘 / 手柄焦点 → 可见滚动范围',
+  menu_asset_failures: '资产加载失败 → 英文会话日志',
+  menu_backdrop_spawn: '真实 GLB 展台 / 独立菜单相机；无地图碰撞',
+  observe_release_pointer: 'F3：释放光标，保持 Running 和检查器',
+});
 function system(x, y, w, id, extraRows = null, height = 112) {
   const s = systems[id]; if (!s) throw new Error(`Missing system ${id}`);
   registry[id] = s;
@@ -63,16 +87,16 @@ function save(id, label, width, height, body, summary) { const content = svg(lab
 // 总览：保留最重要的执行路径和数据路径，完整函数在细节视图展开。
 let b = text(36, 78, '先沿粗箭头看执行顺序，再沿 R / W 看数据；点击卡片查看源码与完整访问声明。', 'note');
 registry['app-main'] = { name:'main / App',kind:'App',description:'创建 App 与会话日志，配置默认插件，加载设置，装配功能插件后进入主循环。退出时记录结果并刷新日志。',notes:model.startup_notes,source:{path:'src/main.rs',line:17} };
-b += `<g class="node entity" ${register('app-main',registry['app-main'])}>${frame(30, 102, 1500, 170, '«App» main：装配应用与共享 World', 'Plugin 负责注册；下方位置不代表插件内部系统的执行先后。')}</g>`;
-const plugins = ['DefaultPlugins', 'EguiPlugin', 'WorldInspectorPlugin', 'SettingsPlugin', 'GameplayPlugin', 'PlayerInputPlugin', 'CameraControlPlugin', 'PrototypeScenePlugin', 'StartupLogPlugin'];
-const pluginNotes = ['引擎输入、窗口、时间、变换、渲染与日志。','准备 Egui 上下文与界面绘制。','通过反射检查 ECS；复用当前窗口与相机。','设置资源与限帧。','玩法资源、反射类型和固定模拟链。','输入上下文、动作与角色意图 Observer。','相机 Observer、捕获、视角与姿态同步。','共享场景资源与 Startup 场景生成。','集中注册四项只读启动日志，沿用现有日志 target。'];
+b += `<g class="node entity" ${register('app-main',registry['app-main'])}>${frame(30, 102, 1500, 222, '«App» main：装配应用与共享 World', 'Plugin 负责注册；下方位置不代表插件内部系统的执行先后。')}</g>`;
+const plugins = ['DefaultPlugins', 'EguiPlugin', 'WorldInspectorPlugin', 'SettingsPlugin', 'GameplayPlugin', 'PlayerInputPlugin', 'CameraControlPlugin', 'PrototypeScenePlugin', 'StartupLogPlugin', 'AppFlowPlugin', 'GameUiPlugin'];
+const pluginNotes = ['引擎输入、窗口、时间、变换、渲染与日志。','准备 Egui 上下文与界面绘制。','通过反射检查 ECS；仅 Running 显示。','设置加载、草稿校验、保存与限帧。','玩法资源、反射类型和固定模拟链。','输入上下文、动作与角色意图 Observer。','相机 Observer、捕获、视角与姿态同步。','共享场景资源；OnEnter(InGame) 生成玩法。','集中注册四项只读启动日志，沿用现有日志 target。','主菜单 / 游戏 / 暂停生命周期与时间门控。','BSN 页面、菜单输入、设置草稿与展示资产。'];
 const mainLines = fs.readFileSync(path.join(dir, '../../src/main.rs'), 'utf8').split('\n');
 registry['app-main'].source.line = mainLines.findIndex(l=>l.startsWith('fn main('))+1;
-// 九个插件分两行展示，保留标题可读宽度；后续总览内容整体下移以避开新增行。
+// 插件分三行展示；原物理与相机内容整体下移，保留原有走线。
 plugins.forEach((name, i) => { const id = `plugin-${name}`; const line = mainLines.findIndex(l => l.trim() === name || l.trim().startsWith(name + ',') || l.trim().startsWith(name + '::')) + 1; registry[id] = { id, name, kind: 'Plugin', description: pluginNotes[i], notes: ['注册顺序不等于系统执行顺序。', ...(name.includes('Egui') || name.includes('Inspector') ? ['EguiPlugin 必须先于 WorldInspectorPlugin 构建。'] : [])], source: { path: 'src/main.rs', line } }; b += compact(44 + (i % 5) * 296, 165 + Math.floor(i / 5) * 52, 284, 42, id, name, 'plugin'); });
-b += '<g transform="translate(0 52)">';
-b += frame(30, 240, 1500, 108, '«Schedule» Startup · 启动一次', '场景插件生成场景，启动日志插件注册四项日志；五个系统无彼此顺序约束，阶段结束应用场景命令。');
-['startup_spawn', 'startup_config', 'startup_timestep', 'startup_pose', 'startup_inspector'].forEach((id, i) => { registry[id] = systems[id]; b += compact(48 + i * 293, 303, 274, 32, id, systems[id].name, 'system'); });
+b += '<g transform="translate(0 104)">';
+b += frame(30, 240, 1500, 108, '«Schedule» Startup · 启动一次', '菜单输入控制者与四项只读启动日志无彼此顺序约束；玩法场景改由 OnEnter(InGame) 生成。');
+['menu_spawn_controller', 'startup_config', 'startup_timestep', 'startup_pose', 'startup_inspector'].forEach((id, i) => { registry[id] = systems[id]; b += compact(48 + i * 293, 303, 274, 32, id, systems[id].name, 'system'); });
 const phases = [
   { x: 30, w: 330, name: 'First', note: '每个渲染帧', rows: ['限帧 → 时间更新', '默认上限 60 FPS；最低 60', 'Local：帧间计时'] },
   { x: 395, w: 330, name: 'PreUpdate', note: '输入与界面准备', rows: ['捕获 / 上下文 → 动作评估', '事件 → 意图 / 观察角度', '本帧消费视角切换请求'] },
@@ -109,7 +133,23 @@ b += '</g>';
 // GameplayPlugin 内部安装物理插件，不把内部注册伪装成 main 的额外插件。
 const nestedPlugins = [['DemoPhysicsPlugin','src/gameplay.rs','add_plugins(DemoPhysicsPlugin)'],['PhysicsPlugins::default()','src/physics.rs','add_plugins(PhysicsPlugins::default())']];
 nestedPlugins.forEach(([name,file,needle],i)=>{const id=`plugin-physics-${i}`;registry[id]={name,kind:'Plugin',description:i?'Avian 默认 FixedPostUpdate 求解及物理插值插件。':'GameplayPlugin 内部安装，注册重力同步和碰撞日志。',notes:['内部插件注册关系；不表示系统执行顺序。'],source:{path:file,line:fs.readFileSync(path.join(dir,'../..',file),'utf8').split('\n').findIndex(line=>line.includes(needle))+1}};b+=card(1575+i*505,112,475,135,id,name,['GameplayPlugin → DemoPhysicsPlugin → Avian'],'engine','small');});
-save('overview', '当前 App · ECS 总览', 2590, 987, b, '输入 → 固定控制力 → Avian 求解 → 插值 → 本帧显示 → 世界变换与渲染。');
+// 状态门控单独成区，避免将暂停误画成销毁并重建玩法场景。
+b += frame(30, 1060, 2520, 410, 'AppFlow · 状态、场景与输入门控', 'AppState 控制场景生命周期；PlayState 是 InGame 内的子状态；MenuState 保存页面与返回来源。');
+b += card(55, 1145, 700, 160, 'resource.AppState', 'MainMenu', ['OnEnter：show_main_menu → suspend_input', '生成菜单 GLB 展台；玩法输入 / 物理停用', 'Start Game → InGame，才创建玩法场景'], 'resource', 'small');
+b += card(935, 1145, 700, 160, 'resource.PlayState', 'InGame / Running', ['OnEnter(InGame)：spawn_scene，业务根标记生命周期', 'OnEnter(Running)：恢复时间与光标捕获', 'GameplayContext、固定玩法、Inspector 有效'], 'resource', 'small');
+b += card(1815, 1145, 700, 160, 'state-paused', 'InGame / Paused', ['OnEnter：show_pause_menu → suspend_input', 'Time<Virtual> / Time<Physics> 暂停并清本帧 delta', '保留业务实体；释放光标，隐藏 Inspector'], 'engine', 'small');
+b += edge([[755,1225],[935,1225]], 'Start Game', 'order', [845,1225], ['resource.AppState','resource.PlayState','startup_spawn']);
+b += edge([[1635,1225],[1815,1225]], 'Esc', 'trigger', [1725,1225], ['resource.PlayState','state-paused','flow_pause']);
+b += edge([[2040,1305],[2040,1345],[1285,1345],[1285,1305]], 'Resume：保留原场景', 'order', [1620,1345], ['state-paused','flow_resume','resource.PlayState']);
+b += edge([[2320,1305],[2320,1415],[405,1415],[405,1305]], 'Return to Main Menu：退出 InGame 时清理业务根', 'order', [1285,1415], ['state-paused','resource.AppState']);
+b += frame(30, 1510, 2520, 310, 'Update · BSN 页面与鼠标 / 导航状态', 'UI 实体树更新后才处理指针，再更新显示；Style 组内系统不虚构串行顺序。');
+b += system(55, 1595, 700, 'menu_rebuild', ['MenuState / UiTheme → UI 实体树', '自动宽度 Text 保留自然测量'], 130);
+b += system(935, 1595, 700, 'menu_pointer', ['真实鼠标移动（含空白）→ Pointer', '进入高亮、离开恢复；按钮点击排入消息'], 130);
+b += system(1815, 1595, 700, 'menu_style', ['鼠标模式按 Interaction；导航模式按 MenuFocus', 'Apply / 当前 Tab 无常驻黄色'], 130);
+b += edge([[755,1660],[935,1660]], 'Build →', 'order', [845,1660], ['menu_rebuild','menu_pointer']);
+b += edge([[1635,1660],[1815,1660]], 'Pointer → Style', 'order', [1725,1660], ['menu_pointer','menu_style']);
+b += text(55, 1770, 'MenuInputSource：Pointer / Navigation；键盘或手柄实际导航后显示焦点。设置只在 Apply 成功后热生效并保存，取消丢弃草稿。', 'note');
+save('overview', '当前 App · ECS 总览', 2590, 1855, b, '主菜单 → InGame / Running ↔ Paused；玩法物理与相机链保留，菜单按 Build → Pointer → Style 更新。');
 
 // 时序视图：每个注册实例单独呈现，R/W 在卡片内列摘要，点击显示完整读写项。
 b = text(36, 80, '系统卡片中的 R / W 是访问摘要；同一函数在不同 Schedule 中有两个注册实例。', 'note');
@@ -133,7 +173,7 @@ columns.forEach(col => { const nodeWidth = col.nodeWidth ?? col.w - 30, centerX 
 [['input_update','InputSystems'],['egui_input','Egui · ProcessInput'],['filter_egui_input','filter_captured_egui_input'],['egui_begin','Egui · BeginPass（集合边界）']].forEach(([id,label],i)=>{registry[id]=systems[id];b+=compact(390,193+i*50,390,28,id,label,systems[id].kind);b+=edge([[585,221+i*50],[585,i===3?400:243+i*50]],'','order',null,[id,i===3?'mouse_capture':['egui_input','filter_egui_input','egui_begin'][i]]);});
 const preNodes = [ ['mouse_capture', 400, 130], ['capture_apply', 555, 96], ['enhanced_prepare', 676, 96], ['enhanced_evaluate', 797, 96], ['input_apply', 918, 106], ['event_apply', 1049, 106], ['perspective_apply', 1180, 130] ];
 systems.event_apply = { id:'event_apply', name:'ApplyDeferred · 动作事件', kind:'sync', phase:'PreUpdate', description:'应用 Enhanced Input 排入的 trigger 命令，此时触发匹配 Observer。', reads:[], writes:['character.CharacterIntent','camera.OrbitCamera'], filters:[], events:model.observers.map(o=>o.event), notes:['这是命令同步点，不是 EnhancedInputSystems::Apply。','apply_perspective_toggle.after(EnhancedInputSystems::Apply) 建立依赖；常规调度在需要时自动应用延迟命令。','Observer 之间没有注册顺序所保证的串行依赖。'], source:systems.perspective_apply.source };
-brief.event_apply = '应用 trigger 命令 → 七个 Observer';
+brief.event_apply = '应用 trigger 命令 → 匹配动作 Observer';
 brief.capture_apply = '应用 ContextActivity 替换';
 preNodes.forEach(([id,y,h],i)=>{b += system(390,y,390,id,h===130?accessRows(id):[brief[id] || systems[id].description],h);if(i){const previous=preNodes[i-1];b+=edge([[585,previous[1]+previous[2]],[585,y]],'','order',null,[previous[0],id]);}});
 b += text(399, 1339, 'UI 捕获停用 GameplayContext；', 'small');
@@ -158,18 +198,47 @@ b += system(1320, 1170, 380, 'collision_log', accessRows('collision_log'), 130);
 b += edge([[1700,415],[1723,415],[1723,1135],[1510,1135],[1510,1170]],'仅 after(StepSimulation)','order',[1510,1100],['physics_step','collision_log']);
 b += text(1324, 1350, '碰撞日志与 Writeback 后观察无全序', 'small');
 b += system(2575, 193, 320, 'transform_propagate', ['R 根 Transform / ChildOf', 'W GlobalTransform（另有可见性传播）'], 118);
-b += system(2575, 365, 320, 'inspector_pass', ['反射读取 / 编辑实体、资源与资产', 'multipass：界面可在此多轮处理'], 118);
+b += system(2575, 365, 320, 'inspector_pass', ['仅 InGame / Running：反射读取 / 编辑', 'multipass：界面可在此多轮处理'], 118);
 b += text(2584, 340, '相关分支并列；彼此未指定全序', 'small');
 // 两条渲染分支使用独立入口，右侧留出走线空间，避免沿卡片边框或合并箭头。
 b += edge([[2895, 252], [2928, 252], [2928, 566], [2815, 566], [2815, 610]], '', 'order', null, ['transform_propagate','render']);
 b += edge([[2735, 483], [2735, 610]], '', 'order', null, ['inspector_pass','render']);
 b += system(2575, 610, 320, 'render', ['Extract → Prepare → Render', 'RenderApp 是子应用，不是单个系统'], 118);
 columns.slice(0, -1).forEach((col, i) => b += edge([[col.x + col.w, 144], [columns[i + 1].x, 144]]));
-b += text(43, 2140, 'Startup：场景生成与四项日志无彼此顺序；物理主体和碰撞体位于业务根实体。', 'note');
+b += text(43, 2140, 'Startup：菜单控制者与四项日志无彼此顺序；OnEnter(InGame) 才生成物理主体与碰撞体。', 'note');
 b += text(43, 2174, 'Commands 同步点用琥珀色框；碰撞日志与回写后接地/采样只有各自明确的依赖。', 'note');
 b += text(43, 2208, '固定循环每帧 0～N 次；AfterFixedMainLoop 的 Ease → 显示链 → UpdateEasingTick 每帧执行。', 'note');
 b += text(43, 2242, 'HeldTarget 仅呈现检查；物理施力直接读 Position，不读取插值目标，不把箱体直接搬到手前。', 'note');
-save('schedules', '调度泳道 · 系统与数据访问', 2990, 2285, b, '固定控制 → 物理解算 → 插值后显示；点击查看完整访问，框架集合为概览。');
+// 新增菜单泳道放在原图下方；不改变旧物理支线的空间与箭头。
+b += frame(30, 2330, 680, 535, 'Startup · 一次注册', '以下系统彼此无串行约束；场景生成不在 Startup。');
+['menu_spawn_controller','startup_config','startup_timestep','startup_pose','startup_inspector'].forEach((id,i)=>{
+  b += system(50 + i % 2 * 330, 2415 + Math.floor(i / 2) * 150, 310, id, [brief[id] || systems[id].description], 110);
+});
+b += frame(750, 2330, 680, 535, 'PreUpdate · 菜单上下文与消息', 'MenuContext 按窗口焦点启用；Hidden 时保留 Back 动作处理暂停。');
+b += system(770, 2415, 640, 'menu_sync_context', accessRows('menu_sync_context'), 130);
+b += system(770, 2605, 640, 'menu_handle_requests', accessRows('menu_handle_requests'), 130);
+b += text(777, 2580, '上下文同步在 Prepare 前；消息消费在动作 Apply 后。', 'small');
+b += text(777, 2780, 'UiRequest → 页面 / 设置草稿 / NextState / 退出请求。', 'small');
+b += frame(1470, 2330, 1480, 535, 'StateTransition · 生命周期', 'OnEnter(MainMenu / Paused) 的页面切换在 suspend_input 前；其余不同入口不组成串行链。');
+['flow_enter_menu','flow_pause','flow_suspend','flow_resume','startup_spawn','menu_backdrop_spawn'].forEach((id,i)=>{
+  b += system(1490 + i % 3 * 485, 2415 + Math.floor(i / 3) * 200, 455, id, [brief[id] || systems[id].description, systems[id].phase], 130);
+});
+b += text(1495, 2790, '退出 InGame：业务根与子实体清理；退出 MainMenu：菜单相机与展台清理。暂停不清理玩法实体。', 'small');
+b += frame(30, 2910, 2920, 560, 'Update · Build → Pointer → Style', 'UiSystems 的显式阶段顺序；Style 内样式、说明与滚动独立运行，资产失败记录为独立分支。');
+b += system(55, 2995, 790, 'menu_rebuild', accessRows('menu_rebuild'), 130);
+b += system(1045, 2995, 790, 'menu_pointer', accessRows('menu_pointer'), 130);
+b += card(2035, 2995, 890, 130, 'ui-style-set', 'UiSystems::Style', ['在 Pointer 之后执行三个显示系统', '组内没有彼此先后约束；样式不改变设置草稿'], 'engine', 'small');
+b += edge([[845,3060],[1045,3060]], '应用 UI 命令', 'order', [945,3060], ['menu_rebuild','menu_pointer']);
+b += edge([[1835,3060],[2035,3060]], 'Pointer → Style', 'order', [1935,3060], ['menu_pointer','ui-style-set']);
+['menu_style','menu_description','menu_scroll_focus'].forEach((id,i)=>{
+  b += system(2035 + i * 300, 3230, 290, id, [brief[id]], 115);
+  const targetX = 2180 + i * 300;
+  b += edge([[targetX,3125],[targetX,3230]], '', 'registration', null, ['ui-style-set',id]);
+});
+b += system(55, 3230, 790, 'menu_asset_failures', accessRows('menu_asset_failures'), 130);
+b += card(1045, 3230, 790, 130, 'resource.MenuInputSource', '菜单输入来源', ['Navigation：实际键盘 / 手柄导航显示焦点', 'Pointer：真实鼠标移动（含空白）恢复悬停规则', '进入高亮 / 离开纸色；Apply / 当前 Tab 无常驻黄'], 'resource', 'small');
+b += text(55, 3425, '门控：MainMenu / Paused 停用玩法上下文并冻结物理；Running 恢复输入，菜单与暂停隐藏 Inspector。F3 仅释放指针供检查器编辑。', 'note');
+save('schedules', '调度泳道 · 系统与数据访问', 2990, 3505, b, '原固定模拟与相机链保留；下方展开菜单输入、状态入口、BSN 页面与样式顺序。');
 
 // 关系视图：矩形容器表达实体，内嵌组件；普通 Entity 引用与 Bevy 关系单独标注。
 b = text(36, 80, '按实体角色汇总关键组件，可选组件并非始终存在；虚线＝普通引用，紫实线＝Bevy 关系。', 'note');
@@ -215,7 +284,43 @@ model.resources.forEach(r => registry[r.id] = r);
 ['resource.GameSettings','resource.PrototypeConfig','resource.TimeFixed','resource.Gravity','resource.ColliderTrees'].forEach((id,i)=>{const r=registry[id];b+=compact(554,1370+i*33,332,28,id,r.name,'resource');});
 b += text(557, 1560, '预留集合 / 采样计时：Local', 'small');
 b += text(557, 1588, 'LastEasingTick：插值共享 Resource', 'small');
-save('relationships', '实体 · 组件归属与关系', 1450, 2175, b, '真实物理状态、插值呈现和持握目标分离；点击组件查看字段及源码入口。');
+// 菜单实体独立列在右侧，省略 BSN 中间布局容器但保留完整组件详情。
+const menuEntityBoxes = [
+  { id:'menu_controller', x:1500, y:112, w:430, h:350 }, { id:'menu_root', x:2030, y:112, w:430, h:350 },
+  { id:'menu_scroll', x:1500, y:560, w:430, h:430 }, { id:'menu_button', x:2030, y:560, w:430, h:430 },
+  { id:'menu_backdrop', x:1500, y:1100, w:430, h:380 }, { id:'menu_camera', x:2030, y:1100, w:430, h:380 },
+  { id:'menu_model', x:1500, y:1630, w:430, h:430 }, { id:'menu_text', x:2030, y:1630, w:430, h:430 },
+];
+menuEntityBoxes.forEach(box=>{
+  const entity = entities[box.id];
+  if (!entity) throw new Error(`Missing menu entity ${box.id}`);
+  const id = `entity-${entity.id}`;
+  registry[id] = {...entity,kind:'Entity'};
+  b += `<g class="node entity" ${register(id,registry[id])}>${frame(box.x,box.y,box.w,box.h,`«Entity» ${entity.name}`,`当前数量：${entity.count}`,colors.entity)}</g>`;
+  entity.components.forEach(component=>registry[component.id]={...component,kind:'Component',owner:entity.name});
+  const visible = entity.components.slice(0,Math.floor((box.h-110)/34));
+  visible.forEach((component,i)=>b+=compact(box.x+15,box.y+71+i*34,box.w-30,30,component.id,component.name));
+  b += text(box.x+16,box.y+box.h-12,`完整清单：${entity.components.length} 项组件 · 点击实体查看`,'small');
+});
+b += edge([[1715,560],[1715,515],[2245,515]], '', 'relationship', null, ['entity-menu_scroll','entity-menu_root'], false);
+b += edge([[2245,560],[2245,515]], '', 'relationship', null, ['entity-menu_button','entity-menu_root'], false);
+b += edge([[2245,515],[2245,462]], '', 'relationship', null, ['entity-menu_scroll','entity-menu_button','entity-menu_root']);
+b += text(1735, 499, 'Children / ChildOf 子树（中间容器省略）', 'small');
+b += text(1520, 1030, '菜单控制者复用 ActionOf / BindingOf 模式；Coming Soon 装饰不含 MenuButton。', 'small');
+b += text(1520, 1060, '文字叶节点使用自然宽度；说明标题 / 正文由焦点系统更新。', 'small');
+b += edge([[2030,1250],[1930,1250]], 'ChildOf', 'relationship', [1980,1250], ['entity-menu_camera','entity-menu_backdrop']);
+b += edge([[1715,1630],[1715,1480]], 'ChildOf 子树', 'relationship', [1715,1555], ['entity-menu_model','entity-menu_backdrop']);
+b += text(2050, 1530, 'MainMenu 退出清理舞台与相机；', 'small');
+b += text(2050, 1557, '页面重建仅清 MenuRoot 的 UI 子树。', 'small');
+b += frame(1500, 2160, 960, 405, '«Resource / Message» 菜单与生命周期共享数据', '草稿与已应用设置分开；NextState 决定后续状态入口；GLB 展示资产没有物理碰撞地图。');
+const menuResourceIds = ['resource.AppState','resource.PlayState','resource.MenuState','resource.MenuFocus','resource.MenuInputSource','resource.SettingsDraft','resource.SettingsFile','resource.UiTheme','resource.UiRequestMessages','resource.TimePhysics','resource.AssetServer','resource.AssetsAnimationGraph','resource.AssetLoadFailedMessages'];
+menuResourceIds.forEach((id,i)=>{
+  const resource = registry[id];
+  if (!resource) throw new Error(`Missing menu resource ${id}`);
+  b += compact(1520+i%2*465,2245+Math.floor(i/2)*40,440,32,id,resource.name,'resource');
+});
+b += text(1520, 2540, 'Pause：保留 InGame 世界，冻结时间；Return to Main Menu：DespawnOnExit(InGame) 清理业务根。', 'small');
+save('relationships', '实体 · 组件归属与关系', 2490, 2600, b, '左侧保留物理与持握关系；右侧展开菜单输入、BSN 子树、文字、展示舞台及共享资源。');
 
 // 通信视图：输入动作事件、全局 Observer 与窗口缓冲消息保持不同路线。
 b = text(36, 80, `${model.observers.length} 个 Observer 由匹配事件触发；它们不是按 add_observer 的注册顺序组成流水线。`, 'note');
@@ -241,9 +346,9 @@ const route = ['event.context → 控制者','ControlsCharacter → 角色','↓
 b += route.map((r,i)=>fitted(1257,392+i*38,r,216,'small')).join('');
 b += text(45, 1273, '移动轴持续保留至 Complete / Cancel；跳跃与交互的同类未消费请求会合并为一次。', 'note');
 b += frame(30, 1320, 1460, 280, '窗口通信 · 缓冲 Message、输入 Resource 与 Egui 上下文', '窗口消息有独立读取游标；UI 占用通过输入上下文停用，避免与玩法动作重复触发。');
-registry['window-messages'] = { name: 'WindowFocused / MouseButtonInput', kind: 'Message', description: 'Bevy 的窗口消息缓冲，由 sync_mouse_capture 的 MessageReader 读取。', notes:['缓冲不是永久业务队列。','Esc 来自 ButtonInput<KeyCode>；当前 Window 光标与 Egui 已缓存 UI 状态参与点击归属判定。'], source:systems.mouse_capture.source };
+registry['window-messages'] = { name: 'WindowFocused / MouseButtonInput', kind: 'Message', description: 'Bevy 的窗口消息缓冲，由 sync_mouse_capture 的 MessageReader 读取。', notes:['缓冲不是永久业务队列。','Esc 的底层读取仅处理光标生命周期；Window 光标与 Egui 已缓存 UI 状态参与点击归属判定。','暂停业务由 MenuContext 的 BackAction 处理；F3 经 GameplayContext 的 ReleasePointerAction 释放光标。'], source:systems.mouse_capture.source };
 b += card(50, 1410, 374, 130, 'window-messages', '窗口消息缓冲', ['WindowFocused / MouseButtonInput', 'MessageReader 读取', 'Esc / Window / Egui 另由参数访问'], 'message', 'small');
-b += system(512, 1410, 356, 'mouse_capture', ['R 消息 / Esc / Window / Egui', 'W MouseLookState / CursorOptions', 'Commands：ContextActivity 开 / 关'], 130);
+b += system(512, 1410, 356, 'mouse_capture', ['R 消息 / Esc / Window / Egui / AppState', 'W MouseLookState / CursorOptions', 'Commands：ContextActivity 开 / 关'], 130);
 registry['capture-state'] = { name:'捕获与输入上下文',kind:'Component',description:'捕获与焦点状态写入相机和窗口；UI 占用通过 Commands 改变控制者的 ContextActivity，命令在动作 Prepare 前应用。',writes:systems.mouse_capture.writes,notes:systems.mouse_capture.notes,source:systems.mouse_capture.source };
 b += card(971, 1410, 486, 130, 'capture-state', '捕获与输入上下文', ['MouseLookState：active / skip_motion / focused', 'CursorOptions：visible / grab_mode', 'ContextActivity：ACTIVE / INACTIVE（延迟命令）'], 'component', 'small');
 b += edge([[424, 1474], [512, 1474]], '读取', 'read', [468, 1474], ['window-messages', 'mouse_capture']);
@@ -257,10 +362,60 @@ registry['physics-file-log']={name:'会话文件日志',kind:'External I/O',desc
 b += card(971,1720,486,100,'physics-file-log','统一会话日志',['碰撞双方、原因、时间与级别'],'external','small');
 b += edge([[424,1770],[512,1770]],'读取','read',[468,1770],['physics-messages','collision_log']);
 b += edge([[868,1770],[971,1770]],'日志','write',[919,1770],['collision_log','physics-file-log']);
-save('events', '事件 · Observer · Message', 1520, 1880, b, '输入使用 EntityEvent / Observer；窗口与碰撞分别使用缓冲 Message；输出共用会话日志。');
+b += frame(30, 1880, 1460, 230, '调试释放光标 · GameplayContext', 'F3 保持 Running，可编辑 Inspector；Esc 属于右侧菜单 BackAction，不直接轮询底层键盘。');
+const releasePointer = model.observers.find(observer=>observer.system==='observe_release_pointer');
+registry['event-observe_release_pointer']={name:releasePointer.event,kind:'EntityEvent',description:releasePointer.description};
+b += card(50,1965,374,110,'event-observe_release_pointer',releasePointer.event,['F3 → context 控制者'],'event','small');
+b += system(512,1965,356,'observe_release_pointer',[brief.observe_release_pointer],110);
+b += card(971,1965,486,110,'result-observe_release_pointer','相机 / 窗口捕获状态',['MouseLookState.active = false；skip_motion = true','CursorOptions.visible = true；grab_mode = None'],'component','small');
+registry['result-observe_release_pointer']={...systems.observe_release_pointer,name:'调试释放捕获',kind:'Component write'};
+b += edge([[424,2020],[512,2020]],'触发','trigger',[468,2020],['event-observe_release_pointer','observe_release_pointer']);
+b += edge([[868,2020],[971,2020]],'W','write',[919,2020],['observe_release_pointer','result-observe_release_pointer','camera.MouseLookState','window.CursorOptions']);
+
+// 从清单动态展开菜单及资产 Observer，避免新增事件被旧七行输入表遗漏。
+const existingEvents = new Set([...eventRows.map(([id])=>id),'observe_release_pointer']);
+const menuEvents = model.observers.filter(observer=>!existingEvents.has(observer.system));
+const menuEventStep = 148;
+const menuEventBottom = 306 + menuEvents.length * menuEventStep;
+b += frame(1540,112,1470,menuEventBottom-112,'菜单动作 / UI 滚动 / GLB 就绪','菜单六个动作来自 Enhanced Input；滚轮来自原生 UI，资产就绪来自 WorldAssetRoot。');
+b += lines(1560,200,['MenuContext 按窗口焦点启用；优先级 10，高于玩法，consume_input 避免同键重复消费。','Hidden 保留 Back（Esc）暂停；方向与确认在页面隐藏时返回。'], 'body', 32);
+menuEvents.forEach((observer,i)=>{
+  const id=observer.system, y=306+i*menuEventStep, sourceSystem=systems[id];
+  const action=observer.event.startsWith('Fire<');
+  registry[`event-${id}`]={name:observer.event,kind:'EntityEvent',description:observer.description,notes:[observer.target]};
+  b += card(1552,y,312,118,`event-${id}`,observer.event,[action?'target：MenuContext 控制者':observer.event.startsWith('Pointer')?'target：MenuScroll 视口':'target：快递员 GLB 根'],'event','small');
+  b += system(1944,y,335,id,[sourceSystem.description],118);
+  const resultId=`result-${id}`;
+  registry[resultId]={name:`${sourceSystem.name} 输出`,kind:'Data write',description:sourceSystem.description,reads:sourceSystem.reads,writes:sourceSystem.writes,notes:sourceSystem.notes,source:sourceSystem.source};
+  b += card(2366,y,345,118,resultId,action?'菜单共享数据':observer.event.startsWith('Pointer')?'ScrollPosition':'动画播放与图句柄',sourceSystem.writes.slice(0,2).map(value=>`W ${accessName(value)}`),action?'resource':'component','small');
+  b += edge([[1864,y+59],[1944,y+59]],'触发','trigger',[1904,y+59],[`event-${id}`,id]);
+  b += edge([[2279,y+59],[2366,y+59]],'W','write',[2322,y+59],[id,resultId,...sourceSystem.writes]);
+});
+b += frame(2750,306,250,menuEventBottom-346,'路由与消费','源事件保持各自目标。');
+b += ['Previous / Next','↓ MenuFocus','＋ Navigation 来源','','Left / Right / Confirm','Back（含 Esc）','↓ UiRequest Message','↓ PreUpdate 统一消费','','指针点击也写同一队列','UI 滚轮只改视口位置','','WorldInstanceReady','↓ 遍历 GLB 骨架子树','AnimationPlayer 循环播放','Commands 插入图句柄'].map((value,i)=>fitted(2767,392+i*38,value,216,'small')).join('');
+const requestY=menuEventBottom+45;
+b += frame(1540,requestY,1470,525,'UiRequest · 从输入到页面、设置与状态','确认、调整、返回与指针点击产生消息；焦点、滚动与动画直接更新 ECS；未接通功能为禁用 Coming Soon。');
+b += card(1560,requestY+85,360,130,'resource.UiRequestMessages','UiRequest 消息缓冲',['导航确认 / 调整 / Back','与 pointer_interactions 共用 UiAction'],'message','small');
+b += system(2040,requestY+85,430,'menu_handle_requests',['MessageReader 统一消费请求','更新 MenuState / Draft / NextState'],130);
+b += card(2600,requestY+85,385,130,'resource.SettingsDraft','设置草稿',['Apply：校验、保存成功才热生效','Back：丢弃；保存失败保留原文件'],'resource','small');
+b += edge([[1920,requestY+150],[2040,requestY+150]],'读取','read',[1980,requestY+150],['resource.UiRequestMessages','menu_handle_requests']);
+b += edge([[2470,requestY+150],[2600,requestY+150]],'W 草稿','write',[2535,requestY+150],['menu_handle_requests','resource.SettingsDraft']);
+b += card(1560,requestY+320,660,130,'resource.MenuState','页面与返回来源',['Main / Hidden / Pause / Settings / Help','Settings / Help 返回来源保存在 return_page'],'resource','small');
+b += card(2335,requestY+320,650,130,'ui-next-state','NextState → StateTransition',['Start Game / ReturnToMenu：AppState','Pause / Resume：InGame 内 PlayState'],'engine','small');
+b += edge([[2145,requestY+215],[2145,requestY+265],[1890,requestY+265],[1890,requestY+320]],'W 页面','write',[1890,requestY+265],['menu_handle_requests','resource.MenuState']);
+b += edge([[2370,requestY+215],[2370,requestY+265],[2660,requestY+265],[2660,requestY+320]],'状态请求','write',[2660,requestY+265],['menu_handle_requests','ui-next-state','resource.AppState','resource.PlayState']);
+save('events', '事件 · Observer · Message', 3040, Math.max(2150,requestY+565), b, '左侧保留玩法、窗口与碰撞；右侧显示菜单动作、滚动、展示动画及 UiRequest 的统一业务路由。');
 
 // 源码与图同时生成快照，让网页和离线文件都能打开完整源码并定位行号。
-const sourcePaths = [...new Set(Object.values(registry).map(d => d.source?.path).filter(Boolean))].sort();
+// 清单中仅在详情出现的组件和资源也需要完整源码快照，不能只收集画布节点。
+function sourceReferences(value, result = new Set()) {
+  if (value && typeof value === 'object') {
+    if (value.source?.path) result.add(value.source.path);
+    Object.values(value).forEach(child=>sourceReferences(child,result));
+  }
+  return result;
+}
+const sourcePaths = [...sourceReferences({model,registry})].sort();
 writeSourceViewer({ outputDirectory: dir, sources: sourcePaths.map(sourcePath => ({ path: sourcePath, text: fs.readFileSync(path.resolve(dir, '../..', sourcePath), 'utf8') })) });
 
 // UI 使用内嵌数据和 SVG，离线打开不依赖网络、字体 CDN 或第三方脚本。

@@ -4,6 +4,7 @@ use avian3d::prelude::*;
 use bevy::{ecs::relationship::RelationshipTarget, prelude::*};
 use std::collections::HashSet;
 
+use crate::app_flow::gameplay_running;
 use crate::physics::{DemoPhysicsPlugin, held_collision_layers, parcel_collision_layers};
 
 /// 独立于运行时实体标识的玩家身份，便于后续多人输入路由。
@@ -151,13 +152,15 @@ impl Plugin for GameplayPlugin {
                 )
                     // 拿放的关系与碰撞层命令必须在本步施力前可见。
                     .chain()
-                    .in_set(GameplaySystems::Simulate),
+                    .in_set(GameplaySystems::Simulate)
+                    .run_if(gameplay_running),
             )
             .add_systems(
                 FixedPostUpdate,
                 (update_grounded, log_character_velocity)
                     .chain()
-                    .after(PhysicsSystems::Writeback),
+                    .after(PhysicsSystems::Writeback)
+                    .run_if(gameplay_running),
             );
     }
 }
