@@ -1,8 +1,11 @@
-//! 使用简易资产启动移动、跳跃和木箱拾取原型。
+//! 组装美术海岛、物理搬运、视角、动画与落水恢复。
 
+mod art_assets;
 mod camera;
+mod character_animation;
 mod gameplay;
 mod input;
+mod island_recovery;
 mod physics;
 #[cfg(test)]
 mod physics_tests;
@@ -11,11 +14,14 @@ mod session_log;
 mod settings;
 mod startup_log;
 
+use art_assets::ArtAssetsPlugin;
 use bevy::{log::LogPlugin, prelude::*, window::PresentMode};
 use bevy_inspector_egui::{bevy_egui::EguiPlugin, quick::WorldInspectorPlugin};
 use camera::CameraControlPlugin;
+use character_animation::CharacterAnimationPlugin;
 use gameplay::GameplayPlugin;
 use input::PlayerInputPlugin;
+use island_recovery::IslandRecoveryPlugin;
 use scene::PrototypeScenePlugin;
 use settings::{GameSettings, SettingsPlugin};
 use startup_log::StartupLogPlugin;
@@ -35,6 +41,7 @@ fn main() -> AppExit {
         DefaultPlugins
             .set(LogPlugin {
                 custom_layer: session_log::file_layer,
+                fmt_layer: session_log::console_layer,
                 ..default()
             })
             .set(WindowPlugin {
@@ -63,6 +70,9 @@ fn main() -> AppExit {
             GameplayPlugin,
             PlayerInputPlugin,
             CameraControlPlugin,
+            ArtAssetsPlugin,
+            CharacterAnimationPlugin,
+            IslandRecoveryPlugin,
             PrototypeScenePlugin,
             StartupLogPlugin,
         ))

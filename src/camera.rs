@@ -41,7 +41,7 @@ impl CameraPerspective {
 }
 
 /// 由视角系统控制可见性的角色视觉根；所属角色使用已有的 ChildOf 关系。
-#[derive(Component, Reflect)]
+#[derive(Component, Reflect, Default, Clone)]
 #[reflect(Component)]
 pub struct CharacterVisual;
 
@@ -485,7 +485,7 @@ fn apply_perspective_toggle(mut cameras: Query<(Entity, &mut OrbitCamera)>) {
 }
 
 /// 在固定模拟前及逐帧持握目标同步前设置水平朝向，站立、横移和后退时也跟随视角。
-fn sync_character_facing(
+pub(crate) fn sync_character_facing(
     controllers: Query<(&ControlsCharacter, &ControlsCamera), With<GameplayContext>>,
     cameras: Query<&OrbitCamera>,
     mut characters: Query<&mut Transform, With<Character>>,
@@ -572,10 +572,11 @@ mod tests {
 
     use crate::{
         gameplay::{
-            CharacterIntent, CharacterMotion, GameplayPlugin, HeldBy, HeldTarget, HoldingItems,
-            Pickable, PlayerId, PrototypeConfig,
+            CarryGrip, CharacterIntent, CharacterMotion, GameplayPlugin, HeldBy, HeldTarget,
+            HoldingItems, Pickable, PlayerId, PrototypeConfig,
         },
         input::{PlayerInputPlugin, spawn_keyboard_controller},
+        island_recovery::{IslandRecoveryPlugin, SpawnPoint},
         physics::{character_body, ground_body, parcel_body},
     };
 
@@ -593,6 +594,7 @@ mod tests {
             GameplayPlugin,
             PlayerInputPlugin,
             CameraControlPlugin,
+            IslandRecoveryPlugin,
         ))
         .insert_resource(Time::<Fixed>::from_hz(60.0))
         .insert_resource(TimeUpdateStrategy::ManualDuration(Duration::ZERO))
@@ -670,6 +672,15 @@ mod tests {
                 Transform::from_translation(position),
             ))
             .id()
+    }
+
+    /// 原型默认偏移、纸箱和木箱复用相同的帧末姿态与解除关系回归。
+    fn carry_grip_cases() -> [Option<Vec3>; 3] {
+        [
+            None,
+            Some(Vec3::new(0.0, 1.3, -0.48)),
+            Some(Vec3::new(0.0, 1.3, -0.62)),
+        ]
     }
 
     fn mouse_motion(app: &mut App, delta: Vec2) {
@@ -1607,6 +1618,82 @@ mod tests {
     }
 
     #[test]
+    fn water_recovery_uses_current_camera_facing_for_the_same_fixed_step_movement() {
+        let (mut app, window, character, camera, _) = test_app();
+        let spawn = Transform::from_xyz(4.0, 0.03, 5.0).with_rotation(Quat::from_rotation_y(-0.6));
+        app.world_mut()
+            .entity_mut(character)
+            .insert(SpawnPoint(spawn));
+        // 通过真实输入上下文持续按住 W，避免下一帧 Enhanced Input 清空手写的移动意图。
+        inspector_keyboard(&mut app, window, KeyCode::KeyW, ButtonState::Pressed);
+        mouse_motion(&mut app, Vec2::new(-500.0, 0.0));
+        app.update();
+        let yaw = app.world().get::<OrbitCamera>(camera).unwrap().yaw;
+        let facing = Quat::from_rotation_y(yaw) * Vec3::NEG_Z;
+        assert!((spawn.rotation * Vec3::NEG_Z).dot(facing) < 0.0);
+        assert_eq!(
+            app.world()
+                .get::<CharacterIntent>(character)
+                .unwrap()
+                .movement,
+            Vec2::Y
+        );
+        let underwater = Vec3::new(40.0, -2.0, -40.0);
+        app.world_mut().get_mut::<Position>(character).unwrap().0 = underwater;
+        app.world_mut()
+            .get_mut::<Transform>(character)
+            .unwrap()
+            .translation = underwater;
+        app.world_mut()
+            .get_mut::<LinearVelocity>(character)
+            .unwrap()
+            .0 = Vec3::new(5.0, -3.0, 4.0);
+        let fixed_before = app.world().resource::<Time<Fixed>>().elapsed();
+        fixed_step(&mut app);
+        let world = app.world();
+        assert_eq!(
+            world.resource::<Time<Fixed>>().elapsed() - fixed_before,
+            world.resource::<Time<Fixed>>().timestep()
+        );
+        let position = world.get::<Position>(character).unwrap().0;
+        assert!(position.distance(spawn.translation) < 0.1, "{position:?}");
+        let velocity = world.get::<LinearVelocity>(character).unwrap().0;
+        assert!(velocity.xz().length() > 0.05, "{velocity:?}");
+        assert!(
+            velocity.xz().normalize().dot(facing.xz()) > 0.9999,
+            "Recovery movement used the spawn facing: {velocity:?} {facing:?}"
+        );
+        assert!(
+            world
+                .get::<Transform>(character)
+                .unwrap()
+                .forward()
+                .dot(facing)
+                > 0.9999
+        );
+        let recovered_fixed_time = world.resource::<Time<Fixed>>().elapsed();
+        for _ in 0..3 {
+            // 恢复后的零固定步帧不能再次用出生朝向覆盖当前镜头方向或推进物理。
+            app.update();
+            let world = app.world();
+            assert_eq!(
+                world.resource::<Time<Fixed>>().elapsed(),
+                recovered_fixed_time
+            );
+            assert_eq!(world.get::<Position>(character).unwrap().0, position);
+            assert_eq!(world.get::<LinearVelocity>(character).unwrap().0, velocity);
+            assert!(
+                world
+                    .get::<Transform>(character)
+                    .unwrap()
+                    .forward()
+                    .dot(facing)
+                    > 0.9999
+            );
+        }
+    }
+
+    #[test]
     fn turning_preserves_translation_interpolation_and_camera_reads_presented_position() {
         let (mut app, _, character, camera, _) = test_app();
         let visual_offset = Vec3::new(0.0, 0.72, 0.0);
@@ -1807,13 +1894,21 @@ mod tests {
 
     #[test]
     fn held_target_and_visuals_use_current_frame_without_teleporting_box() {
-        for frame_duration in [Duration::ZERO, Duration::from_secs_f64(1.0 / 120.0)] {
+        for (frame_duration, grip) in [Duration::ZERO, Duration::from_secs_f64(1.0 / 120.0)]
+            .into_iter()
+            .flat_map(|duration| carry_grip_cases().map(|grip| (duration, grip)))
+        {
             let (mut app, window, character, camera, _) = test_app();
             let character_visual = app
                 .world_mut()
                 .spawn((CharacterVisual, Visibility::default(), ChildOf(character)))
                 .id();
             let item = spawn_test_item(&mut app, Vec3::new(0.0, 0.3, -1.0));
+            if let Some(grip) = grip {
+                app.world_mut().entity_mut(item).insert(CarryGrip(grip));
+            }
+            let grip_offset =
+                grip.unwrap_or_else(|| app.world().resource::<PrototypeConfig>().hold_offset);
             let visual_offset = Vec3::new(0.0, 0.18, 0.0);
             app.world_mut()
                 .entity_mut(item)
@@ -1902,8 +1997,7 @@ mod tests {
                 let rotation = Quat::from_rotation_y(orbit.yaw);
                 assert!(character_transform.rotation.abs_diff_eq(rotation, 0.00001));
                 let held_target = world.get::<HeldTarget>(item).unwrap();
-                let expected_target = character_transform.translation
-                    + rotation * world.resource::<PrototypeConfig>().hold_offset;
+                let expected_target = character_transform.transform_point(grip_offset);
                 assert!(
                     held_target
                         .translation
@@ -1934,16 +2028,24 @@ mod tests {
 
     #[test]
     fn turning_updates_grip_target_and_released_box_stops_following() {
-        for perspective in [
+        for (perspective, grip) in [
             CameraPerspective::ThirdPerson,
             CameraPerspective::FirstPerson,
-        ] {
+        ]
+        .into_iter()
+        .flat_map(|perspective| carry_grip_cases().map(|grip| (perspective, grip)))
+        {
             let (mut app, window, character, camera, _) = test_app();
             if perspective == CameraPerspective::FirstPerson {
                 perspective_key(&mut app, window, ButtonState::Pressed);
                 app.update();
             }
             let item = spawn_test_item(&mut app, Vec3::new(0.0, 0.3, -1.0));
+            if let Some(grip) = grip {
+                app.world_mut().entity_mut(item).insert(CarryGrip(grip));
+            }
+            let grip_offset =
+                grip.unwrap_or_else(|| app.world().resource::<PrototypeConfig>().hold_offset);
             let visual_offset = Vec3::new(0.0, 0.18, 0.0);
             let visual_child = app
                 .world_mut()
@@ -1975,8 +2077,7 @@ mod tests {
             let rotation = Quat::from_rotation_y(yaw);
             assert!(character_transform.up().dot(Vec3::Y) > 0.9999);
             assert!(character_transform.rotation.abs_diff_eq(rotation, 0.00001));
-            let expected_target = character_transform.translation
-                + rotation * app.world().resource::<PrototypeConfig>().hold_offset;
+            let expected_target = character_transform.transform_point(grip_offset);
             assert!(
                 app.world()
                     .get::<HeldTarget>(item)
