@@ -228,3 +228,117 @@ fn external_impulse_moves_character_before_active_braking_stops_it() {
     step(&mut app, 10);
     assert!((app.world().get::<Position>(character).unwrap().x - stopped.x).abs() < 0.01);
 }
+
+/// 浮空与零重力隔离地面刹车；推测距离仅保留 1mm，用于稳定扫掠抵达后的真实接触。
+fn thin_wall_ccd_app(yaw: f32) -> (App, Entity, Vec3) {
+    let mut app = test_app();
+    app.world_mut().resource_mut::<PrototypeConfig>().gravity = 0.0;
+    let rotation = Quat::from_rotation_y(yaw);
+    let direction = rotation * Vec3::NEG_Z;
+    let character = spawn_character(&mut app, Vec3::Y);
+    app.world_mut()
+        .get_mut::<Transform>(character)
+        .unwrap()
+        .rotation = rotation;
+    app.world_mut()
+        .entity_mut(character)
+        .insert(SpeculativeMargin(0.001));
+    step(&mut app, 1);
+    assert!(
+        app.world()
+            .get::<Rotation>(character)
+            .unwrap()
+            .0
+            .abs_diff_eq(rotation, 1e-4)
+    );
+    (app, character, direction)
+}
+
+/// 已有高速步先建立预测邻域，再加入薄墙；不手动搬动角色以免清掉扩展后的 AABB。
+fn add_thin_wall_after_high_speed_step(app: &mut App, character: Entity, direction: Vec3) -> Vec3 {
+    let before = app.world().get::<Position>(character).unwrap().0;
+    step(app, 1);
+    let start = app.world().get::<Position>(character).unwrap().0;
+    assert!(((start - before).dot(direction) - 4.0).abs() < 0.01);
+    let rotation = app.world().get::<Rotation>(character).unwrap().0;
+    let wall_position = start + direction * 2.0 + Vec3::Y;
+    // 纯物理夹具不注册 BSN 所依赖的资产服务，使用 Bundle 隔离扫掠与薄墙接触。
+    app.world_mut().spawn((
+        Name::new("CCD regression thin wall"),
+        RigidBody::Static,
+        Collider::cuboid(6.0, 4.0, 0.04),
+        world_collision_layers(),
+        SpeculativeMargin(0.001),
+        // 新墙在高速物理步开始前已有完整模拟姿态，不依赖首次变换传播初始化它。
+        Position(wall_position),
+        Rotation(rotation),
+        Transform::from_translation(wall_position).with_rotation(rotation),
+    ));
+    start
+}
+
+#[test]
+fn character_ccd_blocks_high_speed_velocity_and_impulses_at_different_yaws() {
+    const SPEED: f32 = 240.0;
+    for yaw in [0.0, 0.45, std::f32::consts::FRAC_PI_2, -1.1, 3.0] {
+        for use_impulse in [false, true] {
+            let (mut app, character, direction) = thin_wall_ccd_app(yaw);
+            if use_impulse {
+                // 冲量在正常控制施力之后进入同一个物理步，不通过手动搬动角色模拟撞墙。
+                app.add_systems(
+                    FixedUpdate,
+                    (move |mut pushed: Local<bool>,
+                           mut characters: Query<(Forces, &ComputedMass), With<Character>>| {
+                        if *pushed {
+                            return;
+                        }
+                        let (mut character, mass) = characters.single_mut().unwrap();
+                        character.apply_linear_impulse(direction * mass.value() * SPEED);
+                        *pushed = true;
+                    })
+                    .after(GameplaySystems::Simulate),
+                );
+            } else {
+                app.world_mut()
+                    .entity_mut(character)
+                    .insert(LinearVelocity(direction * SPEED));
+            }
+            let start = add_thin_wall_after_high_speed_step(&mut app, character, direction);
+            let radius = app.world().resource::<PrototypeConfig>().character_radius;
+            for frame in 0..12 {
+                step(&mut app, 1);
+                let position = app.world().get::<Position>(character).unwrap().0;
+                let velocity = app.world().get::<LinearVelocity>(character).unwrap().0;
+                let travel = (position - start).dot(direction);
+                assert!(position.is_finite() && velocity.is_finite());
+                // 每帧检查胶囊前缘，而非只看最终位置，避免穿墙后被其他接触拉回的假通过。
+                assert!(
+                    travel + radius <= 2.0 - 0.02 + 0.03,
+                    "yaw={yaw}, impulse={use_impulse}, frame={frame}, position={position:?}, velocity={velocity:?}"
+                );
+                if frame == 0 {
+                    assert!(
+                        travel > 0.5,
+                        "High-speed motion must reach the wall: {position:?}"
+                    );
+                }
+            }
+            let velocity = app.world().get::<LinearVelocity>(character).unwrap().0;
+            assert!(
+                velocity.dot(direction).abs() < 0.2,
+                "yaw={yaw}, impulse={use_impulse}, velocity={velocity:?}"
+            );
+        }
+    }
+
+    // 1mm 推测接触不能阻挡每步 4m 的位移；同一夹具移除 CCD 后必须穿墙。
+    let (mut app, character, direction) = thin_wall_ccd_app(0.0);
+    app.world_mut()
+        .entity_mut(character)
+        .insert(LinearVelocity(direction * SPEED));
+    let start = add_thin_wall_after_high_speed_step(&mut app, character, direction);
+    app.world_mut().entity_mut(character).remove::<SweptCcd>();
+    step(&mut app, 1);
+    let position = app.world().get::<Position>(character).unwrap().0;
+    assert!((position - start).dot(direction) > 2.5, "{position:?}");
+}

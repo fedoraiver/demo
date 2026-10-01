@@ -17,7 +17,7 @@ pub struct PlayerId(pub u64);
 pub struct ControlsCharacter(#[entities] pub Entity);
 
 /// 具有移动和跳跃能力的角色。
-#[derive(Component, Reflect)]
+#[derive(Component, Reflect, Default, Clone)]
 #[reflect(Component)]
 pub struct Character;
 
@@ -25,7 +25,7 @@ pub struct Character;
 ///
 /// PreUpdate 与 FixedUpdate 不一一对应：移动轴持续有效，跳跃和交互请求只消费一次。
 /// 输入 Observer 仅更新意图，不按输入事件次数积分位置，避免运动速度依赖渲染帧率。
-#[derive(Component, Reflect, Default)]
+#[derive(Component, Reflect, Default, Clone)]
 #[reflect(Component)]
 pub struct CharacterIntent {
     /// 角色局部水平输入轴：x 表示左右横移，y 表示前后移动。
@@ -35,21 +35,26 @@ pub struct CharacterIntent {
 }
 
 /// 接地状态由物理查询派生；实际速度直接读取 Avian 的 LinearVelocity。
-#[derive(Component, Reflect, Default)]
+#[derive(Component, Reflect, Default, Clone)]
 #[reflect(Component)]
 pub struct CharacterMotion {
     pub grounded: bool,
 }
 
-/// 快递身份，当前使用木箱作为占位模型。
-#[derive(Component, Reflect)]
+/// 可搬运快递身份；纸箱与木箱的美术种类由场景组件表达。
+#[derive(Component, Reflect, Default, Clone)]
 #[reflect(Component)]
 pub struct Parcel;
 
 /// 允许被拾取的能力标签。
-#[derive(Component, Reflect)]
+#[derive(Component, Reflect, Default, Clone)]
 #[reflect(Component)]
 pub struct Pickable;
+
+/// 模型对应的手前偏移；未指定时继续使用原型配置，纸箱对齐持箱动作的双手。
+#[derive(Component, Reflect, Default, Clone, Copy)]
+#[reflect(Component)]
+pub(crate) struct CarryGrip(pub Vec3);
 
 /// 物体的持有者；只由交互系统插入或移除。
 #[derive(Component)]
@@ -134,6 +139,7 @@ impl Plugin for GameplayPlugin {
             .register_type::<CharacterMotion>()
             .register_type::<Parcel>()
             .register_type::<Pickable>()
+            .register_type::<CarryGrip>()
             .register_type::<HeldTarget>()
             .register_type::<PrototypeConfig>()
             .init_resource::<PrototypeConfig>()
@@ -328,7 +334,7 @@ fn handle_interaction(
                     .insert(parcel_collision_layers());
                 info!(?character, ?item, position = ?item_position.0, velocity = ?velocity.0,
                     angular_velocity = ?angular_velocity.0, before = "held", after = "free",
-                    reason = "interact_action_release", "Wooden crate released");
+                    reason = "interact_action_release", "Carryable item released");
             }
             continue;
         }
@@ -376,7 +382,7 @@ fn handle_interaction(
                 after = "held",
                 distance = distance_squared.sqrt(),
                 reason = "interact_action_pickup",
-                "Wooden crate picked up"
+                "Carryable item picked up"
             );
         } else {
             info!(
@@ -409,7 +415,7 @@ fn release_orphaned_items(
             before = "held",
             after = "free",
             reason,
-            "Wooden crate released"
+            "Carryable item released"
         );
     }
 }
@@ -418,11 +424,15 @@ fn release_orphaned_items(
 pub(crate) fn sync_held_objects(
     config: Res<PrototypeConfig>,
     characters: Query<&Transform, (With<Character>, Without<Pickable>)>,
-    mut items: Query<(&HeldBy, &mut HeldTarget), (With<Pickable>, Without<Character>)>,
+    mut items: Query<
+        (&HeldBy, &mut HeldTarget, Option<&CarryGrip>),
+        (With<Pickable>, Without<Character>),
+    >,
 ) {
-    for (held_by, mut target) in &mut items {
+    for (held_by, mut target, grip) in &mut items {
         if let Ok(character) = characters.get(held_by.0) {
-            target.translation = character.translation + character.rotation * config.hold_offset;
+            let offset = grip.map_or(config.hold_offset, |grip| grip.0);
+            target.translation = character.translation + character.rotation * offset;
             target.rotation = character.rotation;
         }
     }
@@ -434,19 +444,23 @@ fn apply_grip_forces(
     config: Res<PrototypeConfig>,
     gravity: Res<Gravity>,
     mut characters: Query<(Forces, &Transform), (With<Character>, Without<Pickable>)>,
-    mut items: Query<(Forces, &ComputedMass, &HeldBy), (With<Pickable>, Without<Character>)>,
+    mut items: Query<
+        (Forces, &ComputedMass, &HeldBy, Option<&CarryGrip>),
+        (With<Pickable>, Without<Character>),
+    >,
 ) {
     let omega = std::f32::consts::TAU * config.hold_frequency;
     let stiffness = omega * omega;
     let damping = 2.0 * config.hold_damping_ratio * omega;
     // 隐式弹簧系数避免固定步较长时的高频振荡，实际力仍由质量换算并限制。
     let denominator = 1.0 + damping * time.delta_secs() + stiffness * time.delta_secs().powi(2);
-    for (mut item, mass, held_by) in &mut items {
+    for (mut item, mass, held_by, grip) in &mut items {
         let Ok((mut holder, transform)) = characters.get_mut(held_by.0) else {
             continue;
         };
         // 模拟读取 Position 而非已经插值的显示目标，防止呈现反馈污染物理。
-        let target = holder.position().0 + transform.rotation * config.hold_offset;
+        let offset = grip.map_or(config.hold_offset, |grip| grip.0);
+        let target = holder.position().0 + transform.rotation * offset;
         let acceleration = (stiffness * (target - item.position().0)
             + damping * (holder.linear_velocity() - item.linear_velocity())
             - gravity.0)
@@ -779,6 +793,55 @@ mod tests {
                 .grounded
         );
         assert!(app.world().get::<Position>(character).unwrap().y.abs() < 0.03);
+    }
+
+    #[test]
+    fn item_specific_grips_converge_through_physics_to_the_presented_targets() {
+        for grip in [Vec3::new(0.0, 1.3, -0.48), Vec3::new(0.0, 1.3, -0.62)] {
+            let mut app = test_app();
+            let character = spawn_character(&mut app, Vec3::ZERO, default());
+            let item = spawn_box(&mut app, Vec3::new(0.0, 0.3, -1.3));
+            app.world_mut().entity_mut(item).insert(CarryGrip(grip));
+            step(&mut app, 30);
+            let before_pickup = app.world().get::<Position>(item).unwrap().0;
+            interact(&mut app, character);
+            assert_eq!(app.world().get::<HeldBy>(item).unwrap().0, character);
+            assert_eq!(
+                app.world().get::<RigidBody>(item),
+                Some(&RigidBody::Dynamic)
+            );
+            let after_pickup = app.world().get::<Position>(item).unwrap().0;
+            assert!(
+                after_pickup.distance(before_pickup) < 0.2,
+                "Pickup teleported the item: {before_pickup:?} {after_pickup:?}"
+            );
+            let initial_error =
+                after_pickup.distance(app.world().get::<HeldTarget>(item).unwrap().translation);
+            assert!(initial_error > 0.5);
+            let fixed_before = app.world().resource::<Time<Fixed>>().elapsed();
+            // 执行真实 FixedPostUpdate，让施力、重力、反作用与碰撞共同产生收敛结果。
+            step(&mut app, 120);
+            assert!(
+                app.world().resource::<Time<Fixed>>().elapsed() - fixed_before
+                    > Duration::from_secs(1)
+            );
+            let world = app.world();
+            let target = world.get::<HeldTarget>(item).unwrap();
+            let actual = world.get::<Position>(item).unwrap().0;
+            assert!(
+                actual.distance(target.translation) < 0.1,
+                "Physics grip did not reach the presented target: {grip:?} {actual:?} {:?}",
+                target.translation
+            );
+            // 静止角色面向 -Z；分别验证真实箱体的高度和距离，不只断言派生目标的公式。
+            let relative = actual - world.get::<Position>(character).unwrap().0;
+            assert!((relative.y - 1.3).abs() < 0.1, "{grip:?} {relative:?}");
+            assert!((relative.z - grip.z).abs() < 0.08, "{grip:?} {relative:?}");
+            assert!(world.get::<LinearVelocity>(item).unwrap().0.length() < 0.1);
+            let displayed_offset =
+                target.translation - world.get::<Transform>(character).unwrap().translation;
+            assert!(displayed_offset.abs_diff_eq(grip, 0.00001));
+        }
     }
 
     #[test]

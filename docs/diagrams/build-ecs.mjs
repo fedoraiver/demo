@@ -63,24 +63,28 @@ function save(id, label, width, height, body, summary) { const content = svg(lab
 // 总览：保留最重要的执行路径和数据路径，完整函数在细节视图展开。
 let b = text(36, 78, '先沿粗箭头看执行顺序，再沿 R / W 看数据；点击卡片查看源码与完整访问声明。', 'note');
 registry['app-main'] = { name:'main / App',kind:'App',description:'创建 App 与会话日志，配置默认插件，加载设置，装配功能插件后进入主循环。退出时记录结果并刷新日志。',notes:model.startup_notes,source:{path:'src/main.rs',line:17} };
-b += `<g class="node entity" ${register('app-main',registry['app-main'])}>${frame(30, 102, 1500, 170, '«App» main：装配应用与共享 World', 'Plugin 负责注册；下方位置不代表插件内部系统的执行先后。')}</g>`;
-const plugins = ['DefaultPlugins', 'EguiPlugin', 'WorldInspectorPlugin', 'SettingsPlugin', 'GameplayPlugin', 'PlayerInputPlugin', 'CameraControlPlugin', 'PrototypeScenePlugin', 'StartupLogPlugin'];
-const pluginNotes = ['引擎输入、窗口、时间、变换、渲染与日志。','准备 Egui 上下文与界面绘制。','通过反射检查 ECS；复用当前窗口与相机。','设置资源与限帧。','玩法资源、反射类型和固定模拟链。','输入上下文、动作与角色意图 Observer。','相机 Observer、捕获、视角与姿态同步。','共享场景资源与 Startup 场景生成。','集中注册四项只读启动日志，沿用现有日志 target。'];
+b += `<g class="node entity" ${register('app-main',registry['app-main'])}>${frame(30, 102, 1500, 224, '«App» main：装配应用与共享 World', 'Plugin 负责注册；下方位置不代表插件内部系统的执行先后。')}</g>`;
 const mainLines = fs.readFileSync(path.join(dir, '../../src/main.rs'), 'utf8').split('\n');
+const pluginDescriptions = {
+  DefaultPlugins:'引擎输入、窗口、时间、资产、动画、变换、渲染与统一日志。', EguiPlugin:'准备 Egui 上下文与界面绘制。', WorldInspectorPlugin:'通过反射检查 ECS，复用当前窗口与相机。', SettingsPlugin:'设置资源与限帧。', GameplayPlugin:'玩法资源、反射类型和固定模拟链。', PlayerInputPlugin:'输入上下文、动作与角色意图 Observer。', CameraControlPlugin:'相机 Observer、捕获、视角与姿态同步。', ArtAssetsPlugin:'五份运行 GLB 强句柄、加载状态与失败报告。', CharacterAnimationPlugin:'主角命名动作绑定与实际速度/持物切换。', IslandRecoveryPlugin:'固定步落水恢复与临时插值暂停生命周期。', PrototypeScenePlugin:'BSN 海岛准备、静态碰撞与动态业务装配。', StartupLogPlugin:'集中注册四项只读启动日志。'
+};
+// 候选索引可能只包含部分功能；插件只从该版本 main 的实际装配位置读取。
+const plugins = Object.keys(pluginDescriptions).map(name => ({name, line:mainLines.findIndex(l => l.trim() === name || l.trim().startsWith(name + ',') || l.trim().startsWith(name + '::')) + 1})).filter(plugin => plugin.line > 0);
 registry['app-main'].source.line = mainLines.findIndex(l=>l.startsWith('fn main('))+1;
-// 九个插件分两行展示，保留标题可读宽度；后续总览内容整体下移以避开新增行。
-plugins.forEach((name, i) => { const id = `plugin-${name}`; const line = mainLines.findIndex(l => l.trim() === name || l.trim().startsWith(name + ',') || l.trim().startsWith(name + '::')) + 1; registry[id] = { id, name, kind: 'Plugin', description: pluginNotes[i], notes: ['注册顺序不等于系统执行顺序。', ...(name.includes('Egui') || name.includes('Inspector') ? ['EguiPlugin 必须先于 WorldInspectorPlugin 构建。'] : [])], source: { path: 'src/main.rs', line } }; b += compact(44 + (i % 5) * 296, 165 + Math.floor(i / 5) * 52, 284, 42, id, name, 'plugin'); });
-b += '<g transform="translate(0 52)">';
-b += frame(30, 240, 1500, 108, '«Schedule» Startup · 启动一次', '场景插件生成场景，启动日志插件注册四项日志；五个系统无彼此顺序约束，阶段结束应用场景命令。');
-['startup_spawn', 'startup_config', 'startup_timestep', 'startup_pose', 'startup_inspector'].forEach((id, i) => { registry[id] = systems[id]; b += compact(48 + i * 293, 303, 274, 32, id, systems[id].name, 'system'); });
+plugins.forEach(({name,line}, i) => { const id = `plugin-${name}`; registry[id] = { id, name, kind:'Plugin', description:pluginDescriptions[name], notes:['注册顺序不等于系统执行顺序。', ...(name.includes('Egui') || name.includes('Inspector') ? ['EguiPlugin 必须先于 WorldInspectorPlugin 构建。'] : [])], source:{path:'src/main.rs',line} }; b += compact(44 + (i % 5) * 296, 165 + Math.floor(i / 5) * 52, 284, 42, id, name, 'plugin'); });
+b += '<g transform="translate(0 104)">';
+b += frame(30, 240, 1500, 108, '«Schedule» Startup · 启动一次', '生成日光/加载相机并记录启动与资源请求；各系统无彼此顺序，阶段结束应用命令。');
+const startupIds = ['startup_spawn','startup_assets','startup_config','startup_timestep','startup_pose','startup_inspector'].filter(id => systems[id]);
+startupIds.forEach((id, i) => { registry[id] = systems[id]; b += compact(48 + i * 246, 303, 232, 32, id, systems[id].name, 'system'); });
 const phases = [
   { x: 30, w: 330, name: 'First', note: '每个渲染帧', rows: ['限帧 → 时间更新', '默认上限 60 FPS；最低 60', 'Local：帧间计时'] },
   { x: 395, w: 330, name: 'PreUpdate', note: '输入与界面准备', rows: ['捕获 / 上下文 → 动作评估', '事件 → 意图 / 观察角度', '本帧消费视角切换请求'] },
-  { x: 760, w: 330, name: 'FixedUpdate', note: 'FixedFirst 先记录插值起点', rows: ['朝向 / 重力 → 接地 / 控制力', '跳跃冲量 → 交互 / 清理', '持握目标 → 弹簧 / 反作用力'] },
+  { x: 760, w: 330, name: 'FixedUpdate', note: 'FixedFirst 先记录插值起点', rows: ['恢复 → 朝向；重力独立同步', '跳跃冲量 → 交互 / 清理', '持握目标 → 弹簧 / 反作用力'] },
   { x: 1125, w: 330, name: 'FixedPostUpdate', note: 'Avian 默认物理阶段', rows: ['Prepare → StepSimulation', '→ Writeback → 接地 / 速度日志', '真实位置 / 速度 / 碰撞'] },
   { x: 1490, w: 330, name: 'FixedLast', note: '固定步末尾', rows: ['记录本步插值终点', '角色：平移插值', '箱体：完整 Transform 插值'] },
   { x: 1855, w: 330, name: '固定循环之后', note: 'RunFixedMainLoop · 每帧', rows: ['Ease → 朝向 → HeldTarget', '→ 镜头 → 可见性', '→ UpdateEasingTick'] },
-  { x: 2220, w: 330, name: 'PostUpdate', note: '其前经过普通 Update', rows: ['Transform → GlobalTransform', '检查器 UI 为同阶段独立分支', '→ 渲染子应用'] },
+  { x: 2220, w: 330, name: 'Update / SpawnScene', note: '资源与实例的异步准备', rows: ['资源轮询；海岛三步装配链', '主角动画绑定 → 状态切换', 'SpawnScene 实例化 / 就绪事件'] },
+  { x: 2585, w: 330, name: 'PostUpdate', note: '骨骼动画与最终变换', rows: ['Animation → Transform传播', '检查器 UI 为独立分支', '→ 渲染子应用'] },
 ];
 phases.forEach(p => { b += frame(p.x, 382, p.w, 180, p.name, `«Schedule» · ${p.note}`); b += p.rows.map((r, i) => fitted(p.x + 17, 469 + i * 31, r, p.w - 34)).join(''); });
 phases.slice(0, -1).forEach((p, i) => b += edge([[p.x + p.w, 420], [phases[i + 1].x, 420]]));
@@ -90,9 +94,9 @@ const data = [
   { id: 'character.CharacterIntent', x: 395, w: 330, name: 'CharacterIntent', rows: ['movement：持续输入', 'jump_pending / interact_pending', '固定步消费后清除请求'] },
   { id: 'character.Position', x: 760, w: 330, name: '真实物理状态', rows: ['Position / Rotation / Velocity', 'CharacterMotion：仅 grounded', 'Transform：插值呈现位置'] },
   { id: 'parcel.HeldTarget', x: 1125, w: 330, name: 'HeldTarget / 物理持握', rows: ['目标仅供呈现检查', '施力另读真实 Position', '实际箱体可滞后 / 受碰撞阻挡'] },
-  { id: 'world.Collider', x: 1490, w: 330, name: '静态世界碰撞', rows: ['地面与墙体两个盒形刚体', 'World / Character / Parcel', '持握箱忽略 Character 层'] },
+  { id: 'world.Collider', x: 1490, w: 330, name: '静态世界碰撞', rows: ['三角网格 + 入口坡道', 'World / Character / Parcel', '持握箱忽略 Character 层'] },
   { id: 'camera.OrbitCamera', x: 1855, w: 330, name: 'OrbitCamera', rows: ['目标 / 模式 / yaw / 两组 pitch', '镜头读本帧插值后角色位置', '相机 Transform：最终姿态'] },
-  { id: 'visual.GlobalTransform', x: 2220, w: 330, name: '视觉子实体', rows: ['Mesh3d / 材质，无物理体', 'ChildOf → 业务根实体', 'GlobalTransform → 渲染'] },
+  { id: 'visual.GlobalTransform', x: 2585, w: 330, name: '视觉子实体', rows: ['GLB 网格/骨骼子树无刚体', '直属视觉根 → 业务根实体', '骨骼 / GlobalTransform → 渲染'] },
 ];
 data.forEach(d => { registry[d.id] = { id: d.id, name: d.name, kind: 'Component', description: d.rows.join('；') }; b += card(d.x, 697, d.w, 151, d.id, d.name, d.rows, 'component', 'small'); });
 registry['resource.GameSettings'] = model.resources.find(r => r.id === 'resource.GameSettings');
@@ -103,13 +107,13 @@ b += edge([[650,562],[650,675],[1950,675],[1950,697]], 'W 角度 / 模式', 'wri
 b += edge([[725, 754], [745, 754], [745, 582], [790, 582], [790, 562]], 'R 意图', 'read', [745, 649], ['character.CharacterIntent', 'movement']);
 b += edge([[1290, 562], [1290, 648], [925,648], [925,697]], 'W 物理状态', 'write', [1120,648], ['physics_step', 'character.Position']);
 b += edge([[2020, 697], [2020, 562]], 'R 角度', 'read', [2020, 640], ['camera.OrbitCamera', 'facing_update']);
-b += edge([[2385, 562], [2385, 697]], 'W 世界变换', 'write', [2385, 641], ['transform_propagate', 'visual.GlobalTransform']);
+b += edge([[2750, 562], [2750, 697]], 'W 世界变换', 'write', [2750, 641], ['transform_propagate', 'visual.GlobalTransform']);
 b += text(36, 900, '图例：粗箭头＝执行顺序　R 蓝虚线＝读取　W 绿实线＝写入　Event 橙虚线＝触发　紫线＝引用 / 关系', 'note');
 b += '</g>';
 // GameplayPlugin 内部安装物理插件，不把内部注册伪装成 main 的额外插件。
 const nestedPlugins = [['DemoPhysicsPlugin','src/gameplay.rs','add_plugins(DemoPhysicsPlugin)'],['PhysicsPlugins::default()','src/physics.rs','add_plugins(PhysicsPlugins::default())']];
 nestedPlugins.forEach(([name,file,needle],i)=>{const id=`plugin-physics-${i}`;registry[id]={name,kind:'Plugin',description:i?'Avian 默认 FixedPostUpdate 求解及物理插值插件。':'GameplayPlugin 内部安装，注册重力同步和碰撞日志。',notes:['内部插件注册关系；不表示系统执行顺序。'],source:{path:file,line:fs.readFileSync(path.join(dir,'../..',file),'utf8').split('\n').findIndex(line=>line.includes(needle))+1}};b+=card(1575+i*505,112,475,135,id,name,['GameplayPlugin → DemoPhysicsPlugin → Avian'],'engine','small');});
-save('overview', '当前 App · ECS 总览', 2590, 987, b, '输入 → 固定控制力 → Avian 求解 → 插值 → 本帧显示 → 世界变换与渲染。');
+save('overview', '当前 App · ECS 总览', 2955, 1039, b, '输入 → 固定控制力 → Avian 求解 → 插值 → 本帧显示 → 世界变换与渲染。');
 
 // 时序视图：每个注册实例单独呈现，R/W 在卡片内列摘要，点击显示完整读写项。
 b = text(36, 80, '系统卡片中的 R / W 是访问摘要；同一函数在不同 Schedule 中有两个注册实例。', 'note');
@@ -121,76 +125,111 @@ const columns = [
   { x: 1305, w: 430, nodeWidth: 380, phase: 'FixedPostUpdate', note: 'Avian 默认物理解算', ids: ['physics_prepare','physics_step','physics_writeback','grounded_after','velocity_log'] },
   { x: 1760, w: 330, phase: 'FixedLast', note: '每个固定步末尾', ids: ['easing_end'] },
   { x: 2135, w: 380, phase: '固定循环之后', note: 'RunFixedMainLoop · AfterFixedMainLoop', ids: ['easing_apply','facing_update','held_update','camera_follow','visibility_update','easing_tick'] },
-  { x: 2560, w: 390, phase: 'PostUpdate / 渲染', note: '其前经过普通 Update', ids: [] },
+  { x: 2560, w: 470, phase: 'Update / SpawnScene', note: '三条 Update 路线不设彼此全序', ids: [] },
+  { x: 3075, w: 400, phase: 'PostUpdate / 渲染', note: '动画先于变换传播，UI 为独立分支', ids: [] },
 ];
 const accessName = value => value.split('.').pop().replace(/\s*\(.*/, '');
 function accessRows(id) { const s = systems[id]; const summarize = values => { const rank = v => v.startsWith('resource.') ? 1 : v.startsWith('local.') ? 2 : 0; const sorted = [...values].sort((a,b)=>rank(a)-rank(b)); return sorted.map(accessName).slice(0,2).join(' / ') + (values.length>2?' …':''); }; return [brief[id] || s.description, ...(s.reads.length ? [`R ${summarize(s.reads)}`] : []), ...(s.writes.length ? [`W ${summarize(s.writes)}`] : [])].slice(0, 3); }
-columns.forEach(col => { const nodeWidth = col.nodeWidth ?? col.w - 30, centerX = col.x + 15 + nodeWidth / 2; b += frame(col.x, 112, col.w, 1980, col.phase, `«Schedule» · ${col.note}`); col.ids.forEach((id, i) => {
+columns.forEach(col => { const nodeWidth = col.nodeWidth ?? col.w - 30, centerX = col.x + 15 + nodeWidth / 2; b += frame(col.x, 112, col.w, 2250, col.phase, `«Schedule» · ${col.note}`); col.ids.forEach((id, i) => {
   b += system(col.x + 15, 193 + i * 160, nodeWidth, id, accessRows(id), 130);
   if (i) b += edge([[centerX, 163 + i * 160], [centerX, 193 + i * 160]]);
  }); });
 // 这里只展开和捕获逻辑有关的输入集合；主 UI 的多轮执行另列于 PostUpdate。
 [['input_update','InputSystems'],['egui_input','Egui · ProcessInput'],['filter_egui_input','filter_captured_egui_input'],['egui_begin','Egui · BeginPass（集合边界）']].forEach(([id,label],i)=>{registry[id]=systems[id];b+=compact(390,193+i*50,390,28,id,label,systems[id].kind);b+=edge([[585,221+i*50],[585,i===3?400:243+i*50]],'','order',null,[id,i===3?'mouse_capture':['egui_input','filter_egui_input','egui_begin'][i]]);});
 const preNodes = [ ['mouse_capture', 400, 130], ['capture_apply', 555, 96], ['enhanced_prepare', 676, 96], ['enhanced_evaluate', 797, 96], ['input_apply', 918, 106], ['event_apply', 1049, 106], ['perspective_apply', 1180, 130] ];
-systems.event_apply = { id:'event_apply', name:'ApplyDeferred · 动作事件', kind:'sync', phase:'PreUpdate', description:'应用 Enhanced Input 排入的 trigger 命令，此时触发匹配 Observer。', reads:[], writes:['character.CharacterIntent','camera.OrbitCamera'], filters:[], events:model.observers.map(o=>o.event), notes:['这是命令同步点，不是 EnhancedInputSystems::Apply。','apply_perspective_toggle.after(EnhancedInputSystems::Apply) 建立依赖；常规调度在需要时自动应用延迟命令。','Observer 之间没有注册顺序所保证的串行依赖。'], source:systems.perspective_apply.source };
+systems.event_apply = { id:'event_apply', name:'ApplyDeferred · 动作事件', kind:'sync', phase:'PreUpdate', description:'应用 Enhanced Input 排入的 trigger 命令，此时触发匹配 Observer。', reads:[], writes:['character.CharacterIntent','camera.OrbitCamera'], filters:[], events:model.observers.filter(o=>o.system.startsWith('observe_')).map(o=>o.event), notes:['这是命令同步点，不是 EnhancedInputSystems::Apply。','apply_perspective_toggle.after(EnhancedInputSystems::Apply) 建立依赖；常规调度在需要时自动应用延迟命令。','Observer 之间没有注册顺序所保证的串行依赖。'], source:systems.perspective_apply.source };
 brief.event_apply = '应用 trigger 命令 → 七个 Observer';
 brief.capture_apply = '应用 ContextActivity 替换';
 preNodes.forEach(([id,y,h],i)=>{b += system(390,y,390,id,h===130?accessRows(id):[brief[id] || systems[id].description],h);if(i){const previous=preNodes[i-1];b+=edge([[585,previous[1]+previous[2]],[585,y]],'','order',null,[previous[0],id]);}});
 b += text(399, 1339, 'UI 捕获停用 GameplayContext；', 'small');
 b += text(399, 1365, '动作 Complete / Cancel 清除移动轴。', 'small');
-b += system(855, 193, 390, 'easing_reset', [brief.easing_reset], 96);
-// 重力与朝向都在玩法链之前，但二者没有显式先后依赖。
-// 两卡和下方玩法链整体下移，分叉末段留出 46px；约 19px 的箭头头部之外仍有可见竖线。
-b += system(855, 360, 187, 'gravity_sync', [brief.gravity_sync], 96);
-b += system(1058, 360, 187, 'facing_fixed', ['水平 yaw → 朝向'], 96);
-b += edge([[948,456],[948,480],[1050,480]],'','order',null,['gravity_sync','grounded_fixed'],false);
-b += edge([[1151,456],[1151,480],[1050,480]],'','order',null,['facing_fixed','grounded_fixed'],false);
-b += edge([[1050,480],[1050,510]],'','order',null,['gravity_sync','facing_fixed','grounded_fixed']);
-// 说明分居汇合点两侧，不遮挡指向玩法链的竖线与箭头。
-b += text(860, 502, '二者无彼此顺序', 'small');
-b += text(1080, 502, '下方为显式玩法链', 'small');
-const fixedNodes = ['grounded_fixed','movement','gravity','interaction','held_apply','orphan_cleanup','orphan_apply','held_fixed','grip_forces'];
-fixedNodes.forEach((id,i)=>{const y=510+i*160;b+=system(855,y,390,id,accessRows(id),130);if(i)b+=edge([[1050,y-30],[1050,y]],'','order',null,[fixedNodes[i-1],id]);});
-b += edge([[1050,289],[1050,314],[948,314],[948,360]],'','order',null,['easing_reset','gravity_sync']);
-b += edge([[1050,314],[1151,314],[1151,360]],'','order',null,['easing_reset','facing_fixed']);
+if (systems.water_recover && systems.interpolation_resume && systems.easing_start) {
+  b += system(855, 193, 390, 'easing_reset', ['重置旧插值状态'], 90);
+  b += system(855, 307, 390, 'interpolation_resume', ['只撤销上次恢复添加的暂停标记'], 80);
+  registry.resume_apply = {name:'ApplyDeferred · 恢复插值',kind:'sync',description:'应用暂停组件清理，再记录新固定步起点。',source:systems.interpolation_resume.source};
+  b += card(855,425,390,52,'resume_apply','ApplyDeferred · 插值暂停清理',[],'sync');
+  b += system(855,520,390,'easing_start',['记录本固定步插值起点'],90);
+  b += edge([[1050,283],[1050,307]],'','order',null,['easing_reset','interpolation_resume']);
+  b += edge([[1050,387],[1050,425]],'','order',null,['interpolation_resume','resume_apply']);
+  b += edge([[1050,477],[1050,520]],'','order',null,['resume_apply','easing_start']);
+  b += system(855,660,390,'water_recover',['y < -1.5 → 出生点 / 清速度','解除持握；持续移动轴保留'],110);
+  b += edge([[1050,610],[1050,660]],'','order',null,['easing_start','water_recover']);
+  b += system(855,825,187,'gravity_sync',['配置 → Gravity'],85);
+  b += system(1058,825,187,'facing_fixed',['当前 yaw → 朝向'],85);
+  // FixedFirst 后进入两个独立 FixedUpdate 分支；重力不假借恢复节点建立顺序。
+  b += edge([[855,555],[815,555],[815,867],[855,867]],'','order',null,['easing_start','gravity_sync']);
+  b += edge([[1151,770],[1151,825]],'恢复后按视角转向','order',[995,798],['water_recover','facing_fixed']);
+  b += edge([[948,910],[948,940],[1050,940]],'','order',null,['gravity_sync','grounded_fixed'],false);
+  b += edge([[1151,910],[1151,940],[1050,940]],'','order',null,['facing_fixed','grounded_fixed'],false);
+  b += edge([[1050,940],[1050,975]],'','order',null,['gravity_sync','facing_fixed','grounded_fixed']);
+  const fixedNodes = ['grounded_fixed','movement','gravity','interaction','held_apply','orphan_cleanup','orphan_apply','held_fixed','grip_forces'];
+  fixedNodes.forEach((id,i)=>{const y=975+i*155;b+=system(855,y,390,id,accessRows(id),130);if(i)b+=edge([[1050,y-25],[1050,y]],'','order',null,[fixedNodes[i-1],id]);});
+} else {
+  b += system(855,193,390,'easing_reset',[brief.easing_reset],96);
+  b += system(855,360,187,'gravity_sync',[brief.gravity_sync],96);
+  b += system(1058,360,187,'facing_fixed',['水平 yaw → 朝向'],96);
+  b += edge([[948,456],[948,480],[1050,480]],'','order',null,['gravity_sync','grounded_fixed'],false);
+  b += edge([[1151,456],[1151,480],[1050,480]],'','order',null,['facing_fixed','grounded_fixed'],false);
+  b += edge([[1050,480],[1050,510]],'','order',null,['gravity_sync','facing_fixed','grounded_fixed']);
+  b += text(860,502,'二者无彼此顺序','small');
+  b += text(1080,502,'下方为显式玩法链','small');
+  const fixedNodes = ['grounded_fixed','movement','gravity','interaction','held_apply','orphan_cleanup','orphan_apply','held_fixed','grip_forces'];
+  fixedNodes.forEach((id,i)=>{const y=510+i*160;b+=system(855,y,390,id,accessRows(id),130);if(i)b+=edge([[1050,y-30],[1050,y]],'','order',null,[fixedNodes[i-1],id]);});
+  b += edge([[1050,289],[1050,314],[948,314],[948,360]],'','order',null,['easing_reset','gravity_sync']);
+  b += edge([[1050,314],[1151,314],[1151,360]],'','order',null,['easing_reset','facing_fixed']);
+}
 b += system(1320, 1170, 380, 'collision_log', accessRows('collision_log'), 130);
 // 支线从卡片边缘出发，绕过中间节点；标签放在线外，保留转折及箭头的连续走线。
 b += edge([[1700,415],[1723,415],[1723,1135],[1510,1135],[1510,1170]],'仅 after(StepSimulation)','order',[1510,1100],['physics_step','collision_log']);
 b += text(1324, 1350, '碰撞日志与 Writeback 后观察无全序', 'small');
-b += system(2575, 193, 320, 'transform_propagate', ['R 根 Transform / ChildOf', 'W GlobalTransform（另有可见性传播）'], 118);
-b += system(2575, 365, 320, 'inspector_pass', ['反射读取 / 编辑实体、资源与资产', 'multipass：界面可在此多轮处理'], 118);
-b += text(2584, 340, '相关分支并列；彼此未指定全序', 'small');
-// 两条渲染分支使用独立入口，右侧留出走线空间，避免沿卡片边框或合并箭头。
-b += edge([[2895, 252], [2928, 252], [2928, 566], [2815, 566], [2815, 610]], '', 'order', null, ['transform_propagate','render']);
-b += edge([[2735, 483], [2735, 610]], '', 'order', null, ['inspector_pass','render']);
-b += system(2575, 610, 320, 'render', ['Extract → Prepare → Render', 'RenderApp 是子应用，不是单个系统'], 118);
+// 新增行为只绘制候选模型中实际存在的 ID，分步提交不会提前展示后续系统。
+if (systems.asset_poll) b += system(2575,193,440,'asset_poll',['Loading → Ready / Failed','递归依赖就绪；状态变化才记录'],118);
+const islandIds = ['island_begin','island_prepare','actors_spawn'].filter(id => systems[id]);
+islandIds.forEach((id,i) => { const y=420+i*160; b+=system(2575,y,440,id,accessRows(id),130); if(i)b+=edge([[2795,y-30],[2795,y]],'chain / Commands','order',[2648,y-16],[islandIds[i-1],id]); });
+b += text(2584,350,'资源轮询与海岛链无显式先后','small');
+const animationIds = ['animation_initialize','animation_sync'].filter(id=>systems[id]);
+animationIds.forEach((id,i)=>{const y=1020+i*160;b+=system(2575,y,440,id,accessRows(id),130);if(i)b+=edge([[2795,y-30],[2795,y]],'chain / Commands','order',[2648,y-16],[animationIds[i-1],id]);});
+if(animationIds.length)b+=text(2584,963,'主角动画链与海岛链无显式全序','small');
+if(systems.world_spawn){b+=system(2575,1450,440,'world_spawn',['SpawnScene：模板实例化','WorldInstanceReady → 对应 Observer'],130);b+=text(2584,1640,'就绪标记由后续 Update 消费','small');}
+const postX=3090;
+if(systems.animation_engine){b+=system(postX,193,320,'animation_engine',['推进图与过渡 → 骨骼 Transform'],118);b+=edge([[3250,311],[3250,370]],'before(Propagate)','order',[3165,341],['animation_engine','transform_propagate']);}
+b += system(postX,370,320,'transform_propagate',['R 根 Transform / ChildOf','W GlobalTransform / 可见性'],118);
+b += system(postX,585,320,'inspector_pass',['反射读取 / 编辑实体、资源与资产','multipass：每帧可多轮处理'],118);
+b += text(3099,546,'UI 与动画/变换未指定完整全序','small');
+b += edge([[3410,429],[3450,429],[3450,780],[3330,780],[3330,825]],'','order',null,['transform_propagate','render']);
+b += edge([[3250,703],[3250,825]],'','order',null,['inspector_pass','render']);
+b += system(postX,825,320,'render',['Extract → Prepare → Render','RenderApp 是相关子应用概览'],118);
 columns.slice(0, -1).forEach((col, i) => b += edge([[col.x + col.w, 144], [columns[i + 1].x, 144]]));
-b += text(43, 2140, 'Startup：场景生成与四项日志无彼此顺序；物理主体和碰撞体位于业务根实体。', 'note');
-b += text(43, 2174, 'Commands 同步点用琥珀色框；碰撞日志与回写后接地/采样只有各自明确的依赖。', 'note');
-b += text(43, 2208, '固定循环每帧 0～N 次；AfterFixedMainLoop 的 Ease → 显示链 → UpdateEasingTick 每帧执行。', 'note');
-b += text(43, 2242, 'HeldTarget 仅呈现检查；物理施力直接读 Position，不读取插值目标，不把箱体直接搬到手前。', 'note');
-save('schedules', '调度泳道 · 系统与数据访问', 2990, 2285, b, '固定控制 → 物理解算 → 插值后显示；点击查看完整访问，框架集合为概览。');
+b += text(43, 2410, 'Startup 只准备日光/加载相机与日志；Update 资源和静态碰撞准备成功后生成动态业务根。', 'note');
+b += text(43, 2444, 'Commands 同步点用琥珀色框；碰撞日志与回写后接地/采样只有各自明确的依赖。', 'note');
+b += text(43, 2478, '固定循环每帧 0～N 次；AfterFixedMainLoop 的 Ease → 显示链 → UpdateEasingTick 每帧执行。', 'note');
+b += text(43, 2512, 'HeldTarget 仅呈现检查；物理施力直接读 Position，不读取插值目标，不把箱体直接搬到手前。', 'note');
+save('schedules', '调度泳道 · 系统与数据访问', 3515, 2555, b, '固定控制 → 物理解算 → 插值后显示；点击查看完整访问，框架集合为概览。');
 
 // 关系视图：矩形容器表达实体，内嵌组件；普通 Entity 引用与 Bevy 关系单独标注。
 b = text(36, 80, '按实体角色汇总关键组件，可选组件并非始终存在；虚线＝普通引用，紫实线＝Bevy 关系。', 'note');
 const entityBoxes = [
-  { id: 'controller', x: 30, y: 112, w: 360, h: 350 }, { id: 'action', x: 540, y: 112, w: 360, h: 315 }, { id: 'binding', x: 1050, y: 112, w: 360, h: 230 },
-  { id: 'character', x: 30, y: 650, w: 360, h: 600 }, { id: 'parcel', x: 540, y: 650, w: 360, h: 615 }, { id: 'camera', x: 1050, y: 650, w: 360, h: 365 },
-  { id: 'world', x: 1050, y: 1080, w: 360, h: 430 },
-  { id: 'visual', x: 30, y: 1540, w: 360, h: 355 }, { id: 'window', x: 1050, y: 1580, w: 360, h: 270 },
-];
-const primaryComponents = { controller: ['PlayerId', 'GameplayContext', 'ContextActivity', 'ControlsCharacter', 'ControlsCamera', 'Actions', 'GamepadDevice'], action: ['Action', 'ActionSettings', 'ActionOf', 'Bindings', 'Press'], binding: ['Binding', 'BindingOf'], character: ['Character', 'CharacterIntent', 'CharacterMotion', 'RigidBody', 'Collider', 'Position', 'LinearVelocity', 'Transform', 'CollisionLayers', 'LockedAxes', 'TranslationInterpolation', 'HoldingItems', 'Children'], parcel: ['Parcel', 'Pickable', 'RigidBody', 'Collider', 'Position', 'LinearVelocity', 'AngularVelocity', 'Transform', 'CollisionLayers', 'HeldBy', 'HeldTarget', 'TransformInterpolation', 'Children'], camera: ['OrbitCamera', 'MouseLookState', 'Camera3d', 'Transform'], world: ['RigidBody','Collider','CollisionLayers','Transform','Mesh3d','MeshMaterial3d'], visual: ['CharacterVisual', 'Mesh3d', 'MeshMaterial3d', 'Transform', 'GlobalTransform', 'ChildOf'], window: ['PrimaryWindow', 'Window', 'CursorOptions'] };
-entityBoxes.forEach(box => { const e = entities[box.id]; registry[`entity-${e.id}`] = { ...e, name: e.name, kind: 'Entity' };
-  const shortName = {visual:'视觉子实体',action:'动作',binding:'输入绑定',controller:'控制者',character:'角色',parcel:'木箱快递',camera:'相机',world:'静态地面 / 墙体',window:'主窗口'}[e.id];
-  b += `<g class="node entity" ${register(`entity-${e.id}`, registry[`entity-${e.id}`])}>${frame(box.x, box.y, box.w, box.h, `«Entity» ${shortName}`, e.id==='visual'?'6 个：人物 3、木箱 3':`当前数量：${e.count}`, colors.entity)}</g>`;
-  const key = c => c.name.split('<')[0].split(' ')[0];
-  const visible = e.components.filter(c => primaryComponents[e.id].includes(key(c))).sort((a, b) => primaryComponents[e.id].indexOf(key(a)) - primaryComponents[e.id].indexOf(key(b)));
-  e.components.forEach(c => registry[c.id] = { ...c, kind: 'Component', owner: e.name });
-  visible.forEach((c, i) => {
-    const label = c.name==='CharacterVisual'?'CharacterVisual（仅人物）':c.name;
-    b += compact(box.x + 15, box.y + 71 + i * 34, box.w - 30, 30, c.id, label);
-  });
-  b += text(box.x + 16, box.y + box.h - 12, `完整清单：${e.components.length} 项组件 · 点击实体查看`, 'small');
+  {id:'controller',x:30,y:112,w:360,h:350},{id:'action',x:540,y:112,w:360,h:315},{id:'binding',x:1050,y:112,w:360,h:230},
+  {id:'character',x:30,y:650,w:360,h:660},{id:'parcel',x:540,y:650,w:360,h:700},{id:'camera',x:1050,y:650,w:360,h:400},
+  {id:'world',x:1050,y:1130,w:360,h:430},{id:'visual',x:30,y:1750,w:360,h:460},{id:'window',x:1050,y:1660,w:360,h:270},
+  {id:'island',x:1510,y:112,w:440,h:350},{id:'npc',x:1510,y:550,w:440,h:260},{id:'animation_player',x:1510,y:930,w:440,h:360},{id:'model_node',x:1510,y:1450,w:440,h:480},
+].filter(box=>entities[box.id]);
+const primaryComponents = {
+  controller:['PlayerId','GameplayContext','ContextActivity','ControlsCharacter','ControlsCamera','Actions','GamepadDevice'], action:['Action','ActionSettings','ActionOf','Bindings','Press'], binding:['Binding','BindingOf'],
+  character:['Character','CharacterIntent','CharacterMotion','SpawnPoint','RigidBody','Collider','Position','LinearVelocity','Transform','CollisionLayers','SweptCcd','LockedAxes','TranslationInterpolation','HoldingItems','Children'],
+  parcel:['Parcel','Pickable','ItemModel','CarryGrip','SpawnPoint','RigidBody','Collider','Position','LinearVelocity','AngularVelocity','Transform','CollisionLayers','HeldBy','HeldTarget','TransformInterpolation','Children'],
+  camera:['LoadingCamera','OrbitCamera','MouseLookState','Camera3d','Transform'],world:['IslandCollider','RigidBody','Collider','CollisionLayers','Transform','ChildOf'],
+  visual:['CharacterVisual','CourierVisual','CourierAnimationPending','WorldAssetRoot','Transform','GlobalTransform','ChildOf','Children','Visibility'],window:['PrimaryWindow','Window','CursorOptions'],
+  island:['IslandMap','IslandPending','IslandReady','ActorsSpawned','WorldAssetRoot','Children'],npc:['DisplayNpc','ChildOf'],animation_player:['AnimationPlayer','AnimationGraphHandle','AnimationTransitions','CourierAnimation','ChildOf'],model_node:['Transform','GlobalTransform','ChildOf','Mesh3d','MeshMaterial3d','Visibility','GltfExtras','SkinnedMesh','AnimationTargetId']
+};
+entityBoxes.forEach(box=>{const e=entities[box.id];registry[`entity-${e.id}`]={...e,name:e.name,kind:'Entity'};
+  const shortName={visual:'直属 GLB 视觉根',action:'动作',binding:'输入绑定',controller:'控制者',character:'角色',parcel:'五件可搬物',camera:'同一相机',world:'海岛静态碰撞',window:'主窗口',island:'海岛实例根',npc:'地图展示 NPC',animation_player:'主角播放器节点',model_node:'GLB 网格/骨骼节点'}[e.id];
+  b+=`<g class="node entity" ${register(`entity-${e.id}`,registry[`entity-${e.id}`])}>${frame(box.x,box.y,box.w,box.h,`«Entity» ${shortName}`,`数量：${e.count}`,colors.entity)}</g>`;
+  const key=c=>c.name.split('<')[0].split(' ')[0];
+  const visible=e.components.filter(c=>primaryComponents[e.id].includes(key(c))).sort((a,b)=>primaryComponents[e.id].indexOf(key(a))-primaryComponents[e.id].indexOf(key(b)));
+  e.components.forEach(c=>registry[c.id]={...c,kind:'Component',owner:e.name});
+  visible.forEach((c,i)=>b+=compact(box.x+15,box.y+71+i*34,box.w-30,30,c.id,c.name==='CharacterVisual'?'CharacterVisual（仅人物）':c.name));
+  b+=text(box.x+16,box.y+box.h-12,`完整清单：${e.components.length} 项 · 可选组件并非始终存在`,'small');
 });
 b += edge([[540, 214], [390, 214]], 'ActionOf', 'relationship', [465, 212], ['entity-action', 'entity-controller']);
 b += text(408, 247, '← Actions', 'small');
@@ -205,20 +244,30 @@ b += edge([[1143, 650], [1143, 600], [273, 600], [273, 650]], 'OrbitCamera.targe
 b += edge([[540, 810], [390, 810]], 'HeldBy', 'relationship', [465, 808], ['entity-parcel', 'entity-character']);
 b += text(399, 848, '← HoldingItems', 'small');
 b += text(407, 873, '无 linked_spawn', 'small');
-b += edge([[157, 1540], [157, 1250]], 'ChildOf：人物模型', 'relationship', [157, 1400], ['entity-visual', 'entity-character']);
+b += edge([[157, 1750], [157, 1310]], 'ChildOf：人物模型', 'relationship', [157, 1500], ['entity-visual', 'entity-character']);
 // 标签靠近下方横线，避开 Resource 框的边界与竖向走线。
-b += edge([[390, 1687], [965, 1687], [965, 1230], [900,1230]], 'ChildOf：箱子模型', 'relationship', [690, 1655], ['entity-visual', 'entity-parcel']);
-b += frame(540, 1910, 870, 228, '关系的基数与生命周期', '这里只描述当前源码声明的行为。');
-b += lines(561, 1994, ['HeldBy：每箱 0..1 位持有者；HoldingItems 容器允许 0..N，当前业务一次持一件。', 'ActionOf / BindingOf / ChildOf 声明 linked_spawn；HeldBy 不连带销毁箱体。', '失效持有者 / 异常解除：移除 HeldTarget、恢复自由碰撞，动态箱体自然下落。', 'Position / Velocity 为物理状态，Transform 为插值呈现；视觉子实体无刚体。', '持握使用反作用力，仍参与世界碰撞；持握箱当前忽略全部 Character 层。'], 'small', 27);
-b += frame(540, 1300, 360, 305, '«Resource / Local» 数据范围', 'Resource 共享；Local 属于某个系统。');
+b += edge([[390, 1927], [965, 1927], [965, 1300], [900,1300]], 'ChildOf：箱子模型', 'relationship', [690, 1900], ['entity-visual', 'entity-parcel']);
+b += frame(540, 2290, 1410, 228, '关系的基数与生命周期', '这里只描述当前源码声明的行为。');
+b += lines(561, 2374, ['HeldBy：每箱 0..1 位持有者；HoldingItems 容器允许 0..N，当前业务一次持一件。', 'ActionOf / BindingOf / ChildOf 声明 linked_spawn；HeldBy 不连带销毁箱体。', '失效持有者 / 异常解除：移除 HeldTarget、恢复自由碰撞，动态箱体自然下落。', 'Position / Velocity 为物理状态，Transform 为插值呈现；视觉子实体无刚体。', '持握使用反作用力，仍参与世界碰撞；持握箱当前忽略全部 Character 层。'], 'small', 27);
+b += frame(540, 1430, 360, 393, '«Resource / Local» 数据范围', 'Resource 共享；Local 属于某个系统。');
 model.resources.forEach(r => registry[r.id] = r);
-['resource.GameSettings','resource.PrototypeConfig','resource.TimeFixed','resource.Gravity','resource.ColliderTrees'].forEach((id,i)=>{const r=registry[id];b+=compact(554,1370+i*33,332,28,id,r.name,'resource');});
-b += text(557, 1560, '预留集合 / 采样计时：Local', 'small');
-b += text(557, 1588, 'LastEasingTick：插值共享 Resource', 'small');
-save('relationships', '实体 · 组件归属与关系', 1450, 2175, b, '真实物理状态、插值呈现和持握目标分离；点击组件查看字段及源码入口。');
+['resource.GameSettings','resource.PrototypeConfig','resource.TimeFixed','resource.Gravity','resource.ColliderTrees','resource.ArtAssets','resource.ArtLoadState'].filter(id=>registry[id]).forEach((id,i)=>{const r=registry[id];b+=compact(554,1500+i*33,332,28,id,r.name,'resource');});
+b += text(557, 1760, '预留集合 / 采样计时：Local', 'small');
+b += text(557, 1788, 'LastEasingTick：插值共享 Resource', 'small');
+if(entities.island && entities.npc){b+=edge([[1730,550],[1730,462]],'原地图子树','relationship',[1730,502],['entity-npc','entity-island']);}
+if(entities.model_node){
+  b+=edge([[1950,1670],[2070,1670],[2070,320],[1950,320]],'地图导入子树','relationship',[2070,860],['entity-model_node','entity-island']);
+  b+=edge([[1410,1360],[1460,1360],[1460,1580],[1510,1580]],'ChildOf：原地图实例','relationship',[1460,1403],['entity-world','entity-model_node']);
+  b+=edge([[1510,1850],[1484,1850],[1484,2175],[390,2175]],'GLB 节点 ChildOf 子树','relationship',[1010,2175],['entity-model_node','entity-visual']);
+}
+if(entities.animation_player){
+  b+=edge([[1510,1210],[1448,1210],[1448,2242],[332,2242],[332,2210]],'CourierVisual 内的播放器子树','relationship',[1080,2242],['entity-animation_player','entity-visual']);
+  b+=edge([[1510,995],[1432,995],[1432,621],[355,621],[355,650]],'CourierAnimation.character','reference',[920,621],['entity-animation_player','entity-character']);
+}
+save('relationships', '实体 · 组件归属与关系', 2200, 2555, b, '真实物理状态、插值呈现和持握目标分离；点击组件查看字段及源码入口。');
 
 // 通信视图：输入动作事件、全局 Observer 与窗口缓冲消息保持不同路线。
-b = text(36, 80, `${model.observers.length} 个 Observer 由匹配事件触发；它们不是按 add_observer 的注册顺序组成流水线。`, 'note');
+b = text(36, 80, `${model.observers.length} 个 Observer（七个输入，另含实例就绪）由匹配事件触发；它们不是按 add_observer 的注册顺序组成流水线。`, 'note');
 b += frame(30, 112, 1460, 154, '输入动作 · PreUpdate 中由 Enhanced Input 评估', '事件携带 context（控制者实体）、action（动作实体）和 value（动作输出）。');
 b += lines(50, 200, ['设备绑定 → Prepare → Update → Apply → Commands::trigger(EntityEvent) → 应用命令 → 匹配 Observer', 'Fire / Complete / Cancel 是触发式 EntityEvent；它们不经过 MessageReader 的消息缓冲。'], 'body', 32);
 const eventRows = [
@@ -257,7 +306,33 @@ registry['physics-file-log']={name:'会话文件日志',kind:'External I/O',desc
 b += card(971,1720,486,100,'physics-file-log','统一会话日志',['碰撞双方、原因、时间与级别'],'external','small');
 b += edge([[424,1770],[512,1770]],'读取','read',[468,1770],['physics-messages','collision_log']);
 b += edge([[868,1770],[971,1770]],'日志','write',[919,1770],['collision_log','physics-file-log']);
-save('events', '事件 · Observer · Message', 1520, 1880, b, '输入使用 EntityEvent / Observer；窗口与碰撞分别使用缓冲 Message；输出共用会话日志。');
+if(systems.island_ready_observer || systems.courier_ready_observer){
+  b+=frame(30,1880,1460,430,'模板实例化 · WorldInstanceReady','SpawnScene 的就绪事件只标记对应根；随后 Update 分别准备地图或绑定主角动画。');
+  if(systems.world_spawn)b+=system(50,2010,374,'world_spawn',['WorldAssetRoot → GLB 实例层级'],130);
+  registry['world-ready-event']={name:'WorldInstanceReady',kind:'EntityEvent',description:'实例化完成后在对应 WorldAssetRoot 实体上触发，不是资源轮询的 Message。',source:(systems.island_ready_observer||systems.courier_ready_observer).source};
+  b+=card(512,2030,356,100,'world-ready-event','WorldInstanceReady',['target：对应的模板根实体'],'event','small');
+  if(systems.world_spawn)b+=edge([[424,2080],[512,2080]],'触发','trigger',[468,2080],['world_spawn','world-ready-event']);
+  ['island_ready_observer','courier_ready_observer'].filter(id=>systems[id]).forEach((id,i)=>{const y=1970+i*170;b+=system(971,y,486,id,[id==='island_ready_observer'?'IslandMap → IslandPending':'CourierVisual → CourierAnimationPending'],100);b+=edge([[868,2080],[920,2080],[920,y+50],[971,y+50]],'匹配目标','trigger',[920,y+21],['world-ready-event',id]);});
+  b+=text(52,2270,'两个 Observer 按标记筛选；无注册顺序链。地图/NPC 和主角动画保持各自生命周期。','small');
+}
+const sessionPath=path.join(dir,'../../src/session_log.rs');
+const sessionLines=fs.existsSync(sessionPath)?fs.readFileSync(sessionPath,'utf8').split('\n'):[];
+const queuedLogging=sessionLines.some(line=>line.includes('struct QueuedWriter'));
+if(queuedLogging){
+  const logSource=name=>({path:'src/session_log.rs',line:sessionLines.findIndex(line=>new RegExp('\\bfn\\s+'+name+'\\b').test(line))+1});
+  b+=frame(30,2350,1460,485,'统一 tracing 输出 · 文件与控制台后台线程','两路无界队列是外部 I/O，不是 ECS Component / Resource / Event / Message。');
+  registry['log-producer']={name:'tracing producer',kind:'External I/O',description:'事件在调用线程格式化并入队；两路格式层 log_internal_errors(false)，不在失败时同步回退 stderr。',source:logSource('file_layer')};
+  registry['log-file-worker']={name:'File worker',kind:'External I/O',description:'独立线程 write_all + flush；首个错误保留，在后续写入/Flush/Shutdown 反馈。',source:logSource('spawn')};
+  registry['log-console-worker']={name:'Console worker',kind:'External I/O',description:'独立 stderr 线程；慢或故障控制台不拖住文件与普通日志生产线程。',source:logSource('console_layer')};
+  b+=card(50,2480,374,140,'log-producer','玩法 / 引擎 tracing',['时间 / level / target / 字段','统一 EnvFilter；不丢弃队列记录','普通调用不等待设备 I/O'],'external','small');
+  b+=card(600,2420,857,130,'log-file-worker','文件队列 → File worker',['独立会话文件 logs/unix-<时间戳>_<UUID>.log','write_all + flush；panic 文件 Sync barrier → sync_data'],'external','small');
+  b+=card(600,2600,857,130,'log-console-worker','控制台队列 → Stderr worker',['与文件队列隔离；同一过滤规则','record_exit：文件 Flush → 控制台 Flush'],'external','small');
+  b+=edge([[424,2550],[475,2550],[475,2485],[600,2485]],'入队','write',[535,2485],['log-producer','log-file-worker']);
+  b+=edge([[475,2550],[475,2665],[600,2665]],'入队','write',[535,2665],['log-producer','log-console-worker']);
+  b+=text(52,2775,'Drop：Shutdown 后拒绝新记录，排空已接受记录并 join；失败仍反馈，worker panic 避免等待自身。','small');
+  b+=text(52,2808,'日志与存档分别管理；这里不展开线程/队列内部类型为 ECS 节点，也不表示实机 FPS 已验收。','small');
+}
+save('events','事件 · Observer · Message',1520,queuedLogging?2875:2350,b,'输入 EntityEvent、实例就绪、窗口/碰撞 Message 与外部后台日志分别建模。');
 
 // 源码与图同时生成快照，让网页和离线文件都能打开完整源码并定位行号。
 const sourcePaths = [...new Set(Object.values(registry).map(d => d.source?.path).filter(Boolean))].sort();

@@ -1,122 +1,29 @@
 {
   "title": "当前原型的 ECS 架构",
-  "snapshot_note": "按 Avian 0.7.0 动态角色与物理持握实现维护；正式 HTML/SVG/源码快照由本次 pre-commit 从候选索引生成。",
+  "snapshot_note": "源码结构快照：海岛资源装配、动态搬运、主角动画、落水恢复、CCD 与后台会话日志；不表示已完成游戏运行或视觉验收。",
   "systems": [
     {
       "id": "startup_spawn",
-      "name": "spawn_scene",
+      "name": "spawn_lighting",
       "kind": "system",
       "phase": "Startup",
       "module": "scene",
-      "description": "生成带物理组件的角色/快递根、静态地面/墙体及独立视觉、控制者、输入与镜头。",
-      "reads": [
-        "resource.PrototypeConfig"
-      ],
+      "description": "BSN 生成日光与加载相机；此时不生成动态角色和物品。",
+      "reads": [],
       "writes": [
-        "controller.Name",
-        "controller.PlayerId",
-        "controller.GameplayContext",
-        "controller.GamepadDevice",
-        "controller.ControlsCharacter",
-        "controller.ControlsCamera",
-        "controller.Actions",
-        "controller.ContextPriority",
-        "controller.ContextActivity",
-        "character.Name",
-        "character.Character",
-        "character.CharacterIntent",
-        "character.CharacterMotion",
-        "character.Transform",
-        "character.GlobalTransform",
-        "character.Visibility",
-        "character.Children",
-        "parcel.Name",
-        "parcel.Parcel",
-        "parcel.Pickable",
-        "parcel.Transform",
-        "parcel.GlobalTransform",
-        "parcel.Visibility",
-        "parcel.Children",
-        "camera.Name",
         "camera.Camera3d",
-        "camera.OrbitCamera",
-        "camera.MouseLookState",
-        "camera.Transform",
-        "camera.GlobalTransform",
-        "visual.Name",
-        "visual.Mesh3d",
-        "visual.MeshMaterial3d",
-        "visual.Transform",
-        "visual.GlobalTransform",
-        "visual.ChildOf",
-        "visual.Visibility",
-        "action.Name",
-        "action.Action",
-        "action.ActionSettings",
-        "action.ActionOf",
-        "action.Bindings",
-        "action.Press",
-        "action.ActionValue",
-        "action.TriggerState",
-        "action.ActionEvents",
-        "action.ActionTime",
-        "action.ActionMock",
-        "action.ActionFns",
-        "action.ConditionFns",
-        "binding.Binding",
-        "binding.BindingOf",
-        "binding.FirstActivation",
-        "binding.Negate",
-        "binding.SwizzleAxis",
-        "binding.ModifierFns",
-        "resource.AssetsMesh",
-        "resource.AssetsStandardMaterial",
-        "visual.CharacterVisual",
-        "character.RigidBody",
-        "character.Collider",
-        "character.Mass",
-        "character.ComputedMass",
-        "character.ComputedCenterOfMass",
-        "character.CollisionLayers",
-        "character.CollisionEventsEnabled",
-        "character.SweptCcd",
-        "character.Friction",
-        "character.Restitution",
-        "character.TranslationInterpolation",
-        "character.LockedAxes",
-        "parcel.RigidBody",
-        "parcel.Collider",
-        "parcel.Mass",
-        "parcel.ComputedMass",
-        "parcel.ComputedCenterOfMass",
-        "parcel.CollisionLayers",
-        "parcel.CollisionEventsEnabled",
-        "parcel.SweptCcd",
-        "parcel.Friction",
-        "parcel.Restitution",
-        "parcel.TranslationInterpolation",
-        "parcel.LockedAxes",
-        "parcel.AngularDamping",
-        "parcel.TransformInterpolation",
-        "parcel.RotationInterpolation",
-        "parcel.ScaleInterpolation",
-        "world.RigidBody",
-        "world.Collider",
-        "world.CollisionLayers",
-        "world.Transform",
-        "world.Mesh3d",
-        "world.MeshMaterial3d"
+        "camera.LoadingCamera",
+        "camera.Transform"
       ],
       "filters": [],
       "events": [],
       "notes": [
-        "Commands 生成业务实体，Assets 添加直接发生；碰撞体和刚体只放在业务根。",
-        "地面与墙体各有一个静态盒形 Collider；日光另行生成，主窗口由 WindowPlugin 创建。",
-        "character_body / parcel_body 是 Bundle 构造辅助函数，不是系统；反向索引由关系钩子维护。"
+        "准备完成后复用加载相机实体，不临时创建第二台主相机。",
+        "启动场景命令在阶段结束应用，四项启动日志与资源请求日志无彼此顺序。"
       ],
       "source": {
         "path": "src/scene.rs",
-        "line": 31
+        "line": 82
       }
     },
     {
@@ -637,7 +544,8 @@
       "events": [],
       "notes": [
         "显式 before(GameplaySystems::Simulate)，与 sync_gravity 之间没有显式顺序。",
-        "只同步水平 rotation，随后移动施力和持握使用最新朝向；呈现链复用相同函数。"
+        "只同步水平 rotation，随后移动施力和持握使用最新朝向；呈现链复用相同函数。",
+        "落水恢复显式在本系统之前；恢复出生姿态后按当前视角重设朝向。"
       ],
       "source": {
         "path": "src/camera.rs",
@@ -687,7 +595,7 @@
       ],
       "source": {
         "path": "src/gameplay.rs",
-        "line": 230
+        "line": 236
       }
     },
     {
@@ -733,7 +641,7 @@
       ],
       "source": {
         "path": "src/gameplay.rs",
-        "line": 260
+        "line": 266
       }
     },
     {
@@ -786,7 +694,7 @@
       ],
       "source": {
         "path": "src/gameplay.rs",
-        "line": 297
+        "line": 303
       }
     },
     {
@@ -824,7 +732,8 @@
       "reads": [
         "resource.PrototypeConfig",
         "character.Transform",
-        "parcel.HeldBy"
+        "parcel.HeldBy",
+        "parcel.CarryGrip"
       ],
       "writes": [
         "parcel.HeldTarget"
@@ -836,11 +745,12 @@
       "events": [],
       "notes": [
         "固定步清理命令应用之后更新目标；实际持握施力另读 Avian Position，不读 HeldTarget。",
-        "HeldTarget 是呈现/检查器数据，不是物理位置来源；实际箱体可因惯性和碰撞偏离目标。"
+        "HeldTarget 是呈现/检查器数据，不是物理位置来源；实际箱体可因惯性和碰撞偏离目标。",
+        "CarryGrip 是每件物品的模型偏移；未指定时回退 PrototypeConfig.hold_offset，模拟与呈现读同一来源。"
       ],
       "source": {
         "path": "src/gameplay.rs",
-        "line": 418
+        "line": 424
       }
     },
     {
@@ -885,7 +795,8 @@
       "reads": [
         "resource.PrototypeConfig",
         "character.Transform",
-        "parcel.HeldBy"
+        "parcel.HeldBy",
+        "parcel.CarryGrip"
       ],
       "writes": [
         "parcel.HeldTarget"
@@ -897,11 +808,12 @@
       "events": [],
       "notes": [
         "物理插值和本帧角色朝向同步之后更新呈现目标，零固定步帧也执行。",
-        "HeldTarget 是呈现/检查器数据，不是物理位置来源；实际箱体可因惯性和碰撞偏离目标。"
+        "HeldTarget 是呈现/检查器数据，不是物理位置来源；实际箱体可因惯性和碰撞偏离目标。",
+        "CarryGrip 是每件物品的模型偏移；未指定时回退 PrototypeConfig.hold_offset，模拟与呈现读同一来源。"
       ],
       "source": {
         "path": "src/gameplay.rs",
-        "line": 418
+        "line": 424
       }
     },
     {
@@ -1332,7 +1244,7 @@
       ],
       "source": {
         "path": "src/gameplay.rs",
-        "line": 166
+        "line": 172
       }
     },
     {
@@ -1380,7 +1292,7 @@
       ],
       "source": {
         "path": "src/gameplay.rs",
-        "line": 166
+        "line": 172
       }
     },
     {
@@ -1434,7 +1346,7 @@
       ],
       "source": {
         "path": "src/gameplay.rs",
-        "line": 392
+        "line": 398
       }
     },
     {
@@ -1495,7 +1407,8 @@
         "parcel.LockedAxes",
         "parcel.VelocityIntegrationData",
         "parcel.AccumulatedLocalAcceleration",
-        "parcel.SleepTimer"
+        "parcel.SleepTimer",
+        "parcel.CarryGrip"
       ],
       "writes": [
         "character.LinearVelocity",
@@ -1517,11 +1430,12 @@
       "notes": [
         "不读 HeldTarget；模拟目标直接由 holder.position() 与水平朝向计算，防止呈现反馈进物理。",
         "动态箱体始终参与世界和其他箱体碰撞，隐式弹簧系数与力上限限制振荡；短弧旋转驱动。",
-        "Forces 是可变 QueryData，不是组件；访问速度、质量、位姿及引擎力累计/唤醒数据。图列出访问权限，具体施力只写本步累计量，冲量立即改变速度；引擎内部非业务字段仅作摘要。"
+        "Forces 是可变 QueryData，不是组件；访问速度、质量、位姿及引擎力累计/唤醒数据。图列出访问权限，具体施力只写本步累计量，冲量立即改变速度；引擎内部非业务字段仅作摘要。",
+        "CarryGrip 是每件物品的模型偏移；未指定时回退 PrototypeConfig.hold_offset，模拟与呈现读同一来源。"
       ],
       "source": {
         "path": "src/gameplay.rs",
-        "line": 432
+        "line": 442
       }
     },
     {
@@ -1549,7 +1463,7 @@
       ],
       "source": {
         "path": "src/gameplay.rs",
-        "line": 472
+        "line": 486
       }
     },
     {
@@ -1572,7 +1486,7 @@
       ],
       "source": {
         "path": "src/physics.rs",
-        "line": 112
+        "line": 115
       }
     },
     {
@@ -1687,11 +1601,11 @@
     },
     {
       "id": "easing_reset",
-      "name": "TransformEasingSystems::Reset / 插值起点",
+      "name": "TransformEasingSystems::Reset",
       "kind": "engine",
       "phase": "FixedFirst",
       "module": "bevy_transform_interpolation",
-      "description": "固定步开始重置插值状态并记录起点，随后才进行控制和物理解算。",
+      "description": "FixedFirst 重置上一轮插值状态；起点采样单列为 UpdateStart。",
       "reads": [
         "character.Transform",
         "parcel.Transform"
@@ -1705,7 +1619,7 @@
       "filters": [],
       "events": [],
       "notes": [
-        "由 Avian 安装插值插件；此引擎概览属于 FixedFirst，不在项目 FixedUpdate 链内。"
+        "Reset → resume_interpolation → 命令应用 → UpdateStart。"
       ],
       "source": null
     },
@@ -1778,6 +1692,457 @@
       "events": [],
       "notes": [
         "项目显示链明确 before(UpdateEasingTick)，不能挪到普通 Update 后再写角色朝向。"
+      ],
+      "source": null
+    },
+    {
+      "id": "startup_assets",
+      "name": "log_asset_requests",
+      "kind": "system",
+      "module": "art_assets",
+      "phase": "Startup",
+      "reads": [
+        "resource.ArtAssets"
+      ],
+      "writes": [],
+      "filters": [],
+      "events": [],
+      "description": "记录五份运行 GLB 的请求；实际加载在资源初始化时开始。",
+      "notes": [
+        "art/ 是制作源，运行时仅依赖 assets/。"
+      ],
+      "source": {
+        "path": "src/art_assets.rs",
+        "line": 117
+      }
+    },
+    {
+      "id": "asset_poll",
+      "name": "poll_art_assets",
+      "kind": "system",
+      "module": "art_assets",
+      "phase": "Update",
+      "reads": [
+        "resource.AssetServer",
+        "resource.ArtAssets",
+        "resource.ArtLoadState"
+      ],
+      "writes": [
+        "resource.ArtLoadState"
+      ],
+      "filters": [],
+      "events": [],
+      "description": "检查全部资源及递归依赖，进入 Ready 或 Failed。",
+      "notes": [
+        "Loading 时检查；已 Ready 或 Failed 后立即返回。",
+        "与海岛和动画 Update 链无显式相互顺序，晚一个 Update 观察 Ready 是允许的。"
+      ],
+      "source": {
+        "path": "src/art_assets.rs",
+        "line": 125
+      }
+    },
+    {
+      "id": "island_begin",
+      "name": "begin_island",
+      "kind": "system",
+      "module": "scene",
+      "phase": "Update",
+      "reads": [
+        "resource.ArtAssets",
+        "resource.AssetsGltf",
+        "resource.ArtLoadState",
+        "island.IslandMap"
+      ],
+      "writes": [
+        "resource.ArtLoadState",
+        "island.IslandMap",
+        "island.WorldAssetRoot"
+      ],
+      "filters": [
+        "With<IslandMap>"
+      ],
+      "events": [],
+      "description": "五份资源就绪且地图不存在时请求海岛实例。",
+      "notes": [
+        "begin_island → prepare_island → spawn_actors 使用 chain，延迟结构命令在依赖处应用。",
+        "仅请求 WorldAssetRoot；模板请求不等于静态碰撞已就绪。"
+      ],
+      "source": {
+        "path": "src/scene.rs",
+        "line": 100
+      }
+    },
+    {
+      "id": "island_ready_observer",
+      "name": "mark_island_ready",
+      "kind": "observer",
+      "module": "scene",
+      "phase": "WorldInstanceReady 触发时",
+      "reads": [
+        "island.IslandMap",
+        "island.IslandReady"
+      ],
+      "writes": [
+        "island.IslandPending"
+      ],
+      "filters": [
+        "With<IslandMap>",
+        "Without<IslandReady>"
+      ],
+      "events": [
+        "响应 EntityEvent：WorldInstanceReady"
+      ],
+      "description": "只为未准备的地图根插入待准备标记。",
+      "notes": [
+        "事件来自 SpawnScene 阶段的 WorldInstanceSpawner。",
+        "重复就绪通知不会在已准备地图上再次装配。"
+      ],
+      "source": {
+        "path": "src/scene.rs",
+        "line": 122
+      }
+    },
+    {
+      "id": "island_prepare",
+      "name": "prepare_island",
+      "kind": "system",
+      "module": "scene",
+      "phase": "Update",
+      "reads": [
+        "island.IslandPending",
+        "island.Children",
+        "model_node.GltfExtras",
+        "model_node.Transform",
+        "model_node.Mesh3d",
+        "resource.AssetsMesh",
+        "resource.ArtLoadState"
+      ],
+      "writes": [
+        "resource.ArtLoadState",
+        "island.IslandReady",
+        "island.IslandPending",
+        "world.IslandCollider",
+        "world.RigidBody",
+        "world.Collider",
+        "world.CollisionLayers",
+        "world.ChildOf",
+        "npc.DisplayNpc"
+      ],
+      "filters": [
+        "With<IslandPending>"
+      ],
+      "events": [],
+      "description": "导入元数据与 CPU 几何，构建静态三角碰撞及入口坡道。",
+      "notes": [
+        "全部几何成功后才提交碰撞并标记 IslandReady；失败不生成动态玩家。",
+        "移除地图展示主角、易碎纸箱与三只木箱；保留四名 NPC。",
+        "碰撞是原美术实例的 ChildOf；不改变视觉姿态。",
+        "海水、草、叶片无支撑碰撞；台阶用连接实际地板的坡道。"
+      ],
+      "source": {
+        "path": "src/scene.rs",
+        "line": 133
+      }
+    },
+    {
+      "id": "actors_spawn",
+      "name": "spawn_actors",
+      "kind": "system",
+      "module": "scene",
+      "phase": "Update",
+      "reads": [
+        "island.IslandReady",
+        "resource.PrototypeConfig",
+        "resource.ArtAssets",
+        "resource.AssetsGltf",
+        "camera.LoadingCamera"
+      ],
+      "writes": [
+        "island.ActorsSpawned",
+        "character.Character",
+        "character.SpawnPoint",
+        "parcel.Parcel",
+        "parcel.Pickable",
+        "parcel.ItemModel",
+        "parcel.CarryGrip",
+        "parcel.SpawnPoint",
+        "visual.WorldAssetRoot",
+        "visual.CourierVisual",
+        "controller.ControlsCharacter",
+        "controller.ControlsCamera",
+        "camera.OrbitCamera",
+        "camera.MouseLookState"
+      ],
+      "filters": [
+        "Without<ActorsSpawned>"
+      ],
+      "events": [],
+      "description": "碰撞命令可见后生成一名玩家、五件物品与控制者，复用加载相机。",
+      "notes": [
+        "玩家和可搬物是独立世界根，不是地图的子实体。",
+        "业务根保存刚体；直属视觉根通过 BSN Children 挂接 GLB 模板。",
+        "普通纸箱、易碎纸箱、三只木箱复用同一玩法能力，偏移来自 CarryGrip。"
+      ],
+      "source": {
+        "path": "src/scene.rs",
+        "line": 468
+      }
+    },
+    {
+      "id": "courier_ready_observer",
+      "name": "mark_courier_animation_ready",
+      "kind": "observer",
+      "module": "character_animation",
+      "phase": "WorldInstanceReady 触发时",
+      "reads": [
+        "visual.CourierVisual"
+      ],
+      "writes": [
+        "visual.CourierAnimationPending"
+      ],
+      "filters": [
+        "With<CourierVisual>"
+      ],
+      "events": [
+        "响应 EntityEvent：WorldInstanceReady"
+      ],
+      "description": "只将主角视觉根标记为待绑定动画。",
+      "notes": [
+        "地图和 NPC 的就绪事件不会绑定主角动画。"
+      ],
+      "source": {
+        "path": "src/character_animation.rs",
+        "line": 79
+      }
+    },
+    {
+      "id": "animation_initialize",
+      "name": "initialize_ready_couriers",
+      "kind": "system",
+      "module": "character_animation",
+      "phase": "Update",
+      "reads": [
+        "visual.CourierAnimationPending",
+        "visual.CourierVisual",
+        "visual.ChildOf",
+        "visual.Children",
+        "character.LinearVelocity",
+        "character.HoldingItems",
+        "resource.AssetsGltf",
+        "animation_player.AnimationPlayer"
+      ],
+      "writes": [
+        "resource.AssetsAnimationGraph",
+        "animation_player.AnimationPlayer",
+        "animation_player.AnimationGraphHandle",
+        "animation_player.AnimationTransitions",
+        "animation_player.CourierAnimation",
+        "visual.CourierAnimationPending"
+      ],
+      "filters": [
+        "With<CourierAnimationPending>",
+        "With<Character>"
+      ],
+      "events": [],
+      "description": "遍历主角视觉子树，按动作名称创建图并绑定实际播放器。",
+      "notes": [
+        "Idle / Walk / Carry_Idle 按 named_animations 查找，不硬编码 glTF 排列索引。",
+        "与 sync_courier_animation 使用 chain，新增绑定当帧可见。",
+        "等待 GLB 可用；缺失动作或父角色记录错误并清理待绑定状态。"
+      ],
+      "source": {
+        "path": "src/character_animation.rs",
+        "line": 92
+      }
+    },
+    {
+      "id": "animation_sync",
+      "name": "sync_courier_animation",
+      "kind": "system",
+      "module": "character_animation",
+      "phase": "Update",
+      "reads": [
+        "character.LinearVelocity",
+        "character.HoldingItems",
+        "animation_player.CourierAnimation"
+      ],
+      "writes": [
+        "animation_player.AnimationPlayer",
+        "animation_player.AnimationTransitions",
+        "animation_player.CourierAnimation",
+        "animation_player.AnimationGraphHandle"
+      ],
+      "filters": [
+        "With<Character>"
+      ],
+      "events": [],
+      "description": "实际水平速度选择 Idle / Walk，持物优先 Carry_Idle。",
+      "notes": [
+        "水平速度门槛 0.15 m/s，切换过渡 180 ms，无根运动。",
+        "相同状态保持播放进度，不重启动作；角色缺失时移除关联并停止播放。",
+        "Update 在固定循环后运行；没有固定步时沿用真实速度。"
+      ],
+      "source": {
+        "path": "src/character_animation.rs",
+        "line": 190
+      }
+    },
+    {
+      "id": "water_recover",
+      "name": "recover_from_water",
+      "kind": "system",
+      "module": "island_recovery",
+      "phase": "FixedUpdate",
+      "reads": [
+        "character.SpawnPoint",
+        "parcel.SpawnPoint",
+        "parcel.HeldBy",
+        "character.Position",
+        "parcel.Position"
+      ],
+      "writes": [
+        "character.Position",
+        "character.Rotation",
+        "character.Transform",
+        "character.LinearVelocity",
+        "character.AngularVelocity",
+        "character.CharacterIntent",
+        "character.CharacterMotion",
+        "character.ResumeInterpolation",
+        "character.NoTranslationEasing",
+        "character.NoRotationEasing",
+        "parcel.Position",
+        "parcel.Rotation",
+        "parcel.Transform",
+        "parcel.LinearVelocity",
+        "parcel.AngularVelocity",
+        "parcel.HeldBy",
+        "parcel.HeldTarget",
+        "parcel.CollisionLayers",
+        "parcel.ResumeInterpolation",
+        "parcel.NoTranslationEasing",
+        "parcel.NoRotationEasing"
+      ],
+      "filters": [
+        "Or<(With<Character>, With<Pickable>)>",
+        "SpawnPoint 必须存在"
+      ],
+      "events": [],
+      "description": "物理 y < -1.5 时回各自出生姿态，清除速度与单次请求，解除持握。",
+      "notes": [
+        "显式 recover_from_water → sync_character_facing → GameplaySystems::Simulate，保留持续移动轴。",
+        "物品在自身落水时恢复；持有者落水只释放尚未落水物品，不搬动物品。",
+        "移除 Sleeping，临时暂停平移/旋转插值，避免当前与零固定步帧跨岛拖影。",
+        "模拟前应用延迟关系命令，交互和施力看见释放结果。"
+      ],
+      "source": {
+        "path": "src/island_recovery.rs",
+        "line": 78
+      }
+    },
+    {
+      "id": "interpolation_resume",
+      "name": "resume_interpolation",
+      "kind": "system",
+      "module": "island_recovery",
+      "phase": "FixedFirst",
+      "reads": [
+        "character.ResumeInterpolation",
+        "parcel.ResumeInterpolation"
+      ],
+      "writes": [
+        "character.ResumeInterpolation",
+        "character.NoTranslationEasing",
+        "character.NoRotationEasing",
+        "parcel.ResumeInterpolation",
+        "parcel.NoTranslationEasing",
+        "parcel.NoRotationEasing"
+      ],
+      "filters": [
+        "ResumeInterpolation"
+      ],
+      "events": [],
+      "description": "下一固定步清理本模块添加的插值暂停，再从恢复位置采样。",
+      "notes": [
+        "after(Reset).before(UpdateStart)；保留恢复前已有的暂停标记。"
+      ],
+      "source": {
+        "path": "src/island_recovery.rs",
+        "line": 145
+      }
+    },
+    {
+      "id": "world_spawn",
+      "name": "WorldInstanceSpawner / WorldInstanceSpawn",
+      "kind": "engine",
+      "module": "engine",
+      "phase": "SpawnScene",
+      "reads": [
+        "visual.WorldAssetRoot",
+        "island.WorldAssetRoot",
+        "resource.AssetsWorldAsset"
+      ],
+      "writes": [
+        "visual.Children",
+        "island.Children",
+        "model_node.ChildOf"
+      ],
+      "filters": [],
+      "events": [
+        "WorldInstanceReady"
+      ],
+      "description": "WorldSerializationPlugin 实例化 WorldAssetRoot 层级并触发 WorldInstanceReady。",
+      "notes": [
+        "引擎概览，不展开所有资产、钩子与内部系统。",
+        "在 Update 之后、PostUpdate 之前运行；项目在随后 Update 消费就绪标记。"
+      ],
+      "source": null
+    },
+    {
+      "id": "animation_engine",
+      "name": "AnimationSystems / AnimationPlugin",
+      "kind": "engine",
+      "module": "engine",
+      "phase": "PostUpdate",
+      "reads": [
+        "animation_player.AnimationPlayer",
+        "animation_player.AnimationGraphHandle",
+        "animation_player.AnimationTransitions",
+        "resource.AssetsAnimationGraph"
+      ],
+      "writes": [
+        "model_node.Transform"
+      ],
+      "filters": [],
+      "events": [],
+      "description": "推进动画、过渡并写入目标骨骼局部 Transform。",
+      "notes": [
+        "Bevy 0.19.1 在 PostUpdate 中 chain 并 before(TransformSystems::Propagate)。",
+        "只展示相关引擎流程，不宣称动画驱动业务根或精确渲染顺序。"
+      ],
+      "source": null
+    },
+    {
+      "id": "easing_start",
+      "name": "TransformEasingSystems::UpdateStart",
+      "kind": "engine",
+      "module": "engine",
+      "phase": "FixedFirst",
+      "reads": [
+        "character.Transform",
+        "parcel.Transform"
+      ],
+      "writes": [
+        "character.TranslationEasingState",
+        "parcel.TranslationEasingState",
+        "parcel.RotationEasingState"
+      ],
+      "filters": [],
+      "events": [],
+      "description": "记录当前固定步插值起点；在恢复临时暂停清理之后。",
+      "notes": [
+        "引擎集合概览，实际内部插值系统不逐项穷举。"
       ],
       "source": null
     }
@@ -1912,7 +2277,7 @@
           "description": "角色根实体名称。",
           "source": {
             "path": "src/scene.rs",
-            "line": 98
+            "line": 432
           }
         },
         {
@@ -1962,7 +2327,7 @@
           "description": "Avian 固定步回写与渲染帧插值的呈现姿态；物理位置来源是 Position，非持握系统直接搬动。",
           "source": {
             "path": "src/scene.rs",
-            "line": 103
+            "line": 432
           }
         },
         {
@@ -1974,7 +2339,7 @@
           "description": "由 Transform 要求并由引擎同步；供层级传播与渲染使用。",
           "source": {
             "path": "src/scene.rs",
-            "line": 103
+            "line": 432
           }
         },
         {
@@ -1986,7 +2351,7 @@
           "description": "根实体的可见性，视觉子实体继承层级可见性。",
           "source": {
             "path": "src/scene.rs",
-            "line": 104
+            "line": 432
           }
         },
         {
@@ -1998,7 +2363,7 @@
           "description": "ChildOf 的自动反向索引；当前包含身体、头部与朝向标记三个视觉实体。",
           "source": {
             "path": "src/scene.rs",
-            "line": 114
+            "line": 432
           }
         },
         {
@@ -2010,7 +2375,7 @@
           "description": "HeldBy 的自动反向索引，仅在关系需要时存在；业务读取第一件持有物，容器本身可容纳多件。",
           "source": {
             "path": "src/gameplay.rs",
-            "line": 62
+            "line": 67
           }
         },
         {
@@ -2154,8 +2519,12 @@
         {
           "id": "character.SweptCcd",
           "name": "SweptCcd",
-          "fields": [],
-          "description": "连续碰撞检测，减少高速穿越。",
+          "fields": [
+            "NON_LINEAR",
+            "linear_velocity_threshold=8.0 m/s",
+            "angular_velocity_threshold=0.1 rad/s"
+          ],
+          "description": "保留非线性高速扫掠，正常移动使用推测接触；非零 yaw 下不采用 LINEAR。",
           "source": {
             "path": "src/physics.rs",
             "line": 57
@@ -2260,14 +2629,59 @@
             "path": "src/physics.rs",
             "line": 57
           }
+        },
+        {
+          "id": "character.SpawnPoint",
+          "name": "SpawnPoint",
+          "fields": [
+            "0: Transform"
+          ],
+          "description": "每个业务根独立保存出生姿态。",
+          "source": {
+            "path": "src/island_recovery.rs",
+            "line": 26
+          }
+        },
+        {
+          "id": "character.ResumeInterpolation",
+          "name": "ResumeInterpolation",
+          "fields": [
+            "translation: bool",
+            "rotation: bool"
+          ],
+          "description": "记录本次恢复临时添加的暂停项。",
+          "source": {
+            "path": "src/island_recovery.rs",
+            "line": 54
+          }
+        },
+        {
+          "id": "character.NoTranslationEasing",
+          "name": "NoTranslationEasing",
+          "fields": [],
+          "description": "恢复后临时暂停；不移除原先暂停。",
+          "source": {
+            "path": "src/island_recovery.rs",
+            "line": 78
+          }
+        },
+        {
+          "id": "character.NoRotationEasing",
+          "name": "NoRotationEasing",
+          "fields": [],
+          "description": "恢复后临时暂停；下一固定步按归属清理。",
+          "source": {
+            "path": "src/island_recovery.rs",
+            "line": 78
+          }
         }
       ]
     },
     {
       "id": "parcel",
-      "name": "木箱快递业务根实体",
-      "count": 1,
-      "description": "始终为动态刚体的快递根对应箱体中心；持握建立关系和目标，不改变视觉层级或瞬移位置。",
+      "name": "可搬物品业务根实体",
+      "count": 5,
+      "description": "普通纸箱、易碎纸箱和三只木箱均为动态 Parcel + Pickable；持握关系不改变视觉父实体。",
       "components": [
         {
           "id": "parcel.Name",
@@ -2278,7 +2692,7 @@
           "description": "木箱快递根实体名称。",
           "source": {
             "path": "src/scene.rs",
-            "line": 176
+            "line": 445
           }
         },
         {
@@ -2312,7 +2726,7 @@
           "description": "Avian 固定步回写与渲染帧插值的呈现姿态；物理位置来源是 Position，非持握系统直接搬动。",
           "source": {
             "path": "src/scene.rs",
-            "line": 142
+            "line": 445
           }
         },
         {
@@ -2324,7 +2738,7 @@
           "description": "由 Transform 要求并由引擎同步，用于木箱模型层级传播。",
           "source": {
             "path": "src/scene.rs",
-            "line": 142
+            "line": 445
           }
         },
         {
@@ -2336,7 +2750,7 @@
           "description": "根实体可见性。",
           "source": {
             "path": "src/scene.rs",
-            "line": 144
+            "line": 445
           }
         },
         {
@@ -2348,7 +2762,7 @@
           "description": "ChildOf 的自动反向索引；当前包含箱体与两条木条三个视觉实体。",
           "source": {
             "path": "src/scene.rs",
-            "line": 157
+            "line": 445
           }
         },
         {
@@ -2360,7 +2774,7 @@
           "description": "可选关系组件，仅持有时存在；指向持有者，增删通过 Commands 延迟执行。",
           "source": {
             "path": "src/gameplay.rs",
-            "line": 57
+            "line": 62
           }
         },
         {
@@ -2372,19 +2786,20 @@
           "description": "动态刚体；角色与箱体均保留物理解算。",
           "source": {
             "path": "src/physics.rs",
-            "line": 81
+            "line": 84
           }
         },
         {
           "id": "parcel.Collider",
           "name": "Collider",
           "fields": [
-            "cuboid：边长 0.6"
+            "纸箱 cuboid：边长 0.6",
+            "木箱 compound：0.84 × 0.6825 × 0.8145，中心偏移(0, 0.01625, 0.01625)"
           ],
           "description": "业务根碰撞体，视觉子实体不添加物理体。",
           "source": {
             "path": "src/physics.rs",
-            "line": 81
+            "line": 84
           }
         },
         {
@@ -2396,7 +2811,7 @@
           "description": "实际物理位置；Forces.position()、接地与拾取读取此值。",
           "source": {
             "path": "src/physics.rs",
-            "line": 81
+            "line": 84
           }
         },
         {
@@ -2408,7 +2823,7 @@
           "description": "实际物理旋转；角色锁旋转，箱体允许旋转。",
           "source": {
             "path": "src/physics.rs",
-            "line": 81
+            "line": 84
           }
         },
         {
@@ -2420,7 +2835,7 @@
           "description": "实际线速度，由冲量、外力、重力与接触求解改变。",
           "source": {
             "path": "src/physics.rs",
-            "line": 81
+            "line": 84
           }
         },
         {
@@ -2432,7 +2847,7 @@
           "description": "实际角速度；释放箱体保留原有动量。",
           "source": {
             "path": "src/physics.rs",
-            "line": 81
+            "line": 84
           }
         },
         {
@@ -2444,7 +2859,7 @@
           "description": "显式质量，Avian 更新计算质量。",
           "source": {
             "path": "src/physics.rs",
-            "line": 81
+            "line": 84
           }
         },
         {
@@ -2456,7 +2871,7 @@
           "description": "Forces 及跳跃冲量读取的计算质量。",
           "source": {
             "path": "src/physics.rs",
-            "line": 81
+            "line": 84
           }
         },
         {
@@ -2466,7 +2881,7 @@
           "description": "Avian 计算角惯量，Forces QueryData 只读。",
           "source": {
             "path": "src/physics.rs",
-            "line": 81
+            "line": 84
           }
         },
         {
@@ -2476,7 +2891,7 @@
           "description": "Avian 计算质量中心，Forces QueryData 只读。",
           "source": {
             "path": "src/physics.rs",
-            "line": 81
+            "line": 84
           }
         },
         {
@@ -2488,7 +2903,7 @@
           "description": "接触求解与支撑查询使用的碰撞层；持握当前忽略全部人物层。",
           "source": {
             "path": "src/physics.rs",
-            "line": 81
+            "line": 84
           }
         },
         {
@@ -2498,17 +2913,20 @@
           "description": "请求离散接触开始/结束消息，用于集中日志。",
           "source": {
             "path": "src/physics.rs",
-            "line": 81
+            "line": 84
           }
         },
         {
           "id": "parcel.SweptCcd",
           "name": "SweptCcd",
-          "fields": [],
+          "fields": [
+            "NON_LINEAR（默认）",
+            "速度门槛均为 0（本轮未改变）"
+          ],
           "description": "连续碰撞检测，减少高速穿越。",
           "source": {
             "path": "src/physics.rs",
-            "line": 81
+            "line": 84
           }
         },
         {
@@ -2520,7 +2938,7 @@
           "description": "控制接触摩擦；人物低摩擦避免贴墙卡住。",
           "source": {
             "path": "src/physics.rs",
-            "line": 81
+            "line": 84
           }
         },
         {
@@ -2532,7 +2950,7 @@
           "description": "接触恢复系数。",
           "source": {
             "path": "src/physics.rs",
-            "line": 81
+            "line": 84
           }
         },
         {
@@ -2542,7 +2960,7 @@
           "description": "Avian 内部组件；Forces 在此累计本步世界加速度/力数据，物理步消费。",
           "source": {
             "path": "src/physics.rs",
-            "line": 81
+            "line": 84
           }
         },
         {
@@ -2552,7 +2970,7 @@
           "description": "Avian 内部局部加速度累计；Forces QueryData 声明可变访问，项目未用局部力方法。",
           "source": {
             "path": "src/physics.rs",
-            "line": 81
+            "line": 84
           }
         },
         {
@@ -2562,7 +2980,7 @@
           "description": "可选 Avian 睡眠状态计时；Forces 施力/冲量可能唤醒。",
           "source": {
             "path": "src/physics.rs",
-            "line": 81
+            "line": 84
           }
         },
         {
@@ -2572,7 +2990,7 @@
           "description": "只对渲染帧平移执行插值，不反馈物理 Position。",
           "source": {
             "path": "src/physics.rs",
-            "line": 81
+            "line": 84
           }
         },
         {
@@ -2584,7 +3002,7 @@
           "description": "固定步起止平移的插值端点，渲染帧按 overstep 混合。",
           "source": {
             "path": "src/physics.rs",
-            "line": 81
+            "line": 84
           }
         },
         {
@@ -2594,7 +3012,7 @@
           "description": "Forces 的可选只读组件；当前箱体不锁旋转。",
           "source": {
             "path": "src/physics.rs",
-            "line": 81
+            "line": 84
           }
         },
         {
@@ -2606,7 +3024,7 @@
           "description": "物理角速度阻尼。",
           "source": {
             "path": "src/physics.rs",
-            "line": 81
+            "line": 84
           }
         },
         {
@@ -2616,7 +3034,7 @@
           "description": "要求平移、旋转和缩放插值标记。",
           "source": {
             "path": "src/physics.rs",
-            "line": 81
+            "line": 84
           }
         },
         {
@@ -2626,7 +3044,7 @@
           "description": "箱体完整 Transform 插值的标记或端点数据。",
           "source": {
             "path": "src/physics.rs",
-            "line": 81
+            "line": 84
           }
         },
         {
@@ -2636,7 +3054,7 @@
           "description": "箱体完整 Transform 插值的标记或端点数据。",
           "source": {
             "path": "src/physics.rs",
-            "line": 81
+            "line": 84
           }
         },
         {
@@ -2648,7 +3066,7 @@
           "description": "箱体完整 Transform 插值的标记或端点数据。",
           "source": {
             "path": "src/physics.rs",
-            "line": 81
+            "line": 84
           }
         },
         {
@@ -2660,7 +3078,7 @@
           "description": "箱体完整 Transform 插值的标记或端点数据。",
           "source": {
             "path": "src/physics.rs",
-            "line": 81
+            "line": 84
           }
         },
         {
@@ -2673,7 +3091,7 @@
           "description": "持握时的呈现检查目标，镜头显示链更新；物理施力不读取它。",
           "source": {
             "path": "src/gameplay.rs",
-            "line": 67
+            "line": 72
           }
         },
         {
@@ -2695,7 +3113,76 @@
           "description": "Avian 从业务根碰撞体/刚体初始化的物理查询数据；SpatialQuery 只读。",
           "source": {
             "path": "src/physics.rs",
-            "line": 81
+            "line": 84
+          }
+        },
+        {
+          "id": "parcel.SpawnPoint",
+          "name": "SpawnPoint",
+          "fields": [
+            "0: Transform"
+          ],
+          "description": "每个业务根独立保存出生姿态。",
+          "source": {
+            "path": "src/island_recovery.rs",
+            "line": 26
+          }
+        },
+        {
+          "id": "parcel.ResumeInterpolation",
+          "name": "ResumeInterpolation",
+          "fields": [
+            "translation: bool",
+            "rotation: bool"
+          ],
+          "description": "记录本次恢复临时添加的暂停项。",
+          "source": {
+            "path": "src/island_recovery.rs",
+            "line": 54
+          }
+        },
+        {
+          "id": "parcel.NoTranslationEasing",
+          "name": "NoTranslationEasing",
+          "fields": [],
+          "description": "恢复后临时暂停；不移除原先暂停。",
+          "source": {
+            "path": "src/island_recovery.rs",
+            "line": 78
+          }
+        },
+        {
+          "id": "parcel.NoRotationEasing",
+          "name": "NoRotationEasing",
+          "fields": [],
+          "description": "恢复后临时暂停；下一固定步按归属清理。",
+          "source": {
+            "path": "src/island_recovery.rs",
+            "line": 78
+          }
+        },
+        {
+          "id": "parcel.CarryGrip",
+          "name": "CarryGrip",
+          "fields": [
+            "0: Vec3（模型握持偏移）"
+          ],
+          "description": "模拟施力与显示目标共同读取。",
+          "source": {
+            "path": "src/gameplay.rs",
+            "line": 57
+          }
+        },
+        {
+          "id": "parcel.ItemModel",
+          "name": "ItemModel",
+          "fields": [
+            "StandardParcel / FragileParcel / WoodenCrate"
+          ],
+          "description": "美术种类不替代 Pickable 能力与 HeldBy 关系。",
+          "source": {
+            "path": "src/art_assets.rs",
+            "line": 15
           }
         }
       ]
@@ -2704,7 +3191,7 @@
       "id": "camera",
       "name": "环绕相机实体",
       "count": 1,
-      "description": "同一相机保存两种视角，默认第三人称；与控制者和角色通过 Entity 引用关联。两种模式共享水平角，分别保留俯仰，水平角驱动角色朝向。",
+      "description": "同一相机保存两种视角，默认第三人称；与控制者和角色通过 Entity 引用关联。两种模式共享水平角，分别保留俯仰，水平角驱动角色朝向。加载时带 LoadingCamera，地图准备后复用同一实体，替换为 OrbitCamera 与 MouseLookState。",
       "components": [
         {
           "id": "camera.Name",
@@ -2715,7 +3202,7 @@
           "description": "相机名称。",
           "source": {
             "path": "src/scene.rs",
-            "line": 177
+            "line": 82
           }
         },
         {
@@ -2727,7 +3214,7 @@
           "description": "引擎三维相机组件；其要求的渲染组件在此清单中省略。",
           "source": {
             "path": "src/scene.rs",
-            "line": 177
+            "line": 82
           }
         },
         {
@@ -2777,7 +3264,7 @@
           "description": "follow_orbit_camera 根据角色位置和当前视角计算镜头姿态；第三人称环绕，第一人称在眼位使用 yaw 与独立俯仰。",
           "source": {
             "path": "src/scene.rs",
-            "line": 180
+            "line": 82
           }
         },
         {
@@ -2789,7 +3276,7 @@
           "description": "引擎传播后的相机世界变换，供渲染提取。",
           "source": {
             "path": "src/scene.rs",
-            "line": 180
+            "line": 82
           }
         },
         {
@@ -2811,7 +3298,7 @@
           "description": "主 UI 上下文标记，位于当前相机实体而非 Window 实体；要求 EguiContext。",
           "source": {
             "path": "src/main.rs",
-            "line": 60
+            "line": 67
           }
         },
         {
@@ -2826,7 +3313,7 @@
           "description": "EguiContext 要求的组件；控制上下文输入与输出处理，当前保留插件默认值。",
           "source": {
             "path": "src/main.rs",
-            "line": 60
+            "line": 67
           }
         },
         {
@@ -2838,7 +3325,7 @@
           "description": "UI 输入缓冲组件，包含映射后的窗口输入；不是玩法 Resource 或动作意图。",
           "source": {
             "path": "src/main.rs",
-            "line": 60
+            "line": 67
           }
         },
         {
@@ -2850,7 +3337,7 @@
           "description": "EguiPlugin::default() 默认启用多轮 UI 计算，PrimaryEguiContext 钩子附加此组件；PostUpdate 的引擎循环据此调用 UI Schedule。",
           "source": {
             "path": "src/main.rs",
-            "line": 60
+            "line": 67
           }
         },
         {
@@ -2862,16 +3349,26 @@
           "description": "UI 计算输出，由多轮上下文循环写入并交给插件输出、渲染处理。",
           "source": {
             "path": "src/main.rs",
-            "line": 60
+            "line": 67
+          }
+        },
+        {
+          "id": "camera.LoadingCamera",
+          "name": "LoadingCamera",
+          "fields": [],
+          "description": "加载期间相机身份，准备后移除。",
+          "source": {
+            "path": "src/scene.rs",
+            "line": 94
           }
         }
       ]
     },
     {
       "id": "visual",
-      "name": "角色与木箱的视觉子实体",
+      "name": "业务直属 GLB 视觉根实体",
       "count": 6,
-      "description": "角色三个：身体、头部、朝向标记；木箱三个：箱体、两条木条。此类别不包括另行生成的地面与日光。",
+      "description": "一名主角和五件物品各有一个 WorldAssetRoot 视觉根；根下由 GLB 生成网格、骨骼与播放器，根自身无刚体。",
       "components": [
         {
           "id": "visual.Name",
@@ -2882,31 +3379,7 @@
           "description": "各视觉部分的调试名称。",
           "source": {
             "path": "src/scene.rs",
-            "line": 86
-          }
-        },
-        {
-          "id": "visual.Mesh3d",
-          "name": "Mesh3d",
-          "fields": [
-            "0: Handle<Mesh>"
-          ],
-          "description": "仅持有网格资产句柄；资产本体在 Assets<Mesh> 资源中。",
-          "source": {
-            "path": "src/scene.rs",
-            "line": 111
-          }
-        },
-        {
-          "id": "visual.MeshMaterial3d",
-          "name": "MeshMaterial3d<StandardMaterial>",
-          "fields": [
-            "0: Handle<StandardMaterial>"
-          ],
-          "description": "仅持有材质资产句柄。",
-          "source": {
-            "path": "src/scene.rs",
-            "line": 112
+            "line": 428
           }
         },
         {
@@ -2920,7 +3393,7 @@
           "description": "相对所属业务根的局部变换，场景生成后没有业务系统修改。",
           "source": {
             "path": "src/scene.rs",
-            "line": 113
+            "line": 428
           }
         },
         {
@@ -2932,7 +3405,7 @@
           "description": "由 ChildOf 层级与局部 Transform 传播出的世界变换。",
           "source": {
             "path": "src/scene.rs",
-            "line": 113
+            "line": 428
           }
         },
         {
@@ -2944,7 +3417,7 @@
           "description": "内置关系组件；每个视觉子实体关联角色根或木箱根。",
           "source": {
             "path": "src/scene.rs",
-            "line": 114
+            "line": 428
           }
         },
         {
@@ -2956,7 +3429,7 @@
           "description": "由 Mesh3d 要求；角色视觉的 Visibility 由 sync_character_visibility 更新，木箱视觉保持默认；引擎再计算最终可见性。",
           "source": {
             "path": "src/scene.rs",
-            "line": 111
+            "line": 428
           }
         },
         {
@@ -2967,6 +3440,52 @@
           "source": {
             "path": "src/camera.rs",
             "line": 46
+          }
+        },
+        {
+          "id": "visual.CourierVisual",
+          "name": "CourierVisual",
+          "fields": [
+            "0: Handle<Gltf>"
+          ],
+          "description": "仅主角直属视觉根携带，作为动画绑定入口。",
+          "source": {
+            "path": "src/character_animation.rs",
+            "line": 17
+          }
+        },
+        {
+          "id": "visual.CourierAnimationPending",
+          "name": "CourierAnimationPending",
+          "fields": [],
+          "description": "实例就绪后等待命名动画绑定。",
+          "source": {
+            "path": "src/character_animation.rs",
+            "line": 21
+          }
+        },
+        {
+          "id": "visual.WorldAssetRoot",
+          "name": "WorldAssetRoot",
+          "fields": [
+            "0: Handle<WorldAsset>"
+          ],
+          "description": "主角和物品模板的实例化入口。",
+          "source": {
+            "path": "src/scene.rs",
+            "line": 428
+          }
+        },
+        {
+          "id": "visual.Children",
+          "name": "Children",
+          "fields": [
+            "GLB 节点子树"
+          ],
+          "description": "由 WorldInstanceSpawner 维护实例层级。",
+          "source": {
+            "path": "src/scene.rs",
+            "line": 428
           }
         }
       ]
@@ -2989,7 +3508,7 @@
           "description": "主窗口；sync_mouse_capture 读取焦点及当前物理光标，并用 Egui 缓存的面板层命中区域区别游戏区点击。AutoNoVsync 可能由平台回退。",
           "source": {
             "path": "src/main.rs",
-            "line": 41
+            "line": 48
           }
         },
         {
@@ -2999,7 +3518,7 @@
           "description": "标识鼠标捕获系统要求唯一的主窗口。",
           "source": {
             "path": "src/main.rs",
-            "line": 41
+            "line": 48
           }
         },
         {
@@ -3278,9 +3797,9 @@
     },
     {
       "id": "world",
-      "name": "静态世界碰撞实体",
-      "count": 2,
-      "description": "地面与墙体各一个静态刚体，网格和碰撞位于同一根；日光仍省略。",
+      "name": "海岛静态碰撞实体",
+      "count": "由地图几何决定",
+      "description": "三角碰撞与入口坡道独立于美术，ChildOf 指向对应原美术实例，随地图层级销毁。",
       "components": [
         {
           "id": "world.RigidBody",
@@ -3291,20 +3810,19 @@
           "description": "不接受运动积分的静态地面/墙体。",
           "source": {
             "path": "src/scene.rs",
-            "line": 42
+            "line": 133
           }
         },
         {
           "id": "world.Collider",
           "name": "Collider",
           "fields": [
-            "地面：200 × 1 × 200；顶面 ground_y",
-            "墙：4 × 2.5 × 0.5；z=-5"
+            "结构网格合并 trimesh；入口台阶对应斜坡"
           ],
           "description": "有厚度的盒形碰撞体。",
           "source": {
             "path": "src/scene.rs",
-            "line": 42
+            "line": 133
           }
         },
         {
@@ -3330,27 +3848,7 @@
           "description": "静态碰撞和视觉共享位姿，物理插件初始化 Position/Rotation。",
           "source": {
             "path": "src/scene.rs",
-            "line": 42
-          }
-        },
-        {
-          "id": "world.Mesh3d",
-          "name": "Mesh3d",
-          "fields": [],
-          "description": "地面和墙体可见几何。",
-          "source": {
-            "path": "src/scene.rs",
-            "line": 42
-          }
-        },
-        {
-          "id": "world.MeshMaterial3d",
-          "name": "MeshMaterial3d",
-          "fields": [],
-          "description": "地面和墙体的占位材质。",
-          "source": {
-            "path": "src/scene.rs",
-            "line": 42
+            "line": 133
           }
         },
         {
@@ -3362,7 +3860,7 @@
           "description": "Avian 从业务根碰撞体/刚体初始化的物理查询数据；SpatialQuery 只读。",
           "source": {
             "path": "src/scene.rs",
-            "line": 42
+            "line": 133
           }
         },
         {
@@ -3374,7 +3872,7 @@
           "description": "Avian 从业务根碰撞体/刚体初始化的物理查询数据；SpatialQuery 只读。",
           "source": {
             "path": "src/scene.rs",
-            "line": 42
+            "line": 133
           }
         },
         {
@@ -3386,7 +3884,304 @@
           "description": "Avian 从业务根碰撞体/刚体初始化的物理查询数据；SpatialQuery 只读。",
           "source": {
             "path": "src/scene.rs",
-            "line": 42
+            "line": 133
+          }
+        },
+        {
+          "id": "world.IslandCollider",
+          "name": "IslandCollider",
+          "fields": [],
+          "description": "地图静态碰撞标签。",
+          "source": {
+            "path": "src/scene.rs",
+            "line": 53
+          }
+        },
+        {
+          "id": "world.ChildOf",
+          "name": "ChildOf",
+          "fields": [
+            "parent: Entity（原美术实例）"
+          ],
+          "description": "随原地图实例层级清理。",
+          "source": {
+            "path": "src/scene.rs",
+            "line": 133
+          }
+        }
+      ]
+    },
+    {
+      "id": "island",
+      "name": "海岛实例根",
+      "count": 1,
+      "description": "独立 WorldAssetRoot，状态标记控制一次准备与业务生成。",
+      "components": [
+        {
+          "id": "island.IslandMap",
+          "name": "IslandMap",
+          "fields": [],
+          "description": "海岛身份。",
+          "source": {
+            "path": "src/scene.rs",
+            "line": 41
+          }
+        },
+        {
+          "id": "island.IslandPending",
+          "name": "IslandPending",
+          "fields": [],
+          "description": "实例就绪，等待 CPU 几何准备。",
+          "source": {
+            "path": "src/scene.rs",
+            "line": 43
+          }
+        },
+        {
+          "id": "island.IslandReady",
+          "name": "IslandReady",
+          "fields": [
+            "player: Transform",
+            "items: Vec<ItemPlacement>"
+          ],
+          "description": "静态碰撞与布局已准备。",
+          "source": {
+            "path": "src/scene.rs",
+            "line": 62
+          }
+        },
+        {
+          "id": "island.ActorsSpawned",
+          "name": "ActorsSpawned",
+          "fields": [],
+          "description": "业务角色已生成，防止重复。",
+          "source": {
+            "path": "src/scene.rs",
+            "line": 45
+          }
+        },
+        {
+          "id": "island.WorldAssetRoot",
+          "name": "WorldAssetRoot",
+          "fields": [],
+          "description": "地图实例化与原始 GLB 层级。",
+          "source": {
+            "path": "src/scene.rs",
+            "line": 96
+          }
+        },
+        {
+          "id": "island.Children",
+          "name": "Children",
+          "fields": [],
+          "description": "地图实例化与原始 GLB 层级。",
+          "source": {
+            "path": "src/scene.rs",
+            "line": 96
+          }
+        }
+      ]
+    },
+    {
+      "id": "npc",
+      "name": "地图展示 NPC",
+      "count": 4,
+      "description": "保留地图原始层级；无 Character、输入或玩家刚体能力，不接入主角动画控制。",
+      "components": [
+        {
+          "id": "npc.DisplayNpc",
+          "name": "DisplayNpc",
+          "fields": [],
+          "description": "导入边界识别展示 NPC。",
+          "source": {
+            "path": "src/scene.rs",
+            "line": 49
+          }
+        },
+        {
+          "id": "npc.ChildOf",
+          "name": "ChildOf",
+          "fields": [
+            "地图原始节点父实体"
+          ],
+          "description": "保持地图原始层级。",
+          "source": {
+            "path": "src/scene.rs",
+            "line": 133
+          }
+        }
+      ]
+    },
+    {
+      "id": "animation_player",
+      "name": "主角 GLB 播放器节点",
+      "count": "由主角 GLB 决定",
+      "description": "位于 CourierVisual 子树，CourierAnimation.character 是业务根普通引用。",
+      "components": [
+        {
+          "id": "animation_player.CourierAnimation",
+          "name": "CourierAnimation",
+          "fields": [
+            "character: Entity",
+            "nodes: CourierAnimationNodes",
+            "current: CourierAnimationState"
+          ],
+          "description": "只保存播放器关联与当前动作；辅助值不是 ECS 组件。",
+          "source": {
+            "path": "src/character_animation.rs",
+            "line": 43
+          }
+        },
+        {
+          "id": "animation_player.AnimationPlayer",
+          "name": "AnimationPlayer",
+          "fields": [],
+          "description": "GLB 实际播放器。",
+          "source": {
+            "path": "src/character_animation.rs",
+            "line": 92
+          }
+        },
+        {
+          "id": "animation_player.AnimationGraphHandle",
+          "name": "AnimationGraphHandle",
+          "fields": [],
+          "description": "本次绑定生成的命名动作图。",
+          "source": {
+            "path": "src/character_animation.rs",
+            "line": 92
+          }
+        },
+        {
+          "id": "animation_player.AnimationTransitions",
+          "name": "AnimationTransitions",
+          "fields": [],
+          "description": "状态变化时平滑切换，相同状态不重启。",
+          "source": {
+            "path": "src/character_animation.rs",
+            "line": 92
+          }
+        },
+        {
+          "id": "animation_player.ChildOf",
+          "name": "ChildOf",
+          "fields": [],
+          "description": "原 GLB 节点层级。",
+          "source": {
+            "path": "src/character_animation.rs",
+            "line": 92
+          }
+        }
+      ]
+    },
+    {
+      "id": "model_node",
+      "name": "GLB 网格与骨骼节点",
+      "count": "由运行 GLB 决定",
+      "description": "地图、NPC、主角、物品的导入子树概览；并非每个节点拥有全部所列组件。",
+      "components": [
+        {
+          "id": "model_node.Transform",
+          "name": "Transform",
+          "fields": [
+            "局部位姿"
+          ],
+          "description": "资源导入后沿层级传播。",
+          "source": {
+            "path": "src/scene.rs",
+            "line": 314
+          }
+        },
+        {
+          "id": "model_node.GlobalTransform",
+          "name": "GlobalTransform",
+          "fields": [
+            "世界位姿"
+          ],
+          "description": "由变换传播生成。",
+          "source": {
+            "path": "src/scene.rs",
+            "line": 314
+          }
+        },
+        {
+          "id": "model_node.ChildOf",
+          "name": "ChildOf",
+          "fields": [
+            "原 GLB 父节点"
+          ],
+          "description": "ChildOf linked_spawn 保持子树生命周期。",
+          "source": {
+            "path": "src/scene.rs",
+            "line": 314
+          }
+        },
+        {
+          "id": "model_node.Mesh3d",
+          "name": "Mesh3d",
+          "fields": [
+            "Handle<Mesh>"
+          ],
+          "description": "网格节点携带。",
+          "source": {
+            "path": "src/scene.rs",
+            "line": 314
+          }
+        },
+        {
+          "id": "model_node.MeshMaterial3d",
+          "name": "MeshMaterial3d",
+          "fields": [
+            "Handle<StandardMaterial>"
+          ],
+          "description": "材质节点携带。",
+          "source": {
+            "path": "src/scene.rs",
+            "line": 314
+          }
+        },
+        {
+          "id": "model_node.Visibility",
+          "name": "Visibility",
+          "fields": [
+            "继承根可见性"
+          ],
+          "description": "第一人称隐藏主角视觉根会沿子树传播。",
+          "source": {
+            "path": "src/scene.rs",
+            "line": 314
+          }
+        },
+        {
+          "id": "model_node.GltfExtras",
+          "name": "GltfExtras",
+          "fields": [
+            "source_asset / category（部分根）"
+          ],
+          "description": "仅在导入边界读取为业务标记。",
+          "source": {
+            "path": "src/scene.rs",
+            "line": 314
+          }
+        },
+        {
+          "id": "model_node.SkinnedMesh",
+          "name": "SkinnedMesh",
+          "fields": [],
+          "description": "部分网格绑定骨骼；由 GLB 导入。",
+          "source": {
+            "path": "src/character_animation.rs",
+            "line": 92
+          }
+        },
+        {
+          "id": "model_node.AnimationTargetId",
+          "name": "AnimationTargetId",
+          "fields": ["0: Uuid"],
+          "description": "GLB 骨骼/曲线目标 ID，由动画加载器生成，AnimationSystems 按 ID 匹配曲线。",
+          "source": {
+            "path": "src/character_animation.rs",
+            "line": 92
           }
         }
       ]
@@ -3432,7 +4227,7 @@
       "description": "共享动态刚体、运动控制、重力、拾取与弹簧持握参数；检查器修改只影响当前会话。",
       "source": {
         "path": "src/gameplay.rs",
-        "line": 75
+        "line": 80
       }
     },
     {
@@ -3445,7 +4240,7 @@
       "description": "固定 60 Hz 模拟时钟，由引擎固定循环推进；每个渲染帧执行 0..N 个固定步。帧率上限不会修改此时间步。",
       "source": {
         "path": "src/main.rs",
-        "line": 57
+        "line": 64
       }
     },
     {
@@ -3469,7 +4264,7 @@
       "description": "引擎真实时钟；Enhanced Input 的 ContextTime 可读取，与 Time 的自动阶段语义不同。",
       "source": {
         "path": "src/main.rs",
-        "line": 34
+        "line": 41
       }
     },
     {
@@ -3482,7 +4277,7 @@
       "description": "引擎游戏时钟，为固定步累计时间提供来源。",
       "source": {
         "path": "src/main.rs",
-        "line": 34
+        "line": 41
       }
     },
     {
@@ -3506,7 +4301,7 @@
       "description": "引擎从 MouseButtonInput 更新；输入框架可读取，但当前没有鼠标按钮玩法绑定。",
       "source": {
         "path": "src/main.rs",
-        "line": 34
+        "line": 41
       }
     },
     {
@@ -3530,7 +4325,7 @@
       "description": "底层窗口键盘消息，由引擎输入系统读取；缓冲通信不是触发式 Observer。",
       "source": {
         "path": "src/main.rs",
-        "line": 34
+        "line": 41
       }
     },
     {
@@ -3542,7 +4337,7 @@
       "description": "引擎输入系统据此释放残留按键状态。",
       "source": {
         "path": "src/main.rs",
-        "line": 34
+        "line": 41
       }
     },
     {
@@ -3581,7 +4376,7 @@
       "description": "底层鼠标位移消息，由引擎汇总为 AccumulatedMouseMotion。",
       "source": {
         "path": "src/main.rs",
-        "line": 34
+        "line": 41
       }
     },
     {
@@ -3590,10 +4385,10 @@
       "fields": [
         "网格资产集合"
       ],
-      "description": "场景生成向资源添加网格；Mesh3d 仅保存句柄。",
+      "description": "GLB loader 提供网格资产；prepare_island 读取 CPU 顶点构建碰撞，Mesh3d 仅保存句柄。",
       "source": {
         "path": "src/scene.rs",
-        "line": 34
+        "line": 133
       }
     },
     {
@@ -3602,10 +4397,10 @@
       "fields": [
         "材质资产集合"
       ],
-      "description": "场景生成向资源添加材质；MeshMaterial3d 仅保存句柄。",
+      "description": "GLB loader 提供材质资产；MeshMaterial3d 仅保存句柄，场景装配复用导入材质。",
       "source": {
-        "path": "src/scene.rs",
-        "line": 35
+        "path": "src/art_assets.rs",
+        "line": 51
       }
     },
     {
@@ -3617,7 +4412,7 @@
       "description": "场景插件构建时设置背景清除颜色。",
       "source": {
         "path": "src/scene.rs",
-        "line": 20
+        "line": 27
       }
     },
     {
@@ -3630,7 +4425,7 @@
       "description": "场景插件构建时设置全局环境光。",
       "source": {
         "path": "src/scene.rs",
-        "line": 21
+        "line": 28
       }
     },
     {
@@ -3642,7 +4437,7 @@
       "description": "主循环采用连续更新策略，帧间等待由 limit_frame_rate 负责。",
       "source": {
         "path": "src/main.rs",
-        "line": 55
+        "line": 62
       }
     },
     {
@@ -3717,7 +4512,7 @@
       "description": "只属于 log_character_velocity 的采样计时；解算/接地更新后每 0.5 模拟秒采样。",
       "source": {
         "path": "src/gameplay.rs",
-        "line": 472
+        "line": 486
       }
     },
     {
@@ -3741,7 +4536,7 @@
       "description": "引擎反射注册表；GameplayPlugin 注册玩法数据，CameraControlPlugin 另注册 ControlsCamera、CharacterVisual、CameraPerspective、OrbitCamera。检查器访问内存 ECS 数据；HeldBy、HoldingItems、MouseLookState 未开放反射编辑，切换请求字段标记 reflect(ignore)。",
       "source": {
         "path": "src/gameplay.rs",
-        "line": 130
+        "line": 135
       }
     },
     {
@@ -3757,7 +4552,7 @@
       "description": "Egui 插件全局配置。默认创建主相机上下文，默认不吸收或清空 Bevy 底层输入；项目通过 ContextActivity 隔离游戏动作。",
       "source": {
         "path": "src/main.rs",
-        "line": 60
+        "line": 67
       }
     },
     {
@@ -3767,7 +4562,7 @@
       "description": "EguiPlugin 默认多轮模式的标记 Resource；主上下文插入钩子据此要求 EguiMultipassSchedule。",
       "source": {
         "path": "src/main.rs",
-        "line": 60
+        "line": 67
       }
     },
     {
@@ -3794,7 +4589,7 @@
       "description": "Avian 碰撞树加速资源；SpatialQuery 只读 ColliderTrees 与实际 Position/Rotation/Collider/ColliderAabb，供接地和拾取查询。",
       "source": {
         "path": "src/gameplay.rs",
-        "line": 166
+        "line": 172
       }
     },
     {
@@ -3807,7 +4602,7 @@
       "description": "接触开始缓冲消息；log_collisions 使用独立 MessageReader。",
       "source": {
         "path": "src/physics.rs",
-        "line": 112
+        "line": 115
       }
     },
     {
@@ -3820,7 +4615,7 @@
       "description": "接触结束缓冲消息；不是 Observer 事件。",
       "source": {
         "path": "src/physics.rs",
-        "line": 112
+        "line": 115
       }
     },
     {
@@ -3844,7 +4639,77 @@
       "description": "handle_interaction 每次调用清空并预留，防止同批次延迟拾取重复占用。",
       "source": {
         "path": "src/gameplay.rs",
-        "line": 297
+        "line": 303
+      }
+    },
+    {
+      "id": "resource.ArtAssets",
+      "name": "ArtAssets",
+      "kind": "Resource",
+      "fields": [
+        "island / courier / standard / fragile / wooden_crate: Handle<Gltf>"
+      ],
+      "description": "五份强句柄持有资源生命周期。",
+      "source": {
+        "path": "src/art_assets.rs",
+        "line": 42
+      }
+    },
+    {
+      "id": "resource.ArtLoadState",
+      "name": "ArtLoadState",
+      "kind": "Resource",
+      "fields": [
+        "Loading / Ready / Failed"
+      ],
+      "description": "资源门槛与地图碰撞门槛分别管理。",
+      "source": {
+        "path": "src/art_assets.rs",
+        "line": 97
+      }
+    },
+    {
+      "id": "resource.AssetServer",
+      "name": "AssetServer",
+      "kind": "Resource",
+      "fields": [],
+      "description": "加载并查询递归依赖。",
+      "source": {
+        "path": "src/art_assets.rs",
+        "line": 125
+      }
+    },
+    {
+      "id": "resource.AssetsGltf",
+      "name": "Assets<Gltf>",
+      "kind": "Resource",
+      "fields": [],
+      "description": "保存 GLB 场景与命名动画句柄。",
+      "source": {
+        "path": "src/scene.rs",
+        "line": 100
+      }
+    },
+    {
+      "id": "resource.AssetsWorldAsset",
+      "name": "Assets<WorldAsset>",
+      "kind": "Resource",
+      "fields": [],
+      "description": "WorldAssetRoot 引用的 Bevy 资产集合。",
+      "source": {
+        "path": "src/scene.rs",
+        "line": 96
+      }
+    },
+    {
+      "id": "resource.AssetsAnimationGraph",
+      "name": "Assets<AnimationGraph>",
+      "kind": "Resource",
+      "fields": [],
+      "description": "主角动画绑定时添加动作图。",
+      "source": {
+        "path": "src/character_animation.rs",
+        "line": 92
       }
     }
   ],
@@ -3931,12 +4796,12 @@
       "name": "ChildOf",
       "kind": "relationship",
       "reverse": "character.Children",
-      "cardinality": "当前 3 个视觉子实体各关联 1 个角色根；根结构允许 0..N 子实体",
+      "cardinality": "一个主角直属视觉根关联角色业务根；GLB 节点再组成子树",
       "linked_spawn": true,
       "description": "内置层级关系，驱动局部到世界变换和可见性；销毁角色根会连带销毁这些模型子实体。",
       "source": {
         "path": "src/scene.rs",
-        "line": 115
+        "line": 432
       }
     },
     {
@@ -3946,12 +4811,12 @@
       "name": "ChildOf",
       "kind": "relationship",
       "reverse": "parcel.Children",
-      "cardinality": "当前 3 个视觉子实体各关联 1 个木箱根；根结构允许 0..N 子实体",
+      "cardinality": "五件物品各有一个直属视觉根；持握不改变 ChildOf",
       "linked_spawn": true,
-      "description": "内置层级关系；木箱模型始终关联木箱业务根，不随拾取改为角色的 ChildOf。",
+      "description": "模型始终关联自身 Parcel 根，不随拾取改为角色子实体。",
       "source": {
         "path": "src/scene.rs",
-        "line": 158
+        "line": 445
       }
     },
     {
@@ -3961,12 +4826,12 @@
       "name": "HeldBy",
       "kind": "relationship",
       "reverse": "character.HoldingItems",
-      "cardinality": "每个木箱持有时关联 1 个持有者、自由时为 0；持有者索引允许 0..N，当前业务按 1 件实现",
+      "cardinality": "每件物品持有时关联 1 个角色，自由时为 0；索引允许 0..N，当前一次持一件",
       "linked_spawn": false,
       "description": "自定义关系，无 linked_spawn；人物销毁不会销毁箱体，失效目标清理恢复自由碰撞，动态刚体自然下落。",
       "source": {
         "path": "src/gameplay.rs",
-        "line": 57
+        "line": 62
       }
     },
     {
@@ -3982,6 +4847,51 @@
       "source": {
         "path": "src/camera.rs",
         "line": 51
+      }
+    },
+    {
+      "id": "collider_parent",
+      "from": "world",
+      "to": "model_node",
+      "name": "ChildOf（原地图美术实例）",
+      "kind": "relationship",
+      "reverse": "Children",
+      "cardinality": "每个静态碰撞对应一个美术实例；实例可有三角碰撞和坡道",
+      "linked_spawn": true,
+      "description": "碰撞与视觉分离，沿地图原始层级清理。",
+      "source": {
+        "path": "src/scene.rs",
+        "line": 133
+      }
+    },
+    {
+      "id": "npc_map_tree",
+      "from": "npc",
+      "to": "island",
+      "name": "ChildOf（地图子树）",
+      "kind": "relationship",
+      "reverse": "Children",
+      "cardinality": "四名 NPC 保持地图子树；不宣称直属地图根",
+      "linked_spawn": true,
+      "description": "导入后的原始节点层级。",
+      "source": {
+        "path": "src/scene.rs",
+        "line": 133
+      }
+    },
+    {
+      "id": "animation_character",
+      "from": "animation_player",
+      "to": "character",
+      "name": "CourierAnimation.character",
+      "kind": "reference",
+      "reverse": null,
+      "cardinality": "主角播放器引用一个业务 Character",
+      "linked_spawn": null,
+      "description": "普通引用；角色消失时停止并解绑，播放器自身通常随视觉子树销毁。",
+      "source": {
+        "path": "src/character_animation.rs",
+        "line": 43
       }
     }
   ],
@@ -4027,27 +4937,38 @@
       "system": "observe_perspective",
       "target": "事件的 context（controller）",
       "description": "确认窗口聚焦与控制关联有效后暂存切换请求；实际切换在动作命令应用后的 PreUpdate 系统执行。"
+    },
+    {
+      "event": "WorldInstanceReady",
+      "system": "island_ready_observer",
+      "target": "IslandMap 根",
+      "description": "标记未准备地图，随后 Update 读取 CPU 几何。"
+    },
+    {
+      "event": "WorldInstanceReady",
+      "system": "courier_ready_observer",
+      "target": "CourierVisual 根",
+      "description": "标记主角视觉，随后 Update 绑定命名动作。"
     }
   ],
   "startup_notes": [
-    "main 先创建 App 和会话日志守护对象，再配置 DefaultPlugins 的 LogPlugin 文件输出与 WindowPlugin；设置加载失败回退默认。会话日志不是玩法 ECS 状态。",
-    "main 插入 GameSettings、WinitSettings::continuous() 与固定 60 Hz 的 Time<Fixed>，再注册 EguiPlugin、WorldInspectorPlugin、SettingsPlugin、GameplayPlugin、PlayerInputPlugin、CameraControlPlugin、PrototypeScenePlugin、StartupLogPlugin；Egui 在检查器之前构建。",
-    "PlayerInputPlugin 注册 GameplayContext 与五个角色意图 Observer；CameraControlPlugin 注册观察与视角切换两个 Observer、窗口焦点消息与显示系统。GameplayPlugin 注册玩法数据反射类型，支持世界检查器。",
-    "PrototypeScenePlugin 构建时插入 ClearColor 与 GlobalAmbientLight；spawn_scene 在 Startup 使用 Commands 生成场景并添加网格、材质资产。",
-    "默认启动阶段为 PreStartup → Startup → PostStartup。StartupLogPlugin 集中注册四个启动日志，PrototypeScenePlugin 注册场景生成；五个系统没有显式相互顺序，插件注册顺序不构成系统串行依赖。",
-    "Startup 结束会应用场景生成命令，关系钩子维护 Actions、Bindings 与 Children；引擎还在 PostStartup 完成启动变换同步。四个启动日志系统只报告实际玩法配置、固定时间步与当前功能约定，不依赖已生成实体；启动日志插件不初始化配置或添加功能插件。",
-    "当前场景创建 1 个控制者、1 个角色、1 个木箱、1 台相机、6 个视觉子实体、5 个动作、8 条绑定；WindowPlugin 创建 1 个主窗口。另生成 2 个静态世界实体（地面、墙体）与日光，未并入 visual；检查器复用主窗口与相机，不添加第二套玩法实体。",
-    "spawn_keyboard_controller、keyboard_context 和 OrbitCamera::transform 是生成或计算辅助函数，不是独立注册的 Schedule 系统。Action、Binding 的生成辅助宏与关系由插件实现。",
-    "SessionWriter 只在日志插件初始化期间作为临时 Resource 存在，随后取出交给文件输出层；SessionLogGuard 是 main 持有的普通 Rust 对象，App::run 返回后记录退出并刷新。",
-    "EguiPlugin 默认把 EguiContext 与 PrimaryEguiContext 自动附加到首个相机，当前只有一台相机。其 required components 与插入钩子补入 UI 设置、输入、输出及多轮 Schedule；这些由插件初始化，不由 spawn_scene 手工生成，检查器不另建游戏窗口。",
-    "GameplayPlugin 内部注册 DemoPhysicsPlugin，再由它安装 PhysicsPlugins::default()，默认物理调度 FixedPostUpdate；不是 main 中额外注册两个插件。"
+    "main 先创建 App 与会话日志，再配置 DefaultPlugins 的 LogPlugin：文件 custom_layer 与控制台 fmt_layer 分别使用后台线程；不将队列和线程当玩法 ECS 资源。",
+    "功能插件包含 EguiPlugin、WorldInspectorPlugin、SettingsPlugin、GameplayPlugin、PlayerInputPlugin、CameraControlPlugin、ArtAssetsPlugin、CharacterAnimationPlugin、IslandRecoveryPlugin、PrototypeScenePlugin、StartupLogPlugin；插件注册顺序不定义系统全序。",
+    "ArtAssetsPlugin 初始化五份 assets/ GLB 强句柄并启动加载，Startup 仅记录请求；海岛碰撞准备另有门槛。art/ 制作源不参与运行依赖。",
+    "Startup 生成日光和一台加载相机，四项启动日志与资源请求日志无彼此顺序。Ready 后 Update 请求海岛 WorldAssetRoot，SpawnScene 实例化后触发 WorldInstanceReady。",
+    "海岛 Update 链 begin_island → prepare_island → spawn_actors 在依赖处应用延迟命令。全部静态碰撞成功后才生成一名角色、一名控制者、普通/易碎纸箱与三只木箱，复用加载相机。",
+    "NPC 四名继续留在地图原始层级；玩家和五件动态物品是独立业务根，每根有直属 GLB 视觉根。地图和物品 GLB 节点数量不是固定的六个测试网格。",
+    "主角 WorldInstanceReady 标记 pending，Update initialize_ready_couriers → sync_courier_animation 绑定命名动作，读取真实水平速度与持有关系；无根运动，未给 NPC 添加玩法动画系统。",
+    "Scene/Bundle 工厂与 MapAsset、ItemPlacement、CollisionGeometry、CourierAnimationNodes/State、RecoverableBody 是辅助数据或 QueryData，不作为 Component/Resource 列出。",
+    "SessionWriter 与 ConsoleWriter 只在 LogPlugin 构建期间临时传递，随后由 layer 持有；SessionLogGuard 是 main 持有的 Rust 对象。两路无界队列、独立 worker，退出 Flush，Drop Shutdown 排空并 join；panic 优先文件 sync_data，关闭同步 stderr 错误回退。",
+    "EguiPlugin 在 WorldInspectorPlugin 之前构建；默认附加到第一台加载相机，准备后复用同一实体，不另建游戏窗口。",
+    "GameplayPlugin 内部注册 DemoPhysicsPlugin → PhysicsPlugins::default()，物理默认 FixedPostUpdate；main 不重复注册。"
   ],
   "general_notes": [
     "systems 的固定 ID 用于布局。kind=engine 是引擎或输入框架阶段的概览，kind=sync 是延迟命令应用点，kind=observer 是触发式响应，其余为项目系统。",
     "业务系统列出访问声明和实际用途；可变访问中读取的数据也列入 reads。EguiContext 的可变接口用于查询 UI，其 writes 表示调度访问权限，不意味着项目修改 UI 内容。With/Without 是筛选而非数据读取；Commands 结构变更在同步点才可见。",
     "引擎概览的 reads/writes 只列与当前原型有关的数据，未展开全部内部组件、资源、条件函数表、消息游标与局部缓存。部分组件通过 required components 自动出现，部分关系反向索引只在关联存在时出现；组件列表不表示所有组件始终同时存在。",
     "source.path 使用仓库相对路径。项目类型引用声明行，引擎或插件类型引用项目内的使用、生成或注册行；kind=engine 概览 source=null。父图应把这些位置标为源码入口，不能宣称是引擎类型定义。",
-    "默认逐帧主阶段包括 First → PreUpdate → RunFixedMainLoop → Update → SpawnScene → PostUpdate → Last。图中仅展示相关阶段；自定义 spawn_scene 在 Startup，名称并不意味着它运行于引擎 SpawnScene 阶段。",
     "RunFixedMainLoop 每个渲染帧执行 0..N 次固定阶段；固定步不是渲染帧的一对一后续步骤。当前 fixed 为 60 Hz，默认渲染上限 60 FPS，自定义上限可高于 60，性能不足也可能低于上限。",
     "EnhancedInputSystems::Apply 写入动作输出并调用 Commands::trigger；这个 Apply 阶段不是 ECS 的 ApplyDeferred。排入的动作事件在下一命令同步点触发，默认 PreUpdate 完成时已经应用，随后固定循环可读到最新意图。",
     "World::trigger 在调用期间触发 Observer；Commands::trigger 延迟到命令应用。Observer 注册先后不定义执行顺序；不得把七个业务 Observer 排成串行链。Fire、Complete、Cancel 包含 context、action 与动作值，当前路由使用 context。视角请求通过随后有显式依赖的系统消费。",
@@ -4055,7 +4976,6 @@
     "跳跃与交互用布尔请求跨零固定步帧保留，固定步用 mem::take 消费一次；多次到达而尚未消费的同类请求会合并。移动轴保持到 Complete 或 Cancel；镜头角度直接按本帧像素位移更新，不积分角色位置。",
     "同一 Schedule 的 .before/.after/.chain 才表达先后；数据访问冲突、元组顺序、插件注册顺序及 .in_set 本身都不定义完整执行顺序，跨 Schedule 的先后来自主调度顺序。",
     "普通 Entity 引用不提供 Bevy 关系生命周期；#[entities] 只参与实体映射。ActionOf、BindingOf、ChildOf 与 HeldBy 是关系，反向索引的成员由 Bevy 自动维护；只有前三者启用 linked_spawn。",
-    "RenderApp 包含提取、准备、排序与 GPU 渲染等步骤，也可能使用流水线；render 节点是渲染概览，不是紧接 PostUpdate 的单个普通系统。日志通过 tracing 文件输出，不是 ECS Event 或 Message。",
     "该文件记录源码结构，未启动游戏，未执行窗口或视觉验收。",
     "视角切换不是 Observer 内立即切换：request_perspective_toggle 只记录请求，apply_perspective_toggle 在 EnhancedInputSystems::Apply 之后同帧消费，避免 I 与鼠标同帧时依赖动作遍历或 Observer 顺序。",
     "世界检查器由 EguiPlugin 与 WorldInspectorPlugin 提供，数据留在 ECS 内，通过反射动态读取和可选编辑。Egui 输入映射、BeginPass 集合与嵌套 EguiPrimaryContextPass 以概览节点表示；未展开全部输入、提取和绘制系统。",
@@ -4064,13 +4984,20 @@
     "PostUpdate 的 UI 嵌套 Schedule 与变换传播都属于本帧后处理，但源码与已核对插件未建立二者的显式顺序。应画成并行分支或同阶段无序节点，避免将 UI 动态反射编辑包装成与模拟保证同步的过程。",
     "UI 输入隔离用不可变 ContextActivity 的延迟替换，不清空共享底层键鼠资源；窗口捕获、动作上下文启用与视角模式是三份不同状态。Esc 释放不直接停用键盘动作，检查器占用才停用整个 GameplayContext。",
     "EguiInput 内部的 egui::Event 只是 UI RawInput 的事件枚举，不等同于 Bevy ECS Event、EntityEvent 或缓冲 Message。捕获期间的 UI 过滤与 UI 占用时的 GameplayContext 停用构成两个方向的输入边界。",
-    "项目固定准备链：update_grounded → move_characters → jump_characters → handle_interaction → release_orphaned_items → sync_held_objects → apply_grip_forces。sync_gravity 与 sync_character_facing 均 before(GameplaySystems::Simulate)，二者无彼此顺序。",
     "Avian 0.7 默认在 FixedPostUpdate 执行 Prepare → StepSimulation（嵌套 PhysicsSchedule 与求解子步）→ Writeback；接地与速度日志链 after(Writeback)。碰撞日志只 after(StepSimulation)，与回写链不设额外顺序。",
-    "插值边界：FixedFirst 重置起点 → 物理步 → FixedLast 记录终点 → RunFixedMainLoop / AfterFixedMainLoop 的 Ease → 朝向 → HeldTarget → 相机 → 可见性 → UpdateEasingTick。零固定步帧仍完成插值后的显示链。",
     "Position/Rotation/LinearVelocity/AngularVelocity 是真实物理状态；Transform 为插值呈现。HeldTarget 仅显示检查，持握施力直接由 holder.position() 与当前水平朝向计算，不能把插值目标回输模拟。",
     "拾取和释放只增删 HeldBy/HeldTarget 与碰撞层；不瞬移箱体，不清除线/角速度。持握以有上限的弹簧阻尼力追随，箱体始终动态，允许惯性和碰撞偏离目标并向人物施加反作用力。",
     "同批次拾取 Local 预留防止重复占用；持有者消失或关系异常解除时清理目标并恢复自由碰撞。多角色公平裁决/退出前交接及只过滤持有者仍暂缓。",
     "World / Character / Parcel 为碰撞分类；持握箱忽略整个 Character 层，保留 World / Parcel。支撑探测检查双方掩码、支撑法线、传感器与 HeldBy，避免墙面或手中箱体充当地面。",
-    "Forces 是 Avian QueryData，SpatialQuery 是 SystemParam；二者均不是新增实体组件。组件清单只列真实刚体数据/内部累计与插值状态，内部引擎字段不穷举。"
+    "Forces 是 Avian QueryData，SpatialQuery 是 SystemParam；二者均不是新增实体组件。组件清单只列真实刚体数据/内部累计与插值状态，内部引擎字段不穷举。",
+    "主阶段 First → PreUpdate → RunFixedMainLoop → Update → SpawnScene → PostUpdate → Last；Update 内资源轮询、海岛链、主角动画链彼此未建立显式全序，不能按图中文字顺序串联。",
+    "固定阶段 Reset → resume_interpolation → 命令应用 → UpdateStart，然后 recover_from_water → sync_character_facing → GameplaySystems::Simulate。sync_gravity 也 before(Simulate)，与恢复/朝向无额外全序。",
+    "GameplaySystems::Simulate 内 update_grounded → move_characters → jump_characters → handle_interaction → release_orphaned_items → sync_held_objects → apply_grip_forces；拿放和恢复的延迟关系在后续依赖处可见。",
+    "落水阈值 Position.y < -1.5。业务根回各自 SpawnPoint，清速度与单次请求，保留持续输入；临时暂停插值跨过零固定步帧，下一 FixedFirst 仅撤销本模块添加的暂停。",
+    "角色 NON_LINEAR CCD 速度门槛 8m/s 与 0.1rad/s，常规运动由推测接触覆盖；非零 yaw 下不能用 LINEAR 替代。纸箱与木箱保持默认零门槛非线性扫掠。",
+    "CarryGrip 是每件物品的握持偏移，模拟与显示共同读取，缺省回退 PrototypeConfig.hold_offset。持物仍动态，不瞬移，不将 HeldTarget 输入物理解算。",
+    "FixedLast 记录插值终点，AfterFixedMainLoop 的 Ease → 朝向 → HeldTarget → 镜头 → 可见性 → UpdateEasingTick 每帧执行。PostUpdate 的 AnimationSystems before(TransformSystems::Propagate)，检查器为未设全序的独立分支。",
+    "事件视图保留七个输入 EntityEvent Observer，并单列两个 WorldInstanceReady Observer。窗口/碰撞仍是缓冲 Message；tracing 队列属于外部输出，不是 Bevy Event/Message。",
+    "引擎资产实例化、AnimationSystems 与 GLB 层级为相关流程概览，未准确展开的全部 loader/骨骼内部系统、内部动画缓存、渲染批次、灯光组件与 GPU 流程不声称完整建模。"
   ]
 }
