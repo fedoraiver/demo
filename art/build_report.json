@@ -1,0 +1,171 @@
+{
+  "blend_file": "D:\\demo\\art\\blender\\courier_island.blend",
+  "library_scene": "Courier_Asset_Library",
+  "map_scene": "Courier_Island",
+  "lineup_scene": "Character_Lineup",
+  "cameras": {
+    "overview": "Camera_Island_Overview",
+    "street": "Camera_Street_View",
+    "courier": "Camera_Courier_View",
+    "beach": "Camera_Beach_View"
+  },
+  "assets": [
+    {
+      "id": "chr_courier",
+      "root": "chr_courier",
+      "category": "characters"
+    },
+    {
+      "id": "chr_dispatcher",
+      "root": "chr_dispatcher",
+      "category": "characters"
+    },
+    {
+      "id": "chr_pizza_clerk",
+      "root": "chr_pizza_clerk",
+      "category": "characters"
+    },
+    {
+      "id": "chr_music_clerk",
+      "root": "chr_music_clerk",
+      "category": "characters"
+    },
+    {
+      "id": "chr_resident",
+      "root": "chr_resident",
+      "category": "characters"
+    },
+    {
+      "id": "prop_parcel_standard",
+      "root": "prop_parcel_standard",
+      "category": "props"
+    },
+    {
+      "id": "prop_parcel_fragile",
+      "root": "prop_parcel_fragile",
+      "category": "props"
+    },
+    {
+      "id": "prop_crate",
+      "root": "prop_crate",
+      "category": "props"
+    },
+    {
+      "id": "prop_planter",
+      "root": "prop_planter",
+      "category": "props"
+    },
+    {
+      "id": "prop_bench",
+      "root": "prop_bench",
+      "category": "props"
+    },
+    {
+      "id": "prop_street_lamp",
+      "root": "prop_street_lamp",
+      "category": "props"
+    },
+    {
+      "id": "prop_mailbox",
+      "root": "prop_mailbox",
+      "category": "props"
+    },
+    {
+      "id": "prop_dock_bollard",
+      "root": "prop_dock_bollard",
+      "category": "props"
+    },
+    {
+      "id": "prop_grass_clump",
+      "root": "prop_grass_clump",
+      "category": "environment"
+    },
+    {
+      "id": "prop_pine_tree",
+      "root": "prop_pine_tree",
+      "category": "environment"
+    },
+    {
+      "id": "prop_broadleaf_tree",
+      "root": "prop_broadleaf_tree",
+      "category": "environment"
+    },
+    {
+      "id": "prop_shrub",
+      "root": "prop_shrub",
+      "category": "environment"
+    },
+    {
+      "id": "prop_palm_leaning",
+      "root": "prop_palm_leaning",
+      "category": "environment"
+    },
+    {
+      "id": "prop_palm_crooked",
+      "root": "prop_palm_crooked",
+      "category": "environment"
+    },
+    {
+      "id": "prop_palm_young",
+      "root": "prop_palm_young",
+      "category": "environment"
+    },
+    {
+      "id": "prop_wild_grass_patch",
+      "root": "prop_wild_grass_patch",
+      "category": "environment"
+    },
+    {
+      "id": "bld_courier_station",
+      "root": "bld_courier_station",
+      "category": "buildings"
+    },
+    {
+      "id": "bld_pizza_shop",
+      "root": "bld_pizza_shop",
+      "category": "buildings"
+    },
+    {
+      "id": "bld_music_shop",
+      "root": "bld_music_shop",
+      "category": "buildings"
+    },
+    {
+      "id": "bld_residential_a",
+      "root": "bld_residential_a",
+      "category": "buildings"
+    },
+    {
+      "id": "bld_residential_b",
+      "root": "bld_residential_b",
+      "category": "buildings"
+    },
+    {
+      "id": "env_island_terrain",
+      "root": "env_island_terrain",
+      "category": "environment"
+    },
+    {
+      "id": "env_ocean",
+      "root": "env_ocean",
+      "category": "environment"
+    },
+    {
+      "id": "env_stairs_railings",
+      "root": "env_stairs_railings",
+      "category": "environment"
+    },
+    {
+      "id": "env_dock",
+      "root": "env_dock",
+      "category": "environment"
+    },
+    {
+      "id": "env_wilderness_details",
+      "root": "env_wilderness_details",
+      "category": "environment"
+    }
+  ],
+  "map_objects": 4559,
+  "blender_version": "5.2.1 LTS"
+}

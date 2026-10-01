@@ -1,0 +1,3346 @@
+{
+  "name": "Courier Island",
+  "blender_version": "5.2.1 LTS",
+  "units": "meters",
+  "source_file": "art/blender/courier_island.blend",
+  "source_axes": "Z-up; characters +Y forward; buildings -Y front",
+  "export_axes": "glTF Y-up; characters -Z forward",
+  "palette_srgb": {
+    "navy": "334E80",
+    "blue": "4266AC",
+    "blue_dark": "2B4275",
+    "pants": "344879",
+    "skin": "DDA664",
+    "skin_light": "F2C58F",
+    "skin_dark": "AC734F",
+    "hair": "4D3530",
+    "cream": "EFE1BE",
+    "white": "FFF7E5",
+    "ink": "293240",
+    "coral": "E78064",
+    "red": "B65058",
+    "gold": "F2BA56",
+    "olive": "788656",
+    "leaf": "57734B",
+    "leaf_light": "91A960",
+    "wood": "AC7950",
+    "wood_dark": "775438",
+    "cardboard": "BA8A52",
+    "tape": "DDB777",
+    "metal": "414B59",
+    "teal": "619992",
+    "purple": "8C799D",
+    "concrete": "919795",
+    "concrete_light": "B8B5A9",
+    "glass": "71979E",
+    "warm_light": "FFE0A0",
+    "roof": "59616B",
+    "sand": "D5C5A3",
+    "sea": "348C9B",
+    "sea_deep": "296A85",
+    "sea_light": "63B9BD",
+    "foam": "BEE0D7",
+    "rock": "7C8790",
+    "rock_light": "98A09D",
+    "plaza": "CABFA7",
+    "soil": "9D9C7B",
+    "dry_sand": "DBC79B",
+    "wet_sand": "BBA982",
+    "weathered_wood": "9E8B70",
+    "weathered_dark": "706454",
+    "wood_gray": "A19F8C",
+    "rust": "936953",
+    "faded_blue": "647B8B",
+    "faded_red": "A2796C",
+    "faded_olive": "8A8F6E"
+  },
+  "assets": [
+    {
+      "id": "chr_courier",
+      "category": "characters",
+      "file": "assets/models/characters/chr_courier.glb",
+      "root_node": "chr_courier",
+      "pivot": "base",
+      "blender_bounds": {
+        "min": [
+          -0.373,
+          -0.169,
+          -0.0
+        ],
+        "max": [
+          0.373,
+          0.2203,
+          1.91
+        ]
+      },
+      "mesh_objects": 59,
+      "triangles": 2072,
+      "animations": [
+        "Idle",
+        "Walk",
+        "Carry_Idle"
+      ],
+      "bytes": 368380
+    },
+    {
+      "id": "chr_dispatcher",
+      "category": "characters",
+      "file": "assets/models/characters/chr_dispatcher.glb",
+      "root_node": "chr_dispatcher",
+      "pivot": "base",
+      "blender_bounds": {
+        "min": [
+          -0.3665,
+          -0.169,
+          -0.0
+        ],
+        "max": [
+          0.3665,
+          0.2203,
+          1.91
+        ]
+      },
+      "mesh_objects": 72,
+      "triangles": 2356,
+      "animations": [],
+      "bytes": 376024
+    },
+    {
+      "id": "chr_pizza_clerk",
+      "category": "characters",
+      "file": "assets/models/characters/chr_pizza_clerk.glb",
+      "root_node": "chr_pizza_clerk",
+      "pivot": "base",
+      "blender_bounds": {
+        "min": [
+          -0.3665,
+          -0.169,
+          -0.0
+        ],
+        "max": [
+          0.3665,
+          0.2203,
+          1.91
+        ]
+      },
+      "mesh_objects": 64,
+      "triangles": 2185,
+      "animations": [],
+      "bytes": 346844
+    },
+    {
+      "id": "chr_music_clerk",
+      "category": "characters",
+      "file": "assets/models/characters/chr_music_clerk.glb",
+      "root_node": "chr_music_clerk",
+      "pivot": "base",
+      "blender_bounds": {
+        "min": [
+          -0.3665,
+          -0.131,
+          -0.0
+        ],
+        "max": [
+          0.3665,
+          0.205,
+          1.94
+        ]
+      },
+      "mesh_objects": 70,
+      "triangles": 2252,
+      "animations": [],
+      "bytes": 369244
+    },
+    {
+      "id": "chr_resident",
+      "category": "characters",
+      "file": "assets/models/characters/chr_resident.glb",
+      "root_node": "chr_resident",
+      "pivot": "base",
+      "blender_bounds": {
+        "min": [
+          -0.3665,
+          -0.2089,
+          -0.0
+        ],
+        "max": [
+          0.3665,
+          0.205,
+          1.94
+        ]
+      },
+      "mesh_objects": 64,
+      "triangles": 2212,
+      "animations": [],
+      "bytes": 355324
+    },
+    {
+      "id": "prop_parcel_standard",
+      "category": "props",
+      "file": "assets/models/props/prop_parcel_standard.glb",
+      "root_node": "prop_parcel_standard",
+      "pivot": "center",
+      "blender_bounds": {
+        "min": [
+          -0.3,
+          -0.321,
+          -0.3065
+        ],
+        "max": [
+          0.3,
+          0.3065,
+          0.3065
+        ]
+      },
+      "mesh_objects": 32,
+      "triangles": 40494,
+      "animations": [],
+      "bytes": 1056672
+    },
+    {
+      "id": "prop_parcel_fragile",
+      "category": "props",
+      "file": "assets/models/props/prop_parcel_fragile.glb",
+      "root_node": "prop_parcel_fragile",
+      "pivot": "center",
+      "blender_bounds": {
+        "min": [
+          -0.3,
+          -0.321,
+          -0.3065
+        ],
+        "max": [
+          0.3,
+          0.308,
+          0.3065
+        ]
+      },
+      "mesh_objects": 36,
+      "triangles": 29603,
+      "animations": [],
+      "bytes": 789100
+    },
+    {
+      "id": "prop_crate",
+      "category": "props",
+      "file": "assets/models/props/prop_crate.glb",
+      "root_node": "prop_crate",
+      "pivot": "center",
+      "blender_bounds": {
+        "min": [
+          -0.42,
+          -0.4235,
+          -0.325
+        ],
+        "max": [
+          0.42,
+          0.391,
+          0.3575
+        ]
+      },
+      "mesh_objects": 40,
+      "triangles": 768,
+      "animations": [],
+      "bytes": 86956
+    },
+    {
+      "id": "prop_planter",
+      "category": "props",
+      "file": "assets/models/props/prop_planter.glb",
+      "root_node": "prop_planter",
+      "pivot": "base",
+      "blender_bounds": {
+        "min": [
+          -0.37,
+          -0.37,
+          0.0
+        ],
+        "max": [
+          0.37,
+          0.37,
+          0.959
+        ]
+      },
+      "mesh_objects": 15,
+      "triangles": 198,
+      "animations": [],
+      "bytes": 24896
+    },
+    {
+      "id": "prop_bench",
+      "category": "props",
+      "file": "assets/models/props/prop_bench.glb",
+      "root_node": "prop_bench",
+      "pivot": "base",
+      "blender_bounds": {
+        "min": [
+          -0.88,
+          -0.33,
+          0.0
+        ],
+        "max": [
+          0.88,
+          0.3723,
+          1.0036
+        ]
+      },
+      "mesh_objects": 20,
+      "triangles": 240,
+      "animations": [],
+      "bytes": 31732
+    },
+    {
+      "id": "prop_street_lamp",
+      "category": "props",
+      "file": "assets/models/props/prop_street_lamp.glb",
+      "root_node": "prop_street_lamp",
+      "pivot": "base",
+      "blender_bounds": {
+        "min": [
+          -0.3677,
+          -0.3677,
+          0.0
+        ],
+        "max": [
+          0.3677,
+          0.3677,
+          3.615
+        ]
+      },
+      "mesh_objects": 13,
+      "triangles": 234,
+      "animations": [],
+      "bytes": 27224
+    },
+    {
+      "id": "prop_mailbox",
+      "category": "props",
+      "file": "assets/models/props/prop_mailbox.glb",
+      "root_node": "prop_mailbox",
+      "pivot": "base",
+      "blender_bounds": {
+        "min": [
+          -0.255,
+          -0.2335,
+          0.0
+        ],
+        "max": [
+          0.255,
+          0.22,
+          1.31
+        ]
+      },
+      "mesh_objects": 8,
+      "triangles": 6872,
+      "animations": [],
+      "bytes": 184852
+    },
+    {
+      "id": "prop_dock_bollard",
+      "category": "props",
+      "file": "assets/models/props/prop_dock_bollard.glb",
+      "root_node": "prop_dock_bollard",
+      "pivot": "base",
+      "blender_bounds": {
+        "min": [
+          -0.25,
+          -0.21,
+          0.0
+        ],
+        "max": [
+          0.25,
+          0.21,
+          0.4325
+        ]
+      },
+      "mesh_objects": 9,
+      "triangles": 204,
+      "animations": [],
+      "bytes": 20140
+    },
+    {
+      "id": "prop_grass_clump",
+      "category": "environment",
+      "file": "assets/models/environment/prop_grass_clump.glb",
+      "root_node": "prop_grass_clump",
+      "pivot": "base",
+      "blender_bounds": {
+        "min": [
+          -0.2985,
+          -0.2891,
+          0.006
+        ],
+        "max": [
+          0.2381,
+          0.3607,
+          0.5216
+        ]
+      },
+      "mesh_objects": 13,
+      "triangles": 182,
+      "animations": [],
+      "bytes": 21096
+    },
+    {
+      "id": "prop_pine_tree",
+      "category": "environment",
+      "file": "assets/models/environment/prop_pine_tree.glb",
+      "root_node": "prop_pine_tree",
+      "pivot": "base",
+      "blender_bounds": {
+        "min": [
+          -1.1355,
+          -1.1474,
+          -0.0084
+        ],
+        "max": [
+          0.9138,
+          1.0581,
+          4.01
+        ]
+      },
+      "mesh_objects": 24,
+      "triangles": 436,
+      "animations": [],
+      "bytes": 49652
+    },
+    {
+      "id": "prop_broadleaf_tree",
+      "category": "environment",
+      "file": "assets/models/environment/prop_broadleaf_tree.glb",
+      "root_node": "prop_broadleaf_tree",
+      "pivot": "base",
+      "blender_bounds": {
+        "min": [
+          -1.4413,
+          -1.062,
+          -0.019
+        ],
+        "max": [
+          1.4013,
+          1.2565,
+          4.1
+        ]
+      },
+      "mesh_objects": 15,
+      "triangles": 240,
+      "animations": [],
+      "bytes": 33252
+    },
+    {
+      "id": "prop_shrub",
+      "category": "environment",
+      "file": "assets/models/environment/prop_shrub.glb",
+      "root_node": "prop_shrub",
+      "pivot": "base",
+      "blender_bounds": {
+        "min": [
+          -0.6509,
+          -0.4852,
+          0.0
+        ],
+        "max": [
+          0.6357,
+          0.4392,
+          0.92
+        ]
+      },
+      "mesh_objects": 5,
+      "triangles": 100,
+      "animations": [],
+      "bytes": 14612
+    },
+    {
+      "id": "prop_palm_leaning",
+      "category": "environment",
+      "file": "assets/models/environment/prop_palm_leaning.glb",
+      "root_node": "prop_palm_leaning",
+      "pivot": "base",
+      "blender_bounds": {
+        "min": [
+          -0.8361,
+          -2.8774,
+          0.0
+        ],
+        "max": [
+          4.4314,
+          2.0469,
+          6.3653
+        ]
+      },
+      "mesh_objects": 51,
+      "triangles": 2316,
+      "animations": [],
+      "bytes": 180280
+    },
+    {
+      "id": "prop_palm_crooked",
+      "category": "environment",
+      "file": "assets/models/environment/prop_palm_crooked.glb",
+      "root_node": "prop_palm_crooked",
+      "pivot": "base",
+      "blender_bounds": {
+        "min": [
+          -2.9505,
+          -2.4423,
+          0.0
+        ],
+        "max": [
+          1.4541,
+          2.5655,
+          6.7671
+        ]
+      },
+      "mesh_objects": 53,
+      "triangles": 2464,
+      "animations": [],
+      "bytes": 192216
+    },
+    {
+      "id": "prop_palm_young",
+      "category": "environment",
+      "file": "assets/models/environment/prop_palm_young.glb",
+      "root_node": "prop_palm_young",
+      "pivot": "base",
+      "blender_bounds": {
+        "min": [
+          -2.3207,
+          -2.1442,
+          0.0
+        ],
+        "max": [
+          1.7873,
+          0.9163,
+          5.4433
+        ]
+      },
+      "mesh_objects": 45,
+      "triangles": 2092,
+      "animations": [],
+      "bytes": 163492
+    },
+    {
+      "id": "prop_wild_grass_patch",
+      "category": "environment",
+      "file": "assets/models/environment/prop_wild_grass_patch.glb",
+      "root_node": "prop_wild_grass_patch",
+      "pivot": "base",
+      "blender_bounds": {
+        "min": [
+          -1.1081,
+          -0.7615,
+          0.0
+        ],
+        "max": [
+          0.8782,
+          1.0335,
+          1.7189
+        ]
+      },
+      "mesh_objects": 1,
+      "triangles": 994,
+      "animations": [],
+      "bytes": 64112
+    },
+    {
+      "id": "bld_courier_station",
+      "category": "buildings",
+      "file": "assets/models/buildings/bld_courier_station.glb",
+      "root_node": "bld_courier_station",
+      "pivot": "base",
+      "blender_bounds": {
+        "min": [
+          -3.8409,
+          -2.815,
+          0.0
+        ],
+        "max": [
+          3.8821,
+          2.805,
+          4.88
+        ]
+      },
+      "mesh_objects": 279,
+      "triangles": 33642,
+      "animations": [],
+      "bytes": 1272760
+    },
+    {
+      "id": "bld_pizza_shop",
+      "category": "buildings",
+      "file": "assets/models/buildings/bld_pizza_shop.glb",
+      "root_node": "bld_pizza_shop",
+      "pivot": "base",
+      "blender_bounds": {
+        "min": [
+          -2.8448,
+          -2.405,
+          0.0
+        ],
+        "max": [
+          2.8781,
+          2.405,
+          4.4928
+        ]
+      },
+      "mesh_objects": 208,
+      "triangles": 65440,
+      "animations": [],
+      "bytes": 1991148
+    },
+    {
+      "id": "bld_music_shop",
+      "category": "buildings",
+      "file": "assets/models/buildings/bld_music_shop.glb",
+      "root_node": "bld_music_shop",
+      "pivot": "base",
+      "blender_bounds": {
+        "min": [
+          -3.1394,
+          -2.555,
+          0.0
+        ],
+        "max": [
+          3.1806,
+          2.555,
+          3.96
+        ]
+      },
+      "mesh_objects": 242,
+      "triangles": 41968,
+      "animations": [],
+      "bytes": 1469444
+    },
+    {
+      "id": "bld_residential_a",
+      "category": "buildings",
+      "file": "assets/models/buildings/bld_residential_a.glb",
+      "root_node": "bld_residential_a",
+      "pivot": "base",
+      "blender_bounds": {
+        "min": [
+          -2.7036,
+          -2.285,
+          0.0
+        ],
+        "max": [
+          2.73,
+          2.213,
+          3.7725
+        ]
+      },
+      "mesh_objects": 435,
+      "triangles": 5220,
+      "animations": [],
+      "bytes": 676776
+    },
+    {
+      "id": "bld_residential_b",
+      "category": "buildings",
+      "file": "assets/models/buildings/bld_residential_b.glb",
+      "root_node": "bld_residential_b",
+      "pivot": "base",
+      "blender_bounds": {
+        "min": [
+          -2.6204,
+          -2.35,
+          0.0
+        ],
+        "max": [
+          2.645,
+          2.278,
+          3.7325
+        ]
+      },
+      "mesh_objects": 429,
+      "triangles": 5148,
+      "animations": [],
+      "bytes": 667340
+    },
+    {
+      "id": "env_island_terrain",
+      "category": "environment",
+      "file": "assets/models/environment/env_island_terrain.glb",
+      "root_node": "env_island_terrain",
+      "pivot": "base",
+      "blender_bounds": {
+        "min": [
+          -58.425,
+          -46.0338,
+          -2.7935
+        ],
+        "max": [
+          55.1975,
+          44.9573,
+          1.5135
+        ]
+      },
+      "mesh_objects": 20,
+      "triangles": 547,
+      "animations": [],
+      "bytes": 69388
+    },
+    {
+      "id": "env_ocean",
+      "category": "environment",
+      "file": "assets/models/environment/env_ocean.glb",
+      "root_node": "env_ocean",
+      "pivot": "base",
+      "blender_bounds": {
+        "min": [
+          -160.0,
+          -160.0,
+          -1.3
+        ],
+        "max": [
+          160.0,
+          160.0,
+          -1.151
+        ]
+      },
+      "mesh_objects": 286,
+      "triangles": 1498,
+      "animations": [],
+      "bytes": 270760
+    },
+    {
+      "id": "env_stairs_railings",
+      "category": "environment",
+      "file": "assets/models/environment/env_stairs_railings.glb",
+      "root_node": "env_stairs_railings",
+      "pivot": "base",
+      "blender_bounds": {
+        "min": [
+          -25.75,
+          -3.92,
+          0.0
+        ],
+        "max": [
+          25.75,
+          24.3,
+          1.8375
+        ]
+      },
+      "mesh_objects": 130,
+      "triangles": 2168,
+      "animations": [],
+      "bytes": 245188
+    },
+    {
+      "id": "env_dock",
+      "category": "environment",
+      "file": "assets/models/environment/env_dock.glb",
+      "root_node": "env_dock",
+      "pivot": "base",
+      "blender_bounds": {
+        "min": [
+          -1.85,
+          -9.5,
+          -4.4
+        ],
+        "max": [
+          1.85,
+          0.14,
+          0.275
+        ]
+      },
+      "mesh_objects": 46,
+      "triangles": 1768,
+      "animations": [],
+      "bytes": 154600
+    },
+    {
+      "id": "env_wilderness_details",
+      "category": "environment",
+      "file": "assets/models/environment/env_wilderness_details.glb",
+      "root_node": "env_wilderness_details",
+      "pivot": "base",
+      "blender_bounds": {
+        "min": [
+          -39.7837,
+          -32.2067,
+          -0.1666
+        ],
+        "max": [
+          38.0549,
+          32.1637,
+          1.0776
+        ]
+      },
+      "mesh_objects": 72,
+      "triangles": 1216,
+      "animations": [],
+      "bytes": 169664
+    }
+  ],
+  "map": {
+    "file": "assets/maps/courier_island.glb",
+    "bytes": 10624868,
+    "instances": [
+      {
+        "name": "Map_env_island_terrain",
+        "asset": "env_island_terrain",
+        "position_blender": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotation_z": 0.0,
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "name": "Map_env_ocean",
+        "asset": "env_ocean",
+        "position_blender": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotation_z": 0.0,
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "name": "Map_env_stairs_railings",
+        "asset": "env_stairs_railings",
+        "position_blender": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotation_z": 0.0,
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "name": "Map_env_dock",
+        "asset": "env_dock",
+        "position_blender": [
+          -5.0,
+          -40.0,
+          0.15000000596046448
+        ],
+        "rotation_z": 0.0,
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "name": "Map_bld_courier_station",
+        "asset": "bld_courier_station",
+        "position_blender": [
+          -9.0,
+          3.0,
+          0.5400000214576721
+        ],
+        "rotation_z": 0.0,
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "name": "Map_bld_pizza_shop",
+        "asset": "bld_pizza_shop",
+        "position_blender": [
+          3.0,
+          10.0,
+          0.7200000286102295
+        ],
+        "rotation_z": 0.0,
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "name": "Map_bld_music_shop",
+        "asset": "bld_music_shop",
+        "position_blender": [
+          13.0,
+          0.0,
+          0.5400000214576721
+        ],
+        "rotation_z": 0.0,
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "name": "Map_bld_residential_a",
+        "asset": "bld_residential_a",
+        "position_blender": [
+          -23.0,
+          19.0,
+          0.36000001430511475
+        ],
+        "rotation_z": 0.0,
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "name": "Map_bld_residential_b",
+        "asset": "bld_residential_b",
+        "position_blender": [
+          23.0,
+          22.0,
+          0.36000001430511475
+        ],
+        "rotation_z": 0.0,
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "name": "Map_chr_courier",
+        "asset": "chr_courier",
+        "position_blender": [
+          -1.7999999523162842,
+          -3.5,
+          0.0
+        ],
+        "rotation_z": 0.0,
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "name": "Map_chr_dispatcher",
+        "asset": "chr_dispatcher",
+        "position_blender": [
+          -10.199999809265137,
+          2.75,
+          0.7200000286102295
+        ],
+        "rotation_z": 3.1415927410125732,
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "name": "Map_chr_pizza_clerk",
+        "asset": "chr_pizza_clerk",
+        "position_blender": [
+          3.0,
+          10.800000190734863,
+          0.8999999761581421
+        ],
+        "rotation_z": 3.1415927410125732,
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "name": "Map_chr_music_clerk",
+        "asset": "chr_music_clerk",
+        "position_blender": [
+          13.699999809265137,
+          0.800000011920929,
+          0.7200000286102295
+        ],
+        "rotation_z": 3.1415927410125732,
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "name": "Map_chr_resident",
+        "asset": "chr_resident",
+        "position_blender": [
+          7.5,
+          -3.0,
+          0.0
+        ],
+        "rotation_z": -1.899999976158142,
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "name": "Map_carried_parcel",
+        "asset": "prop_parcel_fragile",
+        "position_blender": [
+          -1.7999999523162842,
+          -3.0199999809265137,
+          1.2999999523162842
+        ],
+        "rotation_z": 0.0,
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "name": "Map_prop_mailbox_0",
+        "asset": "prop_mailbox",
+        "position_blender": [
+          -13.300000190734863,
+          0.30000001192092896,
+          0.0
+        ],
+        "rotation_z": -0.06131822243332863,
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "name": "Map_prop_crate_0",
+        "asset": "prop_crate",
+        "position_blender": [
+          -12.199999809265137,
+          0.699999988079071,
+          0.8999999761581421
+        ],
+        "rotation_z": 0.14425086975097656,
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "name": "Map_prop_crate_1",
+        "asset": "prop_crate",
+        "position_blender": [
+          -12.100000381469727,
+          1.7000000476837158,
+          0.8999999761581421
+        ],
+        "rotation_z": -0.0012533970875665545,
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "name": "Map_prop_crate_2",
+        "asset": "prop_crate",
+        "position_blender": [
+          -10.899999618530273,
+          1.5,
+          0.8999999761581421
+        ],
+        "rotation_z": -0.05648250877857208,
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "name": "Map_bollard_0",
+        "asset": "prop_dock_bollard",
+        "position_blender": [
+          -6.400000095367432,
+          -46.0,
+          0.10999999940395355
+        ],
+        "rotation_z": 0.0,
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "name": "Map_bollard_1",
+        "asset": "prop_dock_bollard",
+        "position_blender": [
+          -3.5999999046325684,
+          -46.0,
+          0.10999999940395355
+        ],
+        "rotation_z": 0.0,
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "name": "Map_bollard_2",
+        "asset": "prop_dock_bollard",
+        "position_blender": [
+          -6.400000095367432,
+          -49.0,
+          0.10999999940395355
+        ],
+        "rotation_z": 0.0,
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "name": "Map_bollard_3",
+        "asset": "prop_dock_bollard",
+        "position_blender": [
+          -3.5999999046325684,
+          -49.0,
+          0.10999999940395355
+        ],
+        "rotation_z": 0.0,
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "name": "Wilderness_details",
+        "asset": "env_wilderness_details",
+        "position_blender": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotation_z": 0.0,
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "name": "Wilderness_palm_0",
+        "asset": "prop_palm_crooked",
+        "position_blender": [
+          -36.91586685180664,
+          -13.582240104675293,
+          0.0
+        ],
+        "rotation_z": 2.5650768280029297,
+        "scale": [
+          1.0861833095550537,
+          1.0861833095550537,
+          1.0861833095550537
+        ]
+      },
+      {
+        "name": "Wilderness_palm_1",
+        "asset": "prop_palm_leaning",
+        "position_blender": [
+          -24.655109405517578,
+          -15.589729309082031,
+          0.0
+        ],
+        "rotation_z": 2.162691593170166,
+        "scale": [
+          0.9285463094711304,
+          0.9285463094711304,
+          0.9285463094711304
+        ]
+      },
+      {
+        "name": "Wilderness_palm_2",
+        "asset": "prop_palm_leaning",
+        "position_blender": [
+          -35.88039779663086,
+          -14.695958137512207,
+          0.0
+        ],
+        "rotation_z": 5.176244258880615,
+        "scale": [
+          1.1448312997817993,
+          1.1448312997817993,
+          1.1448312997817993
+        ]
+      },
+      {
+        "name": "Wilderness_palm_3",
+        "asset": "prop_palm_crooked",
+        "position_blender": [
+          -28.384103775024414,
+          -13.270139694213867,
+          0.0
+        ],
+        "rotation_z": 0.2661304473876953,
+        "scale": [
+          1.0714466571807861,
+          1.0714466571807861,
+          1.0714466571807861
+        ]
+      },
+      {
+        "name": "Wilderness_palm_4",
+        "asset": "prop_palm_crooked",
+        "position_blender": [
+          -26.01187515258789,
+          -21.838891983032227,
+          0.0
+        ],
+        "rotation_z": 0.4167536199092865,
+        "scale": [
+          1.0730217695236206,
+          1.0730217695236206,
+          1.0730217695236206
+        ]
+      },
+      {
+        "name": "Wilderness_palm_5",
+        "asset": "prop_palm_crooked",
+        "position_blender": [
+          -28.541229248046875,
+          -11.176450729370117,
+          0.0
+        ],
+        "rotation_z": 6.245171070098877,
+        "scale": [
+          0.8552361130714417,
+          0.8552361130714417,
+          0.8552361130714417
+        ]
+      },
+      {
+        "name": "Wilderness_palm_6",
+        "asset": "prop_palm_leaning",
+        "position_blender": [
+          -26.201942443847656,
+          -9.745550155639648,
+          0.0
+        ],
+        "rotation_z": 1.5286377668380737,
+        "scale": [
+          1.0331860780715942,
+          1.0331860780715942,
+          1.0331860780715942
+        ]
+      },
+      {
+        "name": "Wilderness_palm_7",
+        "asset": "prop_palm_leaning",
+        "position_blender": [
+          -38.1230583190918,
+          1.3374191522598267,
+          0.0
+        ],
+        "rotation_z": 1.5273067951202393,
+        "scale": [
+          1.009199619293213,
+          1.009199619293213,
+          1.009199619293213
+        ]
+      },
+      {
+        "name": "Wilderness_palm_8",
+        "asset": "prop_palm_young",
+        "position_blender": [
+          -39.14841842651367,
+          -1.313072681427002,
+          0.0
+        ],
+        "rotation_z": 0.9708285927772522,
+        "scale": [
+          1.1643248796463013,
+          1.1643248796463013,
+          1.1643248796463013
+        ]
+      },
+      {
+        "name": "Wilderness_palm_9",
+        "asset": "prop_palm_crooked",
+        "position_blender": [
+          -35.904029846191406,
+          1.9317103624343872,
+          0.0
+        ],
+        "rotation_z": 1.346021056175232,
+        "scale": [
+          0.9336887001991272,
+          0.9336887001991272,
+          0.9336887001991272
+        ]
+      },
+      {
+        "name": "Wilderness_palm_10",
+        "asset": "prop_palm_young",
+        "position_blender": [
+          -39.555110931396484,
+          -6.2801713943481445,
+          0.0
+        ],
+        "rotation_z": 6.190373420715332,
+        "scale": [
+          1.0424768924713135,
+          1.0424768924713135,
+          1.0424768924713135
+        ]
+      },
+      {
+        "name": "Wilderness_palm_11",
+        "asset": "prop_palm_crooked",
+        "position_blender": [
+          -4.011984348297119,
+          20.978612899780273,
+          0.0
+        ],
+        "rotation_z": 0.2110728919506073,
+        "scale": [
+          0.9249162673950195,
+          0.9249162673950195,
+          0.9249162673950195
+        ]
+      },
+      {
+        "name": "Wilderness_palm_12",
+        "asset": "prop_palm_leaning",
+        "position_blender": [
+          -3.787006139755249,
+          20.07579803466797,
+          0.0
+        ],
+        "rotation_z": 1.6605126857757568,
+        "scale": [
+          0.9335724115371704,
+          0.9335724115371704,
+          0.9335724115371704
+        ]
+      },
+      {
+        "name": "Wilderness_palm_13",
+        "asset": "prop_palm_young",
+        "position_blender": [
+          -4.653560638427734,
+          20.61551856994629,
+          0.0
+        ],
+        "rotation_z": 3.4154889583587646,
+        "scale": [
+          0.8688499331474304,
+          0.8688499331474304,
+          0.8688499331474304
+        ]
+      },
+      {
+        "name": "Wilderness_palm_14",
+        "asset": "prop_palm_leaning",
+        "position_blender": [
+          -10.455927848815918,
+          22.482900619506836,
+          0.0
+        ],
+        "rotation_z": 1.3746048212051392,
+        "scale": [
+          1.090480089187622,
+          1.090480089187622,
+          1.090480089187622
+        ]
+      },
+      {
+        "name": "Wilderness_palm_15",
+        "asset": "prop_palm_crooked",
+        "position_blender": [
+          -2.1731386184692383,
+          24.127668380737305,
+          0.0
+        ],
+        "rotation_z": 3.3261232376098633,
+        "scale": [
+          1.1089694499969482,
+          1.1089694499969482,
+          1.1089694499969482
+        ]
+      },
+      {
+        "name": "Wilderness_palm_16",
+        "asset": "prop_palm_young",
+        "position_blender": [
+          11.904870986938477,
+          28.6409969329834,
+          0.0
+        ],
+        "rotation_z": 4.882938385009766,
+        "scale": [
+          1.1308729648590088,
+          1.1308729648590088,
+          1.1308729648590088
+        ]
+      },
+      {
+        "name": "Wilderness_palm_17",
+        "asset": "prop_palm_crooked",
+        "position_blender": [
+          12.654681205749512,
+          25.891754150390625,
+          0.0
+        ],
+        "rotation_z": 6.117998123168945,
+        "scale": [
+          0.9670394659042358,
+          0.9670394659042358,
+          0.9670394659042358
+        ]
+      },
+      {
+        "name": "Wilderness_palm_18",
+        "asset": "prop_palm_crooked",
+        "position_blender": [
+          13.558841705322266,
+          26.22057342529297,
+          0.0
+        ],
+        "rotation_z": 4.065983295440674,
+        "scale": [
+          1.1339540481567383,
+          1.1339540481567383,
+          1.1339540481567383
+        ]
+      },
+      {
+        "name": "Wilderness_palm_19",
+        "asset": "prop_palm_young",
+        "position_blender": [
+          10.823246955871582,
+          28.079627990722656,
+          0.0
+        ],
+        "rotation_z": 5.552369117736816,
+        "scale": [
+          1.035845398902893,
+          1.035845398902893,
+          1.035845398902893
+        ]
+      },
+      {
+        "name": "Wilderness_palm_20",
+        "asset": "prop_palm_young",
+        "position_blender": [
+          27.34394645690918,
+          4.385183334350586,
+          0.0
+        ],
+        "rotation_z": 2.908498525619507,
+        "scale": [
+          0.9022309184074402,
+          0.9022309184074402,
+          0.9022309184074402
+        ]
+      },
+      {
+        "name": "Wilderness_palm_21",
+        "asset": "prop_palm_leaning",
+        "position_blender": [
+          31.476181030273438,
+          9.831292152404785,
+          0.0
+        ],
+        "rotation_z": 1.0222634077072144,
+        "scale": [
+          1.0857343673706055,
+          1.0857343673706055,
+          1.0857343673706055
+        ]
+      },
+      {
+        "name": "Wilderness_palm_22",
+        "asset": "prop_palm_crooked",
+        "position_blender": [
+          27.03630256652832,
+          6.099637031555176,
+          0.0
+        ],
+        "rotation_z": 2.1419408321380615,
+        "scale": [
+          1.0790574550628662,
+          1.0790574550628662,
+          1.0790574550628662
+        ]
+      },
+      {
+        "name": "Wilderness_palm_23",
+        "asset": "prop_palm_leaning",
+        "position_blender": [
+          22.69914436340332,
+          -13.063783645629883,
+          0.0
+        ],
+        "rotation_z": 3.206028461456299,
+        "scale": [
+          1.0457793474197388,
+          1.0457793474197388,
+          1.0457793474197388
+        ]
+      },
+      {
+        "name": "Wilderness_palm_24",
+        "asset": "prop_palm_crooked",
+        "position_blender": [
+          23.521339416503906,
+          -18.010297775268555,
+          0.0
+        ],
+        "rotation_z": 1.1638202667236328,
+        "scale": [
+          0.9501053094863892,
+          0.9501053094863892,
+          0.9501053094863892
+        ]
+      },
+      {
+        "name": "Wilderness_palm_25",
+        "asset": "prop_palm_leaning",
+        "position_blender": [
+          27.563793182373047,
+          -20.683523178100586,
+          0.0
+        ],
+        "rotation_z": 0.987951397895813,
+        "scale": [
+          1.0409104824066162,
+          1.0409104824066162,
+          1.0409104824066162
+        ]
+      },
+      {
+        "name": "Wilderness_palm_26",
+        "asset": "prop_palm_crooked",
+        "position_blender": [
+          24.369478225708008,
+          -19.49577522277832,
+          0.0
+        ],
+        "rotation_z": 5.755188465118408,
+        "scale": [
+          0.9637174606323242,
+          0.9637174606323242,
+          0.9637174606323242
+        ]
+      },
+      {
+        "name": "Wilderness_palm_27",
+        "asset": "prop_palm_leaning",
+        "position_blender": [
+          27.387821197509766,
+          -9.80990219116211,
+          0.0
+        ],
+        "rotation_z": 5.467273235321045,
+        "scale": [
+          0.9060071706771851,
+          0.9060071706771851,
+          0.9060071706771851
+        ]
+      },
+      {
+        "name": "Wilderness_palm_28",
+        "asset": "prop_palm_young",
+        "position_blender": [
+          -8.636305809020996,
+          -30.550682067871094,
+          0.0
+        ],
+        "rotation_z": 3.4097683429718018,
+        "scale": [
+          0.8692136406898499,
+          0.8692136406898499,
+          0.8692136406898499
+        ]
+      },
+      {
+        "name": "Wilderness_palm_29",
+        "asset": "prop_palm_crooked",
+        "position_blender": [
+          -10.409777641296387,
+          -26.565031051635742,
+          0.0
+        ],
+        "rotation_z": 0.4487588405609131,
+        "scale": [
+          0.8601890206336975,
+          0.8601890206336975,
+          0.8601890206336975
+        ]
+      },
+      {
+        "name": "Wilderness_palm_30",
+        "asset": "prop_palm_crooked",
+        "position_blender": [
+          -11.636251449584961,
+          -28.92529296875,
+          0.0
+        ],
+        "rotation_z": 3.794982433319092,
+        "scale": [
+          0.9636501669883728,
+          0.9636501669883728,
+          0.9636501669883728
+        ]
+      },
+      {
+        "name": "Wilderness_grass_0",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          -28.59505844116211,
+          -17.0827693939209,
+          0.012000000104308128
+        ],
+        "rotation_z": 4.793232440948486,
+        "scale": [
+          0.855155348777771,
+          0.855155348777771,
+          0.855155348777771
+        ]
+      },
+      {
+        "name": "Wilderness_grass_1",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          -28.047122955322266,
+          -10.344734191894531,
+          0.012000000104308128
+        ],
+        "rotation_z": 3.3728482723236084,
+        "scale": [
+          0.5555221438407898,
+          0.5555221438407898,
+          0.5555221438407898
+        ]
+      },
+      {
+        "name": "Wilderness_grass_2",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          -31.6684513092041,
+          -16.561803817749023,
+          0.012000000104308128
+        ],
+        "rotation_z": 0.6124476790428162,
+        "scale": [
+          0.5564193725585938,
+          0.5564193725585938,
+          0.5564193725585938
+        ]
+      },
+      {
+        "name": "Wilderness_grass_3",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          -29.46860122680664,
+          -11.89687728881836,
+          0.012000000104308128
+        ],
+        "rotation_z": 3.5927062034606934,
+        "scale": [
+          0.5803812146186829,
+          0.5803812146186829,
+          0.5803812146186829
+        ]
+      },
+      {
+        "name": "Wilderness_grass_4",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          -23.144927978515625,
+          -20.88301658630371,
+          0.012000000104308128
+        ],
+        "rotation_z": 0.9338659048080444,
+        "scale": [
+          0.6260697841644287,
+          0.6260697841644287,
+          0.6260697841644287
+        ]
+      },
+      {
+        "name": "Wilderness_grass_5",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          -26.623188018798828,
+          -17.384511947631836,
+          0.012000000104308128
+        ],
+        "rotation_z": 3.4301724433898926,
+        "scale": [
+          0.6383528709411621,
+          0.6383528709411621,
+          0.6383528709411621
+        ]
+      },
+      {
+        "name": "Wilderness_grass_6",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          -33.6719856262207,
+          -15.69188117980957,
+          0.012000000104308128
+        ],
+        "rotation_z": 6.103187084197998,
+        "scale": [
+          0.5580829977989197,
+          0.5580829977989197,
+          0.5580829977989197
+        ]
+      },
+      {
+        "name": "Wilderness_grass_7",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          -28.87407112121582,
+          -13.173636436462402,
+          0.012000000104308128
+        ],
+        "rotation_z": 0.17933109402656555,
+        "scale": [
+          0.7503072023391724,
+          0.7503072023391724,
+          0.7503072023391724
+        ]
+      },
+      {
+        "name": "Wilderness_grass_8",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          -24.275476455688477,
+          -17.515949249267578,
+          0.012000000104308128
+        ],
+        "rotation_z": 4.917226791381836,
+        "scale": [
+          0.5438284873962402,
+          0.5438284873962402,
+          0.5438284873962402
+        ]
+      },
+      {
+        "name": "Wilderness_grass_9",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          -29.505722045898438,
+          -21.012271881103516,
+          0.012000000104308128
+        ],
+        "rotation_z": 5.34294319152832,
+        "scale": [
+          0.62306147813797,
+          0.62306147813797,
+          0.62306147813797
+        ]
+      },
+      {
+        "name": "Wilderness_grass_10",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          -23.859697341918945,
+          -14.746795654296875,
+          0.012000000104308128
+        ],
+        "rotation_z": 4.905900478363037,
+        "scale": [
+          0.6423599123954773,
+          0.6423599123954773,
+          0.6423599123954773
+        ]
+      },
+      {
+        "name": "Wilderness_grass_11",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          -31.203399658203125,
+          -17.57737922668457,
+          0.012000000104308128
+        ],
+        "rotation_z": 3.014549970626831,
+        "scale": [
+          0.5686212182044983,
+          0.5686212182044983,
+          0.5686212182044983
+        ]
+      },
+      {
+        "name": "Wilderness_grass_12",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          -30.26565170288086,
+          -17.582794189453125,
+          0.012000000104308128
+        ],
+        "rotation_z": 2.9200634956359863,
+        "scale": [
+          0.5418080687522888,
+          0.5418080687522888,
+          0.5418080687522888
+        ]
+      },
+      {
+        "name": "Wilderness_grass_13",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          -26.42021369934082,
+          -14.910893440246582,
+          0.012000000104308128
+        ],
+        "rotation_z": 3.8536343574523926,
+        "scale": [
+          0.5319227576255798,
+          0.5319227576255798,
+          0.5319227576255798
+        ]
+      },
+      {
+        "name": "Wilderness_grass_14",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          -25.199758529663086,
+          -9.760656356811523,
+          0.012000000104308128
+        ],
+        "rotation_z": 6.254260540008545,
+        "scale": [
+          0.8053773045539856,
+          0.8053773045539856,
+          0.8053773045539856
+        ]
+      },
+      {
+        "name": "Wilderness_grass_15",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          -26.975900650024414,
+          -19.630884170532227,
+          0.012000000104308128
+        ],
+        "rotation_z": 3.923146963119507,
+        "scale": [
+          0.7689226269721985,
+          0.7689226269721985,
+          0.7689226269721985
+        ]
+      },
+      {
+        "name": "Wilderness_grass_16",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          -24.215078353881836,
+          -22.762855529785156,
+          0.012000000104308128
+        ],
+        "rotation_z": 0.375700980424881,
+        "scale": [
+          0.7897690534591675,
+          0.7897690534591675,
+          0.7897690534591675
+        ]
+      },
+      {
+        "name": "Wilderness_grass_17",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          -31.529077529907227,
+          -11.814249992370605,
+          0.012000000104308128
+        ],
+        "rotation_z": 2.5694470405578613,
+        "scale": [
+          0.8816319704055786,
+          0.8816319704055786,
+          0.8816319704055786
+        ]
+      },
+      {
+        "name": "Wilderness_grass_18",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          -32.75039291381836,
+          -19.39066505432129,
+          0.012000000104308128
+        ],
+        "rotation_z": 1.5064797401428223,
+        "scale": [
+          0.6525819301605225,
+          0.6525819301605225,
+          0.6525819301605225
+        ]
+      },
+      {
+        "name": "Wilderness_grass_19",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          -27.953569412231445,
+          -15.221034049987793,
+          0.012000000104308128
+        ],
+        "rotation_z": 2.8789124488830566,
+        "scale": [
+          0.8370422720909119,
+          0.8370422720909119,
+          0.8370422720909119
+        ]
+      },
+      {
+        "name": "Wilderness_grass_20",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          -39.3043212890625,
+          3.0685269832611084,
+          0.012000000104308128
+        ],
+        "rotation_z": 5.32111930847168,
+        "scale": [
+          0.5697727203369141,
+          0.5697727203369141,
+          0.5697727203369141
+        ]
+      },
+      {
+        "name": "Wilderness_grass_21",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          -38.916534423828125,
+          2.069502353668213,
+          0.012000000104308128
+        ],
+        "rotation_z": 2.5571162700653076,
+        "scale": [
+          0.8408148884773254,
+          0.8408148884773254,
+          0.8408148884773254
+        ]
+      },
+      {
+        "name": "Wilderness_grass_22",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          -37.16615676879883,
+          1.8456507921218872,
+          0.012000000104308128
+        ],
+        "rotation_z": 2.25161075592041,
+        "scale": [
+          0.7284131050109863,
+          0.7284131050109863,
+          0.7284131050109863
+        ]
+      },
+      {
+        "name": "Wilderness_grass_23",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          -37.834171295166016,
+          0.09727665036916733,
+          0.012000000104308128
+        ],
+        "rotation_z": 2.084296226501465,
+        "scale": [
+          0.7501733899116516,
+          0.7501733899116516,
+          0.7501733899116516
+        ]
+      },
+      {
+        "name": "Wilderness_grass_24",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          -36.65480422973633,
+          -0.49019095301628113,
+          0.012000000104308128
+        ],
+        "rotation_z": 0.17695166170597076,
+        "scale": [
+          0.862018883228302,
+          0.862018883228302,
+          0.862018883228302
+        ]
+      },
+      {
+        "name": "Wilderness_grass_25",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          -37.72258377075195,
+          1.3928639888763428,
+          0.012000000104308128
+        ],
+        "rotation_z": 0.6450099349021912,
+        "scale": [
+          0.8886955380439758,
+          0.8886955380439758,
+          0.8886955380439758
+        ]
+      },
+      {
+        "name": "Wilderness_grass_26",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          -37.99595642089844,
+          4.837526798248291,
+          0.012000000104308128
+        ],
+        "rotation_z": 2.1113147735595703,
+        "scale": [
+          0.7167819142341614,
+          0.7167819142341614,
+          0.7167819142341614
+        ]
+      },
+      {
+        "name": "Wilderness_grass_27",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          -36.45920181274414,
+          3.7482359409332275,
+          0.012000000104308128
+        ],
+        "rotation_z": 4.457662582397461,
+        "scale": [
+          0.5510832071304321,
+          0.5510832071304321,
+          0.5510832071304321
+        ]
+      },
+      {
+        "name": "Wilderness_grass_28",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          -41.59238815307617,
+          2.0394997596740723,
+          0.012000000104308128
+        ],
+        "rotation_z": 0.2730472981929779,
+        "scale": [
+          0.7936915755271912,
+          0.7936915755271912,
+          0.7936915755271912
+        ]
+      },
+      {
+        "name": "Wilderness_grass_29",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          -38.489620208740234,
+          0.42692968249320984,
+          0.012000000104308128
+        ],
+        "rotation_z": 2.303675651550293,
+        "scale": [
+          0.7607105374336243,
+          0.7607105374336243,
+          0.7607105374336243
+        ]
+      },
+      {
+        "name": "Wilderness_grass_30",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          -39.39756774902344,
+          3.164696216583252,
+          0.012000000104308128
+        ],
+        "rotation_z": 0.12454641610383987,
+        "scale": [
+          0.7711718678474426,
+          0.7711718678474426,
+          0.7711718678474426
+        ]
+      },
+      {
+        "name": "Wilderness_grass_31",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          -4.585821628570557,
+          24.899534225463867,
+          0.012000000104308128
+        ],
+        "rotation_z": 5.446794033050537,
+        "scale": [
+          0.46185511350631714,
+          0.46185511350631714,
+          0.46185511350631714
+        ]
+      },
+      {
+        "name": "Wilderness_grass_32",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          -5.77222204208374,
+          20.022499084472656,
+          0.012000000104308128
+        ],
+        "rotation_z": 3.0977447032928467,
+        "scale": [
+          0.7463106513023376,
+          0.7463106513023376,
+          0.7463106513023376
+        ]
+      },
+      {
+        "name": "Wilderness_grass_33",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          -6.988946914672852,
+          24.13718032836914,
+          0.012000000104308128
+        ],
+        "rotation_z": 5.545767784118652,
+        "scale": [
+          0.6130277514457703,
+          0.6130277514457703,
+          0.6130277514457703
+        ]
+      },
+      {
+        "name": "Wilderness_grass_34",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          -1.1765036582946777,
+          20.298751831054688,
+          0.012000000104308128
+        ],
+        "rotation_z": 2.495328187942505,
+        "scale": [
+          0.77199786901474,
+          0.77199786901474,
+          0.77199786901474
+        ]
+      },
+      {
+        "name": "Wilderness_grass_35",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          -4.418282985687256,
+          27.72332191467285,
+          0.012000000104308128
+        ],
+        "rotation_z": 3.3887252807617188,
+        "scale": [
+          0.7465028166770935,
+          0.7465028166770935,
+          0.7465028166770935
+        ]
+      },
+      {
+        "name": "Wilderness_grass_36",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          -6.241638660430908,
+          21.528484344482422,
+          0.012000000104308128
+        ],
+        "rotation_z": 2.805178165435791,
+        "scale": [
+          0.4700321853160858,
+          0.4700321853160858,
+          0.4700321853160858
+        ]
+      },
+      {
+        "name": "Wilderness_grass_37",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          -5.28932523727417,
+          27.53639030456543,
+          0.012000000104308128
+        ],
+        "rotation_z": 2.945955276489258,
+        "scale": [
+          0.7224814295768738,
+          0.7224814295768738,
+          0.7224814295768738
+        ]
+      },
+      {
+        "name": "Wilderness_grass_38",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          -6.734541893005371,
+          25.459733963012695,
+          0.012000000104308128
+        ],
+        "rotation_z": 0.15823905169963837,
+        "scale": [
+          0.49434155225753784,
+          0.49434155225753784,
+          0.49434155225753784
+        ]
+      },
+      {
+        "name": "Wilderness_grass_39",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          -7.683018684387207,
+          24.977828979492188,
+          0.012000000104308128
+        ],
+        "rotation_z": 4.734881401062012,
+        "scale": [
+          0.5049616694450378,
+          0.5049616694450378,
+          0.5049616694450378
+        ]
+      },
+      {
+        "name": "Wilderness_grass_40",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          -3.787827253341675,
+          26.027524948120117,
+          0.012000000104308128
+        ],
+        "rotation_z": 5.988739490509033,
+        "scale": [
+          0.7429647445678711,
+          0.7429647445678711,
+          0.7429647445678711
+        ]
+      },
+      {
+        "name": "Wilderness_grass_41",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          -6.7301025390625,
+          19.394601821899414,
+          0.012000000104308128
+        ],
+        "rotation_z": 1.1954224109649658,
+        "scale": [
+          0.6468400955200195,
+          0.6468400955200195,
+          0.6468400955200195
+        ]
+      },
+      {
+        "name": "Wilderness_grass_42",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          -8.937446594238281,
+          24.250551223754883,
+          0.012000000104308128
+        ],
+        "rotation_z": 0.9477441906929016,
+        "scale": [
+          0.7438258528709412,
+          0.7438258528709412,
+          0.7438258528709412
+        ]
+      },
+      {
+        "name": "Wilderness_grass_43",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          -3.7985622882843018,
+          22.522611618041992,
+          0.012000000104308128
+        ],
+        "rotation_z": 0.8306567072868347,
+        "scale": [
+          0.576120913028717,
+          0.576120913028717,
+          0.576120913028717
+        ]
+      },
+      {
+        "name": "Wilderness_grass_44",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          13.109107971191406,
+          27.13925552368164,
+          0.012000000104308128
+        ],
+        "rotation_z": 0.13166086375713348,
+        "scale": [
+          0.8545759320259094,
+          0.8545759320259094,
+          0.8545759320259094
+        ]
+      },
+      {
+        "name": "Wilderness_grass_45",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          11.431821823120117,
+          30.386009216308594,
+          0.012000000104308128
+        ],
+        "rotation_z": 2.340862274169922,
+        "scale": [
+          0.49036961793899536,
+          0.49036961793899536,
+          0.49036961793899536
+        ]
+      },
+      {
+        "name": "Wilderness_grass_46",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          15.50125503540039,
+          21.80235481262207,
+          0.012000000104308128
+        ],
+        "rotation_z": 2.1176822185516357,
+        "scale": [
+          0.6543731093406677,
+          0.6543731093406677,
+          0.6543731093406677
+        ]
+      },
+      {
+        "name": "Wilderness_grass_47",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          8.400760650634766,
+          21.01395034790039,
+          0.012000000104308128
+        ],
+        "rotation_z": 3.551698923110962,
+        "scale": [
+          0.782898485660553,
+          0.782898485660553,
+          0.782898485660553
+        ]
+      },
+      {
+        "name": "Wilderness_grass_48",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          11.931737899780273,
+          28.46185874938965,
+          0.012000000104308128
+        ],
+        "rotation_z": 5.008453845977783,
+        "scale": [
+          0.8803434371948242,
+          0.8803434371948242,
+          0.8803434371948242
+        ]
+      },
+      {
+        "name": "Wilderness_grass_49",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          9.023433685302734,
+          27.394573211669922,
+          0.012000000104308128
+        ],
+        "rotation_z": 1.4536693096160889,
+        "scale": [
+          0.595065712928772,
+          0.595065712928772,
+          0.595065712928772
+        ]
+      },
+      {
+        "name": "Wilderness_grass_50",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          13.268675804138184,
+          22.890396118164062,
+          0.012000000104308128
+        ],
+        "rotation_z": 5.959306716918945,
+        "scale": [
+          0.7327566742897034,
+          0.7327566742897034,
+          0.7327566742897034
+        ]
+      },
+      {
+        "name": "Wilderness_grass_51",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          10.40090560913086,
+          28.44693946838379,
+          0.012000000104308128
+        ],
+        "rotation_z": 4.8877482414245605,
+        "scale": [
+          0.7562125325202942,
+          0.7562125325202942,
+          0.7562125325202942
+        ]
+      },
+      {
+        "name": "Wilderness_grass_52",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          9.834609985351562,
+          23.394906997680664,
+          0.012000000104308128
+        ],
+        "rotation_z": 2.7422845363616943,
+        "scale": [
+          0.7947273850440979,
+          0.7947273850440979,
+          0.7947273850440979
+        ]
+      },
+      {
+        "name": "Wilderness_grass_53",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          15.150773048400879,
+          24.896286010742188,
+          0.012000000104308128
+        ],
+        "rotation_z": 2.660616397857666,
+        "scale": [
+          0.8190229535102844,
+          0.8190229535102844,
+          0.8190229535102844
+        ]
+      },
+      {
+        "name": "Wilderness_grass_54",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          9.413548469543457,
+          28.68524169921875,
+          0.012000000104308128
+        ],
+        "rotation_z": 4.885188579559326,
+        "scale": [
+          0.5336172580718994,
+          0.5336172580718994,
+          0.5336172580718994
+        ]
+      },
+      {
+        "name": "Wilderness_grass_55",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          14.033568382263184,
+          27.806608200073242,
+          0.012000000104308128
+        ],
+        "rotation_z": 0.34950006008148193,
+        "scale": [
+          0.6023678183555603,
+          0.6023678183555603,
+          0.6023678183555603
+        ]
+      },
+      {
+        "name": "Wilderness_grass_56",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          9.861486434936523,
+          31.230653762817383,
+          0.012000000104308128
+        ],
+        "rotation_z": 4.073582172393799,
+        "scale": [
+          0.8393231630325317,
+          0.8393231630325317,
+          0.8393231630325317
+        ]
+      },
+      {
+        "name": "Wilderness_grass_57",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          12.430230140686035,
+          25.48561668395996,
+          0.012000000104308128
+        ],
+        "rotation_z": 4.948708534240723,
+        "scale": [
+          0.602998673915863,
+          0.602998673915863,
+          0.602998673915863
+        ]
+      },
+      {
+        "name": "Wilderness_grass_58",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          28.652645111083984,
+          7.702301025390625,
+          0.012000000104308128
+        ],
+        "rotation_z": 4.205140113830566,
+        "scale": [
+          0.8581224083900452,
+          0.8581224083900452,
+          0.8581224083900452
+        ]
+      },
+      {
+        "name": "Wilderness_grass_59",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          29.726398468017578,
+          9.66865348815918,
+          0.012000000104308128
+        ],
+        "rotation_z": 5.273930549621582,
+        "scale": [
+          0.6970219016075134,
+          0.6970219016075134,
+          0.6970219016075134
+        ]
+      },
+      {
+        "name": "Wilderness_grass_60",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          29.19806480407715,
+          11.71070384979248,
+          0.012000000104308128
+        ],
+        "rotation_z": 3.2371463775634766,
+        "scale": [
+          0.7335035800933838,
+          0.7335035800933838,
+          0.7335035800933838
+        ]
+      },
+      {
+        "name": "Wilderness_grass_61",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          29.967866897583008,
+          13.813793182373047,
+          0.012000000104308128
+        ],
+        "rotation_z": 5.2514424324035645,
+        "scale": [
+          0.5902782678604126,
+          0.5902782678604126,
+          0.5902782678604126
+        ]
+      },
+      {
+        "name": "Wilderness_grass_62",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          24.285200119018555,
+          0.5852939486503601,
+          0.012000000104308128
+        ],
+        "rotation_z": 5.196782112121582,
+        "scale": [
+          0.464907169342041,
+          0.464907169342041,
+          0.464907169342041
+        ]
+      },
+      {
+        "name": "Wilderness_grass_63",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          34.125179290771484,
+          8.056781768798828,
+          0.012000000104308128
+        ],
+        "rotation_z": 3.6928067207336426,
+        "scale": [
+          0.639083981513977,
+          0.639083981513977,
+          0.639083981513977
+        ]
+      },
+      {
+        "name": "Wilderness_grass_64",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          30.342947006225586,
+          7.842800617218018,
+          0.012000000104308128
+        ],
+        "rotation_z": 6.026307582855225,
+        "scale": [
+          0.47741395235061646,
+          0.47741395235061646,
+          0.47741395235061646
+        ]
+      },
+      {
+        "name": "Wilderness_grass_65",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          26.181655883789062,
+          8.117606163024902,
+          0.012000000104308128
+        ],
+        "rotation_z": 0.49069589376449585,
+        "scale": [
+          0.8259423971176147,
+          0.8259423971176147,
+          0.8259423971176147
+        ]
+      },
+      {
+        "name": "Wilderness_grass_66",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          28.985702514648438,
+          8.421797752380371,
+          0.012000000104308128
+        ],
+        "rotation_z": 1.9095631837844849,
+        "scale": [
+          0.7969422340393066,
+          0.7969422340393066,
+          0.7969422340393066
+        ]
+      },
+      {
+        "name": "Wilderness_grass_67",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          23.41560173034668,
+          7.926786422729492,
+          0.012000000104308128
+        ],
+        "rotation_z": 5.479985237121582,
+        "scale": [
+          0.8785102963447571,
+          0.8785102963447571,
+          0.8785102963447571
+        ]
+      },
+      {
+        "name": "Wilderness_grass_68",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          25.082706451416016,
+          10.090239524841309,
+          0.012000000104308128
+        ],
+        "rotation_z": 5.439610004425049,
+        "scale": [
+          0.8696582317352295,
+          0.8696582317352295,
+          0.8696582317352295
+        ]
+      },
+      {
+        "name": "Wilderness_grass_69",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          36.525062561035156,
+          2.7008793354034424,
+          0.012000000104308128
+        ],
+        "rotation_z": 0.4576757550239563,
+        "scale": [
+          0.6071639060974121,
+          0.6071639060974121,
+          0.6071639060974121
+        ]
+      },
+      {
+        "name": "Wilderness_grass_70",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          29.422775268554688,
+          7.933085918426514,
+          0.012000000104308128
+        ],
+        "rotation_z": 5.780576705932617,
+        "scale": [
+          0.6570761799812317,
+          0.6570761799812317,
+          0.6570761799812317
+        ]
+      },
+      {
+        "name": "Wilderness_grass_71",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          33.724578857421875,
+          9.607112884521484,
+          0.012000000104308128
+        ],
+        "rotation_z": 5.3917317390441895,
+        "scale": [
+          0.47836631536483765,
+          0.47836631536483765,
+          0.47836631536483765
+        ]
+      },
+      {
+        "name": "Wilderness_grass_72",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          24.5650634765625,
+          -13.310181617736816,
+          0.012000000104308128
+        ],
+        "rotation_z": 2.8124332427978516,
+        "scale": [
+          0.5048663020133972,
+          0.5048663020133972,
+          0.5048663020133972
+        ]
+      },
+      {
+        "name": "Wilderness_grass_73",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          27.71563148498535,
+          -20.141483306884766,
+          0.012000000104308128
+        ],
+        "rotation_z": 2.6726009845733643,
+        "scale": [
+          0.5238600969314575,
+          0.5238600969314575,
+          0.5238600969314575
+        ]
+      },
+      {
+        "name": "Wilderness_grass_74",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          30.047168731689453,
+          -19.149099349975586,
+          0.012000000104308128
+        ],
+        "rotation_z": 0.21912097930908203,
+        "scale": [
+          0.8896023035049438,
+          0.8896023035049438,
+          0.8896023035049438
+        ]
+      },
+      {
+        "name": "Wilderness_grass_75",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          28.896718978881836,
+          -9.772747039794922,
+          0.012000000104308128
+        ],
+        "rotation_z": 4.756009578704834,
+        "scale": [
+          0.5464478731155396,
+          0.5464478731155396,
+          0.5464478731155396
+        ]
+      },
+      {
+        "name": "Wilderness_grass_76",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          30.376327514648438,
+          -14.250653266906738,
+          0.012000000104308128
+        ],
+        "rotation_z": 3.1504149436950684,
+        "scale": [
+          0.8193294405937195,
+          0.8193294405937195,
+          0.8193294405937195
+        ]
+      },
+      {
+        "name": "Wilderness_grass_77",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          33.05708694458008,
+          -14.237458229064941,
+          0.012000000104308128
+        ],
+        "rotation_z": 0.37486532330513,
+        "scale": [
+          0.754700779914856,
+          0.754700779914856,
+          0.754700779914856
+        ]
+      },
+      {
+        "name": "Wilderness_grass_78",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          21.230148315429688,
+          -19.093769073486328,
+          0.012000000104308128
+        ],
+        "rotation_z": 3.100534439086914,
+        "scale": [
+          0.48478972911834717,
+          0.48478972911834717,
+          0.48478972911834717
+        ]
+      },
+      {
+        "name": "Wilderness_grass_79",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          25.474241256713867,
+          -15.826562881469727,
+          0.012000000104308128
+        ],
+        "rotation_z": 5.468737602233887,
+        "scale": [
+          0.871562123298645,
+          0.871562123298645,
+          0.871562123298645
+        ]
+      },
+      {
+        "name": "Wilderness_grass_80",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          26.95807647705078,
+          -9.940834045410156,
+          0.012000000104308128
+        ],
+        "rotation_z": 3.659334182739258,
+        "scale": [
+          0.7080637812614441,
+          0.7080637812614441,
+          0.7080637812614441
+        ]
+      },
+      {
+        "name": "Wilderness_grass_81",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          24.968557357788086,
+          -16.38911247253418,
+          0.012000000104308128
+        ],
+        "rotation_z": 1.668195128440857,
+        "scale": [
+          0.85575270652771,
+          0.85575270652771,
+          0.85575270652771
+        ]
+      },
+      {
+        "name": "Wilderness_grass_82",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          31.11369514465332,
+          -10.802352905273438,
+          0.012000000104308128
+        ],
+        "rotation_z": 0.11924397945404053,
+        "scale": [
+          0.8516291975975037,
+          0.8516291975975037,
+          0.8516291975975037
+        ]
+      },
+      {
+        "name": "Wilderness_grass_83",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          33.005645751953125,
+          -14.82591438293457,
+          0.012000000104308128
+        ],
+        "rotation_z": 2.469325542449951,
+        "scale": [
+          0.8369072675704956,
+          0.8369072675704956,
+          0.8369072675704956
+        ]
+      },
+      {
+        "name": "Wilderness_grass_84",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          24.17981719970703,
+          -13.851143836975098,
+          0.012000000104308128
+        ],
+        "rotation_z": 2.6845617294311523,
+        "scale": [
+          0.8177869319915771,
+          0.8177869319915771,
+          0.8177869319915771
+        ]
+      },
+      {
+        "name": "Wilderness_grass_85",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          28.11205291748047,
+          -12.465066909790039,
+          0.012000000104308128
+        ],
+        "rotation_z": 5.642775535583496,
+        "scale": [
+          0.8897619247436523,
+          0.8897619247436523,
+          0.8897619247436523
+        ]
+      },
+      {
+        "name": "Wilderness_grass_86",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          26.804750442504883,
+          -10.613481521606445,
+          0.012000000104308128
+        ],
+        "rotation_z": 5.463463306427002,
+        "scale": [
+          0.6574132442474365,
+          0.6574132442474365,
+          0.6574132442474365
+        ]
+      },
+      {
+        "name": "Wilderness_grass_87",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          25.471174240112305,
+          -19.320749282836914,
+          0.012000000104308128
+        ],
+        "rotation_z": 1.3075692653656006,
+        "scale": [
+          0.7911024689674377,
+          0.7911024689674377,
+          0.7911024689674377
+        ]
+      },
+      {
+        "name": "Wilderness_grass_88",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          28.48579216003418,
+          -15.597420692443848,
+          0.012000000104308128
+        ],
+        "rotation_z": 0.17694628238677979,
+        "scale": [
+          0.8624888062477112,
+          0.8624888062477112,
+          0.8624888062477112
+        ]
+      },
+      {
+        "name": "Wilderness_grass_89",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          -6.147426128387451,
+          -24.735092163085938,
+          0.012000000104308128
+        ],
+        "rotation_z": 3.8750696182250977,
+        "scale": [
+          0.8816535472869873,
+          0.8816535472869873,
+          0.8816535472869873
+        ]
+      },
+      {
+        "name": "Wilderness_grass_90",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          -15.815876960754395,
+          -31.062458038330078,
+          0.012000000104308128
+        ],
+        "rotation_z": 0.12005715817213058,
+        "scale": [
+          0.6354451179504395,
+          0.6354451179504395,
+          0.6354451179504395
+        ]
+      },
+      {
+        "name": "Wilderness_grass_91",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          -8.206403732299805,
+          -30.997068405151367,
+          0.012000000104308128
+        ],
+        "rotation_z": 3.7156708240509033,
+        "scale": [
+          0.8016330003738403,
+          0.8016330003738403,
+          0.8016330003738403
+        ]
+      },
+      {
+        "name": "Wilderness_grass_92",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          -12.689228057861328,
+          -24.866666793823242,
+          0.012000000104308128
+        ],
+        "rotation_z": 0.7575587630271912,
+        "scale": [
+          0.499428391456604,
+          0.499428391456604,
+          0.499428391456604
+        ]
+      },
+      {
+        "name": "Wilderness_grass_93",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          -13.419976234436035,
+          -29.778888702392578,
+          0.012000000104308128
+        ],
+        "rotation_z": 6.077789306640625,
+        "scale": [
+          0.46491119265556335,
+          0.46491119265556335,
+          0.46491119265556335
+        ]
+      },
+      {
+        "name": "Wilderness_grass_94",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          -15.308817863464355,
+          -28.247726440429688,
+          0.012000000104308128
+        ],
+        "rotation_z": 2.634035348892212,
+        "scale": [
+          0.47835031151771545,
+          0.47835031151771545,
+          0.47835031151771545
+        ]
+      },
+      {
+        "name": "Wilderness_grass_95",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          -14.278674125671387,
+          -25.595542907714844,
+          0.012000000104308128
+        ],
+        "rotation_z": 4.924057483673096,
+        "scale": [
+          0.5398805141448975,
+          0.5398805141448975,
+          0.5398805141448975
+        ]
+      },
+      {
+        "name": "Wilderness_grass_96",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          -12.150851249694824,
+          -26.090049743652344,
+          0.012000000104308128
+        ],
+        "rotation_z": 5.936066627502441,
+        "scale": [
+          0.555738627910614,
+          0.555738627910614,
+          0.555738627910614
+        ]
+      },
+      {
+        "name": "Wilderness_grass_97",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          -14.413128852844238,
+          -21.448471069335938,
+          0.012000000104308128
+        ],
+        "rotation_z": 1.6130294799804688,
+        "scale": [
+          0.585059642791748,
+          0.585059642791748,
+          0.585059642791748
+        ]
+      },
+      {
+        "name": "Wilderness_grass_98",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          -12.94124698638916,
+          -26.275615692138672,
+          0.012000000104308128
+        ],
+        "rotation_z": 2.035407304763794,
+        "scale": [
+          0.632439911365509,
+          0.632439911365509,
+          0.632439911365509
+        ]
+      },
+      {
+        "name": "Wilderness_grass_99",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          -12.064992904663086,
+          -25.102869033813477,
+          0.012000000104308128
+        ],
+        "rotation_z": 0.17290940880775452,
+        "scale": [
+          0.4757693111896515,
+          0.4757693111896515,
+          0.4757693111896515
+        ]
+      },
+      {
+        "name": "Wilderness_grass_100",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          -6.436588764190674,
+          -21.73541831970215,
+          0.012000000104308128
+        ],
+        "rotation_z": 2.242023229598999,
+        "scale": [
+          0.7109812498092651,
+          0.7109812498092651,
+          0.7109812498092651
+        ]
+      },
+      {
+        "name": "Wilderness_grass_101",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          -16.157148361206055,
+          -23.588624954223633,
+          0.012000000104308128
+        ],
+        "rotation_z": 5.314471244812012,
+        "scale": [
+          0.8408647775650024,
+          0.8408647775650024,
+          0.8408647775650024
+        ]
+      },
+      {
+        "name": "Wilderness_grass_102",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          -3.364682912826538,
+          -15.073588371276855,
+          0.012000000104308128
+        ],
+        "rotation_z": 2.081285238265991,
+        "scale": [
+          0.686515748500824,
+          0.686515748500824,
+          0.686515748500824
+        ]
+      },
+      {
+        "name": "Wilderness_grass_103",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          -6.076513767242432,
+          -7.70836877822876,
+          0.012000000104308128
+        ],
+        "rotation_z": 3.0924527645111084,
+        "scale": [
+          0.4966633915901184,
+          0.4966633915901184,
+          0.4966633915901184
+        ]
+      },
+      {
+        "name": "Wilderness_grass_104",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          -7.804645538330078,
+          -12.244366645812988,
+          0.012000000104308128
+        ],
+        "rotation_z": 1.3387081623077393,
+        "scale": [
+          0.4874608516693115,
+          0.4874608516693115,
+          0.4874608516693115
+        ]
+      },
+      {
+        "name": "Wilderness_grass_105",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          -2.458890199661255,
+          -11.176313400268555,
+          0.012000000104308128
+        ],
+        "rotation_z": 0.2702789008617401,
+        "scale": [
+          0.7353736758232117,
+          0.7353736758232117,
+          0.7353736758232117
+        ]
+      },
+      {
+        "name": "Wilderness_grass_106",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          -3.943126678466797,
+          -8.222468376159668,
+          0.012000000104308128
+        ],
+        "rotation_z": 1.270621418952942,
+        "scale": [
+          0.8443360924720764,
+          0.8443360924720764,
+          0.8443360924720764
+        ]
+      },
+      {
+        "name": "Wilderness_grass_107",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          -6.726377487182617,
+          -10.067103385925293,
+          0.012000000104308128
+        ],
+        "rotation_z": 2.314140558242798,
+        "scale": [
+          0.6045114994049072,
+          0.6045114994049072,
+          0.6045114994049072
+        ]
+      },
+      {
+        "name": "Wilderness_grass_108",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          -2.7001540660858154,
+          -16.890575408935547,
+          0.012000000104308128
+        ],
+        "rotation_z": 5.827521800994873,
+        "scale": [
+          0.6802704334259033,
+          0.6802704334259033,
+          0.6802704334259033
+        ]
+      },
+      {
+        "name": "Wilderness_grass_109",
+        "asset": "prop_wild_grass_patch",
+        "position_blender": [
+          -7.923930644989014,
+          -11.348859786987305,
+          0.012000000104308128
+        ],
+        "rotation_z": 2.8380002975463867,
+        "scale": [
+          0.5209217667579651,
+          0.5209217667579651,
+          0.5209217667579651
+        ]
+      },
+      {
+        "name": "Wilderness_scrub_0",
+        "asset": "prop_shrub",
+        "position_blender": [
+          -34.0,
+          -8.0,
+          0.0
+        ],
+        "rotation_z": 1.8619942665100098,
+        "scale": [
+          0.7998504638671875,
+          0.7998504638671875,
+          0.7998504638671875
+        ]
+      },
+      {
+        "name": "Wilderness_scrub_1",
+        "asset": "prop_shrub",
+        "position_blender": [
+          -24.0,
+          -23.0,
+          0.0
+        ],
+        "rotation_z": 2.1183881759643555,
+        "scale": [
+          0.6449744701385498,
+          0.6449744701385498,
+          0.6449744701385498
+        ]
+      },
+      {
+        "name": "Wilderness_scrub_2",
+        "asset": "prop_shrub",
+        "position_blender": [
+          30.0,
+          -9.0,
+          0.0
+        ],
+        "rotation_z": 5.803544044494629,
+        "scale": [
+          0.7312743663787842,
+          0.7312743663787842,
+          0.7312743663787842
+        ]
+      },
+      {
+        "name": "Wilderness_scrub_3",
+        "asset": "prop_shrub",
+        "position_blender": [
+          -8.0,
+          27.0,
+          0.0
+        ],
+        "rotation_z": 5.222769260406494,
+        "scale": [
+          0.8429321050643921,
+          0.8429321050643921,
+          0.8429321050643921
+        ]
+      },
+      {
+        "name": "Wilderness_scrub_4",
+        "asset": "prop_shrub",
+        "position_blender": [
+          16.0,
+          27.0,
+          0.0
+        ],
+        "rotation_z": 6.095800876617432,
+        "scale": [
+          0.6346372365951538,
+          0.6346372365951538,
+          0.6346372365951538
+        ]
+      }
+    ]
+  },
+  "integration_status": "Art assets only; not yet loaded by the game; collision and navigation not provided",
+  "land_dimensions_m": [
+    109,
+    87
+  ],
+  "coastline_area_m2": 6070,
+  "art_direction": "Irregular desolate tropical island; weathered wooden buildings; no planned roads or parks",
+  "notes_zh": [
+    "地图为不规则荒凉海岛，陆地约110×90米，以沙地、碎石、野草和弯曲棕榈组成。",
+    "移除规则路网、环岛步道、铺装广场与海景公园，建筑改为破旧木屋和木棚。",
+    "模型颜色使用内置材质，不依赖外部贴图。",
+    "主角骨架使用分段刚性权重；动作无根运动。",
+    "台阶、建筑与地图不包含物理碰撞、寻路数据或玩法组件。"
+  ]
+}
