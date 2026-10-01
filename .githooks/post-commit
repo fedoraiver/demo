@@ -1,0 +1,9 @@
+#!/bin/sh
+# 架构图已在提交前生成并提交；这里只对齐部分路径提交后保留的产物索引。
+project_root=$(git rev-parse --show-toplevel) || exit 1
+if [ "${OS:-}" = "Windows_NT" ]; then
+    exec powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$project_root/.codex/hooks/architecture-hook.ps1" synchronize-index
+else
+    git_started=$(LC_ALL=C ps -p "$PPID" -o lstart= | cksum | cut -d ' ' -f 1)
+    exec node "$project_root/.codex/hooks/architecture-hook.mjs" synchronize-index "$PPID-$git_started"
+fi
