@@ -24,7 +24,12 @@ impl Plugin for StartupLogPlugin {
 
 /// 记录实际玩法配置；显式保留迁移前的日志分类，兼容现有过滤设置。
 fn log_configuration(config: Res<PrototypeConfig>) {
-    info!(target: "demo::gameplay", ?config, "Prototype gameplay initialized");
+    // 刚体与持握方式属于本次玩法配置，合并到原有记录便于沿用日志筛选。
+    info!(target: "demo::gameplay", ?config,
+        physics_engine = "avian3d", physics_version = "0.7.0",
+        character_body = "dynamic", parcel_body = "dynamic",
+        grip_mode = "spring_damper", release_mode = "preserve_velocity",
+        "Prototype gameplay initialized");
 }
 
 /// 记录模拟频率，直接读取应用配置的固定时间步。
@@ -39,8 +44,9 @@ fn log_simulation_timestep(time: Res<Time<Fixed>>) {
 /// 将模拟和逐帧姿态同步的调度约定写入统一会话日志，便于排查帧率相关问题。
 fn log_pose_synchronization() {
     info!(target: "demo::camera", simulation_schedule = "FixedUpdate",
-        presentation_schedule = "Update",
-        presentation_order = "character_facing_held_objects_camera_visibility", reason = "initialization",
+        grip_force_schedule = "FixedUpdate", physics_schedule = "FixedPostUpdate",
+        presentation_schedule = "RunFixedMainLoop",
+        presentation_order = "interpolation_character_facing_hold_target_camera_visibility", reason = "initialization",
         "Camera pose synchronization configured");
 }
 
@@ -79,6 +85,12 @@ mod tests {
             let mut app = App::new();
             app.insert_resource(PrototypeConfig {
                 move_speed: 9.0,
+                acceleration: 36.0,
+                character_mass: 75.0,
+                parcel_mass: 3.0,
+                hold_frequency: 5.0,
+                hold_damping_ratio: 0.8,
+                hold_max_force: 240.0,
                 ..default()
             })
             .insert_resource(Time::<Fixed>::from_seconds(0.25))
@@ -96,7 +108,21 @@ mod tests {
             (
                 "demo::gameplay",
                 "Prototype gameplay initialized",
-                vec!["move_speed: 9.0"],
+                vec![
+                    "move_speed: 9.0",
+                    "acceleration: 36.0",
+                    "character_mass: 75.0",
+                    "parcel_mass: 3.0",
+                    "hold_frequency: 5.0",
+                    "hold_damping_ratio: 0.8",
+                    "hold_max_force: 240.0",
+                    "physics_engine=\"avian3d\"",
+                    "physics_version=\"0.7.0\"",
+                    "character_body=\"dynamic\"",
+                    "parcel_body=\"dynamic\"",
+                    "grip_mode=\"spring_damper\"",
+                    "release_mode=\"preserve_velocity\"",
+                ],
             ),
             (
                 "demo::settings",
@@ -108,8 +134,10 @@ mod tests {
                 "Camera pose synchronization configured",
                 vec![
                     "simulation_schedule=\"FixedUpdate\"",
-                    "presentation_schedule=\"Update\"",
-                    "presentation_order=\"character_facing_held_objects_camera_visibility\"",
+                    "grip_force_schedule=\"FixedUpdate\"",
+                    "physics_schedule=\"FixedPostUpdate\"",
+                    "presentation_schedule=\"RunFixedMainLoop\"",
+                    "presentation_order=\"interpolation_character_facing_hold_target_camera_visibility\"",
                     "reason=\"initialization\"",
                 ],
             ),

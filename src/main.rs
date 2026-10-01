@@ -3,6 +3,9 @@
 mod camera;
 mod gameplay;
 mod input;
+mod physics;
+#[cfg(test)]
+mod physics_tests;
 mod scene;
 mod session_log;
 mod settings;

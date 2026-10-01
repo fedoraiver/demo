@@ -29,13 +29,14 @@ function frame(x, y, w, h, label, subtitle = '', tone = '#526477') {
 function card(x, y, w, h, id, title, rows = [], kind = 'system', extra = '') {
   const data = registry[id] || { id, name: title, kind, description: rows.join('；') };
   const color = colors[kind] || colors.system;
-  const stereotype = { system: 'System', observer: 'Observer', engine: 'Engine', sync: 'Commands / Sync', resource: 'Resource', local: 'Local', event: 'EntityEvent', message: 'Message', component: 'Component', entity: 'Entity' }[kind] || kind;
+  const stereotype = { system: 'System', observer: 'Observer', engine: 'Engine', sync: 'Commands / Sync', resource: 'Resource', local: 'Local', external: 'External I/O', event: 'EntityEvent', message: 'Message', component: 'Component', entity: 'Entity' }[kind] || kind;
   const shape = kind === 'event' ? `<path d="M${x},${y}H${x + w - 18}L${x + w},${y + h / 2}L${x + w - 18},${y + h}H${x}Z" fill="#fff8ed" stroke="${color}" stroke-width="1.7"/>` : `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${kind === 'observer' ? 20 : kind === 'system' || kind === 'engine' ? 10 : 3}" fill="${kind === 'component' ? '#f2faf5' : kind === 'observer' ? '#f8f3fc' : kind === 'resource' ? '#fffaf0' : '#fff'}" stroke="${color}" stroke-width="1.7" ${kind === 'local' ? 'stroke-dasharray="5 4"' : ''}/>`;
   return `<g class="node ${kind}" ${register(id, data)}>${shape}${kind === 'observer' ? `<rect x="${x + 5}" y="${y + 5}" width="${w - 10}" height="${h - 10}" rx="16" fill="none" stroke="${color}" stroke-opacity=".28"/>` : ''}${text(x + 14, y + 21, `«${stereotype}»`, 'stereotype')}${fitted(x + 14, y + 48, title, w - 34, 'node-title')}${rows.map((r, i) => fitted(x + 14, y + 73 + i * 23, r, w - 34, extra || 'body')).join('')}</g>`;
 }
 const brief = {
  frame_limit:'按设置等待帧间剩余时间',time_update:'更新引擎时间与固定步累积',input_update:'更新键鼠状态与窗口输入消息',mouse_capture:'窗口 / Egui 命中 → 捕获与上下文',enhanced_prepare:'准备有效输入上下文和绑定',enhanced_evaluate:'评估绑定、条件和动作状态',input_apply:'写动作输出，排入 trigger 命令',
- facing_fixed:'按相机 yaw 同步人物朝向',movement:'移动轴 → 水平速度与位置',gravity:'消费跳跃，积分垂直运动与着地',interaction:'消费交互，拿起或放下最近木箱',held_apply:'应用 HeldBy 变更，维护反向索引',held_fixed:'持有者姿态 → 木箱姿态',facing_update:'同步本帧 yaw，不积分移动',held_update:'同步本帧持物姿态',camera_follow:'角色位置 + 观察状态 → 镜头',visibility_update:'视角模式 → 人物模型可见性',perspective_apply:'消费请求，切换第一 / 第三人称',
+ facing_fixed:'按相机 yaw 同步人物朝向',movement:'输入 / 实际速度 → 有上限的控制力',gravity:'消费跳跃请求 → 一次向上冲量',interaction:'射线 / 范围 → 拾取或保留动量释放',held_apply:'应用持握关系、目标与碰撞层',held_fixed:'角色呈现姿态 → HeldTarget',facing_update:'保留插值位置，同步本帧 yaw',held_update:'更新呈现目标，不搬箱或施力',camera_follow:'插值位置 + 观察状态 → 镜头',visibility_update:'视角模式 → 人物模型可见性',perspective_apply:'消费请求，切换第一 / 第三人称',
+ gravity_sync:'配置变化 → Gravity',grounded_fixed:'脚底 shape cast → 接地状态',grounded_after:'物理回写后重新探测接地',orphan_cleanup:'失效持有者 / 关系 → 自由碰撞',orphan_apply:'应用失效清理命令',grip_forces:'真实 Position / 速度 → 弹簧与反作用力',velocity_log:'解算后实际速度 → 采样日志',collision_log:'CollisionStart / End → 文件日志',physics_prepare:'准备物理位姿、质量与碰撞数据',physics_step:'积分 / 接触 / 子步求解 → 真实运动',physics_writeback:'Position / Rotation → Transform',easing_reset:'FixedFirst：重置并记录插值起点',easing_end:'FixedLast：记录物理步插值终点',easing_apply:'固定循环后按 overstep 插值',easing_tick:'显示同步后记录变化 tick',
  transform_propagate:'根 Transform → 子 GlobalTransform',render:'提取 ECS 数据，准备并绘制画面',observe_move:'路由到角色，更新持续移动轴',observe_complete:'移动完成，将轴归零',observe_cancel:'移动取消，将轴归零',observe_jump:'路由到角色，设置跳跃请求',observe_interact:'路由到角色，设置交互请求',observe_look:'有效捕获时更新当前模式角度',observe_perspective:'记录请求来源，稍后统一切换'
 };
 const displayNames = { time_update:'TimeSystems',input_update:'InputSystems',enhanced_prepare:'Enhanced Input · Prepare',enhanced_evaluate:'Enhanced Input · Update',input_apply:'Enhanced Input · Apply',held_apply:'ApplyDeferred · 持有关系',capture_apply:'ApplyDeferred · 上下文',inspector_pass:'World Inspector · UI Pass',transform_propagate:'Transform · Propagate',render:'RenderApp · 渲染概览' };
@@ -72,48 +73,56 @@ b += '<g transform="translate(0 52)">';
 b += frame(30, 240, 1500, 108, '«Schedule» Startup · 启动一次', '场景插件生成场景，启动日志插件注册四项日志；五个系统无彼此顺序约束，阶段结束应用场景命令。');
 ['startup_spawn', 'startup_config', 'startup_timestep', 'startup_pose', 'startup_inspector'].forEach((id, i) => { registry[id] = systems[id]; b += compact(48 + i * 293, 303, 274, 32, id, systems[id].name, 'system'); });
 const phases = [
-  { x: 30, w: 235, name: 'First', note: '每个渲染帧', id: 'frame_limit', rows: ['limit_frame_rate → 时间更新', '默认上限 60 FPS；最低 60', 'Local：帧间计时'] },
-  { x: 302, w: 285, name: 'PreUpdate', note: '输入与界面准备', id: 'enhanced_evaluate', rows: ['捕获 / 上下文 → 动作评估', '应用事件 → Observer', '写意图 / 角度 → 视角切换'] },
-  { x: 626, w: 340, name: 'FixedUpdate', note: '60 Hz · 每帧 0～N 次', id: 'movement', rows: ['朝向 → 移动 → 跳跃重力', '→ 交互 → 应用命令 → 持物', '积分位置，消费单次请求'] },
-  { x: 1005, w: 250, name: 'Update', note: '每个渲染帧', id: 'facing_update', rows: ['朝向 → 持物 → 镜头', '→ 人物模型可见性', '仅同步派生姿态'] },
-  { x: 1294, w: 236, name: 'PostUpdate', note: '变换传播与渲染交接', id: 'transform_propagate', rows: ['Transform', '→ GlobalTransform', '→ 渲染子应用'] },
+  { x: 30, w: 330, name: 'First', note: '每个渲染帧', rows: ['限帧 → 时间更新', '默认上限 60 FPS；最低 60', 'Local：帧间计时'] },
+  { x: 395, w: 330, name: 'PreUpdate', note: '输入与界面准备', rows: ['捕获 / 上下文 → 动作评估', '事件 → 意图 / 观察角度', '本帧消费视角切换请求'] },
+  { x: 760, w: 330, name: 'FixedUpdate', note: 'FixedFirst 先记录插值起点', rows: ['朝向 / 重力 → 接地 / 控制力', '跳跃冲量 → 交互 / 清理', '持握目标 → 弹簧 / 反作用力'] },
+  { x: 1125, w: 330, name: 'FixedPostUpdate', note: 'Avian 默认物理阶段', rows: ['Prepare → StepSimulation', '→ Writeback → 接地 / 速度日志', '真实位置 / 速度 / 碰撞'] },
+  { x: 1490, w: 330, name: 'FixedLast', note: '固定步末尾', rows: ['记录本步插值终点', '角色：平移插值', '箱体：完整 Transform 插值'] },
+  { x: 1855, w: 330, name: '固定循环之后', note: 'RunFixedMainLoop · 每帧', rows: ['Ease → 朝向 → HeldTarget', '→ 镜头 → 可见性', '→ UpdateEasingTick'] },
+  { x: 2220, w: 330, name: 'PostUpdate', note: '其前经过普通 Update', rows: ['Transform → GlobalTransform', '检查器 UI 为同阶段独立分支', '→ 渲染子应用'] },
 ];
 phases.forEach(p => { b += frame(p.x, 382, p.w, 180, p.name, `«Schedule» · ${p.note}`); b += p.rows.map((r, i) => fitted(p.x + 17, 469 + i * 31, r, p.w - 34)).join(''); });
 phases.slice(0, -1).forEach((p, i) => b += edge([[p.x + p.w, 420], [phases[i + 1].x, 420]]));
-b += text(650, 609, '固定循环由时间累积决定；没有固定步时，Update 仍同步显示姿态。', 'note');
+b += text(770, 609, 'FixedFirst → FixedUpdate → FixedPostUpdate → FixedLast 每帧 0～N 次；零固定步帧仍完成插值后显示链。', 'note');
 const data = [
-  { id: 'character.CharacterIntent', x: 302, w: 285, name: 'CharacterIntent', rows: ['movement：持续输入', 'jump_pending / interact_pending', '固定步消费后清除请求'] },
-  { id: 'character.Transform', x: 626, w: 340, name: '角色状态与 Transform', rows: ['CharacterMotion：速度 / 着地', '角色 Transform：位置 / 朝向', '组件挂在角色实体上'] },
-  { id: 'camera.OrbitCamera', x: 1005, w: 250, name: 'OrbitCamera', rows: ['目标 / 模式 / yaw / 两组 pitch', 'MouseLookState：捕获状态', '相机 Transform：最终姿态'] },
-  { id: 'visual.GlobalTransform', x: 1294, w: 236, name: '视觉子实体', rows: ['Mesh3d / 材质', 'ChildOf → 业务根实体', 'GlobalTransform → 渲染'] },
+  { id: 'character.CharacterIntent', x: 395, w: 330, name: 'CharacterIntent', rows: ['movement：持续输入', 'jump_pending / interact_pending', '固定步消费后清除请求'] },
+  { id: 'character.Position', x: 760, w: 330, name: '真实物理状态', rows: ['Position / Rotation / Velocity', 'CharacterMotion：仅 grounded', 'Transform：插值呈现位置'] },
+  { id: 'parcel.HeldTarget', x: 1125, w: 330, name: 'HeldTarget / 物理持握', rows: ['目标仅供呈现检查', '施力另读真实 Position', '实际箱体可滞后 / 受碰撞阻挡'] },
+  { id: 'world.Collider', x: 1490, w: 330, name: '静态世界碰撞', rows: ['地面与墙体两个盒形刚体', 'World / Character / Parcel', '持握箱忽略 Character 层'] },
+  { id: 'camera.OrbitCamera', x: 1855, w: 330, name: 'OrbitCamera', rows: ['目标 / 模式 / yaw / 两组 pitch', '镜头读本帧插值后角色位置', '相机 Transform：最终姿态'] },
+  { id: 'visual.GlobalTransform', x: 2220, w: 330, name: '视觉子实体', rows: ['Mesh3d / 材质，无物理体', 'ChildOf → 业务根实体', 'GlobalTransform → 渲染'] },
 ];
 data.forEach(d => { registry[d.id] = { id: d.id, name: d.name, kind: 'Component', description: d.rows.join('；') }; b += card(d.x, 697, d.w, 151, d.id, d.name, d.rows, 'component', 'small'); });
 registry['resource.GameSettings'] = model.resources.find(r => r.id === 'resource.GameSettings');
-b += card(30, 697, 235, 151, 'resource.GameSettings', '共享 Resource', ['GameSettings：帧率 / 相机', 'PrototypeConfig：玩法参数', 'max_fps ≥ 60；默认 60'], 'resource', 'small');
-b += edge([[147, 697], [147, 562]], 'R 设置', 'read', [147, 630], ['resource.GameSettings', 'frame_limit']);
-b += edge([[410, 562], [410, 697]], 'W 意图', 'write', [410, 630], ['observe_move', 'character.CharacterIntent']);
-b += edge([[566,562],[566,675],[1040,675],[1040,697]], 'W 角度 / 模式', 'write', [922,675], ['observe_look','perspective_apply','camera.OrbitCamera']);
-b += edge([[587, 754], [607, 754], [607, 582], [650, 582], [650, 562]], 'R 意图', 'read', [607, 649], ['character.CharacterIntent', 'movement']);
-b += edge([[791, 562], [791, 697]], 'W 运动', 'write', [791, 640], ['movement', 'character.Transform']);
-b += edge([[1140, 697], [1140, 562]], 'R 角度', 'read', [1140, 640], ['camera.OrbitCamera', 'facing_update']);
-b += edge([[930, 697], [930, 648], [1024, 648], [1024, 562]], 'R 角色姿态', 'read', [974, 648], ['character.Transform', 'camera_follow']);
-b += edge([[1412, 562], [1412, 697]], 'W 世界变换', 'write', [1412, 641], ['transform_propagate', 'visual.GlobalTransform']);
+b += card(30, 697, 330, 151, 'resource.GameSettings', '共享 Resource', ['GameSettings：帧率 / 相机', 'PrototypeConfig / Gravity：物理', 'max_fps ≥ 60；默认 60'], 'resource', 'small');
+b += edge([[195, 697], [195, 562]], 'R 设置', 'read', [195, 630], ['resource.GameSettings', 'frame_limit']);
+b += edge([[560, 562], [560, 697]], 'W 意图', 'write', [560, 630], ['observe_move', 'character.CharacterIntent']);
+b += edge([[650,562],[650,675],[1950,675],[1950,697]], 'W 角度 / 模式', 'write', [1670,675], ['observe_look','perspective_apply','camera.OrbitCamera']);
+b += edge([[725, 754], [745, 754], [745, 582], [790, 582], [790, 562]], 'R 意图', 'read', [745, 649], ['character.CharacterIntent', 'movement']);
+b += edge([[1290, 562], [1290, 648], [925,648], [925,697]], 'W 物理状态', 'write', [1120,648], ['physics_step', 'character.Position']);
+b += edge([[2020, 697], [2020, 562]], 'R 角度', 'read', [2020, 640], ['camera.OrbitCamera', 'facing_update']);
+b += edge([[2385, 562], [2385, 697]], 'W 世界变换', 'write', [2385, 641], ['transform_propagate', 'visual.GlobalTransform']);
 b += text(36, 900, '图例：粗箭头＝执行顺序　R 蓝虚线＝读取　W 绿实线＝写入　Event 橙虚线＝触发　紫线＝引用 / 关系', 'note');
 b += '</g>';
-save('overview', '当前 App · ECS 总览', 1560, 987, b, '装配 → 启动 → 输入 → 固定模拟 → 逐帧姿态 → 世界变换与渲染。');
+// GameplayPlugin 内部安装物理插件，不把内部注册伪装成 main 的额外插件。
+const nestedPlugins = [['DemoPhysicsPlugin','src/gameplay.rs','add_plugins(DemoPhysicsPlugin)'],['PhysicsPlugins::default()','src/physics.rs','add_plugins(PhysicsPlugins::default())']];
+nestedPlugins.forEach(([name,file,needle],i)=>{const id=`plugin-physics-${i}`;registry[id]={name,kind:'Plugin',description:i?'Avian 默认 FixedPostUpdate 求解及物理插值插件。':'GameplayPlugin 内部安装，注册重力同步和碰撞日志。',notes:['内部插件注册关系；不表示系统执行顺序。'],source:{path:file,line:fs.readFileSync(path.join(dir,'../..',file),'utf8').split('\n').findIndex(line=>line.includes(needle))+1}};b+=card(1575+i*505,112,475,135,id,name,['GameplayPlugin → DemoPhysicsPlugin → Avian'],'engine','small');});
+save('overview', '当前 App · ECS 总览', 2590, 987, b, '输入 → 固定控制力 → Avian 求解 → 插值 → 本帧显示 → 世界变换与渲染。');
 
 // 时序视图：每个注册实例单独呈现，R/W 在卡片内列摘要，点击显示完整读写项。
 b = text(36, 80, '系统卡片中的 R / W 是访问摘要；同一函数在不同 Schedule 中有两个注册实例。', 'note');
 const columns = [
   { x: 30, w: 300, phase: 'First', note: '每帧一次', ids: ['frame_limit', 'time_update'] },
   { x: 375, w: 420, phase: 'PreUpdate', note: '每帧一次；响应输入', ids: [] },
-  { x: 840, w: 350, phase: 'FixedUpdate', note: '60 Hz · 每帧 0～N 次', ids: ['facing_fixed', 'movement', 'gravity', 'interaction', 'held_apply', 'held_fixed'] },
-  { x: 1235, w: 320, phase: 'Update', note: '每帧一次；显示同步', ids: ['facing_update', 'held_update', 'camera_follow', 'visibility_update'] },
-  { x: 1600, w: 390, phase: 'PostUpdate / 渲染', note: '只展示相关引擎分支', ids: [] },
+  { x: 840, w: 420, phase: 'FixedFirst / FixedUpdate', note: '60 Hz · 每帧 0～N 次', ids: [] },
+  { x: 1305, w: 410, phase: 'FixedPostUpdate', note: 'Avian 默认物理解算', ids: ['physics_prepare','physics_step','physics_writeback','grounded_after','velocity_log'] },
+  { x: 1760, w: 330, phase: 'FixedLast', note: '每个固定步末尾', ids: ['easing_end'] },
+  { x: 2135, w: 380, phase: '固定循环之后', note: 'RunFixedMainLoop · AfterFixedMainLoop', ids: ['easing_apply','facing_update','held_update','camera_follow','visibility_update','easing_tick'] },
+  { x: 2560, w: 390, phase: 'PostUpdate / 渲染', note: '其前经过普通 Update', ids: [] },
 ];
 const accessName = value => value.split('.').pop().replace(/\s*\(.*/, '');
 function accessRows(id) { const s = systems[id]; const summarize = values => { const rank = v => v.startsWith('resource.') ? 1 : v.startsWith('local.') ? 2 : 0; const sorted = [...values].sort((a,b)=>rank(a)-rank(b)); return sorted.map(accessName).slice(0,2).join(' / ') + (values.length>2?' …':''); }; return [brief[id] || s.description, ...(s.reads.length ? [`R ${summarize(s.reads)}`] : []), ...(s.writes.length ? [`W ${summarize(s.writes)}`] : [])].slice(0, 3); }
-columns.forEach(col => { b += frame(col.x, 112, col.w, 1270, col.phase, `«Schedule» · ${col.note}`); col.ids.forEach((id, i) => {
+columns.forEach(col => { b += frame(col.x, 112, col.w, 1980, col.phase, `«Schedule» · ${col.note}`); col.ids.forEach((id, i) => {
   b += system(col.x + 15, 193 + i * 160, col.w - 30, id, accessRows(id), 130);
   if (i) b += edge([[col.x + col.w / 2, 163 + i * 160], [col.x + col.w / 2, 193 + i * 160]]);
  }); });
@@ -126,30 +135,45 @@ brief.capture_apply = '应用 ContextActivity 替换';
 preNodes.forEach(([id,y,h],i)=>{b += system(390,y,390,id,h===130?accessRows(id):[brief[id] || systems[id].description],h);if(i){const previous=preNodes[i-1];b+=edge([[585,previous[1]+previous[2]],[585,y]],'','order',null,[previous[0],id]);}});
 b += text(399, 1339, 'UI 捕获停用 GameplayContext；', 'small');
 b += text(399, 1365, '动作 Complete / Cancel 清除移动轴。', 'small');
-b += system(1615, 193, 320, 'transform_propagate', ['R 根 Transform / ChildOf', 'W GlobalTransform（另有可见性传播）'], 118);
-b += system(1615, 365, 320, 'inspector_pass', ['反射读取 / 编辑实体、资源与资产', 'multipass：界面可在此多轮处理'], 118);
-b += text(1624, 340, '相关分支并列；彼此未指定全序', 'small');
+b += system(855, 193, 390, 'easing_reset', [brief.easing_reset], 96);
+// 重力与朝向都在玩法链之前，但二者没有显式先后依赖。
+b += system(855, 320, 187, 'gravity_sync', [brief.gravity_sync], 96);
+b += system(1058, 320, 187, 'facing_fixed', ['水平 yaw → 朝向'], 96);
+b += edge([[948,416],[948,440],[1050,440],[1050,470]],'','order',null,['gravity_sync','grounded_fixed']);
+b += edge([[1151,416],[1151,440],[1050,440]],'','order',null,['facing_fixed','grounded_fixed']);
+b += text(860, 455, '二者无彼此顺序；下方为显式玩法链', 'small');
+const fixedNodes = ['grounded_fixed','movement','gravity','interaction','held_apply','orphan_cleanup','orphan_apply','held_fixed','grip_forces'];
+fixedNodes.forEach((id,i)=>{const y=470+i*160;b+=system(855,y,390,id,accessRows(id),130);if(i)b+=edge([[1050,y-30],[1050,y]],'','order',null,[fixedNodes[i-1],id]);});
+b += edge([[1050,289],[1050,302],[948,302],[948,320]],'','order',null,['easing_reset','gravity_sync']);
+b += edge([[1050,302],[1151,302],[1151,320]],'','order',null,['easing_reset','facing_fixed']);
+b += system(1320, 1170, 380, 'collision_log', accessRows('collision_log'), 130);
+b += edge([[1695,415],[1702,415],[1702,1135],[1510,1135],[1510,1170]],'仅 after(StepSimulation)','order',[1510,1135],['physics_step','collision_log']);
+b += text(1324, 1350, '碰撞日志与 Writeback 后观察无全序', 'small');
+b += system(2575, 193, 320, 'transform_propagate', ['R 根 Transform / ChildOf', 'W GlobalTransform（另有可见性传播）'], 118);
+b += system(2575, 365, 320, 'inspector_pass', ['反射读取 / 编辑实体、资源与资产', 'multipass：界面可在此多轮处理'], 118);
+b += text(2584, 340, '相关分支并列；彼此未指定全序', 'small');
 // 两条渲染分支使用独立入口，右侧留出走线空间，避免沿卡片边框或合并箭头。
-b += edge([[1935, 252], [1968, 252], [1968, 566], [1855, 566], [1855, 610]], '', 'order', null, ['transform_propagate','render']);
-b += edge([[1775, 483], [1775, 610]], '', 'order', null, ['inspector_pass','render']);
-b += system(1615, 610, 320, 'render', ['Extract → Prepare → Render', 'RenderApp 是子应用，不是单个系统'], 118);
+b += edge([[2895, 252], [2928, 252], [2928, 566], [2815, 566], [2815, 610]], '', 'order', null, ['transform_propagate','render']);
+b += edge([[2735, 483], [2735, 610]], '', 'order', null, ['inspector_pass','render']);
+b += system(2575, 610, 320, 'render', ['Extract → Prepare → Render', 'RenderApp 是子应用，不是单个系统'], 118);
 columns.slice(0, -1).forEach((col, i) => b += edge([[col.x + col.w, 144], [columns[i + 1].x, 144]]));
-b += text(43, 1430, 'Startup：场景插件生成场景；启动日志插件集中注册四项无顺序依赖的日志，详见总览。', 'note');
-b += text(43, 1464, 'Commands：结构变更和事件触发等命令应用才生效；命令同步点用琥珀色框表示。', 'note');
-b += text(43, 1498, '跨阶段箭头依据默认主调度；固定步内依据 before(GameplaySystems::Simulate) 与 chain()。', 'note');
-b += text(43, 1532, 'FixedUpdate 与 Update 复用朝向、持物同步函数；后者不额外积分运动。', 'note');
-save('schedules', '调度泳道 · 系统与数据访问', 2030, 1575, b, '点击系统查看完整 R/W、查询过滤、事件与源码；引擎集合和子应用是概览。');
+b += text(43, 2140, 'Startup：场景生成与四项日志无彼此顺序；物理主体和碰撞体位于业务根实体。', 'note');
+b += text(43, 2174, 'Commands 同步点用琥珀色框；碰撞日志与回写后接地/采样只有各自明确的依赖。', 'note');
+b += text(43, 2208, '固定循环每帧 0～N 次；AfterFixedMainLoop 的 Ease → 显示链 → UpdateEasingTick 每帧执行。', 'note');
+b += text(43, 2242, 'HeldTarget 仅呈现检查；物理施力直接读 Position，不读取插值目标，不把箱体直接搬到手前。', 'note');
+save('schedules', '调度泳道 · 系统与数据访问', 2990, 2285, b, '固定控制 → 物理解算 → 插值后显示；点击查看完整访问，框架集合为概览。');
 
 // 关系视图：矩形容器表达实体，内嵌组件；普通 Entity 引用与 Bevy 关系单独标注。
 b = text(36, 80, '按实体角色汇总关键组件，可选组件并非始终存在；虚线＝普通引用，紫实线＝Bevy 关系。', 'note');
 const entityBoxes = [
   { id: 'controller', x: 30, y: 112, w: 360, h: 350 }, { id: 'action', x: 540, y: 112, w: 360, h: 315 }, { id: 'binding', x: 1050, y: 112, w: 360, h: 230 },
-  { id: 'character', x: 30, y: 650, w: 360, h: 395 }, { id: 'parcel', x: 540, y: 650, w: 360, h: 340 }, { id: 'camera', x: 1050, y: 650, w: 360, h: 365 },
-  { id: 'visual', x: 30, y: 1210, w: 360, h: 355 }, { id: 'window', x: 1050, y: 1210, w: 360, h: 270 },
+  { id: 'character', x: 30, y: 650, w: 360, h: 600 }, { id: 'parcel', x: 540, y: 650, w: 360, h: 615 }, { id: 'camera', x: 1050, y: 650, w: 360, h: 365 },
+  { id: 'world', x: 1050, y: 1080, w: 360, h: 430 },
+  { id: 'visual', x: 30, y: 1540, w: 360, h: 355 }, { id: 'window', x: 1050, y: 1580, w: 360, h: 270 },
 ];
-const primaryComponents = { controller: ['PlayerId', 'GameplayContext', 'ContextActivity', 'ControlsCharacter', 'ControlsCamera', 'Actions', 'GamepadDevice'], action: ['Action', 'ActionSettings', 'ActionOf', 'Bindings', 'Press'], binding: ['Binding', 'BindingOf'], character: ['Character', 'CharacterIntent', 'CharacterMotion', 'Transform', 'HoldingItems', 'Children'], parcel: ['Parcel', 'Pickable', 'Transform', 'HeldBy', 'Children'], camera: ['OrbitCamera', 'MouseLookState', 'Camera3d', 'Transform'], visual: ['CharacterVisual', 'Mesh3d', 'MeshMaterial3d', 'Transform', 'GlobalTransform', 'ChildOf'], window: ['PrimaryWindow', 'Window', 'CursorOptions'] };
+const primaryComponents = { controller: ['PlayerId', 'GameplayContext', 'ContextActivity', 'ControlsCharacter', 'ControlsCamera', 'Actions', 'GamepadDevice'], action: ['Action', 'ActionSettings', 'ActionOf', 'Bindings', 'Press'], binding: ['Binding', 'BindingOf'], character: ['Character', 'CharacterIntent', 'CharacterMotion', 'RigidBody', 'Collider', 'Position', 'LinearVelocity', 'Transform', 'CollisionLayers', 'LockedAxes', 'TranslationInterpolation', 'HoldingItems', 'Children'], parcel: ['Parcel', 'Pickable', 'RigidBody', 'Collider', 'Position', 'LinearVelocity', 'AngularVelocity', 'Transform', 'CollisionLayers', 'HeldBy', 'HeldTarget', 'TransformInterpolation', 'Children'], camera: ['OrbitCamera', 'MouseLookState', 'Camera3d', 'Transform'], world: ['RigidBody','Collider','CollisionLayers','Transform','Mesh3d','MeshMaterial3d'], visual: ['CharacterVisual', 'Mesh3d', 'MeshMaterial3d', 'Transform', 'GlobalTransform', 'ChildOf'], window: ['PrimaryWindow', 'Window', 'CursorOptions'] };
 entityBoxes.forEach(box => { const e = entities[box.id]; registry[`entity-${e.id}`] = { ...e, name: e.name, kind: 'Entity' };
-  const shortName = {visual:'视觉子实体',action:'动作',binding:'输入绑定',controller:'控制者',character:'角色',parcel:'木箱快递',camera:'相机',window:'主窗口'}[e.id];
+  const shortName = {visual:'视觉子实体',action:'动作',binding:'输入绑定',controller:'控制者',character:'角色',parcel:'木箱快递',camera:'相机',world:'静态地面 / 墙体',window:'主窗口'}[e.id];
   b += `<g class="node entity" ${register(`entity-${e.id}`, registry[`entity-${e.id}`])}>${frame(box.x, box.y, box.w, box.h, `«Entity» ${shortName}`, e.id==='visual'?'6 个：人物 3、木箱 3':`当前数量：${e.count}`, colors.entity)}</g>`;
   const key = c => c.name.split('<')[0].split(' ')[0];
   const visible = e.components.filter(c => primaryComponents[e.id].includes(key(c))).sort((a, b) => primaryComponents[e.id].indexOf(key(a)) - primaryComponents[e.id].indexOf(key(b)));
@@ -171,15 +195,16 @@ b += edge([[1143, 650], [1143, 600], [273, 600], [273, 650]], 'OrbitCamera.targe
 b += edge([[540, 810], [390, 810]], 'HeldBy', 'relationship', [465, 808], ['entity-parcel', 'entity-character']);
 b += text(399, 848, '← HoldingItems', 'small');
 b += text(407, 873, '无 linked_spawn', 'small');
-b += edge([[157, 1210], [157, 1045]], 'ChildOf：人物模型', 'relationship', [157, 1140], ['entity-visual', 'entity-character']);
-b += edge([[390, 1347], [965, 1347], [965, 1000], [900,1000]], 'ChildOf：箱子模型', 'relationship', [965, 1290], ['entity-visual', 'entity-parcel']);
-b += frame(540, 1510, 870, 194, '关系的基数与生命周期', '这里只描述当前源码声明的行为。');
-b += lines(561, 1594, ['HeldBy：每箱 0..1 位持有者；HoldingItems 容器允许 0..N 件，当前业务一次持一件。', 'ActionOf / BindingOf / ChildOf：自动维护反向索引，并声明 linked_spawn。', '普通 Entity 引用：不自动清理目标；查询时处理目标不存在或组件缺失。', '持箱关系保持箱子为业务根实体；模型子实体通过 ChildOf 随业务根传播变换。'], 'small', 27);
-b += frame(540, 1060, 360, 202, '«Resource / Local» 数据范围', 'Resource 共享；Local 属于某个系统。');
+b += edge([[157, 1540], [157, 1250]], 'ChildOf：人物模型', 'relationship', [157, 1400], ['entity-visual', 'entity-character']);
+b += edge([[390, 1687], [965, 1687], [965, 1230], [900,1230]], 'ChildOf：箱子模型', 'relationship', [965, 1560], ['entity-visual', 'entity-parcel']);
+b += frame(540, 1910, 870, 228, '关系的基数与生命周期', '这里只描述当前源码声明的行为。');
+b += lines(561, 1994, ['HeldBy：每箱 0..1 位持有者；HoldingItems 容器允许 0..N，当前业务一次持一件。', 'ActionOf / BindingOf / ChildOf 声明 linked_spawn；HeldBy 不连带销毁箱体。', '失效持有者 / 异常解除：移除 HeldTarget、恢复自由碰撞，动态箱体自然下落。', 'Position / Velocity 为物理状态，Transform 为插值呈现；视觉子实体无刚体。', '持握使用反作用力，仍参与世界碰撞；持握箱当前忽略全部 Character 层。'], 'small', 27);
+b += frame(540, 1300, 360, 305, '«Resource / Local» 数据范围', 'Resource 共享；Local 属于某个系统。');
 model.resources.forEach(r => registry[r.id] = r);
-['resource.GameSettings','resource.PrototypeConfig','resource.TimeFixed'].forEach((id,i)=>{const r=registry[id];b+=compact(554,1130+i*33,332,28,id,r.name,'resource');});
-b += text(557, 1247, 'FramePacing / 采样计时：Local', 'small');
-save('relationships', '实体 · 组件归属与关系', 1450, 1740, b, '点击组件查看字段，点击实体查看完整清单；关键角色之外省略地面、光照等背景实体。');
+['resource.GameSettings','resource.PrototypeConfig','resource.TimeFixed','resource.Gravity','resource.ColliderTrees'].forEach((id,i)=>{const r=registry[id];b+=compact(554,1370+i*33,332,28,id,r.name,'resource');});
+b += text(557, 1560, '预留集合 / 采样计时：Local', 'small');
+b += text(557, 1588, 'LastEasingTick：插值共享 Resource', 'small');
+save('relationships', '实体 · 组件归属与关系', 1450, 2175, b, '真实物理状态、插值呈现和持握目标分离；点击组件查看字段及源码入口。');
 
 // 通信视图：输入动作事件、全局 Observer 与窗口缓冲消息保持不同路线。
 b = text(36, 80, `${model.observers.length} 个 Observer 由匹配事件触发；它们不是按 add_observer 的注册顺序组成流水线。`, 'note');
@@ -201,7 +226,7 @@ eventRows.forEach(([id, name, result], i) => { const y = 306 + i * 136;
   b += edge([[769, y + 46], [856, y + 46]], 'W', 'write', [812, y + 46], [id, `result-${id}`, dataId]);
 });
 b += frame(1240, 306, 250, 910, '路由与状态消费', 'Observer 是全局注册的。');
-const route = ['event.context → 控制者','ControlsCharacter → 角色','↓ CharacterIntent','','movement → 移动系统','jump_pending → 跳跃重力','interact_pending → 交互','布尔请求一次消费后清零','','观察 / 切换另走：','ControlsCamera → 相机','↓ OrbitCamera','','观察：直接更新角度','切换：先记请求来源','↓ apply_perspective_toggle','在事件命令应用后切换','','目标或组件缺失 → 返回','零固定步帧保留玩法请求'];
+const route = ['event.context → 控制者','ControlsCharacter → 角色','↓ CharacterIntent','','movement → 控制力','jump_pending → 跳跃冲量','interact_pending → 交互','布尔请求一次消费后清零','','观察 / 切换另走：','ControlsCamera → 相机','↓ OrbitCamera','','观察：直接更新角度','切换：先记请求来源','↓ apply_perspective_toggle','在事件命令应用后切换','','目标或组件缺失 → 返回','零固定步帧保留玩法请求'];
 b += route.map((r,i)=>fitted(1257,392+i*38,r,216,'small')).join('');
 b += text(45, 1273, '移动轴持续保留至 Complete / Cancel；跳跃与交互的同类未消费请求会合并为一次。', 'note');
 b += frame(30, 1320, 1460, 280, '窗口通信 · 缓冲 Message、输入 Resource 与 Egui 上下文', '窗口消息有独立读取游标；UI 占用通过输入上下文停用，避免与玩法动作重复触发。');
@@ -213,7 +238,15 @@ b += card(971, 1410, 486, 130, 'capture-state', '捕获与输入上下文', ['Mo
 b += edge([[424, 1474], [512, 1474]], '读取', 'read', [468, 1474], ['window-messages', 'mouse_capture']);
 b += edge([[868, 1474], [971, 1474]], 'W', 'write', [919, 1474], ['mouse_capture', 'capture-state']);
 b += text(52, 1577, '恢复鼠标捕获当帧跳过位移；检查器编辑直接作用于 ECS 内存，界面绘制见调度视图。', 'small');
-save('events', '事件 · Observer · Message', 1520, 1640, b, '点击 Observer 看事件目标与数据访问；查看请求如何跨输入、模拟和显示阶段流动。');
+b += frame(30, 1640, 1460, 200, '物理碰撞 · 缓冲 Message', 'PhysicsSchedule 产生离散接触消息；项目不新增碰撞 Observer。');
+registry['physics-messages']={name:'CollisionStart / CollisionEnd',kind:'Message',description:'Avian 缓冲碰撞开始/结束消息，携带 collider1 和 collider2；log_collisions 在物理步之后读取。',notes:systems.collision_log.notes,source:systems.collision_log.source};
+b += card(50,1720,374,100,'physics-messages','CollisionStart / End',['collider1 / collider2：Entity'],'message','small');
+b += system(512,1720,356,'collision_log',[brief.collision_log],100);
+registry['physics-file-log']={name:'会话文件日志',kind:'External I/O',description:'离散碰撞记录复用集中 tracing 文件输出，与游戏存档分别管理。',source:systems.collision_log.source};
+b += card(971,1720,486,100,'physics-file-log','统一会话日志',['碰撞双方、原因、时间与级别'],'external','small');
+b += edge([[424,1770],[512,1770]],'读取','read',[468,1770],['physics-messages','collision_log']);
+b += edge([[868,1770],[971,1770]],'日志','write',[919,1770],['collision_log','physics-file-log']);
+save('events', '事件 · Observer · Message', 1520, 1880, b, '输入使用 EntityEvent / Observer；窗口与碰撞分别使用缓冲 Message；输出共用会话日志。');
 
 // 源码与图同时生成快照，让网页和离线文件都能打开完整源码并定位行号。
 const sourcePaths = [...new Set(Object.values(registry).map(d => d.source?.path).filter(Boolean))].sort();

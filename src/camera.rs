@@ -1,7 +1,8 @@
-//! 第一／第三人称视角：动作更新观察状态，固定步同步朝向，逐帧同步人物、持物、镜头和模型显示。
+//! 第一／第三人称视角：动作更新观察状态，固定步同步朝向，物理插值后同步持握目标、镜头和模型显示。
 
 use std::f32::consts::TAU;
 
+use avian3d::interpolation::TransformEasingSystems;
 use bevy::{
     input::{InputSystems, mouse::MouseButtonInput},
     prelude::*,
@@ -171,16 +172,19 @@ impl Plugin for CameraControlPlugin {
                 sync_character_facing.before(GameplaySystems::Simulate),
             )
             .add_systems(
-                Update,
-                // 渲染帧可能没有固定步，先补齐人物与持物姿态，避免镜头读取新角度而箱子仍停在旧角度。
-                // 只同步派生姿态；位置积分与交互仍在固定步，随后由 PostUpdate 传播模型世界坐标。
+                RunFixedMainLoop,
+                // 插值在固定循环后执行，镜头和持握目标必须读取同一份已插值的角色位置。
+                // 朝向同步在插值变化标记采样前完成，避免下一无固定步帧将它误判为位置瞬移。
                 (
                     sync_character_facing,
                     sync_held_objects,
                     follow_orbit_camera,
                     sync_character_visibility,
                 )
-                    .chain(),
+                    .chain()
+                    .in_set(RunFixedMainLoopSystems::AfterFixedMainLoop)
+                    .after(TransformEasingSystems::Ease)
+                    .before(TransformEasingSystems::UpdateEasingTick),
             );
     }
 }
@@ -480,7 +484,7 @@ fn apply_perspective_toggle(mut cameras: Query<(Entity, &mut OrbitCamera)>) {
     }
 }
 
-/// 在固定模拟前及逐帧持物同步前设置水平朝向，站立、横移和后退时也跟随视角。
+/// 在固定模拟前及逐帧持握目标同步前设置水平朝向，站立、横移和后退时也跟随视角。
 fn sync_character_facing(
     controllers: Query<(&ControlsCharacter, &ControlsCamera), With<GameplayContext>>,
     cameras: Query<&OrbitCamera>,
@@ -503,7 +507,7 @@ fn sync_character_facing(
     }
 }
 
-/// 镜头使用最新人物位置与本帧环绕角；互斥过滤避免 Transform 查询读写冲突。
+/// 镜头使用本帧插值后的人物位置与环绕角；互斥过滤避免 Transform 查询读写冲突。
 fn follow_orbit_camera(
     characters: Query<&Transform, With<Character>>,
     mut cameras: Query<(&OrbitCamera, &mut Transform), Without<Character>>,
@@ -549,6 +553,7 @@ fn sync_character_visibility(
 
 #[cfg(test)]
 mod tests {
+    use avian3d::prelude::{LinearVelocity, Position, RigidBody};
     use std::time::Duration;
 
     use bevy::{
@@ -567,10 +572,11 @@ mod tests {
 
     use crate::{
         gameplay::{
-            CharacterIntent, CharacterMotion, GameplayPlugin, HeldBy, HoldingItems, Pickable,
-            PlayerId, PrototypeConfig,
+            CharacterIntent, CharacterMotion, GameplayPlugin, HeldBy, HeldTarget, HoldingItems,
+            Pickable, PlayerId, PrototypeConfig,
         },
         input::{PlayerInputPlugin, spawn_keyboard_controller},
+        physics::{character_body, ground_body, parcel_body},
     };
 
     use super::*;
@@ -594,6 +600,11 @@ mod tests {
         .init_resource::<Assets<SkinnedMeshInverseBindposes>>();
         app.finish();
         app.cleanup();
+        let config = app.world().resource::<PrototypeConfig>().clone();
+        app.world_mut().spawn((
+            ground_body(&config),
+            Transform::from_xyz(0.0, config.ground_y, 0.0),
+        ));
         let window = app
             .world_mut()
             .spawn((
@@ -610,10 +621,8 @@ mod tests {
             .spawn((
                 Character,
                 CharacterIntent::default(),
-                CharacterMotion {
-                    grounded: true,
-                    ..default()
-                },
+                CharacterMotion { grounded: true },
+                character_body(&config),
                 Transform::default(),
                 Visibility::default(),
             ))
@@ -634,14 +643,33 @@ mod tests {
         // 首帧初始化捕获并丢弃增量，第二帧开始接收观察输入。
         app.update();
         app.update();
+        // 初始化真实物理接触和插值端点，后续输入后的帧末检查不再补跑模拟。
+        for _ in 0..6 {
+            fixed_step(&mut app);
+        }
         (app, window, character, camera, controller)
     }
 
     fn fixed_step(app: &mut App) {
+        // 经主调度推进一固定步，覆盖 Avian 的 FixedPostUpdate 和插值，不能只执行玩法系统。
+        let strategy = app
+            .world_mut()
+            .remove_resource::<TimeUpdateStrategy>()
+            .unwrap();
+        app.insert_resource(TimeUpdateStrategy::FixedTimesteps(1));
+        app.update();
+        app.insert_resource(strategy);
+    }
+
+    fn spawn_test_item(app: &mut App, position: Vec3) -> Entity {
+        let config = app.world().resource::<PrototypeConfig>().clone();
         app.world_mut()
-            .resource_mut::<Time<Fixed>>()
-            .advance_by(Duration::from_secs_f64(1.0 / 60.0));
-        app.world_mut().run_schedule(FixedUpdate);
+            .spawn((
+                Pickable,
+                parcel_body(&config),
+                Transform::from_translation(position),
+            ))
+            .id()
     }
 
     fn mouse_motion(app: &mut App, delta: Vec2) {
@@ -948,10 +976,7 @@ mod tests {
     fn inspector_click_blocks_keyboard_actions_and_blank_click_requires_key_reset() {
         let (mut app, window, character, camera, controller) = test_app();
         add_test_inspector(&mut app);
-        let item = app
-            .world_mut()
-            .spawn((Pickable, Transform::from_xyz(0.0, 0.3, -1.0)))
-            .id();
+        let item = spawn_test_item(&mut app, Vec3::new(0.0, 0.3, -1.0));
         set_cursor(&mut app, window, egui::pos2(500.0, 300.0));
         inspector_keyboard(&mut app, window, KeyCode::KeyW, ButtonState::Pressed);
         app.update();
@@ -1001,10 +1026,9 @@ mod tests {
             CameraPerspective::ThirdPerson
         );
         fixed_step(&mut app);
-        assert_eq!(
-            app.world().get::<Transform>(character).unwrap().translation,
-            Vec3::ZERO
-        );
+        let position = app.world().get::<Position>(character).unwrap().0;
+        assert!(Vec2::new(position.x, position.z).abs_diff_eq(Vec2::ZERO, 0.00001));
+        assert!(app.world().get::<LinearVelocity>(character).unwrap().y < 0.1);
         assert!(app.world().get::<HeldBy>(item).is_none());
 
         mouse_button(&mut app, window, ButtonState::Released);
@@ -1042,13 +1066,7 @@ mod tests {
             CameraPerspective::FirstPerson
         );
         fixed_step(&mut app);
-        assert!(
-            app.world()
-                .get::<CharacterMotion>(character)
-                .unwrap()
-                .vertical_velocity
-                > 0.0
-        );
+        assert!(app.world().get::<LinearVelocity>(character).unwrap().y > 0.0);
         assert_eq!(
             app.world()
                 .get::<HoldingItems>(character)
@@ -1129,10 +1147,13 @@ mod tests {
                 > 0.9999
         );
         let speed = app.world().resource::<PrototypeConfig>().move_speed;
-        assert!(transform.translation.abs_diff_eq(
-            Quat::from_rotation_y(yaw) * Vec3::NEG_Z * speed * 3.0 / 60.0,
-            0.00001
-        ));
+        let position = app.world().get::<Position>(character).unwrap().0;
+        let displacement = Vec3::new(position.x, 0.0, position.z);
+        let direction = Quat::from_rotation_y(yaw) * Vec3::NEG_Z;
+        // 动态角色逐步加速，检验固定步保留输入与方向，而非旧有的瞬时满速积分。
+        assert!(displacement.dot(direction) > 0.0);
+        assert!(displacement.length() <= speed * 3.0 / 60.0 + 0.00001);
+        assert!(displacement.normalize().dot(direction) > 0.9999);
         app.update();
         assert_eq!(app.world().get::<OrbitCamera>(camera).unwrap().yaw, yaw);
         let orbit = app.world().get::<OrbitCamera>(camera).unwrap();
@@ -1246,7 +1267,10 @@ mod tests {
         assert!((orbit.third_person_pitch - (initial_pitch + 0.06)).abs() < 0.00001);
         assert!((orbit.yaw - yaw).abs() < 0.00001);
         let camera_transform = app.world().get::<Transform>(camera).unwrap();
-        assert_eq!(camera_transform.translation, Vec3::Y * 1.65);
+        assert_eq!(
+            camera_transform.translation,
+            app.world().get::<Transform>(character).unwrap().translation + Vec3::Y * 1.65
+        );
         assert!(
             camera_transform
                 .forward()
@@ -1308,16 +1332,16 @@ mod tests {
         perspective_key(&mut app, window, ButtonState::Pressed);
         app.update();
         assert!((app.world().get::<OrbitCamera>(camera).unwrap().pitch() + 0.27).abs() < 0.00001);
-        assert_eq!(
-            app.world().get::<Transform>(character).unwrap().translation,
-            Vec3::ZERO
+        let character_position = app.world().get::<Transform>(character).unwrap().translation;
+        assert!(
+            Vec2::new(character_position.x, character_position.z).abs_diff_eq(Vec2::ZERO, 0.00001)
         );
         assert_eq!(app.world().resource::<Time<Fixed>>().elapsed(), fixed_time);
     }
 
     #[test]
     fn first_person_look_clamps_up_and_down_and_uses_camera_settings() {
-        let (mut app, window, _, camera, _) = test_app();
+        let (mut app, window, character, camera, _) = test_app();
         perspective_key(&mut app, window, ButtonState::Pressed);
         app.update();
         app.world_mut()
@@ -1345,7 +1369,10 @@ mod tests {
                 pitch
             );
             let transform = app.world().get::<Transform>(camera).unwrap();
-            assert_eq!(transform.translation, Vec3::Y * 1.65);
+            assert_eq!(
+                transform.translation,
+                app.world().get::<Transform>(character).unwrap().translation + Vec3::Y * 1.65
+            );
             assert!(transform.forward().y * forward_y > 0.99);
             assert!(transform.rotation.is_finite());
         }
@@ -1534,6 +1561,8 @@ mod tests {
                 intent.jump_pending = true;
                 intent.interact_pending = true;
             }
+            let position_before = app.world().get::<Position>(character).unwrap().0;
+            let presentation_before = app.world().get::<Transform>(character).unwrap().translation;
             let fixed_before = app.world().resource::<Time<Fixed>>().elapsed();
             perspective_key(&mut app, window, ButtonState::Pressed);
             mouse_motion(&mut app, Vec2::new(100.0, 100.0));
@@ -1544,23 +1573,28 @@ mod tests {
             assert_eq!(orbit.perspective, CameraPerspective::FirstPerson);
             assert!((orbit.yaw - (-0.3_f32).rem_euclid(TAU)).abs() < 0.00001);
             let transform = world.get::<Transform>(character).unwrap();
-            let expected = Quat::from_rotation_y(orbit.yaw)
-                * Vec3::NEG_Z
-                * world.resource::<PrototypeConfig>().move_speed
-                * simulated.as_secs_f32();
-            assert!(
-                Vec2::new(transform.translation.x, transform.translation.z)
-                    .abs_diff_eq(Vec2::new(expected.x, expected.z), 0.00001)
-            );
+            let position = world.get::<Position>(character).unwrap().0;
+            let direction = Quat::from_rotation_y(orbit.yaw) * Vec3::NEG_Z;
+            assert!(transform.forward().dot(direction) > 0.9999);
             let intent = world.get::<CharacterIntent>(character).unwrap();
             if frame_duration.is_zero() {
                 assert!(simulated.is_zero());
                 assert!(intent.jump_pending && intent.interact_pending);
-                assert_eq!(transform.translation.y, 0.0);
+                assert_eq!(position, position_before);
+                assert_eq!(transform.translation, presentation_before);
             } else {
                 assert!(simulated >= world.resource::<Time<Fixed>>().timestep() * 2);
                 assert!(!intent.jump_pending && !intent.interact_pending);
-                assert!(transform.translation.y > 0.0);
+                assert!(position.y > position_before.y);
+                let displacement = Vec3::new(position.x, 0.0, position.z)
+                    - Vec3::new(position_before.x, 0.0, position_before.z);
+                assert!(displacement.dot(direction) > 0.0);
+                assert!(displacement.normalize().dot(direction) > 0.9999);
+                assert!(
+                    displacement.length()
+                        <= world.resource::<PrototypeConfig>().move_speed * simulated.as_secs_f32()
+                            + 0.00001
+                );
             }
             assert!(
                 world
@@ -1570,6 +1604,83 @@ mod tests {
                     .abs_diff_eq(transform.translation + Vec3::Y * 1.65, 0.00001)
             );
         }
+    }
+
+    #[test]
+    fn turning_preserves_translation_interpolation_and_camera_reads_presented_position() {
+        let (mut app, _, character, camera, _) = test_app();
+        let visual_offset = Vec3::new(0.0, 0.72, 0.0);
+        let visual = app
+            .world_mut()
+            .spawn((
+                CharacterVisual,
+                Visibility::default(),
+                Transform::from_translation(visual_offset),
+                ChildOf(character),
+            ))
+            .id();
+        app.world_mut()
+            .get_mut::<CharacterIntent>(character)
+            .unwrap()
+            .movement = Vec2::Y;
+        app.insert_resource(TimeUpdateStrategy::ManualDuration(Duration::from_secs_f64(
+            1.0 / 240.0,
+        )));
+        let mut start = app.world().get::<Transform>(character).unwrap().translation;
+        let mut end = app.world().get::<Position>(character).unwrap().0;
+        let mut moving_frames_without_fixed_step = 0;
+        for _ in 0..32 {
+            let fixed_before = app.world().resource::<Time<Fixed>>().elapsed();
+            let physical_before = app.world().get::<Position>(character).unwrap().0;
+            mouse_motion(&mut app, Vec2::new(2.0, 0.0));
+            app.update();
+            let world = app.world();
+            let time = world.resource::<Time<Fixed>>();
+            if time.elapsed() != fixed_before {
+                start = physical_before;
+                end = world.get::<Position>(character).unwrap().0;
+            } else if start.distance(end) > 0.0001 {
+                moving_frames_without_fixed_step += 1;
+            }
+            // 连续无固定步帧仍按同一端点插值；若转向误触发瞬移检测，此处会立即失败。
+            let expected = start.lerp(end, time.overstep_fraction());
+            let character_transform = world.get::<Transform>(character).unwrap();
+            assert!(
+                character_transform
+                    .translation
+                    .abs_diff_eq(expected, 0.00001)
+            );
+            let orbit = world.get::<OrbitCamera>(camera).unwrap();
+            assert!(
+                character_transform
+                    .rotation
+                    .abs_diff_eq(Quat::from_rotation_y(orbit.yaw), 0.00001)
+            );
+            let camera_transform = world.get::<Transform>(camera).unwrap();
+            assert!(
+                camera_transform
+                    .translation
+                    .abs_diff_eq(orbit.transform(expected).translation, 0.00001)
+            );
+            assert!(
+                world
+                    .get::<GlobalTransform>(character)
+                    .unwrap()
+                    .translation()
+                    .abs_diff_eq(expected, 0.00001)
+            );
+            let visual_global = world.get::<GlobalTransform>(visual).unwrap();
+            assert!(
+                visual_global
+                    .translation()
+                    .abs_diff_eq(character_transform.transform_point(visual_offset), 0.00001)
+            );
+            assert!(
+                (visual_global.compute_transform().rotation * Vec3::NEG_Z)
+                    .abs_diff_eq(*character_transform.forward(), 0.00001)
+            );
+        }
+        assert!(moving_frames_without_fixed_step >= 3);
     }
 
     #[test]
@@ -1666,26 +1777,56 @@ mod tests {
         assert!((rotations[0] - (-0.6_f32).rem_euclid(TAU)).abs() < 0.0001);
     }
 
+    /// 校验视觉使用箱子本帧的真实呈现姿态，不把持握目标误当成箱子位置。
+    fn assert_item_visual_matches_root(world: &World, item: Entity, visual: Entity, offset: Vec3) {
+        let root = world.get::<Transform>(item).unwrap();
+        let root_global = world
+            .get::<GlobalTransform>(item)
+            .unwrap()
+            .compute_transform();
+        assert!(
+            root_global
+                .translation
+                .abs_diff_eq(root.translation, 0.00001)
+        );
+        let visual_global = world
+            .get::<GlobalTransform>(visual)
+            .unwrap()
+            .compute_transform();
+        assert!(
+            visual_global
+                .translation
+                .abs_diff_eq(root.transform_point(offset), 0.00001)
+        );
+        // 世界矩阵分解可能得到反号四元数，比较实际前向与上向。
+        for axis in [Vec3::NEG_Z, Vec3::Y] {
+            assert!((root_global.rotation * axis).abs_diff_eq(root.rotation * axis, 0.00001));
+            assert!((visual_global.rotation * axis).abs_diff_eq(root.rotation * axis, 0.00001));
+        }
+    }
+
     #[test]
-    fn held_item_and_visual_child_follow_look_on_frames_without_fixed_steps() {
+    fn held_target_and_visuals_use_current_frame_without_teleporting_box() {
         for frame_duration in [Duration::ZERO, Duration::from_secs_f64(1.0 / 120.0)] {
             let (mut app, window, character, camera, _) = test_app();
             let character_visual = app
                 .world_mut()
                 .spawn((CharacterVisual, Visibility::default(), ChildOf(character)))
                 .id();
-            let item = app
-                .world_mut()
-                .spawn((Pickable, Transform::from_xyz(0.0, 0.3, -1.0)))
-                .id();
-            let child_transform = Transform::from_xyz(0.0, 0.18, 0.0);
+            let item = spawn_test_item(&mut app, Vec3::new(0.0, 0.3, -1.0));
+            let visual_offset = Vec3::new(0.0, 0.18, 0.0);
             app.world_mut()
                 .entity_mut(item)
                 .insert(Visibility::default());
             let visual_child = app
                 .world_mut()
-                .spawn((child_transform, Visibility::default(), ChildOf(item)))
+                .spawn((
+                    Transform::from_translation(visual_offset),
+                    Visibility::default(),
+                    ChildOf(item),
+                ))
                 .id();
+            fixed_step(&mut app);
             app.world_mut()
                 .get_mut::<CharacterIntent>(character)
                 .unwrap()
@@ -1699,10 +1840,25 @@ mod tests {
                     .next(),
                 Some(item)
             );
+            assert_eq!(
+                app.world().get::<RigidBody>(item),
+                Some(&RigidBody::Dynamic)
+            );
+            let target = app.world().get::<HeldTarget>(item).unwrap();
+            assert!(
+                app.world()
+                    .get::<Position>(item)
+                    .unwrap()
+                    .0
+                    .distance(target.translation)
+                    > 0.1
+            );
+
             app.insert_resource(TimeUpdateStrategy::ManualDuration(frame_duration));
             let mut frames_without_fixed_step = 0;
             for frame in 0..12 {
                 let fixed_time = app.world().resource::<Time<Fixed>>().elapsed();
+                let box_position = app.world().get::<Position>(item).unwrap().0;
                 perspective_key(
                     &mut app,
                     window,
@@ -1713,12 +1869,13 @@ mod tests {
                     },
                 );
                 mouse_motion(&mut app, Vec2::new(25.0, 5.0));
-                // 不补跑固定步，直接检查本帧最终交给渲染的姿态与子节点传播结果。
+                // 不补跑固定步，直接检查本帧目标、物理位置和视觉子实体传播结果。
                 app.update();
-                if app.world().resource::<Time<Fixed>>().elapsed() == fixed_time {
-                    frames_without_fixed_step += 1;
-                }
                 let world = app.world();
+                if world.resource::<Time<Fixed>>().elapsed() == fixed_time {
+                    frames_without_fixed_step += 1;
+                    assert_eq!(world.get::<Position>(item).unwrap().0, box_position);
+                }
                 let orbit = world.get::<OrbitCamera>(camera).unwrap();
                 assert_eq!(
                     orbit.perspective,
@@ -1743,47 +1900,30 @@ mod tests {
                 );
                 let character_transform = world.get::<Transform>(character).unwrap();
                 let rotation = Quat::from_rotation_y(orbit.yaw);
-                assert_eq!(character_transform.translation, Vec3::ZERO);
+                assert!(character_transform.rotation.abs_diff_eq(rotation, 0.00001));
+                let held_target = world.get::<HeldTarget>(item).unwrap();
+                let expected_target = character_transform.translation
+                    + rotation * world.resource::<PrototypeConfig>().hold_offset;
                 assert!(
-                    character_transform.rotation.abs_diff_eq(rotation, 0.00001),
-                    "Character facing must match the current render frame's camera yaw"
+                    held_target
+                        .translation
+                        .abs_diff_eq(expected_target, 0.00001)
                 );
-                let hold_offset = world.resource::<PrototypeConfig>().hold_offset;
-                let held_transform =
-                    Transform::from_translation(rotation * hold_offset).with_rotation(rotation);
-                let camera_transform = orbit.transform(character_transform.translation);
-                for (entity, expected) in [(item, held_transform), (camera, camera_transform)] {
-                    let local = world.get::<Transform>(entity).unwrap();
-                    assert!(local.translation.abs_diff_eq(expected.translation, 0.00001));
-                    assert!(local.rotation.abs_diff_eq(expected.rotation, 0.00001));
-                    let global = world
-                        .get::<GlobalTransform>(entity)
-                        .unwrap()
-                        .compute_transform();
-                    assert!(
-                        global
-                            .translation
-                            .abs_diff_eq(expected.translation, 0.00001)
-                    );
-                    // 世界矩阵分解可能得到反号四元数，二者表示同一旋转，应比较实际朝向。
-                    assert!(
-                        (global.rotation * Vec3::NEG_Z)
-                            .abs_diff_eq(expected.rotation * Vec3::NEG_Z, 0.00001)
-                    );
-                    assert!(
-                        (global.rotation * Vec3::Y)
-                            .abs_diff_eq(expected.rotation * Vec3::Y, 0.00001)
-                    );
-                }
-                let child = world.get::<GlobalTransform>(visual_child).unwrap();
-                assert!(child.translation().abs_diff_eq(
-                    held_transform.transform_point(child_transform.translation),
-                    0.00001
-                ));
-                let child_rotation = child.compute_transform().rotation;
+                assert!(held_target.rotation.abs_diff_eq(rotation, 0.00001));
+                let expected_camera = orbit.transform(character_transform.translation);
+                let camera_transform = world.get::<Transform>(camera).unwrap();
                 assert!(
-                    (child_rotation * Vec3::NEG_Z).abs_diff_eq(rotation * Vec3::NEG_Z, 0.00001)
+                    camera_transform
+                        .translation
+                        .abs_diff_eq(expected_camera.translation, 0.00001)
                 );
+                assert!(
+                    camera_transform
+                        .rotation
+                        .abs_diff_eq(expected_camera.rotation, 0.00001)
+                );
+                assert_eq!(world.get::<RigidBody>(item), Some(&RigidBody::Dynamic));
+                assert_item_visual_matches_root(world, item, visual_child, visual_offset);
             }
             assert!(
                 frames_without_fixed_step > 0,
@@ -1793,7 +1933,7 @@ mod tests {
     }
 
     #[test]
-    fn standing_character_and_held_item_turn_before_interaction() {
+    fn turning_updates_grip_target_and_released_box_stops_following() {
         for perspective in [
             CameraPerspective::ThirdPerson,
             CameraPerspective::FirstPerson,
@@ -1803,88 +1943,86 @@ mod tests {
                 perspective_key(&mut app, window, ButtonState::Pressed);
                 app.update();
             }
-            let item = app
-                .world_mut()
-                .spawn((Pickable, Transform::from_xyz(0.0, 0.3, -1.0)))
-                .id();
+            let item = spawn_test_item(&mut app, Vec3::new(0.0, 0.3, -1.0));
             let visual_offset = Vec3::new(0.0, 0.18, 0.0);
             let visual_child = app
                 .world_mut()
                 .spawn((Transform::from_translation(visual_offset), ChildOf(item)))
                 .id();
+            fixed_step(&mut app);
             app.world_mut()
                 .get_mut::<CharacterIntent>(character)
                 .unwrap()
                 .interact_pending = true;
             fixed_step(&mut app);
-            assert_eq!(
-                app.world()
-                    .get::<HoldingItems>(character)
-                    .unwrap()
-                    .iter()
-                    .next(),
-                Some(item)
-            );
+            for _ in 0..12 {
+                fixed_step(&mut app);
+            }
+            let physical_position = app.world().get::<Position>(item).unwrap().0;
+            let fixed_before = app.world().resource::<Time<Fixed>>().elapsed();
             mouse_motion(&mut app, Vec2::new(500.0, -100.0));
             app.update();
-            let yaw = app.world().get::<OrbitCamera>(camera).unwrap().yaw;
-            let transform = app.world().get::<Transform>(character).unwrap();
-            assert_eq!(transform.translation, Vec3::ZERO);
-            assert!(transform.up().dot(Vec3::Y) > 0.9999);
-            assert!(
-                transform
-                    .rotation
-                    .abs_diff_eq(Quat::from_rotation_y(yaw), 0.00001)
+            assert_eq!(
+                app.world().resource::<Time<Fixed>>().elapsed(),
+                fixed_before
             );
-            let offset = app.world().resource::<PrototypeConfig>().hold_offset;
+            assert_eq!(
+                app.world().get::<Position>(item).unwrap().0,
+                physical_position
+            );
+            let yaw = app.world().get::<OrbitCamera>(camera).unwrap().yaw;
+            let character_transform = app.world().get::<Transform>(character).unwrap();
+            let rotation = Quat::from_rotation_y(yaw);
+            assert!(character_transform.up().dot(Vec3::Y) > 0.9999);
+            assert!(character_transform.rotation.abs_diff_eq(rotation, 0.00001));
+            let expected_target = character_transform.translation
+                + rotation * app.world().resource::<PrototypeConfig>().hold_offset;
             assert!(
                 app.world()
-                    .get::<Transform>(item)
+                    .get::<HeldTarget>(item)
                     .unwrap()
                     .translation
-                    .abs_diff_eq(transform.rotation * offset, 0.00001)
+                    .abs_diff_eq(expected_target, 0.00001)
             );
+            assert_item_visual_matches_root(app.world(), item, visual_child, visual_offset);
+
             app.world_mut()
                 .get_mut::<CharacterIntent>(character)
                 .unwrap()
                 .interact_pending = true;
             fixed_step(&mut app);
-            let mut expected = Quat::from_rotation_y(yaw) * Vec3::new(0.0, 0.0, -1.2);
-            expected.y = 0.3;
-            assert!(
-                app.world()
-                    .get::<Transform>(item)
-                    .unwrap()
-                    .translation
-                    .abs_diff_eq(expected, 0.00001)
-            );
             assert!(app.world().get::<HeldBy>(item).is_none());
-            let dropped_rotation = app.world().get::<Transform>(item).unwrap().rotation;
+            assert!(app.world().get::<HeldTarget>(item).is_none());
+            assert_eq!(
+                app.world().get::<RigidBody>(item),
+                Some(&RigidBody::Dynamic)
+            );
+            let released_position = app.world().get::<Position>(item).unwrap().0;
+            let released_velocity = app.world().get::<LinearVelocity>(item).unwrap().0;
+            let released_transform = *app.world().get::<Transform>(item).unwrap();
+            assert!(
+                released_position.y
+                    > app.world().resource::<PrototypeConfig>().parcel_half_height + 0.1
+            );
             for _ in 0..6 {
                 mouse_motion(&mut app, Vec2::new(50.0, 10.0));
                 app.update();
-                // 固定步已解除持有关系，逐帧姿态同步不能把放下的箱子重新拉回人物身前。
-                let item_transform = app.world().get::<Transform>(item).unwrap();
-                assert!(item_transform.translation.abs_diff_eq(expected, 0.00001));
-                assert_eq!(item_transform.rotation, dropped_rotation);
+                // 没有固定步时，仅更新人物和镜头；已释放箱子不得被旧目标重新拉回。
+                assert_eq!(
+                    app.world().get::<Position>(item).unwrap().0,
+                    released_position
+                );
+                assert_eq!(
+                    app.world().get::<LinearVelocity>(item).unwrap().0,
+                    released_velocity
+                );
+                assert_eq!(
+                    *app.world().get::<Transform>(item).unwrap(),
+                    released_transform
+                );
                 assert!(app.world().get::<HeldBy>(item).is_none());
-                assert!(
-                    app.world()
-                        .get::<GlobalTransform>(item)
-                        .unwrap()
-                        .translation()
-                        .abs_diff_eq(expected, 0.00001)
-                );
-                let visual = app.world().get::<GlobalTransform>(visual_child).unwrap();
-                assert!(
-                    visual
-                        .translation()
-                        .abs_diff_eq(expected + dropped_rotation * visual_offset, 0.00001)
-                );
-                assert!(
-                    (visual.compute_transform().rotation * Vec3::NEG_Z)
-                        .abs_diff_eq(dropped_rotation * Vec3::NEG_Z, 0.00001)
-                );
+                assert!(app.world().get::<HeldTarget>(item).is_none());
+                assert_item_visual_matches_root(app.world(), item, visual_child, visual_offset);
             }
         }
     }
@@ -1897,8 +2035,8 @@ mod tests {
             app.world_mut()
                 .despawn(if remove_target { character } else { controller });
             mouse_motion(&mut app, Vec2::ONE * 100.0);
+            // 捕获释放应在当前无固定步帧完成，不能补跑物理后再检查鼠标生命周期。
             app.update();
-            fixed_step(&mut app);
             assert!(!app.world().get::<MouseLookState>(camera).unwrap().active);
             assert!(app.world().get::<CursorOptions>(window).unwrap().visible);
             assert_eq!(*app.world().get::<Transform>(camera).unwrap(), before);

@@ -4,6 +4,7 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
+avian3d = { version = "0.7.0", default-features = false, features = ["3d", "f32", "parry-f32"] }
 bevy = "0.19.1"
 bevy-inspector-egui = { version = "0.37.0", features = ["highlight_changes"] }
 bevy_enhanced_input = "0.26.0"
