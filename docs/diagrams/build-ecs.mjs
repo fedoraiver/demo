@@ -151,6 +151,12 @@ Object.assign(brief, {
   menu_pointer: '真实鼠标移动切输入来源；进入 / 离开同步悬停',
   menu_style: 'Interaction / 导航焦点 → 按钮纸色或黄色',
   menu_description: '当前设置焦点 → 右侧解释文字',
+  menu_status: '设置提示 → 已有 Text；保留拖动实体',
+  menu_volume_pointer: '局部指针捕获 → SetVolume / 释放请求',
+  menu_volume_visuals: '音量草稿 → 已有百分比 / 轨道填充',
+  audio_mix: '草稿预览 / 已应用配置 → AudioMix',
+  audio_voice_volumes: '有效混音 × 素材基准 → 实例分贝',
+  audio_voice_volumes_post: 'Queued 就绪后补同步最新实例分贝',
   menu_scroll_focus: '键盘 / 手柄焦点 → 可见滚动范围',
   menu_asset_failures: '资产加载失败 → 英文会话日志',
   menu_backdrop_spawn: '真实 GLB 展台 / 独立菜单相机；无地图碰撞',
@@ -229,7 +235,7 @@ const data = [
 ];
 data.forEach(d => { registry[d.id] = { id: d.id, name: d.name, kind: 'Component', description: d.rows.join('；') }; b += card(d.x, 697, d.w, 151, d.id, d.name, d.rows, 'component', 'small'); });
 registry['resource.GameSettings'] = model.resources.find(r => r.id === 'resource.GameSettings');
-b += card(30, 697, 330, 151, 'resource.GameSettings', '共享 Resource', ['GameSettings：帧率 / 相机', 'PrototypeConfig / Gravity：物理', 'max_fps ≥ 60；默认 60'], 'resource', 'small');
+b += card(30, 697, 330, 151, 'resource.GameSettings', '共享 Resource', ['GameSettings：帧率 / 相机 / 音量', 'PrototypeConfig / Gravity：物理', 'max_fps ≥ 60；默认 60'], 'resource', 'small');
 b += edge([[195, 697], [195, 562]], 'R 设置', 'read', [195, 630], ['resource.GameSettings', 'frame_limit']);
 b += edge([[560, 562], [560, 697]], 'W 意图', 'write', [560, 630], ['observe_move', 'character.CharacterIntent']);
 b += edge([[650,562],[650,675],[1950,675],[1950,697]], 'W 角度 / 模式', 'write', [1670,675], ['observe_look','perspective_apply','camera.OrbitCamera']);
@@ -257,7 +263,7 @@ b += system(935, 1595, 700, 'menu_pointer', ['真实鼠标移动（含空白）�
 b += system(1815, 1595, 700, 'menu_style', ['鼠标模式按 Interaction；导航模式按 MenuFocus', 'Apply / 当前 Tab 无常驻黄色'], 130);
 b += edge([[755,1660],[935,1660]], 'Build →', 'order', [845,1660], ['menu_rebuild','menu_pointer']);
 b += edge([[1635,1660],[1815,1660]], 'Pointer → Style', 'order', [1725,1660], ['menu_pointer','menu_style']);
-b += text(55, 1770, 'MenuInputSource：Pointer / Navigation；键盘或手柄实际导航后显示焦点。设置只在 Apply 成功后热生效并保存，取消丢弃草稿。', 'note');
+b += text(55, 1770, 'Pointer / Navigation 区分焦点；音量草稿即时预览，Apply 成功后保存，Back 恢复最近应用值。音量与提示变化不重建页面。', 'note');
 // 音频插件装配和反馈路径单独列出；它们不建立新的玩法实体。
 registry['plugin-sound-events']={name:'SoundEventsPlugin',kind:'Plugin',description:'GameplayPlugin 内部注册声音消息和无设备的物理反馈观察。',source:{path:'src/gameplay.rs',line:fs.readFileSync(path.join(dir,'../../src/gameplay.rs'),'utf8').split('\n').findIndex(l=>l.includes('add_plugins((DemoPhysicsPlugin, SoundEventsPlugin))'))+1}};
 registry['plugin-kira']={name:'KiraAudioPlugin',kind:'Plugin',description:'GameAudioPlugin 安装 Kira 0.26.0；DefaultPlugins 禁用 Bevy 默认 AudioPlugin。',source:{path:'src/audio.rs',line:fs.readFileSync(path.join(dir,'../../src/audio.rs'),'utf8').split('\n').findIndex(l=>l.includes('app.add_plugins(KiraAudioPlugin)'))+1}};
@@ -269,16 +275,18 @@ registry['audio-producers']={name:'已接入的反馈生产者',kind:'System gro
 b+=card(30,1885,650,155,'audio-producers','菜单 / 玩法反馈生产者',['MenuHover / MenuConfirm / MenuCancel','拿起 / 释放 / 落地 / 持握失稳','反馈不改变物理规则'],'system','small');
 b+=card(800,1885,520,155,'resource.SoundRequestMessages','SoundRequest 消息',['cue：稳定事件标识','source：仅记录 Entity','延迟拿放消息与关系一起生效'],'message','small');
 b+=card(1440,1885,520,155,'resource.SoundBank','SoundBank',['预加载句柄与清单策略','Time<Real>：暂停时冷却仍前进','总并发 4；SFX 最多 3，菜单保留 1'],'resource','small');
-registry['audio-output']={name:'Update / Kira 播放输出',kind:'Engine',description:'读取 SoundRequest，检查加载/冷却/并发后向类型通道排队；AppExit 时停止。',reads:['resource.SoundBank','resource.SoundRequestMessages','resource.UiAudioChannel','resource.SfxAudioChannel'],source:systems.audio_play.source};
-b+=card(2090,1885,825,155,'audio-output','UI Style → Update → Kira UI / SFX',['失败日志 → 播放请求 → 退出停止','线性音量乘 0.25 后转为 dB','ambience 只供试听，不自动播放'],'engine','small');
+registry['audio-output']={name:'Update / Kira 播放输出',kind:'Engine',description:'UI Style 之后选有效混音并同步实例，再按加载/冷却/并发排队；PostUpdate 就绪后补同步实例，AppExit 时停止。',reads:['resource.AudioMix','resource.AudioInstances','resource.SoundBank','resource.SoundRequestMessages','resource.UiAudioChannel','resource.SfxAudioChannel'],source:systems.audio_play.source};
+b+=card(2090,1885,825,155,'audio-output','UI Style → Update → Kira UI / SFX',['失败日志 → 混音 → 实例音量 → 播放 → 退出','0.25 × 总音量 × UI/SFX × 素材增益 → dB','PostUpdate：Queued 就绪后补同步实例'],'engine','small');
 b+=edge([[680,1963],[800,1963]],'W','write',[740,1963],['audio-producers','resource.SoundRequestMessages']);
 b+=edge([[1320,1962.5],[1380,1962.5],[1380,2075],[2502.5,2075],[2502.5,2040]],'R 请求','read',[1980,2075],['resource.SoundRequestMessages','audio-output']);
 b+=edge([[1960,1963],[2090,1963]],'R','read',[2025,1963],['resource.SoundBank','audio-output']);
 b+=edge([[2090,2007],[1960,2007]],'W','write',[2025,2007],['audio-output','resource.SoundBank']);
 b+=edge([[1285,1725],[1285,1790],[1060,1790],[1060,1885]],'W MenuHover','write',[1060,1790],['menu_pointer','resource.SoundRequestMessages']);
 b+=edge([[2515,1660],[2890,1660],[2890,1835],[2710,1835],[2710,1885]],'after(Style)','order',[2810,1835],['menu_style','audio-output']);
+b+=card(30,2130,1290,130,'resource.AudioMix','AudioMix · 临时预览与保存分开',['Settings 页面：读取 SettingsDraft.audio，分类切换仍预览','离开设置：读取最近成功应用的 GameSettings.audio','默认 100%；静音丢弃新请求，不占冷却 / 并发'],'resource','small');
+b+=edge([[1320,2195],[1360,2195],[2502.5,2195],[2502.5,2040]],'R 有效音量','read',[1900,2195],['resource.AudioMix','audio-output']);
 
-save('overview', '当前 App · ECS 总览', 2955, 2130, b, '输入 → 固定控制力 → Avian 求解 → 插值 → 本帧显示 → 世界变换与渲染。');
+save('overview', '当前 App · ECS 总览', 2955, 2310, b, '输入 → 固定控制力 → Avian 求解 → 插值 → 本帧显示 → 世界变换与渲染。');
 
 // 时序视图：每个注册实例单独呈现，R/W 在卡片内列摘要，点击显示完整读写项。
 b = text(36, 80, '系统卡片中的 R / W 是访问摘要；同一函数在不同 Schedule 中有两个注册实例。', 'note');
@@ -388,30 +396,41 @@ b += frame(1470,2740,1480,535,'StateTransition · 生命周期','MainMenu / Paus
   b += system(1490+i%3*485,2825+Math.floor(i/3)*200,455,id,[brief[id]||systems[id].description,systems[id].phase],130);
 });
 b += text(1495,3200,'InGame 退出清理业务根和海岛；MainMenu 退出清理展台。Paused 保留原会话。','small');
-b += frame(30,3310,2920,560,'Update · Build → Pointer → Style','页面结构命令先应用；Style 内的样式、说明和焦点滚动无彼此全序。');
-b += system(55,3395,790,'menu_rebuild',accessRows('menu_rebuild'),130);
-b += system(1045,3395,790,'menu_pointer',accessRows('menu_pointer'),130);
-b += card(2035,3395,890,130,'ui-style-set','UiSystems::Style',['在 Pointer 之后运行三个显示系统','输入来源区分 Pointer / Navigation'],'engine','small');
-b += edge([[845,3460],[1045,3460]],'应用 UI 命令','order',[945,3460],['menu_rebuild','menu_pointer']);
-b += edge([[1835,3460],[2035,3460]],'Pointer → Style','order',[1935,3460],['menu_pointer','ui-style-set']);
-['menu_style','menu_description','menu_scroll_focus'].forEach((id,i)=>{
-  const x=2035+i*300;
-  b += system(x,3630,290,id,[brief[id]],115);
-  b += edge([[x+145,3525],[x+145,3630]],'','registration',null,['ui-style-set',id]);
+b += frame(30,3310,2920,1120,'Update · Build → Pointer → 音量处理 → Style','结构命令先应用；音量元组与 Style 各组内无虚构串行链。');
+b += system(55,3395,740,'menu_rebuild',accessRows('menu_rebuild'),130);
+b += system(935,3395,740,'menu_pointer',accessRows('menu_pointer'),130);
+b += card(1855,3395,1040,130,'ui-volume-set','音量元组 · after(Build / Pointer)',['两个系统都在 Style 之前，彼此没有显式先后','滑条输入只发消息；显示读取 PreUpdate 已更新的草稿'],'engine','small');
+b += edge([[795,3460],[935,3460]],'应用 UI 命令','order',[865,3460],['menu_rebuild','menu_pointer']);
+b += edge([[1675,3460],[1855,3460]],'after(Pointer)','order',[1765,3460],['menu_pointer','ui-volume-set']);
+b += system(1875,3570,490,'menu_volume_pointer',[brief.menu_volume_pointer,'R 光标 / 左键 / Interaction；W 请求 / Local'],110);
+b += system(2405,3570,490,'menu_volume_visuals',[brief.menu_volume_visuals,'R 草稿；W 既有 Text / Node'],110);
+b += edge([[2201.7,3525],[2201.7,3548],[2120,3548],[2120,3570]],'','registration',null,['ui-volume-set','menu_volume_pointer']);
+b += edge([[2548.3,3525],[2548.3,3548],[2650,3548],[2650,3570]],'','registration',null,['ui-volume-set','menu_volume_visuals']);
+b += card(55,3750,2840,130,'ui-style-set','UiSystems::Style',['四个显示系统在音量处理之后；组内没有显式全序','输入来源区分 Pointer / Navigation，音量 / 提示不销毁既有实体'],'engine','small');
+b += edge([[2120,3680],[2120,3715]],'','order',null,['menu_volume_pointer','ui-style-set'],false);
+b += edge([[2650,3680],[2650,3715]],'','order',null,['menu_volume_visuals','ui-style-set'],false);
+b += edge([[2650,3715],[1475,3715],[1475,3750]],'before(Style)','order',[1750,3715],['menu_volume_pointer','menu_volume_visuals','ui-style-set']);
+['menu_style','menu_description','menu_status','menu_scroll_focus'].forEach((id,i)=>{
+  const x=55+i*740;
+  b += system(x,3970,620,id,[brief[id]],115);
+  b += edge([[55+2840*(i+1)/5,3880],[55+2840*(i+1)/5,3925],[x+310,3925],[x+310,3970]],'','registration',null,['ui-style-set',id]);
 });
-b += system(55,3630,790,'menu_asset_failures',accessRows('menu_asset_failures'),130);
-b += card(1045,3630,790,130,'resource.MenuInputSource','菜单输入来源',['Navigation：实际导航显示焦点','Pointer：真实移动、点击或离开窗口接管','文字保留自然测量；Apply / Tab 不常驻黄'],'resource','small');
-b += frame(3010,2740,465,1130,'Update · Kira 输出','after(UiSystems::Style)，暂停菜单仍可发声。');
-['audio_load_failures','audio_play','audio_stop'].forEach((id,i)=>{
-  const y=2825+i*225;
+b += system(55,4210,790,'menu_asset_failures',accessRows('menu_asset_failures'),130);
+b += card(1045,4210,790,130,'resource.MenuInputSource','菜单输入来源',['Navigation：实际导航显示焦点','Pointer：真实移动、点击或离开窗口接管','文字保留自然测量；Apply / Tab 不常驻黄'],'resource','small');
+b += frame(3010,2740,465,1690,'Update / PostUpdate · Kira 输出','Update 在 Style 后；PostUpdate 仅依赖 TypedChannels。');
+const audioChain=['audio_load_failures','audio_mix','audio_voice_volumes','audio_play','audio_stop'];
+audioChain.forEach((id,i)=>{
+  const y=2825+i*215;
   b += system(3025,y,435,id,accessRows(id),150);
-  if(i)b += edge([[3242.5,y-75],[3242.5,y]],'chain','order',[3300,y-40],[['audio_load_failures','audio_play'][i-1],id]);
+  if(i)b += edge([[3242.5,y-65],[3242.5,y]],'chain','order',[3310,y-32],[audioChain[i-1],id]);
 });
-b += text(3025,3560,'Time<Real> / 加载 / 冷却 / 并发','small');
-b += text(3025,3590,'UI ≤ 4；SFX ≤ 3；排队计入','small');
-b += text(55,3900,'Running 门控海岛准备、主角动画、落水恢复、固定玩法与显示链；菜单和音频继续逐帧处理。','note');
+b += card(3025,3900,435,120,'kira-play-typed','PostUpdate · PlayTypedChannels',['Kira 将 Queued 句柄写入 Assets','不与其它 PostUpdate 分支建立全序'],'engine','small');
+b += system(3025,4130,435,'audio_voice_volumes_post',[brief.audio_voice_volumes_post,'R AudioMix；W SoundBank / 实例'],150);
+b += edge([[3242.5,4020],[3242.5,4130]],'after','order',[3320,4075],['kira-play-typed','audio_voice_volumes_post']);
+b += text(3025,4320,'Time<Real>；UI ≤ 4 / SFX ≤ 3；静音丢弃','small');
+b += text(55,4470,'Running 门控海岛准备、主角动画、落水恢复、固定玩法与显示链；菜单和音频继续逐帧处理。','note');
 
-save('schedules', '调度泳道 · 系统与数据访问', 3515, 3935, b, '固定控制 → 物理解算 → 插值后显示；点击查看完整访问，框架集合为概览。');
+save('schedules', '调度泳道 · 系统与数据访问', 3515, 4510, b, '固定控制 → 物理解算 → 插值后显示；点击查看完整访问，框架集合为概览。');
 
 // 关系视图：矩形容器表达实体，内嵌组件；普通 Entity 引用与 Bevy 关系单独标注。
 b = text(36, 80, '按实体角色汇总关键组件，可选组件并非始终存在；虚线＝普通引用，紫实线＝Bevy 关系。', 'note');
@@ -477,6 +496,7 @@ const menuEntityBoxes=[
  {id:'menu_scroll',x:2250,y:560,w:430,h:430},{id:'menu_button',x:2780,y:560,w:430,h:430},
  {id:'menu_backdrop',x:2250,y:1100,w:430,h:380},{id:'menu_camera',x:2780,y:1100,w:430,h:380},
  {id:'menu_model',x:2250,y:1630,w:430,h:430},{id:'menu_text',x:2780,y:1630,w:430,h:430},
+ {id:'menu_volume',x:2780,y:2140,w:430,h:330},
 ];
 menuEntityBoxes.forEach(box=>{
  const e=entities[box.id],id=`entity-${e.id}`;registry[id]={...e,kind:'Entity'};
@@ -493,12 +513,13 @@ b += edge([[2780,1250],[2680,1250]],'ChildOf','relationship',[2730,1250],['entit
 b += edge([[2465,1630],[2465,1480]],'ChildOf 子树','relationship',[2465,1555],['entity-menu_model','entity-menu_backdrop']);
 b += text(2800,1530,'MainMenu 退出清理展台；','small');
 b += text(2800,1557,'页面重建仅清 MenuRoot 子树。','small');
-b += frame(2250,2160,960,405,'«Resource / Message» 菜单、生命周期与音频','草稿与生效配置分开；菜单展示 GLB 与可碰撞海岛是不同实体树。');
-const menuResourceIds=['resource.AppState','resource.PlayState','resource.MenuState','resource.MenuFocus','resource.MenuInputSource','resource.SettingsDraft','resource.SettingsFile','resource.UiTheme','resource.UiRequestMessages','resource.TimePhysics','resource.SoundBank','resource.UiAudioChannel','resource.SfxAudioChannel'];
-menuResourceIds.forEach((id,i)=>b+=compact(2270+i%2*465,2245+Math.floor(i/2)*40,440,32,id,registry[id].name,'resource'));
-b += text(2270,2540,'Paused 保留 1 主角 + 5 物品 + 海岛；Return to Main Menu 清理整个会话。','small');
+b += edge([[2995,2140],[2995,2095],[3250,2095],[3250,775],[3210,775]],'ChildOf 子树','relationship',[3135,2095],['entity-menu_volume','entity-menu_button']);
+b += frame(2250,2580,960,545,'«Resource / Message» 菜单、生命周期与音频','音量草稿即时预览；持久配置只在 Apply 保存成功后替换。');
+const menuResourceIds=['resource.AppState','resource.PlayState','resource.MenuState','resource.MenuFocus','resource.MenuInputSource','resource.SettingsDraft','resource.SettingsFile','resource.UiTheme','resource.UiRequestMessages','resource.TimePhysics','resource.SoundBank','resource.UiAudioChannel','resource.SfxAudioChannel','resource.AudioMix','resource.AudioInstances','local.VolumeDrag','local.VolumeEdit','local.PageStructure'];
+menuResourceIds.forEach((id,i)=>b+=compact(2270+i%2*465,2665+Math.floor(i/2)*40,440,32,id,registry[id].name,id.startsWith('local.')?'local':'resource'));
+b += text(2270,3095,'Paused 保留会话；页面重建清 MenuRoot 子树，音量变化保留滑条。','small');
 
-save('relationships', '实体 · 组件归属与关系', 3230, 2600, b, '真实物理状态、插值呈现和持握目标分离；点击组件查看字段及源码入口。');
+save('relationships', '实体 · 组件归属与关系', 3290, 3180, b, '真实物理状态、插值呈现和持握目标分离；点击组件查看字段及源码入口。');
 
 // 通信视图：输入动作事件、全局 Observer 与窗口缓冲消息保持不同路线。
 b = text(36, 80, `${model.observers.length} 个 Observer（玩法／菜单动作、滚轮与实例就绪）由匹配事件触发；它们不是按 add_observer 的注册顺序组成流水线。`, 'note');
@@ -595,22 +616,24 @@ menuEvents.forEach((o,i)=>{
 b += frame(2750,306,250,menuEventBottom-346,'路由与消费','事件分别匹配真实目标。');
 b += ['Previous / Next','↓ MenuFocus','＋ Navigation 来源','','Left / Right / Confirm','Back（含 Esc）','↓ UiRequest Message','↓ PreUpdate 统一消费','','指针点击写同一队列','滚轮只改视口位置','','WorldInstanceReady','↓ 遍历菜单 GLB 骨架','AnimationPlayer 循环播放'].map((v,i)=>fitted(2767,392+i*38,v,216,'small')).join('');
 const requestY=menuEventBottom+45;
-b += frame(1540,requestY,1470,525,'UiRequest · 页面、设置与状态','消息消费集中于 PreUpdate；焦点、滚动和动画直接更新 ECS。');
-b += card(1560,requestY+85,360,130,'resource.UiRequestMessages','UiRequest 消息缓冲',['Confirm / Adjust / Back','与指针点击共用 UiAction'],'message','small');
+b += frame(1540,requestY,1470,750,'UiRequest · 页面、设置与状态','消息消费集中于 PreUpdate；滑条数值与释放归并，返回优先于旧采样。');
+b += card(1560,requestY+85,360,130,'resource.UiRequestMessages','UiRequest 消息缓冲',['Confirm / Adjust / Back / SetVolume','释放：FinishVolumeEdit'],'message','small');
 b += system(2040,requestY+85,430,'menu_handle_requests',['消费请求 → 页面 / 草稿 / NextState','接受的操作 → MenuConfirm / Cancel'],130);
-b += card(2600,requestY+85,385,130,'resource.SettingsDraft','设置草稿',['Apply：保存成功才生效','Back：丢弃；失败保留原文件'],'resource','small');
+b += card(2600,requestY+85,385,130,'resource.SettingsDraft','设置草稿',['音量即时预览；Apply 成功才保存','Back 回滚；失败保留草稿与预览'],'resource','small');
 b += edge([[1920,requestY+150],[2040,requestY+150]],'读取','read',[1980,requestY+150],['resource.UiRequestMessages','menu_handle_requests']);
 b += edge([[2470,requestY+150],[2600,requestY+150]],'W 草稿','write',[2535,requestY+150],['menu_handle_requests','resource.SettingsDraft']);
 b += card(1560,requestY+320,660,130,'resource.MenuState','页面与返回来源',['Main / Hidden / Pause / Settings / Help','设置和帮助保留 return_page'],'resource','small');
 b += card(2335,requestY+320,650,130,'ui-next-state','NextState → StateTransition',['Start Game / ReturnToMenu：AppState','Pause / Resume：PlayState'],'engine','small');
 b += edge([[2145,requestY+215],[2145,requestY+265],[1890,requestY+265],[1890,requestY+320]],'W 页面','write',[1890,requestY+265],['menu_handle_requests','resource.MenuState']);
 b += edge([[2370,requestY+215],[2370,requestY+265],[2660,requestY+265],[2660,requestY+320]],'状态请求','write',[2660,requestY+265],['menu_handle_requests','ui-next-state']);
+b += card(1560,requestY+550,660,130,'volume-request-source','Audio 页 · 滑条局部捕获',['Interaction 命中；只在真实左键按下后捕获','SetVolume 只改草稿，结束且最终值改变才确认','失焦 / 离开窗口 / 页面销毁时清理手势'],'engine','small');
+b += card(2335,requestY+550,650,130,'resource.AudioMix','有效音量与试听',['Settings 读草稿；切换分类仍预览','Back 离开后回到最近成功应用值','TestSfx → ParcelPickup；只发声音请求'],'resource','small');
 // 声音缓冲在真实语义/物理结果之后产生；不通过声音驱动物理。
 b += frame(30,3150,2980,550,'SoundRequest · 真实结果到 Kira 输出','菜单焦点/接受的操作、拿放、持续持握偏差与真实支撑触地；预留映射不会自动产生声音。');
 b += system(50,3235,374,'audio_strain',['真实 Position / CarryGrip → 持握偏差','Local 宽限 / 持续计时 / 滞回锁存'],130);
 b += system(50,3420,374,'audio_land',['ContactGraph：支撑法线与冲量','Running 中收集；离开支撑才解锁'],130);
 b += card(512,3235,356,130,'resource.SoundRequestMessages','SoundRequest 缓冲',['cue：稳定事件名','source：只记录 Entity'],'message','small');
-b += system(971,3235,486,'audio_play',['R 请求 / 资产 / 策略 / Time<Real>','W SoundBank；排队 UI / SFX 命令'],130);
+b += system(971,3235,486,'audio_play',['R 请求 / AudioMix / 策略 / Time<Real>','静音丢弃；W SoundBank / UI / SFX 命令'],130);
 b += card(1600,3235,550,130,'resource.SoundBank','SoundBank',['预加载句柄、冷却与声音实例','总并发 4；SFX 最多 3'],'resource','small');
 registry['kira-output']={name:'Kira UI / SFX 通道',kind:'Engine',description:'类型 AudioChannel 消费排队命令，AppExit 停止；环境底声仅供试听。',source:systems.audio_play.source};
 b += card(2290,3235,690,130,'kira-output','Kira UI / SFX 通道',['设备输出；退出统一停止','ambience 不自动播放'],'engine','small');
@@ -621,7 +644,7 @@ b += edge([[868,3300],[971,3300]],'读取','read',[919,3300],['resource.SoundReq
 b += edge([[1600,3280],[1457,3280]],'R 策略','read',[1530,3280],['resource.SoundBank','audio_play']);
 b += edge([[1457,3320],[1600,3320]],'W 实例','write',[1530,3320],['audio_play','resource.SoundBank']);
 b += edge([[1214,3365],[1214,3580],[2635,3580],[2635,3365]],'排队播放','write',[1960,3580],['audio_play','kira-output']);
-b += text(55,3650,'拿放声音随延迟关系命令一起生效；真实菜单焦点变动发 MenuHover，接受操作发 MenuConfirm / MenuCancel。','note');
+b += text(55,3650,'拿放声音随关系命令生效；菜单发 Hover / Confirm / Cancel，拖动仅结束且最终值改变时确认；TestSfx 发 ParcelPickup。','note');
 
 save('events','事件 · Observer · Message',3040,Math.max(3750,menuEventBottom+700),b,'输入 EntityEvent、实例就绪、窗口/碰撞 Message 与外部后台日志分别建模。');
 

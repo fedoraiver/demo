@@ -20,6 +20,8 @@ pub struct GameSettings {
     pub max_fps: NonZeroU32,
     /// 自由视角的鼠标灵敏度与纵轴方向。
     pub camera: CameraSettings,
+    /// 全局音量及 UI、玩法音效分类音量；百分比以现有混音基准为上限。
+    pub audio: AudioSettings,
 }
 
 impl Default for GameSettings {
@@ -27,6 +29,29 @@ impl Default for GameSettings {
         Self {
             max_fps: NonZeroU32::new(60).unwrap(),
             camera: CameraSettings::default(),
+            audio: AudioSettings::default(),
+        }
+    }
+}
+
+/// 音量采用整数百分比，旧配置缺少本节或字段时保持原有响度。
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Deserialize, Serialize)]
+#[serde(default, deny_unknown_fields)]
+pub struct AudioSettings {
+    #[serde(deserialize_with = "deserialize_volume")]
+    pub master_volume: u8,
+    #[serde(deserialize_with = "deserialize_volume")]
+    pub sfx_volume: u8,
+    #[serde(deserialize_with = "deserialize_volume")]
+    pub ui_volume: u8,
+}
+
+impl Default for AudioSettings {
+    fn default() -> Self {
+        Self {
+            master_volume: 100,
+            sfx_volume: 100,
+            ui_volume: 100,
         }
     }
 }
@@ -61,12 +86,13 @@ impl Default for SettingsFile {
     }
 }
 
-/// 菜单独立编辑的草稿；只有应用成功后才替换正在使用的设置资源。
-#[derive(Resource, Clone, Debug)]
+/// 菜单独立编辑的草稿；音量可以临时预览，只有应用成功才替换已保存设置。
+#[derive(Resource, Clone, Debug, PartialEq)]
 pub struct SettingsDraft {
     pub max_fps: u32,
     pub mouse_sensitivity: f32,
     pub invert_y: bool,
+    pub audio: AudioSettings,
 }
 
 impl Default for SettingsDraft {
@@ -82,6 +108,7 @@ impl SettingsDraft {
             max_fps: settings.max_fps.get(),
             mouse_sensitivity: settings.camera.mouse_sensitivity,
             invert_y: settings.camera.invert_y,
+            audio: settings.audio,
         }
     }
 
@@ -96,9 +123,36 @@ impl SettingsDraft {
                 mouse_sensitivity: self.mouse_sensitivity,
                 invert_y: self.invert_y,
             },
+            audio: self.audio,
         };
         settings.validate()?;
         Ok(settings)
+    }
+
+    /// 返回可调整音量的百分比；其他设置字段没有音量值。
+    pub fn volume(&self, key: crate::ui::SettingKey) -> Option<u8> {
+        match key {
+            crate::ui::SettingKey::MasterVolume => Some(self.audio.master_volume),
+            crate::ui::SettingKey::SfxVolume => Some(self.audio.sfx_volume),
+            crate::ui::SettingKey::UiVolume => Some(self.audio.ui_volume),
+            _ => None,
+        }
+    }
+
+    /// 鼠标拖动与方向步进共用写入边界，夹到 100 并返回是否发生实际变化。
+    pub fn set_volume(&mut self, key: crate::ui::SettingKey, value: u8) -> bool {
+        let volume = match key {
+            crate::ui::SettingKey::MasterVolume => &mut self.audio.master_volume,
+            crate::ui::SettingKey::SfxVolume => &mut self.audio.sfx_volume,
+            crate::ui::SettingKey::UiVolume => &mut self.audio.ui_volume,
+            _ => return false,
+        };
+        let value = value.min(100);
+        if *volume == value {
+            return false;
+        }
+        *volume = value;
+        true
     }
 
     /// 左右调整当前字段；自定义值只在用户实际调整该字段后进入菜单范围。
@@ -127,8 +181,26 @@ impl SettingsDraft {
                 }
             }
             crate::ui::SettingKey::InvertY => self.invert_y = !self.invert_y,
+            key @ (crate::ui::SettingKey::MasterVolume
+            | crate::ui::SettingKey::SfxVolume
+            | crate::ui::SettingKey::UiVolume) => {
+                let value =
+                    i16::from(self.volume(key).unwrap()) + 5 * i16::from(direction.signum());
+                self.set_volume(key, value.clamp(0, 100) as u8);
+            }
         }
     }
+}
+
+fn deserialize_volume<'de, D>(deserializer: D) -> Result<u8, D::Error>
+where
+    D: Deserializer<'de>,
+{
+    let value = u8::deserialize(deserializer)?;
+    if value > 100 {
+        return Err(D::Error::custom("audio volume must be between 0 and 100"));
+    }
+    Ok(value)
 }
 
 fn deserialize_max_fps<'de, D>(deserializer: D) -> Result<NonZeroU32, D::Error>
@@ -171,6 +243,19 @@ impl GameSettings {
                 "camera mouse_sensitivity must be finite and greater than zero",
             ));
         }
+        if [
+            self.audio.master_volume,
+            self.audio.sfx_volume,
+            self.audio.ui_volume,
+        ]
+        .into_iter()
+        .any(|value| value > 100)
+        {
+            return Err(io::Error::new(
+                io::ErrorKind::InvalidInput,
+                "audio volume must be between 0 and 100",
+            ));
+        }
         Ok(())
     }
 
@@ -196,6 +281,9 @@ impl GameSettings {
                     fallback_max_fps = Self::default().max_fps.get(),
                     fallback_camera_mouse_sensitivity = CameraSettings::default().mouse_sensitivity,
                     fallback_camera_invert_y = CameraSettings::default().invert_y,
+                    fallback_audio_master_volume = AudioSettings::default().master_volume,
+                    fallback_audio_sfx_volume = AudioSettings::default().sfx_volume,
+                    fallback_audio_ui_volume = AudioSettings::default().ui_volume,
                     reason = "settings_load_failed",
                     "Failed to load game settings; using defaults"
                 );
@@ -208,6 +296,9 @@ impl GameSettings {
             max_fps = settings.max_fps.get(),
             camera_mouse_sensitivity = settings.camera.mouse_sensitivity,
             camera_invert_y = settings.camera.invert_y,
+            audio_master_volume = settings.audio.master_volume,
+            audio_sfx_volume = settings.audio.sfx_volume,
+            audio_ui_volume = settings.audio.ui_volume,
             "Game settings initialized"
         );
         settings
@@ -247,6 +338,9 @@ impl GameSettings {
         info!(target: "demo::settings", path = %path.display(), max_fps = self.max_fps.get(),
             camera_mouse_sensitivity = self.camera.mouse_sensitivity,
             camera_invert_y = self.camera.invert_y, reason = "settings_saved",
+            audio_master_volume = self.audio.master_volume,
+            audio_sfx_volume = self.audio.sfx_volume,
+            audio_ui_volume = self.audio.ui_volume,
             "Game settings saved");
         Ok(())
     }
@@ -369,6 +463,76 @@ mod tests {
     }
 
     #[test]
+    fn audio_settings_support_legacy_partial_and_custom_files() {
+        assert_eq!(GameSettings::default().audio, AudioSettings::default());
+        for legacy in [
+            "{}",
+            r#"{"max_fps": 144, "camera": {"invert_y": true}}"#,
+            r#"{"audio": {}}"#,
+        ] {
+            let settings: GameSettings = serde_json::from_str(legacy).unwrap();
+            assert_eq!(settings.audio, AudioSettings::default());
+        }
+        let partial: GameSettings = serde_json::from_str(r#"{"audio": {"ui_volume": 0}}"#).unwrap();
+        assert_eq!(partial.audio.master_volume, 100);
+        assert_eq!(partial.audio.sfx_volume, 100);
+        assert_eq!(partial.audio.ui_volume, 0);
+        let custom: GameSettings = serde_json::from_str(
+            r#"{"audio": {"master_volume": 73, "sfx_volume": 0, "ui_volume": 100}}"#,
+        )
+        .unwrap();
+        assert_eq!(SettingsDraft::from_settings(&custom).audio, custom.audio);
+        assert_eq!(custom.audio.master_volume, 73);
+        assert_eq!(custom.audio.sfx_volume, 0);
+        assert_eq!(custom.audio.ui_volume, 100);
+    }
+
+    #[test]
+    fn invalid_audio_settings_fall_back_and_never_replace_existing_file() {
+        let path = settings_test_path();
+        for field in ["master_volume", "sfx_volume", "ui_volume"] {
+            for value in ["101", "255", "256", "-1", "50.5", "null", "true", "\"NaN\""] {
+                let json = format!(r#"{{"max_fps": 144, "audio": {{"{field}": {value}}}}}"#);
+                assert!(serde_json::from_str::<GameSettings>(&json).is_err());
+                fs::write(&path, &json).unwrap();
+                let fallback = GameSettings::load(&path);
+                assert_eq!(fallback.max_fps.get(), 60);
+                assert_eq!(fallback.audio, AudioSettings::default());
+                assert_eq!(fs::read_to_string(&path).unwrap(), json);
+            }
+        }
+        assert!(
+            serde_json::from_str::<GameSettings>(r#"{"audio": {"music_volume": 50}}"#).is_err()
+        );
+        let original = r#"{"audio": {"master_volume": 75}}"#;
+        fs::write(&path, original).unwrap();
+        for audio in [
+            AudioSettings {
+                master_volume: 101,
+                ..default()
+            },
+            AudioSettings {
+                sfx_volume: 101,
+                ..default()
+            },
+            AudioSettings {
+                ui_volume: 101,
+                ..default()
+            },
+        ] {
+            let draft = SettingsDraft { audio, ..default() };
+            assert!(draft.to_settings().is_err());
+            let settings = GameSettings { audio, ..default() };
+            assert_eq!(
+                settings.save(&path).unwrap_err().kind(),
+                io::ErrorKind::InvalidInput
+            );
+            assert_eq!(fs::read_to_string(&path).unwrap(), original);
+        }
+        fs::remove_file(path).unwrap();
+    }
+
+    #[test]
     fn invalid_camera_settings_fall_back_without_overwriting_file() {
         let path = settings_test_path();
         for invalid in [
@@ -422,6 +586,11 @@ mod tests {
             max_fps: 165,
             mouse_sensitivity: 0.0065,
             invert_y: true,
+            audio: AudioSettings {
+                master_volume: 75,
+                sfx_volume: 0,
+                ui_volume: 33,
+            },
         };
         draft.to_settings().unwrap().save(&path).unwrap();
 
@@ -429,6 +598,7 @@ mod tests {
         assert_eq!(loaded.max_fps.get(), 165);
         assert_eq!(loaded.camera.mouse_sensitivity, 0.0065);
         assert!(loaded.camera.invert_y);
+        assert_eq!(loaded.audio, draft.audio);
         assert!(fs::read_to_string(&path).unwrap().ends_with('\n'));
         fs::remove_file(path).unwrap();
     }
@@ -549,6 +719,48 @@ mod tests {
         }
         assert_eq!(draft.mouse_sensitivity, 0.0005);
         assert!(draft.to_settings().is_ok());
+    }
+
+    #[test]
+    fn audio_draft_adjustments_preserve_custom_values_and_clamp_only_edited_field() {
+        use crate::ui::SettingKey;
+
+        let custom: GameSettings = serde_json::from_str(
+            r#"{"max_fps": 75, "audio": {"master_volume": 73, "sfx_volume": 3, "ui_volume": 97}}"#,
+        )
+        .unwrap();
+        let mut draft = SettingsDraft::from_settings(&custom);
+        assert_eq!(draft.to_settings().unwrap().audio, custom.audio);
+        assert_eq!(draft.volume(SettingKey::FrameRate), None);
+        assert!(!draft.set_volume(SettingKey::FrameRate, 20));
+        draft.adjust(SettingKey::MasterVolume, 0);
+        assert_eq!(draft.audio, custom.audio);
+        draft.adjust(SettingKey::MasterVolume, 1);
+        assert_eq!(draft.audio.master_volume, 78);
+        assert_eq!(draft.audio.sfx_volume, 3);
+        assert_eq!(draft.audio.ui_volume, 97);
+        draft.adjust(SettingKey::SfxVolume, -1);
+        assert_eq!(draft.audio.sfx_volume, 0);
+        draft.adjust(SettingKey::UiVolume, 1);
+        assert_eq!(draft.audio.ui_volume, 100);
+        assert!(!draft.set_volume(SettingKey::UiVolume, 255));
+        assert!(draft.set_volume(SettingKey::MasterVolume, 255));
+        assert_eq!(draft.audio.master_volume, 100);
+        for key in [
+            SettingKey::MasterVolume,
+            SettingKey::SfxVolume,
+            SettingKey::UiVolume,
+        ] {
+            for _ in 0..22 {
+                draft.adjust(key, -1);
+            }
+            assert_eq!(draft.volume(key), Some(0));
+            for _ in 0..22 {
+                draft.adjust(key, 1);
+            }
+            assert_eq!(draft.volume(key), Some(100));
+        }
+        assert_eq!(draft.max_fps, 75);
     }
 
     #[test]

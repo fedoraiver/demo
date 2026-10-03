@@ -4,6 +4,7 @@ mod backdrop;
 mod navigation;
 mod screens;
 mod theme;
+mod volume;
 mod widgets;
 
 use bevy::prelude::*;
@@ -61,6 +62,9 @@ pub enum SettingKey {
     FrameRate,
     MouseSensitivity,
     InvertY,
+    MasterVolume,
+    SfxVolume,
+    UiVolume,
 }
 
 /// 鼠标与 Enhanced Input 共用的菜单语义，避免两条路径分别执行业务。
@@ -78,6 +82,10 @@ pub enum UiAction {
     RestoreDefaults,
     SelectTab(SettingsTab),
     Adjust(SettingKey, i8),
+    /// 滑条拖动只更新草稿，释放时统一反馈，避免每像素都播放确认音。
+    SetVolume(SettingKey, u8),
+    FinishVolumeEdit,
+    TestSfx,
 }
 
 /// 菜单实体保存动作与导航序号，系统不依赖显示文字或实体名称。
@@ -117,6 +125,7 @@ impl Plugin for GameUiPlugin {
             .configure_sets(Update, (UiSystems::Build, UiSystems::Style).chain());
         navigation::register(app);
         screens::register(app);
+        volume::register(app);
         backdrop::register(app);
     }
 }

@@ -11,6 +11,7 @@
 | [ui/mod.rs](../src/ui/mod.rs) | 定义菜单页面、返回来源、焦点、设置分类与语义请求，注册 UI 插件和更新顺序。 |
 | [ui/navigation.rs](../src/ui/navigation.rs) | Enhanced Input 处理菜单键盘与手柄动作，Bevy UI 处理鼠标命中；统一消费请求、切换页面及保存和应用设置，并根据实际焦点变化与接受结果发出菜单音效消息。 |
 | [ui/screens.rs](../src/ui/screens.rs)、[ui/widgets.rs](../src/ui/widgets.rs)、[ui/theme.rs](../src/ui/theme.rs) | 用 BSN 声明页面与控件树，复用字体、颜色和间距；系统更新焦点、设置说明与滚动位置。 |
+| [ui/volume.rs](../src/ui/volume.rs) | 用 BSN 声明音量行，局部捕获滑条鼠标拖动并发出统一设置请求，更新已有百分比与轨道填充。 |
 | [ui/backdrop.rs](../src/ui/backdrop.rs) | 主菜单的独立 GLB 展示舞台、相机与光照；启动快递员展示动画，记录资产加载失败。 |
 | [input.rs](../src/input.rs) | 注册 `bevy_enhanced_input`、`GameplayContext` 和玩法／调试动作；创建键盘控制者，按动作的 `context` 路由角色意图。 |
 | [camera.rs](../src/camera.rs) | 管理相机控制关联、视角模式、环绕状态和鼠标捕获；处理观察与视角切换动作，固定步同步角色朝向，物理插值后逐帧同步朝向、持握目标、镜头和人物可见性。 |
@@ -24,7 +25,7 @@
 | [startup_log.rs](../src/startup_log.rs) | 通过 `StartupLogPlugin` 集中注册四项启动日志，只读玩法配置与固定时间步，并记录姿态同步约定和检查器启用信息。 |
 | [session_log.rs](../src/session_log.rs) | 创建独立会话文件，管理文件与控制台后台输出，记录会话生命周期和 panic 上下文，并负责排空、刷新与关闭线程。 |
 | [audio_events.rs](../src/audio_events.rs) | 注册反馈消息，观察真实落地碰撞与持续持握误差；独立于声音设备，供最小物理测试复用。 |
-| [audio.rs](../src/audio.rs) | 以嵌入的音频清单预加载 Kira 资产，通过 UI/SFX 通道播放，处理冷却、并发、失败日志和退出停止。 |
+| [audio.rs](../src/audio.rs) | 以嵌入的音频清单预加载 Kira 资产，通过 UI/SFX 通道播放；选择草稿或已应用音量，同步实例增益，处理静音、冷却、并发、失败日志和退出停止。 |
 
 依赖声明和锁定版本分别见 [Cargo.toml](../Cargo.toml) 和 [Cargo.lock](../Cargo.lock)。
 
@@ -32,9 +33,9 @@
 
 `AppState` 只有 `MainMenu` 与 `InGame`。`PlayState` 是仅在 `InGame` 存在的 `Running / Paused` 子状态。`PrototypeScenePlugin` 在 `OnEnter(AppState::InGame)` 生成光照和加载相机，重置本次场景准备状态；`Update` 仅在 `gameplay_running` 时推进地图装配、碰撞准备和动态实体生成。地图根、独立业务根、控制者、相机和灯光使用 `DespawnOnExit(AppState::InGame)`，退出会话时清理；NPC、碰撞与视觉子树沿地图根或业务根的 `ChildOf` 一同销毁。全局 `ArtAssets` 强句柄与 `ArtLoadState` 跨会话保留，重新开始复用已加载资产并建立新的地图实例。暂停不退出 `InGame`，因此不重新生成角色、箱体或持有关系，也不推进尚未完成的场景装配。
 
-`MenuState` 保存 `Main / Hidden / Settings / Help / Pause` 页面、设置分类、返回页面与提示文本；`MenuFocus` 独立保存可操作按钮序号，`MenuInputSource` 区分鼠标与键盘／手柄导航来源。设置和帮助只切换页面，返回主菜单来源时仍在主菜单，返回暂停来源时仍暂停。`SettingsDraft` 是独立草稿，`Back` 丢弃未应用修改；`Apply` 先校验并保存，成功才替换 `GameSettings`，失败保留生效设置和草稿。
+`MenuState` 保存 `Main / Hidden / Settings / Help / Pause` 页面、设置分类、返回页面与提示文本；`MenuFocus` 独立保存可操作按钮序号，`MenuInputSource` 区分鼠标与键盘／手柄导航来源。设置和帮助只切换页面，返回主菜单来源时仍在主菜单，返回暂停来源时仍暂停。`SettingsDraft` 是独立草稿，切换分类保留草稿和音量预览。`Back / Esc` 丢弃未应用修改并恢复最近成功应用的音量；`Restore Defaults` 只恢复全部草稿并预览默认音量。`Apply` 先校验并保存，成功才替换 `GameSettings`，失败保留已应用设置、原文件、草稿及临时音量预览，返回后回滚预览。
 
-菜单控制者的 `MenuContext` 使用较高优先级与 `require_reset`，接收方向键、Enter、Esc 和手柄菜单按键。鼠标经 Bevy UI `Interaction` 发出相同 `UiRequest`。集中处理系统每帧消费一项请求，避免同帧两种输入重复触发。键盘动作在 `PreUpdate` 的 `EnhancedInputSystems::Apply` 后处理，`StateTransition` 随后执行；`Update` 先重建页面并应用旧树销毁，再读取鼠标点击，避免旧页面的 `Back` 穿透新页面。鼠标请求交给下一次 `PreUpdate` 消费。窗口光标位置仅用于判断真实鼠标移动，静止光标造成的新 `Hovered` 不抢走键盘焦点。
+菜单控制者的 `MenuContext` 使用较高优先级与 `require_reset`，接收方向键、Enter、Esc 和手柄菜单按键。鼠标经 Bevy UI `Interaction` 发出相同 `UiRequest`。集中处理系统每帧消费一项语义请求，避免同帧两种输入重复触发；连续滑条采样合并，同帧返回优先于旧采样，最终数值与释放反馈一起处理。键盘动作在 `PreUpdate` 的 `EnhancedInputSystems::Apply` 后处理，`StateTransition` 随后执行；`Update` 先重建页面并应用旧树销毁，再读取鼠标点击，避免旧页面的 `Back` 穿透新页面。鼠标请求交给下一次 `PreUpdate` 消费。窗口光标位置用于判断真实鼠标移动，静止光标造成的新 `Hovered` 不抢走键盘焦点；音量滑条额外在局部范围读取底层左键与物理光标位置，以表达 Enhanced Input 菜单动作无法表达的轨道绝对坐标。命中沿用 `Interaction`，滑条不经普通按钮路径重复发请求，释放、失焦、光标离开窗口或页面销毁时结束捕获。
 
 按钮样式由当前输入来源决定：鼠标模式只高亮实际悬停或按下的按钮，离开后恢复纸色；键盘／手柄实际导航时显示 `MenuFocus`。鼠标真实移动即切回鼠标模式，包括移到空白区域，因此离开按钮不会留下导航高亮。`Apply` 与当前设置分类不另设常驻黄色样式；帮助编号的黄色装饰节点不参与按钮交互。
 
@@ -44,9 +45,9 @@
 
 ## BSN 页面与菜单展示资产
 
-UI 控件与主菜单舞台使用 Bevy 0.19 的 `bsn!`、`bsn_list!` 和返回 `impl Scene` 的辅助函数声明。页面结构与组件数据由 BSN 创建，交互、焦点、设置应用和跨实体行为仍由 ECS 系统负责。`rebuild_page` 在页面、草稿或窗口宽度变化时清理旧 `MenuRoot` 并生成新树；焦点变化只更新按钮颜色与说明。字号按窗口宽度缩放，窄窗口折行，高度不足由滚动区域和焦点滚入系统处理。
+UI 控件与主菜单舞台使用 Bevy 0.19 的 `bsn!`、`bsn_list!` 和返回 `impl Scene` 的辅助函数声明。页面结构与组件数据由 BSN 创建，交互、焦点、设置应用和跨实体行为仍由 ECS 系统负责。`rebuild_page` 在页面结构、非音量设置草稿或窗口宽度变化时清理旧 `MenuRoot` 并生成新树；焦点和状态提示分别更新已有节点。音量行的 `VolumeSlider / VolumeValue / VolumeFill` 保存设置键，系统更新既有数字和填充，拖动不会销毁滑条。字号按窗口宽度缩放，窄窗口折行，高度不足由滚动区域和焦点滚入系统处理。
 
-自动宽度的 `Text` 节点保留文本的自然测量，避免短文字在可收缩布局中被压成零宽。键帽、帧率值、按钮标题和帮助编号都使用这一规则；容器按实际布局需要设置尺寸与折行约束。BSN 组件检查不能代替最终字体与排版的用户目测，重点检查短标签和数字是否完整可见。
+自动宽度的 `Text` 节点保留文本的自然测量，避免短文字在可收缩布局中被压成零宽。键帽、帧率值、音量百分比与 `Muted`、按钮标题和帮助编号都使用这一规则；容器按实际布局需要设置尺寸与折行约束。BSN 组件检查不能代替最终字体与排版的用户目测，重点检查短标签和数字是否完整可见。
 
 文字零宽与鼠标离开后高亮残留的原因及预防要求统一见 [UI 布局与高亮规范](development.md#ui-布局与高亮规范)，对应的字体测量、悬停循环和输入来源回归见 [文字布局与高亮回归](testing.md#文字布局与高亮回归)。
 
@@ -55,6 +56,8 @@ UI 控件与主菜单舞台使用 Bevy 0.19 的 `bsn!`、`bsn_list!` 和返回 `
 模型通过 `WorldAssetRoot` 加载原有 `#Scene0`；快递员 `WorldInstanceReady` 后查找骨架中的 `AnimationPlayer` 并循环播放索引 0 的 `Carry_Idle`。展示包裹是独立模型附件，没有角色控制器、Avian 刚体或玩法持有关系。菜单舞台与使用 `assets/maps/courier_island.glb` 的可游玩海岛分别装配；菜单模型不参与玩法碰撞或配送业务。字体资源与资产准备约定见 [README](../README.md#美术与字体准备)。
 
 保存设置前校验与序列化完整 `GameSettings`，然后在根 `tmp/settings-save/` 写入唯一临时文件、同步并关闭句柄，再用 `rename` 替换目标文件。替换失败时保留原文件并清理临时产物；临时文件与设置及会话日志各自管理。菜单步进范围不收紧 JSON 的原有有效范围，打开设置保留有效自定义值，实际调整相应字段后才进入菜单范围。
+
+`GameSettings.audio` 与 `SettingsDraft.audio` 使用 `AudioSettings`，总音量、SFX 和 UI 均为 `u8` 的 `0..100` 百分比。缺少节或字段以默认 `100` 补齐；非法值拒绝整个设置文件，加载回退默认且不覆写原文件。方向按钮及 Enhanced Input 左右动作步进 `5%`，滑条将局部横坐标换算为 `1%` 精度的整数并夹到边界。`SetVolume` 只更新草稿，`FinishVolumeEdit` 在释放且最终值改变时汇总确认音和变化日志；`TestSfx` 只发送现有拾取素材的 `SoundRequest`，不触发玩法。
 
 ## 世界检查器
 
@@ -204,13 +207,15 @@ UI 控件与主菜单舞台使用 Bevy 0.19 的 `bsn!`、`bsn_list!` 和返回 `
 
 `GameplayPlugin` 注册 `SoundEventsPlugin`。拾取与主动释放只在 `handle_interaction` 接受操作后，用 `Commands::write_message` 和关系变更一起提交 `SoundRequest`。固定步链的同步点保证关系和消息同时可见，失败尝试不会产生成功反馈。释放提示与真正的落地是两个事件。
 
-菜单复用同一 `SoundRequest` 消息。真实键盘／手柄导航改变焦点，或真实鼠标移动进入已有可操作按钮时发送 `MenuHover`；静止光标、按钮内移动、页面重建产生的 `Hovered` 和单按钮页面导航不产生悬停音。集中请求消费系统每帧只接受一项 `UiRequest`，只在开始、打开页面、改变分类、实际调整设置、恢复默认或成功应用等有效结果后发送 `MenuConfirm`。`Back`、恢复运行和返回主菜单发送 `MenuCancel`，游戏中按 Esc 打开暂停发送 `MenuConfirm`；设置保存失败也用 `MenuCancel`，不借用交付失败事件。无效动作、当前分类重选和设置边界不发声。鼠标确认请求在下一次 `PreUpdate` 被接受后发出反馈；`Update` 的指针悬停反馈由后续播放系统同帧消费。
+菜单复用同一 `SoundRequest` 消息。真实键盘／手柄导航改变焦点，或真实鼠标移动进入已有可操作按钮时发送 `MenuHover`；静止光标、按钮内移动、页面重建产生的 `Hovered` 和单按钮页面导航不产生悬停音。集中请求消费系统每帧只接受一项 `UiRequest`，只在开始、打开页面、改变分类、实际调整设置、恢复默认或成功应用等有效结果后发送 `MenuConfirm`；音量拖动期间不连续确认，只在释放且最终值改变后一次。`Back`、恢复运行和返回主菜单发送 `MenuCancel`，游戏中按 Esc 打开暂停发送 `MenuConfirm`；设置保存失败也用 `MenuCancel`，不借用交付失败事件。无效动作、当前分类重选和设置边界不发声。鼠标确认请求在下一次 `PreUpdate` 被接受后发出反馈；`Update` 的指针悬停反馈由后续播放系统同帧消费。`Test SFX` 在主菜单或暂停的 Audio 页请求 `ParcelPickup`，不建立持有关系，按 SFX 分类遵守正常播放限制。
 
 `warn_hold_strain` 在 `FixedUpdate` 的 `GameplaySystems::Simulate` 之后读取角色与包裹的模拟 `Position`，按最新水平朝向与物品的 `CarryGrip` 计算手前目标，和实际持握施力使用同一偏移来源，检查持续误差。新持握有 0.5 秒宽限；距离超过 0.65 米持续 0.35 秒触发一次，降到 0.45 米以下才重置。系统的 `Local` 只保存当前持握包裹的时间与锁存状态，解除关系或销毁后清理；这是音频提示阈值，不代表新增失稳玩法规则。
 
 `emit_parcel_land` 在 `FixedPostUpdate` 的 `PhysicsSystems::StepSimulation` 之后读取只读 `ContactGraph`，逐步检查活动与休眠的真实支撑接触。只有未持握的 `Parcel`，在向上支撑法线至少 0.65、法向求解冲量至少 1.8 kg·m/s 时发出落地事件，并锁存到完全失去支撑；侧墙、轻微接触和持续静置不发出。Avian 的预测接触可能在实际撞击前产生 `CollisionStart`，因此不能只在开始事件当步检查冲量，否则会漏掉后续实际落地。现有碰撞日志继续独立读取开始与结束消息。
 
-落地和持握警告收集系统受 `gameplay_running` 条件限制，主菜单和暂停时不产生新的玩法反馈。默认主调度在固定模拟后进入 `Update`。`GameAudioPlugin` 在 `UiSystems::Style` 之后连续消费短音请求，清理已停止的实例，再按清单冷却、单事件并发和全局四个声音上限排队；其中为 UI 预留一条，SFX 最多占用三条。冷却使用 `Time<Real>`，暂停冻结虚拟时间不会阻断菜单反馈。Kira `Queued` 状态同样计入并发；尚未加载的音效直接略过，避免稍后重放过期交互。第一版为全局二维反馈，尚无距离衰减或方位，菜单音量设置仍为占位。固定线性总音量为 0.25，清单线性音量乘入后换算为 Kira 0.26 的分贝 API。UI 与 SFX 使用独立类型通道，退出时停止；`Quit` 直接退出，不等待确认音播完。Bevy 内建音频插件在主入口关闭，避免两个后端同时初始化设备。
+落地和持握警告收集系统受 `gameplay_running` 条件限制，主菜单和暂停时不产生新的玩法反馈。默认主调度在固定模拟后进入 `Update`。`GameAudioPlugin` 在 `UiSystems::Style` 之后先选择并同步有效音量，再连续消费短音请求，清理已停止的实例，按清单冷却、单事件并发和全局四个声音上限排队；其中为 UI 预留一条，SFX 最多占用三条。冷却使用 `Time<Real>`，暂停冻结虚拟时间不会阻断菜单反馈。Kira `Queued` 状态同样计入并发；尚未加载的音效直接略过，避免稍后重放过期交互。第一版为全局二维反馈，尚无距离衰减或方位。UI 与 SFX 使用独立类型通道，退出时停止；`Quit` 直接退出，不等待确认音播完。Bevy 内建音频插件在主入口关闭，避免两个后端同时初始化设备。
+
+`AudioMix` 保存有效音量及是否处于预览：设置页使用 `SettingsDraft.audio`，切换分类仍预览，离开设置页使用最近成功应用的 `GameSettings.audio`。两个业务通道的线性增益分别为 `0.25 × master_volume / 100 × ui_volume / 100` 和 `0.25 × master_volume / 100 × sfx_volume / 100`，再乘清单素材增益后换算为 Kira 分贝；默认三个 `100%` 保留素材间响度。Kira 0.26 的通道 `set_volume` 会覆盖实例绝对音量，因此 `sync_voice_volumes` 逐实例按素材基准与统一增益更新正在播放的声音；`PostUpdate` 在 `AudioSystemSet::PlayTypedChannels` 后再次同步刚从 `Queued` 就绪的实例，避免多留一帧旧增益。零增益使用明确的 `Decibels::SILENCE`，新请求直接丢弃，不占冷却或并发，恢复音量不重放。预览进入／退出和正式配置变化记录 `Audio mix changed`；箭头调整及拖动释放汇总记录 `Audio volume preview changed`，试听记录 `Audio sample requested` 与 `reason="settings_preview"`，加载、保存和应用日志包含三项音量。
 
 清单在编译时嵌入，文件路径相对 `assets`，启动时校验映射和策略，再由 `AssetServer` 加载。清单无效只禁用声音并记录错误，素材加载错误包含实际路径与外部错误；修改清单后需要重新编译。合成环境底声只供试听，不预加载、不自动循环。交接、推车、弹开和交付的 `SoundCue` 供未来业务结果发送，当前没有伪造触发器。资源与事件表见 [音频管线](audio.md)。无窗口测试不安装 `GameAudioPlugin`，因此不会打开音频设备。
 
