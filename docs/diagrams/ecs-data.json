@@ -116,7 +116,7 @@
       ],
       "source": {
         "path": "src/settings.rs",
-        "line": 281
+        "line": 375
       }
     },
     {
@@ -2392,14 +2392,15 @@
       "kind": "system",
       "phase": "PreUpdate · after(EnhancedInputSystems::Apply)",
       "module": "ui",
-      "description": "每帧消费一项 UiRequest，导航页面、开始/暂停/恢复/结束会话，编辑草稿并保存应用真实设置。接受的动作发送确认或返回声音；无效请求、当前分类和边界调整静音。",
+      "description": "集中消费菜单语义请求，导航与保存应用设置；归并同一拖动数值与释放，试听复用拾取声音消息。",
       "reads": [
         "resource.UiRequestMessages",
         "resource.MenuState",
         "resource.GameSettings",
         "resource.SettingsDraft",
         "resource.SettingsFile",
-        "menu_controller.MenuContext"
+        "menu_controller.MenuContext",
+        "local.VolumeEdit"
       ],
       "writes": [
         "resource.UiRequestMessages",
@@ -2410,21 +2411,25 @@
         "resource.AppState",
         "resource.PlayState",
         "resource.SoundRequestMessages",
-        "resource.AppExitMessages"
+        "resource.AppExitMessages",
+        "local.VolumeEdit"
       ],
       "filters": [],
       "events": [
-        "写入 SoundRequest：menu_confirm / menu_cancel"
+        "写入 SoundRequest：menu_confirm / menu_cancel / parcel_pickup（TestSfx）"
       ],
       "notes": [
         "写 NextState 而非直接执行状态系统；随后的 StateTransition 在固定循环之前生效。",
-        "鼠标 Update 请求在下一次 PreUpdate 消费；读取第一项后清空其余，避免页面穿透。",
+        "鼠标 Update 请求在下一次 PreUpdate 消费；普通语义接受第一项后清空其余。同一拖动坐标取最后值，释放同帧处理；返回等语义优先于旧采样。",
         "Quit 写 AppExit::Success；保存失败只写提示，不替换当前生效设置。",
-        "MenuConfirm 用于有效操作及打开暂停；MenuCancel 用于恢复/返回、离开子页和保存失败。每帧仅反馈第一项接受的 UiRequest，source 使用唯一菜单控制者。"
+        "MenuConfirm 用于有效操作及打开暂停；MenuCancel 用于恢复/返回、离开子页和保存失败。每帧仅反馈第一项接受的 UiRequest，source 使用唯一菜单控制者。",
+        "SetVolume 只改草稿；FinishVolumeEdit 在最终值实际改变时汇总确认音及日志，过程不连续确认。",
+        "TestSfx 只发送 ParcelPickup，来源为菜单控制者，不触发玩法或持有关系。",
+        "Back 重置草稿；成功 Apply 更新 GameSettings；保存失败保留草稿及预览，退出设置由 AudioMix 回滚。"
       ],
       "source": {
         "path": "src/ui/navigation.rs",
-        "line": 283
+        "line": 286
       }
     },
     {
@@ -2459,7 +2464,8 @@
       "notes": [
         "只读窗口位置区分来源，点击仍使用 Interaction；不重复读取 MouseButton。",
         "页面 Build 先销毁旧按钮并应用命令，防止旧页面 Back 补发；Hidden 不处理按钮。",
-        "按钮内移动、按下后释放和页面重建初始 Hovered 不重复发声；Local 保存上次窗口位置与悬停实体。"
+        "按钮内移动、按下后释放和页面重建初始 Hovered 不重复发声；Local 保存上次窗口位置与悬停实体。",
+        "滑条 Adjust(_, 0) 不经普通按钮点击路径发请求，避免重复触发。"
       ],
       "source": {
         "path": "src/ui/navigation.rs",
@@ -2472,13 +2478,14 @@
       "kind": "system",
       "phase": "Update · UiSystems::Build",
       "module": "ui",
-      "description": "页面、草稿或窗口宽度变化时销毁旧根并声明新的 BSN 页面；Hidden 只清理。",
+      "description": "页面结构、非音量草稿或窗口宽度变化时销毁旧根并声明新的 BSN 页面；Hidden 只清理。",
       "reads": [
         "resource.MenuState",
         "resource.SettingsDraft",
         "resource.UiTheme",
         "window.Window",
-        "menu_root.MenuRoot"
+        "menu_root.MenuRoot",
+        "local.PageStructure"
       ],
       "writes": [
         "menu_root.MenuRoot",
@@ -2492,7 +2499,13 @@
         "menu_text.Text",
         "menu_text.TextFont",
         "menu_text.TextColor",
-        "menu_text.Node"
+        "menu_text.Node",
+        "local.PageStructure",
+        "menu_button.VolumeSlider",
+        "menu_volume.VolumeFill",
+        "menu_volume.Node",
+        "menu_text.VolumeValue",
+        "menu_text.SettingsStatus"
       ],
       "filters": [
         "With<PrimaryWindow>",
@@ -2501,11 +2514,12 @@
       "events": [],
       "notes": [
         "Build/Style 通过系统集 chain；结构 Commands 在读取新按钮前同步。",
-        "字体句柄预加载，BSN 不发独立异步页面任务；焦点变化不重建页面。"
+        "字体句柄预加载，BSN 不发独立异步页面任务；焦点变化不重建页面。",
+        "PageStructure 缓存排除音量与 status；音量数值、填充及提示由专门系统更新已有实体，拖动不会销毁滑条。"
       ],
       "source": {
         "path": "src/ui/screens.rs",
-        "line": 29
+        "line": 51
       }
     },
     {
@@ -2532,7 +2546,7 @@
       ],
       "source": {
         "path": "src/ui/screens.rs",
-        "line": 556
+        "line": 591
       }
     },
     {
@@ -2561,7 +2575,7 @@
       ],
       "source": {
         "path": "src/ui/screens.rs",
-        "line": 590
+        "line": 641
       }
     },
     {
@@ -2591,7 +2605,7 @@
       ],
       "source": {
         "path": "src/ui/screens.rs",
-        "line": 613
+        "line": 664
       }
     },
     {
@@ -2926,7 +2940,7 @@
       ],
       "source": {
         "path": "src/audio.rs",
-        "line": 130
+        "line": 236
       }
     },
     {
@@ -2950,7 +2964,7 @@
       ],
       "source": {
         "path": "src/audio.rs",
-        "line": 169
+        "line": 275
       }
     },
     {
@@ -2959,13 +2973,14 @@
       "kind": "system",
       "phase": "Update · after(UiSystems::Style)",
       "module": "audio",
-      "description": "消费已接受的 SoundRequest；按加载状态、冷却与实例限额排队到 UI 或 SFX 通道。",
+      "description": "消费 SoundRequest；静音直接丢弃，其余按加载、冷却与实例限额排队，并保持清单素材间响度。",
       "reads": [
         "resource.SoundRequestMessages",
         "resource.TimeReal",
         "resource.AudioSources",
         "resource.UiAudioChannel",
-        "resource.SfxAudioChannel"
+        "resource.SfxAudioChannel",
+        "resource.AudioMix"
       ],
       "writes": [
         "resource.SoundBank",
@@ -2979,14 +2994,15 @@
       "notes": [
         "通道通过共享 Res 访问，其内部播放命令队列产生副作用；不是组件修改。",
         "总并发 4，SFX 最多 3，为菜单保留 1 个名额；Queued 也计入并发，Stopped 实例从 SoundBank 清理。",
-        "每种事件的清单音量乘总线性增益 0.25，再转换为 Kira 0.26 的 dB。",
+        "清单音量乘 0.25 × master% × ui% / sfx%，再转换为 Kira 0.26 的 dB；默认各 100% 保持原响度。",
         "加载中或达到限额的消息直接丢弃；source Entity 只用于日志，不读取实体组件。",
         "完整音频链在 UiSystems::Style 之后执行，因此同帧鼠标焦点消息可被播放系统消费。",
-        "使用 Time<Real> 计算冷却，暂停冻结虚拟时间时菜单声音仍能再次触发。"
+        "使用 Time<Real> 计算冷却，暂停冻结虚拟时间时菜单声音仍能再次触发。",
+        "静音请求立即消费，不占冷却/并发，恢复音量不补播旧交互。"
       ],
       "source": {
         "path": "src/audio.rs",
-        "line": 188
+        "line": 294
       }
     },
     {
@@ -3010,12 +3026,12 @@
         "读取 AppExit（Message）"
       ],
       "notes": [
-        "与失败日志、播放请求通过 .chain() 顺序运行；退出消息读取后发停止命令。",
+        "失败日志 → AudioMix → 实例音量 → 播放请求 → 退出停止通过 .chain() 顺序运行。",
         "完整音频链在 UiSystems::Style 之后执行，因此同帧鼠标焦点消息可被播放系统消费。"
       ],
       "source": {
         "path": "src/audio.rs",
-        "line": 255
+        "line": 367
       }
     },
     {
@@ -3094,6 +3110,179 @@
       "source": {
         "path": "src/audio_events.rs",
         "line": 108
+      }
+    },
+    {
+      "id": "menu_volume_pointer",
+      "name": "sample_slider_pointer",
+      "kind": "system",
+      "phase": "Update · after(Build / pointer_interaction) / before(Style)",
+      "module": "ui",
+      "description": "仅 Audio 页捕获原生命中的滑条；按物理光标局部位置生成精确音量与释放请求。",
+      "reads": [
+        "resource.MenuState",
+        "window.Window",
+        "resource.ButtonInputMouseButton",
+        "menu_button.VolumeSlider",
+        "menu_button.MenuButton",
+        "menu_button.Interaction",
+        "menu_button.ComputedNode",
+        "menu_button.UiGlobalTransform",
+        "local.VolumeDrag"
+      ],
+      "writes": [
+        "resource.MenuFocus",
+        "resource.MenuInputSource",
+        "resource.UiRequestMessages",
+        "local.VolumeDrag"
+      ],
+      "filters": [
+        "With<PrimaryWindow>"
+      ],
+      "events": [
+        "写入 UiRequest：SetVolume / FinishVolumeEdit"
+      ],
+      "notes": [
+        "命中沿用 Interaction；Enhanced Input 菜单动作不能表达轨道绝对坐标，故仅滑条局部读取左键及物理光标。",
+        "真实按下才捕获；释放、失焦、离开窗口或实体失效结束手势，页面切换清理 Local。",
+        "按坐标夹到 0..100 并舍入 1%；同值不重复采样。与 update_volume_visuals 无显式先后。"
+      ],
+      "source": {
+        "path": "src/ui/volume.rs",
+        "line": 206
+      }
+    },
+    {
+      "id": "menu_volume_visuals",
+      "name": "update_volume_visuals",
+      "kind": "system",
+      "phase": "Update · after(Build / pointer_interaction) / before(Style)",
+      "module": "ui",
+      "description": "草稿变化时更新已有百分比文字与轨道填充；静音显示 Muted，不重建音量实体树。",
+      "reads": [
+        "resource.SettingsDraft",
+        "menu_text.VolumeValue",
+        "menu_volume.VolumeFill"
+      ],
+      "writes": [
+        "menu_text.Text",
+        "menu_volume.Node"
+      ],
+      "filters": [],
+      "events": [],
+      "notes": [
+        "仅草稿发生变化时写入；与 sample_slider_pointer 无显式先后。"
+      ],
+      "source": {
+        "path": "src/ui/volume.rs",
+        "line": 280
+      }
+    },
+    {
+      "id": "menu_status",
+      "name": "update_settings_status",
+      "kind": "system",
+      "phase": "Update · UiSystems::Style",
+      "module": "ui",
+      "description": "独立更新设置提示文本，保存与试听状态不销毁正在拖动的滑条。",
+      "reads": [
+        "resource.MenuState",
+        "menu_text.SettingsStatus"
+      ],
+      "writes": [
+        "menu_text.Text"
+      ],
+      "filters": [
+        "With<SettingsStatus>"
+      ],
+      "events": [],
+      "notes": [
+        "Style 内样式、说明、状态与焦点滚动没有彼此全序。"
+      ],
+      "source": {
+        "path": "src/ui/screens.rs",
+        "line": 626
+      }
+    },
+    {
+      "id": "audio_mix",
+      "name": "sync_audio_mix",
+      "kind": "system",
+      "phase": "Update · after(UiSystems::Style) / 音频 chain",
+      "module": "audio",
+      "description": "设置页选草稿音量，离开设置选最近成功应用的音量；切换分类仍保持预览。",
+      "reads": [
+        "resource.GameSettings",
+        "resource.SettingsDraft",
+        "resource.MenuState"
+      ],
+      "writes": [
+        "resource.AudioMix"
+      ],
+      "filters": [],
+      "events": [],
+      "notes": [
+        "SettingsDraft / MenuState 为可选资源；缺少草稿时采用已应用音量。",
+        "进入预览，或非预览状态下有效混音变化时记录 Audio mix changed；Apply 由菜单系统记录保存日志，连续拖动在 UI 释放时汇总。"
+      ],
+      "source": {
+        "path": "src/audio.rs",
+        "line": 169
+      }
+    },
+    {
+      "id": "audio_voice_volumes",
+      "name": "sync_voice_volumes",
+      "kind": "system",
+      "phase": "Update · 音频 chain，mix 之后 / play_requests 之前",
+      "module": "audio",
+      "description": "按每条素材清单音量与 UI/SFX 有效混音，更新正在播放及刚就绪实例的绝对分贝。",
+      "reads": [
+        "resource.AudioMix",
+        "resource.SoundBank"
+      ],
+      "writes": [
+        "resource.SoundBank",
+        "resource.AudioInstances"
+      ],
+      "filters": [],
+      "events": [],
+      "notes": [
+        "Kira 通道 set_volume 会覆盖实例绝对音量，因此保留素材间响度后逐实例更新。",
+        "Queued 句柄未就绪时等待；应用值保存在 Voice.applied_volume，避免重复提交。",
+        "零增益使用有限的 Decibels::SILENCE，AudioTween 时长为零。"
+      ],
+      "source": {
+        "path": "src/audio.rs",
+        "line": 206
+      }
+    },
+    {
+      "id": "audio_voice_volumes_post",
+      "name": "sync_voice_volumes",
+      "kind": "system",
+      "phase": "PostUpdate · after(AudioSystemSet::PlayTypedChannels)",
+      "module": "audio",
+      "description": "Kira 将 Queued 句柄写入 Assets 后再次同步新实例，避免旧增益多留一帧。",
+      "reads": [
+        "resource.AudioMix",
+        "resource.SoundBank"
+      ],
+      "writes": [
+        "resource.SoundBank",
+        "resource.AudioInstances"
+      ],
+      "filters": [],
+      "events": [],
+      "notes": [
+        "同一函数的独立调度注册实例，不暗示与其它 PostUpdate 分支的全序。",
+        "Kira 通道 set_volume 会覆盖实例绝对音量，因此保留素材间响度后逐实例更新。",
+        "Queued 句柄未就绪时等待；应用值保存在 Voice.applied_volume，避免重复提交。",
+        "零增益使用有限的 Decibels::SILENCE，AudioTween 时长为零。"
+      ],
+      "source": {
+        "path": "src/audio.rs",
+        "line": 206
       }
     }
   ],
@@ -5312,7 +5501,7 @@
           "description": "仅清理菜单页面，不改变展示舞台或玩法会话。",
           "source": {
             "path": "src/ui/mod.rs",
-            "line": 92
+            "line": 100
           }
         },
         {
@@ -5325,7 +5514,7 @@
           "description": "顶层页面布局，内容滚动区域与固定页脚分开。",
           "source": {
             "path": "src/ui/screens.rs",
-            "line": 64
+            "line": 94
           }
         },
         {
@@ -5337,7 +5526,7 @@
           "description": "菜单显示在展示场景与玩法画面上。",
           "source": {
             "path": "src/ui/screens.rs",
-            "line": 62
+            "line": 92
           }
         },
         {
@@ -5349,7 +5538,7 @@
           "description": "BSN 声明式层级，间接子节点逐层使用 ChildOf。",
           "source": {
             "path": "src/ui/screens.rs",
-            "line": 73
+            "line": 103
           }
         }
       ]
@@ -5357,8 +5546,8 @@
     {
       "id": "menu_button",
       "name": "可操作菜单按钮",
-      "count": "0..11",
-      "description": "英文菜单、分类、设置箭头与底部按钮；Coming Soon 展示节点不带 Button 或 MenuButton。",
+      "count": "0..17",
+      "description": "英文菜单、分类、设置箭头与底部按钮；Coming Soon 展示节点不带 Button 或 MenuButton。 三个音量滑条额外携带 VolumeSlider；自身为左右导航中间目标，Enter 不改变值。",
       "components": [
         {
           "id": "menu_button.MenuButton",
@@ -5370,7 +5559,19 @@
           "description": "业务动作与连续导航序号，不依赖按钮文字或实体名。",
           "source": {
             "path": "src/ui/mod.rs",
-            "line": 85
+            "line": 93
+          }
+        },
+        {
+          "id": "menu_button.VolumeSlider",
+          "name": "VolumeSlider",
+          "fields": [
+            "key: SettingKey"
+          ],
+          "description": "Audio 页滑条仍为普通 MenuButton，左右步进与鼠标坐标共用字段键。",
+          "source": {
+            "path": "src/ui/volume.rs",
+            "line": 14
           }
         },
         {
@@ -5416,7 +5617,7 @@
           "description": "style_buttons 按输入来源与 Interaction 更新。",
           "source": {
             "path": "src/ui/screens.rs",
-            "line": 556
+            "line": 591
           }
         },
         {
@@ -5428,7 +5629,7 @@
           "description": "悬停/键盘焦点时使用深色边框。",
           "source": {
             "path": "src/ui/screens.rs",
-            "line": 556
+            "line": 591
           }
         },
         {
@@ -5453,7 +5654,7 @@
           "description": "原生布局后的按钮几何，用于焦点滚入。",
           "source": {
             "path": "src/ui/screens.rs",
-            "line": 615
+            "line": 666
           }
         },
         {
@@ -5465,7 +5666,7 @@
           "description": "与视口坐标比较按钮上下边界。",
           "source": {
             "path": "src/ui/screens.rs",
-            "line": 615
+            "line": 666
           }
         }
       ]
@@ -5507,7 +5708,7 @@
           "description": "布局计算结果，用于滚动范围与坐标转换。",
           "source": {
             "path": "src/ui/screens.rs",
-            "line": 613
+            "line": 664
           }
         },
         {
@@ -5519,7 +5720,7 @@
           "description": "与按钮比较可视区上下边界。",
           "source": {
             "path": "src/ui/screens.rs",
-            "line": 613
+            "line": 664
           }
         },
         {
@@ -5818,6 +6019,61 @@
             "path": "src/ui/widgets.rs",
             "line": 43
           }
+        },
+        {
+          "id": "menu_text.VolumeValue",
+          "name": "VolumeValue",
+          "fields": [
+            "0: SettingKey"
+          ],
+          "description": "音量百分比 / Muted 文字身份，草稿变化时只改已有 Text。",
+          "source": {
+            "path": "src/ui/volume.rs",
+            "line": 20
+          }
+        },
+        {
+          "id": "menu_text.SettingsStatus",
+          "name": "SettingsStatus",
+          "fields": [],
+          "description": "独立设置提示文字身份，保存结果不触发页面重建。",
+          "source": {
+            "path": "src/ui/screens.rs",
+            "line": 20
+          }
+        }
+      ]
+    },
+    {
+      "id": "menu_volume",
+      "name": "音量轨道填充",
+      "count": "Audio 页 3 个",
+      "description": "BSN 音量滑条的后代视觉节点；不参与命中，由草稿同步宽度，页面清理时沿 ChildOf 销毁。",
+      "components": [
+        {
+          "id": "menu_volume.VolumeFill",
+          "name": "VolumeFill",
+          "fields": [
+            "0: SettingKey"
+          ],
+          "description": "保存填充对应字段键，更新已有 Node 的百分比宽度。",
+          "source": {
+            "path": "src/ui/volume.rs",
+            "line": 23
+          }
+        },
+        {
+          "id": "menu_volume.Node",
+          "name": "Node",
+          "fields": [
+            "width: percent(volume)",
+            "height: 100%"
+          ],
+          "description": "视觉填充轨道；Pickable::IGNORE 与 FocusPolicy::Pass 将命中留给滑条。",
+          "source": {
+            "path": "src/ui/volume.rs",
+            "line": 71
+          }
         }
       ]
     }
@@ -5829,9 +6085,12 @@
       "fields": [
         "max_fps: NonZeroU32 = 60",
         "camera.mouse_sensitivity: f32 = 0.003",
-        "camera.invert_y: bool = false"
+        "camera.invert_y: bool = false",
+        "audio.master_volume: u8 = 100",
+        "audio.sfx_volume: u8 = 100",
+        "audio.ui_volume: u8 = 100"
       ],
-      "description": "全局玩家设置；配置帧率须为不小于 60 的整数，120 是合法自定义值。无效文件警告并回退默认 60，保留原文件；CameraSettings 是嵌套值，不是另一个 Resource。",
+      "description": "全局玩家设置；配置帧率须为不小于 60 的整数，120 是合法自定义值。无效文件警告并回退默认 60，保留原文件；CameraSettings 是嵌套值，不是另一个 Resource。 AudioSettings 与 CameraSettings 都是嵌套值；音量仅接受 0..100，旧配置缺项按 100 补齐。",
       "source": {
         "path": "src/settings.rs",
         "line": 17
@@ -5933,7 +6192,7 @@
       "fields": [
         "pressed / just_pressed / just_released"
       ],
-      "description": "引擎从 MouseButtonInput 更新；输入框架可读取，但当前没有鼠标按钮玩法绑定。",
+      "description": "引擎从 MouseButtonInput 更新；输入框架读取，音量滑条仅在局部捕获中读取左键保持与释放，命中复用 Interaction。",
       "source": {
         "path": "src/main.rs",
         "line": 41
@@ -6135,7 +6394,7 @@
       "description": "只属于 limit_frame_rate 系统实例的局部等待和日志去重状态，不是共享 Resource。",
       "source": {
         "path": "src/settings.rs",
-        "line": 269
+        "line": 363
       }
     },
     {
@@ -6394,7 +6653,7 @@
       "description": "保存 Main/Hidden/Settings/Help/Pause 页面、四个设置分类、返回来源与英文提示；不等同于 AppState。",
       "source": {
         "path": "src/ui/mod.rs",
-        "line": 39
+        "line": 40
       }
     },
     {
@@ -6406,7 +6665,7 @@
       "description": "可操作按钮的连续序号；未实现的灰色占位不进入焦点列表。",
       "source": {
         "path": "src/ui/mod.rs",
-        "line": 48
+        "line": 49
       }
     },
     {
@@ -6419,7 +6678,7 @@
       "description": "控制可见焦点来源；鼠标离开取消悬停，键盘/手柄仍可保持焦点序号。",
       "source": {
         "path": "src/ui/mod.rs",
-        "line": 52
+        "line": 53
       }
     },
     {
@@ -6428,12 +6687,13 @@
       "fields": [
         "max_fps: u32",
         "mouse_sensitivity: f32",
-        "invert_y: bool"
+        "invert_y: bool",
+        "audio: AudioSettings"
       ],
-      "description": "菜单独立草稿，打开设置复制当前值；Apply 保存成功后才替换 GameSettings，Back 丢弃，失败保留草稿。",
+      "description": "菜单独立草稿，音量立即预览；分类切换保留，Apply 保存成功才替换 GameSettings，Back 恢复最近应用值，失败保留草稿及预览。",
       "source": {
         "path": "src/settings.rs",
-        "line": 66
+        "line": 91
       }
     },
     {
@@ -6445,7 +6705,7 @@
       "description": "设置文件路径；保存使用根 tmp/settings-save 唯一临时文件、同步关闭后 rename，错误保留原文件。",
       "source": {
         "path": "src/settings.rs",
-        "line": 56
+        "line": 81
       }
     },
     {
@@ -6468,10 +6728,10 @@
       "fields": [
         "0: UiAction"
       ],
-      "description": "鼠标与菜单 Enhanced Input 共享的缓冲请求；PreUpdate 每帧消费第一项并清空其余，防止旧页面穿透。",
+      "description": "鼠标与 Enhanced Input 共享的缓冲请求；普通动作每帧接受第一项。同一滑条数值归并、释放合并，返回语义优先于旧采样。",
       "source": {
         "path": "src/ui/mod.rs",
-        "line": 96
+        "line": 104
       }
     },
     {
@@ -6547,10 +6807,10 @@
         "voices: Vec<Voice>",
         "last_played: HashMap<SoundCue, f64>"
       ],
-      "description": "共享的短音句柄、清单策略、实例生命周期与最近获准时间；LoadedSound/Voice 是普通 Rust 数据，不是组件或资源。",
+      "description": "共享的短音句柄、清单策略、实例生命周期与最近获准时间；LoadedSound/Voice 是普通 Rust 数据，不是组件或资源。 Voice.applied_volume 记录当前实例分贝，Queued 就绪后补同步。",
       "source": {
         "path": "src/audio.rs",
-        "line": 124
+        "line": 230
       }
     },
     {
@@ -6562,7 +6822,7 @@
       "description": "bevy_kira_audio 0.26.0 创建的共享通道；UiTrack 是 add_audio_channel 使用的 Resource 标记。",
       "source": {
         "path": "src/audio.rs",
-        "line": 32
+        "line": 37
       }
     },
     {
@@ -6574,7 +6834,7 @@
       "description": "Kira SFX 通道；播放系统用共享 Res 排队，退出系统发出停止命令。",
       "source": {
         "path": "src/audio.rs",
-        "line": 33
+        "line": 38
       }
     },
     {
@@ -6584,7 +6844,7 @@
       "description": "无字段的 UI 通道类型标记，derive(Resource)；项目不直接访问独立 UiTrack 实例。",
       "source": {
         "path": "src/audio.rs",
-        "line": 25
+        "line": 30
       }
     },
     {
@@ -6594,7 +6854,7 @@
       "description": "无字段的 SFX 通道类型标记，derive(Resource)；项目不直接访问独立 SfxTrack 实例。",
       "source": {
         "path": "src/audio.rs",
-        "line": 27
+        "line": 32
       }
     },
     {
@@ -6606,7 +6866,7 @@
       "description": "Kira 插件安装资产加载器；播放系统只读检查短音是否已加载。",
       "source": {
         "path": "src/audio.rs",
-        "line": 192
+        "line": 298
       }
     },
     {
@@ -6618,7 +6878,7 @@
       "description": "Bevy 资产加载失败缓冲，由 log_load_failures 的独立 MessageReader 消费。",
       "source": {
         "path": "src/audio.rs",
-        "line": 169
+        "line": 275
       }
     },
     {
@@ -6630,7 +6890,7 @@
       "description": "引擎退出缓冲消息；stop_on_exit 在 main 的会话日志刷新之前停止 Kira 通道。",
       "source": {
         "path": "src/audio.rs",
-        "line": 256
+        "line": 368
       }
     },
     {
@@ -6694,6 +6954,70 @@
       "source": {
         "path": "src/ui/navigation.rs",
         "line": 228
+      }
+    },
+    {
+      "id": "resource.AudioMix",
+      "name": "AudioMix",
+      "fields": [
+        "settings: AudioSettings",
+        "preview: bool"
+      ],
+      "description": "UI/SFX 共用的有效音量；设置草稿临时预览与已成功应用配置分开。",
+      "source": {
+        "path": "src/audio.rs",
+        "line": 143
+      }
+    },
+    {
+      "id": "resource.AudioInstances",
+      "name": "Assets<AudioInstance>",
+      "fields": [
+        "句柄 → Kira 已播放实例"
+      ],
+      "description": "Kira 在 PostUpdate 写入新实例；逐实例同步绝对分贝，保留素材基准响度。",
+      "source": {
+        "path": "src/audio.rs",
+        "line": 206
+      }
+    },
+    {
+      "id": "local.VolumeDrag",
+      "name": "Local<Option<VolumeDrag>>",
+      "fields": [
+        "entity: Entity",
+        "last_value: Option<u8>"
+      ],
+      "description": "仅 sample_slider_pointer 使用的局部捕获身份与最后采样值；失焦、释放及实体失效清理。",
+      "source": {
+        "path": "src/ui/volume.rs",
+        "line": 46
+      }
+    },
+    {
+      "id": "local.VolumeEdit",
+      "name": "Local<Option<(SettingKey, u8)>>",
+      "fields": [
+        "正在编辑的设置键",
+        "手势起始音量"
+      ],
+      "description": "handle_requests 私有缓存，释放时比较最终音量并汇总一次确认与日志。",
+      "source": {
+        "path": "src/ui/navigation.rs",
+        "line": 286
+      }
+    },
+    {
+      "id": "local.PageStructure",
+      "name": "Local<Option<PageStructure>>",
+      "fields": [
+        "page / tab / return_page / width",
+        "max_fps / sensitivity / invert_y"
+      ],
+      "description": "rebuild_page 私有缓存；音量和提示变化不重建页面，避免丢失拖动实体。",
+      "source": {
+        "path": "src/ui/screens.rs",
+        "line": 24
       }
     }
   ],
@@ -6920,7 +7244,7 @@
       "description": "聚合多层 BSN 子树，不宣称按钮直接 ChildOf 页面根；重建或 Hidden 时沿层级清理。",
       "source": {
         "path": "src/ui/screens.rs",
-        "line": 29
+        "line": 51
       }
     },
     {
@@ -6935,7 +7259,7 @@
       "description": "page_area 的 MenuScroll 是根内容子节点，固定页脚为并列兄弟节点。",
       "source": {
         "path": "src/ui/screens.rs",
-        "line": 80
+        "line": 110
       }
     },
     {
@@ -6951,6 +7275,21 @@
       "source": {
         "path": "src/ui/widgets.rs",
         "line": 28
+      }
+    },
+    {
+      "id": "menu_volume_hierarchy",
+      "from": "menu_volume",
+      "to": "menu_button",
+      "name": "ChildOf 子树",
+      "kind": "relationship",
+      "reverse": null,
+      "cardinality": "各填充节点经轨道容器归属一个音量滑条",
+      "linked_spawn": true,
+      "description": "聚合多层 BSN 子树，不宣称填充直接 ChildOf 滑条；页面根销毁时完整清理。",
+      "source": {
+        "path": "src/ui/volume.rs",
+        "line": 71
       }
     }
   ],
@@ -7076,7 +7415,8 @@
     "主角 WorldInstanceReady 添加 pending；Update initialize_ready_couriers → sync_courier_animation 读取真实速度与持有关系，仅在 Running 绑定和切换命名动画。",
     "GameplayPlugin 内部安装 DemoPhysicsPlugin、Avian PhysicsPlugins 和无设备 SoundEventsPlugin；GameAudioPlugin 安装 Kira 0.26.0。",
     "BSN 与 Bundle 辅助数据、MapAsset / ItemPlacement、动画节点和 QueryData 不作为独立玩法 ECS 组件列出。",
-    "统一 tracing 的文件与控制台各有后台线程和无界队列，属于外部 I/O；SessionLogGuard 由 main 持有，退出 Flush，Drop 排空并 join，panic 文件屏障 sync_data。"
+    "统一 tracing 的文件与控制台各有后台线程和无界队列，属于外部 I/O；SessionLogGuard 由 main 持有，退出 Flush，Drop 排空并 join，panic 文件屏障 sync_data。",
+    "GameAudioPlugin 初始化 AudioMix；UI 注册滑条采样与已有视觉同步，设置草稿可即时预览音量。"
   ],
   "general_notes": [
     "systems 的固定 ID 用于布局。kind=engine 是引擎或输入框架阶段的概览，kind=sync 是延迟命令应用点，kind=observer 是触发式响应，其余为项目系统。",
