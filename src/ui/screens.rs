@@ -6,7 +6,7 @@ use crate::settings::SettingsDraft;
 
 use super::{
     MenuButton, MenuFocus, MenuInputSource, MenuPage, MenuRoot, MenuState, SettingKey, SettingsTab,
-    UiAction, UiSystems, theme::*, widgets::*,
+    UiAction, UiSystems, theme::*, volume::volume_row, widgets::*,
 };
 
 #[derive(Component, Default, Clone)]
@@ -15,17 +15,39 @@ struct DescriptionTitle;
 #[derive(Component, Default, Clone)]
 struct DescriptionBody;
 
+/// 提示文字独立更新，不因为试听或保存结果销毁正在拖动的滑条。
+#[derive(Component, Default, Clone)]
+struct SettingsStatus;
+
+/// 只缓存会改变 BSN 结构的状态；音量和提示文本由组件更新系统处理。
+#[derive(PartialEq, Eq)]
+struct PageStructure {
+    page: MenuPage,
+    tab: SettingsTab,
+    return_page: MenuPage,
+    width: u32,
+    max_fps: u32,
+    sensitivity: u32,
+    invert_y: bool,
+}
+
 pub(super) fn register(app: &mut App) {
     app.init_resource::<UiTheme>()
         .add_systems(Update, rebuild_page.in_set(UiSystems::Build))
         // Build 与 Style 由插件串联，保证新 BSN 子树的延迟命令先应用。
         .add_systems(
             Update,
-            (style_buttons, update_description, scroll_focused_button).in_set(UiSystems::Style),
+            (
+                style_buttons,
+                update_description,
+                update_settings_status,
+                scroll_focused_button,
+            )
+                .in_set(UiSystems::Style),
         );
 }
 
-/// 页面状态与草稿变化时重建；键盘焦点只更新样式，避免输入实体不断销毁。
+/// 仅结构变化时重建；连续试听与提示文字保留实体，避免拖动和焦点中断。
 fn rebuild_page(
     mut commands: Commands,
     state: Res<MenuState>,
@@ -33,14 +55,22 @@ fn rebuild_page(
     theme: Res<UiTheme>,
     windows: Query<&Window, With<PrimaryWindow>>,
     roots: Query<Entity, With<MenuRoot>>,
-    mut previous_width: Local<Option<u32>>,
+    mut previous: Local<Option<PageStructure>>,
 ) {
     let width = windows.single().map_or(1440.0, |window| window.width());
-    let width_bucket = width.round() as u32;
-    if !state.is_changed() && !draft.is_changed() && *previous_width == Some(width_bucket) {
+    let structure = PageStructure {
+        page: state.page,
+        tab: state.tab,
+        return_page: state.return_page,
+        width: width.round() as u32,
+        max_fps: draft.max_fps,
+        sensitivity: draft.mouse_sensitivity.to_bits(),
+        invert_y: draft.invert_y,
+    };
+    if previous.as_ref() == Some(&structure) {
         return;
     }
-    *previous_width = Some(width_bucket);
+    *previous = Some(structure);
     for entity in &roots {
         commands.entity(entity).despawn();
     }
@@ -262,7 +292,7 @@ fn settings_page(
 ) -> impl Scene {
     let (category, next_index) = match state.tab {
         SettingsTab::Graphics => ("GRAPHICS", 6),
-        SettingsTab::Audio => ("AUDIO", 4),
+        SettingsTab::Audio => ("AUDIO", 14),
         SettingsTab::Controls => ("CONTROLS", 8),
         SettingsTab::Accessibility => ("ACCESSIBILITY", 4),
     };
@@ -283,10 +313,15 @@ fn settings_page(
         SettingsTab::Audio => Box::new(bsn! {
             template_value(column(theme.size(13.0)))
             Children [
-                placeholder_row(theme, "Master Volume", false),
+                volume_row(theme, "Master Volume", draft.audio.master_volume, SettingKey::MasterVolume, 4,
+                    "Adjust every sound together. Changes are heard immediately. Choose Apply to save, or Back to restore the last applied volumes."),
+                volume_row(theme, "SFX Volume", draft.audio.sfx_volume, SettingKey::SfxVolume, 7,
+                    "Adjust pickup, release, landing and carry warning sounds. Use Test SFX to hear a pickup sample in this menu."),
+                volume_row(theme, "UI Volume", draft.audio.ui_volume, SettingKey::UiVolume, 10,
+                    "Adjust menu navigation, confirmation and back sounds. Dragging previews the volume without repeated confirmation sounds."),
                 placeholder_row(theme, "Music Volume", false),
-                placeholder_row(theme, "SFX Volume", false),
-                label(theme, "Audio controls are on their way.", 17.0, MUTED),
+                small_button(theme, "Test SFX", UiAction::TestSfx, 13),
+                label(theme, "Preview changes now. Choose Apply to save.", 17.0, MUTED),
             ]
         }),
         SettingsTab::Controls => Box::new(bsn! {
@@ -362,7 +397,7 @@ fn settings_page(
                                         description_panel(theme, compact),
                                     ]
                                 ),
-                                label(theme, status, 17.0, MUTED),
+                                (label(theme, status, 17.0, MUTED) SettingsStatus),
                             ]
                         ),
                         (
@@ -587,6 +622,22 @@ fn style_buttons(
     }
 }
 
+/// 保存状态与拖动草稿不会重新装配页面，只替换提示节点的文字。
+fn update_settings_status(state: Res<MenuState>, mut text: Query<&mut Text, With<SettingsStatus>>) {
+    if !state.is_changed() {
+        return;
+    }
+    let status = state
+        .status
+        .as_deref()
+        .unwrap_or("Changes are saved only when you choose Apply.");
+    for mut text in &mut text {
+        if text.0 != status {
+            text.0 = status.into();
+        }
+    }
+}
+
 fn update_description(
     focus: Res<MenuFocus>,
     buttons: Query<(&MenuButton, &SettingDescription)>,
@@ -759,23 +810,110 @@ mod tests {
                 UiAction::Back
             ]
         );
-        for tab in [SettingsTab::Audio, SettingsTab::Accessibility] {
-            state.tab = tab;
-            let placeholders = actions(settings_page(
-                &theme,
-                &state,
-                &SettingsDraft::default(),
-                false,
-            ));
-            assert_eq!(
-                &placeholders[4..],
-                &[
-                    UiAction::RestoreDefaults,
-                    UiAction::ApplySettings,
-                    UiAction::Back
-                ]
-            );
-        }
+        state.tab = SettingsTab::Audio;
+        let audio = actions(settings_page(
+            &theme,
+            &state,
+            &SettingsDraft::default(),
+            false,
+        ));
+        assert_eq!(
+            &audio[4..14],
+            &[
+                UiAction::Adjust(SettingKey::MasterVolume, -1),
+                UiAction::Adjust(SettingKey::MasterVolume, 0),
+                UiAction::Adjust(SettingKey::MasterVolume, 1),
+                UiAction::Adjust(SettingKey::SfxVolume, -1),
+                UiAction::Adjust(SettingKey::SfxVolume, 0),
+                UiAction::Adjust(SettingKey::SfxVolume, 1),
+                UiAction::Adjust(SettingKey::UiVolume, -1),
+                UiAction::Adjust(SettingKey::UiVolume, 0),
+                UiAction::Adjust(SettingKey::UiVolume, 1),
+                UiAction::TestSfx,
+            ]
+        );
+        assert_eq!(
+            &audio[14..],
+            &[
+                UiAction::RestoreDefaults,
+                UiAction::ApplySettings,
+                UiAction::Back
+            ]
+        );
+        state.tab = SettingsTab::Accessibility;
+        let placeholders = actions(settings_page(
+            &theme,
+            &state,
+            &SettingsDraft::default(),
+            false,
+        ));
+        assert_eq!(
+            &placeholders[4..],
+            &[
+                UiAction::RestoreDefaults,
+                UiAction::ApplySettings,
+                UiAction::Back
+            ]
+        );
+    }
+
+    #[test]
+    fn volume_and_status_changes_keep_the_current_bsn_tree_and_focus() {
+        let mut app = App::new();
+        app.add_plugins((MinimalPlugins, AssetPlugin::default(), ScenePlugin))
+            .init_asset::<Font>()
+            .insert_resource(test_theme())
+            .insert_resource(MenuState {
+                page: MenuPage::Settings,
+                tab: SettingsTab::Audio,
+                ..default()
+            })
+            .init_resource::<SettingsDraft>()
+            .insert_resource(MenuFocus(5))
+            .insert_resource(MenuInputSource::Navigation)
+            .add_message::<super::super::UiRequest>()
+            .configure_sets(Update, (UiSystems::Build, UiSystems::Style).chain());
+        register(&mut app);
+        super::super::volume::register(&mut app);
+        app.finish();
+        app.cleanup();
+        app.update();
+        let root = app
+            .world_mut()
+            .query_filtered::<Entity, With<MenuRoot>>()
+            .single(app.world())
+            .unwrap();
+        let slider = app
+            .world_mut()
+            .query::<(Entity, &super::super::volume::VolumeSlider)>()
+            .iter(app.world())
+            .find_map(|(entity, slider)| (slider.key == SettingKey::MasterVolume).then_some(entity))
+            .unwrap();
+        app.world_mut()
+            .resource_mut::<SettingsDraft>()
+            .set_volume(SettingKey::MasterVolume, 0);
+        app.world_mut().resource_mut::<MenuState>().status = Some("Settings applied.".into());
+        app.update();
+        assert!(app.world().get::<MenuRoot>(root).is_some());
+        assert!(
+            app.world()
+                .get::<super::super::volume::VolumeSlider>(slider)
+                .is_some()
+        );
+        assert_eq!(app.world().resource::<MenuFocus>().0, 5);
+        assert_eq!(app.world().get::<BackgroundColor>(slider).unwrap().0, GOLD);
+        let mut text = app.world_mut().query::<&Text>();
+        assert!(text.iter(app.world()).any(|text| text.0 == "Muted"));
+        assert!(
+            text.iter(app.world())
+                .any(|text| text.0 == "Settings applied.")
+        );
+        app.world_mut().resource_mut::<MenuState>().tab = SettingsTab::Controls;
+        app.update();
+        assert!(
+            app.world().get_entity(root).is_err(),
+            "Changing category must still rebuild the page"
+        );
     }
 
     #[test]

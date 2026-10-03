@@ -28,7 +28,7 @@ cargo run --locked
 | --- | --- | --- |
 | 主菜单 | Start Game、Settings、How to Play、Quit | Continue、Multiplayer |
 | Graphics | Frame Rate Limit | Window Mode、Resolution、VSync、Shadow Quality、Anti-Aliasing、View Distance |
-| Audio | 暂无可调音频功能 | Master Volume、Music Volume、SFX Volume |
+| Audio | Master Volume、SFX Volume、UI Volume、Test SFX | Music Volume |
 | Controls | Mouse Sensitivity、Invert Camera Y | Rebind Keys |
 | Accessibility | 暂无可调辅助功能 | UI Scale、Camera Shake |
 
@@ -86,9 +86,11 @@ cargo run --locked
 
 ## 设置
 
-可从主菜单或暂停菜单打开 `Settings`。`Graphics` 的 `Frame Rate Limit` 与 `Controls` 的 `Mouse Sensitivity`、`Invert Camera Y` 编辑独立草稿；`Apply` 保存成功后立即生效，`Back` 或 Esc 丢弃未应用的编辑，`Restore Defaults` 只恢复草稿，仍需 `Apply`。保存失败会显示英文提示，保留原设置文件、当前生效设置与草稿，方便重试。
+可从主菜单或暂停菜单打开 `Settings`。`Graphics` 的 `Frame Rate Limit`、`Controls` 的 `Mouse Sensitivity / Invert Camera Y` 和 `Audio` 的三项音量编辑独立草稿，切换分类保留编辑。音量实时预览，正在播放的声音也随之变化；其余设置在 `Apply` 保存成功后立即生效。`Back` 或 Esc 丢弃未应用的编辑并恢复最近一次成功应用的音量；`Restore Defaults` 恢复全部设置草稿并立即预览默认音量，仍需 `Apply` 保存。保存失败显示英文重试提示，保留原设置文件、已应用设置和草稿，音量继续使用临时预览；返回时恢复已应用音量。
 
-玩家设置保存在工作目录的 `settings.json`，该文件由 Git 忽略，各工作目录保留自己的配置。文件缺失时使用代码中的默认值，首次在菜单中选择 `Apply` 后创建本地文件；也可手动创建或修改，文件修改在下次启动时读取。默认设置以 [GameSettings 与 CameraSettings 的实现](src/settings.rs) 为准：
+`Audio` 的 `Master Volume` 控制全部声音，`SFX Volume` 控制拾取、释放、落地及持握警告，`UI Volume` 控制菜单焦点、确认及返回提示。各项范围为 `0–100%`，默认 `100%`；每行提供左右按钮、滑条和百分比，`0%` 显示 `Muted`。按钮、左／右方向键和手柄每次调整 `5%`，鼠标点击或拖动滑条精确到 `1%`。拖动中不连续播放确认音，放开且数值改变后反馈一次；达到边界继续调整不反馈。`Test SFX` 播放一次已有拾取音，便于在主菜单或暂停中试听，不触发拾取玩法。`Music Volume` 仍为不可操作的 `Coming Soon`。
+
+玩家设置保存在工作目录的 `settings.json`，该文件由 Git 忽略，各工作目录保留自己的配置。文件缺失时使用代码中的默认值，首次在菜单中选择 `Apply` 后创建本地文件；也可手动创建或修改，文件修改在下次启动时读取。默认设置以 [GameSettings、CameraSettings 与 AudioSettings 的实现](src/settings.rs) 为准：
 
 ```json
 {
@@ -96,6 +98,11 @@ cargo run --locked
   "camera": {
     "mouse_sensitivity": 0.003,
     "invert_y": false
+  },
+  "audio": {
+    "master_volume": 100,
+    "sfx_volume": 100,
+    "ui_volume": 100
   }
 }
 ```
@@ -105,10 +112,13 @@ cargo run --locked
 | `max_fps` | 渲染帧率上限，必须为不小于 `60` 的整数，默认 `60`；`120`、`144` 等也有效。 |
 | `camera.mouse_sensitivity` | 鼠标灵敏度，单位为弧度/像素，必须为有限正数。 |
 | `camera.invert_y` | 为 `true` 时反转鼠标上下方向。 |
+| `audio.master_volume` | 全部声音的音量百分比，必须为 `0..100` 的整数，默认 `100`。 |
+| `audio.sfx_volume` | 游戏音效的音量百分比，必须为 `0..100` 的整数，默认 `100`。 |
+| `audio.ui_volume` | 菜单音效的音量百分比，必须为 `0..100` 的整数，默认 `100`。 |
 
 菜单帧率选项为 `60 / 90 / 120 / 144 / 165 / 240`；灵敏度每次调整 `0.0005`，菜单范围为 `0.0005..0.02`，界面按默认灵敏度 `0.003` 显示百分比。文件中的有效自定义值不因打开菜单而被修改，只有实际调整相应字段时才进入菜单选项范围。
 
-省略 `max_fps` 时采用默认上限 `60`；省略 `camera` 时采用默认相机设置，旧的仅含有效 `max_fps` 的配置仍然有效。文件缺失时使用默认设置；读取失败或内容无效（包括 `max_fps` 低于 `60`）时记录警告并使用默认设置，帧率上限回退为 `60`，保留原文件。保存前验证完整设置并写入根 `tmp/settings-save/` 的临时文件，成功替换后才更新运行设置。
+省略 `max_fps` 时采用默认上限 `60`；省略 `camera` 时采用默认相机设置；省略 `audio` 或其中任一音量字段时以对应默认值补齐，旧配置仍然有效。文件缺失时使用默认设置；读取失败或内容无效（包括 `max_fps` 低于 `60`、音量超出 `0..100` 或非整数）时记录警告并整体使用默认设置，保留原文件。保存前验证完整设置并写入根 `tmp/settings-save/` 的临时文件，成功替换后才更新已应用设置。
 
 渲染上限不会改变人物移动、跳跃速度或相同鼠标位移对应的旋转幅度，也不会保证实际达到该帧率。性能不足时实际帧率会更低；操作系统调度也可能令帧率略低于上限。垂直同步是否能关闭取决于平台支持，关闭后可能出现画面撕裂。
 
@@ -122,7 +132,7 @@ cargo run --locked
 
 第一版通过 `bevy_kira_audio` 播放菜单焦点、确认与返回反馈，以及拾取、主动释放、包裹实际落地及持续持握失稳提示。菜单只对实际导航／移入可用按钮、接受的操作和设置结果发声；静止鼠标、页面重建、当前分类重选或设置已到边界不发声。打开暂停有确认音，返回、恢复和回主菜单有返回音；设置保存失败使用返回音。具体事件与去重规则见 [音效事件表](assets/audio/events.md)。
 
-音频设置中的音量调节仍为 `Coming Soon`，游戏使用固定总增益；暂停期间菜单声音继续可用。失败拾取、静置接触和普通侧面碰墙不会播放成功或落地音；交接、推车、角色弹开和交付结果仍只有素材与事件接口，等待对应玩法实现。音效不改变输入绑定与物理规则。
+音量控制及保存规则见 [设置](#设置)。全部音量为 `100%` 时保留原有响度，最终线性音量由 `0.25` 混音基准、总音量、分类音量和素材增益共同决定；试听页面的监听音量独立于游戏设置。暂停期间菜单声音和 `Test SFX` 仍可用。静音期间的新反馈直接丢弃，恢复音量不会补播。失败拾取、静置接触和普通侧面碰墙不会播放成功或落地音；交接、推车、角色弹开和交付结果仍只有素材与事件接口，等待对应玩法实现。音效不改变输入绑定与物理规则。
 
 在浏览器中打开 [逐项试听页面](assets/audio/audition.html)，可以单独播放、停止及试听唯一的合成环境循环；环境音默认不在游戏播放。页面由用户点击后播放，支持直接打开本地文件。素材、来源、生成参数和缺口见 [音频管线说明](docs/audio.md)、[资产清单](assets/audio/audio_manifest.json) 和 [归属记录](assets/audio/ATTRIBUTION.md)。外部资产来自 Kenney 官方 CC0 发布包；保留其原始发布 OGG 格式并明确有损，原创反馈音由本地脚本生成。
 

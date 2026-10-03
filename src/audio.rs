@@ -7,12 +7,17 @@ use bevy_kira_audio::{
     AudioApp, AudioChannel, AudioControl, AudioInstance, AudioPlugin as KiraAudioPlugin,
     AudioSource, PlaybackState,
 };
+use bevy_kira_audio::{AudioSystemSet, AudioTween, prelude::Decibels};
 use serde::Deserialize;
 
-use crate::audio_events::{SoundCue, SoundRequest};
+use crate::{
+    audio_events::{SoundCue, SoundRequest},
+    settings::{AudioSettings, GameSettings, SettingsDraft},
+    ui::{MenuPage, MenuState},
+};
 
 const MANIFEST: &str = include_str!("../assets/audio/audio_manifest.json");
-// 第一版固定混音余量与总并发，避免物理碰撞密集时叠加过响；试听页可独立调整监听音量。
+// 保留第一版混音余量；菜单百分比只能衰减，默认 100% 不改变现有听感。
 const MASTER_GAIN: f64 = 0.25;
 const MAX_VOICES: usize = 4;
 // 为菜单保留一个名额，不打断已播放的声音；物理反馈不能占满全部短音并发。
@@ -32,13 +37,25 @@ impl Plugin for GameAudioPlugin {
             .add_audio_channel::<UiTrack>()
             .add_audio_channel::<SfxTrack>()
             .init_resource::<SoundBank>()
+            .init_resource::<AudioMix>()
             .add_systems(Startup, preload_sounds)
             .add_systems(
                 Update,
                 // 鼠标导航在 UI 更新中产生消息，播放需等本帧交互处理完再消费。
-                (log_load_failures, play_requests, stop_on_exit)
+                (
+                    log_load_failures,
+                    sync_audio_mix,
+                    sync_voice_volumes,
+                    play_requests,
+                    stop_on_exit,
+                )
                     .chain()
                     .after(crate::ui::UiSystems::Style),
+            )
+            // Kira 在 PostUpdate 才把 Queued 句柄写入 Assets，当帧就绪后再次同步，避免旧增益多留一帧。
+            .add_systems(
+                PostUpdate,
+                sync_voice_volumes.after(AudioSystemSet::PlayTypedChannels),
             );
     }
 }
@@ -117,6 +134,95 @@ struct Voice {
     cue: SoundCue,
     handle: Handle<AudioInstance>,
     ui: bool,
+    // 排队实例尚未进入 Assets，等待句柄就绪后同步最新预览，避免沿用过时音量。
+    applied_volume: Option<Decibels>,
+}
+
+/// 两条业务通道共用的有效混音源；离开设置页便回到最近成功应用的配置。
+#[derive(Resource, Clone, Copy, Debug, PartialEq, Eq, Default)]
+struct AudioMix {
+    settings: AudioSettings,
+    preview: bool,
+}
+
+impl AudioMix {
+    fn gain(&self, ui: bool) -> f64 {
+        let category = if ui {
+            self.settings.ui_volume
+        } else {
+            self.settings.sfx_volume
+        };
+        MASTER_GAIN * f64::from(self.settings.master_volume) * f64::from(category) / 10_000.0
+    }
+}
+
+/// Kira 的 SILENCE 有明确静音语义，避免把 log10(0) 产生的非有限值传给后端。
+fn volume_decibels(gain: f64, asset_volume: f64) -> Decibels {
+    let volume = gain * asset_volume;
+    if volume <= 0.0 {
+        Decibels::SILENCE
+    } else {
+        Decibels((20.0 * volume.log10()) as f32)
+    }
+}
+
+fn sync_audio_mix(
+    settings: Res<GameSettings>,
+    draft: Option<Res<SettingsDraft>>,
+    menu: Option<Res<MenuState>>,
+    mut mix: ResMut<AudioMix>,
+) {
+    let preview = menu.is_some_and(|menu| menu.page == MenuPage::Settings);
+    let desired = AudioMix {
+        settings: if preview {
+            draft.as_ref().map_or(settings.audio, |draft| draft.audio)
+        } else {
+            settings.audio
+        },
+        preview,
+    };
+    if *mix != desired {
+        // 连续拖动由 UI 在放手时汇总；这里只记录预览启用或退出及正式配置变化。
+        if !preview || !mix.preview {
+            info!(
+                master_volume_before = mix.settings.master_volume,
+                master_volume_after = desired.settings.master_volume,
+                sfx_volume_before = mix.settings.sfx_volume,
+                sfx_volume_after = desired.settings.sfx_volume,
+                ui_volume_before = mix.settings.ui_volume,
+                ui_volume_after = desired.settings.ui_volume,
+                reason = if preview {
+                    "settings_preview"
+                } else {
+                    "applied_settings"
+                },
+                "Audio mix changed"
+            );
+        }
+        *mix = desired;
+    }
+}
+
+fn sync_voice_volumes(
+    mix: Res<AudioMix>,
+    mut bank: ResMut<SoundBank>,
+    mut instances: ResMut<Assets<AudioInstance>>,
+) {
+    // Kira 0.26 的通道 set_volume 会覆盖每个实例的绝对音量，不能保持素材间响度。
+    // 因此统一计算 UI/SFX 增益，再按每条声音的清单音量同步，覆盖正在播放和刚就绪实例。
+    let SoundBank { sounds, voices, .. } = &mut *bank;
+    for voice in voices {
+        let Some(sound) = sounds.get(&voice.cue) else {
+            continue;
+        };
+        let volume = volume_decibels(mix.gain(voice.ui), sound.policy.volume);
+        if voice.applied_volume != Some(volume)
+            && let Some(mut instance) = instances.get_mut(voice.handle.id())
+        {
+            instance.set_decibels(volume, AudioTween::linear(std::time::Duration::ZERO));
+            voice.applied_volume = Some(volume);
+        }
+    }
 }
 
 /// 短音的句柄生命周期与播放状态集中维护；只保留每种事件最后一次获准的播放时间。
@@ -192,6 +298,7 @@ fn play_requests(
     sources: Res<Assets<AudioSource>>,
     ui: Res<AudioChannel<UiTrack>>,
     sfx: Res<AudioChannel<SfxTrack>>,
+    mix: Res<AudioMix>,
     mut bank: ResMut<SoundBank>,
 ) {
     bank.voices.retain(|voice| {
@@ -206,6 +313,13 @@ fn play_requests(
         let Some(sound) = bank.sounds.get(&request.cue) else {
             continue;
         };
+        let gain = mix.gain(sound.ui);
+        if gain == 0.0 || sound.policy.volume == 0.0 {
+            // 静音请求立即消费，恢复音量时不能补播旧交互，也不占冷却或并发。
+            debug!(event = request.cue.id(), source = ?request.source,
+                reason = "muted", "Audio cue skipped");
+            continue;
+        }
         let now = time.elapsed_secs_f64();
         let same_cue = bank
             .voices
@@ -228,11 +342,8 @@ fn play_requests(
             debug!(event = request.cue.id(), source = ?request.source, reason = "loading_or_playback_limit", "Audio cue skipped");
             continue;
         }
-        if sound.policy.volume == 0.0 {
-            continue;
-        }
         // Kira 0.26 接受分贝；清单音量是线性倍率，须显式换算，不能直接把倍率传成 dB。
-        let decibels = (20.0 * (MASTER_GAIN * sound.policy.volume).log10()) as f32;
+        let decibels = volume_decibels(gain, sound.policy.volume);
         let is_ui = sound.ui;
         let handle = if is_ui {
             ui.play(sound.handle.clone()).with_volume(decibels).handle()
@@ -245,9 +356,10 @@ fn play_requests(
             cue: request.cue,
             handle,
             ui: is_ui,
+            applied_volume: None,
         });
         bank.last_played.insert(request.cue, now);
-        info!(event = request.cue.id(), source = ?request.source, volume_db = decibels,
+        info!(event = request.cue.id(), source = ?request.source, volume_db = decibels.0,
             reason = "accepted_sound_request", "Audio cue queued");
     }
 }
@@ -294,6 +406,144 @@ mod tests {
         assert!(allow_request(&policy, 1.3, Some(1.0), 1, 1));
     }
 
+    #[test]
+    fn audio_mix_preserves_asset_balance_and_controls_categories_independently() {
+        let mut mix = AudioMix::default();
+        assert_eq!(mix.gain(true), MASTER_GAIN);
+        assert_eq!(mix.gain(false), MASTER_GAIN);
+        for asset_volume in [0.2, 0.5, 1.0] {
+            let decibels = volume_decibels(mix.gain(true), asset_volume);
+            assert!((f64::from(decibels.as_amplitude()) - MASTER_GAIN * asset_volume).abs() < 1e-6);
+        }
+        mix.settings.sfx_volume = 20;
+        assert_eq!(mix.gain(true), MASTER_GAIN);
+        assert_eq!(mix.gain(false), 0.05);
+        mix.settings.ui_volume = 60;
+        mix.settings.master_volume = 50;
+        assert_eq!(mix.gain(true), 0.075);
+        assert_eq!(mix.gain(false), 0.025);
+        mix.settings.master_volume = 0;
+        for ui in [true, false] {
+            let silent = volume_decibels(mix.gain(ui), 1.0);
+            assert_eq!(silent, Decibels::SILENCE);
+            assert!(silent.0.is_finite());
+            assert_eq!(silent.as_amplitude(), 0.0);
+        }
+    }
+
+    #[test]
+    fn settings_preview_survives_category_changes_and_rolls_back_on_exit() {
+        use crate::ui::SettingsTab;
+
+        let mut app = queued_test_app();
+        let saved_audio = AudioSettings {
+            master_volume: 40,
+            sfx_volume: 60,
+            ui_volume: 80,
+        };
+        app.world_mut().resource_mut::<GameSettings>().audio = saved_audio;
+        let preview_audio = AudioSettings {
+            master_volume: 75,
+            sfx_volume: 20,
+            ui_volume: 50,
+        };
+        app.insert_resource(SettingsDraft {
+            audio: preview_audio,
+            ..default()
+        })
+        .insert_resource(MenuState {
+            page: MenuPage::Settings,
+            tab: SettingsTab::Audio,
+            return_page: MenuPage::Pause,
+            ..default()
+        });
+        app.update();
+        assert_eq!(app.world().resource::<AudioMix>().settings, preview_audio);
+        assert_eq!(app.world().resource::<GameSettings>().audio, saved_audio);
+        app.world_mut().resource_mut::<MenuState>().tab = SettingsTab::Graphics;
+        app.update();
+        assert_eq!(app.world().resource::<AudioMix>().settings, preview_audio);
+        // 保存失败不更新 GameSettings，继续预览；离开设置页时只取最近一次成功应用值。
+        app.update();
+        assert_eq!(app.world().resource::<AudioMix>().settings, preview_audio);
+        app.world_mut().resource_mut::<MenuState>().page = MenuPage::Pause;
+        app.update();
+        assert_eq!(app.world().resource::<AudioMix>().settings, saved_audio);
+        assert!(!app.world().resource::<AudioMix>().preview);
+
+        // 已成功 Apply 的音量是新回滚目标，不回退到进入设置前的值。
+        app.world_mut().resource_mut::<MenuState>().page = MenuPage::Settings;
+        app.world_mut().resource_mut::<GameSettings>().audio = preview_audio;
+        app.world_mut()
+            .resource_mut::<SettingsDraft>()
+            .audio
+            .master_volume = 5;
+        app.update();
+        assert_eq!(app.world().resource::<AudioMix>().settings.master_volume, 5);
+        app.world_mut().resource_mut::<MenuState>().page = MenuPage::Pause;
+        app.update();
+        assert_eq!(app.world().resource::<AudioMix>().settings, preview_audio);
+    }
+
+    #[test]
+    fn muted_requests_are_discarded_without_cooldown_and_unmute_does_not_replay() {
+        for muted_ui in [true, false] {
+            let mut app = queued_test_app();
+            let source = app.world_mut().spawn_empty().id();
+            let muted_cue = if muted_ui {
+                SoundCue::MenuConfirm
+            } else {
+                SoundCue::ParcelPickup
+            };
+            let audible_cue = if muted_ui {
+                SoundCue::ParcelPickup
+            } else {
+                SoundCue::MenuConfirm
+            };
+            let mut settings = app.world_mut().resource_mut::<GameSettings>();
+            if muted_ui {
+                settings.audio.ui_volume = 0;
+            } else {
+                settings.audio.sfx_volume = 0;
+            }
+            app.world_mut()
+                .write_message(SoundRequest::new(muted_cue, source));
+            app.world_mut()
+                .write_message(SoundRequest::new(audible_cue, source));
+            app.update();
+            let bank = app.world().resource::<SoundBank>();
+            assert_eq!(bank.voices.len(), 1);
+            assert_eq!(bank.voices[0].cue, audible_cue);
+            assert!(!bank.last_played.contains_key(&muted_cue));
+            app.world_mut().resource_mut::<GameSettings>().audio = AudioSettings::default();
+            app.update();
+            assert_eq!(app.world().resource::<SoundBank>().voices.len(), 1);
+            app.world_mut()
+                .write_message(SoundRequest::new(muted_cue, source));
+            app.update();
+            assert_eq!(app.world().resource::<SoundBank>().voices.len(), 2);
+        }
+        let mut app = queued_test_app();
+        let source = app.world_mut().spawn_empty().id();
+        app.world_mut()
+            .resource_mut::<GameSettings>()
+            .audio
+            .master_volume = 0;
+        for cue in [SoundCue::MenuConfirm, SoundCue::ParcelPickup] {
+            app.world_mut()
+                .write_message(SoundRequest::new(cue, source));
+        }
+        app.update();
+        assert!(app.world().resource::<SoundBank>().voices.is_empty());
+        assert!(app.world().resource::<SoundBank>().last_played.is_empty());
+        app.world_mut()
+            .resource_mut::<GameSettings>()
+            .audio
+            .master_volume = 100;
+        app.update();
+        assert!(app.world().resource::<SoundBank>().voices.is_empty());
+    }
+
     /// 默认通道只排队而不会初始化设备；实际执行播放系统验证 Queued 的跨帧限额。
     #[test]
     fn queued_requests_obey_limits_without_audio_device() {
@@ -332,11 +582,17 @@ mod tests {
         let mut app = App::new();
         app.init_resource::<Time<Real>>()
             .init_resource::<Assets<AudioSource>>()
+            .init_resource::<Assets<AudioInstance>>()
+            .init_resource::<GameSettings>()
+            .init_resource::<AudioMix>()
             .init_resource::<AudioChannel<UiTrack>>()
             .init_resource::<AudioChannel<SfxTrack>>()
             .init_resource::<SoundBank>()
             .add_message::<SoundRequest>()
-            .add_systems(Update, play_requests);
+            .add_systems(
+                Update,
+                (sync_audio_mix, sync_voice_volumes, play_requests).chain(),
+            );
         let manifest = Manifest::parse(MANIFEST).unwrap();
         for cue in SoundCue::ALL {
             let asset = manifest

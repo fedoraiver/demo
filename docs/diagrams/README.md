@@ -7,7 +7,7 @@
 | 视图 | 独立 SVG | 阅读重点 |
 | --- | --- | --- |
 | App 总览 | [总览](ecs-overview.svg) | 实际插件装配、主菜单／游戏／暂停、海岛准备、固定模拟与音效输出。 |
-| 调度与读写 | [调度](ecs-schedules.svg) | 资源轮询、海岛与动画 Update 链、落水恢复、Avian、菜单 Build → Pointer → Style、Kira 音效与检查器。 |
+| 调度与读写 | [调度](ecs-schedules.svg) | 资源轮询、海岛与动画 Update 链、落水恢复、Avian、菜单 Build → Pointer → 音量处理 → Style、Kira 混音及实例补同步与检查器。 |
 | 实体关系 | [实体与组件](ecs-relationships.svg) | 动态角色与五件可搬物、海岛碰撞／NPC／骨骼、BSN 页面与展示舞台，以及状态退出清理。 |
 | 事件与 Observer | [通信](ecs-events.svg) | 八个玩法／相机动作、六个菜单动作、滚轮与三类实例就绪 Observer、窗口／碰撞消息、声音请求及后台日志。 |
 
@@ -17,7 +17,7 @@
 
 应用默认进入 `AppState::MainMenu`，`Startup` 创建持久菜单控制者、预加载短音并记录启动与美术请求日志；进入 `InGame` 才创建日光与加载相机。`Running` 的海岛 Update 链等待资源及静态碰撞就绪，再生成主角与五件可搬物，并复用加载相机。暂停清空意图、停用玩法输入、释放光标并冻结时间，保留原会话；返回主菜单由 `DespawnOnExit(InGame)` 与 `ChildOf` 清理玩法根和完整海岛子树。主菜单展示相机和独立 GLB 舞台在退出 `MainMenu` 时清理。
 
-键盘与手柄由 `MenuContext` 产生 `UiRequest`；鼠标读取 UI 的 `Interaction`，走同一请求入口。`PreUpdate` 在动作应用后消费请求，后续 `StateTransition` 在固定循环前执行。`Update` 先重建 BSN 页面并应用命令，再处理真实指针移动／点击，最后更新样式、说明与滚动。`Pointer / Navigation` 区分悬停与导航焦点，静止光标和页面重建不抢焦点。占位节点不含按钮动作、不进入导航；文字保留自然测量，设置仅在 `Apply` 保存成功后替换生效资源。F3 通过动作 Observer 释放检查器光标，Esc 通过菜单动作暂停／返回。
+键盘与手柄由 `MenuContext` 产生 `UiRequest`；鼠标读取 UI 的 `Interaction`，走同一请求入口。`PreUpdate` 在动作应用后消费请求，后续 `StateTransition` 在固定循环前执行。`Update` 先重建 BSN 页面并应用命令，再处理真实指针移动／点击和局部滑条捕获，最后更新样式、说明、设置提示与滚动。滑条采样与已有数字／填充更新都在 Build、Pointer 之后和 Style 之前，彼此没有显式全序；Style 内四个显示系统也没有彼此全序。`Pointer / Navigation` 区分悬停与导航焦点，静止光标和页面重建不抢焦点。占位节点不含按钮动作、不进入导航；文字保留自然测量，设置仅在 `Apply` 保存成功后替换生效资源。音量与提示更新已有实体，不销毁拖动滑条；音量草稿即时预览，分类切换保留，Back 恢复最近成功应用值。F3 通过动作 Observer 释放检查器光标，Esc 通过菜单动作暂停／返回。
 
 固定模拟为 60 Hz，每个渲染帧可能执行 0～N 次。默认渲染上限为 60 FPS，允许配置的最低上限为 60；实际帧率仍取决于运行性能。Observer 按匹配事件触发，不由注册顺序组成流水线；Enhanced Input 的 `Apply` 与 ECS 命令应用是两个步骤。
 
@@ -27,7 +27,7 @@
 
 `Position`／速度是实际物理状态，`Transform` 是插值呈现；`HeldTarget` 只供呈现检查，施力另读真实物理位置，模拟与显示共同读取物品 `CarryGrip`。拿起与释放不瞬移箱体，释放保留动量，失效持有关系会恢复自由碰撞并自然下落。`Forces`、`RecoverableBody` 是 `QueryData`，`SpatialQuery` 是 `SystemParam`；导入布局辅助值、动画节点/状态辅助值以及日志线程/队列均不作为玩法 ECS 组件列出。
 
-声音反馈使用 `SoundRequest` 缓冲消息。菜单的 `previous / next / pointer_interaction` 仅在真实焦点变化时发送 `MenuHover`；`handle_requests` 对接受的语义操作发送 `MenuConfirm / MenuCancel`。成功拾取与主动释放在关系命令生效时提交；持握警告在固定玩法链之后只读真实位置，落地检测在物理步之后只读 `ContactGraph`，两者仅在 Running 收集。`Update` 在 UI Style 之后顺序执行加载失败日志、请求播放与退出停止，使用 `Time<Real>` 节流，暂停菜单仍可发声；总并发 4、SFX 最多 3，为 UI 保留 1 个名额。`SoundBank` 维护策略与实例，UI/SFX 通道由 Kira 消费排队命令。交接、推车、弹开及交付共五种 cue 仅预留映射，合成环境底声仅供试听。
+声音反馈使用 `SoundRequest` 缓冲消息。菜单的 `previous / next / pointer_interaction` 仅在真实焦点变化时发送 `MenuHover`；`handle_requests` 对接受的语义操作发送 `MenuConfirm / MenuCancel`。滑条拖动只更新草稿，结束且最终值改变时汇总一次确认；`TestSfx` 只请求现有 `ParcelPickup`，不触发玩法。成功拾取与主动释放在关系命令生效时提交；持握警告在固定玩法链之后只读真实位置，落地检测在物理步之后只读 `ContactGraph`，两者仅在 Running 收集。`Update` 在 UI Style 之后顺序执行加载失败日志、有效混音选择、实例音量同步、请求播放与退出停止，使用 `Time<Real>` 节流，暂停菜单仍可发声；总并发 4、SFX 最多 3，为 UI 保留 1 个名额。`AudioMix` 选择草稿或已应用音量，按 `0.25 × master% × UI/SFX% × 素材基准` 计算实例分贝；静音新请求立即丢弃，不占冷却／并发。`SoundBank` 维护策略与实例，UI/SFX 通道由 Kira 消费排队命令；`PostUpdate` 在 `PlayTypedChannels` 后再次同步刚就绪实例，保留素材间响度与最新预览。交接、推车、弹开及交付共五种 cue 仅预留映射，合成环境底声仅供试听。
 
 [ecs-data.json](ecs-data.json) 保存经过源码核对的清单，[build-ecs.mjs](build-ecs.mjs) 生成交付文件，[source-viewer.mjs](source-viewer.mjs) 将清单引用文件的完整文本内嵌到源码查看页。架构图的清单、布局、关系、源码入口及生成校验统一归下面的 Agent Hook 维护职责；普通代码开发任务不逐次手动维护或刷新。分享时保留 `ecs-architecture.html` 和 `ecs-source.html` 的相对位置。
 
