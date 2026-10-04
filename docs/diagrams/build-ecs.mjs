@@ -134,7 +134,7 @@ function card(x, y, w, h, id, title, rows = [], kind = 'system', extra = '') {
 }
 const brief = {
  frame_limit:'按设置等待帧间剩余时间',time_update:'更新引擎时间与固定步累积',input_update:'更新键鼠状态与窗口输入消息',mouse_capture:'窗口 / Egui 命中 → 捕获与上下文',enhanced_prepare:'准备有效输入上下文和绑定',enhanced_evaluate:'评估绑定、条件和动作状态',input_apply:'写动作输出，排入 trigger 命令',
- facing_fixed:'按相机 yaw 同步人物朝向',movement:'输入 / 实际速度 → 有上限的控制力',gravity:'消费跳跃请求 → 一次向上冲量',interaction:'射线 / 范围 → 拾取或保留动量释放',held_apply:'应用持握关系、目标与碰撞层',held_fixed:'角色呈现姿态 → HeldTarget',facing_update:'保留插值位置，同步本帧 yaw',held_update:'更新呈现目标，不搬箱或施力',camera_follow:'插值位置 + 观察状态 → 镜头',visibility_update:'视角模式 → 人物模型可见性',perspective_apply:'消费请求，切换第一 / 第三人称',
+ facing_fixed:'按相机 yaw 同步人物朝向',movement:'输入 / 实际速度 → 有上限的控制力',gravity:'消费跳跃请求 → 一次向上冲量',interaction:'射线 / 范围 → 拾取或保留动量释放',held_apply:'应用持握关系、目标与碰撞层',held_fixed:'角色呈现姿态 → HeldTarget',facing_update:'保留插值位置，同步本帧 yaw',held_update:'更新呈现目标，不搬箱或施力',camera_follow:'插值位置 / World 球扫掠 → 安全镜头',visibility_update:'视角模式 → 人物模型可见性',perspective_apply:'消费请求，切换第一 / 第三人称',
  gravity_sync:'配置变化 → Gravity',grounded_fixed:'脚底 shape cast → 接地状态',grounded_after:'物理回写后重新探测接地',orphan_cleanup:'失效持有者 / 关系 → 自由碰撞',orphan_apply:'应用失效清理命令',grip_forces:'真实 Position / 速度 → 弹簧与反作用力',velocity_log:'解算后实际速度 → 采样日志',collision_log:'CollisionStart / End → 文件日志',physics_prepare:'准备物理位姿、质量与碰撞数据',physics_step:'积分 / 接触 / 子步求解 → 真实运动',physics_writeback:'Position / Rotation → Transform',easing_reset:'FixedFirst：重置并记录插值起点',easing_end:'FixedLast：记录物理步插值终点',easing_apply:'固定循环后按 overstep 插值',easing_tick:'显示同步后记录变化 tick',
  transform_propagate:'根 Transform → 子 GlobalTransform',render:'提取 ECS 数据，准备并绘制画面',observe_move:'路由到角色，更新持续移动轴',observe_complete:'移动完成，将轴归零',observe_cancel:'移动取消，将轴归零',observe_jump:'路由到角色，设置跳跃请求',observe_interact:'路由到角色，设置交互请求',observe_look:'有效捕获时更新当前模式角度',observe_perspective:'记录请求来源，稍后统一切换',audio_preload:'清单契约 → 短音加载与映射',audio_load_failures:'资产加载失败 → 会话日志',audio_play:'请求 / 加载 / 冷却 / 并发 → 播放队列',audio_stop:'AppExit → UI / SFX 通道停止',audio_strain:'持续持握误差 → 一次警告',audio_land:'真实支撑冲量 → 一次落地反馈'
 };
@@ -154,6 +154,10 @@ Object.assign(brief, {
   menu_scroll_focus: '键盘 / 手柄焦点 → 可见滚动范围',
   menu_asset_failures: '资产加载失败 → 英文会话日志',
   menu_backdrop_spawn: '真实 GLB 展台 / 独立菜单相机；无地图碰撞',
+  menu_animation_play: 'pending / 命名 Carry_Idle → 循环播放',
+  animation_initialize: '16 命名片段 / 鞋底节点 → 绑定',
+  animation_sync: '局部速度 / 持箱 / 跳跃 → 权重与相位',
+  animation_grounding: '本帧鞋底姿态 → 视觉高度补偿',
   observe_release_pointer: 'F3：释放光标，保持 Running 和检查器',
 });
 function system(x, y, w, id, extraRows = null, height = 112) {
@@ -212,8 +216,8 @@ const phases = [
   { x: 1125, w: 330, name: 'FixedPostUpdate', note: 'Avian 默认物理阶段', rows: ['Prepare → StepSimulation', '→ Writeback → 接地 / 速度日志', '真实位置 / 速度 / 碰撞'] },
   { x: 1490, w: 330, name: 'FixedLast', note: '固定步末尾', rows: ['记录本步插值终点', '角色：平移插值', '箱体：完整 Transform 插值'] },
   { x: 1855, w: 330, name: '固定循环之后', note: 'RunFixedMainLoop · 每帧', rows: ['Ease → 朝向 → HeldTarget', '→ 镜头 → 可见性', '→ UpdateEasingTick'] },
-  { x: 2220, w: 330, name: 'Update / SpawnScene', note: '资源与实例的异步准备', rows: ['资源轮询；海岛三步装配链', '主角动画绑定 → 状态切换', 'SpawnScene 实例化 / 就绪事件'] },
-  { x: 2585, w: 330, name: 'PostUpdate', note: '骨骼动画与最终变换', rows: ['Animation → Transform传播', '检查器 UI 为独立分支', '→ 渲染子应用'] },
+  { x: 2220, w: 330, name: 'Update / SpawnScene', note: '资源与实例的异步准备', rows: ['海岛装配；主角 16 动作混合', '菜单 pending → 命名绑定', 'SpawnScene 实例化 / 就绪事件'] },
+  { x: 2585, w: 330, name: 'PostUpdate', note: '骨骼动画与最终变换', rows: ['Animation → 鞋底补偿 → 传播', '检查器 UI 为独立分支', '→ 渲染子应用'] },
 ];
 phases.forEach((p, phaseIndex) => { b += frame(p.x, 382, p.w, 180, p.name, `«Schedule» · ${p.note}`, '#526477', `phase-${phaseIndex}`); b += p.rows.map((r, i) => fitted(p.x + 17, 469 + i * 31, r, p.w - 34)).join(''); });
 phases.slice(0, -1).forEach((p, i) => b += edge([[p.x + p.w, 420], [phases[i + 1].x, 420]]));
@@ -224,8 +228,8 @@ const data = [
   { id: 'character.Position', x: 760, w: 330, name: '真实物理状态', rows: ['Position / Rotation / Velocity', 'CharacterMotion：仅 grounded', 'Transform：插值呈现位置'] },
   { id: 'parcel.HeldTarget', x: 1125, w: 330, name: 'HeldTarget / 物理持握', rows: ['目标仅供呈现检查', '施力另读真实 Position', '实际箱体可滞后 / 受碰撞阻挡'] },
   { id: 'world.Collider', x: 1490, w: 330, name: '静态世界碰撞', rows: ['三角网格 + 入口坡道', 'World / Character / Parcel', '持握箱忽略 Character 层'] },
-  { id: 'camera.OrbitCamera', x: 1855, w: 330, name: 'OrbitCamera', rows: ['目标 / 模式 / yaw / 两组 pitch', '镜头读本帧插值后角色位置', '相机 Transform：最终姿态'] },
-  { id: 'visual.GlobalTransform', x: 2585, w: 330, name: '视觉子实体', rows: ['GLB 网格/骨骼子树无刚体', '直属视觉根 → 业务根实体', '骨骼 / GlobalTransform → 渲染'] },
+  { id: 'camera.OrbitCamera', x: 1855, w: 330, name: 'OrbitCamera', rows: ['yaw / pitch / 呈现距离 / 遮挡引用', '插值位置 + World 球形扫掠', '相机 Transform：最终姿态'] },
+  { id: 'visual.GlobalTransform', x: 2585, w: 330, name: '视觉子实体', rows: ['GLB 网格/骨骼子树无刚体', '主角视觉根只补偿鞋底高度', '骨骼 / GlobalTransform → 渲染'] },
 ];
 data.forEach(d => { registry[d.id] = { id: d.id, name: d.name, kind: 'Component', description: d.rows.join('；') }; b += card(d.x, 697, d.w, 151, d.id, d.name, d.rows, 'component', 'small'); });
 registry['resource.GameSettings'] = model.resources.find(r => r.id === 'resource.GameSettings');
@@ -290,8 +294,8 @@ const columns = [
   { x: 1305, w: 430, nodeWidth: 380, phase: 'FixedPostUpdate', note: 'Avian 默认物理解算', ids: ['physics_prepare','physics_step','physics_writeback','grounded_after','velocity_log'] },
   { x: 1760, w: 330, phase: 'FixedLast', note: '每个固定步末尾', ids: ['easing_end'] },
   { x: 2135, w: 380, phase: '固定循环之后', note: 'RunFixedMainLoop · AfterFixedMainLoop', ids: ['easing_apply','facing_update','held_update','camera_follow','visibility_update','easing_tick'] },
-  { x: 2560, w: 470, phase: 'Update / SpawnScene', note: '三条 Update 路线不设彼此全序', ids: [] },
-  { x: 3075, w: 400, phase: 'PostUpdate / 渲染', note: '动画先于变换传播，UI 为独立分支', ids: [] },
+  { x: 2560, w: 470, phase: 'Update / SpawnScene', note: '资源 / 海岛 / 主角 / 菜单不设全序', ids: [] },
+  { x: 3075, w: 400, phase: 'PostUpdate / 渲染', note: '动画 → 鞋底补偿 → 传播；UI 独立', ids: [] },
 ];
 const accessName = value => value.split('.').pop().replace(/\s*\(.*/, '');
 function accessRows(id) { const s = systems[id]; const summarize = values => { const rank = v => v.startsWith('resource.') ? 1 : v.startsWith('local.') ? 2 : 0; const sorted = [...values].sort((a,b)=>rank(a)-rank(b)); return sorted.map(accessName).slice(0,2).join(' / ') + (values.length>2?' …':''); }; return [brief[id] || s.description, ...(s.reads.length ? [`R ${summarize(s.reads)}`] : []), ...(s.writes.length ? [`W ${summarize(s.writes)}`] : [])].slice(0, 3); }
@@ -357,14 +361,17 @@ const animationIds = ['animation_initialize','animation_sync'].filter(id=>system
 animationIds.forEach((id,i)=>{const y=1020+i*160;b+=system(2575,y,440,id,accessRows(id),130);if(i)b+=edge([[2795,y-30],[2795,y]],'chain / Commands','order',[2648,y-16],[animationIds[i-1],id]);});
 if(animationIds.length)b+=text(2584,963,'主角动画链与海岛链无显式全序','small');
 if(systems.world_spawn){b+=system(2575,1450,440,'world_spawn',['SpawnScene：模板实例化','WorldInstanceReady → 对应 Observer'],130);b+=text(2584,1640,'就绪标记由后续 Update 消费','small');}
+if(systems.menu_animation_play){b+=system(2575,1780,440,'menu_animation_play',accessRows('menu_animation_play'),130);b+=text(2584,1950,'菜单 GLTF / clip 未入库保留 pending；','small');b+=text(2584,1978,'按 Carry_Idle 名称绑定，不依赖排列。','small');}
 const postX=3090;
-if(systems.animation_engine){b+=system(postX,193,320,'animation_engine',['推进图与过渡 → 骨骼 Transform'],118);b+=edge([[3250,311],[3250,370]],'before(Propagate)','order',[3165,341],['animation_engine','transform_propagate']);}
-b += system(postX,370,320,'transform_propagate',['R 根 Transform / ChildOf','W GlobalTransform / 可见性'],118);
-b += system(postX,585,320,'inspector_pass',['反射读取 / 编辑实体、资源与资产','multipass：每帧可多轮处理'],118);
-b += text(3099,546,'Running 显示检查器；无分支全序','small');
-b += edge([[3410,429],[3450,429],[3450,780],[3330,780],[3330,825]],'','order',null,['transform_propagate','render']);
-b += edge([[3250,703],[3250,825]],'','order',null,['inspector_pass','render']);
-b += system(postX,825,320,'render',['Extract → Prepare → Render','RenderApp 是相关子应用概览'],118);
+if(systems.animation_engine){b+=system(postX,193,320,'animation_engine',['采样图 → 本帧骨骼 Transform'],118);b+=edge([[3250,311],[3250,370]],'after(AnimationSystems)','order',[3250,342],['animation_engine','animation_grounding']);}
+b += system(postX,370,320,'animation_grounding',['Running：本帧鞋底 → 视觉高度','TransformHelper 读骨链；不写物理'],118);
+b += edge([[3250,488],[3250,585]],'before(Propagate)','order',[3250,536],['animation_grounding','transform_propagate']);
+b += system(postX,585,320,'transform_propagate',['R 根 Transform / ChildOf','W GlobalTransform / 可见性'],118);
+b += system(postX,800,320,'inspector_pass',['反射读取 / 编辑实体、资源与资产','multipass：每帧可多轮处理'],118);
+b += text(3099,761,'Running 显示检查器；无分支全序','small');
+b += edge([[3410,644],[3450,644],[3450,995],[3330,995],[3330,1040]],'','order',null,['transform_propagate','render']);
+b += edge([[3250,918],[3250,1040]],'','order',null,['inspector_pass','render']);
+b += system(postX,1040,320,'render',['Extract → Prepare → Render','RenderApp 是相关子应用概览'],118);
 columns.slice(0, -1).forEach((col, i) => b += edge([[col.x + col.w, 144], [columns[i + 1].x, 144]]));
 b += text(43, 2590, 'OnEnter(InGame) 只准备日光/加载相机；Running 的 Update 资源和静态碰撞就绪后生成动态根。', 'note');
 b += text(43, 2624, 'Commands 同步点用琥珀色框；碰撞日志与回写后接地/采样只有各自明确的依赖。', 'note');
@@ -425,9 +432,9 @@ const primaryComponents = {
   controller:['PlayerId','GameplayContext','ContextActivity','ControlsCharacter','ControlsCamera','Actions','GamepadDevice'], action:['Action','ActionSettings','ActionOf','Bindings','Press'], binding:['Binding','BindingOf'],
   character:['Character','CharacterIntent','CharacterMotion','SpawnPoint','RigidBody','Collider','Position','LinearVelocity','Transform','CollisionLayers','SweptCcd','LockedAxes','TranslationInterpolation','HoldingItems','Children'],
   parcel:['Parcel','Pickable','ItemModel','CarryGrip','SpawnPoint','RigidBody','Collider','Position','LinearVelocity','AngularVelocity','Transform','CollisionLayers','HeldBy','HeldTarget','TransformInterpolation','Children'],
-  camera:['LoadingCamera','OrbitCamera','MouseLookState','Camera3d','Transform'],world:['IslandCollider','RigidBody','Collider','CollisionLayers','Transform','ChildOf'],
-  visual:['CharacterVisual','CourierVisual','CourierAnimationPending','WorldAssetRoot','Transform','GlobalTransform','ChildOf','Children','Visibility'],window:['PrimaryWindow','Window','CursorOptions'],
-  island:['IslandMap','IslandPending','IslandReady','ActorsSpawned','WorldAssetRoot','Children'],npc:['DisplayNpc','ChildOf'],animation_player:['AnimationPlayer','AnimationGraphHandle','AnimationTransitions','CourierAnimation','ChildOf'],model_node:['Transform','GlobalTransform','ChildOf','Mesh3d','MeshMaterial3d','Visibility','GltfExtras','SkinnedMesh','AnimationTargetId']
+  camera:['LoadingCamera','OrbitCamera','MouseLookState','Camera3d','Projection','Transform'],world:['IslandCollider','RigidBody','Collider','CollisionLayers','Transform','ChildOf'],
+  visual:['CharacterVisual','CourierVisual','CourierAnimationPending','CourierFootGrounding','WorldAssetRoot','Transform','GlobalTransform','ChildOf','Children','Visibility'],window:['PrimaryWindow','Window','CursorOptions'],
+  island:['IslandMap','IslandPending','IslandReady','ActorsSpawned','WorldAssetRoot','Children'],npc:['DisplayNpc','ChildOf'],animation_player:['AnimationPlayer','AnimationGraphHandle','CourierAnimation','ChildOf'],model_node:['Name','Transform','GlobalTransform','ChildOf','Mesh3d','MeshMaterial3d','Visibility','SkinnedMesh','AnimationTargetId','AnimatedBy']
 };
 entityBoxes.forEach(box=>{const e=entities[box.id];registry[`entity-${e.id}`]={...e,name:e.name,kind:'Entity'};
   const shortName={visual:'直属 GLB 视觉根',action:'动作',binding:'输入绑定',controller:'控制者',character:'角色',parcel:'五件可搬物',camera:'同一相机',world:'海岛静态碰撞',window:'主窗口',island:'海岛实例根',npc:'地图展示 NPC',animation_player:'主角播放器节点',model_node:'GLB 网格/骨骼节点'}[e.id];
@@ -471,6 +478,12 @@ if(entities.animation_player){
   b+=edge([[1510,1210],[1448,1210],[1448,2242],[332,2242],[332,2210]],'CourierVisual 内的播放器子树','relationship',[1080,2242],['entity-animation_player','entity-visual']);
   b+=edge([[1510,995],[1432,995],[1432,621],[355,621],[355,650]],'CourierAnimation.character','reference',[920,621],['entity-animation_player','entity-character']);
 }
+// 高度补偿缓存的是普通引用；GLB ChildOf 生命周期与数据读取关系分别表达。
+b+=edge([[1230,1050],[1230,1130]],'遮挡实体 0..1','reference',[1230,1090],['entity-camera','entity-world','camera.OrbitCamera']);
+b+=edge([[220,1750],[220,1660],[480,1660],[480,1210],[390,1210]],'补偿 → 角色','reference',[480,1510],['entity-visual','entity-character','visual.CourierFootGrounding']);
+b+=edge([[390,2050],[1418,2050],[1418,1880],[1510,1880]],'缓存八个鞋底节点','reference',[960,2050],['entity-visual','entity-model_node','visual.CourierFootGrounding']);
+b+=edge([[390,1990],[1470,1990],[1470,1332],[1730,1332],[1730,1290]],'首个播放器 / 接地状态','reference',[1050,1990],['entity-visual','entity-animation_player','visual.CourierFootGrounding']);
+b+=edge([[1900,1450],[1900,1290]],'AnimatedBy','reference',[1900,1380],['entity-model_node','entity-animation_player','model_node.AnimatedBy']);
 // 菜单实体在海岛和骨骼层级右侧独立展开，省略中间 BSN 布局容器。
 const menuEntityBoxes=[
  {id:'menu_controller',x:2250,y:112,w:430,h:350},{id:'menu_root',x:2780,y:112,w:430,h:350},
@@ -588,12 +601,12 @@ menuEvents.forEach((o,i)=>{
  b += card(1552,y,312,118,`event-${id}`,o.event,[action?'target：MenuContext 控制者':o.event.startsWith('Pointer')?'target：MenuScroll 视口':'target：菜单快递员 GLB 根'],'event','small');
  b += system(1944,y,335,id,[s.description],118);
  const resultId=`result-${id}`;registry[resultId]={name:`${s.name} 输出`,kind:'Data write',description:s.description,reads:s.reads,writes:s.writes,notes:s.notes,source:s.source};
- b += card(2366,y,345,118,resultId,action?'菜单共享数据':o.event.startsWith('Pointer')?'ScrollPosition':'动画播放与图句柄',s.writes.slice(0,2).map(v=>`W ${accessName(v)}`),action?'resource':'component','small');
+ b += card(2366,y,345,118,resultId,action?'菜单共享数据':o.event.startsWith('Pointer')?'ScrollPosition':'菜单 pending 标记',s.writes.slice(0,2).map(v=>`W ${accessName(v)}`),action?'resource':'component','small');
  b += edge([[1864,y+59],[1944,y+59]],'触发','trigger',[1904,y+59],[`event-${id}`,id]);
  b += edge([[2279,y+59],[2366,y+59]],'W','write',[2322,y+59],[id,resultId,...s.writes]);
 });
 b += frame(2750,306,250,menuEventBottom-346,'路由与消费','事件分别匹配真实目标。');
-b += ['Previous / Next','↓ MenuFocus','＋ Navigation 来源','','Left / Right / Confirm','Back（含 Esc）','↓ UiRequest Message','↓ PreUpdate 统一消费','','指针点击写同一队列','滚轮只改视口位置','','WorldInstanceReady','↓ 遍历菜单 GLB 骨架','AnimationPlayer 循环播放'].map((v,i)=>fitted(2767,392+i*38,v,216,'small')).join('');
+b += ['Previous / Next','↓ MenuFocus','＋ Navigation 来源','','Left / Right / Confirm','Back（含 Esc）','↓ UiRequest Message','↓ PreUpdate 统一消费','','指针点击写同一队列','滚轮只改视口位置','','WorldInstanceReady','↓ 仅标记菜单 pending','↓ Update 等待命名 clip','绑定 Carry_Idle 循环播放'].map((v,i)=>fitted(2767,392+i*38,v,216,'small')).join('');
 const requestY=menuEventBottom+45;
 b += frame(1540,requestY,1470,525,'UiRequest · 页面、设置与状态','消息消费集中于 PreUpdate；焦点、滚动和动画直接更新 ECS。');
 b += card(1560,requestY+85,360,130,'resource.UiRequestMessages','UiRequest 消息缓冲',['Confirm / Adjust / Back','与指针点击共用 UiAction'],'message','small');

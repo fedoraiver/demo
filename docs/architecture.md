@@ -18,7 +18,7 @@
 | [physics.rs](../src/physics.rs) | 注册 Avian3D 物理插件、重力和碰撞层，构建角色与箱体物理组件，并记录接触开始和结束日志。 |
 | [art_assets.rs](../src/art_assets.rs) | 通过 `ArtAssetsPlugin` 加载海岛、主角、普通纸箱、易碎纸箱与木箱五份 GLB；`ArtAssets` 保存强句柄，`ArtLoadState` 单独保存加载状态，记录加载完成及失败。 |
 | [scene.rs](../src/scene.rs) | `PrototypeScenePlugin` 使用 Rust 内嵌 BSN `scene` 函数装配场景；处理地图实例就绪、展示实体替换和结构碰撞生成，资源及碰撞准备完成后生成动态角色、物品、控制者和相机。 |
-| [character_animation.rs](../src/character_animation.rs) | `CharacterAnimationPlugin` 为主角 GLB 绑定命名动画，根据真实水平速度与持有关系选择动作，并管理过渡与关联清理。 |
+| [character_animation.rs](../src/character_animation.rs) | `CharacterAnimationPlugin` 为主角 GLB 绑定命名动画，根据局部真实速度、接地与持有关系连续混合 16 个动作，统一脚步相位、跳跃阶段、视觉接地补偿与关联清理。 |
 | [island_recovery.rs](../src/island_recovery.rs) | `IslandRecoveryPlugin` 根据物理位置检测落水，使用实体的 `SpawnPoint` 恢复玩家与可搬物品，解除持握并清理运动状态。 |
 | [settings.rs](../src/settings.rs) | 加载、校验、编辑草稿和保存玩家设置，失败时保留原文件；在时间更新之前限制渲染循环频率。 |
 | [startup_log.rs](../src/startup_log.rs) | 通过 `StartupLogPlugin` 集中注册四项启动日志，只读玩法配置与固定时间步，并记录姿态同步约定和检查器启用信息。 |
@@ -52,7 +52,7 @@ UI 控件与主菜单舞台使用 Bevy 0.19 的 `bsn!`、`bsn_list!` 和返回 `
 
 主菜单的 `MenuBackdrop` 使用 `DespawnOnExit(AppState::MainMenu)` 管理相机、光照和真实美术模型。它由独立快递员、快递站、地形、海水、植物与包裹 GLB 组成；设置和帮助沿用这个舞台，暂停沿用当前玩法相机。菜单相机标记 `IsDefaultUiCamera` 与 `PrimaryEguiContext`，进入游戏时随舞台销毁，玩法相机接管界面。
 
-模型通过 `WorldAssetRoot` 加载原有 `#Scene0`；快递员 `WorldInstanceReady` 后查找骨架中的 `AnimationPlayer` 并循环播放索引 0 的 `Carry_Idle`。展示包裹是独立模型附件，没有角色控制器、Avian 刚体或玩法持有关系。菜单舞台与使用 `assets/maps/courier_island.glb` 的可游玩海岛分别装配；菜单模型不参与玩法碰撞或配送业务。字体资源与资产准备约定见 [README](../README.md#美术与字体准备)。
+模型通过 `WorldAssetRoot` 加载原有 `#Scene0`；快递员 `WorldInstanceReady` 后查找骨架中的 `AnimationPlayer` 并等待父 GLB 和命名片段可用后，循环播放按名称绑定的 `Carry_Idle`。展示包裹是独立模型附件，没有角色控制器、Avian 刚体或玩法持有关系。菜单舞台与使用 `assets/maps/courier_island.glb` 的可游玩海岛分别装配；菜单模型不参与玩法碰撞或配送业务。字体资源与资产准备约定见 [README](../README.md#美术与字体准备)。
 
 保存设置前校验与序列化完整 `GameSettings`，然后在根 `tmp/settings-save/` 写入唯一临时文件、同步并关闭句柄，再用 `rename` 替换目标文件。替换失败时保留原文件并清理临时产物；临时文件与设置及会话日志各自管理。菜单步进范围不收紧 JSON 的原有有效范围，打开设置保留有效自定义值，实际调整相应字段后才进入菜单范围。
 
@@ -113,7 +113,7 @@ UI 控件与主菜单舞台使用 Bevy 0.19 的 `bsn!`、`bsn_list!` 和返回 `
                                                   → PostUpdate 视觉子实体 GlobalTransform
 ```
 
-`on_camera_look` 根据灵敏度和 Y 轴设置换算角度，不另存 `CameraLookIntent`，也不乘帧时间或固定步时间。默认第三人称保持固定环绕距离，俯仰限制在 `5°..80°`；初始镜头相对脚底偏移为 `(0, 6, 8)`，观察中心位于脚底上方 `0.8`。第一人称镜头位于脚底上方 `1.65`，首次俯仰角为 `0°`，之后限制在 `-85°..85°`。两种模式共享水平角并分别保存俯仰角，人物朝向和移动只使用水平角。
+`on_camera_look` 根据灵敏度和 Y 轴设置换算角度，不另存 `CameraLookIntent`，也不乘帧时间或固定步时间。默认第三人称以固定环绕距离为目标，实际显示距离受环境阻挡限制，俯仰限制在 `5°..80°`；初始镜头相对脚底偏移为 `(0, 6, 8)`，观察中心位于脚底上方 `0.8`。第一人称镜头位于脚底上方 `1.65`，首次俯仰角为 `0°`，之后限制在 `-85°..85°`。两种模式共享水平角并分别保存俯仰角，人物朝向和移动只使用水平角。
 
 `TogglePerspectiveAction` 默认绑定 I，使用 `Press` 与 `require_reset` 保证每次按下只切换一次，长按不重复。`request_perspective_toggle` Observer 验证窗口聚焦、控制关联和目标有效后，将请求保存到 `OrbitCamera.toggle_requested_by`；`apply_perspective_toggle` 在 `PreUpdate` 的 `EnhancedInputSystems::Apply` 之后消费请求并切换同一台相机的模式。因此同帧鼠标位移先作用于原模式，切换后恢复目标模式记住的俯仰角，不依赖动作遍历顺序；首次进入第一人称仍为平视。切换在本帧完成，不修改鼠标捕获、角色位置或玩法请求。F3 释放光标后，未操作检查器时仍可切换视角；失焦或暂停时忽略切换。
 
@@ -152,7 +152,7 @@ UI 控件与主菜单舞台使用 Bevy 0.19 的 `bsn!`、`bsn_list!` 和返回 `
 
 当前默认参数为目标速度 `4.5 m/s`、接地加速度 `30 m/s²`、松键制动加速度 `45 m/s²`、空中加速度 `6 m/s²`、重力 `9.81 m/s²`、跳跃速度 `5 m/s`、角色质量 `75 kg`，胶囊高度 `1.9 m`、半径 `0.32 m`。箱体质量为 `3 kg`；持握使用 `3 Hz`、阻尼比 `1` 的弹簧阻尼力，最大拉力为 `450 N`。这些参数在 `PrototypeConfig` 中定义，重力每个固定步同步到物理资源；检查器编辑只影响当前会话。
 
-渲染循环上限和固定 60 Hz 模拟分别管理。限帧系统只等待剩余间隔，超时后从实际帧起点重新计时；`WinitSettings::continuous()` 避免窗口失焦时额外套用默认更新频率。窗口使用 `AutoNoVsync`，但平台可能回退。当前已启用物理运动插值与刚体碰撞，尚无镜头碰撞、滚轮缩放或通用自动跨越台阶的角色控制规则；海岛入口通过场景中的斜坡碰撞支持通行。
+渲染循环上限和固定 60 Hz 模拟分别管理。限帧系统只等待剩余间隔，超时后从实际帧起点重新计时；`WinitSettings::continuous()` 避免窗口失焦时额外套用默认更新频率。窗口使用 `AutoNoVsync`，但平台可能回退。当前已启用物理运动插值与刚体碰撞，第三人称具有环境球形扫掠和回扩阻尼，尚无滚轮缩放或通用自动跨越台阶的角色控制规则；海岛入口通过场景中的斜坡碰撞支持通行。
 
 ### 持箱转向错位的经验
 
@@ -192,7 +192,13 @@ UI 控件与主菜单舞台使用 Bevy 0.19 的 `bsn!`、`bsn_list!` 和返回 `
 
 ## 主角动画与落水恢复
 
-`CharacterAnimationPlugin` 等待主角视觉实例与 GLB 就绪后，在对应视觉子层级中绑定 `Idle`、`Walk`、`Carry_Idle` 命名动画，不依赖 GLB 中的数字排列。动作无根运动，角色位置由物理模拟决定。没有持物时，实际水平速度大于 `0.15 m/s` 使用 `Walk`，其余使用 `Idle`；有有效持有关系时优先使用 `Carry_Idle`。资源没有 `Carry_Walk`，因此持物移动也沿用搬运站立动作。动作变化使用 `180 ms` 过渡，相同状态不重复重启动画；角色关联失效后清理绑定。NPC 不使用这套玩家动画路由。
+`CharacterAnimationPlugin` 等待主角视觉实例、GLB 与片段就绪后，按名称绑定 `Idle`、`Walk`、`Walk_Backward`、`Walk_Left`、`Walk_Right`、`Carry_Idle`、`Carry_Walk`、`Carry_Backward`、`Carry_Left`、`Carry_Right`、`Jump`、`Fall`、`Carry_Jump`、`Carry_Fall`、`Land`、`Carry_Land`。所有片段均长 `0.8 s` 且无根运动；`Jump / Land` 及对应持箱片段为一次性动作，其他片段循环，人物位置由物理模拟决定。八个步行片段保持同一左右脚相位，持箱只改变上身，腿部与对应空手动作一致；制作源与独立刷新入口见 [美术说明](../art/ASSET_GUIDE.txt)。
+
+逐帧系统在固定循环的姿态同步后将实际水平速度转到人物局部空间，按前后左右速度分量分配动作权重；静止到行走使用 `0.15..0.65 m/s` 的连续过渡，权重以 `75 ms` 时间常数指数平滑。所有步行动作共用归一化相位，按前后 `1.5 m/s`、侧向 `1.1 m/s` 的资产步长调整步频，并补偿斜向混合造成的步长缩短。转向、拿放和速度变化不重启播放器。接地短暂丢失有 `60 ms` 过滤，真实向上起跳立即进入空中姿态；最高点附近保留起跳／下落状态以避免抖动，空中停止推进步相位。起跳片段在 `0.24 s` 内走完整并保持尾姿，下落按独立时钟循环；真实空中到接地时播放一次 `0.22 s` 落地缓冲，再回到当前速度对应动作。空中拿放使用同一阶段进度，暂停冻结时钟；一次性片段暂停自动推进后显式采样，避免 Bevy 在尾帧环回。
+
+GLB 的八个 `Courier_Sole_*` 鞋底子节点跟随足部骨骼。`PostUpdate` 在动画求值后、变换传播前读取当前骨链姿态，按角色脚底平面修正视觉高度，避免不同方向混合伸直腿链后穿地；补偿不修改角色业务根、物理碰撞或持握目标。角色关联失效后停止播放器并清理绑定。NPC 不使用这套玩家动画路由。
+
+第三人称镜头从人物脚底上方的观察中心向期望视点球形扫掠，仅查询 `World` 结构碰撞并排除 Sensor；半径覆盖当前近裁剪面的四角并保留余量，人物和可搬箱体不引起镜头抽动。遇障碍立即收缩，离开后以指数阻尼回扩，每个渲染帧使用最新 yaw 与插值后人物位置。期望距离与实际显示距离分开保存，第一人称眼位沿用既有规则。离散阻挡变化记录 `Camera obstruction changed`。
 
 `IslandRecoveryPlugin` 的 `recover_from_water` 在 `FixedUpdate` 明确先于 `camera::sync_character_facing` 和 `GameplaySystems::Simulate` 读取 Avian `Position`，玩家脚底或可搬物品中心低于 `Y = -1.5` 时恢复。玩家先解除持握关系，使物品恢复自由碰撞，再回到自己的 `SpawnPoint`，清除线速度、角速度与未消费的跳跃、交互请求；持续移动轴保留。恢复出生朝向后，本固定步立即按当前相机水平角重新同步角色朝向，再计算移动力，保证按住 W 时恢复当步也沿当前视角前进，不使用出生朝向计算移动方向。玩家恢复只释放手中物品，物品自身落水后再独立回到各自的出生姿态并清除运动。
 

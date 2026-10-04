@@ -220,7 +220,7 @@
       ],
       "source": {
         "path": "src/camera.rs",
-        "line": 288
+        "line": 297
       }
     },
     {
@@ -523,7 +523,7 @@
       ],
       "source": {
         "path": "src/camera.rs",
-        "line": 453
+        "line": 462
       }
     },
     {
@@ -558,7 +558,7 @@
       ],
       "source": {
         "path": "src/camera.rs",
-        "line": 538
+        "line": 547
       }
     },
     {
@@ -811,7 +811,7 @@
       ],
       "source": {
         "path": "src/camera.rs",
-        "line": 538
+        "line": 547
       }
     },
     {
@@ -854,29 +854,50 @@
       "kind": "system",
       "phase": "RunFixedMainLoop · AfterFixedMainLoop（每帧一次）",
       "module": "camera",
-      "description": "读取本帧已经插值的角色 Transform 和模式角度，更新同一台镜头。",
+      "description": "读取本帧插值后的角色位置与观察角度；第三人称以 World 层球形扫掠收缩安全距离并平滑回扩，第一人称保持眼位。",
       "reads": [
         "character.Transform",
         "camera.OrbitCamera",
+        "camera.Projection",
+        "resource.Time",
+        "resource.ColliderTrees",
+        "world.Sensor",
+        "character.Position",
+        "character.Rotation",
+        "character.Collider",
+        "character.ColliderAabb",
+        "parcel.Position",
+        "parcel.Rotation",
+        "parcel.Collider",
+        "parcel.ColliderAabb",
+        "world.Position",
+        "world.Rotation",
+        "world.Collider",
+        "world.ColliderAabb",
         "resource.AppState",
         "resource.PlayState"
       ],
       "writes": [
+        "camera.OrbitCamera",
         "camera.Transform"
       ],
       "filters": [
         "角色：With<Character>",
         "相机查询：Without<Character>，具有 OrbitCamera 与 Transform；没有额外 With<Camera3d> 过滤",
-        "run_if(gameplay_running)：AppState::InGame 且 PlayState::Running；独立无状态测试兼容运行。"
+        "run_if(gameplay_running)：AppState::InGame 且 PlayState::Running；独立无状态测试兼容运行。",
+        "扫掠候选：GamePhysicsLayer::World 且不含 Sensor；SpatialQuery 参数访问仍覆盖所有碰撞体。"
       ],
       "events": [],
       "notes": [
         "位于插值后的显示链；角色朝向 → HeldTarget → 镜头 → 人物可见性。",
-        "不读取未插值 Position；零固定步帧仍使用本帧呈现位置。"
+        "跟随目标使用插值 Transform，零固定步帧仍响应本帧位置与 yaw；SpatialQuery 另读碰撞体真实 Position/Rotation。",
+        "球半径覆盖透视 near/fov/aspect_ratio 的近裁剪面四角，至少 0.2 米；缺失或非透视 Projection 使用最小半径。",
+        "遇阻立即缩短，Time.delta 驱动指数回扩；obstructed_by 变化才记录日志。",
+        "SpatialQuery 是 SystemParam，读取 ColliderTrees 与 Position/Rotation/Collider/ColliderAabb；不是新增资源。"
       ],
       "source": {
         "path": "src/camera.rs",
-        "line": 561
+        "line": 570
       }
     },
     {
@@ -971,7 +992,7 @@
       ],
       "source": {
         "path": "src/camera.rs",
-        "line": 492
+        "line": 501
       }
     },
     {
@@ -1001,7 +1022,7 @@
       ],
       "source": {
         "path": "src/camera.rs",
-        "line": 519
+        "line": 528
       }
     },
     {
@@ -1037,7 +1058,7 @@
       ],
       "source": {
         "path": "src/camera.rs",
-        "line": 573
+        "line": 658
       }
     },
     {
@@ -1130,7 +1151,7 @@
       ],
       "source": {
         "path": "src/camera.rs",
-        "line": 164
+        "line": 173
       }
     },
     {
@@ -1241,7 +1262,7 @@
       ],
       "source": {
         "path": "src/camera.rs",
-        "line": 230
+        "line": 239
       }
     },
     {
@@ -1984,7 +2005,7 @@
       ],
       "source": {
         "path": "src/character_animation.rs",
-        "line": 84
+        "line": 304
       }
     },
     {
@@ -1996,11 +2017,16 @@
       "reads": [
         "visual.CourierAnimationPending",
         "visual.CourierVisual",
+        "visual.Transform",
         "visual.ChildOf",
         "visual.Children",
+        "model_node.Name",
         "character.LinearVelocity",
+        "character.Transform",
+        "character.CharacterMotion",
         "character.HoldingItems",
         "resource.AssetsGltf",
+        "resource.AssetsAnimationClip",
         "animation_player.AnimationPlayer",
         "resource.AppState",
         "resource.PlayState"
@@ -2009,9 +2035,9 @@
         "resource.AssetsAnimationGraph",
         "animation_player.AnimationPlayer",
         "animation_player.AnimationGraphHandle",
-        "animation_player.AnimationTransitions",
         "animation_player.CourierAnimation",
-        "visual.CourierAnimationPending"
+        "visual.CourierAnimationPending",
+        "visual.CourierFootGrounding"
       ],
       "filters": [
         "With<CourierAnimationPending>",
@@ -2019,15 +2045,16 @@
         "run_if(gameplay_running)：AppState::InGame 且 PlayState::Running；无状态测试仍可运行。"
       ],
       "events": [],
-      "description": "遍历主角视觉子树，按动作名称创建图并绑定实际播放器。",
+      "description": "等待 16 个命名片段与合法时长，绑定播放器及统一步相位；缓存八个鞋底节点用于视觉高度补偿。",
       "notes": [
-        "Idle / Walk / Carry_Idle 按 named_animations 查找，不硬编码 glTF 排列索引。",
+        "按 named_animations 查找 16 个动作，不硬编码 glTF 排列索引；GLTF 或 clip 未入库时保留 pending 重试。",
         "与 sync_courier_animation 使用 chain，新增绑定当帧可见。",
-        "等待 GLB 可用；缺失动作或父角色记录错误并清理待绑定状态。"
+        "移除旧 AnimationTransitions；缺少动作、非法时长或父角色时记录错误并清理 pending。",
+        "鞋底名字只在绑定时扫描，CourierFootGrounding 保存角色、首个播放器与八个节点引用；节点缺失时不安装该补偿。"
       ],
       "source": {
         "path": "src/character_animation.rs",
-        "line": 97
+        "line": 317
       }
     },
     {
@@ -2037,15 +2064,18 @@
       "module": "character_animation",
       "phase": "Update",
       "reads": [
+        "resource.Time",
         "character.LinearVelocity",
+        "character.Transform",
+        "character.CharacterMotion",
         "character.HoldingItems",
         "animation_player.CourierAnimation",
+        "animation_player.AnimationPlayer",
         "resource.AppState",
         "resource.PlayState"
       ],
       "writes": [
         "animation_player.AnimationPlayer",
-        "animation_player.AnimationTransitions",
         "animation_player.CourierAnimation",
         "animation_player.AnimationGraphHandle"
       ],
@@ -2054,15 +2084,17 @@
         "run_if(gameplay_running)：AppState::InGame 且 PlayState::Running；无状态测试仍可运行。"
       ],
       "events": [],
-      "description": "实际水平速度选择 Idle / Walk，持物优先 Carry_Idle。",
+      "description": "真实速度转入角色局部空间，连续混合四向静走、持箱与跳跃/下落/落地阶段。",
       "notes": [
-        "水平速度门槛 0.15 m/s，切换过渡 180 ms，无根运动。",
-        "相同状态保持播放进度，不重启动作；角色缺失时移除关联并停止播放。",
-        "Update 在固定循环后运行；没有固定步时沿用真实速度。"
+        "静走在 0.15..0.65 m/s 连续混合；16 权重以 75 ms 时间常数指数平滑，与帧率无关。",
+        "八个步行片段显式采样统一归一化步相位；六个空中/落地片段暂停自动推进，按阶段时钟采样，Jump/Land 单次播放。",
+        "方向与持箱变化不重置步相位；接地噪声过滤后才确认空中与落地阶段。",
+        "角色缺失时停止播放并移除 CourierAnimation/AnimationGraphHandle；不读写 AnimationTransitions。",
+        "Update 在固定循环后运行，没有固定步时仍使用真实速度与本帧 yaw。"
       ],
       "source": {
         "path": "src/character_animation.rs",
-        "line": 195
+        "line": 675
       }
     },
     {
@@ -2183,6 +2215,45 @@
       "source": null
     },
     {
+      "id": "animation_grounding",
+      "name": "compensate_courier_sole_penetration",
+      "kind": "system",
+      "module": "character_animation",
+      "phase": "PostUpdate · after(AnimationSystems) / before(TransformSystems::Propagate)",
+      "reads": [
+        "resource.Time",
+        "animation_player.CourierAnimation",
+        "visual.CourierFootGrounding",
+        "character.Transform",
+        "visual.Transform",
+        "visual.ChildOf",
+        "model_node.Transform",
+        "model_node.ChildOf",
+        "resource.AppState",
+        "resource.PlayState"
+      ],
+      "writes": [
+        "visual.Transform",
+        "visual.CourierFootGrounding"
+      ],
+      "filters": [
+        "With<CourierFootGrounding>",
+        "run_if(gameplay_running)：仅 InGame / Running；无状态测试可运行。"
+      ],
+      "events": [],
+      "description": "根据本帧鞋底节点姿态向上补偿主角视觉根，解除时平滑回落。",
+      "notes": [
+        "TransformHelper 沿 ChildOf 读取当前局部 Transform，不依赖尚未传播的 GlobalTransform。",
+        "ParamSet 分时隔离骨链只读查询与视觉根可变查询。",
+        "只写视觉高度与 offset，不改变业务根、碰撞体、真实物理位置或 HeldTarget。",
+        "层级或关联播放器失效时通过 Commands 移除补偿组件。"
+      ],
+      "source": {
+        "path": "src/character_animation.rs",
+        "line": 506
+      }
+    },
+    {
       "id": "animation_engine",
       "name": "AnimationSystems / AnimationPlugin",
       "kind": "engine",
@@ -2191,18 +2262,21 @@
       "reads": [
         "animation_player.AnimationPlayer",
         "animation_player.AnimationGraphHandle",
-        "animation_player.AnimationTransitions",
-        "resource.AssetsAnimationGraph"
+        "model_node.AnimationTargetId",
+        "resource.AssetsAnimationGraph",
+        "resource.AssetsAnimationClip",
+        "model_node.AnimatedBy"
       ],
       "writes": [
         "model_node.Transform"
       ],
       "filters": [],
       "events": [],
-      "description": "推进动画、过渡并写入目标骨骼局部 Transform。",
+      "description": "采样动画图并写入目标骨骼局部 Transform。",
       "notes": [
-        "Bevy 0.19.1 在 PostUpdate 中 chain 并 before(TransformSystems::Propagate)。",
-        "只展示相关引擎流程，不宣称动画驱动业务根或精确渲染顺序。"
+        "Bevy 0.19.1 在 PostUpdate 中运行 AnimationSystems，并先于 TransformSystems::Propagate。",
+        "主角随后执行鞋底视觉高度补偿，再传播最终世界变换；检查器没有分支全序。",
+        "引擎概览不展开全部动画内部系统与缓存。"
       ],
       "source": null
     },
@@ -2600,13 +2674,12 @@
       "kind": "system",
       "phase": "OnEnter(AppState::MainMenu) · StateTransition",
       "module": "ui",
-      "description": "声明独立海岛 GLB 展示舞台、相机、日光与 Carry_Idle 动画图。",
+      "description": "声明独立海岛 GLB 舞台、相机与日光；展示快递员根保存父 GLTF 句柄，待命名动画可用后绑定。",
       "reads": [
         "resource.AssetServer",
         "resource.AppState"
       ],
       "writes": [
-        "resource.AssetsAnimationGraph",
         "menu_backdrop.MenuBackdrop",
         "menu_backdrop.DespawnOnExit",
         "menu_backdrop.Children",
@@ -2628,7 +2701,7 @@
       ],
       "source": {
         "path": "src/ui/backdrop.rs",
-        "line": 36
+        "line": 40
       }
     },
     {
@@ -2649,7 +2722,7 @@
       ],
       "source": {
         "path": "src/ui/backdrop.rs",
-        "line": 179
+        "line": 205
       }
     },
     {
@@ -2680,7 +2753,7 @@
       ],
       "source": {
         "path": "src/camera.rs",
-        "line": 200
+        "line": 209
       }
     },
     {
@@ -2880,29 +2953,66 @@
     },
     {
       "id": "observe_courier_ready",
-      "name": "play_courier_animation",
+      "name": "mark_courier_animation_ready",
       "kind": "observer",
       "phase": "匹配事件触发时",
       "module": "ui",
-      "description": "展示快递员 GLB 展开后查找骨架 AnimationPlayer，循环播放 Carry_Idle 并插入动画图句柄。",
+      "description": "展示快递员模板就绪后只标记 pending，等待 Update 绑定命名动画。",
       "reads": [
-        "menu_model.CourierAnimation",
-        "menu_model.Children"
+        "menu_model.CourierAnimation"
       ],
       "writes": [
-        "menu_model.AnimationPlayer",
-        "menu_model.AnimationGraphHandle"
+        "menu_model.CourierAnimationPending"
       ],
-      "filters": [],
+      "filters": [
+        "With<CourierAnimation>（菜单同名类型）"
+      ],
       "events": [
         "响应 EntityEvent：WorldInstanceReady"
       ],
       "notes": [
-        "BSN on(play_courier_animation) 注册在快递员模型根；图句柄用 Commands 延迟插入真实播放器子实体。"
+        "BSN on(mark_courier_animation_ready) 注册在快递员 GLB 根。",
+        "WorldInstanceReady 不保证父 GLTF 与 AnimationClip 已入库；Observer 不建图、不直接播放。"
       ],
       "source": {
         "path": "src/ui/backdrop.rs",
-        "line": 146
+        "line": 143
+      }
+    },
+    {
+      "id": "menu_animation_play",
+      "name": "play_courier_animation",
+      "kind": "system",
+      "module": "ui",
+      "phase": "Update",
+      "reads": [
+        "menu_model.CourierAnimation",
+        "menu_model.CourierAnimationPending",
+        "menu_model.Children",
+        "menu_model.AnimationPlayer",
+        "resource.AssetsGltf",
+        "resource.AssetsAnimationClip"
+      ],
+      "writes": [
+        "resource.AssetsAnimationGraph",
+        "menu_model.AnimationPlayer",
+        "menu_model.AnimationGraphHandle",
+        "menu_model.CourierAnimationPending"
+      ],
+      "filters": [
+        "With<CourierAnimationPending>（菜单同名类型）"
+      ],
+      "events": [],
+      "description": "等待 Carry_Idle 命名片段入库，创建图并循环播放实际骨架播放器，然后移除 pending。",
+      "notes": [
+        "父 GLTF 或命名 clip 未入库时继续等待，不依赖 GLTF 排列顺序。",
+        "缺少 Carry_Idle 或实际播放器时记录英文错误并清 pending；成功后不重复建图、不重启动作。",
+        "图句柄与 pending 清理通过 Commands 应用；实体随 MainMenu 退出清理，系统无额外状态条件。",
+        "与 log_asset_failures 及其他 Update 路线没有显式全序。"
+      ],
+      "source": {
+        "path": "src/ui/backdrop.rs",
+        "line": 156
       }
     },
     {
@@ -3171,7 +3281,7 @@
           "description": "普通实体引用，指向受控相机。",
           "source": {
             "path": "src/camera.rs",
-            "line": 26
+            "line": 28
           }
         },
         {
@@ -4213,14 +4323,28 @@
             "third_person_pitch: f32",
             "first_person_pitch: f32",
             "distance: f32",
+            "presented_distance: f32",
+            "obstructed_by: Option<Entity>",
             "look_height: f32",
             "eye_height: f32",
             "toggle_requested_by: Option<Entity>"
           ],
-          "description": "持续视角状态与切换请求；默认第三人称偏移 (0, 6, 8)、观察中心高 0.8，俯仰 5°..80°；第一人称眼高 1.65、首次俯仰 0°、范围 -85°..85°。",
+          "description": "持续观察状态、实际呈现距离与可选遮挡实体引用；默认偏移 (0, 5.2, 8)、观察中心高 0.8。第三人称球扫掠即时收缩、平滑回扩；第一人称眼高 1.65，两种模式共享 yaw，分别保存 pitch。",
           "source": {
             "path": "src/camera.rs",
-            "line": 52
+            "line": 54
+          }
+        },
+        {
+          "id": "camera.Projection",
+          "name": "Projection",
+          "fields": [
+            "Perspective：near / fov / aspect_ratio"
+          ],
+          "description": "Camera3d 要求的投影组件；相机扫掠只读可选值，用于覆盖近裁剪面四角。",
+          "source": {
+            "path": "src/camera.rs",
+            "line": 580
           }
         },
         {
@@ -4236,7 +4360,7 @@
           "description": "鼠标捕获、初始化、跳过位移、目标可用与聚焦状态。主菜单与暂停强制释放；F3 释放后未操作检查器时仍可使用玩法键盘，检查器占用由 ContextActivity 停用整个 GameplayContext。",
           "source": {
             "path": "src/camera.rs",
-            "line": 128
+            "line": 137
           }
         },
         {
@@ -4247,7 +4371,7 @@
             "rotation: Quat",
             "scale: Vec3"
           ],
-          "description": "follow_orbit_camera 根据角色位置和当前视角计算镜头姿态；第三人称环绕，第一人称在眼位使用 yaw 与独立俯仰。",
+          "description": "follow_orbit_camera 以插值后位置与当前 yaw/pitch 计算姿态；第三人称避开 World 层遮挡，第一人称保持原眼位。",
           "source": {
             "path": "src/scene.rs",
             "line": 82
@@ -4274,7 +4398,7 @@
           "description": "显式 PrimaryEguiContext 要求 EguiContext；保存共享 UI 状态。捕获系统查询面板、指针和焦点，过滤系统在游戏捕获期间终止 UI 拖拽并移除 UI 键盘焦点。",
           "source": {
             "path": "src/camera.rs",
-            "line": 304
+            "line": 313
           }
         },
         {
@@ -4398,7 +4522,7 @@
             "rotation: Quat",
             "scale: Vec3"
           ],
-          "description": "相对所属业务根的局部变换，场景生成后没有业务系统修改。",
+          "description": "相对业务根的局部变换；主角鞋底补偿仅改变此视觉根高度，物品视觉根保持场景装配变换。",
           "source": {
             "path": "src/scene.rs",
             "line": 428
@@ -4444,10 +4568,10 @@
           "id": "visual.CharacterVisual",
           "name": "CharacterVisual",
           "fields": [],
-          "description": "仅三个角色视觉子实体具有此标记；第一人称隐藏对应角色模型，独立木箱模型不被隐藏。",
+          "description": "角色直属视觉根标记；第一人称隐藏对应主角模型，独立包裹模型不隐藏。",
           "source": {
             "path": "src/camera.rs",
-            "line": 47
+            "line": 49
           }
         },
         {
@@ -4456,10 +4580,10 @@
           "fields": [
             "0: Handle<Gltf>"
           ],
-          "description": "仅主角直属视觉根携带，作为动画绑定入口。",
+          "description": "仅主角直属视觉根携带父 GLTF 句柄，并要求 Transform，作为命名动画绑定入口。",
           "source": {
             "path": "src/character_animation.rs",
-            "line": 20
+            "line": 41
           }
         },
         {
@@ -4469,7 +4593,23 @@
           "description": "实例就绪后等待命名动画绑定。",
           "source": {
             "path": "src/character_animation.rs",
-            "line": 24
+            "line": 45
+          }
+        },
+        {
+          "id": "visual.CourierFootGrounding",
+          "name": "CourierFootGrounding",
+          "fields": [
+            "character: Entity",
+            "animation_player: Entity",
+            "sole_markers: [Entity; 8]",
+            "base_translation: Vec3",
+            "offset: f32"
+          ],
+          "description": "主角视觉根保存鞋底高度补偿状态与骨链引用；节点只在绑定时按 Name 缓存，普通 Entity 引用不提供关系生命周期。",
+          "source": {
+            "path": "src/character_animation.rs",
+            "line": 49
           }
         },
         {
@@ -4564,7 +4704,7 @@
           "description": "捕获时隐藏并抓取，释放时显示；不代表玩法动作绑定。",
           "source": {
             "path": "src/camera.rs",
-            "line": 292
+            "line": 301
           }
         }
       ]
@@ -4852,7 +4992,7 @@
           "fields": [
             "结构网格合并 trimesh；入口台阶对应斜坡"
           ],
-          "description": "有厚度的盒形碰撞体。",
+          "description": "依据结构网格生成三角网格碰撞，入口台阶另以斜坡连接；镜头球扫掠与角色物理共享 World 层结构环境。",
           "source": {
             "path": "src/scene.rs",
             "line": 133
@@ -4940,6 +5080,16 @@
           "source": {
             "path": "src/scene.rs",
             "line": 133
+          }
+        },
+        {
+          "id": "world.Sensor",
+          "name": "Sensor",
+          "fields": [],
+          "description": "可选传感器标记；当前结构环境未设置，镜头扫掠显式排除。",
+          "source": {
+            "path": "src/camera.rs",
+            "line": 573
           }
         }
       ]
@@ -5068,13 +5218,23 @@
           "name": "CourierAnimation",
           "fields": [
             "character: Entity",
-            "nodes: CourierAnimationNodes",
+            "nodes: CourierAnimationNodes（16 indices / durations）",
+            "weights: [f32; 16]",
+            "gait_phase: f32",
+            "grounded: bool",
+            "ungrounded_time: f32",
+            "rising: bool",
+            "airborne_confirmed: bool",
+            "jump_phase: CourierJumpPhase",
+            "jump_elapsed: f32",
+            "fall_elapsed: f32",
+            "landing_elapsed: f32",
             "current: CourierAnimationState"
           ],
-          "description": "只保存播放器关联与当前动作；辅助值不是 ECS 组件。",
+          "description": "播放器关联、连续混合权重、统一步相位与跳跃阶段时钟；状态/节点辅助值不是 ECS 组件或 Local。",
           "source": {
             "path": "src/character_animation.rs",
-            "line": 46
+            "line": 170
           }
         },
         {
@@ -5084,7 +5244,7 @@
           "description": "GLB 实际播放器。",
           "source": {
             "path": "src/character_animation.rs",
-            "line": 92
+            "line": 334
           }
         },
         {
@@ -5094,17 +5254,7 @@
           "description": "本次绑定生成的命名动作图。",
           "source": {
             "path": "src/character_animation.rs",
-            "line": 92
-          }
-        },
-        {
-          "id": "animation_player.AnimationTransitions",
-          "name": "AnimationTransitions",
-          "fields": [],
-          "description": "状态变化时平滑切换，相同状态不重启。",
-          "source": {
-            "path": "src/character_animation.rs",
-            "line": 92
+            "line": 440
           }
         },
         {
@@ -5114,7 +5264,7 @@
           "description": "原 GLB 节点层级。",
           "source": {
             "path": "src/character_animation.rs",
-            "line": 92
+            "line": 319
           }
         }
       ]
@@ -5126,12 +5276,24 @@
       "description": "地图、NPC、主角、物品的导入子树概览；并非每个节点拥有全部所列组件。",
       "components": [
         {
+          "id": "model_node.Name",
+          "name": "Name",
+          "fields": [
+            "导入节点名：String"
+          ],
+          "description": "鞋底节点绑定时按八个约定名称查找；逐帧补偿使用已缓存 Entity。",
+          "source": {
+            "path": "src/character_animation.rs",
+            "line": 330
+          }
+        },
+        {
           "id": "model_node.Transform",
           "name": "Transform",
           "fields": [
             "局部位姿"
           ],
-          "description": "资源导入后沿层级传播。",
+          "description": "GLB 局部姿态由 AnimationSystems 更新，鞋底补偿通过 TransformHelper 读取本帧骨链；随后传播世界变换。",
           "source": {
             "path": "src/scene.rs",
             "line": 314
@@ -5215,8 +5377,8 @@
           "fields": [],
           "description": "部分网格绑定骨骼；由 GLB 导入。",
           "source": {
-            "path": "src/character_animation.rs",
-            "line": 92
+            "path": "src/scene.rs",
+            "line": 428
           }
         },
         {
@@ -5228,7 +5390,19 @@
           "description": "GLB 骨骼/曲线目标 ID，由动画加载器生成，AnimationSystems 按 ID 匹配曲线。",
           "source": {
             "path": "src/character_animation.rs",
-            "line": 92
+            "line": 317
+          }
+        },
+        {
+          "id": "model_node.AnimatedBy",
+          "name": "AnimatedBy",
+          "fields": [
+            "0: Entity（AnimationPlayer）"
+          ],
+          "description": "GLTF loader 为动画目标写入的普通播放器引用，与 AnimationTargetId 共同决定曲线由谁采样；不是 Bevy relationship。",
+          "source": {
+            "path": "src/character_animation.rs",
+            "line": 317
           }
         }
       ]
@@ -5551,7 +5725,7 @@
           "description": "舞台根标记。",
           "source": {
             "path": "src/ui/backdrop.rs",
-            "line": 19
+            "line": 20
           }
         },
         {
@@ -5563,7 +5737,7 @@
           "description": "离开主菜单时连带销毁相机、灯光与 GLB 子树。",
           "source": {
             "path": "src/ui/backdrop.rs",
-            "line": 51
+            "line": 48
           }
         },
         {
@@ -5575,7 +5749,7 @@
           "description": "BSN 展示树；设置和帮助沿用舞台。",
           "source": {
             "path": "src/ui/backdrop.rs",
-            "line": 54
+            "line": 51
           }
         },
         {
@@ -5585,7 +5759,7 @@
           "description": "为视觉父子变换提供根。",
           "source": {
             "path": "src/ui/backdrop.rs",
-            "line": 52
+            "line": 49
           }
         },
         {
@@ -5595,7 +5769,7 @@
           "description": "通过父子树传播展示可见性。",
           "source": {
             "path": "src/ui/backdrop.rs",
-            "line": 53
+            "line": 50
           }
         }
       ]
@@ -5613,7 +5787,7 @@
           "description": "3D GLB 展示镜头。",
           "source": {
             "path": "src/ui/backdrop.rs",
-            "line": 111
+            "line": 108
           }
         },
         {
@@ -5623,7 +5797,7 @@
           "description": "菜单与子页面复用的默认 UI 相机。",
           "source": {
             "path": "src/ui/backdrop.rs",
-            "line": 115
+            "line": 112
           }
         },
         {
@@ -5633,7 +5807,7 @@
           "description": "显式主上下文；主菜单检查器受 gameplay_running 条件隐藏。",
           "source": {
             "path": "src/ui/backdrop.rs",
-            "line": 116
+            "line": 113
           }
         },
         {
@@ -5645,7 +5819,7 @@
           "description": "为左侧 UI 留白，右侧展示快递员与据点。",
           "source": {
             "path": "src/ui/backdrop.rs",
-            "line": 130
+            "line": 127
           }
         },
         {
@@ -5657,7 +5831,7 @@
           "description": "舞台根的直接子实体，根销毁时连带清理。",
           "source": {
             "path": "src/ui/backdrop.rs",
-            "line": 55
+            "line": 52
           }
         }
       ]
@@ -5677,20 +5851,29 @@
           "description": "异步展开真实美术资产，展开完成发 WorldInstanceReady。",
           "source": {
             "path": "src/ui/backdrop.rs",
-            "line": 135
+            "line": 132
           }
         },
         {
           "id": "menu_model.CourierAnimation",
           "name": "CourierAnimation",
           "fields": [
-            "graph: Handle<AnimationGraph>",
-            "node: AnimationNodeIndex"
+            "gltf: Handle<Gltf>"
           ],
-          "description": "只在展示快递员 GLB 根保存 Carry_Idle 图与索引。",
+          "description": "仅展示快递员根保存父 GLTF 强句柄，用于按名绑定 Carry_Idle；与玩法同名组件是不同类型。",
           "source": {
             "path": "src/ui/backdrop.rs",
-            "line": 23
+            "line": 24
+          }
+        },
+        {
+          "id": "menu_model.CourierAnimationPending",
+          "name": "CourierAnimationPending",
+          "fields": [],
+          "description": "模板就绪后等待父 GLTF 和命名片段，Update 成功绑定后移除；与玩法 pending 不同类型。",
+          "source": {
+            "path": "src/ui/backdrop.rs",
+            "line": 32
           }
         },
         {
@@ -5699,10 +5882,10 @@
           "fields": [
             "当前图节点/播放状态"
           ],
-          "description": "由 GLB 骨架子实体提供；Ready Observer 循环播放。",
+          "description": "由 GLB 骨架子实体提供；pending 的 Update 系统循环播放 Carry_Idle。",
           "source": {
             "path": "src/ui/backdrop.rs",
-            "line": 146
+            "line": 163
           }
         },
         {
@@ -5711,10 +5894,10 @@
           "fields": [
             "0: Handle<AnimationGraph>"
           ],
-          "description": "Ready Observer 用 Commands 插入真实 AnimationPlayer 所在子实体。",
+          "description": "Update 等待命名 clip 后通过 Commands 插入真实 AnimationPlayer 子实体。",
           "source": {
             "path": "src/ui/backdrop.rs",
-            "line": 163
+            "line": 188
           }
         },
         {
@@ -5726,7 +5909,7 @@
           "description": "模型根与携带包裹使用局部位置。",
           "source": {
             "path": "src/ui/backdrop.rs",
-            "line": 135
+            "line": 132
           }
         },
         {
@@ -5738,7 +5921,7 @@
           "description": "快递员的独立包裹附件保持角色本地持握位置。",
           "source": {
             "path": "src/ui/backdrop.rs",
-            "line": 82
+            "line": 79
           }
         }
       ]
@@ -5884,10 +6067,10 @@
       "fields": [
         "delta / elapsed"
       ],
-      "description": "引擎按当前阶段提供的通用时钟；PreUpdate 使用虚拟时间，固定阶段切换为固定时间。观察日志采样读取此资源，但鼠标角度不乘 delta。",
+      "description": "引擎按当前阶段提供通用时钟；观察日志仅用于节流，鼠标角度不乘 delta。逐帧动画权重/阶段时钟、鞋底补偿回落与镜头距离回扩读取帧 delta。",
       "source": {
         "path": "src/camera.rs",
-        "line": 455
+        "line": 464
       }
     },
     {
@@ -5924,7 +6107,7 @@
       "description": "引擎从 KeyboardInput 等缓冲消息更新。动作评估读取，鼠标捕获另读 Esc 处理窗口生命周期。",
       "source": {
         "path": "src/camera.rs",
-        "line": 230
+        "line": 239
       }
     },
     {
@@ -5986,7 +6169,7 @@
       "description": "引擎输入系统与 sync_mouse_capture 各自持有独立读取游标；后者只检查窗口左键按下以恢复捕获。",
       "source": {
         "path": "src/camera.rs",
-        "line": 231
+        "line": 240
       }
     },
     {
@@ -5999,7 +6182,7 @@
       "description": "窗口焦点缓冲消息；CameraControlPlugin 注册并由鼠标捕获系统读取。",
       "source": {
         "path": "src/camera.rs",
-        "line": 147
+        "line": 156
       }
     },
     {
@@ -6159,7 +6342,7 @@
       "description": "只属于 on_camera_look Observer 系统实例，最多每 0.5 秒记录一次连续角度变化。",
       "source": {
         "path": "src/camera.rs",
-        "line": 456
+        "line": 466
       }
     },
     {
@@ -6221,7 +6404,7 @@
         "static_tree: ColliderTree",
         "standalone_tree: ColliderTree"
       ],
-      "description": "Avian 碰撞树加速资源；SpatialQuery 只读 ColliderTrees 与实际 Position/Rotation/Collider/ColliderAabb，供接地和拾取查询。",
+      "description": "Avian 碰撞树加速资源；SpatialQuery 只读树与实际 Position/Rotation/Collider/ColliderAabb，供接地、拾取和第三人称环境扫掠。",
       "source": {
         "path": "src/gameplay.rs",
         "line": 172
@@ -6262,7 +6445,7 @@
       "description": "插值插件追踪 Transform 外部变更；显示链写朝向后才更新 tick。",
       "source": {
         "path": "src/camera.rs",
-        "line": 193
+        "line": 202
       }
     },
     {
@@ -6339,16 +6522,29 @@
       }
     },
     {
+      "id": "resource.AssetsAnimationClip",
+      "name": "Assets<AnimationClip>",
+      "kind": "Resource",
+      "fields": [
+        "AnimationClip 资产集合；duration 与骨骼曲线"
+      ],
+      "description": "玩法绑定等待全部 16 个片段与合法时长，菜单绑定等待 Carry_Idle；引擎据此采样骨骼姿态。",
+      "source": {
+        "path": "src/character_animation.rs",
+        "line": 332
+      }
+    },
+    {
       "id": "resource.AssetsAnimationGraph",
       "name": "Assets<AnimationGraph>",
       "kind": "Resource",
       "fields": [
         "AnimationGraph 资产集合"
       ],
-      "description": "主角动画绑定时添加动作图。",
+      "description": "玩法与菜单等待命名片段后添加动画图；图句柄保存在实际播放器实体。",
       "source": {
         "path": "src/character_animation.rs",
-        "line": 92
+        "line": 333
       }
     },
     {
@@ -6497,7 +6693,7 @@
       "description": "菜单资产失败日志的缓冲消息；读取 models/ 与 ui/ 路径，不作为 Observer 事件。",
       "source": {
         "path": "src/ui/backdrop.rs",
-        "line": 179
+        "line": 205
       }
     },
     {
@@ -6725,7 +6921,7 @@
       "description": "普通 Entity 引用，由场景生成补入控制者。",
       "source": {
         "path": "src/camera.rs",
-        "line": 26
+        "line": 28
       }
     },
     {
@@ -6740,7 +6936,7 @@
       "description": "相机目标引用必须与同一控制者的 ControlsCharacter 一致，朝向系统才会同步。",
       "source": {
         "path": "src/camera.rs",
-        "line": 52
+        "line": 54
       }
     },
     {
@@ -6830,7 +7026,7 @@
       "description": "可选普通 Entity 引用，Observer 记录请求来源，apply_perspective_toggle 同帧取出；不是持久控制关系，不提供反向索引或生命周期绑定。",
       "source": {
         "path": "src/camera.rs",
-        "line": 52
+        "line": 54
       }
     },
     {
@@ -6875,7 +7071,7 @@
       "description": "普通引用；角色消失时停止并解绑，播放器自身通常随视觉子树销毁。",
       "source": {
         "path": "src/character_animation.rs",
-        "line": 43
+        "line": 171
       }
     },
     {
@@ -6890,7 +7086,7 @@
       "description": "BSN 直接子节点；退出 MainMenu 清理舞台时相机与主上下文一同销毁。",
       "source": {
         "path": "src/ui/backdrop.rs",
-        "line": 55
+        "line": 52
       }
     },
     {
@@ -6905,7 +7101,7 @@
       "description": "图按视觉类别汇总多层真实 ChildOf；携带包裹直接属于快递员，GLB 子树逐层挂接，不能解释为所有节点直接指向舞台。",
       "source": {
         "path": "src/ui/backdrop.rs",
-        "line": 36
+        "line": 40
       }
     },
     {
@@ -6951,6 +7147,81 @@
       "source": {
         "path": "src/ui/widgets.rs",
         "line": 28
+      }
+    },
+    {
+      "id": "camera_obstruction",
+      "from": "camera",
+      "to": "world",
+      "name": "OrbitCamera.obstructed_by",
+      "kind": "reference",
+      "reverse": null,
+      "cardinality": "每台相机暂存 0..1 个环境遮挡实体",
+      "linked_spawn": null,
+      "description": "球形扫掠结果的普通可选 Entity 引用；每帧更新，无反向索引或生命周期绑定。",
+      "source": {
+        "path": "src/camera.rs",
+        "line": 66
+      }
+    },
+    {
+      "id": "grounding_character",
+      "from": "visual",
+      "to": "character",
+      "name": "CourierFootGrounding.character",
+      "kind": "reference",
+      "reverse": null,
+      "cardinality": "主角视觉根引用一个业务角色",
+      "linked_spawn": null,
+      "description": "鞋底补偿读取角色骨链世界位置；不写物理根。",
+      "source": {
+        "path": "src/character_animation.rs",
+        "line": 50
+      }
+    },
+    {
+      "id": "grounding_player",
+      "from": "visual",
+      "to": "animation_player",
+      "name": "CourierFootGrounding.animation_player",
+      "kind": "reference",
+      "reverse": null,
+      "cardinality": "主角视觉根引用首个已绑定播放器",
+      "linked_spawn": null,
+      "description": "共用播放器中经过过滤的接地状态；失效时解除补偿。",
+      "source": {
+        "path": "src/character_animation.rs",
+        "line": 51
+      }
+    },
+    {
+      "id": "grounding_soles",
+      "from": "visual",
+      "to": "model_node",
+      "name": "CourierFootGrounding.sole_markers",
+      "kind": "reference",
+      "reverse": null,
+      "cardinality": "主角视觉根缓存八个鞋底节点",
+      "linked_spawn": null,
+      "description": "普通 Entity 数组引用；节点实际仍在 GLB ChildOf 子树中，逐帧不重新扫描名字。",
+      "source": {
+        "path": "src/character_animation.rs",
+        "line": 52
+      }
+    },
+    {
+      "id": "model_animated_by",
+      "from": "model_node",
+      "to": "animation_player",
+      "name": "AnimatedBy",
+      "kind": "reference",
+      "reverse": null,
+      "cardinality": "每个动画目标引用一个播放器；普通 Entity 引用",
+      "linked_spawn": null,
+      "description": "GLTF loader 绑定的动画采样关联；ChildOf 子树生命周期另外表达。",
+      "source": {
+        "path": "src/character_animation.rs",
+        "line": 317
       }
     }
   ],
@@ -7007,7 +7278,7 @@
       "event": "WorldInstanceReady",
       "system": "courier_ready_observer",
       "target": "CourierVisual 根",
-      "description": "标记主角视觉，随后 Update 绑定命名动作。"
+      "description": "标记主角视觉 pending；后续 Update 等待 16 个命名片段后绑定。"
     },
     {
       "event": "Fire<ReleasePointerAction>",
@@ -7061,7 +7332,7 @@
       "event": "WorldInstanceReady",
       "system": "observe_courier_ready",
       "target": "展示快递员 WorldAssetRoot",
-      "description": "展示快递员 GLB 展开后查找骨架 AnimationPlayer，循环播放 Carry_Idle 并插入动画图句柄。"
+      "description": "只插入菜单 pending；后续 Update 等待父 GLTF 与命名 Carry_Idle 入库再播放。"
     }
   ],
   "startup_notes": [
@@ -7073,7 +7344,8 @@
     "海岛资源与全部静态碰撞就绪后生成一名主角、一名控制者、普通纸箱与易碎纸箱各一件及三只木箱，并复用加载相机。NPC 沿原地图层级保留。",
     "Pause 清空玩法意图、停用上下文、释放光标并冻结虚拟与物理时间，保留全部会话实体；返回 MainMenu 用 DespawnOnExit(InGame) / ChildOf 清理。",
     "菜单相机与独立 GLB 展示舞台属于 MainMenu；退出主菜单后销毁，由玩法相机接管 UI 与 Egui 上下文。",
-    "主角 WorldInstanceReady 添加 pending；Update initialize_ready_couriers → sync_courier_animation 读取真实速度与持有关系，仅在 Running 绑定和切换命名动画。",
+    "主角 WorldInstanceReady 添加 pending；Update initialize_ready_couriers → sync_courier_animation 读取真实速度与持有关系，仅在 Running 绑定 16 个命名片段并连续混合。",
+    "主菜单模板就绪只标记菜单 pending；Update 按 Carry_Idle 名称等待片段，不依赖 GLTF 动作排序。",
     "GameplayPlugin 内部安装 DemoPhysicsPlugin、Avian PhysicsPlugins 和无设备 SoundEventsPlugin；GameAudioPlugin 安装 Kira 0.26.0。",
     "BSN 与 Bundle 辅助数据、MapAsset / ItemPlacement、动画节点和 QueryData 不作为独立玩法 ECS 组件列出。",
     "统一 tracing 的文件与控制台各有后台线程和无界队列，属于外部 I/O；SessionLogGuard 由 main 持有，退出 Flush，Drop 排空并 join，panic 文件屏障 sync_data。"
@@ -7101,13 +7373,13 @@
     "同批次拾取 Local 预留防止重复占用；持有者消失或关系异常解除时清理目标并恢复自由碰撞。多角色公平裁决/退出前交接及只过滤持有者仍暂缓。",
     "World / Character / Parcel 为碰撞分类；持握箱忽略整个 Character 层，保留 World / Parcel。支撑探测检查双方掩码、支撑法线、传感器与 HeldBy，避免墙面或手中箱体充当地面。",
     "Forces 是 Avian QueryData，SpatialQuery 是 SystemParam；二者均不是新增实体组件。组件清单只列真实刚体数据/内部累计与插值状态，内部引擎字段不穷举。",
-    "主阶段 First → PreUpdate → RunFixedMainLoop → Update → SpawnScene → PostUpdate → Last；Update 内资源轮询、海岛链、主角动画链彼此未建立显式全序，不能按图中文字顺序串联。",
+    "主阶段 First → PreUpdate → RunFixedMainLoop → Update → SpawnScene → PostUpdate → Last；Update 内资源轮询、海岛链、主角动画链及菜单动画绑定彼此未建立显式全序，不能按图中文字顺序串联。",
     "固定阶段 Reset → resume_interpolation → 命令应用 → UpdateStart，然后 recover_from_water → sync_character_facing → GameplaySystems::Simulate。sync_gravity 也 before(Simulate)，与恢复/朝向无额外全序。",
     "GameplaySystems::Simulate 内 update_grounded → move_characters → jump_characters → handle_interaction → release_orphaned_items → sync_held_objects → apply_grip_forces；拿放和恢复的延迟关系在后续依赖处可见。",
     "落水阈值 Position.y < -1.5。业务根回各自 SpawnPoint，清速度与单次请求，保留持续输入；临时暂停插值跨过零固定步帧，下一 FixedFirst 仅撤销本模块添加的暂停。",
     "角色 NON_LINEAR CCD 速度门槛 8m/s 与 0.1rad/s，常规运动由推测接触覆盖；非零 yaw 下不能用 LINEAR 替代。纸箱与木箱保持默认零门槛非线性扫掠。",
     "CarryGrip 是每件物品的握持偏移，模拟与显示共同读取，缺省回退 PrototypeConfig.hold_offset。持物仍动态，不瞬移，不将 HeldTarget 输入物理解算。",
-    "FixedLast 记录插值终点，AfterFixedMainLoop 的 Ease → 朝向 → HeldTarget → 镜头 → 可见性 → UpdateEasingTick 每帧执行。PostUpdate 的 AnimationSystems before(TransformSystems::Propagate)，检查器为未设全序的独立分支。",
+    "FixedLast 记录插值终点，AfterFixedMainLoop 的 Ease → 朝向 → HeldTarget → 镜头 → 可见性 → UpdateEasingTick 每帧执行。PostUpdate 的 AnimationSystems → 主角鞋底补偿 → TransformSystems::Propagate，检查器为未设全序的独立分支。",
     "引擎资产实例化、AnimationSystems 与 GLB 层级为相关流程概览，未准确展开的全部 loader/骨骼内部系统、内部动画缓存、渲染批次、灯光组件与 GPU 流程不声称完整建模。",
     "World::trigger 在调用期间触发 Observer；Commands::trigger 在命令应用时触发。玩法/相机的八个动作 Observer 与菜单六个动作 Observer、指针滚动及模型 Ready Observer 按事件响应，不组成注册顺序流水线。",
     "RenderApp 包含提取、准备、排序与 GPU 渲染等步骤，也可能使用流水线；render 节点是渲染概览，不是紧接 PostUpdate 的单个普通系统。日志通过 tracing 文件输出，不是 ECS Event 或 Message。",
@@ -7123,6 +7395,10 @@
     "SoundRequest 是缓冲 Message，由真实菜单焦点、接受的菜单请求、成功拿放命令、固定步持握观察与真实支撑撞击写入；Update 在 UI Style 后播放，不从原始按键猜测业务成功。",
     "音频观察和物理规则分开：警告只提示不改变持握；落地锁存涵盖活动与休眠支撑，暂停/主菜单不采集。Kira 输出与无设备事件测试分开；12 种 cue 中菜单三种及物理四种已接入，交接、推车、弹开与交付共五种预留。",
     "GameAudioPlugin 的 Update 链在 UiSystems::Style 后显式运行 log_load_failures → play_requests → stop_on_exit；节流用 Time<Real>，总并发 4、SFX 最多 3。与 Kira 内部系统不指定额外全序，通道排队后由插件消费。",
-    "实例就绪共有地图、玩法主角和菜单快递员三种 Observer；动态事件数量以清单为准。菜单与 Kira 的时间门控不会改变海岛资产、落水恢复、CarryGrip 或 NON_LINEAR CCD 规则。"
+    "实例就绪共有地图、玩法主角和菜单快递员三种 Observer；动态事件数量以清单为准。菜单与 Kira 的时间门控不会改变海岛资产、落水恢复、CarryGrip 或 NON_LINEAR CCD 规则。",
+    "主角动画不再使用 AnimationTransitions：16 个命名片段按真实局部速度、持有关系与跳跃阶段混合，权重/步相位/阶段时钟是 CourierAnimation 组件字段。",
+    "鞋底补偿在 AnimationSystems 后、变换传播前运行；TransformHelper 读取本帧局部骨链，不依赖缓存 GlobalTransform，只写视觉根高度。",
+    "第三人称镜头每渲染帧读取插值角色位置，World 层球扫掠排除 Sensor；遇阻立即缩短，解除时平滑回扩，obstructed_by 只是普通 Entity 引用。",
+    "菜单与玩法 pending 和 CourierAnimation 同名但为独立类型；菜单 Ready Observer 只标记，Update 等待 GLTF/clip 后按 Carry_Idle 名称绑定。"
   ]
 }
