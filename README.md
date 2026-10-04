@@ -44,6 +44,8 @@ cargo run --locked
 - `models/props/prop_parcel_standard.glb`、`prop_parcel_fragile.glb`、`prop_crate.glb`：包裹与箱体；这些文件均位于 `models/props/`。
 - `ui/fonts/heading.ttf`（Lilita One）、`ui/fonts/body.ttf`（Atkinson Hyperlegible），以及同目录的 `LICENSE-LilitaOne.txt`、`LICENSE-AtkinsonHyperlegible.txt`：菜单字体及 SIL Open Font License 1.1 许可。
 
+新增道具的 Blender 源库、独立 GLB 与分类预览见 [道具美术资产](art/items/README.md)。该库包含 18 件道具和配套结构变体，仅完成美术制作，当前游戏尚未加载这些道具或实现对应效果。
+
 主菜单舞台独立于可游玩海岛，不包含角色控制器或玩法碰撞。缺失或加载失败的资产会写入本次会话日志，菜单背景检查 `Menu asset failed to load`，玩法资源与装配检查对应的美术和场景日志及资源路径。海岛加载、替换展示实体和碰撞准备见下文。
 
 ## 当前操作

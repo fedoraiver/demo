@@ -1,4 +1,4 @@
-"""统一低多边形资产的材质、轴心和建模工具；只供 Blender MCP 执行。"""
+"""统一低多边形资产的材质、轴心和建模工具；供 Blender 交互与后台制作使用。"""
 
 import math
 from dataclasses import dataclass
@@ -44,7 +44,8 @@ def material(key):
     color = tuple(linear(int(hex_color[i:i + 2], 16) / 255) for i in (0, 2, 4))
     mat = bpy.data.materials.new(name)
     mat.use_nodes = True
-    shader = mat.node_tree.nodes.get("Principled BSDF")
+    # 节点名称随 Blender 界面语言变化，类型标识保持稳定。
+    shader = next(node for node in mat.node_tree.nodes if node.type == "BSDF_PRINCIPLED")
     shader.inputs["Base Color"].default_value = (*color, 1)
     shader.inputs["Roughness"].default_value = 0.82
     mat.diffuse_color = (*color, 1)
