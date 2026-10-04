@@ -15,6 +15,8 @@ use bevy_inspector_egui::bevy_egui::{
 
 use crate::{
     app_flow::{AppState, PlayState, gameplay_running},
+    camera_fade::{self, update_building_fades},
+    camera_obstruction::{CameraOcclusion, OccludedBuildings, detect_building_occlusion},
     gameplay::{Character, ControlsCharacter, GameplaySystems, sync_held_objects},
     input::{GameplayContext, LookAction, ReleasePointerAction, TogglePerspectiveAction},
     settings::GameSettings,
@@ -49,6 +51,7 @@ pub struct CharacterVisual;
 /// 两种视角共享水平朝向并分别记住俯仰；实际位置和朝向仅写入 Transform。
 #[derive(Component, Reflect)]
 #[reflect(Component)]
+#[require(CameraOcclusion)]
 pub struct OrbitCamera {
     #[entities]
     pub target: Entity,
@@ -91,7 +94,7 @@ impl OrbitCamera {
                         * Quat::from_rotation_x(-self.first_person_pitch),
                 );
         }
-        let pivot = target_position + Vec3::Y * self.look_height;
+        let pivot = self.pivot(target_position);
         let offset = Quat::from_rotation_y(self.yaw)
             * Vec3::new(
                 0.0,
@@ -99,6 +102,15 @@ impl OrbitCamera {
                 self.distance * self.third_person_pitch.cos(),
             );
         Transform::from_translation(pivot + offset).looking_at(pivot, Vec3::Y)
+    }
+
+    /// 遮挡处理只读取模式和理想观察点，不改变玩家输入的角度与距离。
+    pub(crate) fn is_third_person(&self) -> bool {
+        self.perspective == CameraPerspective::ThirdPerson
+    }
+
+    pub(crate) fn pivot(&self, target_position: Vec3) -> Vec3 {
+        target_position + Vec3::Y * self.look_height
     }
 
     fn pitch(&self) -> f32 {
@@ -110,7 +122,7 @@ impl OrbitCamera {
 
     fn apply_vertical_look(&mut self, delta: f32) {
         match self.perspective {
-            // 没有镜头碰撞，第三人称保持在观察点上方；第一人称允许抬头，但都避开垂直极点。
+            // 第三人称保持固定距离且在观察点上方；两种模式都避开垂直极点。
             CameraPerspective::ThirdPerson => {
                 self.third_person_pitch = (self.third_person_pitch + delta)
                     .clamp(5.0_f32.to_radians(), 80.0_f32.to_radians());
@@ -139,7 +151,9 @@ pub struct CameraControlPlugin;
 
 impl Plugin for CameraControlPlugin {
     fn build(&self, app: &mut App) {
+        camera_fade::init(app);
         app.init_resource::<GameSettings>()
+            .init_resource::<OccludedBuildings>()
             .register_type::<ControlsCamera>()
             .register_type::<CharacterVisual>()
             .register_type::<CameraPerspective>()
@@ -185,6 +199,8 @@ impl Plugin for CameraControlPlugin {
                     sync_character_facing,
                     sync_held_objects,
                     follow_orbit_camera,
+                    detect_building_occlusion,
+                    update_building_fades,
                     sync_character_visibility,
                 )
                     .chain()
@@ -558,7 +574,7 @@ pub(crate) fn sync_character_facing(
 }
 
 /// 镜头使用本帧插值后的人物位置与环绕角；互斥过滤避免 Transform 查询读写冲突。
-fn follow_orbit_camera(
+pub(crate) fn follow_orbit_camera(
     characters: Query<&Transform, With<Character>>,
     mut cameras: Query<(&OrbitCamera, &mut Transform), Without<Character>>,
 ) {
@@ -569,7 +585,7 @@ fn follow_orbit_camera(
     }
 }
 
-/// 只隐藏角色视觉子树，保留业务根与独立木箱；相机或控制者丢失后自动恢复模型。
+/// 第一人称只隐藏自身视觉子树，保留业务根与独立木箱。
 fn sync_character_visibility(
     controllers: Query<(&ControlsCharacter, &ControlsCamera), With<GameplayContext>>,
     cameras: Query<&OrbitCamera>,
@@ -578,7 +594,7 @@ fn sync_character_visibility(
 ) {
     for (visual, parent, mut visibility) in &mut visuals {
         let character = parent.parent();
-        let first_person = controllers
+        let hide_visual = controllers
             .iter()
             .any(|(controlled_character, controlled_camera)| {
                 characters.contains(character)
@@ -588,7 +604,7 @@ fn sync_character_visibility(
                             && orbit.perspective == CameraPerspective::FirstPerson
                     })
             });
-        let after = if first_person {
+        let after = if hide_visual {
             Visibility::Hidden
         } else {
             Visibility::Inherited
@@ -2220,6 +2236,133 @@ mod tests {
                 assert_item_visual_matches_root(app.world(), item, visual_child, visual_offset);
             }
         }
+    }
+
+    #[test]
+    fn third_person_world_obstacles_keep_fixed_pose_and_character_visible() {
+        use crate::physics::world_collision_layers;
+        use avian3d::prelude::Collider;
+
+        let (mut app, _, character, camera, _) = test_app();
+        let visual = app
+            .world_mut()
+            .spawn((CharacterVisual, Visibility::default(), ChildOf(character)))
+            .id();
+        let ideal = app
+            .world()
+            .get::<OrbitCamera>(camera)
+            .unwrap()
+            .transform(app.world().get::<Transform>(character).unwrap().translation);
+        let obstacle = app
+            .world_mut()
+            .spawn((
+                RigidBody::Static,
+                Collider::cuboid(4.0, 4.0, 4.0),
+                world_collision_layers(),
+                Transform::from_translation(ideal.translation),
+            ))
+            .id();
+        fixed_step(&mut app);
+        let expected = app
+            .world()
+            .get::<OrbitCamera>(camera)
+            .unwrap()
+            .transform(app.world().get::<Transform>(character).unwrap().translation);
+        assert_eq!(*app.world().get::<Transform>(camera).unwrap(), expected);
+        assert_eq!(
+            app.world().get::<Visibility>(visual),
+            Some(&Visibility::Inherited)
+        );
+        app.world_mut().despawn(obstacle);
+        fixed_step(&mut app);
+        let expected = app
+            .world()
+            .get::<OrbitCamera>(camera)
+            .unwrap()
+            .transform(app.world().get::<Transform>(character).unwrap().translation);
+        assert_eq!(*app.world().get::<Transform>(camera).unwrap(), expected);
+        assert_eq!(
+            app.world().get::<Visibility>(visual),
+            Some(&Visibility::Inherited)
+        );
+    }
+
+    #[test]
+    fn first_person_restores_shell_material_in_the_same_zero_fixed_step_frame() {
+        use crate::{
+            camera_obstruction::{BuildingShellVisual, CameraShell},
+            physics::camera_query_layers,
+        };
+        use avian3d::prelude::Collider;
+
+        let (mut app, _, _, camera, _) = test_app();
+        let building = app.world_mut().spawn_empty().id();
+        let original = app
+            .world_mut()
+            .resource_mut::<Assets<StandardMaterial>>()
+            .add(StandardMaterial::default());
+        let wall_visual = app
+            .world_mut()
+            .spawn((
+                BuildingShellVisual(building),
+                MeshMaterial3d(original.clone()),
+            ))
+            .id();
+        app.world_mut().spawn((
+            CameraShell(building),
+            RigidBody::Static,
+            Collider::cuboid(8.0, 8.0, 0.1),
+            camera_query_layers(),
+            Transform::from_xyz(0.0, 3.5, 4.0),
+        ));
+        for _ in 0..12 {
+            fixed_step(&mut app);
+        }
+        let faded = &app
+            .world()
+            .get::<MeshMaterial3d<StandardMaterial>>(wall_visual)
+            .unwrap()
+            .0;
+        assert_ne!(faded.id(), original.id());
+        assert!(
+            (app.world()
+                .resource::<Assets<StandardMaterial>>()
+                .get(faded)
+                .unwrap()
+                .base_color
+                .alpha()
+                - 0.2)
+                .abs()
+                < 0.001
+        );
+        let fixed_before = app.world().resource::<Time<Fixed>>().elapsed();
+        app.world_mut()
+            .get_mut::<OrbitCamera>(camera)
+            .unwrap()
+            .perspective = CameraPerspective::FirstPerson;
+        app.update();
+        assert_eq!(
+            app.world().resource::<Time<Fixed>>().elapsed(),
+            fixed_before
+        );
+        assert_eq!(
+            app.world()
+                .get::<MeshMaterial3d<StandardMaterial>>(wall_visual)
+                .unwrap()
+                .0
+                .id(),
+            original.id()
+        );
+        assert!(
+            app.world()
+                .resource::<OccludedBuildings>()
+                .buildings
+                .is_empty()
+        );
+        assert_eq!(
+            app.world().resource::<OccludedBuildings>().active_cameras,
+            0
+        );
     }
 
     #[test]
