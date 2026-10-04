@@ -1,6 +1,6 @@
 {
   "title": "当前原型的 ECS 架构",
-  "snapshot_note": "源码结构快照：英文菜单／暂停、真实海岛资源装配、五件动态可搬物、主角动画、落水恢复、CCD、Kira 音效与后台会话日志；不表示已完成游戏运行或游戏视觉验收。",
+  "snapshot_note": "以当前源码为准：窗口原生 16:9 策略、固定菜单与设置面板滚动、草稿原位更新；保留既有玩法、动画与声音架构。",
   "systems": [
     {
       "id": "startup_spawn",
@@ -2472,13 +2472,14 @@
       "kind": "system",
       "phase": "Update · UiSystems::Build",
       "module": "ui",
-      "description": "页面、草稿或窗口宽度变化时销毁旧根并声明新的 BSN 页面；Hidden 只清理。",
+      "description": "页面、分类、返回来源或逻辑视口尺寸变化时重建 BSN 页面；草稿数值和保存提示原位更新，Hidden 只清理。",
       "reads": [
         "resource.MenuState",
         "resource.SettingsDraft",
         "resource.UiTheme",
         "window.Window",
-        "menu_root.MenuRoot"
+        "menu_root.MenuRoot",
+        "local.MenuLayout"
       ],
       "writes": [
         "menu_root.MenuRoot",
@@ -2492,7 +2493,13 @@
         "menu_text.Text",
         "menu_text.TextFont",
         "menu_text.TextColor",
-        "menu_text.Node"
+        "menu_text.Node",
+        "local.MenuLayout",
+        "menu_text.SettingValue",
+        "menu_text.SettingsStatus",
+        "settings_panel.SettingsPanel",
+        "settings_scrollbar.SettingsScrollbar",
+        "settings_scrollbar_thumb.SettingsScrollbarThumb"
       ],
       "filters": [
         "With<PrimaryWindow>",
@@ -2500,12 +2507,13 @@
       ],
       "events": [],
       "notes": [
-        "Build/Style 通过系统集 chain；结构 Commands 在读取新按钮前同步。",
-        "字体句柄预加载，BSN 不发独立异步页面任务；焦点变化不重建页面。"
+        "Build → Style 应用结构 Commands；指针处理与滚动条绑定均在 Build 后、Style 前，两者不设全序。",
+        "草稿和 status 不进入结构 key；修改数值、Restore Defaults 和 Apply 保留视口、滑块与焦点身份。",
+        "切换分类或离开再进入按新页面初始化；内容变短允许布局后夹取有效滚动范围。"
       ],
       "source": {
         "path": "src/ui/screens.rs",
-        "line": 29
+        "line": 45
       }
     },
     {
@@ -2532,7 +2540,7 @@
       ],
       "source": {
         "path": "src/ui/screens.rs",
-        "line": 556
+        "line": 618
       }
     },
     {
@@ -2561,7 +2569,7 @@
       ],
       "source": {
         "path": "src/ui/screens.rs",
-        "line": 590
+        "line": 689
       }
     },
     {
@@ -2570,28 +2578,34 @@
       "kind": "system",
       "phase": "Update · UiSystems::Style",
       "module": "ui",
-      "description": "等待真实布局后，沿 ChildOf 找视口，把键盘焦点按钮滚入可视范围。",
+      "description": "等待真实布局后，沿 ChildOf 找视口，把当前焦点按钮滚入可视范围。",
       "reads": [
         "resource.MenuFocus",
         "menu_button.MenuButton",
         "menu_scroll.ComputedNode",
         "menu_scroll.UiGlobalTransform",
         "menu_button.ComputedNode",
-        "menu_button.UiGlobalTransform"
+        "menu_button.UiGlobalTransform",
+        "menu_scroll.ScrollPosition",
+        "menu_button.ChildOf",
+        "local.MenuScrollFocus"
       ],
       "writes": [
-        "menu_scroll.ScrollPosition"
+        "menu_scroll.ScrollPosition",
+        "local.MenuScrollFocus"
       ],
       "filters": [
         "With<MenuScroll>"
       ],
       "events": [],
       "notes": [
-        "布局尚无有效尺寸时等待下一帧；物理 UI 坐标通过 inverse_scale_factor 转逻辑滚动位置。"
+        "布局尚无有效尺寸时等待下一帧；物理 UI 坐标通过 inverse_scale_factor 转逻辑滚动位置。",
+        "固定分类和操作按钮没有 MenuScroll 祖先；仅设置面板内焦点可滚入。",
+        "函数不按 MenuInputSource 门控；鼠标点击改变焦点时同样可运行，主要供导航使用。"
       ],
       "source": {
         "path": "src/ui/screens.rs",
-        "line": 613
+        "line": 712
       }
     },
     {
@@ -2859,14 +2873,18 @@
       "kind": "observer",
       "phase": "匹配事件触发时",
       "module": "ui",
-      "description": "原生 UI 滚轮事件在当前 MenuScroll 视口更新夹紧滚动位置并停止继续冒泡。",
+      "description": "仅 Settings 内容视口响应原生 Pointer<Scroll>，夹紧滚动位置并停止冒泡。",
       "reads": [
-        "menu_scroll.ComputedNode"
+        "resource.MenuState",
+        "menu_scroll.ComputedNode",
+        "menu_scroll.ScrollPosition"
       ],
       "writes": [
         "menu_scroll.ScrollPosition"
       ],
-      "filters": [],
+      "filters": [
+        "With<MenuScroll>"
+      ],
       "events": [
         "响应 EntityEvent：Pointer<Scroll>"
       ],
@@ -2875,7 +2893,7 @@
       ],
       "source": {
         "path": "src/ui/widgets.rs",
-        "line": 347
+        "line": 629
       }
     },
     {
@@ -3094,6 +3112,218 @@
       "source": {
         "path": "src/audio_events.rs",
         "line": 108
+      }
+    },
+    {
+      "id": "window_log",
+      "name": "log_policy",
+      "kind": "system",
+      "phase": "Startup",
+      "module": "window_policy",
+      "description": "记录窗口策略支持平台、比例与最小尺寸。",
+      "reads": [],
+      "writes": [],
+      "filters": [],
+      "events": [],
+      "notes": [
+        "写入统一会话日志；不启动窗口。"
+      ],
+      "source": {
+        "path": "src/window_policy/mod.rs",
+        "line": 58
+      }
+    },
+    {
+      "id": "window_install",
+      "name": "install_native_policy",
+      "kind": "system",
+      "phase": "PreUpdate · window thread",
+      "module": "window_policy",
+      "description": "安装、刷新并清理原生窗口策略；成功后显示，失败时固定尺寸显示。",
+      "reads": [
+        "non_send.NativePolicies",
+        "window.Window",
+        "window.PrimaryWindow",
+        "window.RawHandleWrapper"
+      ],
+      "writes": [
+        "non_send.NativePolicies",
+        "window.Window"
+      ],
+      "filters": [
+        "With<PrimaryWindow>",
+        "NonSendMarker"
+      ],
+      "events": [],
+      "notes": [
+        "WINIT_WINDOWS 为线程局部后端映射，不是 ECS Resource。",
+        "仅短借用后端取得存活 Entity 集合，所有原生 API 在借用结束后调用，避免 resize 同步重入。",
+        "无窗口测试后端映射为空，不调用原生 API；退出守卫 Drop 在窗口线程执行。"
+      ],
+      "source": {
+        "path": "src/window_policy/mod.rs",
+        "line": 84
+      }
+    },
+    {
+      "id": "menu_settings_text",
+      "name": "update_settings_text",
+      "kind": "system",
+      "phase": "Update · UiSystems::Style",
+      "module": "ui",
+      "description": "草稿数值与保存提示变更时原位更新 Text，保留视口与焦点身份。",
+      "reads": [
+        "resource.SettingsDraft",
+        "resource.MenuState",
+        "menu_text.Text",
+        "menu_text.SettingValue",
+        "menu_text.SettingsStatus"
+      ],
+      "writes": [
+        "menu_text.Text"
+      ],
+      "filters": [
+        "Or<(With<SettingValue>, With<SettingsStatus>)>"
+      ],
+      "events": [],
+      "notes": [
+        "仅资源变化时运行，实际字符串不同才写入；不是结构重建系统。"
+      ],
+      "source": {
+        "path": "src/ui/screens.rs",
+        "line": 661
+      }
+    },
+    {
+      "id": "menu_bind_scrollbars",
+      "name": "bind_settings_scrollbars",
+      "kind": "system",
+      "phase": "Update · after Build / before Style",
+      "module": "ui",
+      "description": "用 BSN 生成后的真实 sibling Entity 绑定原生 Scrollbar.target。",
+      "reads": [
+        "settings_scrollbar.SettingsScrollbar",
+        "settings_scrollbar.ChildOf",
+        "settings_panel.Children",
+        "menu_scroll.MenuScroll"
+      ],
+      "writes": [
+        "settings_scrollbar.Scrollbar"
+      ],
+      "filters": [
+        "Without<Scrollbar>",
+        "With<MenuScroll>"
+      ],
+      "events": [],
+      "notes": [
+        "Commands 插入原生控件；Build 延迟命令已可见，原生布局前同步。",
+        "与 pointer_interaction 均在 Build 后、Style 前，无额外彼此全序。",
+        "settings_panel.Children 在图中聚合省略的 frame.Children；真实 Query 读取轨道父 frame 的 Children。"
+      ],
+      "source": {
+        "path": "src/ui/widgets.rs",
+        "line": 129
+      }
+    },
+    {
+      "id": "menu_sync_scrollbars",
+      "name": "sync_settings_scrollbars",
+      "kind": "system",
+      "phase": "PostUpdate · after UiSystems::Layout / before VisibilityPropagate",
+      "module": "ui",
+      "description": "依据实际溢出更新显隐和拾取，夹取滚动位置并同步滑块高亮。",
+      "reads": [
+        "resource.MenuState",
+        "resource.MenuInputSource",
+        "menu_scroll.ComputedNode",
+        "menu_scroll.ScrollPosition",
+        "settings_scrollbar.Scrollbar",
+        "settings_scrollbar.Children",
+        "settings_scrollbar.Visibility",
+        "settings_scrollbar.Pickable",
+        "settings_scrollbar_thumb.ScrollbarDragState",
+        "settings_scrollbar_thumb.Hovered",
+        "settings_scrollbar_thumb.Pickable",
+        "settings_scrollbar_thumb.BackgroundColor"
+      ],
+      "writes": [
+        "menu_scroll.ScrollPosition",
+        "settings_scrollbar.Visibility",
+        "settings_scrollbar.Pickable",
+        "settings_scrollbar_thumb.ScrollbarDragState",
+        "settings_scrollbar_thumb.Pickable",
+        "settings_scrollbar_thumb.BackgroundColor"
+      ],
+      "filters": [
+        "With<MenuScroll>",
+        "With<SettingsScrollbar>",
+        "With<SettingsScrollbarThumb>",
+        "Without<SettingsScrollbarThumb> (track Query)",
+        "Without<SettingsScrollbar> (thumb Query)"
+      ],
+      "events": [],
+      "notes": [
+        "原生滑块几何系统位于 Layout 集合并在 ui_layout_system 后，本系统读取本帧布局。",
+        "fit 或离开 Settings 清零 offset 并取消 dragging；仍溢出的持续 resize 不额外取消拖拽。",
+        "重建销毁旧滑块，新滑块默认未拖拽；显隐变化记录 English structured debug log。"
+      ],
+      "source": {
+        "path": "src/ui/widgets.rs",
+        "line": 150
+      }
+    },
+    {
+      "id": "observe_scrollbar_scroll",
+      "name": "scroll_over_settings_scrollbar",
+      "kind": "observer",
+      "phase": "匹配事件触发时",
+      "module": "ui",
+      "description": "轨道或滑块冒泡的滚轮事件更新 target 视口并停止传播。",
+      "reads": [
+        "resource.MenuState",
+        "settings_scrollbar.Scrollbar",
+        "menu_scroll.ComputedNode",
+        "menu_scroll.ScrollPosition"
+      ],
+      "writes": [
+        "menu_scroll.ScrollPosition"
+      ],
+      "filters": [
+        "With<MenuScroll>",
+        "With<SettingsScrollbar>"
+      ],
+      "events": [
+        "响应 EntityEvent：Pointer<Scroll>"
+      ],
+      "notes": [
+        "仅 Settings 响应；原生 UI 事件避免重复读取底层输入。"
+      ],
+      "source": {
+        "path": "src/ui/widgets.rs",
+        "line": 235
+      }
+    },
+    {
+      "id": "observe_scrollbar_press",
+      "name": "scrollbar_pointer_source",
+      "kind": "observer",
+      "phase": "匹配事件触发时",
+      "module": "ui",
+      "description": "轨道和滑块按下时将菜单输入来源切为 Pointer。",
+      "reads": [],
+      "writes": [
+        "resource.MenuInputSource"
+      ],
+      "filters": [],
+      "events": [
+        "响应 EntityEvent：Pointer<Press>"
+      ],
+      "notes": [
+        "菜单动作仍使用 Enhanced Input；控件坐标与拖拽由原生 ScrollbarPlugin 处理。"
+      ],
+      "source": {
+        "path": "src/ui/widgets.rs",
+        "line": 230
       }
     }
   ],
@@ -4299,7 +4529,7 @@
           "description": "EguiContext 要求的组件；控制上下文输入与输出处理，当前保留插件默认值。",
           "source": {
             "path": "src/main.rs",
-            "line": 67
+            "line": 64
           }
         },
         {
@@ -4311,7 +4541,7 @@
           "description": "UI 输入缓冲组件，包含映射后的窗口输入；不是玩法 Resource 或动作意图。",
           "source": {
             "path": "src/main.rs",
-            "line": 67
+            "line": 64
           }
         },
         {
@@ -4323,7 +4553,7 @@
           "description": "EguiPlugin::default() 默认启用多轮 UI 计算，PrimaryEguiContext 钩子附加此组件；PostUpdate 的引擎循环据此调用 UI Schedule。",
           "source": {
             "path": "src/main.rs",
-            "line": 67
+            "line": 64
           }
         },
         {
@@ -4335,7 +4565,7 @@
           "description": "UI 计算输出，由多轮上下文循环写入并交给插件输出、渲染处理。",
           "source": {
             "path": "src/main.rs",
-            "line": 67
+            "line": 64
           }
         },
         {
@@ -4526,7 +4756,7 @@
       "id": "window",
       "name": "主窗口实体",
       "count": 1,
-      "description": "WindowPlugin 根据 primary_window 设置创建。鼠标捕获系统读取窗口状态并设置 CursorOptions。",
+      "description": "WindowPlugin 创建主窗口；WindowPolicyPlugin 在窗口线程安装原生 16:9 策略后显示，退出释放守卫。",
       "components": [
         {
           "id": "window.Window",
@@ -4535,12 +4765,15 @@
             "focused: bool",
             "present_mode: PresentMode = AutoNoVsync",
             "其余窗口配置与运行状态",
-            "当前物理光标位置: Option<Vec2>"
+            "当前物理光标位置: Option<Vec2>",
+            "resolution: 1280×720 initial, logical min 960×540",
+            "visible: false until native policy installed (Windows/macOS)",
+            "resizable / enabled_buttons.maximize"
           ],
-          "description": "主窗口；sync_mouse_capture 读取焦点及当前物理光标，并用 Egui 缓存的面板层命中区域区别游戏区点击。AutoNoVsync 可能由平台回退。",
+          "description": "原生平台在应用尺寸前约束内容 16:9；工作区、DPI 和最大化参与几何计算。安装失败显示固定窗口并记录日志。",
           "source": {
-            "path": "src/main.rs",
-            "line": 48
+            "path": "src/window_policy/mod.rs",
+            "line": 35
           }
         },
         {
@@ -4549,8 +4782,8 @@
           "fields": [],
           "description": "标识鼠标捕获系统要求唯一的主窗口。",
           "source": {
-            "path": "src/main.rs",
-            "line": 48
+            "path": "src/window_policy/mod.rs",
+            "line": 35
           }
         },
         {
@@ -4565,6 +4798,18 @@
           "source": {
             "path": "src/camera.rs",
             "line": 292
+          }
+        },
+        {
+          "id": "window.RawHandleWrapper",
+          "name": "RawHandleWrapper",
+          "fields": [
+            "原生窗口句柄"
+          ],
+          "description": "后端建立后仅在窗口线程读取，用于安装原生策略。",
+          "source": {
+            "path": "src/window_policy/mod.rs",
+            "line": 87
           }
         }
       ]
@@ -5303,7 +5548,7 @@
       "id": "menu_root",
       "name": "BSN 菜单页面根",
       "count": "0..1",
-      "description": "MenuState、草稿或窗口宽度变化时重建；Hidden 销毁页面，子页面返回来源由 MenuState 管理。",
+      "description": "页面、分类、返回来源或逻辑视口尺寸变更重建；草稿和提示更新保留实体，Hidden 销毁页面。",
       "components": [
         {
           "id": "menu_root.MenuRoot",
@@ -5322,10 +5567,10 @@
             "width/height: 100%",
             "flex_direction: Column"
           ],
-          "description": "顶层页面布局，内容滚动区域与固定页脚分开。",
+          "description": "顶层固定内容与页脚；Settings 右列纸色面板和底部操作为兄弟。",
           "source": {
             "path": "src/ui/screens.rs",
-            "line": 64
+            "line": 105
           }
         },
         {
@@ -5337,7 +5582,7 @@
           "description": "菜单显示在展示场景与玩法画面上。",
           "source": {
             "path": "src/ui/screens.rs",
-            "line": 62
+            "line": 104
           }
         },
         {
@@ -5349,7 +5594,7 @@
           "description": "BSN 声明式层级，间接子节点逐层使用 ChildOf。",
           "source": {
             "path": "src/ui/screens.rs",
-            "line": 73
+            "line": 115
           }
         }
       ]
@@ -5380,7 +5625,7 @@
           "description": "Bevy 原生 UI 按钮命中。",
           "source": {
             "path": "src/ui/widgets.rs",
-            "line": 90
+            "line": 361
           }
         },
         {
@@ -5404,7 +5649,7 @@
           "description": "BSN 控件布局；文字叶节点保留自然宽度。",
           "source": {
             "path": "src/ui/widgets.rs",
-            "line": 82
+            "line": 331
           }
         },
         {
@@ -5416,7 +5661,7 @@
           "description": "style_buttons 按输入来源与 Interaction 更新。",
           "source": {
             "path": "src/ui/screens.rs",
-            "line": 556
+            "line": 618
           }
         },
         {
@@ -5428,7 +5673,7 @@
           "description": "悬停/键盘焦点时使用深色边框。",
           "source": {
             "path": "src/ui/screens.rs",
-            "line": 556
+            "line": 618
           }
         },
         {
@@ -5441,7 +5686,7 @@
           "description": "实际设置的箭头携带说明；焦点更新右侧文本，不重建页面。",
           "source": {
             "path": "src/ui/widgets.rs",
-            "line": 9
+            "line": 19
           }
         },
         {
@@ -5453,7 +5698,7 @@
           "description": "原生布局后的按钮几何，用于焦点滚入。",
           "source": {
             "path": "src/ui/screens.rs",
-            "line": 615
+            "line": 714
           }
         },
         {
@@ -5465,16 +5710,16 @@
           "description": "与视口坐标比较按钮上下边界。",
           "source": {
             "path": "src/ui/screens.rs",
-            "line": 615
+            "line": 714
           }
         }
       ]
     },
     {
       "id": "menu_scroll",
-      "name": "页面滚动视口",
+      "name": "设置面板内容视口",
       "count": "0..1",
-      "description": "页面高度不足时保留控件大小，由原生 UI Scroll 与键盘焦点滚入共同更新位置。",
+      "description": "只包含右侧纸色面板内标题、字段、说明和保存提示；左侧分类、底部操作及页脚固定，Main/Pause/Help 无此实体。",
       "components": [
         {
           "id": "menu_scroll.MenuScroll",
@@ -5483,19 +5728,20 @@
           "description": "滚动视口标记。",
           "source": {
             "path": "src/ui/widgets.rs",
-            "line": 16
+            "line": 37
           }
         },
         {
           "id": "menu_scroll.ScrollPosition",
           "name": "ScrollPosition",
           "fields": [
-            "0: Vec2"
+            "x: f32 = 0",
+            "y: f32"
           ],
           "description": "指针滚轮或焦点滚入按内容范围夹紧。",
           "source": {
             "path": "src/ui/widgets.rs",
-            "line": 342
+            "line": 624
           }
         },
         {
@@ -5507,7 +5753,7 @@
           "description": "布局计算结果，用于滚动范围与坐标转换。",
           "source": {
             "path": "src/ui/screens.rs",
-            "line": 613
+            "line": 712
           }
         },
         {
@@ -5519,7 +5765,7 @@
           "description": "与按钮比较可视区上下边界。",
           "source": {
             "path": "src/ui/screens.rs",
-            "line": 613
+            "line": 712
           }
         },
         {
@@ -5530,10 +5776,10 @@
             "flex_grow: 1",
             "flex_basis: 0"
           ],
-          "description": "只占顶层剩余高度，页脚保留可视空间。",
+          "description": "纸色面板内剩余高度，纵向 overflow；与轨道为同一 frame 的兄弟。",
           "source": {
             "path": "src/ui/widgets.rs",
-            "line": 328
+            "line": 613
           }
         }
       ]
@@ -5758,7 +6004,7 @@
           "description": "正文/标题实际文本；说明系统按焦点更新对应叶节点。",
           "source": {
             "path": "src/ui/widgets.rs",
-            "line": 36
+            "line": 285
           }
         },
         {
@@ -5771,7 +6017,7 @@
           "description": "UiTheme 标题/正文字体句柄与响应式字号。",
           "source": {
             "path": "src/ui/widgets.rs",
-            "line": 37
+            "line": 286
           }
         },
         {
@@ -5783,7 +6029,7 @@
           "description": "纸色/深墨色文字，区分正文与静态占位。",
           "source": {
             "path": "src/ui/widgets.rs",
-            "line": 41
+            "line": 290
           }
         },
         {
@@ -5816,7 +6062,246 @@
           "description": "保留内在宽度，Column 正文仍正常折行。",
           "source": {
             "path": "src/ui/widgets.rs",
-            "line": 43
+            "line": 292
+          }
+        },
+        {
+          "id": "menu_text.SettingValue",
+          "name": "SettingValue",
+          "fields": [
+            "0: SettingKey"
+          ],
+          "description": "标识草稿值文字，原位更新。",
+          "source": {
+            "path": "src/ui/widgets.rs",
+            "line": 26
+          }
+        },
+        {
+          "id": "menu_text.SettingsStatus",
+          "name": "SettingsStatus",
+          "fields": [],
+          "description": "标识保存提示文字，原位更新。",
+          "source": {
+            "path": "src/ui/screens.rs",
+            "line": 24
+          }
+        }
+      ]
+    },
+    {
+      "id": "settings_panel",
+      "name": "设置右侧纸色面板",
+      "count": "0..1 (Settings)",
+      "description": "右列剩余高度内裁切内容；下方 Restore Defaults / Apply / Back 固定。",
+      "components": [
+        {
+          "id": "settings_panel.SettingsPanel",
+          "name": "SettingsPanel",
+          "fields": [],
+          "description": "右侧内容边界。",
+          "source": {
+            "path": "src/ui/screens.rs",
+            "line": 20
+          }
+        },
+        {
+          "id": "settings_panel.Node",
+          "name": "Node",
+          "fields": [
+            "overflow: clip",
+            "flex_grow: 1",
+            "min_height: 0"
+          ],
+          "description": "包含滚动 frame；右列操作行为并列兄弟。",
+          "source": {
+            "path": "src/ui/screens.rs",
+            "line": 412
+          }
+        },
+        {
+          "id": "settings_panel.Children",
+          "name": "Children",
+          "fields": [
+            "panel child: frame Entity",
+            "omitted frame.Children: viewport / track"
+          ],
+          "description": "图中聚合面板及省略 frame 的 Children；bind 实际读取 frame.Children 查找 sibling，不直接读取面板 Children。",
+          "source": {
+            "path": "src/ui/widgets.rs",
+            "line": 84
+          }
+        }
+      ]
+    },
+    {
+      "id": "settings_scrollbar",
+      "name": "设置滚动条轨道",
+      "count": "0..1 (Settings)",
+      "description": "保留固定 gutter，默认隐藏；只有内容溢出才显示并允许拾取。",
+      "components": [
+        {
+          "id": "settings_scrollbar.SettingsScrollbar",
+          "name": "SettingsScrollbar",
+          "fields": [
+            "min_thumb_length: f32"
+          ],
+          "description": "BSN 标记；Build 后绑定真实 sibling target。",
+          "source": {
+            "path": "src/ui/widgets.rs",
+            "line": 41
+          }
+        },
+        {
+          "id": "settings_scrollbar.Scrollbar",
+          "name": "Scrollbar",
+          "fields": [
+            "target: Entity",
+            "orientation: Vertical",
+            "min_thumb_length: f32"
+          ],
+          "description": "Bevy 原生控件；target 是普通 Entity 引用。",
+          "source": {
+            "path": "src/ui/widgets.rs",
+            "line": 142
+          }
+        },
+        {
+          "id": "settings_scrollbar.Visibility",
+          "name": "Visibility",
+          "fields": [
+            "Hidden / Inherited"
+          ],
+          "description": "PostUpdate 布局后更新显隐。",
+          "source": {
+            "path": "src/ui/widgets.rs",
+            "line": 150
+          }
+        },
+        {
+          "id": "settings_scrollbar.Pickable",
+          "name": "Pickable",
+          "fields": [
+            "IGNORE / default"
+          ],
+          "description": "隐藏时禁用拾取。",
+          "source": {
+            "path": "src/ui/widgets.rs",
+            "line": 150
+          }
+        },
+        {
+          "id": "settings_scrollbar.Children",
+          "name": "Children",
+          "fields": [
+            "thumb: Entity"
+          ],
+          "description": "原生滑块是轨道子实体。",
+          "source": {
+            "path": "src/ui/widgets.rs",
+            "line": 113
+          }
+        },
+        {
+          "id": "settings_scrollbar.ChildOf",
+          "name": "ChildOf",
+          "fields": [
+            "parent: frame Entity"
+          ],
+          "description": "与 MenuScroll 共用 frame 父实体。",
+          "source": {
+            "path": "src/ui/widgets.rs",
+            "line": 84
+          }
+        }
+      ]
+    },
+    {
+      "id": "settings_scrollbar_thumb",
+      "name": "设置滚动条滑块",
+      "count": "0..1 (Settings)",
+      "description": "不带 Node 或菜单动作；原生控件按比例定位和处理拖拽。",
+      "components": [
+        {
+          "id": "settings_scrollbar_thumb.SettingsScrollbarThumb",
+          "name": "SettingsScrollbarThumb",
+          "fields": [],
+          "description": "项目滑块身份。",
+          "source": {
+            "path": "src/ui/widgets.rs",
+            "line": 47
+          }
+        },
+        {
+          "id": "settings_scrollbar_thumb.ScrollbarThumb",
+          "name": "ScrollbarThumb",
+          "fields": [
+            "border_radius / border"
+          ],
+          "description": "原生滑块几何；不装配 Node。",
+          "source": {
+            "path": "src/ui/widgets.rs",
+            "line": 115
+          }
+        },
+        {
+          "id": "settings_scrollbar_thumb.ScrollbarDragState",
+          "name": "ScrollbarDragState",
+          "fields": [
+            "dragging: bool"
+          ],
+          "description": "原生 DragEnd/Cancel 清理；隐藏或离页由同步系统取消。",
+          "source": {
+            "path": "src/ui/widgets.rs",
+            "line": 161
+          }
+        },
+        {
+          "id": "settings_scrollbar_thumb.Hovered",
+          "name": "Hovered",
+          "fields": [
+            "hovered: bool"
+          ],
+          "description": "Pointer 来源时同步高亮。",
+          "source": {
+            "path": "src/ui/widgets.rs",
+            "line": 120
+          }
+        },
+        {
+          "id": "settings_scrollbar_thumb.Pickable",
+          "name": "Pickable",
+          "fields": [
+            "IGNORE / default"
+          ],
+          "description": "随轨道显隐同步拾取。",
+          "source": {
+            "path": "src/ui/widgets.rs",
+            "line": 121
+          }
+        },
+        {
+          "id": "settings_scrollbar_thumb.BackgroundColor",
+          "name": "BackgroundColor",
+          "fields": [
+            "0: Color"
+          ],
+          "description": "悬停或拖动显示黄色，导航来源恢复纸色。",
+          "source": {
+            "path": "src/ui/widgets.rs",
+            "line": 122
+          }
+        },
+        {
+          "id": "settings_scrollbar_thumb.ChildOf",
+          "name": "ChildOf",
+          "fields": [
+            "parent: track Entity"
+          ],
+          "description": "轨道的直接子实体。",
+          "source": {
+            "path": "src/ui/widgets.rs",
+            "line": 113
           }
         }
       ]
@@ -5875,7 +6360,7 @@
       "description": "固定 60 Hz 模拟时钟，由引擎固定循环推进；每个渲染帧执行 0..N 个固定步。帧率上限不会修改此时间步。",
       "source": {
         "path": "src/main.rs",
-        "line": 64
+        "line": 61
       }
     },
     {
@@ -5899,7 +6384,7 @@
       "description": "引擎真实时钟；Enhanced Input 的 ContextTime 可读取，与 Time 的自动阶段语义不同。音频节流也使用此时钟，暂停时仍前进。",
       "source": {
         "path": "src/main.rs",
-        "line": 41
+        "line": 43
       }
     },
     {
@@ -5936,7 +6421,7 @@
       "description": "引擎从 MouseButtonInput 更新；输入框架可读取，但当前没有鼠标按钮玩法绑定。",
       "source": {
         "path": "src/main.rs",
-        "line": 41
+        "line": 43
       }
     },
     {
@@ -5960,7 +6445,7 @@
       "description": "底层窗口键盘消息，由引擎输入系统读取；缓冲通信不是触发式 Observer。",
       "source": {
         "path": "src/main.rs",
-        "line": 41
+        "line": 43
       }
     },
     {
@@ -5972,7 +6457,7 @@
       "description": "引擎输入系统据此释放残留按键状态。",
       "source": {
         "path": "src/main.rs",
-        "line": 41
+        "line": 43
       }
     },
     {
@@ -6011,7 +6496,7 @@
       "description": "底层鼠标位移消息，由引擎汇总为 AccumulatedMouseMotion。",
       "source": {
         "path": "src/main.rs",
-        "line": 41
+        "line": 43
       }
     },
     {
@@ -6072,7 +6557,7 @@
       "description": "主循环采用连续更新策略，帧间等待由 limit_frame_rate 负责。",
       "source": {
         "path": "src/main.rs",
-        "line": 62
+        "line": 60
       }
     },
     {
@@ -6187,7 +6672,7 @@
       "description": "Egui 插件全局配置。默认创建主相机上下文，默认不吸收或清空 Bevy 底层输入；项目通过 ContextActivity 隔离游戏动作。",
       "source": {
         "path": "src/main.rs",
-        "line": 67
+        "line": 64
       }
     },
     {
@@ -6197,7 +6682,7 @@
       "description": "EguiPlugin 默认多轮模式的标记 Resource；主上下文插入钩子据此要求 EguiMultipassSchedule。",
       "source": {
         "path": "src/main.rs",
-        "line": 67
+        "line": 64
       }
     },
     {
@@ -6456,7 +6941,7 @@
         "body: Handle<Font>",
         "scale: f32"
       ],
-      "description": "一次加载标题/正文字体；响应窗口宽度缩放，页面 BSN 引用既有句柄。",
+      "description": "一次加载字体；固定菜单按视口宽高等比适配，设置按宽度缩放。",
       "source": {
         "path": "src/ui/theme.rs",
         "line": 14
@@ -6695,6 +7180,63 @@
         "path": "src/ui/navigation.rs",
         "line": 228
       }
+    },
+    {
+      "id": "non_send.NativePolicies",
+      "name": "NativePolicies · NonSend",
+      "fields": [
+        "active: HashMap<Entity, platform::NativeWindowPolicy>",
+        "failed: HashSet<Entity>"
+      ],
+      "description": "窗口线程专属资源，原生守卫不是 ECS 组件；窗口实体或后端退出时移除并 Drop，macOS 恢复属性、Windows 卸载 subclass。",
+      "source": {
+        "path": "src/window_policy/mod.rs",
+        "line": 78
+      },
+      "platform_sources": [
+        {
+          "source": {
+            "path": "src/window_policy/macos.rs",
+            "line": 12
+          }
+        },
+        {
+          "source": {
+            "path": "src/window_policy/windows.rs",
+            "line": 39
+          }
+        },
+        {
+          "source": {
+            "path": "src/window_policy/geometry.rs",
+            "line": 48
+          }
+        }
+      ]
+    },
+    {
+      "id": "local.MenuLayout",
+      "name": "Local · previous_layout",
+      "fields": [
+        "Option<(MenuPage, SettingsTab, MenuPage, UVec2)>"
+      ],
+      "description": "rebuild_page 私有结构 key；逻辑尺寸按整数比较，不包含草稿或 status。",
+      "source": {
+        "path": "src/ui/screens.rs",
+        "line": 52
+      }
+    },
+    {
+      "id": "local.MenuScrollFocus",
+      "name": "Local · previous focused Entity",
+      "fields": [
+        "Option<Entity>"
+      ],
+      "description": "scroll_focused_button 私有记录，等待有效布局后才提交。",
+      "source": {
+        "path": "src/ui/screens.rs",
+        "line": 717
+      }
     }
   ],
   "relationships": [
@@ -6920,22 +7462,22 @@
       "description": "聚合多层 BSN 子树，不宣称按钮直接 ChildOf 页面根；重建或 Hidden 时沿层级清理。",
       "source": {
         "path": "src/ui/screens.rs",
-        "line": 29
+        "line": 45
       }
     },
     {
       "id": "menu_scroll_hierarchy",
       "from": "menu_scroll",
-      "to": "menu_root",
+      "to": "settings_panel",
       "name": "ChildOf",
       "kind": "relationship",
-      "reverse": "menu_root.Children",
-      "cardinality": "当前页面内容视口直接属于 MenuRoot",
+      "reverse": "settings_panel.Children",
+      "cardinality": "视口经 frame 属于 SettingsPanel",
       "linked_spawn": true,
-      "description": "page_area 的 MenuScroll 是根内容子节点，固定页脚为并列兄弟节点。",
+      "description": "视口和轨道是同一 frame 的兄弟；图省略中间纯布局实体。",
       "source": {
-        "path": "src/ui/screens.rs",
-        "line": 80
+        "path": "src/ui/widgets.rs",
+        "line": 84
       }
     },
     {
@@ -6950,7 +7492,67 @@
       "description": "聚合多层 BSN 子树；文字可以直接属于按钮、按键框、编号块或正文容器，根清理时沿层级销毁。",
       "source": {
         "path": "src/ui/widgets.rs",
-        "line": 28
+        "line": 277
+      }
+    },
+    {
+      "id": "settings_panel_hierarchy",
+      "from": "settings_panel",
+      "to": "menu_root",
+      "name": "ChildOf 子树",
+      "kind": "relationship",
+      "reverse": "menu_root.Children",
+      "cardinality": "0..1",
+      "linked_spawn": true,
+      "description": "右列面板与操作行并列；图省略固定内容区和右列。",
+      "source": {
+        "path": "src/ui/screens.rs",
+        "line": 397
+      }
+    },
+    {
+      "id": "settings_track_hierarchy",
+      "from": "settings_scrollbar",
+      "to": "settings_panel",
+      "name": "ChildOf 子树",
+      "kind": "relationship",
+      "reverse": "settings_panel.Children",
+      "cardinality": "0..1",
+      "linked_spawn": true,
+      "description": "轨道经 frame 属于纸色面板。",
+      "source": {
+        "path": "src/ui/widgets.rs",
+        "line": 84
+      }
+    },
+    {
+      "id": "settings_thumb_hierarchy",
+      "from": "settings_scrollbar_thumb",
+      "to": "settings_scrollbar",
+      "name": "ChildOf",
+      "kind": "relationship",
+      "reverse": "settings_scrollbar.Children",
+      "cardinality": "0..1",
+      "linked_spawn": true,
+      "description": "原生滑块直接属于轨道。",
+      "source": {
+        "path": "src/ui/widgets.rs",
+        "line": 113
+      }
+    },
+    {
+      "id": "settings_scrollbar_target",
+      "from": "settings_scrollbar",
+      "to": "menu_scroll",
+      "name": "Scrollbar.target",
+      "kind": "reference",
+      "reverse": null,
+      "cardinality": "0..1",
+      "linked_spawn": false,
+      "description": "target 是普通 Entity 引用，不是 ChildOf。",
+      "source": {
+        "path": "src/ui/widgets.rs",
+        "line": 142
       }
     }
   ],
@@ -7062,6 +7664,18 @@
       "system": "observe_courier_ready",
       "target": "展示快递员 WorldAssetRoot",
       "description": "展示快递员 GLB 展开后查找骨架 AnimationPlayer，循环播放 Carry_Idle 并插入动画图句柄。"
+    },
+    {
+      "event": "Pointer<Scroll>",
+      "system": "observe_scrollbar_scroll",
+      "target": "SettingsScrollbar track (thumb bubbles)",
+      "description": "原生轨道或滑块滚轮更新内容视口。"
+    },
+    {
+      "event": "Pointer<Press>",
+      "system": "observe_scrollbar_press",
+      "target": "SettingsScrollbar track and thumb",
+      "description": "原生控件按下接管 Pointer 输入来源。"
     }
   ],
   "startup_notes": [
@@ -7115,7 +7729,7 @@
     "菜单与暂停强制停用 GameplayContext；检查器占用、失焦或关联失效也停用。F3 释放光标后未操作检查器仍可使用玩法键盘；Esc 的业务暂停由菜单 Enhanced Input 处理，底层读取仅负责光标生命周期。",
     "项目固定准备链：update_grounded → move_characters → jump_characters → handle_interaction → release_orphaned_items → sync_held_objects → apply_grip_forces。sync_gravity 与 sync_character_facing 均 before(GameplaySystems::Simulate)，二者无彼此顺序。",
     "插值边界：FixedFirst 重置起点 → 物理步 → FixedLast 记录终点 → RunFixedMainLoop / AfterFixedMainLoop 的 Ease → 朝向 → HeldTarget → 相机 → 可见性 → UpdateEasingTick。零固定步帧仍完成插值后的显示链。",
-    "菜单 Update 顺序为 UiSystems::Build → 延迟命令同步 → pointer_interaction → UiSystems::Style。Style 中样式、说明与焦点滚入没有彼此显式全序；原生 UI PostUpdate 计算布局，焦点滚入等待有效尺寸。",
+    "菜单 Update：Build → 延迟命令同步 → Pointer / Bind → Style；Pointer 与 Bind 彼此无全序，四个 Style 成员也无全序。PostUpdate 原生 Layout 后同步滚动条显隐，焦点滚入等待有效几何。",
     "可操作按钮带 Button/MenuButton；Continue、Multiplayer 及未实现设置是静态 Coming Soon 节点，不带动作、不保存虚构设置、不参与键盘序号。",
     "状态类型 AppState/PlayState 对应 State 与 NextState 资源；MenuPage/SettingsTab 是 MenuState 内部值。UiRequest 是缓冲 Message，Fire/Pointer/WorldInstanceReady 是触发事件，不混用图例。",
     "展示 WorldAssetRoot 异步展开 GLB，字体使用预加载句柄；BSN 构造辅助函数不是 Schedule 系统。模型 Ready 与滚动回调用 on(...) 在具体实体注册 Observer。",
@@ -7123,6 +7737,9 @@
     "SoundRequest 是缓冲 Message，由真实菜单焦点、接受的菜单请求、成功拿放命令、固定步持握观察与真实支撑撞击写入；Update 在 UI Style 后播放，不从原始按键猜测业务成功。",
     "音频观察和物理规则分开：警告只提示不改变持握；落地锁存涵盖活动与休眠支撑，暂停/主菜单不采集。Kira 输出与无设备事件测试分开；12 种 cue 中菜单三种及物理四种已接入，交接、推车、弹开与交付共五种预留。",
     "GameAudioPlugin 的 Update 链在 UiSystems::Style 后显式运行 log_load_failures → play_requests → stop_on_exit；节流用 Time<Real>，总并发 4、SFX 最多 3。与 Kira 内部系统不指定额外全序，通道排队后由插件消费。",
-    "实例就绪共有地图、玩法主角和菜单快递员三种 Observer；动态事件数量以清单为准。菜单与 Kira 的时间门控不会改变海岛资产、落水恢复、CarryGrip 或 NON_LINEAR CCD 规则。"
+    "实例就绪共有地图、玩法主角和菜单快递员三种 Observer；动态事件数量以清单为准。菜单与 Kira 的时间门控不会改变海岛资产、落水恢复、CarryGrip 或 NON_LINEAR CCD 规则。",
+    "Windows/macOS 由 WindowPolicyPlugin 在窗口线程维护原生 16:9；NativePolicies 是 NonSend 资源，平台回调不是 Bevy 输入动作或 EntityEvent。",
+    "Main/Pause/Help 固定完整展示；只有 Settings 右侧纸色面板内容滚动，分类、操作行和页脚固定。",
+    "设置值/提示由 Style 原位更新；原生 ScrollbarPlugin 处理比例几何、轨道分页和拖拽，PostUpdate 布局后同步显隐。"
   ]
 }
