@@ -37,6 +37,16 @@ impl UiTheme {
         }
     }
 
+    /// 固定菜单同时按宽高缩放；最小 960×540 窗口仍保持可读文字与完整按钮。
+    pub fn for_fixed_menu(&self, viewport: Vec2) -> Self {
+        Self {
+            scale: (viewport.x / 1440.0)
+                .min(viewport.y / 810.0)
+                .clamp(2.0 / 3.0, 1.15),
+            ..self.clone()
+        }
+    }
+
     pub fn size(&self, size: f32) -> f32 {
         size * self.scale
     }
