@@ -76,11 +76,35 @@
       "mesh_objects": 59,
       "triangles": 2072,
       "animations": [
+        "Carry_Backward",
+        "Carry_Fall",
+        "Carry_Idle",
+        "Carry_Jump",
+        "Carry_Land",
+        "Carry_Left",
+        "Carry_Right",
+        "Carry_Walk",
+        "Fall",
         "Idle",
+        "Jump",
+        "Land",
         "Walk",
-        "Carry_Idle"
+        "Walk_Backward",
+        "Walk_Left",
+        "Walk_Right"
       ],
-      "bytes": 368380
+      "bytes": 554880,
+      "source_file": "art/blender/courier_actions.blend",
+      "animation_cycle_seconds": 0.8,
+      "sole_markers": 8,
+      "one_shot_animations": [
+        "Jump",
+        "Carry_Jump",
+        "Land",
+        "Carry_Land"
+      ],
+      "jump_visual_seconds": 0.24,
+      "land_visual_seconds": 0.22
     },
     {
       "id": "chr_dispatcher",
