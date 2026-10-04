@@ -3,7 +3,6 @@
 use std::f32::consts::TAU;
 
 use avian3d::interpolation::TransformEasingSystems;
-use avian3d::prelude::{Collider, Sensor, ShapeCastConfig, SpatialQuery, SpatialQueryFilter};
 use bevy::{
     input::{InputSystems, mouse::MouseButtonInput},
     prelude::*,
@@ -16,9 +15,10 @@ use bevy_inspector_egui::bevy_egui::{
 
 use crate::{
     app_flow::{AppState, PlayState, gameplay_running},
+    camera_fade::{self, update_building_fades},
+    camera_obstruction::{CameraOcclusion, OccludedBuildings, detect_building_occlusion},
     gameplay::{Character, ControlsCharacter, GameplaySystems, sync_held_objects},
     input::{GameplayContext, LookAction, ReleasePointerAction, TogglePerspectiveAction},
-    physics::GamePhysicsLayer,
     settings::GameSettings,
 };
 
@@ -51,6 +51,7 @@ pub struct CharacterVisual;
 /// 两种视角共享水平朝向并分别记住俯仰；实际位置和朝向仅写入 Transform。
 #[derive(Component, Reflect)]
 #[reflect(Component)]
+#[require(CameraOcclusion)]
 pub struct OrbitCamera {
     #[entities]
     pub target: Entity,
@@ -59,11 +60,6 @@ pub struct OrbitCamera {
     third_person_pitch: f32,
     first_person_pitch: f32,
     distance: f32,
-    /// 环境阻挡只影响实际显示距离；期望跟随距离和玩家观察角度保持独立。
-    presented_distance: f32,
-    #[entities]
-    #[reflect(ignore)]
-    obstructed_by: Option<Entity>,
     look_height: f32,
     eye_height: f32,
     #[entities]
@@ -82,8 +78,6 @@ impl OrbitCamera {
             third_person_pitch: relative_offset.y.atan2(relative_offset.z),
             first_person_pitch: 0.0,
             distance: relative_offset.length(),
-            presented_distance: relative_offset.length(),
-            obstructed_by: None,
             look_height: 0.8,
             eye_height: 1.65,
             toggle_requested_by: None,
@@ -100,7 +94,7 @@ impl OrbitCamera {
                         * Quat::from_rotation_x(-self.first_person_pitch),
                 );
         }
-        let pivot = target_position + Vec3::Y * self.look_height;
+        let pivot = self.pivot(target_position);
         let offset = Quat::from_rotation_y(self.yaw)
             * Vec3::new(
                 0.0,
@@ -108,6 +102,15 @@ impl OrbitCamera {
                 self.distance * self.third_person_pitch.cos(),
             );
         Transform::from_translation(pivot + offset).looking_at(pivot, Vec3::Y)
+    }
+
+    /// 遮挡处理只读取模式和理想观察点，不改变玩家输入的角度与距离。
+    pub(crate) fn is_third_person(&self) -> bool {
+        self.perspective == CameraPerspective::ThirdPerson
+    }
+
+    pub(crate) fn pivot(&self, target_position: Vec3) -> Vec3 {
+        target_position + Vec3::Y * self.look_height
     }
 
     fn pitch(&self) -> f32 {
@@ -119,7 +122,7 @@ impl OrbitCamera {
 
     fn apply_vertical_look(&mut self, delta: f32) {
         match self.perspective {
-            // 第三人称保持在观察点上方；第一人称允许抬头，两者都避开垂直极点。
+            // 第三人称保持固定距离且在观察点上方；两种模式都避开垂直极点。
             CameraPerspective::ThirdPerson => {
                 self.third_person_pitch = (self.third_person_pitch + delta)
                     .clamp(5.0_f32.to_radians(), 80.0_f32.to_radians());
@@ -148,7 +151,9 @@ pub struct CameraControlPlugin;
 
 impl Plugin for CameraControlPlugin {
     fn build(&self, app: &mut App) {
+        camera_fade::init(app);
         app.init_resource::<GameSettings>()
+            .init_resource::<OccludedBuildings>()
             .register_type::<ControlsCamera>()
             .register_type::<CharacterVisual>()
             .register_type::<CameraPerspective>()
@@ -194,6 +199,8 @@ impl Plugin for CameraControlPlugin {
                     sync_character_facing,
                     sync_held_objects,
                     follow_orbit_camera,
+                    detect_building_occlusion,
+                    update_building_fades,
                     sync_character_visibility,
                 )
                     .chain()
@@ -566,95 +573,19 @@ pub(crate) fn sync_character_facing(
     }
 }
 
-/// 镜头使用本帧插值位置与环绕角，球形扫掠防止穿墙；互斥过滤避免 Transform 查询冲突。
-fn follow_orbit_camera(
-    time: Res<Time>,
-    spatial_query: SpatialQuery,
-    sensors: Query<(), With<Sensor>>,
+/// 镜头使用本帧插值后的人物位置与环绕角；互斥过滤避免 Transform 查询读写冲突。
+pub(crate) fn follow_orbit_camera(
     characters: Query<&Transform, With<Character>>,
-    mut cameras: Query<
-        (
-            Entity,
-            &mut OrbitCamera,
-            &mut Transform,
-            Option<&Projection>,
-        ),
-        Without<Character>,
-    >,
+    mut cameras: Query<(&OrbitCamera, &mut Transform), Without<Character>>,
 ) {
-    for (camera, mut orbit, mut transform, projection) in &mut cameras {
-        let Ok(character) = characters.get(orbit.target) else {
-            continue;
-        };
-        let mut desired = orbit.transform(character.translation);
-        let mut obstruction = None;
-        let mut safe_distance = orbit.distance;
-        if orbit.perspective == CameraPerspective::ThirdPerson {
-            let pivot = character.translation + Vec3::Y * orbit.look_height;
-            let offset = desired.translation - pivot;
-            if let Ok(direction) = Dir3::new(offset) {
-                // 只查询结构环境，动态人物和包裹不能让镜头在持箱时反复抽动。
-                // 每个显示帧都使用本帧 yaw；无固定步时也不能沿上一帧方向留在墙后。
-                let filter = SpatialQueryFilter::from_mask(GamePhysicsLayer::World);
-                let probe = Collider::sphere(camera_probe_radius(projection));
-                let hit = spatial_query.cast_shape_predicate(
-                    &probe,
-                    pivot,
-                    Quat::IDENTITY,
-                    direction,
-                    &ShapeCastConfig::from_max_distance(orbit.distance),
-                    &filter,
-                    &|entity| !sensors.contains(entity),
-                );
-                if let Some(hit) = hit {
-                    // 不设强制最小距离，否则贴墙时会把视点推回墙内；零距离沿用原观察旋转。
-                    safe_distance = (hit.distance - 0.03).clamp(0.0, orbit.distance);
-                    obstruction = Some(hit.entity);
-                }
-                orbit.presented_distance = recover_camera_distance(
-                    orbit.presented_distance,
-                    safe_distance,
-                    time.delta_secs(),
-                );
-                desired.translation = pivot + direction.as_vec3() * orbit.presented_distance;
-            }
-        } else {
-            // 第一人称仍使用既有眼位；返回第三人称时重新执行安全扫掠。
-            orbit.presented_distance = orbit.distance;
+    for (orbit, mut transform) in &mut cameras {
+        if let Ok(character) = characters.get(orbit.target) {
+            *transform = orbit.transform(character.translation);
         }
-        if orbit.obstructed_by != obstruction {
-            info!(target: "demo::camera", ?camera, character = ?orbit.target,
-                obstacle_before = ?orbit.obstructed_by, obstacle_after = ?obstruction,
-                desired_distance = orbit.distance, safe_distance,
-                reason = "environment_shape_cast", "Camera obstruction changed");
-            orbit.obstructed_by = obstruction;
-        }
-        *transform = desired;
     }
 }
 
-/// 探测球包住近裁剪面的四角，宽屏和视野设置变化后仍保留墙面余量。
-fn camera_probe_radius(projection: Option<&Projection>) -> f32 {
-    if let Some(Projection::Perspective(perspective)) = projection {
-        let near = perspective.near;
-        let half_height = near * (perspective.fov * 0.5).tan();
-        let half_width = half_height * perspective.aspect_ratio;
-        (Vec3::new(half_width, half_height, near).length() + 0.03).max(0.2)
-    } else {
-        0.2
-    }
-}
-
-/// 障碍出现时立即收缩，移开后按真实渲染增量回扩，不把平滑过程反馈到物理。
-fn recover_camera_distance(current: f32, safe: f32, delta_secs: f32) -> f32 {
-    if safe <= current {
-        safe
-    } else {
-        current + (safe - current) * (1.0 - (-10.0 * delta_secs).exp())
-    }
-}
-
-/// 只隐藏角色视觉子树，保留业务根与独立木箱；相机或控制者丢失后自动恢复模型。
+/// 第一人称只隐藏自身视觉子树，保留业务根与独立木箱。
 fn sync_character_visibility(
     controllers: Query<(&ControlsCharacter, &ControlsCamera), With<GameplayContext>>,
     cameras: Query<&OrbitCamera>,
@@ -663,7 +594,7 @@ fn sync_character_visibility(
 ) {
     for (visual, parent, mut visibility) in &mut visuals {
         let character = parent.parent();
-        let first_person = controllers
+        let hide_visual = controllers
             .iter()
             .any(|(controlled_character, controlled_camera)| {
                 characters.contains(character)
@@ -673,7 +604,7 @@ fn sync_character_visibility(
                             && orbit.perspective == CameraPerspective::FirstPerson
                     })
             });
-        let after = if first_person {
+        let after = if hide_visual {
             Visibility::Hidden
         } else {
             Visibility::Inherited
@@ -2308,6 +2239,133 @@ mod tests {
     }
 
     #[test]
+    fn third_person_world_obstacles_keep_fixed_pose_and_character_visible() {
+        use crate::physics::world_collision_layers;
+        use avian3d::prelude::Collider;
+
+        let (mut app, _, character, camera, _) = test_app();
+        let visual = app
+            .world_mut()
+            .spawn((CharacterVisual, Visibility::default(), ChildOf(character)))
+            .id();
+        let ideal = app
+            .world()
+            .get::<OrbitCamera>(camera)
+            .unwrap()
+            .transform(app.world().get::<Transform>(character).unwrap().translation);
+        let obstacle = app
+            .world_mut()
+            .spawn((
+                RigidBody::Static,
+                Collider::cuboid(4.0, 4.0, 4.0),
+                world_collision_layers(),
+                Transform::from_translation(ideal.translation),
+            ))
+            .id();
+        fixed_step(&mut app);
+        let expected = app
+            .world()
+            .get::<OrbitCamera>(camera)
+            .unwrap()
+            .transform(app.world().get::<Transform>(character).unwrap().translation);
+        assert_eq!(*app.world().get::<Transform>(camera).unwrap(), expected);
+        assert_eq!(
+            app.world().get::<Visibility>(visual),
+            Some(&Visibility::Inherited)
+        );
+        app.world_mut().despawn(obstacle);
+        fixed_step(&mut app);
+        let expected = app
+            .world()
+            .get::<OrbitCamera>(camera)
+            .unwrap()
+            .transform(app.world().get::<Transform>(character).unwrap().translation);
+        assert_eq!(*app.world().get::<Transform>(camera).unwrap(), expected);
+        assert_eq!(
+            app.world().get::<Visibility>(visual),
+            Some(&Visibility::Inherited)
+        );
+    }
+
+    #[test]
+    fn first_person_restores_shell_material_in_the_same_zero_fixed_step_frame() {
+        use crate::{
+            camera_obstruction::{BuildingShellVisual, CameraShell},
+            physics::camera_query_layers,
+        };
+        use avian3d::prelude::Collider;
+
+        let (mut app, _, _, camera, _) = test_app();
+        let building = app.world_mut().spawn_empty().id();
+        let original = app
+            .world_mut()
+            .resource_mut::<Assets<StandardMaterial>>()
+            .add(StandardMaterial::default());
+        let wall_visual = app
+            .world_mut()
+            .spawn((
+                BuildingShellVisual(building),
+                MeshMaterial3d(original.clone()),
+            ))
+            .id();
+        app.world_mut().spawn((
+            CameraShell(building),
+            RigidBody::Static,
+            Collider::cuboid(8.0, 8.0, 0.1),
+            camera_query_layers(),
+            Transform::from_xyz(0.0, 3.5, 4.0),
+        ));
+        for _ in 0..12 {
+            fixed_step(&mut app);
+        }
+        let faded = &app
+            .world()
+            .get::<MeshMaterial3d<StandardMaterial>>(wall_visual)
+            .unwrap()
+            .0;
+        assert_ne!(faded.id(), original.id());
+        assert!(
+            (app.world()
+                .resource::<Assets<StandardMaterial>>()
+                .get(faded)
+                .unwrap()
+                .base_color
+                .alpha()
+                - 0.2)
+                .abs()
+                < 0.001
+        );
+        let fixed_before = app.world().resource::<Time<Fixed>>().elapsed();
+        app.world_mut()
+            .get_mut::<OrbitCamera>(camera)
+            .unwrap()
+            .perspective = CameraPerspective::FirstPerson;
+        app.update();
+        assert_eq!(
+            app.world().resource::<Time<Fixed>>().elapsed(),
+            fixed_before
+        );
+        assert_eq!(
+            app.world()
+                .get::<MeshMaterial3d<StandardMaterial>>(wall_visual)
+                .unwrap()
+                .0
+                .id(),
+            original.id()
+        );
+        assert!(
+            app.world()
+                .resource::<OccludedBuildings>()
+                .buildings
+                .is_empty()
+        );
+        assert_eq!(
+            app.world().resource::<OccludedBuildings>().active_cameras,
+            0
+        );
+    }
+
+    #[test]
     fn missing_target_or_controller_releases_capture_and_keeps_camera_pose() {
         for remove_target in [true, false] {
             let (mut app, window, character, camera, controller) = test_app();
@@ -2324,177 +2382,8 @@ mod tests {
     }
 
     #[test]
-    fn third_person_camera_blocks_new_frame_yaw_and_recovers_after_turning_away() {
-        let (mut app, _, character, camera, _) = test_app();
-        let rear_wall = app
-            .world_mut()
-            .spawn((
-                RigidBody::Static,
-                Collider::cuboid(20.0, 20.0, 0.04),
-                crate::physics::world_collision_layers(),
-                Transform::from_xyz(0.0, 5.0, 4.0),
-            ))
-            .id();
-        let side_wall = app
-            .world_mut()
-            .spawn((
-                RigidBody::Static,
-                Collider::cuboid(0.04, 20.0, 20.0),
-                crate::physics::world_collision_layers(),
-                Transform::from_xyz(2.0, 5.0, 0.0),
-            ))
-            .id();
-        // 初始化静态碰撞树后，输入帧仅执行 app.update，不能补跑固定步修复镜头。
-        fixed_step(&mut app);
-        assert_eq!(
-            app.world()
-                .get::<OrbitCamera>(camera)
-                .unwrap()
-                .obstructed_by,
-            Some(rear_wall)
-        );
-        let fixed_before = app.world().resource::<Time<Fixed>>().elapsed();
-        let position_before = app.world().get::<Position>(character).unwrap().0;
-        let sensitivity = app
-            .world()
-            .resource::<GameSettings>()
-            .camera
-            .mouse_sensitivity;
-        mouse_motion(
-            &mut app,
-            Vec2::new(-std::f32::consts::FRAC_PI_2 / sensitivity, 0.0),
-        );
-        app.update();
-        let orbit = app.world().get::<OrbitCamera>(camera).unwrap();
-        let camera_transform = app.world().get::<Transform>(camera).unwrap();
-        assert_eq!(
-            app.world().resource::<Time<Fixed>>().elapsed(),
-            fixed_before
-        );
-        assert_eq!(
-            app.world().get::<Position>(character).unwrap().0,
-            position_before
-        );
-        assert_eq!(orbit.obstructed_by, Some(side_wall));
-        assert!(camera_transform.translation.x + camera_probe_radius(None) < 1.98);
-        assert!(camera_transform.translation.is_finite());
-        assert!(
-            camera_transform
-                .rotation
-                .abs_diff_eq(orbit.transform(position_before).rotation, 0.00001)
-        );
-        let retracted = orbit.presented_distance;
-        // 继续转向另一侧；零时间帧仍解除阻挡，但不能凭空推进回扩过程。
-        mouse_motion(
-            &mut app,
-            Vec2::new(-std::f32::consts::FRAC_PI_2 / sensitivity, 0.0),
-        );
-        app.update();
-        let orbit = app.world().get::<OrbitCamera>(camera).unwrap();
-        assert_eq!(orbit.obstructed_by, None);
-        assert_eq!(orbit.presented_distance, retracted);
-        assert_eq!(
-            app.world().resource::<Time<Fixed>>().elapsed(),
-            fixed_before
-        );
-        app.insert_resource(TimeUpdateStrategy::ManualDuration(Duration::from_secs_f64(
-            1.0 / 120.0,
-        )));
-        let mut previous = retracted;
-        for _ in 0..60 {
-            app.update();
-            let orbit = app.world().get::<OrbitCamera>(camera).unwrap();
-            assert_eq!(orbit.obstructed_by, None);
-            assert!(orbit.presented_distance >= previous);
-            assert!(orbit.presented_distance <= orbit.distance);
-            let pivot = app.world().get::<Transform>(character).unwrap().translation
-                + Vec3::Y * orbit.look_height;
-            assert!(
-                (app.world()
-                    .get::<Transform>(camera)
-                    .unwrap()
-                    .translation
-                    .distance(pivot)
-                    - orbit.presented_distance)
-                    .abs()
-                    < 0.00001
-            );
-            previous = orbit.presented_distance;
-        }
-        let orbit = app.world().get::<OrbitCamera>(camera).unwrap();
-        assert!(orbit.distance - orbit.presented_distance < 0.06);
-    }
-
-    #[test]
-    fn camera_obstruction_ignores_non_environment_and_preserves_first_person_eye_pose() {
-        let (mut app, _, character, camera, _) = test_app();
-        for (z, sensor, layers) in [
-            (1.0, false, crate::physics::parcel_collision_layers()),
-            (
-                2.0,
-                false,
-                avian3d::prelude::CollisionLayers::new(
-                    GamePhysicsLayer::Character,
-                    avian3d::prelude::LayerMask::ALL,
-                ),
-            ),
-            (3.0, true, crate::physics::world_collision_layers()),
-        ] {
-            let entity = app
-                .world_mut()
-                .spawn((
-                    RigidBody::Static,
-                    Collider::cuboid(20.0, 20.0, 0.04),
-                    layers,
-                    Transform::from_xyz(0.0, 5.0, z),
-                ))
-                .id();
-            if sensor {
-                app.world_mut().entity_mut(entity).insert(Sensor);
-            }
-        }
-        fixed_step(&mut app);
-        let orbit = app.world().get::<OrbitCamera>(camera).unwrap();
-        assert_eq!(orbit.obstructed_by, None);
-        assert_eq!(orbit.presented_distance, orbit.distance);
-        app.world_mut()
-            .get_mut::<OrbitCamera>(camera)
-            .unwrap()
-            .perspective = CameraPerspective::FirstPerson;
-        app.update();
-        let position = app.world().get::<Transform>(character).unwrap().translation;
-        let orbit = app.world().get::<OrbitCamera>(camera).unwrap();
-        assert_eq!(
-            *app.world().get::<Transform>(camera).unwrap(),
-            orbit.transform(position)
-        );
-        assert_eq!(orbit.obstructed_by, None);
-    }
-
-    #[test]
-    fn camera_clearance_covers_near_plane_and_return_smoothing_is_frame_rate_independent() {
-        let projection = Projection::Perspective(PerspectiveProjection {
-            near: 0.15,
-            fov: 90.0_f32.to_radians(),
-            aspect_ratio: 2.4,
-            ..default()
-        });
-        let corner_radius = Vec3::new(0.15 * 2.4, 0.15, 0.15).length();
-        assert!(camera_probe_radius(Some(&projection)) >= corner_radius + 0.029);
-        assert_eq!(recover_camera_distance(5.0, 0.0, 0.0), 0.0);
-        let recover = |hz: u32| {
-            (0..hz).fold(1.0, |distance, _| {
-                recover_camera_distance(distance, 9.0, 1.0 / hz as f32)
-            })
-        };
-        assert!((recover(30) - recover(240)).abs() < 0.00001);
-    }
-
-    #[test]
     fn cameras_follow_their_own_characters_with_original_initial_offset() {
         let mut app = App::new();
-        app.init_resource::<Time>()
-            .init_resource::<avian3d::collider_tree::ColliderTrees>();
         app.add_systems(Update, follow_orbit_camera);
         for position in [Vec3::new(3.0, 1.0, -2.0), Vec3::new(-4.0, 0.0, 7.0)] {
             let target = app

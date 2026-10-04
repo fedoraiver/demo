@@ -5,6 +5,8 @@ mod art_assets;
 mod audio;
 mod audio_events;
 mod camera;
+mod camera_fade;
+mod camera_obstruction;
 mod character_animation;
 mod gameplay;
 mod input;
