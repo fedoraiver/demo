@@ -6,7 +6,9 @@ use std::collections::HashSet;
 
 use crate::app_flow::gameplay_running;
 use crate::audio_events::{SoundCue, SoundEventsPlugin, SoundRequest};
-use crate::physics::{DemoPhysicsPlugin, held_collision_layers, parcel_collision_layers};
+use crate::physics::{
+    DemoPhysicsPlugin, gameplay_query_layers, held_collision_layers, parcel_collision_layers,
+};
 
 /// 独立于运行时实体标识的玩家身份，便于后续多人输入路由。
 #[derive(Component, Reflect, Clone, Copy, Debug, PartialEq, Eq, Hash)]
@@ -190,7 +192,9 @@ fn update_grounded(
 ) {
     let probe = Collider::sphere(config.character_radius * 0.8);
     for (entity, position, velocity, layers, mut motion) in &mut characters {
-        let filter = SpatialQueryFilter::from_excluded_entities([entity]);
+        // 相机查询网格不参与接地或拾取，即使其碰撞掩码为空也必须显式排除所属层。
+        let filter =
+            SpatialQueryFilter::from_excluded_entities([entity]).with_mask(gameplay_query_layers());
         let character_layers = layers.copied().unwrap_or_default();
         let mut grounded = false;
         if velocity.y <= 0.5 {
@@ -361,7 +365,8 @@ fn handle_interaction(
                         direction,
                         offset.length(),
                         true,
-                        &SpatialQueryFilter::from_excluded_entities([character]),
+                        &SpatialQueryFilter::from_excluded_entities([character])
+                            .with_mask(gameplay_query_layers()),
                     )
                     && hit.entity != item
                 {
@@ -661,7 +666,8 @@ mod tests {
                             Quat::IDENTITY,
                             Dir3::NEG_Y,
                             &ShapeCastConfig::from_max_distance(0.12),
-                            &SpatialQueryFilter::from_excluded_entities([character]),
+                            &SpatialQueryFilter::from_excluded_entities([character])
+                                .with_mask(gameplay_query_layers()),
                         )
                         .unwrap();
                     assert_eq!(closest.entity, wall);

@@ -10,6 +10,7 @@ use crate::{
     app_flow::{AppState, gameplay_running},
     art_assets::{ArtAssets, ArtLoadState, ItemModel},
     camera::{CharacterVisual, ControlsCamera, MouseLookState, OrbitCamera},
+    camera_obstruction::{BuildingShellVisual, CameraShell},
     character_animation::CourierVisual,
     gameplay::{
         CarryGrip, Character, CharacterIntent, CharacterMotion, Parcel, Pickable, PlayerId,
@@ -17,7 +18,7 @@ use crate::{
     },
     input::spawn_keyboard_controller,
     island_recovery::SpawnPoint,
-    physics::{character_body, parcel_body, world_collision_layers},
+    physics::{camera_query_layers, character_body, parcel_body, world_collision_layers},
 };
 
 /// 游戏入口建立加载视图，就绪后装配完整海岛；退出时清理整套业务与视觉实体。
@@ -166,6 +167,8 @@ fn prepare_island(
         let mut remove = Vec::new();
         let mut npcs = Vec::new();
         let mut colliders = Vec::new();
+        let mut camera_colliders = Vec::new();
+        let mut shell_visuals = Vec::new();
         let mut ramps = Vec::new();
         let mut floors = Vec::new();
         let mut ramp_count = 0;
@@ -215,6 +218,25 @@ fn prepare_island(
                     }
                     if let Some(bounds) = geometry.floor_bounds {
                         floors.push(transform_bounds(bounds, pose.to_matrix()));
+                    }
+                    if asset.source_asset.starts_with("bld_") {
+                        // 原玩法碰撞保持完整；仅复制外壳几何，供视线遮挡查询请求建筑淡化。
+                        match geometry.camera_shell.into_collider() {
+                            Ok(Some(collider)) => camera_colliders.push((instance, collider)),
+                            Ok(None) => {}
+                            Err(error) => {
+                                *state = ArtLoadState::Failed;
+                                error!(target: "demo::scene", ?instance, asset = asset.source_asset,
+                                    %error, reason = "camera_query_geometry_failed", "Island initialization failed");
+                                return;
+                            }
+                        }
+                        shell_visuals.extend(
+                            geometry
+                                .shell_visuals
+                                .into_iter()
+                                .map(|visual| (visual, instance)),
+                        );
                     }
                     if !geometry.indices.is_empty() {
                         match Collider::try_trimesh_with_config(
@@ -288,6 +310,24 @@ fn prepare_island(
                 ChildOf(parent)
             });
         }
+        let camera_collider_count = camera_colliders.len();
+        for (parent, collider) in camera_colliders {
+            // 建筑归属使用运行时导入实体，装配后插入关联，避免为 Entity 引用伪造默认值。
+            commands
+                .spawn_scene(bsn! {
+                    Name("Building camera query collider")
+                    template_value(RigidBody::Static)
+                    template_value(collider)
+                    template_value(camera_query_layers())
+                    ChildOf(parent)
+                })
+                .insert(CameraShell(parent));
+        }
+        for (visual, building) in shell_visuals {
+            commands
+                .entity(visual)
+                .insert(BuildingShellVisual(building));
+        }
         for &entity in &remove {
             commands.entity(entity).despawn();
         }
@@ -298,7 +338,7 @@ fn prepare_island(
             .entity(map)
             .remove::<IslandPending>()
             .insert(IslandReady { player, items });
-        info!(target: "demo::scene", ?map, collider_count, ramp_count,
+        info!(target: "demo::scene", ?map, collider_count, camera_collider_count, ramp_count,
             npc_count = npcs.len(), replaced_instances = remove.len(),
             reason = "map_geometry_ready", "Island colliders ready");
     }
@@ -310,6 +350,36 @@ struct CollisionGeometry {
     indices: Vec<[u32; 3]>,
     ramps: BTreeMap<String, (Vec3, Vec3)>,
     floor_bounds: Option<(Vec3, Vec3)>,
+    camera_shell: CameraGeometry,
+    shell_visuals: Vec<Entity>,
+}
+
+/// 相机几何复用同一批已变换三角形，但不会反馈到玩法碰撞或改动美术资源。
+#[derive(Default)]
+struct CameraGeometry {
+    vertices: Vec<Vec3>,
+    indices: Vec<[u32; 3]>,
+}
+
+impl CameraGeometry {
+    fn push_triangle(&mut self, vertices: [Vec3; 3]) {
+        let start = self.vertices.len() as u32;
+        self.vertices.extend(vertices);
+        self.indices.push([start, start + 1, start + 2]);
+    }
+
+    fn into_collider(self) -> Result<Option<Collider>, String> {
+        if self.indices.is_empty() {
+            return Ok(None);
+        }
+        Collider::try_trimesh_with_config(
+            self.vertices,
+            self.indices,
+            TrimeshFlags::MERGE_DUPLICATE_VERTICES | TrimeshFlags::FIX_INTERNAL_EDGES,
+        )
+        .map(Some)
+        .map_err(|error| error.to_string())
+    }
 }
 
 /// 包围体沿实例变换转换坐标，供不同美术根之间的入口连接匹配。
@@ -355,6 +425,11 @@ fn collect_geometry(
     if let Some(mesh) = mesh {
         let ramp = stair_group(asset, part_name);
         if ramp.is_some() || solid_mesh(asset, part_name) {
+            let building = asset.starts_with("bld_");
+            let shell = building && building_shell_part(part_name);
+            if shell {
+                geometry.shell_visuals.push(entity);
+            }
             let mesh = meshes
                 .get(&mesh.0)
                 .ok_or_else(|| "Collision mesh unavailable".to_owned())?;
@@ -384,6 +459,9 @@ fn collect_geometry(
                         bounds.1 = bounds.1.max(point);
                     }
                 } else {
+                    if shell {
+                        geometry.camera_shell.push_triangle(vertices);
+                    }
                     let start = geometry.vertices.len() as u32;
                     geometry.vertices.extend(vertices);
                     geometry.indices.push([start, start + 1, start + 2]);
@@ -399,6 +477,50 @@ fn collect_geometry(
         }
     }
     Ok(())
+}
+
+/// 只在美术导入边界解释两套建筑部件命名，未知部件保持不透明。
+/// 明确外壳前缀避免把柜台、地板或招牌中的 board 误认为墙；门槛同样保留原外观。
+fn building_shell_part(name: &str) -> bool {
+    let part = name.rsplit_once("__").map_or(name, |(_, part)| part);
+    if part.starts_with("Floor_") || part.starts_with("Hut floor ") || part == "Door threshold" {
+        return false;
+    }
+    [
+        "Roof_",
+        "Side_board_",
+        "Back_board_",
+        "Front_gable_board_",
+        "Side_crossbeam_",
+        "Side_external_brace_",
+        "Corner_post_",
+        "Door_",
+        "Service_",
+        "Roof ",
+        "Side ",
+        "Rear ",
+        "Gable ",
+        "Front row ",
+        "Front window ",
+        "Door ",
+        "Hut upper wall beam ",
+        "Hut horizontal wall beam ",
+        "Hut corner post ",
+        "Hut grounded support ",
+        "Old shutter ",
+        "Shutter brace ",
+    ]
+    .iter()
+    .any(|prefix| part.starts_with(prefix))
+        || matches!(
+            part,
+            "Front_header_beam"
+                | "Side_door"
+                | "Pizza_front_brace"
+                | "Chimney_cap"
+                | "Peeling paint replacement plank"
+                | "Lower patched board"
+        )
 }
 
 /// 模型命名只在美术导入边界解释，草、海水、叶片和人物不会成为隐形障碍。
