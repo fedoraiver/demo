@@ -7,8 +7,8 @@
 | 视图 | 独立 SVG | 阅读重点 |
 | --- | --- | --- |
 | App 总览 | [总览](ecs-overview.svg) | 实际插件装配、主菜单／游戏／暂停、海岛准备、固定模拟与音效输出。 |
-| 调度与读写 | [调度](ecs-schedules.svg) | 资源轮询、海岛与动画 Update 链、落水恢复、Avian、菜单 Build → Pointer → Style、Kira 音效与检查器。 |
-| 实体关系 | [实体与组件](ecs-relationships.svg) | 动态角色与五件可搬物、海岛碰撞／NPC／骨骼、BSN 页面与展示舞台，以及状态退出清理。 |
+| 调度与读写 | [调度](ecs-schedules.svg) | 资源轮询、海岛与动画 Update 链、菜单命名片段等待、Animation → 鞋底补偿 → 变换传播，以及 Avian、UI 与 Kira 分支。 |
+| 实体关系 | [实体与组件](ecs-relationships.svg) | 动态角色与五件可搬物、镜头遮挡引用、鞋底节点／播放器引用、GLB 骨骼，以及 BSN 页面与展示舞台。 |
 | 事件与 Observer | [通信](ecs-events.svg) | 八个玩法／相机动作、六个菜单动作、滚轮与三类实例就绪 Observer、窗口／碰撞消息、声音请求及后台日志。 |
 
 粗实线表示执行先后；蓝虚线表示读取，绿实线表示写入，橙虚线表示事件触发。紫虚线表示普通 `Entity` 引用，紫实线表示 Bevy 关系。框的类型标签和颜色用于区分实体、组件、系统、Observer、共享资源、系统私有状态及引擎概览。
@@ -21,9 +21,11 @@
 
 固定模拟为 60 Hz，每个渲染帧可能执行 0～N 次。默认渲染上限为 60 FPS，允许配置的最低上限为 60；实际帧率仍取决于运行性能。Observer 按匹配事件触发，不由注册顺序组成流水线；Enhanced Input 的 `Apply` 与 ECS 命令应用是两个步骤。
 
-资源轮询、海岛装配链和主角动画链分别运行在 `Update`，彼此没有显式全序；海岛与动画链各自在依赖处应用延迟命令。`SpawnScene` 实例化 `WorldAssetRoot` 并触发 `WorldInstanceReady`，后续 `Update` 消费各自待准备标记。玩家和物品在资源与静态碰撞均准备好后生成；加载相机复用为玩家相机。
+资源轮询、海岛装配链、主角动画链和菜单动画绑定分别运行在 `Update`，彼此没有显式全序；海岛与主角动画链各自在依赖处应用延迟命令。`SpawnScene` 实例化 `WorldAssetRoot` 并触发 `WorldInstanceReady`，后续 `Update` 消费各自待准备标记。菜单就绪 Observer 只插入自己的 pending，绑定系统继续等待父 GLTF 与命名 `Carry_Idle` 片段入库，不依赖动作排列索引。玩家和物品在资源与静态碰撞均准备好后生成；加载相机复用为玩家相机。
 
-`FixedUpdate` 先落水恢复，再按当前视角同步朝向，随后准备控制力、跳跃冲量和弹簧持握；重力同步也在模拟前，但与恢复/朝向无额外全序。恢复暂停插值跨过零固定步帧，下一 `FixedFirst` 在 `Reset` 与 `UpdateStart` 之间仅清理本模块添加的暂停。Avian 在 `FixedPostUpdate` 求解与回写，`FixedLast` 记录插值终点。固定循环后的 `RunFixedMainLoop` 在 `Ease` 之后同步朝向、`HeldTarget`、镜头和可见性，再执行 `UpdateEasingTick`。`PostUpdate` 的骨骼动画先于变换传播，检查器仍是独立分支。
+主角等待全部 16 个命名动作后绑定实际 GLB 播放器，按真实局部速度、持箱关系与跳跃／下落／落地阶段连续混合。八个步行动作共用归一化相位，六个空中／落地动作按阶段时钟采样；权重、相位和时钟保存在 `CourierAnimation` 组件，未使用 `AnimationTransitions`。视觉根的 `CourierFootGrounding` 缓存角色、首个播放器与八个鞋底节点的普通实体引用。`AnimationSystems` 写入本帧骨骼姿态后，鞋底补偿通过 `TransformHelper` 读取当前局部骨链，只调整视觉根高度，然后执行变换传播；它不移动物理根或持握目标。
+
+`FixedUpdate` 先落水恢复，再按当前视角同步朝向，随后准备控制力、跳跃冲量和弹簧持握；重力同步也在模拟前，但与恢复/朝向无额外全序。恢复暂停插值跨过零固定步帧，下一 `FixedFirst` 在 `Reset` 与 `UpdateStart` 之间仅清理本模块添加的暂停。Avian 在 `FixedPostUpdate` 求解与回写，`FixedLast` 记录插值终点。固定循环后的 `RunFixedMainLoop` 在 `Ease` 之后同步朝向、`HeldTarget`、镜头和可见性，再执行 `UpdateEasingTick`。第三人称镜头读取本帧插值后位置，球形扫掠只筛选 World 层且排除 Sensor；半径覆盖当前透视近裁剪面四角，遇阻立即缩短距离，脱离后按帧时间平滑回扩。`OrbitCamera.obstructed_by` 是可选普通引用；第一人称保持眼位。`PostUpdate` 的检查器仍是独立分支，不与骨骼／鞋底／传播链建立额外全序。
 
 `Position`／速度是实际物理状态，`Transform` 是插值呈现；`HeldTarget` 只供呈现检查，施力另读真实物理位置，模拟与显示共同读取物品 `CarryGrip`。拿起与释放不瞬移箱体，释放保留动量，失效持有关系会恢复自由碰撞并自然下落。`Forces`、`RecoverableBody` 是 `QueryData`，`SpatialQuery` 是 `SystemParam`；导入布局辅助值、动画节点/状态辅助值以及日志线程/队列均不作为玩法 ECS 组件列出。
 
