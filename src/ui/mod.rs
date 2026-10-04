@@ -127,5 +127,6 @@ impl Plugin for GameUiPlugin {
         screens::register(app);
         volume::register(app);
         backdrop::register(app);
+        widgets::register(app);
     }
 }
