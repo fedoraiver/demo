@@ -7,6 +7,7 @@
 | 模块 | 当前职责 |
 | --- | --- |
 | [main.rs](../src/main.rs) | 组装英文菜单、游戏与检查器插件，先准备会话日志，再加载设置；指定固定 60 Hz 模拟和窗口策略，退出后记录结果并刷新日志。 |
+| [window_policy/mod.rs](../src/window_policy/mod.rs)、[macos.rs](../src/window_policy/macos.rs)、[windows.rs](../src/window_policy/windows.rs) | 统一主窗口初始尺寸与最小尺寸，以主线程原生适配约束 16:9 拖拽、工作区及最大化；管理安装与窗口退出清理。 |
 | [app_flow.rs](../src/app_flow.rs) | 管理主菜单／游戏状态与运行／暂停子状态，清理玩法输入并暂停或恢复时间；暂停保留玩法实体。 |
 | [ui/mod.rs](../src/ui/mod.rs) | 定义菜单页面、返回来源、焦点、设置分类与语义请求，注册 UI 插件和更新顺序。 |
 | [ui/navigation.rs](../src/ui/navigation.rs) | Enhanced Input 处理菜单键盘与手柄动作，Bevy UI 处理鼠标命中；统一消费请求、切换页面及保存和应用设置，并根据实际焦点变化与接受结果发出菜单音效消息。 |
@@ -44,7 +45,17 @@
 
 ## BSN 页面与菜单展示资产
 
-UI 控件与主菜单舞台使用 Bevy 0.19 的 `bsn!`、`bsn_list!` 和返回 `impl Scene` 的辅助函数声明。页面结构与组件数据由 BSN 创建，交互、焦点、设置应用和跨实体行为仍由 ECS 系统负责。`rebuild_page` 在页面、草稿或窗口宽度变化时清理旧 `MenuRoot` 并生成新树；焦点变化只更新按钮颜色与说明。字号按窗口宽度缩放，窄窗口折行，高度不足由滚动区域和焦点滚入系统处理。
+UI 控件与主菜单舞台使用 Bevy 0.19 的 `bsn!`、`bsn_list!` 和返回 `impl Scene` 的辅助函数声明。页面结构与组件数据由 BSN 创建，交互、焦点、设置应用和跨实体行为仍由 ECS 系统负责。`rebuild_page` 仅在页面、设置分类、返回来源或窗口宽高变化时清理旧 `MenuRoot` 并生成新树；焦点变化只更新按钮颜色与说明。设置草稿和保存提示变化时，系统原位更新已有数值与提示文字，不重建页面。主菜单、暂停与帮助使用按宽高缩放的固定内容区，不包含 `MenuScroll` 和滚轮 Observer，也不参与焦点滚入。帮助在支持的 16:9 尺寸下完整呈现三列说明卡片、正文、键位和返回按钮。
+
+设置页外层为固定布局，左侧分类、右侧底部 `Restore Defaults / Apply / Back` 与页面页脚不进入滚动层级。仅右侧纸色面板通过 `settings_scroll_frame` 装配 `MenuScroll` 与面板右侧滚动条，`SETTINGS` 标题、当前分类项目、说明和保存提示属于滚动内容。滚轮只由此内容区或其滚动条处理，焦点滚入只作用于该区域内的控件；固定区域的滚轮与焦点不会移动整页。
+
+调整设置字段、`Restore Defaults` 与 `Apply` 均保留 `MenuRoot`、滚动区域、滚动条及按钮实体，数值和成功／失败提示原位刷新，因此不会因草稿变化将 `ScrollPosition` 复位或替换焦点控件。内容刷新后若滚动范围缩小，只将偏移夹取到新的有效范围；范围未缩小时保持原偏移。离开后重新进入设置或切换分类会生成新页面，并按新页面初始化滚动与焦点状态。
+
+滚动条采用 Bevy 原生 `Scrollbar / ScrollbarThumb`；`DefaultPlugins` 中的 `ScrollbarPlugin` 负责比例滑块、拖动、轨道点击分页和指针状态。滚轮、焦点滚入与滚动条共同更新内容区的 `ScrollPosition`，将偏移限制在有效范围；轨道和滑块不加入 `MenuButton` 导航列表。BSN 树生成后绑定同层的滚动目标，`PostUpdate` 的 UI 布局完成后按实际面板内容与视口尺寸决定显隐：默认隐藏，内容溢出时显示，无溢出时隐藏并将偏移归零。面板右侧空间始终预留，避免显隐改变内容折行而抖动；显隐变化写入 `Settings scrollbar visibility changed` 调试日志。页面树销毁后原生控件按实体生命周期清理指针状态；空间指针交互使用 Bevy UI 事件，菜单键盘／手柄动作仍走 Enhanced Input。
+
+主窗口尺寸策略由 `WindowPolicyPlugin` 管理。Windows 与 macOS 初始隐藏窗口，`PreUpdate` 的安装系统通过 `NonSendMarker` 在窗口线程读取 Bevy 0.19 的线程局部 `WINIT_WINDOWS`，确认真实主窗口存在，成功安装后才显示。只在短借用中取得窗口身份快照，不在调用原生 API 时持有后端表借用，避免同步窗口通知重入。原生守护对象放在非 Send 资源中；窗口实体或后端窗口退出时清理，安装失败显示固定窗口并记录英文错误。仅有 `Window` ECS 数据的无窗口测试不会触发原生 API。具体窗口能力与边界见 [README](../README.md#菜单与占位功能)。
+
+macOS 在真实 `NSWindow` 上设置 `contentAspectRatio`，按扣除标题栏后的工作区更新内容最小／最大尺寸，并禁止系统全屏与全屏平铺，保留 Winit 原有代理。普通拖拽由 AppKit 应用尺寸前约束；Zoom 或桌面平铺等系统请求若绕过该属性，则只在实际尺寸违反比例或边界时补充校准并记录原因。Windows 使用 `SetWindowSubclass` 在 `WM_SIZING`、`WM_WINDOWPOSCHANGING` 应用请求前约束客户区，保留 `DefSubclassProc` 子类链；最大化转换为工作区内最大的普通 16:9 窗口，DPI 消息保持 Winit 正常处理。窗口管理不能用玩家动作表达，因此此适配只处理窗口消息，键鼠业务输入仍走现有 Enhanced Input 与 Bevy UI。Windows 物理客户区使用 `(16k, 9k)`，几何计算与锚点回归共用 [geometry.rs](../src/window_policy/geometry.rs)；普通拖拽不靠每帧事后回弹校正。
 
 自动宽度的 `Text` 节点保留文本的自然测量，避免短文字在可收缩布局中被压成零宽。键帽、帧率值、按钮标题和帮助编号都使用这一规则；容器按实际布局需要设置尺寸与折行约束。BSN 组件检查不能代替最终字体与排版的用户目测，重点检查短标签和数字是否完整可见。
 
@@ -137,7 +148,7 @@ UI 控件与主菜单舞台使用 Bevy 0.19 的 `bsn!`、`bsn_list!` 和返回 `
 | `FixedPostUpdate` | Avian 的 `PhysicsPlugins` 执行固定物理步，积分速度与位姿并求解接触和碰撞；`PhysicsSystems::Writeback` 之后再次更新接地并采样实际速度。真实支撑接触的落地音效收集在 `PhysicsSystems::StepSimulation` 之后执行。 |
 | `FixedLast` | Avian 记录本固定步的插值端点，供渲染帧呈现使用。 |
 | `RunFixedMainLoop` 固定循环之后 | `CameraControlPlugin` 的显示同步链在 `TransformEasingSystems::Ease` 之后、`UpdateEasingTick` 之前执行；使用本帧插值位置，依次同步角色朝向、`HeldTarget`、镜头和人物可见性。 |
-| `Update` | 检查美术加载状态；游戏运行且 `ArtLoadState::Ready` 后按装配地图、准备结构碰撞、生成业务实体的链路推进。主角动作读取固定模拟后的实际速度与持有关系。UI 按页面与草稿变化重建 BSN 树并应用延迟命令，再读取鼠标命中，最后更新样式、说明与滚动；音效播放在 UI 样式之后消费请求。 |
+| `Update` | 检查美术加载状态；游戏运行且 `ArtLoadState::Ready` 后按装配地图、准备结构碰撞、生成业务实体的链路推进。主角动作读取固定模拟后的实际速度与持有关系。UI 仅按页面、分类、返回来源或视口变化重建 BSN 树并应用延迟命令，草稿数值与提示原位更新，再读取鼠标命中，最后更新样式、说明与滚动；音效播放在 UI 样式之后消费请求。 |
 | `PostUpdate` | Bevy 的变换传播根据业务根实体 `Transform` 更新模型子实体的 `GlobalTransform`，可见性传播应用人物视觉状态，供渲染使用；Egui 仅在游戏运行时绘制检查器。 |
 
 相机与玩法的固定步顺序由显式依赖表达；跨阶段数据流依赖 Bevy 默认主调度，`PreUpdate` 结束时应用动作命令，完成状态转换后进入固定循环。玩法模拟和相机姿态同步只在 `Running` 执行。一次渲染帧可以没有固定步，也可以有多个固定步，因此输入 Observer 不直接积分角色位置。

@@ -118,5 +118,6 @@ impl Plugin for GameUiPlugin {
         navigation::register(app);
         screens::register(app);
         backdrop::register(app);
+        widgets::register(app);
     }
 }

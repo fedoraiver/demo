@@ -147,11 +147,16 @@ Object.assign(brief, {
   menu_spawn_controller: '创建菜单输入控制者及 Enhanced Input 绑定',
   menu_sync_context: '窗口焦点 → MenuContext；Hidden 仍保留 Esc',
   menu_handle_requests: '消费菜单消息 → 页面 / 设置 / NextState',
-  menu_rebuild: '页面变化 → BSN 重建 UI 实体树',
+  menu_rebuild: '结构 key 变化 → BSN 重建；草稿不重建',
+  menu_settings_text: '草稿 / 提示变化 → 原位更新 Text',
+  menu_bind_scrollbars: 'Build 后 → 绑定真实 sibling target',
+  menu_sync_scrollbars: '本帧布局 → 显隐 / 拾取 / 夹取 / 高亮',
+  window_log: '记录平台、16:9 与最小尺寸策略',
+  window_install: '窗口线程：安装 / 刷新 / 清理原生守卫',
   menu_pointer: '真实鼠标移动切输入来源；进入 / 离开同步悬停',
   menu_style: 'Interaction / 导航焦点 → 按钮纸色或黄色',
   menu_description: '当前设置焦点 → 右侧解释文字',
-  menu_scroll_focus: '键盘 / 手柄焦点 → 可见滚动范围',
+  menu_scroll_focus: '当前焦点按钮 → 可见滚动范围',
   menu_asset_failures: '资产加载失败 → 英文会话日志',
   menu_backdrop_spawn: '真实 GLB 展台 / 独立菜单相机；无地图碰撞',
   observe_release_pointer: 'F3：释放光标，保持 Running 和检查器',
@@ -195,12 +200,12 @@ registry['app-main'] = { name:'main / App',kind:'App',description:'创建 App �
 b += `<g class="node entity" ${register('app-main',registry['app-main'])}>${frame(30, 102, 1500, 224, '«App» main：装配应用与共享 World', 'Plugin 负责注册；下方位置不代表插件内部系统的执行先后。')}</g>`;
 const mainLines = fs.readFileSync(path.join(dir, '../../src/main.rs'), 'utf8').split('\n');
 const pluginDescriptions = {
-  DefaultPlugins:'引擎输入、窗口、时间、资产、动画、变换、渲染与统一日志。', EguiPlugin:'准备 Egui 上下文与界面绘制。', WorldInspectorPlugin:'通过反射检查 ECS；仅 Running 显示。', AppFlowPlugin:'主菜单/游戏/暂停生命周期与时间门控。', GameUiPlugin:'BSN 页面、菜单输入、草稿与展示舞台。', GameAudioPlugin:'Kira 预加载、策略、UI/SFX 输出与退出停止。', SettingsPlugin:'设置资源与限帧。', GameplayPlugin:'玩法资源、反射类型和固定模拟链。', PlayerInputPlugin:'输入上下文、动作与角色意图 Observer。', CameraControlPlugin:'相机 Observer、捕获、视角与姿态同步。', ArtAssetsPlugin:'五份运行 GLB 强句柄、加载状态与失败报告。', CharacterAnimationPlugin:'主角命名动作绑定与实际速度/持物切换。', IslandRecoveryPlugin:'固定步落水恢复与临时插值暂停生命周期。', PrototypeScenePlugin:'BSN 海岛准备、静态碰撞与动态业务装配。', StartupLogPlugin:'集中注册四项只读启动日志。'
+  DefaultPlugins:'引擎输入、窗口、时间、资产、动画、变换、渲染、原生 ScrollbarPlugin 与统一日志。', WindowPolicyPlugin:'窗口线程安装、刷新与清理原生 16:9 策略。', EguiPlugin:'准备 Egui 上下文与界面绘制。', WorldInspectorPlugin:'通过反射检查 ECS；仅 Running 显示。', AppFlowPlugin:'主菜单/游戏/暂停生命周期与时间门控。', GameUiPlugin:'BSN 页面、菜单输入、草稿与展示舞台。', GameAudioPlugin:'Kira 预加载、策略、UI/SFX 输出与退出停止。', SettingsPlugin:'设置资源与限帧。', GameplayPlugin:'玩法资源、反射类型和固定模拟链。', PlayerInputPlugin:'输入上下文、动作与角色意图 Observer。', CameraControlPlugin:'相机 Observer、捕获、视角与姿态同步。', ArtAssetsPlugin:'五份运行 GLB 强句柄、加载状态与失败报告。', CharacterAnimationPlugin:'主角命名动作绑定与实际速度/持物切换。', IslandRecoveryPlugin:'固定步落水恢复与临时插值暂停生命周期。', PrototypeScenePlugin:'BSN 海岛准备、静态碰撞与动态业务装配。', StartupLogPlugin:'集中注册四项只读启动日志。'
 };
 // 候选索引可能只包含部分功能；插件只从该版本 main 的实际装配位置读取。
 const plugins = Object.keys(pluginDescriptions).map(name => ({name, line:mainLines.findIndex(l => l.trim() === name || l.trim().startsWith(name + ',') || l.trim().startsWith(name + '::')) + 1})).filter(plugin => plugin.line > 0);
 registry['app-main'].source.line = mainLines.findIndex(l=>l.startsWith('fn main('))+1;
-plugins.forEach(({name,line}, i) => { const id = `plugin-${name}`; registry[id] = { id, name, kind:'Plugin', description:pluginDescriptions[name], notes:['注册顺序不等于系统执行顺序。', ...(name.includes('Egui') || name.includes('Inspector') ? ['EguiPlugin 必须先于 WorldInspectorPlugin 构建。'] : [])], source:{path:'src/main.rs',line} }; b += compact(44 + (i % 5) * 296, 165 + Math.floor(i / 5) * 52, 284, 42, id, name, 'plugin'); });
+plugins.forEach(({name,line}, i) => { const id = `plugin-${name}`; registry[id] = { id, name, kind:'Plugin', description:pluginDescriptions[name], notes:['注册顺序不等于系统执行顺序。', ...(name.includes('Egui') || name.includes('Inspector') ? ['EguiPlugin 必须先于 WorldInspectorPlugin 构建。'] : [])], source:{path:'src/main.rs',line} }; b += compact(44 + (i % 6) * 246, 165 + Math.floor(i / 6) * 52, 234, 42, id, name, 'plugin'); });
 b += '<g transform="translate(0 104)">';
 b += frame(30, 240, 1500, 108, '«Schedule» Startup · 启动一次', '菜单控制者、短音、美术请求与四项日志无彼此顺序；进入 InGame 才生成加载视图。');
 const startupIds = ['menu_spawn_controller','audio_preload','startup_assets','startup_config','startup_timestep','startup_inspector'].filter(id => systems[id]);
@@ -252,9 +257,9 @@ b += edge([[1635,1225],[1815,1225]], 'Esc', 'trigger', [1725,1225], ['resource.P
 b += edge([[2040,1305],[2040,1345],[1285,1345],[1285,1305]], 'Resume：保留原场景', 'order', [1620,1345], ['state-paused','flow_resume','resource.PlayState']);
 b += edge([[2320,1305],[2320,1415],[405,1415],[405,1305]], 'Return to Main Menu：退出 InGame 时清理业务根', 'order', [1285,1415], ['state-paused','resource.AppState']);
 b += frame(30, 1510, 2520, 310, 'Update · BSN 页面与鼠标 / 导航状态', 'UI 实体树更新后才处理指针，再更新显示；Style 组内系统不虚构串行顺序。');
-b += system(55, 1595, 700, 'menu_rebuild', ['MenuState / UiTheme → UI 实体树', '自动宽度 Text 保留自然测量'], 130);
+b += system(55, 1595, 700, 'menu_rebuild', ['页面 / 分类 / 返回来源 / 视口 → 结构 key', '草稿和 status 由 Style 原位更新 Text'], 130);
 b += system(935, 1595, 700, 'menu_pointer', ['真实鼠标移动（含空白）→ Pointer', '进入高亮、离开恢复；按钮点击排入消息'], 130);
-b += system(1815, 1595, 700, 'menu_style', ['鼠标模式按 Interaction；导航模式按 MenuFocus', 'Apply / 当前 Tab 无常驻黄色'], 130);
+b += system(1815, 1595, 700, 'menu_style', ['四个 Style 系统无彼此全序', '按钮高亮 / 值与提示 / 说明 / 焦点滚入'], 130);
 b += edge([[755,1660],[935,1660]], 'Build →', 'order', [845,1660], ['menu_rebuild','menu_pointer']);
 b += edge([[1635,1660],[1815,1660]], 'Pointer → Style', 'order', [1725,1660], ['menu_pointer','menu_style']);
 b += text(55, 1770, 'MenuInputSource：Pointer / Navigation；键盘或手柄实际导航后显示焦点。设置只在 Apply 成功后热生效并保存，取消丢弃草稿。', 'note');
@@ -278,7 +283,17 @@ b+=edge([[2090,2007],[1960,2007]],'W','write',[2025,2007],['audio-output','resou
 b+=edge([[1285,1725],[1285,1790],[1060,1790],[1060,1885]],'W MenuHover','write',[1060,1790],['menu_pointer','resource.SoundRequestMessages']);
 b+=edge([[2515,1660],[2890,1660],[2890,1835],[2710,1835],[2710,1885]],'after(Style)','order',[2810,1835],['menu_style','audio-output']);
 
-save('overview', '当前 App · ECS 总览', 2955, 2130, b, '输入 → 固定控制力 → Avian 求解 → 插值 → 本帧显示 → 世界变换与渲染。');
+// 窗口策略作为独立平台桥接展示，不把原生回调画成菜单输入。
+b += frame(30,2180,2885,270,'WindowPolicyPlugin · 原生 16:9 窗口','Windows/macOS：初始隐藏 → 窗口线程安装 → 显示；无窗口后端不调用原生 API。');
+b += system(55,2265,700,'window_install',['PreUpdate · NonSendMarker / NonSendMut','WINIT_WINDOWS 只短借用取得存活 Entity'],130);
+b += card(935,2265,700,130,'non_send.NativePolicies','NativePolicies · NonSend',['active：Entity → 原生守卫；failed：Entity 集合','实体 / 后端退出 → Drop 卸载或恢复属性'],'resource','small');
+registry['window-native-policy']={name:'原生窗口约束',kind:'Native platform bridge',description:'Windows subclass 在尺寸应用前约束；macOS contentAspectRatio、工作区 min/max 及 Zoom 校准。纯几何与平台守卫不是 ECS 组件。',source:{path:'src/window_policy/macos.rs',line:22},platform_sources:[{source:{path:'src/window_policy/windows.rs',line:175}},{source:{path:'src/window_policy/geometry.rs',line:69}}]};
+b += card(1815,2265,1075,130,'window-native-policy','Windows / macOS 原生窗口约束',['内容 16:9；拖边 / 工作区 / DPI / 最大化','主线程原生 API 在后端借用结束后调用'],'engine','small');
+b += edge([[755,2330],[935,2330]],'R / W 守卫','write',[845,2330],['window_install','non_send.NativePolicies']);
+b += edge([[1635,2330],[1815,2330]],'安装 / 刷新 / Drop','reference',[1725,2330],['non_send.NativePolicies','window-native-policy']);
+b += text(55,2425,'只支持范围内保证 UI：逻辑最小 960×540；工作区不足时优先保持比例和可用范围，日志记录 small_work_area。','small');
+
+save('overview', '当前 App · ECS 总览', 2955, 2500, b, '输入 → 固定控制力 → Avian 求解 → 插值 → 本帧显示 → 世界变换与渲染。');
 
 // 时序视图：每个注册实例单独呈现，R/W 在卡片内列摘要，点击显示完整读写项。
 b = text(36, 80, '系统卡片中的 R / W 是访问摘要；同一函数在不同 Schedule 中有两个注册实例。', 'note');
@@ -388,19 +403,24 @@ b += frame(1470,2740,1480,535,'StateTransition · 生命周期','MainMenu / Paus
   b += system(1490+i%3*485,2825+Math.floor(i/3)*200,455,id,[brief[id]||systems[id].description,systems[id].phase],130);
 });
 b += text(1495,3200,'InGame 退出清理业务根和海岛；MainMenu 退出清理展台。Paused 保留原会话。','small');
-b += frame(30,3310,2920,560,'Update · Build → Pointer → Style','页面结构命令先应用；Style 内的样式、说明和焦点滚动无彼此全序。');
+b += frame(30,3310,2920,720,'Update · Build → Pointer / Bind → Style','结构 Commands 先应用；Pointer 与 Bind 彼此无全序；四个 Style 系统彼此无全序。');
 b += system(55,3395,790,'menu_rebuild',accessRows('menu_rebuild'),130);
 b += system(1045,3395,790,'menu_pointer',accessRows('menu_pointer'),130);
-b += card(2035,3395,890,130,'ui-style-set','UiSystems::Style',['在 Pointer 之后运行三个显示系统','输入来源区分 Pointer / Navigation'],'engine','small');
+registry['ui-style-set']={name:'UiSystems::Style',kind:'SystemSet',description:'Build 后并在指针和绑定系统后运行；四个成员系统没有彼此全序。',source:{path:'src/ui/screens.rs',line:28}};
+b += card(2035,3395,890,130,'ui-style-set','UiSystems::Style',['样式 / 数值与提示 / 说明 / 焦点滚入','资源文字更新保留视口、滑块和焦点身份'],'engine','small');
 b += edge([[845,3460],[1045,3460]],'应用 UI 命令','order',[945,3460],['menu_rebuild','menu_pointer']);
 b += edge([[1835,3460],[2035,3460]],'Pointer → Style','order',[1935,3460],['menu_pointer','ui-style-set']);
-['menu_style','menu_description','menu_scroll_focus'].forEach((id,i)=>{
-  const x=2035+i*300;
-  b += system(x,3630,290,id,[brief[id]],115);
-  b += edge([[x+145,3525],[x+145,3630]],'','registration',null,['ui-style-set',id]);
+['menu_style','menu_description','menu_settings_text','menu_scroll_focus'].forEach((id,i)=>{
+  const x=2035+i%2*460,y=3630+Math.floor(i/2)*200;
+  b += system(x,y,430,id,[brief[id]],115);
+  if(i<2)b += edge([[x+215,3525],[x+215,y]],'','registration',null,['ui-style-set',id]);
+  else { const corridor=i===2?1980:2970; b += edge([[i===2?2035:2925,3460],[corridor,3460],[corridor,y+57.5],[i===2?x:x+430,y+57.5]],'成员','registration',[corridor,y-28],['ui-style-set',id]); }
 });
 b += system(55,3630,790,'menu_asset_failures',accessRows('menu_asset_failures'),130);
-b += card(1045,3630,790,130,'resource.MenuInputSource','菜单输入来源',['Navigation：实际导航显示焦点','Pointer：真实移动、点击或离开窗口接管','文字保留自然测量；Apply / Tab 不常驻黄'],'resource','small');
+b += card(1045,3630,790,130,'resource.MenuInputSource','菜单输入来源',['Navigation：实际导航显示焦点','Pointer：真实移动、点击或离开窗口接管','滑块按下也接管 Pointer 来源'],'resource','small');
+b += system(1045,3830,790,'menu_bind_scrollbars',accessRows('menu_bind_scrollbars'),130);
+b += edge([[845,3460],[945,3460],[945,3895],[1045,3895]],'Build → Bind','order',[945,3790],['menu_rebuild','menu_bind_scrollbars']);
+b += edge([[1835,3895],[1950,3895],[1950,3485],[2035,3485]],'Bind → Style','order',[1950,3765],['menu_bind_scrollbars','ui-style-set']);
 b += frame(3010,2740,465,1130,'Update · Kira 输出','after(UiSystems::Style)，暂停菜单仍可发声。');
 ['audio_load_failures','audio_play','audio_stop'].forEach((id,i)=>{
   const y=2825+i*225;
@@ -409,16 +429,34 @@ b += frame(3010,2740,465,1130,'Update · Kira 输出','after(UiSystems::Style)�
 });
 b += text(3025,3560,'Time<Real> / 加载 / 冷却 / 并发','small');
 b += text(3025,3590,'UI ≤ 4；SFX ≤ 3；排队计入','small');
-b += text(55,3900,'Running 门控海岛准备、主角动画、落水恢复、固定玩法与显示链；菜单和音频继续逐帧处理。','note');
+b += text(55,4765,'Running 门控海岛准备、主角动画、落水恢复、固定玩法与显示链；菜单和音频继续逐帧处理。','note');
 
-save('schedules', '调度泳道 · 系统与数据访问', 3515, 3935, b, '固定控制 → 物理解算 → 插值后显示；点击查看完整访问，框架集合为概览。');
+// 原生滚动条几何属于 Layout；显隐在布局后、可见性传播前同步。
+b += frame(30,4080,3445,300,'PostUpdate · 设置滚动条布局与显隐','固定 gutter；Main/Pause/Help 无视口；只有 Settings 右侧纸色面板内容滚动。');
+registry['native-ui-layout']={name:'UiSystems::Layout',kind:'Engine SystemSet',description:'计算本帧 UI 内容与视口；原生 thumb 系统在 ui_layout_system 之后且仍属于 Layout。',source:{path:'src/ui/widgets.rs',line:63}};
+registry['native-scrollbar-layout']={name:'ScrollbarPlugin · thumb geometry',kind:'Engine system',description:'DefaultPlugins 的原生 ScrollbarPlugin 按 target 的内容/视口比例计算滑块几何；滑块不带 Node。',source:{path:'src/ui/widgets.rs',line:115}};
+registry['native-visibility']={name:'VisibilityPropagate',kind:'Engine system set',description:'在项目显隐同步后传播可见性。',source:{path:'src/ui/widgets.rs',line:64}};
+b += card(55,4165,650,130,'native-ui-layout','UiSystems::Layout',['ui_layout_system：真实 ComputedNode','原生 thumb 几何在同一 Layout 集合内'],'engine','small');
+b += card(870,4165,650,130,'native-scrollbar-layout','ScrollbarPlugin · thumb geometry',['target → 比例 / track / thumb 几何','属于 Layout，after(ui_layout_system)'],'engine','small');
+b += system(1685,4165,790,'menu_sync_scrollbars',['实际溢出 → Hidden / Inherited + Pickable','fit / 离页取消拖拽；内容缩短夹取范围','W ScrollPosition / 高亮 / dragging'],130);
+b += card(2640,4165,810,130,'native-visibility','VisibilityPropagate',['传播项目同步后的 Hidden / Inherited','拾取、拖拽与范围夹取由前一项目系统负责'],'engine','small');
+b += edge([[705,4230],[870,4230]],'Layout 内','order',[788,4230],['native-ui-layout','native-scrollbar-layout']);
+b += edge([[1520,4230],[1685,4230]],'after(Layout)','order',[1602,4230],['native-scrollbar-layout','menu_sync_scrollbars']);
+b += edge([[2475,4230],[2640,4230]],'before','order',[2557,4230],['menu_sync_scrollbars','native-visibility']);
+b += frame(30,4430,3445,275,'Startup / PreUpdate · 原生窗口策略','两种 Schedule 独立注册；原生 resize 回调不属于 ECS 调度或增强输入动作。');
+b += system(55,4515,700,'window_log',accessRows('window_log'),130);
+b += system(935,4515,1075,'window_install',accessRows('window_install'),130);
+b += card(2190,4515,1260,130,'non_send.NativePolicies','NativePolicies · NonSend',['NonSendMarker 固定在窗口线程；守卫归 active 所有','短借用后端 map → 原生安装 / macOS 刷新 / 退出 Drop'],'resource','small');
+b += edge([[2010,4580],[2190,4580]],'R / W','write',[2100,4580],['window_install','non_send.NativePolicies']);
+
+save('schedules', '调度泳道 · 系统与数据访问', 3515, 4810, b, '固定控制 → 物理解算 → 插值后显示；点击查看完整访问，框架集合为概览。');
 
 // 关系视图：矩形容器表达实体，内嵌组件；普通 Entity 引用与 Bevy 关系单独标注。
 b = text(36, 80, '按实体角色汇总关键组件，可选组件并非始终存在；虚线＝普通引用，紫实线＝Bevy 关系。', 'note');
 const entityBoxes = [
   {id:'controller',x:30,y:112,w:360,h:350},{id:'action',x:540,y:112,w:360,h:315},{id:'binding',x:1050,y:112,w:360,h:230},
   {id:'character',x:30,y:650,w:360,h:660},{id:'parcel',x:540,y:650,w:360,h:700},{id:'camera',x:1050,y:650,w:360,h:400},
-  {id:'world',x:1050,y:1130,w:360,h:430},{id:'visual',x:30,y:1750,w:360,h:460},{id:'window',x:1050,y:1660,w:360,h:270},
+  {id:'world',x:1050,y:1130,w:360,h:430},{id:'visual',x:30,y:1750,w:360,h:460},{id:'window',x:1050,y:1660,w:360,h:300},
   {id:'island',x:1510,y:112,w:440,h:350},{id:'npc',x:1510,y:550,w:440,h:260},{id:'animation_player',x:1510,y:930,w:440,h:360},{id:'model_node',x:1510,y:1450,w:440,h:480},
 ].filter(box=>entities[box.id]);
 const primaryComponents = {
@@ -426,7 +464,7 @@ const primaryComponents = {
   character:['Character','CharacterIntent','CharacterMotion','SpawnPoint','RigidBody','Collider','Position','LinearVelocity','Transform','CollisionLayers','SweptCcd','LockedAxes','TranslationInterpolation','HoldingItems','Children'],
   parcel:['Parcel','Pickable','ItemModel','CarryGrip','SpawnPoint','RigidBody','Collider','Position','LinearVelocity','AngularVelocity','Transform','CollisionLayers','HeldBy','HeldTarget','TransformInterpolation','Children'],
   camera:['LoadingCamera','OrbitCamera','MouseLookState','Camera3d','Transform'],world:['IslandCollider','RigidBody','Collider','CollisionLayers','Transform','ChildOf'],
-  visual:['CharacterVisual','CourierVisual','CourierAnimationPending','WorldAssetRoot','Transform','GlobalTransform','ChildOf','Children','Visibility'],window:['PrimaryWindow','Window','CursorOptions'],
+  visual:['CharacterVisual','CourierVisual','CourierAnimationPending','WorldAssetRoot','Transform','GlobalTransform','ChildOf','Children','Visibility'],window:['PrimaryWindow','Window','CursorOptions','RawHandleWrapper'],
   island:['IslandMap','IslandPending','IslandReady','ActorsSpawned','WorldAssetRoot','Children'],npc:['DisplayNpc','ChildOf'],animation_player:['AnimationPlayer','AnimationGraphHandle','AnimationTransitions','CourierAnimation','ChildOf'],model_node:['Transform','GlobalTransform','ChildOf','Mesh3d','MeshMaterial3d','Visibility','GltfExtras','SkinnedMesh','AnimationTargetId']
 };
 entityBoxes.forEach(box=>{const e=entities[box.id];registry[`entity-${e.id}`]={...e,name:e.name,kind:'Entity'};
@@ -477,6 +515,8 @@ const menuEntityBoxes=[
  {id:'menu_scroll',x:2250,y:560,w:430,h:430},{id:'menu_button',x:2780,y:560,w:430,h:430},
  {id:'menu_backdrop',x:2250,y:1100,w:430,h:380},{id:'menu_camera',x:2780,y:1100,w:430,h:380},
  {id:'menu_model',x:2250,y:1630,w:430,h:430},{id:'menu_text',x:2780,y:1630,w:430,h:430},
+ {id:'settings_panel',x:3330,y:112,w:530,h:350},{id:'settings_scrollbar',x:3330,y:560,w:530,h:430},
+ {id:'settings_scrollbar_thumb',x:3940,y:560,w:530,h:430},
 ];
 menuEntityBoxes.forEach(box=>{
  const e=entities[box.id],id=`entity-${e.id}`;registry[id]={...e,kind:'Entity'};
@@ -484,10 +524,12 @@ menuEntityBoxes.forEach(box=>{
  e.components.slice(0,Math.floor((box.h-110)/34)).forEach((c,i)=>b+=compact(box.x+15,box.y+71+i*34,box.w-30,30,c.id,c.name));
  b += text(box.x+16,box.y+box.h-12,`完整清单：${e.components.length} 项 · 点击查看`,'small');
 });
-b += edge([[2465,560],[2465,515],[2995,515]],'','relationship',null,['entity-menu_scroll','entity-menu_root'],false);
-b += edge([[2995,560],[2995,515]],'','relationship',null,['entity-menu_button','entity-menu_root'],false);
-b += edge([[2995,515],[2995,462]],'','relationship',null,['entity-menu_scroll','entity-menu_button','entity-menu_root']);
-b += text(2485,499,'Children / ChildOf 子树（中间容器省略）','small');
+b += edge([[2995,560],[2995,462]],'ChildOf 子树','relationship',[2900,490],['entity-menu_button','entity-menu_root']);
+b += edge([[3330,287],[3210,287]],'ChildOf','relationship',[3270,235],['entity-settings_panel','entity-menu_root']);
+b += edge([[2465,560],[2465,515],[3540,515],[3540,462]],'ChildOf 经 frame','relationship',[3150,515],['entity-menu_scroll','entity-settings_panel']);
+b += edge([[3595,560],[3595,462]],'经 frame','relationship',[3595,512],['entity-settings_scrollbar','entity-settings_panel']);
+b += edge([[3940,775],[3860,775]],'ChildOf','relationship',[3900,720],['entity-settings_scrollbar_thumb','entity-settings_scrollbar']);
+b += edge([[3595,990],[3595,1060],[2465,1060],[2465,990]],'Scrollbar.target · Entity 引用','reference',[3100,1060],['entity-settings_scrollbar','entity-menu_scroll']);
 b += text(2270,1030,'MenuContext 复用 ActionOf / BindingOf；Coming Soon 无 MenuButton。','small');
 b += edge([[2780,1250],[2680,1250]],'ChildOf','relationship',[2730,1250],['entity-menu_camera','entity-menu_backdrop']);
 b += edge([[2465,1630],[2465,1480]],'ChildOf 子树','relationship',[2465,1555],['entity-menu_model','entity-menu_backdrop']);
@@ -498,7 +540,13 @@ const menuResourceIds=['resource.AppState','resource.PlayState','resource.MenuSt
 menuResourceIds.forEach((id,i)=>b+=compact(2270+i%2*465,2245+Math.floor(i/2)*40,440,32,id,registry[id].name,'resource'));
 b += text(2270,2540,'Paused 保留 1 主角 + 5 物品 + 海岛；Return to Main Menu 清理整个会话。','small');
 
-save('relationships', '实体 · 组件归属与关系', 3230, 2600, b, '真实物理状态、插值呈现和持握目标分离；点击组件查看字段及源码入口。');
+b += frame(3330,1100,1140,380,'设置滚动范围与控件生命周期','面板内部滚动，固定区域和普通 Entity 引用分别建模。');
+registry['settings-fixed-regions']={name:'设置固定区域',kind:'BSN layout',description:'左侧分类、右列底部 Restore Defaults / Apply / Back、页脚固定；纸色面板内标题/字段/说明/保存提示滚动。',source:{path:'src/ui/screens.rs',line:397}};
+b += card(3350,1185,1100,180,'settings-fixed-regions','分类 / 底部操作 / 页脚固定',['SettingsPanel → frame → MenuScroll + track（兄弟）','track → thumb（直接 ChildOf）；track.target → MenuScroll（普通引用）','值和提示原位更新；结构 key 变化才销毁旧树重建'],'engine','small');
+b += text(3350,1430,'原生 DragEnd / Cancel 清理；fit 或离页同步取消 dragging，重建的新 thumb 默认未拖拽。','small');
+b += card(3330,1630,1140,230,'non_send.NativePolicies','NativePolicies · NonSend（窗口线程）',['不是普通 Send Resource；平台守卫不是 ECS 组件','active 持有原生窗口守卫；failed 记录安装失败实体','退出实体 / 后端 → Drop 卸载 Windows subclass 或恢复 macOS 属性'],'resource','small');
+
+save('relationships', '实体 · 组件归属与关系', 4500, 2600, b, '真实物理状态、插值呈现和持握目标分离；点击组件查看字段及源码入口。');
 
 // 通信视图：输入动作事件、全局 Observer 与窗口缓冲消息保持不同路线。
 b = text(36, 80, `${model.observers.length} 个 Observer（玩法／菜单动作、滚轮与实例就绪）由匹配事件触发；它们不是按 add_observer 的注册顺序组成流水线。`, 'note');
@@ -584,11 +632,11 @@ b += frame(1540,112,1470,menuEventBottom-112,'菜单动作 / UI 滚动 / GLB 就
 b += lines(1560,200,['MenuContext 优先级 10；consume_input 避免同键被两种上下文重复消费。','Hidden 仍保留 Back（Esc）暂停；方向和确认在隐藏页面返回。'],'body',32);
 menuEvents.forEach((o,i)=>{
  const id=o.system,y=306+i*menuEventStep,s=systems[id],action=o.event.startsWith('Fire<');
- registry[`event-${id}`]={name:o.event,kind:'EntityEvent',description:o.description,notes:[o.target]};
- b += card(1552,y,312,118,`event-${id}`,o.event,[action?'target：MenuContext 控制者':o.event.startsWith('Pointer')?'target：MenuScroll 视口':'target：菜单快递员 GLB 根'],'event','small');
+ registry[`event-${id}`]={name:o.event,kind:'EntityEvent',description:o.description,notes:[o.target],source:s.source};
+ b += card(1552,y,312,118,`event-${id}`,o.event,[action?'target：MenuContext 控制者':o.event.startsWith('Pointer')?(id==='observe_menu_scroll'?'target：MenuScroll 视口':'target：轨道 / 滑块'):'target：菜单快递员 GLB 根'],'event','small');
  b += system(1944,y,335,id,[s.description],118);
  const resultId=`result-${id}`;registry[resultId]={name:`${s.name} 输出`,kind:'Data write',description:s.description,reads:s.reads,writes:s.writes,notes:s.notes,source:s.source};
- b += card(2366,y,345,118,resultId,action?'菜单共享数据':o.event.startsWith('Pointer')?'ScrollPosition':'动画播放与图句柄',s.writes.slice(0,2).map(v=>`W ${accessName(v)}`),action?'resource':'component','small');
+ b += card(2366,y,345,118,resultId,action?'菜单共享数据':o.event.startsWith('Pointer')?(id==='observe_scrollbar_press'?'MenuInputSource':'ScrollPosition'):'动画播放与图句柄',s.writes.slice(0,2).map(v=>`W ${accessName(v)}`),action?'resource':'component','small');
  b += edge([[1864,y+59],[1944,y+59]],'触发','trigger',[1904,y+59],[`event-${id}`,id]);
  b += edge([[2279,y+59],[2366,y+59]],'W','write',[2322,y+59],[id,resultId,...s.writes]);
 });
@@ -623,7 +671,21 @@ b += edge([[1457,3320],[1600,3320]],'W 实例','write',[1530,3320],['audio_play'
 b += edge([[1214,3365],[1214,3580],[2635,3580],[2635,3365]],'排队播放','write',[1960,3580],['audio_play','kira-output']);
 b += text(55,3650,'拿放声音随延迟关系命令一起生效；真实菜单焦点变动发 MenuHover，接受操作发 MenuConfirm / MenuCancel。','note');
 
-save('events','事件 · Observer · Message',3040,Math.max(3750,menuEventBottom+700),b,'输入 EntityEvent、实例就绪、窗口/碰撞 Message 与外部后台日志分别建模。');
+// 控件原生事件是引擎能力概览；项目 Observer 不重复实现拖拽生命周期。
+b += frame(1540,requestY+585,1470,330,'DefaultPlugins · 原生 ScrollbarPlugin','菜单语义使用 Enhanced Input；滚动条的坐标、轨道分页和拖拽复用原生 UI 指针事件。');
+registry['native-scrollbar-events']={name:'ScrollbarPlugin · pointer observers',kind:'Engine observers',description:'Scrollbar / ScrollbarThumb 原生控件处理 track Press 分页、DragStart/Drag/DragEnd/Cancel；几何在 Layout 内更新。项目只绑定 target 和同步显隐/来源。',source:{path:'src/ui/widgets.rs',line:115}};
+b += card(1560,requestY+670,650,160,'native-scrollbar-events','Press / DragStart / Drag / End / Cancel',['原生 track 分页和 thumb 拖拽更新 target','DragEnd / Cancel 清理原生 dragging','项目 Press Observer 只接管输入来源'],'engine','small');
+b += card(2320,requestY+670,665,160,'menu_sync_scrollbars','项目布局后同步',['fit / 离页：offset 清零、禁拾取、取消拖拽','仍 overflow 的 resize：原生按当前几何计算','重建销毁旧 thumb，新实体默认未拖拽'],'system','small');
+b += edge([[2210,requestY+750],[2320,requestY+750]],'控件数据','reference',[2265,requestY+720],['native-scrollbar-events','menu_sync_scrollbars']);
+b += frame(30,3760,2980,290,'原生窗口桥接 · OS 消息与回调','窗口 resize 是原生平台约束；不通过 Enhanced Input，也不是 Bevy EntityEvent 或 MessageReader 消息。');
+registry['native-window-events']={name:'OS 窗口事件 / API',kind:'Native platform event',description:'Windows WM_SIZING / WM_WINDOWPOSCHANGING / WM_DPICHANGED / WM_SYSCOMMAND；macOS contentAspectRatio、屏幕工作区和 Zoom 几何校准。',source:{path:'src/window_policy/windows.rs',line:175}};
+b += card(55,3845,850,130,'native-window-events','Windows resize / DPI / maximize · macOS Zoom',['在原生尺寸应用前约束内容比例和工作区','macOS PreUpdate 刷新边界并校准旁路几何'],'engine','small');
+b += card(1080,3845,850,130,'window-native-policy','原生守卫 / 平台纯几何',['守卫由 NativePolicies.active 所有','非 ECS 组件；不建立额外实体或 State'],'engine','small');
+b += card(2105,3845,850,130,'window.Window','主窗口 Window',['逻辑内容 16:9；初始化安装后显示','退出 / 后端消失：清理守卫'],'component','small');
+b += edge([[905,3910],[1080,3910]],'原生约束','reference',[992,3910],['native-window-events','window-native-policy']);
+b += edge([[1930,3910],[2105,3910]],'应用尺寸','write',[2017,3910],['window-native-policy','window.Window']);
+
+save('events','事件 · Observer · Message',3040,Math.max(4100,menuEventBottom+1000),b,'输入 EntityEvent、实例就绪、窗口/碰撞 Message 与外部后台日志分别建模。');
 
 // 源码与图同时生成快照，让网页和离线文件都能打开完整源码并定位行号。
 function sourceReferences(value, result = new Set()) {

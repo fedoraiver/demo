@@ -13,6 +13,18 @@ serde = { version = "1.0.229", features = ["derive"] }
 serde_json = "1.0.151"
 uuid = { version = "1.26.1", features = ["v4"] }
 
+# 原生窗口约束只在对应桌面平台编译；复用现有锁定依赖，避免升级引擎。
+[target.'cfg(any(target_os = "macos", target_os = "windows"))'.dependencies]
+raw-window-handle = "0.6.2"
+
+[target.'cfg(target_os = "macos")'.dependencies]
+objc2 = "0.6.4"
+objc2-app-kit = { version = "0.3.2", default-features = false, features = ["std", "NSResponder", "NSWindow", "NSView", "NSScreen"] }
+objc2-foundation = { version = "0.3.2", default-features = false, features = ["std", "NSGeometry"] }
+
+[target.'cfg(target_os = "windows")'.dependencies]
+windows-sys = { version = "0.61.2", features = ["Win32_Foundation", "Win32_UI_Shell", "Win32_UI_WindowsAndMessaging", "Win32_UI_HiDpi", "Win32_Graphics_Gdi"] }
+
 # Keep project code quick to compile and easy to debug.
 [profile.dev]
 opt-level = 1
