@@ -55,6 +55,8 @@ Hook 回归还须确认 `post-commit` 只对齐本次已提交的六份产物，
 
 ## 海岛资源与无窗口验证
 
+新道具资产的离线重建、GLB 清单与挂点矩阵检查、Blender 预览检查见 [道具美术资产](../art/items/README.md#重建与离线验证)。全库检查工具同时读取海岛与道具清单。新道具尚未注册到 `ArtAssets`，以下海岛场景测试不能证明新装备、机械或魔法效果已经接入。
+
 运行 GLB 与场景装配的检查由 [scene.rs](../src/scene.rs) 注册为 `scene::tests`，具体测试集中在 [scene_tests.rs](../src/scene_tests.rs)，使用真实的运行资源和无窗口测试环境。可在仓库根目录执行：
 
 ```powershell
