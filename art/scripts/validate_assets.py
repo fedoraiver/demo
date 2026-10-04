@@ -784,6 +784,13 @@ def main():
     if manifest.is_file():
         try:
             entries = json.loads(manifest.read_text(encoding="utf-8"))["assets"]
+            # 道具库有独立制作源与清单，但与海岛模型一起分发和验证。
+            item_manifest = root / "art/items/asset_manifest.json"
+            if item_manifest.is_file():
+                item_entries = json.loads(item_manifest.read_text(encoding="utf-8"))["assets"]
+                require(isinstance(item_entries, list) and item_entries, "Item manifest assets must be a nonempty list")
+                entries = entries + item_entries
+                report["item_manifest"] = str(item_manifest.relative_to(root))
             require(isinstance(entries, list) and entries, "Manifest assets must be a nonempty list")
             expected = set()
             expected_paths = set()
