@@ -134,7 +134,7 @@ function card(x, y, w, h, id, title, rows = [], kind = 'system', extra = '') {
 }
 const brief = {
  frame_limit:'按设置等待帧间剩余时间',time_update:'更新引擎时间与固定步累积',input_update:'更新键鼠状态与窗口输入消息',mouse_capture:'窗口 / Egui 命中 → 捕获与上下文',enhanced_prepare:'准备有效输入上下文和绑定',enhanced_evaluate:'评估绑定、条件和动作状态',input_apply:'写动作输出，排入 trigger 命令',
- facing_fixed:'按相机 yaw 同步人物朝向',movement:'输入 / 实际速度 → 有上限的控制力',gravity:'消费跳跃请求 → 一次向上冲量',interaction:'射线 / 范围 → 拾取或保留动量释放',held_apply:'应用持握关系、目标与碰撞层',held_fixed:'角色呈现姿态 → HeldTarget',facing_update:'保留插值位置，同步本帧 yaw',held_update:'更新呈现目标，不搬箱或施力',camera_follow:'插值位置 + 观察状态 → 镜头',visibility_update:'视角模式 → 人物模型可见性',perspective_apply:'消费请求，切换第一 / 第三人称',
+ facing_fixed:'按相机 yaw 同步人物朝向',movement:'输入 / 实际速度 → 有上限的控制力',gravity:'消费跳跃请求 → 一次向上冲量',interaction:'射线 / 范围 → 拾取或保留动量释放',held_apply:'应用持握关系、目标与碰撞层',held_fixed:'角色呈现姿态 → HeldTarget',facing_update:'保留插值位置，同步本帧 yaw',held_update:'更新呈现目标，不搬箱或施力',camera_follow:'插值位置 + 观察状态 → 固定镜头',camera_occlusion:'外壳扫掠 / 重叠 → 建筑需求并集',building_fade:'建筑需求 → 实例材质 alpha / 句柄',fade_cleanup:'Last：失效关联恢复 / 材质副本清理',visibility_update:'视角模式 → 人物模型可见性',perspective_apply:'消费请求，切换第一 / 第三人称',
  gravity_sync:'配置变化 → Gravity',grounded_fixed:'脚底 shape cast → 接地状态',grounded_after:'物理回写后重新探测接地',orphan_cleanup:'失效持有者 / 关系 → 自由碰撞',orphan_apply:'应用失效清理命令',grip_forces:'真实 Position / 速度 → 弹簧与反作用力',velocity_log:'解算后实际速度 → 采样日志',collision_log:'CollisionStart / End → 文件日志',physics_prepare:'准备物理位姿、质量与碰撞数据',physics_step:'积分 / 接触 / 子步求解 → 真实运动',physics_writeback:'Position / Rotation → Transform',easing_reset:'FixedFirst：重置并记录插值起点',easing_end:'FixedLast：记录物理步插值终点',easing_apply:'固定循环后按 overstep 插值',easing_tick:'显示同步后记录变化 tick',
  transform_propagate:'根 Transform → 子 GlobalTransform',render:'提取 ECS 数据，准备并绘制画面',observe_move:'路由到角色，更新持续移动轴',observe_complete:'移动完成，将轴归零',observe_cancel:'移动取消，将轴归零',observe_jump:'路由到角色，设置跳跃请求',observe_interact:'路由到角色，设置交互请求',observe_look:'有效捕获时更新当前模式角度',observe_perspective:'记录请求来源，稍后统一切换',audio_preload:'清单契约 → 短音加载与映射',audio_load_failures:'资产加载失败 → 会话日志',audio_play:'请求 / 加载 / 冷却 / 并发 → 播放队列',audio_stop:'AppExit → UI / SFX 通道停止',audio_strain:'持续持握误差 → 一次警告',audio_land:'真实支撑冲量 → 一次落地反馈'
 };
@@ -217,7 +217,7 @@ const phases = [
   { x: 760, w: 330, name: 'FixedUpdate', note: 'FixedFirst 先记录插值起点', rows: ['恢复 → 朝向；重力独立同步', '跳跃冲量 → 交互 / 清理', '持握目标 → 弹簧 / 反作用力'] },
   { x: 1125, w: 330, name: 'FixedPostUpdate', note: 'Avian 默认物理阶段', rows: ['Prepare → StepSimulation', '→ Writeback → 接地 / 速度日志', '真实位置 / 速度 / 碰撞'] },
   { x: 1490, w: 330, name: 'FixedLast', note: '固定步末尾', rows: ['记录本步插值终点', '角色：平移插值', '箱体：完整 Transform 插值'] },
-  { x: 1855, w: 330, name: '固定循环之后', note: 'RunFixedMainLoop · 每帧', rows: ['Ease → 朝向 → HeldTarget', '→ 镜头 → 可见性', '→ UpdateEasingTick'] },
+  { x: 1855, w: 330, name: '固定循环之后', note: 'RunFixedMainLoop · 每帧', rows: ['Ease → 朝向 → HeldTarget → 镜头', '→ 建筑遮挡 → 淡化 → 可见性', '→ UpdateEasingTick'] },
   { x: 2220, w: 330, name: 'Update / SpawnScene', note: '资源与实例的异步准备', rows: ['资源轮询；海岛三步装配链', '主角动画绑定 → 状态切换', 'SpawnScene 实例化 / 就绪事件'] },
   { x: 2585, w: 330, name: 'PostUpdate', note: '骨骼动画与最终变换', rows: ['Animation → Transform传播', '检查器 UI 为独立分支', '→ 渲染子应用'] },
 ];
@@ -286,7 +286,18 @@ b+=edge([[2515,1660],[2890,1660],[2890,1835],[2710,1835],[2710,1885]],'after(Sty
 b+=card(30,2130,1290,130,'resource.AudioMix','AudioMix · 临时预览与保存分开',['Settings 页面：读取 SettingsDraft.audio，分类切换仍预览','离开设置：读取最近成功应用的 GameSettings.audio','默认 100%；静音丢弃新请求，不占冷却 / 并发'],'resource','small');
 b+=edge([[1320,2195],[1360,2195],[2502.5,2195],[2502.5,2040]],'R 有效音量','read',[1900,2195],['resource.AudioMix','audio-output']);
 
-save('overview', '当前 App · ECS 总览', 2955, 2310, b, '输入 → 固定控制力 → Avian 求解 → 插值 → 本帧显示 → 世界变换与渲染。');
+// 建筑外壳透明只读固定镜头姿态；单列实例数据流，保留原有玩法 / 音频区域。
+b += frame(30,2310,2885,350,'第三人称 · 固定镜头与建筑外壳半透明','插值后的目标与实际持物 → CameraQuery；检测只写透明需求，镜头距离 / 方向保持跟随计算。');
+b += card(50,2395,590,150,'camera_shell.CameraShell','CameraShell · 独立外壳查询',['每栋最多 1 份合并几何','CameraQuery；接触掩码 NONE','完整 World 碰撞继续保留'],'component','small');
+b += card(790,2395,590,150,'resource.OccludedBuildings','OccludedBuildings',['有效 TP 相机的建筑需求并集','0.12 m 扫掠 + 0.25 m 镜头重叠','FP / 目标失效清除对应需求'],'resource','small');
+b += card(1530,2395,590,150,'building.BuildingFadeState','BuildingFadeState',['0.15 s → 原 alpha × 20%','无遮挡 0.25 s 后，用 0.35 s 恢复','不修改碰撞 / 拾取 / 镜头姿态'],'component','small');
+b += card(2270,2395,625,150,'resource.ShellMaterialCache','实例材质副本与绑定',['缓存键：building + 原 material','ShellMaterialBinding 保留原句柄','Last 清失效；暂停不推进渐变'],'resource','small');
+b += edge([[640,2470],[790,2470]],'查询','read',[715,2470],['camera_shell.CameraShell','camera_occlusion','resource.OccludedBuildings']);
+b += edge([[1380,2470],[1530,2470]],'需求','read',[1455,2470],['resource.OccludedBuildings','building_fade','building.BuildingFadeState']);
+b += edge([[2120,2470],[2270,2470]],'实例因子','write',[2195,2470],['building_fade','building.BuildingFadeState','resource.ShellMaterialCache']);
+b += text(55,2618,'仅识别的建筑外壳淡化；家具、地板、NPC、包裹、未知部件与非建筑保持正常外观。第三人称人物始终遵循模式可见性。','note');
+
+save('overview', '当前 App · ECS 总览', 2955, 2710, b, '输入 → 固定控制力 → Avian 求解 → 插值 → 固定镜头 / 建筑外壳淡化 → 世界变换与渲染。');
 
 // 时序视图：每个注册实例单独呈现，R/W 在卡片内列摘要，点击显示完整读写项。
 b = text(36, 80, '系统卡片中的 R / W 是访问摘要；同一函数在不同 Schedule 中有两个注册实例。', 'note');
@@ -297,7 +308,7 @@ const columns = [
   // 保持卡片宽度，给独立碰撞日志支线预留右侧走线槽。
   { x: 1305, w: 430, nodeWidth: 380, phase: 'FixedPostUpdate', note: 'Avian 默认物理解算', ids: ['physics_prepare','physics_step','physics_writeback','grounded_after','velocity_log'] },
   { x: 1760, w: 330, phase: 'FixedLast', note: '每个固定步末尾', ids: ['easing_end'] },
-  { x: 2135, w: 380, phase: '固定循环之后', note: 'RunFixedMainLoop · AfterFixedMainLoop', ids: ['easing_apply','facing_update','held_update','camera_follow','visibility_update','easing_tick'] },
+  { x: 2135, w: 380, phase: '固定循环之后', note: 'RunFixedMainLoop · AfterFixedMainLoop', ids: ['easing_apply','facing_update','held_update','camera_follow','camera_occlusion','building_fade','visibility_update','easing_tick'] },
   { x: 2560, w: 470, phase: 'Update / SpawnScene', note: '三条 Update 路线不设彼此全序', ids: [] },
   { x: 3075, w: 400, phase: 'PostUpdate / 渲染', note: '动画先于变换传播，UI 为独立分支', ids: [] },
 ];
@@ -430,7 +441,15 @@ b += edge([[3242.5,4020],[3242.5,4130]],'after','order',[3320,4075],['kira-play-
 b += text(3025,4320,'Time<Real>；UI ≤ 4 / SFX ≤ 3；静音丢弃','small');
 b += text(55,4470,'Running 门控海岛准备、主角动画、落水恢复、固定玩法与显示链；菜单和音频继续逐帧处理。','note');
 
-save('schedules', '调度泳道 · 系统与数据访问', 3515, 4510, b, '固定控制 → 物理解算 → 插值后显示；点击查看完整访问，框架集合为概览。');
+// Last 是独立主阶段，避免将暂停时仍执行的生命周期清理画进 Running 显示链。
+b += frame(30,4520,3445,270,'Last · 建筑外壳生命周期清理','不受 gameplay_running 条件限制；不读取时间，不推进正常渐变；场景销毁和暂停仍执行。');
+b += system(55,4610,920,'fade_cleanup',accessRows('fade_cleanup'),130);
+b += card(1135,4610,960,130,'building_visual.ShellMaterialBinding','恢复本系统拥有的材质绑定',['相机 / 目标失效 → 立即恢复原句柄','外部替换句柄 → 清绑定，保留外部新句柄','失效建筑 / 外壳 / 原资产 → 释放缓存副本'],'component','small');
+b += card(2255,4610,1195,130,'resource.ShellMaterialCache','ShellMaterialCache / Assets<StandardMaterial>',['正常恢复保留可复用副本；仅失效关联删除副本资产','Commands 清除无外壳的 BuildingFadeState 与失效 Binding','与前面的正常计时渐变职责分开'],'resource','small');
+b += edge([[975,4675],[1135,4675]],'W 绑定','write',[1055,4675],['fade_cleanup','building_visual.ShellMaterialBinding']);
+b += edge([[515,4740],[515,4770],[2852.5,4770],[2852.5,4740]],'W 缓存 / 副本资产','write',[1610,4770],['fade_cleanup','resource.ShellMaterialCache']);
+
+save('schedules', '调度泳道 · 系统与数据访问', 3515, 4830, b, '固定控制 → 物理解算 → 插值后显示；Last 独立清理外壳；点击查看完整访问。');
 
 // 关系视图：矩形容器表达实体，内嵌组件；普通 Entity 引用与 Bevy 关系单独标注。
 b = text(36, 80, '按实体角色汇总关键组件，可选组件并非始终存在；虚线＝普通引用，紫实线＝Bevy 关系。', 'note');
@@ -444,7 +463,7 @@ const primaryComponents = {
   controller:['PlayerId','GameplayContext','ContextActivity','ControlsCharacter','ControlsCamera','Actions','GamepadDevice'], action:['Action','ActionSettings','ActionOf','Bindings','Press'], binding:['Binding','BindingOf'],
   character:['Character','CharacterIntent','CharacterMotion','SpawnPoint','RigidBody','Collider','Position','LinearVelocity','Transform','CollisionLayers','SweptCcd','LockedAxes','TranslationInterpolation','HoldingItems','Children'],
   parcel:['Parcel','Pickable','ItemModel','CarryGrip','SpawnPoint','RigidBody','Collider','Position','LinearVelocity','AngularVelocity','Transform','CollisionLayers','HeldBy','HeldTarget','TransformInterpolation','Children'],
-  camera:['LoadingCamera','OrbitCamera','MouseLookState','Camera3d','Transform'],world:['IslandCollider','RigidBody','Collider','CollisionLayers','Transform','ChildOf'],
+  camera:['LoadingCamera','OrbitCamera','CameraOcclusion','MouseLookState','Camera3d','Transform'],world:['IslandCollider','RigidBody','Collider','CollisionLayers','Transform','ChildOf'],
   visual:['CharacterVisual','CourierVisual','CourierAnimationPending','WorldAssetRoot','Transform','GlobalTransform','ChildOf','Children','Visibility'],window:['PrimaryWindow','Window','CursorOptions'],
   island:['IslandMap','IslandPending','IslandReady','ActorsSpawned','WorldAssetRoot','Children'],npc:['DisplayNpc','ChildOf'],animation_player:['AnimationPlayer','AnimationGraphHandle','AnimationTransitions','CourierAnimation','ChildOf'],model_node:['Transform','GlobalTransform','ChildOf','Mesh3d','MeshMaterial3d','Visibility','GltfExtras','SkinnedMesh','AnimationTargetId']
 };
@@ -519,7 +538,29 @@ const menuResourceIds=['resource.AppState','resource.PlayState','resource.MenuSt
 menuResourceIds.forEach((id,i)=>b+=compact(2270+i%2*465,2665+Math.floor(i/2)*40,440,32,id,registry[id].name,id.startsWith('local.')?'local':'resource'));
 b += text(2270,3095,'Paused 保留会话；页面重建清 MenuRoot 子树，音量变化保留滑条。','small');
 
-save('relationships', '实体 · 组件归属与关系', 3290, 3180, b, '真实物理状态、插值呈现和持握目标分离；点击组件查看字段及源码入口。');
+// 新角色放在原图空白底部；保留地图 / 骨骼 / 菜单布局和原有连线。
+b += frame(30,2580,2110,765,'建筑实例 · 查询外壳 · 视觉材质','建筑是原 GLB 实例；CameraShell 单独查询，BuildingShellVisual 保留原网格层级。');
+const shellEntityBoxes=[
+ {id:'building',x:50,y:2715,w:450,h:330},
+ {id:'camera_shell',x:650,y:2715,w:450,h:330},
+ {id:'building_visual',x:1250,y:2715,w:610,h:330},
+];
+const shellPrimary={building:['Transform','Children','ChildOf','BuildingFadeState'],camera_shell:['CameraShell','RigidBody','Collider','CollisionLayers','Transform','ChildOf'],building_visual:['BuildingShellVisual','MeshMaterial3d','ShellMaterialBinding','ChildOf']};
+shellEntityBoxes.forEach(box=>{
+ const e=entities[box.id],id=`entity-${e.id}`;registry[id]={...e,kind:'Entity'};
+ b+=`<g class="node entity" ${register(id,registry[id])}>${frame(box.x,box.y,box.w,box.h,`«Entity» ${e.name}`,`数量：${e.count}`,colors.entity,id)}</g>`;
+ e.components.filter(c=>shellPrimary[e.id].includes(c.name.split('<')[0])).forEach((c,i)=>b+=compact(box.x+15,box.y+71+i*34,box.w-30,30,c.id,c.name));
+ b+=text(box.x+16,box.y+box.h-12,`完整清单：${e.components.length} 项 · 可选状态 / 绑定`,'small');
+});
+b += edge([[650,2825],[500,2825]],'CameraShell.0','reference',[575,2825],['entity-camera_shell','entity-building']);
+b += edge([[650,2935],[500,2935]],'ChildOf','relationship',[575,2935],['entity-camera_shell','entity-building']);
+b += edge([[1555,2715],[1555,2675],[275,2675],[275,2715]],'BuildingShellVisual.0','reference',[915,2675],['entity-building_visual','entity-building']);
+b += edge([[1555,3045],[1555,3110],[275,3110],[275,3045]],'ChildOf · 原 GLB 子树（含间接层级）','relationship',[915,3110],['entity-building_visual','entity-building']);
+b += card(50,3170,530,130,'resource.OccludedBuildings','OccludedBuildings',['所有有效 TP 相机的建筑需求并集','与 CameraOcclusion 的历史集合分开'],'resource','small');
+b += card(670,3170,780,130,'resource.ShellMaterialCache','ShellMaterialCache',['key：building Entity + 原材质 AssetId','value：原句柄 / 副本强句柄；实例之间隔离'],'resource','small');
+b += card(1540,3170,575,130,'local.OcclusionDetected','Local · detected',['每台相机临时需求缓冲','clear / swap 复用容量'],'local','small');
+
+save('relationships', '实体 · 组件归属与关系', 3290, 3390, b, '真实物理状态、插值呈现、建筑查询与实例材质分离；点击组件查看字段及源码入口。');
 
 // 通信视图：输入动作事件、全局 Observer 与窗口缓冲消息保持不同路线。
 b = text(36, 80, `${model.observers.length} 个 Observer（玩法／菜单动作、滚轮与实例就绪）由匹配事件触发；它们不是按 add_observer 的注册顺序组成流水线。`, 'note');
@@ -585,7 +626,7 @@ if(queuedLogging){
   b+=edge([[424,2550],[475,2550],[475,2485],[600,2485]],'入队','write',[535,2485],['log-producer','log-file-worker']);
   b+=edge([[475,2550],[475,2665],[600,2665]],'入队','write',[535,2665],['log-producer','log-console-worker']);
   b+=text(52,2775,'Drop：Shutdown 后拒绝新记录，排空已接受记录并 join；失败仍反馈，worker panic 避免等待自身。','small');
-  b+=text(52,2808,'日志与存档分别管理；这里不展开线程/队列内部类型为 ECS 节点，也不表示实机 FPS 已验收。','small');
+  b+=text(52,2808,'相机建筑需求 / 淡化只记录离散变化；日志与存档分别管理，不表示透明叠层或实机 FPS 已验收。','small');
 }
 // 调试释放由独立玩法动作响应，Esc 走菜单动作。
 b += frame(30,2890,1460,230,'调试释放光标 · GameplayContext','F3 保持 Running，释放检查器光标；Esc 属于菜单 BackAction。');
