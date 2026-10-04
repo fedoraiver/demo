@@ -114,8 +114,11 @@ function text(x, y, value, cls = 'body', anchor = 'start') { return `<text x="${
 function lines(x, y, values, cls = 'body', step = 25) { return values.map((s, i) => text(x, y + i * step, s, cls)).join(''); }
 function fitted(x, y, value, width, cls = 'body') {
   const size = { 'node-title': 19, 'group-title': 21, small: 15, body: 18 }[cls] || 18;
-  const estimate = [...String(value)].reduce((n, c) => n + (c.charCodeAt(0) > 255 ? size : size * .57), 0);
-  return text(x, y, value, cls).replace('<text ', `<text ${estimate > width ? `textLength="${width}" lengthAdjust="spacingAndGlyphs" ` : ''}`);
+  // 静态 SVG 渲染器不一定支持 textLength；显式字号也保护离线预览的边界。
+  // 对字体回退与粗体保留少量宽度余量，完整函数名和访问声明仍放在交互详情。
+  const estimate = [...String(value)].reduce((n, c) => n + (c.charCodeAt(0) > 255 ? size * 1.05 : size * .66), 0);
+  const fittedSize = estimate > width ? size * width / estimate : size;
+  return text(x, y, value, cls).replace('<text ', `<text style="font-size:${fittedSize.toFixed(2)}px" `);
 }
 function compact(x, y, w, h, id, name, kind = 'component') {
   return `<g class="node ${kind}" ${register(id, registry[id] || { name, kind })}><rect ${boxAttributes(id, x, y, w, h)} x="${x}" y="${y}" width="${w}" height="${h}" rx="4" fill="${kind === 'component' ? '#f2faf5' : '#fff'}" stroke="${colors[kind] || colors.system}"/>${fitted(x + 12, y + h / 2 + 6, name, w - 24, 'node-title')}</g>`;
@@ -138,8 +141,15 @@ const brief = {
  gravity_sync:'配置变化 → Gravity',grounded_fixed:'脚底 shape cast → 接地状态',grounded_after:'物理回写后重新探测接地',orphan_cleanup:'失效持有者 / 关系 → 自由碰撞',orphan_apply:'应用失效清理命令',grip_forces:'真实 Position / 速度 → 弹簧与反作用力',velocity_log:'解算后实际速度 → 采样日志',collision_log:'CollisionStart / End → 文件日志',physics_prepare:'准备物理位姿、质量与碰撞数据',physics_step:'积分 / 接触 / 子步求解 → 真实运动',physics_writeback:'Position / Rotation → Transform',easing_reset:'FixedFirst：重置并记录插值起点',easing_end:'FixedLast：记录物理步插值终点',easing_apply:'固定循环后按 overstep 插值',easing_tick:'显示同步后记录变化 tick',
  transform_propagate:'根 Transform → 子 GlobalTransform',render:'提取 ECS 数据，准备并绘制画面',observe_move:'路由到角色，更新持续移动轴',observe_complete:'移动完成，将轴归零',observe_cancel:'移动取消，将轴归零',observe_jump:'路由到角色，设置跳跃请求',observe_interact:'路由到角色，设置交互请求',observe_look:'有效捕获时更新当前模式角度',observe_perspective:'记录请求来源，稍后统一切换',audio_preload:'清单契约 → 短音加载与映射',audio_load_failures:'资产加载失败 → 会话日志',audio_play:'请求 / 加载 / 冷却 / 并发 → 播放队列',audio_stop:'AppExit → UI / SFX 通道停止',audio_strain:'持续持握误差 → 一次警告',audio_land:'真实支撑冲量 → 一次落地反馈'
 };
-const displayNames = { time_update:'TimeSystems',input_update:'InputSystems',enhanced_prepare:'Enhanced Input · Prepare',enhanced_evaluate:'Enhanced Input · Update',input_apply:'Enhanced Input · Apply',held_apply:'ApplyDeferred · 持有关系',capture_apply:'ApplyDeferred · 上下文',inspector_pass:'World Inspector · UI Pass',transform_propagate:'Transform · Propagate',render:'RenderApp · 渲染概览' };
+const displayNames = { animation_grounding:'鞋底穿透补偿',observe_courier_ready:'菜单快递员 · 标记待绑定',courier_ready_observer:'主角 · 标记待绑定动画',time_update:'TimeSystems',input_update:'InputSystems',enhanced_prepare:'Enhanced Input · Prepare',enhanced_evaluate:'Enhanced Input · Update',input_apply:'Enhanced Input · Apply',held_apply:'ApplyDeferred · 持有关系',capture_apply:'ApplyDeferred · 上下文',inspector_pass:'World Inspector · UI Pass',transform_propagate:'Transform · Propagate',render:'RenderApp · 渲染概览' };
 Object.assign(brief, {
+  startup_pose: '记录固定模拟与插值后显示顺序',
+  observe_menu_previous: '循环向上选择；焦点改变才反馈',
+  observe_menu_next: '循环向下选择；焦点改变才反馈',
+  observe_menu_back: 'Back → 暂停、恢复或返回',
+  observe_menu_scroll: '设置视口：滚轮 → 夹取偏移',
+  observe_courier_ready: '菜单模板就绪 → 动画 pending',
+  observe_scrollbar_scroll: '滚轮 → 目标视口偏移',
   flow_enter_menu: 'MainMenu：展示主菜单并恢复展示动画时间',
   flow_pause: 'Paused：保存返回来源，展示暂停菜单',
   flow_suspend: '停物理，暂停另停虚拟时间；清意图并释放光标',
@@ -443,9 +453,9 @@ b += edge([[2120,3680],[2120,3715]],'','order',null,['menu_volume_pointer','ui-s
 b += edge([[2650,3680],[2650,3715]],'','order',null,['menu_volume_visuals','ui-style-set'],false);
 b += edge([[2650,3715],[1475,3715],[1475,3750]],'before(Style)','order',[1750,3715],['menu_volume_pointer','menu_volume_visuals','ui-style-set']);
 // 滚动条绑定与指针同在 Build 后执行，不增加彼此的全序。
-b += system(55,3570,740,'menu_bind_scrollbars',accessRows('menu_bind_scrollbars'),110);
+b += system(55,3570,740,'menu_bind_scrollbars',accessRows('menu_bind_scrollbars'),130);
 b += edge([[425,3525],[425,3570]],'Build → Bind','order',[500,3550],['menu_rebuild','menu_bind_scrollbars']);
-b += edge([[425,3680],[425,3715],[1475,3715]],'before(Style)','order',[845,3715],['menu_bind_scrollbars','ui-style-set'],false);
+b += edge([[425,3700],[425,3715],[1475,3715]],'before(Style)','order',[845,3715],['menu_bind_scrollbars','ui-style-set'],false);
 ['menu_style','menu_description','menu_settings_text','menu_scroll_focus'].forEach((id,i)=>{
   const x=55+i*740;
   b += system(x,3970,620,id,[brief[id]],115);
@@ -555,7 +565,7 @@ if(entities.animation_player){
 // 高度补偿缓存的是普通引用；GLB ChildOf 生命周期与数据读取关系分别表达。
 b+=edge([[220,1750],[220,1660],[480,1660],[480,1210],[390,1210]],'补偿 → 角色','reference',[480,1510],['entity-visual','entity-character','visual.CourierFootGrounding']);
 b+=edge([[390,2050],[1418,2050],[1418,1880],[1510,1880]],'缓存八个鞋底节点','reference',[960,2050],['entity-visual','entity-model_node','visual.CourierFootGrounding']);
-b+=edge([[390,1990],[1470,1990],[1470,1332],[1730,1332],[1730,1290]],'首个播放器 / 接地状态','reference',[1050,1990],['entity-visual','entity-animation_player','visual.CourierFootGrounding']);
+b+=edge([[390,1990],[950,1990],[1000,1990],[1470,1990],[1470,1332],[1730,1332],[1730,1290]],'首个播放器 / 接地状态','reference',[1150,1990],['entity-visual','entity-animation_player','visual.CourierFootGrounding']);
 b+=edge([[1900,1450],[1900,1290]],'AnimatedBy','reference',[1900,1380],['entity-model_node','entity-animation_player','model_node.AnimatedBy']);
 // 菜单实体在海岛和骨骼层级右侧独立展开，省略中间 BSN 布局容器。
 const menuEntityBoxes=[
@@ -706,7 +716,7 @@ menuEvents.forEach((o,i)=>{
  const id=o.system,y=306+i*menuEventStep,s=systems[id],action=o.event.startsWith('Fire<');
  registry[`event-${id}`]={name:o.event,kind:'EntityEvent',description:o.description,notes:[o.target],source:s.source};
  b += card(1552,y,312,118,`event-${id}`,o.event,[action?'target：MenuContext 控制者':o.event.startsWith('Pointer')?(id==='observe_menu_scroll'?'target：MenuScroll 视口':'target：轨道 / 滑块'):'target：菜单快递员 GLB 根'],'event','small');
- b += system(1944,y,335,id,[s.description],118);
+ b += system(1944,y,335,id,[brief[id] || s.description],118);
  const resultId=`result-${id}`;registry[resultId]={name:`${s.name} 输出`,kind:'Data write',description:s.description,reads:s.reads,writes:s.writes,notes:s.notes,source:s.source};
  b += card(2366,y,345,118,resultId,action?'菜单共享数据':o.event.startsWith('Pointer')?(id==='observe_scrollbar_press'?'MenuInputSource':'ScrollPosition'):'菜单 pending 标记',s.writes.slice(0,2).map(v=>`W ${accessName(v)}`),action?'resource':'component','small');
  b += edge([[1864,y+59],[1944,y+59]],'触发','trigger',[1904,y+59],[`event-${id}`,id]);
@@ -727,40 +737,43 @@ b += edge([[2145,requestY+215],[2145,requestY+265],[1890,requestY+265],[1890,req
 b += edge([[2370,requestY+215],[2370,requestY+265],[2660,requestY+265],[2660,requestY+320]],'状态请求','write',[2660,requestY+265],['menu_handle_requests','ui-next-state']);
 b += card(1560,requestY+550,660,130,'volume-request-source','Audio 页 · 滑条局部捕获',['Interaction 命中；只在真实左键按下后捕获','SetVolume 只改草稿，结束且最终值改变才确认','失焦 / 离开窗口 / 页面销毁时清理手势'],'engine','small');
 b += card(2335,requestY+550,650,130,'resource.AudioMix','有效音量与试听',['Settings 读草稿；切换分类仍预览','Back 离开后回到最近成功应用值','TestSfx → ParcelPickup；只发声音请求'],'resource','small');
+const scrollbarEventY = requestY + 800;
+const soundEventY = Math.max(3150, scrollbarEventY + 380);
+const nativeWindowEventY = soundEventY + 610;
 // 声音缓冲在真实语义/物理结果之后产生；不通过声音驱动物理。
-b += frame(30,3150,2980,550,'SoundRequest · 真实结果到 Kira 输出','菜单焦点/接受的操作、拿放、持续持握偏差与真实支撑触地；预留映射不会自动产生声音。');
-b += system(50,3235,374,'audio_strain',['真实 Position / CarryGrip → 持握偏差','Local 宽限 / 持续计时 / 滞回锁存'],130);
-b += system(50,3420,374,'audio_land',['ContactGraph：支撑法线与冲量','Running 中收集；离开支撑才解锁'],130);
-b += card(512,3235,356,130,'resource.SoundRequestMessages','SoundRequest 缓冲',['cue：稳定事件名','source：只记录 Entity'],'message','small');
-b += system(971,3235,486,'audio_play',['R 请求 / AudioMix / 策略 / Time<Real>','静音丢弃；W SoundBank / UI / SFX 命令'],130);
-b += card(1600,3235,550,130,'resource.SoundBank','SoundBank',['预加载句柄、冷却与声音实例','总并发 4；SFX 最多 3'],'resource','small');
+b += frame(30,soundEventY,2980,550,'SoundRequest · 真实结果到 Kira 输出','菜单焦点/接受的操作、拿放、持续持握偏差与真实支撑触地；预留映射不会自动产生声音。');
+b += system(50,soundEventY+85,374,'audio_strain',['真实 Position / CarryGrip → 持握偏差','Local 宽限 / 持续计时 / 滞回锁存'],130);
+b += system(50,soundEventY+270,374,'audio_land',['ContactGraph：支撑法线与冲量','Running 中收集；离开支撑才解锁'],130);
+b += card(512,soundEventY+85,356,130,'resource.SoundRequestMessages','SoundRequest 缓冲',['cue：稳定事件名','source：只记录 Entity'],'message','small');
+b += system(971,soundEventY+85,486,'audio_play',['R 请求 / AudioMix / 策略 / Time<Real>','静音丢弃；W SoundBank / UI / SFX 命令'],130);
+b += card(1600,soundEventY+85,550,130,'resource.SoundBank','SoundBank',['预加载句柄、冷却与声音实例','总并发 4；SFX 最多 3'],'resource','small');
 registry['kira-output']={name:'Kira UI / SFX 通道',kind:'Engine',description:'类型 AudioChannel 消费排队命令，AppExit 停止；环境底声仅供试听。',source:systems.audio_play.source};
-b += card(2290,3235,690,130,'kira-output','Kira UI / SFX 通道',['设备输出；退出统一停止','ambience 不自动播放'],'engine','small');
-b += edge([[424,3300],[468,3300]],'','write',null,['audio_strain','resource.SoundRequestMessages'],false);
-b += edge([[424,3485],[468,3485],[468,3300]],'','write',null,['audio_land','resource.SoundRequestMessages'],false);
+b += card(2290,soundEventY+85,690,130,'kira-output','Kira UI / SFX 通道',['设备输出；退出统一停止','ambience 不自动播放'],'engine','small');
+b += edge([[424,soundEventY+150],[468,soundEventY+150]],'','write',null,['audio_strain','resource.SoundRequestMessages'],false);
+b += edge([[424,soundEventY+335],[468,soundEventY+335],[468,soundEventY+150]],'','write',null,['audio_land','resource.SoundRequestMessages'],false);
 // 汇合末段较短，标签置于线条上方，避免白底遮住整段连线和目标箭头。
-b += edge([[468,3300],[512,3300]],'W','write',[488,3275],['audio_strain','audio_land','interaction','resource.SoundRequestMessages']);
-b += edge([[868,3300],[971,3300]],'读取','read',[919,3300],['resource.SoundRequestMessages','audio_play']);
-b += edge([[1600,3280],[1457,3280]],'R 策略','read',[1530,3280],['resource.SoundBank','audio_play']);
-b += edge([[1457,3320],[1600,3320]],'W 实例','write',[1530,3320],['audio_play','resource.SoundBank']);
-b += edge([[1214,3365],[1214,3580],[2635,3580],[2635,3365]],'排队播放','write',[1960,3580],['audio_play','kira-output']);
-b += text(55,3650,'拿放声音随关系命令生效；菜单发 Hover / Confirm / Cancel，拖动仅结束且最终值改变时确认；TestSfx 发 ParcelPickup。','note');
+b += edge([[468,soundEventY+150],[512,soundEventY+150]],'W','write',[488,soundEventY+125],['audio_strain','audio_land','interaction','resource.SoundRequestMessages']);
+b += edge([[868,soundEventY+150],[971,soundEventY+150]],'读取','read',[919,soundEventY+150],['resource.SoundRequestMessages','audio_play']);
+b += edge([[1600,soundEventY+130],[1457,soundEventY+130]],'R 策略','read',[1530,soundEventY+130],['resource.SoundBank','audio_play']);
+b += edge([[1457,soundEventY+170],[1600,soundEventY+170]],'W 实例','write',[1530,soundEventY+170],['audio_play','resource.SoundBank']);
+b += edge([[1214,soundEventY+215],[1214,soundEventY+430],[2635,soundEventY+430],[2635,soundEventY+215]],'排队播放','write',[1960,soundEventY+430],['audio_play','kira-output']);
+b += text(55,soundEventY+500,'拿放声音随关系命令生效；菜单发 Hover / Confirm / Cancel，拖动仅结束且最终值改变时确认；TestSfx 发 ParcelPickup。','note');
 
 // 控件原生事件是引擎能力概览；项目 Observer 不重复实现拖拽生命周期。
-b += frame(1540,requestY+585,1470,330,'DefaultPlugins · 原生 ScrollbarPlugin','菜单语义使用 Enhanced Input；滚动条的坐标、轨道分页和拖拽复用原生 UI 指针事件。');
+b += frame(1540,scrollbarEventY,1470,330,'DefaultPlugins · 原生 ScrollbarPlugin','菜单语义使用 Enhanced Input；滚动条的坐标、轨道分页和拖拽复用原生 UI 指针事件。');
 registry['native-scrollbar-events']={name:'ScrollbarPlugin · pointer observers',kind:'Engine observers',description:'Scrollbar / ScrollbarThumb 原生控件处理 track Press 分页、DragStart/Drag/DragEnd/Cancel；几何在 Layout 内更新。项目只绑定 target 和同步显隐/来源。',source:{path:'src/ui/widgets.rs',line:115}};
-b += card(1560,requestY+670,650,160,'native-scrollbar-events','Press / DragStart / Drag / End / Cancel',['原生 track 分页和 thumb 拖拽更新 target','DragEnd / Cancel 清理原生 dragging','项目 Press Observer 只接管输入来源'],'engine','small');
-b += card(2320,requestY+670,665,160,'menu_sync_scrollbars','项目布局后同步',['fit / 离页：offset 清零、禁拾取、取消拖拽','仍 overflow 的 resize：原生按当前几何计算','重建销毁旧 thumb，新实体默认未拖拽'],'system','small');
-b += edge([[2210,requestY+750],[2320,requestY+750]],'控件数据','reference',[2265,requestY+720],['native-scrollbar-events','menu_sync_scrollbars']);
-b += frame(30,3760,2980,290,'原生窗口桥接 · OS 消息与回调','窗口 resize 是原生平台约束；不通过 Enhanced Input，也不是 Bevy EntityEvent 或 MessageReader 消息。');
+b += card(1560,scrollbarEventY+85,650,160,'native-scrollbar-events','Press / DragStart / Drag / End / Cancel',['原生 track 分页和 thumb 拖拽更新 target','DragEnd / Cancel 清理原生 dragging','项目 Press Observer 只接管输入来源'],'engine','small');
+b += card(2320,scrollbarEventY+85,665,160,'menu_sync_scrollbars','项目布局后同步',['fit / 离页：offset 清零、禁拾取、取消拖拽','仍 overflow 的 resize：原生按当前几何计算','重建销毁旧 thumb，新实体默认未拖拽'],'system','small');
+b += edge([[2210,scrollbarEventY+165],[2320,scrollbarEventY+165]],'控件数据','reference',[2265,scrollbarEventY+135],['native-scrollbar-events','menu_sync_scrollbars']);
+b += frame(30,nativeWindowEventY,2980,290,'原生窗口桥接 · OS 消息与回调','窗口 resize 是原生平台约束；不通过 Enhanced Input，也不是 Bevy EntityEvent 或 MessageReader 消息。');
 registry['native-window-events']={name:'OS 窗口事件 / API',kind:'Native platform event',description:'Windows WM_SIZING / WM_WINDOWPOSCHANGING / WM_DPICHANGED / WM_SYSCOMMAND；macOS contentAspectRatio、屏幕工作区和 Zoom 几何校准。',source:{path:'src/window_policy/windows.rs',line:175}};
-b += card(55,3845,850,130,'native-window-events','Windows resize / DPI / maximize · macOS Zoom',['在原生尺寸应用前约束内容比例和工作区','macOS PreUpdate 刷新边界并校准旁路几何'],'engine','small');
-b += card(1080,3845,850,130,'window-native-policy','原生守卫 / 平台纯几何',['守卫由 NativePolicies.active 所有','非 ECS 组件；不建立额外实体或 State'],'engine','small');
-b += card(2105,3845,850,130,'window.Window','主窗口 Window',['逻辑内容 16:9；初始化安装后显示','退出 / 后端消失：清理守卫'],'component','small');
-b += edge([[905,3910],[1080,3910]],'原生约束','reference',[992,3910],['native-window-events','window-native-policy']);
-b += edge([[1930,3910],[2105,3910]],'应用尺寸','write',[2017,3910],['window-native-policy','window.Window']);
+b += card(55,nativeWindowEventY+85,850,130,'native-window-events','Windows resize / DPI / maximize · macOS Zoom',['在原生尺寸应用前约束内容比例和工作区','macOS PreUpdate 刷新边界并校准旁路几何'],'engine','small');
+b += card(1080,nativeWindowEventY+85,850,130,'window-native-policy','原生守卫 / 平台纯几何',['守卫由 NativePolicies.active 所有','非 ECS 组件；不建立额外实体或 State'],'engine','small');
+b += card(2105,nativeWindowEventY+85,850,130,'window.Window','主窗口 Window',['逻辑内容 16:9；初始化安装后显示','退出 / 后端消失：清理守卫'],'component','small');
+b += edge([[905,nativeWindowEventY+150],[1080,nativeWindowEventY+150]],'原生约束','reference',[992,nativeWindowEventY+150],['native-window-events','window-native-policy']);
+b += edge([[1930,nativeWindowEventY+150],[2105,nativeWindowEventY+150]],'应用尺寸','write',[2017,nativeWindowEventY+150],['window-native-policy','window.Window']);
 
-save('events','事件 · Observer · Message',3040,Math.max(4100,menuEventBottom+1000),b,'输入 EntityEvent、实例就绪、窗口/碰撞 Message 与外部后台日志分别建模。');
+save('events','事件 · Observer · Message',3040,nativeWindowEventY+340,b,'输入 EntityEvent、实例就绪、窗口/碰撞 Message 与外部后台日志分别建模。');
 
 // 源码与图同时生成快照，让网页和离线文件都能打开完整源码并定位行号。
 function sourceReferences(value, result = new Set()) {
