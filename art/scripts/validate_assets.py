@@ -1,7 +1,9 @@
 """离线检查导出的 GLB 结构、蒙皮、动作与几何；不连接 Blender 或启动游戏。"""
 
 import argparse
+from bisect import bisect_right
 from datetime import datetime, timezone
+from itertools import combinations
 import json
 import math
 from pathlib import Path
@@ -18,6 +20,17 @@ RETIRED_ASSETS = {"env_island_paths", "env_residential_extension"}
 PALM_ASSETS = {"prop_palm_leaning", "prop_palm_crooked", "prop_palm_young"}
 WOODEN_HUT_ASSETS = {"bld_residential_a", "bld_residential_b"}
 REQUIRED_ART_ASSETS = PALM_ASSETS | WOODEN_HUT_ASSETS | {"prop_wild_grass_patch", "env_wilderness_details"}
+COURIER_DIRECTIONS = ("Walk", "Walk_Backward", "Walk_Left", "Walk_Right")
+COURIER_ANIMATIONS = {"Idle", "Carry_Idle", "Jump", "Fall", "Land", "Carry_Jump", "Carry_Fall", "Carry_Land"} | set(COURIER_DIRECTIONS) | {
+    "Carry_Walk", "Carry_Backward", "Carry_Left", "Carry_Right"
+}
+COURIER_PAIRS = tuple(zip(COURIER_DIRECTIONS, ("Carry_Walk", "Carry_Backward", "Carry_Left", "Carry_Right"))) + (
+    ("Jump", "Carry_Jump"), ("Fall", "Carry_Fall"), ("Land", "Carry_Land"), ("Idle", "Carry_Idle")
+)
+COURIER_ONE_SHOTS = {"Jump", "Carry_Jump", "Land", "Carry_Land"}
+COURIER_LOWER_BONES = {"root", "hips", "thigh.L", "thigh.R", "shin.L", "shin.R", "foot.L", "foot.R"}
+COURIER_DURATION_SECONDS = 0.8
+POSE_TOLERANCE = 0.00002
 
 
 class InvalidGlb(ValueError):
@@ -82,6 +95,28 @@ def node_matrix(node):
                 (2*(x*y+z*w), 1-2*(x*x+z*z), 2*(y*z-x*w)),
                 (2*(x*z-y*w), 2*(y*z+x*w), 1-2*(x*x+y*y)))
     return tuple(tuple(rotation[r][c] * s[c] for c in range(3)) + (t[r],) for r in range(3)) + ((0, 0, 0, 1),)
+
+
+def pose_gap(a, b, path):
+    """四元数 q 与 -q 是同一姿态，闭环和持箱匹配不能因符号不同误报。"""
+    direct = max(abs(x - y) for x, y in zip(a, b))
+    return min(direct, max(abs(x + y) for x, y in zip(a, b))) if path == "rotation" else direct
+
+
+def interpolate_rotation(a, b, factor):
+    """复现 glTF LINEAR 的最短弧 slerp，近重合时使用归一化线性插值。"""
+    dot = sum(x * y for x, y in zip(a, b))
+    if dot < 0:
+        b, dot = tuple(-v for v in b), -dot
+    if dot > 0.9995:
+        value = tuple(x + factor * (y - x) for x, y in zip(a, b))
+    else:
+        angle = math.acos(max(-1, min(1, dot)))
+        weights = (math.sin((1 - factor) * angle) / math.sin(angle), math.sin(factor * angle) / math.sin(angle))
+        value = tuple(weights[0] * x + weights[1] * y for x, y in zip(a, b))
+    length = math.sqrt(sum(v * v for v in value))
+    require(length > 1e-12, "Animation produced a zero rotation quaternion")
+    return tuple(v / length for v in value)
 
 
 class Glb:
@@ -332,11 +367,226 @@ class Glb:
             summary["height_m"] = height
             summary["bounds_y_up_m"] = bounds
         if stem == "chr_courier":
-            require({"Idle", "Walk", "Carry_Idle"}.issubset(animation_names), f"Courier animation clips missing; found {animation_names}")
+            summary["courier_animation_contract"] = self.check_courier_animations()
         if stem in WOODEN_HUT_ASSETS or stem in PALM_ASSETS:
             summary["art_asset_structure"] = self.check_art_asset_structure(stem)
         summary["surface_orientation"] = self.surface_orientation()
         return summary
+
+    def _animation_tracks(self, animation):
+        """解码各节点的 TRS 通道；保留插值模式，检查的是导出数据而非制作端姿态。"""
+        tracks = {}
+        for channel in animation["channels"]:
+            target = channel["target"]
+            key = target["node"], target["path"]
+            require(key not in tracks, f"Duplicate animation channel: clip={animation['name']}, target={key}")
+            require(key[1] in ("translation", "rotation", "scale"), f"Courier animation has unsupported channel: {key}")
+            sampler = animation["samplers"][channel["sampler"]]
+            times = tuple(v[0] for v in self.accessor(sampler["input"]))
+            values = self.accessor(sampler["output"])
+            interpolation = sampler.get("interpolation", "LINEAR")
+            require(interpolation in ("LINEAR", "STEP", "CUBICSPLINE"), f"Unsupported animation interpolation: {interpolation}")
+            require(times and all(a < b for a, b in zip(times, times[1:])), "Animation times must strictly increase")
+            multiplier = 3 if interpolation == "CUBICSPLINE" else 1
+            require(len(values) == len(times) * multiplier, "Animation output count disagrees with input count")
+            dimension = 4 if key[1] == "rotation" else 3
+            require(all(len(value) == dimension for value in values), f"Animation channel has invalid dimensions: {key}")
+            rotations = values[1::3] if interpolation == "CUBICSPLINE" else values
+            require(key[1] != "rotation" or all(abs(sum(v * v for v in row) - 1) < 0.001 for row in rotations),
+                    f"Animation quaternion is not normalized: clip={animation['name']}, target={key}")
+            require(abs(times[0]) <= POSE_TOLERANCE and abs(times[-1] - COURIER_DURATION_SECONDS) <= POSE_TOLERANCE,
+                    f"Courier animation duration must be 0.8 seconds: clip={animation['name']}, target={key}, range={times[0]}..{times[-1]}")
+            tracks[key] = (times, values, interpolation)
+        return tracks
+
+    def _sample_track(self, track, time, path):
+        times, values, interpolation = track
+        left = max(0, min(bisect_right(times, time) - 1, len(times) - 1))
+        if left == len(times) - 1 or interpolation == "STEP":
+            return values[left * 3 + 1] if interpolation == "CUBICSPLINE" else values[left]
+        right = left + 1
+        duration = times[right] - times[left]
+        factor = max(0, min(1, (time - times[left]) / duration))
+        if interpolation == "CUBICSPLINE":
+            # glTF 三元组依次为入切线、值、出切线；切线需乘该段的秒数。
+            a, b = values[left * 3 + 1], values[right * 3 + 1]
+            outgoing, incoming = values[left * 3 + 2], values[right * 3]
+            square, cube = factor * factor, factor * factor * factor
+            value = tuple((2 * cube - 3 * square + 1) * x + (cube - 2 * square + factor) * duration * out
+                          + (-2 * cube + 3 * square) * y + (cube - square) * duration * inc
+                          for x, y, out, inc in zip(a, b, outgoing, incoming))
+            if path == "rotation":
+                length = math.sqrt(sum(v * v for v in value))
+                require(length > 1e-12, "Animation produced a zero rotation quaternion")
+                value = tuple(v / length for v in value)
+            return value
+        a, b = values[left], values[right]
+        return interpolate_rotation(a, b, factor) if path == "rotation" else tuple(x + factor * (y - x) for x, y in zip(a, b))
+
+    def _animated_transforms(self, tracks, time, indices):
+        """只解析鞋部关节及祖先的世界变换；不把静态网格包围盒当成动画脚底。"""
+        result = {}
+        def resolve(index):
+            if index not in result:
+                node = dict(self.document["nodes"][index])
+                for path in ("translation", "rotation", "scale"):
+                    if (index, path) in tracks:
+                        require("matrix" not in node, "Animated courier node must use TRS")
+                        node[path] = self._sample_track(tracks[index, path], time, path)
+                local = node_matrix(node)
+                result[index] = multiply(resolve(self.parents[index]), local) if index in self.parents else local
+            return result[index]
+        for index in indices:
+            resolve(index)
+        return result
+
+    def _shoe_vertices(self):
+        """按制作元数据定位鞋网格，读取导出权重与逆绑定矩阵进行真正的 FK 蒙皮。"""
+        vertices, influenced = [], set()
+        for node_index in self.reachable:
+            node = self.document["nodes"][node_index]
+            if node.get("extras", {}).get("bone_part") not in ("foot.L", "foot.R") or "mesh" not in node:
+                continue
+            require("skin" in node, "Courier shoe mesh must retain skin weights")
+            skin = self.document["skins"][node["skin"]]
+            require("inverseBindMatrices" in skin, "Courier shoe skin lacks inverse bind matrices")
+            inverse = self.accessor(skin["inverseBindMatrices"])
+            matrices = [tuple(tuple(row[c * 4 + r] for c in range(4)) for r in range(4)) for row in inverse]
+            for primitive in self.document["meshes"][node["mesh"]]["primitives"]:
+                attributes = primitive["attributes"]
+                require("JOINTS_0" in attributes and "WEIGHTS_0" in attributes, "Courier shoe mesh lacks skin attributes")
+                require(not any(key.startswith(("JOINTS_", "WEIGHTS_")) and key not in ("JOINTS_0", "WEIGHTS_0")
+                                for key in attributes), "Courier shoe uses unsupported extra skin influence sets")
+                for point, joints, weights in zip(self.accessor(attributes["POSITION"]), self.accessor(attributes["JOINTS_0"]), self.accessor(attributes["WEIGHTS_0"])):
+                    bindings = [(skin["joints"][joint], transform(matrices[joint], point), weight)
+                                for joint, weight in zip(joints, weights) if weight > 0]
+                    influenced.update(index for index, _, _ in bindings)
+                    vertices.append(bindings)
+        require(vertices, "Courier shoe meshes not found through foot bone_part metadata")
+        return vertices, influenced
+
+    def check_courier_sole_markers(self):
+        """补偿锚点必须贴住静止鞋底包围盒四角，并随对应足骨移动，不能悬空或绑错脚。"""
+        nodes = self.document["nodes"]
+        expected_names = {f"Courier_Sole_{side}_{corner}" for side in ("L", "R") for corner in range(4)}
+        markers = {node.get("name"): index for index, node in enumerate(nodes) if node.get("name", "").startswith("Courier_Sole_")}
+        count = sum(node.get("name", "").startswith("Courier_Sole_") for node in nodes)
+        require(count == len(expected_names) and set(markers) == expected_names, f"Courier sole contact markers missing or duplicated: found={sorted(markers)}")
+        maximum_gap = 0
+        for side in ("L", "R"):
+            soles = [index for index in self.reachable if "mesh" in nodes[index]
+                     and nodes[index].get("extras", {}).get("bone_part") == f"foot.{side}"
+                     and "boot sole" in nodes[index].get("name", "").lower()]
+            require(len(soles) == 1, f"Courier sole mesh must be unique: side={side}, found={soles}")
+            points = [transform(self.transforms[index], point) for index in soles
+                      for primitive in self.document["meshes"][nodes[index]["mesh"]]["primitives"]
+                      for point in self.accessor(primitive["attributes"]["POSITION"])]
+            minimum, maximum = [min(point[axis] for point in points) for axis in range(3)], [max(point[axis] for point in points) for axis in range(3)]
+            corners = {(x, minimum[1], z) for x in (minimum[0], maximum[0]) for z in (minimum[2], maximum[2])}
+            for corner in range(4):
+                name = f"Courier_Sole_{side}_{corner}"
+                index = markers[name]
+                require(index in self.reachable and index in self.parents and nodes[self.parents[index]].get("name") == f"foot.{side}",
+                        f"Courier sole contact marker has wrong parent: marker={name}")
+                point = tuple(self.transforms[index][axis][3] for axis in range(3))
+                closest = min(corners, key=lambda expected: max(abs(a - b) for a, b in zip(point, expected)))
+                gap = max(abs(a - b) for a, b in zip(point, closest))
+                require(gap <= POSE_TOLERANCE, f"Courier sole contact marker is not at a shoe bottom corner: marker={name}, point={point}, gap={gap}")
+                maximum_gap = max(maximum_gap, gap)
+                corners.remove(closest)
+        return {"count": len(markers), "maximum_rest_corner_gap_m": maximum_gap}
+
+    def check_courier_animations(self):
+        """检查方向动作的循环、无根运动、持箱下肢共相位与夹帧鞋底；不启动游戏。"""
+        animations = self.document.get("animations", [])
+        names = [animation.get("name", "") for animation in animations]
+        require(len(names) == len(set(names)) and set(names) == COURIER_ANIMATIONS,
+                f"Courier animation names do not match contract: expected={sorted(COURIER_ANIMATIONS)}, found={names}")
+        joints = set().union(*(set(skin["joints"]) for skin in self.document.get("skins", [])))
+        require(joints, "Courier animation contract requires a skin")
+        bones = {self.document["nodes"][index].get("name"): index for index in joints}
+        require(COURIER_LOWER_BONES.issubset(bones), f"Courier lower-body bones missing: {sorted(COURIER_LOWER_BONES - bones.keys())}")
+        contact_markers = self.check_courier_sole_markers()
+        tracks_by_name = {animation["name"]: self._animation_tracks(animation) for animation in animations}
+        root_nodes = {bones["root"]}
+        for joint in joints:
+            ancestor = self.parents.get(joint)
+            while ancestor is not None:
+                if ancestor not in joints:
+                    root_nodes.add(ancestor)
+                ancestor = self.parents.get(ancestor)
+        summaries = {}
+        sample_times = {COURIER_DURATION_SECONDS * index / 96 for index in range(97)}
+        for tracks in tracks_by_name.values():
+            for times, _, _ in tracks.values():
+                sample_times.update(times)
+                sample_times.update((a + b) / 2 for a, b in zip(times, times[1:]))
+        sample_times = sorted(sample_times)
+        for name, tracks in tracks_by_name.items():
+            required = {(index, path) for index in joints for path in ("translation", "rotation")}
+            missing = required - tracks.keys()
+            require(not missing, f"Courier animation lacks full-bone coverage: clip={name}, targets={sorted(missing)}")
+            maximum_loop_gap = 0
+            for (index, path), track in tracks.items():
+                first = self._sample_track(track, 0, path)
+                last = self._sample_track(track, COURIER_DURATION_SECONDS, path)
+                gap = pose_gap(first, last, path)
+                maximum_loop_gap = max(maximum_loop_gap, gap)
+                if name not in COURIER_ONE_SHOTS:
+                    require(gap <= POSE_TOLERANCE, f"Courier animation loop is open: clip={name}, bone={self.document['nodes'][index].get('name')}, path={path}, gap={gap}")
+                node = self.document["nodes"][index]
+                if path == "scale" or index in root_nodes:
+                    expected = node.get(path, {"translation": (0, 0, 0), "rotation": (0, 0, 0, 1), "scale": (1, 1, 1)}[path])
+                    for time in sample_times:
+                        require(pose_gap(self._sample_track(track, time, path), expected, path) <= POSE_TOLERANCE,
+                                f"Courier animation has {'scale deformation' if path == 'scale' else 'root motion'}: clip={name}, node={node.get('name')}, time={time}")
+            # 髋部允许竖直接地补偿，但不能靠水平偏移绕过 root 骨静止的原地动作约定。
+            for time in sample_times:
+                matrix = self._animated_transforms(tracks, time, (bones["hips"],))[bones["hips"]]
+                expected = self.transforms[bones["hips"]]
+                require(all(abs(matrix[axis][3] - expected[axis][3]) <= POSE_TOLERANCE for axis in (0, 2)),
+                        f"Courier animation has horizontal hip root motion: clip={name}, time={time}")
+            if name in COURIER_ONE_SHOTS:
+                # 起跳和落地必须有真实下肢变化，且不能被导出器误做成首尾相同的循环。
+                endpoint_gap = max(pose_gap(self._sample_track(tracks[bones[bone], path], 0, path),
+                                           self._sample_track(tracks[bones[bone], path], COURIER_DURATION_SECONDS, path), path)
+                                   for bone in COURIER_LOWER_BONES - {"root"} for path in ("translation", "rotation"))
+                require(endpoint_gap > 0.01, f"Courier one-shot animation lacks distinct endpoint poses: clip={name}, gap={endpoint_gap}")
+            summaries[name] = {"duration_seconds": COURIER_DURATION_SECONDS, "covered_bones": len(joints),
+                               "playback": "once" if name in COURIER_ONE_SHOTS else "loop",
+                               "maximum_endpoint_gap": maximum_loop_gap}
+        # 持箱只改变上肢；比较实际采样姿态，允许导出器压缩恒定通道的关键帧数量。
+        for free, carry in COURIER_PAIRS:
+            for bone in sorted(COURIER_LOWER_BONES):
+                for path in ("translation", "rotation", "scale"):
+                    key = bones[bone], path
+                    a, b = tracks_by_name[free].get(key), tracks_by_name[carry].get(key)
+                    if a is None and b is None:
+                        continue
+                    require(a is not None and b is not None, f"Carry lower-body channel differs: pair={free}/{carry}, bone={bone}, path={path}")
+                    require(all(pose_gap(self._sample_track(a, time, path), self._sample_track(b, time, path), path) <= POSE_TOLERANCE
+                                for time in sample_times), f"Carry lower-body phase differs: pair={free}/{carry}, bone={bone}, path={path}")
+        direction_gaps = {}
+        for a, b in combinations(COURIER_DIRECTIONS, 2):
+            gap = max(pose_gap(self._sample_track(tracks_by_name[a][bones[bone], path], time, path),
+                               self._sample_track(tracks_by_name[b][bones[bone], path], time, path), path)
+                      for bone in COURIER_LOWER_BONES - {"root", "hips"}
+                      for path in ("translation", "rotation") for time in sample_times)
+            require(gap > 0.001, f"Directional walking clips have identical lower-body motion: pair={a}/{b}, gap={gap}")
+            direction_gaps[f"{a}/{b}"] = gap
+        shoe_vertices, influenced = self._shoe_vertices()
+        for name in COURIER_DIRECTIONS + tuple(pair[1] for pair in COURIER_PAIRS[:4]) + ("Land", "Carry_Land"):
+            lowest, lowest_time = math.inf, None
+            for time in sample_times:
+                transforms = self._animated_transforms(tracks_by_name[name], time, influenced)
+                floor = min(sum(transform(transforms[index], point)[1] * weight for index, point, weight in bindings)
+                            for bindings in shoe_vertices)
+                if floor < lowest:
+                    lowest, lowest_time = floor, time
+            require(lowest >= -0.003, f"Courier shoe penetrates ground: clip={name}, min_y={lowest}, time={lowest_time}")
+            summaries[name].update({"shoe_min_y_m": lowest, "shoe_min_time_seconds": lowest_time, "shoe_samples": len(sample_times)})
+        return {"clips": summaries, "lower_body_pairs": [list(pair) for pair in COURIER_PAIRS], "direction_pose_gaps": direction_gaps,
+                "shoe_vertices": len(shoe_vertices), "sole_contact_markers": contact_markers, "root_motion": "none", "scale_deformation": "none"}
 
     def check_art_asset_structure(self, asset_id):
         """检查木屋与棕榈的实际网格组成，防止保留稳定 ID 却导出旧居民楼或旧树。"""

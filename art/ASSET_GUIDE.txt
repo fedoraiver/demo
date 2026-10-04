@@ -9,7 +9,8 @@ Pizza 店、Music 店与居民木屋使用风化木板和锈蚀屋顶，商铺�
 
 交付文件
 本批共 31 个独立 GLB：5 个角色、8 个道具、5 个建筑、13 个环境资产；另有 1 个组合地图 GLB。
-art/blender/courier_island.blend：可继续编辑的 Blender 源文件。
+art/blender/courier_island.blend：海岛 Blender 源文件。
+art/blender/courier_actions.blend：独立快递员与16个新动作的制作源，优先用它编辑主角动作。
 assets/models/characters/：主角与四名 NPC，共 5 个角色。
 assets/models/props/：纸箱、木箱、花盆、长椅、路灯、邮箱和系缆柱。
 assets/models/environment/：草、树、灌木、棕榈、岛屿地形、海水、台阶栏杆、码头与荒野细节。
@@ -18,8 +19,10 @@ assets/models/environment/：草、树、灌木、棕榈、岛屿地形、海水
 assets/models/buildings/：破旧木制物流总站、Pizza 店、Music 店及两种单层居民木屋。
 assets/maps/courier_island.glb：组合后的完整地图。
 art/asset_manifest.json：每件模型的路径、尺寸、轴心、动作与地图实例位置。
-art/validation_report.json：无窗口 GLB 结构与几何验证的实际结果。
+art/validation_report.json：原海岛批次的结构与几何记录；新动作以当前离线验证命令为准。
 art/previews/：岛屿全景、商铺街景、角色近景、棕榈沙滩与角色展示图片。
+art/previews/courier_actions.png：八方向空手／持箱动作的两组步相位静态美术预览。
+art/previews/courier_jump.png：空手／持箱起跳与落地的一次性动作首、中、尾姿态预览。
 
 Blender 场景
 Courier_Island 是完整海岛，保存后默认打开此场景与全景相机视角。
@@ -33,14 +36,19 @@ Blender 使用米制、Z-up；glTF 导出转换为 Y-up。
 人物约 1.9 米高。箱子主体 0.6 米见方，原点位于中心；木箱也使用中心轴心。
 建筑店面朝 Blender -Y，导出后朝 +Z，原点位于底部中心。
 所有资产颜色由内置材质提供，不依赖外部图像贴图。
-主角有 Idle、Walk、Carry_Idle 三个 1 秒循环，无根运动；包裹为独立模型。
+主角有16个0.8秒原地动作：Idle、Walk、Walk_Backward、Walk_Left、Walk_Right、
+Carry_Idle、Carry_Walk、Carry_Backward、Carry_Left、Carry_Right、Jump、Fall、Carry_Jump、Carry_Fall、Land、Carry_Land。
+Jump、Carry_Jump、Land、Carry_Land为一次性动作；其余循环闭环。
+游戏将起跳映射到0.24秒、落地缓冲映射到0.22秒，并在最高点保持阶段。
+八个步行动作使用相同左右脚相位，持箱腿部与空手逐帧一致；包裹为独立模型。
+鞋底八个 Courier_Sole_* 骨骼子节点用于动画混合后的同帧视觉接地补偿。
 骨架使用刚性分段权重，以保留低多边形棱面风格。
 Carry_Idle 从纸箱两侧夹持；纸箱仍需由接入后的游戏逻辑放置或挂接。
 
 验证与尚未完成的部分
-此批次交付为美术源件与模型文件，尚未接入现有 Bevy 游戏。
-地形、建筑、台阶和水面没有物理碰撞、导航网格或玩法逻辑。
-此批美术验证使用 Blender 渲染与无窗口文件检查；实际结果以最新 validation_report.json 为准。
+独立模型与组合地图已接入 Bevy 原型，当前玩法范围以 README 为准。
+GLB 保存可见几何，运行时按 scene.rs 提取结构碰撞；海水没有支撑碰撞，也没有导航网格。
+美术可用 Blender 渲染与无窗口文件检查；当前命令见 docs/testing.md 的人物动作与镜头验收。
 没有启动或操作游戏。验证器检查清单内模型、旧资产残留、角色蒙皮与动作，
 并检查凹海湾附近每个岸坡三角的绕序与海岸外法线、平坦沙地和浅水的朝向。
 另外检查地图确有棕榈、荒草和五处建筑引用，居民资产包含单层木屋的木板结构。
@@ -48,12 +56,15 @@ Carry_Idle 从纸箱两侧夹持；纸箱仍需由接入后的游戏逻辑放置
 街景应显示物流总站、Pizza 店、Music 店与对应招牌；
 沙滩视角应看到弯曲棕榈、荒草、自然沙坡与海面，没有环岛路、海景公园或铺装广场；
 角色展示应看到主角、调度员、披萨店员、音乐店员和居民。
-后续接入游戏后，游戏启动、行走、台阶碰撞和视觉验收由用户自行完成。
+游戏启动、行走、台阶碰撞和视觉验收由用户自行完成。
 实际游戏运行日志应查看 logs/ 中每次独立会话文件，此批美术渲染不会产生游戏日志。
 
 再生成
 art/scripts/build_scene.py 可通过现有 Blender MCP 插件在已打开的 Blender 中生成新场景。
 art/scripts/export_assets.py 导出独立模型和地图，重复导出会归零独立源件的展示位移。
+仅刷新主角时使用 art/scripts/export_courier_actions.py，在 Blender 内执行或以 --background --python 执行；
+脚本从独立动作源追加角色集合，生成接触约束关键帧，再保存制作源和运行 GLB，不重导出地图。
+旧海岛源的主角仍保留原动作，直接导出旧海岛后应重新运行本脚本，避免覆盖新主角动作。
 art/scripts/render_previews.py 渲染预览。
 art/scripts/validate_assets.py 仅在普通 Python 中验证导出的 GLB，不创建任何窗口。
-脚本不会启动游戏或启动新的 Blender 程序。
+脚本不会启动游戏；无窗口 Blender 仅用于制作和导出美术资产。
