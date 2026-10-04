@@ -19,11 +19,12 @@ mod session_log;
 mod settings;
 mod startup_log;
 mod ui;
+mod window_policy;
 
 use app_flow::{AppFlowPlugin, gameplay_running};
 use art_assets::ArtAssetsPlugin;
 use audio::GameAudioPlugin;
-use bevy::{log::LogPlugin, prelude::*, window::PresentMode};
+use bevy::{log::LogPlugin, prelude::*};
 use bevy_inspector_egui::{bevy_egui::EguiPlugin, quick::WorldInspectorPlugin};
 use camera::CameraControlPlugin;
 use character_animation::CharacterAnimationPlugin;
@@ -34,6 +35,7 @@ use scene::PrototypeScenePlugin;
 use settings::{GameSettings, SettingsPlugin};
 use startup_log::StartupLogPlugin;
 use ui::GameUiPlugin;
+use window_policy::WindowPolicyPlugin;
 
 fn main() -> AppExit {
     let mut app = App::new();
@@ -57,12 +59,7 @@ fn main() -> AppExit {
                 ..default()
             })
             .set(WindowPlugin {
-                primary_window: Some(Window {
-                    title: "Island Courier".into(),
-                    // 避免垂直同步把玩家设置的帧率上限额外限制为显示器的刷新率。
-                    present_mode: PresentMode::AutoNoVsync,
-                    ..default()
-                }),
+                primary_window: Some(window_policy::primary_window()),
                 ..default()
             }),
     );
@@ -79,6 +76,7 @@ fn main() -> AppExit {
             // 检查器复用同一主窗口与相机，Egui 必须先于世界检查器注册。
             EguiPlugin::default(),
             WorldInspectorPlugin::new().run_if(gameplay_running),
+            WindowPolicyPlugin,
             AppFlowPlugin,
             SettingsPlugin,
             GameplayPlugin,
