@@ -5,13 +5,14 @@ use bevy::prelude::*;
 
 use crate::gameplay::{GameplaySystems, PrototypeConfig};
 
-/// 世界、角色与快递的碰撞分类；持握时箱子仍碰撞世界与其他快递。
+/// 世界、角色与快递的碰撞分类；相机查询几何使用独立层，不参与玩法接触。
 #[derive(PhysicsLayer, Default)]
 pub(crate) enum GamePhysicsLayer {
     #[default]
     World,
     Character,
     Parcel,
+    CameraQuery,
 }
 
 /// 固定物理模拟和统一碰撞日志；可用于没有窗口和渲染器的最小 App。
@@ -38,6 +39,21 @@ fn sync_gravity(config: Res<PrototypeConfig>, mut gravity: ResMut<Gravity>) {
 /// 静态世界接受角色与快递的碰撞。
 pub(crate) fn world_collision_layers() -> CollisionLayers {
     CollisionLayers::new(GamePhysicsLayer::World, LayerMask::ALL)
+}
+
+/// 查询掩码只决定目标所属层；玩法射线和支撑探测必须显式排除相机的重复几何。
+pub(crate) fn gameplay_query_layers() -> LayerMask {
+    [
+        GamePhysicsLayer::World,
+        GamePhysicsLayer::Character,
+        GamePhysicsLayer::Parcel,
+    ]
+    .into()
+}
+
+/// 相机只读取这份几何；空碰撞掩码保证它不会增加角色、快递或世界之间的接触。
+pub(crate) fn camera_query_layers() -> CollisionLayers {
+    CollisionLayers::new(GamePhysicsLayer::CameraQuery, LayerMask::NONE)
 }
 
 /// 自由快递参与世界、人物与快递之间的碰撞。

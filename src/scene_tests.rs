@@ -3,9 +3,9 @@
 use std::time::{Duration, Instant};
 
 use avian3d::prelude::{
-    ColliderAabb, ColliderOf, CollisionLayers, LinearVelocity, NoTranslationEasing, PhysicsTime,
-    Position, RayHitData, Rotation, ShapeCastConfig, ShapeHitData, Sleeping, SpatialQuery,
-    SpatialQueryFilter,
+    ColliderAabb, ColliderOf, CollisionLayers, ContactGraph, LayerMask, LinearVelocity, Mass,
+    NoTranslationEasing, PhysicsTime, Position, RayHitData, Rotation, ShapeCastConfig,
+    ShapeHitData, Sleeping, SpatialQuery, SpatialQueryFilter,
 };
 use bevy::{
     animation::{AnimationPlugin, RepeatAnimation, graph::AnimationNodeType},
@@ -27,7 +27,7 @@ use crate::{
     character_animation::CharacterAnimationPlugin,
     gameplay::{ControlsCharacter, GameplayPlugin},
     input::GameplayContext,
-    physics::GamePhysicsLayer,
+    physics::{DemoPhysicsPlugin, GamePhysicsLayer, gameplay_query_layers},
 };
 
 fn asset_app() -> App {
@@ -200,6 +200,332 @@ fn wait_until(app: &mut App, mut ready: impl FnMut(&mut World) -> bool) {
         assert!(Instant::now() < deadline, "Asset loading timed out");
         std::thread::yield_now();
     }
+}
+
+/// 比较实际三角面而不只比较包围体，确保相机分类没有删掉或增加原玩法几何。
+fn triangle_inventory(collider: &Collider) -> BTreeMap<[[i64; 3]; 3], usize> {
+    let mesh = collider
+        .shape()
+        .as_trimesh()
+        .expect("Expected an imported triangle collider");
+    let mut triangles = BTreeMap::new();
+    for triangle in mesh.indices() {
+        let points = triangle.map(|index| {
+            mesh.vertices()[index as usize]
+                .to_array()
+                .map(|value| (value * 100_000.0).round() as i64)
+        });
+        *triangles.entry(points).or_insert(0) += 1;
+    }
+    triangles
+}
+
+#[test]
+fn real_island_camera_queries_only_five_building_shells_and_preserves_world() {
+    let mut app = asset_app();
+    wait_until(&mut app, |world| {
+        world
+            .query_filtered::<Entity, With<ActorsSpawned>>()
+            .iter(world)
+            .count()
+            == 1
+    });
+    let world = app.world_mut();
+    assert_eq!(
+        world.query::<&CameraShell>().iter(world).count(),
+        5,
+        "Only the five buildings need shell query geometry",
+    );
+    assert_eq!(
+        world
+            .query::<&CollisionLayers>()
+            .iter(world)
+            .filter(|layers| **layers == camera_query_layers())
+            .count(),
+        5,
+        "No extra camera query geometry should remain",
+    );
+    // 样本来自实际导出部件，既覆盖两套命名，又防止柜台和招牌的 board 被误判为墙。
+    let cases: [(&str, &[&str], &[&str]); 5] = [
+        (
+            "bld_courier_station",
+            &["Roof_", "Side_board_", "Door_window_", "Corner_post_"],
+            &["Floor_", "Counter_", "Shelf_", "Station_sign_"],
+        ),
+        (
+            "bld_music_shop",
+            &["Roof_", "Side_board_", "Corner_post_"],
+            &["Floor_", "Counter_", "Turntable_", "Music_shop_sign_"],
+        ),
+        (
+            "bld_pizza_shop",
+            &["Roof_", "Side_board_", "Corner_post_"],
+            &["Floor_", "Counter_", "Oven_", "Menu_board_"],
+        ),
+        (
+            "bld_residential_a",
+            &[
+                "Roof ",
+                "Front row ",
+                "Door faded ",
+                "Side window ",
+                "Hut corner post ",
+            ],
+            &["Hut floor ", "Door threshold"],
+        ),
+        (
+            "bld_residential_b",
+            &[
+                "Roof ",
+                "Front row ",
+                "Door faded ",
+                "Side window ",
+                "Hut corner post ",
+            ],
+            &["Hut floor ", "Door threshold"],
+        ),
+    ];
+    for (asset, shell_prefixes, opaque_prefixes) in cases {
+        let building = source_asset_entity(world, asset);
+        let physical = static_collider_child(world, building);
+        assert!(world.get::<CameraShell>(physical).is_none());
+        assert_eq!(
+            world.get::<CollisionLayers>(physical),
+            Some(&world_collision_layers()),
+        );
+        let camera_colliders: Vec<_> = world
+            .get::<Children>(building)
+            .unwrap()
+            .iter()
+            .filter(|&entity| world.get::<CollisionLayers>(entity) == Some(&camera_query_layers()))
+            .collect();
+        assert_eq!(camera_colliders.len(), 1, "{asset}");
+        let camera_shell = camera_colliders[0];
+        assert!(world.get::<IslandCollider>(camera_shell).is_none());
+        assert!(world.get::<Mesh3d>(camera_shell).is_none());
+        assert_eq!(
+            world.get::<RigidBody>(camera_shell),
+            Some(&RigidBody::Static)
+        );
+        assert_eq!(
+            world.get::<ChildOf>(camera_shell).unwrap().parent(),
+            building
+        );
+        assert_eq!(world.get::<CameraShell>(camera_shell).unwrap().0, building);
+        let shell_triangles = triangle_inventory(world.get::<Collider>(camera_shell).unwrap());
+        let physical_triangles = triangle_inventory(world.get::<Collider>(physical).unwrap());
+        assert!(
+            !shell_triangles.is_empty()
+                && shell_triangles
+                    .iter()
+                    .map(|(_, count)| count)
+                    .sum::<usize>()
+                    < physical_triangles
+                        .iter()
+                        .map(|(_, count)| count)
+                        .sum::<usize>(),
+            "Shell queries must exclude opaque interior parts for {asset}",
+        );
+        for (triangle, count) in &shell_triangles {
+            assert!(
+                physical_triangles
+                    .get(triangle)
+                    .is_some_and(|total| total >= count),
+                "Shell query geometry must be a subset of world geometry for {asset}",
+            );
+        }
+        let descendants: Vec<_> = world
+            .query::<&Children>()
+            .query(world)
+            .iter_descendants(building)
+            .collect();
+        let mesh_parts: Vec<_> = world
+            .query::<(Entity, &Mesh3d, &ChildOf)>()
+            .iter(world)
+            .filter(|(entity, ..)| descendants.contains(entity))
+            .map(|(entity, _, parent)| {
+                let name = world.get::<Name>(parent.parent()).unwrap().as_str();
+                let part = name.rsplit_once("__").map_or(name, |(_, part)| part);
+                (entity, part.to_owned())
+            })
+            .collect();
+        // 独立遍历全部真实原语，确认外壳查询覆盖标记网格且完整玩法碰撞未删掉内部结构。
+        let mut expected_physical = CameraGeometry::default();
+        let mut expected_shell = CameraGeometry::default();
+        for (entity, part) in &mesh_parts {
+            let marker = world.get::<BuildingShellVisual>(*entity);
+            assert_eq!(
+                marker.is_some(),
+                building_shell_part(part),
+                "{asset}: {part}"
+            );
+            let mut node = *entity;
+            let mut transforms = Vec::new();
+            while node != building {
+                transforms.push(world.get::<Transform>(node).unwrap().to_matrix());
+                node = world.get::<ChildOf>(node).unwrap().parent();
+            }
+            let matrix = transforms
+                .into_iter()
+                .rev()
+                .fold(Mat4::IDENTITY, |parent, transform| parent * transform);
+            let mesh = world.get::<Mesh3d>(*entity).unwrap();
+            for triangle in world
+                .resource::<Assets<Mesh>>()
+                .get(&mesh.0)
+                .unwrap()
+                .triangles()
+                .unwrap()
+            {
+                let vertices = triangle
+                    .vertices
+                    .map(|point| matrix.transform_point3(point));
+                expected_physical.push_triangle(vertices);
+                if marker.is_some() {
+                    expected_shell.push_triangle(vertices);
+                }
+            }
+        }
+        assert_eq!(
+            physical_triangles,
+            triangle_inventory(&expected_physical.into_collider().unwrap().unwrap()),
+            "World collision must still contain every building primitive for {asset}",
+        );
+        assert_eq!(
+            shell_triangles,
+            triangle_inventory(&expected_shell.into_collider().unwrap().unwrap()),
+            "Shell query must contain every tagged shell primitive for {asset}",
+        );
+        for (prefixes, expected_shell) in [(shell_prefixes, true), (opaque_prefixes, false)] {
+            for prefix in prefixes {
+                let selected: Vec<_> = mesh_parts
+                    .iter()
+                    .filter(|(_, name)| name.starts_with(prefix))
+                    .collect();
+                assert!(
+                    !selected.is_empty(),
+                    "Missing actual part {asset}: {prefix}"
+                );
+                for &(entity, _) in selected {
+                    let marker = world.get::<BuildingShellVisual>(entity);
+                    assert_eq!(marker.is_some(), expected_shell, "{asset}: {prefix}");
+                    if let Some(marker) = marker {
+                        assert_eq!(marker.0, building);
+                    }
+                }
+            }
+        }
+    }
+    for entity in world
+        .query_filtered::<Entity, With<IslandCollider>>()
+        .iter(world)
+    {
+        assert!(world.get::<CameraShell>(entity).is_none());
+        assert_eq!(
+            world.get::<CollisionLayers>(entity),
+            Some(&world_collision_layers())
+        );
+    }
+}
+
+#[test]
+fn building_shell_classification_keeps_furniture_floors_and_unknown_parts_opaque() {
+    for part in [
+        "Floor_board_11",
+        "Hut floor board 21",
+        "Door threshold",
+        "Counter_front_board_3",
+        "Station_sign_board_5",
+        "Music_notice_board_0",
+        "Shelf_post_0",
+        "Future_opaque_part",
+    ] {
+        assert!(!building_shell_part(part), "{part}");
+    }
+}
+
+#[test]
+fn camera_query_layer_is_visible_to_queries_but_never_creates_gameplay_contacts() {
+    let mut app = App::new();
+    app.add_plugins((MinimalPlugins, TransformPlugin, DemoPhysicsPlugin))
+        .insert_resource(PrototypeConfig {
+            gravity: 0.0,
+            ..default()
+        })
+        .insert_resource(Time::<Fixed>::from_hz(60.0))
+        .insert_resource(TimeUpdateStrategy::ManualDuration(Duration::ZERO))
+        .init_resource::<Assets<Mesh>>()
+        .init_resource::<Assets<bevy::mesh::skinning::SkinnedMeshInverseBindposes>>();
+    app.finish();
+    app.cleanup();
+    let camera_query = app
+        .world_mut()
+        .spawn((
+            RigidBody::Static,
+            Collider::cuboid(10.0, 10.0, 10.0),
+            camera_query_layers(),
+            Transform::default(),
+        ))
+        .id();
+    let mut bodies = Vec::new();
+    for (layer, x) in [
+        (GamePhysicsLayer::Character, -2.0),
+        (GamePhysicsLayer::Parcel, 2.0),
+    ] {
+        let entity = app
+            .world_mut()
+            .spawn((
+                RigidBody::Dynamic,
+                Collider::sphere(0.2),
+                Mass(1.0),
+                CollisionLayers::new(layer, LayerMask::ALL),
+                LinearVelocity(Vec3::X),
+                Transform::from_xyz(x, 0.0, 0.0),
+            ))
+            .id();
+        bodies.push((entity, x));
+    }
+    app.update();
+    fixed_steps(&mut app, 12);
+    let world = app.world_mut();
+    assert!(
+        world
+            .resource::<ContactGraph>()
+            .contact_pairs_with(camera_query)
+            .next()
+            .is_none(),
+    );
+    for (entity, start_x) in bodies {
+        let position = world.get::<Position>(entity).unwrap().0;
+        assert!(
+            position.x > start_x + 0.1,
+            "Query geometry must not block motion"
+        );
+        assert!(world.get::<LinearVelocity>(entity).unwrap().x > 0.99);
+    }
+    let mut query = SystemState::<SpatialQuery>::new(world);
+    let spatial = query.get(world).unwrap();
+    let origin = Vec3::new(-20.0, 0.0, 0.0);
+    let hit = spatial
+        .cast_ray(
+            origin,
+            Dir3::X,
+            40.0,
+            true,
+            &SpatialQueryFilter::from_mask(GamePhysicsLayer::CameraQuery),
+        )
+        .expect("Camera query geometry must remain queryable");
+    assert_eq!(hit.entity, camera_query);
+    let hit = spatial
+        .cast_ray(
+            origin,
+            Dir3::X,
+            40.0,
+            true,
+            &SpatialQueryFilter::from_mask(gameplay_query_layers()),
+        )
+        .expect("Gameplay query must still find dynamic bodies");
+    assert_ne!(hit.entity, camera_query);
 }
 
 /// 真实海岛跨菜单状态装配；同时检查异步等待、暂停与所有场景后代的退出清理。

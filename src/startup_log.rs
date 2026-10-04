@@ -46,7 +46,7 @@ fn log_pose_synchronization() {
     info!(target: "demo::camera", simulation_schedule = "FixedUpdate",
         grip_force_schedule = "FixedUpdate", physics_schedule = "FixedPostUpdate",
         presentation_schedule = "RunFixedMainLoop",
-        presentation_order = "interpolation_character_facing_hold_target_camera_visibility", reason = "initialization",
+        presentation_order = "interpolation_character_facing_hold_target_camera_occlusion_fade_visibility", reason = "initialization",
         "Camera pose synchronization configured");
 }
 
@@ -137,7 +137,7 @@ mod tests {
                     "grip_force_schedule=\"FixedUpdate\"",
                     "physics_schedule=\"FixedPostUpdate\"",
                     "presentation_schedule=\"RunFixedMainLoop\"",
-                    "presentation_order=\"interpolation_character_facing_hold_target_camera_visibility\"",
+                    "presentation_order=\"interpolation_character_facing_hold_target_camera_occlusion_fade_visibility\"",
                     "reason=\"initialization\"",
                 ],
             ),
