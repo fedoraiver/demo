@@ -1,0 +1,2421 @@
+{
+  "name": "Courier Items",
+  "schema_version": 1,
+  "blender_version": "5.2.2 LTS",
+  "units": "meters",
+  "source_file": "art/blender/courier_items.blend",
+  "source_axes": "Z-up; equipment +Y forward; industrial +Y output; decals +Z normal",
+  "export_axes": "glTF Y-up; source +Y maps to -Z",
+  "palette_srgb": {
+    "navy": "334E80",
+    "blue": "4266AC",
+    "blue_dark": "2B4275",
+    "pants": "344879",
+    "skin": "DDA664",
+    "skin_light": "F2C58F",
+    "skin_dark": "AC734F",
+    "hair": "4D3530",
+    "cream": "EFE1BE",
+    "white": "FFF7E5",
+    "ink": "293240",
+    "coral": "E78064",
+    "red": "B65058",
+    "gold": "F2BA56",
+    "olive": "788656",
+    "leaf": "57734B",
+    "leaf_light": "91A960",
+    "wood": "AC7950",
+    "wood_dark": "775438",
+    "cardboard": "BA8A52",
+    "tape": "DDB777",
+    "metal": "414B59",
+    "teal": "619992",
+    "purple": "8C799D",
+    "concrete": "919795",
+    "concrete_light": "B8B5A9",
+    "glass": "71979E",
+    "warm_light": "FFE0A0",
+    "roof": "59616B",
+    "sand": "D5C5A3",
+    "sea": "348C9B",
+    "sea_deep": "296A85",
+    "sea_light": "63B9BD",
+    "foam": "BEE0D7",
+    "rock": "7C8790",
+    "rock_light": "98A09D",
+    "plaza": "CABFA7",
+    "soil": "9D9C7B",
+    "dry_sand": "DBC79B",
+    "wet_sand": "BBA982",
+    "weathered_wood": "9E8B70",
+    "weathered_dark": "706454",
+    "wood_gray": "A19F8C",
+    "rust": "936953",
+    "faded_blue": "647B8B",
+    "faded_red": "A2796C",
+    "faded_olive": "8A8F6E"
+  },
+  "assets": [
+    {
+      "id": "itm_grip_gloves",
+      "item_id": "itm_grip_gloves",
+      "name_zh": "抓牢手套",
+      "category": "items/equipment",
+      "variant": "default",
+      "file": "assets/models/items/equipment/itm_grip_gloves.glb",
+      "root_node": "itm_grip_gloves",
+      "pivot": "base",
+      "bounds_blender_m": {
+        "min": [
+          -0.15250888466835022,
+          -0.07000000029802322,
+          0.0
+        ],
+        "max": [
+          0.15250888466835022,
+          0.052000001072883606,
+          0.19949999451637268
+        ]
+      },
+      "dimensions_m": [
+        0.305018,
+        0.122,
+        0.1995
+      ],
+      "mesh_objects": 70,
+      "triangles": 2944,
+      "bytes": 261000,
+      "equip_slot": "hands",
+      "surface_normal": "+Y",
+      "sockets": [
+        {
+          "node": "itm_grip_gloves__part_left",
+          "kind": "part_left",
+          "position_blender_m": [
+            0.098,
+            0.0,
+            -0.002
+          ],
+          "matrix_blender_column_major": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.098,
+            0.0,
+            -0.002,
+            1.0
+          ]
+        },
+        {
+          "node": "itm_grip_gloves__socket_wrist_left",
+          "kind": "socket_wrist_left",
+          "position_blender_m": [
+            0.098,
+            0.0,
+            0.177
+          ],
+          "matrix_blender_column_major": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.098,
+            0.0,
+            0.177,
+            1.0
+          ]
+        },
+        {
+          "node": "itm_grip_gloves__part_right",
+          "kind": "part_right",
+          "position_blender_m": [
+            -0.098,
+            0.0,
+            -0.002
+          ],
+          "matrix_blender_column_major": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            -0.098,
+            0.0,
+            -0.002,
+            1.0
+          ]
+        },
+        {
+          "node": "itm_grip_gloves__socket_wrist_right",
+          "kind": "socket_wrist_right",
+          "position_blender_m": [
+            -0.098,
+            0.0,
+            0.177
+          ],
+          "matrix_blender_column_major": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            -0.098,
+            0.0,
+            0.177,
+            1.0
+          ]
+        }
+      ],
+      "mechanical_pivots": [],
+      "animations": [],
+      "preview": "art/previews/items/itm_grip_gloves.png"
+    },
+    {
+      "id": "itm_reach_grabber",
+      "item_id": "itm_reach_grabber",
+      "name_zh": "伸缩搬运夹",
+      "category": "items/equipment",
+      "variant": "default",
+      "file": "assets/models/items/equipment/itm_reach_grabber.glb",
+      "root_node": "itm_reach_grabber",
+      "pivot": "base",
+      "bounds_blender_m": {
+        "min": [
+          -0.15982535481452942,
+          -0.2824999988079071,
+          9.313225746154785e-10
+        ],
+        "max": [
+          0.15982535481452942,
+          0.8319173455238342,
+          0.13750000298023224
+        ]
+      },
+      "dimensions_m": [
+        0.319651,
+        1.114417,
+        0.1375
+      ],
+      "mesh_objects": 45,
+      "triangles": 1548,
+      "bytes": 141356,
+      "equip_slot": "hands",
+      "surface_normal": "+Y",
+      "sockets": [
+        {
+          "node": "itm_reach_grabber__socket_grasp_target",
+          "kind": "socket_grasp_target",
+          "position_blender_m": [
+            0.0,
+            0.792,
+            0.0865
+          ],
+          "matrix_blender_column_major": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.792,
+            0.0865,
+            1.0
+          ]
+        },
+        {
+          "node": "itm_reach_grabber__socket_hand",
+          "kind": "socket_hand",
+          "position_blender_m": [
+            0.0,
+            -0.18,
+            0.0865
+          ],
+          "matrix_blender_column_major": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            -0.18,
+            0.0865,
+            1.0
+          ]
+        }
+      ],
+      "mechanical_pivots": [
+        "itm_reach_grabber__pivot_claw_left",
+        "itm_reach_grabber__pivot_claw_right",
+        "itm_reach_grabber__pivot_telescope"
+      ],
+      "animations": [],
+      "preview": "art/previews/items/itm_reach_grabber.png"
+    },
+    {
+      "id": "itm_goat_boots",
+      "item_id": "itm_goat_boots",
+      "name_zh": "山羊登山靴",
+      "category": "items/equipment",
+      "variant": "default",
+      "file": "assets/models/items/equipment/itm_goat_boots.glb",
+      "root_node": "itm_goat_boots",
+      "pivot": "base",
+      "bounds_blender_m": {
+        "min": [
+          -0.21149998903274536,
+          -0.12600000202655792,
+          0.0
+        ],
+        "max": [
+          0.21149998903274536,
+          0.210999995470047,
+          0.2630000114440918
+        ]
+      },
+      "dimensions_m": [
+        0.423,
+        0.337,
+        0.263
+      ],
+      "mesh_objects": 84,
+      "triangles": 3032,
+      "bytes": 278124,
+      "equip_slot": "feet",
+      "surface_normal": "+Y",
+      "sockets": [
+        {
+          "node": "itm_goat_boots__part_left",
+          "kind": "part_left",
+          "position_blender_m": [
+            0.116,
+            0.0,
+            0.0
+          ],
+          "matrix_blender_column_major": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.116,
+            0.0,
+            0.0,
+            1.0
+          ]
+        },
+        {
+          "node": "itm_goat_boots__socket_ankle_left",
+          "kind": "socket_ankle_left",
+          "position_blender_m": [
+            0.116,
+            0.0,
+            0.115
+          ],
+          "matrix_blender_column_major": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.116,
+            0.0,
+            0.115,
+            1.0
+          ]
+        },
+        {
+          "node": "itm_goat_boots__part_right",
+          "kind": "part_right",
+          "position_blender_m": [
+            -0.116,
+            0.0,
+            0.0
+          ],
+          "matrix_blender_column_major": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            -0.116,
+            0.0,
+            0.0,
+            1.0
+          ]
+        },
+        {
+          "node": "itm_goat_boots__socket_ankle_right",
+          "kind": "socket_ankle_right",
+          "position_blender_m": [
+            -0.116,
+            0.0,
+            0.115
+          ],
+          "matrix_blender_column_major": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            -0.116,
+            0.0,
+            0.115,
+            1.0
+          ]
+        }
+      ],
+      "mechanical_pivots": [],
+      "animations": [],
+      "preview": "art/previews/items/itm_goat_boots.png"
+    },
+    {
+      "id": "itm_spring_boots",
+      "item_id": "itm_spring_boots",
+      "name_zh": "蓄力弹簧鞋",
+      "category": "items/equipment",
+      "variant": "default",
+      "file": "assets/models/items/equipment/itm_spring_boots.glb",
+      "root_node": "itm_spring_boots",
+      "pivot": "base",
+      "bounds_blender_m": {
+        "min": [
+          -0.21399998664855957,
+          -0.12800000607967377,
+          0.0
+        ],
+        "max": [
+          0.2224999964237213,
+          0.2160000056028366,
+          0.32665157318115234
+        ]
+      },
+      "dimensions_m": [
+        0.4365,
+        0.344,
+        0.326652
+      ],
+      "mesh_objects": 80,
+      "triangles": 5608,
+      "bytes": 378184,
+      "equip_slot": "feet",
+      "surface_normal": "+Y",
+      "sockets": [
+        {
+          "node": "itm_spring_boots__part_left",
+          "kind": "part_left",
+          "position_blender_m": [
+            0.116,
+            0.0,
+            0.0
+          ],
+          "matrix_blender_column_major": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.116,
+            0.0,
+            0.0,
+            1.0
+          ]
+        },
+        {
+          "node": "itm_spring_boots__socket_ankle_left",
+          "kind": "socket_ankle_left",
+          "position_blender_m": [
+            0.116,
+            0.0,
+            0.185
+          ],
+          "matrix_blender_column_major": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.116,
+            0.0,
+            0.185,
+            1.0
+          ]
+        },
+        {
+          "node": "itm_spring_boots__part_right",
+          "kind": "part_right",
+          "position_blender_m": [
+            -0.116,
+            0.0,
+            0.0
+          ],
+          "matrix_blender_column_major": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            -0.116,
+            0.0,
+            0.0,
+            1.0
+          ]
+        },
+        {
+          "node": "itm_spring_boots__socket_ankle_right",
+          "kind": "socket_ankle_right",
+          "position_blender_m": [
+            -0.116,
+            0.0,
+            0.185
+          ],
+          "matrix_blender_column_major": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            -0.116,
+            0.0,
+            0.185,
+            1.0
+          ]
+        }
+      ],
+      "mechanical_pivots": [
+        "itm_spring_boots__pivot_compression_left",
+        "itm_spring_boots__pivot_compression_right"
+      ],
+      "animations": [],
+      "preview": "art/previews/items/itm_spring_boots.png"
+    },
+    {
+      "id": "itm_courier_frame",
+      "item_id": "itm_courier_frame",
+      "name_zh": "邮差背架",
+      "category": "items/equipment",
+      "variant": "default",
+      "file": "assets/models/items/equipment/itm_courier_frame.glb",
+      "root_node": "itm_courier_frame",
+      "pivot": "base",
+      "bounds_blender_m": {
+        "min": [
+          -0.2839999794960022,
+          -0.3060000240802765,
+          0.0
+        ],
+        "max": [
+          0.2839999794960022,
+          0.3190000057220459,
+          0.8209601640701294
+        ]
+      },
+      "dimensions_m": [
+        0.568,
+        0.625,
+        0.82096
+      ],
+      "mesh_objects": 70,
+      "triangles": 1672,
+      "bytes": 179292,
+      "equip_slot": "back",
+      "surface_normal": "+Y",
+      "sockets": [
+        {
+          "node": "itm_courier_frame__socket_cargo_lower",
+          "kind": "socket_cargo_lower",
+          "position_blender_m": [
+            0.0,
+            -0.188,
+            0.165
+          ],
+          "matrix_blender_column_major": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            -0.188,
+            0.165,
+            1.0
+          ]
+        },
+        {
+          "node": "itm_courier_frame__socket_cargo_upper",
+          "kind": "socket_cargo_upper",
+          "position_blender_m": [
+            0.0,
+            -0.188,
+            0.46
+          ],
+          "matrix_blender_column_major": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            -0.188,
+            0.46,
+            1.0
+          ]
+        },
+        {
+          "node": "itm_courier_frame__socket_spine",
+          "kind": "socket_spine",
+          "position_blender_m": [
+            0.0,
+            -0.015,
+            0.42
+          ],
+          "matrix_blender_column_major": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            -0.015,
+            0.42,
+            1.0
+          ]
+        }
+      ],
+      "mechanical_pivots": [],
+      "animations": [],
+      "preview": "art/previews/items/itm_courier_frame.png"
+    },
+    {
+      "id": "itm_glider_cape",
+      "item_id": "itm_glider_cape",
+      "name_zh": "折叠滑翔披风（展开）",
+      "category": "items/equipment",
+      "variant": "default",
+      "file": "assets/models/items/equipment/itm_glider_cape.glb",
+      "root_node": "itm_glider_cape",
+      "pivot": "base",
+      "bounds_blender_m": {
+        "min": [
+          -0.8718884587287903,
+          -0.2696338891983032,
+          2.2177997216488166e-09
+        ],
+        "max": [
+          0.8718884587287903,
+          0.3969999849796295,
+          0.6088176965713501
+        ]
+      },
+      "dimensions_m": [
+        1.743777,
+        0.666634,
+        0.608818
+      ],
+      "mesh_objects": 66,
+      "triangles": 984,
+      "bytes": 124420,
+      "equip_slot": "back",
+      "surface_normal": "+Y",
+      "sockets": [
+        {
+          "node": "itm_glider_cape__socket_release_cord",
+          "kind": "socket_release_cord",
+          "position_blender_m": [
+            0.116,
+            0.12,
+            0.248818
+          ],
+          "matrix_blender_column_major": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.116,
+            0.12,
+            0.248818,
+            1.0
+          ]
+        },
+        {
+          "node": "itm_glider_cape__socket_spine",
+          "kind": "socket_spine",
+          "position_blender_m": [
+            0.0,
+            0.063,
+            0.303818
+          ],
+          "matrix_blender_column_major": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.063,
+            0.303818,
+            1.0
+          ]
+        },
+        {
+          "node": "itm_glider_cape__socket_wing_tip_left",
+          "kind": "socket_wing_tip_left",
+          "position_blender_m": [
+            0.854,
+            -0.21,
+            0.356818
+          ],
+          "matrix_blender_column_major": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.854,
+            -0.21,
+            0.356818,
+            1.0
+          ]
+        },
+        {
+          "node": "itm_glider_cape__socket_wing_tip_right",
+          "kind": "socket_wing_tip_right",
+          "position_blender_m": [
+            -0.854,
+            -0.21,
+            0.356818
+          ],
+          "matrix_blender_column_major": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            -0.854,
+            -0.21,
+            0.356818,
+            1.0
+          ]
+        }
+      ],
+      "mechanical_pivots": [
+        "itm_glider_cape__pivot_wing_left",
+        "itm_glider_cape__pivot_wing_right"
+      ],
+      "animations": [],
+      "preview": "art/previews/items/itm_glider_cape.png"
+    },
+    {
+      "id": "itm_glider_cape_folded",
+      "item_id": "itm_glider_cape",
+      "name_zh": "折叠滑翔披风（收拢）",
+      "category": "items/equipment",
+      "variant": "folded",
+      "file": "assets/models/items/equipment/itm_glider_cape_folded.glb",
+      "root_node": "itm_glider_cape_folded",
+      "pivot": "base",
+      "bounds_blender_m": {
+        "min": [
+          -0.2724834382534027,
+          -0.18950000405311584,
+          1.1966432289511886e-08
+        ],
+        "max": [
+          0.2724834382534027,
+          0.3969999849796295,
+          0.5793882012367249
+        ]
+      },
+      "dimensions_m": [
+        0.544967,
+        0.5865,
+        0.579388
+      ],
+      "mesh_objects": 44,
+      "triangles": 840,
+      "bytes": 95536,
+      "equip_slot": "back",
+      "surface_normal": "+Y",
+      "sockets": [
+        {
+          "node": "itm_glider_cape_folded__socket_release_cord",
+          "kind": "socket_release_cord",
+          "position_blender_m": [
+            0.116,
+            0.12,
+            0.251444
+          ],
+          "matrix_blender_column_major": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.116,
+            0.12,
+            0.251444,
+            1.0
+          ]
+        },
+        {
+          "node": "itm_glider_cape_folded__socket_spine",
+          "kind": "socket_spine",
+          "position_blender_m": [
+            0.0,
+            0.063,
+            0.306444
+          ],
+          "matrix_blender_column_major": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.063,
+            0.306444,
+            1.0
+          ]
+        }
+      ],
+      "mechanical_pivots": [
+        "itm_glider_cape_folded__pivot_wing_left",
+        "itm_glider_cape_folded__pivot_wing_right"
+      ],
+      "animations": [],
+      "preview": "art/previews/items/itm_glider_cape_folded.png"
+    },
+    {
+      "id": "mach_conveyor",
+      "item_id": "mach_conveyor",
+      "name_zh": "模块传送带",
+      "category": "items/industrial",
+      "variant": "default",
+      "file": "assets/models/items/industrial/mach_conveyor.glb",
+      "root_node": "mach_conveyor",
+      "pivot": "base",
+      "bounds_blender_m": {
+        "min": [
+          -0.6800000071525574,
+          -0.75,
+          0.0
+        ],
+        "max": [
+          0.5249999761581421,
+          0.7600000500679016,
+          0.8514999747276306
+        ]
+      },
+      "dimensions_m": [
+        1.205,
+        1.51,
+        0.8515
+      ],
+      "mesh_objects": 88,
+      "triangles": 2632,
+      "bytes": 235804,
+      "equip_slot": null,
+      "surface_normal": "+Y",
+      "sockets": [
+        {
+          "node": "mach_conveyor__socket_input",
+          "kind": "socket_input",
+          "position_blender_m": [
+            0.0,
+            -0.75,
+            0.75
+          ],
+          "matrix_blender_column_major": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            -0.75,
+            0.75,
+            1.0
+          ]
+        },
+        {
+          "node": "mach_conveyor__socket_output",
+          "kind": "socket_output",
+          "position_blender_m": [
+            0.0,
+            0.75,
+            0.75
+          ],
+          "matrix_blender_column_major": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.75,
+            0.75,
+            1.0
+          ]
+        }
+      ],
+      "mechanical_pivots": [],
+      "animations": [],
+      "preview": "art/previews/items/mach_conveyor.png"
+    },
+    {
+      "id": "mach_address_sorter",
+      "item_id": "mach_address_sorter",
+      "name_zh": "地址分拣闸",
+      "category": "items/industrial",
+      "variant": "default",
+      "file": "assets/models/items/industrial/mach_address_sorter.glb",
+      "root_node": "mach_address_sorter",
+      "pivot": "base",
+      "bounds_blender_m": {
+        "min": [
+          -0.7199999690055847,
+          -1.0099999904632568,
+          0.0
+        ],
+        "max": [
+          1.3300000429153442,
+          1.0099999904632568,
+          1.7575000524520874
+        ]
+      },
+      "dimensions_m": [
+        2.05,
+        2.02,
+        1.7575
+      ],
+      "mesh_objects": 129,
+      "triangles": 14540,
+      "bytes": 621252,
+      "equip_slot": null,
+      "surface_normal": "+Y",
+      "sockets": [
+        {
+          "node": "mach_address_sorter__socket_input",
+          "kind": "socket_input",
+          "position_blender_m": [
+            0.0,
+            -1.0,
+            0.75
+          ],
+          "matrix_blender_column_major": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            -1.0,
+            0.75,
+            1.0
+          ]
+        },
+        {
+          "node": "mach_address_sorter__socket_output",
+          "kind": "socket_output",
+          "position_blender_m": [
+            0.0,
+            1.0,
+            0.75
+          ],
+          "matrix_blender_column_major": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            1.0,
+            0.75,
+            1.0
+          ]
+        },
+        {
+          "node": "mach_address_sorter__socket_output_branch",
+          "kind": "socket_output_branch",
+          "position_blender_m": [
+            1.34,
+            0.41,
+            0.75
+          ],
+          "matrix_blender_column_major": [
+            -0.0,
+            -1.0,
+            0.0,
+            0.0,
+            1.0,
+            -0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            1.34,
+            0.41,
+            0.75,
+            1.0
+          ]
+        }
+      ],
+      "mechanical_pivots": [
+        "mach_address_sorter__pivot_gate"
+      ],
+      "animations": [],
+      "preview": "art/previews/items/mach_address_sorter.png"
+    },
+    {
+      "id": "mach_buffer_cabinet",
+      "item_id": "mach_buffer_cabinet",
+      "name_zh": "蓄件缓存柜",
+      "category": "items/industrial",
+      "variant": "default",
+      "file": "assets/models/items/industrial/mach_buffer_cabinet.glb",
+      "root_node": "mach_buffer_cabinet",
+      "pivot": "base",
+      "bounds_blender_m": {
+        "min": [
+          -0.5859999656677246,
+          -0.5990000367164612,
+          0.0
+        ],
+        "max": [
+          0.7800000309944153,
+          0.574999988079071,
+          2.184999942779541
+        ]
+      },
+      "dimensions_m": [
+        1.366,
+        1.174,
+        2.185
+      ],
+      "mesh_objects": 140,
+      "triangles": 11304,
+      "bytes": 545116,
+      "equip_slot": null,
+      "surface_normal": "+Y",
+      "sockets": [
+        {
+          "node": "mach_buffer_cabinet__socket_input",
+          "kind": "socket_input",
+          "position_blender_m": [
+            0.0,
+            -0.58,
+            1.46
+          ],
+          "matrix_blender_column_major": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            -0.58,
+            1.46,
+            1.0
+          ]
+        },
+        {
+          "node": "mach_buffer_cabinet__socket_output",
+          "kind": "socket_output",
+          "position_blender_m": [
+            0.0,
+            0.58,
+            0.75
+          ],
+          "matrix_blender_column_major": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.58,
+            0.75,
+            1.0
+          ]
+        }
+      ],
+      "mechanical_pivots": [
+        "mach_buffer_cabinet__pivot_gate"
+      ],
+      "animations": [],
+      "preview": "art/previews/items/mach_buffer_cabinet.png"
+    },
+    {
+      "id": "mach_pallet_packer",
+      "item_id": "mach_pallet_packer",
+      "name_zh": "托盘打包机",
+      "category": "items/industrial",
+      "variant": "default",
+      "file": "assets/models/items/industrial/mach_pallet_packer.glb",
+      "root_node": "mach_pallet_packer",
+      "pivot": "base",
+      "bounds_blender_m": {
+        "min": [
+          -1.1200000047683716,
+          -0.8619999885559082,
+          0.0
+        ],
+        "max": [
+          1.0795000791549683,
+          0.8399999737739563,
+          2.1050000190734863
+        ]
+      },
+      "dimensions_m": [
+        2.1995,
+        1.702,
+        2.105
+      ],
+      "mesh_objects": 100,
+      "triangles": 6924,
+      "bytes": 369320,
+      "equip_slot": null,
+      "surface_normal": "+Y",
+      "sockets": [
+        {
+          "node": "mach_pallet_packer__socket_input",
+          "kind": "socket_input",
+          "position_blender_m": [
+            0.0,
+            -0.87,
+            0.5
+          ],
+          "matrix_blender_column_major": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            -0.87,
+            0.5,
+            1.0
+          ]
+        },
+        {
+          "node": "mach_pallet_packer__socket_output",
+          "kind": "socket_output",
+          "position_blender_m": [
+            0.0,
+            0.87,
+            0.5
+          ],
+          "matrix_blender_column_major": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.87,
+            0.5,
+            1.0
+          ]
+        },
+        {
+          "node": "mach_pallet_packer__socket_pallet",
+          "kind": "socket_pallet",
+          "position_blender_m": [
+            0.0,
+            0.0,
+            0.5
+          ],
+          "matrix_blender_column_major": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.5,
+            1.0
+          ]
+        }
+      ],
+      "mechanical_pivots": [
+        "mach_pallet_packer__pivot_packing_head",
+        "mach_pallet_packer__pivot_turntable"
+      ],
+      "animations": [],
+      "preview": "art/previews/items/mach_pallet_packer.png"
+    },
+    {
+      "id": "mach_loading_arm",
+      "item_id": "mach_loading_arm",
+      "name_zh": "回转装车臂",
+      "category": "items/industrial",
+      "variant": "default",
+      "file": "assets/models/items/industrial/mach_loading_arm.glb",
+      "root_node": "mach_loading_arm",
+      "pivot": "base",
+      "bounds_blender_m": {
+        "min": [
+          -0.4124999940395355,
+          -0.4429999887943268,
+          0.0
+        ],
+        "max": [
+          0.4124999940395355,
+          1.3600000143051147,
+          1.649999976158142
+        ]
+      },
+      "dimensions_m": [
+        0.825,
+        1.803,
+        1.65
+      ],
+      "mesh_objects": 52,
+      "triangles": 5320,
+      "bytes": 234904,
+      "equip_slot": null,
+      "surface_normal": "+Y",
+      "sockets": [
+        {
+          "node": "mach_loading_arm__socket_grip",
+          "kind": "socket_grip",
+          "position_blender_m": [
+            0.0,
+            1.26,
+            0.87
+          ],
+          "matrix_blender_column_major": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            1.26,
+            0.87,
+            1.0
+          ]
+        },
+        {
+          "node": "mach_loading_arm__socket_input",
+          "kind": "socket_input",
+          "position_blender_m": [
+            0.0,
+            1.26,
+            0.75
+          ],
+          "matrix_blender_column_major": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            1.26,
+            0.75,
+            1.0
+          ]
+        },
+        {
+          "node": "mach_loading_arm__socket_output",
+          "kind": "socket_output",
+          "position_blender_m": [
+            0.0,
+            -1.26,
+            0.75
+          ],
+          "matrix_blender_column_major": [
+            -1.0,
+            -0.0,
+            0.0,
+            0.0,
+            0.0,
+            -1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            -1.26,
+            0.75,
+            1.0
+          ]
+        }
+      ],
+      "mechanical_pivots": [
+        "mach_loading_arm__pivot_arm_base",
+        "mach_loading_arm__pivot_arm_elbow",
+        "mach_loading_arm__pivot_arm_wrist"
+      ],
+      "animations": [],
+      "preview": "art/previews/items/mach_loading_arm.png"
+    },
+    {
+      "id": "mach_pneumatic_launcher",
+      "item_id": "mach_pneumatic_launcher",
+      "name_zh": "气动发射台",
+      "category": "items/industrial",
+      "variant": "default",
+      "file": "assets/models/items/industrial/mach_pneumatic_launcher.glb",
+      "root_node": "mach_pneumatic_launcher",
+      "pivot": "base",
+      "bounds_blender_m": {
+        "min": [
+          -0.800000011920929,
+          -0.7200000286102295,
+          0.0
+        ],
+        "max": [
+          0.7400000095367432,
+          0.7900000214576721,
+          1.0824999809265137
+        ]
+      },
+      "dimensions_m": [
+        1.54,
+        1.51,
+        1.0825
+      ],
+      "mesh_objects": 90,
+      "triangles": 5401,
+      "bytes": 313928,
+      "equip_slot": null,
+      "surface_normal": "+Y",
+      "sockets": [
+        {
+          "node": "mach_pneumatic_launcher__socket_output",
+          "kind": "socket_output",
+          "position_blender_m": [
+            0.0,
+            0.79,
+            0.75
+          ],
+          "matrix_blender_column_major": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.79,
+            0.75,
+            1.0
+          ]
+        },
+        {
+          "node": "mach_pneumatic_launcher__socket_input",
+          "kind": "socket_input",
+          "position_blender_m": [
+            0.0,
+            -0.69,
+            0.75
+          ],
+          "matrix_blender_column_major": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            -0.69,
+            0.75,
+            1.0
+          ]
+        }
+      ],
+      "mechanical_pivots": [
+        "mach_pneumatic_launcher__pivot_launch_barrel",
+        "mach_pneumatic_launcher__pivot_launch_pusher"
+      ],
+      "animations": [],
+      "preview": "art/previews/items/mach_pneumatic_launcher.png"
+    },
+    {
+      "id": "mach_conveyor_corner",
+      "item_id": "mach_conveyor",
+      "name_zh": "模块传送带·弯道",
+      "category": "items/industrial",
+      "variant": "corner",
+      "file": "assets/models/items/industrial/mach_conveyor_corner.glb",
+      "root_node": "mach_conveyor_corner",
+      "pivot": "base",
+      "bounds_blender_m": {
+        "min": [
+          -0.6299999952316284,
+          -0.8066882491111755,
+          0.0
+        ],
+        "max": [
+          0.8116883039474487,
+          0.5152039527893066,
+          0.8500000238418579
+        ]
+      },
+      "dimensions_m": [
+        1.441688,
+        1.321892,
+        0.85
+      ],
+      "mesh_objects": 79,
+      "triangles": 2844,
+      "bytes": 236680,
+      "equip_slot": null,
+      "surface_normal": "+Y",
+      "sockets": [
+        {
+          "node": "mach_conveyor_corner__socket_input",
+          "kind": "socket_input",
+          "position_blender_m": [
+            0.0,
+            -0.75,
+            0.75
+          ],
+          "matrix_blender_column_major": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            -0.75,
+            0.75,
+            1.0
+          ]
+        },
+        {
+          "node": "mach_conveyor_corner__socket_output",
+          "kind": "socket_output",
+          "position_blender_m": [
+            0.75,
+            0.0,
+            0.75
+          ],
+          "matrix_blender_column_major": [
+            -0.0,
+            -1.0,
+            0.0,
+            0.0,
+            1.0,
+            -0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.75,
+            0.0,
+            0.75,
+            1.0
+          ]
+        }
+      ],
+      "mechanical_pivots": [],
+      "animations": [],
+      "preview": "art/previews/items/mach_conveyor_corner.png"
+    },
+    {
+      "id": "mach_conveyor_ramp",
+      "item_id": "mach_conveyor",
+      "name_zh": "模块传送带·缓坡",
+      "category": "items/industrial",
+      "variant": "ramp",
+      "file": "assets/models/items/industrial/mach_conveyor_ramp.glb",
+      "root_node": "mach_conveyor_ramp",
+      "pivot": "base",
+      "bounds_blender_m": {
+        "min": [
+          -0.6800000071525574,
+          -0.7627248167991638,
+          0.0
+        ],
+        "max": [
+          0.5249999761581421,
+          0.7627248167991638,
+          1.1995742321014404
+        ]
+      },
+      "dimensions_m": [
+        1.205,
+        1.52545,
+        1.199574
+      ],
+      "mesh_objects": 88,
+      "triangles": 2632,
+      "bytes": 236652,
+      "equip_slot": null,
+      "surface_normal": "+Y",
+      "sockets": [
+        {
+          "node": "mach_conveyor_ramp__socket_input",
+          "kind": "socket_input",
+          "position_blender_m": [
+            0.0,
+            -0.75,
+            0.75
+          ],
+          "matrix_blender_column_major": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            -0.75,
+            0.75,
+            1.0
+          ]
+        },
+        {
+          "node": "mach_conveyor_ramp__socket_output",
+          "kind": "socket_output",
+          "position_blender_m": [
+            0.0,
+            0.75,
+            1.1
+          ],
+          "matrix_blender_column_major": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.973841,
+            0.22723,
+            0.0,
+            0.0,
+            -0.22723,
+            0.973841,
+            0.0,
+            0.0,
+            0.75,
+            1.1,
+            1.0
+          ]
+        }
+      ],
+      "mechanical_pivots": [],
+      "animations": [],
+      "preview": "art/previews/items/mach_conveyor_ramp.png"
+    },
+    {
+      "id": "mach_receiver_basket",
+      "item_id": "mach_pneumatic_launcher",
+      "name_zh": "气动发射台·接货篮",
+      "category": "items/industrial",
+      "variant": "receiver",
+      "file": "assets/models/items/industrial/mach_receiver_basket.glb",
+      "root_node": "mach_receiver_basket",
+      "pivot": "base",
+      "bounds_blender_m": {
+        "min": [
+          -0.5699999928474426,
+          -0.581000030040741,
+          0.0
+        ],
+        "max": [
+          0.5699999928474426,
+          0.6825000047683716,
+          1.3224999904632568
+        ]
+      },
+      "dimensions_m": [
+        1.14,
+        1.2635,
+        1.3225
+      ],
+      "mesh_objects": 52,
+      "triangles": 6812,
+      "bytes": 276304,
+      "equip_slot": null,
+      "surface_normal": "+Y",
+      "sockets": [
+        {
+          "node": "mach_receiver_basket__socket_input",
+          "kind": "socket_input",
+          "position_blender_m": [
+            0.0,
+            -0.56,
+            0.85
+          ],
+          "matrix_blender_column_major": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            -0.56,
+            0.85,
+            1.0
+          ]
+        },
+        {
+          "node": "mach_receiver_basket__socket_output",
+          "kind": "socket_output",
+          "position_blender_m": [
+            0.0,
+            0.56,
+            0.75
+          ],
+          "matrix_blender_column_major": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.56,
+            0.75,
+            1.0
+          ]
+        }
+      ],
+      "mechanical_pivots": [],
+      "animations": [],
+      "preview": "art/previews/items/mach_receiver_basket.png"
+    },
+    {
+      "id": "magic_feather_stamp",
+      "item_id": "magic_feather_stamp",
+      "name_zh": "羽毛邮票",
+      "category": "items/magic",
+      "variant": "default",
+      "file": "assets/models/items/magic/magic_feather_stamp.glb",
+      "root_node": "magic_feather_stamp",
+      "pivot": "base",
+      "bounds_blender_m": {
+        "min": [
+          -0.07000000029802322,
+          -0.09000000357627869,
+          0.0
+        ],
+        "max": [
+          0.07000000029802322,
+          0.09000000357627869,
+          0.011250000447034836
+        ]
+      },
+      "dimensions_m": [
+        0.14,
+        0.18,
+        0.01125
+      ],
+      "mesh_objects": 39,
+      "triangles": 1504,
+      "bytes": 110820,
+      "equip_slot": null,
+      "surface_normal": "+Z",
+      "sockets": [
+        {
+          "node": "magic_feather_stamp__socket_attach",
+          "kind": "socket_attach",
+          "position_blender_m": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "matrix_blender_column_major": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        },
+        {
+          "node": "magic_feather_stamp__socket_effect",
+          "kind": "socket_effect",
+          "position_blender_m": [
+            0.0,
+            0.018,
+            0.011
+          ],
+          "matrix_blender_column_major": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.018,
+            0.011,
+            1.0
+          ]
+        }
+      ],
+      "mechanical_pivots": [],
+      "animations": [],
+      "preview": "art/previews/items/magic_feather_stamp.png"
+    },
+    {
+      "id": "magic_stasis_tape",
+      "item_id": "magic_stasis_tape",
+      "name_zh": "停时胶带",
+      "category": "items/magic",
+      "variant": "default",
+      "file": "assets/models/items/magic/magic_stasis_tape.glb",
+      "root_node": "magic_stasis_tape",
+      "pivot": "base",
+      "bounds_blender_m": {
+        "min": [
+          -0.09000000357627869,
+          -0.03949999809265137,
+          -2.797528875220223e-09
+        ],
+        "max": [
+          0.14100000262260437,
+          0.03580000251531601,
+          0.18000000715255737
+        ]
+      },
+      "dimensions_m": [
+        0.231,
+        0.0753,
+        0.18
+      ],
+      "mesh_objects": 24,
+      "triangles": 1712,
+      "bytes": 94972,
+      "equip_slot": null,
+      "surface_normal": "-Y",
+      "sockets": [
+        {
+          "node": "magic_stasis_tape__socket_attach",
+          "kind": "socket_attach",
+          "position_blender_m": [
+            0.0,
+            0.0,
+            0.09
+          ],
+          "matrix_blender_column_major": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            -0.0,
+            1.0,
+            0.0,
+            0.0,
+            -1.0,
+            -0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.09,
+            1.0
+          ]
+        },
+        {
+          "node": "magic_stasis_tape__socket_effect",
+          "kind": "socket_effect",
+          "position_blender_m": [
+            0.0,
+            -0.039,
+            0.141
+          ],
+          "matrix_blender_column_major": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            -0.0,
+            1.0,
+            0.0,
+            0.0,
+            -1.0,
+            -0.0,
+            0.0,
+            0.0,
+            -0.039,
+            0.141,
+            1.0
+          ]
+        }
+      ],
+      "mechanical_pivots": [],
+      "animations": [],
+      "preview": "art/previews/items/magic_stasis_tape.png"
+    },
+    {
+      "id": "magic_fold_stamp",
+      "item_id": "magic_fold_stamp",
+      "name_zh": "折角邮票",
+      "category": "items/magic",
+      "variant": "default",
+      "file": "assets/models/items/magic/magic_fold_stamp.glb",
+      "root_node": "magic_fold_stamp",
+      "pivot": "base",
+      "bounds_blender_m": {
+        "min": [
+          -0.07000000029802322,
+          -0.09000000357627869,
+          0.0
+        ],
+        "max": [
+          0.07056568562984467,
+          0.09000000357627869,
+          0.03270837292075157
+        ]
+      },
+      "dimensions_m": [
+        0.140566,
+        0.18,
+        0.032708
+      ],
+      "mesh_objects": 28,
+      "triangles": 1270,
+      "bytes": 88488,
+      "equip_slot": null,
+      "surface_normal": "+Z",
+      "sockets": [
+        {
+          "node": "magic_fold_stamp__socket_attach",
+          "kind": "socket_attach",
+          "position_blender_m": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "matrix_blender_column_major": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        },
+        {
+          "node": "magic_fold_stamp__socket_effect",
+          "kind": "socket_effect",
+          "position_blender_m": [
+            0.0,
+            0.005,
+            0.033
+          ],
+          "matrix_blender_column_major": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.005,
+            0.033,
+            1.0
+          ]
+        }
+      ],
+      "mechanical_pivots": [],
+      "animations": [],
+      "preview": "art/previews/items/magic_fold_stamp.png"
+    },
+    {
+      "id": "magic_turn_sticker",
+      "item_id": "magic_turn_sticker",
+      "name_zh": "地板换向贴",
+      "category": "items/magic",
+      "variant": "default",
+      "file": "assets/models/items/magic/magic_turn_sticker.glb",
+      "root_node": "magic_turn_sticker",
+      "pivot": "base",
+      "bounds_blender_m": {
+        "min": [
+          -0.32499998807907104,
+          -0.32499998807907104,
+          0.0
+        ],
+        "max": [
+          0.32499998807907104,
+          0.32499998807907104,
+          0.040800001472234726
+        ]
+      },
+      "dimensions_m": [
+        0.65,
+        0.65,
+        0.0408
+      ],
+      "mesh_objects": 45,
+      "triangles": 904,
+      "bytes": 84484,
+      "equip_slot": null,
+      "surface_normal": "+Z",
+      "sockets": [
+        {
+          "node": "magic_turn_sticker__socket_attach",
+          "kind": "socket_attach",
+          "position_blender_m": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "matrix_blender_column_major": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        },
+        {
+          "node": "magic_turn_sticker__socket_effect",
+          "kind": "socket_effect",
+          "position_blender_m": [
+            0.015,
+            0.02,
+            0.023
+          ],
+          "matrix_blender_column_major": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.015,
+            0.02,
+            0.023,
+            1.0
+          ]
+        }
+      ],
+      "mechanical_pivots": [],
+      "animations": [],
+      "preview": "art/previews/items/magic_turn_sticker.png"
+    },
+    {
+      "id": "magic_slip_mist",
+      "item_id": "magic_slip_mist",
+      "name_zh": "溜溜雾瓶",
+      "category": "items/magic",
+      "variant": "default",
+      "file": "assets/models/items/magic/magic_slip_mist.glb",
+      "root_node": "magic_slip_mist",
+      "pivot": "base",
+      "bounds_blender_m": {
+        "min": [
+          -0.07800000160932541,
+          -0.07200000435113907,
+          0.0
+        ],
+        "max": [
+          0.07800000160932541,
+          0.06707999855279922,
+          0.31049999594688416
+        ]
+      },
+      "dimensions_m": [
+        0.156,
+        0.13908,
+        0.3105
+      ],
+      "mesh_objects": 44,
+      "triangles": 1332,
+      "bytes": 109516,
+      "equip_slot": null,
+      "surface_normal": "-Y",
+      "sockets": [
+        {
+          "node": "magic_slip_mist__socket_attach",
+          "kind": "socket_attach",
+          "position_blender_m": [
+            0.0,
+            0.0,
+            0.121
+          ],
+          "matrix_blender_column_major": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.121,
+            1.0
+          ]
+        },
+        {
+          "node": "magic_slip_mist__socket_effect",
+          "kind": "socket_effect",
+          "position_blender_m": [
+            0.0,
+            -0.062,
+            0.29
+          ],
+          "matrix_blender_column_major": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            -0.0,
+            1.0,
+            0.0,
+            0.0,
+            -1.0,
+            -0.0,
+            0.0,
+            0.0,
+            -0.062,
+            0.29,
+            1.0
+          ]
+        }
+      ],
+      "mechanical_pivots": [],
+      "animations": [],
+      "preview": "art/previews/items/magic_slip_mist.png"
+    },
+    {
+      "id": "magic_wind_bottle",
+      "item_id": "magic_wind_bottle",
+      "name_zh": "口袋风瓶",
+      "category": "items/magic",
+      "variant": "default",
+      "file": "assets/models/items/magic/magic_wind_bottle.glb",
+      "root_node": "magic_wind_bottle",
+      "pivot": "base",
+      "bounds_blender_m": {
+        "min": [
+          -0.08399999886751175,
+          -0.08049999922513962,
+          0.0
+        ],
+        "max": [
+          0.08399999886751175,
+          0.061319999396800995,
+          0.41999998688697815
+        ]
+      },
+      "dimensions_m": [
+        0.168,
+        0.14182,
+        0.42
+      ],
+      "mesh_objects": 51,
+      "triangles": 1516,
+      "bytes": 125728,
+      "equip_slot": null,
+      "surface_normal": "-Y",
+      "sockets": [
+        {
+          "node": "magic_wind_bottle__socket_attach",
+          "kind": "socket_attach",
+          "position_blender_m": [
+            0.0,
+            0.0,
+            0.145
+          ],
+          "matrix_blender_column_major": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.145,
+            1.0
+          ]
+        },
+        {
+          "node": "magic_wind_bottle__socket_effect",
+          "kind": "socket_effect",
+          "position_blender_m": [
+            0.0,
+            -0.083,
+            0.315
+          ],
+          "matrix_blender_column_major": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            -0.0,
+            1.0,
+            0.0,
+            0.0,
+            -1.0,
+            -0.0,
+            0.0,
+            0.0,
+            -0.083,
+            0.315,
+            1.0
+          ]
+        }
+      ],
+      "mechanical_pivots": [],
+      "animations": [],
+      "preview": "art/previews/items/magic_wind_bottle.png"
+    }
+  ],
+  "main_item_count": 18,
+  "integration_status": "art_assets_only",
+  "notes_zh": [
+    "模型与预览已制作；装备效果、流水线与魔法玩法尚未接入。",
+    "左右装备、机械枢轴与接口保留命名节点，未提供碰撞或玩法组件。",
+    "材质为项目共享内置配色，不依赖外部图片。",
+    "源库展示位置不参与GLB导出；独立模型的根原点为零。"
+  ]
+}
