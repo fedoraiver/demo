@@ -639,7 +639,8 @@ registry['kira-output']={name:'Kira UI / SFX 通道',kind:'Engine',description:'
 b += card(2290,3235,690,130,'kira-output','Kira UI / SFX 通道',['设备输出；退出统一停止','ambience 不自动播放'],'engine','small');
 b += edge([[424,3300],[468,3300]],'','write',null,['audio_strain','resource.SoundRequestMessages'],false);
 b += edge([[424,3485],[468,3485],[468,3300]],'','write',null,['audio_land','resource.SoundRequestMessages'],false);
-b += edge([[468,3300],[512,3300]],'W','write',[490,3300],['audio_strain','audio_land','interaction','resource.SoundRequestMessages']);
+// 汇合末段较短，标签置于线条上方，避免白底遮住整段连线和目标箭头。
+b += edge([[468,3300],[512,3300]],'W','write',[488,3275],['audio_strain','audio_land','interaction','resource.SoundRequestMessages']);
 b += edge([[868,3300],[971,3300]],'读取','read',[919,3300],['resource.SoundRequestMessages','audio_play']);
 b += edge([[1600,3280],[1457,3280]],'R 策略','read',[1530,3280],['resource.SoundBank','audio_play']);
 b += edge([[1457,3320],[1600,3320]],'W 实例','write',[1530,3320],['audio_play','resource.SoundBank']);
