@@ -8,7 +8,7 @@ use avian3d::prelude::{
     SpatialQueryFilter,
 };
 use bevy::{
-    animation::{AnimationPlugin, graph::AnimationNodeType},
+    animation::{AnimationPlugin, RepeatAnimation, graph::AnimationNodeType},
     asset::AssetPlugin,
     camera::visibility::{InheritedVisibility, VisibilityPlugin},
     ecs::system::SystemState,
@@ -530,11 +530,13 @@ fn real_island_loading_assembles_independent_roots_and_solid_geometry() {
             .iter_descendants(visual)
             .collect();
         descendants.iter().any(|&entity| {
-            world.get::<AnimationPlayer>(entity).is_some()
-                && world.get::<AnimationGraphHandle>(entity).is_some()
-                && world
-                    .get::<AnimationTransitions>(entity)
-                    .is_some_and(|transitions| transitions.get_main_animation().is_some())
+            world.get::<AnimationGraphHandle>(entity).is_some()
+                && world.get::<AnimationPlayer>(entity).is_some_and(|player| {
+                    player.playing_animations().count() == 16
+                        && player
+                            .playing_animations()
+                            .any(|(_, active)| active.weight() > 0.0)
+                })
         })
     });
     let world = app.world_mut();
@@ -710,29 +712,70 @@ fn real_island_loading_assembles_independent_roots_and_solid_geometry() {
         .collect();
     assert_eq!(players.len(), 1);
     let player = players[0];
-    let idle_node = world
-        .get::<AnimationTransitions>(player)
-        .unwrap()
-        .get_main_animation()
+    // 所有片段持续关联，动作由权重选择；没有物理步的装配环境尚未接地，应使用 Fall。
+    let animation_player = world.get::<AnimationPlayer>(player).unwrap();
+    assert_eq!(animation_player.playing_animations().count(), 16);
+    let (dominant_node, dominant_active) = animation_player
+        .playing_animations()
+        .max_by(|(_, a), (_, b)| a.weight().total_cmp(&b.weight()))
         .unwrap();
-    assert!(
-        world
-            .get::<AnimationPlayer>(player)
-            .unwrap()
-            .is_playing_animation(idle_node)
-    );
+    assert!(dominant_active.weight() > 0.99);
     let graph = world
         .resource::<Assets<AnimationGraph>>()
         .get(&world.get::<AnimationGraphHandle>(player).unwrap().0)
         .unwrap();
-    let AnimationNodeType::Clip(clip) = &graph[idle_node].node_type else {
+    let AnimationNodeType::Clip(clip) = &graph[*dominant_node].node_type else {
         panic!("Expected the courier main animation to be a clip");
     };
     let courier = world
         .resource::<Assets<Gltf>>()
         .get(&world.get::<CourierVisual>(visual).unwrap().0)
         .unwrap();
-    assert_eq!(clip.id(), courier.named_animations["Idle"].id());
+    // 真正加载全部方向与持箱动作；GLB 改名或丢失曲线必须在无窗口回归中暴露。
+    let clips = world.resource::<Assets<AnimationClip>>();
+    for name in [
+        "Idle",
+        "Walk",
+        "Walk_Backward",
+        "Walk_Left",
+        "Walk_Right",
+        "Carry_Idle",
+        "Carry_Walk",
+        "Carry_Backward",
+        "Carry_Left",
+        "Carry_Right",
+        "Jump",
+        "Fall",
+        "Carry_Jump",
+        "Carry_Fall",
+        "Land",
+        "Carry_Land",
+    ] {
+        let clip = clips.get(&courier.named_animations[name]).unwrap();
+        assert!(
+            (clip.duration() - 0.8).abs() < 0.0001 && !clip.curves().is_empty(),
+            "Courier animation {name} must retain a complete 0.8-second clip"
+        );
+    }
+    assert!(!world.get::<CharacterMotion>(character).unwrap().grounded);
+    assert_eq!(clip.id(), courier.named_animations["Fall"].id());
+    for (node, active) in animation_player.playing_animations() {
+        let AnimationNodeType::Clip(handle) = &graph[*node].node_type else {
+            panic!("Expected the courier animation to be a clip");
+        };
+        // 起跳与落地保持一次性尾姿；其他动作保留循环，不因图中的排列位置判断。
+        let one_shot = ["Jump", "Carry_Jump", "Land", "Carry_Land"]
+            .iter()
+            .any(|name| courier.named_animations[*name].id() == handle.id());
+        assert_eq!(
+            active.repeat_mode(),
+            if one_shot {
+                RepeatAnimation::Never
+            } else {
+                RepeatAnimation::Forever
+            }
+        );
+    }
     assert!(
         world
             .resource::<Assets<AnimationClip>>()

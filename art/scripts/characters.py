@@ -1,7 +1,5 @@
 """低多边形岛屿居民：独立角色资产、可导出骨架和主角循环动作。"""
 
-from itertools import product
-from math import cos, pi, sin, sqrt
 
 import bpy
 
@@ -210,125 +208,11 @@ def _character(h, name, style):
     return a, rig
 
 
-def _walk_leg_angles(step):
-    """腿部动画和接地计算使用同一组角度，避免以后调整步幅时产生偏差。"""
-    return .39 * step, -.47 * max(0, -step), -.12 * step
-
-
-def _rotate_about_bone(point, head, tail, angle):
-    """纯数学重现零 roll 骨骼的局部 X 旋转，不读取 Blender 世界。"""
-    direction = tuple(tail[i] - head[i] for i in range(3))
-    length = sqrt(sum(value * value for value in direction))
-    x, y, z = (value / length for value in direction)
-    # 这里的骨骼均不朝向 -Y，零 roll 矩阵的局部 X 轴有稳定的闭式表达。
-    # 使用骨骼局部轴，而非世界 X，才能保留左右腿轻微外展的真实运动。
-    axis = (1 - x * x / (1 + y), -x, -x * z / (1 + y))
-    relative = tuple(point[i] - head[i] for i in range(3))
-    dot = sum(axis[i] * relative[i] for i in range(3))
-    cross = (axis[1] * relative[2] - axis[2] * relative[1],
-             axis[2] * relative[0] - axis[0] * relative[2],
-             axis[0] * relative[1] - axis[1] * relative[0])
-    c, s = cos(angle), sin(angle)
-    return tuple(head[i] + relative[i] * c + cross[i] * s + axis[i] * dot * (1 - c)
-                 for i in range(3))
-
-
-def _beveled_box_points(center, size, bevel):
-    """与鞋部一段 BEVEL 的角点对应，避免用未倒角包围盒高估接地补偿。"""
-    for signs in product((-1, 1), repeat=3):
-        for untrimmed in range(3):
-            yield tuple(center[i] + signs[i] * (size[i] / 2 - (0 if i == untrimmed else bevel))
-                        for i in range(3))
-
-
-def _walk_foot_height(sign, angles):
-    """计算一个脚的最低蒙皮顶点；髋部尚未平移，坐标保持 Z-up。"""
-    thigh, shin, foot = angles
-    joints = (
-        ((sign * .116, 0, .115), (sign * .116, .155, .06), foot),
-        ((sign * .116, .013, .548), (sign * .116, 0, .115), shin),
-        ((sign * .108, 0, .945), (sign * .116, .013, .548), thigh),
-    )
-    shoe_parts = (
-        ((sign * .116, .063, .079), (.145, .265, .140), .024),
-        ((sign * .116, .069, .015), (.153, .272, .030), .008),
-        ((sign * .116, .171, .069), (.134, .045, .088), .014),
-    )
-    lowest = float("inf")
-    for center, size, bevel in shoe_parts:
-        for point in _beveled_box_points(center, size, bevel):
-            # 子骨骼先变换，再叠加父骨骼，等价于刚性权重的 FK 蒙皮。
-            for head, tail, angle in joints:
-                point = _rotate_about_bone(point, head, tail, angle)
-            lowest = min(lowest, point[2])
-    return lowest
-
-
-def _walk_ground_offset(phase):
-    """最低支撑脚距地约 4 mm；微小余量抵消采样帧之间的插值误差。"""
-    floor = min(_walk_foot_height(sign, _walk_leg_angles(sin(phase + sign * pi / 2)))
-                for sign in (1, -1))
-    return .004 - floor
-
-
 def _animations(rig):
-    """用标准关键帧创建三个独立循环，不依赖旧版 Action.fcurves API。"""
-    rig.animation_data_create()
-    action_names = []
-    definitions = (("Idle", (1, 7, 13, 19, 25)),
-                   ("Walk", range(1, 26)),
-                   ("Carry_Idle", (1, 7, 13, 19, 25)))
-    for label, frames in definitions:
-        action = bpy.data.actions.new(label)
-        rig.animation_data.action = action
-        action.use_fake_user = True
-        for frame in frames:
-            phase = 2 * pi * (frame - 1) / 24
-            wave = sin(phase)
-            for bone in rig.pose.bones:
-                bone.rotation_euler = (0, 0, 0)
-                bone.location = (0, 0, 0)
-            if label == "Walk":
-                for side, sign in (("L", 1), ("R", -1)):
-                    step = sin(phase + sign * pi / 2)
-                    thigh, shin, foot = _walk_leg_angles(step)
-                    rig.pose.bones["thigh." + side].rotation_euler.x = thigh
-                    rig.pose.bones["shin." + side].rotation_euler.x = shin
-                    rig.pose.bones["foot." + side].rotation_euler.x = foot
-                    rig.pose.bones["upper_arm." + side].rotation_euler.x = -.28 * step
-                    rig.pose.bones["forearm." + side].rotation_euler.x = .12 + .07 * max(0, step)
-                # 髋骨局部 +Y 对应世界 +Z；逐帧降低重心，使至少一个脚落地。
-                rig.pose.bones["hips"].location.y = _walk_ground_offset(phase)
-                rig.pose.bones["spine"].rotation_euler.y = .045 * wave
-                rig.pose.bones["head"].rotation_euler.y = -.025 * wave
-            elif label == "Carry_Idle":
-                for side in ("L", "R"):
-                    rig.pose.bones["upper_arm." + side].rotation_euler.x = 1.06 + .012 * wave
-                    rig.pose.bones["forearm." + side].rotation_euler.x = .61
-                    rig.pose.bones["hand." + side].rotation_euler.x = -.19
-                rig.pose.bones["spine"].rotation_euler.x = -.035 + .012 * wave
-                rig.pose.bones["head"].rotation_euler.x = .035 - .01 * wave
-                rig.pose.bones["hips"].location.y = .008 * wave
-            else:
-                rig.pose.bones["spine"].rotation_euler.x = .018 * wave
-                rig.pose.bones["head"].rotation_euler.z = .015 * wave
-                for side in ("L", "R"):
-                    rig.pose.bones["forearm." + side].rotation_euler.x = .065 + .01 * wave
-            # 全部骨骼显式设键，切换动作时不会继承另一动作的未覆盖姿态。
-            for bone in rig.pose.bones:
-                bone.keyframe_insert(data_path="rotation_euler", frame=frame, group=bone.name)
-                bone.keyframe_insert(data_path="location", frame=frame, group=bone.name)
-        action_names.append(action.name)
-        track = rig.animation_data.nla_tracks.new()
-        track.name = label
-        strip = track.strips.new(label, 1, action)
-        # 三轨作为导出容器，避免在 Blender 预览中把三个动作叠加计算。
-        strip.mute = True
-        strip.extrapolation = "NOTHING"
-    rig.animation_data.action = bpy.data.actions[action_names[0]]
-    rig["animation_clips"] = ",".join(action_names)
-    rig.parent["animation_clips"] = ",".join(action_names)
-    bpy.context.scene.frame_set(1)
+    """主角动作由统一接触约束工具生成，完整重建与单角色导出共用同一来源。"""
+    from courier_actions import add_sole_markers, build_actions
+    add_sole_markers(rig)
+    build_actions(rig)
 
 
 def build_characters(h):
