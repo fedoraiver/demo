@@ -115,6 +115,8 @@ cargo test --locked ui::
 
 窗口策略回归可用 `cargo test --locked window_policy::` 选择：验证初始 16:9 和最小尺寸、无窗口应用不会安装原生后端、Windows 拖边与拖角锚点、角内拖缩小、不同 DPI 的物理最小尺寸、最大化工作区适配与重复请求幂等。平台无关几何与 Windows 桥接共用源码，macOS 主机也运行这些数学回归；macOS 另检查工作区内容尺寸拟合。窗口线程、原生消息、跨屏和最大化的运行效果仍须用户手动验证。
 
+Windows MSVC 的启动依赖还需检查最终链接产物：[build.rs](../build.rs) 应为游戏和测试程序嵌入 Common Controls v6 清单。执行 `cargo build --locked` 与 `cargo test --locked --no-run window_policy::` 后，使用 PE 资源检查工具读取游戏 EXE 和 Cargo 输出中指定的测试 EXE，确认存在 `RT_MANIFEST`（资源类型 24、ID 1），且依赖包含 `Microsoft.Windows.Common-Controls`、版本 `6.0.0.0`。启用共享 `build-dir` 时，测试程序位置以 Cargo 输出为准；只有 `cargo check` 通过或看到静态导入名称不能代替清单检查。此检查不执行游戏，测试仍须遵守无窗口边界；Windows GNU 不适用本构建脚本的 MSVC 清单参数。
+
 运行 GLB 随仓库分发，完整海岛的资源与物理检查见 [海岛资源与无窗口验证](#海岛资源与无窗口验证)。主菜单展示资产的无窗口约定检查随标准测试执行；确认 [README](../README.md#美术与字体准备) 指定资产完整后，也可单独运行：
 
 ```powershell
@@ -237,6 +239,8 @@ cargo run --locked
 ```
 
 先按 [README](../README.md#美术与字体准备) 准备 GLB 与字体，再检查菜单与原型。以下步骤均为用户手动执行，排版、动画、真实输入手感与运行效果不能由 Agent 的编译或无窗口测试代替。
+
+Windows MSVC 用户先确认上述启动命令不再以 `0xc0000139`（`STATUS_ENTRYPOINT_NOT_FOUND`）退出，能够显示主菜单并创建本次 `logs/unix-<时间戳>_<会话UUID>.log`。随后按下方菜单验收的第 5、6 步检查 16:9 拖拽、最大化与 DPI，并核对窗口策略安装日志；正常退出后保留会话日志。若仍在应用初始化前失败而没有新日志，应保留终端的退出码与构建目标信息，不能据此判断游戏内窗口策略已运行。
 
 ### 英文菜单与暂停验收
 
