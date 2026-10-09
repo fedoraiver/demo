@@ -163,6 +163,8 @@ cargo build --release --locked
 
 `--locked` 确保使用提交的依赖锁定文件，需要变化时直接报错。构建参数以 Cargo 文件为准。后续添加外部资源时，发布包也需要包含对应的 `assets` 文件。
 
+Windows MSVC 目标由根 [build.rs](../build.rs) 在链接时嵌入 `Microsoft.Windows.Common-Controls` v6 清单，覆盖开发、发布及测试程序。原生窗口策略按名称导入的 `GetWindowSubclass` 依赖该清单选择 v6 `comctl32.dll`；仅编译检查通过不能确认最终程序已携带清单，还需按 [验证指南](testing.md#菜单设置与资产的无窗口验证) 检查链接产物。构建脚本按目标平台与 ABI 判断，只向 Windows MSVC 传递清单链接参数，Windows GNU 与其他目标不使用这些参数。
+
 多个 worktree 可以共享 crates 的编译中间产物，同时保留各自 `target/` 中的最终程序。本机使用支持 `build.build-dir` 的 Cargo，在各 worktree 被 Git 本地排除的 `.cargo/config.toml` 中，将 `[build] build-dir` 指向同一专用缓存目录，例如主检出的 `tmp/shared-crates/`；不要配置共享 `target-dir`，也不要提交机器专属路径。这里复用的是依赖编译结果、构建脚本输出和增量编译数据，区别于 `CARGO_HOME` 中的源码下载缓存。工具链、目标平台、构建模式、依赖特性和编译参数一致时，Cargo 可复用匹配的依赖产物；同时构建可能等待共享目录锁。运行或测试仍须从对应 worktree 执行，保证代码与资源来源一致；清理共享编译目录会同时移除其他 worktree 可复用的缓存。配置说明见 [Cargo 构建目录](https://doc.rust-lang.org/cargo/reference/config.html#buildbuild-dir)。
 
 构建检查由 Agent 执行；游戏启动和实际游玩由用户完成。用户启动方式见 [README](../README.md)，检查命令和验收流程集中在 [验证指南](testing.md)。

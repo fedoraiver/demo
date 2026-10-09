@@ -60,6 +60,8 @@ UI 控件与主菜单舞台使用 Bevy 0.19 的 `bsn!`、`bsn_list!` 和返回 `
 
 macOS 在真实 `NSWindow` 上设置 `contentAspectRatio`，按扣除标题栏后的工作区更新内容最小／最大尺寸，并禁止系统全屏与全屏平铺，保留 Winit 原有代理。普通拖拽由 AppKit 应用尺寸前约束；Zoom 或桌面平铺等系统请求若绕过该属性，则只在实际尺寸违反比例或边界时补充校准并记录原因。Windows 使用 `SetWindowSubclass` 在 `WM_SIZING`、`WM_WINDOWPOSCHANGING` 应用请求前约束客户区，保留 `DefSubclassProc` 子类链；最大化转换为工作区内最大的普通 16:9 窗口，DPI 消息保持 Winit 正常处理。窗口管理不能用玩家动作表达，因此此适配只处理窗口消息，键鼠业务输入仍走现有 Enhanced Input 与 Bevy UI。Windows 物理客户区使用 `(16k, 9k)`，几何计算与锚点回归共用 [geometry.rs](../src/window_policy/geometry.rs)；普通拖拽不靠每帧事后回弹校正。
 
+Windows MSVC 构建由根 [build.rs](../build.rs) 为游戏和测试程序嵌入 Common Controls v6 清单，使系统在进入 `main` 前为 `GetWindowSubclass` 等静态导入选择 v6 `comctl32.dll`。缺少清单时，默认 DLL 可能不提供 `GetWindowSubclass` 的名称导出，程序会以 `0xc0000139`（`STATUS_ENTRYPOINT_NOT_FOUND`）在应用初始化前退出，尚不能进入窗口策略的失败回退或创建会话日志。该链接配置仅适用于 Windows MSVC，其他目标不传递 MSVC 清单参数；原有平台窗口策略保持上述职责。
+
 自动宽度的 `Text` 节点保留文本的自然测量，避免短文字在可收缩布局中被压成零宽。键帽、帧率值、音量百分比与 `Muted`、按钮标题和帮助编号都使用这一规则；容器按实际布局需要设置尺寸与折行约束。BSN 组件检查不能代替最终字体与排版的用户目测，重点检查短标签和数字是否完整可见。
 
 文字零宽与鼠标离开后高亮残留的原因及预防要求统一见 [UI 布局与高亮规范](development.md#ui-布局与高亮规范)，对应的字体测量、悬停循环和输入来源回归见 [文字布局与高亮回归](testing.md#文字布局与高亮回归)。
