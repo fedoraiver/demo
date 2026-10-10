@@ -10,7 +10,8 @@ const defaultRoot = path.resolve(path.dirname(filename), '../..');
 const diagramDirectory = 'docs/diagrams';
 const outputs = ['ecs-architecture.html', 'ecs-source.html', 'ecs-overview.svg',
   'ecs-schedules.svg', 'ecs-relationships.svg', 'ecs-events.svg'];
-const inputs = ['ecs-data.json', 'build-ecs.mjs', 'source-viewer.mjs', 'check-ecs.mjs', 'diagram-geometry.mjs'];
+// 共享的编辑器入口也必须来自候选索引，不能依赖工作区中未暂存的模块。
+const inputs = ['ecs-data.json', 'build-ecs.mjs', 'source-viewer.mjs', 'source-editor.mjs', 'check-ecs.mjs', 'diagram-geometry.mjs'];
 const hash = value => crypto.createHash('sha256').update(value).digest('hex');
 const normalizedText = value => value.toString('utf8').replaceAll('\r\n', '\n');
 function runGit(root, args, { allowFailure = false, input } = {}) {
