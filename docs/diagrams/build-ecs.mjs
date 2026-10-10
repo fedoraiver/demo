@@ -219,7 +219,7 @@ registry['app-main'] = { name:'main / App',kind:'App',description:'创建 App �
 b += `<g class="node entity" ${register('app-main',registry['app-main'])}>${frame(30, 102, 1500, 224, '«App» main：装配应用与共享 World', 'Plugin 负责注册；下方位置不代表插件内部系统的执行先后。')}</g>`;
 const mainLines = fs.readFileSync(path.join(dir, '../../src/main.rs'), 'utf8').split('\n');
 const pluginDescriptions = {
-  DefaultPlugins:'引擎输入、窗口、时间、资产、动画、变换、渲染、原生 ScrollbarPlugin 与统一日志。', WindowPolicyPlugin:'窗口线程安装、刷新与清理原生 16:9 策略。', EguiPlugin:'准备 Egui 上下文与界面绘制。', WorldInspectorPlugin:'通过反射检查 ECS；仅 Running 显示。', AppFlowPlugin:'主菜单/游戏/暂停生命周期与时间门控。', GameUiPlugin:'BSN 页面、菜单输入、草稿与展示舞台。', GameAudioPlugin:'Kira 预加载、策略、UI/SFX 输出与退出停止。', SettingsPlugin:'设置资源与限帧。', GameplayPlugin:'玩法资源、反射类型和固定模拟链。', PlayerInputPlugin:'输入上下文、动作与角色意图 Observer。', CameraControlPlugin:'相机 Observer、捕获、视角与姿态同步。', ArtAssetsPlugin:'五份运行 GLB 强句柄、加载状态与失败报告。', CharacterAnimationPlugin:'主角命名动作绑定与实际速度/持物切换。', IslandRecoveryPlugin:'固定步落水恢复与临时插值暂停生命周期。', PrototypeScenePlugin:'BSN 海岛准备、静态碰撞与动态业务装配。', StartupLogPlugin:'集中注册四项只读启动日志。'
+  DefaultPlugins:'引擎输入、窗口、时间、资产、动画、变换、渲染、原生 ScrollbarPlugin 与统一日志。', WindowPolicyPlugin:'窗口线程安装、刷新与清理原生 16:9 策略。', ProjectInspectorPlugin:'封装 Egui、世界检查器与启用日志；仅 Running 显示。', AppFlowPlugin:'主菜单/游戏/暂停生命周期与时间门控。', GameUiPlugin:'BSN 页面、菜单输入、草稿与展示舞台。', GameAudioPlugin:'Kira 预加载、策略、UI/SFX 输出与退出停止。', SettingsPlugin:'设置资源、限帧与固定时间步启动日志。', GameplayPlugin:'玩法资源、反射类型、固定模拟链与配置启动日志。', PlayerInputPlugin:'输入上下文、动作与角色意图 Observer。', CameraControlPlugin:'相机 Observer、捕获、视角、姿态同步及其启动日志。', ArtAssetsPlugin:'五份运行 GLB 强句柄、加载状态与失败报告。', CharacterAnimationPlugin:'主角命名动作绑定与实际速度/持物切换。', IslandRecoveryPlugin:'固定步落水恢复与临时插值暂停生命周期。', PrototypeScenePlugin:'BSN 海岛准备、静态碰撞与动态业务装配。'
 };
 // 候选索引可能只包含部分功能；插件只从该版本 main 的实际装配位置读取。
 const plugins = Object.keys(pluginDescriptions).map(name => ({name, line:mainLines.findIndex(l => l.trim() === name || l.trim().startsWith(name + ',') || l.trim().startsWith(name + '::')) + 1})).filter(plugin => plugin.line > 0);
@@ -266,6 +266,12 @@ b += '</g>';
 // GameplayPlugin 内部安装物理插件，不把内部注册伪装成 main 的额外插件。
 const nestedPlugins = [['DemoPhysicsPlugin','src/gameplay.rs','add_plugins((DemoPhysicsPlugin, SoundEventsPlugin))'],['PhysicsPlugins::default()','src/physics.rs','add_plugins(PhysicsPlugins::default())']];
 nestedPlugins.forEach(([name,file,needle],i)=>{const id=`plugin-physics-${i}`;registry[id]={name,kind:'Plugin',description:i?'Avian 默认 FixedPostUpdate 求解及物理插值插件。':'GameplayPlugin 内部安装，注册重力同步和碰撞日志。',notes:['内部插件注册关系；不表示系统执行顺序。'],source:{path:file,line:fs.readFileSync(path.join(dir,'../..',file),'utf8').split('\n').findIndex(line=>line.includes(needle))+1}};b+=card(1575+i*505,112,475,135,id,name,['GameplayPlugin → DemoPhysicsPlugin → Avian'],'engine','small');});
+// 检查器内部装配单独标明，保持 Egui 先构建且不暗示 Startup 日志全序。
+if (plugins.some(plugin => plugin.name === 'ProjectInspectorPlugin')) {
+  const inspectorLines = fs.readFileSync(path.join(dir, '../../src/inspector.rs'), 'utf8').split('\n');
+  b += text(1575, 418, 'ProjectInspectorPlugin 内部装配：Egui 先于世界检查器', 'note');
+  ['EguiPlugin','WorldInspectorPlugin'].forEach((name,i)=>{const id=`plugin-inspector-${i}`;registry[id]={id,name,kind:'Plugin',description:i?'通过反射检查 ECS；run_if(gameplay_running) 仅在 InGame / Running 显示。':'准备 Egui 上下文与界面绘制。',notes:['ProjectInspectorPlugin 内部按 EguiPlugin → WorldInspectorPlugin 注册。','插件构建顺序不等于系统执行顺序；启用日志为独立 Startup 系统。'],source:{path:'src/inspector.rs',line:inspectorLines.findIndex(line=>line.trim().startsWith(name+'::'))+1}};b+=compact(1575+i*505,430,475,32,id,name,'plugin');});
+}
 // 状态门控单独成区，避免将暂停误画成销毁并重建玩法场景。
 b += frame(30, 1060, 2520, 410, 'AppFlow · 状态、场景与输入门控', 'AppState 控制场景生命周期；PlayState 是 InGame 内的子状态；MenuState 保存页面与返回来源。');
 b += card(55, 1145, 700, 160, 'resource.AppState', 'MainMenu', ['OnEnter：show_main_menu → suspend_input', '生成菜单 GLB 展台；玩法输入 / 物理停用', 'Start Game → InGame，加载海岛，再等待碰撞就绪生成角色'], 'resource', 'small');
