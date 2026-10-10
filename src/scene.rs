@@ -18,7 +18,10 @@ use crate::{
     },
     input::spawn_keyboard_controller,
     island_recovery::SpawnPoint,
-    physics::{camera_query_layers, character_body, parcel_body, world_collision_layers},
+    physics::{
+        camera_query_layers, character_body, character_collider, parcel_body,
+        world_collision_layers,
+    },
 };
 
 /// 游戏入口建立加载视图，就绪后装配完整海岛；退出时清理整套业务与视觉实体。
@@ -156,6 +159,7 @@ fn prepare_island(
     metadata: Query<(&GltfExtras, &Transform)>,
     nodes: Query<(&Transform, Option<&Name>, Option<&Mesh3d>)>,
     meshes: Res<Assets<Mesh>>,
+    config: Res<PrototypeConfig>,
     mut state: ResMut<ArtLoadState>,
 ) {
     if *state != ArtLoadState::Ready {
@@ -299,7 +303,7 @@ fn prepare_island(
                 pose: Transform::from_translation(player.translation + offset),
             });
         }
-        let collider_count = colliders.len();
+        let collider_count = colliders.len() + npcs.len();
         for (parent, collider) in colliders {
             commands.spawn_scene(bsn! {
                 Name("Island static collider")
@@ -333,13 +337,29 @@ fn prepare_island(
         }
         for &entity in &npcs {
             commands.entity(entity).insert(DisplayNpc);
+            // 展示 NPC 保持固定站位；World 层让忽略玩家身体的持握箱仍受到阻挡。
+            // 独立碰撞子体沿用模型脚底原点，保留导入姿态并随地图层级清理。
+            let collider = commands
+                .spawn_scene(bsn! {
+                    Name("Display NPC collider")
+                    IslandCollider
+                    Transform
+                    template_value(RigidBody::Static)
+                    template_value(character_collider(&config))
+                    template_value(world_collision_layers())
+                    ChildOf(entity)
+                })
+                .id();
+            info!(target: "demo::scene", npc = ?entity, ?collider,
+                height = config.character_height, radius = config.character_radius,
+                reason = "npc_collision_ready", "Display NPC collider initialized");
         }
         commands
             .entity(map)
             .remove::<IslandPending>()
             .insert(IslandReady { player, items });
         info!(target: "demo::scene", ?map, collider_count, camera_collider_count, ramp_count,
-            npc_count = npcs.len(), replaced_instances = remove.len(),
+            npc_count = npcs.len(), npc_collider_count = npcs.len(), replaced_instances = remove.len(),
             reason = "map_geometry_ready", "Island colliders ready");
     }
 }

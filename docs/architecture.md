@@ -87,6 +87,7 @@ Windows MSVC 构建由根 [build.rs](../build.rs) 为游戏和测试程序嵌入
 - **控制者实体**保存 `PlayerId`、`GameplayContext`、设备绑定、`ControlsCharacter` 和 `ControlsCamera`。`PlayerId` 表达业务身份，两个控制组件使用运行时 `Entity` 指向角色与相机。
 - **角色业务实体**保存 `Character`、`CharacterIntent`、`CharacterMotion`、`SpawnPoint`、动态 `RigidBody`、胶囊 `Collider` 和 Avian 运动组件。移动能力与控制设备分离；物理位置与速度由 Avian 管理，`Transform` 用于插值呈现，角色根位置对应脚底。锁定刚体旋转避免碰撞后倾倒，水平朝向仍由视角系统控制。
 - **快递业务实体**保存 `Parcel`、`Pickable`、`CarryGrip`、`SpawnPoint`、动态 `RigidBody`、方盒 `Collider` 和 Avian 运动组件，被持有时增加 `HeldBy` 与 `HeldTarget`。纸箱与木箱根位置对应模型中心，碰撞体按实际尺寸与轴心对齐；拾取系统按 `Pickable` 能力过滤，不依赖名称或模型。
+- **展示 NPC 实例**保存 `DisplayNpc`，保留原模型和固定姿态；其 `IslandCollider` 子实体保存静态刚体与身体胶囊碰撞，不加入 `Character`、玩家意图、移动或拾取能力。碰撞随原实例和地图层级一同清理。
 - **相机实体**保存 `OrbitCamera`、`MouseLookState`、`CameraOcclusion`、`Camera3d` 和 `Transform`。`OrbitCamera` 保存目标、`CameraPerspective` 视角模式、共享水平角、各模式的俯仰角和固定跟随参数；跟随系统把位置与朝向写入 `Transform`，建筑遮挡检测复用相同的跟随计算，不反向修改姿态。`CameraOcclusion` 只保存上一帧建筑需求集合以记录离散日志，不保存实际距离或距离恢复状态。
 - **建筑外壳查询实体**用 `CameraShell` 关联所属建筑实例；额外碰撞体只供建筑遮挡查询，不参与角色、箱体的接触与玩法射线查询。`OccludedBuildings` 保存本帧有效第三人称相机的建筑需求并集，淡化状态与材质副本按实例管理，不改动 GLB 的共享原始材质。
 - **共享资源**包括 `PrototypeConfig`、`GameSettings`、`SettingsDraft`、`SettingsFile`、菜单状态与焦点、`ArtAssets` 与 `ArtLoadState`；限帧计时和连续数据日志采样使用各系统的 `Local`。
@@ -103,7 +104,7 @@ Windows MSVC 构建由根 [build.rs](../build.rs) 为游戏和测试程序嵌入
 
 `ArtAssetsPlugin` 在插件构建时初始化 `ArtAssets`，其 `FromWorld` 发起五份 GLB 的异步加载；强句柄覆盖模型生命周期。`ArtLoadState` 独立保存 `Loading`、`Ready`、`Failed` 状态，`Update` 检查模型及递归依赖是否完成或失败，主菜单期间也可完成加载。`Startup` 记录加载请求；`PrototypeScenePlugin` 在进入游戏时建立光照和加载相机，运行且 `ArtLoadState::Ready` 后使用 Rust 内嵌的 BSN `scene` 函数装配地图与实体组合，地图实例的 `WorldInstanceReady` 到达后再处理已展开的模型层级。导出的 `source_asset` 元数据仅用于装配阶段识别美术实例，之后的玩法查询使用业务组件，不把名称或美术元数据作为玩家身份。
 
-地图 GLB 已包含静态持箱主角、易碎纸箱和三只木箱。装配流程移除这些展示实例及其子层级，并用独立 GLB 重建业务实体，避免同一位置出现重复模型或重复碰撞。四名 NPC 保留；柜台、货架纸箱和商店摆件继续作为固定装饰，没有 `Pickable`。资产场景就绪、所需模型就绪和实际碰撞生成都完成后，才创建玩家与可搬物品，避免先掉入尚未准备的地形。
+地图 GLB 已包含静态持箱主角、易碎纸箱和三只木箱。装配流程移除这些展示实例及其子层级，并用独立 GLB 重建业务实体，避免同一位置出现重复模型或重复碰撞。四名 NPC 保留，在地图碰撞准备阶段分别添加一份 BSN 声明的静态 `IslandCollider` 子实体。胶囊沿本地 Y 轴，以原实例脚底为起点，复用 `PrototypeConfig` 的人物高度与半径（默认 `1.9 m`、`0.32 m`）；碰撞沿 `ChildOf` 使用模型实例的变换，不修改原视觉姿态。NPC 碰撞属于 `World` 层，因此玩家、自由箱体和已忽略 `Character` 层的手持箱体都受其阻挡；NPC 不加入 `CameraShell`、建筑淡化或对话业务。柜台、货架纸箱和商店摆件继续作为固定装饰，没有 `Pickable`。资产场景就绪、所需模型就绪和实际碰撞生成都完成后，才创建玩家与可搬物品，避免先掉入尚未准备的地形。
 
 静态碰撞从地形、建筑、码头、固定道具和棕榈树干的结构网格提取顶点与三角形，应用节点的实际变换后合并生成。建筑保持开放前厅与入口，不能用覆盖整栋模型的包围盒封住通道。海水、草和棕榈叶片不生成碰撞；台阶显示保留原始网格，原步阶不参与碰撞。三个商铺与两栋住宅的五组入口台阶按包围体生成不可见斜坡，并与各自实际地板边界配对：斜坡顶面接到室内地板高度，向地板内延伸 `0.05 m`，消除台阶与地板间的门槛落差和间隙。物理组件位于静态业务根或碰撞实体，模型视觉层级不重复添加刚体。
 
