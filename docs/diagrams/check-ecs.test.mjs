@@ -230,6 +230,13 @@ test('rejects an arrow marker that does not follow the actual terminal segment',
   assert.throws(() => checkGeometry(content), /must follow the terminal segment/);
 });
 
+test('rejects SVG 2 start reversal for terminal-only arrows that older renderers cannot rotate', () => {
+  const content = svg(box('a', 0, 0) + box('b', 200, 0)
+    + edge([[100, 45], [200, 45]], port('a', 'right'), port('b', 'left')))
+    .replace('orient="auto"', 'orient="auto-start-reverse"');
+  assert.throws(() => checkGeometry(content), /must follow the terminal segment/);
+});
+
 test('accepts a shared trunk and T-junctions without multiplying its box port count', () => {
   const content = svg(box('lane', -20, -20, 500, 400, true) + box('a', 0, 0) + box('b', 250, 0) + box('c', 250, 180)
     + edge([[100, 45], [150, 45], [150, 225]], port('a', 'right'), null, false)
