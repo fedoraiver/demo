@@ -15,17 +15,17 @@
 | [ui/volume.rs](../src/ui/volume.rs) | 用 BSN 声明音量行，局部捕获滑条鼠标拖动并发出统一设置请求，更新已有百分比与轨道填充。 |
 | [ui/backdrop.rs](../src/ui/backdrop.rs) | 主菜单的独立 GLB 展示舞台、相机与光照；启动快递员展示动画，记录资产加载失败。 |
 | [input.rs](../src/input.rs) | 注册 `bevy_enhanced_input`、`GameplayContext` 和玩法／调试动作；创建键盘控制者，按动作的 `context` 路由角色意图。 |
-| [camera.rs](../src/camera.rs) | 管理相机控制关联、视角模式、环绕状态和鼠标捕获；处理观察与视角切换动作，固定步同步角色朝向，物理插值后逐帧同步朝向、持握目标、环绕镜头、建筑遮挡需求、建筑淡化和人物可见性。 |
+| [camera.rs](../src/camera.rs) | 管理相机控制关联、视角模式、环绕状态和鼠标捕获，启动时记录姿态同步约定；处理观察与视角切换动作，固定步同步角色朝向，物理插值后逐帧同步朝向、持握目标、环绕镜头、建筑遮挡需求、建筑淡化和人物可见性。 |
 | [camera_obstruction.rs](../src/camera_obstruction.rs) | 按本帧环绕镜头检测建筑外壳遮挡，汇总 `OccludedBuildings`；只更新透明需求，不写相机 `Transform` 或改变距离、方向。 |
 | [camera_fade.rs](../src/camera_fade.rs) | 按建筑实例管理外壳材质副本、淡化过渡和无遮挡恢复；多相机需求取并集，清理失效关联与退出场景后的缓存。 |
-| [gameplay.rs](../src/gameplay.rs) | 定义玩家身份、角色与快递组件、持有关系和原型参数；固定步查询接地、施加移动力、跳跃冲量与持握力并执行拿放，固定步和逐帧共用持握目标同步。 |
+| [gameplay.rs](../src/gameplay.rs) | 定义玩家身份、角色与快递组件、持有关系和原型参数，启动时记录实际玩法配置；固定步查询接地、施加移动力、跳跃冲量与持握力并执行拿放，固定步和逐帧共用持握目标同步。 |
 | [physics.rs](../src/physics.rs) | 注册 Avian3D 物理插件、重力和碰撞层，构建角色与箱体物理组件，并记录接触开始和结束日志。 |
 | [art_assets.rs](../src/art_assets.rs) | 通过 `ArtAssetsPlugin` 加载海岛、主角、普通纸箱、易碎纸箱与木箱五份 GLB；`ArtAssets` 保存强句柄，`ArtLoadState` 单独保存加载状态，记录加载完成及失败。 |
 | [scene.rs](../src/scene.rs) | `PrototypeScenePlugin` 使用 Rust 内嵌 BSN `scene` 函数装配场景；处理地图实例就绪、展示实体替换和结构碰撞生成，资源及碰撞准备完成后生成动态角色、物品、控制者和相机。 |
 | [character_animation.rs](../src/character_animation.rs) | `CharacterAnimationPlugin` 为主角 GLB 绑定命名动画，根据局部真实速度、接地与持有关系连续混合 16 个动作，统一脚步相位、跳跃阶段、视觉接地补偿与关联清理。 |
 | [island_recovery.rs](../src/island_recovery.rs) | `IslandRecoveryPlugin` 根据物理位置检测落水，使用实体的 `SpawnPoint` 恢复玩家与可搬物品，解除持握并清理运动状态。 |
-| [settings.rs](../src/settings.rs) | 加载、校验、编辑草稿和保存玩家设置，失败时保留原文件；在时间更新之前限制渲染循环频率。 |
-| [startup_log.rs](../src/startup_log.rs) | 通过 `StartupLogPlugin` 集中注册四项启动日志，只读玩法配置与固定时间步，并记录姿态同步约定和检查器启用信息。 |
+| [settings.rs](../src/settings.rs) | 加载、校验、编辑草稿和保存玩家设置，失败时保留原文件；启动时读取并记录实际固定时间步，在时间更新之前限制渲染循环频率。 |
+| [inspector.rs](../src/inspector.rs) | `ProjectInspectorPlugin` 按顺序组装 Egui 与世界检查器，将面板限制在游戏运行状态，并在启动时记录检查器启用信息。 |
 | [session_log.rs](../src/session_log.rs) | 创建独立会话文件，管理文件与控制台后台输出，记录会话生命周期和 panic 上下文，并负责排空、刷新与关闭线程。 |
 | [audio_events.rs](../src/audio_events.rs) | 注册反馈消息，观察真实落地碰撞与持续持握误差；独立于声音设备，供最小物理测试复用。 |
 | [audio.rs](../src/audio.rs) | 以嵌入的音频清单预加载 Kira 资产，通过 UI/SFX 通道播放；选择草稿或已应用音量，同步实例增益，处理静音、冷却、并发、失败日志和退出停止。 |
@@ -76,7 +76,7 @@ Windows MSVC 构建由根 [build.rs](../build.rs) 为游戏和测试程序嵌入
 
 ## 世界检查器
 
-`main` 在默认插件之后依次注册 `EguiPlugin` 和 `WorldInspectorPlugin::run_if(gameplay_running)`，检查器只在游戏运行时显示，主菜单与暂停时隐藏。它复用主窗口与当前相机，在 `EguiPrimaryContextPass` 中展示实体、资源和资产。插件自身的独占世界访问用于通用反射检查，项目不另建世界扫描或数据镜像。`StartupLogPlugin` 在启动时通过统一日志记录 `World inspector enabled`，表示插件已注册，并不表示启动主菜单显示检查器。
+`main` 在默认插件之后注册 `ProjectInspectorPlugin`；该插件内部先注册 `EguiPlugin`，再注册 `WorldInspectorPlugin::new().run_if(gameplay_running)`。检查器只在游戏运行时显示，主菜单与暂停时隐藏。它复用主窗口与当前相机，在 `EguiPrimaryContextPass` 中展示实体、资源和资产。插件自身的独占世界访问用于通用反射检查，项目不另建世界扫描或数据镜像。`ProjectInspectorPlugin` 同时在 `Startup` 注册 `log_world_inspector`，通过统一日志记录 `World inspector enabled`，表示插件已注册，并不表示启动主菜单显示检查器。
 
 鼠标仍被游戏捕获时，`filter_captured_egui_input` 在 Egui 收集输入后、开始本帧之前过滤面板交互，补齐 Egui 内部残留按键的释放并清除拖拽和文本焦点。这样隐藏光标即使位于面板上也不会误编辑字段或中断玩家输入。F3 的 `ReleasePointerAction` 由相机 Observer 释放光标以操作检查器，游戏仍保持运行；Esc 通过菜单动作进入暂停。
 
@@ -159,7 +159,7 @@ Windows MSVC 构建由根 [build.rs](../build.rs) 为游戏和测试程序嵌入
 | 阶段 | 数据变换与执行依赖 |
 | --- | --- |
 | 插件构建 | 初始化 `ArtAssets`，由 `FromWorld` 发起五份 GLB 加载；初始化独立的 `ArtLoadState`。 |
-| `Startup` | 记录加载请求并创建菜单输入控制者；`StartupLogPlugin` 注册玩法配置、固定时间步、姿态同步约定与检查器启用日志。启动日志不依赖已生成玩法实体。 |
+| `Startup` | 记录加载请求并创建菜单输入控制者；玩法、设置、相机与检查器插件分别注册自身初始化日志，启动日志不依赖已生成玩法实体。 |
 | `First` | `limit_frame_rate.before(TimeSystems)` 在引擎更新时钟前补足帧间剩余时间。 |
 | `PreUpdate` | 更新鼠标捕获和菜单上下文，Enhanced Input 评估动作并通过 Observer 更新意图、观察角度或切换请求；动作应用后消费菜单请求及视角切换请求。 |
 | `StateTransition` | 紧随 `PreUpdate`；主菜单入口生成展示舞台，游戏入口准备海岛会话的光照和加载相机，暂停入口清意图并冻结时间，退出状态清理对应实体。 |
@@ -264,7 +264,7 @@ GLB 的八个 `Courier_Sole_*` 鞋底子节点跟随足部骨骼。`PostUpdate` 
 
 panic hook 尽力记录错误，优先等待文件队列写完并调用 `sync_data`，然后调用原有 hook；不先等待可能阻塞的控制台。写入线程自身发生 panic 时由线程内部捕获并反馈，避免等待自己的队列。panic 日志通过已安装的 subscriber 输出，不能保证覆盖日志插件就绪前的异常或进程被强制终止的情况。慢写入端隔离与完整刷新回归见 [验证指南](testing.md#按变更类型选择检查)。
 
-`StartupLogPlugin` 集中注册 `log_configuration`、`log_simulation_timestep`、`log_pose_synchronization` 和 `log_world_inspector` 四个 `Startup` 系统；前两个分别只读 `PrototypeConfig` 和 `Time<Fixed>`，后两个记录当前装配采用的固定约定。资源继续由玩法插件和主入口准备，日志插件不创建默认配置，也不添加功能插件。四条日志之间及其与场景生成之间没有显式执行顺序，均不依赖已生成实体。各条日志保留原来的 `demo::gameplay`、`demo::settings`、`demo::camera` 和 `demo::inspector` target，日志过滤与查找路径保持一致；会话文件和退出刷新仍由 `session_log` 管理。
+初始化日志随功能插件注册：`GameplayPlugin` 注册 `log_configuration`，`SettingsPlugin` 注册 `log_simulation_timestep`，`CameraControlPlugin` 注册 `log_pose_synchronization`，`ProjectInspectorPlugin` 注册 `log_world_inspector`，均位于各自模块的 `Startup`。前两个分别只读启动时最终生效的 `PrototypeConfig` 和 `Time<Fixed>`，后两个记录当前装配采用的固定约定；日志系统不初始化或覆盖这些资源。四条日志之间及其与场景生成之间没有显式执行顺序，均不依赖已生成实体；未注册某个功能插件时，不会由其他日志入口输出该功能已初始化的记录。各条日志沿用 `demo::gameplay`、`demo::settings`、`demo::camera` 和 `demo::inspector` target，日志过滤与查找路径保持一致。会话文件、过滤、后台写入、panic 处理和退出刷新仍由 `session_log` 管理。
 
 其中 `log_pose_synchronization` 通过统一日志设施记录 `Camera pose synchronization configured`，字段 `simulation_schedule="FixedUpdate"`、`grip_force_schedule="FixedUpdate"`、`physics_schedule="FixedPostUpdate"`、`presentation_schedule="RunFixedMainLoop"` 和 `presentation_order="interpolation_character_facing_hold_target_camera_occlusion_fade_visibility"` 说明模拟与显示同步的阶段和顺序，便于排查持箱转动或视角切换时的不同步问题。相机初始化记录 `perspective="third_person"`；每次有效切换以 `info` 级别记录 `Camera perspective changed`，包含 `perspective_before`、`perspective_after`、`yaw`、`pitch_before`、`pitch_after` 和 `reason="toggle_perspective_action"`。
 

@@ -42,7 +42,7 @@ cargo test --locked
 
 Hook 回归还须确认 `post-commit` 只对齐本次已提交的六份产物，不生成或重新提交；本次 Git 进程记录缺失、记录中的候选树与 HEAD 不一致，或 `--no-verify` 跳过生成时，不修改索引。模拟提交后索引同步失败时，确认提交已存在且错误报告保留待处理记录；使用完整 Git 调用标识的 `synchronize-index` 重试能对齐产物，错误标识不修改索引。
 
-启动日志的无窗口回归位于 [startup_log.rs](../src/startup_log.rs)：只提供 `PrototypeConfig`、`Time<Fixed>` 与 `StartupLogPlugin`，捕获四条启动日志，检查各输出一次、使用实际资源值、保留原 target，后续更新不重复输出。测试不注册窗口、渲染或完整场景，也不由日志插件初始化玩法资源。
+初始化日志的无窗口回归位于仅在测试构建注册的 [initialization_log_tests.rs](../src/initialization_log_tests.rs)，可用 `cargo test --locked initialization_log_tests` 选择。测试在最小依赖环境中安装实际 `GameplayPlugin`、`SettingsPlugin`、`CameraControlPlugin` 和 `ProjectInspectorPlugin`，执行真实 `Startup` 注册；不能只手工添加四个日志系统来代替插件注册验证。分别检查插件安装时对应记录出现、缺少该插件时对应记录不出现，以及四项组合时每条仅输出一次、后续更新不重复输出。提供自定义且最终生效的 `PrototypeConfig` 和 `Time<Fixed>`，核对实际资源值、原有 target、`info` 级别、英文消息和结构化字段；检查器还须保留 `plugin="WorldInspectorPlugin"` 与 `reason="initialization"`。测试只执行所需调度，不安装窗口后端、渲染器或完整场景，临时日志放在根 `tmp/`；日志系统不初始化或覆盖玩法配置与固定时间步。
 
 会话日志的无窗口回归位于 [session_log.rs](../src/session_log.rs)，可用 `cargo test --locked session_log::tests` 选择。`blocked_sink_does_not_block_tracing_producer` 用门闩阻塞实际写入，确认解除阻塞前日志调用已返回；`blocked_console_does_not_block_file_or_producer` 同时确认文件输出能独立写完并刷新。不能只用不稳定的绝对耗时判断是否阻塞；解除门闩后核对记录数量、顺序与完整内容，没有丢失或截断。
 
@@ -342,7 +342,7 @@ Windows MSVC 用户先确认上述启动命令不再以 `0xc0000139`（`STATUS_E
 1. 选择 `Start Game` 并运行时应显示 `World Inspector`；主菜单、暂停及从暂停打开的设置／帮助均隐藏检查器。展开 `Entities`、`Resources`、`Assets`，确认能找到人物、木箱和相机，以及 `PrototypeConfig`、网格和材质。展开人物组件应能查看移动意图和运动状态。
 2. 按 F3 后将光标移到面板并点击、拖动或滚动，应保持光标自由，镜头不转动。也检查从面板外快速移入并立即点击，不应重新捕获鼠标。把面板拖到窗口中央，再点击面板外恢复控制；持续移动并点击左键，人物不应因隐藏光标重叠面板而停下，面板字段也不应改变。再次按 F3 后应能正常点击和编辑；不要用 Esc 代替 F3，Esc 会暂停并隐藏检查器。
 3. 在检查器字段中输入 W、E、I 或空格，人物不应移动、跳跃、拿放或切换视角；原先持续移动的输入在上下文停用后应清零。点击面板外恢复控制时镜头不跳转，单次动作需松开后重新按下才触发。
-4. 检查本次 `logs/unix-<时间戳>_<会话UUID>.log`，启动时应包含 `World inspector enabled`，上下文停用与恢复应记录输入状态变化。正常退出后历史会话文件保留。
+4. 检查本次 `logs/unix-<时间戳>_<会话UUID>.log`，启动时应包含来自 `demo::inspector` 的 `World inspector enabled`，字段为 `plugin="WorldInspectorPlugin"` 与 `reason="initialization"`。这表示检查器插件注册，即使启动主菜单未显示面板也应输出；开始、暂停、恢复及重新进入游戏不重复输出该初始化记录。上下文停用与恢复应记录输入状态变化，正常退出后历史会话文件保留。
 5. 展开人物和木箱根实体的物理运动组件与 `Transform`，点击面板外恢复控制，移动、持握或释放箱体时检查速度和位置变化；箱体静止后运动变化应停止。组件标题的金色边框依据 Bevy 变化标记，插值系统和持续可变访问也可能保持高亮，不能据此单独判断箱体仍在运动。
 
 无窗口回归只检查 Egui 命中、输入上下文与组件状态，不安装窗口后端或渲染插件；面板排版、鼠标交互手感和资产预览需用户按以上步骤验收。
@@ -372,6 +372,7 @@ Windows MSVC 用户先确认上述启动命令不再以 `0xc0000139`（`STATUS_E
 
 会话文件命名和位置见 [README](../README.md)，日志规则与调试过滤配置见 [开发规范](development.md)。验收时先确认本次文件的会话开始时间和配置，再将日志中的实体、前后值和原因与操作步骤对应。
 
+- 用户自行启动后，正常退出并检查本次会话文件：`demo::gameplay` 的 `Prototype gameplay initialized`、`demo::settings` 的 `Fixed simulation timestep initialized`、`demo::camera` 的 `Camera pose synchronization configured` 与 `demo::inspector` 的 `World inspector enabled` 均应以 `info` 级别各出现一次。玩法记录应对应实际 `PrototypeConfig`，固定模拟频率应对应实际 `Time<Fixed>`；暂停、恢复和重新开始游戏不能重复这些启动记录。确认正常退出记录存在、已入队日志排空并刷新完成，文件末尾没有缺失或截断；再次自行启动并正常退出后，应生成新的会话文件，第一份文件仍保留且未被覆盖。用户覆盖 `RUST_LOG` 时按实际过滤规则核对，低于过滤级别的记录缺失不能直接判定插件未注册。
 - 鼠标捕获及实际移动输入的离散变化，默认以 `info` 级别落盘，应能对应释放、恢复、失焦和移动输入变化。
 - 启动时应有 `Camera pose synchronization configured`，字段为 `simulation_schedule="FixedUpdate"`、`grip_force_schedule="FixedUpdate"`、`physics_schedule="FixedPostUpdate"`、`presentation_schedule="RunFixedMainLoop"`、`presentation_order="interpolation_character_facing_hold_target_camera_occlusion_fade_visibility"`。这条日志说明采用的同步配置，人物与箱体运动、持握转动、视角切换及遮挡过渡是否稳定仍需按上述步骤目测确认。
 - 美术与场景日志应记录所需资源的加载、失败路径、地图实例与碰撞准备状态，以及动态实体生成；结构碰撞日志用于核对实际地图范围和组成。玩法日志记录起跳、接地变化，以及 `Carryable item picked up`、`Carryable item released`；物理碰撞日志用于核对阻挡发生的实体。释放日志应能对应释放前的真实位置和速度；异常关联清理应记录原因。所有日志均写入本次 `logs/unix-<时间戳>_<会话UUID>.log`，提供问题反馈时保留该文件。
