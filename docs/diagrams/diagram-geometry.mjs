@@ -139,7 +139,8 @@ export function checkSvgGeometry(svg) {
       const markerId = attrs['marker-end'].match(/^url\(#([^)]*)\)$/)?.[1];
       const marker = markers.get(markerId);
       requireCondition(marker, `Unknown arrow marker: ${markerId}`);
-      requireCondition(marker.orient === 'auto' || marker.orient === 'auto-start-reverse', `Arrow marker must follow the terminal segment: ${markerId}`);
+      // 图只在末端使用箭头；SVG 1.1 的 auto 也能旋转，避免旧渲染器把 SVG 2 值画成固定向右。
+      requireCondition(marker.orient === 'auto', `Arrow marker must follow the terminal segment with orient="auto": ${markerId}`);
       const stroke = number(attrs['stroke-width'] ?? '1', 'connection stroke-width');
       const units = marker.markerUnits ?? 'strokeWidth';
       requireCondition(units === 'strokeWidth' || units === 'userSpaceOnUse', `Unsupported marker units: ${units}`);

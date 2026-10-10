@@ -1,9 +1,11 @@
 // 将源码快照内嵌到离线查看页；源码只作为文本展示，不执行其中的标记或脚本。
 import fs from 'node:fs';
 import path from 'node:path';
+import { sourceEditorAssets } from './source-editor.mjs';
 
 /** 写入 ecs-source.html；sources 为带有仓库相对路径和完整文本的源码快照。 */
 export function writeSourceViewer({ outputDirectory, sources }) {
+  const editorAssets = sourceEditorAssets();
   // 转义脚本容器的边界字符，避免源码中的 </script> 提前结束 JSON 数据块。
   const snapshot = JSON.stringify(sources).replace(/[<>&\u2028\u2029]/g, character =>
     `\\u${character.charCodeAt(0).toString(16).padStart(4, '0')}`);
@@ -26,17 +28,22 @@ main{flex:1;min-height:0;overflow:auto;overscroll-behavior:contain;outline-offse
 .line-number:hover{color:#235f92;background:#edf4f9}.code-line.selected{background:#fff0c8;box-shadow:inset 3px 0 #c88916}.code-line.selected .line-number{color:#815600;font-weight:700}
 #empty{padding:28px 24px;color:#576779}#empty[hidden]{display:none}code{font:inherit}
 @media(max-width:600px){header{padding:14px 16px}.line-number{flex-basis:52px;margin-right:10px;padding-right:10px}#code{font-size:12px}}
+${editorAssets.style}
 </style>
 </head>
 <body>
 <header>
 <h1>ECS 架构源码</h1>
-<div class="toolbar"><label for="file">文件 <select id="file" aria-label="选择源码文件"></select></label><a href="ecs-architecture.html">返回架构图</a></div>
+<div class="toolbar"><label for="file">文件 <select id="file" aria-label="选择源码文件"></select></label><a href="ecs-architecture.html">返回架构图</a><button type="button" data-workspace-config>配置工作区</button></div>
+<div class="source-actions"><a id="editor-open" data-vscode-path="" data-vscode-line="1" hidden>在 VS Code 中打开</a></div>
 <p id="summary">这是生成架构图时保存的源码快照。点击行号可以更新当前定位链接。</p>
+<p>VS Code 打开当前工作区文件；文件修改后，快照行号可能不再对应同一段代码。</p>
 <p id="status" role="status" aria-live="polite"></p>
 </header>
 <main id="scroller" tabindex="0" aria-label="完整源码，可滚动"><div id="empty" hidden></div><div id="code"></div></main>
+${editorAssets.markup}
 <script id="sources" type="application/json">${snapshot}</script>
+<script>${editorAssets.script}</script>
 <script>
 const sources = JSON.parse(document.getElementById('sources').textContent);
 const files = new Map(sources.map(source => [source.path, source.text]));
@@ -46,6 +53,7 @@ const code = document.getElementById('code');
 const empty = document.getElementById('empty');
 const summary = document.getElementById('summary');
 const status = document.getElementById('status');
+const editorLink = document.getElementById('editor-open');
 let selectedLine;
 const placeholder = document.createElement('option');
 placeholder.value = '';
@@ -62,6 +70,9 @@ function locateLine() {
   selectedLine?.classList.remove('selected');
   selectedLine = undefined;
   status.textContent = '';
+  // 无定位或定位失效时仍可打开文件首行，不将无效行号交给编辑器。
+  editorLink.dataset.vscodeLine = '1';
+  sourceEditor.refreshLinks();
   if (!location.hash || !code.children.length) return;
   const match = /^#L([1-9][0-9]*)$/.exec(location.hash);
   const line = match ? Number(match[1]) : 0;
@@ -72,6 +83,8 @@ function locateLine() {
   }
   selectedLine = row;
   row.classList.add('selected');
+  editorLink.dataset.vscodeLine = String(line);
+  sourceEditor.refreshLinks();
   status.textContent = '已定位到第 ' + line + ' 行。';
   // 只滚动源码容器，保留顶部文件选择与定位提示。
   scroller.scrollTop = row.offsetTop - (scroller.clientHeight - row.offsetHeight) / 2;
@@ -84,6 +97,8 @@ function showFile() {
   code.replaceChildren();
   scroller.scrollTop = 0;
   selector.value = files.has(file) ? file : '';
+  editorLink.hidden = !files.has(file);
+  editorLink.dataset.vscodePath = files.has(file) ? file : '';
   empty.hidden = true;
   summary.textContent = '这是生成架构图时保存的源码快照。点击行号可以更新当前定位链接。';
   if (text === undefined || text === '') {
@@ -119,10 +134,10 @@ function showFile() {
 
 selector.addEventListener('change', () => {
   const url = new URL(location.href);
-  url.search = '?file=' + encodeURIComponent(selector.value);
+  url.searchParams.set('file', selector.value);
   url.hash = '';
   // 使用普通页面导航，避免本地 file:// 页面的 History API 权限差异。
-  location.href = url.href;
+  location.href = sourceEditor.withWorkspace(url.href);
 });
 code.addEventListener('click', event => {
   if (event.target.closest('.line-number')) requestAnimationFrame(locateLine);
