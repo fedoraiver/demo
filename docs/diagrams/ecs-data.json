@@ -35,7 +35,7 @@
       "name": "log_configuration",
       "kind": "system",
       "phase": "Startup",
-      "module": "startup_log",
+      "module": "gameplay",
       "description": "记录实际玩法配置、Avian 版本、动态刚体、弹簧持握和保留速度的释放方式。",
       "reads": [
         "resource.PrototypeConfig"
@@ -45,11 +45,11 @@
       "events": [],
       "notes": [
         "与其他项目 Startup 系统没有显式先后依赖；日志是外部输出。",
-        "由 StartupLogPlugin 注册；保留日志 target demo::gameplay。"
+        "由 GameplayPlugin 注册；保留日志 target demo::gameplay。"
       ],
       "source": {
-        "path": "src/startup_log.rs",
-        "line": 26
+        "path": "src/gameplay.rs",
+        "line": 179
       }
     },
     {
@@ -57,7 +57,7 @@
       "name": "log_simulation_timestep",
       "kind": "system",
       "phase": "Startup",
-      "module": "startup_log",
+      "module": "settings",
       "description": "记录固定模拟频率。",
       "reads": [
         "resource.TimeFixed"
@@ -67,11 +67,11 @@
       "events": [],
       "notes": [
         "只读固定时间步，不修改模拟时钟。",
-        "由 StartupLogPlugin 注册；保留日志 target demo::settings。"
+        "由 SettingsPlugin 注册；保留日志 target demo::settings。"
       ],
       "source": {
-        "path": "src/startup_log.rs",
-        "line": 36
+        "path": "src/settings.rs",
+        "line": 363
       }
     },
     {
@@ -79,7 +79,7 @@
       "name": "log_pose_synchronization",
       "kind": "system",
       "phase": "Startup",
-      "module": "startup_log",
+      "module": "camera",
       "description": "记录准备力、物理解算和插值后显示同步的各个调度阶段及顺序。",
       "reads": [],
       "writes": [],
@@ -87,11 +87,12 @@
       "events": [],
       "notes": [
         "FixedUpdate 准备运动/持握力；FixedPostUpdate 求解；RunFixedMainLoop 插值 → 朝向 → HeldTarget → 镜头 → 建筑遮挡 → 外壳淡化 → 可见性。",
-        "仅记录装配约定，不执行同步或规定其他 Startup 系统先后；保留 demo::camera target。"
+        "仅记录装配约定，不执行同步或规定其他 Startup 系统先后；保留 demo::camera target。",
+        "由 CameraControlPlugin 注册；保留日志 target demo::camera。"
       ],
       "source": {
-        "path": "src/startup_log.rs",
-        "line": 45
+        "path": "src/camera.rs",
+        "line": 217
       }
     },
     {
@@ -116,7 +117,7 @@
       ],
       "source": {
         "path": "src/settings.rs",
-        "line": 375
+        "line": 385
       }
     },
     {
@@ -220,7 +221,7 @@
       ],
       "source": {
         "path": "src/camera.rs",
-        "line": 304
+        "line": 314
       }
     },
     {
@@ -523,7 +524,7 @@
       ],
       "source": {
         "path": "src/camera.rs",
-        "line": 469
+        "line": 479
       }
     },
     {
@@ -558,7 +559,7 @@
       ],
       "source": {
         "path": "src/camera.rs",
-        "line": 554
+        "line": 564
       }
     },
     {
@@ -607,7 +608,7 @@
       ],
       "source": {
         "path": "src/gameplay.rs",
-        "line": 244
+        "line": 255
       }
     },
     {
@@ -656,7 +657,7 @@
       ],
       "source": {
         "path": "src/gameplay.rs",
-        "line": 274
+        "line": 285
       }
     },
     {
@@ -717,7 +718,7 @@
       ],
       "source": {
         "path": "src/gameplay.rs",
-        "line": 311
+        "line": 322
       }
     },
     {
@@ -743,7 +744,7 @@
       ],
       "source": {
         "path": "src/gameplay.rs",
-        "line": 157
+        "line": 158
       }
     },
     {
@@ -777,7 +778,7 @@
       ],
       "source": {
         "path": "src/gameplay.rs",
-        "line": 436
+        "line": 447
       }
     },
     {
@@ -812,7 +813,7 @@
       ],
       "source": {
         "path": "src/camera.rs",
-        "line": 554
+        "line": 564
       }
     },
     {
@@ -846,7 +847,7 @@
       ],
       "source": {
         "path": "src/gameplay.rs",
-        "line": 436
+        "line": 447
       }
     },
     {
@@ -878,7 +879,7 @@
       ],
       "source": {
         "path": "src/camera.rs",
-        "line": 577
+        "line": 587
       }
     },
     {
@@ -1064,7 +1065,7 @@
       ],
       "source": {
         "path": "src/camera.rs",
-        "line": 508
+        "line": 518
       }
     },
     {
@@ -1094,7 +1095,7 @@
       ],
       "source": {
         "path": "src/camera.rs",
-        "line": 535
+        "line": 545
       }
     },
     {
@@ -1131,7 +1132,7 @@
       ],
       "source": {
         "path": "src/camera.rs",
-        "line": 589
+        "line": 599
       }
     },
     {
@@ -1139,7 +1140,7 @@
       "name": "log_world_inspector",
       "kind": "system",
       "phase": "Startup",
-      "module": "startup_log",
+      "module": "inspector",
       "description": "记录世界检查器已启用的初始化日志。",
       "reads": [],
       "writes": [],
@@ -1147,11 +1148,11 @@
       "events": [],
       "notes": [
         "仅记录日志，不执行检查器界面；与其他项目 Startup 日志没有显式顺序。",
-        "由 StartupLogPlugin 注册；保留日志 target demo::inspector。"
+        "由 ProjectInspectorPlugin 注册；保留日志 target demo::inspector。"
       ],
       "source": {
-        "path": "src/startup_log.rs",
-        "line": 54
+        "path": "src/inspector.rs",
+        "line": 23
       }
     },
     {
@@ -1224,7 +1225,7 @@
       ],
       "source": {
         "path": "src/camera.rs",
-        "line": 178
+        "line": 179
       }
     },
     {
@@ -1335,7 +1336,7 @@
       ],
       "source": {
         "path": "src/camera.rs",
-        "line": 246
+        "line": 256
       }
     },
     {
@@ -1387,7 +1388,7 @@
       ],
       "source": {
         "path": "src/gameplay.rs",
-        "line": 178
+        "line": 189
       }
     },
     {
@@ -1439,7 +1440,7 @@
       ],
       "source": {
         "path": "src/gameplay.rs",
-        "line": 178
+        "line": 189
       }
     },
     {
@@ -1496,7 +1497,7 @@
       ],
       "source": {
         "path": "src/gameplay.rs",
-        "line": 410
+        "line": 421
       }
     },
     {
@@ -1520,7 +1521,7 @@
       ],
       "source": {
         "path": "src/gameplay.rs",
-        "line": 157
+        "line": 158
       }
     },
     {
@@ -1588,7 +1589,7 @@
       ],
       "source": {
         "path": "src/gameplay.rs",
-        "line": 454
+        "line": 465
       }
     },
     {
@@ -1619,7 +1620,7 @@
       ],
       "source": {
         "path": "src/gameplay.rs",
-        "line": 498
+        "line": 509
       }
     },
     {
@@ -2865,7 +2866,7 @@
       ],
       "source": {
         "path": "src/camera.rs",
-        "line": 216
+        "line": 226
       }
     },
     {
@@ -4702,7 +4703,7 @@
           "description": "可选外部传感器标签；当前场景未设置，接地过滤显式排除。",
           "source": {
             "path": "src/gameplay.rs",
-            "line": 181
+            "line": 192
           }
         },
         {
@@ -4913,7 +4914,7 @@
           "description": "显式 PrimaryEguiContext 要求 EguiContext；保存共享 UI 状态。捕获系统查询面板、指针和焦点，过滤系统在游戏捕获期间终止 UI 拖拽并移除 UI 键盘焦点。",
           "source": {
             "path": "src/camera.rs",
-            "line": 321
+            "line": 331
           }
         },
         {
@@ -4937,8 +4938,8 @@
           ],
           "description": "EguiContext 要求的组件；控制上下文输入与输出处理，当前保留插件默认值。",
           "source": {
-            "path": "src/main.rs",
-            "line": 77
+            "path": "src/inspector.rs",
+            "line": 15
           }
         },
         {
@@ -4949,8 +4950,8 @@
           ],
           "description": "UI 输入缓冲组件，包含映射后的窗口输入；不是玩法 Resource 或动作意图。",
           "source": {
-            "path": "src/main.rs",
-            "line": 77
+            "path": "src/inspector.rs",
+            "line": 15
           }
         },
         {
@@ -4961,8 +4962,8 @@
           ],
           "description": "EguiPlugin::default() 默认启用多轮 UI 计算，PrimaryEguiContext 钩子附加此组件；PostUpdate 的引擎循环据此调用 UI Schedule。",
           "source": {
-            "path": "src/main.rs",
-            "line": 77
+            "path": "src/inspector.rs",
+            "line": 15
           }
         },
         {
@@ -4973,8 +4974,8 @@
           ],
           "description": "UI 计算输出，由多轮上下文循环写入并交给插件输出、渲染处理。",
           "source": {
-            "path": "src/main.rs",
-            "line": 77
+            "path": "src/inspector.rs",
+            "line": 15
           }
         },
         {
@@ -5222,7 +5223,7 @@
           "description": "捕获时隐藏并抓取，释放时显示；不代表玩法动作绑定。",
           "source": {
             "path": "src/camera.rs",
-            "line": 309
+            "line": 319
           }
         },
         {
@@ -5619,7 +5620,7 @@
           "description": "可选传感器标记；当前结构环境未设置，镜头扫掠显式排除。",
           "source": {
             "path": "src/camera.rs",
-            "line": 573
+            "line": 583
           }
         }
       ]
@@ -7120,7 +7121,7 @@
       "description": "固定 60 Hz 模拟时钟，由引擎固定循环推进；每个渲染帧执行 0..N 个固定步。帧率上限不会修改此时间步。",
       "source": {
         "path": "src/main.rs",
-        "line": 74
+        "line": 75
       }
     },
     {
@@ -7132,7 +7133,7 @@
       "description": "引擎按当前阶段提供通用时钟；观察日志仅用于节流，鼠标角度不乘 delta。逐帧动画权重/阶段时钟、鞋底补偿回落读取帧 delta。",
       "source": {
         "path": "src/camera.rs",
-        "line": 472
+        "line": 482
       }
     },
     {
@@ -7144,7 +7145,7 @@
       "description": "引擎真实时钟；Enhanced Input 的 ContextTime 可读取，与 Time 的自动阶段语义不同。音频节流也使用此时钟，暂停时仍前进。",
       "source": {
         "path": "src/main.rs",
-        "line": 52
+        "line": 53
       }
     },
     {
@@ -7169,7 +7170,7 @@
       "description": "引擎从 KeyboardInput 等缓冲消息更新。动作评估读取，鼠标捕获另读 Esc 处理窗口生命周期。",
       "source": {
         "path": "src/camera.rs",
-        "line": 246
+        "line": 256
       }
     },
     {
@@ -7181,7 +7182,7 @@
       "description": "引擎从 MouseButtonInput 更新；输入框架读取，音量滑条仅在局部捕获中读取左键保持与释放，命中复用 Interaction。",
       "source": {
         "path": "src/main.rs",
-        "line": 52
+        "line": 53
       }
     },
     {
@@ -7205,7 +7206,7 @@
       "description": "底层窗口键盘消息，由引擎输入系统读取；缓冲通信不是触发式 Observer。",
       "source": {
         "path": "src/main.rs",
-        "line": 52
+        "line": 53
       }
     },
     {
@@ -7217,7 +7218,7 @@
       "description": "引擎输入系统据此释放残留按键状态。",
       "source": {
         "path": "src/main.rs",
-        "line": 52
+        "line": 53
       }
     },
     {
@@ -7231,7 +7232,7 @@
       "description": "引擎输入系统与 sync_mouse_capture 各自持有独立读取游标；后者只检查窗口左键按下以恢复捕获。",
       "source": {
         "path": "src/camera.rs",
-        "line": 307
+        "line": 317
       }
     },
     {
@@ -7244,7 +7245,7 @@
       "description": "窗口焦点缓冲消息；CameraControlPlugin 注册并由鼠标捕获系统读取。",
       "source": {
         "path": "src/camera.rs",
-        "line": 308
+        "line": 318
       }
     },
     {
@@ -7256,7 +7257,7 @@
       "description": "底层鼠标位移消息，由引擎汇总为 AccumulatedMouseMotion。",
       "source": {
         "path": "src/main.rs",
-        "line": 52
+        "line": 53
       }
     },
     {
@@ -7317,7 +7318,7 @@
       "description": "主循环采用连续更新策略，帧间等待由 limit_frame_rate 负责。",
       "source": {
         "path": "src/main.rs",
-        "line": 72
+        "line": 73
       }
     },
     {
@@ -7380,7 +7381,7 @@
       "description": "只属于 limit_frame_rate 系统实例的局部等待和日志去重状态，不是共享 Resource。",
       "source": {
         "path": "src/settings.rs",
-        "line": 363
+        "line": 373
       }
     },
     {
@@ -7392,7 +7393,7 @@
       "description": "只属于 log_character_velocity 的采样计时；解算/接地更新后每 0.5 模拟秒采样。",
       "source": {
         "path": "src/gameplay.rs",
-        "line": 500
+        "line": 511
       }
     },
     {
@@ -7404,7 +7405,7 @@
       "description": "只属于 on_camera_look Observer 系统实例，最多每 0.5 秒记录一次连续角度变化。",
       "source": {
         "path": "src/camera.rs",
-        "line": 473
+        "line": 483
       }
     },
     {
@@ -7431,8 +7432,8 @@
       ],
       "description": "Egui 插件全局配置。默认创建主相机上下文，默认不吸收或清空 Bevy 底层输入；项目通过 ContextActivity 隔离游戏动作。",
       "source": {
-        "path": "src/main.rs",
-        "line": 77
+        "path": "src/inspector.rs",
+        "line": 15
       }
     },
     {
@@ -7441,8 +7442,8 @@
       "fields": [],
       "description": "EguiPlugin 默认多轮模式的标记 Resource；主上下文插入钩子据此要求 EguiMultipassSchedule。",
       "source": {
-        "path": "src/main.rs",
-        "line": 77
+        "path": "src/inspector.rs",
+        "line": 15
       }
     },
     {
@@ -7469,7 +7470,7 @@
       "description": "Avian 碰撞树加速资源；SpatialQuery 只读 ColliderTrees 与实际 Position/Rotation/Collider/ColliderAabb，供接地和拾取查询。 建筑遮挡另以 CameraQuery 层读取外壳查询碰撞。",
       "source": {
         "path": "src/gameplay.rs",
-        "line": 180
+        "line": 191
       }
     },
     {
@@ -7507,7 +7508,7 @@
       "description": "插值插件追踪 Transform 外部变更；显示链写朝向后才更新 tick。",
       "source": {
         "path": "src/camera.rs",
-        "line": 209
+        "line": 210
       }
     },
     {
@@ -7519,7 +7520,7 @@
       "description": "handle_interaction 每次调用清空并预留，防止同批次延迟拾取重复占用。",
       "source": {
         "path": "src/gameplay.rs",
-        "line": 315
+        "line": 326
       }
     },
     {
@@ -8694,7 +8695,7 @@
   ],
   "startup_notes": [
     "main 创建 App 与独立会话日志；DefaultPlugins 禁用 Bevy 默认 AudioPlugin，由 Kira 提供音频设备输出。",
-    "EguiPlugin 先于 WorldInspectorPlugin；检查器只在 InGame / Running 显示。功能插件装配顺序不等于系统全序。",
+    "ProjectInspectorPlugin 内部先注册 EguiPlugin，再注册 WorldInspectorPlugin；检查器只在 InGame / Running 显示。功能插件装配顺序不等于系统全序。",
     "AppFlowPlugin 默认进入 MainMenu；当前 State<PlayState> 只在 InGame 存在，NextState<PlayState> 从插件注册起跨会话保留。Startup 创建持久 MenuContext 控制者、预加载短音、记录四项启动日志与美术请求。",
     "ArtAssetsPlugin 保持五份运行 GLB 强句柄，Update 轮询 Loading / Ready / Failed；地图 CPU 网格保留以生成静态碰撞。",
     "OnEnter(InGame) 创建日光和加载相机。Running 的 Update 海岛链 begin_island → prepare_island → spawn_actors 在各依赖处应用延迟命令。",
@@ -8707,7 +8708,8 @@
     "BSN 与 Bundle 辅助数据、MapAsset / ItemPlacement、动画节点和 QueryData 不作为独立玩法 ECS 组件列出。",
     "统一 tracing 的文件与控制台各有后台线程和无界队列，属于外部 I/O；SessionLogGuard 由 main 持有，退出 Flush，Drop 排空并 join，panic 文件屏障 sync_data。",
     "GameAudioPlugin 初始化 AudioMix；UI 注册滑条采样与已有视觉同步，设置草稿可即时预览音量。",
-    "CameraControlPlugin 初始化 OccludedBuildings 与 ShellMaterialCache；建筑外壳查询层和材质副本不改变玩法碰撞。Last 清理独立于暂停门控。"
+    "CameraControlPlugin 初始化 OccludedBuildings 与 ShellMaterialCache；建筑外壳查询层和材质副本不改变玩法碰撞。Last 清理独立于暂停门控。",
+    "玩法配置、固定时间步、姿态同步和检查器启用四项只读 Startup 日志分别由对应功能插件注册，彼此无显式顺序。"
   ],
   "general_notes": [
     "systems 的固定 ID 用于布局。kind=engine 是引擎或输入框架阶段的概览，kind=sync 是延迟命令应用点，kind=observer 是触发式响应，其余为项目系统。",
