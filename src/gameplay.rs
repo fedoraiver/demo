@@ -148,6 +148,7 @@ impl Plugin for GameplayPlugin {
             .register_type::<PrototypeConfig>()
             .init_resource::<PrototypeConfig>()
             .add_plugins((DemoPhysicsPlugin, SoundEventsPlugin))
+            .add_systems(Startup, log_configuration)
             .add_systems(
                 FixedUpdate,
                 (
@@ -172,6 +173,16 @@ impl Plugin for GameplayPlugin {
                     .run_if(gameplay_running),
             );
     }
+}
+
+/// 记录实际玩法配置；显式保留日志分类，兼容现有过滤设置。
+fn log_configuration(config: Res<PrototypeConfig>) {
+    // 刚体与持握方式属于玩法配置，合并到同一记录便于沿用日志筛选。
+    info!(target: "demo::gameplay", ?config,
+        physics_engine = "avian3d", physics_version = "0.7.0",
+        character_body = "dynamic", parcel_body = "dynamic",
+        grip_mode = "spring_damper", release_mode = "preserve_velocity",
+        "Prototype gameplay initialized");
 }
 
 /// 脚底附近的小球向下探测支撑面；墙面法线和上升中的角色不能算接地。
