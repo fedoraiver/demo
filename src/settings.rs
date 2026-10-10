@@ -346,16 +346,26 @@ impl GameSettings {
     }
 }
 
-/// 注册帧率限制系统；设置资源也可由后续设置界面在运行期间修改。
+/// 注册帧率限制和固定时间步日志；设置资源也可由设置界面在运行期间修改。
 pub struct SettingsPlugin;
 
 impl Plugin for SettingsPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<GameSettings>()
             .init_resource::<SettingsFile>()
+            .add_systems(Startup, log_simulation_timestep)
             // 等待在时间与业务系统之前完成；固定步仍由引擎时钟驱动，不改写模拟时间步。
             .add_systems(First, limit_frame_rate.before(TimeSystems));
     }
+}
+
+/// 记录模拟频率，直接读取应用配置的固定时间步，不初始化或覆盖它。
+fn log_simulation_timestep(time: Res<Time<Fixed>>) {
+    info!(
+        target: "demo::settings",
+        simulation_hz = 1.0 / time.timestep().as_secs_f64(),
+        "Fixed simulation timestep initialized"
+    );
 }
 
 /// 等待和日志去重只属于帧率系统，使用 Local 而非共享的游戏状态。
