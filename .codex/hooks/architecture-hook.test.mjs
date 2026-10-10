@@ -113,6 +113,24 @@ test('missing staged geometry checker blocks the commit without changing index o
   assert.equal(f.reports().filter(report => report.status === 'failed').length, 1);
 });
 
+test('missing staged source editor blocks the commit without changing index or artifacts', () => {
+  const f = fixture();
+  f.commit('installed source editor');
+  const originalHead = f.git(['rev-parse', 'HEAD']).stdout;
+  const originalOutputs = outputPaths.map(f.read);
+  // 共享模块在工作区中存在，也不能用于补齐缺失的候选提交依赖。
+  const editor = 'docs/diagrams/source-editor.mjs';
+  f.git(['rm', '--cached', editor]);
+  assert.equal(fs.existsSync(path.join(f.directory, editor)), true);
+  const tree = f.git(['write-tree']).stdout;
+  const result = f.commit('missing staged source editor', [], 1);
+  assert.match(result.stderr, /Missing staged architecture input: docs\/diagrams\/source-editor\.mjs/);
+  assert.equal(f.git(['write-tree']).stdout, tree);
+  assert.equal(f.git(['rev-parse', 'HEAD']).stdout, originalHead);
+  assert.deepEqual(outputPaths.map(f.read), originalOutputs);
+  assert.equal(f.reports().filter(report => report.status === 'failed').length, 1);
+});
+
 test('removing an installed model blocks the commit even when all diagrams are removed from the index', () => {
   const f = fixture();
   f.commit('installed architecture snapshot');

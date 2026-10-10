@@ -2,7 +2,7 @@
 
 打开 [交互式 HTML](ecs-architecture.html) 查看四个视图。文件内嵌图形与数据，可离线使用；滚轮缩放、左键拖动平移，点击卡片展开字段、读写声明和源码入口。画布内的文字不参与选择，避免拖动误选；右侧详情和源码页中的文字仍可选择复制。详情中的组件与资源还可继续点击。
 
-详情中的“源码位置”是链接，点击后在新页面打开 [源码查看页](ecs-source.html)，显示对应完整文件并定位、高亮指定行。源码页可切换文件，点击行号更新定位链接；两份 HTML 放在同一目录即可离线使用，无需启动服务。源码文本是生成时的快照，不会自动跟随工作区文件变化。
+详情中的“源码位置”保留离线快照入口，点击后在新页面打开 [源码查看页](ecs-source.html)，显示对应完整文件并定位、高亮指定行。并列的 VS Code 入口打开当前本地工作区中的对应文件，定位到节点记录的行，默认列为 `1`。源码页也提供 VS Code 入口，使用当前选择的文件和定位行；切换文件、点击行号后会更新定位。源码文本是生成时的快照，不会自动跟随工作区文件变化，本地文件修改后内容和行号可能与快照不同。两份 HTML 放在同一目录即可离线使用，无需启动服务。
 
 | 视图 | 独立 SVG | 阅读重点 |
 | --- | --- | --- |
@@ -39,9 +39,19 @@
 
 声音反馈使用 `SoundRequest` 缓冲消息。菜单的 `previous / next / pointer_interaction` 仅在真实焦点变化时发送 `MenuHover`；`handle_requests` 对接受的语义操作发送 `MenuConfirm / MenuCancel`。滑条拖动只更新草稿，结束且最终值改变时汇总一次确认；`TestSfx` 只请求现有 `ParcelPickup`，不触发玩法。成功拾取与主动释放在关系命令生效时提交；持握警告在固定玩法链之后只读真实位置，落地检测在物理步之后只读 `ContactGraph`，两者仅在 Running 收集。`Update` 在 UI Style 之后顺序执行加载失败日志、有效混音选择、实例音量同步、请求播放与退出停止，使用 `Time<Real>` 节流，暂停菜单仍可发声；总并发 4、SFX 最多 3，为 UI 保留 1 个名额。`AudioMix` 选择草稿或已应用音量，按 `0.25 × master% × UI/SFX% × 素材基准` 计算实例分贝；静音新请求立即丢弃，不占冷却／并发。`SoundBank` 维护策略与实例，UI/SFX 通道由 Kira 消费排队命令；`PostUpdate` 在 `PlayTypedChannels` 后再次同步刚就绪实例，保留素材间响度与最新预览。交接、推车、弹开及交付共五种 cue 仅预留映射，合成环境底声仅供试听。
 
-[ecs-data.json](ecs-data.json) 保存经过源码核对的清单，[build-ecs.mjs](build-ecs.mjs) 生成交付文件，[source-viewer.mjs](source-viewer.mjs) 将清单引用文件的完整文本内嵌到源码查看页。架构图的清单、布局、关系、源码入口及生成校验统一归下面的 Agent Hook 维护职责；普通代码开发任务不逐次手动维护或刷新。分享时保留 `ecs-architecture.html` 和 `ecs-source.html` 的相对位置。
+[ecs-data.json](ecs-data.json) 保存经过源码核对的清单，[build-ecs.mjs](build-ecs.mjs) 生成交付文件，[source-viewer.mjs](source-viewer.mjs) 将清单引用文件的完整文本内嵌到源码查看页，[source-editor.mjs](source-editor.mjs) 为两份 HTML 共用的工作区配置与 VS Code 定位入口。共享逻辑内嵌到生成页面，离线使用不需要额外加载模块。架构图的清单、布局、关系、源码入口及生成校验统一归下面的 Agent Hook 维护职责；普通代码开发任务不逐次手动维护或刷新。分享时保留 `ecs-architecture.html` 和 `ecs-source.html` 的相对位置。
+
+## 在 VS Code 中打开源码
+
+从实际检出或 worktree 的 `docs/diagrams/` 目录通过 `file://` 打开 HTML 时，页面根据自己的位置推导工作区根目录；通过“配置工作区”查看并修正“仓库根目录”，点击“保存目录”生效。“恢复默认”清除手动配置并重新使用本地页面推导。由 HTTP 服务提供、HTML 搬到其他位置，或需要指向另一份 worktree 时，先填写目标工作区的绝对根目录；Git Hook 的 `tmp/git-hooks/architecture/` 快照不自动推导为可编辑工作区。路径可以包含空格、中文、`#` 和 `%`，无需手动编码。
+
+配置按页面所在目录的完整 URL 保存在浏览器本地，主检出和各 worktree 的页面目录相互独立。`workspace` 查询参数优先于保存的配置，保存的配置优先于 `file://` 推导；浏览器禁用存储时，本页仍保留配置，并通过同目录两份 HTML 的链接携带 `workspace` 参数。分享链接前移除该参数中的个人路径。生成文件不包含个人绝对路径，也不将 Hook 临时快照目录写入产物。
+
+VS Code 入口仅在用户点击时调用 `vscode://file/...` 协议；页面加载、选择节点及修改根目录都不会自动打开编辑器。浏览器可能要求确认外部应用，只有安装并注册了该协议的 VS Code 才能处理请求。页面无法确认浏览器是否批准或编辑器是否打开，发出请求不等于打开成功。未配置有效根目录时按提示补齐；浏览器拒绝请求或本机未安装 VS Code 时，可使用复制定位入口保留文件、行、列信息，或继续查看离线快照。仅打开源码不会启动游戏。
 
 ## 箭头锚点与走线
+
+箭头只出现在连线末端，使用 SVG 1.1 的 `orient="auto"` 随末段方向旋转。不要使用仅为起点反向提供能力的 SVG 2 `auto-start-reverse`；部分旧静态渲染器无法识别该值，会把所有箭头头部固定画成向右。浏览器和静态预览都需检查实际方向。
 
 连接节点的箭头必须选定上、右、下或左侧的一条边。同侧只有一条连接时，必须从该边的几何中心引出或接入；同侧有多条独立连接时，采用均匀分布的内部等分点：两条使用两个三等分点，三条使用三个四等分点，`n` 条使用 `k / (n + 1)` 的位置（`k = 1..n`），不要求全部挤在中心。计数包含该侧的入线与出线；共用干线在框外分叉或汇合时，节点边上只计一条实际连线。
 
@@ -71,7 +81,7 @@ git config --local core.hooksPath .githooks
 
 每次 `git commit`（包括 `--amend`、`-a` 和指定部分路径）写入提交前，Hook 通过 `git write-tree` 读取 Git 为本次提交提供的活动索引，将候选树导出到根 `tmp/git-hooks/architecture/<索引树ID>-<运行标识>/` 的独立快照中。在快照内生成两份 HTML、四份 SVG，并运行 [check-ecs.mjs](check-ecs.mjs) 校验清单一致性、系统图内覆盖、节点及 Observer 引用、函数入口、源码快照与 SVG 一致性。保留原图、本次 diff、生成与校验日志；`run.json` 记录状态及错误。临时文件不提交，Hook 不启动或操作游戏。纯问答和没有提交的工作区修改不触发生成。
 
-候选树必须包含清单、生成器及其依赖（[源码查看页生成器](source-viewer.mjs)、[校验器](check-ecs.mjs)、[几何校验模块](diagram-geometry.mjs)和引用源码）；首次引入时须暂存项目 Hook、清单、生成器、校验器及其依赖和源码。Hook 只读取候选树中的输入，不使用工作区未暂存的修改补齐快照，也不自动暂存源码、清单、生成器或其他文件。校验通过后，仅将 `ecs-architecture.html`、`ecs-source.html` 和四份 SVG 的生成内容精确写入活动索引，随本次提交一起保存，不另行提交或 amend。部分暂存时，图和源码页表示本次提交选中的版本，工作区剩余修改不参与生成。校验不判断 Rust 架构语义，也不能识别所有新系统；语义输入由 Agent Hook 负责。
+候选树必须包含清单、生成器及其依赖（[源码查看页生成器](source-viewer.mjs)、[编辑器入口共享模块](source-editor.mjs)、[校验器](check-ecs.mjs)、[几何校验模块](diagram-geometry.mjs)和引用源码）；首次引入时须暂存项目 Hook、清单、生成器、校验器及其依赖和源码。Hook 只读取候选树中的输入，不使用工作区未暂存的修改补齐快照，也不自动暂存源码、清单、生成器或其他文件；工作区中存在但候选索引中缺失的共享模块仍会阻止提交。校验通过后，仅将 `ecs-architecture.html`、`ecs-source.html` 和四份 SVG 的生成内容精确写入活动索引，随本次提交一起保存，不另行提交或 amend。部分暂存时，图和源码页表示本次提交选中的版本，工作区剩余修改不参与生成。校验不判断 Rust 架构语义，也不能识别所有新系统；语义输入由 Agent Hook 负责。
 
 提交后的 `post-commit` 只将本次提交中六份已生成产物的 blob 对齐到 Git 提供的真实索引，不生成产物、不再次提交。同步要求本次 Git 进程的生成记录存在，且其中的候选树与当前 HEAD 树一致；其他运行留下的记录不能用于同步。普通索引及自定义 `GIT_INDEX_FILE` 的指定路径提交均支持此流程，避免提交后出现六份产物的反向暂存差异，其他已暂存文件保持原状。
 
@@ -98,9 +108,11 @@ powershell -NoProfile -File .codex/hooks/architecture-hook.ps1 synchronize-index
 ```text
 node docs/diagrams/build-ecs.mjs
 node docs/diagrams/check-ecs.mjs
-node --test .codex/hooks/architecture-hook.test.mjs docs/diagrams/check-ecs.test.mjs
+node --test .codex/hooks/architecture-hook.test.mjs docs/diagrams/check-ecs.test.mjs docs/diagrams/source-editor.test.mjs docs/diagrams/source-viewer.test.mjs
 ```
 
 工作区生成读取当前源码与清单，覆盖六份产物但不自动暂存；它只进行渲染，不能代替 Agent Hook 的语义维护职责。`pre-commit` 重试只读取索引，排查工作区修改时使用上述生成命令。独立校验可能报告未刷新产物的源码入口或快照不符；校验仅允许 CRLF/LF 换行差异，不忽略其他源码内容变化。本次提交以 `pre-commit` 索引快照内的校验结果为准。Hook 回归在根 `tmp/` 的独立 Git 仓库执行真实提交、amend、`-a` 和普通、自定义索引的部分路径提交，检查暂存边界、生成失败保护、提交后索引对齐及重试，不修改主仓库历史。临时文件遵循 [临时文件管理](../development.md#临时文件管理)。
+
+VS Code URI、根目录配置与生成页交互按 [源码定位验证](../testing.md#架构图源码定位验证) 检查；无窗口回归不能代替本机浏览器与 VS Code 的实际协议打开验证。
 
 图描述代码结构与调度约束，不替代游戏运行或视觉验收。
