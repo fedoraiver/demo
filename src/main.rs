@@ -9,7 +9,10 @@ mod camera_fade;
 mod camera_obstruction;
 mod character_animation;
 mod gameplay;
+#[cfg(test)]
+mod initialization_log_tests;
 mod input;
+mod inspector;
 mod island_recovery;
 mod physics;
 #[cfg(test)]
@@ -17,23 +20,21 @@ mod physics_tests;
 mod scene;
 mod session_log;
 mod settings;
-mod startup_log;
 mod ui;
 mod window_policy;
 
-use app_flow::{AppFlowPlugin, gameplay_running};
+use app_flow::AppFlowPlugin;
 use art_assets::ArtAssetsPlugin;
 use audio::GameAudioPlugin;
 use bevy::{log::LogPlugin, prelude::*};
-use bevy_inspector_egui::{bevy_egui::EguiPlugin, quick::WorldInspectorPlugin};
 use camera::CameraControlPlugin;
 use character_animation::CharacterAnimationPlugin;
 use gameplay::GameplayPlugin;
 use input::PlayerInputPlugin;
+use inspector::ProjectInspectorPlugin;
 use island_recovery::IslandRecoveryPlugin;
 use scene::PrototypeScenePlugin;
 use settings::{GameSettings, SettingsPlugin};
-use startup_log::StartupLogPlugin;
 use ui::GameUiPlugin;
 use window_policy::WindowPolicyPlugin;
 
@@ -73,9 +74,7 @@ fn main() -> AppExit {
         // 固定步只控制移动、重力和交互模拟，独立于玩家设置的渲染上限。
         .insert_resource(Time::<Fixed>::from_hz(60.0))
         .add_plugins((
-            // 检查器复用同一主窗口与相机，Egui 必须先于世界检查器注册。
-            EguiPlugin::default(),
-            WorldInspectorPlugin::new().run_if(gameplay_running),
+            ProjectInspectorPlugin,
             WindowPolicyPlugin,
             AppFlowPlugin,
             SettingsPlugin,
@@ -88,7 +87,6 @@ fn main() -> AppExit {
             IslandRecoveryPlugin,
             PrototypeScenePlugin,
             GameUiPlugin,
-            StartupLogPlugin,
         ))
         .run();
 

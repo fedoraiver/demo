@@ -162,6 +162,7 @@ impl Plugin for CameraControlPlugin {
             .add_observer(on_camera_look)
             .add_observer(request_perspective_toggle)
             .add_observer(release_pointer_for_inspector)
+            .add_systems(Startup, log_pose_synchronization)
             .add_systems(
                 PreUpdate,
                 filter_captured_egui_input
@@ -210,6 +211,15 @@ impl Plugin for CameraControlPlugin {
                     .run_if(gameplay_running),
             );
     }
+}
+
+/// 将模拟和逐帧姿态同步约定写入统一会话日志，便于排查帧率相关问题。
+fn log_pose_synchronization() {
+    info!(target: "demo::camera", simulation_schedule = "FixedUpdate",
+        grip_force_schedule = "FixedUpdate", physics_schedule = "FixedPostUpdate",
+        presentation_schedule = "RunFixedMainLoop",
+        presentation_order = "interpolation_character_facing_hold_target_camera_occlusion_fade_visibility", reason = "initialization",
+        "Camera pose synchronization configured");
 }
 
 /// 检查器释放使用动作事件；相机捕获系统继续负责下一帧上下文与点击恢复。
