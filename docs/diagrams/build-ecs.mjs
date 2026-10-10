@@ -144,6 +144,7 @@ const brief = {
 };
 const displayNames = { animation_grounding:'鞋底穿透补偿',observe_courier_ready:'菜单快递员 · 标记待绑定',courier_ready_observer:'主角 · 标记待绑定动画',time_update:'TimeSystems',input_update:'InputSystems',enhanced_prepare:'Enhanced Input · Prepare',enhanced_evaluate:'Enhanced Input · Update',input_apply:'Enhanced Input · Apply',held_apply:'ApplyDeferred · 持有关系',capture_apply:'ApplyDeferred · 上下文',inspector_pass:'World Inspector · UI Pass',transform_propagate:'Transform · Propagate',render:'RenderApp · 渲染概览' };
 Object.assign(brief, {
+  island_prepare: '地图几何 / 配置 → 静态碰撞与 NPC 胶囊',
   startup_pose: '记录固定模拟与插值后显示顺序',
   observe_menu_previous: '循环向上选择；焦点改变才反馈',
   observe_menu_next: '循环向下选择；焦点改变才反馈',
@@ -525,7 +526,7 @@ const primaryComponents = {
   parcel:['Parcel','Pickable','ItemModel','CarryGrip','SpawnPoint','RigidBody','Collider','Position','LinearVelocity','AngularVelocity','Transform','CollisionLayers','HeldBy','HeldTarget','TransformInterpolation','Children'],
   camera:['LoadingCamera','OrbitCamera','CameraOcclusion','MouseLookState','Camera3d','Transform'],world:['IslandCollider','RigidBody','Collider','CollisionLayers','Transform','ChildOf'],
   visual:['CharacterVisual','CourierVisual','CourierAnimationPending','CourierFootGrounding','WorldAssetRoot','Transform','GlobalTransform','ChildOf','Children','Visibility'],window:['PrimaryWindow','Window','CursorOptions','RawHandleWrapper'],
-  island:['IslandMap','IslandPending','IslandReady','ActorsSpawned','WorldAssetRoot','Children'],npc:['DisplayNpc','ChildOf'],animation_player:['AnimationPlayer','AnimationGraphHandle','CourierAnimation','ChildOf'],model_node:['Name','Transform','GlobalTransform','ChildOf','Mesh3d','MeshMaterial3d','Visibility','SkinnedMesh','AnimationTargetId','AnimatedBy']
+  island:['IslandMap','IslandPending','IslandReady','ActorsSpawned','WorldAssetRoot','Children'],npc:['DisplayNpc','ChildOf','Children'],animation_player:['AnimationPlayer','AnimationGraphHandle','CourierAnimation','ChildOf'],model_node:['Name','Transform','GlobalTransform','ChildOf','Mesh3d','MeshMaterial3d','Visibility','SkinnedMesh','AnimationTargetId','AnimatedBy']
 };
 entityBoxes.forEach(box=>{const e=entities[box.id];registry[`entity-${e.id}`]={...e,name:e.name,kind:'Entity'};
   const shortName={visual:'直属 GLB 视觉根',action:'动作',binding:'输入绑定',controller:'控制者',character:'角色',parcel:'五件可搬物',camera:'同一相机',world:'海岛静态碰撞',window:'主窗口',island:'海岛实例根',npc:'地图展示 NPC',animation_player:'主角播放器节点',model_node:'GLB 网格/骨骼节点'}[e.id];
@@ -560,6 +561,8 @@ model.resources.forEach(r => registry[r.id] = r);
 b += text(557, 1760, '预留集合 / 采样计时：Local', 'small');
 b += text(557, 1788, 'LastEasingTick：插值共享 Resource', 'small');
 if(entities.island && entities.npc){b+=edge([[1730,550],[1730,462]],'原地图子树','relationship',[1730,502],['entity-npc','entity-island']);}
+// NPC 胶囊与结构碰撞共用 World 汇总框；独立 ChildOf 箭头保留固定身体的生命周期。
+if(entities.world && entities.npc){b+=edge([[1230,1130],[1230,1090],[1480,1090],[1480,850],[1730,850],[1730,810]],'ChildOf：NPC 身体','relationship',[1680,890],['entity-world','entity-npc']);}
 if(entities.model_node){
   b+=edge([[1950,1670],[2070,1670],[2070,320],[1950,320]],'地图导入子树','relationship',[2070,860],['entity-model_node','entity-island']);
   b+=edge([[1410,1360],[1460,1360],[1460,1580],[1510,1580]],'ChildOf：原地图实例','relationship',[1460,1403],['entity-world','entity-model_node']);

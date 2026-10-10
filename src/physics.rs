@@ -69,18 +69,23 @@ pub(crate) fn held_collision_layers() -> CollisionLayers {
     )
 }
 
+/// 玩家与展示 NPC 共享脚底原点的身体形状，刚体类型和碰撞层由装配方决定。
+pub(crate) fn character_collider(config: &PrototypeConfig) -> Collider {
+    Collider::compound(vec![(
+        Vec3::Y * config.character_height * 0.5,
+        Quat::IDENTITY,
+        Collider::capsule(
+            config.character_radius,
+            config.character_height - 2.0 * config.character_radius,
+        ),
+    )])
+}
+
 /// 角色根保持脚底原点；偏移胶囊承载动态碰撞，锁旋转保证人物不翻倒。
 pub(crate) fn character_body(config: &PrototypeConfig) -> impl Bundle {
     (
         RigidBody::Dynamic,
-        Collider::compound(vec![(
-            Vec3::Y * config.character_height * 0.5,
-            Quat::IDENTITY,
-            Collider::capsule(
-                config.character_radius,
-                config.character_height - 2.0 * config.character_radius,
-            ),
-        )]),
+        character_collider(config),
         Mass(config.character_mass),
         LockedAxes::ROTATION_LOCKED,
         // 人物的刹车由运动控制力表达，低摩擦避免贴墙时被摩擦卡住。

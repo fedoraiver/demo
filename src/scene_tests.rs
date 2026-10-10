@@ -3,9 +3,9 @@
 use std::time::{Duration, Instant};
 
 use avian3d::prelude::{
-    ColliderAabb, ColliderOf, CollisionLayers, ContactGraph, LayerMask, LinearVelocity, Mass,
-    NoTranslationEasing, PhysicsTime, Position, RayHitData, Rotation, ShapeCastConfig,
-    ShapeHitData, Sleeping, SpatialQuery, SpatialQueryFilter,
+    AngularVelocity, ColliderAabb, ColliderOf, CollisionLayers, ContactGraph, LayerMask,
+    LinearVelocity, Mass, NoTranslationEasing, PhysicsTime, Position, RayHitData, Rotation,
+    ShapeCastConfig, ShapeHitData, Sleeping, SpatialQuery, SpatialQueryFilter,
 };
 use bevy::{
     animation::{AnimationPlugin, RepeatAnimation, graph::AnimationNodeType},
@@ -25,7 +25,7 @@ use super::*;
 use crate::{
     art_assets::ArtAssetsPlugin,
     character_animation::CharacterAnimationPlugin,
-    gameplay::{ControlsCharacter, GameplayPlugin},
+    gameplay::{ControlsCharacter, GameplayPlugin, HeldBy, HeldTarget},
     input::GameplayContext,
     physics::{DemoPhysicsPlugin, GamePhysicsLayer, gameplay_query_layers},
 };
@@ -110,6 +110,127 @@ fn static_collider_child(world: &World, parent: Entity) -> Entity {
         .copied()
         .find(|&entity| world.get::<IslandCollider>(entity).is_some())
         .expect("Expected a static collider child")
+}
+
+/// 核对真实 NPC 导入根与唯一碰撞子体，防止展示层级再次漏装或重复装配碰撞。
+fn assert_npc_colliders(world: &mut World) -> Vec<Entity> {
+    let config = world.resource::<PrototypeConfig>().clone();
+    let npcs: Vec<_> = world
+        .query_filtered::<Entity, With<DisplayNpc>>()
+        .iter(world)
+        .collect();
+    assert_eq!(npcs.len(), 4);
+    let mut colliders = Vec::new();
+    for (asset, position, yaw) in [
+        (
+            "chr_dispatcher",
+            Vec3::new(-10.2, 0.72, -2.75),
+            std::f32::consts::PI,
+        ),
+        (
+            "chr_pizza_clerk",
+            Vec3::new(3.0, 0.9, -10.8),
+            std::f32::consts::PI,
+        ),
+        (
+            "chr_music_clerk",
+            Vec3::new(13.7, 0.72, -0.8),
+            std::f32::consts::PI,
+        ),
+        ("chr_resident", Vec3::new(7.5, 0.0, 3.0), -1.9),
+    ] {
+        let npc = source_asset_entity(world, asset);
+        assert!(npcs.contains(&npc));
+        let pose = world.get::<Transform>(npc).unwrap();
+        assert!(pose.translation.abs_diff_eq(position, 0.001));
+        assert!(pose.rotation.dot(Quat::from_rotation_y(yaw)).abs() > 0.9999);
+        assert!(pose.scale.abs_diff_eq(Vec3::ONE, 0.001));
+        let global = *world.get::<GlobalTransform>(npc).unwrap();
+        let descendants: Vec<_> = world
+            .query::<&Children>()
+            .query(world)
+            .iter_descendants(npc)
+            .collect();
+        let npc_colliders: Vec<_> = descendants
+            .iter()
+            .copied()
+            .filter(|&entity| world.get::<Collider>(entity).is_some())
+            .collect();
+        assert_eq!(
+            npc_colliders.len(),
+            1,
+            "NPC {asset} needs one body collider"
+        );
+        let collider_entity = npc_colliders[0];
+        colliders.push(collider_entity);
+        assert!(world.get::<IslandCollider>(collider_entity).is_some());
+        assert_eq!(world.get::<ChildOf>(collider_entity).unwrap().parent(), npc);
+        assert_eq!(
+            world.get::<RigidBody>(collider_entity),
+            Some(&RigidBody::Static)
+        );
+        assert_eq!(
+            world.get::<CollisionLayers>(collider_entity),
+            Some(&world_collision_layers())
+        );
+        assert_eq!(
+            *world.get::<Transform>(collider_entity).unwrap(),
+            Transform::IDENTITY
+        );
+        assert!(
+            world
+                .get::<GlobalTransform>(collider_entity)
+                .unwrap()
+                .affine()
+                .abs_diff_eq(global.affine(), 0.001)
+        );
+        assert!(world.get::<CameraShell>(collider_entity).is_none());
+        assert!(world.get::<RigidBody>(npc).is_none());
+        assert!(world.get::<Collider>(npc).is_none());
+
+        let compound = world
+            .get::<Collider>(collider_entity)
+            .unwrap()
+            .shape()
+            .as_compound()
+            .expect("NPC body must use a capsule with its feet at the imported origin");
+        assert_eq!(compound.shapes().len(), 1);
+        let (offset, shape) = &compound.shapes()[0];
+        let capsule = shape.as_capsule().expect("NPC body must remain a capsule");
+        assert!((capsule.radius - config.character_radius).abs() < 0.001);
+        assert!(
+            (2.0 * (capsule.half_height() + capsule.radius) - config.character_height).abs()
+                < 0.001
+        );
+        assert!(
+            offset
+                .translation
+                .abs_diff_eq(Vec3::Y * config.character_height * 0.5, 0.001)
+        );
+        // NPC 只阻挡接触，导入模型及碰撞子体均不取得玩家控制或可搬运能力。
+        for entity in std::iter::once(npc).chain(descendants) {
+            assert!(world.get::<Character>(entity).is_none());
+            assert!(world.get::<CharacterIntent>(entity).is_none());
+            assert!(world.get::<CharacterMotion>(entity).is_none());
+            assert!(world.get::<Pickable>(entity).is_none());
+            assert!(world.get::<BuildingShellVisual>(entity).is_none());
+        }
+    }
+    colliders
+}
+
+/// 只有实际求解出的法向冲量才算撞上 NPC，AABB 重叠或预测接触不能代替阻挡。
+fn npc_contact_solved(world: &World, npc_collider: Entity, other: Entity) -> bool {
+    world
+        .resource::<ContactGraph>()
+        .get(npc_collider, other)
+        .is_some_and(|(_, pair)| {
+            pair.is_touching()
+                && pair
+                    .manifolds
+                    .iter()
+                    .any(|manifold| manifold.total_normal_impulse() > 0.001)
+        })
 }
 
 /// 从已实例化网格读取世界边界，入口目标跟随真实地板位置而不是碰撞楔体的高度。
@@ -661,6 +782,7 @@ fn island_sessions_wait_for_assets_survive_pause_and_clean_up_on_menu_return() {
             .iter(app.world())
             .collect();
         assert_eq!(parcels.len(), 5);
+        let npc_colliders = assert_npc_colliders(app.world_mut());
         assert_eq!(
             app.world_mut()
                 .query::<&Camera3d>()
@@ -715,6 +837,7 @@ fn island_sessions_wait_for_assets_survive_pause_and_clean_up_on_menu_return() {
             1
         );
         assert_eq!(app.world().resource::<MenuState>().page, MenuPage::Hidden);
+        assert_eq!(assert_npc_colliders(app.world_mut()), npc_colliders);
 
         app.world_mut()
             .resource_mut::<NextState<AppState>>()
@@ -722,6 +845,9 @@ fn island_sessions_wait_for_assets_survive_pause_and_clean_up_on_menu_return() {
         // WorldInstance 等异步展开也要观察到清理后的根，不能仅检查业务组件数量。
         for _ in 0..3 {
             app.update();
+        }
+        for collider in npc_colliders {
+            assert!(app.world().get_entity(collider).is_err());
         }
         assert_eq!(entities.iter(app.world()).collect::<HashSet<_>>(), initial);
     }
@@ -908,6 +1034,7 @@ fn real_island_loading_assembles_independent_roots_and_solid_geometry() {
             .count(),
         4
     );
+    let npc_colliders = assert_npc_colliders(world);
     assert_eq!(
         world
             .query_filtered::<Entity, With<Parcel>>()
@@ -939,7 +1066,7 @@ fn real_island_loading_assembles_independent_roots_and_solid_geometry() {
             .count();
         assert_eq!(actual, expected);
     }
-    // 保留的场景里不能残留展示版主角和自由箱，NPC 子树也不附加碰撞。
+    // 展示版主角和自由箱应移除；海水与草无碰撞，NPC 的独立身体碰撞已在上方核对。
     let imported: Vec<_> = world
         .query::<(Entity, &GltfExtras)>()
         .iter(world)
@@ -957,10 +1084,7 @@ fn real_island_loading_assembles_independent_roots_and_solid_geometry() {
             ),
             "Display dynamic instance was not removed"
         );
-        if asset.source_asset == "env_ocean"
-            || asset.category == "characters"
-            || asset.source_asset == "prop_wild_grass_patch"
-        {
+        if asset.source_asset == "env_ocean" || asset.source_asset == "prop_wild_grass_patch" {
             let descendants: Vec<_> = world
                 .query::<&Children>()
                 .query(world)
@@ -1185,6 +1309,7 @@ fn real_island_loading_assembles_independent_roots_and_solid_geometry() {
                 .count(),
             collider_count
         );
+        assert_eq!(assert_npc_colliders(world), npc_colliders);
         assert_eq!(
             world
                 .query_filtered::<Entity, With<Character>>()
@@ -1425,6 +1550,219 @@ fn real_island_physics_initializes_world_transforms_supports_all_items_and_enter
                 .0
                 .length()
                 < 0.2
+        );
+    }
+}
+
+#[test]
+fn real_island_npc_blocks_player_control_force_without_moving() {
+    let mut app = physics_asset_app();
+    wait_until(&mut app, |world| {
+        world.query::<&Character>().iter(world).count() == 1
+    });
+    fixed_steps(&mut app, 1);
+    let world = app.world_mut();
+    assert_npc_colliders(world);
+    let npc = source_asset_entity(world, "chr_resident");
+    let npc_collider = static_collider_child(world, npc);
+    let npc_position = world.get::<Position>(npc_collider).unwrap().0;
+    let npc_rotation = world.get::<Rotation>(npc_collider).unwrap().0;
+    let character = world
+        .query_filtered::<Entity, With<Character>>()
+        .single(world)
+        .unwrap();
+    let start = npc_position + Vec3::new(0.0, 0.03, 2.0);
+    let radius = world.resource::<PrototypeConfig>().character_radius;
+    // 从居民前方的实际地形走向身体，使用正常运动控制力，不能靠瞬移到重叠位置验证。
+    world
+        .entity_mut(character)
+        .insert((
+            Position(start),
+            Rotation(Quat::IDENTITY),
+            Transform::from_translation(start),
+            LinearVelocity(Vec3::ZERO),
+            AngularVelocity(Vec3::ZERO),
+            NoTranslationEasing,
+        ))
+        .remove::<Sleeping>();
+    world
+        .get_mut::<CharacterIntent>(character)
+        .unwrap()
+        .movement = Vec2::Y;
+    let mut touched_npc = false;
+    for _ in 0..90 {
+        fixed_steps(&mut app, 1);
+        let world = app.world();
+        let position = world.get::<Position>(character).unwrap().0;
+        assert!(position.is_finite());
+        assert!(
+            position.z >= npc_position.z + 2.0 * radius - 0.04,
+            "Player crossed the NPC body: {position:?}"
+        );
+        touched_npc |= npc_contact_solved(world, npc_collider, character);
+        assert!(
+            world
+                .get::<Position>(npc_collider)
+                .unwrap()
+                .0
+                .abs_diff_eq(npc_position, 0.0001)
+        );
+        assert!(
+            world
+                .get::<Rotation>(npc_collider)
+                .unwrap()
+                .0
+                .dot(npc_rotation)
+                .abs()
+                > 0.99999
+        );
+    }
+    let world = app.world();
+    let position = world.get::<Position>(character).unwrap().0;
+    assert!(
+        touched_npc,
+        "Player must make a solved contact with the real NPC collider"
+    );
+    assert!(
+        start.z - position.z > 1.0,
+        "Player control force must actually approach the NPC"
+    );
+    assert!((position.x - npc_position.x).abs() < 0.05);
+    assert!(position.z <= npc_position.z + 2.0 * radius + 0.04);
+    assert!(world.get::<LinearVelocity>(character).unwrap().0.z.abs() < 0.2);
+    assert_npc_colliders(app.world_mut());
+}
+
+#[test]
+fn real_island_npc_blocks_free_and_actually_held_parcels() {
+    use bevy::ecs::relationship::Relationship;
+
+    for held in [false, true] {
+        let mut app = physics_asset_app();
+        wait_until(&mut app, |world| {
+            world.query::<&Character>().iter(world).count() == 1
+        });
+        fixed_steps(&mut app, 1);
+        let world = app.world_mut();
+        let npc = source_asset_entity(world, "chr_resident");
+        let npc_collider = static_collider_child(world, npc);
+        let npc_position = world.get::<Position>(npc_collider).unwrap().0;
+        let npc_rotation = world.get::<Rotation>(npc_collider).unwrap().0;
+        let character = world
+            .query_filtered::<Entity, With<Character>>()
+            .single(world)
+            .unwrap();
+        let parcel = world
+            .query::<(Entity, &ItemModel)>()
+            .iter(world)
+            .find(|(_, model)| **model == ItemModel::StandardParcel)
+            .unwrap()
+            .0;
+        let character_start = npc_position + Vec3::new(0.0, 0.03, 2.0);
+        let parcel_start = npc_position + Vec3::new(0.0, if held { 0.3 } else { 1.0 }, 1.1);
+        world
+            .entity_mut(character)
+            .insert((
+                Position(character_start),
+                Rotation(Quat::IDENTITY),
+                Transform::from_translation(character_start),
+                LinearVelocity(Vec3::ZERO),
+                AngularVelocity(Vec3::ZERO),
+                NoTranslationEasing,
+            ))
+            .remove::<Sleeping>();
+        world
+            .entity_mut(parcel)
+            .insert((
+                Position(parcel_start),
+                Rotation(Quat::IDENTITY),
+                Transform::from_translation(parcel_start),
+                LinearVelocity(if held { Vec3::ZERO } else { Vec3::NEG_Z * 4.0 }),
+                AngularVelocity(Vec3::ZERO),
+                NoTranslationEasing,
+            ))
+            .remove::<Sleeping>();
+        if held {
+            fixed_steps(&mut app, 20);
+            // 通过真实交互系统建立持有关系和碰撞过滤，随后先让纸箱正常升到手前。
+            app.world_mut()
+                .get_mut::<CharacterIntent>(character)
+                .unwrap()
+                .interact_pending = true;
+            fixed_steps(&mut app, 1);
+            assert_eq!(app.world().get::<HeldBy>(parcel).unwrap().get(), character);
+            fixed_steps(&mut app, 90);
+            let raised = app.world().get::<Position>(parcel).unwrap().0;
+            assert!(
+                raised.y > npc_position.y + 1.0,
+                "The held parcel must actually rise before the collision probe"
+            );
+            // 把持握目标放到居民背后，角色留在身体外；阻挡必须来自 NPC 而非持有者自身。
+            app.world_mut().get_mut::<CarryGrip>(parcel).unwrap().0 = Vec3::new(0.0, 1.3, -2.3);
+        }
+        let mut touched_npc = false;
+        for _ in 0..if held { 90 } else { 30 } {
+            fixed_steps(&mut app, 1);
+            let world = app.world();
+            let position = world.get::<Position>(parcel).unwrap().0;
+            assert!(position.is_finite());
+            assert!(
+                position.z > npc_position.z + 0.2,
+                "Parcel crossed the NPC body: held={held}, position={position:?}"
+            );
+            touched_npc |= npc_contact_solved(world, npc_collider, parcel);
+            assert!(
+                world
+                    .get::<Position>(npc_collider)
+                    .unwrap()
+                    .0
+                    .abs_diff_eq(npc_position, 0.0001)
+            );
+            assert!(
+                world
+                    .get::<Rotation>(npc_collider)
+                    .unwrap()
+                    .0
+                    .dot(npc_rotation)
+                    .abs()
+                    > 0.99999
+            );
+            if held {
+                assert_eq!(world.get::<HeldBy>(parcel).unwrap().get(), character);
+                assert!(world.get::<Position>(character).unwrap().0.z > npc_position.z + 1.0);
+            } else {
+                assert!(world.get::<HeldBy>(parcel).is_none());
+            }
+        }
+        let world = app.world();
+        assert!(
+            touched_npc,
+            "Parcel must make a solved contact with the real NPC: held={held}"
+        );
+        if held {
+            let position = world.get::<Position>(parcel).unwrap().0;
+            let target = world.get::<HeldTarget>(parcel).unwrap().translation;
+            assert!(
+                target.z < npc_position.z,
+                "Held target must request motion through the NPC"
+            );
+            assert!(
+                position.z - target.z > 0.5,
+                "NPC must prevent the real held parcel reaching the blocked target"
+            );
+        } else {
+            let position = world.get::<Position>(parcel).unwrap().0;
+            assert!(
+                parcel_start.z - position.z > 0.3,
+                "The free parcel must actually move toward the NPC"
+            );
+        }
+        assert_eq!(
+            app.world_mut()
+                .query::<&bevy::window::Window>()
+                .iter(app.world())
+                .count(),
+            0
         );
     }
 }

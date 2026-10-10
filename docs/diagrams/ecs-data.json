@@ -27,7 +27,7 @@
       ],
       "source": {
         "path": "src/scene.rs",
-        "line": 95
+        "line": 98
       }
     },
     {
@@ -1643,7 +1643,7 @@
       ],
       "source": {
         "path": "src/physics.rs",
-        "line": 131
+        "line": 136
       }
     },
     {
@@ -1931,7 +1931,7 @@
       ],
       "source": {
         "path": "src/scene.rs",
-        "line": 119
+        "line": 122
       }
     },
     {
@@ -1961,7 +1961,7 @@
       ],
       "source": {
         "path": "src/scene.rs",
-        "line": 141
+        "line": 144
       }
     },
     {
@@ -1977,6 +1977,7 @@
         "model_node.Transform",
         "model_node.Mesh3d",
         "resource.AssetsMesh",
+        "resource.PrototypeConfig",
         "resource.ArtLoadState",
         "resource.AppState",
         "resource.PlayState"
@@ -1989,8 +1990,10 @@
         "world.RigidBody",
         "world.Collider",
         "world.CollisionLayers",
+        "world.Transform",
         "world.ChildOf",
         "npc.DisplayNpc",
+        "npc.Children",
         "camera_shell.CameraShell",
         "camera_shell.RigidBody",
         "camera_shell.Collider",
@@ -2003,10 +2006,11 @@
         "run_if(gameplay_running)：AppState::InGame 且 PlayState::Running；无状态测试仍可运行。"
       ],
       "events": [],
-      "description": "导入元数据与 CPU 几何，构建完整玩法静态碰撞、入口坡道，以及独立的建筑外壳查询几何与视觉标记。",
+      "description": "导入元数据与 CPU 几何，构建完整玩法静态碰撞、入口坡道、四名 NPC 的身体胶囊，以及独立的建筑外壳查询几何与视觉标记。",
       "notes": [
         "全部几何成功后才提交碰撞并标记 IslandReady；失败不生成动态玩家。",
         "移除地图展示主角、易碎纸箱与三只木箱；保留四名 NPC。",
+        "NPC 各生成一份静态胶囊子体，按 PrototypeConfig 复用脚底原点的角色身体形状；World 层阻挡玩家、自由箱和持握箱，NPC 本身不加入 Character。",
         "碰撞是原美术实例的 ChildOf；不改变视觉姿态。",
         "海水、草、叶片无支撑碰撞；台阶用连接实际地板的坡道。",
         "每栋建筑最多一份合并外壳查询碰撞体，CameraShell 与 ChildOf 指向所属导入实例。CameraQuery 掩码为 NONE，不参与玩法接触。",
@@ -2014,7 +2018,7 @@
       ],
       "source": {
         "path": "src/scene.rs",
-        "line": 152
+        "line": 155
       }
     },
     {
@@ -2064,7 +2068,7 @@
       ],
       "source": {
         "path": "src/scene.rs",
-        "line": 608
+        "line": 628
       }
     },
     {
@@ -3847,7 +3851,7 @@
           "description": "状态退出销毁此根；内置 ChildOf 子树随根清理。",
           "source": {
             "path": "src/scene.rs",
-            "line": 633
+            "line": 653
           }
         }
       ]
@@ -3867,7 +3871,7 @@
           "description": "角色根实体名称。",
           "source": {
             "path": "src/scene.rs",
-            "line": 572
+            "line": 592
           }
         },
         {
@@ -3917,7 +3921,7 @@
           "description": "Avian 固定步回写与渲染帧插值的呈现姿态；物理位置来源是 Position，非持握系统直接搬动。",
           "source": {
             "path": "src/scene.rs",
-            "line": 572
+            "line": 592
           }
         },
         {
@@ -3929,7 +3933,7 @@
           "description": "由 Transform 要求并由引擎同步；供层级传播与渲染使用。",
           "source": {
             "path": "src/scene.rs",
-            "line": 572
+            "line": 592
           }
         },
         {
@@ -3941,7 +3945,7 @@
           "description": "根实体的可见性，视觉子实体继承层级可见性。",
           "source": {
             "path": "src/scene.rs",
-            "line": 572
+            "line": 592
           }
         },
         {
@@ -3953,7 +3957,7 @@
           "description": "ChildOf 的自动反向索引；当前包含身体、头部与朝向标记三个视觉实体。",
           "source": {
             "path": "src/scene.rs",
-            "line": 572
+            "line": 592
           }
         },
         {
@@ -3977,7 +3981,7 @@
           "description": "动态刚体；角色与箱体均保留物理解算。",
           "source": {
             "path": "src/physics.rs",
-            "line": 73
+            "line": 85
           }
         },
         {
@@ -3989,7 +3993,7 @@
           "description": "业务根碰撞体，视觉子实体不添加物理体。",
           "source": {
             "path": "src/physics.rs",
-            "line": 73
+            "line": 85
           }
         },
         {
@@ -4001,7 +4005,7 @@
           "description": "实际物理位置；Forces.position()、接地与拾取读取此值。",
           "source": {
             "path": "src/physics.rs",
-            "line": 73
+            "line": 85
           }
         },
         {
@@ -4013,7 +4017,7 @@
           "description": "实际物理旋转；角色锁旋转，箱体允许旋转。",
           "source": {
             "path": "src/physics.rs",
-            "line": 73
+            "line": 85
           }
         },
         {
@@ -4025,7 +4029,7 @@
           "description": "实际线速度，由冲量、外力、重力与接触求解改变。",
           "source": {
             "path": "src/physics.rs",
-            "line": 73
+            "line": 85
           }
         },
         {
@@ -4037,7 +4041,7 @@
           "description": "实际角速度；释放箱体保留原有动量。",
           "source": {
             "path": "src/physics.rs",
-            "line": 73
+            "line": 85
           }
         },
         {
@@ -4049,7 +4053,7 @@
           "description": "显式质量，Avian 更新计算质量。",
           "source": {
             "path": "src/physics.rs",
-            "line": 73
+            "line": 85
           }
         },
         {
@@ -4061,7 +4065,7 @@
           "description": "Forces 及跳跃冲量读取的计算质量。",
           "source": {
             "path": "src/physics.rs",
-            "line": 73
+            "line": 85
           }
         },
         {
@@ -4071,7 +4075,7 @@
           "description": "Avian 计算角惯量，Forces QueryData 只读。",
           "source": {
             "path": "src/physics.rs",
-            "line": 73
+            "line": 85
           }
         },
         {
@@ -4081,7 +4085,7 @@
           "description": "Avian 计算质量中心，Forces QueryData 只读。",
           "source": {
             "path": "src/physics.rs",
-            "line": 73
+            "line": 85
           }
         },
         {
@@ -4093,7 +4097,7 @@
           "description": "接触求解与支撑查询使用的碰撞层；持握当前忽略全部人物层。",
           "source": {
             "path": "src/physics.rs",
-            "line": 73
+            "line": 85
           }
         },
         {
@@ -4103,7 +4107,7 @@
           "description": "请求离散接触开始/结束消息，用于集中日志。",
           "source": {
             "path": "src/physics.rs",
-            "line": 73
+            "line": 85
           }
         },
         {
@@ -4117,7 +4121,7 @@
           "description": "保留非线性高速扫掠，正常移动使用推测接触；非零 yaw 下不采用 LINEAR。",
           "source": {
             "path": "src/physics.rs",
-            "line": 73
+            "line": 85
           }
         },
         {
@@ -4129,7 +4133,7 @@
           "description": "控制接触摩擦；人物低摩擦避免贴墙卡住。",
           "source": {
             "path": "src/physics.rs",
-            "line": 73
+            "line": 85
           }
         },
         {
@@ -4141,7 +4145,7 @@
           "description": "接触恢复系数。",
           "source": {
             "path": "src/physics.rs",
-            "line": 73
+            "line": 85
           }
         },
         {
@@ -4151,7 +4155,7 @@
           "description": "Avian 内部组件；Forces 在此累计本步世界加速度/力数据，物理步消费。",
           "source": {
             "path": "src/physics.rs",
-            "line": 73
+            "line": 85
           }
         },
         {
@@ -4161,7 +4165,7 @@
           "description": "Avian 内部局部加速度累计；Forces QueryData 声明可变访问，项目未用局部力方法。",
           "source": {
             "path": "src/physics.rs",
-            "line": 73
+            "line": 85
           }
         },
         {
@@ -4171,7 +4175,7 @@
           "description": "可选 Avian 睡眠状态计时；Forces 施力/冲量可能唤醒。",
           "source": {
             "path": "src/physics.rs",
-            "line": 73
+            "line": 85
           }
         },
         {
@@ -4181,7 +4185,7 @@
           "description": "只对渲染帧平移执行插值，不反馈物理 Position。",
           "source": {
             "path": "src/physics.rs",
-            "line": 73
+            "line": 85
           }
         },
         {
@@ -4193,7 +4197,7 @@
           "description": "固定步起止平移的插值端点，渲染帧按 overstep 混合。",
           "source": {
             "path": "src/physics.rs",
-            "line": 73
+            "line": 85
           }
         },
         {
@@ -4205,7 +4209,7 @@
           "description": "锁定刚体旋转防止倾倒；视角仍设置水平呈现朝向。",
           "source": {
             "path": "src/physics.rs",
-            "line": 73
+            "line": 85
           }
         },
         {
@@ -4217,7 +4221,7 @@
           "description": "Avian 从业务根碰撞体/刚体初始化的物理查询数据；SpatialQuery 只读。",
           "source": {
             "path": "src/physics.rs",
-            "line": 73
+            "line": 85
           }
         },
         {
@@ -4274,7 +4278,7 @@
           "description": "状态退出销毁此根；内置 ChildOf 子树随根清理。",
           "source": {
             "path": "src/scene.rs",
-            "line": 628
+            "line": 648
           }
         }
       ]
@@ -4294,7 +4298,7 @@
           "description": "木箱快递根实体名称。",
           "source": {
             "path": "src/scene.rs",
-            "line": 585
+            "line": 605
           }
         },
         {
@@ -4328,7 +4332,7 @@
           "description": "Avian 固定步回写与渲染帧插值的呈现姿态；物理位置来源是 Position，非持握系统直接搬动。",
           "source": {
             "path": "src/scene.rs",
-            "line": 585
+            "line": 605
           }
         },
         {
@@ -4340,7 +4344,7 @@
           "description": "由 Transform 要求并由引擎同步，用于木箱模型层级传播。",
           "source": {
             "path": "src/scene.rs",
-            "line": 585
+            "line": 605
           }
         },
         {
@@ -4352,7 +4356,7 @@
           "description": "根实体可见性。",
           "source": {
             "path": "src/scene.rs",
-            "line": 585
+            "line": 605
           }
         },
         {
@@ -4364,7 +4368,7 @@
           "description": "ChildOf 的自动反向索引；当前包含箱体与两条木条三个视觉实体。",
           "source": {
             "path": "src/scene.rs",
-            "line": 585
+            "line": 605
           }
         },
         {
@@ -4388,7 +4392,7 @@
           "description": "动态刚体；角色与箱体均保留物理解算。",
           "source": {
             "path": "src/physics.rs",
-            "line": 100
+            "line": 105
           }
         },
         {
@@ -4401,7 +4405,7 @@
           "description": "业务根碰撞体，视觉子实体不添加物理体。",
           "source": {
             "path": "src/physics.rs",
-            "line": 100
+            "line": 105
           }
         },
         {
@@ -4413,7 +4417,7 @@
           "description": "实际物理位置；Forces.position()、接地与拾取读取此值。",
           "source": {
             "path": "src/physics.rs",
-            "line": 100
+            "line": 105
           }
         },
         {
@@ -4425,7 +4429,7 @@
           "description": "实际物理旋转；角色锁旋转，箱体允许旋转。",
           "source": {
             "path": "src/physics.rs",
-            "line": 100
+            "line": 105
           }
         },
         {
@@ -4437,7 +4441,7 @@
           "description": "实际线速度，由冲量、外力、重力与接触求解改变。",
           "source": {
             "path": "src/physics.rs",
-            "line": 100
+            "line": 105
           }
         },
         {
@@ -4449,7 +4453,7 @@
           "description": "实际角速度；释放箱体保留原有动量。",
           "source": {
             "path": "src/physics.rs",
-            "line": 100
+            "line": 105
           }
         },
         {
@@ -4461,7 +4465,7 @@
           "description": "显式质量，Avian 更新计算质量。",
           "source": {
             "path": "src/physics.rs",
-            "line": 100
+            "line": 105
           }
         },
         {
@@ -4473,7 +4477,7 @@
           "description": "Forces 及跳跃冲量读取的计算质量。",
           "source": {
             "path": "src/physics.rs",
-            "line": 100
+            "line": 105
           }
         },
         {
@@ -4483,7 +4487,7 @@
           "description": "Avian 计算角惯量，Forces QueryData 只读。",
           "source": {
             "path": "src/physics.rs",
-            "line": 100
+            "line": 105
           }
         },
         {
@@ -4493,7 +4497,7 @@
           "description": "Avian 计算质量中心，Forces QueryData 只读。",
           "source": {
             "path": "src/physics.rs",
-            "line": 100
+            "line": 105
           }
         },
         {
@@ -4505,7 +4509,7 @@
           "description": "接触求解与支撑查询使用的碰撞层；持握当前忽略全部人物层。",
           "source": {
             "path": "src/physics.rs",
-            "line": 100
+            "line": 105
           }
         },
         {
@@ -4515,7 +4519,7 @@
           "description": "请求离散接触开始/结束消息，用于集中日志。",
           "source": {
             "path": "src/physics.rs",
-            "line": 100
+            "line": 105
           }
         },
         {
@@ -4528,7 +4532,7 @@
           "description": "连续碰撞检测，减少高速穿越。",
           "source": {
             "path": "src/physics.rs",
-            "line": 100
+            "line": 105
           }
         },
         {
@@ -4540,7 +4544,7 @@
           "description": "控制接触摩擦；人物低摩擦避免贴墙卡住。",
           "source": {
             "path": "src/physics.rs",
-            "line": 100
+            "line": 105
           }
         },
         {
@@ -4552,7 +4556,7 @@
           "description": "接触恢复系数。",
           "source": {
             "path": "src/physics.rs",
-            "line": 100
+            "line": 105
           }
         },
         {
@@ -4562,7 +4566,7 @@
           "description": "Avian 内部组件；Forces 在此累计本步世界加速度/力数据，物理步消费。",
           "source": {
             "path": "src/physics.rs",
-            "line": 100
+            "line": 105
           }
         },
         {
@@ -4572,7 +4576,7 @@
           "description": "Avian 内部局部加速度累计；Forces QueryData 声明可变访问，项目未用局部力方法。",
           "source": {
             "path": "src/physics.rs",
-            "line": 100
+            "line": 105
           }
         },
         {
@@ -4582,7 +4586,7 @@
           "description": "可选 Avian 睡眠状态计时；Forces 施力/冲量可能唤醒。",
           "source": {
             "path": "src/physics.rs",
-            "line": 100
+            "line": 105
           }
         },
         {
@@ -4592,7 +4596,7 @@
           "description": "只对渲染帧平移执行插值，不反馈物理 Position。",
           "source": {
             "path": "src/physics.rs",
-            "line": 100
+            "line": 105
           }
         },
         {
@@ -4604,7 +4608,7 @@
           "description": "固定步起止平移的插值端点，渲染帧按 overstep 混合。",
           "source": {
             "path": "src/physics.rs",
-            "line": 100
+            "line": 105
           }
         },
         {
@@ -4614,7 +4618,7 @@
           "description": "Forces 的可选只读组件；当前箱体不锁旋转。",
           "source": {
             "path": "src/physics.rs",
-            "line": 100
+            "line": 105
           }
         },
         {
@@ -4626,7 +4630,7 @@
           "description": "物理角速度阻尼。",
           "source": {
             "path": "src/physics.rs",
-            "line": 100
+            "line": 105
           }
         },
         {
@@ -4636,7 +4640,7 @@
           "description": "要求平移、旋转和缩放插值标记。",
           "source": {
             "path": "src/physics.rs",
-            "line": 100
+            "line": 105
           }
         },
         {
@@ -4646,7 +4650,7 @@
           "description": "箱体完整 Transform 插值的标记或端点数据。",
           "source": {
             "path": "src/physics.rs",
-            "line": 100
+            "line": 105
           }
         },
         {
@@ -4656,7 +4660,7 @@
           "description": "箱体完整 Transform 插值的标记或端点数据。",
           "source": {
             "path": "src/physics.rs",
-            "line": 100
+            "line": 105
           }
         },
         {
@@ -4668,7 +4672,7 @@
           "description": "箱体完整 Transform 插值的标记或端点数据。",
           "source": {
             "path": "src/physics.rs",
-            "line": 100
+            "line": 105
           }
         },
         {
@@ -4680,7 +4684,7 @@
           "description": "箱体完整 Transform 插值的标记或端点数据。",
           "source": {
             "path": "src/physics.rs",
-            "line": 100
+            "line": 105
           }
         },
         {
@@ -4715,7 +4719,7 @@
           "description": "Avian 从业务根碰撞体/刚体初始化的物理查询数据；SpatialQuery 只读。",
           "source": {
             "path": "src/physics.rs",
-            "line": 100
+            "line": 105
           }
         },
         {
@@ -4796,7 +4800,7 @@
           "description": "状态退出销毁此根；内置 ChildOf 子树随根清理。",
           "source": {
             "path": "src/scene.rs",
-            "line": 641
+            "line": 661
           }
         }
       ]
@@ -4816,7 +4820,7 @@
           "description": "相机名称。",
           "source": {
             "path": "src/scene.rs",
-            "line": 99
+            "line": 102
           }
         },
         {
@@ -4828,7 +4832,7 @@
           "description": "引擎三维相机组件；其要求的渲染组件在此清单中省略。",
           "source": {
             "path": "src/scene.rs",
-            "line": 100
+            "line": 103
           }
         },
         {
@@ -4890,7 +4894,7 @@
           "description": "follow_orbit_camera 根据角色位置和当前视角计算镜头姿态；第三人称环绕，第一人称在眼位使用 yaw 与独立俯仰。",
           "source": {
             "path": "src/scene.rs",
-            "line": 105
+            "line": 108
           }
         },
         {
@@ -4902,7 +4906,7 @@
           "description": "引擎传播后的相机世界变换，供渲染提取。",
           "source": {
             "path": "src/scene.rs",
-            "line": 100
+            "line": 103
           }
         },
         {
@@ -4924,7 +4928,7 @@
           "description": "场景显式标记玩法相机；主菜单退出时展示相机已清理，设置与暂停继续复用当前相机。",
           "source": {
             "path": "src/scene.rs",
-            "line": 102
+            "line": 105
           }
         },
         {
@@ -4985,7 +4989,7 @@
           "description": "加载期间相机身份，准备后移除。",
           "source": {
             "path": "src/scene.rs",
-            "line": 110
+            "line": 113
           }
         },
         {
@@ -4997,7 +5001,7 @@
           "description": "状态退出销毁此根；内置 ChildOf 子树随根清理。",
           "source": {
             "path": "src/scene.rs",
-            "line": 104
+            "line": 107
           }
         },
         {
@@ -5007,7 +5011,7 @@
           "description": "游戏会话中的 Bevy UI 默认相机。",
           "source": {
             "path": "src/scene.rs",
-            "line": 101
+            "line": 104
           }
         }
       ]
@@ -5027,7 +5031,7 @@
           "description": "各视觉部分的调试名称。",
           "source": {
             "path": "src/scene.rs",
-            "line": 569
+            "line": 589
           }
         },
         {
@@ -5041,7 +5045,7 @@
           "description": "相对业务根的局部变换；主角鞋底补偿仅改变此视觉根高度，物品视觉根保持场景装配变换。",
           "source": {
             "path": "src/scene.rs",
-            "line": 569
+            "line": 589
           }
         },
         {
@@ -5053,7 +5057,7 @@
           "description": "由 ChildOf 层级与局部 Transform 传播出的世界变换。",
           "source": {
             "path": "src/scene.rs",
-            "line": 569
+            "line": 589
           }
         },
         {
@@ -5065,7 +5069,7 @@
           "description": "内置关系组件；每个视觉子实体关联角色根或木箱根。",
           "source": {
             "path": "src/scene.rs",
-            "line": 569
+            "line": 589
           }
         },
         {
@@ -5077,7 +5081,7 @@
           "description": "由 Mesh3d 要求；角色视觉的 Visibility 由 sync_character_visibility 更新，木箱视觉保持默认；引擎再计算最终可见性。",
           "source": {
             "path": "src/scene.rs",
-            "line": 569
+            "line": 589
           }
         },
         {
@@ -5137,7 +5141,7 @@
           "description": "主角和物品模板的实例化入口。",
           "source": {
             "path": "src/scene.rs",
-            "line": 569
+            "line": 589
           }
         },
         {
@@ -5149,7 +5153,7 @@
           "description": "由 WorldInstanceSpawner 维护实例层级。",
           "source": {
             "path": "src/scene.rs",
-            "line": 569
+            "line": 589
           }
         },
         {
@@ -5161,7 +5165,7 @@
           "description": "仅持有网格资产句柄；资产本体在 Assets<Mesh> 资源中。",
           "source": {
             "path": "src/scene.rs",
-            "line": 157
+            "line": 160
           }
         },
         {
@@ -5502,8 +5506,8 @@
     {
       "id": "world",
       "name": "海岛静态碰撞实体",
-      "count": "由地图几何决定",
-      "description": "三角碰撞与入口坡道独立于美术，ChildOf 指向对应原美术实例，随地图层级销毁。",
+      "count": "结构 / 坡道 + 4 个 NPC 胶囊",
+      "description": "三角碰撞、入口坡道和 NPC 身体胶囊独立于美术，ChildOf 指向对应原实例或 NPC，随地图层级销毁。",
       "components": [
         {
           "id": "world.RigidBody",
@@ -5511,22 +5515,22 @@
           "fields": [
             "Static"
           ],
-          "description": "不接受运动积分的静态地面/墙体。",
+          "description": "不接受运动积分的静态地面、墙体和 NPC 身体。",
           "source": {
             "path": "src/scene.rs",
-            "line": 134
+            "line": 311
           }
         },
         {
           "id": "world.Collider",
           "name": "Collider",
           "fields": [
-            "结构网格合并 trimesh；入口台阶对应斜坡"
+            "结构网格合并 trimesh；入口台阶对应斜坡；NPC 使用脚底原点的身体胶囊"
           ],
-          "description": "完整结构几何合并为三角网格碰撞，入口台阶另用坡道；不因视觉淡化改变。",
+          "description": "完整结构几何合并为三角网格碰撞，入口台阶另用坡道；NPC 胶囊由 character_collider 读取角色高度与半径，不因视觉淡化改变。",
           "source": {
             "path": "src/scene.rs",
-            "line": 134
+            "line": 312
           }
         },
         {
@@ -5535,7 +5539,7 @@
           "fields": [
             "membership=World; filters=ALL"
           ],
-          "description": "与角色和快递碰撞。",
+          "description": "与角色、自由快递和仍保留 World 层的持握快递碰撞。",
           "source": {
             "path": "src/physics.rs",
             "line": 40
@@ -5552,7 +5556,7 @@
           "description": "静态碰撞和视觉共享位姿，物理插件初始化 Position/Rotation。",
           "source": {
             "path": "src/scene.rs",
-            "line": 569
+            "line": 346
           }
         },
         {
@@ -5564,7 +5568,7 @@
           "description": "Avian 从业务根碰撞体/刚体初始化的物理查询数据；SpatialQuery 只读。",
           "source": {
             "path": "src/scene.rs",
-            "line": 134
+            "line": 311
           }
         },
         {
@@ -5576,7 +5580,7 @@
           "description": "Avian 从业务根碰撞体/刚体初始化的物理查询数据；SpatialQuery 只读。",
           "source": {
             "path": "src/scene.rs",
-            "line": 134
+            "line": 311
           }
         },
         {
@@ -5588,7 +5592,7 @@
           "description": "Avian 从业务根碰撞体/刚体初始化的物理查询数据；SpatialQuery 只读。",
           "source": {
             "path": "src/scene.rs",
-            "line": 134
+            "line": 312
           }
         },
         {
@@ -5598,19 +5602,19 @@
           "description": "地图静态碰撞标签。",
           "source": {
             "path": "src/scene.rs",
-            "line": 65
+            "line": 68
           }
         },
         {
           "id": "world.ChildOf",
           "name": "ChildOf",
           "fields": [
-            "parent: Entity（原美术实例）"
+            "parent: Entity（原美术实例或 NPC）"
           ],
           "description": "随原地图实例层级清理。",
           "source": {
             "path": "src/scene.rs",
-            "line": 569
+            "line": 350
           }
         },
         {
@@ -5638,7 +5642,7 @@
           "description": "海岛身份。",
           "source": {
             "path": "src/scene.rs",
-            "line": 53
+            "line": 56
           }
         },
         {
@@ -5648,7 +5652,7 @@
           "description": "实例就绪，等待 CPU 几何准备。",
           "source": {
             "path": "src/scene.rs",
-            "line": 55
+            "line": 58
           }
         },
         {
@@ -5661,7 +5665,7 @@
           "description": "静态碰撞与布局已准备。",
           "source": {
             "path": "src/scene.rs",
-            "line": 74
+            "line": 77
           }
         },
         {
@@ -5671,7 +5675,7 @@
           "description": "业务角色已生成，防止重复。",
           "source": {
             "path": "src/scene.rs",
-            "line": 57
+            "line": 60
           }
         },
         {
@@ -5681,7 +5685,7 @@
           "description": "地图实例化与原始 GLB 层级。",
           "source": {
             "path": "src/scene.rs",
-            "line": 114
+            "line": 117
           }
         },
         {
@@ -5691,7 +5695,7 @@
           "description": "地图实例化与原始 GLB 层级。",
           "source": {
             "path": "src/scene.rs",
-            "line": 114
+            "line": 117
           }
         },
         {
@@ -5703,7 +5707,7 @@
           ],
           "source": {
             "path": "src/scene.rs",
-            "line": 101
+            "line": 104
           }
         }
       ]
@@ -5712,7 +5716,7 @@
       "id": "npc",
       "name": "地图展示 NPC",
       "count": 4,
-      "description": "保留地图原始层级；无 Character、输入或玩家刚体能力，不接入主角动画控制。",
+      "description": "保留地图原始层级与固定姿态；每名 NPC 拥有一个独立静态胶囊碰撞子体，无 Character、输入或玩家刚体能力，不接入主角动画控制或建筑淡化。",
       "components": [
         {
           "id": "npc.DisplayNpc",
@@ -5721,7 +5725,7 @@
           "description": "导入边界识别展示 NPC。",
           "source": {
             "path": "src/scene.rs",
-            "line": 61
+            "line": 64
           }
         },
         {
@@ -5733,7 +5737,19 @@
           "description": "保持地图原始层级。",
           "source": {
             "path": "src/scene.rs",
-            "line": 334
+            "line": 338
+          }
+        },
+        {
+          "id": "npc.Children",
+          "name": "Children",
+          "fields": [
+            "原模型子树及一个直属身体碰撞子体"
+          ],
+          "description": "Bevy 维护碰撞子体的反向层级索引，NPC 随地图销毁时一同清理身体碰撞。",
+          "source": {
+            "path": "src/scene.rs",
+            "line": 350
           }
         }
       ]
@@ -5827,7 +5843,7 @@
           "description": "GLB 局部姿态由 AnimationSystems 更新，鞋底补偿通过 TransformHelper 读取本帧骨链；随后传播世界变换。",
           "source": {
             "path": "src/scene.rs",
-            "line": 402
+            "line": 422
           }
         },
         {
@@ -5839,7 +5855,7 @@
           "description": "由变换传播生成。",
           "source": {
             "path": "src/scene.rs",
-            "line": 402
+            "line": 422
           }
         },
         {
@@ -5851,7 +5867,7 @@
           "description": "ChildOf linked_spawn 保持子树生命周期。",
           "source": {
             "path": "src/scene.rs",
-            "line": 402
+            "line": 422
           }
         },
         {
@@ -5863,7 +5879,7 @@
           "description": "网格节点携带。",
           "source": {
             "path": "src/scene.rs",
-            "line": 402
+            "line": 422
           }
         },
         {
@@ -5887,7 +5903,7 @@
           "description": "第一人称隐藏主角视觉根会沿子树传播。",
           "source": {
             "path": "src/scene.rs",
-            "line": 402
+            "line": 422
           }
         },
         {
@@ -5899,7 +5915,7 @@
           "description": "仅在导入边界读取为业务标记。",
           "source": {
             "path": "src/scene.rs",
-            "line": 156
+            "line": 159
           }
         },
         {
@@ -5909,7 +5925,7 @@
           "description": "部分网格绑定骨骼；由 GLB 导入。",
           "source": {
             "path": "src/scene.rs",
-            "line": 428
+            "line": 448
           }
         },
         {
@@ -6630,7 +6646,7 @@
           "description": "原有导入实例的姿态，淡化不修改。",
           "source": {
             "path": "src/scene.rs",
-            "line": 156
+            "line": 159
           }
         },
         {
@@ -6642,7 +6658,7 @@
           "description": "导入网格层级与 CameraShell 查询碰撞随实例销毁。",
           "source": {
             "path": "src/scene.rs",
-            "line": 114
+            "line": 117
           }
         },
         {
@@ -6654,7 +6670,7 @@
           "description": "属于海岛原 GLB 子树，不宣称直属地图根。",
           "source": {
             "path": "src/scene.rs",
-            "line": 176
+            "line": 180
           }
         },
         {
@@ -6700,7 +6716,7 @@
           "description": "静态查询几何不接受运动积分。",
           "source": {
             "path": "src/scene.rs",
-            "line": 134
+            "line": 137
           }
         },
         {
@@ -6712,7 +6728,7 @@
           "description": "多部件只生成一份外壳查询碰撞；无室内、地板或未知部件。",
           "source": {
             "path": "src/scene.rs",
-            "line": 134
+            "line": 137
           }
         },
         {
@@ -6736,7 +6752,7 @@
           "description": "外壳几何已变换到建筑局部空间，随实例变换。",
           "source": {
             "path": "src/scene.rs",
-            "line": 317
+            "line": 321
           }
         },
         {
@@ -6748,7 +6764,7 @@
           "description": "由 Avian 根据静态查询实体初始化，供 SpatialQuery 读取。",
           "source": {
             "path": "src/scene.rs",
-            "line": 134
+            "line": 137
           }
         },
         {
@@ -6760,7 +6776,7 @@
           "description": "由 Avian 根据静态查询实体初始化，供 SpatialQuery 读取。",
           "source": {
             "path": "src/scene.rs",
-            "line": 134
+            "line": 137
           }
         },
         {
@@ -6772,7 +6788,7 @@
           "description": "Avian 空间查询的宽阶段数据。",
           "source": {
             "path": "src/scene.rs",
-            "line": 134
+            "line": 137
           }
         },
         {
@@ -6784,7 +6800,7 @@
           "description": "直属所属建筑，linked_spawn 随实例清理。",
           "source": {
             "path": "src/scene.rs",
-            "line": 176
+            "line": 180
           }
         }
       ]
@@ -6842,7 +6858,7 @@
           "description": "沿原网格子树属于建筑，可能间接挂接；不是所有网格都直属建筑。",
           "source": {
             "path": "src/scene.rs",
-            "line": 402
+            "line": 422
           }
         }
       ]
@@ -7269,7 +7285,7 @@
       "description": "GLB loader 提供网格资产；prepare_island 读取 CPU 顶点构建碰撞，Mesh3d 仅保存句柄。",
       "source": {
         "path": "src/scene.rs",
-        "line": 158
+        "line": 161
       }
     },
     {
@@ -7293,7 +7309,7 @@
       "description": "场景插件构建时设置背景清除颜色。",
       "source": {
         "path": "src/scene.rs",
-        "line": 29
+        "line": 32
       }
     },
     {
@@ -7306,7 +7322,7 @@
       "description": "场景插件构建时设置全局环境光。",
       "source": {
         "path": "src/scene.rs",
-        "line": 30
+        "line": 33
       }
     },
     {
@@ -7483,7 +7499,7 @@
       "description": "接触开始缓冲消息；log_collisions 使用独立 MessageReader。",
       "source": {
         "path": "src/physics.rs",
-        "line": 131
+        "line": 136
       }
     },
     {
@@ -7496,7 +7512,7 @@
       "description": "接触结束缓冲消息；不是 Observer 事件。",
       "source": {
         "path": "src/physics.rs",
-        "line": 131
+        "line": 136
       }
     },
     {
@@ -7570,7 +7586,7 @@
       "description": "保存 GLB 场景与命名动画句柄。",
       "source": {
         "path": "src/scene.rs",
-        "line": 101
+        "line": 104
       }
     },
     {
@@ -7581,7 +7597,7 @@
       "description": "WorldAssetRoot 引用的 Bevy 资产集合。",
       "source": {
         "path": "src/scene.rs",
-        "line": 112
+        "line": 115
       }
     },
     {
@@ -8192,7 +8208,7 @@
       "description": "内置层级关系，驱动局部到世界变换和可见性；销毁角色根会连带销毁这些模型子实体。",
       "source": {
         "path": "src/scene.rs",
-        "line": 581
+        "line": 601
       }
     },
     {
@@ -8207,7 +8223,7 @@
       "description": "模型始终关联自身 Parcel 根，不随拾取改为角色子实体。",
       "source": {
         "path": "src/scene.rs",
-        "line": 604
+        "line": 624
       }
     },
     {
@@ -8247,12 +8263,27 @@
       "name": "ChildOf（原地图美术实例）",
       "kind": "relationship",
       "reverse": "Children",
-      "cardinality": "每个静态碰撞对应一个美术实例；实例可有三角碰撞和坡道",
+      "cardinality": "每个结构碰撞对应一个美术实例；实例可有三角碰撞和坡道",
       "linked_spawn": true,
       "description": "碰撞与视觉分离，沿地图原始层级清理。",
       "source": {
         "path": "src/scene.rs",
-        "line": 134
+        "line": 314
+      }
+    },
+    {
+      "id": "npc_collider_parent",
+      "from": "world",
+      "to": "npc",
+      "name": "ChildOf（NPC 身体碰撞）",
+      "kind": "relationship",
+      "reverse": "npc.Children",
+      "cardinality": "四名 NPC 各拥有 1 个直属静态身体胶囊碰撞子体",
+      "linked_spawn": true,
+      "description": "碰撞子体复用角色身体形状，属于 World 层；NPC 保持原地，沿 NPC 和地图层级清理。",
+      "source": {
+        "path": "src/scene.rs",
+        "line": 350
       }
     },
     {
@@ -8267,7 +8298,7 @@
       "description": "导入后的原始节点层级。",
       "source": {
         "path": "src/scene.rs",
-        "line": 334
+        "line": 338
       }
     },
     {
@@ -8492,7 +8523,7 @@
       "description": "只绑定查询实体生命周期；完整 World 碰撞沿原有层级单独保留。",
       "source": {
         "path": "src/scene.rs",
-        "line": 604
+        "line": 624
       }
     },
     {
@@ -8507,7 +8538,7 @@
       "description": "聚合原层级，不宣称所有网格都是建筑直属子实体。",
       "source": {
         "path": "src/scene.rs",
-        "line": 402
+        "line": 422
       }
     },
     {
