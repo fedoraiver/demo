@@ -29,13 +29,15 @@
 
 主角等待全部 16 个命名动作后绑定实际 GLB 播放器，按真实局部速度、持箱关系与跳跃／下落／落地阶段连续混合。八个步行动作共用归一化相位，六个空中／落地动作按阶段时钟采样；权重、相位和时钟保存在 `CourierAnimation` 组件，未使用 `AnimationTransitions`。视觉根的 `CourierFootGrounding` 缓存角色、首个播放器与八个鞋底节点的普通实体引用。`AnimationSystems` 写入本帧骨骼姿态后，鞋底补偿通过 `TransformHelper` 读取当前局部骨链，只调整视觉根高度，然后执行变换传播；它不移动物理根或持握目标。
 
-`FixedUpdate` 先落水恢复，再按当前视角同步朝向，随后准备控制力、跳跃冲量和弹簧持握；重力同步也在模拟前，但与恢复/朝向无额外全序。恢复暂停插值跨过零固定步帧，下一 `FixedFirst` 在 `Reset` 与 `UpdateStart` 之间仅清理本模块添加的暂停。Avian 在 `FixedPostUpdate` 求解与回写，`FixedLast` 记录插值终点。固定循环后的 `RunFixedMainLoop` 在 `Ease` 之后依次同步朝向、`HeldTarget`、固定环绕镜头、建筑遮挡需求、外壳淡化与人物可见性，再执行 `UpdateEasingTick`；这条显示链受 `gameplay_running` 门控。`PostUpdate` 的骨骼动画先于变换传播，检查器仍是独立分支。`Last` 的外壳生命周期清理不受暂停门控，也不推进正常渐变计时。
+`FixedUpdate` 先落水恢复，再检查本次完整持箱转向并同步朝向，随后 `GameplaySystems::Simulate` 依次执行接地、控制力、跳跃、交互与持物呈现同步。`CarryPlugin` 在该集合之后顺序完成失效箱释放、孤儿代理清理、质量恢复、共享挂接、安全对齐与真实持物姿态同步；重力同步也在模拟前，但与恢复/朝向无额外全序。下一 `FixedFirst` 在 `Reset` 与 `UpdateStart` 之间清理落水与释放各自拥有的插值暂停，两类恢复没有彼此全序。Avian 在 `FixedPostUpdate` 求解与回写，回写后持物真实同步与接地/速度日志链为独立分支，`FixedLast` 记录自由体插值终点。固定循环后的 `RunFixedMainLoop` 在 `Ease` 之后依次同步朝向、持物真实姿态、箱根呈现与 `HeldTarget`、固定环绕镜头、建筑遮挡需求、外壳淡化与人物可见性，再执行 `UpdateEasingTick`；这条显示链受 `gameplay_running` 门控，零固定步帧也执行。`PostUpdate` 的骨骼动画先于变换传播，检查器仍是独立分支。`Last` 的外壳生命周期清理不受暂停门控，也不推进正常渐变计时。
 
 建筑遮挡只请求外壳半透明，不修改镜头 `Transform`、距离或方向。每栋建筑最多一份 `CameraShell` 合并查询碰撞体，属于 `CameraQuery` 层且接触掩码为 `NONE`；原 `World` 玩法碰撞完整保留，接地与拾取查询显式排除外壳查询层。检测读取插值后的角色与实际持物根 `Transform`，用小球扫掠和镜头附近外壳重叠识别遮挡，将所有有效第三人称相机需求取并集放入 `OccludedBuildings`。`CameraOcclusion` 只保存每台相机的上一帧需求用于离散日志；控制者解绑但相机目标仍有效时不提前撤销需求。
 
 `BuildingFadeState` 属于原导入建筑实例；只有带 `BuildingShellVisual` 的外壳网格替换材质。`ShellMaterialCache` 以建筑实例和原材质为键复用副本，`ShellMaterialBinding` 保留网格原句柄及副本拥有权，不改共享原始材质。约 `0.15 s` 内降到原 alpha 的 `20%`，最后一台相机解除需求并连续 `0.25 s` 无遮挡后，用约 `0.35 s` 恢复。第一人称或没有有效第三人称目标时立即恢复；暂停保留进度，`Last` 仍恢复失效绑定并释放失效缓存。家具、地板、NPC、包裹、未知部件和非建筑不进入淡化；人物自身仅按第一／第三人称模式控制可见性。完整数据流见 [当前架构](../architecture.md#第三人称遮挡与建筑淡化)。
 
-`Position`／速度是实际物理状态，`Transform` 是插值呈现；`HeldTarget` 只供呈现检查，施力另读真实物理位置，模拟与显示共同读取物品 `CarryGrip`。拿起与释放不瞬移箱体，释放保留动量，失效持有关系会恢复自由碰撞并自然下落。`Forces`、`RecoverableBody` 是 `QueryData`，`SpatialQuery` 是 `SystemParam`；导入布局辅助值、动画节点/状态辅助值以及日志线程/队列均不作为玩法 ECS 组件列出。
+`Position`／速度是实际物理状态，`Transform` 是呈现；持握的 `HeldAttachment.local_pose` 是真实碰撞和箱根呈现共同的唯一局部姿态，`HeldTarget` 仅供握持目标检查。拾取保留原世界姿态，经过完整路径碰撞检查后按小步对齐 `CarryGrip`。持握期间只有人物的 `Dynamic`：箱根移除自身刚体并停用原碰撞，无视觉代理复制真实形状并通过 `ColliderOf(holder)` 参与同一刚体求解。外部墙体、NPC、其他人物和箱体仍会阻挡，组合内部无需弹簧力。箱根始终独立，`HeldBy` 无连带销毁；`ColliderOf` 的连带清理只作用于代理。释放先停用、卸载代理，再恢复独立自由体、原人物质量、安全姿态和动量；人物或物品销毁、关系异常解除、落水均有对应清理。`ResumeCarryEasing` 在下一固定步恢复原来未暂停的插值通道。
+
+转向连续查询覆盖实际符号及整圈路径，受阻时在转动前的安全姿态放下，人物与视角继续转动；已有接触允许向外分离。地形和建筑三角网格使用保守分离证明排除误报，不能靠缩小箱体或忽略墙体通过检查。`Forces`、`RecoverableBody` 是 `QueryData`，`SpatialQuery`、`CarryRotationQuery` 是 `SystemParam`；后者的几何辅助函数以及导入布局辅助值、动画辅助值、日志线程/队列均不作为玩法 ECS 组件或 Schedule 系统列出。
 
 声音反馈使用 `SoundRequest` 缓冲消息。菜单的 `previous / next / pointer_interaction` 仅在真实焦点变化时发送 `MenuHover`；`handle_requests` 对接受的语义操作发送 `MenuConfirm / MenuCancel`。滑条拖动只更新草稿，结束且最终值改变时汇总一次确认；`TestSfx` 只请求现有 `ParcelPickup`，不触发玩法。成功拾取与主动释放在关系命令生效时提交；持握警告在固定玩法链之后只读真实位置，落地检测在物理步之后只读 `ContactGraph`，两者仅在 Running 收集。`Update` 在 UI Style 之后顺序执行加载失败日志、有效混音选择、实例音量同步、请求播放与退出停止，使用 `Time<Real>` 节流，暂停菜单仍可发声；总并发 4、SFX 最多 3，为 UI 保留 1 个名额。`AudioMix` 选择草稿或已应用音量，按 `0.25 × master% × UI/SFX% × 素材基准` 计算实例分贝；静音新请求立即丢弃，不占冷却／并发。`SoundBank` 维护策略与实例，UI/SFX 通道由 Kira 消费排队命令；`PostUpdate` 在 `PlayTypedChannels` 后再次同步刚就绪实例，保留素材间响度与最新预览。交接、推车、弹开及交付共五种 cue 仅预留映射，合成环境底声仅供试听。
 

@@ -1,4 +1,4 @@
-//! 固定步把角色意图转换为力与冲量，物理持握保留箱子的碰撞和动量。
+//! 固定步把角色意图转换为力与冲量，箱子持握时共享人物刚体，释放恢复独立运动。
 
 use avian3d::prelude::*;
 use bevy::{ecs::relationship::RelationshipTarget, prelude::*};
@@ -6,9 +6,11 @@ use std::collections::HashSet;
 
 use crate::app_flow::gameplay_running;
 use crate::audio_events::{SoundCue, SoundEventsPlugin, SoundRequest};
-use crate::physics::{
-    DemoPhysicsPlugin, gameplay_query_layers, held_collision_layers, parcel_collision_layers,
-};
+pub(crate) use crate::carry::sync_held_presentation as sync_held_objects;
+use crate::carry::{CarryPlugin, begin_attachment, release_item};
+use crate::physics::{DemoPhysicsPlugin, gameplay_query_layers};
+#[cfg(test)]
+use crate::physics::{held_collision_layers, parcel_collision_layers};
 
 /// 独立于运行时实体标识的玩家身份，便于后续多人输入路由。
 #[derive(Component, Reflect, Clone, Copy, Debug, PartialEq, Eq, Hash)]
@@ -70,7 +72,7 @@ pub struct HeldBy(Entity);
 #[relationship_target(relationship = HeldBy)]
 pub struct HoldingItems(Vec<Entity>);
 
-/// 手前的目标姿态；呈现同步只更新目标，箱子的实际位置仍由物理解算。
+/// 手前的目标姿态；对齐期间与真实局部挂接姿态分离，完成后由共享刚体保持相对位置。
 #[derive(Component, Reflect)]
 #[reflect(Component)]
 pub(crate) struct HeldTarget {
@@ -96,9 +98,6 @@ pub struct PrototypeConfig {
     pub character_height: f32,
     pub character_radius: f32,
     pub parcel_mass: f32,
-    pub hold_frequency: f32,
-    pub hold_damping_ratio: f32,
-    pub hold_max_force: f32,
 }
 
 impl Default for PrototypeConfig {
@@ -118,9 +117,6 @@ impl Default for PrototypeConfig {
             character_height: 1.9,
             character_radius: 0.32,
             parcel_mass: 3.0,
-            hold_frequency: 3.0,
-            hold_damping_ratio: 1.0,
-            hold_max_force: 450.0,
         }
     }
 }
@@ -147,7 +143,7 @@ impl Plugin for GameplayPlugin {
             .register_type::<HeldTarget>()
             .register_type::<PrototypeConfig>()
             .init_resource::<PrototypeConfig>()
-            .add_plugins((DemoPhysicsPlugin, SoundEventsPlugin))
+            .add_plugins((DemoPhysicsPlugin, SoundEventsPlugin, CarryPlugin))
             .add_systems(Startup, log_configuration)
             .add_systems(
                 FixedUpdate,
@@ -156,11 +152,9 @@ impl Plugin for GameplayPlugin {
                     move_characters,
                     jump_characters,
                     handle_interaction,
-                    release_orphaned_items,
                     sync_held_objects,
-                    apply_grip_forces,
                 )
-                    // 拿放的关系与碰撞层命令必须在本步施力前可见。
+                    // 拿放关系先应用，再让共享刚体装卸读取；人物运动始终由同一固定步求解。
                     .chain()
                     .in_set(GameplaySystems::Simulate)
                     .run_if(gameplay_running),
@@ -180,8 +174,8 @@ fn log_configuration(config: Res<PrototypeConfig>) {
     // 刚体与持握方式属于玩法配置，合并到同一记录便于沿用日志筛选。
     info!(target: "demo::gameplay", ?config,
         physics_engine = "avian3d", physics_version = "0.7.0",
-        character_body = "dynamic", parcel_body = "dynamic",
-        grip_mode = "spring_damper", release_mode = "preserve_velocity",
+        character_body = "dynamic", parcel_body = "dynamic_free_shared_held",
+        grip_mode = "shared_body", release_mode = "preserve_velocity",
         "Prototype gameplay initialized");
 }
 
@@ -189,7 +183,12 @@ fn log_configuration(config: Res<PrototypeConfig>) {
 fn update_grounded(
     config: Res<PrototypeConfig>,
     spatial_query: SpatialQuery,
-    colliders: Query<(Option<&CollisionLayers>, Has<HeldBy>, Has<Sensor>)>,
+    colliders: Query<(
+        Option<&CollisionLayers>,
+        Has<HeldBy>,
+        Has<crate::carry::HeldCollider>,
+        Has<Sensor>,
+    )>,
     mut characters: Query<
         (
             Entity,
@@ -219,8 +218,10 @@ fn update_grounded(
                 &ShapeCastConfig::from_max_distance(0.12),
                 &filter,
                 |hit| {
-                    if let Ok((layers, held, sensor)) = colliders.get(hit.entity) {
+                    if let Ok((layers, held, held_proxy, sensor)) = colliders.get(hit.entity) {
+                        // 手持的实际碰撞代理没有 HeldBy，不能被脚底探测误判为外部支撑。
                         grounded |= !held
+                            && !held_proxy
                             && !sensor
                             && character_layers.interacts_with(layers.copied().unwrap_or_default())
                             && hit.normal1.y >= 0.65;
@@ -328,42 +329,68 @@ fn handle_interaction(
         (
             Entity,
             &Position,
+            &Rotation,
             &Transform,
             &mut CharacterIntent,
             Option<&HoldingItems>,
         ),
         (With<Character>, Without<Pickable>),
     >,
-    pickables: Query<(Entity, &Position), (With<Pickable>, Without<HeldBy>, Without<Character>)>,
+    pickables: Query<
+        (
+            Entity,
+            &Position,
+            &Rotation,
+            &Transform,
+            &RigidBody,
+            Has<NoTranslationEasing>,
+            Has<NoRotationEasing>,
+            Has<ColliderDisabled>,
+        ),
+        (With<Pickable>, Without<HeldBy>, Without<Character>),
+    >,
     held_items: Query<
-        (&Position, &LinearVelocity, &AngularVelocity),
+        (
+            &Position,
+            &Rotation,
+            &Transform,
+            &LinearVelocity,
+            &AngularVelocity,
+        ),
         (With<Pickable>, With<HeldBy>, Without<Character>),
     >,
 ) {
     reserved.clear();
-    for (character, position, transform, mut intent, holding) in &mut characters {
+    for (character, position, rotation, transform, mut intent, holding) in &mut characters {
         if !std::mem::take(&mut intent.interact_pending) {
             continue;
         }
         if let Some(item) = holding.and_then(|items| items.iter().next()) {
-            if let Ok((item_position, velocity, angular_velocity)) = held_items.get(item) {
-                commands
-                    .entity(item)
-                    .remove::<(HeldBy, HeldTarget)>()
-                    .insert(parcel_collision_layers());
+            if let Ok((item_position, item_rotation, item_transform, velocity, angular_velocity)) =
+                held_items.get(item)
+            {
+                release_item(
+                    &mut commands,
+                    item,
+                    Transform {
+                        translation: item_position.0,
+                        rotation: item_rotation.0,
+                        scale: item_transform.scale,
+                    },
+                    velocity.0,
+                    angular_velocity.0,
+                    "interact_action_release",
+                );
                 // 延迟消息与解除关系一起提交，播放者只能收到已接受的交互结果。
                 commands.write_message(SoundRequest::new(SoundCue::ParcelRelease, item));
-                info!(?character, ?item, position = ?item_position.0, velocity = ?velocity.0,
-                    angular_velocity = ?angular_velocity.0, before = "held", after = "free",
-                    reason = "interact_action_release", "Carryable item released");
             }
             continue;
         }
         let origin = position.0 + Vec3::Y * config.hold_offset.y;
         let nearest = pickables
             .iter()
-            .filter(|(item, _)| !reserved.contains(item))
-            .filter_map(|(item, item_position)| {
+            .filter(|(item, ..)| !reserved.contains(item))
+            .filter_map(|(item, item_position, ..)| {
                 let distance = position.0.distance_squared(item_position.0);
                 if distance > config.pickup_radius.powi(2) {
                     return None;
@@ -395,8 +422,33 @@ fn handle_interaction(
                     translation: position.0 + transform.rotation * config.hold_offset,
                     rotation: transform.rotation,
                 },
-                held_collision_layers(),
             ));
+            let (
+                _,
+                item_position,
+                item_rotation,
+                item_transform,
+                body,
+                translation_paused,
+                rotation_paused,
+                collider_disabled,
+            ) = pickables
+                .get(item)
+                .expect("Selected carryable must remain in the interaction query");
+            begin_attachment(
+                &mut commands,
+                item,
+                Transform::from_translation(position.0).with_rotation(rotation.0),
+                Transform {
+                    translation: item_position.0,
+                    rotation: item_rotation.0,
+                    scale: item_transform.scale,
+                },
+                *body,
+                translation_paused,
+                rotation_paused,
+                collider_disabled,
+            );
             commands.write_message(SoundRequest::new(SoundCue::ParcelPickup, item));
             info!(
                 ?character,
@@ -414,94 +466,6 @@ fn handle_interaction(
                 "No pickable item in range"
             );
         }
-    }
-}
-
-/// 持有者销毁或关系被外部解除后清理目标，恢复自由碰撞；刚体始终继续模拟。
-fn release_orphaned_items(
-    mut commands: Commands,
-    characters: Query<(), With<Character>>,
-    items: Query<(Entity, Option<&HeldBy>), With<HeldTarget>>,
-) {
-    for (item, held_by) in &items {
-        let reason = match held_by {
-            Some(held_by) if characters.contains(held_by.0) => continue,
-            Some(_) => "holder_missing",
-            None => "holding_relation_removed",
-        };
-        commands
-            .entity(item)
-            .remove::<(HeldBy, HeldTarget)>()
-            .insert(parcel_collision_layers());
-        info!(
-            ?item,
-            before = "held",
-            after = "free",
-            reason,
-            "Carryable item released"
-        );
-    }
-}
-
-/// 固定步和本帧显示复用同一目标计算，不瞬移箱子，也不积分或消费请求。
-pub(crate) fn sync_held_objects(
-    config: Res<PrototypeConfig>,
-    characters: Query<&Transform, (With<Character>, Without<Pickable>)>,
-    mut items: Query<
-        (&HeldBy, &mut HeldTarget, Option<&CarryGrip>),
-        (With<Pickable>, Without<Character>),
-    >,
-) {
-    for (held_by, mut target, grip) in &mut items {
-        if let Ok(character) = characters.get(held_by.0) {
-            let offset = grip.map_or(config.hold_offset, |grip| grip.0);
-            target.translation = character.translation + character.rotation * offset;
-            target.rotation = character.rotation;
-        }
-    }
-}
-
-/// 弹簧阻尼手约束施加有限的力与转动驱动，碰撞求解仍能阻挡箱体。
-fn apply_grip_forces(
-    time: Res<Time<Fixed>>,
-    config: Res<PrototypeConfig>,
-    gravity: Res<Gravity>,
-    mut characters: Query<(Forces, &Transform), (With<Character>, Without<Pickable>)>,
-    mut items: Query<
-        (Forces, &ComputedMass, &HeldBy, Option<&CarryGrip>),
-        (With<Pickable>, Without<Character>),
-    >,
-) {
-    let omega = std::f32::consts::TAU * config.hold_frequency;
-    let stiffness = omega * omega;
-    let damping = 2.0 * config.hold_damping_ratio * omega;
-    // 隐式弹簧系数避免固定步较长时的高频振荡，实际力仍由质量换算并限制。
-    let denominator = 1.0 + damping * time.delta_secs() + stiffness * time.delta_secs().powi(2);
-    for (mut item, mass, held_by, grip) in &mut items {
-        let Ok((mut holder, transform)) = characters.get_mut(held_by.0) else {
-            continue;
-        };
-        // 模拟读取 Position 而非已经插值的显示目标，防止呈现反馈污染物理。
-        let offset = grip.map_or(config.hold_offset, |grip| grip.0);
-        let target = holder.position().0 + transform.rotation * offset;
-        let acceleration = (stiffness * (target - item.position().0)
-            + damping * (holder.linear_velocity() - item.linear_velocity())
-            - gravity.0)
-            / denominator;
-        let force = (acceleration * mass.value()).clamp_length_max(config.hold_max_force);
-        item.apply_force(force);
-        // 持有者承受相反的力，箱子的重量和撞墙阻力会反馈到动态角色。
-        holder.apply_force(-force);
-        // q 与 -q 表示同一姿态，选择短弧，避免箱子绕一整圈追向手部朝向。
-        let mut rotation_error = transform.rotation * item.rotation().0.inverse();
-        if rotation_error.w < 0.0 {
-            rotation_error = -rotation_error;
-        }
-        let error = rotation_error.to_scaled_axis();
-        let angular_acceleration = ((stiffness * error - damping * item.angular_velocity())
-            / denominator)
-            .clamp_length_max(80.0);
-        item.apply_angular_acceleration(angular_acceleration);
     }
 }
 
@@ -649,6 +613,20 @@ mod tests {
             grounded(&app),
             "Released box must become valid support again"
         );
+        // 单独重跑 ECS 探测确认代理身份同样不能充当地面，不推进装卸或物理积分。
+        app.world_mut()
+            .entity_mut(item)
+            .insert(crate::carry::HeldCollider(item));
+        schedule.run(app.world_mut());
+        assert!(
+            !grounded(&app),
+            "A held collision proxy cannot support the character"
+        );
+        app.world_mut()
+            .entity_mut(item)
+            .remove::<crate::carry::HeldCollider>();
+        schedule.run(app.world_mut());
+        assert!(grounded(&app));
     }
 
     #[test]
@@ -820,7 +798,7 @@ mod tests {
     }
 
     #[test]
-    fn item_specific_grips_converge_through_physics_to_the_presented_targets() {
+    fn item_specific_grips_align_then_remain_fixed_on_the_shared_body() {
         for grip in [Vec3::new(0.0, 1.3, -0.48), Vec3::new(0.0, 1.3, -0.62)] {
             let mut app = test_app();
             let character = spawn_character(&mut app, Vec3::ZERO, default());
@@ -830,9 +808,15 @@ mod tests {
             let before_pickup = app.world().get::<Position>(item).unwrap().0;
             interact(&mut app, character);
             assert_eq!(app.world().get::<HeldBy>(item).unwrap().0, character);
+            assert!(app.world().get::<RigidBody>(item).is_none());
+            let proxy = app
+                .world()
+                .get::<crate::carry::HeldAttachment>(item)
+                .unwrap()
+                .collider;
             assert_eq!(
-                app.world().get::<RigidBody>(item),
-                Some(&RigidBody::Dynamic)
+                app.world().get::<ColliderOf>(proxy).unwrap().body,
+                character
             );
             let after_pickup = app.world().get::<Position>(item).unwrap().0;
             assert!(
@@ -843,7 +827,7 @@ mod tests {
                 after_pickup.distance(app.world().get::<HeldTarget>(item).unwrap().translation);
             assert!(initial_error > 0.5);
             let fixed_before = app.world().resource::<Time<Fixed>>().elapsed();
-            // 执行真实 FixedPostUpdate，让施力、重力、反作用与碰撞共同产生收敛结果。
+            // 执行真实固定步，先安全对齐，再核对组合刚体保存的实际箱体位置。
             step(&mut app, 120);
             assert!(
                 app.world().resource::<Time<Fixed>>().elapsed() - fixed_before
@@ -854,7 +838,7 @@ mod tests {
             let actual = world.get::<Position>(item).unwrap().0;
             assert!(
                 actual.distance(target.translation) < 0.1,
-                "Physics grip did not reach the presented target: {grip:?} {actual:?} {:?}",
+                "The shared body did not align its held box: {grip:?} {actual:?} {:?}",
                 target.translation
             );
             // 静止角色面向 -Z；分别验证真实箱体的高度和距离，不只断言派生目标的公式。
@@ -869,7 +853,7 @@ mod tests {
     }
 
     #[test]
-    fn grip_preserves_dynamic_body_blocks_at_wall_and_release_keeps_velocity() {
+    fn shared_body_blocks_at_wall_and_release_keeps_velocity() {
         let mut app = test_app();
         let character = spawn_character(&mut app, Vec3::ZERO, default());
         let item = spawn_box(&mut app, Vec3::new(0.0, 0.3, -1.3));
@@ -877,9 +861,15 @@ mod tests {
         let before = app.world().get::<Position>(item).unwrap().0;
         interact(&mut app, character);
         assert_eq!(app.world().get::<HeldBy>(item).unwrap().0, character);
+        assert!(app.world().get::<RigidBody>(item).is_none());
+        let proxy = app
+            .world()
+            .get::<crate::carry::HeldAttachment>(item)
+            .unwrap()
+            .collider;
         assert_eq!(
-            app.world().get::<RigidBody>(item),
-            Some(&RigidBody::Dynamic)
+            app.world().get::<ColliderOf>(proxy).unwrap().body,
+            character
         );
         let after = app.world().get::<Position>(item).unwrap().0;
         assert!(
@@ -894,13 +884,20 @@ mod tests {
             world_collision_layers(),
             Transform::from_xyz(0.0, 1.5, -1.6),
         ));
+        // 已完成正常持握后持续前进，箱体碰墙应直接阻挡同一刚体的人物。
         app.world_mut()
-            .resource_mut::<PrototypeConfig>()
-            .hold_offset
-            .z = -2.4;
+            .get_mut::<CharacterIntent>(character)
+            .unwrap()
+            .movement = Vec2::Y;
         step(&mut app, 90);
         let position = app.world().get::<Position>(item).unwrap().0;
         assert!(position.z > -1.3, "Held box crossed wall: {position:?}");
+        assert_eq!(app.world().get::<HeldBy>(item).unwrap().0, character);
+        let holder_position = app.world().get::<Position>(character).unwrap().0;
+        assert!(
+            holder_position.z > -0.4,
+            "Holder entered its blocked box: {holder_position:?}"
+        );
         // 直接运行交互系统验证释放瞬间不修改任何速度或位置，不混入随后重力。
         app.world_mut().get_mut::<LinearVelocity>(item).unwrap().0 = Vec3::new(1.0, 2.0, 0.5);
         app.world_mut().get_mut::<AngularVelocity>(item).unwrap().0 = Vec3::new(0.5, 1.0, 0.0);
@@ -928,8 +925,29 @@ mod tests {
             app.world().get::<Rotation>(item).unwrap().0,
             rotation_before_release
         );
+        // 松手后退离箱体再验证重力；继续向墙走会把自由箱夹住，墙面摩擦可合法承重。
+        let holder_before_retreat = app.world().get::<Position>(character).unwrap().0;
+        app.world_mut()
+            .get_mut::<CharacterIntent>(character)
+            .unwrap()
+            .movement = Vec2::NEG_Y;
         step(&mut app, 120);
-        assert!(app.world().get::<Position>(item).unwrap().y < 0.5);
+        let final_position = app.world().get::<Position>(item).unwrap().0;
+        let final_velocity = app.world().get::<LinearVelocity>(item).unwrap().0;
+        let holder_position = app.world().get::<Position>(character).unwrap().0;
+        let touching_holder = app
+            .world()
+            .resource::<ContactGraph>()
+            .get(item, character)
+            .is_some_and(|(_, pair)| pair.is_touching());
+        assert!(
+            final_position.y < 0.5,
+            "Released box did not land: box={final_position:?}, velocity={final_velocity:?}, holder={holder_position:?}, touching_holder={touching_holder}"
+        );
+        assert!(
+            holder_position.z > holder_before_retreat.z + 1.0,
+            "The holder must retreat far enough to stop clamping the free box"
+        );
     }
 
     #[test]
@@ -955,6 +973,69 @@ mod tests {
             step(&mut app, 120);
             assert!(app.world().get::<Position>(item).unwrap().y < 0.5);
         }
+    }
+
+    #[test]
+    fn held_box_collision_stops_the_holder_before_it_enters_the_box() {
+        let mut app = test_app();
+        let character = spawn_character(&mut app, Vec3::new(0.0, 0.0, 2.0), default());
+        let item = spawn_box(&mut app, Vec3::new(0.0, 0.3, 1.1));
+        let grip = Vec3::new(0.0, 1.3, -0.48);
+        app.world_mut().entity_mut(item).insert(CarryGrip(grip));
+        let config = app.world().resource::<PrototypeConfig>().clone();
+        let obstacle = app
+            .world_mut()
+            .spawn((
+                RigidBody::Static,
+                crate::physics::character_collider(&config),
+                world_collision_layers(),
+                Transform::IDENTITY,
+            ))
+            .id();
+        step(&mut app, 30);
+        interact(&mut app, character);
+        step(&mut app, 120);
+        let proxy = app
+            .world()
+            .get::<crate::carry::HeldAttachment>(item)
+            .unwrap()
+            .collider;
+        let before = app.world().get::<Position>(character).unwrap().0;
+        app.world_mut()
+            .get_mut::<CharacterIntent>(character)
+            .unwrap()
+            .movement = Vec2::Y;
+
+        let mut solved_contact = false;
+        for _ in 0..180 {
+            step(&mut app, 1);
+            let world = app.world();
+            let holder_position = world.get::<Position>(character).unwrap().0;
+            let box_position = world.get::<Position>(item).unwrap().0;
+            if let Some((_, pair)) = world.resource::<ContactGraph>().get(proxy, obstacle) {
+                solved_contact |= pair.is_touching()
+                    && pair
+                        .manifolds
+                        .iter()
+                        .any(|manifold| manifold.total_normal_impulse() > 0.001);
+            }
+            // 使用正常手前偏移和持续移动，不能让人物留在远处、延长手臂来掩盖追入箱体。
+            let relative = box_position - holder_position;
+            assert!(
+                (relative.z - grip.z).abs() < 0.16,
+                "The holder moved into its obstructed box: holder={holder_position:?}, box={box_position:?}"
+            );
+        }
+        let after = app.world().get::<Position>(character).unwrap().0;
+        assert!(
+            before.z - after.z > 0.5,
+            "The holder must actually approach"
+        );
+        assert!(
+            solved_contact,
+            "The held box must have a solved obstacle contact"
+        );
+        assert!(after.z > config.character_radius * 2.0 + 0.2);
     }
 
     #[test]

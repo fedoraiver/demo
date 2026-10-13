@@ -13,10 +13,11 @@ use bevy::{
     camera::visibility::{InheritedVisibility, VisibilityPlugin},
     ecs::system::SystemState,
     gltf::GltfPlugin,
-    input::InputPlugin,
+    input::{InputPlugin, mouse::MouseMotion},
     mesh::{MeshPlugin, skinning::SkinnedMesh},
     scene::ScenePlugin,
     time::TimeUpdateStrategy,
+    window::{CursorOptions, PrimaryWindow},
     world_serialization::{WorldInstance, WorldSerializationPlugin},
 };
 use bevy_enhanced_input::prelude::{EnhancedInputPlugin, InputContextAppExt};
@@ -24,6 +25,8 @@ use bevy_enhanced_input::prelude::{EnhancedInputPlugin, InputContextAppExt};
 use super::*;
 use crate::{
     art_assets::ArtAssetsPlugin,
+    camera::{CameraControlPlugin, ControlsCamera},
+    carry::HeldAttachment,
     character_animation::CharacterAnimationPlugin,
     gameplay::{ControlsCharacter, GameplayPlugin, HeldBy, HeldTarget},
     input::GameplayContext,
@@ -39,6 +42,15 @@ fn physics_asset_app() -> App {
 }
 
 fn build_asset_app(with_physics: bool, asset_path: Option<String>, with_session: bool) -> App {
+    build_asset_app_with_camera(with_physics, asset_path, with_session, false)
+}
+
+fn build_asset_app_with_camera(
+    with_physics: bool,
+    asset_path: Option<String>,
+    with_session: bool,
+    with_camera: bool,
+) -> App {
     let mut app = App::new();
     app.add_plugins((
         MinimalPlugins,
@@ -74,6 +86,18 @@ fn build_asset_app(with_physics: bool, asset_path: Option<String>, with_session:
         // GameplayPlugin 只安装 ECS 运动和 DemoPhysicsPlugin，也让坡道回归使用实际控制力。
         app.add_plugins(GameplayPlugin)
             .insert_resource(Time::<Fixed>::from_hz(60.0));
+    }
+    if with_camera {
+        app.add_plugins(CameraControlPlugin);
+        // Window 只作为捕获与 Enhanced Input 所需的 ECS 数据，不安装原生窗口后端或渲染器。
+        app.world_mut().spawn((
+            Window {
+                focused: true,
+                ..default()
+            },
+            CursorOptions::default(),
+            PrimaryWindow,
+        ));
     }
     app.finish();
     app.cleanup();
@@ -1637,7 +1661,12 @@ fn real_island_npc_blocks_player_control_force_without_moving() {
 fn real_island_npc_blocks_free_and_actually_held_parcels() {
     use bevy::ecs::relationship::Relationship;
 
-    for held in [false, true] {
+    for (held, model) in [
+        (false, ItemModel::StandardParcel),
+        (true, ItemModel::StandardParcel),
+        (true, ItemModel::FragileParcel),
+        (true, ItemModel::WoodenCrate),
+    ] {
         let mut app = physics_asset_app();
         wait_until(&mut app, |world| {
             world.query::<&Character>().iter(world).count() == 1
@@ -1655,7 +1684,7 @@ fn real_island_npc_blocks_free_and_actually_held_parcels() {
         let parcel = world
             .query::<(Entity, &ItemModel)>()
             .iter(world)
-            .find(|(_, model)| **model == ItemModel::StandardParcel)
+            .find(|(_, item_model)| **item_model == model)
             .unwrap()
             .0;
         let character_start = npc_position + Vec3::new(0.0, 0.03, 2.0);
@@ -1684,7 +1713,7 @@ fn real_island_npc_blocks_free_and_actually_held_parcels() {
             .remove::<Sleeping>();
         if held {
             fixed_steps(&mut app, 20);
-            // 通过真实交互系统建立持有关系和碰撞过滤，随后先让纸箱正常升到手前。
+            // 使用资产原有的正常握点与真实交互入口，不能延长握点把箱子单独拉向 NPC。
             app.world_mut()
                 .get_mut::<CharacterIntent>(character)
                 .unwrap()
@@ -1693,12 +1722,20 @@ fn real_island_npc_blocks_free_and_actually_held_parcels() {
             assert_eq!(app.world().get::<HeldBy>(parcel).unwrap().get(), character);
             fixed_steps(&mut app, 90);
             let raised = app.world().get::<Position>(parcel).unwrap().0;
+            let holder_position = app.world().get::<Position>(character).unwrap().0;
+            let holder = app.world().get::<HeldBy>(parcel).map(Relationship::get);
+            let local_pose = app
+                .world()
+                .get::<HeldAttachment>(parcel)
+                .map(|attachment| attachment.local_pose);
             assert!(
                 raised.y > npc_position.y + 1.0,
-                "The held parcel must actually rise before the collision probe"
+                "The held parcel must actually rise before the collision probe: model={model:?}, parcel={raised:?}, holder={holder:?}, holder_position={holder_position:?}, local_pose={local_pose:?}"
             );
-            // 把持握目标放到居民背后，角色留在身体外；阻挡必须来自 NPC 而非持有者自身。
-            app.world_mut().get_mut::<CarryGrip>(parcel).unwrap().0 = Vec3::new(0.0, 1.3, -2.3);
+            app.world_mut()
+                .get_mut::<CharacterIntent>(character)
+                .unwrap()
+                .movement = Vec2::Y;
         }
         let mut touched_npc = false;
         for _ in 0..if held { 90 } else { 30 } {
@@ -1710,7 +1747,10 @@ fn real_island_npc_blocks_free_and_actually_held_parcels() {
                 position.z > npc_position.z + 0.2,
                 "Parcel crossed the NPC body: held={held}, position={position:?}"
             );
-            touched_npc |= npc_contact_solved(world, npc_collider, parcel);
+            let parcel_collider = world
+                .get::<HeldAttachment>(parcel)
+                .map_or(parcel, |attachment| attachment.collider);
+            touched_npc |= npc_contact_solved(world, npc_collider, parcel_collider);
             assert!(
                 world
                     .get::<Position>(npc_collider)
@@ -1729,7 +1769,23 @@ fn real_island_npc_blocks_free_and_actually_held_parcels() {
             );
             if held {
                 assert_eq!(world.get::<HeldBy>(parcel).unwrap().get(), character);
-                assert!(world.get::<Position>(character).unwrap().0.z > npc_position.z + 1.0);
+                let character_position = world.get::<Position>(character).unwrap().0;
+                let character_rotation = world.get::<Rotation>(character).unwrap().0;
+                let grip = world.get::<CarryGrip>(parcel).unwrap().0;
+                if touched_npc {
+                    assert!(
+                        position.abs_diff_eq(character_position + character_rotation * grip, 0.002),
+                        "The blocked parcel must remain at the normal grip: model={model:?}, character={character_position:?}, parcel={position:?}"
+                    );
+                }
+                assert!(
+                    character_position.z > npc_position.z + 0.8,
+                    "The player must stop behind the blocked parcel: model={model:?}, position={character_position:?}"
+                );
+                assert!(
+                    !npc_contact_solved(world, npc_collider, character),
+                    "The parcel must block movement before the player reaches the NPC: model={model:?}"
+                );
             } else {
                 assert!(world.get::<HeldBy>(parcel).is_none());
             }
@@ -1740,16 +1796,30 @@ fn real_island_npc_blocks_free_and_actually_held_parcels() {
             "Parcel must make a solved contact with the real NPC: held={held}"
         );
         if held {
-            let position = world.get::<Position>(parcel).unwrap().0;
+            let position = world.get::<Position>(character).unwrap().0;
             let target = world.get::<HeldTarget>(parcel).unwrap().translation;
             assert!(
-                target.z < npc_position.z,
-                "Held target must request motion through the NPC"
+                character_start.z - position.z > 0.35,
+                "The player must actually carry the parcel toward the NPC: model={model:?}"
             );
             assert!(
-                position.z - target.z > 0.5,
-                "NPC must prevent the real held parcel reaching the blocked target"
+                world
+                    .get::<Position>(parcel)
+                    .unwrap()
+                    .0
+                    .abs_diff_eq(target, 0.002),
+                "The whole carrying body must stop without grip compression: model={model:?}"
             );
+            assert!(world.get::<LinearVelocity>(character).unwrap().z.abs() < 0.2);
+            assert!(world.get::<RigidBody>(parcel).is_none());
+            let collider = world.get::<HeldAttachment>(parcel).unwrap().collider;
+            assert_eq!(world.get::<ColliderOf>(collider).unwrap().body, character);
+            assert!(
+                world
+                    .get::<avian3d::prelude::ColliderDisabled>(parcel)
+                    .is_some()
+            );
+            assert!(world.get::<ChildOf>(parcel).is_none());
         } else {
             let position = world.get::<Position>(parcel).unwrap().0;
             assert!(
@@ -1764,6 +1834,682 @@ fn real_island_npc_blocks_free_and_actually_held_parcels() {
                 .count(),
             0
         );
+    }
+}
+
+/// 真实地形和箱体模型参与逐帧同步，空旷地面上的视角转动不能误触发自动释放。
+#[test]
+fn real_island_open_area_turning_keeps_standard_and_fragile_parcels_held() {
+    use bevy::ecs::relationship::Relationship;
+
+    for model in [ItemModel::StandardParcel, ItemModel::FragileParcel] {
+        let mut app = build_asset_app_with_camera(true, None, false, true);
+        wait_until(&mut app, |world| {
+            world.query::<&Character>().iter(world).count() == 1
+        });
+        fixed_steps(&mut app, 2);
+        let world = app.world_mut();
+        let character = world
+            .query_filtered::<Entity, With<Character>>()
+            .single(world)
+            .unwrap();
+        let parcel = world
+            .query::<(Entity, &ItemModel)>()
+            .iter(world)
+            .find(|(_, item_model)| **item_model == model)
+            .unwrap()
+            .0;
+        let position = world.get::<Position>(parcel).unwrap().0;
+        // 日志首次复现位于出生纸箱附近，离建筑、NPC 和树干都很远，保留真实地形碰撞。
+        let start = Vec3::new(position.x + 0.04, 0.03, position.z + 1.05);
+        world
+            .entity_mut(character)
+            .insert((
+                Position(start),
+                Rotation(Quat::IDENTITY),
+                Transform::from_translation(start),
+                LinearVelocity(Vec3::ZERO),
+                AngularVelocity(Vec3::ZERO),
+            ))
+            .remove::<Sleeping>();
+        fixed_steps(&mut app, 20);
+        app.world_mut()
+            .get_mut::<CharacterIntent>(character)
+            .unwrap()
+            .interact_pending = true;
+        fixed_steps(&mut app, 1);
+        assert_eq!(app.world().get::<HeldBy>(parcel).unwrap().get(), character);
+        // 拾取安全对齐属于初始化；开始观察输入后，只检查真实 app.update 帧末，不补跑系统。
+        fixed_steps(&mut app, 30);
+        assert_eq!(app.world().get::<HeldBy>(parcel).unwrap().get(), character);
+        let world = app.world_mut();
+        let controller = world
+            .query::<(Entity, &ControlsCharacter)>()
+            .iter(world)
+            .find(|(_, controlled)| controlled.0 == character)
+            .unwrap()
+            .0;
+        let camera = world.get::<ControlsCamera>(controller).unwrap().0;
+        let descendants: Vec<_> = world
+            .query::<&Children>()
+            .query(world)
+            .iter_descendants(parcel)
+            .collect();
+        let visual = descendants
+            .into_iter()
+            .find(|&entity| world.get::<Mesh3d>(entity).is_some())
+            .expect("The actual parcel model must be instantiated");
+        let root = GlobalTransform::from(*world.get::<Transform>(parcel).unwrap());
+        let visual_local = world
+            .get::<GlobalTransform>(visual)
+            .unwrap()
+            .reparented_to(&root);
+        let source_collider = world.get::<Collider>(parcel).unwrap().clone();
+        let held_pose = *world.get::<Transform>(parcel).unwrap();
+        let grip = world.get::<CarryGrip>(parcel).unwrap().0;
+        let half = source_collider.shape().as_cuboid().unwrap().half_extents;
+        let radius = Vec2::new(grip.x, grip.z).length() + Vec2::new(half.x, half.z).length();
+        let envelope = Collider::cuboid(2.0 * radius, 2.0 * half.y, 2.0 * radius);
+        let holder_position = world.get::<Position>(character).unwrap().0;
+        let proxy = world.get::<HeldAttachment>(parcel).unwrap().collider;
+        let mut query = SystemState::<SpatialQuery>::new(world);
+        let intersections = query.get(world).unwrap().shape_intersections(
+            &source_collider,
+            held_pose.translation,
+            held_pose.rotation,
+            &SpatialQueryFilter::from_mask(GamePhysicsLayer::World),
+        );
+        assert!(
+            intersections.is_empty(),
+            "The settled held parcel must start clear of all world colliders: model={model:?}, intersections={intersections:?}"
+        );
+        // 水平整圈扫过的所有箱角均包含在此实体包络中，证明全程没有其他物品或世界障碍。
+        let arc_intersections = query.get(world).unwrap().shape_intersections(
+            &envelope,
+            holder_position + Vec3::Y * grip.y,
+            Quat::IDENTITY,
+            &SpatialQueryFilter::from_excluded_entities([character, parcel, proxy])
+                .with_mask(gameplay_query_layers()),
+        );
+        assert!(
+            arc_intersections.is_empty(),
+            "The complete turn envelope must be clear of real obstacles: model={model:?}, intersections={arc_intersections:?}"
+        );
+
+        for fixed in [false, true] {
+            app.insert_resource(if fixed {
+                TimeUpdateStrategy::FixedTimesteps(1)
+            } else {
+                TimeUpdateStrategy::ManualDuration(Duration::ZERO)
+            });
+            let mut turns = Vec::new();
+            let mut previous_angle = 0.0;
+            for angle in [
+                0.113,
+                0.47,
+                0.791,
+                1.23,
+                1.666,
+                2.1,
+                2.739,
+                std::f32::consts::PI,
+                3.44,
+                4.029,
+                4.74,
+                5.186,
+                5.917,
+                6.113,
+                std::f32::consts::TAU,
+            ] {
+                turns.push(angle - previous_angle);
+                previous_angle = angle;
+                // 每个非均匀始角覆盖亚像素微转、单像素、慢转、快速正反转和半圈。
+                turns.extend([
+                    0.001,
+                    -0.001,
+                    0.003,
+                    -0.003,
+                    0.02,
+                    -0.02,
+                    0.2,
+                    -0.2,
+                    std::f32::consts::PI,
+                    -std::f32::consts::PI,
+                ]);
+            }
+            let sensitivity = app
+                .world()
+                .resource::<crate::settings::GameSettings>()
+                .camera
+                .mouse_sensitivity;
+            for turn in turns {
+                let delta = -turn / sensitivity;
+                let before = app.world().resource::<Time<Fixed>>().elapsed();
+                let camera_before = app.world().get::<Transform>(camera).unwrap().rotation;
+                app.world_mut().write_message(MouseMotion {
+                    delta: Vec2::X * delta,
+                });
+                app.update();
+                let world = app.world();
+                assert!(
+                    !world
+                        .get::<Transform>(camera)
+                        .unwrap()
+                        .rotation
+                        .abs_diff_eq(camera_before, 0.000001),
+                    "The real mouse action must actually turn the camera"
+                );
+                assert_eq!(
+                    world.get::<HeldBy>(parcel).map(Relationship::get),
+                    Some(character),
+                    "Turning in the open island area must not release the parcel: model={model:?}, fixed={fixed}, turn={turn}, pixels={delta}"
+                );
+                let character_pose = world.get::<Transform>(character).unwrap();
+                let parcel_pose = world.get::<Transform>(parcel).unwrap();
+                let grip = world.get::<CarryGrip>(parcel).unwrap().0;
+                assert!(
+                    parcel_pose
+                        .translation
+                        .abs_diff_eq(character_pose.transform_point(grip), 0.0001)
+                );
+                let expected_visual =
+                    GlobalTransform::from(*parcel_pose).mul_transform(visual_local);
+                assert!(
+                    world
+                        .get::<GlobalTransform>(visual)
+                        .unwrap()
+                        .affine()
+                        .abs_diff_eq(expected_visual.affine(), 0.0001),
+                    "The actual GLB mesh must follow the current held root pose"
+                );
+                let expected_camera = world
+                    .get::<OrbitCamera>(camera)
+                    .unwrap()
+                    .transform(character_pose.translation);
+                assert!(
+                    world
+                        .get::<Transform>(camera)
+                        .unwrap()
+                        .translation
+                        .abs_diff_eq(expected_camera.translation, 0.0001)
+                );
+                if fixed {
+                    assert!(world.resource::<Time<Fixed>>().elapsed() > before);
+                } else {
+                    assert_eq!(world.resource::<Time<Fixed>>().elapsed(), before);
+                }
+            }
+        }
+    }
+}
+
+/// 对真实形状局部包围盒的八角求水平圆弧极值，得到包含整个连续转向的实体包络。
+fn clear_turn_envelope(
+    world: &mut World,
+    character: Entity,
+    parcel: Entity,
+    turn: f32,
+) -> Vec<Entity> {
+    let attachment = *world.get::<HeldAttachment>(parcel).unwrap();
+    let collider = world.get::<Collider>(parcel).unwrap();
+    let bounds = collider.shape_scaled().compute_local_aabb();
+    let origin = world.get::<Position>(character).unwrap().0;
+    let rotation = world.get::<Rotation>(character).unwrap().0;
+    let mut min = Vec3::splat(f32::INFINITY);
+    let mut max = Vec3::splat(f32::NEG_INFINITY);
+    for x in [bounds.mins.x, bounds.maxs.x] {
+        for y in [bounds.mins.y, bounds.maxs.y] {
+            for z in [bounds.mins.z, bounds.maxs.z] {
+                // shape_scaled 已包含真实尺度，与生产 ColliderTransform 一样只叠加局部位姿。
+                let point = rotation
+                    * (attachment.local_pose.translation
+                        + attachment.local_pose.rotation * Vec3::new(x, y, z));
+                let mut angles = vec![0.0, turn];
+                // x/z 的驻点每隔半圈出现；连同两端可覆盖正、反向整段圆弧。
+                for angle in [point.z.atan2(point.x), (-point.x).atan2(point.z)] {
+                    for half_turn in -2..=2 {
+                        let angle = angle + half_turn as f32 * std::f32::consts::PI;
+                        if (turn.min(0.0)..=turn.max(0.0)).contains(&angle) {
+                            angles.push(angle);
+                        }
+                    }
+                }
+                for angle in angles {
+                    let point = origin + Quat::from_rotation_y(angle) * point;
+                    min = min.min(point);
+                    max = max.max(point);
+                }
+            }
+        }
+    }
+    // 少量向外扩展只覆盖浮点舍入；不缩小真实箱体，也不放宽障碍判断。
+    let size = max - min + Vec3::splat(0.00002);
+    let envelope = Collider::cuboid(size.x, size.y, size.z);
+    let mut query = SystemState::<SpatialQuery>::new(world);
+    query.get(world).unwrap().shape_intersections(
+        &envelope,
+        (min + max) * 0.5,
+        Quat::IDENTITY,
+        &SpatialQueryFilter::from_excluded_entities([character, parcel, attachment.collider])
+            .with_mask(gameplay_query_layers()),
+    )
+}
+
+/// 失败诊断沿碰撞子体读取导入资产，实体 ID 在不同测试与会话中不能代表固定建筑。
+fn island_collider_asset(world: &World, collider: Entity) -> Option<String> {
+    let parent = world.get::<ChildOf>(collider)?.parent();
+    let extras = world.get::<GltfExtras>(parent)?;
+    serde_json::from_str::<MapAsset>(&extras.value)
+        .ok()
+        .map(|asset| asset.source_asset)
+}
+
+/// 检查真实输入返回时的关系、模型和镜头；不靠额外固定步修正本帧姿态。
+fn assert_clear_turn_frame(
+    app: &mut App,
+    character: Entity,
+    parcel: Entity,
+    camera: Entity,
+    visual: Entity,
+    visual_local: Transform,
+    turn: f32,
+    fixed: bool,
+) {
+    use bevy::ecs::relationship::Relationship;
+
+    let intersections = clear_turn_envelope(app.world_mut(), character, parcel, turn);
+    assert!(
+        intersections.is_empty(),
+        "The complete near-building turn must be clear: model={:?}, holder={:?}, parcel={:?}, turn={turn}, intersections={intersections:?}, obstacle_assets={:?}",
+        app.world().get::<ItemModel>(parcel),
+        app.world().get::<Position>(character),
+        app.world().get::<Position>(parcel),
+        intersections
+            .iter()
+            .map(|&entity| (entity, island_collider_asset(app.world(), entity)))
+            .collect::<Vec<_>>(),
+    );
+    let start_position = app.world().get::<Position>(character).unwrap().0;
+    let start_rotation = app.world().get::<Rotation>(character).unwrap().0;
+    let attachment = *app.world().get::<HeldAttachment>(parcel).unwrap();
+    let collider = app.world().get::<Collider>(parcel).unwrap().clone();
+    app.insert_resource(if fixed {
+        TimeUpdateStrategy::FixedTimesteps(1)
+    } else {
+        TimeUpdateStrategy::ManualDuration(Duration::ZERO)
+    });
+    let before = app.world().resource::<Time<Fixed>>().elapsed();
+    let camera_before = app.world().get::<Transform>(camera).unwrap().rotation;
+    let sensitivity = app
+        .world()
+        .resource::<crate::settings::GameSettings>()
+        .camera
+        .mouse_sensitivity;
+    app.world_mut().write_message(MouseMotion {
+        delta: Vec2::X * (-turn / sensitivity),
+    });
+    app.update();
+    if app.world().get::<HeldBy>(parcel).map(Relationship::get) != Some(character) {
+        // 失败时沿实际阻挡体的导入父级报告资产，不能把运行实体 ID 当成固定地图身份。
+        let mut state =
+            SystemState::<crate::carry_rotation::CarryRotationQuery>::new(app.world_mut());
+        let blocker = state.get(app.world()).unwrap().yaw_path_blocker(
+            &collider,
+            start_position,
+            start_rotation,
+            turn,
+            attachment.local_pose.into(),
+            &[character, parcel],
+        );
+        let source = blocker.and_then(|entity| island_collider_asset(app.world(), entity));
+        panic!(
+            "A proven clear turn released the parcel: model={:?}, origin={start_position:?}, rotation={start_rotation:?}, turn={turn}, fixed={fixed}, blocker={blocker:?}, source={source:?}",
+            app.world().get::<ItemModel>(parcel)
+        );
+    }
+    let world = app.world();
+    assert!(
+        !world
+            .get::<Transform>(camera)
+            .unwrap()
+            .rotation
+            .abs_diff_eq(camera_before, 0.000001),
+        "The real mouse action must actually turn the camera"
+    );
+    assert_eq!(
+        world.get::<HeldBy>(parcel).map(Relationship::get),
+        Some(character),
+        "A proven clear turn must keep the parcel held: turn={turn}, fixed={fixed}"
+    );
+    let character_pose = world.get::<Transform>(character).unwrap();
+    let parcel_pose = world.get::<Transform>(parcel).unwrap();
+    let grip = world.get::<CarryGrip>(parcel).unwrap().0;
+    assert!(
+        parcel_pose
+            .translation
+            .abs_diff_eq(character_pose.transform_point(grip), 0.0001)
+    );
+    let expected_visual = GlobalTransform::from(*parcel_pose).mul_transform(visual_local);
+    assert!(
+        world
+            .get::<GlobalTransform>(visual)
+            .unwrap()
+            .affine()
+            .abs_diff_eq(expected_visual.affine(), 0.0001)
+    );
+    let expected_camera = world
+        .get::<OrbitCamera>(camera)
+        .unwrap()
+        .transform(character_pose.translation);
+    assert!(
+        world
+            .get::<Transform>(camera)
+            .unwrap()
+            .translation
+            .abs_diff_eq(expected_camera.translation, 0.0001)
+    );
+    if fixed {
+        assert!(world.resource::<Time<Fixed>>().elapsed() > before);
+    } else {
+        assert_eq!(world.resource::<Time<Fixed>>().elapsed(), before);
+    }
+}
+
+/// 使用真实建筑侧墙、原始箱体与交互，对完整无障碍的微转和转离做回归。
+#[test]
+fn real_island_clear_turns_beside_building_walls_keep_all_parcels_held() {
+    use bevy::ecs::relationship::Relationship;
+
+    for model in [
+        ItemModel::StandardParcel,
+        ItemModel::FragileParcel,
+        ItemModel::WoodenCrate,
+    ] {
+        let mut app = build_asset_app_with_camera(true, None, false, true);
+        wait_until(&mut app, |world| {
+            world.query::<&Character>().iter(world).count() == 1
+        });
+        fixed_steps(&mut app, 2);
+        let world = app.world_mut();
+        let character = world
+            .query_filtered::<Entity, With<Character>>()
+            .single(world)
+            .unwrap();
+        let parcel = world
+            .query::<(Entity, &ItemModel)>()
+            .iter(world)
+            .find(|(_, item_model)| **item_model == model)
+            .unwrap()
+            .0;
+        let controller = world
+            .query::<(Entity, &ControlsCharacter)>()
+            .iter(world)
+            .find(|(_, controlled)| controlled.0 == character)
+            .unwrap()
+            .0;
+        let camera = world.get::<ControlsCamera>(controller).unwrap().0;
+        let descendants: Vec<_> = world
+            .query::<&Children>()
+            .query(world)
+            .iter_descendants(parcel)
+            .collect();
+        let visual = descendants
+            .into_iter()
+            .find(|&entity| world.get::<Mesh3d>(entity).is_some())
+            .unwrap();
+        let root = GlobalTransform::from(*world.get::<Transform>(parcel).unwrap());
+        let visual_local = world
+            .get::<GlobalTransform>(visual)
+            .unwrap()
+            .reparented_to(&root);
+        let bounds = world
+            .get::<Collider>(parcel)
+            .unwrap()
+            .shape_scaled()
+            .compute_local_aabb();
+        for asset in ["bld_courier_station", "bld_music_shop"] {
+            let world = app.world_mut();
+            let building = source_asset_entity(world, asset);
+            let building_z = world.get::<Transform>(building).unwrap().translation.z;
+            // 外斜撑比墙板更突出；读取真实网格的世界外缘，为整段转离包络留下 6cm 净空。
+            let (_, brace_max) = imported_mesh_bounds(world, building, "Side_external_brace_1");
+            // 两栋商铺的真实外平台顶面为 Y=.56，不能在平台内部生成角色和箱体。
+            let start = Vec3::new(brace_max.x - bounds.mins.x + 0.06, 0.59, building_z);
+            let parcel_start = start + Vec3::new(0.0, -bounds.mins.y, -0.9);
+            world
+                .entity_mut(character)
+                .insert((
+                    Position(start),
+                    Rotation(Quat::IDENTITY),
+                    Transform::from_translation(start),
+                    LinearVelocity(Vec3::ZERO),
+                    AngularVelocity(Vec3::ZERO),
+                    NoTranslationEasing,
+                ))
+                .remove::<Sleeping>();
+            world
+                .entity_mut(parcel)
+                .insert((
+                    Position(parcel_start),
+                    Rotation(Quat::IDENTITY),
+                    Transform::from_translation(parcel_start),
+                    LinearVelocity(Vec3::ZERO),
+                    AngularVelocity(Vec3::ZERO),
+                    NoTranslationEasing,
+                ))
+                .remove::<Sleeping>();
+            fixed_steps(&mut app, 20);
+            let world = app.world_mut();
+            let holder_position = world.get::<Position>(character).unwrap().0;
+            let holder_rotation = world.get::<Rotation>(character).unwrap().0;
+            let source_position = world.get::<Position>(parcel).unwrap().0;
+            let source_rotation = world.get::<Rotation>(parcel).unwrap().0;
+            let grip = world.get::<CarryGrip>(parcel).unwrap().0;
+            let collider = world.get::<Collider>(parcel).unwrap().clone();
+            let target_position = holder_position + holder_rotation * grip;
+            let mut query = SystemState::<SpatialQuery>::new(world);
+            let target_intersections = query.get(world).unwrap().shape_intersections(
+                &collider,
+                target_position,
+                holder_rotation,
+                &SpatialQueryFilter::from_excluded_entities([character, parcel])
+                    .with_mask(gameplay_query_layers()),
+            );
+            assert!(
+                target_intersections.is_empty(),
+                "The normal near-wall grip target must be genuinely clear: model={model:?}, asset={asset}, source={source_position:?}, source_rotation={source_rotation:?}, holder={holder_position:?}, holder_rotation={holder_rotation:?}, target={target_position:?}, intersections={target_intersections:?}, obstacle_assets={:?}",
+                target_intersections
+                    .iter()
+                    .map(|&entity| (entity, island_collider_asset(world, entity)))
+                    .collect::<Vec<_>>(),
+            );
+            app.world_mut()
+                .get_mut::<CharacterIntent>(character)
+                .unwrap()
+                .interact_pending = true;
+            fixed_steps(&mut app, 1);
+            assert_eq!(
+                app.world().get::<HeldBy>(parcel).map(Relationship::get),
+                Some(character),
+                "The near-wall interaction must actually pick up the parcel: model={model:?}, asset={asset}, source={:?}, source_rotation={:?}, holder={:?}, holder_rotation={:?}",
+                app.world().get::<Position>(parcel),
+                app.world().get::<Rotation>(parcel),
+                app.world().get::<Position>(character),
+                app.world().get::<Rotation>(character),
+            );
+            fixed_steps(&mut app, 30);
+            assert_eq!(
+                app.world().get::<HeldBy>(parcel).map(Relationship::get),
+                Some(character),
+                "Safe near-wall pickup must align: model={model:?}, asset={asset}, source={:?}, source_rotation={:?}, holder={:?}, holder_rotation={:?}",
+                app.world().get::<Position>(parcel),
+                app.world().get::<Rotation>(parcel),
+                app.world().get::<Position>(character),
+                app.world().get::<Rotation>(character),
+            );
+            for fixed in [false, true] {
+                for turn in [
+                    0.001,
+                    -0.001,
+                    0.003,
+                    -0.003,
+                    0.02,
+                    -0.02,
+                    -0.2,
+                    0.2,
+                    -std::f32::consts::FRAC_PI_2,
+                    std::f32::consts::FRAC_PI_2,
+                ] {
+                    assert_clear_turn_frame(
+                        &mut app,
+                        character,
+                        parcel,
+                        camera,
+                        visual,
+                        visual_local,
+                        turn,
+                        fixed,
+                    );
+                }
+            }
+            app.world_mut()
+                .get_mut::<CharacterIntent>(character)
+                .unwrap()
+                .interact_pending = true;
+            fixed_steps(&mut app, 1);
+            assert!(app.world().get::<HeldBy>(parcel).is_none());
+        }
+    }
+}
+
+/// 日志没有记录始角，围绕实际放下中心覆盖多种始角，并独立证明每段微转的净空。
+#[test]
+fn real_island_logged_building_side_microturns_keep_paper_parcels_held() {
+    use bevy::ecs::relationship::Relationship;
+
+    for (model, center) in [
+        (
+            ItemModel::StandardParcel,
+            Vec3::new(-4.0382676, 1.2999693, -2.5877512),
+        ),
+        (
+            ItemModel::FragileParcel,
+            Vec3::new(17.734007, 1.2999692, 0.84188503),
+        ),
+    ] {
+        let mut app = build_asset_app_with_camera(true, None, false, true);
+        wait_until(&mut app, |world| {
+            world.query::<&Character>().iter(world).count() == 1
+        });
+        fixed_steps(&mut app, 2);
+        let world = app.world_mut();
+        let character = world
+            .query_filtered::<Entity, With<Character>>()
+            .single(world)
+            .unwrap();
+        let parcel = world
+            .query::<(Entity, &ItemModel)>()
+            .iter(world)
+            .find(|(_, item_model)| **item_model == model)
+            .unwrap()
+            .0;
+        let source = world.get::<Position>(parcel).unwrap().0;
+        let open_start = Vec3::new(source.x + 0.04, 0.03, source.z + 1.05);
+        world
+            .entity_mut(character)
+            .insert((
+                Position(open_start),
+                Rotation(Quat::IDENTITY),
+                Transform::from_translation(open_start),
+                LinearVelocity(Vec3::ZERO),
+                AngularVelocity(Vec3::ZERO),
+                NoTranslationEasing,
+            ))
+            .remove::<Sleeping>();
+        fixed_steps(&mut app, 20);
+        app.world_mut()
+            .get_mut::<CharacterIntent>(character)
+            .unwrap()
+            .interact_pending = true;
+        fixed_steps(&mut app, 31);
+        assert_eq!(app.world().get::<HeldBy>(parcel).unwrap().get(), character);
+        let world = app.world_mut();
+        let controller = world
+            .query::<(Entity, &ControlsCharacter)>()
+            .iter(world)
+            .find(|(_, controlled)| controlled.0 == character)
+            .unwrap()
+            .0;
+        let camera = world.get::<ControlsCamera>(controller).unwrap().0;
+        let descendants: Vec<_> = world
+            .query::<&Children>()
+            .query(world)
+            .iter_descendants(parcel)
+            .collect();
+        let visual = descendants
+            .into_iter()
+            .find(|&entity| world.get::<Mesh3d>(entity).is_some())
+            .unwrap();
+        let root = GlobalTransform::from(*world.get::<Transform>(parcel).unwrap());
+        let visual_local = world
+            .get::<GlobalTransform>(visual)
+            .unwrap()
+            .reparented_to(&root);
+        let local = world.get::<HeldAttachment>(parcel).unwrap().local_pose;
+        let mut previous_angle = 0.0;
+        for angle in [
+            0.113,
+            0.47,
+            0.791,
+            1.23,
+            1.666,
+            2.1,
+            2.739,
+            std::f32::consts::PI,
+            3.44,
+            4.029,
+            4.74,
+            5.186,
+            5.917,
+            6.113,
+            std::f32::consts::TAU,
+        ] {
+            // 先在已证明空旷的出生区域改变始角，再保持局部握姿重放日志中的箱根位置。
+            let rotation = app.world().get::<Rotation>(character).unwrap().0;
+            app.world_mut().entity_mut(character).insert((
+                Position(open_start),
+                Transform::from_translation(open_start).with_rotation(rotation),
+            ));
+            assert_clear_turn_frame(
+                &mut app,
+                character,
+                parcel,
+                camera,
+                visual,
+                visual_local,
+                angle - previous_angle,
+                false,
+            );
+            previous_angle = angle;
+            let rotation = app.world().get::<Rotation>(character).unwrap().0;
+            let origin = center - rotation * local.translation;
+            app.world_mut().entity_mut(character).insert((
+                Position(origin),
+                Transform::from_translation(origin).with_rotation(rotation),
+            ));
+            for turn in [0.003, -0.003] {
+                assert_clear_turn_frame(
+                    &mut app,
+                    character,
+                    parcel,
+                    camera,
+                    visual,
+                    visual_local,
+                    turn,
+                    false,
+                );
+            }
+        }
     }
 }
 

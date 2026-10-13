@@ -266,10 +266,17 @@ fn simultaneous_pickups_reserve_nearest_box_and_use_available_alternative() {
     // 只断言单箱最终有一个 HeldBy 会掩盖“先拾取再被第二个命令覆盖”；备用箱能排除该假通过。
     assert_eq!(holding_count, 2);
     for item in [nearest, alternative] {
+        assert!(app.world().get::<RigidBody>(item).is_none());
+        let proxy = app
+            .world()
+            .get::<crate::carry::HeldAttachment>(item)
+            .unwrap()
+            .collider;
         assert_eq!(
-            app.world().get::<RigidBody>(item),
-            Some(&RigidBody::Dynamic)
+            app.world().get::<ColliderOf>(proxy).unwrap().body,
+            app.world().get::<HeldBy>(item).unwrap().get()
         );
+        assert!(app.world().get::<ColliderDisabled>(item).is_some());
     }
 }
 
