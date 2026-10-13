@@ -3,6 +3,7 @@
 use std::f32::consts::TAU;
 
 use avian3d::interpolation::TransformEasingSystems;
+use avian3d::prelude::{AngularVelocity, Collider, LinearVelocity, Position, Rotation};
 use bevy::{
     input::{InputSystems, mouse::MouseButtonInput},
     prelude::*,
@@ -15,9 +16,12 @@ use bevy_inspector_egui::bevy_egui::{
 
 use crate::{
     app_flow::{AppState, PlayState, gameplay_running},
+    audio_events::{SoundCue, SoundRequest},
     camera_fade::{self, update_building_fades},
     camera_obstruction::{CameraOcclusion, OccludedBuildings, detect_building_occlusion},
-    gameplay::{Character, ControlsCharacter, GameplaySystems, sync_held_objects},
+    carry::{HeldAttachment, release_item, sync_held_physics, sync_held_presentation},
+    carry_rotation::CarryRotationQuery,
+    gameplay::{Character, ControlsCharacter, GameplaySystems, HoldingItems},
     input::{GameplayContext, LookAction, ReleasePointerAction, TogglePerspectiveAction},
     settings::GameSettings,
 };
@@ -56,6 +60,9 @@ pub struct OrbitCamera {
     #[entities]
     pub target: Entity,
     yaw: f32,
+    /// 保留动作本身的有向转角，避免半圈或整圈输入被四元数最短弧改变方向。
+    #[reflect(ignore)]
+    pending_yaw_delta: f32,
     perspective: CameraPerspective,
     third_person_pitch: f32,
     first_person_pitch: f32,
@@ -74,6 +81,7 @@ impl OrbitCamera {
         Self {
             target,
             yaw: 0.0,
+            pending_yaw_delta: 0.0,
             perspective: CameraPerspective::ThirdPerson,
             third_person_pitch: relative_offset.y.atan2(relative_offset.z),
             first_person_pitch: 0.0,
@@ -198,7 +206,8 @@ impl Plugin for CameraControlPlugin {
                 // 朝向同步在插值变化标记采样前完成，避免下一无固定步帧将它误判为位置瞬移。
                 (
                     sync_character_facing,
-                    sync_held_objects,
+                    sync_held_physics,
+                    sync_held_presentation,
                     follow_orbit_camera,
                     detect_building_occlusion,
                     update_building_fades,
@@ -216,9 +225,9 @@ impl Plugin for CameraControlPlugin {
 /// 将模拟和逐帧姿态同步约定写入统一会话日志，便于排查帧率相关问题。
 fn log_pose_synchronization() {
     info!(target: "demo::camera", simulation_schedule = "FixedUpdate",
-        grip_force_schedule = "FixedUpdate", physics_schedule = "FixedPostUpdate",
+        carry_schedule = "FixedUpdate", grip_mode = "shared_body", physics_schedule = "FixedPostUpdate",
         presentation_schedule = "RunFixedMainLoop",
-        presentation_order = "interpolation_character_facing_hold_target_camera_occlusion_fade_visibility", reason = "initialization",
+        presentation_order = "interpolation_character_facing_carry_pose_camera_occlusion_fade_visibility", reason = "initialization",
         "Camera pose synchronization configured");
 }
 
@@ -475,7 +484,7 @@ fn sync_mouse_capture(
     }
 }
 
-/// Fire 已携带本帧汇总位移，直接更新角度；不缓存增量，也不乘固定步或帧时间。
+/// Fire 已携带本帧汇总位移，直接更新角度；有向水平转角留给下一次碰撞检查消费。
 fn on_camera_look(
     event: On<Fire<LookAction>>,
     settings: Res<GameSettings>,
@@ -496,6 +505,7 @@ fn on_camera_look(
     let before_yaw = orbit.yaw;
     let before_pitch = orbit.pitch();
     let delta = event.value * settings.camera.mouse_sensitivity;
+    orbit.pending_yaw_delta -= delta.x;
     orbit.yaw = (orbit.yaw - delta.x).rem_euclid(TAU);
     let vertical = if settings.camera.invert_y {
         -delta.y
@@ -562,23 +572,77 @@ fn apply_perspective_toggle(mut cameras: Query<(Entity, &mut OrbitCamera)>) {
 
 /// 在固定模拟前及逐帧持握目标同步前设置水平朝向，站立、横移和后退时也跟随视角。
 pub(crate) fn sync_character_facing(
+    mut commands: Commands,
     controllers: Query<(&ControlsCharacter, &ControlsCamera), With<GameplayContext>>,
-    cameras: Query<&OrbitCamera>,
-    mut characters: Query<&mut Transform, With<Character>>,
+    mut cameras: Query<&mut OrbitCamera>,
+    mut characters: Query<(&mut Transform, &Position, Option<&HoldingItems>), With<Character>>,
+    items: Query<(
+        &Collider,
+        &HeldAttachment,
+        &LinearVelocity,
+        &AngularVelocity,
+    )>,
+    names: Query<&Name>,
+    collision: CarryRotationQuery,
 ) {
     for (controlled_character, controlled_camera) in &controllers {
-        let Ok(orbit) = cameras.get(controlled_camera.0) else {
+        let Ok(mut orbit) = cameras.get_mut(controlled_camera.0) else {
             continue;
         };
         if orbit.target != controlled_character.0 {
             continue;
         }
-        let Ok(mut transform) = characters.get_mut(controlled_character.0) else {
+        let Ok((mut transform, position, holding)) = characters.get_mut(controlled_character.0)
+        else {
             continue;
         };
         let rotation = Quat::from_rotation_y(orbit.yaw);
-        if !transform.rotation.abs_diff_eq(rotation, 0.000001) {
+        let input_turn = std::mem::take(&mut orbit.pending_yaw_delta);
+        if input_turn.abs() > 0.000001 || !transform.rotation.abs_diff_eq(rotation, 0.000001) {
+            let turn = if input_turn != 0.0 {
+                input_turn
+            } else {
+                (rotation * transform.rotation.inverse())
+                    .to_euler(EulerRot::YXZ)
+                    .0
+            };
+            // 角色胶囊绕 Y 对称，但前伸箱体必须检查整段转向；受阻先卸载，镜头继续自由观察。
+            if let Some(item) = holding.and_then(|holding| holding.iter().next())
+                && let Ok((collider, attachment, velocity, angular)) = items.get(item)
+                && let Some(blocker) = collision.yaw_path_blocker(
+                    collider,
+                    position.0,
+                    transform.rotation,
+                    turn,
+                    attachment.local_pose.into(),
+                    &[controlled_character.0, item],
+                )
+            {
+                // 仅记录自动放下这一状态变化的阻挡来源，便于区分真实碰障与查询误报。
+                info!(target: "demo::camera", ?item, holder = ?controlled_character.0,
+                    ?blocker, blocker_name = names.get(blocker).map_or("unnamed", Name::as_str),
+                    yaw_delta = turn, reason = "turn_collision", "Held parcel turn blocked");
+                let local = attachment.local_pose;
+                let pose = Transform::from_translation(
+                    position.0 + transform.rotation * local.translation,
+                )
+                .with_rotation(transform.rotation * local.rotation)
+                .with_scale(local.scale);
+                release_item(
+                    &mut commands,
+                    item,
+                    pose,
+                    velocity.0,
+                    angular.0,
+                    "turn_collision",
+                );
+                commands.write_message(SoundRequest::new(SoundCue::ParcelRelease, item));
+            }
             transform.rotation = rotation;
+            // 只同步安全朝向，不积分平移；延迟命令在同帧持箱同步前应用，避免零固定步状态分裂。
+            commands
+                .entity(controlled_character.0)
+                .insert(Rotation(rotation));
         }
     }
 }
@@ -2013,7 +2077,7 @@ mod tests {
     }
 
     #[test]
-    fn held_target_and_visuals_use_current_frame_without_teleporting_box() {
+    fn held_box_aligns_safely_then_shares_current_frame_pose_and_visuals() {
         for (frame_duration, grip) in [Duration::ZERO, Duration::from_secs_f64(1.0 / 120.0)]
             .into_iter()
             .flat_map(|duration| carry_grip_cases().map(|grip| (duration, grip)))
@@ -2055,10 +2119,7 @@ mod tests {
                     .next(),
                 Some(item)
             );
-            assert_eq!(
-                app.world().get::<RigidBody>(item),
-                Some(&RigidBody::Dynamic)
-            );
+            assert!(app.world().get::<RigidBody>(item).is_none());
             let target = app.world().get::<HeldTarget>(item).unwrap();
             assert!(
                 app.world()
@@ -2068,12 +2129,15 @@ mod tests {
                     .distance(target.translation)
                     > 0.1
             );
+            // 拿起保留原位置；安全对齐完成后，转向的物理姿态和视觉都由人物直接派生。
+            for _ in 0..30 {
+                fixed_step(&mut app);
+            }
 
             app.insert_resource(TimeUpdateStrategy::ManualDuration(frame_duration));
             let mut frames_without_fixed_step = 0;
             for frame in 0..12 {
                 let fixed_time = app.world().resource::<Time<Fixed>>().elapsed();
-                let box_position = app.world().get::<Position>(item).unwrap().0;
                 perspective_key(
                     &mut app,
                     window,
@@ -2089,7 +2153,6 @@ mod tests {
                 let world = app.world();
                 if world.resource::<Time<Fixed>>().elapsed() == fixed_time {
                     frames_without_fixed_step += 1;
-                    assert_eq!(world.get::<Position>(item).unwrap().0, box_position);
                 }
                 let orbit = world.get::<OrbitCamera>(camera).unwrap();
                 assert_eq!(
@@ -2136,7 +2199,23 @@ mod tests {
                         .rotation
                         .abs_diff_eq(expected_camera.rotation, 0.00001)
                 );
-                assert_eq!(world.get::<RigidBody>(item), Some(&RigidBody::Dynamic));
+                assert!(world.get::<RigidBody>(item).is_none());
+                let physical_target =
+                    world.get::<Position>(character).unwrap().0 + rotation * grip_offset;
+                assert!(
+                    world
+                        .get::<Position>(item)
+                        .unwrap()
+                        .0
+                        .abs_diff_eq(physical_target, 0.0001)
+                );
+                assert!(
+                    world
+                        .get::<Transform>(item)
+                        .unwrap()
+                        .translation
+                        .abs_diff_eq(expected_target, 0.0001)
+                );
                 assert_item_visual_matches_root(world, item, visual_child, visual_offset);
             }
             assert!(
@@ -2177,10 +2256,9 @@ mod tests {
                 .unwrap()
                 .interact_pending = true;
             fixed_step(&mut app);
-            for _ in 0..12 {
+            for _ in 0..30 {
                 fixed_step(&mut app);
             }
-            let physical_position = app.world().get::<Position>(item).unwrap().0;
             let fixed_before = app.world().resource::<Time<Fixed>>().elapsed();
             mouse_motion(&mut app, Vec2::new(500.0, -100.0));
             app.update();
@@ -2188,16 +2266,21 @@ mod tests {
                 app.world().resource::<Time<Fixed>>().elapsed(),
                 fixed_before
             );
-            assert_eq!(
-                app.world().get::<Position>(item).unwrap().0,
-                physical_position
-            );
             let yaw = app.world().get::<OrbitCamera>(camera).unwrap().yaw;
             let character_transform = app.world().get::<Transform>(character).unwrap();
             let rotation = Quat::from_rotation_y(yaw);
             assert!(character_transform.up().dot(Vec3::Y) > 0.9999);
             assert!(character_transform.rotation.abs_diff_eq(rotation, 0.00001));
             let expected_target = character_transform.transform_point(grip_offset);
+            let physical_target =
+                app.world().get::<Position>(character).unwrap().0 + rotation * grip_offset;
+            assert!(
+                app.world()
+                    .get::<Position>(item)
+                    .unwrap()
+                    .0
+                    .abs_diff_eq(physical_target, 0.0001)
+            );
             assert!(
                 app.world()
                     .get::<HeldTarget>(item)

@@ -61,12 +61,9 @@ pub(crate) fn parcel_collision_layers() -> CollisionLayers {
     CollisionLayers::new(GamePhysicsLayer::Parcel, LayerMask::ALL)
 }
 
-/// 当前单角色持握时排除人物层，避免手中箱子与自己的身体互相挤压。
+/// 持箱保留全部外部碰撞；同一刚体内部的身体和箱体由 Avian 自动排除接触。
 pub(crate) fn held_collision_layers() -> CollisionLayers {
-    CollisionLayers::new(
-        GamePhysicsLayer::Parcel,
-        [GamePhysicsLayer::World, GamePhysicsLayer::Parcel],
-    )
+    parcel_collision_layers()
 }
 
 /// 玩家与展示 NPC 共享脚底原点的身体形状，刚体类型和碰撞层由装配方决定。
@@ -101,7 +98,7 @@ pub(crate) fn character_body(config: &PrototypeConfig) -> impl Bundle {
     )
 }
 
-/// 快递根位于箱体中心；拿起和松手均保持动态刚体与原有动量。
+/// 自由快递根位于箱体中心；持握时归属人物刚体，释放后恢复这份独立物理配置。
 pub(crate) fn parcel_body(config: &PrototypeConfig) -> impl Bundle {
     let size = 2.0 * config.parcel_half_height;
     (

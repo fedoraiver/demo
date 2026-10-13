@@ -7,6 +7,10 @@ mod audio_events;
 mod camera;
 mod camera_fade;
 mod camera_obstruction;
+mod carry;
+#[cfg(test)]
+mod carry_frame_tests;
+mod carry_rotation;
 mod character_animation;
 mod gameplay;
 #[cfg(test)]

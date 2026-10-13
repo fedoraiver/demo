@@ -12,6 +12,7 @@ use bevy::{
 
 use crate::{
     app_flow::gameplay_running,
+    carry::release_item,
     gameplay::{
         Character, CharacterIntent, CharacterMotion, GameplaySystems, HeldBy, HeldTarget, Pickable,
     },
@@ -29,8 +30,15 @@ pub(crate) struct SpawnPoint(pub Transform);
 /// 注册固定步落水恢复，不创建窗口或额外推进模拟。
 pub(crate) struct IslandRecoveryPlugin;
 
+/// 无窗口回归只记录真实恢复系统的实体处理顺序，不用另一份查询推断其缓存顺序。
+#[cfg(test)]
+#[derive(Resource, Default)]
+pub(crate) struct WaterRecoveryOrder(pub(crate) Vec<Entity>);
+
 impl Plugin for IslandRecoveryPlugin {
     fn build(&self, app: &mut App) {
+        #[cfg(test)]
+        app.init_resource::<WaterRecoveryOrder>();
         app.register_type::<SpawnPoint>()
             .add_systems(
                 FixedFirst,
@@ -43,7 +51,7 @@ impl Plugin for IslandRecoveryPlugin {
             .add_systems(
                 FixedUpdate,
                 // 恢复先重设出生姿态，再按本步视角同步朝向，避免保留的移动输入使用出生方向。
-                // 延迟关系命令在模拟前同步，确保当步交互和持握施力看见解除结果。
+                // 延迟关系命令在模拟前同步，确保当步交互和持握挂接看见解除结果。
                 recover_from_water
                     .before(crate::camera::sync_character_facing)
                     .before(GameplaySystems::Simulate)
@@ -80,29 +88,89 @@ struct RecoverableBody {
 /// 恢复实体自身的出生姿态；角色落水只释放手中物品，物品落水时再独立恢复。
 fn recover_from_water(
     mut commands: Commands,
-    mut bodies: Query<RecoverableBody, Or<(With<Character>, With<Pickable>)>>,
-    held_items: Query<(Entity, &HeldBy)>,
+    mut bodies: ParamSet<(
+        Query<RecoverableBody, Or<(With<Character>, With<Pickable>)>>,
+        Query<(
+            Entity,
+            &HeldBy,
+            &Position,
+            &Rotation,
+            &Transform,
+            &LinearVelocity,
+            &AngularVelocity,
+            Option<&SpawnPoint>,
+        )>,
+    )>,
+    #[cfg(test)] mut recovery_order: ResMut<WaterRecoveryOrder>,
 ) {
-    for mut body in &mut bodies {
+    // 在重置人物前保存持箱的真实世界状态；ParamSet 避免与恢复查询的可变访问冲突。
+    let held_items: Vec<_> = bodies
+        .p1()
+        .iter()
+        .map(
+            |(item, holder, position, rotation, transform, velocity, angular, spawn)| {
+                // 双方同一步落水时，先排队的卸载也必须使用箱子出生姿态，避免实体遍历顺序影响恢复。
+                let recovered = (position.y < WATER_RECOVERY_Y).then_some(spawn).flatten();
+                (
+                    item,
+                    holder.get(),
+                    recovered.map_or(
+                        Transform {
+                            translation: position.0,
+                            rotation: rotation.0,
+                            scale: transform.scale,
+                        },
+                        |spawn| spawn.0,
+                    ),
+                    if recovered.is_some() {
+                        Vec3::ZERO
+                    } else {
+                        velocity.0
+                    },
+                    if recovered.is_some() {
+                        Vec3::ZERO
+                    } else {
+                        angular.0
+                    },
+                )
+            },
+        )
+        .collect();
+    for mut body in &mut bodies.p0() {
         if body.position.y >= WATER_RECOVERY_Y {
             continue;
         }
 
         let entity = body.entity;
+        #[cfg(test)]
+        recovery_order.0.push(entity);
         let position_before = body.position.0;
         if body.character {
-            for (item, holder) in &held_items {
-                if holder.get() == entity {
-                    commands
-                        .entity(item)
-                        .remove::<(HeldBy, HeldTarget)>()
-                        .insert(parcel_collision_layers());
+            for &(item, holder, pose, velocity, angular) in &held_items {
+                if holder == entity {
+                    release_item(
+                        &mut commands,
+                        item,
+                        pose,
+                        velocity,
+                        angular,
+                        "holder_water_recovery",
+                    );
                     info!(target: "demo::island_recovery", ?item, holder = ?entity,
                         before = "held", after = "free", reason = "holder_water_recovery",
                         "Held item released during water recovery");
                 }
             }
         } else {
+            // 箱体自身也落水时，卸载与恢复出生姿态使用同一状态，不能被后续释放命令拖回海中。
+            release_item(
+                &mut commands,
+                entity,
+                body.spawn.0,
+                Vec3::ZERO,
+                Vec3::ZERO,
+                "item_water_recovery",
+            );
             commands
                 .entity(entity)
                 .remove::<(HeldBy, HeldTarget)>()

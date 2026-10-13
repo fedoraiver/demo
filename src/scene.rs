@@ -305,8 +305,15 @@ fn prepare_island(
         }
         let collider_count = colliders.len() + npcs.len();
         for (parent, collider) in colliders {
+            // 碰撞日志保留导入来源，避免不同建筑和平台都只显示同一个通用名称。
+            let source = nodes
+                .get(parent)
+                .ok()
+                .and_then(|(_, name, _)| name)
+                .map_or("unnamed", Name::as_str);
+            let name = Name::new(format!("Island static collider ({source})"));
             commands.spawn_scene(bsn! {
-                Name("Island static collider")
+                template_value(name)
                 IslandCollider
                 template_value(RigidBody::Static)
                 template_value(collider)
@@ -337,7 +344,7 @@ fn prepare_island(
         }
         for &entity in &npcs {
             commands.entity(entity).insert(DisplayNpc);
-            // 展示 NPC 保持固定站位；World 层让忽略玩家身体的持握箱仍受到阻挡。
+            // 展示 NPC 保持固定站位；World 层同时阻挡玩家、自由箱体与整体持箱。
             // 独立碰撞子体沿用模型脚底原点，保留导入姿态并随地图层级清理。
             let collider = commands
                 .spawn_scene(bsn! {

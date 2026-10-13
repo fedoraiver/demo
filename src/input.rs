@@ -238,7 +238,9 @@ fn request_interaction(
 mod tests {
     use std::time::Duration;
 
-    use avian3d::prelude::{LinearVelocity, Physics, Position, RigidBody};
+    use avian3d::prelude::{
+        ColliderDisabled, ColliderOf, LinearVelocity, Physics, Position, RigidBody,
+    };
     use bevy::{
         ecs::relationship::RelationshipTarget, input::InputPlugin, time::TimeUpdateStrategy,
     };
@@ -566,11 +568,18 @@ mod tests {
         assert!(character_after.y > character_before.y);
         assert!(character_after.z < character_before.z);
         assert!(app.world().get::<LinearVelocity>(character).unwrap().y > 0.0);
+        assert!(app.world().get::<RigidBody>(item).is_none());
+        let proxy = app
+            .world()
+            .get::<crate::carry::HeldAttachment>(item)
+            .unwrap()
+            .collider;
         assert_eq!(
-            app.world().get::<RigidBody>(item),
-            Some(&RigidBody::Dynamic)
+            app.world().get::<ColliderOf>(proxy).unwrap().body,
+            character
         );
-        // 拾取只建立目标和施力，第一步木箱仍与目标有间距，不能瞬移到手中。
+        assert!(app.world().get::<ColliderDisabled>(item).is_some());
+        // 拾取先建立整体碰撞并安全对齐，第一步箱子仍与目标有间距，不能瞬移到手中。
         let target = app.world().get::<HeldTarget>(item).unwrap();
         assert!(item_after.distance(target.translation) > 0.1);
 
