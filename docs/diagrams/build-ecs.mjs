@@ -223,7 +223,7 @@ const mainLines = fs.readFileSync(path.join(dir, '../../src/main.rs'), 'utf8').s
 const pluginDescriptions = {
   DefaultPlugins:'引擎输入、窗口、时间、资产、动画、变换、渲染、原生 ScrollbarPlugin 与统一日志。', WindowPolicyPlugin:'窗口线程安装、刷新与清理原生 16:9 策略。', ProjectInspectorPlugin:'封装 Egui、世界检查器与启用日志；仅 Running 显示。', AppFlowPlugin:'主菜单/游戏/暂停生命周期与时间门控。', GameUiPlugin:'BSN 页面、菜单输入、草稿与展示舞台。', GameAudioPlugin:'Kira 预加载、策略、UI/SFX 输出与退出停止。', SettingsPlugin:'设置资源、限帧与固定时间步启动日志。', GameplayPlugin:'玩法资源、反射类型、固定模拟链与配置启动日志。', PlayerInputPlugin:'输入上下文、动作与角色意图 Observer。', CameraControlPlugin:'相机 Observer、捕获、视角、姿态同步及其启动日志。', ArtAssetsPlugin:'五份运行 GLB 强句柄、加载状态与失败报告。', CharacterAnimationPlugin:'主角命名动作绑定与实际速度/持物切换。', IslandRecoveryPlugin:'固定步落水恢复与临时插值暂停生命周期。', PrototypeScenePlugin:'BSN 海岛准备、静态碰撞与动态业务装配。'
 };
-// 候选索引可能只包含部分功能；插件只从该版本 main 的实际装配位置读取。
+// 插件入口从当前 main 的实际装配位置读取。
 const plugins = Object.keys(pluginDescriptions).map(name => ({name, line:mainLines.findIndex(l => l.trim() === name || l.trim().startsWith(name + ',') || l.trim().startsWith(name + '::')) + 1})).filter(plugin => plugin.line > 0);
 registry['app-main'].source.line = mainLines.findIndex(l=>l.startsWith('fn main('))+1;
 plugins.forEach(({name,line}, i) => { const id = `plugin-${name}`; registry[id] = { id, name, kind:'Plugin', description:pluginDescriptions[name], notes:['注册顺序不等于系统执行顺序。', ...(name.includes('Egui') || name.includes('Inspector') ? ['EguiPlugin 必须先于 WorldInspectorPlugin 构建。'] : [])], source:{path:'src/main.rs',line} }; b += compact(44 + (i % 6) * 246, 165 + Math.floor(i / 6) * 52, 234, 42, id, name, 'plugin'); });
@@ -337,7 +337,7 @@ b += text(55,2985,'只支持范围内保证 UI：逻辑最小 960×540；工作�
 registry['plugin-carry']={name:'CarryPlugin',kind:'Plugin',description:'GameplayPlugin 内部注册共享挂接、孤儿清理、质量恢复、固定步姿态同步及销毁 Observer。呈现由相机链注册。',source:{path:'src/gameplay.rs',line:fs.readFileSync(path.join(dir,'../../src/gameplay.rs'),'utf8').split('\n').findIndex(l=>l.includes('add_plugins((DemoPhysicsPlugin, SoundEventsPlugin, CarryPlugin))'))+1}};
 registry['param-carry-rotation']={name:'CarryRotationQuery',kind:'SystemParam',description:'复用 Avian 空间索引，读取实际碰撞形状检查完整转向/对齐路径；排除自身组合、传感器、禁用碰撞和相机查询层。',notes:['SystemParam 不是 Resource 或 Component。','三角网格连续查询的分离证明、接触过滤等辅助函数是纯几何，不是 Schedule 系统。'],source:{path:'src/carry_rotation.rs',line:fs.readFileSync(path.join(dir,'../../src/carry_rotation.rs'),'utf8').split('\n').findIndex(l=>l.includes('pub(crate) struct CarryRotationQuery'))+1}};
 b += frame(30,3060,2885,260,'人物与箱体 · 共享动态刚体','人物和箱体形状共同阻挡外界；转向检查完整路径，真实受阻在旧安全姿态放下，视角继续自由转动。');
-b += card(55,3145,780,130,'plugin-carry','CarryPlugin',['安全对齐 / 装卸 / 清理 / 质量恢复','没有人物与箱体之间的弹簧力'],'engine','small');
+b += card(55,3145,780,130,'plugin-carry','CarryPlugin',['安全对齐 / 装卸 / 清理 / 质量恢复','持握碰撞归属人物刚体'],'engine','small');
 b += card(1025,3145,780,130,'param-carry-rotation','CarryRotationQuery · SystemParam',['Avian 候选 → 连续真实形状查询','空地 / 网格墙分离不误报'],'engine','small');
 registry['shared-carry-pose']={...registry['parcel.HeldAttachment'],name:'单一局部姿态'};
 b += card(1995,3145,890,130,'shared-carry-pose','单一局部姿态',['真实箱根独立，模型树不改父级','无视觉 ColliderOf(holder) 代理参与碰撞'],'component','small');
@@ -424,7 +424,7 @@ b += edge([[1700,578],[1711,578],[1711,970],[1510,970],[1510,1000]],'after(Write
 b += edge([[1700,415],[1723,415],[1723,1415]],'','order',null,['physics_step','collision_log','audio_land'],false);
 b += edge([[1723,1135],[1510,1135],[1510,1170]],'after StepSimulation','order',[1407,1150],['physics_step','collision_log']);
 b += text(1324, 1350, '碰撞日志与 Writeback 后观察无全序', 'small');
-// 新增行为只绘制候选模型中实际存在的 ID，分步提交不会提前展示后续系统。
+// 只绘制当前清单中实际存在的系统 ID。
 if (systems.asset_poll) b += system(2575,193,440,'asset_poll',['Loading → Ready / Failed','递归依赖就绪；状态变化才记录'],118);
 const islandIds = ['island_begin','island_prepare','actors_spawn'].filter(id => systems[id]);
 islandIds.forEach((id,i) => { const y=420+i*160; b+=system(2575,y,440,id,accessRows(id),130); if(i)b+=edge([[2795,y-30],[2795,y]],'chain / Commands','order',[2648,y-16],[islandIds[i-1],id]); });
@@ -448,7 +448,7 @@ columns.slice(0, -1).forEach((col, i) => b += edge([[col.x + col.w, 144], [colum
 b += text(43, 2590, 'OnEnter(InGame) 只准备日光/加载相机；Running 的 Update 资源和静态碰撞就绪后生成动态根。', 'note');
 b += text(43, 2624, 'Commands 同步点用琥珀色框；碰撞日志与回写后接地/采样只有各自明确的依赖。', 'note');
 b += text(43, 2658, '固定循环每帧 0～N 次；AfterFixedMainLoop 的 Ease → 显示链 → UpdateEasingTick 每帧执行。', 'note');
-b += text(43, 2692, 'HeldAttachment.local_pose 统一真实碰撞与呈现；HeldTarget 仅目标检查；同一刚体内部不施弹簧力。', 'note');
+b += text(43, 2692, 'HeldAttachment.local_pose 统一真实碰撞与呈现；HeldTarget 仅目标检查；持握代理与人物共享刚体。', 'note');
 // 原物理解算支线保持独立；落地音效只依赖实际 StepSimulation。
 b += system(1320, 1460, 380, 'audio_land', accessRows('audio_land'), 130);
 b += edge([[1723,1415],[1510,1415],[1510,1460]],'after(StepSimulation)','order',[1510,1385],['physics_step','audio_land']);

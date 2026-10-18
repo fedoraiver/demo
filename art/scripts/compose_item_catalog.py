@@ -42,7 +42,7 @@ def make_board(groups, destination, title, columns):
     canvas = Image.new("RGB", (width, 140 + sum(heights) + 28), "#EFE5D4")
     draw = ImageDraw.Draw(canvas)
     draw.text((margin, 25), title, font=font(38), fill="#293240")
-    draw.text((margin, 80), "COURIER ISLAND  /  BLENDER ASSET LIBRARY  /  METERS · Z-UP SOURCE · Y-UP GLB",
+    draw.text((margin, 80), "DEMO  /  BLENDER ASSET LIBRARY  /  METERS · Z-UP SOURCE · Y-UP GLB",
               font=font(15), fill="#706454")
     y = 125
     for category, entries in groups:
@@ -74,9 +74,9 @@ def make_html(entries):
                          f'<p><a href="../../../{safe["file"]}">独立 GLB</a> · {safe["variant"]}</p></div></article>')
         sections.append(f'<section style="--accent:{color}"><h2>{name}<small>{subtitle}</small></h2><div class="grid">{"".join(cards)}</div></section>')
     page = '''<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Courier Island · 道具美术资产</title><style>
+<title>demo 道具美术资产</title><style>
 *{box-sizing:border-box}body{margin:0;background:#efe5d4;color:#293240;font:16px system-ui,sans-serif}main{max-width:1500px;margin:auto;padding:42px 28px}h1{font-size:38px;margin:0 0 12px}header p{max-width:800px;line-height:1.7}nav{display:flex;flex-wrap:wrap;gap:20px;margin:22px 0 40px}a{color:#4266ac}h2{border-left:7px solid var(--accent);padding-left:16px;margin-top:42px}small{font-size:13px;font-weight:400;color:var(--accent);margin-left:20px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px}article{overflow:hidden;border:1px solid #d8d0c2;border-radius:14px;background:#fff9ef}img{display:block;width:100%;height:auto}article>div{padding:4px 18px 15px}h3{margin:8px 0}.id{font-size:12px;color:#777;overflow-wrap:anywhere}article p{font-size:13px}footer{margin-top:40px;color:#706454;font-size:14px}</style><main>
-<header><h1>小岛快递 · 道具美术资产</h1><p>18 件道具与配套结构变体。预览来自 Blender 实际模型渲染；独立 GLB 保留米制比例、原点与命名接口。点击图片查看原尺寸。</p></header>
+<header><h1>demo 道具美术资产</h1><p>18 件道具与配套结构变体，用于美术制作与资源接入练习；当前玩法尚未确定。预览来自 Blender 实际模型渲染；独立 GLB 保留米制比例、原点与命名接口。点击图片查看原尺寸。</p></header>
 <nav><a href="../../blender/courier_items.blend">Blender 源库</a><a href="../../items/README.md">资产说明</a><a href="overview.png">总览图</a><a href="equipment_fit_front.png">穿戴正面</a><a href="equipment_fit.png">穿戴背面</a><a href="../../items/asset_manifest.json">资产清单</a></nav>
 ''' + "".join(sections) + '<footer>这些是美术资产；装备效果、工业模拟与魔法玩法尚未接入游戏。源模型不包含碰撞或角色蒙皮适配。</footer></main></html>'
     (PREVIEWS / "catalog.html").write_text(page, encoding="utf-8")
@@ -87,7 +87,7 @@ def main():
     entries = manifest["assets"]
     groups = [(category, [entry for entry in entries if entry["category"] == category and entry["variant"] == "default"])
               for category in GROUPS]
-    make_board(groups, PREVIEWS / "overview.png", "小岛快递 · 18 件道具", 6)
+    make_board(groups, PREVIEWS / "overview.png", "demo · 18 件道具", 6)
     for category, group in groups:
         make_board([(category, group)], PREVIEWS / (category.rsplit("/", 1)[-1] + ".png"), GROUPS[category][0], 3)
     variants = [(category, [entry for entry in entries if entry["category"] == category and entry["variant"] != "default"])

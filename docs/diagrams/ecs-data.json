@@ -2212,7 +2212,7 @@
       "notes": [
         "按 named_animations 查找 16 个动作，不硬编码 glTF 排列索引；GLTF 或 clip 未入库时保留 pending 重试。",
         "与 sync_courier_animation 使用 chain，新增绑定当帧可见。",
-        "移除旧 AnimationTransitions；缺少动作、非法时长或父角色时记录错误并清理 pending。",
+        "清理 AnimationTransitions；缺少动作、非法时长或父角色时记录错误并清理 pending。",
         "鞋底名字只在绑定时扫描，CourierFootGrounding 保存角色、首个播放器与八个节点引用；节点缺失时不安装该补偿。"
       ],
       "source": {

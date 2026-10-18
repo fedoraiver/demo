@@ -1,38 +1,30 @@
-# 第一版音频管线
+# 音频管线
 
-当前声音管线使用 `bevy_kira_audio 0.26.0`，对应项目 Bevy 0.19；具体版本以 Cargo 声明与锁文件为准。玩法结果通过 ECS 消息进入播放端，接入范围与阈值见 [当前架构](architecture.md#音效数据流)。音效事件、来源与参数分别维护在下表链接，不把预留素材当作已实现玩法。
+本文面向维护音频资产和接入声音反馈的开发者，说明来源导入、可重现生成、技术检查和接入要求。用户操作与独立试听见 [使用说明](usage.md#音效)，运行时 ECS 数据流见 [当前架构](architecture.md#音效数据流)。
 
-已接入主菜单、暂停、设置与帮助页面的焦点、确认和返回反馈，以及拾取、释放、实际落地和持握警告。菜单反馈遵循操作接受结果，设置保存失败用返回音；交接、推车、角色弹开及交付结果仍待对应玩法接入。游戏提供总音量、游戏音效与菜单音效的实时预览和持久化，操作及 JSON 字段见 [README](../README.md#设置)。三项默认 `100%`，保留原有 `0.25` 混音基准；素材增益、总音量和所属 UI/SFX 分类音量相乘决定最终音量。分类静音时丢弃对应新请求，解除静音不补播。UI 与 SFX 的并发、预览数据流和暂停行为见上述架构说明，听感与运行验收步骤见 [验证指南](testing.md#音频检查与用户验收)。
+## 资产与记录的归属
 
-| 文件 | 维护内容 |
+| 记录 | 用途 |
 | --- | --- |
-| [events.md](../assets/audio/events.md) | 菜单、拾取、交接、落地、推车碰撞、弹开、失稳、交付成功和失败的事件合同与当前接入范围。 |
-| [audio_manifest.json](../assets/audio/audio_manifest.json) | 精确播放 ID、相对 `assets` 路径、来源、取得日期、处理、生成参数、播放策略、哈希与技术质量。 |
-| [ATTRIBUTION.md](../assets/audio/ATTRIBUTION.md) | 作者、包版本、许可证及证据、原创素材权属、真实声音缺口与未下载候选。 |
-| [generation.json](../assets/audio/generation.json) | 本地生成器版本、每条合成声的种子与全部配方、正式发布包导入选择。 |
-| [quality_report.json](../assets/audio/quality_report.json) | 解码格式、静音、削波、DC、循环边界和文件哈希检查结果；不代表人耳验收。 |
+| [音效事件表](../assets/audio/events.md) | 当前事件的触发与去重合同，以及未接入素材的语义边界。 |
+| [来源记录](../assets/audio/ATTRIBUTION.md) | 外部包、作者、许可证及取得证据，原创素材权属和未下载候选。 |
+| [generation.json](../assets/audio/generation.json) | 外部包导入选择、本地合成配方、独立种子和播放策略的输入配置。 |
+| [audio_manifest.json](../assets/audio/audio_manifest.json) | 生成后的运行时映射，以及与文件对应的来源、处理、哈希和技术信息。 |
+| [quality_report.json](../assets/audio/quality_report.json) | 技术检查的工具版本、阈值和结果。 |
 
-## 素材与预算
+生成后的清单和报告由管线维护；调整生成输入时修改 `generation.json` 或生成器，不手工维护第二份参数表。试听页使用生成快照，修改清单后也要刷新快照。
 
-仓库已有素材优先复用；外部素材只接受来源与许可可核实的 CC0 完整发布文件，不接受 CC BY-NC、许可不明素材、影视游戏提取声音或付费生成 API。当前外部素材为 Kenney 官方发布包中的 OGG，原样提取并保存原文件名、字节哈希及包内 License 副本。它们是有损正式发布文件，不宣称为无损原录音，也不转换为 WAV 冒充原件。
+## 素材要求
 
-反馈音由 Python 标准库本地生成，不需要生成服务、jsfxr 网站或登录。配方保存包络、频率、时长、谐波、目标峰值和独立种子，生成器版本是 `1.0.0`。原创文件为一次量化的 PCM16 WAV，无外部采样；权利留在项目，不能误记为第三方 CC0。环境底声是明确标注的合成占位，默认不在游戏中播放。真实海浪、风与推车声音只列为未下载候选；Freesound 登录后的原文件须另行取得并检查，页面预览不能代替。
+优先复用仓库已有素材。外部素材只接受来源与许可可核实的 CC0 完整发布文件，不接受 CC BY-NC、许可不明素材、影视游戏提取声音或付费生成 API。
 
-## 逐项试听
+保留正式发布文件的编码格式、原包条目、字节哈希及许可证副本。不得用网页有损预览代替原文件，也不将有损文件转换成 WAV 后声称是无损原录音。
 
-用户可在浏览器中直接打开 [audition.html](../assets/audio/audition.html)。页面通过同目录的 `audition_data.js` 静态快照读取清单，用户点击后才播放；同一时间仅播放一项，支持停止、监听音量与仅循环素材的循环开关。查看详情可见来源、许可、生成参数、哈希和技术报告。
-
-也可在仓库根目录执行以下命令，仅启动本地试听文件服务：
-
-```powershell
-python scripts/serve_audio.py
-```
-
-随后打开 `http://127.0.0.1:8765/audition.html`；按 Ctrl+C 停止服务。该脚本只绑定 localhost，不启动游戏。HTTP 下可以刷新 manifest；直接本地打开时使用静态快照或手动导入 JSON。浏览器策略若禁止 `file://`，使用 localhost。
+本地合成不使用外部采样，权利归属按原创素材记录，不标为第三方 CC0。合成环境底声是试听候选，默认不在游戏播放；真实声音缺口及取得状态见 [来源记录](../assets/audio/ATTRIBUTION.md#真实声音缺口仅候选未下载)。
 
 ## 重现与检查
 
-已生成的音频足够播放，正常构建无需下载。以下命令在仓库根目录运行，仅重现原创 WAV 和更新清单，不访问网络：
+仓库已有音频可直接使用，正常构建不需要下载。运行以下命令前，确认本机已有 Python；生成只使用 Python 标准库，技术检查还需要 `ffmpeg` 和 `ffprobe`。在仓库根目录执行：
 
 ```powershell
 python scripts/audio_pipeline.py generate
@@ -40,14 +32,26 @@ python scripts/audio_pipeline.py check
 python scripts/build_audition_index.py
 ```
 
-`check` 使用本机现有 `ffmpeg` 与 `ffprobe` 解码到内存，可用 `--ffmpeg <路径> --ffprobe <路径>` 指定。没有工具时应报告未完成检查，不能将缺少解码器视作通过。脚本检查所有声道的削波、DC、采样率和格式，并按每帧最大声道幅度检测头尾静音；循环文件检查边界采样差与一阶斜率差。阈值记录在报告中。短音不进行循环测试，环境循环仍需人耳检查底噪、重复感和接缝。
+`generate` 重建原创 WAV 与运行时清单，保留外部 OGG 和下载记录。`check` 不播放音频：在内存复现合成字节、比对外部文件与取得记录的哈希，并更新清单和质量报告。`build_audition_index.py` 刷新试听页的 `audition_data.js` 快照。
 
-只有需要重新取得外部正式包时才使用导入命令，`--acquired-date` 必须填本次实际取得日期；已取得的包可加 `--use-cache`，不能用缓存伪造新的下载：
+解码工具不在 PATH 时，可为 `check` 传入 `--ffmpeg <路径> --ffprobe <路径>`。缺少工具应记录为未完成检查，不能视作通过；管线不自动安装解码器。技术检查范围、无窗口回归与预期结果见 [音频无窗口验证](testing/README.md#音频无窗口验证)。
+
+### 导入外部发布包
+
+仅在需要取得或重新导入正式发布包时执行：
 
 ```powershell
 python scripts/audio_pipeline.py import-sources --acquired-date YYYY-MM-DD
 ```
 
-导入的包保留在 `tmp/audio/downloads`，正式归属证据在 `assets/audio/sources`；首次取得与候选查阅日期分开记录。替换原素材需要先确认许可，再更新配置、来源与报告。清单嵌入 Rust 二进制，修改后重新编译；试听快照也需重新生成。格式、编译、无窗口解码与真实物理事件检查见 [验证指南](testing.md#音频检查与用户验收)。
+`--acquired-date` 填写实际取得日期。重新使用已取得的包时添加 `--use-cache` 并保留其实际取得日期，不把缓存使用日期记录为下载日期。完整包暂存在根 `tmp/audio/downloads/`，正式来源证据写入 `assets/audio/sources/`。
 
-用户听感与游戏声音输出验收由用户自行完成；技术报告始终保留 `subjective_listening_status` 和 `game_runtime_status`，不得从文件或网页播放状态推断已经听过。
+替换素材前核实许可并更新导入配置；导入后重新执行生成、检查和快照刷新。首次取得日期与候选页面查阅日期分别记录，不补写未取得文件的哈希。
+
+## 接入与验收
+
+声音反馈通过已接受的业务结果发送，不从按键推断成功。接入时按 [音效事件表](../assets/audio/events.md) 确认触发、去重及当前范围；新增语义时同步维护 `SoundCue` 与清单映射，不能把预留素材名称当成玩法需求。
+
+运行时由 `AssetServer` 加载实际文件，路径相对 `assets/`。清单编译嵌入 Rust 程序，修改清单后需要重新编译。混音、加载失败处理、并发和暂停行为由 [音效数据流](architecture.md#音效数据流) 说明，音量设置的操作与持久化见 [使用说明](usage.md#设置)。
+
+技术报告不代表听感或真实设备输出通过。`subjective_listening_status` 与 `game_runtime_status` 必须反映实际验收状态，不能从文件存在或网页可播放推断。听感与游戏声音输出由用户按 [音频检查与用户验收](testing/game-acceptance.md#音频验收) 完成。

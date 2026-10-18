@@ -1,0 +1,4 @@
+interface:
+  display_name: "更新 ECS 架构图"
+  short_description: "按当前源码维护 ECS 清单、四视图与源码快照，并完成校验及视觉检查"
+  default_prompt: "使用 $update-ecs-architecture 对照当前源码更新本项目的 ECS 架构图，完成生成、校验和最终 HTML/SVG 视觉检查。"

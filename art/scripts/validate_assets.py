@@ -74,7 +74,7 @@ def normal_transform(matrix, normal):
 
 
 def forbidden_map_geometry(name):
-    """按完整词匹配旧景观名，不把 broadleaf、码头板或楼梯 landing 误报为道路。"""
+    """按完整词匹配禁用景观名称，避免误判 broadleaf、码头板或楼梯 landing。"""
     words = re.sub(r"[^a-z0-9]+", "_", name.lower()).strip("_")
     return bool(re.search(r"(?:^|_)(?:roads?|roadways?|parks?|promenades?)(?:_|$)", words)
                 or re.search(r"(?:^|_)central_plaza(?:_|$)", words))
@@ -589,7 +589,7 @@ class Glb:
                 "shoe_vertices": len(shoe_vertices), "sole_contact_markers": contact_markers, "root_motion": "none", "scale_deformation": "none"}
 
     def check_art_asset_structure(self, asset_id):
-        """检查木屋与棕榈的实际网格组成，防止保留稳定 ID 却导出旧居民楼或旧树。"""
+        """检查木屋与棕榈的实际网格组成。"""
         nodes = [self.document["nodes"][i] for i in self.reachable if "mesh" in self.document["nodes"][i]]
         names = [re.sub(r"[_\s]+", " ", node.get("name", "").lower()) for node in nodes]
         minimum, maximum = self.bounds()

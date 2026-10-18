@@ -173,7 +173,7 @@ fn warn_hold_strain(
             strain.remove(&parcel);
             continue;
         };
-        // 告警与持握施力共用物品偏移；纸箱和木箱不能用旧全局目标判断恢复。
+        // 告警按物品实际持握偏移计算目标位置。
         let offset = grip.map_or(config.hold_offset, |grip| grip.0);
         let target = holder_position.0 + holder_transform.rotation * offset;
         let distance = position.0.distance(target);
@@ -378,7 +378,7 @@ mod tests {
                     .map(|request| (request.cue, request.source))
                     .collect::<Vec<_>>()
             };
-            // 小于恢复阈值的正常惯性偏移不得被旧全局偏移放大成持续失稳。
+            // 小于恢复阈值的正常惯性偏移不应触发持续失稳告警。
             for _ in 0..20 {
                 app.world_mut().run_schedule(FixedUpdate);
             }

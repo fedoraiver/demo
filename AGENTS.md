@@ -1,56 +1,54 @@
-# Agent 开发指南
+# Agent Development Guide
 
-本文件适用于整个仓库，规定 Agent 的执行约束和文档读取入口。详细工程规范见 [开发规范](docs/development.md)；该文件中的要求同样适用于全仓库，不能因为内容被移出根文件而省略。
+`demo` is a Rust/Bevy game development sandbox with gameplay undecided. Read [docs/architecture.md](docs/architecture.md) before changing `src/`; follow [docs/development.md](docs/development.md) for code and [docs/AGENTS.md](docs/AGENTS.md) for documentation.
 
-## 必读文档
+## Repository layout
 
-- 修改代码前，必须读取 [开发规范](docs/development.md)、[当前架构](docs/architecture.md) 中相关说明和 [验证指南](docs/testing.md)。
-- 修改 UI、BSN 布局或按钮交互时，重点核对 [UI 布局与高亮规范](docs/development.md#ui-布局与高亮规范) 和 [文字布局与高亮回归](docs/testing.md#文字布局与高亮回归)，防止文字零宽与输入来源混淆再次出现。
-- 处理玩法需求时，读取 [游戏设计](docs/game-design.md) 和相关 Issue，区分已确认设定、设计建议与待确认事项。游戏当前可用能力以 [README](README.md) 为入口，实际实现以源码为准。
-- 仅修改文档时，读取受影响的文档及开发规范中的文档维护约定，检查内容与链接。
-- 处理工单、分诊或领域文档时，按下方 `Agent skills` 入口读取对应适配约定。
+```text
+src/                   Rust/Bevy application and ECS modules
+  main.rs              Application assembly and entry point
+  ui/                  Menus, widgets, navigation, and styling
+  window_policy/       Platform-specific window behavior
+  *_tests.rs           Headless regression tests
+art/                   Asset authoring sources and tooling
+  blender/             Blender source projects
+  scripts/             Asset generation, export, validation, and previews
+  previews/            Rendered images and asset catalogs
+  items/               Item asset manifest and guide
+  *.json               Asset manifests and build/validation reports
+  ASSET_GUIDE.md       Art asset guide
+assets/                Runtime assets grouped by resource type
+  maps/                Exported GLB maps
+  models/              Character, prop, building, environment, and item models
+  audio/               Sounds, metadata, and source/license records
+  ui/                  UI resources
+    fonts/             UI fonts, sources, and licenses
+```
 
-依赖版本和构建参数以 [Cargo.toml](Cargo.toml) 与 [Cargo.lock](Cargo.lock) 为准。使用对应版本的 API 与示例。
+## Required Reading
 
-## 全仓库强约束
+- Before changing code, read the [Development Standards](docs/development.md), the relevant sections of the [Current Architecture](docs/architecture.md), and the [Testing Guide](docs/testing/README.md).
+- When changing UI, BSN layouts, or button interactions, pay particular attention to the [UI Layout and Highlighting Standards](docs/development.md#ui-布局与高亮规范) and [Text Layout and Highlighting Regression Checks](docs/testing/README.md#文字布局与高亮回归) to prevent zero-width text and input-source confusion from recurring.
+- For gameplay requirements, read the [Game Design](docs/game-design.md) and related issues. Distinguish confirmed decisions, design suggestions, and open questions. See the [Usage Guide](docs/usage.md) for currently available capabilities, controls, and configuration; the source code is authoritative for actual implementation.
+- For documentation-only changes, read the affected documents and their applicable writing rules, then check content and links.
 
-- 所有新增或修改的游戏逻辑必须遵循 ECS，并使用本项目的 Bevy 实现；实体身份、组件数据、共享资源和系统行为分别归位。
-- 场景、UI 和其他实体层级装配尽量使用 BSN 风格的声明式代码，清晰表达组件组合与子实体结构；运行时行为继续由 ECS 系统或 Observer 处理。完整规则见 [场景与 UI 装配规范](docs/development.md#场景与-ui-装配规范)。
-- 处理输入时优先使用 `bevy_enhanced_input` 插件。新增或修改输入处理先评估动作、绑定、上下文和动作事件；确需直接读取底层输入或窗口事件时，用中文注释说明原因并限制范围，避免重复触发。
-- 新增或修改的代码补充必要的中文注释；日志消息、结构化字段名及代码定义的状态、原因和错误提示统一使用英文。外部错误信息和文件路径按原样记录。
-- 每次用户启动游戏都必须通过统一日志设施写入独立会话文件，默认放在 `logs/`，文件包含时间戳和唯一会话标识。覆盖完整会话及关键状态变化，正常退出刷新，保留历史日志；日志与存档分别管理。
-- 仓库内所有临时文件统一放在根 `tmp/` 下，不提交版本控制；完整规则见 [临时文件管理](docs/development.md#临时文件管理)。
-- 架构图维护统一由 Agent Hook 负责，包括 ECS 清单、关系、布局、源码入口及产物生成与校验；普通代码修改或提交不要求开发 Agent 手动维护或刷新架构图。职责边界、Hook 配置和失败处理见 [架构图自动维护](docs/diagrams/README.md#agent-hook-自动维护)。
-- 每次修改架构图后，架构图维护 Agent / Hook 流程必须对最终生成的 HTML 和 SVG 进行实际视觉检查，重点检查箭头和线条；自动校验不能代替目测，未完成视觉检查不能报告架构图验收通过。检查步骤见 [架构图视觉检查](docs/testing.md#架构图视觉检查)。普通游戏代码变更且架构图未变化时，不增加人工图形检查要求。
-- 提交标题遵循 Conventional Commits，标题语言按用户明确要求或仓库惯例确定；提交正文使用中文，固定页脚标记保留原文，附带自然语言说明使用中文。
-- 修改 Rust 代码后必须运行 `cargo fmt --all -- --check` 和 `cargo check --locked`；行为变更增加或运行针对性的无窗口测试。完整自查及验证流程见 [验证指南](docs/testing.md)。
-- 一般工程约定确需偏离时，在代码注释或交付说明中解释具体理由和影响，并保持最小范围。下方禁止 Agent 启动或操作游戏的约束不能豁免。
+[Cargo.toml](Cargo.toml) and [Cargo.lock](Cargo.lock) are authoritative for dependency versions and build settings. Use APIs and examples that match those versions.
 
-## 验证方式：游戏仅由用户启动
+## Conventions
 
-- Agent 禁止实际启动、打开或操作游戏进行验证。游戏游玩、窗口交互和视觉验收必须由用户自己启动并完成，以减少无必要的 token 消耗。
-- 禁止通过 Computer Use、浏览器自动化、屏幕截图、录屏、模拟键鼠或其他工具操作游戏；也禁止通过 `cargo run`、直接执行游戏程序、脚本或其他间接方式启动游戏。
-- Agent 仅进行代码阅读、格式检查、编译检查和无窗口自动化测试。测试可以使用最小 `App` / `World`，但不得创建游戏窗口、启动完整游戏或依赖桌面交互。
-- 需要实际游玩才能确认的行为，在交付说明中列出用户手动验证的步骤、预期结果和应查看的日志位置；明确标记尚未完成的运行或视觉验证。
-- 用户提供日志后，Agent 可以读取和分析日志辅助排查。不得以验证、调试或日志检查为由自行启动游戏。
-- 架构图属于静态文档，Agent 可以仅打开架构图 HTML / SVG 或查看其渲染截图进行视觉检查；截图和临时产物统一放在根 `tmp/`。这不允许启动或操作游戏。
+- All new or modified game logic must follow ECS and use this project's Bevy implementation. Keep entity identity, component data, shared resources, and system behavior in their respective roles.
+- Prefer BSN-style declarative code when assembling scenes, UI, and other entity hierarchies, clearly expressing component composition and child entity structure. Keep runtime behavior in ECS systems or Observers. See the [Scene and UI Assembly Standards](docs/development.md#场景与-ui-装配规范) for the full rules.
+- Keep all temporary repository files under the root `tmp/` directory and do not commit them. See the [Temporary File Rules](docs/development.md#临时文件管理) for details.
+- Use Conventional Commits for commit titles, with the title language determined by explicit user instructions or repository convention. Write commit bodies in Chinese. Preserve fixed footer markers verbatim and write their accompanying natural-language descriptions in Chinese.
+- After changing Rust code, run `cargo fmt --all -- --check` and `cargo check --locked`. Add or run targeted headless tests for behavior changes. See the [Testing Guide](docs/testing/README.md) for the full self-review and validation workflow.
+- If a general engineering convention must be departed from, explain the specific reason and impact in code comments or delivery notes, and keep the exception narrowly scoped.
 
-## 交付要求
+## Validation
 
-完成前按 [验证指南](docs/testing.md) 的检查清单核对 ECS、注释、系统访问与顺序、延迟命令、注册与生命周期、文件日志。仅修改普通文档时检查内容和链接即可；架构图有变更时，必须另行完成架构图视觉检查。
+Do not use computer-use to launch or operate the game.
 
-交付说明应说明具体改动、实际完成的验证及未验证事项。依赖实际游玩的行为，列出用户手动步骤、预期结果和应查看的日志位置；具体执行记录放在对应 Issue 或 PR，长期文档保留可复用的说明。
+## Delivery Requirements
 
-## Agent skills
+Before finishing, follow the [Testing Guide](docs/testing/README.md) checklist to review ECS design, comments, system access and ordering, deferred commands, registration and lifecycle, and file logging. For ordinary documentation-only changes, checking content and links is sufficient. If architecture diagrams change, also complete their visual checks.
 
-### Issue tracker
-
-需求、缺陷和 PRD 使用 GitHub Issues。目标仓库和操作要求以 [任务跟踪约定](docs/agents/issue-tracker.md) 为准。
-
-### Triage labels
-
-技能分诊角色对应的标签及含义，以 [标签映射](docs/agents/triage-labels.md) 为准。
-
-### Domain docs
-
-当前为单个游戏原型，架构读取入口及以后拆分上下文时的规则，见 [领域文档约定](docs/agents/domain.md)。
+Delivery notes must describe the specific changes, validation actually completed, and any unverified items. For behavior that depends on gameplay, include user-performed steps, expected results, and log locations. Record execution details in the corresponding issue or PR; keep reusable guidance in long-term documentation.

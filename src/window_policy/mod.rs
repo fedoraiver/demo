@@ -89,7 +89,7 @@ fn install_native_policy(
         With<PrimaryWindow>,
     >,
 ) {
-    // Bevy 0.19 的后端存在线程局部表中，不再是 NonSend 资源；只取得身份快照。
+    // Bevy 0.19 的后端存在线程局部表中；这里只取得身份快照。
     // 不跨原生 API 调用持有 RefCell 借用，避免同步窗口通知重入时发生借用冲突。
     let live: std::collections::HashSet<_> = bevy::winit::WINIT_WINDOWS.with_borrow(|backend| {
         windows

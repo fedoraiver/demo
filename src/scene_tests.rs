@@ -877,7 +877,7 @@ fn island_sessions_wait_for_assets_survive_pause_and_clean_up_on_menu_return() {
     }
 }
 
-/// 真实站点驻足和行走时对比旧扫掠；相对开销避免把特定机器的 FPS 当成测试条件。
+/// 真实站点驻足和行走时对比零门槛配置；相对开销避免把特定机器的 FPS 当成测试条件。
 #[test]
 fn station_character_ccd_avoids_expensive_stationary_and_walking_sweeps() {
     use avian3d::dynamics::solver::SolverDiagnostics;

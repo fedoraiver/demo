@@ -55,7 +55,7 @@ def build_environment(h):
     # 内陆主要为裸露沙地；岸边连成连续沙坡，不铺广场、网格或道路。
     top_points = [Vector((x*.89,y*.89,0)) for x,y,_ in outer]
     tris = tessellate_polygon([top_points])
-    # Blender 5.2 的 tessellate_polygon 返回顶点索引，直接使用避免旧版 Vector 接口。
+    # Blender 5.2 的 tessellate_polygon 返回顶点索引，可直接构造三角面。
     top_faces = [tuple(tri) for tri in tris]
     top = h.mesh(terrain, "Island_surface", [tuple(v) for v in top_points], top_faces, "dry_sand")
     top.data.materials.append(h.material("sand"))

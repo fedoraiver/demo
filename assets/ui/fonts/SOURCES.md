@@ -1,8 +1,8 @@
-# Menu fonts
+# 菜单字体来源
 
-These fonts are distributed under the SIL Open Font License 1.1. The original license files are included alongside the fonts.
+菜单字体使用 SIL Open Font License 1.1 分发，原始许可证随字体保存。
 
-- `body.ttf`: Atkinson Hyperlegible Bold, from [Google Fonts](https://github.com/google/fonts/tree/main/ofl/atkinsonhyperlegible). License: `LICENSE-AtkinsonHyperlegible.txt`.
-- `heading.ttf`: Lilita One Regular, from [Google Fonts](https://github.com/google/fonts/tree/main/ofl/lilitaone). License: `LICENSE-LilitaOne.txt`.
-
-The original GLB models remain local assets and are not covered by these font licenses.
+| 本地文件 | 字体 | 来源 | 许可证副本 |
+| --- | --- | --- | --- |
+| `body.ttf` | Atkinson Hyperlegible Bold | [Google Fonts](https://github.com/google/fonts/tree/main/ofl/atkinsonhyperlegible) | [LICENSE-AtkinsonHyperlegible.txt](LICENSE-AtkinsonHyperlegible.txt) |
+| `heading.ttf` | Lilita One Regular | [Google Fonts](https://github.com/google/fonts/tree/main/ofl/lilitaone) | [LICENSE-LilitaOne.txt](LICENSE-LilitaOne.txt) |

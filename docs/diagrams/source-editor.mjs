@@ -42,7 +42,7 @@ export function normalizeWorkspaceRoot(value) {
   return result;
 }
 
-/** 只从正式 file:// 架构页面推导目录；Git Hook 的候选树快照不代表可编辑工作区。 */
+/** 从本地 file:// 架构页面推导目录，并排除临时快照。 */
 export function inferWorkspaceRoot(pageUrl) {
   try {
     const url = new URL(pageUrl);

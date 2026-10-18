@@ -87,7 +87,7 @@ def main():
         "land_dimensions_m":[109,87],"coastline_area_m2":6070,
         "art_direction":"Irregular desolate tropical island; weathered wooden buildings; no planned roads or parks",
         "notes_zh":["地图为不规则荒凉海岛，陆地约110×90米，以沙地、碎石、野草和弯曲棕榈组成。",
-                    "移除规则路网、环岛步道、铺装广场与海景公园，建筑改为破旧木屋和木棚。", "模型颜色使用内置材质，不依赖外部贴图。",
+                    "建筑以破旧木屋和木棚为主。", "模型颜色使用内置材质，不依赖外部贴图。",
                     "主角骨架使用分段刚性权重；动作无根运动。", "台阶、建筑与地图不包含物理碰撞、寻路数据或玩法组件。"]}
     (BASE/"art/asset_manifest.json").write_text(json.dumps(manifest,indent=2,ensure_ascii=False),encoding="utf-8")
     # 源库排成可浏览的行列，环境在地图场景单独查看，避免巨大的海面遮挡其他源件。
