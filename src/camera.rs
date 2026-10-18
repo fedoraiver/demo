@@ -1345,7 +1345,7 @@ mod tests {
         let position = app.world().get::<Position>(character).unwrap().0;
         let displacement = Vec3::new(position.x, 0.0, position.z);
         let direction = Quat::from_rotation_y(yaw) * Vec3::NEG_Z;
-        // 动态角色逐步加速，检验固定步保留输入与方向，而非旧有的瞬时满速积分。
+        // 动态角色逐步加速，检验固定步保留输入与方向。
         assert!(displacement.dot(direction) > 0.0);
         assert!(displacement.length() <= speed * 3.0 / 60.0 + 0.00001);
         assert!(displacement.normalize().dot(direction) > 0.9999);

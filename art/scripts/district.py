@@ -15,7 +15,7 @@ BUILDINGS = ((-9, 3), (3, 10), (13, 0), (-23, 19), (23, 22))
 
 
 def _inside(x, y, scale=0.85):
-    """奇偶射线检查不规则岸线，不再使用椭圆边界。"""
+    """奇偶射线检查不规则岸线。"""
     points = [(px * scale, py * scale) for px, py in COAST]
     inside = False
     j = len(points) - 1

@@ -2,7 +2,7 @@
 
 本仓库的需求、缺陷和 PRD 记录在 [fedoraiver/demo 的 GitHub Issues](https://github.com/fedoraiver/demo/issues)。
 
-本文件维护目标仓库和操作约定。长期玩法与方案记录在 [游戏设计](../game-design.md)；具体任务进度、缺陷及一次变更的验证结果记录在对应 Issue 或 PR。
+本文件维护目标仓库和操作约定。项目用于探索和提升游戏制作水平，当前玩法尚未确定；玩法设计的确认状态记录在 [游戏设计](../game-design.md)。具体需求与方案讨论、任务进度、缺陷及一次变更的验证结果记录在对应 Issue 或 PR。
 
 使用已连接的 GitHub 工具或已登录的 `gh` CLI 操作。使用 CLI 时显式指定 `--repo fedoraiver/demo`，并通过 `git remote -v` 核对目标仓库。
 

@@ -18,7 +18,7 @@ const NEAR_CAMERA_FADE_RADIUS: f32 = 0.25;
 #[derive(Component, Clone, Copy)]
 pub(crate) struct CameraShell(pub Entity);
 
-/// 在美术导入边界标记外壳原语，运行时不再依赖模型部件名称。
+/// 在美术导入边界标记外壳原语。
 #[derive(Component, Clone, Copy)]
 pub(crate) struct BuildingShellVisual(pub Entity);
 
