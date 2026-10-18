@@ -27,7 +27,7 @@ Each fact has one complete home. Elsewhere, summarize briefly and link there. Th
 | [testing/game-acceptance.md](testing/game-acceptance.md) | User-performed game checks, expected behavior, and session-log acceptance | Headless test internals or individual execution results |
 | [audio.md](audio.md) and asset guides | Their own pipeline, authoring, integration, and usage contracts | Duplicated source manifests, attribution records, or unrelated gameplay decisions |
 | [diagrams/](diagrams/README.md) | Generated architecture views and their maintenance workflow | Hand-edited generated outputs or independent copies of source contracts |
-| [agents/](agents/domain.md) | Issue-tracker, label, and domain-reading conventions | Task progress or a second copy of domain architecture |
+| [domain.md](domain.md), [issue-tracker.md](issue-tracker.md), and [triage-labels.md](triage-labels.md) | Issue-tracker, label, and domain-reading conventions | Task progress or a second copy of domain architecture |
 | [Agent Notes](../.agents/notes/README.md) | Durable decisions, motivation, alternatives, consequences, and verification requirements | Complete runtime references or task journals |
 | [postmortem/](postmortem/README.md) | Incident evidence, failure mechanisms, missed safeguards, and prevention | Feature proposals or the current runtime specification |
 | Skills (`.agents/skills/`) | Reusable workflows and specialized execution guidance | Product contracts or duplicated architecture |
@@ -50,6 +50,6 @@ Current architecture may explain local invariants and implementation constraints
 
 - Update the owning documentation alongside changes to documented behavior. Check commands, parameters, paths, and examples against current source and configuration.
 - When moving or deleting content, repair incoming links and remove duplicated or orphaned explanations.
-- Record individual execution results in the corresponding Issue or PR, following [Issue Tracking Conventions](agents/issue-tracker.md).
+- Record individual execution results in the corresponding Issue or PR, following [Issue Tracking Conventions](issue-tracker.md).
 - Maintain ECS diagrams through [Project Skill Maintenance](diagrams/README.md#项目-skill-维护). Update their owning inventory or generator, regenerate outputs, and complete the required structural and visual checks.
 - For ordinary documentation changes, check facts, ownership, links, anchors, and formatting. Follow the [Testing Guide](testing/README.md) when additional validation is required.
