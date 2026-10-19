@@ -44,11 +44,11 @@ cargo test --locked
 在仓库根按范围运行：
 
 ```powershell
-cargo test --locked initialization_log_tests
-cargo test --locked session_log::tests
+cargo test --locked game_flow::initialization_tests
+cargo test --locked session_log::
 ```
 
-[初始化日志测试](../../src/initialization_log_tests.rs) 安装真实功能插件并执行 `Startup`；手工注册日志系统不能证明插件实际完成注册。[会话日志测试](../../src/session_log.rs) 覆盖下列边界，不能只凭短时间内没有阻塞或文件存在判定通过。
+[初始化日志测试](../../src/game_flow/initialization_tests.rs) 安装真实功能插件并执行 `Startup`；手工注册日志系统不能证明插件实际完成注册。[会话生命周期测试](../../src/session_log/tests.rs) 和 [后台输出测试](../../src/session_log/output_tests.rs) 覆盖下列边界，不能只凭短时间内没有阻塞或文件存在判定通过。
 
 | 场景 | 必须保留的契约 |
 | --- | --- |
@@ -64,10 +64,10 @@ cargo test --locked session_log::tests
 
 新道具资产的离线重建、GLB 清单与挂点矩阵检查、Blender 预览检查见 [道具美术资产](../../art/items/README.md#重建与离线验证)。全库检查工具同时读取海岛与道具清单。新道具尚未注册到 `ArtAssets`，以下海岛场景测试不能证明新装备、机械或魔法效果已经接入。
 
-运行 GLB 与场景装配的检查由 [scene.rs](../../src/scene.rs) 注册为 `scene::tests`，具体测试集中在 [scene_tests.rs](../../src/scene_tests.rs)，使用真实的运行资源和无窗口测试环境。可在仓库根目录执行：
+运行 GLB 与场景装配使用真实资源和无窗口环境；[tests.rs](../../src/scene_assembly/tests.rs) 提供共享夹具，碰撞、生命周期和转向检查分别位于同目录的 `collision_tests.rs`、`lifecycle_tests.rs` 与 `turn_tests.rs`，均通过 `scene_assembly::tests` 注册。可在仓库根目录执行：
 
 ```powershell
-cargo test --locked scene::tests
+cargo test --locked scene_assembly::tests
 ```
 
 主角 GLB 的离线文件检查使用普通 Python，不启动 Blender 或游戏：
@@ -104,7 +104,7 @@ python3 -B -m unittest discover -s art/scripts -p test_character_assets.py
 
 ## 菜单、设置与资产的无窗口验证
 
-菜单回归只使用最小 `App / World`、必要的状态／输入插件和 BSN 实体树，不安装窗口后端或渲染器。应覆盖：
+菜单回归只使用最小 `App / World`、必要的状态／输入插件和 BSN 实体树，不安装窗口后端或渲染器。UI 夹具显式安装第三方 `EnhancedInputPlugin`，通过与 `GameUiPlugin` 共用的普通注册函数安装菜单生命周期、真实输入与页面，不依赖 `FirstPersonPlugin`。跨功能夹具显式安装所需项目 Plugin；需要状态时安装 `GameFlowPlugin` 并进入运行状态，没有应用状态时复用 `game_flow::configure_feature_order`，不补跑系统代替实际调度。应覆盖：
 
 - 页面只暴露可用的 `MenuButton` 动作，导航序号连续；`Continue`、`Multiplayer` 和所有 `Coming Soon` 设置不进入焦点或业务动作列表。
 - 菜单动作使用真实 Enhanced Input 绑定，长按确认／返回不重复执行；鼠标和键盘请求进入同一消费入口，页面切换后旧请求不穿透。
@@ -121,7 +121,7 @@ python3 -B -m unittest discover -s art/scripts -p test_character_assets.py
 - 设置默认帧率上限为 `60`，省略 `max_fps` 或文件缺失时采用默认值；`59` 拒绝，`60` 与 `120` 可解析。无效文件回退到 `60` 且原文件不变。设置文件保存创建与替换的完整 JSON 回读；Windows 下独占文件句柄导致替换失败时保留原文件。设置测试与保存暂存文件分别位于根 `tmp/settings-tests/`、`tmp/settings-save/`。
 - 离开主菜单清理展示根及菜单相机，保留无关相机；相机构图数学检查不能替代实际渲染验收。
 
-相关入口为 [app_flow.rs](../../src/app_flow.rs)、[ui/navigation.rs](../../src/ui/navigation.rs)、[ui/screens.rs](../../src/ui/screens.rs)、[ui/backdrop.rs](../../src/ui/backdrop.rs) 和 [settings.rs](../../src/settings.rs)。可按模块选择运行，例如：
+状态与暂停检查见 [game_flow/tests.rs](../../src/game_flow/tests.rs)，菜单请求检查见 [requests_tests.rs](../../src/ui/requests_tests.rs)，布局与原位刷新见 `ui/` 的 `page_*_tests.rs`，展示舞台见 [backdrop_tests.rs](../../src/ui/backdrop_tests.rs)，设置持久化见 [settings/tests.rs](../../src/settings/tests.rs)。可按模块选择运行，例如：
 
 ```powershell
 cargo test --locked settings::tests
@@ -163,7 +163,7 @@ cargo test --locked courier_asset_contains_carry_clip_and_independent_parcel
 
 指针检查触发真实 `Pointer<Scroll>` 与滚动条 Observer，并用面板／滑块的正向滚动证明事件已到达，再验证固定区域不滚动；只检查事件类型或样式会假通过。最小环境须注册输入所需的 `Window` 组件类型与 `ScrollbarPlugin`，不安装窗口后端或渲染器。
 
-入口为 [widgets.rs](../../src/ui/widgets.rs) 的短文字／换行检查和 [screens.rs](../../src/ui/screens.rs) 的页面布局／滚动检查。前者使用内嵌字体与虚拟视口，不能证明项目字体加载或实际输出；后者覆盖上述三个尺寸，不代表全部分辨率均已验证。
+入口为 [widgets_tests.rs](../../src/ui/widgets_tests.rs) 的短文字／换行检查，以及 [page_layout_tests.rs](../../src/ui/page_layout_tests.rs)、[page_refresh_tests.rs](../../src/ui/page_refresh_tests.rs) 和 [scroll_tests.rs](../../src/ui/scroll_tests.rs) 的布局、原位刷新与滚动检查。前者使用内嵌字体与虚拟视口，不能证明项目字体加载或实际输出；后者覆盖上述三个尺寸，不代表全部分辨率均已验证。
 
 高亮回归使用实际 BSN 页面与样式系统，至少覆盖以下过程，并在每次 `app.update()` 后断言背景和边框：
 
@@ -174,7 +174,7 @@ cargo test --locked courier_asset_contains_carry_clip_and_independent_parcel
 | 鼠标静止在另一按钮上，通过真实 Enhanced Input 动作导航，再切换页面重建或原位更新草稿 | 只保留导航焦点，旧悬停与重建产生的新 `Hovered` 都不抢焦点；草稿更新不替换焦点按钮实体。 |
 | 导航后真实移动鼠标到同一按钮内部、空白区域、窗口外，或点击按钮 | 即使 `Interaction` 没有变化也切回鼠标来源；空白与窗口外无遗留导航高亮，点击按钮只产生一次语义请求。 |
 
-高亮入口为 [navigation.rs](../../src/ui/navigation.rs) 的悬停／输入来源检查和 [screens.rs](../../src/ui/screens.rs) 的导航样式检查。新增控件纳入对应页面覆盖；模拟 `Interaction` 只确认状态与样式，真实命中、字体显示与裁切由用户按 [菜单验收](game-acceptance.md#英文菜单与暂停验收) 检查。
+高亮入口为 [pointer_tests.rs](../../src/ui/pointer_tests.rs) 的悬停／输入来源检查和 [page_structure_tests.rs](../../src/ui/page_structure_tests.rs) 的导航样式检查。新增控件纳入对应页面覆盖；模拟 `Interaction` 只确认状态与样式，真实命中、字体显示与裁切由用户按 [菜单验收](game-acceptance.md#英文菜单与暂停验收) 检查。
 
 ## 架构图源码定位验证
 
@@ -245,7 +245,7 @@ Avian 的物理步位于 `FixedPostUpdate`。涉及速度、重力、接地或�
 - 释放后先确认 `HeldBy`、`HeldTarget` 移除，再连续转动视角。零固定步时物理位置和速度应保持；有固定步时允许物体自然移动，需确认它不再追逐持握目标，不能只检查持有状态。
 - 比较世界矩阵分解得到的旋转时，注意四元数 `q` 与 `-q` 表示同一旋转。应比较实际前向、上向向量或等价旋转，避免把符号变化误判为同步错误。
 
-对应覆盖位于 [camera.rs](../../src/camera.rs)、[carry_frame_tests.rs](../../src/carry_frame_tests.rs)、[carry_rotation.rs](../../src/carry_rotation.rs) 和 [scene_tests.rs](../../src/scene_tests.rs)。真实 E 绑定完成拾取和短暂对齐后再发鼠标输入，所有场景保留帧末立即断言：
+第一人称共享夹具见 [pose_tests.rs](../../src/first_person/pose_tests.rs)，捕获、视角与持物姿态检查位于同目录的 `capture_tests.rs`、`view_tests.rs`、`held_pose_tests.rs`，动作路由见 `action_tests.rs`。物品跨帧与旋转检查见 [frame_tests.rs](../../src/item_interaction/frame_tests.rs) 和 [rotation_tests.rs](../../src/item_interaction/rotation_tests.rs)，真实资产转向检查见 [turn_tests.rs](../../src/scene_assembly/turn_tests.rs)。真实 E 绑定完成拾取和短暂对齐后再发鼠标输入，所有场景保留帧末立即断言：
 
 | 转向与恢复场景 | 必须保留的边界 |
 | --- | --- |
@@ -260,7 +260,7 @@ Avian 的物理步位于 `FixedPostUpdate`。涉及速度、重力、接地或�
 cargo test --locked audio
 cargo test --locked ui::
 cargo test --locked settings::tests
-cargo test --locked physics_tests
+cargo test --locked physics::tests
 ```
 
 | 范围 | 应验证的结果 |

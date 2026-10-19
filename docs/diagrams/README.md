@@ -17,7 +17,7 @@
 
 实体框按角色汇总组件，可选组件并非始终存在；业务根、视觉根和 GLB 子节点分别表达。引擎集合与渲染等只展示相关流程，不代表全部内部系统或精确全序。源码入口对项目类型指向声明，对框架类型指向项目内使用或注册位置；运行机制由 [当前架构](../architecture.md) 维护。
 
-[ecs-data.json](ecs-data.json) 保存源码核对清单，[build-ecs.mjs](build-ecs.mjs) 生成四视图，[source-viewer.mjs](source-viewer.mjs) 内嵌源码快照，[source-editor.mjs](source-editor.mjs) 提供共享工作区配置与编辑器入口。分享时保留两份 HTML 的相对位置；生成后的页面无需额外加载模块。
+[ecs-data.json](ecs-data.json) 保存源码核对清单，[build-ecs.mjs](build-ecs.mjs) 生成四视图，[source-locator.mjs](source-locator.mjs) 按明确指定的声明定位生成器源码入口，[source-viewer.mjs](source-viewer.mjs) 内嵌源码快照，[source-editor.mjs](source-editor.mjs) 提供共享工作区配置与编辑器入口。分享时保留两份 HTML 的相对位置；生成后的页面无需额外加载模块。
 
 ## 在 VS Code 中打开源码
 
@@ -41,7 +41,7 @@ VS Code 入口仅在用户点击时调用 `vscode://file/...` 协议；页面加
 
 架构图维护使用 [update-ecs-architecture](../../.agents/skills/update-ecs-architecture/SKILL.md)。用户调用 `$update-ecs-architecture` 或提出匹配请求时，按 Skill 核对当前工作区的清单、关系、布局、说明和源码入口。普通代码修改和 Git 提交不要求刷新图。
 
-清单与生成器共同维护语义和布局；生成器不分析 Rust 架构，校验器也不能识别所有新系统，自动通过不能代替源码核对。生成覆盖两份 HTML、四份 SVG 及内嵌源码快照，反映整个当前工作区，不自动暂存或提交。开始前检查已有修改；无法安全合并的产物修改先记录冲突，不能直接覆盖。
+清单与生成器共同维护语义和布局；生成器不分析 Rust 架构，校验器也不能识别所有新系统，自动通过不能代替源码核对。生成器的源码定位在声明缺失或匹配多处时失败；清单的 `required_nodes` 保留功能插件、日志拓扑及关键跨功能契约，校验其注册和可见卡片，避免路径迁移后静默省略。生成覆盖两份 HTML、四份 SVG 及内嵌源码快照，反映整个当前工作区，不自动暂存或提交。开始前检查已有修改；无法安全合并的产物修改先记录冲突，不能直接覆盖。
 
 图有变更时，按 [架构图视觉检查](../testing/README.md#架构图视觉检查) 查看最终 HTML 和四份 SVG；重新生成改变图形后须重查。检查只打开静态文档，临时文件放根 `tmp/`。失败原因、日志位置和未完成范围写入对应 Issue 或 PR，不能将生成或校验成功当作视觉验收完成。
 
@@ -55,6 +55,6 @@ node docs/diagrams/check-ecs.mjs
 node --test docs/diagrams/check-ecs.test.mjs docs/diagrams/source-editor.test.mjs docs/diagrams/source-viewer.test.mjs
 ```
 
-生成器与校验器依赖 [源码查看页生成器](source-viewer.mjs)、[编辑器入口共享模块](source-editor.mjs)、[几何校验模块](diagram-geometry.mjs)及清单引用的源码。独立校验可能报告未刷新产物的源码入口或快照不符；校验仅允许 CRLF/LF 换行差异，不忽略其他源码内容变化。临时文件遵循 [临时文件管理](../development.md#临时文件管理)。VS Code URI、根目录配置与生成页交互按 [源码定位验证](../testing/README.md#架构图源码定位验证) 检查；无窗口回归不能代替本机浏览器与 VS Code 的实际协议打开验证。
+生成器与校验器依赖 [声明定位模块](source-locator.mjs)、[源码查看页生成器](source-viewer.mjs)、[编辑器入口共享模块](source-editor.mjs)、[几何校验模块](diagram-geometry.mjs)及清单引用的源码。独立校验可能报告未刷新产物的源码入口或快照不符；校验仅允许 CRLF/LF 换行差异，不忽略其他源码内容变化。临时文件遵循 [临时文件管理](../development.md#临时文件管理)。VS Code URI、根目录配置与生成页交互按 [源码定位验证](../testing/README.md#架构图源码定位验证) 检查；无窗口回归不能代替本机浏览器与 VS Code 的实际协议打开验证。
 
 图描述代码结构与调度约束，不替代游戏运行或视觉验收。

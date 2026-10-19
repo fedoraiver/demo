@@ -5,6 +5,7 @@ import { fileURLToPath } from 'node:url';
 import test from 'node:test';
 import { checkArchitecture } from './check-ecs.mjs';
 import { checkSvgGeometry } from './diagram-geometry.mjs';
+import { createSourceLocator } from './source-locator.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const temporaryRoot = path.join(root, 'tmp', 'architecture-check-tests');
@@ -265,4 +266,28 @@ test('architecture validation rejects bad geometry even when SVG and embedded ar
   data.views[0].svg = data.views[0].svg.replace('M100,45 L200,45', 'M100,30 L200,30');
   data.save();
   assert.throws(() => checkArchitecture(data.directory), /Invalid SVG geometry in overview: Anchor position mismatch/);
+});
+
+// 插件和日志拓扑不可因路径迁移或文本扫描失败而悄悄从图中消失。
+test('rejects a required plugin or logging node removed from the registry', () => {
+  const data = fixture();
+  data.model.required_nodes = ['log-file-worker'];
+  data.save();
+  assert.throws(() => checkArchitecture(data.directory), /Missing required architecture node: log-file-worker/);
+});
+
+test('rejects a required registered node that has no visible card', () => {
+  const data = fixture();
+  data.model.required_nodes = ['log-file-worker'];
+  data.registry['log-file-worker'] = { name: 'File worker', kind: 'External I/O' };
+  data.save();
+  assert.throws(() => checkArchitecture(data.directory), /Required architecture node is missing from views: log-file-worker/);
+});
+
+test('source lookup rejects a missing or ambiguous declaration', () => {
+  const data = fixture();
+  const locateSource = createSourceLocator(data.directory);
+  assert.deepEqual(locateSource('src/example.rs', /^fn move_entity\b/), { path: 'src/example.rs', line: 1 });
+  assert.throws(() => locateSource('src/example.rs', 'QueuedWriter'), /found 0/);
+  assert.throws(() => locateSource('src/example.rs', 'fn '), /found 2/);
 });

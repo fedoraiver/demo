@@ -60,6 +60,13 @@ export function checkArchitecture(root) {
       }
     }
   }
+  if (model.required_nodes != null) {
+    requireCondition(Array.isArray(model.required_nodes) && model.required_nodes.length > 0, 'Invalid required architecture node list');
+    for (const id of model.required_nodes) {
+      requireCondition(Object.hasOwn(registry, id), `Missing required architecture node: ${id}`);
+      requireCondition(visibleIds.has(id), `Required architecture node is missing from views: ${id}`);
+    }
+  }
   const systems = new Map();
   for (const system of model.systems) {
     requireCondition(typeof system.id === 'string' && system.id && !systems.has(system.id), `Invalid or duplicate system ID: ${system.id}`);

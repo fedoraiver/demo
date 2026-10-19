@@ -95,7 +95,7 @@ Windows 与 macOS 的游戏内容区保持 16:9，初始为 `1280×720`，可拖
 
 按钮、左／右方向键和手柄每次调整 `5%`，鼠标点击或拖动滑条精确到 `1%`。拖动中不连续播放确认音，放开且数值改变后反馈一次；达到边界继续调整不反馈。`Test SFX` 播放一次拾取音，不触发拾取玩法。`Music Volume` 为不可操作的 `Coming Soon`。
 
-玩家设置保存在工作目录的 `settings.json`，该文件由 Git 忽略，各工作目录保留自己的配置。文件缺失时使用代码中的默认值，首次在菜单中选择 `Apply` 后创建本地文件；也可手动创建或修改，文件修改在下次启动时读取。默认设置以 [GameSettings、CameraSettings 与 AudioSettings 的实现](../src/settings.rs) 为准：
+玩家设置保存在工作目录的 `settings.json`，该文件由 Git 忽略，各工作目录保留自己的配置。文件缺失时使用代码中的默认值，首次在菜单中选择 `Apply` 后创建本地文件；也可手动创建或修改，文件修改在下次启动时读取。默认设置以 [GameSettings、CameraSettings 与 AudioSettings 的实现](../src/settings/config.rs) 为准：
 
 ```json
 {

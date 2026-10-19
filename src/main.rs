@@ -1,94 +1,80 @@
-//! 组装英文菜单、美术海岛、物理搬运与音效，并覆盖完整会话的文件日志。
+//! 显式组装功能插件，并保留会话日志直到退出刷新完成。
 
-mod app_flow;
-mod art_assets;
 mod audio;
-mod audio_events;
-mod camera;
-mod carry;
-#[cfg(test)]
-mod carry_frame_tests;
-mod carry_rotation;
+mod bounds_recovery;
+mod character;
 mod character_animation;
-mod gameplay;
-#[cfg(test)]
-mod initialization_log_tests;
-mod input;
+mod first_person;
+mod game_flow;
 mod inspector;
-mod island_recovery;
+mod item_interaction;
 mod physics;
-#[cfg(test)]
-mod physics_tests;
-mod scene;
+mod scene_assembly;
 mod session_log;
 mod settings;
 mod ui;
 mod window_policy;
 
-use app_flow::AppFlowPlugin;
-use art_assets::ArtAssetsPlugin;
 use audio::GameAudioPlugin;
-use bevy::{log::LogPlugin, prelude::*};
-use camera::CameraControlPlugin;
+use bounds_recovery::BoundsRecoveryPlugin;
+use character::CharacterPlugin;
 use character_animation::CharacterAnimationPlugin;
-use gameplay::GameplayPlugin;
-use input::PlayerInputPlugin;
-use inspector::ProjectInspectorPlugin;
-use island_recovery::IslandRecoveryPlugin;
-use scene::PrototypeScenePlugin;
+use first_person::FirstPersonPlugin;
+use game_flow::GameFlowPlugin;
+use inspector::InspectorPlugin;
+use item_interaction::ItemInteractionPlugin;
+use physics::GamePhysicsPlugin;
+use scene_assembly::SceneAssemblyPlugin;
+use session_log::SessionLogPlugin;
 use settings::{GameSettings, SettingsPlugin};
 use ui::GameUiPlugin;
 use window_policy::WindowPolicyPlugin;
 
+use bevy::{log::LogPlugin, prelude::*};
+use bevy_enhanced_input::EnhancedInputPlugin;
+
 fn main() -> AppExit {
     let mut app = App::new();
-    // 先准备会话文件，再交给 LogPlugin 安装日志；守护对象保留到退出记录写入后。
-    let session = match session_log::prepare(&mut app) {
-        Ok(session) => session,
+    let (logging, session) = match SessionLogPlugin::prepare() {
+        Ok(prepared) => prepared,
         Err(error) => {
             eprintln!("Failed to initialize session logging; game startup aborted: {error}");
             return AppExit::error();
         }
     };
-
+    // 日志先于引擎其他插件安装，构建阶段的事件也进入本次会话。
+    app.add_plugins(logging);
     app.add_plugins(
         DefaultPlugins
             .build()
-            // 播放统一交给 Kira，避免两套音频插件同时打开输出设备。
+            .disable::<LogPlugin>()
+            // 设备输出统一由 Kira 管理。
             .disable::<bevy::audio::AudioPlugin>()
-            .set(LogPlugin {
-                custom_layer: session_log::file_layer,
-                fmt_layer: session_log::console_layer,
-                ..default()
-            })
             .set(WindowPlugin {
                 primary_window: Some(window_policy::primary_window()),
                 ..default()
             }),
     );
-    // LogPlugin 已完成初始化，此后的会话与玩法日志会同时写入控制台和文件。
-    session.start();
 
     let exit = app
         .insert_resource(GameSettings::load(std::path::Path::new("settings.json")))
-        // 统一由玩家上限限速，避免失焦时再被默认的 60 Hz 更新策略限制。
         .insert_resource(bevy::winit::WinitSettings::continuous())
-        // 固定步只控制移动、重力和交互模拟，独立于玩家设置的渲染上限。
         .insert_resource(Time::<Fixed>::from_hz(60.0))
         .add_plugins((
-            ProjectInspectorPlugin,
+            EnhancedInputPlugin,
+            InspectorPlugin,
             WindowPolicyPlugin,
-            AppFlowPlugin,
+            GameFlowPlugin,
             SettingsPlugin,
-            GameplayPlugin,
-            GameAudioPlugin,
-            PlayerInputPlugin,
-            CameraControlPlugin,
-            ArtAssetsPlugin,
+            GamePhysicsPlugin,
+            CharacterPlugin,
+            ItemInteractionPlugin,
+            FirstPersonPlugin,
             CharacterAnimationPlugin,
-            IslandRecoveryPlugin,
-            PrototypeScenePlugin,
+            BoundsRecoveryPlugin,
+            SceneAssemblyPlugin,
             GameUiPlugin,
+            GameAudioPlugin,
         ))
         .run();
 
