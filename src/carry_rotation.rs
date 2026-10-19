@@ -685,7 +685,7 @@ fn plane_interval_is_clear(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::physics::{camera_query_layers, world_collision_layers};
+    use crate::physics::world_collision_layers;
     use bevy::{ecs::system::SystemState, time::TimeUpdateStrategy};
     use std::f32::consts::{FRAC_PI_2, PI, TAU};
 
@@ -1107,7 +1107,7 @@ mod tests {
     }
 
     #[test]
-    fn spatial_candidates_exclude_own_body_camera_queries_and_sensors() {
+    fn spatial_candidates_exclude_own_body_and_sensors() {
         let mut app = query_app();
         let middle = motion_to(PI).position_at_time(0.5).translation;
         let holder = spawn_obstacle(&mut app, Vec3::ZERO);
@@ -1124,10 +1124,6 @@ mod tests {
                 world_collision_layers(),
             ))
             .id();
-        let camera = spawn_obstacle(&mut app, middle);
-        app.world_mut()
-            .entity_mut(camera)
-            .insert(camera_query_layers());
         let sensor = spawn_obstacle(&mut app, middle);
         app.world_mut().entity_mut(sensor).insert(Sensor);
         app.update();

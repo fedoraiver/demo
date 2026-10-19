@@ -1,4 +1,4 @@
-//! 第一／第三人称视角：动作更新观察状态，固定步同步朝向，物理插值后同步持握目标、镜头和模型显示。
+//! 第一人称视角：动作更新观察状态，固定步同步朝向，物理插值后同步持握目标、镜头和模型显示。
 
 use std::f32::consts::TAU;
 
@@ -17,12 +17,10 @@ use bevy_inspector_egui::bevy_egui::{
 use crate::{
     app_flow::{AppState, PlayState, gameplay_running},
     audio_events::{SoundCue, SoundRequest},
-    camera_fade::{self, update_building_fades},
-    camera_obstruction::{CameraOcclusion, OccludedBuildings, detect_building_occlusion},
     carry::{HeldAttachment, release_item, sync_held_physics, sync_held_presentation},
     carry_rotation::CarryRotationQuery,
     gameplay::{Character, ControlsCharacter, GameplaySystems, HoldingItems},
-    input::{GameplayContext, LookAction, ReleasePointerAction, TogglePerspectiveAction},
+    input::{GameplayContext, LookAction, ReleasePointerAction},
     settings::GameSettings,
 };
 
@@ -31,115 +29,46 @@ use crate::{
 #[reflect(Component)]
 pub struct ControlsCamera(#[entities] pub Entity);
 
-/// 同一台相机的观察模式，角度和目标仍由相机组件保存。
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Reflect)]
-pub enum CameraPerspective {
-    ThirdPerson,
-    FirstPerson,
-}
-
-impl CameraPerspective {
-    fn name(self) -> &'static str {
-        match self {
-            Self::ThirdPerson => "third_person",
-            Self::FirstPerson => "first_person",
-        }
-    }
-}
-
 /// 由视角系统控制可见性的角色视觉根；所属角色使用已有的 ChildOf 关系。
 #[derive(Component, Reflect, Default, Clone)]
 #[reflect(Component)]
 pub struct CharacterVisual;
 
-/// 两种视角共享水平朝向并分别记住俯仰；实际位置和朝向仅写入 Transform。
+/// 第一人称的目标、观察角度和眼位；实际位置和朝向仅写入 Transform。
 #[derive(Component, Reflect)]
 #[reflect(Component)]
-#[require(CameraOcclusion)]
-pub struct OrbitCamera {
+pub struct FirstPersonCamera {
     #[entities]
     pub target: Entity,
     yaw: f32,
     /// 保留动作本身的有向转角，避免半圈或整圈输入被四元数最短弧改变方向。
     #[reflect(ignore)]
     pending_yaw_delta: f32,
-    perspective: CameraPerspective,
-    third_person_pitch: f32,
-    first_person_pitch: f32,
-    distance: f32,
-    look_height: f32,
+    pitch: f32,
     eye_height: f32,
-    #[entities]
-    #[reflect(ignore)]
-    toggle_requested_by: Option<Entity>,
 }
 
-impl OrbitCamera {
-    /// 从原型原有的偏移初始化，保持初始画面和跟随距离。
+impl FirstPersonCamera {
+    /// 初始平视，眼位相对角色脚底保持固定高度。
     pub fn new(target: Entity) -> Self {
-        let relative_offset = Vec3::new(0.0, 5.2, 8.0);
         Self {
             target,
             yaw: 0.0,
             pending_yaw_delta: 0.0,
-            perspective: CameraPerspective::ThirdPerson,
-            third_person_pitch: relative_offset.y.atan2(relative_offset.z),
-            first_person_pitch: 0.0,
-            distance: relative_offset.length(),
-            look_height: 0.8,
+            pitch: 0.0,
             eye_height: 1.65,
-            toggle_requested_by: None,
         }
     }
 
     /// 根据目标的世界位置计算镜头，不读取或修改其他实体。
     pub fn transform(&self, target_position: Vec3) -> Transform {
-        if self.perspective == CameraPerspective::FirstPerson {
-            // 眼位只跟随人物位置；俯仰直接决定观察方向，不能继续朝向第三人称的低处观察点。
-            return Transform::from_translation(target_position + Vec3::Y * self.eye_height)
-                .with_rotation(
-                    Quat::from_rotation_y(self.yaw)
-                        * Quat::from_rotation_x(-self.first_person_pitch),
-                );
-        }
-        let pivot = self.pivot(target_position);
-        let offset = Quat::from_rotation_y(self.yaw)
-            * Vec3::new(
-                0.0,
-                self.distance * self.third_person_pitch.sin(),
-                self.distance * self.third_person_pitch.cos(),
-            );
-        Transform::from_translation(pivot + offset).looking_at(pivot, Vec3::Y)
-    }
-
-    /// 遮挡处理只读取模式和理想观察点，不改变玩家输入的角度与距离。
-    pub(crate) fn is_third_person(&self) -> bool {
-        self.perspective == CameraPerspective::ThirdPerson
-    }
-
-    pub(crate) fn pivot(&self, target_position: Vec3) -> Vec3 {
-        target_position + Vec3::Y * self.look_height
-    }
-
-    fn pitch(&self) -> f32 {
-        match self.perspective {
-            CameraPerspective::ThirdPerson => self.third_person_pitch,
-            CameraPerspective::FirstPerson => self.first_person_pitch,
-        }
+        Transform::from_translation(target_position + Vec3::Y * self.eye_height)
+            .with_rotation(Quat::from_rotation_y(self.yaw) * Quat::from_rotation_x(-self.pitch))
     }
 
     fn apply_vertical_look(&mut self, delta: f32) {
-        match self.perspective {
-            // 第三人称保持固定距离且在观察点上方；两种模式都避开垂直极点。
-            CameraPerspective::ThirdPerson => {
-                self.third_person_pitch = (self.third_person_pitch + delta)
-                    .clamp(5.0_f32.to_radians(), 80.0_f32.to_radians());
-            }
-            CameraPerspective::FirstPerson => {
-                self.first_person_pitch = (self.first_person_pitch + delta)
-                    .clamp(-85.0_f32.to_radians(), 85.0_f32.to_radians());
-            }
-        }
+        // 避开垂直极点，允许向上和向下观察。
+        self.pitch = (self.pitch + delta).clamp(-85.0_f32.to_radians(), 85.0_f32.to_radians());
     }
 }
 
@@ -150,8 +79,6 @@ pub struct MouseLookState {
     pub(crate) initialized: bool,
     pub(crate) skip_motion: bool,
     target_available: bool,
-    /// 焦点消息与窗口最终状态共同决定本帧能否切换；检查器另通过输入上下文屏蔽动作。
-    focused: bool,
 }
 
 /// 注册自由视角、鼠标捕获和人物朝向同步，不创建窗口。
@@ -159,16 +86,12 @@ pub struct CameraControlPlugin;
 
 impl Plugin for CameraControlPlugin {
     fn build(&self, app: &mut App) {
-        camera_fade::init(app);
         app.init_resource::<GameSettings>()
-            .init_resource::<OccludedBuildings>()
             .register_type::<ControlsCamera>()
             .register_type::<CharacterVisual>()
-            .register_type::<CameraPerspective>()
-            .register_type::<OrbitCamera>()
+            .register_type::<FirstPersonCamera>()
             .add_message::<WindowFocused>()
             .add_observer(on_camera_look)
-            .add_observer(request_perspective_toggle)
             .add_observer(release_pointer_for_inspector)
             .add_systems(Startup, log_pose_synchronization)
             .add_systems(
@@ -187,13 +110,6 @@ impl Plugin for CameraControlPlugin {
                     .before(EnhancedInputSystems::Prepare),
             )
             .add_systems(
-                PreUpdate,
-                // 所有动作 Observer 完成后再切换，避免 I 与鼠标同帧时依赖动作遍历顺序。
-                apply_perspective_toggle
-                    .after(EnhancedInputSystems::Apply)
-                    .run_if(gameplay_running),
-            )
-            .add_systems(
                 FixedUpdate,
                 // 默认 Main 在 PreUpdate 结束时应用动作命令，再进入固定步；此处只规定固定步内顺序。
                 sync_character_facing
@@ -208,9 +124,7 @@ impl Plugin for CameraControlPlugin {
                     sync_character_facing,
                     sync_held_physics,
                     sync_held_presentation,
-                    follow_orbit_camera,
-                    detect_building_occlusion,
-                    update_building_fades,
+                    follow_first_person_camera,
                     sync_character_visibility,
                 )
                     .chain()
@@ -227,7 +141,7 @@ fn log_pose_synchronization() {
     info!(target: "demo::camera", simulation_schedule = "FixedUpdate",
         carry_schedule = "FixedUpdate", grip_mode = "shared_body", physics_schedule = "FixedPostUpdate",
         presentation_schedule = "RunFixedMainLoop",
-        presentation_order = "interpolation_character_facing_carry_pose_camera_occlusion_fade_visibility", reason = "initialization",
+        presentation_order = "interpolation_character_facing_carry_pose_camera_visibility", reason = "initialization",
         "Camera pose synchronization configured");
 }
 
@@ -336,7 +250,7 @@ fn sync_mouse_capture(
         With<GameplayContext>,
     >,
     characters: Query<(), With<Character>>,
-    mut cameras: Query<(Entity, &OrbitCamera, &mut MouseLookState)>,
+    mut cameras: Query<(Entity, &FirstPersonCamera, &mut MouseLookState)>,
     mut egui_contexts: Query<&mut EguiContext, With<PrimaryEguiContext>>,
     app_state: Option<Res<State<AppState>>>,
     play_state: Option<Res<State<PlayState>>>,
@@ -357,7 +271,6 @@ fn sync_mouse_capture(
             }
             state.active = false;
             state.skip_motion = true;
-            state.focused = false;
         }
         for (controller, _, _, activity) in &controllers {
             if **activity {
@@ -401,20 +314,19 @@ fn sync_mouse_capture(
     let gameplay_clicked = clicked && !pointer_over_ui && !using_pointer && !popup_open;
 
     let mut any_active = false;
-    for (camera, orbit, mut state) in &mut cameras {
-        let available = characters.contains(orbit.target)
+    for (camera, view, mut state) in &mut cameras {
+        let available = characters.contains(view.target)
             && controllers
                 .iter()
                 .any(|(_, character, controlled_camera, _)| {
-                    character.0 == orbit.target && controlled_camera.0 == camera
+                    character.0 == view.target && controlled_camera.0 == camera
                 });
         if !available && (!state.initialized || state.target_available) {
-            warn!(target: "demo::camera", ?camera, character = ?orbit.target,
+            warn!(target: "demo::camera", ?camera, character = ?view.target,
                 before = "available", after = "unavailable", reason = "camera_binding_unavailable",
                 "Camera target or controller unavailable");
         }
         state.target_available = available;
-        state.focused = window.focused && !lost_focus;
         let before = state.active;
         let reason = if !running {
             state.active = false;
@@ -440,7 +352,7 @@ fn sync_mouse_capture(
         };
         state.skip_motion = !state.initialized || before != state.active;
         if !state.initialized || before != state.active {
-            info!(target: "demo::camera", ?camera, character = ?orbit.target,
+            info!(target: "demo::camera", ?camera, character = ?view.target,
                 ?window_entity, before = if before { "captured" } else { "released" },
                 after = if state.active { "captured" } else { "released" }, reason,
                 "Mouse look capture changed");
@@ -468,7 +380,7 @@ fn sync_mouse_capture(
         let available = characters.contains(character.0)
             && cameras
                 .get(controlled_camera.0)
-                .is_ok_and(|(_, orbit, _)| orbit.target == character.0);
+                .is_ok_and(|(_, view, _)| view.target == character.0);
         let after = gameplay_active && available;
         if **activity != after {
             commands
@@ -491,82 +403,35 @@ fn on_camera_look(
     time: Res<Time>,
     mut next_log_at: Local<f64>,
     controllers: Query<&ControlsCamera, With<GameplayContext>>,
-    mut cameras: Query<(&mut OrbitCamera, &MouseLookState)>,
+    mut cameras: Query<(&mut FirstPersonCamera, &MouseLookState)>,
 ) {
     let Ok(controlled) = controllers.get(event.context) else {
         return;
     };
-    let Ok((mut orbit, state)) = cameras.get_mut(controlled.0) else {
+    let Ok((mut view, state)) = cameras.get_mut(controlled.0) else {
         return;
     };
     if !state.active || state.skip_motion {
         return;
     }
-    let before_yaw = orbit.yaw;
-    let before_pitch = orbit.pitch();
+    let before_yaw = view.yaw;
+    let before_pitch = view.pitch;
     let delta = event.value * settings.camera.mouse_sensitivity;
-    orbit.pending_yaw_delta -= delta.x;
-    orbit.yaw = (orbit.yaw - delta.x).rem_euclid(TAU);
+    view.pending_yaw_delta -= delta.x;
+    view.yaw = (view.yaw - delta.x).rem_euclid(TAU);
     let vertical = if settings.camera.invert_y {
         -delta.y
     } else {
         delta.y
     };
-    orbit.apply_vertical_look(vertical);
+    view.apply_vertical_look(vertical);
     // 连续角度只采样调试日志，捕获和失效状态仍逐次记录。
     if time.elapsed_secs_f64() >= *next_log_at {
-        debug!(target: "demo::camera", camera = ?controlled.0, character = ?orbit.target,
-            controller = ?event.context, yaw_before = before_yaw, yaw_after = orbit.yaw,
-            pitch_before = before_pitch, pitch_after = orbit.pitch(),
-            perspective = orbit.perspective.name(),
+        debug!(target: "demo::camera", camera = ?controlled.0, character = ?view.target,
+            controller = ?event.context, yaw_before = before_yaw, yaw_after = view.yaw,
+            pitch_before = before_pitch, pitch_after = view.pitch,
             reason = "mouse_motion_sample", "Camera look angles changed");
         *next_log_at = time.elapsed_secs_f64() + 0.5;
-    }
-}
-
-/// 切换请求只来自 Enhanced Input；关联有效且窗口聚焦时接收，不改变鼠标捕获状态。
-fn request_perspective_toggle(
-    event: On<Fire<TogglePerspectiveAction>>,
-    controllers: Query<(&ControlsCharacter, &ControlsCamera), With<GameplayContext>>,
-    characters: Query<(), With<Character>>,
-    mut cameras: Query<(&mut OrbitCamera, &MouseLookState)>,
-) {
-    let Ok((character, controlled)) = controllers.get(event.context) else {
-        return;
-    };
-    let Ok((mut orbit, state)) = cameras.get_mut(controlled.0) else {
-        warn!(target: "demo::camera", controller = ?event.context, camera = ?controlled.0,
-            character = ?character.0, reason = "camera_binding_unavailable",
-            "Camera perspective toggle ignored");
-        return;
-    };
-    if orbit.target != character.0 || !characters.contains(character.0) {
-        warn!(target: "demo::camera", controller = ?event.context, camera = ?controlled.0,
-            character = ?character.0, reason = "camera_binding_unavailable",
-            "Camera perspective toggle ignored");
-        return;
-    }
-    if state.focused {
-        orbit.toggle_requested_by = Some(event.context);
-    }
-}
-
-/// 在动作应用后的同一 PreUpdate 消费请求；本帧即使没有固定步也会切换一次。
-fn apply_perspective_toggle(mut cameras: Query<(Entity, &mut OrbitCamera)>) {
-    for (camera, mut orbit) in &mut cameras {
-        let Some(controller) = orbit.toggle_requested_by.take() else {
-            continue;
-        };
-        let before = orbit.perspective;
-        let pitch_before = orbit.pitch();
-        orbit.perspective = match before {
-            CameraPerspective::ThirdPerson => CameraPerspective::FirstPerson,
-            CameraPerspective::FirstPerson => CameraPerspective::ThirdPerson,
-        };
-        info!(target: "demo::camera", ?camera, ?controller, character = ?orbit.target,
-            perspective_before = before.name(), perspective_after = orbit.perspective.name(),
-            yaw = orbit.yaw, pitch_before, pitch_after = orbit.pitch(),
-            reason = "toggle_perspective_action", "Camera perspective changed");
     }
 }
 
@@ -574,7 +439,7 @@ fn apply_perspective_toggle(mut cameras: Query<(Entity, &mut OrbitCamera)>) {
 pub(crate) fn sync_character_facing(
     mut commands: Commands,
     controllers: Query<(&ControlsCharacter, &ControlsCamera), With<GameplayContext>>,
-    mut cameras: Query<&mut OrbitCamera>,
+    mut cameras: Query<&mut FirstPersonCamera>,
     mut characters: Query<(&mut Transform, &Position, Option<&HoldingItems>), With<Character>>,
     items: Query<(
         &Collider,
@@ -586,18 +451,18 @@ pub(crate) fn sync_character_facing(
     collision: CarryRotationQuery,
 ) {
     for (controlled_character, controlled_camera) in &controllers {
-        let Ok(mut orbit) = cameras.get_mut(controlled_camera.0) else {
+        let Ok(mut view) = cameras.get_mut(controlled_camera.0) else {
             continue;
         };
-        if orbit.target != controlled_character.0 {
+        if view.target != controlled_character.0 {
             continue;
         }
         let Ok((mut transform, position, holding)) = characters.get_mut(controlled_character.0)
         else {
             continue;
         };
-        let rotation = Quat::from_rotation_y(orbit.yaw);
-        let input_turn = std::mem::take(&mut orbit.pending_yaw_delta);
+        let rotation = Quat::from_rotation_y(view.yaw);
+        let input_turn = std::mem::take(&mut view.pending_yaw_delta);
         if input_turn.abs() > 0.000001 || !transform.rotation.abs_diff_eq(rotation, 0.000001) {
             let turn = if input_turn != 0.0 {
                 input_turn
@@ -647,14 +512,14 @@ pub(crate) fn sync_character_facing(
     }
 }
 
-/// 镜头使用本帧插值后的人物位置与环绕角；互斥过滤避免 Transform 查询读写冲突。
-pub(crate) fn follow_orbit_camera(
+/// 镜头使用本帧插值后的人物位置与观察角度；互斥过滤避免 Transform 查询读写冲突。
+pub(crate) fn follow_first_person_camera(
     characters: Query<&Transform, With<Character>>,
-    mut cameras: Query<(&OrbitCamera, &mut Transform), Without<Character>>,
+    mut cameras: Query<(&FirstPersonCamera, &mut Transform), Without<Character>>,
 ) {
-    for (orbit, mut transform) in &mut cameras {
-        if let Ok(character) = characters.get(orbit.target) {
-            *transform = orbit.transform(character.translation);
+    for (view, mut transform) in &mut cameras {
+        if let Ok(character) = characters.get(view.target) {
+            *transform = view.transform(character.translation);
         }
     }
 }
@@ -662,7 +527,7 @@ pub(crate) fn follow_orbit_camera(
 /// 第一人称只隐藏自身视觉子树，保留业务根与独立木箱。
 fn sync_character_visibility(
     controllers: Query<(&ControlsCharacter, &ControlsCamera), With<GameplayContext>>,
-    cameras: Query<&OrbitCamera>,
+    cameras: Query<&FirstPersonCamera>,
     characters: Query<(), With<Character>>,
     mut visuals: Query<(Entity, &ChildOf, &mut Visibility), With<CharacterVisual>>,
 ) {
@@ -673,10 +538,9 @@ fn sync_character_visibility(
             .any(|(controlled_character, controlled_camera)| {
                 characters.contains(character)
                     && controlled_character.0 == character
-                    && cameras.get(controlled_camera.0).is_ok_and(|orbit| {
-                        orbit.target == character
-                            && orbit.perspective == CameraPerspective::FirstPerson
-                    })
+                    && cameras
+                        .get(controlled_camera.0)
+                        .is_ok_and(|view| view.target == character)
             });
         let after = if hide_visual {
             Visibility::Hidden
@@ -685,7 +549,7 @@ fn sync_character_visibility(
         };
         if *visibility != after {
             info!(target: "demo::camera", ?visual, ?character, before = ?*visibility, ?after,
-                reason = "camera_perspective_visibility", "Character visual visibility changed");
+                reason = "first_person_visibility", "Character visual visibility changed");
             *visibility = after;
         }
     }
@@ -769,11 +633,11 @@ mod tests {
                 Visibility::default(),
             ))
             .id();
-        let orbit = OrbitCamera::new(character);
-        let transform = orbit.transform(Vec3::ZERO);
+        let view = FirstPersonCamera::new(character);
+        let transform = view.transform(Vec3::ZERO);
         let camera = app
             .world_mut()
-            .spawn((orbit, MouseLookState::default(), transform))
+            .spawn((view, MouseLookState::default(), transform))
             .id();
         let controller = {
             let mut commands = app.world_mut().commands();
@@ -839,7 +703,7 @@ mod tests {
     fn f3_releases_pointer_and_click_recapture_skips_free_cursor_motion() {
         // 使用实际 F3 绑定验证调试释放；窗口仍只是 ECS 数据，不创建桌面窗口。
         let (mut app, window, _, camera, _) = test_app();
-        let yaw = app.world().get::<OrbitCamera>(camera).unwrap().yaw;
+        let yaw = app.world().get::<FirstPersonCamera>(camera).unwrap().yaw;
         app.world_mut().write_message(KeyboardInput {
             key_code: KeyCode::F3,
             logical_key: Key::F3,
@@ -858,7 +722,10 @@ mod tests {
         for _ in 0..3 {
             mouse_motion(&mut app, Vec2::new(50.0, 20.0));
             app.update();
-            assert_eq!(app.world().get::<OrbitCamera>(camera).unwrap().yaw, yaw);
+            assert_eq!(
+                app.world().get::<FirstPersonCamera>(camera).unwrap().yaw,
+                yaw
+            );
         }
         app.world_mut().write_message(KeyboardInput {
             key_code: KeyCode::F3,
@@ -872,11 +739,17 @@ mod tests {
         mouse_motion(&mut app, Vec2::new(200.0, 100.0));
         app.update();
         assert!(app.world().get::<MouseLookState>(camera).unwrap().active);
-        assert_eq!(app.world().get::<OrbitCamera>(camera).unwrap().yaw, yaw);
+        assert_eq!(
+            app.world().get::<FirstPersonCamera>(camera).unwrap().yaw,
+            yaw
+        );
         mouse_button(&mut app, window, ButtonState::Released);
         mouse_motion(&mut app, Vec2::new(10.0, 0.0));
         app.update();
-        assert_ne!(app.world().get::<OrbitCamera>(camera).unwrap().yaw, yaw);
+        assert_ne!(
+            app.world().get::<FirstPersonCamera>(camera).unwrap().yaw,
+            yaw
+        );
     }
 
     fn escape(app: &mut App, window: Entity, state: ButtonState) {
@@ -888,28 +761,6 @@ mod tests {
             repeat: false,
             window,
         });
-    }
-
-    fn perspective_key(app: &mut App, window: Entity, state: ButtonState) {
-        app.world_mut().write_message(KeyboardInput {
-            key_code: KeyCode::KeyI,
-            logical_key: Key::Character("i".into()),
-            state,
-            text: None,
-            repeat: false,
-            window,
-        });
-    }
-
-    fn perspective_fire(context: Entity) -> Fire<TogglePerspectiveAction> {
-        Fire {
-            context,
-            action: Entity::PLACEHOLDER,
-            value: true,
-            state: TriggerState::Fired,
-            fired_secs: 0.0,
-            elapsed_secs: 0.0,
-        }
     }
 
     fn fire(context: Entity, delta: Vec2) -> Fire<LookAction> {
@@ -1161,10 +1012,6 @@ mod tests {
         inspector_keyboard(&mut app, window, KeyCode::KeyI, ButtonState::Pressed);
         app.update();
         assert!(app.world().resource::<TestInspectorUi>().text.contains('i'));
-        assert_eq!(
-            app.world().get::<OrbitCamera>(camera).unwrap().perspective,
-            CameraPerspective::ThirdPerson
-        );
     }
 
     #[test]
@@ -1200,7 +1047,7 @@ mod tests {
             .center();
         set_cursor(&mut app, window, input_position);
         mouse_button(&mut app, window, ButtonState::Pressed);
-        for key in [KeyCode::Space, KeyCode::KeyE, KeyCode::KeyI] {
+        for key in [KeyCode::Space, KeyCode::KeyE] {
             inspector_keyboard(&mut app, window, key, ButtonState::Pressed);
         }
         // 首次点击面板和按键同帧到达，必须在动作准备前停用上下文。
@@ -1216,10 +1063,6 @@ mod tests {
         let intent = app.world().get::<CharacterIntent>(character).unwrap();
         assert_eq!(intent.movement, Vec2::ZERO);
         assert!(!intent.jump_pending && !intent.interact_pending);
-        assert_eq!(
-            app.world().get::<OrbitCamera>(camera).unwrap().perspective,
-            CameraPerspective::ThirdPerson
-        );
         fixed_step(&mut app);
         let position = app.world().get::<Position>(character).unwrap().0;
         assert!(Vec2::new(position.x, position.z).abs_diff_eq(Vec2::ZERO, 0.00001));
@@ -1243,23 +1086,15 @@ mod tests {
         );
         let intent = app.world().get::<CharacterIntent>(character).unwrap();
         assert!(!intent.jump_pending && !intent.interact_pending);
-        assert_eq!(
-            app.world().get::<OrbitCamera>(camera).unwrap().perspective,
-            CameraPerspective::ThirdPerson
-        );
 
         for state in [ButtonState::Released, ButtonState::Pressed] {
-            for key in [KeyCode::Space, KeyCode::KeyE, KeyCode::KeyI] {
+            for key in [KeyCode::Space, KeyCode::KeyE] {
                 inspector_keyboard(&mut app, window, key, state);
             }
             app.update();
         }
         let intent = app.world().get::<CharacterIntent>(character).unwrap();
         assert!(intent.jump_pending && intent.interact_pending);
-        assert_eq!(
-            app.world().get::<OrbitCamera>(camera).unwrap().perspective,
-            CameraPerspective::FirstPerson
-        );
         fixed_step(&mut app);
         assert!(app.world().get::<LinearVelocity>(character).unwrap().y > 0.0);
         assert_eq!(
@@ -1274,7 +1109,7 @@ mod tests {
 
     #[test]
     fn focused_inspector_keeps_keyboard_blocked_after_pointer_leaves_panel() {
-        let (mut app, window, character, camera, controller) = test_app();
+        let (mut app, window, character, _, controller) = test_app();
         let context = add_test_inspector(&mut app);
         escape(&mut app, window, ButtonState::Pressed);
         app.update();
@@ -1299,7 +1134,7 @@ mod tests {
         );
 
         set_cursor(&mut app, window, egui::pos2(500.0, 300.0));
-        for key in [KeyCode::KeyW, KeyCode::Space, KeyCode::KeyE, KeyCode::KeyI] {
+        for key in [KeyCode::KeyW, KeyCode::Space, KeyCode::KeyE] {
             inspector_keyboard(&mut app, window, key, ButtonState::Pressed);
         }
         app.update();
@@ -1312,10 +1147,6 @@ mod tests {
         let intent = app.world().get::<CharacterIntent>(character).unwrap();
         assert_eq!(intent.movement, Vec2::ZERO);
         assert!(!intent.jump_pending && !intent.interact_pending);
-        assert_eq!(
-            app.world().get::<OrbitCamera>(camera).unwrap().perspective,
-            CameraPerspective::ThirdPerson
-        );
     }
 
     #[test]
@@ -1324,7 +1155,7 @@ mod tests {
         mouse_motion(&mut app, Vec2::new(100.0, 0.0));
         mouse_motion(&mut app, Vec2::new(50.0, 0.0));
         app.update();
-        let yaw = app.world().get::<OrbitCamera>(camera).unwrap().yaw;
+        let yaw = app.world().get::<FirstPersonCamera>(camera).unwrap().yaw;
         assert!((yaw - (-0.45_f32).rem_euclid(TAU)).abs() < 0.00001);
         // 一帧无固定步时，Observer 更新的角度和持续移动轴都保留至模拟消费。
         app.world_mut()
@@ -1350,18 +1181,16 @@ mod tests {
         assert!(displacement.length() <= speed * 3.0 / 60.0 + 0.00001);
         assert!(displacement.normalize().dot(direction) > 0.9999);
         app.update();
-        assert_eq!(app.world().get::<OrbitCamera>(camera).unwrap().yaw, yaw);
-        let orbit = app.world().get::<OrbitCamera>(camera).unwrap();
-        let pivot = app.world().get::<Transform>(character).unwrap().translation
-            + Vec3::Y * orbit.look_height;
-        let camera_transform = app.world().get::<Transform>(camera).unwrap();
-        assert!((camera_transform.translation.distance(pivot) - orbit.distance).abs() < 0.00001);
-        assert!(
-            camera_transform
-                .forward()
-                .dot((pivot - camera_transform.translation).normalize())
-                > 0.9999
+        assert_eq!(
+            app.world().get::<FirstPersonCamera>(camera).unwrap().yaw,
+            yaw
         );
+        let view = app.world().get::<FirstPersonCamera>(camera).unwrap();
+        let eye = app.world().get::<Transform>(character).unwrap().translation
+            + Vec3::Y * view.eye_height;
+        let camera_transform = app.world().get::<Transform>(camera).unwrap();
+        assert!(camera_transform.translation.abs_diff_eq(eye, 0.00001));
+        assert!(camera_transform.forward().dot(direction) > 0.9999);
     }
 
     #[test]
@@ -1374,7 +1203,7 @@ mod tests {
         let second = app
             .world_mut()
             .spawn((
-                OrbitCamera::new(second_target),
+                FirstPersonCamera::new(second_target),
                 MouseLookState {
                     active: true,
                     initialized: true,
@@ -1388,18 +1217,21 @@ mod tests {
             .id();
         app.world_mut()
             .trigger(fire(second_controller, Vec2::new(30.0, 10000.0)));
-        assert_eq!(app.world().get::<OrbitCamera>(first).unwrap().yaw, 0.0);
         assert_eq!(
-            app.world().get::<OrbitCamera>(second).unwrap().pitch(),
-            80.0_f32.to_radians()
+            app.world().get::<FirstPersonCamera>(first).unwrap().yaw,
+            0.0
+        );
+        assert_eq!(
+            app.world().get::<FirstPersonCamera>(second).unwrap().pitch,
+            85.0_f32.to_radians()
         );
         app.world_mut()
             .trigger(fire(second_controller, Vec2::new(0.0, -10000.0)));
         assert_eq!(
-            app.world().get::<OrbitCamera>(second).unwrap().pitch(),
-            5.0_f32.to_radians()
+            app.world().get::<FirstPersonCamera>(second).unwrap().pitch,
+            -85.0_f32.to_radians()
         );
-        let pitch = app.world().get::<OrbitCamera>(first).unwrap().pitch();
+        let pitch = app.world().get::<FirstPersonCamera>(first).unwrap().pitch;
         app.world_mut()
             .resource_mut::<GameSettings>()
             .camera
@@ -1407,35 +1239,34 @@ mod tests {
         app.world_mut()
             .trigger(fire(first_controller, Vec2::new(0.0, 10.0)));
         assert!(
-            (app.world().get::<OrbitCamera>(first).unwrap().pitch() - (pitch - 0.03)).abs()
+            (app.world().get::<FirstPersonCamera>(first).unwrap().pitch - (pitch - 0.03)).abs()
                 < 0.00001
         );
         app.world_mut()
             .get_mut::<MouseLookState>(first)
             .unwrap()
             .active = false;
-        let yaw = app.world().get::<OrbitCamera>(first).unwrap().yaw;
+        let yaw = app.world().get::<FirstPersonCamera>(first).unwrap().yaw;
         app.world_mut()
             .trigger(fire(first_controller, Vec2::new(30.0, 0.0)));
-        assert_eq!(app.world().get::<OrbitCamera>(first).unwrap().yaw, yaw);
+        assert_eq!(
+            app.world().get::<FirstPersonCamera>(first).unwrap().yaw,
+            yaw
+        );
         app.world_mut().despawn(second);
         app.world_mut().trigger(fire(second_controller, Vec2::ONE));
     }
 
     #[test]
-    fn perspective_key_switches_pose_and_restores_each_pitch() {
-        let (mut app, window, character, camera, _) = test_app();
-        let visual = app
+    fn starts_at_eye_height_and_hides_only_the_controlled_character() {
+        let (mut app, _, character, camera, _) = test_app();
+        let own_visual = app
             .world_mut()
             .spawn((CharacterVisual, Visibility::default(), ChildOf(character)))
             .id();
-        let nested_visual = app
-            .world_mut()
-            .spawn((Visibility::default(), ChildOf(visual)))
-            .id();
         let other_character = app
             .world_mut()
-            .spawn((Character, Visibility::default()))
+            .spawn((Character, Transform::default(), Visibility::default()))
             .id();
         let other_visual = app
             .world_mut()
@@ -1445,39 +1276,31 @@ mod tests {
                 ChildOf(other_character),
             ))
             .id();
-        let initial_pitch = app.world().get::<OrbitCamera>(camera).unwrap().pitch();
-        assert_eq!(
-            app.world().get::<OrbitCamera>(camera).unwrap().perspective,
-            CameraPerspective::ThirdPerson
-        );
-        let fixed_time = app.world().resource::<Time<Fixed>>().elapsed();
-        // 同帧鼠标先更新原视角，切换系统再恢复新视角的记忆角度。
-        perspective_key(&mut app, window, ButtonState::Pressed);
-        mouse_motion(&mut app, Vec2::new(10.0, 20.0));
+        let item = spawn_test_item(&mut app, Vec3::new(0.0, 0.3, -1.0));
+        app.world_mut()
+            .entity_mut(item)
+            .insert(Visibility::default());
+        let item_visual = app
+            .world_mut()
+            .spawn((Transform::default(), Visibility::default(), ChildOf(item)))
+            .id();
+
+        // 首帧显示同步就使用眼位和自身隐藏，不需要任何视角输入。
         app.update();
-        let orbit = app.world().get::<OrbitCamera>(camera).unwrap();
-        let yaw = (-0.03_f32).rem_euclid(TAU);
-        assert_eq!(orbit.perspective, CameraPerspective::FirstPerson);
-        assert_eq!(orbit.first_person_pitch, 0.0);
-        assert!((orbit.third_person_pitch - (initial_pitch + 0.06)).abs() < 0.00001);
-        assert!((orbit.yaw - yaw).abs() < 0.00001);
-        let camera_transform = app.world().get::<Transform>(camera).unwrap();
-        assert_eq!(
-            camera_transform.translation,
-            app.world().get::<Transform>(character).unwrap().translation + Vec3::Y * 1.65
-        );
+        let pose = app.world().get::<Transform>(camera).unwrap();
+        let position = app.world().get::<Transform>(character).unwrap().translation;
         assert!(
-            camera_transform
-                .forward()
-                .abs_diff_eq(Quat::from_rotation_y(yaw) * Vec3::NEG_Z, 0.00001)
+            pose.translation
+                .abs_diff_eq(position + Vec3::Y * 1.65, 0.00001)
         );
+        assert!(pose.forward().dot(Vec3::NEG_Z) > 0.9999);
         assert_eq!(
-            app.world().get::<Visibility>(visual),
-            Some(&Visibility::Hidden)
+            app.world().get::<FirstPersonCamera>(camera).unwrap().pitch,
+            0.0
         );
         assert!(
             !app.world()
-                .get::<InheritedVisibility>(nested_visual)
+                .get::<InheritedVisibility>(own_visual)
                 .unwrap()
                 .get()
         );
@@ -1487,58 +1310,67 @@ mod tests {
                 .unwrap()
                 .get()
         );
-        assert_eq!(
-            app.world().get::<Visibility>(character),
-            Some(&Visibility::Inherited)
-        );
-        assert!(!app.world().get::<CursorOptions>(window).unwrap().visible);
-        for _ in 0..3 {
-            app.update();
-            assert_eq!(
-                app.world().get::<OrbitCamera>(camera).unwrap().perspective,
-                CameraPerspective::FirstPerson
-            );
-        }
-        perspective_key(&mut app, window, ButtonState::Released);
-        mouse_motion(&mut app, Vec2::new(0.0, -100.0));
-        app.update();
-        assert!((app.world().get::<OrbitCamera>(camera).unwrap().pitch() + 0.3).abs() < 0.00001);
-
-        perspective_key(&mut app, window, ButtonState::Pressed);
-        mouse_motion(&mut app, Vec2::new(0.0, 10.0));
-        app.update();
-        let orbit = app.world().get::<OrbitCamera>(camera).unwrap();
-        assert_eq!(orbit.perspective, CameraPerspective::ThirdPerson);
-        assert!((orbit.pitch() - (initial_pitch + 0.06)).abs() < 0.00001);
-        assert!((orbit.first_person_pitch + 0.27).abs() < 0.00001);
-        assert_eq!(orbit.yaw, yaw);
-        assert_eq!(
-            app.world().get::<Visibility>(visual),
-            Some(&Visibility::Inherited)
-        );
         assert!(
             app.world()
-                .get::<InheritedVisibility>(nested_visual)
+                .get::<InheritedVisibility>(item_visual)
                 .unwrap()
                 .get()
         );
-        perspective_key(&mut app, window, ButtonState::Released);
+    }
+
+    #[test]
+    fn i_key_keeps_first_person_pose_visibility_and_gameplay_intent() {
+        let (mut app, window, character, camera, _) = test_app();
+        let visual = app
+            .world_mut()
+            .spawn((CharacterVisual, Visibility::default(), ChildOf(character)))
+            .id();
+        mouse_motion(&mut app, Vec2::new(100.0, -50.0));
         app.update();
-        perspective_key(&mut app, window, ButtonState::Pressed);
+        let pose = *app.world().get::<Transform>(camera).unwrap();
+        let position = app.world().get::<Position>(character).unwrap().0;
+        let fixed_time = app.world().resource::<Time<Fixed>>().elapsed();
+
+        // 使用真实键盘消息覆盖长按、松开和重复按下，帧末不补跑模拟。
+        for state in [
+            ButtonState::Pressed,
+            ButtonState::Released,
+            ButtonState::Pressed,
+        ] {
+            inspector_keyboard(&mut app, window, KeyCode::KeyI, state);
+            for _ in 0..3 {
+                app.update();
+                assert_eq!(*app.world().get::<Transform>(camera).unwrap(), pose);
+                assert_eq!(app.world().get::<Position>(character).unwrap().0, position);
+                assert_eq!(app.world().resource::<Time<Fixed>>().elapsed(), fixed_time);
+                assert!(
+                    !app.world()
+                        .get::<InheritedVisibility>(visual)
+                        .unwrap()
+                        .get()
+                );
+                assert!(app.world().get::<MouseLookState>(camera).unwrap().active);
+                let intent = app.world().get::<CharacterIntent>(character).unwrap();
+                assert_eq!(intent.movement, Vec2::ZERO);
+                assert!(!intent.jump_pending && !intent.interact_pending);
+            }
+        }
+        // I 保持按下时鼠标仍可正常观察。
+        mouse_motion(&mut app, Vec2::new(10.0, 10.0));
         app.update();
-        assert!((app.world().get::<OrbitCamera>(camera).unwrap().pitch() + 0.27).abs() < 0.00001);
-        let character_position = app.world().get::<Transform>(character).unwrap().translation;
-        assert!(
-            Vec2::new(character_position.x, character_position.z).abs_diff_eq(Vec2::ZERO, 0.00001)
+        assert_ne!(
+            app.world().get::<Transform>(camera).unwrap().rotation,
+            pose.rotation
         );
-        assert_eq!(app.world().resource::<Time<Fixed>>().elapsed(), fixed_time);
+        assert_eq!(
+            app.world().get::<Transform>(camera).unwrap().translation,
+            pose.translation
+        );
     }
 
     #[test]
     fn first_person_look_clamps_up_and_down_and_uses_camera_settings() {
-        let (mut app, window, character, camera, _) = test_app();
-        perspective_key(&mut app, window, ButtonState::Pressed);
-        app.update();
+        let (mut app, _, character, camera, _) = test_app();
         app.world_mut()
             .resource_mut::<GameSettings>()
             .camera
@@ -1549,9 +1381,9 @@ mod tests {
             .invert_y = true;
         mouse_motion(&mut app, Vec2::new(10.0, 10.0));
         app.update();
-        let orbit = app.world().get::<OrbitCamera>(camera).unwrap();
-        assert!((orbit.yaw - (-0.06_f32).rem_euclid(TAU)).abs() < 0.00001);
-        assert!((orbit.pitch() + 0.06).abs() < 0.00001);
+        let view = app.world().get::<FirstPersonCamera>(camera).unwrap();
+        assert!((view.yaw - (-0.06_f32).rem_euclid(TAU)).abs() < 0.00001);
+        assert!((view.pitch + 0.06).abs() < 0.00001);
         assert!(app.world().get::<Transform>(camera).unwrap().forward().y > 0.0);
         for (delta_y, pitch, forward_y) in [
             (10000.0, -85.0_f32.to_radians(), 1.0),
@@ -1560,7 +1392,7 @@ mod tests {
             mouse_motion(&mut app, Vec2::new(0.0, delta_y));
             app.update();
             assert_eq!(
-                app.world().get::<OrbitCamera>(camera).unwrap().pitch(),
+                app.world().get::<FirstPersonCamera>(camera).unwrap().pitch,
                 pitch
             );
             let transform = app.world().get::<Transform>(camera).unwrap();
@@ -1574,122 +1406,6 @@ mod tests {
     }
 
     #[test]
-    fn perspective_toggle_preserves_released_capture_and_ignores_lost_focus() {
-        let (mut app, window, _, camera, _) = test_app();
-        escape(&mut app, window, ButtonState::Pressed);
-        perspective_key(&mut app, window, ButtonState::Pressed);
-        app.update();
-        assert_eq!(
-            app.world().get::<OrbitCamera>(camera).unwrap().perspective,
-            CameraPerspective::FirstPerson
-        );
-        assert!(app.world().get::<CursorOptions>(window).unwrap().visible);
-        assert_eq!(
-            app.world().get::<CursorOptions>(window).unwrap().grab_mode,
-            CursorGrabMode::None
-        );
-        escape(&mut app, window, ButtonState::Released);
-        perspective_key(&mut app, window, ButtonState::Released);
-        app.update();
-
-        app.world_mut().get_mut::<Window>(window).unwrap().focused = false;
-        perspective_key(&mut app, window, ButtonState::Pressed);
-        app.update();
-        assert_eq!(
-            app.world().get::<OrbitCamera>(camera).unwrap().perspective,
-            CameraPerspective::FirstPerson
-        );
-        perspective_key(&mut app, window, ButtonState::Released);
-        app.update();
-        app.world_mut().get_mut::<Window>(window).unwrap().focused = true;
-        // 同帧失焦后又回焦，也不能响应切换或自动捕获鼠标。
-        for focused in [false, true] {
-            app.world_mut()
-                .write_message(WindowFocused { window, focused });
-        }
-        perspective_key(&mut app, window, ButtonState::Pressed);
-        app.update();
-        assert_eq!(
-            app.world().get::<OrbitCamera>(camera).unwrap().perspective,
-            CameraPerspective::FirstPerson
-        );
-        perspective_key(&mut app, window, ButtonState::Released);
-        app.update();
-        perspective_key(&mut app, window, ButtonState::Pressed);
-        app.update();
-        assert_eq!(
-            app.world().get::<OrbitCamera>(camera).unwrap().perspective,
-            CameraPerspective::ThirdPerson
-        );
-        assert!(!app.world().get::<MouseLookState>(camera).unwrap().active);
-        assert!(app.world().get::<CursorOptions>(window).unwrap().visible);
-    }
-
-    #[test]
-    fn perspective_actions_route_only_to_valid_controller_targets() {
-        let (mut app, _, first_character, first, _) = test_app();
-        let second_character = app
-            .world_mut()
-            .spawn((Character, Transform::default()))
-            .id();
-        let second = app
-            .world_mut()
-            .spawn((
-                OrbitCamera::new(second_character),
-                MouseLookState {
-                    focused: true,
-                    ..default()
-                },
-                Transform::default(),
-            ))
-            .id();
-        let second_controller = app
-            .world_mut()
-            .spawn((
-                GameplayContext,
-                ControlsCharacter(second_character),
-                ControlsCamera(second),
-            ))
-            .id();
-        app.world_mut().trigger(perspective_fire(second_controller));
-        app.update();
-        assert_eq!(
-            app.world().get::<OrbitCamera>(first).unwrap().perspective,
-            CameraPerspective::ThirdPerson
-        );
-        assert_eq!(
-            app.world().get::<OrbitCamera>(second).unwrap().perspective,
-            CameraPerspective::FirstPerson
-        );
-        app.world_mut()
-            .get_mut::<ControlsCharacter>(second_controller)
-            .unwrap()
-            .0 = first_character;
-        app.world_mut().trigger(perspective_fire(second_controller));
-        app.update();
-        assert_eq!(
-            app.world().get::<OrbitCamera>(second).unwrap().perspective,
-            CameraPerspective::FirstPerson
-        );
-        app.world_mut()
-            .get_mut::<ControlsCharacter>(second_controller)
-            .unwrap()
-            .0 = second_character;
-        app.world_mut()
-            .entity_mut(second_character)
-            .remove::<Character>();
-        app.world_mut().trigger(perspective_fire(second_controller));
-        app.update();
-        assert_eq!(
-            app.world().get::<OrbitCamera>(second).unwrap().perspective,
-            CameraPerspective::FirstPerson
-        );
-        app.world_mut().despawn(second);
-        app.world_mut().trigger(perspective_fire(second_controller));
-        app.update();
-    }
-
-    #[test]
     fn hidden_character_visuals_recover_when_camera_binding_becomes_invalid() {
         for removed in [
             "camera",
@@ -1697,12 +1413,11 @@ mod tests {
             "character_component",
             "target_binding",
         ] {
-            let (mut app, window, character, camera, controller) = test_app();
+            let (mut app, _, character, camera, controller) = test_app();
             let visual = app
                 .world_mut()
                 .spawn((CharacterVisual, Visibility::default(), ChildOf(character)))
                 .id();
-            perspective_key(&mut app, window, ButtonState::Pressed);
             app.update();
             assert!(
                 !app.world()
@@ -1722,7 +1437,7 @@ mod tests {
                 }
                 "target_binding" => {
                     app.world_mut()
-                        .get_mut::<OrbitCamera>(camera)
+                        .get_mut::<FirstPersonCamera>(camera)
                         .unwrap()
                         .target = Entity::PLACEHOLDER;
                 }
@@ -1743,9 +1458,9 @@ mod tests {
     }
 
     #[test]
-    fn first_person_motion_and_toggle_follow_actual_fixed_step_count() {
+    fn first_person_motion_follows_actual_fixed_step_count() {
         for frame_duration in [Duration::ZERO, Duration::from_millis(50)] {
-            let (mut app, window, character, camera, _) = test_app();
+            let (mut app, _, character, camera, _) = test_app();
             app.insert_resource(TimeUpdateStrategy::ManualDuration(frame_duration));
             {
                 let mut intent = app
@@ -1759,17 +1474,15 @@ mod tests {
             let position_before = app.world().get::<Position>(character).unwrap().0;
             let presentation_before = app.world().get::<Transform>(character).unwrap().translation;
             let fixed_before = app.world().resource::<Time<Fixed>>().elapsed();
-            perspective_key(&mut app, window, ButtonState::Pressed);
             mouse_motion(&mut app, Vec2::new(100.0, 100.0));
             app.update();
             let world = app.world();
             let simulated = world.resource::<Time<Fixed>>().elapsed() - fixed_before;
-            let orbit = world.get::<OrbitCamera>(camera).unwrap();
-            assert_eq!(orbit.perspective, CameraPerspective::FirstPerson);
-            assert!((orbit.yaw - (-0.3_f32).rem_euclid(TAU)).abs() < 0.00001);
+            let view = world.get::<FirstPersonCamera>(camera).unwrap();
+            assert!((view.yaw - (-0.3_f32).rem_euclid(TAU)).abs() < 0.00001);
             let transform = world.get::<Transform>(character).unwrap();
             let position = world.get::<Position>(character).unwrap().0;
-            let direction = Quat::from_rotation_y(orbit.yaw) * Vec3::NEG_Z;
+            let direction = Quat::from_rotation_y(view.yaw) * Vec3::NEG_Z;
             assert!(transform.forward().dot(direction) > 0.9999);
             let intent = world.get::<CharacterIntent>(character).unwrap();
             if frame_duration.is_zero() {
@@ -1812,7 +1525,7 @@ mod tests {
         inspector_keyboard(&mut app, window, KeyCode::KeyW, ButtonState::Pressed);
         mouse_motion(&mut app, Vec2::new(-500.0, 0.0));
         app.update();
-        let yaw = app.world().get::<OrbitCamera>(camera).unwrap().yaw;
+        let yaw = app.world().get::<FirstPersonCamera>(camera).unwrap().yaw;
         let facing = Quat::from_rotation_y(yaw) * Vec3::NEG_Z;
         assert!((spawn.rotation * Vec3::NEG_Z).dot(facing) < 0.0);
         assert_eq!(
@@ -1921,17 +1634,17 @@ mod tests {
                     .translation
                     .abs_diff_eq(expected, 0.00001)
             );
-            let orbit = world.get::<OrbitCamera>(camera).unwrap();
+            let view = world.get::<FirstPersonCamera>(camera).unwrap();
             assert!(
                 character_transform
                     .rotation
-                    .abs_diff_eq(Quat::from_rotation_y(orbit.yaw), 0.00001)
+                    .abs_diff_eq(Quat::from_rotation_y(view.yaw), 0.00001)
             );
             let camera_transform = world.get::<Transform>(camera).unwrap();
             assert!(
                 camera_transform
                     .translation
-                    .abs_diff_eq(orbit.transform(expected).translation, 0.00001)
+                    .abs_diff_eq(view.transform(expected).translation, 0.00001)
             );
             assert!(
                 world
@@ -1961,7 +1674,10 @@ mod tests {
         escape(&mut app, window, ButtonState::Pressed);
         mouse_motion(&mut app, Vec2::X * 50.0);
         app.update();
-        assert_eq!(app.world().get::<OrbitCamera>(camera).unwrap().yaw, 0.0);
+        assert_eq!(
+            app.world().get::<FirstPersonCamera>(camera).unwrap().yaw,
+            0.0
+        );
         assert_eq!(
             app.world().get::<CursorOptions>(window).unwrap().grab_mode,
             CursorGrabMode::None
@@ -1971,11 +1687,14 @@ mod tests {
         mouse_motion(&mut app, Vec2::X * 50.0);
         app.update();
         assert!(app.world().get::<MouseLookState>(camera).unwrap().active);
-        assert_eq!(app.world().get::<OrbitCamera>(camera).unwrap().yaw, 0.0);
+        assert_eq!(
+            app.world().get::<FirstPersonCamera>(camera).unwrap().yaw,
+            0.0
+        );
         mouse_button(&mut app, window, ButtonState::Released);
         mouse_motion(&mut app, Vec2::X * 50.0);
         app.update();
-        let yaw = app.world().get::<OrbitCamera>(camera).unwrap().yaw;
+        let yaw = app.world().get::<FirstPersonCamera>(camera).unwrap().yaw;
         assert!(yaw != 0.0);
         // 窗口最终仍聚焦，但消息记录曾失焦；不能自动恢复或消费本帧位移。
         app.world_mut().write_message(WindowFocused {
@@ -1990,15 +1709,24 @@ mod tests {
         app.update();
         assert!(!app.world().get::<MouseLookState>(camera).unwrap().active);
         assert!(app.world().get::<CursorOptions>(window).unwrap().visible);
-        assert_eq!(app.world().get::<OrbitCamera>(camera).unwrap().yaw, yaw);
+        assert_eq!(
+            app.world().get::<FirstPersonCamera>(camera).unwrap().yaw,
+            yaw
+        );
         mouse_motion(&mut app, Vec2::X * 50.0);
         app.update();
-        assert_eq!(app.world().get::<OrbitCamera>(camera).unwrap().yaw, yaw);
+        assert_eq!(
+            app.world().get::<FirstPersonCamera>(camera).unwrap().yaw,
+            yaw
+        );
         mouse_button(&mut app, window, ButtonState::Pressed);
         app.update();
         mouse_motion(&mut app, Vec2::X * 50.0);
         app.update();
-        assert_ne!(app.world().get::<OrbitCamera>(camera).unwrap().yaw, yaw);
+        assert_ne!(
+            app.world().get::<FirstPersonCamera>(camera).unwrap().yaw,
+            yaw
+        );
     }
 
     #[test]
@@ -2024,10 +1752,16 @@ mod tests {
         mouse_motion(&mut app, Vec2::X * 50.0);
         app.update();
         assert!(app.world().get::<MouseLookState>(camera).unwrap().active);
-        assert_eq!(app.world().get::<OrbitCamera>(camera).unwrap().yaw, 0.0);
+        assert_eq!(
+            app.world().get::<FirstPersonCamera>(camera).unwrap().yaw,
+            0.0
+        );
         mouse_motion(&mut app, Vec2::X * 50.0);
         app.update();
-        assert_ne!(app.world().get::<OrbitCamera>(camera).unwrap().yaw, 0.0);
+        assert_ne!(
+            app.world().get::<FirstPersonCamera>(camera).unwrap().yaw,
+            0.0
+        );
     }
 
     #[test]
@@ -2042,7 +1776,7 @@ mod tests {
                 mouse_motion(&mut app, Vec2::X * (200.0 / fps as f32));
                 app.update();
             }
-            rotations.push(app.world().get::<OrbitCamera>(camera).unwrap().yaw);
+            rotations.push(app.world().get::<FirstPersonCamera>(camera).unwrap().yaw);
         }
         assert!((rotations[0] - rotations[1]).abs() < 0.0001);
         assert!((rotations[0] - (-0.6_f32).rem_euclid(TAU)).abs() < 0.0001);
@@ -2082,7 +1816,7 @@ mod tests {
             .into_iter()
             .flat_map(|duration| carry_grip_cases().map(|grip| (duration, grip)))
         {
-            let (mut app, window, character, camera, _) = test_app();
+            let (mut app, _, character, camera, _) = test_app();
             let character_visual = app
                 .world_mut()
                 .spawn((CharacterVisual, Visibility::default(), ChildOf(character)))
@@ -2136,17 +1870,8 @@ mod tests {
 
             app.insert_resource(TimeUpdateStrategy::ManualDuration(frame_duration));
             let mut frames_without_fixed_step = 0;
-            for frame in 0..12 {
+            for _ in 0..12 {
                 let fixed_time = app.world().resource::<Time<Fixed>>().elapsed();
-                perspective_key(
-                    &mut app,
-                    window,
-                    if frame % 2 == 0 {
-                        ButtonState::Pressed
-                    } else {
-                        ButtonState::Released
-                    },
-                );
                 mouse_motion(&mut app, Vec2::new(25.0, 5.0));
                 // 不补跑固定步，直接检查本帧目标、物理位置和视觉子实体传播结果。
                 app.update();
@@ -2154,21 +1879,12 @@ mod tests {
                 if world.resource::<Time<Fixed>>().elapsed() == fixed_time {
                     frames_without_fixed_step += 1;
                 }
-                let orbit = world.get::<OrbitCamera>(camera).unwrap();
-                assert_eq!(
-                    orbit.perspective,
-                    if (frame / 2) % 2 == 0 {
-                        CameraPerspective::FirstPerson
-                    } else {
-                        CameraPerspective::ThirdPerson
-                    }
-                );
-                assert_eq!(
-                    world
+                let view = world.get::<FirstPersonCamera>(camera).unwrap();
+                assert!(
+                    !world
                         .get::<InheritedVisibility>(character_visual)
                         .unwrap()
-                        .get(),
-                    orbit.perspective == CameraPerspective::ThirdPerson
+                        .get()
                 );
                 assert!(
                     world
@@ -2177,7 +1893,7 @@ mod tests {
                         .get()
                 );
                 let character_transform = world.get::<Transform>(character).unwrap();
-                let rotation = Quat::from_rotation_y(orbit.yaw);
+                let rotation = Quat::from_rotation_y(view.yaw);
                 assert!(character_transform.rotation.abs_diff_eq(rotation, 0.00001));
                 let held_target = world.get::<HeldTarget>(item).unwrap();
                 let expected_target = character_transform.transform_point(grip_offset);
@@ -2187,7 +1903,7 @@ mod tests {
                         .abs_diff_eq(expected_target, 0.00001)
                 );
                 assert!(held_target.rotation.abs_diff_eq(rotation, 0.00001));
-                let expected_camera = orbit.transform(character_transform.translation);
+                let expected_camera = view.transform(character_transform.translation);
                 let camera_transform = world.get::<Transform>(camera).unwrap();
                 assert!(
                     camera_transform
@@ -2227,18 +1943,8 @@ mod tests {
 
     #[test]
     fn turning_updates_grip_target_and_released_box_stops_following() {
-        for (perspective, grip) in [
-            CameraPerspective::ThirdPerson,
-            CameraPerspective::FirstPerson,
-        ]
-        .into_iter()
-        .flat_map(|perspective| carry_grip_cases().map(|grip| (perspective, grip)))
-        {
-            let (mut app, window, character, camera, _) = test_app();
-            if perspective == CameraPerspective::FirstPerson {
-                perspective_key(&mut app, window, ButtonState::Pressed);
-                app.update();
-            }
+        for grip in carry_grip_cases() {
+            let (mut app, _, character, camera, _) = test_app();
             let item = spawn_test_item(&mut app, Vec3::new(0.0, 0.3, -1.0));
             if let Some(grip) = grip {
                 app.world_mut().entity_mut(item).insert(CarryGrip(grip));
@@ -2266,7 +1972,7 @@ mod tests {
                 app.world().resource::<Time<Fixed>>().elapsed(),
                 fixed_before
             );
-            let yaw = app.world().get::<OrbitCamera>(camera).unwrap().yaw;
+            let yaw = app.world().get::<FirstPersonCamera>(camera).unwrap().yaw;
             let character_transform = app.world().get::<Transform>(character).unwrap();
             let rotation = Quat::from_rotation_y(yaw);
             assert!(character_transform.up().dot(Vec3::Y) > 0.9999);
@@ -2332,133 +2038,6 @@ mod tests {
     }
 
     #[test]
-    fn third_person_world_obstacles_keep_fixed_pose_and_character_visible() {
-        use crate::physics::world_collision_layers;
-        use avian3d::prelude::Collider;
-
-        let (mut app, _, character, camera, _) = test_app();
-        let visual = app
-            .world_mut()
-            .spawn((CharacterVisual, Visibility::default(), ChildOf(character)))
-            .id();
-        let ideal = app
-            .world()
-            .get::<OrbitCamera>(camera)
-            .unwrap()
-            .transform(app.world().get::<Transform>(character).unwrap().translation);
-        let obstacle = app
-            .world_mut()
-            .spawn((
-                RigidBody::Static,
-                Collider::cuboid(4.0, 4.0, 4.0),
-                world_collision_layers(),
-                Transform::from_translation(ideal.translation),
-            ))
-            .id();
-        fixed_step(&mut app);
-        let expected = app
-            .world()
-            .get::<OrbitCamera>(camera)
-            .unwrap()
-            .transform(app.world().get::<Transform>(character).unwrap().translation);
-        assert_eq!(*app.world().get::<Transform>(camera).unwrap(), expected);
-        assert_eq!(
-            app.world().get::<Visibility>(visual),
-            Some(&Visibility::Inherited)
-        );
-        app.world_mut().despawn(obstacle);
-        fixed_step(&mut app);
-        let expected = app
-            .world()
-            .get::<OrbitCamera>(camera)
-            .unwrap()
-            .transform(app.world().get::<Transform>(character).unwrap().translation);
-        assert_eq!(*app.world().get::<Transform>(camera).unwrap(), expected);
-        assert_eq!(
-            app.world().get::<Visibility>(visual),
-            Some(&Visibility::Inherited)
-        );
-    }
-
-    #[test]
-    fn first_person_restores_shell_material_in_the_same_zero_fixed_step_frame() {
-        use crate::{
-            camera_obstruction::{BuildingShellVisual, CameraShell},
-            physics::camera_query_layers,
-        };
-        use avian3d::prelude::Collider;
-
-        let (mut app, _, _, camera, _) = test_app();
-        let building = app.world_mut().spawn_empty().id();
-        let original = app
-            .world_mut()
-            .resource_mut::<Assets<StandardMaterial>>()
-            .add(StandardMaterial::default());
-        let wall_visual = app
-            .world_mut()
-            .spawn((
-                BuildingShellVisual(building),
-                MeshMaterial3d(original.clone()),
-            ))
-            .id();
-        app.world_mut().spawn((
-            CameraShell(building),
-            RigidBody::Static,
-            Collider::cuboid(8.0, 8.0, 0.1),
-            camera_query_layers(),
-            Transform::from_xyz(0.0, 3.5, 4.0),
-        ));
-        for _ in 0..12 {
-            fixed_step(&mut app);
-        }
-        let faded = &app
-            .world()
-            .get::<MeshMaterial3d<StandardMaterial>>(wall_visual)
-            .unwrap()
-            .0;
-        assert_ne!(faded.id(), original.id());
-        assert!(
-            (app.world()
-                .resource::<Assets<StandardMaterial>>()
-                .get(faded)
-                .unwrap()
-                .base_color
-                .alpha()
-                - 0.2)
-                .abs()
-                < 0.001
-        );
-        let fixed_before = app.world().resource::<Time<Fixed>>().elapsed();
-        app.world_mut()
-            .get_mut::<OrbitCamera>(camera)
-            .unwrap()
-            .perspective = CameraPerspective::FirstPerson;
-        app.update();
-        assert_eq!(
-            app.world().resource::<Time<Fixed>>().elapsed(),
-            fixed_before
-        );
-        assert_eq!(
-            app.world()
-                .get::<MeshMaterial3d<StandardMaterial>>(wall_visual)
-                .unwrap()
-                .0
-                .id(),
-            original.id()
-        );
-        assert!(
-            app.world()
-                .resource::<OccludedBuildings>()
-                .buildings
-                .is_empty()
-        );
-        assert_eq!(
-            app.world().resource::<OccludedBuildings>().active_cameras,
-            0
-        );
-    }
-
-    #[test]
     fn missing_target_or_controller_releases_capture_and_keeps_camera_pose() {
         for remove_target in [true, false] {
             let (mut app, window, character, camera, controller) = test_app();
@@ -2475,26 +2054,26 @@ mod tests {
     }
 
     #[test]
-    fn cameras_follow_their_own_characters_with_original_initial_offset() {
+    fn cameras_follow_their_own_characters_at_eye_height() {
         let mut app = App::new();
-        app.add_systems(Update, follow_orbit_camera);
+        app.add_systems(Update, follow_first_person_camera);
         for position in [Vec3::new(3.0, 1.0, -2.0), Vec3::new(-4.0, 0.0, 7.0)] {
             let target = app
                 .world_mut()
                 .spawn((Character, Transform::from_translation(position)))
                 .id();
             app.world_mut()
-                .spawn((OrbitCamera::new(target), Transform::default()));
+                .spawn((FirstPersonCamera::new(target), Transform::default()));
         }
         app.update();
         let world = app.world_mut();
-        let mut query = world.query::<(&OrbitCamera, &Transform)>();
-        for (orbit, transform) in query.iter(world) {
-            let position = world.get::<Transform>(orbit.target).unwrap().translation;
+        let mut query = world.query::<(&FirstPersonCamera, &Transform)>();
+        for (view, transform) in query.iter(world) {
+            let position = world.get::<Transform>(view.target).unwrap().translation;
             assert!(
                 transform
                     .translation
-                    .abs_diff_eq(position + Vec3::new(0.0, 6.0, 8.0), 0.00001)
+                    .abs_diff_eq(position + Vec3::Y * 1.65, 0.00001)
             );
         }
     }
