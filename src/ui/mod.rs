@@ -1,8 +1,16 @@
 //! 英文游戏菜单：BSN 声明页面，动作消息连接导航、设置与游戏生命周期。
 
 mod backdrop;
+mod lifecycle;
 mod navigation;
-mod screens;
+mod pages;
+mod pointer;
+mod requests;
+mod scroll;
+mod style;
+
+#[cfg(test)]
+mod test_support;
 mod theme;
 mod volume;
 mod widgets;
@@ -10,8 +18,8 @@ mod widgets;
 use bevy::prelude::*;
 
 use crate::{
-    audio_events::SoundRequest,
-    settings::{SettingsDraft, SettingsFile},
+    audio::{AudioPreview, SoundRequest},
+    settings::{SettingKey, SettingsDraft, SettingsFile},
 };
 
 /// 当前菜单页面；设置和帮助不改变游戏会话的生命周期。
@@ -56,17 +64,6 @@ pub(super) enum MenuInputSource {
     Navigation,
 }
 
-/// 设置草稿中的可修改字段。
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub enum SettingKey {
-    FrameRate,
-    MouseSensitivity,
-    InvertY,
-    MasterVolume,
-    SfxVolume,
-    UiVolume,
-}
-
 /// 鼠标与 Enhanced Input 共用的菜单语义，避免两条路径分别执行业务。
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub enum UiAction {
@@ -107,6 +104,7 @@ pub struct UiRequest(pub UiAction);
 #[derive(SystemSet, Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub enum UiSystems {
     Build,
+    Pointer,
     Style,
 }
 
@@ -115,18 +113,30 @@ pub struct GameUiPlugin;
 
 impl Plugin for GameUiPlugin {
     fn build(&self, app: &mut App) {
-        app.init_resource::<MenuState>()
-            .init_resource::<MenuFocus>()
-            .init_resource::<MenuInputSource>()
-            .init_resource::<SettingsDraft>()
-            .init_resource::<SettingsFile>()
-            .add_message::<UiRequest>()
-            .add_message::<SoundRequest>()
-            .configure_sets(Update, (UiSystems::Build, UiSystems::Style).chain());
-        navigation::register(app);
-        screens::register(app);
-        volume::register(app);
+        register_menu(app);
         backdrop::register(app);
-        widgets::register(app);
     }
+}
+
+/// 注册菜单的真实状态、输入、页面和视觉行为，便于不装展示舞台的无窗口集成夹具复用。
+pub(crate) fn register_menu(app: &mut App) {
+    lifecycle::register(app);
+    app.init_resource::<MenuInputSource>()
+        .init_resource::<SettingsDraft>()
+        .init_resource::<SettingsFile>()
+        .init_resource::<AudioPreview>()
+        .add_message::<UiRequest>()
+        .add_message::<SoundRequest>()
+        // 新树及其延迟销毁先完成，再读取指针，最后刷新当前输入来源的视觉状态。
+        .configure_sets(
+            Update,
+            (UiSystems::Build, UiSystems::Pointer, UiSystems::Style).chain(),
+        );
+    navigation::register(app);
+    requests::register(app);
+    pointer::register(app);
+    pages::register(app);
+    style::register(app);
+    scroll::register(app);
+    volume::register(app);
 }

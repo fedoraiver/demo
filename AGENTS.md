@@ -5,11 +5,22 @@
 ## Repository layout
 
 ```text
-src/                   Rust/Bevy application and ECS modules
-  main.rs              Application assembly and entry point
-  ui/                  Menus, widgets, navigation, and styling
+src/                   Feature directories, each owning one project Plugin
+  main.rs              Explicit plugin assembly and application entry point
+  game_flow/           Application states, clocks, and cross-feature ordering
+  first_person/        Player actions, pointer capture, facing, and camera
+  character/           Character identity, movement, grounding, and jumping
+  item_interaction/    Pickup, shared-body carrying, release, and feedback
+  physics/             Avian setup, gravity, and shared collision layers
+  bounds_recovery/     Water recovery and interpolation reset
+  scene_assembly/      Asset loading, map collision, and entity assembly
+  character_animation/ Animation binding, blending, and visual grounding
+  ui/                  Menus, widgets, navigation, styling, and backdrop
+  audio/               Sound contracts, mixing, playback, and device output
+  settings/            Settings, drafts, shared prototype parameters, pacing
+  inspector/           World inspector integration
+  session_log/         Session logging, background output, and exit flush
   window_policy/       Platform-specific window behavior
-  *_tests.rs           Headless regression tests
 art/                   Asset authoring sources and tooling
   blender/             Blender source projects
   scripts/             Asset generation, export, validation, and previews
@@ -36,6 +47,7 @@ assets/                Runtime assets grouped by resource type
 
 ## Conventions
 
+- Each first-level directory under `src/` owns exactly one project `Plugin`. Keep implementation and headless tests in flat Rust files within that feature; do not hide additional project plugins in the directory or add directories without their own plugin. Compose project plugins explicitly in `main.rs`; cross-feature scheduling uses the shared contracts in [Current Architecture](docs/architecture.md).
 - All new or modified game logic must follow ECS and use this project's Bevy implementation. Keep entity identity, component data, shared resources, and system behavior in their respective roles.
 - Prefer BSN-style declarative code when assembling scenes, UI, and other entity hierarchies, clearly expressing component composition and child entity structure. Keep runtime behavior in ECS systems or Observers. See the [Scene and UI Assembly Standards](docs/development.md#场景与-ui-装配规范) for the full rules.
 - Keep all temporary repository files under the root `tmp/` directory and do not commit them. See the [Temporary File Rules](docs/development.md#临时文件管理) for details.
