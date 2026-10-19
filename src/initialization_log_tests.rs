@@ -212,7 +212,7 @@ fn assert_initialization_logs(contents: &str, omitted: Option<Feature>) {
                 "grip_mode=\"shared_body\"",
                 "physics_schedule=\"FixedPostUpdate\"",
                 "presentation_schedule=\"RunFixedMainLoop\"",
-                "presentation_order=\"interpolation_character_facing_carry_pose_camera_occlusion_fade_visibility\"",
+                "presentation_order=\"interpolation_character_facing_carry_pose_camera_visibility\"",
                 "reason=\"initialization\"",
             ],
         ),

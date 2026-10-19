@@ -9,7 +9,6 @@
 | 应用与会话：[main.rs](../src/main.rs)、[app_flow.rs](../src/app_flow.rs) | 装配插件、设置与固定时钟，管理主菜单、运行、暂停和退出。 |
 | 菜单：[ui/mod.rs](../src/ui/mod.rs) | 组织页面、导航、控件、音量编辑与独立展示舞台；结构使用 BSN，行为由系统与 Observer 执行。 |
 | 输入与相机：[input.rs](../src/input.rs)、[camera.rs](../src/camera.rs) | 将设备动作路由到角色与相机，管理捕获、视角与同帧姿态。 |
-| 建筑遮挡：[camera_obstruction.rs](../src/camera_obstruction.rs)、[camera_fade.rs](../src/camera_fade.rs) | 汇总建筑外壳透明需求，管理实例材质与生命周期。 |
 | 运动与交互：[gameplay.rs](../src/gameplay.rs)、[physics.rs](../src/physics.rs) | 定义玩法数据、Avian 物理装配、接地、控制力、跳跃与拿放。 |
 | 组合持握：[carry.rs](../src/carry.rs)、[carry_rotation.rs](../src/carry_rotation.rs) | 管理共享刚体、完整路径碰撞、姿态同步与释放恢复。 |
 | 资源与场景：[art_assets.rs](../src/art_assets.rs)、[scene.rs](../src/scene.rs) | 加载运行 GLB，装配地图、结构碰撞和动态业务实体。 |
@@ -34,7 +33,7 @@
 
 音量滑条沿用 `Interaction` 命中，并局部读取底层左键与物理光标位置，表达菜单动作无法提供的绝对轨道坐标。滑条不走普通按钮请求路径；释放、失焦、光标离窗或页面销毁时结束捕获。
 
-暂停入口的 `suspend_input` 清意图、停用 `GameplayContext`、释放鼠标，并冻结 `Time<Virtual>` 与 `Time<Physics>`。物理增量立即归零，避免复用前一步增量。玩法、显示同步、动画状态和落水恢复受 `gameplay_running` 门控；失效相机、目标和建筑的生命周期清理仍执行。菜单继续响应，恢复后重新启用时间，捕获恢复当帧跳过自由光标位移。主菜单只运行虚拟时间以播放展示动画，物理时间暂停。无应用状态的最小测试中，`gameplay_running` 允许独立玩法系统执行。
+暂停入口的 `suspend_input` 清意图、停用 `GameplayContext`、释放鼠标，并冻结 `Time<Virtual>` 与 `Time<Physics>`。物理增量立即归零，避免复用前一步增量。玩法、显示同步、动画状态和落水恢复受 `gameplay_running` 门控；输入捕获检查仍执行。菜单继续响应，恢复后重新启用时间，捕获恢复当帧跳过自由光标位移。主菜单只运行虚拟时间以播放展示动画，物理时间暂停。无应用状态的最小测试中，`gameplay_running` 允许独立玩法系统执行。
 
 `Continue`、`Multiplayer` 和未实现设置项只声明灰色 `Coming Soon` 展示节点，不包含 `Button`、`MenuButton` 或业务动作，因而不会进入鼠标行为或键盘焦点列表。菜单行为与占位说明见 [使用说明](usage.md#菜单与占位功能)。
 
@@ -89,8 +88,7 @@ Windows MSVC 的 [build.rs](../build.rs) 为游戏和测试程序嵌入 Common C
 - **角色业务实体**通过 `Character`、意图与运动组件表达能力，Avian 动态刚体保存物理状态，`Transform` 表达插值呈现。根位于脚底；物理旋转锁定以防倾倒，水平朝向由相机系统同步。
 - **可搬物品实体**以 `Parcel / Pickable` 表达身份和能力，根位于模型中心。自由时拥有独立动态刚体，持握时通过 `HeldBy / HeldAttachment` 连接持有者与同形碰撞代理；业务根始终独立，具体装卸见 [持有关系与生命周期](#持有关系与生命周期)。
 - **展示 NPC 实例**保存 `DisplayNpc`，保留原模型和固定姿态；其 `IslandCollider` 子实体保存静态刚体与身体胶囊碰撞，不加入 `Character`、玩家意图、移动或拾取能力。碰撞随原实例和地图层级一同清理。
-- **相机实体**保存 `OrbitCamera`、`MouseLookState`、`CameraOcclusion`、`Camera3d` 和 `Transform`。`OrbitCamera` 保存目标、`CameraPerspective` 视角模式、共享水平角、各模式的俯仰角和固定跟随参数；跟随系统把位置与朝向写入 `Transform`，建筑遮挡检测复用相同的跟随计算，不反向修改姿态。`CameraOcclusion` 只保存上一帧建筑需求集合以记录离散日志。
-- **建筑外壳查询实体**用 `CameraShell` 关联所属建筑实例；额外碰撞体只供建筑遮挡查询，不参与角色、箱体的接触与玩法射线查询。`OccludedBuildings` 保存本帧有效第三人称相机的建筑需求并集，淡化状态与材质副本按实例管理，不改动 GLB 的共享原始材质。
+- **相机实体**保存 `FirstPersonCamera`、`MouseLookState`、`Camera3d` 和 `Transform`。`FirstPersonCamera` 保存目标、水平角、俯仰角和眼位高度；跟随系统根据人物本帧插值位置计算眼位，并把位置与朝向写入 `Transform`。
 - **共享资源**包括 `PrototypeConfig`、`GameSettings`、`SettingsDraft`、`SettingsFile`、菜单状态与焦点、`ArtAssets` 与 `ArtLoadState`；限帧计时和连续数据日志采样使用各系统的 `Local`。
 
 模型通过 `ChildOf` 属于业务根，人物视觉根带 `CharacterVisual`。玩法查询操作业务组件，网格、材质和骨骼留在视觉子树。持有关系与视觉父子关系相互独立；`Forces / RecoverableBody` 是 `QueryData`，`SpatialQuery / CarryRotationQuery` 是 `SystemParam`，几何辅助值也不作为 ECS 组件或独立系统。
@@ -105,11 +103,9 @@ Windows MSVC 的 [build.rs](../build.rs) 为游戏和测试程序嵌入 Common C
 
 地图中的展示主角、易碎纸箱和三只木箱连同子树移除，由独立 GLB 重建业务实体，避免模型或碰撞重复。四名 NPC 保留，各添加一份静态 `IslandCollider` 子实体；胶囊沿本地 Y 轴从脚底开始，复用 `PrototypeConfig` 的人物高度和半径，并沿 `ChildOf` 继承原实例变换。
 
-NPC 身体碰撞属于 `World` 层，阻挡人物、自由箱与持箱代理，但不加入角色控制、`CameraShell`、建筑淡化或对话业务。柜台、货架纸箱和摆件是无 `Pickable` 的固定装饰。资源、地图实例和实际碰撞全部就绪后，才生成玩家与可搬物品。
+NPC 身体碰撞属于 `World` 层，阻挡人物、自由箱与持箱代理，但不加入角色控制或对话业务。柜台、货架纸箱和摆件是无 `Pickable` 的固定装饰。资源、地图实例和实际碰撞全部就绪后，才生成玩家与可搬物品。
 
 静态碰撞从地形、建筑、码头、固定道具和棕榈树干的结构网格提取顶点与三角形，应用节点的实际变换后合并生成。建筑保持开放前厅与入口，不能用覆盖整栋模型的包围盒封住通道。海水、草和棕榈叶片不生成碰撞；台阶显示保留原始网格，原步阶不参与碰撞。三个商铺与两栋住宅的五组入口台阶按包围体生成不可见斜坡，并与各自实际地板边界配对：斜坡顶面接到室内地板高度，向地板内延伸 `0.05 m`，消除台阶与地板间的门槛落差和间隙。物理组件位于静态业务根或碰撞实体，模型视觉层级不重复添加刚体。
-
-建筑额外装配每栋一份合并外壳查询体，以 `CameraShell` 关联建筑。室内、地板、未知部件和非建筑结构不加入外壳查询，完整玩法碰撞仍保留；查询层及淡化隔离见 [第三人称遮挡与建筑淡化](#第三人称遮挡与建筑淡化)。
 
 场景生成 `PlayerId(1)` 的控制者、人物、五件可搬物和一台跟随相机。初始姿态由 [scene.rs](../src/scene.rs) 装配，木箱从地图布局调整到不穿透的室内位置。每个业务根保存自己的 `SpawnPoint`，恢复不再从视觉节点或文件推断。
 
@@ -117,7 +113,7 @@ NPC 身体碰撞属于 `World` 层，阻挡人物、自由箱与持箱代理，�
 
 ## 输入与相机数据流
 
-`PlayerInputPlugin` 使用 `bevy_enhanced_input` 注册 `MoveAction`、`LookAction`、`JumpAction`、`InteractAction`、`TogglePerspectiveAction` 和调试用的 `ReleasePointerAction`。设备绑定位于控制者的 `GameplayContext`，Observer 从事件的 `context` 查到对应控制目标，再写入目标状态。
+`PlayerInputPlugin` 使用 `bevy_enhanced_input` 注册 `MoveAction`、`LookAction`、`JumpAction`、`InteractAction` 和调试用的 `ReleasePointerAction`。设备绑定位于控制者的 `GameplayContext`，Observer 从事件的 `context` 查到对应控制目标，再写入目标状态。
 
 移动、跳跃和交互沿下面的路径进入固定模拟：
 
@@ -127,37 +123,23 @@ NPC 身体碰撞属于 `World` 层，阻挡人物、自由箱与持箱代理，�
 
 `CharacterIntent.movement` 保存持续有效的移动轴，动作完成或取消时归零。跳跃和交互使用 `Press` 与 `require_reset` 产生单次请求，Observer 将相应的 `pending` 置为 `true`，固定步通过 `std::mem::take` 消费并清除。没有固定步的渲染帧不会丢失请求；消费前的同类请求会合并为一次布尔请求，当前没有动作队列。
 
-观察动作直接更新相机持续状态，视角切换动作先写入相机上的单次请求，再于本帧动作应用完成后消费：
+观察动作直接更新相机持续状态：
 
 ```text
-鼠标位移 / 视角切换 → 动作 Observer → ControlsCamera → OrbitCamera
-                                                    ├→ 固定步朝向
-                                                    └→ 插值后的显示同步链
+鼠标位移 → 动作 Observer → ControlsCamera → FirstPersonCamera
+                                             ├→ 固定步朝向
+                                             └→ 插值后的显示同步链
 ```
 
-`on_camera_look` 按灵敏度和 Y 轴设置更新角度，不乘帧时间。两种视角共享水平角并分别记忆俯仰角，角色朝向和移动只读取水平角。第三人称使用固定环绕距离，环境遮挡只请求建筑淡化；第一人称使用角色眼位，首次平视。角度边界与眼位见 [当前操作](usage.md#当前操作)，显示链顺序见 [调度与模拟边界](#调度与模拟边界)。
+`on_camera_look` 按灵敏度和 Y 轴设置更新角度，不乘帧时间。角色朝向和移动只读取水平角，镜头位于角色眼位，初始平视。角度边界与眼位见 [当前操作](usage.md#当前操作)，显示链顺序见 [调度与模拟边界](#调度与模拟边界)。
 
-`request_perspective_toggle` 验证窗口聚焦、控制关联与目标后，把单次请求写入 `OrbitCamera.toggle_requested_by`；`apply_perspective_toggle` 在 `PreUpdate` 动作 Apply 后消费，避免依赖 Observer 遍历顺序。
-
-同帧鼠标位移先更新原模式，切换再恢复目标模式的俯仰角；首次第一人称平视。切换不改捕获、位置或玩法意图，失焦和暂停时忽略；调试释放光标但未操作检查器时仍有效。
-
-`sync_character_visibility` 在镜头更新后按有效控制关联和模式更新角色视觉子实体的 `Visibility`：仅第一人称隐藏对应的 `CharacterVisual`，切回第三人称时恢复；第三人称不因遮挡或镜头位置自动隐藏自身模型。相机或控制者丢失、关联不再有效时也恢复人物显示，避免模型停留在隐藏状态。
+`sync_character_visibility` 在镜头更新后按有效控制关联隐藏对应角色视觉子实体的 `CharacterVisual`，持有物与其他角色保持显示。相机或控制者丢失、关联不再有效时恢复人物显示，避免模型停留在隐藏状态。
 
 `sync_mouse_capture` 直接读取 Esc、`MouseButtonInput` 与 `WindowFocused`，结合应用状态和控制关联更新 `MouseLookState` 与光标。底层 Esc 只用于及时释放，业务暂停仍由菜单动作执行。系统位于 `InputSystems / Egui BeginPass` 后、Enhanced Input Prepare 前。
 
 主 Egui 上下文使用多遍 UI，界面在 `PostUpdate` 处理。捕获同步读取最近已完成 UI 的拖拽、文本焦点和菜单状态，再以当前物理光标命中已有面板布局，阻止同帧移入点击穿透。恢复捕获时跳过自由光标阶段累积位移。
 
-操作检查器时通过 `ContextActivity<GameplayContext>` 停用输入上下文，而不清空全局底层键盘资源；延迟命令在动作准备前应用。停用触发动作完成或取消，已有移动意图归零，单次动作继续遵循 `require_reset` 的松键要求。F3 释放后未操作检查器时保留原有键盘控制，包括 I 切换视角；主菜单和暂停强制停用玩法输入，点击菜单背景不能重新捕获鼠标。
-
-### 第三人称遮挡与建筑淡化
-
-`detect_building_occlusion` 复用本帧插值后的环绕镜头，向角色身体采样点和实际持物根 `Transform` 做小球扫掠，并检查镜头附近的外壳重叠。扫掠宽度覆盖木板细缝，重叠检查覆盖近裁剪面进入墙壳；`HeldTarget` 不能替代实际持物位置。所有有效第三人称相机的需求取并集放入 `OccludedBuildings`，任一相机仍需要时不能恢复建筑。
-
-`BuildingFadeState` 属于建筑实例，只有已识别的 `BuildingShellVisual` 网格替换材质。`ShellMaterialCache` 以建筑和原材质为键复用副本，`ShellMaterialBinding` 保存原句柄与副本归属；共享原始材质不变，外部系统的新绑定不被覆盖。淡化按原 alpha 比例降低，避免使半透明材质变得更不透明；需求解除后经过宽限再恢复原句柄，正常恢复保留缓存，关联失效时释放。过渡参数见 [当前操作](usage.md#当前操作)。
-
-遮挡检测不写相机 `Transform`，不缩距、避让或隐藏自身模型。家具、地板、NPC、包裹、未知部件和非建筑物不参与淡化；额外外壳查询体与玩法碰撞分离，效果不改变阻挡或隔墙拾取规则。
-
-目标有效的第三人称 `OrbitCamera` 参与检测，控制者解绑本身不撤销仍呈现的镜头需求。第一人称、相机或目标失效时撤销对应需求；没有有效第三人称镜头时立即恢复，其他相机仍有效时保留其需求和宽限。暂停冻结检测与过渡，`Last` 仍清理失效绑定和缓存。视觉验收见 [镜头遮挡验收](testing/game-acceptance.md#第三人称遮挡与建筑淡化验收)。
+操作检查器时通过 `ContextActivity<GameplayContext>` 停用输入上下文，而不清空全局底层键盘资源；延迟命令在动作准备前应用。停用触发动作完成或取消，已有移动意图归零，单次动作继续遵循 `require_reset` 的松键要求。F3 释放后未操作检查器时保留原有键盘控制；主菜单和暂停强制停用玩法输入，点击菜单背景不能重新捕获鼠标。
 
 ## 调度与模拟边界
 
@@ -166,16 +148,15 @@ NPC 身体碰撞属于 `World` 层，阻挡人物、自由箱与持箱代理，�
 | 插件构建 | 初始化 `ArtAssets`，由 `FromWorld` 发起五份 GLB 加载；初始化独立的 `ArtLoadState`。 |
 | `Startup` | 记录加载请求并创建菜单输入控制者；玩法、设置、相机与检查器插件分别注册自身初始化日志，启动日志不依赖已生成玩法实体。 |
 | `First` | `limit_frame_rate.before(TimeSystems)` 在引擎更新时钟前补足帧间剩余时间。 |
-| `PreUpdate` | 更新鼠标捕获和菜单上下文，Enhanced Input 评估动作并通过 Observer 更新意图、观察角度或切换请求；动作应用后消费菜单请求及视角切换请求。 |
+| `PreUpdate` | 更新鼠标捕获和菜单上下文，Enhanced Input 评估动作并通过 Observer 更新意图与观察角度；动作应用后消费菜单请求。 |
 | `StateTransition` | 紧随 `PreUpdate`；主菜单入口生成展示舞台，游戏入口准备海岛会话的光照和加载相机，暂停入口清意图并冻结时间，退出状态清理对应实体。 |
 | `FixedFirst` | 落水与释放各自恢复临时暂停的插值通道，均在 `TransformEasingSystems::Reset` 后、`UpdateStart` 前，彼此无全序。 |
 | `FixedUpdate` | 落水恢复 → 转向检查与朝向同步 → `GameplaySystems::Simulate`：接地 → 控制力 → 跳跃 → 交互 → 持物呈现。随后 `CarryPlugin` 链执行失效箱释放 → 孤儿代理清理 → 质量恢复 → 挂接 → 安全对齐 → 真实姿态同步。结构依赖处应用命令；重力同步只约束在 Simulate 前。 |
 | `FixedPostUpdate` | Avian 求解速度、位姿与碰撞。`Writeback` 后持物真实同步与“接地 → 速度日志”是独立分支；落地反馈只依赖 `StepSimulation`，不与日志或回写建立额外全序。 |
 | `FixedLast` | Avian 记录本固定步的插值端点，供渲染帧呈现使用。 |
-| `RunFixedMainLoop` 固定循环之后 | `CameraControlPlugin` 的显示同步链在 `TransformEasingSystems::Ease` 之后、`UpdateEasingTick` 之前执行；依次检查并同步角色朝向、持箱物理姿态、本帧插值后的箱体与 `HeldTarget`、环绕镜头、建筑遮挡需求、建筑淡化和人物可见性。 |
+| `RunFixedMainLoop` 固定循环之后 | `CameraControlPlugin` 的显示同步链在 `TransformEasingSystems::Ease` 之后、`UpdateEasingTick` 之前执行；依次检查并同步角色朝向、持箱物理姿态、本帧插值后的箱体与 `HeldTarget`、第一人称镜头和人物可见性。 |
 | `Update` | 资源轮询、海岛装配链、主角动画链、菜单动画绑定各自运行，彼此无显式全序。UI 局部依赖见 [BSN 页面](#bsn-页面与菜单展示资产)；音效消费在 UI Style 后。 |
 | `PostUpdate` | 骨骼动画求值 → 鞋底视觉补偿 → 变换传播；Egui 检查器为独立分支。布局后同步滚动条；Kira 排队播放阶段后补同步实例增益。 |
-| `Last` | 建筑外壳失效绑定与缓存清理，不受 Running 门控，也不推进正常渐变计时。 |
 
 相机与玩法的固定步顺序由显式依赖表达；跨阶段数据流依赖 Bevy 默认主调度，`PreUpdate` 结束时应用动作命令，完成状态转换后进入固定循环。玩法模拟和相机姿态同步只在 `Running` 执行。一次渲染帧可以没有固定步，也可以有多个固定步，因此输入 Observer 不直接积分角色位置。
 
@@ -203,7 +184,7 @@ NPC 身体碰撞属于 `World` 层，阻挡人物、自由箱与持箱代理，�
 
 持握连接保留拾取瞬间的相对姿态，固定步经连续形状查询后逐步对齐到手前，避免瞬移或穿过障碍；对齐完成后局部姿态固定。人物胶囊与真实箱体形状归属同一动态刚体，箱体撞到 NPC、墙或其他物体时，求解直接阻挡整个组合，人物不能继续追入受阻箱体。
 
-视角始终自由更新。角色同步新水平朝向前，以人物位置为旋转中心，对箱体完整转动路径做连续碰撞查询，覆盖公转、自转和复合形状偏移。`OrbitCamera` 保留动作的有向水平增量，检查后消费一次，180° 或整圈输入也按实际方向扫过；不能只检查终点，也不依赖锁定旋转人物的 CCD 推断显式转向安全。只有转向新引入的阻挡才自动释放，直走接触仍保持持握；释放保留转动前的安全世界姿态与实际运动速度，再让空手人物继续朝向当前视角。
+视角始终自由更新。角色同步新水平朝向前，以人物位置为旋转中心，对箱体完整转动路径做连续碰撞查询，覆盖公转、自转和复合形状偏移。`FirstPersonCamera` 保留动作的有向水平增量，检查后消费一次，180° 或整圈输入也按实际方向扫过；不能只检查终点，也不依赖锁定旋转人物的 CCD 推断显式转向安全。只有转向新引入的阻挡才自动释放，直走接触仍保持持握；释放保留转动前的安全世界姿态与实际运动速度，再让空手人物继续朝向当前视角。
 
 三角网格查询仅在能证明整段路径分离时跳过完整连续查询：使用平面距离、支撑映射与转动位移上界，必要时二分区间；不能把离散安全姿态当作证明。起点分离用零余量，仅同一平面的真实已有接触允许 `0.001 m` 数值余量。有限三角面与方盒采用支持映射最近点查询，复合箱体逐子形状分派；无法证明安全或达到细分上限时回到完整查询，仍阻挡中途薄墙和再次穿入。几何实现见 [carry_rotation.rs](../src/carry_rotation.rs)。
 
@@ -211,7 +192,7 @@ NPC 身体碰撞属于 `World` 层，阻挡人物、自由箱与持箱代理，�
 
 `CarryGrip` 是每件物品相对角色脚底与水平朝向的目标偏移，由场景按模型尺寸设置。实际挂接姿态存于 `HeldAttachment.local_pose`，供真实碰撞和呈现共同读取；拾取对齐朝目标逐步推进，不直接以目标覆盖真实姿态。
 
-`GamePhysicsLayer` 分为 `World`、`Character`、`Parcel` 和仅供相机空间查询的 `CameraQuery`。自由箱体与持箱代理都保留外部碰撞；同一人物刚体内的形状由 Avian 排除自碰，转向查询另按 `ColliderOf.body` 排除整套自身碰撞。`CameraQuery` 实体的空碰撞掩码阻止真实接触，玩法空间查询另外只选前三层；持握不会忽略其他角色所属的 `Character` 层。
+`GamePhysicsLayer` 分为 `World`、`Character` 和 `Parcel`。自由箱体与持箱代理都保留外部碰撞；同一人物刚体内的形状由 Avian 排除自碰，转向查询另按 `ColliderOf.body` 排除整套自身碰撞，持握不会忽略其他角色所属的 `Character` 层。
 
 当持有者销毁、落水或持有关系异常解除时，统一清理连接与失效目标，恢复箱体独立动态刚体、自由碰撞和插值，并还原仍存在的持有者质量。箱体业务根不属于人物子树，因此不会随人物级联消失；恢复独立物理后从安全世界位置自然下落，不把它瞬移到地面。清理记录失效关联及原因日志。
 

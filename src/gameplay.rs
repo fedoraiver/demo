@@ -8,7 +8,7 @@ use crate::app_flow::gameplay_running;
 use crate::audio_events::{SoundCue, SoundEventsPlugin, SoundRequest};
 pub(crate) use crate::carry::sync_held_presentation as sync_held_objects;
 use crate::carry::{CarryPlugin, begin_attachment, release_item};
-use crate::physics::{DemoPhysicsPlugin, gameplay_query_layers};
+use crate::physics::DemoPhysicsPlugin;
 #[cfg(test)]
 use crate::physics::{held_collision_layers, parcel_collision_layers};
 
@@ -202,9 +202,7 @@ fn update_grounded(
 ) {
     let probe = Collider::sphere(config.character_radius * 0.8);
     for (entity, position, velocity, layers, mut motion) in &mut characters {
-        // 相机查询网格不参与接地或拾取，即使其碰撞掩码为空也必须显式排除所属层。
-        let filter =
-            SpatialQueryFilter::from_excluded_entities([entity]).with_mask(gameplay_query_layers());
+        let filter = SpatialQueryFilter::from_excluded_entities([entity]);
         let character_layers = layers.copied().unwrap_or_default();
         let mut grounded = false;
         if velocity.y <= 0.5 {
@@ -403,8 +401,7 @@ fn handle_interaction(
                         direction,
                         offset.length(),
                         true,
-                        &SpatialQueryFilter::from_excluded_entities([character])
-                            .with_mask(gameplay_query_layers()),
+                        &SpatialQueryFilter::from_excluded_entities([character]),
                     )
                     && hit.entity != item
                 {
@@ -655,8 +652,7 @@ mod tests {
                             Quat::IDENTITY,
                             Dir3::NEG_Y,
                             &ShapeCastConfig::from_max_distance(0.12),
-                            &SpatialQueryFilter::from_excluded_entities([character])
-                                .with_mask(gameplay_query_layers()),
+                            &SpatialQueryFilter::from_excluded_entities([character]),
                         )
                         .unwrap();
                     assert_eq!(closest.entity, wall);

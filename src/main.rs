@@ -5,8 +5,6 @@ mod art_assets;
 mod audio;
 mod audio_events;
 mod camera;
-mod camera_fade;
-mod camera_obstruction;
 mod carry;
 #[cfg(test)]
 mod carry_frame_tests;

@@ -343,11 +343,11 @@ fn settings_page(
             template_value(column(theme.size(13.0)))
             Children [
                 setting_row(theme, "Mouse Sensitivity", setting_value(draft, SettingKey::MouseSensitivity), SettingKey::MouseSensitivity, 4,
-                    "Adjust how far the camera turns when you move the mouse. 100% is the default sensitivity. This affects both first-person and third-person views."),
+                    "Adjust how far the first-person camera turns when you move the mouse. 100% is the default sensitivity."),
                 setting_row(theme, "Invert Camera Y", setting_value(draft, SettingKey::InvertY), SettingKey::InvertY, 6,
                     "Reverse vertical mouse movement. When enabled, moving the mouse upward tilts the camera downward."),
                 placeholder_row(theme, "Rebind Keys", false),
-                label(theme, "Move with WASD. Switch your view with I.", 17.0, MUTED),
+                label(theme, "Move with WASD. Look around with the mouse.", 17.0, MUTED),
             ]
         }),
         SettingsTab::Accessibility => Box::new(bsn! {
@@ -527,8 +527,8 @@ fn help_page(theme: &UiTheme) -> impl Scene + use<> {
                         "Move relative to the camera. Build up speed, coast to a stop, and jump while grounded."),
                     help_card(theme, "02", "CARRY & DROP", "E", "E again", "Pick up", "Release",
                         "Get close to a parcel with a clear path. Hold it with physics, then release it to let gravity do the rest."),
-                    help_card(theme, "03", "CAMERA", "Mouse", "I", "Look around", "Switch view",
-                        "Use the mouse to look around. Switch between first-person and third-person. Press Esc to pause."),
+                    help_card(theme, "03", "CAMERA & PAUSE", "Mouse", "Esc", "Look around", "Pause",
+                        "Use the mouse to look around in first-person. Press Esc to pause and resume."),
                 ]
             ),
             (
@@ -956,7 +956,7 @@ mod tests {
                     for paragraph in [
                         "Move relative to the camera. Build up speed, coast to a stop, and jump while grounded.",
                         "Get close to a parcel with a clear path. Hold it with physics, then release it to let gravity do the rest.",
-                        "Use the mouse to look around. Switch between first-person and third-person. Press Esc to pause.",
+                        "Use the mouse to look around in first-person. Press Esc to pause and resume.",
                     ] {
                         let (_, node, transform, parent) = world
                             .query::<(&Text, &ComputedNode, &UiGlobalTransform, &ChildOf)>()

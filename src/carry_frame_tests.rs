@@ -18,7 +18,7 @@ use bevy::{
 };
 
 use crate::{
-    camera::{CameraControlPlugin, ControlsCamera, MouseLookState, OrbitCamera},
+    camera::{CameraControlPlugin, ControlsCamera, FirstPersonCamera, MouseLookState},
     carry::HeldAttachment,
     gameplay::{
         CarryGrip, Character, CharacterIntent, CharacterMotion, GameplayPlugin, GameplaySystems,
@@ -45,11 +45,8 @@ struct CarryFixture {
 
 #[test]
 fn open_mesh_ground_turn_keeps_actual_held_parcel_in_zero_step_frame() {
-    for (first_person, exact_ground_pose) in [false, true]
-        .into_iter()
-        .flat_map(|first_person| [false, true].map(|exact| (first_person, exact)))
-    {
-        let mut fixture = carry_fixture(Some(Vec3::new(0.0, 1.3, -0.48)), first_person);
+    for exact_ground_pose in [false, true] {
+        let mut fixture = carry_fixture(Some(Vec3::new(0.0, 1.3, -0.48)));
         let world = fixture.app.world_mut();
         let ground = world
             .query_filtered::<Entity, (With<RigidBody>, Without<Character>, Without<Pickable>)>()
@@ -121,15 +118,11 @@ fn open_mesh_ground_turn_keeps_actual_held_parcel_in_zero_step_frame() {
 }
 
 /// Window 仅作为 Enhanced Input 所需的 ECS 数据；真实 E 绑定负责建立持握关系。
-fn carry_fixture(grip: Option<Vec3>, first_person: bool) -> CarryFixture {
-    carry_fixture_with_easing(grip, first_person, false)
+fn carry_fixture(grip: Option<Vec3>) -> CarryFixture {
+    carry_fixture_with_easing(grip, false)
 }
 
-fn carry_fixture_with_easing(
-    grip: Option<Vec3>,
-    first_person: bool,
-    preserve_easing_pause: bool,
-) -> CarryFixture {
+fn carry_fixture_with_easing(grip: Option<Vec3>, preserve_easing_pause: bool) -> CarryFixture {
     let mut app = App::new();
     app.add_plugins((
         MinimalPlugins,
@@ -172,11 +165,11 @@ fn carry_fixture_with_easing(
             SpawnPoint(Transform::IDENTITY),
         ))
         .id();
-    let orbit = OrbitCamera::new(character);
-    let camera_pose = orbit.transform(Vec3::ZERO);
+    let camera_state = FirstPersonCamera::new(character);
+    let camera_pose = camera_state.transform(Vec3::ZERO);
     let camera = app
         .world_mut()
-        .spawn((orbit, MouseLookState::default(), camera_pose))
+        .spawn((camera_state, MouseLookState::default(), camera_pose))
         .id();
     let mut commands = app.world_mut().commands();
     let controller = spawn_keyboard_controller(&mut commands, PlayerId(1), character);
@@ -213,16 +206,10 @@ fn carry_fixture_with_easing(
     for _ in 0..20 {
         app.update();
     }
-    if first_person {
-        key(&mut app, window, KeyCode::KeyI, ButtonState::Pressed);
-        app.update();
-        key(&mut app, window, KeyCode::KeyI, ButtonState::Released);
-        app.update();
-    }
-    key(&mut app, window, KeyCode::KeyE, ButtonState::Pressed);
+    interaction_key(&mut app, window, ButtonState::Pressed);
     app.update();
     assert_eq!(app.world().get::<HeldBy>(parcel).unwrap().get(), character);
-    key(&mut app, window, KeyCode::KeyE, ButtonState::Released);
+    interaction_key(&mut app, window, ButtonState::Released);
     app.update();
     // 拾取允许短暂对齐，先完成这段初始化；随后输入后的帧末断言绝不补跑模拟。
     for _ in 0..30 {
@@ -240,16 +227,10 @@ fn carry_fixture_with_easing(
     }
 }
 
-fn key(app: &mut App, window: Entity, key_code: KeyCode, state: ButtonState) {
+fn interaction_key(app: &mut App, window: Entity, state: ButtonState) {
     app.world_mut().write_message(KeyboardInput {
-        key_code,
-        logical_key: Key::Character(
-            match key_code {
-                KeyCode::KeyI => "i",
-                _ => "e",
-            }
-            .into(),
-        ),
+        key_code: KeyCode::KeyE,
+        logical_key: Key::Character("e".into()),
         state,
         text: None,
         repeat: false,
@@ -317,35 +298,33 @@ fn actual_held_parcel_and_visual_follow_fast_turns_at_each_frame_end() {
         Duration::from_secs_f64(1.0 / 120.0),
         Duration::from_secs_f64(1.0 / 240.0),
     ] {
-        for first_person in [false, true] {
-            for grip in [
-                None,
-                Some(Vec3::new(0.0, 1.3, -0.48)),
-                Some(Vec3::new(0.0, 1.3, -0.62)),
-            ] {
-                let mut fixture = carry_fixture(grip, first_person);
-                fixture
-                    .app
-                    .insert_resource(TimeUpdateStrategy::ManualDuration(duration));
-                let mut zero_steps = 0;
-                let mut multiple_steps = 0;
-                for frame in 0..16 {
-                    let before = fixture.app.world().resource::<Time<Fixed>>().elapsed();
-                    fixture.app.world_mut().write_message(MouseMotion {
-                        delta: Vec2::new(if frame % 2 == 0 { 180.0 } else { -130.0 }, 0.0),
-                    });
-                    fixture.app.update();
-                    // 不补跑固定步、姿态系统或变换传播；这里就是用户看到的本帧状态。
-                    assert_held_pose(&fixture);
-                    let advanced = fixture.app.world().resource::<Time<Fixed>>().elapsed() - before;
-                    zero_steps += usize::from(advanced.is_zero());
-                    multiple_steps += usize::from(advanced.as_secs_f64() > 1.5 / 60.0);
-                }
-                if duration == Duration::from_millis(50) {
-                    assert!(multiple_steps > 0);
-                } else {
-                    assert!(zero_steps > 0);
-                }
+        for grip in [
+            None,
+            Some(Vec3::new(0.0, 1.3, -0.48)),
+            Some(Vec3::new(0.0, 1.3, -0.62)),
+        ] {
+            let mut fixture = carry_fixture(grip);
+            fixture
+                .app
+                .insert_resource(TimeUpdateStrategy::ManualDuration(duration));
+            let mut zero_steps = 0;
+            let mut multiple_steps = 0;
+            for frame in 0..16 {
+                let before = fixture.app.world().resource::<Time<Fixed>>().elapsed();
+                fixture.app.world_mut().write_message(MouseMotion {
+                    delta: Vec2::new(if frame % 2 == 0 { 180.0 } else { -130.0 }, 0.0),
+                });
+                fixture.app.update();
+                // 不补跑固定步、姿态系统或变换传播；这里就是用户看到的本帧状态。
+                assert_held_pose(&fixture);
+                let advanced = fixture.app.world().resource::<Time<Fixed>>().elapsed() - before;
+                zero_steps += usize::from(advanced.is_zero());
+                multiple_steps += usize::from(advanced.as_secs_f64() > 1.5 / 60.0);
+            }
+            if duration == Duration::from_millis(50) {
+                assert!(multiple_steps > 0);
+            } else {
+                assert!(zero_steps > 0);
             }
         }
     }
@@ -353,19 +332,14 @@ fn actual_held_parcel_and_visual_follow_fast_turns_at_each_frame_end() {
 
 #[test]
 fn released_parcel_keeps_its_identity_and_stops_following_zero_step_turns() {
-    let mut fixture = carry_fixture(Some(Vec3::new(0.0, 1.3, -0.48)), false);
+    let mut fixture = carry_fixture(Some(Vec3::new(0.0, 1.3, -0.48)));
     let proxy = fixture
         .app
         .world()
         .get::<HeldAttachment>(fixture.parcel)
         .unwrap()
         .collider;
-    key(
-        &mut fixture.app,
-        fixture.window,
-        KeyCode::KeyE,
-        ButtonState::Pressed,
-    );
+    interaction_key(&mut fixture.app, fixture.window, ButtonState::Pressed);
     fixture.app.update();
     let world = fixture.app.world();
     assert!(world.get::<HeldBy>(fixture.parcel).is_none());
@@ -387,12 +361,7 @@ fn released_parcel_keeps_its_identity_and_stops_following_zero_step_turns() {
     fixture
         .app
         .insert_resource(TimeUpdateStrategy::ManualDuration(Duration::ZERO));
-    key(
-        &mut fixture.app,
-        fixture.window,
-        KeyCode::KeyE,
-        ButtonState::Released,
-    );
+    interaction_key(&mut fixture.app, fixture.window, ButtonState::Released);
     for _ in 0..8 {
         fixture.app.world_mut().write_message(MouseMotion {
             delta: Vec2::X * 200.0,
@@ -435,7 +404,7 @@ fn full_turn_checks_the_arc_even_when_the_final_pose_is_unchanged() {
 }
 
 fn assert_blocked_turn_arc_releases(angle: f32) {
-    let mut fixture = carry_fixture(None, false);
+    let mut fixture = carry_fixture(None);
     let character_position = fixture
         .app
         .world()
@@ -508,7 +477,7 @@ fn assert_blocked_turn_arc_releases(angle: f32) {
     }
     let character = world.get::<Transform>(fixture.character).unwrap();
     let expected_camera = world
-        .get::<OrbitCamera>(fixture.camera)
+        .get::<FirstPersonCamera>(fixture.camera)
         .unwrap()
         .transform(character.translation);
     let camera = world.get::<Transform>(fixture.camera).unwrap();
@@ -517,12 +486,14 @@ fn assert_blocked_turn_arc_releases(angle: f32) {
             .translation
             .abs_diff_eq(expected_camera.translation, 0.0001)
     );
-    let requested_position = character.translation
-        + Vec3::Y * 0.8
-        + Quat::from_rotation_y(angle) * Vec3::new(0.0, 5.2, 8.0);
+    let requested_position = character.translation + Vec3::Y * 1.65;
     assert!(
         camera.translation.abs_diff_eq(requested_position, 0.0001),
-        "The orbit camera must complete the requested turn despite the parcel obstruction"
+        "The first-person camera must stay at eye height despite the parcel obstruction"
+    );
+    assert!(
+        (*camera.forward()).abs_diff_eq(Quat::from_rotation_y(angle) * Vec3::NEG_Z, 0.0001),
+        "The first-person camera must complete the requested turn despite the parcel obstruction"
     );
 }
 
@@ -612,7 +583,7 @@ fn assert_free_after_recovery(fixture: &CarryFixture) {
 
 #[test]
 fn actual_attachment_holder_water_recovery_releases_dry_parcel_at_its_real_pose() {
-    let mut fixture = carry_fixture(Some(Vec3::new(0.0, 1.3, -0.48)), false);
+    let mut fixture = carry_fixture(Some(Vec3::new(0.0, 1.3, -0.48)));
     assert_held_pose(&fixture);
     // 先让组合体获得真实平移速度，避免错误清零也能通过释放速度断言。
     fixture
@@ -689,7 +660,7 @@ fn actual_attachment_holder_water_recovery_releases_dry_parcel_at_its_real_pose(
 
 #[test]
 fn actual_attachment_parcel_water_recovery_restores_own_spawn_and_easing_pause() {
-    let mut fixture = carry_fixture_with_easing(Some(Vec3::new(0.0, 1.3, -0.48)), false, true);
+    let mut fixture = carry_fixture_with_easing(Some(Vec3::new(0.0, 1.3, -0.48)), true);
     assert_held_pose(&fixture);
     let character_position = fixture
         .app
@@ -777,7 +748,7 @@ struct RecoveryOrderShift;
 #[test]
 fn actual_attachment_simultaneous_water_recovery_uses_item_spawn_in_both_query_orders() {
     for parcel_first in [false, true] {
-        let mut fixture = carry_fixture(Some(Vec3::new(0.0, 1.3, -0.48)), false);
+        let mut fixture = carry_fixture(Some(Vec3::new(0.0, 1.3, -0.48)));
         assert_held_pose(&fixture);
         // 测试标记只把指定实体移到后创建的 archetype，明确覆盖两种恢复迭代顺序。
         let last = if parcel_first {
