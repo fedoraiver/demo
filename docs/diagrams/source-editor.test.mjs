@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import vm from 'node:vm';
 import { inferWorkspaceRoot, normalizeWorkspaceRoot, sourceEditorAssets, vscodeUri } from './source-editor.mjs';
+import { testDocument } from './test-dom.mjs';
 
 test('normalizes Windows, UNC and POSIX absolute workspace roots without depending on the host OS', () => {
   assert.equal(normalizeWorkspaceRoot(' d:\\worktrees\\diagram\\demo\\ '), 'D:/worktrees/diagram/demo');
@@ -45,6 +46,31 @@ test('builds exact VS Code line and column URIs for Windows, UNC and POSIX paths
   assert.equal(vscodeUri('C:/', { path: 'main.rs', line: 1 }), 'vscode://file/C:/main.rs:1:1');
   assert.equal(vscodeUri('D:/工作 目录#%', { path: 'src/中文 #%.rs', line: 5, column: 9 }),
     'vscode://file/D:/%E5%B7%A5%E4%BD%9C%20%E7%9B%AE%E5%BD%95%23%25/src/%E4%B8%AD%E6%96%87%20%23%25.rs:5:9');
+});
+
+test('Cargo dependency locations use their validated root independently of the project workspace', () => {
+  const source = { path: 'src/中文 #%.rs', line: 5, column: 9, dependency: { name: 'avian3d', version: '0.7.0', root: 'C:/Cargo 缓存 #%/avian3d-0.7.0' } };
+  const expected = 'vscode://file/C:/Cargo%20%E7%BC%93%E5%AD%98%20%23%25/avian3d-0.7.0/src/%E4%B8%AD%E6%96%87%20%23%25.rs:5:9';
+  for (const workspace of [null, undefined, 'relative', 'E:/other-project']) assert.equal(vscodeUri(workspace, source), expected);
+  assert.equal(vscodeUri(null, { ...source, dependency: { ...source.dependency, root: '//server/share/cargo/avian3d-0.7.0' } }),
+    'vscode://file//server/share/cargo/avian3d-0.7.0/src/%E4%B8%AD%E6%96%87%20%23%25.rs:5:9');
+  assert.equal(vscodeUri(null, { ...source, dependency: { name: 'some-crate_name', version: '1.2.3-beta.1+build.2', root: '/home/user/cargo' } }),
+    'vscode://file/home/user/cargo/src/%E4%B8%AD%E6%96%87%20%23%25.rs:5:9');
+});
+
+test('dependency identities, roots and relative paths cannot become arbitrary editor targets', () => {
+  const dependency = { name: 'avian3d', version: '0.7.0', root: 'C:/cargo/avian3d-0.7.0' };
+  const source = { path: 'src/lib.rs', line: 1, dependency };
+  for (const value of [null, {}, { ...dependency, name: '../avian' }, { ...dependency, name: 'a b' },
+    { ...dependency, version: '0.7' }, { ...dependency, version: '0.7.0/other' },
+    { ...dependency, root: 'relative' }, { ...dependency, root: 'https://example.test/' },
+    { ...dependency, root: 'C:/cargo\n/avian' }, { ...dependency, root: '/../../outside' }]) {
+    assert.throws(() => vscodeUri('D:/demo', { ...source, dependency: value }));
+  }
+  for (const path of ['../lib.rs', '/absolute.rs', 'C:/absolute.rs', 'src/../lib.rs', 'src/\ud800.rs']) {
+    assert.throws(() => vscodeUri(null, { ...source, path }), /source|Source/);
+  }
+  assert.throws(() => vscodeUri(null, { path: 'src/main.rs', line: 1 }), /workspace|Workspace/);
 });
 
 test('rejects path traversal, absolute source paths and invalid coordinates', () => {
@@ -103,6 +129,11 @@ class Element {
   }
   querySelector(selector) { return this.querySelectorAll(selector)[0] || null; }
   append(...elements) { for (const element of elements) { element.parent = this; this.children.push(element); } }
+  remove() {
+    if (!this.parent) return;
+    this.parent.children.splice(this.parent.children.indexOf(this), 1);
+    this.parent = null;
+  }
   insertAdjacentElement(position, element) {
     assert.equal(position, 'afterend');
     element.parent = this.parent;
@@ -129,10 +160,9 @@ function memoryStorage() {
   return { values, getItem: key => values.get(key), setItem: (key, value) => values.set(key, value), removeItem: key => values.delete(key) };
 }
 
-function browserFixture(pageUrl, { storage = memoryStorage(), clipboard, storageAccessBlocked = false, historyBlocked = false } = {}) {
+function browserFixture(pageUrl, { storage = memoryStorage(), clipboard, dependency, storageAccessBlocked = false, historyBlocked = false, historyState = null } = {}) {
   const document = new Element('document');
   document.createElement = name => new Element(name);
-  const status = new Element('p', { 'data-workspace-status': '' });
   const dialog = new Element('dialog', { 'data-workspace-dialog': '' });
   const input = new Element('input', { 'data-workspace-root': '' });
   const error = new Element('p', { 'data-workspace-error': '' });
@@ -144,23 +174,42 @@ function browserFixture(pageUrl, { storage = memoryStorage(), clipboard, storage
   const config = new Element('button', { 'data-workspace-config': '' });
   const container = new Element('div');
   const editorLink = new Element('a', { 'data-vscode-path': 'src/中文 #%.rs', 'data-vscode-line': '8' });
+  if (dependency) for (const [key, value] of Object.entries(dependency)) editorLink.dataset['vscodeDependency' + key[0].toUpperCase() + key.slice(1)] = value;
   const offlineLink = new Element('a', { href: 'ecs-source.html?file=src%2Fmain.rs#L8' });
   container.append(editorLink, offlineLink);
-  document.append(status, dialog, config, container);
+  document.append(dialog, config, container);
   const historyCalls = [];
+  const timers = new Map();
+  let now = 0, timerId = 0;
   const location = { href: pageUrl };
   const context = vm.createContext({ document, URL, location, localStorage: storage,
-    navigator: { clipboard }, history: { replaceState: (...args) => {
+    setTimeout: (callback, delay) => { const id = ++timerId; timers.set(id, { callback, at: now + delay }); return id; },
+    clearTimeout: id => timers.delete(id),
+    navigator: { clipboard }, history: { state: historyState, replaceState: (...args) => {
       if (historyBlocked) throw new Error('History unavailable');
       historyCalls.push(args);
       location.href = args[2];
     } } });
   if (storageAccessBlocked) Object.defineProperty(context, 'localStorage', { get() { throw new Error('Storage unavailable'); } });
   vm.runInContext(sourceEditorAssets().script + '\nglobalThis.editor = sourceEditor;', context);
-  return { editor: context.editor, document, editorLink, offlineLink, status, dialog, input, error, form, config,
+  return { editor: context.editor, document, editorLink, offlineLink, dialog, input, error, form, config,
     container, reset, historyCalls, location, storage, field: () => container.querySelector('[data-source-location]')?.children[0],
-    copy: () => container.querySelector('[data-source-location]')?.children[1] };
+    copy: () => container.querySelector('[data-source-location]')?.children[1],
+    feedback: () => container.querySelector('[data-source-copy-feedback]'),
+    advance(milliseconds) {
+      now += milliseconds;
+      for (const [id, timer] of [...timers]) if (timer.at <= now) { timers.delete(id); timer.callback(); }
+    },
+  };
 }
+
+test('workspace configuration preserves the current architecture expansion history state', () => {
+  const historyState = { architectureEntityModes: { 'infrastructure-data': 'entity-camera' }, other: 12 };
+  const page = browserFixture('https://example.com/docs/diagrams/ecs-architecture.html?feature=infrastructure&tab=data', { historyState });
+  page.editor.configure('D:/demo');
+  assert.equal(page.historyCalls.at(-1)[0], historyState);
+  assert.equal(new URL(page.historyCalls.at(-1)[2]).searchParams.get('feature'), 'infrastructure');
+});
 
 test('HTTP pages require explicit configuration and configure only after a user action', async () => {
   const page = browserFixture('https://example.com/demo/docs/diagrams/ecs-architecture.html');
@@ -168,6 +217,7 @@ test('HTTP pages require explicit configuration and configure only after a user 
   assert.equal(page.editor.state, 'unconfigured');
   assert.equal(page.field().value, 'src/中文 #%.rs:8:1');
   assert.equal(page.editorLink.href, '#workspace-config');
+  assert.equal(page.editorLink.title, '先配置本机仓库根目录。');
   assert.equal(page.historyCalls.length, 0);
   const initialClick = await page.document.dispatch('click', page.editorLink);
   assert.equal(initialClick.defaultPrevented, true);
@@ -183,12 +233,57 @@ test('HTTP pages require explicit configuration and configure only after a user 
   assert.equal(page.dialog.open, false);
   assert.equal(page.field().value, 'D:/本机 副本/src/中文 #%.rs:8:1');
   assert.equal(page.editorLink.href, vscodeUri('D:/本机 副本', { path: 'src/中文 #%.rs', line: 8 }));
-  assert.equal(page.status.dataset.state, 'configured');
+  assert.equal(page.editor.state, 'configured');
   const editorClick = await page.document.dispatch('click', page.editorLink);
   assert.equal(editorClick.defaultPrevented, false);
-  assert.equal(page.status.dataset.state, 'editor_requested');
-  assert.match(page.status.textContent, /已请求浏览器/);
-  assert.match(page.status.textContent, /未安装或拒绝协议/);
+  assert.equal(page.editorLink.href, vscodeUri('D:/本机 副本', { path: 'src/中文 #%.rs', line: 8 }));
+  assert.equal(page.document.querySelector('[data-workspace-status]'), null);
+});
+
+test('dependency editor links and copy locations work on HTTP without configuring a project', async () => {
+  const dependency = { name: 'avian3d', version: '0.7.0', root: 'C:/Cargo & 中文 #%/avian3d-0.7.0' };
+  const copied = [];
+  for (const query of ['', '?workspace=relative', '?workspace=E%3A%2Fother']) {
+    const page = browserFixture('https://example.test/docs/diagrams/ecs-source.html' + query,
+      { dependency, clipboard: { writeText: async value => copied.push(value) } });
+    assert.equal(page.editorLink.href, vscodeUri(null, { path: 'src/中文 #%.rs', line: 8, dependency }));
+    assert.equal(page.editorLink.dataset.workspaceState, 'ready');
+    assert.equal(page.field().value, dependency.root + '/src/中文 #%.rs:8:1');
+    assert.equal((await page.document.dispatch('click', page.editorLink)).defaultPrevented, false);
+    assert.notEqual(page.dialog.open, true);
+    await page.copy().dispatch('click');
+    assert.equal(page.copy().textContent, '已复制');
+    page.editor.configure('F:/changed-project');
+    assert.equal(page.field().value, dependency.root + '/src/中文 #%.rs:8:1');
+    page.advance(2000);
+    assert.equal(page.copy().textContent, '复制定位');
+  }
+  assert.deepEqual(copied, Array(3).fill(dependency.root + '/src/中文 #%.rs:8:1'));
+  const invalid = browserFixture('https://example.test/docs/diagrams/ecs-source.html', { dependency: { name: 'avian3d', version: '0.7.0' } });
+  assert.equal(invalid.editorLink.href, null);
+  assert.equal(invalid.field(), undefined);
+  assert.equal((await invalid.document.dispatch('click', invalid.editorLink)).defaultPrevented, true);
+});
+
+test('dependency copy feedback follows only the latest request and current dependency location', async () => {
+  const pending = [], dependency = { name: 'avian3d', version: '0.7.0', root: 'C:/cargo/avian3d-0.7.0' };
+  const page = browserFixture('https://example.test/docs/diagrams/ecs-source.html', {
+    dependency, clipboard: { writeText() { const copy = deferred(); pending.push(copy); return copy.promise; } },
+  });
+  const earlier = page.copy().dispatch('click'), latest = page.copy().dispatch('click');
+  pending[1].resolve(); await latest;
+  pending[0].resolve(); await earlier;
+  assert.equal(page.copy().textContent, '已复制');
+  const moving = page.copy().dispatch('click');
+  page.editorLink.dataset.vscodeDependencyRoot = 'D:/different-cargo/avian3d-0.7.0';
+  page.editor.refreshLinks();
+  pending[2].resolve(); await moving;
+  assert.equal(page.copy().textContent, '复制定位');
+  assert.equal(page.field().value, 'D:/different-cargo/avian3d-0.7.0/src/中文 #%.rs:8:1');
+  const denied = page.copy().dispatch('click');
+  pending[3].reject(new Error('Denied')); await denied;
+  assert.equal(page.field().selected, true);
+  assert.match(page.feedback().textContent, /请手动复制/);
 });
 
 test('file inference is editable and stored roots are isolated by page directory and worktree', () => {
@@ -232,7 +327,7 @@ test('unavailable browser storage still permits in-memory configuration and page
   const page = browserFixture('https://example.com/demo/docs/diagrams/ecs-source.html', { storage: unavailable });
   page.editor.configure('/home/user/current');
   assert.equal(page.editor.root, '/home/user/current');
-  assert.match(page.status.textContent, /未保存配置/);
+  assert.equal(page.editor.state, 'configured');
   assert.equal(new URL(page.offlineLink.href).searchParams.get('workspace'), '/home/user/current');
   const another = browserFixture(page.editor.withWorkspace('ecs-architecture.html'), { storage: unavailable });
   assert.equal(another.editor.root, '/home/user/current');
@@ -294,23 +389,144 @@ test('copy fallback selects the complete location and does not depend on protoco
   const page = browserFixture('file:///D:/demo/docs/diagrams/ecs-source.html');
   await page.copy().dispatch('click');
   assert.equal(page.field().selected, true);
-  assert.equal(page.status.dataset.state, 'copy_unavailable');
+  assert.equal(page.field().focused, true);
+  assert.match(page.feedback().textContent, /请手动复制/);
+  assert.equal(page.feedback().getAttribute('role'), 'status');
+  assert.equal(page.copy().textContent, '复制定位');
   const copied = [];
   const supported = browserFixture('file:///D:/demo/docs/diagrams/ecs-source.html', { clipboard: { writeText: async value => copied.push(value) } });
   await supported.copy().dispatch('click');
   assert.deepEqual(copied, ['D:/demo/src/中文 #%.rs:8:1']);
-  assert.equal(supported.status.dataset.state, 'location_copied');
+  assert.equal(supported.copy().textContent, '已复制');
+  assert.equal(supported.copy().getAttribute('aria-live'), 'polite');
+  assert.equal(supported.feedback().textContent, '');
+  supported.advance(1999);
+  assert.equal(supported.copy().textContent, '已复制');
+  supported.advance(1);
+  assert.equal(supported.copy().textContent, '复制定位');
 });
 
-test('assets remain fully inline with snapshot and current-file guidance', () => {
+function deferred() {
+  let resolve, reject;
+  const promise = new Promise((yes, no) => { resolve = yes; reject = no; });
+  return { promise, resolve, reject };
+}
+
+test('copy success is announced only after the clipboard resolves and stays local to its control', async () => {
+  const pending = deferred(), copied = [];
+  const page = browserFixture('file:///D:/demo/docs/diagrams/ecs-source.html', {
+    clipboard: { writeText(value) { copied.push(value); return pending.promise; } },
+  });
+  const other = new Element('a', { 'data-vscode-path': 'src/other.rs', 'data-vscode-line': '3' });
+  page.container.append(other);
+  page.editor.refreshLinks();
+  page.editor.refreshLinks();
+  const controls = page.container.querySelectorAll('[data-source-location]');
+  assert.equal(controls.length, 2);
+  const click = page.copy().dispatch('click');
+  assert.equal(page.copy().textContent, '复制定位');
+  assert.equal(page.feedback().textContent, '');
+  pending.resolve();
+  await click;
+  assert.deepEqual(copied, ['D:/demo/src/中文 #%.rs:8:1']);
+  assert.equal(page.copy().textContent, '已复制');
+  assert.equal(controls[1].children[1].textContent, '复制定位');
+  assert.equal(controls[1].children[2].textContent, '');
+});
+
+test('a changed location discards a pending result and clears success without losing the reused controls', async () => {
+  const pending = [];
+  const page = browserFixture('file:///D:/demo/docs/diagrams/ecs-source.html', {
+    clipboard: { writeText() { const copy = deferred(); pending.push(copy); return copy.promise; } },
+  });
+  const original = page.field(), click = page.copy().dispatch('click');
+  page.editorLink.dataset.vscodeLine = '42';
+  page.editor.refreshLinks();
+  pending[0].resolve();
+  await click;
+  assert.equal(page.field(), original);
+  assert.equal(page.field().value, 'D:/demo/src/中文 #%.rs:42:1');
+  assert.equal(page.copy().textContent, '复制定位');
+  const next = page.copy().dispatch('click');
+  pending[1].resolve();
+  await next;
+  assert.equal(page.copy().textContent, '已复制');
+  page.editor.configure('E:/changed');
+  assert.equal(page.copy().textContent, '复制定位');
+  page.advance(2000);
+  assert.equal(page.field().value, 'E:/changed/src/中文 #%.rs:42:1');
+  assert.equal(page.copy().textContent, '复制定位');
+});
+
+test('removed or hidden copy controls discard pending success and rejection without focus or feedback', async () => {
+  for (const outcome of ['resolve', 'reject']) for (const state of ['removed', 'hidden']) {
+    const pending = deferred();
+    const page = browserFixture('file:///D:/demo/docs/diagrams/ecs-source.html', {
+      clipboard: { writeText: () => pending.promise },
+    });
+    const controls = page.container.querySelector('[data-source-location]'), field = page.field(), button = page.copy(), feedback = page.feedback();
+    const click = button.dispatch('click');
+    if (state === 'removed') page.container.remove();
+    else { page.editorLink.hidden = true; page.editor.refreshLinks(); }
+    pending[outcome](outcome === 'reject' ? new Error('Permission denied') : undefined);
+    await click;
+    assert.equal(button.textContent, '复制定位', state + '/' + outcome);
+    assert.equal(feedback.textContent, '', state + '/' + outcome);
+    assert.notEqual(field.focused, true, state + '/' + outcome);
+    if (state === 'hidden') assert.equal(controls.hidden, true);
+  }
+});
+
+test('repeated copy requests retain only the latest completion and its two-second feedback interval', async () => {
+  const pending = [];
+  const page = browserFixture('file:///D:/demo/docs/diagrams/ecs-source.html', {
+    clipboard: { writeText() { const copy = deferred(); pending.push(copy); return copy.promise; } },
+  });
+  const earlier = page.copy().dispatch('click'), latest = page.copy().dispatch('click');
+  pending[1].resolve();
+  await latest;
+  assert.equal(page.copy().textContent, '已复制');
+  page.advance(1000);
+  pending[0].resolve();
+  await earlier;
+  page.advance(999);
+  assert.equal(page.copy().textContent, '已复制');
+  page.advance(1);
+  assert.equal(page.copy().textContent, '复制定位');
+});
+
+test('clipboard rejection keeps feedback beside the current location and a retry clears the old failure', async () => {
+  let reject = true;
+  const page = browserFixture('file:///D:/demo/docs/diagrams/ecs-source.html', {
+    clipboard: { async writeText() { if (reject) throw new Error('Permission denied'); } },
+  });
+  await page.copy().dispatch('click');
+  assert.match(page.feedback().textContent, /请手动复制/);
+  assert.equal(page.field().selected, true);
+  reject = false;
+  await page.copy().dispatch('click');
+  assert.equal(page.feedback().textContent, '');
+  assert.equal(page.copy().textContent, '已复制');
+});
+
+test('shared assets keep only configuration controls and omit the bottom status and explanatory paragraphs', () => {
   const assets = sourceEditorAssets();
   assert.deepEqual(Object.keys(assets), ['style', 'markup', 'script']);
   assert.match(assets.script, /^const sourceEditor =/);
   assert.doesNotMatch(assets.script, /\b(?:fetch|import)\s*\(/);
   assert.doesNotMatch(assets.markup, /<script[^>]+src=/);
-  assert.match(assets.markup, /离线源码页显示生成时保存的快照/);
-  assert.match(assets.markup, /行号可能已经变化/);
-  assert.match(assets.markup, /分享前移除个人路径/);
+  assert.doesNotMatch(assets.markup, /data-workspace-status|source-editor-status/);
+  assert.doesNotMatch(assets.style, /source-editor-status/);
+  const document = testDocument(assets.markup);
+  const dialog = document.querySelector('[data-workspace-dialog]');
+  assert.ok(dialog);
+  assert.ok(dialog.querySelector('[data-workspace-root]'));
+  assert.equal(dialog.querySelectorAll('p').length, 1);
+  assert.equal(dialog.querySelector('p').getAttribute('data-workspace-error'), '');
+  assert.equal(dialog.querySelectorAll('button').length, 3);
+  assert.match(dialog.textContent, /保存目录/);
+  assert.match(dialog.textContent, /恢复默认/);
+  assert.match(dialog.textContent, /取消/);
 });
 
 test('line anchors remain fragment-only instead of reloading the source page with workspace parameters', () => {

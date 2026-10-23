@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { sourceEditorAssets } from './source-editor.mjs';
 
-/** 写入 ecs-source.html；sources 为带有仓库相对路径和完整文本的源码快照。 */
+/** 写入 ecs-source.html；快照使用逻辑路径，依赖文件可另带真实源码 source 定位。 */
 export function writeSourceViewer({ outputDirectory, sources }) {
   const editorAssets = sourceEditorAssets();
   // 转义脚本容器的边界字符，避免源码中的 </script> 提前结束 JSON 数据块。
@@ -16,16 +16,16 @@ export function writeSourceViewer({ outputDirectory, sources }) {
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>ECS 架构源码</title>
 <style>
-:root{color-scheme:light;font-family:'Segoe UI','Microsoft YaHei',sans-serif;color:#263648;background:#f7f8fa}
+:root{font-family:'Segoe UI','Microsoft YaHei',sans-serif;color:var(--ui-text);background:var(--ui-bg)}
 *{box-sizing:border-box}body{margin:0;height:100vh;display:flex;flex-direction:column}
-header{padding:18px 24px 14px;border-bottom:1px solid #dae2e8;background:#fff}h1{font-size:21px;margin:0 0 8px}
+header{padding:20px 24px 16px;border-bottom:1px solid var(--ui-border);background:var(--ui-surface)}h1{font-size:21px;line-height:1.4;margin:0 0 14px}
 .toolbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap}label{display:flex;align-items:center;gap:8px}
-select{font:inherit;max-width:min(70vw,620px);padding:5px 8px;border:1px solid #aebdca;border-radius:4px;background:#fff;color:inherit}
-a{color:#235f92}p{font-size:13px;color:#576779;margin:10px 0 0}#status{min-height:1.4em}#status:empty{display:none}
+select{max-width:min(70vw,620px);padding:6px 10px}
+p{font-size:13px;color:var(--ui-muted);margin:10px 0 0}#status{min-height:1.4em;color:var(--ui-accent)}#summary:empty,#status:empty{display:none}
 main{flex:1;min-height:0;overflow:auto;overscroll-behavior:contain;outline-offset:-3px;background:#fff}
 #code{position:relative;min-width:100%;width:max-content;font:14px/1.65 Consolas,'Cascadia Code',monospace;tab-size:4;padding:12px 0}
 .code-line{display:flex;min-height:23.1px;padding-right:24px;white-space:pre}.line-number{flex:0 0 76px;padding-right:16px;text-align:right;text-decoration:none;color:#718092;user-select:none;border-right:1px solid #e3e9ed;margin-right:16px}
-.line-number:hover{color:#235f92;background:#edf4f9}.code-line.selected{background:#fff0c8;box-shadow:inset 3px 0 #c88916}.code-line.selected .line-number{color:#815600;font-weight:700}
+.line-number:hover{color:var(--ui-accent);background:var(--ui-active)}.code-line.selected{background:var(--ui-active);box-shadow:inset 3px 0 var(--ui-accent)}.code-line.selected .line-number{color:var(--ui-accent);font-weight:700}
 #empty{padding:28px 24px;color:#576779}#empty[hidden]{display:none}code{font:inherit}
 @media(max-width:600px){header{padding:14px 16px}.line-number{flex-basis:52px;margin-right:10px;padding-right:10px}#code{font-size:12px}}
 ${editorAssets.style}
@@ -36,8 +36,7 @@ ${editorAssets.style}
 <h1>ECS 架构源码</h1>
 <div class="toolbar"><label for="file">文件 <select id="file" aria-label="选择源码文件"></select></label><a href="ecs-architecture.html">返回架构图</a><button type="button" data-workspace-config>配置工作区</button></div>
 <div class="source-actions"><a id="editor-open" data-vscode-path="" data-vscode-line="1" hidden>在 VS Code 中打开</a></div>
-<p id="summary">这是生成架构图时保存的源码快照。点击行号可以更新当前定位链接。</p>
-<p>VS Code 打开当前工作区文件；文件修改后，快照行号可能不再对应同一段代码。</p>
+<p id="summary"></p>
 <p id="status" role="status" aria-live="polite"></p>
 </header>
 <main id="scroller" tabindex="0" aria-label="完整源码，可滚动"><div id="empty" hidden></div><div id="code"></div></main>
@@ -46,7 +45,7 @@ ${editorAssets.markup}
 <script>${editorAssets.script}</script>
 <script>
 const sources = JSON.parse(document.getElementById('sources').textContent);
-const files = new Map(sources.map(source => [source.path, source.text]));
+const files = new Map(sources.map(source => [source.path, source]));
 const selector = document.getElementById('file');
 const scroller = document.getElementById('scroller');
 const code = document.getElementById('code');
@@ -93,18 +92,27 @@ function locateLine() {
 function showFile() {
   const requested = new URLSearchParams(location.search).get('file');
   const file = requested === null ? sources[0]?.path : requested;
-  const text = files.get(file);
+  const snapshot = files.get(file);
+  const text = snapshot?.text;
   code.replaceChildren();
   scroller.scrollTop = 0;
   selector.value = files.has(file) ? file : '';
   editorLink.hidden = !files.has(file);
-  editorLink.dataset.vscodePath = files.has(file) ? file : '';
+  const source = snapshot?.source || (snapshot ? { path: file, line: 1 } : null);
+  editorLink.dataset.vscodePath = source?.path || '';
+  editorLink.dataset.vscodeColumn = String(source?.column || 1);
+  for (const key of ['Name', 'Version', 'Root']) delete editorLink.dataset['vscodeDependency' + key];
+  if (source?.dependency) {
+    editorLink.dataset.vscodeDependencyName = source.dependency.name;
+    editorLink.dataset.vscodeDependencyVersion = source.dependency.version;
+    editorLink.dataset.vscodeDependencyRoot = source.dependency.root;
+  }
   empty.hidden = true;
-  summary.textContent = '这是生成架构图时保存的源码快照。点击行号可以更新当前定位链接。';
+  summary.textContent = '';
   if (text === undefined || text === '') {
     empty.hidden = false;
     empty.textContent = text === '' ? '此文件为空。' : !sources.length ? '此快照未包含源码文件。' : file ? '快照中找不到文件：' + file : '请选择一个源码文件。';
-    if (files.has(file)) summary.textContent = file + ' · 空文件 · 生成时的源码快照';
+    if (files.has(file)) summary.textContent = file + ' · 空文件';
     locateLine();
     return;
   }
@@ -127,7 +135,7 @@ function showFile() {
     fragment.append(row);
   });
   code.append(fragment);
-  summary.textContent = file + ' · ' + lines.length + ' 行 · 生成时的源码快照';
+  summary.textContent = file + ' · ' + lines.length + ' 行';
   document.title = file + ' — ECS 架构源码';
   locateLine();
 }

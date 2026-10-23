@@ -6,109 +6,10 @@ import test from 'node:test';
 import vm from 'node:vm';
 import { fileURLToPath } from 'node:url';
 import { writeSourceViewer } from './source-viewer.mjs';
+import { Element, parseMarkup, scriptsIn } from './test-dom.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const temporaryRoot = path.join(root, 'tmp', 'source-viewer-tests');
-const dataKey = attribute => attribute.slice(5).replace(/-([a-z])/g, (_, letter) => letter.toUpperCase());
-const decode = value => value.replace(/&(?:amp|lt|gt|quot|#39);/g, entity =>
-  ({ '&amp;': '&', '&lt;': '<', '&gt;': '>', '&quot;': '"', '&#39;': "'" })[entity]);
-
-// 只模拟脚本用到的 DOM 契约，解析实际生成标记，避免复制页面业务逻辑。
-class Element {
-  constructor(tagName) {
-    this.tagName = tagName;
-    this.children = [];
-    this.dataset = {};
-    this.attributes = new Map();
-    this.listeners = new Map();
-    this.hidden = false;
-    this.className = '';
-    this.value = '';
-    this.scrollTop = 0;
-    this.clientHeight = 200;
-    this.offsetHeight = 24;
-    this.classList = {
-      contains: name => this.className.split(/\s+/).includes(name),
-      add: (...names) => { this.className = [...new Set([...this.className.split(/\s+/).filter(Boolean), ...names])].join(' '); },
-      remove: (...names) => { this.className = this.className.split(/\s+/).filter(name => !names.includes(name)).join(' '); },
-    };
-  }
-
-  get offsetTop() { return (this.parentElement?.children.indexOf(this) ?? 0) * this.offsetHeight; }
-  get href() { return this.getAttribute('href') ?? ''; }
-  set href(value) { this.setAttribute('href', value); }
-  get textContent() { return (this.text ?? '') + this.children.map(child => child.textContent).join(''); }
-  set textContent(value) { this.replaceChildren(); this.text = String(value); }
-  get innerHTML() { return this.markup ?? ''; }
-  set innerHTML(value) { this.replaceChildren(); this.markup = value; parseMarkup(value, this); }
-  setAttribute(name, value) {
-    this.attributes.set(name, String(value));
-    if (name.startsWith('data-')) this.dataset[dataKey(name)] = String(value);
-    else if (name === 'id') this.id = String(value);
-    else if (name === 'class') this.className = String(value);
-    else if (name === 'hidden') this.hidden = true;
-  }
-  getAttribute(name) {
-    if (name.startsWith('data-')) return this.dataset[dataKey(name)] ?? null;
-    if (name === 'hidden') return this.hidden ? '' : null;
-    if (name === 'id') return this.id ?? null;
-    return this.attributes.get(name) ?? null;
-  }
-  removeAttribute(name) { this.attributes.delete(name); if (name === 'hidden') this.hidden = false; }
-  append(...elements) {
-    for (const element of elements) {
-      if (element.tagName === '#fragment') this.append(...element.children);
-      else { element.parentElement = this; this.children.push(element); }
-    }
-  }
-  replaceChildren(...elements) { this.children.forEach(child => { child.parentElement = null; }); this.children = []; this.text = ''; this.append(...elements); }
-  insertAdjacentElement(position, element) {
-    assert.equal(position, 'afterend');
-    const siblings = this.parentElement.children;
-    element.parentElement = this.parentElement;
-    siblings.splice(siblings.indexOf(this) + 1, 0, element);
-  }
-  matches(selector) {
-    if (selector.startsWith('.')) return this.classList.contains(selector.slice(1));
-    const match = /^(\w+)?(?:\[([^\]]+)\])?$/.exec(selector);
-    assert.ok(match, 'Unsupported test DOM selector: ' + selector);
-    return (!match[1] || this.tagName === match[1]) && (!match[2] || this.getAttribute(match[2]) !== null);
-  }
-  closest(selector) { return this.matches(selector) ? this : this.parentElement?.closest(selector) ?? null; }
-  querySelectorAll(selector) { return this.children.flatMap(child => [...(child.matches(selector) ? [child] : []), ...child.querySelectorAll(selector)]); }
-  querySelector(selector) { return this.querySelectorAll(selector)[0] ?? null; }
-  addEventListener(name, callback) {
-    if (!this.listeners.has(name)) this.listeners.set(name, []);
-    this.listeners.get(name).push(callback);
-  }
-  dispatch(name, event = {}) { for (const callback of this.listeners.get(name) ?? []) callback({ target: this, preventDefault() {}, ...event }); }
-  focus() {}
-  select() {}
-}
-
-function parseMarkup(markup, parent) {
-  const stack = [parent];
-  const tokens = markup.match(/<[^>]+>|[^<]+/g) ?? [];
-  for (const token of tokens) {
-    if (token.startsWith('<!')) continue;
-    if (token.startsWith('</')) { if (stack.length > 1) stack.pop(); continue; }
-    if (!token.startsWith('<')) { stack.at(-1).text = (stack.at(-1).text ?? '') + decode(token); continue; }
-    const [, tagName, attributes] = /^<(\w+)\b([\s\S]*?)\/?\s*>$/.exec(token) ?? [];
-    assert.ok(tagName, 'Unsupported test DOM markup: ' + token);
-    const element = new Element(tagName.toLowerCase());
-    for (const attribute of attributes.matchAll(/([\w-]+)(?:="([^"]*)"|'([^']*)')?/g)) {
-      element.setAttribute(attribute[1], decode(attribute[2] ?? attribute[3] ?? ''));
-    }
-    stack.at(-1).append(element);
-    if (!['meta', 'input', 'br', 'link', 'hr'].includes(element.tagName) && !token.endsWith('/>')) stack.push(element);
-  }
-}
-
-function scriptsIn(html) {
-  return [...html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script\s*>/gi)]
-    .map(([, attributes, script]) => ({ attributes, script }));
-}
-
 function viewer(sources, url = 'https://example.test/docs/diagrams/ecs-source.html?workspace=D%3A%2Fdemo') {
   fs.mkdirSync(temporaryRoot, { recursive: true });
   const directory = fs.mkdtempSync(path.join(temporaryRoot, 'case-'));
@@ -159,8 +60,41 @@ test('generated viewer numbers CRLF, lone CR, empty and trailing lines as safe t
   assert.deepEqual(page.get('code').children.map(row => row.children[1].textContent), ['first', '', 'last', 'end', '']);
   assert.deepEqual(page.get('code').children.map(row => row.id), ['L1', 'L2', 'L3', 'L4', 'L5']);
   assert.deepEqual(page.get('code').children.map(row => new URL(row.children[0].href, page.location.href).hash), ['#L1', '#L2', '#L3', '#L4', '#L5']);
-  assert.match(page.get('summary').textContent, /5 行/);
+  assert.equal(page.get('summary').textContent, 'src/example.rs · 5 行');
   assert.equal(page.get('editor-open').href, 'vscode://file/D:/demo/src/example.rs:1:1');
+});
+
+test('source headings omit repeated opening and snapshot guidance while keeping file, editor and location controls', () => {
+  const page = viewer([{ path: 'src/example.rs', text: 'one\ntwo' }]);
+  assert.match(page.html, /<p id="summary"><\/p>/);
+  assert.match(page.html, /#summary:empty,#status:empty\{display:none\}/);
+  assert.doesNotMatch(page.html, /这是生成架构图时保存的源码快照|点击行号可以更新当前定位链接|VS Code 打开当前工作区文件|快照行号可能不再对应|生成时的源码快照/);
+  assert.equal(page.get('summary').textContent, 'src/example.rs · 2 行');
+  assert.equal(page.get('file').getAttribute('aria-label'), '选择源码文件');
+  assert.equal(page.get('file').value, 'src/example.rs');
+  assert.equal(page.get('editor-open').textContent, '在 VS Code 中打开');
+  assert.equal(page.get('editor-open').href, 'vscode://file/D:/demo/src/example.rs:1:1');
+  assert.ok(page.document.querySelector('[data-workspace-config]'));
+  const controls = page.document.querySelector('[data-source-location]');
+  assert.ok(controls);
+  assert.equal(controls.querySelector('input').value, 'D:/demo/src/example.rs:1:1');
+  assert.equal(controls.querySelector('button').textContent, '复制定位');
+  assert.equal(page.get('status').getAttribute('role'), 'status');
+  assert.equal(page.get('status').getAttribute('aria-live'), 'polite');
+  assert.equal(page.get('scroller').getAttribute('aria-label'), '完整源码，可滚动');
+});
+
+test('the generated source page omits the shared bottom directory status while preserving line feedback', () => {
+  const page = viewer([{ path: 'src/example.rs', text: 'one\ntwo' }]);
+  assert.equal(page.document.querySelector('[data-workspace-status]'), null);
+  const dialog = page.document.querySelector('[data-workspace-dialog]');
+  assert.equal(dialog.querySelectorAll('p').length, 1);
+  assert.ok(dialog.querySelector('[data-workspace-error]'));
+  assert.equal(dialog.querySelectorAll('button').length, 3);
+  page.hash('#L2');
+  assert.match(page.get('status').textContent, /已定位到第 2 行/);
+  page.hash('#L3');
+  assert.match(page.get('status').textContent, /定位行不存在/);
 });
 
 test('hash navigation and line clicks update the same editor location and remove stale highlight', () => {
@@ -175,6 +109,62 @@ test('hash navigation and line clicks update the same editor location and remove
   page.hash('#L4');
   assert.deepEqual(selected(page), ['L4']);
   assert.equal(page.get('editor-open').href, 'vscode://file/D:/demo/src/example.rs:4:1');
+});
+
+test('Cargo snapshots keep their logical file key while line actions use the dependency definition path', () => {
+  const dependency = { name: 'avian3d', version: '0.7.0', root: 'C:/Cargo & 中文 #%/avian3d-0.7.0' };
+  const path = 'cargo/avian3d-0.7.0/src/中文 #%.rs';
+  const snapshot = { path, text: 'one\ntwo\nthree', source: { path: 'src/中文 #%.rs', line: 1, dependency } };
+  const sources = [snapshot, { path: 'src/main.rs', text: 'project' }];
+  const query = '?file=' + encodeURIComponent(path);
+  for (const workspace of ['', '&workspace=E%3A%2Fother-project', '&workspace=relative']) {
+    const page = viewer(sources, 'https://example.test/docs/diagrams/ecs-source.html' + query + workspace + '#L3');
+    const link = page.get('editor-open'), controls = page.document.querySelector('[data-source-location]');
+    assert.equal(page.get('file').value, path);
+    assert.equal(page.get('summary').textContent, path + ' · 3 行');
+    assert.equal(link.dataset.vscodePath, snapshot.source.path);
+    assert.equal(link.dataset.vscodeDependencyName, dependency.name);
+    assert.equal(link.dataset.vscodeDependencyVersion, dependency.version);
+    assert.equal(link.dataset.vscodeDependencyRoot, dependency.root);
+    assert.equal(controls.querySelector('input').value, dependency.root + '/src/中文 #%.rs:3:1');
+    assert.equal(link.href, 'vscode://file/C:/Cargo%20%26%20%E4%B8%AD%E6%96%87%20%23%25/avian3d-0.7.0/src/%E4%B8%AD%E6%96%87%20%23%25.rs:3:1');
+    assert.deepEqual(selected(page), ['L3']);
+    page.clickLine(2);
+    assert.ok(link.href.endsWith(':2:1'));
+    assert.equal(page.get('status').textContent, '已定位到第 2 行。');
+    page.hash('#L99');
+    assert.ok(link.href.endsWith(':1:1'));
+    assert.deepEqual(selected(page), []);
+    // 模拟重新渲染另一文件，确认复用 anchor 不会沿用上一依赖的根目录。
+    page.location.searchParams.set('file', 'src/main.rs');
+    page.location.hash = '';
+    vm.runInContext('showFile()', page.context);
+    assert.equal(link.dataset.vscodeDependencyRoot, undefined);
+    assert.equal(link.dataset.vscodeDependencyName, undefined);
+    assert.equal(link.dataset.vscodeDependencyVersion, undefined);
+    assert.equal(link.dataset.vscodePath, 'src/main.rs');
+    assert.equal(link.href, workspace.includes('E%3A') ? 'vscode://file/E:/other-project/src/main.rs:1:1' : '#workspace-config');
+  }
+  const page = viewer(sources, 'https://example.test/docs/diagrams/ecs-source.html' + query + '#L2');
+  page.get('file').value = 'src/main.rs';
+  page.get('file').dispatch('change');
+  assert.equal(page.location.searchParams.get('file'), 'src/main.rs');
+  assert.equal(page.location.searchParams.get('workspace'), null);
+  assert.equal(page.location.hash, '');
+  assert.deepEqual(JSON.parse(page.get('sources').textContent), sources);
+});
+
+test('invalid dependency snapshot targets are hidden rather than joined to the project workspace', () => {
+  for (const source of [
+    { path: '../lib.rs', line: 1, dependency: { name: 'avian3d', version: '0.7.0', root: 'C:/cargo/avian3d-0.7.0' } },
+    { path: 'src/lib.rs', line: 1, dependency: { name: 'avian3d', version: '0.7.0', root: 'relative' } },
+    { path: 'src/lib.rs', line: 1, dependency: { name: '../avian3d', version: '0.7.0', root: 'C:/cargo/avian3d-0.7.0' } },
+  ]) {
+    const page = viewer([{ path: 'cargo/avian3d-0.7.0/src/lib.rs', text: 'text', source }]);
+    assert.equal(page.get('editor-open').getAttribute('href'), null);
+    assert.equal(page.document.querySelector('[data-source-location]'), null);
+    assert.equal(page.get('code').children[0].children[1].textContent, 'text');
+  }
 });
 
 test('invalid hashes clear highlight and safely reset editor navigation to the first line', () => {
@@ -216,6 +206,7 @@ test('unknown or explicitly blank files hide the editor entry instead of reusing
     assert.equal(page.get('editor-open').hidden, true, file);
     assert.equal(page.get('editor-open').getAttribute('href'), null, file);
     assert.equal(page.get('empty').hidden, false, file);
+    assert.equal(page.get('summary').textContent, '', file);
   }
 });
 
@@ -224,12 +215,14 @@ test('empty files remain openable at line one and empty snapshots expose no sour
     'https://example.test/docs/diagrams/ecs-source.html?workspace=D%3A%2Fdemo#L8');
   assert.equal(page.get('code').children.length, 0);
   assert.equal(page.get('empty').textContent, '此文件为空。');
+  assert.equal(page.get('summary').textContent, 'src/empty.rs · 空文件');
   assert.equal(page.get('editor-open').hidden, false);
   assert.equal(page.get('editor-open').href, 'vscode://file/D:/demo/src/empty.rs:1:1');
   const empty = viewer([]);
   assert.equal(empty.get('empty').textContent, '此快照未包含源码文件。');
   assert.equal(empty.get('editor-open').hidden, true);
   assert.equal(empty.get('editor-open').getAttribute('href'), null);
+  assert.equal(empty.get('summary').textContent, '');
 });
 
 test('embedded script and HTML fragments survive exactly as text without creating executable markup', () => {
@@ -243,30 +236,30 @@ test('embedded script and HTML fragments survive exactly as text without creatin
   assert.deepEqual(JSON.parse(page.get('sources').textContent), [{ path: 'src/danger.rs', text }]);
 });
 
-test('actual architecture details retain both source entries and omit entries on nodes without source', () => {
+test('actual architecture details retain only the VS Code source entry and preserve full node descriptions', () => {
   const html = fs.readFileSync(path.join(root, 'docs', 'diagrams', 'ecs-architecture.html'), 'utf8');
   const script = scriptsIn(html).find(item => item.script.includes('function sourceLink('))?.script;
   assert.ok(script, 'Generated architecture must contain source links');
   // 从交付 HTML 提取真实函数，只替代无关的图形渲染；断言调用产生的详细面板。
   const definitions = script.split(/\r?\n/).filter(line =>
-    line.startsWith('const safe=') || line.startsWith('function sourceLink(') || line.startsWith('function showDetail(')).join('\n');
+    line.startsWith('const safe=') || line.startsWith('const componentEntities=') || line.startsWith('function sourceLink(') || line.startsWith('function entityDetailToggle(') || line.startsWith('function showDetail(')).join('\n')
+    + '\n' + script.slice(script.indexOf('function list('), script.indexOf('function guide('));
   const details = new Element('aside');
   const clear = {};
   let refreshScope;
   const context = vm.createContext({
-    details, DATA: { registry: { source: { name: 'update', source: { path: 'src/中文 #%.rs', line: 8, column: 3 } }, data: { name: 'Resource' } } },
-    list: () => '', select() {}, guide() {}, document: { getElementById: () => clear },
+    details, view: { nodes: [] }, DATA: { model: { features: [], entities: [] }, registry: { source: { name: 'update', description: '完整节点说明保留注册顺序与生命周期约束。', source: { path: 'src/中文 #%.rs', line: 8, column: 3 } }, data: { name: 'Resource' } } },
+    select() {}, guide() {}, document: { getElementById: () => clear },
     sourceEditor: { refreshLinks(scope) { refreshScope = scope; } },
   });
   vm.runInContext(definitions + '\nshowDetail("source");', context);
   const links = details.querySelectorAll('a');
-  assert.equal(links.length, 2);
-  const offline = new URL(links[0].href, 'https://example.test/docs/diagrams/ecs-architecture.html');
-  assert.equal(offline.searchParams.get('file'), 'src/中文 #%.rs');
-  assert.equal(offline.hash, '#L8');
-  assert.equal(links[1].dataset.vscodePath, 'src/中文 #%.rs');
-  assert.equal(links[1].dataset.vscodeLine, '8');
-  assert.equal(links[1].dataset.vscodeColumn, '3');
+  assert.equal(links.length, 1);
+  assert.equal(links[0].dataset.vscodePath, 'src/中文 #%.rs');
+  assert.equal(links[0].dataset.vscodeLine, '8');
+  assert.equal(links[0].dataset.vscodeColumn, '3');
+  assert.ok(details.textContent.includes('完整节点说明保留注册顺序与生命周期约束。'));
+  assert.doesNotMatch(details.textContent, /离线源码快照/);
   assert.equal(refreshScope, details);
   vm.runInContext('showDetail("data");', context);
   assert.equal(details.querySelectorAll('a').length, 0);

@@ -1,6 +1,6 @@
 # 当前 demo 架构
 
-本文是当前代码组织、ECS 归属和数据流的查阅入口。项目玩法尚未确定，探索方向见 [设计探索](game-design.md)，操作与配置见 [使用说明](usage.md)，工程约定见 [开发规范](development.md)。[交互式架构图](diagrams/README.md) 提供四视图及源码定位。
+本文是当前代码组织、ECS 归属和数据流的查阅入口。项目玩法尚未确定，探索方向见 [设计探索](game-design.md)，操作与配置见 [使用说明](usage.md)，工程约定见 [开发规范](development.md)。[交互式架构图](diagrams/README.md) 提供功能总览、各插件独立详情及源码定位。
 
 ## 模块职责
 
@@ -84,7 +84,7 @@ Windows MSVC 的 [build.rs](../build.rs) 为游戏和测试程序嵌入 Common C
 
 ## 世界检查器
 
-`InspectorPlugin` 在默认插件后安装，内部先注册 `EguiPlugin`，再注册受 `gameplay_running` 门控的 `WorldInspectorPlugin`。检查器复用主窗口和当前相机，在 `EguiPrimaryContextPass` 直接反射 ECS 世界，不维护数据镜像。
+`InspectorPlugin` 在默认插件后安装，内部先注册 `EguiPlugin`，再注册受 `gameplay_running` 门控的 `WorldInspectorPlugin`。检查器复用主窗口和当前相机，在 `EguiPrimaryContextPass` 直接反射 ECS 世界，不维护数据镜像。该 pass 由 `PostUpdate` 内的 Egui 驱动，可在一帧中运行多轮，不是 `PostUpdate` 之后另一个逐帧主 Schedule。
 
 插件的 Startup 记录表示已注册，不代表主菜单显示面板。检查器仅在游戏运行时显示，主菜单与暂停时隐藏。
 
@@ -169,6 +169,8 @@ NPC 身体碰撞属于 `World` 层，阻挡人物、自由箱与持箱代理，�
 | `PostUpdate` | 骨骼动画求值 → 鞋底视觉补偿 → 变换传播；Egui 检查器为独立分支。布局后同步滚动条；Kira 排队播放阶段后补同步实例增益。 |
 
 相机与玩法的固定步顺序由显式依赖表达；跨阶段数据流依赖 Bevy 默认主调度，`PreUpdate` 结束时应用动作命令，完成状态转换后进入固定循环。玩法模拟和相机姿态同步只在 `Running` 执行。一次渲染帧可以没有固定步，也可以有多个固定步，因此输入 Observer 不直接积分角色位置。
+
+上表按正常帧的主调度顺序阅读。首次初始化时，`StatesPlugin` 还会在 `PreStartup` 前执行 `StateTransition`；`OnEnter` 只在进入对应状态时运行，不能把状态入口理解为每帧都会执行的系统链。
 
 固定模拟通过人物 Avian `Position`、安全朝向与箱体局部 `ColliderTransform` 求解同一刚体。人物保留 `TranslationInterpolation`，持握箱暂停独立插值；显示链从人物本帧 `Transform` 与 `HeldAttachment.local_pose` 派生箱根姿态，`HeldTarget` 则按 `CarryGrip` 更新目标，两者在对齐期间可不同。
 
