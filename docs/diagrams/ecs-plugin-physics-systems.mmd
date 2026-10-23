@@ -1,0 +1,69 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 32,
+      "rankSpacing": 56,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart TB
+  accTitle: 物理基础 · 系统与调度
+  accDescr: 物理基础的系统与调度；外部契约保留摘要，可跳转到所属插件。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_contract fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef edge_schedule stroke:#334155,stroke-width:3px
+  classDef edge_order stroke:#334155,stroke-width:2px
+  classDef external_node stroke-dasharray:6 4
+  subgraph diagram_main[" "]
+  direction LR
+  style diagram_main fill:none,stroke:none
+  subgraph sg0["FixedUpdate"]
+  direction TB
+  n0@{ shape: rounded, label: "**sync_gravity**<br/>将共享重力配置同步到物理世界。" }
+  class n0 node_system
+  n2@{ shape: rounded, label: "**update_grounded**<br/>来自角色运动 ↗：准备运动前更新接地状<br/>态。" }
+  class n2 node_system
+  class n2 external_node
+  n0 layout_0@~~~ n2
+  end
+  subgraph sg1["FixedPostUpdate"]
+  direction TB
+  n3@{ shape: lin-rect, label: "**PhysicsSystems::StepSimulation /**<br/>**PhysicsSchedule**<br/>来自Avian ↗：执行碰撞求解、重力积分与<br/>刚体运动。" }
+  class n3 node_contract
+  class n3 external_node
+  n1@{ shape: rounded, label: "**log_collisions**<br/>将碰撞开始与结束写入统一日志。" }
+  class n1 node_system
+  n3 layout_1@~~~ n1
+  end
+  sg0 sc0@--> sg1
+  class sc0 edge_schedule
+  n0 e0@--> n2
+  class e0 edge_order
+  n3 e1@-->|"StepSimulation"| n1
+  class e1 edge_order
+  end
+  e0@{ curve: basis }
+  e1@{ curve: basis }

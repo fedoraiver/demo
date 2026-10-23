@@ -1,0 +1,116 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 32,
+      "rankSpacing": 8,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart TB
+  accTitle: Egui / Inspector · 数据与实体
+  accDescr: Egui / Inspector的数据与实体；外部契约保留摘要，可跳转到所属插件。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_entity fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef external_node stroke-dasharray:6 4
+  subgraph catalog["数据与实体"]
+  direction LR
+  subgraph column_0[" "]
+  direction TB
+  n0@{ shape: cyl, label: "**EguiGlobalSettings**<br/>配置检查器界面的上下文与输入处理。" }
+  class n0 node_resource
+  n1@{ shape: cyl, label: "**EnableMultipassForPrimaryContext**<br/>启用主检查器上下文的多轮界面计算。" }
+  class n1 node_resource
+  subgraph n9[" "]
+  direction TB
+  eh0@{ shape: text, label: "**第一人称相机实体**        ​<br/>来自场景装配 ↗：提供跟随角色        ​<br/>的第一人称视角与观察输入状态。        ​" }
+  n10@{ shape: rect, label: "**Name**<br/>来自Bevy 引擎 ↗：相机名称。" }
+  class n10 node_component
+  class n10 external_node
+  n11@{ shape: rect, label: "**Camera3d**<br/>来自Bevy 引擎 ↗：标记三维场景相机。" }
+  class n11 node_component
+  class n11 external_node
+  n12@{ shape: rect, label: "**FirstPersonCamera**<br/>来自第一人称控制 ↗：保存跟随目标、眼高<br/>与观察角度。" }
+  class n12 node_component
+  class n12 external_node
+  n13@{ shape: rect, label: "**MouseLookState**<br/>来自第一人称控制 ↗：保存光标捕获与观察<br/>输入初始化状态。" }
+  class n13 node_component
+  class n13 external_node
+  n14@{ shape: rect, label: "**Transform**<br/>来自Bevy 引擎 ↗：保存第一人称镜头的显<br/>示姿态。" }
+  class n14 node_component
+  class n14 external_node
+  eh0 layout_0@~~~ n10
+  n10 layout_1@~~~ n11
+  n11 layout_2@~~~ n12
+  n12 layout_3@~~~ n13
+  n13 layout_4@~~~ n14
+  n15@{ shape: rect, label: "**GlobalTransform**<br/>来自Bevy 引擎 ↗：引擎传播后的相机世界<br/>变换，供渲染提取。" }
+  class n15 node_component
+  class n15 external_node
+  n2@{ shape: rect, label: "**EguiContext**<br/>保存世界检查器的界面交互状态。" }
+  class n2 node_component
+  n3@{ shape: rect, label: "**PrimaryEguiContext**<br/>指定主检查器界面的相机上下文。" }
+  class n3 node_component
+  n4@{ shape: rect, label: "**EguiContextSettings**<br/>配置检查器上下文的输入与输出处理。" }
+  class n4 node_component
+  n5@{ shape: rect, label: "**EguiInput**<br/>缓冲检查器界面收到的输入。" }
+  class n5 node_component
+  eh0 layout_5@~~~ n15
+  n15 layout_6@~~~ n2
+  n2 layout_7@~~~ n3
+  n3 layout_8@~~~ n4
+  n4 layout_9@~~~ n5
+  n6@{ shape: rect, label: "**EguiMultipassSchedule**<br/>指定检查器上下文的内部界面调度。" }
+  class n6 node_component
+  n7@{ shape: rect, label: "**EguiFullOutput**<br/>保存检查器界面计算产生的输出。" }
+  class n7 node_component
+  n16@{ shape: rect, label: "**LoadingCamera**<br/>来自场景装配 ↗：加载期间相机身份，准备<br/>后移除。" }
+  class n16 node_component
+  class n16 external_node
+  n17@{ shape: rect, label: "**DespawnOnExit**<br/>来自Bevy 引擎 ↗：标记退出所属应用状态<br/>时销毁此实体。" }
+  class n17 node_component
+  class n17 external_node
+  n18@{ shape: rect, label: "**IsDefaultUiCamera**<br/>来自Bevy 引擎 ↗：指定菜单界面的默认绘<br/>制相机。" }
+  class n18 node_component
+  class n18 external_node
+  eh0 layout_10@~~~ n6
+  n6 layout_11@~~~ n7
+  n7 layout_12@~~~ n16
+  n16 layout_13@~~~ n17
+  n17 layout_14@~~~ n18
+  end
+  class n9 node_entity
+  class n9 external_node
+  style n9 fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340,stroke-dasharray:6 4
+  n19@{ shape: rect, label: "**主菜单展示相机**        ​<br/>来自菜单与界面 ↗：为主菜单展        ​<br/>示场景与界面提供相机。        ​" }
+  class n19 node_entity
+  class n19 external_node
+  n0 layout_15@~~~ n1
+  n1 layout_16@~~~ n9
+  n9 layout_17@~~~ n19
+  end
+  style column_0 fill:none,stroke:none
+  end

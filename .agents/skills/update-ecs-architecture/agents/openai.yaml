@@ -1,4 +1,4 @@
 interface:
   display_name: "更新 ECS 架构图"
-  short_description: "按当前源码维护 ECS 清单、四视图与源码快照，并完成校验及视觉检查"
-  default_prompt: "使用 $update-ecs-architecture 对照当前源码更新本项目的 ECS 架构图，完成生成、校验和最终 HTML/SVG 视觉检查。"
+  short_description: "按当前源码维护 ECS 插件图、Mermaid 语义样式与产物，完成校验和视觉检查"
+  default_prompt: "使用 $update-ecs-architecture 对照当前源码维护插件架构、原生节点形状、连线语义、阶段箭头及右侧当前页样例，保留源码入口与面板交互，编译 Mermaid 产物并完成语义校验和最终 HTML/SVG 视觉检查。"

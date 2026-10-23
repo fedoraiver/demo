@@ -1,0 +1,97 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 32,
+      "rankSpacing": 56,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart TB
+  accTitle: 越界恢复 · 系统与调度
+  accDescr: 越界恢复的系统与调度；外部契约保留摘要，可跳转到所属插件。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_contract fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef edge_schedule stroke:#334155,stroke-width:3px
+  classDef edge_order stroke:#334155,stroke-width:2px
+  classDef edge_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef external_node stroke-dasharray:6 4
+  subgraph diagram_main[" "]
+  direction LR
+  style diagram_main fill:none,stroke:none
+  subgraph sg0["FixedFirst"]
+  direction TB
+  n3@{ shape: lin-rect, label: "**TransformEasingSystems::Reset**<br/>来自Avian ↗：重置上一轮固定步的插值状<br/>态。" }
+  class n3 node_contract
+  class n3 external_node
+  n1@{ shape: rounded, label: "**resume_interpolation**<br/>撤销落水恢复添加的临时插值暂停。" }
+  class n1 node_system
+  n4@{ shape: rounded, label: "**resume_carry_easing**<br/>来自物品交互 ↗：恢复物品释放前未暂停的<br/>插值通道。" }
+  class n4 node_system
+  class n4 external_node
+  n2@{ shape: lin-rect, label: "**ApplyDeferred · 恢复插值**<br/>使插值暂停清理在新固定步采样前可见。" }
+  class n2 node_contract
+  n5@{ shape: lin-rect, label: "**TransformEasingSystems::UpdateStart**<br/>来自Avian ↗：记录当前固定步的插值起<br/>点。" }
+  class n5 node_contract
+  class n5 external_node
+  n3 layout_0@~~~ n1
+  n1 layout_1@~~~ n4
+  n4 layout_2@~~~ n2
+  n2 layout_3@~~~ n5
+  end
+  subgraph sg1["FixedUpdate"]
+  direction TB
+  n0@{ shape: rounded, label: "**recover_from_water**<br/>将落水实体恢复到各自出生姿态。" }
+  class n0 node_system
+  n6@{ shape: rounded, label: "**sync_character_facing**<br/>来自第一人称控制 ↗：同步人物朝向并处理<br/>持物转向受阻。" }
+  class n6 node_system
+  class n6 external_node
+  n7@{ shape: lin-rect, label: "**FixedGameplaySystems**<br/>来自应用流程 ↗：协调恢复、朝向、运动、<br/>交互与持握的固定步顺序。" }
+  class n7 node_contract
+  class n7 external_node
+  n0 layout_4@~~~ n6
+  n6 layout_5@~~~ n7
+  end
+  sg0 sc0@--> sg1
+  class sc0 edge_schedule
+  n3 e0@--> n1
+  class e0 edge_order
+  n1 e1@--> n2
+  class e1 edge_order
+  n4 e2@--> n2
+  class e2 edge_order
+  n2 e3@--> n5
+  class e3 edge_order
+  n0 e4@-->|"恢复后按视角转向"| n6
+  class e4 edge_order
+  n7 e5@-->|"Recover"| n0
+  class e5 edge_membership
+  end
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: bumpY }
+  e5@{ curve: basis }

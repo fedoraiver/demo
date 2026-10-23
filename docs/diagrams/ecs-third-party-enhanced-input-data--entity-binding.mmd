@@ -1,0 +1,98 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 32,
+      "rankSpacing": 8,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart TB
+  accTitle: Enhanced Input · 数据与实体
+  accDescr: Enhanced Input的数据与实体；外部契约保留摘要，可跳转到所属插件。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_entity fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef external_node stroke-dasharray:6 4
+  subgraph catalog["数据与实体"]
+  direction LR
+  subgraph column_0[" "]
+  direction TB
+  n0@{ shape: cyl, label: "**ContextInstances#lt;PreUpdate#gt;**<br/>索引输入框架当前运行的动作上下文。" }
+  class n0 node_resource
+  n2@{ shape: cyl, label: "**ConsumedInputs**<br/>记录本轮动作评估已经消费的输入。" }
+  class n2 node_resource
+  subgraph n39[" "]
+  direction TB
+  eh2@{ shape: text, label: "**绑定实体**        ​<br/>来自第一人称控制 ↗：将键盘或        ​<br/>鼠标输入映射到玩法动作。        ​" }
+  n20@{ shape: rect, label: "**Binding**<br/>保存设备输入到动作的映射。" }
+  class n20 node_component
+  n21@{ shape: rect, label: "**BindingOf**<br/>将输入绑定关联到所属动作。" }
+  class n21 node_component
+  n22@{ shape: rect, label: "**FirstActivation**<br/>记录绑定重新启用时的首次激活状态。" }
+  class n22 node_component
+  n23@{ shape: rect, label: "**Negate**<br/>反转绑定输入的方向符号。" }
+  class n23 node_component
+  n24@{ shape: rect, label: "**SwizzleAxis**<br/>将输入标量映射到指定坐标轴。" }
+  class n24 node_component
+  n25@{ shape: rect, label: "**ModifierFns**<br/>保存输入修饰器的执行适配。" }
+  class n25 node_component
+  eh2 layout_0@~~~ n20
+  n20 layout_1@~~~ n21
+  n21 layout_2@~~~ n22
+  n22 layout_3@~~~ n23
+  n23 layout_4@~~~ n24
+  n24 layout_5@~~~ n25
+  end
+  class n39 node_entity
+  class n39 external_node
+  style n39 fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340,stroke-dasharray:6 4
+  n0 layout_6@~~~ n2
+  n2 layout_7@~~~ n39
+  end
+  style column_0 fill:none,stroke:none
+  subgraph column_1[" "]
+  direction TB
+  n1@{ shape: cyl, label: "**ActionSources**<br/>配置输入框架允许使用的输入来源。" }
+  class n1 node_resource
+  n3@{ shape: cyl, label: "**PendingBindings**<br/>保存上下文停用后仍需重置的输入绑定。" }
+  class n3 node_resource
+  n30@{ shape: rect, label: "**键盘控制者**        ​<br/>来自场景装配 ↗：保存玩家身        ​<br/>份、输入上下文与受控角色及相        ​<br/>机。        ​" }
+  class n30 node_entity
+  class n30 external_node
+  n37@{ shape: rect, label: "**动作实体**        ​<br/>来自第一人称控制 ↗：保存玩法        ​<br/>或调试动作的评估结果与触发状        ​<br/>态。        ​" }
+  class n37 node_entity
+  class n37 external_node
+  n40@{ shape: rect, label: "**菜单输入控制者**        ​<br/>来自菜单与界面 ↗：提供跨页面        ​<br/>与玩法会话保留的菜单动作输入。        ​" }
+  class n40 node_entity
+  class n40 external_node
+  n1 layout_8@~~~ n3
+  n3 layout_9@~~~ n30
+  n30 layout_10@~~~ n37
+  n37 layout_11@~~~ n40
+  end
+  style column_1 fill:none,stroke:none
+  column_0 layout_12@~~~ column_1
+  end

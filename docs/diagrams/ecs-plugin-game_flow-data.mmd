@@ -1,0 +1,70 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 32,
+      "rankSpacing": 8,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart TB
+  accTitle: 应用流程 · 数据与实体
+  accDescr: 应用流程的数据与实体；外部契约保留摘要，可跳转到所属插件。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef node_message_buffer fill:#EDF4F6,stroke:#247B91,stroke-width:1.6px,color:#1F3340
+  classDef node_note fill:#F7F7F5,stroke:#9A9B88,stroke-width:1.2px,color:#1F3340
+  classDef edge_transition stroke:#A64E76,stroke-width:2px,stroke-dasharray:10 4 2 4
+  classDef external_node stroke-dasharray:6 4
+  subgraph relations["数据流与关系"]
+  direction LR
+  subgraph relation_0[" "]
+  direction TB
+  n1@{ shape: cyl, label: "**State#lt;PlayState#gt; /**<br/>**NextState#lt;PlayState#gt;**<br/>保存游戏运行、暂停及待处理的切换请求。" }
+  class n1 node_resource
+  n5@{ shape: doc, label: "**InGame / Paused**<br/>保留会话实体并暂停模拟与玩法输入。" }
+  class n5 node_note
+  n1 e0@-->|"进入 PlayState::Paused"| n5
+  class e0 edge_transition
+  end
+  style relation_0 fill:none,stroke:none
+  end
+  subgraph catalog["数据与实体"]
+  direction LR
+  subgraph column_0[" "]
+  direction TB
+  n0@{ shape: cyl, label: "**State#lt;AppState#gt; /**<br/>**NextState#lt;AppState#gt;**<br/>保存应用主状态及待处理的会话切换。" }
+  class n0 node_resource
+  n2@{ shape: cyl, label: "**Messages#lt;StateTransitionEvent#lt;AppSta**<br/>**te#gt;#gt;**<br/>缓冲应用主状态转换的日志输入。" }
+  class n2 node_message_buffer
+  n3@{ shape: cyl, label: "**Messages#lt;StateTransitionEvent#lt;PlaySt**<br/>**ate#gt;#gt;**<br/>缓冲游戏运行与暂停转换的日志输入。" }
+  class n3 node_message_buffer
+  n4@{ shape: doc, label: "**NextState → StateTransition**<br/>将开始、返回、暂停与恢复请求提交状态切<br/>换。" }
+  class n4 node_note
+  n0 layout_0@~~~ n2
+  n2 layout_1@~~~ n3
+  n3 layout_2@~~~ n4
+  end
+  style column_0 fill:none,stroke:none
+  end

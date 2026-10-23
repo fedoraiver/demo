@@ -1,0 +1,122 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 32,
+      "rankSpacing": 56,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: 音频播放 · 事件与协作
+  accDescr: 音频播放的事件与协作；外部契约保留摘要，可跳转到所属插件。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_observer fill:#F4F1F9,stroke:#7B4DB2,stroke-width:1.6px,color:#1F3340
+  classDef node_message_buffer fill:#EDF4F6,stroke:#247B91,stroke-width:1.6px,color:#1F3340
+  classDef node_plugin fill:#F1F3F6,stroke:#4A6389,stroke-width:2.2px,color:#1F3340
+  classDef node_contract fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_external_io fill:#F1F3F4,stroke:#526A78,stroke-width:1.6px,color:#1F3340
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_publish stroke:#247B91,stroke-width:1.8px,stroke-dasharray:10 4 2 4
+  classDef edge_consume stroke:#247B91,stroke-width:1.8px,stroke-dasharray:2 4
+  classDef edge_constraint stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:10 4 2 4
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  subgraph diagram_main[" "]
+  direction LR
+  style diagram_main fill:none,stroke:none
+  n0@{ shape: cyl, label: "**Messages#lt;SoundRequest#gt;**<br/>缓冲菜单交互与物品反馈的短音请求。" }
+  class n0 node_message_buffer
+  n1@{ shape: fr-rect, label: "**GameAudioPlugin**<br/>管理短音预加载、混音、播放与设备输出。" }
+  class n1 node_plugin
+  n2@{ shape: lin-rect, label: "**Update / Kira 播放输出**<br/>将声音请求按有效混音与播放策略提交音频实<br/>例。" }
+  class n2 node_contract
+  n3@{ shape: rounded, label: "**play_requests**<br/>按有效音量与播放策略处理短音请求。" }
+  class n3 node_system
+  n4@{ shape: lin-rect, label: "**AudioSystems**<br/>公开音量混合与播放的调度阶段。" }
+  class n4 node_contract
+  n5@{ shape: lin-rect, label: "**已接入的反馈生产者**<br/>来自物品交互 ↗：汇总菜单交互与物品运动<br/>产生的声音反馈。" }
+  class n5 node_contract
+  class n5 external_node
+  n6@{ shape: rounded, label: "**pointer_interaction**<br/>来自菜单与界面 ↗：将真实鼠标交互转换为<br/>共享菜单请求。" }
+  class n6 node_system
+  class n6 external_node
+  n7@{ shape: hex, label: "**previous**<br/>来自菜单与界面 ↗：循环选择上一个可操作<br/>菜单按钮。" }
+  class n7 node_observer
+  class n7 external_node
+  n8@{ shape: hex, label: "**next**<br/>来自菜单与界面 ↗：循环选择下一个可操作<br/>菜单按钮。" }
+  class n8 node_observer
+  class n8 external_node
+  n9@{ shape: rounded, label: "**warn_hold_strain**<br/>来自物品交互 ↗：检查持续持握偏差并发出<br/>失稳提示音。" }
+  class n9 node_system
+  class n9 external_node
+  n10@{ shape: rounded, label: "**emit_parcel_land**<br/>来自物品交互 ↗：识别自由物品落地并发出<br/>声音请求。" }
+  class n10 node_system
+  class n10 external_node
+  n11@{ shape: lean-l, label: "**Kira UI / SFX 通道**<br/>来自Kira ↗：接收播放与停止命令并输出界<br/>面和物品短音。" }
+  class n11 node_external_io
+  class n11 external_node
+  n12@{ shape: rounded, label: "**handle_interaction**<br/>来自物品交互 ↗：处理物品拾取、共享持握<br/>与主动释放。" }
+  class n12 node_system
+  class n12 external_node
+  n13@{ shape: lin-rect, label: "**UI Style → Audio Mix → Playback**<br/>来自应用流程 ↗：约束界面显示更新先于音<br/>量混合与播放。" }
+  class n13 node_contract
+  class n13 external_node
+  n14@{ shape: fr-rect, label: "**KiraAudioPlugin**<br/>来自Kira ↗：提供短音资产加载、通道播放<br/>与混音基础设施。" }
+  class n14 node_plugin
+  class n14 external_node
+  n5 e0@--> n0
+  class e0 edge_publish
+  n0 e1@-->|"请求"| n2
+  class e1 edge_consume
+  n6 e2@-->|"MenuHover"| n0
+  class e2 edge_publish
+  n7 e3@--> n0
+  class e3 edge_publish
+  n8 e4@--> n0
+  class e4 edge_publish
+  n9 e5@--> n0
+  class e5 edge_publish
+  n10 e6@--> n0
+  class e6 edge_publish
+  n0 e7@--> n3
+  class e7 edge_consume
+  n3 e8@-->|"排队播放"| n11
+  class e8 edge_write
+  n12 e9@-->|"成功拿起 / 释放"| n0
+  class e9 edge_publish
+  n13 e10@-->|"Audio Mix / Playback"| n4
+  class e10 edge_constraint
+  n1 e11@-->|"Kira"| n14
+  class e11 edge_registration
+  end
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e9@{ curve: basis }

@@ -1,0 +1,405 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 32,
+      "rankSpacing": 8,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart TB
+  accTitle: 越界恢复 · 数据与实体
+  accDescr: 越界恢复的数据与实体；外部契约保留摘要，可跳转到所属插件。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_entity fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef external_node stroke-dasharray:6 4
+  subgraph catalog["数据与实体"]
+  direction LR
+  subgraph column_0[" "]
+  direction TB
+  subgraph n4[" "]
+  direction TB
+  eh0@{ shape: text, label: "**角色业务根实体**        ​<br/>承载角色身份、运动意图与动态物        ​<br/>理身体。        ​" }
+  n6@{ shape: rect, label: "**Name**<br/>来自Bevy 引擎 ↗：角色根实体名称。" }
+  class n6 node_component
+  class n6 external_node
+  n7@{ shape: rect, label: "**Character**<br/>来自角色运动 ↗：标识具有角色运动能力的<br/>实体。" }
+  class n7 node_component
+  class n7 external_node
+  n8@{ shape: rect, label: "**CharacterIntent**<br/>来自角色运动 ↗：保存持续移动方向与单次<br/>跳跃、交互请求。" }
+  class n8 node_component
+  class n8 external_node
+  n9@{ shape: rect, label: "**CharacterMotion**<br/>来自角色运动 ↗：保存角色接地等运动观察<br/>结果。" }
+  class n9 node_component
+  class n9 external_node
+  n10@{ shape: rect, label: "**Transform**<br/>来自Bevy 引擎 ↗：保存角色经插值生成的<br/>显示姿态。" }
+  class n10 node_component
+  class n10 external_node
+  n11@{ shape: rect, label: "**GlobalTransform**<br/>来自Bevy 引擎 ↗：保存层级传播后的世界<br/>姿态。" }
+  class n11 node_component
+  class n11 external_node
+  n12@{ shape: rect, label: "**Visibility**<br/>来自Bevy 引擎 ↗：根实体的可见性，视觉<br/>子实体继承层级可见性。" }
+  class n12 node_component
+  class n12 external_node
+  n13@{ shape: rect, label: "**Children**<br/>来自Bevy 引擎 ↗：索引当前实体的直接子<br/>实体。" }
+  class n13 node_component
+  class n13 external_node
+  n14@{ shape: rect, label: "**HoldingItems**<br/>来自物品交互 ↗：索引角色当前持有的物<br/>品。" }
+  class n14 node_component
+  class n14 external_node
+  n15@{ shape: rect, label: "**RigidBody**<br/>来自Avian ↗：定义实体参与物理模拟的刚<br/>体模式。" }
+  class n15 node_component
+  class n15 external_node
+  eh0 layout_0@~~~ n6
+  n6 layout_1@~~~ n7
+  n7 layout_2@~~~ n8
+  n8 layout_3@~~~ n9
+  n9 layout_4@~~~ n10
+  n10 layout_5@~~~ n11
+  n11 layout_6@~~~ n12
+  n12 layout_7@~~~ n13
+  n13 layout_8@~~~ n14
+  n14 layout_9@~~~ n15
+  n16@{ shape: rect, label: "**Collider**<br/>来自Avian ↗：保存参与物理碰撞的实体形<br/>状。" }
+  class n16 node_component
+  class n16 external_node
+  n17@{ shape: rect, label: "**Position**<br/>来自Avian ↗：保存物理模拟中的真实位<br/>置。" }
+  class n17 node_component
+  class n17 external_node
+  n18@{ shape: rect, label: "**Rotation**<br/>来自Avian ↗：保存物理模拟中的真实旋<br/>转。" }
+  class n18 node_component
+  class n18 external_node
+  n19@{ shape: rect, label: "**LinearVelocity**<br/>来自Avian ↗：实际线速度，由冲量、外<br/>力、重力与接触求解改变。" }
+  class n19 node_component
+  class n19 external_node
+  n20@{ shape: rect, label: "**AngularVelocity**<br/>来自Avian ↗：保存物理模拟中的角速度。" }
+  class n20 node_component
+  class n20 external_node
+  n21@{ shape: rect, label: "**Mass**<br/>来自Avian ↗：保存显式配置的质量。" }
+  class n21 node_component
+  class n21 external_node
+  n22@{ shape: rect, label: "**ComputedMass**<br/>来自Avian ↗：保存物理求解使用的计算质<br/>量。" }
+  class n22 node_component
+  class n22 external_node
+  n23@{ shape: rect, label: "**ComputedAngularInertia**<br/>来自Avian ↗：保存物理求解使用的计算角<br/>惯量。" }
+  class n23 node_component
+  class n23 external_node
+  n24@{ shape: rect, label: "**ComputedCenterOfMass**<br/>来自Avian ↗：保存物理求解使用的计算质<br/>心。" }
+  class n24 node_component
+  class n24 external_node
+  n25@{ shape: rect, label: "**CollisionLayers**<br/>来自Avian ↗：配置实体之间允许发生碰撞<br/>的层。" }
+  class n25 node_component
+  class n25 external_node
+  eh0 layout_10@~~~ n16
+  n16 layout_11@~~~ n17
+  n17 layout_12@~~~ n18
+  n18 layout_13@~~~ n19
+  n19 layout_14@~~~ n20
+  n20 layout_15@~~~ n21
+  n21 layout_16@~~~ n22
+  n22 layout_17@~~~ n23
+  n23 layout_18@~~~ n24
+  n24 layout_19@~~~ n25
+  n26@{ shape: rect, label: "**CollisionEventsEnabled**<br/>来自Avian ↗：请求离散接触开始/结束消<br/>息，用于集中日志。" }
+  class n26 node_component
+  class n26 external_node
+  n27@{ shape: rect, label: "**SweptCcd**<br/>来自Avian ↗：启用连续碰撞检测以减少高<br/>速穿透。" }
+  class n27 node_component
+  class n27 external_node
+  n28@{ shape: rect, label: "**Friction**<br/>来自Avian ↗：保存接触表面的摩擦参数。" }
+  class n28 node_component
+  class n28 external_node
+  n29@{ shape: rect, label: "**Restitution**<br/>来自Avian ↗：接触恢复系数。" }
+  class n29 node_component
+  class n29 external_node
+  n30@{ shape: rect, label: "**VelocityIntegrationData**<br/>来自Avian ↗：累计本物理步的世界加速度<br/>与外力。" }
+  class n30 node_component
+  class n30 external_node
+  n31@{ shape: rect, label: "**AccumulatedLocalAcceleration**<br/>来自Avian ↗：累计本物理步的局部加速<br/>度。" }
+  class n31 node_component
+  class n31 external_node
+  n32@{ shape: rect, label: "**SleepTimer**<br/>来自Avian ↗：记录刚体休眠计时。" }
+  class n32 node_component
+  class n32 external_node
+  n33@{ shape: rect, label: "**TranslationInterpolation**<br/>来自Avian ↗：启用平移显示插值。" }
+  class n33 node_component
+  class n33 external_node
+  n34@{ shape: rect, label: "**TranslationEasingState**<br/>来自Avian ↗：保存固定步平移插值的起止<br/>端点。" }
+  class n34 node_component
+  class n34 external_node
+  eh0 layout_20@~~~ n26
+  n26 layout_21@~~~ n27
+  n27 layout_22@~~~ n28
+  n28 layout_23@~~~ n29
+  n29 layout_24@~~~ n30
+  n30 layout_25@~~~ n31
+  n31 layout_26@~~~ n32
+  n32 layout_27@~~~ n33
+  n33 layout_28@~~~ n34
+  n35@{ shape: rect, label: "**LockedAxes**<br/>来自Avian ↗：限制刚体可移动或旋转的<br/>轴。" }
+  class n35 node_component
+  class n35 external_node
+  n36@{ shape: rect, label: "**ColliderAabb**<br/>来自Avian ↗：保存碰撞查询使用的轴对齐<br/>包围盒。" }
+  class n36 node_component
+  class n36 external_node
+  n0@{ shape: rect, label: "**SpawnPoint**<br/>每个业务根独立保存出生姿态。" }
+  class n0 node_component
+  n1@{ shape: rect, label: "**ResumeInterpolation**<br/>记录本次恢复临时添加的暂停项。" }
+  class n1 node_component
+  n37@{ shape: rect, label: "**NoTranslationEasing**<br/>来自Avian ↗：暂停独立平移插值。" }
+  class n37 node_component
+  class n37 external_node
+  n38@{ shape: rect, label: "**NoRotationEasing**<br/>来自Avian ↗：暂停独立旋转插值。" }
+  class n38 node_component
+  class n38 external_node
+  n39@{ shape: rect, label: "**DespawnOnExit**<br/>来自Bevy 引擎 ↗：标记退出所属应用状态<br/>时销毁此实体。" }
+  class n39 node_component
+  class n39 external_node
+  n40@{ shape: rect, label: "**CarryBaseMass**<br/>来自物品交互 ↗：挂接时保存，释放或箱体<br/>销毁时恢复原人物质量。" }
+  class n40 node_component
+  class n40 external_node
+  n41@{ shape: rect, label: "**RigidBodyColliders**<br/>来自Avian ↗：索引属于同一刚体的全部碰<br/>撞体。" }
+  class n41 node_component
+  class n41 external_node
+  eh0 layout_29@~~~ n35
+  n35 layout_30@~~~ n36
+  n36 layout_31@~~~ n0
+  n0 layout_32@~~~ n1
+  n1 layout_33@~~~ n37
+  n37 layout_34@~~~ n38
+  n38 layout_35@~~~ n39
+  n39 layout_36@~~~ n40
+  n40 layout_37@~~~ n41
+  end
+  class n4 node_entity
+  style n4 fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
+  subgraph n5[" "]
+  direction TB
+  eh1@{ shape: text, label: "**可搬物品业务根实体**        ​<br/>承载可拾取物品身份及自由运动、        ​<br/>共享持握状态。        ​" }
+  n42@{ shape: rect, label: "**Name**<br/>来自Bevy 引擎 ↗：木箱快递根实体名称。" }
+  class n42 node_component
+  class n42 external_node
+  n43@{ shape: rect, label: "**Parcel**<br/>来自物品交互 ↗：快递身份标记。" }
+  class n43 node_component
+  class n43 external_node
+  n44@{ shape: rect, label: "**Pickable**<br/>来自物品交互 ↗：标记可被玩家拾取的物<br/>品。" }
+  class n44 node_component
+  class n44 external_node
+  n45@{ shape: rect, label: "**Transform**<br/>来自Bevy 引擎 ↗：保存自由运动或共享持<br/>握时的显示姿态。" }
+  class n45 node_component
+  class n45 external_node
+  n46@{ shape: rect, label: "**GlobalTransform**<br/>来自Bevy 引擎 ↗：保存层级传播后的世界<br/>姿态。" }
+  class n46 node_component
+  class n46 external_node
+  n47@{ shape: rect, label: "**Visibility**<br/>来自Bevy 引擎 ↗：根实体可见性。" }
+  class n47 node_component
+  class n47 external_node
+  n48@{ shape: rect, label: "**Children**<br/>来自Bevy 引擎 ↗：索引当前实体的直接子<br/>实体。" }
+  class n48 node_component
+  class n48 external_node
+  n49@{ shape: rect, label: "**HeldBy**<br/>来自物品交互 ↗：关联当前物品的持有者。" }
+  class n49 node_component
+  class n49 external_node
+  n50@{ shape: rect, label: "**RigidBody**<br/>来自Avian ↗：定义实体参与物理模拟的刚<br/>体模式。" }
+  class n50 node_component
+  class n50 external_node
+  n51@{ shape: rect, label: "**Collider**<br/>来自Avian ↗：保存参与物理碰撞的实体形<br/>状。" }
+  class n51 node_component
+  class n51 external_node
+  n52@{ shape: rect, label: "**Position**<br/>来自Avian ↗：保存物理模拟中的真实位<br/>置。" }
+  class n52 node_component
+  class n52 external_node
+  n53@{ shape: rect, label: "**Rotation**<br/>来自Avian ↗：保存物理模拟中的真实旋<br/>转。" }
+  class n53 node_component
+  class n53 external_node
+  n54@{ shape: rect, label: "**LinearVelocity**<br/>来自Avian ↗：实际线速度，由冲量、外<br/>力、重力与接触求解改变。" }
+  class n54 node_component
+  class n54 external_node
+  eh1 layout_38@~~~ n42
+  n42 layout_39@~~~ n43
+  n43 layout_40@~~~ n44
+  n44 layout_41@~~~ n45
+  n45 layout_42@~~~ n46
+  n46 layout_43@~~~ n47
+  n47 layout_44@~~~ n48
+  n48 layout_45@~~~ n49
+  n49 layout_46@~~~ n50
+  n50 layout_47@~~~ n51
+  n51 layout_48@~~~ n52
+  n52 layout_49@~~~ n53
+  n53 layout_50@~~~ n54
+  n55@{ shape: rect, label: "**AngularVelocity**<br/>来自Avian ↗：保存物理模拟中的角速度。" }
+  class n55 node_component
+  class n55 external_node
+  n56@{ shape: rect, label: "**Mass**<br/>来自Avian ↗：保存显式配置的质量。" }
+  class n56 node_component
+  class n56 external_node
+  n57@{ shape: rect, label: "**ComputedMass**<br/>来自Avian ↗：保存物理求解使用的计算质<br/>量。" }
+  class n57 node_component
+  class n57 external_node
+  n58@{ shape: rect, label: "**ComputedAngularInertia**<br/>来自Avian ↗：保存物理求解使用的计算角<br/>惯量。" }
+  class n58 node_component
+  class n58 external_node
+  n59@{ shape: rect, label: "**ComputedCenterOfMass**<br/>来自Avian ↗：保存物理求解使用的计算质<br/>心。" }
+  class n59 node_component
+  class n59 external_node
+  n60@{ shape: rect, label: "**CollisionLayers**<br/>来自Avian ↗：配置实体之间允许发生碰撞<br/>的层。" }
+  class n60 node_component
+  class n60 external_node
+  n61@{ shape: rect, label: "**CollisionEventsEnabled**<br/>来自Avian ↗：请求离散接触开始/结束消<br/>息，用于集中日志。" }
+  class n61 node_component
+  class n61 external_node
+  n62@{ shape: rect, label: "**SweptCcd**<br/>来自Avian ↗：连续碰撞检测，减少高速穿<br/>越。" }
+  class n62 node_component
+  class n62 external_node
+  n63@{ shape: rect, label: "**Friction**<br/>来自Avian ↗：保存接触表面的摩擦参数。" }
+  class n63 node_component
+  class n63 external_node
+  n64@{ shape: rect, label: "**Restitution**<br/>来自Avian ↗：接触恢复系数。" }
+  class n64 node_component
+  class n64 external_node
+  n65@{ shape: rect, label: "**VelocityIntegrationData**<br/>来自Avian ↗：累计本物理步的世界加速度<br/>与外力。" }
+  class n65 node_component
+  class n65 external_node
+  n66@{ shape: rect, label: "**AccumulatedLocalAcceleration**<br/>来自Avian ↗：累计本物理步的局部加速<br/>度。" }
+  class n66 node_component
+  class n66 external_node
+  n67@{ shape: rect, label: "**SleepTimer**<br/>来自Avian ↗：记录刚体休眠计时。" }
+  class n67 node_component
+  class n67 external_node
+  eh1 layout_51@~~~ n55
+  n55 layout_52@~~~ n56
+  n56 layout_53@~~~ n57
+  n57 layout_54@~~~ n58
+  n58 layout_55@~~~ n59
+  n59 layout_56@~~~ n60
+  n60 layout_57@~~~ n61
+  n61 layout_58@~~~ n62
+  n62 layout_59@~~~ n63
+  n63 layout_60@~~~ n64
+  n64 layout_61@~~~ n65
+  n65 layout_62@~~~ n66
+  n66 layout_63@~~~ n67
+  n68@{ shape: rect, label: "**TranslationInterpolation**<br/>来自Avian ↗：启用平移显示插值。" }
+  class n68 node_component
+  class n68 external_node
+  n69@{ shape: rect, label: "**TranslationEasingState**<br/>来自Avian ↗：保存固定步平移插值的起止<br/>端点。" }
+  class n69 node_component
+  class n69 external_node
+  n70@{ shape: rect, label: "**LockedAxes**<br/>来自Avian ↗：限制刚体可移动或旋转的<br/>轴。" }
+  class n70 node_component
+  class n70 external_node
+  n71@{ shape: rect, label: "**AngularDamping**<br/>来自Avian ↗：物理角速度阻尼。" }
+  class n71 node_component
+  class n71 external_node
+  n72@{ shape: rect, label: "**TransformInterpolation**<br/>来自Avian ↗：启用实体的平移、旋转和缩<br/>放显示插值。" }
+  class n72 node_component
+  class n72 external_node
+  n73@{ shape: rect, label: "**RotationInterpolation**<br/>来自Avian ↗：启用旋转显示插值。" }
+  class n73 node_component
+  class n73 external_node
+  n74@{ shape: rect, label: "**ScaleInterpolation**<br/>来自Avian ↗：启用缩放显示插值。" }
+  class n74 node_component
+  class n74 external_node
+  n75@{ shape: rect, label: "**RotationEasingState**<br/>来自Avian ↗：保存旋转显示插值的起止端<br/>点。" }
+  class n75 node_component
+  class n75 external_node
+  n76@{ shape: rect, label: "**ScaleEasingState**<br/>来自Avian ↗：保存缩放显示插值的起止端<br/>点。" }
+  class n76 node_component
+  class n76 external_node
+  n77@{ shape: rect, label: "**HeldTarget**<br/>来自物品交互 ↗：保存本帧握持姿态的检查<br/>目标。" }
+  class n77 node_component
+  class n77 external_node
+  n78@{ shape: rect, label: "**Sensor**<br/>来自Avian ↗：标记传感器碰撞体。" }
+  class n78 node_component
+  class n78 external_node
+  n79@{ shape: rect, label: "**ColliderAabb**<br/>来自Avian ↗：保存碰撞查询使用的轴对齐<br/>包围盒。" }
+  class n79 node_component
+  class n79 external_node
+  eh1 layout_64@~~~ n68
+  n68 layout_65@~~~ n69
+  n69 layout_66@~~~ n70
+  n70 layout_67@~~~ n71
+  n71 layout_68@~~~ n72
+  n72 layout_69@~~~ n73
+  n73 layout_70@~~~ n74
+  n74 layout_71@~~~ n75
+  n75 layout_72@~~~ n76
+  n76 layout_73@~~~ n77
+  n77 layout_74@~~~ n78
+  n78 layout_75@~~~ n79
+  n2@{ shape: rect, label: "**SpawnPoint**<br/>每个业务根独立保存出生姿态。" }
+  class n2 node_component
+  n3@{ shape: rect, label: "**ResumeInterpolation**<br/>记录本次恢复临时添加的暂停项。" }
+  class n3 node_component
+  n80@{ shape: rect, label: "**NoTranslationEasing**<br/>来自Avian ↗：暂停独立平移插值。" }
+  class n80 node_component
+  class n80 external_node
+  n81@{ shape: rect, label: "**NoRotationEasing**<br/>来自Avian ↗：暂停独立旋转插值。" }
+  class n81 node_component
+  class n81 external_node
+  n82@{ shape: rect, label: "**CarryGrip**<br/>来自物品交互 ↗：保存握持对齐使用的模型<br/>偏移。" }
+  class n82 node_component
+  class n82 external_node
+  n83@{ shape: rect, label: "**ItemModel**<br/>来自场景装配 ↗：标识物品采用的美术模型<br/>种类。" }
+  class n83 node_component
+  class n83 external_node
+  n84@{ shape: rect, label: "**DespawnOnExit**<br/>来自Bevy 引擎 ↗：标记退出所属应用状态<br/>时销毁此实体。" }
+  class n84 node_component
+  class n84 external_node
+  n85@{ shape: rect, label: "**HeldAttachment**<br/>来自物品交互 ↗：保存物品挂接姿态与装卸<br/>状态。" }
+  class n85 node_component
+  class n85 external_node
+  n86@{ shape: rect, label: "**ResumeCarryEasing**<br/>来自物品交互 ↗：记录物品释放后需要恢复<br/>的插值通道。" }
+  class n86 node_component
+  class n86 external_node
+  n87@{ shape: rect, label: "**ColliderDisabled**<br/>来自Avian ↗：暂时停用碰撞体。" }
+  class n87 node_component
+  class n87 external_node
+  n88@{ shape: rect, label: "**ColliderOf**<br/>来自Avian ↗：关联碰撞体所属的刚体。" }
+  class n88 node_component
+  class n88 external_node
+  n89@{ shape: rect, label: "**Sleeping**<br/>来自Avian ↗：标记刚体当前处于休眠。" }
+  class n89 node_component
+  class n89 external_node
+  eh1 layout_76@~~~ n2
+  n2 layout_77@~~~ n3
+  n3 layout_78@~~~ n80
+  n80 layout_79@~~~ n81
+  n81 layout_80@~~~ n82
+  n82 layout_81@~~~ n83
+  n83 layout_82@~~~ n84
+  n84 layout_83@~~~ n85
+  n85 layout_84@~~~ n86
+  n86 layout_85@~~~ n87
+  n87 layout_86@~~~ n88
+  n88 layout_87@~~~ n89
+  end
+  class n5 node_entity
+  style n5 fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
+  n4 layout_88@~~~ n5
+  end
+  style column_0 fill:none,stroke:none
+  end

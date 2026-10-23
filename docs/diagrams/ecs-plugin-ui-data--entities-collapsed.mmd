@@ -1,0 +1,225 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 32,
+      "rankSpacing": 8,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart TB
+  accTitle: 菜单与界面 · 数据与实体
+  accDescr: 菜单与界面的数据与实体；外部契约保留摘要，可跳转到所属插件。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_observer fill:#F4F1F9,stroke:#7B4DB2,stroke-width:1.6px,color:#1F3340
+  classDef node_entity fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef node_local fill:#F8F5F1,stroke:#AA8752,stroke-width:1.6px,color:#1F3340
+  classDef node_message_buffer fill:#EDF4F6,stroke:#247B91,stroke-width:1.6px,color:#1F3340
+  classDef node_note fill:#F7F7F5,stroke:#9A9B88,stroke-width:1.2px,color:#1F3340
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_publish stroke:#247B91,stroke-width:1.8px,stroke-dasharray:10 4 2 4
+  classDef edge_consume stroke:#247B91,stroke-width:1.8px,stroke-dasharray:2 4
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef edge_relationship stroke:#7B4DB2,stroke-width:1.8px
+  classDef external_node stroke-dasharray:6 4
+  subgraph relations["数据流与关系"]
+  direction LR
+  subgraph relation_0[" "]
+  direction TB
+  n0@{ shape: cyl, label: "**MenuState**<br/>保存菜单页面、设置分类、返回来源与提示。" }
+  class n0 node_resource
+  n1@{ shape: cyl, label: "**MenuFocus**<br/>保存当前可操作按钮的导航序号。" }
+  class n1 node_resource
+  n2@{ shape: cyl, label: "**MenuInputSource**<br/>保存当前可见焦点使用的输入来源。" }
+  class n2 node_resource
+  n4@{ shape: cyl, label: "**Messages#lt;UiRequest#gt;**<br/>缓冲鼠标与动作输入共用的菜单请求。" }
+  class n4 node_message_buffer
+  n42@{ shape: hex, label: "**previous**<br/>循环选择上一个可操作菜单按钮。" }
+  class n42 node_observer
+  n43@{ shape: hex, label: "**next**<br/>循环选择下一个可操作菜单按钮。" }
+  class n43 node_observer
+  n44@{ shape: hex, label: "**left**<br/>向左调整当前聚焦的真实设置字段。" }
+  class n44 node_observer
+  n45@{ shape: hex, label: "**right**<br/>向右调整当前聚焦的真实设置字段。" }
+  class n45 node_observer
+  n46@{ shape: hex, label: "**confirm**<br/>执行当前聚焦按钮的菜单动作。" }
+  class n46 node_observer
+  n47@{ shape: hex, label: "**back**<br/>发出返回、暂停或恢复请求。" }
+  class n47 node_observer
+  n49@{ shape: hex, label: "**scrollbar_pointer_source**<br/>将滚动条按下操作标为鼠标输入。" }
+  class n49 node_observer
+  n50@{ shape: rounded, label: "**handle_requests**<br/>处理菜单导航、设置应用与音量编辑请求。" }
+  class n50 node_system
+  n42 layout_0@~~~ n43
+  n43 layout_1@~~~ n44
+  n44 layout_2@~~~ n45
+  n45 layout_3@~~~ n46
+  n46 layout_4@~~~ n47
+  n47 layout_5@~~~ n49
+  n42 e0@--> n1
+  class e0 edge_write
+  n42 e1@--> n2
+  class e1 edge_write
+  n43 e2@--> n1
+  class e2 edge_write
+  n43 e3@--> n2
+  class e3 edge_write
+  n44 e4@--> n2
+  class e4 edge_write
+  n44 e5@--> n4
+  class e5 edge_publish
+  n45 e6@--> n2
+  class e6 edge_write
+  n45 e7@--> n4
+  class e7 edge_publish
+  n46 e8@--> n2
+  class e8 edge_write
+  n46 e9@--> n4
+  class e9 edge_publish
+  n47 e10@--> n2
+  class e10 edge_write
+  n47 e11@--> n4
+  class e11 edge_publish
+  n49 e13@--> n2
+  class e13 edge_write
+  n4 e14@--> n50
+  class e14 edge_consume
+  n50 e15@-->|"页面"| n0
+  class e15 edge_write
+  end
+  style relation_0 fill:none,stroke:none
+  subgraph relation_1[" "]
+  direction TB
+  n31@{ shape: rect, label: "**BSN 菜单页面根**        ​<br/>承载当前菜单页面及其声明式控件        ​<br/>层级。        ​" }
+  class n31 node_entity
+  n32@{ shape: rect, label: "**可操作菜单按钮**        ​<br/>承载可操作菜单动作、设置调整与        ​<br/>连续导航。        ​" }
+  class n32 node_entity
+  n33@{ shape: rect, label: "**设置面板内容视口**        ​<br/>为设置标题、字段、说明与提示提        ​<br/>供滚动视口。        ​" }
+  class n33 node_entity
+  n37@{ shape: rect, label: "**菜单文字叶节点**        ​<br/>显示菜单标题、按钮、按键提示与        ​<br/>正文。        ​" }
+  class n37 node_entity
+  n38@{ shape: rect, label: "**音量轨道填充**        ​<br/>显示当前音量对应的轨道填充。        ​" }
+  class n38 node_entity
+  n39@{ shape: rect, label: "**设置右侧纸色面板**        ​<br/>限定设置内容的显示与裁切范围。        ​" }
+  class n39 node_entity
+  n40@{ shape: rect, label: "**设置滚动条轨道**        ​<br/>为设置内容视口提供可交互滚动轨        ​<br/>道。        ​" }
+  class n40 node_entity
+  n41@{ shape: rect, label: "**设置滚动条滑块**        ​<br/>显示设置内容的可视比例并支持拖        ​<br/>动。        ​" }
+  class n41 node_entity
+  n32 e18@-->|"ChildOf 层级"| n31
+  class e18 edge_relationship
+  n33 e19@-->|"ChildOf"| n39
+  class e19 edge_relationship
+  n37 e20@-->|"ChildOf 层级"| n31
+  class e20 edge_relationship
+  n38 e21@-->|"ChildOf 子树"| n32
+  class e21 edge_relationship
+  n39 e22@-->|"ChildOf 子树"| n31
+  class e22 edge_relationship
+  n40 e23@-->|"ChildOf 子树"| n39
+  class e23 edge_relationship
+  n41 e24@-->|"ChildOf"| n40
+  class e24 edge_relationship
+  n40 e25@-->|"Scrollbar.target"| n33
+  class e25 edge_reference
+  end
+  style relation_1 fill:none,stroke:none
+  subgraph relation_2[" "]
+  direction TB
+  n34@{ shape: rect, label: "**主菜单展示舞台根**        ​<br/>承载主菜单的独立海岛展示场景。        ​" }
+  class n34 node_entity
+  n35@{ shape: rect, label: "**主菜单展示相机**        ​<br/>为主菜单展示场景与界面提供相        ​<br/>机。        ​" }
+  class n35 node_entity
+  n36@{ shape: rect, label: "**菜单 GLB 模型与动画子树**        ​<br/>承载主菜单的海岛模型与快递员展        ​<br/>示动画。        ​" }
+  class n36 node_entity
+  n48@{ shape: hex, label: "**mark_courier_animation_ready**<br/>标记展示快递员以等待动画绑定。" }
+  class n48 node_observer
+  n48 e12@--> n36
+  class e12 edge_write
+  n35 e16@-->|"ChildOf"| n34
+  class e16 edge_relationship
+  n36 e17@-->|"ChildOf 层级"| n34
+  class e17 edge_relationship
+  end
+  style relation_2 fill:none,stroke:none
+  end
+  subgraph catalog["数据与实体"]
+  direction LR
+  subgraph column_0[" "]
+  direction TB
+  n3@{ shape: cyl, label: "**UiTheme**<br/>保存菜单使用的字体主题。" }
+  class n3 node_resource
+  n6@{ shape: notch-rect, label: "**Local#lt;Option#lt;Entity#gt;#gt; · previous_**<br/>**hover**<br/>保存上次悬停按钮以识别真实进入。" }
+  class n6 node_local
+  n8@{ shape: notch-rect, label: "**Local#lt;Option#lt;(SettingKey, u8)#gt;#gt;**<br/>记录连续音量编辑以在结束时汇总确认。" }
+  class n8 node_local
+  n10@{ shape: notch-rect, label: "**Local · previous focused Entity**<br/>保存最近提交的滚动焦点按钮。" }
+  class n10 node_local
+  n30@{ shape: rect, label: "**菜单输入控制者**        ​<br/>提供跨页面与玩法会话保留的菜单        ​<br/>动作输入。        ​" }
+  class n30 node_entity
+  n3 layout_6@~~~ n6
+  n6 layout_7@~~~ n8
+  n8 layout_8@~~~ n10
+  n10 layout_9@~~~ n30
+  end
+  style column_0 fill:none,stroke:none
+  subgraph column_1[" "]
+  direction TB
+  n5@{ shape: notch-rect, label: "**Local#lt;Option#lt;Vec2#gt;#gt; · previous_**<br/>**cursor**<br/>保存上次光标位置以识别真实移动。" }
+  class n5 node_local
+  n7@{ shape: notch-rect, label: "**Local#lt;Option#lt;VolumeDrag#gt;#gt;**<br/>保存音量滑条的局部捕获身份与最后采样值。" }
+  class n7 node_local
+  n9@{ shape: notch-rect, label: "**Local · previous_layout**<br/>保存上次菜单结构以判断是否需要重建。" }
+  class n9 node_local
+  n29@{ shape: doc, label: "**设置固定区域**<br/>保留设置分类、底部操作与页脚的固定位置。" }
+  class n29 node_note
+  n5 layout_10@~~~ n7
+  n7 layout_11@~~~ n9
+  n9 layout_12@~~~ n29
+  end
+  style column_1 fill:none,stroke:none
+  column_0 layout_13@~~~ column_1
+  end
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e13@{ curve: basis }
+  e16@{ curve: basis }
+  e17@{ curve: basis }
+  e18@{ curve: basis }
+  e19@{ curve: basis }
+  e22@{ curve: basis }
+  e23@{ curve: basis }
+  e25@{ curve: basis }

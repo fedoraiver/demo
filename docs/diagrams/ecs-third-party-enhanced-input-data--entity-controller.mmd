@@ -1,0 +1,116 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 32,
+      "rankSpacing": 8,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart TB
+  accTitle: Enhanced Input · 数据与实体
+  accDescr: Enhanced Input的数据与实体；外部契约保留摘要，可跳转到所属插件。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_entity fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef external_node stroke-dasharray:6 4
+  subgraph catalog["数据与实体"]
+  direction LR
+  subgraph column_0[" "]
+  direction TB
+  n0@{ shape: cyl, label: "**ContextInstances#lt;PreUpdate#gt;**<br/>索引输入框架当前运行的动作上下文。" }
+  class n0 node_resource
+  n2@{ shape: cyl, label: "**ConsumedInputs**<br/>记录本轮动作评估已经消费的输入。" }
+  class n2 node_resource
+  subgraph n30[" "]
+  direction TB
+  eh0@{ shape: text, label: "**键盘控制者**        ​<br/>来自场景装配 ↗：保存玩家身        ​<br/>份、输入上下文与受控角色及相        ​<br/>机。        ​" }
+  n31@{ shape: rect, label: "**Name**<br/>来自Bevy 引擎 ↗：用于日志与调试的控制<br/>者名称。" }
+  class n31 node_component
+  class n31 external_node
+  n32@{ shape: rect, label: "**PlayerId**<br/>来自第一人称控制 ↗：独立于运行时<br/>Entity 的业务身份。" }
+  class n32 node_component
+  class n32 external_node
+  n33@{ shape: rect, label: "**GameplayContext**<br/>来自第一人称控制 ↗：标记用于玩法动作的<br/>控制上下文。" }
+  class n33 node_component
+  class n33 external_node
+  n4@{ shape: rect, label: "**GamepadDevice**<br/>配置玩法上下文的手柄输入来源。" }
+  class n4 node_component
+  n34@{ shape: rect, label: "**ControlsCharacter**<br/>来自第一人称控制 ↗：普通实体引用，指向<br/>受控角色。" }
+  class n34 node_component
+  class n34 external_node
+  eh0 layout_0@~~~ n31
+  n31 layout_1@~~~ n32
+  n32 layout_2@~~~ n33
+  n33 layout_3@~~~ n4
+  n4 layout_4@~~~ n34
+  n35@{ shape: rect, label: "**ControlsCamera**<br/>来自第一人称控制 ↗：普通实体引用，指向<br/>受控相机。" }
+  class n35 node_component
+  class n35 external_node
+  n5@{ shape: rect, label: "**Actions#lt;GameplayContext#gt;**<br/>索引控制上下文拥有的动作实体。" }
+  class n5 node_component
+  n6@{ shape: rect, label: "**ContextPriority#lt;GameplayContext#gt;**<br/>配置动作上下文的输入评估优先级。" }
+  class n6 node_component
+  n7@{ shape: rect, label: "**ContextActivity#lt;GameplayContext#gt;**<br/>保存动作上下文的启用状态。" }
+  class n7 node_component
+  n36@{ shape: rect, label: "**DespawnOnExit**<br/>来自Bevy 引擎 ↗：标记退出游戏会话时清<br/>理控制者。" }
+  class n36 node_component
+  class n36 external_node
+  eh0 layout_5@~~~ n35
+  n35 layout_6@~~~ n5
+  n5 layout_7@~~~ n6
+  n6 layout_8@~~~ n7
+  n7 layout_9@~~~ n36
+  end
+  class n30 node_entity
+  class n30 external_node
+  style n30 fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340,stroke-dasharray:6 4
+  n0 layout_10@~~~ n2
+  n2 layout_11@~~~ n30
+  end
+  style column_0 fill:none,stroke:none
+  subgraph column_1[" "]
+  direction TB
+  n1@{ shape: cyl, label: "**ActionSources**<br/>配置输入框架允许使用的输入来源。" }
+  class n1 node_resource
+  n3@{ shape: cyl, label: "**PendingBindings**<br/>保存上下文停用后仍需重置的输入绑定。" }
+  class n3 node_resource
+  n37@{ shape: rect, label: "**动作实体**        ​<br/>来自第一人称控制 ↗：保存玩法        ​<br/>或调试动作的评估结果与触发状        ​<br/>态。        ​" }
+  class n37 node_entity
+  class n37 external_node
+  n39@{ shape: rect, label: "**绑定实体**        ​<br/>来自第一人称控制 ↗：将键盘或        ​<br/>鼠标输入映射到玩法动作。        ​" }
+  class n39 node_entity
+  class n39 external_node
+  n40@{ shape: rect, label: "**菜单输入控制者**        ​<br/>来自菜单与界面 ↗：提供跨页面        ​<br/>与玩法会话保留的菜单动作输入。        ​" }
+  class n40 node_entity
+  class n40 external_node
+  n1 layout_12@~~~ n3
+  n3 layout_13@~~~ n37
+  n37 layout_14@~~~ n39
+  n39 layout_15@~~~ n40
+  end
+  style column_1 fill:none,stroke:none
+  column_0 layout_16@~~~ column_1
+  end

@@ -1,0 +1,154 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 32,
+      "rankSpacing": 8,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart TB
+  accTitle: Avian · 数据与实体
+  accDescr: Avian的数据与实体；外部契约保留摘要，可跳转到所属插件。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_observer fill:#F4F1F9,stroke:#7B4DB2,stroke-width:1.6px,color:#1F3340
+  classDef node_entity fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef node_message_buffer fill:#EDF4F6,stroke:#247B91,stroke-width:1.6px,color:#1F3340
+  classDef node_contract fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef external_node stroke-dasharray:6 4
+  subgraph relations["数据流与关系"]
+  direction LR
+  subgraph relation_0[" "]
+  direction TB
+  n85@{ shape: lin-rect, label: "**PhysicsSystems::StepSimulation /**<br/>**PhysicsSchedule**<br/>执行碰撞求解、重力积分与刚体运动。" }
+  class n85 node_contract
+  n87@{ shape: rect, label: "**角色业务根实体**        ​<br/>来自场景装配 ↗：承载角色身        ​<br/>份、运动意图与动态物理身体。        ​" }
+  class n87 node_entity
+  class n87 external_node
+  n85 e0@-->|"物理状态"| n87
+  class e0 edge_write
+  end
+  style relation_0 fill:none,stroke:none
+  subgraph relation_1[" "]
+  direction TB
+  n86@{ shape: hex, label: "**prepare_holder_despawn**<br/>来自物品交互 ↗：在持有者销毁前停用并卸<br/>载持物代理。" }
+  class n86 node_observer
+  class n86 external_node
+  n123@{ shape: rect, label: "**持物无视觉碰撞代理**        ​<br/>来自物品交互 ↗：为持物共享人        ​<br/>物刚体提供无视觉碰撞形状。        ​" }
+  class n123 node_entity
+  class n123 external_node
+  n86 e1@-->|"Commands"| n123
+  class e1 edge_write
+  end
+  style relation_1 fill:none,stroke:none
+  end
+  subgraph catalog["数据与实体"]
+  direction LR
+  subgraph column_0[" "]
+  direction TB
+  n0@{ shape: cyl, label: "**Gravity**<br/>保存物理世界使用的全局重力。" }
+  class n0 node_resource
+  n2@{ shape: cyl, label: "**Messages#lt;CollisionStart#gt;**<br/>缓冲物理接触开始消息。" }
+  class n2 node_message_buffer
+  n4@{ shape: cyl, label: "**LastEasingTick**<br/>记录最近显示插值变更以识别外部瞬移。" }
+  class n4 node_resource
+  n6@{ shape: cyl, label: "**ContactGraph**<br/>保存物理解算后的真实接触结果。" }
+  class n6 node_resource
+  n101@{ shape: rect, label: "**可搬物品业务根实体**        ​<br/>来自场景装配 ↗：承载可拾取物        ​<br/>品身份及自由运动、共享持握状        ​<br/>态。        ​" }
+  class n101 node_entity
+  class n101 external_node
+  n0 layout_0@~~~ n2
+  n2 layout_1@~~~ n4
+  n4 layout_2@~~~ n6
+  n6 layout_3@~~~ n101
+  end
+  style column_0 fill:none,stroke:none
+  subgraph column_1[" "]
+  direction TB
+  n1@{ shape: cyl, label: "**ColliderTrees**<br/>索引碰撞体以加速接地、拾取与持物路径查<br/>询。" }
+  class n1 node_resource
+  n3@{ shape: cyl, label: "**Messages#lt;CollisionEnd#gt;**<br/>缓冲物理接触结束消息。" }
+  class n3 node_message_buffer
+  n5@{ shape: cyl, label: "**Time#lt;Physics#gt;**<br/>保存可随游戏暂停的物理模拟时间。" }
+  class n5 node_resource
+  subgraph n118[" "]
+  direction TB
+  eh2@{ shape: text, label: "**海岛静态碰撞实体**        ​<br/>来自场景装配 ↗：为海岛结构、        ​<br/>入口坡道与展示人物提供静态碰        ​<br/>撞。        ​" }
+  n66@{ shape: rect, label: "**RigidBody**<br/>定义实体参与物理模拟的刚体模式。" }
+  class n66 node_component
+  n67@{ shape: rect, label: "**Collider**<br/>保存参与物理碰撞的实体形状。" }
+  class n67 node_component
+  n68@{ shape: rect, label: "**CollisionLayers**<br/>配置实体之间允许发生碰撞的层。" }
+  class n68 node_component
+  n119@{ shape: rect, label: "**Transform**<br/>来自Bevy 引擎 ↗：保存静态碰撞与原模型<br/>共用的位姿。" }
+  class n119 node_component
+  class n119 external_node
+  n69@{ shape: rect, label: "**Position**<br/>保存物理模拟中的真实位置。" }
+  class n69 node_component
+  eh2 layout_4@~~~ n66
+  n66 layout_5@~~~ n67
+  n67 layout_6@~~~ n68
+  n68 layout_7@~~~ n119
+  n119 layout_8@~~~ n69
+  n70@{ shape: rect, label: "**Rotation**<br/>保存物理模拟中的真实旋转。" }
+  class n70 node_component
+  n71@{ shape: rect, label: "**ColliderAabb**<br/>保存碰撞查询使用的轴对齐包围盒。" }
+  class n71 node_component
+  n120@{ shape: rect, label: "**IslandCollider**<br/>来自场景装配 ↗：地图静态碰撞标签。" }
+  class n120 node_component
+  class n120 external_node
+  n121@{ shape: rect, label: "**ChildOf**<br/>来自Bevy 引擎 ↗：随原地图实例层级清<br/>理。" }
+  class n121 node_component
+  class n121 external_node
+  eh2 layout_9@~~~ n70
+  n70 layout_10@~~~ n71
+  n71 layout_11@~~~ n120
+  n120 layout_12@~~~ n121
+  n72@{ shape: rect, label: "**Sensor**<br/>标记传感器碰撞体。" }
+  class n72 node_component
+  n122@{ shape: rect, label: "**Name**<br/>来自Bevy 引擎 ↗：保存碰撞体的美术来源<br/>名称以定位障碍。" }
+  class n122 node_component
+  class n122 external_node
+  n73@{ shape: rect, label: "**ColliderOf**<br/>关联碰撞体所属的刚体。" }
+  class n73 node_component
+  n74@{ shape: rect, label: "**ColliderDisabled**<br/>暂时停用碰撞体。" }
+  class n74 node_component
+  eh2 layout_13@~~~ n72
+  n72 layout_14@~~~ n122
+  n122 layout_15@~~~ n73
+  n73 layout_16@~~~ n74
+  end
+  class n118 node_entity
+  class n118 external_node
+  style n118 fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340,stroke-dasharray:6 4
+  n1 layout_17@~~~ n3
+  n3 layout_18@~~~ n5
+  n5 layout_19@~~~ n118
+  end
+  style column_1 fill:none,stroke:none
+  column_0 layout_20@~~~ column_1
+  end

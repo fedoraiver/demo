@@ -1,0 +1,217 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 32,
+      "rankSpacing": 56,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: 功能模块与依赖总览
+  accDescr: 选择插件查看职责、数据契约与实现。连线表示公开契约依赖，不表示插件或系统的执行顺序。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_plugin fill:#F1F3F6,stroke:#4A6389,stroke-width:2.2px,color:#1F3340
+  classDef edge_dependency stroke:#64748B,stroke-width:1.5px,stroke-dasharray:10 5
+  classDef external_node stroke-dasharray:6 4
+  subgraph diagram_main[" "]
+  direction LR
+  style diagram_main fill:none,stroke:none
+  subgraph layout_card_n0[" "]
+  n0@{ shape: fr-rect, label: "**应用流程 · GameFlowPlugin**<br/>管理应用状态、时钟及跨功能阶段顺序。" }
+  class n0 node_plugin
+  end
+  style layout_card_n0 fill:none,stroke:none
+  subgraph layout_card_n1[" "]
+  n1@{ shape: fr-rect, label: "**第一人称控制 · FirstPersonPlugin**<br/>管理玩法动作、光标捕获、朝向与第一人称镜<br/>头。" }
+  class n1 node_plugin
+  end
+  style layout_card_n1 fill:none,stroke:none
+  subgraph layout_card_n2[" "]
+  n2@{ shape: fr-rect, label: "**角色运动 · CharacterPlugin**<br/>提供角色身份、运动、接地与跳跃。" }
+  class n2 node_plugin
+  end
+  style layout_card_n2 fill:none,stroke:none
+  subgraph layout_card_n3[" "]
+  n3@{ shape: fr-rect, label: "**物品交互 · ItemInteractionPlugin**<br/>管理物品拾取、共享持握、安全释放与反馈。" }
+  class n3 node_plugin
+  end
+  style layout_card_n3 fill:none,stroke:none
+  subgraph layout_card_n4[" "]
+  n4@{ shape: fr-rect, label: "**物理基础 · GamePhysicsPlugin**<br/>安装物理引擎并管理重力与碰撞日志。" }
+  class n4 node_plugin
+  end
+  style layout_card_n4 fill:none,stroke:none
+  subgraph layout_card_n5[" "]
+  n5@{ shape: fr-rect, label: "**越界恢复 · BoundsRecoveryPlugin**<br/>管理落水恢复与恢复期间的插值状态。" }
+  class n5 node_plugin
+  end
+  style layout_card_n5 fill:none,stroke:none
+  subgraph layout_card_n6[" "]
+  n6@{ shape: fr-rect, label: "**场景装配 · SceneAssemblyPlugin**<br/>加载运行资源并装配海岛、碰撞与业务实体。" }
+  class n6 node_plugin
+  end
+  style layout_card_n6 fill:none,stroke:none
+  subgraph layout_card_n7[" "]
+  n7@{ shape: fr-rect, label: "**角色动画 · CharacterAnimationPlugin**<br/>绑定并混合角色动画，补偿视觉接地。" }
+  class n7 node_plugin
+  end
+  style layout_card_n7 fill:none,stroke:none
+  subgraph layout_card_n8[" "]
+  n8@{ shape: fr-rect, label: "**菜单与界面 · GameUiPlugin**<br/>管理菜单、设置编辑、导航与主菜单展示场<br/>景。" }
+  class n8 node_plugin
+  end
+  style layout_card_n8 fill:none,stroke:none
+  subgraph layout_card_n9[" "]
+  n9@{ shape: fr-rect, label: "**音频播放 · GameAudioPlugin**<br/>管理短音预加载、混音、播放与设备输出。" }
+  class n9 node_plugin
+  end
+  style layout_card_n9 fill:none,stroke:none
+  subgraph layout_card_n10[" "]
+  n10@{ shape: fr-rect, label: "**设置与参数 · SettingsPlugin**<br/>管理设置持久化、共享原型参数与帧率控制。" }
+  class n10 node_plugin
+  end
+  style layout_card_n10 fill:none,stroke:none
+  subgraph layout_card_n11[" "]
+  n11@{ shape: fr-rect, label: "**世界检查器 · InspectorPlugin**<br/>安装可读写世界数据的检查器界面。" }
+  class n11 node_plugin
+  end
+  style layout_card_n11 fill:none,stroke:none
+  subgraph layout_card_n12[" "]
+  n12@{ shape: fr-rect, label: "**会话日志 · SessionLogPlugin**<br/>安装统一会话日志并管理后台输出与退出刷<br/>新。" }
+  class n12 node_plugin
+  end
+  style layout_card_n12 fill:none,stroke:none
+  subgraph layout_card_n13[" "]
+  n13@{ shape: fr-rect, label: "**窗口策略 · WindowPolicyPlugin**<br/>维护主窗口的原生比例与尺寸策略。" }
+  class n13 node_plugin
+  end
+  style layout_card_n13 fill:none,stroke:none
+  subgraph layout_card_n14[" "]
+  n14@{ shape: fr-rect, label: "**Bevy 引擎 · DefaultPlugins**<br/>提供窗口、时间、资产、动画与渲染基础设<br/>施。" }
+  class n14 node_plugin
+  end
+  style layout_card_n14 fill:none,stroke:none
+  subgraph layout_card_n15[" "]
+  n15@{ shape: fr-rect, label: "**Avian · PhysicsPlugins::default()**<br/>提供固定步刚体模拟与碰撞求解。" }
+  class n15 node_plugin
+  end
+  style layout_card_n15 fill:none,stroke:none
+  subgraph layout_card_n16[" "]
+  n16@{ shape: fr-rect, label: "**Enhanced Input · EnhancedInputPlugin**<br/>提供动作上下文、绑定评估与事件派发。" }
+  class n16 node_plugin
+  end
+  style layout_card_n16 fill:none,stroke:none
+  subgraph layout_card_n17[" "]
+  n17@{ shape: fr-rect, label: "**Kira · KiraAudioPlugin**<br/>提供短音资产加载、通道播放与混音基础设<br/>施。" }
+  class n17 node_plugin
+  end
+  style layout_card_n17 fill:none,stroke:none
+  subgraph layout_card_n18[" "]
+  n18@{ shape: fr-rect, label: "**Egui / Inspector · EguiPlugin**<br/>准备 Egui 上下文和界面绘制。" }
+  class n18 node_plugin
+  end
+  style layout_card_n18 fill:none,stroke:none
+  n1 e0@-->|"CharacterIntent 与角色姿态"| n2
+  class e0 edge_dependency
+  n1 e1@-->|"转向使用持握碰撞查询"| n3
+  class e1 edge_dependency
+  n1 e2@-->|"观察设置"| n10
+  class e2 edge_dependency
+  n2 e3@-->|"PrototypeConfig"| n10
+  class e3 edge_dependency
+  n2 e4@-->|"Avian 身体与碰撞层"| n4
+  class e4 edge_dependency
+  n3 e5@-->|"角色意图与持有者身体"| n2
+  class e5 edge_dependency
+  n3 e6@-->|"共享碰撞层与物理查询"| n4
+  class e6 edge_dependency
+  n3 e7@-->|"SoundRequest"| n9
+  class e7 edge_dependency
+  n3 e8@-->|"拾取与握持参数"| n10
+  class e8 edge_dependency
+  n5 e9@-->|"恢复时解除持握"| n3
+  class e9 edge_dependency
+  n5 e10@-->|"恢复角色运动状态"| n2
+  class e10 edge_dependency
+  n6 e11@-->|"装配控制者与相机"| n1
+  class e11 edge_dependency
+  n6 e12@-->|"装配角色身份与身体"| n2
+  class e12 edge_dependency
+  n6 e13@-->|"装配可搬物与身体"| n3
+  class e13 edge_dependency
+  n6 e14@-->|"装配 SpawnPoint"| n5
+  class e14 edge_dependency
+  n6 e15@-->|"装配 CourierVisual"| n7
+  class e15 edge_dependency
+  n6 e16@-->|"装配地图碰撞"| n4
+  class e16 edge_dependency
+  n7 e17@-->|"角色动作状态"| n2
+  class e17 edge_dependency
+  n8 e18@-->|"编辑并应用设置草稿"| n10
+  class e18 edge_dependency
+  n8 e19@-->|"请求应用与运行状态转换"| n0
+  class e19 edge_dependency
+  n8 e20@-->|"SoundRequest / AudioPreview"| n9
+  class e20 edge_dependency
+  n9 e21@-->|"已应用音量"| n10
+  class e21 edge_dependency
+  n4 e22@-->|"共享重力参数"| n10
+  class e22 edge_dependency
+  n0 e23@-->|"引用 UiSystems::Style"| n8
+  class e23 edge_dependency
+  n0 e24@-->|"引用 AudioSystems"| n9
+  class e24 edge_dependency
+  n4 e25@-->|"tracing 碰撞记录"| n12
+  class e25 edge_dependency
+  n13 e26@-->|"窗口策略日志"| n12
+  class e26 edge_dependency
+  end
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e17@{ curve: basis }
+  e18@{ curve: basis }
+  e19@{ curve: basis }
+  e20@{ curve: basis }
+  e21@{ curve: basis }
+  e22@{ curve: basis }
+  e23@{ curve: basis }
+  e24@{ curve: basis }
+  e25@{ curve: basis }
+  e26@{ curve: basis }

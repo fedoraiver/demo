@@ -1,0 +1,213 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 32,
+      "rankSpacing": 56,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart TB
+  accTitle: 物品交互 · 系统与调度
+  accDescr: 物品交互的系统与调度；外部契约保留摘要，可跳转到所属插件。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_contract fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef edge_schedule stroke:#334155,stroke-width:3px
+  classDef edge_order stroke:#334155,stroke-width:2px
+  classDef edge_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef external_node stroke-dasharray:6 4
+  subgraph diagram_main[" "]
+  direction LR
+  style diagram_main fill:none,stroke:none
+  subgraph sg0["FixedFirst"]
+  direction TB
+  n16@{ shape: lin-rect, label: "**TransformEasingSystems::Reset**<br/>来自Avian ↗：重置上一轮固定步的插值状<br/>态。" }
+  class n16 node_contract
+  class n16 external_node
+  n13@{ shape: rounded, label: "**resume_carry_easing**<br/>恢复物品释放前未暂停的插值通道。" }
+  class n13 node_system
+  n17@{ shape: lin-rect, label: "**ApplyDeferred · 恢复插值**<br/>来自越界恢复 ↗：使插值暂停清理在新固定<br/>步采样前可见。" }
+  class n17 node_contract
+  class n17 external_node
+  n16 layout_0@~~~ n13
+  n13 layout_1@~~~ n17
+  end
+  subgraph sg1["FixedUpdate"]
+  direction TB
+  n18@{ shape: rounded, label: "**jump_characters**<br/>来自角色运动 ↗：执行角色跳跃并消费单次<br/>请求。" }
+  class n18 node_system
+  class n18 external_node
+  n0@{ shape: rounded, label: "**handle_interaction**<br/>处理物品拾取、共享持握与主动释放。" }
+  class n0 node_system
+  n19@{ shape: lin-rect, label: "**ApplyDeferred（交互 → 呈现 / 挂接）**<br/>来自Bevy 引擎 ↗：使拿放后的关系与刚体<br/>变更对后续系统可见。" }
+  class n19 node_contract
+  class n19 external_node
+  n1@{ shape: rounded, label: "**sync_held_presentation**<br/>按人物呈现姿态同步持物模型与握持目标。" }
+  class n1 node_system
+  n3@{ shape: rounded, label: "**release_orphaned_items**<br/>清理失效持握并恢复物品独立运动。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**warn_hold_strain**<br/>检查持续持握偏差并发出失稳提示音。" }
+  class n4 node_system
+  n20@{ shape: lin-rect, label: "**ApplyDeferred（清理 / 装卸依赖）**<br/>来自Bevy 引擎 ↗：使持物清理与刚体装卸<br/>变更对后续同步可见。" }
+  class n20 node_contract
+  class n20 external_node
+  n6@{ shape: rounded, label: "**cleanup_orphaned_colliders**<br/>清理物品销毁后残留的碰撞代理。" }
+  class n6 node_system
+  n7@{ shape: rounded, label: "**restore_empty_holder_mass**<br/>归还不再持物角色的原有质量。" }
+  class n7 node_system
+  n8@{ shape: rounded, label: "**finish_attachments**<br/>为持物装配共享碰撞代理并累计质量。" }
+  class n8 node_system
+  n9@{ shape: rounded, label: "**align_attachments**<br/>沿安全碰撞路径将物品对齐双手。" }
+  class n9 node_system
+  n10@{ shape: rounded, label: "**sync_held_physics**<br/>按人物物理姿态同步持物位置与碰撞代理。" }
+  class n10 node_system
+  n23@{ shape: lin-rect, label: "**FixedGameplaySystems**<br/>来自应用流程 ↗：协调恢复、朝向、运动、<br/>交互与持握的固定步顺序。" }
+  class n23 node_contract
+  class n23 external_node
+  n18 layout_2@~~~ n0
+  n0 layout_3@~~~ n19
+  n19 layout_4@~~~ n1
+  n1 layout_5@~~~ n3
+  n3 layout_6@~~~ n4
+  n4 layout_7@~~~ n20
+  n20 layout_8@~~~ n6
+  n6 layout_9@~~~ n7
+  n7 layout_10@~~~ n8
+  n8 layout_11@~~~ n9
+  n9 layout_12@~~~ n10
+  n10 layout_13@~~~ n23
+  end
+  subgraph sg2["FixedPostUpdate"]
+  direction TB
+  n21@{ shape: lin-rect, label: "**PhysicsSystems::Writeback**<br/>来自Avian ↗：将求解后的物理位姿写回显<br/>示变换。" }
+  class n21 node_contract
+  class n21 external_node
+  n11@{ shape: rounded, label: "**sync_held_physics**<br/>按最新物理位姿同步持物与碰撞代理。" }
+  class n11 node_system
+  n22@{ shape: lin-rect, label: "**PhysicsSystems::StepSimulation /**<br/>**PhysicsSchedule**<br/>来自Avian ↗：执行碰撞求解、重力积分与<br/>刚体运动。" }
+  class n22 node_contract
+  class n22 external_node
+  n5@{ shape: rounded, label: "**emit_parcel_land**<br/>识别自由物品落地并发出声音请求。" }
+  class n5 node_system
+  n21 layout_14@~~~ n11
+  n11 layout_15@~~~ n22
+  n22 layout_16@~~~ n5
+  end
+  subgraph sg3["RunFixedMainLoop ·<br/>AfterFixedMainLoop"]
+  direction TB
+  n14@{ shape: rounded, label: "**sync_character_facing**<br/>来自第一人称控制 ↗：同步人物朝向并处理<br/>持物转向受阻。" }
+  class n14 node_system
+  class n14 external_node
+  n12@{ shape: rounded, label: "**sync_held_physics**<br/>同步本帧持物碰撞朝向与显示朝向。" }
+  class n12 node_system
+  n2@{ shape: rounded, label: "**sync_held_presentation**<br/>按人物呈现姿态同步持物模型与握持目标。" }
+  class n2 node_system
+  n15@{ shape: rounded, label: "**follow_first_person_camera**<br/>来自第一人称控制 ↗：按人物本帧位置与观<br/>察角度更新第一人称镜头。" }
+  class n15 node_system
+  class n15 external_node
+  n24@{ shape: lin-rect, label: "**PresentationSystems**<br/>来自应用流程 ↗：协调插值后的持物、镜头<br/>与可见性同步。" }
+  class n24 node_contract
+  class n24 external_node
+  n14 layout_17@~~~ n12
+  n12 layout_18@~~~ n2
+  n2 layout_19@~~~ n15
+  n15 layout_20@~~~ n24
+  end
+  sg0 sc0@--> sg1
+  class sc0 edge_schedule
+  sg1 sc1@--> sg2
+  class sc1 edge_schedule
+  sg2 sc2@--> sg3
+  class sc2 edge_schedule
+  n14 e0@--> n12
+  class e0 edge_order
+  n12 e1@--> n2
+  class e1 edge_order
+  n2 e2@--> n15
+  class e2 edge_order
+  n16 e3@--> n13
+  class e3 edge_order
+  n13 e4@--> n17
+  class e4 edge_order
+  n18 e5@--> n0
+  class e5 edge_order
+  n0 e6@--> n19
+  class e6 edge_order
+  n19 e7@--> n1
+  class e7 edge_order
+  n3 e8@--> n20
+  class e8 edge_order
+  n20 e9@--> n6
+  class e9 edge_order
+  n6 e10@--> n7
+  class e10 edge_order
+  n7 e11@--> n8
+  class e11 edge_order
+  n8 e12@--> n9
+  class e12 edge_order
+  n9 e13@--> n10
+  class e13 edge_order
+  n1 e14@-->|"Target"| n3
+  class e14 edge_order
+  n1 e15@-->|"Target"| n4
+  class e15 edge_order
+  n21 e16@-->|"Writeback"| n11
+  class e16 edge_order
+  n22 e17@--> n5
+  class e17 edge_order
+  n23 e18@-->|"Interaction"| n0
+  class e18 edge_membership
+  n23 e19@-->|"Target"| n1
+  class e19 edge_membership
+  n23 e20@-->|"Attachment"| n10
+  class e20 edge_membership
+  n24 e21@-->|"HeldPhysics"| n12
+  class e21 edge_membership
+  n24 e22@-->|"HeldPresentation"| n2
+  class e22 edge_membership
+  end
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e17@{ curve: basis }
+  e18@{ curve: basis }
+  e19@{ curve: basis }
+  e20@{ curve: basis }
+  e21@{ curve: basis }
+  e22@{ curve: basis }

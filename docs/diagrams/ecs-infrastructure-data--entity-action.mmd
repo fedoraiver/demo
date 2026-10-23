@@ -1,0 +1,318 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 32,
+      "rankSpacing": 8,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart TB
+  accTitle: Bevy 引擎 · 数据与实体
+  accDescr: Bevy 引擎的数据与实体；外部契约保留摘要，可跳转到所属插件。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_observer fill:#F4F1F9,stroke:#7B4DB2,stroke-width:1.6px,color:#1F3340
+  classDef node_entity fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef node_message_buffer fill:#EDF4F6,stroke:#247B91,stroke-width:1.6px,color:#1F3340
+  classDef node_contract fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_external_io fill:#F1F3F4,stroke:#526A78,stroke-width:1.6px,color:#1F3340
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef external_node stroke-dasharray:6 4
+  subgraph relations["数据流与关系"]
+  direction LR
+  subgraph relation_0[" "]
+  direction TB
+  n127@{ shape: rect, label: "**主窗口实体**        ​<br/>承载应用主窗口及原生尺寸策略。        ​" }
+  class n127 node_entity
+  n133@{ shape: lean-l, label: "**原生窗口约束**<br/>来自窗口策略 ↗：在平台应用尺寸前约束主<br/>窗口比例与范围。" }
+  class n133 node_external_io
+  class n133 external_node
+  n133 e3@-->|"应用尺寸"| n127
+  class e3 edge_write
+  end
+  style relation_0 fill:none,stroke:none
+  subgraph relation_1[" "]
+  direction TB
+  n130@{ shape: lin-rect, label: "**TransformSystems::Propagate**<br/>沿实体层级传播世界变换。" }
+  class n130 node_contract
+  n231@{ shape: rect, label: "**业务直属 GLB 视觉根实体**        ​<br/>来自场景装配 ↗：承载业务实体        ​<br/>的模型、骨骼与动画子树。        ​" }
+  class n231 node_entity
+  class n231 external_node
+  n130 e0@-->|"世界变换"| n231
+  class e0 edge_write
+  end
+  style relation_1 fill:none,stroke:none
+  subgraph relation_2[" "]
+  direction TB
+  n131@{ shape: hex, label: "**scroll_menu**<br/>来自菜单与界面 ↗：滚动设置内容并限制在<br/>有效范围内。" }
+  class n131 node_observer
+  class n131 external_node
+  n132@{ shape: hex, label: "**scroll_over_settings_scrollbar**<br/>来自菜单与界面 ↗：通过滚动条上的滚轮操<br/>作滚动内容视口。" }
+  class n132 node_observer
+  class n132 external_node
+  n274@{ shape: rect, label: "**设置面板内容视口**        ​<br/>来自菜单与界面 ↗：为设置标        ​<br/>题、字段、说明与提示提供滚动视        ​<br/>口。        ​" }
+  class n274 node_entity
+  class n274 external_node
+  n131 layout_0@~~~ n132
+  n131 e1@--> n274
+  class e1 edge_write
+  n132 e2@--> n274
+  class e2 edge_write
+  end
+  style relation_2 fill:none,stroke:none
+  end
+  subgraph catalog["数据与实体"]
+  direction LR
+  subgraph column_0[" "]
+  direction TB
+  n0@{ shape: cyl, label: "**Time#lt;Fixed#gt;**<br/>提供固定模拟的时间步长。" }
+  class n0 node_resource
+  n4@{ shape: cyl, label: "**ButtonInput#lt;KeyCode#gt;**<br/>保存键盘按键的当前状态与变化。" }
+  class n4 node_resource
+  n8@{ shape: cyl, label: "**Messages#lt;KeyboardFocusLost#gt;**<br/>通知输入系统清理失焦后残留的按键。" }
+  class n8 node_message_buffer
+  n12@{ shape: cyl, label: "**Assets#lt;Mesh#gt;**<br/>保存模型网格并提供碰撞构建所需的顶点。" }
+  class n12 node_resource
+  n16@{ shape: cyl, label: "**WinitSettings**<br/>配置窗口主循环的更新策略。" }
+  class n16 node_resource
+  n20@{ shape: cyl, label: "**Assets#lt;WorldAsset#gt;**<br/>保存可以展开为实体层级的场景资产。" }
+  class n20 node_resource
+  n24@{ shape: cyl, label: "**Messages#lt;AppExit#gt;**<br/>通知音频停止并进入应用退出流程。" }
+  class n24 node_message_buffer
+  n134@{ shape: rect, label: "**键盘控制者**        ​<br/>来自场景装配 ↗：保存玩家身        ​<br/>份、输入上下文与受控角色及相        ​<br/>机。        ​" }
+  class n134 node_entity
+  class n134 external_node
+  n221@{ shape: rect, label: "**第一人称相机实体**        ​<br/>来自场景装配 ↗：提供跟随角色        ​<br/>的第一人称视角与观察输入状态。        ​" }
+  class n221 node_entity
+  class n221 external_node
+  n265@{ shape: rect, label: "**地图展示 NPC**        ​<br/>来自场景装配 ↗：保留地图展示        ​<br/>人物及其静态身体碰撞。        ​" }
+  class n265 node_entity
+  class n265 external_node
+  n276@{ shape: rect, label: "**主菜单展示舞台根**        ​<br/>来自菜单与界面 ↗：承载主菜单        ​<br/>的独立海岛展示场景。        ​" }
+  class n276 node_entity
+  class n276 external_node
+  n283@{ shape: rect, label: "**菜单文字叶节点**        ​<br/>来自菜单与界面 ↗：显示菜单标        ​<br/>题、按钮、按键提示与正文。        ​" }
+  class n283 node_entity
+  class n283 external_node
+  n293@{ shape: rect, label: "**设置滚动条轨道**        ​<br/>来自菜单与界面 ↗：为设置内容        ​<br/>视口提供可交互滚动轨道。        ​" }
+  class n293 node_entity
+  class n293 external_node
+  n0 layout_1@~~~ n4
+  n4 layout_2@~~~ n8
+  n8 layout_3@~~~ n12
+  n12 layout_4@~~~ n16
+  n16 layout_5@~~~ n20
+  n20 layout_6@~~~ n24
+  n24 layout_7@~~~ n134
+  n134 layout_8@~~~ n221
+  n221 layout_9@~~~ n265
+  n265 layout_10@~~~ n276
+  n276 layout_11@~~~ n283
+  n283 layout_12@~~~ n293
+  end
+  style column_0 fill:none,stroke:none
+  subgraph column_1[" "]
+  direction TB
+  n1@{ shape: cyl, label: "**Time**<br/>提供当前运行阶段的通用时间。" }
+  class n1 node_resource
+  n5@{ shape: cyl, label: "**ButtonInput#lt;MouseButton#gt;**<br/>保存鼠标按钮的当前状态与变化。" }
+  class n5 node_resource
+  n9@{ shape: cyl, label: "**Messages#lt;MouseButtonInput#gt;**<br/>缓冲底层鼠标按钮输入消息。" }
+  class n9 node_message_buffer
+  n13@{ shape: cyl, label: "**Assets#lt;StandardMaterial#gt;**<br/>保存导入模型使用的材质资产。" }
+  class n13 node_resource
+  n17@{ shape: cyl, label: "**AppTypeRegistry**<br/>登记检查器可以读取和编辑的数据类型。" }
+  class n17 node_resource
+  n21@{ shape: cyl, label: "**Assets#lt;AnimationClip#gt;**<br/>保存主角与展示模型使用的动画片段。" }
+  class n21 node_resource
+  subgraph n236[" "]
+  direction TB
+  eh6@{ shape: text, label: "**动作实体**        ​<br/>来自第一人称控制 ↗：保存玩法        ​<br/>或调试动作的评估结果与触发状        ​<br/>态。        ​" }
+  n56@{ shape: rect, label: "**Name**<br/>Action#lt;A#gt; 要求的动作名称，用于插件诊<br/>断。" }
+  class n56 node_component
+  n237@{ shape: rect, label: "**Action#lt;A#gt;**<br/>来自Enhanced Input ↗：保存具体玩法动<br/>作的当前输出。" }
+  class n237 node_component
+  class n237 external_node
+  n238@{ shape: rect, label: "**ActionSettings**<br/>来自Enhanced Input ↗：保存动作的输入<br/>消费与重新激活策略。" }
+  class n238 node_component
+  class n238 external_node
+  n239@{ shape: rect, label: "**ActionOf#lt;GameplayContext#gt;**<br/>来自Enhanced Input ↗：将动作关联到所<br/>属控制上下文。" }
+  class n239 node_component
+  class n239 external_node
+  n240@{ shape: rect, label: "**Bindings**<br/>来自Enhanced Input ↗：索引动作拥有的<br/>输入绑定。" }
+  class n240 node_component
+  class n240 external_node
+  eh6 layout_13@~~~ n56
+  n56 layout_14@~~~ n237
+  n237 layout_15@~~~ n238
+  n238 layout_16@~~~ n239
+  n239 layout_17@~~~ n240
+  n241@{ shape: rect, label: "**Press**<br/>来自Enhanced Input ↗：将按钮按下转换<br/>为一次触发。" }
+  class n241 node_component
+  class n241 external_node
+  n242@{ shape: rect, label: "**ActionValue**<br/>来自Enhanced Input ↗：保存动作评估产<br/>生的通用输入值。" }
+  class n242 node_component
+  class n242 external_node
+  n243@{ shape: rect, label: "**TriggerState**<br/>来自Enhanced Input ↗：保存本次动作评<br/>估的触发状态。" }
+  class n243 node_component
+  class n243 external_node
+  n244@{ shape: rect, label: "**ActionEvents**<br/>来自Enhanced Input ↗：保存本次待派发<br/>的动作事件。" }
+  class n244 node_component
+  class n244 external_node
+  eh6 layout_18@~~~ n241
+  n241 layout_19@~~~ n242
+  n242 layout_20@~~~ n243
+  n243 layout_21@~~~ n244
+  n245@{ shape: rect, label: "**ActionTime**<br/>来自Enhanced Input ↗：动作持续与触发<br/>计时，由插件评估更新。" }
+  class n245 node_component
+  class n245 external_node
+  n246@{ shape: rect, label: "**ActionMock**<br/>来自Enhanced Input ↗：保存测试使用的<br/>模拟动作输入。" }
+  class n246 node_component
+  class n246 external_node
+  n247@{ shape: rect, label: "**ActionFns**<br/>来自Enhanced Input ↗：将通用动作值适<br/>配为具体动作组件。" }
+  class n247 node_component
+  class n247 external_node
+  n248@{ shape: rect, label: "**ConditionFns**<br/>来自Enhanced Input ↗：保存动作触发条<br/>件的执行适配。" }
+  class n248 node_component
+  class n248 external_node
+  eh6 layout_22@~~~ n245
+  n245 layout_23@~~~ n246
+  n246 layout_24@~~~ n247
+  n247 layout_25@~~~ n248
+  end
+  class n236 node_entity
+  class n236 external_node
+  style n236 fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340,stroke-dasharray:6 4
+  n1 layout_26@~~~ n5
+  n5 layout_27@~~~ n9
+  n9 layout_28@~~~ n13
+  n13 layout_29@~~~ n17
+  n17 layout_30@~~~ n21
+  n21 layout_31@~~~ n236
+  end
+  style column_1 fill:none,stroke:none
+  subgraph column_2[" "]
+  direction TB
+  n2@{ shape: cyl, label: "**Time#lt;Real#gt;**<br/>提供不随游戏暂停的真实时间。" }
+  class n2 node_resource
+  n6@{ shape: cyl, label: "**AccumulatedMouseMotion**<br/>汇总本帧鼠标位移供观察动作使用。" }
+  class n6 node_resource
+  n10@{ shape: cyl, label: "**Messages#lt;WindowFocused#gt;**<br/>缓冲窗口焦点变化消息。" }
+  class n10 node_message_buffer
+  n14@{ shape: cyl, label: "**ClearColor**<br/>保存场景背景清除颜色。" }
+  class n14 node_resource
+  n18@{ shape: cyl, label: "**AssetServer**<br/>加载并查询递归依赖。" }
+  class n18 node_resource
+  n22@{ shape: cyl, label: "**Assets#lt;AnimationGraph#gt;**<br/>保存模型使用的动画混合图。" }
+  class n22 node_resource
+  n128@{ shape: rect, label: "**主角 GLB 播放器节点**        ​<br/>承载主角模型的动画播放与混合状        ​<br/>态。        ​" }
+  class n128 node_entity
+  n143@{ shape: rect, label: "**角色业务根实体**        ​<br/>来自场景装配 ↗：承载角色身        ​<br/>份、运动意图与动态物理身体。        ​" }
+  class n143 node_entity
+  class n143 external_node
+  n249@{ shape: rect, label: "**海岛静态碰撞实体**        ​<br/>来自场景装配 ↗：为海岛结构、        ​<br/>入口坡道与展示人物提供静态碰        ​<br/>撞。        ​" }
+  class n249 node_entity
+  class n249 external_node
+  n268@{ shape: rect, label: "**BSN 菜单页面根**        ​<br/>来自菜单与界面 ↗：承载当前菜        ​<br/>单页面及其声明式控件层级。        ​" }
+  class n268 node_entity
+  class n268 external_node
+  n278@{ shape: rect, label: "**主菜单展示相机**        ​<br/>来自菜单与界面 ↗：为主菜单展        ​<br/>示场景与界面提供相机。        ​" }
+  class n278 node_entity
+  class n278 external_node
+  n289@{ shape: rect, label: "**音量轨道填充**        ​<br/>来自菜单与界面 ↗：显示当前音        ​<br/>量对应的轨道填充。        ​" }
+  class n289 node_entity
+  class n289 external_node
+  n295@{ shape: rect, label: "**设置滚动条滑块**        ​<br/>来自菜单与界面 ↗：显示设置内        ​<br/>容的可视比例并支持拖动。        ​" }
+  class n295 node_entity
+  class n295 external_node
+  n2 layout_32@~~~ n6
+  n6 layout_33@~~~ n10
+  n10 layout_34@~~~ n14
+  n14 layout_35@~~~ n18
+  n18 layout_36@~~~ n22
+  n22 layout_37@~~~ n128
+  n128 layout_38@~~~ n143
+  n143 layout_39@~~~ n249
+  n249 layout_40@~~~ n268
+  n268 layout_41@~~~ n278
+  n278 layout_42@~~~ n289
+  n289 layout_43@~~~ n295
+  end
+  style column_2 fill:none,stroke:none
+  subgraph column_3[" "]
+  direction TB
+  n3@{ shape: cyl, label: "**Time#lt;Virtual#gt;**<br/>提供可暂停的游戏时间，作为固定步时间来<br/>源。" }
+  class n3 node_resource
+  n7@{ shape: cyl, label: "**Messages#lt;KeyboardInput#gt;**<br/>缓冲底层键盘输入消息。" }
+  class n7 node_message_buffer
+  n11@{ shape: cyl, label: "**Messages#lt;MouseMotion#gt;**<br/>缓冲底层鼠标位移消息。" }
+  class n11 node_message_buffer
+  n15@{ shape: cyl, label: "**GlobalAmbientLight**<br/>保存场景的全局环境光配置。" }
+  class n15 node_resource
+  n19@{ shape: cyl, label: "**Assets#lt;Gltf#gt;**<br/>保存导入场景与命名动画的资源引用。" }
+  class n19 node_resource
+  n23@{ shape: cyl, label: "**Messages#lt;UntypedAssetLoadFailedEvent**<br/>**#gt;**<br/>缓冲菜单模型与界面资源的加载失败。" }
+  class n23 node_message_buffer
+  n129@{ shape: rect, label: "**GLB 网格与骨骼节点**        ​<br/>承载导入模型的网格、骨骼与局部        ​<br/>动画姿态。        ​" }
+  class n129 node_entity
+  n176@{ shape: rect, label: "**可搬物品业务根实体**        ​<br/>来自场景装配 ↗：承载可拾取物        ​<br/>品身份及自由运动、共享持握状        ​<br/>态。        ​" }
+  class n176 node_entity
+  class n176 external_node
+  n260@{ shape: rect, label: "**海岛实例根**        ​<br/>来自场景装配 ↗：承载海岛实例        ​<br/>并记录碰撞与业务生成进度。        ​" }
+  class n260 node_entity
+  class n260 external_node
+  n270@{ shape: rect, label: "**可操作菜单按钮**        ​<br/>来自菜单与界面 ↗：承载可操作        ​<br/>菜单动作、设置调整与连续导航。        ​" }
+  class n270 node_entity
+  class n270 external_node
+  n280@{ shape: rect, label: "**菜单 GLB 模型与动画子树**        ​<br/>来自菜单与界面 ↗：承载主菜单        ​<br/>的海岛模型与快递员展示动画。        ​" }
+  class n280 node_entity
+  class n280 external_node
+  n291@{ shape: rect, label: "**设置右侧纸色面板**        ​<br/>来自菜单与界面 ↗：限定设置内        ​<br/>容的显示与裁切范围。        ​" }
+  class n291 node_entity
+  class n291 external_node
+  n297@{ shape: rect, label: "**持物无视觉碰撞代理**        ​<br/>来自物品交互 ↗：为持物共享人        ​<br/>物刚体提供无视觉碰撞形状。        ​" }
+  class n297 node_entity
+  class n297 external_node
+  n3 layout_44@~~~ n7
+  n7 layout_45@~~~ n11
+  n11 layout_46@~~~ n15
+  n15 layout_47@~~~ n19
+  n19 layout_48@~~~ n23
+  n23 layout_49@~~~ n129
+  n129 layout_50@~~~ n176
+  n176 layout_51@~~~ n260
+  n260 layout_52@~~~ n270
+  n270 layout_53@~~~ n280
+  n280 layout_54@~~~ n291
+  n291 layout_55@~~~ n297
+  end
+  style column_3 fill:none,stroke:none
+  column_0 layout_56@~~~ column_1
+  column_1 layout_57@~~~ column_2
+  column_2 layout_58@~~~ column_3
+  end
+  e1@{ curve: basis }
+  e2@{ curve: basis }

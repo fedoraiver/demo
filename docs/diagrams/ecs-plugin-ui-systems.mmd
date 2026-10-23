@@ -1,0 +1,220 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 32,
+      "rankSpacing": 56,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart TB
+  accTitle: 菜单与界面 · 系统与调度
+  accDescr: 菜单与界面的系统与调度；外部契约保留摘要，可跳转到所属插件。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_contract fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_note fill:#F7F7F5,stroke:#9A9B88,stroke-width:1.2px,color:#1F3340
+  classDef edge_schedule stroke:#334155,stroke-width:3px
+  classDef edge_order stroke:#334155,stroke-width:2px
+  classDef edge_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef edge_constraint stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:10 4 2 4
+  classDef external_node stroke-dasharray:6 4
+  subgraph diagram_main[" "]
+  direction LR
+  style diagram_main fill:none,stroke:none
+  subgraph sg0["Startup"]
+  direction TB
+  n3@{ shape: rounded, label: "**spawn_menu_controller**<br/>创建菜单动作控制者及键盘、手柄绑定。" }
+  class n3 node_system
+  end
+  subgraph sg1["PreUpdate"]
+  direction TB
+  n4@{ shape: rounded, label: "**sync_context**<br/>跟随窗口焦点启停菜单输入。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**handle_requests**<br/>处理菜单导航、设置应用与音量编辑请求。" }
+  class n5 node_system
+  n25@{ shape: lin-rect, label: "**EnhancedInputSystems::Apply**<br/>来自Enhanced Input ↗：提交动作值并派<br/>发对应事件。" }
+  class n25 node_contract
+  class n25 external_node
+  n20@{ shape: lin-rect, label: "**ApplyDeferred · 动作事件**<br/>应用动作事件命令以触发匹配的观察系统。" }
+  class n20 node_contract
+  n4 layout_0@~~~ n5
+  n5 layout_1@~~~ n25
+  n25 layout_2@~~~ n20
+  end
+  subgraph sg2["OnEnter"]
+  direction TB
+  n0@{ shape: rounded, label: "**show_main_menu**<br/>打开主菜单并重置页面、返回来源与焦点。" }
+  class n0 node_system
+  n1@{ shape: rounded, label: "**show_pause_menu**<br/>打开暂停菜单并重置焦点。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**hide_menu**<br/>隐藏菜单并清除提示。" }
+  class n2 node_system
+  n11@{ shape: rounded, label: "**spawn_backdrop**<br/>装配主菜单海岛展示舞台、相机与日光。" }
+  class n11 node_system
+  n0 layout_3@~~~ n1
+  n1 layout_4@~~~ n2
+  n2 layout_5@~~~ n11
+  end
+  subgraph sg3["Update"]
+  direction TB
+  n7@{ shape: rounded, label: "**rebuild_page**<br/>按页面结构变化重建菜单界面。" }
+  class n7 node_system
+  n6@{ shape: rounded, label: "**pointer_interaction**<br/>将真实鼠标交互转换为共享菜单请求。" }
+  class n6 node_system
+  n8@{ shape: rounded, label: "**style_buttons**<br/>按当前输入来源更新按钮背景与焦点边框。" }
+  class n8 node_system
+  n9@{ shape: rounded, label: "**update_description**<br/>更新当前聚焦设置的说明标题与正文。" }
+  class n9 node_system
+  n10@{ shape: rounded, label: "**scroll_focused_button**<br/>将当前聚焦设置按钮滚入可视范围。" }
+  class n10 node_system
+  n12@{ shape: rounded, label: "**log_asset_failures**<br/>记录菜单模型与界面资源加载失败。" }
+  class n12 node_system
+  n13@{ shape: rounded, label: "**play_courier_animation**<br/>绑定并循环播放展示快递员的持物待机动画。" }
+  class n13 node_system
+  n14@{ shape: rounded, label: "**sample_slider_pointer**<br/>从光标位置生成音量采样与释放请求。" }
+  class n14 node_system
+  n15@{ shape: rounded, label: "**update_volume_visuals**<br/>原位更新音量百分比文字与轨道填充。" }
+  class n15 node_system
+  n16@{ shape: rounded, label: "**update_settings_text**<br/>原位更新设置草稿数值与保存提示。" }
+  class n16 node_system
+  n17@{ shape: rounded, label: "**bind_settings_scrollbars**<br/>将设置滚动条绑定到对应内容视口。" }
+  class n17 node_system
+  n19@{ shape: rounded, label: "**publish_audio_preview**<br/>向音频功能发布或清除临时音量预览。" }
+  class n19 node_system
+  n21@{ shape: lin-rect, label: "**音量元组 · after(Build / Pointer)**<br/>组织音量输入采样与显示更新的局部调度。" }
+  class n21 node_contract
+  n22@{ shape: lin-rect, label: "**UiSystems::Style**<br/>组织菜单显示、数值与说明的原位更新。" }
+  class n22 node_contract
+  n23@{ shape: doc, label: "**Audio 页 · 滑条局部捕获**<br/>将滑条捕获与连续采样汇总为音量编辑请求。" }
+  class n23 node_note
+  n24@{ shape: lin-rect, label: "**Update / Kira 播放输出**<br/>来自音频播放 ↗：将声音请求按有效混音与<br/>播放策略提交音频实例。" }
+  class n24 node_contract
+  class n24 external_node
+  n28@{ shape: lin-rect, label: "**UI Style → Audio Mix → Playback**<br/>来自应用流程 ↗：约束界面显示更新先于音<br/>量混合与播放。" }
+  class n28 node_contract
+  class n28 external_node
+  n29@{ shape: rounded, label: "**log_load_failures**<br/>来自音频播放 ↗：记录声音资源加载失败的<br/>路径与错误。" }
+  class n29 node_system
+  class n29 external_node
+  n7 layout_6@~~~ n6
+  n6 layout_7@~~~ n8
+  n8 layout_8@~~~ n9
+  n9 layout_9@~~~ n10
+  n10 layout_10@~~~ n12
+  n12 layout_11@~~~ n13
+  n13 layout_12@~~~ n14
+  n14 layout_13@~~~ n15
+  n15 layout_14@~~~ n16
+  n16 layout_15@~~~ n17
+  n17 layout_16@~~~ n19
+  n19 layout_17@~~~ n21
+  n21 layout_18@~~~ n22
+  n22 layout_19@~~~ n23
+  n23 layout_20@~~~ n24
+  n24 layout_21@~~~ n28
+  n28 layout_22@~~~ n29
+  end
+  subgraph sg4["PostUpdate"]
+  direction TB
+  n26@{ shape: rounded, label: "**ScrollbarPlugin · thumb geometry**<br/>来自Bevy 引擎 ↗：按内容与视口比例更新<br/>滚动条滑块几何。" }
+  class n26 node_system
+  class n26 external_node
+  n18@{ shape: rounded, label: "**sync_settings_scrollbars**<br/>同步滚动条显隐、拾取范围与高亮。" }
+  class n18 node_system
+  n27@{ shape: lin-rect, label: "**VisibilityPropagate**<br/>来自Bevy 引擎 ↗：在项目显隐同步后传播<br/>可见性。" }
+  class n27 node_contract
+  class n27 external_node
+  n26 layout_23@~~~ n18
+  n18 layout_24@~~~ n27
+  end
+  sg0 sc0@--> sg1
+  class sc0 edge_schedule
+  sg1 sc1@--> sg2
+  class sc1 edge_schedule
+  sg2 sc2@--> sg3
+  class sc2 edge_schedule
+  sg3 sc3@--> sg4
+  class sc3 edge_schedule
+  n7 e0@-->|"Build"| n6
+  class e0 edge_order
+  n6 e1@-->|"Pointer → Style"| n8
+  class e1 edge_order
+  n8 e2@-->|"Style"| n24
+  class e2 edge_order
+  n25 e3@--> n20
+  class e3 edge_order
+  n6 e4@-->|"Pointer"| n21
+  class e4 edge_order
+  n21 e5@--> n14
+  class e5 edge_membership
+  n21 e6@--> n15
+  class e6 edge_membership
+  n14 e7@--> n22
+  class e7 edge_order
+  n15 e8@--> n22
+  class e8 edge_order
+  n7 e9@-->|"Build → Bind"| n17
+  class e9 edge_order
+  n17 e10@-->|"Style"| n22
+  class e10 edge_order
+  n22 e11@--> n8
+  class e11 edge_membership
+  n22 e12@--> n9
+  class e12 edge_membership
+  n22 e13@--> n16
+  class e13 edge_membership
+  n22 e14@--> n19
+  class e14 edge_membership
+  n22 e15@--> n10
+  class e15 edge_membership
+  n26 e16@-->|"Layout"| n18
+  class e16 edge_order
+  n18 e17@--> n27
+  class e17 edge_order
+  n28 e18@-->|"UI Style"| n22
+  class e18 edge_constraint
+  n22 e19@-->|"Style 之后进入 Mix"| n29
+  class e19 edge_order
+  end
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e17@{ curve: basis }
+  e18@{ curve: basis }
+  e19@{ curve: basis }

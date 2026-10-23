@@ -1,0 +1,253 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 32,
+      "rankSpacing": 8,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart TB
+  accTitle: 场景装配 · 数据与实体
+  accDescr: 场景装配的数据与实体；外部契约保留摘要，可跳转到所属插件。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_entity fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef edge_relationship stroke:#7B4DB2,stroke-width:1.8px
+  classDef external_node stroke-dasharray:6 4
+  subgraph relations["数据流与关系"]
+  direction LR
+  subgraph relation_0[" "]
+  direction TB
+  subgraph n11[" "]
+  direction TB
+  eh1@{ shape: text, label: "**角色业务根实体**        ​<br/>承载角色身份、运动意图与动态物        ​<br/>理身体。        ​" }
+  n29@{ shape: rect, label: "**Name**<br/>来自Bevy 引擎 ↗：角色根实体名称。" }
+  class n29 node_component
+  class n29 external_node
+  n30@{ shape: rect, label: "**Character**<br/>来自角色运动 ↗：标识具有角色运动能力的<br/>实体。" }
+  class n30 node_component
+  class n30 external_node
+  n31@{ shape: rect, label: "**CharacterIntent**<br/>来自角色运动 ↗：保存持续移动方向与单次<br/>跳跃、交互请求。" }
+  class n31 node_component
+  class n31 external_node
+  n32@{ shape: rect, label: "**CharacterMotion**<br/>来自角色运动 ↗：保存角色接地等运动观察<br/>结果。" }
+  class n32 node_component
+  class n32 external_node
+  n33@{ shape: rect, label: "**Transform**<br/>来自Bevy 引擎 ↗：保存角色经插值生成的<br/>显示姿态。" }
+  class n33 node_component
+  class n33 external_node
+  n34@{ shape: rect, label: "**GlobalTransform**<br/>来自Bevy 引擎 ↗：保存层级传播后的世界<br/>姿态。" }
+  class n34 node_component
+  class n34 external_node
+  n35@{ shape: rect, label: "**Visibility**<br/>来自Bevy 引擎 ↗：根实体的可见性，视觉<br/>子实体继承层级可见性。" }
+  class n35 node_component
+  class n35 external_node
+  n36@{ shape: rect, label: "**Children**<br/>来自Bevy 引擎 ↗：索引当前实体的直接子<br/>实体。" }
+  class n36 node_component
+  class n36 external_node
+  n37@{ shape: rect, label: "**HoldingItems**<br/>来自物品交互 ↗：索引角色当前持有的物<br/>品。" }
+  class n37 node_component
+  class n37 external_node
+  n38@{ shape: rect, label: "**RigidBody**<br/>来自Avian ↗：定义实体参与物理模拟的刚<br/>体模式。" }
+  class n38 node_component
+  class n38 external_node
+  eh1 layout_0@~~~ n29
+  n29 layout_1@~~~ n30
+  n30 layout_2@~~~ n31
+  n31 layout_3@~~~ n32
+  n32 layout_4@~~~ n33
+  n33 layout_5@~~~ n34
+  n34 layout_6@~~~ n35
+  n35 layout_7@~~~ n36
+  n36 layout_8@~~~ n37
+  n37 layout_9@~~~ n38
+  n39@{ shape: rect, label: "**Collider**<br/>来自Avian ↗：保存参与物理碰撞的实体形<br/>状。" }
+  class n39 node_component
+  class n39 external_node
+  n40@{ shape: rect, label: "**Position**<br/>来自Avian ↗：保存物理模拟中的真实位<br/>置。" }
+  class n40 node_component
+  class n40 external_node
+  n41@{ shape: rect, label: "**Rotation**<br/>来自Avian ↗：保存物理模拟中的真实旋<br/>转。" }
+  class n41 node_component
+  class n41 external_node
+  n42@{ shape: rect, label: "**LinearVelocity**<br/>来自Avian ↗：实际线速度，由冲量、外<br/>力、重力与接触求解改变。" }
+  class n42 node_component
+  class n42 external_node
+  n43@{ shape: rect, label: "**AngularVelocity**<br/>来自Avian ↗：保存物理模拟中的角速度。" }
+  class n43 node_component
+  class n43 external_node
+  n44@{ shape: rect, label: "**Mass**<br/>来自Avian ↗：保存显式配置的质量。" }
+  class n44 node_component
+  class n44 external_node
+  n45@{ shape: rect, label: "**ComputedMass**<br/>来自Avian ↗：保存物理求解使用的计算质<br/>量。" }
+  class n45 node_component
+  class n45 external_node
+  n46@{ shape: rect, label: "**ComputedAngularInertia**<br/>来自Avian ↗：保存物理求解使用的计算角<br/>惯量。" }
+  class n46 node_component
+  class n46 external_node
+  n47@{ shape: rect, label: "**ComputedCenterOfMass**<br/>来自Avian ↗：保存物理求解使用的计算质<br/>心。" }
+  class n47 node_component
+  class n47 external_node
+  n48@{ shape: rect, label: "**CollisionLayers**<br/>来自Avian ↗：配置实体之间允许发生碰撞<br/>的层。" }
+  class n48 node_component
+  class n48 external_node
+  eh1 layout_10@~~~ n39
+  n39 layout_11@~~~ n40
+  n40 layout_12@~~~ n41
+  n41 layout_13@~~~ n42
+  n42 layout_14@~~~ n43
+  n43 layout_15@~~~ n44
+  n44 layout_16@~~~ n45
+  n45 layout_17@~~~ n46
+  n46 layout_18@~~~ n47
+  n47 layout_19@~~~ n48
+  n49@{ shape: rect, label: "**CollisionEventsEnabled**<br/>来自Avian ↗：请求离散接触开始/结束消<br/>息，用于集中日志。" }
+  class n49 node_component
+  class n49 external_node
+  n50@{ shape: rect, label: "**SweptCcd**<br/>来自Avian ↗：启用连续碰撞检测以减少高<br/>速穿透。" }
+  class n50 node_component
+  class n50 external_node
+  n51@{ shape: rect, label: "**Friction**<br/>来自Avian ↗：保存接触表面的摩擦参数。" }
+  class n51 node_component
+  class n51 external_node
+  n52@{ shape: rect, label: "**Restitution**<br/>来自Avian ↗：接触恢复系数。" }
+  class n52 node_component
+  class n52 external_node
+  n53@{ shape: rect, label: "**VelocityIntegrationData**<br/>来自Avian ↗：累计本物理步的世界加速度<br/>与外力。" }
+  class n53 node_component
+  class n53 external_node
+  n54@{ shape: rect, label: "**AccumulatedLocalAcceleration**<br/>来自Avian ↗：累计本物理步的局部加速<br/>度。" }
+  class n54 node_component
+  class n54 external_node
+  n55@{ shape: rect, label: "**SleepTimer**<br/>来自Avian ↗：记录刚体休眠计时。" }
+  class n55 node_component
+  class n55 external_node
+  n56@{ shape: rect, label: "**TranslationInterpolation**<br/>来自Avian ↗：启用平移显示插值。" }
+  class n56 node_component
+  class n56 external_node
+  n57@{ shape: rect, label: "**TranslationEasingState**<br/>来自Avian ↗：保存固定步平移插值的起止<br/>端点。" }
+  class n57 node_component
+  class n57 external_node
+  eh1 layout_20@~~~ n49
+  n49 layout_21@~~~ n50
+  n50 layout_22@~~~ n51
+  n51 layout_23@~~~ n52
+  n52 layout_24@~~~ n53
+  n53 layout_25@~~~ n54
+  n54 layout_26@~~~ n55
+  n55 layout_27@~~~ n56
+  n56 layout_28@~~~ n57
+  n58@{ shape: rect, label: "**LockedAxes**<br/>来自Avian ↗：限制刚体可移动或旋转的<br/>轴。" }
+  class n58 node_component
+  class n58 external_node
+  n59@{ shape: rect, label: "**ColliderAabb**<br/>来自Avian ↗：保存碰撞查询使用的轴对齐<br/>包围盒。" }
+  class n59 node_component
+  class n59 external_node
+  n60@{ shape: rect, label: "**SpawnPoint**<br/>来自越界恢复 ↗：每个业务根独立保存出生<br/>姿态。" }
+  class n60 node_component
+  class n60 external_node
+  n61@{ shape: rect, label: "**ResumeInterpolation**<br/>来自越界恢复 ↗：记录本次恢复临时添加的<br/>暂停项。" }
+  class n61 node_component
+  class n61 external_node
+  n62@{ shape: rect, label: "**NoTranslationEasing**<br/>来自Avian ↗：暂停独立平移插值。" }
+  class n62 node_component
+  class n62 external_node
+  n63@{ shape: rect, label: "**NoRotationEasing**<br/>来自Avian ↗：暂停独立旋转插值。" }
+  class n63 node_component
+  class n63 external_node
+  n64@{ shape: rect, label: "**DespawnOnExit**<br/>来自Bevy 引擎 ↗：标记退出所属应用状态<br/>时销毁此实体。" }
+  class n64 node_component
+  class n64 external_node
+  n65@{ shape: rect, label: "**CarryBaseMass**<br/>来自物品交互 ↗：挂接时保存，释放或箱体<br/>销毁时恢复原人物质量。" }
+  class n65 node_component
+  class n65 external_node
+  n66@{ shape: rect, label: "**RigidBodyColliders**<br/>来自Avian ↗：索引属于同一刚体的全部碰<br/>撞体。" }
+  class n66 node_component
+  class n66 external_node
+  eh1 layout_29@~~~ n58
+  n58 layout_30@~~~ n59
+  n59 layout_31@~~~ n60
+  n60 layout_32@~~~ n61
+  n61 layout_33@~~~ n62
+  n62 layout_34@~~~ n63
+  n63 layout_35@~~~ n64
+  n64 layout_36@~~~ n65
+  n65 layout_37@~~~ n66
+  end
+  class n11 node_entity
+  style n11 fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
+  n12@{ shape: rect, label: "**可搬物品业务根实体**        ​<br/>承载可拾取物品身份及自由运动、        ​<br/>共享持握状态。        ​" }
+  class n12 node_entity
+  n14@{ shape: rect, label: "**业务直属 GLB 视觉根实体**        ​<br/>承载业务实体的模型、骨骼与动画        ​<br/>子树。        ​" }
+  class n14 node_entity
+  n14 e0@-->|"ChildOf"| n11
+  class e0 edge_relationship
+  n14 e1@-->|"ChildOf"| n12
+  class e1 edge_relationship
+  end
+  style relation_0 fill:none,stroke:none
+  subgraph relation_1[" "]
+  direction TB
+  n15@{ shape: rect, label: "**海岛静态碰撞实体**        ​<br/>为海岛结构、入口坡道与展示人物        ​<br/>提供静态碰撞。        ​" }
+  class n15 node_entity
+  n16@{ shape: rect, label: "**海岛实例根**        ​<br/>承载海岛实例并记录碰撞与业务生        ​<br/>成进度。        ​" }
+  class n16 node_entity
+  n17@{ shape: rect, label: "**地图展示 NPC**        ​<br/>保留地图展示人物及其静态身体碰        ​<br/>撞。        ​" }
+  class n17 node_entity
+  n18@{ shape: rect, label: "**GLB 网格与骨骼节点**        ​<br/>来自Bevy 引擎 ↗：承载导入模型        ​<br/>的网格、骨骼与局部动画姿态。        ​" }
+  class n18 node_entity
+  class n18 external_node
+  n15 e2@-->|"ChildOf（原地图美术实例）"| n18
+  class e2 edge_relationship
+  n15 e3@-->|"ChildOf（NPC 身体碰撞）"| n17
+  class e3 edge_relationship
+  n17 e4@-->|"ChildOf（地图子树）"| n16
+  class e4 edge_relationship
+  end
+  style relation_1 fill:none,stroke:none
+  end
+  subgraph catalog["数据与实体"]
+  direction LR
+  subgraph column_0[" "]
+  direction TB
+  n0@{ shape: cyl, label: "**ArtAssets**<br/>保存运行模型资源并维持其加载寿命。" }
+  class n0 node_resource
+  n1@{ shape: cyl, label: "**ArtLoadState**<br/>保存运行资源的加载进度与就绪结果。" }
+  class n1 node_resource
+  n10@{ shape: rect, label: "**键盘控制者**        ​<br/>保存玩家身份、输入上下文与受控        ​<br/>角色及相机。        ​" }
+  class n10 node_entity
+  n13@{ shape: rect, label: "**第一人称相机实体**        ​<br/>提供跟随角色的第一人称视角与观        ​<br/>察输入状态。        ​" }
+  class n13 node_entity
+  n0 layout_38@~~~ n1
+  n1 layout_39@~~~ n10
+  n10 layout_40@~~~ n13
+  end
+  style column_0 fill:none,stroke:none
+  end
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }

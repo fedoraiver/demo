@@ -1,0 +1,159 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 32,
+      "rankSpacing": 56,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: 第一人称控制 · 事件与协作
+  accDescr: 第一人称控制的事件与协作；外部契约保留摘要，可跳转到所属插件。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_observer fill:#F4F1F9,stroke:#7B4DB2,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef node_message fill:#EDF4F6,stroke:#247B91,stroke-width:1.6px,color:#1F3340
+  classDef node_event fill:#F9F3EE,stroke:#B66B2D,stroke-width:1.6px,color:#1F3340
+  classDef node_plugin fill:#F1F3F6,stroke:#4A6389,stroke-width:2.2px,color:#1F3340
+  classDef node_contract fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_consume stroke:#247B91,stroke-width:1.8px,stroke-dasharray:2 4
+  classDef edge_observe stroke:#B66B2D,stroke-width:1.8px,stroke-dasharray:2 4
+  classDef edge_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef external_node stroke-dasharray:6 4
+  subgraph diagram_main[" "]
+  direction LR
+  style diagram_main fill:none,stroke:none
+  n0@{ shape: hex, label: "**record_movement**<br/>保存控制角色的持续移动方向。" }
+  class n0 node_observer
+  n1@{ shape: hex, label: "**clear_completed_movement**<br/>清除已结束动作的角色移动方向。" }
+  class n1 node_observer
+  n2@{ shape: hex, label: "**clear_cancelled_movement**<br/>清除已取消动作的角色移动方向。" }
+  class n2 node_observer
+  n3@{ shape: hex, label: "**request_jump**<br/>记录目标角色的单次跳跃请求。" }
+  class n3 node_observer
+  n4@{ shape: hex, label: "**request_interaction**<br/>记录目标角色的单次交互请求。" }
+  class n4 node_observer
+  n5@{ shape: hex, label: "**on_camera_look**<br/>将观察输入转为第一人称水平角与俯仰角。" }
+  class n5 node_observer
+  n6@{ shape: hex, label: "**release_pointer_for_inspector**<br/>释放光标以允许操作世界检查器。" }
+  class n6 node_observer
+  n7@{ shape: fr-rect, label: "**FirstPersonPlugin**<br/>管理玩法动作、光标捕获、朝向与第一人称镜<br/>头。" }
+  class n7 node_plugin
+  n8@{ shape: stadium, label: "**Fire#lt;MoveAction#gt;**<br/>通知目标控制者的移动动作已触发。" }
+  class n8 node_event
+  n9@{ shape: stadium, label: "**Complete#lt;MoveAction#gt;**<br/>通知目标控制者的移动动作已正常结束。" }
+  class n9 node_event
+  n10@{ shape: stadium, label: "**Cancel#lt;MoveAction#gt;**<br/>通知目标控制者的移动动作已取消。" }
+  class n10 node_event
+  n11@{ shape: stadium, label: "**Fire#lt;JumpAction#gt;**<br/>通知目标控制者发起跳跃动作。" }
+  class n11 node_event
+  n12@{ shape: stadium, label: "**Fire#lt;InteractAction#gt;**<br/>通知目标控制者发起交互动作。" }
+  class n12 node_event
+  n13@{ shape: stadium, label: "**Fire#lt;LookAction#gt;**<br/>通知目标控制者更新观察输入。" }
+  class n13 node_event
+  n14@{ shape: rect, label: "**捕获与输入上下文**<br/>保存光标捕获与玩法输入启用状态。" }
+  class n14 node_component
+  n15@{ shape: stadium, label: "**Fire#lt;ReleasePointerAction#gt;**<br/>通知控制者释放光标以操作检查器。" }
+  class n15 node_event
+  n16@{ shape: rounded, label: "**sync_mouse_capture**<br/>管理光标捕获及玩法输入启停。" }
+  class n16 node_system
+  n17@{ shape: rounded, label: "**sync_character_facing**<br/>同步人物朝向并处理持物转向受阻。" }
+  class n17 node_system
+  n18@{ shape: rounded, label: "**sync_character_facing**<br/>同步人物朝向并处理持物转向受阻。" }
+  class n18 node_system
+  n19@{ shape: rounded, label: "**follow_first_person_camera**<br/>按人物本帧位置与观察角度更新第一人称镜<br/>头。" }
+  class n19 node_system
+  n20@{ shape: rounded, label: "**sync_character_visibility**<br/>隐藏第一人称控制角色的自身模型。" }
+  class n20 node_system
+  n21@{ shape: rect, label: "**CharacterIntent**<br/>来自角色运动 ↗：保存持续移动方向与单次<br/>跳跃、交互请求。" }
+  class n21 node_component
+  class n21 external_node
+  n22@{ shape: rect, label: "**FirstPersonCamera**<br/>保存跟随目标、眼高与观察角度。" }
+  class n22 node_component
+  n23@{ shape: lean-r, label: "**WindowFocused / MouseButtonInput**<br/>来自Bevy 引擎 ↗：缓冲窗口焦点与鼠标按<br/>钮变化。" }
+  class n23 node_message
+  class n23 external_node
+  n24@{ shape: cyl, label: "**GameSettings**<br/>来自设置与参数 ↗：保存已应用的玩家设置<br/>与音量配置。" }
+  class n24 node_resource
+  class n24 external_node
+  n25@{ shape: lin-rect, label: "**FixedGameplaySystems**<br/>来自应用流程 ↗：协调恢复、朝向、运动、<br/>交互与持握的固定步顺序。" }
+  class n25 node_contract
+  class n25 external_node
+  n26@{ shape: lin-rect, label: "**PresentationSystems**<br/>来自应用流程 ↗：协调插值后的持物、镜头<br/>与可见性同步。" }
+  class n26 node_contract
+  class n26 external_node
+  n0 e0@-->|"意图"| n21
+  class e0 edge_write
+  n5 e1@-->|"观察角度"| n22
+  class e1 edge_write
+  n1 e2@--> n21
+  class e2 edge_write
+  n2 e3@--> n21
+  class e3 edge_write
+  n3 e4@--> n21
+  class e4 edge_write
+  n4 e5@--> n21
+  class e5 edge_write
+  n23 e6@--> n16
+  class e6 edge_consume
+  n16 e7@--> n14
+  class e7 edge_write
+  n8 e8@-->|"Fire#lt;MoveAction#gt;"| n0
+  class e8 edge_observe
+  n9 e9@-->|"Complete#lt;MoveAction#gt;"| n1
+  class e9 edge_observe
+  n10 e10@-->|"Cancel#lt;MoveAction#gt;"| n2
+  class e10 edge_observe
+  n11 e11@-->|"Fire#lt;JumpAction#gt;"| n3
+  class e11 edge_observe
+  n12 e12@-->|"Fire#lt;InteractAction#gt;"| n4
+  class e12 edge_observe
+  n13 e13@-->|"Fire#lt;LookAction#gt;"| n5
+  class e13 edge_observe
+  n15 e14@-->|"Fire#lt;ReleasePointerAction#gt;"| n6
+  class e14 edge_observe
+  n24 e15@-->|"已应用观察设置"| n5
+  class e15 edge_read
+  n25 e16@-->|"Facing"| n17
+  class e16 edge_membership
+  n26 e17@-->|"Facing"| n18
+  class e17 edge_membership
+  n26 e18@-->|"Camera"| n19
+  class e18 edge_membership
+  n26 e19@-->|"Visibility"| n20
+  class e19 edge_membership
+  end
+  e0@{ curve: basis }
+  e2@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e13@{ curve: basis }
+  e15@{ curve: basis }
+  e17@{ curve: basis }
+  e19@{ curve: basis }

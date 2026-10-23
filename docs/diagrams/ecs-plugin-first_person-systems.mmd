@@ -1,0 +1,178 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 32,
+      "rankSpacing": 56,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart TB
+  accTitle: 第一人称控制 · 系统与调度
+  accDescr: 第一人称控制的系统与调度；外部契约保留摘要，可跳转到所属插件。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_contract fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef edge_schedule stroke:#334155,stroke-width:3px
+  classDef edge_order stroke:#334155,stroke-width:2px
+  classDef edge_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef external_node stroke-dasharray:6 4
+  subgraph diagram_main[" "]
+  direction LR
+  style diagram_main fill:none,stroke:none
+  subgraph sg0["Startup"]
+  direction TB
+  n0@{ shape: rounded, label: "**log_pose_synchronization**<br/>记录物理模拟与显示同步的阶段安排。" }
+  class n0 node_system
+  end
+  subgraph sg1["PreUpdate"]
+  direction TB
+  n13@{ shape: lin-rect, label: "**EguiPreUpdateSet::ProcessInput**<br/>来自Egui / Inspector ↗：将窗口和设备<br/>输入转换为检查器界面输入。" }
+  class n13 node_contract
+  class n13 external_node
+  n6@{ shape: rounded, label: "**filter_captured_egui_input**<br/>隔离游戏操作与检查器界面输入。" }
+  class n6 node_system
+  n14@{ shape: lin-rect, label: "**EguiPreUpdateSet::BeginPass**<br/>来自Egui / Inspector ↗：界定检查器界<br/>面开始计算前的输入准备阶段。" }
+  class n14 node_contract
+  class n14 external_node
+  n1@{ shape: rounded, label: "**sync_mouse_capture**<br/>管理光标捕获及玩法输入启停。" }
+  class n1 node_system
+  n15@{ shape: lin-rect, label: "**ApplyDeferred（捕获 → 动作准备）**<br/>来自Bevy 引擎 ↗：使本帧玩法输入启停变<br/>更对动作评估可见。" }
+  class n15 node_contract
+  class n15 external_node
+  n13 layout_0@~~~ n6
+  n6 layout_1@~~~ n14
+  n14 layout_2@~~~ n1
+  n1 layout_3@~~~ n15
+  end
+  subgraph sg2["OnEnter"]
+  direction TB
+  n7@{ shape: rounded, label: "**suspend_controls**<br/>停用玩法输入并释放光标。" }
+  class n7 node_system
+  n8@{ shape: rounded, label: "**resume_capture**<br/>重置光标捕获并丢弃自由光标阶段位移。" }
+  class n8 node_system
+  n7 layout_4@~~~ n8
+  end
+  subgraph sg3["FixedUpdate"]
+  direction TB
+  n16@{ shape: rounded, label: "**recover_from_water**<br/>来自越界恢复 ↗：将落水实体恢复到各自出<br/>生姿态。" }
+  class n16 node_system
+  class n16 external_node
+  n2@{ shape: rounded, label: "**sync_character_facing**<br/>同步人物朝向并处理持物转向受阻。" }
+  class n2 node_system
+  n17@{ shape: rounded, label: "**update_grounded**<br/>来自角色运动 ↗：准备运动前更新接地状<br/>态。" }
+  class n17 node_system
+  class n17 external_node
+  n18@{ shape: lin-rect, label: "**FixedGameplaySystems**<br/>来自应用流程 ↗：协调恢复、朝向、运动、<br/>交互与持握的固定步顺序。" }
+  class n18 node_contract
+  class n18 external_node
+  n16 layout_5@~~~ n2
+  n2 layout_6@~~~ n17
+  n17 layout_7@~~~ n18
+  end
+  subgraph sg4["RunFixedMainLoop ·<br/>AfterFixedMainLoop"]
+  direction TB
+  n9@{ shape: lin-rect, label: "**TransformEasingSystems::Ease**<br/>来自Avian ↗：混合固定步端点以生成平滑<br/>显示姿态。" }
+  class n9 node_contract
+  class n9 external_node
+  n3@{ shape: rounded, label: "**sync_character_facing**<br/>同步人物朝向并处理持物转向受阻。" }
+  class n3 node_system
+  n10@{ shape: rounded, label: "**sync_held_physics**<br/>来自物品交互 ↗：同步本帧持物碰撞朝向与<br/>显示朝向。" }
+  class n10 node_system
+  class n10 external_node
+  n11@{ shape: rounded, label: "**sync_held_presentation**<br/>来自物品交互 ↗：按人物呈现姿态同步持物<br/>模型与握持目标。" }
+  class n11 node_system
+  class n11 external_node
+  n4@{ shape: rounded, label: "**follow_first_person_camera**<br/>按人物本帧位置与观察角度更新第一人称镜<br/>头。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**sync_character_visibility**<br/>隐藏第一人称控制角色的自身模型。" }
+  class n5 node_system
+  n12@{ shape: lin-rect, label: "**TransformEasingSystems::**<br/>**UpdateEasingTick**<br/>来自Avian ↗：记录显示变更，区分插值更<br/>新与外部瞬移。" }
+  class n12 node_contract
+  class n12 external_node
+  n19@{ shape: lin-rect, label: "**PresentationSystems**<br/>来自应用流程 ↗：协调插值后的持物、镜头<br/>与可见性同步。" }
+  class n19 node_contract
+  class n19 external_node
+  n9 layout_8@~~~ n3
+  n3 layout_9@~~~ n10
+  n10 layout_10@~~~ n11
+  n11 layout_11@~~~ n4
+  n4 layout_12@~~~ n5
+  n5 layout_13@~~~ n12
+  n12 layout_14@~~~ n19
+  end
+  sg0 sc0@--> sg1
+  class sc0 edge_schedule
+  sg1 sc1@--> sg2
+  class sc1 edge_schedule
+  sg2 sc2@--> sg3
+  class sc2 edge_schedule
+  sg3 sc3@--> sg4
+  class sc3 edge_schedule
+  n4 e0@--> n5
+  class e0 edge_order
+  n9 e1@--> n3
+  class e1 edge_order
+  n3 e2@--> n10
+  class e2 edge_order
+  n11 e3@--> n4
+  class e3 edge_order
+  n5 e4@--> n12
+  class e4 edge_order
+  n13 e5@--> n6
+  class e5 edge_order
+  n6 e6@--> n14
+  class e6 edge_order
+  n14 e7@--> n1
+  class e7 edge_order
+  n1 e8@--> n15
+  class e8 edge_order
+  n16 e9@-->|"恢复后按视角转向"| n2
+  class e9 edge_order
+  n2 e10@--> n17
+  class e10 edge_order
+  n18 e11@-->|"Facing"| n2
+  class e11 edge_membership
+  n19 e12@-->|"Facing"| n3
+  class e12 edge_membership
+  n19 e13@-->|"Camera"| n4
+  class e13 edge_membership
+  n19 e14@-->|"Visibility"| n5
+  class e14 edge_membership
+  end
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }

@@ -1,0 +1,60 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 32,
+      "rankSpacing": 56,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart TB
+  accTitle: 窗口策略 · 系统与调度
+  accDescr: 窗口策略的系统与调度；外部契约保留摘要，可跳转到所属插件。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_external_io fill:#F1F3F4,stroke:#526A78,stroke-width:1.6px,color:#1F3340
+  classDef edge_schedule stroke:#334155,stroke-width:3px
+  classDef external_node stroke-dasharray:6 4
+  subgraph diagram_main[" "]
+  direction LR
+  style diagram_main fill:none,stroke:none
+  subgraph sg0["Startup"]
+  direction TB
+  n0@{ shape: rounded, label: "**log_policy**<br/>记录窗口策略支持平台、比例与最小尺寸。" }
+  class n0 node_system
+  end
+  subgraph sg1["PreUpdate"]
+  direction TB
+  n1@{ shape: rounded, label: "**install_native_policy**<br/>安装并维护原生窗口比例与尺寸策略。" }
+  class n1 node_system
+  end
+  subgraph sg2["原生平台回调"]
+  direction TB
+  n2@{ shape: lean-l, label: "**原生窗口约束**<br/>在平台应用尺寸前约束主窗口比例与范围。" }
+  class n2 node_external_io
+  end
+  sg1 layout_0@~~~ sg2
+  sg0 sc0@--> sg1
+  class sc0 edge_schedule
+  end

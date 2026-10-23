@@ -1,0 +1,160 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 32,
+      "rankSpacing": 8,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart TB
+  accTitle: 场景装配 · 数据与实体
+  accDescr: 场景装配的数据与实体；外部契约保留摘要，可跳转到所属插件。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_entity fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef edge_relationship stroke:#7B4DB2,stroke-width:1.8px
+  classDef external_node stroke-dasharray:6 4
+  subgraph relations["数据流与关系"]
+  direction LR
+  subgraph relation_0[" "]
+  direction TB
+  n11@{ shape: rect, label: "**角色业务根实体**        ​<br/>承载角色身份、运动意图与动态物        ​<br/>理身体。        ​" }
+  class n11 node_entity
+  n12@{ shape: rect, label: "**可搬物品业务根实体**        ​<br/>承载可拾取物品身份及自由运动、        ​<br/>共享持握状态。        ​" }
+  class n12 node_entity
+  n14@{ shape: rect, label: "**业务直属 GLB 视觉根实体**        ​<br/>承载业务实体的模型、骨骼与动画        ​<br/>子树。        ​" }
+  class n14 node_entity
+  n14 e0@-->|"ChildOf"| n11
+  class e0 edge_relationship
+  n14 e1@-->|"ChildOf"| n12
+  class e1 edge_relationship
+  end
+  style relation_0 fill:none,stroke:none
+  subgraph relation_1[" "]
+  direction TB
+  n15@{ shape: rect, label: "**海岛静态碰撞实体**        ​<br/>为海岛结构、入口坡道与展示人物        ​<br/>提供静态碰撞。        ​" }
+  class n15 node_entity
+  n16@{ shape: rect, label: "**海岛实例根**        ​<br/>承载海岛实例并记录碰撞与业务生        ​<br/>成进度。        ​" }
+  class n16 node_entity
+  n17@{ shape: rect, label: "**地图展示 NPC**        ​<br/>保留地图展示人物及其静态身体碰        ​<br/>撞。        ​" }
+  class n17 node_entity
+  n18@{ shape: rect, label: "**GLB 网格与骨骼节点**        ​<br/>来自Bevy 引擎 ↗：承载导入模型        ​<br/>的网格、骨骼与局部动画姿态。        ​" }
+  class n18 node_entity
+  class n18 external_node
+  n15 e2@-->|"ChildOf（原地图美术实例）"| n18
+  class e2 edge_relationship
+  n15 e3@-->|"ChildOf（NPC 身体碰撞）"| n17
+  class e3 edge_relationship
+  n17 e4@-->|"ChildOf（地图子树）"| n16
+  class e4 edge_relationship
+  end
+  style relation_1 fill:none,stroke:none
+  end
+  subgraph catalog["数据与实体"]
+  direction LR
+  subgraph column_0[" "]
+  direction TB
+  n0@{ shape: cyl, label: "**ArtAssets**<br/>保存运行模型资源并维持其加载寿命。" }
+  class n0 node_resource
+  n1@{ shape: cyl, label: "**ArtLoadState**<br/>保存运行资源的加载进度与就绪结果。" }
+  class n1 node_resource
+  subgraph n13[" "]
+  direction TB
+  eh3@{ shape: text, label: "**第一人称相机实体**        ​<br/>提供跟随角色的第一人称视角与观        ​<br/>察输入状态。        ​" }
+  n116@{ shape: rect, label: "**Name**<br/>来自Bevy 引擎 ↗：相机名称。" }
+  class n116 node_component
+  class n116 external_node
+  n117@{ shape: rect, label: "**Camera3d**<br/>来自Bevy 引擎 ↗：标记三维场景相机。" }
+  class n117 node_component
+  class n117 external_node
+  n118@{ shape: rect, label: "**FirstPersonCamera**<br/>来自第一人称控制 ↗：保存跟随目标、眼高<br/>与观察角度。" }
+  class n118 node_component
+  class n118 external_node
+  n119@{ shape: rect, label: "**MouseLookState**<br/>来自第一人称控制 ↗：保存光标捕获与观察<br/>输入初始化状态。" }
+  class n119 node_component
+  class n119 external_node
+  n120@{ shape: rect, label: "**Transform**<br/>来自Bevy 引擎 ↗：保存第一人称镜头的显<br/>示姿态。" }
+  class n120 node_component
+  class n120 external_node
+  eh3 layout_0@~~~ n116
+  n116 layout_1@~~~ n117
+  n117 layout_2@~~~ n118
+  n118 layout_3@~~~ n119
+  n119 layout_4@~~~ n120
+  n121@{ shape: rect, label: "**GlobalTransform**<br/>来自Bevy 引擎 ↗：引擎传播后的相机世界<br/>变换，供渲染提取。" }
+  class n121 node_component
+  class n121 external_node
+  n122@{ shape: rect, label: "**EguiContext**<br/>来自Egui / Inspector ↗：保存世界检查<br/>器的界面交互状态。" }
+  class n122 node_component
+  class n122 external_node
+  n123@{ shape: rect, label: "**PrimaryEguiContext**<br/>来自Egui / Inspector ↗：指定主检查器<br/>界面的相机上下文。" }
+  class n123 node_component
+  class n123 external_node
+  n124@{ shape: rect, label: "**EguiContextSettings**<br/>来自Egui / Inspector ↗：配置检查器上<br/>下文的输入与输出处理。" }
+  class n124 node_component
+  class n124 external_node
+  n125@{ shape: rect, label: "**EguiInput**<br/>来自Egui / Inspector ↗：缓冲检查器界<br/>面收到的输入。" }
+  class n125 node_component
+  class n125 external_node
+  eh3 layout_5@~~~ n121
+  n121 layout_6@~~~ n122
+  n122 layout_7@~~~ n123
+  n123 layout_8@~~~ n124
+  n124 layout_9@~~~ n125
+  n126@{ shape: rect, label: "**EguiMultipassSchedule**<br/>来自Egui / Inspector ↗：指定检查器上<br/>下文的内部界面调度。" }
+  class n126 node_component
+  class n126 external_node
+  n127@{ shape: rect, label: "**EguiFullOutput**<br/>来自Egui / Inspector ↗：保存检查器界<br/>面计算产生的输出。" }
+  class n127 node_component
+  class n127 external_node
+  n3@{ shape: rect, label: "**LoadingCamera**<br/>加载期间相机身份，准备后移除。" }
+  class n3 node_component
+  n128@{ shape: rect, label: "**DespawnOnExit**<br/>来自Bevy 引擎 ↗：标记退出所属应用状态<br/>时销毁此实体。" }
+  class n128 node_component
+  class n128 external_node
+  n129@{ shape: rect, label: "**IsDefaultUiCamera**<br/>来自Bevy 引擎 ↗：指定菜单界面的默认绘<br/>制相机。" }
+  class n129 node_component
+  class n129 external_node
+  eh3 layout_10@~~~ n126
+  n126 layout_11@~~~ n127
+  n127 layout_12@~~~ n3
+  n3 layout_13@~~~ n128
+  n128 layout_14@~~~ n129
+  end
+  class n13 node_entity
+  style n13 fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
+  n10@{ shape: rect, label: "**键盘控制者**        ​<br/>保存玩家身份、输入上下文与受控        ​<br/>角色及相机。        ​" }
+  class n10 node_entity
+  n0 layout_15@~~~ n1
+  n1 layout_16@~~~ n13
+  n13 layout_17@~~~ n10
+  end
+  style column_0 fill:none,stroke:none
+  end
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }

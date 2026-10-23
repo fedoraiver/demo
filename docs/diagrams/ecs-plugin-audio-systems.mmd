@@ -1,0 +1,111 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 32,
+      "rankSpacing": 56,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart TB
+  accTitle: 音频播放 · 系统与调度
+  accDescr: 音频播放的系统与调度；外部契约保留摘要，可跳转到所属插件。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_contract fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef edge_schedule stroke:#334155,stroke-width:3px
+  classDef edge_order stroke:#334155,stroke-width:2px
+  classDef edge_constraint stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:10 4 2 4
+  classDef external_node stroke-dasharray:6 4
+  subgraph diagram_main[" "]
+  direction LR
+  style diagram_main fill:none,stroke:none
+  subgraph sg0["Startup"]
+  direction TB
+  n0@{ shape: rounded, label: "**preload_sounds**<br/>预加载界面与音效短音并保存播放策略。" }
+  class n0 node_system
+  end
+  subgraph sg1["Update"]
+  direction TB
+  n7@{ shape: lin-rect, label: "**AudioSystems**<br/>公开音量混合与播放的调度阶段。" }
+  class n7 node_contract
+  n9@{ shape: lin-rect, label: "**UI Style → Audio Mix → Playback**<br/>来自应用流程 ↗：约束界面显示更新先于音<br/>量混合与播放。" }
+  class n9 node_contract
+  class n9 external_node
+  n10@{ shape: lin-rect, label: "**UiSystems::Style**<br/>来自菜单与界面 ↗：组织菜单显示、数值与<br/>说明的原位更新。" }
+  class n10 node_contract
+  class n10 external_node
+  n1@{ shape: rounded, label: "**log_load_failures**<br/>记录声音资源加载失败的路径与错误。" }
+  class n1 node_system
+  n4@{ shape: rounded, label: "**sync_audio_mix**<br/>合成设置预览或正式配置的有效音量。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**sync_voice_volumes**<br/>将有效混音与素材音量同步到播放实例。" }
+  class n5 node_system
+  n2@{ shape: rounded, label: "**play_requests**<br/>按有效音量与播放策略处理短音请求。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**stop_on_exit**<br/>停止音频通道并记录退出。" }
+  class n3 node_system
+  n7 layout_0@~~~ n9
+  n9 layout_1@~~~ n10
+  n10 layout_2@~~~ n1
+  n1 layout_3@~~~ n4
+  n4 layout_4@~~~ n5
+  n5 layout_5@~~~ n2
+  n2 layout_6@~~~ n3
+  end
+  subgraph sg2["PostUpdate"]
+  direction TB
+  n8@{ shape: lin-rect, label: "**PostUpdate · PlayTypedChannels**<br/>来自Kira ↗：将排队声音句柄转为已就绪播<br/>放实例。" }
+  class n8 node_contract
+  class n8 external_node
+  n6@{ shape: rounded, label: "**sync_voice_volumes**<br/>为新就绪的播放实例补同步有效音量。" }
+  class n6 node_system
+  n8 layout_7@~~~ n6
+  end
+  sg0 sc0@--> sg1
+  class sc0 edge_schedule
+  sg1 sc1@--> sg2
+  class sc1 edge_schedule
+  n1 e0@--> n4
+  class e0 edge_order
+  n4 e1@--> n5
+  class e1 edge_order
+  n5 e2@--> n2
+  class e2 edge_order
+  n2 e3@--> n3
+  class e3 edge_order
+  n8 e4@--> n6
+  class e4 edge_order
+  n9 e5@-->|"Audio Mix / Playback"| n7
+  class e5 edge_constraint
+  n10 e6@-->|"Style 之后进入 Mix"| n1
+  class e6 edge_order
+  end
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }

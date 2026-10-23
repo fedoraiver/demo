@@ -1,0 +1,147 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 32,
+      "rankSpacing": 8,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart TB
+  accTitle: 物品交互 · 数据与实体
+  accDescr: 物品交互的数据与实体；外部契约保留摘要，可跳转到所属插件。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_entity fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_local fill:#F8F5F1,stroke:#AA8752,stroke-width:1.6px,color:#1F3340
+  classDef node_contract fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef edge_relationship stroke:#7B4DB2,stroke-width:1.8px
+  classDef external_node stroke-dasharray:6 4
+  subgraph relations["数据流与关系"]
+  direction LR
+  subgraph relation_0[" "]
+  direction TB
+  subgraph n16[" "]
+  direction TB
+  eh2@{ shape: text, label: "**持物无视觉碰撞代理**        ​<br/>为持物共享人物刚体提供无视觉碰        ​<br/>撞形状。        ​" }
+  n12@{ shape: rect, label: "**HeldCollider**<br/>关联代理所对应的真实物品。" }
+  class n12 node_component
+  n97@{ shape: rect, label: "**ColliderOf**<br/>来自Avian ↗：关联碰撞体所属的刚体。" }
+  class n97 node_component
+  class n97 external_node
+  n98@{ shape: rect, label: "**ColliderTransform**<br/>来自Avian ↗：保存相对刚体的局部碰撞姿<br/>态。" }
+  class n98 node_component
+  class n98 external_node
+  n99@{ shape: rect, label: "**Collider**<br/>来自Avian ↗：保存参与物理碰撞的实体形<br/>状。" }
+  class n99 node_component
+  class n99 external_node
+  n100@{ shape: rect, label: "**CollisionLayers**<br/>来自Avian ↗：配置实体之间允许发生碰撞<br/>的层。" }
+  class n100 node_component
+  class n100 external_node
+  eh2 layout_0@~~~ n12
+  n12 layout_1@~~~ n97
+  n97 layout_2@~~~ n98
+  n98 layout_3@~~~ n99
+  n99 layout_4@~~~ n100
+  n101@{ shape: rect, label: "**Position**<br/>来自Avian ↗：保存从持有者姿态派生的真<br/>实位置。" }
+  class n101 node_component
+  class n101 external_node
+  n102@{ shape: rect, label: "**Rotation**<br/>来自Avian ↗：保存从持有者姿态派生的真<br/>实旋转。" }
+  class n102 node_component
+  class n102 external_node
+  n103@{ shape: rect, label: "**Transform**<br/>来自Bevy 引擎 ↗：保存无视觉碰撞代理的<br/>实体姿态。" }
+  class n103 node_component
+  class n103 external_node
+  n104@{ shape: rect, label: "**Friction**<br/>来自Avian ↗：保持原表面摩擦。" }
+  class n104 node_component
+  class n104 external_node
+  eh2 layout_5@~~~ n101
+  n101 layout_6@~~~ n102
+  n102 layout_7@~~~ n103
+  n103 layout_8@~~~ n104
+  n105@{ shape: rect, label: "**Restitution**<br/>来自Avian ↗：保持原反弹配置。" }
+  class n105 node_component
+  class n105 external_node
+  n106@{ shape: rect, label: "**CollisionEventsEnabled**<br/>来自Avian ↗：保留离散碰撞消息。" }
+  class n106 node_component
+  class n106 external_node
+  n107@{ shape: rect, label: "**ColliderDisabled**<br/>来自Avian ↗：标记暂时停用的代理碰撞<br/>体。" }
+  class n107 node_component
+  class n107 external_node
+  n108@{ shape: rect, label: "**Name**<br/>来自Bevy 引擎 ↗：持物无视觉碰撞代理的<br/>调试名称。" }
+  class n108 node_component
+  class n108 external_node
+  eh2 layout_9@~~~ n105
+  n105 layout_10@~~~ n106
+  n106 layout_11@~~~ n107
+  n107 layout_12@~~~ n108
+  end
+  class n16 node_entity
+  style n16 fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
+  n14@{ shape: rect, label: "**角色业务根实体**        ​<br/>承载角色身份、运动意图与动态物        ​<br/>理身体。        ​" }
+  class n14 node_entity
+  n15@{ shape: rect, label: "**可搬物品业务根实体**        ​<br/>承载可拾取物品身份及自由运动、        ​<br/>共享持握状态。        ​" }
+  class n15 node_entity
+  n17@{ shape: rounded, label: "**recover_from_water**<br/>来自越界恢复 ↗：将落水实体恢复到各自出<br/>生姿态。" }
+  class n17 node_system
+  class n17 external_node
+  n15 e0@-->|"HeldBy"| n14
+  class e0 edge_relationship
+  n15 e1@-->|"HeldAttachment.collider"| n16
+  class e1 edge_reference
+  n16 e2@-->|"HeldCollider.0"| n15
+  class e2 edge_reference
+  n16 e3@-->|"ColliderOf"| n14
+  class e3 edge_relationship
+  n15 e4@-->|"落水时解除持握"| n17
+  class e4 edge_read
+  end
+  style relation_0 fill:none,stroke:none
+  end
+  subgraph catalog["数据与实体"]
+  direction LR
+  subgraph column_0[" "]
+  direction TB
+  n0@{ shape: notch-rect, label: "**Local#lt;HashSet#lt;Entity#gt;#gt;（reserved）**<br/>预留同批次拾取目标以避免重复占用。" }
+  class n0 node_local
+  n1@{ shape: notch-rect, label: "**Local#lt;LandingContacts#gt;**<br/>记录物品支撑接触与单次落地反馈状态。" }
+  class n1 node_local
+  n2@{ shape: notch-rect, label: "**Local#lt;HashMap#lt;Entity, HoldStrain#gt;#gt;**<br/>记录持握偏差计时与失稳提示锁存。" }
+  class n2 node_local
+  n13@{ shape: lin-rect, label: "**CarryRotationQuery**<br/>提供持物转向与对齐的连续碰撞路径查询。" }
+  class n13 node_contract
+  n0 layout_13@~~~ n1
+  n1 layout_14@~~~ n2
+  n2 layout_15@~~~ n13
+  end
+  style column_0 fill:none,stroke:none
+  end
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
