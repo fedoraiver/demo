@@ -102,10 +102,6 @@ export function createArchitectureInteraction({ diagram, nodeStyles, selectionSt
         next.add(remember(node, parts, nodeStyles[node.dataset.visualType], nativeOutlineRoot(node, parts)));
       }
     }
-    for (const header of diagram.querySelectorAll('[data-entity-header]')) {
-      const owner = header.dataset.entityOwner || header.closest('[data-id]')?.dataset.id;
-      header.classList.toggle('dim', dimNodes.has(owner));
-    }
     for (const group of diagram.querySelectorAll('[data-schedule-id]')) {
       const selected = selectedSchedules.has(group.dataset.scheduleId);
       group.classList.toggle('selected', selected);

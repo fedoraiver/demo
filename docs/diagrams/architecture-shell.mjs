@@ -26,13 +26,11 @@ header{height:48px;flex:none;padding:8px 22px;display:flex;align-items:center;ju
 .workspace{--details-width:286px;display:grid;grid-template-columns:minmax(360px,1fr) 10px var(--details-width);gap:0;padding:14px;min-height:0;flex:1}
 .canvas-wrap{min-width:0;min-height:0;display:flex;flex-direction:column;border:1px solid var(--ui-border);border-radius:var(--ui-radius);background:var(--ui-bg);overflow:hidden}
 .caption{flex:none;display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-wrap:wrap;padding:6px 10px;background:var(--ui-surface);border-bottom:1px solid var(--ui-border);color:var(--ui-muted);font-size:11px}
-.entity-layout-status{margin-right:auto;max-width:100%;overflow-wrap:anywhere}.entity-layout-status[hidden]{display:none}.entity-layout-status button{margin-left:8px;padding:2px 6px;font-size:11px}
 .caption select{max-width:180px;background:var(--ui-bg);padding:3px 6px;font-size:11px}
 .canvas{flex:1;position:relative;overflow:hidden;touch-action:none;cursor:grab;min-height:200px}
 .canvas:focus{outline:none}
 .canvas,.canvas *{user-select:none;-webkit-user-select:none}.canvas.dragging{cursor:grabbing}
 .diagram{position:absolute;left:0;top:0;transform-origin:0 0}.diagram svg{display:block;overflow:visible}
-.entity-toggle{position:absolute;z-index:1;display:grid;place-items:center;min-width:0;min-height:0;padding:0;border:1px solid var(--entity-stroke);border-radius:3px;background:#FFF;color:var(--entity-stroke);font:600 20px/1 'Segoe UI','Microsoft YaHei',sans-serif;white-space:nowrap;cursor:pointer}.entity-toggle:hover{background:var(--entity-fill)}.entity-toggle:focus-visible{outline:2px solid var(--ui-accent);outline-offset:2px}
 .details-resizer{cursor:col-resize;touch-action:none;position:relative;outline-offset:-2px}
 .details-resizer::after{content:"";position:absolute;inset:10px 3px;border-radius:3px;background:transparent}
 .details-resizer:hover::after,.details-resizer:focus-visible::after,.workspace.resizing .details-resizer::after{background:#93C5FD}
@@ -47,6 +45,7 @@ header{height:48px;flex:none;padding:8px 22px;display:flex;align-items:center;ju
 .side .data-link:hover{background:var(--ui-active);color:var(--ui-accent)}
 .badge{display:inline-block;background:var(--ui-hover);color:var(--ui-muted);font-size:10px;padding:3px 7px;border-radius:4px}
 .side .source{display:block;font-size:11px;padding:7px 9px;background:var(--ui-bg);border-radius:6px;margin:5px 0}.side .source:hover{background:var(--ui-active)}
+.source-group-label{font-size:11px;color:var(--ui-muted);font-weight:500;margin:14px 0 6px}.side .source-entry-label{font-size:11px;margin:10px 0 4px;color:var(--ui-muted)}.source-entry,.source-actions{min-width:0}
 .side button[data-owner]{margin:8px 0;color:var(--ui-accent);background:var(--ui-active);font-size:12px}.side button[data-owner]:hover{background:#DBEAFE}
 .reset{width:100%;margin-top:24px;border-color:var(--ui-border);font-size:12px;color:var(--ui-muted)}
 .guide h3:first-child{margin-top:0}.guide-row{display:grid;grid-template-columns:88px minmax(0,1fr);gap:12px;align-items:center;margin:14px 0;font-size:12px;line-height:1.6}

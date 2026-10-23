@@ -1,5 +1,6 @@
 // 直接核对交付 SVG 的矩形和折线；端点声明只描述意图，不能替代真实几何。
 import { measureMermaidNodes, shapeBounds, svgElements } from './svg-shape-geometry.mjs';
+import { nativeMarkerProperty } from './architecture-routing.mjs';
 const epsilon = 1e-6;
 const close = (a, b) => Math.abs(a - b) <= epsilon;
 const samePoint = (a, b) => close(a[0], b[0]) && close(a[1], b[1]);
@@ -260,6 +261,15 @@ export function checkMermaidGeometry(svg, view) {
     requireCondition(node.position && ['x', 'y', 'width', 'height'].every(key => Number.isFinite(node.position[key]) && near(node.position[key], actual.bounds[key])), `Mermaid node position mismatch: ${node.id}`);
   }
   requireCondition(nodes.size === view.nodes.length, 'Mermaid node count mismatch');
+  if (view.aspect === 'component') {
+    const centerId = view.componentNodeId || view.nodes.find(node => node.visualType === 'component')?.id, center = nodes.get(centerId)?.bounds;
+    requireCondition(center, 'Mermaid Component column is missing');
+    for (const node of view.nodes.filter(node => node.id !== centerId)) {
+      const bounds = nodes.get(node.id)?.bounds;
+      requireCondition(node.visualType === 'entity' ? bounds.x + bounds.width <= center.x + .05 : bounds.x >= center.x + center.width - .05,
+        `Mermaid Component columns are not Entity / Component / System: ${node.id}`);
+    }
+  }
   const markers = new Set(elements.filter(element => element.tag === 'marker').map(element => element.attrs.id));
   const semantic = new Map(), layout = new Map(), schedule = new Map();
   for (const element of elements.filter(item => item.tag === 'path' && (item.attrs['data-link-id'] !== undefined || item.attrs['data-schedule-link-id'] !== undefined || item.attrs['data-layout-link'] !== undefined || item.attrs['data-edge'] === 'true'))) {
@@ -267,9 +277,22 @@ export function checkMermaidGeometry(svg, view) {
     const ids = [attrs['data-link-id'], attrs['data-layout-link'], attrs['data-schedule-link-id']].filter(value => value !== undefined), id = ids[0];
     requireCondition(ids.length === 1 && id, 'Unidentified Mermaid edge path');
     validMermaidPath(attrs.d, id);
-    requireCondition(!attrs['marker-start'] && !attrs['marker-mid'], `Mermaid arrow is only allowed at the target: ${id}`);
-    if (attrs['marker-end']) {
-      const markerId = attrs['marker-end'].match(/^url\([^#]*#([^)]*)\)$/)?.[1];
+    const link = attrs['data-link-id'] !== undefined ? view.links.find(link => link.id === id) : null;
+    const reverse = link?.nativeReverse === true, startMarker = nativeMarkerProperty(element, 'marker-start'), endMarker = nativeMarkerProperty(element, 'marker-end');
+    const present = value => value && value !== 'none';
+    requireCondition(!present(nativeMarkerProperty(element, 'marker-mid')) && (!present(startMarker) || reverse), `Mermaid arrow is only allowed at the target: ${id}`);
+    requireCondition((attrs['data-native-reverse'] === 'true') === reverse, `Mermaid native direction metadata mismatch: ${id}`);
+    if (reverse) {
+      const from = view.nodes.find(node => node.id === (link.displayFrom ?? link.from)), to = view.nodes.find(node => node.id === (link.displayTo ?? link.to));
+      const declaration = new RegExp(`^\\s*${to?.mermaidId} ${link.mermaidId}@-{3,}(?:\\|[^\\n]*\\|)? ${from?.mermaidId}\\s*$`, 'm');
+      const config = /^---\r?\n([\s\S]*?)\r?\n---/.exec(view.mermaid || '')?.[1];
+      const themeCSS = config && JSON.parse(config).config?.themeCSS;
+      requireCondition(view.aspect === 'component' && declaration.test(view.mermaid || '') && themeCSS?.includes(`#${view.id}-${link.mermaidId}{marker-start:url(#${view.id}_flowchart-v2-pointStart)!important}`)
+        && startMarker === `url(#${view.id}_flowchart-v2-pointStart)` && !present(endMarker), `Mermaid reverse arrow has no native source evidence: ${id}`);
+    }
+    const arrow = reverse ? startMarker : endMarker;
+    if (present(arrow)) {
+      const markerId = arrow.match(/^url\([^#]*#([^)]*)\)$/)?.[1];
       requireCondition(markers.has(markerId), `Unknown Mermaid arrow marker: ${id}`);
     }
     const target = attrs['data-link-id'] !== undefined ? semantic : attrs['data-schedule-link-id'] !== undefined ? schedule : layout;

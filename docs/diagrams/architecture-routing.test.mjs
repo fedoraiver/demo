@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { arrowGeometry, inspectViewRoutes, pathIntersectsOutline, ROUTING_STYLE, routingObstacles } from './architecture-routing.mjs';
+import { arrowGeometry, inspectViewRoutes, nativeMarkerProperty, nativeSvgProperty, pathIntersectsOutline, ROUTING_STYLE, routingObstacles } from './architecture-routing.mjs';
 import { flattenPath, svgElements } from './svg-shape-geometry.mjs';
 
 const card = (id, shape, extra = '') => `<g class="node" data-id="${id}" data-instance="v--${id}" ${extra}>${shape.replaceAll('PART', `data-shape-part="v--${id}"`)}</g>`;
@@ -9,6 +9,31 @@ const view = (contents, nodes = ['a', 'b', 'obstacle'], links = [{ id: 'edge', m
 const endpoint = id => card(id, `<rect PART x="${id === 'a' ? 0 : 180}" y="40" width="20" height="20"/>`);
 const marker = '<defs><marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerUnits="userSpaceOnUse" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 0L10 5L0 10Z"/></marker></defs>';
 const label = (x, y, width = 20, height = 10) => `<g class="edgeLabel" transform="translate(${x} ${y})"><g class="label" data-mermaid-native-id="e0"><g><rect class="background" x="0" y="0" width="${width}" height="${height}"/><text>Contract</text></g></g></g>`;
+
+test('native stylesheet properties preserve marker URLs, context stroke and actual cascade priority', () => {
+  const elements = svgElements('<svg id="v"><style>#v .edge{marker-start:none}#v #v-e0{marker-start:url("#pointStart")!important}#v #pointStart path{fill:context-stroke!important;stroke:context-stroke!important}</style><marker id="pointStart"><path fill="#000"/></marker><path id="v-e0" class="edge" style="marker-start:none;stroke:#3567A6"/></svg>');
+  const edge = elements.find(element => element.attrs.id === 'v-e0'), path = elements.find(element => element.parent?.tag === 'marker');
+  assert.equal(nativeMarkerProperty(edge, 'marker-start'), 'url(#pointStart)');
+  assert.equal(nativeSvgProperty(edge, 'stroke'), '#3567A6');
+  assert.equal(nativeSvgProperty(path, 'fill'), 'context-stroke');
+  edge.attrs.style += ';marker-start:none!important';
+  assert.equal(nativeMarkerProperty(edge, 'marker-start'), 'none');
+});
+
+test('reverse native paths keep logical source contact at the end and target markers at the start', () => {
+  const startMarker = '<defs><marker id="start" viewBox="0 0 10 10" refX="4.5" refY="5" markerUnits="userSpaceOnUse" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 5L10 10L10 0Z"/></marker></defs>';
+  const fixture = view(startMarker + endpoint('a') + endpoint('b') + edge('M180 50H20', 'edge', 'marker-start="url(#start)"'), ['a', 'b'], [{ id: 'edge', mermaidId: 'e0', from: 'a', to: 'b', nativeReverse: true }]);
+  const inspected = inspectViewRoutes(fixture).edges[0];
+  assert.deepEqual(inspected.arrowIssues, []); assert.deepEqual(inspected.start, [20, 50]); assert.deepEqual(inspected.end, [180, 50]);
+  fixture.svg = fixture.svg.replace('M180 50H20', 'M180 50H24');
+  assert.deepEqual(inspectViewRoutes(fixture).edges[0].arrowIssues, ['path-source-gap']);
+  fixture.svg = fixture.svg.replace('M180 50H24', 'M170 50H20');
+  assert.ok(inspectViewRoutes(fixture).edges[0].arrowIssues.includes('marker-target-gap'));
+  fixture.svg = fixture.svg.replace('M170 50H20', 'M180 50H190V80H20');
+  assert.ok(inspectViewRoutes(fixture).edges[0].arrowIssues.includes('marker-target-direction'));
+  fixture.svg = fixture.svg.replace('M180 50H190V80H20', 'M180 50H20V50H0');
+  assert.ok(inspectViewRoutes(fixture).edges[0].arrowIssues.includes('path-source-direction'));
+});
 
 test('routing uses all native shape types and does not confuse empty polygon corners with card interiors', () => {
   for (const shape of ['<rect PART x="80" y="20" width="40" height="60"/>', '<polygon PART points="80,50 100,20 120,50 100,80"/>', '<ellipse PART cx="100" cy="50" rx="20" ry="30"/>', '<path PART d="M80 30Q100 10 120 30V70Q100 90 80 70Z"/>']) {
@@ -47,20 +72,6 @@ test('unrelated Entity containers cannot be crossed, even between their Componen
   const fixture = view(endpoint('a') + endpoint('b') + card('entity', '<rect PART x="80" y="20" width="40" height="100"/>') + edge('M20 50H180'), ['a', 'b', 'entity']);
   fixture.nodes[2].presentation = 'entity-container'; fixture.entityGroups = [{ entity: 'entity', components: [], headerBounds: { x: 85, y: 25, width: 30, height: 10 } }];
   assert.equal(inspectViewRoutes(fixture).collisions[0].kind, 'entity-container');
-});
-
-test('Entity corner controls remain protected even when a member edge may cross its container', () => {
-  const entity = card('entity', '<rect PART x="20" y="0" width="120" height="130"/>');
-  const component = card('component', '<rect PART x="40" y="60" width="40" height="20"/>');
-  const fixture = view(entity + component + endpoint('b') + edge('M80 70L120 20L180 50'), ['entity', 'component', 'b'], [{ id: 'edge', from: 'component', to: 'b', mermaidId: 'e0' }]);
-  fixture.nodes[0].presentation = 'entity-container';
-  fixture.nodes[0].entityToggle = { entity: 'entity', expanded: true, count: 1, label: '收起组件（1）' };
-  fixture.entityGroups = [{ id: 'entity-group', entity: 'entity', components: ['component'] }];
-  const control = routingObstacles(fixture).find(obstacle => obstacle.kind === 'entity-control');
-  assert.deepEqual(control.bounds, { x: 108, y: 8, width: 24, height: 24 });
-  assert.deepEqual(inspectViewRoutes(fixture).collisions, [{ edge: 'edge', id: 'entity:toggle', kind: 'entity-control' }]);
-  fixture.svg = fixture.svg.replace('M80 70L120 20L180 50', 'M80 70H180');
-  assert.deepEqual(inspectViewRoutes(fixture).collisions, []);
 });
 
 test('Schedule arrows and business paths share clearance while canonical Schedule transit is allowed', () => {
@@ -153,7 +164,7 @@ test('a native arrow may enter its target while its visible head still spans the
   assert.ok(inspectViewRoutes(fixture).edges[0].arrowIssues.includes('marker-target-gap'));
 });
 
-test('folded Component routes use displayed Entity endpoints for clearance and actual target arrows', () => {
+test('projected Component routes use displayed Entity endpoints for clearance and actual target arrows', () => {
   const fixture = view(marker + endpoint('a') + endpoint('b') + edge('M20 50H176', 'edge', 'marker-end="url(#arrow)"'), ['a', 'b'], [
     { id: 'edge', mermaidId: 'e0', from: 'a.Component', to: 'b.Component', displayFrom: 'a', displayTo: 'b' },
   ]);
@@ -166,7 +177,7 @@ test('folded Component routes use displayed Entity endpoints for clearance and a
   assert.ok(inspectViewRoutes(fixture).edges[0].arrowIssues.includes('marker-target-gap'));
 });
 
-test('folded Entity endpoints do not grant hidden Component body space to a relation label', () => {
+test('projected Entity endpoints do not grant hidden Component body space to a relation label', () => {
   const fixture = view(endpoint('a') + endpoint('b') + edge('M20 50H180') + label(182, 45, 10, 5), ['a', 'b'], [
     { id: 'edge', mermaidId: 'e0', from: 'a', to: 'b.Component', displayFrom: 'a', displayTo: 'b' },
   ]);

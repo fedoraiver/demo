@@ -137,15 +137,10 @@ export function buildArchitectureModel(model) {
     });
     const visible = new Set(internal);
     for (const link of selectedLinks) { visible.add(link.from); visible.add(link.to); }
-    const entityGroups = [];
-    if (aspect === 'data') for (const [entityId, entity] of entityById) {
-      if (!visible.has(entityId) && !entity.components.some(component => visible.has(component.id))) continue;
-      const members = entity.components.map(component => component.id);
-      if (!members.length) continue;
-      entityGroups.push({ id: `entity-group-${entity.id}`, entity: entityId, components: members });
-      // 实体及完整组件在关系筛选后补齐，不扩展系统、其他实体或业务关系。
-      visible.add(entityId);
-      for (const id of members) visible.add(id);
+    // 数据页固定显示实体卡片；组件投影与原关系端点保留，类型图由详情进入。
+    if (aspect === 'data') for (const id of [...visible]) {
+      const owner = componentEntity.get(id);
+      if (owner) { visible.delete(id); visible.add(owner); }
     }
     const isInternal = id => internal.has(id) || owned(id);
     const featureLabel = id => featureById.get(id)?.label || infrastructureFeature(id)?.label;
@@ -168,7 +163,9 @@ export function buildArchitectureModel(model) {
       group: groupFor(id),
       ...(projectionEntities.has(id) ? { projection_components: entityById.get(id).components.filter(component => ownerOf(component.id) === featureId).map(component => component.id) } : {}),
     }));
-    return { nodes: graphNodes, links: selectedLinks.map(({ id, from, to, kind: linkKind, label }) => ({ id, from, to, kind: linkKind, label })), ...(aspect === 'data' ? { entityGroups } : {}), empty: graphNodes.length === 0 };
+    return { nodes: graphNodes, links: selectedLinks.map(({ id, from, to, kind: linkKind, label, ...metadata }) => ({ id, from, to, kind: linkKind, label, ...metadata,
+      ...(aspect === 'data' ? { displayFrom: componentEntity.get(from) || from, displayTo: componentEntity.get(to) || to } : {}),
+    })), empty: graphNodes.length === 0 };
   }
   function scheduleGroups(graph) {
     const groups = new Map((model.schedule_groups || []).map(group => [group.id, { ...group, nodes: [] }]));

@@ -1,5 +1,4 @@
 import { flattenShape, pathAxis, pathCurveDeviation, pathTerminals, pointSegmentDistance, shapeBounds, svgElements } from './svg-shape-geometry.mjs';
-import { entityToggleBounds } from './architecture-style.mjs';
 
 export const ROUTING_STYLE = Object.freeze({ axisTolerance: .5, geometryTolerance: .25, curve: 'basis', curveFallbacks: ['bumpX', 'bumpY'] });
 export const ROUTING_GEOMETRY = Object.freeze({ tolerance: ROUTING_STYLE.geometryTolerance, axisTolerance: ROUTING_STYLE.axisTolerance });
@@ -68,6 +67,54 @@ function nativeProperty(element, name) {
   }
 }
 
+const markerRules = new WeakMap();
+/** 读取原生 SVG 的级联，包含 Mermaid themeCSS 输出的 ID/类/标签后代选择器。 */
+export function nativeSvgProperty(element, name) {
+  let root = element;
+  while (root.parent) root = root.parent;
+  if (!markerRules.has(root)) {
+    const styles = [], visit = item => { if (item.tag === 'style') styles.push(item.text); item.children.forEach(visit); };
+    visit(root);
+    markerRules.set(root, styles.flatMap(css => [...css.matchAll(/([^{}]+)\{([^{}]*)\}/g)].flatMap(match => {
+      const declarations = match[2].split(';').flatMap(entry => {
+        const separator = entry.indexOf(':');
+        if (separator < 0) return [];
+        return [{ name: entry.slice(0, separator).trim(), value: entry.slice(separator + 1).trim().replace(/\s*!important$/, ''), important: /!important\s*$/.test(entry) }];
+      });
+      return match[1].split(',').map(selector => ({ selector: selector.trim(), declarations }));
+    })));
+  }
+  const matches = (item, selector) => {
+    if (!/^[\w#.*\s-]+$/.test(selector)) return false;
+    const tokens = selector.split(/\s+/), simple = (node, token) => {
+      const tag = /^[\w*-]+/.exec(token)?.[0], id = /#([\w-]+)/.exec(token)?.[1], classes = [...token.matchAll(/\.([\w-]+)/g)].map(match => match[1]);
+      return (!tag || tag === '*' || tag === node.tag) && (!id || id === node.attrs.id) && classes.every(value => (node.attrs.class || '').split(/\s+/).includes(value));
+    };
+    if (!simple(item, tokens.pop())) return false;
+    for (let parent = item.parent; tokens.length; parent = parent?.parent) {
+      if (!parent) return false;
+      if (simple(parent, tokens.at(-1))) tokens.pop();
+    }
+    return true;
+  };
+  for (let current = element; current; current = current.parent) {
+    const candidates = current.attrs[name] === undefined ? [] : [{ value: current.attrs[name], score: 0 }];
+    for (const rule of markerRules.get(root)) if (matches(current, rule.selector)) {
+      const specificity = (rule.selector.match(/#/g)?.length || 0) * 100 + (rule.selector.match(/\./g)?.length || 0) * 10 + (rule.selector.match(/(?:^|\s)[a-z]/gi)?.length || 0);
+      for (const declaration of rule.declarations) if (declaration.name === name) candidates.push({ value: declaration.value, score: specificity + (declaration.important ? 10000 : 0) });
+    }
+    for (const entry of (current.attrs.style || '').split(';')) {
+      const separator = entry.indexOf(':');
+      if (entry.slice(0, separator).trim() === name) candidates.push({ value: entry.slice(separator + 1).trim().replace(/\s*!important$/, ''), score: 1000 + (/!important\s*$/.test(entry) ? 10000 : 0) });
+    }
+    if (candidates.length) return candidates.reduce((best, item) => item.score >= best.score ? item : best).value;
+  }
+}
+export function nativeMarkerProperty(element, name) {
+  const value = nativeSvgProperty(element, name);
+  return value?.replace(/^url\(["']?([^"')]+)["']?\)$/, 'url($1)');
+}
+
 function strokeWidth(element) {
   const stroke = nativeProperty(element, 'stroke'), width = nativeProperty(element, 'stroke-width');
   const result = parseFloat(width ?? (stroke && stroke !== 'none' ? '1' : '0'));
@@ -120,10 +167,6 @@ export function routingObstacles(view, { tolerance = ROUTING_GEOMETRY.tolerance 
     const header = elements.find(element => element.attrs['data-entity-header'] === instance);
     add(node.id, group && node.presentation === 'entity-container' ? 'entity-container' : 'node', own,
       group ? [group.entity, ...group.components] : [node.id], nativeLabelBounds(header) || group?.headerBounds);
-    if (node.entityToggle) {
-      const bounds = entityToggleBounds(unionBounds(own.map(shapeBounds)));
-      obstacles.push({ id: `${node.id}:toggle`, kind: 'entity-control', members: [], bounds, parts: [rectanglePart(bounds)] });
-    }
   }
   for (const group of view.scheduleGroups || []) {
     const cluster = elements.find(element => element.attrs['data-schedule-id'] === group.id);
@@ -136,13 +179,14 @@ export function routingObstacles(view, { tolerance = ROUTING_GEOMETRY.tolerance 
 }
 
 /** SVG marker 的原生图形映射到路径终点，包含 viewBox、refX/Y、单位与切线方向。 */
-export function arrowGeometry(element, elements, { tolerance = ROUTING_GEOMETRY.tolerance } = {}) {
-  const reference = element.attrs['marker-end'];
-  if (!reference) return null;
+export function arrowGeometry(element, elements, { tolerance = ROUTING_GEOMETRY.tolerance, nativeReverse = false } = {}) {
+  const side = nativeReverse ? 'start' : 'end', reference = nativeMarkerProperty(element, `marker-${side}`);
+  if (!reference || reference === 'none') return null;
   const id = reference.match(/^url\([^#]*#([^)]*)\)$/)?.[1], marker = elements.find(item => item.tag === 'marker' && item.attrs.id === id);
   if (!marker) throw new Error(`Unknown native Mermaid arrow marker: ${id}`);
-  const terminal = pathTerminals(element), tangent = terminal.endTangent;
-  if (!terminal.end || !tangent) throw new Error('Native Mermaid arrow has no terminal tangent');
+  const terminal = pathTerminals(element), nativeTangent = nativeReverse ? terminal.startTangent : terminal.endTangent;
+  const anchor = nativeReverse ? terminal.start : terminal.end, tangent = nativeReverse ? nativeTangent?.map(value => -value) : nativeTangent;
+  if (!anchor || !tangent) throw new Error('Native Mermaid arrow has no terminal tangent');
   const viewport = marker.attrs.viewBox?.trim().split(/[\s,]+/).map(Number), markerWidth = Number(marker.attrs.markerWidth ?? 3), markerHeight = Number(marker.attrs.markerHeight ?? 3);
   const box = viewport || [0, 0, markerWidth, markerHeight];
   if (box.length !== 4 || !box.every(Number.isFinite) || box[2] <= 0 || box[3] <= 0 || markerWidth <= 0 || markerHeight <= 0) throw new Error('Invalid native Mermaid marker viewport');
@@ -154,11 +198,11 @@ export function arrowGeometry(element, elements, { tolerance = ROUTING_GEOMETRY.
   let sx = markerWidth / box[2], sy = markerHeight / box[3];
   if ((marker.attrs.preserveAspectRatio || 'xMidYMid meet') !== 'none') sx = sy = (marker.attrs.preserveAspectRatio || '').includes('slice') ? Math.max(sx, sy) : Math.min(sx, sy);
   const orient = marker.attrs.orient ?? '0', followsPath = ['auto', 'auto-start-reverse'].includes(orient);
-  const angle = followsPath ? Math.atan2(tangent[1], tangent[0]) : parseFloat(orient) * Math.PI / 180;
+  const angle = followsPath ? Math.atan2(nativeTangent[1], nativeTangent[0]) + (nativeReverse && orient === 'auto-start-reverse' ? Math.PI : 0) : parseFloat(orient) * Math.PI / 180;
   if (!Number.isFinite(angle)) throw new Error('Invalid native Mermaid marker orientation');
   const cos = Math.cos(angle), sin = Math.sin(angle), map = point => {
     const x = (point[0] - ref[0]) * sx * unitScale, y = (point[1] - ref[1]) * sy * unitScale;
-    return [terminal.end[0] + cos * x - sin * y, terminal.end[1] + sin * x + cos * y];
+    return [anchor[0] + cos * x - sin * y, anchor[1] + sin * x + cos * y];
   };
   const descendants = elements.filter(item => { for (let current = item.parent; current; current = current.parent) if (current === marker) return true; return false; });
   const parts = descendants.filter(item => ['path', 'polygon', 'polyline', 'rect', 'circle', 'ellipse', 'line'].includes(item.tag)).map(item => ({
@@ -166,7 +210,7 @@ export function arrowGeometry(element, elements, { tolerance = ROUTING_GEOMETRY.
     contours: nativeContours(item, { relativeTo: marker, tolerance: tolerance / Math.max(sx * unitScale, sy * unitScale, 1) }).map(contour => ({ ...contour, points: contour.points.map(map) }))
   }));
   if (!parts.length) throw new Error('Native Mermaid marker has no outline');
-  const points = parts.flatMap(part => part.contours.flatMap(contour => contour.points)), projection = point => (point[0] - terminal.end[0]) * tangent[0] + (point[1] - terminal.end[1]) * tangent[1];
+  const points = parts.flatMap(part => part.contours.flatMap(contour => contour.points)), projection = point => (point[0] - anchor[0]) * tangent[0] + (point[1] - anchor[1]) * tangent[1];
   const tip = points.reduce((best, point) => projection(point) > projection(best) ? point : best, points[0]);
   const xs = points.map(point => point[0]), ys = points.map(point => point[1]);
   return { parts, bounds: { x: Math.min(...xs), y: Math.min(...ys), width: Math.max(...xs) - Math.min(...xs), height: Math.max(...ys) - Math.min(...ys) },
@@ -191,9 +235,10 @@ function arrowTargetIssues(arrow, target, tolerance) {
   return issues;
 }
 
-function pathSourceIssues(element, source, tolerance) {
+function pathSourceIssues(element, source, tolerance, nativeReverse = false) {
   if (!source) return [];
-  const { start, startTangent } = pathTerminals(element);
+  const terminal = pathTerminals(element), start = nativeReverse ? terminal.end : terminal.start;
+  const startTangent = nativeReverse ? terminal.endTangent?.map(value => -value) : terminal.startTangent;
   if (!start || !startTangent) return ['path-source-direction'];
   const boundary = boundarySegments(source.parts);
   const boundaryDistance = point => Math.min(...boundary.map(([first, last]) => pointSegmentDistance(point, first, last)));
@@ -201,7 +246,7 @@ function pathSourceIssues(element, source, tolerance) {
   const threshold = 2 * tolerance + (stroke + strokeWidth(element)) / 2;
   const issues = boundaryDistance(start) > threshold ? ['path-source-gap'] : [];
   // 原生曲线可以沿轮廓相切后离开；检查实际初段是否钻入源节点，不能要求反向切线进入填充。
-  const points = flattenShape(element, { tolerance })[0]?.points || [];
+  const contours = flattenShape(element, { tolerance }), points = nativeReverse ? [...(contours.at(-1)?.points || [])].reverse() : contours[0]?.points || [];
   let remaining = Math.max(8, 2 * threshold), enters = false;
   for (let index = 1; index < points.length && remaining > 0 && !enters; index++) {
     const first = points[index - 1], last = points[index], length = Math.hypot(last[0] - first[0], last[1] - first[1]);
@@ -246,7 +291,7 @@ export function inspectViewRoutes(view, options = {}) {
   for (const [kind, links, attribute] of [['business', view.links || [], 'data-link-id'], ['schedule', view.scheduleLinks || [], 'data-schedule-link-id']]) for (const link of links) {
     const element = elements.find(element => element.attrs[attribute] === link.id);
     if (!element) throw new Error(`Missing native routing path: ${view.id}/${link.id}`);
-    const path = flattenShape(element, { tolerance }), endpoints = displayEndpoints(link), arrow = arrowGeometry(element, elements, { tolerance });
+    const path = flattenShape(element, { tolerance }), endpoints = displayEndpoints(link), arrow = arrowGeometry(element, elements, { tolerance, nativeReverse: link.nativeReverse === true });
     const collisions = obstacles.filter(obstacle => {
       if (permitted(obstacle, endpoints)) return false;
       return pathIntersectsOutline(path, obstacle, { ...options, tolerance, clearance: (options.clearance || 0) + strokeWidth(element) / 2 })
@@ -259,8 +304,8 @@ export function inspectViewRoutes(view, options = {}) {
     const first = path[0]?.points, last = path.at(-1)?.points;
     const axis = pathAxis(element, options.axisTolerance ?? ROUTING_GEOMETRY.axisTolerance), curveCommands = /[CQAST]/i.test(element.attrs.d);
     edges.push({ id: link.id, mermaidId: link.mermaidId, kind, axis, curved: !axis && pathCurveDeviation(element) > tolerance, curveCommands,
-      collisions, arrowIssues: [...pathSourceIssues(element, obstacles.find(obstacle => obstacle.id === endpoints[0] && !obstacle.kind.endsWith('-header')), tolerance),
-        ...arrowTargetIssues(arrow, obstacles.find(obstacle => obstacle.id === endpoints[1] && !obstacle.kind.endsWith('-header')), tolerance)], start: first?.[0], end: last?.at(-1) });
+      collisions, arrowIssues: [...pathSourceIssues(element, obstacles.find(obstacle => obstacle.id === endpoints[0] && !obstacle.kind.endsWith('-header')), tolerance, link.nativeReverse === true),
+        ...arrowTargetIssues(arrow, obstacles.find(obstacle => obstacle.id === endpoints[1] && !obstacle.kind.endsWith('-header')), tolerance)], start: link.nativeReverse ? last?.at(-1) : first?.[0], end: link.nativeReverse ? first?.[0] : last?.at(-1) });
   }
   return { edges, collisions: edges.flatMap(edge => edge.collisions.map(obstacle => ({ edge: edge.id, ...obstacle }))) };
 }

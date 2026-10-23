@@ -2,17 +2,12 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import test from 'node:test';
 import { buildArchitectureModel } from './architecture-model.mjs';
-import { NODE_STYLES, EDGE_STYLES, SELECTION_STYLE, ENTITY_TOGGLE_STYLE, entityToggleBounds, EXTERNAL_REFERENCE_STYLE, selectedFillColor, visualTypeOf, edgeSemanticOf, displayLabelOf, scheduleLinksFor, mermaidStyleDefinitions } from './architecture-style.mjs';
+import { NODE_STYLES, EDGE_STYLES, SELECTION_STYLE, EXTERNAL_REFERENCE_STYLE, selectedFillColor, visualTypeOf, edgeSemanticOf, displayLabelOf, scheduleLinksFor, mermaidStyleDefinitions } from './architecture-style.mjs';
 
 const model = JSON.parse(fs.readFileSync(new URL('./ecs-data.json', import.meta.url), 'utf8'));
 const architecture = buildArchitectureModel(model);
 const registry = architecture.registry;
 const features = [...architecture.features, ...architecture.infrastructureFeatures].map(feature => feature.id);
-
-test('Entity corner controls use the shared twenty four unit square with eight unit insets', () => {
-  assert.deepEqual(ENTITY_TOGGLE_STYLE, { size: 24, inset: 8 });
-  assert.deepEqual(entityToggleBounds({ x: -50, y: 20, width: 200, height: 160 }), { x: 118, y: 28, width: 24, height: 24 });
-});
 
 test('the fourteen node types use a distinct shape and color combination', () => {
   assert.equal(Object.keys(NODE_STYLES).length, 14);
@@ -64,7 +59,9 @@ test('every node fill blends eight percent of its semantic stroke into ninety tw
   assert.equal(NODE_STYLES.entity.fill, '#F8F1EF');
   assert.equal(NODE_STYLES.entity.stroke, '#A6533B');
   assert.equal(selectedFillColor(NODE_STYLES.entity.stroke), '#EBD9D4');
-  assert.equal(NODE_STYLES.entity.shape, 'rect', 'Standalone Entity, folded Entity, expanded container and legend share the native rectangle');
+  assert.equal(NODE_STYLES.system.shape, 'rounded');
+  assert.equal(NODE_STYLES.entity.shape, NODE_STYLES.system.shape);
+  assert.equal(NODE_STYLES.component.shape, NODE_STYLES.system.shape);
   assert.equal(NODE_STYLES.message.fill, NODE_STYLES.message_buffer.fill);
 });
 

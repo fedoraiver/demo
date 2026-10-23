@@ -7,7 +7,7 @@ import { checkArchitecture as checkArchitectureWithDependencies, checkDataSectio
 import { createDependencySourceResolver, dependencySourceKey, attachDependencySources } from './dependency-sources.mjs';
 import { checkMermaidGeometry, checkSvgGeometry } from './diagram-geometry.mjs';
 import { createSourceLocator } from './source-locator.mjs';
-import { NODE_STYLES, EDGE_STYLES, SELECTION_STYLE, EXTERNAL_REFERENCE_STYLE, ENTITY_TOGGLE_STYLE, visualTypeOf, edgeSemanticOf, displayLabelOf } from './architecture-style.mjs';
+import { NODE_STYLES, EDGE_STYLES, SELECTION_STYLE, EXTERNAL_REFERENCE_STYLE, visualTypeOf, edgeSemanticOf, displayLabelOf } from './architecture-style.mjs';
 import { buildArchitectureModel, isMainPluginRegistration, scheduleGroupLabel } from './architecture-model.mjs';
 import { DATA_GROUP_LABELS } from './architecture-renderer.mjs';
 import { normalizeMermaidSvg } from './mermaid-compiler.mjs';
@@ -15,7 +15,7 @@ import { INFRASTRUCTURE_FEATURES, architectureViewId } from './architecture-infr
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const temporaryRoot = path.join(root, 'tmp', 'architecture-check-tests');
-const sharedStyles = () => ({ nodes: NODE_STYLES, edges: EDGE_STYLES, selection: SELECTION_STYLE, externalReference: EXTERNAL_REFERENCE_STYLE, entityToggle: ENTITY_TOGGLE_STYLE });
+const sharedStyles = () => ({ nodes: NODE_STYLES, edges: EDGE_STYLES, selection: SELECTION_STYLE, externalReference: EXTERNAL_REFERENCE_STYLE });
 const fixtureViewCount = 1 + 3 * (1 + INFRASTRUCTURE_FEATURES.length);
 const fixtureOverviewNodeCount = 2 + INFRASTRUCTURE_FEATURES.length;
 const extensionFeature = INFRASTRUCTURE_FEATURES.find(feature => feature.section === 'third_party');
@@ -197,134 +197,16 @@ function entityGroupFixture() {
   return { model, registry, source, view: normalizeMermaidSvg(view, source, registry, { clusterLabelBounds: { eh0: { x: 120, y: 60, width: 120, height: 20 } } }) };
 }
 
-test('Entity group is the one semantic Entity card and uses the translated native container', () => {
-  const { model, registry, view } = entityGroupFixture();
-  assert.deepEqual(view.entityGroups[0].bounds, { x: 30, y: 40, width: 300, height: 240 });
-  assert.deepEqual(view.sections, [{ label: '角色', entityGroup: 'entity-group-actor', x: 30, y: 40, width: 300, height: 240 }]);
-  assert.doesNotThrow(() => checkEntityGroups(view, model, registry));
-  const frame = view.svg.match(/<g\b[^>]*data-entity-group="entity-group-actor"[^>]*>/)[0];
-  assert.match(frame, /data-id="entity-actor"/);
-  assert.match(frame, /data-presentation="entity-container"/);
-  assert.doesNotMatch(frame, /\b(?:data-shape-part|filter)=/);
-  assert.equal((view.svg.match(/data-id=/g) || []).length, 2);
-  assert.equal((view.svg.match(/data-shape-part=/g) || []).length, 2);
-});
-
-test('Entity container validation rejects changed membership, bounds, identity and header overlap', () => {
-  for (const corrupt of [
-    view => { view.entityGroups[0].components = []; },
-    view => { view.entityGroups[0].entity = 'actor.Marker'; },
-    view => { view.entityGroups[0].bounds.x++; },
-    view => { view.sections[0].width--; },
-    view => { view.sections.push({ ...view.sections[0] }); },
-    view => { view.svg = view.svg.replace('data-id="entity-actor"', 'data-id="wrong-entity"'); },
-    view => { view.svg = view.svg.replace('data-entity-group="entity-group-actor"', 'data-entity-group="entity-group-actor" data-shape-part="fixture--entity"'); },
-    view => { view.svg = view.svg.replace('data-entity-group="entity-group-actor"', 'data-entity-group="entity-group-actor" filter="url(#selected)"'); },
-    view => { view.nodes[1].position.y = view.entityGroups[0].headerBounds.y; },
-    view => { view.entityGroups[0].headerBounds.width++; },
-  ]) {
-    const { model, registry, view } = entityGroupFixture(); corrupt(view);
-    assert.throws(() => checkEntityGroups(view, model, registry), /Entity (?:group|card)/);
-  }
-});
-
-test('Entity validation requires the complete canonical component list, including components absent from the old feature projection', () => {
-  const { model, registry, view } = entityGroupFixture();
-  model.entities[0].components.push({ id: 'actor.External' });
-  assert.throws(() => checkEntityGroups(view, model, registry), /Entity group membership mismatch/);
-});
-
-function entityProjectionFixture() {
-  const groups = [
-    { id: 'entity-group-a', entity: 'entity-a', components: ['a.same', 'a.other'], expanded: true },
-    { id: 'entity-group-b', entity: 'entity-b', components: ['b.same'], expanded: true },
-  ];
-  const view = { id: 'folding-data', feature: 'example', aspect: 'data', entityExpansion: 'all', entityGroups: groups,
-    nodes: ['entity-a', 'a.same', 'a.other', 'entity-b', 'b.same', 'free'].map(id => ({ id, role: 'internal', shape: 'rect', visualType: id.startsWith('entity-') ? 'entity' : 'component', displayLabel: id, ...(id.startsWith('entity-') ? { presentation: 'entity-container' } : {}) })),
-    links: [
-      { id: 'read-a', from: 'free', to: 'a.same', kind: 'read', label: 'Read' },
-      { id: 'read-other', from: 'free', to: 'a.other', kind: 'read', label: 'Other' },
-      { id: 'write-b', from: 'b.same', to: 'free', kind: 'write', label: 'Write' },
-      { id: 'inside-a', from: 'a.same', to: 'a.other', kind: 'reference', label: 'Internal' },
-    ] };
-  for (const group of groups) view.nodes.find(node => node.id === group.entity).entityToggle = { entity: group.entity, expanded: true, count: group.components.length, label: `收起组件（${group.components.length}）` };
-  view.entityViews = Object.fromEntries(['collapsed', ...groups.map(group => group.entity)].map((key, index) => {
-    const closed = groups.filter(group => group.entity !== key), hidden = new Set(closed.flatMap(group => group.components));
-    const project = id => closed.find(group => group.components.includes(id))?.entity || id;
-    return [key, { id: `folding-data-${index}`, parentViewId: view.id, feature: view.feature, aspect: 'data', entityExpansion: key,
-      entityGroups: groups.map(group => ({ ...structuredClone(group), expanded: group.entity === key })),
-      nodes: view.nodes.filter(node => !hidden.has(node.id)).map(node => ({ ...node, ...(node.visualType === 'entity' ? { presentation: node.id === key ? 'entity-container' : 'entity-collapsed', entityToggle: { ...node.entityToggle, expanded: node.id === key, label: `${node.id === key ? '收起' : '展开'}组件（${node.entityToggle.count}）` } } : {}) })),
-      links: view.links.map(link => ({ ...link, displayFrom: project(link.from), displayTo: project(link.to) })) }];
-  }));
-  return view;
-}
-
-test('Entity variants preserve canonical identities while projecting only hidden Component endpoints', () => {
-  const view = entityProjectionFixture(), originalLinks = structuredClone(view.links);
-  assert.equal(checkEntityViewProjections(view).length, 3);
-  assert.deepEqual(view.links, originalLinks);
-  assert.deepEqual(view.entityViews.collapsed.nodes.map(node => node.id), ['entity-a', 'entity-b', 'free']);
-  assert.deepEqual(view.entityViews['entity-a'].nodes.map(node => node.id), ['entity-a', 'a.same', 'a.other', 'entity-b', 'free']);
-  const links = view.entityViews.collapsed.links;
-  assert.equal(links.length, originalLinks.length);
-  assert.deepEqual(links.slice(0, 2).map(link => [link.displayFrom, link.displayTo]), [['free', 'entity-a'], ['free', 'entity-a']]);
-  assert.deepEqual([links[3].displayFrom, links[3].displayTo], ['entity-a', 'entity-a']);
-  assert.equal(view.entityViews['entity-b'].links[2].displayFrom, 'b.same');
-});
-
-test('Entity variants reject changed catalogs, membership, visibility, roles and original relations', () => {
-  for (const corrupt of [
-    view => { delete view.entityViews.collapsed; },
-    view => { view.entityViews.extra = structuredClone(view.entityViews.collapsed); },
-    view => { view.entityViews.collapsed.parentViewId = 'elsewhere'; },
-    view => { view.entityViews.collapsed.id = view.id; },
-    view => { view.entityViews.collapsed.feature = 'other'; },
-    view => { view.entityViews.collapsed.entityExpansion = 'all'; },
-    view => { view.entityViews.collapsed.entityGroups[0].components.reverse(); },
-    view => { view.entityViews.collapsed.entityGroups[0].expanded = true; },
-    view => { view.entityViews.collapsed.nodes.push(structuredClone(view.nodes[1])); },
-    view => { view.entityViews.collapsed.nodes.pop(); },
-    view => { view.entityViews.collapsed.nodes[0].role = 'external'; },
-    view => { view.entityViews.collapsed.nodes[0].displayLabel = 'Renamed'; },
-    view => { view.entityViews.collapsed.nodes[0].presentation = 'entity-container'; },
-    view => { view.entityViews.collapsed.nodes[0].entityToggle = { ...view.entityViews.collapsed.nodes[0].entityToggle, count: 99 }; },
-    view => { view.entityViews.collapsed.links.pop(); },
-    view => { view.entityViews.collapsed.links[0].from = 'entity-b'; },
-    view => { view.entityViews.collapsed.links[0].kind = 'write'; },
-    view => { view.entityViews.collapsed.links[0].label = 'Changed'; },
-    view => { view.entityViews.collapsed.links[0].displayTo = 'entity-b'; },
-    view => { delete view.entityViews.collapsed.links[0].displayFrom; },
-  ]) {
-    const view = entityProjectionFixture(); corrupt(view);
-    assert.throws(() => checkEntityViewProjections(view), /Entity view/);
-  }
-  const unexpected = { id: 'empty', entityGroups: [], links: [], entityViews: {} };
-  assert.throws(() => checkEntityViewProjections(unexpected), /Unexpected Entity view variants/);
-});
-
-function collapsedEntityFixture() {
-  const { model, registry, view: parentView } = entityGroupFixture();
-  const view = structuredClone(parentView), entity = view.nodes[0];
-  view.nodes = [entity]; entity.presentation = 'entity-collapsed';
-  const group = view.entityGroups[0]; group.expanded = false; delete group.headerBounds; delete group.headerMermaidId;
-  view.svg = `<svg viewBox="0 0 500 400"><g class="node" role="button" tabindex="0" data-id="entity-actor" data-instance="${entity.instance}" data-mermaid-id="n0" data-entity-group="entity-group-actor" data-presentation="entity-collapsed" data-center-x="180" data-center-y="160"><rect data-shape-part="${entity.instance}" x="30" y="40" width="300" height="240"/></g></svg>`;
-  return { model, registry, parentView, view };
-}
-
-test('collapsed Entity groups locate the ordinary rect and cannot retain a hidden Component or header', () => {
-  const fixture = collapsedEntityFixture();
-  assert.doesNotThrow(() => checkEntityGroups(fixture.view, fixture.model, fixture.registry, fixture.parentView));
-  assert.doesNotThrow(() => checkMermaidGeometry(fixture.view.svg, fixture.view));
-  for (const corrupt of [
-    ({ view, parentView }) => { view.nodes.push(parentView.nodes[1]); },
-    ({ view }) => { view.entityGroups[0].headerMermaidId = 'eh0'; },
-    ({ view }) => { view.entityGroups[0].headerBounds = { x: 1, y: 2, width: 3, height: 4 }; },
-    ({ view }) => { view.entityGroups[0].bounds.width++; },
-    ({ view }) => { view.nodes[0].presentation = 'entity-container'; },
-  ]) {
-    const data = collapsedEntityFixture(); corrupt(data);
-    assert.throws(() => checkEntityGroups(data.view, data.model, data.registry, data.parentView), /(?:collapsed Entity|Collapsed Entity)/);
-  }
+test('Entity validation rejects retired expansion metadata and controls', () => {
+  const ordinary = { id: 'plain', nodes: [], entityGroups: [], svg: '<svg/>' };
+  assert.deepEqual(checkEntityViewProjections(ordinary), []);
+  checkEntityGroups(ordinary);
+  for (const extra of [{ entityViews: {} }, { entityExpansion: [] }, { parentViewId: 'old' }, { nodes: [{ entityToggle: {} }] }]) assert.throws(() => checkEntityViewProjections({ ...ordinary, ...extra }), /Obsolete Entity/);
+  assert.throws(() => checkEntityGroups({ ...ordinary, entityGroups: [{ entity: 'old' }] }), /Obsolete nested/);
+  assert.throws(() => checkEntityGroups({ ...ordinary, svg: '<svg data-entity-toggle="old"/>' }), /Obsolete nested/);
+  assert.throws(() => checkEntityGroups({ ...ordinary, svg: '<svg><g class="node entity-container"/></svg>' }), /Obsolete nested/);
+  assert.throws(() => checkEntityGroups({ ...ordinary, svg: '<svg><g data-entity-owner="old"/></svg>' }), /Obsolete nested/);
+  assert.doesNotThrow(() => checkEntityGroups({ ...ordinary, svg: '<svg><style>[data-entity-owner],.entity-container{cursor:pointer}[data-entity-header].dim{opacity:.22}</style><title>data-entity-toggle is a selector name</title><g data-label="data-entity-group"/></svg>' }), 'Historical selectors and explanatory text are not obsolete Entity geometry');
 });
 
 test('all-view routing checks translated native geometry, curves and unrelated card types', () => {
@@ -767,7 +649,7 @@ test('sidebar guide samples cover the central catalog with one ordinary sample p
   assert.throws(() => checkGuideSamples(missing, styles), /Read guide sample catalog mismatch/);
   styles.nodes.resource.fill = '#FFFFFF';
   assert.throws(() => checkGuideSamples(guideSamplesFixture(), styles), /Read guide styles do not match the shared catalog/);
-  for (const field of ['selection', 'externalReference', 'entityToggle']) {
+  for (const field of ['selection', 'externalReference']) {
     const incomplete = structuredClone(sharedStyles());
     delete incomplete[field];
     assert.throws(() => checkGuideSamples(guideSamplesFixture(), incomplete), /Read guide styles do not match the shared catalog/);
@@ -1032,7 +914,7 @@ test('rejects an unrendered entity component even if it remains in the registry'
   view.nodes = view.nodes.filter(node => node.id !== 'actor.Marker');
   data.render(view);
   data.save();
-  assert.throws(() => checkArchitecture(data.directory), /Data node has no internal view: actor.Marker/);
+  assert.throws(() => checkArchitecture(data.directory), /Data node has no internal view or component type projection: actor.Marker/);
 });
 
 test('checks typed link identity against the actual Mermaid declarations', () => {

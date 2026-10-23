@@ -55,54 +55,6 @@ test('multiple native primitives highlight together while unrelated children and
   assert.ok(parts.every(part => part.style.getPropertyValue('stroke-width') === '2.2px'));
 });
 
-test('Entity containers select only their own instance geometry in native nested and sibling layouts', () => {
-  for (const nested of [true, false]) {
-    const component = '<g class="node" data-id="component" data-instance="component-instance" data-visual-type="component"><rect data-shape-part="component-instance" style="fill:#F1F5F2;stroke:#4B8060;stroke-width:1.6px !important;stroke-dasharray:6 4"/><g class="label"><text>Component</text></g></g>';
-    const headerMarkup = '<g data-entity-header="entity-instance" data-entity-owner="entity" class="node" aria-hidden="true"><g class="label"><text>Entity</text></g></g>';
-    const document = testDocument(`<svg id="diagram"><g class="cluster node entity-container" data-presentation="entity-container" data-id="entity" data-instance="entity-instance" data-visual-type="entity"><rect data-shape-part="entity-instance" style="fill:#EEF4F2;stroke:#2F7161;stroke-width:2.2px !important"/>${nested ? headerMarkup + component : ''}</g>${nested ? '' : headerMarkup + component}</svg>`);
-    const diagram = document.getElementById('diagram'), entity = diagram.querySelector('[data-id="entity"]'), child = diagram.querySelector('[data-id="component"]');
-    const header = diagram.querySelector('[data-entity-header]');
-    const outline = entity.children[0], childOutline = child.querySelector('[data-shape-part]');
-    const original = [snapshot(outline), snapshot(childOutline)];
-    const interaction = createArchitectureInteraction({ diagram, nodeStyles: NODE_STYLES });
-    for (const scale of [1, .01, 1]) {
-      interaction.setScale(scale);
-      interaction.paint({ selectedNodes: new Set(['entity']), dimNodes: new Set(['component']) });
-      assert.equal(outline.style.getPropertyValue('stroke-width'), `${2.2 + 2 / scale}px`);
-      assert.deepEqual(snapshot(childOutline), original[1]);
-      assert.equal(entity.style.getPropertyValue('filter'), '');
-      assert.equal(entity.style.getPropertyValue('opacity'), '');
-      assert.equal(header.style.getPropertyValue('filter'), '');
-      assert.equal(header.classList.contains('dim'), false);
-      assert.equal(header.classList.contains('selected'), false);
-      for (const attribute of ['data-id', 'tabindex', 'role', 'aria-pressed']) assert.equal(header.getAttribute(attribute), null);
-      assert.equal(child.style.getPropertyValue('filter'), '');
-      assert.equal(childOutline.style.getPropertyValue('filter'), '');
-      assert.equal(child.getAttribute('aria-pressed'), 'false');
-      assert.equal(child.classList.contains('dim'), true);
-      assert.equal(diagram.querySelectorAll('[data-selection-filter]').length, 1);
-      interaction.paint({ selectedNodes: new Set(['component']), dimNodes: new Set(['entity']) });
-      assert.deepEqual(snapshot(outline), original[0]);
-      assert.equal(outline.style.getPropertyValue('filter'), '');
-      assert.equal(entity.classList.contains('dim'), true);
-      assert.equal(header.classList.contains('dim'), true);
-      assert.equal(entity.style.getPropertyValue('opacity'), '', 'A dim parent must not impose opacity on its component subtree');
-      assert.equal(child.classList.contains('dim'), false);
-      assert.equal(childOutline.style.getPropertyValue('stroke-width'), `${1.6 + 2 / scale}px`);
-      assert.equal(diagram.querySelectorAll('[data-selection-filter]').length, 1);
-      interaction.paint({ selectedNodes: new Set(['entity', 'component']) });
-      assert.equal(diagram.querySelectorAll('[data-selection-filter]').length, 2);
-      assert.notEqual(outline.style.getPropertyValue('filter'), childOutline.style.getPropertyValue('filter'));
-      interaction.paint();
-      assert.deepEqual([snapshot(outline), snapshot(childOutline)], original);
-      assert.equal(outline.style.getPropertyValue('filter'), '');
-      assert.equal(childOutline.style.getPropertyValue('filter'), '');
-      assert.equal(diagram.querySelectorAll('[data-selection-filter]').length, 0);
-      assert.equal(header.classList.contains('dim'), false);
-    }
-  }
-});
-
 test('clearing accurately restores a normal priority or removes a previously absent inline width', () => {
   const document = testDocument('<svg id="diagram"><g data-id="normal" data-visual-type="component"><rect data-shape-part="normal" style="stroke-width:1.7px;fill:#fff"/></g><g data-id="attribute" data-visual-type="component"><rect data-shape-part="attribute" stroke-width="1.8" style="fill:#fff"/></g><g data-id="computed" data-visual-type="component"><rect data-shape-part="computed" style="fill:#fff"/></g></svg>');
   document.defaultView = { getComputedStyle: part => ({ strokeWidth: part.getAttribute('stroke-width') || '1.9px' }) };
