@@ -1,0 +1,124 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 32,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#component-3654d7e4014f6459-e1{marker-start:url(#component-3654d7e4014f6459_flowchart-v2-pointStart)!important}\n#component-3654d7e4014f6459-e2{marker-start:url(#component-3654d7e4014f6459_flowchart-v2-pointStart)!important}\n#component-3654d7e4014f6459-e3{marker-start:url(#component-3654d7e4014f6459_flowchart-v2-pointStart)!important}\n#component-3654d7e4014f6459-e4{marker-start:url(#component-3654d7e4014f6459_flowchart-v2-pointStart)!important}\n#component-3654d7e4014f6459-e5{marker-start:url(#component-3654d7e4014f6459_flowchart-v2-pointStart)!important}\n#component-3654d7e4014f6459-e6{marker-start:url(#component-3654d7e4014f6459_flowchart-v2-pointStart)!important}\n#component-3654d7e4014f6459-e7{marker-start:url(#component-3654d7e4014f6459_flowchart-v2-pointStart)!important}\n#component-3654d7e4014f6459-e8{marker-start:url(#component-3654d7e4014f6459_flowchart-v2-pointStart)!important}\n#component-3654d7e4014f6459-e9{marker-start:url(#component-3654d7e4014f6459_flowchart-v2-pointStart)!important}\n#component-3654d7e4014f6459-e11{marker-start:url(#component-3654d7e4014f6459_flowchart-v2-pointStart)!important}\n#component-3654d7e4014f6459-e12{marker-start:url(#component-3654d7e4014f6459_flowchart-v2-pointStart)!important}\n#component-3654d7e4014f6459_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}"
+  }
+}
+---
+flowchart RL
+  accTitle: GameplayContext · 组件关系
+  accDescr: 左侧为包含组件的实体，中间为组件类型，右侧每个系统函数只显示一次；连线表达访问与生命周期操作。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_observer fill:#F4F1F9,stroke:#7B4DB2,stroke-width:1.6px,color:#1F3340
+  classDef node_entity fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**键盘控制者**<br/>来自场景装配 ↗：保存玩家身份、输入上下<br/>文与受控角色及相机。" }
+  class n0 node_entity
+  class n0 external_node
+  n1@{ shape: rounded, label: "**GameplayContext**<br/>标记用于玩法动作的控制上下文。" }
+  class n1 node_component
+  n2@{ shape: rounded, label: "**sync_mouse_capture**<br/>管理光标捕获及玩法输入启停。" }
+  class n2 node_system
+  n3@{ shape: hex, label: "**record_movement**<br/>保存控制角色的持续移动方向。" }
+  class n3 node_observer
+  n4@{ shape: hex, label: "**clear_completed_movement**<br/>清除已结束动作的角色移动方向。" }
+  class n4 node_observer
+  n5@{ shape: hex, label: "**clear_cancelled_movement**<br/>清除已取消动作的角色移动方向。" }
+  class n5 node_observer
+  n6@{ shape: hex, label: "**request_jump**<br/>记录目标角色的单次跳跃请求。" }
+  class n6 node_observer
+  n7@{ shape: hex, label: "**request_interaction**<br/>记录目标角色的单次交互请求。" }
+  class n7 node_observer
+  n8@{ shape: hex, label: "**on_camera_look**<br/>将观察输入转为第一人称水平角与俯仰角。" }
+  class n8 node_observer
+  n9@{ shape: rounded, label: "**sync_character_facing**<br/>同步人物朝向并处理持物转向受阻。" }
+  class n9 node_system
+  n10@{ shape: rounded, label: "**sync_character_visibility**<br/>隐藏第一人称控制角色的自身模型。" }
+  class n10 node_system
+  n11@{ shape: rounded, label: "**spawn_actors**<br/>来自场景装配 ↗：装配玩家、可搬物、控制<br/>者与相机。" }
+  class n11 node_system
+  class n11 external_node
+  n12@{ shape: rounded, label: "**suspend_controls**<br/>停用玩法输入并释放光标。" }
+  class n12 node_system
+  n13@{ shape: hex, label: "**release_pointer_for_inspector**<br/>释放光标以允许操作世界检查器。" }
+  class n13 node_observer
+  n1 layout_0@~~~ n0
+  n2 layout_1@~~~ n1
+  n3 layout_2@~~~ n1
+  n4 layout_3@~~~ n1
+  n5 layout_4@~~~ n1
+  n6 layout_5@~~~ n1
+  n7 layout_6@~~~ n1
+  n8 layout_7@~~~ n1
+  n9 layout_8@~~~ n1
+  n10 layout_9@~~~ n1
+  n11 layout_10@~~~ n1
+  n12 layout_11@~~~ n1
+  n13 layout_12@~~~ n1
+  n11 e10@-->|"添加"| n1
+  class e10 edge_write
+  n1 e0@-->|"可能挂载于"| n0
+  class e0 edge_reference
+  n2 e1@---|"存在 / 变更过滤"| n1
+  class e1 edge_reference
+  n3 e2@---|"存在 / 变更过滤"| n1
+  class e2 edge_reference
+  n4 e3@---|"存在 / 变更过滤"| n1
+  class e3 edge_reference
+  n5 e4@---|"存在 / 变更过滤"| n1
+  class e4 edge_reference
+  n6 e5@---|"存在 / 变更过滤"| n1
+  class e5 edge_reference
+  n7 e6@---|"存在 / 变更过滤"| n1
+  class e6 edge_reference
+  n8 e7@---|"存在 / 变更过滤"| n1
+  class e7 edge_reference
+  n9 e8@---|"存在 / 变更过滤"| n1
+  class e8 edge_reference
+  n10 e9@---|"存在 / 变更过滤"| n1
+  class e9 edge_reference
+  n12 e11@---|"存在 / 变更过滤"| n1
+  class e11 edge_reference
+  n13 e12@---|"存在 / 变更过滤"| n1
+  class e12 edge_reference
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: bumpX }
+  e11@{ curve: basis }
+  e12@{ curve: basis }

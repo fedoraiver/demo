@@ -106,18 +106,9 @@ function wrap(value, limit = 36) {
   return lines;
 }
 const text = values => values.filter(Boolean).flatMap(value => wrap(value)).map(escape).join('<br/>');
-function nodeText(name, context, entityControl = false) {
-  // Figure spaces survive Mermaid's native SVG text measurement, reserving the corner without a proxy node.
-  const reserve = entityControl ? '\u2007'.repeat(8) + '\u200B' : '';
-  const limit = entityControl ? 28 : 36;
-  return [...wrap(name, limit).map(line => `**${escape(line)}**${reserve}`),
-    ...context.filter(Boolean).flatMap(value => wrap(value, limit)).map(line => escape(line) + reserve)].join('<br/>');
-}
-
-export function entityExpansionIds(view, expansion = view.entityExpansion ?? 'all') {
-  const requested = new Set(expansion === 'all' ? (view.entityGroups || []).map(group => group.entity)
-    : Array.isArray(expansion) ? expansion : expansion === 'collapsed' ? [] : [expansion]);
-  return (view.entityGroups || []).map(group => group.entity).filter(id => requested.has(id));
+function nodeText(name, context) {
+  return [...wrap(name).map(line => `**${escape(line)}**`),
+    ...context.filter(Boolean).flatMap(value => wrap(value)).map(escape)].join('<br/>');
 }
 
 export function mermaidConfiguration(aspect) {
@@ -128,17 +119,12 @@ export function mermaidConfiguration(aspect) {
 }
 
 function definition(view, graph, registry, features, scheduleGroups = []) {
-  const entityExpansion = view.entityExpansion ?? 'all';
-  const base = { ...view, ...(view.aspect === 'data' ? { entityExpansion } : {}), engine: 'mermaid', diagramType: 'flowchart', width: 0, height: 0, svg: null, filename: null, mermaid: null, mermaidFilename: null, nodes: [], links: [], scheduleLinks: [], layoutLinks: [], scheduleGroups: [], entityGroups: [], sections: [] };
+  const base = { ...view, engine: 'mermaid', diagramType: 'flowchart', width: 0, height: 0, svg: null, filename: null, mermaid: null, mermaidFilename: null, nodes: [], links: [], scheduleLinks: [], layoutLinks: [], scheduleGroups: [], entityGroups: [], sections: [] };
   if (graph.empty || !graph.nodes.length) return base;
   const names = new Map([...features, ...INFRASTRUCTURE_FEATURES].map(feature => [feature.id, feature.label]));
-  const expandedEntities = new Set(entityExpansionIds(graph, entityExpansion));
-  const entityGroups = (graph.entityGroups || []).map((group, index) => ({ ...group, expanded: expandedEntities.has(group.entity), ...(expandedEntities.has(group.entity) ? { headerMermaidId: `eh${index}` } : {}) }));
-  const hiddenComponents = new Map(entityGroups.filter(group => !group.expanded).flatMap(group => group.components.map(component => [component, group.entity])));
-  const entityById = new Map(entityGroups.map(group => [group.entity, group]));
+  const entityGroups = [];
   const nodes = graph.nodes.flatMap((node, index) => {
-    if (hiddenComponents.has(node.id)) return [];
-    const data = registry[node.id], visualType = visualTypeOf(data);
+    const data = { ...registry[node.id], ...(view.aspect === 'component' && node.id === (view.componentNodeId || graph.componentNodeId) ? view.componentDetails : {}) }, visualType = visualTypeOf(data);
     if (data.display_summary !== undefined && (typeof data.display_summary !== 'string' || !data.display_summary.trim())) throw new Error(`架构节点用途简介必须是非空文本：${node.id}`);
     const feature = node.role === 'plugin' && features.find(item => `plugin-${item.plugin}` === node.id);
     const infrastructure = node.role === 'plugin' && INFRASTRUCTURE_FEATURES.find(item => item.overviewNode === node.id);
@@ -148,21 +134,28 @@ function definition(view, graph, registry, features, scheduleGroups = []) {
     if (!summary) throw new Error(`架构节点缺少用途简介：${node.id}`);
     const scope = node.role === 'external' ? `来自${names.get(data.feature)} ↗` : null;
     const contents = [scope ? `${scope}：${summary}` : summary];
-    const entity = entityById.get(node.id);
-    const entityToggle = entity ? { entity: node.id, expanded: entity.expanded, count: entity.components.length, label: `${entity.expanded ? '收起' : '展开'}组件（${entity.components.length}）` } : null;
-    return [{ ...node, instance: `${view.id}--n${index}`, mermaidId: `n${index}`, visualType, shape: NODE_STYLES[visualType].shape, ...(entity ? { presentation: entity.expanded ? 'entity-container' : 'entity-collapsed' } : {}), ...(entityToggle ? { entityToggle } : {}), displayLabel: [name, ...contents].join('\n'), nameLabel: name, contextLabel: contents }];
+    return [{ ...node, instance: `${view.id}--n${index}`, mermaidId: `n${index}`, visualType, shape: NODE_STYLES[visualType].shape, displayLabel: [name, ...contents].join('\n'), nameLabel: name, contextLabel: contents }];
   });
   const byId = new Map(nodes.map(node => [node.id, node]));
   if (byId.size !== nodes.length) throw new Error(`同一视图重复声明节点：${view.id}`);
   const links = graph.links.map((link, index) => {
     const edgeSemantic = edgeSemanticOf(link, registry);
-    return { ...link, ...(view.aspect === 'data' ? { displayFrom: hiddenComponents.get(link.from) ?? link.from, displayTo: hiddenComponents.get(link.to) ?? link.to } : {}), mermaidId: `e${index}`, edgeSemantic, displayLabel: displayLabelOf(link, edgeSemantic, registry) };
+    const nativeReverse = view.aspect === 'component' && displayEndpoint(link, 'from') === (view.componentNodeId || graph.componentNodeId)
+      && byId.get(displayEndpoint(link, 'to'))?.visualType !== 'entity';
+    return { ...link, ...(nativeReverse ? { nativeReverse: true } : {}), mermaidId: `e${index}`, edgeSemantic, displayLabel: displayLabelOf(link, edgeSemantic, registry) };
   });
   const groups = scheduleGroups.map((group, index) => ({ ...group, mermaidId: `sg${index}`, nodes: group.nodes.map(node => node.id) }));
-  for (const group of entityGroups) group.mermaidId = byId.get(group.entity).mermaidId;
   const scheduleLinks = scheduleLinksFor(groups).map((link, index) => ({ ...link, mermaidId: `sc${index}` }));
   const types = { nodeTypes: Object.keys(NODE_STYLES).filter(type => nodes.some(node => node.visualType === type)), edgeTypes: Object.keys(EDGE_STYLES).filter(type => [...links, ...scheduleLinks].some(link => link.edgeSemantic === type)) };
-  const lines = ['---', JSON.stringify({ config: mermaidConfiguration(view.aspect) }, null, 2), '---', `flowchart ${['overview', 'events'].includes(view.aspect) ? 'LR' : 'TB'}`, `  accTitle: ${view.label}`, `  accDescr: ${view.summary}`, '  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。'];
+  const configuration = mermaidConfiguration(view.aspect);
+  if (view.aspect === 'component') Object.assign(configuration.flowchart, { nodeSpacing: 16, rankSpacing: 32 });
+  if (links.some(link => link.nativeReverse)) {
+    // Mermaid 12 不支持单向左箭头。源配置复用本图真实关系生成的原生 pointStart；不改编译后的路径或 marker。
+    const marker = `${view.id}_flowchart-v2-pointStart`;
+    configuration.themeCSS = links.filter(link => link.nativeReverse).map(link => `#${view.id}-${link.mermaidId}{marker-start:url(#${marker})!important}`).join('\n')
+      + `\n#${marker} path{fill:context-stroke!important;stroke:context-stroke!important}`;
+  }
+  const lines = ['---', JSON.stringify({ config: configuration }, null, 2), '---', `flowchart ${view.aspect === 'component' ? 'RL' : ['overview', 'events'].includes(view.aspect) ? 'LR' : 'TB'}`, `  accTitle: ${view.label}`, `  accDescr: ${view.summary}`, '  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。'];
   lines.push(...mermaidStyleDefinitions(types.nodeTypes, types.edgeTypes).map(line => '  ' + line));
   const layoutLinks = [];
   function layout(from, to) {
@@ -170,11 +163,11 @@ function definition(view, graph, registry, features, scheduleGroups = []) {
     layoutLinks.push({ mermaidId, from, to }); lines.push(`  ${from} ${mermaidId}@~~~ ${to}`);
   }
   function declare(node) {
-    lines.push(`  ${node.mermaidId}@{ shape: ${node.shape}, label: "${nodeText(node.nameLabel, node.contextLabel, Boolean(node.entityToggle))}" }`, `  class ${node.mermaidId} node_${node.visualType}`);
+    lines.push(`  ${node.mermaidId}@{ shape: ${node.shape}, label: "${nodeText(node.nameLabel, node.contextLabel)}" }`, `  class ${node.mermaidId} node_${node.visualType}`);
     if (node.role === 'external') lines.push(`  class ${node.mermaidId} external_node`);
   }
   function edge(link, from, to) {
-    lines.push(`  ${from} ${link.mermaidId}@-->${link.displayLabel ? `|"${text([link.displayLabel])}"|` : ''} ${to}`, `  class ${link.mermaidId} edge_${link.edgeSemantic}`);
+    lines.push(`  ${link.nativeReverse ? to : from} ${link.mermaidId}@${link.nativeReverse ? '---' : '-->'}${link.displayLabel ? `|"${text([link.displayLabel])}"|` : ''} ${link.nativeReverse ? from : to}`, `  class ${link.mermaidId} edge_${link.edgeSemantic}`);
   }
   function declareLinks(selected = links) {
     for (const link of selected) {
@@ -183,22 +176,19 @@ function definition(view, graph, registry, features, scheduleGroups = []) {
       edge(link, byId.get(from).mermaidId, byId.get(to).mermaidId);
     }
   }
-  function declareUnit(unit) {
-    if (!unit.components) { declare(unit); return; }
-    const entity = byId.get(unit.entity), columns = entityComponentColumns(unit.components);
-    lines.push(`  subgraph ${entity.mermaidId}[" "]`, '  direction TB', `  ${unit.headerMermaidId}@{ shape: text, label: "${nodeText(entity.nameLabel, entity.contextLabel, true)}" }`);
-    for (const column of columns) {
-      column.forEach(component => declare(byId.get(component)));
-      layout(unit.headerMermaidId, byId.get(column[0]).mermaidId);
-      for (let row = 1; row < column.length; row++) layout(byId.get(column[row - 1]).mermaidId, byId.get(column[row]).mermaidId);
+  const declareUnit = declare;
+  if (!['data', 'component'].includes(view.aspect)) lines.push('  subgraph diagram_main[" "]', '  direction LR', '  style diagram_main fill:none,stroke:none');
+  if (view.aspect === 'component') {
+    nodes.forEach(declare);
+    const center = byId.get(view.componentNodeId || graph.componentNodeId);
+    if (!center) throw new Error(`组件类型图缺少中心节点：${view.id}`);
+    // 真实读写方向可互逆；独立不可见边只固定三栏，不表达执行先后。
+    for (const node of nodes) if (node.id !== center.id) {
+      if (node.visualType === 'entity') layout(center.mermaidId, node.mermaidId);
+      else layout(node.mermaidId, center.mermaidId);
     }
-    lines.push('  end', `  class ${entity.mermaidId} node_entity`);
-    if (entity.role === 'external') lines.push(`  class ${entity.mermaidId} external_node`);
-    const style = NODE_STYLES.entity;
-    lines.push(`  style ${entity.mermaidId} fill:${style.fill},stroke:${style.stroke},stroke-width:${style.width}px,color:#1F3340${entity.role === 'external' ? `,stroke-dasharray:${EXTERNAL_REFERENCE_STYLE.dash}` : ''}`);
-  }
-  if (view.aspect !== 'data') lines.push('  subgraph diagram_main[" "]', '  direction LR', '  style diagram_main fill:none,stroke:none');
-  if (view.aspect === 'systems') {
+    declareLinks([...links.filter(link => displayEndpoint(link, 'from') !== center.id), ...links.filter(link => displayEndpoint(link, 'from') === center.id)]);
+  } else if (view.aspect === 'systems') {
     for (const group of groups) {
       lines.push(`  subgraph ${group.mermaidId}["${text(group.label.split('\n'))}"]`, '  direction TB');
       for (const id of group.nodes) declare(byId.get(id));
@@ -246,33 +236,12 @@ function definition(view, graph, registry, features, scheduleGroups = []) {
       }
     } else { nodes.forEach(declare); declareLinks(); }
   }
-  if (view.aspect !== 'data') lines.push('  end');
+  if (!['data', 'component'].includes(view.aspect)) lines.push('  end');
   return { ...base, nodes, links, scheduleLinks, layoutLinks, scheduleGroups: groups, entityGroups, mermaid: lines.join('\n') + '\n', mermaidFilename: `ecs-${view.id}.mmd`, filename: `ecs-${view.id}.svg` };
 }
 
 export function renderGraphView(view, graph, registry, features, scheduleGroups) {
-  const result = definition(view, graph, registry, features, scheduleGroups);
-  if (view.aspect !== 'data' || !result.entityGroups.length || view.parentViewId) return result;
-  result.entityViews = Object.fromEntries(['collapsed', ...result.entityGroups.map(group => group.entity)].map(entityExpansion => {
-    const id = entityExpansion === 'collapsed' ? `${view.id}--entities-collapsed` : `${view.id}--${entityExpansion}`;
-    return [entityExpansion, definition({ ...view, id, parentViewId: view.id, entityExpansion }, graph, registry, features, scheduleGroups)];
-  }));
-  return result;
-}
-
-export function renderEntityExpansion(baseView, expandedEntityIds, registry, features) {
-  if (baseView.aspect !== 'data' || baseView.parentViewId || baseView.nodes.some(node => node.presentation === 'entity-collapsed')) throw new Error(`Expected complete Entity base view: ${baseView.id}`);
-  const entityExpansion = entityExpansionIds(baseView, expandedEntityIds);
-  const indices = entityExpansion.map(id => baseView.entityGroups.findIndex(group => group.entity === id));
-  const id = `${baseView.id}--entities-${indices.length ? indices.join('-') : 'collapsed'}`;
-  const graph = {
-    nodes: baseView.nodes.map(({ position, ...node }) => node),
-    links: baseView.links.map(({ displayFrom, displayTo, ...link }) => link),
-    entityGroups: (baseView.entityGroups || []).map(({ id, entity, components }) => ({ id, entity, components: [...components] })),
-    empty: baseView.empty,
-  };
-  const { entityViews, svg, bounds, routing, ...view } = baseView;
-  return definition({ ...view, id, parentViewId: baseView.id, entityExpansion }, graph, registry, features);
+  return definition(view, graph, registry, features, scheduleGroups);
 }
 
 export function renderOverview(model, registry, features) {

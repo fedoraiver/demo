@@ -1,0 +1,69 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 32,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#component-84040bd11771a91b-e3{marker-start:url(#component-84040bd11771a91b_flowchart-v2-pointStart)!important}\n#component-84040bd11771a91b_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}"
+  }
+}
+---
+flowchart RL
+  accTitle: ScaleEasingState · 组件关系
+  accDescr: 左侧为包含组件的实体，中间为组件类型，右侧每个系统函数只显示一次；连线表达访问与生命周期操作。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_entity fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_contract fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**可搬物品业务根实体**<br/>来自场景装配 ↗：承载可拾取物品身份及自<br/>由运动、共享持握状态。" }
+  class n0 node_entity
+  class n0 external_node
+  n1@{ shape: rounded, label: "**ScaleEasingState**<br/>保存缩放显示插值的起止端点。" }
+  class n1 node_component
+  n2@{ shape: lin-rect, label: "**TransformEasingSystems::Reset**<br/>重置上一轮固定步的插值状态。" }
+  class n2 node_contract
+  n3@{ shape: lin-rect, label: "**TransformEasingSystems::UpdateEnd**<br/>记录固定步结束位置供显示插值。" }
+  class n3 node_contract
+  n4@{ shape: lin-rect, label: "**TransformEasingSystems::Ease**<br/>混合固定步端点以生成平滑显示姿态。" }
+  class n4 node_contract
+  n1 layout_0@~~~ n0
+  n2 layout_1@~~~ n1
+  n3 layout_2@~~~ n1
+  n4 layout_3@~~~ n1
+  n2 e1@-->|"/ 结构变更（待核实）"| n1
+  class e1 edge_write
+  n3 e2@-->|"/ 结构变更（待核实）"| n1
+  class e2 edge_write
+  n1 e0@-->|"可能挂载于"| n0
+  class e0 edge_reference
+  n4 e3@---|"查询访问"| n1
+  class e3 edge_read
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }

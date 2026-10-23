@@ -12598,7 +12598,7 @@
         "path": "src/item_interaction/components.rs",
         "line": 41
       },
-      "kind": "Component",
+      "kind": "Note",
       "owner": "可搬物品业务根实体",
       "alias_of": "parcel.HeldAttachment",
       "feature": "item_interaction",
@@ -12821,7 +12821,7 @@
         "path": "src/first_person/mod.rs",
         "line": 63
       },
-      "kind": "Component",
+      "kind": "Note",
       "owner": "第一人称相机实体",
       "alias_of": "camera.FirstPersonCamera",
       "feature": "first_person",
@@ -12841,7 +12841,7 @@
         "path": "src/scene_assembly/actors.rs",
         "line": 9
       },
-      "kind": "Component",
+      "kind": "Note",
       "owner": "业务直属 GLB 视觉根实体",
       "alias_of": "visual.Visibility",
       "feature": "first_person",
@@ -14199,7 +14199,7 @@
     },
     {
       "name": "捕获与输入上下文",
-      "kind": "Component",
+      "kind": "Note",
       "description": "捕获与焦点状态写入相机和窗口；UI 占用通过 Commands 改变控制者的 ContextActivity，命令在动作 Prepare 前应用。",
       "display_summary": "保存光标捕获与玩法输入启用状态。",
       "writes": [

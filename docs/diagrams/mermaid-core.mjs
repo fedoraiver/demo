@@ -56,12 +56,13 @@ export function normalizeMermaidSvg(view, source, registry, { clusterLabelBounds
   for (const node of all) if (node.hasAttribute('data-id')) { node.setAttribute('data-mermaid-native-id', node.getAttribute('data-id')); node.removeAttribute('data-id'); }
   const nodeElements = new Map();
   for (const node of view.nodes) {
+    const record = { ...registry[node.id], ...(view.aspect === 'component' && node.id === view.componentNodeId ? view.componentDetails : {}) };
     const container = node.presentation === 'entity-container';
     const element = all.find(item => container
       ? hasClass(item, 'cluster') && item.getAttribute('id') === `${view.id}-${node.mermaidId}`
       : hasClass(item, 'node') && item.getAttribute('id').includes(`flowchart-${node.mermaidId}-`));
     if (!element) throw new Error(`Mermaid node missing: ${view.id}/${node.id}`);
-    const attributes = { 'data-id': node.id, 'data-instance': node.instance, 'data-role': node.role, 'data-feature': registry[node.id].feature, 'data-mermaid-id': node.mermaidId, 'data-visual-type': node.visualType, 'data-shape': node.shape, tabindex: 0, role: 'button', 'aria-pressed': 'false', 'aria-label': `${registry[node.id].name || node.id} · ${NODE_STYLES[node.visualType].label}` };
+    const attributes = { 'data-id': node.id, 'data-instance': node.instance, 'data-role': node.role, 'data-feature': record.feature, 'data-mermaid-id': node.mermaidId, 'data-visual-type': node.visualType, 'data-shape': node.shape, tabindex: 0, role: 'button', 'aria-pressed': 'false', 'aria-label': `${record.name || node.id} · ${NODE_STYLES[node.visualType].label}` };
     for (const [key, value] of Object.entries(attributes)) element.setAttribute(key, String(value));
     element.setAttribute('class', `${element.getAttribute('class')} ${node.role}${container ? ' node entity-container' : ''}`);
     if (node.presentation) {
@@ -75,7 +76,7 @@ export function normalizeMermaidSvg(view, source, registry, { clusterLabelBounds
     if (!primitives.length || (container && primitives.length !== 1)) throw new Error(`Mermaid native outline missing: ${view.id}/${node.id}`);
     for (const primitive of primitives) primitive.setAttribute('data-shape-part', node.instance);
     const title = document.createElementNS(svg.namespaceURI, 'title');
-    title.textContent = [registry[node.id].name || node.id, registry[node.id].description].filter(Boolean).join(' · ');
+    title.textContent = [record.name || node.id, record.description].filter(Boolean).join(' · ');
     element.insertBefore(title, element.firstChild);
     nodeElements.set(node.id, element);
   }
@@ -95,6 +96,7 @@ export function normalizeMermaidSvg(view, source, registry, { clusterLabelBounds
     if (!schedule) element.setAttribute('data-canonical-connect', `${link.from}|${link.to}`);
     element.setAttribute('data-mermaid-id', link.mermaidId);
     element.setAttribute('data-edge-semantic', link.edgeSemantic);
+    if (link.nativeReverse) element.setAttribute('data-native-reverse', 'true');
     element.setAttribute('tabindex', '0'); element.setAttribute('role', 'button'); element.setAttribute('aria-label', `${link.displayLabel || EDGE_STYLES[link.edgeSemantic].label} · ${link.from} → ${link.to}`);
     element.setAttribute('style', `${element.getAttribute('style') || ''};--edge-width:${EDGE_STYLES[link.edgeSemantic].width}px`);
   }
@@ -240,7 +242,7 @@ export function routedMermaid(view, { curves = new Map(), spacing = 0, spans = n
     lines.splice(start, 0, `  subgraph layout_entity_${id}[" "]`, '  direction TB');
     source = lines.join('\n');
   }
-  for (const [id, span] of spans) source = source.replace(new RegExp(`(\\b${id}@)-{2,}>`), `$1${'-'.repeat(2 + span)}>`);
+  for (const [id, span] of spans) source = source.replace(new RegExp(`(\\b${id}@)(-{2,}>|-{3,})(?=\\||\\s)`), (_, prefix, arrow) => prefix + '-'.repeat((arrow.endsWith('>') ? 2 : 3) + span) + (arrow.endsWith('>') ? '>' : ''));
   for (const [id, curve] of curves) source += `  ${id}@{ curve: ${curve} }\n`;
   return source;
 }
@@ -281,12 +283,15 @@ export async function compileRoutedView(view, registry, compileNative, { onAttem
       preferredContext,
       ...remaining.map(profile => ({ ...profile, headerContext: true })), ...remaining.map(profile => ({ ...profile, headerContext: true, cardContainers: 'related' })), ...remaining];
   }
-  const layoutContainers = dagre && ['overview', 'events'].includes(view.aspect);
+  const layoutContainers = dagre && ['overview', 'events', 'component'].includes(view.aspect);
   // 原生透明容器为复杂协作图预留绕行空间，不添加业务身份或执行顺序。
   if (layoutContainers) profiles.splice(1, 0, { spacing: 0, span: 0, cardContainers: true });
+  // 多实体的组件图需要在容器内边距与列间距共同变化后重新布线；每个候选仍走完整几何检查。
+  if (dagre && view.aspect === 'component') profiles.splice(2, 0,
+    ...[16, 32, 64].flatMap(spacing => [0, 2, 4, 8].map(span => ({ spacing, span, cardContainers: true }))));
   // 复合节点可能遮住 Dagre 的原生曲线；最后尝试同一网络的另一声明顺序，不改变任何关系或排版链。
   if (dagre && view.aspect === 'data') profiles.push({ spacing: 0, span: 0, reverseRelationEdges: true });
-  let final, inspection, layoutError, contextualLabelProfiles = false, entityWrapperCandidates = false;
+  let final, inspection, layoutError, contextualLabelProfiles = false, entityWrapperCandidates = false, componentCurveProfiles = false;
   const labelVariants = new Set();
   for (const [attempt, { spacing, span, labelEdges, labelSpan, reverseRelationEdges, cardContainers, headerContext, entityContainers, entityOrder, padding }] of profiles.entries()) {
     try {
@@ -327,6 +332,14 @@ export async function compileRoutedView(view, registry, compileNative, { onAttem
         inspection = inspectViewRoutes(final);
       }
       const invalid = inspection.edges.filter(invalidRoute);
+      // 单条近共线关系可能被 Dagre 压直。只延长该关系的原生 rank span，避免同时拉长包含边穿过左栏。
+      if (dagre && view.aspect === 'component' && cardContainers && !componentCurveProfiles) {
+        const straight = invalid.filter(edge => !edge.axis && !edge.curved && !edge.collisions.length && !edge.arrowIssues.length).map(edge => edge.mermaidId);
+        if (straight.length) {
+          componentCurveProfiles = true;
+          profiles.splice(attempt + 1, 0, ...Array.from({ length: 8 }, (_, index) => ({ spacing, span, cardContainers, labelEdges: straight, labelSpan: index + 1 })));
+        }
+      }
       let wrapperProfiles = 0;
       if (dagre && !attempt && view.aspect === 'data') {
         const containers = new Map((view.entityGroups || []).map(group => [group.entity, group.mermaidId]));

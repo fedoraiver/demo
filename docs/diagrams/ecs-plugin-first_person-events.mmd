@@ -40,6 +40,7 @@ flowchart LR
   classDef node_event fill:#F9F3EE,stroke:#B66B2D,stroke-width:1.6px,color:#1F3340
   classDef node_plugin fill:#F1F3F6,stroke:#4A6389,stroke-width:2.2px,color:#1F3340
   classDef node_contract fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_note fill:#F7F7F5,stroke:#9A9B88,stroke-width:1.2px,color:#1F3340
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_consume stroke:#247B91,stroke-width:1.8px,stroke-dasharray:2 4
@@ -77,8 +78,8 @@ flowchart LR
   class n12 node_event
   n13@{ shape: stadium, label: "**Fire#lt;LookAction#gt;**<br/>通知目标控制者更新观察输入。" }
   class n13 node_event
-  n14@{ shape: rect, label: "**捕获与输入上下文**<br/>保存光标捕获与玩法输入启用状态。" }
-  class n14 node_component
+  n14@{ shape: doc, label: "**捕获与输入上下文**<br/>保存光标捕获与玩法输入启用状态。" }
+  class n14 node_note
   n15@{ shape: stadium, label: "**Fire#lt;ReleasePointerAction#gt;**<br/>通知控制者释放光标以操作检查器。" }
   class n15 node_event
   n16@{ shape: rounded, label: "**sync_mouse_capture**<br/>管理光标捕获及玩法输入启停。" }
@@ -91,10 +92,10 @@ flowchart LR
   class n19 node_system
   n20@{ shape: rounded, label: "**sync_character_visibility**<br/>隐藏第一人称控制角色的自身模型。" }
   class n20 node_system
-  n21@{ shape: rect, label: "**CharacterIntent**<br/>来自角色运动 ↗：保存持续移动方向与单次<br/>跳跃、交互请求。" }
+  n21@{ shape: rounded, label: "**CharacterIntent**<br/>来自角色运动 ↗：保存持续移动方向与单次<br/>跳跃、交互请求。" }
   class n21 node_component
   class n21 external_node
-  n22@{ shape: rect, label: "**FirstPersonCamera**<br/>保存跟随目标、眼高与观察角度。" }
+  n22@{ shape: rounded, label: "**FirstPersonCamera**<br/>保存跟随目标、眼高与观察角度。" }
   class n22 node_component
   n23@{ shape: lean-r, label: "**WindowFocused / MouseButtonInput**<br/>来自Bevy 引擎 ↗：缓冲窗口焦点与鼠标按<br/>钮变化。" }
   class n23 node_message

@@ -1,5 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import puppeteer from 'puppeteer';
 import { renderMermaid } from '@mermaid-js/mermaid-cli';
@@ -8,6 +9,8 @@ import { svgElements, shapeBounds } from './svg-shape-geometry.mjs';
 import { NODE_STYLES, EDGE_STYLES, mermaidStyleDefinitions } from './architecture-style.mjs';
 
 import { mermaidConfiguration } from './architecture-renderer.mjs';
+import { checkMermaidGeometry } from './diagram-geometry.mjs';
+import { inspectViewRoutes } from './architecture-routing.mjs';
 import { normalizeMermaidSvg, compileRoutedView as compileRoutedViewCore, measureNativeLabelBounds } from './mermaid-core.mjs';
 export { normalizeMermaidSvg, routedMermaid } from './mermaid-core.mjs';
 
@@ -97,7 +100,7 @@ async function compileRoutedView(browser, view, registry) {
       console.log(`Mermaid routing: ${view.id}, attempt ${attempt}, ${[layoutError, ...invalid.map(edge => `${edge.id}[${edge.collisions.map(item => item.id).concat(edge.arrowIssues).join(',')}]`)].filter(Boolean).join('; ')}`);
     },
     onFailure(failure) {
-      const diagnostics = path.join(root, 'tmp/ecs-architecture/entity-folding');
+      const diagnostics = path.join(root, 'tmp/ecs-architecture/routing');
       fs.mkdirSync(diagnostics, { recursive: true });
       fs.writeFileSync(path.join(diagnostics, `${view.id}-failed.json`), JSON.stringify(failure));
       fs.writeFileSync(path.join(diagnostics, `${view.id}-failed.svg`), failure.view.svg);
@@ -106,28 +109,46 @@ async function compileRoutedView(browser, view, registry) {
 }
 
 export async function compileArchitectureArtifacts(views, registry) {
-  const temporary = path.join(root, 'tmp/ecs-architecture/entity-folding/mermaid-build');
+  const temporary = path.join(root, 'tmp/ecs-architecture/mermaid-build');
   fs.mkdirSync(temporary, { recursive: true });
+  const cacheDirectory = path.join(temporary, 'geometry-cache');
+  fs.mkdirSync(cacheDirectory, { recursive: true });
+  const dependencies = fs.readFileSync(path.join(root, 'docs/diagrams/package-lock.json'), 'utf8');
   const profile = fs.mkdtempSync(path.join(temporary, 'profile-'));
   const browser = await puppeteer.launch({ executablePath: chromiumPath(), headless: true, userDataDir: profile });
   try {
-    const compiled = [], failures = [];
+    const compiled = [];
     async function compile(view) {
       if (!view.mermaid) return view;
-      const result = await compileRoutedView(browser, view, registry);
-      if (view.entityViews) {
-        const entityViews = {};
-        for (const [key, variant] of Object.entries(view.entityViews)) entityViews[key] = await compile(variant);
-        result.entityViews = entityViews;
+      // 归一化或 SVG 注解规则变化时递增版本；原生源码、依赖及完整标题变化会自动失效。
+      const fingerprint = crypto.createHash('sha256').update(JSON.stringify({ version: 1, id: view.id, definition: view.mermaid, dependencies,
+        titles: view.nodes.map(node => [node.id, registry[node.id].name, registry[node.id].description, registry[node.id].feature]), componentDetails: view.componentDetails,
+      })).digest('hex');
+      const cachePath = path.join(cacheDirectory, fingerprint + '.json');
+      if (fs.existsSync(cachePath)) {
+        try {
+          const cached = JSON.parse(fs.readFileSync(cachePath, 'utf8'));
+          const result = { ...view, ...cached.geometry, nodes: view.nodes.map(node => ({ ...node, position: cached.positions[node.id] })),
+            scheduleGroups: view.scheduleGroups.map(group => ({ ...group, ...cached.scheduleBounds[group.id] })),
+          };
+          checkMermaidGeometry(result.svg, result);
+          const inspection = inspectViewRoutes(result);
+          if (inspection.edges.some(edge => edge.collisions.length || edge.arrowIssues.length || (edge.axis ? edge.curved : !edge.curved))) throw new Error('Cached native routing is stale');
+          console.log(`Mermaid cached: ${view.id}`);
+          return result;
+        } catch { /* 几何规则更新后重新编译；缓存不代替本次严格检查。 */ }
       }
+      const result = await compileRoutedView(browser, view, registry);
+      const geometry = Object.fromEntries(['svg', 'mermaid', 'width', 'height', 'bounds', 'routing', 'sections', 'entityGroups'].map(key => [key, result[key]]));
+      fs.writeFileSync(cachePath, JSON.stringify({ geometry, positions: Object.fromEntries(result.nodes.map(node => [node.id, node.position])),
+        scheduleBounds: Object.fromEntries(result.scheduleGroups.map(group => [group.id, group.labelBounds ? { labelBounds: group.labelBounds } : {}])),
+      }));
       console.log(`Mermaid: ${view.id}`);
       return result;
     }
     for (const view of views) {
-      try { compiled.push(await compile(view)); }
-      catch (error) { failures.push(error); console.error(error.message); continue; }
+      compiled.push(await compile(view));
     }
-    if (failures.length) throw new AggregateError(failures, `${failures.length} Mermaid views failed native routing`);
     const guideSamples = await compileGuideSamples(browser);
     return { views: compiled, guideSamples };
   } finally { await browser.close(); }

@@ -35,7 +35,6 @@ flowchart TB
   classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
   classDef node_observer fill:#F4F1F9,stroke:#7B4DB2,stroke-width:1.6px,color:#1F3340
   classDef node_entity fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
-  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
   classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
   classDef node_local fill:#F8F5F1,stroke:#AA8752,stroke-width:1.6px,color:#1F3340
   classDef node_message_buffer fill:#EDF4F6,stroke:#247B91,stroke-width:1.6px,color:#1F3340
@@ -58,410 +57,111 @@ flowchart TB
   class n2 node_resource
   n4@{ shape: cyl, label: "**Messages#lt;UiRequest#gt;**<br/>缓冲鼠标与动作输入共用的菜单请求。" }
   class n4 node_message_buffer
-  n42@{ shape: hex, label: "**previous**<br/>循环选择上一个可操作菜单按钮。" }
-  class n42 node_observer
-  n43@{ shape: hex, label: "**next**<br/>循环选择下一个可操作菜单按钮。" }
-  class n43 node_observer
-  n44@{ shape: hex, label: "**left**<br/>向左调整当前聚焦的真实设置字段。" }
-  class n44 node_observer
-  n45@{ shape: hex, label: "**right**<br/>向右调整当前聚焦的真实设置字段。" }
-  class n45 node_observer
-  n46@{ shape: hex, label: "**confirm**<br/>执行当前聚焦按钮的菜单动作。" }
-  class n46 node_observer
-  n47@{ shape: hex, label: "**back**<br/>发出返回、暂停或恢复请求。" }
-  class n47 node_observer
-  n49@{ shape: hex, label: "**scrollbar_pointer_source**<br/>将滚动条按下操作标为鼠标输入。" }
-  class n49 node_observer
-  n50@{ shape: rounded, label: "**handle_requests**<br/>处理菜单导航、设置应用与音量编辑请求。" }
-  class n50 node_system
-  n42 layout_0@~~~ n43
-  n43 layout_1@~~~ n44
-  n44 layout_2@~~~ n45
-  n45 layout_3@~~~ n46
-  n46 layout_4@~~~ n47
-  n47 layout_5@~~~ n49
-  n42 e0@--> n1
+  n24@{ shape: hex, label: "**previous**<br/>循环选择上一个可操作菜单按钮。" }
+  class n24 node_observer
+  n25@{ shape: hex, label: "**next**<br/>循环选择下一个可操作菜单按钮。" }
+  class n25 node_observer
+  n26@{ shape: hex, label: "**left**<br/>向左调整当前聚焦的真实设置字段。" }
+  class n26 node_observer
+  n27@{ shape: hex, label: "**right**<br/>向右调整当前聚焦的真实设置字段。" }
+  class n27 node_observer
+  n28@{ shape: hex, label: "**confirm**<br/>执行当前聚焦按钮的菜单动作。" }
+  class n28 node_observer
+  n29@{ shape: hex, label: "**back**<br/>发出返回、暂停或恢复请求。" }
+  class n29 node_observer
+  n31@{ shape: hex, label: "**scrollbar_pointer_source**<br/>将滚动条按下操作标为鼠标输入。" }
+  class n31 node_observer
+  n32@{ shape: rounded, label: "**handle_requests**<br/>处理菜单导航、设置应用与音量编辑请求。" }
+  class n32 node_system
+  n24 layout_0@~~~ n25
+  n25 layout_1@~~~ n26
+  n26 layout_2@~~~ n27
+  n27 layout_3@~~~ n28
+  n28 layout_4@~~~ n29
+  n29 layout_5@~~~ n31
+  n24 e0@--> n1
   class e0 edge_write
-  n42 e1@--> n2
+  n24 e1@--> n2
   class e1 edge_write
-  n43 e2@--> n1
+  n25 e2@--> n1
   class e2 edge_write
-  n43 e3@--> n2
+  n25 e3@--> n2
   class e3 edge_write
-  n44 e4@--> n2
+  n26 e4@--> n2
   class e4 edge_write
-  n44 e5@--> n4
+  n26 e5@--> n4
   class e5 edge_publish
-  n45 e6@--> n2
+  n27 e6@--> n2
   class e6 edge_write
-  n45 e7@--> n4
+  n27 e7@--> n4
   class e7 edge_publish
-  n46 e8@--> n2
+  n28 e8@--> n2
   class e8 edge_write
-  n46 e9@--> n4
+  n28 e9@--> n4
   class e9 edge_publish
-  n47 e10@--> n2
+  n29 e10@--> n2
   class e10 edge_write
-  n47 e11@--> n4
+  n29 e11@--> n4
   class e11 edge_publish
-  n49 e13@--> n2
+  n31 e13@--> n2
   class e13 edge_write
-  n4 e14@--> n50
+  n4 e14@--> n32
   class e14 edge_consume
-  n50 e15@-->|"页面"| n0
+  n32 e15@-->|"页面"| n0
   class e15 edge_write
   end
   style relation_0 fill:none,stroke:none
   subgraph relation_1[" "]
   direction TB
-  subgraph n31[" "]
-  direction TB
-  eh1@{ shape: text, label: "**BSN 菜单页面根**        ​<br/>承载当前菜单页面及其声明式控件        ​<br/>层级。        ​" }
-  n12@{ shape: rect, label: "**MenuRoot**<br/>标记菜单页面以统一清理其界面。" }
-  class n12 node_component
-  n55@{ shape: rect, label: "**Node**<br/>来自Bevy 引擎 ↗：保存界面节点的布局约<br/>束。" }
-  class n55 node_component
-  class n55 external_node
-  n56@{ shape: rect, label: "**GlobalZIndex**<br/>来自Bevy 引擎 ↗：菜单显示在展示场景与<br/>玩法画面上。" }
-  class n56 node_component
-  class n56 external_node
-  n57@{ shape: rect, label: "**Children**<br/>来自Bevy 引擎 ↗：索引当前实体的直接子<br/>实体。" }
-  class n57 node_component
-  class n57 external_node
-  eh1 layout_6@~~~ n12
-  n12 layout_7@~~~ n55
-  n55 layout_8@~~~ n56
-  n56 layout_9@~~~ n57
-  end
-  class n31 node_entity
-  style n31 fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
-  subgraph n32[" "]
-  direction TB
-  eh2@{ shape: text, label: "**可操作菜单按钮**        ​<br/>承载可操作菜单动作、设置调整与        ​<br/>连续导航。        ​" }
-  n13@{ shape: rect, label: "**MenuButton**<br/>保存菜单动作及按钮的导航序号。" }
-  class n13 node_component
-  n14@{ shape: rect, label: "**VolumeSlider**<br/>标识滑条编辑的音量设置项。" }
-  class n14 node_component
-  n58@{ shape: rect, label: "**Button**<br/>来自Bevy 引擎 ↗：启用原生界面按钮命中<br/>处理。" }
-  class n58 node_component
-  class n58 external_node
-  n59@{ shape: rect, label: "**Interaction**<br/>来自Bevy 引擎 ↗：保存鼠标对按钮的交互<br/>状态。" }
-  class n59 node_component
-  class n59 external_node
-  n60@{ shape: rect, label: "**Node**<br/>来自Bevy 引擎 ↗：保存界面节点的布局约<br/>束。" }
-  class n60 node_component
-  class n60 external_node
-  n61@{ shape: rect, label: "**BackgroundColor**<br/>来自Bevy 引擎 ↗：保存界面节点的背景颜<br/>色。" }
-  class n61 node_component
-  class n61 external_node
-  eh2 layout_10@~~~ n13
-  n13 layout_11@~~~ n14
-  n14 layout_12@~~~ n58
-  n58 layout_13@~~~ n59
-  n59 layout_14@~~~ n60
-  n60 layout_15@~~~ n61
-  n62@{ shape: rect, label: "**BorderColor**<br/>来自Bevy 引擎 ↗：保存界面节点的边框颜<br/>色。" }
-  class n62 node_component
-  class n62 external_node
-  n15@{ shape: rect, label: "**SettingDescription**<br/>关联当前设置项的说明文字。" }
-  class n15 node_component
-  n63@{ shape: rect, label: "**ComputedNode**<br/>来自Bevy 引擎 ↗：原生布局后的按钮几<br/>何，用于焦点滚入。" }
-  class n63 node_component
-  class n63 external_node
-  n64@{ shape: rect, label: "**UiGlobalTransform**<br/>来自Bevy 引擎 ↗：保存按钮在界面中的全<br/>局变换。" }
-  class n64 node_component
-  class n64 external_node
-  n65@{ shape: rect, label: "**ChildOf**<br/>来自Bevy 引擎 ↗：关联父实体并跟随父级<br/>生命周期。" }
-  class n65 node_component
-  class n65 external_node
-  eh2 layout_16@~~~ n62
-  n62 layout_17@~~~ n15
-  n15 layout_18@~~~ n63
-  n63 layout_19@~~~ n64
-  n64 layout_20@~~~ n65
-  end
-  class n32 node_entity
-  style n32 fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
-  subgraph layout_entity_n39[" "]
-  direction TB
-  subgraph n39[" "]
-  direction TB
-  eh9@{ shape: text, label: "**设置右侧纸色面板**        ​<br/>限定设置内容的显示与裁切范围。        ​" }
-  n26@{ shape: rect, label: "**SettingsPanel**<br/>标记设置内容面板。" }
-  class n26 node_component
-  n89@{ shape: rect, label: "**Node**<br/>来自Bevy 引擎 ↗：保存界面节点的布局约<br/>束。" }
-  class n89 node_component
-  class n89 external_node
-  n90@{ shape: rect, label: "**Children**<br/>来自Bevy 引擎 ↗：保存设置面板及滚动框<br/>架的装配层级。" }
-  class n90 node_component
-  class n90 external_node
-  eh9 layout_37@~~~ n26
-  n26 layout_38@~~~ n89
-  n89 layout_39@~~~ n90
-  end
-  end
-  style layout_entity_n39 fill:none,stroke:none
-  class n39 node_entity
-  style n39 fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
-  subgraph n37[" "]
-  direction TB
-  eh7@{ shape: text, label: "**菜单文字叶节点**        ​<br/>显示菜单标题、按钮、按键提示与        ​<br/>正文。        ​" }
-  n84@{ shape: rect, label: "**Text**<br/>来自Bevy 引擎 ↗：保存界面实际显示的文<br/>字。" }
-  class n84 node_component
-  class n84 external_node
-  n85@{ shape: rect, label: "**TextFont**<br/>来自Bevy 引擎 ↗：保存文字字体与字号。" }
-  class n85 node_component
-  class n85 external_node
-  n86@{ shape: rect, label: "**TextColor**<br/>来自Bevy 引擎 ↗：保存界面文字的显示颜<br/>色。" }
-  class n86 node_component
-  class n86 external_node
-  n20@{ shape: rect, label: "**DescriptionTitle**<br/>仅设置说明标题的身份标记。" }
-  class n20 node_component
-  n21@{ shape: rect, label: "**DescriptionBody**<br/>仅设置说明正文的身份标记。" }
-  class n21 node_component
-  eh7 layout_26@~~~ n84
-  n84 layout_27@~~~ n85
-  n85 layout_28@~~~ n86
-  n86 layout_29@~~~ n20
-  n20 layout_30@~~~ n21
-  n87@{ shape: rect, label: "**Node**<br/>来自Bevy 引擎 ↗：保存界面节点的布局约<br/>束。" }
-  class n87 node_component
-  class n87 external_node
-  n22@{ shape: rect, label: "**VolumeValue**<br/>标记音量百分比或静音状态文字。" }
-  class n22 node_component
-  n23@{ shape: rect, label: "**SettingsStatus**<br/>标识保存提示文字，原位更新。" }
-  class n23 node_component
-  n24@{ shape: rect, label: "**SettingValue**<br/>标识草稿值文字，原位更新。" }
-  class n24 node_component
-  eh7 layout_31@~~~ n87
-  n87 layout_32@~~~ n22
-  n22 layout_33@~~~ n23
-  n23 layout_34@~~~ n24
-  end
-  class n37 node_entity
-  style n37 fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
-  subgraph n38[" "]
-  direction TB
-  eh8@{ shape: text, label: "**音量轨道填充**        ​<br/>显示当前音量对应的轨道填充。        ​" }
-  n25@{ shape: rect, label: "**VolumeFill**<br/>标记音量轨道填充对应的设置项。" }
-  class n25 node_component
-  n88@{ shape: rect, label: "**Node**<br/>来自Bevy 引擎 ↗：保存音量轨道填充的视<br/>觉布局。" }
-  class n88 node_component
-  class n88 external_node
-  eh8 layout_35@~~~ n25
-  n25 layout_36@~~~ n88
-  end
-  class n38 node_entity
-  style n38 fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
-  subgraph layout_entity_n33[" "]
-  direction TB
-  subgraph n33[" "]
-  direction TB
-  eh3@{ shape: text, label: "**设置面板内容视口**        ​<br/>为设置标题、字段、说明与提示提        ​<br/>供滚动视口。        ​" }
-  n16@{ shape: rect, label: "**MenuScroll**<br/>滚动视口标记。" }
-  class n16 node_component
-  n66@{ shape: rect, label: "**ScrollPosition**<br/>来自Bevy 引擎 ↗：保存内容视口的滚动偏<br/>移。" }
-  class n66 node_component
-  class n66 external_node
-  n67@{ shape: rect, label: "**ComputedNode**<br/>来自Bevy 引擎 ↗：布局计算结果，用于滚<br/>动范围与坐标转换。" }
-  class n67 node_component
-  class n67 external_node
-  n68@{ shape: rect, label: "**UiGlobalTransform**<br/>来自Bevy 引擎 ↗：保存滚动视口在界面中<br/>的全局变换。" }
-  class n68 node_component
-  class n68 external_node
-  n69@{ shape: rect, label: "**Node**<br/>来自Bevy 引擎 ↗：保存界面节点的布局约<br/>束。" }
-  class n69 node_component
-  class n69 external_node
-  eh3 layout_21@~~~ n16
-  n16 layout_22@~~~ n66
-  n66 layout_23@~~~ n67
-  n67 layout_24@~~~ n68
-  n68 layout_25@~~~ n69
-  end
-  end
-  style layout_entity_n33 fill:none,stroke:none
-  class n33 node_entity
-  style n33 fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
-  subgraph n40[" "]
-  direction TB
-  eh10@{ shape: text, label: "**设置滚动条轨道**        ​<br/>为设置内容视口提供可交互滚动轨        ​<br/>道。        ​" }
-  n27@{ shape: rect, label: "**SettingsScrollbar**<br/>标记需要绑定内容视口的滚动条。" }
-  class n27 node_component
-  n91@{ shape: rect, label: "**Scrollbar**<br/>来自Bevy 引擎 ↗：关联滚动条控制的内容<br/>视口。" }
-  class n91 node_component
-  class n91 external_node
-  n92@{ shape: rect, label: "**Visibility**<br/>来自Bevy 引擎 ↗：控制实体及视觉子树的<br/>显示状态。" }
-  class n92 node_component
-  class n92 external_node
-  n93@{ shape: rect, label: "**Pickable**<br/>来自Bevy 引擎 ↗：控制滚动条是否接受指<br/>针拾取。" }
-  class n93 node_component
-  class n93 external_node
-  n94@{ shape: rect, label: "**Children**<br/>来自Bevy 引擎 ↗：索引轨道拥有的原生滑<br/>块子实体。" }
-  class n94 node_component
-  class n94 external_node
-  n95@{ shape: rect, label: "**ChildOf**<br/>来自Bevy 引擎 ↗：关联父实体并跟随父级<br/>生命周期。" }
-  class n95 node_component
-  class n95 external_node
-  eh10 layout_40@~~~ n27
-  n27 layout_41@~~~ n91
-  n91 layout_42@~~~ n92
-  n92 layout_43@~~~ n93
-  n93 layout_44@~~~ n94
-  n94 layout_45@~~~ n95
-  end
-  class n40 node_entity
-  style n40 fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
-  subgraph n41[" "]
-  direction TB
-  eh11@{ shape: text, label: "**设置滚动条滑块**        ​<br/>显示设置内容的可视比例并支持拖        ​<br/>动。        ​" }
-  n28@{ shape: rect, label: "**SettingsScrollbarThumb**<br/>项目滑块身份。" }
-  class n28 node_component
-  n96@{ shape: rect, label: "**ScrollbarThumb**<br/>来自Bevy 引擎 ↗：标记由原生滚动条更新<br/>几何的滑块。" }
-  class n96 node_component
-  class n96 external_node
-  n97@{ shape: rect, label: "**ScrollbarDragState**<br/>来自Bevy 引擎 ↗：保存原生滑块的拖动状<br/>态。" }
-  class n97 node_component
-  class n97 external_node
-  n98@{ shape: rect, label: "**Hovered**<br/>来自Bevy 引擎 ↗：标记滑块当前被指针悬<br/>停。" }
-  class n98 node_component
-  class n98 external_node
-  eh11 layout_46@~~~ n28
-  n28 layout_47@~~~ n96
-  n96 layout_48@~~~ n97
-  n97 layout_49@~~~ n98
-  n99@{ shape: rect, label: "**Pickable**<br/>来自Bevy 引擎 ↗：控制滑块是否接受指针<br/>拾取。" }
-  class n99 node_component
-  class n99 external_node
-  n100@{ shape: rect, label: "**BackgroundColor**<br/>来自Bevy 引擎 ↗：保存滑块的背景颜色。" }
-  class n100 node_component
-  class n100 external_node
-  n101@{ shape: rect, label: "**ChildOf**<br/>来自Bevy 引擎 ↗：关联滑块所属的滚动条<br/>轨道。" }
-  class n101 node_component
-  class n101 external_node
-  eh11 layout_50@~~~ n99
-  n99 layout_51@~~~ n100
-  n100 layout_52@~~~ n101
-  end
-  class n41 node_entity
-  style n41 fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
-  n32 e18@-->|"ChildOf 层级"| n31
+  n13@{ shape: rounded, label: "**BSN 菜单页面根**<br/>承载当前菜单页面及其声明式控件层级。" }
+  class n13 node_entity
+  n14@{ shape: rounded, label: "**可操作菜单按钮**<br/>承载可操作菜单动作、设置调整与连续导航。" }
+  class n14 node_entity
+  n15@{ shape: rounded, label: "**设置面板内容视口**<br/>为设置标题、字段、说明与提示提供滚动视<br/>口。" }
+  class n15 node_entity
+  n19@{ shape: rounded, label: "**菜单文字叶节点**<br/>显示菜单标题、按钮、按键提示与正文。" }
+  class n19 node_entity
+  n20@{ shape: rounded, label: "**音量轨道填充**<br/>显示当前音量对应的轨道填充。" }
+  class n20 node_entity
+  n21@{ shape: rounded, label: "**设置右侧纸色面板**<br/>限定设置内容的显示与裁切范围。" }
+  class n21 node_entity
+  n22@{ shape: rounded, label: "**设置滚动条轨道**<br/>为设置内容视口提供可交互滚动轨道。" }
+  class n22 node_entity
+  n23@{ shape: rounded, label: "**设置滚动条滑块**<br/>显示设置内容的可视比例并支持拖动。" }
+  class n23 node_entity
+  n14 e18@-->|"ChildOf 层级"| n13
   class e18 edge_relationship
-  n33 e19@-->|"ChildOf"| n39
+  n15 e19@-->|"ChildOf"| n21
   class e19 edge_relationship
-  n37 e20@-->|"ChildOf 层级"| n31
+  n19 e20@-->|"ChildOf 层级"| n13
   class e20 edge_relationship
-  n38 e21@-->|"ChildOf 子树"| n32
+  n20 e21@-->|"ChildOf 子树"| n14
   class e21 edge_relationship
-  n39 e22@-->|"ChildOf 子树"| n31
+  n21 e22@-->|"ChildOf 子树"| n13
   class e22 edge_relationship
-  n40 e23@-->|"ChildOf 子树"| n39
+  n22 e23@-->|"ChildOf 子树"| n21
   class e23 edge_relationship
-  n41 e24@-->|"ChildOf"| n40
+  n23 e24@-->|"ChildOf"| n22
   class e24 edge_relationship
-  n40 e25@-->|"Scrollbar.target"| n33
+  n22 e25@-->|"Scrollbar.target"| n15
   class e25 edge_reference
   end
   style relation_1 fill:none,stroke:none
   subgraph relation_2[" "]
   direction TB
-  subgraph layout_entity_n36[" "]
-  direction TB
-  subgraph n36[" "]
-  direction TB
-  eh6@{ shape: text, label: "**菜单 GLB 模型与动画子树**        ​<br/>承载主菜单的海岛模型与快递员展        ​<br/>示动画。        ​" }
-  n79@{ shape: rect, label: "**WorldAssetRoot**<br/>来自Bevy 引擎 ↗：指定需要展开的场景资<br/>产实例。" }
-  class n79 node_component
-  class n79 external_node
-  n18@{ shape: rect, label: "**CourierAnimation**<br/>保存展示快递员的模型来源以绑定命名动画。" }
-  class n18 node_component
-  n19@{ shape: rect, label: "**CourierAnimationPending**<br/>标记等待命名动画绑定的模型。" }
-  class n19 node_component
-  n80@{ shape: rect, label: "**AnimationPlayer**<br/>来自Bevy 引擎 ↗：驱动模型的动画播放。" }
-  class n80 node_component
-  class n80 external_node
-  eh6 layout_58@~~~ n79
-  n79 layout_59@~~~ n18
-  n18 layout_60@~~~ n19
-  n19 layout_61@~~~ n80
-  n81@{ shape: rect, label: "**AnimationGraphHandle**<br/>来自Bevy 引擎 ↗：关联模型使用的动画混<br/>合图。" }
-  class n81 node_component
-  class n81 external_node
-  n82@{ shape: rect, label: "**Transform**<br/>来自Bevy 引擎 ↗：保存模型及展示包裹的<br/>局部姿态。" }
-  class n82 node_component
-  class n82 external_node
-  n83@{ shape: rect, label: "**Children**<br/>来自Bevy 引擎 ↗：索引展示模型及包裹附<br/>件的子实体。" }
-  class n83 node_component
-  class n83 external_node
-  eh6 layout_62@~~~ n81
-  n81 layout_63@~~~ n82
-  n82 layout_64@~~~ n83
-  end
-  end
-  style layout_entity_n36 fill:none,stroke:none
-  class n36 node_entity
-  style n36 fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
-  subgraph layout_entity_n34[" "]
-  direction TB
-  subgraph n34[" "]
-  direction TB
-  eh4@{ shape: text, label: "**主菜单展示舞台根**        ​<br/>承载主菜单的独立海岛展示场景。        ​" }
-  n17@{ shape: rect, label: "**MenuBackdrop**<br/>舞台根标记。" }
-  class n17 node_component
-  n70@{ shape: rect, label: "**DespawnOnExit**<br/>来自Bevy 引擎 ↗：标记退出所属应用状态<br/>时销毁此实体。" }
-  class n70 node_component
-  class n70 external_node
-  n71@{ shape: rect, label: "**Children**<br/>来自Bevy 引擎 ↗：索引当前实体的直接子<br/>实体。" }
-  class n71 node_component
-  class n71 external_node
-  n72@{ shape: rect, label: "**Transform**<br/>来自Bevy 引擎 ↗：提供展示舞台父子变换<br/>的根姿态。" }
-  class n72 node_component
-  class n72 external_node
-  n73@{ shape: rect, label: "**Visibility**<br/>来自Bevy 引擎 ↗：通过父子树传播展示可<br/>见性。" }
-  class n73 node_component
-  class n73 external_node
-  eh4 layout_53@~~~ n17
-  n17 layout_54@~~~ n70
-  n70 layout_55@~~~ n71
-  n71 layout_56@~~~ n72
-  n72 layout_57@~~~ n73
-  end
-  end
-  style layout_entity_n34 fill:none,stroke:none
-  class n34 node_entity
-  style n34 fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
-  subgraph n35[" "]
-  direction TB
-  eh5@{ shape: text, label: "**主菜单展示相机**        ​<br/>为主菜单展示场景与界面提供相        ​<br/>机。        ​" }
-  n74@{ shape: rect, label: "**Camera3d**<br/>来自Bevy 引擎 ↗：标记三维场景相机。" }
-  class n74 node_component
-  class n74 external_node
-  n75@{ shape: rect, label: "**IsDefaultUiCamera**<br/>来自Bevy 引擎 ↗：指定菜单界面的默认绘<br/>制相机。" }
-  class n75 node_component
-  class n75 external_node
-  n76@{ shape: rect, label: "**PrimaryEguiContext**<br/>来自Egui / Inspector ↗：指定主检查器<br/>界面的相机上下文。" }
-  class n76 node_component
-  class n76 external_node
-  n77@{ shape: rect, label: "**Transform**<br/>来自Bevy 引擎 ↗：保存菜单界面与展示模<br/>型的相机构图。" }
-  class n77 node_component
-  class n77 external_node
-  n78@{ shape: rect, label: "**ChildOf**<br/>来自Bevy 引擎 ↗：舞台根的直接子实体，<br/>根销毁时连带清理。" }
-  class n78 node_component
-  class n78 external_node
-  eh5 layout_65@~~~ n74
-  n74 layout_66@~~~ n75
-  n75 layout_67@~~~ n76
-  n76 layout_68@~~~ n77
-  n77 layout_69@~~~ n78
-  end
-  class n35 node_entity
-  style n35 fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
-  n48@{ shape: hex, label: "**mark_courier_animation_ready**<br/>标记展示快递员以等待动画绑定。" }
-  class n48 node_observer
-  n48 e12@--> n19
+  n16@{ shape: rounded, label: "**主菜单展示舞台根**<br/>承载主菜单的独立海岛展示场景。" }
+  class n16 node_entity
+  n17@{ shape: rounded, label: "**主菜单展示相机**<br/>为主菜单展示场景与界面提供相机。" }
+  class n17 node_entity
+  n18@{ shape: rounded, label: "**菜单 GLB 模型与动画子树**<br/>承载主菜单的海岛模型与快递员展示动画。" }
+  class n18 node_entity
+  n30@{ shape: hex, label: "**mark_courier_animation_ready**<br/>标记展示快递员以等待动画绑定。" }
+  class n30 node_observer
+  n30 e12@--> n18
   class e12 edge_write
-  n35 e16@-->|"ChildOf"| n34
+  n17 e16@-->|"ChildOf"| n16
   class e16 edge_relationship
-  n36 e17@--->|"ChildOf 层级"| n34
+  n18 e17@-->|"ChildOf 层级"| n16
   class e17 edge_relationship
   end
   style relation_2 fill:none,stroke:none
@@ -478,12 +178,12 @@ flowchart TB
   class n8 node_local
   n10@{ shape: notch-rect, label: "**Local · previous focused Entity**<br/>保存最近提交的滚动焦点按钮。" }
   class n10 node_local
-  n29@{ shape: doc, label: "**设置固定区域**<br/>保留设置分类、底部操作与页脚的固定位置。" }
-  class n29 node_note
-  n3 layout_70@~~~ n6
-  n6 layout_71@~~~ n8
-  n8 layout_72@~~~ n10
-  n10 layout_73@~~~ n29
+  n12@{ shape: rounded, label: "**菜单输入控制者**<br/>提供跨页面与玩法会话保留的菜单动作输入。" }
+  class n12 node_entity
+  n3 layout_6@~~~ n6
+  n6 layout_7@~~~ n8
+  n8 layout_8@~~~ n10
+  n10 layout_9@~~~ n12
   end
   style column_0 fill:none,stroke:none
   subgraph column_1[" "]
@@ -494,37 +194,14 @@ flowchart TB
   class n7 node_local
   n9@{ shape: notch-rect, label: "**Local · previous_layout**<br/>保存上次菜单结构以判断是否需要重建。" }
   class n9 node_local
-  subgraph n30[" "]
-  direction TB
-  eh0@{ shape: text, label: "**菜单输入控制者**        ​<br/>提供跨页面与玩法会话保留的菜单        ​<br/>动作输入。        ​" }
-  n11@{ shape: rect, label: "**MenuContext**<br/>标记独立于玩法的菜单动作上下文。" }
-  class n11 node_component
-  n51@{ shape: rect, label: "**ContextPriority**<br/>来自Enhanced Input ↗：设置菜单动作高<br/>于玩法的输入评估优先级。" }
-  class n51 node_component
-  class n51 external_node
-  n52@{ shape: rect, label: "**ContextActivity**<br/>来自Enhanced Input ↗：保存动作上下文<br/>的启用状态。" }
-  class n52 node_component
-  class n52 external_node
-  n53@{ shape: rect, label: "**GamepadDevice**<br/>来自Enhanced Input ↗：配置菜单接受的<br/>手柄输入来源。" }
-  class n53 node_component
-  class n53 external_node
-  n54@{ shape: rect, label: "**Actions**<br/>来自Enhanced Input ↗：索引控制上下文<br/>拥有的动作实体。" }
-  class n54 node_component
-  class n54 external_node
-  eh0 layout_74@~~~ n11
-  n11 layout_75@~~~ n51
-  n51 layout_76@~~~ n52
-  n52 layout_77@~~~ n53
-  n53 layout_78@~~~ n54
-  end
-  class n30 node_entity
-  style n30 fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
-  n5 layout_79@~~~ n7
-  n7 layout_80@~~~ n9
-  n9 layout_81@~~~ n30
+  n11@{ shape: doc, label: "**设置固定区域**<br/>保留设置分类、底部操作与页脚的固定位置。" }
+  class n11 node_note
+  n5 layout_10@~~~ n7
+  n7 layout_11@~~~ n9
+  n9 layout_12@~~~ n11
   end
   style column_1 fill:none,stroke:none
-  column_0 layout_82@~~~ column_1
+  column_0 layout_13@~~~ column_1
   end
   e0@{ curve: basis }
   e1@{ curve: basis }
@@ -538,9 +215,9 @@ flowchart TB
   e9@{ curve: basis }
   e10@{ curve: basis }
   e11@{ curve: basis }
-  e12@{ curve: basis }
   e13@{ curve: basis }
-  e17@{ curve: bumpX }
+  e16@{ curve: basis }
+  e17@{ curve: basis }
   e18@{ curve: basis }
   e19@{ curve: basis }
   e22@{ curve: basis }

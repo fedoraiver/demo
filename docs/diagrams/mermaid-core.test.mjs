@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { compileRoutedView, normalizeMermaidSvg } from './mermaid-core.mjs';
+import { svgElements } from './svg-shape-geometry.mjs';
 
 function clearanceFixture(layout, aspect) {
   const view = {
@@ -17,6 +18,16 @@ function clearanceFixture(layout, aspect) {
   }
   return { view, registry, native };
 }
+
+test('type center accessible name and full title use component details without changing projection registry records', () => {
+  const { view, registry, native } = clearanceFixture('dagre', 'component');
+  view.componentNodeId = 'a'; view.componentDetails = { name: 'A<f32>', description: '完整类型说明' };
+  const output = native(view, true), elements = svgElements(output.svg), center = elements.find(element => element.attrs['data-id'] === 'a');
+  assert.equal(center.attrs['aria-label'], 'A<f32> · 组件');
+  assert.equal(center.children.find(element => element.tag === 'title').text, 'A<f32> · 完整类型说明');
+  assert.equal(elements.find(element => element.attrs['data-id'] === 'b').attrs['aria-label'], 'B · 组件');
+  assert.equal(registry.a.name, 'A');
+});
 
 test('shared native compiler rejects residual overlap after every permitted layout profile', async () => {
   const view = {
@@ -53,6 +64,20 @@ test('Dagre overview retries native card clearance before spacing and returns on
   assert.equal(result.routing.rule, 'axis-or-curve');
   assert.equal(view.mermaid, before);
   assert.deepEqual(view.nodes.map(node => node.id), ['a', 'b']);
+});
+
+test('Component fallback combines native card containers and increased spacing before unwrapped span retries', async () => {
+  const { view, registry, native } = clearanceFixture('dagre', 'component'), candidates = [], before = view.mermaid;
+  const result = await compileRoutedView(view, registry, async candidate => {
+    const configuration = JSON.parse(/^---\n([\s\S]*?)\n---/.exec(candidate.mermaid)[1]).config;
+    const wrapped = candidate.mermaid.includes('subgraph layout_card_'), spacing = configuration.flowchart.nodeSpacing - 32;
+    candidates.push({ wrapped, spacing });
+    return native(candidate, wrapped && spacing >= 16);
+  });
+  assert.deepEqual(candidates, [{ wrapped: false, spacing: 0 }, { wrapped: true, spacing: 0 }, { wrapped: true, spacing: 16 }]);
+  assert.match(result.mermaid, /subgraph layout_card_/);
+  assert.equal(view.mermaid, before);
+  assert.equal(JSON.parse(/^---\n([\s\S]*?)\n---/.exec(result.mermaid)[1]).config.flowchart.rankSpacing, 72);
 });
 
 test('native retry eligibility follows the configured layout rather than the data aspect', async () => {

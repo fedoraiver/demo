@@ -4,13 +4,6 @@ export const SELECTION_STYLE = {
   ringColor: '#2563EB', ringOpacity: .85, filterPaddingPx: 2,
 };
 
-export const ENTITY_TOGGLE_STYLE = Object.freeze({ size: 24, inset: 8 });
-
-export function entityToggleBounds(bounds) {
-  const { size, inset } = ENTITY_TOGGLE_STYLE;
-  return { x: bounds.x + bounds.width - inset - size, y: bounds.y + inset, width: size, height: size };
-}
-
 export const EXTERNAL_REFERENCE_STYLE = { dash: '6 4', description: '节点虚线边框表示外部引用', legendLabel: 'Dashed node outlines indicate external references.' };
 
 export function selectedFillColor(stroke, ratio = SELECTION_STYLE.fillStrokeRatio) {
@@ -28,8 +21,8 @@ function nodeStyle(label, legendLabel, shape, stroke, width = 1.6) {
 export const NODE_STYLES = {
   system: nodeStyle('系统', 'System', 'rounded', '#3567A6'),
   observer: nodeStyle('Observer', 'Observer', 'hex', '#7B4DB2'),
-  entity: nodeStyle('实体', 'Entity', 'rect', '#A6533B', 2.2),
-  component: nodeStyle('组件', 'Component', 'rect', '#4B8060'),
+  entity: nodeStyle('实体', 'Entity', 'rounded', '#A6533B', 2.2),
+  component: nodeStyle('组件', 'Component', 'rounded', '#4B8060'),
   resource: nodeStyle('共享资源', 'Resource', 'cyl', '#A5792C'),
   local: nodeStyle('系统私有状态', 'Local<T>', 'notch-rect', '#AA8752'),
   non_send: nodeStyle('主线程状态', 'NonSend<T>', 'tag-rect', '#A5633A'),
@@ -78,7 +71,7 @@ const visualTypes = new Map([
   ['SystemSet', 'contract'], ['Engine SystemSet', 'contract'], ['Engine system set', 'contract'],
   ['SystemParam', 'contract'], ['Shared data contract', 'contract'], ['System group', 'contract'], ['Scheduling contract', 'contract'],
   ['Relationship', 'contract'], ['External I/O', 'external_io'], ['Native platform bridge', 'external_io'],
-  ['Lifecycle note', 'note'], ['BSN layout', 'note'], ['Component write', 'note'], ['Data write', 'note'],
+  ['Note', 'note'], ['Lifecycle note', 'note'], ['BSN layout', 'note'], ['Component write', 'note'], ['Data write', 'note'],
 ]);
 // 旧清单中的概览条目共用 engine；按其已核对职责区分，不能把说明当成系统或资源。
 const visualOverrides = new Map([

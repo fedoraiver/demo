@@ -1,0 +1,230 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 32,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#component-3413b0716259d4cb-e1{marker-start:url(#component-3413b0716259d4cb_flowchart-v2-pointStart)!important}\n#component-3413b0716259d4cb-e2{marker-start:url(#component-3413b0716259d4cb_flowchart-v2-pointStart)!important}\n#component-3413b0716259d4cb-e3{marker-start:url(#component-3413b0716259d4cb_flowchart-v2-pointStart)!important}\n#component-3413b0716259d4cb-e4{marker-start:url(#component-3413b0716259d4cb_flowchart-v2-pointStart)!important}\n#component-3413b0716259d4cb-e5{marker-start:url(#component-3413b0716259d4cb_flowchart-v2-pointStart)!important}\n#component-3413b0716259d4cb-e6{marker-start:url(#component-3413b0716259d4cb_flowchart-v2-pointStart)!important}\n#component-3413b0716259d4cb-e7{marker-start:url(#component-3413b0716259d4cb_flowchart-v2-pointStart)!important}\n#component-3413b0716259d4cb-e8{marker-start:url(#component-3413b0716259d4cb_flowchart-v2-pointStart)!important}\n#component-3413b0716259d4cb-e9{marker-start:url(#component-3413b0716259d4cb_flowchart-v2-pointStart)!important}\n#component-3413b0716259d4cb-e10{marker-start:url(#component-3413b0716259d4cb_flowchart-v2-pointStart)!important}\n#component-3413b0716259d4cb-e11{marker-start:url(#component-3413b0716259d4cb_flowchart-v2-pointStart)!important}\n#component-3413b0716259d4cb-e12{marker-start:url(#component-3413b0716259d4cb_flowchart-v2-pointStart)!important}\n#component-3413b0716259d4cb-e13{marker-start:url(#component-3413b0716259d4cb_flowchart-v2-pointStart)!important}\n#component-3413b0716259d4cb-e14{marker-start:url(#component-3413b0716259d4cb_flowchart-v2-pointStart)!important}\n#component-3413b0716259d4cb-e15{marker-start:url(#component-3413b0716259d4cb_flowchart-v2-pointStart)!important}\n#component-3413b0716259d4cb-e16{marker-start:url(#component-3413b0716259d4cb_flowchart-v2-pointStart)!important}\n#component-3413b0716259d4cb-e17{marker-start:url(#component-3413b0716259d4cb_flowchart-v2-pointStart)!important}\n#component-3413b0716259d4cb-e19{marker-start:url(#component-3413b0716259d4cb_flowchart-v2-pointStart)!important}\n#component-3413b0716259d4cb-e20{marker-start:url(#component-3413b0716259d4cb_flowchart-v2-pointStart)!important}\n#component-3413b0716259d4cb-e21{marker-start:url(#component-3413b0716259d4cb_flowchart-v2-pointStart)!important}\n#component-3413b0716259d4cb-e22{marker-start:url(#component-3413b0716259d4cb_flowchart-v2-pointStart)!important}\n#component-3413b0716259d4cb-e23{marker-start:url(#component-3413b0716259d4cb_flowchart-v2-pointStart)!important}\n#component-3413b0716259d4cb-e24{marker-start:url(#component-3413b0716259d4cb_flowchart-v2-pointStart)!important}\n#component-3413b0716259d4cb-e25{marker-start:url(#component-3413b0716259d4cb_flowchart-v2-pointStart)!important}\n#component-3413b0716259d4cb-e26{marker-start:url(#component-3413b0716259d4cb_flowchart-v2-pointStart)!important}\n#component-3413b0716259d4cb_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}"
+  }
+}
+---
+flowchart RL
+  accTitle: Character · 组件关系
+  accDescr: 左侧为包含组件的实体，中间为组件类型，右侧每个系统函数只显示一次；连线表达访问与生命周期操作。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_observer fill:#F4F1F9,stroke:#7B4DB2,stroke-width:1.6px,color:#1F3340
+  classDef node_entity fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**角色业务根实体**<br/>来自场景装配 ↗：承载角色身份、运动意图<br/>与动态物理身体。" }
+  class n0 node_entity
+  class n0 external_node
+  n1@{ shape: rounded, label: "**Character**<br/>标识具有角色运动能力的实体。" }
+  class n1 node_component
+  n2@{ shape: rounded, label: "**WorldInspectorPlugin / world_**<br/>**inspector_ui**<br/>来自Egui / Inspector ↗：展示并编辑开<br/>放反射的实体、资源与资产。" }
+  class n2 node_system
+  class n2 external_node
+  n3@{ shape: rounded, label: "**sync_mouse_capture**<br/>来自第一人称控制 ↗：管理光标捕获及玩法<br/>输入启停。" }
+  class n3 node_system
+  class n3 external_node
+  n4@{ shape: hex, label: "**record_movement**<br/>来自第一人称控制 ↗：保存控制角色的持续<br/>移动方向。" }
+  class n4 node_observer
+  class n4 external_node
+  n5@{ shape: hex, label: "**clear_completed_movement**<br/>来自第一人称控制 ↗：清除已结束动作的角<br/>色移动方向。" }
+  class n5 node_observer
+  class n5 external_node
+  n6@{ shape: hex, label: "**clear_cancelled_movement**<br/>来自第一人称控制 ↗：清除已取消动作的角<br/>色移动方向。" }
+  class n6 node_observer
+  class n6 external_node
+  n7@{ shape: hex, label: "**request_jump**<br/>来自第一人称控制 ↗：记录目标角色的单次<br/>跳跃请求。" }
+  class n7 node_observer
+  class n7 external_node
+  n8@{ shape: hex, label: "**request_interaction**<br/>来自第一人称控制 ↗：记录目标角色的单次<br/>交互请求。" }
+  class n8 node_observer
+  class n8 external_node
+  n9@{ shape: rounded, label: "**sync_character_facing**<br/>来自第一人称控制 ↗：同步人物朝向并处理<br/>持物转向受阻。" }
+  class n9 node_system
+  class n9 external_node
+  n10@{ shape: rounded, label: "**move_characters**<br/>按移动意图和速度为角色施加水平运动力。" }
+  class n10 node_system
+  n11@{ shape: rounded, label: "**jump_characters**<br/>执行角色跳跃并消费单次请求。" }
+  class n11 node_system
+  n12@{ shape: rounded, label: "**handle_interaction**<br/>来自物品交互 ↗：处理物品拾取、共享持握<br/>与主动释放。" }
+  class n12 node_system
+  class n12 external_node
+  n13@{ shape: rounded, label: "**sync_held_presentation**<br/>来自物品交互 ↗：按人物呈现姿态同步持物<br/>模型与握持目标。" }
+  class n13 node_system
+  class n13 external_node
+  n14@{ shape: rounded, label: "**follow_first_person_camera**<br/>来自第一人称控制 ↗：按人物本帧位置与观<br/>察角度更新第一人称镜头。" }
+  class n14 node_system
+  class n14 external_node
+  n15@{ shape: rounded, label: "**sync_character_visibility**<br/>来自第一人称控制 ↗：隐藏第一人称控制角<br/>色的自身模型。" }
+  class n15 node_system
+  class n15 external_node
+  n16@{ shape: rounded, label: "**update_grounded**<br/>探测角色脚下支撑面并更新接地状态。" }
+  class n16 node_system
+  n17@{ shape: rounded, label: "**release_orphaned_items**<br/>来自物品交互 ↗：清理失效持握并恢复物品<br/>独立运动。" }
+  class n17 node_system
+  class n17 external_node
+  n18@{ shape: rounded, label: "**log_character_velocity**<br/>定期记录角色实际速度与接地状态。" }
+  class n18 node_system
+  n19@{ shape: rounded, label: "**spawn_actors**<br/>来自场景装配 ↗：装配玩家、可搬物、控制<br/>者与相机。" }
+  class n19 node_system
+  class n19 external_node
+  n20@{ shape: rounded, label: "**initialize_ready_couriers**<br/>来自角色动画 ↗：绑定主角命名动画并缓存<br/>鞋底补偿节点。" }
+  class n20 node_system
+  class n20 external_node
+  n21@{ shape: rounded, label: "**sync_courier_animation**<br/>来自角色动画 ↗：按角色运动状态连续混合<br/>移动与跳跃动画。" }
+  class n21 node_system
+  class n21 external_node
+  n22@{ shape: rounded, label: "**recover_from_water**<br/>来自越界恢复 ↗：将落水实体恢复到各自出<br/>生姿态。" }
+  class n22 node_system
+  class n22 external_node
+  n23@{ shape: rounded, label: "**warn_hold_strain**<br/>来自物品交互 ↗：检查持续持握偏差并发出<br/>失稳提示音。" }
+  class n23 node_system
+  class n23 external_node
+  n24@{ shape: rounded, label: "**restore_empty_holder_mass**<br/>来自物品交互 ↗：归还不再持物角色的原有<br/>质量。" }
+  class n24 node_system
+  class n24 external_node
+  n25@{ shape: rounded, label: "**finish_attachments**<br/>来自物品交互 ↗：为持物装配共享碰撞代理<br/>并累计质量。" }
+  class n25 node_system
+  class n25 external_node
+  n26@{ shape: rounded, label: "**align_attachments**<br/>来自物品交互 ↗：沿安全碰撞路径将物品对<br/>齐双手。" }
+  class n26 node_system
+  class n26 external_node
+  n27@{ shape: rounded, label: "**sync_held_physics**<br/>来自物品交互 ↗：按人物物理姿态同步持物<br/>位置与碰撞代理。" }
+  class n27 node_system
+  class n27 external_node
+  n1 layout_0@~~~ n0
+  n2 layout_1@~~~ n1
+  n3 layout_2@~~~ n1
+  n4 layout_3@~~~ n1
+  n5 layout_4@~~~ n1
+  n6 layout_5@~~~ n1
+  n7 layout_6@~~~ n1
+  n8 layout_7@~~~ n1
+  n9 layout_8@~~~ n1
+  n10 layout_9@~~~ n1
+  n11 layout_10@~~~ n1
+  n12 layout_11@~~~ n1
+  n13 layout_12@~~~ n1
+  n14 layout_13@~~~ n1
+  n15 layout_14@~~~ n1
+  n16 layout_15@~~~ n1
+  n17 layout_16@~~~ n1
+  n18 layout_17@~~~ n1
+  n19 layout_18@~~~ n1
+  n20 layout_19@~~~ n1
+  n21 layout_20@~~~ n1
+  n22 layout_21@~~~ n1
+  n23 layout_22@~~~ n1
+  n24 layout_23@~~~ n1
+  n25 layout_24@~~~ n1
+  n26 layout_25@~~~ n1
+  n27 layout_26@~~~ n1
+  n19 e18@-->|"添加"| n1
+  class e18 edge_write
+  n1 e0@-->|"可能挂载于"| n0
+  class e0 edge_reference
+  n2 e1@---|"反射查看"| n1
+  class e1 edge_read
+  n3 e2@---|"存在 / 变更过滤"| n1
+  class e2 edge_reference
+  n4 e3@---|"存在 / 变更过滤"| n1
+  class e3 edge_reference
+  n5 e4@---|"存在 / 变更过滤"| n1
+  class e4 edge_reference
+  n6 e5@---|"存在 / 变更过滤"| n1
+  class e5 edge_reference
+  n7 e6@---|"存在 / 变更过滤"| n1
+  class e6 edge_reference
+  n8 e7@---|"存在 / 变更过滤"| n1
+  class e7 edge_reference
+  n9 e8@---|"存在 / 变更过滤"| n1
+  class e8 edge_reference
+  n10 e9@---|"存在 / 变更过滤"| n1
+  class e9 edge_reference
+  n11 e10@---|"存在 / 变更过滤"| n1
+  class e10 edge_reference
+  n12 e11@---|"存在 / 变更过滤"| n1
+  class e11 edge_reference
+  n13 e12@---|"存在 / 变更过滤"| n1
+  class e12 edge_reference
+  n14 e13@---|"存在 / 变更过滤"| n1
+  class e13 edge_reference
+  n15 e14@---|"存在 / 变更过滤"| n1
+  class e14 edge_reference
+  n16 e15@---|"存在 / 变更过滤"| n1
+  class e15 edge_reference
+  n17 e16@---|"存在 / 变更过滤"| n1
+  class e16 edge_reference
+  n18 e17@---|"存在 / 变更过滤"| n1
+  class e17 edge_reference
+  n20 e19@---|"存在 / 变更过滤"| n1
+  class e19 edge_reference
+  n21 e20@---|"存在 / 变更过滤"| n1
+  class e20 edge_reference
+  n22 e21@---|"存在 / 变更过滤"| n1
+  class e21 edge_reference
+  n23 e22@---|"存在 / 变更过滤"| n1
+  class e22 edge_reference
+  n24 e23@---|"存在 / 变更过滤"| n1
+  class e23 edge_reference
+  n25 e24@---|"存在 / 变更过滤"| n1
+  class e24 edge_reference
+  n26 e25@---|"存在 / 变更过滤"| n1
+  class e25 edge_reference
+  n27 e26@---|"存在 / 变更过滤"| n1
+  class e26 edge_reference
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e17@{ curve: basis }
+  e18@{ curve: basis }
+  e19@{ curve: basis }
+  e20@{ curve: basis }
+  e21@{ curve: basis }
+  e22@{ curve: basis }
+  e23@{ curve: basis }
+  e24@{ curve: basis }
+  e25@{ curve: basis }
+  e26@{ curve: basis }

@@ -13,7 +13,8 @@ export function resolveArchitectureSelection(search, features) {
   const feature = ids.has(requested) ? requested : 'overview';
   const aspect = feature === 'overview' ? 'overview' : aspects.includes(params.get('tab')) ? params.get('tab') : 'systems';
   const node = feature === requested ? params.get('node')?.trim() || null : null;
-  return { feature, aspect, node };
+  const component = params.get('component')?.trim();
+  return { feature, aspect, node, ...(component ? { component } : {}) };
 }
 
 /** 只更新架构导航参数，保留工作区、其他参数与片段，不触发实际页面导航。 */
@@ -22,6 +23,7 @@ export function architectureUrl(selection, href, features) {
   params.set('feature', selection.feature || 'overview');
   if (selection.aspect) params.set('tab', selection.aspect);
   if (selection.node) params.set('node', selection.node);
+  if (selection.component) params.set('component', selection.component);
   const normalized = resolveArchitectureSelection(params, features);
   const url = new URL(href);
   url.searchParams.set('feature', normalized.feature);
@@ -29,6 +31,8 @@ export function architectureUrl(selection, href, features) {
   else url.searchParams.set('tab', normalized.aspect);
   if (normalized.node) url.searchParams.set('node', normalized.node);
   else url.searchParams.delete('node');
+  if (normalized.component) url.searchParams.set('component', normalized.component);
+  else url.searchParams.delete('component');
   return url.href;
 }
 

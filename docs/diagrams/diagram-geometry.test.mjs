@@ -24,3 +24,40 @@ test('canonical Entity membership cannot excuse a Component outside its actual c
   view.svg = view.svg.replace('data-center-x="80" data-center-y="100"', 'data-center-x="150" data-center-y="100"').replace('x="30" y="80"', 'x="100" y="80"');
   assert.throws(() => checkMermaidGeometry(view.svg, view), /Mermaid Component is outside its Entity card/);
 });
+
+function reverseComponent() {
+  const markerId = 'v_flowchart-v2-pointStart', css = `#v-e0{marker-start:url(#${markerId})!important}`;
+  const view = { id: 'v', aspect: 'component', componentNodeId: 'component', bounds: { x: 0, y: 0, width: 140, height: 60 }, width: 140, height: 60,
+    nodes: ['entity', 'component', 'system'].map((id, index) => ({ id, instance: id, mermaidId: `n${index}`, visualType: ['entity', 'component', 'system'][index], position: { x: index * 60, y: 20, width: 20, height: 20 } })),
+    links: [{ id: 'read', mermaidId: 'e0', from: 'component', to: 'system', nativeReverse: true }],
+    mermaid: `---\n${JSON.stringify({ config: { themeCSS: css } })}\n---\nflowchart RL\n n2 e0@--- n1\n`,
+  };
+  view.svg = `<svg id="v" viewBox="0 0 140 60"><style>#v ${css}</style><defs><marker id="${markerId}"><path d="M0 5L10 10L10 0Z"/></marker></defs>`
+    + view.nodes.map(node => `<g class="node" data-id="${node.id}" data-instance="${node.instance}" data-visual-type="${node.visualType}" data-mermaid-id="${node.mermaidId}" data-center-x="${node.position.x + 10}" data-center-y="30"><rect data-shape-part="${node.instance}" x="${node.position.x}" y="20" width="20" height="20"/></g>`).join('')
+    + '<path id="v-e0" data-link-id="read" data-mermaid-id="e0" data-native-reverse="true" d="M120 30H80"/></svg>';
+  return view;
+}
+
+test('marker-start requires exact native reverse source, metadata and actual stylesheet evidence', () => {
+  const view = reverseComponent();
+  assert.equal(checkMermaidGeometry(view.svg, view).edges, 1);
+  for (const mutate of [
+    value => { delete value.links[0].nativeReverse; },
+    value => { value.svg = value.svg.replace('data-native-reverse="true"', ''); },
+    value => { value.mermaid = value.mermaid.replace('n2 e0@--- n1', 'n1 e0@--- n2'); },
+    value => { value.mermaid = value.mermaid.replace('themeCSS', 'otherCSS'); },
+    value => { value.svg = value.svg.replace('d="M120 30H80"', 'marker-end="url(#v_flowchart-v2-pointStart)" d="M120 30H80"'); },
+    value => { value.svg = value.svg.replace('d="M120 30H80"', 'marker-mid="url(#v_flowchart-v2-pointStart)" d="M120 30H80"'); },
+  ]) {
+    const invalid = reverseComponent(); mutate(invalid);
+    assert.throws(() => checkMermaidGeometry(invalid.svg, invalid), /arrow|direction metadata/);
+  }
+});
+
+test('Component geometry rejects correctly routed Systems or Entities on the wrong side of the center', () => {
+  for (const id of ['system', 'entity']) {
+    const view = reverseComponent(), node = view.nodes.find(node => node.id === id), other = view.nodes.find(node => node.id === (id === 'system' ? 'entity' : 'system'));
+    [node.visualType, other.visualType] = [other.visualType, node.visualType];
+    assert.throws(() => checkMermaidGeometry(view.svg, view), /Component columns/);
+  }
+});

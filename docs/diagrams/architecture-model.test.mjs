@@ -51,12 +51,12 @@ test('149 个第三方业务节点各有唯一入口，移除混合目录而不�
       const graph = architecture.graphFor(feature, aspect);
       for (const node of graph.nodes) {
         assert.equal(node.role === 'internal', architecture.ownerOf(node.id) === feature, `${feature}/${aspect}/${node.id}`);
-        if (node.role === 'internal') visibleInternal.add(node.id);
+        if (node.role === 'internal' && architecture.registry[node.id].kind !== 'Component') visibleInternal.add(node.id);
         else assert.ok(node.group.startsWith('外部契约 · '), node.id);
       }
       assert.ok(graph.links.every(link => architecture.ownerOf(link.from) === feature || architecture.ownerOf(link.to) === feature), `${feature}/${aspect}`);
     }
-    assert.deepEqual(visibleInternal, new Set(owned.map(node => node.id)), feature);
+    assert.deepEqual(visibleInternal, new Set(owned.filter(node => node.kind !== 'Component').map(node => node.id)), feature);
   }
   assert.ok(!architecture.registry['third-party-plugins']);
   assert.ok(!Object.hasOwn(model.node_features, 'third-party-plugins'));
@@ -104,195 +104,21 @@ test('功能系统图保留本功能边界，Observer 留在事件图，跨功�
   assert.ok(graph.nodes.every(node => /[\u4e00-\u9fff]/.test(node.group)));
 });
 
-test('跨功能实体复用同一身份，完整组件与本功能定义归属分别保留', () => {
-  const characterGraph = architecture.graphFor('character', 'data'), interactionGraph = architecture.graphFor('item_interaction', 'data');
-  const character = characterGraph.nodes.find(node => node.id === 'entity-character');
-  const interaction = interactionGraph.nodes.find(node => node.id === 'entity-character');
-  assert.equal(character.id, interaction.id);
-  assert.equal(architecture.registry[character.id].identity, 'entity-character');
-  assert.ok(character.projection_components.includes('character.CharacterIntent'));
-  assert.ok(!character.projection_components.includes('character.HoldingItems'));
-  assert.ok(interaction.projection_components.includes('character.HoldingItems'));
-  assert.ok(!interaction.projection_components.includes('character.CharacterIntent'));
-  for (const [feature, graph] of [['character', characterGraph], ['item_interaction', interactionGraph]]) {
-    assert.deepEqual(graph.entityGroups.find(group => group.entity === character.id).components, entityComponentIds(character.id));
-    for (const id of ['character.CharacterIntent', 'character.HoldingItems']) {
-      assert.equal(graph.nodes.find(node => node.id === id).role, architecture.ownerOf(id) === feature ? 'internal' : 'external');
-    }
-  }
-});
-
-test('数据页实体组包含规范全组件并保留清单顺序，每个视图内节点和组件只出现一次', () => {
-  const groupedComponents = [];
+test('数据页使用普通Entity卡片，组件清单和真实访问端点完整保留', () => {
+  const owner = new Map(model.entities.flatMap(entity => entity.components.map(component => [component.id, `entity-${entity.id}`])));
   for (const feature of featureIds) {
-    const graph = architecture.graphFor(feature, 'data');
-    const visible = new Set(graph.nodes.map(node => node.id));
-    const members = graph.entityGroups.flatMap(group => group.components);
-    assert.equal(visible.size, graph.nodes.length, feature);
-    assert.equal(new Set(members).size, members.length, feature);
-    assert.equal(new Set(graph.entityGroups.map(group => group.id)).size, graph.entityGroups.length, feature);
-    for (const group of graph.entityGroups) {
-      const entity = model.entities.find(entity => `entity-${entity.id}` === group.entity);
-      assert.ok(entity, group.entity);
-      assert.equal(group.id, `entity-group-${entity.id}`);
-      assert.ok(!architecture.registry[group.id], group.id);
-      assert.ok(visible.has(group.entity), group.entity);
-      assert.ok(group.components.length > 0, group.entity);
-      assert.deepEqual(group.components, entity.components.map(component => component.id));
-      for (const id of group.components) {
-        assert.equal(architecture.registry[id].kind, 'Component', id);
-        assert.ok(visible.has(id), `${feature}/${id}`);
-      }
-      groupedComponents.push(...group.components);
+    const graph = architecture.graphFor(feature, 'data'), visible = new Set(graph.nodes.map(node => node.id));
+    assert.ok(!graph.entityGroups);
+    assert.ok(graph.nodes.every(node => !owner.has(node.id)));
+    for (const link of graph.links) {
+      assert.equal(link.displayFrom, owner.get(link.from) || link.from);
+      assert.equal(link.displayTo, owner.get(link.to) || link.to);
+      assert.ok(visible.has(link.displayFrom) && visible.has(link.displayTo));
     }
   }
-  assert.ok(new Set(groupedComponents).size < groupedComponents.length);
-  assert.deepEqual(new Set(groupedComponents), new Set(model.entities.flatMap(entity => entity.components.map(component => component.id))));
-});
-
-test('菜单背景、角色及可搬物在功能页与提供方页均展开完整规范组件', () => {
-  const expected = [['entity-menu_backdrop', 5, ['ui', 'infrastructure']], ['entity-character', 38, ['character', 'avian', 'infrastructure']], ['entity-parcel', 50, ['item_interaction', 'avian', 'infrastructure']]];
-  for (const [entity, count, features] of expected) for (const feature of features) {
-    const group = architecture.graphFor(feature, 'data').entityGroups.find(group => group.entity === entity);
-    assert.equal(group.components.length, count, `${feature}/${entity}`);
-    assert.deepEqual(group.components, entityComponentIds(entity));
-  }
-  assert.deepEqual(entityComponentIds('entity-menu_backdrop'), ['menu_backdrop.MenuBackdrop', 'menu_backdrop.DespawnOnExit', 'menu_backdrop.Children', 'menu_backdrop.Transform', 'menu_backdrop.Visibility']);
-});
-
-test('不同实体的同名组件保留各自分组，不按名称合并或复制', () => {
-  const graph = architecture.graphFor('bounds_recovery', 'data');
-  assert.deepEqual(graph.entityGroups, [
-    { id: 'entity-group-character', entity: 'entity-character', components: entityComponentIds('entity-character') },
-    { id: 'entity-group-parcel', entity: 'entity-parcel', components: entityComponentIds('entity-parcel') },
-  ]);
-  for (const name of ['SpawnPoint', 'ResumeInterpolation']) {
-    const matches = graph.nodes.filter(node => architecture.registry[node.id].name === name);
-    assert.equal(matches.length, 2, name);
-    assert.notEqual(matches[0].id, matches[1].id);
-  }
-});
-
-test('提供方数据页补齐已有外部实体上下文的完整组件，身份、源码与真实归属不变', () => {
-  let contexts = 0;
-  for (const [feature, count] of [['infrastructure', 21], ['avian', 4], ['enhanced_input', 4], ['egui', 2]]) {
-    const graph = architecture.graphFor(feature, 'data');
-    const externalEntities = graph.nodes.filter(node => architecture.registry[node.id].kind === 'Entity' && node.role === 'external');
-    assert.equal(externalEntities.length, count, feature);
-    contexts += externalEntities.length;
-    for (const context of externalEntities) {
-      const entity = model.entities.find(entity => `entity-${entity.id}` === context.id), record = architecture.registry[context.id];
-      assert.ok(entity, context.id);
-      assert.equal(record.identity, context.id);
-      assert.notEqual(record.feature, feature);
-      assert.deepEqual(record.source, entity.source);
-      assert.deepEqual(record.assembled_by, entity.assembled_by);
-      assert.deepEqual(record.features, entity.features);
-      assert.ok(!Object.hasOwn(context, 'projection_components'));
-      assert.ok(context.group.startsWith('外部契约 · '));
-      assert.equal(graph.nodes.filter(node => node.id === context.id).length, 1);
-      assert.equal(graph.entityGroups.filter(group => group.entity === context.id).length, 1);
-      assert.deepEqual(graph.entityGroups.find(group => group.entity === context.id).components, entityComponentIds(context.id));
-    }
-  }
-  assert.equal(contexts, 31);
-  const avian = architecture.graphFor('avian', 'data');
-  assert.equal(avian.entityGroups.find(group => group.entity === 'entity-character').components.length, 38);
-  for (const id of ['character.CharacterIntent', 'character.Transform']) {
-    assert.equal(avian.nodes.find(node => node.id === id).role, 'external', id);
-    assert.notEqual(architecture.ownerOf(id), 'avian');
-    assert.equal(architecture.registry[id].defined_in, architecture.ownerOf(id));
-  }
-  assert.ok(!avian.nodes.some(node => node.id === 'entity-camera'));
-});
-
-test('组成员只读取规范组件清单，外部组件仍可归组且上下文不扩展关系', () => {
-  const fixture = {
-    features: [{ id: 'project', label: '项目' }],
-    entities: [
-      { id: 'one', name: '同名实体', feature: 'project', source: { path: 'src/project.rs', line: 1 }, components: [
-        { id: 'one.Transform', name: 'Transform', feature: 'avian' },
-        { id: 'one.Hidden', name: 'Hidden', feature: 'enhanced_input' },
-      ] },
-      { id: 'two', name: '同名实体', feature: 'project', source: { path: 'src/project.rs', line: 2 }, components: [
-        { id: 'two.Transform', name: 'Transform', feature: 'avian' },
-        { id: 'two.External', name: 'External', feature: 'enhanced_input' },
-      ] },
-      { id: 'unrelated', name: '补齐成员所引用的其他实体', feature: 'project', components: [
-        { id: 'unrelated.Component', name: 'Component', feature: 'enhanced_input' },
-      ] },
-    ],
-    systems: [{ id: 'external-system', name: 'ExternalSystem', feature: 'project', kind: 'system' }],
-    resources: [{ id: 'project-resource', name: 'ProjectResource', feature: 'project' }],
-    nodes: [{ id: 'aggregate', name: '聚合说明', kind: 'Component', feature: 'avian', owner: '同名实体', aspects: ['data', 'events'] }],
-    system_links: [
-      { id: 'component-reference', from: 'one.Transform', to: 'two.External', kind: 'reference', label: '真实引用' },
-      { id: 'context-read', from: 'entity-one', to: 'project-resource', kind: 'read' },
-      { id: 'hidden-reference', from: 'one.Hidden', to: 'unrelated.Component', kind: 'reference' },
-      { id: 'hidden-write', from: 'external-system', to: 'one.Hidden', kind: 'write' },
-    ],
-  };
-  const before = structuredClone(fixture), local = buildArchitectureModel(fixture), graph = local.graphFor('avian', 'data');
-  assert.deepEqual(graph.entityGroups, [
-    { id: 'entity-group-one', entity: 'entity-one', components: ['one.Transform', 'one.Hidden'] },
-    { id: 'entity-group-two', entity: 'entity-two', components: ['two.Transform', 'two.External'] },
-  ]);
-  for (const id of ['entity-one', 'entity-two', 'one.Hidden', 'two.External']) assert.equal(graph.nodes.find(node => node.id === id).role, 'external', id);
-  assert.ok(graph.nodes.some(node => node.id === 'aggregate'));
-  assert.ok(!graph.entityGroups.some(group => group.components.includes('aggregate')));
-  assert.ok(!graph.nodes.some(node => ['project-resource', 'external-system', 'entity-unrelated', 'unrelated.Component'].includes(node.id)));
-  assert.deepEqual(graph.links, [fixture.system_links[0]]);
-  assert.deepEqual(fixture, before);
-});
-
-test('聚合组件不从显示归属补充成员，规范实体即使原来没有组件投影也补齐完整清单', () => {
-  const graph = architecture.graphFor('first_person', 'data');
-  assert.ok(graph.nodes.some(node => node.id === 'capture-state'));
-  assert.ok(graph.nodes.some(node => node.id === 'entity-action'));
-  assert.ok(graph.nodes.some(node => node.id === 'entity-binding'));
-  assert.ok(!graph.entityGroups.some(group => group.components.includes('capture-state')));
-  for (const id of ['entity-action', 'entity-binding']) assert.deepEqual(graph.entityGroups.find(group => group.entity === id).components, entityComponentIds(id));
-  for (const id of ['shared-carry-pose', 'first-person-fields', 'first-person-visual-state']) assert.ok(!allGraphs().some(graph => graph.nodes.some(node => node.id === id)), id);
-});
-
-test('直接可见的外部实体补齐自身组件，零组件实体独立保留而不生成空组', () => {
-  const fixture = {
-    features: [{ id: 'project', label: '项目' }],
-    entities: [
-      { id: 'owned', name: '本地实体', feature: 'project', components: [{ id: 'owned.External', name: 'External', feature: 'avian' }] },
-      { id: 'external', name: '外部实体', feature: 'avian', components: [{ id: 'external.Component', name: 'Component', feature: 'enhanced_input' }] },
-      { id: 'empty', name: '空实体', feature: 'project', components: [] },
-    ],
-    resources: [{ id: 'resource.Local', name: 'Local', feature: 'project' }],
-    system_links: [{ id: 'external-reference', from: 'resource.Local', to: 'entity-external', kind: 'reference' }],
-  };
-  const local = buildArchitectureModel(fixture), graph = local.graphFor('project', 'data');
-  assert.deepEqual(graph.entityGroups, [
-    { id: 'entity-group-owned', entity: 'entity-owned', components: ['owned.External'] },
-    { id: 'entity-group-external', entity: 'entity-external', components: ['external.Component'] },
-  ]);
-  assert.equal(graph.nodes.find(node => node.id === 'entity-owned').role, 'internal');
-  for (const id of ['owned.External', 'entity-external', 'external.Component']) assert.equal(graph.nodes.find(node => node.id === id).role, 'external', id);
-  assert.equal(graph.nodes.find(node => node.id === 'entity-empty').role, 'internal');
-  assert.ok(!graph.entityGroups.some(group => group.entity === 'entity-empty'));
-  assert.deepEqual(graph.links, fixture.system_links.map(link => ({ ...link, label: undefined })));
-});
-
-test('数据实体组不影响系统和事件视图、注册表及原始关系', () => {
-  const local = buildArchitectureModel(model), beforeModel = structuredClone(model), beforeRegistry = structuredClone(local.registry);
-  const before = featureIds.flatMap(feature => ['systems', 'events'].map(aspect => local.graphFor(feature, aspect)));
-  const data = featureIds.map(feature => local.graphFor(feature, 'data'));
-  assert.deepEqual(featureIds.flatMap(feature => ['systems', 'events'].map(aspect => local.graphFor(feature, aspect))), before);
-  for (const graph of before) assert.ok(!Object.hasOwn(graph, 'entityGroups'));
-  assert.equal(data.reduce((count, graph) => count + graph.links.length, 0), 89);
-  for (const graph of data) for (const link of graph.links) {
-    const original = model.system_links.find(original => original.id === link.id);
-    assert.ok(original, link.id);
-    const { id, from, to, kind, label } = original;
-    assert.deepEqual(link, { id, from: local.resolveNode(from), to: local.resolveNode(to), kind, label });
-  }
-  assert.deepEqual(local.registry, beforeRegistry);
-  assert.deepEqual(model, beforeModel);
+  assert.deepEqual(architecture.registry['entity-parcel'].components.map(component => component.id), entityComponentIds('entity-parcel'));
+  assert.ok(architecture.registry['parcel.HeldTarget']);
+  assert.ok(architecture.registry['character.Transform'] && architecture.registry['parcel.Transform']);
 });
 
 test('共享实体的关系只在定义功能展开，使用功能仅保留必要外部实体', () => {
@@ -382,8 +208,8 @@ test('图中关系端点均可解析，局部图不引入 dangling ID', () => {
     assert.equal(nodeIds.size, graph.nodes.length);
     assert.equal(new Set(graph.links.map(link => link.id)).size, graph.links.length);
     for (const link of graph.links) {
-      assert.ok(nodeIds.has(link.from), link.id);
-      assert.ok(nodeIds.has(link.to), link.id);
+      assert.ok(nodeIds.has(link.displayFrom || link.from), link.id);
+      assert.ok(nodeIds.has(link.displayTo || link.to), link.id);
       assert.ok(architecture.registry[link.from]);
       assert.ok(architecture.registry[link.to]);
     }

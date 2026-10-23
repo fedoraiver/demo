@@ -1,0 +1,103 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 32,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#component-30e6dd8a7870e42f-e2{marker-start:url(#component-30e6dd8a7870e42f_flowchart-v2-pointStart)!important}\n#component-30e6dd8a7870e42f-e4{marker-start:url(#component-30e6dd8a7870e42f_flowchart-v2-pointStart)!important}\n#component-30e6dd8a7870e42f-e6{marker-start:url(#component-30e6dd8a7870e42f_flowchart-v2-pointStart)!important}\n#component-30e6dd8a7870e42f_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}"
+  }
+}
+---
+flowchart RL
+  accTitle: VelocityIntegrationData · 组件关系
+  accDescr: 左侧为包含组件的实体，中间为组件类型，右侧每个系统函数只显示一次；连线表达访问与生命周期操作。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_entity fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_contract fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  subgraph layout_card_n0[" "]
+  n0@{ shape: rounded, label: "**角色业务根实体**<br/>来自场景装配 ↗：承载角色身份、运动意图<br/>与动态物理身体。" }
+  class n0 node_entity
+  class n0 external_node
+  end
+  style layout_card_n0 fill:none,stroke:none
+  subgraph layout_card_n1[" "]
+  n1@{ shape: rounded, label: "**可搬物品业务根实体**<br/>来自场景装配 ↗：承载可拾取物品身份及自<br/>由运动、共享持握状态。" }
+  class n1 node_entity
+  class n1 external_node
+  end
+  style layout_card_n1 fill:none,stroke:none
+  subgraph layout_card_n2[" "]
+  n2@{ shape: rounded, label: "**VelocityIntegrationData**<br/>累计本物理步的世界加速度与外力。" }
+  class n2 node_component
+  end
+  style layout_card_n2 fill:none,stroke:none
+  subgraph layout_card_n3[" "]
+  n3@{ shape: rounded, label: "**move_characters**<br/>来自角色运动 ↗：按移动意图和速度为角色<br/>施加水平运动力。" }
+  class n3 node_system
+  class n3 external_node
+  end
+  style layout_card_n3 fill:none,stroke:none
+  subgraph layout_card_n4[" "]
+  n4@{ shape: rounded, label: "**jump_characters**<br/>来自角色运动 ↗：执行角色跳跃并消费单次<br/>请求。" }
+  class n4 node_system
+  class n4 external_node
+  end
+  style layout_card_n4 fill:none,stroke:none
+  subgraph layout_card_n5[" "]
+  n5@{ shape: lin-rect, label: "**PhysicsSystems::StepSimulation /**<br/>**PhysicsSchedule**<br/>执行碰撞求解、重力积分与刚体运动。" }
+  class n5 node_contract
+  end
+  style layout_card_n5 fill:none,stroke:none
+  n2 layout_0@~~~ n0
+  n2 layout_1@~~~ n1
+  n3 layout_2@~~~ n2
+  n4 layout_3@~~~ n2
+  n5 layout_4@~~~ n2
+  n3 e3@-->|"/ 结构变更（待核实）"| n2
+  class e3 edge_write
+  n4 e5@--->|"/ 结构变更（待核实）"| n2
+  class e5 edge_write
+  n2 e0@-->|"可能挂载于"| n0
+  class e0 edge_reference
+  n2 e1@-->|"可能挂载于"| n1
+  class e1 edge_reference
+  n3 e2@---|"查询访问"| n2
+  class e2 edge_read
+  n4 e4@---|"查询访问"| n2
+  class e4 edge_read
+  n5 e6@---|"查询访问"| n2
+  class e6 edge_read
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }

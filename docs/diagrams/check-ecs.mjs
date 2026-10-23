@@ -4,11 +4,13 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { isDeepStrictEqual } from 'node:util';
 import { checkMermaidGeometry } from './diagram-geometry.mjs';
-import { NODE_STYLES, EDGE_STYLES, SELECTION_STYLE, EXTERNAL_REFERENCE_STYLE, ENTITY_TOGGLE_STYLE, visualTypeOf, edgeSemanticOf, displayLabelOf, scheduleLinksFor } from './architecture-style.mjs';
+import { NODE_STYLES, EDGE_STYLES, SELECTION_STYLE, EXTERNAL_REFERENCE_STYLE, visualTypeOf, edgeSemanticOf, displayLabelOf, scheduleLinksFor } from './architecture-style.mjs';
 import { shapeBounds, svgElements } from './svg-shape-geometry.mjs';
-import { isMainPluginRegistration, scheduleGroupLabel } from './architecture-model.mjs';
+import { isMainPluginRegistration, scheduleGroupLabel, buildArchitectureModel } from './architecture-model.mjs';
+import { buildComponentCatalog } from './architecture-components.mjs';
+import { sourceEntriesFor, sourcePolicyKindFor, sourcePolicyFor } from './architecture-source-policy.mjs';
 import { DATA_GROUP_LABELS, entityComponentColumns } from './architecture-renderer.mjs';
-import { displayEndpoints, inspectViewRoutes, ROUTING_STYLE } from './architecture-routing.mjs';
+import { displayEndpoints, inspectViewRoutes, ROUTING_STYLE, nativeSvgProperty, nativeMarkerProperty } from './architecture-routing.mjs';
 import { INFRASTRUCTURE_FEATURES, infrastructureFeature, architectureViewId } from './architecture-infrastructure.mjs';
 import { DEPENDENCY_SOURCE_DEFINITIONS } from './architecture-source-definitions.mjs';
 import { readCargoMetadata, createDependencySourceResolver, dependencySourceKey, checkDependencySources } from './dependency-sources.mjs';
@@ -69,11 +71,12 @@ function checkActualEdgeStyle(element, semantic, elements, id) {
   const expected = EDGE_STYLES[semantic], actual = effectiveStyle(element);
   requireCondition(expected && actual.stroke?.toLowerCase() === expected.stroke.toLowerCase()
     && Math.abs(parseFloat(actual['stroke-width']) - expected.width) < .01 && dashValue(actual['stroke-dasharray']) === dashValue(expected.dash), `Mermaid edge style mismatch: ${id}`);
-  const markerId = element.attrs['marker-end']?.match(/^url\([^#]*#([^)]*)\)$/)?.[1];
+  const reverse = element.attrs['data-native-reverse'] === 'true';
+  const markerId = nativeMarkerProperty(element, reverse ? 'marker-start' : 'marker-end')?.match(/^url\([^#]*#([^)]*)\)$/)?.[1];
   const marker = elements.find(item => item.tag === 'marker' && item.attrs.id === markerId);
   requireCondition(marker && ['auto', 'auto-start-reverse'].includes(marker.attrs.orient), `Missing Mermaid target arrow: ${id}`);
   requireCondition(descendantsOf(elements, marker).some(item => ['path', 'polygon'].includes(item.tag)
-    && effectiveStyle(item).fill?.toLowerCase() === expected.stroke.toLowerCase()), `Mermaid arrow color mismatch: ${id}`);
+    && (nativeSvgProperty(item, 'fill')?.toLowerCase() === expected.stroke.toLowerCase() || reverse && nativeSvgProperty(item, 'fill') === 'context-stroke')), `Mermaid arrow color mismatch: ${id}`);
 }
 
 function checkNodeAppearance(parts, expected, external, id) {
@@ -87,7 +90,7 @@ function checkNodeAppearance(parts, expected, external, id) {
 
 /** 侧栏样例独立于业务图；核对真实 Mermaid 图元，不把图例样例当作业务身份。 */
 export function checkGuideSamples(samples, styles) {
-  requireCondition(isDeepStrictEqual(styles, { nodes: NODE_STYLES, edges: EDGE_STYLES, selection: SELECTION_STYLE, externalReference: EXTERNAL_REFERENCE_STYLE, entityToggle: ENTITY_TOGGLE_STYLE }), 'Read guide styles do not match the shared catalog');
+  requireCondition(isDeepStrictEqual(styles, { nodes: NODE_STYLES, edges: EDGE_STYLES, selection: SELECTION_STYLE, externalReference: EXTERNAL_REFERENCE_STYLE }), 'Read guide styles do not match the shared catalog');
   requireCondition(samples && typeof samples === 'object' && !Array.isArray(samples)
     && isDeepStrictEqual(Object.keys(samples).sort(), ['edges', 'nodes'])
     && samples.nodes && samples.edges && isDeepStrictEqual(Object.keys(samples.nodes).sort(), Object.keys(NODE_STYLES).sort())
@@ -155,6 +158,7 @@ export function checkMermaidStyles(view, registry) {
     requireCondition(link.edgeSemantic === edgeSemanticOf(link, registry) && link.displayLabel === displayLabelOf(link, link.edgeSemantic, registry), `Visual edge semantic mismatch: ${link.id}`);
     const element = elements.find(item => item.attrs['data-link-id'] === link.id);
     requireCondition(element?.attrs['data-edge-semantic'] === link.edgeSemantic, `Visual edge semantic metadata mismatch: ${link.id}`);
+    requireCondition((element?.attrs['data-native-reverse'] === 'true') === Boolean(link.nativeReverse), `Visual native edge direction mismatch: ${link.id}`);
     checkActualEdgeStyle(element, link.edgeSemantic, elements, link.id);
   }
   for (const link of view.scheduleLinks || []) checkActualEdgeStyle(elements.find(item => item.attrs['data-schedule-link-id'] === link.id), link.edgeSemantic, elements, link.id);
@@ -175,118 +179,18 @@ export function checkDataSections(view) {
   }
 }
 
-/** 折叠只投影画面端点；规范节点、关系及每个实体的组件清单始终来自完整视图。 */
+/** Entity 保持普通卡片，组件在详情和独立类型图中浏览。 */
 export function checkEntityViewProjections(view) {
-  const groups = view.entityGroups || [];
-  requireCondition((view.links || []).every(link => isDeepStrictEqual(displayEndpoints(link), [link.from, link.to])), `Complete view endpoint projection mismatch: ${view.id}`);
-  if (!groups.length) {
-    requireCondition(!Object.hasOwn(view, 'entityViews'), `Unexpected Entity view variants: ${view.id}`);
-    return [];
-  }
-  requireCondition(view.aspect === 'data' && view.entityExpansion === 'all' && !view.parentViewId
-    && groups.every(group => group.expanded === true), `Invalid complete Entity view: ${view.id}`);
-  const variants = view.entityViews;
-  requireCondition(variants && typeof variants === 'object' && !Array.isArray(variants)
-    && isDeepStrictEqual(Object.keys(variants).sort(), ['collapsed', ...groups.map(group => group.entity)].sort()), `Entity view variant catalog mismatch: ${view.id}`);
-  const memberships = value => value.map(({ id, entity, components }) => ({ id, entity, components }));
-  const semanticLink = ({ mermaidId, displayFrom, displayTo, ...link }) => link;
-  const nodeIdentity = node => Object.fromEntries(['id', 'role', 'group', 'visualType', 'shape', 'displayLabel', 'nameLabel', 'contextLabel'].filter(key => Object.hasOwn(node, key)).map(key => [key, node[key]]));
-  const ids = new Set([view.id]);
-  const checkToggles = candidate => {
-    for (const group of candidate.entityGroups) {
-      const node = candidate.nodes.find(node => node.id === group.entity), label = `${group.expanded ? '收起' : '展开'}组件（${group.components.length}）`;
-      requireCondition(isDeepStrictEqual(node?.entityToggle, { entity: group.entity, expanded: group.expanded, count: group.components.length, label }), `Entity view toggle mismatch: ${candidate.id}/${group.entity}`);
-    }
-  };
-  checkToggles(view);
-  for (const [key, child] of Object.entries(variants)) {
-    requireCondition(child && typeof child === 'object' && !Array.isArray(child) && typeof child.id === 'string' && /^[A-Za-z0-9_-]+$/.test(child.id)
-      && !ids.has(child.id) && child.parentViewId === view.id && child.entityExpansion === key && child.feature === view.feature && child.aspect === view.aspect
-      && !Object.hasOwn(child, 'entityViews'), `Entity view variant identity mismatch: ${view.id}/${key}`);
-    ids.add(child.id);
-    requireCondition(Array.isArray(child.entityGroups) && isDeepStrictEqual(memberships(child.entityGroups), memberships(groups))
-      && child.entityGroups.every(group => group.expanded === (key === group.entity)), `Entity view variant membership mismatch: ${child.id}`);
-    const closed = groups.filter(group => key !== group.entity), hidden = new Set(closed.flatMap(group => group.components));
-    const expectedNodes = view.nodes.filter(node => !hidden.has(node.id));
-    requireCondition(Array.isArray(child.nodes) && isDeepStrictEqual(child.nodes.map(nodeIdentity), expectedNodes.map(nodeIdentity)), `Entity view visible node projection mismatch: ${child.id}`);
-    for (const group of child.entityGroups) {
-      const entity = child.nodes.find(node => node.id === group.entity);
-      requireCondition(entity?.presentation === (group.expanded ? 'entity-container' : 'entity-collapsed') && entity.shape === 'rect', `Entity view presentation mismatch: ${child.id}/${group.entity}`);
-    }
-    checkToggles(child);
-    requireCondition(Array.isArray(child.links) && isDeepStrictEqual(child.links.map(semanticLink), view.links.map(semanticLink)), `Entity view canonical relation mismatch: ${child.id}`);
-    const project = id => closed.find(group => group.components.includes(id))?.entity || id;
-    for (const link of child.links) requireCondition(link.displayFrom === project(link.from) && link.displayTo === project(link.to), `Entity view endpoint projection mismatch: ${child.id}/${link.id}`);
-  }
-  return Object.values(variants);
+  requireCondition(!Object.hasOwn(view, 'entityViews') && !Object.hasOwn(view, 'entityExpansion') && !view.parentViewId, `Obsolete Entity expansion metadata: ${view.id}`);
+  requireCondition(!(view.nodes || []).some(node => node.entityToggle || /^entity-(?:container|collapsed)$/.test(node.presentation || '')), `Obsolete Entity expansion controls: ${view.id}`);
+  return [];
 }
 
-export function checkEntityGroups(view, model, registry, parentView) {
-  const groups = view.entityGroups || [], visible = new Set(view.nodes.map(node => node.id));
-  const expected = parentView ? parentView.entityGroups.map(({ id, entity, components }) => ({ id, entity, components })) : view.aspect === 'data' ? (model.entities || []).flatMap(entity => {
-    const entityId = `entity-${entity.id}`, components = entity.components.map(component => component.id);
-    return components.length && (visible.has(entityId) || components.some(id => visible.has(id))) ? [{ id: `entity-group-${entity.id}`, entity: entityId, components }] : [];
-  }) : [];
-  requireCondition(Array.isArray(groups) && isDeepStrictEqual(groups.map(({ id, entity, components }) => ({ id, entity, components })), expected), `Entity group membership mismatch: ${view.id}`);
-  const elements = svgElements(view.svg), containers = elements.filter(element => Object.hasOwn(element.attrs, 'data-entity-group'));
-  requireCondition(containers.length === groups.length, `Entity group container count mismatch: ${view.id}`);
-  for (const group of groups) {
-    const cluster = containers.find(element => element.attrs['data-entity-group'] === group.id);
-    const entity = view.nodes.find(node => node.id === group.entity);
-    if (entity?.entityToggle) {
-      const labels = elements.filter(element => element.attrs['data-entity-toggle-label'] === group.entity);
-      requireCondition(labels.length === 0, `Obsolete Entity group toggle label: ${view.id}/${group.id}`);
-    }
-    if (group.expanded === false) {
-      const semantic = elements.find(element => element.attrs['data-id'] === group.entity);
-      const rect = semantic?.children.find(element => element.tag === 'rect' && element.attrs['data-shape-part'] === entity?.instance);
-      requireCondition(cluster === semantic && (semantic.attrs.class || '').split(/\s+/).includes('node') && semantic.attrs['data-presentation'] === 'entity-collapsed'
-        && entity?.presentation === 'entity-collapsed' && entity.shape === 'rect' && registry[group.entity]?.kind === 'Entity'
-        && semantic.attrs.role === 'button' && semantic.attrs.tabindex === '0' && !Object.hasOwn(semantic.attrs, 'filter')
-        && rect && !Object.hasOwn(group, 'headerMermaidId') && !Object.hasOwn(group, 'headerBounds')
-        && group.components.every(id => !visible.has(id)) && !elements.some(element => element.attrs['data-entity-header'] === entity.instance), `Invalid collapsed Entity group: ${view.id}/${group.id}`);
-      const box = shapeBounds(rect), sections = (view.sections || []).filter(section => section.entityGroup === group.id);
-      requireCondition(!Object.hasOwn(rect.attrs, 'filter') && sections.length === 1 && sections[0].label === registry[group.entity].name
-        && Object.keys(box).every(key => Number.isFinite(group.bounds?.[key]) && Math.abs(group.bounds[key] - box[key]) < .05
-          && Number.isFinite(sections[0][key]) && Math.abs(sections[0][key] - box[key]) < .05), `Collapsed Entity bounds mismatch: ${view.id}/${group.id}`);
-      continue;
-    }
-    requireCondition(cluster && (cluster.attrs.class || '').split(/\s+/).includes('cluster')
-      && cluster.attrs.id === `${view.id}-${group.mermaidId}`
-      && entity?.presentation === 'entity-container' && entity.mermaidId === group.mermaidId
-      && cluster.attrs['data-id'] === group.entity && cluster.attrs['data-instance'] === entity.instance
-      && cluster.attrs['data-presentation'] === 'entity-container' && cluster.attrs.role === 'button' && cluster.attrs.tabindex === '0'
-      && !['data-shape-part', 'filter'].some(name => Object.hasOwn(cluster.attrs, name)), `Invalid Entity group container: ${view.id}/${group.id}`);
-    const rect = cluster.children.find(element => element.tag === 'rect');
-    requireCondition(rect && rect.attrs['data-shape-part'] === entity.instance && !['data-id', 'filter'].some(name => Object.hasOwn(rect.attrs, name)), `Invalid Entity group outline: ${group.id}`);
-    const box = shapeBounds(rect), sections = (view.sections || []).filter(section => section.entityGroup === group.id);
-    requireCondition(sections.length === 1 && sections[0].label === registry[group.entity]?.name
-      && Object.keys(box).every(key => Number.isFinite(group.bounds?.[key]) && Math.abs(group.bounds[key] - box[key]) < .05
-        && Number.isFinite(sections[0][key]) && Math.abs(sections[0][key] - box[key]) < .05), `Entity group bounds mismatch: ${view.id}/${group.id}`);
-    const members = [group.entity, ...group.components];
-    // Mermaid 的 cluster 与 node 可以是 SVG 兄弟，按真实根坐标核对包含关系。
-    const contained = view.nodes.filter(({ position }) => position && position.x >= box.x - .05 && position.y >= box.y - .05
-      && position.x + position.width <= box.x + box.width + .05 && position.y + position.height <= box.y + box.height + .05);
-    requireCondition(isDeepStrictEqual(contained.map(node => node.id).sort(), [...members].sort()), `Entity group SVG membership mismatch: ${view.id}/${group.id}`);
-    requireCondition(entity && registry[group.entity]?.kind === 'Entity', `Missing Entity group identity: ${group.id}`);
-    const header = elements.find(element => element.attrs['data-entity-header'] === entity.instance);
-    requireCondition(header && !['data-id', 'tabindex'].some(name => Object.hasOwn(header.attrs, name)) && header.attrs['data-entity-owner'] === entity.id
-      && group.headerBounds && ['x', 'y', 'width', 'height'].every(key => Number.isFinite(group.headerBounds[key]))
-      && group.headerBounds.width > 0 && group.headerBounds.height > 0
-      && isDeepStrictEqual(JSON.parse(header.attrs['data-label-bounds'] || 'null'), group.headerBounds)
-      && group.headerBounds.x >= box.x - .05 && group.headerBounds.y >= box.y - .05
-      && group.headerBounds.x + group.headerBounds.width <= box.x + box.width + .05, `Entity group header bounds mismatch: ${group.id}`);
-    for (const id of members) {
-      const node = view.nodes.find(node => node.id === id), position = node?.position;
-      requireCondition(position && position.x >= box.x - .05 && position.y >= box.y - .05
-        && position.x + position.width <= box.x + box.width + .05 && position.y + position.height <= box.y + box.height + .05, `Entity group does not contain member: ${view.id}/${id}`);
-      if (id !== group.entity) requireCondition(position.y >= group.headerBounds.y + group.headerBounds.height - .05, `Entity card header must precede its components: ${view.id}/${id}`);
-    }
-    const columns = entityComponentColumns(group.components).map(column => column.map(id => view.nodes.find(node => node.id === id).position));
-    for (const column of columns) for (let index = 1; index < column.length; index++) requireCondition(column[index].y >= column[index - 1].y + column[index - 1].height - .05, `Entity component row order mismatch: ${view.id}/${group.id}`);
-    const lefts = columns.map(column => Math.min(...column.map(position => position.x)));
-    requireCondition(lefts.every((left, index) => !index || left > lefts[index - 1] + .05), `Entity component column order mismatch: ${view.id}/${group.id}`);
-  }
+export function checkEntityGroups(view) {
+  requireCondition(!(view.entityGroups || []).length, `Obsolete nested Entity groups: ${view.id}`);
+  const elements = svgElements(view.svg);
+  requireCondition(!elements.some(element => Object.keys(element.attrs).some(name => /^data-entity-(?:group|header|toggle|owner)(?:-|$)/.test(name))
+    || (element.attrs.class || '').split(/\s+/).includes('entity-container')), `Obsolete nested Entity geometry: ${view.id}`);
 }
 
 export function checkViewRouting(view) {
@@ -304,7 +208,7 @@ export function checkViewRouting(view) {
 }
 
 function checkMermaidSource(view, registry, scheduleDefinitions) {
-  requireCondition(view.diagramType === 'flowchart' && /^\s*flowchart\s+(LR|TB)\s*$/m.test(view.mermaid), `Expected Mermaid flowchart LR or TB: ${view.id}`);
+  requireCondition(view.diagramType === 'flowchart' && /^\s*flowchart\s+(LR|RL|TB)\s*$/m.test(view.mermaid), `Expected Mermaid flowchart LR, RL or TB: ${view.id}`);
   if (view.routing) {
     const configuration = /^---\r?\n([\s\S]*?)\r?\n---/.exec(view.mermaid);
     requireCondition(configuration && JSON.parse(configuration[1]).config?.layout === 'dagre', `Expected shared Dagre layout: ${view.id}`);
@@ -347,10 +251,10 @@ function checkMermaidSource(view, registry, scheduleDefinitions) {
       layout.set(invisible[2], { from: invisible[1], to: invisible[4], directed: invisible[3] === '-->' });
       continue;
     }
-    const link = /^([A-Za-z]\w*)\s+([A-Za-z]\w*)@(-{2,}>|-\.->)\s*(?:\|"((?:[^"\\]|\\.)*)"\|\s*)?([A-Za-z]\w*)\s*;?$/.exec(line);
+    const link = /^([A-Za-z]\w*)\s+([A-Za-z]\w*)@(-{2,}>|-\.->|-{3,})\s*(?:\|"((?:[^"\\]|\\.)*)"\|\s*)?([A-Za-z]\w*)\s*;?$/.exec(line);
     if (link) {
       requireCondition(!links.has(link[2]), `Duplicate Mermaid edge declaration: ${link[2]}`);
-      links.set(link[2], { from: link[1], to: link[5], label: decodeMermaidText(link[4] || '') });
+      links.set(link[2], { from: link[1], to: link[5], arrow: link[3], label: decodeMermaidText(link[4] || '') });
       continue;
     }
     requireCondition(!/@(?:-->|-\.->|~~~)|\s(?:-->|-\.->|~~~)\s/.test(line), `Unidentified Mermaid edge declaration in ${view.id}: ${line}`);
@@ -375,9 +279,10 @@ function checkMermaidSource(view, registry, scheduleDefinitions) {
   const ids = new Set();
   for (const link of view.links) {
     const declaration = links.get(link.mermaidId);
-    const [from, to] = displayEndpoints(link);
+    const logical = displayEndpoints(link), [from, to] = link.nativeReverse ? [...logical].reverse() : logical;
     requireCondition(declaration && !ids.has(link.mermaidId) && declaration.from === canonicalToMermaid.get(from)
       && declaration.to === canonicalToMermaid.get(to), `Mermaid edge declaration mismatch: ${link.id}`);
+    requireCondition(link.nativeReverse ? view.aspect === 'component' && /^-{3,}$/.test(declaration.arrow) : /^(?:-{2,}>|-\.->)$/.test(declaration.arrow), `Mermaid edge arrow declaration mismatch: ${link.id}`);
     if (styledView(view)) requireCondition(compactText(declaration.label) === compactText(link.displayLabel), `Mermaid edge display label mismatch: ${link.id}`);
     ids.add(link.mermaidId);
   }
@@ -472,10 +377,30 @@ export function checkArchitecture(root, { dependencyDefinitions = DEPENDENCY_SOU
   for (const feature of featureIds) for (const aspect of aspects) {
     expectedViews.set(architectureViewId(feature, aspect), { feature, aspect });
   }
-  requireCondition(Array.isArray(artifact.views) && artifact.views.length === expectedViews.size, `Expected ${expectedViews.size} architecture views`);
   const registry = artifact.registry;
   const dependencyResolver = createDependencySourceResolver(cargoMetadata ?? readCargoMetadata(repository));
   checkDependencySources(registry, dependencyResolver, dependencyDefinitions, requireDependencyDefinitions);
+  let componentTypes = [];
+  if (artifact.schemaVersion === 2) {
+    requireCondition(Array.isArray(artifact.componentTypes), 'Missing component type catalog');
+    const fresh = buildArchitectureModel(model);
+    if (requireDependencyDefinitions) {
+      for (const [id, node] of Object.entries(fresh.registry)) if (registry[id]?.definition_source) node.definition_source = registry[id].definition_source;
+    }
+    const catalog = buildComponentCatalog(model, fresh.registry, { readSource: filename => fs.readFileSync(path.join(repository, filename), 'utf8') });
+    componentTypes = catalog.types;
+    requireCondition(isDeepStrictEqual(artifact.componentTypes, componentTypes), 'Component catalog differs from Rust type identities and original projections');
+    const roleLabels = Object.fromEntries(sourcePolicyFor('edge').groups.map(group => [group.role, group.label]));
+    requireCondition(isDeepStrictEqual(artifact.sourceRoleLabels, roleLabels), 'Source role labels differ from the semantic source policy');
+    for (const type of componentTypes) expectedViews.set(type.viewId, { feature: type.feature, aspect: 'component', type, graph: catalog.graphFor(type.id) });
+    for (const node of Object.values(registry)) {
+      requireCondition(Array.isArray(node.sourceEntries) && Array.isArray(node.sourceGaps), `Missing semantic source policy: ${node.id}`);
+      const filtered = sourceEntriesFor(node, { kind: sourcePolicyKindFor(node), reviewedEntries: node.sourceEntries });
+      requireCondition(isDeepStrictEqual(filtered, node.sourceEntries), `Source entry outside the card policy: ${node.id}`);
+      if (node.kind === 'Component') requireCondition(node.sourceEntries.length > 0 || node.sourceGaps.length > 0, `Component has no definition evidence or pending explanation: ${node.id}`);
+    }
+  }
+  requireCondition(Array.isArray(artifact.views) && artifact.views.length === expectedViews.size, `Expected ${expectedViews.size} architecture views`);
   const scheduleDefinitions = new Map();
   for (const group of model.schedule_groups || []) {
     requireCondition(typeof group.id === 'string' && group.id && !scheduleDefinitions.has(group.id) && Number.isFinite(group.order), `Invalid or duplicate Schedule definition: ${group.id}`);
@@ -544,6 +469,18 @@ export function checkArchitecture(root, { dependencyDefinitions = DEPENDENCY_SOU
     requireCondition(expected && !seenViews.has(view.id), `Invalid or duplicate architecture view: ${view.id}`);
     seenViews.add(view.id);
     requireCondition(view.feature === expected.feature && view.aspect === expected.aspect, `Architecture view metadata mismatch: ${view.id}`);
+    if (expected.type) {
+      const type = expected.type;
+      for (const key of ['componentNodeId', 'projectionIds', 'ownerEntityIds']) requireCondition(isDeepStrictEqual(view[key], type[key]), `Component view ${key} mismatch: ${view.id}`);
+      requireCondition(isDeepStrictEqual(view.componentDetails, type.details), `Component view full type details mismatch: ${view.id}`);
+      requireCondition(view.componentTypeId === type.id && view.nodes.filter(node => node.id === type.componentNodeId).length === 1, `Component view center mismatch: ${view.id}`);
+      requireCondition(isDeepStrictEqual(view.nodes.map(node => [node.id, node.role]), expected.graph.nodes.map(node => [node.id, node.role])), `Component view Entity/System coverage mismatch: ${view.id}`);
+      const coreLink = ({ id, from, to, kind, operation, label, projectionIds, registrationIds, originalLinkIds, sourceLinkIds }) => ({ id, from, to, kind, operation, label, projectionIds, registrationIds, originalLinkIds, sourceLinkIds });
+      requireCondition(isDeepStrictEqual(view.links.map(coreLink), expected.graph.links.map(coreLink)), `Component view operation coverage mismatch: ${view.id}`);
+      const functions = view.nodes.map(node => registry[node.id]).filter(node => ['system', 'observer'].includes(node.kind));
+      const identities = functions.map(node => JSON.stringify([node.definition_source?.dependency?.name || '', node.source?.path, node.source?.line, node.name]));
+      requireCondition(new Set(identities).size === identities.length, `Duplicate system function in component view: ${view.id}`);
+    }
     requireCondition(Array.isArray(view.nodes) && Array.isArray(view.links), `Invalid view graph: ${view.id}`);
     entries.push({ view });
     for (const child of checkEntityViewProjections(view)) entries.push({ view: child, parentView: view });
@@ -638,6 +575,13 @@ export function checkArchitecture(root, { dependencyDefinitions = DEPENDENCY_SOU
     }
     checkMermaidSource(view, registry, scheduleDefinitions);
     try { checkMermaidGeometry(view.svg, view); } catch (error) { throw new Error(`Invalid Mermaid geometry in ${view.id}: ${error.message}`); }
+    if (view.aspect === 'component') {
+      const center = view.nodes.find(node => node.id === view.componentNodeId).position;
+      for (const node of view.nodes.filter(node => node.id !== view.componentNodeId)) {
+        const owner = view.ownerEntityIds.includes(node.id);
+        requireCondition(owner ? node.position.x + node.position.width <= center.x + .05 : node.position.x >= center.x + center.width - .05, `Component view column mismatch: ${view.id}/${node.id}`);
+      }
+    }
     checkMermaidStyles(view, registry);
     checkDataSections(view);
     if (styledView(view) || view.entityGroups) checkEntityGroups(view, model, registry, parentView);
@@ -664,7 +608,7 @@ export function checkArchitecture(root, { dependencyDefinitions = DEPENDENCY_SOU
     requireCondition(Array.isArray(model.required_nodes) && model.required_nodes.length > 0, 'Invalid required architecture node list');
     for (const id of model.required_nodes) {
       requireCondition(Object.hasOwn(registry, id), `Missing required architecture node: ${id}`);
-      requireCondition(visibleIds.has(resolveNode(id)), `Required architecture node is missing from views: ${id}`);
+      requireCondition(visibleIds.has(resolveNode(id)) || componentTypes.some(type => type.projectionIds.includes(resolveNode(id))), `Required architecture node is missing from views: ${id}`);
     }
   }
   const systems = new Map();
@@ -682,7 +626,7 @@ export function checkArchitecture(root, { dependencyDefinitions = DEPENDENCY_SOU
   ];
   for (const id of requiredData) {
     requireCondition(Object.hasOwn(registry, id), `Data node is missing from registry: ${id}`);
-    requireCondition(internalIds.has(resolveNode(id)), `Data node has no internal view: ${id}`);
+    requireCondition(internalIds.has(resolveNode(id)) || componentTypes.some(type => type.projectionIds.includes(id)), `Data node has no internal view or component type projection: ${id}`);
   }
   function requireLink(expected, label) {
     const links = visibleLinks.get(expected.id) || [];
@@ -739,6 +683,7 @@ export function checkArchitecture(root, { dependencyDefinitions = DEPENDENCY_SOU
   }
   function visitSources(value) {
     if (!value || typeof value !== 'object') return;
+    if (typeof value.path === 'string' && Number.isSafeInteger(value.line)) { readReference(value); return; }
     if (value.source != null) {
       const source = value.source;
       const file = readReference(source);
@@ -757,6 +702,7 @@ export function checkArchitecture(root, { dependencyDefinitions = DEPENDENCY_SOU
   }
   visitSources(model);
   visitSources(registry);
+  visitSources(artifact.views);
 
   const snapshots = embeddedJson(fs.readFileSync(path.join(directory, 'ecs-source.html'), 'utf8'), 'sources');
   requireCondition(Array.isArray(snapshots), 'Invalid source snapshot list');

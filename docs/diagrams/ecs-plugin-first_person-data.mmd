@@ -35,7 +35,6 @@ flowchart TB
   classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
   classDef node_observer fill:#F4F1F9,stroke:#7B4DB2,stroke-width:1.6px,color:#1F3340
   classDef node_entity fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
-  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
   classDef node_local fill:#F8F5F1,stroke:#AA8752,stroke-width:1.6px,color:#1F3340
   classDef node_note fill:#F7F7F5,stroke:#9A9B88,stroke-width:1.2px,color:#1F3340
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
@@ -47,384 +46,34 @@ flowchart TB
   direction LR
   subgraph relation_0[" "]
   direction TB
-  subgraph n10[" "]
-  direction TB
-  eh0@{ shape: text, label: "**键盘控制者**        ​<br/>保存玩家身份、输入上下文与受控        ​<br/>角色及相机。        ​" }
-  n18@{ shape: rect, label: "**Name**<br/>来自Bevy 引擎 ↗：用于日志与调试的控制<br/>者名称。" }
-  class n18 node_component
-  class n18 external_node
-  n1@{ shape: rect, label: "**PlayerId**<br/>独立于运行时 Entity 的业务身份。" }
-  class n1 node_component
-  n2@{ shape: rect, label: "**GameplayContext**<br/>标记用于玩法动作的控制上下文。" }
-  class n2 node_component
-  n19@{ shape: rect, label: "**GamepadDevice**<br/>来自Enhanced Input ↗：配置玩法上下文<br/>的手柄输入来源。" }
-  class n19 node_component
-  class n19 external_node
-  n3@{ shape: rect, label: "**ControlsCharacter**<br/>普通实体引用，指向受控角色。" }
-  class n3 node_component
-  eh0 layout_0@~~~ n18
-  n18 layout_1@~~~ n1
-  n1 layout_2@~~~ n2
-  n2 layout_3@~~~ n19
-  n19 layout_4@~~~ n3
-  n4@{ shape: rect, label: "**ControlsCamera**<br/>普通实体引用，指向受控相机。" }
-  class n4 node_component
-  n20@{ shape: rect, label: "**Actions#lt;GameplayContext#gt;**<br/>来自Enhanced Input ↗：索引控制上下文<br/>拥有的动作实体。" }
-  class n20 node_component
-  class n20 external_node
-  n21@{ shape: rect, label: "**ContextPriority#lt;GameplayContext#gt;**<br/>来自Enhanced Input ↗：配置动作上下文<br/>的输入评估优先级。" }
-  class n21 node_component
-  class n21 external_node
-  n22@{ shape: rect, label: "**ContextActivity#lt;GameplayContext#gt;**<br/>来自Enhanced Input ↗：保存动作上下文<br/>的启用状态。" }
-  class n22 node_component
-  class n22 external_node
-  n23@{ shape: rect, label: "**DespawnOnExit**<br/>来自Bevy 引擎 ↗：标记退出游戏会话时清<br/>理控制者。" }
-  class n23 node_component
-  class n23 external_node
-  eh0 layout_5@~~~ n4
-  n4 layout_6@~~~ n20
-  n20 layout_7@~~~ n21
-  n21 layout_8@~~~ n22
-  n22 layout_9@~~~ n23
-  end
+  n3@{ shape: rounded, label: "**键盘控制者**<br/>保存玩家身份、输入上下文与受控角色及相<br/>机。" }
+  class n3 node_entity
+  n4@{ shape: rounded, label: "**第一人称相机实体**<br/>提供跟随角色的第一人称视角与观察输入状<br/>态。" }
+  class n4 node_entity
+  n6@{ shape: rounded, label: "**动作实体**<br/>保存玩法或调试动作的评估结果与触发状态。" }
+  class n6 node_entity
+  n7@{ shape: rounded, label: "**绑定实体**<br/>将键盘或鼠标输入映射到玩法动作。" }
+  class n7 node_entity
+  n8@{ shape: hex, label: "**on_camera_look**<br/>将观察输入转为第一人称水平角与俯仰角。" }
+  class n8 node_observer
+  n9@{ shape: rounded, label: "**sync_character_facing**<br/>同步人物朝向并处理持物转向受阻。" }
+  class n9 node_system
+  n10@{ shape: rounded, label: "**角色业务根实体**<br/>来自场景装配 ↗：承载角色身份、运动意图<br/>与动态物理身体。" }
   class n10 node_entity
-  style n10 fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
-  subgraph layout_entity_n11[" "]
-  direction TB
-  subgraph n11[" "]
-  direction TB
-  eh2@{ shape: text, label: "**第一人称相机实体**        ​<br/>提供跟随角色的第一人称视角与观        ​<br/>察输入状态。        ​" }
-  n62@{ shape: rect, label: "**Name**<br/>来自Bevy 引擎 ↗：相机名称。" }
-  class n62 node_component
-  class n62 external_node
-  n63@{ shape: rect, label: "**Camera3d**<br/>来自Bevy 引擎 ↗：标记三维场景相机。" }
-  class n63 node_component
-  class n63 external_node
-  n5@{ shape: rect, label: "**FirstPersonCamera**<br/>保存跟随目标、眼高与观察角度。" }
-  class n5 node_component
-  n6@{ shape: rect, label: "**MouseLookState**<br/>保存光标捕获与观察输入初始化状态。" }
-  class n6 node_component
-  n64@{ shape: rect, label: "**Transform**<br/>来自Bevy 引擎 ↗：保存第一人称镜头的显<br/>示姿态。" }
-  class n64 node_component
-  class n64 external_node
-  eh2 layout_10@~~~ n62
-  n62 layout_11@~~~ n63
-  n63 layout_12@~~~ n5
-  n5 layout_13@~~~ n6
-  n6 layout_14@~~~ n64
-  n65@{ shape: rect, label: "**GlobalTransform**<br/>来自Bevy 引擎 ↗：引擎传播后的相机世界<br/>变换，供渲染提取。" }
-  class n65 node_component
-  class n65 external_node
-  n66@{ shape: rect, label: "**EguiContext**<br/>来自Egui / Inspector ↗：保存世界检查<br/>器的界面交互状态。" }
-  class n66 node_component
-  class n66 external_node
-  n67@{ shape: rect, label: "**PrimaryEguiContext**<br/>来自Egui / Inspector ↗：指定主检查器<br/>界面的相机上下文。" }
-  class n67 node_component
-  class n67 external_node
-  n68@{ shape: rect, label: "**EguiContextSettings**<br/>来自Egui / Inspector ↗：配置检查器上<br/>下文的输入与输出处理。" }
-  class n68 node_component
-  class n68 external_node
-  n69@{ shape: rect, label: "**EguiInput**<br/>来自Egui / Inspector ↗：缓冲检查器界<br/>面收到的输入。" }
-  class n69 node_component
-  class n69 external_node
-  eh2 layout_15@~~~ n65
-  n65 layout_16@~~~ n66
-  n66 layout_17@~~~ n67
-  n67 layout_18@~~~ n68
-  n68 layout_19@~~~ n69
-  n70@{ shape: rect, label: "**EguiMultipassSchedule**<br/>来自Egui / Inspector ↗：指定检查器上<br/>下文的内部界面调度。" }
-  class n70 node_component
-  class n70 external_node
-  n71@{ shape: rect, label: "**EguiFullOutput**<br/>来自Egui / Inspector ↗：保存检查器界<br/>面计算产生的输出。" }
-  class n71 node_component
-  class n71 external_node
-  n72@{ shape: rect, label: "**LoadingCamera**<br/>来自场景装配 ↗：加载期间相机身份，准备<br/>后移除。" }
-  class n72 node_component
-  class n72 external_node
-  n73@{ shape: rect, label: "**DespawnOnExit**<br/>来自Bevy 引擎 ↗：标记退出所属应用状态<br/>时销毁此实体。" }
-  class n73 node_component
-  class n73 external_node
-  n74@{ shape: rect, label: "**IsDefaultUiCamera**<br/>来自Bevy 引擎 ↗：指定菜单界面的默认绘<br/>制相机。" }
-  class n74 node_component
-  class n74 external_node
-  eh2 layout_20@~~~ n70
-  n70 layout_21@~~~ n71
-  n71 layout_22@~~~ n72
-  n72 layout_23@~~~ n73
-  n73 layout_24@~~~ n74
-  end
-  end
-  style layout_entity_n11 fill:none,stroke:none
-  class n11 node_entity
-  style n11 fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
-  subgraph n13[" "]
-  direction TB
-  eh4@{ shape: text, label: "**动作实体**        ​<br/>保存玩法或调试动作的评估结果与        ​<br/>触发状态。        ​" }
-  n85@{ shape: rect, label: "**Name**<br/>来自Bevy 引擎 ↗：Action#lt;A#gt; 要求的动作<br/>名称，用于插件诊断。" }
-  class n85 node_component
-  class n85 external_node
-  n86@{ shape: rect, label: "**Action#lt;A#gt;**<br/>来自Enhanced Input ↗：保存具体玩法动<br/>作的当前输出。" }
-  class n86 node_component
-  class n86 external_node
-  n87@{ shape: rect, label: "**ActionSettings**<br/>来自Enhanced Input ↗：保存动作的输入<br/>消费与重新激活策略。" }
-  class n87 node_component
-  class n87 external_node
-  n88@{ shape: rect, label: "**ActionOf#lt;GameplayContext#gt;**<br/>来自Enhanced Input ↗：将动作关联到所<br/>属控制上下文。" }
-  class n88 node_component
-  class n88 external_node
-  n89@{ shape: rect, label: "**Bindings**<br/>来自Enhanced Input ↗：索引动作拥有的<br/>输入绑定。" }
-  class n89 node_component
-  class n89 external_node
-  eh4 layout_25@~~~ n85
-  n85 layout_26@~~~ n86
-  n86 layout_27@~~~ n87
-  n87 layout_28@~~~ n88
-  n88 layout_29@~~~ n89
-  n90@{ shape: rect, label: "**Press**<br/>来自Enhanced Input ↗：将按钮按下转换<br/>为一次触发。" }
-  class n90 node_component
-  class n90 external_node
-  n91@{ shape: rect, label: "**ActionValue**<br/>来自Enhanced Input ↗：保存动作评估产<br/>生的通用输入值。" }
-  class n91 node_component
-  class n91 external_node
-  n92@{ shape: rect, label: "**TriggerState**<br/>来自Enhanced Input ↗：保存本次动作评<br/>估的触发状态。" }
-  class n92 node_component
-  class n92 external_node
-  n93@{ shape: rect, label: "**ActionEvents**<br/>来自Enhanced Input ↗：保存本次待派发<br/>的动作事件。" }
-  class n93 node_component
-  class n93 external_node
-  eh4 layout_30@~~~ n90
-  n90 layout_31@~~~ n91
-  n91 layout_32@~~~ n92
-  n92 layout_33@~~~ n93
-  n94@{ shape: rect, label: "**ActionTime**<br/>来自Enhanced Input ↗：动作持续与触发<br/>计时，由插件评估更新。" }
-  class n94 node_component
-  class n94 external_node
-  n95@{ shape: rect, label: "**ActionMock**<br/>来自Enhanced Input ↗：保存测试使用的<br/>模拟动作输入。" }
-  class n95 node_component
-  class n95 external_node
-  n96@{ shape: rect, label: "**ActionFns**<br/>来自Enhanced Input ↗：将通用动作值适<br/>配为具体动作组件。" }
-  class n96 node_component
-  class n96 external_node
-  n97@{ shape: rect, label: "**ConditionFns**<br/>来自Enhanced Input ↗：保存动作触发条<br/>件的执行适配。" }
-  class n97 node_component
-  class n97 external_node
-  eh4 layout_34@~~~ n94
-  n94 layout_35@~~~ n95
-  n95 layout_36@~~~ n96
-  n96 layout_37@~~~ n97
-  end
-  class n13 node_entity
-  style n13 fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
-  subgraph n14[" "]
-  direction TB
-  eh5@{ shape: text, label: "**绑定实体**        ​<br/>将键盘或鼠标输入映射到玩法动        ​<br/>作。        ​" }
-  n98@{ shape: rect, label: "**Binding**<br/>来自Enhanced Input ↗：保存设备输入到<br/>动作的映射。" }
-  class n98 node_component
-  class n98 external_node
-  n99@{ shape: rect, label: "**BindingOf**<br/>来自Enhanced Input ↗：将输入绑定关联<br/>到所属动作。" }
-  class n99 node_component
-  class n99 external_node
-  n100@{ shape: rect, label: "**FirstActivation**<br/>来自Enhanced Input ↗：记录绑定重新启<br/>用时的首次激活状态。" }
-  class n100 node_component
-  class n100 external_node
-  n101@{ shape: rect, label: "**Negate**<br/>来自Enhanced Input ↗：反转绑定输入的<br/>方向符号。" }
-  class n101 node_component
-  class n101 external_node
-  n102@{ shape: rect, label: "**SwizzleAxis**<br/>来自Enhanced Input ↗：将输入标量映射<br/>到指定坐标轴。" }
-  class n102 node_component
-  class n102 external_node
-  n103@{ shape: rect, label: "**ModifierFns**<br/>来自Enhanced Input ↗：保存输入修饰器<br/>的执行适配。" }
-  class n103 node_component
-  class n103 external_node
-  eh5 layout_38@~~~ n98
-  n98 layout_39@~~~ n99
-  n99 layout_40@~~~ n100
-  n100 layout_41@~~~ n101
-  n101 layout_42@~~~ n102
-  n102 layout_43@~~~ n103
-  end
-  class n14 node_entity
-  style n14 fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
-  n15@{ shape: hex, label: "**on_camera_look**<br/>将观察输入转为第一人称水平角与俯仰角。" }
-  class n15 node_observer
-  n16@{ shape: rounded, label: "**sync_character_facing**<br/>同步人物朝向并处理持物转向受阻。" }
-  class n16 node_system
-  subgraph layout_entity_n17[" "]
-  direction TB
-  subgraph n17[" "]
-  direction TB
-  eh1@{ shape: text, label: "**角色业务根实体**        ​<br/>来自场景装配 ↗：承载角色身        ​<br/>份、运动意图与动态物理身体。        ​" }
-  n24@{ shape: rect, label: "**Name**<br/>来自Bevy 引擎 ↗：角色根实体名称。" }
-  class n24 node_component
-  class n24 external_node
-  n25@{ shape: rect, label: "**Character**<br/>来自角色运动 ↗：标识具有角色运动能力的<br/>实体。" }
-  class n25 node_component
-  class n25 external_node
-  n26@{ shape: rect, label: "**CharacterIntent**<br/>来自角色运动 ↗：保存持续移动方向与单次<br/>跳跃、交互请求。" }
-  class n26 node_component
-  class n26 external_node
-  n27@{ shape: rect, label: "**CharacterMotion**<br/>来自角色运动 ↗：保存角色接地等运动观察<br/>结果。" }
-  class n27 node_component
-  class n27 external_node
-  n28@{ shape: rect, label: "**Transform**<br/>来自Bevy 引擎 ↗：保存角色经插值生成的<br/>显示姿态。" }
-  class n28 node_component
-  class n28 external_node
-  n29@{ shape: rect, label: "**GlobalTransform**<br/>来自Bevy 引擎 ↗：保存层级传播后的世界<br/>姿态。" }
-  class n29 node_component
-  class n29 external_node
-  n30@{ shape: rect, label: "**Visibility**<br/>来自Bevy 引擎 ↗：根实体的可见性，视觉<br/>子实体继承层级可见性。" }
-  class n30 node_component
-  class n30 external_node
-  n31@{ shape: rect, label: "**Children**<br/>来自Bevy 引擎 ↗：索引当前实体的直接子<br/>实体。" }
-  class n31 node_component
-  class n31 external_node
-  n32@{ shape: rect, label: "**HoldingItems**<br/>来自物品交互 ↗：索引角色当前持有的物<br/>品。" }
-  class n32 node_component
-  class n32 external_node
-  n33@{ shape: rect, label: "**RigidBody**<br/>来自Avian ↗：定义实体参与物理模拟的刚<br/>体模式。" }
-  class n33 node_component
-  class n33 external_node
-  eh1 layout_44@~~~ n24
-  n24 layout_45@~~~ n25
-  n25 layout_46@~~~ n26
-  n26 layout_47@~~~ n27
-  n27 layout_48@~~~ n28
-  n28 layout_49@~~~ n29
-  n29 layout_50@~~~ n30
-  n30 layout_51@~~~ n31
-  n31 layout_52@~~~ n32
-  n32 layout_53@~~~ n33
-  n34@{ shape: rect, label: "**Collider**<br/>来自Avian ↗：保存参与物理碰撞的实体形<br/>状。" }
-  class n34 node_component
-  class n34 external_node
-  n35@{ shape: rect, label: "**Position**<br/>来自Avian ↗：保存物理模拟中的真实位<br/>置。" }
-  class n35 node_component
-  class n35 external_node
-  n36@{ shape: rect, label: "**Rotation**<br/>来自Avian ↗：保存物理模拟中的真实旋<br/>转。" }
-  class n36 node_component
-  class n36 external_node
-  n37@{ shape: rect, label: "**LinearVelocity**<br/>来自Avian ↗：实际线速度，由冲量、外<br/>力、重力与接触求解改变。" }
-  class n37 node_component
-  class n37 external_node
-  n38@{ shape: rect, label: "**AngularVelocity**<br/>来自Avian ↗：保存物理模拟中的角速度。" }
-  class n38 node_component
-  class n38 external_node
-  n39@{ shape: rect, label: "**Mass**<br/>来自Avian ↗：保存显式配置的质量。" }
-  class n39 node_component
-  class n39 external_node
-  n40@{ shape: rect, label: "**ComputedMass**<br/>来自Avian ↗：保存物理求解使用的计算质<br/>量。" }
-  class n40 node_component
-  class n40 external_node
-  n41@{ shape: rect, label: "**ComputedAngularInertia**<br/>来自Avian ↗：保存物理求解使用的计算角<br/>惯量。" }
-  class n41 node_component
-  class n41 external_node
-  n42@{ shape: rect, label: "**ComputedCenterOfMass**<br/>来自Avian ↗：保存物理求解使用的计算质<br/>心。" }
-  class n42 node_component
-  class n42 external_node
-  n43@{ shape: rect, label: "**CollisionLayers**<br/>来自Avian ↗：配置实体之间允许发生碰撞<br/>的层。" }
-  class n43 node_component
-  class n43 external_node
-  eh1 layout_54@~~~ n34
-  n34 layout_55@~~~ n35
-  n35 layout_56@~~~ n36
-  n36 layout_57@~~~ n37
-  n37 layout_58@~~~ n38
-  n38 layout_59@~~~ n39
-  n39 layout_60@~~~ n40
-  n40 layout_61@~~~ n41
-  n41 layout_62@~~~ n42
-  n42 layout_63@~~~ n43
-  n44@{ shape: rect, label: "**CollisionEventsEnabled**<br/>来自Avian ↗：请求离散接触开始/结束消<br/>息，用于集中日志。" }
-  class n44 node_component
-  class n44 external_node
-  n45@{ shape: rect, label: "**SweptCcd**<br/>来自Avian ↗：启用连续碰撞检测以减少高<br/>速穿透。" }
-  class n45 node_component
-  class n45 external_node
-  n46@{ shape: rect, label: "**Friction**<br/>来自Avian ↗：保存接触表面的摩擦参数。" }
-  class n46 node_component
-  class n46 external_node
-  n47@{ shape: rect, label: "**Restitution**<br/>来自Avian ↗：接触恢复系数。" }
-  class n47 node_component
-  class n47 external_node
-  n48@{ shape: rect, label: "**VelocityIntegrationData**<br/>来自Avian ↗：累计本物理步的世界加速度<br/>与外力。" }
-  class n48 node_component
-  class n48 external_node
-  n49@{ shape: rect, label: "**AccumulatedLocalAcceleration**<br/>来自Avian ↗：累计本物理步的局部加速<br/>度。" }
-  class n49 node_component
-  class n49 external_node
-  n50@{ shape: rect, label: "**SleepTimer**<br/>来自Avian ↗：记录刚体休眠计时。" }
-  class n50 node_component
-  class n50 external_node
-  n51@{ shape: rect, label: "**TranslationInterpolation**<br/>来自Avian ↗：启用平移显示插值。" }
-  class n51 node_component
-  class n51 external_node
-  n52@{ shape: rect, label: "**TranslationEasingState**<br/>来自Avian ↗：保存固定步平移插值的起止<br/>端点。" }
-  class n52 node_component
-  class n52 external_node
-  eh1 layout_64@~~~ n44
-  n44 layout_65@~~~ n45
-  n45 layout_66@~~~ n46
-  n46 layout_67@~~~ n47
-  n47 layout_68@~~~ n48
-  n48 layout_69@~~~ n49
-  n49 layout_70@~~~ n50
-  n50 layout_71@~~~ n51
-  n51 layout_72@~~~ n52
-  n53@{ shape: rect, label: "**LockedAxes**<br/>来自Avian ↗：限制刚体可移动或旋转的<br/>轴。" }
-  class n53 node_component
-  class n53 external_node
-  n54@{ shape: rect, label: "**ColliderAabb**<br/>来自Avian ↗：保存碰撞查询使用的轴对齐<br/>包围盒。" }
-  class n54 node_component
-  class n54 external_node
-  n55@{ shape: rect, label: "**SpawnPoint**<br/>来自越界恢复 ↗：每个业务根独立保存出生<br/>姿态。" }
-  class n55 node_component
-  class n55 external_node
-  n56@{ shape: rect, label: "**ResumeInterpolation**<br/>来自越界恢复 ↗：记录本次恢复临时添加的<br/>暂停项。" }
-  class n56 node_component
-  class n56 external_node
-  n57@{ shape: rect, label: "**NoTranslationEasing**<br/>来自Avian ↗：暂停独立平移插值。" }
-  class n57 node_component
-  class n57 external_node
-  n58@{ shape: rect, label: "**NoRotationEasing**<br/>来自Avian ↗：暂停独立旋转插值。" }
-  class n58 node_component
-  class n58 external_node
-  n59@{ shape: rect, label: "**DespawnOnExit**<br/>来自Bevy 引擎 ↗：标记退出所属应用状态<br/>时销毁此实体。" }
-  class n59 node_component
-  class n59 external_node
-  n60@{ shape: rect, label: "**CarryBaseMass**<br/>来自物品交互 ↗：挂接时保存，释放或箱体<br/>销毁时恢复原人物质量。" }
-  class n60 node_component
-  class n60 external_node
-  n61@{ shape: rect, label: "**RigidBodyColliders**<br/>来自Avian ↗：索引属于同一刚体的全部碰<br/>撞体。" }
-  class n61 node_component
-  class n61 external_node
-  eh1 layout_73@~~~ n53
-  n53 layout_74@~~~ n54
-  n54 layout_75@~~~ n55
-  n55 layout_76@~~~ n56
-  n56 layout_77@~~~ n57
-  n57 layout_78@~~~ n58
-  n58 layout_79@~~~ n59
-  n59 layout_80@~~~ n60
-  n60 layout_81@~~~ n61
-  end
-  end
-  style layout_entity_n17 fill:none,stroke:none
-  class n17 node_entity
-  class n17 external_node
-  style n17 fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340,stroke-dasharray:6 4
-  n15 e0@-->|"观察角度"| n5
+  class n10 external_node
+  n8 e0@-->|"观察角度"| n4
   class e0 edge_write
-  n5 e1@-->|"角度"| n16
+  n4 e1@-->|"角度"| n9
   class e1 edge_read
-  n10 e2@-->|"ControlsCharacter"| n17
+  n3 e2@-->|"ControlsCharacter"| n10
   class e2 edge_reference
-  n10 e3@-->|"ControlsCamera"| n11
+  n3 e3@-->|"ControlsCamera"| n4
   class e3 edge_reference
-  n11 e4@--->|"FirstPersonCamera.target"| n17
+  n4 e4@-->|"FirstPersonCamera.target"| n10
   class e4 edge_reference
-  n13 e5@-->|"ActionOf#lt;GameplayContext#gt;"| n10
+  n6 e5@-->|"ActionOf#lt;GameplayContext#gt;"| n3
   class e5 edge_relationship
-  n14 e6@-->|"BindingOf"| n13
+  n7 e6@-->|"BindingOf"| n6
   class e6 edge_relationship
   end
   style relation_0 fill:none,stroke:none
@@ -435,67 +84,19 @@ flowchart TB
   direction TB
   n0@{ shape: notch-rect, label: "**Local#lt;f64#gt;（next_log_at）**<br/>保存连续观察角度日志的下次采样时间。" }
   class n0 node_local
-  subgraph n12[" "]
-  direction TB
-  eh3@{ shape: text, label: "**业务直属 GLB 视觉根实体**        ​<br/>承载业务实体的模型、骨骼与动画        ​<br/>子树。        ​" }
-  n75@{ shape: rect, label: "**Name**<br/>来自Bevy 引擎 ↗：各视觉部分的调试名<br/>称。" }
-  class n75 node_component
-  class n75 external_node
-  n76@{ shape: rect, label: "**Transform**<br/>来自Bevy 引擎 ↗：保存模型相对业务根的<br/>局部显示姿态。" }
-  class n76 node_component
-  class n76 external_node
-  n77@{ shape: rect, label: "**GlobalTransform**<br/>来自Bevy 引擎 ↗：保存层级传播后的世界<br/>姿态。" }
-  class n77 node_component
-  class n77 external_node
-  n78@{ shape: rect, label: "**ChildOf**<br/>来自Bevy 引擎 ↗：关联父实体并跟随父级<br/>生命周期。" }
-  class n78 node_component
-  class n78 external_node
-  n79@{ shape: rect, label: "**Visibility**<br/>来自Bevy 引擎 ↗：控制实体及视觉子树的<br/>显示状态。" }
-  class n79 node_component
-  class n79 external_node
-  n7@{ shape: rect, label: "**CharacterVisual**<br/>标记随第一人称视角隐藏的角色模型。" }
-  class n7 node_component
-  eh3 layout_82@~~~ n75
-  n75 layout_83@~~~ n76
-  n76 layout_84@~~~ n77
-  n77 layout_85@~~~ n78
-  n78 layout_86@~~~ n79
-  n79 layout_87@~~~ n7
-  n80@{ shape: rect, label: "**CourierVisual**<br/>来自角色动画 ↗：保存主角模型来源并作为<br/>动画绑定入口。" }
-  class n80 node_component
-  class n80 external_node
-  n81@{ shape: rect, label: "**CourierAnimationPending**<br/>来自角色动画 ↗：实例就绪后等待命名动画<br/>绑定。" }
-  class n81 node_component
-  class n81 external_node
-  n82@{ shape: rect, label: "**CourierFootGrounding**<br/>来自角色动画 ↗：保存鞋底高度补偿与骨链<br/>引用。" }
-  class n82 node_component
-  class n82 external_node
-  n83@{ shape: rect, label: "**WorldAssetRoot**<br/>来自Bevy 引擎 ↗：主角和物品模板的实例<br/>化入口。" }
-  class n83 node_component
-  class n83 external_node
-  n84@{ shape: rect, label: "**Children**<br/>来自Bevy 引擎 ↗：索引当前实体的直接子<br/>实体。" }
-  class n84 node_component
-  class n84 external_node
-  eh3 layout_88@~~~ n80
-  n80 layout_89@~~~ n81
-  n81 layout_90@~~~ n82
-  n82 layout_91@~~~ n83
-  n83 layout_92@~~~ n84
-  end
-  class n12 node_entity
-  style n12 fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
-  n8@{ shape: doc, label: "**第一人称模型生命周期**<br/>保持受控角色自身模型隐藏并恢复失效关联。" }
-  class n8 node_note
-  n9@{ shape: rect, label: "**捕获与输入上下文**<br/>保存光标捕获与玩法输入启用状态。" }
-  class n9 node_component
-  n0 layout_93@~~~ n12
-  n12 layout_94@~~~ n8
-  n8 layout_95@~~~ n9
+  n1@{ shape: doc, label: "**第一人称模型生命周期**<br/>保持受控角色自身模型隐藏并恢复失效关联。" }
+  class n1 node_note
+  n2@{ shape: doc, label: "**捕获与输入上下文**<br/>保存光标捕获与玩法输入启用状态。" }
+  class n2 node_note
+  n5@{ shape: rounded, label: "**业务直属 GLB 视觉根实体**<br/>承载业务实体的模型、骨骼与动画子树。" }
+  class n5 node_entity
+  n0 layout_0@~~~ n1
+  n1 layout_1@~~~ n2
+  n2 layout_2@~~~ n5
   end
   style column_0 fill:none,stroke:none
   end
   e0@{ curve: basis }
-  e1@{ curve: basis }
   e2@{ curve: basis }
   e3@{ curve: basis }
-  e4@{ curve: bumpX }
+  e4@{ curve: basis }

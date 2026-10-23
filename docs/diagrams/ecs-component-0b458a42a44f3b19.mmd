@@ -1,0 +1,75 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 32,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#component-0b458a42a44f3b19-e4{marker-start:url(#component-0b458a42a44f3b19_flowchart-v2-pointStart)!important}\n#component-0b458a42a44f3b19_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}"
+  }
+}
+---
+flowchart RL
+  accTitle: Pickable · 组件关系
+  accDescr: 左侧为包含组件的实体，中间为组件类型，右侧每个系统函数只显示一次；连线表达访问与生命周期操作。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_entity fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**设置滚动条轨道**<br/>来自菜单与界面 ↗：为设置内容视口提供可<br/>交互滚动轨道。" }
+  class n0 node_entity
+  class n0 external_node
+  n1@{ shape: rounded, label: "**设置滚动条滑块**<br/>来自菜单与界面 ↗：显示设置内容的可视比<br/>例并支持拖动。" }
+  class n1 node_entity
+  class n1 external_node
+  n2@{ shape: rounded, label: "**Pickable**<br/>控制滚动条是否接受指针拾取。" }
+  class n2 node_component
+  n3@{ shape: rounded, label: "**rebuild_page**<br/>来自菜单与界面 ↗：按页面结构变化重建菜<br/>单界面。" }
+  class n3 node_system
+  class n3 external_node
+  n4@{ shape: rounded, label: "**sync_settings_scrollbars**<br/>来自菜单与界面 ↗：同步滚动条显隐、拾取<br/>范围与高亮。" }
+  class n4 node_system
+  class n4 external_node
+  n2 layout_0@~~~ n0
+  n2 layout_1@~~~ n1
+  n3 layout_2@~~~ n2
+  n4 layout_3@~~~ n2
+  n3 e2@-->|"添加"| n2
+  class e2 edge_write
+  n4 e3@-->|"可变访问"| n2
+  class e3 edge_write
+  n2 e0@-->|"可能挂载于"| n0
+  class e0 edge_reference
+  n2 e1@-->|"可能挂载于"| n1
+  class e1 edge_reference
+  n4 e4@---|"查询访问"| n2
+  class e4 edge_read
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }

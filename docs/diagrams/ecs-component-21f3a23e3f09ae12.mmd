@@ -1,0 +1,86 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 32,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#component-21f3a23e3f09ae12-e1{marker-start:url(#component-21f3a23e3f09ae12_flowchart-v2-pointStart)!important}\n#component-21f3a23e3f09ae12-e3{marker-start:url(#component-21f3a23e3f09ae12_flowchart-v2-pointStart)!important}\n#component-21f3a23e3f09ae12-e5{marker-start:url(#component-21f3a23e3f09ae12_flowchart-v2-pointStart)!important}\n#component-21f3a23e3f09ae12-e6{marker-start:url(#component-21f3a23e3f09ae12_flowchart-v2-pointStart)!important}\n#component-21f3a23e3f09ae12_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}"
+  }
+}
+---
+flowchart RL
+  accTitle: CarryGrip · 组件关系
+  accDescr: 左侧为包含组件的实体，中间为组件类型，右侧每个系统函数只显示一次；连线表达访问与生命周期操作。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_entity fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**可搬物品业务根实体**<br/>来自场景装配 ↗：承载可拾取物品身份及自<br/>由运动、共享持握状态。" }
+  class n0 node_entity
+  class n0 external_node
+  n1@{ shape: rounded, label: "**CarryGrip**<br/>保存握持对齐使用的模型偏移。" }
+  class n1 node_component
+  n2@{ shape: rounded, label: "**WorldInspectorPlugin / world_**<br/>**inspector_ui**<br/>来自Egui / Inspector ↗：展示并编辑开<br/>放反射的实体、资源与资产。" }
+  class n2 node_system
+  class n2 external_node
+  n3@{ shape: rounded, label: "**sync_held_presentation**<br/>按人物呈现姿态同步持物模型与握持目标。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**spawn_actors**<br/>来自场景装配 ↗：装配玩家、可搬物、控制<br/>者与相机。" }
+  class n4 node_system
+  class n4 external_node
+  n5@{ shape: rounded, label: "**warn_hold_strain**<br/>检查持续持握偏差并发出失稳提示音。" }
+  class n5 node_system
+  n6@{ shape: rounded, label: "**align_attachments**<br/>沿安全碰撞路径将物品对齐双手。" }
+  class n6 node_system
+  n1 layout_0@~~~ n0
+  n2 layout_1@~~~ n1
+  n3 layout_2@~~~ n1
+  n4 layout_3@~~~ n1
+  n5 layout_4@~~~ n1
+  n6 layout_5@~~~ n1
+  n2 e2@-->|"反射可选编辑"| n1
+  class e2 edge_write
+  n4 e4@-->|"添加"| n1
+  class e4 edge_write
+  n1 e0@-->|"可能挂载于"| n0
+  class e0 edge_reference
+  n2 e1@---|"反射查看"| n1
+  class e1 edge_read
+  n3 e3@---|"查询访问"| n1
+  class e3 edge_read
+  n5 e5@---|"查询访问"| n1
+  class e5 edge_read
+  n6 e6@---|"查询访问"| n1
+  class e6 edge_read
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }

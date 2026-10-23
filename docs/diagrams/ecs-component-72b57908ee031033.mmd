@@ -1,0 +1,86 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 32,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#component-72b57908ee031033-e2{marker-start:url(#component-72b57908ee031033_flowchart-v2-pointStart)!important}\n#component-72b57908ee031033-e3{marker-start:url(#component-72b57908ee031033_flowchart-v2-pointStart)!important}\n#component-72b57908ee031033-e4{marker-start:url(#component-72b57908ee031033_flowchart-v2-pointStart)!important}\n#component-72b57908ee031033-e5{marker-start:url(#component-72b57908ee031033_flowchart-v2-pointStart)!important}\n#component-72b57908ee031033-e6{marker-start:url(#component-72b57908ee031033_flowchart-v2-pointStart)!important}\n#component-72b57908ee031033_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}"
+  }
+}
+---
+flowchart RL
+  accTitle: MenuScroll · 组件关系
+  accDescr: 左侧为包含组件的实体，中间为组件类型，右侧每个系统函数只显示一次；连线表达访问与生命周期操作。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_observer fill:#F4F1F9,stroke:#7B4DB2,stroke-width:1.6px,color:#1F3340
+  classDef node_entity fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**设置面板内容视口**<br/>为设置标题、字段、说明与提示提供滚动视<br/>口。" }
+  class n0 node_entity
+  n1@{ shape: rounded, label: "**MenuScroll**<br/>滚动视口标记。" }
+  class n1 node_component
+  n2@{ shape: rounded, label: "**rebuild_page**<br/>按页面结构变化重建菜单界面。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**scroll_focused_button**<br/>将当前聚焦设置按钮滚入可视范围。" }
+  class n3 node_system
+  n4@{ shape: hex, label: "**scroll_menu**<br/>滚动设置内容并限制在有效范围内。" }
+  class n4 node_observer
+  n5@{ shape: rounded, label: "**bind_settings_scrollbars**<br/>将设置滚动条绑定到对应内容视口。" }
+  class n5 node_system
+  n6@{ shape: rounded, label: "**sync_settings_scrollbars**<br/>同步滚动条显隐、拾取范围与高亮。" }
+  class n6 node_system
+  n7@{ shape: hex, label: "**scroll_over_settings_scrollbar**<br/>通过滚动条上的滚轮操作滚动内容视口。" }
+  class n7 node_observer
+  n1 layout_0@~~~ n0
+  n2 layout_1@~~~ n1
+  n3 layout_2@~~~ n1
+  n4 layout_3@~~~ n1
+  n5 layout_4@~~~ n1
+  n6 layout_5@~~~ n1
+  n7 layout_6@~~~ n1
+  n2 e1@-->|"添加"| n1
+  class e1 edge_write
+  n1 e0@-->|"可能挂载于"| n0
+  class e0 edge_reference
+  n3 e2@---|"存在 / 变更过滤"| n1
+  class e2 edge_reference
+  n4 e3@---|"存在 / 变更过滤"| n1
+  class e3 edge_reference
+  n5 e4@---|"存在 / 变更过滤"| n1
+  class e4 edge_reference
+  n6 e5@---|"存在 / 变更过滤"| n1
+  class e5 edge_reference
+  n7 e6@---|"存在 / 变更过滤"| n1
+  class e6 edge_reference
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: bumpX }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }

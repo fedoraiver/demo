@@ -1,0 +1,79 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 32,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#component-3d04ec9764d2f3ee-e2{marker-start:url(#component-3d04ec9764d2f3ee_flowchart-v2-pointStart)!important}\n#component-3d04ec9764d2f3ee_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}"
+  }
+}
+---
+flowchart RL
+  accTitle: CursorOptions · 组件关系
+  accDescr: 左侧为包含组件的实体，中间为组件类型，右侧每个系统函数只显示一次；连线表达访问与生命周期操作。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_observer fill:#F4F1F9,stroke:#7B4DB2,stroke-width:1.6px,color:#1F3340
+  classDef node_entity fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**主窗口实体**<br/>承载应用主窗口及原生尺寸策略。" }
+  class n0 node_entity
+  n1@{ shape: rounded, label: "**CursorOptions**<br/>配置光标可见性与抓取模式。" }
+  class n1 node_component
+  n2@{ shape: rounded, label: "**sync_mouse_capture**<br/>来自第一人称控制 ↗：管理光标捕获及玩法<br/>输入启停。" }
+  class n2 node_system
+  class n2 external_node
+  n3@{ shape: rounded, label: "**filter_captured_egui_input**<br/>来自第一人称控制 ↗：隔离游戏操作与检查<br/>器界面输入。" }
+  class n3 node_system
+  class n3 external_node
+  n4@{ shape: rounded, label: "**suspend_controls**<br/>来自第一人称控制 ↗：停用玩法输入并释放<br/>光标。" }
+  class n4 node_system
+  class n4 external_node
+  n5@{ shape: hex, label: "**release_pointer_for_inspector**<br/>来自第一人称控制 ↗：释放光标以允许操作<br/>世界检查器。" }
+  class n5 node_observer
+  class n5 external_node
+  n1 layout_0@~~~ n0
+  n2 layout_1@~~~ n1
+  n3 layout_2@~~~ n1
+  n4 layout_3@~~~ n1
+  n5 layout_4@~~~ n1
+  n2 e1@-->|"字段赋值"| n1
+  class e1 edge_write
+  n4 e3@-->|"字段赋值"| n1
+  class e3 edge_write
+  n5 e4@-->|"字段赋值"| n1
+  class e4 edge_write
+  n1 e0@-->|"可能挂载于"| n0
+  class e0 edge_reference
+  n3 e2@---|"查询访问"| n1
+  class e2 edge_read
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }

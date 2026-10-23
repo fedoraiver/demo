@@ -49,6 +49,20 @@ test('switching feature clears old node and overview removes irrelevant tab stat
   assert.equal(overview.searchParams.get('workspace'), '/tmp/checkout');
 });
 
+test('component routes preserve the originating feature and tab, node selection and unrelated URL state', () => {
+  const href = 'file:///D:/demo/docs/diagrams/ecs-architecture.html?feature=character&tab=data&workspace=D%3A%2Fdemo&keep=1#source';
+  const next = { feature: 'character', aspect: 'data', node: 'system-update', component: 'character.Transform' };
+  const url = new URL(architectureUrl(next, href, features));
+  assert.deepEqual(resolveArchitectureSelection(url.search, features), next);
+  assert.equal(url.searchParams.get('workspace'), 'D:/demo');
+  assert.equal(url.searchParams.get('keep'), '1');
+  assert.equal(url.hash, '#source');
+  const cleared = new URL(architectureUrl({ feature: 'ui', aspect: 'systems' }, url.href, features));
+  assert.equal(cleared.searchParams.has('component'), false);
+  assert.equal(cleared.searchParams.has('node'), false);
+  assert.deepEqual(resolveArchitectureSelection('?feature=character&tab=data&component=%20%20', features), { feature: 'character', aspect: 'data', node: null });
+});
+
 test('inline assets run the same pure rules and cannot close their script element', () => {
   const dangerousFeatures = [...features, { id: '</script><script>danger()</script>' }];
   const assets = architectureNavigationAssets(dangerousFeatures);
