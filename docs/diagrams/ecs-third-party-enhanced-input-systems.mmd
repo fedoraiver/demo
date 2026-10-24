@@ -32,6 +32,7 @@ flowchart TB
   accTitle: Enhanced Input · 系统与调度
   accDescr: Enhanced Input的系统与调度；外部契约保留摘要，可跳转到所属插件。
   %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
   classDef node_contract fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
   classDef edge_order stroke:#334155,stroke-width:2px
   classDef external_node stroke-dasharray:6 4
@@ -40,33 +41,39 @@ flowchart TB
   style diagram_main fill:none,stroke:none
   subgraph sg0["PreUpdate"]
   direction TB
-  n3@{ shape: lin-rect, label: "**ApplyDeferred（捕获 → 动作准备）**<br/>来自Bevy 引擎 ↗：使本帧玩法输入启停变<br/>更对动作评估可见。" }
-  class n3 node_contract
-  class n3 external_node
+  n4@{ shape: lin-rect, label: "**ApplyDeferred（捕获 → 动作准备）**<br/>来自Bevy 引擎 ↗：使本帧玩法输入启停变<br/>更对动作评估可见。" }
+  class n4 node_contract
+  class n4 external_node
   n0@{ shape: lin-rect, label: "**EnhancedInputSystems::Prepare**<br/>准备动作评估并清理待释放的输入。" }
   class n0 node_contract
   n1@{ shape: lin-rect, label: "**EnhancedInputSystems::Update**<br/>评估绑定输入并更新动作值与触发状态。" }
   class n1 node_contract
-  n2@{ shape: lin-rect, label: "**EnhancedInputSystems::Apply**<br/>提交动作值并派发对应事件。" }
+  n2@{ shape: lin-rect, label: "**EnhancedInputSystems::Apply**<br/>把评估结果写回强类型动作值。" }
   class n2 node_contract
-  n4@{ shape: lin-rect, label: "**ApplyDeferred · 动作事件**<br/>来自菜单与界面 ↗：应用动作事件命令以触<br/>发匹配的观察系统。" }
-  class n4 node_contract
-  class n4 external_node
-  n3 layout_0@~~~ n0
+  n3@{ shape: rounded, label: "**EnhancedInputSystems::Trigger**<br/>按上下文顺序排入动作事件命令。" }
+  class n3 node_system
+  n5@{ shape: lin-rect, label: "**ApplyDeferred · 动作事件**<br/>来自菜单与界面 ↗：应用动作事件命令以触<br/>发匹配的观察系统。" }
+  class n5 node_contract
+  class n5 external_node
+  n4 layout_0@~~~ n0
   n0 layout_1@~~~ n1
   n1 layout_2@~~~ n2
-  n2 layout_3@~~~ n4
+  n2 layout_3@~~~ n3
+  n3 layout_4@~~~ n5
   end
-  n3 e0@--> n0
+  n4 e0@--> n0
   class e0 edge_order
   n0 e1@--> n1
   class e1 edge_order
   n1 e2@--> n2
   class e2 edge_order
-  n2 e3@--> n4
+  n3 e3@--> n5
   class e3 edge_order
+  n2 e4@--> n3
+  class e4 edge_order
   end
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
   e3@{ curve: basis }
+  e4@{ curve: basis }

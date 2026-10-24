@@ -126,6 +126,19 @@ test('systems, scheduling contracts, event observers and external callbacks reta
   assert.equal(visualTypeOf(registry['state-paused']), 'note');
 });
 
+test('原生插件组复用插件视觉，保留PluginGroup身份和各回调的真实语义', () => {
+  for (const id of ['plugin-UiWidgetsPlugins', 'plugin-DefaultPickingPlugins']) {
+    const node = registry[id], before = JSON.stringify(node);
+    assert.equal(node.kind, 'PluginGroup');
+    assert.equal(visualTypeOf(node), 'plugin');
+    assert.equal(JSON.stringify(node), before);
+  }
+  for (const id of ['native_pointer_events', 'native_update_hovered']) assert.equal(visualTypeOf(registry[id]), 'system', id);
+  for (const suffix of ['down', 'up', 'click', 'drag_end', 'cancel', 'key']) assert.equal(visualTypeOf(registry[`native_button_${suffix}`]), 'observer', suffix);
+  for (const id of ['picking_hover', 'picking_post_hover', 'picking_last']) assert.equal(visualTypeOf(registry[id]), 'contract', id);
+  assert.equal(edgeSemanticOf({ from: 'plugin-UiWidgetsPlugins', to: 'plugin-ButtonPlugin', kind: 'registration' }, registry), 'registration');
+});
+
 test('Messages resources are buffer shapes and their communication differs from ordinary data access', () => {
   assert.equal(visualTypeOf(registry['resource.SoundRequestMessages']), 'message_buffer');
   assert.equal(visualTypeOf(registry['resource.AppTransitionMessages']), 'message_buffer');
@@ -142,9 +155,9 @@ test('Messages resources are buffer shapes and their communication differs from 
   for (const [id, expected] of cases) assert.equal(edgeSemanticOf(model.system_links.find(link => link.id === id), registry), expected, id);
 });
 
-test('all 233 detailed links and 27 feature links are classified without changing raw contracts', () => {
+test('all 296 detailed links and 27 feature links are classified without changing raw contracts', () => {
   const before = JSON.stringify(model);
-  assert.equal(model.system_links.length, 233);
+  assert.equal(model.system_links.length, 296);
   assert.equal(model.feature_links.length, 27);
   const counts = {};
   for (const link of [...model.system_links, ...model.feature_links]) {
@@ -153,13 +166,13 @@ test('all 233 detailed links and 27 feature links are classified without changin
     assert.equal(typeof displayLabelOf(link, semantic, registry), 'string');
     counts[semantic] = (counts[semantic] || 0) + 1;
   }
-  assert.equal(counts.membership, 18);
+  assert.equal(counts.membership, 20);
   assert.equal(counts.constraint, 2);
-  assert.equal(counts.registration, 25);
-  assert.equal(counts.emit, 1);
-  assert.equal(counts.observe, 20);
+  assert.equal(counts.registration, 38);
+  assert.equal(counts.emit, 14);
+  assert.equal(counts.observe, 28);
   assert.equal(counts.dependency, 27);
-  assert.equal(counts.order, 66);
+  assert.equal(counts.order, 74);
   assert.equal(counts.relationship, 18);
   assert.equal(counts.reference, 14);
   assert.equal(JSON.stringify(model), before);
@@ -194,6 +207,7 @@ test('edge labels contain contract names and domain conditions rather than repea
     ['chain / Commands', 'order', 'Commands'], ['after(Writeback)', 'order', 'Writeback'], ['after StepSimulation', 'order', 'StepSimulation'],
     ['Build →', 'order', 'Build'], ['Pointer → Style', 'order', 'Pointer → Style'],
     ['读取 PrototypeConfig', 'dependency', 'PrototypeConfig'], ['使用 Avian 身体与碰撞层', 'dependency', 'Avian 身体与碰撞层'],
+    ['写入 / 结构变更（待核实）', 'write', '结构变更（待核实）'],
     ['发布 SoundRequest', 'dependency', 'SoundRequest'], ['消费交互请求', 'read', '交互请求'],
     ['先安装 Egui', 'registration', 'Egui'], ['显式安装', 'registration', ''],
     ['禁用默认 LogPlugin / AudioPlugin', 'registration', '禁用默认 LogPlugin / AudioPlugin'],

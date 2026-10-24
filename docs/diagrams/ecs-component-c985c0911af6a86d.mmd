@@ -1,0 +1,458 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 32,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#component-c985c0911af6a86d-e13{marker-start:url(#component-c985c0911af6a86d_flowchart-v2-pointStart)!important}\n#component-c985c0911af6a86d-e14{marker-start:url(#component-c985c0911af6a86d_flowchart-v2-pointStart)!important}\n#component-c985c0911af6a86d-e15{marker-start:url(#component-c985c0911af6a86d_flowchart-v2-pointStart)!important}\n#component-c985c0911af6a86d-e17{marker-start:url(#component-c985c0911af6a86d_flowchart-v2-pointStart)!important}\n#component-c985c0911af6a86d-e19{marker-start:url(#component-c985c0911af6a86d_flowchart-v2-pointStart)!important}\n#component-c985c0911af6a86d-e21{marker-start:url(#component-c985c0911af6a86d_flowchart-v2-pointStart)!important}\n#component-c985c0911af6a86d-e23{marker-start:url(#component-c985c0911af6a86d_flowchart-v2-pointStart)!important}\n#component-c985c0911af6a86d-e26{marker-start:url(#component-c985c0911af6a86d_flowchart-v2-pointStart)!important}\n#component-c985c0911af6a86d-e27{marker-start:url(#component-c985c0911af6a86d_flowchart-v2-pointStart)!important}\n#component-c985c0911af6a86d-e28{marker-start:url(#component-c985c0911af6a86d_flowchart-v2-pointStart)!important}\n#component-c985c0911af6a86d-e32{marker-start:url(#component-c985c0911af6a86d_flowchart-v2-pointStart)!important}\n#component-c985c0911af6a86d-e34{marker-start:url(#component-c985c0911af6a86d_flowchart-v2-pointStart)!important}\n#component-c985c0911af6a86d-e38{marker-start:url(#component-c985c0911af6a86d_flowchart-v2-pointStart)!important}\n#component-c985c0911af6a86d-e39{marker-start:url(#component-c985c0911af6a86d_flowchart-v2-pointStart)!important}\n#component-c985c0911af6a86d-e41{marker-start:url(#component-c985c0911af6a86d_flowchart-v2-pointStart)!important}\n#component-c985c0911af6a86d-e43{marker-start:url(#component-c985c0911af6a86d_flowchart-v2-pointStart)!important}\n#component-c985c0911af6a86d-e44{marker-start:url(#component-c985c0911af6a86d_flowchart-v2-pointStart)!important}\n#component-c985c0911af6a86d-e46{marker-start:url(#component-c985c0911af6a86d_flowchart-v2-pointStart)!important}\n#component-c985c0911af6a86d-e48{marker-start:url(#component-c985c0911af6a86d_flowchart-v2-pointStart)!important}\n#component-c985c0911af6a86d_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}"
+  }
+}
+---
+flowchart RL
+  accTitle: Transform · 组件关系
+  accDescr: 左侧为包含组件的实体，中间为组件类型，右侧每个系统函数只显示一次；连线表达访问与生命周期操作。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_entity fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_contract fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  subgraph layout_card_n0[" "]
+  n0@{ shape: rounded, label: "**角色业务根实体**<br/>来自场景装配 ↗：承载角色身份、运动意图<br/>与动态物理身体。" }
+  class n0 node_entity
+  class n0 external_node
+  end
+  style layout_card_n0 fill:none,stroke:none
+  subgraph layout_card_n1[" "]
+  n1@{ shape: rounded, label: "**可搬物品业务根实体**<br/>来自场景装配 ↗：承载可拾取物品身份及自<br/>由运动、共享持握状态。" }
+  class n1 node_entity
+  class n1 external_node
+  end
+  style layout_card_n1 fill:none,stroke:none
+  subgraph layout_card_n2[" "]
+  n2@{ shape: rounded, label: "**第一人称相机实体**<br/>来自场景装配 ↗：提供跟随角色的第一人称<br/>视角与观察输入状态。" }
+  class n2 node_entity
+  class n2 external_node
+  end
+  style layout_card_n2 fill:none,stroke:none
+  subgraph layout_card_n3[" "]
+  n3@{ shape: rounded, label: "**业务直属 GLB 视觉根实体**<br/>来自场景装配 ↗：承载业务实体的模型、骨<br/>骼与动画子树。" }
+  class n3 node_entity
+  class n3 external_node
+  end
+  style layout_card_n3 fill:none,stroke:none
+  subgraph layout_card_n4[" "]
+  n4@{ shape: rounded, label: "**海岛静态碰撞实体**<br/>来自场景装配 ↗：为海岛结构、入口坡道与<br/>展示人物提供静态碰撞。" }
+  class n4 node_entity
+  class n4 external_node
+  end
+  style layout_card_n4 fill:none,stroke:none
+  subgraph layout_card_n5[" "]
+  n5@{ shape: rounded, label: "**GLB 网格与骨骼节点**<br/>承载导入模型的网格、骨骼与局部动画姿态。" }
+  class n5 node_entity
+  end
+  style layout_card_n5 fill:none,stroke:none
+  subgraph layout_card_n6[" "]
+  n6@{ shape: rounded, label: "**主菜单展示舞台根**<br/>来自菜单与界面 ↗：承载主菜单的独立海岛<br/>展示场景。" }
+  class n6 node_entity
+  class n6 external_node
+  end
+  style layout_card_n6 fill:none,stroke:none
+  subgraph layout_card_n7[" "]
+  n7@{ shape: rounded, label: "**主菜单展示相机**<br/>来自菜单与界面 ↗：为主菜单展示场景与界<br/>面提供相机。" }
+  class n7 node_entity
+  class n7 external_node
+  end
+  style layout_card_n7 fill:none,stroke:none
+  subgraph layout_card_n8[" "]
+  n8@{ shape: rounded, label: "**菜单 GLB 模型与动画子树**<br/>来自菜单与界面 ↗：承载主菜单的海岛模型<br/>与快递员展示动画。" }
+  class n8 node_entity
+  class n8 external_node
+  end
+  style layout_card_n8 fill:none,stroke:none
+  subgraph layout_card_n9[" "]
+  n9@{ shape: rounded, label: "**持物无视觉碰撞代理**<br/>来自物品交互 ↗：为持物共享人物刚体提供<br/>无视觉碰撞形状。" }
+  class n9 node_entity
+  class n9 external_node
+  end
+  style layout_card_n9 fill:none,stroke:none
+  subgraph layout_card_n10[" "]
+  n10@{ shape: rounded, label: "**Transform**<br/>保存角色经插值生成的显示姿态。" }
+  class n10 node_component
+  end
+  style layout_card_n10 fill:none,stroke:none
+  subgraph layout_card_n11[" "]
+  n11@{ shape: rounded, label: "**spawn_lighting**<br/>来自场景装配 ↗：为游戏会话创建日光与加<br/>载相机。" }
+  class n11 node_system
+  class n11 external_node
+  end
+  style layout_card_n11 fill:none,stroke:none
+  subgraph layout_card_n12[" "]
+  n12@{ shape: rounded, label: "**sync_character_facing**<br/>来自第一人称控制 ↗：同步人物朝向并处理<br/>持物转向受阻。" }
+  class n12 node_system
+  class n12 external_node
+  end
+  style layout_card_n12 fill:none,stroke:none
+  subgraph layout_card_n13[" "]
+  n13@{ shape: rounded, label: "**move_characters**<br/>来自角色运动 ↗：按移动意图和速度为角色<br/>施加水平运动力。" }
+  class n13 node_system
+  class n13 external_node
+  end
+  style layout_card_n13 fill:none,stroke:none
+  subgraph layout_card_n14[" "]
+  n14@{ shape: rounded, label: "**handle_interaction**<br/>来自物品交互 ↗：处理物品拾取、共享持握<br/>与主动释放。" }
+  class n14 node_system
+  class n14 external_node
+  end
+  style layout_card_n14 fill:none,stroke:none
+  subgraph layout_card_n15[" "]
+  n15@{ shape: rounded, label: "**sync_held_presentation**<br/>来自物品交互 ↗：按人物呈现姿态同步持物<br/>模型与握持目标。" }
+  class n15 node_system
+  class n15 external_node
+  end
+  style layout_card_n15 fill:none,stroke:none
+  subgraph layout_card_n16[" "]
+  n16@{ shape: rounded, label: "**follow_first_person_camera**<br/>来自第一人称控制 ↗：按人物本帧位置与观<br/>察角度更新第一人称镜头。" }
+  class n16 node_system
+  class n16 external_node
+  end
+  style layout_card_n16 fill:none,stroke:none
+  subgraph layout_card_n17[" "]
+  n17@{ shape: rounded, label: "**release_orphaned_items**<br/>来自物品交互 ↗：清理失效持握并恢复物品<br/>独立运动。" }
+  class n17 node_system
+  class n17 external_node
+  end
+  style layout_card_n17 fill:none,stroke:none
+  subgraph layout_card_n18[" "]
+  n18@{ shape: rounded, label: "**prepare_island**<br/>来自场景装配 ↗：从海岛模型构建静态碰<br/>撞、坡道与人物碰撞。" }
+  class n18 node_system
+  class n18 external_node
+  end
+  style layout_card_n18 fill:none,stroke:none
+  subgraph layout_card_n19[" "]
+  n19@{ shape: rounded, label: "**spawn_actors**<br/>来自场景装配 ↗：装配玩家、可搬物、控制<br/>者与相机。" }
+  class n19 node_system
+  class n19 external_node
+  end
+  style layout_card_n19 fill:none,stroke:none
+  subgraph layout_card_n20[" "]
+  n20@{ shape: rounded, label: "**initialize_ready_couriers**<br/>来自角色动画 ↗：绑定主角命名动画并缓存<br/>鞋底补偿节点。" }
+  class n20 node_system
+  class n20 external_node
+  end
+  style layout_card_n20 fill:none,stroke:none
+  subgraph layout_card_n21[" "]
+  n21@{ shape: rounded, label: "**sync_courier_animation**<br/>来自角色动画 ↗：按角色运动状态连续混合<br/>移动与跳跃动画。" }
+  class n21 node_system
+  class n21 external_node
+  end
+  style layout_card_n21 fill:none,stroke:none
+  subgraph layout_card_n22[" "]
+  n22@{ shape: rounded, label: "**recover_from_water**<br/>来自越界恢复 ↗：将落水实体恢复到各自出<br/>生姿态。" }
+  class n22 node_system
+  class n22 external_node
+  end
+  style layout_card_n22 fill:none,stroke:none
+  subgraph layout_card_n23[" "]
+  n23@{ shape: rounded, label: "**compensate_courier_sole_penetration**<br/>来自角色动画 ↗：补偿鞋底穿地并平滑恢复<br/>视觉高度。" }
+  class n23 node_system
+  class n23 external_node
+  end
+  style layout_card_n23 fill:none,stroke:none
+  subgraph layout_card_n24[" "]
+  n24@{ shape: rounded, label: "**spawn_backdrop**<br/>来自菜单与界面 ↗：装配主菜单海岛展示舞<br/>台、相机与日光。" }
+  class n24 node_system
+  class n24 external_node
+  end
+  style layout_card_n24 fill:none,stroke:none
+  subgraph layout_card_n25[" "]
+  n25@{ shape: rounded, label: "**warn_hold_strain**<br/>来自物品交互 ↗：检查持续持握偏差并发出<br/>失稳提示音。" }
+  class n25 node_system
+  class n25 external_node
+  end
+  style layout_card_n25 fill:none,stroke:none
+  subgraph layout_card_n26[" "]
+  n26@{ shape: rounded, label: "**finish_attachments**<br/>来自物品交互 ↗：为持物装配共享碰撞代理<br/>并累计质量。" }
+  class n26 node_system
+  class n26 external_node
+  end
+  style layout_card_n26 fill:none,stroke:none
+  subgraph layout_card_n27[" "]
+  n27@{ shape: rounded, label: "**align_attachments**<br/>来自物品交互 ↗：沿安全碰撞路径将物品对<br/>齐双手。" }
+  class n27 node_system
+  class n27 external_node
+  end
+  style layout_card_n27 fill:none,stroke:none
+  subgraph layout_card_n28[" "]
+  n28@{ shape: rounded, label: "**sync_held_physics**<br/>来自物品交互 ↗：按人物物理姿态同步持物<br/>位置与碰撞代理。" }
+  class n28 node_system
+  class n28 external_node
+  end
+  style layout_card_n28 fill:none,stroke:none
+  subgraph layout_card_n29[" "]
+  n29@{ shape: lin-rect, label: "**TransformSystems::Propagate**<br/>沿实体层级传播世界变换。" }
+  class n29 node_contract
+  end
+  style layout_card_n29 fill:none,stroke:none
+  subgraph layout_card_n30[" "]
+  n30@{ shape: rounded, label: "**WorldInspectorPlugin / world_**<br/>**inspector_ui**<br/>来自Egui / Inspector ↗：展示并编辑开<br/>放反射的实体、资源与资产。" }
+  class n30 node_system
+  class n30 external_node
+  end
+  style layout_card_n30 fill:none,stroke:none
+  subgraph layout_card_n31[" "]
+  n31@{ shape: lin-rect, label: "**PhysicsSystems::Prepare**<br/>来自Avian ↗：准备物理步所需的位姿、质<br/>量与碰撞查询数据。" }
+  class n31 node_contract
+  class n31 external_node
+  end
+  style layout_card_n31 fill:none,stroke:none
+  subgraph layout_card_n32[" "]
+  n32@{ shape: lin-rect, label: "**PhysicsSystems::Writeback**<br/>来自Avian ↗：将求解后的物理位姿写回显<br/>示变换。" }
+  class n32 node_contract
+  class n32 external_node
+  end
+  style layout_card_n32 fill:none,stroke:none
+  subgraph layout_card_n33[" "]
+  n33@{ shape: lin-rect, label: "**TransformEasingSystems::Reset**<br/>来自Avian ↗：重置上一轮固定步的插值状<br/>态。" }
+  class n33 node_contract
+  class n33 external_node
+  end
+  style layout_card_n33 fill:none,stroke:none
+  subgraph layout_card_n34[" "]
+  n34@{ shape: lin-rect, label: "**TransformEasingSystems::UpdateEnd**<br/>来自Avian ↗：记录固定步结束位置供显示<br/>插值。" }
+  class n34 node_contract
+  class n34 external_node
+  end
+  style layout_card_n34 fill:none,stroke:none
+  subgraph layout_card_n35[" "]
+  n35@{ shape: lin-rect, label: "**TransformEasingSystems::Ease**<br/>来自Avian ↗：混合固定步端点以生成平滑<br/>显示姿态。" }
+  class n35 node_contract
+  class n35 external_node
+  end
+  style layout_card_n35 fill:none,stroke:none
+  subgraph layout_card_n36[" "]
+  n36@{ shape: lin-rect, label: "**TransformEasingSystems::**<br/>**UpdateEasingTick**<br/>来自Avian ↗：记录显示变更，区分插值更<br/>新与外部瞬移。" }
+  class n36 node_contract
+  class n36 external_node
+  end
+  style layout_card_n36 fill:none,stroke:none
+  subgraph layout_card_n37[" "]
+  n37@{ shape: lin-rect, label: "**AnimationSystems / AnimationPlugin**<br/>采样动画图并更新骨骼局部姿态。" }
+  class n37 node_contract
+  end
+  style layout_card_n37 fill:none,stroke:none
+  subgraph layout_card_n38[" "]
+  n38@{ shape: lin-rect, label: "**TransformEasingSystems::UpdateStart**<br/>来自Avian ↗：记录当前固定步的插值起<br/>点。" }
+  class n38 node_contract
+  class n38 external_node
+  end
+  style layout_card_n38 fill:none,stroke:none
+  n10 layout_0@~~~ n0
+  n10 layout_1@~~~ n1
+  n10 layout_2@~~~ n2
+  n10 layout_3@~~~ n3
+  n10 layout_4@~~~ n4
+  n10 layout_5@~~~ n5
+  n10 layout_6@~~~ n6
+  n10 layout_7@~~~ n7
+  n10 layout_8@~~~ n8
+  n10 layout_9@~~~ n9
+  n11 layout_10@~~~ n10
+  n12 layout_11@~~~ n10
+  n13 layout_12@~~~ n10
+  n14 layout_13@~~~ n10
+  n15 layout_14@~~~ n10
+  n16 layout_15@~~~ n10
+  n17 layout_16@~~~ n10
+  n18 layout_17@~~~ n10
+  n19 layout_18@~~~ n10
+  n20 layout_19@~~~ n10
+  n21 layout_20@~~~ n10
+  n22 layout_21@~~~ n10
+  n23 layout_22@~~~ n10
+  n24 layout_23@~~~ n10
+  n25 layout_24@~~~ n10
+  n26 layout_25@~~~ n10
+  n27 layout_26@~~~ n10
+  n28 layout_27@~~~ n10
+  n29 layout_28@~~~ n10
+  n30 layout_29@~~~ n10
+  n31 layout_30@~~~ n10
+  n32 layout_31@~~~ n10
+  n33 layout_32@~~~ n10
+  n34 layout_33@~~~ n10
+  n35 layout_34@~~~ n10
+  n36 layout_35@~~~ n10
+  n37 layout_36@~~~ n10
+  n38 layout_37@~~~ n10
+  n11 e10@-->|"添加"| n10
+  class e10 edge_write
+  n12 e11@-->|"字段赋值"| n10
+  class e11 edge_write
+  n12 e12@-->|"添加"| n10
+  class e12 edge_write
+  n14 e16@-->|"添加"| n10
+  class e16 edge_write
+  n15 e18@-->|"字段赋值"| n10
+  class e18 edge_write
+  n16 e20@-->|"字段赋值"| n10
+  class e20 edge_write
+  n17 e22@-->|"添加"| n10
+  class e22 edge_write
+  n18 e24@--->|"添加"| n10
+  class e24 edge_write
+  n19 e25@-->|"添加"| n10
+  class e25 edge_write
+  n22 e29@-->|"字段赋值"| n10
+  class e29 edge_write
+  n22 e30@-->|"添加"| n10
+  class e30 edge_write
+  n23 e31@-->|"可变访问"| n10
+  class e31 edge_write
+  n24 e33@-->|"添加"| n10
+  class e33 edge_write
+  n26 e35@-->|"添加"| n10
+  class e35 edge_write
+  n27 e36@-->|"添加"| n10
+  class e36 edge_write
+  n28 e37@-->|"字段赋值"| n10
+  class e37 edge_write
+  n30 e40@-->|"结构变更（待核实）"| n10
+  class e40 edge_write
+  n32 e42@-->|"结构变更（待核实）"| n10
+  class e42 edge_write
+  n35 e45@-->|"结构变更（待核实）"| n10
+  class e45 edge_write
+  n37 e47@-->|"结构变更（待核实）"| n10
+  class e47 edge_write
+  n10 e0@-->|"可能挂载于"| n0
+  class e0 edge_reference
+  n10 e1@-->|"可能挂载于"| n1
+  class e1 edge_reference
+  n10 e2@-->|"可能挂载于"| n2
+  class e2 edge_reference
+  n10 e3@-->|"可能挂载于"| n3
+  class e3 edge_reference
+  n10 e4@-->|"可能挂载于"| n4
+  class e4 edge_reference
+  n10 e5@-->|"可能挂载于"| n5
+  class e5 edge_reference
+  n10 e6@-->|"可能挂载于"| n6
+  class e6 edge_reference
+  n10 e7@-->|"可能挂载于"| n7
+  class e7 edge_reference
+  n10 e8@-->|"可能挂载于"| n8
+  class e8 edge_reference
+  n10 e9@-->|"可能挂载于"| n9
+  class e9 edge_reference
+  n12 e13@---|"查询访问"| n10
+  class e13 edge_read
+  n13 e14@---|"查询访问"| n10
+  class e14 edge_read
+  n14 e15@---|"查询访问"| n10
+  class e15 edge_read
+  n15 e17@---|"查询访问"| n10
+  class e17 edge_read
+  n16 e19@---|"查询访问"| n10
+  class e19 edge_read
+  n17 e21@---|"查询访问"| n10
+  class e21 edge_read
+  n18 e23@---|"查询访问"| n10
+  class e23 edge_read
+  n20 e26@---|"查询访问"| n10
+  class e26 edge_read
+  n21 e27@---|"查询访问"| n10
+  class e27 edge_read
+  n22 e28@---|"查询访问"| n10
+  class e28 edge_read
+  n23 e32@---|"查询访问"| n10
+  class e32 edge_read
+  n25 e34@---|"查询访问"| n10
+  class e34 edge_read
+  n29 e38@---|"查询访问"| n10
+  class e38 edge_read
+  n30 e39@---|"查询访问"| n10
+  class e39 edge_read
+  n31 e41@---|"查询访问"| n10
+  class e41 edge_read
+  n33 e43@---|"查询访问"| n10
+  class e43 edge_read
+  n34 e44@---|"查询访问"| n10
+  class e44 edge_read
+  n36 e46@---|"查询访问"| n10
+  class e46 edge_read
+  n38 e48@---|"查询访问"| n10
+  class e48 edge_read
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e17@{ curve: basis }
+  e18@{ curve: basis }
+  e19@{ curve: basis }
+  e20@{ curve: basis }
+  e21@{ curve: basis }
+  e22@{ curve: basis }
+  e23@{ curve: basis }
+  e24@{ curve: basis }
+  e25@{ curve: basis }
+  e26@{ curve: basis }
+  e27@{ curve: basis }
+  e28@{ curve: basis }
+  e29@{ curve: basis }
+  e30@{ curve: basis }
+  e31@{ curve: basis }
+  e32@{ curve: basis }
+  e33@{ curve: basis }
+  e34@{ curve: basis }
+  e35@{ curve: basis }
+  e36@{ curve: basis }
+  e37@{ curve: basis }
+  e38@{ curve: basis }
+  e39@{ curve: basis }
+  e40@{ curve: basis }
+  e41@{ curve: basis }
+  e42@{ curve: basis }
+  e43@{ curve: basis }
+  e44@{ curve: basis }
+  e45@{ curve: basis }
+  e46@{ curve: basis }
+  e47@{ curve: basis }
+  e48@{ curve: basis }

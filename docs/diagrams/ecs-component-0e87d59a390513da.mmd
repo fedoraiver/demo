@@ -1,0 +1,105 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 32,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#component-0e87d59a390513da-e3{marker-start:url(#component-0e87d59a390513da_flowchart-v2-pointStart)!important}\n#component-0e87d59a390513da-e5{marker-start:url(#component-0e87d59a390513da_flowchart-v2-pointStart)!important}\n#component-0e87d59a390513da-e6{marker-start:url(#component-0e87d59a390513da_flowchart-v2-pointStart)!important}\n#component-0e87d59a390513da_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}"
+  }
+}
+---
+flowchart RL
+  accTitle: PrimaryPress · 组件关系
+  accDescr: 左侧为包含组件的实体，中间为组件类型，右侧每个系统函数只显示一次；连线表达访问与生命周期操作。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_observer fill:#F4F1F9,stroke:#7B4DB2,stroke-width:1.6px,color:#1F3340
+  classDef node_entity fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  subgraph layout_card_n0[" "]
+  n0@{ shape: rounded, label: "**可操作菜单按钮**<br/>承载可操作菜单动作、设置调整与连续导航。" }
+  class n0 node_entity
+  end
+  style layout_card_n0 fill:none,stroke:none
+  subgraph layout_card_n1[" "]
+  n1@{ shape: rounded, label: "**PrimaryPress**<br/>区分菜单主键按压与其他按钮来源。" }
+  class n1 node_component
+  end
+  style layout_card_n1 fill:none,stroke:none
+  subgraph layout_card_n2[" "]
+  n2@{ shape: hex, label: "**primary_press**<br/>记录菜单按钮主键按压的指针身份。" }
+  class n2 node_observer
+  end
+  style layout_card_n2 fill:none,stroke:none
+  subgraph layout_card_n3[" "]
+  n3@{ shape: hex, label: "**clear_primary_press**<br/>原生 Pressed 移除时清理菜单主键来源。" }
+  class n3 node_observer
+  end
+  style layout_card_n3 fill:none,stroke:none
+  subgraph layout_card_n4[" "]
+  n4@{ shape: rounded, label: "**clear_cancelled_primary_presses**<br/>清理被取消、失焦或离窗的菜单主键按压。" }
+  class n4 node_system
+  end
+  style layout_card_n4 fill:none,stroke:none
+  subgraph layout_card_n5[" "]
+  n5@{ shape: rounded, label: "**pointer_interaction**<br/>将真实鼠标交互转换为共享菜单请求。" }
+  class n5 node_system
+  end
+  style layout_card_n5 fill:none,stroke:none
+  subgraph layout_card_n6[" "]
+  n6@{ shape: rounded, label: "**style_buttons**<br/>按当前输入来源更新按钮背景与焦点边框。" }
+  class n6 node_system
+  end
+  style layout_card_n6 fill:none,stroke:none
+  n1 layout_0@~~~ n0
+  n2 layout_1@~~~ n1
+  n3 layout_2@~~~ n1
+  n4 layout_3@~~~ n1
+  n5 layout_4@~~~ n1
+  n6 layout_5@~~~ n1
+  n2 e1@-->|"添加"| n1
+  class e1 edge_write
+  n3 e2@-->|"移除"| n1
+  class e2 edge_write
+  n4 e4@--->|"移除"| n1
+  class e4 edge_write
+  n1 e0@-->|"可能挂载于"| n0
+  class e0 edge_reference
+  n4 e3@---|"查询访问"| n1
+  class e3 edge_read
+  n5 e5@---|"存在 / 变更过滤"| n1
+  class e5 edge_reference
+  n6 e6@---|"存在 / 变更过滤"| n1
+  class e6 edge_reference
+  e0@{ curve: bumpX }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }

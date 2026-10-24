@@ -44,26 +44,42 @@ flowchart TB
   direction TB
   n0@{ shape: rounded, label: "**sync_gravity**<br/>将共享重力配置同步到物理世界。" }
   class n0 node_system
-  n2@{ shape: rounded, label: "**update_grounded**<br/>来自角色运动 ↗：准备运动前更新接地状<br/>态。" }
-  class n2 node_system
-  class n2 external_node
-  n0 layout_0@~~~ n2
+  n4@{ shape: rounded, label: "**update_grounded**<br/>来自角色运动 ↗：准备运动前更新接地状<br/>态。" }
+  class n4 node_system
+  class n4 external_node
+  n0 layout_0@~~~ n4
   end
   subgraph sg1["FixedPostUpdate"]
   direction TB
-  n3@{ shape: lin-rect, label: "**PhysicsSystems::StepSimulation /**<br/>**PhysicsSchedule**<br/>来自Avian ↗：执行碰撞求解、重力积分与<br/>刚体运动。" }
+  n2@{ shape: rounded, label: "**wake_changed_bodies**<br/>使休眠身体的外部受力和位姿修改在本固定步<br/>生效。" }
+  class n2 node_system
+  n3@{ shape: lin-rect, label: "**ApplyDeferred（提前唤醒 → 物理准备）**<br/>使提前唤醒命令在物理准备前可见。" }
   class n3 node_contract
-  class n3 external_node
+  n5@{ shape: lin-rect, label: "**PhysicsSystems::StepSimulation /**<br/>**PhysicsSchedule**<br/>来自Avian ↗：执行碰撞求解、重力积分与<br/>刚体运动。" }
+  class n5 node_contract
+  class n5 external_node
   n1@{ shape: rounded, label: "**log_collisions**<br/>将碰撞开始与结束写入统一日志。" }
   class n1 node_system
-  n3 layout_1@~~~ n1
+  n6@{ shape: lin-rect, label: "**PhysicsSystems::Prepare**<br/>来自Avian ↗：准备物理步所需的位姿、质<br/>量与碰撞查询数据。" }
+  class n6 node_contract
+  class n6 external_node
+  n2 layout_1@~~~ n3
+  n3 layout_2@~~~ n5
+  n5 layout_3@~~~ n1
+  n1 layout_4@~~~ n6
   end
   sg0 sc0@--> sg1
   class sc0 edge_schedule
-  n0 e0@--> n2
+  n0 e0@--> n4
   class e0 edge_order
-  n3 e1@-->|"StepSimulation"| n1
+  n5 e1@-->|"StepSimulation"| n1
   class e1 edge_order
+  n2 e2@-->|"应用排队的 WakeBody"| n3
+  class e2 edge_order
+  n3 e3@-->|"Prepare"| n6
+  class e3 edge_order
   end
   e0@{ curve: basis }
   e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }

@@ -60,6 +60,9 @@ flowchart LR
   n7@{ shape: fr-rect, label: "**main / App**<br/>来自Bevy 引擎 ↗：装配应用、设置与插件<br/>并管理主循环和退出。" }
   class n7 node_plugin
   class n7 external_node
+  n8@{ shape: rounded, label: "**wake_changed_bodies**<br/>来自物理基础 ↗：使休眠身体的外部受力和<br/>位姿修改在本固定步生效。" }
+  class n8 node_system
+  class n8 external_node
   n3 e0@-->|"write_all / flush"| n1
   class e0 edge_write
   n2 e1@-->|"入队"| n3
@@ -74,10 +77,13 @@ flowchart LR
   class e5 edge_write
   n7 e6@-->|"record_exit / 退出刷新"| n3
   class e6 edge_write
+  n8 e7@-->|"tracing 唤醒日志"| n2
+  class e7 edge_write
   end
   e1@{ curve: basis }
-  e2@{ curve: basis }
+  e2@{ curve: bumpX }
   e3@{ curve: basis }
   e4@{ curve: basis }
-  e5@{ curve: basis }
+  e5@{ curve: bumpX }
   e6@{ curve: basis }
+  e7@{ curve: basis }

@@ -39,119 +39,508 @@ flowchart LR
   classDef node_message_buffer fill:#EDF4F6,stroke:#247B91,stroke-width:1.6px,color:#1F3340
   classDef node_event fill:#F9F3EE,stroke:#B66B2D,stroke-width:1.6px,color:#1F3340
   classDef node_plugin fill:#F1F3F6,stroke:#4A6389,stroke-width:2.2px,color:#1F3340
+  classDef node_contract fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
   classDef node_external_io fill:#F1F3F4,stroke:#526A78,stroke-width:1.6px,color:#1F3340
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_publish stroke:#247B91,stroke-width:1.8px,stroke-dasharray:10 4 2 4
   classDef edge_consume stroke:#247B91,stroke-width:1.8px,stroke-dasharray:2 4
   classDef edge_emit stroke:#B66B2D,stroke-width:1.8px
   classDef edge_observe stroke:#B66B2D,stroke-width:1.8px,stroke-dasharray:2 4
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef edge_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
   subgraph diagram_main[" "]
   direction LR
   style diagram_main fill:none,stroke:none
-  n0@{ shape: cyl, label: "**Messages#lt;KeyboardInput#gt;**<br/>缓冲底层键盘输入消息。" }
-  class n0 node_message_buffer
-  n1@{ shape: cyl, label: "**Messages#lt;KeyboardFocusLost#gt;**<br/>通知输入系统清理失焦后残留的按键。" }
-  class n1 node_message_buffer
-  n2@{ shape: cyl, label: "**Messages#lt;MouseButtonInput#gt;**<br/>缓冲底层鼠标按钮输入消息。" }
-  class n2 node_message_buffer
-  n3@{ shape: cyl, label: "**Messages#lt;WindowFocused#gt;**<br/>缓冲窗口焦点变化消息。" }
-  class n3 node_message_buffer
-  n4@{ shape: cyl, label: "**Messages#lt;MouseMotion#gt;**<br/>缓冲底层鼠标位移消息。" }
-  class n4 node_message_buffer
-  n5@{ shape: cyl, label: "**Messages#lt;UntypedAssetLoadFailedEvent**<br/>**#gt;**<br/>缓冲菜单模型与界面资源的加载失败。" }
-  class n5 node_message_buffer
-  n6@{ shape: cyl, label: "**Messages#lt;AppExit#gt;**<br/>通知音频停止并进入应用退出流程。" }
+  subgraph layout_card_n0[" "]
+  n0@{ shape: hex, label: "**button_on_pointer_down**<br/>按压时插入原生Pressed；可<br/>选ActivateOnPress会发Activate。" }
+  class n0 node_observer
+  end
+  style layout_card_n0 fill:none,stroke:none
+  subgraph layout_card_n1[" "]
+  n1@{ shape: hex, label: "**button_on_pointer_up**<br/>释放时移除原生Pressed。" }
+  class n1 node_observer
+  end
+  style layout_card_n1 fill:none,stroke:none
+  subgraph layout_card_n2[" "]
+  n2@{ shape: hex, label: "**button_on_pointer_click**<br/>满足条件时派发原生Activate。" }
+  class n2 node_observer
+  end
+  style layout_card_n2 fill:none,stroke:none
+  subgraph layout_card_n3[" "]
+  n3@{ shape: hex, label: "**button_on_pointer_drag_end**<br/>拖动结束时移除原生Pressed。" }
+  class n3 node_observer
+  end
+  style layout_card_n3 fill:none,stroke:none
+  subgraph layout_card_n4[" "]
+  n4@{ shape: hex, label: "**button_on_pointer_cancel**<br/>收到取消事件时移除原生Pressed。" }
+  class n4 node_observer
+  end
+  style layout_card_n4 fill:none,stroke:none
+  subgraph layout_card_n5[" "]
+  n5@{ shape: hex, label: "**button_on_key_event**<br/>焦点键盘Enter或Space首次按下时派<br/>发Activate。" }
+  class n5 node_observer
+  end
+  style layout_card_n5 fill:none,stroke:none
+  subgraph layout_card_n6[" "]
+  n6@{ shape: cyl, label: "**Messages#lt;KeyboardInput#gt;**<br/>缓冲底层键盘输入消息。" }
   class n6 node_message_buffer
-  n7@{ shape: fr-rect, label: "**DefaultPlugins**<br/>提供窗口、时间、资产、动画与渲染基础设<br/>施。" }
-  class n7 node_plugin
-  n8@{ shape: fr-rect, label: "**LogPlugin**<br/>安装统一日志订阅与输出基础设施。" }
-  class n8 node_plugin
-  n9@{ shape: lean-r, label: "**WindowFocused / MouseButtonInput**<br/>缓冲窗口焦点与鼠标按钮变化。" }
-  class n9 node_message
-  n10@{ shape: stadium, label: "**WorldInstanceReady**<br/>通知对应场景资产已完成实体层级实例化。" }
-  class n10 node_event
-  n11@{ shape: stadium, label: "**Pointer#lt;Scroll#gt;**<br/>通知设置内容视口处理滚轮输入。" }
-  class n11 node_event
-  n12@{ shape: stadium, label: "**WorldInstanceReady**<br/>通知展示快递员进入命名动画绑定准备。" }
-  class n12 node_event
-  n13@{ shape: stadium, label: "**Pointer#lt;Scroll#gt;**<br/>通知内容视口处理滚动条上的滚轮输入。" }
-  class n13 node_event
-  n14@{ shape: stadium, label: "**Pointer#lt;Press#gt;**<br/>通知滚动条接管鼠标输入来源。" }
-  class n14 node_event
-  n15@{ shape: hex, label: "**ScrollbarPlugin · pointer observers**<br/>处理滚动条的轨道分页与滑块拖动。" }
-  class n15 node_observer
-  n16@{ shape: stadium, label: "**Despawn#lt;Character#gt;**<br/>通知人物销毁前执行持物生命周期清理。" }
-  class n16 node_event
-  n17@{ shape: rounded, label: "**WorldInstanceSpawner /**<br/>**WorldInstanceSpawn**<br/>展开场景资产层级并通知实例就绪。" }
-  class n17 node_system
-  n18@{ shape: rounded, label: "**Window**<br/>保存主窗口的尺寸与显示配置。" }
-  class n18 node_component
-  n19@{ shape: fr-rect, label: "**main / App**<br/>装配应用、设置与插件并管理主循环和退出。" }
-  class n19 node_plugin
-  n20@{ shape: rounded, label: "**sync_mouse_capture**<br/>来自第一人称控制 ↗：管理光标捕获及玩法<br/>输入启停。" }
-  class n20 node_system
-  class n20 external_node
-  n21@{ shape: rounded, label: "**sync_settings_scrollbars**<br/>来自菜单与界面 ↗：同步滚动条显隐、拾取<br/>范围与高亮。" }
-  class n21 node_system
-  class n21 external_node
-  n22@{ shape: lean-l, label: "**原生窗口约束**<br/>来自窗口策略 ↗：在平台应用尺寸前约束主<br/>窗口比例与范围。" }
-  class n22 node_external_io
-  class n22 external_node
-  n23@{ shape: hex, label: "**mark_island_ready**<br/>来自场景装配 ↗：标记地图实例以进入碰撞<br/>准备。" }
+  end
+  style layout_card_n6 fill:none,stroke:none
+  subgraph layout_card_n7[" "]
+  n7@{ shape: cyl, label: "**Messages#lt;KeyboardFocusLost#gt;**<br/>通知输入系统清理失焦后残留的按键。" }
+  class n7 node_message_buffer
+  end
+  style layout_card_n7 fill:none,stroke:none
+  subgraph layout_card_n8[" "]
+  n8@{ shape: cyl, label: "**Messages#lt;MouseButtonInput#gt;**<br/>缓冲底层鼠标按钮输入消息。" }
+  class n8 node_message_buffer
+  end
+  style layout_card_n8 fill:none,stroke:none
+  subgraph layout_card_n9[" "]
+  n9@{ shape: cyl, label: "**Messages#lt;WindowFocused#gt;**<br/>缓冲窗口焦点变化消息。" }
+  class n9 node_message_buffer
+  end
+  style layout_card_n9 fill:none,stroke:none
+  subgraph layout_card_n10[" "]
+  n10@{ shape: cyl, label: "**Messages#lt;MouseMotion#gt;**<br/>缓冲底层鼠标位移消息。" }
+  class n10 node_message_buffer
+  end
+  style layout_card_n10 fill:none,stroke:none
+  subgraph layout_card_n11[" "]
+  n11@{ shape: cyl, label: "**Messages#lt;UntypedAssetLoadFailedEvent**<br/>**#gt;**<br/>缓冲菜单模型与界面资源的加载失败。" }
+  class n11 node_message_buffer
+  end
+  style layout_card_n11 fill:none,stroke:none
+  subgraph layout_card_n12[" "]
+  n12@{ shape: cyl, label: "**Messages#lt;AppExit#gt;**<br/>通知音频停止并进入应用退出流程。" }
+  class n12 node_message_buffer
+  end
+  style layout_card_n12 fill:none,stroke:none
+  subgraph layout_card_n13[" "]
+  n13@{ shape: cyl, label: "**Messages#lt;PointerPress#gt;**<br/>Bevy Picking 同时发布缓冲按下消息与<br/>EntityEvent；菜单和音量捕获分别使用独<br/>立 MessageReader 游标。" }
+  class n13 node_message_buffer
+  end
+  style layout_card_n13 fill:none,stroke:none
+  subgraph layout_card_n14[" "]
+  n14@{ shape: cyl, label: "**Messages#lt;PointerInput#gt;**<br/>Picking 归一化输入消息；项目仅消费<br/>Cancel 以补清原生按压生命周期。" }
+  class n14 node_message_buffer
+  end
+  style layout_card_n14 fill:none,stroke:none
+  subgraph layout_card_n15[" "]
+  n15@{ shape: fr-rect, label: "**DefaultPlugins**<br/>提供窗口、时间、资产、动画与渲染基础设<br/>施。" }
+  class n15 node_plugin
+  end
+  style layout_card_n15 fill:none,stroke:none
+  subgraph layout_card_n16[" "]
+  n16@{ shape: fr-rect, label: "**LogPlugin**<br/>安装统一日志订阅与输出基础设施。" }
+  class n16 node_plugin
+  end
+  style layout_card_n16 fill:none,stroke:none
+  subgraph layout_card_n17[" "]
+  n17@{ shape: lean-r, label: "**WindowFocused / MouseButtonInput**<br/>缓冲窗口焦点与鼠标按钮变化。" }
+  class n17 node_message
+  end
+  style layout_card_n17 fill:none,stroke:none
+  subgraph layout_card_n18[" "]
+  n18@{ shape: stadium, label: "**WorldInstanceReady**<br/>通知对应场景资产已完成实体层级实例化。" }
+  class n18 node_event
+  end
+  style layout_card_n18 fill:none,stroke:none
+  subgraph layout_card_n19[" "]
+  n19@{ shape: stadium, label: "**PointerScroll**<br/>通知设置内容视口处理滚轮输入。" }
+  class n19 node_event
+  end
+  style layout_card_n19 fill:none,stroke:none
+  subgraph layout_card_n20[" "]
+  n20@{ shape: stadium, label: "**WorldInstanceReady**<br/>通知展示快递员进入命名动画绑定准备。" }
+  class n20 node_event
+  end
+  style layout_card_n20 fill:none,stroke:none
+  subgraph layout_card_n21[" "]
+  n21@{ shape: stadium, label: "**PointerScroll**<br/>通知内容视口处理滚动条上的滚轮输入。" }
+  class n21 node_event
+  end
+  style layout_card_n21 fill:none,stroke:none
+  subgraph layout_card_n22[" "]
+  n22@{ shape: stadium, label: "**PointerPress**<br/>通知滚动条接管鼠标输入来源。" }
+  class n22 node_event
+  end
+  style layout_card_n22 fill:none,stroke:none
+  subgraph layout_card_n23[" "]
+  n23@{ shape: hex, label: "**ScrollbarPlugin · pointer observers**<br/>处理滚动条的轨道分页与滑块拖动。" }
   class n23 node_observer
-  class n23 external_node
-  n24@{ shape: hex, label: "**mark_courier_animation_ready**<br/>来自角色动画 ↗：标记主角视觉根以进入动<br/>画绑定。" }
-  class n24 node_observer
-  class n24 external_node
-  n25@{ shape: hex, label: "**scroll_menu**<br/>来自菜单与界面 ↗：滚动设置内容并限制在<br/>有效范围内。" }
-  class n25 node_observer
-  class n25 external_node
-  n26@{ shape: hex, label: "**mark_courier_animation_ready**<br/>来自菜单与界面 ↗：标记展示快递员以等待<br/>动画绑定。" }
-  class n26 node_observer
-  class n26 external_node
-  n27@{ shape: hex, label: "**scroll_over_settings_scrollbar**<br/>来自菜单与界面 ↗：通过滚动条上的滚轮操<br/>作滚动内容视口。" }
-  class n27 node_observer
-  class n27 external_node
-  n28@{ shape: hex, label: "**scrollbar_pointer_source**<br/>来自菜单与界面 ↗：将滚动条按下操作标为<br/>鼠标输入。" }
-  class n28 node_observer
-  class n28 external_node
-  n29@{ shape: hex, label: "**prepare_holder_despawn**<br/>来自物品交互 ↗：在持有者销毁前停用并卸<br/>载持物代理。" }
-  class n29 node_observer
-  class n29 external_node
-  n30@{ shape: fr-rect, label: "**SessionLogPlugin**<br/>来自会话日志 ↗：安装统一会话日志并管理<br/>后台输出与退出刷新。" }
+  end
+  style layout_card_n23 fill:none,stroke:none
+  subgraph layout_card_n24[" "]
+  n24@{ shape: stadium, label: "**DespawnEvent**<br/>通知人物销毁前执行持物生命周期清理。" }
+  class n24 node_event
+  end
+  style layout_card_n24 fill:none,stroke:none
+  subgraph layout_card_n25[" "]
+  n25@{ shape: stadium, label: "**PointerPress**<br/>事件 entity 上具有 MenuButton，且为<br/>Primary 指针键" }
+  class n25 node_event
+  end
+  style layout_card_n25 fill:none,stroke:none
+  subgraph layout_card_n26[" "]
+  n26@{ shape: stadium, label: "**RemoveEvent**<br/>正移除 Pressed 且仍具有 MenuButton 的<br/>实体" }
+  class n26 node_event
+  end
+  style layout_card_n26 fill:none,stroke:none
+  subgraph layout_card_n27[" "]
+  n27@{ shape: fr-rect, label: "**UiWidgetsPlugins**<br/>注册无样式UI控件插件组。" }
+  class n27 node_plugin
+  end
+  style layout_card_n27 fill:none,stroke:none
+  subgraph layout_card_n28[" "]
+  n28@{ shape: fr-rect, label: "**ButtonPlugin**<br/>为原生按钮注册六个事件Observer。" }
+  class n28 node_plugin
+  end
+  style layout_card_n28 fill:none,stroke:none
+  subgraph layout_card_n29[" "]
+  n29@{ shape: fr-rect, label: "**DefaultPickingPlugins**<br/>注册指针输入、Picking和交互插件。" }
+  class n29 node_plugin
+  end
+  style layout_card_n29 fill:none,stroke:none
+  subgraph layout_card_n30[" "]
+  n30@{ shape: fr-rect, label: "**PickingPlugin**<br/>配置Picking阶段并接收归一化指针输入。" }
   class n30 node_plugin
-  class n30 external_node
-  n31@{ shape: lean-l, label: "**File worker**<br/>来自会话日志 ↗：在独立线程写入、刷新并<br/>反馈文件输出错误。" }
-  class n31 node_external_io
-  class n31 external_node
-  n9 e0@--> n20
+  end
+  style layout_card_n30 fill:none,stroke:none
+  subgraph layout_card_n31[" "]
+  n31@{ shape: fr-rect, label: "**InteractionPlugin**<br/>生成悬停状态、指针事件和消息缓冲。" }
+  class n31 node_plugin
+  end
+  style layout_card_n31 fill:none,stroke:none
+  subgraph layout_card_n32[" "]
+  n32@{ shape: stadium, label: "**PointerPress**<br/>按压时插入原生Pressed；可<br/>选ActivateOnPress会发Activate。" }
+  class n32 node_event
+  end
+  style layout_card_n32 fill:none,stroke:none
+  subgraph layout_card_n33[" "]
+  n33@{ shape: stadium, label: "**PointerRelease**<br/>释放时移除原生Pressed。" }
+  class n33 node_event
+  end
+  style layout_card_n33 fill:none,stroke:none
+  subgraph layout_card_n34[" "]
+  n34@{ shape: stadium, label: "**PointerClick**<br/>满足条件时派发原生Activate。" }
+  class n34 node_event
+  end
+  style layout_card_n34 fill:none,stroke:none
+  subgraph layout_card_n35[" "]
+  n35@{ shape: stadium, label: "**PointerDragEnd**<br/>拖动结束时移除原生Pressed。" }
+  class n35 node_event
+  end
+  style layout_card_n35 fill:none,stroke:none
+  subgraph layout_card_n36[" "]
+  n36@{ shape: stadium, label: "**PointerCancel**<br/>收到取消事件时移除原生Pressed。" }
+  class n36 node_event
+  end
+  style layout_card_n36 fill:none,stroke:none
+  subgraph layout_card_n37[" "]
+  n37@{ shape: stadium, label: "**FocusedInput#lt;KeyboardInput#gt;**<br/>焦点键盘Enter或Space首次按下时派<br/>发Activate。" }
+  class n37 node_event
+  end
+  style layout_card_n37 fill:none,stroke:none
+  subgraph layout_card_n38[" "]
+  n38@{ shape: stadium, label: "**Activate**<br/>原生按钮激活事件；GameUiPlugin不消费，<br/>避免与Enhanced Input重复。" }
+  class n38 node_event
+  end
+  style layout_card_n38 fill:none,stroke:none
+  subgraph layout_card_n39[" "]
+  n39@{ shape: rounded, label: "**WorldInstanceSpawner /**<br/>**WorldInstanceSpawn**<br/>展开场景资产层级并通知实例就绪。" }
+  class n39 node_system
+  end
+  style layout_card_n39 fill:none,stroke:none
+  subgraph layout_card_n40[" "]
+  n40@{ shape: rounded, label: "**Window**<br/>保存主窗口的尺寸与显示配置。" }
+  class n40 node_component
+  end
+  style layout_card_n40 fill:none,stroke:none
+  subgraph layout_card_n41[" "]
+  n41@{ shape: fr-rect, label: "**main / App**<br/>装配应用、设置与插件并管理主循环和退出。" }
+  class n41 node_plugin
+  end
+  style layout_card_n41 fill:none,stroke:none
+  subgraph layout_card_n42[" "]
+  n42@{ shape: rounded, label: "**pointer_events**<br/>生成指针EntityEvent并同时发布对<br/>应Message。" }
+  class n42 node_system
+  end
+  style layout_card_n42 fill:none,stroke:none
+  subgraph layout_card_n43[" "]
+  n43@{ shape: lin-rect, label: "**PickingSystems::Hover**<br/>更新HoverMap、悬停组件与指针事件。" }
+  class n43 node_contract
+  end
+  style layout_card_n43 fill:none,stroke:none
+  subgraph layout_card_n44[" "]
+  n44@{ shape: rounded, label: "**update_is_hovered**<br/>按鼠标HoverMap及祖先关系替换已<br/>有Hovered值。" }
+  class n44 node_system
+  end
+  style layout_card_n44 fill:none,stroke:none
+  subgraph layout_card_n45[" "]
+  n45@{ shape: rounded, label: "**sync_mouse_capture**<br/>来自第一人称控制 ↗：管理光标捕获及玩法<br/>输入启停。" }
+  class n45 node_system
+  class n45 external_node
+  end
+  style layout_card_n45 fill:none,stroke:none
+  subgraph layout_card_n46[" "]
+  n46@{ shape: rounded, label: "**sync_settings_scrollbars**<br/>来自菜单与界面 ↗：同步滚动条显隐、拾取<br/>范围与高亮。" }
+  class n46 node_system
+  class n46 external_node
+  end
+  style layout_card_n46 fill:none,stroke:none
+  subgraph layout_card_n47[" "]
+  n47@{ shape: lean-l, label: "**原生窗口约束**<br/>来自窗口策略 ↗：在平台应用尺寸前约束主<br/>窗口比例与范围。" }
+  class n47 node_external_io
+  class n47 external_node
+  end
+  style layout_card_n47 fill:none,stroke:none
+  subgraph layout_card_n48[" "]
+  n48@{ shape: hex, label: "**mark_island_ready**<br/>来自场景装配 ↗：标记地图实例以进入碰撞<br/>准备。" }
+  class n48 node_observer
+  class n48 external_node
+  end
+  style layout_card_n48 fill:none,stroke:none
+  subgraph layout_card_n49[" "]
+  n49@{ shape: hex, label: "**mark_courier_animation_ready**<br/>来自角色动画 ↗：标记主角视觉根以进入动<br/>画绑定。" }
+  class n49 node_observer
+  class n49 external_node
+  end
+  style layout_card_n49 fill:none,stroke:none
+  subgraph layout_card_n50[" "]
+  n50@{ shape: hex, label: "**scroll_menu**<br/>来自菜单与界面 ↗：滚动设置内容并限制在<br/>有效范围内。" }
+  class n50 node_observer
+  class n50 external_node
+  end
+  style layout_card_n50 fill:none,stroke:none
+  subgraph layout_card_n51[" "]
+  n51@{ shape: hex, label: "**mark_courier_animation_ready**<br/>来自菜单与界面 ↗：标记展示快递员以等待<br/>动画绑定。" }
+  class n51 node_observer
+  class n51 external_node
+  end
+  style layout_card_n51 fill:none,stroke:none
+  subgraph layout_card_n52[" "]
+  n52@{ shape: hex, label: "**scroll_over_settings_scrollbar**<br/>来自菜单与界面 ↗：通过滚动条上的滚轮操<br/>作滚动内容视口。" }
+  class n52 node_observer
+  class n52 external_node
+  end
+  style layout_card_n52 fill:none,stroke:none
+  subgraph layout_card_n53[" "]
+  n53@{ shape: hex, label: "**scrollbar_pointer_source**<br/>来自菜单与界面 ↗：将滚动条按下操作标为<br/>鼠标输入。" }
+  class n53 node_observer
+  class n53 external_node
+  end
+  style layout_card_n53 fill:none,stroke:none
+  subgraph layout_card_n54[" "]
+  n54@{ shape: hex, label: "**prepare_holder_despawn**<br/>来自物品交互 ↗：在持有者销毁前停用并卸<br/>载持物代理。" }
+  class n54 node_observer
+  class n54 external_node
+  end
+  style layout_card_n54 fill:none,stroke:none
+  subgraph layout_card_n55[" "]
+  n55@{ shape: fr-rect, label: "**SessionLogPlugin**<br/>来自会话日志 ↗：安装统一会话日志并管理<br/>后台输出与退出刷新。" }
+  class n55 node_plugin
+  class n55 external_node
+  end
+  style layout_card_n55 fill:none,stroke:none
+  subgraph layout_card_n56[" "]
+  n56@{ shape: lean-l, label: "**File worker**<br/>来自会话日志 ↗：在独立线程写入、刷新并<br/>反馈文件输出错误。" }
+  class n56 node_external_io
+  class n56 external_node
+  end
+  style layout_card_n56 fill:none,stroke:none
+  subgraph layout_card_n57[" "]
+  n57@{ shape: hex, label: "**primary_press**<br/>来自菜单与界面 ↗：记录菜单按钮主键按压<br/>的指针身份。" }
+  class n57 node_observer
+  class n57 external_node
+  end
+  style layout_card_n57 fill:none,stroke:none
+  subgraph layout_card_n58[" "]
+  n58@{ shape: hex, label: "**clear_primary_press**<br/>来自菜单与界面 ↗：原生 Pressed 移除时<br/>清理菜单主键来源。" }
+  class n58 node_observer
+  class n58 external_node
+  end
+  style layout_card_n58 fill:none,stroke:none
+  subgraph layout_card_n59[" "]
+  n59@{ shape: rounded, label: "**pointer_interaction**<br/>来自菜单与界面 ↗：将真实鼠标交互转换为<br/>共享菜单请求。" }
+  class n59 node_system
+  class n59 external_node
+  end
+  style layout_card_n59 fill:none,stroke:none
+  subgraph layout_card_n60[" "]
+  n60@{ shape: rounded, label: "**sample_slider_pointer**<br/>来自菜单与界面 ↗：从光标位置生成音量采<br/>样与释放请求。" }
+  class n60 node_system
+  class n60 external_node
+  end
+  style layout_card_n60 fill:none,stroke:none
+  subgraph layout_card_n61[" "]
+  n61@{ shape: rounded, label: "**clear_cancelled_primary_presses**<br/>来自菜单与界面 ↗：清理被取消、失焦或离<br/>窗的菜单主键按压。" }
+  class n61 node_system
+  class n61 external_node
+  end
+  style layout_card_n61 fill:none,stroke:none
+  subgraph layout_card_n62[" "]
+  n62@{ shape: rounded, label: "**Pressed**<br/>标记原生按钮当前被按压。" }
+  class n62 node_component
+  end
+  style layout_card_n62 fill:none,stroke:none
+  n17 e0@--> n45
   class e0 edge_consume
-  n17 e1@--> n10
+  n39 e1@--> n18
   class e1 edge_emit
-  n15 e2@-->|"控件数据"| n21
+  n23 e2@-->|"控件数据"| n46
   class e2 edge_reference
-  n22 e3@-->|"应用尺寸"| n18
+  n47 e3@-->|"应用尺寸"| n40
   class e3 edge_write
-  n10 e4@-->|"WorldInstanceReady"| n23
+  n18 e4@-->|"WorldInstanceReady"| n48
   class e4 edge_observe
-  n10 e5@-->|"WorldInstanceReady"| n24
+  n18 e5@-->|"WorldInstanceReady"| n49
   class e5 edge_observe
-  n11 e6@-->|"Pointer#lt;Scroll#gt;"| n25
+  n19 e6@-->|"PointerScroll"| n50
   class e6 edge_observe
-  n12 e7@-->|"WorldInstanceReady"| n26
+  n20 e7@-->|"WorldInstanceReady"| n51
   class e7 edge_observe
-  n13 e8@-->|"Pointer#lt;Scroll#gt;"| n27
+  n21 e8@-->|"PointerScroll"| n52
   class e8 edge_observe
-  n14 e9@-->|"Pointer#lt;Press#gt;"| n28
+  n22 e9@-->|"PointerPress"| n53
   class e9 edge_observe
-  n16 e10@-->|"Despawn#lt;Character#gt;"| n29
+  n24 e10@-->|"Despawn#lt;Character#gt;"| n54
   class e10 edge_observe
-  n30 e11@-->|"LogPlugin"| n8
+  n55 e11@-->|"LogPlugin"| n16
   class e11 edge_registration
-  n19 e12@-->|"record_exit / 退出刷新"| n31
+  n41 e12@-->|"record_exit / 退出刷新"| n56
   class e12 edge_write
+  n25 e13@-->|"PointerPress"| n57
+  class e13 edge_observe
+  n26 e14@-->|"RemoveEvent"| n58
+  class e14 edge_observe
+  n13 e15@-->|"缓冲消息"| n59
+  class e15 edge_consume
+  n13 e16@-->|"缓冲消息"| n60
+  class e16 edge_consume
+  n14 e17@-->|"缓冲消息"| n61
+  class e17 edge_consume
+  n15 e18@--> n27
+  class e18 edge_registration
+  n27 e19@--> n28
+  class e19 edge_registration
+  n15 e20@--> n29
+  class e20 edge_registration
+  n29 e21@--> n30
+  class e21 edge_registration
+  n29 e22@--> n31
+  class e22 edge_registration
+  n31 e23@--> n42
+  class e23 edge_registration
+  n43 e24@-->|"in_set(Hover)"| n42
+  class e24 edge_membership
+  n31 e25@--> n44
+  class e25 edge_registration
+  n43 e26@-->|"in_set(Hover)"| n44
+  class e26 edge_membership
+  n32 e27@-->|"PointerPress"| n0
+  class e27 edge_observe
+  n42 e28@-->|"Commands::trigger"| n32
+  class e28 edge_emit
+  n28 e29@--> n0
+  class e29 edge_registration
+  n0 e30@-->|"insert Pressed"| n62
+  class e30 edge_write
+  n33 e31@-->|"PointerRelease"| n1
+  class e31 edge_observe
+  n42 e32@-->|"Commands::trigger"| n33
+  class e32 edge_emit
+  n28 e33@--> n1
+  class e33 edge_registration
+  n1 e34@-->|"remove Pressed"| n62
+  class e34 edge_write
+  n1 e35@-->|"RemoveEvent（Pressed） lifecycle"| n26
+  class e35 edge_emit
+  n34 e36@-->|"PointerClick"| n2
+  class e36 edge_observe
+  n42 e37@-->|"Commands::trigger"| n34
+  class e37 edge_emit
+  n28 e38@--> n2
+  class e38 edge_registration
+  n35 e39@-->|"PointerDragEnd"| n3
+  class e39 edge_observe
+  n42 e40@-->|"Commands::trigger"| n35
+  class e40 edge_emit
+  n28 e41@--> n3
+  class e41 edge_registration
+  n3 e42@-->|"remove Pressed"| n62
+  class e42 edge_write
+  n3 e43@-->|"RemoveEvent（Pressed） lifecycle"| n26
+  class e43 edge_emit
+  n36 e44@-->|"PointerCancel"| n4
+  class e44 edge_observe
+  n42 e45@-->|"Commands::trigger"| n36
+  class e45 edge_emit
+  n28 e46@--> n4
+  class e46 edge_registration
+  n4 e47@-->|"remove Pressed"| n62
+  class e47 edge_write
+  n4 e48@-->|"RemoveEvent（Pressed） lifecycle"| n26
+  class e48 edge_emit
+  n37 e49@-->|"FocusedInput#lt;KeyboardInput#gt;"| n5
+  class e49 edge_observe
+  n28 e50@--> n5
+  class e50 edge_registration
+  n0 e51@-->|"Activate（有条件）"| n38
+  class e51 edge_emit
+  n2 e52@-->|"Activate（有条件）"| n38
+  class e52 edge_emit
+  n5 e53@-->|"Activate（有条件）"| n38
+  class e53 edge_emit
+  n42 e54@-->|"PointerPress"| n25
+  class e54 edge_emit
+  n42 e55@-->|"PointerPress"| n22
+  class e55 edge_emit
+  n42 e56@-->|"缓冲按下消息"| n13
+  class e56 edge_publish
+  n14 e57@--> n42
+  class e57 edge_consume
   end
   e4@{ curve: basis }
   e5@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e17@{ curve: basis }
+  e20@{ curve: basis }
+  e22@{ curve: basis }
+  e23@{ curve: basis }
+  e24@{ curve: basis }
+  e25@{ curve: basis }
+  e26@{ curve: basis }
+  e27@{ curve: basis }
+  e28@{ curve: basis }
+  e29@{ curve: basis }
+  e30@{ curve: basis }
+  e31@{ curve: basis }
+  e32@{ curve: basis }
+  e33@{ curve: basis }
+  e34@{ curve: basis }
+  e35@{ curve: basis }
+  e36@{ curve: basis }
+  e37@{ curve: basis }
+  e38@{ curve: basis }
+  e39@{ curve: basis }
+  e40@{ curve: basis }
+  e41@{ curve: basis }
+  e42@{ curve: basis }
+  e43@{ curve: basis }
+  e44@{ curve: basis }
+  e45@{ curve: basis }
+  e46@{ curve: basis }
+  e47@{ curve: basis }
+  e48@{ curve: basis }
+  e49@{ curve: basis }
+  e50@{ curve: basis }
+  e51@{ curve: basis }
+  e52@{ curve: basis }
+  e53@{ curve: basis }
+  e54@{ curve: basis }
+  e55@{ curve: basis }
+  e56@{ curve: basis }
+  e57@{ curve: basis }

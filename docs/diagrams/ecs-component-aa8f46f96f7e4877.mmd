@@ -1,0 +1,132 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 32,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#component-aa8f46f96f7e4877-e1{marker-start:url(#component-aa8f46f96f7e4877_flowchart-v2-pointStart)!important}\n#component-aa8f46f96f7e4877-e2{marker-start:url(#component-aa8f46f96f7e4877_flowchart-v2-pointStart)!important}\n#component-aa8f46f96f7e4877-e4{marker-start:url(#component-aa8f46f96f7e4877_flowchart-v2-pointStart)!important}\n#component-aa8f46f96f7e4877-e5{marker-start:url(#component-aa8f46f96f7e4877_flowchart-v2-pointStart)!important}\n#component-aa8f46f96f7e4877-e6{marker-start:url(#component-aa8f46f96f7e4877_flowchart-v2-pointStart)!important}\n#component-aa8f46f96f7e4877-e7{marker-start:url(#component-aa8f46f96f7e4877_flowchart-v2-pointStart)!important}\n#component-aa8f46f96f7e4877-e8{marker-start:url(#component-aa8f46f96f7e4877_flowchart-v2-pointStart)!important}\n#component-aa8f46f96f7e4877-e9{marker-start:url(#component-aa8f46f96f7e4877_flowchart-v2-pointStart)!important}\n#component-aa8f46f96f7e4877-e10{marker-start:url(#component-aa8f46f96f7e4877_flowchart-v2-pointStart)!important}\n#component-aa8f46f96f7e4877-e11{marker-start:url(#component-aa8f46f96f7e4877_flowchart-v2-pointStart)!important}\n#component-aa8f46f96f7e4877-e12{marker-start:url(#component-aa8f46f96f7e4877_flowchart-v2-pointStart)!important}\n#component-aa8f46f96f7e4877-e13{marker-start:url(#component-aa8f46f96f7e4877_flowchart-v2-pointStart)!important}\n#component-aa8f46f96f7e4877-e14{marker-start:url(#component-aa8f46f96f7e4877_flowchart-v2-pointStart)!important}\n#component-aa8f46f96f7e4877_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}"
+  }
+}
+---
+flowchart RL
+  accTitle: MenuButton · 组件关系
+  accDescr: 左侧为包含组件的实体，中间为组件类型，右侧每个系统函数只显示一次；连线表达访问与生命周期操作。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_observer fill:#F4F1F9,stroke:#7B4DB2,stroke-width:1.6px,color:#1F3340
+  classDef node_entity fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**可操作菜单按钮**<br/>承载可操作菜单动作、设置调整与连续导航。" }
+  class n0 node_entity
+  n1@{ shape: rounded, label: "**MenuButton**<br/>保存菜单动作及按钮的导航序号。" }
+  class n1 node_component
+  n2@{ shape: hex, label: "**primary_press**<br/>记录菜单按钮主键按压的指针身份。" }
+  class n2 node_observer
+  n3@{ shape: rounded, label: "**pointer_interaction**<br/>将真实鼠标交互转换为共享菜单请求。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**rebuild_page**<br/>按页面结构变化重建菜单界面。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**style_buttons**<br/>按当前输入来源更新按钮背景与焦点边框。" }
+  class n5 node_system
+  n6@{ shape: rounded, label: "**update_description**<br/>更新当前聚焦设置的说明标题与正文。" }
+  class n6 node_system
+  n7@{ shape: rounded, label: "**scroll_focused_button**<br/>将当前聚焦设置按钮滚入可视范围。" }
+  class n7 node_system
+  n8@{ shape: hex, label: "**previous**<br/>循环选择上一个可操作菜单按钮。" }
+  class n8 node_observer
+  n9@{ shape: hex, label: "**next**<br/>循环选择下一个可操作菜单按钮。" }
+  class n9 node_observer
+  n10@{ shape: hex, label: "**left**<br/>向左调整当前聚焦的真实设置字段。" }
+  class n10 node_observer
+  n11@{ shape: hex, label: "**right**<br/>向右调整当前聚焦的真实设置字段。" }
+  class n11 node_observer
+  n12@{ shape: hex, label: "**confirm**<br/>执行当前聚焦按钮的菜单动作。" }
+  class n12 node_observer
+  n13@{ shape: rounded, label: "**sample_slider_pointer**<br/>从光标位置生成音量采样与释放请求。" }
+  class n13 node_system
+  n14@{ shape: hex, label: "**clear_primary_press**<br/>原生 Pressed 移除时清理菜单主键来源。" }
+  class n14 node_observer
+  n1 layout_0@~~~ n0
+  n2 layout_1@~~~ n1
+  n3 layout_2@~~~ n1
+  n4 layout_3@~~~ n1
+  n5 layout_4@~~~ n1
+  n6 layout_5@~~~ n1
+  n7 layout_6@~~~ n1
+  n8 layout_7@~~~ n1
+  n9 layout_8@~~~ n1
+  n10 layout_9@~~~ n1
+  n11 layout_10@~~~ n1
+  n12 layout_11@~~~ n1
+  n13 layout_12@~~~ n1
+  n14 layout_13@~~~ n1
+  n4 e3@-->|"添加"| n1
+  class e3 edge_write
+  n1 e0@-->|"可能挂载于"| n0
+  class e0 edge_reference
+  n2 e1@---|"存在 / 变更过滤"| n1
+  class e1 edge_reference
+  n3 e2@---|"查询访问"| n1
+  class e2 edge_read
+  n4 e4@---|"查询访问"| n1
+  class e4 edge_read
+  n5 e5@---|"查询访问"| n1
+  class e5 edge_read
+  n6 e6@---|"查询访问"| n1
+  class e6 edge_read
+  n7 e7@---|"查询访问"| n1
+  class e7 edge_read
+  n8 e8@---|"查询访问"| n1
+  class e8 edge_read
+  n9 e9@---|"查询访问"| n1
+  class e9 edge_read
+  n10 e10@---|"查询访问"| n1
+  class e10 edge_read
+  n11 e11@---|"查询访问"| n1
+  class e11 edge_read
+  n12 e12@---|"查询访问"| n1
+  class e12 edge_read
+  n13 e13@---|"查询访问"| n1
+  class e13 edge_read
+  n14 e14@---|"存在 / 变更过滤"| n1
+  class e14 edge_reference
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }

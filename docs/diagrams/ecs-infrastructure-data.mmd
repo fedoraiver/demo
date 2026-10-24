@@ -32,56 +32,123 @@ flowchart TB
   accTitle: Bevy 引擎 · 数据与实体
   accDescr: Bevy 引擎的数据与实体；外部契约保留摘要，可跳转到所属插件。
   %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
   classDef node_observer fill:#F4F1F9,stroke:#7B4DB2,stroke-width:1.6px,color:#1F3340
   classDef node_entity fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
   classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
   classDef node_message_buffer fill:#EDF4F6,stroke:#247B91,stroke-width:1.6px,color:#1F3340
   classDef node_contract fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
   classDef node_external_io fill:#F1F3F4,stroke:#526A78,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_publish stroke:#247B91,stroke-width:1.8px,stroke-dasharray:10 4 2 4
+  classDef edge_consume stroke:#247B91,stroke-width:1.8px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
   subgraph relations["数据流与关系"]
   direction LR
   subgraph relation_0[" "]
   direction TB
-  n25@{ shape: rounded, label: "**主窗口实体**<br/>承载应用主窗口及原生尺寸策略。" }
-  class n25 node_entity
-  n31@{ shape: lean-l, label: "**原生窗口约束**<br/>来自窗口策略 ↗：在平台应用尺寸前约束主<br/>窗口比例与范围。" }
-  class n31 node_external_io
-  class n31 external_node
-  n31 e3@-->|"应用尺寸"| n25
-  class e3 edge_write
+  n25@{ shape: cyl, label: "**Messages#lt;PointerPress#gt;**<br/>Bevy Picking 同时发布缓冲按下消息与<br/>EntityEvent；菜单和音量捕获分别使用独<br/>立 MessageReader 游标。" }
+  class n25 node_message_buffer
+  n26@{ shape: cyl, label: "**Messages#lt;PointerInput#gt;**<br/>Picking 归一化输入消息；项目仅消费<br/>Cancel 以补清原生按压生命周期。" }
+  class n26 node_message_buffer
+  n27@{ shape: cyl, label: "**HoverMap**<br/>保存原生指针处理状态。" }
+  class n27 node_resource
+  n39@{ shape: rounded, label: "**pointer_interaction**<br/>来自菜单与界面 ↗：将真实鼠标交互转换为<br/>共享菜单请求。" }
+  class n39 node_system
+  class n39 external_node
+  n40@{ shape: rounded, label: "**sample_slider_pointer**<br/>来自菜单与界面 ↗：从光标位置生成音量采<br/>样与释放请求。" }
+  class n40 node_system
+  class n40 external_node
+  n41@{ shape: rounded, label: "**clear_cancelled_primary_presses**<br/>来自菜单与界面 ↗：清理被取消、失焦或离<br/>窗的菜单主键按压。" }
+  class n41 node_system
+  class n41 external_node
+  n42@{ shape: hex, label: "**button_on_pointer_down**<br/>按压时插入原生Pressed；可<br/>选ActivateOnPress会发Activate。" }
+  class n42 node_observer
+  n43@{ shape: hex, label: "**button_on_pointer_up**<br/>释放时移除原生Pressed。" }
+  class n43 node_observer
+  n44@{ shape: hex, label: "**button_on_pointer_drag_end**<br/>拖动结束时移除原生Pressed。" }
+  class n44 node_observer
+  n45@{ shape: hex, label: "**button_on_pointer_cancel**<br/>收到取消事件时移除原生Pressed。" }
+  class n45 node_observer
+  n46@{ shape: rounded, label: "**pointer_events**<br/>生成指针EntityEvent并同时发布对<br/>应Message。" }
+  class n46 node_system
+  n47@{ shape: rounded, label: "**update_is_hovered**<br/>按鼠标HoverMap及祖先关系替换已<br/>有Hovered值。" }
+  class n47 node_system
+  n58@{ shape: rounded, label: "**可操作菜单按钮**<br/>来自菜单与界面 ↗：承载可操作菜单动作、<br/>设置调整与连续导航。" }
+  class n58 node_entity
+  class n58 external_node
+  n42 layout_0@~~~ n43
+  n43 layout_1@~~~ n44
+  n44 layout_2@~~~ n45
+  n25 e4@--->|"缓冲消息"| n39
+  class e4 edge_consume
+  n25 e5@--->|"缓冲消息"| n40
+  class e5 edge_consume
+  n26 e6@--->|"缓冲消息"| n41
+  class e6 edge_consume
+  n41 e7@--->|"Commands remove"| n58
+  class e7 edge_write
+  n42 e8@--->|"insert Pressed"| n58
+  class e8 edge_write
+  n43 e9@--->|"remove Pressed"| n58
+  class e9 edge_write
+  n44 e10@--->|"remove Pressed"| n58
+  class e10 edge_write
+  n45 e11@--->|"remove Pressed"| n58
+  class e11 edge_write
+  n46 e12@--->|"缓冲按下消息"| n25
+  class e12 edge_publish
+  n47 e13@--->|"immutable insert"| n58
+  class e13 edge_write
+  n26 e14@---> n46
+  class e14 edge_consume
+  n27 e15@---> n46
+  class e15 edge_read
+  n27 e16@---> n47
+  class e16 edge_read
   end
   style relation_0 fill:none,stroke:none
   subgraph relation_1[" "]
   direction TB
-  n28@{ shape: lin-rect, label: "**TransformSystems::Propagate**<br/>沿实体层级传播世界变换。" }
-  class n28 node_contract
-  n36@{ shape: rounded, label: "**业务直属 GLB 视觉根实体**<br/>来自场景装配 ↗：承载业务实体的模型、骨<br/>骼与动画子树。" }
-  class n36 node_entity
-  class n36 external_node
-  n28 e0@-->|"世界变换"| n36
-  class e0 edge_write
+  n32@{ shape: rounded, label: "**主窗口实体**<br/>承载应用主窗口及原生尺寸策略。" }
+  class n32 node_entity
+  n38@{ shape: lean-l, label: "**原生窗口约束**<br/>来自窗口策略 ↗：在平台应用尺寸前约束主<br/>窗口比例与范围。" }
+  class n38 node_external_io
+  class n38 external_node
+  n38 e3@--->|"应用尺寸"| n32
+  class e3 edge_write
   end
   style relation_1 fill:none,stroke:none
   subgraph relation_2[" "]
   direction TB
-  n29@{ shape: hex, label: "**scroll_menu**<br/>来自菜单与界面 ↗：滚动设置内容并限制在<br/>有效范围内。" }
-  class n29 node_observer
-  class n29 external_node
-  n30@{ shape: hex, label: "**scroll_over_settings_scrollbar**<br/>来自菜单与界面 ↗：通过滚动条上的滚轮操<br/>作滚动内容视口。" }
-  class n30 node_observer
-  class n30 external_node
-  n43@{ shape: rounded, label: "**设置面板内容视口**<br/>来自菜单与界面 ↗：为设置标题、字段、说<br/>明与提示提供滚动视口。" }
-  class n43 node_entity
-  class n43 external_node
-  n29 layout_0@~~~ n30
-  n29 e1@--> n43
-  class e1 edge_write
-  n30 e2@--> n43
-  class e2 edge_write
+  n35@{ shape: lin-rect, label: "**TransformSystems::Propagate**<br/>沿实体层级传播世界变换。" }
+  class n35 node_contract
+  n52@{ shape: rounded, label: "**业务直属 GLB 视觉根实体**<br/>来自场景装配 ↗：承载业务实体的模型、骨<br/>骼与动画子树。" }
+  class n52 node_entity
+  class n52 external_node
+  n35 e0@--->|"世界变换"| n52
+  class e0 edge_write
   end
   style relation_2 fill:none,stroke:none
+  subgraph relation_3[" "]
+  direction TB
+  n36@{ shape: hex, label: "**scroll_menu**<br/>来自菜单与界面 ↗：滚动设置内容并限制在<br/>有效范围内。" }
+  class n36 node_observer
+  class n36 external_node
+  n37@{ shape: hex, label: "**scroll_over_settings_scrollbar**<br/>来自菜单与界面 ↗：通过滚动条上的滚轮操<br/>作滚动内容视口。" }
+  class n37 node_observer
+  class n37 external_node
+  n59@{ shape: rounded, label: "**设置面板内容视口**<br/>来自菜单与界面 ↗：为设置标题、字段、说<br/>明与提示提供滚动视口。" }
+  class n59 node_entity
+  class n59 external_node
+  n36 layout_3@~~~ n37
+  n36 e1@---> n59
+  class e1 edge_write
+  n37 e2@---> n59
+  class e2 edge_write
+  end
+  style relation_3 fill:none,stroke:none
   end
   subgraph catalog["数据与实体"]
   direction LR
@@ -101,32 +168,35 @@ flowchart TB
   class n20 node_resource
   n24@{ shape: cyl, label: "**Messages#lt;AppExit#gt;**<br/>通知音频停止并进入应用退出流程。" }
   class n24 node_message_buffer
-  n33@{ shape: rounded, label: "**角色业务根实体**<br/>来自场景装配 ↗：承载角色身份、运动意图<br/>与动态物理身体。" }
-  class n33 node_entity
-  class n33 external_node
-  n38@{ shape: rounded, label: "**海岛静态碰撞实体**<br/>来自场景装配 ↗：为海岛结构、入口坡道与<br/>展示人物提供静态碰撞。" }
-  class n38 node_entity
-  class n38 external_node
-  n42@{ shape: rounded, label: "**可操作菜单按钮**<br/>来自菜单与界面 ↗：承载可操作菜单动作、<br/>设置调整与连续导航。" }
-  class n42 node_entity
-  class n42 external_node
-  n47@{ shape: rounded, label: "**菜单文字叶节点**<br/>来自菜单与界面 ↗：显示菜单标题、按钮、<br/>按键提示与正文。" }
-  class n47 node_entity
-  class n47 external_node
-  n51@{ shape: rounded, label: "**设置滚动条滑块**<br/>来自菜单与界面 ↗：显示设置内容的可视比<br/>例并支持拖动。" }
-  class n51 node_entity
-  class n51 external_node
-  n0 layout_1@~~~ n4
-  n4 layout_2@~~~ n8
-  n8 layout_3@~~~ n12
-  n12 layout_4@~~~ n16
-  n16 layout_5@~~~ n20
-  n20 layout_6@~~~ n24
-  n24 layout_7@~~~ n33
-  n33 layout_8@~~~ n38
-  n38 layout_9@~~~ n42
-  n42 layout_10@~~~ n47
-  n47 layout_11@~~~ n51
+  n31@{ shape: cyl, label: "**PointerMap**<br/>保存原生指针处理状态。" }
+  class n31 node_resource
+  n49@{ shape: rounded, label: "**角色业务根实体**<br/>来自场景装配 ↗：承载角色身份、运动意图<br/>与动态物理身体。" }
+  class n49 node_entity
+  class n49 external_node
+  n54@{ shape: rounded, label: "**海岛静态碰撞实体**<br/>来自场景装配 ↗：为海岛结构、入口坡道与<br/>展示人物提供静态碰撞。" }
+  class n54 node_entity
+  class n54 external_node
+  n60@{ shape: rounded, label: "**主菜单展示舞台根**<br/>来自菜单与界面 ↗：承载主菜单的独立海岛<br/>展示场景。" }
+  class n60 node_entity
+  class n60 external_node
+  n64@{ shape: rounded, label: "**音量轨道填充**<br/>来自菜单与界面 ↗：显示当前音量对应的轨<br/>道填充。" }
+  class n64 node_entity
+  class n64 external_node
+  n68@{ shape: rounded, label: "**持物无视觉碰撞代理**<br/>来自物品交互 ↗：为持物共享人物刚体提供<br/>无视觉碰撞形状。" }
+  class n68 node_entity
+  class n68 external_node
+  n0 layout_4@~~~ n4
+  n4 layout_5@~~~ n8
+  n8 layout_6@~~~ n12
+  n12 layout_7@~~~ n16
+  n16 layout_8@~~~ n20
+  n20 layout_9@~~~ n24
+  n24 layout_10@~~~ n31
+  n31 layout_11@~~~ n49
+  n49 layout_12@~~~ n54
+  n54 layout_13@~~~ n60
+  n60 layout_14@~~~ n64
+  n64 layout_15@~~~ n68
   end
   style column_0 fill:none,stroke:none
   subgraph column_1[" "]
@@ -143,34 +213,33 @@ flowchart TB
   class n17 node_resource
   n21@{ shape: cyl, label: "**Assets#lt;AnimationClip#gt;**<br/>保存主角与展示模型使用的动画片段。" }
   class n21 node_resource
-  n26@{ shape: rounded, label: "**主角 GLB 播放器节点**<br/>承载主角模型的动画播放与混合状态。" }
-  class n26 node_entity
-  n34@{ shape: rounded, label: "**可搬物品业务根实体**<br/>来自场景装配 ↗：承载可拾取物品身份及自<br/>由运动、共享持握状态。" }
-  class n34 node_entity
-  class n34 external_node
-  n39@{ shape: rounded, label: "**海岛实例根**<br/>来自场景装配 ↗：承载海岛实例并记录碰撞<br/>与业务生成进度。" }
-  class n39 node_entity
-  class n39 external_node
-  n44@{ shape: rounded, label: "**主菜单展示舞台根**<br/>来自菜单与界面 ↗：承载主菜单的独立海岛<br/>展示场景。" }
-  class n44 node_entity
-  class n44 external_node
-  n48@{ shape: rounded, label: "**音量轨道填充**<br/>来自菜单与界面 ↗：显示当前音量对应的轨<br/>道填充。" }
-  class n48 node_entity
-  class n48 external_node
-  n52@{ shape: rounded, label: "**持物无视觉碰撞代理**<br/>来自物品交互 ↗：为持物共享人物刚体提供<br/>无视觉碰撞形状。" }
-  class n52 node_entity
-  class n52 external_node
-  n1 layout_12@~~~ n5
-  n5 layout_13@~~~ n9
-  n9 layout_14@~~~ n13
-  n13 layout_15@~~~ n17
-  n17 layout_16@~~~ n21
-  n21 layout_17@~~~ n26
-  n26 layout_18@~~~ n34
-  n34 layout_19@~~~ n39
-  n39 layout_20@~~~ n44
-  n44 layout_21@~~~ n48
-  n48 layout_22@~~~ n52
+  n28@{ shape: cyl, label: "**PreviousHoverMap**<br/>保存原生指针处理状态。" }
+  class n28 node_resource
+  n33@{ shape: rounded, label: "**主角 GLB 播放器节点**<br/>承载主角模型的动画播放与混合状态。" }
+  class n33 node_entity
+  n50@{ shape: rounded, label: "**可搬物品业务根实体**<br/>来自场景装配 ↗：承载可拾取物品身份及自<br/>由运动、共享持握状态。" }
+  class n50 node_entity
+  class n50 external_node
+  n55@{ shape: rounded, label: "**海岛实例根**<br/>来自场景装配 ↗：承载海岛实例并记录碰撞<br/>与业务生成进度。" }
+  class n55 node_entity
+  class n55 external_node
+  n61@{ shape: rounded, label: "**主菜单展示相机**<br/>来自菜单与界面 ↗：为主菜单展示场景与界<br/>面提供相机。" }
+  class n61 node_entity
+  class n61 external_node
+  n65@{ shape: rounded, label: "**设置右侧纸色面板**<br/>来自菜单与界面 ↗：限定设置内容的显示与<br/>裁切范围。" }
+  class n65 node_entity
+  class n65 external_node
+  n1 layout_16@~~~ n5
+  n5 layout_17@~~~ n9
+  n9 layout_18@~~~ n13
+  n13 layout_19@~~~ n17
+  n17 layout_20@~~~ n21
+  n21 layout_21@~~~ n28
+  n28 layout_22@~~~ n33
+  n33 layout_23@~~~ n50
+  n50 layout_24@~~~ n55
+  n55 layout_25@~~~ n61
+  n61 layout_26@~~~ n65
   end
   style column_1 fill:none,stroke:none
   subgraph column_2[" "]
@@ -187,30 +256,33 @@ flowchart TB
   class n18 node_resource
   n22@{ shape: cyl, label: "**Assets#lt;AnimationGraph#gt;**<br/>保存模型使用的动画混合图。" }
   class n22 node_resource
-  n27@{ shape: rounded, label: "**GLB 网格与骨骼节点**<br/>承载导入模型的网格、骨骼与局部动画姿态。" }
-  class n27 node_entity
-  n35@{ shape: rounded, label: "**第一人称相机实体**<br/>来自场景装配 ↗：提供跟随角色的第一人称<br/>视角与观察输入状态。" }
-  class n35 node_entity
-  class n35 external_node
-  n40@{ shape: rounded, label: "**地图展示 NPC**<br/>来自场景装配 ↗：保留地图展示人物及其静<br/>态身体碰撞。" }
-  class n40 node_entity
-  class n40 external_node
-  n45@{ shape: rounded, label: "**主菜单展示相机**<br/>来自菜单与界面 ↗：为主菜单展示场景与界<br/>面提供相机。" }
-  class n45 node_entity
-  class n45 external_node
-  n49@{ shape: rounded, label: "**设置右侧纸色面板**<br/>来自菜单与界面 ↗：限定设置内容的显示与<br/>裁切范围。" }
-  class n49 node_entity
-  class n49 external_node
-  n2 layout_23@~~~ n6
-  n6 layout_24@~~~ n10
-  n10 layout_25@~~~ n14
-  n14 layout_26@~~~ n18
-  n18 layout_27@~~~ n22
-  n22 layout_28@~~~ n27
-  n27 layout_29@~~~ n35
-  n35 layout_30@~~~ n40
-  n40 layout_31@~~~ n45
-  n45 layout_32@~~~ n49
+  n29@{ shape: cyl, label: "**PointerState**<br/>保存原生指针处理状态。" }
+  class n29 node_resource
+  n34@{ shape: rounded, label: "**GLB 网格与骨骼节点**<br/>承载导入模型的网格、骨骼与局部动画姿态。" }
+  class n34 node_entity
+  n51@{ shape: rounded, label: "**第一人称相机实体**<br/>来自场景装配 ↗：提供跟随角色的第一人称<br/>视角与观察输入状态。" }
+  class n51 node_entity
+  class n51 external_node
+  n56@{ shape: rounded, label: "**地图展示 NPC**<br/>来自场景装配 ↗：保留地图展示人物及其静<br/>态身体碰撞。" }
+  class n56 node_entity
+  class n56 external_node
+  n62@{ shape: rounded, label: "**菜单 GLB 模型与动画子树**<br/>来自菜单与界面 ↗：承载主菜单的海岛模型<br/>与快递员展示动画。" }
+  class n62 node_entity
+  class n62 external_node
+  n66@{ shape: rounded, label: "**设置滚动条轨道**<br/>来自菜单与界面 ↗：为设置内容视口提供可<br/>交互滚动轨道。" }
+  class n66 node_entity
+  class n66 external_node
+  n2 layout_27@~~~ n6
+  n6 layout_28@~~~ n10
+  n10 layout_29@~~~ n14
+  n14 layout_30@~~~ n18
+  n18 layout_31@~~~ n22
+  n22 layout_32@~~~ n29
+  n29 layout_33@~~~ n34
+  n34 layout_34@~~~ n51
+  n51 layout_35@~~~ n56
+  n56 layout_36@~~~ n62
+  n62 layout_37@~~~ n66
   end
   style column_2 fill:none,stroke:none
   subgraph column_3[" "]
@@ -227,36 +299,50 @@ flowchart TB
   class n19 node_resource
   n23@{ shape: cyl, label: "**Messages#lt;UntypedAssetLoadFailedEvent**<br/>**#gt;**<br/>缓冲菜单模型与界面资源的加载失败。" }
   class n23 node_message_buffer
-  n32@{ shape: rounded, label: "**键盘控制者**<br/>来自场景装配 ↗：保存玩家身份、输入上下<br/>文与受控角色及相机。" }
-  class n32 node_entity
-  class n32 external_node
-  n37@{ shape: rounded, label: "**动作实体**<br/>来自第一人称控制 ↗：保存玩法或调试动作<br/>的评估结果与触发状态。" }
-  class n37 node_entity
-  class n37 external_node
-  n41@{ shape: rounded, label: "**BSN 菜单页面根**<br/>来自菜单与界面 ↗：承载当前菜单页面及其<br/>声明式控件层级。" }
-  class n41 node_entity
-  class n41 external_node
-  n46@{ shape: rounded, label: "**菜单 GLB 模型与动画子树**<br/>来自菜单与界面 ↗：承载主菜单的海岛模型<br/>与快递员展示动画。" }
-  class n46 node_entity
-  class n46 external_node
-  n50@{ shape: rounded, label: "**设置滚动条轨道**<br/>来自菜单与界面 ↗：为设置内容视口提供可<br/>交互滚动轨道。" }
-  class n50 node_entity
-  class n50 external_node
-  n3 layout_33@~~~ n7
-  n7 layout_34@~~~ n11
-  n11 layout_35@~~~ n15
-  n15 layout_36@~~~ n19
-  n19 layout_37@~~~ n23
-  n23 layout_38@~~~ n32
-  n32 layout_39@~~~ n37
-  n37 layout_40@~~~ n41
-  n41 layout_41@~~~ n46
-  n46 layout_42@~~~ n50
+  n30@{ shape: cyl, label: "**PickingSettings**<br/>保存原生指针处理状态。" }
+  class n30 node_resource
+  n48@{ shape: rounded, label: "**键盘控制者**<br/>来自场景装配 ↗：保存玩家身份、输入上下<br/>文与受控角色及相机。" }
+  class n48 node_entity
+  class n48 external_node
+  n53@{ shape: rounded, label: "**动作实体**<br/>来自第一人称控制 ↗：保存玩法或调试动作<br/>的评估结果与触发状态。" }
+  class n53 node_entity
+  class n53 external_node
+  n57@{ shape: rounded, label: "**BSN 菜单页面根**<br/>来自菜单与界面 ↗：承载当前菜单页面及其<br/>声明式控件层级。" }
+  class n57 node_entity
+  class n57 external_node
+  n63@{ shape: rounded, label: "**菜单文字叶节点**<br/>来自菜单与界面 ↗：显示菜单标题、按钮、<br/>按键提示与正文。" }
+  class n63 node_entity
+  class n63 external_node
+  n67@{ shape: rounded, label: "**设置滚动条滑块**<br/>来自菜单与界面 ↗：显示设置内容的可视比<br/>例并支持拖动。" }
+  class n67 node_entity
+  class n67 external_node
+  n3 layout_38@~~~ n7
+  n7 layout_39@~~~ n11
+  n11 layout_40@~~~ n15
+  n15 layout_41@~~~ n19
+  n19 layout_42@~~~ n23
+  n23 layout_43@~~~ n30
+  n30 layout_44@~~~ n48
+  n48 layout_45@~~~ n53
+  n53 layout_46@~~~ n57
+  n57 layout_47@~~~ n63
+  n63 layout_48@~~~ n67
   end
   style column_3 fill:none,stroke:none
-  column_0 layout_43@~~~ column_1
-  column_1 layout_44@~~~ column_2
-  column_2 layout_45@~~~ column_3
+  column_0 layout_49@~~~ column_1
+  column_1 layout_50@~~~ column_2
+  column_2 layout_51@~~~ column_3
   end
   e1@{ curve: basis }
   e2@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }

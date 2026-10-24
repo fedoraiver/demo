@@ -8,7 +8,8 @@ use avian3d::{
         math::Pose,
         query::{
             ClosestPoints, Contact, DefaultQueryDispatcher, NonlinearRigidMotion, QueryDispatcher,
-            ShapeCastHit, ShapeCastOptions, ShapeCastStatus, Unsupported, details,
+            ShapeCastHit, ShapeCastOptions, ShapeCastStatus, ShapeDistance, ShapeIntersection,
+            Unsupported, details,
         },
         shape::Shape,
     },
@@ -32,6 +33,7 @@ pub(super) fn path_hits(
     ) else {
         return true;
     };
+    let started_touching = started_touching.intersecting;
     let initial_plane = if started_touching {
         DefaultQueryDispatcher
             .contact(
@@ -88,7 +90,7 @@ impl QueryDispatcher for CarryPathDispatcher {
         pose: &Pose,
         first: &dyn Shape,
         second: &dyn Shape,
-    ) -> Result<bool, Unsupported> {
+    ) -> Result<ShapeIntersection, Unsupported> {
         DefaultQueryDispatcher.intersection_test(pose, first, second)
     }
 
@@ -97,7 +99,7 @@ impl QueryDispatcher for CarryPathDispatcher {
         pose: &Pose,
         first: &dyn Shape,
         second: &dyn Shape,
-    ) -> Result<f32, Unsupported> {
+    ) -> Result<ShapeDistance, Unsupported> {
         DefaultQueryDispatcher.distance(pose, first, second)
     }
 
@@ -205,13 +207,15 @@ impl QueryDispatcher for CarryPathDispatcher {
             }
             // 整体在起点接触不代表每个子片都接触；新子片不能借用另一个面的分离余量。
             let can_separate = !stop_at_penetration
-                && DefaultQueryDispatcher.intersection_test(
-                    &first_motion
-                        .position_at_time(0.0)
-                        .inv_mul(&second_motion.position_at_time(0.0)),
-                    first,
-                    second,
-                )?;
+                && DefaultQueryDispatcher
+                    .intersection_test(
+                        &first_motion
+                            .position_at_time(0.0)
+                            .inv_mul(&second_motion.position_at_time(0.0)),
+                        first,
+                        second,
+                    )?
+                    .intersecting;
             while can_separate {
                 let first_pose = first_motion.position_at_time(time);
                 let second_pose = second_motion.position_at_time(time);
@@ -252,6 +256,8 @@ impl QueryDispatcher for CarryPathDispatcher {
                     normal1: contact.normal1,
                     normal2: contact.normal2,
                     status: ShapeCastStatus::PenetratingOrWithinTargetDist,
+                    subshape1: contact.subshape1,
+                    subshape2: contact.subshape2,
                 }));
             }
             Ok(details::cast_shapes_nonlinear_support_map_support_map(

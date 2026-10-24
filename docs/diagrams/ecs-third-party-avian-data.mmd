@@ -32,35 +32,46 @@ flowchart TB
   accTitle: Avian · 数据与实体
   accDescr: Avian的数据与实体；外部契约保留摘要，可跳转到所属插件。
   %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
   classDef node_observer fill:#F4F1F9,stroke:#7B4DB2,stroke-width:1.6px,color:#1F3340
   classDef node_entity fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
   classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
   classDef node_message_buffer fill:#EDF4F6,stroke:#247B91,stroke-width:1.6px,color:#1F3340
   classDef node_contract fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
   subgraph relations["数据流与关系"]
   direction LR
   subgraph relation_0[" "]
   direction TB
-  n7@{ shape: lin-rect, label: "**PhysicsSystems::StepSimulation /**<br/>**PhysicsSchedule**<br/>执行碰撞求解、重力积分与刚体运动。" }
-  class n7 node_contract
-  n9@{ shape: rounded, label: "**角色业务根实体**<br/>来自场景装配 ↗：承载角色身份、运动意图<br/>与动态物理身体。" }
-  class n9 node_entity
-  class n9 external_node
-  n7 e0@-->|"物理状态"| n9
+  n7@{ shape: cyl, label: "**LastPhysicsTick**<br/>区分外部修改与上一物理步自身的回写。" }
+  class n7 node_resource
+  n8@{ shape: lin-rect, label: "**PhysicsSystems::StepSimulation /**<br/>**PhysicsSchedule**<br/>执行碰撞求解、重力积分与刚体运动。" }
+  class n8 node_contract
+  n10@{ shape: rounded, label: "**wake_changed_bodies**<br/>来自物理基础 ↗：使休眠身体的外部受力和<br/>位姿修改在本固定步生效。" }
+  class n10 node_system
+  class n10 external_node
+  n11@{ shape: rounded, label: "**角色业务根实体**<br/>来自场景装配 ↗：承载角色身份、运动意图<br/>与动态物理身体。" }
+  class n11 node_entity
+  class n11 external_node
+  n8 e0@-->|"物理状态"| n11
   class e0 edge_write
+  n7 e2@-->|"上一物理步末尾 tick"| n10
+  class e2 edge_read
+  n8 e3@-->|"PhysicsSchedule 末尾 tick"| n7
+  class e3 edge_write
   end
   style relation_0 fill:none,stroke:none
   subgraph relation_1[" "]
   direction TB
-  n8@{ shape: hex, label: "**prepare_holder_despawn**<br/>来自物品交互 ↗：在持有者销毁前停用并卸<br/>载持物代理。" }
-  class n8 node_observer
-  class n8 external_node
-  n12@{ shape: rounded, label: "**持物无视觉碰撞代理**<br/>来自物品交互 ↗：为持物共享人物刚体提供<br/>无视觉碰撞形状。" }
-  class n12 node_entity
-  class n12 external_node
-  n8 e1@-->|"Commands"| n12
+  n9@{ shape: hex, label: "**prepare_holder_despawn**<br/>来自物品交互 ↗：在持有者销毁前停用并卸<br/>载持物代理。" }
+  class n9 node_observer
+  class n9 external_node
+  n14@{ shape: rounded, label: "**持物无视觉碰撞代理**<br/>来自物品交互 ↗：为持物共享人物刚体提供<br/>无视觉碰撞形状。" }
+  class n14 node_entity
+  class n14 external_node
+  n9 e1@-->|"Commands"| n14
   class e1 edge_write
   end
   style relation_1 fill:none,stroke:none
@@ -77,13 +88,13 @@ flowchart TB
   class n4 node_resource
   n6@{ shape: cyl, label: "**ContactGraph**<br/>保存物理解算后的真实接触结果。" }
   class n6 node_resource
-  n11@{ shape: rounded, label: "**海岛静态碰撞实体**<br/>来自场景装配 ↗：为海岛结构、入口坡道与<br/>展示人物提供静态碰撞。" }
-  class n11 node_entity
-  class n11 external_node
+  n13@{ shape: rounded, label: "**海岛静态碰撞实体**<br/>来自场景装配 ↗：为海岛结构、入口坡道与<br/>展示人物提供静态碰撞。" }
+  class n13 node_entity
+  class n13 external_node
   n0 layout_0@~~~ n2
   n2 layout_1@~~~ n4
   n4 layout_2@~~~ n6
-  n6 layout_3@~~~ n11
+  n6 layout_3@~~~ n13
   end
   style column_0 fill:none,stroke:none
   subgraph column_1[" "]
@@ -94,13 +105,15 @@ flowchart TB
   class n3 node_message_buffer
   n5@{ shape: cyl, label: "**Time#lt;Physics#gt;**<br/>保存可随游戏暂停的物理模拟时间。" }
   class n5 node_resource
-  n10@{ shape: rounded, label: "**可搬物品业务根实体**<br/>来自场景装配 ↗：承载可拾取物品身份及自<br/>由运动、共享持握状态。" }
-  class n10 node_entity
-  class n10 external_node
+  n12@{ shape: rounded, label: "**可搬物品业务根实体**<br/>来自场景装配 ↗：承载可拾取物品身份及自<br/>由运动、共享持握状态。" }
+  class n12 node_entity
+  class n12 external_node
   n1 layout_4@~~~ n3
   n3 layout_5@~~~ n5
-  n5 layout_6@~~~ n10
+  n5 layout_6@~~~ n12
   end
   style column_1 fill:none,stroke:none
   column_0 layout_7@~~~ column_1
   end
+  e0@{ curve: basis }
+  e3@{ curve: basis }

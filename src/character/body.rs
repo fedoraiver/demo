@@ -28,10 +28,10 @@ pub(crate) fn character_body(config: &PrototypeConfig) -> impl Bundle {
         Restitution::new(0.0),
         CollisionLayers::new(GamePhysicsLayer::Character, LayerMask::ALL),
         CollisionEventsEnabled,
-        // 正常移动与跳跃的合速度低于 8m/s，现有推测接触足以覆盖每步位移。
-        // 仅高速或与旋转物体接触时执行昂贵扫掠，避免驻足时反复查询密集建筑网格。
-        // 保留非线性算法：当前依赖的线性算法在非零水平朝向下会漏掉薄墙接触。
-        SweptCcd::NON_LINEAR.with_velocity_threshold(8.0, 0.1),
+        // Avian 按每步位移与身体最薄尺寸的比例自动启用非线性扫掠。
+        // 半厚度门槛避免普通步行逐帧扫掠建筑网格；保留对动态箱体的高速碰撞保护。
+        SweptCcd::default().with_filter(CcdFilter::ALL),
+        SpeculativeCcd::default(),
         TranslationInterpolation,
     )
 }

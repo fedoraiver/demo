@@ -354,7 +354,7 @@ fn thin_wall_ccd_app(yaw: f32) -> (App, Entity, Vec3) {
         .rotation = rotation;
     app.world_mut()
         .entity_mut(character)
-        .insert(SpeculativeMargin(0.001));
+        .insert(SpeculativeCcd::new(0.001));
     step(&mut app, 1);
     assert!(
         app.world()
@@ -367,7 +367,12 @@ fn thin_wall_ccd_app(yaw: f32) -> (App, Entity, Vec3) {
 }
 
 /// 已有高速步先建立预测邻域，再加入薄墙；不手动搬动角色以免清掉扩展后的 AABB。
-fn add_thin_wall_after_high_speed_step(app: &mut App, character: Entity, direction: Vec3) -> Vec3 {
+fn add_thin_wall_after_high_speed_step(
+    app: &mut App,
+    character: Entity,
+    direction: Vec3,
+    body: RigidBody,
+) -> Vec3 {
     let before = app.world().get::<Position>(character).unwrap().0;
     step(app, 1);
     let start = app.world().get::<Position>(character).unwrap().0;
@@ -377,10 +382,12 @@ fn add_thin_wall_after_high_speed_step(app: &mut App, character: Entity, directi
     // 纯物理夹具不注册 BSN 所依赖的资产服务，使用 Bundle 隔离扫掠与薄墙接触。
     app.world_mut().spawn((
         Name::new("CCD regression thin wall"),
-        RigidBody::Static,
+        body,
+        // 动态对照仍保持墙体原位，只改变 CCD 必须纳入的刚体类别。
+        LockedAxes::ALL_LOCKED,
         Collider::cuboid(6.0, 4.0, 0.04),
         world_collision_layers(),
-        SpeculativeMargin(0.001),
+        SpeculativeCcd::new(0.001),
         // 新墙在高速物理步开始前已有完整模拟姿态，不依赖首次变换传播初始化它。
         Position(wall_position),
         Rotation(rotation),
@@ -415,7 +422,12 @@ fn character_ccd_blocks_high_speed_velocity_and_impulses_at_different_yaws() {
                     .entity_mut(character)
                     .insert(LinearVelocity(direction * SPEED));
             }
-            let start = add_thin_wall_after_high_speed_step(&mut app, character, direction);
+            let start = add_thin_wall_after_high_speed_step(
+                &mut app,
+                character,
+                direction,
+                RigidBody::Static,
+            );
             let radius = app.world().resource::<PrototypeConfig>().character_radius;
             for frame in 0..12 {
                 step(&mut app, 1);
@@ -443,14 +455,129 @@ fn character_ccd_blocks_high_speed_velocity_and_impulses_at_different_yaws() {
         }
     }
 
-    // 1mm 推测接触不能阻挡每步 4m 的位移；同一夹具移除 CCD 后必须穿墙。
+    // 1mm 推测接触不能阻挡每步 4m 的位移；同一夹具禁用 CCD 后必须穿墙。
     let (mut app, character, direction) = thin_wall_ccd_app(0.0);
     app.world_mut()
         .entity_mut(character)
         .insert(LinearVelocity(direction * SPEED));
-    let start = add_thin_wall_after_high_speed_step(&mut app, character, direction);
-    app.world_mut().entity_mut(character).remove::<SweptCcd>();
+    let start =
+        add_thin_wall_after_high_speed_step(&mut app, character, direction, RigidBody::Static);
+    // 新版 Avian 无组件时也启用自动 CCD，必须显式清空过滤掩码才能构造无保护对照。
+    app.world_mut()
+        .entity_mut(character)
+        .insert(SweptCcd::default().with_filter(CcdFilter::NONE));
     step(&mut app, 1);
     let position = app.world().get::<Position>(character).unwrap().0;
     assert!((position - start).dot(direction) > 2.5, "{position:?}");
+}
+
+#[test]
+fn character_ccd_keeps_dynamic_body_protection_after_plugin_upgrade() {
+    for dynamic_ccd in [true, false] {
+        let (mut app, character, direction) = thin_wall_ccd_app(0.45);
+        if !dynamic_ccd {
+            // 默认扫静态几何，漏掉动态物体；此对照确保真实命中依赖动态过滤位。
+            app.world_mut()
+                .entity_mut(character)
+                .insert(SweptCcd::default());
+        }
+        app.world_mut()
+            .entity_mut(character)
+            .insert(LinearVelocity(direction * 240.0));
+        let start =
+            add_thin_wall_after_high_speed_step(&mut app, character, direction, RigidBody::Dynamic);
+        let radius = app.world().resource::<PrototypeConfig>().character_radius;
+        for frame in 0..12 {
+            step(&mut app, 1);
+            let position = app.world().get::<Position>(character).unwrap().0;
+            let travel = (position - start).dot(direction);
+            if dynamic_ccd {
+                assert!(
+                    travel + radius <= 2.0 - 0.02 + 0.03,
+                    "Dynamic-body CCD must block the thin wall in every frame: frame={frame}, position={position:?}"
+                );
+                if frame == 0 {
+                    assert!(travel > 0.5, "The character must reach the wall");
+                }
+            } else {
+                assert!(travel > 2.5, "The unprotected control must cross the wall");
+                break;
+            }
+        }
+    }
+}
+
+#[test]
+fn approaching_fast_dynamic_bodies_keep_their_order_with_predictive_neighbors() {
+    const SPEED: f32 = 120.0;
+    for character_first in [true, false] {
+        for predictive_neighbors in [true, false] {
+            let mut app = test_app();
+            let distance_per_step = SPEED / 60.0;
+            let initial_offset = 1.9 * distance_per_step;
+            app.world_mut().resource_mut::<PrototypeConfig>().gravity = 0.0;
+            let config = app.world().resource::<PrototypeConfig>().clone();
+            let left = if character_first {
+                spawn_character(
+                    &mut app,
+                    Vec3::new(-initial_offset, 4.0 - config.character_height * 0.5, 0.0),
+                )
+            } else {
+                spawn_box(&mut app, Vec3::new(-initial_offset, 4.0, 0.0))
+            };
+            let right = spawn_box(&mut app, Vec3::new(initial_offset, 4.0, 0.0));
+            // 先初始化真实物理姿态；之后每次 app.update 返回即检查，不补跑求解器。
+            step(&mut app, 1);
+            if !predictive_neighbors {
+                // 保留双方的动态扫掠，只移除预测邻域；交会点不落在任一对方起点的 AABB 内。
+                app.world_mut().entity_mut(left).remove::<SpeculativeCcd>();
+                app.world_mut().entity_mut(right).remove::<SpeculativeCcd>();
+            }
+            app.world_mut()
+                .entity_mut(left)
+                .insert(LinearVelocity(Vec3::X * SPEED));
+            app.world_mut()
+                .entity_mut(right)
+                .insert(LinearVelocity(Vec3::NEG_X * SPEED));
+            let left_extent = if character_first {
+                config.character_radius
+            } else {
+                config.parcel_half_height
+            };
+            let minimum_separation = left_extent + config.parcel_half_height;
+            // Avian 在物理步结束时更新下一步的预测邻域；首个高速步尚未交会，仍立即核对其位姿。
+            step(&mut app, 1);
+            let left_position = app.world().get::<Position>(left).unwrap().0;
+            let right_position = app.world().get::<Position>(right).unwrap().0;
+            assert!((left_position.x + initial_offset - distance_per_step).abs() < 0.01);
+            assert!((right_position.x - initial_offset + distance_per_step).abs() < 0.01);
+            assert!(right_position.x - left_position.x >= minimum_separation);
+            for frame in 0..12 {
+                step(&mut app, 1);
+                let left_position = app.world().get::<Position>(left).unwrap().0;
+                let right_position = app.world().get::<Position>(right).unwrap().0;
+                let separation = right_position.x - left_position.x;
+                if predictive_neighbors {
+                    assert!(
+                        separation >= minimum_separation - 0.03,
+                        "Approaching dynamic bodies must remain separated without changing order: character={character_first}, frame={frame}, left={left_position:?}, right={right_position:?}"
+                    );
+                    if frame == 0 {
+                        let left_velocity = app.world().get::<LinearVelocity>(left).unwrap().x;
+                        let right_velocity = app.world().get::<LinearVelocity>(right).unwrap().x;
+                        assert!(
+                            right_velocity - left_velocity > -SPEED,
+                            "Contact must change the approaching relative velocity"
+                        );
+                    }
+                } else {
+                    assert!(
+                        separation < 0.0,
+                        "The control must expose crossing paths without predictive neighbors: character={character_first}, left={left_position:?}, right={right_position:?}"
+                    );
+                    break;
+                }
+            }
+        }
+    }
 }

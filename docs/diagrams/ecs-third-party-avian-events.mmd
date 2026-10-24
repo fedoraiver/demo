@@ -53,7 +53,7 @@ flowchart LR
   n4@{ shape: rounded, label: "**log_collisions**<br/>来自物理基础 ↗：将碰撞开始与结束写入统<br/>一日志。" }
   class n4 node_system
   class n4 external_node
-  n5@{ shape: fr-rect, label: "**GamePhysicsPlugin**<br/>来自物理基础 ↗：安装物理引擎并管理重力<br/>与碰撞日志。" }
+  n5@{ shape: fr-rect, label: "**GamePhysicsPlugin**<br/>来自物理基础 ↗：安装物理引擎并管理重<br/>力、提前唤醒与碰撞日志。" }
   class n5 node_plugin
   class n5 external_node
   n3 e0@--> n4

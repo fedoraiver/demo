@@ -32,27 +32,26 @@ fn spawn_scrollbar_fixture(app: &mut App) {
             ScrollbarTestRoot
             Node {
                 width: percent(100), height: percent(100),
+                min_height: px(0),
                 flex_direction: FlexDirection::Column,
                 row_gap: px(12), padding: px(16),
             }
             Children [
-                (
-                    ScrollbarTestFixedSibling
-                    Node { height: px(24), flex_shrink: 0.0 }
-                ),
-                (
-                    ScrollbarTestPanel
-                    paper_panel(&theme)
-                    Node { width: percent(100), min_height: px(0), flex_grow: 1.0, flex_basis: px(0) }
-                    Children [settings_scroll_frame(&theme, bsn! {
-                        ScrollbarTestContent
-                        Node { width: percent(100), height: px(1000), flex_shrink: 0.0 }
-                    })]
-                ),
-                (
-                    ScrollbarTestFixedSibling
-                    Node { height: px(36), flex_shrink: 0.0 }
-                ),
+                ScrollbarTestFixedSibling
+                Node { height: px(24), flex_shrink: 0.0 }
+                --
+                ScrollbarTestPanel
+                @paper_panel(&theme)
+                Node { width: percent(100), min_height: px(0), flex_grow: 1.0, flex_basis: px(0) }
+                Children [
+                    @settings_scroll_frame(&theme, bsn! {
+                            ScrollbarTestContent
+                            Node { width: percent(100), height: px(1000), flex_shrink: 0.0 }
+                    })
+                ]
+                --
+                ScrollbarTestFixedSibling
+                Node { height: px(36), flex_shrink: 0.0 }
             ]
         })
         .unwrap();
@@ -75,13 +74,15 @@ fn scrollbar_entities(app: &mut App) -> (Entity, Entity, Entity) {
 }
 
 // 只向无窗口 World 注入 UI 事件，验证真正的 Bevy Observer，不模拟桌面输入。
-fn send_pointer<E: std::fmt::Debug + Clone + Reflect>(
+fn send_pointer<E: bevy::picking::events::PointerEvent>(
     app: &mut App,
     entity: Entity,
     position: Vec2,
-    event: E,
-) {
-    app.world_mut().trigger(Pointer::new(
+    event: impl FnOnce(Entity, Pointer) -> E,
+) where
+    for<'a> E::Trigger<'a>: Default,
+{
+    let pointer = Pointer::new(
         PointerId::Mouse,
         Location {
             target: NormalizedRenderTarget::None {
@@ -90,9 +91,8 @@ fn send_pointer<E: std::fmt::Debug + Clone + Reflect>(
             },
             position,
         },
-        event,
-        entity,
-    ));
+    );
+    app.world_mut().trigger(event(entity, pointer));
 }
 
 fn pointer_hit(app: &mut App) -> HitData {
@@ -106,18 +106,15 @@ fn pointer_hit(app: &mut App) -> HitData {
 
 fn pointer_scroll(app: &mut App, entity: Entity, unit: MouseScrollUnit, y: f32) {
     let hit = pointer_hit(app);
-    send_pointer(
-        app,
+    send_pointer(app, entity, Vec2::ZERO, |entity, pointer| PointerScroll {
         entity,
-        Vec2::ZERO,
-        Scroll {
-            unit,
-            x: 0.0,
-            y,
-            hit,
-            phase: TouchPhase::Moved,
-        },
-    );
+        pointer,
+        unit,
+        x: 0.0,
+        y,
+        hit,
+        phase: TouchPhase::Moved,
+    });
 }
 
 fn node_rect(world: &World, entity: Entity) -> Rect {
@@ -223,16 +220,13 @@ fn settings_scrollbar_native_pointer_actions_follow_the_scroll_position_at_multi
         let click =
             Vec2::new(track_rect.center().x, track_rect.max.y - 1.0) * ui_scale / render_scale;
         let hit = pointer_hit(&mut app);
-        send_pointer(
-            &mut app,
-            track,
-            click,
-            Press {
-                button: PointerButton::Primary,
-                hit,
-                count: 1,
-            },
-        );
+        send_pointer(&mut app, track, click, |entity, pointer| PointerPress {
+            entity,
+            pointer,
+            button: PointerButton::Primary,
+            hit,
+            count: 1,
+        });
         let area_node = app.world().get::<ComputedNode>(area).unwrap();
         let page_size =
             (area_node.size().y - area_node.scrollbar_size.y) * area_node.inverse_scale_factor();
@@ -244,27 +238,21 @@ fn settings_scrollbar_native_pointer_actions_follow_the_scroll_position_at_multi
 
         let before = app.world().get::<ScrollPosition>(area).unwrap().y;
         let hit = pointer_hit(&mut app);
-        send_pointer(
-            &mut app,
-            thumb,
-            click,
-            Press {
-                button: PointerButton::Primary,
-                hit,
-                count: 1,
-            },
-        );
+        send_pointer(&mut app, thumb, click, |entity, pointer| PointerPress {
+            entity,
+            pointer,
+            button: PointerButton::Primary,
+            hit,
+            count: 1,
+        });
         assert_eq!(app.world().get::<ScrollPosition>(area).unwrap().y, before);
         let hit = pointer_hit(&mut app);
-        send_pointer(
-            &mut app,
-            thumb,
-            click,
-            DragStart {
-                button: PointerButton::Primary,
-                hit,
-            },
-        );
+        send_pointer(&mut app, thumb, click, |entity, pointer| PointerDragStart {
+            entity,
+            pointer,
+            button: PointerButton::Primary,
+            hit,
+        });
         assert!(
             app.world()
                 .get::<ScrollbarDragState>(thumb)
@@ -272,16 +260,13 @@ fn settings_scrollbar_native_pointer_actions_follow_the_scroll_position_at_multi
                 .dragging
         );
         let distance = Vec2::new(0.0, 18.0 * ui_scale);
-        send_pointer(
-            &mut app,
-            thumb,
-            click,
-            Drag {
-                button: PointerButton::Primary,
-                distance,
-                delta: distance,
-            },
-        );
+        send_pointer(&mut app, thumb, click, |entity, pointer| PointerDrag {
+            entity,
+            pointer,
+            button: PointerButton::Primary,
+            distance,
+            delta: distance,
+        });
         let area_node = app.world().get::<ComputedNode>(area).unwrap();
         let track_node = app.world().get::<ComputedNode>(track).unwrap();
         let content_height = area_node.content_size().y * area_node.inverse_scale_factor();
@@ -289,30 +274,24 @@ fn settings_scrollbar_native_pointer_actions_follow_the_scroll_position_at_multi
         let range = vertical_scroll_range(area_node);
         let expected = (before + 18.0 * content_height / track_height).min(range);
         assert!((app.world().get::<ScrollPosition>(area).unwrap().y - expected).abs() < 0.1);
-        send_pointer(
-            &mut app,
-            thumb,
-            click,
-            Drag {
-                button: PointerButton::Primary,
-                distance: Vec2::new(0.0, 10000.0),
-                delta: Vec2::new(0.0, 10000.0),
-            },
-        );
+        send_pointer(&mut app, thumb, click, |entity, pointer| PointerDrag {
+            entity,
+            pointer,
+            button: PointerButton::Primary,
+            distance: Vec2::new(0.0, 10000.0),
+            delta: Vec2::new(0.0, 10000.0),
+        });
         app.update();
         assert!((app.world().get::<ScrollPosition>(area).unwrap().y - range).abs() < 0.1);
         assert!(
             (node_rect(app.world(), thumb).max.y - node_rect(app.world(), track).max.y).abs() < 1.0
         );
-        send_pointer(
-            &mut app,
-            thumb,
-            click,
-            DragEnd {
-                button: PointerButton::Primary,
-                distance,
-            },
-        );
+        send_pointer(&mut app, thumb, click, |entity, pointer| PointerDragEnd {
+            entity,
+            pointer,
+            button: PointerButton::Primary,
+            distance,
+        });
         assert!(
             !app.world()
                 .get::<ScrollbarDragState>(thumb)
@@ -320,17 +299,18 @@ fn settings_scrollbar_native_pointer_actions_follow_the_scroll_position_at_multi
                 .dragging
         );
         let hit = pointer_hit(&mut app);
-        send_pointer(
-            &mut app,
-            thumb,
-            click,
-            DragStart {
-                button: PointerButton::Primary,
-                hit,
-            },
-        );
+        send_pointer(&mut app, thumb, click, |entity, pointer| PointerDragStart {
+            entity,
+            pointer,
+            button: PointerButton::Primary,
+            hit,
+        });
         let hit = pointer_hit(&mut app);
-        send_pointer(&mut app, thumb, click, Cancel { hit });
+        send_pointer(&mut app, thumb, click, |entity, pointer| PointerCancel {
+            entity,
+            pointer,
+            hit,
+        });
         assert!(
             !app.world()
                 .get::<ScrollbarDragState>(thumb)
@@ -351,15 +331,14 @@ fn settings_scrollbar_hides_clamps_and_clears_drag_when_layout_or_page_changes()
     let (area, track, thumb) = scrollbar_entities(&mut app);
     pointer_scroll(&mut app, area, MouseScrollUnit::Line, -8.0);
     let hit = pointer_hit(&mut app);
-    send_pointer(
-        &mut app,
-        thumb,
-        Vec2::ZERO,
-        DragStart {
+    send_pointer(&mut app, thumb, Vec2::ZERO, |entity, pointer| {
+        PointerDragStart {
+            entity,
+            pointer,
             button: PointerButton::Primary,
             hit,
-        },
-    );
+        }
+    });
     let world = app.world_mut();
     let content = world
         .query_filtered::<Entity, With<ScrollbarTestContent>>()
@@ -398,15 +377,14 @@ fn settings_scrollbar_hides_clamps_and_clears_drag_when_layout_or_page_changes()
     );
     pointer_scroll(&mut app, area, MouseScrollUnit::Line, -8.0);
     let hit = pointer_hit(&mut app);
-    send_pointer(
-        &mut app,
-        thumb,
-        Vec2::ZERO,
-        DragStart {
+    send_pointer(&mut app, thumb, Vec2::ZERO, |entity, pointer| {
+        PointerDragStart {
+            entity,
+            pointer,
             button: PointerButton::Primary,
             hit,
-        },
-    );
+        }
+    });
     app.world_mut().resource_mut::<MenuState>().page = MenuPage::Main;
     app.update();
     pointer_scroll(&mut app, area, MouseScrollUnit::Line, -8.0);

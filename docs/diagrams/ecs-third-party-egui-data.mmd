@@ -41,17 +41,14 @@ flowchart TB
   direction TB
   n0@{ shape: cyl, label: "**EguiGlobalSettings**<br/>配置检查器界面的上下文与输入处理。" }
   class n0 node_resource
-  n1@{ shape: cyl, label: "**EnableMultipassForPrimaryContext**<br/>启用主检查器上下文的多轮界面计算。" }
-  class n1 node_resource
-  n2@{ shape: rounded, label: "**第一人称相机实体**<br/>来自场景装配 ↗：提供跟随角色的第一人称<br/>视角与观察输入状态。" }
+  n1@{ shape: rounded, label: "**第一人称相机实体**<br/>来自场景装配 ↗：提供跟随角色的第一人称<br/>视角与观察输入状态。" }
+  class n1 node_entity
+  class n1 external_node
+  n2@{ shape: rounded, label: "**主菜单展示相机**<br/>来自菜单与界面 ↗：为主菜单展示场景与界<br/>面提供相机。" }
   class n2 node_entity
   class n2 external_node
-  n3@{ shape: rounded, label: "**主菜单展示相机**<br/>来自菜单与界面 ↗：为主菜单展示场景与界<br/>面提供相机。" }
-  class n3 node_entity
-  class n3 external_node
   n0 layout_0@~~~ n1
   n1 layout_1@~~~ n2
-  n2 layout_2@~~~ n3
   end
   style column_0 fill:none,stroke:none
   end

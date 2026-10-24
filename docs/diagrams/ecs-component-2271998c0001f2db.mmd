@@ -50,7 +50,7 @@ flowchart RL
   n3@{ shape: rounded, label: "**spawn_menu_controller**<br/>来自菜单与界面 ↗：创建菜单动作控制者及<br/>键盘、手柄绑定。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: lin-rect, label: "**EnhancedInputSystems::Apply**<br/>提交动作值并派发对应事件。" }
+  n4@{ shape: lin-rect, label: "**EnhancedInputSystems::Apply**<br/>把评估结果写回强类型动作值。" }
   class n4 node_contract
   n1 layout_0@~~~ n0
   n2 layout_1@~~~ n1
@@ -60,7 +60,7 @@ flowchart RL
   class e1 edge_write
   n3 e2@-->|"添加"| n1
   class e2 edge_write
-  n4 e3@-->|"/ 结构变更（待核实）"| n1
+  n4 e3@-->|"结构变更（待核实）"| n1
   class e3 edge_write
   n1 e0@-->|"可能挂载于"| n0
   class e0 edge_reference

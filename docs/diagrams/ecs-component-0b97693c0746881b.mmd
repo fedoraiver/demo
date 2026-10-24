@@ -1,0 +1,63 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 32,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#component-0b97693c0746881b-e1{marker-start:url(#component-0b97693c0746881b_flowchart-v2-pointStart)!important}\n#component-0b97693c0746881b-e2{marker-start:url(#component-0b97693c0746881b_flowchart-v2-pointStart)!important}\n#component-0b97693c0746881b_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}"
+  }
+}
+---
+flowchart RL
+  accTitle: EguiContextSettings · 组件关系
+  accDescr: 左侧为包含组件的实体，中间为组件类型，右侧每个系统函数只显示一次；连线表达访问与生命周期操作。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_entity fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_contract fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**第一人称相机实体**<br/>来自场景装配 ↗：提供跟随角色的第一人称<br/>视角与观察输入状态。" }
+  class n0 node_entity
+  class n0 external_node
+  n1@{ shape: rounded, label: "**EguiContextSettings**<br/>配置检查器上下文的输入与输出处理。" }
+  class n1 node_component
+  n2@{ shape: lin-rect, label: "**EguiPreUpdateSet::ProcessInput**<br/>将窗口和设备输入转换为检查器界面输入。" }
+  class n2 node_contract
+  n3@{ shape: rounded, label: "**WorldInspectorPlugin / world_**<br/>**inspector_ui**<br/>展示并编辑开放反射的实体、资源与资产。" }
+  class n3 node_system
+  n1 layout_0@~~~ n0
+  n2 layout_1@~~~ n1
+  n3 layout_2@~~~ n1
+  n1 e0@-->|"可能挂载于"| n0
+  class e0 edge_reference
+  n2 e1@---|"查询访问"| n1
+  class e1 edge_read
+  n3 e2@---|"查询访问"| n1
+  class e2 edge_read
+  e0@{ curve: basis }
+  e1@{ curve: bumpX }
+  e2@{ curve: basis }

@@ -1,0 +1,85 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 32,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#component-e78dc61e23793822-e5{marker-start:url(#component-e78dc61e23793822_flowchart-v2-pointStart)!important}\n#component-e78dc61e23793822_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}"
+  }
+}
+---
+flowchart RL
+  accTitle: AnimationGraphHandle · 组件关系
+  accDescr: 左侧为包含组件的实体，中间为组件类型，右侧每个系统函数只显示一次；连线表达访问与生命周期操作。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_entity fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_contract fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**主角 GLB 播放器节点**<br/>承载主角模型的动画播放与混合状态。" }
+  class n0 node_entity
+  n1@{ shape: rounded, label: "**菜单 GLB 模型与动画子树**<br/>来自菜单与界面 ↗：承载主菜单的海岛模型<br/>与快递员展示动画。" }
+  class n1 node_entity
+  class n1 external_node
+  n2@{ shape: rounded, label: "**AnimationGraphHandle**<br/>关联模型使用的动画混合图。" }
+  class n2 node_component
+  n3@{ shape: rounded, label: "**initialize_ready_couriers**<br/>来自角色动画 ↗：绑定主角命名动画并缓存<br/>鞋底补偿节点。" }
+  class n3 node_system
+  class n3 external_node
+  n4@{ shape: rounded, label: "**sync_courier_animation**<br/>来自角色动画 ↗：按角色运动状态连续混合<br/>移动与跳跃动画。" }
+  class n4 node_system
+  class n4 external_node
+  n5@{ shape: rounded, label: "**play_courier_animation**<br/>来自菜单与界面 ↗：绑定并循环播放展示快<br/>递员的持物待机动画。" }
+  class n5 node_system
+  class n5 external_node
+  n6@{ shape: lin-rect, label: "**AnimationSystems / AnimationPlugin**<br/>采样动画图并更新骨骼局部姿态。" }
+  class n6 node_contract
+  n2 layout_0@~~~ n0
+  n2 layout_1@~~~ n1
+  n3 layout_2@~~~ n2
+  n4 layout_3@~~~ n2
+  n5 layout_4@~~~ n2
+  n6 layout_5@~~~ n2
+  n3 e2@-->|"添加"| n2
+  class e2 edge_write
+  n4 e3@-->|"移除"| n2
+  class e3 edge_write
+  n5 e4@-->|"添加"| n2
+  class e4 edge_write
+  n2 e0@-->|"可能挂载于"| n0
+  class e0 edge_reference
+  n2 e1@-->|"可能挂载于"| n1
+  class e1 edge_reference
+  n6 e5@---|"查询访问"| n2
+  class e5 edge_read
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }

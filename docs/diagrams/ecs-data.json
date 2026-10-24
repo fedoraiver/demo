@@ -456,16 +456,13 @@
       "kind": "engine",
       "phase": "PreUpdate",
       "module": "bevy_enhanced_input",
-      "description": "把类型擦除动作值写入 Action<A>，通过 Commands::trigger 排入动作事件。",
-      "display_summary": "提交动作值并派发对应事件。",
+      "description": "把类型擦除的 ActionValue 写回对应的强类型 Action<A>；不在此阶段派发事件。",
+      "display_summary": "把评估结果写回强类型动作值。",
       "reads": [
         "resource.ContextInstances",
         "controller.Actions",
         "action.ActionFns",
-        "action.ActionValue",
-        "action.TriggerState",
-        "action.ActionEvents",
-        "action.ActionTime"
+        "action.ActionValue"
       ],
       "writes": [
         "action.Action"
@@ -474,14 +471,10 @@
         "上下文：Without<ActionFns>",
         "动作：With<ActionFns>"
       ],
-      "events": [
-        "排入 EntityEvent：Fire<MoveAction>、Complete<MoveAction>、Cancel<MoveAction>、Fire<JumpAction>、Fire<InteractAction>、Fire<LookAction>、Fire<ReleasePointerAction>"
-      ],
+      "events": [],
       "notes": [
-        "Update → Apply 为框架显式链。",
-        "此 Apply 是动作写回阶段，不是 ApplyDeferred。",
-        "Commands::trigger 在命令应用时才触发 Observer；默认 PreUpdate 结束前已应用，固定循环读取最新意图。",
-        "框架还可产生 Start、Ongoing 等动作事件；本项目未注册相应业务 Observer。"
+        "Update → Apply → Trigger 是框架显式链。",
+        "此 Apply 是动作值写回阶段，不是 ApplyDeferred；事件命令由后续 Trigger 排入。"
       ],
       "source": null,
       "feature": "enhanced_input",
@@ -494,6 +487,52 @@
           "scope": "runtime",
           "sets": [
             "EnhancedInputSystems::Apply"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "input_trigger",
+      "name": "EnhancedInputSystems::Trigger",
+      "kind": "engine",
+      "phase": "PreUpdate",
+      "module": "bevy_enhanced_input",
+      "description": "按上下文优先级读取动作状态、时间与事件标记，通过 Commands::trigger 排入带类型的动作事件。",
+      "display_summary": "按上下文顺序排入动作事件命令。",
+      "reads": [
+        "resource.ContextInstances",
+        "controller.Actions",
+        "action.ActionFns",
+        "action.ActionValue",
+        "action.TriggerState",
+        "action.ActionEvents",
+        "action.ActionTime"
+      ],
+      "writes": [],
+      "filters": [
+        "上下文：Without<ActionFns>",
+        "动作：With<ActionFns>"
+      ],
+      "events": [
+        "排入 EntityEvent：Fire<MoveAction>、Complete<MoveAction>、Cancel<MoveAction>、Fire<JumpAction>、Fire<InteractAction>、Fire<LookAction>、Fire<ReleasePointerAction>"
+      ],
+      "notes": [
+        "Update → Apply → Trigger 是框架显式链。",
+        "Apply 只把类型擦除值写回 Action<A>，Trigger 单独负责事件。",
+        "Commands::trigger 在命令应用时触发 Observer；菜单请求消费者显式位于 Trigger 之后。",
+        "框架还可产生 Start、Ongoing 等动作事件；图中只展开项目已接入的业务事件。"
+      ],
+      "source": null,
+      "feature": "enhanced_input",
+      "registered_by": "enhanced_input",
+      "schedule": "PreUpdate",
+      "schedule_group": "PreUpdate",
+      "registrations": [
+        {
+          "schedule": "PreUpdate",
+          "scope": "runtime",
+          "sets": [
+            "EnhancedInputSystems::Trigger"
           ]
         }
       ]
@@ -526,7 +565,7 @@
       ],
       "source": {
         "path": "src/first_person/actions.rs",
-        "line": 118
+        "line": 95
       },
       "feature": "first_person",
       "registered_by": "first_person",
@@ -561,7 +600,7 @@
       ],
       "source": {
         "path": "src/first_person/actions.rs",
-        "line": 137
+        "line": 114
       },
       "feature": "first_person",
       "registered_by": "first_person",
@@ -596,7 +635,7 @@
       ],
       "source": {
         "path": "src/first_person/actions.rs",
-        "line": 156
+        "line": 133
       },
       "feature": "first_person",
       "registered_by": "first_person",
@@ -630,7 +669,7 @@
       ],
       "source": {
         "path": "src/first_person/actions.rs",
-        "line": 176
+        "line": 153
       },
       "feature": "first_person",
       "registered_by": "first_person",
@@ -664,7 +703,7 @@
       ],
       "source": {
         "path": "src/first_person/actions.rs",
-        "line": 190
+        "line": 167
       },
       "feature": "first_person",
       "registered_by": "first_person",
@@ -1584,11 +1623,11 @@
       "reads": [],
       "writes": [],
       "filters": [
-        "begin_pass_system 仅作用于 Without<EguiMultipassSchedule> 的上下文"
+        "begin_pass_system 仅作用于 Without<EguiSchedule> 的上下文"
       ],
       "events": [],
       "notes": [
-        "默认 EguiPlugin 启用主上下文 multipass，当前主相机具有 EguiMultipassSchedule，所以这里不对主 UI 执行 begin_pass。",
+        "PrimaryEguiContext 默认要求 EguiSchedule，当前主相机具有 EguiSchedule，所以这里不对主 UI 执行 begin_pass。",
         "主检查器的本帧 UI 在 PostUpdate 的上下文循环内部计算；此节点表示排序边界，不能标为主 UI 本帧已处理完成。",
         "单轮上下文的 begin_pass_system 会读 EguiContextSettings、取出 EguiInput 并可变访问 EguiContext；这些是过滤条件下的引擎行为，此图不把它们算作当前主相机访问。",
         "filter_captured_egui_input.before(BeginPass) 与 sync_mouse_capture.after(BeginPass) 在该集合两侧明确排序；即使当前主上下文采用 multipass，这仍是相关系统的排序边界。"
@@ -1955,7 +1994,7 @@
       ],
       "source": {
         "path": "src/physics/mod.rs",
-        "line": 37
+        "line": 89
       },
       "feature": "physics",
       "registered_by": "physics",
@@ -2246,7 +2285,13 @@
         "parcel.ColliderAabb",
         "world.Position",
         "world.Rotation",
-        "world.ColliderAabb"
+        "world.ColliderAabb",
+        "character.SweptCcd",
+        "character.SpeculativeCcd",
+        "character.BodySizeMetrics",
+        "parcel.SweptCcd",
+        "parcel.SpeculativeCcd",
+        "parcel.BodySizeMetrics"
       ],
       "writes": [
         "character.Position",
@@ -2262,14 +2307,21 @@
         "resource.CollisionEndMessages",
         "character.ColliderAabb",
         "parcel.ColliderAabb",
-        "world.ColliderAabb"
+        "world.ColliderAabb",
+        "resource.LastPhysicsTick",
+        "character.BodySizeMetrics",
+        "parcel.BodySizeMetrics"
       ],
       "filters": [],
       "events": [],
       "notes": [
         "PhysicsSchedule 嵌套于 StepSimulation；内部有求解子步，不等于一个普通业务函数。",
         "碰撞消息按 CollisionEventsEnabled 策略产生；力本步连续作用，物理步后清理累计。",
-        "ColliderTreePlugin 在 PhysicsSchedule 的 BroadPhase 更新 AABB/树，在 Finalize 之后、Last 之前再次更新求解体 AABB；结构、碰撞层与 Sensor 的框架 Observer 也维护 ColliderTrees。此概览不新增项目 Observer。"
+        "ColliderTreePlugin 在 PhysicsSchedule 的 BroadPhase 更新 AABB/树，在 Finalize 之后、Last 之前再次更新求解体 AABB；结构、碰撞层与 Sensor 的框架 Observer 也维护 ColliderTrees。此概览不新增项目 Observer。",
+        "Avian 0.8 使用默认 6 个求解子步；项目没有覆盖 SubstepCount。",
+        "CCD 在刚体层遍历 RigidBodyColliders；人物的 SpeculativeCcd / SweptCcd 配置也覆盖持物代理，不在代理上重复装配这些组件。",
+        "PhysicsSchedule 在 PhysicsStepSystems::Last 之后执行 update_last_physics_tick，记录本次物理末尾的系统变更 tick。",
+        "BodySizeMetricsPlugin 在 PhysicsSchedule 的 Solver 前，按变化的质心或 Collider 重算 CCD 厚度与扫掠半径。"
       ],
       "source": null,
       "feature": "avian",
@@ -3187,7 +3239,7 @@
       "description": "采样动画图并写入目标骨骼局部 Transform。",
       "display_summary": "采样动画图并更新骨骼局部姿态。",
       "notes": [
-        "Bevy 0.19.1 在 PostUpdate 中运行 AnimationSystems，并先于 TransformSystems::Propagate。",
+        "Bevy 0.20.0 在 PostUpdate 中运行 AnimationSystems，并先于 TransformSystems::Propagate。",
         "主角随后执行鞋底视觉高度补偿，再传播最终世界变换；检查器没有分支全序。",
         "引擎概览不展开全部动画内部系统与缓存。"
       ],
@@ -3440,7 +3492,7 @@
       ],
       "source": {
         "path": "src/ui/navigation.rs",
-        "line": 72
+        "line": 121
       },
       "feature": "ui",
       "registered_by": "ui",
@@ -3463,7 +3515,7 @@
       "id": "menu_handle_requests",
       "name": "handle_requests",
       "kind": "system",
-      "phase": "PreUpdate · after(EnhancedInputSystems::Apply)",
+      "phase": "PreUpdate · after(EnhancedInputSystems::Trigger)",
       "module": "ui",
       "description": "集中消费菜单语义请求，导航与保存应用设置；归并同一拖动数值与释放，试听复用拾取声音消息。",
       "display_summary": "处理菜单导航、设置应用与音量编辑请求。",
@@ -3477,7 +3529,6 @@
         "local.VolumeEdit"
       ],
       "writes": [
-        "resource.UiRequestMessages",
         "resource.MenuState",
         "resource.MenuFocus",
         "resource.SettingsDraft",
@@ -3514,7 +3565,7 @@
           "schedule": "PreUpdate",
           "scope": "runtime",
           "after": [
-            "EnhancedInputSystems::Apply"
+            "EnhancedInputSystems::Trigger"
           ]
         }
       ]
@@ -3525,13 +3576,16 @@
       "kind": "system",
       "phase": "Update · Build之后 / Style之前",
       "module": "ui",
-      "description": "读取原生 Interaction 产生共享请求，按真实窗口光标变化区分鼠标与键盘焦点。真实鼠标进入新按钮时发送 MenuHover。",
+      "description": "在 Build 后消费原生主键 PointerPress 缓冲消息，沿 ChildOf 找仍存活按钮，并按真实窗口光标移动区分输入来源。",
       "display_summary": "将真实鼠标交互转换为共享菜单请求。",
       "reads": [
         "resource.MenuState",
         "window.Window",
         "menu_button.MenuButton",
-        "menu_button.Interaction",
+        "menu_button.Hovered",
+        "menu_button.PrimaryPress",
+        "menu_button.ChildOf",
+        "resource.PointerPressMessages",
         "local.MenuPointerCursor",
         "local.MenuPointerHover"
       ],
@@ -3544,20 +3598,24 @@
         "local.MenuPointerHover"
       ],
       "filters": [
-        "With<PrimaryWindow>"
+        "With<PrimaryWindow>",
+        "Has<PrimaryPress> 仅存在过滤，不读取指针身份字段"
       ],
       "events": [
+        "读取 Message：PointerPress（仅 Primary）",
+        "写入 Message：UiRequest（滑条 Adjust(_,0) 除外）",
         "写入 SoundRequest：menu_hover"
       ],
       "notes": [
-        "只读窗口位置区分来源，点击仍使用 Interaction；不重复读取 MouseButton。",
-        "页面 Build 先销毁旧按钮并应用命令，防止旧页面 Back 补发；Hidden 不处理按钮。",
-        "按钮内移动、按下后释放和页面重建初始 Hovered 不重复发声；Local 保存上次窗口位置与悬停实体。",
-        "滑条 Adjust(_, 0) 不经普通按钮点击路径发请求，避免重复触发。"
+        "同帧按下再释放时 Pressed 已移除，但 PointerPress 缓冲仍保留；不能以 Has<Pressed> 代替按下消息。",
+        "按原始 press.entity 沿 ChildOf 找所属按钮；Build 销毁旧树后，不存在的实体不会匹配新页面。",
+        "MessageReader::clear 只推进本系统游标，Hidden 分支不处理按钮。",
+        "只读窗口位置切换真实鼠标来源；静止光标、初次 Hovered 和同按钮内移动不重复悬停音。",
+        "PrimaryPress 这里只用 Has 做过滤；身份字段只由取消清理系统读取。"
       ],
       "source": {
         "path": "src/ui/pointer.rs",
-        "line": 12
+        "line": 88
       },
       "feature": "ui",
       "registered_by": "ui",
@@ -3654,20 +3712,25 @@
         "resource.MenuFocus",
         "resource.MenuInputSource",
         "menu_button.MenuButton",
-        "menu_button.Interaction"
+        "menu_button.Hovered",
+        "menu_button.Pressed",
+        "menu_button.PrimaryPress"
       ],
       "writes": [
         "menu_button.BackgroundColor",
         "menu_button.BorderColor"
       ],
-      "filters": [],
+      "filters": [
+        "Has<Pressed> 与 Has<PrimaryPress> 仅存在过滤，无字段读取"
+      ],
       "events": [],
       "notes": [
-        "Apply 与分类按钮复用同一规则；只有颜色变化时写入。"
+        "按下颜色仅在原生 Pressed 与项目 PrimaryPress 同时存在时显示，副键不继承主键颜色。",
+        "鼠标模式根据 Hovered 或有效主键按下高亮，导航模式只看 MenuFocus；只在颜色变化时写入。"
       ],
       "source": {
         "path": "src/ui/style.rs",
-        "line": 36
+        "line": 37
       },
       "feature": "ui",
       "registered_by": "ui",
@@ -3710,7 +3773,7 @@
       ],
       "source": {
         "path": "src/ui/style.rs",
-        "line": 111
+        "line": 114
       },
       "feature": "ui",
       "registered_by": "ui",
@@ -3760,7 +3823,7 @@
       ],
       "source": {
         "path": "src/ui/scroll.rs",
-        "line": 282
+        "line": 284
       },
       "feature": "ui",
       "registered_by": "ui",
@@ -3842,7 +3905,7 @@
       ],
       "source": {
         "path": "src/ui/backdrop.rs",
-        "line": 205
+        "line": 214
       },
       "feature": "ui",
       "registered_by": "ui",
@@ -3921,7 +3984,7 @@
       ],
       "source": {
         "path": "src/ui/navigation.rs",
-        "line": 115
+        "line": 164
       },
       "feature": "ui",
       "registered_by": "ui",
@@ -3958,7 +4021,7 @@
       ],
       "source": {
         "path": "src/ui/navigation.rs",
-        "line": 128
+        "line": 177
       },
       "feature": "ui",
       "registered_by": "ui",
@@ -3991,7 +4054,7 @@
       ],
       "source": {
         "path": "src/ui/navigation.rs",
-        "line": 158
+        "line": 207
       },
       "feature": "ui",
       "registered_by": "ui",
@@ -4024,7 +4087,7 @@
       ],
       "source": {
         "path": "src/ui/navigation.rs",
-        "line": 172
+        "line": 221
       },
       "feature": "ui",
       "registered_by": "ui",
@@ -4058,7 +4121,7 @@
       ],
       "source": {
         "path": "src/ui/navigation.rs",
-        "line": 186
+        "line": 235
       },
       "feature": "ui",
       "registered_by": "ui",
@@ -4088,7 +4151,7 @@
       ],
       "source": {
         "path": "src/ui/navigation.rs",
-        "line": 202
+        "line": 251
       },
       "feature": "ui",
       "registered_by": "ui",
@@ -4102,7 +4165,7 @@
       "kind": "observer",
       "phase": "匹配事件触发时",
       "module": "ui",
-      "description": "仅 Settings 内容视口响应原生 Pointer<Scroll>，夹紧滚动位置并停止冒泡。",
+      "description": "仅 Settings 内容视口响应原生 PointerScroll，夹紧滚动位置并停止冒泡。",
       "display_summary": "滚动设置内容并限制在有效范围内。",
       "reads": [
         "resource.MenuState",
@@ -4116,14 +4179,14 @@
         "With<MenuScroll>"
       ],
       "events": [
-        "响应 EntityEvent：Pointer<Scroll>"
+        "响应 EntityEvent：PointerScroll"
       ],
       "notes": [
         "BSN on(scroll_menu) 注册在视口实体上；不重复读取底层滚轮。"
       ],
       "source": {
         "path": "src/ui/scroll.rs",
-        "line": 265
+        "line": 267
       },
       "feature": "ui",
       "registered_by": "ui",
@@ -4157,7 +4220,7 @@
       ],
       "source": {
         "path": "src/ui/backdrop.rs",
-        "line": 143
+        "line": 152
       },
       "feature": "ui",
       "registered_by": "ui",
@@ -4199,7 +4262,7 @@
       ],
       "source": {
         "path": "src/ui/backdrop.rs",
-        "line": 156
+        "line": 165
       },
       "feature": "ui",
       "registered_by": "ui",
@@ -4507,11 +4570,12 @@
         "resource.MenuState",
         "window.Window",
         "resource.ButtonInputMouseButton",
+        "resource.PointerPressMessages",
         "menu_button.VolumeSlider",
         "menu_button.MenuButton",
-        "menu_button.Interaction",
         "menu_button.ComputedNode",
         "menu_button.UiGlobalTransform",
+        "menu_button.ChildOf",
         "local.VolumeDrag"
       ],
       "writes": [
@@ -4524,16 +4588,18 @@
         "With<PrimaryWindow>"
       ],
       "events": [
+        "读取 Message：PointerPress（仅 Primary）",
         "写入 UiRequest：SetVolume / FinishVolumeEdit"
       ],
       "notes": [
-        "命中沿用 Interaction；Enhanced Input 菜单动作不能表达轨道绝对坐标，故仅滑条局部读取左键及物理光标。",
-        "真实按下才捕获；释放、失焦、离开窗口或实体失效结束手势，页面切换清理 Local。",
-        "按坐标夹到 0..100 并舍入 1%；同值不重复采样。与 update_volume_visuals 无显式先后。"
+        "起点来自独立 PointerPress MessageReader，并沿 ChildOf 定位滑条；完全不查询 Pressed。",
+        "同帧按下并释放仍开始一次捕获、采样最终物理光标并生成 FinishVolumeEdit。",
+        "局部读取左键保持/释放及物理光标；轨道外释放、失焦、离窗、窗口或滑条消失均结束手势，页面/分类切换丢弃旧 Local。",
+        "只在最后采样值变化时写 SetVolume；按几何夹取0..100并舍入；与 update_volume_visuals 无显式顺序。"
       ],
       "source": {
         "path": "src/ui/volume.rs",
-        "line": 206
+        "line": 197
       },
       "feature": "ui",
       "registered_by": "ui",
@@ -4577,7 +4643,7 @@
       ],
       "source": {
         "path": "src/ui/volume.rs",
-        "line": 280
+        "line": 290
       },
       "feature": "ui",
       "registered_by": "ui",
@@ -4824,7 +4890,7 @@
       ],
       "source": {
         "path": "src/ui/style.rs",
-        "line": 83
+        "line": 86
       },
       "feature": "ui",
       "registered_by": "ui",
@@ -4869,7 +4935,7 @@
       ],
       "source": {
         "path": "src/ui/scroll.rs",
-        "line": 106
+        "line": 108
       },
       "feature": "ui",
       "registered_by": "ui",
@@ -4933,7 +4999,7 @@
       ],
       "source": {
         "path": "src/ui/scroll.rs",
-        "line": 127
+        "line": 129
       },
       "feature": "ui",
       "registered_by": "ui",
@@ -4974,14 +5040,14 @@
         "With<SettingsScrollbar>"
       ],
       "events": [
-        "响应 EntityEvent：Pointer<Scroll>"
+        "响应 EntityEvent：PointerScroll"
       ],
       "notes": [
         "仅 Settings 响应；原生 UI 事件避免重复读取底层输入。"
       ],
       "source": {
         "path": "src/ui/scroll.rs",
-        "line": 213
+        "line": 215
       },
       "feature": "ui",
       "registered_by": "ui",
@@ -5003,14 +5069,14 @@
       ],
       "filters": [],
       "events": [
-        "响应 EntityEvent：Pointer<Press>"
+        "响应 EntityEvent：PointerPress"
       ],
       "notes": [
         "菜单动作仍使用 Enhanced Input；控件坐标与拖拽由原生 ScrollbarPlugin 处理。"
       ],
       "source": {
         "path": "src/ui/scroll.rs",
-        "line": 208
+        "line": 210
       },
       "feature": "ui",
       "registered_by": "ui",
@@ -5503,10 +5569,10 @@
         "character.RigidBodyColliders"
       ],
       "filters": [
-        "On<Despawn, Character>；代理 With<HeldCollider>"
+        "On<Despawn<Character>>；代理 With<HeldCollider>"
       ],
       "events": [
-        "响应 EntityEvent：Despawn<Character>"
+        "响应 EntityEvent：DespawnEvent"
       ],
       "notes": [
         "由 ItemInteractionPlugin 注册；不依赖 Observer 注册顺序，先入队的停用卸载与 Avian 生命周期配合。"
@@ -5664,7 +5730,7 @@
       "notes": [],
       "source": {
         "path": "src/ui/style.rs",
-        "line": 26
+        "line": 27
       },
       "feature": "ui",
       "registered_by": "ui",
@@ -5715,6 +5781,491 @@
           "scope": "runtime"
         }
       ]
+    },
+    {
+      "id": "wake_changed_bodies",
+      "name": "wake_changed_bodies",
+      "kind": "system",
+      "phase": "FixedPostUpdate · PhysicsSystems::First",
+      "module": "physics",
+      "feature": "physics",
+      "registered_by": "physics",
+      "description": "物理准备前检查休眠身体的变更 tick；仅当外部位姿、速度或施力计时变化晚于上一物理步末尾时，排队 WakeBody 唤醒所属物理岛。",
+      "display_summary": "使休眠身体的外部受力和位姿修改在本固定步生效。",
+      "reads": [
+        "resource.LastPhysicsTick"
+      ],
+      "writes": [
+        "character.Sleeping",
+        "character.SleepTimer",
+        "character.SolverBodyIndex",
+        "parcel.Sleeping",
+        "parcel.SleepTimer",
+        "parcel.SolverBodyIndex"
+      ],
+      "filters": [
+        "With<Sleeping>",
+        "Or<(Changed<Position>, Changed<Rotation>, Changed<LinearVelocity>, Changed<AngularVelocity>, Changed<SleepTimer>)>",
+        "Ref<T> 仅读取 last_changed 元数据，不读取这些组件的业务字段。",
+        "任一变更 tick.is_newer_than(LastPhysicsTick.0, SystemChangeTick::this_run()) 才排队。"
+      ],
+      "events": [],
+      "notes": [
+        "无 gameplay_running 条件；实际注册在 FixedPostUpdate 的 PhysicsSystems::First，并显式 before(PhysicsSystems::Prepare)。",
+        "本函数不直接写入物理组件；writes 汇总排队 WakeBody 的已核实间接效果。命令应用时唤醒整个相关物理岛，不只目标 Entity。",
+        "WakeBody → WakeIslands 重置 SleepTimer、移除 Sleeping；Avian 的 Remove<Sleeping> Observer 再插入 SolverBodyIndex。未展开其内部全部岛、接触图与约束图资源。",
+        "LastPhysicsTick 在 PhysicsSchedule 的 Last 之后更新；早于该 tick 的引擎回写不会再次唤醒静置身体。",
+        "唯一 debug 日志记录 entity 和 reason=external_physics_change，送入现有 tracing producer。"
+      ],
+      "source": {
+        "path": "src/physics/mod.rs",
+        "line": 43
+      },
+      "schedule": "FixedPostUpdate",
+      "schedule_group": "FixedPostUpdate",
+      "registrations": [
+        {
+          "schedule": "FixedPostUpdate",
+          "scope": "runtime",
+          "sets": [
+            "PhysicsSystems::First"
+          ],
+          "before": [
+            "PhysicsSystems::Prepare"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "wake_apply",
+      "name": "ApplyDeferred（提前唤醒 → 物理准备）",
+      "kind": "sync",
+      "module": "bevy_ecs",
+      "feature": "physics",
+      "registered_by": "physics",
+      "phase": "FixedPostUpdate",
+      "description": "在 wake_changed_bodies 与 PhysicsSystems::Prepare 之间应用 WakeBody 及其生命周期命令，恢复休眠身体本步求解所需状态。",
+      "display_summary": "使提前唤醒命令在物理准备前可见。",
+      "reads": [],
+      "writes": [
+        "character.Sleeping",
+        "character.SleepTimer",
+        "character.SolverBodyIndex",
+        "parcel.Sleeping",
+        "parcel.SleepTimer",
+        "parcel.SolverBodyIndex"
+      ],
+      "filters": [],
+      "events": [],
+      "notes": [
+        "由 before(PhysicsSystems::Prepare) 的延迟命令依赖自动插入；不是新增项目系统函数。"
+      ],
+      "source": {
+        "path": "src/physics/mod.rs",
+        "line": 29
+      },
+      "schedule": "FixedPostUpdate",
+      "schedule_group": "FixedPostUpdate",
+      "registrations": [
+        {
+          "schedule": "FixedPostUpdate",
+          "scope": "runtime",
+          "implicit": true,
+          "after": [
+            "wake_changed_bodies"
+          ],
+          "before": [
+            "PhysicsSystems::Prepare"
+          ]
+        }
+      ],
+      "defined_in": "infrastructure"
+    },
+    {
+      "id": "observe_menu_primary_press",
+      "name": "primary_press",
+      "kind": "observer",
+      "phase": "匹配事件触发时",
+      "module": "ui",
+      "description": "记录菜单按钮主键按压的指针身份。",
+      "display_summary": "记录菜单按钮主键按压的指针身份。",
+      "reads": [],
+      "writes": [
+        "menu_button.PrimaryPress"
+      ],
+      "filters": [
+        "Query<(), With<MenuButton>>：仅存在过滤，无字段读取"
+      ],
+      "events": [
+        "响应 EntityEvent：PointerPress"
+      ],
+      "notes": [
+        "仅 event.button == PointerButton::Primary；Commands 插入 PrimaryPress(event.pointer.id)，不写 UiRequest。",
+        "原生 Button 自己维护任意指针键的 Pressed；项目标记只筛选主键样式来源。"
+      ],
+      "source": {
+        "path": "src/ui/pointer.rs",
+        "line": 32
+      },
+      "feature": "ui",
+      "registered_by": "ui",
+      "schedule": null,
+      "schedule_group": "EventTriggered",
+      "registrations": []
+    },
+    {
+      "id": "observe_menu_primary_clear",
+      "name": "clear_primary_press",
+      "kind": "observer",
+      "phase": "生命周期事件触发时",
+      "module": "ui",
+      "description": "原生 Pressed 移除时清理菜单主键来源。",
+      "display_summary": "原生 Pressed 移除时清理菜单主键来源。",
+      "reads": [],
+      "writes": [
+        "menu_button.PrimaryPress"
+      ],
+      "filters": [
+        "On<Remove<Pressed>>：以 Pressed 组件过滤 RemoveEvent",
+        "Query<(), With<MenuButton>>：仅存在过滤"
+      ],
+      "events": [
+        "响应 EntityEvent：RemoveEvent"
+      ],
+      "notes": [
+        "Remove<Pressed> 是 EventPattern；真实触发类型为 RemoveEvent，组件过滤仍由 On<Remove<Pressed>> 保留。",
+        "try_remove::<PrimaryPress>() 是 Commands 延迟移除；目标可能随页面旧树销毁。",
+        "Pressed 由原生 Button 的 release / drag_end / cancel 移除，也可能由项目取消清理或整树销毁移除。"
+      ],
+      "source": {
+        "path": "src/ui/pointer.rs",
+        "line": 45
+      },
+      "feature": "ui",
+      "registered_by": "ui",
+      "schedule": null,
+      "schedule_group": "EventTriggered",
+      "registrations": []
+    },
+    {
+      "id": "menu_clear_cancelled_primary",
+      "name": "clear_cancelled_primary_presses",
+      "kind": "system",
+      "phase": "PreUpdate · after(PickingSystems::Last)",
+      "module": "ui",
+      "description": "清理被取消、失焦或离窗的菜单主键按压。",
+      "display_summary": "清理被取消、失焦或离窗的菜单主键按压。",
+      "reads": [
+        "resource.PointerInputMessages",
+        "menu_button.PrimaryPress",
+        "window.Window"
+      ],
+      "writes": [
+        "menu_button.PrimaryPress",
+        "menu_button.Pressed"
+      ],
+      "filters": [
+        "窗口：With<PrimaryWindow>，唯一且 focused 且 cursor_position 有值时才保留鼠标主键状态"
+      ],
+      "events": [
+        "读取 Message：PointerInput；仅对 PointerAction::Cancel 执行按指针身份清理"
+      ],
+      "notes": [
+        "显式 after(PickingSystems::Last)，原生命中与事件命令已应用。",
+        "读取 PrimaryPress.0 与 input.pointer_id 比较，删除匹配实体的 (PrimaryPress, Pressed)。",
+        "窗口不存在、失焦或 cursor_position=None 时，仅删除 PointerId::Mouse 对应的两组件；触摸或自定义指针只按取消消息清理。",
+        "Bevy 的 HoverMap 可先排除取消指针，导致原生 PointerCancel 未派发；鼠标后端也不把失焦或离窗转换为 Cancel，故局部补清。"
+      ],
+      "source": {
+        "path": "src/ui/pointer.rs",
+        "line": 58
+      },
+      "feature": "ui",
+      "registered_by": "ui",
+      "schedule": "PreUpdate",
+      "schedule_group": "PreUpdate",
+      "registrations": [
+        {
+          "schedule": "PreUpdate",
+          "scope": "runtime",
+          "after": [
+            "PickingSystems::Last"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "native_pointer_events",
+      "name": "pointer_events",
+      "kind": "system",
+      "phase": "PreUpdate · PickingSystems::Hover",
+      "module": "bevy_picking",
+      "description": "生成指针EntityEvent并同时发布对应Message。",
+      "display_summary": "生成指针EntityEvent并同时发布对应Message。",
+      "reads": [
+        "resource.PointerInputMessages",
+        "resource.PointerMap",
+        "resource.HoverMap",
+        "resource.PreviousHoverMap",
+        "resource.PickingSettings",
+        "resource.PointerState",
+        "menu_button.ChildOf"
+      ],
+      "writes": [
+        "resource.PointerState",
+        "resource.PointerPressMessages"
+      ],
+      "filters": [
+        "指针：Query<&PointerLocation>；祖先：Query<&ChildOf>；原始命中可为文字等子实体"
+      ],
+      "events": [
+        "Commands::trigger PointerPress / PointerRelease / PointerClick / PointerDragEnd / PointerCancel 等",
+        "MessageWriter::write 相同指针事件，项目独立读取 PointerPress 消息"
+      ],
+      "notes": [
+        "InteractionPlugin 在PickingSystems::Hover链中注册；update_is_hovered之后执行。",
+        "缓冲消息与EntityEvent是并行通信渠道；项目菜单请求读取消息，原生Button及项目PrimaryPress Observer接收事件。",
+        "只保留本次UI迁移所需事件；不把其全部内部状态扩成新的业务实体。"
+      ],
+      "source": null,
+      "feature": "infrastructure",
+      "registered_by": "infrastructure",
+      "schedule": "PreUpdate",
+      "schedule_group": "PreUpdate",
+      "registrations": [
+        {
+          "schedule": "PreUpdate",
+          "scope": "runtime",
+          "sets": [
+            "PickingSystems::Hover"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "native_update_hovered",
+      "name": "update_is_hovered",
+      "kind": "system",
+      "phase": "PreUpdate · PickingSystems::Hover",
+      "module": "bevy_picking",
+      "description": "按鼠标HoverMap及祖先关系替换已有Hovered值。",
+      "display_summary": "按鼠标HoverMap及祖先关系替换已有Hovered值。",
+      "reads": [
+        "resource.HoverMap",
+        "menu_button.Hovered",
+        "settings_scrollbar_thumb.Hovered",
+        "menu_button.ChildOf"
+      ],
+      "writes": [
+        "menu_button.Hovered",
+        "settings_scrollbar_thumb.Hovered"
+      ],
+      "filters": [
+        "只处理已有Hovered的实体；HoverMap可缺省；由PointerId::Mouse命中及其祖先计算"
+      ],
+      "events": [],
+      "notes": [
+        "Hovered是不可变组件，布尔值变化时通过Commands insert替换；不凭空给所有实体添加悬停能力。",
+        "注册在InteractionPlugin的Hover阶段，随后链式执行pointer_events。"
+      ],
+      "source": null,
+      "feature": "infrastructure",
+      "registered_by": "infrastructure",
+      "schedule": "PreUpdate",
+      "schedule_group": "PreUpdate",
+      "registrations": [
+        {
+          "schedule": "PreUpdate",
+          "scope": "runtime",
+          "sets": [
+            "PickingSystems::Hover"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "native_button_down",
+      "name": "button_on_pointer_down",
+      "kind": "observer",
+      "phase": "匹配事件触发时",
+      "module": "bevy_ui_widgets",
+      "description": "按压时插入原生Pressed；可选ActivateOnPress会发Activate。",
+      "display_summary": "按压时插入原生Pressed；可选ActivateOnPress会发Activate。",
+      "reads": [
+        "menu_button.Button",
+        "menu_button.Pressed"
+      ],
+      "writes": [
+        "menu_button.Pressed"
+      ],
+      "filters": [
+        "With<Button>；Has<Pressed>/Has<InteractionDisabled>/Has<ActivateOnPress>均仅存在过滤。"
+      ],
+      "events": [
+        "响应 EntityEvent：PointerPress",
+        "Commands::trigger Activate"
+      ],
+      "notes": [
+        "原生实现不筛Primary/Secondary/Middle；项目另用PrimaryPress筛选主键。"
+      ],
+      "source": null,
+      "feature": "infrastructure",
+      "registered_by": "infrastructure",
+      "schedule": null,
+      "schedule_group": "EventTriggered",
+      "registrations": []
+    },
+    {
+      "id": "native_button_up",
+      "name": "button_on_pointer_up",
+      "kind": "observer",
+      "phase": "匹配事件触发时",
+      "module": "bevy_ui_widgets",
+      "description": "释放时移除原生Pressed。",
+      "display_summary": "释放时移除原生Pressed。",
+      "reads": [
+        "menu_button.Button",
+        "menu_button.Pressed"
+      ],
+      "writes": [
+        "menu_button.Pressed"
+      ],
+      "filters": [
+        "With<Button>；Has<Pressed>/Has<InteractionDisabled>仅存在过滤。"
+      ],
+      "events": [
+        "响应 EntityEvent：PointerRelease"
+      ],
+      "notes": [
+        "Commands remove 触发 RemoveEvent，项目通过 On<Remove<Pressed>> 匹配后清理 PrimaryPress。"
+      ],
+      "source": null,
+      "feature": "infrastructure",
+      "registered_by": "infrastructure",
+      "schedule": null,
+      "schedule_group": "EventTriggered",
+      "registrations": []
+    },
+    {
+      "id": "native_button_click",
+      "name": "button_on_pointer_click",
+      "kind": "observer",
+      "phase": "匹配事件触发时",
+      "module": "bevy_ui_widgets",
+      "description": "满足条件时派发原生Activate。",
+      "display_summary": "满足条件时派发原生Activate。",
+      "reads": [
+        "menu_button.Button",
+        "menu_button.Pressed"
+      ],
+      "writes": [],
+      "filters": [
+        "With<Button>；Has<Pressed>/Has<InteractionDisabled>/Has<ActivateOnPress>仅存在过滤。"
+      ],
+      "events": [
+        "响应 EntityEvent：PointerClick",
+        "Commands::trigger Activate"
+      ],
+      "notes": [
+        "普通菜单按钮没有ActivateOnPress；项目不消费此Activate，点击请求已经来自PointerPress缓冲。"
+      ],
+      "source": null,
+      "feature": "infrastructure",
+      "registered_by": "infrastructure",
+      "schedule": null,
+      "schedule_group": "EventTriggered",
+      "registrations": []
+    },
+    {
+      "id": "native_button_drag_end",
+      "name": "button_on_pointer_drag_end",
+      "kind": "observer",
+      "phase": "匹配事件触发时",
+      "module": "bevy_ui_widgets",
+      "description": "拖动结束时移除原生Pressed。",
+      "display_summary": "拖动结束时移除原生Pressed。",
+      "reads": [
+        "menu_button.Button",
+        "menu_button.Pressed"
+      ],
+      "writes": [
+        "menu_button.Pressed"
+      ],
+      "filters": [
+        "With<Button>；Has<Pressed>/Has<InteractionDisabled>仅存在过滤。"
+      ],
+      "events": [
+        "响应 EntityEvent：PointerDragEnd"
+      ],
+      "notes": [
+        "拖动离开按钮后仍由原始拖动目标接收结束事件；Commands remove触发项目生命周期清理。"
+      ],
+      "source": null,
+      "feature": "infrastructure",
+      "registered_by": "infrastructure",
+      "schedule": null,
+      "schedule_group": "EventTriggered",
+      "registrations": []
+    },
+    {
+      "id": "native_button_cancel",
+      "name": "button_on_pointer_cancel",
+      "kind": "observer",
+      "phase": "匹配事件触发时",
+      "module": "bevy_ui_widgets",
+      "description": "收到取消事件时移除原生Pressed。",
+      "display_summary": "收到取消事件时移除原生Pressed。",
+      "reads": [
+        "menu_button.Button",
+        "menu_button.Pressed"
+      ],
+      "writes": [
+        "menu_button.Pressed"
+      ],
+      "filters": [
+        "With<Button>；Has<Pressed>/Has<InteractionDisabled>仅存在过滤。"
+      ],
+      "events": [
+        "响应 EntityEvent：PointerCancel"
+      ],
+      "notes": [
+        "取消事件可能因HoverMap先排除指针而未送达；项目还读取PointerInput::Cancel补清。"
+      ],
+      "source": null,
+      "feature": "infrastructure",
+      "registered_by": "infrastructure",
+      "schedule": null,
+      "schedule_group": "EventTriggered",
+      "registrations": []
+    },
+    {
+      "id": "native_button_key",
+      "name": "button_on_key_event",
+      "kind": "observer",
+      "phase": "匹配事件触发时",
+      "module": "bevy_ui_widgets",
+      "description": "焦点键盘Enter或Space首次按下时派发Activate。",
+      "display_summary": "焦点键盘Enter或Space首次按下时派发Activate。",
+      "reads": [
+        "menu_button.Button"
+      ],
+      "writes": [],
+      "filters": [
+        "With<Button>；Has<InteractionDisabled>仅存在过滤；忽略repeat及非Pressed键盘事件。"
+      ],
+      "events": [
+        "响应 EntityEvent：FocusedInput<KeyboardInput>",
+        "Commands::trigger Activate"
+      ],
+      "notes": [
+        "此函数不会插入Pressed；项目不消费Activate，键盘/手柄菜单动作只经Enhanced Input。"
+      ],
+      "source": null,
+      "feature": "infrastructure",
+      "registered_by": "infrastructure",
+      "schedule": null,
+      "schedule_group": "EventTriggered",
+      "registrations": []
     }
   ],
   "entities": [
@@ -5734,7 +6285,7 @@
           "description": "用于日志与调试的控制者名称。",
           "source": {
             "path": "src/first_person/actions.rs",
-            "line": 46
+            "line": 47
           },
           "feature": "infrastructure",
           "defined_in": "infrastructure"
@@ -5776,7 +6327,7 @@
           "display_summary": "配置玩法上下文的手柄输入来源。",
           "source": {
             "path": "src/first_person/actions.rs",
-            "line": 65
+            "line": 66
           },
           "feature": "enhanced_input",
           "defined_in": "enhanced_input"
@@ -5819,7 +6370,7 @@
           "display_summary": "索引控制上下文拥有的动作实体。",
           "source": {
             "path": "src/first_person/actions.rs",
-            "line": 66
+            "line": 67
           },
           "feature": "enhanced_input",
           "defined_in": "enhanced_input"
@@ -6195,15 +6746,15 @@
           "id": "character.SweptCcd",
           "name": "SweptCcd",
           "fields": [
-            "NON_LINEAR",
-            "linear_velocity_threshold=8.0 m/s",
-            "angular_velocity_threshold=0.1 rad/s"
+            "mode: SweepMode = NonLinear",
+            "filter: CcdFilter = ALL（项目显式配置）",
+            "threshold: f32 = 0.5（每步运动 / 最小 CCD 厚度比例）"
           ],
-          "description": "保留非线性高速扫掠，正常移动使用推测接触；非零 yaw 下不采用 LINEAR。",
+          "description": "按身体最薄尺寸的半厚度门槛自动启用非线性扫掠；显式包含动态、运动学、静态和独立碰撞体，避免只采用新版默认静态/运动学过滤。",
           "display_summary": "启用连续碰撞检测以减少高速穿透。",
           "source": {
             "path": "src/character/body.rs",
-            "line": 20
+            "line": 33
           },
           "feature": "avian",
           "defined_in": "avian"
@@ -6429,6 +6980,61 @@
           "source": {
             "path": "src/item_interaction/attachment.rs",
             "line": 126
+          },
+          "feature": "avian",
+          "defined_in": "avian"
+        },
+        {
+          "id": "character.SpeculativeCcd",
+          "name": "SpeculativeCcd",
+          "fields": [
+            "max_distance: f32 = f32::MAX（default）"
+          ],
+          "description": "显式启用随速度扩张的预测邻域；与动态扫掠配合，让相向高速物体在交会前互为候选。持物代理读取其所属人物刚体的配置。",
+          "source": {
+            "path": "src/character/body.rs",
+            "line": 34
+          },
+          "feature": "avian",
+          "defined_in": "avian"
+        },
+        {
+          "id": "character.BodySizeMetrics",
+          "name": "BodySizeMetrics",
+          "fields": [
+            "ccd_thickness: f32",
+            "sweep_radius: f32"
+          ],
+          "description": "RigidBody 所需组件；Avian 汇总该刚体全部碰撞体的最小 CCD 厚度和至质心的最大扫掠半径，用于尺寸比例门槛。",
+          "source": {
+            "path": "src/character/body.rs",
+            "line": 22
+          },
+          "feature": "avian",
+          "defined_in": "avian"
+        },
+        {
+          "id": "character.SolverBodyIndex",
+          "name": "SolverBodyIndex",
+          "fields": [
+            "0: u32"
+          ],
+          "description": "Avian 活动动态刚体在 SolverBodies 中的索引；休眠或移除刚体时删除，唤醒时由框架重新插入。该组件具有明确的可选生命周期。",
+          "source": {
+            "path": "src/character/body.rs",
+            "line": 22
+          },
+          "feature": "avian",
+          "defined_in": "avian"
+        },
+        {
+          "id": "character.Sleeping",
+          "name": "Sleeping",
+          "fields": [],
+          "description": "可选休眠标记；外部变化触发提前 WakeBody，未变化时继续休眠。",
+          "source": {
+            "path": "src/character/body.rs",
+            "line": 22
           },
           "feature": "avian",
           "defined_in": "avian"
@@ -6745,13 +7351,14 @@
           "id": "parcel.SweptCcd",
           "name": "SweptCcd",
           "fields": [
-            "NON_LINEAR（默认）",
-            "速度门槛均为 0（本轮未改变）"
+            "mode: SweepMode = NonLinear",
+            "filter: CcdFilter = ALL（项目显式配置）",
+            "threshold: f32 = 0.5（每步运动 / 最小 CCD 厚度比例）"
           ],
-          "description": "连续碰撞检测，减少高速穿越。",
+          "description": "按身体最薄尺寸的半厚度门槛自动启用非线性扫掠；显式包含动态、运动学、静态和独立碰撞体，避免只采用新版默认静态/运动学过滤。",
           "source": {
             "path": "src/item_interaction/body.rs",
-            "line": 8
+            "line": 20
           },
           "feature": "avian",
           "defined_in": "avian"
@@ -7168,6 +7775,49 @@
           },
           "feature": "avian",
           "defined_in": "avian"
+        },
+        {
+          "id": "parcel.SpeculativeCcd",
+          "name": "SpeculativeCcd",
+          "fields": [
+            "max_distance: f32 = f32::MAX（default）"
+          ],
+          "description": "显式启用随速度扩张的预测邻域；与动态扫掠配合，让相向高速物体在交会前互为候选。持物代理读取其所属人物刚体的配置。",
+          "source": {
+            "path": "src/item_interaction/body.rs",
+            "line": 22
+          },
+          "feature": "avian",
+          "defined_in": "avian"
+        },
+        {
+          "id": "parcel.BodySizeMetrics",
+          "name": "BodySizeMetrics",
+          "fields": [
+            "ccd_thickness: f32",
+            "sweep_radius: f32"
+          ],
+          "description": "RigidBody 所需组件；Avian 汇总该刚体全部碰撞体的最小 CCD 厚度和至质心的最大扫掠半径，用于尺寸比例门槛。",
+          "source": {
+            "path": "src/item_interaction/body.rs",
+            "line": 11
+          },
+          "feature": "avian",
+          "defined_in": "avian"
+        },
+        {
+          "id": "parcel.SolverBodyIndex",
+          "name": "SolverBodyIndex",
+          "fields": [
+            "0: u32"
+          ],
+          "description": "Avian 活动动态刚体在 SolverBodies 中的索引；休眠或移除刚体时删除，唤醒时由框架重新插入。该组件具有明确的可选生命周期。",
+          "source": {
+            "path": "src/item_interaction/body.rs",
+            "line": 11
+          },
+          "feature": "avian",
+          "defined_in": "avian"
         }
       ],
       "features": [
@@ -7348,11 +7998,11 @@
         },
         {
           "id": "camera.EguiMultipassSchedule",
-          "name": "EguiMultipassSchedule",
+          "name": "EguiSchedule",
           "fields": [
             "0: InternedScheduleLabel = EguiPrimaryContextPass"
           ],
-          "description": "EguiPlugin::default() 默认启用多轮 UI 计算，PrimaryEguiContext 钩子附加此组件；PostUpdate 的引擎循环据此调用 UI Schedule。",
+          "description": "PrimaryEguiContext 要求此组件，默认指向 EguiPrimaryContextPass；PostUpdate 的上下文循环据此调用内部 UI Schedule，可在一帧执行多轮。旧投影 ID 保留以兼容已有链接，真实类型定义为 EguiSchedule。",
           "display_summary": "指定检查器上下文的内部界面调度。",
           "source": {
             "path": "src/inspector/mod.rs",
@@ -7740,7 +8390,7 @@
           "display_summary": "保存动作的输入消费与重新激活策略。",
           "source": {
             "path": "src/first_person/actions.rs",
-            "line": 62
+            "line": 69
           },
           "feature": "enhanced_input",
           "defined_in": "enhanced_input"
@@ -7751,11 +8401,11 @@
           "fields": [
             "上下文实体: Entity"
           ],
-          "description": "动作到控制者上下文的关系；actions! 建立关系，Actions<GameplayContext> 为自动反向索引。",
+          "description": "动作到控制者上下文的关系；BSN Actions<GameplayContext> 建立关系，Actions<GameplayContext> 为自动反向索引。",
           "display_summary": "将动作关联到所属控制上下文。",
           "source": {
             "path": "src/first_person/actions.rs",
-            "line": 66
+            "line": 67
           },
           "feature": "enhanced_input",
           "defined_in": "enhanced_input"
@@ -7770,7 +8420,7 @@
           "display_summary": "索引动作拥有的输入绑定。",
           "source": {
             "path": "src/first_person/actions.rs",
-            "line": 73
+            "line": 70
           },
           "feature": "enhanced_input",
           "defined_in": "enhanced_input"
@@ -7786,7 +8436,7 @@
           "display_summary": "将按钮按下转换为一次触发。",
           "source": {
             "path": "src/first_person/actions.rs",
-            "line": 62
+            "line": 78
           },
           "feature": "enhanced_input",
           "defined_in": "enhanced_input"
@@ -7894,7 +8544,7 @@
           "display_summary": "保存动作触发条件的执行适配。",
           "source": {
             "path": "src/first_person/actions.rs",
-            "line": 62
+            "line": 78
           },
           "feature": "enhanced_input",
           "defined_in": "enhanced_input"
@@ -7925,7 +8575,7 @@
           "display_summary": "保存设备输入到动作的映射。",
           "source": {
             "path": "src/first_person/actions.rs",
-            "line": 73
+            "line": 70
           },
           "feature": "enhanced_input",
           "defined_in": "enhanced_input"
@@ -7940,7 +8590,7 @@
           "display_summary": "将输入绑定关联到所属动作。",
           "source": {
             "path": "src/first_person/actions.rs",
-            "line": 73
+            "line": 70
           },
           "feature": "enhanced_input",
           "defined_in": "enhanced_input"
@@ -7955,7 +8605,7 @@
           "display_summary": "记录绑定重新启用时的首次激活状态。",
           "source": {
             "path": "src/first_person/actions.rs",
-            "line": 73
+            "line": 70
           },
           "feature": "enhanced_input",
           "defined_in": "enhanced_input"
@@ -7972,7 +8622,7 @@
           "display_summary": "反转绑定输入的方向符号。",
           "source": {
             "path": "src/first_person/actions.rs",
-            "line": 81
+            "line": 74
           },
           "feature": "enhanced_input",
           "defined_in": "enhanced_input"
@@ -7987,7 +8637,7 @@
           "display_summary": "将输入标量映射到指定坐标轴。",
           "source": {
             "path": "src/first_person/actions.rs",
-            "line": 81
+            "line": 74
           },
           "feature": "enhanced_input",
           "defined_in": "enhanced_input"
@@ -8002,7 +8652,7 @@
           "display_summary": "保存输入修饰器的执行适配。",
           "source": {
             "path": "src/first_person/actions.rs",
-            "line": 81
+            "line": 74
           },
           "feature": "enhanced_input",
           "defined_in": "enhanced_input"
@@ -8079,7 +8729,7 @@
           "display_summary": "保存静态碰撞与原模型共用的位姿。",
           "source": {
             "path": "src/scene_assembly/loading.rs",
-            "line": 230
+            "line": 231
           },
           "feature": "infrastructure",
           "defined_in": "infrastructure"
@@ -8150,7 +8800,7 @@
           "description": "随原地图实例层级清理。",
           "source": {
             "path": "src/scene_assembly/loading.rs",
-            "line": 234
+            "line": 235
           },
           "feature": "infrastructure",
           "defined_in": "infrastructure"
@@ -8374,7 +9024,7 @@
           "display_summary": "索引当前实体的直接子实体。",
           "source": {
             "path": "src/scene_assembly/loading.rs",
-            "line": 234
+            "line": 235
           },
           "feature": "infrastructure",
           "defined_in": "infrastructure"
@@ -8691,7 +9341,7 @@
           "display_summary": "保存动作上下文的启用状态。",
           "source": {
             "path": "src/ui/navigation.rs",
-            "line": 72
+            "line": 121
           },
           "feature": "enhanced_input",
           "defined_in": "enhanced_input"
@@ -8717,7 +9367,7 @@
           "fields": [
             "Previous / Next / Left / Right / Confirm / Back"
           ],
-          "description": "actions! 创建六个 Action<A> 与键盘/手柄绑定；每个动作 consume_input 与 require_reset。动作/绑定实体由输入插件关系管理，未在这里逐个展开。",
+          "description": "BSN Actions<MenuContext> 创建六个 Action<A>，Bindings 声明键盘/手柄绑定；每个动作 consume_input 与 require_reset。动作/绑定实体由输入插件关系管理，未在这里逐个展开。",
           "display_summary": "索引控制上下文拥有的动作实体。",
           "source": {
             "path": "src/ui/navigation.rs",
@@ -8748,7 +9398,7 @@
           "description": "仅清理菜单页面，不改变展示舞台或玩法会话。",
           "source": {
             "path": "src/ui/mod.rs",
-            "line": 97
+            "line": 98
           },
           "feature": "ui",
           "defined_in": "ui",
@@ -8824,7 +9474,7 @@
           "description": "业务动作与连续导航序号，不依赖按钮文字或实体名。",
           "source": {
             "path": "src/ui/mod.rs",
-            "line": 90
+            "line": 91
           },
           "feature": "ui",
           "defined_in": "ui",
@@ -8849,29 +9499,15 @@
           "id": "menu_button.Button",
           "name": "Button",
           "fields": [],
-          "description": "Bevy 原生 UI 按钮命中。",
+          "description": "原生无样式按钮；ButtonPlugin 维护 Pressed 并发 Activate，项目仅消费 Primary PointerPress，不消费键盘 Activate。",
           "display_summary": "启用原生界面按钮命中处理。",
           "source": {
-            "path": "src/ui/widgets.rs",
-            "line": 110
+            "path": "src/ui/mod.rs",
+            "line": 90
           },
           "feature": "infrastructure",
-          "defined_in": "infrastructure"
-        },
-        {
-          "id": "menu_button.Interaction",
-          "name": "Interaction",
-          "fields": [
-            "None / Hovered / Pressed"
-          ],
-          "description": "原生命中后产生相同 UiRequest，离开恢复纸色。",
-          "display_summary": "保存鼠标对按钮的交互状态。",
-          "source": {
-            "path": "src/ui/pointer.rs",
-            "line": 12
-          },
-          "feature": "infrastructure",
-          "defined_in": "infrastructure"
+          "defined_in": "infrastructure",
+          "rust_type": "bevy::ui_widgets::Button"
         },
         {
           "id": "menu_button.Node",
@@ -8883,7 +9519,7 @@
           "display_summary": "保存界面节点的布局约束。",
           "source": {
             "path": "src/ui/widgets.rs",
-            "line": 89
+            "line": 90
           },
           "feature": "infrastructure",
           "defined_in": "infrastructure"
@@ -8894,11 +9530,11 @@
           "fields": [
             "PAPER / GOLD / pressed"
           ],
-          "description": "style_buttons 按输入来源与 Interaction 更新。",
+          "description": "style_buttons 按输入来源、Hovered 与 Pressed / PrimaryPress 状态更新。",
           "display_summary": "保存界面节点的背景颜色。",
           "source": {
             "path": "src/ui/style.rs",
-            "line": 36
+            "line": 37
           },
           "feature": "infrastructure",
           "defined_in": "infrastructure"
@@ -8912,7 +9548,7 @@
           "description": "悬停/键盘焦点时使用深色边框。",
           "source": {
             "path": "src/ui/style.rs",
-            "line": 36
+            "line": 37
           },
           "feature": "infrastructure",
           "defined_in": "infrastructure",
@@ -8943,7 +9579,7 @@
           "description": "原生布局后的按钮几何，用于焦点滚入。",
           "source": {
             "path": "src/ui/scroll.rs",
-            "line": 284
+            "line": 286
           },
           "feature": "infrastructure",
           "defined_in": "infrastructure"
@@ -8957,7 +9593,7 @@
           "description": "与视口坐标比较按钮上下边界。",
           "source": {
             "path": "src/ui/scroll.rs",
-            "line": 284
+            "line": 286
           },
           "feature": "infrastructure",
           "defined_in": "infrastructure",
@@ -8973,10 +9609,56 @@
           "display_summary": "关联父实体并跟随父级生命周期。",
           "source": {
             "path": "src/ui/scroll.rs",
-            "line": 285
+            "line": 287
           },
           "feature": "infrastructure",
           "defined_in": "infrastructure"
+        },
+        {
+          "id": "menu_button.Hovered",
+          "name": "Hovered",
+          "fields": [
+            "0: bool（不可变组件，通过替换更新）"
+          ],
+          "description": "原生 Picking 的祖先悬停状态；MenuButton 的 required component。",
+          "display_summary": "保存按钮或其子树是否被悬停。",
+          "source": {
+            "path": "src/ui/mod.rs",
+            "line": 90
+          },
+          "feature": "infrastructure",
+          "defined_in": "infrastructure",
+          "rust_type": "bevy::picking::hover::Hovered"
+        },
+        {
+          "id": "menu_button.Pressed",
+          "name": "Pressed",
+          "fields": [],
+          "description": "原生 Button 按任意指针键插入，释放、拖动结束、取消时移除；项目取消回退也能移除。按下颜色还要求 PrimaryPress。",
+          "display_summary": "标记原生按钮当前被按压。",
+          "source": {
+            "path": "src/ui/style.rs",
+            "line": 43
+          },
+          "feature": "infrastructure",
+          "defined_in": "infrastructure",
+          "rust_type": "bevy::ui::Pressed"
+        },
+        {
+          "id": "menu_button.PrimaryPress",
+          "name": "PrimaryPress",
+          "fields": [
+            "0: PointerId"
+          ],
+          "description": "菜单主键按下的指针身份；主键 PointerPress Observer 插入，Pressed 移除及取消/窗口生命周期清理时删除。",
+          "display_summary": "区分菜单主键按压与其他按钮来源。",
+          "source": {
+            "path": "src/ui/pointer.rs",
+            "line": 18
+          },
+          "feature": "ui",
+          "defined_in": "ui",
+          "rust_type": "crate::ui::pointer::PrimaryPress"
         }
       ],
       "features": [
@@ -9015,7 +9697,7 @@
           "description": "指针滚轮或焦点滚入按内容范围夹紧。",
           "source": {
             "path": "src/ui/scroll.rs",
-            "line": 260
+            "line": 262
           },
           "feature": "infrastructure",
           "defined_in": "infrastructure",
@@ -9030,7 +9712,7 @@
           "description": "布局计算结果，用于滚动范围与坐标转换。",
           "source": {
             "path": "src/ui/scroll.rs",
-            "line": 282
+            "line": 284
           },
           "feature": "infrastructure",
           "defined_in": "infrastructure"
@@ -9044,7 +9726,7 @@
           "description": "与按钮比较可视区上下边界。",
           "source": {
             "path": "src/ui/scroll.rs",
-            "line": 282
+            "line": 284
           },
           "feature": "infrastructure",
           "defined_in": "infrastructure",
@@ -9062,7 +9744,7 @@
           "display_summary": "保存界面节点的布局约束。",
           "source": {
             "path": "src/ui/widgets.rs",
-            "line": 89
+            "line": 90
           },
           "feature": "infrastructure",
           "defined_in": "infrastructure"
@@ -9132,7 +9814,7 @@
           "display_summary": "提供展示舞台父子变换的根姿态。",
           "source": {
             "path": "src/ui/backdrop.rs",
-            "line": 127
+            "line": 136
           },
           "feature": "infrastructure",
           "defined_in": "infrastructure"
@@ -9172,7 +9854,7 @@
           "display_summary": "标记三维场景相机。",
           "source": {
             "path": "src/ui/backdrop.rs",
-            "line": 108
+            "line": 117
           },
           "feature": "infrastructure",
           "defined_in": "infrastructure"
@@ -9185,7 +9867,7 @@
           "display_summary": "指定菜单界面的默认绘制相机。",
           "source": {
             "path": "src/ui/backdrop.rs",
-            "line": 112
+            "line": 121
           },
           "feature": "infrastructure",
           "defined_in": "infrastructure"
@@ -9198,7 +9880,7 @@
           "display_summary": "指定主检查器界面的相机上下文。",
           "source": {
             "path": "src/ui/backdrop.rs",
-            "line": 113
+            "line": 122
           },
           "feature": "egui",
           "defined_in": "egui"
@@ -9213,7 +9895,7 @@
           "display_summary": "保存菜单界面与展示模型的相机构图。",
           "source": {
             "path": "src/ui/backdrop.rs",
-            "line": 127
+            "line": 136
           },
           "feature": "infrastructure",
           "defined_in": "infrastructure"
@@ -9257,7 +9939,7 @@
           "display_summary": "指定需要展开的场景资产实例。",
           "source": {
             "path": "src/ui/backdrop.rs",
-            "line": 132
+            "line": 141
           },
           "feature": "infrastructure",
           "defined_in": "infrastructure"
@@ -9300,7 +9982,7 @@
           "display_summary": "驱动模型的动画播放。",
           "source": {
             "path": "src/ui/backdrop.rs",
-            "line": 163
+            "line": 172
           },
           "feature": "infrastructure",
           "defined_in": "infrastructure"
@@ -9315,7 +9997,7 @@
           "display_summary": "关联模型使用的动画混合图。",
           "source": {
             "path": "src/ui/backdrop.rs",
-            "line": 188
+            "line": 197
           },
           "feature": "infrastructure",
           "defined_in": "infrastructure"
@@ -9330,7 +10012,7 @@
           "display_summary": "保存模型及展示包裹的局部姿态。",
           "source": {
             "path": "src/ui/backdrop.rs",
-            "line": 132
+            "line": 141
           },
           "feature": "infrastructure",
           "defined_in": "infrastructure"
@@ -9344,7 +10026,7 @@
           "description": "快递员的独立包裹附件保持角色本地持握位置。",
           "source": {
             "path": "src/ui/backdrop.rs",
-            "line": 79
+            "line": 81
           },
           "feature": "infrastructure",
           "defined_in": "infrastructure",
@@ -9446,7 +10128,7 @@
           "display_summary": "保存界面节点的布局约束。",
           "source": {
             "path": "src/ui/widgets.rs",
-            "line": 89
+            "line": 90
           },
           "feature": "infrastructure",
           "defined_in": "infrastructure"
@@ -9578,7 +10260,7 @@
           "display_summary": "保存界面节点的布局约束。",
           "source": {
             "path": "src/ui/pages.rs",
-            "line": 407
+            "line": 437
           },
           "feature": "infrastructure",
           "defined_in": "infrastructure"
@@ -9641,7 +10323,7 @@
           "display_summary": "关联滚动条控制的内容视口。",
           "source": {
             "path": "src/ui/scroll.rs",
-            "line": 119
+            "line": 121
           },
           "feature": "infrastructure",
           "defined_in": "infrastructure"
@@ -9656,7 +10338,7 @@
           "display_summary": "控制实体及视觉子树的显示状态。",
           "source": {
             "path": "src/ui/scroll.rs",
-            "line": 127
+            "line": 129
           },
           "feature": "infrastructure",
           "defined_in": "infrastructure"
@@ -9671,7 +10353,7 @@
           "display_summary": "控制滚动条是否接受指针拾取。",
           "source": {
             "path": "src/ui/scroll.rs",
-            "line": 127
+            "line": 129
           },
           "feature": "infrastructure",
           "defined_in": "infrastructure"
@@ -9684,8 +10366,8 @@
           ],
           "description": "原生滑块是轨道子实体。",
           "source": {
-            "path": "src/ui/widgets.rs",
-            "line": 268
+            "path": "src/ui/scroll.rs",
+            "line": 92
           },
           "feature": "infrastructure",
           "defined_in": "infrastructure",
@@ -9743,7 +10425,7 @@
           "display_summary": "标记由原生滚动条更新几何的滑块。",
           "source": {
             "path": "src/ui/scroll.rs",
-            "line": 92
+            "line": 94
           },
           "feature": "infrastructure",
           "defined_in": "infrastructure"
@@ -9758,7 +10440,7 @@
           "display_summary": "保存原生滑块的拖动状态。",
           "source": {
             "path": "src/ui/scroll.rs",
-            "line": 138
+            "line": 140
           },
           "feature": "infrastructure",
           "defined_in": "infrastructure"
@@ -9767,13 +10449,13 @@
           "id": "settings_scrollbar_thumb.Hovered",
           "name": "Hovered",
           "fields": [
-            "hovered: bool"
+            "0: bool（不可变组件，通过替换更新）"
           ],
           "description": "Pointer 来源时同步高亮。",
           "display_summary": "标记滑块当前被指针悬停。",
           "source": {
             "path": "src/ui/scroll.rs",
-            "line": 97
+            "line": 99
           },
           "feature": "infrastructure",
           "defined_in": "infrastructure"
@@ -9788,7 +10470,7 @@
           "display_summary": "控制滑块是否接受指针拾取。",
           "source": {
             "path": "src/ui/scroll.rs",
-            "line": 127
+            "line": 129
           },
           "feature": "infrastructure",
           "defined_in": "infrastructure"
@@ -9802,7 +10484,7 @@
           "description": "悬停或拖动显示黄色，导航来源恢复纸色。",
           "source": {
             "path": "src/ui/widgets.rs",
-            "line": 266
+            "line": 264
           },
           "feature": "infrastructure",
           "defined_in": "infrastructure",
@@ -9816,8 +10498,8 @@
           ],
           "description": "轨道的直接子实体。",
           "source": {
-            "path": "src/ui/widgets.rs",
-            "line": 268
+            "path": "src/ui/scroll.rs",
+            "line": 92
           },
           "feature": "infrastructure",
           "defined_in": "infrastructure",
@@ -9872,9 +10554,11 @@
           "id": "held_proxy.ColliderTransform",
           "name": "ColliderTransform",
           "fields": [
-            "translation / rotation / scale"
+            "translation: Vec3",
+            "rotation: Quat（3D 的 Rot）",
+            "scale: Vec3"
           ],
-          "description": "相对人物刚体的局部碰撞姿态，由 HeldAttachment 派生。",
+          "description": "相对人物刚体的局部碰撞姿态，由 HeldAttachment 派生；3D rotation 直接使用 Quat，不是 Rotation 包装。",
           "display_summary": "保存相对刚体的局部碰撞姿态。",
           "source": {
             "path": "src/item_interaction/attachment.rs",
@@ -10169,7 +10853,7 @@
       "fields": [
         "pressed / just_pressed / just_released"
       ],
-      "description": "引擎从 MouseButtonInput 更新；输入框架读取，音量滑条仅在局部捕获中读取左键保持与释放，命中复用 Interaction。",
+      "description": "引擎从 MouseButtonInput 更新；音量滑条仅在局部捕获中读取左键保持与释放，起点使用 PointerPress 缓冲消息。",
       "display_summary": "保存鼠标按钮的当前状态与变化。",
       "source": {
         "path": "src/main.rs",
@@ -10188,7 +10872,7 @@
       "display_summary": "汇总本帧鼠标位移供观察动作使用。",
       "source": {
         "path": "src/first_person/actions.rs",
-        "line": 73
+        "line": 70
       },
       "feature": "infrastructure",
       "defined_in": "infrastructure"
@@ -10351,9 +11035,10 @@
       "id": "resource.ContextInstances",
       "name": "ContextInstances<PreUpdate>",
       "fields": [
-        "instances: Vec<ContextInstance>"
+        "instances: Vec<ContextInstance>",
+        "marker: PhantomData<S>"
       ],
-      "description": "Enhanced Input 维护的上下文运行索引，在插件生命周期和上下文关系变化时自动更新。",
+      "description": "Enhanced Input 为每个输入 Schedule 初始化上下文运行索引；ContextPriority<C> 的 Insert / Discard Observer 注册或注销对应上下文，按优先级评估动作。",
       "display_summary": "索引输入框架当前运行的动作上下文。",
       "source": {
         "path": "src/first_person/mod.rs",
@@ -10366,8 +11051,12 @@
       "id": "resource.ActionSources",
       "name": "ActionSources",
       "fields": [
-        "keyboard / mouse_buttons / mouse_motion / mouse_wheel",
-        "gamepad_button / gamepad_axis"
+        "keyboard: bool = true",
+        "mouse_buttons: bool = true",
+        "mouse_motion: bool = true",
+        "mouse_wheel: bool = true",
+        "gamepad_button: bool = true",
+        "gamepad_axis: bool = true"
       ],
       "description": "Enhanced Input 的输入源开关；此原型未自定义，使用默认设置。",
       "display_summary": "配置输入框架允许使用的输入来源。",
@@ -10382,9 +11071,9 @@
       "id": "resource.ConsumedInputs",
       "name": "ConsumedInputs",
       "fields": [
-        "按 Schedule 保存的输入消费索引"
+        "0: TypeIdHashMap<IgnoredInputs>（pub(crate)）"
       ],
-      "description": "输入框架内部资源；动作输入消费不修改 ButtonInput 或鼠标位移资源。",
+      "description": "EnhancedInputPlugin 初始化的内部 Resource；按输入 Schedule 保存消费索引，Prepare 清空本 Schedule 索引，读取时合并各 Schedule 已消费的输入；不修改 ButtonInput 或鼠标位移资源。",
       "display_summary": "记录本轮动作评估已经消费的输入。",
       "source": {
         "path": "src/first_person/mod.rs",
@@ -10398,9 +11087,9 @@
       "name": "PendingBindings",
       "fields": [
         "bindings: Vec<Binding>",
-        "ignored: 内部输入忽略索引"
+        "ignored: IgnoredInputs"
       ],
-      "description": "输入框架内部资源，为移除或停用上下文后尚待释放的绑定保留重置状态。",
+      "description": "EnhancedInputPlugin 初始化为空；移除 require_reset 动作或停用上下文后收集尚未释放的绑定，Prepare 更新并保留仍活跃的输入，避免重新激活时误触发。",
       "display_summary": "保存上下文停用后仍需重置的输入绑定。",
       "source": {
         "path": "src/first_person/mod.rs",
@@ -10478,23 +11167,11 @@
         "enable_absorb_bevy_input_system: bool = false",
         "input_system_settings: EguiInputSystemSettings",
         "enable_cursor_icon_updates: bool = true",
-        "enable_ime: bool = true"
+        "enable_ime: bool = true",
+        "enable_focused_non_window_context_updates: bool = true"
       ],
       "description": "Egui 插件全局配置。默认创建主相机上下文，默认不吸收或清空 Bevy 底层输入；项目通过 ContextActivity 隔离游戏动作。",
       "display_summary": "配置检查器界面的上下文与输入处理。",
-      "source": {
-        "path": "src/inspector/mod.rs",
-        "line": 15
-      },
-      "feature": "egui",
-      "defined_in": "egui"
-    },
-    {
-      "id": "resource.EnableMultipassForPrimaryContext",
-      "name": "EnableMultipassForPrimaryContext",
-      "fields": [],
-      "description": "EguiPlugin 默认多轮模式的标记 Resource；主上下文插入钩子据此要求 EguiMultipassSchedule。",
-      "display_summary": "启用主检查器上下文的多轮界面计算。",
       "source": {
         "path": "src/inspector/mod.rs",
         "line": 15
@@ -10512,7 +11189,7 @@
       "display_summary": "保存物理世界使用的全局重力。",
       "source": {
         "path": "src/physics/mod.rs",
-        "line": 37
+        "line": 89
       },
       "feature": "avian",
       "defined_in": "avian"
@@ -10850,7 +11527,7 @@
       "display_summary": "缓冲鼠标与动作输入共用的菜单请求。",
       "source": {
         "path": "src/ui/mod.rs",
-        "line": 101
+        "line": 102
       },
       "feature": "ui",
       "defined_in": "ui"
@@ -10882,7 +11559,7 @@
       "display_summary": "缓冲菜单模型与界面资源的加载失败。",
       "source": {
         "path": "src/ui/backdrop.rs",
-        "line": 205
+        "line": 214
       },
       "feature": "infrastructure",
       "defined_in": "infrastructure"
@@ -10958,7 +11635,7 @@
       "fields": [
         "类型化 UI 通道与内部播放命令队列"
       ],
-      "description": "bevy_kira_audio 0.26.0 创建的共享通道；UiTrack 是 add_audio_channel 使用的 Resource 标记。",
+      "description": "bevy_kira_audio 0.27.1 创建的共享通道；UiTrack 是 add_audio_channel 使用的 Resource 标记。",
       "display_summary": "承载界面短音的播放命令。",
       "source": {
         "path": "src/audio/mod.rs",
@@ -11111,7 +11788,7 @@
       "display_summary": "保存上次光标位置以识别真实移动。",
       "source": {
         "path": "src/ui/pointer.rs",
-        "line": 12
+        "line": 88
       },
       "feature": "ui",
       "defined_in": "ui"
@@ -11126,7 +11803,7 @@
       "display_summary": "保存上次悬停按钮以识别真实进入。",
       "source": {
         "path": "src/ui/pointer.rs",
-        "line": 12
+        "line": 88
       },
       "feature": "ui",
       "defined_in": "ui"
@@ -11255,7 +11932,7 @@
       "display_summary": "保存最近提交的滚动焦点按钮。",
       "source": {
         "path": "src/ui/scroll.rs",
-        "line": 287
+        "line": 289
       },
       "feature": "ui",
       "defined_in": "ui"
@@ -11275,6 +11952,111 @@
       },
       "feature": "audio",
       "defined_in": "audio"
+    },
+    {
+      "id": "resource.LastPhysicsTick",
+      "name": "LastPhysicsTick",
+      "fields": [
+        "0: bevy_ecs::component::Tick"
+      ],
+      "description": "Avian 记录上一次 PhysicsSchedule 完成后的变更 tick；项目提前唤醒只接受晚于此边界的外部修改。",
+      "display_summary": "区分外部修改与上一物理步自身的回写。",
+      "source": {
+        "path": "src/physics/mod.rs",
+        "line": 65
+      },
+      "feature": "avian",
+      "defined_in": "avian"
+    },
+    {
+      "id": "resource.PointerPressMessages",
+      "name": "Messages<PointerPress>",
+      "fields": [
+        "PointerPress: entity / pointer / button / hit / count"
+      ],
+      "description": "Bevy Picking 同时发布缓冲按下消息与 EntityEvent；菜单和音量捕获分别使用独立 MessageReader 游标。",
+      "display_summary": "Bevy Picking 同时发布缓冲按下消息与 EntityEvent；菜单和音量捕获分别使用独立 MessageReader 游标。",
+      "source": {
+        "path": "src/ui/pointer.rs",
+        "line": 21
+      },
+      "feature": "infrastructure",
+      "defined_in": "infrastructure"
+    },
+    {
+      "id": "resource.PointerInputMessages",
+      "name": "Messages<PointerInput>",
+      "fields": [
+        "PointerInput: pointer_id / location / action"
+      ],
+      "description": "Picking 归一化输入消息；项目仅消费 Cancel 以补清原生按压生命周期。",
+      "display_summary": "Picking 归一化输入消息；项目仅消费 Cancel 以补清原生按压生命周期。",
+      "source": {
+        "path": "src/ui/pointer.rs",
+        "line": 22
+      },
+      "feature": "infrastructure",
+      "defined_in": "infrastructure"
+    },
+    {
+      "id": "resource.HoverMap",
+      "name": "HoverMap",
+      "fields": [
+        "PointerId → 当前命中Entity / HitData"
+      ],
+      "description": "Bevy Picking 维护的原生共享状态。",
+      "display_summary": "保存原生指针处理状态。",
+      "source": null,
+      "feature": "infrastructure",
+      "defined_in": "infrastructure"
+    },
+    {
+      "id": "resource.PreviousHoverMap",
+      "name": "PreviousHoverMap",
+      "fields": [
+        "PointerId → 前帧命中Entity / HitData"
+      ],
+      "description": "Bevy Picking 维护的原生共享状态。",
+      "display_summary": "保存原生指针处理状态。",
+      "source": null,
+      "feature": "infrastructure",
+      "defined_in": "infrastructure"
+    },
+    {
+      "id": "resource.PointerState",
+      "name": "PointerState",
+      "fields": [
+        "逐指针逐按键的点击、拖动和祖先状态"
+      ],
+      "description": "Bevy Picking 维护的原生共享状态。",
+      "display_summary": "保存原生指针处理状态。",
+      "source": null,
+      "feature": "infrastructure",
+      "defined_in": "infrastructure"
+    },
+    {
+      "id": "resource.PickingSettings",
+      "name": "PickingSettings",
+      "fields": [
+        "is_enabled / is_input_enabled / is_hover_enabled / multi_click_interval"
+      ],
+      "description": "Bevy Picking 维护的原生共享状态。",
+      "display_summary": "保存原生指针处理状态。",
+      "source": null,
+      "feature": "infrastructure",
+      "defined_in": "infrastructure"
+    },
+    {
+      "id": "resource.PointerMap",
+      "name": "PointerMap",
+      "fields": [
+        "PointerId → 指针Entity（普通运行时实体引用）"
+      ],
+      "description": "Bevy Picking 维护的原生共享状态。",
+      "display_summary": "保存原生指针处理状态。",
+      "source": null,
+      "feature": "infrastructure",
+      "defined_in": "infrastructure"
     }
   ],
   "relationships": [
@@ -11335,7 +12117,7 @@
       "description": "插件关系；销毁上下文会连带销毁其动作实体，反向索引由 Bevy 自动维护。",
       "source": {
         "path": "src/first_person/actions.rs",
-        "line": 66
+        "line": 67
       }
     },
     {
@@ -11350,7 +12132,7 @@
       "description": "插件关系；销毁动作会连带销毁其绑定实体。",
       "source": {
         "path": "src/first_person/actions.rs",
-        "line": 73
+        "line": 70
       }
     },
     {
@@ -11425,7 +12207,7 @@
       "description": "碰撞子体复用角色身体形状，属于 World 层；NPC 保持原地，沿 NPC 和地图层级清理。",
       "source": {
         "path": "src/scene_assembly/loading.rs",
-        "line": 234
+        "line": 235
       }
     },
     {
@@ -11515,7 +12297,7 @@
       "description": "视口和轨道是同一 frame 的兄弟；图省略中间纯布局实体。",
       "source": {
         "path": "src/ui/scroll.rs",
-        "line": 87
+        "line": 89
       }
     },
     {
@@ -11620,7 +12402,7 @@
       "description": "右列面板与操作行并列；图省略固定内容区和右列。",
       "source": {
         "path": "src/ui/pages.rs",
-        "line": 410
+        "line": 439
       }
     },
     {
@@ -11649,8 +12431,8 @@
       "linked_spawn": true,
       "description": "原生滑块直接属于轨道。",
       "source": {
-        "path": "src/ui/widgets.rs",
-        "line": 268
+        "path": "src/ui/scroll.rs",
+        "line": 92
       }
     },
     {
@@ -11665,7 +12447,7 @@
       "description": "target 是普通 Entity 引用，不是 ChildOf。",
       "source": {
         "path": "src/ui/scroll.rs",
-        "line": 119
+        "line": 121
       }
     },
     {
@@ -11806,7 +12588,7 @@
       "description": "产生 Back 请求；Hidden 时为暂停、Pause 时为恢复，子页面按返回来源返回。"
     },
     {
-      "event": "Pointer<Scroll>",
+      "event": "PointerScroll",
       "system": "observe_menu_scroll",
       "target": "事件 entity 的 MenuScroll 视口",
       "description": "原生 UI 滚轮事件在当前 MenuScroll 视口更新夹紧滚动位置并停止继续冒泡。"
@@ -11818,21 +12600,69 @@
       "description": "只插入菜单 pending；后续 Update 等待父 GLTF 与命名 Carry_Idle 入库再播放。"
     },
     {
-      "event": "Pointer<Scroll>",
+      "event": "PointerScroll",
       "system": "observe_scrollbar_scroll",
       "target": "SettingsScrollbar track (thumb bubbles)",
       "description": "原生轨道或滑块滚轮更新内容视口。"
     },
     {
-      "event": "Pointer<Press>",
+      "event": "PointerPress",
       "system": "observe_scrollbar_press",
       "target": "SettingsScrollbar track and thumb",
       "description": "原生控件按下接管 Pointer 输入来源。"
     },
     {
       "system": "carry_holder_despawn",
-      "event": "Despawn<Character>",
-      "description": "清理人物共享碰撞归属，真实箱业务根独立保留。"
+      "event": "DespawnEvent",
+      "description": "匹配人物组件的 DespawnEvent 模式；清理共享碰撞归属，真实箱业务根独立保留。"
+    },
+    {
+      "event": "PointerPress",
+      "system": "observe_menu_primary_press",
+      "target": "事件 entity 上具有 MenuButton，且为 Primary 指针键",
+      "description": "记录菜单按钮主键按压的指针身份。"
+    },
+    {
+      "event": "RemoveEvent",
+      "system": "observe_menu_primary_clear",
+      "target": "正移除 Pressed 且仍具有 MenuButton 的实体",
+      "description": "原生 Pressed 移除时清理菜单主键来源。"
+    },
+    {
+      "event": "PointerPress",
+      "system": "native_button_down",
+      "target": "原生Button实体（事件冒泡后命中）",
+      "description": "按压时插入原生Pressed；可选ActivateOnPress会发Activate。"
+    },
+    {
+      "event": "PointerRelease",
+      "system": "native_button_up",
+      "target": "原生Button实体（事件冒泡后命中）",
+      "description": "释放时移除原生Pressed。"
+    },
+    {
+      "event": "PointerClick",
+      "system": "native_button_click",
+      "target": "原生Button实体（事件冒泡后命中）",
+      "description": "满足条件时派发原生Activate。"
+    },
+    {
+      "event": "PointerDragEnd",
+      "system": "native_button_drag_end",
+      "target": "原生Button实体（事件冒泡后命中）",
+      "description": "拖动结束时移除原生Pressed。"
+    },
+    {
+      "event": "PointerCancel",
+      "system": "native_button_cancel",
+      "target": "原生Button实体（事件冒泡后命中）",
+      "description": "收到取消事件时移除原生Pressed。"
+    },
+    {
+      "event": "FocusedInput<KeyboardInput>",
+      "system": "native_button_key",
+      "target": "原生Button实体（事件冒泡后命中）",
+      "description": "焦点键盘Enter或Space首次按下时派发Activate。"
     }
   ],
   "startup_notes": [
@@ -11871,7 +12701,7 @@
     "PreUpdate 的已核对相关路线为 InputSystems → Egui ProcessInput → filter_captured_egui_input → Egui BeginPass 集合 → sync_mouse_capture → 自动 ApplyDeferred → EnhancedInput Prepare → Update → Apply → 事件命令应用。只描述相关显式依赖，未展开全部引擎系统。",
     "EguiPlugin::default() 默认 multipass=true；主上下文的 EguiPrimaryContextPass 在 PostUpdate 的上下文循环内部运行，可一帧多轮。PreUpdate BeginPass 排序边界不等于主检查器 UI 在该时刻开始或完成。",
     "EguiInput 内部的 egui::Event 只是 UI RawInput 的事件枚举，不等同于 Bevy ECS Event、EntityEvent 或缓冲 Message。捕获期间的 UI 过滤与 UI 占用时的 GameplayContext 停用构成两个方向的输入边界。",
-    "Avian 0.7 默认在 FixedPostUpdate 执行 Prepare → StepSimulation（嵌套 PhysicsSchedule 与求解子步）→ Writeback；接地与速度日志链 after(Writeback)。碰撞日志只 after(StepSimulation)，与回写链不设额外顺序。",
+    "Avian 0.8 默认在 FixedPostUpdate 执行 First → Prepare → StepSimulation（嵌套 PhysicsSchedule 与默认 6 个求解子步）→ Writeback。项目在 First 中排队外部变化唤醒并在 Prepare 前应用命令；接地与速度日志 after(Writeback)，碰撞日志仅 after(StepSimulation)。",
     "Position/Rotation/Velocity 为真实物理状态；Transform 为呈现。HeldAttachment.local_pose 是组合箱体姿态的唯一来源，HeldTarget 仅握持目标检查数据。",
     "拾取保持真实姿态并开始挂接，连续安全小步对齐；释放先停用/卸载代理，再恢复独立刚体、自由碰撞、原质量及安全姿态和动量。",
     "同批次拾取 Local 预留防止重复占用；人物或箱体销毁、关系异常解除都清理代理并恢复质量。多玩家完整规则仍未实现。",
@@ -11881,7 +12711,7 @@
     "FixedFirst：Reset → 落水及持物插值恢复（无彼此全序）→ 命令应用 → UpdateStart；FixedUpdate 通过公开集合依次执行 Recover → Facing → Motion → Interaction → Target → Attachment。sync_gravity 独立位于 Motion 前。",
     "Motion 内部为接地 → 移动力 → 跳跃；Interaction 处理拿放，Target 同步目标，Attachment 内部依次清理失效持物、代理和质量，再完成挂接、安全对齐和真实姿态同步。",
     "落水阈值 Position.y < -1.5。业务根回各自 SpawnPoint，清速度与单次请求，保留持续输入；临时暂停插值跨过零固定步帧，下一 FixedFirst 仅撤销本模块添加的暂停。",
-    "角色 NON_LINEAR CCD 速度门槛 8m/s 与 0.1rad/s，常规运动由推测接触覆盖；非零 yaw 下不能用 LINEAR 替代。纸箱与木箱保持默认零门槛非线性扫掠。",
+    "角色与自由箱体均显式使用 SweptCcd::default().with_filter(CcdFilter::ALL) 和 SpeculativeCcd::default()；非线性扫掠采用每步运动 / 身体最小 CCD 厚度的 0.5 门槛，预测邻域按速度扩张。",
     "CarryGrip 是每件物品的目标握持偏移，缺省 PrototypeConfig.hold_offset；实际局部姿态存于 HeldAttachment，拾取对齐不瞬移，持握不计算内部力。",
     "FixedPostUpdate：Avian Writeback 后 sync_held_physics 与接地/速度日志独立；FixedLast 记录自由体插值终点。AfterFixedMainLoop：Ease → 朝向 → 真实持物同步 → 呈现 → 相机 → 可见性 → UpdateEasingTick，零固定步同样执行。",
     "引擎资产实例化、AnimationSystems 与 GLB 层级为相关流程概览，未准确展开的全部 loader/骨骼内部系统、内部动画缓存、渲染批次、灯光组件与 GPU 流程不声称完整建模。",
@@ -11896,7 +12726,7 @@
     "SoundRequest 是缓冲 Message，由真实菜单焦点、接受的菜单请求、成功拿放命令、固定步持握观察与真实支撑撞击写入；Update 在 UI Style 后播放，不从原始按键猜测业务成功。",
     "音频观察和物理规则分开：警告只提示不改变持握；落地锁存涵盖活动与休眠支撑，暂停/主菜单不采集。Kira 输出与无设备事件测试分开；12 种 cue 中菜单三种及物理四种已接入，交接、推车、弹开与交付共五种预留。",
     "UI Style 发布 AudioPreview 后，AudioSystems::Mix 执行加载错误、有效混音和实例音量；Playback 随后消费请求并处理退出。节流用 Time<Real>，总并发 4、SFX 最多 3；PostUpdate 在 Kira 创建排队实例后补同步音量。",
-    "实例就绪共有地图、玩法主角和菜单快递员三种 Observer；动态事件数量以清单为准。菜单与 Kira 的时间门控不会改变海岛资产、落水恢复、CarryGrip 或 NON_LINEAR CCD 规则。",
+    "实例就绪共有地图、玩法主角和菜单快递员三种 Observer；动态事件数量以清单为准。菜单与 Kira 的时间门控不会改变海岛资产、落水恢复、CarryGrip 或 NonLinear 扫掠 CCD 规则。",
     "主角动画不再使用 AnimationTransitions：16 个命名片段按真实局部速度、持有关系与跳跃阶段混合，权重/步相位/阶段时钟是 CourierAnimation 组件字段。",
     "鞋底补偿在 AnimationSystems 后、变换传播前运行；TransformHelper 读取本帧局部骨链，不依赖缓存 GlobalTransform，只写视觉根高度。",
     "菜单与玩法 pending 和 CourierAnimation 同名但为独立类型；菜单 Ready Observer 只标记，Update 等待 GLTF/clip 后按 Carry_Idle 名称绑定。",
@@ -11932,7 +12762,18 @@
     "flow_clock_pause",
     "flow_clock_resume",
     "flow_resume_capture",
-    "character_clear_intents"
+    "character_clear_intents",
+    "observe_menu_primary_press",
+    "observe_menu_primary_clear",
+    "menu_clear_cancelled_primary",
+    "native_pointer_events",
+    "native_update_hovered",
+    "native_button_down",
+    "native_button_up",
+    "native_button_click",
+    "native_button_drag_end",
+    "native_button_cancel",
+    "native_button_key"
   ],
   "nodes": [
     {
@@ -12146,8 +12987,8 @@
       "id": "plugin-GamePhysicsPlugin",
       "name": "GamePhysicsPlugin",
       "kind": "Plugin",
-      "description": "安装 Avian、重力同步与统一碰撞日志。",
-      "display_summary": "安装物理引擎并管理重力与碰撞日志。",
+      "description": "安装 Avian、重力同步、外部变化的提前唤醒与统一物理日志。",
+      "display_summary": "安装物理引擎并管理重力、提前唤醒与碰撞日志。",
       "notes": [
         "注册顺序不等于系统执行顺序。"
       ],
@@ -12300,7 +13141,7 @@
       ],
       "source": {
         "path": "src/ui/mod.rs",
-        "line": 112
+        "line": 113
       },
       "feature": "ui",
       "aspects": [
@@ -12611,6 +13452,7 @@
       "id": "event_apply",
       "name": "ApplyDeferred · 动作事件",
       "kind": "sync",
+      "defined_in": "infrastructure",
       "phase": "PreUpdate",
       "description": "应用 Enhanced Input 排入的 trigger 命令，此时触发匹配 Observer。",
       "display_summary": "应用动作事件命令以触发匹配的观察系统。",
@@ -12634,7 +13476,7 @@
       ],
       "notes": [
         "这是命令同步点，不是 EnhancedInputSystems::Apply；业务读写由对应 Observer 声明。",
-        "菜单请求消费位于 EnhancedInputSystems::Apply 之后；常规调度应用待处理的动作事件命令。",
+        "菜单请求消费位于 EnhancedInputSystems::Trigger 之后；常规调度应用待处理的动作事件命令。",
         "Observer 之间没有注册顺序所保证的串行依赖。"
       ],
       "source": {
@@ -12768,7 +13610,7 @@
       "display_summary": "按内容与视口比例更新滚动条滑块几何。",
       "source": {
         "path": "src/ui/scroll.rs",
-        "line": 73
+        "line": 74
       },
       "id": "native-scrollbar-layout",
       "feature": "infrastructure",
@@ -12857,7 +13699,7 @@
       "display_summary": "保留设置分类、底部操作与页脚的固定位置。",
       "source": {
         "path": "src/ui/pages.rs",
-        "line": 297
+        "line": 308
       },
       "id": "settings-fixed-regions",
       "feature": "ui",
@@ -12884,7 +13726,9 @@
           "source": {
             "path": "src/scene_assembly/actors.rs",
             "line": 19
-          }
+          },
+          "feature": "infrastructure",
+          "defined_in": "infrastructure"
         },
         {
           "id": "character.Character",
@@ -12894,7 +13738,9 @@
           "source": {
             "path": "src/character/components.rs",
             "line": 8
-          }
+          },
+          "feature": "character",
+          "defined_in": "character"
         },
         {
           "id": "character.CharacterIntent",
@@ -12905,10 +13751,13 @@
             "interact_pending: bool"
           ],
           "description": "持续移动轴与一次性跳跃、交互请求跨帧保存。固定步消费布尔请求。",
+          "display_summary": "保存持续移动方向与单次跳跃、交互请求。",
           "source": {
             "path": "src/character/components.rs",
             "line": 16
-          }
+          },
+          "feature": "character",
+          "defined_in": "character"
         },
         {
           "id": "character.CharacterMotion",
@@ -12917,10 +13766,13 @@
             "grounded: bool"
           ],
           "description": "支撑探测派生的接地状态；不再复制水平/竖直速度，实际速度读取 LinearVelocity。",
+          "display_summary": "保存角色接地等运动观察结果。",
           "source": {
             "path": "src/character/components.rs",
             "line": 26
-          }
+          },
+          "feature": "character",
+          "defined_in": "character"
         },
         {
           "id": "character.Transform",
@@ -12931,10 +13783,13 @@
             "scale: Vec3"
           ],
           "description": "Avian 固定步回写与渲染帧插值的呈现姿态；物理位置来源是 Position，非持握系统直接搬动。",
+          "display_summary": "保存角色经插值生成的显示姿态。",
           "source": {
             "path": "src/scene_assembly/actors.rs",
             "line": 13
-          }
+          },
+          "feature": "infrastructure",
+          "defined_in": "infrastructure"
         },
         {
           "id": "character.GlobalTransform",
@@ -12943,10 +13798,13 @@
             "世界变换: Affine3A"
           ],
           "description": "由 Transform 要求并由引擎同步；供层级传播与渲染使用。",
+          "display_summary": "保存层级传播后的世界姿态。",
           "source": {
             "path": "src/scene_assembly/actors.rs",
             "line": 13
-          }
+          },
+          "feature": "infrastructure",
+          "defined_in": "infrastructure"
         },
         {
           "id": "character.Visibility",
@@ -12958,7 +13816,9 @@
           "source": {
             "path": "src/scene_assembly/actors.rs",
             "line": 13
-          }
+          },
+          "feature": "infrastructure",
+          "defined_in": "infrastructure"
         },
         {
           "id": "character.Children",
@@ -12967,10 +13827,13 @@
             "子实体集合: Vec<Entity>"
           ],
           "description": "ChildOf 的自动反向索引，当前关联主角 GLB 视觉根；网格、骨骼与动画播放器再组成模型子树。",
+          "display_summary": "索引当前实体的直接子实体。",
           "source": {
             "path": "src/scene_assembly/actors.rs",
             "line": 26
-          }
+          },
+          "feature": "infrastructure",
+          "defined_in": "infrastructure"
         },
         {
           "id": "character.HoldingItems",
@@ -12982,7 +13845,10 @@
           "source": {
             "path": "src/item_interaction/components.rs",
             "line": 29
-          }
+          },
+          "feature": "item_interaction",
+          "defined_in": "item_interaction",
+          "display_summary": "索引角色当前持有的物品。"
         },
         {
           "id": "character.RigidBody",
@@ -12991,10 +13857,13 @@
             "Dynamic"
           ],
           "description": "动态刚体；角色与箱体均保留物理解算。",
+          "display_summary": "定义实体参与物理模拟的刚体模式。",
           "source": {
             "path": "src/character/body.rs",
             "line": 20
-          }
+          },
+          "feature": "avian",
+          "defined_in": "avian"
         },
         {
           "id": "character.Collider",
@@ -13006,7 +13875,10 @@
           "source": {
             "path": "src/character/body.rs",
             "line": 20
-          }
+          },
+          "feature": "avian",
+          "defined_in": "avian",
+          "display_summary": "保存参与物理碰撞的实体形状。"
         },
         {
           "id": "character.Position",
@@ -13015,10 +13887,13 @@
             "0: Vec3"
           ],
           "description": "实际物理位置；Forces.position()、接地与拾取读取此值。",
+          "display_summary": "保存物理模拟中的真实位置。",
           "source": {
             "path": "src/character/body.rs",
             "line": 20
-          }
+          },
+          "feature": "avian",
+          "defined_in": "avian"
         },
         {
           "id": "character.Rotation",
@@ -13027,10 +13902,13 @@
             "0: Quat"
           ],
           "description": "实际物理旋转；角色锁旋转，箱体允许旋转。",
+          "display_summary": "保存物理模拟中的真实旋转。",
           "source": {
             "path": "src/character/body.rs",
             "line": 20
-          }
+          },
+          "feature": "avian",
+          "defined_in": "avian"
         },
         {
           "id": "character.LinearVelocity",
@@ -13042,7 +13920,9 @@
           "source": {
             "path": "src/character/body.rs",
             "line": 20
-          }
+          },
+          "feature": "avian",
+          "defined_in": "avian"
         },
         {
           "id": "character.AngularVelocity",
@@ -13051,10 +13931,13 @@
             "0: Vec3"
           ],
           "description": "实际角速度；释放箱体保留原有动量。",
+          "display_summary": "保存物理模拟中的角速度。",
           "source": {
             "path": "src/character/body.rs",
             "line": 20
-          }
+          },
+          "feature": "avian",
+          "defined_in": "avian"
         },
         {
           "id": "character.Mass",
@@ -13063,10 +13946,13 @@
             "质量: f32 = 75"
           ],
           "description": "显式质量，Avian 更新计算质量。",
+          "display_summary": "保存显式配置的质量。",
           "source": {
             "path": "src/character/body.rs",
             "line": 20
-          }
+          },
+          "feature": "avian",
+          "defined_in": "avian"
         },
         {
           "id": "character.ComputedMass",
@@ -13075,30 +13961,39 @@
             "质量与逆质量（引擎计算）"
           ],
           "description": "Forces 及跳跃冲量读取的计算质量。",
+          "display_summary": "保存物理求解使用的计算质量。",
           "source": {
             "path": "src/character/body.rs",
             "line": 20
-          }
+          },
+          "feature": "avian",
+          "defined_in": "avian"
         },
         {
           "id": "character.ComputedAngularInertia",
           "name": "ComputedAngularInertia",
           "fields": [],
           "description": "Avian 计算角惯量，Forces QueryData 只读。",
+          "display_summary": "保存物理求解使用的计算角惯量。",
           "source": {
             "path": "src/character/body.rs",
             "line": 20
-          }
+          },
+          "feature": "avian",
+          "defined_in": "avian"
         },
         {
           "id": "character.ComputedCenterOfMass",
           "name": "ComputedCenterOfMass",
           "fields": [],
           "description": "Avian 计算质量中心，Forces QueryData 只读。",
+          "display_summary": "保存物理求解使用的计算质心。",
           "source": {
             "path": "src/character/body.rs",
             "line": 20
-          }
+          },
+          "feature": "avian",
+          "defined_in": "avian"
         },
         {
           "id": "character.CollisionLayers",
@@ -13107,10 +14002,13 @@
             "membership=Character; filters=ALL"
           ],
           "description": "人物保留 Character → ALL；持物与人物内部按同一 ColliderOf.body 排除，外部 Character 仍受完整阻挡。",
+          "display_summary": "配置实体之间允许发生碰撞的层。",
           "source": {
             "path": "src/character/body.rs",
             "line": 20
-          }
+          },
+          "feature": "avian",
+          "defined_in": "avian"
         },
         {
           "id": "character.CollisionEventsEnabled",
@@ -13120,21 +14018,26 @@
           "source": {
             "path": "src/character/body.rs",
             "line": 20
-          }
+          },
+          "feature": "avian",
+          "defined_in": "avian"
         },
         {
           "id": "character.SweptCcd",
           "name": "SweptCcd",
           "fields": [
-            "NON_LINEAR",
-            "linear_velocity_threshold=8.0 m/s",
-            "angular_velocity_threshold=0.1 rad/s"
+            "mode: SweepMode = NonLinear",
+            "filter: CcdFilter = ALL（项目显式配置）",
+            "threshold: f32 = 0.5（每步运动 / 最小 CCD 厚度比例）"
           ],
-          "description": "保留非线性高速扫掠，正常移动使用推测接触；非零 yaw 下不采用 LINEAR。",
+          "description": "按身体最薄尺寸的半厚度门槛自动启用非线性扫掠；显式包含动态、运动学、静态和独立碰撞体，避免只采用新版默认静态/运动学过滤。",
+          "display_summary": "启用连续碰撞检测以减少高速穿透。",
           "source": {
             "path": "src/character/body.rs",
-            "line": 20
-          }
+            "line": 33
+          },
+          "feature": "avian",
+          "defined_in": "avian"
         },
         {
           "id": "character.Friction",
@@ -13143,10 +14046,13 @@
             "系数=0；Min 合并规则"
           ],
           "description": "控制接触摩擦；人物低摩擦避免贴墙卡住。",
+          "display_summary": "保存接触表面的摩擦参数。",
           "source": {
             "path": "src/character/body.rs",
             "line": 20
-          }
+          },
+          "feature": "avian",
+          "defined_in": "avian"
         },
         {
           "id": "character.Restitution",
@@ -13158,47 +14064,61 @@
           "source": {
             "path": "src/character/body.rs",
             "line": 20
-          }
+          },
+          "feature": "avian",
+          "defined_in": "avian"
         },
         {
           "id": "character.VelocityIntegrationData",
           "name": "VelocityIntegrationData",
           "fields": [],
           "description": "Avian 内部组件；Forces 在此累计本步世界加速度/力数据，物理步消费。",
+          "display_summary": "累计本物理步的世界加速度与外力。",
           "source": {
             "path": "src/character/body.rs",
             "line": 20
-          }
+          },
+          "feature": "avian",
+          "defined_in": "avian"
         },
         {
           "id": "character.AccumulatedLocalAcceleration",
           "name": "AccumulatedLocalAcceleration",
           "fields": [],
           "description": "Avian 内部局部加速度累计；Forces QueryData 声明可变访问，项目未用局部力方法。",
+          "display_summary": "累计本物理步的局部加速度。",
           "source": {
             "path": "src/character/body.rs",
             "line": 20
-          }
+          },
+          "feature": "avian",
+          "defined_in": "avian"
         },
         {
           "id": "character.SleepTimer",
           "name": "SleepTimer",
           "fields": [],
           "description": "可选 Avian 睡眠状态计时；Forces 施力/冲量可能唤醒。",
+          "display_summary": "记录刚体休眠计时。",
           "source": {
             "path": "src/character/body.rs",
             "line": 20
-          }
+          },
+          "feature": "avian",
+          "defined_in": "avian"
         },
         {
           "id": "character.TranslationInterpolation",
           "name": "TranslationInterpolation",
           "fields": [],
           "description": "只对渲染帧平移执行插值，不反馈物理 Position。",
+          "display_summary": "启用平移显示插值。",
           "source": {
             "path": "src/character/body.rs",
             "line": 20
-          }
+          },
+          "feature": "avian",
+          "defined_in": "avian"
         },
         {
           "id": "character.TranslationEasingState",
@@ -13207,10 +14127,13 @@
             "start / end: Option<Vec3>"
           ],
           "description": "固定步起止平移的插值端点，渲染帧按 overstep 混合。",
+          "display_summary": "保存固定步平移插值的起止端点。",
           "source": {
             "path": "src/character/body.rs",
             "line": 20
-          }
+          },
+          "feature": "avian",
+          "defined_in": "avian"
         },
         {
           "id": "character.LockedAxes",
@@ -13219,10 +14142,13 @@
             "ROTATION_LOCKED"
           ],
           "description": "锁定刚体旋转防止倾倒；视角仍设置水平呈现朝向。",
+          "display_summary": "限制刚体可移动或旋转的轴。",
           "source": {
             "path": "src/character/body.rs",
             "line": 20
-          }
+          },
+          "feature": "avian",
+          "defined_in": "avian"
         },
         {
           "id": "character.ColliderAabb",
@@ -13231,10 +14157,13 @@
             "min / max：世界 AABB"
           ],
           "description": "Avian 从业务根碰撞体/刚体初始化的物理查询数据；SpatialQuery 只读。",
+          "display_summary": "保存碰撞查询使用的轴对齐包围盒。",
           "source": {
             "path": "src/character/body.rs",
             "line": 20
-          }
+          },
+          "feature": "avian",
+          "defined_in": "avian"
         },
         {
           "id": "character.SpawnPoint",
@@ -13246,7 +14175,9 @@
           "source": {
             "path": "src/bounds_recovery/mod.rs",
             "line": 15
-          }
+          },
+          "feature": "bounds_recovery",
+          "defined_in": "bounds_recovery"
         },
         {
           "id": "character.ResumeInterpolation",
@@ -13259,27 +14190,35 @@
           "source": {
             "path": "src/bounds_recovery/recovery.rs",
             "line": 26
-          }
+          },
+          "feature": "bounds_recovery",
+          "defined_in": "bounds_recovery"
         },
         {
           "id": "character.NoTranslationEasing",
           "name": "NoTranslationEasing",
           "fields": [],
           "description": "恢复后临时暂停；不移除原先暂停。",
+          "display_summary": "暂停独立平移插值。",
           "source": {
             "path": "src/bounds_recovery/recovery.rs",
             "line": 34
-          }
+          },
+          "feature": "avian",
+          "defined_in": "avian"
         },
         {
           "id": "character.NoRotationEasing",
           "name": "NoRotationEasing",
           "fields": [],
           "description": "恢复后临时暂停；下一固定步按归属清理。",
+          "display_summary": "暂停独立旋转插值。",
           "source": {
             "path": "src/bounds_recovery/recovery.rs",
             "line": 34
-          }
+          },
+          "feature": "avian",
+          "defined_in": "avian"
         },
         {
           "id": "character.DespawnOnExit",
@@ -13288,10 +14227,13 @@
             "AppState::InGame"
           ],
           "description": "状态退出销毁此根；内置 ChildOf 子树随根清理。",
+          "display_summary": "标记退出所属应用状态时销毁此实体。",
           "source": {
             "path": "src/scene_assembly/actors.rs",
             "line": 77
-          }
+          },
+          "feature": "infrastructure",
+          "defined_in": "infrastructure"
         },
         {
           "id": "character.CarryBaseMass",
@@ -13303,7 +14245,9 @@
           "source": {
             "path": "src/item_interaction/components.rs",
             "line": 58
-          }
+          },
+          "feature": "item_interaction",
+          "defined_in": "item_interaction"
         },
         {
           "id": "character.RigidBodyColliders",
@@ -13312,10 +14256,68 @@
             "所属碰撞 Entity 集合"
           ],
           "description": "Avian ColliderOf 反向关系，含人物身体与持物代理；linked_spawn 只清理代理。",
+          "display_summary": "索引属于同一刚体的全部碰撞体。",
           "source": {
             "path": "src/item_interaction/attachment.rs",
             "line": 126
-          }
+          },
+          "feature": "avian",
+          "defined_in": "avian"
+        },
+        {
+          "id": "character.SpeculativeCcd",
+          "name": "SpeculativeCcd",
+          "fields": [
+            "max_distance: f32 = f32::MAX（default）"
+          ],
+          "description": "显式启用随速度扩张的预测邻域；与动态扫掠配合，让相向高速物体在交会前互为候选。持物代理读取其所属人物刚体的配置。",
+          "source": {
+            "path": "src/character/body.rs",
+            "line": 34
+          },
+          "feature": "avian",
+          "defined_in": "avian"
+        },
+        {
+          "id": "character.BodySizeMetrics",
+          "name": "BodySizeMetrics",
+          "fields": [
+            "ccd_thickness: f32",
+            "sweep_radius: f32"
+          ],
+          "description": "RigidBody 所需组件；Avian 汇总该刚体全部碰撞体的最小 CCD 厚度和至质心的最大扫掠半径，用于尺寸比例门槛。",
+          "source": {
+            "path": "src/character/body.rs",
+            "line": 22
+          },
+          "feature": "avian",
+          "defined_in": "avian"
+        },
+        {
+          "id": "character.SolverBodyIndex",
+          "name": "SolverBodyIndex",
+          "fields": [
+            "0: u32"
+          ],
+          "description": "Avian 活动动态刚体在 SolverBodies 中的索引；休眠或移除刚体时删除，唤醒时由框架重新插入。该组件具有明确的可选生命周期。",
+          "source": {
+            "path": "src/character/body.rs",
+            "line": 22
+          },
+          "feature": "avian",
+          "defined_in": "avian"
+        },
+        {
+          "id": "character.Sleeping",
+          "name": "Sleeping",
+          "fields": [],
+          "description": "可选休眠标记；外部变化触发提前 WakeBody，未变化时继续休眠。",
+          "source": {
+            "path": "src/character/body.rs",
+            "line": 22
+          },
+          "feature": "avian",
+          "defined_in": "avian"
         }
       ],
       "kind": "Entity",
@@ -13342,7 +14344,9 @@
           "source": {
             "path": "src/scene_assembly/actors.rs",
             "line": 45
-          }
+          },
+          "feature": "infrastructure",
+          "defined_in": "infrastructure"
         },
         {
           "id": "parcel.Parcel",
@@ -13352,17 +14356,22 @@
           "source": {
             "path": "src/item_interaction/components.rs",
             "line": 9
-          }
+          },
+          "feature": "item_interaction",
+          "defined_in": "item_interaction"
         },
         {
           "id": "parcel.Pickable",
           "name": "Pickable",
           "fields": [],
           "description": "可拾取能力标记；交互系统按此能力选择物体。",
+          "display_summary": "标记可被玩家拾取的物品。",
           "source": {
             "path": "src/item_interaction/components.rs",
             "line": 14
-          }
+          },
+          "feature": "item_interaction",
+          "defined_in": "item_interaction"
         },
         {
           "id": "parcel.Transform",
@@ -13373,10 +14382,13 @@
             "scale: Vec3"
           ],
           "description": "自由时为物理插值呈现，持握时由 carry 系统按同一局部挂接姿态直接派生箱根呈现。",
+          "display_summary": "保存自由运动或共享持握时的显示姿态。",
           "source": {
             "path": "src/scene_assembly/actors.rs",
             "line": 30
-          }
+          },
+          "feature": "infrastructure",
+          "defined_in": "infrastructure"
         },
         {
           "id": "parcel.GlobalTransform",
@@ -13385,10 +14397,13 @@
             "世界变换: Affine3A"
           ],
           "description": "由 Transform 要求并由引擎同步，用于木箱模型层级传播。",
+          "display_summary": "保存层级传播后的世界姿态。",
           "source": {
             "path": "src/scene_assembly/actors.rs",
             "line": 30
-          }
+          },
+          "feature": "infrastructure",
+          "defined_in": "infrastructure"
         },
         {
           "id": "parcel.Visibility",
@@ -13400,7 +14415,9 @@
           "source": {
             "path": "src/scene_assembly/actors.rs",
             "line": 30
-          }
+          },
+          "feature": "infrastructure",
+          "defined_in": "infrastructure"
         },
         {
           "id": "parcel.Children",
@@ -13409,10 +14426,13 @@
             "子实体集合: Vec<Entity>"
           ],
           "description": "模型视觉根与导入 GLB 子树，持握不改变箱体视觉树归属。",
+          "display_summary": "索引当前实体的直接子实体。",
           "source": {
             "path": "src/scene_assembly/actors.rs",
             "line": 53
-          }
+          },
+          "feature": "infrastructure",
+          "defined_in": "infrastructure"
         },
         {
           "id": "parcel.HeldBy",
@@ -13421,10 +14441,13 @@
             "0: Entity"
           ],
           "description": "可选关系组件，仅持有时存在；指向持有者，增删通过 Commands 延迟执行。",
+          "display_summary": "关联当前物品的持有者。",
           "source": {
             "path": "src/item_interaction/components.rs",
             "line": 24
-          }
+          },
+          "feature": "item_interaction",
+          "defined_in": "item_interaction"
         },
         {
           "id": "parcel.RigidBody",
@@ -13433,10 +14456,13 @@
             "Dynamic（自由时）；持握时移除"
           ],
           "description": "仅自由或释放后恢复独立 Dynamic；持握期间移除，人物是组合体唯一 Dynamic。",
+          "display_summary": "定义实体参与物理模拟的刚体模式。",
           "source": {
             "path": "src/item_interaction/body.rs",
             "line": 8
-          }
+          },
+          "feature": "avian",
+          "defined_in": "avian"
         },
         {
           "id": "parcel.Collider",
@@ -13449,7 +14475,10 @@
           "source": {
             "path": "src/item_interaction/body.rs",
             "line": 8
-          }
+          },
+          "feature": "avian",
+          "defined_in": "avian",
+          "display_summary": "保存参与物理碰撞的实体形状。"
         },
         {
           "id": "parcel.Position",
@@ -13458,10 +14487,13 @@
             "0: Vec3"
           ],
           "description": "实际物理位置；Forces.position()、接地与拾取读取此值。",
+          "display_summary": "保存物理模拟中的真实位置。",
           "source": {
             "path": "src/item_interaction/body.rs",
             "line": 8
-          }
+          },
+          "feature": "avian",
+          "defined_in": "avian"
         },
         {
           "id": "parcel.Rotation",
@@ -13470,10 +14502,13 @@
             "0: Quat"
           ],
           "description": "实际物理旋转；角色锁旋转，箱体允许旋转。",
+          "display_summary": "保存物理模拟中的真实旋转。",
           "source": {
             "path": "src/item_interaction/body.rs",
             "line": 8
-          }
+          },
+          "feature": "avian",
+          "defined_in": "avian"
         },
         {
           "id": "parcel.LinearVelocity",
@@ -13485,7 +14520,9 @@
           "source": {
             "path": "src/item_interaction/body.rs",
             "line": 8
-          }
+          },
+          "feature": "avian",
+          "defined_in": "avian"
         },
         {
           "id": "parcel.AngularVelocity",
@@ -13494,10 +14531,13 @@
             "0: Vec3"
           ],
           "description": "实际角速度；释放箱体保留原有动量。",
+          "display_summary": "保存物理模拟中的角速度。",
           "source": {
             "path": "src/item_interaction/body.rs",
             "line": 8
-          }
+          },
+          "feature": "avian",
+          "defined_in": "avian"
         },
         {
           "id": "parcel.Mass",
@@ -13506,10 +14546,13 @@
             "质量: f32 = 3"
           ],
           "description": "显式质量，Avian 更新计算质量。",
+          "display_summary": "保存显式配置的质量。",
           "source": {
             "path": "src/item_interaction/body.rs",
             "line": 8
-          }
+          },
+          "feature": "avian",
+          "defined_in": "avian"
         },
         {
           "id": "parcel.ComputedMass",
@@ -13518,30 +14561,39 @@
             "质量与逆质量（引擎计算）"
           ],
           "description": "Forces 及跳跃冲量读取的计算质量。",
+          "display_summary": "保存物理求解使用的计算质量。",
           "source": {
             "path": "src/item_interaction/body.rs",
             "line": 8
-          }
+          },
+          "feature": "avian",
+          "defined_in": "avian"
         },
         {
           "id": "parcel.ComputedAngularInertia",
           "name": "ComputedAngularInertia",
           "fields": [],
           "description": "Avian 计算角惯量，Forces QueryData 只读。",
+          "display_summary": "保存物理求解使用的计算角惯量。",
           "source": {
             "path": "src/item_interaction/body.rs",
             "line": 8
-          }
+          },
+          "feature": "avian",
+          "defined_in": "avian"
         },
         {
           "id": "parcel.ComputedCenterOfMass",
           "name": "ComputedCenterOfMass",
           "fields": [],
           "description": "Avian 计算质量中心，Forces QueryData 只读。",
+          "display_summary": "保存物理求解使用的计算质心。",
           "source": {
             "path": "src/item_interaction/body.rs",
             "line": 8
-          }
+          },
+          "feature": "avian",
+          "defined_in": "avian"
         },
         {
           "id": "parcel.CollisionLayers",
@@ -13550,10 +14602,13 @@
             "自由及持物代理：Parcel → ALL"
           ],
           "description": "同一组合体内部依赖共享刚体排除，外部 World / NPC / Character / Parcel 保留完整碰撞。",
+          "display_summary": "配置实体之间允许发生碰撞的层。",
           "source": {
             "path": "src/item_interaction/body.rs",
             "line": 8
-          }
+          },
+          "feature": "avian",
+          "defined_in": "avian"
         },
         {
           "id": "parcel.CollisionEventsEnabled",
@@ -13563,20 +14618,25 @@
           "source": {
             "path": "src/item_interaction/body.rs",
             "line": 8
-          }
+          },
+          "feature": "avian",
+          "defined_in": "avian"
         },
         {
           "id": "parcel.SweptCcd",
           "name": "SweptCcd",
           "fields": [
-            "NON_LINEAR（默认）",
-            "速度门槛均为 0（本轮未改变）"
+            "mode: SweepMode = NonLinear",
+            "filter: CcdFilter = ALL（项目显式配置）",
+            "threshold: f32 = 0.5（每步运动 / 最小 CCD 厚度比例）"
           ],
-          "description": "连续碰撞检测，减少高速穿越。",
+          "description": "按身体最薄尺寸的半厚度门槛自动启用非线性扫掠；显式包含动态、运动学、静态和独立碰撞体，避免只采用新版默认静态/运动学过滤。",
           "source": {
             "path": "src/item_interaction/body.rs",
-            "line": 8
-          }
+            "line": 20
+          },
+          "feature": "avian",
+          "defined_in": "avian"
         },
         {
           "id": "parcel.Friction",
@@ -13585,10 +14645,13 @@
             "系数=0.65"
           ],
           "description": "控制接触摩擦；人物低摩擦避免贴墙卡住。",
+          "display_summary": "保存接触表面的摩擦参数。",
           "source": {
             "path": "src/item_interaction/body.rs",
             "line": 8
-          }
+          },
+          "feature": "avian",
+          "defined_in": "avian"
         },
         {
           "id": "parcel.Restitution",
@@ -13600,47 +14663,61 @@
           "source": {
             "path": "src/item_interaction/body.rs",
             "line": 8
-          }
+          },
+          "feature": "avian",
+          "defined_in": "avian"
         },
         {
           "id": "parcel.VelocityIntegrationData",
           "name": "VelocityIntegrationData",
           "fields": [],
           "description": "Avian 内部组件；Forces 在此累计本步世界加速度/力数据，物理步消费。",
+          "display_summary": "累计本物理步的世界加速度与外力。",
           "source": {
             "path": "src/item_interaction/body.rs",
             "line": 8
-          }
+          },
+          "feature": "avian",
+          "defined_in": "avian"
         },
         {
           "id": "parcel.AccumulatedLocalAcceleration",
           "name": "AccumulatedLocalAcceleration",
           "fields": [],
           "description": "Avian 内部局部加速度累计；Forces QueryData 声明可变访问，项目未用局部力方法。",
+          "display_summary": "累计本物理步的局部加速度。",
           "source": {
             "path": "src/item_interaction/body.rs",
             "line": 8
-          }
+          },
+          "feature": "avian",
+          "defined_in": "avian"
         },
         {
           "id": "parcel.SleepTimer",
           "name": "SleepTimer",
           "fields": [],
           "description": "可选 Avian 睡眠状态计时；Forces 施力/冲量可能唤醒。",
+          "display_summary": "记录刚体休眠计时。",
           "source": {
             "path": "src/item_interaction/body.rs",
             "line": 8
-          }
+          },
+          "feature": "avian",
+          "defined_in": "avian"
         },
         {
           "id": "parcel.TranslationInterpolation",
           "name": "TranslationInterpolation",
           "fields": [],
           "description": "只对渲染帧平移执行插值，不反馈物理 Position。",
+          "display_summary": "启用平移显示插值。",
           "source": {
             "path": "src/item_interaction/body.rs",
             "line": 8
-          }
+          },
+          "feature": "avian",
+          "defined_in": "avian"
         },
         {
           "id": "parcel.TranslationEasingState",
@@ -13649,20 +14726,26 @@
             "start / end: Option<Vec3>"
           ],
           "description": "固定步起止平移的插值端点，渲染帧按 overstep 混合。",
+          "display_summary": "保存固定步平移插值的起止端点。",
           "source": {
             "path": "src/item_interaction/body.rs",
             "line": 8
-          }
+          },
+          "feature": "avian",
+          "defined_in": "avian"
         },
         {
           "id": "parcel.LockedAxes",
           "name": "LockedAxes",
           "fields": [],
           "description": "Forces 的可选只读组件；当前箱体不锁旋转。",
+          "display_summary": "限制刚体可移动或旋转的轴。",
           "source": {
             "path": "src/item_interaction/body.rs",
             "line": 8
-          }
+          },
+          "feature": "avian",
+          "defined_in": "avian"
         },
         {
           "id": "parcel.AngularDamping",
@@ -13674,7 +14757,9 @@
           "source": {
             "path": "src/item_interaction/body.rs",
             "line": 8
-          }
+          },
+          "feature": "avian",
+          "defined_in": "avian"
         },
         {
           "id": "parcel.TransformInterpolation",
@@ -13684,27 +14769,36 @@
           "source": {
             "path": "src/item_interaction/body.rs",
             "line": 8
-          }
+          },
+          "feature": "avian",
+          "defined_in": "avian",
+          "display_summary": "启用实体的平移、旋转和缩放显示插值。"
         },
         {
           "id": "parcel.RotationInterpolation",
           "name": "RotationInterpolation",
           "fields": [],
           "description": "箱体完整 Transform 插值的标记或端点数据。",
+          "display_summary": "启用旋转显示插值。",
           "source": {
             "path": "src/item_interaction/body.rs",
             "line": 8
-          }
+          },
+          "feature": "avian",
+          "defined_in": "avian"
         },
         {
           "id": "parcel.ScaleInterpolation",
           "name": "ScaleInterpolation",
           "fields": [],
           "description": "箱体完整 Transform 插值的标记或端点数据。",
+          "display_summary": "启用缩放显示插值。",
           "source": {
             "path": "src/item_interaction/body.rs",
             "line": 8
-          }
+          },
+          "feature": "avian",
+          "defined_in": "avian"
         },
         {
           "id": "parcel.RotationEasingState",
@@ -13713,10 +14807,13 @@
             "start / end: Option<Quat>"
           ],
           "description": "箱体完整 Transform 插值的标记或端点数据。",
+          "display_summary": "保存旋转显示插值的起止端点。",
           "source": {
             "path": "src/item_interaction/body.rs",
             "line": 8
-          }
+          },
+          "feature": "avian",
+          "defined_in": "avian"
         },
         {
           "id": "parcel.ScaleEasingState",
@@ -13725,10 +14822,13 @@
             "start / end: Option<Vec3>"
           ],
           "description": "箱体完整 Transform 插值的标记或端点数据。",
+          "display_summary": "保存缩放显示插值的起止端点。",
           "source": {
             "path": "src/item_interaction/body.rs",
             "line": 8
-          }
+          },
+          "feature": "avian",
+          "defined_in": "avian"
         },
         {
           "id": "parcel.HeldTarget",
@@ -13738,20 +14838,26 @@
             "rotation: Quat"
           ],
           "description": "本帧握持检查目标；实际箱体 Transform 由 HeldAttachment.local_pose 与人物姿态派生。",
+          "display_summary": "保存本帧握持姿态的检查目标。",
           "source": {
             "path": "src/item_interaction/components.rs",
             "line": 34
-          }
+          },
+          "feature": "item_interaction",
+          "defined_in": "item_interaction"
         },
         {
           "id": "parcel.Sensor",
           "name": "Sensor",
           "fields": [],
           "description": "可选外部传感器标签；当前场景未设置，接地过滤显式排除。",
+          "display_summary": "标记传感器碰撞体。",
           "source": {
             "path": "src/character/motion.rs",
             "line": 13
-          }
+          },
+          "feature": "avian",
+          "defined_in": "avian"
         },
         {
           "id": "parcel.ColliderAabb",
@@ -13760,10 +14866,13 @@
             "min / max：世界 AABB"
           ],
           "description": "Avian 从业务根碰撞体/刚体初始化的物理查询数据；SpatialQuery 只读。",
+          "display_summary": "保存碰撞查询使用的轴对齐包围盒。",
           "source": {
             "path": "src/item_interaction/body.rs",
             "line": 8
-          }
+          },
+          "feature": "avian",
+          "defined_in": "avian"
         },
         {
           "id": "parcel.SpawnPoint",
@@ -13775,7 +14884,9 @@
           "source": {
             "path": "src/bounds_recovery/mod.rs",
             "line": 15
-          }
+          },
+          "feature": "bounds_recovery",
+          "defined_in": "bounds_recovery"
         },
         {
           "id": "parcel.ResumeInterpolation",
@@ -13788,27 +14899,35 @@
           "source": {
             "path": "src/bounds_recovery/recovery.rs",
             "line": 26
-          }
+          },
+          "feature": "bounds_recovery",
+          "defined_in": "bounds_recovery"
         },
         {
           "id": "parcel.NoTranslationEasing",
           "name": "NoTranslationEasing",
           "fields": [],
           "description": "持握期间暂停独立箱体插值，释放后由 ResumeCarryEasing 恢复；落水恢复按自身归属管理。",
+          "display_summary": "暂停独立平移插值。",
           "source": {
             "path": "src/bounds_recovery/recovery.rs",
             "line": 34
-          }
+          },
+          "feature": "avian",
+          "defined_in": "avian"
         },
         {
           "id": "parcel.NoRotationEasing",
           "name": "NoRotationEasing",
           "fields": [],
           "description": "持握期间暂停独立箱体插值，释放后由 ResumeCarryEasing 恢复；落水恢复按自身归属管理。",
+          "display_summary": "暂停独立旋转插值。",
           "source": {
             "path": "src/bounds_recovery/recovery.rs",
             "line": 34
-          }
+          },
+          "feature": "avian",
+          "defined_in": "avian"
         },
         {
           "id": "parcel.CarryGrip",
@@ -13817,10 +14936,13 @@
             "0: Vec3（模型握持偏移）"
           ],
           "description": "安全对齐目标与呈现检查目标共享的模型偏移；实际挂接姿态由 HeldAttachment 决定。",
+          "display_summary": "保存握持对齐使用的模型偏移。",
           "source": {
             "path": "src/item_interaction/components.rs",
             "line": 19
-          }
+          },
+          "feature": "item_interaction",
+          "defined_in": "item_interaction"
         },
         {
           "id": "parcel.ItemModel",
@@ -13829,10 +14951,13 @@
             "StandardParcel / FragileParcel / WoodenCrate"
           ],
           "description": "美术种类不替代 Pickable 能力与 HeldBy 关系。",
+          "display_summary": "标识物品采用的美术模型种类。",
           "source": {
             "path": "src/scene_assembly/assets.rs",
             "line": 15
-          }
+          },
+          "feature": "scene_assembly",
+          "defined_in": "scene_assembly"
         },
         {
           "id": "parcel.DespawnOnExit",
@@ -13841,10 +14966,13 @@
             "AppState::InGame"
           ],
           "description": "状态退出销毁此根；内置 ChildOf 子树随根清理。",
+          "display_summary": "标记退出所属应用状态时销毁此实体。",
           "source": {
             "path": "src/scene_assembly/actors.rs",
             "line": 90
-          }
+          },
+          "feature": "infrastructure",
+          "defined_in": "infrastructure"
         },
         {
           "id": "parcel.HeldAttachment",
@@ -13858,10 +14986,13 @@
             "blocked_seconds: f32"
           ],
           "description": "持握期间真实箱体局部姿态与装卸生命周期唯一数据源；业务根仍独立。",
+          "display_summary": "保存物品挂接姿态与装卸状态。",
           "source": {
             "path": "src/item_interaction/components.rs",
             "line": 41
-          }
+          },
+          "feature": "item_interaction",
+          "defined_in": "item_interaction"
         },
         {
           "id": "parcel.ResumeCarryEasing",
@@ -13871,20 +15002,26 @@
             "rotation: bool"
           ],
           "description": "释放后暂缓插值至下一 FixedFirst，只恢复原来未暂停的通道。",
+          "display_summary": "记录物品释放后需要恢复的插值通道。",
           "source": {
             "path": "src/item_interaction/components.rs",
             "line": 62
-          }
+          },
+          "feature": "item_interaction",
+          "defined_in": "item_interaction"
         },
         {
           "id": "parcel.ColliderDisabled",
           "name": "ColliderDisabled",
           "fields": [],
           "description": "持握期间停用原箱根碰撞；真实形状复制到人物所属代理，避免第二次碰撞。",
+          "display_summary": "暂时停用碰撞体。",
           "source": {
             "path": "src/item_interaction/attachment.rs",
             "line": 30
-          }
+          },
+          "feature": "avian",
+          "defined_in": "avian"
         },
         {
           "id": "parcel.ColliderOf",
@@ -13893,20 +15030,69 @@
             "body: Entity"
           ],
           "description": "Avian 自动维护碰撞归属；拾取移除独立刚体后卸载原归属，释放辅助函数再次移除残留，真实业务箱不关联人物的 linked_spawn。",
+          "display_summary": "关联碰撞体所属的刚体。",
           "source": {
             "path": "src/item_interaction/lifecycle.rs",
             "line": 49
-          }
+          },
+          "feature": "avian",
+          "defined_in": "avian"
         },
         {
           "id": "parcel.Sleeping",
           "name": "Sleeping",
           "fields": [],
           "description": "可选休眠状态；释放时移除，确保恢复的自由刚体可以继续运动。",
+          "display_summary": "标记刚体当前处于休眠。",
           "source": {
             "path": "src/item_interaction/lifecycle.rs",
             "line": 50
-          }
+          },
+          "feature": "avian",
+          "defined_in": "avian"
+        },
+        {
+          "id": "parcel.SpeculativeCcd",
+          "name": "SpeculativeCcd",
+          "fields": [
+            "max_distance: f32 = f32::MAX（default）"
+          ],
+          "description": "显式启用随速度扩张的预测邻域；与动态扫掠配合，让相向高速物体在交会前互为候选。持物代理读取其所属人物刚体的配置。",
+          "source": {
+            "path": "src/item_interaction/body.rs",
+            "line": 22
+          },
+          "feature": "avian",
+          "defined_in": "avian"
+        },
+        {
+          "id": "parcel.BodySizeMetrics",
+          "name": "BodySizeMetrics",
+          "fields": [
+            "ccd_thickness: f32",
+            "sweep_radius: f32"
+          ],
+          "description": "RigidBody 所需组件；Avian 汇总该刚体全部碰撞体的最小 CCD 厚度和至质心的最大扫掠半径，用于尺寸比例门槛。",
+          "source": {
+            "path": "src/item_interaction/body.rs",
+            "line": 11
+          },
+          "feature": "avian",
+          "defined_in": "avian"
+        },
+        {
+          "id": "parcel.SolverBodyIndex",
+          "name": "SolverBodyIndex",
+          "fields": [
+            "0: u32"
+          ],
+          "description": "Avian 活动动态刚体在 SolverBodies 中的索引；休眠或移除刚体时删除，唤醒时由框架重新插入。该组件具有明确的可选生命周期。",
+          "source": {
+            "path": "src/item_interaction/body.rs",
+            "line": 11
+          },
+          "feature": "avian",
+          "defined_in": "avian"
         }
       ],
       "kind": "Entity",
@@ -13951,7 +15137,7 @@
       ],
       "source": {
         "path": "src/first_person/actions.rs",
-        "line": 118
+        "line": 95
       },
       "id": "result-observe_move",
       "feature": "first_person",
@@ -13993,7 +15179,7 @@
       ],
       "source": {
         "path": "src/first_person/actions.rs",
-        "line": 137
+        "line": 114
       },
       "id": "result-observe_complete",
       "feature": "first_person",
@@ -14035,7 +15221,7 @@
       ],
       "source": {
         "path": "src/first_person/actions.rs",
-        "line": 156
+        "line": 133
       },
       "id": "result-observe_cancel",
       "feature": "first_person",
@@ -14076,7 +15262,7 @@
       ],
       "source": {
         "path": "src/first_person/actions.rs",
-        "line": 176
+        "line": 153
       },
       "id": "result-observe_jump",
       "feature": "first_person",
@@ -14117,7 +15303,7 @@
       ],
       "source": {
         "path": "src/first_person/actions.rs",
-        "line": 190
+        "line": 167
       },
       "id": "result-observe_interact",
       "feature": "first_person",
@@ -14403,7 +15589,7 @@
       ],
       "source": {
         "path": "src/ui/navigation.rs",
-        "line": 115
+        "line": 164
       },
       "id": "event-observe_menu_previous",
       "feature": "ui",
@@ -14434,7 +15620,7 @@
       ],
       "source": {
         "path": "src/ui/navigation.rs",
-        "line": 115
+        "line": 164
       },
       "id": "result-observe_menu_previous",
       "feature": "ui",
@@ -14452,7 +15638,7 @@
       ],
       "source": {
         "path": "src/ui/navigation.rs",
-        "line": 128
+        "line": 177
       },
       "id": "event-observe_menu_next",
       "feature": "ui",
@@ -14483,7 +15669,7 @@
       ],
       "source": {
         "path": "src/ui/navigation.rs",
-        "line": 128
+        "line": 177
       },
       "id": "result-observe_menu_next",
       "feature": "ui",
@@ -14501,7 +15687,7 @@
       ],
       "source": {
         "path": "src/ui/navigation.rs",
-        "line": 158
+        "line": 207
       },
       "id": "event-observe_menu_left",
       "feature": "ui",
@@ -14530,7 +15716,7 @@
       ],
       "source": {
         "path": "src/ui/navigation.rs",
-        "line": 158
+        "line": 207
       },
       "id": "result-observe_menu_left",
       "feature": "ui",
@@ -14548,7 +15734,7 @@
       ],
       "source": {
         "path": "src/ui/navigation.rs",
-        "line": 172
+        "line": 221
       },
       "id": "event-observe_menu_right",
       "feature": "ui",
@@ -14577,7 +15763,7 @@
       ],
       "source": {
         "path": "src/ui/navigation.rs",
-        "line": 172
+        "line": 221
       },
       "id": "result-observe_menu_right",
       "feature": "ui",
@@ -14596,7 +15782,7 @@
       ],
       "source": {
         "path": "src/ui/navigation.rs",
-        "line": 186
+        "line": 235
       },
       "id": "event-observe_menu_confirm",
       "feature": "ui",
@@ -14625,7 +15811,7 @@
       ],
       "source": {
         "path": "src/ui/navigation.rs",
-        "line": 186
+        "line": 235
       },
       "id": "result-observe_menu_confirm",
       "feature": "ui",
@@ -14644,7 +15830,7 @@
       ],
       "source": {
         "path": "src/ui/navigation.rs",
-        "line": 202
+        "line": 251
       },
       "id": "event-observe_menu_back",
       "feature": "ui",
@@ -14669,7 +15855,7 @@
       ],
       "source": {
         "path": "src/ui/navigation.rs",
-        "line": 202
+        "line": 251
       },
       "id": "result-observe_menu_back",
       "feature": "ui",
@@ -14679,7 +15865,7 @@
       "registrations": []
     },
     {
-      "name": "Pointer<Scroll>",
+      "name": "PointerScroll",
       "kind": "EntityEvent",
       "description": "原生 UI 滚轮事件在当前 MenuScroll 视口更新夹紧滚动位置并停止继续冒泡。",
       "display_summary": "通知设置内容视口处理滚轮输入。",
@@ -14688,7 +15874,7 @@
       ],
       "source": {
         "path": "src/ui/scroll.rs",
-        "line": 265
+        "line": 267
       },
       "id": "event-observe_menu_scroll",
       "feature": "infrastructure",
@@ -14702,7 +15888,7 @@
     {
       "name": "scroll_menu 输出",
       "kind": "Data write",
-      "description": "仅 Settings 内容视口响应原生 Pointer<Scroll>，夹紧滚动位置并停止冒泡。",
+      "description": "仅 Settings 内容视口响应原生 PointerScroll，夹紧滚动位置并停止冒泡。",
       "reads": [
         "resource.MenuState",
         "menu_scroll.ComputedNode",
@@ -14716,7 +15902,7 @@
       ],
       "source": {
         "path": "src/ui/scroll.rs",
-        "line": 265
+        "line": 267
       },
       "id": "result-observe_menu_scroll",
       "feature": "ui",
@@ -14735,7 +15921,7 @@
       ],
       "source": {
         "path": "src/ui/backdrop.rs",
-        "line": 143
+        "line": 152
       },
       "id": "event-observe_courier_ready",
       "feature": "infrastructure",
@@ -14762,7 +15948,7 @@
       ],
       "source": {
         "path": "src/ui/backdrop.rs",
-        "line": 143
+        "line": 152
       },
       "id": "result-observe_courier_ready",
       "feature": "ui",
@@ -14772,7 +15958,7 @@
       "registrations": []
     },
     {
-      "name": "Pointer<Scroll>",
+      "name": "PointerScroll",
       "kind": "EntityEvent",
       "description": "原生轨道或滑块滚轮更新内容视口。",
       "display_summary": "通知内容视口处理滚动条上的滚轮输入。",
@@ -14781,7 +15967,7 @@
       ],
       "source": {
         "path": "src/ui/scroll.rs",
-        "line": 213
+        "line": 215
       },
       "id": "event-observe_scrollbar_scroll",
       "feature": "infrastructure",
@@ -14810,7 +15996,7 @@
       ],
       "source": {
         "path": "src/ui/scroll.rs",
-        "line": 213
+        "line": 215
       },
       "id": "result-observe_scrollbar_scroll",
       "feature": "ui",
@@ -14820,7 +16006,7 @@
       "registrations": []
     },
     {
-      "name": "Pointer<Press>",
+      "name": "PointerPress",
       "kind": "EntityEvent",
       "description": "原生控件按下接管 Pointer 输入来源。",
       "display_summary": "通知滚动条接管鼠标输入来源。",
@@ -14829,7 +16015,7 @@
       ],
       "source": {
         "path": "src/ui/scroll.rs",
-        "line": 208
+        "line": 210
       },
       "id": "event-observe_scrollbar_press",
       "feature": "infrastructure",
@@ -14853,7 +16039,7 @@
       ],
       "source": {
         "path": "src/ui/scroll.rs",
-        "line": 208
+        "line": 210
       },
       "id": "result-observe_scrollbar_press",
       "feature": "ui",
@@ -14881,7 +16067,7 @@
       "id": "volume-request-source",
       "name": "Audio 页 · 滑条局部捕获",
       "kind": "engine",
-      "description": "Interaction 命中；只在真实左键按下后捕获；SetVolume 只改草稿，结束且最终值改变才确认；失焦 / 离开窗口 / 页面销毁时清理手势",
+      "description": "PointerPress 主键消息命中后局部捕获；同帧完整点击仍完成最终采样；SetVolume改草稿，结束且值改变才确认，失焦/离窗/旧实体销毁结束。",
       "display_summary": "将滑条捕获与连续采样汇总为音量编辑请求。",
       "feature": "ui",
       "aspects": [
@@ -14921,7 +16107,7 @@
       "display_summary": "处理滚动条的轨道分页与滑块拖动。",
       "source": {
         "path": "src/ui/scroll.rs",
-        "line": 73
+        "line": 74
       },
       "id": "native-scrollbar-events",
       "feature": "infrastructure",
@@ -14951,9 +16137,9 @@
       "registrations": []
     },
     {
-      "name": "Despawn<Character>",
+      "name": "DespawnEvent",
       "kind": "EntityEvent",
-      "description": "Bevy 人物实体销毁生命周期事件；ItemInteractionPlugin 注册带 Character 过滤的 Observer。",
+      "description": "Bevy 实体销毁生命周期事件。Despawn<Character> 是匹配 Character 组件的 EventPattern；项目 Observer 使用 On<Despawn<Character>>。",
       "display_summary": "通知人物销毁前执行持物生命周期清理。",
       "source": {
         "path": "src/item_interaction/lifecycle.rs",
@@ -15093,6 +16279,286 @@
       "schedule": null,
       "schedule_group": "Explanatory",
       "registrations": []
+    },
+    {
+      "id": "event-observe_menu_primary_press",
+      "name": "PointerPress",
+      "kind": "EntityEvent",
+      "description": "事件 entity 上具有 MenuButton，且为 Primary 指针键",
+      "display_summary": "事件 entity 上具有 MenuButton，且为 Primary 指针键",
+      "source": {
+        "path": "src/ui/pointer.rs",
+        "line": 32
+      },
+      "feature": "infrastructure",
+      "aspects": [
+        "events"
+      ],
+      "schedule": null,
+      "schedule_group": "Explanatory",
+      "registrations": []
+    },
+    {
+      "id": "event-observe_menu_primary_clear",
+      "name": "RemoveEvent",
+      "kind": "EntityEvent",
+      "description": "真实组件移除事件；On<Remove<Pressed>> 仅匹配正移除 Pressed 且仍具有 MenuButton 的实体。",
+      "display_summary": "正移除 Pressed 且仍具有 MenuButton 的实体",
+      "source": {
+        "path": "src/ui/pointer.rs",
+        "line": 45
+      },
+      "feature": "infrastructure",
+      "aspects": [
+        "events"
+      ],
+      "schedule": null,
+      "schedule_group": "Explanatory",
+      "registrations": []
+    },
+    {
+      "id": "picking_last",
+      "name": "PickingSystems::Last",
+      "kind": "SystemSet",
+      "phase": "PreUpdate",
+      "description": "Bevy Picking 最后的逐帧输入集合；项目取消清理显式位于此集合之后。",
+      "display_summary": "界定原生命中处理完成后的清理时机。",
+      "source": {
+        "path": "src/ui/pointer.rs",
+        "line": 27
+      },
+      "feature": "infrastructure",
+      "aspects": [
+        "systems"
+      ],
+      "schedule": "PreUpdate",
+      "schedule_group": "PreUpdate",
+      "registrations": [
+        {
+          "schedule": "PreUpdate",
+          "scope": "runtime"
+        }
+      ]
+    },
+    {
+      "id": "plugin-UiWidgetsPlugins",
+      "name": "UiWidgetsPlugins",
+      "kind": "PluginGroup",
+      "description": "注册无样式UI控件插件组。",
+      "display_summary": "注册无样式UI控件插件组。",
+      "feature": "infrastructure",
+      "source": null,
+      "aspects": [
+        "events"
+      ],
+      "schedule": null,
+      "schedule_group": "Explanatory",
+      "registrations": []
+    },
+    {
+      "id": "plugin-ButtonPlugin",
+      "name": "ButtonPlugin",
+      "kind": "Plugin",
+      "description": "为原生按钮注册六个事件Observer。",
+      "display_summary": "为原生按钮注册六个事件Observer。",
+      "feature": "infrastructure",
+      "source": null,
+      "aspects": [
+        "events"
+      ],
+      "schedule": null,
+      "schedule_group": "Explanatory",
+      "registrations": []
+    },
+    {
+      "id": "plugin-DefaultPickingPlugins",
+      "name": "DefaultPickingPlugins",
+      "kind": "PluginGroup",
+      "description": "注册指针输入、Picking和交互插件。",
+      "display_summary": "注册指针输入、Picking和交互插件。",
+      "feature": "infrastructure",
+      "source": null,
+      "aspects": [
+        "events"
+      ],
+      "schedule": null,
+      "schedule_group": "Explanatory",
+      "registrations": []
+    },
+    {
+      "id": "plugin-PickingPlugin",
+      "name": "PickingPlugin",
+      "kind": "Plugin",
+      "description": "配置Picking阶段并接收归一化指针输入。",
+      "display_summary": "配置Picking阶段并接收归一化指针输入。",
+      "feature": "infrastructure",
+      "source": null,
+      "aspects": [
+        "events"
+      ],
+      "schedule": null,
+      "schedule_group": "Explanatory",
+      "registrations": []
+    },
+    {
+      "id": "plugin-InteractionPlugin",
+      "name": "InteractionPlugin",
+      "kind": "Plugin",
+      "description": "生成悬停状态、指针事件和消息缓冲。",
+      "display_summary": "生成悬停状态、指针事件和消息缓冲。",
+      "feature": "infrastructure",
+      "source": null,
+      "aspects": [
+        "events"
+      ],
+      "schedule": null,
+      "schedule_group": "Explanatory",
+      "registrations": []
+    },
+    {
+      "id": "picking_hover",
+      "name": "PickingSystems::Hover",
+      "kind": "SystemSet",
+      "description": "更新HoverMap、悬停组件与指针事件。",
+      "display_summary": "更新HoverMap、悬停组件与指针事件。",
+      "feature": "infrastructure",
+      "source": null,
+      "aspects": [
+        "systems"
+      ],
+      "schedule": "PreUpdate",
+      "schedule_group": "PreUpdate",
+      "registrations": [
+        {
+          "schedule": "PreUpdate",
+          "scope": "runtime"
+        }
+      ]
+    },
+    {
+      "id": "picking_post_hover",
+      "name": "PickingSystems::PostHover",
+      "kind": "SystemSet",
+      "description": "位于Hover之后、Last之前。",
+      "display_summary": "位于Hover之后、Last之前。",
+      "feature": "infrastructure",
+      "source": null,
+      "aspects": [
+        "systems"
+      ],
+      "schedule": "PreUpdate",
+      "schedule_group": "PreUpdate",
+      "registrations": [
+        {
+          "schedule": "PreUpdate",
+          "scope": "runtime"
+        }
+      ]
+    },
+    {
+      "id": "event-native_button_down",
+      "name": "PointerPress",
+      "kind": "EntityEvent",
+      "description": "按压时插入原生Pressed；可选ActivateOnPress会发Activate。",
+      "display_summary": "按压时插入原生Pressed；可选ActivateOnPress会发Activate。",
+      "feature": "infrastructure",
+      "source": null,
+      "aspects": [
+        "events"
+      ],
+      "schedule": null,
+      "schedule_group": "Explanatory",
+      "registrations": []
+    },
+    {
+      "id": "event-native_button_up",
+      "name": "PointerRelease",
+      "kind": "EntityEvent",
+      "description": "释放时移除原生Pressed。",
+      "display_summary": "释放时移除原生Pressed。",
+      "feature": "infrastructure",
+      "source": null,
+      "aspects": [
+        "events"
+      ],
+      "schedule": null,
+      "schedule_group": "Explanatory",
+      "registrations": []
+    },
+    {
+      "id": "event-native_button_click",
+      "name": "PointerClick",
+      "kind": "EntityEvent",
+      "description": "满足条件时派发原生Activate。",
+      "display_summary": "满足条件时派发原生Activate。",
+      "feature": "infrastructure",
+      "source": null,
+      "aspects": [
+        "events"
+      ],
+      "schedule": null,
+      "schedule_group": "Explanatory",
+      "registrations": []
+    },
+    {
+      "id": "event-native_button_drag_end",
+      "name": "PointerDragEnd",
+      "kind": "EntityEvent",
+      "description": "拖动结束时移除原生Pressed。",
+      "display_summary": "拖动结束时移除原生Pressed。",
+      "feature": "infrastructure",
+      "source": null,
+      "aspects": [
+        "events"
+      ],
+      "schedule": null,
+      "schedule_group": "Explanatory",
+      "registrations": []
+    },
+    {
+      "id": "event-native_button_cancel",
+      "name": "PointerCancel",
+      "kind": "EntityEvent",
+      "description": "收到取消事件时移除原生Pressed。",
+      "display_summary": "收到取消事件时移除原生Pressed。",
+      "feature": "infrastructure",
+      "source": null,
+      "aspects": [
+        "events"
+      ],
+      "schedule": null,
+      "schedule_group": "Explanatory",
+      "registrations": []
+    },
+    {
+      "id": "native-focused-keyboard-event",
+      "name": "FocusedInput<KeyboardInput>",
+      "kind": "EntityEvent",
+      "description": "焦点键盘Enter或Space首次按下时派发Activate。",
+      "display_summary": "焦点键盘Enter或Space首次按下时派发Activate。",
+      "feature": "infrastructure",
+      "source": null,
+      "aspects": [
+        "events"
+      ],
+      "schedule": null,
+      "schedule_group": "Explanatory",
+      "registrations": []
+    },
+    {
+      "id": "native-button-activate-event",
+      "name": "Activate",
+      "kind": "EntityEvent",
+      "description": "原生按钮激活事件；GameUiPlugin不消费，避免与Enhanced Input重复。",
+      "display_summary": "原生按钮激活事件；GameUiPlugin不消费，避免与Enhanced Input重复。",
+      "feature": "infrastructure",
+      "source": null,
+      "aspects": [
+        "events"
+      ],
+      "schedule": null,
+      "schedule_group": "Explanatory",
+      "registrations": []
     }
   ],
   "features": [
@@ -15166,10 +16632,11 @@
       "id": "physics",
       "plugin": "GamePhysicsPlugin",
       "label": "物理基础",
-      "description": "安装 Avian、重力同步与统一碰撞日志。",
+      "description": "安装 Avian、重力同步、外部变化的提前唤醒与统一物理日志。",
       "contracts": [
         "resource.Gravity",
-        "physics-collision-layers"
+        "physics-collision-layers",
+        "resource.LastPhysicsTick"
       ],
       "source": {
         "path": "src/physics/mod.rs",
@@ -15232,7 +16699,7 @@
       ],
       "source": {
         "path": "src/ui/mod.rs",
-        "line": 112
+        "line": 113
       }
     },
     {
@@ -15339,7 +16806,6 @@
     "local.LookLog": "first_person",
     "resource.AppTypeRegistry": "infrastructure",
     "resource.EguiGlobalSettings": "egui",
-    "resource.EnableMultipassForPrimaryContext": "egui",
     "resource.Gravity": "avian",
     "resource.ColliderTrees": "avian",
     "resource.CollisionStartMessages": "avian",
@@ -15585,7 +17051,6 @@
     "menu_button.MenuButton": "ui",
     "menu_button.VolumeSlider": "ui",
     "menu_button.Button": "infrastructure",
-    "menu_button.Interaction": "infrastructure",
     "menu_button.Node": "infrastructure",
     "menu_button.BackgroundColor": "infrastructure",
     "menu_button.BorderColor": "infrastructure",
@@ -15820,7 +17285,163 @@
     "easing_end": "avian",
     "easing_apply": "avian",
     "easing_tick": "avian",
-    "easing_start": "avian"
+    "easing_start": "avian",
+    "wake_changed_bodies": "physics",
+    "wake_apply": "physics",
+    "resource.LastPhysicsTick": "avian",
+    "character.SpeculativeCcd": "avian",
+    "character.BodySizeMetrics": "avian",
+    "character.SolverBodyIndex": "avian",
+    "parcel.SpeculativeCcd": "avian",
+    "parcel.BodySizeMetrics": "avian",
+    "parcel.SolverBodyIndex": "avian",
+    "character.Sleeping": "avian",
+    "input_trigger": "enhanced_input",
+    "startup_spawn": "scene_assembly",
+    "startup_config": "character",
+    "startup_timestep": "settings",
+    "startup_pose": "first_person",
+    "frame_limit": "settings",
+    "time_update": "infrastructure",
+    "input_update": "infrastructure",
+    "mouse_capture": "first_person",
+    "observe_move": "first_person",
+    "observe_complete": "first_person",
+    "observe_cancel": "first_person",
+    "observe_jump": "first_person",
+    "observe_interact": "first_person",
+    "observe_look": "first_person",
+    "facing_fixed": "first_person",
+    "movement": "character",
+    "gravity": "character",
+    "interaction": "item_interaction",
+    "held_apply": "infrastructure",
+    "held_fixed": "item_interaction",
+    "facing_update": "first_person",
+    "held_update": "item_interaction",
+    "camera_follow": "first_person",
+    "transform_propagate": "infrastructure",
+    "render": "infrastructure",
+    "visibility_update": "first_person",
+    "startup_inspector": "inspector",
+    "capture_apply": "infrastructure",
+    "filter_egui_input": "first_person",
+    "grounded_fixed": "character",
+    "grounded_after": "character",
+    "gravity_sync": "physics",
+    "orphan_cleanup": "item_interaction",
+    "orphan_apply": "infrastructure",
+    "velocity_log": "character",
+    "collision_log": "physics",
+    "startup_assets": "scene_assembly",
+    "asset_poll": "scene_assembly",
+    "island_begin": "scene_assembly",
+    "island_ready_observer": "scene_assembly",
+    "island_prepare": "scene_assembly",
+    "actors_spawn": "scene_assembly",
+    "courier_ready_observer": "character_animation",
+    "animation_initialize": "character_animation",
+    "animation_sync": "character_animation",
+    "water_recover": "bounds_recovery",
+    "interpolation_resume": "bounds_recovery",
+    "world_spawn": "infrastructure",
+    "animation_grounding": "character_animation",
+    "animation_engine": "infrastructure",
+    "flow_enter_menu": "ui",
+    "flow_pause": "ui",
+    "flow_suspend": "first_person",
+    "flow_resume": "ui",
+    "menu_spawn_controller": "ui",
+    "menu_sync_context": "ui",
+    "menu_handle_requests": "ui",
+    "menu_pointer": "ui",
+    "menu_rebuild": "ui",
+    "menu_style": "ui",
+    "menu_description": "ui",
+    "menu_scroll_focus": "ui",
+    "menu_backdrop_spawn": "ui",
+    "menu_asset_failures": "ui",
+    "observe_release_pointer": "first_person",
+    "observe_menu_previous": "ui",
+    "observe_menu_next": "ui",
+    "observe_menu_left": "ui",
+    "observe_menu_right": "ui",
+    "observe_menu_confirm": "ui",
+    "observe_menu_back": "ui",
+    "observe_menu_scroll": "ui",
+    "observe_courier_ready": "ui",
+    "menu_animation_play": "ui",
+    "audio_preload": "audio",
+    "audio_load_failures": "audio",
+    "audio_play": "audio",
+    "audio_stop": "audio",
+    "audio_strain": "item_interaction",
+    "audio_land": "item_interaction",
+    "menu_volume_pointer": "ui",
+    "menu_volume_visuals": "ui",
+    "audio_mix": "audio",
+    "audio_voice_volumes": "audio",
+    "audio_voice_volumes_post": "audio",
+    "window_log": "window_policy",
+    "window_install": "window_policy",
+    "menu_settings_text": "ui",
+    "menu_bind_scrollbars": "ui",
+    "menu_sync_scrollbars": "ui",
+    "observe_scrollbar_scroll": "ui",
+    "observe_scrollbar_press": "ui",
+    "carry_proxy_cleanup": "item_interaction",
+    "carry_mass_restore": "item_interaction",
+    "carry_attach": "item_interaction",
+    "carry_align": "item_interaction",
+    "carry_physics_fixed": "item_interaction",
+    "carry_physics_post": "item_interaction",
+    "carry_physics_frame": "item_interaction",
+    "carry_resume": "item_interaction",
+    "carry_holder_despawn": "item_interaction",
+    "flow_clock_menu": "game_flow",
+    "flow_clock_pause": "game_flow",
+    "flow_clock_resume": "game_flow",
+    "flow_resume_capture": "first_person",
+    "menu_audio_preview": "ui",
+    "character_clear_intents": "character",
+    "observe_menu_primary_press": "ui",
+    "observe_menu_primary_clear": "ui",
+    "menu_clear_cancelled_primary": "ui",
+    "native_pointer_events": "infrastructure",
+    "native_update_hovered": "infrastructure",
+    "native_button_down": "infrastructure",
+    "native_button_up": "infrastructure",
+    "native_button_click": "infrastructure",
+    "native_button_drag_end": "infrastructure",
+    "native_button_cancel": "infrastructure",
+    "native_button_key": "infrastructure",
+    "resource.PointerPressMessages": "infrastructure",
+    "resource.PointerInputMessages": "infrastructure",
+    "resource.HoverMap": "infrastructure",
+    "resource.PreviousHoverMap": "infrastructure",
+    "resource.PointerState": "infrastructure",
+    "resource.PickingSettings": "infrastructure",
+    "resource.PointerMap": "infrastructure",
+    "event-observe_menu_primary_press": "infrastructure",
+    "event-observe_menu_primary_clear": "infrastructure",
+    "picking_last": "infrastructure",
+    "plugin-UiWidgetsPlugins": "infrastructure",
+    "plugin-ButtonPlugin": "infrastructure",
+    "plugin-DefaultPickingPlugins": "infrastructure",
+    "plugin-PickingPlugin": "infrastructure",
+    "plugin-InteractionPlugin": "infrastructure",
+    "picking_hover": "infrastructure",
+    "picking_post_hover": "infrastructure",
+    "event-native_button_down": "infrastructure",
+    "event-native_button_up": "infrastructure",
+    "event-native_button_click": "infrastructure",
+    "event-native_button_drag_end": "infrastructure",
+    "event-native_button_cancel": "infrastructure",
+    "native-focused-keyboard-event": "infrastructure",
+    "native-button-activate-event": "infrastructure",
+    "menu_button.Hovered": "infrastructure",
+    "menu_button.Pressed": "infrastructure",
+    "menu_button.PrimaryPress": "ui"
   },
   "system_links": [
     {
@@ -16091,7 +17712,7 @@
     },
     {
       "id": "order-input_apply-event_apply",
-      "from": "input_apply",
+      "from": "input_trigger",
       "to": "event_apply",
       "kind": "order",
       "label": ""
@@ -16850,7 +18471,7 @@
       "from": "event-observe_menu_scroll",
       "to": "observe_menu_scroll",
       "kind": "trigger",
-      "label": "Pointer<Scroll>"
+      "label": "PointerScroll"
     },
     {
       "id": "observer-observe_courier_ready",
@@ -16864,14 +18485,14 @@
       "from": "event-observe_scrollbar_scroll",
       "to": "observe_scrollbar_scroll",
       "kind": "trigger",
-      "label": "Pointer<Scroll>"
+      "label": "PointerScroll"
     },
     {
       "id": "observer-observe_scrollbar_press",
       "from": "event-observe_scrollbar_press",
       "to": "observe_scrollbar_press",
       "kind": "trigger",
-      "label": "Pointer<Press>"
+      "label": "PointerPress"
     },
     {
       "id": "observer-carry_holder_despawn",
@@ -16921,7 +18542,7 @@
       "label": "ActionOf<GameplayContext>",
       "source": {
         "path": "src/first_person/actions.rs",
-        "line": 66
+        "line": 67
       }
     },
     {
@@ -16932,7 +18553,7 @@
       "label": "BindingOf",
       "source": {
         "path": "src/first_person/actions.rs",
-        "line": 73
+        "line": 70
       }
     },
     {
@@ -16987,7 +18608,7 @@
       "label": "ChildOf（NPC 身体碰撞）",
       "source": {
         "path": "src/scene_assembly/loading.rs",
-        "line": 234
+        "line": 235
       }
     },
     {
@@ -17053,7 +18674,7 @@
       "label": "ChildOf",
       "source": {
         "path": "src/ui/scroll.rs",
-        "line": 87
+        "line": 89
       }
     },
     {
@@ -17130,7 +18751,7 @@
       "label": "ChildOf 子树",
       "source": {
         "path": "src/ui/pages.rs",
-        "line": 410
+        "line": 439
       }
     },
     {
@@ -17151,8 +18772,8 @@
       "kind": "relationship",
       "label": "ChildOf",
       "source": {
-        "path": "src/ui/widgets.rs",
-        "line": 268
+        "path": "src/ui/scroll.rs",
+        "line": 92
       }
     },
     {
@@ -17163,7 +18784,7 @@
       "label": "Scrollbar.target",
       "source": {
         "path": "src/ui/scroll.rs",
-        "line": 119
+        "line": 121
       }
     },
     {
@@ -17569,6 +19190,467 @@
       "to": "plugin-WindowPolicyPlugin",
       "kind": "registration",
       "label": "显式安装"
+    },
+    {
+      "id": "order-wake_changed_bodies-wake_apply",
+      "from": "wake_changed_bodies",
+      "to": "wake_apply",
+      "kind": "order",
+      "label": "应用排队的 WakeBody",
+      "source": {
+        "path": "src/physics/mod.rs",
+        "line": 29
+      }
+    },
+    {
+      "id": "order-wake_apply-physics_prepare",
+      "from": "wake_apply",
+      "to": "physics_prepare",
+      "kind": "order",
+      "label": "before Prepare",
+      "source": {
+        "path": "src/physics/mod.rs",
+        "line": 29
+      }
+    },
+    {
+      "id": "read-resource.LastPhysicsTick-wake_changed_bodies",
+      "from": "resource.LastPhysicsTick",
+      "to": "wake_changed_bodies",
+      "kind": "read",
+      "label": "上一物理步末尾 tick",
+      "source": {
+        "path": "src/physics/mod.rs",
+        "line": 79
+      }
+    },
+    {
+      "id": "write-wake_changed_bodies-log-producer",
+      "from": "wake_changed_bodies",
+      "to": "log-producer",
+      "kind": "write",
+      "label": "tracing 唤醒日志",
+      "source": {
+        "path": "src/physics/mod.rs",
+        "line": 82
+      }
+    },
+    {
+      "id": "write-physics_step-resource.LastPhysicsTick",
+      "from": "physics_step",
+      "to": "resource.LastPhysicsTick",
+      "kind": "write",
+      "label": "PhysicsSchedule 末尾 tick"
+    },
+    {
+      "id": "order-input_apply-input_trigger",
+      "from": "input_apply",
+      "to": "input_trigger",
+      "kind": "order",
+      "label": ""
+    },
+    {
+      "id": "observer-observe_menu_primary_press",
+      "from": "event-observe_menu_primary_press",
+      "to": "observe_menu_primary_press",
+      "kind": "trigger",
+      "label": "PointerPress"
+    },
+    {
+      "id": "observer-observe_menu_primary_clear",
+      "from": "event-observe_menu_primary_clear",
+      "to": "observe_menu_primary_clear",
+      "kind": "trigger",
+      "label": "RemoveEvent"
+    },
+    {
+      "id": "order-picking_last-menu_clear_cancelled_primary",
+      "from": "picking_last",
+      "to": "menu_clear_cancelled_primary",
+      "kind": "order",
+      "label": "after(PickingSystems::Last)"
+    },
+    {
+      "id": "read-resource.PointerPressMessages-menu_pointer",
+      "from": "resource.PointerPressMessages",
+      "to": "menu_pointer",
+      "kind": "read",
+      "label": "消费缓冲消息"
+    },
+    {
+      "id": "read-resource.PointerPressMessages-menu_volume_pointer",
+      "from": "resource.PointerPressMessages",
+      "to": "menu_volume_pointer",
+      "kind": "read",
+      "label": "消费缓冲消息"
+    },
+    {
+      "id": "read-resource.PointerInputMessages-menu_clear_cancelled_primary",
+      "from": "resource.PointerInputMessages",
+      "to": "menu_clear_cancelled_primary",
+      "kind": "read",
+      "label": "消费缓冲消息"
+    },
+    {
+      "id": "write-observe_menu_primary_press-menu_button.PrimaryPress",
+      "from": "observe_menu_primary_press",
+      "to": "menu_button.PrimaryPress",
+      "kind": "write",
+      "label": "Commands insert"
+    },
+    {
+      "id": "write-observe_menu_primary_clear-menu_button.PrimaryPress",
+      "from": "observe_menu_primary_clear",
+      "to": "menu_button.PrimaryPress",
+      "kind": "write",
+      "label": "Commands remove"
+    },
+    {
+      "id": "write-menu_clear_cancelled_primary-menu_button.PrimaryPress",
+      "from": "menu_clear_cancelled_primary",
+      "to": "menu_button.PrimaryPress",
+      "kind": "write",
+      "label": "Commands remove"
+    },
+    {
+      "id": "write-menu_clear_cancelled_primary-menu_button.Pressed",
+      "from": "menu_clear_cancelled_primary",
+      "to": "menu_button.Pressed",
+      "kind": "write",
+      "label": "Commands remove"
+    },
+    {
+      "id": "registration-plugin-DefaultPlugins-plugin-UiWidgetsPlugins",
+      "from": "plugin-DefaultPlugins",
+      "to": "plugin-UiWidgetsPlugins",
+      "kind": "registration",
+      "label": ""
+    },
+    {
+      "id": "registration-plugin-UiWidgetsPlugins-plugin-ButtonPlugin",
+      "from": "plugin-UiWidgetsPlugins",
+      "to": "plugin-ButtonPlugin",
+      "kind": "registration",
+      "label": ""
+    },
+    {
+      "id": "registration-plugin-DefaultPlugins-plugin-DefaultPickingPlugins",
+      "from": "plugin-DefaultPlugins",
+      "to": "plugin-DefaultPickingPlugins",
+      "kind": "registration",
+      "label": ""
+    },
+    {
+      "id": "registration-plugin-DefaultPickingPlugins-plugin-PickingPlugin",
+      "from": "plugin-DefaultPickingPlugins",
+      "to": "plugin-PickingPlugin",
+      "kind": "registration",
+      "label": ""
+    },
+    {
+      "id": "registration-plugin-DefaultPickingPlugins-plugin-InteractionPlugin",
+      "from": "plugin-DefaultPickingPlugins",
+      "to": "plugin-InteractionPlugin",
+      "kind": "registration",
+      "label": ""
+    },
+    {
+      "id": "order-picking_hover-picking_post_hover",
+      "from": "picking_hover",
+      "to": "picking_post_hover",
+      "kind": "order",
+      "label": "Picking sets chain"
+    },
+    {
+      "id": "order-picking_post_hover-picking_last",
+      "from": "picking_post_hover",
+      "to": "picking_last",
+      "kind": "order",
+      "label": "Picking sets chain"
+    },
+    {
+      "id": "order-native_update_hovered-native_pointer_events",
+      "from": "native_update_hovered",
+      "to": "native_pointer_events",
+      "kind": "order",
+      "label": "InteractionPlugin chain"
+    },
+    {
+      "id": "registration-plugin-InteractionPlugin-native_pointer_events",
+      "from": "plugin-InteractionPlugin",
+      "to": "native_pointer_events",
+      "kind": "registration",
+      "label": ""
+    },
+    {
+      "id": "registration-picking_hover-native_pointer_events",
+      "from": "picking_hover",
+      "to": "native_pointer_events",
+      "kind": "registration",
+      "label": "in_set(Hover)"
+    },
+    {
+      "id": "registration-plugin-InteractionPlugin-native_update_hovered",
+      "from": "plugin-InteractionPlugin",
+      "to": "native_update_hovered",
+      "kind": "registration",
+      "label": ""
+    },
+    {
+      "id": "registration-picking_hover-native_update_hovered",
+      "from": "picking_hover",
+      "to": "native_update_hovered",
+      "kind": "registration",
+      "label": "in_set(Hover)"
+    },
+    {
+      "id": "observer-native_button_down",
+      "from": "event-native_button_down",
+      "to": "native_button_down",
+      "kind": "trigger",
+      "label": "PointerPress"
+    },
+    {
+      "id": "trigger-native_pointer_events-event-native_button_down",
+      "from": "native_pointer_events",
+      "to": "event-native_button_down",
+      "kind": "trigger",
+      "label": "Commands::trigger"
+    },
+    {
+      "id": "registration-plugin-ButtonPlugin-native_button_down",
+      "from": "plugin-ButtonPlugin",
+      "to": "native_button_down",
+      "kind": "registration",
+      "label": ""
+    },
+    {
+      "id": "write-native_button_down-menu_button.Pressed",
+      "from": "native_button_down",
+      "to": "menu_button.Pressed",
+      "kind": "write",
+      "label": "insert Pressed"
+    },
+    {
+      "id": "observer-native_button_up",
+      "from": "event-native_button_up",
+      "to": "native_button_up",
+      "kind": "trigger",
+      "label": "PointerRelease"
+    },
+    {
+      "id": "trigger-native_pointer_events-event-native_button_up",
+      "from": "native_pointer_events",
+      "to": "event-native_button_up",
+      "kind": "trigger",
+      "label": "Commands::trigger"
+    },
+    {
+      "id": "registration-plugin-ButtonPlugin-native_button_up",
+      "from": "plugin-ButtonPlugin",
+      "to": "native_button_up",
+      "kind": "registration",
+      "label": ""
+    },
+    {
+      "id": "write-native_button_up-menu_button.Pressed",
+      "from": "native_button_up",
+      "to": "menu_button.Pressed",
+      "kind": "write",
+      "label": "remove Pressed"
+    },
+    {
+      "id": "trigger-native_button_up-event-observe_menu_primary_clear",
+      "from": "native_button_up",
+      "to": "event-observe_menu_primary_clear",
+      "kind": "trigger",
+      "label": "RemoveEvent（Pressed） lifecycle"
+    },
+    {
+      "id": "observer-native_button_click",
+      "from": "event-native_button_click",
+      "to": "native_button_click",
+      "kind": "trigger",
+      "label": "PointerClick"
+    },
+    {
+      "id": "trigger-native_pointer_events-event-native_button_click",
+      "from": "native_pointer_events",
+      "to": "event-native_button_click",
+      "kind": "trigger",
+      "label": "Commands::trigger"
+    },
+    {
+      "id": "registration-plugin-ButtonPlugin-native_button_click",
+      "from": "plugin-ButtonPlugin",
+      "to": "native_button_click",
+      "kind": "registration",
+      "label": ""
+    },
+    {
+      "id": "observer-native_button_drag_end",
+      "from": "event-native_button_drag_end",
+      "to": "native_button_drag_end",
+      "kind": "trigger",
+      "label": "PointerDragEnd"
+    },
+    {
+      "id": "trigger-native_pointer_events-event-native_button_drag_end",
+      "from": "native_pointer_events",
+      "to": "event-native_button_drag_end",
+      "kind": "trigger",
+      "label": "Commands::trigger"
+    },
+    {
+      "id": "registration-plugin-ButtonPlugin-native_button_drag_end",
+      "from": "plugin-ButtonPlugin",
+      "to": "native_button_drag_end",
+      "kind": "registration",
+      "label": ""
+    },
+    {
+      "id": "write-native_button_drag_end-menu_button.Pressed",
+      "from": "native_button_drag_end",
+      "to": "menu_button.Pressed",
+      "kind": "write",
+      "label": "remove Pressed"
+    },
+    {
+      "id": "trigger-native_button_drag_end-event-observe_menu_primary_clear",
+      "from": "native_button_drag_end",
+      "to": "event-observe_menu_primary_clear",
+      "kind": "trigger",
+      "label": "RemoveEvent（Pressed） lifecycle"
+    },
+    {
+      "id": "observer-native_button_cancel",
+      "from": "event-native_button_cancel",
+      "to": "native_button_cancel",
+      "kind": "trigger",
+      "label": "PointerCancel"
+    },
+    {
+      "id": "trigger-native_pointer_events-event-native_button_cancel",
+      "from": "native_pointer_events",
+      "to": "event-native_button_cancel",
+      "kind": "trigger",
+      "label": "Commands::trigger"
+    },
+    {
+      "id": "registration-plugin-ButtonPlugin-native_button_cancel",
+      "from": "plugin-ButtonPlugin",
+      "to": "native_button_cancel",
+      "kind": "registration",
+      "label": ""
+    },
+    {
+      "id": "write-native_button_cancel-menu_button.Pressed",
+      "from": "native_button_cancel",
+      "to": "menu_button.Pressed",
+      "kind": "write",
+      "label": "remove Pressed"
+    },
+    {
+      "id": "trigger-native_button_cancel-event-observe_menu_primary_clear",
+      "from": "native_button_cancel",
+      "to": "event-observe_menu_primary_clear",
+      "kind": "trigger",
+      "label": "RemoveEvent（Pressed） lifecycle"
+    },
+    {
+      "id": "observer-native_button_key",
+      "from": "native-focused-keyboard-event",
+      "to": "native_button_key",
+      "kind": "trigger",
+      "label": "FocusedInput<KeyboardInput>"
+    },
+    {
+      "id": "registration-plugin-ButtonPlugin-native_button_key",
+      "from": "plugin-ButtonPlugin",
+      "to": "native_button_key",
+      "kind": "registration",
+      "label": ""
+    },
+    {
+      "id": "trigger-native_button_down-native-button-activate-event",
+      "from": "native_button_down",
+      "to": "native-button-activate-event",
+      "kind": "trigger",
+      "label": "Activate（有条件）"
+    },
+    {
+      "id": "trigger-native_button_click-native-button-activate-event",
+      "from": "native_button_click",
+      "to": "native-button-activate-event",
+      "kind": "trigger",
+      "label": "Activate（有条件）"
+    },
+    {
+      "id": "trigger-native_button_key-native-button-activate-event",
+      "from": "native_button_key",
+      "to": "native-button-activate-event",
+      "kind": "trigger",
+      "label": "Activate（有条件）"
+    },
+    {
+      "id": "trigger-native_pointer_events-event-observe_menu_primary_press",
+      "from": "native_pointer_events",
+      "to": "event-observe_menu_primary_press",
+      "kind": "trigger",
+      "label": "PointerPress"
+    },
+    {
+      "id": "trigger-native_pointer_events-event-observe_scrollbar_press",
+      "from": "native_pointer_events",
+      "to": "event-observe_scrollbar_press",
+      "kind": "trigger",
+      "label": "PointerPress"
+    },
+    {
+      "id": "write-native_pointer_events-resource.PointerPressMessages",
+      "from": "native_pointer_events",
+      "to": "resource.PointerPressMessages",
+      "kind": "write",
+      "label": "发布缓冲按下消息"
+    },
+    {
+      "id": "write-native_update_hovered-menu_button.Hovered",
+      "from": "native_update_hovered",
+      "to": "menu_button.Hovered",
+      "kind": "write",
+      "label": "immutable insert"
+    },
+    {
+      "id": "read-resource.PointerInputMessages-native_pointer_events",
+      "from": "resource.PointerInputMessages",
+      "to": "native_pointer_events",
+      "kind": "read",
+      "label": ""
+    },
+    {
+      "id": "read-resource.HoverMap-native_pointer_events",
+      "from": "resource.HoverMap",
+      "to": "native_pointer_events",
+      "kind": "read",
+      "label": ""
+    },
+    {
+      "id": "read-resource.HoverMap-native_update_hovered",
+      "from": "resource.HoverMap",
+      "to": "native_update_hovered",
+      "kind": "read",
+      "label": ""
+    },
+    {
+      "id": "order-event_apply-menu_handle_requests",
+      "from": "event_apply",
+      "to": "menu_handle_requests",
+      "kind": "order",
+      "label": "",
+      "source": {
+        "path": "src/ui/requests.rs",
+        "line": 16
+      }
     }
   ],
   "feature_links": [
@@ -17911,6 +19993,134 @@
       "track": "explanatory",
       "notes": [
         "数据、状态和机制说明没有系统调度；位置只服务阅读。"
+      ]
+    }
+  ],
+  "component_accesses": [
+    {
+      "system": "observe_menu_primary_press",
+      "component": "menu_button.MenuButton",
+      "operation": "filter",
+      "sourceEntries": [
+        {
+          "path": "src/ui/pointer.rs",
+          "line": 34,
+          "role": "parameter",
+          "label": "只验证MenuButton存在",
+          "column": 1
+        }
+      ]
+    },
+    {
+      "system": "observe_menu_primary_press",
+      "component": "menu_button.PrimaryPress",
+      "operation": "insert",
+      "sourceEntries": [
+        {
+          "path": "src/ui/pointer.rs",
+          "line": 40,
+          "role": "operation",
+          "label": "Commands插入主键身份",
+          "column": 1
+        }
+      ]
+    },
+    {
+      "system": "observe_menu_primary_clear",
+      "component": "menu_button.PrimaryPress",
+      "operation": "remove",
+      "sourceEntries": [
+        {
+          "path": "src/ui/pointer.rs",
+          "line": 52,
+          "role": "operation",
+          "label": "延迟安全移除主键来源",
+          "column": 1
+        }
+      ]
+    },
+    {
+      "system": "menu_clear_cancelled_primary",
+      "component": "menu_button.PrimaryPress",
+      "operation": "read",
+      "sourceEntries": [
+        {
+          "path": "src/ui/pointer.rs",
+          "line": 60,
+          "role": "parameter",
+          "label": "读取按压指针ID",
+          "column": 1
+        }
+      ]
+    },
+    {
+      "system": "menu_clear_cancelled_primary",
+      "component": "menu_button.PrimaryPress",
+      "operation": "remove",
+      "sourceEntries": [
+        {
+          "path": "src/ui/pointer.rs",
+          "line": 70,
+          "role": "operation",
+          "label": "取消/窗口生命周期删除两组件",
+          "column": 1
+        }
+      ]
+    },
+    {
+      "system": "menu_clear_cancelled_primary",
+      "component": "menu_button.Pressed",
+      "operation": "remove",
+      "sourceEntries": [
+        {
+          "path": "src/ui/pointer.rs",
+          "line": 70,
+          "role": "operation",
+          "label": "取消/窗口生命周期删除两组件",
+          "column": 1
+        }
+      ]
+    },
+    {
+      "system": "menu_pointer",
+      "component": "menu_button.PrimaryPress",
+      "operation": "filter",
+      "sourceEntries": [
+        {
+          "path": "src/ui/pointer.rs",
+          "line": 93,
+          "role": "parameter",
+          "label": "Has仅判断存在",
+          "column": 1
+        }
+      ]
+    },
+    {
+      "system": "menu_style",
+      "component": "menu_button.PrimaryPress",
+      "operation": "filter",
+      "sourceEntries": [
+        {
+          "path": "src/ui/style.rs",
+          "line": 44,
+          "role": "parameter",
+          "label": "Has仅判断存在",
+          "column": 1
+        }
+      ]
+    },
+    {
+      "system": "menu_style",
+      "component": "menu_button.Pressed",
+      "operation": "filter",
+      "sourceEntries": [
+        {
+          "path": "src/ui/style.rs",
+          "line": 43,
+          "role": "parameter",
+          "label": "Has仅判断存在",
+          "column": 1
+        }
       ]
     }
   ]

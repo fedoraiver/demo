@@ -165,6 +165,20 @@ function dependencyFixture() {
   return { ...data, dependencyRoot, cargoMetadata, dependencyDefinitions, check: () => checkArchitectureWithDependencies(data.directory, { cargoMetadata, dependencyDefinitions }) };
 }
 
+function dependencyFunctionFixture() {
+  const data = dependencyFixture();
+  const filename = path.join(data.dependencyRoot, 'src', 'lib.rs');
+  const text = fs.readFileSync(filename, 'utf8') + 'pub fn move_entity() {}\n';
+  fs.writeFileSync(filename, text);
+  data.snapshots[1].text = text;
+  Object.assign(data.model.systems[0], { source: null, defined_in: 'infrastructure' });
+  Object.assign(data.registry.move, { source: null, defined_in: 'infrastructure' });
+  data.dependencyDefinitions.move = { package: 'fixture_dependency', path: 'src/lib.rs', symbol: 'move_entity', kind: 'fn' };
+  attachDependencySources(data.registry, createDependencySourceResolver(data.cargoMetadata), data.dependencyDefinitions);
+  data.save();
+  return data;
+}
+
 function guideSamplesFixture() {
   const label = style => escape(style.legendLabel).replaceAll('<', '&lt;').replaceAll('>', '&gt;');
   const nodes = Object.fromEntries(Object.entries(NODE_STYLES).map(([type, style]) => {
@@ -310,6 +324,52 @@ test('locked dependency declarations and their complete source snapshots are req
   assert.deepEqual(data.check(), { systems: 2, sources: 2, views: fixtureViewCount });
   assert.equal(data.registry['actor.Marker'].definition_source.line, 3);
   for (const feature of INFRASTRUCTURE_FEATURES) assert.equal(data.registry[feature.overviewNode].definition_source.line, 2);
+});
+
+test('dependency functions use verified attached definitions when the model has no project source', () => {
+  const data = dependencyFunctionFixture();
+  assert.deepEqual(data.check(), { systems: 2, sources: 2, views: fixtureViewCount });
+  assert.equal(data.registry.move.definition_source.dependency.name, 'fixture_dependency');
+  assert.equal(data.registry.move.definition_source.line, 4);
+  data.model.systems[0].definition_source = structuredClone(data.registry.move.definition_source);
+  data.save();
+  assert.deepEqual(data.check(), { systems: 2, sources: 2, views: fixtureViewCount });
+});
+
+test('dependency function definitions do not promote an original usage source into a declaration', () => {
+  const data = dependencyFunctionFixture();
+  const usage = { path: 'src/example.rs', line: 2 };
+  data.model.systems[0].source = structuredClone(usage);
+  data.registry.move.source = structuredClone(usage);
+  data.save();
+  assert.deepEqual(data.check(), { systems: 2, sources: 2, views: fixtureViewCount });
+  assert.deepEqual(data.model.systems[0].source, usage);
+  assert.equal(data.registry.move.definition_source.path, 'src/lib.rs');
+});
+
+test('dependency functions reject missing, wrong or unverified definitions and mismatched function names', () => {
+  for (const [corrupt, expected] of [
+    [data => { delete data.registry.move.definition_source; }, /Dependency definition source mismatch: move/],
+    [data => { delete data.dependencyDefinitions.move; }, /Missing dependency definition: move/],
+    [data => { data.registry.move.definition_source.line = 3; }, /Dependency definition source mismatch: move/],
+    [data => { data.registry.move.definition_source.dependency.name = 'another_dependency'; }, /Dependency definition source mismatch: move/],
+    [data => { data.registry.move.definition_source.dependency.version = '9.0.0'; }, /Dependency definition source mismatch: move/],
+    [data => { data.model.systems[0].definition_source = { ...structuredClone(data.registry.move.definition_source), line: 3 }; }, /Unverified dependency function definition: move_entity/],
+    [data => { data.model.systems[0].name = data.registry.move.name = 'another_function'; }, /Function source mismatch: another_function/],
+  ]) {
+    const data = dependencyFunctionFixture();
+    corrupt(data);
+    data.save();
+    assert.throws(data.check, expected);
+  }
+});
+
+test('project functions still require their original project declaration source', () => {
+  const data = fixture();
+  data.model.systems[0].source = null;
+  data.registry.move.source = null;
+  data.save();
+  assert.throws(() => checkArchitecture(data.directory), /Missing function source: move_entity/);
 });
 
 test('dependency checks reject a missing catalog entry or definition source', () => {
@@ -459,13 +519,14 @@ test('maintained infrastructure ownership distinguishes Bevy, extensions and pro
   const model = JSON.parse(fs.readFileSync(path.join(root, 'docs/diagrams/ecs-data.json'), 'utf8'));
   const { registry } = buildArchitectureModel(model);
   const expected = {
-    infrastructure: ['plugin-DefaultPlugins', 'app-main', 'input_update', 'resource.TimeFixed', 'resource.ButtonInputKeyCode', 'resource.KeyboardInputMessages', 'resource.WindowFocusedMessages', 'character.Transform', 'camera.Camera3d'],
-    avian: ['physics_prepare', 'physics_step', 'physics_writeback', 'resource.TimePhysics', 'resource.CollisionStartMessages', 'physics-messages', 'character.RigidBody', 'character.Collider', 'easing_start', 'character.TranslationInterpolation', 'parcel.TransformInterpolation'],
-    enhanced_input: ['plugin-EnhancedInputPlugin', 'enhanced_prepare', 'enhanced_evaluate', 'input_apply', 'resource.ActionSources', 'controller.Actions', 'action.ActionOf'],
+    infrastructure: ['plugin-DefaultPlugins', 'app-main', 'input_update', 'resource.TimeFixed', 'resource.ButtonInputKeyCode', 'resource.KeyboardInputMessages', 'resource.WindowFocusedMessages', 'character.Transform', 'camera.Camera3d', 'native_pointer_events', 'native_update_hovered', 'native_button_down', 'plugin-UiWidgetsPlugins', 'plugin-DefaultPickingPlugins'],
+    avian: ['physics_prepare', 'physics_step', 'physics_writeback', 'resource.TimePhysics', 'resource.CollisionStartMessages', 'physics-messages', 'character.RigidBody', 'character.Collider', 'easing_start', 'character.TranslationInterpolation', 'parcel.TransformInterpolation', 'resource.LastPhysicsTick', 'character.SpeculativeCcd', 'parcel.SpeculativeCcd'],
+    enhanced_input: ['plugin-EnhancedInputPlugin', 'enhanced_prepare', 'enhanced_evaluate', 'input_apply', 'input_trigger', 'resource.ActionSources', 'controller.Actions', 'action.ActionOf'],
     kira: ['plugin-kira', 'resource.AudioSources', 'resource.AudioInstances', 'kira-output'],
     egui: ['egui_input', 'egui_begin', 'camera.EguiContext', 'resource.EguiGlobalSettings', 'plugin-inspector-0', 'plugin-inspector-1', 'inspector_pass'],
     first_person: ['event-observe_move', 'event-observe_look'],
-    ui: ['event-observe_menu_previous', 'event-observe_menu_confirm'],
+    ui: ['event-observe_menu_previous', 'event-observe_menu_confirm', 'event_apply'],
+    physics: ['wake_changed_bodies', 'wake_apply'],
     audio: ['audio-output', 'audio-system-sets'],
     window_policy: ['native-window-events'],
   };
@@ -477,9 +538,11 @@ test('maintained infrastructure ownership distinguishes Bevy, extensions and pro
     assert.equal(registry[id].defined_in, 'infrastructure', `${id}: Bevy container definition`);
   }
   assert.equal(model.features.length, 14);
-  for (const [feature, count] of Object.entries({ avian: 95, enhanced_input: 34, kira: 6, egui: 14 })) {
+  for (const [feature, count] of Object.entries({ avian: 103, enhanced_input: 35, kira: 6, egui: 13 })) {
     assert.equal(Object.values(registry).filter(node => node.feature === feature && !node.alias_of).length, count, feature);
   }
+  for (const id of ['wake_apply', 'event_apply']) assert.equal(registry[id].defined_in, 'infrastructure', id);
+  assert.equal(registry['resource.EnableMultipassForPrimaryContext'], undefined);
   assert.equal(registry['third-party-plugins'], undefined);
 });
 

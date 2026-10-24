@@ -5,7 +5,7 @@ use super::{MenuButton, SettingKey, UiAction, theme::*};
 use bevy::{prelude::*, text::FontSourceTemplate};
 
 /// 说明文本属于按钮实体，焦点变化时只更新右侧说明，不重建页面。
-#[derive(Component, Default, Clone)]
+#[derive(Component, Default, Clone, Copy)]
 pub(super) struct SettingDescription {
     pub title: &'static str,
     pub body: &'static str,
@@ -46,7 +46,7 @@ pub(super) fn label<Value: Into<String>>(
             font_size: px(theme.size(size).max(14.0)),
         }
         TextColor(color)
-        // 文字保留自动最小宽度；显式设为 0 会让 Bevy 0.19 把横排测量宽度也解析成 0。
+        // 文字保留自然测量宽度，横排短标签与纵排正文共用同一布局规则。
         Node { flex_shrink: 1.0 }
     }
 }
@@ -70,6 +70,7 @@ pub(super) fn heading<Value: Into<String>>(
 }
 
 pub(super) fn paper_panel(theme: &UiTheme) -> impl Scene + use<> {
+    let scale = theme.scale;
     bsn! {
         Node {
             padding: px(theme.size(24.0)),
@@ -81,7 +82,7 @@ pub(super) fn paper_panel(theme: &UiTheme) -> impl Scene + use<> {
         }
         BackgroundColor(PAPER)
         BorderColor::all(CREAM)
-        template_value(paper_shadow(theme.scale))
+        paper_shadow(scale)
     }
 }
 
@@ -115,9 +116,9 @@ fn menu_button_with_size(
     index: usize,
     fixed_menu: bool,
 ) -> impl Scene + use<> {
+    let scale = theme.scale;
     bsn! {
-        Button
-        template_value(MenuButton { action, index })
+        MenuButton { action, index }
         Node {
             width: percent(100),
             min_height: px(theme.size(if fixed_menu { 52.0 } else { 69.0 })),
@@ -133,21 +134,21 @@ fn menu_button_with_size(
         }
         BackgroundColor(PAPER)
         BorderColor::all(CREAM)
-        template_value(paper_shadow(theme.scale))
+        paper_shadow(scale)
         Children [
-            (
-                Node {
-                    width: px(theme.size(if fixed_menu { 30.0 } else { 36.0 })),
-                    justify_content: JustifyContent::Center,
-                    flex_shrink: 0.0,
-                }
-                Children [heading(theme, icon, if fixed_menu { 27.0 } else { 31.0 }, INK)]
-            ),
-            (
-                label(theme, title, if fixed_menu { 24.0 } else { 27.0 }, INK)
-                Node { flex_grow: 1.0 }
-            ),
-            heading(theme, ">", if fixed_menu { 22.0 } else { 24.0 }, INK),
+            Node {
+                width: px(theme.size(if fixed_menu { 30.0 } else { 36.0 })),
+                justify_content: JustifyContent::Center,
+                flex_shrink: 0.0,
+            }
+            Children [
+                @heading(theme, icon, if fixed_menu { 27.0 } else { 31.0 }, INK)
+            ]
+            --
+            @label(theme, title, if fixed_menu { 24.0 } else { 27.0 }, INK)
+            Node { flex_grow: 1.0 }
+            --
+            @heading(theme, ">", if fixed_menu { 22.0 } else { 24.0 }, INK)
         ]
     }
 }
@@ -158,9 +159,9 @@ pub(super) fn small_button(
     action: UiAction,
     index: usize,
 ) -> impl Scene + use<> {
+    let scale = theme.scale;
     bsn! {
-        Button
-        template_value(MenuButton { action, index })
+        MenuButton { action, index }
         Node {
             min_height: px(theme.size(49.0)),
             min_width: px(0),
@@ -172,8 +173,10 @@ pub(super) fn small_button(
         }
         BackgroundColor(PAPER)
         BorderColor::all(CREAM)
-        template_value(paper_shadow(theme.scale))
-        Children [label(theme, title, 21.0, INK)]
+        paper_shadow(scale)
+        Children [
+            @label(theme, title, 21.0, INK)
+        ]
     }
 }
 
@@ -199,18 +202,17 @@ pub(super) fn placeholder_row(
         BackgroundColor({if menu { Color::srgba(0.76, 0.78, 0.79, 0.92) } else { SUBTLE }})
         BorderColor::all(Color::srgba(0.83, 0.84, 0.83, 0.75))
         Children [
-            (
-                label(theme, title, if menu { 22.0 } else { 20.0 }, MUTED)
-                Node { flex_grow: 1.0 }
-            ),
-            (
-                Node {
-                    padding: UiRect::axes(px(theme.size(8.0)), px(theme.size(4.0))),
-                    border_radius: BorderRadius::all(px(4)),
-                }
-                BackgroundColor(Color::srgba(0.39, 0.42, 0.46, 0.13))
-                Children [label(theme, "Coming Soon", 14.0, MUTED)]
-            ),
+            @label(theme, title, if menu { 22.0 } else { 20.0 }, MUTED)
+            Node { flex_grow: 1.0 }
+            --
+            Node {
+                padding: UiRect::axes(px(theme.size(8.0)), px(theme.size(4.0))),
+                border_radius: BorderRadius::all(px(4)),
+            }
+            BackgroundColor(Color::srgba(0.39, 0.42, 0.46, 0.13))
+            Children [
+                @label(theme, "Coming Soon", 14.0, MUTED)
+            ]
         ]
     }
 }
@@ -241,42 +243,35 @@ pub(super) fn setting_row(
         }
         BackgroundColor(SUBTLE)
         Children [
-            (
-                label(theme, title, 21.0, INK)
-                Node { flex_grow: 1.0, min_width: px(theme.size(130.0)) }
-            ),
-            (
-                Node { align_items: AlignItems::Center, column_gap: px(theme.size(8.0)) }
+            @label(theme, title, 21.0, INK)
+            Node { flex_grow: 1.0, min_width: px(theme.size(130.0)) }
+            --
+            Node { align_items: AlignItems::Center, column_gap: px(theme.size(8.0)) }
+            Children [
+                @small_button(theme, "<", UiAction::Adjust(key, -1), index)
+                details
+                Node { padding: px(theme.size(7.0)), min_width: px(theme.size(34.0)) }
+                --
+                Node {
+                    width: px(theme.size(130.0)),
+                    min_height: px(theme.size(43.0)),
+                    justify_content: JustifyContent::Center,
+                    align_items: AlignItems::Center,
+                    padding: px(theme.size(5.0)),
+                    border: px(1),
+                    border_radius: BorderRadius::all(px(5)),
+                }
+                BackgroundColor(CREAM)
+                BorderColor::all(Color::srgba(0.2, 0.25, 0.32, 0.15))
                 Children [
-                    (
-                        small_button(theme, "<", UiAction::Adjust(key, -1), index)
-                        template_value(details.clone())
-                        Node { padding: px(theme.size(7.0)), min_width: px(theme.size(34.0)) }
-                    ),
-                    (
-                        Node {
-                            width: px(theme.size(130.0)),
-                            min_height: px(theme.size(43.0)),
-                            justify_content: JustifyContent::Center,
-                            align_items: AlignItems::Center,
-                            padding: px(theme.size(5.0)),
-                            border: px(1),
-                            border_radius: BorderRadius::all(px(5)),
-                        }
-                        BackgroundColor(CREAM)
-                        BorderColor::all(Color::srgba(0.2, 0.25, 0.32, 0.15))
-                        Children [(
-                            label(theme, value, 20.0, INK)
-                            template_value(SettingValue(key))
-                        )]
-                    ),
-                    (
-                        small_button(theme, ">", UiAction::Adjust(key, 1), index + 1)
-                        template_value(details)
-                        Node { padding: px(theme.size(7.0)), min_width: px(theme.size(34.0)) }
-                    ),
+                    @label(theme, value, 20.0, INK)
+                    SettingValue(key)
                 ]
-            ),
+                --
+                @small_button(theme, ">", UiAction::Adjust(key, 1), index + 1)
+                details
+                Node { padding: px(theme.size(7.0)), min_width: px(theme.size(34.0)) }
+            ]
         ]
     }
 }
@@ -294,7 +289,9 @@ pub(super) fn keycap(theme: &UiTheme, key: &'static str, light: bool) -> impl Sc
             justify_content: JustifyContent::Center,
         }
         BorderColor::all(color)
-        Children [label(theme, key, 17.0, color)]
+        Children [
+            @label(theme, key, 17.0, color)
+        ]
     }
 }
 
@@ -312,54 +309,48 @@ pub(super) fn parcel_stamp(theme: &UiTheme) -> impl Scene + use<> {
         BackgroundColor(Color::srgb(0.75, 0.51, 0.27))
         BorderColor::all(INK)
         Children [
-            (
-                Node {
-                    position_type: PositionType::Absolute,
-                    top: px(0),
-                    width: percent(30),
-                    height: percent(40),
-                }
-                BackgroundColor(Color::srgb(0.91, 0.71, 0.42))
-            ),
-            (
-                Node {
-                    width: percent(40),
-                    height: px(theme.size(6.0)),
-                    margin: UiRect::top(px(theme.size(12.0))),
-                    border_radius: BorderRadius::all(px(2)),
-                }
-                BackgroundColor(INK)
-            ),
+            Node {
+                position_type: PositionType::Absolute,
+                top: px(0),
+                width: percent(30),
+                height: percent(40),
+            }
+            BackgroundColor(Color::srgb(0.91, 0.71, 0.42))
+            --
+            Node {
+                width: percent(40),
+                height: px(theme.size(6.0)),
+                margin: UiRect::top(px(theme.size(12.0))),
+                border_radius: BorderRadius::all(px(2)),
+            }
+            BackgroundColor(INK)
         ]
     }
 }
 
 pub(super) fn logo(theme: &UiTheme, compact: bool) -> impl Scene + use<> {
+    let scale = theme.scale;
     // 固定菜单标题留出六行按钮的高度；设置与帮助的小标志保持原样。
     let title_size = if compact { 50.0 } else { 56.0 };
     bsn! {
-        template_value(column(theme.size(3.0)))
+        column(3.0 * scale)
         Children [
-            (
-                Node { align_items: AlignItems::Center, column_gap: px(theme.size(12.0)) }
-                Children [
-                    parcel_stamp(theme),
-                    label(theme, "ISLAND DELIVERY CO.", 15.0, CREAM),
-                ]
-            ),
-            (
-                heading(theme, "ISLAND", title_size, CREAM)
-                TextShadow { offset: {Vec2::new(3.0, 4.0)}, color: INK }
-            ),
-            (
-                heading(theme, "COURIER", title_size, GOLD)
-                TextShadow { offset: {Vec2::new(3.0, 4.0)}, color: INK }
-            ),
-            (
-                label(theme, "SMALL ISLAND. BIG DELIVERIES.", 16.0, CREAM)
-                TextShadow { offset: {Vec2::new(1.0, 2.0)}, color: INK }
-                Node { margin: UiRect::top(px(theme.size(7.0))) }
-            ),
+            Node { align_items: AlignItems::Center, column_gap: px(theme.size(12.0)) }
+            Children [
+                @parcel_stamp(theme)
+                --
+                @label(theme, "ISLAND DELIVERY CO.", 15.0, CREAM)
+            ]
+            --
+            @heading(theme, "ISLAND", title_size, CREAM)
+            TextShadow { offset: {Vec2::new(3.0, 4.0)}, color: INK }
+            --
+            @heading(theme, "COURIER", title_size, GOLD)
+            TextShadow { offset: {Vec2::new(3.0, 4.0)}, color: INK }
+            --
+            @label(theme, "SMALL ISLAND. BIG DELIVERIES.", 16.0, CREAM)
+            TextShadow { offset: {Vec2::new(1.0, 2.0)}, color: INK }
+            Node { margin: UiRect::top(px(theme.size(7.0))) }
         ]
     }
 }

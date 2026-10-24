@@ -15,6 +15,7 @@ use bevy::{
     },
     mesh::skinning::SkinnedMeshInverseBindposes,
     prelude::*,
+    scene::ScenePlugin,
     time::TimeUpdateStrategy,
     window::{CursorOptions, PrimaryWindow},
 };
@@ -130,6 +131,9 @@ fn carry_fixture_with_easing(grip: Option<Vec3>, preserve_easing_pause: bool) ->
     configure_feature_order(&mut app);
     app.add_plugins((
         MinimalPlugins,
+        // 真实输入上下文使用 BSN；仅启用无窗口资产与场景服务来应用声明式绑定。
+        AssetPlugin::default(),
+        ScenePlugin,
         InputPlugin,
         TransformPlugin,
         VisibilityPlugin,

@@ -1,0 +1,76 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 32,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#component-6b767643c44105e0-e1{marker-start:url(#component-6b767643c44105e0_flowchart-v2-pointStart)!important}\n#component-6b767643c44105e0-e3{marker-start:url(#component-6b767643c44105e0_flowchart-v2-pointStart)!important}\n#component-6b767643c44105e0-e4{marker-start:url(#component-6b767643c44105e0_flowchart-v2-pointStart)!important}\n#component-6b767643c44105e0_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}"
+  }
+}
+---
+flowchart RL
+  accTitle: Scrollbar · 组件关系
+  accDescr: 左侧为包含组件的实体，中间为组件类型，右侧每个系统函数只显示一次；连线表达访问与生命周期操作。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_observer fill:#F4F1F9,stroke:#7B4DB2,stroke-width:1.6px,color:#1F3340
+  classDef node_entity fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**设置滚动条轨道**<br/>来自菜单与界面 ↗：为设置内容视口提供可<br/>交互滚动轨道。" }
+  class n0 node_entity
+  class n0 external_node
+  n1@{ shape: rounded, label: "**Scrollbar**<br/>关联滚动条控制的内容视口。" }
+  class n1 node_component
+  n2@{ shape: rounded, label: "**bind_settings_scrollbars**<br/>来自菜单与界面 ↗：将设置滚动条绑定到对<br/>应内容视口。" }
+  class n2 node_system
+  class n2 external_node
+  n3@{ shape: rounded, label: "**sync_settings_scrollbars**<br/>来自菜单与界面 ↗：同步滚动条显隐、拾取<br/>范围与高亮。" }
+  class n3 node_system
+  class n3 external_node
+  n4@{ shape: hex, label: "**scroll_over_settings_scrollbar**<br/>来自菜单与界面 ↗：通过滚动条上的滚轮操<br/>作滚动内容视口。" }
+  class n4 node_observer
+  class n4 external_node
+  n1 layout_0@~~~ n0
+  n2 layout_1@~~~ n1
+  n3 layout_2@~~~ n1
+  n4 layout_3@~~~ n1
+  n2 e2@-->|"添加"| n1
+  class e2 edge_write
+  n1 e0@-->|"可能挂载于"| n0
+  class e0 edge_reference
+  n2 e1@---|"存在 / 变更过滤"| n1
+  class e1 edge_reference
+  n3 e3@---|"查询访问"| n1
+  class e3 edge_read
+  n4 e4@---|"查询访问"| n1
+  class e4 edge_read
+  e0@{ curve: basis }
+  e1@{ curve: bumpX }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }

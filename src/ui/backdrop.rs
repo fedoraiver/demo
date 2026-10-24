@@ -2,8 +2,8 @@
 
 use bevy::{
     asset::{HandleTemplate, UntypedAssetLoadFailedEvent},
-    core_pipeline::tonemapping::Tonemapping,
     prelude::*,
+    render::view::Tonemapping,
     world_serialization::WorldInstanceReady,
 };
 use bevy_inspector_egui::bevy_egui::PrimaryEguiContext;
@@ -45,53 +45,62 @@ fn spawn_backdrop(mut commands: Commands, asset_server: Res<AssetServer>) {
         .spawn_scene(bsn! {
             #MenuBackdrop
             MenuBackdrop
-            template_value(DespawnOnExit(AppState::MainMenu))
+            DespawnOnExit::<AppState>(AppState::MainMenu)
             Transform
             Visibility
             Children [
-                menu_camera(),
-                (
-                    #MenuDaylight
-                    DirectionalLight {
-                        illuminance: 12_000.0,
-                        shadow_maps_enabled: true,
-                    }
-                    template_value(Transform::from_xyz(-8.0, 14.0, 9.0)
-                        .looking_at(Vec3::ZERO, Vec3::Y))
-                ),
+                @menu_camera()
+                --
+                #MenuDaylight
+                DirectionalLight {
+                    illuminance: 12_000.0,
+                    shadow_maps_enabled: true,
+                }
+                Transform::from_xyz(-8.0, 14.0, 9.0)
+                .looking_at(Vec3::ZERO, Vec3::Y)
+                --
                 // 地形与海水保持原来的相对位置，把北岸移到据点后方形成真实海岸线。
-                model("MenuIsland", "models/environment/env_island_terrain.glb#Scene0",
-                    Vec3::new(-8.0, 0.0, 31.0), 0.0),
-                model("MenuOcean", "models/environment/env_ocean.glb#Scene0",
-                    Vec3::new(-8.0, 0.0, 31.0), 0.0),
-                model("MenuCourierStation", "models/buildings/bld_courier_station.glb#Scene0",
-                    STATION_POSITION, -0.12),
-                (
-                    #MenuCourier
-                    WorldAssetRoot("models/characters/chr_courier.glb#Scene0")
-                    CourierAnimation { gltf: {HandleTemplate::Handle(gltf)} }
-                    Transform {
-                        translation: COURIER_POSITION,
-                        rotation: {Quat::from_rotation_y(2.85)},
-                    }
-                    on(mark_courier_animation_ready)
-                    // 包裹是独立资产；动作没有根运动，附件保持角色本地的持握位置。
-                    Children [model("MenuCarriedParcel",
+                @model("MenuIsland", "models/environment/env_island_terrain.glb#Scene0",
+                    Vec3::new(-8.0, 0.0, 31.0), 0.0)
+                --
+                @model("MenuOcean", "models/environment/env_ocean.glb#Scene0",
+                    Vec3::new(-8.0, 0.0, 31.0), 0.0)
+                --
+                @model("MenuCourierStation", "models/buildings/bld_courier_station.glb#Scene0",
+                    STATION_POSITION, -0.12)
+                --
+                #MenuCourier
+                WorldAssetRoot("models/characters/chr_courier.glb#Scene0")
+                CourierAnimation { gltf: {HandleTemplate::Handle(gltf)} }
+                Transform {
+                    translation: COURIER_POSITION,
+                    rotation: {Quat::from_rotation_y(2.85)},
+                }
+                on(mark_courier_animation_ready)
+                // 包裹是独立资产；动作没有根运动，附件保持角色本地的持握位置。
+                Children [
+                    @model("MenuCarriedParcel",
                         "models/props/prop_parcel_standard.glb#Scene0",
-                        Vec3::new(0.0, 1.3, -0.48), 0.0)]
-                ),
-                model("MenuPalmBehindStation", "models/environment/prop_palm_leaning.glb#Scene0",
-                    Vec3::new(9.5, 0.02, -7.0), -0.5),
-                model("MenuPalmAtShore", "models/environment/prop_palm_crooked.glb#Scene0",
-                    Vec3::new(1.0, 0.02, -9.0), 0.8),
-                model("MenuYoungPalm", "models/environment/prop_palm_young.glb#Scene0",
-                    Vec3::new(11.0, 0.02, -2.0), -0.3),
-                model("MenuGrass", "models/environment/prop_wild_grass_patch.glb#Scene0",
-                    Vec3::new(7.5, 0.02, -1.0), 0.4),
-                model("MenuParcelOnSand", "models/props/prop_parcel_fragile.glb#Scene0",
-                    Vec3::new(5.0, 0.32, 1.5), -0.2),
-                model("MenuCrate", "models/props/prop_crate.glb#Scene0",
-                    Vec3::new(6.0, 0.37, 1.0), 0.15),
+                        Vec3::new(0.0, 1.3, -0.48), 0.0)
+                ]
+                --
+                @model("MenuPalmBehindStation", "models/environment/prop_palm_leaning.glb#Scene0",
+                    Vec3::new(9.5, 0.02, -7.0), -0.5)
+                --
+                @model("MenuPalmAtShore", "models/environment/prop_palm_crooked.glb#Scene0",
+                    Vec3::new(1.0, 0.02, -9.0), 0.8)
+                --
+                @model("MenuYoungPalm", "models/environment/prop_palm_young.glb#Scene0",
+                    Vec3::new(11.0, 0.02, -2.0), -0.3)
+                --
+                @model("MenuGrass", "models/environment/prop_wild_grass_patch.glb#Scene0",
+                    Vec3::new(7.5, 0.02, -1.0), 0.4)
+                --
+                @model("MenuParcelOnSand", "models/props/prop_parcel_fragile.glb#Scene0",
+                    Vec3::new(5.0, 0.32, 1.5), -0.2)
+                --
+                @model("MenuCrate", "models/props/prop_crate.glb#Scene0",
+                    Vec3::new(6.0, 0.37, 1.0), 0.15)
             ]
         })
         .id();
@@ -115,12 +124,12 @@ fn menu_camera() -> impl Scene {
             color: {Color::srgb(1.0, 0.95, 0.84)},
             brightness: 450.0,
         }
-        template_value(Projection::Perspective(PerspectiveProjection {
-            fov: 46.0_f32.to_radians(),
-            ..default()
-        }))
-        template_value(Tonemapping::AcesFitted)
-        template_value(camera_transform())
+        Projection::Perspective({PerspectiveProjection {
+                    fov: 46.0_f32.to_radians(),
+                    ..default()
+        }})
+        Tonemapping::AcesFitted
+        camera_transform()
     }
 }
 
@@ -128,7 +137,7 @@ fn camera_transform() -> Transform {
     Transform::from_xyz(-2.0, 4.2, 10.0).looking_at(Vec3::new(0.0, 1.5, -4.0), Vec3::Y)
 }
 
-/// 可复用的 BSN 模型声明；Bevy 0.19 的 WorldAssetRoot 即原 SceneRoot。
+/// 可复用的 BSN 模型声明；WorldAssetRoot 在场景资产加载后展开其子树。
 fn model(name: &'static str, path: &'static str, position: Vec3, yaw: f32) -> impl Scene {
     bsn! {
         Name(name)

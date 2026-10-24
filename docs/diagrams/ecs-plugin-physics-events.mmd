@@ -43,23 +43,29 @@ flowchart LR
   subgraph diagram_main[" "]
   direction LR
   style diagram_main fill:none,stroke:none
-  n0@{ shape: fr-rect, label: "**GamePhysicsPlugin**<br/>安装物理引擎并管理重力与碰撞日志。" }
+  n0@{ shape: fr-rect, label: "**GamePhysicsPlugin**<br/>安装物理引擎并管理重力、提前唤醒与碰撞日<br/>志。" }
   class n0 node_plugin
   n1@{ shape: rounded, label: "**log_collisions**<br/>将碰撞开始与结束写入统一日志。" }
   class n1 node_system
-  n2@{ shape: lean-r, label: "**CollisionStart / CollisionEnd**<br/>来自Avian ↗：缓冲接触开始或结束及碰撞<br/>双方身份。" }
-  class n2 node_message
-  class n2 external_node
-  n3@{ shape: fr-rect, label: "**PhysicsPlugins::default()**<br/>来自Avian ↗：提供固定步刚体模拟与碰撞<br/>求解。" }
-  class n3 node_plugin
+  n2@{ shape: rounded, label: "**wake_changed_bodies**<br/>使休眠身体的外部受力和位姿修改在本固定步<br/>生效。" }
+  class n2 node_system
+  n3@{ shape: lean-r, label: "**CollisionStart / CollisionEnd**<br/>来自Avian ↗：缓冲接触开始或结束及碰撞<br/>双方身份。" }
+  class n3 node_message
   class n3 external_node
-  n4@{ shape: lean-l, label: "**tracing producer**<br/>来自会话日志 ↗：格式化日志并交给独立文<br/>件与控制台队列。" }
-  class n4 node_external_io
+  n4@{ shape: fr-rect, label: "**PhysicsPlugins::default()**<br/>来自Avian ↗：提供固定步刚体模拟与碰撞<br/>求解。" }
+  class n4 node_plugin
   class n4 external_node
-  n2 e0@--> n1
+  n5@{ shape: lean-l, label: "**tracing producer**<br/>来自会话日志 ↗：格式化日志并交给独立文<br/>件与控制台队列。" }
+  class n5 node_external_io
+  class n5 external_node
+  n3 e0@--> n1
   class e0 edge_consume
-  n0 e1@-->|"Avian"| n3
+  n0 e1@-->|"Avian"| n4
   class e1 edge_registration
-  n1 e2@-->|"tracing 碰撞日志"| n4
+  n1 e2@-->|"tracing 碰撞日志"| n5
   class e2 edge_write
+  n2 e3@-->|"tracing 唤醒日志"| n5
+  class e3 edge_write
   end
+  e2@{ curve: basis }
+  e3@{ curve: basis }

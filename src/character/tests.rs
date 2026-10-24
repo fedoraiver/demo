@@ -321,6 +321,46 @@ fn jump_is_consumed_once_and_gravity_lands_on_collider() {
 }
 
 #[test]
+fn resting_character_keeps_sleeping_until_movement_wakes_it_in_the_same_step() {
+    let mut app = test_app();
+    let character = spawn_character(&mut app, Vec3::ZERO, default());
+    step(&mut app, 90);
+    assert!(app.world().entity(character).contains::<Sleeping>());
+    let resting_position = app.world().get::<Position>(character).unwrap().0;
+    step(&mut app, 10);
+    assert!(
+        app.world().entity(character).contains::<Sleeping>(),
+        "Physics writeback must not wake an unchanged resting character"
+    );
+    assert_eq!(
+        app.world().get::<Position>(character).unwrap().0,
+        resting_position
+    );
+
+    app.world_mut()
+        .get_mut::<CharacterIntent>(character)
+        .unwrap()
+        .movement = Vec2::X;
+    step(&mut app, 1);
+    assert!(!app.world().entity(character).contains::<Sleeping>());
+    let position = app.world().get::<Position>(character).unwrap().0;
+    let velocity = app.world().get::<LinearVelocity>(character).unwrap().0;
+    let acceleration = app.world().resource::<PrototypeConfig>().acceleration;
+    let delta = app.world().resource::<Time<Fixed>>().delta_secs();
+    let substeps = app.world().resource::<SubstepCount>().0 as f32;
+    // 每子步先更新速度再积分位置，首步位移应为等差速度序列之和。
+    let expected_distance = acceleration * delta.powi(2) * (substeps + 1.0) / (2.0 * substeps);
+    assert!(
+        (position.x - resting_position.x - expected_distance).abs() < 1.0e-5,
+        "{position:?}"
+    );
+    assert!(
+        (velocity.x - acceleration * delta).abs() < 1.0e-5,
+        "{velocity:?}"
+    );
+}
+
+#[test]
 fn no_fixed_step_preserves_requests_and_render_rates_share_physics() {
     let simulate = |frame_hz: f64| {
         let mut app = test_app();

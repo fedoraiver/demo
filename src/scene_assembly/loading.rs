@@ -5,9 +5,9 @@ use super::*;
 pub(super) fn lighting_scene() -> impl Scene {
     bsn! {
         Name("Island daylight")
-        template_value(DespawnOnExit(AppState::InGame))
+        DespawnOnExit::<AppState>(AppState::InGame)
         DirectionalLight { illuminance: 12_000.0, shadow_maps_enabled: true }
-        template_value(Transform::from_xyz(6.0, 10.0, 8.0).looking_at(Vec3::ZERO, Vec3::Y))
+        Transform::from_xyz(6.0, 10.0, 8.0).looking_at(Vec3::ZERO, Vec3::Y)
     }
 }
 
@@ -19,9 +19,9 @@ pub(super) fn spawn_lighting(mut commands: Commands) {
         Camera3d
         IsDefaultUiCamera
         bevy_inspector_egui::bevy_egui::PrimaryEguiContext
-        template_value(DespawnOnExit(AppState::InGame))
+        DespawnOnExit::<AppState>(AppState::InGame)
         LoadingCamera
-        template_value(Transform::from_xyz(-1.8, 6.0, 11.5).looking_at(Vec3::new(-1.8, 0.8, 3.5), Vec3::Y))
+        Transform::from_xyz(-1.8, 6.0, 11.5).looking_at(Vec3::new(-1.8, 0.8, 3.5), Vec3::Y)
     });
 }
 
@@ -31,7 +31,7 @@ pub(super) struct LoadingCamera;
 pub(super) fn island_scene(scene: Handle<WorldAsset>) -> impl Scene {
     bsn! {
         Name("Courier island") IslandMap WorldAssetRoot(scene)
-        template_value(DespawnOnExit(AppState::InGame))
+        DespawnOnExit::<AppState>(AppState::InGame)
     }
 }
 
@@ -208,11 +208,11 @@ pub(super) fn prepare_island(
                 .map_or("unnamed", Name::as_str);
             let name = Name::new(format!("Island static collider ({source})"));
             commands.spawn_scene(bsn! {
-                template_value(name)
+                name
                 IslandCollider
-                template_value(RigidBody::Static)
-                template_value(collider)
-                template_value(world_collision_layers())
+                RigidBody::Static
+                collider
+                world_collision_layers()
                 ChildOf(parent)
             });
         }
@@ -223,14 +223,15 @@ pub(super) fn prepare_island(
             commands.entity(entity).insert(DisplayNpc);
             // 展示 NPC 保持固定站位；World 层同时阻挡玩家、自由箱体与整体持箱。
             // 独立碰撞子体沿用模型脚底原点，保留导入姿态并随地图层级清理。
+            let npc_shape = character_collider(&config);
             let collider = commands
                 .spawn_scene(bsn! {
                     Name("Display NPC collider")
                     IslandCollider
                     Transform
-                    template_value(RigidBody::Static)
-                    template_value(character_collider(&config))
-                    template_value(world_collision_layers())
+                    RigidBody::Static
+                    npc_shape
+                    world_collision_layers()
                     ChildOf(entity)
                 })
                 .id();

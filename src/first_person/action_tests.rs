@@ -185,6 +185,55 @@ fn keyboard_press_fires_once_and_requests_survive_until_consumed() {
 }
 
 #[test]
+fn keyboard_scene_preserves_cardinal_axes_and_cleans_up_owned_inputs() {
+    let (mut app, _, character, _, controller) = super::pose_tests::test_app();
+    let actions = app
+        .world()
+        .get::<Actions<GameplayContext>>(controller)
+        .unwrap()
+        .iter()
+        .collect::<Vec<_>>();
+    let bindings = actions
+        .iter()
+        .flat_map(|action| app.world().get::<Bindings>(*action).unwrap().iter())
+        .collect::<Vec<_>>();
+
+    for (pressed, released, expected) in [
+        (vec![KeyCode::KeyW, KeyCode::KeyD], vec![], Vec2::ONE),
+        (vec![KeyCode::KeyA], vec![], Vec2::Y),
+        (vec![KeyCode::KeyS], vec![KeyCode::KeyW], Vec2::NEG_Y),
+        (
+            vec![],
+            vec![KeyCode::KeyA, KeyCode::KeyD, KeyCode::KeyS],
+            Vec2::ZERO,
+        ),
+    ] {
+        let mut keys = app.world_mut().resource_mut::<ButtonInput<KeyCode>>();
+        for key in pressed {
+            keys.press(key);
+        }
+        for key in released {
+            keys.release(key);
+        }
+        app.update();
+        assert_eq!(
+            app.world()
+                .get::<CharacterIntent>(character)
+                .unwrap()
+                .movement,
+            expected
+        );
+    }
+
+    // Actions 与 Bindings 的 linked_spawn 关系必须随控制者清理，不能留下仍消费键盘的动作。
+    app.world_mut().despawn(controller);
+    for entity in actions.into_iter().chain(bindings) {
+        assert!(app.world().get_entity(entity).is_err());
+    }
+    assert!(app.world().get::<CharacterIntent>(character).is_some());
+}
+
+#[test]
 fn keyboard_actions_drive_physics_pickup_jump_and_release() {
     // 使用完整输入、相机与真实物理组合，所有断言都在实际 app.update 的帧末检查。
     let (mut app, _, character, _, _) = super::pose_tests::test_app();

@@ -37,67 +37,87 @@ flowchart TB
   classDef node_contract fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
   classDef edge_schedule stroke:#334155,stroke-width:3px
   classDef edge_order stroke:#334155,stroke-width:2px
+  classDef edge_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
   subgraph diagram_main[" "]
   direction LR
   style diagram_main fill:none,stroke:none
   subgraph sg0["App 构建与退出"]
   direction TB
-  n9@{ shape: fr-rect, label: "**main / App**<br/>装配应用、设置与插件并管理主循环和退出。" }
-  class n9 node_plugin
+  n11@{ shape: fr-rect, label: "**main / App**<br/>装配应用、设置与插件并管理主循环和退出。" }
+  class n11 node_plugin
   end
   subgraph sg1["First"]
   direction TB
-  n13@{ shape: rounded, label: "**limit_frame_rate**<br/>来自设置与参数 ↗：补足帧间等待以控制显<br/>示帧率。" }
-  class n13 node_system
-  class n13 external_node
+  n18@{ shape: rounded, label: "**limit_frame_rate**<br/>来自设置与参数 ↗：补足帧间等待以控制显<br/>示帧率。" }
+  class n18 node_system
+  class n18 external_node
   n0@{ shape: lin-rect, label: "**TimeSystems / time_system**<br/>推进真实时间与游戏时间。" }
   class n0 node_contract
-  n13 layout_0@~~~ n0
+  n18 layout_0@~~~ n0
   end
   subgraph sg2["PreUpdate"]
   direction TB
   n1@{ shape: lin-rect, label: "**InputSystems**<br/>汇总键盘与鼠标输入状态。" }
   class n1 node_contract
-  n14@{ shape: lin-rect, label: "**EguiPreUpdateSet::ProcessInput**<br/>来自Egui / Inspector ↗：将窗口和设备<br/>输入转换为检查器界面输入。" }
-  class n14 node_contract
-  class n14 external_node
-  n15@{ shape: rounded, label: "**sync_mouse_capture**<br/>来自第一人称控制 ↗：管理光标捕获及玩法<br/>输入启停。" }
-  class n15 node_system
-  class n15 external_node
+  n10@{ shape: rounded, label: "**update_is_hovered**<br/>按鼠标HoverMap及祖先关系替换已<br/>有Hovered值。" }
+  class n10 node_system
+  n9@{ shape: rounded, label: "**pointer_events**<br/>生成指针EntityEvent并同时发布对<br/>应Message。" }
+  class n9 node_system
+  n16@{ shape: lin-rect, label: "**PickingSystems::Hover**<br/>更新HoverMap、悬停组件与指针事件。" }
+  class n16 node_contract
+  n17@{ shape: lin-rect, label: "**PickingSystems::PostHover**<br/>位于Hover之后、Last之前。" }
+  class n17 node_contract
+  n15@{ shape: lin-rect, label: "**PickingSystems::Last**<br/>界定原生命中处理完成后的清理时机。" }
+  class n15 node_contract
+  n19@{ shape: lin-rect, label: "**EguiPreUpdateSet::ProcessInput**<br/>来自Egui / Inspector ↗：将窗口和设备<br/>输入转换为检查器界面输入。" }
+  class n19 node_contract
+  class n19 external_node
+  n20@{ shape: rounded, label: "**sync_mouse_capture**<br/>来自第一人称控制 ↗：管理光标捕获及玩法<br/>输入启停。" }
+  class n20 node_system
+  class n20 external_node
   n5@{ shape: lin-rect, label: "**ApplyDeferred（捕获 → 动作准备）**<br/>使本帧玩法输入启停变更对动作评估可见。" }
   class n5 node_contract
-  n16@{ shape: lin-rect, label: "**EnhancedInputSystems::Prepare**<br/>来自Enhanced Input ↗：准备动作评估并<br/>清理待释放的输入。" }
-  class n16 node_contract
-  class n16 external_node
-  n1 layout_1@~~~ n14
-  n14 layout_2@~~~ n15
-  n15 layout_3@~~~ n5
-  n5 layout_4@~~~ n16
+  n21@{ shape: lin-rect, label: "**EnhancedInputSystems::Prepare**<br/>来自Enhanced Input ↗：准备动作评估并<br/>清理待释放的输入。" }
+  class n21 node_contract
+  class n21 external_node
+  n28@{ shape: rounded, label: "**clear_cancelled_primary_presses**<br/>来自菜单与界面 ↗：清理被取消、失焦或离<br/>窗的菜单主键按压。" }
+  class n28 node_system
+  class n28 external_node
+  n1 layout_1@~~~ n10
+  n10 layout_2@~~~ n9
+  n9 layout_3@~~~ n16
+  n16 layout_4@~~~ n17
+  n17 layout_5@~~~ n15
+  n15 layout_6@~~~ n19
+  n19 layout_7@~~~ n20
+  n20 layout_8@~~~ n5
+  n5 layout_9@~~~ n21
+  n21 layout_10@~~~ n28
   end
   subgraph sg3["FixedUpdate"]
   direction TB
-  n17@{ shape: rounded, label: "**handle_interaction**<br/>来自物品交互 ↗：处理物品拾取、共享持握<br/>与主动释放。" }
-  class n17 node_system
-  class n17 external_node
+  n22@{ shape: rounded, label: "**handle_interaction**<br/>来自物品交互 ↗：处理物品拾取、共享持握<br/>与主动释放。" }
+  class n22 node_system
+  class n22 external_node
   n2@{ shape: lin-rect, label: "**ApplyDeferred（交互 → 呈现 / 挂接）**<br/>使拿放后的关系与刚体变更对后续系统可见。" }
   class n2 node_contract
-  n18@{ shape: rounded, label: "**sync_held_presentation**<br/>来自物品交互 ↗：按人物呈现姿态同步持物<br/>模型与握持目标。" }
-  class n18 node_system
-  class n18 external_node
-  n19@{ shape: rounded, label: "**release_orphaned_items**<br/>来自物品交互 ↗：清理失效持握并恢复物品<br/>独立运动。" }
-  class n19 node_system
-  class n19 external_node
+  n23@{ shape: rounded, label: "**sync_held_presentation**<br/>来自物品交互 ↗：按人物呈现姿态同步持物<br/>模型与握持目标。" }
+  class n23 node_system
+  class n23 external_node
+  n24@{ shape: rounded, label: "**release_orphaned_items**<br/>来自物品交互 ↗：清理失效持握并恢复物品<br/>独立运动。" }
+  class n24 node_system
+  class n24 external_node
   n6@{ shape: lin-rect, label: "**ApplyDeferred（清理 / 装卸依赖）**<br/>使持物清理与刚体装卸变更对后续同步可见。" }
   class n6 node_contract
-  n20@{ shape: rounded, label: "**cleanup_orphaned_colliders**<br/>来自物品交互 ↗：清理物品销毁后残留的碰<br/>撞代理。" }
-  class n20 node_system
-  class n20 external_node
-  n17 layout_5@~~~ n2
-  n2 layout_6@~~~ n18
-  n18 layout_7@~~~ n19
-  n19 layout_8@~~~ n6
-  n6 layout_9@~~~ n20
+  n25@{ shape: rounded, label: "**cleanup_orphaned_colliders**<br/>来自物品交互 ↗：清理物品销毁后残留的碰<br/>撞代理。" }
+  class n25 node_system
+  class n25 external_node
+  n22 layout_11@~~~ n2
+  n2 layout_12@~~~ n23
+  n23 layout_13@~~~ n24
+  n24 layout_14@~~~ n6
+  n6 layout_15@~~~ n25
   end
   subgraph sg4["SpawnScene"]
   direction TB
@@ -108,34 +128,34 @@ flowchart TB
   direction TB
   n8@{ shape: lin-rect, label: "**AnimationSystems / AnimationPlugin**<br/>采样动画图并更新骨骼局部姿态。" }
   class n8 node_contract
-  n10@{ shape: lin-rect, label: "**UiSystems::Layout**<br/>计算界面内容与视口的本帧布局。" }
-  class n10 node_contract
-  n11@{ shape: rounded, label: "**ScrollbarPlugin · thumb geometry**<br/>按内容与视口比例更新滚动条滑块几何。" }
-  class n11 node_system
-  n21@{ shape: rounded, label: "**compensate_courier_sole_penetration**<br/>来自角色动画 ↗：补偿鞋底穿地并平滑恢复<br/>视觉高度。" }
-  class n21 node_system
-  class n21 external_node
+  n12@{ shape: lin-rect, label: "**UiSystems::Layout**<br/>计算界面内容与视口的本帧布局。" }
+  class n12 node_contract
+  n13@{ shape: rounded, label: "**ScrollbarPlugin · thumb geometry**<br/>按内容与视口比例更新滚动条滑块几何。" }
+  class n13 node_system
+  n26@{ shape: rounded, label: "**compensate_courier_sole_penetration**<br/>来自角色动画 ↗：补偿鞋底穿地并平滑恢复<br/>视觉高度。" }
+  class n26 node_system
+  class n26 external_node
   n3@{ shape: lin-rect, label: "**TransformSystems::Propagate**<br/>沿实体层级传播世界变换。" }
   class n3 node_contract
-  n22@{ shape: rounded, label: "**sync_settings_scrollbars**<br/>来自菜单与界面 ↗：同步滚动条显隐、拾取<br/>范围与高亮。" }
-  class n22 node_system
-  class n22 external_node
-  n12@{ shape: lin-rect, label: "**VisibilityPropagate**<br/>在项目显隐同步后传播可见性。" }
-  class n12 node_contract
-  n8 layout_10@~~~ n10
-  n10 layout_11@~~~ n11
-  n11 layout_12@~~~ n21
-  n21 layout_13@~~~ n3
-  n3 layout_14@~~~ n22
-  n22 layout_15@~~~ n12
+  n27@{ shape: rounded, label: "**sync_settings_scrollbars**<br/>来自菜单与界面 ↗：同步滚动条显隐、拾取<br/>范围与高亮。" }
+  class n27 node_system
+  class n27 external_node
+  n14@{ shape: lin-rect, label: "**VisibilityPropagate**<br/>在项目显隐同步后传播可见性。" }
+  class n14 node_contract
+  n8 layout_16@~~~ n12
+  n12 layout_17@~~~ n13
+  n13 layout_18@~~~ n26
+  n26 layout_19@~~~ n3
+  n3 layout_20@~~~ n27
+  n27 layout_21@~~~ n14
   end
   subgraph sg6["RenderApp"]
   direction TB
   n4@{ shape: lin-rect, label: "**RenderApp / 渲染流程**<br/>提取场景数据并执行本帧渲染。" }
   class n4 node_contract
   end
-  sg0 layout_16@~~~ sg1
-  sg5 layout_17@~~~ sg6
+  sg0 layout_22@~~~ sg1
+  sg5 layout_23@~~~ sg6
   sg1 sc0@--> sg2
   class sc0 edge_schedule
   sg2 sc1@--> sg3
@@ -144,32 +164,44 @@ flowchart TB
   class sc2 edge_schedule
   sg4 sc3@--> sg5
   class sc3 edge_schedule
-  n13 e0@--> n0
+  n18 e0@--> n0
   class e0 edge_order
-  n1 e1@--> n14
+  n1 e1@--> n19
   class e1 edge_order
-  n15 e2@--> n5
+  n20 e2@--> n5
   class e2 edge_order
-  n5 e3@--> n16
+  n5 e3@--> n21
   class e3 edge_order
-  n17 e4@--> n2
+  n22 e4@--> n2
   class e4 edge_order
-  n2 e5@--> n18
+  n2 e5@--> n23
   class e5 edge_order
-  n19 e6@--> n6
+  n24 e6@--> n6
   class e6 edge_order
-  n6 e7@--> n20
+  n6 e7@--> n25
   class e7 edge_order
-  n8 e8@-->|"AnimationSystems"| n21
+  n8 e8@-->|"AnimationSystems"| n26
   class e8 edge_order
-  n21 e9@-->|"Propagate"| n3
+  n26 e9@-->|"Propagate"| n3
   class e9 edge_order
-  n10 e10@-->|"Layout 内"| n11
+  n12 e10@-->|"Layout 内"| n13
   class e10 edge_order
-  n11 e11@-->|"Layout"| n22
+  n13 e11@-->|"Layout"| n27
   class e11 edge_order
-  n22 e12@--> n12
+  n27 e12@--> n14
   class e12 edge_order
+  n15 e13@-->|"PickingSystems::Last"| n28
+  class e13 edge_order
+  n16 e14@-->|"Picking sets chain"| n17
+  class e14 edge_order
+  n17 e15@-->|"Picking sets chain"| n15
+  class e15 edge_order
+  n10 e16@-->|"InteractionPlugin chain"| n9
+  class e16 edge_order
+  n16 e17@-->|"in_set(Hover)"| n9
+  class e17 edge_membership
+  n16 e18@-->|"in_set(Hover)"| n10
+  class e18 edge_membership
   end
   e0@{ curve: basis }
   e1@{ curve: basis }
@@ -184,3 +216,9 @@ flowchart TB
   e10@{ curve: basis }
   e11@{ curve: basis }
   e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: bumpY }
+  e17@{ curve: basis }
+  e18@{ curve: basis }
