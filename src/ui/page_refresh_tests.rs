@@ -4,6 +4,7 @@ use bevy::{
     text::TextLayoutInfo,
     ui_widgets::{Scrollbar, ScrollbarThumb},
 };
+use bevy::{picking::hover::Hovered, ui::Pressed};
 
 use super::super::test_support::*;
 fn live_settings_app() -> App {
@@ -154,7 +155,8 @@ fn frame_rate_clicks_refresh_values_without_resetting_scroll_or_focus() {
             .map(|(entity, _)| entity)
             .unwrap();
         let offset = world.get::<ScrollPosition>(area).unwrap().y;
-        *world.get_mut::<Interaction>(button).unwrap() = Interaction::Pressed;
+        world.entity_mut(button).insert(Pressed);
+        pointer_press(world, button, PointerButton::Primary);
         app.update(); // 真实 pointer_interaction 将鼠标状态转为 UiRequest。
         app.update(); // 下一帧消费请求、原位更新文字，帧末布局和滑块必须已经一致。
         assert_eq!(setting_text(&mut app, SettingKey::FrameRate), expected);
@@ -167,7 +169,8 @@ fn frame_rate_clicks_refresh_values_without_resetting_scroll_or_focus() {
             *app.world().resource::<MenuInputSource>(),
             MenuInputSource::Pointer
         );
-        *app.world_mut().get_mut::<Interaction>(button).unwrap() = Interaction::None;
+        app.world_mut().entity_mut(button).remove::<Pressed>();
+        app.world_mut().entity_mut(button).insert(Hovered(false));
         app.update();
     }
     // 数值边界 no-op 也不能因资源的 changed 标记而销毁页面。

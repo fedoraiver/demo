@@ -13,8 +13,8 @@ pub(crate) use collision::{
 };
 
 use crate::{game_flow::FixedGameplaySystems, settings::PrototypeConfig};
-use avian3d::prelude::*;
-use bevy::prelude::*;
+use avian3d::{prelude::*, schedule::LastPhysicsTick};
+use bevy::{ecs::system::SystemChangeTick, prelude::*};
 
 /// 注册固定物理模拟与统一碰撞日志；不加载场景、窗口或音频设备。
 pub(crate) struct GamePhysicsPlugin;
@@ -23,6 +23,12 @@ impl Plugin for GamePhysicsPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugins(PhysicsPlugins::default())
             .add_systems(
+                FixedPostUpdate,
+                wake_changed_bodies
+                    .in_set(PhysicsSystems::First)
+                    .before(PhysicsSystems::Prepare),
+            )
+            .add_systems(
                 FixedUpdate,
                 sync_gravity.before(FixedGameplaySystems::Motion),
             )
@@ -30,6 +36,52 @@ impl Plugin for GamePhysicsPlugin {
                 FixedPostUpdate,
                 collision::log_collisions.after(PhysicsSystems::StepSimulation),
             );
+    }
+}
+
+/// Avian 的自动唤醒在求解之后；外部冲量和施力应在本步准备求解器之前生效。
+fn wake_changed_bodies(
+    mut commands: Commands,
+    bodies: Query<
+        (
+            Entity,
+            Ref<Position>,
+            Ref<Rotation>,
+            Ref<LinearVelocity>,
+            Ref<AngularVelocity>,
+            Ref<SleepTimer>,
+        ),
+        (
+            With<Sleeping>,
+            Or<(
+                Changed<Position>,
+                Changed<Rotation>,
+                Changed<LinearVelocity>,
+                Changed<AngularVelocity>,
+                Changed<SleepTimer>,
+            )>,
+        ),
+    >,
+    last_physics_tick: Res<LastPhysicsTick>,
+    system_tick: SystemChangeTick,
+) {
+    let this_run = system_tick.this_run();
+    for (entity, position, rotation, velocity, angular, timer) in &bodies {
+        // 物理解算自身的写入早于 LastPhysicsTick，不能把静置身体每帧重新唤醒。
+        if [
+            position.last_changed(),
+            rotation.last_changed(),
+            velocity.last_changed(),
+            angular.last_changed(),
+            timer.last_changed(),
+        ]
+        .into_iter()
+        .any(|tick| tick.is_newer_than(last_physics_tick.0, this_run))
+        {
+            commands.queue(WakeBody(entity));
+            debug!(target: "demo::physics", ?entity, reason = "external_physics_change",
+                "Physics body scheduled to wake before simulation");
+        }
     }
 }
 

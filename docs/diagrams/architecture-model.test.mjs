@@ -3,6 +3,8 @@ import fs from 'node:fs';
 import test from 'node:test';
 import { buildArchitectureModel, isMainPluginRegistration, scheduleGroupLabel, SCHEDULE_GROUP_DISPLAY_LABELS } from './architecture-model.mjs';
 import { INFRASTRUCTURE_FEATURES, architectureViewId } from './architecture-infrastructure.mjs';
+import { dependencyDefinitionTargets } from './dependency-sources.mjs';
+import { DEPENDENCY_SOURCE_DEFINITIONS } from './architecture-source-definitions.mjs';
 
 const model = JSON.parse(fs.readFileSync(new URL('./ecs-data.json', import.meta.url), 'utf8'));
 const architecture = buildArchitectureModel(model);
@@ -40,11 +42,74 @@ test('Bevy 与四个第三方入口分别浏览，具体泛型契约和类型定
   assert.equal(architecture.graphFor('infrastructure', 'systems').nodes.find(node => node.id === 'input_update').role, 'internal');
 });
 
-test('149 个第三方业务节点各有唯一入口，移除混合目录而不展开跨入口内部实现', () => {
-  const counts = { avian: 95, enhanced_input: 34, kira: 6, egui: 14 };
+test('157 个第三方业务节点各有唯一入口，移除混合目录而不展开跨入口内部实现', () => {
+  const counts = { avian: 103, enhanced_input: 35, kira: 6, egui: 13 };
+  // 8d78c14 的已核实入口保持稳定；仅移除新版已不存在的 Egui 标记资源。
+  const originalNodes = {
+    avian: [
+      'physics_prepare', 'physics_step', 'physics_writeback', 'easing_reset',
+      'easing_end', 'easing_apply', 'easing_tick', 'easing_start',
+      'resource.Gravity', 'resource.ColliderTrees', 'resource.CollisionStartMessages', 'resource.CollisionEndMessages',
+      'resource.LastEasingTick', 'resource.TimePhysics', 'resource.ContactGraph', 'character.RigidBody',
+      'character.Collider', 'character.Position', 'character.Rotation', 'character.LinearVelocity',
+      'character.AngularVelocity', 'character.Mass', 'character.ComputedMass', 'character.ComputedAngularInertia',
+      'character.ComputedCenterOfMass', 'character.CollisionLayers', 'character.CollisionEventsEnabled', 'character.SweptCcd',
+      'character.Friction', 'character.Restitution', 'character.VelocityIntegrationData', 'character.AccumulatedLocalAcceleration',
+      'character.SleepTimer', 'character.TranslationInterpolation', 'character.TranslationEasingState', 'character.LockedAxes',
+      'character.ColliderAabb', 'character.NoTranslationEasing', 'character.NoRotationEasing', 'character.RigidBodyColliders',
+      'parcel.RigidBody', 'parcel.Collider', 'parcel.Position', 'parcel.Rotation',
+      'parcel.LinearVelocity', 'parcel.AngularVelocity', 'parcel.Mass', 'parcel.ComputedMass',
+      'parcel.ComputedAngularInertia', 'parcel.ComputedCenterOfMass', 'parcel.CollisionLayers', 'parcel.CollisionEventsEnabled',
+      'parcel.SweptCcd', 'parcel.Friction', 'parcel.Restitution', 'parcel.VelocityIntegrationData',
+      'parcel.AccumulatedLocalAcceleration', 'parcel.SleepTimer', 'parcel.TranslationInterpolation', 'parcel.TranslationEasingState',
+      'parcel.LockedAxes', 'parcel.AngularDamping', 'parcel.TransformInterpolation', 'parcel.RotationInterpolation',
+      'parcel.ScaleInterpolation', 'parcel.RotationEasingState', 'parcel.ScaleEasingState', 'parcel.Sensor',
+      'parcel.ColliderAabb', 'parcel.NoTranslationEasing', 'parcel.NoRotationEasing', 'parcel.ColliderDisabled',
+      'parcel.ColliderOf', 'parcel.Sleeping', 'world.RigidBody', 'world.Collider',
+      'world.CollisionLayers', 'world.Position', 'world.Rotation', 'world.ColliderAabb',
+      'world.Sensor', 'world.ColliderOf', 'world.ColliderDisabled', 'held_proxy.ColliderOf',
+      'held_proxy.ColliderTransform', 'held_proxy.Collider', 'held_proxy.CollisionLayers', 'held_proxy.Position',
+      'held_proxy.Rotation', 'held_proxy.Friction', 'held_proxy.Restitution', 'held_proxy.CollisionEventsEnabled',
+      'held_proxy.ColliderDisabled', 'plugin-physics-0', 'physics-messages',
+    ],
+    enhanced_input: [
+      'enhanced_prepare', 'enhanced_evaluate', 'input_apply', 'resource.ContextInstances',
+      'resource.ActionSources', 'resource.ConsumedInputs', 'resource.PendingBindings', 'controller.GamepadDevice',
+      'controller.Actions', 'controller.ContextPriority', 'controller.ContextActivity', 'action.Action',
+      'action.ActionSettings', 'action.ActionOf', 'action.Bindings', 'action.Press',
+      'action.ActionValue', 'action.TriggerState', 'action.ActionEvents', 'action.ActionTime',
+      'action.ActionMock', 'action.ActionFns', 'action.ConditionFns', 'binding.Binding',
+      'binding.BindingOf', 'binding.FirstActivation', 'binding.Negate', 'binding.SwizzleAxis',
+      'binding.ModifierFns', 'menu_controller.ContextPriority', 'menu_controller.ContextActivity', 'menu_controller.GamepadDevice',
+      'menu_controller.Actions', 'plugin-EnhancedInputPlugin',
+    ],
+    kira: [
+      'resource.AudioSources', 'resource.AudioLoadFailures', 'resource.AudioInstances', 'plugin-kira',
+      'kira-play-typed', 'kira-output',
+    ],
+    egui: [
+      'egui_input', 'egui_begin', 'inspector_pass', 'resource.EguiGlobalSettings',
+      'resource.EnableMultipassForPrimaryContext', 'camera.EguiContext', 'camera.PrimaryEguiContext', 'camera.EguiContextSettings',
+      'camera.EguiInput', 'camera.EguiMultipassSchedule', 'camera.EguiFullOutput', 'menu_camera.PrimaryEguiContext',
+      'plugin-inspector-0', 'plugin-inspector-1',
+    ],
+  };
+  const addedNodes = {
+    avian: [
+      'resource.LastPhysicsTick', 'character.SpeculativeCcd', 'character.BodySizeMetrics', 'character.SolverBodyIndex',
+      'character.Sleeping', 'parcel.SpeculativeCcd', 'parcel.BodySizeMetrics', 'parcel.SolverBodyIndex',
+    ],
+    enhanced_input: [
+      'input_trigger',
+    ],
+    kira: [],
+    egui: [],
+  };
   for (const [feature, expected] of Object.entries(counts)) {
     const owned = Object.values(architecture.registry).filter(node => node.feature === feature);
     assert.equal(owned.length, expected, feature);
+    const retained = originalNodes[feature].filter(id => id !== 'resource.EnableMultipassForPrimaryContext');
+    assert.deepEqual(new Set(owned.map(node => node.id)), new Set([...retained, ...addedNodes[feature]]), `${feature}: retained and added stable IDs`);
     assert.equal(Object.values(model.node_features).filter(owner => owner === feature).length, expected, feature);
     const visibleInternal = new Set();
     for (const aspect of ['systems', 'data', 'events']) {
@@ -102,6 +167,48 @@ test('功能系统图保留本功能边界，Observer 留在事件图，跨功�
   assert.ok(!architecture.graphFor('first_person', 'systems').nodes.some(node => node.id === 'observe_move'));
   assert.ok(architecture.graphFor('first_person', 'events').nodes.some(node => node.id === 'observe_move' && node.role === 'internal'));
   assert.ok(graph.nodes.every(node => /[\u4e00-\u9fff]/.test(node.group)));
+});
+
+test('提前唤醒同步在物理页完整显示，浏览归属不覆盖引擎定义来源', () => {
+  const graph = architecture.graphFor('physics', 'systems');
+  const chain = ['wake_changed_bodies', 'wake_apply', 'physics_prepare'];
+  for (const [id, role] of [['wake_changed_bodies', 'internal'], ['wake_apply', 'internal'], ['physics_prepare', 'external']]) {
+    assert.equal(graph.nodes.find(node => node.id === id)?.role, role, id);
+    assert.equal(architecture.registry[id].schedule, 'FixedPostUpdate', id);
+  }
+  for (let index = 1; index < chain.length; index++) {
+    assert.equal(graph.links.filter(link => link.kind === 'order' && link.from === chain[index - 1] && link.to === chain[index]).length, 1);
+  }
+  const group = architecture.scheduleGroups(graph).find(group => group.id === 'FixedPostUpdate');
+  const positions = chain.map(id => group.nodes.findIndex(node => node.id === id));
+  assert.ok(positions.every(index => index >= 0));
+  assert.ok(positions[0] < positions[1] && positions[1] < positions[2]);
+  assert.equal(architecture.ownerOf('wake_apply'), 'physics');
+  assert.equal(architecture.registry.wake_apply.defined_in, 'infrastructure');
+  assert.equal(architecture.registry.wake_apply.registered_by, 'physics');
+  assert.equal(architecture.registry.wake_apply.registrations[0].implicit, true);
+  assert.ok(dependencyDefinitionTargets(architecture.registry).includes('wake_apply'));
+  assert.deepEqual(DEPENDENCY_SOURCE_DEFINITIONS.wake_apply, {
+    package: 'bevy_ecs', path: 'src/schedule/executor/mod.rs', symbol: 'ApplyDeferred', kind: 'struct',
+  });
+});
+
+test('菜单请求等待 Trigger 事件命令应用，UI 页保留完整消费链', () => {
+  const graph = architecture.graphFor('ui', 'systems');
+  const chain = ['input_trigger', 'event_apply', 'menu_handle_requests'];
+  for (const [id, role] of [['input_trigger', 'external'], ['event_apply', 'internal'], ['menu_handle_requests', 'internal']]) {
+    assert.equal(graph.nodes.find(node => node.id === id)?.role, role, id);
+    assert.equal(architecture.registry[id].schedule, 'PreUpdate', id);
+  }
+  for (let index = 1; index < chain.length; index++) {
+    assert.equal(graph.links.filter(link => link.kind === 'order' && link.from === chain[index - 1] && link.to === chain[index]).length, 1);
+  }
+  assert.equal(architecture.registry.input_apply.events.length, 0);
+  assert.ok(!graph.links.some(link => link.kind === 'order' && link.from === 'input_apply' && link.to === 'menu_handle_requests'));
+  assert.equal(architecture.ownerOf('event_apply'), 'ui');
+  assert.equal(architecture.registry.event_apply.registrations[0].implicit, true);
+  assert.equal(architecture.registry.event_apply.defined_in, 'infrastructure');
+  assert.deepEqual(DEPENDENCY_SOURCE_DEFINITIONS.event_apply, DEPENDENCY_SOURCE_DEFINITIONS.wake_apply);
 });
 
 test('数据页使用普通Entity卡片，组件清单和真实访问端点完整保留', () => {
@@ -294,9 +401,49 @@ test('非系统节点缺少明确归属时失败，不静默归入基础设施',
   assert.throws(() => buildArchitectureModel(missingOwner), /resource.GameSettings.*缺少明确的功能归属/);
 });
 
-test('121 个条目分别记录实际 Schedule，Observer 不冒充固定调度', () => {
+test('135 个条目分别记录实际 Schedule，Observer 不冒充固定调度', () => {
   const scheduleNames = new Set(['Startup', 'First', 'PreUpdate', 'FixedFirst', 'FixedUpdate', 'FixedPostUpdate', 'FixedLast', 'RunFixedMainLoop', 'Update', 'SpawnScene', 'PostUpdate', 'EguiPrimaryContextPass', 'Render', 'OnEnter(AppState::MainMenu)', 'OnEnter(AppState::InGame)', 'OnEnter(PlayState::Paused)', 'OnEnter(PlayState::Running)']);
-  assert.equal(model.systems.length, 121);
+  assert.equal(model.systems.length, 135);
+  const originalIds = [
+    'startup_spawn', 'startup_config', 'startup_timestep', 'startup_pose',
+    'frame_limit', 'time_update', 'input_update', 'mouse_capture',
+    'enhanced_prepare', 'enhanced_evaluate', 'input_apply', 'observe_move',
+    'observe_complete', 'observe_cancel', 'observe_jump', 'observe_interact',
+    'observe_look', 'facing_fixed', 'movement', 'gravity',
+    'interaction', 'held_apply', 'held_fixed', 'facing_update',
+    'held_update', 'camera_follow', 'transform_propagate', 'render',
+    'visibility_update', 'startup_inspector', 'egui_input', 'egui_begin',
+    'capture_apply', 'inspector_pass', 'filter_egui_input', 'grounded_fixed',
+    'grounded_after', 'gravity_sync', 'orphan_cleanup', 'orphan_apply',
+    'velocity_log', 'collision_log', 'physics_prepare', 'physics_step',
+    'physics_writeback', 'easing_reset', 'easing_end', 'easing_apply',
+    'easing_tick', 'startup_assets', 'asset_poll', 'island_begin',
+    'island_ready_observer', 'island_prepare', 'actors_spawn', 'courier_ready_observer',
+    'animation_initialize', 'animation_sync', 'water_recover', 'interpolation_resume',
+    'world_spawn', 'animation_grounding', 'animation_engine', 'easing_start',
+    'flow_enter_menu', 'flow_pause', 'flow_suspend', 'flow_resume',
+    'menu_spawn_controller', 'menu_sync_context', 'menu_handle_requests', 'menu_pointer',
+    'menu_rebuild', 'menu_style', 'menu_description', 'menu_scroll_focus',
+    'menu_backdrop_spawn', 'menu_asset_failures', 'observe_release_pointer', 'observe_menu_previous',
+    'observe_menu_next', 'observe_menu_left', 'observe_menu_right', 'observe_menu_confirm',
+    'observe_menu_back', 'observe_menu_scroll', 'observe_courier_ready', 'menu_animation_play',
+    'audio_preload', 'audio_load_failures', 'audio_play', 'audio_stop',
+    'audio_strain', 'audio_land', 'menu_volume_pointer', 'menu_volume_visuals',
+    'audio_mix', 'audio_voice_volumes', 'audio_voice_volumes_post', 'window_log',
+    'window_install', 'menu_settings_text', 'menu_bind_scrollbars', 'menu_sync_scrollbars',
+    'observe_scrollbar_scroll', 'observe_scrollbar_press', 'carry_proxy_cleanup', 'carry_mass_restore',
+    'carry_attach', 'carry_align', 'carry_physics_fixed', 'carry_physics_post',
+    'carry_physics_frame', 'carry_resume', 'carry_holder_despawn', 'flow_clock_menu',
+    'flow_clock_pause', 'flow_clock_resume', 'flow_resume_capture', 'menu_audio_preview',
+    'character_clear_intents',
+  ];
+  const addedIds = [
+    'input_trigger', 'wake_changed_bodies', 'wake_apply', 'observe_menu_primary_press',
+    'observe_menu_primary_clear', 'menu_clear_cancelled_primary', 'native_pointer_events', 'native_update_hovered',
+    'native_button_down', 'native_button_up', 'native_button_click', 'native_button_drag_end',
+    'native_button_cancel', 'native_button_key',
+  ];
+  assert.deepEqual(new Set(model.systems.map(system => system.id)), new Set([...originalIds, ...addedIds]), 'Original registrations retain their stable IDs');
   for (const system of model.systems) {
     assert.ok(Object.hasOwn(system, 'schedule'), system.id);
     if (system.kind === 'observer') {

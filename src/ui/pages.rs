@@ -100,16 +100,19 @@ pub(super) fn page_scene(
         Node {
             width: percent(100),
             height: percent(100),
+            // 根固定在视口内；正文由内层滚动区承接，避免自动最小高度把整页撑出窗口。
+            min_height: px(0),
             flex_direction: FlexDirection::Column,
         }
         BackgroundColor({if state.page == MenuPage::Pause {
-            Color::srgba(0.06, 0.10, 0.15, 0.68)
-        } else {
-            Color::NONE
+                    Color::srgba(0.06, 0.10, 0.15, 0.68)
+                } else {
+                    Color::NONE
         }})
         Children [
-            ({content}),
-            footer(&theme),
+            @{content}
+            --
+            @footer(&theme)
         ]
     }
 }
@@ -128,6 +131,7 @@ fn fixed_page_area(theme: &UiTheme) -> impl Scene + use<> {
 }
 
 fn main_page(theme: &UiTheme, paused: bool) -> impl Scene + use<> {
+    let scale = theme.scale;
     let first_title = if paused { "Resume" } else { "Start Game" };
     let first_action = if paused {
         UiAction::Resume
@@ -151,78 +155,78 @@ fn main_page(theme: &UiTheme, paused: bool) -> impl Scene + use<> {
         "A little sunshine. A lot to carry."
     };
     let placeholders: Box<dyn SceneList> = if paused {
-        Box::new(bsn_list![])
+        Box::new(bsn_list! {})
     } else {
-        Box::new(bsn_list![
-            placeholder_row(theme, "Continue", true),
-            placeholder_row(theme, "Multiplayer", true),
-        ])
+        Box::new(bsn_list! {
+            @placeholder_row(theme, "Continue", true)
+            --
+            @placeholder_row(theme, "Multiplayer", true)
+        })
     };
     bsn! {
-        fixed_page_area(theme)
+        @fixed_page_area(theme)
         Node { flex_direction: FlexDirection::Row, align_items: AlignItems::FlexStart }
         Children [
-            (
-                template_value(column(theme.size(16.0)))
-                Node {
-                    width: percent(32),
-                    min_width: px(theme.size(280.0)),
-                    max_width: px(theme.size(490.0)),
-                    flex_shrink: 0.0,
-                }
+            column(16.0 * scale)
+            Node {
+                width: percent(32),
+                min_width: px(theme.size(280.0)),
+                max_width: px(theme.size(490.0)),
+                flex_shrink: 0.0,
+            }
+            Children [
+                @logo(theme, false)
+                --
+                column(8.0 * scale)
                 Children [
-                    logo(theme, false),
-                    (
-                        template_value(column(theme.size(8.0)))
-                        Children [
-                            fixed_menu_button(theme, first_title, ">", first_action, 0),
-                            {placeholders},
-                            fixed_menu_button(theme, "Settings", "+", UiAction::OpenSettings, 1),
-                            fixed_menu_button(theme, "How to Play", "?", UiAction::OpenHelp, 2),
-                            fixed_menu_button(theme, last_title, "<", last_action, 3),
-                        ]
-                    ),
-                    (
-                        Node { align_items: AlignItems::Center, column_gap: px(theme.size(8.0)) }
-                        Children [
-                            (
-                                Node {
-                                    width: px(theme.size(9.0)),
-                                    height: px(theme.size(9.0)),
-                                    border_radius: BorderRadius::MAX,
-                                }
-                                BackgroundColor(GOLD)
-                            ),
-                            label(theme, if paused { "DELIVERIES ON HOLD" } else { "SINGLE PLAYER" }, 15.0, CREAM),
-                        ]
-                    ),
+                    @fixed_menu_button(theme, first_title, ">", first_action, 0)
+                    --
+                    {placeholders}
+                    --
+                    @fixed_menu_button(theme, "Settings", "+", UiAction::OpenSettings, 1)
+                    --
+                    @fixed_menu_button(theme, "How to Play", "?", UiAction::OpenHelp, 2)
+                    --
+                    @fixed_menu_button(theme, last_title, "<", last_action, 3)
                 ]
-            ),
-            (
-                Node {
-                    flex_grow: 1.0,
-                    min_width: px(0),
-                    align_self: AlignSelf::FlexEnd,
-                    justify_content: JustifyContent::FlexEnd,
-                    padding: UiRect::bottom(px(theme.size(20.0))),
-                }
-                Children [(
+                --
+                Node { align_items: AlignItems::Center, column_gap: px(theme.size(8.0)) }
+                Children [
                     Node {
-                        padding: px(theme.size(17.0)),
-                        border: px(1),
-                        border_radius: BorderRadius::all(px(7)),
-                        flex_direction: FlexDirection::Column,
-                        row_gap: px(theme.size(6.0)),
-                        max_width: px(theme.size(350.0)),
+                        width: px(theme.size(9.0)),
+                        height: px(theme.size(9.0)),
+                        border_radius: BorderRadius::MAX,
                     }
-                    BackgroundColor(Color::srgba(0.09, 0.15, 0.22, 0.70))
-                    BorderColor::all(Color::srgba(0.99, 0.96, 0.87, 0.40))
-                    Children [
-                        heading(theme, tag_title, 24.0, GOLD),
-                        label(theme, tag_body, 17.0, CREAM),
-                    ]
-                )]
-            ),
+                    BackgroundColor(GOLD)
+                    --
+                    @label(theme, if paused { "DELIVERIES ON HOLD" } else { "SINGLE PLAYER" }, 15.0, CREAM)
+                ]
+            ]
+            --
+            Node {
+                flex_grow: 1.0,
+                min_width: px(0),
+                align_self: AlignSelf::FlexEnd,
+                justify_content: JustifyContent::FlexEnd,
+                padding: UiRect::bottom(px(theme.size(20.0))),
+            }
+            Children [
+                Node {
+                    padding: px(theme.size(17.0)),
+                    border: px(1),
+                    border_radius: BorderRadius::all(px(7)),
+                    flex_direction: FlexDirection::Column,
+                    row_gap: px(theme.size(6.0)),
+                    max_width: px(theme.size(350.0)),
+                }
+                BackgroundColor(Color::srgba(0.09, 0.15, 0.22, 0.70))
+                BorderColor::all(Color::srgba(0.99, 0.96, 0.87, 0.40))
+                Children [
+                    @heading(theme, tag_title, 24.0, GOLD)
+                    --
+                    @label(theme, tag_body, 17.0, CREAM)
+                ]
+            ]
         ]
     }
 }
@@ -242,20 +246,21 @@ fn footer(theme: &UiTheme) -> impl Scene + use<> {
         }
         BackgroundColor(Color::srgba(0.07, 0.11, 0.16, 0.88))
         Children [
-            label(theme, "ISLAND DELIVERY CO.  /  HANDLE WITH CARE", 14.0, CREAM),
-            (
-                Node {
-                    column_gap: px(theme.size(17.0)),
-                    row_gap: px(theme.size(8.0)),
-                    flex_wrap: FlexWrap::Wrap,
-                    align_items: AlignItems::Center,
-                }
-                Children [
-                    input_hint(theme, "Arrows", "Navigate"),
-                    input_hint(theme, "Enter", "Confirm"),
-                    input_hint(theme, "Esc", "Back"),
-                ]
-            ),
+            @label(theme, "ISLAND DELIVERY CO.  /  HANDLE WITH CARE", 14.0, CREAM)
+            --
+            Node {
+                column_gap: px(theme.size(17.0)),
+                row_gap: px(theme.size(8.0)),
+                flex_wrap: FlexWrap::Wrap,
+                align_items: AlignItems::Center,
+            }
+            Children [
+                @input_hint(theme, "Arrows", "Navigate")
+                --
+                @input_hint(theme, "Enter", "Confirm")
+                --
+                @input_hint(theme, "Esc", "Back")
+            ]
         ]
     }
 }
@@ -263,33 +268,39 @@ fn footer(theme: &UiTheme) -> impl Scene + use<> {
 fn input_hint(theme: &UiTheme, key: &'static str, title: &'static str) -> impl Scene + use<> {
     bsn! {
         Node { align_items: AlignItems::Center, column_gap: px(theme.size(8.0)) }
-        Children [keycap(theme, key, true), label(theme, title, 17.0, CREAM)]
+        Children [
+            @keycap(theme, key, true)
+            --
+            @label(theme, title, 17.0, CREAM)
+        ]
     }
 }
 
 fn sidebar(theme: &UiTheme, state: &MenuState) -> impl Scene + use<> {
+    let scale = theme.scale;
     bsn! {
-        template_value(column(theme.size(25.0)))
+        column(25.0 * scale)
         Node { width: percent(24), min_width: px(theme.size(205.0)), flex_shrink: 0.0 }
         Children [
-            logo(theme, true),
-            (
-                template_value(column(theme.size(12.0)))
-                Children [
-                    menu_button(theme, "Graphics", "+", UiAction::SelectTab(SettingsTab::Graphics), 0),
-                    menu_button(theme, "Audio", "~", UiAction::SelectTab(SettingsTab::Audio), 1),
-                    menu_button(theme, "Controls", ">", UiAction::SelectTab(SettingsTab::Controls), 2),
-                    menu_button(theme, "Accessibility", "+", UiAction::SelectTab(SettingsTab::Accessibility), 3),
-                ]
-            ),
-            (
-                label(theme, if state.return_page == MenuPage::Pause {
+            @logo(theme, true)
+            --
+            column(12.0 * scale)
+            Children [
+                @menu_button(theme, "Graphics", "+", UiAction::SelectTab(SettingsTab::Graphics), 0)
+                --
+                @menu_button(theme, "Audio", "~", UiAction::SelectTab(SettingsTab::Audio), 1)
+                --
+                @menu_button(theme, "Controls", ">", UiAction::SelectTab(SettingsTab::Controls), 2)
+                --
+                @menu_button(theme, "Accessibility", "+", UiAction::SelectTab(SettingsTab::Accessibility), 3)
+            ]
+            --
+            @label(theme, if state.return_page == MenuPage::Pause {
                     "Your game is paused."
                 } else {
                     "Make yourself at home."
                 }, 17.0, CREAM)
-                TextShadow { offset: {Vec2::new(1.0, 1.0)}, color: INK }
-            ),
+            TextShadow { offset: {Vec2::new(1.0, 1.0)}, color: INK }
         ]
     }
 }
@@ -300,6 +311,7 @@ fn settings_page(
     draft: &SettingsDraft,
     compact: bool,
 ) -> impl Scene + use<> {
+    let scale = theme.scale;
     let (category, next_index) = match state.tab {
         SettingsTab::Graphics => ("GRAPHICS", 6),
         SettingsTab::Audio => ("AUDIO", 14),
@@ -308,150 +320,167 @@ fn settings_page(
     };
     let rows: Box<dyn Scene> = match state.tab {
         SettingsTab::Graphics => Box::new(bsn! {
-            template_value(column(theme.size(13.0)))
+            column(13.0 * scale)
             Children [
-                placeholder_row(theme, "Window Mode", false),
-                placeholder_row(theme, "Resolution", false),
-                placeholder_row(theme, "VSync", false),
-                setting_row(theme, "Frame Rate Limit", setting_value(draft, SettingKey::FrameRate), SettingKey::FrameRate, 4,
-                    "Choose the maximum frame rate. A higher limit feels smoother when your computer can keep up. This setting does not change movement speed."),
-                placeholder_row(theme, "Shadow Quality", false),
-                placeholder_row(theme, "Anti-Aliasing", false),
-                placeholder_row(theme, "View Distance", false),
+                @placeholder_row(theme, "Window Mode", false)
+                --
+                @placeholder_row(theme, "Resolution", false)
+                --
+                @placeholder_row(theme, "VSync", false)
+                --
+                @setting_row(theme, "Frame Rate Limit", setting_value(draft, SettingKey::FrameRate), SettingKey::FrameRate, 4,
+                    "Choose the maximum frame rate. A higher limit feels smoother when your computer can keep up. This setting does not change movement speed.")
+                --
+                @placeholder_row(theme, "Shadow Quality", false)
+                --
+                @placeholder_row(theme, "Anti-Aliasing", false)
+                --
+                @placeholder_row(theme, "View Distance", false)
             ]
         }),
         SettingsTab::Audio => Box::new(bsn! {
-            template_value(column(theme.size(13.0)))
+            column(13.0 * scale)
             Children [
-                volume_row(theme, "Master Volume", draft.audio.master_volume, SettingKey::MasterVolume, 4,
-                    "Adjust every sound together. Changes are heard immediately. Choose Apply to save, or Back to restore the last applied volumes."),
-                volume_row(theme, "SFX Volume", draft.audio.sfx_volume, SettingKey::SfxVolume, 7,
-                    "Adjust pickup, release, landing and carry warning sounds. Use Test SFX to hear a pickup sample in this menu."),
-                volume_row(theme, "UI Volume", draft.audio.ui_volume, SettingKey::UiVolume, 10,
-                    "Adjust menu navigation, confirmation and back sounds. Dragging previews the volume without repeated confirmation sounds."),
-                placeholder_row(theme, "Music Volume", false),
-                small_button(theme, "Test SFX", UiAction::TestSfx, 13),
-                label(theme, "Preview changes now. Choose Apply to save.", 17.0, MUTED),
+                @volume_row(theme, "Master Volume", draft.audio.master_volume, SettingKey::MasterVolume, 4,
+                    "Adjust every sound together. Changes are heard immediately. Choose Apply to save, or Back to restore the last applied volumes.")
+                --
+                @volume_row(theme, "SFX Volume", draft.audio.sfx_volume, SettingKey::SfxVolume, 7,
+                    "Adjust pickup, release, landing and carry warning sounds. Use Test SFX to hear a pickup sample in this menu.")
+                --
+                @volume_row(theme, "UI Volume", draft.audio.ui_volume, SettingKey::UiVolume, 10,
+                    "Adjust menu navigation, confirmation and back sounds. Dragging previews the volume without repeated confirmation sounds.")
+                --
+                @placeholder_row(theme, "Music Volume", false)
+                --
+                @small_button(theme, "Test SFX", UiAction::TestSfx, 13)
+                --
+                @label(theme, "Preview changes now. Choose Apply to save.", 17.0, MUTED)
             ]
         }),
         SettingsTab::Controls => Box::new(bsn! {
-            template_value(column(theme.size(13.0)))
+            column(13.0 * scale)
             Children [
-                setting_row(theme, "Mouse Sensitivity", setting_value(draft, SettingKey::MouseSensitivity), SettingKey::MouseSensitivity, 4,
-                    "Adjust how far the first-person camera turns when you move the mouse. 100% is the default sensitivity."),
-                setting_row(theme, "Invert Camera Y", setting_value(draft, SettingKey::InvertY), SettingKey::InvertY, 6,
-                    "Reverse vertical mouse movement. When enabled, moving the mouse upward tilts the camera downward."),
-                placeholder_row(theme, "Rebind Keys", false),
-                label(theme, "Move with WASD. Look around with the mouse.", 17.0, MUTED),
+                @setting_row(theme, "Mouse Sensitivity", setting_value(draft, SettingKey::MouseSensitivity), SettingKey::MouseSensitivity, 4,
+                    "Adjust how far the first-person camera turns when you move the mouse. 100% is the default sensitivity.")
+                --
+                @setting_row(theme, "Invert Camera Y", setting_value(draft, SettingKey::InvertY), SettingKey::InvertY, 6,
+                    "Reverse vertical mouse movement. When enabled, moving the mouse upward tilts the camera downward.")
+                --
+                @placeholder_row(theme, "Rebind Keys", false)
+                --
+                @label(theme, "Move with WASD. Look around with the mouse.", 17.0, MUTED)
             ]
         }),
         SettingsTab::Accessibility => Box::new(bsn! {
-            template_value(column(theme.size(13.0)))
+            column(13.0 * scale)
             Children [
-                placeholder_row(theme, "UI Scale", false),
-                placeholder_row(theme, "Camera Shake", false),
-                label(theme, "More ways to make the island yours.", 17.0, MUTED),
+                @placeholder_row(theme, "UI Scale", false)
+                --
+                @placeholder_row(theme, "Camera Shake", false)
+                --
+                @label(theme, "More ways to make the island yours.", 17.0, MUTED)
             ]
         }),
     };
     let status = state.status.as_deref().unwrap_or(DEFAULT_SETTINGS_STATUS);
     // 纸色设置面板中的内容整体滚动，页面外壳、分类菜单和底部操作始终固定。
     let content = bsn! {
-        template_value(column(theme.size(18.0)))
+        column(18.0 * scale)
         Node { width: percent(100), flex_shrink: 0.0 }
         Children [
-            heading(theme, "SETTINGS", 44.0, INK),
-            (
+            @heading(theme, "SETTINGS", 44.0, INK)
+            --
+            Node {
+                height: px(theme.size(4.0)),
+                width: px(theme.size(70.0)),
+                border_radius: BorderRadius::MAX,
+                flex_shrink: 0.0,
+            }
+            BackgroundColor(GOLD)
+            --
+            Node {
+                column_gap: px(theme.size(18.0)),
+                row_gap: px(theme.size(19.0)),
+                flex_direction: {if compact { FlexDirection::Column } else { FlexDirection::Row }},
+                flex_shrink: 0.0,
+            }
+            Children [
+                column(21.0 * scale)
                 Node {
-                    height: px(theme.size(4.0)),
-                    width: px(theme.size(70.0)),
-                    border_radius: BorderRadius::MAX,
-                    flex_shrink: 0.0,
-                }
-                BackgroundColor(GOLD)
-            ),
-            (
-                Node {
-                    column_gap: px(theme.size(18.0)),
-                    row_gap: px(theme.size(19.0)),
-                    flex_direction: {if compact { FlexDirection::Column } else { FlexDirection::Row }},
-                    flex_shrink: 0.0,
+                    flex_grow: 1.0,
+                    flex_basis: {if compact { Val::Auto } else { percent(66) }},
+                    min_width: px(0),
                 }
                 Children [
-                    (
-                        template_value(column(theme.size(21.0)))
-                        Node {
-                            flex_grow: 1.0,
-                            flex_basis: {if compact { Val::Auto } else { percent(66) }},
-                            min_width: px(0),
-                        }
-                        Children [heading(theme, category, 27.0, INK), ({rows})]
-                    ),
-                    description_panel(theme, compact),
+                    @heading(theme, category, 27.0, INK)
+                    --
+                    @{rows}
                 ]
-            ),
-            (label(theme, status.to_owned(), 17.0, MUTED) SettingsStatus),
+                --
+                @description_panel(theme, compact)
+            ]
+            --
+            @label(theme, status.to_owned(), 17.0, MUTED) SettingsStatus
         ]
     };
     bsn! {
-        fixed_page_area(theme)
+        @fixed_page_area(theme)
         Node {
             column_gap: px(theme.size(27.0)),
             align_items: AlignItems::Stretch,
             min_width: px(0),
         }
         Children [
-            sidebar(theme, state),
-            (
-                template_value(column(theme.size(18.0)))
-                Node { flex_grow: 1.0, flex_basis: px(0), min_height: px(0) }
+            @sidebar(theme, state)
+            --
+            column(18.0 * scale)
+            Node { flex_grow: 1.0, flex_basis: px(0), min_height: px(0) }
+            Children [
+                SettingsPanel
+                @paper_panel(theme)
+                Node {
+                    flex_grow: 1.0,
+                    flex_basis: px(0),
+                    min_height: px(0),
+                    min_width: px(0),
+                    // 固定面板高度由页面剩余空间决定，内容不会撑高整个页面。
+                    overflow: Overflow::clip(),
+                }
                 Children [
-                    (
-                        SettingsPanel
-                        paper_panel(theme)
-                        Node {
-                            flex_grow: 1.0,
-                            flex_basis: px(0),
-                            min_height: px(0),
-                            min_width: px(0),
-                            // 固定面板高度由页面剩余空间决定，内容不会撑高整个页面。
-                            overflow: Overflow::clip(),
-                        }
-                        Children [settings_scroll_frame(theme, content)]
-                    ),
-                    (
-                        Node {
-                            width: percent(100),
-                            justify_content: JustifyContent::SpaceBetween,
-                            column_gap: px(theme.size(12.0)),
-                            row_gap: px(theme.size(10.0)),
-                            flex_wrap: FlexWrap::Wrap,
-                            flex_shrink: 0.0,
-                        }
-                        Children [
-                            small_button(theme, "Restore Defaults", UiAction::RestoreDefaults, next_index),
-                            (
-                                Node {
-                                    column_gap: px(theme.size(12.0)),
-                                    row_gap: px(theme.size(10.0)),
-                                    flex_wrap: FlexWrap::Wrap,
-                                }
-                                Children [
-                                    small_button(theme, "Apply", UiAction::ApplySettings, next_index + 1),
-                                    small_button(theme, "Back", UiAction::Back, next_index + 2),
-                                ]
-                            ),
-                        ]
-                    ),
+                    @settings_scroll_frame(theme, content)
                 ]
-            ),
+                --
+                Node {
+                    width: percent(100),
+                    justify_content: JustifyContent::SpaceBetween,
+                    column_gap: px(theme.size(12.0)),
+                    row_gap: px(theme.size(10.0)),
+                    flex_wrap: FlexWrap::Wrap,
+                    flex_shrink: 0.0,
+                }
+                Children [
+                    @small_button(theme, "Restore Defaults", UiAction::RestoreDefaults, next_index)
+                    --
+                    Node {
+                        column_gap: px(theme.size(12.0)),
+                        row_gap: px(theme.size(10.0)),
+                        flex_wrap: FlexWrap::Wrap,
+                    }
+                    Children [
+                        @small_button(theme, "Apply", UiAction::ApplySettings, next_index + 1)
+                        --
+                        @small_button(theme, "Back", UiAction::Back, next_index + 2)
+                    ]
+                ]
+            ]
         ]
     }
 }
 
 fn description_panel(theme: &UiTheme, compact: bool) -> impl Scene + use<> {
+    let scale = theme.scale;
     bsn! {
-        template_value(column(theme.size(14.0)))
+        column(14.0 * scale)
         Node {
             flex_basis: {if compact { Val::Auto } else { percent(30) }},
             flex_grow: 1.0,
@@ -461,87 +490,85 @@ fn description_panel(theme: &UiTheme, compact: bool) -> impl Scene + use<> {
         }
         BackgroundColor(SUBTLE)
         Children [
-            (
-                heading(theme, "A LITTLE FINE-TUNING", 25.0, INK)
-                DescriptionTitle
-            ),
-            (
-                label(theme, "Select a setting to see what it does. Use the arrows to change its value, then Apply to save.", 18.0, MUTED)
-                DescriptionBody
-            ),
-            (
-                Node {
-                    margin: UiRect::top(px(theme.size(12.0))),
-                    align_items: AlignItems::Center,
-                    column_gap: px(theme.size(9.0)),
-                }
-                Children [parcel_stamp(theme), heading(theme, "HANDLE WITH CARE", 17.0, INK)]
-            ),
+            @heading(theme, "A LITTLE FINE-TUNING", 25.0, INK)
+            DescriptionTitle
+            --
+            @label(theme, "Select a setting to see what it does. Use the arrows to change its value, then Apply to save.", 18.0, MUTED)
+            DescriptionBody
+            --
+            Node {
+                margin: UiRect::top(px(theme.size(12.0))),
+                align_items: AlignItems::Center,
+                column_gap: px(theme.size(9.0)),
+            }
+            Children [
+                @parcel_stamp(theme)
+                --
+                @heading(theme, "HANDLE WITH CARE", 17.0, INK)
+            ]
         ]
     }
 }
 
 /// 支持的 16:9 窗口始终显示三列说明；减少重复品牌标题，完整保留正文和键位。
 fn help_page(theme: &UiTheme) -> impl Scene + use<> {
+    let scale = theme.scale;
     bsn! {
-        fixed_page_area(theme)
+        @fixed_page_area(theme)
         Node {
             flex_direction: FlexDirection::Column,
             row_gap: px(theme.size(16.0)),
         }
         Children [
-            (
-                paper_panel(theme)
-                Node {
-                    flex_direction: FlexDirection::Row,
-                    align_items: AlignItems::Center,
-                    padding: px(theme.size(12.0)),
-                    column_gap: px(theme.size(18.0)),
-                    flex_shrink: 0.0,
-                }
+            @paper_panel(theme)
+            Node {
+                flex_direction: FlexDirection::Row,
+                align_items: AlignItems::Center,
+                padding: px(theme.size(12.0)),
+                column_gap: px(theme.size(18.0)),
+                flex_shrink: 0.0,
+            }
+            Children [
+                @parcel_stamp(theme)
+                --
+                column(5.0 * scale)
+                Node { flex_grow: 1.0 }
                 Children [
-                    parcel_stamp(theme),
-                    (
-                        template_value(column(theme.size(5.0)))
-                        Node { flex_grow: 1.0 }
-                        Children [
-                            heading(theme, "HOW TO PLAY", 36.0, INK),
-                            label(theme, "Grab a parcel. Find your stride. Enjoy the island.", 18.0, MUTED),
-                        ]
-                    ),
+                    @heading(theme, "HOW TO PLAY", 36.0, INK)
+                    --
+                    @label(theme, "Grab a parcel. Find your stride. Enjoy the island.", 18.0, MUTED)
                 ]
-            ),
-            (
-                Node {
-                    width: percent(100),
-                    column_gap: px(theme.size(16.0)),
-                    flex_shrink: 0.0,
-                }
-                Children [
-                    help_card(theme, "01", "MOVE & JUMP", "WASD", "Space", "Move", "Jump",
-                        "Move relative to the camera. Build up speed, coast to a stop, and jump while grounded."),
-                    help_card(theme, "02", "CARRY & DROP", "E", "E again", "Pick up", "Release",
-                        "Get close to a parcel with a clear path. Hold it with physics, then release it to let gravity do the rest."),
-                    help_card(theme, "03", "CAMERA & PAUSE", "Mouse", "Esc", "Look around", "Pause",
-                        "Use the mouse to look around in first-person. Press Esc to pause and resume."),
-                ]
-            ),
-            (
-                paper_panel(theme)
-                Node {
-                    flex_direction: FlexDirection::Row,
-                    align_items: AlignItems::Center,
-                    padding: px(theme.size(12.0)),
-                    flex_shrink: 0.0,
-                }
-                Children [
-                    (
-                        label(theme, "One courier. One box at a time. Take it easy out there.", 19.0, INK)
-                        Node { flex_grow: 1.0 }
-                    ),
-                    small_button(theme, "Back", UiAction::Back, 0),
-                ]
-            ),
+            ]
+            --
+            Node {
+                width: percent(100),
+                column_gap: px(theme.size(16.0)),
+                flex_shrink: 0.0,
+            }
+            Children [
+                @help_card(theme, "01", "MOVE & JUMP", "WASD", "Space", "Move", "Jump",
+                    "Move relative to the camera. Build up speed, coast to a stop, and jump while grounded.")
+                --
+                @help_card(theme, "02", "CARRY & DROP", "E", "E again", "Pick up", "Release",
+                    "Get close to a parcel with a clear path. Hold it with physics, then release it to let gravity do the rest.")
+                --
+                @help_card(theme, "03", "CAMERA & PAUSE", "Mouse", "Esc", "Look around", "Pause",
+                    "Use the mouse to look around in first-person. Press Esc to pause and resume.")
+            ]
+            --
+            @paper_panel(theme)
+            Node {
+                flex_direction: FlexDirection::Row,
+                align_items: AlignItems::Center,
+                padding: px(theme.size(12.0)),
+                flex_shrink: 0.0,
+            }
+            Children [
+                @label(theme, "One courier. One box at a time. Take it easy out there.", 19.0, INK)
+                Node { flex_grow: 1.0 }
+                --
+                @small_button(theme, "Back", UiAction::Back, 0)
+            ]
         ]
     }
 }
@@ -558,7 +585,7 @@ fn help_card(
     details: &'static str,
 ) -> impl Scene + use<> {
     bsn! {
-        paper_panel(theme)
+        @paper_panel(theme)
         Node {
             flex_grow: 1.0,
             flex_basis: px(0),
@@ -567,43 +594,41 @@ fn help_card(
             row_gap: px(theme.size(12.0)),
         }
         Children [
-            (
-                Node { align_items: AlignItems::Center, column_gap: px(theme.size(12.0)) }
-                Children [
-                    (
-                        Node {
-                            width: px(theme.size(34.0)),
-                            height: px(theme.size(34.0)),
-                            border_radius: BorderRadius::all(px(5)),
-                            justify_content: JustifyContent::Center,
-                            align_items: AlignItems::Center,
-                            flex_shrink: 0.0,
-                        }
-                        BackgroundColor(GOLD)
-                        Children [heading(theme, number, 26.0, INK)]
-                    ),
-                    heading(theme, title, 26.0, INK),
-                ]
-            ),
-            (
+            Node { align_items: AlignItems::Center, column_gap: px(theme.size(12.0)) }
+            Children [
                 Node {
-                    flex_direction: FlexDirection::Column,
-                    row_gap: px(theme.size(6.0)),
+                    width: px(theme.size(34.0)),
+                    height: px(theme.size(34.0)),
+                    border_radius: BorderRadius::all(px(5)),
+                    justify_content: JustifyContent::Center,
+                    align_items: AlignItems::Center,
+                    flex_shrink: 0.0,
                 }
+                BackgroundColor(GOLD)
                 Children [
-                    help_hint(theme, key_one, action_one),
-                    help_hint(theme, key_two, action_two),
+                    @heading(theme, number, 26.0, INK)
                 ]
-            ),
-            (
-                label(theme, details, 19.0, MUTED)
-                // 文字测量宽度不含行尾空白，而 Parley 字形布局尺寸会计入其 advance。
-                // 正文明确占满卡片，并预留少量右侧换行余量，避免尾部越过文本节点。
-                Node {
-                    width: percent(100),
-                    padding: UiRect::right(px(theme.size(8.0).max(8.0))),
-                }
-            ),
+                --
+                @heading(theme, title, 26.0, INK)
+            ]
+            --
+            Node {
+                flex_direction: FlexDirection::Column,
+                row_gap: px(theme.size(6.0)),
+            }
+            Children [
+                @help_hint(theme, key_one, action_one)
+                --
+                @help_hint(theme, key_two, action_two)
+            ]
+            --
+            @label(theme, details, 19.0, MUTED)
+            // 文字测量宽度不含行尾空白，而 Parley 字形布局尺寸会计入其 advance。
+            // 正文明确占满卡片，并预留少量右侧换行余量，避免尾部越过文本节点。
+            Node {
+                width: percent(100),
+                padding: UiRect::right(px(theme.size(8.0).max(8.0))),
+            }
         ]
     }
 }
@@ -611,7 +636,11 @@ fn help_card(
 fn help_hint(theme: &UiTheme, key: &'static str, title: &'static str) -> impl Scene + use<> {
     bsn! {
         Node { align_items: AlignItems::Center, column_gap: px(theme.size(8.0)) }
-        Children [keycap(theme, key, false), label(theme, title, 18.0, INK)]
+        Children [
+            @keycap(theme, key, false)
+            --
+            @label(theme, title, 18.0, INK)
+        ]
     }
 }
 

@@ -684,16 +684,19 @@ export function checkArchitecture(root, { dependencyDefinitions = DEPENDENCY_SOU
   function visitSources(value) {
     if (!value || typeof value !== 'object') return;
     if (typeof value.path === 'string' && Number.isSafeInteger(value.line)) { readReference(value); return; }
-    if (value.source != null) {
-      const source = value.source;
-      const file = readReference(source);
-      if (value.kind === 'system' || value.kind === 'observer') {
-        // 只核对源码入口行的函数名，不能据此推断函数行为或注册完整性。
-        const declaration = file.lines[source.line - 1].match(/^\s*(?:pub(?:\([^)]*\))?\s+)?(?:(?:async|const|unsafe)\s+)*fn\s+([A-Za-z_][A-Za-z0-9_]*)\s*(?:\(|<)/);
-        requireCondition(declaration?.[1] === value.name, `Function source mismatch: ${value.name} at ${source.path}:${source.line}`);
+    if (value.source != null) readReference(value.source);
+    if (value.kind === 'system' || value.kind === 'observer') {
+      const dependencyDefinition = registry[value.id]?.definition_source;
+      if (value.definition_source?.dependency) {
+        requireCondition(isDeepStrictEqual(value.definition_source, dependencyDefinition), `Unverified dependency function definition: ${value.name}`);
       }
-    } else if (value.kind === 'system' || value.kind === 'observer') {
-      throw new Error(`Missing function source: ${value.name}`);
+      // 依赖定义已由 checkDependencySources 校验包、版本和唯一声明；原 source 仍只保留使用语义。
+      const source = dependencyDefinition?.dependency ? dependencyDefinition : value.source;
+      requireCondition(source, `Missing function source: ${value.name}`);
+      const file = readReference(source);
+      // 只核对真实定义行的函数名，不能据此推断函数行为或注册完整性。
+      const declaration = file.lines[source.line - 1].match(/^\s*(?:pub(?:\([^)]*\))?\s+)?(?:(?:async|const|unsafe)\s+)*fn\s+([A-Za-z_][A-Za-z0-9_]*)\s*(?:\(|<)/);
+      requireCondition(declaration?.[1] === value.name, `Function source mismatch: ${value.name} at ${source.path}:${source.line}`);
     }
     if (value.definition_source != null) readReference(value.definition_source);
     for (const [key, child] of Object.entries(value)) {

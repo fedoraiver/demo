@@ -49,6 +49,7 @@ fn intersects_at(
         obstacle.shape_scaled().as_ref(),
     )
     .unwrap()
+    .intersecting
 }
 
 #[test]
@@ -377,7 +378,7 @@ fn pickup_translation_and_rotation_hit_between_clear_endpoints() {
 #[test]
 fn compound_geometry_and_local_rotation_follow_the_same_pivot() {
     let local = ColliderTransform {
-        rotation: Rotation(Quat::from_rotation_y(0.3)),
+        rotation: Quat::from_rotation_y(0.3),
         ..local_grip()
     };
     let motion = rotation_motion(

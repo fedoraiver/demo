@@ -1,7 +1,8 @@
-use super::super::test_support::{drain_sounds, menu_app as test_app, request};
+use super::super::test_support::{drain_sounds, menu_app as test_app, pointer_press, request};
 use super::*;
 use crate::audio::AudioPreview;
 use crate::game_flow::{AppState, PlayState};
+use bevy::ui::Pressed;
 use bevy::window::PrimaryWindow;
 use std::path::PathBuf;
 #[test]
@@ -370,7 +371,8 @@ fn simultaneous_settings_back_and_old_button_press_remain_paused() {
     drain_sounds(&mut app);
 
     // 同一帧键盘返回与旧页按钮的点击并存；真实 Build 必须先清理旧按钮。
-    *app.world_mut().get_mut::<Interaction>(old_back).unwrap() = Interaction::Pressed;
+    app.world_mut().entity_mut(old_back).insert(Pressed);
+    pointer_press(app.world_mut(), old_back, PointerButton::Primary);
     app.world_mut().write_message(UiRequest(UiAction::Back));
     app.update();
     assert!(app.world().get_entity(old_back).is_err());

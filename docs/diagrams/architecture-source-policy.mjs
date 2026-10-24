@@ -381,11 +381,18 @@ function typeLifecycle(record, context, definitions) {
       const generic = compact(call.generic), argument = compact(firstArgument(call.body));
       const direct = generic === wanted || argument === wanted || argument.startsWith(wanted + '(') || argument.startsWith(wanted + '{') || argument.startsWith(wanted + '::');
       const message = family === 'Messages' && call.method === 'add_message' && generic === compact(typeArgument);
+      // 框架可用 hover::HoverMap 等模块限定名初始化；仅接受已唯一核实且同包的真实声明。
+      const qualifiedResource = framework && /^[A-Za-z_]\w*$/.test(wanted)
+        && definitions.some(source => source.dependency?.name === file.dependency?.name)
+        && new RegExp(`^(?:[A-Za-z_]\\w*::)+${word(wanted)}$`).test(generic);
+      const qualifiedMessage = framework && family === 'Messages' && call.method === 'add_message'
+        && /^[A-Za-z_]\w*$/.test(typeArgument || '') && TYPE_PACKAGES[typeArgument] === file.dependency?.name
+        && new RegExp(`^(?:[A-Za-z_]\\w*::)+${word(typeArgument)}$`).test(generic);
       const state = ['State', 'NextState'].includes(family) && ['init_state', 'add_sub_state'].includes(call.method) && generic === compact(typeArgument);
       const asset = family === 'Assets' && call.method === 'init_asset' && generic === compact(typeArgument);
       const channel = family === 'AudioChannel' && call.method === 'add_audio_channel' && generic === compact(typeArgument);
       const genericFramework = framework && ((family === 'Assets' && /^Assets<[A-Z]\w*>$/.test(generic)) || (family === 'Messages' && /^Messages<[A-Z]\w*>$/.test(generic)) || (family === 'AudioChannel' && /^AudioChannel<[A-Z]\w*>$/.test(generic)) || (family === 'ContextInstances' && /^ContextInstances<[A-Z]\w*>$/.test(generic)));
-      if (!direct && !message && !state && !asset && !channel && !genericFramework) continue;
+      if (!direct && !message && !qualifiedResource && !qualifiedMessage && !state && !asset && !channel && !genericFramework) continue;
       if (framework && genericFramework) {
         const enclosing = [...file.code.slice(0, call.start).matchAll(/\bfn\s+([A-Za-z_]\w*)/g)].at(-1)?.[1];
         if (/^(?:deregister|unregister|remove|cleanup)/.test(enclosing || '') || /remove/.test(call.method)) continue;
@@ -395,7 +402,7 @@ function typeLifecycle(record, context, definitions) {
     }
   };
   context.projectFiles.forEach(file => collect(file));
-  const packages = uniqueValues([TYPE_PACKAGES[family], family === 'Assets' ? TYPE_PACKAGES[firstType(typeArgument)] : null, record.id === 'resource.TimePhysics' ? 'avian3d' : null, family === 'AppTypeRegistry' ? 'bevy_app' : null, ...definitions.map(source => source.dependency?.name)]);
+  const packages = uniqueValues([TYPE_PACKAGES[family], ['Assets', 'Messages'].includes(family) ? TYPE_PACKAGES[firstType(typeArgument)] : null, record.id === 'resource.TimePhysics' ? 'avian3d' : null, family === 'AppTypeRegistry' ? 'bevy_app' : null, ...definitions.map(source => source.dependency?.name)]);
   for (const packageName of packages) context.inPackage(packageName).forEach(file => collect(file, true));
   if (family === 'Assets') sources.push(...context.resolveEvidence({ package: 'bevy_asset', path: 'src/lib.rs', contains: 'self.insert_resource(assets)', role: 'initialize', label: '框架执行：AssetApp::init_asset 将 Assets<A> 插入 World' }));
   for (const definition of definitions.filter(source => !source.dependency)) {
@@ -437,7 +444,7 @@ function entitySources(record, context, gaps) {
     sources.push(...imported);
     if (!imported.length) gaps.push('导入实体的实际实例化入口尚未唯一定位');
   }
-  if (sources.some(source => source.role === 'create' && /BSN|spawn_scene/.test(source.label))) sources.push(...context.resolveEvidence({ package: 'bevy_scene', path: 'src/spawn.rs', contains: 'fn spawn_scene', line: 373, role: 'create', label: '框架执行：Commands::spawn_scene 创建根实体并排队装配' }));
+  if (sources.some(source => source.role === 'create' && /BSN|spawn_scene/.test(source.label))) sources.push(...context.resolveEvidence({ package: 'bevy_scene', path: 'src/spawn.rs', contains: 'fn spawn_scene', line: 361, role: 'create', label: '框架执行：Commands::spawn_scene 创建根实体并排队装配' }));
   if (!sources.some(source => source.role === 'create')) gaps.push('实体的实际创建位置尚未完整核实');
   if (!sources.some(source => source.role === 'destroy')) gaps.push('实体的显式或自动销毁位置尚未完整核实；不能据此断言没有销毁路径');
   return sources;
@@ -512,6 +519,19 @@ function sourcesForNode(record, registry, context, gaps) {
       for (const match of file.code.matchAll(impl)) sources.push(context.sourceAt(file, match.index, 'build', `构建实现：${record.name}`));
     }
     for (const file of context.projectFiles) for (const call of context.callsIn(file)) if (call.method === 'add_plugins' && [symbol, record.name].some(name => new RegExp(`\\b${word(name)}\\b`).test(call.body))) sources.push(context.sourceAt(file, call.start, 'install', `安装：${record.name}`));
+    // 这些插件由已核实的框架插件组安装，不能把任意同名引用或排序约束当作安装。
+    const nestedInstallations = {
+      'plugin-UiWidgetsPlugins': ['bevy_ui_widgets', 'bevy_internal', 'src/default_plugins.rs', 'bevy_ui_widgets:::UiWidgetsPlugins,', 'DefaultPlugins'],
+      'plugin-DefaultPickingPlugins': ['bevy_picking', 'bevy_internal', 'src/default_plugins.rs', 'bevy_picking:::DefaultPickingPlugins,', 'DefaultPlugins'],
+      'plugin-ButtonPlugin': ['bevy_ui_widgets', 'bevy_ui_widgets', 'src/lib.rs', '.add(ButtonPlugin)', 'UiWidgetsPlugins'],
+      'plugin-PickingPlugin': ['bevy_picking', 'bevy_picking', 'src/lib.rs', '.add(PickingPlugin)', 'DefaultPickingPlugins'],
+      'plugin-InteractionPlugin': ['bevy_picking', 'bevy_picking', 'src/lib.rs', '.add(InteractionPlugin)', 'DefaultPickingPlugins'],
+    };
+    const nested = nestedInstallations[record.id];
+    if (nested && sources[0]?.dependency?.name === nested[0]) {
+      const [, packageName, sourcePath, contains, parent] = nested;
+      sources.push(...context.resolveEvidence({ package: packageName, path: sourcePath, contains, role: 'install', label: `框架装配：${parent} 安装 ${symbol}` }));
+    }
     if (record.name === 'SessionLogPlugin') sources.push(...context.resolveEvidence({ path: 'src/main.rs', contains: 'app.add_plugins(logging)', role: 'install', label: '安装：SessionLogPlugin::prepare 返回的日志插件' }));
     if (record.name === 'DefaultPlugins') sources.push(...context.resolveEvidence({ package: 'bevy_app', path: 'src/plugin_group.rs', contains: 'fn build(self) -> $crate::PluginGroupBuilder', role: 'build', label: '框架生成：plugin_group! 的 PluginGroup::build 实现' }));
     if (!sources.some(source => source.role === 'definition')) gaps.push('插件类型定义尚未唯一核实');

@@ -15,7 +15,7 @@ mod theme;
 mod volume;
 mod widgets;
 
-use bevy::prelude::*;
+use bevy::{picking::hover::Hovered, prelude::*, ui_widgets::Button};
 
 use crate::{
     audio::{AudioPreview, SoundRequest},
@@ -87,6 +87,7 @@ pub enum UiAction {
 
 /// 菜单实体保存动作与导航序号，系统不依赖显示文字或实体名称。
 #[derive(Component, Clone, Default)]
+#[require(Button, Node, Hovered, BackgroundColor, BorderColor)]
 pub struct MenuButton {
     pub action: UiAction,
     pub index: usize,

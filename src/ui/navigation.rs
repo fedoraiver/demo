@@ -7,7 +7,7 @@ use crate::audio::{SoundCue, SoundRequest};
 
 use super::*;
 
-#[derive(Component)]
+#[derive(Component, Clone, Default)]
 pub(super) struct MenuContext;
 
 #[derive(InputAction)]
@@ -53,20 +53,69 @@ fn spawn_menu_controller(mut commands: Commands) {
         consume_input: true,
         ..default()
     };
-    commands.spawn((
-        Name::new("Menu input controller"),
-        MenuContext,
-        ContextPriority::<MenuContext>::new(10),
-        GamepadDevice::Any,
-        actions!(MenuContext[
-            (Action::<PreviousAction>::new(), settings(), Press::default(), bindings![KeyCode::ArrowUp, GamepadButton::DPadUp]),
-            (Action::<NextAction>::new(), settings(), Press::default(), bindings![KeyCode::ArrowDown, GamepadButton::DPadDown]),
-            (Action::<LeftAction>::new(), settings(), Press::default(), bindings![KeyCode::ArrowLeft, GamepadButton::DPadLeft]),
-            (Action::<RightAction>::new(), settings(), Press::default(), bindings![KeyCode::ArrowRight, GamepadButton::DPadRight]),
-            (Action::<ConfirmAction>::new(), settings(), Press::default(), bindings![KeyCode::Enter, GamepadButton::South]),
-            (Action::<BackAction>::new(), settings(), Press::default(), bindings![KeyCode::Escape, GamepadButton::East, GamepadButton::Start]),
-        ]),
-    ));
+    commands.spawn_scene(bsn! {
+        Name("Menu input controller")
+        MenuContext
+        ContextPriority::<MenuContext>::new(10)
+        GamepadDevice::Any
+        Actions<MenuContext> [
+            Action<PreviousAction>
+            settings()
+            Press
+            Bindings [
+                Binding(KeyCode::ArrowUp)
+                --
+                Binding(GamepadButton::DPadUp)
+            ]
+            --
+            Action<NextAction>
+            settings()
+            Press
+            Bindings [
+                Binding(KeyCode::ArrowDown)
+                --
+                Binding(GamepadButton::DPadDown)
+            ]
+            --
+            Action<LeftAction>
+            settings()
+            Press
+            Bindings [
+                Binding(KeyCode::ArrowLeft)
+                --
+                Binding(GamepadButton::DPadLeft)
+            ]
+            --
+            Action<RightAction>
+            settings()
+            Press
+            Bindings [
+                Binding(KeyCode::ArrowRight)
+                --
+                Binding(GamepadButton::DPadRight)
+            ]
+            --
+            Action<ConfirmAction>
+            settings()
+            Press
+            Bindings [
+                Binding(KeyCode::Enter)
+                --
+                Binding(GamepadButton::South)
+            ]
+            --
+            Action<BackAction>
+            settings()
+            Press
+            Bindings [
+                Binding(KeyCode::Escape)
+                --
+                Binding(GamepadButton::East)
+                --
+                Binding(GamepadButton::Start)
+            ]
+        ]
+    });
 }
 
 fn sync_context(

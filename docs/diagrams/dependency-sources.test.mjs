@@ -76,7 +76,7 @@ test('definition attachment preserves project usage, identity, ownership and unr
     friction: { id: 'friction', kind: 'Component', feature: 'avian', defined_in: 'avian', source },
     plugin: { id: 'plugin', kind: 'Plugin', feature: 'infrastructure' },
     payload: { id: 'payload', kind: 'Component', feature: 'avian', defined_in: 'physics', source },
-    system: { id: 'system', kind: 'system', feature: 'infrastructure', source },
+    system: { id: 'system', kind: 'system', feature: 'physics', source },
   };
   assert.deepEqual(dependencyDefinitionTargets(registry), ['friction', 'plugin']);
   assert.throws(() => attachDependencySources(registry, resolver, { friction: definition }), /Missing dependency definition: plugin/);
@@ -109,12 +109,12 @@ test('all maintained dependency types and execution nodes resolve real declarati
   for (const id of ['character.Friction', 'parcel.Friction', 'held_proxy.Friction']) {
     const source = registry[id].definition_source;
     assert.equal(source.dependency.name, 'avian3d');
-    assert.equal(source.dependency.version, '0.7.0');
+    assert.equal(source.dependency.version, '0.8.0');
     assert.equal(source.path, 'src/dynamics/rigid_body/physics_material.rs');
     assert.match(resolver.read(source).lines[source.line - 1], /^pub struct Friction/);
-    assert.ok(vscodeUri('Z:/another-worktree', source).endsWith(`/avian3d-0.7.0/${source.path}:${source.line}:1`));
+    assert.ok(vscodeUri('Z:/another-worktree', source).endsWith(`/avian3d-0.8.0/${source.path}:${source.line}:1`));
   }
-  assert.equal(registry['menu_button.Button'].definition_source.dependency.name, 'bevy_ui');
+  assert.equal(registry['menu_button.Button'].definition_source.dependency.name, 'bevy_ui_widgets');
   const worldRoots = targets.filter(id => DEPENDENCY_SOURCE_DEFINITIONS[id].symbol === 'WorldAssetRoot');
   assert.ok(worldRoots.length);
   for (const id of worldRoots) assert.equal(registry[id].definition_source.dependency.name, 'bevy_world_serialization');
@@ -123,7 +123,7 @@ test('all maintained dependency types and execution nodes resolve real declarati
   assert.equal(kira.definition_source.dependency.name, 'bevy_kira_audio');
   assert.equal(kira.definition_source.path, 'src/lib.rs');
   assert.match(resolver.read(kira.definition_source).lines[kira.definition_source.line - 1], /^\s*PlayTypedChannels,/);
-  const synchronization = ['held_apply', 'capture_apply', 'orphan_apply'];
+  const synchronization = ['held_apply', 'capture_apply', 'orphan_apply', 'wake_apply', 'event_apply'];
   for (const id of synchronization) {
     const source = registry[id].definition_source;
     assert.equal(source.dependency.name, 'bevy_ecs');
@@ -135,11 +135,81 @@ test('all maintained dependency types and execution nodes resolve real declarati
   }
 });
 
+test('the 0.20 dependency catalog distinguishes native UI states, 3d physics and input execution stages', () => {
+  const repository = fileURLToPath(new URL('../..', import.meta.url));
+  const resolver = createDependencySourceResolver(readCargoMetadata(repository));
+  const sourceFor = id => resolver.resolve(DEPENDENCY_SOURCE_DEFINITIONS[id]);
+  const declarationFor = id => {
+    const source = sourceFor(id);
+    return resolver.read(source).lines[source.line - 1];
+  };
+  assert.match(declarationFor('menu_button.Button'), /^pub struct Button;/);
+  assert.equal(sourceFor('menu_button.Button').dependency.name, 'bevy_ui_widgets');
+  assert.equal(sourceFor('menu_button.Button').dependency.version, '0.20.0');
+  assert.equal(sourceFor('menu_button.Pressed').path, 'src/interaction_states.rs');
+  assert.equal(sourceFor('menu_button.Hovered').dependency.name, 'bevy_picking');
+  assert.match(declarationFor('menu_button.Pressed'), /^pub struct Pressed;/);
+  assert.match(declarationFor('menu_button.Hovered'), /^pub struct Hovered/);
+
+  assert.match(declarationFor('character.Rotation'), /^pub struct Rotation\(pub Quat\);/);
+  const inertia = sourceFor('character.ComputedAngularInertia');
+  assert.equal(resolver.read(inertia).lines[inertia.line], '    inverse: SymmetricTensor,');
+  for (const id of ['character.SpeculativeCcd', 'parcel.SpeculativeCcd']) {
+    assert.equal(sourceFor(id).dependency.version, '0.8.0');
+    assert.match(declarationFor(id), /^pub struct SpeculativeCcd/);
+  }
+  for (const [type, sourcePath] of [
+    ['BodySizeMetrics', 'src/dynamics/rigid_body/body_size_metrics.rs'],
+    ['SolverBodyIndex', 'src/dynamics/solver/solver_body/mod.rs'],
+    ['Sleeping', 'src/dynamics/rigid_body/sleeping.rs'],
+  ]) {
+    const sources = ['character', 'parcel'].map(owner => sourceFor(`${owner}.${type}`));
+    assert.deepEqual(sources[0], sources[1]);
+    assert.equal(sources[0].dependency.name, 'avian3d');
+    assert.equal(sources[0].dependency.version, '0.8.0');
+    assert.equal(sources[0].path, sourcePath);
+    assert.match(declarationFor(`character.${type}`), new RegExp(`^pub struct ${type}\\b`));
+  }
+  assert.deepEqual(sourceFor('wake_apply'), sourceFor('capture_apply'));
+
+  assert.equal(sourceFor('input_apply').dependency.version, '0.27.0');
+  assert.match(declarationFor('input_apply'), /^\s*Apply,/);
+  assert.match(declarationFor('input_trigger'), /^\s*Trigger,/);
+  assert.notEqual(sourceFor('input_apply').line, sourceFor('input_trigger').line);
+  const egui = sourceFor('camera.EguiMultipassSchedule');
+  assert.equal(egui.dependency.version, '0.43.1');
+  assert.match(declarationFor('camera.EguiMultipassSchedule'), /^pub struct EguiSchedule\(/);
+  assert.equal(sourceFor('kira-play-typed').dependency.version, '0.27.1');
+
+  for (const id of ['plugin-UiWidgetsPlugins', 'plugin-ButtonPlugin']) {
+    assert.equal(sourceFor(id).dependency.name, 'bevy_ui_widgets');
+    assert.match(declarationFor(id), /^pub struct (?:UiWidgetsPlugins|ButtonPlugin);/);
+  }
+  for (const plugin of ['DefaultPickingPlugins', 'InteractionPlugin', 'PickingPlugin']) {
+    const id = `plugin-${plugin}`;
+    assert.equal(sourceFor(id).dependency.name, 'bevy_picking');
+    assert.match(declarationFor(id), new RegExp(`^pub struct ${plugin};`));
+  }
+  const callbacks = ['down', 'up', 'click', 'drag_end', 'cancel', 'key'].map(name => sourceFor(`native_button_${name}`));
+  assert.equal(new Set(callbacks.map(source => source.line)).size, 6);
+  for (const source of callbacks) {
+    assert.equal(source.dependency.name, 'bevy_ui_widgets');
+    assert.match(resolver.read(source).lines[source.line - 1], /^fn button_on_/);
+  }
+  assert.match(declarationFor('native_pointer_events'), /^pub fn pointer_events\(/);
+  assert.match(declarationFor('native_update_hovered'), /^pub fn update_is_hovered\(/);
+  for (const [id, variant] of [['picking_hover', 'Hover'], ['picking_post_hover', 'PostHover'], ['picking_last', 'Last']]) {
+    assert.equal(sourceFor(id).dependency.name, 'bevy_picking');
+    assert.equal(declarationFor(id).trim(), `${variant},`);
+  }
+});
+
 test('execution definitions include engine sets and synchronization while preserving project implementations and output contracts', () => {
   const { definition, resolver } = fixture();
-  const kinds = ['engine', 'sync', 'SystemSet', 'Engine SystemSet', 'Engine system set', 'Engine system', 'Engine observers'];
+  const kinds = ['system', 'observer', 'engine', 'sync', 'SystemSet', 'Engine SystemSet', 'Engine system set', 'Engine system', 'Engine observers', 'PluginGroup'];
   const registry = Object.fromEntries(kinds.map((kind, index) => ['execution-' + index, { id: 'execution-' + index, kind, feature: 'infrastructure' }]));
   registry.project = { id: 'project', kind: 'SystemSet', feature: 'physics', source: { path: 'src/physics.rs', line: 1 } };
+  registry.project_observer = { id: 'project_observer', kind: 'observer', feature: 'ui', source: { path: 'src/ui/pointer.rs', line: 1 } };
   registry.output = { id: 'output', kind: 'Engine', feature: 'kira' };
   registry.entity = { id: 'entity', kind: 'Entity', feature: 'infrastructure' };
   assert.deepEqual(dependencyDefinitionTargets(registry), kinds.map((_, index) => 'execution-' + index));
@@ -149,6 +219,7 @@ test('execution definitions include engine sets and synchronization while preser
   const missing = structuredClone(registry); delete missing['execution-0'].definition_source;
   assert.throws(() => checkDependencySources(missing, resolver, definitions), /Dependency definition source mismatch: execution-0/);
   assert.equal(registry.project.definition_source, undefined);
+  assert.equal(registry.project_observer.definition_source, undefined);
   assert.equal(registry.output.definition_source, undefined);
   assert.equal(registry.entity.definition_source, undefined);
 });

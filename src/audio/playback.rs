@@ -64,7 +64,7 @@ pub(super) fn preload_sounds(server: Res<AssetServer>, mut bank: ResMut<SoundBan
     }
     info!(target: "demo::audio",
         backend = "bevy_kira_audio",
-        backend_version = "0.26.0",
+        backend_version = "0.27.1",
         master_gain = MASTER_GAIN,
         max_voices = MAX_VOICES,
         reserved_ui_voices = RESERVED_UI_VOICES,

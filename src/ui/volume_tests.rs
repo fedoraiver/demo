@@ -1,4 +1,6 @@
+use super::super::test_support::pointer_press;
 use super::*;
+use bevy::{picking::hover::Hovered, ui::Pressed, ui_widgets::Button};
 
 fn pointer_app() -> (App, Entity, Entity) {
     let mut app = App::new();
@@ -10,6 +12,7 @@ fn pointer_app() -> (App, Entity, Entity) {
     .init_resource::<MenuFocus>()
     .insert_resource(MenuInputSource::Navigation)
     .init_resource::<ButtonInput<MouseButton>>()
+    .add_message::<PointerPress>()
     .add_message::<UiRequest>()
     .add_systems(Update, sample_slider_pointer);
     let window = app
@@ -27,7 +30,7 @@ fn pointer_app() -> (App, Entity, Entity) {
                 action: UiAction::Adjust(SettingKey::MasterVolume, 0),
                 index: 5,
             },
-            Interaction::Pressed,
+            Pressed,
             ComputedNode {
                 size: Vec2::new(220.0, 43.0),
                 padding: BorderRect::all(10.0),
@@ -62,6 +65,7 @@ fn pointer_drag_keeps_capture_outside_slider_and_finishes_once() {
     app.world_mut()
         .resource_mut::<ButtonInput<MouseButton>>()
         .press(MouseButton::Left);
+    pointer_press(app.world_mut(), slider, PointerButton::Primary);
     app.update();
     assert_eq!(
         requests(&mut app),
@@ -75,7 +79,8 @@ fn pointer_drag_keeps_capture_outside_slider_and_finishes_once() {
     app.world_mut()
         .resource_mut::<ButtonInput<MouseButton>>()
         .clear();
-    *app.world_mut().get_mut::<Interaction>(slider).unwrap() = Interaction::None;
+    app.world_mut().entity_mut(slider).remove::<Pressed>();
+    app.world_mut().entity_mut(slider).insert(Hovered(false));
     cursor(&mut app, window, Some(Vec2::new(53.0, 240.0)));
     app.update();
     assert_eq!(
@@ -115,11 +120,12 @@ fn pointer_drag_keeps_capture_outside_slider_and_finishes_once() {
 #[test]
 fn pointer_leaving_window_or_losing_focus_finishes_capture() {
     for leave_window in [true, false] {
-        let (mut app, window, _) = pointer_app();
+        let (mut app, window, slider) = pointer_app();
         cursor(&mut app, window, Some(Vec2::new(200.0, 200.0)));
         app.world_mut()
             .resource_mut::<ButtonInput<MouseButton>>()
             .press(MouseButton::Left);
+        pointer_press(app.world_mut(), slider, PointerButton::Primary);
         app.update();
         requests(&mut app);
         app.world_mut()
@@ -145,6 +151,7 @@ fn destroyed_slider_or_window_finishes_existing_capture() {
         app.world_mut()
             .resource_mut::<ButtonInput<MouseButton>>()
             .press(MouseButton::Left);
+        pointer_press(app.world_mut(), slider, PointerButton::Primary);
         app.update();
         requests(&mut app);
         app.world_mut()
@@ -161,7 +168,7 @@ fn destroyed_slider_or_window_finishes_existing_capture() {
 
 #[test]
 fn pointer_uses_physical_coordinates_and_never_starts_on_old_pressed_tree() {
-    let (mut app, window, _) = pointer_app();
+    let (mut app, window, slider) = pointer_app();
     app.world_mut()
         .get_mut::<Window>(window)
         .unwrap()
@@ -176,6 +183,7 @@ fn pointer_uses_physical_coordinates_and_never_starts_on_old_pressed_tree() {
     app.world_mut()
         .resource_mut::<ButtonInput<MouseButton>>()
         .press(MouseButton::Left);
+    pointer_press(app.world_mut(), slider, PointerButton::Primary);
     app.update();
     assert_eq!(
         requests(&mut app),

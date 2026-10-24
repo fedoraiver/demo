@@ -5,19 +5,117 @@ import { buildComponentCatalog, maskRustSource } from './architecture-components
 import { buildArchitectureModel } from './architecture-model.mjs';
 import { DEPENDENCY_SOURCE_DEFINITIONS } from './architecture-source-definitions.mjs';
 
-function fixture({ components, systems = [], files = {}, links = [] }) {
+function fixture({ components, systems = [], files = {}, links = [], dependencyFiles = {} }) {
   const model = { entities: components.map((component, index) => ({ id: `owner${index}`, name: `Owner ${index}`, components: [component] })), systems, system_links: links };
   const registry = Object.fromEntries(model.entities.flatMap(entity => [
     [`entity-${entity.id}`, { ...entity, id: `entity-${entity.id}`, kind: 'Entity', feature: 'example' }],
     ...entity.components.map(component => [component.id, { ...component, kind: 'Component', feature: 'example', defined_in: 'example' }]),
   ]));
   for (const system of systems) registry[system.id] = { kind: 'system', feature: 'example', ...system };
-  return { model, registry, catalog: buildComponentCatalog(model, registry, { readSource: filename => files[filename] }) };
+  return { model, registry, catalog: buildComponentCatalog(model, registry, { readSource: filename => files[filename], readDependencySource: source => dependencyFiles[source.path] }) };
 }
 const component = (id, name = 'Flag', source = { path: 'src/types.rs', line: 1 }) => ({ id, name, source });
 const system = (id, source, reads = [], writes = [], extra = {}) => ({ id, kind: 'system', name: 'run', source, reads, writes,
   registrations: [{ schedule: 'Update', scope: 'runtime' }], ...extra });
 const definition = (path, line, name = 'bevy_test', root = 'C:/cargo/test') => ({ path, line, dependency: { name, version: '1.0.0', root } });
+
+test('try_remove 保留真实移除位置，With 与 Has 标记不冒充字段读取', () => {
+  const { catalog } = fixture({
+    components: [component('button.PrimaryPress', 'PrimaryPress'), component('button.MenuButton', 'MenuButton')],
+    systems: [system('run', { path: 'src/run.rs', line: 1 }, ['button.PrimaryPress', 'button.MenuButton'], ['button.PrimaryPress'])],
+    files: { 'src/run.rs': `fn run(buttons: Query<(), With<MenuButton>>, pressed: Query<Has<PrimaryPress>>, mut commands: Commands) {
+    if buttons.contains(entity) && pressed.get(entity).unwrap_or(false) {
+        commands.entity(entity).try_remove::<PrimaryPress>();
+    }
+}` },
+  });
+  const links = catalog.graphFor('button.PrimaryPress').links.filter(link => link.operation !== 'contains');
+  assert.deepEqual(new Set(links.map(link => link.operation)), new Set(['filter', 'remove']));
+  const removal = links.find(link => link.operation === 'remove');
+  assert.equal(removal.sourceGaps.length, 0);
+  assert.ok(removal.sourceEntries.some(source => source.role === 'operation' && source.path === 'src/run.rs' && source.line === 3));
+  assert.deepEqual(catalog.graphFor('button.MenuButton').links.filter(link => link.operation !== 'contains').map(link => link.operation), ['filter']);
+});
+
+test('原生 Button 的存在过滤与 Pressed 插入使用锁定依赖中的独立操作证据', () => {
+  const { catalog } = fixture({
+    components: [component('menu_button.Button', 'Button'), component('menu_button.Pressed', 'Pressed')],
+    systems: [system('native_button_down', definition('src/button.rs', 1, 'bevy_ui_widgets'),
+      ['menu_button.Button', 'menu_button.Pressed'], ['menu_button.Pressed'], { name: 'button_on_pointer_down', kind: 'observer' })],
+    dependencyFiles: { 'src/button.rs': `fn button_on_pointer_down(state: Query<Has<Pressed>, With<Button>>, mut commands: Commands) {
+    commands.entity(entity).insert(Pressed);
+}` },
+  });
+  const links = catalog.graphFor('menu_button.Pressed').links.filter(link => link.operation !== 'contains');
+  assert.deepEqual(new Set(links.map(link => link.operation)), new Set(['filter', 'insert']));
+  assert.ok(links.every(link => !link.sourceGaps.length));
+  assert.ok(links.find(link => link.operation === 'insert').sourceEntries.some(source => source.dependency.name === 'bevy_ui_widgets' && source.role === 'operation' && source.line === 2));
+  assert.deepEqual(catalog.graphFor('menu_button.Button').links.filter(link => link.operation !== 'contains').map(link => link.operation), ['filter']);
+});
+
+test('排队唤醒保留整岛生命周期操作证据，Ref 变更元数据不冒充字段读取', () => {
+  const source = { path: 'src/physics/mod.rs', line: 1 };
+  const dep = definition('src/dynamics/rigid_body/sleeping.rs', 1, 'avian3d');
+  const { catalog } = fixture({
+    components: ['Sleeping', 'SleepTimer', 'SolverBodyIndex', 'Position'].map(name => ({ ...component(`character.${name}`, name), definition_source: dep })),
+    systems: [system('wake_changed_bodies', source, [], ['character.Sleeping', 'character.SleepTimer', 'character.SolverBodyIndex'], { name: 'wake_changed_bodies' })],
+    files: { 'src/physics/mod.rs': `fn wake_changed_bodies(bodies: Query<Ref<Position>, (With<Sleeping>, Changed<Position>)>, mut commands: Commands) {
+      commands.queue(WakeBody(entity));
+    }` },
+    dependencyFiles: {
+      'src/dynamics/solver/islands/sleeping.rs': `impl Command for WakeIslands {
+        WakeIslands(vec![body_island.island_id]).apply(world);
+        sleep_timer.0 = 0.0;
+        world.entity_mut(entity).remove::<Sleeping>();
+      }`,
+      'src/dynamics/solver/solver_body/plugin.rs': `fn build() {
+        app.add_observer(|trigger: On<Remove<Sleeping>>| {});
+        commands.entity(entity).try_insert(index);
+      }`,
+    },
+  });
+  for (const [name, operation, line] of [['Sleeping', 'remove', 4], ['SleepTimer', 'write', 3], ['SolverBodyIndex', 'insert', 3]]) {
+    const edge = catalog.graphFor(`character.${name}`).links.find(link => link.operation === operation);
+    assert.ok(edge);
+    assert.equal(edge.sourceGaps.length, 0);
+    assert.ok(edge.sourceEntries.some(entry => entry.path === source.path && entry.line === 2));
+    assert.ok(edge.sourceEntries.some(entry => entry.dependency?.name === 'avian3d' && entry.role === 'operation' && entry.line === line));
+  }
+  const position = catalog.graphFor('character.Position').links.filter(link => link.operation !== 'contains');
+  assert.deepEqual(position.map(link => link.operation), ['filter']);
+  assert.ok(!catalog.graphFor('character.Sleeping').links.some(link => link.operation === 'read'));
+});
+
+test('BSN 0.20 裸值组件保留参数类型，嵌入场景沿 helper 归属调用系统', () => {
+  const { catalog } = fixture({ components: [component('a.Flag', 'Flag'), component('a.Value', 'Value')],
+    systems: [system('run', { path: 'src/run.rs', line: 1 }, [], ['a.Flag', 'a.Value'])],
+    files: { 'src/run.rs': `fn run(mut commands: Commands) { commands.spawn_scene(scene(Value::default())); }
+fn scene(value: Value) -> impl Scene { bsn! { value Children [@child() -- Flag] } }
+fn child() -> impl Scene { bsn! { Flag } }` },
+  });
+  for (const name of ['Flag', 'Value']) {
+    const insertion = catalog.graphFor(`a.${name}`).links.find(link => link.operation === 'insert');
+    assert.ok(insertion);
+    assert.ok(insertion.sourceEntries.some(entry => entry.path === 'src/run.rs' && entry.line === 2));
+  }
+  assert.ok(catalog.graphFor('a.Flag').links.find(link => link.operation === 'insert').sourceEntries.some(entry => entry.line === 3));
+});
+
+test('BodySizeMetrics 在求解前重算的两个变化分支有实际赋值证据', () => {
+  const path = 'src/dynamics/rigid_body/body_size_metrics.rs';
+  const { catalog } = fixture({ components: [{ ...component('character.BodySizeMetrics', 'BodySizeMetrics'), definition_source: definition(path, 1, 'avian3d') }],
+    systems: [system('physics_step', null, ['character.BodySizeMetrics'], ['character.BodySizeMetrics'], { kind: 'engine' })],
+    dependencyFiles: { [path]: `app.add_systems(PhysicsSchedule, update_body_size_metrics::<C>.before(PhysicsStepSystems::Solver));
+fn update_body_size_metrics<C>() {
+    *size_metrics = compute(rb_colliders, com);
+    *size_metrics = compute(rb_colliders, com);
+}` },
+  });
+  const write = catalog.graphFor('character.BodySizeMetrics').links.find(link => link.operation === 'write');
+  assert.equal(write.sourceGaps.length, 0);
+  assert.deepEqual(write.sourceEntries.filter(source => source.role === 'operation').map(source => source.line), [3, 4]);
+  assert.ok(write.sourceEntries.some(source => source.role === 'registration' && source.line === 1));
+});
 
 test('同一真实声明聚合多个实体投影，原 ID 和全部 owner 保留', () => {
   const result = fixture({ components: [component('a.Flag'), component('b.Flag')] });
@@ -31,6 +129,19 @@ test('同一真实声明聚合多个实体投影，原 ID 和全部 owner 保留
   assert.equal(graph.nodes.filter(node => node.id === 'a.Flag').length, 1);
   assert.ok(!graph.nodes.some(node => node.id === 'b.Flag'));
   assert.equal(graph.links.filter(link => link.operation === 'contains').length, 2);
+});
+
+test('已核实的同一声明不因 Rust 导入路径写法拆图，泛型实参继续区分', () => {
+  const source = definition('src/hover.rs', 1, 'bevy_picking');
+  const { catalog } = fixture({ components: [
+    { ...component('a.Hovered', 'Hovered'), rust_type: 'bevy::picking::hover::Hovered', definition_source: source },
+    { ...component('b.Hovered', 'Hovered'), definition_source: source },
+    { ...component('a.Generic', 'Generic<A>'), rust_type: 'bevy::Generic<A>', definition_source: source },
+    { ...component('b.Generic', 'Generic<B>'), definition_source: source },
+  ] });
+  assert.equal(catalog.types.length, 3);
+  assert.equal(catalog.typeByProjectionId['a.Hovered'], catalog.typeByProjectionId['b.Hovered']);
+  assert.notEqual(catalog.typeByProjectionId['a.Generic'], catalog.typeByProjectionId['b.Generic']);
 });
 
 test('同名不同声明、不同泛型实参以及无定义证据的投影不会误合并', () => {
@@ -323,9 +434,9 @@ test('当前清单全部真实组件有专属图，HeldTarget 保持批准样稿
     registry[id].definition_source = { path: descriptor.path, line: descriptors.get(key), dependency: { name: descriptor.package, version: '0.0.0', root: '/locked-dependency' } };
   }
   registry.inspector_pass.definition_source = definition('src/quick.rs', 92, 'bevy-inspector-egui');
-  const catalog = buildComponentCatalog(model, registry), projections = model.entities.flatMap(entity => entity.components.map(component => component.id));
+  const catalog = buildComponentCatalog(model, registry, { readDependencySource: () => null }), projections = model.entities.flatMap(entity => entity.components.map(component => component.id));
   assert.deepEqual(new Set(Object.keys(catalog.typeByProjectionId)), new Set(projections));
-  assert.equal(catalog.types.length, 158);
+  assert.equal(catalog.types.length, 162);
   const declaredCount = model.systems.reduce((count, system) => count + [...system.reads, ...system.writes].filter(id => projections.includes(id)).length, 0);
   assert.equal(catalog.declarations.length, declaredCount);
   assert.ok(catalog.deferredAccesses.every(access => registry[access.system].kind === 'sync'));
@@ -387,7 +498,7 @@ test('当前清单全部真实组件有专属图，HeldTarget 保持批准样稿
   }
   const uiPickable = catalog.graphFor('settings_scrollbar.Pickable').links.find(link => link.operation === 'insert' && link.from === 'menu_rebuild');
   assert.ok(uiPickable);
-  assert.ok([86, 98].every(line => uiPickable.sourceEntries.some(source => source.path === 'src/ui/scroll.rs' && source.line === line)));
+  assert.ok([88, 100].every(line => uiPickable.sourceEntries.some(source => source.path === 'src/ui/scroll.rs' && source.line === line)));
   for (const id of ['grounded_fixed', 'carry_physics_fixed', 'audio_voice_volumes']) {
     const merged = registry[catalog.functionIdBySystemId[id]];
     assert.ok(!merged.description.includes('\n'));

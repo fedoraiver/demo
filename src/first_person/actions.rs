@@ -4,7 +4,7 @@ use super::*;
 use bevy_enhanced_input::prelude::{Cancel, Press, *};
 
 /// 控制者的步行输入上下文；角色实体不直接持有设备绑定。
-#[derive(Component)]
+#[derive(Component, Default, Clone)]
 pub struct GameplayContext;
 
 /// 地面移动方向，X 为左右、Y 为前后。
@@ -42,11 +42,11 @@ pub fn spawn_keyboard_controller(
 ) -> Entity {
     let id = player_id.0;
     let controller = commands
-        .spawn((
+        .spawn_scene(keyboard_context())
+        .insert((
             Name::new(format!("Keyboard controller {id}")),
             player_id,
             ControlsCharacter(character),
-            keyboard_context(),
         ))
         .id();
     info!(
@@ -59,59 +59,36 @@ pub fn spawn_keyboard_controller(
     controller
 }
 
-pub(super) fn keyboard_context() -> impl Bundle {
-    (
-        GameplayContext,
-        GamepadDevice::None,
-        actions!(GameplayContext[
-            (
-                Action::<LookAction>::new(),
-                ActionSettings {
-                    consume_input: true,
-                    ..default()
-                },
-                bindings![Binding::mouse_motion()],
-            ),
-            (
-                Action::<MoveAction>::new(),
-                ActionSettings {
-                    consume_input: true,
-                    ..default()
-                },
-                Bindings::spawn(Cardinal::wasd_keys()),
-            ),
-            (
-                Action::<JumpAction>::new(),
-                ActionSettings {
-                    consume_input: true,
-                    require_reset: true,
-                    ..default()
-                },
-                Press::default(),
-                bindings![KeyCode::Space],
-            ),
-            (
-                Action::<InteractAction>::new(),
-                ActionSettings {
-                    consume_input: true,
-                    require_reset: true,
-                    ..default()
-                },
-                Press::default(),
-                bindings![KeyCode::KeyE],
-            ),
-            (
-                Action::<ReleasePointerAction>::new(),
-                ActionSettings {
-                    consume_input: true,
-                    require_reset: true,
-                    ..default()
-                },
-                Press::default(),
-                bindings![KeyCode::F3],
-            ),
-        ]),
-    )
+/// 动作和绑定使用原生关系场景，随控制者生命周期一起生成和清理。
+pub(super) fn keyboard_context() -> impl Scene {
+    bsn! {
+        GameplayContext
+        GamepadDevice::None
+        Actions<GameplayContext> [
+            Action::<LookAction>::new()
+            ActionSettings { consume_input: true }
+            Bindings [ Binding::mouse_motion() ]
+            --
+            Action::<MoveAction>::new()
+            ActionSettings { consume_input: true }
+            Bindings [ {preset::cardinal::wasd_keys()} ]
+            --
+            Action::<JumpAction>::new()
+            ActionSettings { consume_input: true, require_reset: true }
+            Press
+            Bindings [ Binding(KeyCode::Space) ]
+            --
+            Action::<InteractAction>::new()
+            ActionSettings { consume_input: true, require_reset: true }
+            Press
+            Bindings [ Binding(KeyCode::KeyE) ]
+            --
+            Action::<ReleasePointerAction>::new()
+            ActionSettings { consume_input: true, require_reset: true }
+            Press
+            Bindings [ Binding(KeyCode::F3) ]
+        ]
+    }
 }
 
 /// 按事件所属的上下文查找角色，避免把一个玩家的动作写给其他角色。

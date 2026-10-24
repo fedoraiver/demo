@@ -67,7 +67,7 @@ const visualTypes = new Map([
   ['observer', 'observer'], ['Engine observers', 'observer'],
   ['Entity', 'entity'], ['Component', 'component'], ['Resource', 'resource'], ['Local', 'local'], ['NonSend', 'non_send'],
   ['Message', 'message'], ['EntityEvent', 'event'], ['Native platform event', 'external_io'],
-  ['Plugin', 'plugin'], ['App', 'plugin'], ['Registration helper', 'plugin'],
+  ['Plugin', 'plugin'], ['PluginGroup', 'plugin'], ['App', 'plugin'], ['Registration helper', 'plugin'],
   ['SystemSet', 'contract'], ['Engine SystemSet', 'contract'], ['Engine system set', 'contract'],
   ['SystemParam', 'contract'], ['Shared data contract', 'contract'], ['System group', 'contract'], ['Scheduling contract', 'contract'],
   ['Relationship', 'contract'], ['External I/O', 'external_io'], ['Native platform bridge', 'external_io'],
@@ -123,7 +123,7 @@ export function displayLabelOf(link, semantic, registry) {
   // 只移除关系类别前缀；条件、Commands 可见时机和具体领域名仍留在线上。
   label = label.replace(/^(?:R\s*\/\s*W|R|W)(?:\s+|$)/, '').trim();
   if (['read', 'write', 'publish', 'consume', 'dependency'].includes(semantic)) {
-    label = label.replace(/^(?:读写|读取|写入|修改|消费|发布|使用)\s*/, '').trim();
+    label = label.replace(/^(?:读写|读取|写入|修改|消费|发布|使用)\s*(?:\/\s*)?/, '').trim();
   }
   if (semantic === 'registration') label = label.replace(/^(?:首先安装|先安装|再安装|显式安装|安装|注册)\s*/, '').trim();
   if (['order', 'nested', 'schedule'].includes(semantic)) {
