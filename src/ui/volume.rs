@@ -1,6 +1,6 @@
 //! 音量滑条声明与局部鼠标拖动：精确数值仍通过统一菜单请求修改草稿。
 
-use bevy::{prelude::*, ui::FocusPolicy, window::PrimaryWindow};
+use bevy::{prelude::*, window::PrimaryWindow};
 
 use crate::settings::SettingsDraft;
 
@@ -49,7 +49,7 @@ struct VolumeDrag {
 }
 
 pub(super) fn register(app: &mut App) {
-    app.add_systems(
+    app.add_message::<PointerPress>().add_systems(
         Update,
         (sample_slider_pointer, update_volume_visuals)
             .after(UiSystems::Build)
@@ -76,12 +76,13 @@ pub(super) fn volume_row(
     index: usize,
     description: &'static str,
 ) -> impl Scene {
+    let scale = theme.scale;
     let details = SettingDescription {
         title,
         body: description,
     };
     bsn! {
-        template_value(column(theme.size(8.0)))
+        column(8.0 * scale)
         Node {
             width: percent(100),
             padding: px(theme.size(10.0)),
@@ -90,94 +91,84 @@ pub(super) fn volume_row(
         }
         BackgroundColor(SUBTLE)
         Children [
-            label(theme, title, 21.0, INK),
-            (
+            @label(theme, title, 21.0, INK)
+            --
+            Node {
+                width: percent(100),
+                align_items: AlignItems::Center,
+                column_gap: px(theme.size(8.0)),
+                row_gap: px(theme.size(8.0)),
+                flex_wrap: FlexWrap::Wrap,
+            }
+            Children [
+                @small_button(theme, "<", UiAction::Adjust(key, -1), index)
+                details
+                Node { padding: px(theme.size(7.0)), min_width: px(theme.size(34.0)), flex_shrink: 0.0 }
+                --
+                MenuButton { action: UiAction::Adjust(key, 0), index: {index + 1} }
+                VolumeSlider { key }
+                details
                 Node {
-                    width: percent(100),
+                    min_height: px(theme.size(43.0)),
+                    min_width: px(theme.size(95.0)),
+                    flex_basis: px(theme.size(130.0)),
+                    flex_grow: 1.0,
+                    padding: UiRect::axes(px(theme.size(10.0)), px(theme.size(9.0))),
+                    border: px(2),
+                    border_radius: BorderRadius::all(px(7)),
                     align_items: AlignItems::Center,
-                    column_gap: px(theme.size(8.0)),
-                    row_gap: px(theme.size(8.0)),
-                    flex_wrap: FlexWrap::Wrap,
+                }
+                BackgroundColor(PAPER)
+                BorderColor::all(CREAM)
+                Children [
+                    // 填充和手柄只负责绘制，命中仍由外层 Button 统一处理。
+                    Pickable::IGNORE
+                    Node {
+                        width: percent(100),
+                        height: px(theme.size(8.0)),
+                        border_radius: BorderRadius::MAX,
+                    }
+                    BackgroundColor(SUBTLE)
+                    Children [
+                        Pickable::IGNORE
+                        VolumeFill(key)
+                        Node {
+                            width: percent(f32::from(value)),
+                            height: percent(100),
+                            border_radius: BorderRadius::MAX,
+                        }
+                        BackgroundColor(GOLD)
+                        Children [
+                            Pickable::IGNORE
+                            Node {
+                                position_type: PositionType::Absolute,
+                                right: px(-theme.size(5.0)),
+                                top: px(-theme.size(4.0)),
+                                width: px(theme.size(10.0)),
+                                height: px(theme.size(16.0)),
+                                border_radius: BorderRadius::all(px(3)),
+                            }
+                            BackgroundColor(INK)
+                        ]
+                    ]
+                ]
+                --
+                @small_button(theme, ">", UiAction::Adjust(key, 1), index + 2)
+                details
+                Node { padding: px(theme.size(7.0)), min_width: px(theme.size(34.0)), flex_shrink: 0.0 }
+                --
+                Node {
+                    width: px(theme.size(64.0)),
+                    min_height: px(theme.size(43.0)),
+                    align_items: AlignItems::Center,
+                    justify_content: JustifyContent::Center,
+                    flex_shrink: 0.0,
                 }
                 Children [
-                    (
-                        small_button(theme, "<", UiAction::Adjust(key, -1), index)
-                        template_value(details.clone())
-                        Node { padding: px(theme.size(7.0)), min_width: px(theme.size(34.0)), flex_shrink: 0.0 }
-                    ),
-                    (
-                        Button
-                        template_value(MenuButton { action: UiAction::Adjust(key, 0), index: index + 1 })
-                        template_value(VolumeSlider { key })
-                        template_value(details.clone())
-                        Node {
-                            min_height: px(theme.size(43.0)),
-                            min_width: px(theme.size(95.0)),
-                            flex_basis: px(theme.size(130.0)),
-                            flex_grow: 1.0,
-                            padding: UiRect::axes(px(theme.size(10.0)), px(theme.size(9.0))),
-                            border: px(2),
-                            border_radius: BorderRadius::all(px(7)),
-                            align_items: AlignItems::Center,
-                        }
-                        BackgroundColor(PAPER)
-                        BorderColor::all(CREAM)
-                        Children [(
-                            // 填充和手柄只负责绘制，命中仍由外层 Button 统一处理。
-                            Pickable::IGNORE
-                            template_value(FocusPolicy::Pass)
-                            Node {
-                                width: percent(100),
-                                height: px(theme.size(8.0)),
-                                border_radius: BorderRadius::MAX,
-                            }
-                            BackgroundColor(SUBTLE)
-                            Children [(
-                                Pickable::IGNORE
-                            template_value(FocusPolicy::Pass)
-                                template_value(VolumeFill(key))
-                                Node {
-                                    width: percent(f32::from(value)),
-                                    height: percent(100),
-                                    border_radius: BorderRadius::MAX,
-                                }
-                                BackgroundColor(GOLD)
-                                Children [(
-                                    Pickable::IGNORE
-                            template_value(FocusPolicy::Pass)
-                                    Node {
-                                        position_type: PositionType::Absolute,
-                                        right: px(-theme.size(5.0)),
-                                        top: px(-theme.size(4.0)),
-                                        width: px(theme.size(10.0)),
-                                        height: px(theme.size(16.0)),
-                                        border_radius: BorderRadius::all(px(3)),
-                                    }
-                                    BackgroundColor(INK)
-                                )]
-                            )]
-                        )]
-                    ),
-                    (
-                        small_button(theme, ">", UiAction::Adjust(key, 1), index + 2)
-                        template_value(details)
-                        Node { padding: px(theme.size(7.0)), min_width: px(theme.size(34.0)), flex_shrink: 0.0 }
-                    ),
-                    (
-                        Node {
-                            width: px(theme.size(64.0)),
-                            min_height: px(theme.size(43.0)),
-                            align_items: AlignItems::Center,
-                            justify_content: JustifyContent::Center,
-                            flex_shrink: 0.0,
-                        }
-                        Children [(
-                            label(theme, volume_text(value), 20.0, INK)
-                            template_value(VolumeValue(key))
-                        )]
-                    ),
+                    @label(theme, volume_text(value), 20.0, INK)
+                    VolumeValue(key)
                 ]
-            ),
+            ]
         ]
     }
 }
@@ -202,7 +193,7 @@ fn value_at_pointer(
 }
 
 /// Enhanced Input 负责菜单语义动作，但无法表示 UI 命中后的局部绝对横坐标。
-/// 因此仅滑条读取底层光标与左键保持／释放；命中复用 Interaction，按钮路径不再发调整请求。
+/// 因此仅滑条读取底层光标与左键保持／释放；起点复用原生 PointerPress，按钮路径不再发调整请求。
 fn sample_slider_pointer(
     state: Res<MenuState>,
     windows: Query<&Window, With<PrimaryWindow>>,
@@ -211,47 +202,66 @@ fn sample_slider_pointer(
         Entity,
         &VolumeSlider,
         &MenuButton,
-        &Interaction,
         &ComputedNode,
         &UiGlobalTransform,
     )>,
+    parents: Query<&ChildOf>,
+    mut presses: MessageReader<PointerPress>,
     mut focus: ResMut<MenuFocus>,
     mut source: ResMut<MenuInputSource>,
     mut requests: MessageWriter<UiRequest>,
     mut drag: Local<Option<VolumeDrag>>,
 ) {
     if state.page != MenuPage::Settings || state.tab != SettingsTab::Audio {
+        presses.clear();
         *drag = None;
         return;
     }
     let Some(mouse) = mouse else {
+        presses.clear();
         return;
     };
     let Ok(window) = windows.single() else {
+        presses.clear();
         if drag.take().is_some() {
             requests.write(UiRequest(UiAction::FinishVolumeEdit));
         }
         return;
     };
-    // 只有真实按下能开始捕获；重建新树生成的 Pressed 不能重新触发滑条。
+    // 按下消息在同帧释放后仍存在，不能依赖此时可能已移除的原生 Pressed。
+    let mut target = None;
+    for press in presses
+        .read()
+        .filter(|press| press.button == PointerButton::Primary)
+    {
+        let mut entity = press.entity;
+        loop {
+            if let Ok((_, _, button, _, _)) = sliders.get(entity) {
+                target = Some((entity, button.index));
+                break;
+            }
+            let Ok(parent) = parents.get(entity) else {
+                break;
+            };
+            entity = parent.parent();
+        }
+    }
+    // 只有真实按下消息能开始捕获；重建新树或残留按下组件不能重新触发滑条。
     if drag.is_none()
         && window.focused
-        && mouse.just_pressed(MouseButton::Left)
-        && let Some((entity, _, button, _, _, _)) = sliders
-            .iter()
-            .find(|(_, _, _, interaction, _, _)| **interaction == Interaction::Pressed)
+        && let Some((entity, index)) = target
     {
         *drag = Some(VolumeDrag {
             entity,
             last_value: None,
         });
-        focus.0 = button.index;
+        focus.0 = index;
         *source = MenuInputSource::Pointer;
     }
     let Some(active) = drag.as_mut() else {
         return;
     };
-    let Ok((_, slider, _, _, node, transform)) = sliders.get(active.entity) else {
+    let Ok((_, slider, _, node, transform)) = sliders.get(active.entity) else {
         // 窗口宽度变化会重建实体；结束原手势，集中请求系统也清理其初值缓存。
         requests.write(UiRequest(UiAction::FinishVolumeEdit));
         *drag = None;

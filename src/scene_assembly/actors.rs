@@ -6,7 +6,7 @@ pub(super) fn courier_visual(scene: Handle<WorldAsset>, gltf: Handle<Gltf>) -> i
     // 玩家在 Update 装配，早于下一帧相机可见性同步；先隐藏自身，避免首帧进入眼位。
     bsn! {
         Name("Courier visual") CharacterVisual CourierVisual(gltf) WorldAssetRoot(scene)
-        template_value(Visibility::Hidden)
+        Visibility::Hidden
     }
 }
 
@@ -21,9 +21,9 @@ pub(super) fn courier_scene(
         CharacterIntent
         CharacterMotion { grounded: false }
         SpawnPoint(pose)
-        template_value(pose)
+        pose
         Visibility
-        Children [courier_visual(scene, gltf)]
+        Children [@courier_visual(scene, gltf)]
     }
 }
 
@@ -46,11 +46,11 @@ pub(super) fn carryable_scene(
         Parcel
         Pickable
         CarryGrip(grip)
-        template_value(model)
+        model
         SpawnPoint(pose)
-        template_value(pose)
+        pose
         Visibility
-        Children [(Name("Carryable visual") WorldAssetRoot(scene))]
+        Children [Name("Carryable visual") WorldAssetRoot(scene)]
     }
 }
 

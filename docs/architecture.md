@@ -37,11 +37,11 @@
 
 `MenuState` 管理页面、分类、返回来源与提示；`MenuFocus` 保存可操作按钮序号，`MenuInputSource` 区分鼠标与导航来源。设置和帮助切换页面，不改变其主菜单或暂停来源。`SettingsDraft` 与已应用的 `GameSettings` 分离；切换分类保留草稿，成功保存后才替换已应用值。预览与返回规则见 [设置](usage.md#设置)。
 
-菜单控制者的高优先级 `MenuContext` 使用 `require_reset`；键盘、手柄与 Bevy UI `Interaction` 均产生 `UiRequest`。集中入口每帧接受一项语义请求；连续滑条采样合并，返回优先于同帧采样，最终数值与释放反馈一并处理。
+菜单控制者的高优先级 `MenuContext` 使用 `require_reset`；动作与绑定通过 BSN `Actions<Context>` 和 `Bindings` 声明，随控制者一起清理。键盘、手柄与原生 `PointerPress` 主键消息均产生 `UiRequest`。按钮使用 `bevy::ui_widgets::Button`，`Hovered` 表达悬停，`Pressed` 与项目 `PrimaryPress` 区分原生任意键按压和主键来源；原生键盘 `Activate` 不进入请求，避免与 Enhanced Input 重复。集中入口每帧接受一项语义请求；连续滑条采样合并，返回优先于同帧采样，最终数值与释放反馈一并处理。
 
-请求在 `PreUpdate` 的 `EnhancedInputSystems::Apply` 后消费，随后进入 `StateTransition`。`Update` 先重建并销毁旧页面，再读取鼠标点击，鼠标请求留到下一次 `PreUpdate` 消费，避免旧页面返回动作穿透。样式统一读取输入来源、焦点与交互；真实光标移动切回鼠标来源，静止光标和页面重建产生的 `Hovered` 不抢导航焦点。完整规则见 [UI 布局与高亮规范](development.md#ui-布局与高亮规范)。
+请求在 `PreUpdate` 的 `EnhancedInputSystems::Trigger` 后消费，确保动作 Observer 已写入请求，随后进入 `StateTransition`。`Update` 先重建并销毁旧页面，再消费缓冲的 `PointerPress`；从原始命中沿 `ChildOf` 查找仍存活的菜单按钮，同帧按下并释放也保留点击，右键与中键不生成请求。鼠标请求留到下一次 `PreUpdate` 消费，避免旧页面返回动作穿透。样式统一读取输入来源、焦点与交互；真实光标移动切回鼠标来源，静止光标和页面重建产生的 `Hovered` 不抢导航焦点。完整规则见 [UI 布局与高亮规范](development.md#ui-布局与高亮规范)。
 
-音量滑条沿用 `Interaction` 命中，并局部读取底层左键与物理光标位置，表达菜单动作无法提供的绝对轨道坐标。滑条不走普通按钮请求路径；释放、失焦、光标离窗或页面销毁时结束捕获。
+音量滑条通过主键 `PointerPress` 命中开始捕获，并局部读取底层左键与物理光标位置，表达菜单动作无法提供的绝对轨道坐标。滑条不走普通按钮请求路径；同帧完整点击仍采样最终位置并结束捕获，释放、失焦、光标离窗或页面销毁时也结束捕获。原生 `Pressed` 移除时清理项目 `PrimaryPress`；`PickingSystems::Last` 后还按指针身份补清取消状态，窗口失焦或鼠标离窗也清理鼠标按压，避免后续副键继承残留样式。
 
 `CharacterPlugin` 在 `OnEnter(AppState::MainMenu)` 和 `OnEnter(PlayState::Paused)` 清空 `CharacterIntent`。暂停时，第一人称功能响应同一状态停用 `GameplayContext` 并释放鼠标，应用流程冻结 `Time<Virtual>` 与 `Time<Physics>`，UI 切换到暂停页；各功能只处理自己拥有的状态。物理增量立即归零，避免复用前一步增量。玩法、显示同步、动画状态和落水恢复受 `gameplay_running` 门控；输入捕获检查仍执行。菜单继续响应，恢复后重新启用时间，捕获恢复当帧跳过自由光标位移。主菜单只运行虚拟时间以播放展示动画，物理时间暂停。无应用状态的最小测试中，`gameplay_running` 允许独立玩法系统执行。
 
@@ -162,7 +162,7 @@ NPC 身体碰撞属于 `World` 层，阻挡人物、自由箱与持箱代理，�
 | `StateTransition` | 紧随 `PreUpdate`；主菜单入口生成展示舞台，游戏入口准备海岛会话的光照和加载相机，暂停入口清意图并冻结时间，退出状态清理对应实体。 |
 | `FixedFirst` | 落水与释放各自恢复临时暂停的插值通道，均在 `TransformEasingSystems::Reset` 后、`UpdateStart` 前，彼此无全序。 |
 | `FixedUpdate` | `FixedGameplaySystems` 依次连接 `Recover → Facing → Motion → Interaction → Target → Attachment`：落水恢复、转向检查、接地／移动／跳跃、交互、持物目标与呈现、挂接维护。物品插件的 Attachment 内部链执行失效箱释放 → 孤儿代理清理 → 质量恢复 → 挂接 → 安全对齐 → 真实姿态同步；结构依赖处应用命令。重力同步只约束在 Motion 前。 |
-| `FixedPostUpdate` | Avian 求解速度、位姿与碰撞。`Writeback` 后持物真实同步与“接地 → 速度日志”是独立分支；落地反馈只依赖 `StepSimulation`，不与日志或回写建立额外全序。 |
+| `FixedPostUpdate` | 物理 First 阶段检测外部修改的休眠身体，并在 Avian `Prepare` 前应用 `WakeBody`；随后求解速度、位姿与碰撞。`Writeback` 后持物真实同步与“接地 → 速度日志”是独立分支；落地反馈只依赖 `StepSimulation`，不与日志或回写建立额外全序。 |
 | `FixedLast` | Avian 记录本固定步的插值端点，供渲染帧呈现使用。 |
 | `RunFixedMainLoop` 固定循环之后 | `PresentationSystems` 在 `TransformEasingSystems::Ease` 之后、`UpdateEasingTick` 之前依次连接 `Facing → HeldPhysics → HeldPresentation → Camera → Visibility`。第一人称与物品插件分别注册自己的系统，依次同步角色朝向、持箱物理姿态、本帧箱体与 `HeldTarget`、镜头和人物可见性。 |
 | `Update` | 资源轮询、海岛装配链、主角动画链、菜单动画绑定各自运行，彼此无显式全序。UI 局部依赖见 [BSN 页面](#bsn-页面与菜单展示资产)；UI Style 发布预览后，依次执行 Audio Mix 与 Playback。 |
@@ -178,9 +178,11 @@ NPC 身体碰撞属于 `World` 层，阻挡人物、自由箱与持箱代理，�
 
 `main` 显式安装 `GamePhysicsPlugin`、`CharacterPlugin` 和 `ItemInteractionPlugin`，物理插件安装 Avian 默认固定调度的 `PhysicsPlugins`。Avian 统一处理重力、速度积分与碰撞。接地通过脚底球体 shape cast 和地面法线判断，探测按角色的真实碰撞层过滤支撑物，持握箱不会作为角色支撑面；跳跃请求只在接地时施加一次向上冲量，侧面碰墙不能充当地面。移动轴先限制长度再转换为水平目标速度，通过力加速或减速，空中操控力度低于接地时；碰撞与外力可以改变实际速度，斜向输入不会提高目标速度。
 
-角色使用 `SweptCcd::NON_LINEAR.with_velocity_threshold(8.0, 0.1)`，保留非线性扫掠算法，只在相对线速度达到 `8 m/s` 或相对角速度达到 `0.1 rad/s` 时触发。速度门槛避免静止接触反复扫掠密集建筑三角网格。默认目标移动速度 `4.5 m/s` 与跳跃初速度 `5 m/s` 的合速度低于线速度门槛，普通运动由已有推测接触覆盖；高速运动或外部冲量仍触发 CCD。当前依赖的 `LINEAR` 算法在非零水平 yaw 的高速薄墙回归中不能正确阻挡，不能以胶囊轴对称为由替换。
+`GamePhysicsPlugin` 的提前唤醒只处理 `Sleeping` 身体：位姿、速度或 `SleepTimer` 的变化必须晚于 `LastPhysicsTick`，才排队 `WakeBody`，并在准备求解器前提交。这样跳跃、主动移动与外部冲量在首个固定步参与重力和位置积分；物理自身的回写不会反复唤醒静置物体，正常休眠继续由 Avian 管理。离散唤醒以 `debug` 记录实体和 `external_physics_change` 原因。
 
-纸箱和木箱使用默认 `NON_LINEAR` 和零速度门槛，保留动态接触与旋转扫掠。角色形状、旋转约束或运动速度变化后须重评门槛；检查见 [无窗口验证](testing/README.md#海岛资源与无窗口验证) 与 [游戏验收](testing/game-acceptance.md)。
+角色使用 `SweptCcd::default().with_filter(CcdFilter::ALL)`，按每步运动与碰撞体最薄尺寸的比例启用非线性扫掠，默认门槛为半厚度。普通步行不持续扫掠密集建筑网格，高速外力与旋转接触仍受保护；过滤包含静态、运动学和动态刚体，避免新版默认过滤遗漏动态接触。角色与自由箱体还显式设置 `SpeculativeCcd::default()`，按速度扩张预测邻域，让相向高速动态物体在扫掠前互为碰撞候选。
+
+纸箱和木箱采用相同半厚度门槛与完整过滤，保留动态接触与旋转扫掠。角色或箱体形状、旋转约束及运动速度变化后须重评门槛，并保留不同水平 yaw 的高速薄墙及无 CCD 穿透对照；检查见 [无窗口验证](testing/README.md#海岛资源与无窗口验证) 与 [游戏验收](testing/game-acceptance.md)。
 
 运动与尺寸参数以 [PrototypeConfig](../src/settings/prototype.rs) 的定义和默认值为准；重力每个固定步同步到物理资源，检查器编辑只影响当前会话。
 

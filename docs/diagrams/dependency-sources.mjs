@@ -25,10 +25,10 @@ export function dependencySourceKey(source) {
 }
 
 export function dependencyDefinitionTargets(registry) {
-  const executionKinds = new Set(['engine', 'sync', 'SystemSet', 'Engine SystemSet', 'Engine system set', 'Engine system', 'Engine observers']);
+  const executionKinds = new Set(['system', 'observer', 'engine', 'sync', 'SystemSet', 'Engine SystemSet', 'Engine system set', 'Engine system', 'Engine observers']);
   return Object.values(registry).filter(node =>
     (node.kind === 'Component' && infrastructureFeature(node.defined_in || node.feature))
-    || (infrastructureFeature(node.feature) && (node.kind === 'Plugin' || executionKinds.has(node.kind)))).map(node => node.id);
+    || (infrastructureFeature(node.defined_in || node.feature) && (node.kind === 'Plugin' || node.kind === 'PluginGroup' || executionKinds.has(node.kind)))).map(node => node.id);
 }
 
 export function createDependencySourceResolver(metadata) {

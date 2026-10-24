@@ -12,6 +12,7 @@ export const THIRD_PARTY_SYSTEM_SOURCE_DEFINITIONS = {
   enhanced_prepare: input('Prepare'),
   enhanced_evaluate: input('Update'),
   input_apply: input('Apply'),
+  input_trigger: input('Trigger'),
   egui_input: egui('ProcessInput'),
   egui_begin: egui('BeginPass'),
   inspector_pass: { package: 'bevy-inspector-egui', path: 'src/quick.rs', symbol: 'world_inspector_ui', kind: 'fn' },

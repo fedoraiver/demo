@@ -98,11 +98,11 @@ fn real_island_buildings_preserve_complete_world_collision_geometry() {
     }
 }
 
-/// 真实站点驻足和行走时对比零门槛配置；相对开销避免把特定机器的 FPS 当成测试条件。
+/// 真实站点驻足和行走时对比强制扫掠；相对开销避免把特定机器的 FPS 当成测试条件。
 #[test]
 fn station_character_ccd_avoids_expensive_stationary_and_walking_sweeps() {
     use avian3d::dynamics::solver::SolverDiagnostics;
-    use avian3d::prelude::SweptCcd;
+    use avian3d::prelude::{CcdFilter, SweptCcd};
     let mut app = physics_asset_app();
     wait_until(&mut app, |world| {
         world.query::<&Character>().iter(world).count() == 1
@@ -116,7 +116,15 @@ fn station_character_ccd_avoids_expensive_stationary_and_walking_sweeps() {
     let configured = *app.world().get::<SweptCcd>(character).unwrap();
     for (activity, axes) in [("stationary", Vec2::ZERO), ("walking", Vec2::X)] {
         let mut measurements = Vec::new();
-        for (label, ccd) in [("configured", configured), ("legacy", SweptCcd::default())] {
+        for (label, ccd) in [
+            ("configured", configured),
+            (
+                "eager",
+                SweptCcd::default()
+                    .with_filter(CcdFilter::ALL)
+                    .with_threshold(0.0),
+            ),
+        ] {
             let position = Vec3::new(-9.0, 0.73, -1.3);
             {
                 let world = app.world_mut();
@@ -184,7 +192,7 @@ fn station_character_ccd_avoids_expensive_stationary_and_walking_sweeps() {
         assert!(measurements[1] > Duration::ZERO);
         assert!(
             measurements[0] < measurements[1] / 4,
-            "Character sweeps regressed during {activity}: configured={:?}, legacy={:?}",
+            "Character sweeps regressed during {activity}: configured={:?}, eager={:?}",
             measurements[0],
             measurements[1]
         );

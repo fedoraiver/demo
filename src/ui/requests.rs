@@ -13,7 +13,7 @@ pub(super) fn register(app: &mut App) {
     // 动作应用后、状态切换及固定循环前消费，暂停在当帧生效。
     app.add_systems(
         PreUpdate,
-        handle_requests.after(EnhancedInputSystems::Apply),
+        handle_requests.after(EnhancedInputSystems::Trigger),
     );
 }
 

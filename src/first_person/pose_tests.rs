@@ -12,6 +12,7 @@ use bevy::{
         mouse::{MouseButtonInput, MouseMotion},
     },
     mesh::skinning::SkinnedMeshInverseBindposes,
+    scene::ScenePlugin,
     time::TimeUpdateStrategy,
     transform::TransformPlugin,
 };
@@ -38,6 +39,8 @@ pub(super) fn test_app() -> (App, Entity, Entity, Entity, Entity) {
     let mut app = App::new();
     app.add_plugins((
         MinimalPlugins,
+        AssetPlugin::default(),
+        ScenePlugin,
         InputPlugin,
         TransformPlugin,
         // 只注册可见性计算，不安装渲染或窗口后端。
@@ -288,7 +291,9 @@ fn draw_test_inspector(
 }
 
 fn end_test_inspector_pass(mut contexts: Query<&mut EguiContext, With<PrimaryEguiContext>>) {
-    let _ = contexts.single_mut().unwrap().get_mut().end_pass();
+    let mut output = contexts.single_mut().unwrap().get_mut().end_pass();
+    // 无窗口夹具只验证输入与内存布局，不上传纹理；egui 要求显式清空未应用的更新。
+    output.textures_delta.clear();
 }
 
 fn set_cursor(app: &mut App, window: Entity, position: egui::Pos2) {

@@ -2,12 +2,13 @@
 
 use super::{
     pages::{DEFAULT_SETTINGS_STATUS, DescriptionBody, DescriptionTitle, SettingsStatus},
+    pointer::PrimaryPress,
     theme::*,
     widgets::*,
     *,
 };
 use crate::{audio::AudioPreview, settings::SettingsDraft};
-use bevy::prelude::*;
+use bevy::{picking::hover::Hovered, prelude::*, ui::Pressed};
 
 pub(super) fn register(app: &mut App) {
     app.add_systems(
@@ -38,18 +39,20 @@ pub(super) fn style_buttons(
     source: Res<MenuInputSource>,
     mut buttons: Query<(
         &MenuButton,
-        &Interaction,
+        &Hovered,
+        Has<Pressed>,
+        Has<PrimaryPress>,
         &mut BackgroundColor,
         &mut BorderColor,
     )>,
 ) {
-    for (button, interaction, mut background, mut border) in &mut buttons {
+    for (button, hovered, pressed, primary, mut background, mut border) in &mut buttons {
         // 只显示当前输入来源的焦点；分类和 Apply 也在鼠标离开后恢复普通纸色。
         let focused = match *source {
-            MenuInputSource::Pointer => *interaction != Interaction::None,
+            MenuInputSource::Pointer => hovered.0 || (pressed && primary),
             MenuInputSource::Navigation => button.index == focus.0,
         };
-        let color = if *interaction == Interaction::Pressed {
+        let color = if pressed && primary {
             Color::srgb(0.94, 0.65, 0.20)
         } else if focused {
             GOLD
