@@ -6,6 +6,7 @@ import { createArchitectureViewer, renderArchitectureViewer } from './architectu
 import { createArchitectureNavigation } from './architecture-navigation.mjs';
 import { createArchitectureInteraction } from './architecture-interaction.mjs';
 import { createArchitectureSplitter } from './architecture-splitter.mjs';
+import { createArchitectureGestures } from './architecture-gestures.mjs';
 import { NODE_STYLES, EDGE_STYLES, SELECTION_STYLE, EXTERNAL_REFERENCE_STYLE } from './architecture-style.mjs';
 import { testDocument, scriptsIn } from './test-dom.mjs';
 
@@ -40,19 +41,59 @@ function fixture() {
   return{model:{features,entities:[{id:'item',components:[{id:'item.Shared'},{id:'item.Other'}]},{id:'character',components:[{id:'character.Shared'}]}]},registry,views,features,infrastructureFeatures:[],guideSamples:{nodes:Object.fromEntries(Object.keys(NODE_STYLES).map(type=>[type,'<svg data-sample="'+type+'"></svg>'])),edges:Object.fromEntries(Object.keys(EDGE_STYLES).map(type=>[type,'<svg data-sample="'+type+'"></svg>']))},styles:{nodes:NODE_STYLES,edges:EDGE_STYLES,selection:SELECTION_STYLE,externalReference:EXTERNAL_REFERENCE_STYLE}};
 }
 
-function viewer(query='?feature=item&tab=data',{historyUnavailable=false,edit=()=>{}}={}) {
+function viewer(query='?feature=item&tab=data',{historyUnavailable=false,width=1440,edit=()=>{}}={}) {
   const data=fixture();edit(data);
   const html=renderArchitectureViewer({...data,features:data.features});
   const document=testDocument(html),location=new URL('file:///D:/demo/docs/diagrams/ecs-architecture.html'+query),frames=[],events=new Map(),entries=[{href:location.href,state:null}];let index=0;
   const history={get state(){return entries[index].state},get length(){return entries.length},replaceState(state,_,href){if(historyUnavailable)throw new Error('unavailable');location.href=new URL(href,location).href;entries[index]={href:location.href,state:structuredClone(state)}},pushState(state,_,href){if(historyUnavailable)throw new Error('unavailable');entries.splice(index+1);location.href=new URL(href,location).href;entries.push({href:location.href,state:structuredClone(state)});index++}};
-  const window={innerWidth:1440,addEventListener(name,listener){events.set(name,listener)}};
+  const window={innerWidth:width,addEventListener(name,listener){events.set(name,listener)}};
   const canvas=document.getElementById('canvas');canvas.clientWidth=950;canvas.clientHeight=600;
   const refreshed=[];
-  const app=createArchitectureViewer({data,document,location,history,window,requestAnimationFrame:callback=>frames.push(callback),sourceEditor:{refreshLinks:scope=>refreshed.push(scope),withWorkspace:href=>href},navigation:createArchitectureNavigation(data.features),createSplitter:createArchitectureSplitter,createInteraction:createArchitectureInteraction});
+  const app=createArchitectureViewer({data,document,location,history,window,requestAnimationFrame:callback=>frames.push(callback),sourceEditor:{refreshLinks:scope=>refreshed.push(scope),withWorkspace:href=>href},navigation:createArchitectureNavigation(data.features),createSplitter:createArchitectureSplitter,createInteraction:createArchitectureInteraction,createGestures:createArchitectureGestures});
   function flush(){while(frames.length)frames.splice(0).forEach(callback=>callback())}flush();
   function click(element){assert.ok(element,'control exists');element.click();flush()}
-  return{data,app,document,location,history,canvas,refreshed,get:id=>document.getElementById(id),click,flush,activate(id,key='Enter'){const node=document.getElementById('diagram').querySelector('[data-id="'+id+'"]');assert.ok(node,'visible node '+id);node.dispatch('keydown',{key});flush()},back(){assert.ok(index>0);location.href=entries[--index].href;events.get('popstate')();flush()},forward(){assert.ok(index+1<entries.length);location.href=entries[++index].href;events.get('popstate')();flush()}};
+  return{data,app,document,location,history,canvas,window,emit:name=>events.get(name)?.(),refreshed,get:id=>document.getElementById(id),click,flush,activate(id,key='Enter'){const node=document.getElementById('diagram').querySelector('[data-id="'+id+'"]');assert.ok(node,'visible node '+id);node.dispatch('keydown',{key});flush()},back(){assert.ok(index>0);location.href=entries[--index].href;events.get('popstate')();flush()},forward(){assert.ok(index+1<entries.length);location.href=entries[++index].href;events.get('popstate')();flush()}};
 }
+
+test('two touch points zoom around their midpoint without selecting a node on release',()=>{
+  const page=viewer('?feature=item&tab=data',{width:390}),diagram=page.get('diagram');
+  page.document.elementFromPoint=()=>diagram.querySelector('[data-id="entity-item"]');
+  const point=(pointerId,clientX,clientY=180)=>({button:0,pointerType:'touch',pointerId,clientX,clientY});
+  const scale=()=>Number(/scale\(([^)]+)\)/.exec(diagram.style.transform)[1]),before=scale();
+  page.canvas.dispatch('pointerdown',point(1,100));page.canvas.dispatch('pointerdown',point(2,200));
+  page.canvas.dispatch('pointermove',point(1,50));page.canvas.dispatch('pointermove',point(2,250));
+  assert.equal(scale(),before*2);
+  page.canvas.dispatch('pointerup',point(1,50));page.canvas.dispatch('pointerup',point(2,250));
+  assert.equal(page.location.searchParams.get('node'),null);
+});
+
+test('mobile height-only resizing retains the user zoom and pan',()=>{
+  const page=viewer('?feature=item&tab=data',{width:390});page.click(page.get('zoom-in'));
+  const before=page.get('diagram').style.transform;page.canvas.clientHeight=530;page.emit('resize');
+  assert.equal(page.get('diagram').style.transform,before);
+});
+
+test('navigation and layout breakpoint changes discard in-progress touch captures',()=>{
+  for(const change of ['navigate','resize']){
+    const page=viewer(),point={button:0,pointerType:'touch',pointerId:5,clientX:100,clientY:180};
+    page.canvas.dispatch('pointerdown',point);assert.equal(page.canvas.hasPointerCapture(5),true);
+    if(change==='navigate'){page.app.navigate({feature:'character',aspect:'data',node:null});page.flush()}
+    else{page.window.innerWidth=390;page.emit('resize')}
+    const before=page.get('diagram').style.transform;
+    assert.equal(page.canvas.hasPointerCapture(5),false);
+    page.canvas.dispatch('pointermove',{...point,clientX:200});page.canvas.dispatch('pointerup',point);
+    assert.equal(page.get('diagram').style.transform,before);assert.equal(page.location.searchParams.get('node'),null);
+  }
+});
+
+test('narrow-screen wheel scrolling reaches the page while desktop wheels zoom the diagram',()=>{
+  for(const width of [390,1440]){
+    const page=viewer('?feature=item&tab=data',{width}),before=page.get('diagram').style.transform;
+    const event=page.canvas.dispatch('wheel',{deltaY:-100,clientX:100,clientY:180});
+    assert.equal(event.defaultPrevented,width>900);
+    assert.equal(page.get('diagram').style.transform===before,width<=900);
+  }
+});
 
 test('Entity cards have no expansion controls and their complete component list opens a dedicated type view',()=>{
   const page=viewer();page.activate('entity-item');

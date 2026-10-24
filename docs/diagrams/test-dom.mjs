@@ -166,12 +166,13 @@ export class Element {
   dispatch(name, event = {}) {
     const value = { target: this, defaultPrevented: false, ...event };
     value.preventDefault ??= () => { value.defaultPrevented = true; };
+    value.stopPropagation ??= () => { value.propagationStopped = true; };
     let current = this;
     while (current) {
       value.currentTarget = current;
       current['on' + name]?.(value);
       for (const callback of current.listeners.get(name) ?? []) callback(value);
-      if (event.bubbles === false) break;
+      if (event.bubbles === false || value.propagationStopped) break;
       current = current.parentElement;
     }
     return value;
@@ -186,9 +187,9 @@ export class Element {
   getBoundingClientRect() { return { left: 0, top: 0, x: 0, y: 0, width: this.clientWidth, height: this.clientHeight }; }
   // 仅供交互滤镜计算使用的可覆盖 fixture，不代表浏览器测得的 SVG 几何。
   getBBox() { return this.bbox ?? { x: 0, y: 0, width: 180, height: 80 }; }
-  setPointerCapture(id) { this.capturedPointer = id; }
-  hasPointerCapture(id) { return this.capturedPointer === id; }
-  releasePointerCapture(id) { if (this.capturedPointer === id) this.capturedPointer = undefined; }
+  setPointerCapture(id) { (this.capturedPointers ??= new Set()).add(id); }
+  hasPointerCapture(id) { return this.capturedPointers?.has(id) ?? false; }
+  releasePointerCapture(id) { this.capturedPointers?.delete(id); }
 }
 
 export function parseMarkup(markup, parent) {
