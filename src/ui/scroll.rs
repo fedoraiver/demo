@@ -58,21 +58,23 @@ pub(super) fn settings_scroll_frame<Content: Scene>(
             padding: UiRect::right(px(theme.size(24.0).max(20.0))),
         }
         Children [
-            (
-                scroll_area(theme)
-                Node {
-                    padding: UiRect::ZERO,
-                }
-                Children [({content})]
-            ),
-            settings_scrollbar(theme),
+            @scroll_area(theme)
+            Node {
+                padding: UiRect::ZERO,
+            }
+            Children [
+                @{content}
+            ]
+            --
+            @settings_scrollbar(theme)
         ]
     }
 }
 
 fn settings_scrollbar(theme: &UiTheme) -> impl Scene + use<> {
+    let min_thumb_length = theme.size(28.0).max(22.0);
     bsn! {
-        template_value(SettingsScrollbar { min_thumb_length: theme.size(28.0).max(22.0) })
+        SettingsScrollbar { min_thumb_length }
         Node {
             position_type: PositionType::Absolute,
             right: px(theme.size(7.0).max(5.0)),
@@ -87,19 +89,19 @@ fn settings_scrollbar(theme: &UiTheme) -> impl Scene + use<> {
         // Enhanced Input 负责菜单语义，控件的命中坐标、拖拽和轨道分页复用 Bevy 指针事件。
         on(scrollbar_pointer_source)
         on(scroll_over_settings_scrollbar)
-        Children [(
+        Children [
             SettingsScrollbarThumb
-            template_value(ScrollbarThumb {
+            ScrollbarThumb {
                 border_radius: BorderRadius::MAX,
                 border: UiRect::all(px(1)),
-            })
+            }
             // 原生滑块不带 Node，避免 UI layout 与 ScrollbarPlugin 两次写入几何。
-            template_value(Hovered::default())
+            Hovered::default()
             Pickable::IGNORE
             BackgroundColor(CREAM)
             BorderColor::all(INK)
             on(scrollbar_pointer_source)
-        )]
+        ]
     }
 }
 
@@ -205,13 +207,13 @@ fn sync_settings_scrollbars(
     }
 }
 
-fn scrollbar_pointer_source(_: On<Pointer<Press>>, mut source: ResMut<MenuInputSource>) {
+fn scrollbar_pointer_source(_: On<PointerPress>, mut source: ResMut<MenuInputSource>) {
     *source = MenuInputSource::Pointer;
 }
 
 /// 滚轮落在右侧轨道或滑块时仍控制其目标区域，不另行消费底层 MouseWheel。
 fn scroll_over_settings_scrollbar(
-    mut event: On<Pointer<Scroll>>,
+    mut event: On<PointerScroll>,
     state: Option<Res<MenuState>>,
     tracks: Query<&Scrollbar, With<SettingsScrollbar>>,
     mut areas: Query<(&mut ScrollPosition, &ComputedNode), With<MenuScroll>>,
@@ -263,7 +265,7 @@ pub(super) fn scroll_area(theme: &UiTheme) -> impl Scene + use<> {
 }
 
 fn scroll_menu(
-    mut event: On<Pointer<Scroll>>,
+    mut event: On<PointerScroll>,
     state: Option<Res<MenuState>>,
     mut areas: Query<(&mut ScrollPosition, &ComputedNode), With<MenuScroll>>,
 ) {

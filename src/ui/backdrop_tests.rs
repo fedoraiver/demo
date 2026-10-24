@@ -1,6 +1,7 @@
 use bevy::{
     animation::{RepeatAnimation, graph::AnimationNodeType},
     asset::AssetPlugin,
+    camera::CameraProjection,
     scene::ScenePlugin,
     state::app::StatesPlugin,
     world_serialization::{WorldAsset, WorldInstanceSpawner},
@@ -25,9 +26,11 @@ fn leaving_main_menu_removes_backdrop_camera_and_preserves_other_camera() {
         .world_mut()
         .spawn_scene(bsn! {
             MenuBackdrop
-            template_value(DespawnOnExit(AppState::MainMenu))
+            DespawnOnExit::<AppState>(AppState::MainMenu)
             Transform
-            Children [menu_camera()]
+            Children [
+                @menu_camera()
+            ]
         })
         .unwrap()
         .id();
@@ -198,7 +201,14 @@ fn courier_menu_resolves_named_clip_after_scene_and_asset_are_ready() {
 fn camera_frames_courier_and_station_on_right_at_wide_and_narrow_aspects() {
     let view = camera_transform().to_matrix().inverse();
     for aspect in [16.0 / 9.0, 4.0 / 3.0] {
-        let projection = Mat4::perspective_rh(46.0_f32.to_radians(), aspect, 0.1, 1000.0);
+        let projection = PerspectiveProjection {
+            fov: 46.0_f32.to_radians(),
+            aspect_ratio: aspect,
+            near: 0.1,
+            far: 1000.0,
+            ..default()
+        }
+        .get_clip_from_view();
         for point in [
             COURIER_POSITION,
             COURIER_POSITION + Vec3::Y * 1.91,

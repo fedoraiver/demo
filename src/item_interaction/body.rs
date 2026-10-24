@@ -16,7 +16,10 @@ pub(crate) fn parcel_body(config: &PrototypeConfig) -> impl Bundle {
         AngularDamping(0.15),
         parcel_collision_layers(),
         CollisionEventsEnabled,
-        SweptCcd::default(),
+        // 默认只扫静态与运动学刚体，箱体仍需防止高速穿过人物或其他动态箱体。
+        SweptCcd::default().with_filter(CcdFilter::ALL),
+        // 相向高速物体的路径可能只在中途交会，预测邻域必须覆盖双方的单步位移。
+        SpeculativeCcd::default(),
         TransformInterpolation,
     )
 }

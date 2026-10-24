@@ -31,7 +31,7 @@ pub(super) fn pivot_motion(
     if angular.length_squared() <= 1.0e-12 {
         return None;
     }
-    let rotation = start_yaw * local.rotation.0;
+    let rotation = start_yaw * local.rotation;
     let position = holder_origin + start_yaw * local.translation;
     let local_pivot = rotation.inverse() * (holder_origin - position);
     Some(NonlinearRigidMotion::new(

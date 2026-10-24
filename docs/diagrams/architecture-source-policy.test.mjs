@@ -203,6 +203,10 @@ test('current registry and merged function cards have verified source scope acro
   buildComponentCatalog(model, registry);
   const inspectorBody = structuredClone({ description: registry.inspector_pass.description, notes: registry.inspector_pass.notes, registrations: registry.inspector_pass.registrations });
   const audit = applyArchitectureSourcePolicies(registry, { repository, model, dependencyContext: { metadata, resolver } });
+  const sourceLine = source => source.dependency ? resolver.read(source).lines[source.line - 1]
+    : fs.readFileSync(path.join(repository, source.path), 'utf8').split(/\r?\n/)[source.line - 1];
+  const hasSource = (id, role, sourcePath, pattern, packageName) => registry[id].sourceEntries.some(source =>
+    source.role === role && source.path === sourcePath && source.dependency?.name === packageName && pattern.test(sourceLine(source)));
   assert(audit.entries > 1000);
   for (const record of Object.values(registry)) {
     assert(record.sourceEntries.length || record.sourceGaps.length, `${record.id}: source entry or explicit missing evidence`);
@@ -221,14 +225,108 @@ test('current registry and merged function cards have verified source scope acro
     assert.equal(registry[id].sourceEntries.filter(source => source.role === 'definition').length, 1);
     assert.equal(registry[id].sourceEntries.filter(source => source.role === 'registration').length, 2);
   }
-  const parcel = registry['entity-parcel'];
-  for (const [filename, line] of [['src/scene_assembly/actors.rs', 89], ['src/scene_assembly/actors.rs', 90], ['src/ui/requests.rs', 95], ['src/state_scoped.rs', 183]]) assert(parcel.sourceEntries.some(source => source.path === filename && source.line === line));
+  assert(hasSource('entity-parcel', 'create', 'src/scene_assembly/actors.rs', /commands\.spawn_scene\(carryable_scene/));
+  assert(hasSource('entity-parcel', 'destroy', 'src/scene_assembly/actors.rs', /entity\.insert\(\(parcel_body\(&config\), DespawnOnExit/));
+  assert(hasSource('entity-parcel', 'destroy', 'src/ui/requests.rs', /app_state\.set\(AppState::MainMenu\)/));
+  assert(hasSource('entity-parcel', 'destroy', 'src/state_scoped.rs', /commands\.despawn_all_where::<&DespawnOnExit<S>/, 'bevy_state'));
   assert(registry['resource.UiRequestMessages'].sourceEntries.some(source => source.role === 'message_definition'));
   assert(!registry['resource.UiRequestMessages'].sourceEntries.some(source => source.role === 'remove'), 'Generic deregistration capability is not an observed removal of this resource');
   assert.deepEqual(registry['resource.UiTrack'].sourceEntries.map(source => source.role), ['definition']);
-  assert(registry['resource.EnableMultipassForPrimaryContext'].sourceEntries.some(source => source.role === 'insert'), 'The Egui multipass marker is an actual inserted Resource');
+  assert.equal(registry['resource.EnableMultipassForPrimaryContext'], undefined, 'Egui 0.43 no longer installs a multipass marker Resource');
+  assert.equal(registry['camera.EguiMultipassSchedule'].name, 'EguiSchedule', 'The stable projection points at the current component');
+  assert(hasSource('camera.EguiMultipassSchedule', 'definition', 'src/lib.rs', /^pub struct EguiSchedule\(/, 'bevy_egui'));
+  assert(hasSource('resource.EguiGlobalSettings', 'initialize', 'src/lib.rs', /init_resource::<EguiGlobalSettings>/, 'bevy_egui'));
+
+  for (const [id, variant] of [['input_apply', 'Apply'], ['input_trigger', 'Trigger']]) {
+    assert(hasSource(id, 'definition', 'src/lib.rs', new RegExp(`^\\s*${variant},`), 'bevy_enhanced_input'));
+  }
+  assert.notEqual(registry.input_apply.definition_source.line, registry.input_trigger.definition_source.line);
+  assert.deepEqual(registry.input_apply.writes, ['action.Action']);
+  assert.deepEqual(registry.input_apply.events, []);
+  assert(registry.input_trigger.events.some(event => /Fire<MoveAction>/.test(event)));
+
+  assert.equal(registry.wake_apply.sourcePolicyKind, 'sync');
+  assert(hasSource('wake_apply', 'definition', 'src/schedule/executor/mod.rs', /^pub struct ApplyDeferred;/, 'bevy_ecs'));
+  assert(hasSource('wake_apply', 'configure', 'src/physics/mod.rs', /before\(PhysicsSystems::Prepare\)/));
+  assert(hasSource('event_apply', 'definition', 'src/schedule/executor/mod.rs', /^pub struct ApplyDeferred;/, 'bevy_ecs'));
+  assert(hasSource('event_apply', 'configure', 'src/ui/requests.rs', /after\(EnhancedInputSystems::Trigger\)/));
+  assert(hasSource('resource.LastPhysicsTick', 'initialize', 'src/schedule/mod.rs', /init_resource::<LastPhysicsTick>/, 'avian3d'));
+  assert.equal(registry.wake_changed_bodies.sourceEntries.filter(source => source.role === 'definition').length, 1);
+  assert.equal(registry.wake_changed_bodies.sourceEntries.filter(source => source.role === 'registration').length, 1);
+
+  for (const name of ['down', 'up', 'click', 'drag_end', 'cancel', 'key']) {
+    const record = registry[`native_button_${name}`];
+    assert.equal(record.sourcePolicyKind, 'observer');
+    assert.equal(record.sourceEntries.filter(source => source.role === 'definition').length, 1);
+    assert.equal(record.sourceEntries.filter(source => source.role === 'registration').length, 1);
+    assert(record.sourceEntries.every(source => source.dependency?.name === 'bevy_ui_widgets' && source.path === 'src/button.rs'));
+  }
+  for (const id of ['native_pointer_events', 'native_update_hovered']) {
+    assert.equal(registry[id].sourcePolicyKind, 'system');
+    assert.equal(registry[id].sourceEntries.filter(source => source.role === 'definition').length, 1);
+    assert.equal(registry[id].sourceEntries.filter(source => source.role === 'registration').length, 1);
+    assert(registry[id].sourceEntries.every(source => source.dependency?.name === 'bevy_picking'));
+  }
+  for (const [id, symbol, sourcePath, packageName] of [
+    ['event-native_button_up', 'PointerRelease', 'src/events.rs', 'bevy_picking'],
+    ['event-native_button_click', 'PointerClick', 'src/events.rs', 'bevy_picking'],
+    ['event-native_button_drag_end', 'PointerDragEnd', 'src/events.rs', 'bevy_picking'],
+    ['event-native_button_cancel', 'PointerCancel', 'src/events.rs', 'bevy_picking'],
+    ['native-focused-keyboard-event', 'FocusedInput', 'src/lib.rs', 'bevy_input_focus'],
+    ['native-button-activate-event', 'Activate', 'src/lib.rs', 'bevy_ui_widgets'],
+    ['event-observe_menu_primary_clear', 'RemoveEvent', 'src/lifecycle.rs', 'bevy_ecs'],
+  ]) {
+    assert(hasSource(id, 'definition', sourcePath, new RegExp(`^pub struct ${symbol}\\b`), packageName), `${id}: actual event declaration`);
+    assert.deepEqual(registry[id].sourceGaps, [], id);
+  }
+  assert.equal(registry['event-observe_menu_primary_clear'].name, 'RemoveEvent');
+  assert.equal(model.observers.find(observer => observer.system === 'observe_menu_primary_clear').event, 'RemoveEvent');
+  assert(registry.observe_menu_primary_clear.filters.some(filter => filter.includes('On<Remove<Pressed>>')));
+  for (const [symbol, sourcePath, qualified] of [
+    ['HoverMap', 'src/hover.rs', 'hover::HoverMap'],
+    ['PreviousHoverMap', 'src/hover.rs', 'hover::PreviousHoverMap'],
+    ['PointerState', 'src/events.rs', 'PointerState'],
+    ['PointerMap', 'src/pointer.rs', 'pointer::PointerMap'],
+    ['PickingSettings', 'src/lib.rs', 'PickingSettings'],
+  ]) {
+    const id = `resource.${symbol}`;
+    assert(hasSource(id, 'definition', sourcePath, new RegExp(`^pub struct ${symbol}\\b`), 'bevy_picking'), `${id}: actual resource declaration`);
+    assert(hasSource(id, 'initialize', 'src/lib.rs', new RegExp(`init_resource::<${qualified}>`), 'bevy_picking'), `${id}: actual framework initialization`);
+    assert.deepEqual(registry[id].sourceGaps, [], id);
+  }
+  for (const [symbol, sourcePath, qualified] of [
+    ['PointerPress', 'src/events.rs', 'PointerPress'],
+    ['PointerInput', 'src/pointer.rs', 'pointer::PointerInput'],
+  ]) {
+    const id = `resource.${symbol}Messages`;
+    assert(hasSource(id, 'message_definition', sourcePath, new RegExp(`^pub struct ${symbol}\\b`), 'bevy_picking'), `${id}: actual message declaration`);
+    assert(hasSource(id, 'registration', 'src/lib.rs', new RegExp(`add_message::<${qualified}>`), 'bevy_picking'), `${id}: actual framework message registration`);
+  }
   assert.equal(registry['native-scrollbar-layout'].sourceEntries.filter(source => source.role === 'registration').length, 1, 'Popover ordering constraints do not register the scrollbar function');
   assert.equal(registry.inspector_pass.sourcePolicyKind, 'system');
   assert.deepEqual(registry.inspector_pass.sourceEntries.map(source => [source.role, source.path, source.line]), [['definition', 'src/quick.rs', 92], ['registration', 'src/quick.rs', 88]], 'The real inspector function shows only its definition and true Schedule registration');
   assert.deepEqual({ description: registry.inspector_pass.description, notes: registry.inspector_pass.notes, registrations: registry.inspector_pass.registrations }, inspectorBody, 'Exclusive World access and run conditions remain intact');
+});
+
+test('native framework plugins retain exact parent-group installation evidence', () => {
+  const metadata = readCargoMetadata(repository), resolver = createDependencySourceResolver(metadata);
+  const installations = [
+    ['UiWidgetsPlugins', 'PluginGroup', 'bevy_internal', 'src/default_plugins.rs', /bevy_ui_widgets:::UiWidgetsPlugins,/],
+    ['DefaultPickingPlugins', 'PluginGroup', 'bevy_internal', 'src/default_plugins.rs', /bevy_picking:::DefaultPickingPlugins,/],
+    ['ButtonPlugin', 'Plugin', 'bevy_ui_widgets', 'src/lib.rs', /\.add\(ButtonPlugin\)/],
+    ['PickingPlugin', 'Plugin', 'bevy_picking', 'src/lib.rs', /\.add\(PickingPlugin\)/],
+    ['InteractionPlugin', 'Plugin', 'bevy_picking', 'src/lib.rs', /\.add\(InteractionPlugin\)/],
+  ];
+  const registry = Object.fromEntries(installations.map(([name, kind]) => [`plugin-${name}`, { id: `plugin-${name}`, name, kind, feature: 'infrastructure' }]));
+  attachDependencySources(registry, resolver, DEPENDENCY_SOURCE_DEFINITIONS);
+  applyArchitectureSourcePolicies(registry, { repository, dependencyContext: { metadata, resolver } });
+  for (const [name, , packageName, sourcePath, pattern] of installations) {
+    const record = registry[`plugin-${name}`];
+    assert.deepEqual(record.sourceEntries.map(source => source.role), ['definition', 'build', 'install']);
+    const install = record.sourceEntries.find(source => source.role === 'install');
+    assert.equal(install.dependency.name, packageName);
+    assert.equal(install.path, sourcePath);
+    assert.match(resolver.read(install).lines[install.line - 1], pattern);
+    assert.deepEqual(record.sourceGaps, []);
+  }
 });

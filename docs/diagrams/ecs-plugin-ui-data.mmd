@@ -129,6 +129,13 @@ flowchart TB
   class n22 node_entity
   n23@{ shape: rounded, label: "**设置滚动条滑块**<br/>显示设置内容的可视比例并支持拖动。" }
   class n23 node_entity
+  n33@{ shape: hex, label: "**primary_press**<br/>记录菜单按钮主键按压的指针身份。" }
+  class n33 node_observer
+  n34@{ shape: hex, label: "**clear_primary_press**<br/>原生 Pressed 移除时清理菜单主键来源。" }
+  class n34 node_observer
+  n35@{ shape: rounded, label: "**clear_cancelled_primary_presses**<br/>清理被取消、失焦或离窗的菜单主键按压。" }
+  class n35 node_system
+  n33 layout_6@~~~ n34
   n14 e18@-->|"ChildOf 层级"| n13
   class e18 edge_relationship
   n15 e19@-->|"ChildOf"| n21
@@ -145,6 +152,12 @@ flowchart TB
   class e24 edge_relationship
   n22 e25@-->|"Scrollbar.target"| n15
   class e25 edge_reference
+  n33 e26@-->|"Commands insert"| n14
+  class e26 edge_write
+  n34 e27@-->|"Commands remove"| n14
+  class e27 edge_write
+  n35 e28@-->|"Commands remove"| n14
+  class e28 edge_write
   end
   style relation_1 fill:none,stroke:none
   subgraph relation_2[" "]
@@ -180,10 +193,10 @@ flowchart TB
   class n10 node_local
   n12@{ shape: rounded, label: "**菜单输入控制者**<br/>提供跨页面与玩法会话保留的菜单动作输入。" }
   class n12 node_entity
-  n3 layout_6@~~~ n6
-  n6 layout_7@~~~ n8
-  n8 layout_8@~~~ n10
-  n10 layout_9@~~~ n12
+  n3 layout_7@~~~ n6
+  n6 layout_8@~~~ n8
+  n8 layout_9@~~~ n10
+  n10 layout_10@~~~ n12
   end
   style column_0 fill:none,stroke:none
   subgraph column_1[" "]
@@ -196,12 +209,12 @@ flowchart TB
   class n9 node_local
   n11@{ shape: doc, label: "**设置固定区域**<br/>保留设置分类、底部操作与页脚的固定位置。" }
   class n11 node_note
-  n5 layout_10@~~~ n7
-  n7 layout_11@~~~ n9
-  n9 layout_12@~~~ n11
+  n5 layout_11@~~~ n7
+  n7 layout_12@~~~ n9
+  n9 layout_13@~~~ n11
   end
   style column_1 fill:none,stroke:none
-  column_0 layout_13@~~~ column_1
+  column_0 layout_14@~~~ column_1
   end
   e0@{ curve: basis }
   e1@{ curve: basis }
@@ -220,6 +233,11 @@ flowchart TB
   e17@{ curve: basis }
   e18@{ curve: basis }
   e19@{ curve: basis }
+  e20@{ curve: basis }
+  e21@{ curve: basis }
   e22@{ curve: basis }
   e23@{ curve: basis }
   e25@{ curve: basis }
+  e26@{ curve: basis }
+  e27@{ curve: basis }
+  e28@{ curve: basis }

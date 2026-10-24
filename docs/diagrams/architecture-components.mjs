@@ -15,7 +15,7 @@ const labels = {
   contains: '可能挂载于', read: '查询访问', write: '可变访问', insert: '添加', remove: '移除',
   filter: '存在 / 变更过滤', reflect_read: '反射查看', reflect_write: '反射可选编辑',
 };
-// 这些清单显示名省略泛型参数；实参分别来自对应 BSN、actions! 和状态清理声明。
+// 这些清单显示名省略泛型参数；实参分别来自对应 BSN 场景、动作列表和状态清理声明。
 const reviewedTypeNames = {
   ...Object.fromEntries(['controller', 'character', 'parcel', 'camera', 'island', 'menu_backdrop'].map(entity => [`${entity}.DespawnOnExit`, 'DespawnOnExit<crate::game_flow::AppState>'])),
   ...Object.fromEntries(['Actions', 'ContextPriority', 'ContextActivity'].flatMap(type => [
@@ -46,13 +46,16 @@ function nominal(value) {
 function typeIdentity(component, record) {
   const explicit = component.rust_type || record.rust_type;
   const type = explicit || reviewedTypeNames[component.id] || component.name;
-  const definition = record.definition_source || component.definition_source
+  const verifiedDefinition = record.definition_source || component.definition_source;
+  const definition = verifiedDefinition
     || (!infrastructureFeature(record.defined_in || record.feature) ? component.source : null);
   const declared = definition && sourceIdentity(definition);
   const explicitId = component.type_id || component.component_type_id;
   const aggregate = aggregateProjections[component.id];
-  const identity = aggregate ? `aggregate:${component.id}` : explicitId ? `explicit:${explicitId}` : explicit ? `rust:${explicit}`
-    : declared ? `definition:${declared}|${type.replace(/\s+/g, '')}` : `projection:${component.id}`;
+  // 已解析声明优先于导入路径的拼写；具体泛型实参仍属于类型身份。
+  const declaredType = type.replace(/^[A-Za-z_]\w*(?:::[A-Za-z_]\w*)*::/, '').replace(/\s+/g, '');
+  const identity = aggregate ? `aggregate:${component.id}` : explicitId ? `explicit:${explicitId}`
+    : declared && (!explicit || verifiedDefinition) ? `definition:${declared}|${declaredType}` : explicit ? `rust:${explicit}` : `projection:${component.id}`;
   const rustType = explicit || (definition && !definition.dependency
     ? `crate::${definition.path.replace(/^src\//, '').replace(/\/(?:mod|main)\.rs$/, '').replace(/\.rs$/, '').replaceAll('/', '::')}::${type}`
     : type);
@@ -447,6 +450,7 @@ function scanAccesses(model, registry, catalog, database) {
           }
           if (/^[A-Z]/.test(name)) add(name, 'insert', fn, from, calls, 'bsn', `BSN ${name}`);
           else if (fn.masked[index] === '(') insertionCalls.add(from);
+          else if (valueTypes.has(name)) add(valueTypes.get(name), 'insert', fn, from, calls, 'value', `BSN ${name}: ${valueTypes.get(name)}`);
           // Associated constructors/constants belong to the root type. Skip their argument values.
           while (fn.masked.startsWith('::', index) || fn.masked[index] === '.') {
             index += fn.masked[index] === '.' ? 1 : 2;
@@ -490,12 +494,12 @@ function scanAccesses(model, registry, catalog, database) {
         const component = mutableBindings.get(`${assignment[1]}.${field}`) || mutableBindings.get(assignment[1]);
         if (component) add(component, 'write', fn, origin + assignment.index, calls, 'field-write', assignment[0].trim());
       }
-      for (const match of body.matchAll(/\.(remove|get|get_mut)\s*::\s*</g)) {
+      for (const match of body.matchAll(/\.(remove|try_remove|get|get_mut)\s*::\s*</g)) {
         const open = origin + match.index + match[0].lastIndexOf('<'), end = closing(fn.masked, open, '<', '>');
         if (end < 0) continue;
         const tail = fn.masked.slice(end + 1, end + 70);
         const existence = match[1] === 'get' && /^\s*\([^)]*\)\s*\.\s*is_(?:some|none)/.test(tail);
-        const operation = match[1] === 'remove' ? 'remove' : match[1] === 'get_mut' ? 'write' : existence ? 'filter' : 'read';
+        const operation = /^(?:try_)?remove$/.test(match[1]) ? 'remove' : match[1] === 'get_mut' ? 'write' : existence ? 'filter' : 'read';
         for (const name of outerTypes(fn.masked.slice(open + 1, end))) add(name, operation, fn, origin + match.index, calls, existence ? 'existence-check' : 'world', match[0] + name + '>');
       }
       for (const match of body.matchAll(/\.(insert|spawn|spawn_scene)\s*\(/g)) {
@@ -530,8 +534,114 @@ function scanAccesses(model, registry, catalog, database) {
   return facts;
 }
 
+// 原生 UI 函数来自锁定依赖；参数过滤和结构操作分别取真实函数内的证据。
+function reviewedUiNativeAccesses(registry, readDependencySource) {
+  const result = [];
+  const facts = {
+    native_update_hovered: ['bevy_picking', [
+      ['Hovered', 'read', '&Hovered'], ['Hovered', 'insert', '.insert(Hovered(is_hovering))'],
+    ]],
+    native_button_down: ['bevy_ui_widgets', [
+      ['Button', 'filter', 'With<Button>'], ['Pressed', 'filter', 'Has<Pressed>'], ['Pressed', 'insert', '.insert(Pressed)'],
+    ]],
+    native_button_up: ['bevy_ui_widgets', [
+      ['Button', 'filter', 'With<Button>'], ['Pressed', 'filter', 'Has<Pressed>'], ['Pressed', 'remove', '.remove::<Pressed>()'],
+    ]],
+    native_button_drag_end: ['bevy_ui_widgets', [
+      ['Button', 'filter', 'With<Button>'], ['Pressed', 'filter', 'Has<Pressed>'], ['Pressed', 'remove', '.remove::<Pressed>()'],
+    ]],
+    native_button_cancel: ['bevy_ui_widgets', [
+      ['Button', 'filter', 'With<Button>'], ['Pressed', 'filter', 'Has<Pressed>'], ['Pressed', 'remove', '.remove::<Pressed>()'],
+    ]],
+    native_button_click: ['bevy_ui_widgets', [
+      ['Button', 'filter', 'With<Button>'], ['Pressed', 'filter', 'Has<Pressed>'],
+    ]],
+    native_button_key: ['bevy_ui_widgets', [['Button', 'filter', 'With<Button>']]],
+  };
+  for (const [system, [packageName, accesses]] of Object.entries(facts)) {
+    const record = registry[system], definition = record?.definition_source || record?.source;
+    if (!definition?.dependency) continue;
+    if (definition.dependency.name !== packageName) throw new Error(`原生 UI 来源不匹配：${system}`);
+    const text = readDependencySource(definition);
+    if (typeof text !== 'string') continue;
+    const masked = maskRustSource(text), start = text.split('\n').slice(0, definition.line - 1).join('\n').length;
+    const bodyStart = masked.indexOf('{', start), end = closing(masked, bodyStart, '{', '}');
+    if (bodyStart < 0 || end < 0) throw new Error(`原生 UI 函数范围无效：${system}`);
+    for (const [type, operation, snippet] of accesses) {
+      const offset = masked.indexOf(snippet, start);
+      if (offset < start || offset > end) throw new Error(`原生 UI 操作证据失效：${system} ${snippet}`);
+      const projections = type === 'Hovered' ? ['menu_button.Hovered', 'settings_scrollbar_thumb.Hovered'] : [`menu_button.${type}`];
+      for (const component of projections.filter(id => registry[id]?.kind === 'Component')) result.push({
+        system, component, operation, evidence: 'reviewed', accessMode: ['read', 'filter'].includes(operation) ? 'query' : 'native-structure',
+        label: operation === 'filter' ? snippet : labels[operation], notes: ['原生依赖的真实参数或结构操作；With / Has 不代表读取组件字段。'],
+        sourceEntries: [{ ...definition, line: text.slice(0, offset).split('\n').length, column: 1,
+          role: ['read', 'filter'].includes(operation) ? 'parameter' : 'operation', label: snippet }],
+      });
+    }
+  }
+  return result;
+}
+
+// 项目排队唤醒命令；实际结构操作发生于 Avian 整岛命令及其生命周期 Observer。
+function reviewedPhysicsWakeAccesses(registry, readSource, readDependencySource) {
+  const system = registry.wake_changed_bodies;
+  const dependency = registry['character.Sleeping']?.definition_source?.dependency;
+  if (!system?.source || dependency?.name !== 'avian3d') return [];
+  const commandPath = 'src/dynamics/solver/islands/sleeping.rs';
+  const solverPath = 'src/dynamics/solver/solver_body/plugin.rs';
+  const project = readSource(system.source.path);
+  const command = readDependencySource({ path: commandPath, dependency });
+  const solver = readDependencySource({ path: solverPath, dependency });
+  if (![project, command, solver].every(text => typeof text === 'string')) return [];
+  function evidence(text, path, snippet, role, label, external = false, scope) {
+    const masked = maskRustSource(text), anchor = scope ? masked.indexOf(scope) : 0;
+    const end = scope && anchor >= 0 ? closing(masked, masked.indexOf('{', anchor), '{', '}') : masked.length;
+    const offset = anchor < 0 ? -1 : masked.indexOf(snippet, anchor), next = masked.indexOf(snippet, offset + 1);
+    if (offset < 0 || offset > end || next >= 0 && next < end) throw new Error(`物理唤醒操作证据失效：${path} ${snippet}`);
+    return { path, line: text.slice(0, offset).split('\n').length, column: 1, role, label, ...(external ? { dependency } : {}) };
+  }
+  const queued = evidence(project, system.source.path, 'commands.queue(WakeBody(entity))', 'operation', '项目排队：WakeBody(entity)');
+  const island = evidence(command, commandPath, 'WakeIslands(vec![body_island.island_id]).apply(world)', 'implementation', '命令执行：唤醒身体所属物理岛', true);
+  const effects = [
+    ['Sleeping', 'remove', [evidence(command, commandPath, 'world.entity_mut(entity).remove::<Sleeping>()', 'operation', '整岛身体：移除 Sleeping', true, 'impl Command for WakeIslands')]],
+    ['SleepTimer', 'write', [evidence(command, commandPath, 'sleep_timer.0 = 0.0', 'operation', '整岛身体：重置休眠计时', true, 'impl Command for WakeIslands')]],
+    ['SolverBodyIndex', 'insert', [
+      evidence(solver, solverPath, 'trigger: On<Remove<Sleeping>>', 'registration', '引擎注册：移除 Sleeping 后恢复求解身体', true),
+      evidence(solver, solverPath, 'commands.entity(entity).try_insert(index)', 'operation', '生命周期 helper：插入 SolverBodyIndex', true),
+    ]],
+  ];
+  return effects.flatMap(([type, operation, sourceEntries]) => ['character', 'parcel'].flatMap(owner => {
+    const component = `${owner}.${type}`;
+    return registry[component]?.kind === 'Component' ? [{ system: system.id, component, operation, evidence: 'reviewed', accessMode: 'queued-island-command',
+      label: `唤醒命令：${labels[operation]}`, sourceEntries: [queued, island, ...sourceEntries],
+      notes: ['项目函数只检查 Ref<T> 的变更元数据；命令应用时作用于整个休眠物理岛。', 'SolverBodyIndex 的恢复由引擎 Remove<Sleeping> Observer 调用 helper 完成；helper 不是另一个项目 System。'],
+    }] : [];
+  }));
+}
+
+function reviewedBodySizeAccesses(registry, readDependencySource) {
+  const definition = registry['character.BodySizeMetrics']?.definition_source;
+  if (!registry.physics_step || definition?.dependency?.name !== 'avian3d') return [];
+  const path = 'src/dynamics/rigid_body/body_size_metrics.rs', text = readDependencySource({ ...definition, path });
+  if (typeof text !== 'string') return [];
+  const masked = maskRustSource(text), start = masked.indexOf('fn update_body_size_metrics<');
+  const end = closing(masked, masked.indexOf('{', start), '{', '}');
+  const updates = [...masked.matchAll(/\*size_metrics = compute\(rb_colliders, com\)/g)].map(match => match.index);
+  const registration = masked.indexOf('.before(PhysicsStepSystems::Solver)');
+  if (start < 0 || registration < 0 || updates.length !== 2 || updates.some(offset => offset < start || offset > end)) throw new Error('BodySizeMetrics 更新证据失效');
+  const sourceEntries = [registration, ...updates].map((offset, index) => ({ ...definition, path, line: text.slice(0, offset).split('\n').length, column: 1,
+    role: index === 0 ? 'registration' : 'operation', label: index === 0 ? '引擎注册：在 Solver 前更新刚体尺寸' : '碰撞体或质心变化后重算 BodySizeMetrics' }));
+  return ['character.BodySizeMetrics', 'parcel.BodySizeMetrics'].filter(component => registry[component]?.kind === 'Component').map(component => ({
+    system: 'physics_step', component, operation: 'write', evidence: 'reviewed', accessMode: 'field-write', label: '重算刚体尺寸', sourceEntries,
+    notes: ['PhysicsSchedule 内部在 Solver 前执行 update_body_size_metrics；汇总身体的全部 Collider，仅在质心或碰撞体变化时更新。'],
+  }));
+}
+
 /** Build after dependency definitions are attached. Original projection/registration IDs remain valid. */
-export function buildComponentCatalog(model, registry, { readSource = filename => fs.readFileSync(path.join(repository, filename), 'utf8') } = {}) {
+export function buildComponentCatalog(model, registry, {
+  readSource = filename => fs.readFileSync(path.join(repository, filename), 'utf8'),
+  readDependencySource = source => fs.readFileSync(path.join(source.dependency.root, source.path), 'utf8'),
+} = {}) {
   const typeById = {}, typeByProjectionId = {}, types = [], byIdentity = new Map();
   for (const entity of model.entities || []) for (const component of entity.components || []) {
     const record = registry[component.id];
@@ -580,7 +690,7 @@ export function buildComponentCatalog(model, registry, { readSource = filename =
     system: system.id, component, operation, evidence: 'declaration', notes: [], sourceEntries: system.source ? [{ ...system.source, role: 'related', label: '系统访问声明对应函数' }] : [],
   });
   const database = sourceDatabase(model, registry, readSource);
-  const reviewed = [...reviewedHeldTargetAccesses(registry), ...reflectedProjectAccesses(registry, catalog, database)];
+  const reviewed = [...reviewedHeldTargetAccesses(registry), ...reflectedProjectAccesses(registry, catalog, database), ...reviewedUiNativeAccesses(registry, readDependencySource), ...reviewedPhysicsWakeAccesses(registry, readSource, readDependencySource), ...reviewedBodySizeAccesses(registry, readDependencySource)];
   const inspectorReadOnly = new Set(reviewed.filter(access => access.system === 'inspector_pass' && access.readOnlyMarker)
     .flatMap(access => typeById[typeByProjectionId[access.component]]?.projectionIds || []));
   catalog.disprovedDeclarations = catalog.declarations.filter(access => access.system === 'inspector_pass' && access.operation === 'write' && inspectorReadOnly.has(access.component))

@@ -84,7 +84,7 @@ pub(crate) fn release_item(
 
 /// Despawn 观察先排队停用代理，再让 Avian 的刚体卸载与 linked_spawn 清理运行。
 pub(super) fn prepare_holder_despawn(
-    event: On<Despawn, Character>,
+    event: On<Despawn<Character>>,
     mut commands: Commands,
     proxies: Query<(Entity, &ColliderOf), With<HeldCollider>>,
 ) {

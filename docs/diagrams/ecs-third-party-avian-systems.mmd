@@ -62,6 +62,9 @@ flowchart TB
   end
   subgraph sg1["FixedPostUpdate"]
   direction TB
+  n17@{ shape: lin-rect, label: "**ApplyDeferred（提前唤醒 → 物理准备）**<br/>来自物理基础 ↗：使提前唤醒命令在物理准<br/>备前可见。" }
+  class n17 node_contract
+  class n17 external_node
   n0@{ shape: lin-rect, label: "**PhysicsSystems::Prepare**<br/>准备物理步所需的位姿、质量与碰撞查询数<br/>据。" }
   class n0 node_contract
   n1@{ shape: lin-rect, label: "**PhysicsSystems::StepSimulation /**<br/>**PhysicsSchedule**<br/>执行碰撞求解、重力积分与刚体运动。" }
@@ -80,12 +83,13 @@ flowchart TB
   n16@{ shape: rounded, label: "**log_collisions**<br/>来自物理基础 ↗：将碰撞开始与结束写入统<br/>一日志。" }
   class n16 node_system
   class n16 external_node
-  n0 layout_4@~~~ n1
-  n1 layout_5@~~~ n2
-  n2 layout_6@~~~ n8
-  n8 layout_7@~~~ n14
-  n14 layout_8@~~~ n15
-  n15 layout_9@~~~ n16
+  n17 layout_4@~~~ n0
+  n0 layout_5@~~~ n1
+  n1 layout_6@~~~ n2
+  n2 layout_7@~~~ n8
+  n8 layout_8@~~~ n14
+  n14 layout_9@~~~ n15
+  n15 layout_10@~~~ n16
   end
   subgraph sg2["FixedLast"]
   direction TB
@@ -104,9 +108,9 @@ flowchart TB
   class n10 external_node
   n6@{ shape: lin-rect, label: "**TransformEasingSystems::**<br/>**UpdateEasingTick**<br/>记录显示变更，区分插值更新与外部瞬移。" }
   class n6 node_contract
-  n5 layout_10@~~~ n9
-  n9 layout_11@~~~ n10
-  n10 layout_12@~~~ n6
+  n5 layout_11@~~~ n9
+  n9 layout_12@~~~ n10
+  n10 layout_13@~~~ n6
   end
   sg0 sc0@--> sg1
   class sc0 edge_schedule
@@ -136,6 +140,8 @@ flowchart TB
   class e9 edge_order
   n1 e10@-->|"StepSimulation"| n16
   class e10 edge_order
+  n17 e11@-->|"Prepare"| n0
+  class e11 edge_order
   end
   e0@{ curve: basis }
   e1@{ curve: basis }
@@ -148,3 +154,4 @@ flowchart TB
   e8@{ curve: basis }
   e9@{ curve: basis }
   e10@{ curve: basis }
+  e11@{ curve: basis }

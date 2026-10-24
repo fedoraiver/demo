@@ -29,6 +29,10 @@ use bevy::{input::InputPlugin, time::TimeUpdateStrategy, window::PrimaryWindow};
 use bevy_enhanced_input::prelude::EnhancedInputPlugin;
 
 pub(super) fn menu_app() -> App {
+    menu_app_with(|_| {})
+}
+
+pub(super) fn menu_app_with(configure: impl FnOnce(&mut App)) -> App {
     // 使用真实输入、状态调度与 BSN 页面，只生成 ECS 数据，不安装 UI 渲染或窗口后端。
     let mut app = App::new();
     app.add_plugins((
@@ -59,6 +63,7 @@ pub(super) fn menu_app() -> App {
     .configure_sets(Update, (UiSystems::Build, UiSystems::Style).chain());
     super::register_menu(&mut app);
     app.world_mut().spawn((Window::default(), PrimaryWindow));
+    configure(&mut app);
     app.finish();
     app.cleanup();
     app.update();
@@ -229,24 +234,44 @@ pub(super) fn wheel_over(app: &mut App, target: Entity, unit: MouseScrollUnit, y
         .query_filtered::<Entity, With<Camera>>()
         .single(app.world())
         .unwrap();
-    let mut event = Pointer::new(
-        PointerId::Mouse,
-        Location {
-            target: NormalizedRenderTarget::None {
-                width: 960,
-                height: 540,
+    let mut event = PointerScroll {
+        entity: target,
+        pointer: Pointer::new(
+            PointerId::Mouse,
+            Location {
+                target: NormalizedRenderTarget::None {
+                    width: 960,
+                    height: 540,
+                },
+                position: Vec2::new(100.0, 100.0),
             },
-            position: Vec2::new(100.0, 100.0),
-        },
-        Scroll {
-            unit,
-            x: 0.0,
-            y,
-            hit: HitData::new(camera, 0.0, None, None),
-            phase: TouchPhase::Moved,
-        },
-        target,
-    );
+        ),
+        unit,
+        x: 0.0,
+        y,
+        hit: HitData::new(camera, 0.0, None, None),
+        phase: TouchPhase::Moved,
+    };
     app.world_mut().trigger_ref(&mut event);
     event.entity
+}
+
+/// 状态级测试显式提交与原生 Picking 相同的缓冲按下消息；真实命中另由集成回归覆盖。
+pub(super) fn pointer_press(world: &mut World, entity: Entity, button: PointerButton) {
+    world.write_message(PointerPress {
+        entity,
+        pointer: Pointer::new(
+            PointerId::Mouse,
+            Location {
+                target: NormalizedRenderTarget::None {
+                    width: 960,
+                    height: 540,
+                },
+                position: Vec2::new(80.0, 80.0),
+            },
+        ),
+        button,
+        hit: HitData::new(Entity::PLACEHOLDER, 0.0, None, None),
+        count: 1,
+    });
 }

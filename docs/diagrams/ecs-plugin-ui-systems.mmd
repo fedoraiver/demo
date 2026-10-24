@@ -52,16 +52,23 @@ flowchart TB
   direction TB
   n4@{ shape: rounded, label: "**sync_context**<br/>跟随窗口焦点启停菜单输入。" }
   class n4 node_system
+  n26@{ shape: rounded, label: "**EnhancedInputSystems::Trigger**<br/>来自Enhanced Input ↗：按上下文顺序排<br/>入动作事件命令。" }
+  class n26 node_system
+  class n26 external_node
+  n21@{ shape: lin-rect, label: "**ApplyDeferred · 动作事件**<br/>应用动作事件命令以触发匹配的观察系统。" }
+  class n21 node_contract
   n5@{ shape: rounded, label: "**handle_requests**<br/>处理菜单导航、设置应用与音量编辑请求。" }
   class n5 node_system
-  n25@{ shape: lin-rect, label: "**EnhancedInputSystems::Apply**<br/>来自Enhanced Input ↗：提交动作值并派<br/>发对应事件。" }
-  class n25 node_contract
-  class n25 external_node
-  n20@{ shape: lin-rect, label: "**ApplyDeferred · 动作事件**<br/>应用动作事件命令以触发匹配的观察系统。" }
-  class n20 node_contract
-  n4 layout_0@~~~ n5
-  n5 layout_1@~~~ n25
-  n25 layout_2@~~~ n20
+  n31@{ shape: lin-rect, label: "**PickingSystems::Last**<br/>来自Bevy 引擎 ↗：界定原生命中处理完成<br/>后的清理时机。" }
+  class n31 node_contract
+  class n31 external_node
+  n20@{ shape: rounded, label: "**clear_cancelled_primary_presses**<br/>清理被取消、失焦或离窗的菜单主键按压。" }
+  class n20 node_system
+  n4 layout_0@~~~ n26
+  n26 layout_1@~~~ n21
+  n21 layout_2@~~~ n5
+  n5 layout_3@~~~ n31
+  n31 layout_4@~~~ n20
   end
   subgraph sg2["OnEnter"]
   direction TB
@@ -73,9 +80,9 @@ flowchart TB
   class n2 node_system
   n11@{ shape: rounded, label: "**spawn_backdrop**<br/>装配主菜单海岛展示舞台、相机与日光。" }
   class n11 node_system
-  n0 layout_3@~~~ n1
-  n1 layout_4@~~~ n2
-  n2 layout_5@~~~ n11
+  n0 layout_5@~~~ n1
+  n1 layout_6@~~~ n2
+  n2 layout_7@~~~ n11
   end
   subgraph sg3["Update"]
   direction TB
@@ -103,51 +110,51 @@ flowchart TB
   class n17 node_system
   n19@{ shape: rounded, label: "**publish_audio_preview**<br/>向音频功能发布或清除临时音量预览。" }
   class n19 node_system
-  n21@{ shape: lin-rect, label: "**音量元组 · after(Build / Pointer)**<br/>组织音量输入采样与显示更新的局部调度。" }
-  class n21 node_contract
-  n22@{ shape: lin-rect, label: "**UiSystems::Style**<br/>组织菜单显示、数值与说明的原位更新。" }
+  n22@{ shape: lin-rect, label: "**音量元组 · after(Build / Pointer)**<br/>组织音量输入采样与显示更新的局部调度。" }
   class n22 node_contract
-  n23@{ shape: doc, label: "**Audio 页 · 滑条局部捕获**<br/>将滑条捕获与连续采样汇总为音量编辑请求。" }
-  class n23 node_note
-  n24@{ shape: lin-rect, label: "**Update / Kira 播放输出**<br/>来自音频播放 ↗：将声音请求按有效混音与<br/>播放策略提交音频实例。" }
-  class n24 node_contract
-  class n24 external_node
-  n28@{ shape: lin-rect, label: "**UI Style → Audio Mix → Playback**<br/>来自应用流程 ↗：约束界面显示更新先于音<br/>量混合与播放。" }
-  class n28 node_contract
-  class n28 external_node
-  n29@{ shape: rounded, label: "**log_load_failures**<br/>来自音频播放 ↗：记录声音资源加载失败的<br/>路径与错误。" }
-  class n29 node_system
+  n23@{ shape: lin-rect, label: "**UiSystems::Style**<br/>组织菜单显示、数值与说明的原位更新。" }
+  class n23 node_contract
+  n24@{ shape: doc, label: "**Audio 页 · 滑条局部捕获**<br/>将滑条捕获与连续采样汇总为音量编辑请求。" }
+  class n24 node_note
+  n25@{ shape: lin-rect, label: "**Update / Kira 播放输出**<br/>来自音频播放 ↗：将声音请求按有效混音与<br/>播放策略提交音频实例。" }
+  class n25 node_contract
+  class n25 external_node
+  n29@{ shape: lin-rect, label: "**UI Style → Audio Mix → Playback**<br/>来自应用流程 ↗：约束界面显示更新先于音<br/>量混合与播放。" }
+  class n29 node_contract
   class n29 external_node
-  n7 layout_6@~~~ n6
-  n6 layout_7@~~~ n8
-  n8 layout_8@~~~ n9
-  n9 layout_9@~~~ n10
-  n10 layout_10@~~~ n12
-  n12 layout_11@~~~ n13
-  n13 layout_12@~~~ n14
-  n14 layout_13@~~~ n15
-  n15 layout_14@~~~ n16
-  n16 layout_15@~~~ n17
-  n17 layout_16@~~~ n19
-  n19 layout_17@~~~ n21
-  n21 layout_18@~~~ n22
-  n22 layout_19@~~~ n23
-  n23 layout_20@~~~ n24
-  n24 layout_21@~~~ n28
-  n28 layout_22@~~~ n29
+  n30@{ shape: rounded, label: "**log_load_failures**<br/>来自音频播放 ↗：记录声音资源加载失败的<br/>路径与错误。" }
+  class n30 node_system
+  class n30 external_node
+  n7 layout_8@~~~ n6
+  n6 layout_9@~~~ n8
+  n8 layout_10@~~~ n9
+  n9 layout_11@~~~ n10
+  n10 layout_12@~~~ n12
+  n12 layout_13@~~~ n13
+  n13 layout_14@~~~ n14
+  n14 layout_15@~~~ n15
+  n15 layout_16@~~~ n16
+  n16 layout_17@~~~ n17
+  n17 layout_18@~~~ n19
+  n19 layout_19@~~~ n22
+  n22 layout_20@~~~ n23
+  n23 layout_21@~~~ n24
+  n24 layout_22@~~~ n25
+  n25 layout_23@~~~ n29
+  n29 layout_24@~~~ n30
   end
   subgraph sg4["PostUpdate"]
   direction TB
-  n26@{ shape: rounded, label: "**ScrollbarPlugin · thumb geometry**<br/>来自Bevy 引擎 ↗：按内容与视口比例更新<br/>滚动条滑块几何。" }
-  class n26 node_system
-  class n26 external_node
+  n27@{ shape: rounded, label: "**ScrollbarPlugin · thumb geometry**<br/>来自Bevy 引擎 ↗：按内容与视口比例更新<br/>滚动条滑块几何。" }
+  class n27 node_system
+  class n27 external_node
   n18@{ shape: rounded, label: "**sync_settings_scrollbars**<br/>同步滚动条显隐、拾取范围与高亮。" }
   class n18 node_system
-  n27@{ shape: lin-rect, label: "**VisibilityPropagate**<br/>来自Bevy 引擎 ↗：在项目显隐同步后传播<br/>可见性。" }
-  class n27 node_contract
-  class n27 external_node
-  n26 layout_23@~~~ n18
-  n18 layout_24@~~~ n27
+  n28@{ shape: lin-rect, label: "**VisibilityPropagate**<br/>来自Bevy 引擎 ↗：在项目显隐同步后传播<br/>可见性。" }
+  class n28 node_contract
+  class n28 external_node
+  n27 layout_25@~~~ n18
+  n18 layout_26@~~~ n28
   end
   sg0 sc0@--> sg1
   class sc0 edge_schedule
@@ -161,42 +168,46 @@ flowchart TB
   class e0 edge_order
   n6 e1@-->|"Pointer → Style"| n8
   class e1 edge_order
-  n8 e2@-->|"Style"| n24
+  n8 e2@-->|"Style"| n25
   class e2 edge_order
-  n25 e3@--> n20
+  n26 e3@--> n21
   class e3 edge_order
-  n6 e4@-->|"Pointer"| n21
+  n6 e4@-->|"Pointer"| n22
   class e4 edge_order
-  n21 e5@--> n14
+  n22 e5@--> n14
   class e5 edge_membership
-  n21 e6@--> n15
+  n22 e6@--> n15
   class e6 edge_membership
-  n14 e7@--> n22
+  n14 e7@--> n23
   class e7 edge_order
-  n15 e8@--> n22
+  n15 e8@--> n23
   class e8 edge_order
   n7 e9@-->|"Build → Bind"| n17
   class e9 edge_order
-  n17 e10@-->|"Style"| n22
+  n17 e10@-->|"Style"| n23
   class e10 edge_order
-  n22 e11@--> n8
+  n23 e11@--> n8
   class e11 edge_membership
-  n22 e12@--> n9
+  n23 e12@--> n9
   class e12 edge_membership
-  n22 e13@--> n16
+  n23 e13@--> n16
   class e13 edge_membership
-  n22 e14@--> n19
+  n23 e14@--> n19
   class e14 edge_membership
-  n22 e15@--> n10
+  n23 e15@--> n10
   class e15 edge_membership
-  n26 e16@-->|"Layout"| n18
+  n27 e16@-->|"Layout"| n18
   class e16 edge_order
-  n18 e17@--> n27
+  n18 e17@--> n28
   class e17 edge_order
-  n28 e18@-->|"UI Style"| n22
+  n29 e18@-->|"UI Style"| n23
   class e18 edge_constraint
-  n22 e19@-->|"Style 之后进入 Mix"| n29
+  n23 e19@-->|"Style 之后进入 Mix"| n30
   class e19 edge_order
+  n31 e20@-->|"PickingSystems::Last"| n20
+  class e20 edge_order
+  n21 e21@--> n5
+  class e21 edge_order
   end
   e0@{ curve: basis }
   e1@{ curve: basis }
@@ -218,3 +229,5 @@ flowchart TB
   e17@{ curve: basis }
   e18@{ curve: basis }
   e19@{ curve: basis }
+  e20@{ curve: basis }
+  e21@{ curve: basis }

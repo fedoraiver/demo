@@ -1,0 +1,111 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 32,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#component-187edeefc4cb6bc4-e1{marker-start:url(#component-187edeefc4cb6bc4_flowchart-v2-pointStart)!important}\n#component-187edeefc4cb6bc4_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}"
+  }
+}
+---
+flowchart RL
+  accTitle: RigidBodyColliders · 组件关系
+  accDescr: 左侧为包含组件的实体，中间为组件类型，右侧每个系统函数只显示一次；连线表达访问与生命周期操作。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_observer fill:#F4F1F9,stroke:#7B4DB2,stroke-width:1.6px,color:#1F3340
+  classDef node_entity fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**角色业务根实体**<br/>来自场景装配 ↗：承载角色身份、运动意图<br/>与动态物理身体。" }
+  class n0 node_entity
+  class n0 external_node
+  n1@{ shape: rounded, label: "**RigidBodyColliders**<br/>索引属于同一刚体的全部碰撞体。" }
+  class n1 node_component
+  n2@{ shape: rounded, label: "**align_attachments**<br/>来自物品交互 ↗：沿安全碰撞路径将物品对<br/>齐双手。" }
+  class n2 node_system
+  class n2 external_node
+  n3@{ shape: rounded, label: "**sync_character_facing**<br/>来自第一人称控制 ↗：同步人物朝向并处理<br/>持物转向受阻。" }
+  class n3 node_system
+  class n3 external_node
+  n4@{ shape: rounded, label: "**handle_interaction**<br/>来自物品交互 ↗：处理物品拾取、共享持握<br/>与主动释放。" }
+  class n4 node_system
+  class n4 external_node
+  n5@{ shape: rounded, label: "**release_orphaned_items**<br/>来自物品交互 ↗：清理失效持握并恢复物品<br/>独立运动。" }
+  class n5 node_system
+  class n5 external_node
+  n6@{ shape: rounded, label: "**recover_from_water**<br/>来自越界恢复 ↗：将落水实体恢复到各自出<br/>生姿态。" }
+  class n6 node_system
+  class n6 external_node
+  n7@{ shape: rounded, label: "**cleanup_orphaned_colliders**<br/>来自物品交互 ↗：清理物品销毁后残留的碰<br/>撞代理。" }
+  class n7 node_system
+  class n7 external_node
+  n8@{ shape: rounded, label: "**finish_attachments**<br/>来自物品交互 ↗：为持物装配共享碰撞代理<br/>并累计质量。" }
+  class n8 node_system
+  class n8 external_node
+  n9@{ shape: hex, label: "**prepare_holder_despawn**<br/>来自物品交互 ↗：在持有者销毁前停用并卸<br/>载持物代理。" }
+  class n9 node_observer
+  class n9 external_node
+  n1 layout_0@~~~ n0
+  n2 layout_1@~~~ n1
+  n3 layout_2@~~~ n1
+  n4 layout_3@~~~ n1
+  n5 layout_4@~~~ n1
+  n6 layout_5@~~~ n1
+  n7 layout_6@~~~ n1
+  n8 layout_7@~~~ n1
+  n9 layout_8@~~~ n1
+  n2 e2@-->|"结构变更（待核实）"| n1
+  class e2 edge_write
+  n3 e3@-->|"结构变更（待核实）"| n1
+  class e3 edge_write
+  n4 e4@-->|"结构变更（待核实）"| n1
+  class e4 edge_write
+  n5 e5@-->|"结构变更（待核实）"| n1
+  class e5 edge_write
+  n6 e6@-->|"结构变更（待核实）"| n1
+  class e6 edge_write
+  n7 e7@-->|"结构变更（待核实）"| n1
+  class e7 edge_write
+  n8 e8@-->|"结构变更（待核实）"| n1
+  class e8 edge_write
+  n9 e9@-->|"结构变更（待核实）"| n1
+  class e9 edge_write
+  n1 e0@-->|"可能挂载于"| n0
+  class e0 edge_reference
+  n2 e1@---|"查询访问"| n1
+  class e1 edge_read
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }

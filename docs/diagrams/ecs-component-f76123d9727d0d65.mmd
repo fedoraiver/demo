@@ -1,0 +1,249 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 32,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#component-f76123d9727d0d65-e10{marker-start:url(#component-f76123d9727d0d65_flowchart-v2-pointStart)!important}\n#component-f76123d9727d0d65-e13{marker-start:url(#component-f76123d9727d0d65_flowchart-v2-pointStart)!important}\n#component-f76123d9727d0d65-e16{marker-start:url(#component-f76123d9727d0d65_flowchart-v2-pointStart)!important}\n#component-f76123d9727d0d65-e17{marker-start:url(#component-f76123d9727d0d65_flowchart-v2-pointStart)!important}\n#component-f76123d9727d0d65-e18{marker-start:url(#component-f76123d9727d0d65_flowchart-v2-pointStart)!important}\n#component-f76123d9727d0d65-e19{marker-start:url(#component-f76123d9727d0d65_flowchart-v2-pointStart)!important}\n#component-f76123d9727d0d65_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}"
+  }
+}
+---
+flowchart RL
+  accTitle: Children · 组件关系
+  accDescr: 左侧为包含组件的实体，中间为组件类型，右侧每个系统函数只显示一次；连线表达访问与生命周期操作。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_entity fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_contract fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  subgraph layout_card_n0[" "]
+  n0@{ shape: rounded, label: "**角色业务根实体**<br/>来自场景装配 ↗：承载角色身份、运动意图<br/>与动态物理身体。" }
+  class n0 node_entity
+  class n0 external_node
+  end
+  style layout_card_n0 fill:none,stroke:none
+  subgraph layout_card_n1[" "]
+  n1@{ shape: rounded, label: "**可搬物品业务根实体**<br/>来自场景装配 ↗：承载可拾取物品身份及自<br/>由运动、共享持握状态。" }
+  class n1 node_entity
+  class n1 external_node
+  end
+  style layout_card_n1 fill:none,stroke:none
+  subgraph layout_card_n2[" "]
+  n2@{ shape: rounded, label: "**业务直属 GLB 视觉根实体**<br/>来自场景装配 ↗：承载业务实体的模型、骨<br/>骼与动画子树。" }
+  class n2 node_entity
+  class n2 external_node
+  end
+  style layout_card_n2 fill:none,stroke:none
+  subgraph layout_card_n3[" "]
+  n3@{ shape: rounded, label: "**海岛实例根**<br/>来自场景装配 ↗：承载海岛实例并记录碰撞<br/>与业务生成进度。" }
+  class n3 node_entity
+  class n3 external_node
+  end
+  style layout_card_n3 fill:none,stroke:none
+  subgraph layout_card_n4[" "]
+  n4@{ shape: rounded, label: "**地图展示 NPC**<br/>来自场景装配 ↗：保留地图展示人物及其静<br/>态身体碰撞。" }
+  class n4 node_entity
+  class n4 external_node
+  end
+  style layout_card_n4 fill:none,stroke:none
+  subgraph layout_card_n5[" "]
+  n5@{ shape: rounded, label: "**BSN 菜单页面根**<br/>来自菜单与界面 ↗：承载当前菜单页面及其<br/>声明式控件层级。" }
+  class n5 node_entity
+  class n5 external_node
+  end
+  style layout_card_n5 fill:none,stroke:none
+  subgraph layout_card_n6[" "]
+  n6@{ shape: rounded, label: "**主菜单展示舞台根**<br/>来自菜单与界面 ↗：承载主菜单的独立海岛<br/>展示场景。" }
+  class n6 node_entity
+  class n6 external_node
+  end
+  style layout_card_n6 fill:none,stroke:none
+  subgraph layout_card_n7[" "]
+  n7@{ shape: rounded, label: "**菜单 GLB 模型与动画子树**<br/>来自菜单与界面 ↗：承载主菜单的海岛模型<br/>与快递员展示动画。" }
+  class n7 node_entity
+  class n7 external_node
+  end
+  style layout_card_n7 fill:none,stroke:none
+  subgraph layout_card_n8[" "]
+  n8@{ shape: rounded, label: "**设置右侧纸色面板**<br/>来自菜单与界面 ↗：限定设置内容的显示与<br/>裁切范围。" }
+  class n8 node_entity
+  class n8 external_node
+  end
+  style layout_card_n8 fill:none,stroke:none
+  subgraph layout_card_n9[" "]
+  n9@{ shape: rounded, label: "**设置滚动条轨道**<br/>来自菜单与界面 ↗：为设置内容视口提供可<br/>交互滚动轨道。" }
+  class n9 node_entity
+  class n9 external_node
+  end
+  style layout_card_n9 fill:none,stroke:none
+  subgraph layout_card_n10[" "]
+  n10@{ shape: rounded, label: "**Children**<br/>索引当前实体的直接子实体。" }
+  class n10 node_component
+  end
+  style layout_card_n10 fill:none,stroke:none
+  subgraph layout_card_n11[" "]
+  n11@{ shape: rounded, label: "**prepare_island**<br/>来自场景装配 ↗：从海岛模型构建静态碰<br/>撞、坡道与人物碰撞。" }
+  class n11 node_system
+  class n11 external_node
+  end
+  style layout_card_n11 fill:none,stroke:none
+  subgraph layout_card_n12[" "]
+  n12@{ shape: rounded, label: "**spawn_actors**<br/>来自场景装配 ↗：装配玩家、可搬物、控制<br/>者与相机。" }
+  class n12 node_system
+  class n12 external_node
+  end
+  style layout_card_n12 fill:none,stroke:none
+  subgraph layout_card_n13[" "]
+  n13@{ shape: rounded, label: "**initialize_ready_couriers**<br/>来自角色动画 ↗：绑定主角命名动画并缓存<br/>鞋底补偿节点。" }
+  class n13 node_system
+  class n13 external_node
+  end
+  style layout_card_n13 fill:none,stroke:none
+  subgraph layout_card_n14[" "]
+  n14@{ shape: rounded, label: "**rebuild_page**<br/>来自菜单与界面 ↗：按页面结构变化重建菜<br/>单界面。" }
+  class n14 node_system
+  class n14 external_node
+  end
+  style layout_card_n14 fill:none,stroke:none
+  subgraph layout_card_n15[" "]
+  n15@{ shape: rounded, label: "**spawn_backdrop**<br/>来自菜单与界面 ↗：装配主菜单海岛展示舞<br/>台、相机与日光。" }
+  class n15 node_system
+  class n15 external_node
+  end
+  style layout_card_n15 fill:none,stroke:none
+  subgraph layout_card_n16[" "]
+  n16@{ shape: rounded, label: "**play_courier_animation**<br/>来自菜单与界面 ↗：绑定并循环播放展示快<br/>递员的持物待机动画。" }
+  class n16 node_system
+  class n16 external_node
+  end
+  style layout_card_n16 fill:none,stroke:none
+  subgraph layout_card_n17[" "]
+  n17@{ shape: rounded, label: "**bind_settings_scrollbars**<br/>来自菜单与界面 ↗：将设置滚动条绑定到对<br/>应内容视口。" }
+  class n17 node_system
+  class n17 external_node
+  end
+  style layout_card_n17 fill:none,stroke:none
+  subgraph layout_card_n18[" "]
+  n18@{ shape: rounded, label: "**sync_settings_scrollbars**<br/>来自菜单与界面 ↗：同步滚动条显隐、拾取<br/>范围与高亮。" }
+  class n18 node_system
+  class n18 external_node
+  end
+  style layout_card_n18 fill:none,stroke:none
+  subgraph layout_card_n19[" "]
+  n19@{ shape: lin-rect, label: "**TransformSystems::Propagate**<br/>沿实体层级传播世界变换。" }
+  class n19 node_contract
+  end
+  style layout_card_n19 fill:none,stroke:none
+  subgraph layout_card_n20[" "]
+  n20@{ shape: rounded, label: "**WorldInstanceSpawner /**<br/>**WorldInstanceSpawn**<br/>展开场景资产层级并通知实例就绪。" }
+  class n20 node_system
+  end
+  style layout_card_n20 fill:none,stroke:none
+  n10 layout_0@~~~ n0
+  n10 layout_1@~~~ n1
+  n10 layout_2@~~~ n2
+  n10 layout_3@~~~ n3
+  n10 layout_4@~~~ n4
+  n10 layout_5@~~~ n5
+  n10 layout_6@~~~ n6
+  n10 layout_7@~~~ n7
+  n10 layout_8@~~~ n8
+  n10 layout_9@~~~ n9
+  n11 layout_10@~~~ n10
+  n12 layout_11@~~~ n10
+  n13 layout_12@~~~ n10
+  n14 layout_13@~~~ n10
+  n15 layout_14@~~~ n10
+  n16 layout_15@~~~ n10
+  n17 layout_16@~~~ n10
+  n18 layout_17@~~~ n10
+  n19 layout_18@~~~ n10
+  n20 layout_19@~~~ n10
+  n11 e11@-->|"结构变更（待核实）"| n10
+  class e11 edge_write
+  n12 e12@-->|"添加"| n10
+  class e12 edge_write
+  n14 e14@-->|"添加"| n10
+  class e14 edge_write
+  n15 e15@-->|"添加"| n10
+  class e15 edge_write
+  n20 e20@-->|"结构变更（待核实）"| n10
+  class e20 edge_write
+  n10 e0@-->|"可能挂载于"| n0
+  class e0 edge_reference
+  n10 e1@-->|"可能挂载于"| n1
+  class e1 edge_reference
+  n10 e2@-->|"可能挂载于"| n2
+  class e2 edge_reference
+  n10 e3@-->|"可能挂载于"| n3
+  class e3 edge_reference
+  n10 e4@-->|"可能挂载于"| n4
+  class e4 edge_reference
+  n10 e5@-->|"可能挂载于"| n5
+  class e5 edge_reference
+  n10 e6@-->|"可能挂载于"| n6
+  class e6 edge_reference
+  n10 e7@-->|"可能挂载于"| n7
+  class e7 edge_reference
+  n10 e8@-->|"可能挂载于"| n8
+  class e8 edge_reference
+  n10 e9@-->|"可能挂载于"| n9
+  class e9 edge_reference
+  n11 e10@---|"查询访问"| n10
+  class e10 edge_read
+  n13 e13@---|"查询访问"| n10
+  class e13 edge_read
+  n16 e16@---|"查询访问"| n10
+  class e16 edge_read
+  n17 e17@---|"查询访问"| n10
+  class e17 edge_read
+  n18 e18@---|"查询访问"| n10
+  class e18 edge_read
+  n19 e19@---|"查询访问"| n10
+  class e19 edge_read
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e17@{ curve: basis }
+  e18@{ curve: basis }
+  e19@{ curve: basis }
+  e20@{ curve: basis }

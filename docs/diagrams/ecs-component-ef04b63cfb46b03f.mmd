@@ -1,0 +1,79 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 32,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#component-ef04b63cfb46b03f-e4{marker-start:url(#component-ef04b63cfb46b03f_flowchart-v2-pointStart)!important}\n#component-ef04b63cfb46b03f_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}"
+  }
+}
+---
+flowchart RL
+  accTitle: GamepadDevice · 组件关系
+  accDescr: 左侧为包含组件的实体，中间为组件类型，右侧每个系统函数只显示一次；连线表达访问与生命周期操作。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_entity fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_contract fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**键盘控制者**<br/>来自场景装配 ↗：保存玩家身份、输入上下<br/>文与受控角色及相机。" }
+  class n0 node_entity
+  class n0 external_node
+  n1@{ shape: rounded, label: "**菜单输入控制者**<br/>来自菜单与界面 ↗：提供跨页面与玩法会话<br/>保留的菜单动作输入。" }
+  class n1 node_entity
+  class n1 external_node
+  n2@{ shape: rounded, label: "**GamepadDevice**<br/>配置玩法上下文的手柄输入来源。" }
+  class n2 node_component
+  n3@{ shape: rounded, label: "**spawn_actors**<br/>来自场景装配 ↗：装配玩家、可搬物、控制<br/>者与相机。" }
+  class n3 node_system
+  class n3 external_node
+  n4@{ shape: rounded, label: "**spawn_menu_controller**<br/>来自菜单与界面 ↗：创建菜单动作控制者及<br/>键盘、手柄绑定。" }
+  class n4 node_system
+  class n4 external_node
+  n5@{ shape: lin-rect, label: "**EnhancedInputSystems::Update**<br/>评估绑定输入并更新动作值与触发状态。" }
+  class n5 node_contract
+  n2 layout_0@~~~ n0
+  n2 layout_1@~~~ n1
+  n3 layout_2@~~~ n2
+  n4 layout_3@~~~ n2
+  n5 layout_4@~~~ n2
+  n3 e2@-->|"添加"| n2
+  class e2 edge_write
+  n4 e3@-->|"添加"| n2
+  class e3 edge_write
+  n2 e0@-->|"可能挂载于"| n0
+  class e0 edge_reference
+  n2 e1@-->|"可能挂载于"| n1
+  class e1 edge_reference
+  n5 e4@---|"查询访问"| n2
+  class e4 edge_read
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }

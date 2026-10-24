@@ -1,0 +1,102 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 32,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#component-3550fee53bbee390-e3{marker-start:url(#component-3550fee53bbee390_flowchart-v2-pointStart)!important}\n#component-3550fee53bbee390_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}"
+  }
+}
+---
+flowchart RL
+  accTitle: Sleeping · 组件关系
+  accDescr: 左侧为包含组件的实体，中间为组件类型，右侧每个系统函数只显示一次；连线表达访问与生命周期操作。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_entity fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**角色业务根实体**<br/>来自场景装配 ↗：承载角色身份、运动意图<br/>与动态物理身体。" }
+  class n0 node_entity
+  class n0 external_node
+  n1@{ shape: rounded, label: "**可搬物品业务根实体**<br/>来自场景装配 ↗：承载可拾取物品身份及自<br/>由运动、共享持握状态。" }
+  class n1 node_entity
+  class n1 external_node
+  n2@{ shape: rounded, label: "**Sleeping**<br/>标记刚体当前处于休眠。" }
+  class n2 node_component
+  n3@{ shape: rounded, label: "**wake_changed_bodies**<br/>来自物理基础 ↗：使休眠身体的外部受力和<br/>位姿修改在本固定步生效。" }
+  class n3 node_system
+  class n3 external_node
+  n4@{ shape: rounded, label: "**sync_character_facing**<br/>来自第一人称控制 ↗：同步人物朝向并处理<br/>持物转向受阻。" }
+  class n4 node_system
+  class n4 external_node
+  n5@{ shape: rounded, label: "**handle_interaction**<br/>来自物品交互 ↗：处理物品拾取、共享持握<br/>与主动释放。" }
+  class n5 node_system
+  class n5 external_node
+  n6@{ shape: rounded, label: "**release_orphaned_items**<br/>来自物品交互 ↗：清理失效持握并恢复物品<br/>独立运动。" }
+  class n6 node_system
+  class n6 external_node
+  n7@{ shape: rounded, label: "**recover_from_water**<br/>来自越界恢复 ↗：将落水实体恢复到各自出<br/>生姿态。" }
+  class n7 node_system
+  class n7 external_node
+  n8@{ shape: rounded, label: "**align_attachments**<br/>来自物品交互 ↗：沿安全碰撞路径将物品对<br/>齐双手。" }
+  class n8 node_system
+  class n8 external_node
+  n2 layout_0@~~~ n0
+  n2 layout_1@~~~ n1
+  n3 layout_2@~~~ n2
+  n4 layout_3@~~~ n2
+  n5 layout_4@~~~ n2
+  n6 layout_5@~~~ n2
+  n7 layout_6@~~~ n2
+  n8 layout_7@~~~ n2
+  n3 e2@-->|"唤醒命令：移除"| n2
+  class e2 edge_write
+  n4 e4@-->|"移除"| n2
+  class e4 edge_write
+  n5 e5@-->|"移除"| n2
+  class e5 edge_write
+  n6 e6@-->|"移除"| n2
+  class e6 edge_write
+  n7 e7@-->|"移除"| n2
+  class e7 edge_write
+  n8 e8@-->|"移除"| n2
+  class e8 edge_write
+  n2 e0@-->|"可能挂载于"| n0
+  class e0 edge_reference
+  n2 e1@-->|"可能挂载于"| n1
+  class e1 edge_reference
+  n3 e3@---|"存在 / 变更过滤"| n2
+  class e3 edge_reference
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
