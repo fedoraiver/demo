@@ -10,7 +10,7 @@ mod scroll;
 mod style;
 
 #[cfg(test)]
-mod test_support;
+mod tests;
 mod theme;
 mod volume;
 mod widgets;

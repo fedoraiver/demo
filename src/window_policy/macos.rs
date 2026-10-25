@@ -111,7 +111,7 @@ impl NativeWindowPolicy {
 }
 
 /// 内容区扣除标题栏后，选择工作区内最大的整数 16:9 尺寸。
-fn fit_size(available: NSSize) -> NSSize {
+pub(super) fn fit_size(available: NSSize) -> NSSize {
     let unit = (available.width / 16.0)
         .min(available.height / 9.0)
         .floor()
@@ -125,25 +125,5 @@ impl Drop for NativeWindowPolicy {
         self.window.setContentMinSize(self.previous_min);
         self.window.setContentMaxSize(self.previous_max);
         self.window.setCollectionBehavior(self.previous_behavior);
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn work_area_fit_keeps_aspect_on_wide_and_tall_screens() {
-        for available in [
-            NSSize::new(1920.0, 1055.0),
-            NSSize::new(1512.0, 930.0),
-            NSSize::new(2560.0, 1055.0),
-            NSSize::new(720.0, 1280.0),
-        ] {
-            let size = fit_size(available);
-            assert_eq!(size.width * 9.0, size.height * 16.0);
-            assert!(size.width <= available.width && size.height <= available.height);
-            assert!(size.width + 16.0 > available.width || size.height + 9.0 > available.height);
-        }
     }
 }

@@ -3,10 +3,6 @@
 mod lifecycle;
 mod output;
 #[cfg(test)]
-mod output_tests;
-#[cfg(test)]
-mod test_support;
-#[cfg(test)]
 mod tests;
 
 use std::{io, path::Path};

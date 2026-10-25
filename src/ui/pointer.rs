@@ -85,7 +85,7 @@ fn clear_cancelled_primary_presses(
 }
 
 /// Bevy 原生 UI 已完成按钮命中；这里只读取缓冲的按下事件，不另读 MouseButton。
-fn pointer_interaction(
+pub(super) fn pointer_interaction(
     menu: Res<MenuState>,
     mut focus: ResMut<MenuFocus>,
     mut source: ResMut<MenuInputSource>,
@@ -148,7 +148,3 @@ fn pointer_interaction(
     }
     *previous_hover = hovered;
 }
-
-#[cfg(test)]
-#[path = "pointer_tests.rs"]
-mod tests;

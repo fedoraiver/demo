@@ -9,12 +9,6 @@ use super::{
     scroll::settings_scroll_frame, style::setting_value, theme::*, volume::volume_row, widgets::*,
 };
 
-#[cfg(test)]
-use super::{
-    MenuButton, MenuFocus, MenuInputSource,
-    scroll::{MenuScroll, SettingsScrollbar, scroll_focused_button},
-};
-
 #[derive(Component, Default, Clone)]
 pub(super) struct DescriptionTitle;
 
@@ -37,7 +31,7 @@ pub(super) fn register(app: &mut App) {
 }
 
 /// 只在页面结构或视口变化时重建；数值、提示与焦点变化保留现有滚动控件。
-fn rebuild_page(
+pub(super) fn rebuild_page(
     mut commands: Commands,
     state: Res<MenuState>,
     draft: Res<SettingsDraft>,
@@ -130,7 +124,8 @@ fn fixed_page_area(theme: &UiTheme) -> impl Scene + use<> {
     }
 }
 
-fn main_page(theme: &UiTheme, paused: bool) -> impl Scene + use<> {
+/// 主菜单与暂停页复用相同结构，根据会话状态选择动作。
+pub(super) fn main_page(theme: &UiTheme, paused: bool) -> impl Scene + use<> {
     let scale = theme.scale;
     let first_title = if paused { "Resume" } else { "Start Game" };
     let first_action = if paused {
@@ -305,7 +300,8 @@ fn sidebar(theme: &UiTheme, state: &MenuState) -> impl Scene + use<> {
     }
 }
 
-fn settings_page(
+/// 按当前分类和草稿声明设置页面，紧凑模式适配较窄窗口。
+pub(super) fn settings_page(
     theme: &UiTheme,
     state: &MenuState,
     draft: &SettingsDraft,
@@ -511,7 +507,7 @@ fn description_panel(theme: &UiTheme, compact: bool) -> impl Scene + use<> {
 }
 
 /// 支持的 16:9 窗口始终显示三列说明；减少重复品牌标题，完整保留正文和键位。
-fn help_page(theme: &UiTheme) -> impl Scene + use<> {
+pub(super) fn help_page(theme: &UiTheme) -> impl Scene + use<> {
     let scale = theme.scale;
     bsn! {
         @fixed_page_area(theme)
@@ -643,15 +639,3 @@ fn help_hint(theme: &UiTheme, key: &'static str, title: &'static str) -> impl Sc
         ]
     }
 }
-
-#[cfg(test)]
-#[path = "page_layout_tests.rs"]
-mod page_layout_tests;
-
-#[cfg(test)]
-#[path = "page_refresh_tests.rs"]
-mod page_refresh_tests;
-
-#[cfg(test)]
-#[path = "page_structure_tests.rs"]
-mod page_structure_tests;

@@ -231,7 +231,3 @@ fn handle_requests(
         info!(target: "demo::ui", page_before = ?before, page_after = ?menu.page, reason = ?action, "Menu page changed");
     }
 }
-
-#[cfg(test)]
-#[path = "requests_tests.rs"]
-mod tests;
