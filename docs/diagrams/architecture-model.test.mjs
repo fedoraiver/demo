@@ -5,9 +5,11 @@ import { buildArchitectureModel, isMainPluginRegistration, scheduleGroupLabel, S
 import { INFRASTRUCTURE_FEATURES, architectureViewId } from './architecture-infrastructure.mjs';
 import { dependencyDefinitionTargets } from './dependency-sources.mjs';
 import { DEPENDENCY_SOURCE_DEFINITIONS } from './architecture-source-definitions.mjs';
+import { buildObjectCatalog } from './architecture-objects.mjs';
 
 const model = JSON.parse(fs.readFileSync(new URL('./ecs-data.json', import.meta.url), 'utf8'));
 const architecture = buildArchitectureModel(model);
+const objects = buildObjectCatalog(model, architecture.registry);
 const featureIds = [...model.features, ...INFRASTRUCTURE_FEATURES].map(feature => feature.id);
 const allGraphs = () => featureIds.flatMap(feature => ['systems', 'data', 'events'].map(aspect => architecture.graphFor(feature, aspect)));
 const entityComponentIds = entityId => model.entities.find(entity => `entity-${entity.id}` === entityId).components.map(component => component.id);
@@ -42,8 +44,8 @@ test('Bevy 与四个第三方入口分别浏览，具体泛型契约和类型定
   assert.equal(architecture.graphFor('infrastructure', 'systems').nodes.find(node => node.id === 'input_update').role, 'internal');
 });
 
-test('157 个第三方业务节点各有唯一入口，移除混合目录而不展开跨入口内部实现', () => {
-  const counts = { avian: 103, enhanced_input: 35, kira: 6, egui: 13 };
+test('第三方业务节点各有唯一入口，拆分旧聚合身份而不展开跨入口内部实现', () => {
+  const counts = { avian: 104, enhanced_input: 39, kira: 6, egui: 13 };
   // 8d78c14 的已核实入口保持稳定；仅移除新版已不存在的 Egui 标记资源。
   const originalNodes = {
     avian: [
@@ -108,7 +110,7 @@ test('157 个第三方业务节点各有唯一入口，移除混合目录而不�
   for (const [feature, expected] of Object.entries(counts)) {
     const owned = Object.values(architecture.registry).filter(node => node.feature === feature);
     assert.equal(owned.length, expected, feature);
-    const retained = originalNodes[feature].filter(id => id !== 'resource.EnableMultipassForPrimaryContext');
+    const retained = originalNodes[feature].filter(id => id !== 'resource.EnableMultipassForPrimaryContext').flatMap(id => model.object_aliases[id] || [id]);
     assert.deepEqual(new Set(owned.map(node => node.id)), new Set([...retained, ...addedNodes[feature]]), `${feature}: retained and added stable IDs`);
     assert.equal(Object.values(model.node_features).filter(owner => owner === feature).length, expected, feature);
     const visibleInternal = new Set();
@@ -121,6 +123,7 @@ test('157 个第三方业务节点各有唯一入口，移除混合目录而不�
       }
       assert.ok(graph.links.every(link => architecture.ownerOf(link.from) === feature || architecture.ownerOf(link.to) === feature), `${feature}/${aspect}`);
     }
+    for (const object of objects.objects.filter(object => object.feature === feature && object.kind !== 'Component')) visibleInternal.add(object.id);
     assert.deepEqual(visibleInternal, new Set(owned.filter(node => node.kind !== 'Component').map(node => node.id)), feature);
   }
   assert.ok(!architecture.registry['third-party-plugins']);
@@ -159,13 +162,14 @@ test('同名类型与同一函数的多次注册保留各自 canonical ID', () =
   assert.equal(architecture.ownerOf('menu_model.CourierAnimation'), 'ui');
 });
 
-test('功能系统图保留本功能边界，Observer 留在事件图，跨功能依赖显示外部端点', () => {
+test('功能系统图保留本功能边界和独立Observer区，跨功能依赖显示外部端点', () => {
   const graph = architecture.graphFor('character', 'systems');
   assert.ok(graph.nodes.some(node => node.id === 'movement' && node.role === 'internal'));
   assert.ok(graph.nodes.some(node => node.id === 'facing_fixed' && node.role === 'external'));
   assert.ok(!graph.nodes.some(node => node.id === 'menu_rebuild'));
-  assert.ok(!architecture.graphFor('first_person', 'systems').nodes.some(node => node.id === 'observe_move'));
-  assert.ok(architecture.graphFor('first_person', 'events').nodes.some(node => node.id === 'observe_move' && node.role === 'internal'));
+  const firstPerson = architecture.graphFor('first_person', 'systems');
+  assert.ok(firstPerson.nodes.some(node => node.id === 'observe_move' && node.role === 'internal'));
+  assert.ok(architecture.scheduleGroups(firstPerson).find(group => group.id === 'EventTriggered').nodes.some(node => node.id === 'observe_move'));
   assert.ok(graph.nodes.every(node => /[\u4e00-\u9fff]/.test(node.group)));
 });
 
@@ -255,7 +259,7 @@ test('PlayState 暂停是状态转换，只出现在数据视图，不伪装为 
 });
 
 test('所有系统、Observer、关键节点和实体关系均保留在可浏览图中', () => {
-  const graphs = allGraphs();
+  const graphs = [...allGraphs(), ...objects.objects.map(object => objects.graphFor(object.id))];
   const nodeIds = new Set(graphs.flatMap(graph => graph.nodes.map(node => node.id)));
   const links = new Map(graphs.flatMap(graph => graph.links.map(link => [link.id, link])));
   for (const system of model.systems) assert.ok(nodeIds.has(system.id), system.id);
@@ -267,8 +271,7 @@ test('所有系统、Observer、关键节点和实体关系均保留在可浏览
     assert.equal(links.get(relation.id)?.kind, relation.kind);
   }
   for (const link of model.system_links) {
-    if (isMainPluginRegistration(link, architecture.registry)) assert.ok(!links.has(link.id), link.id);
-    else assert.ok(links.has(link.id), link.id);
+    assert.ok(links.has(link.id), link.id);
   }
 });
 
@@ -344,7 +347,9 @@ test('会话日志的启动、双后台线程与退出刷新仍可追踪', () =>
   assert.ok(graph.links.some(link => link.from === 'log-producer' && link.to === 'log-file-worker'));
   assert.ok(graph.links.some(link => link.from === 'log-producer' && link.to === 'log-console-worker'));
   assert.ok(graph.links.some(link => link.from === 'app-main' && link.to === 'log-file-worker'));
-  assert.equal(architecture.graphFor('session_log', 'data').empty, true);
+  const data = architecture.graphFor('session_log', 'data');
+  assert.equal(data.empty, false);
+  for (const id of ['resource.SessionWriter', 'resource.ConsoleWriter']) assert.ok(data.nodes.some(node => node.id === id), id);
 });
 
 test('碰撞日志只进入 tracing，由两个后台输出分支处理，文件只有文件线程一个写入源', () => {
@@ -367,7 +372,7 @@ test('物理插件只引用 tracing 入口，不展开日志插件内部的文�
   assert.equal(graph.nodes.find(node => node.id === 'collision_log').role, 'internal');
   assert.equal(graph.nodes.find(node => node.id === 'log-producer').role, 'external');
   assert.deepEqual(graph.links.filter(link => link.from === 'collision_log' && link.kind === 'write').map(link => link.to), ['log-producer']);
-  assert.ok(graph.links.some(link => link.kind === 'read' && link.from === 'physics-messages' && link.to === 'collision_log'));
+  for (const id of model.object_aliases['physics-messages']) assert.ok(graph.links.some(link => link.kind === 'read' && link.from === id && link.to === 'collision_log'), id);
   for (const id of ['physics-file-log', 'log-file-worker', 'log-console-worker']) assert.ok(!graph.nodes.some(node => node.id === id), id);
 });
 
@@ -401,9 +406,9 @@ test('非系统节点缺少明确归属时失败，不静默归入基础设施',
   assert.throws(() => buildArchitectureModel(missingOwner), /resource.GameSettings.*缺少明确的功能归属/);
 });
 
-test('135 个条目分别记录实际 Schedule，Observer 不冒充固定调度', () => {
+test('137 个条目分别记录实际 Schedule，Observer 不冒充固定调度', () => {
   const scheduleNames = new Set(['Startup', 'First', 'PreUpdate', 'FixedFirst', 'FixedUpdate', 'FixedPostUpdate', 'FixedLast', 'RunFixedMainLoop', 'Update', 'SpawnScene', 'PostUpdate', 'EguiPrimaryContextPass', 'Render', 'OnEnter(AppState::MainMenu)', 'OnEnter(AppState::InGame)', 'OnEnter(PlayState::Paused)', 'OnEnter(PlayState::Running)']);
-  assert.equal(model.systems.length, 135);
+  assert.equal(model.systems.length, 137);
   const originalIds = [
     'startup_spawn', 'startup_config', 'startup_timestep', 'startup_pose',
     'frame_limit', 'time_update', 'input_update', 'mouse_capture',
@@ -442,6 +447,7 @@ test('135 个条目分别记录实际 Schedule，Observer 不冒充固定调度'
     'observe_menu_primary_clear', 'menu_clear_cancelled_primary', 'native_pointer_events', 'native_update_hovered',
     'native_button_down', 'native_button_up', 'native_button_click', 'native_button_drag_end',
     'native_button_cancel', 'native_button_key',
+    'flow_suspend_paused', 'character_clear_intents_paused',
   ];
   assert.deepEqual(new Set(model.systems.map(system => system.id)), new Set([...originalIds, ...addedIds]), 'Original registrations retain their stable IDs');
   for (const system of model.systems) {
@@ -493,7 +499,8 @@ test('固定循环之后仍属于 RunFixedMainLoop，条件状态入口与 Start
   assert.equal(groups.get('Startup').track, 'startup');
   assert.equal(groups.get('StateTransition').track, 'conditional');
   assert.ok(groups.get('StateTransition').notes.some(note => note.includes('PreStartup')));
-  assert.deepEqual(architecture.registry.character_clear_intents.registrations.map(registration => registration.schedule), ['OnEnter(AppState::MainMenu)', 'OnEnter(PlayState::Paused)']);
+  assert.deepEqual(architecture.registry.character_clear_intents.registrations.map(registration => registration.schedule), ['OnEnter(AppState::MainMenu)']);
+  assert.deepEqual(architecture.registry.character_clear_intents_paused.registrations.map(registration => registration.schedule), ['OnEnter(PlayState::Paused)']);
   assert.equal(architecture.registry.startup_spawn.schedule, 'OnEnter(AppState::InGame)');
   assert.ok(architecture.registry.startup_spawn.registrations.some(registration => registration.schedule === 'Startup' && registration.scope === 'headless-test'));
   assert.equal(groups.get('EguiPrimaryContextPass').parent, 'PostUpdate');
@@ -529,7 +536,8 @@ test('状态分组标题只显示类型，完整运行时注册、身份与生�
     }
   }
   assert.ok(definitions.get('Startup').notes.some(note => note.includes('执行一次')));
-  assert.deepEqual(architecture.registry.flow_suspend.registrations.map(registration => registration.schedule), ['OnEnter(AppState::MainMenu)', 'OnEnter(PlayState::Paused)']);
+  assert.deepEqual(architecture.registry.flow_suspend.registrations.map(registration => registration.schedule), ['OnEnter(AppState::MainMenu)']);
+  assert.deepEqual(architecture.registry.flow_suspend_paused.registrations.map(registration => registration.schedule), ['OnEnter(PlayState::Paused)']);
 });
 
 test('指定调度标题只显示名称，原始说明、阶段身份和其他标题不被改写', () => {

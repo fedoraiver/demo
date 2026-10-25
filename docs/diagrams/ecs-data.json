@@ -466,7 +466,11 @@
         "action.ActionValue"
       ],
       "writes": [
-        "action.Action"
+        "action.Action<LookAction>",
+        "action.Action<MoveAction>",
+        "action.Action<JumpAction>",
+        "action.Action<InteractAction>",
+        "action.Action<ReleasePointerAction>"
       ],
       "filters": [
         "上下文：Without<ActionFns>",
@@ -845,6 +849,10 @@
             "FixedGameplaySystems::Facing"
           ]
         }
+      ],
+      "registrationFamilyIds": [
+        "facing_fixed",
+        "facing_update"
       ]
     },
     {
@@ -1187,6 +1195,10 @@
             "FixedGameplaySystems::Target"
           ]
         }
+      ],
+      "registrationFamilyIds": [
+        "held_fixed",
+        "held_update"
       ]
     },
     {
@@ -1281,6 +1293,10 @@
           ],
           "driver_set": "RunFixedMainLoopSystems::AfterFixedMainLoop"
         }
+      ],
+      "registrationFamilyIds": [
+        "facing_fixed",
+        "facing_update"
       ]
     },
     {
@@ -1336,6 +1352,10 @@
           ],
           "driver_set": "RunFixedMainLoopSystems::AfterFixedMainLoop"
         }
+      ],
+      "registrationFamilyIds": [
+        "held_fixed",
+        "held_update"
       ]
     },
     {
@@ -1901,6 +1921,10 @@
             "FixedGameplaySystems::Motion"
           ]
         }
+      ],
+      "registrationFamilyIds": [
+        "grounded_fixed",
+        "grounded_after"
       ]
     },
     {
@@ -1971,6 +1995,10 @@
             "PhysicsSystems::Writeback"
           ]
         }
+      ],
+      "registrationFamilyIds": [
+        "grounded_fixed",
+        "grounded_after"
       ]
     },
     {
@@ -2103,7 +2131,7 @@
       ],
       "source": {
         "path": "src/item_interaction/mod.rs",
-        "line": 42
+        "line": 34
       },
       "feature": "infrastructure",
       "registered_by": "item_interaction",
@@ -3367,7 +3395,7 @@
       "id": "flow_suspend",
       "name": "suspend_controls",
       "kind": "System",
-      "phase": "OnEnter(MainMenu / Paused) · StateTransition",
+      "phase": "OnEnter(AppState::MainMenu) · StateTransition",
       "module": "first_person",
       "description": "进入主菜单或暂停时停用 GameplayContext 并释放光标；角色意图由 CharacterPlugin 的独立生命周期系统清空。",
       "display_summary": "停用玩法输入并释放光标。",
@@ -3394,11 +3422,49 @@
         {
           "schedule": "OnEnter(AppState::MainMenu)",
           "scope": "runtime"
-        },
+        }
+      ],
+      "registrationFamilyIds": [
+        "flow_suspend",
+        "flow_suspend_paused"
+      ]
+    },
+    {
+      "id": "flow_suspend_paused",
+      "name": "suspend_controls",
+      "kind": "System",
+      "phase": "OnEnter(PlayState::Paused) · StateTransition",
+      "module": "first_person",
+      "description": "进入主菜单或暂停时停用 GameplayContext 并释放光标；角色意图由 CharacterPlugin 的独立生命周期系统清空。",
+      "display_summary": "停用玩法输入并释放光标。",
+      "reads": [],
+      "writes": [
+        "controller.ContextActivity",
+        "camera.MouseLookState",
+        "window.CursorOptions"
+      ],
+      "filters": [],
+      "events": [],
+      "notes": [
+        "Commands 的上下文停用在状态调度结束前生效；与 UI 页面系统没有虚构顺序。"
+      ],
+      "source": {
+        "path": "src/first_person/mod.rs",
+        "line": 172
+      },
+      "feature": "first_person",
+      "registered_by": "first_person",
+      "schedule": "OnEnter(PlayState::Paused)",
+      "schedule_group": "StateTransition",
+      "registrations": [
         {
           "schedule": "OnEnter(PlayState::Paused)",
           "scope": "runtime"
         }
+      ],
+      "registrationFamilyIds": [
+        "flow_suspend",
+        "flow_suspend_paused"
       ]
     },
     {
@@ -3687,7 +3753,7 @@
       ],
       "source": {
         "path": "src/ui/pages.rs",
-        "line": 40
+        "line": 34
       },
       "feature": "ui",
       "registered_by": "ui",
@@ -3826,7 +3892,7 @@
       ],
       "source": {
         "path": "src/ui/scroll.rs",
-        "line": 284
+        "line": 285
       },
       "feature": "ui",
       "registered_by": "ui",
@@ -3876,7 +3942,7 @@
       ],
       "source": {
         "path": "src/ui/backdrop.rs",
-        "line": 40
+        "line": 44
       },
       "feature": "ui",
       "registered_by": "ui",
@@ -3908,7 +3974,7 @@
       ],
       "source": {
         "path": "src/ui/backdrop.rs",
-        "line": 214
+        "line": 220
       },
       "feature": "ui",
       "registered_by": "ui",
@@ -4189,7 +4255,7 @@
       ],
       "source": {
         "path": "src/ui/scroll.rs",
-        "line": 267
+        "line": 268
       },
       "feature": "ui",
       "registered_by": "ui",
@@ -4223,7 +4289,7 @@
       ],
       "source": {
         "path": "src/ui/backdrop.rs",
-        "line": 152
+        "line": 158
       },
       "feature": "ui",
       "registered_by": "ui",
@@ -4265,7 +4331,7 @@
       ],
       "source": {
         "path": "src/ui/backdrop.rs",
-        "line": 165
+        "line": 171
       },
       "feature": "ui",
       "registered_by": "ui",
@@ -4489,7 +4555,7 @@
       ],
       "source": {
         "path": "src/item_interaction/audio_events.rs",
-        "line": 92
+        "line": 93
       },
       "feature": "item_interaction",
       "registered_by": "item_interaction",
@@ -4750,6 +4816,10 @@
             "sync_audio_mix"
           ]
         }
+      ],
+      "registrationFamilyIds": [
+        "audio_voice_volumes",
+        "audio_voice_volumes_post"
       ]
     },
     {
@@ -4792,6 +4862,10 @@
             "AudioSystemSet::PlayTypedChannels"
           ]
         }
+      ],
+      "registrationFamilyIds": [
+        "audio_voice_volumes",
+        "audio_voice_volumes_post"
       ]
     },
     {
@@ -5387,6 +5461,11 @@
             "FixedGameplaySystems::Attachment"
           ]
         }
+      ],
+      "registrationFamilyIds": [
+        "carry_physics_fixed",
+        "carry_physics_post",
+        "carry_physics_frame"
       ]
     },
     {
@@ -5445,6 +5524,11 @@
             "PhysicsSystems::Writeback"
           ]
         }
+      ],
+      "registrationFamilyIds": [
+        "carry_physics_fixed",
+        "carry_physics_post",
+        "carry_physics_frame"
       ]
     },
     {
@@ -5504,6 +5588,11 @@
           ],
           "driver_set": "RunFixedMainLoopSystems::AfterFixedMainLoop"
         }
+      ],
+      "registrationFamilyIds": [
+        "carry_physics_fixed",
+        "carry_physics_post",
+        "carry_physics_frame"
       ]
     },
     {
@@ -5754,7 +5843,7 @@
       "name": "clear_character_intents",
       "kind": "System",
       "module": "character",
-      "phase": "OnEnter(MainMenu / Paused) · StateTransition",
+      "phase": "OnEnter(AppState::MainMenu) · StateTransition",
       "description": "角色功能在暂停或返回主菜单时清空持续移动轴及一次性请求，不依赖设备或相机插件。",
       "display_summary": "清空持续移动意图与单次动作请求。",
       "reads": [],
@@ -5778,11 +5867,47 @@
         {
           "schedule": "OnEnter(AppState::MainMenu)",
           "scope": "runtime"
-        },
+        }
+      ],
+      "registrationFamilyIds": [
+        "character_clear_intents",
+        "character_clear_intents_paused"
+      ]
+    },
+    {
+      "id": "character_clear_intents_paused",
+      "name": "clear_character_intents",
+      "kind": "System",
+      "module": "character",
+      "phase": "OnEnter(PlayState::Paused) · StateTransition",
+      "description": "角色功能在暂停或返回主菜单时清空持续移动轴及一次性请求，不依赖设备或相机插件。",
+      "display_summary": "清空持续移动意图与单次动作请求。",
+      "reads": [],
+      "writes": [
+        "character.CharacterIntent"
+      ],
+      "filters": [],
+      "events": [],
+      "notes": [
+        "角色生命周期由 CharacterPlugin 自行注册；与菜单、输入和时钟的状态入口没有全序。"
+      ],
+      "source": {
+        "path": "src/character/lifecycle.rs",
+        "line": 8
+      },
+      "feature": "character",
+      "registered_by": "character",
+      "schedule": "OnEnter(PlayState::Paused)",
+      "schedule_group": "StateTransition",
+      "registrations": [
         {
           "schedule": "OnEnter(PlayState::Paused)",
           "scope": "runtime"
         }
+      ],
+      "registrationFamilyIds": [
+        "character_clear_intents",
+        "character_clear_intents_paused"
       ]
     },
     {
@@ -8184,7 +8309,7 @@
           "display_summary": "保存主角模型来源并作为动画绑定入口。",
           "source": {
             "path": "src/character_animation/mod.rs",
-            "line": 30
+            "line": 18
           },
           "feature": "character_animation",
           "defined_in": "character_animation"
@@ -8363,23 +8488,84 @@
           "defined_in": "infrastructure"
         },
         {
-          "id": "action.Action",
-          "name": "Action<A>",
+          "id": "action.Action<LookAction>",
+          "name": "Action<LookAction>",
           "fields": [
-            "LookAction 的输出: Vec2",
-            "MoveAction 的输出: Vec2",
-            "JumpAction 的输出: bool",
-            "InteractAction 的输出: bool",
-            "ReleasePointerAction 的输出: bool"
+            "输出: Vec2"
           ],
-          "description": "五个 GameplayContext 动作各持有一个具体泛型实例；插件 Apply 写入输出。",
-          "display_summary": "保存具体玩法动作的当前输出。",
+          "description": "LookAction 动作实体上的具体 Action 泛型组件，由 Enhanced Input 的 Apply 阶段写入当前输出。",
+          "display_summary": "保存LookAction动作的当前输出。",
           "source": {
             "path": "src/first_person/actions.rs",
             "line": 68
           },
           "feature": "enhanced_input",
-          "defined_in": "enhanced_input"
+          "defined_in": "enhanced_input",
+          "rust_type": "bevy_enhanced_input::action::Action<crate::first_person::actions::LookAction>"
+        },
+        {
+          "id": "action.Action<MoveAction>",
+          "name": "Action<MoveAction>",
+          "fields": [
+            "输出: Vec2"
+          ],
+          "description": "MoveAction 动作实体上的具体 Action 泛型组件，由 Enhanced Input 的 Apply 阶段写入当前输出。",
+          "display_summary": "保存MoveAction动作的当前输出。",
+          "source": {
+            "path": "src/first_person/actions.rs",
+            "line": 72
+          },
+          "feature": "enhanced_input",
+          "defined_in": "enhanced_input",
+          "rust_type": "bevy_enhanced_input::action::Action<crate::first_person::actions::MoveAction>"
+        },
+        {
+          "id": "action.Action<JumpAction>",
+          "name": "Action<JumpAction>",
+          "fields": [
+            "输出: bool"
+          ],
+          "description": "JumpAction 动作实体上的具体 Action 泛型组件，由 Enhanced Input 的 Apply 阶段写入当前输出。",
+          "display_summary": "保存JumpAction动作的当前输出。",
+          "source": {
+            "path": "src/first_person/actions.rs",
+            "line": 76
+          },
+          "feature": "enhanced_input",
+          "defined_in": "enhanced_input",
+          "rust_type": "bevy_enhanced_input::action::Action<crate::first_person::actions::JumpAction>"
+        },
+        {
+          "id": "action.Action<InteractAction>",
+          "name": "Action<InteractAction>",
+          "fields": [
+            "输出: bool"
+          ],
+          "description": "InteractAction 动作实体上的具体 Action 泛型组件，由 Enhanced Input 的 Apply 阶段写入当前输出。",
+          "display_summary": "保存InteractAction动作的当前输出。",
+          "source": {
+            "path": "src/first_person/actions.rs",
+            "line": 81
+          },
+          "feature": "enhanced_input",
+          "defined_in": "enhanced_input",
+          "rust_type": "bevy_enhanced_input::action::Action<crate::first_person::actions::InteractAction>"
+        },
+        {
+          "id": "action.Action<ReleasePointerAction>",
+          "name": "Action<ReleasePointerAction>",
+          "fields": [
+            "输出: bool"
+          ],
+          "description": "ReleasePointerAction 动作实体上的具体 Action 泛型组件，由 Enhanced Input 的 Apply 阶段写入当前输出。",
+          "display_summary": "保存ReleasePointerAction动作的当前输出。",
+          "source": {
+            "path": "src/first_person/actions.rs",
+            "line": 86
+          },
+          "feature": "enhanced_input",
+          "defined_in": "enhanced_input",
+          "rust_type": "bevy_enhanced_input::action::Action<crate::first_person::actions::ReleasePointerAction>"
         },
         {
           "id": "action.ActionSettings",
@@ -9204,18 +9390,19 @@
         },
         {
           "id": "model_node.MeshMaterial3d",
-          "name": "MeshMaterial3d",
+          "name": "MeshMaterial3d<StandardMaterial>",
           "fields": [
             "Handle<StandardMaterial>"
           ],
-          "description": "材质节点携带。",
+          "description": "GLTF 的 PBR 扩展把 StandardMaterial 句柄插入网格实体，当前项目没有注册自定义材质扩展。",
           "source": {
             "path": "src/scene_assembly/actors.rs",
             "line": 8
           },
           "feature": "infrastructure",
           "defined_in": "infrastructure",
-          "display_summary": "关联实体使用的三维网格材质。"
+          "display_summary": "关联实体使用的三维网格材质。",
+          "rust_type": "bevy::pbr::MeshMaterial3d<bevy::pbr::StandardMaterial>"
         },
         {
           "id": "model_node.Visibility",
@@ -9418,7 +9605,7 @@
           "display_summary": "保存界面节点的布局约束。",
           "source": {
             "path": "src/ui/pages.rs",
-            "line": 74
+            "line": 68
           },
           "feature": "infrastructure",
           "defined_in": "infrastructure"
@@ -9432,7 +9619,7 @@
           "description": "菜单显示在展示场景与玩法画面上。",
           "source": {
             "path": "src/ui/pages.rs",
-            "line": 99
+            "line": 93
           },
           "feature": "infrastructure",
           "defined_in": "infrastructure"
@@ -9447,7 +9634,7 @@
           "display_summary": "索引当前实体的直接子实体。",
           "source": {
             "path": "src/ui/pages.rs",
-            "line": 74
+            "line": 68
           },
           "feature": "infrastructure",
           "defined_in": "infrastructure"
@@ -9582,7 +9769,7 @@
           "description": "原生布局后的按钮几何，用于焦点滚入。",
           "source": {
             "path": "src/ui/scroll.rs",
-            "line": 286
+            "line": 287
           },
           "feature": "infrastructure",
           "defined_in": "infrastructure"
@@ -9596,7 +9783,7 @@
           "description": "与视口坐标比较按钮上下边界。",
           "source": {
             "path": "src/ui/scroll.rs",
-            "line": 286
+            "line": 287
           },
           "feature": "infrastructure",
           "defined_in": "infrastructure",
@@ -9612,7 +9799,7 @@
           "display_summary": "关联父实体并跟随父级生命周期。",
           "source": {
             "path": "src/ui/scroll.rs",
-            "line": 287
+            "line": 288
           },
           "feature": "infrastructure",
           "defined_in": "infrastructure"
@@ -9700,7 +9887,7 @@
           "description": "指针滚轮或焦点滚入按内容范围夹紧。",
           "source": {
             "path": "src/ui/scroll.rs",
-            "line": 262
+            "line": 263
           },
           "feature": "infrastructure",
           "defined_in": "infrastructure",
@@ -9715,7 +9902,7 @@
           "description": "布局计算结果，用于滚动范围与坐标转换。",
           "source": {
             "path": "src/ui/scroll.rs",
-            "line": 284
+            "line": 285
           },
           "feature": "infrastructure",
           "defined_in": "infrastructure"
@@ -9729,7 +9916,7 @@
           "description": "与按钮比较可视区上下边界。",
           "source": {
             "path": "src/ui/scroll.rs",
-            "line": 284
+            "line": 285
           },
           "feature": "infrastructure",
           "defined_in": "infrastructure",
@@ -9789,7 +9976,7 @@
           "display_summary": "标记退出所属应用状态时销毁此实体。",
           "source": {
             "path": "src/ui/backdrop.rs",
-            "line": 48
+            "line": 52
           },
           "feature": "infrastructure",
           "defined_in": "infrastructure"
@@ -9804,7 +9991,7 @@
           "display_summary": "索引当前实体的直接子实体。",
           "source": {
             "path": "src/ui/backdrop.rs",
-            "line": 51
+            "line": 55
           },
           "feature": "infrastructure",
           "defined_in": "infrastructure"
@@ -9829,7 +10016,7 @@
           "description": "通过父子树传播展示可见性。",
           "source": {
             "path": "src/ui/backdrop.rs",
-            "line": 50
+            "line": 54
           },
           "feature": "infrastructure",
           "defined_in": "infrastructure"
@@ -9857,7 +10044,7 @@
           "display_summary": "标记三维场景相机。",
           "source": {
             "path": "src/ui/backdrop.rs",
-            "line": 117
+            "line": 121
           },
           "feature": "infrastructure",
           "defined_in": "infrastructure"
@@ -9870,7 +10057,7 @@
           "display_summary": "指定菜单界面的默认绘制相机。",
           "source": {
             "path": "src/ui/backdrop.rs",
-            "line": 121
+            "line": 125
           },
           "feature": "infrastructure",
           "defined_in": "infrastructure"
@@ -9883,7 +10070,7 @@
           "display_summary": "指定主检查器界面的相机上下文。",
           "source": {
             "path": "src/ui/backdrop.rs",
-            "line": 122
+            "line": 126
           },
           "feature": "egui",
           "defined_in": "egui"
@@ -9912,7 +10099,7 @@
           "description": "舞台根的直接子实体，根销毁时连带清理。",
           "source": {
             "path": "src/ui/backdrop.rs",
-            "line": 52
+            "line": 56
           },
           "feature": "infrastructure",
           "defined_in": "infrastructure"
@@ -9942,7 +10129,7 @@
           "display_summary": "指定需要展开的场景资产实例。",
           "source": {
             "path": "src/ui/backdrop.rs",
-            "line": 141
+            "line": 146
           },
           "feature": "infrastructure",
           "defined_in": "infrastructure"
@@ -9985,7 +10172,7 @@
           "display_summary": "驱动模型的动画播放。",
           "source": {
             "path": "src/ui/backdrop.rs",
-            "line": 172
+            "line": 178
           },
           "feature": "infrastructure",
           "defined_in": "infrastructure"
@@ -10000,7 +10187,7 @@
           "display_summary": "关联模型使用的动画混合图。",
           "source": {
             "path": "src/ui/backdrop.rs",
-            "line": 197
+            "line": 203
           },
           "feature": "infrastructure",
           "defined_in": "infrastructure"
@@ -10015,7 +10202,7 @@
           "display_summary": "保存模型及展示包裹的局部姿态。",
           "source": {
             "path": "src/ui/backdrop.rs",
-            "line": 141
+            "line": 146
           },
           "feature": "infrastructure",
           "defined_in": "infrastructure"
@@ -10029,7 +10216,7 @@
           "description": "快递员的独立包裹附件保持角色本地持握位置。",
           "source": {
             "path": "src/ui/backdrop.rs",
-            "line": 81
+            "line": 85
           },
           "feature": "infrastructure",
           "defined_in": "infrastructure",
@@ -10103,7 +10290,7 @@
           "description": "仅设置说明标题的身份标记。",
           "source": {
             "path": "src/ui/pages.rs",
-            "line": 19
+            "line": 13
           },
           "feature": "ui",
           "defined_in": "ui"
@@ -10115,7 +10302,7 @@
           "description": "仅设置说明正文的身份标记。",
           "source": {
             "path": "src/ui/pages.rs",
-            "line": 22
+            "line": 16
           },
           "feature": "ui",
           "defined_in": "ui"
@@ -10158,7 +10345,7 @@
           "description": "标识保存提示文字，原位更新。",
           "source": {
             "path": "src/ui/pages.rs",
-            "line": 30
+            "line": 24
           },
           "feature": "ui",
           "defined_in": "ui"
@@ -10245,7 +10432,7 @@
           "description": "右侧内容边界。",
           "source": {
             "path": "src/ui/pages.rs",
-            "line": 26
+            "line": 20
           },
           "feature": "ui",
           "defined_in": "ui",
@@ -10263,7 +10450,7 @@
           "display_summary": "保存界面节点的布局约束。",
           "source": {
             "path": "src/ui/pages.rs",
-            "line": 437
+            "line": 433
           },
           "feature": "infrastructure",
           "defined_in": "infrastructure"
@@ -11606,7 +11793,7 @@
       "display_summary": "缓冲菜单模型与界面资源的加载失败。",
       "source": {
         "path": "src/ui/backdrop.rs",
-        "line": 214
+        "line": 220
       },
       "feature": "infrastructure",
       "defined_in": "infrastructure",
@@ -11986,7 +12173,7 @@
       "display_summary": "保存上次菜单结构以判断是否需要重建。",
       "source": {
         "path": "src/ui/pages.rs",
-        "line": 47
+        "line": 41
       },
       "feature": "ui",
       "defined_in": "ui",
@@ -12002,7 +12189,7 @@
       "display_summary": "保存最近提交的滚动焦点按钮。",
       "source": {
         "path": "src/ui/scroll.rs",
-        "line": 289
+        "line": 290
       },
       "feature": "ui",
       "defined_in": "ui",
@@ -12136,6 +12323,39 @@
       "feature": "infrastructure",
       "defined_in": "infrastructure",
       "kind": "Resource"
+    },
+    {
+      "id": "resource.SessionWriter",
+      "name": "SessionWriter",
+      "kind": "Resource",
+      "fields": [
+        "output: QueuedWriter",
+        "path: Arc<PathBuf>"
+      ],
+      "description": "把文件日志写入器暂存到 App，随后交给文件日志 layer。",
+      "display_summary": "把文件日志写入器暂存到 App，随后交给文件日志 layer。",
+      "source": {
+        "path": "src/session_log/lifecycle.rs",
+        "line": 155
+      },
+      "feature": "session_log",
+      "defined_in": "session_log"
+    },
+    {
+      "id": "resource.ConsoleWriter",
+      "name": "ConsoleWriter",
+      "kind": "Resource",
+      "fields": [
+        "0: QueuedWriter"
+      ],
+      "description": "把控制台写入器暂存到 App，随后交给控制台日志 layer。",
+      "display_summary": "把控制台写入器暂存到 App，随后交给控制台日志 layer。",
+      "source": {
+        "path": "src/session_log/lifecycle.rs",
+        "line": 171
+      },
+      "feature": "session_log",
+      "defined_in": "session_log"
     }
   ],
   "relationships": [
@@ -12152,7 +12372,28 @@
       "source": {
         "path": "src/first_person/mod.rs",
         "line": 48
-      }
+      },
+      "from_component": "controller.ControlsCharacter",
+      "component_field": "0",
+      "component_target_sources": [
+        {
+          "role": "operation",
+          "label": "调用普通装配 helper：传入本次生成的角色",
+          "path": "src/scene_assembly/actors.rs",
+          "line": 79,
+          "column": 1
+        },
+        {
+          "role": "operation",
+          "label": "插入：控制者保存角色 Entity",
+          "path": "src/first_person/actions.rs",
+          "line": 49,
+          "column": 1
+        }
+      ],
+      "component_target_notes": [
+        "插入、移除与创建通过 Commands 排队，在相应命令应用时建立或更新关系；源码中的普通 helper 或构造函数不是另一个 System。"
+      ]
     },
     {
       "id": "controls_camera",
@@ -12167,7 +12408,21 @@
       "source": {
         "path": "src/first_person/mod.rs",
         "line": 53
-      }
+      },
+      "from_component": "controller.ControlsCamera",
+      "component_field": "0",
+      "component_target_sources": [
+        {
+          "role": "operation",
+          "label": "插入：控制者保存复用的玩法相机 Entity",
+          "path": "src/scene_assembly/actors.rs",
+          "line": 114,
+          "column": 1
+        }
+      ],
+      "component_target_notes": [
+        "插入、移除与创建通过 Commands 排队，在相应命令应用时建立或更新关系；源码中的普通 helper 或构造函数不是另一个 System。"
+      ]
     },
     {
       "id": "camera_target",
@@ -12182,7 +12437,35 @@
       "source": {
         "path": "src/first_person/mod.rs",
         "line": 63
-      }
+      },
+      "from_component": "camera.FirstPersonCamera",
+      "component_field": "target",
+      "component_target_sources": [
+        {
+          "role": "operation",
+          "label": "调用构造 helper：把本次角色作为相机目标",
+          "path": "src/scene_assembly/actors.rs",
+          "line": 103,
+          "column": 1
+        },
+        {
+          "role": "operation",
+          "label": "初始化：FirstPersonCamera 保存 target Entity",
+          "path": "src/first_person/mod.rs",
+          "line": 77,
+          "column": 1
+        },
+        {
+          "role": "operation",
+          "label": "插入：为复用的加载相机装配 FirstPersonCamera",
+          "path": "src/scene_assembly/actors.rs",
+          "line": 108,
+          "column": 1
+        }
+      ],
+      "component_target_notes": [
+        "插入、移除与创建通过 Commands 排队，在相应命令应用时建立或更新关系；源码中的普通 helper 或构造函数不是另一个 System。"
+      ]
     },
     {
       "id": "action_of",
@@ -12197,7 +12480,9 @@
       "source": {
         "path": "src/first_person/actions.rs",
         "line": 67
-      }
+      },
+      "from_component": "action.ActionOf",
+      "component_field": "entity"
     },
     {
       "id": "binding_of",
@@ -12212,7 +12497,9 @@
       "source": {
         "path": "src/first_person/actions.rs",
         "line": 70
-      }
+      },
+      "from_component": "binding.BindingOf",
+      "component_field": "0"
     },
     {
       "id": "character_visual_child",
@@ -12227,7 +12514,9 @@
       "source": {
         "path": "src/scene_assembly/actors.rs",
         "line": 26
-      }
+      },
+      "from_component": "visual.ChildOf",
+      "component_field": "0"
     },
     {
       "id": "parcel_visual_child",
@@ -12242,7 +12531,9 @@
       "source": {
         "path": "src/scene_assembly/actors.rs",
         "line": 53
-      }
+      },
+      "from_component": "visual.ChildOf",
+      "component_field": "0"
     },
     {
       "id": "held_by",
@@ -12257,7 +12548,28 @@
       "source": {
         "path": "src/item_interaction/components.rs",
         "line": 24
-      }
+      },
+      "from_component": "parcel.HeldBy",
+      "component_field": "0",
+      "component_target_sources": [
+        {
+          "role": "operation",
+          "label": "排队插入：选中的物品建立持有关系",
+          "path": "src/item_interaction/interaction.rs",
+          "line": 109,
+          "column": 1
+        },
+        {
+          "role": "operation",
+          "label": "赋值：物品的持有者为当前角色",
+          "path": "src/item_interaction/interaction.rs",
+          "line": 110,
+          "column": 1
+        }
+      ],
+      "component_target_notes": [
+        "插入、移除与创建通过 Commands 排队，在相应命令应用时建立或更新关系；源码中的普通 helper 或构造函数不是另一个 System。"
+      ]
     },
     {
       "id": "collider_parent",
@@ -12272,7 +12584,9 @@
       "source": {
         "path": "src/scene_assembly/loading.rs",
         "line": 216
-      }
+      },
+      "from_component": "world.ChildOf",
+      "component_field": "0"
     },
     {
       "id": "npc_collider_parent",
@@ -12287,7 +12601,9 @@
       "source": {
         "path": "src/scene_assembly/loading.rs",
         "line": 235
-      }
+      },
+      "from_component": "world.ChildOf",
+      "component_field": "0"
     },
     {
       "id": "npc_map_tree",
@@ -12317,7 +12633,35 @@
       "source": {
         "path": "src/character_animation/state.rs",
         "line": 137
-      }
+      },
+      "from_component": "animation_player.CourierAnimation",
+      "component_field": "character",
+      "component_target_sources": [
+        {
+          "role": "operation",
+          "label": "取得：当前主角视觉根的角色父实体",
+          "path": "src/character_animation/binding.rs",
+          "line": 50,
+          "column": 1
+        },
+        {
+          "role": "operation",
+          "label": "排队插入：为主角子树中的动画播放器装配状态",
+          "path": "src/character_animation/binding.rs",
+          "line": 152,
+          "column": 1
+        },
+        {
+          "role": "operation",
+          "label": "初始化：CourierAnimation 保存当前角色 Entity",
+          "path": "src/character_animation/binding.rs",
+          "line": 155,
+          "column": 1
+        }
+      ],
+      "component_target_notes": [
+        "插入、移除与创建通过 Commands 排队，在相应命令应用时建立或更新关系；源码中的普通 helper 或构造函数不是另一个 System。"
+      ]
     },
     {
       "id": "menu_camera_child",
@@ -12331,8 +12675,10 @@
       "description": "BSN 直接子节点；退出 MainMenu 清理舞台时相机与主上下文一同销毁。",
       "source": {
         "path": "src/ui/backdrop.rs",
-        "line": 52
-      }
+        "line": 56
+      },
+      "from_component": "menu_camera.ChildOf",
+      "component_field": "0"
     },
     {
       "id": "menu_models_child",
@@ -12346,7 +12692,7 @@
       "description": "图按视觉类别汇总多层真实 ChildOf；携带包裹直接属于快递员，GLB 子树逐层挂接，不能解释为所有节点直接指向舞台。",
       "source": {
         "path": "src/ui/backdrop.rs",
-        "line": 40
+        "line": 44
       }
     },
     {
@@ -12422,7 +12768,28 @@
       "source": {
         "path": "src/character_animation/grounding.rs",
         "line": 21
-      }
+      },
+      "from_component": "visual.CourierFootGrounding",
+      "component_field": "character",
+      "component_target_sources": [
+        {
+          "role": "operation",
+          "label": "排队插入：在当前主角视觉根装配视觉接地状态",
+          "path": "src/character_animation/binding.rs",
+          "line": 193,
+          "column": 1
+        },
+        {
+          "role": "operation",
+          "label": "初始化：保存当前角色 Entity",
+          "path": "src/character_animation/binding.rs",
+          "line": 194,
+          "column": 1
+        }
+      ],
+      "component_target_notes": [
+        "插入、移除与创建通过 Commands 排队，在相应命令应用时建立或更新关系；源码中的普通 helper 或构造函数不是另一个 System。"
+      ]
     },
     {
       "id": "grounding_player",
@@ -12437,7 +12804,35 @@
       "source": {
         "path": "src/character_animation/grounding.rs",
         "line": 23
-      }
+      },
+      "from_component": "visual.CourierFootGrounding",
+      "component_field": "animation_player",
+      "component_target_sources": [
+        {
+          "role": "operation",
+          "label": "选择：记录当前主角子树中第一个已绑定的播放器",
+          "path": "src/character_animation/binding.rs",
+          "line": 171,
+          "column": 1
+        },
+        {
+          "role": "operation",
+          "label": "排队插入：主角视觉根保存接地状态",
+          "path": "src/character_animation/binding.rs",
+          "line": 193,
+          "column": 1
+        },
+        {
+          "role": "operation",
+          "label": "初始化：保存该主角的动画播放器 Entity",
+          "path": "src/character_animation/binding.rs",
+          "line": 195,
+          "column": 1
+        }
+      ],
+      "component_target_notes": [
+        "插入、移除与创建通过 Commands 排队，在相应命令应用时建立或更新关系；源码中的普通 helper 或构造函数不是另一个 System。"
+      ]
     },
     {
       "id": "grounding_soles",
@@ -12452,7 +12847,35 @@
       "source": {
         "path": "src/character_animation/grounding.rs",
         "line": 24
-      }
+      },
+      "from_component": "visual.CourierFootGrounding",
+      "component_field": "sole_markers",
+      "component_target_sources": [
+        {
+          "role": "operation",
+          "label": "查找：只在当前主角视觉子树匹配鞋底标记",
+          "path": "src/character_animation/binding.rs",
+          "line": 184,
+          "column": 1
+        },
+        {
+          "role": "operation",
+          "label": "排队插入：主角视觉根保存接地状态",
+          "path": "src/character_animation/binding.rs",
+          "line": 193,
+          "column": 1
+        },
+        {
+          "role": "operation",
+          "label": "初始化：保存已完整匹配的鞋底标记 Entity 数组",
+          "path": "src/character_animation/binding.rs",
+          "line": 196,
+          "column": 1
+        }
+      ],
+      "component_target_notes": [
+        "插入、移除与创建通过 Commands 排队，在相应命令应用时建立或更新关系；源码中的普通 helper 或构造函数不是另一个 System。"
+      ]
     },
     {
       "id": "model_animated_by",
@@ -12467,7 +12890,9 @@
       "source": {
         "path": "src/character_animation/binding.rs",
         "line": 30
-      }
+      },
+      "from_component": "model_node.AnimatedBy",
+      "component_field": "0"
     },
     {
       "id": "settings_panel_hierarchy",
@@ -12481,7 +12906,7 @@
       "description": "右列面板与操作行并列；图省略固定内容区和右列。",
       "source": {
         "path": "src/ui/pages.rs",
-        "line": 439
+        "line": 435
       }
     },
     {
@@ -12512,7 +12937,9 @@
       "source": {
         "path": "src/ui/scroll.rs",
         "line": 92
-      }
+      },
+      "from_component": "settings_scrollbar_thumb.ChildOf",
+      "component_field": "0"
     },
     {
       "id": "settings_scrollbar_target",
@@ -12527,7 +12954,35 @@
       "source": {
         "path": "src/ui/scroll.rs",
         "line": 121
-      }
+      },
+      "from_component": "settings_scrollbar.Scrollbar",
+      "component_field": "target",
+      "component_target_sources": [
+        {
+          "role": "operation",
+          "label": "查找：同一面板下带 MenuScroll 的兄弟视口",
+          "path": "src/ui/scroll.rs",
+          "line": 118,
+          "column": 1
+        },
+        {
+          "role": "operation",
+          "label": "排队插入：为当前滚动条轨道绑定视口",
+          "path": "src/ui/scroll.rs",
+          "line": 121,
+          "column": 1
+        },
+        {
+          "role": "operation",
+          "label": "初始化：Scrollbar 目标为找到的菜单视口",
+          "path": "src/ui/scroll.rs",
+          "line": 122,
+          "column": 1
+        }
+      ],
+      "component_target_notes": [
+        "插入、移除与创建通过 Commands 排队，在相应命令应用时建立或更新关系；源码中的普通 helper 或构造函数不是另一个 System。"
+      ]
     },
     {
       "id": "held_attachment_proxy",
@@ -12542,7 +12997,42 @@
       "source": {
         "path": "src/item_interaction/components.rs",
         "line": 41
-      }
+      },
+      "from_component": "parcel.HeldAttachment",
+      "component_field": "collider",
+      "component_target_sources": [
+        {
+          "role": "operation",
+          "label": "调用普通 helper：为选中的物品开始挂接",
+          "path": "src/item_interaction/interaction.rs",
+          "line": 128,
+          "column": 1
+        },
+        {
+          "role": "operation",
+          "label": "排队创建：保留本次碰撞代理 Entity",
+          "path": "src/item_interaction/attachment.rs",
+          "line": 28,
+          "column": 1
+        },
+        {
+          "role": "operation",
+          "label": "排队插入：在独立物品上保存挂接状态",
+          "path": "src/item_interaction/attachment.rs",
+          "line": 31,
+          "column": 1
+        },
+        {
+          "role": "operation",
+          "label": "初始化：HeldAttachment.collider 保存本次代理 Entity",
+          "path": "src/item_interaction/attachment.rs",
+          "line": 33,
+          "column": 1
+        }
+      ],
+      "component_target_notes": [
+        "插入、移除与创建通过 Commands 排队，在相应命令应用时建立或更新关系；源码中的普通 helper 或构造函数不是另一个 System。"
+      ]
     },
     {
       "id": "held_proxy_item",
@@ -12557,7 +13047,28 @@
       "source": {
         "path": "src/item_interaction/components.rs",
         "line": 54
-      }
+      },
+      "from_component": "held_proxy.HeldCollider",
+      "component_field": "0",
+      "component_target_sources": [
+        {
+          "role": "operation",
+          "label": "定位：当前挂接状态中的碰撞代理",
+          "path": "src/item_interaction/attachment.rs",
+          "line": 85,
+          "column": 1
+        },
+        {
+          "role": "operation",
+          "label": "插入：代理保存对应的独立物品 Entity",
+          "path": "src/item_interaction/attachment.rs",
+          "line": 88,
+          "column": 1
+        }
+      ],
+      "component_target_notes": [
+        "插入、移除与创建通过 Commands 排队，在相应命令应用时建立或更新关系；源码中的普通 helper 或构造函数不是另一个 System。"
+      ]
     },
     {
       "id": "held_proxy_body",
@@ -12572,7 +13083,28 @@
       "source": {
         "path": "src/item_interaction/attachment.rs",
         "line": 96
-      }
+      },
+      "from_component": "held_proxy.ColliderOf",
+      "component_field": "body",
+      "component_target_sources": [
+        {
+          "role": "operation",
+          "label": "读取：从该物品的 HeldBy 取得角色 Entity",
+          "path": "src/item_interaction/attachment.rs",
+          "line": 74,
+          "column": 1
+        },
+        {
+          "role": "operation",
+          "label": "插入：碰撞代理归属该角色刚体",
+          "path": "src/item_interaction/attachment.rs",
+          "line": 96,
+          "column": 1
+        }
+      ],
+      "component_target_notes": [
+        "插入、移除与创建通过 Commands 排队，在相应命令应用时建立或更新关系；源码中的普通 helper 或构造函数不是另一个 System。"
+      ]
     }
   ],
   "observers": [
@@ -12904,7 +13436,7 @@
       ],
       "source": {
         "path": "src/session_log/mod.rs",
-        "line": 20
+        "line": 16
       },
       "feature": "session_log",
       "aspects": [
@@ -13094,7 +13626,7 @@
       ],
       "source": {
         "path": "src/item_interaction/mod.rs",
-        "line": 42
+        "line": 34
       },
       "feature": "item_interaction",
       "aspects": [
@@ -13178,7 +13710,7 @@
       ],
       "source": {
         "path": "src/character_animation/mod.rs",
-        "line": 33
+        "line": 21
       },
       "feature": "character_animation",
       "aspects": [
@@ -13261,7 +13793,7 @@
       ],
       "source": {
         "path": "src/session_log/mod.rs",
-        "line": 45
+        "line": 41
       },
       "id": "plugin-physics-1",
       "feature": "infrastructure",
@@ -13481,7 +14013,7 @@
       "description": "独立注册交互、持握生命周期和物品反馈；通过公开调度集与人物、物理、视角协作。",
       "source": {
         "path": "src/item_interaction/mod.rs",
-        "line": 42
+        "line": 34
       },
       "id": "plugin-carry",
       "alias_of": "plugin-ItemInteractionPlugin",
@@ -15455,28 +15987,6 @@
       "registrations": []
     },
     {
-      "name": "WindowFocused / MouseButtonInput",
-      "kind": "Message",
-      "description": "Bevy 的窗口消息缓冲，由 sync_mouse_capture 的 MessageReader 读取。",
-      "display_summary": "缓冲窗口焦点与鼠标按钮变化。",
-      "notes": [
-        "缓冲不是永久业务队列。",
-        "Esc 使用菜单 BackAction；F3 使用 GameplayContext 的 ReleasePointerAction，Window 光标与 Egui 状态仅用于捕获。"
-      ],
-      "source": {
-        "path": "src/first_person/capture.rs",
-        "line": 94
-      },
-      "id": "window-messages",
-      "feature": "infrastructure",
-      "aspects": [
-        "events"
-      ],
-      "schedule": null,
-      "schedule_group": "Explanatory",
-      "registrations": []
-    },
-    {
       "name": "捕获与输入上下文",
       "kind": "Note",
       "description": "捕获与焦点状态写入相机和窗口；UI 占用通过 Commands 改变控制者的 ContextActivity，命令在动作 Prepare 前应用。",
@@ -15506,28 +16016,6 @@
         "events"
       ],
       "feature": "first_person",
-      "schedule": null,
-      "schedule_group": "Explanatory",
-      "registrations": []
-    },
-    {
-      "name": "CollisionStart / CollisionEnd",
-      "kind": "Message",
-      "description": "Avian 缓冲碰撞开始/结束消息，携带 collider1 和 collider2；log_collisions 在物理步之后读取。",
-      "display_summary": "缓冲接触开始或结束及碰撞双方身份。",
-      "notes": [
-        "MessageReader 自有游标；这些是缓冲 Message，不是输入 EntityEvent/Observer。",
-        "与 Writeback 及其后接地/速度日志之间没有额外显式先后，图画独立分支。"
-      ],
-      "source": {
-        "path": "src/physics/collision.rs",
-        "line": 31
-      },
-      "id": "physics-messages",
-      "feature": "avian",
-      "aspects": [
-        "events"
-      ],
       "schedule": null,
       "schedule_group": "Explanatory",
       "registrations": []
@@ -15967,7 +16455,7 @@
       ],
       "source": {
         "path": "src/ui/scroll.rs",
-        "line": 267
+        "line": 268
       },
       "id": "event-observe_menu_scroll",
       "feature": "infrastructure",
@@ -15995,7 +16483,7 @@
       ],
       "source": {
         "path": "src/ui/scroll.rs",
-        "line": 267
+        "line": 268
       },
       "id": "result-observe_menu_scroll",
       "feature": "ui",
@@ -16658,6 +17146,122 @@
       "schedule": null,
       "schedule_group": "Explanatory",
       "registrations": []
+    },
+    {
+      "name": "WindowFocused",
+      "kind": "Message",
+      "description": "窗口焦点变化的消息类型；Messages<WindowFocused> 保存待消费消息。",
+      "display_summary": "记录窗口获得或失去焦点。",
+      "notes": [
+        "这是消息元素类型，缓冲存储使用单独的 Messages<T> Resource。"
+      ],
+      "source": {
+        "path": "src/first_person/capture.rs",
+        "line": 94
+      },
+      "id": "message-WindowFocused",
+      "feature": "infrastructure",
+      "aspects": [
+        "events"
+      ],
+      "schedule": null,
+      "schedule_group": "Explanatory",
+      "registrations": []
+    },
+    {
+      "name": "MouseButtonInput",
+      "kind": "Message",
+      "description": "鼠标按钮变化的消息类型；Messages<MouseButtonInput> 保存待消费消息。",
+      "display_summary": "记录鼠标按钮按下或松开。",
+      "notes": [
+        "这是消息元素类型，缓冲存储使用单独的 Messages<T> Resource。"
+      ],
+      "source": {
+        "path": "src/first_person/capture.rs",
+        "line": 94
+      },
+      "id": "message-MouseButtonInput",
+      "feature": "infrastructure",
+      "aspects": [
+        "events"
+      ],
+      "schedule": null,
+      "schedule_group": "Explanatory",
+      "registrations": []
+    },
+    {
+      "name": "CollisionStart",
+      "kind": "Message",
+      "description": "Avian 碰撞开始消息类型，携带碰撞双方 Entity。",
+      "display_summary": "记录碰撞开始及双方实体。",
+      "notes": [
+        "这是消息元素类型，缓冲存储使用单独的 Messages<T> Resource。"
+      ],
+      "source": {
+        "path": "src/physics/collision.rs",
+        "line": 31
+      },
+      "id": "message-CollisionStart",
+      "feature": "avian",
+      "aspects": [
+        "events"
+      ],
+      "schedule": null,
+      "schedule_group": "Explanatory",
+      "registrations": []
+    },
+    {
+      "name": "CollisionEnd",
+      "kind": "Message",
+      "description": "Avian 碰撞结束消息类型，携带碰撞双方 Entity。",
+      "display_summary": "记录碰撞结束及双方实体。",
+      "notes": [
+        "这是消息元素类型，缓冲存储使用单独的 Messages<T> Resource。"
+      ],
+      "source": {
+        "path": "src/physics/collision.rs",
+        "line": 31
+      },
+      "id": "message-CollisionEnd",
+      "feature": "avian",
+      "aspects": [
+        "events"
+      ],
+      "schedule": null,
+      "schedule_group": "Explanatory",
+      "registrations": []
+    },
+    {
+      "id": "param-recoverable-body",
+      "name": "RecoverableBody",
+      "kind": "QueryData",
+      "feature": "bounds_recovery",
+      "aspects": [
+        "data"
+      ],
+      "schedule": null,
+      "schedule_group": "Explanatory",
+      "registrations": [],
+      "source": {
+        "path": "src/bounds_recovery/recovery.rs",
+        "line": 34
+      },
+      "description": "声明落水恢复查询的实体、出生点、物理姿态、速度与可选角色状态；Read、Write 与 Has 保留各自的访问语义。",
+      "display_summary": "声明落水恢复需要查询的组件与存在条件。",
+      "fields": [
+        "entity: Entity",
+        "spawn: Read<SpawnPoint>",
+        "position: Write<Position>",
+        "rotation: Write<Rotation>",
+        "transform: Write<Transform>",
+        "linear_velocity: Write<LinearVelocity>",
+        "angular_velocity: Write<AngularVelocity>",
+        "intent: Option<Write<CharacterIntent>>",
+        "motion: Option<Write<CharacterMotion>>",
+        "character: Has<Character>",
+        "translation_paused: Has<NoTranslationEasing>",
+        "rotation_paused: Has<NoRotationEasing>"
+      ]
     }
   ],
   "features": [
@@ -16724,7 +17328,7 @@
       ],
       "source": {
         "path": "src/item_interaction/mod.rs",
-        "line": 42
+        "line": 34
       }
     },
     {
@@ -16783,7 +17387,7 @@
       ],
       "source": {
         "path": "src/character_animation/mod.rs",
-        "line": 33
+        "line": 21
       }
     },
     {
@@ -16858,7 +17462,7 @@
       ],
       "source": {
         "path": "src/session_log/mod.rs",
-        "line": 20
+        "line": 16
       }
     },
     {
@@ -17082,7 +17686,6 @@
     "window.CursorOptions": "infrastructure",
     "window.RawHandleWrapper": "infrastructure",
     "action.Name": "infrastructure",
-    "action.Action": "enhanced_input",
     "action.ActionSettings": "enhanced_input",
     "action.ActionOf": "enhanced_input",
     "action.Bindings": "enhanced_input",
@@ -17301,9 +17904,7 @@
     "result-observe_interact": "first_person",
     "event-observe_look": "first_person",
     "result-observe_look": "first_person",
-    "window-messages": "infrastructure",
     "capture-state": "first_person",
-    "physics-messages": "avian",
     "physics-file-log": "session_log",
     "world-ready-event": "infrastructure",
     "log-producer": "session_log",
@@ -17540,7 +18141,21 @@
     "native-button-activate-event": "infrastructure",
     "menu_button.Hovered": "infrastructure",
     "menu_button.Pressed": "infrastructure",
-    "menu_button.PrimaryPress": "ui"
+    "menu_button.PrimaryPress": "ui",
+    "flow_suspend_paused": "first_person",
+    "character_clear_intents_paused": "character",
+    "message-WindowFocused": "infrastructure",
+    "message-MouseButtonInput": "infrastructure",
+    "message-CollisionStart": "avian",
+    "message-CollisionEnd": "avian",
+    "action.Action<LookAction>": "enhanced_input",
+    "action.Action<MoveAction>": "enhanced_input",
+    "action.Action<JumpAction>": "enhanced_input",
+    "action.Action<InteractAction>": "enhanced_input",
+    "action.Action<ReleasePointerAction>": "enhanced_input",
+    "resource.SessionWriter": "session_log",
+    "resource.ConsoleWriter": "session_log",
+    "param-recoverable-body": "bounds_recovery"
   },
   "system_links": [
     {
@@ -18188,11 +18803,24 @@
       "label": "W"
     },
     {
-      "id": "read-window-messages-mouse_capture",
-      "from": "window-messages",
+      "id": "read-window-messages-mouse_capture-message-WindowFocused",
+      "from": "message-WindowFocused",
       "to": "mouse_capture",
       "kind": "read",
-      "label": "读取"
+      "label": "读取",
+      "originalLinkIds": [
+        "read-window-messages-mouse_capture"
+      ]
+    },
+    {
+      "id": "read-window-messages-mouse_capture-message-MouseButtonInput",
+      "from": "message-MouseButtonInput",
+      "to": "mouse_capture",
+      "kind": "read",
+      "label": "读取",
+      "originalLinkIds": [
+        "read-window-messages-mouse_capture"
+      ]
     },
     {
       "id": "write-mouse_capture-capture-state",
@@ -18202,11 +18830,24 @@
       "label": "W"
     },
     {
-      "id": "read-physics-messages-collision_log",
-      "from": "physics-messages",
+      "id": "read-physics-messages-collision_log-message-CollisionStart",
+      "from": "message-CollisionStart",
       "to": "collision_log",
       "kind": "read",
-      "label": "读取"
+      "label": "读取",
+      "originalLinkIds": [
+        "read-physics-messages-collision_log"
+      ]
+    },
+    {
+      "id": "read-physics-messages-collision_log-message-CollisionEnd",
+      "from": "message-CollisionEnd",
+      "to": "collision_log",
+      "kind": "read",
+      "label": "读取",
+      "originalLinkIds": [
+        "read-physics-messages-collision_log"
+      ]
     },
     {
       "id": "write-log-file-worker-physics-file-log",
@@ -18740,7 +19381,7 @@
       "label": "ChildOf",
       "source": {
         "path": "src/ui/backdrop.rs",
-        "line": 52
+        "line": 56
       }
     },
     {
@@ -18751,7 +19392,7 @@
       "label": "ChildOf 层级",
       "source": {
         "path": "src/ui/backdrop.rs",
-        "line": 40
+        "line": 44
       }
     },
     {
@@ -18850,7 +19491,7 @@
       "label": "ChildOf 子树",
       "source": {
         "path": "src/ui/pages.rs",
-        "line": 439
+        "line": 435
       }
     },
     {
@@ -19750,6 +20391,347 @@
         "path": "src/ui/requests.rs",
         "line": 16
       }
+    },
+    {
+      "id": "reference-message-WindowFocused-resource.WindowFocusedMessages",
+      "from": "message-WindowFocused",
+      "to": "resource.WindowFocusedMessages",
+      "kind": "reference",
+      "label": "消息元素类型",
+      "source": {
+        "path": "src/first_person/capture.rs",
+        "line": 94
+      }
+    },
+    {
+      "id": "reference-message-MouseButtonInput-resource.MouseButtonInputMessages",
+      "from": "message-MouseButtonInput",
+      "to": "resource.MouseButtonInputMessages",
+      "kind": "reference",
+      "label": "消息元素类型",
+      "source": {
+        "path": "src/first_person/capture.rs",
+        "line": 94
+      }
+    },
+    {
+      "id": "reference-message-CollisionStart-resource.CollisionStartMessages",
+      "from": "message-CollisionStart",
+      "to": "resource.CollisionStartMessages",
+      "kind": "reference",
+      "label": "消息元素类型",
+      "source": {
+        "path": "src/physics/collision.rs",
+        "line": 31
+      }
+    },
+    {
+      "id": "reference-message-CollisionEnd-resource.CollisionEndMessages",
+      "from": "message-CollisionEnd",
+      "to": "resource.CollisionEndMessages",
+      "kind": "reference",
+      "label": "消息元素类型",
+      "source": {
+        "path": "src/physics/collision.rs",
+        "line": 31
+      }
+    },
+    {
+      "id": "registration-plugin-SessionLogPlugin-resource.SessionWriter",
+      "from": "plugin-SessionLogPlugin",
+      "to": "resource.SessionWriter",
+      "kind": "registration",
+      "label": "构建期暂存写入器",
+      "source": {
+        "path": "src/session_log/mod.rs",
+        "line": 37
+      }
+    },
+    {
+      "id": "reference-resource.SessionWriter-log-producer",
+      "from": "resource.SessionWriter",
+      "to": "log-producer",
+      "kind": "reference",
+      "label": "日志 layer 取走并持有",
+      "source": {
+        "path": "src/session_log/lifecycle.rs",
+        "line": 38
+      }
+    },
+    {
+      "id": "registration-plugin-SessionLogPlugin-resource.ConsoleWriter",
+      "from": "plugin-SessionLogPlugin",
+      "to": "resource.ConsoleWriter",
+      "kind": "registration",
+      "label": "构建期暂存写入器",
+      "source": {
+        "path": "src/session_log/mod.rs",
+        "line": 38
+      }
+    },
+    {
+      "id": "reference-resource.ConsoleWriter-log-producer",
+      "from": "resource.ConsoleWriter",
+      "to": "log-producer",
+      "kind": "reference",
+      "label": "日志 layer 取走并持有",
+      "source": {
+        "path": "src/session_log/lifecycle.rs",
+        "line": 54
+      }
+    },
+    {
+      "id": "parameter-recoverable-body-water_recover",
+      "from": "param-recoverable-body",
+      "to": "water_recover",
+      "kind": "reference",
+      "label": "Query<RecoverableBody>",
+      "source": {
+        "path": "src/bounds_recovery/recovery.rs",
+        "line": 53
+      }
+    },
+    {
+      "id": "reference-param-recoverable-body-character.SpawnPoint",
+      "from": "param-recoverable-body",
+      "to": "character.SpawnPoint",
+      "kind": "reference",
+      "label": "Read<SpawnPoint> 参数声明",
+      "source": {
+        "path": "src/bounds_recovery/recovery.rs",
+        "line": 36
+      }
+    },
+    {
+      "id": "reference-param-recoverable-body-parcel.SpawnPoint",
+      "from": "param-recoverable-body",
+      "to": "parcel.SpawnPoint",
+      "kind": "reference",
+      "label": "Read<SpawnPoint> 参数声明",
+      "source": {
+        "path": "src/bounds_recovery/recovery.rs",
+        "line": 36
+      }
+    },
+    {
+      "id": "reference-param-recoverable-body-character.Position",
+      "from": "param-recoverable-body",
+      "to": "character.Position",
+      "kind": "reference",
+      "label": "Write<Position> 参数声明",
+      "source": {
+        "path": "src/bounds_recovery/recovery.rs",
+        "line": 37
+      }
+    },
+    {
+      "id": "reference-param-recoverable-body-parcel.Position",
+      "from": "param-recoverable-body",
+      "to": "parcel.Position",
+      "kind": "reference",
+      "label": "Write<Position> 参数声明",
+      "source": {
+        "path": "src/bounds_recovery/recovery.rs",
+        "line": 37
+      }
+    },
+    {
+      "id": "reference-param-recoverable-body-character.Rotation",
+      "from": "param-recoverable-body",
+      "to": "character.Rotation",
+      "kind": "reference",
+      "label": "Write<Rotation> 参数声明",
+      "source": {
+        "path": "src/bounds_recovery/recovery.rs",
+        "line": 38
+      }
+    },
+    {
+      "id": "reference-param-recoverable-body-parcel.Rotation",
+      "from": "param-recoverable-body",
+      "to": "parcel.Rotation",
+      "kind": "reference",
+      "label": "Write<Rotation> 参数声明",
+      "source": {
+        "path": "src/bounds_recovery/recovery.rs",
+        "line": 38
+      }
+    },
+    {
+      "id": "reference-param-recoverable-body-character.Transform",
+      "from": "param-recoverable-body",
+      "to": "character.Transform",
+      "kind": "reference",
+      "label": "Write<Transform> 参数声明",
+      "source": {
+        "path": "src/bounds_recovery/recovery.rs",
+        "line": 39
+      }
+    },
+    {
+      "id": "reference-param-recoverable-body-parcel.Transform",
+      "from": "param-recoverable-body",
+      "to": "parcel.Transform",
+      "kind": "reference",
+      "label": "Write<Transform> 参数声明",
+      "source": {
+        "path": "src/bounds_recovery/recovery.rs",
+        "line": 39
+      }
+    },
+    {
+      "id": "reference-param-recoverable-body-character.LinearVelocity",
+      "from": "param-recoverable-body",
+      "to": "character.LinearVelocity",
+      "kind": "reference",
+      "label": "Write<LinearVelocity> 参数声明",
+      "source": {
+        "path": "src/bounds_recovery/recovery.rs",
+        "line": 40
+      }
+    },
+    {
+      "id": "reference-param-recoverable-body-parcel.LinearVelocity",
+      "from": "param-recoverable-body",
+      "to": "parcel.LinearVelocity",
+      "kind": "reference",
+      "label": "Write<LinearVelocity> 参数声明",
+      "source": {
+        "path": "src/bounds_recovery/recovery.rs",
+        "line": 40
+      }
+    },
+    {
+      "id": "reference-param-recoverable-body-character.AngularVelocity",
+      "from": "param-recoverable-body",
+      "to": "character.AngularVelocity",
+      "kind": "reference",
+      "label": "Write<AngularVelocity> 参数声明",
+      "source": {
+        "path": "src/bounds_recovery/recovery.rs",
+        "line": 41
+      }
+    },
+    {
+      "id": "reference-param-recoverable-body-parcel.AngularVelocity",
+      "from": "param-recoverable-body",
+      "to": "parcel.AngularVelocity",
+      "kind": "reference",
+      "label": "Write<AngularVelocity> 参数声明",
+      "source": {
+        "path": "src/bounds_recovery/recovery.rs",
+        "line": 41
+      }
+    },
+    {
+      "id": "reference-param-recoverable-body-character.CharacterIntent",
+      "from": "param-recoverable-body",
+      "to": "character.CharacterIntent",
+      "kind": "reference",
+      "label": "Option<Write<CharacterIntent>> 参数声明",
+      "source": {
+        "path": "src/bounds_recovery/recovery.rs",
+        "line": 42
+      }
+    },
+    {
+      "id": "reference-param-recoverable-body-character.CharacterMotion",
+      "from": "param-recoverable-body",
+      "to": "character.CharacterMotion",
+      "kind": "reference",
+      "label": "Option<Write<CharacterMotion>> 参数声明",
+      "source": {
+        "path": "src/bounds_recovery/recovery.rs",
+        "line": 43
+      }
+    },
+    {
+      "id": "reference-param-recoverable-body-character.Character",
+      "from": "param-recoverable-body",
+      "to": "character.Character",
+      "kind": "reference",
+      "label": "Has<Character> 参数声明",
+      "source": {
+        "path": "src/bounds_recovery/recovery.rs",
+        "line": 44
+      }
+    },
+    {
+      "id": "reference-param-recoverable-body-character.NoTranslationEasing",
+      "from": "param-recoverable-body",
+      "to": "character.NoTranslationEasing",
+      "kind": "reference",
+      "label": "Has<NoTranslationEasing> 参数声明",
+      "source": {
+        "path": "src/bounds_recovery/recovery.rs",
+        "line": 45
+      }
+    },
+    {
+      "id": "reference-param-recoverable-body-parcel.NoTranslationEasing",
+      "from": "param-recoverable-body",
+      "to": "parcel.NoTranslationEasing",
+      "kind": "reference",
+      "label": "Has<NoTranslationEasing> 参数声明",
+      "source": {
+        "path": "src/bounds_recovery/recovery.rs",
+        "line": 45
+      }
+    },
+    {
+      "id": "reference-param-recoverable-body-character.NoRotationEasing",
+      "from": "param-recoverable-body",
+      "to": "character.NoRotationEasing",
+      "kind": "reference",
+      "label": "Has<NoRotationEasing> 参数声明",
+      "source": {
+        "path": "src/bounds_recovery/recovery.rs",
+        "line": 46
+      }
+    },
+    {
+      "id": "reference-param-recoverable-body-parcel.NoRotationEasing",
+      "from": "param-recoverable-body",
+      "to": "parcel.NoRotationEasing",
+      "kind": "reference",
+      "label": "Has<NoRotationEasing> 参数声明",
+      "source": {
+        "path": "src/bounds_recovery/recovery.rs",
+        "line": 46
+      }
+    },
+    {
+      "id": "parameter-carry-rotation-facing_fixed",
+      "from": "param-carry-rotation",
+      "to": "facing_fixed",
+      "kind": "reference",
+      "label": "CarryRotationQuery 参数",
+      "source": {
+        "path": "src/first_person/facing.rs",
+        "line": 18
+      }
+    },
+    {
+      "id": "parameter-carry-rotation-facing_update",
+      "from": "param-carry-rotation",
+      "to": "facing_update",
+      "kind": "reference",
+      "label": "CarryRotationQuery 参数",
+      "source": {
+        "path": "src/first_person/facing.rs",
+        "line": 18
+      }
+    },
+    {
+      "id": "parameter-carry-rotation-carry_align",
+      "from": "param-carry-rotation",
+      "to": "carry_align",
+      "kind": "reference",
+      "label": "CarryRotationQuery 参数",
+      "source": {
+        "path": "src/item_interaction/attachment.rs",
+        "line": 125
+      }
     }
   ],
   "feature_links": [
@@ -20222,5 +21204,22 @@
         }
       ]
     }
-  ]
+  ],
+  "object_aliases": {
+    "window-messages": [
+      "message-WindowFocused",
+      "message-MouseButtonInput"
+    ],
+    "physics-messages": [
+      "message-CollisionStart",
+      "message-CollisionEnd"
+    ],
+    "action.Action": [
+      "action.Action<LookAction>",
+      "action.Action<MoveAction>",
+      "action.Action<JumpAction>",
+      "action.Action<InteractAction>",
+      "action.Action<ReleasePointerAction>"
+    ]
+  }
 }

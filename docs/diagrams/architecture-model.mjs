@@ -114,7 +114,7 @@ export function buildArchitectureModel(model) {
       if (!owned(id)) continue;
       const extra = extraById.get(id);
       if (extra?.aspects?.includes(aspect)) internal.add(id);
-      if (aspect === 'systems' && systems.has(id) && !observers.has(id)) internal.add(id);
+      if (aspect === 'systems' && (systems.has(id) || observers.has(id))) internal.add(id);
       if (aspect === 'data' && (resources.has(id) || components.has(id))) internal.add(id);
       if (aspect === 'events' && (observers.has(id) || isMessage(id) || isRegistration(id))) internal.add(id);
     }

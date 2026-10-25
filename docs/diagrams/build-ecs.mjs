@@ -8,7 +8,8 @@ import { renderGraphView, renderOverview } from './architecture-renderer.mjs';
 import { compileArchitectureArtifacts } from './mermaid-compiler.mjs';
 import { renderArchitectureViewer } from './architecture-viewer.mjs';
 import { buildComponentCatalog } from './architecture-components.mjs';
-import { applyArchitectureSourcePolicies, applyArchitectureEdgeSourcePolicies, sourcePolicyFor } from './architecture-source-policy.mjs';
+import { buildObjectCatalog } from './architecture-objects.mjs';
+import { applyArchitectureSourcePolicies, applyArchitectureEdgeSourcePolicies, auditProductionEcsCoverage, sourcePolicyFor } from './architecture-source-policy.mjs';
 import { attachAppScheduleSources } from './architecture-app-schedule-sources.mjs';
 import { writeSourceViewer } from './source-viewer.mjs';
 import { createSourceLocator } from './source-locator.mjs';
@@ -29,9 +30,11 @@ registry['app-main'].source = locateSource('src/main.rs', /^\s*fn\s+main\b/);
 const cargoMetadata = readCargoMetadata(root);
 const dependencySources = createDependencySourceResolver(cargoMetadata);
 attachDependencySources(registry, dependencySources, DEPENDENCY_SOURCE_DEFINITIONS);
-const components = buildComponentCatalog(model, registry);
+const components = buildComponentCatalog(model, registry, { mergeSystems: false });
 const sourceOptions = { model, repository: root, registry, dependencyContext: { metadata: cargoMetadata, resolver: dependencySources } };
 const sourceAudit = applyArchitectureSourcePolicies(registry, sourceOptions);
+const coverage = auditProductionEcsCoverage(registry, { ...sourceOptions, context: sourceAudit.context });
+if (coverage.gaps.length) throw new Error(coverage.gaps.join('\n'));
 for (const record of Object.values(registry)) {
   if (!['System', 'Observer'].includes(record.kind) && record.sourcePolicyKind !== 'system') continue;
   const declarations = (record.sourceEntries || []).filter(source => source.role === 'definition').flatMap(source => {
@@ -42,7 +45,13 @@ for (const record of Object.values(registry)) {
   });
   record.filters = [...new Set([...declarations, ...(record.filters || [])])];
 }
-const labels = { systems: '系统与调度', data: '数据与实体', events: '事件与协作' };
+const objects = buildObjectCatalog(model, registry, { components });
+for (const access of objects.unresolvedAccesses) {
+  const record = registry[access.system], type = registry[access.component]?.name || access.component;
+  const gap = `待核实：${type} 的 ${access.operation} 操作尚未确定实体投影，未据此建立具体投影关系。`;
+  record.sourceGaps = [...new Set([...(record.sourceGaps || []), gap])];
+}
+const labels = { systems: '系统与调度' };
 let views = [renderOverview(model, registry, features)];
 for (const feature of [...features, ...INFRASTRUCTURE_FEATURES]) {
   for (const [aspect, label] of Object.entries(labels)) {
@@ -51,10 +60,12 @@ for (const feature of [...features, ...INFRASTRUCTURE_FEATURES]) {
     views.push(renderGraphView({ id, feature: feature.id, aspect, label: `${feature.label} · ${label}`, summary: `${feature.label}的${label}；外部契约保留摘要，可跳转到所属插件。` }, graph, registry, features, aspect === 'systems' ? architecture.scheduleGroups(graph) : []));
   }
 }
-for (const type of components.types) {
-  const graph = components.graphFor(type.id);
-  views.push(renderGraphView({ id: type.viewId, feature: type.feature, aspect: 'component', label: `${type.name} · 组件关系`, summary: '左侧为包含组件的实体，中间为组件类型，右侧每个系统函数只显示一次；连线表达访问与生命周期操作。',
-    componentTypeId: type.id, componentNodeId: type.componentNodeId, projectionIds: type.projectionIds, ownerEntityIds: type.ownerEntityIds, componentDetails: type.details,
+for (const object of objects.objects) {
+  const graph = objects.graphFor(object.id);
+  views.push(renderGraphView({ id: object.viewId, feature: object.feature, aspect: 'object', label: `${registry[object.id].name} · 对象关系`, summary: object.kind === 'Entity'
+    ? '中心实体与直接关联的非组件对象；组件清单在右侧查看，保留原关系方向及身份，不递归展开间接关系。'
+    : '中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。',
+    objectId: object.id, centerNodeId: object.id,
   }, graph, registry, features));
 }
 for (const view of views) {
@@ -69,7 +80,7 @@ views = compiled.views;
 const artifactViews = views;
 const outputs = new Set(artifactViews.flatMap(view => [view.filename, view.mermaidFilename]).filter(Boolean));
 for (const filename of fs.readdirSync(directory)) {
-  if ((/^ecs-(plugin-.+|infrastructure-.+|third-party-.+|component-.+)\.(svg|mmd)$/.test(filename) || ['ecs-schedules.svg', 'ecs-relationships.svg', 'ecs-events.svg'].includes(filename)) && !outputs.has(filename)) fs.unlinkSync(path.join(directory, filename));
+  if ((/^ecs-(plugin-.+|infrastructure-.+|third-party-.+|component-.+|object-.+)\.(svg|mmd)$/.test(filename) || ['ecs-schedules.svg', 'ecs-relationships.svg', 'ecs-events.svg'].includes(filename)) && !outputs.has(filename)) fs.unlinkSync(path.join(directory, filename));
 }
 function writeArtifact(filename, content) {
   const target = path.join(directory, filename);
@@ -89,7 +100,7 @@ const sources = [...sourceReferences({ model, registry, views }).entries()].sort
   ? { path: key, text: dependencySources.read(source).text, source: { ...source, line: 1 } }
   : { path: key, text: fs.readFileSync(path.resolve(root, key), 'utf8') });
 writeSourceViewer({ outputDirectory: directory, sources });
-writeArtifact('ecs-architecture.html', renderArchitectureViewer({ model, registry, views, features, guideSamples: compiled.guideSamples, componentTypes: components.types,
+writeArtifact('ecs-architecture.html', renderArchitectureViewer({ model, registry, views, features, guideSamples: compiled.guideSamples, objects: objects.objects, objectAliases: model.object_aliases || {},
   sourceRoleLabels: Object.fromEntries(sourcePolicyFor('edge').groups.map(group => [group.role, group.label])),
 }));
-console.log(JSON.stringify({ features: features.length, views: views.length, componentTypes: components.types.length, svgs: artifactViews.filter(view => view.svg).length, mermaid: artifactViews.filter(view => view.mermaid).length, systems: model.systems.length, sources: sources.length }));
+console.log(JSON.stringify({ features: features.length, views: views.length, objects: objects.objects.length, svgs: artifactViews.filter(view => view.svg).length, mermaid: artifactViews.filter(view => view.mermaid).length, systems: model.systems.length, sources: sources.length }));

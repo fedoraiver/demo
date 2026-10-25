@@ -250,7 +250,7 @@ test('actual architecture details retain only the VS Code source entry and prese
   let refreshScope;
   const context = vm.createContext({
     details, componentEntities: new Map(), view: { nodes: [] }, DATA: { model: { features: [], entities: [] }, registry: { source: { name: 'update', description: '完整节点说明保留注册顺序与生命周期约束。', sourceEntries: [{ role: 'definition', label: '函数定义', path: 'src/中文 #%.rs', line: 8, column: 3 }], source: { path: 'src/legacy.rs', line: 1 } }, data: { name: 'Resource' } } },
-    select() {}, guide() {}, document: { getElementById: () => clear },
+    select() {}, guide() {}, objectView: () => null, document: { getElementById: () => clear },
     sourceEditor: { refreshLinks(scope) { refreshScope = scope; } },
   });
   vm.runInContext(definitions + '\nshowDetail("source");', context);

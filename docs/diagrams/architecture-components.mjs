@@ -24,18 +24,6 @@ const reviewedTypeNames = {
     [`menu_controller.${type}`, `${type}<crate::ui::navigation::MenuContext>`],
   ])),
 };
-// 旧清单在这两处按一类实体汇总泛型实例，不能据泛型声明把它们提升为一种具体运行时类型。
-const aggregateProjections = {
-  'action.Action': {
-    knownRustTypes: ['LookAction', 'MoveAction', 'JumpAction', 'InteractAction', 'ReleasePointerAction'].map(type => `Action<crate::first_person::actions::${type}>`),
-    gap: '当前投影汇总五种 Action 实例；A 是类型模板参数，不是一种已核实的运行时实参。具体实例的独立归并与操作分配尚待核实。',
-  },
-  'model_node.MeshMaterial3d': {
-    knownRustTypes: ['MeshMaterial3d<bevy::pbr::StandardMaterial>'],
-    gap: '当前投影汇总导入材质组件，原名称省略泛型实参。已知标准 GLTF 材质适配使用 MeshMaterial3d<StandardMaterial>；各导入节点的具体实例与归并边界尚待核实。',
-  },
-};
-
 function sourceIdentity(source) {
   return source ? [source.dependency?.name || 'project', source.dependency?.version || '', source.path, source.line].join('|') : null;
 }
@@ -52,15 +40,14 @@ function typeIdentity(component, record) {
     || (!infrastructureFeature(record.defined_in || record.feature) ? component.source : null);
   const declared = definition && sourceIdentity(definition);
   const explicitId = component.type_id || component.component_type_id;
-  const aggregate = aggregateProjections[component.id];
   // 已解析声明优先于导入路径的拼写；具体泛型实参仍属于类型身份。
   const declaredType = type.replace(/^[A-Za-z_]\w*(?:::[A-Za-z_]\w*)*::/, '').replace(/\s+/g, '');
-  const identity = aggregate ? `aggregate:${component.id}` : explicitId ? `explicit:${explicitId}`
+  const identity = explicitId ? `explicit:${explicitId}`
     : declared && (!explicit || verifiedDefinition) ? `definition:${declared}|${declaredType}` : explicit ? `rust:${explicit}` : `projection:${component.id}`;
   const rustType = explicit || (definition && !definition.dependency
     ? `crate::${definition.path.replace(/^src\//, '').replace(/\/(?:mod|main)\.rs$/, '').replace(/\.rs$/, '').replaceAll('/', '::')}::${type}`
     : type);
-  return { identity, type, rustType, definition, aggregate, verified: !aggregate && Boolean(explicitId || explicit || declared) };
+  return { identity, type, rustType, definition, verified: Boolean(explicitId || explicit || declared) };
 }
 
 // 注释、字符串和字符字面量留等长空白，保留源码偏移与行号。
@@ -170,13 +157,13 @@ function sourceDatabase(model, registry, readSource) {
   return { files, functions, forSystem, helper };
 }
 
-function mergedSystems(model, registry) {
+function mergedSystems(model, registry, merge = true) {
   const groups = new Map(), functionIdBySystemId = {}, systemByFunctionId = {};
   for (const original of model.systems || []) {
     const record = registry[original.id];
     if (!record || nodeKindOf(record) === 'Synchronization') continue;
     const callable = functionKinds.has(nodeKindOf(record));
-    const key = callable && record.source ? `function:${sourceIdentity(record.source)}` : `node:${record.id}`;
+    const key = merge && callable && record.source ? `function:${sourceIdentity(record.source)}` : `node:${record.id}`;
     if (!groups.has(key)) groups.set(key, []);
     groups.get(key).push(record);
   }
@@ -640,6 +627,7 @@ function reviewedBodySizeAccesses(registry, readDependencySource) {
 
 /** Build after dependency definitions are attached. Original projection/registration IDs remain valid. */
 export function buildComponentCatalog(model, registry, {
+  mergeSystems = true,
   readSource = filename => fs.readFileSync(path.join(repository, filename), 'utf8'),
   readDependencySource = source => fs.readFileSync(path.join(source.dependency.root, source.path), 'utf8'),
 } = {}) {
@@ -653,15 +641,14 @@ export function buildComponentCatalog(model, registry, {
       type = { id: `component-type-${hash(identity.identity)}`, viewId: `component-${hash(identity.identity)}`, name: identity.type.replace(/crate::[A-Za-z_][\w:]*::/g, ''), rustType: identity.rustType,
         feature: record.feature, defined_in: record.defined_in, definition_source: identity.definition,
         componentNodeId: component.id, projectionIds: [], ownerEntityIds: [], identityVerified: identity.verified,
-        ...(identity.aggregate ? { aggregateProjection: true, knownRustTypes: identity.aggregate.knownRustTypes } : {}),
-        sourceGaps: identity.aggregate ? [identity.aggregate.gap] : identity.verified ? [] : ['类型声明尚未核实，暂时保留独立投影，不按同名合并。'] };
+        sourceGaps: identity.verified ? [] : ['类型声明尚未核实，暂时保留独立投影，不按同名合并。'] };
       byIdentity.set(identity.identity, type); types.push(type); typeById[type.id] = type;
     }
     type.projectionIds.push(component.id);
     type.ownerEntityIds = unique([...type.ownerEntityIds, entity.canonical_entity || `entity-${entity.id}`]);
     typeByProjectionId[component.id] = type.id;
   }
-  const catalog = { types, typeById, typeByProjectionId, ...mergedSystems(model, registry) };
+  const catalog = { types, typeById, typeByProjectionId, ...mergedSystems(model, registry, mergeSystems) };
   for (const type of types) {
     const records = type.projectionIds.map(id => registry[id]);
     const descriptions = unique(records.map(record => record.description));
@@ -675,7 +662,7 @@ export function buildComponentCatalog(model, registry, {
         return owners.length ? `${owners.join('、')}：${description}` : description;
       }).join('\n'),
       fields: distinct(records.flatMap(record => record.fields || [])),
-      notes: unique([...records.flatMap(record => record.notes || []), ...(type.aggregateProjection ? [`当前为聚合浏览入口。已知具体实例：${type.knownRustTypes.join('；')}。`] : [])]),
+      notes: unique(records.flatMap(record => record.notes || [])),
       sourceGaps: [...type.sourceGaps],
       ...((records.find(record => record.display_summary)?.display_summary || records[0].description)
         ? { display_summary: records.find(record => record.display_summary)?.display_summary || records[0].description } : {}),

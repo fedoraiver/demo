@@ -287,7 +287,7 @@ export function checkMermaidGeometry(svg, view) {
       const declaration = new RegExp(`^\\s*${to?.mermaidId} ${link.mermaidId}@-{3,}(?:\\|[^\\n]*\\|)? ${from?.mermaidId}\\s*$`, 'm');
       const config = /^---\r?\n([\s\S]*?)\r?\n---/.exec(view.mermaid || '')?.[1];
       const themeCSS = config && JSON.parse(config).config?.themeCSS;
-      requireCondition(view.aspect === 'component' && declaration.test(view.mermaid || '') && themeCSS?.includes(`#${view.id}-${link.mermaidId}{marker-start:url(#${view.id}_flowchart-v2-pointStart)!important}`)
+      requireCondition(['component', 'object'].includes(view.aspect) && declaration.test(view.mermaid || '') && themeCSS?.includes(`#${view.id}-${link.mermaidId}{marker-start:url(#${view.id}_flowchart-v2-pointStart)!important}`)
         && startMarker === `url(#${view.id}_flowchart-v2-pointStart)` && !present(endMarker), `Mermaid reverse arrow has no native source evidence: ${id}`);
     }
     const arrow = reverse ? startMarker : endMarker;
