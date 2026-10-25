@@ -79,7 +79,7 @@ export function createArchitectureViewer({ data: DATA, document, location, histo
     selection={...selection,node:id};updateUrl();id?showDetail(id):guide();
   }
   function focusNode(id){id=visibleNode(id);const node=view.nodes.find(candidate=>candidate.id===id);if(!node?.position)return;const box=node.position;scale=Math.min((canvas.clientWidth-28)/Math.max(400,box.width*1.3),1);panX=canvas.clientWidth/2-(box.x+box.width/2-(view.bounds?.x||0))*scale;panY=canvas.clientHeight/2-(box.y+box.height/2-(view.bounds?.y||0))*scale;transform();select(id)}
-  function scheduleDetail(id){const group=view.scheduleGroups.find(item=>item.id===id);if(!group)return;details.innerHTML='<h2>'+safe(group.label)+'</h2>'+list('运行说明',group.notes);details.scrollTop=0}
+  function scheduleDetail(id){const group=view.scheduleGroups.find(item=>item.id===id);if(!group)return;details.innerHTML='<h2>'+safe(group.label)+'</h2>'+list('运行说明',group.notes)+list('约束与说明',group.sourceGaps)+sourcesList(group.sourceEntries)+'<button class="reset" id="clear-selection">清除选择</button>';sourceEditor.refreshLinks(details);details.scrollTop=0}
   function focusSection(section){if(!section)return;select(null);fit(true);panX=18-(section.x-(view.bounds?.x||0))*scale;panY=18-(section.y-(view.bounds?.y||0))*scale;transform();if(section.schedule)scheduleDetail(section.schedule);else{details.innerHTML='<h2>'+safe(section.label)+'</h2>';details.scrollTop=0}}
   function focusSchedule(id){if(id)focusSection(view.sections.find(section=>section.schedule===id))}
   function relationshipValue(value){return value===null?'无':typeof value==='boolean'?(value?'是':'否'):typeof value==='object'?JSON.stringify(value):String(value)}
@@ -98,6 +98,10 @@ export function createArchitectureViewer({ data: DATA, document, location, histo
     if(selection.component&&!componentView(selection.component)){const next={...selection};delete next.component;selection=next;updateUrl()}
     if(!selection.component&&isComponent(selection.node)&&componentView(selection.node)){const target=componentView(selection.node),legacy=selection.feature==='third_party'||(selection.feature==='infrastructure'&&target.feature!=='infrastructure');selection={...selection,...(legacy?{feature:target.feature,aspect:'data'}:{}),component:canonical(selection.node)};updateUrl()}
     if(selection.component)return;
+    if(selection.feature==='overview'&&DATA.views.find(candidate=>candidate.id==='overview')?.layout==='app-schedule'){
+      const id=canonical(selection.node),record=DATA.registry[id];
+      if(['Plugin','PluginGroup'].includes(record?.kind)){const target=internalOwnerView(record.feature,id,'events');selection={feature:record.feature,aspect:target.view?.aspect||'systems',node:target.view?target.node:null};updateUrl()}
+    }
     const merged=selection.feature==='third_party';if(!merged&&selection.feature!=='infrastructure')return;
     const id=canonical(selection.node),current=DATA.views.find(candidate=>candidate.feature===selection.feature&&candidate.aspect===selection.aspect);
     if(!merged&&(!id||current?.nodes.some(node=>node.id===id)))return;
@@ -118,7 +122,7 @@ export function createArchitectureViewer({ data: DATA, document, location, histo
     normalizeSelection();view=(selection.component?componentView(selection.component):DATA.views.find(candidate=>selection.feature==='overview'?candidate.id==='overview':candidate.feature===selection.feature&&candidate.aspect===selection.aspect))||DATA.views[0];activeSelection={kind:'none'};
     document.querySelectorAll('.navigation [data-feature]').forEach(button=>button.classList.toggle('active',button.dataset.feature===selection.feature));document.querySelector('.tabs').hidden=selection.feature==='overview'||view.aspect==='component';document.querySelectorAll('[data-aspect]').forEach(button=>button.classList.toggle('active',button.dataset.aspect===selection.aspect));
     const feature=DATA.model.features.find(candidate=>candidate.id===selection.feature)||DATA.infrastructureFeatures.find(candidate=>candidate.id===selection.feature),head=document.getElementById('feature-head'),center=view.componentNodeId||view.projectionIds?.[0];
-    head.innerHTML=view.aspect==='component'?'<h1>'+safe(DATA.registry[center]?.name||view.label)+'<span class="identifier">Component</span></h1>':feature?'<h1>'+safe(feature.label)+'<span class="identifier">'+safe(feature.plugin||feature.identifier)+'</span></h1>':'<h1>功能模块与依赖总览</h1>';
+    head.innerHTML=view.aspect==='component'?'<h1>'+safe(DATA.registry[center]?.name||view.label)+'<span class="identifier">Component</span></h1>':feature?'<h1>'+safe(feature.label)+'<span class="identifier">'+safe(feature.plugin||feature.identifier)+'</span></h1>':'<h1>'+safe(view.label)+'</h1>';
     document.getElementById('return-context').hidden=view.aspect!=='component';document.getElementById('return-overview').disabled=view.id==='overview';document.getElementById('search').value='';renderDiagram();guide();
     const rendered=view,snapshot=restore?history.state?.architectureView:null;requestAnimationFrame(()=>{if(view!==rendered)return;if(snapshot?.id===view.id){scale=snapshot.scale;panX=snapshot.panX;panY=snapshot.panY;transform();if(snapshot.active?.kind==='edge')paintEdge(snapshot.active.id,snapshot.active.schedule);else if(snapshot.active?.kind==='node')select(snapshot.active.id)}else{fit(true);const id=selection.node||(view.aspect==='component'?center:null);if(id)focusNode(id)}});
   }

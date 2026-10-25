@@ -246,7 +246,7 @@ test('selection rejects split outline roots and geometry branches containing lab
   }
 });
 
-test('delivered native nodes of every visual type have one complete outline branch independent of their labels', () => {
+test('delivered native nodes of every used visual type have one complete outline branch independent of their labels', () => {
   const html = readFileSync(new URL('./ecs-architecture.html', import.meta.url), 'utf8');
   const data = JSON.parse(html.match(/<script id="architecture-data" type="application\/json">([\s\S]*?)<\/script>/)[1]);
   const types = new Set(); let count = 0;
@@ -274,5 +274,7 @@ test('delivered native nodes of every visual type have one complete outline bran
     }
   }
   assert.equal(count, data.views.reduce((sum, view) => sum + view.nodes.length, 0));
-  assert.deepEqual([...types].sort(), Object.keys(NODE_STYLES).sort());
+  const used = new Set(data.views.flatMap(view => view.nodes.map(node => node.visualType)));
+  assert.deepEqual([...types].sort(), [...used].sort());
+  for (const type of types) assert.ok(NODE_STYLES[type], 'Every delivered type must have an explicit style: ' + type);
 });

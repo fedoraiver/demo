@@ -212,25 +212,23 @@ test('组件完整用途保留在注册表，事件页组件不增加实体容�
   for (const feature of featureIds) for (const node of viewFor(feature, 'events').nodes.filter(node => node.visualType === 'component')) assert.ok(!node.contextLabel[0].includes(architecture.registry[node.id].owner + '：'));
 });
 
-test('overview cards preserve the complete plugin name and full feature responsibility', () => {
-  const feature = { ...architecture.features[0], description: '维护应用状态与游戏时钟的职责说明。'.repeat(8) };
-  const features = architecture.features.map(item => item.id === feature.id ? feature : item);
-  const id = `plugin-${feature.plugin}`;
-  const registry = { ...architecture.registry, [id]: { ...architecture.registry[id], display_summary: undefined } };
-  const view = renderOverview(model, registry, features);
+test('App overview cards preserve complete system names and responsibilities', () => {
+  const id = 'frame_limit', description = '等待本帧剩余时间并更新本地计时状态。'.repeat(8);
+  const registry = { ...architecture.registry, [id]: { ...architecture.registry[id], description, display_summary: undefined } };
+  const view = renderOverview(model, registry, architecture.features);
   const node = view.nodes.find(item => item.id === id);
-  assert.equal(node.nameLabel, `${feature.label} · ${feature.plugin}`);
-  assert.deepEqual(node.contextLabel, [feature.description]);
-  assert.equal(node.displayLabel, node.nameLabel + '\n' + feature.description);
+  assert.equal(node.nameLabel, registry[id].name);
+  assert.deepEqual(node.contextLabel, [description]);
+  assert.equal(node.displayLabel, node.nameLabel + '\n' + description);
   assert.doesNotMatch(node.displayLabel, /…/);
 });
 
-test('canonical plugin display summaries take priority over the overview feature responsibility', () => {
-  const feature = architecture.features[0], id = `plugin-${feature.plugin}`;
-  const registry = { ...architecture.registry, [id]: { ...architecture.registry[id], display_summary: '管理应用状态与游戏时钟。' } };
+test('App overview reuses canonical system summaries without rewriting full descriptions', () => {
+  const id = 'frame_limit';
+  const registry = { ...architecture.registry, [id]: { ...architecture.registry[id], display_summary: '等待本帧剩余时间。' } };
   const description = registry[id].description;
   const view = renderOverview(model, registry, architecture.features), node = view.nodes.find(item => item.id === id);
-  assert.equal(node.nameLabel, `${feature.label} · ${feature.plugin}`);
+  assert.equal(node.nameLabel, registry[id].name);
   assert.deepEqual(node.contextLabel, [registry[id].display_summary]);
   assert.equal(registry[id].description, description);
 });
@@ -391,20 +389,15 @@ test('data group captions describe their contents while retaining stable group a
   assert.ok(catalogs > 0 && relations > 0);
 });
 
-test('overview reuses the canonical plugins for all engine and provider entries exactly once', () => {
+test('overview displays the App schedule while plugin entrances remain in their own views', () => {
   const view = renderOverview(model, architecture.registry, architecture.features);
-  const count = architecture.features.length + INFRASTRUCTURE_FEATURES.length;
-  assert.equal(view.nodes.length, count);
-  assert.equal(new Set(view.nodes.map(node => node.id)).size, count);
-  for (const entry of INFRASTRUCTURE_FEATURES) {
-    const node = view.nodes.find(node => node.id === entry.overviewNode);
-    assert.equal(architecture.registry[node.id].feature, entry.id);
-    assert.equal(architecture.registry[node.id].kind, 'Plugin');
-    assert.ok(node.displayLabel.startsWith(entry.label));
-  }
+  assert.equal(view.layout, 'app-schedule');
+  assert.equal(new Set(view.nodes.map(node => node.id)).size, view.nodes.length);
+  for (const system of model.systems) assert.ok(view.nodes.some(node => node.id === system.id), system.id);
+  for (const entry of INFRASTRUCTURE_FEATURES) assert.ok(architecture.graphFor(entry.id, 'events').nodes.some(node => node.id === entry.overviewNode), entry.id);
   assert.ok(!view.nodes.some(node => node.id === 'third-party-plugins'));
-  assert.equal(view.links.length, model.feature_links.length);
-  assert.ok(view.nodes.every(node => node.role === 'plugin'));
+  assert.ok(view.links.every(link => ['order', 'registration'].includes(link.kind)));
+  assert.ok(view.nodes.every(node => node.role === 'internal'));
 });
 
 test('empty tabs have neither Mermaid source nor an export filename', () => {

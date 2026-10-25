@@ -481,7 +481,7 @@ test('the shared catalog separates four third-party libraries with canonical Plu
     const data = fixture();
     data.registry[feature.overviewNode].kind = 'Infrastructure catalog';
     data.save();
-    assert.throws(() => checkArchitecture(data.directory), new RegExp(`Infrastructure entrance is missing from overview: ${feature.id}`));
+    assert.throws(() => checkArchitecture(data.directory), /Unknown architecture node kind: Infrastructure catalog/);
   }
 });
 
@@ -637,8 +637,8 @@ test('accepts explicit Mermaid business shapes with an independent sidebar guide
 
 test('checks node styles against actual native shape appearance and preserves external type fill', () => {
   const data = fixture(), view = modernView(data);
-  const corrupted = view.svg.replace(`fill:${NODE_STYLES.plugin.fill}`, 'fill:#FFFFFF');
-  assert.notEqual(corrupted, view.svg, 'The fixture must actually corrupt the current plugin fill');
+  const corrupted = view.svg.replace(`fill:${NODE_STYLES.app.fill}`, 'fill:#FFFFFF');
+  assert.notEqual(corrupted, view.svg, 'The fixture must actually corrupt the current App fill');
   view.svg = corrupted;
   data.save();
   assert.throws(() => checkArchitecture(data.directory), /Mermaid node appearance mismatch: app-main/);
@@ -774,7 +774,7 @@ test('sidebar samples cannot retain business identities or clip their native geo
   assert.throws(() => checkGuideSamples(missing, styles), /Missing native Mermaid node outline: guide\/node\/system/);
   const duplicate = guideSamplesFixture();
   duplicate.nodes.system = duplicate.nodes.system.replace('<svg ', '<svg id="shared-guide-id" ');
-  duplicate.nodes.contract = duplicate.nodes.contract.replace('<svg ', '<svg id="shared-guide-id" ');
+  duplicate.nodes.system_set = duplicate.nodes.system_set.replace('<svg ', '<svg id="shared-guide-id" ');
   assert.throws(() => checkGuideSamples(duplicate, styles), /Duplicate read guide SVG ID: shared-guide-id/);
 });
 

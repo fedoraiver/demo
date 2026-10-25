@@ -1,6 +1,7 @@
 // Mermaid 定义、业务身份和图例共用视觉语义；不手工重画编译后的图形。
 import { NODE_STYLES, EDGE_STYLES, EXTERNAL_REFERENCE_STYLE, visualTypeOf, edgeSemanticOf, displayLabelOf, scheduleLinksFor, mermaidStyleDefinitions } from './architecture-style.mjs';
-import { INFRASTRUCTURE_FEATURES, infrastructureFeature } from './architecture-infrastructure.mjs';
+import { INFRASTRUCTURE_FEATURES } from './architecture-infrastructure.mjs';
+import { buildAppSchedule } from './architecture-app-schedule.mjs';
 
 export const DATA_GROUP_LABELS = { catalog: '数据与实体', relations: '数据流与关系' };
 const displayEndpoint = (link, side) => link[side === 'from' ? 'displayFrom' : 'displayTo'] ?? link[side];
@@ -145,7 +146,7 @@ function definition(view, graph, registry, features, scheduleGroups = []) {
     return { ...link, ...(nativeReverse ? { nativeReverse: true } : {}), mermaidId: `e${index}`, edgeSemantic, displayLabel: displayLabelOf(link, edgeSemantic, registry) };
   });
   const groups = scheduleGroups.map((group, index) => ({ ...group, mermaidId: `sg${index}`, nodes: group.nodes.map(node => node.id) }));
-  const scheduleLinks = scheduleLinksFor(groups).map((link, index) => ({ ...link, mermaidId: `sc${index}` }));
+  const scheduleLinks = (view.layout === 'app-schedule' ? view.phaseLinks : scheduleLinksFor(groups)).map((link, index) => ({ ...link, mermaidId: `sc${index}` }));
   const types = { nodeTypes: Object.keys(NODE_STYLES).filter(type => nodes.some(node => node.visualType === type)), edgeTypes: Object.keys(EDGE_STYLES).filter(type => [...links, ...scheduleLinks].some(link => link.edgeSemantic === type)) };
   const configuration = mermaidConfiguration(view.aspect);
   if (view.aspect === 'component') Object.assign(configuration.flowchart, { nodeSpacing: 16, rankSpacing: 32 });
@@ -188,10 +189,11 @@ function definition(view, graph, registry, features, scheduleGroups = []) {
       else layout(node.mermaidId, center.mermaidId);
     }
     declareLinks([...links.filter(link => displayEndpoint(link, 'from') !== center.id), ...links.filter(link => displayEndpoint(link, 'from') === center.id)]);
-  } else if (view.aspect === 'systems') {
+  } else if (view.aspect === 'systems' || view.layout === 'app-schedule') {
     for (const group of groups) {
       lines.push(`  subgraph ${group.mermaidId}["${text(group.label.split('\n'))}"]`, '  direction TB');
       for (const id of group.nodes) declare(byId.get(id));
+      if (!group.nodes.length) lines.push(`  phase_anchor_${group.mermaidId}@{ shape: anchor, label: " " }`, `  style phase_anchor_${group.mermaidId} opacity:0`);
       for (let index = 1; index < group.nodes.length; index++) layout(byId.get(group.nodes[index - 1]).mermaidId, byId.get(group.nodes[index]).mermaidId);
       lines.push('  end');
     }
@@ -245,7 +247,7 @@ export function renderGraphView(view, graph, registry, features, scheduleGroups)
 }
 
 export function renderOverview(model, registry, features) {
-  const view = { id: 'overview', feature: null, aspect: 'overview', label: '功能模块与依赖总览', summary: '选择插件查看职责、数据契约与实现。连线表示公开契约依赖，不表示插件或系统的执行顺序。' };
-  const pluginId = feature => infrastructureFeature(feature)?.overviewNode ?? `plugin-${features.find(item => item.id === feature).plugin}`;
-  return definition(view, { nodes: [...features, ...INFRASTRUCTURE_FEATURES].map(feature => ({ id: pluginId(feature.id), role: 'plugin' })), links: (model.feature_links || []).map((link, index) => ({ ...link, id: `feature-link-${index}`, from: pluginId(link.from), to: pluginId(link.to) })) }, registry, features);
+  const app = buildAppSchedule(model, registry);
+  const view = { id: 'overview', feature: null, aspect: 'overview', layout: 'app-schedule', label: 'App 系统调度总览', summary: '启动流程只执行一次；每帧依次处理输入、状态、固定循环与呈现。固定循环可执行零到多步；Observer、原生回调和渲染子应用分别展示。组内仅显式连线表示顺序。', phaseLinks: app.phaseLinks };
+  return definition(view, app.graph, registry, features, app.groups);
 }

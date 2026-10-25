@@ -277,3 +277,29 @@ test('rendered HTML embeds valid scripts and no obsolete expansion or Mermaid ru
   const embedded=JSON.parse(/<script id="architecture-data" type="application\/json">([\s\S]*?)<\/script>/.exec(html)[1]);
   assert.deepEqual(Object.keys(embedded.styles),['nodes','edges','selection','externalReference']);
 });
+
+test('App overview system details, plugin navigation and history retain their original registration and workspace',()=>{
+  const page=viewer('?workspace=D%3A%2Fdemo&feature=overview',{edit:data=>{
+    const overview=data.views[0],systemView=data.views.find(view=>view.id==='plugin-item-systems');
+    Object.assign(overview,{feature:null,layout:'app-schedule',label:'App 系统调度总览',nodes:structuredClone(systemView.nodes.slice(0,2)),svg:systemView.svg});
+    overview.nodes.forEach(node=>node.role='internal');
+  }});
+  assert.equal(page.get('feature-head').querySelector('h1').textContent,'App 系统调度总览');
+  page.activate('system-fixed');
+  assert.equal(page.app.view.id,'overview');
+  assert.equal(page.get('details').querySelectorAll('.schedule-registration').length,2);
+  assert.equal(page.location.searchParams.get('workspace'),'D:/demo');
+  page.click(page.get('details').querySelector('[data-owner]'));
+  assert.equal(page.app.view.id,'plugin-item-systems');
+  page.back();assert.equal(page.app.view.id,'overview');
+  assert.equal(page.location.searchParams.get('node'),'system-fixed');
+  assert.equal(page.get('details').querySelector('h2').textContent,'update_shared');
+  page.click(page.get('clear-selection'));assert.equal(page.get('details').querySelector('.guide').getAttribute('aria-label'),'Legend');
+});
+
+test('legacy overview plugin links resolve to the existing owner page after the overview becomes a schedule',()=>{
+  const page=viewer('?workspace=D%3A%2Fdemo&feature=overview&node=plugin-ItemPlugin',{edit:data=>{data.views[0].layout='app-schedule'}});
+  assert.equal(page.app.view.id,'plugin-item-systems');
+  assert.equal(page.location.searchParams.get('feature'),'item');
+  assert.equal(page.location.searchParams.get('workspace'),'D:/demo');
+});

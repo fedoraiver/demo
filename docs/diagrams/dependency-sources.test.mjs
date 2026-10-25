@@ -206,11 +206,11 @@ test('the 0.20 dependency catalog distinguishes native UI states, 3d physics and
 
 test('execution definitions include engine sets and synchronization while preserving project implementations and output contracts', () => {
   const { definition, resolver } = fixture();
-  const kinds = ['system', 'observer', 'engine', 'sync', 'SystemSet', 'Engine SystemSet', 'Engine system set', 'Engine system', 'Engine observers', 'PluginGroup'];
+  const kinds = ['System', 'Observer', 'Synchronization', 'SystemSet', 'Observer group', 'PluginGroup'];
   const registry = Object.fromEntries(kinds.map((kind, index) => ['execution-' + index, { id: 'execution-' + index, kind, feature: 'infrastructure' }]));
   registry.project = { id: 'project', kind: 'SystemSet', feature: 'physics', source: { path: 'src/physics.rs', line: 1 } };
   registry.project_observer = { id: 'project_observer', kind: 'observer', feature: 'ui', source: { path: 'src/ui/pointer.rs', line: 1 } };
-  registry.output = { id: 'output', kind: 'Engine', feature: 'kira' };
+  registry.output = { id: 'output', kind: 'Engine flow', feature: 'kira' };
   registry.entity = { id: 'entity', kind: 'Entity', feature: 'infrastructure' };
   assert.deepEqual(dependencyDefinitionTargets(registry), kinds.map((_, index) => 'execution-' + index));
   const definitions = Object.fromEntries(kinds.map((_, index) => ['execution-' + index, definition]));

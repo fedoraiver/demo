@@ -8,6 +8,7 @@ import { buildArchitectureModel } from './architecture-model.mjs';
 import { readCargoMetadata, createDependencySourceResolver, attachDependencySources } from './dependency-sources.mjs';
 import { DEPENDENCY_SOURCE_DEFINITIONS } from './architecture-source-definitions.mjs';
 import { buildComponentCatalog } from './architecture-components.mjs';
+import { NODE_KINDS } from './architecture-kinds.mjs';
 
 const entry = (role, overrides = {}) => ({ role, label: role, path: 'src/example.rs', line: 12, ...overrides });
 const dependency = { name: 'bevy_ecs', version: '0.17.3', root: 'C:/cargo/registry/bevy_ecs-0.17.3' };
@@ -22,10 +23,16 @@ test('every semantic card kind has its approved source role scope', () => {
     EntityEvent: ['definition', 'action_definition'], Plugin: ['definition', 'build', 'install'],
     PluginGroup: ['definition', 'build', 'install'], App: ['create', 'assembly', 'run'],
     SystemSet: ['definition', 'configure'], 'Engine SystemSet': ['definition', 'configure'],
-    Contract: ['definition', 'configure', 'parameter'], SystemParam: ['definition', 'configure', 'parameter'],
+    'Scheduling constraint': ['configure'], 'Shared data contract': ['definition', 'configure', 'parameter'], SystemParam: ['definition', 'configure', 'parameter'],
     QueryData: ['definition', 'configure', 'parameter'], Relationship: ['definition', 'configure', 'parameter'],
+    'Entity reference': ['definition', 'configure', 'parameter'],
     sync: ['definition', 'implementation', 'registration', 'configure'],
+    'System group': ['configure', 'implementation'], 'Observer group': ['configure', 'implementation'],
+    'Engine flow': ['configure', 'implementation'], 'Registration helper': ['definition', 'configure'],
     'External I/O': ['definition', 'create', 'install', 'implementation', 'close'], 'Lifecycle note': ['related'],
+    'Platform API': ['definition', 'create', 'install', 'implementation', 'close'],
+    'Platform event': ['definition', 'create', 'install', 'implementation', 'close'],
+    'BSN layout': ['related'], 'Operation result': ['related'],
   };
   for (const [kind, roles] of Object.entries(cases)) {
     assert.deepEqual(sourcePolicyFor(kind).roles, roles, kind);
@@ -34,9 +41,18 @@ test('every semantic card kind has its approved source role scope', () => {
 });
 
 test('unknown kinds and aggregate engine visual kinds cannot masquerade as systems', () => {
-  for (const kind of [undefined, 'engine', 'rounded', 'Plugin / App', 'random']) {
+  for (const kind of [undefined, 'engine', 'rounded', 'Contract', 'Plugin / App', 'random']) {
     assert.deepEqual(sourceEntriesFor({ kind, sources: [entry('definition')] }), []);
   }
+});
+
+test('source policy identity follows the shared canonical kind rather than names, IDs or stale policy metadata', () => {
+  for (const [kind, descriptor] of Object.entries(NODE_KINDS)) {
+    assert.equal(sourcePolicyKindFor({ id: 'inspector_pass', name: 'DefaultPlugins', kind, sourcePolicyKind: 'unrelated' }), descriptor.sourcePolicyKind, kind);
+  }
+  assert.equal(sourcePolicyKindFor({ kind: 'Plugin', name: 'DefaultPlugins' }), 'plugin');
+  assert.equal(sourcePolicyKindFor({ kind: 'Resource', name: 'Messages<Foo>' }), 'resource');
+  assert.throws(() => sourcePolicyKindFor({ id: 'inspector_pass', kind: 'engine' }), /Unknown architecture node kind/);
 });
 
 test('generic sources are not promoted into definitions; explicit definition_source is accepted', () => {
@@ -128,12 +144,12 @@ function sourceFixture(t, text) {
 }
 
 test('semantic kinds distinguish real storage types from visual aggregates', () => {
-  assert.equal(sourcePolicyKindFor({ kind: 'engine', name: 'InputSystems' }), 'sync');
-  assert.equal(sourcePolicyKindFor({ id: 'inspector_pass', kind: 'engine', name: 'world_inspector_ui' }), 'system');
-  assert.equal(sourcePolicyKindFor({ id: 'capture-state', kind: 'Component' }), 'Note');
-  assert.equal(sourcePolicyKindFor({ kind: 'Resource', name: 'Messages<SoundRequest>' }), 'Messages<T>');
-  assert.equal(sourcePolicyKindFor({ kind: 'Plugin', name: 'PhysicsPlugins + TransformInterpolation' }), 'PluginGroup');
-  assert.equal(sourcePolicyKindFor({ kind: 'Native platform bridge' }), 'External I/O');
+  assert.equal(sourcePolicyKindFor({ kind: 'SystemSet', name: 'InputSystems' }), 'system_set');
+  assert.equal(sourcePolicyKindFor({ kind: 'System', name: 'world_inspector_ui' }), 'system');
+  assert.equal(sourcePolicyKindFor({ kind: 'Note', id: 'capture-state' }), 'note');
+  assert.equal(sourcePolicyKindFor({ kind: 'Messages<T>', name: 'Messages<SoundRequest>' }), 'message_buffer');
+  assert.equal(sourcePolicyKindFor({ kind: 'PluginGroup', name: 'PhysicsPlugins' }), 'plugin_group');
+  assert.equal(sourcePolicyKindFor({ kind: 'Platform API' }), 'platform_api');
 });
 
 test('real declaration and registration evidence replaces unrelated old provenance', t => {
@@ -164,6 +180,68 @@ test('real declaration and registration evidence replaces unrelated old provenan
   assert.deepEqual(registry.run.sourceEntries.filter(source => source.role === 'registration').map(source => source.line), [6, 7]);
   assert.deepEqual(registry.other.sourceEntries.filter(source => source.role === 'registration').map(source => source.line), [8], 'A before(other) reference does not register other');
   assert.deepEqual(registry.observed.sourceEntries.filter(source => source.role === 'registration').map(source => source.line), [9, 11], 'Global and declarative observers both remain traceable');
+});
+
+test('SystemSet cards retain actual declarations and configuration without claiming to be functions', t => {
+  const fixture = sourceFixture(t, [
+    '#[derive(SystemSet)]', 'pub struct Phase;', 'fn run() {}', 'fn install(app: &mut App) {',
+    ' app.configure_sets(Update, Phase.before(Other));', ' app.add_systems(Update, run.in_set(Phase));', '}',
+  ].join('\n'));
+  const registry = { phase: { id: 'phase', kind: 'SystemSet', name: 'Phase', source: { path: 'src/example/mod.rs', line: 2 } } };
+  applyArchitectureSourcePolicies(registry, { repository: fixture });
+  assert.deepEqual(registry.phase.sourceEntries.map(source => [source.role, source.line]), [['definition', 2], ['configure', 5]]);
+  assert.deepEqual(registry.phase.sourceGaps, []);
+});
+
+test('system groups trace actual member definitions and registrations without a fabricated group type', t => {
+  const fixture = sourceFixture(t, [
+    'fn first() {}', 'fn second() {}', 'fn install(app: &mut App) {',
+    ' app.add_systems(Update, (first, second));', '}',
+  ].join('\n'));
+  const registry = {
+    group: { id: 'group', kind: 'System group', name: '匿名系统元组' },
+    first: { id: 'first', kind: 'System', name: 'first', source: { path: 'src/example/mod.rs', line: 1 } },
+    second: { id: 'second', kind: 'System', name: 'second', source: { path: 'src/example/mod.rs', line: 2 } },
+  };
+  applyArchitectureSourcePolicies(registry, { repository: fixture, model: { system_links: ['first', 'second'].map(to => ({ kind: 'registration', from: 'group', to })) } });
+  assert.deepEqual(registry.group.sourceEntries.map(source => [source.role, source.line]), [['configure', 4], ['implementation', 1], ['implementation', 2]]);
+  assert.deepEqual(registry.group.sourceGaps, []);
+});
+
+test('Observer groups keep member functions and their registrations inside the actual installation scope', t => {
+  const fixture = sourceFixture(t, [
+    'pub struct WidgetPlugin;', 'fn on_a(event: On<Press>) {}', 'fn on_b(event: On<Drag>) {}',
+    'impl Plugin for WidgetPlugin {', ' fn build(&self, app: &mut App) {',
+    '  app.add_observer(on_a);', '  app.add_observer(on_b);', ' }', '}',
+    'fn unrelated(event: On<Click>) {}', 'fn other_install(app: &mut App) { app.add_observer(unrelated); }',
+  ].join('\n'));
+  const registry = { group: { id: 'group', kind: 'Observer group', name: '控件 Observer 分组', definition_source: { path: 'src/example/mod.rs', line: 4 } } };
+  applyArchitectureSourcePolicies(registry, { repository: fixture });
+  assert.deepEqual(registry.group.sourceEntries.filter(source => source.role === 'implementation').map(source => source.line), [2, 3]);
+  assert.deepEqual(registry.group.sourceEntries.filter(source => source.role === 'configure').map(source => source.line), [4, 6, 7]);
+  assert(!registry.group.sourceEntries.some(source => ['definition', 'registration'].includes(source.role)));
+  assert.deepEqual(registry.group.sourceGaps, []);
+});
+
+test('flow aggregates preserve incidental declaration provenance as implementation and report missing configuration', t => {
+  const fixture = sourceFixture(t, 'pub struct Queue;\nfn drain_queue() {}');
+  const registry = { flow: { id: 'flow', kind: 'Engine flow', name: '队列处理流程', definition_source: { path: 'src/example/mod.rs', line: 1 } } };
+  applyArchitectureSourcePolicies(registry, { repository: fixture });
+  assert.deepEqual(registry.flow.sourceEntries.map(source => [source.role, source.line]), [['implementation', 1]]);
+  assert(registry.flow.sourceGaps.some(gap => /配置/.test(gap)));
+});
+
+test('registration helper cards require a real function definition and never invent a Schedule registration', t => {
+  const fixture = sourceFixture(t, 'pub struct Data;\nfn install_feature(app: &mut App) {}');
+  const registry = {
+    helper: { id: 'helper', kind: 'Registration helper', name: '安装辅助函数', source: { path: 'src/example/mod.rs', line: 2 } },
+    missing: { id: 'missing', kind: 'Registration helper', name: '缺少函数证据', source: { path: 'src/example/mod.rs', line: 1 } },
+  };
+  applyArchitectureSourcePolicies(registry, { repository: fixture });
+  assert.deepEqual(registry.helper.sourceEntries.map(source => source.role), ['definition']);
+  assert(!registry.helper.sourceEntries.some(source => source.role === 'registration'));
+  assert.deepEqual(registry.missing.sourceEntries, []);
+  assert(registry.missing.sourceGaps.some(gap => /真实定义/.test(gap)));
 });
 
 test('resource lifecycle uses actual typed operations and never invents missing definitions', t => {
@@ -244,6 +322,42 @@ test('current registry and merged function cards have verified source scope acro
   assert.deepEqual(registry.input_apply.writes, ['action.Action']);
   assert.deepEqual(registry.input_apply.events, []);
   assert(registry.input_trigger.events.some(event => /Fire<MoveAction>/.test(event)));
+  for (const id of ['time_update', 'input_update', 'input_trigger', 'animation_engine', 'native-ui-layout', 'kira-play-typed']) {
+    assert.equal(registry[id].sourcePolicyKind, 'system_set', id);
+    assert(registry[id].sourceEntries.every(source => ['definition', 'configure'].includes(source.role)), id);
+  }
+  for (const [id, packageName, sourcePath, pattern] of [
+    ['time_update', 'bevy_time', 'src/lib.rs', /\.in_set\(TimeSystems\)/],
+    ['input_update', 'bevy_input', 'src/lib.rs', /\.in_set\(InputSystems\)/],
+    ['transform_propagate', 'bevy_transform', 'src/plugins.rs', /\.in_set\(TransformSystems::Propagate\)/],
+    ['animation_engine', 'bevy_animation', 'src/lib.rs', /\.in_set\(AnimationSystems\)/],
+    ['kira-play-typed', 'bevy_kira_audio', 'src/audio.rs', /\.in_set\(AudioSystemSet::PlayTypedChannels\)/],
+    ['native-visibility', 'bevy_camera', 'src/visibility/mod.rs', /\(UpdateFrusta, VisibilityPropagate\)/],
+  ]) {
+    assert(hasSource(id, 'configure', sourcePath, pattern, packageName), `${id}: actual configuration survives imported names and defining-package boundaries`);
+    assert.deepEqual(registry[id].sourceGaps, [], id);
+  }
+  for (const id of ['easing_reset', 'easing_start', 'easing_end']) {
+    assert(!registry[id].sourceEntries.some(source => source.path === 'src/game_flow/mod.rs'), `${id}: constraints on Ease do not configure this variant`);
+  }
+  assert(!registry['native-ui-layout'].sourceEntries.some(source => !source.dependency && source.path === 'src/ui/mod.rs'), 'Project UiSystems and Bevy UiSystems are different declarations');
+  for (const id of ['world_spawn', 'render', 'audio-output', 'kira-output']) {
+    assert.equal(registry[id].sourcePolicyKind, 'engine_flow', id);
+    assert(registry[id].sourceEntries.some(source => source.role === 'configure'), id);
+    assert(registry[id].sourceEntries.some(source => source.role === 'implementation'), id);
+    assert(!registry[id].sourceEntries.some(source => ['definition', 'registration'].includes(source.role)), `${id}: aggregate does not impersonate a single System`);
+  }
+  assert.equal(registry['plugin-DefaultPlugins'].sourcePolicyKind, 'plugin_group');
+  assert.equal(registry['plugin-physics-0'].sourcePolicyKind, 'plugin_group');
+  assert.deepEqual(registry['plugin-sound-events'].sourceEntries.map(source => source.role), ['definition', 'configure']);
+  assert.equal(registry['native-scrollbar-events'].sourcePolicyKind, 'observer_group');
+  assert.equal(registry['native-scrollbar-events'].sourceEntries.filter(source => source.role === 'implementation').length, 5);
+  assert.equal(registry['audio-producers'].memberIds.length, 9);
+  assert.equal(registry['audio-producers'].sourceEntries.filter(source => source.role === 'implementation').length, 8, 'Two facing registrations share a single actual function definition');
+  assert(registry['audio-producers'].sourceEntries.some(source => source.role === 'configure' && /Observer/.test(source.label)), 'Observer producers use Observer registrations rather than fabricated Schedules');
+  assert.deepEqual(registry['audio-producers'].sourceGaps, []);
+  assert(hasSource('ui-next-state', 'related', 'src/ui/requests.rs', /app_state\.set\(AppState::InGame\)/));
+  assert(hasSource('ui-next-state', 'related', 'src/ui/requests.rs', /play_state\.set\(PlayState::Paused\)/));
 
   assert.equal(registry.wake_apply.sourcePolicyKind, 'sync');
   assert(hasSource('wake_apply', 'definition', 'src/schedule/executor/mod.rs', /^pub struct ApplyDeferred;/, 'bevy_ecs'));

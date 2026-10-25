@@ -5,7 +5,7 @@
     {
       "id": "startup_spawn",
       "name": "spawn_lighting",
-      "kind": "system",
+      "kind": "System",
       "phase": "OnEnter(AppState::InGame)；无状态测试使用 Startup",
       "module": "scene_assembly",
       "description": "进入游戏会话时以 BSN 创建日光与加载相机；资源与海岛静态碰撞准备成功后由 Update 链复用相机并生成动态业务实体。",
@@ -51,7 +51,7 @@
     {
       "id": "startup_config",
       "name": "log_configuration",
-      "kind": "system",
+      "kind": "System",
       "phase": "Startup",
       "module": "character",
       "description": "记录实际配置、Avian 版本、共享刚体持握与保留速度释放方式。",
@@ -84,7 +84,7 @@
     {
       "id": "startup_timestep",
       "name": "log_simulation_timestep",
-      "kind": "system",
+      "kind": "System",
       "phase": "Startup",
       "module": "settings",
       "description": "记录固定模拟频率。",
@@ -116,7 +116,7 @@
     {
       "id": "startup_pose",
       "name": "log_pose_synchronization",
-      "kind": "system",
+      "kind": "System",
       "phase": "Startup",
       "module": "first_person",
       "description": "记录准备力、物理解算和插值后显示同步的各个调度阶段及顺序。",
@@ -148,7 +148,7 @@
     {
       "id": "frame_limit",
       "name": "limit_frame_rate",
-      "kind": "system",
+      "kind": "System",
       "phase": "First",
       "module": "settings",
       "description": "补足上一帧起点以来剩余间隔并更新局部计时。",
@@ -186,8 +186,8 @@
     },
     {
       "id": "time_update",
-      "name": "TimeSystems / time_system",
-      "kind": "engine",
+      "name": "TimeSystems",
+      "kind": "SystemSet",
       "phase": "First",
       "module": "bevy_time",
       "description": "引擎更新真实、虚拟与当前阶段通用时钟。",
@@ -206,7 +206,8 @@
       "events": [],
       "notes": [
         "limit_frame_rate 在此之前等待。",
-        "RunFixedMainLoop 根据累计时间执行 0..N 个固定步；固定循环还会更新 Time<Fixed> 并切换通用 Time，此处没有把循环折叠成一次时间更新。"
+        "RunFixedMainLoop 根据累计时间执行 0..N 个固定步；固定循环还会更新 Time<Fixed> 并切换通用 Time，此处没有把循环折叠成一次时间更新。",
+        "TimePlugin 将 time_system 加入 TimeSystems；本卡片表示集合标签，关联函数不是另一个合并身份。"
       ],
       "source": null,
       "feature": "infrastructure",
@@ -226,7 +227,7 @@
     {
       "id": "input_update",
       "name": "InputSystems",
-      "kind": "engine",
+      "kind": "SystemSet",
       "phase": "PreUpdate",
       "module": "bevy_input",
       "description": "引擎从缓冲消息更新键盘、鼠标按钮和本帧鼠标位移。",
@@ -268,7 +269,7 @@
     {
       "id": "mouse_capture",
       "name": "sync_mouse_capture",
-      "kind": "system",
+      "kind": "System",
       "phase": "PreUpdate",
       "module": "first_person",
       "description": "按窗口焦点、当前游戏状态、控制关联与检查器占用统一更新捕获和 GameplayContext；主菜单与暂停始终释放光标。",
@@ -337,7 +338,7 @@
     {
       "id": "enhanced_prepare",
       "name": "EnhancedInputSystems::Prepare",
-      "kind": "engine",
+      "kind": "SystemSet",
       "phase": "PreUpdate",
       "module": "bevy_enhanced_input",
       "description": "清理待重置输入，准备动作评估的输入忽略状态。",
@@ -378,7 +379,7 @@
     {
       "id": "enhanced_evaluate",
       "name": "EnhancedInputSystems::Update",
-      "kind": "engine",
+      "kind": "SystemSet",
       "phase": "PreUpdate",
       "module": "bevy_enhanced_input",
       "description": "评估上下文、绑定、修饰器与 Press，更新动作值、触发状态及计时。",
@@ -453,7 +454,7 @@
     {
       "id": "input_apply",
       "name": "EnhancedInputSystems::Apply",
-      "kind": "engine",
+      "kind": "SystemSet",
       "phase": "PreUpdate",
       "module": "bevy_enhanced_input",
       "description": "把类型擦除的 ActionValue 写回对应的强类型 Action<A>；不在此阶段派发事件。",
@@ -494,7 +495,7 @@
     {
       "id": "input_trigger",
       "name": "EnhancedInputSystems::Trigger",
-      "kind": "engine",
+      "kind": "SystemSet",
       "phase": "PreUpdate",
       "module": "bevy_enhanced_input",
       "description": "按上下文优先级读取动作状态、时间与事件标记，通过 Commands::trigger 排入带类型的动作事件。",
@@ -540,7 +541,7 @@
     {
       "id": "observe_move",
       "name": "record_movement",
-      "kind": "observer",
+      "kind": "Observer",
       "phase": "命令应用时（通常在 PreUpdate）",
       "module": "first_person",
       "description": "按控制者路由移动动作值并保存持续移动轴。",
@@ -576,7 +577,7 @@
     {
       "id": "observe_complete",
       "name": "clear_completed_movement",
-      "kind": "observer",
+      "kind": "Observer",
       "phase": "命令应用时（通常在 PreUpdate）",
       "module": "first_person",
       "description": "移动动作正常结束时清零角色移动轴。",
@@ -611,7 +612,7 @@
     {
       "id": "observe_cancel",
       "name": "clear_cancelled_movement",
-      "kind": "observer",
+      "kind": "Observer",
       "phase": "命令应用时（通常在 PreUpdate）",
       "module": "first_person",
       "description": "移动动作取消时清零角色移动轴。",
@@ -646,7 +647,7 @@
     {
       "id": "observe_jump",
       "name": "request_jump",
-      "kind": "observer",
+      "kind": "Observer",
       "phase": "命令应用时（通常在 PreUpdate）",
       "module": "first_person",
       "description": "设置目标角色 jump_pending=true。",
@@ -680,7 +681,7 @@
     {
       "id": "observe_interact",
       "name": "request_interaction",
-      "kind": "observer",
+      "kind": "Observer",
       "phase": "命令应用时（通常在 PreUpdate）",
       "module": "first_person",
       "description": "设置目标角色 interact_pending=true。",
@@ -714,7 +715,7 @@
     {
       "id": "observe_look",
       "name": "on_camera_look",
-      "kind": "observer",
+      "kind": "Observer",
       "phase": "命令应用时（通常在 PreUpdate）",
       "module": "first_person",
       "description": "按控制者关联更新第一人称水平角和俯仰；只有有效捕获且非跳过帧才处理。",
@@ -756,7 +757,7 @@
     {
       "id": "facing_fixed",
       "name": "sync_character_facing",
-      "kind": "system",
+      "kind": "System",
       "phase": "FixedUpdate（0..N 步）",
       "module": "first_person",
       "description": "消费完整有符号转向，检查持物旋转路径；真实受阻先在安全旧姿态释放箱体，随后人物转向，镜头保持自由。",
@@ -849,7 +850,7 @@
     {
       "id": "movement",
       "name": "move_characters",
-      "kind": "system",
+      "kind": "System",
       "phase": "FixedUpdate（0..N 步）",
       "module": "character",
       "description": "由输入和实际速度计算有上限的水平加速度，通过 Forces 施力；不手动积分位置。",
@@ -918,7 +919,7 @@
     {
       "id": "gravity",
       "name": "jump_characters",
-      "kind": "system",
+      "kind": "System",
       "phase": "FixedUpdate（0..N 步）",
       "module": "character",
       "description": "只消费一次跳跃请求，接地时施加向上冲量；重力和位姿积分交给 Avian。",
@@ -987,7 +988,7 @@
     {
       "id": "interaction",
       "name": "handle_interaction",
-      "kind": "system",
+      "kind": "System",
       "phase": "FixedUpdate · FixedGameplaySystems::Interaction",
       "module": "item_interaction",
       "description": "消费交互请求并筛选自由箱；拾取保持世界姿态、移除独立刚体，开始共享挂接；主动释放使用统一卸载恢复独立运动。",
@@ -1088,7 +1089,7 @@
     {
       "id": "held_apply",
       "name": "ApplyDeferred（交互 → 呈现 / 挂接）",
-      "kind": "sync",
+      "kind": "Synchronization",
       "phase": "FixedUpdate（0..N 步）",
       "module": "bevy_ecs",
       "description": "应用拿放关系与刚体移除，以及 Avian Observer 的延迟归属清理，使后续呈现与共享挂接读取最新状态。",
@@ -1137,7 +1138,7 @@
     {
       "id": "held_fixed",
       "name": "sync_held_presentation",
-      "kind": "system",
+      "kind": "System",
       "phase": "FixedUpdate · FixedGameplaySystems::Target",
       "module": "item_interaction",
       "description": "按本帧人物呈现 Transform 与唯一挂接局部姿态直接同步独立箱根 Transform，同时更新握持检查目标 HeldTarget。",
@@ -1191,7 +1192,7 @@
     {
       "id": "facing_update",
       "name": "sync_character_facing",
-      "kind": "system",
+      "kind": "System",
       "phase": "RunFixedMainLoop · AfterFixedMainLoop（每帧一次）",
       "module": "first_person",
       "description": "消费完整有符号转向，检查持物旋转路径；真实受阻先在安全旧姿态释放箱体，随后人物转向，镜头保持自由。",
@@ -1285,7 +1286,7 @@
     {
       "id": "held_update",
       "name": "sync_held_presentation",
-      "kind": "system",
+      "kind": "System",
       "phase": "RunFixedMainLoop · AfterFixedMainLoop（每帧一次）",
       "module": "item_interaction",
       "description": "按本帧人物呈现 Transform 与唯一挂接局部姿态直接同步独立箱根 Transform，同时更新握持检查目标 HeldTarget。",
@@ -1340,7 +1341,7 @@
     {
       "id": "camera_follow",
       "name": "follow_first_person_camera",
-      "kind": "system",
+      "kind": "System",
       "phase": "RunFixedMainLoop · AfterFixedMainLoop（每帧一次）",
       "module": "first_person",
       "description": "读取本帧已插值的角色 Transform 与观察角度，在固定眼高计算第一人称镜头。",
@@ -1390,7 +1391,7 @@
     {
       "id": "transform_propagate",
       "name": "TransformSystems::Propagate",
-      "kind": "engine",
+      "kind": "SystemSet",
       "phase": "PostUpdate（启动时也在 PostStartup）",
       "module": "bevy_transform",
       "description": "同步独立根实体并按 ChildOf/Children 传播局部变换，更新 GlobalTransform。",
@@ -1437,8 +1438,8 @@
     },
     {
       "id": "render",
-      "name": "RenderApp / 渲染流程",
-      "kind": "engine",
+      "name": "RenderApp 渲染流程",
+      "kind": "Engine flow",
       "phase": "渲染子应用",
       "module": "bevy_render",
       "description": "提取本帧可见性、世界变换、相机和资产，准备并执行渲染。",
@@ -1487,7 +1488,7 @@
     {
       "id": "visibility_update",
       "name": "sync_character_visibility",
-      "kind": "system",
+      "kind": "System",
       "phase": "RunFixedMainLoop · AfterFixedMainLoop（每帧一次）",
       "module": "first_person",
       "description": "有效第一人称控制关联隐藏对应角色直属视觉，失去关联时恢复；木箱保持可见。",
@@ -1542,7 +1543,7 @@
     {
       "id": "startup_inspector",
       "name": "log_world_inspector",
-      "kind": "system",
+      "kind": "System",
       "phase": "Startup",
       "module": "inspector",
       "description": "记录世界检查器已启用的初始化日志。",
@@ -1572,7 +1573,7 @@
     {
       "id": "egui_input",
       "name": "EguiPreUpdateSet::ProcessInput",
-      "kind": "engine",
+      "kind": "SystemSet",
       "phase": "PreUpdate",
       "module": "bevy_egui",
       "description": "引擎把窗口与设备输入映射为 UI 的 EguiInput，随后抵达 BeginPass 集合边界。",
@@ -1615,7 +1616,7 @@
     {
       "id": "egui_begin",
       "name": "EguiPreUpdateSet::BeginPass",
-      "kind": "engine",
+      "kind": "SystemSet",
       "phase": "PreUpdate",
       "module": "bevy_egui",
       "description": "Egui 输入准备后的集合边界；项目捕获系统显式等待此集合完成。",
@@ -1650,7 +1651,7 @@
     {
       "id": "capture_apply",
       "name": "ApplyDeferred（捕获 → 动作准备）",
-      "kind": "sync",
+      "kind": "Synchronization",
       "phase": "PreUpdate",
       "module": "bevy_ecs",
       "description": "应用 sync_mouse_capture 排入的 ContextActivity 替换，让动作框架看到本帧输入启停。",
@@ -1690,8 +1691,8 @@
     },
     {
       "id": "inspector_pass",
-      "name": "WorldInspectorPlugin / world_inspector_ui",
-      "kind": "engine",
+      "name": "world_inspector_ui",
+      "kind": "System",
       "phase": "EguiPrimaryContextPass（由 PostUpdate 驱动）",
       "module": "bevy_inspector_egui",
       "description": "检查器在主 UI Schedule 中以独占 World 访问展示实体、资源和资产，并可编辑已开放反射的数据。",
@@ -1753,7 +1754,7 @@
       ],
       "events": [],
       "notes": [
-        "此节点合并插件 world_inspector_ui 与主上下文 UI 循环，是引擎/插件概览，不是项目新增的固定 Query 系统。",
+        "WorldInspectorPlugin 将 world_inspector_ui 注册到 EguiPrimaryContextPass，由主上下文 UI 循环驱动；本卡片只表示该实际函数，不是项目新增的固定 Query 系统。",
         "默认多轮模式可在同一帧调用 EguiPrimaryContextPass 多轮，不能标成严格每帧一次。",
         "reads/writes 列出与原型有关的反射访问入口；写入是用户编辑或 UI 输出时发生，不是每帧覆盖所有列出的状态，也不是完整动态 World 访问清单。",
         "HeldBy、HoldingItems 和 MouseLookState 未开放反射；FirstPersonCamera.pending_yaw_delta 以 reflect(ignore) 排除。编辑只影响当前会话内存，不保存 settings.json。",
@@ -1780,7 +1781,7 @@
     {
       "id": "filter_egui_input",
       "name": "filter_captured_egui_input",
-      "kind": "system",
+      "kind": "System",
       "phase": "PreUpdate",
       "module": "first_person",
       "description": "鼠标由游戏捕获时过滤本帧 UI 输入，补齐释放并清理 UI 拖拽和焦点，防止检查器接收游戏操作。",
@@ -1835,7 +1836,7 @@
     {
       "id": "grounded_fixed",
       "name": "update_grounded",
-      "kind": "system",
+      "kind": "System",
       "phase": "FixedUpdate（0..N 步）",
       "module": "character",
       "description": "准备运动前更新接地状态。",
@@ -1905,7 +1906,7 @@
     {
       "id": "grounded_after",
       "name": "update_grounded",
-      "kind": "system",
+      "kind": "System",
       "phase": "FixedPostUpdate · after(PhysicsSystems::Writeback)",
       "module": "character",
       "description": "物理回写之后观察实际接地状态。",
@@ -1975,7 +1976,7 @@
     {
       "id": "gravity_sync",
       "name": "sync_gravity",
-      "kind": "system",
+      "kind": "System",
       "phase": "FixedUpdate（0..N 步）",
       "module": "physics",
       "description": "配置变化时更新唯一 Gravity 资源。",
@@ -2013,7 +2014,7 @@
     {
       "id": "orphan_cleanup",
       "name": "release_orphaned_items",
-      "kind": "system",
+      "kind": "System",
       "phase": "FixedUpdate · FixedGameplaySystems::Attachment",
       "module": "item_interaction",
       "description": "持有者消失或 HeldBy 异常解除时，统一卸载并恢复独立箱体与自由碰撞，保留真实姿态和速度。",
@@ -2083,7 +2084,7 @@
     {
       "id": "orphan_apply",
       "name": "ApplyDeferred（清理 / 装卸依赖）",
-      "kind": "sync",
+      "kind": "Synchronization",
       "phase": "FixedUpdate（0..N 步）",
       "module": "bevy_ecs",
       "description": "共享挂接链在结构命令依赖处应用清理与刚体装卸，防止旧 ColliderOf 或持有关系进入后续同步。",
@@ -2128,7 +2129,7 @@
     {
       "id": "velocity_log",
       "name": "log_character_velocity",
-      "kind": "system",
+      "kind": "System",
       "phase": "FixedPostUpdate · after(PhysicsSystems::Writeback)",
       "module": "character",
       "description": "每 0.5 模拟秒采样一次实际速度和接地状态。",
@@ -2177,7 +2178,7 @@
     {
       "id": "collision_log",
       "name": "log_collisions",
-      "kind": "system",
+      "kind": "System",
       "phase": "FixedPostUpdate · after(PhysicsSystems::StepSimulation)",
       "module": "physics",
       "description": "读取碰撞开始/结束缓冲消息，通过统一文件日志记录碰撞双方。",
@@ -2214,7 +2215,7 @@
     {
       "id": "physics_prepare",
       "name": "PhysicsSystems::Prepare",
-      "kind": "engine",
+      "kind": "SystemSet",
       "phase": "FixedPostUpdate",
       "module": "avian3d",
       "description": "准备物理位姿、质量、碰撞体与查询数据（引擎集合概览）。",
@@ -2256,8 +2257,8 @@
     },
     {
       "id": "physics_step",
-      "name": "PhysicsSystems::StepSimulation / PhysicsSchedule",
-      "kind": "engine",
+      "name": "PhysicsSystems::StepSimulation",
+      "kind": "SystemSet",
       "phase": "FixedPostUpdate",
       "module": "avian3d",
       "description": "运行宽/窄阶段、子步求解、重力积分、碰撞与睡眠（引擎概览）。",
@@ -2342,7 +2343,7 @@
     {
       "id": "physics_writeback",
       "name": "PhysicsSystems::Writeback",
-      "kind": "engine",
+      "kind": "SystemSet",
       "phase": "FixedPostUpdate",
       "module": "avian3d",
       "description": "把真实物理 Position/Rotation 回写用于本固定步和插值端点的 Transform。",
@@ -2380,7 +2381,7 @@
     {
       "id": "easing_reset",
       "name": "TransformEasingSystems::Reset",
-      "kind": "engine",
+      "kind": "SystemSet",
       "phase": "FixedFirst",
       "module": "bevy_transform_interpolation",
       "description": "FixedFirst 重置上一轮插值状态；起点采样单列为 UpdateStart。",
@@ -2418,7 +2419,7 @@
     {
       "id": "easing_end",
       "name": "TransformEasingSystems::UpdateEnd",
-      "kind": "engine",
+      "kind": "SystemSet",
       "phase": "FixedLast",
       "module": "bevy_transform_interpolation",
       "description": "物理步完成后记录当前固定步的插值终点。",
@@ -2456,7 +2457,7 @@
     {
       "id": "easing_apply",
       "name": "TransformEasingSystems::Ease",
-      "kind": "engine",
+      "kind": "SystemSet",
       "phase": "RunFixedMainLoop · AfterFixedMainLoop（每帧一次）",
       "module": "bevy_transform_interpolation",
       "description": "固定循环后按本帧 overstep 混合端点，产生渲染帧 Transform。",
@@ -2498,7 +2499,7 @@
     {
       "id": "easing_tick",
       "name": "TransformEasingSystems::UpdateEasingTick",
-      "kind": "engine",
+      "kind": "SystemSet",
       "phase": "RunFixedMainLoop · AfterFixedMainLoop（每帧一次）",
       "module": "bevy_transform_interpolation",
       "description": "记录最后一次插值/显示变化的 tick，避免下一零固定步帧误判为外部瞬移。",
@@ -2534,7 +2535,7 @@
     {
       "id": "startup_assets",
       "name": "log_asset_requests",
-      "kind": "system",
+      "kind": "System",
       "module": "scene_assembly",
       "phase": "Startup",
       "reads": [
@@ -2566,7 +2567,7 @@
     {
       "id": "asset_poll",
       "name": "poll_art_assets",
-      "kind": "system",
+      "kind": "System",
       "module": "scene_assembly",
       "phase": "Update",
       "reads": [
@@ -2603,7 +2604,7 @@
     {
       "id": "island_begin",
       "name": "begin_island",
-      "kind": "system",
+      "kind": "System",
       "module": "scene_assembly",
       "phase": "Update",
       "reads": [
@@ -2652,7 +2653,7 @@
     {
       "id": "island_ready_observer",
       "name": "mark_island_ready",
-      "kind": "observer",
+      "kind": "Observer",
       "module": "scene_assembly",
       "phase": "WorldInstanceReady 触发时",
       "reads": [
@@ -2688,7 +2689,7 @@
     {
       "id": "island_prepare",
       "name": "prepare_island",
-      "kind": "system",
+      "kind": "System",
       "module": "scene_assembly",
       "phase": "Update",
       "reads": [
@@ -2756,7 +2757,7 @@
     {
       "id": "actors_spawn",
       "name": "spawn_actors",
-      "kind": "system",
+      "kind": "System",
       "module": "scene_assembly",
       "phase": "Update",
       "reads": [
@@ -2823,7 +2824,7 @@
     {
       "id": "courier_ready_observer",
       "name": "mark_courier_animation_ready",
-      "kind": "observer",
+      "kind": "Observer",
       "module": "character_animation",
       "phase": "WorldInstanceReady 触发时",
       "reads": [
@@ -2856,7 +2857,7 @@
     {
       "id": "animation_initialize",
       "name": "initialize_ready_couriers",
-      "kind": "system",
+      "kind": "System",
       "module": "character_animation",
       "phase": "Update",
       "reads": [
@@ -2919,7 +2920,7 @@
     {
       "id": "animation_sync",
       "name": "sync_courier_animation",
-      "kind": "system",
+      "kind": "System",
       "module": "character_animation",
       "phase": "Update",
       "reads": [
@@ -2976,7 +2977,7 @@
     {
       "id": "water_recover",
       "name": "recover_from_water",
-      "kind": "system",
+      "kind": "System",
       "module": "bounds_recovery",
       "phase": "FixedUpdate",
       "reads": [
@@ -3069,7 +3070,7 @@
     {
       "id": "interpolation_resume",
       "name": "resume_interpolation",
-      "kind": "system",
+      "kind": "System",
       "module": "bounds_recovery",
       "phase": "FixedFirst",
       "reads": [
@@ -3122,8 +3123,8 @@
     },
     {
       "id": "world_spawn",
-      "name": "WorldInstanceSpawner / WorldInstanceSpawn",
-      "kind": "engine",
+      "name": "场景实例生成流程",
+      "kind": "Engine flow",
       "module": "engine",
       "phase": "SpawnScene",
       "reads": [
@@ -3144,7 +3145,8 @@
       "display_summary": "展开场景资产层级并通知实例就绪。",
       "notes": [
         "引擎概览，不展开所有资产、钩子与内部系统。",
-        "在 Update 之后、PostUpdate 之前运行；项目在随后 Update 消费就绪标记。"
+        "在 Update 之后、PostUpdate 之前运行；项目在随后 Update 消费就绪标记。",
+        "流程概览涉及 WorldInstanceSpawner 资源与 WorldInstanceSpawn 阶段，不表示某个独立系统函数。"
       ],
       "source": null,
       "feature": "infrastructure",
@@ -3161,7 +3163,7 @@
     {
       "id": "animation_grounding",
       "name": "compensate_courier_sole_penetration",
-      "kind": "system",
+      "kind": "System",
       "module": "character_animation",
       "phase": "PostUpdate · after(AnimationSystems) / before(TransformSystems::Propagate)",
       "reads": [
@@ -3219,8 +3221,8 @@
     },
     {
       "id": "animation_engine",
-      "name": "AnimationSystems / AnimationPlugin",
-      "kind": "engine",
+      "name": "AnimationSystems",
+      "kind": "SystemSet",
       "module": "engine",
       "phase": "PostUpdate",
       "reads": [
@@ -3241,7 +3243,8 @@
       "notes": [
         "Bevy 0.20.0 在 PostUpdate 中运行 AnimationSystems，并先于 TransformSystems::Propagate。",
         "主角随后执行鞋底视觉高度补偿，再传播最终世界变换；检查器没有分支全序。",
-        "引擎概览不展开全部动画内部系统与缓存。"
+        "引擎概览不展开全部动画内部系统与缓存。",
+        "AnimationPlugin 安装 AnimationSystems 内的动画系统；本卡片表示该 SystemSet，而非插件或单个函数。"
       ],
       "source": null,
       "feature": "infrastructure",
@@ -3258,7 +3261,7 @@
     {
       "id": "easing_start",
       "name": "TransformEasingSystems::UpdateStart",
-      "kind": "engine",
+      "kind": "SystemSet",
       "module": "engine",
       "phase": "FixedFirst",
       "reads": [
@@ -3295,7 +3298,7 @@
     {
       "id": "flow_enter_menu",
       "name": "show_main_menu",
-      "kind": "system",
+      "kind": "System",
       "phase": "OnEnter(AppState::MainMenu) · StateTransition",
       "module": "ui",
       "description": "进入主菜单时重置页面、返回来源和焦点；时钟与输入分别由所属功能响应。",
@@ -3330,7 +3333,7 @@
     {
       "id": "flow_pause",
       "name": "show_pause_menu",
-      "kind": "system",
+      "kind": "System",
       "phase": "OnEnter(PlayState::Paused) · StateTransition",
       "module": "ui",
       "description": "打开 Pause 页面并重置焦点；不退出 InGame，也不生成或销毁玩法实体。",
@@ -3363,7 +3366,7 @@
     {
       "id": "flow_suspend",
       "name": "suspend_controls",
-      "kind": "system",
+      "kind": "System",
       "phase": "OnEnter(MainMenu / Paused) · StateTransition",
       "module": "first_person",
       "description": "进入主菜单或暂停时停用 GameplayContext 并释放光标；角色意图由 CharacterPlugin 的独立生命周期系统清空。",
@@ -3401,7 +3404,7 @@
     {
       "id": "flow_resume",
       "name": "hide_menu",
-      "kind": "system",
+      "kind": "System",
       "phase": "OnEnter(PlayState::Running) · StateTransition",
       "module": "ui",
       "description": "进入 Running 时隐藏菜单并清提示；捕获恢复和时钟由所属功能响应同一状态。",
@@ -3435,7 +3438,7 @@
     {
       "id": "menu_spawn_controller",
       "name": "spawn_menu_controller",
-      "kind": "system",
+      "kind": "System",
       "phase": "Startup",
       "module": "ui",
       "description": "创建持久菜单控制者与六个 Enhanced Input 动作及键盘/手柄绑定。",
@@ -3471,7 +3474,7 @@
     {
       "id": "menu_sync_context",
       "name": "sync_context",
-      "kind": "system",
+      "kind": "System",
       "phase": "PreUpdate",
       "module": "ui",
       "description": "按主窗口聚焦替换 MenuContext 启用状态。",
@@ -3514,7 +3517,7 @@
     {
       "id": "menu_handle_requests",
       "name": "handle_requests",
-      "kind": "system",
+      "kind": "System",
       "phase": "PreUpdate · after(EnhancedInputSystems::Trigger)",
       "module": "ui",
       "description": "集中消费菜单语义请求，导航与保存应用设置；归并同一拖动数值与释放，试听复用拾取声音消息。",
@@ -3573,7 +3576,7 @@
     {
       "id": "menu_pointer",
       "name": "pointer_interaction",
-      "kind": "system",
+      "kind": "System",
       "phase": "Update · Build之后 / Style之前",
       "module": "ui",
       "description": "在 Build 后消费原生主键 PointerPress 缓冲消息，沿 ChildOf 找仍存活按钮，并按真实窗口光标移动区分输入来源。",
@@ -3634,7 +3637,7 @@
     {
       "id": "menu_rebuild",
       "name": "rebuild_page",
-      "kind": "system",
+      "kind": "System",
       "phase": "Update · UiSystems::Build",
       "module": "ui",
       "description": "页面、分类、返回来源或逻辑视口尺寸变化时重建 BSN 页面；草稿数值和保存提示原位更新，Hidden 只清理。",
@@ -3703,7 +3706,7 @@
     {
       "id": "menu_style",
       "name": "style_buttons",
-      "kind": "system",
+      "kind": "System",
       "phase": "Update · UiSystems::Style",
       "module": "ui",
       "description": "按输入来源更新所有可操作按钮的纸色/金色背景与深色焦点边框，鼠标离开恢复。",
@@ -3749,7 +3752,7 @@
     {
       "id": "menu_description",
       "name": "update_description",
-      "kind": "system",
+      "kind": "System",
       "phase": "Update · UiSystems::Style",
       "module": "ui",
       "description": "从聚焦设置按钮读取说明，更新右侧标题与正文文本。",
@@ -3792,7 +3795,7 @@
     {
       "id": "menu_scroll_focus",
       "name": "scroll_focused_button",
-      "kind": "system",
+      "kind": "System",
       "phase": "Update · UiSystems::Style",
       "module": "ui",
       "description": "等待真实布局后，沿 ChildOf 找视口，把当前焦点按钮滚入可视范围。",
@@ -3842,7 +3845,7 @@
     {
       "id": "menu_backdrop_spawn",
       "name": "spawn_backdrop",
-      "kind": "system",
+      "kind": "System",
       "phase": "OnEnter(AppState::MainMenu) · StateTransition",
       "module": "ui",
       "description": "声明独立海岛 GLB 舞台、相机与日光；展示快递员根保存父 GLTF 句柄，待命名动画可用后绑定。",
@@ -3889,7 +3892,7 @@
     {
       "id": "menu_asset_failures",
       "name": "log_asset_failures",
-      "kind": "system",
+      "kind": "System",
       "phase": "Update",
       "module": "ui",
       "description": "读取 models/ 与 ui/ 资产加载失败消息，写入统一会话日志。",
@@ -3921,7 +3924,7 @@
     {
       "id": "observe_release_pointer",
       "name": "release_pointer_for_inspector",
-      "kind": "observer",
+      "kind": "Observer",
       "phase": "匹配事件触发时",
       "module": "first_person",
       "description": "F3 按下经控制者路由释放光标并跳过运动，为检查器交互做准备；保持游戏运行。",
@@ -3958,7 +3961,7 @@
     {
       "id": "observe_menu_previous",
       "name": "previous",
-      "kind": "observer",
+      "kind": "Observer",
       "phase": "匹配事件触发时",
       "module": "ui",
       "description": "向上循环选择可操作按钮。实际焦点变化时发送 MenuHover。",
@@ -3995,7 +3998,7 @@
     {
       "id": "observe_menu_next",
       "name": "next",
-      "kind": "observer",
+      "kind": "Observer",
       "phase": "匹配事件触发时",
       "module": "ui",
       "description": "向下循环选择可操作按钮。实际焦点变化时发送 MenuHover。",
@@ -4032,7 +4035,7 @@
     {
       "id": "observe_menu_left",
       "name": "left",
-      "kind": "observer",
+      "kind": "Observer",
       "phase": "匹配事件触发时",
       "module": "ui",
       "description": "向左调整当前聚焦的真实设置字段。",
@@ -4065,7 +4068,7 @@
     {
       "id": "observe_menu_right",
       "name": "right",
-      "kind": "observer",
+      "kind": "Observer",
       "phase": "匹配事件触发时",
       "module": "ui",
       "description": "向右调整当前聚焦的真实设置字段。",
@@ -4098,7 +4101,7 @@
     {
       "id": "observe_menu_confirm",
       "name": "confirm",
-      "kind": "observer",
+      "kind": "Observer",
       "phase": "匹配事件触发时",
       "module": "ui",
       "description": "确认当前聚焦按钮的 UiAction。",
@@ -4132,7 +4135,7 @@
     {
       "id": "observe_menu_back",
       "name": "back",
-      "kind": "observer",
+      "kind": "Observer",
       "phase": "匹配事件触发时",
       "module": "ui",
       "description": "产生 Back 请求；Hidden 时为暂停、Pause 时为恢复，子页面按返回来源返回。",
@@ -4162,7 +4165,7 @@
     {
       "id": "observe_menu_scroll",
       "name": "scroll_menu",
-      "kind": "observer",
+      "kind": "Observer",
       "phase": "匹配事件触发时",
       "module": "ui",
       "description": "仅 Settings 内容视口响应原生 PointerScroll，夹紧滚动位置并停止冒泡。",
@@ -4197,7 +4200,7 @@
     {
       "id": "observe_courier_ready",
       "name": "mark_courier_animation_ready",
-      "kind": "observer",
+      "kind": "Observer",
       "phase": "匹配事件触发时",
       "module": "ui",
       "description": "展示快递员模板就绪后只标记 pending，等待 Update 绑定命名动画。",
@@ -4231,7 +4234,7 @@
     {
       "id": "menu_animation_play",
       "name": "play_courier_animation",
-      "kind": "system",
+      "kind": "System",
       "module": "ui",
       "phase": "Update",
       "reads": [
@@ -4278,7 +4281,7 @@
     {
       "id": "audio_preload",
       "name": "preload_sounds",
-      "kind": "system",
+      "kind": "System",
       "phase": "Startup",
       "module": "audio",
       "description": "检查嵌入清单后预加载 UI/SFX 短音，将事件映射与播放策略保存到 SoundBank。",
@@ -4313,7 +4316,7 @@
     {
       "id": "audio_load_failures",
       "name": "log_load_failures",
-      "kind": "system",
+      "kind": "System",
       "phase": "Update · after(UiSystems::Style)",
       "module": "audio",
       "description": "消费 Kira AudioSource 加载失败消息，记录原始路径与错误。",
@@ -4351,7 +4354,7 @@
     {
       "id": "audio_play",
       "name": "play_requests",
-      "kind": "system",
+      "kind": "System",
       "phase": "Update · after(UiSystems::Style)",
       "module": "audio",
       "description": "消费 SoundRequest；静音直接丢弃，其余按加载、冷却与实例限额排队，并保持清单素材间响度。",
@@ -4403,7 +4406,7 @@
     {
       "id": "audio_stop",
       "name": "stop_on_exit",
-      "kind": "system",
+      "kind": "System",
       "phase": "Update · after(UiSystems::Style)",
       "module": "audio",
       "description": "在 AppExit 消息到达时停止 UI 与 SFX 通道并写统一会话日志。",
@@ -4449,7 +4452,7 @@
     {
       "id": "audio_strain",
       "name": "warn_hold_strain",
-      "kind": "system",
+      "kind": "System",
       "phase": "FixedUpdate · after(FixedGameplaySystems::Target)",
       "module": "item_interaction",
       "description": "根据持有者真实 Position 与最新朝向检查包裹持续偏差，发出一次失稳提示。",
@@ -4508,7 +4511,7 @@
     {
       "id": "audio_land",
       "name": "emit_parcel_land",
-      "kind": "system",
+      "kind": "System",
       "phase": "FixedPostUpdate · after(PhysicsSystems::StepSimulation)",
       "module": "item_interaction",
       "description": "逐步检查真实支撑接触和冲量，在自由包裹落地时发出一次声音请求。",
@@ -4561,7 +4564,7 @@
     {
       "id": "menu_volume_pointer",
       "name": "sample_slider_pointer",
-      "kind": "system",
+      "kind": "System",
       "phase": "Update · after(Build / pointer_interaction) / before(Style)",
       "module": "ui",
       "description": "仅 Audio 页捕获原生命中的滑条；按物理光标局部位置生成精确音量与释放请求。",
@@ -4622,7 +4625,7 @@
     {
       "id": "menu_volume_visuals",
       "name": "update_volume_visuals",
-      "kind": "system",
+      "kind": "System",
       "phase": "Update · after(Build / pointer_interaction) / before(Style)",
       "module": "ui",
       "description": "草稿变化时更新已有百分比文字与轨道填充；静音显示 Muted，不重建音量实体树。",
@@ -4666,7 +4669,7 @@
     {
       "id": "audio_mix",
       "name": "sync_audio_mix",
-      "kind": "system",
+      "kind": "System",
       "phase": "Update · after(UiSystems::Style) / 音频 chain",
       "module": "audio",
       "description": "优先使用 UI 发布的 AudioPreview，否则使用最近成功应用的正式音量。",
@@ -4708,7 +4711,7 @@
     {
       "id": "audio_voice_volumes",
       "name": "sync_voice_volumes",
-      "kind": "system",
+      "kind": "System",
       "phase": "Update · 音频 chain，mix 之后 / play_requests 之前",
       "module": "audio",
       "description": "按每条素材清单音量与 UI/SFX 有效混音，更新正在播放及刚就绪实例的绝对分贝。",
@@ -4752,7 +4755,7 @@
     {
       "id": "audio_voice_volumes_post",
       "name": "sync_voice_volumes",
-      "kind": "system",
+      "kind": "System",
       "phase": "PostUpdate · after(AudioSystemSet::PlayTypedChannels)",
       "module": "audio",
       "description": "Kira 将 Queued 句柄写入 Assets 后再次同步新实例，避免旧增益多留一帧。",
@@ -4794,7 +4797,7 @@
     {
       "id": "window_log",
       "name": "log_policy",
-      "kind": "system",
+      "kind": "System",
       "phase": "Startup",
       "module": "window_policy",
       "description": "记录窗口策略支持平台、比例与最小尺寸。",
@@ -4823,7 +4826,7 @@
     {
       "id": "window_install",
       "name": "install_native_policy",
-      "kind": "system",
+      "kind": "System",
       "phase": "PreUpdate · window thread",
       "module": "window_policy",
       "description": "安装、刷新并清理原生窗口策略；成功后显示，失败时固定尺寸显示。",
@@ -4866,7 +4869,7 @@
     {
       "id": "menu_settings_text",
       "name": "update_settings_text",
-      "kind": "system",
+      "kind": "System",
       "phase": "Update · UiSystems::Style",
       "module": "ui",
       "description": "草稿数值与保存提示变更时原位更新 Text，保留视口与焦点身份。",
@@ -4909,7 +4912,7 @@
     {
       "id": "menu_bind_scrollbars",
       "name": "bind_settings_scrollbars",
-      "kind": "system",
+      "kind": "System",
       "phase": "Update · after Build / before Style",
       "module": "ui",
       "description": "用 BSN 生成后的真实 sibling Entity 绑定原生 Scrollbar.target。",
@@ -4957,7 +4960,7 @@
     {
       "id": "menu_sync_scrollbars",
       "name": "sync_settings_scrollbars",
-      "kind": "system",
+      "kind": "System",
       "phase": "PostUpdate · after UiSystems::Layout / before VisibilityPropagate",
       "module": "ui",
       "description": "依据实际溢出更新显隐和拾取，夹取滚动位置并同步滑块高亮。",
@@ -5021,7 +5024,7 @@
     {
       "id": "observe_scrollbar_scroll",
       "name": "scroll_over_settings_scrollbar",
-      "kind": "observer",
+      "kind": "Observer",
       "phase": "匹配事件触发时",
       "module": "ui",
       "description": "轨道或滑块冒泡的滚轮事件更新 target 视口并停止传播。",
@@ -5058,7 +5061,7 @@
     {
       "id": "observe_scrollbar_press",
       "name": "scrollbar_pointer_source",
-      "kind": "observer",
+      "kind": "Observer",
       "phase": "匹配事件触发时",
       "module": "ui",
       "description": "轨道和滑块按下时将菜单输入来源切为 Pointer。",
@@ -5087,7 +5090,7 @@
     {
       "id": "carry_proxy_cleanup",
       "name": "cleanup_orphaned_colliders",
-      "kind": "system",
+      "kind": "System",
       "phase": "FixedUpdate · FixedGameplaySystems::Attachment",
       "module": "item_interaction",
       "description": "箱体销毁后停用并卸载孤儿代理，避免人物继续携带不可见碰撞。",
@@ -5134,7 +5137,7 @@
     {
       "id": "carry_mass_restore",
       "name": "restore_empty_holder_mass",
-      "kind": "system",
+      "kind": "System",
       "phase": "FixedUpdate · FixedGameplaySystems::Attachment",
       "module": "item_interaction",
       "description": "HoldingItems 已空时归还人物原质量，移除 CarryBaseMass。",
@@ -5180,7 +5183,7 @@
     {
       "id": "carry_attach",
       "name": "finish_attachments",
-      "kind": "system",
+      "kind": "System",
       "phase": "FixedUpdate · FixedGameplaySystems::Attachment",
       "module": "item_interaction",
       "description": "刚体移除与 Observer 命令完成后，复制真实箱体形状到无视觉代理并挂到人物刚体，累加质量。",
@@ -5246,7 +5249,7 @@
     {
       "id": "carry_align",
       "name": "align_attachments",
-      "kind": "system",
+      "kind": "System",
       "phase": "FixedUpdate · FixedGameplaySystems::Attachment",
       "module": "item_interaction",
       "description": "按固定步沿连续碰撞检查的小步对齐双手；受阻保留安全姿态，持续受阻 0.35s 后统一释放。",
@@ -5330,7 +5333,7 @@
     {
       "id": "carry_physics_fixed",
       "name": "sync_held_physics",
-      "kind": "system",
+      "kind": "System",
       "phase": "FixedUpdate · FixedGameplaySystems::Attachment",
       "module": "item_interaction",
       "description": "由人物真实物理状态与局部挂接姿态同步箱根和代理，派生箱体点速度。",
@@ -5389,7 +5392,7 @@
     {
       "id": "carry_physics_post",
       "name": "sync_held_physics",
-      "kind": "system",
+      "kind": "System",
       "phase": "FixedPostUpdate · after(PhysicsSystems::Writeback)",
       "module": "item_interaction",
       "description": "Avian 回写后以最新真实位姿同步箱根及碰撞代理。",
@@ -5447,7 +5450,7 @@
     {
       "id": "carry_physics_frame",
       "name": "sync_held_physics",
-      "kind": "system",
+      "kind": "System",
       "phase": "RunFixedMainLoop · AfterFixedMainLoop（每帧一次）",
       "module": "item_interaction",
       "description": "本帧朝向命令应用后同步组合碰撞姿态，即使本帧没有固定步也保持物理与显示朝向一致。",
@@ -5506,7 +5509,7 @@
     {
       "id": "carry_resume",
       "name": "resume_carry_easing",
-      "kind": "system",
+      "kind": "System",
       "phase": "FixedFirst",
       "module": "item_interaction",
       "description": "下一固定步重置旧插值端点后，仅撤销本模块拥有的释放插值暂停。",
@@ -5554,7 +5557,7 @@
     {
       "id": "carry_holder_despawn",
       "name": "prepare_holder_despawn",
-      "kind": "observer",
+      "kind": "Observer",
       "phase": "实体销毁触发时",
       "module": "item_interaction",
       "description": "人物 Despawn 时先排队停用并卸载持物代理，随后让 Avian 刚体卸载及 linked_spawn 清理完成。",
@@ -5590,7 +5593,7 @@
     {
       "id": "flow_clock_menu",
       "name": "enter_main_menu",
-      "kind": "system",
+      "kind": "System",
       "module": "game_flow",
       "phase": "OnEnter(AppState::MainMenu) · StateTransition",
       "description": "主菜单允许虚拟时间播放展示动画，并暂停、清零物理时钟。",
@@ -5621,7 +5624,7 @@
     {
       "id": "flow_clock_pause",
       "name": "pause_simulation",
-      "kind": "system",
+      "kind": "System",
       "module": "game_flow",
       "phase": "OnEnter(PlayState::Paused) · StateTransition",
       "description": "暂停虚拟与物理时钟，立即清零当帧增量。",
@@ -5652,7 +5655,7 @@
     {
       "id": "flow_clock_resume",
       "name": "resume_simulation",
-      "kind": "system",
+      "kind": "System",
       "module": "game_flow",
       "phase": "OnEnter(PlayState::Running) · StateTransition",
       "description": "恢复虚拟与物理时钟，保留现有会话实体。",
@@ -5683,7 +5686,7 @@
     {
       "id": "flow_resume_capture",
       "name": "resume_capture",
-      "kind": "system",
+      "kind": "System",
       "module": "first_person",
       "phase": "OnEnter(PlayState::Running) · StateTransition",
       "description": "标记下一次捕获初始化，并丢弃自由光标阶段累积位移。",
@@ -5713,7 +5716,7 @@
     {
       "id": "menu_audio_preview",
       "name": "publish_audio_preview",
-      "kind": "system",
+      "kind": "System",
       "module": "ui",
       "phase": "Update · UiSystems::Style",
       "description": "菜单发布临时音量契约；离开设置时清空预览，音频不读取 UI 私有状态。",
@@ -5749,7 +5752,7 @@
     {
       "id": "character_clear_intents",
       "name": "clear_character_intents",
-      "kind": "system",
+      "kind": "System",
       "module": "character",
       "phase": "OnEnter(MainMenu / Paused) · StateTransition",
       "description": "角色功能在暂停或返回主菜单时清空持续移动轴及一次性请求，不依赖设备或相机插件。",
@@ -5785,7 +5788,7 @@
     {
       "id": "wake_changed_bodies",
       "name": "wake_changed_bodies",
-      "kind": "system",
+      "kind": "System",
       "phase": "FixedPostUpdate · PhysicsSystems::First",
       "module": "physics",
       "feature": "physics",
@@ -5839,7 +5842,7 @@
     {
       "id": "wake_apply",
       "name": "ApplyDeferred（提前唤醒 → 物理准备）",
-      "kind": "sync",
+      "kind": "Synchronization",
       "module": "bevy_ecs",
       "feature": "physics",
       "registered_by": "physics",
@@ -5884,7 +5887,7 @@
     {
       "id": "observe_menu_primary_press",
       "name": "primary_press",
-      "kind": "observer",
+      "kind": "Observer",
       "phase": "匹配事件触发时",
       "module": "ui",
       "description": "记录菜单按钮主键按压的指针身份。",
@@ -5916,7 +5919,7 @@
     {
       "id": "observe_menu_primary_clear",
       "name": "clear_primary_press",
-      "kind": "observer",
+      "kind": "Observer",
       "phase": "生命周期事件触发时",
       "module": "ui",
       "description": "原生 Pressed 移除时清理菜单主键来源。",
@@ -5950,7 +5953,7 @@
     {
       "id": "menu_clear_cancelled_primary",
       "name": "clear_cancelled_primary_presses",
-      "kind": "system",
+      "kind": "System",
       "phase": "PreUpdate · after(PickingSystems::Last)",
       "module": "ui",
       "description": "清理被取消、失焦或离窗的菜单主键按压。",
@@ -5997,7 +6000,7 @@
     {
       "id": "native_pointer_events",
       "name": "pointer_events",
-      "kind": "system",
+      "kind": "System",
       "phase": "PreUpdate · PickingSystems::Hover",
       "module": "bevy_picking",
       "description": "生成指针EntityEvent并同时发布对应Message。",
@@ -6045,7 +6048,7 @@
     {
       "id": "native_update_hovered",
       "name": "update_is_hovered",
-      "kind": "system",
+      "kind": "System",
       "phase": "PreUpdate · PickingSystems::Hover",
       "module": "bevy_picking",
       "description": "按鼠标HoverMap及祖先关系替换已有Hovered值。",
@@ -6086,7 +6089,7 @@
     {
       "id": "native_button_down",
       "name": "button_on_pointer_down",
-      "kind": "observer",
+      "kind": "Observer",
       "phase": "匹配事件触发时",
       "module": "bevy_ui_widgets",
       "description": "按压时插入原生Pressed；可选ActivateOnPress会发Activate。",
@@ -6118,7 +6121,7 @@
     {
       "id": "native_button_up",
       "name": "button_on_pointer_up",
-      "kind": "observer",
+      "kind": "Observer",
       "phase": "匹配事件触发时",
       "module": "bevy_ui_widgets",
       "description": "释放时移除原生Pressed。",
@@ -6149,7 +6152,7 @@
     {
       "id": "native_button_click",
       "name": "button_on_pointer_click",
-      "kind": "observer",
+      "kind": "Observer",
       "phase": "匹配事件触发时",
       "module": "bevy_ui_widgets",
       "description": "满足条件时派发原生Activate。",
@@ -6179,7 +6182,7 @@
     {
       "id": "native_button_drag_end",
       "name": "button_on_pointer_drag_end",
-      "kind": "observer",
+      "kind": "Observer",
       "phase": "匹配事件触发时",
       "module": "bevy_ui_widgets",
       "description": "拖动结束时移除原生Pressed。",
@@ -6210,7 +6213,7 @@
     {
       "id": "native_button_cancel",
       "name": "button_on_pointer_cancel",
-      "kind": "observer",
+      "kind": "Observer",
       "phase": "匹配事件触发时",
       "module": "bevy_ui_widgets",
       "description": "收到取消事件时移除原生Pressed。",
@@ -6241,7 +6244,7 @@
     {
       "id": "native_button_key",
       "name": "button_on_key_event",
-      "kind": "observer",
+      "kind": "Observer",
       "phase": "匹配事件触发时",
       "module": "bevy_ui_widgets",
       "description": "焦点键盘Enter或Space首次按下时派发Activate。",
@@ -10740,7 +10743,8 @@
         "line": 16
       },
       "feature": "settings",
-      "defined_in": "settings"
+      "defined_in": "settings",
+      "kind": "Resource"
     },
     {
       "id": "resource.PrototypeConfig",
@@ -10768,7 +10772,8 @@
         "line": 8
       },
       "feature": "settings",
-      "defined_in": "settings"
+      "defined_in": "settings",
+      "kind": "Resource"
     },
     {
       "id": "resource.TimeFixed",
@@ -10784,7 +10789,8 @@
         "line": 36
       },
       "feature": "infrastructure",
-      "defined_in": "infrastructure"
+      "defined_in": "infrastructure",
+      "kind": "Resource"
     },
     {
       "id": "resource.Time",
@@ -10799,7 +10805,8 @@
         "line": 9
       },
       "feature": "infrastructure",
-      "defined_in": "infrastructure"
+      "defined_in": "infrastructure",
+      "kind": "Resource"
     },
     {
       "id": "resource.TimeReal",
@@ -10814,7 +10821,8 @@
         "line": 36
       },
       "feature": "infrastructure",
-      "defined_in": "infrastructure"
+      "defined_in": "infrastructure",
+      "kind": "Resource"
     },
     {
       "id": "resource.TimeVirtual",
@@ -10830,7 +10838,8 @@
         "line": 112
       },
       "feature": "infrastructure",
-      "defined_in": "infrastructure"
+      "defined_in": "infrastructure",
+      "kind": "Resource"
     },
     {
       "id": "resource.ButtonInputKeyCode",
@@ -10845,7 +10854,8 @@
         "line": 36
       },
       "feature": "infrastructure",
-      "defined_in": "infrastructure"
+      "defined_in": "infrastructure",
+      "kind": "Resource"
     },
     {
       "id": "resource.ButtonInputMouseButton",
@@ -10860,7 +10870,8 @@
         "line": 48
       },
       "feature": "infrastructure",
-      "defined_in": "infrastructure"
+      "defined_in": "infrastructure",
+      "kind": "Resource"
     },
     {
       "id": "resource.AccumulatedMouseMotion",
@@ -10875,7 +10886,8 @@
         "line": 70
       },
       "feature": "infrastructure",
-      "defined_in": "infrastructure"
+      "defined_in": "infrastructure",
+      "kind": "Resource"
     },
     {
       "id": "resource.KeyboardInputMessages",
@@ -10890,7 +10902,8 @@
         "line": 48
       },
       "feature": "infrastructure",
-      "defined_in": "infrastructure"
+      "defined_in": "infrastructure",
+      "kind": "Messages<T>"
     },
     {
       "id": "resource.KeyboardFocusLostMessages",
@@ -10905,7 +10918,8 @@
         "line": 48
       },
       "feature": "infrastructure",
-      "defined_in": "infrastructure"
+      "defined_in": "infrastructure",
+      "kind": "Messages<T>"
     },
     {
       "id": "resource.MouseButtonInputMessages",
@@ -10922,7 +10936,8 @@
         "line": 97
       },
       "feature": "infrastructure",
-      "defined_in": "infrastructure"
+      "defined_in": "infrastructure",
+      "kind": "Messages<T>"
     },
     {
       "id": "resource.WindowFocusedMessages",
@@ -10938,7 +10953,8 @@
         "line": 98
       },
       "feature": "infrastructure",
-      "defined_in": "infrastructure"
+      "defined_in": "infrastructure",
+      "kind": "Messages<T>"
     },
     {
       "id": "resource.MouseMotionMessages",
@@ -10953,7 +10969,8 @@
         "line": 48
       },
       "feature": "infrastructure",
-      "defined_in": "infrastructure"
+      "defined_in": "infrastructure",
+      "kind": "Messages<T>"
     },
     {
       "id": "resource.AssetsMesh",
@@ -10968,7 +10985,8 @@
         "line": 77
       },
       "feature": "infrastructure",
-      "defined_in": "infrastructure"
+      "defined_in": "infrastructure",
+      "kind": "Resource"
     },
     {
       "id": "resource.AssetsStandardMaterial",
@@ -10983,7 +11001,8 @@
         "line": 51
       },
       "feature": "infrastructure",
-      "defined_in": "infrastructure"
+      "defined_in": "infrastructure",
+      "kind": "Resource"
     },
     {
       "id": "resource.ClearColor",
@@ -10998,7 +11017,8 @@
         "line": 71
       },
       "feature": "infrastructure",
-      "defined_in": "infrastructure"
+      "defined_in": "infrastructure",
+      "kind": "Resource"
     },
     {
       "id": "resource.GlobalAmbientLight",
@@ -11014,7 +11034,8 @@
         "line": 81
       },
       "feature": "infrastructure",
-      "defined_in": "infrastructure"
+      "defined_in": "infrastructure",
+      "kind": "Resource"
     },
     {
       "id": "resource.WinitSettings",
@@ -11029,7 +11050,8 @@
         "line": 61
       },
       "feature": "infrastructure",
-      "defined_in": "infrastructure"
+      "defined_in": "infrastructure",
+      "kind": "Resource"
     },
     {
       "id": "resource.ContextInstances",
@@ -11045,7 +11067,8 @@
         "line": 155
       },
       "feature": "enhanced_input",
-      "defined_in": "enhanced_input"
+      "defined_in": "enhanced_input",
+      "kind": "Resource"
     },
     {
       "id": "resource.ActionSources",
@@ -11065,7 +11088,8 @@
         "line": 155
       },
       "feature": "enhanced_input",
-      "defined_in": "enhanced_input"
+      "defined_in": "enhanced_input",
+      "kind": "Resource"
     },
     {
       "id": "resource.ConsumedInputs",
@@ -11080,7 +11104,8 @@
         "line": 155
       },
       "feature": "enhanced_input",
-      "defined_in": "enhanced_input"
+      "defined_in": "enhanced_input",
+      "kind": "Resource"
     },
     {
       "id": "resource.PendingBindings",
@@ -11096,7 +11121,8 @@
         "line": 155
       },
       "feature": "enhanced_input",
-      "defined_in": "enhanced_input"
+      "defined_in": "enhanced_input",
+      "kind": "Resource"
     },
     {
       "id": "local.FramePacing",
@@ -11112,7 +11138,8 @@
         "line": 26
       },
       "feature": "settings",
-      "defined_in": "settings"
+      "defined_in": "settings",
+      "kind": "Local"
     },
     {
       "id": "local.VelocityLog",
@@ -11127,7 +11154,8 @@
         "line": 153
       },
       "feature": "character",
-      "defined_in": "character"
+      "defined_in": "character",
+      "kind": "Local"
     },
     {
       "id": "local.LookLog",
@@ -11142,7 +11170,8 @@
         "line": 10
       },
       "feature": "first_person",
-      "defined_in": "first_person"
+      "defined_in": "first_person",
+      "kind": "Local"
     },
     {
       "id": "resource.AppTypeRegistry",
@@ -11157,7 +11186,8 @@
         "line": 24
       },
       "feature": "infrastructure",
-      "defined_in": "infrastructure"
+      "defined_in": "infrastructure",
+      "kind": "Resource"
     },
     {
       "id": "resource.EguiGlobalSettings",
@@ -11177,7 +11207,8 @@
         "line": 15
       },
       "feature": "egui",
-      "defined_in": "egui"
+      "defined_in": "egui",
+      "kind": "Resource"
     },
     {
       "id": "resource.Gravity",
@@ -11192,7 +11223,8 @@
         "line": 89
       },
       "feature": "avian",
-      "defined_in": "avian"
+      "defined_in": "avian",
+      "kind": "Resource"
     },
     {
       "id": "resource.ColliderTrees",
@@ -11210,7 +11242,8 @@
         "line": 13
       },
       "feature": "avian",
-      "defined_in": "avian"
+      "defined_in": "avian",
+      "kind": "Resource"
     },
     {
       "id": "resource.CollisionStartMessages",
@@ -11226,7 +11259,8 @@
         "line": 31
       },
       "feature": "avian",
-      "defined_in": "infrastructure"
+      "defined_in": "infrastructure",
+      "kind": "Messages<T>"
     },
     {
       "id": "resource.CollisionEndMessages",
@@ -11242,7 +11276,8 @@
         "line": 31
       },
       "feature": "avian",
-      "defined_in": "infrastructure"
+      "defined_in": "infrastructure",
+      "kind": "Messages<T>"
     },
     {
       "id": "resource.LastEasingTick",
@@ -11257,7 +11292,8 @@
         "line": 67
       },
       "feature": "avian",
-      "defined_in": "avian"
+      "defined_in": "avian",
+      "kind": "Resource"
     },
     {
       "id": "local.PickupReservations",
@@ -11272,7 +11308,8 @@
         "line": 18
       },
       "feature": "item_interaction",
-      "defined_in": "item_interaction"
+      "defined_in": "item_interaction",
+      "kind": "Local"
     },
     {
       "id": "resource.ArtAssets",
@@ -11395,7 +11432,8 @@
         "line": 13
       },
       "feature": "game_flow",
-      "defined_in": "game_flow"
+      "defined_in": "game_flow",
+      "kind": "Resource"
     },
     {
       "id": "resource.PlayState",
@@ -11416,7 +11454,8 @@
         "菜单 handle_requests 在 MainMenu 仍可访问 NextState<PlayState>；请求由后续 StateTransition 消费。"
       ],
       "feature": "game_flow",
-      "defined_in": "game_flow"
+      "defined_in": "game_flow",
+      "kind": "Resource"
     },
     {
       "id": "resource.MenuState",
@@ -11434,7 +11473,8 @@
         "line": 48
       },
       "feature": "ui",
-      "defined_in": "ui"
+      "defined_in": "ui",
+      "kind": "Resource"
     },
     {
       "id": "resource.MenuFocus",
@@ -11449,7 +11489,8 @@
         "line": 57
       },
       "feature": "ui",
-      "defined_in": "ui"
+      "defined_in": "ui",
+      "kind": "Resource"
     },
     {
       "id": "resource.MenuInputSource",
@@ -11465,7 +11506,8 @@
         "line": 61
       },
       "feature": "ui",
-      "defined_in": "ui"
+      "defined_in": "ui",
+      "kind": "Resource"
     },
     {
       "id": "resource.SettingsDraft",
@@ -11483,7 +11525,8 @@
         "line": 21
       },
       "feature": "settings",
-      "defined_in": "settings"
+      "defined_in": "settings",
+      "kind": "Resource"
     },
     {
       "id": "resource.SettingsFile",
@@ -11498,7 +11541,8 @@
         "line": 80
       },
       "feature": "settings",
-      "defined_in": "settings"
+      "defined_in": "settings",
+      "kind": "Resource"
     },
     {
       "id": "resource.UiTheme",
@@ -11515,7 +11559,8 @@
         "line": 14
       },
       "feature": "ui",
-      "defined_in": "ui"
+      "defined_in": "ui",
+      "kind": "Resource"
     },
     {
       "id": "resource.UiRequestMessages",
@@ -11530,7 +11575,8 @@
         "line": 102
       },
       "feature": "ui",
-      "defined_in": "ui"
+      "defined_in": "ui",
+      "kind": "Messages<T>"
     },
     {
       "id": "resource.TimePhysics",
@@ -11546,7 +11592,8 @@
         "line": 122
       },
       "feature": "avian",
-      "defined_in": "infrastructure"
+      "defined_in": "infrastructure",
+      "kind": "Resource"
     },
     {
       "id": "resource.AssetLoadFailedMessages",
@@ -11562,7 +11609,8 @@
         "line": 214
       },
       "feature": "infrastructure",
-      "defined_in": "infrastructure"
+      "defined_in": "infrastructure",
+      "kind": "Messages<T>"
     },
     {
       "id": "resource.AppTransitionMessages",
@@ -11578,7 +11626,8 @@
         "line": 15
       },
       "feature": "game_flow",
-      "defined_in": "game_flow"
+      "defined_in": "game_flow",
+      "kind": "Messages<T>"
     },
     {
       "id": "resource.PlayTransitionMessages",
@@ -11594,7 +11643,8 @@
         "line": 36
       },
       "feature": "game_flow",
-      "defined_in": "game_flow"
+      "defined_in": "game_flow",
+      "kind": "Messages<T>"
     },
     {
       "id": "resource.SoundRequestMessages",
@@ -11610,7 +11660,8 @@
         "line": 59
       },
       "feature": "audio",
-      "defined_in": "audio"
+      "defined_in": "audio",
+      "kind": "Messages<T>"
     },
     {
       "id": "resource.SoundBank",
@@ -11627,7 +11678,8 @@
         "line": 31
       },
       "feature": "audio",
-      "defined_in": "audio"
+      "defined_in": "audio",
+      "kind": "Resource"
     },
     {
       "id": "resource.UiAudioChannel",
@@ -11642,7 +11694,8 @@
         "line": 48
       },
       "feature": "audio",
-      "defined_in": "audio"
+      "defined_in": "audio",
+      "kind": "Resource"
     },
     {
       "id": "resource.SfxAudioChannel",
@@ -11657,7 +11710,8 @@
         "line": 49
       },
       "feature": "audio",
-      "defined_in": "audio"
+      "defined_in": "audio",
+      "kind": "Resource"
     },
     {
       "id": "resource.UiTrack",
@@ -11670,7 +11724,8 @@
         "line": 38
       },
       "feature": "audio",
-      "defined_in": "audio"
+      "defined_in": "audio",
+      "kind": "Resource"
     },
     {
       "id": "resource.SfxTrack",
@@ -11683,7 +11738,8 @@
         "line": 40
       },
       "feature": "audio",
-      "defined_in": "audio"
+      "defined_in": "audio",
+      "kind": "Resource"
     },
     {
       "id": "resource.AudioSources",
@@ -11698,7 +11754,8 @@
         "line": 99
       },
       "feature": "kira",
-      "defined_in": "infrastructure"
+      "defined_in": "infrastructure",
+      "kind": "Resource"
     },
     {
       "id": "resource.AudioLoadFailures",
@@ -11713,7 +11770,8 @@
         "line": 76
       },
       "feature": "kira",
-      "defined_in": "infrastructure"
+      "defined_in": "infrastructure",
+      "kind": "Messages<T>"
     },
     {
       "id": "resource.AppExitMessages",
@@ -11728,7 +11786,8 @@
         "line": 169
       },
       "feature": "infrastructure",
-      "defined_in": "infrastructure"
+      "defined_in": "infrastructure",
+      "kind": "Messages<T>"
     },
     {
       "id": "resource.ContactGraph",
@@ -11743,7 +11802,8 @@
         "line": 39
       },
       "feature": "avian",
-      "defined_in": "avian"
+      "defined_in": "avian",
+      "kind": "Resource"
     },
     {
       "id": "local.LandingContacts",
@@ -11759,7 +11819,8 @@
         "line": 33
       },
       "feature": "item_interaction",
-      "defined_in": "item_interaction"
+      "defined_in": "item_interaction",
+      "kind": "Local"
     },
     {
       "id": "local.HoldStrain",
@@ -11776,7 +11837,8 @@
         "line": 85
       },
       "feature": "item_interaction",
-      "defined_in": "item_interaction"
+      "defined_in": "item_interaction",
+      "kind": "Local"
     },
     {
       "id": "local.MenuPointerCursor",
@@ -11791,7 +11853,8 @@
         "line": 88
       },
       "feature": "ui",
-      "defined_in": "ui"
+      "defined_in": "ui",
+      "kind": "Local"
     },
     {
       "id": "local.MenuPointerHover",
@@ -11806,7 +11869,8 @@
         "line": 88
       },
       "feature": "ui",
-      "defined_in": "ui"
+      "defined_in": "ui",
+      "kind": "Local"
     },
     {
       "id": "resource.AudioMix",
@@ -11822,7 +11886,8 @@
         "line": 10
       },
       "feature": "audio",
-      "defined_in": "audio"
+      "defined_in": "audio",
+      "kind": "Resource"
     },
     {
       "id": "resource.AudioInstances",
@@ -11837,7 +11902,8 @@
         "line": 69
       },
       "feature": "kira",
-      "defined_in": "infrastructure"
+      "defined_in": "infrastructure",
+      "kind": "Resource"
     },
     {
       "id": "local.VolumeDrag",
@@ -11853,7 +11919,8 @@
         "line": 46
       },
       "feature": "ui",
-      "defined_in": "ui"
+      "defined_in": "ui",
+      "kind": "Local"
     },
     {
       "id": "local.VolumeEdit",
@@ -11869,7 +11936,8 @@
         "line": 28
       },
       "feature": "ui",
-      "defined_in": "ui"
+      "defined_in": "ui",
+      "kind": "Local"
     },
     {
       "id": "non_send.NativePolicies",
@@ -11905,7 +11973,8 @@
         }
       ],
       "feature": "window_policy",
-      "defined_in": "window_policy"
+      "defined_in": "window_policy",
+      "kind": "NonSend"
     },
     {
       "id": "local.MenuLayout",
@@ -11920,7 +11989,8 @@
         "line": 47
       },
       "feature": "ui",
-      "defined_in": "ui"
+      "defined_in": "ui",
+      "kind": "Local"
     },
     {
       "id": "local.MenuScrollFocus",
@@ -11935,7 +12005,8 @@
         "line": 289
       },
       "feature": "ui",
-      "defined_in": "ui"
+      "defined_in": "ui",
+      "kind": "Local"
     },
     {
       "id": "resource.AudioPreview",
@@ -11966,7 +12037,8 @@
         "line": 65
       },
       "feature": "avian",
-      "defined_in": "avian"
+      "defined_in": "avian",
+      "kind": "Resource"
     },
     {
       "id": "resource.PointerPressMessages",
@@ -11981,7 +12053,8 @@
         "line": 21
       },
       "feature": "infrastructure",
-      "defined_in": "infrastructure"
+      "defined_in": "infrastructure",
+      "kind": "Messages<T>"
     },
     {
       "id": "resource.PointerInputMessages",
@@ -11996,7 +12069,8 @@
         "line": 22
       },
       "feature": "infrastructure",
-      "defined_in": "infrastructure"
+      "defined_in": "infrastructure",
+      "kind": "Messages<T>"
     },
     {
       "id": "resource.HoverMap",
@@ -12008,7 +12082,8 @@
       "display_summary": "保存原生指针处理状态。",
       "source": null,
       "feature": "infrastructure",
-      "defined_in": "infrastructure"
+      "defined_in": "infrastructure",
+      "kind": "Resource"
     },
     {
       "id": "resource.PreviousHoverMap",
@@ -12020,7 +12095,8 @@
       "display_summary": "保存原生指针处理状态。",
       "source": null,
       "feature": "infrastructure",
-      "defined_in": "infrastructure"
+      "defined_in": "infrastructure",
+      "kind": "Resource"
     },
     {
       "id": "resource.PointerState",
@@ -12032,7 +12108,8 @@
       "display_summary": "保存原生指针处理状态。",
       "source": null,
       "feature": "infrastructure",
-      "defined_in": "infrastructure"
+      "defined_in": "infrastructure",
+      "kind": "Resource"
     },
     {
       "id": "resource.PickingSettings",
@@ -12044,7 +12121,8 @@
       "display_summary": "保存原生指针处理状态。",
       "source": null,
       "feature": "infrastructure",
-      "defined_in": "infrastructure"
+      "defined_in": "infrastructure",
+      "kind": "Resource"
     },
     {
       "id": "resource.PointerMap",
@@ -12056,7 +12134,8 @@
       "display_summary": "保存原生指针处理状态。",
       "source": null,
       "feature": "infrastructure",
-      "defined_in": "infrastructure"
+      "defined_in": "infrastructure",
+      "kind": "Resource"
     }
   ],
   "relationships": [
@@ -12838,7 +12917,7 @@
     {
       "id": "plugin-DefaultPlugins",
       "name": "DefaultPlugins",
-      "kind": "Plugin",
+      "kind": "PluginGroup",
       "description": "引擎窗口、时间、资产、动画和渲染；默认 LogPlugin 与 AudioPlugin 已禁用。",
       "display_summary": "提供窗口、时间、资产、动画与渲染基础设施。",
       "notes": [
@@ -13153,7 +13232,7 @@
     },
     {
       "name": "PhysicsPlugins::default()",
-      "kind": "Plugin",
+      "kind": "PluginGroup",
       "description": "GamePhysicsPlugin → Avian 固定物理",
       "display_summary": "提供固定步刚体模拟与碰撞求解。",
       "notes": [
@@ -13239,7 +13318,7 @@
     {
       "id": "state-paused",
       "name": "InGame / Paused",
-      "kind": "engine",
+      "kind": "Lifecycle note",
       "description": "OnEnter：UI / 输入 / 时钟分别响应；Time<Virtual> / Time<Physics> 暂停并清本帧 delta；保留业务实体；释放光标，隐藏 Inspector",
       "display_summary": "保留会话实体并暂停模拟与玩法输入。",
       "feature": "game_flow",
@@ -13303,11 +13382,22 @@
       "feature": "item_interaction",
       "schedule": null,
       "schedule_group": "Explanatory",
-      "registrations": []
+      "registrations": [],
+      "memberIds": [
+        "interaction",
+        "facing_fixed",
+        "facing_update",
+        "menu_handle_requests",
+        "menu_pointer",
+        "observe_menu_previous",
+        "observe_menu_next",
+        "audio_strain",
+        "audio_land"
+      ]
     },
     {
-      "name": "Update / Kira 播放输出",
-      "kind": "Engine",
+      "name": "Kira 播放输出流程",
+      "kind": "Engine flow",
       "description": "UI Style 之后选有效混音并同步实例，再按加载/冷却/并发排队；PostUpdate 就绪后补同步实例，AppExit 时停止。",
       "display_summary": "将声音请求按有效混音与播放策略提交音频实例。",
       "reads": [
@@ -13354,7 +13444,7 @@
     },
     {
       "name": "原生窗口约束",
-      "kind": "Native platform bridge",
+      "kind": "Platform API",
       "description": "Windows subclass 在尺寸应用前约束；macOS contentAspectRatio、工作区 min/max 及 Zoom 校准。纯几何与平台守卫不是 ECS 组件。",
       "display_summary": "在平台应用尺寸前约束主窗口比例与范围。",
       "source": {
@@ -13451,7 +13541,7 @@
     {
       "id": "event_apply",
       "name": "ApplyDeferred · 动作事件",
-      "kind": "sync",
+      "kind": "Synchronization",
       "defined_in": "infrastructure",
       "phase": "PreUpdate",
       "description": "应用 Enhanced Input 排入的 trigger 命令，此时触发匹配 Observer。",
@@ -13500,7 +13590,7 @@
     },
     {
       "name": "ApplyDeferred · 恢复插值",
-      "kind": "sync",
+      "kind": "Synchronization",
       "description": "应用暂停组件清理，再记录新固定步起点。",
       "display_summary": "使插值暂停清理在新固定步采样前可见。",
       "source": {
@@ -13526,7 +13616,7 @@
     {
       "id": "ui-volume-set",
       "name": "音量元组 · after(Build / Pointer)",
-      "kind": "engine",
+      "kind": "System group",
       "description": "两个系统都在 Style 之前，彼此没有显式先后；滑条输入只发消息；显示读取 PreUpdate 已更新的草稿",
       "display_summary": "组织音量输入采样与显示更新的局部调度。",
       "feature": "ui",
@@ -13545,7 +13635,7 @@
     {
       "id": "ui-style-set",
       "name": "UiSystems::Style",
-      "kind": "engine",
+      "kind": "SystemSet",
       "description": "五个显示系统在音量处理之后；组内没有显式全序；输入来源区分 Pointer / Navigation，音量 / 提示不销毁既有实体",
       "display_summary": "组织菜单显示、数值与说明的原位更新。",
       "feature": "ui",
@@ -13563,8 +13653,8 @@
     },
     {
       "id": "kira-play-typed",
-      "name": "PostUpdate · PlayTypedChannels",
-      "kind": "engine",
+      "name": "AudioSystemSet::PlayTypedChannels",
+      "kind": "SystemSet",
       "description": "Kira 将 Queued 句柄写入 Assets；不与其它 PostUpdate 分支建立全序",
       "display_summary": "将排队声音句柄转为已就绪播放实例。",
       "feature": "kira",
@@ -13582,7 +13672,7 @@
     },
     {
       "name": "UiSystems::Layout",
-      "kind": "Engine SystemSet",
+      "kind": "SystemSet",
       "description": "计算本帧 UI 内容与视口；原生 thumb 系统在 ui_layout_system 之后且仍属于 Layout。",
       "display_summary": "计算界面内容与视口的本帧布局。",
       "source": {
@@ -13604,8 +13694,8 @@
       ]
     },
     {
-      "name": "ScrollbarPlugin · thumb geometry",
-      "kind": "Engine system",
+      "name": "update_scrollbar_thumb",
+      "kind": "System",
       "description": "DefaultPlugins 的原生 ScrollbarPlugin 按 target 的内容/视口比例计算滑块几何；滑块不带 Node。",
       "display_summary": "按内容与视口比例更新滚动条滑块几何。",
       "source": {
@@ -13624,11 +13714,14 @@
           "schedule": "PostUpdate",
           "scope": "runtime"
         }
+      ],
+      "notes": [
+        "由 ScrollbarPlugin 注册 update_scrollbar_thumb；本卡片表示该真实系统函数。"
       ]
     },
     {
-      "name": "VisibilityPropagate",
-      "kind": "Engine system set",
+      "name": "VisibilitySystems::VisibilityPropagate",
+      "kind": "SystemSet",
       "description": "在项目显隐同步后传播可见性。",
       "source": {
         "path": "src/ui/scroll.rs",
@@ -15122,7 +15215,7 @@
     },
     {
       "name": "movement ← value",
-      "kind": "Component write",
+      "kind": "Operation result",
       "description": "按控制者路由移动动作值并保存持续移动轴。",
       "reads": [
         "controller.ControlsCharacter",
@@ -15165,7 +15258,7 @@
     },
     {
       "name": "movement ← ZERO",
-      "kind": "Component write",
+      "kind": "Operation result",
       "description": "移动动作正常结束时清零角色移动轴。",
       "reads": [
         "controller.ControlsCharacter",
@@ -15207,7 +15300,7 @@
     },
     {
       "name": "movement ← ZERO",
-      "kind": "Component write",
+      "kind": "Operation result",
       "description": "移动动作取消时清零角色移动轴。",
       "reads": [
         "controller.ControlsCharacter",
@@ -15249,7 +15342,7 @@
     },
     {
       "name": "jump_pending ← true",
-      "kind": "Component write",
+      "kind": "Operation result",
       "description": "设置目标角色 jump_pending=true。",
       "reads": [
         "controller.ControlsCharacter"
@@ -15290,7 +15383,7 @@
     },
     {
       "name": "interact_pending ← true",
-      "kind": "Component write",
+      "kind": "Operation result",
       "description": "设置目标角色 interact_pending=true。",
       "reads": [
         "controller.ControlsCharacter"
@@ -15331,7 +15424,7 @@
     },
     {
       "name": "yaw / pitch ← 鼠标位移",
-      "kind": "Component write",
+      "kind": "Operation result",
       "description": "按控制者关联更新第一人称水平角和俯仰；只有有效捕获且非跳过帧才处理。",
       "reads": [
         "resource.GameSettings",
@@ -15546,7 +15639,7 @@
     {
       "id": "result-observe_release_pointer",
       "name": "调试释放捕获",
-      "kind": "Component write",
+      "kind": "Operation result",
       "phase": "匹配事件触发时",
       "module": "first_person",
       "description": "F3 按下经控制者路由释放光标并跳过运动，为检查器交互做准备；保持游戏运行。",
@@ -15602,7 +15695,7 @@
     },
     {
       "name": "previous 输出",
-      "kind": "Data write",
+      "kind": "Operation result",
       "description": "向上循环选择可操作按钮。实际焦点变化时发送 MenuHover。",
       "reads": [
         "resource.MenuState",
@@ -15651,7 +15744,7 @@
     },
     {
       "name": "next 输出",
-      "kind": "Data write",
+      "kind": "Operation result",
       "description": "向下循环选择可操作按钮。实际焦点变化时发送 MenuHover。",
       "reads": [
         "resource.MenuState",
@@ -15700,7 +15793,7 @@
     },
     {
       "name": "left 输出",
-      "kind": "Data write",
+      "kind": "Operation result",
       "description": "向左调整当前聚焦的真实设置字段。",
       "reads": [
         "resource.MenuState",
@@ -15747,7 +15840,7 @@
     },
     {
       "name": "right 输出",
-      "kind": "Data write",
+      "kind": "Operation result",
       "description": "向右调整当前聚焦的真实设置字段。",
       "reads": [
         "resource.MenuState",
@@ -15795,7 +15888,7 @@
     },
     {
       "name": "confirm 输出",
-      "kind": "Data write",
+      "kind": "Operation result",
       "description": "确认当前聚焦按钮的 UiAction。",
       "reads": [
         "resource.MenuState",
@@ -15843,7 +15936,7 @@
     },
     {
       "name": "back 输出",
-      "kind": "Data write",
+      "kind": "Operation result",
       "description": "产生 Back 请求；Hidden 时为暂停、Pause 时为恢复，子页面按返回来源返回。",
       "reads": [],
       "writes": [
@@ -15887,7 +15980,7 @@
     },
     {
       "name": "scroll_menu 输出",
-      "kind": "Data write",
+      "kind": "Operation result",
       "description": "仅 Settings 内容视口响应原生 PointerScroll，夹紧滚动位置并停止冒泡。",
       "reads": [
         "resource.MenuState",
@@ -15934,7 +16027,7 @@
     },
     {
       "name": "mark_courier_animation_ready 输出",
-      "kind": "Data write",
+      "kind": "Operation result",
       "description": "展示快递员模板就绪后只标记 pending，等待 Update 绑定命名动画。",
       "reads": [
         "menu_model.CourierAnimation"
@@ -15980,7 +16073,7 @@
     },
     {
       "name": "scroll_over_settings_scrollbar 输出",
-      "kind": "Data write",
+      "kind": "Operation result",
       "description": "轨道或滑块冒泡的滚轮事件更新 target 视口并停止传播。",
       "reads": [
         "resource.MenuState",
@@ -16028,7 +16121,7 @@
     },
     {
       "name": "scrollbar_pointer_source 输出",
-      "kind": "Data write",
+      "kind": "Operation result",
       "description": "轨道和滑块按下时将菜单输入来源切为 Pointer。",
       "reads": [],
       "writes": [
@@ -16051,7 +16144,7 @@
     {
       "id": "ui-next-state",
       "name": "NextState → StateTransition",
-      "kind": "engine",
+      "kind": "Operation result",
       "description": "Start Game / ReturnToMenu：AppState；Pause / Resume：PlayState",
       "display_summary": "将开始、返回、暂停与恢复请求提交状态切换。",
       "aspects": [
@@ -16066,7 +16159,7 @@
     {
       "id": "volume-request-source",
       "name": "Audio 页 · 滑条局部捕获",
-      "kind": "engine",
+      "kind": "Note",
       "description": "PointerPress 主键消息命中后局部捕获；同帧完整点击仍完成最终采样；SetVolume改草稿，结束且值改变才确认，失焦/离窗/旧实体销毁结束。",
       "display_summary": "将滑条捕获与连续采样汇总为音量编辑请求。",
       "feature": "ui",
@@ -16083,8 +16176,8 @@
       ]
     },
     {
-      "name": "Kira UI / SFX 通道",
-      "kind": "Engine",
+      "name": "Kira UI / SFX 输出流程",
+      "kind": "Engine flow",
       "description": "类型 AudioChannel 消费排队命令，AppExit 停止；环境底声仅供试听。",
       "display_summary": "接收播放与停止命令并输出界面和物品短音。",
       "source": {
@@ -16098,11 +16191,14 @@
       "feature": "kira",
       "schedule": null,
       "schedule_group": "Explanatory",
-      "registrations": []
+      "registrations": [],
+      "notes": [
+        "本流程汇总 UI / SFX 类型通道的命令消费和播放输出，不代表单一 Resource 或某个系统函数。"
+      ]
     },
     {
       "name": "ScrollbarPlugin · pointer observers",
-      "kind": "Engine observers",
+      "kind": "Observer group",
       "description": "Scrollbar / ScrollbarThumb 原生控件处理 track Press 分页、DragStart/Drag/DragEnd/Cancel；几何在 Layout 内更新。项目只绑定 target 和同步显隐/来源。",
       "display_summary": "处理滚动条的轨道分页与滑块拖动。",
       "source": {
@@ -16119,8 +16215,8 @@
       "registrations": []
     },
     {
-      "name": "OS 窗口事件 / API",
-      "kind": "Native platform event",
+      "name": "OS 窗口事件",
+      "kind": "Platform event",
       "description": "Windows WM_SIZING / WM_WINDOWPOSCHANGING / WM_DPICHANGED / WM_SYSCOMMAND；macOS contentAspectRatio、屏幕工作区和 Zoom 几何校准。",
       "display_summary": "接收原生窗口尺寸、缩放与工作区变化。",
       "source": {
@@ -16134,7 +16230,10 @@
       ],
       "schedule": null,
       "schedule_group": "Explanatory",
-      "registrations": []
+      "registrations": [],
+      "notes": [
+        "Windows 的回调定义与 OS 注册、macOS 的原生 API 配置仍分别保留在完整说明与源码入口中。"
+      ]
     },
     {
       "name": "DespawnEvent",
@@ -16219,7 +16318,7 @@
     {
       "id": "flow-audio-order",
       "name": "UI Style → Audio Mix → Playback",
-      "kind": "Scheduling contract",
+      "kind": "Scheduling constraint",
       "feature": "game_flow",
       "aspects": [
         "systems"

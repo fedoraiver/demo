@@ -4,6 +4,8 @@ import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { isDeepStrictEqual } from 'node:util';
 import { infrastructureFeature } from './architecture-infrastructure.mjs';
+import { nodeKindOf } from './architecture-kinds.mjs';
+import { DEPENDENCY_SOURCE_DEFINITIONS } from './architecture-source-definitions.mjs';
 
 export function readCargoMetadata(repository) {
   return JSON.parse(execFileSync('cargo', ['metadata', '--locked', '--offline', '--format-version', '1'], {
@@ -24,11 +26,14 @@ export function dependencySourceKey(source) {
   return `cargo/${dependency.name}-${dependency.version}/${relativeSourcePath(source.path)}`;
 }
 
-export function dependencyDefinitionTargets(registry) {
-  const executionKinds = new Set(['system', 'observer', 'engine', 'sync', 'SystemSet', 'Engine SystemSet', 'Engine system set', 'Engine system', 'Engine observers']);
-  return Object.values(registry).filter(node =>
-    (node.kind === 'Component' && infrastructureFeature(node.defined_in || node.feature))
-    || (infrastructureFeature(node.defined_in || node.feature) && (node.kind === 'Plugin' || node.kind === 'PluginGroup' || executionKinds.has(node.kind)))).map(node => node.id);
+export function dependencyDefinitionTargets(registry, definitions = DEPENDENCY_SOURCE_DEFINITIONS) {
+  const declared = new Set(['Component', 'Plugin', 'PluginGroup', 'System', 'Observer', 'Synchronization', 'SystemSet', 'Observer group']);
+  return Object.values(registry).filter(node => {
+    if (!infrastructureFeature(node.defined_in || node.feature)) return false;
+    const kind = nodeKindOf(node);
+    // 聚合只定位已审阅的真实流程入口，不能假造与卡片同名的类型或函数。
+    return declared.has(kind) || (kind === 'Engine flow' && Object.hasOwn(definitions, node.id));
+  }).map(node => node.id);
 }
 
 export function createDependencySourceResolver(metadata) {
@@ -74,14 +79,14 @@ export function createDependencySourceResolver(metadata) {
 }
 
 export function attachDependencySources(registry, resolver, definitions) {
-  for (const id of dependencyDefinitionTargets(registry)) {
+  for (const id of dependencyDefinitionTargets(registry, definitions)) {
     if (!definitions[id]) throw new Error(`Missing dependency definition: ${id}`);
     registry[id].definition_source = resolver.resolve(definitions[id]);
   }
 }
 
 export function checkDependencySources(registry, resolver, definitions, requireAll = true) {
-  const targets = new Set(dependencyDefinitionTargets(registry));
+  const targets = new Set(dependencyDefinitionTargets(registry, definitions));
   for (const id of targets) {
     if (!definitions[id]) {
       if (requireAll) throw new Error(`Missing dependency definition: ${id}`);
