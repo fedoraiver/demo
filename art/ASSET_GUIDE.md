@@ -59,8 +59,9 @@
 以下为制作流程；执行前准备 Blender。只调整主角动作时，从第 3 步开始，无需重建整张地图。
 
 1. 使用 [build_scene.py](scripts/build_scene.py) 通过 Blender MCP 插件在已打开的 Blender 中生成场景。
-2. 使用 [export_assets.py](scripts/export_assets.py) 导出独立模型和地图；重复导出会归零独立源件的展示位移。
+2. 使用 [export_assets.py](scripts/export_assets.py) 导出独立模型和地图；独立模型按原点和单位比例导出，源库保留展示布局。
 3. 使用 [export_courier_actions.py](scripts/export_courier_actions.py) 刷新主角动作、制作源和运行 GLB。完整导出海岛后必须执行此步，保证独立主角包含完整动作；脚本可在 Blender 内执行，或通过 `--background --python` 调用。
-4. 使用 [render_previews.py](scripts/render_previews.py) 渲染预览，再执行无窗口资源检查并核对上面的预览要求。
+4. 同步 [资产清单](asset_manifest.json) 的 `chr_courier` 条目：`animations` 取最终 GLB 的片段名，`bytes` 取最终文件大小，`source_file` 指向 `art/blender/courier_actions.blend`，动作时长和一次性片段与动作定义一致。完整导出会重写清单，单独导出动作不会更新它；清单与最终 GLB 一致后再执行无窗口资源检查。
+5. 在 `courier_island.blend` 中执行 [render_previews.py](scripts/render_previews.py)，刷新海岛视角与角色展示预览并核对上面的预览要求。该脚本依赖海岛制作场景，不生成动作与跳跃预览。
 
 这些工具只制作和导出美术资产，不启动游戏。

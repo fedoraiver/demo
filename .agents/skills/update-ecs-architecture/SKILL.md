@@ -38,19 +38,19 @@ Entity、Component 使用与 System 相同的原生圆角矩形，保留各自�
 
 ## 绘图与右栏
 
-使用真实 Mermaid 定义与编译，不手改最终路径或补画代理矩形。`architecture-kinds.mjs` 维护规范语义类别，`architecture-style.mjs` 统一对应的 visualType、edgeSemantic、displayLabel 和图例；不得以视觉样式覆盖或猜测 kind。按[分类与视觉规范](../../../docs/diagrams/README.md#节点与连线视觉规范)核实真实 System、SystemSet、SystemParam、分组、同步、流程聚合、装配入口、平台接口及说明类别，不回退为笼统 Contract，也不把辅助函数或聚合流程当作单个 System。项目与引擎的同类身份共用规范，旧 engine 条目需凭源码明确归类。名称完整、14px、加粗，短用途常规字重，优先使用人工 display_summary；不截断、不机械截句、不注入所属 Entity 前缀。完整 description、字段、查询、约束及视图摘要作为数据保留，右侧使用完整正文。
+使用真实 Mermaid 定义与编译，不手改最终路径或补画代理矩形。按[分类与视觉规范](../../../docs/diagrams/README.md#节点与连线视觉规范)维护类别、名称、短用途、选中效果和图例；`architecture-kinds.mjs` 与 `architecture-style.mjs` 分别维护语义身份和视觉表达，不得以样式猜测或覆盖 kind。分类依据真实声明，辅助函数、分组和流程聚合不冒充单个 System，缺少证据时标待核实。完整 description、字段、查询、约束及视图摘要作为数据保留。
 
-按[布局规则](../../../docs/diagrams/README.md#mermaid-布局与连线)维护 Dagre：App 总览与插件系统图主方向 LR、Schedule 内部 TB；数据页 TB，事件页 LR。Schedule 真实阶段连接、系统 kind=order 与不可见 layoutLinks 分开维护。插件局部页启动标题仅 Startup，状态组从真实运行时注册推导 Schedule 类型名、按出现顺序去重，测试注册及参数不进组标题；完整参数在详情保留。总览另表达完整驱动骨架和固定循环每帧 `0..N` 步。核对七个短标题及完整 `RunFixedMainLoop · AfterFixedMainLoop`，不增加隐含执行边。
+按[布局规则](../../../docs/diagrams/README.md#mermaid-布局与连线)核对方向、Schedule 标题和组件图的 Entity／Component／System 分区。Schedule 阶段驱动、系统 `kind=order` 与不可见 `layoutLinks` 分开维护；排版容器不增加业务身份、关系端点或隐含执行边。完整注册参数和测试 scope 留在详情，不混入运行时分组标题。
 
-组件图用原生方向、透明排版容器、不可见布局边、声明顺序与有界间距形成 Entity／Component／System 阅读分区，保留相反读写方向、有向环与所有真实关系。透明排版元素不增加业务身份或端点。所有候选共用 `architecture-routing.mjs` 严格检查：无遮挡共线直线容差 0.5 图内像素，其余使用至少偏离弦线 0.25 图内像素的真实 basis／bumpX／bumpY 曲线；全部真实轮廓、凹形、多图元、外部虚线和 Schedule 标题参与避让，不能仅检查包围框。
+所有原生布局候选保留唯一节点、真实关系、相反读写方向和有向环，并通过 `architecture-routing.mjs` 的同一套严格检查。直线／曲线、真实轮廓、端点与标签的数值规则由上述布局规范维护，不能只检查包围框。
 
 同时检查源端路径起点、目标原生箭头尖端与自身真实轮廓贴合，以及原生标签背景不遮挡卡片或标题。默认 flowchart.padding=16；只有其他检查全通过而仅源端接触失败时，同一原生候选才可尝试 padding=4，再跑完整校验。不得手工接线、移动箭头／标签、删边、增加虚假端点或放宽容差。
 
-右栏按[节点详情](../../../docs/diagrams/README.md#节点详情)统一名称、完整说明、归属和插件按钮、Schedule／Read／Write／Query、字段约束、组件清单与源码分组；空栏目省略，无节点类型 badge。Read／Write 各自按 canonical Entity 去重且只显示实体名，其他分类及条目保持，分类和条目分别缩进16px；每条注册独立成块，字段逐行、数组逐项，测试 scope 保留。专属图仍展示完整 System 信息，不以局部组件访问摘要代替。
+按[节点详情](../../../docs/diagrams/README.md#节点详情)核对右栏的完整说明、归属、访问与注册记录、组件清单和源码分组。Read／Write 分别按 canonical Entity 去重；显示归并不删原始记录，专属图不以局部组件访问摘要代替完整 System 信息。
 
-选择与清除使用真实轮廓的增强填充、描边和蓝色外圈，按缩放补偿，不影响外部虚线及透明填充；切页、历史与重复选择准确恢复。按[焦点规则](../../../docs/diagrams/README.md#画布交互与焦点)检查 canvas 的 region／tabindex=-1、pointerdown preventScroll、节点 Tab／Enter／Space，以及清除仅释放图内或被删除按钮焦点；paint 不迁移焦点，不叠加第二层矩形框。
+按[焦点规则](../../../docs/diagrams/README.md#画布交互与焦点)核对指针与键盘操作、清除选择和历史恢复。焦点迁移不改变滚动或视角，不抢其他控件焦点；`paint` 不迁移焦点。选择效果不得改变外部虚线或透明填充，切页、取消与重复选择准确恢复。
 
-右侧未选择时仅显示当前视图实际类型的英文 Legend，Nodes／Edges 样例来自共享 Mermaid guideSamples，每类一个普通样例；类别与数量从共享目录动态取得，分类别名不生成重复图例，各类轮廓与配色组合唯一，SystemSet 与系统分组的成员边分别表达。QueryData 与关系记录没有实际卡片时不为覆盖类别新增业务节点；有外部引用才补英文虚线说明。图例不混入业务 SVG。界面保持浅色，顶栏仅品牌与工作区，画布顶部仅分组定位，无通用操作正文或工具栏导出／图例按钮；面板按共享宽度与窄屏规则工作。
+图例从当前视图实际类别动态取得，不为补齐类别新增业务节点，也不混入业务 SVG。界面、图例样例与面板尺寸按图的说明核对，不另存一套视觉参数。
 
 节点、连线的源码区共用 `source-editor.mjs` 的 VS Code、可选择定位与复制反馈，只渲染审阅后的 sourceEntries；独立源码页从 README 进入，完整项目与依赖快照继续生成。配置、协议、复制成功两秒恢复、失败手动复制、异步失效与无障碍反馈按[源码定位验证](../../../docs/testing/README.md#架构图源码定位验证)检查，不能以页面请求冒充编辑器已打开。
 

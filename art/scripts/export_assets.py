@@ -83,7 +83,7 @@ def main():
         "source_axes":"Z-up; characters +Y forward; buildings -Y front", "export_axes":"glTF Y-up; characters -Z forward",
         "palette_srgb":h.PALETTE,"assets":entries,
         "map":{"file":map_path.relative_to(BASE).as_posix(),"bytes":map_path.stat().st_size,"instances":instances},
-        "integration_status":"Art assets only; not yet loaded by the game; collision and navigation not provided",
+        "integration_status":"Loaded by the demo; structural collision is generated at runtime; no collision or navigation data is baked into the GLB files",
         "land_dimensions_m":[109,87],"coastline_area_m2":6070,
         "art_direction":"Irregular desolate tropical island; weathered wooden buildings; no planned roads or parks",
         "notes_zh":["地图为不规则荒凉海岛，陆地约110×90米，以沙地、碎石、野草和弯曲棕榈组成。",

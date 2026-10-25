@@ -49,7 +49,7 @@
 
 ## BSN 页面与菜单展示资产
 
-UI 控件与主菜单舞台通过 `bsn!`、`bsn_list!` 和返回 `impl Scene` 的辅助函数声明结构；系统负责交互和运行时变化。页面实现见 [pages.rs](../src/ui/pages.rs)，共享控件见 [widgets.rs](../src/ui/widgets.rs)，音量行见 [volume.rs](../src/ui/volume.rs)；原位刷新归属 `style.rs`，指针、语义请求和滚动行为分别归属 `pointer.rs`、`requests.rs` 与 `scroll.rs`。
+UI 控件与主菜单舞台通过 `bsn!`、`bsn_list!` 和返回 `impl Scene` 的辅助函数声明结构；系统负责交互和运行时变化。页面与共享控件入口见 [pages.rs](../src/ui/pages.rs) 和 [widgets.rs](../src/ui/widgets.rs)。
 
 `rebuild_page` 仅在页面、分类、返回来源或视口结构变化时替换 `MenuRoot`。焦点、设置值和成功／失败提示原位更新，保留按钮、音量滑条和滚动实体身份。内容缩短时只夹取越界的 `ScrollPosition`；离页再进入或切换分类才初始化新页面。
 
@@ -58,6 +58,20 @@ UI 控件与主菜单舞台通过 `bsn!`、`bsn_list!` 和返回 `impl Scene` �
 视口与 `Scrollbar` 轨道是同一容器的兄弟，轨道以普通 `Entity` 引用目标，`ScrollbarThumb` 直接属于轨道。原生 `ScrollbarPlugin` 管理比例、拖动、轨道分页及指针清理，控件不进入菜单导航。项目在 `PostUpdate` 的 UI `Layout` 后、可见性传播前同步显隐、拾取、高亮与有效范围；无溢出时归零并隐藏，离页或失效拖动同步清理。右侧预留空间不随显隐改变，避免内容折行反复切换。
 
 `UiSystems` 声明 `Build / Pointer / Style`，`Update` 的局部依赖是 `Build → Pointer → 音量处理 → Style`。滚动条绑定只约束在 Build 后、Style 前；两个音量系统之间及 Style 内的样式、数值、说明、焦点滚入之间均无全序。Build 的延迟命令在后续读取前应用。
+
+文字测量与高亮约束见 [UI 布局规范](development.md#ui-布局与高亮规范)，字体测量与输入来源回归见 [验证指南](testing/README.md#文字布局与高亮回归)。
+
+主菜单的 `MenuBackdrop` 使用 `DespawnOnExit(AppState::MainMenu)` 管理相机、光照和展示模型；设置和帮助沿用这个舞台，暂停沿用当前玩法相机。菜单相机标记 `IsDefaultUiCamera` 与 `PrimaryEguiContext`，进入游戏时随舞台销毁，玩法相机接管界面。
+
+模型通过 `WorldAssetRoot` 加载 `#Scene0`；快递员实例、父 GLB 和命名片段就绪后，在骨架的 `AnimationPlayer` 循环播放 `Carry_Idle`。展示包裹是独立模型附件，没有角色控制器、Avian 刚体或玩法持有关系。菜单舞台与可游玩海岛分别装配；菜单模型不参与玩法碰撞或交互。字体资源与资产准备约定见 [使用说明](usage.md#美术与字体准备)。
+
+## 设置草稿与持久化
+
+保存设置前校验与序列化完整 `GameSettings`，然后在根 `tmp/settings-save/` 写入唯一临时文件、同步并关闭句柄，再用 `rename` 替换目标文件。替换失败时保留原文件并清理临时产物；临时文件与设置及会话日志各自管理。菜单步进范围不收紧 JSON 的有效范围，打开设置保留有效自定义值，实际调整相应字段后才进入菜单范围。
+
+音量的 `SetVolume` 请求只更新草稿，`FinishVolumeEdit` 在释放且最终值改变时汇总反馈；`TestSfx` 只发 `SoundRequest`。字段、默认值、步进与缺省兼容见 [设置](usage.md#设置)，草稿到有效混音的数据流见 [音效数据流](#音效数据流)。
+
+## 原生窗口策略
 
 `WindowPolicyPlugin` 在窗口线程的 `PreUpdate` 通过 `NonSendMarker` 读取线程局部 `WINIT_WINDOWS`，确认真实主窗口后安装策略；Windows 与 macOS 初始隐藏窗口，安装完成再显示。取得身份快照后结束后端表借用，再调用原生 API，避免同步通知重入。
 
@@ -68,19 +82,7 @@ UI 控件与主菜单舞台通过 `bsn!`、`bsn_list!` 和返回 `impl Scene` �
 - macOS 在 `NSWindow` 上设置 `contentAspectRatio` 与工作区尺寸边界，保留 Winit 代理，禁用系统全屏和平铺。绕过比例属性的 Zoom／平铺请求仅在实际越界时校准。
 - Windows 通过 `SetWindowSubclass` 处理 `WM_SIZING / WM_WINDOWPOSCHANGING`，保留 `DefSubclassProc` 链与 Winit 的 DPI 处理。客户区按 `(16k, 9k)` 计算；最大化转换为工作区内的普通窗口。共用几何入口见 [geometry.rs](../src/window_policy/geometry.rs)。
 
-Windows MSVC 的 [build.rs](../build.rs) 为游戏和测试程序嵌入 Common Controls v6 清单，在 `main` 前为 `GetWindowSubclass` 等静态导入选择 v6 `comctl32.dll`；其他目标不传入这些链接参数。
-
-缺少清单时，默认 DLL 可能无对应名称导出，程序以 `0xc0000139`（`STATUS_ENTRYPOINT_NOT_FOUND`）在初始化前退出，此时既没有窗口策略回退，也没有会话日志。
-
-文字测量与高亮约束见 [UI 布局规范](development.md#ui-布局与高亮规范)，字体测量与输入来源回归见 [验证指南](testing/README.md#文字布局与高亮回归)。
-
-主菜单的 `MenuBackdrop` 使用 `DespawnOnExit(AppState::MainMenu)` 管理相机、光照和真实美术模型。它由独立快递员、快递站、地形、海水、植物与包裹 GLB 组成；设置和帮助沿用这个舞台，暂停沿用当前玩法相机。菜单相机标记 `IsDefaultUiCamera` 与 `PrimaryEguiContext`，进入游戏时随舞台销毁，玩法相机接管界面。
-
-模型通过 `WorldAssetRoot` 加载原有 `#Scene0`；快递员 `WorldInstanceReady` 后查找骨架中的 `AnimationPlayer` 并等待父 GLB 和命名片段可用后，循环播放按名称绑定的 `Carry_Idle`。展示包裹是独立模型附件，没有角色控制器、Avian 刚体或玩法持有关系。菜单舞台与使用 `assets/maps/courier_island.glb` 的可游玩海岛分别装配；菜单模型仅作展示，不参与玩法碰撞或交互。字体资源与资产准备约定见 [使用说明](usage.md#美术与字体准备)。
-
-保存设置前校验与序列化完整 `GameSettings`，然后在根 `tmp/settings-save/` 写入唯一临时文件、同步并关闭句柄，再用 `rename` 替换目标文件。替换失败时保留原文件并清理临时产物；临时文件与设置及会话日志各自管理。菜单步进范围不收紧 JSON 的原有有效范围，打开设置保留有效自定义值，实际调整相应字段后才进入菜单范围。
-
-音量的 `SetVolume` 请求只更新草稿，`FinishVolumeEdit` 在释放且最终值改变时汇总反馈；`TestSfx` 只发 `SoundRequest`。字段、默认值、步进与缺省兼容见 [设置](usage.md#设置)，草稿到有效混音的数据流见 [音效数据流](#音效数据流)。
+Windows MSVC 的 `GetWindowSubclass` 等静态导入依赖 Common Controls v6 清单；缺少清单时可能以 `0xc0000139`（`STATUS_ENTRYPOINT_NOT_FOUND`）在初始化前退出，此时既没有窗口策略回退，也没有会话日志。清单嵌入与链接检查见 [构建与调试](development.md#构建与调试)。
 
 ## 世界检查器
 
@@ -98,8 +100,8 @@ Windows MSVC 的 [build.rs](../build.rs) 为游戏和测试程序嵌入 Common C
 - **角色业务实体**通过 `Character`、意图与运动组件表达能力，Avian 动态刚体保存物理状态，`Transform` 表达插值呈现。根位于脚底；物理旋转锁定以防倾倒，水平朝向由相机系统同步。
 - **可搬物品实体**以 `Parcel / Pickable` 表达身份和能力，根位于模型中心。自由时拥有独立动态刚体，持握时通过 `HeldBy / HeldAttachment` 连接持有者与同形碰撞代理；业务根始终独立，具体装卸见 [持有关系与生命周期](#持有关系与生命周期)。
 - **展示 NPC 实例**保存 `DisplayNpc`，保留原模型和固定姿态；其 `IslandCollider` 子实体保存静态刚体与身体胶囊碰撞，不加入 `Character`、玩家意图、移动或拾取能力。碰撞随原实例和地图层级一同清理。
-- **相机实体**保存 `FirstPersonCamera`、`MouseLookState`、`Camera3d` 和 `Transform`。`FirstPersonCamera` 保存目标、水平角、俯仰角和眼位高度；跟随系统根据人物本帧插值位置计算眼位，并把位置与朝向写入 `Transform`。
-- **共享资源**包括 `PrototypeConfig`、`GameSettings`、`SettingsDraft`、`SettingsFile`、菜单状态与焦点、`AudioPreview`、`ArtAssets` 与 `ArtLoadState`；限帧计时和连续数据日志采样使用各系统的 `Local`。
+- **相机实体**通过 `FirstPersonCamera` 保存控制目标与观察姿态，`MouseLookState` 保存捕获状态；跟随系统根据人物本帧插值位置计算眼位，并把位置与朝向写入 `Transform`。
+- **共享资源**保存跨系统配置、菜单、音频预览与资源加载状态；限帧计时和连续数据日志采样使用各系统的 `Local`。
 
 模型通过 `ChildOf` 属于业务根，人物视觉根带 `CharacterVisual`。玩法查询操作业务组件，网格、材质和骨骼留在视觉子树。持有关系与视觉父子关系相互独立；`Forces / RecoverableBody` 是 `QueryData`，`SpatialQuery / CarryRotationQuery` 是 `SystemParam`，几何辅助值也不作为 ECS 组件或独立系统。
 
@@ -107,7 +109,7 @@ Windows MSVC 的 [build.rs](../build.rs) 为游戏和测试程序嵌入 Common C
 
 `ArtAssets` 持有海岛、主角和三类箱体的运行 GLB 强句柄，路径由 [assets.rs](../src/scene_assembly/assets.rs) 定义。制作与坐标约定见 [美术说明](../art/ASSET_GUIDE.md)，运行时不依赖 Blender。
 
-`SceneAssemblyPlugin` 在构建时通过 `ArtAssets::from_world` 发起加载，Startup 记录请求。`ArtLoadState` 独立保存 `Loading / Ready / Failed`，Update 轮询模型及递归依赖，主菜单期间也可完成加载。
+`SceneAssemblyPlugin` 在构建时发起加载，Startup 记录请求。`ArtLoadState` 独立保存 `Loading / Ready / Failed`，Update 轮询模型及递归依赖，主菜单期间也可完成加载。
 
 同一插件在运行且资源 Ready 后，以 BSN 装配地图；`SpawnScene` 实例化 `WorldAssetRoot` 并触发 `WorldInstanceReady`，后续 Update 消费待准备标记。`source_asset` 元数据只在此边界识别美术实例，玩法身份与能力使用业务组件。
 
@@ -117,7 +119,7 @@ NPC 身体碰撞属于 `World` 层，阻挡人物、自由箱与持箱代理，�
 
 静态碰撞从地形、建筑、码头、固定道具和棕榈树干的结构网格提取顶点与三角形，应用节点的实际变换后合并生成。建筑保持开放前厅与入口，不能用覆盖整栋模型的包围盒封住通道。海水、草和棕榈叶片不生成碰撞；台阶显示保留原始网格，原步阶不参与碰撞。三个商铺与两栋住宅的五组入口台阶按包围体生成不可见斜坡，并与各自实际地板边界配对：斜坡顶面接到室内地板高度，向地板内延伸 `0.05 m`，消除台阶与地板间的门槛落差和间隙。物理组件位于静态业务根或碰撞实体，模型视觉层级不重复添加刚体。
 
-场景生成 `PlayerId(1)` 的控制者、人物、五件可搬物和一台跟随相机。初始姿态由 [actors.rs](../src/scene_assembly/actors.rs) 装配，木箱从地图布局调整到不穿透的室内位置。每个业务根保存自己的 `SpawnPoint`，恢复不再从视觉节点或文件推断。
+场景生成 `PlayerId(1)` 的控制者、人物、五件可搬物和一台跟随相机。初始姿态由 [actors.rs](../src/scene_assembly/actors.rs) 装配，木箱位于不穿透的室内位置。角色和物品业务根各自保存 `SpawnPoint`，供落水恢复读取。
 
 资源加载失败记录路径和原始错误，不提前生成玩家。交付资源规则见 [美术与字体准备](usage.md#美术与字体准备)，装配检查见 [无窗口验证](testing/README.md#海岛资源与无窗口验证)。
 
@@ -176,11 +178,11 @@ NPC 身体碰撞属于 `World` 层，阻挡人物、自由箱与持箱代理，�
 
 物理回写后同步真实箱体姿态，`PostUpdate` 再传播模型的 `GlobalTransform`。零固定步帧也同步安全朝向与呈现，不额外积分平移或消费拿放请求。
 
-`main` 显式安装 `GamePhysicsPlugin`、`CharacterPlugin` 和 `ItemInteractionPlugin`，物理插件安装 Avian 默认固定调度的 `PhysicsPlugins`。Avian 统一处理重力、速度积分与碰撞。接地通过脚底球体 shape cast 和地面法线判断，探测按角色的真实碰撞层过滤支撑物，持握箱不会作为角色支撑面；跳跃请求只在接地时施加一次向上冲量，侧面碰墙不能充当地面。移动轴先限制长度再转换为水平目标速度，通过力加速或减速，空中操控力度低于接地时；碰撞与外力可以改变实际速度，斜向输入不会提高目标速度。
+Avian 在默认固定调度中处理重力、速度积分与碰撞。接地通过脚底球体 shape cast 和地面法线判断，探测按角色的真实碰撞层过滤支撑物，持握箱不会作为角色支撑面；跳跃请求只在接地时施加一次向上冲量，侧面碰墙不能充当地面。移动轴先限制长度再转换为水平目标速度，通过力加速或减速，空中操控力度低于接地时；碰撞与外力可以改变实际速度，斜向输入不会提高目标速度。
 
 `GamePhysicsPlugin` 的提前唤醒只处理 `Sleeping` 身体：位姿、速度或 `SleepTimer` 的变化必须晚于 `LastPhysicsTick`，才排队 `WakeBody`，并在准备求解器前提交。这样跳跃、主动移动与外部冲量在首个固定步参与重力和位置积分；物理自身的回写不会反复唤醒静置物体，正常休眠继续由 Avian 管理。离散唤醒以 `debug` 记录实体和 `external_physics_change` 原因。
 
-角色使用 `SweptCcd::default().with_filter(CcdFilter::ALL)`，按每步运动与碰撞体最薄尺寸的比例启用非线性扫掠，默认门槛为半厚度。普通步行不持续扫掠密集建筑网格，高速外力与旋转接触仍受保护；过滤包含静态、运动学和动态刚体，避免新版默认过滤遗漏动态接触。角色与自由箱体还显式设置 `SpeculativeCcd::default()`，按速度扩张预测邻域，让相向高速动态物体在扫掠前互为碰撞候选。
+角色使用 `SweptCcd::default().with_filter(CcdFilter::ALL)`，按每步运动与碰撞体最薄尺寸的比例启用非线性扫掠，默认门槛为半厚度。普通步行不持续扫掠密集建筑网格，高速外力与旋转接触仍受保护；过滤覆盖静态、运动学和动态刚体。角色与自由箱体还显式设置 `SpeculativeCcd::default()`，按速度扩张预测邻域，让相向高速动态物体在扫掠前互为碰撞候选。
 
 纸箱和木箱采用相同半厚度门槛与完整过滤，保留动态接触与旋转扫掠。角色或箱体形状、旋转约束及运动速度变化后须重评门槛，并保留不同水平 yaw 的高速薄墙及无 CCD 穿透对照；检查见 [无窗口验证](testing/README.md#海岛资源与无窗口验证) 与 [游戏验收](testing/game-acceptance.md)。
 
@@ -242,17 +244,17 @@ NPC 身体碰撞属于 `World` 层，阻挡人物、自由箱与持箱代理，�
 
 UI 在 Style 阶段发布 `AudioPreview(Some(SettingsDraft.audio))`，设置页的分类切换保留预览，离页时发布 `None`。音频后端只读取这一可选数据和 `GameSettings.audio`：有预览时采用草稿音量，清空后采用最近成功应用值，不读取菜单状态或草稿资源。`sync_voice_volumes` 将有效增益与素材基准相乘后逐实例写入 Kira，避免通道 `set_volume` 覆盖素材响度；`PostUpdate` 在 `PlayTypedChannels` 后补同步刚就绪的实例。零增益用 `Decibels::SILENCE`，静音新请求不占冷却或并发，恢复不补播。
 
-清单在编译时嵌入，启动校验后由 `AssetServer` 加载；清单无效只禁用声音，加载错误保留路径和外部错误。素材制作、来源与预留 cue 见 [音频管线](audio.md)。物品与 UI 的消息生产不安装 Kira；无窗口反馈测试安装对应功能插件，播放测试使用通道数据而不打开设备。
+清单在编译时嵌入，启动校验后由 `AssetServer` 加载；清单无效只禁用声音，加载错误保留路径和外部错误。物品与 UI 的消息生产不安装 Kira。素材制作、来源与预留 cue 见 [音频管线](audio.md)，无窗口检查见 [音频验证](testing/README.md#音频无窗口验证)。
 
 ## 会话日志实现
 
-`main` 在添加 `DefaultPlugins` 前调用 `SessionLogPlugin::prepare()`，取得待安装的插件与 `SessionLogGuard`；目录、文件或线程准备失败时中止启动。随后先安装该日志插件，再安装禁用内建 `LogPlugin` 的 `DefaultPlugins`，保证日志只有一个安装入口。文件使用 Unix 时间戳、纳秒和 UUID 命名，以 `create_new` 防止覆盖；文件名和日志时间分别使用 Unix 时间与可读 UTC 时间。
+`SessionLogPlugin::prepare()` 准备插件与 `SessionLogGuard`，目录、文件或线程准备失败时中止启动。该插件先于其他插件构建安装 panic hook 和日志层，记录 `Session started` 与版本；`DefaultPlugins` 禁用内建 `LogPlugin`，日志只有一个安装入口。文件使用 Unix 时间戳、纳秒和 UUID 命名，以 `create_new` 防止覆盖；文件名和日志时间分别使用 Unix 时间与可读 UTC 时间。
 
-随后通过 Bevy `LogPlugin::custom_layer` 的文件层和 `LogPlugin::fmt_layer` 的控制台格式层输出，沿用统一日志过滤，文件层关闭 ANSI 颜色。文件和控制台分别使用无界队列和独立后台写入线程；游戏系统记录事件时只将格式化内容入队，不在调用线程等待文件或 stderr 的实际写入与刷新，也不因队列已满而丢弃记录。两个输出端相互隔离，慢控制台不会阻塞文件记录，慢文件也不会阻塞控制台。临时写入器资源在插件构建时取出，由日志 layer 和会话守护对象持有，不作为玩法共享状态。
+文件与控制台日志层沿用统一过滤，文件关闭 ANSI 颜色。两路输出使用各自的无界队列和后台线程，游戏系统只将格式化内容入队，不等待文件或 stderr 的写入与刷新，不因队列已满丢弃记录，两端也不相互阻塞。临时写入器资源在插件构建时取出，由日志 layer 和会话守护对象持有，不作为玩法共享状态。
 
-后台输出保留移动、接地、碰撞和动画状态变化的完整记录。两路格式层显式设置 `.log_internal_errors(false)`，关闭 tracing 的同步 stderr 错误回退，防止设备故障后重新阻塞事件调用或先于 panic 文件同步等待控制台；后台保留首个错误，在刷新和关闭时反馈。文件与控制台显示可以稍晚于事件发生，核对完整会话时应等待刷新完成。
+两路格式层显式设置 `.log_internal_errors(false)`，关闭 tracing 的同步 stderr 错误回退，防止设备故障后重新阻塞事件调用或先于 panic 文件同步等待控制台；后台保留首个错误，在刷新和关闭时反馈。文件与控制台显示可以稍晚于事件发生，核对完整会话时应等待刷新完成。
 
-`SessionLogPlugin` 在构建期安装 panic hook、文件与控制台格式层，随即记录 `Session started` 与版本，覆盖后续引擎和功能插件的构建过程。各功能记录自己的关键变化。`App::run` 返回后由 `record_exit` 记录退出结果，先等待文件队列、再等待控制台队列写完并刷新；守护对象释放时显式发送关闭命令，排空两路输出并等待写入线程结束。全局日志 layer 仍持有队列发送端，不能依赖发送端析构结束线程。退出阶段可以等待 I/O，普通日志调用不能承担这项等待。写入或刷新失败会保存错误，并通过后续写入、刷新或关闭结果反馈。
+`App::run` 返回后由 `record_exit` 记录退出结果，先等待文件队列、再等待控制台队列写完并刷新；守护对象释放时显式发送关闭命令，排空两路输出并等待写入线程结束。全局日志 layer 仍持有队列发送端，不能依赖发送端析构结束线程。退出阶段可以等待 I/O，普通日志调用不能承担这项等待。写入或刷新失败会保存错误，并通过后续写入、刷新或关闭结果反馈。
 
 panic hook 尽力记录错误，优先等待文件队列写完并调用 `sync_data`，然后调用原有 hook；不先等待可能阻塞的控制台。写入线程自身发生 panic 时由线程内部捕获并反馈，避免等待自己的队列。panic 日志通过已安装的 subscriber 输出，不能保证覆盖日志插件就绪前的异常或进程被强制终止的情况。慢写入端隔离与完整刷新回归见 [验证指南](testing/README.md#按变更类型选择检查)。
 
