@@ -48,7 +48,7 @@ Current architecture may explain local invariants and implementation constraints
 
 ## Maintenance and validation
 
-- Update the owning documentation alongside changes to documented behavior. Check commands, parameters, paths, and examples against current source and configuration.
+- Adding or changing a feature or constraint does not by itself require a documentation change. Add documentation only for information future development needs that cannot be directly and reliably inferred from the repository. Update existing documentation when a change makes it inaccurate, and check commands, parameters, paths, and examples against current source and configuration.
 - When moving or deleting content, repair incoming links and remove duplicated or orphaned explanations.
 - Record individual execution results in the corresponding Issue or PR, following [Issue Tracking Conventions](issue-tracker.md).
 - Maintain ECS diagrams through [Project Skill Maintenance](diagrams/README.md#项目-skill-维护). Update their owning inventory or generator, regenerate outputs, and complete the required structural and visual checks.
