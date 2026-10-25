@@ -36,6 +36,7 @@ flowchart RL
   classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
   classDef node_entity fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
   classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_engine_flow fill:#F1F5F4,stroke:#557C78,stroke-width:1.6px,color:#1F3340
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
@@ -82,8 +83,8 @@ flowchart RL
   end
   style layout_card_n6 fill:none,stroke:none
   subgraph layout_card_n7[" "]
-  n7@{ shape: rounded, label: "**WorldInstanceSpawner /**<br/>**WorldInstanceSpawn**<br/>展开场景资产层级并通知实例就绪。" }
-  class n7 node_system
+  n7@{ shape: stadium, label: "**场景实例生成流程**<br/>展开场景资产层级并通知实例就绪。" }
+  class n7 node_engine_flow
   end
   style layout_card_n7 fill:none,stroke:none
   n3 layout_0@~~~ n0

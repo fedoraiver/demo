@@ -38,16 +38,21 @@ flowchart LR
   classDef node_message fill:#EDF4F6,stroke:#247B91,stroke-width:1.6px,color:#1F3340
   classDef node_message_buffer fill:#EDF4F6,stroke:#247B91,stroke-width:1.6px,color:#1F3340
   classDef node_event fill:#F9F3EE,stroke:#B66B2D,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_observer_group fill:#F7F3F6,stroke:#9A648D,stroke-width:1.6px,color:#1F3340
+  classDef node_engine_flow fill:#F1F5F4,stroke:#557C78,stroke-width:1.6px,color:#1F3340
   classDef node_plugin fill:#F1F3F6,stroke:#4A6389,stroke-width:2.2px,color:#1F3340
-  classDef node_contract fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_plugin_group fill:#F4F2F6,stroke:#735C93,stroke-width:2.2px,color:#1F3340
+  classDef node_app fill:#EFF4F5,stroke:#3A7B87,stroke-width:2.2px,color:#1F3340
   classDef node_external_io fill:#F1F3F4,stroke:#526A78,stroke-width:1.6px,color:#1F3340
+  classDef node_platform_api fill:#F6F3F1,stroke:#8A6555,stroke-width:1.6px,color:#1F3340
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_publish stroke:#247B91,stroke-width:1.8px,stroke-dasharray:10 4 2 4
   classDef edge_consume stroke:#247B91,stroke-width:1.8px,stroke-dasharray:2 4
   classDef edge_emit stroke:#B66B2D,stroke-width:1.8px
   classDef edge_observe stroke:#B66B2D,stroke-width:1.8px,stroke-dasharray:2 4
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
-  classDef edge_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
   subgraph diagram_main[" "]
@@ -130,7 +135,7 @@ flowchart LR
   style layout_card_n14 fill:none,stroke:none
   subgraph layout_card_n15[" "]
   n15@{ shape: fr-rect, label: "**DefaultPlugins**<br/>提供窗口、时间、资产、动画与渲染基础设<br/>施。" }
-  class n15 node_plugin
+  class n15 node_plugin_group
   end
   style layout_card_n15 fill:none,stroke:none
   subgraph layout_card_n16[" "]
@@ -170,7 +175,7 @@ flowchart LR
   style layout_card_n22 fill:none,stroke:none
   subgraph layout_card_n23[" "]
   n23@{ shape: hex, label: "**ScrollbarPlugin · pointer observers**<br/>处理滚动条的轨道分页与滑块拖动。" }
-  class n23 node_observer
+  class n23 node_observer_group
   end
   style layout_card_n23 fill:none,stroke:none
   subgraph layout_card_n24[" "]
@@ -190,7 +195,7 @@ flowchart LR
   style layout_card_n26 fill:none,stroke:none
   subgraph layout_card_n27[" "]
   n27@{ shape: fr-rect, label: "**UiWidgetsPlugins**<br/>注册无样式UI控件插件组。" }
-  class n27 node_plugin
+  class n27 node_plugin_group
   end
   style layout_card_n27 fill:none,stroke:none
   subgraph layout_card_n28[" "]
@@ -200,7 +205,7 @@ flowchart LR
   style layout_card_n28 fill:none,stroke:none
   subgraph layout_card_n29[" "]
   n29@{ shape: fr-rect, label: "**DefaultPickingPlugins**<br/>注册指针输入、Picking和交互插件。" }
-  class n29 node_plugin
+  class n29 node_plugin_group
   end
   style layout_card_n29 fill:none,stroke:none
   subgraph layout_card_n30[" "]
@@ -249,8 +254,8 @@ flowchart LR
   end
   style layout_card_n38 fill:none,stroke:none
   subgraph layout_card_n39[" "]
-  n39@{ shape: rounded, label: "**WorldInstanceSpawner /**<br/>**WorldInstanceSpawn**<br/>展开场景资产层级并通知实例就绪。" }
-  class n39 node_system
+  n39@{ shape: stadium, label: "**场景实例生成流程**<br/>展开场景资产层级并通知实例就绪。" }
+  class n39 node_engine_flow
   end
   style layout_card_n39 fill:none,stroke:none
   subgraph layout_card_n40[" "]
@@ -260,7 +265,7 @@ flowchart LR
   style layout_card_n40 fill:none,stroke:none
   subgraph layout_card_n41[" "]
   n41@{ shape: fr-rect, label: "**main / App**<br/>装配应用、设置与插件并管理主循环和退出。" }
-  class n41 node_plugin
+  class n41 node_app
   end
   style layout_card_n41 fill:none,stroke:none
   subgraph layout_card_n42[" "]
@@ -270,7 +275,7 @@ flowchart LR
   style layout_card_n42 fill:none,stroke:none
   subgraph layout_card_n43[" "]
   n43@{ shape: lin-rect, label: "**PickingSystems::Hover**<br/>更新HoverMap、悬停组件与指针事件。" }
-  class n43 node_contract
+  class n43 node_system_set
   end
   style layout_card_n43 fill:none,stroke:none
   subgraph layout_card_n44[" "]
@@ -292,7 +297,7 @@ flowchart LR
   style layout_card_n46 fill:none,stroke:none
   subgraph layout_card_n47[" "]
   n47@{ shape: lean-l, label: "**原生窗口约束**<br/>来自窗口策略 ↗：在平台应用尺寸前约束主<br/>窗口比例与范围。" }
-  class n47 node_external_io
+  class n47 node_platform_api
   class n47 external_node
   end
   style layout_card_n47 fill:none,stroke:none
@@ -434,11 +439,11 @@ flowchart LR
   n31 e23@--> n42
   class e23 edge_registration
   n43 e24@-->|"in_set(Hover)"| n42
-  class e24 edge_membership
+  class e24 edge_set_membership
   n31 e25@--> n44
   class e25 edge_registration
   n43 e26@-->|"in_set(Hover)"| n44
-  class e26 edge_membership
+  class e26 edge_set_membership
   n32 e27@-->|"PointerPress"| n0
   class e27 edge_observe
   n42 e28@-->|"Commands::trigger"| n32

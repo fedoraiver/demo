@@ -36,6 +36,7 @@ flowchart LR
   classDef node_message fill:#EDF4F6,stroke:#247B91,stroke-width:1.6px,color:#1F3340
   classDef node_message_buffer fill:#EDF4F6,stroke:#247B91,stroke-width:1.6px,color:#1F3340
   classDef node_plugin fill:#F1F3F6,stroke:#4A6389,stroke-width:2.2px,color:#1F3340
+  classDef node_plugin_group fill:#F4F2F6,stroke:#735C93,stroke-width:2.2px,color:#1F3340
   classDef edge_consume stroke:#247B91,stroke-width:1.8px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
@@ -47,7 +48,7 @@ flowchart LR
   n1@{ shape: cyl, label: "**Messages#lt;CollisionEnd#gt;**<br/>缓冲物理接触结束消息。" }
   class n1 node_message_buffer
   n2@{ shape: fr-rect, label: "**PhysicsPlugins::default()**<br/>提供固定步刚体模拟与碰撞求解。" }
-  class n2 node_plugin
+  class n2 node_plugin_group
   n3@{ shape: lean-r, label: "**CollisionStart / CollisionEnd**<br/>缓冲接触开始或结束及碰撞双方身份。" }
   class n3 node_message
   n4@{ shape: rounded, label: "**log_collisions**<br/>来自物理基础 ↗：将碰撞开始与结束写入统<br/>一日志。" }

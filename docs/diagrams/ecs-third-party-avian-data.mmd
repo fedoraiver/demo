@@ -37,7 +37,7 @@ flowchart TB
   classDef node_entity fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
   classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
   classDef node_message_buffer fill:#EDF4F6,stroke:#247B91,stroke-width:1.6px,color:#1F3340
-  classDef node_contract fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
@@ -47,8 +47,8 @@ flowchart TB
   direction TB
   n7@{ shape: cyl, label: "**LastPhysicsTick**<br/>区分外部修改与上一物理步自身的回写。" }
   class n7 node_resource
-  n8@{ shape: lin-rect, label: "**PhysicsSystems::StepSimulation /**<br/>**PhysicsSchedule**<br/>执行碰撞求解、重力积分与刚体运动。" }
-  class n8 node_contract
+  n8@{ shape: lin-rect, label: "**PhysicsSystems::StepSimulation**<br/>执行碰撞求解、重力积分与刚体运动。" }
+  class n8 node_system_set
   n10@{ shape: rounded, label: "**wake_changed_bodies**<br/>来自物理基础 ↗：使休眠身体的外部受力和<br/>位姿修改在本固定步生效。" }
   class n10 node_system
   class n10 external_node

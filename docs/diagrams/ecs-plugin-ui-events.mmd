@@ -38,15 +38,19 @@ flowchart LR
   classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
   classDef node_message_buffer fill:#EDF4F6,stroke:#247B91,stroke-width:1.6px,color:#1F3340
   classDef node_event fill:#F9F3EE,stroke:#B66B2D,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_scheduling_constraint fill:#F5F3F8,stroke:#7C6AA6,stroke-width:1.6px,color:#1F3340
+  classDef node_system_group fill:#F2F5F7,stroke:#607C96,stroke-width:1.6px,color:#1F3340
+  classDef node_observer_group fill:#F7F3F6,stroke:#9A648D,stroke-width:1.6px,color:#1F3340
   classDef node_plugin fill:#F1F3F6,stroke:#4A6389,stroke-width:2.2px,color:#1F3340
-  classDef node_contract fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
-  classDef node_note fill:#F7F7F5,stroke:#9A9B88,stroke-width:1.2px,color:#1F3340
+  classDef node_operation_result fill:#F5F6F3,stroke:#7D8963,stroke-width:1.2px,color:#1F3340
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_publish stroke:#247B91,stroke-width:1.8px,stroke-dasharray:10 4 2 4
   classDef edge_consume stroke:#247B91,stroke-width:1.8px,stroke-dasharray:2 4
   classDef edge_observe stroke:#B66B2D,stroke-width:1.8px,stroke-dasharray:2 4
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
-  classDef edge_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef edge_group_membership stroke:#607C96,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_constraint stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:10 4 2 4
   classDef external_node stroke-dasharray:6 4
   subgraph diagram_main[" "]
@@ -158,8 +162,8 @@ flowchart LR
   end
   style layout_card_n20 fill:none,stroke:none
   subgraph layout_card_n21[" "]
-  n21@{ shape: lin-rect, label: "**音量元组 · after(Build / Pointer)**<br/>组织音量输入采样与显示更新的局部调度。" }
-  class n21 node_contract
+  n21@{ shape: fr-rect, label: "**音量元组 · after(Build / Pointer)**<br/>组织音量输入采样与显示更新的局部调度。" }
+  class n21 node_system_group
   end
   style layout_card_n21 fill:none,stroke:none
   subgraph layout_card_n22[" "]
@@ -174,7 +178,7 @@ flowchart LR
   style layout_card_n23 fill:none,stroke:none
   subgraph layout_card_n24[" "]
   n24@{ shape: lin-rect, label: "**UiSystems::Style**<br/>组织菜单显示、数值与说明的原位更新。" }
-  class n24 node_contract
+  class n24 node_system_set
   end
   style layout_card_n24 fill:none,stroke:none
   subgraph layout_card_n25[" "]
@@ -246,13 +250,13 @@ flowchart LR
   style layout_card_n37 fill:none,stroke:none
   subgraph layout_card_n38[" "]
   n38@{ shape: doc, label: "**NextState → StateTransition**<br/>来自应用流程 ↗：将开始、返回、暂停与恢<br/>复请求提交状态切换。" }
-  class n38 node_note
+  class n38 node_operation_result
   class n38 external_node
   end
   style layout_card_n38 fill:none,stroke:none
   subgraph layout_card_n39[" "]
   n39@{ shape: hex, label: "**ScrollbarPlugin · pointer observers**<br/>来自Bevy 引擎 ↗：处理滚动条的轨道分页<br/>与滑块拖动。" }
-  class n39 node_observer
+  class n39 node_observer_group
   class n39 external_node
   end
   style layout_card_n39 fill:none,stroke:none
@@ -282,7 +286,7 @@ flowchart LR
   style layout_card_n43 fill:none,stroke:none
   subgraph layout_card_n44[" "]
   n44@{ shape: lin-rect, label: "**UI Style → Audio Mix → Playback**<br/>来自应用流程 ↗：约束界面显示更新先于音<br/>量混合与播放。" }
-  class n44 node_contract
+  class n44 node_scheduling_constraint
   class n44 external_node
   end
   style layout_card_n44 fill:none,stroke:none
@@ -318,19 +322,19 @@ flowchart LR
   n20 e0@-->|"MenuHover"| n33
   class e0 edge_publish
   n21 e1@--> n22
-  class e1 edge_membership
+  class e1 edge_group_membership
   n21 e2@--> n23
-  class e2 edge_membership
+  class e2 edge_group_membership
   n24 e3@--> n25
-  class e3 edge_membership
+  class e3 edge_set_membership
   n24 e4@--> n26
-  class e4 edge_membership
+  class e4 edge_set_membership
   n24 e5@--> n27
-  class e5 edge_membership
+  class e5 edge_set_membership
   n24 e6@--> n28
-  class e6 edge_membership
+  class e6 edge_set_membership
   n24 e7@--> n29
-  class e7 edge_membership
+  class e7 edge_set_membership
   n0 e8@--> n34
   class e8 edge_write
   n0 e9@--> n35

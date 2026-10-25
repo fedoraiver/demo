@@ -33,10 +33,11 @@ flowchart TB
   accDescr: 物品交互的系统与调度；外部契约保留摘要，可跳转到所属插件。
   %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
   classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
-  classDef node_contract fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_sync fill:#F6F3F0,stroke:#8B6A42,stroke-width:1.6px,color:#1F3340
   classDef edge_schedule stroke:#334155,stroke-width:3px
   classDef edge_order stroke:#334155,stroke-width:2px
-  classDef edge_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
   subgraph diagram_main[" "]
   direction LR
@@ -44,12 +45,12 @@ flowchart TB
   subgraph sg0["FixedFirst"]
   direction TB
   n16@{ shape: lin-rect, label: "**TransformEasingSystems::Reset**<br/>来自Avian ↗：重置上一轮固定步的插值状<br/>态。" }
-  class n16 node_contract
+  class n16 node_system_set
   class n16 external_node
   n13@{ shape: rounded, label: "**resume_carry_easing**<br/>恢复物品释放前未暂停的插值通道。" }
   class n13 node_system
-  n17@{ shape: lin-rect, label: "**ApplyDeferred · 恢复插值**<br/>来自越界恢复 ↗：使插值暂停清理在新固定<br/>步采样前可见。" }
-  class n17 node_contract
+  n17@{ shape: rounded, label: "**ApplyDeferred · 恢复插值**<br/>来自越界恢复 ↗：使插值暂停清理在新固定<br/>步采样前可见。" }
+  class n17 node_sync
   class n17 external_node
   n16 layout_0@~~~ n13
   n13 layout_1@~~~ n17
@@ -61,8 +62,8 @@ flowchart TB
   class n18 external_node
   n0@{ shape: rounded, label: "**handle_interaction**<br/>处理物品拾取、共享持握与主动释放。" }
   class n0 node_system
-  n19@{ shape: lin-rect, label: "**ApplyDeferred（交互 → 呈现 / 挂接）**<br/>来自Bevy 引擎 ↗：使拿放后的关系与刚体<br/>变更对后续系统可见。" }
-  class n19 node_contract
+  n19@{ shape: rounded, label: "**ApplyDeferred（交互 → 呈现 / 挂接）**<br/>来自Bevy 引擎 ↗：使拿放后的关系与刚体<br/>变更对后续系统可见。" }
+  class n19 node_sync
   class n19 external_node
   n1@{ shape: rounded, label: "**sync_held_presentation**<br/>按人物呈现姿态同步持物模型与握持目标。" }
   class n1 node_system
@@ -70,8 +71,8 @@ flowchart TB
   class n3 node_system
   n4@{ shape: rounded, label: "**warn_hold_strain**<br/>检查持续持握偏差并发出失稳提示音。" }
   class n4 node_system
-  n20@{ shape: lin-rect, label: "**ApplyDeferred（清理 / 装卸依赖）**<br/>来自Bevy 引擎 ↗：使持物清理与刚体装卸<br/>变更对后续同步可见。" }
-  class n20 node_contract
+  n20@{ shape: rounded, label: "**ApplyDeferred（清理 / 装卸依赖）**<br/>来自Bevy 引擎 ↗：使持物清理与刚体装卸<br/>变更对后续同步可见。" }
+  class n20 node_sync
   class n20 external_node
   n6@{ shape: rounded, label: "**cleanup_orphaned_colliders**<br/>清理物品销毁后残留的碰撞代理。" }
   class n6 node_system
@@ -84,7 +85,7 @@ flowchart TB
   n10@{ shape: rounded, label: "**sync_held_physics**<br/>按人物物理姿态同步持物位置与碰撞代理。" }
   class n10 node_system
   n23@{ shape: lin-rect, label: "**FixedGameplaySystems**<br/>来自应用流程 ↗：协调恢复、朝向、运动、<br/>交互与持握的固定步顺序。" }
-  class n23 node_contract
+  class n23 node_system_set
   class n23 external_node
   n18 layout_2@~~~ n0
   n0 layout_3@~~~ n19
@@ -102,12 +103,12 @@ flowchart TB
   subgraph sg2["FixedPostUpdate"]
   direction TB
   n21@{ shape: lin-rect, label: "**PhysicsSystems::Writeback**<br/>来自Avian ↗：将求解后的物理位姿写回显<br/>示变换。" }
-  class n21 node_contract
+  class n21 node_system_set
   class n21 external_node
   n11@{ shape: rounded, label: "**sync_held_physics**<br/>按最新物理位姿同步持物与碰撞代理。" }
   class n11 node_system
-  n22@{ shape: lin-rect, label: "**PhysicsSystems::StepSimulation /**<br/>**PhysicsSchedule**<br/>来自Avian ↗：执行碰撞求解、重力积分与<br/>刚体运动。" }
-  class n22 node_contract
+  n22@{ shape: lin-rect, label: "**PhysicsSystems::StepSimulation**<br/>来自Avian ↗：执行碰撞求解、重力积分与<br/>刚体运动。" }
+  class n22 node_system_set
   class n22 external_node
   n5@{ shape: rounded, label: "**emit_parcel_land**<br/>识别自由物品落地并发出声音请求。" }
   class n5 node_system
@@ -128,7 +129,7 @@ flowchart TB
   class n15 node_system
   class n15 external_node
   n24@{ shape: lin-rect, label: "**PresentationSystems**<br/>来自应用流程 ↗：协调插值后的持物、镜头<br/>与可见性同步。" }
-  class n24 node_contract
+  class n24 node_system_set
   class n24 external_node
   n14 layout_17@~~~ n12
   n12 layout_18@~~~ n2
@@ -178,15 +179,15 @@ flowchart TB
   n22 e17@--> n5
   class e17 edge_order
   n23 e18@-->|"Interaction"| n0
-  class e18 edge_membership
+  class e18 edge_set_membership
   n23 e19@-->|"Target"| n1
-  class e19 edge_membership
+  class e19 edge_set_membership
   n23 e20@-->|"Attachment"| n10
-  class e20 edge_membership
+  class e20 edge_set_membership
   n24 e21@-->|"HeldPhysics"| n12
-  class e21 edge_membership
+  class e21 edge_set_membership
   n24 e22@-->|"HeldPresentation"| n2
-  class e22 edge_membership
+  class e22 edge_set_membership
   end
   e0@{ curve: basis }
   e1@{ curve: basis }

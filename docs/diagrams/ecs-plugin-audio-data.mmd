@@ -36,7 +36,8 @@ flowchart TB
   classDef node_observer fill:#F4F1F9,stroke:#7B4DB2,stroke-width:1.6px,color:#1F3340
   classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
   classDef node_message_buffer fill:#EDF4F6,stroke:#247B91,stroke-width:1.6px,color:#1F3340
-  classDef node_contract fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_system_group fill:#F2F5F7,stroke:#607C96,stroke-width:1.6px,color:#1F3340
+  classDef node_engine_flow fill:#F1F5F4,stroke:#557C78,stroke-width:1.6px,color:#1F3340
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_publish stroke:#247B91,stroke-width:1.8px,stroke-dasharray:10 4 2 4
@@ -52,11 +53,11 @@ flowchart TB
   class n1 node_resource
   n6@{ shape: cyl, label: "**AudioMix**<br/>保存界面与音效通道当前采用的有效音量。" }
   class n6 node_resource
-  n8@{ shape: lin-rect, label: "**已接入的反馈生产者**<br/>来自物品交互 ↗：汇总菜单交互与物品运动<br/>产生的声音反馈。" }
-  class n8 node_contract
+  n8@{ shape: fr-rect, label: "**已接入的反馈生产者**<br/>来自物品交互 ↗：汇总菜单交互与物品运动<br/>产生的声音反馈。" }
+  class n8 node_system_group
   class n8 external_node
-  n9@{ shape: lin-rect, label: "**Update / Kira 播放输出**<br/>将声音请求按有效混音与播放策略提交音频实<br/>例。" }
-  class n9 node_contract
+  n9@{ shape: stadium, label: "**Kira 播放输出流程**<br/>将声音请求按有效混音与播放策略提交音频实<br/>例。" }
+  class n9 node_engine_flow
   n10@{ shape: rounded, label: "**pointer_interaction**<br/>来自菜单与界面 ↗：将真实鼠标交互转换为<br/>共享菜单请求。" }
   class n10 node_system
   class n10 external_node

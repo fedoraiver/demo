@@ -38,7 +38,7 @@ flowchart TB
   classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
   classDef node_local fill:#F8F5F1,stroke:#AA8752,stroke-width:1.6px,color:#1F3340
   classDef node_message_buffer fill:#EDF4F6,stroke:#247B91,stroke-width:1.6px,color:#1F3340
-  classDef node_note fill:#F7F7F5,stroke:#9A9B88,stroke-width:1.2px,color:#1F3340
+  classDef node_bsn_layout fill:#F3F6F7,stroke:#6C8D9D,stroke-width:1.2px,color:#1F3340
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_publish stroke:#247B91,stroke-width:1.8px,stroke-dasharray:10 4 2 4
   classDef edge_consume stroke:#247B91,stroke-width:1.8px,stroke-dasharray:2 4
@@ -208,7 +208,7 @@ flowchart TB
   n9@{ shape: notch-rect, label: "**Local · previous_layout**<br/>保存上次菜单结构以判断是否需要重建。" }
   class n9 node_local
   n11@{ shape: doc, label: "**设置固定区域**<br/>保留设置分类、底部操作与页脚的固定位置。" }
-  class n11 node_note
+  class n11 node_bsn_layout
   n5 layout_11@~~~ n7
   n7 layout_12@~~~ n9
   n9 layout_13@~~~ n11

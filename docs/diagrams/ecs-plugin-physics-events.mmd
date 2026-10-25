@@ -35,6 +35,7 @@ flowchart LR
   classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
   classDef node_message fill:#EDF4F6,stroke:#247B91,stroke-width:1.6px,color:#1F3340
   classDef node_plugin fill:#F1F3F6,stroke:#4A6389,stroke-width:2.2px,color:#1F3340
+  classDef node_plugin_group fill:#F4F2F6,stroke:#735C93,stroke-width:2.2px,color:#1F3340
   classDef node_external_io fill:#F1F3F4,stroke:#526A78,stroke-width:1.6px,color:#1F3340
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_consume stroke:#247B91,stroke-width:1.8px,stroke-dasharray:2 4
@@ -53,7 +54,7 @@ flowchart LR
   class n3 node_message
   class n3 external_node
   n4@{ shape: fr-rect, label: "**PhysicsPlugins::default()**<br/>来自Avian ↗：提供固定步刚体模拟与碰撞<br/>求解。" }
-  class n4 node_plugin
+  class n4 node_plugin_group
   class n4 external_node
   n5@{ shape: lean-l, label: "**tracing producer**<br/>来自会话日志 ↗：格式化日志并交给独立文<br/>件与控制台队列。" }
   class n5 node_external_io

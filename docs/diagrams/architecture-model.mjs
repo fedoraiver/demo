@@ -1,5 +1,6 @@
 // 将已核对清单组织为功能局部图；这里不推断 Rust 语义或绘制图形。
 import { INFRASTRUCTURE_FEATURES, infrastructureFeature } from './architecture-infrastructure.mjs';
+import { nodeKindOf } from './architecture-kinds.mjs';
 
 export const SCHEDULE_GROUP_DISPLAY_LABELS = Object.freeze({
   FixedLast: 'FixedLast',
@@ -25,7 +26,7 @@ export function scheduleGroupLabel(group, registry) {
 
 // 主入口统一装配插件；保留清单记录，但不在各图重复展示这类注册关系。
 export function isMainPluginRegistration(link, registry) {
-  return link.kind === 'registration' && link.from === 'app-main' && registry[link.to]?.kind === 'Plugin';
+  return link.kind === 'registration' && link.from === 'app-main' && ['Plugin', 'PluginGroup'].includes(registry[link.to]?.kind);
 }
 
 export function buildArchitectureModel(model) {
@@ -45,7 +46,7 @@ export function buildArchitectureModel(model) {
     const feature = node.feature || model.node_features?.[id];
     if (!feature) throw new Error(`架构节点 ${id} 缺少明确的功能归属`);
     if (!infrastructureFeature(feature) && !featureById.has(feature)) throw new Error(`架构节点 ${id} 的功能不存在：${feature}`);
-    registry[id] = { ...node, id, feature };
+    registry[id] = { ...node, kind: nodeKindOf(node), id, feature };
   }
   for (const system of model.systems || []) {
     const feature = system.feature || (featureById.has(system.module) ? system.module : 'infrastructure');
@@ -67,7 +68,8 @@ export function buildArchitectureModel(model) {
   for (const node of model.nodes || []) register(node.id, node);
   // 关系沿连线阅读，也保留独立详情；不因此添加实体之外的额外卡片。
   for (const relation of model.relationships || []) {
-    register(relation.id, { ...relation, kind: 'Relationship', relationship_kind: relation.kind });
+    if (!['reference', 'relationship'].includes(relation.kind)) throw new Error(`未知的实体关系类别：${relation.id}/${relation.kind}`);
+    register(relation.id, { ...relation, kind: relation.kind === 'relationship' ? 'Relationship' : 'Entity reference', relationship_kind: relation.kind });
   }
   // 旧入口仍可定位同一个插件；别名不用于合并不同系统注册或不同实体组件。
   const aliases = model.node_aliases || {};
@@ -76,6 +78,12 @@ export function buildArchitectureModel(model) {
     if (!from || !to || aliases[target] || alias === target || from.kind !== 'Plugin' || to.kind !== 'Plugin' || from.feature !== to.feature || from.name !== to.name || from.source?.path !== to.source?.path || from.source?.line !== to.source?.line) throw new Error(`无效的同插件旧入口别名：${alias} → ${target}`);
     from.alias_of = target;
     to.aliases = [...(to.aliases || []), alias];
+  }
+  // 旧说明入口只重定向到同一对象，不是具有另一类型的独立卡片。
+  for (const node of Object.values(registry)) if (node.alias_of) {
+    const target = registry[node.alias_of];
+    if (!target) throw new Error(`架构别名缺少目标：${node.id} → ${node.alias_of}`);
+    node.kind = target.kind;
   }
   const resolveNode = id => aliases[id] || id;
   const ownerOf = id => registry[id]?.feature || model.node_features?.[id] || 'infrastructure';
@@ -88,9 +96,9 @@ export function buildArchitectureModel(model) {
   }
   const viewLinks = links.filter(link => !isMainPluginRegistration(link, registry));
   const kind = id => registry[id]?.kind || '';
-  const isMessage = id => /EntityEvent|Message|External I\/O|Native platform event|Engine observers/.test(kind(id)) || /^Messages</.test(registry[id]?.name || '');
-  const isRegistration = id => /Plugin|Registration helper/.test(kind(id));
-  const isSystem = id => systems.has(id) || /^(?:system|sync|engine)$/i.test(kind(id)) || /SystemSet|Engine system|Scheduling contract|Native platform bridge/.test(kind(id));
+  const isMessage = id => ['EntityEvent', 'Message', 'Messages<T>', 'External I/O', 'Platform event', 'Observer group'].includes(kind(id));
+  const isRegistration = id => ['Plugin', 'PluginGroup', 'Registration helper'].includes(kind(id));
+  const isSystem = id => systems.has(id) || ['System', 'Synchronization', 'SystemSet', 'System group', 'Observer group', 'Engine flow', 'Scheduling constraint', 'Platform API'].includes(kind(id));
   const eventEndpoint = id => isMessage(id) || extraById.get(id)?.aspects?.includes('events');
   const eventLink = link => link.kind === 'trigger' || link.kind === 'registration' || ((link.kind === 'read' || link.kind === 'write' || link.kind === 'reference') && (eventEndpoint(link.from) || eventEndpoint(link.to)));
   const relationIds = new Set((model.relationships || []).map(relation => relation.id));
@@ -154,7 +162,7 @@ export function buildArchitectureModel(model) {
       if (observers.has(id)) return 'Observer';
       if (isMessage(id)) return kind(id) === 'External I/O' ? '日志与外部输出' : '事件与消息';
       if (isRegistration(id)) return '插件注册与装配';
-      if (kind(id) === 'sync' || /SystemSet|Scheduling contract/.test(kind(id))) return '调度与命令同步';
+      if (['Synchronization', 'SystemSet', 'Scheduling constraint'].includes(kind(id))) return '调度与命令同步';
       return aspect === 'data' ? '数据契约与结构说明' : aspect === 'events' ? '消息处理与平台桥接' : '功能系统';
     }
     const graphNodes = [...visible].map(id => ({

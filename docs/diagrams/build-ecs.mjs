@@ -9,6 +9,7 @@ import { compileArchitectureArtifacts } from './mermaid-compiler.mjs';
 import { renderArchitectureViewer } from './architecture-viewer.mjs';
 import { buildComponentCatalog } from './architecture-components.mjs';
 import { applyArchitectureSourcePolicies, applyArchitectureEdgeSourcePolicies, sourcePolicyFor } from './architecture-source-policy.mjs';
+import { attachAppScheduleSources } from './architecture-app-schedule-sources.mjs';
 import { writeSourceViewer } from './source-viewer.mjs';
 import { createSourceLocator } from './source-locator.mjs';
 import { DEPENDENCY_SOURCE_DEFINITIONS } from './architecture-source-definitions.mjs';
@@ -32,7 +33,7 @@ const components = buildComponentCatalog(model, registry);
 const sourceOptions = { model, repository: root, registry, dependencyContext: { metadata: cargoMetadata, resolver: dependencySources } };
 const sourceAudit = applyArchitectureSourcePolicies(registry, sourceOptions);
 for (const record of Object.values(registry)) {
-  if (!['system', 'observer', 'Engine system'].includes(record.kind) && record.sourcePolicyKind !== 'system') continue;
+  if (!['System', 'Observer'].includes(record.kind) && record.sourcePolicyKind !== 'system') continue;
   const declarations = (record.sourceEntries || []).filter(source => source.role === 'definition').flatMap(source => {
     const lines = source.dependency ? dependencySources.read(source).lines : fs.readFileSync(path.join(root, source.path), 'utf8').split(/\r?\n/);
     if (!/\bfn\s+\w+/.test(lines[source.line - 1] || '')) return [];
@@ -56,7 +57,10 @@ for (const type of components.types) {
     componentTypeId: type.id, componentNodeId: type.componentNodeId, projectionIds: type.projectionIds, ownerEntityIds: type.ownerEntityIds, componentDetails: type.details,
   }, graph, registry, features));
 }
-for (const view of views) applyArchitectureEdgeSourcePolicies(view.links, { ...sourceOptions, context: sourceAudit.context });
+for (const view of views) {
+  applyArchitectureEdgeSourcePolicies(view.links, { ...sourceOptions, context: sourceAudit.context });
+  attachAppScheduleSources(view, dependencySources);
+}
 for (const id of model.required_nodes ?? []) {
   if (!registry[id] || !views.some(view => view.nodes.some(node => node.id === architecture.resolveNode(id)) || view.projectionIds?.includes(architecture.resolveNode(id)))) throw new Error(`Required architecture node is missing from views: ${id}`);
 }

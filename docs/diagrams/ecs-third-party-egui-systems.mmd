@@ -33,7 +33,7 @@ flowchart TB
   accDescr: Egui / Inspector的系统与调度；外部契约保留摘要，可跳转到所属插件。
   %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
   classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
-  classDef node_contract fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
   classDef edge_order stroke:#334155,stroke-width:2px
   classDef external_node stroke-dasharray:6 4
   subgraph diagram_main[" "]
@@ -42,15 +42,15 @@ flowchart TB
   subgraph sg0["PreUpdate"]
   direction TB
   n3@{ shape: lin-rect, label: "**InputSystems**<br/>来自Bevy 引擎 ↗：汇总键盘与鼠标输入状<br/>态。" }
-  class n3 node_contract
+  class n3 node_system_set
   class n3 external_node
   n0@{ shape: lin-rect, label: "**EguiPreUpdateSet::ProcessInput**<br/>将窗口和设备输入转换为检查器界面输入。" }
-  class n0 node_contract
+  class n0 node_system_set
   n4@{ shape: rounded, label: "**filter_captured_egui_input**<br/>来自第一人称控制 ↗：隔离游戏操作与检查<br/>器界面输入。" }
   class n4 node_system
   class n4 external_node
   n1@{ shape: lin-rect, label: "**EguiPreUpdateSet::BeginPass**<br/>界定检查器界面开始计算前的输入准备阶段。" }
-  class n1 node_contract
+  class n1 node_system_set
   n5@{ shape: rounded, label: "**sync_mouse_capture**<br/>来自第一人称控制 ↗：管理光标捕获及玩法<br/>输入启停。" }
   class n5 node_system
   class n5 external_node
@@ -61,7 +61,7 @@ flowchart TB
   end
   subgraph sg1["EguiPrimaryContextPass"]
   direction TB
-  n2@{ shape: rounded, label: "**WorldInspectorPlugin / world_**<br/>**inspector_ui**<br/>展示并编辑开放反射的实体、资源与资产。" }
+  n2@{ shape: rounded, label: "**world_inspector_ui**<br/>展示并编辑开放反射的实体、资源与资产。" }
   class n2 node_system
   end
   sg0 layout_4@~~~ sg1

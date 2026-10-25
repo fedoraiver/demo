@@ -5,11 +5,13 @@ import { fileURLToPath } from 'node:url';
 import { isDeepStrictEqual } from 'node:util';
 import { checkMermaidGeometry } from './diagram-geometry.mjs';
 import { NODE_STYLES, EDGE_STYLES, SELECTION_STYLE, EXTERNAL_REFERENCE_STYLE, visualTypeOf, edgeSemanticOf, displayLabelOf, scheduleLinksFor } from './architecture-style.mjs';
+import { nodeKindOf, NODE_KINDS } from './architecture-kinds.mjs';
 import { shapeBounds, svgElements } from './svg-shape-geometry.mjs';
 import { isMainPluginRegistration, scheduleGroupLabel, buildArchitectureModel } from './architecture-model.mjs';
 import { buildComponentCatalog } from './architecture-components.mjs';
 import { sourceEntriesFor, sourcePolicyKindFor, sourcePolicyFor } from './architecture-source-policy.mjs';
 import { DATA_GROUP_LABELS, entityComponentColumns } from './architecture-renderer.mjs';
+import { buildAppSchedule, APP_SCHEDULE_GROUPS } from './architecture-app-schedule.mjs';
 import { displayEndpoints, inspectViewRoutes, ROUTING_STYLE, nativeSvgProperty, nativeMarkerProperty } from './architecture-routing.mjs';
 import { INFRASTRUCTURE_FEATURES, infrastructureFeature, architectureViewId } from './architecture-infrastructure.mjs';
 import { DEPENDENCY_SOURCE_DEFINITIONS } from './architecture-source-definitions.mjs';
@@ -142,6 +144,11 @@ export function checkGuideSamples(samples, styles) {
 export function checkMermaidStyles(view, registry) {
   if (!styledView(view)) return;
   const elements = svgElements(view.svg);
+  if (view.layout === 'app-schedule') for (const group of view.scheduleGroups.filter(group => !group.nodes.length)) {
+    const anchor = elements.find(item => item.attrs.id?.startsWith(`${view.id}-flowchart-phase_anchor_${group.mermaidId}-`));
+    const parts = anchor && descendantsOf(elements, anchor).filter(item => ['rect', 'path', 'polygon', 'circle', 'ellipse'].includes(item.tag));
+    requireCondition(parts?.length && parts.every(part => Number(effectiveStyle(part).opacity) === 0), `Visible empty Schedule layout anchor: ${group.id}`);
+  }
   for (const node of view.nodes) {
     const element = elements.find(item => item.attrs['data-id'] === node.id), expected = NODE_STYLES[node.visualType];
     requireCondition(expected && element?.attrs['data-visual-type'] === node.visualType && (!element.attrs['data-shape'] || element.attrs['data-shape'] === node.shape), `Visual node type mismatch: ${node.id}`);
@@ -208,6 +215,8 @@ export function checkViewRouting(view) {
 }
 
 function checkMermaidSource(view, registry, scheduleDefinitions) {
+  const appSchedule = view.layout === 'app-schedule';
+  if (appSchedule) scheduleDefinitions = new Map(APP_SCHEDULE_GROUPS.map(group => [group.id, group]));
   requireCondition(view.diagramType === 'flowchart' && /^\s*flowchart\s+(LR|RL|TB)\s*$/m.test(view.mermaid), `Expected Mermaid flowchart LR, RL or TB: ${view.id}`);
   if (view.routing) {
     const configuration = /^---\r?\n([\s\S]*?)\r?\n---/.exec(view.mermaid);
@@ -274,7 +283,9 @@ function checkMermaidSource(view, registry, scheduleDefinitions) {
         && definition.shape === node.shape && compactText(display?.label) === compactText(renderedNodeLabel(node)), `Mermaid node style or label mismatch: ${node.id}`);
     }
   }
-  requireCondition(nodes.size === view.nodes.length + entityHeaders.size, `Mermaid node declaration count mismatch: ${view.id}`);
+  const phaseAnchors = appSchedule ? view.scheduleGroups.filter(group => !group.nodes.length).map(group => `phase_anchor_${group.mermaidId}`) : [];
+  for (const id of phaseAnchors) requireCondition(nodes.get(id)?.shape === 'anchor' && !nodes.get(id).label.trim(), `Invalid empty Schedule anchor: ${view.id}/${id}`);
+  requireCondition(nodes.size === view.nodes.length + entityHeaders.size + phaseAnchors.length, `Mermaid node declaration count mismatch: ${view.id}`);
   for (const [id] of entityHeaders) requireCondition(nodes.get(id)?.shape === 'text', `Invalid Entity header declaration: ${view.id}/${id}`);
   const ids = new Set();
   for (const link of view.links) {
@@ -308,10 +319,10 @@ function checkMermaidSource(view, registry, scheduleDefinitions) {
   let previousOrder = -Infinity;
   for (const group of view.scheduleGroups) {
     const definition = scheduleDefinitions.get(group.id), declaration = groups.get(group.mermaidId);
-    requireCondition(view.aspect === 'systems' && definition && Array.isArray(group.nodes) && group.label === scheduleGroupLabel({ ...definition, nodes: group.nodes }, registry) && group.order === definition.order
+    requireCondition((view.aspect === 'systems' || appSchedule) && definition && Array.isArray(group.nodes) && group.label === (appSchedule ? definition.label : scheduleGroupLabel({ ...definition, nodes: group.nodes }, registry)) && group.order === definition.order
       && group.order > previousOrder && !groupIds.has(group.id), `Invalid or unordered Schedule group in ${view.id}: ${group.id}`);
-    requireCondition(declaration?.direction === 'TB' && Array.isArray(group.nodes) && group.nodes.length > 0
-      && isDeepStrictEqual(declaration.nodes, group.nodes.map(id => canonicalToMermaid.get(id))), `Mermaid Schedule declaration mismatch: ${group.id}`);
+    requireCondition(declaration?.direction === 'TB' && Array.isArray(group.nodes) && (group.nodes.length > 0 || appSchedule)
+      && isDeepStrictEqual(declaration.nodes, group.nodes.length ? group.nodes.map(id => canonicalToMermaid.get(id)) : [`phase_anchor_${group.mermaidId}`]), `Mermaid Schedule declaration mismatch: ${group.id}`);
     if (styledView(view)) requireCondition(group.track === definition.track && group.parent === definition.parent && normalizedText(declaration.label) === normalizedText(group.label), `Mermaid Schedule contract mismatch: ${group.id}`);
     previousOrder = group.order;
     groupIds.add(group.id);
@@ -320,7 +331,7 @@ function checkMermaidSource(view, registry, scheduleDefinitions) {
       grouped.add(id);
     }
   }
-  if (view.aspect === 'systems') requireCondition(grouped.size === view.nodes.length, `Schedule groups do not cover all nodes: ${view.id}`);
+  if (view.aspect === 'systems' || appSchedule) requireCondition(grouped.size === view.nodes.length, `Schedule groups do not cover all nodes: ${view.id}`);
   for (const group of view.entityGroups || []) {
     if (group.expanded === false) {
       requireCondition(!groups.has(group.mermaidId) && nodes.get(group.mermaidId)?.shape === 'rect', `Mermaid collapsed Entity declaration mismatch: ${view.id}/${group.id}`);
@@ -346,6 +357,19 @@ function checkMermaidSource(view, registry, scheduleDefinitions) {
   }
   if (view.aspect === 'data') requireCondition(!groups.has('diagram_main') && /^\s*flowchart\s+TB\s*$/m.test(view.mermaid), `Invalid compact Mermaid data direction: ${view.id}`);
   else if (/^\s*flowchart\s+TB\s*$/m.test(view.mermaid)) requireCondition(groups.get('diagram_main')?.direction === 'LR', `Invalid Mermaid main direction: ${view.id}`);
+}
+
+export function checkAppSchedule(view, model, registry) {
+  requireCondition(view.id === 'overview' && view.feature === null && view.aspect === 'overview' && view.layout === 'app-schedule', 'Overview must show the App system schedule');
+  const expected = buildAppSchedule(model, registry);
+  const nodeKeys = nodes => nodes.map(node => [node.id, node.role]).sort(([a], [b]) => a.localeCompare(b));
+  requireCondition(isDeepStrictEqual(nodeKeys(view.nodes), nodeKeys(expected.graph.nodes)), 'App schedule node coverage mismatch');
+  const linkKeys = links => links.map(({ id, from, to, kind, label }) => ({ id, from, to, kind, label })).sort((a, b) => a.id.localeCompare(b.id));
+  requireCondition(isDeepStrictEqual(linkKeys(view.links), linkKeys(expected.graph.links)), 'App schedule dependency coverage mismatch');
+  const groupKeys = groups => groups.map(({ id, label, order, track, parent, schedule, notes, nodes }) => ({ id, label, order, track, parent, schedule, notes, nodes: nodes.map(node => typeof node === 'string' ? node : node.id) }));
+  requireCondition(isDeepStrictEqual(groupKeys(view.scheduleGroups), groupKeys(expected.groups)), 'App schedule phase or registration mismatch');
+  const phaseKeys = links => links.map(({ id, from, to, edgeSemantic, displayLabel, notes }) => ({ id, from, to, edgeSemantic, displayLabel, notes }));
+  requireCondition(isDeepStrictEqual(phaseKeys(view.scheduleLinks), phaseKeys(expected.phaseLinks)), 'App schedule execution path mismatch');
 }
 
 /** 核对清单、图、源码入口和快照；成功返回数量摘要，失败抛出英文错误。 */
@@ -408,6 +432,9 @@ export function checkArchitecture(root, { dependencyDefinitions = DEPENDENCY_SOU
   }
   for (const [id, node] of Object.entries(registry)) {
     requireCondition(node && node.id === id, `Registry node ID mismatch: ${id}`);
+    const kind = nodeKindOf(node);
+    if (artifact.schemaVersion === 2) requireCondition(node.kind === kind, `Noncanonical node category: ${id}/${node.kind}`);
+    requireCondition(NODE_KINDS[kind], `Unclassified architecture node: ${id}`);
     requireCondition(featureIds.has(node.feature), `Invalid node feature: ${id}`);
   }
   const aliases = model.node_aliases || {};
@@ -477,7 +504,7 @@ export function checkArchitecture(root, { dependencyDefinitions = DEPENDENCY_SOU
       requireCondition(isDeepStrictEqual(view.nodes.map(node => [node.id, node.role]), expected.graph.nodes.map(node => [node.id, node.role])), `Component view Entity/System coverage mismatch: ${view.id}`);
       const coreLink = ({ id, from, to, kind, operation, label, projectionIds, registrationIds, originalLinkIds, sourceLinkIds }) => ({ id, from, to, kind, operation, label, projectionIds, registrationIds, originalLinkIds, sourceLinkIds });
       requireCondition(isDeepStrictEqual(view.links.map(coreLink), expected.graph.links.map(coreLink)), `Component view operation coverage mismatch: ${view.id}`);
-      const functions = view.nodes.map(node => registry[node.id]).filter(node => ['system', 'observer'].includes(node.kind));
+      const functions = view.nodes.map(node => registry[node.id]).filter(node => ['System', 'Observer'].includes(nodeKindOf(node)));
       const identities = functions.map(node => JSON.stringify([node.definition_source?.dependency?.name || '', node.source?.path, node.source?.line, node.name]));
       requireCondition(new Set(identities).size === identities.length, `Duplicate system function in component view: ${view.id}`);
     }
@@ -533,7 +560,7 @@ export function checkArchitecture(root, { dependencyDefinitions = DEPENDENCY_SOU
       requireCondition(rendered && rendered['data-id'] === id && rendered['data-role'] === role && rendered['data-feature'] === registry[id].feature
         && boxes.has(instance), `Visual node metadata mismatch in ${view.id}: ${instance}`);
       requireCondition(role !== 'plugin' || view.id === 'overview', `Plugin node outside overview: ${instance}`);
-      requireCondition(role !== 'internal' || registry[id].feature === view.feature || projections.get(id)?.has(view.feature), `Foreign internal node in ${view.id}: ${id}`);
+      requireCondition(role !== 'internal' || view.id === 'overview' && view.layout === 'app-schedule' || registry[id].feature === view.feature || projections.get(id)?.has(view.feature), `Foreign internal node in ${view.id}: ${id}`);
       if (role === 'internal') internalIds.add(id);
       pageIds.add(id);
       visibleIds.add(id);
@@ -569,7 +596,7 @@ export function checkArchitecture(root, { dependencyDefinitions = DEPENDENCY_SOU
     }
     if (styledView(view)) {
       requireCondition(Array.isArray(view.scheduleLinks), `Missing Schedule link manifest: ${view.id}`);
-      const expectedScheduleLinks = scheduleLinksFor(view.scheduleGroups).map(({ id, from, to, edgeSemantic, displayLabel }) => ({ id, from, to, edgeSemantic, displayLabel }));
+      const expectedScheduleLinks = (view.layout === 'app-schedule' ? buildAppSchedule(model, registry).phaseLinks : scheduleLinksFor(view.scheduleGroups)).map(({ id, from, to, edgeSemantic, displayLabel }) => ({ id, from, to, edgeSemantic, displayLabel }));
       const actualScheduleLinks = view.scheduleLinks.map(({ id, from, to, edgeSemantic, displayLabel }) => ({ id, from, to, edgeSemantic, displayLabel }));
       requireCondition(isDeepStrictEqual(actualScheduleLinks, expectedScheduleLinks), `Schedule relation manifest mismatch: ${view.id}`);
     }
@@ -594,13 +621,14 @@ export function checkArchitecture(root, { dependencyDefinitions = DEPENDENCY_SOU
   const actualMermaidFilenames = fs.readdirSync(directory).filter(filename => /^ecs-.*\.mmd$/.test(filename)).sort();
   requireCondition(isDeepStrictEqual(actualMermaidFilenames, [...mermaidFilenames].sort()), 'Architecture Mermaid file set does not match view manifest');
   const overview = artifact.views.find(view => view.id === 'overview');
+  if (artifact.schemaVersion === 2) checkAppSchedule(overview, model, registry);
   for (const feature of INFRASTRUCTURE_FEATURES) {
-    requireCondition(registry[feature.overviewNode]?.feature === feature.id && registry[feature.overviewNode]?.kind === 'Plugin'
-      && overview.nodes.some(node => node.id === feature.overviewNode && node.role === 'plugin'), `Infrastructure entrance is missing from overview: ${feature.id}`);
+    requireCondition(registry[feature.overviewNode]?.feature === feature.id && ['Plugin', 'PluginGroup'].includes(registry[feature.overviewNode]?.kind)
+      && (overview.layout === 'app-schedule' || overview.nodes.some(node => node.id === feature.overviewNode && node.role === 'plugin')), `Infrastructure entrance is missing from overview: ${feature.id}`);
   }
   for (const feature of features.values()) {
     const id = `plugin-${feature.plugin}`;
-    requireCondition(registry[id]?.feature === feature.id && overview.nodes.some(node => node.id === id && node.role === 'plugin'), `Plugin is missing from overview: ${feature.plugin}`);
+    requireCondition(registry[id]?.feature === feature.id && (overview.layout === 'app-schedule' || overview.nodes.some(node => node.id === id && node.role === 'plugin')), `Plugin is missing from overview: ${feature.plugin}`);
     const pluginIdentities = new Set(Object.values(registry).filter(node => String(node.kind).toLowerCase() === 'plugin' && node.name === feature.plugin && node.feature === feature.id).map(node => resolveNode(node.id)));
     requireCondition(pluginIdentities.size === 1 && pluginIdentities.has(id), `Duplicate semantic project plugin: ${feature.plugin}`);
   }
@@ -645,7 +673,7 @@ export function checkArchitecture(root, { dependencyDefinitions = DEPENDENCY_SOU
   }
   for (const observer of model.observers) {
     const system = systems.get(observer.system);
-    requireCondition(system?.kind === 'observer' && registry[observer.system]?.kind === 'observer', `Invalid observer system: ${observer.system}`);
+    requireCondition(system && nodeKindOf(system) === 'Observer' && registry[observer.system] && nodeKindOf(registry[observer.system]) === 'Observer', `Invalid observer system: ${observer.system}`);
     // 清单现有 events 使用“响应 EntityEvent：”前缀；移除该前缀后精确匹配。
     const matchesEvent = item => typeof observer.event === 'string' && Array.isArray(item.events)
       && item.events.some(event => typeof event === 'string' && event.replace(/^响应 EntityEvent[：:]\s*/, '') === observer.event);
@@ -685,7 +713,7 @@ export function checkArchitecture(root, { dependencyDefinitions = DEPENDENCY_SOU
     if (!value || typeof value !== 'object') return;
     if (typeof value.path === 'string' && Number.isSafeInteger(value.line)) { readReference(value); return; }
     if (value.source != null) readReference(value.source);
-    if (value.kind === 'system' || value.kind === 'observer') {
+    if (['System', 'Observer', 'system', 'observer'].includes(value.kind) && !value.alias_of) {
       const dependencyDefinition = registry[value.id]?.definition_source;
       if (value.definition_source?.dependency) {
         requireCondition(isDeepStrictEqual(value.definition_source, dependencyDefinition), `Unverified dependency function definition: ${value.name}`);

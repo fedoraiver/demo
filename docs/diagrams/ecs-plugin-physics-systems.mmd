@@ -33,7 +33,8 @@ flowchart TB
   accDescr: 物理基础的系统与调度；外部契约保留摘要，可跳转到所属插件。
   %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
   classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
-  classDef node_contract fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_sync fill:#F6F3F0,stroke:#8B6A42,stroke-width:1.6px,color:#1F3340
   classDef edge_schedule stroke:#334155,stroke-width:3px
   classDef edge_order stroke:#334155,stroke-width:2px
   classDef external_node stroke-dasharray:6 4
@@ -53,15 +54,15 @@ flowchart TB
   direction TB
   n2@{ shape: rounded, label: "**wake_changed_bodies**<br/>使休眠身体的外部受力和位姿修改在本固定步<br/>生效。" }
   class n2 node_system
-  n3@{ shape: lin-rect, label: "**ApplyDeferred（提前唤醒 → 物理准备）**<br/>使提前唤醒命令在物理准备前可见。" }
-  class n3 node_contract
-  n5@{ shape: lin-rect, label: "**PhysicsSystems::StepSimulation /**<br/>**PhysicsSchedule**<br/>来自Avian ↗：执行碰撞求解、重力积分与<br/>刚体运动。" }
-  class n5 node_contract
+  n3@{ shape: rounded, label: "**ApplyDeferred（提前唤醒 → 物理准备）**<br/>使提前唤醒命令在物理准备前可见。" }
+  class n3 node_sync
+  n5@{ shape: lin-rect, label: "**PhysicsSystems::StepSimulation**<br/>来自Avian ↗：执行碰撞求解、重力积分与<br/>刚体运动。" }
+  class n5 node_system_set
   class n5 external_node
   n1@{ shape: rounded, label: "**log_collisions**<br/>将碰撞开始与结束写入统一日志。" }
   class n1 node_system
   n6@{ shape: lin-rect, label: "**PhysicsSystems::Prepare**<br/>来自Avian ↗：准备物理步所需的位姿、质<br/>量与碰撞查询数据。" }
-  class n6 node_contract
+  class n6 node_system_set
   class n6 external_node
   n2 layout_1@~~~ n3
   n3 layout_2@~~~ n5

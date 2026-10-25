@@ -36,7 +36,7 @@ flowchart RL
   classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
   classDef node_entity fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
   classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
-  classDef node_contract fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
@@ -215,59 +215,59 @@ flowchart RL
   style layout_card_n28 fill:none,stroke:none
   subgraph layout_card_n29[" "]
   n29@{ shape: lin-rect, label: "**TransformSystems::Propagate**<br/>沿实体层级传播世界变换。" }
-  class n29 node_contract
+  class n29 node_system_set
   end
   style layout_card_n29 fill:none,stroke:none
   subgraph layout_card_n30[" "]
-  n30@{ shape: rounded, label: "**WorldInspectorPlugin / world_**<br/>**inspector_ui**<br/>来自Egui / Inspector ↗：展示并编辑开<br/>放反射的实体、资源与资产。" }
+  n30@{ shape: rounded, label: "**world_inspector_ui**<br/>来自Egui / Inspector ↗：展示并编辑开<br/>放反射的实体、资源与资产。" }
   class n30 node_system
   class n30 external_node
   end
   style layout_card_n30 fill:none,stroke:none
   subgraph layout_card_n31[" "]
   n31@{ shape: lin-rect, label: "**PhysicsSystems::Prepare**<br/>来自Avian ↗：准备物理步所需的位姿、质<br/>量与碰撞查询数据。" }
-  class n31 node_contract
+  class n31 node_system_set
   class n31 external_node
   end
   style layout_card_n31 fill:none,stroke:none
   subgraph layout_card_n32[" "]
   n32@{ shape: lin-rect, label: "**PhysicsSystems::Writeback**<br/>来自Avian ↗：将求解后的物理位姿写回显<br/>示变换。" }
-  class n32 node_contract
+  class n32 node_system_set
   class n32 external_node
   end
   style layout_card_n32 fill:none,stroke:none
   subgraph layout_card_n33[" "]
   n33@{ shape: lin-rect, label: "**TransformEasingSystems::Reset**<br/>来自Avian ↗：重置上一轮固定步的插值状<br/>态。" }
-  class n33 node_contract
+  class n33 node_system_set
   class n33 external_node
   end
   style layout_card_n33 fill:none,stroke:none
   subgraph layout_card_n34[" "]
   n34@{ shape: lin-rect, label: "**TransformEasingSystems::UpdateEnd**<br/>来自Avian ↗：记录固定步结束位置供显示<br/>插值。" }
-  class n34 node_contract
+  class n34 node_system_set
   class n34 external_node
   end
   style layout_card_n34 fill:none,stroke:none
   subgraph layout_card_n35[" "]
   n35@{ shape: lin-rect, label: "**TransformEasingSystems::Ease**<br/>来自Avian ↗：混合固定步端点以生成平滑<br/>显示姿态。" }
-  class n35 node_contract
+  class n35 node_system_set
   class n35 external_node
   end
   style layout_card_n35 fill:none,stroke:none
   subgraph layout_card_n36[" "]
   n36@{ shape: lin-rect, label: "**TransformEasingSystems::**<br/>**UpdateEasingTick**<br/>来自Avian ↗：记录显示变更，区分插值更<br/>新与外部瞬移。" }
-  class n36 node_contract
+  class n36 node_system_set
   class n36 external_node
   end
   style layout_card_n36 fill:none,stroke:none
   subgraph layout_card_n37[" "]
-  n37@{ shape: lin-rect, label: "**AnimationSystems / AnimationPlugin**<br/>采样动画图并更新骨骼局部姿态。" }
-  class n37 node_contract
+  n37@{ shape: lin-rect, label: "**AnimationSystems**<br/>采样动画图并更新骨骼局部姿态。" }
+  class n37 node_system_set
   end
   style layout_card_n37 fill:none,stroke:none
   subgraph layout_card_n38[" "]
   n38@{ shape: lin-rect, label: "**TransformEasingSystems::UpdateStart**<br/>来自Avian ↗：记录当前固定步的插值起<br/>点。" }
-  class n38 node_contract
+  class n38 node_system_set
   class n38 external_node
   end
   style layout_card_n38 fill:none,stroke:none

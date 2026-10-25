@@ -37,12 +37,14 @@ flowchart LR
   classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
   classDef node_message_buffer fill:#EDF4F6,stroke:#247B91,stroke-width:1.6px,color:#1F3340
   classDef node_event fill:#F9F3EE,stroke:#B66B2D,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_system_group fill:#F2F5F7,stroke:#607C96,stroke-width:1.6px,color:#1F3340
   classDef node_plugin fill:#F1F3F6,stroke:#4A6389,stroke-width:2.2px,color:#1F3340
-  classDef node_contract fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_registration_helper fill:#F6F4F0,stroke:#8A7548,stroke-width:1.6px,color:#1F3340
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_publish stroke:#247B91,stroke-width:1.8px,stroke-dasharray:10 4 2 4
   classDef edge_observe stroke:#B66B2D,stroke-width:1.8px,stroke-dasharray:2 4
-  classDef edge_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
   subgraph diagram_main[" "]
@@ -52,10 +54,10 @@ flowchart LR
   class n0 node_observer
   n1@{ shape: fr-rect, label: "**ItemInteractionPlugin**<br/>管理物品拾取、共享持握、安全释放与反馈。" }
   class n1 node_plugin
-  n2@{ shape: fr-rect, label: "**物品反馈收集**<br/>收集持握失稳与物品落地的声音反馈。" }
-  class n2 node_plugin
-  n3@{ shape: lin-rect, label: "**已接入的反馈生产者**<br/>汇总菜单交互与物品运动产生的声音反馈。" }
-  class n3 node_contract
+  n2@{ shape: tag-rect, label: "**物品反馈收集**<br/>收集持握失稳与物品落地的声音反馈。" }
+  class n2 node_registration_helper
+  n3@{ shape: fr-rect, label: "**已接入的反馈生产者**<br/>汇总菜单交互与物品运动产生的声音反馈。" }
+  class n3 node_system_group
   n4@{ shape: rounded, label: "**warn_hold_strain**<br/>检查持续持握偏差并发出失稳提示音。" }
   class n4 node_system
   n5@{ shape: rounded, label: "**emit_parcel_land**<br/>识别自由物品落地并发出声音请求。" }
@@ -80,10 +82,10 @@ flowchart LR
   class n13 node_event
   class n13 external_node
   n14@{ shape: lin-rect, label: "**FixedGameplaySystems**<br/>来自应用流程 ↗：协调恢复、朝向、运动、<br/>交互与持握的固定步顺序。" }
-  class n14 node_contract
+  class n14 node_system_set
   class n14 external_node
   n15@{ shape: lin-rect, label: "**PresentationSystems**<br/>来自应用流程 ↗：协调插值后的持物、镜头<br/>与可见性同步。" }
-  class n15 node_contract
+  class n15 node_system_set
   class n15 external_node
   n3 e0@--> n11
   class e0 edge_publish
@@ -98,15 +100,15 @@ flowchart LR
   n6 e5@-->|"成功拿起 / 释放"| n11
   class e5 edge_publish
   n14 e6@-->|"Interaction"| n6
-  class e6 edge_membership
+  class e6 edge_set_membership
   n14 e7@-->|"Target"| n7
-  class e7 edge_membership
+  class e7 edge_set_membership
   n14 e8@-->|"Attachment"| n8
-  class e8 edge_membership
+  class e8 edge_set_membership
   n15 e9@-->|"HeldPhysics"| n9
-  class e9 edge_membership
+  class e9 edge_set_membership
   n15 e10@-->|"HeldPresentation"| n10
-  class e10 edge_membership
+  class e10 edge_set_membership
   n1 e11@-->|"物品反馈"| n2
   class e11 edge_registration
   n2 e12@-->|"持握反馈"| n4

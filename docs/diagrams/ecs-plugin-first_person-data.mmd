@@ -37,6 +37,7 @@ flowchart TB
   classDef node_entity fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
   classDef node_local fill:#F8F5F1,stroke:#AA8752,stroke-width:1.6px,color:#1F3340
   classDef node_note fill:#F7F7F5,stroke:#9A9B88,stroke-width:1.2px,color:#1F3340
+  classDef node_lifecycle_note fill:#F6F4F3,stroke:#8E766D,stroke-width:1.2px,color:#1F3340
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
@@ -85,7 +86,7 @@ flowchart TB
   n0@{ shape: notch-rect, label: "**Local#lt;f64#gt;（next_log_at）**<br/>保存连续观察角度日志的下次采样时间。" }
   class n0 node_local
   n1@{ shape: doc, label: "**第一人称模型生命周期**<br/>保持受控角色自身模型隐藏并恢复失效关联。" }
-  class n1 node_note
+  class n1 node_lifecycle_note
   n2@{ shape: doc, label: "**捕获与输入上下文**<br/>保存光标捕获与玩法输入启用状态。" }
   class n2 node_note
   n5@{ shape: rounded, label: "**业务直属 GLB 视觉根实体**<br/>承载业务实体的模型、骨骼与动画子树。" }

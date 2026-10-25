@@ -34,7 +34,7 @@ flowchart TB
   %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
   classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
   classDef node_non_send fill:#F8F3EF,stroke:#A5633A,stroke-width:1.6px,color:#1F3340
-  classDef node_external_io fill:#F1F3F4,stroke:#526A78,stroke-width:1.6px,color:#1F3340
+  classDef node_platform_api fill:#F6F3F1,stroke:#8A6555,stroke-width:1.6px,color:#1F3340
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
@@ -47,7 +47,7 @@ flowchart TB
   n1@{ shape: rounded, label: "**install_native_policy**<br/>安装并维护原生窗口比例与尺寸策略。" }
   class n1 node_system
   n2@{ shape: lean-l, label: "**原生窗口约束**<br/>在平台应用尺寸前约束主窗口比例与范围。" }
-  class n2 node_external_io
+  class n2 node_platform_api
   n1 e0@-->|"守卫"| n0
   class e0 edge_write
   n0 e1@-->|"安装 / 刷新 / Drop"| n2

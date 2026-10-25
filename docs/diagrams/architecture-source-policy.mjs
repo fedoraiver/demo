@@ -1,5 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import { NODE_KINDS, nodeKindOf } from './architecture-kinds.mjs';
 import { TYPE_PACKAGES, ENTITY_SOURCE_EVIDENCE, HIERARCHY_OWNED_ENTITIES, IMPORTED_ENTITIES, MARKER_ONLY_RESOURCES, RELATED_IMPLEMENTATIONS } from './architecture-source-evidence.mjs';
 
 const roleLabels = Object.freeze({
@@ -26,28 +27,41 @@ const policies = {
   plugin_group: ['definition', 'build', 'install'],
   app: ['create', 'assembly', 'run'],
   system_set: ['definition', 'configure'],
-  contract: ['definition', 'configure', 'parameter'],
+  scheduling_constraint: ['configure'],
+  shared_data_contract: ['definition', 'configure', 'parameter'],
   system_param: ['definition', 'configure', 'parameter'],
   query_data: ['definition', 'configure', 'parameter'],
   relationship: ['definition', 'configure', 'parameter'],
+  entity_reference: ['definition', 'configure', 'parameter'],
   sync: ['definition', 'implementation', 'registration', 'configure'],
+  system_group: ['configure', 'implementation'],
+  observer_group: ['configure', 'implementation'],
+  engine_flow: ['configure', 'implementation'],
+  registration_helper: ['definition', 'configure'],
   external_io: ['definition', 'create', 'install', 'implementation', 'close'],
+  platform_api: ['definition', 'create', 'install', 'implementation', 'close'],
+  platform_event: ['definition', 'create', 'install', 'implementation', 'close'],
   note: ['related'],
+  lifecycle_note: ['related'],
+  bsn_layout: ['related'],
+  operation_result: ['related'],
   edge: Object.keys(roleLabels),
 };
 
 const aliases = {
+  ...Object.fromEntries(Object.entries(NODE_KINDS).map(([kind, descriptor]) => [kind.toLowerCase(), descriptor.sourcePolicyKind])),
+  ...Object.fromEntries(Object.keys(policies).map(kind => [kind, kind])),
   component: 'component', entity: 'entity', system: 'system', 'engine system': 'system',
-  observer: 'observer', 'engine observers': 'observer', resource: 'resource',
+  observer: 'observer', 'engine observers': 'observer_group', resource: 'resource',
   local: 'local', 'local<t>': 'local', nonsend: 'non_send', 'nonsend<t>': 'non_send', non_send: 'non_send',
   message: 'message', messages: 'message_buffer', 'messages<t>': 'message_buffer', message_buffer: 'message_buffer',
   event: 'event', entityevent: 'event', plugin: 'plugin', plugingroup: 'plugin_group', plugin_group: 'plugin_group',
   app: 'app', systemset: 'system_set', 'engine systemset': 'system_set', 'engine system set': 'system_set', system_set: 'system_set',
-  contract: 'contract', '调度契约': 'contract', systemparam: 'system_param', system_param: 'system_param',
+  '调度契约': 'scheduling_constraint', 'scheduling contract': 'scheduling_constraint', systemparam: 'system_param', system_param: 'system_param',
   querydata: 'query_data', query_data: 'query_data', relationship: 'relationship',
-  sync: 'sync', '同步节点': 'sync', '引擎流程聚合': 'sync',
-  'external i/o': 'external_io', external_io: 'external_io', '原生平台接口': 'external_io',
-  note: 'note', 'lifecycle note': 'note', layout: 'note', 'result note': 'note',
+  sync: 'sync', '同步节点': 'sync', '引擎流程聚合': 'engine_flow',
+  'native platform bridge': 'platform_api', 'native platform event': 'platform_event', '原生平台接口': 'platform_api',
+  layout: 'bsn_layout', 'component write': 'operation_result', 'data write': 'operation_result', 'result note': 'operation_result',
   edge: 'edge', link: 'edge',
 };
 
@@ -176,17 +190,7 @@ export function sourceEntriesFor(record, { kind = record?.kind, reviewedEntries 
 
 /** Registry kind describes semantics; a rounded engine aggregate is never inferred to be one function. */
 export function sourcePolicyKindFor(record) {
-  if (record?.id === 'inspector_pass') return 'system';
-  if (record?.sourcePolicyKind) return record.sourcePolicyKind;
-  const kind = String(record?.kind || '').toLowerCase();
-  if (record?.id === 'capture-state') return 'Note';
-  if (kind === 'resource' && /^Messages</.test(record.name || '')) return 'Messages<T>';
-  if (kind === 'plugin' && /^(?:DefaultPlugins|PhysicsPlugins)/.test(record.name || '')) return 'PluginGroup';
-  if (['engine', 'engine observers'].includes(kind)) return 'sync';
-  if (['native platform bridge', 'native platform event'].includes(kind)) return 'External I/O';
-  if (['registration helper', 'shared data contract', 'scheduling contract'].includes(kind)) return 'Contract';
-  if (['system group', 'lifecycle note', 'bsn layout', 'component write', 'data write'].includes(kind)) return 'Note';
-  return record?.kind;
+  return NODE_KINDS[nodeKindOf(record)].sourcePolicyKind;
 }
 
 const word = value => String(value).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -256,7 +260,7 @@ function rustCalls(file) {
 }
 
 /** Read-only source index shared by node and edge audits during one build. */
-export function createArchitectureSourceContext({ repository, dependencyContext = {} } = {}) {
+export function createArchitectureSourceContext({ repository, dependencyContext = {}, model } = {}) {
   if (!repository) throw new Error('Source policies require the repository root');
   const roots = (dependencyContext.metadata?.packages || []).filter(item => item.source?.startsWith('registry+')).map(item => ({ name: item.name, version: item.version, root: slash(path.dirname(item.manifest_path)) }));
   const files = new Map(), packageFiles = new Map(), projectFiles = [];
@@ -331,7 +335,7 @@ export function createArchitectureSourceContext({ repository, dependencyContext 
     if (normalized.line > file.lines.length) throw new Error(`Source line out of bounds: ${normalized.path}:${normalized.line}`);
     return normalized;
   }
-  return { repository, roots, projectFiles, read, inPackage, sourceAt, callsIn, declaration, resolveEvidence, verified };
+  return { repository, roots, projectFiles, read, inPackage, sourceAt, callsIn, declaration, resolveEvidence, verified, model };
 }
 
 function typeDefinitions(record, context) {
@@ -544,19 +548,67 @@ function sourcesForNode(record, registry, context, gaps) {
     const file = context.read({ path: 'src/main.rs', line: 1 });
     return [...[['App::new()', 'create', '创建 App'], ['.run();', 'run', '进入应用运行']].flatMap(([contains, role, label]) => context.resolveEvidence({ path: file.path, contains, role, label })), ...context.callsIn(file).filter(call => call.method === 'add_plugins').map(call => context.sourceAt(file, call.start, 'assembly', '应用装配：安装插件或插件组'))];
   }
-  if (['system_set', 'contract', 'system_param', 'query_data', 'relationship', 'sync'].includes(kind)) {
+  if (['system_group', 'observer_group', 'engine_flow', 'registration_helper'].includes(kind)) {
+    const sources = [];
+    for (const descriptor of RELATED_IMPLEMENTATIONS[record.id] || []) {
+      const resolved = context.resolveEvidence(descriptor);
+      if (!resolved.length) gaps.push(`未能唯一核实${descriptor.label}（${descriptor.path}）`);
+      sources.push(...resolved);
+    }
+    if (kind === 'registration_helper') {
+      if (record.source) {
+        const file = context.read(record.source), line = file.lines[record.source.line - 1] || '';
+        if (/\bfn\s+[A-Za-z_]\w*\s*\(/.test(line)) sources.push(context.verified(record.source, 'definition', '注册辅助函数定义'));
+      }
+      if (!sources.some(source => source.role === 'definition')) gaps.push('注册辅助函数的真实定义尚未唯一核实');
+      if (!sources.some(source => source.role === 'configure')) gaps.push('注册辅助函数的调用／装配位置尚未完整核实');
+      return sources;
+    }
+    const memberIds = uniqueValues([...(record.memberIds || []), ...(context.model?.system_links || [])
+      .filter(link => link.from === record.id && link.kind === 'registration').map(link => link.to)]);
+    for (const member of memberIds.map(id => registry[id]).filter(Boolean)) {
+      const definition = systemDefinition(member, context);
+      if (definition) sources.push({ ...definition, role: 'implementation', label: `成员函数定义：${member.name}` });
+      const observer = sourcePolicyFor(sourcePolicyKindFor(member)).kind === 'observer';
+      sources.push(...systemRegistrations(member, context, observer).map(source => ({ ...source, role: 'configure', label: `成员配置：${member.name}；${source.label}` })));
+    }
+    if (kind === 'observer_group' && record.definition_source) {
+      const file = context.read(record.definition_source), line = file.lines[record.definition_source.line - 1] || '';
+      if (/^\s*impl\b/.test(line)) {
+        sources.push(context.verified(record.definition_source, 'configure', 'Observer 分组安装配置'));
+        const start = file.code.indexOf(line.trim()), open = file.code.indexOf('{', start), end = balancedEnd(file.code, open, '{', '}');
+        for (const call of context.callsIn(file).filter(call => call.start > open && call.end < end && ['add_observer', 'observe', 'on'].includes(call.method))) {
+          const symbol = firstType(firstArgument(call.body));
+          if (!symbol) continue;
+          const definition = context.declaration(symbol, { source: record.definition_source, packageName: record.definition_source.dependency?.name, fn: true });
+          if (definition) sources.push({ ...definition, role: 'implementation', label: `成员 Observer 函数定义：${symbol}` });
+          sources.push(context.sourceAt(file, call.start, 'configure', `成员 Observer 注册：${symbol}`));
+        }
+      } else sources.push(context.verified(record.definition_source, 'implementation', 'Observer 分组相关实现入口'));
+    } else if (record.definition_source) sources.push(context.verified(record.definition_source, 'implementation', '流程聚合关联入口；不表示单个系统定义'));
+    if (record.source) sources.push(context.verified(record.source, kind === 'observer_group' ? 'configure' : 'implementation', kind === 'observer_group' ? '项目控件装配入口' : '分组或流程相关实现入口'));
+    if (!sources.some(source => source.role === 'configure')) gaps.push('分组或流程的全部成员及启用配置尚未完整核实');
+    if (!sources.some(source => source.role === 'implementation')) gaps.push('分组或流程的实际成员／执行实现尚未完整核实');
+    return sources;
+  }
+  if (['system_set', 'scheduling_constraint', 'shared_data_contract', 'system_param', 'query_data', 'relationship', 'entity_reference', 'sync'].includes(kind)) {
     const sources = typeDefinitions(record, context), symbol = firstType(record.name);
-    for (const file of context.projectFiles) for (const call of context.callsIn(file)) if (call.method === 'configure_sets' && symbol && new RegExp(`\\b${word(symbol)}\\b`).test(call.body)) sources.push(context.sourceAt(file, call.start, 'configure', `配置：${symbol} 的调度集合约束`));
+    if (kind === 'system_set') for (const descriptor of RELATED_IMPLEMENTATIONS[record.id] || []) {
+      const resolved = context.resolveEvidence(descriptor);
+      if (!resolved.length) gaps.push(`未能唯一核实${descriptor.label}（${descriptor.path}）`);
+      sources.push(...resolved);
+    }
+    const search = kind === 'system_set' && sources[0]?.dependency ? [...context.projectFiles, ...context.inPackage(sources[0].dependency.name)] : context.projectFiles;
+    const target = /^([A-Za-z_]\w*::[A-Za-z_]\w*)/.exec(record.name)?.[1] || symbol;
+    for (const file of search) for (const call of context.callsIn(file)) if (call.method === 'configure_sets' && target && new RegExp(`\\b${word(target)}\\b`).test(call.body)) sources.push(context.sourceAt(file, call.start, 'configure', `配置：${target} 的调度集合约束`));
     if (record.source) {
       const file = context.read(record.source), line = file.lines[record.source.line - 1] || '';
       if (kind === 'sync') sources.push(context.verified(record.source, 'configure', '项目同步或引擎流程配置入口'));
-      else if (kind === 'relationship' && /ChildOf|ColliderOf|ActionOf|BindingOf|\.target|character|sole_markers|animation_player|collider/.test(record.name)) sources.push(context.verified(record.source, 'configure', '关系声明、字段或实际装配配置'));
+      else if (['relationship', 'entity_reference'].includes(kind) && /ChildOf|ColliderOf|ActionOf|BindingOf|\.target|character|sole_markers|animation_player|collider/.test(record.name)) sources.push(context.verified(record.source, 'configure', kind === 'relationship' ? '关系声明或实际装配配置' : '实体引用字段声明或配置'));
       else if (!sources.length && /\.chain\(|\.before\(|\.after\(|configure_sets/.test(line)) sources.push(context.verified(record.source, 'configure', '调度契约配置'));
-      else if (record.kind === 'Registration helper' && /\bfn\s+/.test(line)) sources.push(context.verified(record.source, 'definition', '注册辅助函数定义'));
     }
     const reviewedConfigurations = {
       'state-paused': ['src/game_flow/mod.rs', '.add_systems(OnEnter(PlayState::Paused), pause_simulation)'],
-      'ui-volume-set': ['src/ui/volume.rs', 'app.add_systems('],
       'volume-request-source': ['src/ui/volume.rs', 'fn sample_slider_pointer('],
       'flow-audio-order': ['src/game_flow/mod.rs', '(UiSystems::Style, AudioSystems::Mix, AudioSystems::Playback).chain()'],
     };
@@ -564,15 +616,22 @@ function sourcesForNode(record, registry, context, gaps) {
       const [sourcePath, contains] = reviewedConfigurations[record.id];
       sources.push(...context.resolveEvidence({ path: sourcePath, contains, role: 'configure', label: '实际调度或流程配置' }));
     }
+    if (kind === 'system_set' && !sources.some(source => source.role === 'configure')) gaps.push('该 SystemSet 的显式配置或启用入口尚未完整核实');
     if (!sources.length) gaps.push('该集合、参数或流程契约的声明／配置位置尚未唯一核实');
     return sources;
   }
-  if (kind === 'external_io') {
+  if (['external_io', 'platform_api', 'platform_event'].includes(kind)) {
     const sources = (RELATED_IMPLEMENTATIONS[record.id] || []).flatMap(descriptor => context.resolveEvidence(descriptor));
     if (record.source) sources.push(context.verified(record.source, 'implementation', '外部 I/O 或平台接口相关实现'));
     return sources;
   }
-  if (kind === 'note') return record.source ? [context.verified(record.source, 'related', '说明所依据的相关实现')] : [];
+  if (['note', 'lifecycle_note', 'bsn_layout', 'operation_result'].includes(kind)) {
+    const sources = (RELATED_IMPLEMENTATIONS[record.id] || []).flatMap(descriptor => context.resolveEvidence({ ...descriptor, role: 'related' }));
+    if (record.definition_source) sources.push(context.verified(record.definition_source, 'related', '说明关联的类型或实现入口'));
+    if (record.source) sources.push(context.verified(record.source, 'related', '说明所依据的相关实现'));
+    if (!sources.length) gaps.push('该说明的支持实现尚未唯一核实');
+    return sources;
+  }
   gaps.push(`尚未为语义类型 ${record.kind} 核实源码入口`);
   return [];
 }

@@ -33,7 +33,7 @@ flowchart TB
   accDescr: 角色动画的系统与调度；外部契约保留摘要，可跳转到所属插件。
   %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
   classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
-  classDef node_contract fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
   classDef edge_schedule stroke:#334155,stroke-width:3px
   classDef edge_order stroke:#334155,stroke-width:2px
   classDef external_node stroke-dasharray:6 4
@@ -50,13 +50,13 @@ flowchart TB
   end
   subgraph sg1["PostUpdate"]
   direction TB
-  n3@{ shape: lin-rect, label: "**AnimationSystems / AnimationPlugin**<br/>来自Bevy 引擎 ↗：采样动画图并更新骨骼<br/>局部姿态。" }
-  class n3 node_contract
+  n3@{ shape: lin-rect, label: "**AnimationSystems**<br/>来自Bevy 引擎 ↗：采样动画图并更新骨骼<br/>局部姿态。" }
+  class n3 node_system_set
   class n3 external_node
   n2@{ shape: rounded, label: "**compensate_courier_sole_penetration**<br/>补偿鞋底穿地并平滑恢复视觉高度。" }
   class n2 node_system
   n4@{ shape: lin-rect, label: "**TransformSystems::Propagate**<br/>来自Bevy 引擎 ↗：沿实体层级传播世界变<br/>换。" }
-  class n4 node_contract
+  class n4 node_system_set
   class n4 external_node
   n3 layout_1@~~~ n2
   n2 layout_2@~~~ n4

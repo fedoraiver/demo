@@ -33,7 +33,7 @@ flowchart TB
   accDescr: 设置与参数的系统与调度；外部契约保留摘要，可跳转到所属插件。
   %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
   classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
-  classDef node_contract fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
   classDef edge_schedule stroke:#334155,stroke-width:3px
   classDef edge_order stroke:#334155,stroke-width:2px
   classDef external_node stroke-dasharray:6 4
@@ -49,8 +49,8 @@ flowchart TB
   direction TB
   n1@{ shape: rounded, label: "**limit_frame_rate**<br/>补足帧间等待以控制显示帧率。" }
   class n1 node_system
-  n2@{ shape: lin-rect, label: "**TimeSystems / time_system**<br/>来自Bevy 引擎 ↗：推进真实时间与游戏时<br/>间。" }
-  class n2 node_contract
+  n2@{ shape: lin-rect, label: "**TimeSystems**<br/>来自Bevy 引擎 ↗：推进真实时间与游戏时<br/>间。" }
+  class n2 node_system_set
   class n2 external_node
   n1 layout_0@~~~ n2
   end

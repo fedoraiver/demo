@@ -446,7 +446,7 @@ test('135 个条目分别记录实际 Schedule，Observer 不冒充固定调度'
   assert.deepEqual(new Set(model.systems.map(system => system.id)), new Set([...originalIds, ...addedIds]), 'Original registrations retain their stable IDs');
   for (const system of model.systems) {
     assert.ok(Object.hasOwn(system, 'schedule'), system.id);
-    if (system.kind === 'observer') {
+    if (system.kind === 'Observer') {
       assert.equal(system.schedule, null, system.id);
       assert.deepEqual(system.registrations, [], system.id);
     } else {

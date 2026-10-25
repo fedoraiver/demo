@@ -33,10 +33,11 @@ flowchart TB
   accDescr: 应用流程的系统与调度；外部契约保留摘要，可跳转到所属插件。
   %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
   classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
-  classDef node_contract fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
-  classDef node_note fill:#F7F7F5,stroke:#9A9B88,stroke-width:1.2px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_scheduling_constraint fill:#F5F3F8,stroke:#7C6AA6,stroke-width:1.6px,color:#1F3340
+  classDef node_lifecycle_note fill:#F6F4F3,stroke:#8E766D,stroke-width:1.2px,color:#1F3340
   classDef edge_schedule stroke:#334155,stroke-width:3px
-  classDef edge_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_constraint stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:10 4 2 4
   classDef external_node stroke-dasharray:6 4
   subgraph diagram_main[" "]
@@ -56,7 +57,7 @@ flowchart TB
   subgraph sg1["FixedUpdate"]
   direction TB
   n4@{ shape: lin-rect, label: "**FixedGameplaySystems**<br/>协调恢复、朝向、运动、交互与持握的固定步<br/>顺序。" }
-  class n4 node_contract
+  class n4 node_system_set
   n7@{ shape: rounded, label: "**recover_from_water**<br/>来自越界恢复 ↗：将落水实体恢复到各自出<br/>生姿态。" }
   class n7 node_system
   class n7 external_node
@@ -85,7 +86,7 @@ flowchart TB
   subgraph sg2["RunFixedMainLoop ·<br/>AfterFixedMainLoop"]
   direction TB
   n5@{ shape: lin-rect, label: "**PresentationSystems**<br/>协调插值后的持物、镜头与可见性同步。" }
-  class n5 node_contract
+  class n5 node_system_set
   n13@{ shape: rounded, label: "**sync_character_facing**<br/>来自第一人称控制 ↗：同步人物朝向并处理<br/>持物转向受阻。" }
   class n13 node_system
   class n13 external_node
@@ -110,12 +111,12 @@ flowchart TB
   subgraph sg3["Update"]
   direction TB
   n6@{ shape: lin-rect, label: "**UI Style → Audio Mix → Playback**<br/>约束界面显示更新先于音量混合与播放。" }
-  class n6 node_contract
+  class n6 node_scheduling_constraint
   n18@{ shape: lin-rect, label: "**UiSystems::Style**<br/>来自菜单与界面 ↗：组织菜单显示、数值与<br/>说明的原位更新。" }
-  class n18 node_contract
+  class n18 node_system_set
   class n18 external_node
   n19@{ shape: lin-rect, label: "**AudioSystems**<br/>来自音频播放 ↗：公开音量混合与播放的调<br/>度阶段。" }
-  class n19 node_contract
+  class n19 node_system_set
   class n19 external_node
   n6 layout_13@~~~ n18
   n18 layout_14@~~~ n19
@@ -123,7 +124,7 @@ flowchart TB
   subgraph sg4["约束与说明"]
   direction TB
   n3@{ shape: doc, label: "**InGame / Paused**<br/>保留会话实体并暂停模拟与玩法输入。" }
-  class n3 node_note
+  class n3 node_lifecycle_note
   end
   sg3 layout_15@~~~ sg4
   sg0 sc0@--> sg1
@@ -133,27 +134,27 @@ flowchart TB
   sg2 sc2@--> sg3
   class sc2 edge_schedule
   n4 e0@-->|"Recover"| n7
-  class e0 edge_membership
+  class e0 edge_set_membership
   n4 e1@-->|"Facing"| n8
-  class e1 edge_membership
+  class e1 edge_set_membership
   n4 e2@-->|"Motion"| n9
-  class e2 edge_membership
+  class e2 edge_set_membership
   n4 e3@-->|"Interaction"| n10
-  class e3 edge_membership
+  class e3 edge_set_membership
   n4 e4@-->|"Target"| n11
-  class e4 edge_membership
+  class e4 edge_set_membership
   n4 e5@-->|"Attachment"| n12
-  class e5 edge_membership
+  class e5 edge_set_membership
   n5 e6@-->|"Facing"| n13
-  class e6 edge_membership
+  class e6 edge_set_membership
   n5 e7@-->|"HeldPhysics"| n14
-  class e7 edge_membership
+  class e7 edge_set_membership
   n5 e8@-->|"HeldPresentation"| n15
-  class e8 edge_membership
+  class e8 edge_set_membership
   n5 e9@-->|"Camera"| n16
-  class e9 edge_membership
+  class e9 edge_set_membership
   n5 e10@-->|"Visibility"| n17
-  class e10 edge_membership
+  class e10 edge_set_membership
   n6 e11@-->|"UI Style"| n18
   class e11 edge_constraint
   n6 e12@-->|"Audio Mix / Playback"| n19

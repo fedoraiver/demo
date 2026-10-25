@@ -121,7 +121,8 @@ export async function compileArchitectureArtifacts(views, registry) {
     async function compile(view) {
       if (!view.mermaid) return view;
       // 归一化或 SVG 注解规则变化时递增版本；原生源码、依赖及完整标题变化会自动失效。
-      const fingerprint = crypto.createHash('sha256').update(JSON.stringify({ version: 1, id: view.id, definition: view.mermaid, dependencies,
+      const fingerprint = crypto.createHash('sha256').update(JSON.stringify({ version: 2, id: view.id, definition: view.mermaid, dependencies,
+        categories: view.nodes.map(node => [node.id, node.visualType, NODE_STYLES[node.visualType].label]),
         titles: view.nodes.map(node => [node.id, registry[node.id].name, registry[node.id].description, registry[node.id].feature]), componentDetails: view.componentDetails,
       })).digest('hex');
       const cachePath = path.join(cacheDirectory, fingerprint + '.json');

@@ -36,7 +36,7 @@ flowchart RL
   classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
   classDef node_entity fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
   classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
-  classDef node_contract fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_engine_flow fill:#F1F5F4,stroke:#557C78,stroke-width:1.6px,color:#1F3340
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
@@ -47,8 +47,8 @@ flowchart RL
   n2@{ shape: rounded, label: "**prepare_island**<br/>来自场景装配 ↗：从海岛模型构建静态碰<br/>撞、坡道与人物碰撞。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: lin-rect, label: "**RenderApp / 渲染流程**<br/>提取场景数据并执行本帧渲染。" }
-  class n3 node_contract
+  n3@{ shape: stadium, label: "**RenderApp 渲染流程**<br/>提取场景数据并执行本帧渲染。" }
+  class n3 node_engine_flow
   n1 layout_0@~~~ n0
   n2 layout_1@~~~ n1
   n3 layout_2@~~~ n1

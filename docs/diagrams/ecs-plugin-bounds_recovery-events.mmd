@@ -33,9 +33,9 @@ flowchart LR
   accDescr: 越界恢复的事件与协作；外部契约保留摘要，可跳转到所属插件。
   %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
   classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
   classDef node_plugin fill:#F1F3F6,stroke:#4A6389,stroke-width:2.2px,color:#1F3340
-  classDef node_contract fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
-  classDef edge_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
   subgraph diagram_main[" "]
   direction LR
@@ -45,8 +45,8 @@ flowchart LR
   n1@{ shape: rounded, label: "**recover_from_water**<br/>将落水实体恢复到各自出生姿态。" }
   class n1 node_system
   n2@{ shape: lin-rect, label: "**FixedGameplaySystems**<br/>来自应用流程 ↗：协调恢复、朝向、运动、<br/>交互与持握的固定步顺序。" }
-  class n2 node_contract
+  class n2 node_system_set
   class n2 external_node
   n2 e0@-->|"Recover"| n1
-  class e0 edge_membership
+  class e0 edge_set_membership
   end

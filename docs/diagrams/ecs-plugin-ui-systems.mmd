@@ -33,11 +33,16 @@ flowchart TB
   accDescr: 菜单与界面的系统与调度；外部契约保留摘要，可跳转到所属插件。
   %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
   classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
-  classDef node_contract fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_scheduling_constraint fill:#F5F3F8,stroke:#7C6AA6,stroke-width:1.6px,color:#1F3340
+  classDef node_sync fill:#F6F3F0,stroke:#8B6A42,stroke-width:1.6px,color:#1F3340
+  classDef node_system_group fill:#F2F5F7,stroke:#607C96,stroke-width:1.6px,color:#1F3340
+  classDef node_engine_flow fill:#F1F5F4,stroke:#557C78,stroke-width:1.6px,color:#1F3340
   classDef node_note fill:#F7F7F5,stroke:#9A9B88,stroke-width:1.2px,color:#1F3340
   classDef edge_schedule stroke:#334155,stroke-width:3px
   classDef edge_order stroke:#334155,stroke-width:2px
-  classDef edge_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef edge_group_membership stroke:#607C96,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_constraint stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:10 4 2 4
   classDef external_node stroke-dasharray:6 4
   subgraph diagram_main[" "]
@@ -52,15 +57,15 @@ flowchart TB
   direction TB
   n4@{ shape: rounded, label: "**sync_context**<br/>跟随窗口焦点启停菜单输入。" }
   class n4 node_system
-  n26@{ shape: rounded, label: "**EnhancedInputSystems::Trigger**<br/>来自Enhanced Input ↗：按上下文顺序排<br/>入动作事件命令。" }
-  class n26 node_system
+  n26@{ shape: lin-rect, label: "**EnhancedInputSystems::Trigger**<br/>来自Enhanced Input ↗：按上下文顺序排<br/>入动作事件命令。" }
+  class n26 node_system_set
   class n26 external_node
-  n21@{ shape: lin-rect, label: "**ApplyDeferred · 动作事件**<br/>应用动作事件命令以触发匹配的观察系统。" }
-  class n21 node_contract
+  n21@{ shape: rounded, label: "**ApplyDeferred · 动作事件**<br/>应用动作事件命令以触发匹配的观察系统。" }
+  class n21 node_sync
   n5@{ shape: rounded, label: "**handle_requests**<br/>处理菜单导航、设置应用与音量编辑请求。" }
   class n5 node_system
   n31@{ shape: lin-rect, label: "**PickingSystems::Last**<br/>来自Bevy 引擎 ↗：界定原生命中处理完成<br/>后的清理时机。" }
-  class n31 node_contract
+  class n31 node_system_set
   class n31 external_node
   n20@{ shape: rounded, label: "**clear_cancelled_primary_presses**<br/>清理被取消、失焦或离窗的菜单主键按压。" }
   class n20 node_system
@@ -110,17 +115,17 @@ flowchart TB
   class n17 node_system
   n19@{ shape: rounded, label: "**publish_audio_preview**<br/>向音频功能发布或清除临时音量预览。" }
   class n19 node_system
-  n22@{ shape: lin-rect, label: "**音量元组 · after(Build / Pointer)**<br/>组织音量输入采样与显示更新的局部调度。" }
-  class n22 node_contract
+  n22@{ shape: fr-rect, label: "**音量元组 · after(Build / Pointer)**<br/>组织音量输入采样与显示更新的局部调度。" }
+  class n22 node_system_group
   n23@{ shape: lin-rect, label: "**UiSystems::Style**<br/>组织菜单显示、数值与说明的原位更新。" }
-  class n23 node_contract
+  class n23 node_system_set
   n24@{ shape: doc, label: "**Audio 页 · 滑条局部捕获**<br/>将滑条捕获与连续采样汇总为音量编辑请求。" }
   class n24 node_note
-  n25@{ shape: lin-rect, label: "**Update / Kira 播放输出**<br/>来自音频播放 ↗：将声音请求按有效混音与<br/>播放策略提交音频实例。" }
-  class n25 node_contract
+  n25@{ shape: stadium, label: "**Kira 播放输出流程**<br/>来自音频播放 ↗：将声音请求按有效混音与<br/>播放策略提交音频实例。" }
+  class n25 node_engine_flow
   class n25 external_node
   n29@{ shape: lin-rect, label: "**UI Style → Audio Mix → Playback**<br/>来自应用流程 ↗：约束界面显示更新先于音<br/>量混合与播放。" }
-  class n29 node_contract
+  class n29 node_scheduling_constraint
   class n29 external_node
   n30@{ shape: rounded, label: "**log_load_failures**<br/>来自音频播放 ↗：记录声音资源加载失败的<br/>路径与错误。" }
   class n30 node_system
@@ -145,13 +150,13 @@ flowchart TB
   end
   subgraph sg4["PostUpdate"]
   direction TB
-  n27@{ shape: rounded, label: "**ScrollbarPlugin · thumb geometry**<br/>来自Bevy 引擎 ↗：按内容与视口比例更新<br/>滚动条滑块几何。" }
+  n27@{ shape: rounded, label: "**update_scrollbar_thumb**<br/>来自Bevy 引擎 ↗：按内容与视口比例更新<br/>滚动条滑块几何。" }
   class n27 node_system
   class n27 external_node
   n18@{ shape: rounded, label: "**sync_settings_scrollbars**<br/>同步滚动条显隐、拾取范围与高亮。" }
   class n18 node_system
-  n28@{ shape: lin-rect, label: "**VisibilityPropagate**<br/>来自Bevy 引擎 ↗：在项目显隐同步后传播<br/>可见性。" }
-  class n28 node_contract
+  n28@{ shape: lin-rect, label: "**VisibilitySystems::**<br/>**VisibilityPropagate**<br/>来自Bevy 引擎 ↗：在项目显隐同步后传播<br/>可见性。" }
+  class n28 node_system_set
   class n28 external_node
   n27 layout_25@~~~ n18
   n18 layout_26@~~~ n28
@@ -175,9 +180,9 @@ flowchart TB
   n6 e4@-->|"Pointer"| n22
   class e4 edge_order
   n22 e5@--> n14
-  class e5 edge_membership
+  class e5 edge_group_membership
   n22 e6@--> n15
-  class e6 edge_membership
+  class e6 edge_group_membership
   n14 e7@--> n23
   class e7 edge_order
   n15 e8@--> n23
@@ -187,15 +192,15 @@ flowchart TB
   n17 e10@-->|"Style"| n23
   class e10 edge_order
   n23 e11@--> n8
-  class e11 edge_membership
+  class e11 edge_set_membership
   n23 e12@--> n9
-  class e12 edge_membership
+  class e12 edge_set_membership
   n23 e13@--> n16
-  class e13 edge_membership
+  class e13 edge_set_membership
   n23 e14@--> n19
-  class e14 edge_membership
+  class e14 edge_set_membership
   n23 e15@--> n10
-  class e15 edge_membership
+  class e15 edge_set_membership
   n27 e16@-->|"Layout"| n18
   class e16 edge_order
   n18 e17@--> n28

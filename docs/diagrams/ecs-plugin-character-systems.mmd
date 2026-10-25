@@ -33,10 +33,10 @@ flowchart TB
   accDescr: 角色运动的系统与调度；外部契约保留摘要，可跳转到所属插件。
   %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
   classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
-  classDef node_contract fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
   classDef edge_schedule stroke:#334155,stroke-width:3px
   classDef edge_order stroke:#334155,stroke-width:2px
-  classDef edge_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
   subgraph diagram_main[" "]
   direction LR
@@ -69,7 +69,7 @@ flowchart TB
   class n10 node_system
   class n10 external_node
   n11@{ shape: lin-rect, label: "**FixedGameplaySystems**<br/>来自应用流程 ↗：协调恢复、朝向、运动、<br/>交互与持握的固定步顺序。" }
-  class n11 node_contract
+  class n11 node_system_set
   class n11 external_node
   n8 layout_0@~~~ n9
   n9 layout_1@~~~ n3
@@ -81,7 +81,7 @@ flowchart TB
   subgraph sg3["FixedPostUpdate"]
   direction TB
   n7@{ shape: lin-rect, label: "**PhysicsSystems::Writeback**<br/>来自Avian ↗：将求解后的物理位姿写回显<br/>示变换。" }
-  class n7 node_contract
+  class n7 node_system_set
   class n7 external_node
   n4@{ shape: rounded, label: "**update_grounded**<br/>物理回写之后观察实际接地状态。" }
   class n4 node_system
@@ -111,7 +111,7 @@ flowchart TB
   n2 e6@--> n10
   class e6 edge_order
   n11 e7@-->|"Motion"| n1
-  class e7 edge_membership
+  class e7 edge_set_membership
   end
   e0@{ curve: basis }
   e1@{ curve: basis }

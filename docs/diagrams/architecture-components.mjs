@@ -4,12 +4,13 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { infrastructureFeature } from './architecture-infrastructure.mjs';
+import { nodeKindOf } from './architecture-kinds.mjs';
 
 const repository = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const unique = values => [...new Set(values.filter(Boolean))];
 const distinct = values => [...new Map(values.map(value => [JSON.stringify(value), value])).values()];
 const hash = value => crypto.createHash('sha256').update(value).digest('hex').slice(0, 16);
-const functionKinds = new Set(['system', 'observer']);
+const functionKinds = new Set(['System', 'Observer']);
 const operations = new Set(['read', 'write', 'insert', 'remove', 'filter', 'reflect_read', 'reflect_write']);
 const labels = {
   contains: '可能挂载于', read: '查询访问', write: '可变访问', insert: '添加', remove: '移除',
@@ -173,8 +174,8 @@ function mergedSystems(model, registry) {
   const groups = new Map(), functionIdBySystemId = {}, systemByFunctionId = {};
   for (const original of model.systems || []) {
     const record = registry[original.id];
-    if (!record || record.kind === 'sync') continue;
-    const callable = functionKinds.has(record.kind);
+    if (!record || nodeKindOf(record) === 'Synchronization') continue;
+    const callable = functionKinds.has(nodeKindOf(record));
     const key = callable && record.source ? `function:${sourceIdentity(record.source)}` : `node:${record.id}`;
     if (!groups.has(key)) groups.set(key, []);
     groups.get(key).push(record);
@@ -331,7 +332,7 @@ function scanAccesses(model, registry, catalog, database) {
   const projectionSet = new Set(Object.keys(catalog.typeByProjectionId));
   for (const original of model.systems || []) {
     const system = registry[original.id], rootFunction = database.forSystem(system);
-    if (!system || !functionKinds.has(system.kind) || !rootFunction) continue;
+    if (!system || !functionKinds.has(nodeKindOf(system)) || !rootFunction) continue;
     const references = unique([...(system.reads || []), ...(system.writes || [])]).filter(id => projectionSet.has(id));
     function resolve(typeName, operation, fn) {
       let candidates = byNominal.get(nominal(typeName)) || [];
@@ -684,7 +685,7 @@ export function buildComponentCatalog(model, registry, {
     componentTypeId: type.id, componentNodeId: type.componentNodeId, projectionIds: [...type.projectionIds], ownerEntityIds: [...type.ownerEntityIds], componentRustType: type.rustType,
   });
   catalog.declarations = (model.systems || []).flatMap(system => ['reads', 'writes'].flatMap(key => (system[key] || []).filter(component => typeByProjectionId[component]).map(component => ({ system: system.id, component, operation: key === 'reads' ? 'read' : 'write' }))));
-  catalog.deferredAccesses = catalog.declarations.filter(access => registry[access.system]?.kind === 'sync');
+  catalog.deferredAccesses = catalog.declarations.filter(access => registry[access.system] && nodeKindOf(registry[access.system]) === 'Synchronization');
   const declared = [];
   for (const system of model.systems || []) if (catalog.functionIdBySystemId[system.id]) for (const [key, operation] of [['reads', 'read'], ['writes', 'write']]) for (const component of system[key] || []) if (typeByProjectionId[component]) declared.push({
     system: system.id, component, operation, evidence: 'declaration', notes: [], sourceEntries: system.source ? [{ ...system.source, role: 'related', label: '系统访问声明对应函数' }] : [],
@@ -754,7 +755,7 @@ export function buildComponentCatalog(model, registry, {
       nodes: [
         ...type.ownerEntityIds.map(id => ({ id, role: registry[id]?.feature === type.feature ? 'internal' : 'external', group: '包含此组件的 Entity' })),
         { id: type.componentNodeId, role: 'internal', group: 'Component' },
-        ...[...byActor.keys()].map(id => ({ id, role: registry[id]?.feature === type.feature ? 'internal' : 'external', group: registry[id]?.kind === 'observer' ? '相关 Observer' : '相关 System / 引擎契约' })),
+        ...[...byActor.keys()].map(id => ({ id, role: registry[id]?.feature === type.feature ? 'internal' : 'external', group: registry[id] && nodeKindOf(registry[id]) === 'Observer' ? '相关 Observer' : '相关 System / 引擎契约' })),
       ], links, sections: [], empty: false };
   };
   return catalog;

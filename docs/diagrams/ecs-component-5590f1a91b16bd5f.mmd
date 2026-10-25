@@ -46,7 +46,7 @@ flowchart RL
   class n0 external_node
   n1@{ shape: rounded, label: "**FirstPersonCamera**<br/>保存跟随目标、眼高与观察角度。" }
   class n1 node_component
-  n2@{ shape: rounded, label: "**WorldInspectorPlugin / world_**<br/>**inspector_ui**<br/>来自Egui / Inspector ↗：展示并编辑开<br/>放反射的实体、资源与资产。" }
+  n2@{ shape: rounded, label: "**world_inspector_ui**<br/>来自Egui / Inspector ↗：展示并编辑开<br/>放反射的实体、资源与资产。" }
   class n2 node_system
   class n2 external_node
   n3@{ shape: rounded, label: "**sync_mouse_capture**<br/>管理光标捕获及玩法输入启停。" }
@@ -97,7 +97,7 @@ flowchart RL
   e2@{ curve: basis }
   e3@{ curve: basis }
   e4@{ curve: basis }
-  e5@{ curve: bumpX }
+  e5@{ curve: bumpY }
   e6@{ curve: basis }
   e7@{ curve: basis }
   e8@{ curve: basis }

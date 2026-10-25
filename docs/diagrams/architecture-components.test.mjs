@@ -11,11 +11,11 @@ function fixture({ components, systems = [], files = {}, links = [], dependencyF
     [`entity-${entity.id}`, { ...entity, id: `entity-${entity.id}`, kind: 'Entity', feature: 'example' }],
     ...entity.components.map(component => [component.id, { ...component, kind: 'Component', feature: 'example', defined_in: 'example' }]),
   ]));
-  for (const system of systems) registry[system.id] = { kind: 'system', feature: 'example', ...system };
+  for (const system of systems) registry[system.id] = { kind: 'System', feature: 'example', ...system };
   return { model, registry, catalog: buildComponentCatalog(model, registry, { readSource: filename => files[filename], readDependencySource: source => dependencyFiles[source.path] }) };
 }
 const component = (id, name = 'Flag', source = { path: 'src/types.rs', line: 1 }) => ({ id, name, source });
-const system = (id, source, reads = [], writes = [], extra = {}) => ({ id, kind: 'system', name: 'run', source, reads, writes,
+const system = (id, source, reads = [], writes = [], extra = {}) => ({ id, kind: 'System', name: 'run', source, reads, writes,
   registrations: [{ schedule: 'Update', scope: 'runtime' }], ...extra });
 const definition = (path, line, name = 'bevy_test', root = 'C:/cargo/test') => ({ path, line, dependency: { name, version: '1.0.0', root } });
 
@@ -41,7 +41,7 @@ test('原生 Button 的存在过滤与 Pressed 插入使用锁定依赖中的独
   const { catalog } = fixture({
     components: [component('menu_button.Button', 'Button'), component('menu_button.Pressed', 'Pressed')],
     systems: [system('native_button_down', definition('src/button.rs', 1, 'bevy_ui_widgets'),
-      ['menu_button.Button', 'menu_button.Pressed'], ['menu_button.Pressed'], { name: 'button_on_pointer_down', kind: 'observer' })],
+      ['menu_button.Button', 'menu_button.Pressed'], ['menu_button.Pressed'], { name: 'button_on_pointer_down', kind: 'Observer' })],
     dependencyFiles: { 'src/button.rs': `fn button_on_pointer_down(state: Query<Has<Pressed>, With<Button>>, mut commands: Commands) {
     commands.entity(entity).insert(Pressed);
 }` },
@@ -104,7 +104,7 @@ fn child() -> impl Scene { bsn! { Flag } }` },
 test('BodySizeMetrics 在求解前重算的两个变化分支有实际赋值证据', () => {
   const path = 'src/dynamics/rigid_body/body_size_metrics.rs';
   const { catalog } = fixture({ components: [{ ...component('character.BodySizeMetrics', 'BodySizeMetrics'), definition_source: definition(path, 1, 'avian3d') }],
-    systems: [system('physics_step', null, ['character.BodySizeMetrics'], ['character.BodySizeMetrics'], { kind: 'engine' })],
+    systems: [system('physics_step', null, ['character.BodySizeMetrics'], ['character.BodySizeMetrics'], { kind: 'SystemSet', name: 'PhysicsSystems::StepSimulation' })],
     dependencyFiles: { [path]: `app.add_systems(PhysicsSchedule, update_body_size_metrics::<C>.before(PhysicsStepSystems::Solver));
 fn update_body_size_metrics<C>() {
     *size_metrics = compute(rb_colliders, com);
@@ -219,10 +219,28 @@ test('归并函数只在公共正文保留通用说明，各注册专属正文�
 test('同名函数的不同定义不合并，Observer 保留真实节点类别', () => {
   const { catalog } = fixture({ components: [component('a.Flag')], systems: [
     system('one', { path: 'src/one.rs', line: 1 }, ['a.Flag']),
-    system('two', { path: 'src/two.rs', line: 1 }, ['a.Flag'], [], { kind: 'observer', registrations: [] }),
+    system('two', { path: 'src/two.rs', line: 1 }, ['a.Flag'], [], { kind: 'Observer', registrations: [] }),
   ] });
   assert.notEqual(catalog.functionIdBySystemId.one, catalog.functionIdBySystemId.two);
-  assert.equal(catalog.systemByFunctionId.two.kind, 'observer');
+  assert.equal(catalog.systemByFunctionId.two.kind, 'Observer');
+});
+
+test('集合与分组保留独立身份，不因关联同一源码位置合并为真实系统函数', () => {
+  const source = { path: 'src/run.rs', line: 1 };
+  const { catalog, registry } = fixture({ components: [component('a.Flag')], systems: [
+    system('fixed', source, ['a.Flag']), system('frame', source, ['a.Flag']),
+    system('set', source, ['a.Flag'], [], { kind: 'SystemSet', name: 'Stage' }),
+    system('group', source, ['a.Flag'], [], { kind: 'System group', name: 'Tuple' }),
+  ] });
+  const functionId = catalog.functionIdBySystemId.fixed;
+  assert.equal(catalog.functionIdBySystemId.frame, functionId);
+  assert.deepEqual(registry[functionId].registrationIds, ['fixed', 'frame']);
+  for (const [id, kind] of [['set', 'SystemSet'], ['group', 'System group']]) {
+    assert.equal(catalog.functionIdBySystemId[id], id);
+    assert.equal(catalog.systemByFunctionId[id].kind, kind);
+    assert.deepEqual(catalog.systemByFunctionId[id].registrationIds, [id]);
+  }
+  assert.deepEqual(new Set(catalog.graphFor('a.Flag').nodes.map(node => node.id)), new Set(['entity-owner0', 'a.Flag', functionId, 'set', 'group']));
 });
 
 test('明确 insert/remove、可变 Query 与实际字段赋值保留不同访问操作和行号', () => {
@@ -439,7 +457,7 @@ test('当前清单全部真实组件有专属图，HeldTarget 保持批准样稿
   assert.equal(catalog.types.length, 162);
   const declaredCount = model.systems.reduce((count, system) => count + [...system.reads, ...system.writes].filter(id => projections.includes(id)).length, 0);
   assert.equal(catalog.declarations.length, declaredCount);
-  assert.ok(catalog.deferredAccesses.every(access => registry[access.system].kind === 'sync'));
+  assert.ok(catalog.deferredAccesses.every(access => registry[access.system].kind === 'Synchronization'));
   for (const type of catalog.types) {
     const graph = catalog.graphFor(type.id), ids = new Set(graph.nodes.map(node => node.id));
     assert.equal(ids.size, graph.nodes.length);

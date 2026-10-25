@@ -33,7 +33,7 @@ flowchart TB
   accDescr: Kira的系统与调度；外部契约保留摘要，可跳转到所属插件。
   %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
   classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
-  classDef node_contract fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
   classDef edge_order stroke:#334155,stroke-width:2px
   classDef external_node stroke-dasharray:6 4
   subgraph diagram_main[" "]
@@ -41,8 +41,8 @@ flowchart TB
   style diagram_main fill:none,stroke:none
   subgraph sg0["PostUpdate"]
   direction TB
-  n0@{ shape: lin-rect, label: "**PostUpdate · PlayTypedChannels**<br/>将排队声音句柄转为已就绪播放实例。" }
-  class n0 node_contract
+  n0@{ shape: lin-rect, label: "**AudioSystemSet::PlayTypedChannels**<br/>将排队声音句柄转为已就绪播放实例。" }
+  class n0 node_system_set
   n1@{ shape: rounded, label: "**sync_voice_volumes**<br/>来自音频播放 ↗：为新就绪的播放实例补同<br/>步有效音量。" }
   class n1 node_system
   class n1 external_node

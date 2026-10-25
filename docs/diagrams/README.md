@@ -1,6 +1,6 @@
 # 当前 ECS 架构图
 
-打开 [交互式 HTML](ecs-architecture.html)，先从功能总览查看 14 个项目插件的名称、职责和主要协作契约，再通过侧栏进入插件、Bevy 引擎或第三方的 Avian、Enhanced Input、Kira、Egui 四个独立入口。点击总览卡片只在右侧显示对应详情和关联高亮；通过详情中的“打开所属插件”进入所属入口。项目插件详情顶部只显示名称与标识，下方按“系统与调度”“数据与实体”“事件与协作”切换；无内容的页签显示空态。
+打开 [交互式 HTML](ecs-architecture.html)，先从功能总览查看 App 的整体系统调度，再通过侧栏进入 14 个项目插件、Bevy 引擎或第三方的 Avian、Enhanced Input、Kira、Egui 四个独立入口。点击总览节点在右侧显示对应详情和关联高亮；通过详情中的“打开所属插件”进入所属入口。项目插件详情顶部只显示名称与标识，下方按“系统与调度”“数据与实体”“事件与协作”切换；无内容的页签显示空态。
 
 页头、侧栏、工具栏、画布与详情采用统一浅色界面。顶栏保留品牌与工作区配置入口，内容区标题显示当前视图名称，项目插件同时显示标识；总览及基础设施标题区不显示介绍段落。画布顶部仅保留“定位分组”，不显示视图摘要或操作提示。图内每个节点只显示完整名称与一句短用途；职责、读写声明、注册条件和技术细节集中在右侧详情。搜索结果不重复类别标签与通用说明，空页签仅显示明确的空态标题。
 
@@ -12,7 +12,7 @@
 
 | 视图 | 独立 SVG | 阅读目的与实现归属 |
 | --- | --- | --- |
-| 功能总览 | [总览](ecs-overview.svg) | 看插件职责、边界和有方向的协作契约；实现见 [模块职责](../architecture.md#模块职责) 与 [会话生命周期](../architecture.md#菜单与会话生命周期)。 |
+| 功能总览 | [App 调度总览](ecs-overview.svg) | 看 App 的启动、每帧与固定步调度，以及跨插件的真实系统约束；实现见 [调度与模拟边界](../architecture.md#调度与模拟边界) 与 [会话生命周期](../architecture.md#菜单与会话生命周期)。 |
 | 系统与调度（`systems`） | `ecs-plugin-<module>-systems.svg` | 按 Schedule 看当前插件系统的用途与显式顺序，选择系统查看读写声明；实现见 [调度与模拟边界](../architecture.md#调度与模拟边界)。 |
 | 数据与实体（`data`） | `ecs-plugin-<module>-data.svg` | 看当前插件的资源、组件和实体投影，区分普通引用与 Bevy 关系；实现见 [状态归属](../architecture.md#实体与状态归属) 与 [持有生命周期](../architecture.md#持有关系与生命周期)。 |
 | 组件类型（`component`） | `ecs-component-<type-key>.svg` | 看哪些 Entity 包含同一真实组件类型，以及相关 System 的查询、修改、添加与移除；从 Entity 右侧组件清单或组件入口进入。 |
@@ -20,7 +20,7 @@
 
 `<module>` 是插件的源码目录名；Bevy 和四个第三方入口使用相同三个页签。Bevy 独立文件为 `ecs-infrastructure-<aspect>.svg`，第三方分别为 `ecs-third-party-avian-<aspect>.svg`、`ecs-third-party-enhanced-input-<aspect>.svg`、`ecs-third-party-kira-<aspect>.svg`、`ecs-third-party-egui-<aspect>.svg`，其中 `<aspect>` 为 `systems`、`data` 或 `events`。总览、每个非空页签及每个组件类型图同时生成同名 `.mmd` 源文件，例如 `ecs-overview.mmd`；空页签保留 HTML 空态，不生成 `.mmd` 或 SVG。文件清单以 HTML 内嵌的动态 `views` 为准，独立 SVG 和 `.mmd` 保存在本目录，页面工具栏不提供图例或导出按钮。Mermaid 文件的 YAML frontmatter 使用合法 JSON 对象写入完整主题、布局及配置，使用相同依赖版本可按原设置重新编译。
 
-基础设施入口由 [共享目录](architecture-infrastructure.mjs) 维护：`infrastructure` 表示 Bevy，`avian`、`enhanced_input`、`kira`、`egui` 分别表示四个第三方浏览分组，侧栏中四个第三方入口位于 Bevy 引擎之前。插值纳入 Avian，第三方世界检查器纳入 Egui；分组不改变实际库来源和类型身份。浏览归属按清单中核对的提供方与具体契约维护，Bevy 泛型容器承载第三方类型时可以浏览归对应第三方分组，`defined_in` 仍保留 Bevy 的类型定义归属。总览复用现有插件节点，不显示第三方汇总卡片；`main / App` 留作 Bevy 入口的应用上下文，不表示其源码由 Bevy 定义，原生窗口回调归项目窗口策略。跨入口引用显示真实来源并跳转所属入口，现有业务节点 ID 与关系保持不变。
+基础设施入口由 [共享目录](architecture-infrastructure.mjs) 维护：`infrastructure` 表示 Bevy，`avian`、`enhanced_input`、`kira`、`egui` 分别表示四个第三方浏览分组，侧栏中四个第三方入口位于 Bevy 引擎之前。插值纳入 Avian，第三方世界检查器纳入 Egui；分组不改变实际库来源和类型身份。浏览归属按清单中核对的提供方与具体契约维护，Bevy 泛型容器承载第三方类型时可以浏览归对应第三方分组，`defined_in` 仍保留 Bevy 的类型定义归属。插件导航由侧栏及节点详情中的所属插件入口提供；`main / App` 是项目应用上下文，不表示其源码由 Bevy 定义，原生窗口回调归项目窗口策略。跨入口引用显示真实来源并跳转所属入口，现有业务节点 ID 与关系保持不变。
 
 旧 `feature=third_party` 链接携带真实节点时，按节点当前归属定位合适页签；没有节点、节点失效或指向旧目录 ID `third-party-plugins` 时回到功能总览。旧 `infrastructure` 节点链接仍可定位，无节点时仍进入 Bevy。兼容导航使用历史替换，保留 `workspace`、其他查询参数与片段，不增加一次历史记录；旧混合第三方 SVG 和 `.mmd` 不再生成。
 
@@ -30,11 +30,11 @@
 
 视图不展示 `main / App` 到插件的纯装配注册边，也不保留因过滤这些边而孤立的外部 `main / App`；原始模型与稳定 ID 保留，项目插件安装第三方插件、`main / App` 退出刷新等其他关系继续展示。
 
-外部系统、插件和协作契约显示摘要、所属插件与跳转入口，不展开其他插件内部流程。类型定义归属、系统注册归属和实体装配来源分别记录。每个 Entity 的右侧详情保留 `entities[].components` 完整清单；组件清单补齐不递归引入其他实体、系统或关系。跨视图复用原节点 ID，旧 ID 仅可通过显式 `node_aliases` 指向同一声明和身份；不同实体上的组件投影与同函数的不同注册记录继续保留，组件类型图仅在视图层归并真实同类型和同函数。
+插件局部视图中的外部系统、插件和协作契约显示摘要、所属插件与跳转入口，不展开其他插件内部流程。类型定义归属、系统注册归属和实体装配来源分别记录。每个 Entity 的右侧详情保留 `entities[].components` 完整清单；组件清单补齐不递归引入其他实体、系统或关系。跨视图复用原节点 ID，旧 ID 仅可通过显式 `node_aliases` 指向同一声明和身份；不同实体上的组件投影与同函数的不同注册记录继续保留，组件类型图仅在视图层归并真实同类型和同函数。
 
 Entity 在画布中始终使用砖红色单层圆角矩形，完整组件及可选性在右侧查看；点击组件进入[组件类型专属图](#组件类型专属图)。业务根、视觉根和 GLB 子节点分别表达，图内存在某个组件不表示该组件始终存在。引擎集合与渲染等仅展示相关流程，不代表全部内部系统或精确全序；日志后台线程保持 External I/O 身份。节点和连线的源码入口按[源码范围](#源码范围)核对，不把原项目使用位置当作类型定义。运行机制由[当前架构](../architecture.md)维护。
 
-依赖定义由 [集中映射](architecture-source-definitions.mjs) 及 [定位模块](dependency-sources.mjs) 维护，包名、相对源码路径和声明符号需要对照真实源码核对。同一类型的多个实体组件复用同一声明；Kira 的项目别名 `KiraAudioPlugin` 指向真实的 `AudioPlugin`，Avian 的二维／三维同名声明按当前三维功能选择。系统集合卡片按实际契约定位集合声明或实现函数，`ApplyDeferred` 的不同调度注册共用引擎定义，各自的项目注册位置仍保留。生成与校验通过 `cargo metadata --locked --offline` 获取当前机器的锁定包版本和目录，需要本机已有对应依赖源码；声明缺失、多处匹配、目录或行号不符均使检查失败。
+依赖定义由 [集中映射](architecture-source-definitions.mjs) 及 [定位模块](dependency-sources.mjs) 维护，包名、相对源码路径和声明符号需要对照真实源码核对。同一类型的多个实体组件复用同一声明；Kira 的项目别名 `KiraAudioPlugin` 指向真实的 `AudioPlugin`，Avian 的二维／三维同名声明按当前三维功能选择。SystemSet 卡片定位真实集合声明与配置，关联函数在完整说明中保留，不把集合当成单个系统函数；`ApplyDeferred` 的不同调度注册共用引擎定义，各自的项目注册位置仍保留。生成与校验通过 `cargo metadata --locked --offline` 获取当前机器的锁定包版本和目录，需要本机已有对应依赖源码；声明缺失、多处匹配、目录或行号不符均使检查失败。
 
 日志拓扑将业务碰撞日志连到 `tracing producer`，再分为 `File worker → 统一会话日志文件` 与 `Console worker` 两路，不绘制业务系统绕过 worker 直接写文件的边。物理插件的日志协作仅展示 producer 外部契约，完整内部链在会话日志页查看；文件节点保留 `physics-file-log` 稳定 ID 与 `External I/O` 类型，源码入口指向 `create_session_file`。退出刷新沿用已有关系，队列与 stderr 不另设终点节点。
 
@@ -42,7 +42,15 @@ Entity 在画布中始终使用砖红色单层圆角矩形，完整组件及可�
 
 节点的 `description` 保留完整架构说明；过长或技术细节密集时，在同一记录添加可选 `display_summary`，写一句完整的中文用途，系统说明实际做什么，资源和组件说明承载什么。图内优先使用该短句，否则复用简洁的 `description`；不机械截句或增加省略号。组件在所有页签均使用完整名称和实际用途，不由生成器注入所属实体前缀；实体身份由组件类型图的包含关系及右侧详情表达，外部提供插件的来源说明仍保留。短句无需重复读写或运行条件，右侧详情始终使用完整说明。`view.summary` 保留为视图元数据，不在画布顶部显示。
 
-生成入口调用[模型模块](architecture-model.mjs)构造插件视图，[组件目录模块](architecture-components.mjs)按真实类型归并投影并派生组件图，[源码策略模块](architecture-source-policy.mjs)和[证据清单](architecture-source-evidence.mjs)维护语义类型的源码范围。[绘图模块](architecture-renderer.mjs)生成 Mermaid 定义，[视觉样式模块](architecture-style.mjs)集中维护节点、连线及图例，[编译器](mermaid-compiler.mjs)、[归一化模块](mermaid-core.mjs)和[走线检查](architecture-routing.mjs)生成并验证原生 SVG。[查看器](architecture-viewer.mjs)内嵌全部编译结果，[导航模块](architecture-navigation.mjs)维护页面参数；浏览器切页只读取已有 SVG，不运行 Mermaid 编译。
+[共享分类目录](architecture-kinds.mjs)维护规范语义类别、视觉类别与源码策略之间的对应关系。生成入口调用[模型模块](architecture-model.mjs)构造插件视图，[组件目录模块](architecture-components.mjs)按真实类型归并投影并派生组件图，[源码策略模块](architecture-source-policy.mjs)和[证据清单](architecture-source-evidence.mjs)维护语义类型的源码范围。[绘图模块](architecture-renderer.mjs)生成 Mermaid 定义，[视觉样式模块](architecture-style.mjs)集中维护节点、连线及图例，[编译器](mermaid-compiler.mjs)、[归一化模块](mermaid-core.mjs)和[走线检查](architecture-routing.mjs)生成并验证原生 SVG。[查看器](architecture-viewer.mjs)内嵌全部编译结果，[导航模块](architecture-navigation.mjs)维护页面参数；浏览器切页只读取已有 SVG，不运行 Mermaid 编译。
+
+## App 调度总览
+
+“功能总览”保留 `overview` 视图身份和 `feature=overview` 入口，画布展示 App 的整体系统调度。总览汇总全部项目系统，以及已核实的引擎／第三方集合、命令同步和聚合流程，复用局部视图的规范节点、注册身份和显式关系；同一规范节点只声明一次，不同 Schedule 的注册信息继续保留。节点详情提供完整的 Schedule、运行条件、读写与查询及源码入口，所属插件仍可逐一进入。
+
+调度骨架分别表达一次性启动、每帧 Main 与 `RunFixedMainLoop` 驱动的固定步。固定循环每帧执行 `0..N` 个完整 FixedMain，循环结束后的呈现同步在零固定步帧也运行；状态转换保留首次初始化和每帧处理的不同入口，OnEnter／OnExit 等仅在对应状态变化时执行。阶段驱动与系统执行依赖分别表达，未声明依赖的系统没有额外全序；插件安装顺序和功能协作契约不转成系统顺序。
+
+Egui 的相关 Schedule 由 PostUpdate 内部驱动；RenderApp 是独立渲染子应用。Observer 与原生平台回调位于调度外区域，不追加到主 Schedule 链中，也不伪造固定注册。引擎与第三方的集合和聚合流程只覆盖已核实的职责及公开边界，不代表穷举全部内部系统；聚合节点保留自己的类别和说明，不冒充单个系统函数。
 
 ## 画布交互与焦点
 
@@ -66,13 +74,13 @@ Schedule 与普通分组的详情显示分组标题及已有的具体 `notes`，
 
 ## 源码范围
 
-源码区仅渲染按语义类型核对的 `sourceEntries`，按角色分组并在单个“源码位置”栏目提供明确入口。旧 `source` 保留原使用或注册语义，`definition_source` 保留依赖声明信息，二者不能被查看器无条件提升为类型定义。角色、定位与证据由[源码策略](architecture-source-policy.mjs)和[证据清单](architecture-source-evidence.mjs)维护；相同角色与定位去重，不同 Schedule 注册仍保留各自来源。以下 20 类阅读范围覆盖策略中的各语义 kind，其中 SystemParam 与 QueryData 共用一行。
+源码区仅渲染按语义类型核对的 `sourceEntries`，按角色分组并在单个“源码位置”栏目提供明确入口。旧 `source` 保留原使用或注册语义，`definition_source` 保留依赖声明信息，二者不能被查看器无条件提升为类型定义。角色、定位与证据由[源码策略](architecture-source-policy.mjs)和[证据清单](architecture-source-evidence.mjs)维护；相同角色与定位去重，不同 Schedule 注册仍保留各自来源。下表按规范语义类别规定允许显示的入口；不同类别可具有相同的允许角色，但不能据此合并卡片身份或图例。
 
 | 语义类型 | 节点源码入口范围 |
 | --- | --- |
 | Component | 仅真实类型定义。 |
 | Entity | 创建／装配生成位置、销毁位置。 |
-| System／Engine system | 函数定义及所有真实 Schedule 注册位置。 |
+| System | 函数定义及所有真实 Schedule 注册位置。 |
 | Observer | 回调定义及 Observer 注册位置。 |
 | Resource | 类型定义、初始化、插入与移除位置。 |
 | Local<T> | 参数声明、自定义类型定义及初始化位置。 |
@@ -84,12 +92,24 @@ Schedule 与普通分组的详情显示分组标题及已有的具体 `notes`，
 | PluginGroup | 组类型定义、构建实现及安装位置。 |
 | App | 创建、装配及运行入口。 |
 | SystemSet | 集合定义及 configure_sets 等配置位置。 |
-| Contract | 真实定义、配置和参数位置；按具体契约审阅。 |
-| SystemParam／QueryData | 真实定义、配置与参数位置，不能当作 Component。 |
-| Relationship | 关系定义、配置及参数位置。 |
-| 同步节点／引擎流程聚合 | 真实定义、实际实现、注册与配置位置。 |
-| External I/O／原生平台接口 | 定义、创建、安装、实际实现及关闭位置。 |
-| Note／布局／结果说明 | 仅已核实的相关实现；不虚构定义位置。 |
+| SystemParam | 真实定义、配置与参数位置，不能当作 Component。 |
+| QueryData | 真实定义、配置与参数位置，不能当作 Component。 |
+| Scheduling constraint | 建立调度约束的实际配置；存在独立声明时才列定义。 |
+| Shared data contract | 真实声明、约束配置及参数使用位置。 |
+| Synchronization | 真实同步定义、实际实现、注册与促成同步的配置。 |
+| System group | 真实成员及其注册／配置，不虚构分组类型或独立系统函数。 |
+| Observer group | 真实成员回调及注册／配置，不伪造统一 Observer 函数或 Schedule。 |
+| Engine flow | 真实流程入口、相关集合定义、实际实现及安装配置，不冒充单个函数。 |
+| Registration helper | 真实辅助函数定义及项目调用／装配位置，不当作 Plugin 类型。 |
+| External I/O | 定义、创建、安装、实际实现及关闭位置。 |
+| Platform API | 创建／安装、实际执行和关闭／卸载实现，保留平台条件。 |
+| Platform event | 真实事件／回调定义、OS 注册及项目启用位置，保留平台与触发条件。 |
+| Note | 仅支持说明的已核实相关实现，不虚构定义。 |
+| Lifecycle note | 相关生命周期配置与实际清理实现，不虚构独立声明。 |
+| BSN layout | 真实装配或布局声明。 |
+| Operation result | 实际赋值或其他已核实操作位置，不虚构类型定义。 |
+| Relationship | Bevy 关系声明、约束配置及参数使用位置；建立／解除与 hook 操作通过连线追踪。 |
+| Entity reference | 普通实体引用的字段／参数声明；赋值与清除通过连线追踪，不套用 Bevy 关系 hook。 |
 
 本表规定允许显示的范围，不代表每种角色必有独立实现。间接销毁、导入场景、关系生命周期或引擎自动初始化须标明真实机制和来源。尚无证据的必要入口写入 `sourceGaps` 并明确“待核实”，不拿普通使用处填补，也不伪造不存在的销毁函数或定义。
 
@@ -105,24 +125,44 @@ VS Code 入口仅在用户点击时调用 `vscode://file/...` 协议；页面加
 
 ## 节点与连线视觉规范
 
-节点使用浅色填充、深色描边和 Mermaid 原生轮廓。填充色由描边色与白色按 `8% : 92%` 混合，每个 RGB 通道计算 `round(stroke × 0.08 + 255 × 0.92)`。类型由形状与配色表达，不在名称上方重复 `System`、`Component`、`Resource` 等类型标题；类型文字保留在图例与无障碍描述中，节点详情顶部不重复类型标签。
+节点的规范语义类别由共享分类目录维护，绘图、图例、无障碍名称与源码策略使用同一身份。项目与引擎的同一种真实类型共用类别；节点使用浅色填充、深色描边和 Mermaid 原生轮廓。填充色由描边色与白色按 `8% : 92%` 混合，每个 RGB 通道计算 `round(stroke × 0.08 + 255 × 0.92)`。类型由形状与配色表达，不在名称上方重复 `System`、`Component`、`Resource` 等类型标题；类型文字保留在图例与无障碍描述中，节点详情顶部不重复类型标签。
 
-| 节点类型 | 轮廓 | 填充／描边 |
+| 图例类别 | Mermaid 原生轮廓 | 填充／描边 |
 | --- | --- | --- |
-| 系统、引擎系统 | 圆角矩形 | `#EFF3F8`／`#3567A6` |
-| Observer | 六边形 | `#F4F1F9`／`#7B4DB2` |
-| Entity | 单层圆角矩形 | `#F8F1EF`／`#A6533B` |
-| Component | 圆角矩形 | `#F1F5F2`／`#4B8060` |
-| Resource | 圆柱 | `#F8F4EE`／`#A5792C` |
-| Local | 缺角卡片 | `#F8F5F1`／`#AA8752` |
-| NonSend | 角标矩形 | `#F8F3EF`／`#A5633A` |
-| Message | 右倾平行四边形 | `#EDF4F6`／`#247B91` |
-| 消息缓冲 `Messages<T>` | 圆柱 | `#EDF4F6`／`#247B91` |
-| EntityEvent | 胶囊 | `#F9F3EE`／`#B66B2D` |
-| 插件、App 装配入口 | 双侧框矩形 | `#F1F3F6`／`#4A6389` |
-| 调度集合、同步及共享契约 | 侧线矩形 | `#F3F4F6`／`#6A778C` |
-| 外部 I/O、原生平台接口 | 左倾平行四边形 | `#F1F3F4`／`#526A78` |
-| 生命周期、布局等说明 | 文档形 | `#F7F7F5`／`#9A9B88` |
+| System | `rounded` | `#EFF3F8`／`#3567A6` |
+| Observer | `hex` | `#F4F1F9`／`#7B4DB2` |
+| Entity | `rounded` | `#F8F1EF`／`#A6533B` |
+| Component | `rounded` | `#F1F5F2`／`#4B8060` |
+| Resource | `cyl` | `#F8F4EE`／`#A5792C` |
+| Local<T> | `notch-rect` | `#F8F5F1`／`#AA8752` |
+| NonSend<T> | `tag-rect` | `#F8F3EF`／`#A5633A` |
+| Message | `lean-r` | `#EDF4F6`／`#247B91` |
+| Messages<T> | `cyl` | `#EDF4F6`／`#247B91` |
+| EntityEvent | `stadium` | `#F9F3EE`／`#B66B2D` |
+| SystemSet | `lin-rect` | `#F3F4F6`／`#6A778C` |
+| SystemParam | `notch-rect` | `#EFF5F6`／`#3B8790` |
+| QueryData | `notch-rect` | `#F1F4F1`／`#567A51` |
+| Scheduling constraint | `lin-rect` | `#F5F3F8`／`#7C6AA6` |
+| Shared data contract | `tag-rect` | `#F1F5F5`／`#4A8580` |
+| Synchronization | `rounded` | `#F6F3F0`／`#8B6A42` |
+| System group | `fr-rect` | `#F2F5F7`／`#607C96` |
+| Observer group | `hex` | `#F7F3F6`／`#9A648D` |
+| Engine flow | `stadium` | `#F1F5F4`／`#557C78` |
+| Plugin | `fr-rect` | `#F1F3F6`／`#4A6389` |
+| PluginGroup | `fr-rect` | `#F4F2F6`／`#735C93` |
+| App | `fr-rect` | `#EFF4F5`／`#3A7B87` |
+| Registration helper | `tag-rect` | `#F6F4F0`／`#8A7548` |
+| External I/O | `lean-l` | `#F1F3F4`／`#526A78` |
+| Platform API | `lean-l` | `#F6F3F1`／`#8A6555` |
+| Platform event | `lean-r` | `#F6F3F0`／`#916B45` |
+| Note | `doc` | `#F7F7F5`／`#9A9B88` |
+| Lifecycle note | `doc` | `#F6F4F3`／`#8E766D` |
+| BSN layout | `doc` | `#F3F6F7`／`#6C8D9D` |
+| Operation result | `doc` | `#F5F6F3`／`#7D8963` |
+
+具名 SystemSet、真实 System、匿名 System group、Observer group、Synchronization 和 Engine flow 分别表达集合、单个函数、分组、同步及流程聚合。集合卡片只显示准确的集合名称，关联函数保留在完整说明中；流程聚合不因某个入口声明是 Resource、AppLabel 或 Plugin 而冒充该入口类型。旧 `engine` 名称和视觉覆盖不能作为分类依据，缺少证据时明确标为待核实，不回退为笼统 `Contract`。普通说明、生命周期、布局和操作结果各有独立类别，结果说明不表示新增 ECS 对象。
+
+类型目录支持 QueryData，但没有实际卡片时不新增节点。关系记录按 Bevy 关系和普通实体引用分别维护，继续通过连线及其详情阅读，不为类别覆盖创建额外关系卡片。每个可绘制类别的轮廓与配色组合唯一，卡片与普通图例样例共用同一规范。
 
 图内文字统一为 `14px`，名称加粗，用途使用常规字重。名称完整显示，长名称优先在 `_`、`::` 等标识符边界换行；换行不丢字符，不以截断或省略号缩短名称。名称下只有一句短用途，外部提供插件融入该句；读写、条件和完整说明在详情中查看。系统不重复所在容器的 Schedule，组件不附加实体前缀；不同实体上的组件保留各自投影 ID 和所属信息；真实类型相同才进入同一组件类型图。
 
@@ -144,14 +184,15 @@ VS Code 入口仅在用户点击时调用 `vscode://file/...` 协议；页面加
 | 状态转换 | 玫红 `#A64E76` | 点划线／2px |
 | 普通引用 | 紫 `#7B4DB2` | 短虚线／1.5px |
 | Bevy 关系 | 紫 `#7B4DB2` | 实线／1.8px |
-| 集合成员 | 灰蓝 `#6A778C` | 点线／1.4px |
+| SystemSet 成员（SystemSet membership） | 灰蓝 `#6A778C` | 点线／1.4px |
+| 系统分组成员（System group membership） | 灰蓝 `#607C96` | 点线／1.4px |
 | 调度契约参与 | 灰蓝 `#6A778C` | 点划线／1.4px |
 | 装配注册 | 灰 `#64748B` | 短虚线／1.5px |
 | 公开契约依赖 | 灰 `#64748B` | 长虚线／1.5px |
 
-短虚线的节奏为 `6 4`，长虚线为 `10 5`，点线为 `2 4`，点划线为 `10 4 2 4`。缓冲消息的消费与事件触发分开表达，集合成员与插件装配分开表达。节点、连线和图例共用集中样式定义，HTML 与独立 SVG、Mermaid 源码中的业务图形保持一致。图例使用真实 Mermaid 编译的共享 `guideSamples`，按当前页实际出现的类型组成右侧读图指南；`guideSamples.nodes[type]` 保存该类型唯一的普通 SVG，即使当前页该类型仅作为外部引用出现，也使用同一普通样例。存在外部节点时仅补充 `Dashed node outlines indicate external references.`，不另画外部变体。样例与业务图形分开维护元数据，不进入独立业务 SVG、`.mmd` 或业务节点与关系统计。
+短虚线的节奏为 `6 4`，长虚线为 `10 5`，点线为 `2 4`，点划线为 `10 4 2 4`。缓冲消息的消费与事件触发分开表达，SystemSet 成员、系统分组成员与插件装配分别表达。节点、连线和图例共用集中样式定义，HTML 与独立 SVG、Mermaid 源码中的业务图形保持一致。图例使用真实 Mermaid 编译的共享 `guideSamples`，按当前页实际出现的类型组成右侧读图指南；`guideSamples.nodes[type]` 保存该类型唯一的普通 SVG，即使当前页该类型仅作为外部引用出现，也使用同一普通样例。存在外部节点时仅补充 `Dashed node outlines indicate external references.`，不另画外部变体。样例与业务图形分开维护元数据，不进入独立业务 SVG、`.mmd` 或业务节点与关系统计。
 
-右侧图例的分节标题为 `Nodes` 和 `Edges`，区域的无障碍名称为 `Legend`。14 类节点与 16 类连线各自维护独立的英文 `legendLabel`，仅用于图例；原有 `label` 继续用于详情和业务图形的无障碍描述，其他中文界面与架构说明保留。节点图例采用 `System`、`Entity`、`Component`、`Resource`、`Local<T>`、`NonSend<T>`、`Messages<T>`、`EntityEvent` 等名称；覆盖多种职责的类型使用 `Contract`、`Note`、`External I/O` 等泛称，不能将混合类别解释成单一 Bevy API。本文中文类型表用于解释语义，不是图例文字的第二份词表。
+右侧图例的分节标题为 `Nodes` 和 `Edges`，区域的无障碍名称为 `Legend`。类别数量来自共享分类与样式目录，不在测试或页面固定为某个数量；每个类别维护独立英文 `legendLabel`，其他中文界面与架构说明保留。图例只列当前视图实际出现的类别，分类别名不产生重复项；SystemSet、SystemParam、Plugin、PluginGroup、App 等使用准确名称，不以 `Contract`、`Plugin / App` 或 `External I/O / Platform API` 合并不同身份。卡片名称、完整说明与详情栏目保持原有结构，不增加类型徽章。
 
 Entity、Component 与 System 使用相同的 Mermaid 原生圆角矩形。Entity 与单份普通图例统一使用砖红色单层轮廓，描边为 `#A6533B`、填充为 `#F8F1EF`、选中填充为 `#EBD9D4`；System 保持蓝色，Component 保持绿色。
 
@@ -173,9 +214,9 @@ URL 的 `component` 使用原组件投影 ID，同类型的任一投影均进入
 
 ## Mermaid 布局与连线
 
-“系统与调度”使用 Mermaid 流程图与 Dagre 布局，主图区从左到右排列；按规范化的 Schedule 分组，每个子图内声明 `direction TB`，使 Schedule 容器横排、系统纵排。当前系统图的真实关系保留在各自 `schedule_group` 内，避免内部节点外连覆盖子图方向。系统框显示完整名称与短用途，真实依赖直接连到唯一的语义节点。
+App 调度总览与插件“系统与调度”均使用 Mermaid 流程图与 Dagre 布局，主图区从左到右排列；按规范化的 Schedule 分组，每个子图内声明 `direction TB`，使 Schedule 容器横排、系统纵排。插件系统图的真实关系保留在各自 `schedule_group` 内，避免内部节点外连覆盖子图方向；总览同时保留已核实的跨插件调度约束。系统框显示完整名称与短用途，真实依赖直接连到唯一的语义节点。
 
-Schedule 之间按当前视图可见阶段的真实先后关系增加箭头，单独记录在 `view.scheduleLinks`，不混入系统执行依赖；跳过本页未展示的阶段不代表两个阶段在引擎中直接相邻。Egui 使用内部 Schedule 驱动连接，原生回调、渲染子应用与说明框不串入主调度链。阶段标题不显示“0…N 次”，不另画循环分支；初始化与条件运行的边界仍保留在说明及详情中。
+Schedule 之间按当前视图可见阶段的真实先后关系增加箭头，单独记录在 `view.scheduleLinks`，不混入系统执行依赖；跳过本页未展示的阶段不代表两个阶段在引擎中直接相邻。Egui 使用内部 Schedule 驱动连接，原生回调、渲染子应用与说明框不串入主调度链。插件局部页的阶段标题不显示“0…N 次”，不另画循环分支，初始化与条件运行的边界保留在说明及详情中；总览按 [App 调度总览](#app-调度总览) 表达完整驱动骨架及固定循环次数。
 
 启动阶段标题仅显示 `Startup`。状态切换分组保留稳定身份，标题从本页系统的实际运行时注册中提取 `OnEnter`、`OnExit`、`OnTransition` 等 Schedule 类型名，按出现顺序去重后逐行显示，不列参数；测试注册不进入标题。多个状态目标或不同状态 Schedule 共用原分组，不重复系统，也不因标题列表增加执行边；点击系统后在[节点详情](#节点详情)查看每条注册的完整状态参数。
 
@@ -183,7 +224,7 @@ Schedule 之间按当前视图可见阶段的真实先后关系增加箭头，�
 
 容器之间及组内使用独立记录的不可见 `layoutLinks` 约束排版。它们不进入语义关系，也不表示执行先后；系统实际执行依赖由模型中 `kind=order` 的关系表达。自动校验分别检查 Schedule 横坐标递增、组内系统纵坐标递增及阶段连线方向，不能把“图已经横排／纵排”当作调度语义成立的证据。
 
-总览和“事件与协作”使用从左到右的 Dagre `LR` 布局；“数据与实体”整体使用 Dagre `TB`，移除透明的 `diagram_main` 包装子图，默认 `rankSpacing: 8`，减少嵌套空白并保持跨组真实关系下实体标题与组件列序的确定性。同一节点只声明一次，各条关系复用其 ID，业务图形的布局不包含读图指南样例。Mermaid 子图的方向约束及布局配置见 [官方流程图说明](https://mermaid.js.org/syntax/flowchart.html#direction-in-subgraphs) 与 [布局说明](https://mermaid.js.org/config/layouts.html)。
+“事件与协作”使用从左到右的 Dagre `LR` 布局；“数据与实体”整体使用 Dagre `TB`，移除透明的 `diagram_main` 包装子图，默认 `rankSpacing: 8`，减少嵌套空白并保持跨组真实关系下实体标题与组件列序的确定性。同一节点只声明一次，各条关系复用其 ID，业务图形的布局不包含读图指南样例。Mermaid 子图的方向约束及布局配置见 [官方流程图说明](https://mermaid.js.org/syntax/flowchart.html#direction-in-subgraphs) 与 [布局说明](https://mermaid.js.org/config/layouts.html)。
 
 数据页只从 `model.entities[*].components` 建立 canonical Component 到 Entity 的索引。Entity 画为普通卡片，其完整组件清单仅供详情、搜索和组件类型导航；规范组件端点及关系 ID 保留在 `from`／`to`，画面需要连接 Entity 时另用 `displayFrom`／`displayTo` 固定投影。关系详情始终显示原端点，不能因画布投影合并或删除真实关系。
 

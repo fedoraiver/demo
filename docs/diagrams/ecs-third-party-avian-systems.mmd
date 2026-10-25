@@ -33,7 +33,8 @@ flowchart TB
   accDescr: Avian的系统与调度；外部契约保留摘要，可跳转到所属插件。
   %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
   classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
-  classDef node_contract fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_sync fill:#F6F3F0,stroke:#8B6A42,stroke-width:1.6px,color:#1F3340
   classDef edge_schedule stroke:#334155,stroke-width:3px
   classDef edge_order stroke:#334155,stroke-width:2px
   classDef external_node stroke-dasharray:6 4
@@ -43,18 +44,18 @@ flowchart TB
   subgraph sg0["FixedFirst"]
   direction TB
   n3@{ shape: lin-rect, label: "**TransformEasingSystems::Reset**<br/>重置上一轮固定步的插值状态。" }
-  class n3 node_contract
+  class n3 node_system_set
   n11@{ shape: rounded, label: "**resume_interpolation**<br/>来自越界恢复 ↗：撤销落水恢复添加的临时<br/>插值暂停。" }
   class n11 node_system
   class n11 external_node
   n12@{ shape: rounded, label: "**resume_carry_easing**<br/>来自物品交互 ↗：恢复物品释放前未暂停的<br/>插值通道。" }
   class n12 node_system
   class n12 external_node
-  n13@{ shape: lin-rect, label: "**ApplyDeferred · 恢复插值**<br/>来自越界恢复 ↗：使插值暂停清理在新固定<br/>步采样前可见。" }
-  class n13 node_contract
+  n13@{ shape: rounded, label: "**ApplyDeferred · 恢复插值**<br/>来自越界恢复 ↗：使插值暂停清理在新固定<br/>步采样前可见。" }
+  class n13 node_sync
   class n13 external_node
   n7@{ shape: lin-rect, label: "**TransformEasingSystems::UpdateStart**<br/>记录当前固定步的插值起点。" }
-  class n7 node_contract
+  class n7 node_system_set
   n3 layout_0@~~~ n11
   n11 layout_1@~~~ n12
   n12 layout_2@~~~ n13
@@ -62,15 +63,15 @@ flowchart TB
   end
   subgraph sg1["FixedPostUpdate"]
   direction TB
-  n17@{ shape: lin-rect, label: "**ApplyDeferred（提前唤醒 → 物理准备）**<br/>来自物理基础 ↗：使提前唤醒命令在物理准<br/>备前可见。" }
-  class n17 node_contract
+  n17@{ shape: rounded, label: "**ApplyDeferred（提前唤醒 → 物理准备）**<br/>来自物理基础 ↗：使提前唤醒命令在物理准<br/>备前可见。" }
+  class n17 node_sync
   class n17 external_node
   n0@{ shape: lin-rect, label: "**PhysicsSystems::Prepare**<br/>准备物理步所需的位姿、质量与碰撞查询数<br/>据。" }
-  class n0 node_contract
-  n1@{ shape: lin-rect, label: "**PhysicsSystems::StepSimulation /**<br/>**PhysicsSchedule**<br/>执行碰撞求解、重力积分与刚体运动。" }
-  class n1 node_contract
+  class n0 node_system_set
+  n1@{ shape: lin-rect, label: "**PhysicsSystems::StepSimulation**<br/>执行碰撞求解、重力积分与刚体运动。" }
+  class n1 node_system_set
   n2@{ shape: lin-rect, label: "**PhysicsSystems::Writeback**<br/>将求解后的物理位姿写回显示变换。" }
-  class n2 node_contract
+  class n2 node_system_set
   n8@{ shape: rounded, label: "**update_grounded**<br/>来自角色运动 ↗：物理回写之后观察实际接<br/>地状态。" }
   class n8 node_system
   class n8 external_node
@@ -94,12 +95,12 @@ flowchart TB
   subgraph sg2["FixedLast"]
   direction TB
   n4@{ shape: lin-rect, label: "**TransformEasingSystems::UpdateEnd**<br/>记录固定步结束位置供显示插值。" }
-  class n4 node_contract
+  class n4 node_system_set
   end
   subgraph sg3["RunFixedMainLoop ·<br/>AfterFixedMainLoop"]
   direction TB
   n5@{ shape: lin-rect, label: "**TransformEasingSystems::Ease**<br/>混合固定步端点以生成平滑显示姿态。" }
-  class n5 node_contract
+  class n5 node_system_set
   n9@{ shape: rounded, label: "**sync_character_facing**<br/>来自第一人称控制 ↗：同步人物朝向并处理<br/>持物转向受阻。" }
   class n9 node_system
   class n9 external_node
@@ -107,7 +108,7 @@ flowchart TB
   class n10 node_system
   class n10 external_node
   n6@{ shape: lin-rect, label: "**TransformEasingSystems::**<br/>**UpdateEasingTick**<br/>记录显示变更，区分插值更新与外部瞬移。" }
-  class n6 node_contract
+  class n6 node_system_set
   n5 layout_11@~~~ n9
   n9 layout_12@~~~ n10
   n10 layout_13@~~~ n6
