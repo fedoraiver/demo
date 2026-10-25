@@ -50,7 +50,7 @@ python art/scripts/validate_items.py --report tmp/item-assets/validation.json
 python art/scripts/validate_assets.py --report tmp/item-assets/all-assets.json
 ```
 
-命令依次重建模型与预览、生成静态穿戴示意、排版目录，再验证道具和完整资产库。统一入口为 [build_items.py](../scripts/build_items.py)；只有普通 Python 的目录排版需要 Pillow。后台制作不打开游戏，也不覆盖海岛源文件。
+模型与预览的重建入口为 [build_items.py](../scripts/build_items.py)，只有目录排版需要 Pillow。后台制作不打开游戏，也不覆盖海岛源文件。
 
 离线检查读取实际 GLB 顶点、索引、法线和节点，核对根原点、米制尺寸、三角预算、挂点矩阵、成对子根、清单字节大小以及摄影棚隔离；全库验证同时覆盖海岛资产。报告保存在根 `tmp/`，不提交。
 

@@ -4,9 +4,9 @@
 
 ## 技术栈与版本
 
-项目是用于探索和提升游戏制作水平的 demo，当前玩法尚未确定。技术上使用 Rust 与 Bevy，具体 edition、依赖版本和构建参数以 [Cargo.toml](../Cargo.toml) 与 [Cargo.lock](../Cargo.lock) 为准。
+Rust edition、依赖版本和构建参数以 [Cargo.toml](../Cargo.toml) 与 [Cargo.lock](../Cargo.lock) 为准。
 
-ECS 是架构模式，并无适用于所有引擎的统一强制规范。本文是本项目的工程约定；API 行为以对应版本的官方文档为准。使用与项目版本匹配的示例，不直接套用旧版 Bevy、Unity DOTS 或其他 ECS 框架的接口及限制。
+API 行为以对应版本的官方文档为准，示例必须匹配项目版本，不直接套用旧版 Bevy、Unity DOTS 或其他 ECS 框架的接口及限制。
 
 ## ECS 的职责划分
 
@@ -139,7 +139,7 @@ ECS 是架构模式，并无适用于所有引擎的统一强制规范。本文�
 
 - 每次用户启动游戏游玩，都必须将本次会话的日志写入文件，不能仅输出到控制台。默认保存到 `logs/`，每次启动创建包含时间戳和唯一会话标识的新文件，保留历史日志，不覆盖前次记录。
 - 日志从启动初始化开始，覆盖整个游玩过程；记录会话开始、版本与关键配置、正常退出，以及异常和错误上下文。运行期间及时写入，正常退出时刷新缓冲，尽量保留异常退出前的记录。
-- 新增或修改功能时，同时补充有助于复现问题的日志。记录关键状态变化及其原因，例如场景切换、实体生成与销毁、生命值或资源变化、交互结果、任务进度，以及存档创建、写入、读取和失败。
+- 新增或修改功能时，补充关键状态变化、交互及持久化操作的原因、结果和失败日志，以便复现问题。
 - 状态变化日志应包含时间、级别、模块或系统、相关实体或业务 ID、变化前后值和触发原因；错误日志应包含操作、相关文件路径及错误信息，方便定位问题。
 - 使用统一的日志设施，将 Bevy 日志与业务日志写入会话文件。日志配置和写入职责集中管理，避免各系统自行打开文件或重复初始化日志设施。
 - 关键流程、状态变化和错误默认落盘；详细调试信息使用合适的日志级别。连续变化的高频数据按需采样或汇总，避免逐帧记录全部组件，但不能漏掉有调试价值的离散状态变化。
@@ -155,7 +155,7 @@ ECS 是架构模式，并无适用于所有引擎的统一强制规范。本文�
 cargo build --locked
 ```
 
-Windows 输出程序为 `target/debug/demo.exe`。项目代码使用一级优化并保留完整调试信息，Bevy 等依赖使用三级优化。调试断言和整数溢出检查保持开启；优化可能使单步调试跳行或令部分变量不可查看。首次构建依赖耗时较长，后续构建可以复用缓存。
+Windows 输出程序为 `target/debug/demo.exe`。开发构建保留调试信息，但优化可能使单步调试跳行或令部分变量不可查看。首次构建依赖耗时较长，后续构建可以复用缓存。
 
 ### 发布构建
 
@@ -163,7 +163,7 @@ Windows 输出程序为 `target/debug/demo.exe`。项目代码使用一级优化
 cargo build --release --locked
 ```
 
-Windows 输出程序为 `target/release/demo.exe`。发布构建使用三级优化、Thin LTO 和单个代码生成单元，并移除调试信息；断言与溢出检查使用 Cargo 发布模式默认值。保留默认 panic 行为，便于正常清理资源和处理线程异常。
+Windows 输出程序为 `target/release/demo.exe`。发布构建保留默认 panic 行为，便于正常清理资源和处理线程异常；两种构建模式的优化与调试参数以 [Cargo.toml](../Cargo.toml) 为准。
 
 `--locked` 确保使用提交的依赖锁定文件，需要变化时直接报错。构建参数以 Cargo 文件为准。发布包必须携带完整的 `assets/`。
 
@@ -175,7 +175,7 @@ Windows MSVC 目标由根 [build.rs](../build.rs) 在链接时嵌入 `Microsoft.
 
 构建和测试从对应 worktree 执行，用户启动游戏时也使用该工作目录，保证代码与资源一致。配置细节见 [Cargo 构建目录](https://doc.rust-lang.org/cargo/reference/config.html#buildbuild-dir)。
 
-构建检查由 Agent 执行；游戏启动和实际游玩由用户完成。用户启动方式见 [README](../README.md#运行)，操作与配置见 [使用说明](usage.md)，开发检查见 [验证参考](testing/README.md)，实际窗口与听感按 [游戏手动验收](testing/game-acceptance.md) 由用户检查。
+构建检查由 Agent 执行，游戏启动与实机验收由用户完成。入口见 [运行方式](../README.md#运行)、[验证参考](testing/README.md) 和 [游戏手动验收](testing/game-acceptance.md)。
 
 ### 日志排查
 
@@ -187,7 +187,7 @@ Windows MSVC 目标由根 [build.rs](../build.rs) 在链接时嵌入 `Microsoft.
 $env:RUST_LOG = "info,demo::camera=debug,demo::gameplay=debug"
 ```
 
-该过滤设置提高上述模块的日志详细程度，仍需由用户自行启动游戏。采样包含相关实体、变化前后值和原因。排查结束后可移除当前终端会话的覆盖：
+采样包含相关实体、变化前后值和原因。排查结束后可移除当前终端会话的覆盖：
 
 ```powershell
 Remove-Item Env:RUST_LOG -ErrorAction SilentlyContinue
