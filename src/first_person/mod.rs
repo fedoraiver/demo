@@ -198,6 +198,4 @@ fn resume_capture(mut captures: Query<&mut MouseLookState>) {
 }
 
 #[cfg(test)]
-mod action_tests;
-#[cfg(test)]
-mod pose_tests;
+mod tests;

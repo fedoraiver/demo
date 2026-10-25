@@ -232,7 +232,8 @@ fn scroll_over_settings_scrollbar(
     event.propagate(false);
 }
 
-fn vertical_scroll_range(node: &ComputedNode) -> f32 {
+/// 根据实际内容和轨道占用计算逻辑纵向滚动范围。
+pub(super) fn vertical_scroll_range(node: &ComputedNode) -> f32 {
     (node.content_size().y - (node.size().y - node.scrollbar_size.y)).max(0.0)
         * node.inverse_scale_factor()
 }
@@ -323,7 +324,3 @@ pub(super) fn scroll_focused_button(
     }
     *previous = Some(entity);
 }
-
-#[cfg(test)]
-#[path = "scroll_tests.rs"]
-mod tests;

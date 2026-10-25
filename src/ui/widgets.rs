@@ -354,7 +354,3 @@ pub(super) fn logo(theme: &UiTheme, compact: bool) -> impl Scene + use<> {
         ]
     }
 }
-
-#[cfg(test)]
-#[path = "widgets_tests.rs"]
-mod tests;

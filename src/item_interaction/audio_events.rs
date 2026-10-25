@@ -82,14 +82,15 @@ fn emit_parcel_land(
 
 /// 用滞回与持续时间区分正常拾取拉近、瞬时惯性和持续受阻；每次失稳只提示一次。
 #[derive(Default)]
-struct HoldStrain {
+pub(super) struct HoldStrain {
     holder: Option<Entity>,
     age: f32,
     strained_for: f32,
     warned: bool,
 }
 
-fn warn_hold_strain(
+/// 持续偏离实际握点时提示一次，误差恢复后允许下一次告警。
+pub(super) fn warn_hold_strain(
     time: Res<Time<Fixed>>,
     config: Res<PrototypeConfig>,
     holders: Query<(&Position, &Transform), With<Character>>,
@@ -137,7 +138,3 @@ fn warn_hold_strain(
         }
     }
 }
-
-#[cfg(test)]
-#[path = "audio_event_tests.rs"]
-mod tests;

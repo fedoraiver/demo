@@ -10,26 +10,30 @@ use bevy_inspector_egui::bevy_egui::PrimaryEguiContext;
 
 use crate::game_flow::AppState;
 
-const COURIER_PATH: &str = "models/characters/chr_courier.glb";
-const COURIER_ANIMATION: &str = "Carry_Idle";
-const COURIER_POSITION: Vec3 = Vec3::new(3.2, 0.02, 2.6);
-const STATION_POSITION: Vec3 = Vec3::new(4.5, 0.02, -4.5);
+/// 菜单展示角色使用的独立 GLB。
+pub(super) const COURIER_PATH: &str = "models/characters/chr_courier.glb";
+/// 展示角色固定播放的具名持箱动作。
+pub(super) const COURIER_ANIMATION: &str = "Carry_Idle";
+/// 展示角色在菜单舞台中的位置。
+pub(super) const COURIER_POSITION: Vec3 = Vec3::new(3.2, 0.02, 2.6);
+/// 物流站在菜单舞台中的位置。
+pub(super) const STATION_POSITION: Vec3 = Vec3::new(4.5, 0.02, -4.5);
 
 /// 标记整个展示舞台的根，状态退出时连同相机、灯光和模型一起清理。
 #[derive(Component, Default, Clone)]
-struct MenuBackdrop;
+pub(super) struct MenuBackdrop;
 
 /// 持有 GLB 父资产，展示动作按名字绑定，不依赖导出后的动画排列顺序。
 #[derive(Component, FromTemplate)]
-struct CourierAnimation {
+pub(super) struct CourierAnimation {
     // 资产句柄使用 Bevy 的专用模板，不依赖要求 Unpin 的默认克隆模板。
     #[template(HandleTemplate<Gltf>)]
-    gltf: Handle<Gltf>,
+    pub(super) gltf: Handle<Gltf>,
 }
 
 /// 子场景就绪后继续等待父 GLB 与命名片段，避免异步加载顺序漏掉展示动画。
 #[derive(Component)]
-struct CourierAnimationPending;
+pub(super) struct CourierAnimationPending;
 
 /// 注册主菜单展示舞台与资产失败日志，暂停菜单继续使用玩法相机。
 pub(super) fn register(app: &mut App) {
@@ -111,7 +115,7 @@ fn spawn_backdrop(mut commands: Commands, asset_server: Res<AssetServer>) {
 }
 
 /// 镜头与环境光只属于菜单；左半边留给菜单，角色和物流站在右侧。
-fn menu_camera() -> impl Scene {
+pub(super) fn menu_camera() -> impl Scene {
     bsn! {
         #MenuCamera
         Camera3d
@@ -133,7 +137,8 @@ fn menu_camera() -> impl Scene {
     }
 }
 
-fn camera_transform() -> Transform {
+/// 菜单镜头统一朝向舞台右侧的角色与物流站。
+pub(super) fn camera_transform() -> Transform {
     Transform::from_xyz(-2.0, 4.2, 10.0).looking_at(Vec3::new(0.0, 1.5, -4.0), Vec3::Y)
 }
 
@@ -149,7 +154,8 @@ fn model(name: &'static str, path: &'static str, position: Vec3, yaw: f32) -> im
     }
 }
 
-fn mark_courier_animation_ready(
+/// 子场景就绪后标记展示角色，随后等待具名动画资产。
+pub(super) fn mark_courier_animation_ready(
     ready: On<WorldInstanceReady>,
     mut commands: Commands,
     animations: Query<(), With<CourierAnimation>>,
@@ -162,7 +168,7 @@ fn mark_courier_animation_ready(
 }
 
 /// 仅遍历已展开的展示角色子树，命名资产尚未就绪时保留 pending 供下一帧重试。
-fn play_courier_animation(
+pub(super) fn play_courier_animation(
     mut commands: Commands,
     animations: Query<(Entity, &CourierAnimation), With<CourierAnimationPending>>,
     gltfs: Res<Assets<Gltf>>,
@@ -221,7 +227,3 @@ fn log_asset_failures(mut failures: MessageReader<UntypedAssetLoadFailedEvent>) 
         }
     }
 }
-
-#[cfg(test)]
-#[path = "backdrop_tests.rs"]
-mod tests;

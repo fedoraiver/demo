@@ -1,23 +1,15 @@
 //! 物品拾取、共享刚体持握、完整转向碰撞与释放恢复；不自动安装其他项目插件。
 
 mod attachment;
-#[cfg(test)]
-mod attachment_tests;
 mod audio_events;
 mod body;
 mod components;
-#[cfg(test)]
-mod frame_tests;
 mod interaction;
-#[cfg(test)]
-mod interaction_tests;
 mod lifecycle;
 mod pose;
 mod rotation_motion;
 mod rotation_query;
 mod rotation_sweep;
-#[cfg(test)]
-mod rotation_tests;
 mod triangle_plane;
 
 pub(crate) use body::parcel_body;
@@ -103,3 +95,6 @@ impl Plugin for ItemInteractionPlugin {
         audio_events::register_feedback(app);
     }
 }
+
+#[cfg(test)]
+mod tests;

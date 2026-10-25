@@ -43,7 +43,7 @@ impl Default for VolumeFill {
 }
 
 /// 指针捕获只保留实体身份和上次采样值；页面销毁后立即丢弃失效实体。
-struct VolumeDrag {
+pub(super) struct VolumeDrag {
     entity: Entity,
     last_value: Option<u8>,
 }
@@ -194,7 +194,7 @@ fn value_at_pointer(
 
 /// Enhanced Input 负责菜单语义动作，但无法表示 UI 命中后的局部绝对横坐标。
 /// 因此仅滑条读取底层光标与左键保持／释放；起点复用原生 PointerPress，按钮路径不再发调整请求。
-fn sample_slider_pointer(
+pub(super) fn sample_slider_pointer(
     state: Res<MenuState>,
     windows: Query<&Window, With<PrimaryWindow>>,
     mouse: Option<Res<ButtonInput<MouseButton>>>,
@@ -312,7 +312,3 @@ fn update_volume_visuals(
         }
     }
 }
-
-#[cfg(test)]
-#[path = "volume_tests.rs"]
-mod tests;

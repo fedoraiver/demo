@@ -1,25 +1,13 @@
 //! 快递员视觉动画读取真实运动状态，不驱动业务根运动。
 
 mod binding;
-#[cfg(test)]
-mod binding_tests;
 mod grounding;
-#[cfg(test)]
-mod grounding_tests;
-#[cfg(test)]
-mod jump_tests;
 mod state;
-#[cfg(test)]
-mod state_tests;
-#[cfg(test)]
-mod test_support;
 
 use bevy::{app::AnimationSystems, prelude::*};
 
 use crate::game_flow::gameplay_running;
 
-#[cfg(test)]
-use binding::CourierAnimationPending;
 use binding::{initialize_ready_couriers, mark_courier_animation_ready};
 use grounding::*;
 use state::*;
@@ -52,3 +40,6 @@ impl Plugin for CharacterAnimationPlugin {
             );
     }
 }
+
+#[cfg(test)]
+mod tests;

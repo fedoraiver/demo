@@ -151,6 +151,4 @@ fn resume_simulation(
 }
 
 #[cfg(test)]
-mod initialization_tests;
-#[cfg(test)]
 mod tests;

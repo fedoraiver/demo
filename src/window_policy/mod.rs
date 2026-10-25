@@ -143,41 +143,4 @@ fn install_native_policy(
 }
 
 #[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn primary_window_has_supported_aspect_and_minimum_size() {
-        let window = primary_window();
-        assert_eq!(
-            window.resolution.physical_width() * 9,
-            window.resolution.physical_height() * 16
-        );
-        assert_eq!(window.resize_constraints.min_width, 960.0);
-        assert_eq!(window.resize_constraints.min_height, 540.0);
-        assert_eq!(window.mode, bevy::window::WindowMode::Windowed);
-    }
-
-    #[test]
-    fn headless_policy_does_not_require_native_window_or_create_one() {
-        let mut app = App::new();
-        app.add_plugins((MinimalPlugins, WindowPolicyPlugin));
-        let entity = app
-            .world_mut()
-            .spawn((primary_window(), PrimaryWindow))
-            .id();
-        app.update();
-        assert_eq!(
-            app.world()
-                .get::<Window>(entity)
-                .unwrap()
-                .resolution
-                .physical_size(),
-            INITIAL_SIZE
-        );
-        assert_eq!(
-            app.world_mut().query::<&Window>().iter(app.world()).count(),
-            1
-        );
-    }
-}
+mod tests;
