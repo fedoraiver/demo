@@ -55,6 +55,67 @@ function viewer(query='?feature=item&tab=data',{historyUnavailable=false,width=1
   return{data,app,document,location,history,canvas,window,emit:name=>events.get(name)?.(),refreshed,get:id=>document.getElementById(id),click,flush,activate(id,key='Enter'){const node=document.getElementById('diagram').querySelector('[data-id="'+id+'"]');assert.ok(node,'visible node '+id);node.dispatch('keydown',{key});flush()},back(){assert.ok(index>0);location.href=entries[--index].href;events.get('popstate')();flush()},forward(){assert.ok(index+1<entries.length);location.href=entries[++index].href;events.get('popstate')();flush()}};
 }
 
+function assertFitted(page) {
+  const match=/translate\(([-\d.e+]+)px,\s*([-\d.e+]+)px\) scale\(([-\d.e+]+)\)/.exec(page.get('diagram').style.transform);
+  assert.ok(match,'finite viewport transform');
+  const [x,y,scale]=match.slice(1).map(Number),view=page.app.view;
+  assert.ok(scale>0&&scale<=1);
+  assert.ok(x>=14-.001&&y>=14-.001,'whole diagram has canvas margins');
+  assert.ok(x+view.width*scale<=page.canvas.clientWidth-14+.001);
+  assert.ok(y+view.height*scale<=page.canvas.clientHeight-14+.001);
+  assert.ok(Math.abs(x+view.width*scale/2-page.canvas.clientWidth/2)<.001);
+  assert.ok(Math.abs(y+view.height*scale/2-page.canvas.clientHeight/2)<.001);
+  const transform=page.get('diagram').style.transform;
+  page.click(page.get('fit'));assert.equal(page.get('diagram').style.transform,transform,'entry uses the existing Fit action');
+}
+
+test('first entry fits overview, plugin and component diagrams even when a deep link selects a node',()=>{
+  const queries=['?feature=overview','?feature=item&tab=systems','?feature=item&tab=systems&node=system-fixed','?feature=item&tab=data&component=item.Shared','?feature=item&tab=data&component=item.Shared&node=system-function','?feature=item&tab=data&node=item.Legacy'];
+  for(const query of queries){
+    const page=viewer(query,{edit:data=>{for(const view of data.views){view.width=view.id==='overview'?18000:2400;view.height=view.aspect==='component'?4800:6000;view.bounds={x:-8,y:-8,width:view.width,height:view.height}}}});
+    assertFitted(page);
+    if(query.includes('node=system-fixed'))assert.equal(page.get('details').querySelector('h2').textContent,'update_shared');
+    if(query.includes('component=item.Shared')||query.includes('node=item.Legacy'))assert.equal(page.get('details').querySelector('h2').textContent,query.includes('node=system-function')?'update_shared':'Shared');
+  }
+});
+
+test('plugin switches, tab switches, component entry and both return buttons fit the destination diagram',()=>{
+  const page=viewer();page.click(page.get('zoom-in'));
+  page.click(page.document.querySelector('[data-feature="character"]'));assertFitted(page);
+  page.click(page.document.querySelector('[data-feature="item"]'));assertFitted(page);
+  page.click(page.document.querySelector('[data-aspect="data"]'));assertFitted(page);
+  page.activate('entity-item');page.click(page.get('zoom-in'));
+  page.click(page.get('details').querySelector('[data-open="item.Shared"]'));assertFitted(page);
+  assert.equal(page.get('details').querySelector('h2').textContent,'Shared');
+  page.click(page.get('zoom-in'));page.click(page.get('return-context'));assertFitted(page);
+  assert.equal(page.get('details').querySelector('h2').textContent,'物品');
+  page.click(page.get('zoom-in'));page.click(page.get('return-overview'));assertFitted(page);
+});
+
+test('back and forward restore saved node and edge viewports instead of fitting again',()=>{
+  const page=viewer();page.activate('entity-item');page.click(page.get('zoom-out'));
+  const source=page.get('diagram').style.transform;
+  page.click(page.get('details').querySelector('[data-open="item.Shared"]'));assertFitted(page);
+  page.click(page.get('zoom-in'));page.get('diagram').querySelector('[data-link-id="write"]').dispatch('keydown',{key:'Enter'});
+  const component=page.get('diagram').style.transform;
+  page.app.navigate({feature:'character',aspect:'systems',node:null});page.flush();
+  page.back();assert.equal(page.get('diagram').style.transform,component);assert.equal(page.get('details').querySelector('.badge').textContent,EDGE_STYLES.write.label);
+  page.back();assert.equal(page.get('diagram').style.transform,source);assert.equal(page.get('details').querySelector('h2').textContent,'物品');
+  page.forward();assert.equal(page.get('diagram').style.transform,component);assert.equal(page.get('details').querySelector('.badge').textContent,EDGE_STYLES.write.label);
+});
+
+test('missing or unrelated history falls back to fit while explicit same-diagram location remains available',()=>{
+  const page=viewer('?feature=item&tab=systems&node=system-fixed');assertFitted(page);
+  page.click(page.get('zoom-in'));page.app.renderSelection(true);page.flush();assertFitted(page);
+  page.history.replaceState({architectureView:{id:'deleted-view',scale:2,panX:900,panY:900}},'',page.location.href);
+  page.app.renderSelection(true);page.flush();assertFitted(page);
+  const fitted=page.get('diagram').style.transform;
+  page.app.openNode('system-fixed');assert.notEqual(page.get('diagram').style.transform,fitted);
+  page.click(page.get('fit'));page.get('section').value='0';page.get('section').dispatch('change');assert.notEqual(page.get('diagram').style.transform,fitted);
+  const empty=viewer('?feature=item&tab=events',{edit:data=>{Object.assign(data.views.find(v=>v.id==='plugin-item-events'),{svg:null,width:0,height:0})}});
+  assert.equal(empty.get('diagram').innerHTML,'');assert.doesNotMatch(empty.get('diagram').style.transform,/NaN|Infinity/);
+});
+
 test('two touch points zoom around their midpoint without selecting a node on release',()=>{
   const page=viewer('?feature=item&tab=data',{width:390}),diagram=page.get('diagram');
   page.document.elementFromPoint=()=>diagram.querySelector('[data-id="entity-item"]');
