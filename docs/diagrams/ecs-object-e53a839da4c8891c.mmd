@@ -1,0 +1,50 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: ActionSources · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: cyl, label: "**ActionSources**<br/>配置输入框架允许使用的输入来源。" }
+  class n0 node_resource
+  n1@{ shape: lin-rect, label: "**EnhancedInputSystems::Prepare**<br/>准备动作评估并清理待释放的输入。" }
+  class n1 node_system_set
+  n2@{ shape: lin-rect, label: "**EnhancedInputSystems::Update**<br/>评估绑定输入并更新动作值与触发状态。" }
+  class n2 node_system_set
+  n0 e0@-->|"访问声明"| n1
+  class e0 edge_read
+  n0 e1@-->|"访问声明"| n2
+  class e1 edge_read
+  e0@{ curve: basis }
+  e1@{ curve: basis }

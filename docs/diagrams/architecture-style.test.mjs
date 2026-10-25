@@ -191,7 +191,7 @@ test('Messages resources are buffer shapes and their communication differs from 
   assert.equal(visualTypeOf(registry['resource.SoundRequestMessages']), 'message_buffer');
   assert.equal(visualTypeOf(registry['resource.AppTransitionMessages']), 'message_buffer');
   assert.equal(visualTypeOf(registry['resource.SoundBank']), 'resource');
-  assert.equal(visualTypeOf(registry['window-messages']), 'message');
+  for (const id of model.object_aliases['window-messages']) assert.equal(visualTypeOf(registry[id]), 'message', id);
   const cases = [
     ['write-audio_strain-resource.SoundRequestMessages', 'publish'],
     ['read-resource.SoundRequestMessages-audio_play', 'consume'],
@@ -200,12 +200,16 @@ test('Messages resources are buffer shapes and their communication differs from 
     ['read-resource.SoundBank-audio_play', 'read'],
     ['write-log-producer-log-file-worker', 'write'],
   ];
-  for (const [id, expected] of cases) assert.equal(edgeSemanticOf(model.system_links.find(link => link.id === id), registry), expected, id);
+  for (const [id, expected] of cases) {
+    const links = model.system_links.filter(link => link.id === id || link.originalLinkIds?.includes(id));
+    assert.ok(links.length, id);
+    for (const link of links) assert.equal(edgeSemanticOf(link, registry), expected, link.id);
+  }
 });
 
-test('all 296 detailed links and 27 feature links are classified without changing raw contracts', () => {
+test('all detailed and feature links are classified without changing raw contracts', () => {
   const before = JSON.stringify(model);
-  assert.equal(model.system_links.length, 296);
+  assert.equal(model.system_links.length, 329);
   assert.equal(model.feature_links.length, 27);
   const counts = {};
   for (const link of [...model.system_links, ...model.feature_links]) {
@@ -217,13 +221,13 @@ test('all 296 detailed links and 27 feature links are classified without changin
   assert.equal(counts.set_membership, 18);
   assert.equal(counts.group_membership, 2);
   assert.equal(counts.constraint, 2);
-  assert.equal(counts.registration, 38);
+  assert.equal(counts.registration, 40);
   assert.equal(counts.emit, 14);
   assert.equal(counts.observe, 28);
   assert.equal(counts.dependency, 27);
   assert.equal(counts.order, 74);
   assert.equal(counts.relationship, 18);
-  assert.equal(counts.reference, 14);
+  assert.equal(counts.reference, 43);
   assert.equal(JSON.stringify(model), before);
 });
 

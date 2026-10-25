@@ -1,7 +1,6 @@
 // 共享离线页面的导航规则；纯函数与内嵌脚本共用实现，避免 URL 状态分叉。
 import { INFRASTRUCTURE_FEATURES } from './architecture-infrastructure.mjs';
 
-const aspects = ['systems', 'data', 'events'];
 const infrastructureIds = INFRASTRUCTURE_FEATURES.map(feature => feature.id);
 
 /** 将查询参数解析为一个已知功能与页签；无效入口回到可见的默认页面。 */
@@ -11,10 +10,11 @@ export function resolveArchitectureSelection(search, features) {
   const params = new URLSearchParams(search);
   const requested = params.get('feature') || 'overview';
   const feature = ids.has(requested) ? requested : 'overview';
-  const aspect = feature === 'overview' ? 'overview' : aspects.includes(params.get('tab')) ? params.get('tab') : 'systems';
+  const aspect = feature === 'overview' ? 'overview' : 'systems';
   const node = feature === requested ? params.get('node')?.trim() || null : null;
-  const component = params.get('component')?.trim();
-  return { feature, aspect, node, ...(component ? { component } : {}) };
+  const object = params.get('object')?.trim() || params.get('component')?.trim();
+  const legacyAspect = ['data', 'events'].includes(params.get('tab')) ? params.get('tab') : null;
+  return { feature, aspect, node, ...(object ? { object } : {}), ...(legacyAspect ? { legacyAspect } : {}) };
 }
 
 /** 只更新架构导航参数，保留工作区、其他参数与片段，不触发实际页面导航。 */
@@ -23,7 +23,7 @@ export function architectureUrl(selection, href, features) {
   params.set('feature', selection.feature || 'overview');
   if (selection.aspect) params.set('tab', selection.aspect);
   if (selection.node) params.set('node', selection.node);
-  if (selection.component) params.set('component', selection.component);
+  if (selection.object || selection.component) params.set('object', selection.object || selection.component);
   const normalized = resolveArchitectureSelection(params, features);
   const url = new URL(href);
   url.searchParams.set('feature', normalized.feature);
@@ -31,8 +31,9 @@ export function architectureUrl(selection, href, features) {
   else url.searchParams.set('tab', normalized.aspect);
   if (normalized.node) url.searchParams.set('node', normalized.node);
   else url.searchParams.delete('node');
-  if (normalized.component) url.searchParams.set('component', normalized.component);
-  else url.searchParams.delete('component');
+  if (normalized.object) url.searchParams.set('object', normalized.object);
+  else url.searchParams.delete('object');
+  url.searchParams.delete('component');
   return url.href;
 }
 
@@ -48,5 +49,5 @@ export function createArchitectureNavigation(features) {
 export function architectureNavigationAssets(features) {
   const ids = features.map(feature => typeof feature === 'string' ? feature : feature.id);
   const serialized = JSON.stringify(ids).replace(/</g, '\\u003c');
-  return { script: `const architectureNavigation=(()=>{\nconst aspects=${JSON.stringify(aspects)};\nconst infrastructureIds=${JSON.stringify(infrastructureIds)};\n${resolveArchitectureSelection.toString()}\n${architectureUrl.toString()}\n${createArchitectureNavigation.toString()}\nreturn createArchitectureNavigation(${serialized});\n})();` };
+  return { script: `const architectureNavigation=(()=>{\nconst infrastructureIds=${JSON.stringify(infrastructureIds)};\n${resolveArchitectureSelection.toString()}\n${architectureUrl.toString()}\n${createArchitectureNavigation.toString()}\nreturn createArchitectureNavigation(${serialized});\n})();` };
 }

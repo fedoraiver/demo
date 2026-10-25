@@ -1,0 +1,75 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: ButtonPlugin · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_observer fill:#F4F1F9,stroke:#7B4DB2,stroke-width:1.6px,color:#1F3340
+  classDef node_plugin fill:#F1F3F6,stroke:#4A6389,stroke-width:2.2px,color:#1F3340
+  classDef node_plugin_group fill:#F4F2F6,stroke:#735C93,stroke-width:2.2px,color:#1F3340
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: fr-rect, label: "**ButtonPlugin**<br/>为原生按钮注册六个事件Observer。" }
+  class n0 node_plugin
+  n1@{ shape: fr-rect, label: "**UiWidgetsPlugins**<br/>注册无样式UI控件插件组。" }
+  class n1 node_plugin_group
+  n2@{ shape: hex, label: "**button_on_pointer_down**<br/>按压时插入原生Pressed；可<br/>选ActivateOnPress会发Activate。" }
+  class n2 node_observer
+  n3@{ shape: hex, label: "**button_on_pointer_up**<br/>释放时移除原生Pressed。" }
+  class n3 node_observer
+  n4@{ shape: hex, label: "**button_on_pointer_click**<br/>满足条件时派发原生Activate。" }
+  class n4 node_observer
+  n5@{ shape: hex, label: "**button_on_pointer_drag_end**<br/>拖动结束时移除原生Pressed。" }
+  class n5 node_observer
+  n6@{ shape: hex, label: "**button_on_pointer_cancel**<br/>收到取消事件时移除原生Pressed。" }
+  class n6 node_observer
+  n7@{ shape: hex, label: "**button_on_key_event**<br/>焦点键盘Enter或Space首次按下时派<br/>发Activate。" }
+  class n7 node_observer
+  n1 e0@--> n0
+  class e0 edge_registration
+  n0 e1@--> n2
+  class e1 edge_registration
+  n0 e2@--> n3
+  class e2 edge_registration
+  n0 e3@--> n4
+  class e3 edge_registration
+  n0 e4@--> n5
+  class e4 edge_registration
+  n0 e5@--> n6
+  class e5 edge_registration
+  n0 e6@--> n7
+  class e6 edge_registration
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }

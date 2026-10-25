@@ -55,8 +55,8 @@ flowchart LR
   style diagram_main fill:none,stroke:none
   subgraph sg0["App 构建与退出"]
   direction TB
-  n118@{ shape: fr-rect, label: "**main / App**<br/>装配应用、设置与插件并管理主循环和退出。" }
-  class n118 node_app
+  n148@{ shape: fr-rect, label: "**main / App**<br/>装配应用、设置与插件并管理主循环和退出。" }
+  class n148 node_app
   end
   subgraph sg1["StateTransition · 首次初始化"]
   direction TB
@@ -72,27 +72,27 @@ flowchart LR
   direction TB
   n20@{ shape: rounded, label: "**log_pose_synchronization**<br/>记录物理模拟与显示同步的阶段安排。" }
   class n20 node_system
-  n31@{ shape: rounded, label: "**log_configuration**<br/>记录角色运动与持物行为的初始化配置。" }
-  class n31 node_system
-  n59@{ shape: rounded, label: "**log_asset_requests**<br/>记录运行模型资源的加载请求。" }
-  class n59 node_system
-  n72@{ shape: rounded, label: "**spawn_menu_controller**<br/>创建菜单动作控制者及键盘、手柄绑定。" }
-  class n72 node_system
-  n99@{ shape: rounded, label: "**preload_sounds**<br/>预加载界面与音效短音并保存播放策略。" }
-  class n99 node_system
-  n106@{ shape: rounded, label: "**log_simulation_timestep**<br/>记录固定模拟频率。" }
-  class n106 node_system
-  n109@{ shape: rounded, label: "**log_world_inspector**<br/>记录世界检查器已启用的初始化日志。" }
-  class n109 node_system
-  n110@{ shape: rounded, label: "**log_policy**<br/>记录窗口策略支持平台、比例与最小尺寸。" }
-  class n110 node_system
-  n20 layout_0@~~~ n31
-  n31 layout_1@~~~ n59
-  n59 layout_2@~~~ n72
-  n72 layout_3@~~~ n99
-  n99 layout_4@~~~ n106
-  n106 layout_5@~~~ n109
-  n109 layout_6@~~~ n110
+  n39@{ shape: rounded, label: "**log_configuration**<br/>记录角色运动与持物行为的初始化配置。" }
+  class n39 node_system
+  n69@{ shape: rounded, label: "**log_asset_requests**<br/>记录运行模型资源的加载请求。" }
+  class n69 node_system
+  n84@{ shape: rounded, label: "**spawn_menu_controller**<br/>创建菜单动作控制者及键盘、手柄绑定。" }
+  class n84 node_system
+  n123@{ shape: rounded, label: "**preload_sounds**<br/>预加载界面与音效短音并保存播放策略。" }
+  class n123 node_system
+  n130@{ shape: rounded, label: "**log_simulation_timestep**<br/>记录固定模拟频率。" }
+  class n130 node_system
+  n133@{ shape: rounded, label: "**log_world_inspector**<br/>记录世界检查器已启用的初始化日志。" }
+  class n133 node_system
+  n134@{ shape: rounded, label: "**log_policy**<br/>记录窗口策略支持平台、比例与最小尺寸。" }
+  class n134 node_system
+  n20 layout_0@~~~ n39
+  n39 layout_1@~~~ n69
+  n69 layout_2@~~~ n84
+  n84 layout_3@~~~ n123
+  n123 layout_4@~~~ n130
+  n130 layout_5@~~~ n133
+  n133 layout_6@~~~ n134
   end
   subgraph sg4["PostStartup"]
   direction TB
@@ -101,73 +101,73 @@ flowchart LR
   end
   subgraph sg5["First"]
   direction TB
-  n107@{ shape: rounded, label: "**limit_frame_rate**<br/>补足帧间等待以控制显示帧率。" }
-  class n107 node_system
-  n108@{ shape: lin-rect, label: "**TimeSystems**<br/>推进真实时间与游戏时间。" }
-  class n108 node_system_set
-  n107 layout_7@~~~ n108
+  n131@{ shape: rounded, label: "**limit_frame_rate**<br/>补足帧间等待以控制显示帧率。" }
+  class n131 node_system
+  n132@{ shape: lin-rect, label: "**TimeSystems**<br/>推进真实时间与游戏时间。" }
+  class n132 node_system_set
+  n131 layout_7@~~~ n132
   end
   subgraph sg6["PreUpdate"]
   direction TB
-  n73@{ shape: rounded, label: "**sync_context**<br/>跟随窗口焦点启停菜单输入。" }
-  class n73 node_system
-  n111@{ shape: rounded, label: "**install_native_policy**<br/>安装并维护原生窗口比例与尺寸策略。" }
-  class n111 node_system
-  n113@{ shape: lin-rect, label: "**InputSystems**<br/>汇总键盘与鼠标输入状态。" }
-  class n113 node_system_set
-  n27@{ shape: lin-rect, label: "**EguiPreUpdateSet::ProcessInput**<br/>将窗口和设备输入转换为检查器界面输入。" }
-  class n27 node_system_set
-  n22@{ shape: rounded, label: "**filter_captured_egui_input**<br/>隔离游戏操作与检查器界面输入。" }
-  class n22 node_system
-  n28@{ shape: lin-rect, label: "**EguiPreUpdateSet::BeginPass**<br/>界定检查器界面开始计算前的输入准备阶段。" }
-  class n28 node_system_set
+  n85@{ shape: rounded, label: "**sync_context**<br/>跟随窗口焦点启停菜单输入。" }
+  class n85 node_system
+  n135@{ shape: rounded, label: "**install_native_policy**<br/>安装并维护原生窗口比例与尺寸策略。" }
+  class n135 node_system
+  n137@{ shape: lin-rect, label: "**InputSystems**<br/>汇总键盘与鼠标输入状态。" }
+  class n137 node_system_set
+  n35@{ shape: lin-rect, label: "**EguiPreUpdateSet::ProcessInput**<br/>将窗口和设备输入转换为检查器界面输入。" }
+  class n35 node_system_set
+  n28@{ shape: rounded, label: "**filter_captured_egui_input**<br/>隔离游戏操作与检查器界面输入。" }
+  class n28 node_system
+  n36@{ shape: lin-rect, label: "**EguiPreUpdateSet::BeginPass**<br/>界定检查器界面开始计算前的输入准备阶段。" }
+  class n36 node_system_set
   n21@{ shape: rounded, label: "**sync_mouse_capture**<br/>管理光标捕获及玩法输入启停。" }
   class n21 node_system
-  n29@{ shape: rounded, label: "**ApplyDeferred（捕获 → 动作准备）**<br/>使本帧玩法输入启停变更对动作评估可见。" }
-  class n29 node_sync
-  n117@{ shape: rounded, label: "**update_is_hovered**<br/>按鼠标HoverMap及祖先关系替换已<br/>有Hovered值。" }
-  class n117 node_system
-  n116@{ shape: rounded, label: "**pointer_events**<br/>生成指针EntityEvent并同时发布对<br/>应Message。" }
-  class n116 node_system
-  n120@{ shape: lin-rect, label: "**PickingSystems::Hover**<br/>更新HoverMap、悬停组件与指针事件。" }
-  class n120 node_system_set
-  n121@{ shape: lin-rect, label: "**PickingSystems::PostHover**<br/>位于Hover之后、Last之前。" }
-  class n121 node_system_set
-  n98@{ shape: lin-rect, label: "**PickingSystems::Last**<br/>界定原生命中处理完成后的清理时机。" }
-  class n98 node_system_set
-  n89@{ shape: rounded, label: "**clear_cancelled_primary_presses**<br/>清理被取消、失焦或离窗的菜单主键按压。" }
-  class n89 node_system
-  n122@{ shape: lin-rect, label: "**EnhancedInputSystems::Prepare**<br/>准备动作评估并清理待释放的输入。" }
+  n37@{ shape: rounded, label: "**ApplyDeferred（捕获 → 动作准备）**<br/>使本帧玩法输入启停变更对动作评估可见。" }
+  class n37 node_sync
+  n141@{ shape: rounded, label: "**update_is_hovered**<br/>按鼠标HoverMap及祖先关系替换已<br/>有Hovered值。" }
+  class n141 node_system
+  n140@{ shape: rounded, label: "**pointer_events**<br/>生成指针EntityEvent并同时发布对<br/>应Message。" }
+  class n140 node_system
+  n150@{ shape: lin-rect, label: "**PickingSystems::Hover**<br/>更新HoverMap、悬停组件与指针事件。" }
+  class n150 node_system_set
+  n151@{ shape: lin-rect, label: "**PickingSystems::PostHover**<br/>位于Hover之后、Last之前。" }
+  class n151 node_system_set
+  n122@{ shape: lin-rect, label: "**PickingSystems::Last**<br/>界定原生命中处理完成后的清理时机。" }
   class n122 node_system_set
-  n124@{ shape: lin-rect, label: "**EnhancedInputSystems::Update**<br/>评估绑定输入并更新动作值与触发状态。" }
-  class n124 node_system_set
-  n125@{ shape: lin-rect, label: "**EnhancedInputSystems::Apply**<br/>把评估结果写回强类型动作值。" }
-  class n125 node_system_set
-  n94@{ shape: lin-rect, label: "**EnhancedInputSystems::Trigger**<br/>按上下文顺序排入动作事件命令。" }
-  class n94 node_system_set
-  n90@{ shape: rounded, label: "**ApplyDeferred · 动作事件**<br/>应用动作事件命令以触发匹配的观察系统。" }
-  class n90 node_sync
-  n74@{ shape: rounded, label: "**handle_requests**<br/>处理菜单导航、设置应用与音量编辑请求。" }
-  class n74 node_system
-  n73 layout_8@~~~ n111
-  n111 layout_9@~~~ n113
-  n113 layout_10@~~~ n27
-  n27 layout_11@~~~ n22
-  n22 layout_12@~~~ n28
-  n28 layout_13@~~~ n21
-  n21 layout_14@~~~ n29
-  n29 layout_15@~~~ n117
-  n117 layout_16@~~~ n116
-  n116 layout_17@~~~ n120
-  n120 layout_18@~~~ n121
-  n121 layout_19@~~~ n98
-  n98 layout_20@~~~ n89
-  n89 layout_21@~~~ n122
-  n122 layout_22@~~~ n124
-  n124 layout_23@~~~ n125
-  n125 layout_24@~~~ n94
-  n94 layout_25@~~~ n90
-  n90 layout_26@~~~ n74
+  n113@{ shape: rounded, label: "**clear_cancelled_primary_presses**<br/>清理被取消、失焦或离窗的菜单主键按压。" }
+  class n113 node_system
+  n152@{ shape: lin-rect, label: "**EnhancedInputSystems::Prepare**<br/>准备动作评估并清理待释放的输入。" }
+  class n152 node_system_set
+  n154@{ shape: lin-rect, label: "**EnhancedInputSystems::Update**<br/>评估绑定输入并更新动作值与触发状态。" }
+  class n154 node_system_set
+  n155@{ shape: lin-rect, label: "**EnhancedInputSystems::Apply**<br/>把评估结果写回强类型动作值。" }
+  class n155 node_system_set
+  n118@{ shape: lin-rect, label: "**EnhancedInputSystems::Trigger**<br/>按上下文顺序排入动作事件命令。" }
+  class n118 node_system_set
+  n114@{ shape: rounded, label: "**ApplyDeferred · 动作事件**<br/>应用动作事件命令以触发匹配的观察系统。" }
+  class n114 node_sync
+  n86@{ shape: rounded, label: "**handle_requests**<br/>处理菜单导航、设置应用与音量编辑请求。" }
+  class n86 node_system
+  n85 layout_8@~~~ n135
+  n135 layout_9@~~~ n137
+  n137 layout_10@~~~ n35
+  n35 layout_11@~~~ n28
+  n28 layout_12@~~~ n36
+  n36 layout_13@~~~ n21
+  n21 layout_14@~~~ n37
+  n37 layout_15@~~~ n141
+  n141 layout_16@~~~ n140
+  n140 layout_17@~~~ n150
+  n150 layout_18@~~~ n151
+  n151 layout_19@~~~ n122
+  n122 layout_20@~~~ n113
+  n113 layout_21@~~~ n152
+  n152 layout_22@~~~ n154
+  n154 layout_23@~~~ n155
+  n155 layout_24@~~~ n118
+  n118 layout_25@~~~ n114
+  n114 layout_26@~~~ n86
   end
   subgraph sg7["StateTransition"]
   direction TB
@@ -177,32 +177,38 @@ flowchart LR
   class n1 node_system
   n2@{ shape: rounded, label: "**resume_simulation**<br/>恢复游戏与物理时钟。" }
   class n2 node_system
-  n23@{ shape: rounded, label: "**suspend_controls**<br/>停用玩法输入并释放光标。" }
-  class n23 node_system
-  n24@{ shape: rounded, label: "**resume_capture**<br/>重置光标捕获并丢弃自由光标阶段位移。" }
-  class n24 node_system
-  n35@{ shape: rounded, label: "**clear_character_intents**<br/>清空持续移动意图与单次动作请求。" }
-  class n35 node_system
-  n58@{ shape: rounded, label: "**spawn_lighting**<br/>为游戏会话创建日光与加载相机。" }
-  class n58 node_system
-  n69@{ shape: rounded, label: "**show_main_menu**<br/>打开主菜单并重置页面、返回来源与焦点。" }
-  class n69 node_system
-  n70@{ shape: rounded, label: "**show_pause_menu**<br/>打开暂停菜单并重置焦点。" }
-  class n70 node_system
-  n71@{ shape: rounded, label: "**hide_menu**<br/>隐藏菜单并清除提示。" }
-  class n71 node_system
-  n80@{ shape: rounded, label: "**spawn_backdrop**<br/>装配主菜单海岛展示舞台、相机与日光。" }
-  class n80 node_system
+  n29@{ shape: rounded, label: "**suspend_controls**<br/>停用玩法输入并释放光标。" }
+  class n29 node_system
+  n30@{ shape: rounded, label: "**suspend_controls**<br/>停用玩法输入并释放光标。" }
+  class n30 node_system
+  n32@{ shape: rounded, label: "**resume_capture**<br/>重置光标捕获并丢弃自由光标阶段位移。" }
+  class n32 node_system
+  n43@{ shape: rounded, label: "**clear_character_intents**<br/>清空持续移动意图与单次动作请求。" }
+  class n43 node_system
+  n44@{ shape: rounded, label: "**clear_character_intents**<br/>清空持续移动意图与单次动作请求。" }
+  class n44 node_system
+  n68@{ shape: rounded, label: "**spawn_lighting**<br/>为游戏会话创建日光与加载相机。" }
+  class n68 node_system
+  n81@{ shape: rounded, label: "**show_main_menu**<br/>打开主菜单并重置页面、返回来源与焦点。" }
+  class n81 node_system
+  n82@{ shape: rounded, label: "**show_pause_menu**<br/>打开暂停菜单并重置焦点。" }
+  class n82 node_system
+  n83@{ shape: rounded, label: "**hide_menu**<br/>隐藏菜单并清除提示。" }
+  class n83 node_system
+  n92@{ shape: rounded, label: "**spawn_backdrop**<br/>装配主菜单海岛展示舞台、相机与日光。" }
+  class n92 node_system
   n0 layout_27@~~~ n1
   n1 layout_28@~~~ n2
-  n2 layout_29@~~~ n23
-  n23 layout_30@~~~ n24
-  n24 layout_31@~~~ n35
-  n35 layout_32@~~~ n58
-  n58 layout_33@~~~ n69
-  n69 layout_34@~~~ n70
-  n70 layout_35@~~~ n71
-  n71 layout_36@~~~ n80
+  n2 layout_29@~~~ n29
+  n29 layout_30@~~~ n30
+  n30 layout_31@~~~ n32
+  n32 layout_32@~~~ n43
+  n43 layout_33@~~~ n44
+  n44 layout_34@~~~ n68
+  n68 layout_35@~~~ n81
+  n81 layout_36@~~~ n82
+  n82 layout_37@~~~ n83
+  n83 layout_38@~~~ n92
   end
   subgraph sg8["RunFixedMainLoop ·<br/>BeforeFixedMainLoop"]
   direction TB
@@ -211,20 +217,20 @@ flowchart LR
   end
   subgraph sg9["FixedFirst"]
   direction TB
-  n47@{ shape: lin-rect, label: "**TransformEasingSystems::Reset**<br/>重置上一轮固定步的插值状态。" }
-  class n47 node_system_set
-  n46@{ shape: rounded, label: "**resume_carry_easing**<br/>恢复物品释放前未暂停的插值通道。" }
-  class n46 node_system
-  n56@{ shape: rounded, label: "**resume_interpolation**<br/>撤销落水恢复添加的临时插值暂停。" }
-  class n56 node_system
-  n48@{ shape: rounded, label: "**ApplyDeferred · 恢复插值**<br/>使插值暂停清理在新固定步采样前可见。" }
-  class n48 node_sync
-  n57@{ shape: lin-rect, label: "**TransformEasingSystems::UpdateStart**<br/>记录当前固定步的插值起点。" }
+  n57@{ shape: lin-rect, label: "**TransformEasingSystems::Reset**<br/>重置上一轮固定步的插值状态。" }
   class n57 node_system_set
-  n47 layout_37@~~~ n46
-  n46 layout_38@~~~ n56
-  n56 layout_39@~~~ n48
-  n48 layout_40@~~~ n57
+  n55@{ shape: rounded, label: "**resume_carry_easing**<br/>恢复物品释放前未暂停的插值通道。" }
+  class n55 node_system
+  n66@{ shape: rounded, label: "**resume_interpolation**<br/>撤销落水恢复添加的临时插值暂停。" }
+  class n66 node_system
+  n58@{ shape: rounded, label: "**ApplyDeferred · 恢复插值**<br/>使插值暂停清理在新固定步采样前可见。" }
+  class n58 node_sync
+  n67@{ shape: lin-rect, label: "**TransformEasingSystems::UpdateStart**<br/>记录当前固定步的插值起点。" }
+  class n67 node_system_set
+  n57 layout_39@~~~ n55
+  n55 layout_40@~~~ n66
+  n66 layout_41@~~~ n58
+  n58 layout_42@~~~ n67
   end
   subgraph sg10["FixedPreUpdate"]
   direction TB
@@ -239,97 +245,97 @@ flowchart LR
   class n7 node_system
   n8@{ shape: rounded, label: "**sync_character_facing**<br/>同步人物朝向并处理持物转向受阻。" }
   class n8 node_system
-  n37@{ shape: rounded, label: "**sync_gravity**<br/>将共享重力配置同步到物理世界。" }
-  class n37 node_system
-  n30@{ shape: rounded, label: "**update_grounded**<br/>准备运动前更新接地状态。" }
-  class n30 node_system
+  n46@{ shape: rounded, label: "**sync_gravity**<br/>将共享重力配置同步到物理世界。" }
+  class n46 node_system
+  n38@{ shape: rounded, label: "**update_grounded**<br/>准备运动前更新接地状态。" }
+  class n38 node_system
   n9@{ shape: rounded, label: "**move_characters**<br/>按移动意图和速度为角色施加水平运动力。" }
   class n9 node_system
-  n32@{ shape: rounded, label: "**jump_characters**<br/>执行角色跳跃并消费单次请求。" }
-  class n32 node_system
+  n40@{ shape: rounded, label: "**jump_characters**<br/>执行角色跳跃并消费单次请求。" }
+  class n40 node_system
   n10@{ shape: rounded, label: "**handle_interaction**<br/>处理物品拾取、共享持握与主动释放。" }
   class n10 node_system
-  n49@{ shape: rounded, label: "**ApplyDeferred（交互 → 呈现 / 挂接）**<br/>使拿放后的关系与刚体变更对后续系统可见。" }
-  class n49 node_sync
+  n59@{ shape: rounded, label: "**ApplyDeferred（交互 → 呈现 / 挂接）**<br/>使拿放后的关系与刚体变更对后续系统可见。" }
+  class n59 node_sync
   n11@{ shape: rounded, label: "**sync_held_presentation**<br/>按人物呈现姿态同步持物模型与握持目标。" }
   class n11 node_system
-  n38@{ shape: rounded, label: "**release_orphaned_items**<br/>清理失效持握并恢复物品独立运动。" }
-  class n38 node_system
-  n39@{ shape: rounded, label: "**warn_hold_strain**<br/>检查持续持握偏差并发出失稳提示音。" }
-  class n39 node_system
-  n50@{ shape: rounded, label: "**ApplyDeferred（清理 / 装卸依赖）**<br/>使持物清理与刚体装卸变更对后续同步可见。" }
-  class n50 node_sync
-  n41@{ shape: rounded, label: "**cleanup_orphaned_colliders**<br/>清理物品销毁后残留的碰撞代理。" }
-  class n41 node_system
-  n42@{ shape: rounded, label: "**restore_empty_holder_mass**<br/>归还不再持物角色的原有质量。" }
-  class n42 node_system
-  n43@{ shape: rounded, label: "**finish_attachments**<br/>为持物装配共享碰撞代理并累计质量。" }
-  class n43 node_system
-  n44@{ shape: rounded, label: "**align_attachments**<br/>沿安全碰撞路径将物品对齐双手。" }
-  class n44 node_system
+  n47@{ shape: rounded, label: "**release_orphaned_items**<br/>清理失效持握并恢复物品独立运动。" }
+  class n47 node_system
+  n48@{ shape: rounded, label: "**warn_hold_strain**<br/>检查持续持握偏差并发出失稳提示音。" }
+  class n48 node_system
+  n60@{ shape: rounded, label: "**ApplyDeferred（清理 / 装卸依赖）**<br/>使持物清理与刚体装卸变更对后续同步可见。" }
+  class n60 node_sync
+  n50@{ shape: rounded, label: "**cleanup_orphaned_colliders**<br/>清理物品销毁后残留的碰撞代理。" }
+  class n50 node_system
+  n51@{ shape: rounded, label: "**restore_empty_holder_mass**<br/>归还不再持物角色的原有质量。" }
+  class n51 node_system
+  n52@{ shape: rounded, label: "**finish_attachments**<br/>为持物装配共享碰撞代理并累计质量。" }
+  class n52 node_system
+  n53@{ shape: rounded, label: "**align_attachments**<br/>沿安全碰撞路径将物品对齐双手。" }
+  class n53 node_system
   n12@{ shape: rounded, label: "**sync_held_physics**<br/>按人物物理姿态同步持物位置与碰撞代理。" }
   class n12 node_system
-  n4 layout_41@~~~ n7
-  n7 layout_42@~~~ n8
-  n8 layout_43@~~~ n37
-  n37 layout_44@~~~ n30
-  n30 layout_45@~~~ n9
-  n9 layout_46@~~~ n32
-  n32 layout_47@~~~ n10
-  n10 layout_48@~~~ n49
-  n49 layout_49@~~~ n11
-  n11 layout_50@~~~ n38
-  n38 layout_51@~~~ n39
-  n39 layout_52@~~~ n50
-  n50 layout_53@~~~ n41
-  n41 layout_54@~~~ n42
-  n42 layout_55@~~~ n43
-  n43 layout_56@~~~ n44
-  n44 layout_57@~~~ n12
+  n4 layout_43@~~~ n7
+  n7 layout_44@~~~ n8
+  n8 layout_45@~~~ n46
+  n46 layout_46@~~~ n38
+  n38 layout_47@~~~ n9
+  n9 layout_48@~~~ n40
+  n40 layout_49@~~~ n10
+  n10 layout_50@~~~ n59
+  n59 layout_51@~~~ n11
+  n11 layout_52@~~~ n47
+  n47 layout_53@~~~ n48
+  n48 layout_54@~~~ n60
+  n60 layout_55@~~~ n50
+  n50 layout_56@~~~ n51
+  n51 layout_57@~~~ n52
+  n52 layout_58@~~~ n53
+  n53 layout_59@~~~ n12
   end
   subgraph sg12["FixedPostUpdate"]
   direction TB
-  n53@{ shape: rounded, label: "**wake_changed_bodies**<br/>使休眠身体的外部受力和位姿修改在本固定步<br/>生效。" }
-  class n53 node_system
-  n54@{ shape: rounded, label: "**ApplyDeferred（提前唤醒 → 物理准备）**<br/>使提前唤醒命令在物理准备前可见。" }
-  class n54 node_sync
-  n55@{ shape: lin-rect, label: "**PhysicsSystems::Prepare**<br/>准备物理步所需的位姿、质量与碰撞查询数<br/>据。" }
-  class n55 node_system_set
-  n51@{ shape: lin-rect, label: "**PhysicsSystems::StepSimulation**<br/>执行碰撞求解、重力积分与刚体运动。" }
-  class n51 node_system_set
-  n36@{ shape: lin-rect, label: "**PhysicsSystems::Writeback**<br/>将求解后的物理位姿写回显示变换。" }
-  class n36 node_system_set
-  n33@{ shape: rounded, label: "**update_grounded**<br/>物理回写之后观察实际接地状态。" }
-  class n33 node_system
-  n34@{ shape: rounded, label: "**log_character_velocity**<br/>定期记录角色实际速度与接地状态。" }
-  class n34 node_system
-  n40@{ shape: rounded, label: "**emit_parcel_land**<br/>识别自由物品落地并发出声音请求。" }
-  class n40 node_system
-  n45@{ shape: rounded, label: "**sync_held_physics**<br/>按最新物理位姿同步持物与碰撞代理。" }
-  class n45 node_system
-  n52@{ shape: rounded, label: "**log_collisions**<br/>将碰撞开始与结束写入统一日志。" }
-  class n52 node_system
-  n53 layout_58@~~~ n54
-  n54 layout_59@~~~ n55
-  n55 layout_60@~~~ n51
-  n51 layout_61@~~~ n36
-  n36 layout_62@~~~ n33
-  n33 layout_63@~~~ n34
-  n34 layout_64@~~~ n40
-  n40 layout_65@~~~ n45
-  n45 layout_66@~~~ n52
+  n63@{ shape: rounded, label: "**wake_changed_bodies**<br/>使休眠身体的外部受力和位姿修改在本固定步<br/>生效。" }
+  class n63 node_system
+  n64@{ shape: rounded, label: "**ApplyDeferred（提前唤醒 → 物理准备）**<br/>使提前唤醒命令在物理准备前可见。" }
+  class n64 node_sync
+  n65@{ shape: lin-rect, label: "**PhysicsSystems::Prepare**<br/>准备物理步所需的位姿、质量与碰撞查询数<br/>据。" }
+  class n65 node_system_set
+  n61@{ shape: lin-rect, label: "**PhysicsSystems::StepSimulation**<br/>执行碰撞求解、重力积分与刚体运动。" }
+  class n61 node_system_set
+  n45@{ shape: lin-rect, label: "**PhysicsSystems::Writeback**<br/>将求解后的物理位姿写回显示变换。" }
+  class n45 node_system_set
+  n41@{ shape: rounded, label: "**update_grounded**<br/>物理回写之后观察实际接地状态。" }
+  class n41 node_system
+  n42@{ shape: rounded, label: "**log_character_velocity**<br/>定期记录角色实际速度与接地状态。" }
+  class n42 node_system
+  n49@{ shape: rounded, label: "**emit_parcel_land**<br/>识别自由物品落地并发出声音请求。" }
+  class n49 node_system
+  n54@{ shape: rounded, label: "**sync_held_physics**<br/>按最新物理位姿同步持物与碰撞代理。" }
+  class n54 node_system
+  n62@{ shape: rounded, label: "**log_collisions**<br/>将碰撞开始与结束写入统一日志。" }
+  class n62 node_system
+  n63 layout_60@~~~ n64
+  n64 layout_61@~~~ n65
+  n65 layout_62@~~~ n61
+  n61 layout_63@~~~ n45
+  n45 layout_64@~~~ n41
+  n41 layout_65@~~~ n42
+  n42 layout_66@~~~ n49
+  n49 layout_67@~~~ n54
+  n54 layout_68@~~~ n62
   end
   subgraph sg13["FixedLast"]
   direction TB
-  n123@{ shape: lin-rect, label: "**TransformEasingSystems::UpdateEnd**<br/>记录固定步结束位置供显示插值。" }
-  class n123 node_system_set
+  n153@{ shape: lin-rect, label: "**TransformEasingSystems::UpdateEnd**<br/>记录固定步结束位置供显示插值。" }
+  class n153 node_system_set
   end
   subgraph sg14["RunFixedMainLoop ·<br/>AfterFixedMainLoop"]
   direction TB
   n5@{ shape: lin-rect, label: "**PresentationSystems**<br/>协调插值后的持物、镜头与可见性同步。" }
   class n5 node_system_set
-  n25@{ shape: lin-rect, label: "**TransformEasingSystems::Ease**<br/>混合固定步端点以生成平滑显示姿态。" }
-  class n25 node_system_set
+  n33@{ shape: lin-rect, label: "**TransformEasingSystems::Ease**<br/>混合固定步端点以生成平滑显示姿态。" }
+  class n33 node_system_set
   n13@{ shape: rounded, label: "**sync_character_facing**<br/>同步人物朝向并处理持物转向受阻。" }
   class n13 node_system
   n14@{ shape: rounded, label: "**sync_held_physics**<br/>同步本帧持物碰撞朝向与显示朝向。" }
@@ -340,15 +346,15 @@ flowchart LR
   class n16 node_system
   n17@{ shape: rounded, label: "**sync_character_visibility**<br/>隐藏第一人称控制角色的自身模型。" }
   class n17 node_system
-  n26@{ shape: lin-rect, label: "**TransformEasingSystems::**<br/>**UpdateEasingTick**<br/>记录显示变更，区分插值更新与外部瞬移。" }
-  class n26 node_system_set
-  n5 layout_67@~~~ n25
-  n25 layout_68@~~~ n13
-  n13 layout_69@~~~ n14
-  n14 layout_70@~~~ n15
-  n15 layout_71@~~~ n16
-  n16 layout_72@~~~ n17
-  n17 layout_73@~~~ n26
+  n34@{ shape: lin-rect, label: "**TransformEasingSystems::**<br/>**UpdateEasingTick**<br/>记录显示变更，区分插值更新与外部瞬移。" }
+  class n34 node_system_set
+  n5 layout_69@~~~ n33
+  n33 layout_70@~~~ n13
+  n13 layout_71@~~~ n14
+  n14 layout_72@~~~ n15
+  n15 layout_73@~~~ n16
+  n16 layout_74@~~~ n17
+  n17 layout_75@~~~ n34
   end
   subgraph sg15["Update"]
   direction TB
@@ -356,127 +362,127 @@ flowchart LR
   class n6 node_scheduling_constraint
   n19@{ shape: lin-rect, label: "**AudioSystems**<br/>公开音量混合与播放的调度阶段。" }
   class n19 node_system_set
-  n60@{ shape: rounded, label: "**poll_art_assets**<br/>检查资源及其依赖的加载结果。" }
-  class n60 node_system
-  n61@{ shape: rounded, label: "**begin_island**<br/>请求创建已加载海岛的运行实例。" }
-  class n61 node_system
-  n62@{ shape: rounded, label: "**prepare_island**<br/>从海岛模型构建静态碰撞、坡道与人物碰撞。" }
-  class n62 node_system
-  n63@{ shape: rounded, label: "**spawn_actors**<br/>装配玩家、可搬物、控制者与相机。" }
-  class n63 node_system
-  n64@{ shape: rounded, label: "**initialize_ready_couriers**<br/>绑定主角命名动画并缓存鞋底补偿节点。" }
-  class n64 node_system
-  n65@{ shape: rounded, label: "**sync_courier_animation**<br/>按角色运动状态连续混合移动与跳跃动画。" }
-  class n65 node_system
-  n76@{ shape: rounded, label: "**rebuild_page**<br/>按页面结构变化重建菜单界面。" }
+  n70@{ shape: rounded, label: "**poll_art_assets**<br/>检查资源及其依赖的加载结果。" }
+  class n70 node_system
+  n71@{ shape: rounded, label: "**begin_island**<br/>请求创建已加载海岛的运行实例。" }
+  class n71 node_system
+  n73@{ shape: rounded, label: "**prepare_island**<br/>从海岛模型构建静态碰撞、坡道与人物碰撞。" }
+  class n73 node_system
+  n74@{ shape: rounded, label: "**spawn_actors**<br/>装配玩家、可搬物、控制者与相机。" }
+  class n74 node_system
+  n76@{ shape: rounded, label: "**initialize_ready_couriers**<br/>绑定主角命名动画并缓存鞋底补偿节点。" }
   class n76 node_system
-  n75@{ shape: rounded, label: "**pointer_interaction**<br/>将真实鼠标交互转换为共享菜单请求。" }
-  class n75 node_system
-  n77@{ shape: rounded, label: "**style_buttons**<br/>按当前输入来源更新按钮背景与焦点边框。" }
+  n77@{ shape: rounded, label: "**sync_courier_animation**<br/>按角色运动状态连续混合移动与跳跃动画。" }
   class n77 node_system
-  n78@{ shape: rounded, label: "**update_description**<br/>更新当前聚焦设置的说明标题与正文。" }
-  class n78 node_system
-  n79@{ shape: rounded, label: "**scroll_focused_button**<br/>将当前聚焦设置按钮滚入可视范围。" }
-  class n79 node_system
-  n81@{ shape: rounded, label: "**log_asset_failures**<br/>记录菜单模型与界面资源加载失败。" }
-  class n81 node_system
-  n82@{ shape: rounded, label: "**play_courier_animation**<br/>绑定并循环播放展示快递员的持物待机动画。" }
-  class n82 node_system
-  n83@{ shape: rounded, label: "**sample_slider_pointer**<br/>从光标位置生成音量采样与释放请求。" }
-  class n83 node_system
-  n84@{ shape: rounded, label: "**update_volume_visuals**<br/>原位更新音量百分比文字与轨道填充。" }
-  class n84 node_system
-  n85@{ shape: rounded, label: "**update_settings_text**<br/>原位更新设置草稿数值与保存提示。" }
-  class n85 node_system
-  n86@{ shape: rounded, label: "**bind_settings_scrollbars**<br/>将设置滚动条绑定到对应内容视口。" }
-  class n86 node_system
+  n88@{ shape: rounded, label: "**rebuild_page**<br/>按页面结构变化重建菜单界面。" }
+  class n88 node_system
+  n87@{ shape: rounded, label: "**pointer_interaction**<br/>将真实鼠标交互转换为共享菜单请求。" }
+  class n87 node_system
+  n89@{ shape: rounded, label: "**style_buttons**<br/>按当前输入来源更新按钮背景与焦点边框。" }
+  class n89 node_system
+  n90@{ shape: rounded, label: "**update_description**<br/>更新当前聚焦设置的说明标题与正文。" }
+  class n90 node_system
+  n91@{ shape: rounded, label: "**scroll_focused_button**<br/>将当前聚焦设置按钮滚入可视范围。" }
+  class n91 node_system
+  n93@{ shape: rounded, label: "**log_asset_failures**<br/>记录菜单模型与界面资源加载失败。" }
+  class n93 node_system
+  n102@{ shape: rounded, label: "**play_courier_animation**<br/>绑定并循环播放展示快递员的持物待机动画。" }
+  class n102 node_system
+  n103@{ shape: rounded, label: "**sample_slider_pointer**<br/>从光标位置生成音量采样与释放请求。" }
+  class n103 node_system
+  n104@{ shape: rounded, label: "**update_volume_visuals**<br/>原位更新音量百分比文字与轨道填充。" }
+  class n104 node_system
+  n105@{ shape: rounded, label: "**update_settings_text**<br/>原位更新设置草稿数值与保存提示。" }
+  class n105 node_system
+  n106@{ shape: rounded, label: "**bind_settings_scrollbars**<br/>将设置滚动条绑定到对应内容视口。" }
+  class n106 node_system
   n18@{ shape: lin-rect, label: "**UiSystems::Style**<br/>组织菜单显示、数值与说明的原位更新。" }
   class n18 node_system_set
-  n88@{ shape: rounded, label: "**publish_audio_preview**<br/>向音频功能发布或清除临时音量预览。" }
-  class n88 node_system
-  n91@{ shape: fr-rect, label: "**音量元组 · after(Build / Pointer)**<br/>组织音量输入采样与显示更新的局部调度。" }
-  class n91 node_system_group
-  n92@{ shape: doc, label: "**Audio 页 · 滑条局部捕获**<br/>将滑条捕获与连续采样汇总为音量编辑请求。" }
-  class n92 node_note
-  n93@{ shape: stadium, label: "**Kira 播放输出流程**<br/>将声音请求按有效混音与播放策略提交音频实<br/>例。" }
-  class n93 node_engine_flow
-  n97@{ shape: rounded, label: "**log_load_failures**<br/>记录声音资源加载失败的路径与错误。" }
-  class n97 node_system
-  n102@{ shape: rounded, label: "**sync_audio_mix**<br/>合成设置预览或正式配置的有效音量。" }
-  class n102 node_system
-  n103@{ shape: rounded, label: "**sync_voice_volumes**<br/>将有效混音与素材音量同步到播放实例。" }
-  class n103 node_system
-  n100@{ shape: rounded, label: "**play_requests**<br/>按有效音量与播放策略处理短音请求。" }
-  class n100 node_system
-  n101@{ shape: rounded, label: "**stop_on_exit**<br/>停止音频通道并记录退出。" }
-  class n101 node_system
-  n6 layout_74@~~~ n19
-  n19 layout_75@~~~ n60
-  n60 layout_76@~~~ n61
-  n61 layout_77@~~~ n62
-  n62 layout_78@~~~ n63
-  n63 layout_79@~~~ n64
-  n64 layout_80@~~~ n65
-  n65 layout_81@~~~ n76
-  n76 layout_82@~~~ n75
-  n75 layout_83@~~~ n77
-  n77 layout_84@~~~ n78
-  n78 layout_85@~~~ n79
-  n79 layout_86@~~~ n81
-  n81 layout_87@~~~ n82
-  n82 layout_88@~~~ n83
-  n83 layout_89@~~~ n84
-  n84 layout_90@~~~ n85
-  n85 layout_91@~~~ n86
-  n86 layout_92@~~~ n18
-  n18 layout_93@~~~ n88
-  n88 layout_94@~~~ n91
-  n91 layout_95@~~~ n92
-  n92 layout_96@~~~ n93
-  n93 layout_97@~~~ n97
-  n97 layout_98@~~~ n102
-  n102 layout_99@~~~ n103
-  n103 layout_100@~~~ n100
-  n100 layout_101@~~~ n101
+  n110@{ shape: rounded, label: "**publish_audio_preview**<br/>向音频功能发布或清除临时音量预览。" }
+  class n110 node_system
+  n115@{ shape: fr-rect, label: "**音量元组 · after(Build / Pointer)**<br/>组织音量输入采样与显示更新的局部调度。" }
+  class n115 node_system_group
+  n116@{ shape: doc, label: "**Audio 页 · 滑条局部捕获**<br/>将滑条捕获与连续采样汇总为音量编辑请求。" }
+  class n116 node_note
+  n117@{ shape: stadium, label: "**Kira 播放输出流程**<br/>将声音请求按有效混音与播放策略提交音频实<br/>例。" }
+  class n117 node_engine_flow
+  n121@{ shape: rounded, label: "**log_load_failures**<br/>记录声音资源加载失败的路径与错误。" }
+  class n121 node_system
+  n126@{ shape: rounded, label: "**sync_audio_mix**<br/>合成设置预览或正式配置的有效音量。" }
+  class n126 node_system
+  n127@{ shape: rounded, label: "**sync_voice_volumes**<br/>将有效混音与素材音量同步到播放实例。" }
+  class n127 node_system
+  n124@{ shape: rounded, label: "**play_requests**<br/>按有效音量与播放策略处理短音请求。" }
+  class n124 node_system
+  n125@{ shape: rounded, label: "**stop_on_exit**<br/>停止音频通道并记录退出。" }
+  class n125 node_system
+  n6 layout_76@~~~ n19
+  n19 layout_77@~~~ n70
+  n70 layout_78@~~~ n71
+  n71 layout_79@~~~ n73
+  n73 layout_80@~~~ n74
+  n74 layout_81@~~~ n76
+  n76 layout_82@~~~ n77
+  n77 layout_83@~~~ n88
+  n88 layout_84@~~~ n87
+  n87 layout_85@~~~ n89
+  n89 layout_86@~~~ n90
+  n90 layout_87@~~~ n91
+  n91 layout_88@~~~ n93
+  n93 layout_89@~~~ n102
+  n102 layout_90@~~~ n103
+  n103 layout_91@~~~ n104
+  n104 layout_92@~~~ n105
+  n105 layout_93@~~~ n106
+  n106 layout_94@~~~ n18
+  n18 layout_95@~~~ n110
+  n110 layout_96@~~~ n115
+  n115 layout_97@~~~ n116
+  n116 layout_98@~~~ n117
+  n117 layout_99@~~~ n121
+  n121 layout_100@~~~ n126
+  n126 layout_101@~~~ n127
+  n127 layout_102@~~~ n124
+  n124 layout_103@~~~ n125
   end
   subgraph sg16["SpawnScene"]
   direction TB
-  n115@{ shape: stadium, label: "**场景实例生成流程**<br/>展开场景资产层级并通知实例就绪。" }
-  class n115 node_engine_flow
+  n139@{ shape: stadium, label: "**场景实例生成流程**<br/>展开场景资产层级并通知实例就绪。" }
+  class n139 node_engine_flow
   end
   subgraph sg17["PostUpdate"]
   direction TB
-  n67@{ shape: lin-rect, label: "**AnimationSystems**<br/>采样动画图并更新骨骼局部姿态。" }
-  class n67 node_system_set
-  n66@{ shape: rounded, label: "**compensate_courier_sole_penetration**<br/>补偿鞋底穿地并平滑恢复视觉高度。" }
-  class n66 node_system
-  n68@{ shape: lin-rect, label: "**TransformSystems::Propagate**<br/>沿实体层级传播世界变换。" }
-  class n68 node_system_set
-  n105@{ shape: lin-rect, label: "**AudioSystemSet::PlayTypedChannels**<br/>将排队声音句柄转为已就绪播放实例。" }
-  class n105 node_system_set
-  n104@{ shape: rounded, label: "**sync_voice_volumes**<br/>为新就绪的播放实例补同步有效音量。" }
-  class n104 node_system
-  n119@{ shape: lin-rect, label: "**UiSystems::Layout**<br/>计算界面内容与视口的本帧布局。" }
-  class n119 node_system_set
-  n95@{ shape: rounded, label: "**update_scrollbar_thumb**<br/>按内容与视口比例更新滚动条滑块几何。" }
-  class n95 node_system
-  n87@{ shape: rounded, label: "**sync_settings_scrollbars**<br/>同步滚动条显隐、拾取范围与高亮。" }
-  class n87 node_system
-  n96@{ shape: lin-rect, label: "**VisibilitySystems::**<br/>**VisibilityPropagate**<br/>在项目显隐同步后传播可见性。" }
-  class n96 node_system_set
-  n67 layout_102@~~~ n66
-  n66 layout_103@~~~ n68
-  n68 layout_104@~~~ n105
-  n105 layout_105@~~~ n104
-  n104 layout_106@~~~ n119
-  n119 layout_107@~~~ n95
-  n95 layout_108@~~~ n87
-  n87 layout_109@~~~ n96
+  n79@{ shape: lin-rect, label: "**AnimationSystems**<br/>采样动画图并更新骨骼局部姿态。" }
+  class n79 node_system_set
+  n78@{ shape: rounded, label: "**compensate_courier_sole_penetration**<br/>补偿鞋底穿地并平滑恢复视觉高度。" }
+  class n78 node_system
+  n80@{ shape: lin-rect, label: "**TransformSystems::Propagate**<br/>沿实体层级传播世界变换。" }
+  class n80 node_system_set
+  n129@{ shape: lin-rect, label: "**AudioSystemSet::PlayTypedChannels**<br/>将排队声音句柄转为已就绪播放实例。" }
+  class n129 node_system_set
+  n128@{ shape: rounded, label: "**sync_voice_volumes**<br/>为新就绪的播放实例补同步有效音量。" }
+  class n128 node_system
+  n149@{ shape: lin-rect, label: "**UiSystems::Layout**<br/>计算界面内容与视口的本帧布局。" }
+  class n149 node_system_set
+  n119@{ shape: rounded, label: "**update_scrollbar_thumb**<br/>按内容与视口比例更新滚动条滑块几何。" }
+  class n119 node_system
+  n107@{ shape: rounded, label: "**sync_settings_scrollbars**<br/>同步滚动条显隐、拾取范围与高亮。" }
+  class n107 node_system
+  n120@{ shape: lin-rect, label: "**VisibilitySystems::**<br/>**VisibilityPropagate**<br/>在项目显隐同步后传播可见性。" }
+  class n120 node_system_set
+  n79 layout_104@~~~ n78
+  n78 layout_105@~~~ n80
+  n80 layout_106@~~~ n129
+  n129 layout_107@~~~ n128
+  n128 layout_108@~~~ n149
+  n149 layout_109@~~~ n119
+  n119 layout_110@~~~ n107
+  n107 layout_111@~~~ n120
   end
   subgraph sg18["EguiPrimaryContextPass"]
   direction TB
-  n126@{ shape: rounded, label: "**world_inspector_ui**<br/>展示并编辑开放反射的实体、资源与资产。" }
-  class n126 node_system
+  n156@{ shape: rounded, label: "**world_inspector_ui**<br/>展示并编辑开放反射的实体、资源与资产。" }
+  class n156 node_system
   end
   subgraph sg19["Last"]
   direction TB
@@ -485,111 +491,111 @@ flowchart LR
   end
   subgraph sg20["RenderApp · 独立渲染子应用"]
   direction TB
-  n114@{ shape: stadium, label: "**RenderApp 渲染流程**<br/>提取场景数据并执行本帧渲染。" }
-  class n114 node_engine_flow
+  n138@{ shape: stadium, label: "**RenderApp 渲染流程**<br/>提取场景数据并执行本帧渲染。" }
+  class n138 node_engine_flow
   end
   subgraph sg21["原生平台回调 · 调度外"]
   direction TB
-  n112@{ shape: lean-l, label: "**原生窗口约束**<br/>在平台应用尺寸前约束主窗口比例与范围。" }
-  class n112 node_platform_api
+  n136@{ shape: lean-l, label: "**原生窗口约束**<br/>在平台应用尺寸前约束主窗口比例与范围。" }
+  class n136 node_platform_api
   end
   subgraph sg22["Observer · 匹配事件触发"]
   direction TB
-  n127@{ shape: hex, label: "**record_movement**<br/>保存控制角色的持续移动方向。" }
-  class n127 node_observer
-  n128@{ shape: hex, label: "**clear_completed_movement**<br/>清除已结束动作的角色移动方向。" }
-  class n128 node_observer
-  n129@{ shape: hex, label: "**clear_cancelled_movement**<br/>清除已取消动作的角色移动方向。" }
-  class n129 node_observer
-  n130@{ shape: hex, label: "**request_jump**<br/>记录目标角色的单次跳跃请求。" }
-  class n130 node_observer
-  n131@{ shape: hex, label: "**request_interaction**<br/>记录目标角色的单次交互请求。" }
-  class n131 node_observer
-  n132@{ shape: hex, label: "**on_camera_look**<br/>将观察输入转为第一人称水平角与俯仰角。" }
-  class n132 node_observer
-  n133@{ shape: hex, label: "**mark_island_ready**<br/>标记地图实例以进入碰撞准备。" }
-  class n133 node_observer
-  n134@{ shape: hex, label: "**mark_courier_animation_ready**<br/>标记主角视觉根以进入动画绑定。" }
-  class n134 node_observer
-  n135@{ shape: hex, label: "**release_pointer_for_inspector**<br/>释放光标以允许操作世界检查器。" }
-  class n135 node_observer
-  n136@{ shape: hex, label: "**previous**<br/>循环选择上一个可操作菜单按钮。" }
-  class n136 node_observer
-  n137@{ shape: hex, label: "**next**<br/>循环选择下一个可操作菜单按钮。" }
-  class n137 node_observer
-  n138@{ shape: hex, label: "**left**<br/>向左调整当前聚焦的真实设置字段。" }
-  class n138 node_observer
-  n139@{ shape: hex, label: "**right**<br/>向右调整当前聚焦的真实设置字段。" }
-  class n139 node_observer
-  n140@{ shape: hex, label: "**confirm**<br/>执行当前聚焦按钮的菜单动作。" }
-  class n140 node_observer
-  n141@{ shape: hex, label: "**back**<br/>发出返回、暂停或恢复请求。" }
-  class n141 node_observer
-  n142@{ shape: hex, label: "**scroll_menu**<br/>滚动设置内容并限制在有效范围内。" }
+  n22@{ shape: hex, label: "**record_movement**<br/>保存控制角色的持续移动方向。" }
+  class n22 node_observer
+  n23@{ shape: hex, label: "**clear_completed_movement**<br/>清除已结束动作的角色移动方向。" }
+  class n23 node_observer
+  n24@{ shape: hex, label: "**clear_cancelled_movement**<br/>清除已取消动作的角色移动方向。" }
+  class n24 node_observer
+  n25@{ shape: hex, label: "**request_jump**<br/>记录目标角色的单次跳跃请求。" }
+  class n25 node_observer
+  n26@{ shape: hex, label: "**request_interaction**<br/>记录目标角色的单次交互请求。" }
+  class n26 node_observer
+  n27@{ shape: hex, label: "**on_camera_look**<br/>将观察输入转为第一人称水平角与俯仰角。" }
+  class n27 node_observer
+  n31@{ shape: hex, label: "**release_pointer_for_inspector**<br/>释放光标以允许操作世界检查器。" }
+  class n31 node_observer
+  n56@{ shape: hex, label: "**prepare_holder_despawn**<br/>在持有者销毁前停用并卸载持物代理。" }
+  class n56 node_observer
+  n72@{ shape: hex, label: "**mark_island_ready**<br/>标记地图实例以进入碰撞准备。" }
+  class n72 node_observer
+  n75@{ shape: hex, label: "**mark_courier_animation_ready**<br/>标记主角视觉根以进入动画绑定。" }
+  class n75 node_observer
+  n94@{ shape: hex, label: "**previous**<br/>循环选择上一个可操作菜单按钮。" }
+  class n94 node_observer
+  n95@{ shape: hex, label: "**next**<br/>循环选择下一个可操作菜单按钮。" }
+  class n95 node_observer
+  n96@{ shape: hex, label: "**left**<br/>向左调整当前聚焦的真实设置字段。" }
+  class n96 node_observer
+  n97@{ shape: hex, label: "**right**<br/>向右调整当前聚焦的真实设置字段。" }
+  class n97 node_observer
+  n98@{ shape: hex, label: "**confirm**<br/>执行当前聚焦按钮的菜单动作。" }
+  class n98 node_observer
+  n99@{ shape: hex, label: "**back**<br/>发出返回、暂停或恢复请求。" }
+  class n99 node_observer
+  n100@{ shape: hex, label: "**scroll_menu**<br/>滚动设置内容并限制在有效范围内。" }
+  class n100 node_observer
+  n101@{ shape: hex, label: "**mark_courier_animation_ready**<br/>标记展示快递员以等待动画绑定。" }
+  class n101 node_observer
+  n108@{ shape: hex, label: "**scroll_over_settings_scrollbar**<br/>通过滚动条上的滚轮操作滚动内容视口。" }
+  class n108 node_observer
+  n109@{ shape: hex, label: "**scrollbar_pointer_source**<br/>将滚动条按下操作标为鼠标输入。" }
+  class n109 node_observer
+  n111@{ shape: hex, label: "**primary_press**<br/>记录菜单按钮主键按压的指针身份。" }
+  class n111 node_observer
+  n112@{ shape: hex, label: "**clear_primary_press**<br/>原生 Pressed 移除时清理菜单主键来源。" }
+  class n112 node_observer
+  n142@{ shape: hex, label: "**button_on_pointer_down**<br/>按压时插入原生Pressed；可<br/>选ActivateOnPress会发Activate。" }
   class n142 node_observer
-  n143@{ shape: hex, label: "**mark_courier_animation_ready**<br/>标记展示快递员以等待动画绑定。" }
+  n143@{ shape: hex, label: "**button_on_pointer_up**<br/>释放时移除原生Pressed。" }
   class n143 node_observer
-  n144@{ shape: hex, label: "**scroll_over_settings_scrollbar**<br/>通过滚动条上的滚轮操作滚动内容视口。" }
+  n144@{ shape: hex, label: "**button_on_pointer_click**<br/>满足条件时派发原生Activate。" }
   class n144 node_observer
-  n145@{ shape: hex, label: "**scrollbar_pointer_source**<br/>将滚动条按下操作标为鼠标输入。" }
+  n145@{ shape: hex, label: "**button_on_pointer_drag_end**<br/>拖动结束时移除原生Pressed。" }
   class n145 node_observer
-  n146@{ shape: hex, label: "**prepare_holder_despawn**<br/>在持有者销毁前停用并卸载持物代理。" }
+  n146@{ shape: hex, label: "**button_on_pointer_cancel**<br/>收到取消事件时移除原生Pressed。" }
   class n146 node_observer
-  n147@{ shape: hex, label: "**primary_press**<br/>记录菜单按钮主键按压的指针身份。" }
+  n147@{ shape: hex, label: "**button_on_key_event**<br/>焦点键盘Enter或Space首次按下时派<br/>发Activate。" }
   class n147 node_observer
-  n148@{ shape: hex, label: "**clear_primary_press**<br/>原生 Pressed 移除时清理菜单主键来源。" }
-  class n148 node_observer
-  n149@{ shape: hex, label: "**button_on_pointer_down**<br/>按压时插入原生Pressed；可<br/>选ActivateOnPress会发Activate。" }
-  class n149 node_observer
-  n150@{ shape: hex, label: "**button_on_pointer_up**<br/>释放时移除原生Pressed。" }
-  class n150 node_observer
-  n151@{ shape: hex, label: "**button_on_pointer_click**<br/>满足条件时派发原生Activate。" }
-  class n151 node_observer
-  n152@{ shape: hex, label: "**button_on_pointer_drag_end**<br/>拖动结束时移除原生Pressed。" }
-  class n152 node_observer
-  n153@{ shape: hex, label: "**button_on_pointer_cancel**<br/>收到取消事件时移除原生Pressed。" }
-  class n153 node_observer
-  n154@{ shape: hex, label: "**button_on_key_event**<br/>焦点键盘Enter或Space首次按下时派<br/>发Activate。" }
-  class n154 node_observer
-  n127 layout_110@~~~ n128
-  n128 layout_111@~~~ n129
-  n129 layout_112@~~~ n130
-  n130 layout_113@~~~ n131
-  n131 layout_114@~~~ n132
-  n132 layout_115@~~~ n133
-  n133 layout_116@~~~ n134
-  n134 layout_117@~~~ n135
-  n135 layout_118@~~~ n136
-  n136 layout_119@~~~ n137
-  n137 layout_120@~~~ n138
-  n138 layout_121@~~~ n139
-  n139 layout_122@~~~ n140
-  n140 layout_123@~~~ n141
-  n141 layout_124@~~~ n142
-  n142 layout_125@~~~ n143
-  n143 layout_126@~~~ n144
-  n144 layout_127@~~~ n145
-  n145 layout_128@~~~ n146
-  n146 layout_129@~~~ n147
-  n147 layout_130@~~~ n148
-  n148 layout_131@~~~ n149
-  n149 layout_132@~~~ n150
-  n150 layout_133@~~~ n151
-  n151 layout_134@~~~ n152
-  n152 layout_135@~~~ n153
-  n153 layout_136@~~~ n154
+  n22 layout_112@~~~ n23
+  n23 layout_113@~~~ n24
+  n24 layout_114@~~~ n25
+  n25 layout_115@~~~ n26
+  n26 layout_116@~~~ n27
+  n27 layout_117@~~~ n31
+  n31 layout_118@~~~ n56
+  n56 layout_119@~~~ n72
+  n72 layout_120@~~~ n75
+  n75 layout_121@~~~ n94
+  n94 layout_122@~~~ n95
+  n95 layout_123@~~~ n96
+  n96 layout_124@~~~ n97
+  n97 layout_125@~~~ n98
+  n98 layout_126@~~~ n99
+  n99 layout_127@~~~ n100
+  n100 layout_128@~~~ n101
+  n101 layout_129@~~~ n108
+  n108 layout_130@~~~ n109
+  n109 layout_131@~~~ n111
+  n111 layout_132@~~~ n112
+  n112 layout_133@~~~ n142
+  n142 layout_134@~~~ n143
+  n143 layout_135@~~~ n144
+  n144 layout_136@~~~ n145
+  n145 layout_137@~~~ n146
+  n146 layout_138@~~~ n147
   end
   subgraph sg23["约束与说明 · 非调度"]
   direction TB
   n3@{ shape: doc, label: "**InGame / Paused**<br/>保留会话实体并暂停模拟与玩法输入。" }
   class n3 node_lifecycle_note
   end
-  sg0 layout_137@~~~ sg1
-  sg18 layout_138@~~~ sg19
-  sg19 layout_139@~~~ sg20
-  sg20 layout_140@~~~ sg21
-  sg21 layout_141@~~~ sg22
-  sg22 layout_142@~~~ sg23
+  sg0 layout_139@~~~ sg1
+  sg18 layout_140@~~~ sg19
+  sg19 layout_141@~~~ sg20
+  sg20 layout_142@~~~ sg21
+  sg21 layout_143@~~~ sg22
+  sg22 layout_144@~~~ sg23
   sg1 sc0@--> sg2
   class sc0 edge_schedule
   sg2 sc1@--> sg3
@@ -656,169 +662,169 @@ flowchart LR
   class e12 edge_constraint
   n16 e13@--> n17
   class e13 edge_order
-  n25 e14@--> n13
+  n33 e14@--> n13
   class e14 edge_order
   n13 e15@--> n14
   class e15 edge_order
   n15 e16@--> n16
   class e16 edge_order
-  n17 e17@--> n26
+  n17 e17@--> n34
   class e17 edge_order
-  n27 e18@--> n22
+  n35 e18@--> n28
   class e18 edge_order
-  n22 e19@--> n28
+  n28 e19@--> n36
   class e19 edge_order
-  n28 e20@--> n21
+  n36 e20@--> n21
   class e20 edge_order
-  n21 e21@--> n29
+  n21 e21@--> n37
   class e21 edge_order
   n7 e22@-->|"恢复后按视角转向"| n8
   class e22 edge_order
-  n8 e23@--> n30
+  n8 e23@--> n38
   class e23 edge_order
-  n36 e24@--> n33
+  n45 e24@--> n41
   class e24 edge_order
-  n33 e25@--> n34
+  n41 e25@--> n42
   class e25 edge_order
-  n37 e26@--> n30
+  n46 e26@--> n38
   class e26 edge_order
-  n30 e27@--> n9
+  n38 e27@--> n9
   class e27 edge_order
-  n9 e28@--> n32
+  n9 e28@--> n40
   class e28 edge_order
-  n32 e29@--> n10
+  n40 e29@--> n10
   class e29 edge_order
   n14 e30@--> n15
   class e30 edge_order
-  n47 e31@--> n46
+  n57 e31@--> n55
   class e31 edge_order
-  n46 e32@--> n48
+  n55 e32@--> n58
   class e32 edge_order
-  n10 e33@--> n49
+  n10 e33@--> n59
   class e33 edge_order
-  n49 e34@--> n11
+  n59 e34@--> n11
   class e34 edge_order
-  n38 e35@--> n50
+  n47 e35@--> n60
   class e35 edge_order
-  n50 e36@--> n41
+  n60 e36@--> n50
   class e36 edge_order
-  n41 e37@--> n42
+  n50 e37@--> n51
   class e37 edge_order
-  n42 e38@--> n43
+  n51 e38@--> n52
   class e38 edge_order
-  n43 e39@--> n44
+  n52 e39@--> n53
   class e39 edge_order
-  n44 e40@--> n12
+  n53 e40@--> n12
   class e40 edge_order
-  n11 e41@-->|"Target"| n38
+  n11 e41@-->|"Target"| n47
   class e41 edge_order
-  n11 e42@-->|"Target"| n39
+  n11 e42@-->|"Target"| n48
   class e42 edge_order
-  n36 e43@-->|"Writeback"| n45
+  n45 e43@-->|"Writeback"| n54
   class e43 edge_order
-  n51 e44@--> n40
+  n61 e44@--> n49
   class e44 edge_order
-  n51 e45@-->|"StepSimulation"| n52
+  n61 e45@-->|"StepSimulation"| n62
   class e45 edge_order
-  n53 e46@-->|"应用排队的 WakeBody"| n54
+  n63 e46@-->|"应用排队的 WakeBody"| n64
   class e46 edge_order
-  n54 e47@-->|"Prepare"| n55
+  n64 e47@-->|"Prepare"| n65
   class e47 edge_order
-  n47 e48@--> n56
+  n57 e48@--> n66
   class e48 edge_order
-  n56 e49@--> n48
+  n66 e49@--> n58
   class e49 edge_order
-  n48 e50@--> n57
+  n58 e50@--> n67
   class e50 edge_order
-  n61 e51@-->|"Commands"| n62
+  n71 e51@-->|"Commands"| n73
   class e51 edge_order
-  n62 e52@-->|"Commands"| n63
+  n73 e52@-->|"Commands"| n74
   class e52 edge_order
-  n64 e53@-->|"Commands"| n65
+  n76 e53@-->|"Commands"| n77
   class e53 edge_order
-  n67 e54@-->|"AnimationSystems"| n66
+  n79 e54@-->|"AnimationSystems"| n78
   class e54 edge_order
-  n66 e55@-->|"Propagate"| n68
+  n78 e55@-->|"Propagate"| n80
   class e55 edge_order
-  n76 e56@-->|"Build"| n75
+  n88 e56@-->|"Build"| n87
   class e56 edge_order
-  n75 e57@-->|"Pointer → Style"| n77
+  n87 e57@-->|"Pointer → Style"| n89
   class e57 edge_order
-  n77 e58@-->|"Style"| n93
+  n89 e58@-->|"Style"| n117
   class e58 edge_order
-  n94 e59@--> n90
+  n118 e59@--> n114
   class e59 edge_order
-  n75 e60@-->|"Pointer"| n91
+  n87 e60@-->|"Pointer"| n115
   class e60 edge_order
-  n91 e61@--> n83
+  n115 e61@--> n103
   class e61 edge_group_membership
-  n91 e62@--> n84
+  n115 e62@--> n104
   class e62 edge_group_membership
-  n83 e63@--> n18
+  n103 e63@--> n18
   class e63 edge_order
-  n84 e64@--> n18
+  n104 e64@--> n18
   class e64 edge_order
-  n76 e65@-->|"Build → Bind"| n86
+  n88 e65@-->|"Build → Bind"| n106
   class e65 edge_order
-  n86 e66@-->|"Style"| n18
+  n106 e66@-->|"Style"| n18
   class e66 edge_order
-  n18 e67@--> n77
+  n18 e67@--> n89
   class e67 edge_set_membership
-  n18 e68@--> n78
+  n18 e68@--> n90
   class e68 edge_set_membership
-  n18 e69@--> n85
+  n18 e69@--> n105
   class e69 edge_set_membership
-  n18 e70@--> n88
+  n18 e70@--> n110
   class e70 edge_set_membership
-  n18 e71@--> n79
+  n18 e71@--> n91
   class e71 edge_set_membership
-  n95 e72@-->|"Layout"| n87
+  n119 e72@-->|"Layout"| n107
   class e72 edge_order
-  n87 e73@--> n96
+  n107 e73@--> n120
   class e73 edge_order
-  n18 e74@-->|"Style 之后进入 Mix"| n97
+  n18 e74@-->|"Style 之后进入 Mix"| n121
   class e74 edge_order
-  n98 e75@-->|"PickingSystems::Last"| n89
+  n122 e75@-->|"PickingSystems::Last"| n113
   class e75 edge_order
-  n90 e76@--> n74
+  n114 e76@--> n86
   class e76 edge_order
-  n97 e77@--> n102
+  n121 e77@--> n126
   class e77 edge_order
-  n102 e78@--> n103
+  n126 e78@--> n127
   class e78 edge_order
-  n103 e79@--> n100
+  n127 e79@--> n124
   class e79 edge_order
-  n100 e80@--> n101
+  n124 e80@--> n125
   class e80 edge_order
-  n105 e81@--> n104
+  n129 e81@--> n128
   class e81 edge_order
-  n107 e82@--> n108
+  n131 e82@--> n132
   class e82 edge_order
-  n113 e83@--> n27
+  n137 e83@--> n35
   class e83 edge_order
-  n29 e84@--> n122
+  n37 e84@--> n152
   class e84 edge_order
-  n119 e85@-->|"Layout 内"| n95
+  n149 e85@-->|"Layout 内"| n119
   class e85 edge_order
-  n120 e86@-->|"Picking sets chain"| n121
+  n150 e86@-->|"Picking sets chain"| n151
   class e86 edge_order
-  n121 e87@-->|"Picking sets chain"| n98
+  n151 e87@-->|"Picking sets chain"| n122
   class e87 edge_order
-  n117 e88@-->|"InteractionPlugin chain"| n116
+  n141 e88@-->|"InteractionPlugin chain"| n140
   class e88 edge_order
-  n120 e89@-->|"in_set(Hover)"| n116
+  n150 e89@-->|"in_set(Hover)"| n140
   class e89 edge_set_membership
-  n120 e90@-->|"in_set(Hover)"| n117
+  n150 e90@-->|"in_set(Hover)"| n141
   class e90 edge_set_membership
-  n55 e91@--> n51
+  n65 e91@--> n61
   class e91 edge_order
-  n51 e92@--> n36
+  n61 e92@--> n45
   class e92 edge_order
-  n122 e93@--> n124
+  n152 e93@--> n154
   class e93 edge_order
-  n124 e94@--> n125
+  n154 e94@--> n155
   class e94 edge_order
-  n125 e95@--> n94
+  n155 e95@--> n118
   class e95 edge_order
   end
   e0@{ curve: bumpY }

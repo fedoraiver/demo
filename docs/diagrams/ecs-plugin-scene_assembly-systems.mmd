@@ -33,6 +33,7 @@ flowchart TB
   accDescr: 场景装配的系统与调度；外部契约保留摘要，可跳转到所属插件。
   %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
   classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_observer fill:#F4F1F9,stroke:#7B4DB2,stroke-width:1.6px,color:#1F3340
   classDef edge_schedule stroke:#334155,stroke-width:3px
   classDef edge_order stroke:#334155,stroke-width:2px
   classDef external_node stroke-dasharray:6 4
@@ -55,21 +56,27 @@ flowchart TB
   class n2 node_system
   n3@{ shape: rounded, label: "**begin_island**<br/>请求创建已加载海岛的运行实例。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**prepare_island**<br/>从海岛模型构建静态碰撞、坡道与人物碰撞。" }
-  class n4 node_system
-  n5@{ shape: rounded, label: "**spawn_actors**<br/>装配玩家、可搬物、控制者与相机。" }
+  n5@{ shape: rounded, label: "**prepare_island**<br/>从海岛模型构建静态碰撞、坡道与人物碰撞。" }
   class n5 node_system
+  n6@{ shape: rounded, label: "**spawn_actors**<br/>装配玩家、可搬物、控制者与相机。" }
+  class n6 node_system
   n2 layout_0@~~~ n3
-  n3 layout_1@~~~ n4
-  n4 layout_2@~~~ n5
+  n3 layout_1@~~~ n5
+  n5 layout_2@~~~ n6
   end
+  subgraph sg3["Observer"]
+  direction TB
+  n4@{ shape: hex, label: "**mark_island_ready**<br/>标记地图实例以进入碰撞准备。" }
+  class n4 node_observer
+  end
+  sg2 layout_3@~~~ sg3
   sg0 sc0@--> sg1
   class sc0 edge_schedule
   sg1 sc1@--> sg2
   class sc1 edge_schedule
-  n3 e0@-->|"Commands"| n4
+  n3 e0@-->|"Commands"| n5
   class e0 edge_order
-  n4 e1@-->|"Commands"| n5
+  n5 e1@-->|"Commands"| n6
   class e1 edge_order
   end
   e0@{ curve: basis }

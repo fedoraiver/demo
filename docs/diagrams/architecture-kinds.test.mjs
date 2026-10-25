@@ -73,7 +73,7 @@ test('relationship and ordinary Entity reference records have source identities 
   assert.throws(() => buildArchitectureModel(unknown), /未知的实体关系类别/);
 });
 
-test('normalizing the manifest preserves every stable identity and does not manufacture QueryData cards', () => {
+test('normalizing the manifest preserves every stable identity and the real QueryData declaration', () => {
   const before = JSON.stringify(model), architecture = buildArchitectureModel(model);
   const expectedIds = new Set([
     ...model.systems.map(node => node.id), ...model.resources.map(node => node.id),
@@ -85,6 +85,12 @@ test('normalizing the manifest preserves every stable identity and does not manu
     assert.equal(node.id, id); assert.equal(node.kind, nodeKindOf(node), id);
   }
   assert.ok(NODE_KINDS.QueryData.visualType);
-  assert.ok(!Object.values(architecture.registry).some(node => node.kind === 'QueryData'));
+  const query = architecture.registry['param-recoverable-body'];
+  assert.equal(query.kind, 'QueryData');
+  assert.equal(query.name, 'RecoverableBody');
+  assert.equal(query.source.path, 'src/bounds_recovery/recovery.rs');
+  const lines = fs.readFileSync(new URL('../../' + query.source.path, import.meta.url), 'utf8').split(/\r?\n/);
+  assert.match(lines[query.source.line - 1], /^pub\(super\) struct RecoverableBody\s*\{/);
+  assert.ok(lines.slice(query.source.line - 4, query.source.line - 1).some(line => line === '#[derive(QueryData)]'));
   assert.equal(JSON.stringify(model), before);
 });

@@ -1,0 +1,50 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#object-69364e15802daa7f-e0{marker-start:url(#object-69364e15802daa7f_flowchart-v2-pointStart)!important}\n#object-69364e15802daa7f_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}"
+  }
+}
+---
+flowchart LR
+  accTitle: Local<FramePacing> · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_local fill:#F8F5F1,stroke:#AA8752,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: notch-rect, label: "**Local#lt;FramePacing#gt;**<br/>保存帧间等待计时与重复日志抑制状态。" }
+  class n0 node_local
+  n1@{ shape: rounded, label: "**limit_frame_rate**<br/>补足帧间等待以控制显示帧率。" }
+  class n1 node_system
+  n1 e0@---|"访问声明"| n0
+  class e0 edge_read
+  n1 e1@-->|"访问声明"| n0
+  class e1 edge_write
+  e0@{ curve: basis }
+  e1@{ curve: basis }

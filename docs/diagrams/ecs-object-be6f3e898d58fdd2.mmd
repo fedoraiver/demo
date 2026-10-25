@@ -1,0 +1,192 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#object-be6f3e898d58fdd2-e5{marker-start:url(#object-be6f3e898d58fdd2_flowchart-v2-pointStart)!important}\n#object-be6f3e898d58fdd2-e9{marker-start:url(#object-be6f3e898d58fdd2_flowchart-v2-pointStart)!important}\n#object-be6f3e898d58fdd2-e14{marker-start:url(#object-be6f3e898d58fdd2_flowchart-v2-pointStart)!important}\n#object-be6f3e898d58fdd2_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}"
+  }
+}
+---
+flowchart LR
+  accTitle: Transform · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_entity fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_query_data fill:#F1F4F1,stroke:#567A51,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**Transform**<br/>保存角色经插值生成的显示姿态。" }
+  class n0 node_component
+  n1@{ shape: notch-rect, label: "**RecoverableBody**<br/>来自越界恢复 ↗：声明落水恢复需要查询的<br/>组件与存在条件。" }
+  class n1 node_query_data
+  class n1 external_node
+  n2@{ shape: rounded, label: "**角色业务根实体**<br/>来自场景装配 ↗：承载角色身份、运动意图<br/>与动态物理身体。" }
+  class n2 node_entity
+  class n2 external_node
+  n3@{ shape: rounded, label: "**move_characters**<br/>来自角色运动 ↗：按移动意图和速度为角色<br/>施加水平运动力。" }
+  class n3 node_system
+  class n3 external_node
+  n4@{ shape: rounded, label: "**sync_courier_animation**<br/>来自角色动画 ↗：按角色运动状态连续混合<br/>移动与跳跃动画。" }
+  class n4 node_system
+  class n4 external_node
+  n5@{ shape: rounded, label: "**warn_hold_strain**<br/>来自物品交互 ↗：检查持续持握偏差并发出<br/>失稳提示音。" }
+  class n5 node_system
+  class n5 external_node
+  n6@{ shape: rounded, label: "**sync_character_facing**<br/>来自第一人称控制 ↗：同步人物朝向并处理<br/>持物转向受阻。" }
+  class n6 node_system
+  class n6 external_node
+  n7@{ shape: rounded, label: "**handle_interaction**<br/>来自物品交互 ↗：处理物品拾取、共享持握<br/>与主动释放。" }
+  class n7 node_system
+  class n7 external_node
+  n8@{ shape: rounded, label: "**sync_held_presentation**<br/>来自物品交互 ↗：按人物呈现姿态同步持物<br/>模型与握持目标。" }
+  class n8 node_system
+  class n8 external_node
+  n9@{ shape: rounded, label: "**sync_character_facing**<br/>来自第一人称控制 ↗：同步人物朝向并处理<br/>持物转向受阻。" }
+  class n9 node_system
+  class n9 external_node
+  n10@{ shape: rounded, label: "**sync_held_presentation**<br/>来自物品交互 ↗：按人物呈现姿态同步持物<br/>模型与握持目标。" }
+  class n10 node_system
+  class n10 external_node
+  n11@{ shape: rounded, label: "**follow_first_person_camera**<br/>来自第一人称控制 ↗：按人物本帧位置与观<br/>察角度更新第一人称镜头。" }
+  class n11 node_system
+  class n11 external_node
+  n12@{ shape: lin-rect, label: "**TransformSystems::Propagate**<br/>沿实体层级传播世界变换。" }
+  class n12 node_system_set
+  n13@{ shape: rounded, label: "**world_inspector_ui**<br/>来自Egui / Inspector ↗：展示并编辑开<br/>放反射的实体、资源与资产。" }
+  class n13 node_system
+  class n13 external_node
+  n14@{ shape: lin-rect, label: "**PhysicsSystems::Prepare**<br/>来自Avian ↗：准备物理步所需的位姿、质<br/>量与碰撞查询数据。" }
+  class n14 node_system_set
+  class n14 external_node
+  n15@{ shape: lin-rect, label: "**PhysicsSystems::Writeback**<br/>来自Avian ↗：将求解后的物理位姿写回显<br/>示变换。" }
+  class n15 node_system_set
+  class n15 external_node
+  n16@{ shape: lin-rect, label: "**TransformEasingSystems::Reset**<br/>来自Avian ↗：重置上一轮固定步的插值状<br/>态。" }
+  class n16 node_system_set
+  class n16 external_node
+  n17@{ shape: lin-rect, label: "**TransformEasingSystems::UpdateEnd**<br/>来自Avian ↗：记录固定步结束位置供显示<br/>插值。" }
+  class n17 node_system_set
+  class n17 external_node
+  n18@{ shape: lin-rect, label: "**TransformEasingSystems::Ease**<br/>来自Avian ↗：混合固定步端点以生成平滑<br/>显示姿态。" }
+  class n18 node_system_set
+  class n18 external_node
+  n19@{ shape: lin-rect, label: "**TransformEasingSystems::**<br/>**UpdateEasingTick**<br/>来自Avian ↗：记录显示变更，区分插值更<br/>新与外部瞬移。" }
+  class n19 node_system_set
+  class n19 external_node
+  n20@{ shape: rounded, label: "**initialize_ready_couriers**<br/>来自角色动画 ↗：绑定主角命名动画并缓存<br/>鞋底补偿节点。" }
+  class n20 node_system
+  class n20 external_node
+  n21@{ shape: rounded, label: "**recover_from_water**<br/>来自越界恢复 ↗：将落水实体恢复到各自出<br/>生姿态。" }
+  class n21 node_system
+  class n21 external_node
+  n22@{ shape: rounded, label: "**compensate_courier_sole_penetration**<br/>来自角色动画 ↗：补偿鞋底穿地并平滑恢复<br/>视觉高度。" }
+  class n22 node_system
+  class n22 external_node
+  n23@{ shape: lin-rect, label: "**TransformEasingSystems::UpdateStart**<br/>来自Avian ↗：记录当前固定步的插值起<br/>点。" }
+  class n23 node_system_set
+  class n23 external_node
+  n1 e0@-->|"Write#lt;Transform#gt; 参数声明"| n0
+  class e0 edge_reference
+  n0 e1@-->|"可能挂载于"| n2
+  class e1 edge_reference
+  n0 e2@-->|"查询访问"| n3
+  class e2 edge_read
+  n0 e3@-->|"查询访问"| n4
+  class e3 edge_read
+  n0 e4@-->|"查询访问"| n5
+  class e4 edge_read
+  n6 e5@---|"查询访问"| n0
+  class e5 edge_read
+  n6 e6@-->|"可变访问"| n0
+  class e6 edge_write
+  n0 e7@-->|"查询访问"| n7
+  class e7 edge_read
+  n0 e8@-->|"查询访问"| n8
+  class e8 edge_read
+  n9 e9@---|"查询访问"| n0
+  class e9 edge_read
+  n9 e10@-->|"可变访问"| n0
+  class e10 edge_write
+  n0 e11@-->|"查询访问"| n10
+  class e11 edge_read
+  n0 e12@-->|"查询访问"| n11
+  class e12 edge_read
+  n0 e13@-->|"查询访问"| n12
+  class e13 edge_read
+  n13 e14@---|"查询访问"| n0
+  class e14 edge_read
+  n13 e15@-->|"可变访问"| n0
+  class e15 edge_write
+  n0 e16@-->|"查询访问"| n14
+  class e16 edge_read
+  n15 e17@-->|"可变访问"| n0
+  class e17 edge_write
+  n0 e18@-->|"查询访问"| n16
+  class e18 edge_read
+  n0 e19@-->|"查询访问"| n17
+  class e19 edge_read
+  n18 e20@-->|"可变访问"| n0
+  class e20 edge_write
+  n0 e21@-->|"查询访问"| n19
+  class e21 edge_read
+  n0 e22@-->|"查询访问"| n20
+  class e22 edge_read
+  n21 e23@-->|"可变访问"| n0
+  class e23 edge_write
+  n0 e24@-->|"查询访问"| n22
+  class e24 edge_read
+  n0 e25@-->|"查询访问"| n23
+  class e25 edge_read
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e17@{ curve: basis }
+  e18@{ curve: basis }
+  e19@{ curve: basis }
+  e20@{ curve: basis }
+  e21@{ curve: basis }
+  e22@{ curve: basis }
+  e23@{ curve: basis }
+  e24@{ curve: basis }
+  e25@{ curve: basis }

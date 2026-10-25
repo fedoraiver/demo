@@ -139,10 +139,14 @@ function definition(view, graph, registry, features, scheduleGroups = []) {
   });
   const byId = new Map(nodes.map(node => [node.id, node]));
   if (byId.size !== nodes.length) throw new Error(`同一视图重复声明节点：${view.id}`);
+  const objectCenter = view.centerNodeId || graph.centerNodeId;
+  // 双向访问放在同一侧，使用原生起点箭头保留真实方向，避免把一跳图排成有向环。
+  const objectIncoming = new Set(view.aspect === 'object' ? graph.links.filter(link => link.to === objectCenter && link.from !== objectCenter).map(link => link.from) : []);
   const links = graph.links.map((link, index) => {
     const edgeSemantic = edgeSemanticOf(link, registry);
-    const nativeReverse = view.aspect === 'component' && displayEndpoint(link, 'from') === (view.componentNodeId || graph.componentNodeId)
-      && byId.get(displayEndpoint(link, 'to'))?.visualType !== 'entity';
+    const nativeReverse = (view.aspect === 'component' && displayEndpoint(link, 'from') === (view.componentNodeId || graph.componentNodeId)
+      && byId.get(displayEndpoint(link, 'to'))?.visualType !== 'entity')
+      || (view.aspect === 'object' && link.from === objectCenter && objectIncoming.has(link.to));
     return { ...link, ...(nativeReverse ? { nativeReverse: true } : {}), mermaidId: `e${index}`, edgeSemantic, displayLabel: displayLabelOf(link, edgeSemantic, registry) };
   });
   const groups = scheduleGroups.map((group, index) => ({ ...group, mermaidId: `sg${index}`, nodes: group.nodes.map(node => node.id) }));
@@ -150,13 +154,14 @@ function definition(view, graph, registry, features, scheduleGroups = []) {
   const types = { nodeTypes: Object.keys(NODE_STYLES).filter(type => nodes.some(node => node.visualType === type)), edgeTypes: Object.keys(EDGE_STYLES).filter(type => [...links, ...scheduleLinks].some(link => link.edgeSemantic === type)) };
   const configuration = mermaidConfiguration(view.aspect);
   if (view.aspect === 'component') Object.assign(configuration.flowchart, { nodeSpacing: 16, rankSpacing: 32 });
+  if (view.aspect === 'object') Object.assign(configuration.flowchart, { nodeSpacing: 16, rankSpacing: 48 });
   if (links.some(link => link.nativeReverse)) {
     // Mermaid 12 不支持单向左箭头。源配置复用本图真实关系生成的原生 pointStart；不改编译后的路径或 marker。
     const marker = `${view.id}_flowchart-v2-pointStart`;
     configuration.themeCSS = links.filter(link => link.nativeReverse).map(link => `#${view.id}-${link.mermaidId}{marker-start:url(#${marker})!important}`).join('\n')
       + `\n#${marker} path{fill:context-stroke!important;stroke:context-stroke!important}`;
   }
-  const lines = ['---', JSON.stringify({ config: configuration }, null, 2), '---', `flowchart ${view.aspect === 'component' ? 'RL' : ['overview', 'events'].includes(view.aspect) ? 'LR' : 'TB'}`, `  accTitle: ${view.label}`, `  accDescr: ${view.summary}`, '  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。'];
+  const lines = ['---', JSON.stringify({ config: configuration }, null, 2), '---', `flowchart ${view.aspect === 'component' ? 'RL' : ['overview', 'events', 'object'].includes(view.aspect) ? 'LR' : 'TB'}`, `  accTitle: ${view.label}`, `  accDescr: ${view.summary}`, '  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。'];
   lines.push(...mermaidStyleDefinitions(types.nodeTypes, types.edgeTypes).map(line => '  ' + line));
   const layoutLinks = [];
   function layout(from, to) {
@@ -178,8 +183,12 @@ function definition(view, graph, registry, features, scheduleGroups = []) {
     }
   }
   const declareUnit = declare;
-  if (!['data', 'component'].includes(view.aspect)) lines.push('  subgraph diagram_main[" "]', '  direction LR', '  style diagram_main fill:none,stroke:none');
-  if (view.aspect === 'component') {
+  if (!['data', 'component', 'object'].includes(view.aspect)) lines.push('  subgraph diagram_main[" "]', '  direction LR', '  style diagram_main fill:none,stroke:none');
+  if (view.aspect === 'object') {
+    if (!byId.has(objectCenter)) throw new Error(`对象图缺少中心节点：${view.id}`);
+    nodes.forEach(declare);
+    declareLinks();
+  } else if (view.aspect === 'component') {
     nodes.forEach(declare);
     const center = byId.get(view.componentNodeId || graph.componentNodeId);
     if (!center) throw new Error(`组件类型图缺少中心节点：${view.id}`);
@@ -238,7 +247,7 @@ function definition(view, graph, registry, features, scheduleGroups = []) {
       }
     } else { nodes.forEach(declare); declareLinks(); }
   }
-  if (!['data', 'component'].includes(view.aspect)) lines.push('  end');
+  if (!['data', 'component', 'object'].includes(view.aspect)) lines.push('  end');
   return { ...base, nodes, links, scheduleLinks, layoutLinks, scheduleGroups: groups, entityGroups, mermaid: lines.join('\n') + '\n', mermaidFilename: `ecs-${view.id}.mmd`, filename: `ecs-${view.id}.svg` };
 }
 

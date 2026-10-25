@@ -1,0 +1,190 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#object-56184893b36a1178-e2{marker-start:url(#object-56184893b36a1178_flowchart-v2-pointStart)!important}\n#object-56184893b36a1178-e4{marker-start:url(#object-56184893b36a1178_flowchart-v2-pointStart)!important}\n#object-56184893b36a1178-e8{marker-start:url(#object-56184893b36a1178_flowchart-v2-pointStart)!important}\n#object-56184893b36a1178-e11{marker-start:url(#object-56184893b36a1178_flowchart-v2-pointStart)!important}\n#object-56184893b36a1178-e13{marker-start:url(#object-56184893b36a1178_flowchart-v2-pointStart)!important}\n#object-56184893b36a1178-e16{marker-start:url(#object-56184893b36a1178_flowchart-v2-pointStart)!important}\n#object-56184893b36a1178-e18{marker-start:url(#object-56184893b36a1178_flowchart-v2-pointStart)!important}\n#object-56184893b36a1178_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}"
+  }
+}
+---
+flowchart LR
+  accTitle: HeldAttachment · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_entity fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  subgraph layout_card_n0[" "]
+  n0@{ shape: rounded, label: "**HeldAttachment**<br/>保存物品挂接姿态与装卸状态。" }
+  class n0 node_component
+  end
+  style layout_card_n0 fill:none,stroke:none
+  subgraph layout_card_n1[" "]
+  n1@{ shape: rounded, label: "**可搬物品业务根实体**<br/>来自场景装配 ↗：承载可拾取物品身份及自<br/>由运动、共享持握状态。" }
+  class n1 node_entity
+  class n1 external_node
+  end
+  style layout_card_n1 fill:none,stroke:none
+  subgraph layout_card_n2[" "]
+  n2@{ shape: rounded, label: "**持物无视觉碰撞代理**<br/>为持物共享人物刚体提供无视觉碰撞形状。" }
+  class n2 node_entity
+  end
+  style layout_card_n2 fill:none,stroke:none
+  subgraph layout_card_n3[" "]
+  n3@{ shape: rounded, label: "**sync_character_facing**<br/>来自第一人称控制 ↗：同步人物朝向并处理<br/>持物转向受阻。" }
+  class n3 node_system
+  class n3 external_node
+  end
+  style layout_card_n3 fill:none,stroke:none
+  subgraph layout_card_n4[" "]
+  n4@{ shape: rounded, label: "**handle_interaction**<br/>处理物品拾取、共享持握与主动释放。" }
+  class n4 node_system
+  end
+  style layout_card_n4 fill:none,stroke:none
+  subgraph layout_card_n5[" "]
+  n5@{ shape: rounded, label: "**sync_held_presentation**<br/>按人物呈现姿态同步持物模型与握持目标。" }
+  class n5 node_system
+  end
+  style layout_card_n5 fill:none,stroke:none
+  subgraph layout_card_n6[" "]
+  n6@{ shape: rounded, label: "**sync_character_facing**<br/>来自第一人称控制 ↗：同步人物朝向并处理<br/>持物转向受阻。" }
+  class n6 node_system
+  class n6 external_node
+  end
+  style layout_card_n6 fill:none,stroke:none
+  subgraph layout_card_n7[" "]
+  n7@{ shape: rounded, label: "**sync_held_presentation**<br/>按人物呈现姿态同步持物模型与握持目标。" }
+  class n7 node_system
+  end
+  style layout_card_n7 fill:none,stroke:none
+  subgraph layout_card_n8[" "]
+  n8@{ shape: rounded, label: "**release_orphaned_items**<br/>清理失效持握并恢复物品独立运动。" }
+  class n8 node_system
+  end
+  style layout_card_n8 fill:none,stroke:none
+  subgraph layout_card_n9[" "]
+  n9@{ shape: rounded, label: "**recover_from_water**<br/>来自越界恢复 ↗：将落水实体恢复到各自出<br/>生姿态。" }
+  class n9 node_system
+  class n9 external_node
+  end
+  style layout_card_n9 fill:none,stroke:none
+  subgraph layout_card_n10[" "]
+  n10@{ shape: rounded, label: "**finish_attachments**<br/>为持物装配共享碰撞代理并累计质量。" }
+  class n10 node_system
+  end
+  style layout_card_n10 fill:none,stroke:none
+  subgraph layout_card_n11[" "]
+  n11@{ shape: rounded, label: "**align_attachments**<br/>沿安全碰撞路径将物品对齐双手。" }
+  class n11 node_system
+  end
+  style layout_card_n11 fill:none,stroke:none
+  subgraph layout_card_n12[" "]
+  n12@{ shape: rounded, label: "**sync_held_physics**<br/>按人物物理姿态同步持物位置与碰撞代理。" }
+  class n12 node_system
+  end
+  style layout_card_n12 fill:none,stroke:none
+  subgraph layout_card_n13[" "]
+  n13@{ shape: rounded, label: "**sync_held_physics**<br/>按最新物理位姿同步持物与碰撞代理。" }
+  class n13 node_system
+  end
+  style layout_card_n13 fill:none,stroke:none
+  subgraph layout_card_n14[" "]
+  n14@{ shape: rounded, label: "**sync_held_physics**<br/>同步本帧持物碰撞朝向与显示朝向。" }
+  class n14 node_system
+  end
+  style layout_card_n14 fill:none,stroke:none
+  n0 e0@-->|"可能挂载于"| n1
+  class e0 edge_reference
+  n0 e1@-->|"collider"| n2
+  class e1 edge_reference
+  n3 e2@---|"查询访问"| n0
+  class e2 edge_read
+  n3 e3@-->|"移除"| n0
+  class e3 edge_write
+  n4 e4@---|"查询访问"| n0
+  class e4 edge_read
+  n4 e5@-->|"移除"| n0
+  class e5 edge_write
+  n4 e6@-->|"添加"| n0
+  class e6 edge_write
+  n0 e7@-->|"查询访问"| n5
+  class e7 edge_read
+  n6 e8@---|"查询访问"| n0
+  class e8 edge_read
+  n6 e9@-->|"移除"| n0
+  class e9 edge_write
+  n0 e10@-->|"查询访问"| n7
+  class e10 edge_read
+  n8 e11@---|"查询访问"| n0
+  class e11 edge_read
+  n8 e12@-->|"移除"| n0
+  class e12 edge_write
+  n9 e13@---|"查询访问"| n0
+  class e13 edge_read
+  n9 e14@-->|"移除"| n0
+  class e14 edge_write
+  n10 e15@-->|"可变访问"| n0
+  class e15 edge_write
+  n10 e16@---|"查询访问"| n0
+  class e16 edge_read
+  n11 e17@-->|"可变访问"| n0
+  class e17 edge_write
+  n11 e18@---|"查询访问"| n0
+  class e18 edge_read
+  n11 e19@-->|"移除"| n0
+  class e19 edge_write
+  n0 e20@-->|"查询访问"| n12
+  class e20 edge_read
+  n0 e21@-->|"查询访问"| n13
+  class e21 edge_read
+  n0 e22@-->|"查询访问"| n14
+  class e22 edge_read
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e17@{ curve: basis }
+  e18@{ curve: basis }
+  e19@{ curve: basis }
+  e20@{ curve: basis }
+  e21@{ curve: basis }
+  e22@{ curve: basis }

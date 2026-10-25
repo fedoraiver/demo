@@ -1,0 +1,58 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#object-1f33b4dfbeea24a9-e0{marker-start:url(#object-1f33b4dfbeea24a9_flowchart-v2-pointStart)!important}\n#object-1f33b4dfbeea24a9-e2{marker-start:url(#object-1f33b4dfbeea24a9_flowchart-v2-pointStart)!important}\n#object-1f33b4dfbeea24a9_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}"
+  }
+}
+---
+flowchart LR
+  accTitle: AudioChannel<UiTrack> · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: cyl, label: "**AudioChannel#lt;UiTrack#gt;**<br/>承载界面短音的播放命令。" }
+  class n0 node_resource
+  n1@{ shape: rounded, label: "**play_requests**<br/>按有效音量与播放策略处理短音请求。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**stop_on_exit**<br/>停止音频通道并记录退出。" }
+  class n2 node_system
+  n1 e0@---|"访问声明"| n0
+  class e0 edge_read
+  n1 e1@-->|"访问声明"| n0
+  class e1 edge_write
+  n2 e2@---|"访问声明"| n0
+  class e2 edge_read
+  n2 e3@-->|"访问声明"| n0
+  class e3 edge_write
+  e0@{ curve: basis }
+  e1@{ curve: bumpX }
+  e2@{ curve: bumpX }
+  e3@{ curve: basis }

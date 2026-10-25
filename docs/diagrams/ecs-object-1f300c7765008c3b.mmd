@@ -1,0 +1,261 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#object-1f300c7765008c3b-e3{marker-start:url(#object-1f300c7765008c3b_flowchart-v2-pointStart)!important}\n#object-1f300c7765008c3b_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}"
+  }
+}
+---
+flowchart LR
+  accTitle: spawn_actors · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef node_plugin fill:#F1F3F6,stroke:#4A6389,stroke-width:2.2px,color:#1F3340
+  classDef edge_order stroke:#334155,stroke-width:2px
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  subgraph layout_card_n0[" "]
+  n0@{ shape: rounded, label: "**spawn_actors**<br/>装配玩家、可搬物、控制者与相机。" }
+  class n0 node_system
+  end
+  style layout_card_n0 fill:none,stroke:none
+  subgraph layout_card_n1[" "]
+  n1@{ shape: rounded, label: "**prepare_island**<br/>从海岛模型构建静态碰撞、坡道与人物碰撞。" }
+  class n1 node_system
+  end
+  style layout_card_n1 fill:none,stroke:none
+  subgraph layout_card_n2[" "]
+  n2@{ shape: rounded, label: "**IslandReady**<br/>静态碰撞与布局已准备。" }
+  class n2 node_component
+  end
+  style layout_card_n2 fill:none,stroke:none
+  subgraph layout_card_n3[" "]
+  n3@{ shape: rounded, label: "**ActorsSpawned**<br/>业务角色已生成，防止重复。" }
+  class n3 node_component
+  end
+  style layout_card_n3 fill:none,stroke:none
+  subgraph layout_card_n4[" "]
+  n4@{ shape: rounded, label: "**LoadingCamera**<br/>加载期间相机身份，准备后移除。" }
+  class n4 node_component
+  end
+  style layout_card_n4 fill:none,stroke:none
+  subgraph layout_card_n5[" "]
+  n5@{ shape: rounded, label: "**FirstPersonCamera**<br/>来自第一人称控制 ↗：保存跟随目标、眼高<br/>与观察角度。" }
+  class n5 node_component
+  class n5 external_node
+  end
+  style layout_card_n5 fill:none,stroke:none
+  subgraph layout_card_n6[" "]
+  n6@{ shape: rounded, label: "**MouseLookState**<br/>来自第一人称控制 ↗：保存光标捕获与观察<br/>输入初始化状态。" }
+  class n6 node_component
+  class n6 external_node
+  end
+  style layout_card_n6 fill:none,stroke:none
+  subgraph layout_card_n7[" "]
+  n7@{ shape: rounded, label: "**ControlsCamera**<br/>来自第一人称控制 ↗：普通实体引用，指向<br/>受控相机。" }
+  class n7 node_component
+  class n7 external_node
+  end
+  style layout_card_n7 fill:none,stroke:none
+  subgraph layout_card_n8[" "]
+  n8@{ shape: rounded, label: "**Character**<br/>来自角色运动 ↗：标识具有角色运动能力的<br/>实体。" }
+  class n8 node_component
+  class n8 external_node
+  end
+  style layout_card_n8 fill:none,stroke:none
+  subgraph layout_card_n9[" "]
+  n9@{ shape: rounded, label: "**Visibility**<br/>来自Bevy 引擎 ↗：控制实体及视觉子树的<br/>显示状态。" }
+  class n9 node_component
+  class n9 external_node
+  end
+  style layout_card_n9 fill:none,stroke:none
+  subgraph layout_card_n10[" "]
+  n10@{ shape: rounded, label: "**CourierVisual**<br/>来自角色动画 ↗：保存主角模型来源并作为<br/>动画绑定入口。" }
+  class n10 node_component
+  class n10 external_node
+  end
+  style layout_card_n10 fill:none,stroke:none
+  subgraph layout_card_n11[" "]
+  n11@{ shape: rounded, label: "**WorldAssetRoot**<br/>来自Bevy 引擎 ↗：主角和物品模板的实例<br/>化入口。" }
+  class n11 node_component
+  class n11 external_node
+  end
+  style layout_card_n11 fill:none,stroke:none
+  subgraph layout_card_n12[" "]
+  n12@{ shape: rounded, label: "**ControlsCharacter**<br/>来自第一人称控制 ↗：普通实体引用，指向<br/>受控角色。" }
+  class n12 node_component
+  class n12 external_node
+  end
+  style layout_card_n12 fill:none,stroke:none
+  subgraph layout_card_n13[" "]
+  n13@{ shape: rounded, label: "**Parcel**<br/>来自物品交互 ↗：快递身份标记。" }
+  class n13 node_component
+  class n13 external_node
+  end
+  style layout_card_n13 fill:none,stroke:none
+  subgraph layout_card_n14[" "]
+  n14@{ shape: rounded, label: "**Pickable**<br/>来自物品交互 ↗：标记可被玩家拾取的物<br/>品。" }
+  class n14 node_component
+  class n14 external_node
+  end
+  style layout_card_n14 fill:none,stroke:none
+  subgraph layout_card_n15[" "]
+  n15@{ shape: rounded, label: "**CarryGrip**<br/>来自物品交互 ↗：保存握持对齐使用的模型<br/>偏移。" }
+  class n15 node_component
+  class n15 external_node
+  end
+  style layout_card_n15 fill:none,stroke:none
+  subgraph layout_card_n16[" "]
+  n16@{ shape: rounded, label: "**ItemModel**<br/>标识物品采用的美术模型种类。" }
+  class n16 node_component
+  end
+  style layout_card_n16 fill:none,stroke:none
+  subgraph layout_card_n17[" "]
+  n17@{ shape: rounded, label: "**SpawnPoint**<br/>来自越界恢复 ↗：每个业务根独立保存出生<br/>姿态。" }
+  class n17 node_component
+  class n17 external_node
+  end
+  style layout_card_n17 fill:none,stroke:none
+  subgraph layout_card_n18[" "]
+  n18@{ shape: rounded, label: "**SpawnPoint**<br/>来自越界恢复 ↗：每个业务根独立保存出生<br/>姿态。" }
+  class n18 node_component
+  class n18 external_node
+  end
+  style layout_card_n18 fill:none,stroke:none
+  subgraph layout_card_n19[" "]
+  n19@{ shape: cyl, label: "**PrototypeConfig**<br/>来自设置与参数 ↗：保存运动、重力、拾取<br/>与握持的共享参数。" }
+  class n19 node_resource
+  class n19 external_node
+  end
+  style layout_card_n19 fill:none,stroke:none
+  subgraph layout_card_n20[" "]
+  n20@{ shape: cyl, label: "**ArtAssets**<br/>保存运行模型资源并维持其加载寿命。" }
+  class n20 node_resource
+  end
+  style layout_card_n20 fill:none,stroke:none
+  subgraph layout_card_n21[" "]
+  n21@{ shape: cyl, label: "**Assets#lt;Gltf#gt;**<br/>来自Bevy 引擎 ↗：保存导入场景与命名动<br/>画的资源引用。" }
+  class n21 node_resource
+  class n21 external_node
+  end
+  style layout_card_n21 fill:none,stroke:none
+  subgraph layout_card_n22[" "]
+  n22@{ shape: cyl, label: "**State#lt;AppState#gt; /**<br/>**NextState#lt;AppState#gt;**<br/>来自应用流程 ↗：保存应用主状态及待处理<br/>的会话切换。" }
+  class n22 node_resource
+  class n22 external_node
+  end
+  style layout_card_n22 fill:none,stroke:none
+  subgraph layout_card_n23[" "]
+  n23@{ shape: cyl, label: "**State#lt;PlayState#gt; /**<br/>**NextState#lt;PlayState#gt;**<br/>来自应用流程 ↗：保存游戏运行、暂停及待<br/>处理的切换请求。" }
+  class n23 node_resource
+  class n23 external_node
+  end
+  style layout_card_n23 fill:none,stroke:none
+  subgraph layout_card_n24[" "]
+  n24@{ shape: fr-rect, label: "**SceneAssemblyPlugin**<br/>加载运行资源并装配海岛、碰撞与业务实体。" }
+  class n24 node_plugin
+  end
+  style layout_card_n24 fill:none,stroke:none
+  n1 e0@-->|"Commands"| n0
+  class e0 edge_order
+  n2 e1@-->|"查询访问"| n0
+  class e1 edge_read
+  n3 e2@-->|"存在 / 变更过滤"| n0
+  class e2 edge_reference
+  n3 e3@---|"添加"| n0
+  class e3 edge_write
+  n4 e4@-->|"存在 / 变更过滤"| n0
+  class e4 edge_reference
+  n0 e5@-->|"添加"| n5
+  class e5 edge_write
+  n0 e6@-->|"添加"| n6
+  class e6 edge_write
+  n0 e7@-->|"添加"| n7
+  class e7 edge_write
+  n0 e8@-->|"添加"| n8
+  class e8 edge_write
+  n0 e9@-->|"添加"| n9
+  class e9 edge_write
+  n0 e10@-->|"添加"| n10
+  class e10 edge_write
+  n0 e11@-->|"添加"| n11
+  class e11 edge_write
+  n0 e12@-->|"添加"| n12
+  class e12 edge_write
+  n0 e13@-->|"添加"| n13
+  class e13 edge_write
+  n0 e14@-->|"添加"| n14
+  class e14 edge_write
+  n0 e15@-->|"添加"| n15
+  class e15 edge_write
+  n0 e16@-->|"添加"| n16
+  class e16 edge_write
+  n0 e17@-->|"可变访问"| n17
+  class e17 edge_write
+  n0 e18@-->|"可变访问"| n18
+  class e18 edge_write
+  n19 e19@-->|"访问声明"| n0
+  class e19 edge_read
+  n20 e20@-->|"访问声明"| n0
+  class e20 edge_read
+  n21 e21@-->|"访问声明"| n0
+  class e21 edge_read
+  n22 e22@-->|"访问声明"| n0
+  class e22 edge_read
+  n23 e23@-->|"访问声明"| n0
+  class e23 edge_read
+  n24 e24@--> n0
+  class e24 edge_registration
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e17@{ curve: basis }
+  e18@{ curve: basis }
+  e20@{ curve: basis }
+  e21@{ curve: basis }
+  e22@{ curve: basis }
+  e23@{ curve: basis }
+  e24@{ curve: basis }

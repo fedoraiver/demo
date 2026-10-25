@@ -1,0 +1,143 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: main / App · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_plugin fill:#F1F3F6,stroke:#4A6389,stroke-width:2.2px,color:#1F3340
+  classDef node_plugin_group fill:#F4F2F6,stroke:#735C93,stroke-width:2.2px,color:#1F3340
+  classDef node_app fill:#EFF4F5,stroke:#3A7B87,stroke-width:2.2px,color:#1F3340
+  classDef node_external_io fill:#F1F3F4,stroke:#526A78,stroke-width:1.6px,color:#1F3340
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: fr-rect, label: "**main / App**<br/>装配应用、设置与插件并管理主循环和退出。" }
+  class n0 node_app
+  n1@{ shape: fr-rect, label: "**SessionLogPlugin**<br/>来自会话日志 ↗：安装统一会话日志并管理<br/>后台输出与退出刷新。" }
+  class n1 node_plugin
+  class n1 external_node
+  n2@{ shape: fr-rect, label: "**DefaultPlugins**<br/>提供窗口、时间、资产、动画与渲染基础设<br/>施。" }
+  class n2 node_plugin_group
+  n3@{ shape: fr-rect, label: "**EnhancedInputPlugin**<br/>来自Enhanced Input ↗：提供动作上下<br/>文、绑定评估与事件派发。" }
+  class n3 node_plugin
+  class n3 external_node
+  n4@{ shape: lean-l, label: "**File worker**<br/>来自会话日志 ↗：在独立线程写入、刷新并<br/>反馈文件输出错误。" }
+  class n4 node_external_io
+  class n4 external_node
+  n5@{ shape: fr-rect, label: "**GameFlowPlugin**<br/>来自应用流程 ↗：管理应用状态、时钟及跨<br/>功能阶段顺序。" }
+  class n5 node_plugin
+  class n5 external_node
+  n6@{ shape: fr-rect, label: "**FirstPersonPlugin**<br/>来自第一人称控制 ↗：管理玩法动作、光标<br/>捕获、朝向与第一人称镜头。" }
+  class n6 node_plugin
+  class n6 external_node
+  n7@{ shape: fr-rect, label: "**CharacterPlugin**<br/>来自角色运动 ↗：提供角色身份、运动、接<br/>地与跳跃。" }
+  class n7 node_plugin
+  class n7 external_node
+  n8@{ shape: fr-rect, label: "**ItemInteractionPlugin**<br/>来自物品交互 ↗：管理物品拾取、共享持<br/>握、安全释放与反馈。" }
+  class n8 node_plugin
+  class n8 external_node
+  n9@{ shape: fr-rect, label: "**GamePhysicsPlugin**<br/>来自物理基础 ↗：安装物理引擎并管理重<br/>力、提前唤醒与碰撞日志。" }
+  class n9 node_plugin
+  class n9 external_node
+  n10@{ shape: fr-rect, label: "**BoundsRecoveryPlugin**<br/>来自越界恢复 ↗：管理落水恢复与恢复期间<br/>的插值状态。" }
+  class n10 node_plugin
+  class n10 external_node
+  n11@{ shape: fr-rect, label: "**SceneAssemblyPlugin**<br/>来自场景装配 ↗：加载运行资源并装配海<br/>岛、碰撞与业务实体。" }
+  class n11 node_plugin
+  class n11 external_node
+  n12@{ shape: fr-rect, label: "**CharacterAnimationPlugin**<br/>来自角色动画 ↗：绑定并混合角色动画，补<br/>偿视觉接地。" }
+  class n12 node_plugin
+  class n12 external_node
+  n13@{ shape: fr-rect, label: "**GameUiPlugin**<br/>来自菜单与界面 ↗：管理菜单、设置编辑、<br/>导航与主菜单展示场景。" }
+  class n13 node_plugin
+  class n13 external_node
+  n14@{ shape: fr-rect, label: "**GameAudioPlugin**<br/>来自音频播放 ↗：管理短音预加载、混音、<br/>播放与设备输出。" }
+  class n14 node_plugin
+  class n14 external_node
+  n15@{ shape: fr-rect, label: "**SettingsPlugin**<br/>来自设置与参数 ↗：管理设置持久化、共享<br/>原型参数与帧率控制。" }
+  class n15 node_plugin
+  class n15 external_node
+  n16@{ shape: fr-rect, label: "**InspectorPlugin**<br/>来自世界检查器 ↗：安装可读写世界数据的<br/>检查器界面。" }
+  class n16 node_plugin
+  class n16 external_node
+  n17@{ shape: fr-rect, label: "**WindowPolicyPlugin**<br/>来自窗口策略 ↗：维护主窗口的原生比例与<br/>尺寸策略。" }
+  class n17 node_plugin
+  class n17 external_node
+  n0 e0@-->|"日志"| n1
+  class e0 edge_registration
+  n0 e1@-->|"禁用默认 LogPlugin / AudioPlugin"| n2
+  class e1 edge_registration
+  n0 e2@-->|"增强输入"| n3
+  class e2 edge_registration
+  n0 e3@-->|"record_exit / 退出刷新"| n4
+  class e3 edge_write
+  n0 e4@--> n5
+  class e4 edge_registration
+  n0 e5@--> n6
+  class e5 edge_registration
+  n0 e6@--> n7
+  class e6 edge_registration
+  n0 e7@--> n8
+  class e7 edge_registration
+  n0 e8@--> n9
+  class e8 edge_registration
+  n0 e9@--> n10
+  class e9 edge_registration
+  n0 e10@--> n11
+  class e10 edge_registration
+  n0 e11@--> n12
+  class e11 edge_registration
+  n0 e12@--> n13
+  class e12 edge_registration
+  n0 e13@--> n14
+  class e13 edge_registration
+  n0 e14@--> n15
+  class e14 edge_registration
+  n0 e15@--> n16
+  class e15 edge_registration
+  n0 e16@--> n17
+  class e16 edge_registration
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }

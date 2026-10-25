@@ -1,0 +1,54 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: DefaultPlugins · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_plugin_group fill:#F4F2F6,stroke:#735C93,stroke-width:2.2px,color:#1F3340
+  classDef node_app fill:#EFF4F5,stroke:#3A7B87,stroke-width:2.2px,color:#1F3340
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: fr-rect, label: "**DefaultPlugins**<br/>提供窗口、时间、资产、动画与渲染基础设<br/>施。" }
+  class n0 node_plugin_group
+  n1@{ shape: fr-rect, label: "**main / App**<br/>装配应用、设置与插件并管理主循环和退出。" }
+  class n1 node_app
+  n2@{ shape: fr-rect, label: "**UiWidgetsPlugins**<br/>注册无样式UI控件插件组。" }
+  class n2 node_plugin_group
+  n3@{ shape: fr-rect, label: "**DefaultPickingPlugins**<br/>注册指针输入、Picking和交互插件。" }
+  class n3 node_plugin_group
+  n1 e0@-->|"禁用默认 LogPlugin / AudioPlugin"| n0
+  class e0 edge_registration
+  n0 e1@--> n2
+  class e1 edge_registration
+  n0 e2@--> n3
+  class e2 edge_registration
+  e1@{ curve: basis }
+  e2@{ curve: bumpX }

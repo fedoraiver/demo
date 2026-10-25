@@ -1,0 +1,70 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#object-f25814c15a738c80-e2{marker-start:url(#object-f25814c15a738c80_flowchart-v2-pointStart)!important}\n#object-f25814c15a738c80_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}"
+  }
+}
+---
+flowchart LR
+  accTitle: Kira 播放输出流程 · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef node_message_buffer fill:#EDF4F6,stroke:#247B91,stroke-width:1.6px,color:#1F3340
+  classDef node_engine_flow fill:#F1F5F4,stroke:#557C78,stroke-width:1.6px,color:#1F3340
+  classDef edge_order stroke:#334155,stroke-width:2px
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_consume stroke:#247B91,stroke-width:1.8px,stroke-dasharray:2 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: stadium, label: "**Kira 播放输出流程**<br/>将声音请求按有效混音与播放策略提交音频实<br/>例。" }
+  class n0 node_engine_flow
+  n1@{ shape: cyl, label: "**Messages#lt;SoundRequest#gt;**<br/>缓冲菜单交互与物品反馈的短音请求。" }
+  class n1 node_message_buffer
+  n2@{ shape: cyl, label: "**SoundBank**<br/>保存短音资源、播放策略与实例生命周期。" }
+  class n2 node_resource
+  n3@{ shape: rounded, label: "**style_buttons**<br/>来自菜单与界面 ↗：按当前输入来源更新按<br/>钮背景与焦点边框。" }
+  class n3 node_system
+  class n3 external_node
+  n4@{ shape: cyl, label: "**AudioMix**<br/>保存界面与音效通道当前采用的有效音量。" }
+  class n4 node_resource
+  n1 e0@-->|"请求"| n0
+  class e0 edge_consume
+  n2 e1@--> n0
+  class e1 edge_read
+  n2 e2@--- n0
+  class e2 edge_write
+  n3 e3@-->|"Style"| n0
+  class e3 edge_order
+  n4 e4@-->|"有效音量"| n0
+  class e4 edge_read
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }

@@ -1,0 +1,89 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#object-fa882f1b0d642448-e2{marker-start:url(#object-fa882f1b0d642448_flowchart-v2-pointStart)!important}\n#object-fa882f1b0d642448_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}"
+  }
+}
+---
+flowchart LR
+  accTitle: MouseLookState · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_observer fill:#F4F1F9,stroke:#7B4DB2,stroke-width:1.6px,color:#1F3340
+  classDef node_entity fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**MouseLookState**<br/>保存光标捕获与观察输入初始化状态。" }
+  class n0 node_component
+  n1@{ shape: rounded, label: "**第一人称相机实体**<br/>来自场景装配 ↗：提供跟随角色的第一人称<br/>视角与观察输入状态。" }
+  class n1 node_entity
+  class n1 external_node
+  n2@{ shape: rounded, label: "**sync_mouse_capture**<br/>管理光标捕获及玩法输入启停。" }
+  class n2 node_system
+  n3@{ shape: hex, label: "**on_camera_look**<br/>将观察输入转为第一人称水平角与俯仰角。" }
+  class n3 node_observer
+  n4@{ shape: rounded, label: "**spawn_actors**<br/>来自场景装配 ↗：装配玩家、可搬物、控制<br/>者与相机。" }
+  class n4 node_system
+  class n4 external_node
+  n5@{ shape: rounded, label: "**suspend_controls**<br/>停用玩法输入并释放光标。" }
+  class n5 node_system
+  n6@{ shape: rounded, label: "**suspend_controls**<br/>停用玩法输入并释放光标。" }
+  class n6 node_system
+  n7@{ shape: hex, label: "**release_pointer_for_inspector**<br/>释放光标以允许操作世界检查器。" }
+  class n7 node_observer
+  n8@{ shape: rounded, label: "**resume_capture**<br/>重置光标捕获并丢弃自由光标阶段位移。" }
+  class n8 node_system
+  n0 e0@-->|"可能挂载于"| n1
+  class e0 edge_reference
+  n2 e1@-->|"可变访问"| n0
+  class e1 edge_write
+  n2 e2@---|"查询访问"| n0
+  class e2 edge_read
+  n0 e3@-->|"查询访问"| n3
+  class e3 edge_read
+  n4 e4@-->|"添加"| n0
+  class e4 edge_write
+  n5 e5@-->|"可变访问"| n0
+  class e5 edge_write
+  n6 e6@-->|"可变访问"| n0
+  class e6 edge_write
+  n7 e7@-->|"可变访问"| n0
+  class e7 edge_write
+  n8 e8@-->|"可变访问"| n0
+  class e8 edge_write
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }

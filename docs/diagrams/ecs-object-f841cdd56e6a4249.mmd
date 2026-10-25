@@ -1,0 +1,81 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: HeldCollider · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_observer fill:#F4F1F9,stroke:#7B4DB2,stroke-width:1.6px,color:#1F3340
+  classDef node_entity fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**HeldCollider**<br/>关联代理所对应的真实物品。" }
+  class n0 node_component
+  n1@{ shape: rounded, label: "**持物无视觉碰撞代理**<br/>为持物共享人物刚体提供无视觉碰撞形状。" }
+  class n1 node_entity
+  n2@{ shape: rounded, label: "**可搬物品业务根实体**<br/>来自场景装配 ↗：承载可拾取物品身份及自<br/>由运动、共享持握状态。" }
+  class n2 node_entity
+  class n2 external_node
+  n3@{ shape: rounded, label: "**update_grounded**<br/>来自角色运动 ↗：准备运动前更新接地状<br/>态。" }
+  class n3 node_system
+  class n3 external_node
+  n4@{ shape: rounded, label: "**update_grounded**<br/>来自角色运动 ↗：物理回写之后观察实际接<br/>地状态。" }
+  class n4 node_system
+  class n4 external_node
+  n5@{ shape: rounded, label: "**cleanup_orphaned_colliders**<br/>清理物品销毁后残留的碰撞代理。" }
+  class n5 node_system
+  n6@{ shape: rounded, label: "**finish_attachments**<br/>为持物装配共享碰撞代理并累计质量。" }
+  class n6 node_system
+  n7@{ shape: hex, label: "**prepare_holder_despawn**<br/>在持有者销毁前停用并卸载持物代理。" }
+  class n7 node_observer
+  n0 e0@-->|"可能挂载于"| n1
+  class e0 edge_reference
+  n0 e1@-->|"0"| n2
+  class e1 edge_reference
+  n0 e2@-->|"存在 / 变更过滤"| n3
+  class e2 edge_reference
+  n0 e3@-->|"存在 / 变更过滤"| n4
+  class e3 edge_reference
+  n0 e4@-->|"查询访问"| n5
+  class e4 edge_read
+  n6 e5@-->|"添加"| n0
+  class e5 edge_write
+  n0 e6@-->|"存在 / 变更过滤"| n7
+  class e6 edge_reference
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e6@{ curve: basis }

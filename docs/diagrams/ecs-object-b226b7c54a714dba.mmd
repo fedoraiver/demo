@@ -1,0 +1,66 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#object-b226b7c54a714dba-e0{marker-start:url(#object-b226b7c54a714dba_flowchart-v2-pointStart)!important}\n#object-b226b7c54a714dba-e2{marker-start:url(#object-b226b7c54a714dba_flowchart-v2-pointStart)!important}\n#object-b226b7c54a714dba-e4{marker-start:url(#object-b226b7c54a714dba_flowchart-v2-pointStart)!important}\n#object-b226b7c54a714dba_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}"
+  }
+}
+---
+flowchart LR
+  accTitle: ArtLoadState · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: cyl, label: "**ArtLoadState**<br/>保存运行资源的加载进度与就绪结果。" }
+  class n0 node_resource
+  n1@{ shape: rounded, label: "**poll_art_assets**<br/>检查资源及其依赖的加载结果。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**begin_island**<br/>请求创建已加载海岛的运行实例。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**prepare_island**<br/>从海岛模型构建静态碰撞、坡道与人物碰撞。" }
+  class n3 node_system
+  n1 e0@---|"访问声明"| n0
+  class e0 edge_read
+  n1 e1@-->|"访问声明"| n0
+  class e1 edge_write
+  n2 e2@---|"访问声明"| n0
+  class e2 edge_read
+  n2 e3@-->|"访问声明"| n0
+  class e3 edge_write
+  n3 e4@---|"访问声明"| n0
+  class e4 edge_read
+  n3 e5@-->|"访问声明"| n0
+  class e5 edge_write
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }

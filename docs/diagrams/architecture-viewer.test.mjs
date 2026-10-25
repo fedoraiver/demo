@@ -17,31 +17,34 @@ function fixture() {
     'plugin-ItemPlugin':{id:'plugin-ItemPlugin',kind:'Plugin',name:'ItemPlugin',description:'完整插件说明',feature:'item'},
     'entity-item':{id:'entity-item',kind:'Entity',name:'物品',description:'实体完整说明',feature:'item',assembled_by:['item'],components:[{id:'item.Shared'},{id:'item.Other'}],sourceEntries:[source('create',10),source('destroy',20)]},
     'entity-character':{id:'entity-character',kind:'Entity',name:'人物',description:'另一实体',feature:'character',components:[{id:'character.Shared'}]},
-    'item.Shared':{id:'item.Shared',kind:'Component',name:'Shared',description:'组件的完整说明',feature:'item',defined_in:'item',fields:['value: f32'],sourceEntries:[source('definition',30)],source:{path:'forbidden-legacy.rs',line:1}},
-    'character.Shared':{id:'character.Shared',kind:'Component',name:'Shared',description:'同一真实类型的第二投影',feature:'item',sourceEntries:[source('definition',30)]},
+    'item.Shared':{id:'item.Shared',kind:'Component',name:'Shared',owner:'物品',description:'物品组件的完整说明',feature:'item',defined_in:'item',fields:['value: f32'],sourceEntries:[source('definition',30)],source:{path:'forbidden-legacy.rs',line:1}},
+    'character.Shared':{id:'character.Shared',kind:'Component',name:'Shared',owner:'人物',description:'同一真实类型的另一投影说明',feature:'item',sourceEntries:[source('definition',30)]},
     'item.Other':{id:'item.Other',kind:'Component',name:'Other',description:'另一类型',feature:'item',sourceGaps:['待核实：没有类型定义证据'],source:{path:'not-a-definition.rs',line:9}},
     'item.Legacy':{id:'item.Legacy',alias_of:'item.Shared'},
     'resource.Config':{id:'resource.Config',kind:'Resource',name:'Config',description:'配置',feature:'item'},
     'local.State':{id:'local.State',kind:'Local',name:'State',description:'局部状态',feature:'item'},
     'non_send.Native':{id:'non_send.Native',kind:'NonSend',name:'Native',description:'主线程状态',feature:'item'},
   };
-  const system={kind:'system',name:'update_shared',description:'完整系统说明，保留所有组件和资源访问。',feature:'item',reads:['item.Shared','item.Other','character.Shared','resource.Config','local.State','non_send.Native'],writes:['item.Shared','resource.Config'],filters:['Query<&mut Shared>','With<Pickable>'],events:['消息记录'],notes:['具体运行约束'],sourceEntries:[source('definition',40),source('registration',50,'固定步注册'),source('registration',60,'逐帧注册')],registrations:[{schedule:'FixedUpdate',scope:'runtime',sets:['Target','Other'],run_if:['running']},{schedule:'RunFixedMainLoop',scope:'runtime',driver_set:'AfterFixedMainLoop',after:[]}]};
-  registry['system-fixed']={...system,id:'system-fixed'};
-  registry['system-update']={...system,id:'system-update'};
-  registry['system-function']={...system,id:'system-function',registrationIds:['system-fixed','system-update'],targetNodeId:'system-fixed'};
+  const system={kind:'System',name:'update_shared',description:'完整系统说明，保留所有组件和资源访问。',feature:'item',reads:['item.Shared','item.Other','character.Shared','resource.Config','local.State','non_send.Native'],writes:['item.Shared','resource.Config'],filters:['Query<&mut Shared>','With<Pickable>'],events:['消息记录'],notes:['具体运行约束'],registrationFamilyIds:['system-fixed','system-update']};
+  registry['system-fixed']={...system,id:'system-fixed',registrations:[{schedule:'FixedUpdate',scope:'runtime',sets:['Target','Other'],run_if:['running']}],sourceEntries:[source('definition',40),source('registration',50,'固定步注册')]};
+  registry['system-update']={...system,id:'system-update',registrations:[{schedule:'RunFixedMainLoop',scope:'runtime',driver_set:'AfterFixedMainLoop',after:[]}],sourceEntries:[source('definition',40),source('registration',60,'逐帧注册')]};
   function graph(id,feature,aspect,ids,links=[],extra={}) {
     const nodes=ids.map((nodeId,index)=>{const kind=registry[nodeId].kind;return{id:nodeId,instance:id+'--'+index,visualType:kind==='Entity'?'entity':kind==='Component'?'component':kind==='Resource'?'resource':kind==='Plugin'?'plugin':'system',role:registry[nodeId].feature===feature?'internal':'external',position:{x:40+index*220,y:40,width:180,height:80}}});
     const svg='<svg id="'+id+'">'+nodes.map(node=>'<g class="node" data-id="'+node.id+'" data-instance="'+node.instance+'" data-visual-type="'+node.visualType+'" role="button" tabindex="0"><rect data-shape-part="'+node.instance+'" style="fill:'+NODE_STYLES[node.visualType].fill+';stroke:'+NODE_STYLES[node.visualType].stroke+';stroke-width:1.6px !important"/><g class="label"><text>'+registry[node.id].name+'</text></g></g>').join('')+links.map(link=>'<path class="edge" data-link-id="'+link.id+'" tabindex="0" role="button"/>').join('')+'</svg>';
-    return{id,feature,aspect,label:id,nodes,links,scheduleLinks:[],scheduleGroups:[],sections:[{label:'全部节点',x:40,y:40,width:900,height:80}],bounds:{x:0,y:0,width:1000,height:300},width:1000,height:300,svg,...extra};
+    return{id,feature,aspect,label:id,nodes,links,scheduleLinks:[],scheduleGroups:[],sections:[{label:'全部节点',x:40,y:40,width:900,height:80}],bounds:{x:0,y:0,width:1000,height:300},width:ids.length?1000:0,height:ids.length?300:0,svg:ids.length?svg:null,...extra};
   }
-  const links=[{id:'contains',from:'item.Shared',to:'entity-item',kind:'reference',edgeSemantic:'reference',label:'可选挂载',sourceEntries:[source('related',70)]},{id:'write',from:'system-function',to:'item.Shared',kind:'write',edgeSemantic:'write',label:'更新字段',notes:['直接写入'],sourceEntries:[source('operation',80)]}];
-  const views=[graph('overview','overview','overview',['plugin-ItemPlugin']),graph('plugin-item-data','item','data',['entity-item','resource.Config']),graph('plugin-item-systems','item','systems',['system-fixed','system-update','item.Shared']),graph('plugin-item-events','item','events',[]),graph('plugin-character-data','character','data',['entity-character']),graph('plugin-character-systems','character','systems',[])];
-  views.push(graph('component:shared','item','component',['entity-item','entity-character','item.Shared','system-function'],links,{componentTypeId:'type-shared',componentNodeId:'item.Shared',projectionIds:['item.Shared','character.Shared'],ownerEntityIds:['entity-item','entity-character']}));
-  views.push(graph('component:other','item','component',['entity-item','item.Other'],[],{componentTypeId:'type-other',componentNodeId:'item.Other',projectionIds:['item.Other'],ownerEntityIds:['entity-item']}));
-  return{model:{features,entities:[{id:'item',components:[{id:'item.Shared'},{id:'item.Other'}]},{id:'character',components:[{id:'character.Shared'}]}]},registry,views,features,infrastructureFeatures:[],guideSamples:{nodes:Object.fromEntries(Object.keys(NODE_STYLES).map(type=>[type,'<svg data-sample="'+type+'"></svg>'])),edges:Object.fromEntries(Object.keys(EDGE_STYLES).map(type=>[type,'<svg data-sample="'+type+'"></svg>']))},styles:{nodes:NODE_STYLES,edges:EDGE_STYLES,selection:SELECTION_STYLE,externalReference:EXTERNAL_REFERENCE_STYLE}};
+  const links=[{id:'contains',from:'item.Shared',to:'entity-item',kind:'reference',edgeSemantic:'reference',label:'可选挂载',sourceEntries:[source('related',70)]},{id:'write',from:'system-fixed',to:'item.Shared',kind:'write',edgeSemantic:'write',label:'更新字段',notes:['直接写入'],sourceEntries:[source('operation',80)]},{id:'read-update',from:'item.Shared',to:'system-update',kind:'read',edgeSemantic:'read',label:'读取字段',sourceEntries:[source('operation',90)]}];
+  const views=[graph('overview',null,'overview',['plugin-ItemPlugin']),graph('plugin-item-systems','item','systems',['system-fixed','system-update']),graph('plugin-character-systems','character','systems',[])];
+  for(const record of Object.values(registry).filter(record=>!record.alias_of)){
+    const related=record.kind==='Entity'?[]:links.filter(link=>link.from===record.id||link.to===record.id);
+    const ids=[...new Set([record.id,...related.flatMap(link=>[link.from,link.to])])];
+    views.push(graph('object:'+record.id,record.feature,'object',ids,related,{objectId:record.id,centerNodeId:record.id}));
+  }
+  const objects=views.filter(view=>view.aspect==='object').map(view=>({id:view.objectId,viewId:view.id,feature:view.feature,kind:registry[view.objectId].kind}));
+  return{model:{features,entities:[{id:'item',components:[{id:'item.Shared'},{id:'item.Other'}]},{id:'character',components:[{id:'character.Shared'}]}]},registry,views,objects,objectAliases:{'old-component-type':['item.Shared','character.Shared'],'old-function':['system-fixed','system-update']},features,infrastructureFeatures:[],guideSamples:{nodes:Object.fromEntries(Object.keys(NODE_STYLES).map(type=>[type,'<svg data-sample="'+type+'"></svg>'])),edges:Object.fromEntries(Object.keys(EDGE_STYLES).map(type=>[type,'<svg data-sample="'+type+'"></svg>']))},styles:{nodes:NODE_STYLES,edges:EDGE_STYLES,selection:SELECTION_STYLE,externalReference:EXTERNAL_REFERENCE_STYLE}};
 }
 
-function viewer(query='?feature=item&tab=data',{historyUnavailable=false,width=1440,edit=()=>{}}={}) {
+function viewer(query='?feature=item&tab=systems',{historyUnavailable=false,width=1440,edit=()=>{}}={}) {
   const data=fixture();edit(data);
   const html=renderArchitectureViewer({...data,features:data.features});
   const document=testDocument(html),location=new URL('file:///D:/demo/docs/diagrams/ecs-architecture.html'+query),frames=[],events=new Map(),entries=[{href:location.href,state:null}];let index=0;
@@ -69,298 +72,192 @@ function assertFitted(page) {
   page.click(page.get('fit'));assert.equal(page.get('diagram').style.transform,transform,'entry uses the existing Fit action');
 }
 
-test('first entry fits overview, plugin and component diagrams even when a deep link selects a node',()=>{
-  const queries=['?feature=overview','?feature=item&tab=systems','?feature=item&tab=systems&node=system-fixed','?feature=item&tab=data&component=item.Shared','?feature=item&tab=data&component=item.Shared&node=system-function','?feature=item&tab=data&node=item.Legacy'];
-  for(const query of queries){
-    const page=viewer(query,{edit:data=>{for(const view of data.views){view.width=view.id==='overview'?18000:2400;view.height=view.aspect==='component'?4800:6000;view.bounds={x:-8,y:-8,width:view.width,height:view.height}}}});
+test('first entry fits overview, systems and exact object diagrams with deep-linked selection',()=>{
+  for(const query of ['?feature=overview','?feature=item','?feature=item&node=system-fixed','?feature=item&object=item.Shared','?feature=item&object=item.Shared&node=system-update']){
+    const page=viewer(query,{edit:data=>{for(const view of data.views){view.width=2400;view.height=6000;view.bounds={x:-8,y:-8,width:view.width,height:view.height}}}});
     assertFitted(page);
-    if(query.includes('node=system-fixed'))assert.equal(page.get('details').querySelector('h2').textContent,'update_shared');
-    if(query.includes('component=item.Shared')||query.includes('node=item.Legacy'))assert.equal(page.get('details').querySelector('h2').textContent,query.includes('node=system-function')?'update_shared':'Shared');
+    if(query.includes('node=system'))assert.equal(page.get('details').querySelector('h2').textContent,'update_shared');
   }
 });
 
-test('plugin switches, tab switches, component entry and both return buttons fit the destination diagram',()=>{
-  const page=viewer();page.click(page.get('zoom-in'));
-  page.click(page.document.querySelector('[data-feature="character"]'));assertFitted(page);
-  page.click(page.document.querySelector('[data-feature="item"]'));assertFitted(page);
-  page.click(page.document.querySelector('[data-aspect="data"]'));assertFitted(page);
-  page.activate('entity-item');page.click(page.get('zoom-in'));
-  page.click(page.get('details').querySelector('[data-open="item.Shared"]'));assertFitted(page);
-  assert.equal(page.get('details').querySelector('h2').textContent,'Shared');
-  page.click(page.get('zoom-in'));page.click(page.get('return-context'));assertFitted(page);
-  assert.equal(page.get('details').querySelector('h2').textContent,'物品');
-  page.click(page.get('zoom-in'));page.click(page.get('return-overview'));assertFitted(page);
-});
-
-test('back and forward restore saved node and edge viewports instead of fitting again',()=>{
-  const page=viewer();page.activate('entity-item');page.click(page.get('zoom-out'));
-  const source=page.get('diagram').style.transform;
-  page.click(page.get('details').querySelector('[data-open="item.Shared"]'));assertFitted(page);
-  page.click(page.get('zoom-in'));page.get('diagram').querySelector('[data-link-id="write"]').dispatch('keydown',{key:'Enter'});
-  const component=page.get('diagram').style.transform;
-  page.app.navigate({feature:'character',aspect:'systems',node:null});page.flush();
-  page.back();assert.equal(page.get('diagram').style.transform,component);assert.equal(page.get('details').querySelector('.badge').textContent,EDGE_STYLES.write.label);
-  page.back();assert.equal(page.get('diagram').style.transform,source);assert.equal(page.get('details').querySelector('h2').textContent,'物品');
-  page.forward();assert.equal(page.get('diagram').style.transform,component);assert.equal(page.get('details').querySelector('.badge').textContent,EDGE_STYLES.write.label);
-});
-
-test('missing or unrelated history falls back to fit while explicit same-diagram location remains available',()=>{
-  const page=viewer('?feature=item&tab=systems&node=system-fixed');assertFitted(page);
-  page.click(page.get('zoom-in'));page.app.renderSelection(true);page.flush();assertFitted(page);
-  page.history.replaceState({architectureView:{id:'deleted-view',scale:2,panX:900,panY:900}},'',page.location.href);
-  page.app.renderSelection(true);page.flush();assertFitted(page);
-  const fitted=page.get('diagram').style.transform;
-  page.app.openNode('system-fixed');assert.notEqual(page.get('diagram').style.transform,fitted);
-  page.click(page.get('fit'));page.get('section').value='0';page.get('section').dispatch('change');assert.notEqual(page.get('diagram').style.transform,fitted);
-  const empty=viewer('?feature=item&tab=events',{edit:data=>{Object.assign(data.views.find(v=>v.id==='plugin-item-events'),{svg:null,width:0,height:0})}});
-  assert.equal(empty.get('diagram').innerHTML,'');assert.doesNotMatch(empty.get('diagram').style.transform,/NaN|Infinity/);
-});
-
-test('two touch points zoom around their midpoint without selecting a node on release',()=>{
-  const page=viewer('?feature=item&tab=data',{width:390}),diagram=page.get('diagram');
-  page.document.elementFromPoint=()=>diagram.querySelector('[data-id="entity-item"]');
-  const point=(pointerId,clientX,clientY=180)=>({button:0,pointerType:'touch',pointerId,clientX,clientY});
-  const scale=()=>Number(/scale\(([^)]+)\)/.exec(diagram.style.transform)[1]),before=scale();
-  page.canvas.dispatch('pointerdown',point(1,100));page.canvas.dispatch('pointerdown',point(2,200));
-  page.canvas.dispatch('pointermove',point(1,50));page.canvas.dispatch('pointermove',point(2,250));
-  assert.equal(scale(),before*2);
-  page.canvas.dispatch('pointerup',point(1,50));page.canvas.dispatch('pointerup',point(2,250));
-  assert.equal(page.location.searchParams.get('node'),null);
-});
-
-test('mobile height-only resizing retains the user zoom and pan',()=>{
-  const page=viewer('?feature=item&tab=data',{width:390});page.click(page.get('zoom-in'));
-  const before=page.get('diagram').style.transform;page.canvas.clientHeight=530;page.emit('resize');
-  assert.equal(page.get('diagram').style.transform,before);
-});
-
-test('navigation and layout breakpoint changes discard in-progress touch captures',()=>{
-  for(const change of ['navigate','resize']){
-    const page=viewer(),point={button:0,pointerType:'touch',pointerId:5,clientX:100,clientY:180};
-    page.canvas.dispatch('pointerdown',point);assert.equal(page.canvas.hasPointerCapture(5),true);
-    if(change==='navigate'){page.app.navigate({feature:'character',aspect:'data',node:null});page.flush()}
-    else{page.window.innerWidth=390;page.emit('resize')}
-    const before=page.get('diagram').style.transform;
-    assert.equal(page.canvas.hasPointerCapture(5),false);
-    page.canvas.dispatch('pointermove',{...point,clientX:200});page.canvas.dispatch('pointerup',point);
-    assert.equal(page.get('diagram').style.transform,before);assert.equal(page.location.searchParams.get('node'),null);
-  }
-});
-
-test('narrow-screen wheel scrolling reaches the page while desktop wheels zoom the diagram',()=>{
-  for(const width of [390,1440]){
-    const page=viewer('?feature=item&tab=data',{width}),before=page.get('diagram').style.transform;
-    const event=page.canvas.dispatch('wheel',{deltaY:-100,clientX:100,clientY:180});
-    assert.equal(event.defaultPrevented,width>900);
-    assert.equal(page.get('diagram').style.transform===before,width<=900);
-  }
-});
-
-test('Entity cards have no expansion controls and their complete component list opens a dedicated type view',()=>{
-  const page=viewer();page.activate('entity-item');
-  assert.equal(page.get('details').children[0].tagName,'h2');
-  assert.equal(page.get('details').querySelector('.badge'),null);
-  assert.ok(page.get('details').textContent.includes('实体完整说明'));
-  assert.equal(page.get('diagram').querySelector('[data-id="item.Shared"]'),null);
-  assert.equal(page.document.querySelector('[data-entity-toggle]'),null);
-  page.click(page.get('details').querySelector('[data-open="item.Shared"]'));
-  assert.equal(page.app.view.id,'component:shared');
-  assert.equal(page.location.searchParams.get('feature'),'item');
-  assert.equal(page.location.searchParams.get('tab'),'data');
-  assert.equal(page.location.searchParams.get('component'),'item.Shared');
-  assert.equal(page.get('details').querySelector('h2').textContent,'Shared');
-  assert.equal(page.get('return-context').hidden,false);
-  const before=page.history.length;page.activate('item.Shared');assert.equal(page.history.length,before);
-});
-
-test('component type details merge all projection text and fields only at the dedicated center',()=>{
-  const page=viewer('?feature=item&tab=data&component=item.Shared',{edit:data=>{data.views.find(view=>view.id==='component:shared').componentDetails={name:'Shared<f32>',description:'同类型各实体的完整说明',fields:['value: f32','optional_owner: Entity'],notes:['完整类型约束']}}});
-  const details=page.get('details');
-  assert.equal(details.querySelector('h2').textContent,'Shared<f32>');
-  for(const value of ['同类型各实体的完整说明','optional_owner: Entity','完整类型约束'])assert.ok(details.textContent.includes(value));
-  assert.equal(page.data.registry['item.Shared'].name,'Shared');
-  page.activate('entity-item');assert.equal(details.querySelector('h2').textContent,'物品');
-});
-
-test('legacy component links and same-type projections use replaceState without losing workspace or fragments',()=>{
-  const page=viewer('?feature=item&tab=data&node=item.Legacy&workspace=E%3A%2Fwork&keep=1#anchor');
-  assert.equal(page.app.view.id,'component:shared');assert.equal(page.history.length,1);
-  assert.equal(page.location.searchParams.get('component'),'item.Shared');assert.equal(page.location.searchParams.get('workspace'),'E:/work');assert.equal(page.location.hash,'#anchor');
-  const other=viewer('?feature=character&tab=data&component=character.Shared');
-  assert.equal(other.app.view.id,'component:shared');assert.equal(other.get('details').querySelector('h2').textContent,'Shared');
-  assert.equal(other.location.searchParams.get('component'),'character.Shared');
-});
-
-test('old provider Component links normalize ownership while explicit component routes retain their origin context',()=>{
-  for(const feature of ['third_party','infrastructure']){
-    const page=viewer('?feature='+feature+'&tab=data&node=item.Shared&workspace=D%3A%2Fdemo');
-    assert.equal(page.app.view.id,'component:shared');assert.equal(page.location.searchParams.get('feature'),'item');assert.equal(page.history.length,1);
-  }
-  const explicit=viewer('?feature=infrastructure&tab=data&component=item.Shared');
-  assert.equal(explicit.location.searchParams.get('feature'),'infrastructure');
-});
-
-test('component navigation restores the original Entity and viewport through browser history',()=>{
-  const page=viewer();page.activate('entity-item');page.click(page.get('zoom-out'));
-  const transform=page.get('diagram').style.transform;
-  page.click(page.get('details').querySelector('[data-open="item.Shared"]'));
-  page.back();assert.equal(page.app.view.id,'plugin-item-data');assert.equal(page.get('details').querySelector('h2').textContent,'物品');assert.equal(page.get('diagram').style.transform,transform);
-  page.forward();assert.equal(page.app.view.id,'component:shared');
-  page.click(page.get('return-context'));assert.equal(page.app.view.id,'plugin-item-data');assert.equal(page.location.searchParams.has('component'),false);
-});
-
-test('return-to-origin retains a System source selection instead of substituting a component owner',()=>{
-  const page=viewer('?feature=item&tab=systems');page.activate('system-fixed');
-  page.app.openComponent('item.Shared');page.flush();
-  page.click(page.get('return-context'));
+test('ordinary cards select their own details and the explicit action enters their object view',()=>{
+  const page=viewer();page.activate('system-fixed');
   assert.equal(page.app.view.id,'plugin-item-systems');
+  assert.equal(page.get('details').querySelectorAll('.schedule-registration').length,1);
+  page.click(page.get('details').querySelector('[data-object="system-fixed"]'));
+  assert.equal(page.app.view.id,'object:system-fixed');assertFitted(page);
+  assert.equal(page.location.searchParams.get('object'),'system-fixed');
+  assert.equal(page.get('details').querySelector('[data-object="system-fixed"]'),null);
+  const before=page.history.length;page.activate('system-fixed');assert.equal(page.history.length,before);
+  page.click(page.get('return-context'));assert.equal(page.app.view.id,'plugin-item-systems');assertFitted(page);
   assert.equal(page.location.searchParams.get('node'),'system-fixed');
-  assert.equal(page.get('details').querySelector('h2').textContent,'update_shared');
+  page.click(page.document.querySelector('[data-feature="character"]'));assert.equal(page.app.view.svg,null);
+  page.click(page.get('return-overview'));assertFitted(page);
 });
 
-test('data search still finds components absent from the canvas and result navigation has no layout compilation',()=>{
-  const page=viewer();page.app.search('组件的完整说明');
-  assert.equal(page.get('details').querySelector('h2').textContent,'1 个匹配节点');
-  const result=page.get('details').querySelector('[data-open="item.Shared"]');assert.ok(result);
-  assert.equal(page.get('diagram').querySelector('[data-id="item.Shared"]'),null);
-  page.click(result);assert.equal(page.app.view.id,'component:shared');
+test('legacy component, data and events links migrate exact projections without losing URL state',()=>{
+  for(const id of ['item.Shared','character.Shared'])for(const parameter of ['component='+id,'node='+id]){
+    const page=viewer('?feature=item&tab=data&'+parameter+'&workspace=E%3A%2Fwork&keep=1#anchor');
+    assert.equal(page.app.view.id,'object:'+id);assert.equal(page.history.length,1);
+    assert.equal(page.location.searchParams.get('object'),id);assert.equal(page.location.searchParams.has('component'),false);
+    assert.equal(page.location.searchParams.get('tab'),'systems');assert.equal(page.location.searchParams.get('workspace'),'E:/work');assert.equal(page.location.searchParams.get('keep'),'1');assert.equal(page.location.hash,'#anchor');
+  }
+  const events=viewer('?feature=item&tab=events&node=system-update');assert.equal(events.app.view.id,'object:system-update');
+  const alias=viewer('?feature=item&tab=data&node=item.Legacy');assert.equal(alias.app.view.id,'object:item.Shared');
+  for(const tab of ['data','events'])for(const node of ['','&node=deleted']){
+    const page=viewer('?feature=item&tab='+tab+node);assert.equal(page.app.view.id,'plugin-item-systems');assert.equal(page.location.searchParams.get('node'),null);
+  }
 });
 
-test('one function card retains every Schedule, complete Read/Write/Query and canonical Entity summaries',()=>{
-  const page=viewer('?feature=item&tab=data&component=item.Shared&node=system-fixed');
-  assert.equal(page.app.view.nodes.filter(node=>node.id==='system-function').length,1);
-  assert.equal(page.get('details').querySelector('h2').textContent,'update_shared');
-  assert.ok(page.get('details').textContent.includes('完整系统说明'));
-  assert.equal(page.get('details').querySelectorAll('.schedule-registration').length,2);
-  assert.ok(page.get('details').textContent.includes('AfterFixedMainLoop'));
-  const read=page.get('details').querySelector('[data-access="Read"]');
-  assert.deepEqual(read.querySelectorAll('[data-access-kind]').map(group=>group.dataset.accessKind),['Entity','Resource','Local','NonSend']);
+test('legacy provider links normalize ownership while explicit object routes retain context',()=>{
+  for(const feature of ['third_party','infrastructure']){
+    const page=viewer('?feature='+feature+'&tab=data&node=item.Shared');
+    assert.equal(page.app.view.id,'object:item.Shared');assert.equal(page.location.searchParams.get('feature'),'item');
+  }
+  assert.equal(viewer('?feature=infrastructure&object=item.Shared').location.searchParams.get('feature'),'infrastructure');
+  const merged=viewer('?feature=third_party&node=deleted');assert.equal(merged.app.view.id,'overview');
+});
+
+test('old aggregate aliases offer every original projection or registration without choosing one',()=>{
+  for(const [old,ids]of [['old-component-type',['item.Shared','character.Shared']],['old-function',['system-fixed','system-update']]]){
+    const page=viewer('?feature=item&object='+old+'&keep=1');
+    assert.equal(page.get('details').querySelector('h2').textContent,'选择原对象');
+    assert.deepEqual(page.get('details').querySelectorAll('[data-object]').map(button=>button.dataset.object),ids);
+    assert.equal(page.history.length,1);
+    page.click(page.get('details').querySelector('[data-object="'+ids[1]+'"]'));assert.equal(page.app.view.id,'object:'+ids[1]);
+  }
+  const nodeAlias=viewer('?feature=item&component=item.Shared&node=old-function');
+  assert.equal(nodeAlias.app.view.id,'object:item.Shared');assert.equal(nodeAlias.location.searchParams.get('node'),'old-function');
+  assert.deepEqual(nodeAlias.get('details').querySelectorAll('[data-object]').map(button=>button.dataset.object),['system-fixed','system-update']);
+  const standalone=viewer('?feature=item&node=old-function');assert.equal(standalone.get('details').querySelector('h2').textContent,'选择原对象');
+});
+
+test('each projection and registration retains its own description, fields, sources and family links',()=>{
+  const page=viewer('?feature=item&object=item.Shared');
+  assert.ok(page.get('details').textContent.includes('物品组件的完整说明'));
+  assert.ok(!page.get('details').textContent.includes('另一投影说明'));
+  page.app.openObject('character.Shared');page.flush();
+  assert.equal(page.app.view.id,'object:character.Shared');assert.ok(page.get('details').textContent.includes('另一投影说明'));
+  assert.ok(!page.get('details').textContent.includes('value: f32'));
+  page.app.openObject('system-fixed');page.flush();
+  assert.equal(page.get('details').querySelectorAll('.schedule-registration').length,1);
+  assert.deepEqual(page.get('details').querySelectorAll('[data-vscode-line]').map(anchor=>anchor.dataset.vscodeLine),['40','50']);
+  const family=page.get('details').querySelector('[data-open="system-update"]');assert.ok(family.textContent.includes('RunFixedMainLoop'));
+  page.click(family);assert.equal(page.app.view.id,'object:system-update');
+  assert.equal(page.get('details').querySelectorAll('.schedule-registration').length,1);
+  assert.deepEqual(page.get('details').querySelectorAll('[data-vscode-line]').map(anchor=>anchor.dataset.vscodeLine),['40','60']);
+});
+
+test('global search reaches isolated objects and distinguishes same names by owner and Schedule',()=>{
+  const page=viewer('?feature=overview');page.app.search('Shared');
+  const results=page.get('details').querySelectorAll('[data-object]');
+  assert.ok(results.some(button=>button.dataset.object==='item.Shared'&&button.textContent.includes('物品')));
+  assert.ok(results.some(button=>button.dataset.object==='character.Shared'&&button.textContent.includes('人物')));
+  assert.ok(results.some(button=>button.dataset.object==='system-fixed'&&button.textContent.includes('FixedUpdate')));
+  assert.ok(results.some(button=>button.dataset.object==='system-update'&&button.textContent.includes('RunFixedMainLoop')));
+  page.app.search('配置');assert.equal(page.get('details').querySelector('h2').textContent,'1 个匹配对象');
+  page.click(page.get('details').querySelector('[data-object="resource.Config"]'));assert.equal(page.app.view.id,'object:resource.Config');
+  assert.equal(page.app.view.nodes.length,1);assertFitted(page);
+  page.back();assert.equal(page.get('details').querySelector('h2').textContent,'1 个匹配对象');assert.equal(page.get('search').value,'配置');
+});
+
+test('Entity details keep all components and related links enter exact object views',()=>{
+  const page=viewer('?feature=item&object=entity-item');
+  assert.equal(page.document.querySelector('[data-entity-toggle]'),null);
+  for(const id of ['item.Shared','item.Other'])assert.equal(page.get('diagram').querySelector('[data-id="'+id+'"]'),null);
+  assert.deepEqual(page.app.view.nodes.map(node=>node.id),['entity-item']);
+  assert.deepEqual(page.get('details').querySelectorAll('[data-open]').map(button=>button.dataset.open),['item.Shared','item.Other']);
+  page.click(page.get('details').querySelector('[data-open="item.Shared"]'));
+  assert.equal(page.app.view.id,'object:item.Shared');
+  page.activate('entity-item');assert.equal(page.app.view.id,'object:item.Shared');
+  page.click(page.get('details').querySelector('[data-object="entity-item"]'));assert.equal(page.app.view.id,'object:entity-item');
+});
+
+test('back and forward restore node and edge selection, viewport and original systems context',()=>{
+  const page=viewer();page.activate('system-fixed');page.click(page.get('zoom-out'));const original=page.get('diagram').style.transform;
+  page.app.openObject('item.Shared');page.flush();page.click(page.get('zoom-in'));page.get('diagram').querySelector('[data-link-id="write"]').dispatch('keydown',{key:'Enter'});const object=page.get('diagram').style.transform;
+  page.app.navigate({feature:'character',aspect:'systems',node:null});page.flush();
+  page.back();assert.equal(page.get('diagram').style.transform,object);assert.equal(page.get('details').querySelector('.badge').textContent,EDGE_STYLES.write.label);
+  page.back();assert.equal(page.app.view.id,'plugin-item-systems');assert.equal(page.get('diagram').style.transform,original);assert.equal(page.location.searchParams.get('node'),'system-fixed');
+  page.forward();assert.equal(page.get('diagram').style.transform,object);
+  page.click(page.get('return-context'));assert.equal(page.app.view.id,'plugin-item-systems');assert.equal(page.location.searchParams.get('node'),'system-fixed');
+});
+
+test('unavailable local-file history, invalid object IDs and mismatched object node selections remain usable',()=>{
+  const page=viewer(undefined,{historyUnavailable:true});page.activate('system-fixed');page.app.openObject('item.Shared');page.flush();assert.equal(page.app.view.id,'object:item.Shared');
+  page.click(page.get('return-context'));assert.equal(page.app.view.id,'plugin-item-systems');assert.equal(page.app.selection.node,'system-fixed');
+  const stale=viewer('?feature=item&object=deleted');assert.equal(stale.app.view.id,'plugin-item-systems');assert.equal(stale.location.searchParams.has('object'),false);
+  const unrelated=viewer('?feature=item&object=item.Shared&node=resource.Config');assert.equal(unrelated.app.selection.node,'item.Shared');
+  const empty=viewer('?feature=character');assert.equal(empty.get('diagram').innerHTML,'');assert.doesNotMatch(empty.get('diagram').style.transform,/NaN|Infinity/);
+});
+
+test('node details preserve canonical Read/Write summaries, full query and authoritative source entries',()=>{
+  const page=viewer('?feature=item&object=system-fixed');const details=page.get('details');
+  const read=details.querySelector('[data-access="Read"]');assert.deepEqual(read.querySelectorAll('[data-access-kind]').map(group=>group.dataset.accessKind),['Entity','Resource','Local','NonSend']);
   assert.deepEqual(read.querySelector('[data-access-kind="Entity"]').querySelectorAll('[data-open]').map(button=>button.dataset.open),['entity-item','entity-character']);
-  assert.equal(read.querySelector('[data-open="item.Shared"]'),null);
-  assert.ok(page.get('details').textContent.includes('Query<&mut Shared>'));
-  assert.equal(page.get('details').querySelectorAll('[data-vscode-path]').length,3);
-  assert.equal(page.get('details').querySelectorAll('h3').filter(heading=>heading.textContent==='源码位置').length,1);
-  page.click(page.get('details').querySelector('[data-owner]'));assert.equal(page.app.view.id,'plugin-item-systems');assert.equal(page.location.searchParams.get('node'),'system-fixed');assert.equal(page.location.searchParams.has('component'),false);
+  assert.ok(details.textContent.includes('Query<&mut Shared>'));
+  page.click(details.querySelector('[data-owner]'));assert.equal(page.app.view.id,'plugin-item-systems');assert.equal(page.location.searchParams.has('object'),false);
+  page.app.openObject('item.Other');page.flush();assert.equal(details.querySelector('[data-vscode-path]'),null);assert.ok(details.textContent.includes('待核实'));assert.ok(!details.textContent.includes('not-a-definition.rs'));
 });
 
-test('source entries are authoritative and legacy source is never exposed as a definition',()=>{
-  const page=viewer('?feature=item&tab=data&component=item.Shared');
-  assert.deepEqual(page.get('details').querySelectorAll('[data-vscode-path]').map(anchor=>anchor.dataset.vscodePath),['src/item.rs']);
-  assert.equal(page.get('details').querySelector('.source-group-label').textContent,'定义位置');
-  page.app.openComponent('item.Other');page.flush();
-  assert.equal(page.get('details').querySelector('[data-vscode-path]'),null);
-  assert.ok(page.get('details').textContent.includes('待核实'));
-  assert.ok(!page.get('details').textContent.includes('not-a-definition.rs'));
-});
-
-test('component owners and other component buttons navigate without inventing pages',()=>{
-  const page=viewer('?feature=item&tab=data&component=item.Shared');
-  page.click(page.get('details').querySelector('[data-open="entity-character"]'));assert.equal(page.get('details').querySelector('h2').textContent,'人物');
-  page.click(page.get('details').querySelector('[data-open="character.Shared"]'));assert.equal(page.app.view.id,'component:shared');assert.equal(page.get('details').querySelector('h2').textContent,'Shared');
-  page.app.openNode('entity-item');page.flush();page.click(page.get('details').querySelector('[data-open="item.Other"]'));assert.equal(page.app.view.id,'component:other');
-});
-
-test('clear returns the actual view legend and only releases graph or disappearing-button focus',()=>{
-  const page=viewer('?feature=item&tab=data&component=item.Shared');
-  page.get('search').focus();page.app.select(null);assert.equal(page.document.activeElement,page.get('search'));
+test('clear returns actual view legend and releases only graph or disappearing-button focus',()=>{
+  const page=viewer('?feature=item&object=item.Shared');page.get('search').focus();page.app.select(null);assert.equal(page.document.activeElement,page.get('search'));
   assert.equal(page.get('details').querySelector('.guide').getAttribute('aria-label'),'Legend');
   assert.deepEqual(page.get('details').querySelectorAll('[data-guide-node-type]').map(row=>row.dataset.guideNodeType),['system','entity','component']);
-  assert.deepEqual(page.get('details').querySelectorAll('[data-guide-edge-semantic]').map(row=>row.dataset.guideEdgeSemantic),['write','reference']);
+  assert.deepEqual(page.get('details').querySelectorAll('[data-guide-edge-semantic]').map(row=>row.dataset.guideEdgeSemantic),['read','write','reference']);
   page.activate('item.Shared');page.get('clear-selection').focus();page.click(page.get('clear-selection'));assert.equal(page.document.activeElement,page.canvas);
   assert.equal(page.get('diagram').querySelectorAll('[data-selection-filter]').length,0);
-  assert.equal(page.get('diagram').querySelectorAll('.selected').length,0);
   page.activate('item.Shared');page.get('diagram').querySelector('[data-id="item.Shared"]').focus();page.app.select(null);assert.equal(page.document.activeElement,page.canvas);
 });
 
-test('edge details use real endpoints and reviewed operation sources with keyboard activation',()=>{
-  const page=viewer('?feature=item&tab=data&component=item.Shared');
-  page.get('diagram').querySelector('[data-link-id="write"]').dispatch('keydown',{key:' '});
-  assert.equal(page.get('details').querySelector('.badge').textContent,EDGE_STYLES.write.label);
-  assert.deepEqual(page.get('details').querySelectorAll('[data-open]').map(button=>button.dataset.open),['system-function','item.Shared']);
-  assert.equal(page.get('details').querySelector('[data-vscode-line]').dataset.vscodeLine,'80');
-  page.click(page.get('details').querySelector('[data-open="item.Shared"]'));assert.equal(page.get('details').querySelector('h2').textContent,'Shared');
+test('edge details and native labels preserve exact endpoint and operation source identity',()=>{
+  const page=viewer('?feature=item&object=item.Shared',{edit:data=>{
+    const view=data.views.find(view=>view.objectId==='item.Shared');view.links.forEach((link,index)=>link.mermaidId='e'+index);
+    view.svg=view.svg.replace('</svg>',view.links.map(link=>'<g class="edgeLabel"><g data-mermaid-native-id="'+link.mermaidId+'"><text>'+link.label+'</text></g></g>').join('')+'</svg>');
+  }});
+  const label=page.get('diagram').querySelector('[data-link-label-id="write"]');assert.equal(label.getAttribute('data-connect'),'system-fixed|item.Shared');
+  page.click(label.querySelector('text'));assert.deepEqual(page.get('details').querySelectorAll('[data-open]').map(button=>button.dataset.open),['system-fixed','item.Shared']);assert.equal(page.get('details').querySelector('[data-vscode-line]').dataset.vscodeLine,'80');
+  for(const key of ['Enter',' ']){label.dispatch('keydown',{key});assert.equal(page.get('details').querySelector('.badge').textContent,EDGE_STYLES.write.label)}
+  page.click(page.get('details').querySelector('[data-open="system-fixed"]'));assert.equal(page.app.view.id,'object:system-fixed');
 });
 
-test('native edge labels activate the same relationship by nested click, pointer and keyboard after every render',()=>{
-  const page=viewer('?feature=item&tab=data&component=item.Shared',{edit:data=>{
-    const view=data.views.find(view=>view.id==='component:shared');
-    view.links.forEach((link,index)=>{link.mermaidId='e'+index});
-    view.svg=view.svg.replace('</svg>',view.links.map(link=>'<g class="edgeLabel"><g class="label" data-mermaid-native-id="'+link.mermaidId+'"><text>'+link.label+'</text></g></g>').join('')+'<g class="edgeLabel" data-test="unknown" data-mermaid-native-id="missing"><text>Unknown</text></g><g class="edgeLabel" data-test="ambiguous"><g data-mermaid-native-id="e0"></g><g data-mermaid-native-id="e1"></g></g></svg>');
-  }});
-  const diagram=page.get('diagram'),label=id=>diagram.querySelector('g[data-link-label-id="'+id+'"]');
-  assert.equal(label('write').getAttribute('role'),'button');assert.equal(label('write').getAttribute('tabindex'),'0');
-  assert.equal(label('write').getAttribute('data-connect'),'system-function|item.Shared');
-  assert.equal(diagram.querySelector('[data-test="unknown"]').getAttribute('data-link-label-id'),null);
-  assert.equal(diagram.querySelector('[data-test="ambiguous"]').getAttribute('data-link-label-id'),null);
-  assert.equal(diagram.querySelectorAll('[data-id]').length,4);
-  assert.doesNotMatch(page.app.view.svg,/data-link-label-id/);
-  page.click(label('write').querySelector('text'));assert.equal(page.get('details').querySelector('[data-vscode-line]').dataset.vscodeLine,'80');
-  assert.equal(label('write').classList.contains('focused'),true);assert.equal(label('contains').classList.contains('dim'),true);
-  for(const key of ['Enter',' ']){label('contains').dispatch('keydown',{key});assert.equal(page.get('details').querySelector('.badge').textContent,EDGE_STYLES.reference.label)}
-  page.document.elementFromPoint=()=>label('write').querySelector('text');
-  page.canvas.dispatch('pointerdown',{button:0,pointerId:7,clientX:50,clientY:50});page.canvas.dispatch('pointerup',{pointerId:7,clientX:50,clientY:50});
-  assert.equal(page.get('details').querySelector('.badge').textContent,EDGE_STYLES.write.label);
-  page.app.navigate({feature:'item',aspect:'data',node:null});page.flush();page.app.openComponent('item.Shared');page.flush();
-  assert.equal(diagram.querySelectorAll('[data-link-label-id]').length,2);
-  label('write').dispatch('keydown',{key:'Enter'});assert.equal(page.get('details').querySelector('[data-vscode-line]').dataset.vscodeLine,'80');
-});
-
-test('native Schedule labels retain Schedule relationship identity instead of opening a business edge',()=>{
-  const page=viewer('?feature=item&tab=systems',{edit:data=>{
-    const view=data.views.find(view=>view.id==='plugin-item-systems');
-    view.scheduleLinks=[{id:'schedule-next',mermaidId:'sc0',from:'First',to:'Update',edgeSemantic:'schedule',label:'阶段契约'}];
-    view.svg=view.svg.replace('</svg>','<g class="edgeLabel" data-mermaid-native-id="sc0"><text>阶段契约</text></g></svg>');
-  }});
-  const label=page.get('diagram').querySelector('[data-link-label-id="schedule-next"]');
-  assert.equal(label.dataset.scheduleLinkId,'schedule-next');assert.equal(label.dataset.linkId,undefined);
-  label.dispatch('keydown',{key:'Enter'});assert.equal(page.get('details').querySelector('.badge').textContent,EDGE_STYLES.schedule.label);
+test('native Schedule labels retain Schedule identity and never become object endpoints',()=>{
+  const page=viewer(undefined,{edit:data=>{const view=data.views.find(view=>view.id==='plugin-item-systems');view.scheduleLinks=[{id:'schedule-next',mermaidId:'sc0',from:'First',to:'Update',edgeSemantic:'schedule',label:'阶段契约'}];view.svg=view.svg.replace('</svg>','<g class="edgeLabel" data-mermaid-native-id="sc0"><text>阶段契约</text></g></svg>')}});
+  const label=page.get('diagram').querySelector('[data-link-label-id="schedule-next"]');assert.equal(label.dataset.scheduleLinkId,'schedule-next');label.dispatch('keydown',{key:'Enter'});
   assert.deepEqual(page.get('details').querySelectorAll('[data-schedule]').map(button=>button.dataset.schedule),['First','Update']);
 });
 
-test('pointer focus, drag, section zero and panel resize retain their existing interaction contracts',()=>{
-  const page=viewer();const node=page.get('diagram').querySelector('[data-id="entity-item"]');page.document.elementFromPoint=()=>node;
+test('pointer focus, drag, section zero and panel resize retain their interaction contracts',()=>{
+  const page=viewer();page.document.elementFromPoint=()=>page.get('diagram').querySelector('[data-id="system-fixed"]');
   page.canvas.dispatch('pointerdown',{button:0,pointerId:1,clientX:50,clientY:50});assert.equal(page.document.activeElement,page.canvas);
-  page.canvas.dispatch('pointerup',{pointerId:1,clientX:50,clientY:50});assert.equal(page.get('details').querySelector('h2').textContent,'物品');
+  page.canvas.dispatch('pointerup',{pointerId:1,clientX:50,clientY:50});assert.equal(page.app.view.id,'plugin-item-systems');assert.equal(page.get('details').querySelector('h2').textContent,'update_shared');
   const before=page.get('diagram').style.transform;page.canvas.dispatch('pointerdown',{button:0,pointerId:2,clientX:50,clientY:50});page.canvas.dispatch('pointermove',{pointerId:2,clientX:80,clientY:100});page.canvas.dispatch('pointerup',{pointerId:2,clientX:80,clientY:100});assert.notEqual(page.get('diagram').style.transform,before);
-  const selector=page.get('section');selector.value='0';selector.dispatch('change');assert.equal(page.get('details').querySelector('h2').textContent,'全部节点');
-  const resizer=page.get('details-resizer');resizer.dispatch('keydown',{key:'ArrowLeft'});assert.equal(resizer.getAttribute('aria-valuenow'),'302');
+  page.get('section').value='0';page.get('section').dispatch('change');assert.equal(page.get('details').querySelector('h2').textContent,'全部节点');
+  page.get('details-resizer').dispatch('keydown',{key:'ArrowLeft'});assert.equal(page.get('details-resizer').getAttribute('aria-valuenow'),'302');
 });
 
-test('component entry works with unavailable local-file History APIs and stale component IDs fall back',()=>{
-  const page=viewer('?feature=item&tab=data',{historyUnavailable:true});page.activate('entity-item');page.click(page.get('details').querySelector('[data-open="item.Shared"]'));assert.equal(page.app.view.id,'component:shared');
-  const stale=viewer('?feature=item&tab=data&component=deleted');assert.equal(stale.app.view.id,'plugin-item-data');assert.equal(stale.location.searchParams.has('component'),false);
+test('touch pinch, compact wheel scrolling and height-only resize preserve existing behavior',()=>{
+  const page=viewer(undefined,{width:390}),diagram=page.get('diagram'),point=(pointerId,clientX)=>({button:0,pointerType:'touch',pointerId,clientX,clientY:180});
+  page.document.elementFromPoint=()=>diagram.querySelector('[data-id="system-fixed"]');const scale=()=>Number(/scale\(([^)]+)\)/.exec(diagram.style.transform)[1]),before=scale();
+  page.canvas.dispatch('pointerdown',point(1,100));page.canvas.dispatch('pointerdown',point(2,200));page.canvas.dispatch('pointermove',point(1,50));page.canvas.dispatch('pointermove',point(2,250));assert.equal(scale(),before*2);
+  page.canvas.dispatch('pointerup',point(1,50));page.canvas.dispatch('pointerup',point(2,250));assert.equal(page.app.selection.node,null);
+  const transform=diagram.style.transform;assert.equal(page.canvas.dispatch('wheel',{deltaY:-100,clientX:100,clientY:180}).defaultPrevented,false);
+  page.canvas.clientHeight=530;page.emit('resize');assert.equal(diagram.style.transform,transform);
+  page.window.innerWidth=1440;assert.equal(page.canvas.dispatch('wheel',{deltaY:-100,clientX:100,clientY:180}).defaultPrevented,true);
 });
 
-test('rendered HTML embeds valid scripts and no obsolete expansion or Mermaid runtime assets',()=>{
-  const data=fixture(),html=renderArchitectureViewer(data);
-  for(const{attributes,script}of scriptsIn(html))if(!attributes.includes('application/json'))new vm.Script(script);
-  assert.doesNotMatch(html,/data-entity-toggle|architectureEntityModes|architectureEntityRuntime|entity-layout-status|createArchitectureEntities/);
-  const embedded=JSON.parse(/<script id="architecture-data" type="application\/json">([\s\S]*?)<\/script>/.exec(html)[1]);
-  assert.deepEqual(Object.keys(embedded.styles),['nodes','edges','selection','externalReference']);
+test('rendered HTML has only systems navigation and embeds offline object state with valid scripts',()=>{
+  const html=renderArchitectureViewer(fixture());for(const{attributes,script}of scriptsIn(html))if(!attributes.includes('application/json'))new vm.Script(script);
+  assert.doesNotMatch(html,/data-aspect="(?:data|events)"|data-entity-toggle|createArchitectureEntities|mermaid\.run|cdn\./);
+  const embedded=JSON.parse(/<script id="architecture-data" type="application\/json">([\s\S]*?)<\/script>/.exec(html)[1]);assert.equal(embedded.schemaVersion,3);assert.ok(embedded.objects.length);assert.ok(embedded.objectAliases['old-function']);assert.equal(embedded.componentTypes,undefined);
 });
 
-test('App overview system details, plugin navigation and history retain their original registration and workspace',()=>{
-  const page=viewer('?workspace=D%3A%2Fdemo&feature=overview',{edit:data=>{
-    const overview=data.views[0],systemView=data.views.find(view=>view.id==='plugin-item-systems');
-    Object.assign(overview,{feature:null,layout:'app-schedule',label:'App 系统调度总览',nodes:structuredClone(systemView.nodes.slice(0,2)),svg:systemView.svg});
-    overview.nodes.forEach(node=>node.role='internal');
-  }});
-  assert.equal(page.get('feature-head').querySelector('h1').textContent,'App 系统调度总览');
-  page.activate('system-fixed');
-  assert.equal(page.app.view.id,'overview');
-  assert.equal(page.get('details').querySelectorAll('.schedule-registration').length,2);
-  assert.equal(page.location.searchParams.get('workspace'),'D:/demo');
-  page.click(page.get('details').querySelector('[data-owner]'));
-  assert.equal(page.app.view.id,'plugin-item-systems');
-  page.back();assert.equal(page.app.view.id,'overview');
-  assert.equal(page.location.searchParams.get('node'),'system-fixed');
-  assert.equal(page.get('details').querySelector('h2').textContent,'update_shared');
-  page.click(page.get('clear-selection'));assert.equal(page.get('details').querySelector('.guide').getAttribute('aria-label'),'Legend');
+test('overview system details, owner navigation and history preserve registration and workspace',()=>{
+  const page=viewer('?workspace=D%3A%2Fdemo&feature=overview',{edit:data=>{const overview=data.views[0],systems=data.views.find(view=>view.id==='plugin-item-systems');Object.assign(overview,{layout:'app-schedule',label:'App 系统调度总览',nodes:structuredClone(systems.nodes),svg:systems.svg})}});
+  page.activate('system-fixed');assert.equal(page.app.view.id,'overview');assert.equal(page.get('details').querySelectorAll('.schedule-registration').length,1);
+  page.click(page.get('details').querySelector('[data-owner]'));assert.equal(page.app.view.id,'plugin-item-systems');page.back();assert.equal(page.app.view.id,'overview');assert.equal(page.app.selection.node,'system-fixed');assert.equal(page.location.searchParams.get('workspace'),'D:/demo');
 });
 
-test('legacy overview plugin links resolve to the existing owner page after the overview becomes a schedule',()=>{
-  const page=viewer('?workspace=D%3A%2Fdemo&feature=overview&node=plugin-ItemPlugin',{edit:data=>{data.views[0].layout='app-schedule'}});
-  assert.equal(page.app.view.id,'plugin-item-systems');
-  assert.equal(page.location.searchParams.get('feature'),'item');
-  assert.equal(page.location.searchParams.get('workspace'),'D:/demo');
+test('legacy overview plugin links resolve to owner systems after overview becomes a schedule',()=>{
+  const page=viewer('?feature=overview&node=plugin-ItemPlugin',{edit:data=>data.views[0].layout='app-schedule'});assert.equal(page.app.view.id,'plugin-item-systems');assert.equal(page.location.searchParams.get('feature'),'item');
 });

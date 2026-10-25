@@ -5,14 +5,14 @@ import { buildComponentCatalog, maskRustSource } from './architecture-components
 import { buildArchitectureModel } from './architecture-model.mjs';
 import { DEPENDENCY_SOURCE_DEFINITIONS } from './architecture-source-definitions.mjs';
 
-function fixture({ components, systems = [], files = {}, links = [], dependencyFiles = {} }) {
+function fixture({ components, systems = [], files = {}, links = [], dependencyFiles = {}, mergeSystems = true }) {
   const model = { entities: components.map((component, index) => ({ id: `owner${index}`, name: `Owner ${index}`, components: [component] })), systems, system_links: links };
   const registry = Object.fromEntries(model.entities.flatMap(entity => [
     [`entity-${entity.id}`, { ...entity, id: `entity-${entity.id}`, kind: 'Entity', feature: 'example' }],
     ...entity.components.map(component => [component.id, { ...component, kind: 'Component', feature: 'example', defined_in: 'example' }]),
   ]));
   for (const system of systems) registry[system.id] = { kind: 'System', feature: 'example', ...system };
-  return { model, registry, catalog: buildComponentCatalog(model, registry, { readSource: filename => files[filename], readDependencySource: source => dependencyFiles[source.path] }) };
+  return { model, registry, catalog: buildComponentCatalog(model, registry, { mergeSystems, readSource: filename => files[filename], readDependencySource: source => dependencyFiles[source.path] }) };
 }
 const component = (id, name = 'Flag', source = { path: 'src/types.rs', line: 1 }) => ({ id, name, source });
 const system = (id, source, reads = [], writes = [], extra = {}) => ({ id, kind: 'System', name: 'run', source, reads, writes,
@@ -201,6 +201,19 @@ test('同函数只显示一次，原注册 ID、完整参数与注册专属说�
   assert.deepEqual(registry[id].registrations[0].run_if, ['running']);
   assert.equal(registry[id].targetNodeId, 'fixed');
   assert.equal(catalog.graphFor('a.Flag').nodes.filter(node => node.id === id).length, 1);
+});
+
+test('对象事实模式保留同函数的每个注册，不创建合并函数节点', () => {
+  const source = { path: 'src/run.rs', line: 1 };
+  const { catalog, registry } = fixture({ mergeSystems: false, components: [component('a.Flag')], systems: [
+    system('fixed', source, ['a.Flag'], [], { registrations: [{ schedule: 'FixedUpdate', scope: 'runtime' }] }),
+    system('frame', source, ['a.Flag'], [], { registrations: [{ schedule: 'Update', scope: 'runtime' }] }),
+  ], files: { 'src/run.rs': 'fn run(query: Query<&Flag>) {}' } });
+  assert.equal(catalog.functionIdBySystemId.fixed, 'fixed');
+  assert.equal(catalog.functionIdBySystemId.frame, 'frame');
+  assert.ok(!Object.keys(registry).some(id => id.startsWith('component-function-')));
+  assert.deepEqual(new Set(catalog.accesses.map(access => access.system)), new Set(['fixed', 'frame']));
+  assert.ok(catalog.accesses.every(access => access.component === 'a.Flag'));
 });
 
 test('归并函数只在公共正文保留通用说明，各注册专属正文进入自己的 notes', () => {
@@ -454,7 +467,7 @@ test('当前清单全部真实组件有专属图，HeldTarget 保持批准样稿
   registry.inspector_pass.definition_source = definition('src/quick.rs', 92, 'bevy-inspector-egui');
   const catalog = buildComponentCatalog(model, registry, { readDependencySource: () => null }), projections = model.entities.flatMap(entity => entity.components.map(component => component.id));
   assert.deepEqual(new Set(Object.keys(catalog.typeByProjectionId)), new Set(projections));
-  assert.equal(catalog.types.length, 162);
+  assert.equal(catalog.types.length, 166);
   const declaredCount = model.systems.reduce((count, system) => count + [...system.reads, ...system.writes].filter(id => projections.includes(id)).length, 0);
   assert.equal(catalog.declarations.length, declaredCount);
   assert.ok(catalog.deferredAccesses.every(access => registry[access.system].kind === 'Synchronization'));
@@ -505,12 +518,11 @@ test('当前清单全部真实组件有专属图，HeldTarget 保持批准样稿
   for (const id of ['controller.PlayerId', 'camera.FirstPersonCamera', 'character.CollisionEventsEnabled', 'character.TranslationInterpolation', 'parcel.TransformInterpolation']) {
     assert.ok(catalog.graphFor(id).links.some(link => link.operation === 'insert' && link.from === 'actors_spawn'));
   }
-  for (const id of ['action.Action', 'model_node.MeshMaterial3d']) {
+  for (const id of [...model.object_aliases['action.Action'], 'model_node.MeshMaterial3d']) {
     const type = catalog.typeById[catalog.typeByProjectionId[id]];
-    assert.equal(type.identityVerified, false);
-    assert.equal(type.aggregateProjection, true);
-    assert.ok(type.knownRustTypes.length);
-    assert.ok(type.sourceGaps.length);
+    assert.equal(type.identityVerified, true);
+    assert.ok(!type.aggregateProjection);
+    assert.equal(type.sourceGaps.length, 0);
     assert.deepEqual(type.details.sourceGaps, type.sourceGaps);
     assert.ok(type.definition_source);
   }

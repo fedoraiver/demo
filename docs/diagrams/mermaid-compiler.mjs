@@ -147,9 +147,16 @@ export async function compileArchitectureArtifacts(views, registry) {
       console.log(`Mermaid: ${view.id}`);
       return result;
     }
-    for (const view of views) {
-      compiled.push(await compile(view));
-    }
+    // 各图使用独立页面；有界并行缩短逐对象图的编译时间，清单顺序仍与输入一致。
+    const batches = [...views];
+    let next = 0;
+    compiled.length = batches.length;
+    await Promise.all(Array.from({ length: Math.min(6, batches.length) }, async () => {
+      while (next < batches.length) {
+        const index = next++;
+        compiled[index] = await compile(batches[index]);
+      }
+    }));
     const guideSamples = await compileGuideSamples(browser);
     return { views: compiled, guideSamples };
   } finally { await browser.close(); }

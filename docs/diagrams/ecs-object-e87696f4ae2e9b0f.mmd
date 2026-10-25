@@ -1,0 +1,90 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: update_volume_visuals · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_system_group fill:#F2F5F7,stroke:#607C96,stroke-width:1.6px,color:#1F3340
+  classDef node_plugin fill:#F1F3F6,stroke:#4A6389,stroke-width:2.2px,color:#1F3340
+  classDef edge_order stroke:#334155,stroke-width:2px
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_group_membership stroke:#607C96,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**update_volume_visuals**<br/>原位更新音量百分比文字与轨道填充。" }
+  class n0 node_system
+  n1@{ shape: fr-rect, label: "**音量元组 · after(Build / Pointer)**<br/>组织音量输入采样与显示更新的局部调度。" }
+  class n1 node_system_group
+  n2@{ shape: lin-rect, label: "**UiSystems::Style**<br/>组织菜单显示、数值与说明的原位更新。" }
+  class n2 node_system_set
+  n3@{ shape: rounded, label: "**VolumeValue**<br/>标记音量百分比或静音状态文字。" }
+  class n3 node_component
+  n4@{ shape: rounded, label: "**Text**<br/>来自Bevy 引擎 ↗：保存界面实际显示的文<br/>字。" }
+  class n4 node_component
+  class n4 external_node
+  n5@{ shape: rounded, label: "**VolumeFill**<br/>标记音量轨道填充对应的设置项。" }
+  class n5 node_component
+  n6@{ shape: rounded, label: "**Node**<br/>来自Bevy 引擎 ↗：保存音量轨道填充的视<br/>觉布局。" }
+  class n6 node_component
+  class n6 external_node
+  n7@{ shape: cyl, label: "**SettingsDraft**<br/>来自设置与参数 ↗：保存待应用的设置草稿<br/>与临时音量编辑。" }
+  class n7 node_resource
+  class n7 external_node
+  n8@{ shape: fr-rect, label: "**GameUiPlugin**<br/>管理菜单、设置编辑、导航与主菜单展示场<br/>景。" }
+  class n8 node_plugin
+  n1 e0@--> n0
+  class e0 edge_group_membership
+  n0 e1@--> n2
+  class e1 edge_order
+  n3 e2@-->|"查询访问"| n0
+  class e2 edge_read
+  n0 e3@-->|"可变访问"| n4
+  class e3 edge_write
+  n5 e4@-->|"查询访问"| n0
+  class e4 edge_read
+  n0 e5@-->|"可变访问"| n6
+  class e5 edge_write
+  n7 e6@-->|"访问声明"| n0
+  class e6 edge_read
+  n8 e7@--> n0
+  class e7 edge_registration
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: bumpX }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }

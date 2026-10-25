@@ -318,8 +318,8 @@ test('Schedule titles show unique state Schedule types without changing registra
   const local = buildArchitectureModel(updated), graph = local.graphFor('character', 'systems');
   const view = renderGraphView({ id: 'character-systems', feature: 'character', aspect: 'systems', label: '测试', summary: '测试' }, graph, local.registry, local.features, local.scheduleGroups(graph));
   const changedState = view.scheduleGroups.find(group => group.id === 'StateTransition');
-  assert.equal(changedState.label, 'OnExit\nOnTransition');
-  assert.ok(view.mermaid.includes(`subgraph ${changedState.mermaidId}["OnExit<br/>OnTransition"]`));
+  assert.equal(changedState.label, 'OnExit\nOnTransition\nOnEnter');
+  assert.ok(view.mermaid.includes(`subgraph ${changedState.mermaidId}["OnExit<br/>OnTransition<br/>OnEnter"]`));
   assert.doesNotMatch(view.mermaid, /TestState|StateTransition ·|条件 OnEnter|仅初始化一次/);
   assert.deepEqual(view.nodes.map(node => node.id), baseline.nodes.map(node => node.id));
   assert.deepEqual(view.scheduleGroups.map(({ label, ...group }) => group), baseline.scheduleGroups.map(({ label, ...group }) => group));

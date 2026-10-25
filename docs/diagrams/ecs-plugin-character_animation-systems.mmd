@@ -33,6 +33,7 @@ flowchart TB
   accDescr: 角色动画的系统与调度；外部契约保留摘要，可跳转到所属插件。
   %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
   classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_observer fill:#F4F1F9,stroke:#7B4DB2,stroke-width:1.6px,color:#1F3340
   classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
   classDef edge_schedule stroke:#334155,stroke-width:3px
   classDef edge_order stroke:#334155,stroke-width:2px
@@ -42,32 +43,38 @@ flowchart TB
   style diagram_main fill:none,stroke:none
   subgraph sg0["Update"]
   direction TB
-  n0@{ shape: rounded, label: "**initialize_ready_couriers**<br/>绑定主角命名动画并缓存鞋底补偿节点。" }
-  class n0 node_system
-  n1@{ shape: rounded, label: "**sync_courier_animation**<br/>按角色运动状态连续混合移动与跳跃动画。" }
+  n1@{ shape: rounded, label: "**initialize_ready_couriers**<br/>绑定主角命名动画并缓存鞋底补偿节点。" }
   class n1 node_system
-  n0 layout_0@~~~ n1
+  n2@{ shape: rounded, label: "**sync_courier_animation**<br/>按角色运动状态连续混合移动与跳跃动画。" }
+  class n2 node_system
+  n1 layout_0@~~~ n2
   end
   subgraph sg1["PostUpdate"]
   direction TB
-  n3@{ shape: lin-rect, label: "**AnimationSystems**<br/>来自Bevy 引擎 ↗：采样动画图并更新骨骼<br/>局部姿态。" }
-  class n3 node_system_set
-  class n3 external_node
-  n2@{ shape: rounded, label: "**compensate_courier_sole_penetration**<br/>补偿鞋底穿地并平滑恢复视觉高度。" }
-  class n2 node_system
-  n4@{ shape: lin-rect, label: "**TransformSystems::Propagate**<br/>来自Bevy 引擎 ↗：沿实体层级传播世界变<br/>换。" }
+  n4@{ shape: lin-rect, label: "**AnimationSystems**<br/>来自Bevy 引擎 ↗：采样动画图并更新骨骼<br/>局部姿态。" }
   class n4 node_system_set
   class n4 external_node
-  n3 layout_1@~~~ n2
-  n2 layout_2@~~~ n4
+  n3@{ shape: rounded, label: "**compensate_courier_sole_penetration**<br/>补偿鞋底穿地并平滑恢复视觉高度。" }
+  class n3 node_system
+  n5@{ shape: lin-rect, label: "**TransformSystems::Propagate**<br/>来自Bevy 引擎 ↗：沿实体层级传播世界变<br/>换。" }
+  class n5 node_system_set
+  class n5 external_node
+  n4 layout_1@~~~ n3
+  n3 layout_2@~~~ n5
   end
+  subgraph sg2["Observer"]
+  direction TB
+  n0@{ shape: hex, label: "**mark_courier_animation_ready**<br/>标记主角视觉根以进入动画绑定。" }
+  class n0 node_observer
+  end
+  sg1 layout_3@~~~ sg2
   sg0 sc0@--> sg1
   class sc0 edge_schedule
-  n0 e0@-->|"Commands"| n1
+  n1 e0@-->|"Commands"| n2
   class e0 edge_order
-  n3 e1@-->|"AnimationSystems"| n2
+  n4 e1@-->|"AnimationSystems"| n3
   class e1 edge_order
-  n2 e2@-->|"Propagate"| n4
+  n3 e2@-->|"Propagate"| n5
   class e2 edge_order
   end
   e0@{ curve: basis }

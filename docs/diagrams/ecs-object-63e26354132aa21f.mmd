@@ -1,0 +1,86 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#object-63e26354132aa21f-e4{marker-start:url(#object-63e26354132aa21f_flowchart-v2-pointStart)!important}\n#object-63e26354132aa21f-e5{marker-start:url(#object-63e26354132aa21f_flowchart-v2-pointStart)!important}\n#object-63e26354132aa21f_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}"
+  }
+}
+---
+flowchart LR
+  accTitle: stop_on_exit · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef node_message_buffer fill:#EDF4F6,stroke:#247B91,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_plugin fill:#F1F3F6,stroke:#4A6389,stroke-width:2.2px,color:#1F3340
+  classDef edge_order stroke:#334155,stroke-width:2px
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_consume stroke:#247B91,stroke-width:1.8px,stroke-dasharray:2 4
+  classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**stop_on_exit**<br/>停止音频通道并记录退出。" }
+  class n0 node_system
+  n1@{ shape: rounded, label: "**play_requests**<br/>按有效音量与播放策略处理短音请求。" }
+  class n1 node_system
+  n2@{ shape: cyl, label: "**Messages#lt;AppExit#gt;**<br/>来自Bevy 引擎 ↗：通知音频停止并进入应<br/>用退出流程。" }
+  class n2 node_message_buffer
+  class n2 external_node
+  n3@{ shape: cyl, label: "**AudioChannel#lt;UiTrack#gt;**<br/>承载界面短音的播放命令。" }
+  class n3 node_resource
+  n4@{ shape: cyl, label: "**AudioChannel#lt;SfxTrack#gt;**<br/>承载物品等音效短音的播放命令。" }
+  class n4 node_resource
+  n5@{ shape: fr-rect, label: "**GameAudioPlugin**<br/>管理短音预加载、混音、播放与设备输出。" }
+  class n5 node_plugin
+  n6@{ shape: lin-rect, label: "**AudioSystems**<br/>公开音量混合与播放的调度阶段。" }
+  class n6 node_system_set
+  n1 e0@--> n0
+  class e0 edge_order
+  n2 e1@-->|"访问声明"| n0
+  class e1 edge_consume
+  n3 e2@-->|"访问声明"| n0
+  class e2 edge_read
+  n4 e3@-->|"访问声明"| n0
+  class e3 edge_read
+  n3 e4@---|"访问声明"| n0
+  class e4 edge_write
+  n4 e5@---|"访问声明"| n0
+  class e5 edge_write
+  n5 e6@--> n0
+  class e6 edge_registration
+  n6 e7@-->|"AudioSystems::Playback"| n0
+  class e7 edge_set_membership
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: bumpX }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }

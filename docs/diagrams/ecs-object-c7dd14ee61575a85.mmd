@@ -1,0 +1,152 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#object-c7dd14ee61575a85-e3{marker-start:url(#object-c7dd14ee61575a85_flowchart-v2-pointStart)!important}\n#object-c7dd14ee61575a85-e5{marker-start:url(#object-c7dd14ee61575a85_flowchart-v2-pointStart)!important}\n#object-c7dd14ee61575a85_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}"
+  }
+}
+---
+flowchart LR
+  accTitle: resume_interpolation · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_sync fill:#F6F3F0,stroke:#8B6A42,stroke-width:1.6px,color:#1F3340
+  classDef node_plugin fill:#F1F3F6,stroke:#4A6389,stroke-width:2.2px,color:#1F3340
+  classDef edge_order stroke:#334155,stroke-width:2px
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  subgraph layout_card_n0[" "]
+  n0@{ shape: rounded, label: "**resume_interpolation**<br/>撤销落水恢复添加的临时插值暂停。" }
+  class n0 node_system
+  end
+  style layout_card_n0 fill:none,stroke:none
+  subgraph layout_card_n1[" "]
+  n1@{ shape: lin-rect, label: "**TransformEasingSystems::Reset**<br/>来自Avian ↗：重置上一轮固定步的插值状<br/>态。" }
+  class n1 node_system_set
+  class n1 external_node
+  end
+  style layout_card_n1 fill:none,stroke:none
+  subgraph layout_card_n2[" "]
+  n2@{ shape: rounded, label: "**ApplyDeferred · 恢复插值**<br/>使插值暂停清理在新固定步采样前可见。" }
+  class n2 node_sync
+  end
+  style layout_card_n2 fill:none,stroke:none
+  subgraph layout_card_n3[" "]
+  n3@{ shape: rounded, label: "**ResumeInterpolation**<br/>记录本次恢复临时添加的暂停项。" }
+  class n3 node_component
+  end
+  style layout_card_n3 fill:none,stroke:none
+  subgraph layout_card_n4[" "]
+  n4@{ shape: rounded, label: "**ResumeInterpolation**<br/>记录本次恢复临时添加的暂停项。" }
+  class n4 node_component
+  end
+  style layout_card_n4 fill:none,stroke:none
+  subgraph layout_card_n5[" "]
+  n5@{ shape: rounded, label: "**NoTranslationEasing**<br/>来自Avian ↗：暂停独立平移插值。" }
+  class n5 node_component
+  class n5 external_node
+  end
+  style layout_card_n5 fill:none,stroke:none
+  subgraph layout_card_n6[" "]
+  n6@{ shape: rounded, label: "**NoRotationEasing**<br/>来自Avian ↗：暂停独立旋转插值。" }
+  class n6 node_component
+  class n6 external_node
+  end
+  style layout_card_n6 fill:none,stroke:none
+  subgraph layout_card_n7[" "]
+  n7@{ shape: rounded, label: "**NoTranslationEasing**<br/>来自Avian ↗：暂停独立平移插值。" }
+  class n7 node_component
+  class n7 external_node
+  end
+  style layout_card_n7 fill:none,stroke:none
+  subgraph layout_card_n8[" "]
+  n8@{ shape: rounded, label: "**NoRotationEasing**<br/>来自Avian ↗：暂停独立旋转插值。" }
+  class n8 node_component
+  class n8 external_node
+  end
+  style layout_card_n8 fill:none,stroke:none
+  subgraph layout_card_n9[" "]
+  n9@{ shape: cyl, label: "**State#lt;AppState#gt; /**<br/>**NextState#lt;AppState#gt;**<br/>来自应用流程 ↗：保存应用主状态及待处理<br/>的会话切换。" }
+  class n9 node_resource
+  class n9 external_node
+  end
+  style layout_card_n9 fill:none,stroke:none
+  subgraph layout_card_n10[" "]
+  n10@{ shape: cyl, label: "**State#lt;PlayState#gt; /**<br/>**NextState#lt;PlayState#gt;**<br/>来自应用流程 ↗：保存游戏运行、暂停及待<br/>处理的切换请求。" }
+  class n10 node_resource
+  class n10 external_node
+  end
+  style layout_card_n10 fill:none,stroke:none
+  subgraph layout_card_n11[" "]
+  n11@{ shape: fr-rect, label: "**BoundsRecoveryPlugin**<br/>管理落水恢复与恢复期间的插值状态。" }
+  class n11 node_plugin
+  end
+  style layout_card_n11 fill:none,stroke:none
+  n1 e0@--> n0
+  class e0 edge_order
+  n0 e1@--> n2
+  class e1 edge_order
+  n3 e2@-->|"查询访问"| n0
+  class e2 edge_read
+  n3 e3@---|"可变访问"| n0
+  class e3 edge_write
+  n4 e4@-->|"查询访问"| n0
+  class e4 edge_read
+  n4 e5@---|"可变访问"| n0
+  class e5 edge_write
+  n0 e6@-->|"可变访问"| n5
+  class e6 edge_write
+  n0 e7@-->|"可变访问"| n6
+  class e7 edge_write
+  n0 e8@-->|"可变访问"| n7
+  class e8 edge_write
+  n0 e9@-->|"可变访问"| n8
+  class e9 edge_write
+  n9 e10@-->|"访问声明"| n0
+  class e10 edge_read
+  n10 e11@-->|"访问声明"| n0
+  class e11 edge_read
+  n11 e12@--> n0
+  class e12 edge_registration
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }

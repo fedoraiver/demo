@@ -1,0 +1,131 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#object-e280bba9d49299a0-e3{marker-start:url(#object-e280bba9d49299a0_flowchart-v2-pointStart)!important}\n#object-e280bba9d49299a0-e4{marker-start:url(#object-e280bba9d49299a0_flowchart-v2-pointStart)!important}\n#object-e280bba9d49299a0-e6{marker-start:url(#object-e280bba9d49299a0_flowchart-v2-pointStart)!important}\n#object-e280bba9d49299a0_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}"
+  }
+}
+---
+flowchart LR
+  accTitle: compensate_courier_sole_penetration · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_plugin fill:#F1F3F6,stroke:#4A6389,stroke-width:2.2px,color:#1F3340
+  classDef edge_order stroke:#334155,stroke-width:2px
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**compensate_courier_sole_penetration**<br/>补偿鞋底穿地并平滑恢复视觉高度。" }
+  class n0 node_system
+  n1@{ shape: lin-rect, label: "**AnimationSystems**<br/>来自Bevy 引擎 ↗：采样动画图并更新骨骼<br/>局部姿态。" }
+  class n1 node_system_set
+  class n1 external_node
+  n2@{ shape: lin-rect, label: "**TransformSystems::Propagate**<br/>来自Bevy 引擎 ↗：沿实体层级传播世界变<br/>换。" }
+  class n2 node_system_set
+  class n2 external_node
+  n3@{ shape: rounded, label: "**CourierFootGrounding**<br/>保存鞋底高度补偿与骨链引用。" }
+  class n3 node_component
+  n4@{ shape: rounded, label: "**CourierAnimation**<br/>保存角色动画混合权重、步相位与跳跃阶段。" }
+  class n4 node_component
+  n5@{ shape: rounded, label: "**Transform**<br/>来自Bevy 引擎 ↗：保存模型相对业务根的<br/>局部显示姿态。" }
+  class n5 node_component
+  class n5 external_node
+  n6@{ shape: rounded, label: "**Transform**<br/>来自Bevy 引擎 ↗：保存角色经插值生成的<br/>显示姿态。" }
+  class n6 node_component
+  class n6 external_node
+  n7@{ shape: rounded, label: "**ChildOf**<br/>来自Bevy 引擎 ↗：关联父实体并跟随父级<br/>生命周期。" }
+  class n7 node_component
+  class n7 external_node
+  n8@{ shape: rounded, label: "**Transform**<br/>来自Bevy 引擎 ↗：保存骨骼或模型节点的<br/>局部动画姿态。" }
+  class n8 node_component
+  class n8 external_node
+  n9@{ shape: rounded, label: "**ChildOf**<br/>来自Bevy 引擎 ↗：关联父实体并跟随父级<br/>生命周期。" }
+  class n9 node_component
+  class n9 external_node
+  n10@{ shape: cyl, label: "**Time**<br/>来自Bevy 引擎 ↗：提供当前运行阶段的通<br/>用时间。" }
+  class n10 node_resource
+  class n10 external_node
+  n11@{ shape: cyl, label: "**State#lt;AppState#gt; /**<br/>**NextState#lt;AppState#gt;**<br/>来自应用流程 ↗：保存应用主状态及待处理<br/>的会话切换。" }
+  class n11 node_resource
+  class n11 external_node
+  n12@{ shape: cyl, label: "**State#lt;PlayState#gt; /**<br/>**NextState#lt;PlayState#gt;**<br/>来自应用流程 ↗：保存游戏运行、暂停及待<br/>处理的切换请求。" }
+  class n12 node_resource
+  class n12 external_node
+  n13@{ shape: fr-rect, label: "**CharacterAnimationPlugin**<br/>绑定并混合角色动画，补偿视觉接地。" }
+  class n13 node_plugin
+  n1 e0@-->|"AnimationSystems"| n0
+  class e0 edge_order
+  n0 e1@-->|"Propagate"| n2
+  class e1 edge_order
+  n3 e2@-->|"存在 / 变更过滤"| n0
+  class e2 edge_reference
+  n3 e3@---|"可变访问"| n0
+  class e3 edge_write
+  n3 e4@---|"移除"| n0
+  class e4 edge_write
+  n4 e5@-->|"查询访问"| n0
+  class e5 edge_read
+  n5 e6@---|"可变访问"| n0
+  class e6 edge_write
+  n5 e7@-->|"查询访问"| n0
+  class e7 edge_read
+  n6 e8@-->|"查询访问"| n0
+  class e8 edge_read
+  n7 e9@-->|"查询访问"| n0
+  class e9 edge_read
+  n8 e10@-->|"查询访问"| n0
+  class e10 edge_read
+  n9 e11@-->|"查询访问"| n0
+  class e11 edge_read
+  n10 e12@-->|"访问声明"| n0
+  class e12 edge_read
+  n11 e13@-->|"访问声明"| n0
+  class e13 edge_read
+  n12 e14@-->|"访问声明"| n0
+  class e14 edge_read
+  n13 e15@--> n0
+  class e15 edge_registration
+  e0@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }

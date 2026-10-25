@@ -1,0 +1,73 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#object-5d84ff5eaa8e4408-e2{marker-start:url(#object-5d84ff5eaa8e4408_flowchart-v2-pointStart)!important}\n#object-5d84ff5eaa8e4408-e4{marker-start:url(#object-5d84ff5eaa8e4408_flowchart-v2-pointStart)!important}\n#object-5d84ff5eaa8e4408_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}"
+  }
+}
+---
+flowchart LR
+  accTitle: AnimationPlayer · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_entity fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**AnimationPlayer**<br/>驱动模型的动画播放。" }
+  class n0 node_component
+  n1@{ shape: rounded, label: "**主角 GLB 播放器节点**<br/>承载主角模型的动画播放与混合状态。" }
+  class n1 node_entity
+  n2@{ shape: rounded, label: "**initialize_ready_couriers**<br/>来自角色动画 ↗：绑定主角命名动画并缓存<br/>鞋底补偿节点。" }
+  class n2 node_system
+  class n2 external_node
+  n3@{ shape: rounded, label: "**sync_courier_animation**<br/>来自角色动画 ↗：按角色运动状态连续混合<br/>移动与跳跃动画。" }
+  class n3 node_system
+  class n3 external_node
+  n4@{ shape: lin-rect, label: "**AnimationSystems**<br/>采样动画图并更新骨骼局部姿态。" }
+  class n4 node_system_set
+  n0 e0@-->|"可能挂载于"| n1
+  class e0 edge_reference
+  n2 e1@-->|"可变访问"| n0
+  class e1 edge_write
+  n2 e2@---|"查询访问"| n0
+  class e2 edge_read
+  n3 e3@-->|"可变访问"| n0
+  class e3 edge_write
+  n3 e4@---|"查询访问"| n0
+  class e4 edge_read
+  n0 e5@-->|"查询访问"| n4
+  class e5 edge_read
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: bumpX }
+  e3@{ curve: bumpX }
+  e4@{ curve: basis }
+  e5@{ curve: basis }

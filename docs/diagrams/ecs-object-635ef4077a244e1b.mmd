@@ -1,0 +1,66 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: AudioMix · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef node_engine_flow fill:#F1F5F4,stroke:#557C78,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: cyl, label: "**AudioMix**<br/>保存界面与音效通道当前采用的有效音量。" }
+  class n0 node_resource
+  n1@{ shape: stadium, label: "**Kira 播放输出流程**<br/>将声音请求按有效混音与播放策略提交音频实<br/>例。" }
+  class n1 node_engine_flow
+  n2@{ shape: rounded, label: "**play_requests**<br/>按有效音量与播放策略处理短音请求。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**sync_audio_mix**<br/>合成设置预览或正式配置的有效音量。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**sync_voice_volumes**<br/>将有效混音与素材音量同步到播放实例。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**sync_voice_volumes**<br/>为新就绪的播放实例补同步有效音量。" }
+  class n5 node_system
+  n0 e0@-->|"有效音量"| n1
+  class e0 edge_read
+  n0 e1@-->|"访问声明"| n2
+  class e1 edge_read
+  n3 e2@-->|"访问声明"| n0
+  class e2 edge_write
+  n0 e3@-->|"访问声明"| n4
+  class e3 edge_read
+  n0 e4@-->|"访问声明"| n5
+  class e4 edge_read
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }

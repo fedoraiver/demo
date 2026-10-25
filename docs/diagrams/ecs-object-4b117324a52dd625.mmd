@@ -1,0 +1,61 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: 设置滚动条轨道 · 对象关系
+  accDescr: 中心实体与直接关联的非组件对象；组件清单在右侧查看，保留原关系方向及身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_entity fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
+  classDef node_plugin fill:#F1F3F6,stroke:#4A6389,stroke-width:2.2px,color:#1F3340
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef edge_relationship stroke:#7B4DB2,stroke-width:1.8px
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**设置滚动条轨道**<br/>为设置内容视口提供可交互滚动轨道。" }
+  class n0 node_entity
+  n1@{ shape: rounded, label: "**设置右侧纸色面板**<br/>限定设置内容的显示与裁切范围。" }
+  class n1 node_entity
+  n2@{ shape: rounded, label: "**设置滚动条滑块**<br/>显示设置内容的可视比例并支持拖动。" }
+  class n2 node_entity
+  n3@{ shape: rounded, label: "**设置面板内容视口**<br/>为设置标题、字段、说明与提示提供滚动视<br/>口。" }
+  class n3 node_entity
+  n4@{ shape: fr-rect, label: "**GameUiPlugin**<br/>管理菜单、设置编辑、导航与主菜单展示场<br/>景。" }
+  class n4 node_plugin
+  n0 e0@-->|"ChildOf 子树"| n1
+  class e0 edge_relationship
+  n2 e1@-->|"ChildOf"| n0
+  class e1 edge_relationship
+  n0 e2@-->|"Scrollbar.target"| n3
+  class e2 edge_reference
+  n4 e3@-->|"装配归属"| n0
+  class e3 edge_reference
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }

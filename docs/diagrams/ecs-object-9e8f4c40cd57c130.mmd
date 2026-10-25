@@ -1,0 +1,130 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#object-9e8f4c40cd57c130-e4{marker-start:url(#object-9e8f4c40cd57c130_flowchart-v2-pointStart)!important}\n#object-9e8f4c40cd57c130_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}"
+  }
+}
+---
+flowchart LR
+  accTitle: MenuState · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_observer fill:#F4F1F9,stroke:#7B4DB2,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: cyl, label: "**MenuState**<br/>保存菜单页面、设置分类、返回来源与提示。" }
+  class n0 node_resource
+  n1@{ shape: rounded, label: "**handle_requests**<br/>处理菜单导航、设置应用与音量编辑请求。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**show_main_menu**<br/>打开主菜单并重置页面、返回来源与焦点。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**show_pause_menu**<br/>打开暂停菜单并重置焦点。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**hide_menu**<br/>隐藏菜单并清除提示。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**pointer_interaction**<br/>将真实鼠标交互转换为共享菜单请求。" }
+  class n5 node_system
+  n6@{ shape: rounded, label: "**rebuild_page**<br/>按页面结构变化重建菜单界面。" }
+  class n6 node_system
+  n7@{ shape: hex, label: "**previous**<br/>循环选择上一个可操作菜单按钮。" }
+  class n7 node_observer
+  n8@{ shape: hex, label: "**next**<br/>循环选择下一个可操作菜单按钮。" }
+  class n8 node_observer
+  n9@{ shape: hex, label: "**left**<br/>向左调整当前聚焦的真实设置字段。" }
+  class n9 node_observer
+  n10@{ shape: hex, label: "**right**<br/>向右调整当前聚焦的真实设置字段。" }
+  class n10 node_observer
+  n11@{ shape: hex, label: "**confirm**<br/>执行当前聚焦按钮的菜单动作。" }
+  class n11 node_observer
+  n12@{ shape: hex, label: "**scroll_menu**<br/>滚动设置内容并限制在有效范围内。" }
+  class n12 node_observer
+  n13@{ shape: rounded, label: "**sample_slider_pointer**<br/>从光标位置生成音量采样与释放请求。" }
+  class n13 node_system
+  n14@{ shape: rounded, label: "**update_settings_text**<br/>原位更新设置草稿数值与保存提示。" }
+  class n14 node_system
+  n15@{ shape: rounded, label: "**sync_settings_scrollbars**<br/>同步滚动条显隐、拾取范围与高亮。" }
+  class n15 node_system
+  n16@{ shape: hex, label: "**scroll_over_settings_scrollbar**<br/>通过滚动条上的滚轮操作滚动内容视口。" }
+  class n16 node_observer
+  n17@{ shape: rounded, label: "**publish_audio_preview**<br/>向音频功能发布或清除临时音量预览。" }
+  class n17 node_system
+  n1 e0@-->|"页面"| n0
+  class e0 edge_write
+  n2 e1@-->|"访问声明"| n0
+  class e1 edge_write
+  n3 e2@-->|"访问声明"| n0
+  class e2 edge_write
+  n4 e3@-->|"访问声明"| n0
+  class e3 edge_write
+  n1 e4@---|"访问声明"| n0
+  class e4 edge_read
+  n0 e5@-->|"访问声明"| n5
+  class e5 edge_read
+  n0 e6@-->|"访问声明"| n6
+  class e6 edge_read
+  n0 e7@-->|"访问声明"| n7
+  class e7 edge_read
+  n0 e8@-->|"访问声明"| n8
+  class e8 edge_read
+  n0 e9@-->|"访问声明"| n9
+  class e9 edge_read
+  n0 e10@-->|"访问声明"| n10
+  class e10 edge_read
+  n0 e11@-->|"访问声明"| n11
+  class e11 edge_read
+  n0 e12@-->|"访问声明"| n12
+  class e12 edge_read
+  n0 e13@-->|"访问声明"| n13
+  class e13 edge_read
+  n0 e14@-->|"访问声明"| n14
+  class e14 edge_read
+  n0 e15@-->|"访问声明"| n15
+  class e15 edge_read
+  n0 e16@-->|"访问声明"| n16
+  class e16 edge_read
+  n0 e17@-->|"访问声明"| n17
+  class e17 edge_read
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: bumpX }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e17@{ curve: basis }

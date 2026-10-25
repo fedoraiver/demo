@@ -1,0 +1,76 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: Button · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_observer fill:#F4F1F9,stroke:#7B4DB2,stroke-width:1.6px,color:#1F3340
+  classDef node_entity fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**Button**<br/>启用原生界面按钮命中处理。" }
+  class n0 node_component
+  n1@{ shape: rounded, label: "**可操作菜单按钮**<br/>来自菜单与界面 ↗：承载可操作菜单动作、<br/>设置调整与连续导航。" }
+  class n1 node_entity
+  class n1 external_node
+  n2@{ shape: hex, label: "**button_on_pointer_down**<br/>按压时插入原生Pressed；可<br/>选ActivateOnPress会发Activate。" }
+  class n2 node_observer
+  n3@{ shape: hex, label: "**button_on_pointer_up**<br/>释放时移除原生Pressed。" }
+  class n3 node_observer
+  n4@{ shape: hex, label: "**button_on_pointer_drag_end**<br/>拖动结束时移除原生Pressed。" }
+  class n4 node_observer
+  n5@{ shape: hex, label: "**button_on_pointer_cancel**<br/>收到取消事件时移除原生Pressed。" }
+  class n5 node_observer
+  n6@{ shape: hex, label: "**button_on_pointer_click**<br/>满足条件时派发原生Activate。" }
+  class n6 node_observer
+  n7@{ shape: hex, label: "**button_on_key_event**<br/>焦点键盘Enter或Space首次按下时派<br/>发Activate。" }
+  class n7 node_observer
+  n0 e0@-->|"可能挂载于"| n1
+  class e0 edge_reference
+  n0 e1@-->|"With#lt;Button#gt;"| n2
+  class e1 edge_reference
+  n0 e2@-->|"With#lt;Button#gt;"| n3
+  class e2 edge_reference
+  n0 e3@-->|"With#lt;Button#gt;"| n4
+  class e3 edge_reference
+  n0 e4@-->|"With#lt;Button#gt;"| n5
+  class e4 edge_reference
+  n0 e5@-->|"With#lt;Button#gt;"| n6
+  class e5 edge_reference
+  n0 e6@-->|"With#lt;Button#gt;"| n7
+  class e6 edge_reference
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }

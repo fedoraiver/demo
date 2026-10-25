@@ -1,0 +1,188 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#object-c76542e48f669eb7-e3{marker-start:url(#object-c76542e48f669eb7_flowchart-v2-pointStart)!important}\n#object-c76542e48f669eb7-e24{marker-start:url(#object-c76542e48f669eb7_flowchart-v2-pointStart)!important}\n#object-c76542e48f669eb7_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}"
+  }
+}
+---
+flowchart LR
+  accTitle: prepare_island · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef node_plugin fill:#F1F3F6,stroke:#4A6389,stroke-width:2.2px,color:#1F3340
+  classDef edge_order stroke:#334155,stroke-width:2px
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**prepare_island**<br/>从海岛模型构建静态碰撞、坡道与人物碰撞。" }
+  class n0 node_system
+  n1@{ shape: rounded, label: "**begin_island**<br/>请求创建已加载海岛的运行实例。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**spawn_actors**<br/>装配玩家、可搬物、控制者与相机。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**IslandPending**<br/>标记等待构建碰撞的海岛实例。" }
+  class n3 node_component
+  n4@{ shape: rounded, label: "**GltfExtras**<br/>来自Bevy 引擎 ↗：保存模型节点附带的美<br/>术元数据。" }
+  class n4 node_component
+  class n4 external_node
+  n5@{ shape: rounded, label: "**Mesh3d**<br/>来自Bevy 引擎 ↗：关联实体使用的三维网<br/>格资产。" }
+  class n5 node_component
+  class n5 external_node
+  n6@{ shape: rounded, label: "**Name**<br/>来自Bevy 引擎 ↗：保存碰撞体的美术来源<br/>名称以定位障碍。" }
+  class n6 node_component
+  class n6 external_node
+  n7@{ shape: rounded, label: "**IslandCollider**<br/>地图静态碰撞标签。" }
+  class n7 node_component
+  n8@{ shape: rounded, label: "**RigidBody**<br/>来自Avian ↗：定义实体参与物理模拟的刚<br/>体模式。" }
+  class n8 node_component
+  class n8 external_node
+  n9@{ shape: rounded, label: "**ChildOf**<br/>来自Bevy 引擎 ↗：随原地图实例层级清<br/>理。" }
+  class n9 node_component
+  class n9 external_node
+  n10@{ shape: rounded, label: "**DisplayNpc**<br/>标记导入地图中的展示人物。" }
+  class n10 node_component
+  n11@{ shape: rounded, label: "**Transform**<br/>来自Bevy 引擎 ↗：保存静态碰撞与原模型<br/>共用的位姿。" }
+  class n11 node_component
+  class n11 external_node
+  n12@{ shape: rounded, label: "**IslandReady**<br/>静态碰撞与布局已准备。" }
+  class n12 node_component
+  n13@{ shape: rounded, label: "**CollisionLayers**<br/>来自Avian ↗：配置实体之间允许发生碰撞<br/>的层。" }
+  class n13 node_component
+  class n13 external_node
+  n14@{ shape: rounded, label: "**Children**<br/>来自Bevy 引擎 ↗：索引当前实体的直接子<br/>实体。" }
+  class n14 node_component
+  class n14 external_node
+  n15@{ shape: rounded, label: "**Transform**<br/>来自Bevy 引擎 ↗：保存骨骼或模型节点的<br/>局部动画姿态。" }
+  class n15 node_component
+  class n15 external_node
+  n16@{ shape: rounded, label: "**Name**<br/>来自Bevy 引擎 ↗：保存用于绑定鞋底节点<br/>的模型名称。" }
+  class n16 node_component
+  class n16 external_node
+  n17@{ shape: rounded, label: "**Collider**<br/>来自Avian ↗：保存参与物理碰撞的实体形<br/>状。" }
+  class n17 node_component
+  class n17 external_node
+  n18@{ shape: rounded, label: "**Children**<br/>来自Bevy 引擎 ↗：索引当前实体的直接子<br/>实体。" }
+  class n18 node_component
+  class n18 external_node
+  n19@{ shape: cyl, label: "**Assets#lt;Mesh#gt;**<br/>来自Bevy 引擎 ↗：保存模型网格并提供碰<br/>撞构建所需的顶点。" }
+  class n19 node_resource
+  class n19 external_node
+  n20@{ shape: cyl, label: "**PrototypeConfig**<br/>来自设置与参数 ↗：保存运动、重力、拾取<br/>与握持的共享参数。" }
+  class n20 node_resource
+  class n20 external_node
+  n21@{ shape: cyl, label: "**ArtLoadState**<br/>保存运行资源的加载进度与就绪结果。" }
+  class n21 node_resource
+  n22@{ shape: cyl, label: "**State#lt;AppState#gt; /**<br/>**NextState#lt;AppState#gt;**<br/>来自应用流程 ↗：保存应用主状态及待处理<br/>的会话切换。" }
+  class n22 node_resource
+  class n22 external_node
+  n23@{ shape: cyl, label: "**State#lt;PlayState#gt; /**<br/>**NextState#lt;PlayState#gt;**<br/>来自应用流程 ↗：保存游戏运行、暂停及待<br/>处理的切换请求。" }
+  class n23 node_resource
+  class n23 external_node
+  n24@{ shape: fr-rect, label: "**SceneAssemblyPlugin**<br/>加载运行资源并装配海岛、碰撞与业务实体。" }
+  class n24 node_plugin
+  n1 e0@-->|"Commands"| n0
+  class e0 edge_order
+  n0 e1@-->|"Commands"| n2
+  class e1 edge_order
+  n3 e2@-->|"存在 / 变更过滤"| n0
+  class e2 edge_reference
+  n3 e3@---|"移除"| n0
+  class e3 edge_write
+  n4 e4@-->|"查询访问"| n0
+  class e4 edge_read
+  n5 e5@-->|"查询访问"| n0
+  class e5 edge_read
+  n0 e6@-->|"添加"| n6
+  class e6 edge_write
+  n0 e7@-->|"添加"| n7
+  class e7 edge_write
+  n0 e8@-->|"添加"| n8
+  class e8 edge_write
+  n0 e9@-->|"添加"| n9
+  class e9 edge_write
+  n0 e10@-->|"添加"| n10
+  class e10 edge_write
+  n0 e11@-->|"添加"| n11
+  class e11 edge_write
+  n0 e12@-->|"添加"| n12
+  class e12 edge_write
+  n0 e13@-->|"添加"| n13
+  class e13 edge_write
+  n14 e14@-->|"查询访问"| n0
+  class e14 edge_read
+  n15 e15@-->|"查询访问"| n0
+  class e15 edge_read
+  n16 e16@-->|"查询访问"| n0
+  class e16 edge_read
+  n0 e17@-->|"可变访问"| n17
+  class e17 edge_write
+  n0 e18@-->|"可变访问"| n18
+  class e18 edge_write
+  n19 e19@-->|"访问声明"| n0
+  class e19 edge_read
+  n20 e20@-->|"访问声明"| n0
+  class e20 edge_read
+  n21 e21@-->|"访问声明"| n0
+  class e21 edge_read
+  n22 e22@-->|"访问声明"| n0
+  class e22 edge_read
+  n23 e23@-->|"访问声明"| n0
+  class e23 edge_read
+  n21 e24@---|"访问声明"| n0
+  class e24 edge_write
+  n24 e25@--> n0
+  class e25 edge_registration
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: bumpX }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e17@{ curve: basis }
+  e18@{ curve: basis }
+  e19@{ curve: basis }
+  e20@{ curve: basis }
+  e21@{ curve: basis }
+  e22@{ curve: basis }
+  e23@{ curve: basis }
+  e24@{ curve: basis }
+  e25@{ curve: basis }

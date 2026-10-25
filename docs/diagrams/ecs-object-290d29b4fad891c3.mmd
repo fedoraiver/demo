@@ -1,0 +1,80 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: tracing producer · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef node_plugin fill:#F1F3F6,stroke:#4A6389,stroke-width:2.2px,color:#1F3340
+  classDef node_external_io fill:#F1F3F4,stroke:#526A78,stroke-width:1.6px,color:#1F3340
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: lean-l, label: "**tracing producer**<br/>格式化日志并交给独立文件与控制台队列。" }
+  class n0 node_external_io
+  n1@{ shape: lean-l, label: "**File worker**<br/>在独立线程写入、刷新并反馈文件输出错误。" }
+  class n1 node_external_io
+  n2@{ shape: lean-l, label: "**Console worker**<br/>在独立线程输出控制台日志。" }
+  class n2 node_external_io
+  n3@{ shape: fr-rect, label: "**SessionLogPlugin**<br/>安装统一会话日志并管理后台输出与退出刷<br/>新。" }
+  class n3 node_plugin
+  n4@{ shape: rounded, label: "**log_collisions**<br/>来自物理基础 ↗：将碰撞开始与结束写入统<br/>一日志。" }
+  class n4 node_system
+  class n4 external_node
+  n5@{ shape: rounded, label: "**wake_changed_bodies**<br/>来自物理基础 ↗：使休眠身体的外部受力和<br/>位姿修改在本固定步生效。" }
+  class n5 node_system
+  class n5 external_node
+  n6@{ shape: cyl, label: "**SessionWriter**<br/>把文件日志写入器暂存到 App，随后交给文<br/>件日志 layer。" }
+  class n6 node_resource
+  n7@{ shape: cyl, label: "**ConsoleWriter**<br/>把控制台写入器暂存到 App，随后交给控制<br/>台日志 layer。" }
+  class n7 node_resource
+  n0 e0@-->|"入队"| n1
+  class e0 edge_write
+  n0 e1@-->|"入队"| n2
+  class e1 edge_write
+  n3 e2@-->|"格式层与后台输出"| n0
+  class e2 edge_registration
+  n4 e3@-->|"tracing 碰撞日志"| n0
+  class e3 edge_write
+  n5 e4@-->|"tracing 唤醒日志"| n0
+  class e4 edge_write
+  n6 e5@-->|"日志 layer 取走并持有"| n0
+  class e5 edge_reference
+  n7 e6@-->|"日志 layer 取走并持有"| n0
+  class e6 edge_reference
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }

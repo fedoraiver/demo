@@ -1,0 +1,44 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: OS 窗口事件 · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_platform_api fill:#F6F3F1,stroke:#8A6555,stroke-width:1.6px,color:#1F3340
+  classDef node_platform_event fill:#F6F3F0,stroke:#916B45,stroke-width:1.6px,color:#1F3340
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: lean-r, label: "**OS 窗口事件**<br/>接收原生窗口尺寸、缩放与工作区变化。" }
+  class n0 node_platform_event
+  n1@{ shape: lean-l, label: "**原生窗口约束**<br/>在平台应用尺寸前约束主窗口比例与范围。" }
+  class n1 node_platform_api
+  n0 e0@-->|"原生约束"| n1
+  class e0 edge_reference

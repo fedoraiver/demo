@@ -1,0 +1,58 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: 原生窗口约束 · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_non_send fill:#F8F3EF,stroke:#A5633A,stroke-width:1.6px,color:#1F3340
+  classDef node_platform_api fill:#F6F3F1,stroke:#8A6555,stroke-width:1.6px,color:#1F3340
+  classDef node_platform_event fill:#F6F3F0,stroke:#916B45,stroke-width:1.6px,color:#1F3340
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: lean-l, label: "**原生窗口约束**<br/>在平台应用尺寸前约束主窗口比例与范围。" }
+  class n0 node_platform_api
+  n1@{ shape: tag-rect, label: "**NativePolicies**<br/>持有原生窗口策略的线程专属守卫。" }
+  class n1 node_non_send
+  n2@{ shape: lean-r, label: "**OS 窗口事件**<br/>接收原生窗口尺寸、缩放与工作区变化。" }
+  class n2 node_platform_event
+  n3@{ shape: rounded, label: "**Window**<br/>来自Bevy 引擎 ↗：保存主窗口的尺寸与显<br/>示配置。" }
+  class n3 node_component
+  class n3 external_node
+  n1 e0@-->|"安装 / 刷新 / Drop"| n0
+  class e0 edge_reference
+  n2 e1@-->|"原生约束"| n0
+  class e1 edge_reference
+  n0 e2@-->|"应用尺寸"| n3
+  class e2 edge_write
+  e0@{ curve: basis }
+  e1@{ curve: basis }

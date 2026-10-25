@@ -1,0 +1,82 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: confirm · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_observer fill:#F4F1F9,stroke:#7B4DB2,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef node_message_buffer fill:#EDF4F6,stroke:#247B91,stroke-width:1.6px,color:#1F3340
+  classDef node_event fill:#F9F3EE,stroke:#B66B2D,stroke-width:1.6px,color:#1F3340
+  classDef node_plugin fill:#F1F3F6,stroke:#4A6389,stroke-width:2.2px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_publish stroke:#247B91,stroke-width:1.8px,stroke-dasharray:10 4 2 4
+  classDef edge_observe stroke:#B66B2D,stroke-width:1.8px,stroke-dasharray:2 4
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: hex, label: "**confirm**<br/>执行当前聚焦按钮的菜单动作。" }
+  class n0 node_observer
+  n1@{ shape: cyl, label: "**MenuInputSource**<br/>保存当前可见焦点使用的输入来源。" }
+  class n1 node_resource
+  n2@{ shape: cyl, label: "**Messages#lt;UiRequest#gt;**<br/>缓冲鼠标与动作输入共用的菜单请求。" }
+  class n2 node_message_buffer
+  n3@{ shape: stadium, label: "**Fire#lt;ConfirmAction#gt;**<br/>通知执行当前聚焦按钮的菜单动作。" }
+  class n3 node_event
+  n4@{ shape: rounded, label: "**MenuButton**<br/>保存菜单动作及按钮的导航序号。" }
+  class n4 node_component
+  n5@{ shape: cyl, label: "**MenuState**<br/>保存菜单页面、设置分类、返回来源与提示。" }
+  class n5 node_resource
+  n6@{ shape: cyl, label: "**MenuFocus**<br/>保存当前可操作按钮的导航序号。" }
+  class n6 node_resource
+  n7@{ shape: fr-rect, label: "**GameUiPlugin**<br/>管理菜单、设置编辑、导航与主菜单展示场<br/>景。" }
+  class n7 node_plugin
+  n0 e0@--> n1
+  class e0 edge_write
+  n0 e1@--> n2
+  class e1 edge_publish
+  n3 e2@-->|"Fire#lt;ConfirmAction#gt;"| n0
+  class e2 edge_observe
+  n4 e3@-->|"查询访问"| n0
+  class e3 edge_read
+  n5 e4@-->|"访问声明"| n0
+  class e4 edge_read
+  n6 e5@-->|"访问声明"| n0
+  class e5 edge_read
+  n7 e6@--> n0
+  class e6 edge_registration
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }

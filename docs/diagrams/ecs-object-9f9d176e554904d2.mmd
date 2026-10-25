@@ -1,0 +1,120 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: Messages<SoundRequest> · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_observer fill:#F4F1F9,stroke:#7B4DB2,stroke-width:1.6px,color:#1F3340
+  classDef node_message_buffer fill:#EDF4F6,stroke:#247B91,stroke-width:1.6px,color:#1F3340
+  classDef node_sync fill:#F6F3F0,stroke:#8B6A42,stroke-width:1.6px,color:#1F3340
+  classDef node_system_group fill:#F2F5F7,stroke:#607C96,stroke-width:1.6px,color:#1F3340
+  classDef node_engine_flow fill:#F1F5F4,stroke:#557C78,stroke-width:1.6px,color:#1F3340
+  classDef edge_publish stroke:#247B91,stroke-width:1.8px,stroke-dasharray:10 4 2 4
+  classDef edge_consume stroke:#247B91,stroke-width:1.8px,stroke-dasharray:2 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: cyl, label: "**Messages#lt;SoundRequest#gt;**<br/>缓冲菜单交互与物品反馈的短音请求。" }
+  class n0 node_message_buffer
+  n1@{ shape: fr-rect, label: "**已接入的反馈生产者**<br/>来自物品交互 ↗：汇总菜单交互与物品运动<br/>产生的声音反馈。" }
+  class n1 node_system_group
+  class n1 external_node
+  n2@{ shape: stadium, label: "**Kira 播放输出流程**<br/>将声音请求按有效混音与播放策略提交音频实<br/>例。" }
+  class n2 node_engine_flow
+  n3@{ shape: rounded, label: "**pointer_interaction**<br/>来自菜单与界面 ↗：将真实鼠标交互转换为<br/>共享菜单请求。" }
+  class n3 node_system
+  class n3 external_node
+  n4@{ shape: hex, label: "**previous**<br/>来自菜单与界面 ↗：循环选择上一个可操作<br/>菜单按钮。" }
+  class n4 node_observer
+  class n4 external_node
+  n5@{ shape: hex, label: "**next**<br/>来自菜单与界面 ↗：循环选择下一个可操作<br/>菜单按钮。" }
+  class n5 node_observer
+  class n5 external_node
+  n6@{ shape: rounded, label: "**warn_hold_strain**<br/>来自物品交互 ↗：检查持续持握偏差并发出<br/>失稳提示音。" }
+  class n6 node_system
+  class n6 external_node
+  n7@{ shape: rounded, label: "**emit_parcel_land**<br/>来自物品交互 ↗：识别自由物品落地并发出<br/>声音请求。" }
+  class n7 node_system
+  class n7 external_node
+  n8@{ shape: rounded, label: "**play_requests**<br/>按有效音量与播放策略处理短音请求。" }
+  class n8 node_system
+  n9@{ shape: rounded, label: "**handle_interaction**<br/>来自物品交互 ↗：处理物品拾取、共享持握<br/>与主动释放。" }
+  class n9 node_system
+  class n9 external_node
+  n10@{ shape: rounded, label: "**sync_character_facing**<br/>来自第一人称控制 ↗：同步人物朝向并处理<br/>持物转向受阻。" }
+  class n10 node_system
+  class n10 external_node
+  n11@{ shape: rounded, label: "**ApplyDeferred（交互 → 呈现 / 挂接）**<br/>来自Bevy 引擎 ↗：使拿放后的关系与刚体<br/>变更对后续系统可见。" }
+  class n11 node_sync
+  class n11 external_node
+  n12@{ shape: rounded, label: "**sync_character_facing**<br/>来自第一人称控制 ↗：同步人物朝向并处理<br/>持物转向受阻。" }
+  class n12 node_system
+  class n12 external_node
+  n13@{ shape: rounded, label: "**handle_requests**<br/>来自菜单与界面 ↗：处理菜单导航、设置应<br/>用与音量编辑请求。" }
+  class n13 node_system
+  class n13 external_node
+  n1 e0@--> n0
+  class e0 edge_publish
+  n0 e1@-->|"请求"| n2
+  class e1 edge_consume
+  n3 e2@-->|"MenuHover"| n0
+  class e2 edge_publish
+  n4 e3@--> n0
+  class e3 edge_publish
+  n5 e4@--> n0
+  class e4 edge_publish
+  n6 e5@--> n0
+  class e5 edge_publish
+  n7 e6@--> n0
+  class e6 edge_publish
+  n0 e7@--> n8
+  class e7 edge_consume
+  n9 e8@-->|"成功拿起 / 释放"| n0
+  class e8 edge_publish
+  n10 e9@-->|"访问声明"| n0
+  class e9 edge_publish
+  n11 e10@-->|"访问声明"| n0
+  class e10 edge_publish
+  n12 e11@-->|"访问声明"| n0
+  class e11 edge_publish
+  n13 e12@-->|"访问声明"| n0
+  class e12 edge_publish
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }

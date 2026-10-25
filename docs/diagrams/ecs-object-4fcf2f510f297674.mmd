@@ -1,0 +1,109 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#object-4fcf2f510f297674-e9{marker-start:url(#object-4fcf2f510f297674_flowchart-v2-pointStart)!important}\n#object-4fcf2f510f297674_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}"
+  }
+}
+---
+flowchart LR
+  accTitle: emit_parcel_land · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef node_local fill:#F8F5F1,stroke:#AA8752,stroke-width:1.6px,color:#1F3340
+  classDef node_message_buffer fill:#EDF4F6,stroke:#247B91,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_plugin fill:#F1F3F6,stroke:#4A6389,stroke-width:2.2px,color:#1F3340
+  classDef node_registration_helper fill:#F6F4F0,stroke:#8A7548,stroke-width:1.6px,color:#1F3340
+  classDef edge_order stroke:#334155,stroke-width:2px
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_publish stroke:#247B91,stroke-width:1.8px,stroke-dasharray:10 4 2 4
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**emit_parcel_land**<br/>识别自由物品落地并发出声音请求。" }
+  class n0 node_system
+  n1@{ shape: lin-rect, label: "**PhysicsSystems::StepSimulation**<br/>来自Avian ↗：执行碰撞求解、重力积分与<br/>刚体运动。" }
+  class n1 node_system_set
+  class n1 external_node
+  n2@{ shape: cyl, label: "**Messages#lt;SoundRequest#gt;**<br/>来自音频播放 ↗：缓冲菜单交互与物品反馈<br/>的短音请求。" }
+  class n2 node_message_buffer
+  class n2 external_node
+  n3@{ shape: tag-rect, label: "**物品反馈收集**<br/>收集持握失稳与物品落地的声音反馈。" }
+  class n3 node_registration_helper
+  n4@{ shape: rounded, label: "**Parcel**<br/>快递身份标记。" }
+  class n4 node_component
+  n5@{ shape: rounded, label: "**HeldBy**<br/>关联当前物品的持有者。" }
+  class n5 node_component
+  n6@{ shape: cyl, label: "**ContactGraph**<br/>来自Avian ↗：保存物理解算后的真实接触<br/>结果。" }
+  class n6 node_resource
+  class n6 external_node
+  n7@{ shape: notch-rect, label: "**Local#lt;LandingContacts#gt;**<br/>记录物品支撑接触与单次落地反馈状态。" }
+  class n7 node_local
+  n8@{ shape: cyl, label: "**State#lt;AppState#gt; /**<br/>**NextState#lt;AppState#gt;**<br/>来自应用流程 ↗：保存应用主状态及待处理<br/>的会话切换。" }
+  class n8 node_resource
+  class n8 external_node
+  n9@{ shape: cyl, label: "**State#lt;PlayState#gt; /**<br/>**NextState#lt;PlayState#gt;**<br/>来自应用流程 ↗：保存游戏运行、暂停及待<br/>处理的切换请求。" }
+  class n9 node_resource
+  class n9 external_node
+  n10@{ shape: fr-rect, label: "**ItemInteractionPlugin**<br/>管理物品拾取、共享持握、安全释放与反馈。" }
+  class n10 node_plugin
+  n1 e0@--> n0
+  class e0 edge_order
+  n0 e1@--> n2
+  class e1 edge_publish
+  n3 e2@-->|"落地反馈"| n0
+  class e2 edge_registration
+  n4 e3@-->|"存在 / 变更过滤"| n0
+  class e3 edge_reference
+  n5 e4@-->|"存在 / 变更过滤"| n0
+  class e4 edge_reference
+  n6 e5@-->|"访问声明"| n0
+  class e5 edge_read
+  n7 e6@-->|"访问声明"| n0
+  class e6 edge_read
+  n8 e7@-->|"访问声明"| n0
+  class e7 edge_read
+  n9 e8@-->|"访问声明"| n0
+  class e8 edge_read
+  n7 e9@---|"访问声明"| n0
+  class e9 edge_write
+  n10 e10@--> n0
+  class e10 edge_registration
+  e0@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }

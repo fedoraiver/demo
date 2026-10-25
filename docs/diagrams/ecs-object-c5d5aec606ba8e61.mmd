@@ -1,0 +1,55 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: 物品反馈收集 · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_plugin fill:#F1F3F6,stroke:#4A6389,stroke-width:2.2px,color:#1F3340
+  classDef node_registration_helper fill:#F6F4F0,stroke:#8A7548,stroke-width:1.6px,color:#1F3340
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: tag-rect, label: "**物品反馈收集**<br/>收集持握失稳与物品落地的声音反馈。" }
+  class n0 node_registration_helper
+  n1@{ shape: fr-rect, label: "**ItemInteractionPlugin**<br/>管理物品拾取、共享持握、安全释放与反馈。" }
+  class n1 node_plugin
+  n2@{ shape: rounded, label: "**warn_hold_strain**<br/>检查持续持握偏差并发出失稳提示音。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**emit_parcel_land**<br/>识别自由物品落地并发出声音请求。" }
+  class n3 node_system
+  n1 e0@-->|"物品反馈"| n0
+  class e0 edge_registration
+  n0 e1@-->|"持握反馈"| n2
+  class e1 edge_registration
+  n0 e2@-->|"落地反馈"| n3
+  class e2 edge_registration
+  e1@{ curve: basis }
+  e2@{ curve: basis }

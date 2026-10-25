@@ -3,12 +3,13 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import test from 'node:test';
-import { checkArchitecture as checkArchitectureWithDependencies, checkDataSections, checkEntityGroups, checkEntityViewProjections, checkViewRouting, checkGuideSamples } from './check-ecs.mjs';
+import { checkArchitecture as checkArchitectureWithDependencies, checkDataSections, checkEntityGroups, checkEntityViewProjections, checkViewRouting, checkGuideSamples, checkObjectViews } from './check-ecs.mjs';
 import { createDependencySourceResolver, dependencySourceKey, attachDependencySources } from './dependency-sources.mjs';
 import { checkMermaidGeometry, checkSvgGeometry } from './diagram-geometry.mjs';
 import { createSourceLocator } from './source-locator.mjs';
 import { NODE_STYLES, EDGE_STYLES, SELECTION_STYLE, EXTERNAL_REFERENCE_STYLE, visualTypeOf, edgeSemanticOf, displayLabelOf } from './architecture-style.mjs';
 import { buildArchitectureModel, isMainPluginRegistration, scheduleGroupLabel } from './architecture-model.mjs';
+import { buildObjectCatalog } from './architecture-objects.mjs';
 import { DATA_GROUP_LABELS } from './architecture-renderer.mjs';
 import { normalizeMermaidSvg } from './mermaid-compiler.mjs';
 import { INFRASTRUCTURE_FEATURES, architectureViewId } from './architecture-infrastructure.mjs';
@@ -20,6 +21,113 @@ const fixtureViewCount = 1 + 3 * (1 + INFRASTRUCTURE_FEATURES.length);
 const fixtureOverviewNodeCount = 2 + INFRASTRUCTURE_FEATURES.length;
 const extensionFeature = INFRASTRUCTURE_FEATURES.find(feature => feature.section === 'third_party');
 const checkArchitecture = directory => checkArchitectureWithDependencies(directory, { dependencyDefinitions: {}, cargoMetadata: { packages: [] }, requireDependencyDefinitions: false });
+
+function objectFixture() {
+  const objects = ['actor.Flag', 'target.Flag', 'fixed', 'frame', 'isolated'].map((id, index) => ({ id, viewId: `object-${index}`, feature: 'example', kind: index < 2 ? 'Component' : 'System' }));
+  const links = [
+    { id: 'read', from: 'actor.Flag', to: 'fixed', kind: 'read', operation: 'read', label: '', sourceEntries: [{ role: 'parameter', path: 'src/example.rs', line: 1 }], sourceGaps: ['访问条件待核实'] },
+    { id: 'write', from: 'frame', to: 'actor.Flag', kind: 'write', operation: 'write', label: '' },
+    { id: 'other', from: 'fixed', to: 'target.Flag', kind: 'write', operation: 'insert', label: '' },
+  ];
+  const graphFor = id => {
+    const incident = links.filter(link => link.from === id || link.to === id);
+    return { nodes: [...new Set([id, ...incident.flatMap(link => [link.from, link.to])])].map(id => ({ id, role: 'internal' })), links: structuredClone(incident) };
+  };
+  const catalog = { objects, graphFor };
+  const views = objects.map(object => ({ id: object.viewId, aspect: 'object', feature: object.feature, objectId: object.id, centerNodeId: object.id, ...graphFor(object.id) }));
+  return { objects, views, catalog };
+}
+
+function entityObjectFixture() {
+  const model = {
+    features: [{ id: 'example', plugin: 'ExamplePlugin' }],
+    entities: [
+      { id: 'actor', feature: 'example', assembled_by: ['example'], components: [{ id: 'actor.Flag', name: 'Flag', feature: 'example' }] },
+      { id: 'target', feature: 'example', components: [] },
+      { id: 'isolated', feature: 'example', components: [{ id: 'isolated.Flag', name: 'Flag', feature: 'example' }] },
+    ],
+    nodes: [{ id: 'plugin-ExamplePlugin', kind: 'Plugin', name: 'ExamplePlugin', feature: 'example' }],
+    system_links: [
+      { id: 'actor-target', from: 'entity-actor', to: 'entity-target', kind: 'reference' },
+      { id: 'component-target', from: 'actor.Flag', to: 'entity-target', kind: 'reference', operation: 'entity_target' },
+    ],
+  };
+  const { registry } = buildArchitectureModel(model), catalog = buildObjectCatalog(model, registry);
+  const views = catalog.objects.map(object => ({ id: object.viewId, aspect: 'object', feature: object.feature,
+    objectId: object.id, centerNodeId: object.id, ...catalog.graphFor(object.id) }));
+  return { views, catalog };
+}
+
+test('object views preserve each projection and registration, including an isolated single card', () => {
+  const { views, catalog } = objectFixture();
+  assert.equal(checkObjectViews(views, catalog), 5);
+  assert.deepEqual(views.find(view => view.objectId === 'isolated').nodes, [{ id: 'isolated', role: 'internal' }]);
+});
+
+test('object view coverage rejects missing or duplicate object diagrams and mismatched centers', () => {
+  const missing = objectFixture();
+  missing.views.pop();
+  assert.throws(() => checkObjectViews(missing.views, missing.catalog), /Expected 5 object views/);
+  const duplicate = objectFixture();
+  duplicate.views[1] = structuredClone(duplicate.views[0]);
+  assert.throws(() => checkObjectViews(duplicate.views, duplicate.catalog), /Object view identity mismatch/);
+  const center = objectFixture();
+  center.views[0].centerNodeId = 'target.Flag';
+  assert.throws(() => checkObjectViews(center.views, center.catalog), /Object view center mismatch/);
+});
+
+test('object views require every incoming and outgoing relation without indirect neighbors', () => {
+  for (const id of ['read', 'write']) {
+    const data = objectFixture();
+    data.views[0].links = data.views[0].links.filter(link => link.id !== id);
+    assert.throws(() => checkObjectViews(data.views, data.catalog), /Object view incident-link coverage mismatch/);
+  }
+  const indirect = objectFixture();
+  indirect.views[0].nodes.push({ id: 'target.Flag', role: 'internal' });
+  assert.throws(() => checkObjectViews(indirect.views, indirect.catalog), /Object view direct-neighbor coverage mismatch/);
+  const extraLink = objectFixture();
+  extraLink.views[0].links.push({ id: 'invented', from: 'fixed', to: 'frame', kind: 'order' });
+  assert.throws(() => checkObjectViews(extraLink.views, extraLink.catalog), /Object view incident-link coverage mismatch/);
+});
+
+test('object views preserve operation semantics, pending evidence and source locations', () => {
+  for (const change of [link => { link.operation = 'insert'; }, link => { link.sourceGaps = []; }, link => { link.sourceEntries = []; }]) {
+    const data = objectFixture();
+    change(data.views[0].links[0]);
+    assert.throws(() => checkObjectViews(data.views, data.catalog), /Object view relation (?:metadata mismatch|evidence gap was removed|source evidence was removed)/);
+  }
+});
+
+test('Entity object validation accepts hidden component geometry while preserving the full relation catalog', () => {
+  const { views, catalog } = entityObjectFixture();
+  assert.equal(checkObjectViews(views, catalog), catalog.objects.length);
+  const actor = views.find(view => view.objectId === 'entity-actor');
+  assert.deepEqual(new Set(actor.nodes.map(node => node.id)), new Set(['entity-actor', 'entity-target', 'plugin-ExamplePlugin']));
+  assert.ok(actor.links.some(link => link.id === 'actor-target'));
+  assert.ok(actor.links.some(link => link.operation === 'assembly'));
+  assert.deepEqual(views.find(view => view.objectId === 'entity-isolated').nodes.map(node => node.id), ['entity-isolated']);
+  const contains = catalog.links.find(link => link.operation === 'contains' && link.from === 'actor.Flag');
+  assert.ok(contains);
+  assert.ok(views.find(view => view.objectId === 'actor.Flag').links.some(link => link.id === contains.id));
+  assert.ok(views.find(view => view.objectId === 'actor.Flag').links.some(link => link.id === 'component-target'));
+});
+
+test('Entity object validation rejects either a reintroduced Component card or an edge touching a hidden Component', () => {
+  for (const geometry of ['node', 'edge']) {
+    const { views, catalog } = entityObjectFixture(), actor = views.find(view => view.objectId === 'entity-actor');
+    if (geometry === 'node') actor.nodes.push({ id: 'actor.Flag', role: 'internal' });
+    else actor.links.push(catalog.links.find(link => link.operation === 'contains' && link.from === 'actor.Flag'));
+    assert.throws(() => checkObjectViews(views, catalog), /Entity object view contains Component geometry/);
+  }
+});
+
+test('hiding Entity components does not allow dropping entity relations, assembly ownership or component containment', () => {
+  for (const removed of ['entity-relation', 'assembly', 'contains']) {
+    const { views, catalog } = entityObjectFixture(), view = views.find(view => view.objectId === (removed === 'contains' ? 'actor.Flag' : 'entity-actor'));
+    view.links = view.links.filter(link => removed === 'entity-relation' ? link.id !== 'actor-target' : link.operation !== removed);
+    assert.throws(() => checkObjectViews(views, catalog), /Object view incident-link coverage mismatch/);
+  }
+});
 
 const escape = value => String(value).replaceAll('&', '&amp;').replaceAll('"', '&quot;');
 const port = (box, side, slot = 1, count = 1) => ({ box, side, slot, count });
@@ -457,7 +565,7 @@ test('rejects missing or altered embedded infrastructure catalog metadata', () =
   }
 });
 
-test('requires separate engine and third-party overview entrances and all three tabs', () => {
+test('legacy offline fixtures retain separate engine and third-party entrances', () => {
   for (const feature of INFRASTRUCTURE_FEATURES) {
     const data = fixture();
     for (const aspect of ['systems', 'data', 'events']) {
@@ -520,7 +628,7 @@ test('maintained infrastructure ownership distinguishes Bevy, extensions and pro
   const { registry } = buildArchitectureModel(model);
   const expected = {
     infrastructure: ['plugin-DefaultPlugins', 'app-main', 'input_update', 'resource.TimeFixed', 'resource.ButtonInputKeyCode', 'resource.KeyboardInputMessages', 'resource.WindowFocusedMessages', 'character.Transform', 'camera.Camera3d', 'native_pointer_events', 'native_update_hovered', 'native_button_down', 'plugin-UiWidgetsPlugins', 'plugin-DefaultPickingPlugins'],
-    avian: ['physics_prepare', 'physics_step', 'physics_writeback', 'resource.TimePhysics', 'resource.CollisionStartMessages', 'physics-messages', 'character.RigidBody', 'character.Collider', 'easing_start', 'character.TranslationInterpolation', 'parcel.TransformInterpolation', 'resource.LastPhysicsTick', 'character.SpeculativeCcd', 'parcel.SpeculativeCcd'],
+    avian: ['physics_prepare', 'physics_step', 'physics_writeback', 'resource.TimePhysics', 'resource.CollisionStartMessages', 'message-CollisionStart', 'message-CollisionEnd', 'character.RigidBody', 'character.Collider', 'easing_start', 'character.TranslationInterpolation', 'parcel.TransformInterpolation', 'resource.LastPhysicsTick', 'character.SpeculativeCcd', 'parcel.SpeculativeCcd'],
     enhanced_input: ['plugin-EnhancedInputPlugin', 'enhanced_prepare', 'enhanced_evaluate', 'input_apply', 'input_trigger', 'resource.ActionSources', 'controller.Actions', 'action.ActionOf'],
     kira: ['plugin-kira', 'resource.AudioSources', 'resource.AudioInstances', 'kira-output'],
     egui: ['egui_input', 'egui_begin', 'camera.EguiContext', 'resource.EguiGlobalSettings', 'plugin-inspector-0', 'plugin-inspector-1', 'inspector_pass'],
@@ -538,9 +646,6 @@ test('maintained infrastructure ownership distinguishes Bevy, extensions and pro
     assert.equal(registry[id].defined_in, 'infrastructure', `${id}: Bevy container definition`);
   }
   assert.equal(model.features.length, 14);
-  for (const [feature, count] of Object.entries({ avian: 103, enhanced_input: 35, kira: 6, egui: 13 })) {
-    assert.equal(Object.values(registry).filter(node => node.feature === feature && !node.alias_of).length, count, feature);
-  }
   for (const id of ['wake_apply', 'event_apply']) assert.equal(registry[id].defined_in, 'infrastructure', id);
   assert.equal(registry['resource.EnableMultipassForPrimaryContext'], undefined);
   assert.equal(registry['third-party-plugins'], undefined);

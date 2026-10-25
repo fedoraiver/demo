@@ -1,0 +1,142 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#object-2342e9e89cc4c387-e2{marker-start:url(#object-2342e9e89cc4c387_flowchart-v2-pointStart)!important}\n#object-2342e9e89cc4c387-e4{marker-start:url(#object-2342e9e89cc4c387_flowchart-v2-pointStart)!important}\n#object-2342e9e89cc4c387-e6{marker-start:url(#object-2342e9e89cc4c387_flowchart-v2-pointStart)!important}\n#object-2342e9e89cc4c387-e8{marker-start:url(#object-2342e9e89cc4c387_flowchart-v2-pointStart)!important}\n#object-2342e9e89cc4c387-e10{marker-start:url(#object-2342e9e89cc4c387_flowchart-v2-pointStart)!important}\n#object-2342e9e89cc4c387-e16{marker-start:url(#object-2342e9e89cc4c387_flowchart-v2-pointStart)!important}\n#object-2342e9e89cc4c387-e18{marker-start:url(#object-2342e9e89cc4c387_flowchart-v2-pointStart)!important}\n#object-2342e9e89cc4c387_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}"
+  }
+}
+---
+flowchart LR
+  accTitle: LinearVelocity · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_entity fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_query_data fill:#F1F4F1,stroke:#567A51,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**LinearVelocity**<br/>实际线速度，由冲量、外力、重力与接触求解<br/>改变。" }
+  class n0 node_component
+  n1@{ shape: notch-rect, label: "**RecoverableBody**<br/>来自越界恢复 ↗：声明落水恢复需要查询的<br/>组件与存在条件。" }
+  class n1 node_query_data
+  class n1 external_node
+  n2@{ shape: rounded, label: "**可搬物品业务根实体**<br/>来自场景装配 ↗：承载可拾取物品身份及自<br/>由运动、共享持握状态。" }
+  class n2 node_entity
+  class n2 external_node
+  n3@{ shape: rounded, label: "**sync_character_facing**<br/>来自第一人称控制 ↗：同步人物朝向并处理<br/>持物转向受阻。" }
+  class n3 node_system
+  class n3 external_node
+  n4@{ shape: rounded, label: "**handle_interaction**<br/>来自物品交互 ↗：处理物品拾取、共享持握<br/>与主动释放。" }
+  class n4 node_system
+  class n4 external_node
+  n5@{ shape: rounded, label: "**sync_character_facing**<br/>来自第一人称控制 ↗：同步人物朝向并处理<br/>持物转向受阻。" }
+  class n5 node_system
+  class n5 external_node
+  n6@{ shape: rounded, label: "**release_orphaned_items**<br/>来自物品交互 ↗：清理失效持握并恢复物品<br/>独立运动。" }
+  class n6 node_system
+  class n6 external_node
+  n7@{ shape: rounded, label: "**align_attachments**<br/>来自物品交互 ↗：沿安全碰撞路径将物品对<br/>齐双手。" }
+  class n7 node_system
+  class n7 external_node
+  n8@{ shape: rounded, label: "**sync_held_physics**<br/>来自物品交互 ↗：按人物物理姿态同步持物<br/>位置与碰撞代理。" }
+  class n8 node_system
+  class n8 external_node
+  n9@{ shape: rounded, label: "**sync_held_physics**<br/>来自物品交互 ↗：按最新物理位姿同步持物<br/>与碰撞代理。" }
+  class n9 node_system
+  class n9 external_node
+  n10@{ shape: rounded, label: "**sync_held_physics**<br/>来自物品交互 ↗：同步本帧持物碰撞朝向与<br/>显示朝向。" }
+  class n10 node_system
+  class n10 external_node
+  n11@{ shape: lin-rect, label: "**PhysicsSystems::Prepare**<br/>准备物理步所需的位姿、质量与碰撞查询数<br/>据。" }
+  class n11 node_system_set
+  n12@{ shape: lin-rect, label: "**PhysicsSystems::StepSimulation**<br/>执行碰撞求解、重力积分与刚体运动。" }
+  class n12 node_system_set
+  n13@{ shape: rounded, label: "**recover_from_water**<br/>来自越界恢复 ↗：将落水实体恢复到各自出<br/>生姿态。" }
+  class n13 node_system
+  class n13 external_node
+  n1 e0@-->|"Write#lt;LinearVelocity#gt; 参数声明"| n0
+  class e0 edge_reference
+  n0 e1@-->|"可能挂载于"| n2
+  class e1 edge_reference
+  n3 e2@---|"查询访问"| n0
+  class e2 edge_read
+  n3 e3@-->|"添加"| n0
+  class e3 edge_write
+  n4 e4@---|"查询访问"| n0
+  class e4 edge_read
+  n4 e5@-->|"添加"| n0
+  class e5 edge_write
+  n5 e6@---|"查询访问"| n0
+  class e6 edge_read
+  n5 e7@-->|"添加"| n0
+  class e7 edge_write
+  n6 e8@---|"查询访问"| n0
+  class e8 edge_read
+  n6 e9@-->|"添加"| n0
+  class e9 edge_write
+  n7 e10@---|"查询访问"| n0
+  class e10 edge_read
+  n7 e11@-->|"添加"| n0
+  class e11 edge_write
+  n8 e12@-->|"可变访问"| n0
+  class e12 edge_write
+  n9 e13@-->|"可变访问"| n0
+  class e13 edge_write
+  n10 e14@-->|"可变访问"| n0
+  class e14 edge_write
+  n11 e15@-->|"可变访问"| n0
+  class e15 edge_write
+  n12 e16@---|"查询访问"| n0
+  class e16 edge_read
+  n12 e17@-->|"可变访问"| n0
+  class e17 edge_write
+  n13 e18@---|"查询访问"| n0
+  class e18 edge_read
+  n13 e19@-->|"可变访问"| n0
+  class e19 edge_write
+  e0@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e17@{ curve: basis }
+  e18@{ curve: basis }
+  e19@{ curve: basis }

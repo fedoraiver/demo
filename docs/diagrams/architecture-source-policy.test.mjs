@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { normalizeSourceEntry, sourceEntriesFor, sourcePolicyFor, sourcePolicyKindFor, applyArchitectureSourcePolicies, applyArchitectureEdgeSourcePolicies } from './architecture-source-policy.mjs';
+import { normalizeSourceEntry, sourceEntriesFor, sourcePolicyFor, sourcePolicyKindFor, applyArchitectureSourcePolicies, applyArchitectureEdgeSourcePolicies, auditProductionEcsCoverage } from './architecture-source-policy.mjs';
 import { buildArchitectureModel } from './architecture-model.mjs';
 import { readCargoMetadata, createDependencySourceResolver, attachDependencySources } from './dependency-sources.mjs';
 import { DEPENDENCY_SOURCE_DEFINITIONS } from './architecture-source-definitions.mjs';
@@ -138,7 +138,7 @@ function sourceFixture(t, text) {
   t.after(() => {
     const relative = path.relative(temporaryRoot, fixture);
     assert(relative && relative !== '..' && !relative.startsWith(`..${path.sep}`) && !path.isAbsolute(relative));
-    fs.rmSync(fixture, { recursive: true });
+    fs.rmSync(fixture, { recursive: true, maxRetries: 3, retryDelay: 20 });
   });
   return fixture;
 }
@@ -273,6 +273,55 @@ test('precise edge sources and evidence gaps survive policy application', t => {
   assert.deepEqual(links[0].sourceGaps, ['待核实：字段修改尚未确认']);
 });
 
+test('生产声明与注册覆盖审计排除测试项，保留普通声明和缺失注册', t => {
+  const directory = sourceFixture(t, [
+    '#[cfg(test)] use crate::testing::TestOnly;',
+    '#[derive(Component)]',
+    'struct Visible;',
+    '#[cfg(test)]',
+    '#[derive(Resource)] struct TestOnly;',
+    '#[derive(QueryData)] struct Body { value: Read<Visible> }',
+    'fn run(query: Query<&Visible>) {}',
+    'fn setup(app: &mut App) { app.add_systems(Update, run); }',
+    '#[cfg(test)] fn test_setup(app: &mut App) { app.add_systems(FixedUpdate, run); }',
+  ].join('\n'));
+  const registry = {
+    visible: { id: 'visible', kind: 'Component', name: 'Visible', feature: 'example', source: { path: 'src/example/mod.rs', line: 3 } },
+  };
+  const audit = applyArchitectureSourcePolicies(registry, { repository: directory });
+  const coverage = auditProductionEcsCoverage(registry, { context: audit.context });
+  assert.deepEqual(coverage.declarations.map(declaration => declaration.name), ['Visible', 'Body']);
+  assert.equal(coverage.registrations.length, 1);
+  assert.equal(coverage.gaps.length, 2);
+  assert.ok(coverage.gaps.some(gap => gap.includes('Body')));
+  assert.ok(coverage.gaps.some(gap => gap.includes('add_systems')));
+});
+
+test('已审阅实体目标定位实际赋值及装配操作，未审阅关系不借字段声明伪造操作', () => {
+  const model = JSON.parse(fs.readFileSync(path.join(repository, 'docs/diagrams/ecs-data.json'), 'utf8'));
+  const expected = {
+    controls_character: 'ControlsCharacter(character)', controls_camera: 'ControlsCamera(camera)', camera_target: 'FirstPersonCamera::new(character)',
+    held_by: 'HeldBy(character)', held_attachment_proxy: 'collider,', held_proxy_item: 'HeldCollider(item)', held_proxy_body: 'ColliderOf { body: holder }',
+    animation_character: 'character,', grounding_character: 'character,', grounding_player: 'animation_player: first_player.expect',
+    grounding_soles: 'sole_markers: sole_markers', settings_scrollbar_target: 'Scrollbar::new(',
+  };
+  for (const relation of model.relationships) {
+    const sources = relation.component_target_sources || [];
+    if (!expected[relation.id]) { assert.equal(sources.length, 0); continue; }
+    assert.ok(relation.from_component);
+    assert.ok(relation.component_target_notes.some(note => note.includes('Commands') && note.includes('helper')));
+    const lines = sources.map(source => {
+      assert.equal(source.role, 'operation');
+      assert.equal(source.column, 1);
+      assert.ok(source.label);
+      return fs.readFileSync(path.join(repository, source.path), 'utf8').split(/\r?\n/)[source.line - 1];
+    });
+    assert.ok(lines.every(line => typeof line === 'string' && line.trim() && !/^\s*(?:pub[^;]*\s+)?(?:struct|enum)\b/.test(line)));
+    assert.ok(lines.some(line => line.includes(expected[relation.id])), relation.id);
+  }
+  assert.equal(model.relationships.filter(relation => relation.component_target_sources?.length).length, Object.keys(expected).length);
+});
+
 test('current registry and merged function cards have verified source scope across all real types', () => {
   const model = JSON.parse(fs.readFileSync(path.join(repository, 'docs/diagrams/ecs-data.json'), 'utf8'));
   const { registry } = buildArchitectureModel(model);
@@ -281,6 +330,12 @@ test('current registry and merged function cards have verified source scope acro
   buildComponentCatalog(model, registry);
   const inspectorBody = structuredClone({ description: registry.inspector_pass.description, notes: registry.inspector_pass.notes, registrations: registry.inspector_pass.registrations });
   const audit = applyArchitectureSourcePolicies(registry, { repository, model, dependencyContext: { metadata, resolver } });
+  const coverage = auditProductionEcsCoverage(registry, { context: audit.context });
+  assert.deepEqual(coverage.gaps, []);
+  assert.equal(coverage.declarations.length, 91);
+  assert.equal(coverage.registrations.length, 84);
+  assert.ok(coverage.declarations.some(declaration => declaration.name === 'RecoverableBody'));
+  assert.ok(!coverage.declarations.some(declaration => declaration.name === 'WaterRecoveryOrder'));
   const sourceLine = source => source.dependency ? resolver.read(source).lines[source.line - 1]
     : fs.readFileSync(path.join(repository, source.path), 'utf8').split(/\r?\n/)[source.line - 1];
   const hasSource = (id, role, sourcePath, pattern, packageName) => registry[id].sourceEntries.some(source =>
@@ -301,8 +356,31 @@ test('current registry and merged function cards have verified source scope acro
   }
   for (const id of ['held_fixed', 'held_update', 'facing_fixed', 'facing_update']) {
     assert.equal(registry[id].sourceEntries.filter(source => source.role === 'definition').length, 1);
-    assert.equal(registry[id].sourceEntries.filter(source => source.role === 'registration').length, 2);
+    assert.equal(registry[id].sourceEntries.filter(source => source.role === 'registration').length, 1);
   }
+  for (const family of [['flow_suspend', 'flow_suspend_paused'], ['character_clear_intents', 'character_clear_intents_paused']]) for (const id of family) {
+    assert.deepEqual(registry[id].registrationFamilyIds, family);
+    const entries = registry[id].sourceEntries.filter(source => source.role === 'registration');
+    assert.equal(entries.length, 1);
+    assert.ok(entries[0].label.includes(registry[id].schedule));
+  }
+  for (const id of ['resource.SessionWriter', 'resource.ConsoleWriter']) {
+    assert.deepEqual(registry[id].sourceGaps, []);
+    for (const role of ['definition', 'initialize', 'insert', 'remove']) assert.ok(registry[id].sourceEntries.some(source => source.role === role), `${id}: ${role}`);
+  }
+  assert.ok(registry['param-recoverable-body'].sourceEntries.some(source => source.role === 'parameter'));
+  assert.equal(registry['param-carry-rotation'].sourceEntries.filter(source => source.role === 'parameter').length, 2);
+  assert.deepEqual(model.system_links.filter(link => link.from === 'param-carry-rotation').map(link => link.to), ['facing_fixed', 'facing_update', 'carry_align']);
+  for (const relation of model.relationships.filter(relation => relation.from_component)) {
+    assert.ok(model.entities.find(entity => entity.id === relation.from)?.components.some(component => component.id === relation.from_component), `${relation.id}: explicit component belongs to source entity`);
+    const component = registry[relation.from_component], definition = component.sourceEntries.find(source => source.role === 'definition');
+    const contents = definition.dependency ? resolver.read(definition).text : fs.readFileSync(path.join(repository, definition.path), 'utf8');
+    assert.match(contents, relation.component_field === '0' ? new RegExp(`struct\\s+${component.name.split('<')[0]}(?:<[^>]*>)?\\s*\\(`) : new RegExp(`\\b${relation.component_field}\\s*:`));
+  }
+  const pbrGltf = resolver.read({ ...registry['model_node.MeshMaterial3d'].definition_source, path: 'src/gltf.rs' }).text;
+  assert.match(pbrGltf, /let handle = load_context\.get_label_handle::<StandardMaterial>\(std_label\);\s*entity\.insert\(MeshMaterial3d\(handle\)\);/);
+  assert.equal(registry['model_node.MeshMaterial3d'].rust_type, 'bevy::pbr::MeshMaterial3d<bevy::pbr::StandardMaterial>');
+  assert.ok(audit.context.projectFiles.every(file => !/\bGltfExtensionHandler\b/.test(file.code)));
   assert(hasSource('entity-parcel', 'create', 'src/scene_assembly/actors.rs', /commands\.spawn_scene\(carryable_scene/));
   assert(hasSource('entity-parcel', 'destroy', 'src/scene_assembly/actors.rs', /entity\.insert\(\(parcel_body\(&config\), DespawnOnExit/));
   assert(hasSource('entity-parcel', 'destroy', 'src/ui/requests.rs', /app_state\.set\(AppState::MainMenu\)/));
@@ -319,7 +397,7 @@ test('current registry and merged function cards have verified source scope acro
     assert(hasSource(id, 'definition', 'src/lib.rs', new RegExp(`^\\s*${variant},`), 'bevy_enhanced_input'));
   }
   assert.notEqual(registry.input_apply.definition_source.line, registry.input_trigger.definition_source.line);
-  assert.deepEqual(registry.input_apply.writes, ['action.Action']);
+  assert.deepEqual(registry.input_apply.writes, model.object_aliases['action.Action']);
   assert.deepEqual(registry.input_apply.events, []);
   assert(registry.input_trigger.events.some(event => /Fire<MoveAction>/.test(event)));
   for (const id of ['time_update', 'input_update', 'input_trigger', 'animation_engine', 'native-ui-layout', 'kira-play-typed']) {

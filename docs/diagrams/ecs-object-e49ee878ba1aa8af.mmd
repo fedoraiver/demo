@@ -1,0 +1,77 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 4,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#object-e49ee878ba1aa8af-e4{marker-start:url(#object-e49ee878ba1aa8af_flowchart-v2-pointStart)!important}\n#object-e49ee878ba1aa8af_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}"
+  }
+}
+---
+flowchart LR
+  accTitle: ColliderAabb · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_entity fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**ColliderAabb**<br/>保存碰撞查询使用的轴对齐包围盒。" }
+  class n0 node_component
+  n1@{ shape: rounded, label: "**可搬物品业务根实体**<br/>来自场景装配 ↗：承载可拾取物品身份及自<br/>由运动、共享持握状态。" }
+  class n1 node_entity
+  class n1 external_node
+  n2@{ shape: rounded, label: "**handle_interaction**<br/>来自物品交互 ↗：处理物品拾取、共享持握<br/>与主动释放。" }
+  class n2 node_system
+  class n2 external_node
+  n3@{ shape: rounded, label: "**update_grounded**<br/>来自角色运动 ↗：准备运动前更新接地状<br/>态。" }
+  class n3 node_system
+  class n3 external_node
+  n4@{ shape: rounded, label: "**update_grounded**<br/>来自角色运动 ↗：物理回写之后观察实际接<br/>地状态。" }
+  class n4 node_system
+  class n4 external_node
+  n5@{ shape: lin-rect, label: "**PhysicsSystems::StepSimulation**<br/>执行碰撞求解、重力积分与刚体运动。" }
+  class n5 node_system_set
+  n0 e0@-->|"可能挂载于"| n1
+  class e0 edge_reference
+  n0 e1@-->|"查询访问"| n2
+  class e1 edge_read
+  n0 e2@-->|"查询访问"| n3
+  class e2 edge_read
+  n0 e3@-->|"查询访问"| n4
+  class e3 edge_read
+  n5 e4@---|"查询访问"| n0
+  class e4 edge_read
+  n5 e5@-->|"可变访问"| n0
+  class e5 edge_write
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }

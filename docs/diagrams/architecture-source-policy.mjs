@@ -369,7 +369,10 @@ function systemRegistrations(record, context, observer = false) {
     for (const [start, end] of ranges.reverse()) if (end >= 0) body = body.slice(0, start) + body.slice(end + 1);
     return body;
   };
-  return search.flatMap(file => context.callsIn(file).filter(call => methods.includes(call.method) && new RegExp(`\\b${word(symbol)}\\b`).test(registeredBody(call))).map(call => context.sourceAt(file, call.start, 'registration', observer ? `Observer 注册：${call.method}` : `Schedule 注册：${firstArgument(call.body).replace(/\s+/g, ' ')}`)));
+  const schedules = new Set((record.registrations || []).map(registration => compact(registration.schedule)).filter(Boolean));
+  return search.flatMap(file => context.callsIn(file).filter(call => methods.includes(call.method)
+    && (observer || !schedules.size || schedules.has(compact(firstArgument(call.body))))
+    && new RegExp(`\\b${word(symbol)}\\b`).test(registeredBody(call))).map(call => context.sourceAt(file, call.start, 'registration', observer ? `Observer 注册：${call.method}` : `Schedule 注册：${firstArgument(call.body).replace(/\s+/g, ' ')}`)));
 }
 
 function typeLifecycle(record, context, definitions) {
@@ -482,6 +485,7 @@ function sourcesForNode(record, registry, context, gaps) {
       else gaps.push('缓冲容器所承载的消息类型定义尚未唯一核实');
     }
     sources.push(...typeLifecycle(record, context, definitions));
+    sources.push(...(RELATED_IMPLEMENTATIONS[record.id] || []).flatMap(descriptor => context.resolveEvidence(descriptor)));
     if (MARKER_ONLY_RESOURCES.has(record.id)) gaps.push('该类型仅用作泛型或插件配置标记，未核实存在独立资源实例；不列初始化或移除入口');
     else if (!sources.some(source => ['initialize', 'insert', 'registration'].includes(source.role))) gaps.push('该资源的初始化或插入位置尚未完整核实');
     if (!definitions.length) gaps.push('实际存储类型定义尚未唯一核实');
@@ -593,6 +597,7 @@ function sourcesForNode(record, registry, context, gaps) {
   }
   if (['system_set', 'scheduling_constraint', 'shared_data_contract', 'system_param', 'query_data', 'relationship', 'entity_reference', 'sync'].includes(kind)) {
     const sources = typeDefinitions(record, context), symbol = firstType(record.name);
+    if (['system_param', 'query_data'].includes(kind)) for (const descriptor of RELATED_IMPLEMENTATIONS[record.id] || []) sources.push(...context.resolveEvidence(descriptor));
     if (kind === 'system_set') for (const descriptor of RELATED_IMPLEMENTATIONS[record.id] || []) {
       const resolved = context.resolveEvidence(descriptor);
       if (!resolved.length) gaps.push(`未能唯一核实${descriptor.label}（${descriptor.path}）`);
@@ -655,6 +660,45 @@ export function applyArchitectureSourcePolicies(registry, options = {}) {
   }
   const dependencySources = Object.values(registry).flatMap(record => record.sourceEntries || []).filter(source => source.dependency);
   return { entries, gaps, dependencySources, context };
+}
+
+/** Audit project ECS declarations and registration sites, without treating helpers as systems. */
+export function auditProductionEcsCoverage(registry, { context, ...options } = {}) {
+  context ||= createArchitectureSourceContext(options);
+  const declarations = [], registrations = [];
+  const ecsDerives = /\b(Component|Resource|States|SubStates|SystemSet|SystemParam|QueryData|Message|Event|EntityEvent|InputAction)\b/g;
+  for (const file of context.projectFiles) {
+    const testRanges = [];
+    for (const test of file.code.matchAll(/#\[\s*cfg\s*\(\s*test\s*\)\s*\]/g)) {
+      const tail = file.code.slice(test.index + test[0].length);
+      const item = /^\s*(?:#\[[^\]]*\]\s*)*(?:pub(?:\([^)]*\))?\s+)?(fn|mod|struct|enum|impl|use|const|static|type|trait)\b/.exec(tail);
+      if (!item) continue;
+      const start = test.index + test[0].length + item[0].length;
+      const open = file.code.indexOf('{', start), semicolon = file.code.indexOf(';', start);
+      const end = semicolon >= 0 && (open < 0 || semicolon < open) ? semicolon : open >= 0 ? balancedEnd(file.code, open, '{', '}') : -1;
+      if (end >= 0) testRanges.push([test.index, end]);
+    }
+    const testOnly = offset => testRanges.some(([start, end]) => offset >= start && offset <= end);
+    const expression = /((?:#\[[^\]]*\]\s*)+)(?:pub(?:\([^)]*\))?\s+)?(?:struct|enum)\s+([A-Za-z_]\w*)/g;
+    for (const match of file.code.matchAll(expression)) {
+      if (testOnly(match.index)) continue;
+      if (/#\[\s*cfg\s*\(\s*test\s*\)\s*\]/.test(match[1])) continue;
+      const derives = [...match[1].matchAll(/#\[\s*derive\s*\(([^)]*)\)\s*\]/g)].flatMap(derive => [...derive[1].matchAll(ecsDerives)].map(value => value[1]));
+      if (!derives.length) continue;
+      const offset = match.index + match[0].search(/\b(?:struct|enum)\s/);
+      declarations.push({ ...context.sourceAt(file, offset, derives.includes('InputAction') ? 'action_definition' : 'definition', match[2]), name: match[2], derives });
+    }
+    for (const call of context.callsIn(file)) if (!testOnly(call.start) && ['add_systems', 'add_observer', 'observe', 'on'].includes(call.method)) {
+      registrations.push({ ...context.sourceAt(file, call.start, 'registration', call.method), method: call.method });
+    }
+  }
+  const entries = Object.values(registry).filter(record => !record.alias_of).flatMap(record => record.sourceEntries || []).filter(source => !source.dependency);
+  const at = (expected, roles) => entries.some(source => roles.includes(source.role) && source.path === expected.path && source.line === expected.line);
+  const gaps = [
+    ...declarations.filter(declaration => !at(declaration, declaration.derives.includes('Message') ? ['definition', 'message_definition'] : [declaration.role])).map(declaration => `生产 ECS 声明未覆盖：${declaration.name}（${declaration.path}:${declaration.line}）`),
+    ...registrations.filter(registration => !at(registration, ['registration', 'configure'])).map(registration => `生产 ECS 注册未覆盖：${registration.method}（${registration.path}:${registration.line}）`),
+  ];
+  return { declarations, registrations, gaps };
 }
 
 /** Component access facts may already carry more precise audited operations; keep those authoritative. */

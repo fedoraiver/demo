@@ -283,11 +283,11 @@ export async function compileRoutedView(view, registry, compileNative, { onAttem
       preferredContext,
       ...remaining.map(profile => ({ ...profile, headerContext: true })), ...remaining.map(profile => ({ ...profile, headerContext: true, cardContainers: 'related' })), ...remaining];
   }
-  const layoutContainers = dagre && ['overview', 'events', 'component'].includes(view.aspect);
+  const layoutContainers = dagre && ['overview', 'events', 'component', 'object'].includes(view.aspect);
   // 原生透明容器为复杂协作图预留绕行空间，不添加业务身份或执行顺序。
   if (layoutContainers) profiles.splice(1, 0, { spacing: 0, span: 0, cardContainers: true });
   // 多实体的组件图需要在容器内边距与列间距共同变化后重新布线；每个候选仍走完整几何检查。
-  if (dagre && view.aspect === 'component') profiles.splice(2, 0,
+  if (dagre && ['component', 'object'].includes(view.aspect)) profiles.splice(2, 0,
     ...[16, 32, 64].flatMap(spacing => [0, 2, 4, 8].map(span => ({ spacing, span, cardContainers: true }))));
   // 复合节点可能遮住 Dagre 的原生曲线；最后尝试同一网络的另一声明顺序，不改变任何关系或排版链。
   if (dagre && view.aspect === 'data') profiles.push({ spacing: 0, span: 0, reverseRelationEdges: true });
@@ -333,7 +333,7 @@ export async function compileRoutedView(view, registry, compileNative, { onAttem
       }
       const invalid = inspection.edges.filter(invalidRoute);
       // 单条近共线关系可能被 Dagre 压直。只延长该关系的原生 rank span，避免同时拉长包含边穿过左栏。
-      if (dagre && view.aspect === 'component' && cardContainers && !componentCurveProfiles) {
+      if (dagre && ['component', 'object'].includes(view.aspect) && cardContainers && !componentCurveProfiles) {
         const straight = invalid.filter(edge => !edge.axis && !edge.curved && !edge.collisions.length && !edge.arrowIssues.length).map(edge => edge.mermaidId);
         if (straight.length) {
           componentCurveProfiles = true;
