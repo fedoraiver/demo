@@ -27,6 +27,7 @@ mod test_support {
             pointer::{Location, PointerId},
         },
         scene::ScenePlugin,
+        state::app::StatesPlugin,
         text::{TextPlugin, detect_text_needs_rerender, load_font_assets_into_font_collection},
         ui::{
             ui_layout_system,
@@ -52,6 +53,7 @@ mod test_support {
             ScenePlugin,
             InputPlugin,
             EnhancedInputPlugin,
+            StatesPlugin,
             GameFlowPlugin,
         ))
         .init_asset::<Font>()
@@ -1118,6 +1120,7 @@ mod page_refresh_tests {
     use crate::ui::pages::*;
     use bevy::{
         input::mouse::MouseScrollUnit,
+        state::app::StatesPlugin,
         text::TextLayoutInfo,
         ui_widgets::{Scrollbar, ScrollbarThumb},
     };
@@ -1130,6 +1133,7 @@ mod page_refresh_tests {
             app.add_plugins((
                 bevy::input::InputPlugin,
                 bevy_enhanced_input::prelude::EnhancedInputPlugin,
+                StatesPlugin,
                 crate::game_flow::GameFlowPlugin,
             ));
             let theme = layout_theme(app);

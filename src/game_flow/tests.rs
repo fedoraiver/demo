@@ -1,7 +1,7 @@
 use super::*;
 
 use avian3d::prelude::{Collider, LinearVelocity, Position, RigidBody};
-use bevy::time::TimeUpdateStrategy;
+use bevy::{state::app::StatesPlugin, time::TimeUpdateStrategy};
 
 use crate::{
     character::CharacterPlugin, item_interaction::ItemInteractionPlugin, physics::GamePhysicsPlugin,
@@ -14,6 +14,7 @@ fn pause_freezes_actual_physics_immediately_and_resume_does_not_catch_up() {
     app.add_plugins((
         MinimalPlugins,
         TransformPlugin,
+        StatesPlugin,
         GameFlowPlugin,
         GamePhysicsPlugin,
         CharacterPlugin,
