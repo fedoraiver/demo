@@ -9,9 +9,57 @@ import { readCargoMetadata, createDependencySourceResolver, attachDependencySour
 import { DEPENDENCY_SOURCE_DEFINITIONS } from './architecture-source-definitions.mjs';
 import { buildComponentCatalog } from './architecture-components.mjs';
 import { NODE_KINDS } from './architecture-kinds.mjs';
+import { EDGE_SOURCE_EVIDENCE } from './architecture-source-evidence.mjs';
 
 const entry = (role, overrides = {}) => ({ role, label: role, path: 'src/example.rs', line: 12, ...overrides });
 const dependency = { name: 'bevy_ecs', version: '0.17.3', root: 'C:/cargo/registry/bevy_ecs-0.17.3' };
+
+test('Observer 来源保留精确泛型注册、真实发出操作和投影原链证据', () => {
+  const model = JSON.parse(fs.readFileSync(new URL('./ecs-data.json', import.meta.url), 'utf8'));
+  const { registry } = buildArchitectureModel(model);
+  const metadata = readCargoMetadata(fileURLToPath(new URL('../..', import.meta.url)));
+  const resolver = createDependencySourceResolver(metadata);
+  attachDependencySources(registry, resolver, DEPENDENCY_SOURCE_DEFINITIONS);
+  const options = { repository: fileURLToPath(new URL('../..', import.meta.url)), model, registry, dependencyContext: { metadata, resolver } };
+  const { context } = applyArchitectureSourcePolicies(registry, options);
+  for (const id of ['enhanced-reset-gameplay-action', 'native-focused-keyboard-dispatch', 'ecs-component-lifecycle', 'event-remove-action-of-gameplay']) {
+    assert.deepEqual(registry[id].sourceGaps, [], id);
+    assert(registry[id].sourceEntries.length, id);
+  }
+  const reset = registry['enhanced-reset-gameplay-action'];
+  assert.equal(reset.schedule, null);
+  assert(reset.sourceEntries.some(source => source.role === 'registration' && source.path === 'src/first_person/mod.rs'));
+  assert(!reset.sourceEntries.some(source => source.path === 'src/ui/navigation.rs'));
+  const actual = source => source.dependency ? resolver.read(source).lines[source.line - 1]
+    : fs.readFileSync(new URL(`../../${source.path}`, import.meta.url), 'utf8').split(/\r?\n/)[source.line - 1];
+  assert(reset.sourceEntries.some(source => source.role === 'registration' && /add_observer\(reset_action::<C>\)/.test(actual(source))));
+  const links = structuredClone(model.system_links);
+  applyArchitectureEdgeSourcePolicies(links, { ...options, context });
+  for (const link of links.filter(link => EDGE_SOURCE_EVIDENCE[link.id])) {
+    assert(link.sourceEntries.length, link.id);
+    assert.deepEqual(link.sourceGaps || [], [], link.id);
+  }
+  const subscriptions = links.filter(link => model.observers.some(observer => link.id === `observer-${observer.system}`));
+  for (const subscription of subscriptions) {
+    const emissions = links.filter(link => link.kind === 'trigger' && link.to === subscription.from);
+    assert(emissions.length, subscription.id);
+    for (const emission of emissions) {
+      assert(emission.sourceEntries.some(source => source.role === 'operation'), emission.id);
+      if (['world_spawn', 'native_pointer_events', 'native_button_up', 'native_button_drag_end', 'native_button_cancel'].includes(emission.from)) {
+        assert(emission.notes.some(note => note.includes('命令应用')), `${emission.id}: 延迟命令触发时机`);
+      }
+      const projection = { id: `derived-${emission.id}-${subscription.id}`, projection: 'observer-trigger', kind: 'trigger',
+        from: emission.from, to: subscription.to, eventId: subscription.from, originalLinkIds: [emission.id, subscription.id] };
+      applyArchitectureEdgeSourcePolicies([projection], { ...options, context });
+      assert(projection.sourceEntries.some(source => source.role === 'operation'), projection.id);
+      assert(projection.sourceEntries.some(source => source.role === 'parameter'), projection.id);
+      assert.deepEqual(projection.sourceGaps || [], [], projection.id);
+    }
+  }
+  assert(!model.system_links.some(link => link.kind === 'trigger' && link.from === reset.id && registry[link.to]?.name.startsWith('Fire<')));
+  const cancel = links.find(link => link.from === reset.id && link.to === 'event-observe_cancel');
+  assert(cancel.notes.some(note => note.includes('当前生产') && note.includes('未产生 Ongoing')));
+});
 
 test('every semantic card kind has its approved source role scope', () => {
   const cases = {
@@ -271,6 +319,44 @@ test('precise edge sources and evidence gaps survive policy application', t => {
   assert.deepEqual(links[0].sourceEntries.map(source => source.role), ['related', 'operation']);
   assert(links[0].sourceEntries.some(source => source.role === 'operation' && source.label === '辅助函数调用处'));
   assert.deepEqual(links[0].sourceGaps, ['待核实：字段修改尚未确认']);
+});
+
+test('Observer 投影分别评估两段原链，单段证据不掩盖另一段动态缺口', t => {
+  const fixture = sourceFixture(t, 'fn emit() {}\nfn receive() {}');
+  const operation = { role: 'operation', path: 'src/example/mod.rs', line: 1, label: '发出操作' };
+  const parameter = { role: 'parameter', path: 'src/example/mod.rs', line: 2, label: '订阅参数' };
+  for (const missing of ['emission', 'subscription']) {
+    const originals = [
+      { id: 'emission', kind: 'trigger', from: 'system', to: 'event', sourceEntries: missing === 'emission' ? [] : [operation] },
+      { id: 'subscription', kind: 'trigger', from: 'event', to: 'observer', sourceEntries: missing === 'subscription' ? [] : [parameter] },
+    ];
+    const before = structuredClone(originals);
+    const projection = { id: 'projection', kind: 'trigger', projection: 'observer-trigger', from: 'system', to: 'observer',
+      eventId: 'event', originalLinkIds: ['emission', 'subscription'], sourceEntries: [missing === 'emission' ? parameter : operation] };
+    applyArchitectureEdgeSourcePolicies([projection], { repository: fixture, model: { system_links: originals } });
+    assert.equal(projection.sourceEntries.length, 1);
+    assert(projection.sourceGaps.some(gap => /具体操作位置尚未完成源码核实/.test(gap)), missing);
+    assert.deepEqual(originals, before, `${missing}: 不污染清单中的原始对象关系`);
+  }
+});
+
+test('Observer 投影复用原链普通来源回退，缺失原链或循环标记不会递归求值', t => {
+  const fixture = sourceFixture(t, 'fn emit() {}\nfn receive() {}');
+  const originals = [
+    { id: 'emission', kind: 'trigger', from: 'system', to: 'event', source: { path: 'src/example/mod.rs', line: 1 } },
+    { id: 'subscription', kind: 'trigger', from: 'event', to: 'observer', projection: 'observer-trigger', originalLinkIds: ['subscription'],
+      sourceEntries: [{ role: 'parameter', path: 'src/example/mod.rs', line: 2 }] },
+  ];
+  const before = structuredClone(originals);
+  const projection = { id: 'projection', kind: 'trigger', projection: 'observer-trigger', from: 'system', to: 'observer',
+    eventId: 'event', originalLinkIds: ['emission', 'subscription'] };
+  applyArchitectureEdgeSourcePolicies([projection], { repository: fixture, model: { system_links: originals } });
+  assert.deepEqual(projection.sourceEntries.map(source => source.role), ['parameter', 'operation']);
+  assert.deepEqual(projection.sourceGaps || [], []);
+  assert.deepEqual(originals, before);
+  const incomplete = { ...projection, id: 'incomplete', originalLinkIds: ['emission', 'absent'] };
+  applyArchitectureEdgeSourcePolicies([incomplete], { repository: fixture, model: { system_links: originals } });
+  assert(incomplete.sourceGaps.some(gap => /缺少完整的发出与订阅原关系/.test(gap)));
 });
 
 test('生产声明与注册覆盖审计排除测试项，保留普通声明和缺失注册', t => {

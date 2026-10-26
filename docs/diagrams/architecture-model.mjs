@@ -1,6 +1,66 @@
 // 将已核对清单组织为功能局部图；这里不推断 Rust 语义或绘制图形。
 import { INFRASTRUCTURE_FEATURES, infrastructureFeature } from './architecture-infrastructure.mjs';
 import { nodeKindOf } from './architecture-kinds.mjs';
+import crypto from 'node:crypto';
+
+// 无固定 Schedule 的触发节点保留真实身份，由来源连线安排位置。
+export function isUnscheduledTriggerNode(record) {
+  return nodeKindOf(record) === 'Observer' || record.schedule_group === 'EventTriggered';
+}
+
+// 系统图压缩两跳事件关系；对象图仍使用原关系，不能把来源当成 Observer 的直接对象邻居。
+export function projectObserverTriggers(links, registry) {
+  const distinct = values => [...new Map(values.map(value => [JSON.stringify(value), value])).values()];
+  const emissions = Map.groupBy(links.filter(link => link.kind === 'trigger' && registry[link.to]?.kind === 'EntityEvent'), link => link.to);
+  return links.filter(link => link.kind === 'trigger' && registry[link.from]?.kind === 'EntityEvent' && registry[link.to]?.kind === 'Observer').flatMap(subscription =>
+    (emissions.get(subscription.from) || []).map(emission => ({
+      id: `observer-trigger-${crypto.createHash('sha256').update(`${emission.id}|${subscription.id}`).digest('hex').slice(0, 16)}`,
+      from: emission.from, to: subscription.to, kind: 'trigger', label: subscription.label || registry[subscription.from].name,
+      projection: 'observer-trigger', eventId: subscription.from, originalLinkIds: [emission.id, subscription.id],
+      notes: distinct([emission.label, ...(emission.notes || []), ...(subscription.notes || [])].filter(value => value && value !== '触发')),
+      sourceEntries: distinct([...(emission.sourceEntries || []), ...(subscription.sourceEntries || [])]),
+      sourceGaps: distinct([...(emission.sourceGaps || []), ...(subscription.sourceGaps || [])]),
+    })));
+}
+
+// 附属只决定画布位置；真实 Schedule 成员始终由 nodes 保存，不给回调或机制源增加注册。
+export function buildObserverPlacement(graph, registry, scheduleGroups) {
+  const groups = scheduleGroups.map(group => ({ ...group, visualAttachments: [] }));
+  const nodeId = node => typeof node === 'string' ? node : node.id;
+  const unscheduled = new Set(graph.nodes.filter(node => isUnscheduledTriggerNode(registry[node.id])).map(node => node.id));
+  const triggers = graph.links.filter(link => link.projection === 'observer-trigger');
+  const neighbors = new Map();
+  for (const { from, to } of triggers) for (const [id, other] of [[from, to], [to, from]]) {
+    if (!neighbors.has(id)) neighbors.set(id, new Set());
+    neighbors.get(id).add(other);
+  }
+  const pending = new Set(neighbors.keys()), branches = [];
+  function place(ids) {
+    const attachments = graph.nodes.filter(node => ids.has(node.id) && unscheduled.has(node.id)).map(node => node.id);
+    if (!attachments.length) return;
+    const hosts = groups.filter(group => group.nodes.some(node => ids.has(nodeId(node))));
+    if (hosts.length === 1) hosts[0].visualAttachments.push(...attachments);
+    else {
+      const members = new Set(attachments);
+      branches.push({ id: `observer-branch-${crypto.createHash('sha256').update([...members].sort().join('|')).digest('hex').slice(0, 16)}`,
+        nodes: attachments, anchorSourceIds: [...new Set(triggers.filter(link => members.has(link.from)).map(link => link.from))] });
+    }
+    for (const id of attachments) unscheduled.delete(id);
+  }
+  while (pending.size) {
+    const ids = new Set(), queue = [pending.values().next().value];
+    while (queue.length) {
+      const id = queue.pop();
+      if (!pending.delete(id)) continue;
+      ids.add(id);queue.push(...neighbors.get(id));
+    }
+    place(ids);
+  }
+  // 无已核实发出边的孤立回调仍保留卡片，来源缺口由语义校验报告。
+  for (const id of [...unscheduled]) place(new Set([id]));
+  for (const group of groups) if (!group.visualAttachments.length) delete group.visualAttachments;
+  return { groups, branches };
+}
 
 export const SCHEDULE_GROUP_DISPLAY_LABELS = Object.freeze({
   FixedLast: 'FixedLast',
@@ -135,11 +195,12 @@ export function buildArchitectureModel(model) {
       if (owned(link.from)) internal.add(link.from);
       if (owned(link.to)) internal.add(link.to);
     }
-    const selectedLinks = viewLinks.filter(link => {
+    const candidates = aspect === 'systems' ? [...viewLinks, ...projectObserverTriggers(viewLinks, registry)] : viewLinks;
+    const selectedLinks = candidates.filter(link => {
       // 共享实体不转移关系的功能归属；每条实体关系只在定义它的功能中展开。
       if (relationIds.has(link.id)) return aspect === 'data' && ownerOf(link.id) === featureId;
       if (!internal.has(link.from) && !internal.has(link.to)) return false;
-      if (aspect === 'systems') return (link.kind === 'order' && isSystem(link.from) && isSystem(link.to)) || (link.kind === 'registration' && !isRegistration(link.from) && isSystem(link.from) && isSystem(link.to));
+      if (aspect === 'systems') return link.projection === 'observer-trigger' || (link.kind === 'order' && isSystem(link.from) && isSystem(link.to)) || (link.kind === 'registration' && !isRegistration(link.from) && isSystem(link.from) && isSystem(link.to));
       if (aspect === 'events') return eventLink(link) || ((link.kind === 'read' || link.kind === 'write') && (observers.has(link.from) || observers.has(link.to)));
       return link.kind === 'transition' || ((link.kind === 'read' || link.kind === 'write' || link.kind === 'reference') && (resources.has(link.from) || resources.has(link.to) || components.has(link.from) || components.has(link.to)));
     });
@@ -182,6 +243,7 @@ export function buildArchitectureModel(model) {
       if (seen.has(node.id)) throw new Error(`调度图重复节点：${node.id}`);
       seen.add(node.id);
       if (!registry[node.id]) throw new Error(`调度图未知节点：${node.id}`);
+      if (isUnscheduledTriggerNode(registry[node.id])) continue;
       if (systems.has(node.id) && (!Object.hasOwn(registry[node.id], 'schedule') || !registry[node.id].schedule_group)) throw new Error(`系统 ${node.id} 缺少明确的 Schedule 注册`);
       const groupId = registry[node.id].schedule_group || 'Explanatory';
       const group = groups.get(groupId);
@@ -207,8 +269,9 @@ export function buildArchitectureModel(model) {
       }
       group.nodes = ordered;
     }
-    return [...groups.values()].filter(group => group.nodes.length).sort((a, b) => a.order - b.order)
+    const ordered = [...groups.values()].filter(group => group.nodes.length).sort((a, b) => a.order - b.order)
       .map(group => ({ ...group, label: scheduleGroupLabel(group, registry) }));
+    return buildObserverPlacement(graph, registry, ordered).groups;
   }
   return { registry, features, infrastructureFeatures: INFRASTRUCTURE_FEATURES, ownerOf, graphFor, scheduleGroups, resolveNode };
 }

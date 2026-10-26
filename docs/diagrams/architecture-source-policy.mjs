@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { NODE_KINDS, nodeKindOf } from './architecture-kinds.mjs';
-import { TYPE_PACKAGES, ENTITY_SOURCE_EVIDENCE, HIERARCHY_OWNED_ENTITIES, IMPORTED_ENTITIES, MARKER_ONLY_RESOURCES, RELATED_IMPLEMENTATIONS } from './architecture-source-evidence.mjs';
+import { TYPE_PACKAGES, ENTITY_SOURCE_EVIDENCE, HIERARCHY_OWNED_ENTITIES, IMPORTED_ENTITIES, MARKER_ONLY_RESOURCES, RELATED_IMPLEMENTATIONS, SYSTEM_REGISTRATION_EVIDENCE, EDGE_SOURCE_EVIDENCE } from './architecture-source-evidence.mjs';
 
 const roleLabels = Object.freeze({
   definition: '定义位置', registration: '注册位置', create: '创建位置', destroy: '销毁位置',
@@ -354,6 +354,7 @@ function systemDefinition(record, context) {
 function systemRegistrations(record, context, observer = false) {
   const definition = systemDefinition(record, context);
   if (!definition) return [];
+  if (SYSTEM_REGISTRATION_EVIDENCE[record.id]) return SYSTEM_REGISTRATION_EVIDENCE[record.id].flatMap(descriptor => context.resolveEvidence(descriptor));
   const declarationLine = context.read(definition).lines[definition.line - 1];
   const symbol = /\bfn\s+([A-Za-z_]\w*)/.exec(declarationLine)?.[1] || record.name;
   // WorldInspectorPlugin 先把这个真实函数转为配置变量，再把变量注册进 Schedule。
@@ -704,15 +705,35 @@ export function auditProductionEcsCoverage(registry, { context, ...options } = {
 /** Component access facts may already carry more precise audited operations; keep those authoritative. */
 export function applyArchitectureEdgeSourcePolicies(links, options = {}) {
   const context = options.context || createArchitectureSourceContext(options), registry = options.registry || {};
-  for (const link of links) {
-    const reviewed = (link.sourceEntries || []).map(source => source.role === 'call' ? { ...source, role: 'operation', label: source.label || '调用处' } : source);
+  const originals = new Map((context.model?.system_links || []).map(link => [link.id, link]));
+  const reviewedEntries = entries => entries.map(source => source.role === 'call' ? { ...source, role: 'operation', label: source.label || '调用处' } : source);
+  function evaluateOriginal(link) {
+    const reviewed = reviewedEntries(link.sourceEntries || []), gaps = [...(link.sourceGaps || [])];
+    for (const descriptor of EDGE_SOURCE_EVIDENCE[link.id] || []) {
+      const resolved = context.resolveEvidence(descriptor);
+      reviewed.push(...resolved);
+      if (!resolved.length) gaps.push(pending(`未能唯一核实${descriptor.label}（${descriptor.path}）`));
+    }
     if (!reviewed.length && link.source?.path) reviewed.push(context.verified(link.source, 'operation', '建立该关系的实际实现'));
     if (!reviewed.length && ['registration', 'membership', 'constraint', 'order'].includes(link.kind)) {
       const sources = [registry[link.from], registry[link.to]].filter(Boolean).flatMap(record => record.sourceEntries || []).filter(source => ['registration', 'configure', 'install'].includes(source.role));
       reviewed.push(...sources);
     }
-    link.sourceEntries = sourceEntriesFor(link, { kind: 'edge', reviewedEntries: reviewed });
-    if (!link.sourceEntries.length) link.sourceGaps = uniqueValues([...(link.sourceGaps || []), pending('该关系的具体操作位置尚未完成源码核实')]);
+    const sourceEntries = sourceEntriesFor(link, { kind: 'edge', reviewedEntries: reviewed });
+    if (!sourceEntries.length) gaps.push(pending('该关系的具体操作位置尚未完成源码核实'));
+    return { sourceEntries, ...(gaps.length || link.sourceGaps ? { sourceGaps: uniqueValues(gaps) } : {}) };
+  }
+  for (const link of links) {
+    if (link.projection !== 'observer-trigger') { Object.assign(link, evaluateOriginal(link)); continue; }
+    // 原链逐段独立评估，避免一段证据掩盖另一段缺口；不回写清单，也不递归追踪投影。
+    const lineage = (link.originalLinkIds || []).map(id => originals.get(id)).filter(Boolean).map(evaluateOriginal);
+    link.sourceEntries = sourceEntriesFor(link, { kind: 'edge', reviewedEntries: [
+      ...reviewedEntries(link.sourceEntries || []), ...lineage.flatMap(original => original.sourceEntries),
+    ] });
+    const gaps = [...(link.sourceGaps || []), ...lineage.flatMap(original => original.sourceGaps || [])];
+    if (lineage.length !== 2) gaps.push(pending('触发投影缺少完整的发出与订阅原关系'));
+    if (!link.sourceEntries.length) gaps.push(pending('该关系的具体操作位置尚未完成源码核实'));
+    if (gaps.length || link.sourceGaps) link.sourceGaps = uniqueValues(gaps);
   }
   return links;
 }

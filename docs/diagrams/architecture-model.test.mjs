@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import test from 'node:test';
-import { buildArchitectureModel, isMainPluginRegistration, scheduleGroupLabel, SCHEDULE_GROUP_DISPLAY_LABELS } from './architecture-model.mjs';
+import { buildArchitectureModel, buildObserverPlacement, isMainPluginRegistration, isUnscheduledTriggerNode, projectObserverTriggers, scheduleGroupLabel, SCHEDULE_GROUP_DISPLAY_LABELS } from './architecture-model.mjs';
 import { INFRASTRUCTURE_FEATURES, architectureViewId } from './architecture-infrastructure.mjs';
 import { dependencyDefinitionTargets } from './dependency-sources.mjs';
 import { DEPENDENCY_SOURCE_DEFINITIONS } from './architecture-source-definitions.mjs';
@@ -45,7 +45,7 @@ test('Bevy 与四个第三方入口分别浏览，具体泛型契约和类型定
 });
 
 test('第三方业务节点各有唯一入口，拆分旧聚合身份而不展开跨入口内部实现', () => {
-  const counts = { avian: 104, enhanced_input: 39, kira: 6, egui: 13 };
+  const counts = { avian: 104, enhanced_input: 40, kira: 6, egui: 13 };
   // 8d78c14 的已核实入口保持稳定；仅移除新版已不存在的 Egui 标记资源。
   const originalNodes = {
     avian: [
@@ -102,7 +102,7 @@ test('第三方业务节点各有唯一入口，拆分旧聚合身份而不展�
       'character.Sleeping', 'parcel.SpeculativeCcd', 'parcel.BodySizeMetrics', 'parcel.SolverBodyIndex',
     ],
     enhanced_input: [
-      'input_trigger',
+      'input_trigger', 'enhanced-reset-gameplay-action',
     ],
     kira: [],
     egui: [],
@@ -162,15 +162,66 @@ test('同名类型与同一函数的多次注册保留各自 canonical ID', () =
   assert.equal(architecture.ownerOf('menu_model.CourierAnimation'), 'ui');
 });
 
-test('功能系统图保留本功能边界和独立Observer区，跨功能依赖显示外部端点', () => {
+test('功能系统图保留本功能边界，Observer 根据来源连接而不进入 Schedule 容器', () => {
   const graph = architecture.graphFor('character', 'systems');
   assert.ok(graph.nodes.some(node => node.id === 'movement' && node.role === 'internal'));
   assert.ok(graph.nodes.some(node => node.id === 'facing_fixed' && node.role === 'external'));
   assert.ok(!graph.nodes.some(node => node.id === 'menu_rebuild'));
   const firstPerson = architecture.graphFor('first_person', 'systems');
   assert.ok(firstPerson.nodes.some(node => node.id === 'observe_move' && node.role === 'internal'));
-  assert.ok(architecture.scheduleGroups(firstPerson).find(group => group.id === 'EventTriggered').nodes.some(node => node.id === 'observe_move'));
+  assert.ok(!architecture.scheduleGroups(firstPerson).some(group => group.id === 'EventTriggered'));
+  assert.ok(architecture.scheduleGroups(firstPerson).flatMap(group => group.nodes).every(node => !isUnscheduledTriggerNode(architecture.registry[node.id])));
   assert.ok(graph.nodes.every(node => /[\u4e00-\u9fff]/.test(node.group)));
+});
+
+test('Observer 来源投影按精确事件身份连接，保留多来源、条件、源码和稳定 ID', () => {
+  const registry = {
+    emitter: { kind: 'System' }, cleanup: { kind: 'Observer' }, receiver: { kind: 'Observer' },
+    a: { kind: 'EntityEvent', name: 'RemoveEvent' }, b: { kind: 'EntityEvent', name: 'RemoveEvent' },
+  };
+  const source = { path: 'src/example.rs', line: 9, role: 'operation' };
+  const links = [
+    { id: 'emit-a', from: 'emitter', to: 'a', kind: 'trigger', label: 'Commands::trigger', notes: ['命令应用后生效'], sourceEntries: [source] },
+    { id: 'reset-a', from: 'cleanup', to: 'a', kind: 'trigger', notes: ['旧状态 Fired 时'] },
+    { id: 'emit-b', from: 'emitter', to: 'b', kind: 'trigger' },
+    { id: 'subscribe-a', from: 'a', to: 'receiver', kind: 'trigger', label: 'Remove<Pressed>', sourceEntries: [source], sourceGaps: ['待核实：边界条件'] },
+  ];
+  const before = structuredClone(links), projected = projectObserverTriggers(links, registry);
+  assert.equal(projected.length, 2, '同名事件不能互相匹配');
+  assert.deepEqual(projected.map(link => [link.from, link.to, link.eventId, link.label]), [
+    ['emitter', 'receiver', 'a', 'Remove<Pressed>'], ['cleanup', 'receiver', 'a', 'Remove<Pressed>'],
+  ]);
+  assert.deepEqual(projected[0].originalLinkIds, ['emit-a', 'subscribe-a']);
+  assert.deepEqual(projected[0].sourceEntries, [source]);
+  assert.deepEqual(projected[0].sourceGaps, ['待核实：边界条件']);
+  assert.deepEqual(projected[0].notes, ['Commands::trigger', '命令应用后生效']);
+  assert.deepEqual(projected[1].notes, ['旧状态 Fired 时']);
+  assert.deepEqual(projectObserverTriggers([...links].reverse(), registry).map(link => link.id).sort(), projected.map(link => link.id).sort());
+  assert.equal(new Set(projected.map(link => link.id)).size, projected.length);
+  assert.deepEqual(links, before, '显示投影不修改原关系或对象图输入');
+});
+
+test('Observer 只作为发出来源旁的视觉附属，保留真实调度成员和独立生命周期分支', () => {
+  for (const feature of ['first_person', 'ui', 'infrastructure', 'enhanced_input']) {
+    const graph = architecture.graphFor(feature, 'systems'), before = JSON.stringify(graph);
+    const groups = architecture.scheduleGroups(graph), placement = buildObserverPlacement(graph, architecture.registry, groups);
+    const pre = placement.groups.find(group => group.id === 'PreUpdate');
+    const callbacks = graph.nodes.filter(node => architecture.registry[node.id].kind === 'Observer');
+    assert.ok(pre.visualAttachments.length, feature);
+    assert.ok(callbacks.some(node => pre.visualAttachments.includes(node.id)), feature);
+    const scheduled = placement.groups.flatMap(group => group.nodes.map(node => typeof node === 'string' ? node : node.id));
+    const attachments = placement.groups.flatMap(group => group.visualAttachments || []);
+    const branches = placement.branches.flatMap(branch => branch.nodes);
+    assert.equal(new Set([...scheduled, ...attachments, ...branches]).size, graph.nodes.length);
+    assert.deepEqual(new Set([...scheduled, ...attachments, ...branches]), new Set(graph.nodes.map(node => node.id)));
+    assert.ok(attachments.every(id => !scheduled.includes(id) && architecture.registry[id].schedule === null));
+    assert.equal(JSON.stringify(graph), before, '布局不回写关系或注册');
+  }
+  const item = architecture.graphFor('item_interaction', 'systems');
+  const itemPlacement = buildObserverPlacement(item, architecture.registry, architecture.scheduleGroups(item));
+  assert.ok(itemPlacement.branches.some(branch => branch.nodes.includes('ecs-component-lifecycle') && branch.nodes.includes('carry_holder_despawn')));
+  const scene = architecture.scheduleGroups(architecture.graphFor('scene_assembly', 'systems'));
+  assert.ok(scene.find(group => group.id === 'SpawnScene').visualAttachments.includes('island_ready_observer'));
 });
 
 test('提前唤醒同步在物理页完整显示，浏览归属不覆盖引擎定义来源', () => {
@@ -406,9 +457,8 @@ test('非系统节点缺少明确归属时失败，不静默归入基础设施',
   assert.throws(() => buildArchitectureModel(missingOwner), /resource.GameSettings.*缺少明确的功能归属/);
 });
 
-test('137 个条目分别记录实际 Schedule，Observer 不冒充固定调度', () => {
+test('系统清单分别记录实际 Schedule，Observer 不冒充固定调度', () => {
   const scheduleNames = new Set(['Startup', 'First', 'PreUpdate', 'FixedFirst', 'FixedUpdate', 'FixedPostUpdate', 'FixedLast', 'RunFixedMainLoop', 'Update', 'SpawnScene', 'PostUpdate', 'EguiPrimaryContextPass', 'Render', 'OnEnter(AppState::MainMenu)', 'OnEnter(AppState::InGame)', 'OnEnter(PlayState::Paused)', 'OnEnter(PlayState::Running)']);
-  assert.equal(model.systems.length, 137);
   const originalIds = [
     'startup_spawn', 'startup_config', 'startup_timestep', 'startup_pose',
     'frame_limit', 'time_update', 'input_update', 'mouse_capture',
@@ -448,6 +498,7 @@ test('137 个条目分别记录实际 Schedule，Observer 不冒充固定调度'
     'native_button_down', 'native_button_up', 'native_button_click', 'native_button_drag_end',
     'native_button_cancel', 'native_button_key',
     'flow_suspend_paused', 'character_clear_intents_paused',
+    'enhanced-reset-gameplay-action', 'native-focused-keyboard-dispatch',
   ];
   assert.deepEqual(new Set(model.systems.map(system => system.id)), new Set([...originalIds, ...addedIds]), 'Original registrations retain their stable IDs');
   for (const system of model.systems) {
@@ -472,7 +523,9 @@ test('Schedule 横向分组按引擎真实顺序，每个 canonical 节点只出
     const groups = architecture.scheduleGroups(graph);
     const ids = groups.flatMap(group => group.nodes.map(node => node.id));
     assert.equal(new Set(ids).size, ids.length, feature);
-    assert.deepEqual(new Set(ids), new Set(graph.nodes.map(node => node.id)), feature);
+    const triggers = graph.nodes.filter(node => isUnscheduledTriggerNode(architecture.registry[node.id])).map(node => node.id);
+    assert.deepEqual(new Set([...ids, ...triggers]), new Set(graph.nodes.map(node => node.id)), feature);
+    assert.ok(triggers.every(id => !ids.includes(id)), '触发节点不冒充 Schedule 成员');
     assert.deepEqual(groups.map(group => group.order), groups.map(group => group.order).sort((a, b) => a - b));
     assert.equal(JSON.stringify(graph), before);
   }
@@ -525,7 +578,7 @@ test('状态分组标题只显示类型，完整运行时注册、身份与生�
     const schedules = state && [...new Set(state.nodes.flatMap(node => architecture.registry[node.id].registrations.filter(registration => registration.scope === 'runtime').map(registration => registration.schedule)))];
     assert.deepEqual(schedules?.toSorted(), targets.get(feature)?.toSorted(), feature);
     for (const group of groups) {
-      const { label, nodes, ...contract } = group;
+      const { label, nodes, visualAttachments, ...contract } = group;
       const { label: originalLabel, ...definition } = definitions.get(group.id);
       assert.deepEqual(contract, definition, `${feature}/${group.id}`);
       if (group.id === 'Startup') assert.equal(label, 'Startup');

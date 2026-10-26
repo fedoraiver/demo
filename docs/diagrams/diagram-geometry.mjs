@@ -336,6 +336,11 @@ export function checkMermaidGeometry(svg, view) {
       if (previousNode) requireCondition(bounds.y > previousNode.y + previousNode.height - .05, `Mermaid Schedule nodes are not top to bottom: ${group.id}`);
       previousNode = bounds;
     }
+    for (const id of group.visualAttachments || []) {
+      const bounds = nodes.get(id)?.bounds;
+      requireCondition(bounds && bounds.x >= actual.bounds.x - .05 && bounds.y >= actual.bounds.y - .05
+        && bounds.x + bounds.width <= actual.bounds.x + actual.bounds.width + .05 && bounds.y + bounds.height <= actual.bounds.y + actual.bounds.height + .05, `Mermaid event attachment is outside its source region: ${id}`);
+    }
   }
   const nodeEntries = [...nodes];
   for (let index = 0; index < nodeEntries.length; index++) {

@@ -4,7 +4,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import test from 'node:test';
 import puppeteer from 'puppeteer';
-import { buildArchitectureModel } from './architecture-model.mjs';
+import { buildArchitectureModel, isUnscheduledTriggerNode } from './architecture-model.mjs';
 import { buildComponentCatalog } from './architecture-components.mjs';
 import { renderGraphView } from './architecture-renderer.mjs';
 import { inspectViewRoutes, nativeMarkerProperty } from './architecture-routing.mjs';
@@ -68,6 +68,31 @@ for (const feature of ['item_interaction', 'ui', 'first_person']) test(`${featur
   assert.equal(view.entityViews, undefined);
   assert.deepEqual(view.entityGroups || [], []);
   await compileFixture(view, graph, feature);
+});
+
+test('Observer sources route natively in local branches without assigning callbacks a Schedule', { skip: !chromium, timeout: 180000 }, async () => {
+  const graph = architecture.graphFor('first_person', 'systems');
+  const view = renderGraphView({ id: 'plugin-first_person-systems', feature: 'first_person', aspect: 'systems', label: '系统与调度', summary: '发出系统直接连接其事件 Observer。' },
+    graph, architecture.registry, architecture.features, architecture.scheduleGroups(graph));
+  assert(view.links.some(link => link.kind === 'trigger' && link.projection === 'observer-trigger'));
+  const result = await compileFixture(view, graph, 'observer-sources');
+  const independent = result.nodes.filter(node => isUnscheduledTriggerNode(architecture.registry[node.id]));
+  assert(independent.some(node => node.visualType === 'observer'));
+  for (const node of independent) {
+    assert(!result.scheduleGroups.some(group => group.nodes.includes(node.id)), node.id);
+    assert(result.scheduleGroups.some(group => group.id === 'PreUpdate' && group.visualAttachments?.includes(node.id)), node.id);
+  }
+  assert.equal(JSON.parse(/^---\n([\s\S]*?)\n---/.exec(result.mermaid)[1]).config.layout, 'dagre');
+});
+
+test('unscheduled lifecycle Observer remains beside its real source in an independent native branch', { skip: !chromium, timeout: 180000 }, async () => {
+  const graph = architecture.graphFor('item_interaction', 'systems');
+  const view = renderGraphView({ id: 'plugin-item_interaction-systems', feature: 'item_interaction', aspect: 'systems', label: '系统与调度', summary: '持物调度保持真实来源与原生走线。' },
+    graph, architecture.registry, architecture.features, architecture.scheduleGroups(graph));
+  const result = await compileFixture(view, graph, 'carry-observer-sources');
+  assert(result.observerBranches.some(branch => branch.nodes.includes('carry_holder_despawn') && branch.nodes.includes('ecs-component-lifecycle')));
+  assert(result.scheduleGroups.every(group => !group.nodes.includes('carry_holder_despawn') && !group.visualAttachments?.includes('carry_holder_despawn')));
+  assert.equal(JSON.parse(/^---\n([\s\S]*?)\n---/.exec(result.mermaid)[1]).config.layout, 'dagre');
 });
 
 for (const name of ['Name', 'Transform', 'HeldTarget']) test(`${name} component graph keeps all owners left, systems right and native reversed arrows`, { skip: !chromium, timeout: 240000 }, async () => {
