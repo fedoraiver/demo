@@ -32,6 +32,7 @@ flowchart LR
   accTitle: Messages<KeyboardInput> · 对象关系
   accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
   %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
   classDef node_message_buffer fill:#EDF4F6,stroke:#247B91,stroke-width:1.6px,color:#1F3340
   classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
   classDef edge_consume stroke:#247B91,stroke-width:1.8px,stroke-dasharray:2 4
@@ -43,9 +44,13 @@ flowchart LR
   n2@{ shape: lin-rect, label: "**EguiPreUpdateSet::ProcessInput**<br/>来自Egui / Inspector ↗：将窗口和设备<br/>输入转换为检查器界面输入。" }
   class n2 node_system_set
   class n2 external_node
+  n3@{ shape: rounded, label: "**dispatch_focused_**<br/>**input#lt;KeyboardInput#gt;**<br/>将键盘消息转为焦点实体上的键盘事件。" }
+  class n3 node_system
   n0 e0@-->|"访问声明"| n1
   class e0 edge_consume
   n0 e1@-->|"访问声明"| n2
   class e1 edge_consume
+  n0 e2@-->|"访问声明"| n3
+  class e2 edge_consume
   e0@{ curve: basis }
-  e1@{ curve: basis }
+  e2@{ curve: basis }

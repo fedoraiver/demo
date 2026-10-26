@@ -1,5 +1,6 @@
 // 只读核对已维护的架构清单与交付产物；不分析 Rust 调度语义，也不运行游戏。
 import fs from 'node:fs';
+import crypto from 'node:crypto';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { isDeepStrictEqual } from 'node:util';
@@ -7,7 +8,7 @@ import { checkMermaidGeometry } from './diagram-geometry.mjs';
 import { NODE_STYLES, EDGE_STYLES, SELECTION_STYLE, EXTERNAL_REFERENCE_STYLE, visualTypeOf, edgeSemanticOf, displayLabelOf, scheduleLinksFor } from './architecture-style.mjs';
 import { nodeKindOf, NODE_KINDS } from './architecture-kinds.mjs';
 import { shapeBounds, svgElements } from './svg-shape-geometry.mjs';
-import { isMainPluginRegistration, scheduleGroupLabel, buildArchitectureModel } from './architecture-model.mjs';
+import { isMainPluginRegistration, scheduleGroupLabel, buildArchitectureModel, isUnscheduledTriggerNode, buildObserverPlacement } from './architecture-model.mjs';
 import { buildComponentCatalog } from './architecture-components.mjs';
 import { buildObjectCatalog } from './architecture-objects.mjs';
 import { sourceEntriesFor, sourcePolicyKindFor, sourcePolicyFor, auditProductionEcsCoverage } from './architecture-source-policy.mjs';
@@ -145,7 +146,7 @@ export function checkGuideSamples(samples, styles) {
 export function checkMermaidStyles(view, registry) {
   if (!styledView(view)) return;
   const elements = svgElements(view.svg);
-  if (view.layout === 'app-schedule') for (const group of view.scheduleGroups.filter(group => !group.nodes.length)) {
+  if (view.layout === 'app-schedule') for (const group of view.scheduleGroups.filter(group => !group.nodes.length && !(group.visualAttachments || []).length)) {
     const anchor = elements.find(item => item.attrs.id?.startsWith(`${view.id}-flowchart-phase_anchor_${group.mermaidId}-`));
     const parts = anchor && descendantsOf(elements, anchor).filter(item => ['rect', 'path', 'polygon', 'circle', 'ellipse'].includes(item.tag));
     requireCondition(parts?.length && parts.every(part => Number(effectiveStyle(part).opacity) === 0), `Visible empty Schedule layout anchor: ${group.id}`);
@@ -215,14 +216,21 @@ export function checkViewRouting(view) {
   return result;
 }
 
+/** 所有视图保留统一原生 Dagre 布局，不能通过元数据跳过方向和几何检查。 */
+export function checkMermaidLayout(view) {
+  requireCondition(view.scheduleOrientation === undefined, `Obsolete Schedule orientation metadata: ${view.id}`);
+  const configuration = /^---\r?\n([\s\S]*?)\r?\n---/.exec(view.mermaid);
+  const layout = configuration && JSON.parse(configuration[1]).config?.layout;
+  requireCondition(layout === 'dagre', `Expected shared Dagre layout: ${view.id}`);
+  return layout;
+}
+
 function checkMermaidSource(view, registry, scheduleDefinitions) {
   const appSchedule = view.layout === 'app-schedule';
+  requireCondition(view.scheduleOrientation === undefined, `Obsolete Schedule orientation metadata: ${view.id}`);
   if (appSchedule) scheduleDefinitions = new Map(APP_SCHEDULE_GROUPS.map(group => [group.id, group]));
   requireCondition(view.diagramType === 'flowchart' && /^\s*flowchart\s+(LR|RL|TB)\s*$/m.test(view.mermaid), `Expected Mermaid flowchart LR, RL or TB: ${view.id}`);
-  if (view.routing) {
-    const configuration = /^---\r?\n([\s\S]*?)\r?\n---/.exec(view.mermaid);
-    requireCondition(configuration && JSON.parse(configuration[1]).config?.layout === 'dagre', `Expected shared Dagre layout: ${view.id}`);
-  }
+  if (view.routing) checkMermaidLayout(view);
   requireCondition(!/^\s*(?:subgraph\s+)?legend(?:_\w*)?\b/m.test(view.mermaid), `Legend declaration remains in business Mermaid: ${view.id}`);
   const nodes = new Map(), links = new Map(), layout = new Map(), groups = new Map(), stack = [];
   const entityContainers = new Map((view.entityGroups || []).filter(group => group.expanded !== false).map(group => [group.mermaidId, group]));
@@ -255,7 +263,7 @@ function checkMermaidSource(view, registry, scheduleDefinitions) {
       for (const group of stack) group.descendants.push(node[1]);
       continue;
     }
-    const invisible = /^([A-Za-z]\w*)\s+(layout_\w+)@(~~~|-->)\s+([A-Za-z]\w*)\s*;?$/.exec(line);
+    const invisible = /^([A-Za-z]\w*)\s+(layout_\w+)@(~{3,}|-->)\s+([A-Za-z]\w*)\s*;?$/.exec(line);
     if (invisible) {
       requireCondition(!layout.has(invisible[2]), `Duplicate Mermaid layout edge: ${invisible[2]}`);
       layout.set(invisible[2], { from: invisible[1], to: invisible[4], directed: invisible[3] === '-->' });
@@ -284,7 +292,7 @@ function checkMermaidSource(view, registry, scheduleDefinitions) {
         && definition.shape === node.shape && compactText(display?.label) === compactText(renderedNodeLabel(node)), `Mermaid node style or label mismatch: ${node.id}`);
     }
   }
-  const phaseAnchors = appSchedule ? view.scheduleGroups.filter(group => !group.nodes.length).map(group => `phase_anchor_${group.mermaidId}`) : [];
+  const phaseAnchors = appSchedule ? view.scheduleGroups.filter(group => !group.nodes.length && !(group.visualAttachments || []).length).map(group => `phase_anchor_${group.mermaidId}`) : [];
   for (const id of phaseAnchors) requireCondition(nodes.get(id)?.shape === 'anchor' && !nodes.get(id).label.trim(), `Invalid empty Schedule anchor: ${view.id}/${id}`);
   requireCondition(nodes.size === view.nodes.length + entityHeaders.size + phaseAnchors.length, `Mermaid node declaration count mismatch: ${view.id}`);
   for (const [id] of entityHeaders) requireCondition(nodes.get(id)?.shape === 'text', `Invalid Entity header declaration: ${view.id}/${id}`);
@@ -316,23 +324,53 @@ function checkMermaidSource(view, registry, scheduleDefinitions) {
     layoutIds.add(link.mermaidId);
   }
   requireCondition(Array.isArray(view.scheduleGroups), `Missing Mermaid Schedule groups: ${view.id}`);
-  const grouped = new Set(), groupIds = new Set();
+  const grouped = new Set(), attached = new Set(), branched = new Set(), groupIds = new Set();
   let previousOrder = -Infinity;
   for (const group of view.scheduleGroups) {
     const definition = scheduleDefinitions.get(group.id), declaration = groups.get(group.mermaidId);
-    requireCondition((view.aspect === 'systems' || appSchedule) && definition && Array.isArray(group.nodes) && group.label === (appSchedule ? definition.label : scheduleGroupLabel({ ...definition, nodes: group.nodes }, registry)) && group.order === definition.order
+    requireCondition((view.aspect === 'systems' || appSchedule) && group.id !== 'EventTriggered' && definition && Array.isArray(group.nodes) && group.label === (appSchedule ? definition.label : scheduleGroupLabel({ ...definition, nodes: group.nodes }, registry)) && group.order === definition.order
       && group.order > previousOrder && !groupIds.has(group.id), `Invalid or unordered Schedule group in ${view.id}: ${group.id}`);
-    requireCondition(declaration?.direction === 'TB' && Array.isArray(group.nodes) && (group.nodes.length > 0 || appSchedule)
-      && isDeepStrictEqual(declaration.nodes, group.nodes.length ? group.nodes.map(id => canonicalToMermaid.get(id)) : [`phase_anchor_${group.mermaidId}`]), `Mermaid Schedule declaration mismatch: ${group.id}`);
+    const attachments = group.visualAttachments || [];
+    requireCondition(Array.isArray(attachments), `Invalid visual Schedule attachments: ${group.id}`);
+    const physicalIds = [...group.nodes, ...attachments], expectedDeclarations = physicalIds.length ? physicalIds.map(id => canonicalToMermaid.get(id)) : [`phase_anchor_${group.mermaidId}`];
+    requireCondition(declaration?.direction === 'TB' && Array.isArray(group.nodes) && (physicalIds.length > 0 || appSchedule)
+      && isDeepStrictEqual([...declaration.descendants].sort(), expectedDeclarations.sort()), `Mermaid Schedule declaration mismatch: ${group.id}`);
     if (styledView(view)) requireCondition(group.track === definition.track && group.parent === definition.parent && normalizedText(declaration.label) === normalizedText(group.label), `Mermaid Schedule contract mismatch: ${group.id}`);
     previousOrder = group.order;
     groupIds.add(group.id);
     for (const id of group.nodes) {
-      requireCondition(canonicalToMermaid.has(id) && !grouped.has(id) && (registry[id].schedule_group || 'Explanatory') === group.id, `Invalid Schedule node membership: ${id}`);
+      requireCondition(canonicalToMermaid.has(id) && !grouped.has(id) && !attached.has(id) && !isUnscheduledTriggerNode(registry[id])
+        && (registry[id].schedule_group || 'Explanatory') === group.id, `Invalid Schedule node membership: ${id}`);
       grouped.add(id);
     }
+    for (const id of attachments) {
+      requireCondition(canonicalToMermaid.has(id) && !grouped.has(id) && !attached.has(id) && isUnscheduledTriggerNode(registry[id]), `Invalid visual Schedule attachment: ${id}`);
+      attached.add(id);
+    }
   }
-  if (view.aspect === 'systems' || appSchedule) requireCondition(grouped.size === view.nodes.length, `Schedule groups do not cover all nodes: ${view.id}`);
+  const branches = view.observerBranches || [], branchIds = new Set();
+  requireCondition(Array.isArray(branches) && (!branches.length || view.aspect === 'systems' || appSchedule), `Invalid Observer source branches: ${view.id}`);
+  for (const branch of branches) {
+    requireCondition(typeof branch.id === 'string' && !branchIds.has(branch.id) && Array.isArray(branch.nodes)
+      && branch.nodes.length > 0 && Array.isArray(branch.anchorSourceIds), `Invalid Observer source branch: ${branch.id}`);
+    branchIds.add(branch.id);
+    const declaration = groups.get(branch.mermaidId);
+    requireCondition(declaration?.direction === 'TB' && !declaration.label.trim()
+      && isDeepStrictEqual([...declaration.descendants].sort(), branch.nodes.map(id => canonicalToMermaid.get(id)).sort()), `Mermaid Observer source branch declaration mismatch: ${branch.id}`);
+    requireCondition(view.mermaid.split(/\r?\n/).some(line => line.trim() === `style ${branch.mermaidId} fill:none,stroke:none`), `Visible Observer source branch container: ${branch.id}`);
+    for (const id of branch.nodes) {
+      requireCondition(canonicalToMermaid.has(id) && !grouped.has(id) && !attached.has(id) && !branched.has(id)
+        && isUnscheduledTriggerNode(registry[id]), `Invalid Observer source branch member: ${id}`);
+      branched.add(id);
+    }
+    const identity = `observer-branch-${crypto.createHash('sha256').update([...branch.nodes].sort().join('|')).digest('hex').slice(0, 16)}`;
+    const sources = [...new Set(view.links.filter(link => link.projection === 'observer-trigger' && branch.nodes.includes(link.from)).map(link => link.from))];
+    requireCondition(branch.id === identity && isDeepStrictEqual(branch.anchorSourceIds, sources), `Observer source branch identity or anchor mismatch: ${branch.id}`);
+  }
+  if (view.aspect === 'systems' || appSchedule) for (const node of view.nodes) {
+    const unscheduled = isUnscheduledTriggerNode(registry[node.id]);
+    requireCondition(unscheduled ? attached.has(node.id) || branched.has(node.id) : grouped.has(node.id), `Schedule groups and Observer placements do not cover all nodes: ${view.id}/${node.id}`);
+  }
   for (const group of view.entityGroups || []) {
     if (group.expanded === false) {
       requireCondition(!groups.has(group.mermaidId) && nodes.get(group.mermaidId)?.shape === 'rect', `Mermaid collapsed Entity declaration mismatch: ${view.id}/${group.id}`);
@@ -357,18 +395,64 @@ function checkMermaidSource(view, registry, scheduleDefinitions) {
     requireCondition(region?.id === (connected ? 'relations' : 'catalog'), `Split Entity layout unit: ${view.id}/${group.id}`);
   }
   if (view.aspect === 'data') requireCondition(!groups.has('diagram_main') && /^\s*flowchart\s+TB\s*$/m.test(view.mermaid), `Invalid compact Mermaid data direction: ${view.id}`);
+  else if (view.aspect === 'systems' || appSchedule) requireCondition(groups.get('diagram_main')?.direction === 'LR', `Invalid horizontal Mermaid Schedule direction: ${view.id}`);
   else if (/^\s*flowchart\s+TB\s*$/m.test(view.mermaid)) requireCondition(groups.get('diagram_main')?.direction === 'LR', `Invalid Mermaid main direction: ${view.id}`);
 }
 
+/** 系统图的直连只投影精确事件上的两条原关系；对象图仍保留原始一跳。 */
+export function checkObserverTriggerProjections(view, model, registry, sourceLinks = model.system_links || []) {
+  const projections = view.links.filter(link => link.projection === 'observer-trigger');
+  const systemView = view.aspect === 'systems' || view.layout === 'app-schedule';
+  requireCondition(systemView || projections.length === 0, `Observer trigger projection outside a system view: ${view.id}`);
+  if (!systemView) return 0;
+  requireCondition(projections.every(link => link.kind === 'trigger'), `Invalid Observer trigger projection kind: ${view.id}`);
+  const originals = new Map((model.system_links || []).map(link => [link.id, link]));
+  const evidence = new Map();
+  for (const link of sourceLinks) {
+    if (!evidence.has(link.id)) evidence.set(link.id, []);
+    evidence.get(link.id).push(link);
+  }
+  const sourceKey = source => JSON.stringify([source.role === 'call' ? 'operation' : source.role, source.path, source.line, source.column || 1, source.dependency?.name, source.dependency?.version]);
+  for (const link of view.links.filter(link => link.kind === 'trigger')) {
+    requireCondition(link.projection === 'observer-trigger', `Unprojected Observer trigger in system view: ${view.id}/${link.id}`);
+    requireCondition(registry[link.eventId] && nodeKindOf(registry[link.eventId]) === 'EntityEvent'
+      && registry[link.to] && nodeKindOf(registry[link.to]) === 'Observer'
+      && Array.isArray(link.originalLinkIds) && link.originalLinkIds.length === 2, `Invalid Observer trigger projection: ${link.id}`);
+    const [emission, subscription] = link.originalLinkIds.map(id => originals.get(id));
+    requireCondition(emission?.kind === 'trigger' && subscription?.kind === 'trigger'
+      && emission.from === link.from && emission.to === link.eventId
+      && subscription.from === link.eventId && subscription.to === link.to, `Observer trigger original chain mismatch: ${link.id}`);
+    const id = `observer-trigger-${crypto.createHash('sha256').update(`${emission.id}|${subscription.id}`).digest('hex').slice(0, 16)}`;
+    requireCondition(link.id === id && link.label === (subscription.label || registry[link.eventId].name), `Observer trigger projection identity mismatch: ${link.id}`);
+    const chain = [emission, subscription].flatMap(original => [original, ...(evidence.get(original.id) || [])]);
+    const actualSources = new Set((link.sourceEntries || []).map(sourceKey));
+    requireCondition(chain.flatMap(original => original.sourceEntries || []).every(source => actualSources.has(sourceKey(source))), `Observer trigger source evidence was removed: ${link.id}`);
+    requireCondition(chain.flatMap(original => original.sourceGaps || []).every(gap => link.sourceGaps?.includes(gap)), `Observer trigger evidence gap was removed: ${link.id}`);
+    const notes = [emission.label, ...(emission.notes || []), ...(subscription.notes || [])].filter(note => note && note !== '触发');
+    requireCondition(notes.every(note => link.notes?.includes(note)), `Observer trigger condition was removed: ${link.id}`);
+  }
+  for (const node of view.nodes) if (node.role !== 'external' && nodeKindOf(registry[node.id]) === 'Observer') {
+    requireCondition(projections.some(link => link.to === node.id), `Observer source is missing from system view: ${view.id}/${node.id}`);
+  }
+  return projections.length;
+}
+
+const systemLinkKey = ({ id, from, to, kind, label, projection, eventId, originalLinkIds }) => ({ id, from, to, kind, label, projection, eventId, originalLinkIds });
+const placementNodeIds = nodes => nodes.map(node => typeof node === 'string' ? node : node.id);
+const observerBranchKey = ({ id, nodes, anchorSourceIds }) => ({ id, nodes: placementNodeIds(nodes), anchorSourceIds });
+const visualPlacementKey = groups => groups.map(({ id, nodes, visualAttachments = [] }) => ({ id, nodes: placementNodeIds(nodes), visualAttachments: placementNodeIds(visualAttachments) }));
+
 export function checkAppSchedule(view, model, registry) {
   requireCondition(view.id === 'overview' && view.feature === null && view.aspect === 'overview' && view.layout === 'app-schedule', 'Overview must show the App system schedule');
+  requireCondition(view.scheduleOrientation === undefined, 'Obsolete Schedule orientation metadata: overview');
   const expected = buildAppSchedule(model, registry);
   const nodeKeys = nodes => nodes.map(node => [node.id, node.role]).sort(([a], [b]) => a.localeCompare(b));
   requireCondition(isDeepStrictEqual(nodeKeys(view.nodes), nodeKeys(expected.graph.nodes)), 'App schedule node coverage mismatch');
-  const linkKeys = links => links.map(({ id, from, to, kind, label }) => ({ id, from, to, kind, label })).sort((a, b) => a.id.localeCompare(b.id));
+  const linkKeys = links => links.map(systemLinkKey).sort((a, b) => a.id.localeCompare(b.id));
   requireCondition(isDeepStrictEqual(linkKeys(view.links), linkKeys(expected.graph.links)), 'App schedule dependency coverage mismatch');
-  const groupKeys = groups => groups.map(({ id, label, order, track, parent, schedule, notes, nodes }) => ({ id, label, order, track, parent, schedule, notes, nodes: nodes.map(node => typeof node === 'string' ? node : node.id) }));
+  const groupKeys = groups => groups.map(({ id, label, order, track, parent, schedule, notes, nodes, visualAttachments = [] }) => ({ id, label, order, track, parent, schedule, notes, nodes: nodes.map(node => typeof node === 'string' ? node : node.id), visualAttachments: visualAttachments.map(node => typeof node === 'string' ? node : node.id) }));
   requireCondition(isDeepStrictEqual(groupKeys(view.scheduleGroups), groupKeys(expected.groups)), 'App schedule phase or registration mismatch');
+  requireCondition(isDeepStrictEqual((view.observerBranches || []).map(observerBranchKey), expected.branches.map(observerBranchKey)), 'App Observer source branch coverage mismatch');
   const phaseKeys = links => links.map(({ id, from, to, edgeSemantic, displayLabel, notes }) => ({ id, from, to, edgeSemantic, displayLabel, notes }));
   requireCondition(isDeepStrictEqual(phaseKeys(view.scheduleLinks), phaseKeys(expected.phaseLinks)), 'App schedule execution path mismatch');
 }
@@ -393,6 +477,7 @@ export function checkObjectViews(views, catalog) {
     requireCondition(object && !seen.has(object.id) && view.id === object.viewId && view.feature === object.feature, `Object view identity mismatch: ${view.id}`);
     seen.add(object.id);
     requireCondition(view.centerNodeId === object.id && view.nodes.filter(node => node.id === object.id).length === 1, `Object view center mismatch: ${view.id}`);
+    requireCondition(!view.links.some(link => link.projection === 'observer-trigger'), `Observer trigger projection outside a system view: ${view.id}`);
     // 实体中心只隐藏组件几何；其它关系仍逐项核对，组件自身图继续保留包含关系。
     if (object.kind === 'Entity') {
       const isComponent = id => objects.get(id)?.kind === 'Component';
@@ -470,7 +555,11 @@ export function checkArchitecture(root, { dependencyDefinitions = DEPENDENCY_SOU
       requireCondition(isDeepStrictEqual(artifact.objectAliases, model.object_aliases || {}), 'Object alias catalog differs from maintained compatibility targets');
       checkObjectViews(artifact.views, objectCatalog);
       for (const object of objectCatalog.objects) expectedViews.set(object.viewId, { feature: object.feature, aspect: 'object', object });
-      for (const feature of featureIds) expectedViews.get(architectureViewId(feature, 'systems')).graph = fresh.graphFor(feature, 'systems');
+      for (const feature of featureIds) {
+        const expected = expectedViews.get(architectureViewId(feature, 'systems'));
+        expected.graph = fresh.graphFor(feature, 'systems');
+        expected.placement = buildObserverPlacement(expected.graph, registry, fresh.scheduleGroups(expected.graph));
+      }
     } else {
       requireCondition(isDeepStrictEqual(artifact.componentTypes, componentTypes), 'Component catalog differs from Rust type identities and original projections');
       for (const type of componentTypes) expectedViews.set(type.viewId, { feature: type.feature, aspect: 'component', type, graph: catalog.graphFor(type.id) });
@@ -562,9 +651,11 @@ export function checkArchitecture(root, { dependencyDefinitions = DEPENDENCY_SOU
     requireCondition(view.feature === expected.feature && view.aspect === expected.aspect, `Architecture view metadata mismatch: ${view.id}`);
     if (artifact.schemaVersion === 3 && expected.aspect === 'systems') {
       const nodes = graph => graph.nodes.map(({ id, role }) => [id, role]).sort(([a], [b]) => a.localeCompare(b));
-      const links = graph => graph.links.map(({ id, from, to, kind, label }) => ({ id, from, to, kind, label })).sort((a, b) => a.id.localeCompare(b.id));
+      const links = graph => graph.links.map(systemLinkKey).sort((a, b) => a.id.localeCompare(b.id));
       requireCondition(isDeepStrictEqual(nodes(view), nodes(expected.graph)), `Plugin system and Observer coverage mismatch: ${view.id}`);
       requireCondition(isDeepStrictEqual(links(view), links(expected.graph)), `Plugin scheduling relation coverage mismatch: ${view.id}`);
+      requireCondition(isDeepStrictEqual(visualPlacementKey(view.scheduleGroups), visualPlacementKey(expected.placement.groups))
+        && isDeepStrictEqual((view.observerBranches || []).map(observerBranchKey), expected.placement.branches.map(observerBranchKey)), `Plugin Observer source placement mismatch: ${view.id}`);
     }
     if (expected.type) {
       const type = expected.type;
@@ -582,6 +673,7 @@ export function checkArchitecture(root, { dependencyDefinitions = DEPENDENCY_SOU
     entries.push({ view });
     for (const child of checkEntityViewProjections(view)) entries.push({ view: child, parentView: view });
   }
+  const originalLinkEvidence = artifact.views.filter(view => view.aspect === 'object').flatMap(view => view.links);
   for (const { view, parentView } of entries) {
     requireCondition(!artifactViewIds.has(view.id) && (!parentView || !expectedViews.has(view.id)), `Invalid or duplicate architecture view: ${view.id}`);
     artifactViewIds.add(view.id);
@@ -664,6 +756,7 @@ export function checkArchitecture(root, { dependencyDefinitions = DEPENDENCY_SOU
       if (!visibleLinks.has(link.id)) visibleLinks.set(link.id, []);
       visibleLinks.get(link.id).push(link);
     }
+    if (artifact.schemaVersion === 3) checkObserverTriggerProjections(view, model, registry, originalLinkEvidence);
     if (styledView(view)) {
       requireCondition(Array.isArray(view.scheduleLinks), `Missing Schedule link manifest: ${view.id}`);
       const expectedScheduleLinks = (view.layout === 'app-schedule' ? buildAppSchedule(model, registry).phaseLinks : scheduleLinksFor(view.scheduleGroups)).map(({ id, from, to, edgeSemantic, displayLabel }) => ({ id, from, to, edgeSemantic, displayLabel }));
@@ -798,7 +891,11 @@ export function checkArchitecture(root, { dependencyDefinitions = DEPENDENCY_SOU
       const file = readReference(source);
       // 只核对真实定义行的函数名，不能据此推断函数行为或注册完整性。
       const declaration = file.lines[source.line - 1].match(/^\s*(?:pub(?:\([^)]*\))?\s+)?(?:(?:async|const|unsafe)\s+)*fn\s+([A-Za-z_][A-Za-z0-9_]*)\s*(?:\(|<)/);
-      requireCondition(declaration?.[1] === value.name, `Function source mismatch: ${value.name} at ${source.path}:${source.line}`);
+      const reviewedDefinition = dependencyDefinition?.dependency && dependencyDefinitions[value.id]?.kind === 'fn' ? dependencyDefinitions[value.id] : null;
+      const symbol = reviewedDefinition?.symbol || value.name;
+      // 同函数的泛型注册保留完整显示名，定义行仍按已审核依赖映射中的真实标识符验证。
+      const displayMatches = value.name === symbol || reviewedDefinition && value.name.startsWith(`${symbol}<`) && value.name.endsWith('>');
+      requireCondition(declaration?.[1] === symbol && displayMatches, `Function source mismatch: ${value.name} at ${source.path}:${source.line}`);
     }
     if (value.definition_source != null) readReference(value.definition_source);
     for (const [key, child] of Object.entries(value)) {

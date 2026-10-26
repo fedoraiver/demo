@@ -173,7 +173,7 @@ export function routingObstacles(view, { tolerance = ROUTING_GEOMETRY.tolerance 
     const rect = cluster?.children.find(element => element.tag === 'rect');
     if (!rect) throw new Error(`Missing native Schedule route obstacle: ${view.id}/${group.id}`);
     const label = cluster.children.find(element => element.attrs['data-label-bounds']);
-    add(group.id, 'schedule-container', [rect], [group.id, ...group.nodes], nativeLabelBounds(label) || group.labelBounds);
+    add(group.id, 'schedule-container', [rect], [group.id, ...group.nodes, ...(group.visualAttachments || [])], nativeLabelBounds(label) || group.labelBounds);
   }
   return obstacles;
 }

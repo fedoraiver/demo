@@ -36,8 +36,10 @@ flowchart TB
   classDef node_observer fill:#F4F1F9,stroke:#7B4DB2,stroke-width:1.6px,color:#1F3340
   classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
   classDef node_sync fill:#F6F3F0,stroke:#8B6A42,stroke-width:1.6px,color:#1F3340
+  classDef node_engine_flow fill:#F1F5F4,stroke:#557C78,stroke-width:1.6px,color:#1F3340
   classDef edge_schedule stroke:#334155,stroke-width:3px
   classDef edge_order stroke:#334155,stroke-width:2px
+  classDef edge_observe stroke:#B66B2D,stroke-width:1.8px,stroke-dasharray:2 4
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
   subgraph diagram_main[" "]
@@ -137,12 +139,15 @@ flowchart TB
   n2 layout_19@~~~ n16
   n16 layout_20@~~~ n25
   end
-  subgraph sg4["Observer"]
+  subgraph ob0[" "]
   direction TB
   n14@{ shape: hex, label: "**prepare_holder_despawn**<br/>在持有者销毁前停用并卸载持物代理。" }
   class n14 node_observer
+  n26@{ shape: stadium, label: "**组件移除与实体销毁流程**<br/>来自Bevy 引擎 ↗：在实际移除或销毁时发<br/>出匹配的生命周期事件。" }
+  class n26 node_engine_flow
+  class n26 external_node
   end
-  sg3 layout_21@~~~ sg4
+  style ob0 fill:none,stroke:none
   sg0 sc0@--> sg1
   class sc0 edge_schedule
   sg1 sc1@--> sg2
@@ -195,6 +200,8 @@ flowchart TB
   class e21 edge_set_membership
   n25 e22@-->|"HeldPresentation"| n2
   class e22 edge_set_membership
+  n26 e23@-->|"Despawn#lt;Character#gt;"| n14
+  class e23 edge_observe
   end
   e0@{ curve: basis }
   e1@{ curve: basis }

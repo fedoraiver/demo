@@ -1,8 +1,8 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import test from 'node:test';
-import { buildArchitectureModel, isMainPluginRegistration } from './architecture-model.mjs';
-import { renderGraphView, renderOverview, mermaidConfiguration, entityComponentColumns, dataLayoutColumns, dataObserverLayoutPairs } from './architecture-renderer.mjs';
+import { buildArchitectureModel, isMainPluginRegistration, isUnscheduledTriggerNode } from './architecture-model.mjs';
+import { renderGraphView, renderOverview, mermaidConfiguration, entityComponentColumns, dataLayoutColumns, dataObserverLayoutPairs, observerBranchLayoutPairs } from './architecture-renderer.mjs';
 import { NODE_STYLES, EDGE_STYLES, EXTERNAL_REFERENCE_STYLE } from './architecture-style.mjs';
 import { INFRASTRUCTURE_FEATURES } from './architecture-infrastructure.mjs';
 
@@ -94,6 +94,33 @@ test('systems retain true dependencies and keep layout links outside the semanti
   assert.ok(view.layoutLinks.every(link => link.mermaidId.startsWith('layout_')));
   assert.ok(view.nodes.some(node => node.id === 'grounded_fixed'));
   assert.ok(view.nodes.some(node => node.id === 'grounded_after'));
+});
+
+test('systems place event callbacks in their source region without assigning them Schedule membership', () => {
+  const view = viewFor('first_person', 'systems');
+  const observers = view.nodes.filter(node => isUnscheduledTriggerNode(architecture.registry[node.id]));
+  assert(observers.length);
+  assert(!view.scheduleGroups.some(group => group.id === 'EventTriggered'));
+  for (const node of observers) {
+    assert(!view.scheduleGroups.some(group => group.nodes.includes(node.id)), node.id);
+    assert(view.scheduleGroups.some(group => group.id === 'PreUpdate' && group.visualAttachments?.includes(node.id)), node.id);
+    assert.equal((view.mermaid.match(new RegExp(`^  ${node.mermaidId}@\\{`, 'gm')) || []).length, 1);
+  }
+  const trigger = view.links.find(link => link.kind === 'trigger' && link.projection === 'observer-trigger');
+  assert(trigger);
+  assert.equal(trigger.edgeSemantic, 'observe');
+  assert(view.nodes.some(node => node.id === trigger.from));
+  assert(view.nodes.some(node => node.id === trigger.to));
+});
+
+test('source-local Observer fanout layout never chains unrelated emitters or closes semantic cycles', () => {
+  const nodes = ['source-a', 'source-b', 'a', 'b', 'c', 'd'].map(id => ({ id }));
+  const links = [['source-a', 'a'], ['source-a', 'b'], ['source-b', 'c'], ['source-b', 'd']].map(([from, to]) => ({ from, to, projection: 'observer-trigger' }));
+  const groups = [{ nodes: ['source-a', 'source-b'], visualAttachments: ['a', 'b', 'c', 'd'] }];
+  const before = structuredClone({ nodes, links, groups });
+  assert.deepEqual(observerBranchLayoutPairs(nodes, links, groups), [['a', 'b'], ['c', 'd']]);
+  assert.deepEqual(observerBranchLayoutPairs(nodes, [...links, { from: 'b', to: 'a' }], groups), [['c', 'd']]);
+  assert.deepEqual({ nodes, links, groups }, before);
 });
 
 test('log_policy begins with its full name and purpose without a type header or repeated Startup', () => {
@@ -253,7 +280,7 @@ test('standalone Mermaid carries the same typography, spacing, light containers 
   }
 });
 
-test('data uses compact native top-level groups while overview and events use Dagre LR', () => {
+test('data stays compact while source-local trigger schedules retain the original Dagre orientation', () => {
   const data = viewFor('avian', 'data');
   for (const view of [data]) {
     assert.match(view.mermaid, /^flowchart TB$/m);
@@ -261,10 +288,12 @@ test('data uses compact native top-level groups while overview and events use Da
     for (const group of ['catalog', 'relations', 'column_0', 'relation_0']) assert.match(view.mermaid, new RegExp(`subgraph ${group}\\[`));
   }
   for (const view of [viewFor('ui', 'events'), renderOverview(model, architecture.registry, architecture.features)]) {
+    assert.equal(view.scheduleOrientation, undefined);
     assert.match(view.mermaid, /^flowchart LR$/m);
     assert.equal(JSON.parse(/^---\n([\s\S]*?)\n---/.exec(view.mermaid)[1]).config.layout, 'dagre');
     assert.match(view.mermaid, /subgraph diagram_main\[" "\]\n  direction LR/);
   }
+  assert.equal(viewFor('character', 'systems').scheduleOrientation, undefined);
 });
 
 test('all native node shapes and visible edge styles come from the shared semantic catalog', () => {
@@ -396,7 +425,8 @@ test('overview displays the App schedule while plugin entrances remain in their 
   for (const system of model.systems) assert.ok(view.nodes.some(node => node.id === system.id), system.id);
   for (const entry of INFRASTRUCTURE_FEATURES) assert.ok(architecture.graphFor(entry.id, 'events').nodes.some(node => node.id === entry.overviewNode), entry.id);
   assert.ok(!view.nodes.some(node => node.id === 'third-party-plugins'));
-  assert.ok(view.links.every(link => ['order', 'registration'].includes(link.kind)));
+  assert.ok(view.links.every(link => ['order', 'registration'].includes(link.kind) || (link.kind === 'trigger' && link.projection === 'observer-trigger')));
+  assert.ok(view.nodes.filter(node => isUnscheduledTriggerNode(architecture.registry[node.id])).every(node => !view.scheduleGroups.some(group => group.nodes.includes(node.id))));
   assert.ok(view.nodes.every(node => node.role === 'internal'));
 });
 

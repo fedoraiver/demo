@@ -32,8 +32,10 @@ flowchart LR
   accTitle: ActionOf<GameplayContext> · 对象关系
   accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
   %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_observer fill:#F4F1F9,stroke:#7B4DB2,stroke-width:1.6px,color:#1F3340
   classDef node_entity fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
   classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**ActionOf#lt;GameplayContext#gt;**<br/>将动作关联到所属控制上下文。" }
@@ -44,9 +46,13 @@ flowchart LR
   n2@{ shape: rounded, label: "**键盘控制者**<br/>来自场景装配 ↗：保存玩家身份、输入上下<br/>文与受控角色及相机。" }
   class n2 node_entity
   class n2 external_node
+  n3@{ shape: hex, label: "**reset_action#lt;GameplayContext#gt;**<br/>动作移除时清零并派发条件性的结束事件。" }
+  class n3 node_observer
   n0 e0@-->|"可能挂载于"| n1
   class e0 edge_reference
   n0 e1@-->|"entity"| n2
   class e1 edge_reference
+  n0 e2@-->|"查询访问"| n3
+  class e2 edge_read
   e0@{ curve: basis }
-  e1@{ curve: basis }
+  e2@{ curve: basis }

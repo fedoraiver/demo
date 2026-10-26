@@ -32,6 +32,7 @@ flowchart LR
   accTitle: Binding · 对象关系
   accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
   %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_observer fill:#F4F1F9,stroke:#7B4DB2,stroke-width:1.6px,color:#1F3340
   classDef node_entity fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
   classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
   classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
@@ -45,9 +46,13 @@ flowchart LR
   class n1 external_node
   n2@{ shape: lin-rect, label: "**EnhancedInputSystems::Update**<br/>评估绑定输入并更新动作值与触发状态。" }
   class n2 node_system_set
+  n3@{ shape: hex, label: "**reset_action#lt;GameplayContext#gt;**<br/>动作移除时清零并派发条件性的结束事件。" }
+  class n3 node_observer
   n0 e0@-->|"可能挂载于"| n1
   class e0 edge_reference
   n0 e1@-->|"查询访问"| n2
   class e1 edge_read
+  n0 e2@-->|"查询访问"| n3
+  class e2 edge_read
   e0@{ curve: basis }
-  e1@{ curve: basis }
+  e2@{ curve: basis }

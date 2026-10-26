@@ -2,6 +2,7 @@
 import { NODE_STYLES, EDGE_STYLES, EXTERNAL_REFERENCE_STYLE, visualTypeOf, edgeSemanticOf, displayLabelOf, scheduleLinksFor, mermaidStyleDefinitions } from './architecture-style.mjs';
 import { INFRASTRUCTURE_FEATURES } from './architecture-infrastructure.mjs';
 import { buildAppSchedule } from './architecture-app-schedule.mjs';
+import { buildObserverPlacement } from './architecture-model.mjs';
 
 export const DATA_GROUP_LABELS = { catalog: '数据与实体', relations: '数据流与关系' };
 const displayEndpoint = (link, side) => link[side === 'from' ? 'displayFrom' : 'displayTo'] ?? link[side];
@@ -70,6 +71,44 @@ export function dataObserverLayoutPairs(nodes, links) {
   return result;
 }
 
+export function observerBranchLayoutPairs(nodes, links, groups) {
+  const downstream = new Map(), pairs = [];
+  const connect = (from, to) => {
+    if (!downstream.has(from)) downstream.set(from, new Set());
+    downstream.get(from).add(to);
+  };
+  for (const link of links) connect(link.from, link.to);
+  for (const group of groups) for (let index = 1; index < group.nodes.length; index++) connect(group.nodes[index - 1], group.nodes[index]);
+  function reaches(from, to) {
+    const pending = [from], visited = new Set();
+    while (pending.length) {
+      const id = pending.pop();
+      if (id === to) return true;
+      if (visited.has(id)) continue;
+      visited.add(id); pending.push(...(downstream.get(id) || []));
+    }
+    return false;
+  }
+  for (const group of groups) {
+    const attachments = new Set(group.visualAttachments || []), members = new Set([...group.nodes, ...attachments]);
+    for (const source of nodes.filter(node => members.has(node.id))) {
+      const targets = nodes.filter(node => attachments.has(node.id) && links.some(link => link.projection === 'observer-trigger' && link.from === source.id && link.to === node.id));
+      const ordered = [];
+      while (ordered.length < targets.length) {
+        const next = targets.find(node => !ordered.includes(node) && targets.filter(other => other !== node && !ordered.includes(other)).every(other => !reaches(other.id, node.id)));
+        if (!next) break;
+        ordered.push(next);
+      }
+      for (let index = 1; index < ordered.length; index++) {
+        const from = ordered[index - 1].id, to = ordered[index].id;
+        if (reaches(from, to) || reaches(to, from)) continue;
+        pairs.push([from, to]); connect(from, to);
+      }
+    }
+  }
+  return pairs;
+}
+
 function dataRelationGroups(units, links) {
   const owner = new Map(units.flatMap(unit => (unit.components ? [unit.entity, ...unit.components] : [unit.id]).map(id => [id, unit])));
   const neighbors = new Map(units.map(unit => [unit, new Set()]));
@@ -120,7 +159,7 @@ export function mermaidConfiguration(aspect) {
 }
 
 function definition(view, graph, registry, features, scheduleGroups = []) {
-  const base = { ...view, engine: 'mermaid', diagramType: 'flowchart', width: 0, height: 0, svg: null, filename: null, mermaid: null, mermaidFilename: null, nodes: [], links: [], scheduleLinks: [], layoutLinks: [], scheduleGroups: [], entityGroups: [], sections: [] };
+  const base = { ...view, engine: 'mermaid', diagramType: 'flowchart', width: 0, height: 0, svg: null, filename: null, mermaid: null, mermaidFilename: null, nodes: [], links: [], scheduleLinks: [], layoutLinks: [], scheduleGroups: [], observerBranches: [], entityGroups: [], sections: [] };
   if (graph.empty || !graph.nodes.length) return base;
   const names = new Map([...features, ...INFRASTRUCTURE_FEATURES].map(feature => [feature.id, feature.label]));
   const entityGroups = [];
@@ -149,7 +188,9 @@ function definition(view, graph, registry, features, scheduleGroups = []) {
       || (view.aspect === 'object' && link.from === objectCenter && objectIncoming.has(link.to));
     return { ...link, ...(nativeReverse ? { nativeReverse: true } : {}), mermaidId: `e${index}`, edgeSemantic, displayLabel: displayLabelOf(link, edgeSemantic, registry) };
   });
-  const groups = scheduleGroups.map((group, index) => ({ ...group, mermaidId: `sg${index}`, nodes: group.nodes.map(node => node.id) }));
+  const placement = view.aspect === 'systems' || view.layout === 'app-schedule' ? buildObserverPlacement(graph, registry, scheduleGroups) : { groups: scheduleGroups, branches: [] };
+  const groups = placement.groups.map((group, index) => ({ ...group, mermaidId: `sg${index}`, nodes: group.nodes.map(node => typeof node === 'string' ? node : node.id) }));
+  const observerBranches = placement.branches.map((branch, index) => ({ ...branch, mermaidId: `ob${index}` }));
   const scheduleLinks = (view.layout === 'app-schedule' ? view.phaseLinks : scheduleLinksFor(groups)).map((link, index) => ({ ...link, mermaidId: `sc${index}` }));
   const types = { nodeTypes: Object.keys(NODE_STYLES).filter(type => nodes.some(node => node.visualType === type)), edgeTypes: Object.keys(EDGE_STYLES).filter(type => [...links, ...scheduleLinks].some(link => link.edgeSemantic === type)) };
   const configuration = mermaidConfiguration(view.aspect);
@@ -199,14 +240,23 @@ function definition(view, graph, registry, features, scheduleGroups = []) {
     }
     declareLinks([...links.filter(link => displayEndpoint(link, 'from') !== center.id), ...links.filter(link => displayEndpoint(link, 'from') === center.id)]);
   } else if (view.aspect === 'systems' || view.layout === 'app-schedule') {
+    const grouped = new Set(groups.flatMap(group => [...group.nodes, ...(group.visualAttachments || [])]));
+    const branchPairs = observerBranchLayoutPairs(nodes, links, groups);
     for (const group of groups) {
       lines.push(`  subgraph ${group.mermaidId}["${text(group.label.split('\n'))}"]`, '  direction TB');
-      for (const id of group.nodes) declare(byId.get(id));
-      if (!group.nodes.length) lines.push(`  phase_anchor_${group.mermaidId}@{ shape: anchor, label: " " }`, `  style phase_anchor_${group.mermaidId} opacity:0`);
+      for (const id of [...group.nodes, ...(group.visualAttachments || [])]) declare(byId.get(id));
+      if (!group.nodes.length && !group.visualAttachments?.length) lines.push(`  phase_anchor_${group.mermaidId}@{ shape: anchor, label: " " }`, `  style phase_anchor_${group.mermaidId} opacity:0`);
       for (let index = 1; index < group.nodes.length; index++) layout(byId.get(group.nodes[index - 1]).mermaidId, byId.get(group.nodes[index]).mermaidId);
+      for (const [from, to] of branchPairs.filter(([from]) => group.visualAttachments?.includes(from))) layout(byId.get(from).mermaidId, byId.get(to).mermaidId);
       lines.push('  end');
     }
-    if (groups.flatMap(group => group.nodes).length !== nodes.length) throw new Error(`Schedule 分组没有覆盖全部节点：${view.id}`);
+    // 来源旁的附属节点只表达事件关系；真实 Schedule 成员与注册仍独立保留。
+    for (const branch of observerBranches) {
+      lines.push(`  subgraph ${branch.mermaidId}[" "]`, '  direction TB');
+      for (const id of branch.nodes) { declare(byId.get(id)); grouped.add(id); }
+      lines.push('  end', `  style ${branch.mermaidId} fill:none,stroke:none`);
+    }
+    if (grouped.size !== nodes.length) throw new Error(`Schedule 与事件来源分支没有覆盖全部节点：${view.id}`);
     const groupById = new Map(groups.map(group => [group.id, group]));
     for (let index = 1; index < groups.length; index++) if (!scheduleLinks.some(link => link.from === groups[index - 1].id && link.to === groups[index].id)) layout(groups[index - 1].mermaidId, groups[index].mermaidId);
     for (const link of scheduleLinks) edge(link, groupById.get(link.from).mermaidId, groupById.get(link.to).mermaidId);
@@ -248,7 +298,7 @@ function definition(view, graph, registry, features, scheduleGroups = []) {
     } else { nodes.forEach(declare); declareLinks(); }
   }
   if (!['data', 'component', 'object'].includes(view.aspect)) lines.push('  end');
-  return { ...base, nodes, links, scheduleLinks, layoutLinks, scheduleGroups: groups, entityGroups, mermaid: lines.join('\n') + '\n', mermaidFilename: `ecs-${view.id}.mmd`, filename: `ecs-${view.id}.svg` };
+  return { ...base, nodes, links, scheduleLinks, layoutLinks, scheduleGroups: groups, observerBranches, entityGroups, mermaid: lines.join('\n') + '\n', mermaidFilename: `ecs-${view.id}.mmd`, filename: `ecs-${view.id}.svg` };
 }
 
 export function renderGraphView(view, graph, registry, features, scheduleGroups) {
@@ -257,6 +307,6 @@ export function renderGraphView(view, graph, registry, features, scheduleGroups)
 
 export function renderOverview(model, registry, features) {
   const app = buildAppSchedule(model, registry);
-  const view = { id: 'overview', feature: null, aspect: 'overview', layout: 'app-schedule', label: 'App 系统调度总览', summary: '启动流程只执行一次；每帧依次处理输入、状态、固定循环与呈现。固定循环可执行零到多步；Observer、原生回调和渲染子应用分别展示。组内仅显式连线表示顺序。', phaseLinks: app.phaseLinks };
+  const view = { id: 'overview', feature: null, aspect: 'overview', layout: 'app-schedule', label: 'App 系统调度总览', summary: '启动流程只执行一次；每帧依次处理输入、状态、固定循环与呈现。固定循环可执行零到多步；Observer 按事件来源连接，不属于固定 Schedule。原生回调和渲染子应用分别展示，组内仅显式顺序边表示执行依赖。', phaseLinks: app.phaseLinks };
   return definition(view, app.graph, registry, features, app.groups);
 }

@@ -38,6 +38,7 @@ flowchart TB
   classDef node_sync fill:#F6F3F0,stroke:#8B6A42,stroke-width:1.6px,color:#1F3340
   classDef edge_schedule stroke:#334155,stroke-width:3px
   classDef edge_order stroke:#334155,stroke-width:2px
+  classDef edge_observe stroke:#B66B2D,stroke-width:1.8px,stroke-dasharray:2 4
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
   subgraph diagram_main[" "]
@@ -63,10 +64,37 @@ flowchart TB
   n23@{ shape: rounded, label: "**ApplyDeferred（捕获 → 动作准备）**<br/>来自Bevy 引擎 ↗：使本帧玩法输入启停变<br/>更对动作评估可见。" }
   class n23 node_sync
   class n23 external_node
+  n28@{ shape: lin-rect, label: "**EnhancedInputSystems::Trigger**<br/>来自Enhanced Input ↗：按上下文顺序排<br/>入动作事件命令。" }
+  class n28 node_system_set
+  class n28 external_node
+  n2@{ shape: hex, label: "**record_movement**<br/>保存控制角色的持续移动方向。" }
+  class n2 node_observer
+  n3@{ shape: hex, label: "**clear_completed_movement**<br/>清除已结束动作的角色移动方向。" }
+  class n3 node_observer
+  n4@{ shape: hex, label: "**clear_cancelled_movement**<br/>清除已取消动作的角色移动方向。" }
+  class n4 node_observer
+  n5@{ shape: hex, label: "**request_jump**<br/>记录目标角色的单次跳跃请求。" }
+  class n5 node_observer
+  n6@{ shape: hex, label: "**request_interaction**<br/>记录目标角色的单次交互请求。" }
+  class n6 node_observer
+  n7@{ shape: hex, label: "**on_camera_look**<br/>将观察输入转为第一人称水平角与俯仰角。" }
+  class n7 node_observer
+  n15@{ shape: hex, label: "**release_pointer_for_inspector**<br/>释放光标以允许操作世界检查器。" }
+  class n15 node_observer
+  n29@{ shape: hex, label: "**reset_action#lt;GameplayContext#gt;**<br/>来自Enhanced Input ↗：动作移除时清零<br/>并派发条件性的结束事件。" }
+  class n29 node_observer
+  class n29 external_node
   n21 layout_0@~~~ n12
   n12 layout_1@~~~ n22
   n22 layout_2@~~~ n1
   n1 layout_3@~~~ n23
+  n23 layout_4@~~~ n28
+  n2 layout_5@~~~ n3
+  n3 layout_6@~~~ n4
+  n4 layout_7@~~~ n5
+  n5 layout_8@~~~ n6
+  n6 layout_9@~~~ n7
+  n7 layout_10@~~~ n15
   end
   subgraph sg2["OnEnter"]
   direction TB
@@ -76,8 +104,8 @@ flowchart TB
   class n14 node_system
   n16@{ shape: rounded, label: "**resume_capture**<br/>重置光标捕获并丢弃自由光标阶段位移。" }
   class n16 node_system
-  n13 layout_4@~~~ n14
-  n14 layout_5@~~~ n16
+  n13 layout_11@~~~ n14
+  n14 layout_12@~~~ n16
   end
   subgraph sg3["FixedUpdate"]
   direction TB
@@ -92,9 +120,9 @@ flowchart TB
   n26@{ shape: lin-rect, label: "**FixedGameplaySystems**<br/>来自应用流程 ↗：协调恢复、朝向、运动、<br/>交互与持握的固定步顺序。" }
   class n26 node_system_set
   class n26 external_node
-  n24 layout_6@~~~ n8
-  n8 layout_7@~~~ n25
-  n25 layout_8@~~~ n26
+  n24 layout_13@~~~ n8
+  n8 layout_14@~~~ n25
+  n25 layout_15@~~~ n26
   end
   subgraph sg4["RunFixedMainLoop ·<br/>AfterFixedMainLoop"]
   direction TB
@@ -119,38 +147,14 @@ flowchart TB
   n27@{ shape: lin-rect, label: "**PresentationSystems**<br/>来自应用流程 ↗：协调插值后的持物、镜头<br/>与可见性同步。" }
   class n27 node_system_set
   class n27 external_node
-  n17 layout_9@~~~ n9
-  n9 layout_10@~~~ n18
-  n18 layout_11@~~~ n19
-  n19 layout_12@~~~ n10
-  n10 layout_13@~~~ n11
-  n11 layout_14@~~~ n20
-  n20 layout_15@~~~ n27
+  n17 layout_16@~~~ n9
+  n9 layout_17@~~~ n18
+  n18 layout_18@~~~ n19
+  n19 layout_19@~~~ n10
+  n10 layout_20@~~~ n11
+  n11 layout_21@~~~ n20
+  n20 layout_22@~~~ n27
   end
-  subgraph sg5["Observer"]
-  direction TB
-  n2@{ shape: hex, label: "**record_movement**<br/>保存控制角色的持续移动方向。" }
-  class n2 node_observer
-  n3@{ shape: hex, label: "**clear_completed_movement**<br/>清除已结束动作的角色移动方向。" }
-  class n3 node_observer
-  n4@{ shape: hex, label: "**clear_cancelled_movement**<br/>清除已取消动作的角色移动方向。" }
-  class n4 node_observer
-  n5@{ shape: hex, label: "**request_jump**<br/>记录目标角色的单次跳跃请求。" }
-  class n5 node_observer
-  n6@{ shape: hex, label: "**request_interaction**<br/>记录目标角色的单次交互请求。" }
-  class n6 node_observer
-  n7@{ shape: hex, label: "**on_camera_look**<br/>将观察输入转为第一人称水平角与俯仰角。" }
-  class n7 node_observer
-  n15@{ shape: hex, label: "**release_pointer_for_inspector**<br/>释放光标以允许操作世界检查器。" }
-  class n15 node_observer
-  n2 layout_16@~~~ n3
-  n3 layout_17@~~~ n4
-  n4 layout_18@~~~ n5
-  n5 layout_19@~~~ n6
-  n6 layout_20@~~~ n7
-  n7 layout_21@~~~ n15
-  end
-  sg4 layout_22@~~~ sg5
   sg0 sc0@--> sg1
   class sc0 edge_schedule
   sg1 sc1@--> sg2
@@ -189,6 +193,24 @@ flowchart TB
   class e13 edge_set_membership
   n27 e14@-->|"Visibility"| n11
   class e14 edge_set_membership
+  n28 e15@-->|"Fire#lt;MoveAction#gt;"| n2
+  class e15 edge_observe
+  n28 e16@-->|"Complete#lt;MoveAction#gt;"| n3
+  class e16 edge_observe
+  n29 e17@-->|"Complete#lt;MoveAction#gt;"| n3
+  class e17 edge_observe
+  n28 e18@-->|"Cancel#lt;MoveAction#gt;"| n4
+  class e18 edge_observe
+  n29 e19@-->|"Cancel#lt;MoveAction#gt;"| n4
+  class e19 edge_observe
+  n28 e20@-->|"Fire#lt;JumpAction#gt;"| n5
+  class e20 edge_observe
+  n28 e21@-->|"Fire#lt;InteractAction#gt;"| n6
+  class e21 edge_observe
+  n28 e22@-->|"Fire#lt;LookAction#gt;"| n7
+  class e22 edge_observe
+  n28 e23@-->|"Fire#lt;ReleasePointerAction#gt;"| n15
+  class e23 edge_observe
   end
   e0@{ curve: basis }
   e1@{ curve: basis }
@@ -205,3 +227,12 @@ flowchart TB
   e12@{ curve: basis }
   e13@{ curve: basis }
   e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e17@{ curve: basis }
+  e18@{ curve: basis }
+  e19@{ curve: basis }
+  e20@{ curve: basis }
+  e21@{ curve: basis }
+  e22@{ curve: basis }
+  e23@{ curve: basis }

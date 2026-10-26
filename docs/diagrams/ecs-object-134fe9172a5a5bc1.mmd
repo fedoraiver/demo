@@ -80,6 +80,8 @@ flowchart LR
   n12@{ shape: lin-rect, label: "**EguiPreUpdateSet::ProcessInput**<br/>来自Egui / Inspector ↗：将窗口和设备<br/>输入转换为检查器界面输入。" }
   class n12 node_system_set
   class n12 external_node
+  n13@{ shape: rounded, label: "**dispatch_focused_**<br/>**input#lt;KeyboardInput#gt;**<br/>将键盘消息转为焦点实体上的键盘事件。" }
+  class n13 node_system
   n1 e0@-->|"应用尺寸"| n0
   class e0 edge_write
   n0 e1@-->|"可能挂载于"| n2
@@ -106,16 +108,18 @@ flowchart LR
   class e11 edge_read
   n0 e12@-->|"查询访问"| n12
   class e12 edge_read
+  n0 e13@-->|"查询访问"| n13
+  class e13 edge_read
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
   e3@{ curve: basis }
   e4@{ curve: basis }
   e5@{ curve: basis }
-  e6@{ curve: basis }
   e7@{ curve: basis }
   e8@{ curve: basis }
   e9@{ curve: bumpX }
   e10@{ curve: basis }
   e11@{ curve: basis }
   e12@{ curve: basis }
+  e13@{ curve: basis }

@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import test from 'node:test';
 import { APP_SCHEDULE_GROUPS, APP_SCHEDULE_LINKS, buildAppSchedule } from './architecture-app-schedule.mjs';
-import { buildArchitectureModel } from './architecture-model.mjs';
+import { buildArchitectureModel, isUnscheduledTriggerNode } from './architecture-model.mjs';
 import { INFRASTRUCTURE_FEATURES } from './architecture-infrastructure.mjs';
 import { renderOverview } from './architecture-renderer.mjs';
 import { checkAppSchedule, checkMermaidStyles } from './check-ecs.mjs';
@@ -20,18 +20,20 @@ test('App schedule covers every catalog system and observer plus systems declare
   assert(ids.has('native-scrollbar-layout'));
   assert(app.graph.nodes.every(node => node.role === 'internal'));
   assert(app.graph.links.every(link => ids.has(link.from) && ids.has(link.to)));
-  assert.equal(app.groups.flatMap(entry => entry.nodes).length, ids.size);
-  assert.deepEqual(new Set(app.groups.flatMap(entry => entry.nodes.map(node => node.id))), ids);
+  const scheduled = app.graph.nodes.filter(node => !isUnscheduledTriggerNode(architecture.registry[node.id])).map(node => node.id);
+  assert.equal(app.groups.flatMap(entry => entry.nodes).length, scheduled.length);
+  assert.deepEqual(new Set(app.groups.flatMap(entry => entry.nodes.map(node => node.id))), new Set(scheduled));
 });
 
-test('App schedule preserves the union of local scheduling relations with their original IDs and endpoints', () => {
+test('App schedule preserves local scheduling and event-source relations with their original IDs and endpoints', () => {
   const expected = new Map();
   for (const feature of [...architecture.features, ...INFRASTRUCTURE_FEATURES]) {
     for (const link of architecture.graphFor(feature.id, 'systems').links) expected.set(link.id, link);
   }
   const byId = (a, b) => a.id.localeCompare(b.id);
   assert.deepEqual(app.graph.links.toSorted(byId), [...expected.values()].toSorted(byId));
-  assert(app.graph.links.every(link => ['order', 'registration'].includes(link.kind)));
+  assert(app.graph.links.every(link => ['order', 'registration'].includes(link.kind) || (link.kind === 'trigger' && link.projection === 'observer-trigger')));
+  assert(app.graph.links.some(link => link.kind === 'trigger' && link.projection === 'observer-trigger'));
   assert.equal(new Set(app.graph.links.map(link => link.id)).size, app.graph.links.length);
 });
 
@@ -86,13 +88,15 @@ test('Egui pass nesting and external render, platform and observer execution do 
   assert.equal(group('EguiPrimaryContextPass').parent, 'PostUpdate');
   assert(phase('PostUpdate', 'Last'));
   assert(!phase('EguiPrimaryContextPass', 'Last'));
-  for (const id of ['RenderApp', 'NativePlatformEvents', 'EventTriggered']) {
+  for (const id of ['RenderApp', 'NativePlatformEvents']) {
     assert.equal(group(id).track, 'external', id);
     assert(!app.phaseLinks.some(link => link.from === id || link.to === id), id);
   }
-  const observers = model.systems.filter(system => architecture.registry[system.id].kind === 'Observer').map(system => system.id);
-  assert.deepEqual(new Set(group('EventTriggered').nodes.map(node => node.id)), new Set(observers));
-  assert(group('EventTriggered').notes.some(note => note.includes('没有固定 Schedule')));
+  assert.equal(group('EventTriggered'), undefined);
+  assert(!app.phaseLinks.some(link => link.from === 'EventTriggered' || link.to === 'EventTriggered'));
+  const independent = app.graph.nodes.filter(node => isUnscheduledTriggerNode(architecture.registry[node.id]));
+  assert(independent.some(node => architecture.registry[node.id].kind === 'Observer'));
+  for (const node of independent) assert(!app.groups.some(group => group.nodes.some(member => member.id === node.id)), node.id);
 });
 
 test('runtime cards retain all registrations without duplicating inactive headless startup or initialization entries', () => {

@@ -1,4 +1,4 @@
-import { buildArchitectureModel } from './architecture-model.mjs';
+import { buildArchitectureModel, buildObserverPlacement, isUnscheduledTriggerNode } from './architecture-model.mjs';
 import { INFRASTRUCTURE_FEATURES } from './architecture-infrastructure.mjs';
 
 const catalog = records => Object.freeze(records.map(record => Object.freeze({ ...record, notes: Object.freeze(record.notes || []) })));
@@ -27,7 +27,6 @@ export const APP_SCHEDULE_GROUPS = catalog([
   { id: 'Last', label: 'Last', order: 140, track: 'frame', notes: ['主应用每帧调度的最后一个 Schedule；当前清单没有单列此阶段的系统。'] },
   { id: 'RenderApp', label: 'RenderApp · 独立渲染子应用', order: 150, track: 'external', notes: ['渲染子应用的 ExtractSchedule 与 Render 由渲染流程概括；不作为 Last 后的普通主应用 Schedule 串联。'] },
   { id: 'NativePlatformEvents', label: '原生平台回调 · 调度外', order: 160, track: 'external', notes: ['窗口系统消息与原生 API 回调位于 ECS Schedule 之外；安装系统仍按真实 PreUpdate 注册显示。'] },
-  { id: 'EventTriggered', label: 'Observer · 匹配事件触发', order: 170, track: 'external', notes: ['Observer 按匹配事件触发，没有固定 Schedule；按功能并列展示不代表按此顺序执行。', '动作、场景就绪、指针及生命周期事件分别由真实来源触发；普通辅助函数不作为 Observer。'] },
   { id: 'Explanatory', label: '约束与说明 · 非调度', order: 180, track: 'explanatory', notes: ['数据、状态和机制说明不属于调度系统；位置只服务阅读。'] },
 ]);
 
@@ -78,7 +77,7 @@ export function buildAppSchedule(model, registry) {
     const graph = architecture.graphFor(feature.id, 'systems');
     for (const node of graph.nodes) if (!nodes.has(node.id)) nodes.set(node.id, { ...node, role: 'internal' });
     for (const link of graph.links) {
-      if (!['order', 'registration'].includes(link.kind)) throw new Error(`App 调度图包含非调度关系：${link.id}`);
+      if (!['order', 'registration'].includes(link.kind) && !(link.kind === 'trigger' && link.projection === 'observer-trigger')) throw new Error(`App 调度图包含非调度关系：${link.id}`);
       if (!links.has(link.id)) links.set(link.id, { ...link });
     }
   }
@@ -90,7 +89,8 @@ export function buildAppSchedule(model, registry) {
   for (const node of nodes.values()) {
     const record = registry[node.id];
     if (!record) throw new Error(`App 调度图缺少节点声明：${node.id}`);
-    const groupId = record.kind === 'Observer' ? 'EventTriggered' : record.schedule_group || 'Explanatory';
+    if (isUnscheduledTriggerNode(record)) continue;
+    const groupId = record.schedule_group || 'Explanatory';
     const group = byId.get(groupId);
     if (!group) throw new Error(`App 调度图缺少阶段：${groupId}（${node.id}）`);
     group.nodes.push(node);
@@ -101,5 +101,6 @@ export function buildAppSchedule(model, registry) {
     group.notes = [...new Set([...group.notes, ...(original?.notes || [])])];
     group.nodes = orderNodes(group, graph.links);
   }
-  return { graph, groups, phaseLinks: APP_SCHEDULE_LINKS.map(link => ({ ...link, notes: [...link.notes] })) };
+  const placement = buildObserverPlacement(graph, registry, groups);
+  return { graph, ...placement, phaseLinks: APP_SCHEDULE_LINKS.map(link => ({ ...link, notes: [...link.notes] })) };
 }

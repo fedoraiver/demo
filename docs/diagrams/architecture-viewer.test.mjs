@@ -221,6 +221,24 @@ test('edge details and native labels preserve exact endpoint and operation sourc
   page.click(page.get('details').querySelector('[data-open="system-fixed"]'));assert.equal(page.app.view.id,'object:system-fixed');
 });
 
+test('Observer 触发线显示事件入口、真实操作证据和条件，并能返回原系统图',()=>{
+  const page=viewer('?feature=item&keep=1&workspace=E%3A%2Fwork#anchor',{edit:data=>{
+    data.registry['item.Shared'].kind='EntityEvent';data.registry['item.Shared'].name='Fire<MoveAction>';
+    const view=data.views.find(view=>view.id==='plugin-item-systems');
+    view.links=[{id:'observer-trigger-example',mermaidId:'e0',from:'system-fixed',to:'system-update',kind:'trigger',edgeSemantic:'observe',projection:'observer-trigger',eventId:'item.Shared',originalLinkIds:['emit','observe'],label:'Fire<MoveAction>',notes:['Commands 应用后触发'],sourceEntries:[{path:'src/item.rs',line:88,role:'operation',label:'实际事件发出位置'}]}];
+    view.svg=view.svg.replace('</svg>','<path class="edge" data-link-id="observer-trigger-example" tabindex="0" role="button"/></svg>');
+  }});
+  page.get('diagram').querySelector('[data-link-id="observer-trigger-example"]').dispatch('keydown',{key:'Enter'});
+  const details=page.get('details');
+  assert.equal(details.querySelector('h2').textContent,EDGE_STYLES.observe.label);
+  assert.deepEqual(details.querySelectorAll('[data-open]').map(button=>button.dataset.open),['system-fixed','system-update','item.Shared']);
+  assert.ok(details.textContent.includes('Commands 应用后触发'));
+  assert.equal(details.querySelector('[data-vscode-line]').dataset.vscodeLine,'88');
+  page.click(details.querySelector('[data-open="item.Shared"]'));assert.equal(page.app.view.objectId,'item.Shared');
+  assert.equal(page.location.searchParams.get('workspace'),'E:/work');assert.equal(page.location.searchParams.get('keep'),'1');assert.equal(page.location.hash,'#anchor');
+  page.back();assert.equal(page.app.view.id,'plugin-item-systems');assert.ok(page.get('details').textContent.includes('Fire<MoveAction>'));
+});
+
 test('native Schedule labels retain Schedule identity and never become object endpoints',()=>{
   const page=viewer(undefined,{edit:data=>{const view=data.views.find(view=>view.id==='plugin-item-systems');view.scheduleLinks=[{id:'schedule-next',mermaidId:'sc0',from:'First',to:'Update',edgeSemantic:'schedule',label:'阶段契约'}];view.svg=view.svg.replace('</svg>','<g class="edgeLabel" data-mermaid-native-id="sc0"><text>阶段契约</text></g></svg>')}});
   const label=page.get('diagram').querySelector('[data-link-label-id="schedule-next"]');assert.equal(label.dataset.scheduleLinkId,'schedule-next');label.dispatch('keydown',{key:'Enter'});

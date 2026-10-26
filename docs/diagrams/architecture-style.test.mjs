@@ -66,7 +66,7 @@ test('edge legends use the exact English vocabulary while existing Chinese label
   ]);
   assert.deepEqual(Object.values(EDGE_STYLES).map(style => style.label), [
     'Schedule 先后', '显式执行依赖', '内部调度', '读取：数据 → 系统', '修改：系统 → 数据',
-    '发布：生产者 → 消息缓冲', '消费：消息缓冲 → 消费者', '发出：发起者 → 事件', '触发：事件 → Observer', '状态转换',
+    '发布：生产者 → 消息缓冲', '消费：消息缓冲 → 消费者', '发出：发起者 → 事件', '触发：来源 → Observer', '状态转换',
     '普通引用：持有者 → 目标', 'Bevy 关系：关系源 → 目标', '系统集合 → 成员系统', '系统分组 → 成员系统', '调度契约 → 参与集合', '装配方 → 注册对象', '契约使用方 → 提供方',
   ]);
 });
@@ -209,7 +209,7 @@ test('Messages resources are buffer shapes and their communication differs from 
 
 test('all detailed and feature links are classified without changing raw contracts', () => {
   const before = JSON.stringify(model);
-  assert.equal(model.system_links.length, 329);
+  assert.equal(new Set(model.system_links.map(link => link.id)).size, model.system_links.length);
   assert.equal(model.feature_links.length, 27);
   const counts = {};
   for (const link of [...model.system_links, ...model.feature_links]) {
@@ -222,10 +222,10 @@ test('all detailed and feature links are classified without changing raw contrac
   assert.equal(counts.group_membership, 2);
   assert.equal(counts.constraint, 2);
   assert.equal(counts.registration, 40);
-  assert.equal(counts.emit, 14);
-  assert.equal(counts.observe, 28);
+  assert.equal(counts.emit, 37);
+  assert.equal(counts.observe, 29);
   assert.equal(counts.dependency, 27);
-  assert.equal(counts.order, 74);
+  assert.equal(counts.order, 75);
   assert.equal(counts.relationship, 18);
   assert.equal(counts.reference, 43);
   assert.equal(JSON.stringify(model), before);

@@ -1,14 +1,15 @@
 import assert from 'node:assert/strict';
+import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import test from 'node:test';
-import { checkArchitecture as checkArchitectureWithDependencies, checkDataSections, checkEntityGroups, checkEntityViewProjections, checkViewRouting, checkGuideSamples, checkObjectViews } from './check-ecs.mjs';
+import { checkArchitecture as checkArchitectureWithDependencies, checkDataSections, checkEntityGroups, checkEntityViewProjections, checkViewRouting, checkGuideSamples, checkObjectViews, checkObserverTriggerProjections, checkMermaidLayout } from './check-ecs.mjs';
 import { createDependencySourceResolver, dependencySourceKey, attachDependencySources } from './dependency-sources.mjs';
 import { checkMermaidGeometry, checkSvgGeometry } from './diagram-geometry.mjs';
 import { createSourceLocator } from './source-locator.mjs';
 import { NODE_STYLES, EDGE_STYLES, SELECTION_STYLE, EXTERNAL_REFERENCE_STYLE, visualTypeOf, edgeSemanticOf, displayLabelOf } from './architecture-style.mjs';
-import { buildArchitectureModel, isMainPluginRegistration, scheduleGroupLabel } from './architecture-model.mjs';
+import { buildArchitectureModel, isMainPluginRegistration, scheduleGroupLabel, isUnscheduledTriggerNode } from './architecture-model.mjs';
 import { buildObjectCatalog } from './architecture-objects.mjs';
 import { DATA_GROUP_LABELS } from './architecture-renderer.mjs';
 import { normalizeMermaidSvg } from './mermaid-compiler.mjs';
@@ -57,6 +58,105 @@ function entityObjectFixture() {
     objectId: object.id, centerNodeId: object.id, ...catalog.graphFor(object.id) }));
   return { views, catalog };
 }
+
+function observerProjectionFixture() {
+  const registry = {
+    emitter: { id: 'emitter', kind: 'System' },
+    reset: { id: 'reset', kind: 'Observer' },
+    observer: { id: 'observer', kind: 'Observer' },
+    event: { id: 'event', kind: 'EntityEvent', name: 'Fire<Action>' },
+    sameName: { id: 'sameName', kind: 'EntityEvent', name: 'Fire<Action>' },
+  };
+  const operation = { role: 'operation', path: 'src/emitter.rs', line: 8 };
+  const parameter = { role: 'parameter', path: 'src/observer.rs', line: 3 };
+  const model = { system_links: [
+    { id: 'emit', from: 'emitter', to: 'event', kind: 'trigger', label: 'Commands::trigger', notes: ['命令应用时'], sourceEntries: [operation], sourceGaps: ['其它来源待核实'] },
+    { id: 'reset-emit', from: 'reset', to: 'event', kind: 'trigger', label: '旧状态 Fired 时', notes: ['仅旧状态 Fired'], sourceEntries: [operation] },
+    { id: 'subscription', from: 'event', to: 'observer', kind: 'trigger', label: 'Fire<Action>', sourceEntries: [parameter] },
+  ] };
+  const subscription = model.system_links[2];
+  const links = model.system_links.slice(0, 2).map(emission => ({
+    id: `observer-trigger-${crypto.createHash('sha256').update(`${emission.id}|${subscription.id}`).digest('hex').slice(0, 16)}`,
+    from: emission.from, to: subscription.to, kind: 'trigger', label: 'Fire<Action>', projection: 'observer-trigger', eventId: 'event',
+    originalLinkIds: [emission.id, subscription.id], sourceEntries: [operation, parameter], sourceGaps: emission.sourceGaps || [], notes: [emission.label, ...emission.notes],
+  }));
+  return { model, registry, view: { id: 'plugin-example-systems', aspect: 'systems', nodes: [{ id: 'emitter', role: 'internal' }, { id: 'observer', role: 'internal' }, { id: 'reset', role: 'external' }], links } };
+}
+
+test('Observer trigger systems retain shared Dagre layout without obsolete vertical layout metadata', () => {
+  const configuration = layout => `---\n${JSON.stringify({ config: { layout } })}\n---\nflowchart TB\n`;
+  for (const [aspect, layout] of [['systems', undefined], ['overview', 'app-schedule']]) {
+    const trigger = { id: 'trigger-view', aspect, layout, links: [{ projection: 'observer-trigger' }], mermaid: configuration('dagre') };
+    assert.equal(checkMermaidLayout(trigger), 'dagre');
+    trigger.mermaid = configuration('elk');
+    assert.throws(() => checkMermaidLayout(trigger), /Expected shared Dagre layout/);
+    trigger.scheduleOrientation = 'vertical';
+    assert.throws(() => checkMermaidLayout(trigger), /Obsolete Schedule orientation metadata/);
+  }
+  const ordinary = { id: 'ordinary', aspect: 'systems', links: [], mermaid: configuration('dagre') };
+  assert.equal(checkMermaidLayout(ordinary), 'dagre');
+  ordinary.mermaid = configuration('elk');
+  assert.throws(() => checkMermaidLayout(ordinary), /Expected shared Dagre layout/);
+  ordinary.aspect = 'object';
+  ordinary.links = [{ projection: 'observer-trigger' }];
+  assert.throws(() => checkMermaidLayout(ordinary), /Expected shared Dagre layout/);
+});
+
+test('Observer trigger projections preserve distinct emitters and Observer-to-Observer triggering', () => {
+  const { view, model, registry } = observerProjectionFixture();
+  assert.equal(checkObserverTriggerProjections(view, model, registry), 2);
+  assert.equal(view.nodes.filter(node => node.id === 'observer').length, 1);
+});
+
+test('an external Observer source stays a local summary while the overview requires its own source', () => {
+  const { view, model, registry } = observerProjectionFixture();
+  assert.equal(checkObserverTriggerProjections(view, model, registry), 2);
+  view.id = 'overview';
+  view.layout = 'app-schedule';
+  view.aspect = 'overview';
+  view.nodes.forEach(node => { node.role = 'internal'; });
+  assert.throws(() => checkObserverTriggerProjections(view, model, registry), /Observer source is missing.*reset/);
+});
+
+test('Observer trigger validation rejects a different event with the same name and corrupted original chains', () => {
+  for (const change of [link => { link.eventId = 'sameName'; }, link => { link.originalLinkIds.reverse(); }, link => { link.from = 'reset'; }]) {
+    const { view, model, registry } = observerProjectionFixture();
+    change(view.links[0]);
+    assert.throws(() => checkObserverTriggerProjections(view, model, registry), /Observer trigger original chain mismatch/);
+  }
+});
+
+test('Observer trigger validation rejects unstable IDs, labels and non-trigger projections', () => {
+  for (const change of [link => { link.id += '-random'; }, link => { link.label = 'OtherEvent'; }, link => { link.kind = 'order'; }]) {
+    const { view, model, registry } = observerProjectionFixture();
+    change(view.links[0]);
+    assert.throws(() => checkObserverTriggerProjections(view, model, registry), /Observer trigger projection (?:identity mismatch|kind)/);
+  }
+});
+
+test('Observer trigger projections cannot omit operation evidence, uncertainty or conditions', () => {
+  for (const [field, error] of [['sourceEntries', /source evidence was removed/], ['sourceGaps', /evidence gap was removed/], ['notes', /condition was removed/]]) {
+    const { view, model, registry } = observerProjectionFixture();
+    view.links[0][field] = [];
+    assert.throws(() => checkObserverTriggerProjections(view, model, registry), error);
+  }
+  const { view, model, registry } = observerProjectionFixture();
+  const enriched = structuredClone(model.system_links);
+  enriched[0].sourceEntries.push({ role: 'operation', path: 'src/actual-helper.rs', line: 12 });
+  assert.throws(() => checkObserverTriggerProjections(view, model, registry, enriched), /source evidence was removed/);
+});
+
+test('Observer trigger projections require a visible source and stay out of object views', () => {
+  const missing = observerProjectionFixture();
+  missing.view.links = [];
+  assert.throws(() => checkObserverTriggerProjections(missing.view, missing.model, missing.registry), /Observer source is missing/);
+  const unprojected = observerProjectionFixture();
+  delete unprojected.view.links[0].projection;
+  assert.throws(() => checkObserverTriggerProjections(unprojected.view, unprojected.model, unprojected.registry), /Unprojected Observer trigger/);
+  const object = observerProjectionFixture();
+  object.view.aspect = 'object';
+  assert.throws(() => checkObserverTriggerProjections(object.view, object.model, object.registry), /projection outside a system view/);
+});
 
 test('object views preserve each projection and registration, including an isolated single card', () => {
   const { views, catalog } = objectFixture();
@@ -198,25 +298,27 @@ function fixture() {
     view.layoutLinks = [];
     view.scheduleGroups = [];
     if (!view.nodes.length) { view.svg = null; view.filename = null; view.mermaid = null; view.mermaidFilename = null; return; }
-    const declarations = [];
-    if (view.aspect === 'systems') view.scheduleGroups = model.schedule_groups.filter(group => view.nodes.some(node => registry[node.id].schedule_group === group.id))
+    const declarations = view.aspect === 'systems' ? ['subgraph diagram_main[" "]', 'direction LR'] : [];
+    if (view.aspect === 'systems') view.scheduleGroups = model.schedule_groups.filter(group => view.nodes.some(node => !isUnscheduledTriggerNode(registry[node.id]) && registry[node.id].schedule_group === group.id))
       .sort((a, b) => a.order - b.order).map((group, index) => {
-        const nodes = view.nodes.filter(node => registry[node.id].schedule_group === group.id).map(node => node.id);
-        return { ...group, label: scheduleGroupLabel({ ...group, nodes }, registry), mermaidId: `sg${index}`, nodes };
+        const nodes = view.nodes.filter(node => !isUnscheduledTriggerNode(registry[node.id]) && registry[node.id].schedule_group === group.id).map(node => node.id);
+        const visualAttachments = index === 0 ? view.nodes.filter(node => isUnscheduledTriggerNode(registry[node.id])).map(node => node.id) : [];
+        return { ...group, label: scheduleGroupLabel({ ...group, nodes }, registry), mermaidId: `sg${index}`, nodes, visualAttachments };
       });
     const nodes = view.nodes.map((node, index) => {
       node.mermaidId = `n${index}`;
       node.instance = `${view.id}--${node.mermaidId}`;
-      const groupIndex = view.scheduleGroups.findIndex(group => group.nodes.includes(node.id));
+      const groupIndex = view.scheduleGroups.findIndex(group => group.nodes.includes(node.id) || group.visualAttachments.includes(node.id));
       const group = view.scheduleGroups[groupIndex];
       const columns = view.aspect === 'overview' ? 3 : 2;
-      const x = view.aspect === 'systems' ? 150 + groupIndex * 300 : 50 + index % columns * 200, y = view.aspect === 'systems' ? 100 + group.nodes.indexOf(node.id) * 150 : 45 + Math.floor(index / columns) * 200;
+      const x = view.aspect === 'systems' ? 150 + Math.max(0, groupIndex) * 300 : 50 + index % columns * 200, y = view.aspect === 'systems' ? 100 + (group ? [...group.nodes, ...group.visualAttachments].indexOf(node.id) : index) * 150 : 45 + Math.floor(index / columns) * 200;
       node.position = { x: x - 50, y: y - 45, width: 100, height: 90 };
       return `<g class="node" data-id="${escape(node.id)}" data-instance="${escape(node.instance)}" data-feature="${registry[node.id]?.feature}" data-role="${node.role}" data-mermaid-id="${node.mermaidId}" data-center-x="${x}" data-center-y="${y}" transform="translate(${x},${y})">${box(node.instance, -50, -45)}</g>`;
     }).join('');
     const byId = new Map(view.nodes.map(node => [node.id, node]));
-    if (view.scheduleGroups.length) for (const group of view.scheduleGroups) {
-      declarations.push(`subgraph ${group.mermaidId}["${escape(group.label).replaceAll('\n', '<br/>')}"]`, 'direction TB', ...group.nodes.map(id => `${byId.get(id).mermaidId}["${escape(id)}"]`), 'end');
+    if (view.scheduleGroups.length) {
+      for (const group of view.scheduleGroups) declarations.push(`subgraph ${group.mermaidId}["${escape(group.label).replaceAll('\n', '<br/>')}"]`, 'direction TB', ...[...group.nodes, ...group.visualAttachments].map(id => `${byId.get(id).mermaidId}["${escape(id)}"]`), 'end');
+      declarations.push(...view.nodes.filter(node => !view.scheduleGroups.some(group => group.nodes.includes(node.id) || group.visualAttachments.includes(node.id))).map(node => `${node.mermaidId}["${escape(node.id)}"]`));
     } else declarations.push(...view.nodes.map(node => `${node.mermaidId}["${escape(node.id)}"]`));
     const edges = view.links.map((link, index) => {
       link.mermaidId = `e${index}`;
@@ -227,6 +329,7 @@ function fixture() {
     const cluster = view.scheduleGroups.map((group, index) => `<g class="cluster" data-schedule-id="${group.id}" data-mermaid-id="${group.mermaidId}"><rect x="${index * 300}" y="0" width="250" height="590"/></g>`).join('');
     view.svg = svg(cluster + nodes + edges).replace('<svg ', '<svg viewBox="0 0 600 600" ');
     view.filename = `ecs-${view.id}.svg`;
+    if (view.aspect === 'systems') declarations.push('end');
     view.mermaid = [view.aspect === 'data' ? 'flowchart TB' : 'flowchart LR', ...declarations].join('\n') + '\n';
     view.mermaidFilename = `ecs-${view.id}.mmd`;
   }
@@ -442,6 +545,20 @@ test('dependency functions use verified attached definitions when the model has 
   data.model.systems[0].definition_source = structuredClone(data.registry.move.definition_source);
   data.save();
   assert.deepEqual(data.check(), { systems: 2, sources: 2, views: fixtureViewCount });
+});
+
+test('generic dependency function cards keep their instantiated name while validating the reviewed declaration symbol', () => {
+  const data = dependencyFunctionFixture(), filename = path.join(data.dependencyRoot, 'src', 'lib.rs');
+  const text = fs.readFileSync(filename, 'utf8').replace('pub fn move_entity()', 'pub fn move_entity<C>()');
+  fs.writeFileSync(filename, text);
+  data.snapshots[1].text = text;
+  data.model.systems[0].name = data.registry.move.name = 'move_entity<GameplayContext>';
+  data.save();
+  assert.deepEqual(data.check(), { systems: 2, sources: 2, views: fixtureViewCount });
+  assert.equal(data.registry.move.name, 'move_entity<GameplayContext>');
+  data.model.systems[0].name = data.registry.move.name = 'another_function<GameplayContext>';
+  data.save();
+  assert.throws(data.check, /Function source mismatch: another_function<GameplayContext>/);
 });
 
 test('dependency function definitions do not promote an original usage source into a declaration', () => {
@@ -1211,6 +1328,21 @@ test('directed layout constraints are permitted only as explicitly declared invi
   assert.throws(() => checkArchitecture(data.directory), /Mermaid layout edge declaration mismatch/);
 });
 
+test('long native invisible rank constraints preserve their declared IDs and endpoints', () => {
+  const data = fixture(), view = data.views[0];
+  view.layoutLinks.push({ mermaidId: 'layout_0', from: 'n0', to: 'n1' });
+  const declaration = 'n0 layout_0@~~~~~ n1\n';
+  view.mermaid += declaration;
+  view.svg = view.svg.replace('</svg>', '<path data-edge="true" data-layout-link="layout_0" d="M50,45 Q100,10 200,45"/></svg>');
+  data.save();
+  assert.deepEqual(checkArchitecture(data.directory), { systems: 2, sources: 1, views: fixtureViewCount });
+  for (const replacement of ['n0 layout_wrong@~~~~~ n1\n', 'n0 layout_0@~~~~~ n2\n', 'n0 layout_0@~~~~~ missing\n']) {
+    view.mermaid = view.mermaid.replace(/n0 layout_\w+@~~~~~ \w+\n/, replacement);
+    data.save();
+    assert.throws(() => checkArchitecture(data.directory), /Mermaid layout edge declaration mismatch/);
+  }
+});
+
 test('rejects Mermaid edge paths with missing coordinates or unidentified semantic edges', () => {
   const data = fixture();
   const view = data.views[0];
@@ -1252,7 +1384,7 @@ function stateSchedules() {
 test('Schedule title checks derive unique runtime state Schedule types without changing group identity', () => {
   const data = stateSchedules(), group = data.views[1].scheduleGroups[0];
   assert.equal(group.id, 'StateTransition');
-  assert.deepEqual(group.nodes, ['move', 'event-observe', 'observe']);
+  assert.deepEqual(group.nodes, ['move', 'event-observe']);
   assert.equal(group.label, 'OnEnter\nOnExit\nOnTransition');
   assert.deepEqual(checkArchitecture(data.directory), { systems: 2, sources: 1, views: fixtureViewCount });
   for (const label of ['OnEnter', 'OnEnter(AppState::MainMenu)\nOnExit(AppState::InGame)\nOnTransition { exited: AppState::MainMenu, entered: AppState::InGame }']) {
@@ -1276,7 +1408,6 @@ test('Schedule title checks use concise display names while retaining original d
     ['EguiPrimaryContextPass', 'EguiPrimaryContextPass · PostUpdate 内驱动', 'EguiPrimaryContextPass'],
     ['RenderApp', 'RenderApp · 独立渲染子应用', 'RenderApp'],
     ['NativePlatformEvents', '原生平台回调 · 调度外', '原生平台回调'],
-    ['EventTriggered', 'Observer · 匹配事件触发', 'Observer'],
     ['Explanatory', '约束与说明 · 非调度系统', '约束与说明'],
   ]) {
     const data = fixture();
@@ -1287,7 +1418,7 @@ test('Schedule title checks use concise display names while retaining original d
     const group = data.views[1].scheduleGroups[0];
     assert.equal(group.id, id);
     assert.equal(group.label, label);
-    assert.deepEqual(group.nodes, ['move', 'event-observe', 'observe']);
+    assert.deepEqual(group.nodes, ['move', 'event-observe']);
     assert.equal(data.model.schedule_groups[0].label, originalLabel);
     assert.deepEqual(data.model.schedule_groups[0].notes, ['原始生命周期说明']);
     assert.deepEqual(checkArchitecture(data.directory), { systems: 2, sources: 1, views: fixtureViewCount });
@@ -1324,6 +1455,82 @@ test('validates Schedule identity and source order against the shared Schedule d
   wrongNode.registry.move.schedule_group = 'First';
   wrongNode.save();
   assert.throws(() => checkArchitecture(wrongNode.directory), /Invalid Schedule node membership: move/);
+});
+
+test('Schedule validation rejects Observer membership and omission of an ordinary scheduled node', () => {
+  const grouped = fixture(), groupedView = grouped.views[1];
+  groupedView.scheduleGroups[0].visualAttachments = [];
+  groupedView.scheduleGroups[0].nodes.push('observe');
+  grouped.save();
+  assert.throws(() => checkArchitecture(grouped.directory), /Invalid Schedule node membership: observe/);
+  const missing = fixture(), missingView = missing.views[1];
+  missingView.scheduleGroups[0].nodes = ['move'];
+  missingView.mermaid = missingView.mermaid.replace('n1["event-observe"]\n', '').replace('n2["observe"]\nend', 'n2["observe"]\nend\nn1["event-observe"]');
+  missing.save();
+  assert.throws(() => checkArchitecture(missing.directory), /Schedule groups and Observer placements do not cover all nodes/);
+});
+
+test('visual source attachments may nest without becoming Schedule members', () => {
+  const data = fixture(), view = data.views[1], group = view.scheduleGroups[0];
+  assert.deepEqual(group.nodes, ['move', 'event-observe']);
+  assert.deepEqual(group.visualAttachments, ['observe']);
+  view.mermaid = view.mermaid.replace('n2["observe"]', 'subgraph source_branch[" "]\ndirection LR\nn2["observe"]\nend');
+  data.save();
+  assert.deepEqual(checkArchitecture(data.directory), { systems: 2, sources: 1, views: fixtureViewCount });
+});
+
+test('visual source attachment validation rejects scheduled systems, duplicates and missing Observer ownership', () => {
+  const scheduled = fixture(), scheduledGroup = scheduled.views[1].scheduleGroups[0];
+  scheduledGroup.nodes.shift();
+  scheduledGroup.visualAttachments.push('move');
+  scheduled.save();
+  assert.throws(() => checkArchitecture(scheduled.directory), /Invalid visual Schedule attachment: move/);
+  const duplicate = fixture();
+  duplicate.views[1].scheduleGroups[0].visualAttachments.push('observe');
+  duplicate.save();
+  assert.throws(() => checkArchitecture(duplicate.directory), /Mermaid Schedule declaration mismatch/);
+  const missing = fixture(), missingView = missing.views[1];
+  missingView.scheduleGroups[0].visualAttachments = [];
+  missingView.mermaid = missingView.mermaid.replace('n2["observe"]\nend', 'end\nn2["observe"]');
+  missing.save();
+  assert.throws(() => checkArchitecture(missing.directory), /Schedule groups and Observer placements do not cover all nodes/);
+});
+
+function standaloneObserverBranchFixture() {
+  const data = fixture(), view = data.views[1];
+  view.scheduleGroups[0].visualAttachments = [];
+  const id = `observer-branch-${crypto.createHash('sha256').update('observe').digest('hex').slice(0, 16)}`;
+  view.observerBranches = [{ id, mermaidId: 'ob0', nodes: ['observe'], anchorSourceIds: [] }];
+  view.mermaid = view.mermaid.replace('n2["observe"]\nend', 'end\nsubgraph ob0[" "]\ndirection TB\nn2["observe"]\nend\nstyle ob0 fill:none,stroke:none');
+  data.save();
+  return data;
+}
+
+test('unhosted Observer source branches preserve no-Schedule identity and remain separate from real membership', () => {
+  const data = standaloneObserverBranchFixture(), group = data.views[1].scheduleGroups[0];
+  assert.deepEqual(group.nodes, ['move', 'event-observe']);
+  assert.deepEqual(group.visualAttachments, []);
+  assert.deepEqual(checkArchitecture(data.directory), { systems: 2, sources: 1, views: fixtureViewCount });
+});
+
+test('Observer source branches require stable identity, exact anchors and unique physical membership', () => {
+  for (const corrupt of [
+    branch => { branch.id += '-random'; },
+    branch => { branch.anchorSourceIds.push('move'); },
+  ]) {
+    const data = standaloneObserverBranchFixture();
+    corrupt(data.views[1].observerBranches[0]);
+    data.save();
+    assert.throws(() => checkArchitecture(data.directory), /Observer source branch identity or anchor mismatch/);
+  }
+  const missing = standaloneObserverBranchFixture();
+  missing.views[1].observerBranches = [];
+  missing.save();
+  assert.throws(() => checkArchitecture(missing.directory), /Schedule groups and Observer placements do not cover all nodes/);
+  const duplicate = standaloneObserverBranchFixture();
+  duplicate.views[1].scheduleGroups[0].visualAttachments.push('observe');
+  duplicate.save();
+  assert.throws(() => checkArchitecture(duplicate.directory), /Mermaid Schedule declaration mismatch/);
 });
 
 test('checks compiled Schedule columns instead of merely accepting flowchart LR source text', () => {

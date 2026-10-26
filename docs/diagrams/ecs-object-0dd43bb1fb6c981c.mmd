@@ -32,6 +32,7 @@ flowchart LR
   accTitle: InputSystems · 对象关系
   accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
   %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
   classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
   classDef node_message_buffer fill:#EDF4F6,stroke:#247B91,stroke-width:1.6px,color:#1F3340
   classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
@@ -44,41 +45,45 @@ flowchart LR
   n1@{ shape: lin-rect, label: "**EguiPreUpdateSet::ProcessInput**<br/>来自Egui / Inspector ↗：将窗口和设备<br/>输入转换为检查器界面输入。" }
   class n1 node_system_set
   class n1 external_node
-  n2@{ shape: cyl, label: "**Messages#lt;KeyboardInput#gt;**<br/>缓冲底层键盘输入消息。" }
-  class n2 node_message_buffer
-  n3@{ shape: cyl, label: "**Messages#lt;KeyboardFocusLost#gt;**<br/>通知输入系统清理失焦后残留的按键。" }
+  n2@{ shape: rounded, label: "**dispatch_focused_**<br/>**input#lt;KeyboardInput#gt;**<br/>将键盘消息转为焦点实体上的键盘事件。" }
+  class n2 node_system
+  n3@{ shape: cyl, label: "**Messages#lt;KeyboardInput#gt;**<br/>缓冲底层键盘输入消息。" }
   class n3 node_message_buffer
-  n4@{ shape: cyl, label: "**Messages#lt;MouseButtonInput#gt;**<br/>缓冲底层鼠标按钮输入消息。" }
+  n4@{ shape: cyl, label: "**Messages#lt;KeyboardFocusLost#gt;**<br/>通知输入系统清理失焦后残留的按键。" }
   class n4 node_message_buffer
-  n5@{ shape: cyl, label: "**Messages#lt;MouseMotion#gt;**<br/>缓冲底层鼠标位移消息。" }
+  n5@{ shape: cyl, label: "**Messages#lt;MouseButtonInput#gt;**<br/>缓冲底层鼠标按钮输入消息。" }
   class n5 node_message_buffer
-  n6@{ shape: cyl, label: "**ButtonInput#lt;KeyCode#gt;**<br/>保存键盘按键的当前状态与变化。" }
-  class n6 node_resource
-  n7@{ shape: cyl, label: "**ButtonInput#lt;MouseButton#gt;**<br/>保存鼠标按钮的当前状态与变化。" }
+  n6@{ shape: cyl, label: "**Messages#lt;MouseMotion#gt;**<br/>缓冲底层鼠标位移消息。" }
+  class n6 node_message_buffer
+  n7@{ shape: cyl, label: "**ButtonInput#lt;KeyCode#gt;**<br/>保存键盘按键的当前状态与变化。" }
   class n7 node_resource
-  n8@{ shape: cyl, label: "**AccumulatedMouseMotion**<br/>汇总本帧鼠标位移供观察动作使用。" }
+  n8@{ shape: cyl, label: "**ButtonInput#lt;MouseButton#gt;**<br/>保存鼠标按钮的当前状态与变化。" }
   class n8 node_resource
+  n9@{ shape: cyl, label: "**AccumulatedMouseMotion**<br/>汇总本帧鼠标位移供观察动作使用。" }
+  class n9 node_resource
   n0 e0@--> n1
   class e0 edge_order
-  n2 e1@-->|"访问声明"| n0
-  class e1 edge_consume
+  n0 e1@-->|"InputSystems"| n2
+  class e1 edge_order
   n3 e2@-->|"访问声明"| n0
   class e2 edge_consume
   n4 e3@-->|"访问声明"| n0
   class e3 edge_consume
   n5 e4@-->|"访问声明"| n0
   class e4 edge_consume
-  n0 e5@-->|"访问声明"| n6
-  class e5 edge_write
+  n6 e5@-->|"访问声明"| n0
+  class e5 edge_consume
   n0 e6@-->|"访问声明"| n7
   class e6 edge_write
   n0 e7@-->|"访问声明"| n8
   class e7 edge_write
+  n0 e8@-->|"访问声明"| n9
+  class e8 edge_write
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
   e3@{ curve: basis }
   e4@{ curve: basis }
   e5@{ curve: basis }
-  e6@{ curve: basis }
   e7@{ curve: basis }
+  e8@{ curve: basis }

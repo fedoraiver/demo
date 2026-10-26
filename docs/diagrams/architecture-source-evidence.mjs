@@ -82,6 +82,13 @@ export const IMPORTED_ENTITIES = Object.freeze(new Set(['entity-npc', 'entity-an
 export const MARKER_ONLY_RESOURCES = Object.freeze(new Set(['resource.UiTrack', 'resource.SfxTrack']));
 
 export const RELATED_IMPLEMENTATIONS = Object.freeze({
+  'ecs-component-lifecycle': [
+    dependency('bevy_ecs', 'src/world/mod.rs', 'self.register_event_key::<RemoveEvent>()', 'configure', 'World 初始化：注册组件移除生命周期事件'),
+    dependency('bevy_ecs', 'src/world/mod.rs', 'self.register_event_key::<DespawnEvent>()', 'configure', 'World 初始化：注册实体销毁生命周期事件'),
+    dependency('bevy_ecs', 'src/world/entity_access/world_mut.rs', 'pub(crate) fn despawn_no_free_no_flush_with_caller(', 'implementation', '实际销毁：派发实体销毁与组件移除事件'),
+    dependency('bevy_ecs', 'src/bundle/remove.rs', '&mut RemoveEvent { entity },', 'implementation', '实际移除：按待移除组件集合派发生命周期事件'),
+    dependency('bevy_state', 'src/state_scoped.rs', 'commands.despawn_all_where::<&DespawnOnExit<S>, Allow<Disabled>>', 'implementation', '生产清理路径：退出状态后销毁匹配的 DespawnOnExit 实体'),
+  ],
   'resource.SessionWriter': [project('src/session_log/lifecycle.rs', 'writer: SessionWriter {', 'initialize', '初始化：创建文件日志写入器'), project('src/session_log/mod.rs', 'app.insert_resource(self.writer.clone());', 'insert', '构建期暂存：将文件写入器插入 App'), project('src/session_log/lifecycle.rs', '.remove_resource::<SessionWriter>()', 'remove', '构建期移交：文件日志 layer 取走写入器')],
   'resource.ConsoleWriter': [project('src/session_log/lifecycle.rs', 'console: ConsoleWriter(console_worker.writer.clone()),', 'initialize', '初始化：创建控制台日志写入器'), project('src/session_log/mod.rs', 'app.insert_resource(self.console.clone());', 'insert', '构建期暂存：将控制台写入器插入 App'), project('src/session_log/lifecycle.rs', '.remove_resource::<ConsoleWriter>()', 'remove', '构建期移交：控制台日志 layer 取走写入器')],
   'param-recoverable-body': [project('src/bounds_recovery/recovery.rs', 'Query<RecoverableBody, Or<(With<Character>, With<Pickable>)>>', 'parameter', '参数声明：recover_from_water 注入落水恢复查询')],
@@ -107,4 +114,84 @@ export const RELATED_IMPLEMENTATIONS = Object.freeze({
   'log-console-worker': [project('src/session_log/lifecycle.rs', '.remove_resource::<ConsoleWriter>()', 'implementation', '构建期移交：控制台日志 layer 取走写入器'), project('src/session_log/output.rs', 'sink.write_all(&bytes)', 'implementation', '执行：排队记录写入控制台 sink'), project('src/session_log/lifecycle.rs', 'self.console_worker.shutdown()', 'close', '关闭：会话守卫等待控制台后台线程刷新退出')],
   'window-native-policy': [project('src/window_policy/windows.rs', 'pub(super) fn install(', 'install', 'Windows：安装原生窗口策略'), project('src/window_policy/macos.rs', 'pub(super) fn install(', 'install', 'macOS：安装原生窗口策略'), project('src/window_policy/windows.rs', 'fn drop(&mut self)', 'close', 'Windows：NativeWindowPolicy 释放子类注册'), project('src/window_policy/macos.rs', 'fn drop(&mut self)', 'close', 'macOS：NativeWindowPolicy 释放原生策略')],
   'native-window-events': [project('src/window_policy/windows.rs', 'fn window_subclass(', 'definition', 'Windows：窗口子类事件回调定义'), project('src/window_policy/windows.rs', '        SetWindowSubclass(', 'install', 'Windows：向 OS 注册窗口回调'), project('src/window_policy/windows.rs', 'RemoveWindowSubclass(self.hwnd', 'close', 'Windows：卸载 OS 窗口回调')],
+});
+
+// 泛型注册保留已核实的具体实参链，不能按 helper 函数名关联到另一上下文。
+export const SYSTEM_REGISTRATION_EVIDENCE = Object.freeze({
+  'enhanced-reset-gameplay-action': [
+    project('src/first_person/mod.rs', 'app.add_input_context::<GameplayContext>()', 'registration', '项目注册：GameplayContext 上下文启用其独立 reset_action 注册'),
+    dependency('bevy_enhanced_input', 'src/context.rs', '.add_observer(reset_action::<C>)', 'registration', '框架注册：C = GameplayContext 的动作移除 Observer'),
+  ],
+  'native-focused-keyboard-dispatch': [
+    dependency('bevy_input_focus', 'src/lib.rs', '                dispatch_focused_input::<KeyboardInput>,', 'registration', 'Schedule 注册：PreUpdate，InputFocusSystems::Dispatch，after(InputSystems)'),
+  ],
+});
+
+const actionEmission = (event, line) => [
+  dependency('bevy_enhanced_input', 'src/context.rs', '            fns.trigger(', 'operation', 'Trigger 阶段：按上下文遍历动作并调用类型对应派发器', { line: 760 }),
+  dependency('bevy_enhanced_input', 'src/action/fns.rs', 'commands.trigger(event);', 'operation', `实际排入：${event}<A>`, { line }),
+];
+const resetEmission = (event, line) => [
+  dependency('bevy_enhanced_input', 'src/context.rs', '    fns.trigger(', 'operation', '动作移除：状态清零后调用对应动作派发器', { line: 428 }),
+  dependency('bevy_enhanced_input', 'src/action/fns.rs', 'commands.trigger(event);', 'operation', `实际排入：${event}<A>`, { line }),
+];
+const pointerEmission = variable => [dependency('bevy_picking', 'src/events.rs', `commands.trigger(${variable}.clone());`, 'operation', '实际派发：排入对应指针事件命令')];
+const worldReadyEmission = [dependency('bevy_world_serialization', 'src/world_asset_spawner.rs', 'world.commands().trigger(WorldInstanceReady {', 'operation', '实际派发：场景实例完成后排入就绪事件', { all: true })];
+const removeEmission = [
+  dependency('bevy_ecs', 'src/bundle/remove.rs', '&mut RemoveEvent { entity },', 'operation', '组件移除：按待移除组件集合触发生命周期 Observer'),
+  dependency('bevy_ecs', 'src/world/entity_access/world_mut.rs', '&mut RemoveEvent {', 'operation', '实体销毁：为原组件集合触发 RemoveEvent'),
+];
+const projectSubscription = (path, pattern, extra = {}) => [project(path, pattern, 'parameter', '事件匹配：已注册 Observer 的 On 参数', extra)];
+const buttonSubscription = pattern => [dependency('bevy_ui_widgets', 'src/button.rs', pattern, 'parameter', '事件匹配：原生 Button Observer 的 On 参数')];
+const actionObservers = [
+  ['observe_move', 'src/first_person/actions.rs', 'Fire<MoveAction>', 'Fire', 110],
+  ['observe_complete', 'src/first_person/actions.rs', 'Complete<MoveAction>', 'Complete', 131],
+  ['observe_cancel', 'src/first_person/actions.rs', 'Cancel<MoveAction>', 'Cancel', 120],
+  ['observe_jump', 'src/first_person/actions.rs', 'Fire<JumpAction>', 'Fire', 110],
+  ['observe_interact', 'src/first_person/actions.rs', 'Fire<InteractAction>', 'Fire', 110],
+  ['observe_look', 'src/first_person/camera.rs', 'Fire<LookAction>', 'Fire', 110],
+  ['observe_release_pointer', 'src/first_person/capture.rs', 'Fire<ReleasePointerAction>', 'Fire', 110],
+  ...['previous', 'next', 'left', 'right', 'confirm', 'back'].map(name => [`observe_menu_${name}`, 'src/ui/navigation.rs', `Fire<${name[0].toUpperCase()}${name.slice(1)}Action>`, 'Fire', 110]),
+];
+
+// 事件对象 ID 表示精确匹配入口；同名事件不会在这里按名称合并。
+export const EDGE_SOURCE_EVIDENCE = Object.freeze({
+  ...Object.fromEntries(actionObservers.flatMap(([observer, path, type, event, line]) => [
+    [`observer-${observer}`, projectSubscription(path, `On<${type}>`)],
+    [`trigger-input_trigger-event-${observer}`, actionEmission(event, line)],
+  ])),
+  'observer-island_ready_observer': projectSubscription('src/scene_assembly/loading.rs', 'ready: On<WorldInstanceReady>'),
+  'observer-courier_ready_observer': projectSubscription('src/character_animation/binding.rs', 'ready: On<WorldInstanceReady>'),
+  'observer-observe_courier_ready': projectSubscription('src/ui/backdrop.rs', 'ready: On<WorldInstanceReady>'),
+  'trigger-world_spawn-world-ready-event': worldReadyEmission,
+  'trigger-world_spawn-event-observe_courier_ready': worldReadyEmission,
+  'observer-observe_menu_scroll': projectSubscription('src/ui/scroll.rs', 'mut event: On<PointerScroll>', { line: 269 }),
+  'observer-observe_scrollbar_scroll': projectSubscription('src/ui/scroll.rs', 'mut event: On<PointerScroll>', { line: 216 }),
+  'observer-observe_scrollbar_press': projectSubscription('src/ui/scroll.rs', 'fn scrollbar_pointer_source(_: On<PointerPress>'),
+  'observer-observe_menu_primary_press': projectSubscription('src/ui/pointer.rs', 'event: On<PointerPress>'),
+  'observer-observe_menu_primary_clear': projectSubscription('src/ui/pointer.rs', 'event: On<Remove<Pressed>>'),
+  'observer-carry_holder_despawn': projectSubscription('src/item_interaction/lifecycle.rs', 'event: On<Despawn<Character>>'),
+  'observer-enhanced-reset-gameplay-action': [dependency('bevy_enhanced_input', 'src/context.rs', 'remove: On<Remove<ActionOf<C>>>', 'parameter', '事件匹配：C = GameplayContext 的动作关系移除')],
+  'trigger-enhanced-reset-gameplay-action-event-observe_complete': resetEmission('Complete', 131),
+  'trigger-enhanced-reset-gameplay-action-event-observe_cancel': resetEmission('Cancel', 120),
+  'trigger-ecs-component-lifecycle-carry-despawn-event': [dependency('bevy_ecs', 'src/world/entity_access/world_mut.rs', '&mut DespawnEvent {', 'operation', '实际销毁：触发匹配 Character 的 DespawnEvent')],
+  'trigger-ecs-component-lifecycle-event-observe_menu_primary_clear': removeEmission,
+  'trigger-ecs-component-lifecycle-event-remove-action-of-gameplay': removeEmission,
+  'trigger-menu_clear_cancelled_primary-event-observe_menu_primary_clear': [project('src/ui/pointer.rs', '.remove::<(PrimaryPress, Pressed)>()', 'operation', '实际清理：移除 Pressed，命令应用时触发生命周期事件', { all: true }), ...removeEmission],
+  ...Object.fromEntries([
+    ['event-native_button_down', 'pressed_event'], ['event-native_button_up', 'released_event'],
+    ['event-native_button_click', 'click_event'], ['event-native_button_drag_end', 'drag_end_event'],
+    ['event-native_button_cancel', 'cancel_event'], ['event-observe_menu_primary_press', 'pressed_event'],
+    ['event-observe_scrollbar_press', 'pressed_event'], ['event-observe_menu_scroll', 'scroll_event'],
+    ['event-observe_scrollbar_scroll', 'scroll_event'],
+  ].map(([event, variable]) => [`trigger-native_pointer_events-${event}`, pointerEmission(variable)])),
+  ...Object.fromEntries([
+    ['native_button_down', 'press: On<PointerPress>'], ['native_button_up', 'release: On<PointerRelease>'],
+    ['native_button_click', 'click: On<PointerClick>'], ['native_button_drag_end', 'drag_end: On<PointerDragEnd>'],
+    ['native_button_cancel', 'cancel: On<PointerCancel>'], ['native_button_key', 'event: On<FocusedInput<KeyboardInput>>'],
+  ].map(([observer, parameter]) => [`observer-${observer}`, buttonSubscription(parameter)])),
+  ...Object.fromEntries([
+    ['native_button_up', 110], ['native_button_drag_end', 123], ['native_button_cancel', 136],
+  ].map(([observer, line]) => [`trigger-${observer}-event-observe_menu_primary_clear`, [dependency('bevy_ui_widgets', 'src/button.rs', 'commands.entity(button).remove::<Pressed>();', 'operation', '实际移除：原生 Button 移除 Pressed，命令应用时触发生命周期事件', { line }), ...removeEmission]])),
+  'trigger-native-focused-keyboard-dispatch-native-focused-keyboard-event': [dependency('bevy_input_focus', 'src/lib.rs', 'commands.trigger(FocusedInput {', 'operation', '实际派发：向焦点实体或主窗口排入键盘事件', { all: true })],
 });

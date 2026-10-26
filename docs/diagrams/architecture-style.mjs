@@ -61,7 +61,7 @@ export const EDGE_STYLES = {
   publish: { label: '发布：生产者 → 消息缓冲', legendLabel: 'Message write', stroke: '#247B91', width: 1.8, dash: '10 4 2 4' },
   consume: { label: '消费：消息缓冲 → 消费者', legendLabel: 'Message read', stroke: '#247B91', width: 1.8, dash: '2 4' },
   emit: { label: '发出：发起者 → 事件', legendLabel: 'Event trigger', stroke: '#B66B2D', width: 1.8, dash: null },
-  observe: { label: '触发：事件 → Observer', legendLabel: 'Observer invocation', stroke: '#B66B2D', width: 1.8, dash: '2 4' },
+  observe: { label: '触发：来源 → Observer', legendLabel: 'Observer invocation', stroke: '#B66B2D', width: 1.8, dash: '2 4' },
   transition: { label: '状态转换', legendLabel: 'State transition', stroke: '#A64E76', width: 2, dash: '10 4 2 4' },
   reference: { label: '普通引用：持有者 → 目标', legendLabel: 'Reference', stroke: '#7B4DB2', width: 1.5, dash: '6 4' },
   relationship: { label: 'Bevy 关系：关系源 → 目标', legendLabel: 'Relationship', stroke: '#7B4DB2', width: 1.8, dash: null },
@@ -96,6 +96,7 @@ export function edgeSemanticOf(link, registry) {
   if (link.kind === 'read') return messageTypes.has(visualTypeOf(from)) ? 'consume' : 'read';
   if (link.kind === 'write') return messageTypes.has(visualTypeOf(to)) ? 'publish' : 'write';
   if (link.kind === 'trigger') {
+    if (link.projection === 'observer-trigger' && registry[link.eventId]?.kind === 'EntityEvent' && visualTypeOf(to) === 'observer') return 'observe';
     if (visualTypeOf(from) === 'event' && ['observer', 'observer_group'].includes(visualTypeOf(to))) return 'observe';
     if (visualTypeOf(to) === 'event') return 'emit';
     throw new Error(`Architecture trigger has no event/Observer contract: ${link.id}`);

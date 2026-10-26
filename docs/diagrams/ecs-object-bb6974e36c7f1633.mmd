@@ -34,11 +34,18 @@ flowchart LR
   %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
   classDef node_observer fill:#F4F1F9,stroke:#7B4DB2,stroke-width:1.6px,color:#1F3340
   classDef node_event fill:#F9F3EE,stroke:#B66B2D,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef edge_emit stroke:#B66B2D,stroke-width:1.8px
   classDef edge_observe stroke:#B66B2D,stroke-width:1.8px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: stadium, label: "**Fire#lt;MoveAction#gt;**<br/>通知目标控制者的移动动作已触发。" }
   class n0 node_event
   n1@{ shape: hex, label: "**record_movement**<br/>保存控制角色的持续移动方向。" }
   class n1 node_observer
+  n2@{ shape: lin-rect, label: "**EnhancedInputSystems::Trigger**<br/>来自Enhanced Input ↗：按上下文顺序排<br/>入动作事件命令。" }
+  class n2 node_system_set
+  class n2 external_node
   n0 e0@-->|"Fire#lt;MoveAction#gt;"| n1
   class e0 edge_observe
+  n2 e1@-->|"Commands::trigger Fire#lt;MoveAction#gt;"| n0
+  class e1 edge_emit

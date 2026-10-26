@@ -2,6 +2,20 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { checkMermaidGeometry } from './diagram-geometry.mjs';
 
+test('event attachments remain within their source region while Schedule columns retain horizontal order', () => {
+  const observer = { id: 'observer', instance: 'o', mermaidId: 'n0', position: { x: 130, y: 30, width: 40, height: 20 } };
+  const view = { bounds: { x: 0, y: 0, width: 300, height: 150 }, width: 300, height: 150,
+    nodes: [observer], links: [], scheduleGroups: [{ id: 'First', mermaidId: 'sg0', nodes: [] }, { id: 'PreUpdate', mermaidId: 'sg1', nodes: [], visualAttachments: ['observer'] }] };
+  view.svg = '<svg viewBox="0 0 300 150"><g class="cluster" data-schedule-id="First" data-mermaid-id="sg0"><rect x="10" y="10" width="90" height="80"/></g>'
+    + '<g class="cluster" data-schedule-id="PreUpdate" data-mermaid-id="sg1"><rect x="120" y="10" width="90" height="80"/>'
+    + '<g class="node" data-id="observer" data-instance="o" data-visual-type="observer" data-mermaid-id="n0" data-center-x="150" data-center-y="40"><rect data-shape-part="o" x="130" y="30" width="40" height="20"/></g></g></svg>';
+  assert.equal(checkMermaidGeometry(view.svg, view).scheduleGroups, 2);
+  assert.throws(() => checkMermaidGeometry(view.svg, { ...view, scheduleGroups: [...view.scheduleGroups].reverse() }), /columns are not left to right/);
+  observer.position.x = 205;
+  const outside = view.svg.replace('data-center-x="150"', 'data-center-x="225"').replace('x="130"', 'x="205"');
+  assert.throws(() => checkMermaidGeometry(outside, view), /event attachment is outside its source region/);
+});
+
 function composed() {
   const entity = { id: 'entity', instance: 'e', mermaidId: 'n0', presentation: 'entity-container', position: { x: 10, y: 20, width: 140, height: 150 } };
   const component = { id: 'component', instance: 'c', mermaidId: 'n1', position: { x: 30, y: 80, width: 100, height: 40 } };

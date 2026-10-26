@@ -32,13 +32,19 @@ flowchart LR
   accTitle: FocusedInput<KeyboardInput> · 对象关系
   accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
   %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
   classDef node_observer fill:#F4F1F9,stroke:#7B4DB2,stroke-width:1.6px,color:#1F3340
   classDef node_event fill:#F9F3EE,stroke:#B66B2D,stroke-width:1.6px,color:#1F3340
+  classDef edge_emit stroke:#B66B2D,stroke-width:1.8px
   classDef edge_observe stroke:#B66B2D,stroke-width:1.8px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: stadium, label: "**FocusedInput#lt;KeyboardInput#gt;**<br/>焦点键盘Enter或Space首次按下时派<br/>发Activate。" }
   class n0 node_event
   n1@{ shape: hex, label: "**button_on_key_event**<br/>焦点键盘Enter或Space首次按下时派<br/>发Activate。" }
   class n1 node_observer
+  n2@{ shape: rounded, label: "**dispatch_focused_**<br/>**input#lt;KeyboardInput#gt;**<br/>将键盘消息转为焦点实体上的键盘事件。" }
+  class n2 node_system
   n0 e0@-->|"FocusedInput#lt;KeyboardInput#gt;"| n1
   class e0 edge_observe
+  n2 e1@-->|"Commands::trigger<br/>FocusedInput#lt;KeyboardInput#gt;"| n0
+  class e1 edge_emit

@@ -519,7 +519,8 @@
         "动作：With<ActionFns>"
       ],
       "events": [
-        "排入 EntityEvent：Fire<MoveAction>、Complete<MoveAction>、Cancel<MoveAction>、Fire<JumpAction>、Fire<InteractAction>、Fire<LookAction>、Fire<ReleasePointerAction>"
+        "排入 EntityEvent：Fire<MoveAction>、Complete<MoveAction>、Cancel<MoveAction>、Fire<JumpAction>、Fire<InteractAction>、Fire<LookAction>、Fire<ReleasePointerAction>",
+        "菜单动作：Fire<PreviousAction>、Fire<NextAction>、Fire<LeftAction>、Fire<RightAction>、Fire<ConfirmAction>、Fire<BackAction>"
       ],
       "notes": [
         "Update → Apply → Trigger 是框架显式链。",
@@ -6147,7 +6148,7 @@
         "指针：Query<&PointerLocation>；祖先：Query<&ChildOf>；原始命中可为文字等子实体"
       ],
       "events": [
-        "Commands::trigger PointerPress / PointerRelease / PointerClick / PointerDragEnd / PointerCancel 等",
+        "Commands::trigger PointerPress / PointerRelease / PointerClick / PointerDragEnd / PointerCancel / PointerScroll 等",
         "MessageWriter::write 相同指针事件，项目独立读取 PointerPress 消息"
       ],
       "notes": [
@@ -6394,6 +6395,91 @@
       "schedule": null,
       "schedule_group": "EventTriggered",
       "registrations": []
+    },
+    {
+      "id": "enhanced-reset-gameplay-action",
+      "name": "reset_action<GameplayContext>",
+      "kind": "Observer",
+      "phase": "动作关系移除时",
+      "module": "bevy_enhanced_input",
+      "description": "GameplayContext 的 ActionOf 关系移除时把动作状态和值清零，并按旧状态排入结束事件。",
+      "display_summary": "动作移除时清零并派发条件性的结束事件。",
+      "reads": [
+        "action.ActionOf",
+        "action.ActionFns",
+        "action.ActionSettings",
+        "action.Bindings",
+        "binding.Binding"
+      ],
+      "writes": [
+        "action.ActionValue",
+        "action.TriggerState",
+        "action.ActionEvents",
+        "action.ActionTime",
+        "resource.PendingBindings"
+      ],
+      "filters": [
+        "On<Remove<ActionOf<GameplayContext>>>；动作查询须仍能读取待移除的 ActionOf。"
+      ],
+      "events": [
+        "响应 EntityEvent：RemoveEvent",
+        "旧状态 Fired → None：Complete<A>；旧状态 Ongoing → None：Cancel<A>；旧状态 None：无事件。"
+      ],
+      "notes": [
+        "由 add_input_context::<GameplayContext>() 安装的独立泛型 Observer；不与 MenuContext 注册合并。",
+        "不产生 Fire；项目只为 MoveAction 接入 Complete／Cancel Observer，其他动作的结束事件不在此展开。",
+        "当前 MoveAction 没有产生 Ongoing 的条件，Cancel 分支保留为条件路径，当前生产配置未到达该状态。",
+        "退出 InGame 销毁控制者时，Actions<GameplayContext> 的 linked_spawn 清理动作；暂停或失焦停用上下文走 Update → Trigger 路径。",
+        "Commands::trigger 排入命令，命令应用时才触发对应 Observer。"
+      ],
+      "source": null,
+      "feature": "enhanced_input",
+      "registered_by": "enhanced_input",
+      "schedule": null,
+      "schedule_group": "EventTriggered",
+      "registrations": []
+    },
+    {
+      "id": "native-focused-keyboard-dispatch",
+      "name": "dispatch_focused_input<KeyboardInput>",
+      "kind": "System",
+      "phase": "PreUpdate · InputFocusSystems::Dispatch",
+      "module": "bevy_input_focus",
+      "description": "读取键盘缓冲消息，向存活焦点实体或主窗口排入可冒泡的焦点键盘事件；失效焦点先清除。",
+      "display_summary": "将键盘消息转为焦点实体上的键盘事件。",
+      "reads": [
+        "resource.KeyboardInputMessages",
+        "window.Window"
+      ],
+      "writes": [],
+      "filters": [
+        "主窗口须唯一；使用 Entities 验证焦点实体是否仍存在。"
+      ],
+      "events": [
+        "Commands::trigger FocusedInput<KeyboardInput>"
+      ],
+      "notes": [
+        "InputDispatchPlugin 在 PreUpdate 注册此泛型实例，属于 InputFocusSystems::Dispatch，位于 InputSystems 之后。",
+        "InputFocus 资源保存焦点并可能被清除；当前对象清单未展开该资源。",
+        "Commands::trigger 在命令应用时触发 Observer；事件向 ChildOf 祖先和主窗口传播。"
+      ],
+      "source": null,
+      "feature": "infrastructure",
+      "registered_by": "infrastructure",
+      "schedule": "PreUpdate",
+      "schedule_group": "PreUpdate",
+      "registrations": [
+        {
+          "schedule": "PreUpdate",
+          "scope": "runtime",
+          "sets": [
+            "InputFocusSystems::Dispatch"
+          ],
+          "after": [
+            "InputSystems"
+          ]
+        }
+      ]
     }
   ],
   "entities": [
@@ -13274,6 +13360,12 @@
       "system": "native_button_key",
       "target": "原生Button实体（事件冒泡后命中）",
       "description": "焦点键盘Enter或Space首次按下时派发Activate。"
+    },
+    {
+      "event": "RemoveEvent",
+      "system": "enhanced-reset-gameplay-action",
+      "target": "正移除 ActionOf<GameplayContext> 的动作实体",
+      "description": "GameplayContext 的 ActionOf 关系移除时把动作状态和值清零，并按旧状态排入结束事件。"
     }
   ],
   "startup_notes": [
@@ -13384,7 +13476,11 @@
     "native_button_click",
     "native_button_drag_end",
     "native_button_cancel",
-    "native_button_key"
+    "native_button_key",
+    "enhanced-reset-gameplay-action",
+    "native-focused-keyboard-dispatch",
+    "ecs-component-lifecycle",
+    "event-remove-action-of-gameplay"
   ],
   "nodes": [
     {
@@ -17262,6 +17358,47 @@
         "translation_paused: Has<NoTranslationEasing>",
         "rotation_paused: Has<NoRotationEasing>"
       ]
+    },
+    {
+      "id": "ecs-component-lifecycle",
+      "name": "组件移除与实体销毁流程",
+      "kind": "Engine flow",
+      "feature": "infrastructure",
+      "aspects": [
+        "systems",
+        "events"
+      ],
+      "description": "Bevy World 在组件实际移除或实体实际销毁期间，按原型组件集合匹配并触发生命周期 Observer。",
+      "display_summary": "在实际移除或销毁时发出匹配的生命周期事件。",
+      "notes": [
+        "这是 World 内部生命周期流程，不是独立注册系统，也没有固定 Schedule。",
+        "Commands 的移除与销毁要等命令应用；直接 World 操作在操作过程中触发。",
+        "实体销毁会派发 DespawnEvent，并为其组件派发 RemoveEvent；匹配组件仍由各 Observer 的 EventPattern 限定。",
+        "人物与 GameplayContext 控制者退出 InGame 的生产清理由 DespawnOnExit<AppState> 驱动。"
+      ],
+      "source": null,
+      "schedule": null,
+      "schedule_group": "EventTriggered",
+      "registrations": []
+    },
+    {
+      "id": "event-remove-action-of-gameplay",
+      "name": "RemoveEvent",
+      "kind": "EntityEvent",
+      "feature": "infrastructure",
+      "aspects": [
+        "events"
+      ],
+      "description": "Bevy 组件移除生命周期事件；此对象表示 reset_action<GameplayContext> 对 Remove<ActionOf<GameplayContext>> 的精确匹配入口。",
+      "display_summary": "通知 GameplayContext 的动作关系正在移除。",
+      "notes": [
+        "Remove<ActionOf<GameplayContext>> 是 EventPattern；真实事件类型为 RemoveEvent。",
+        "移除关系或销毁动作实体均可触发，不能与 Pressed 的 RemoveEvent 匹配入口合并。"
+      ],
+      "source": null,
+      "schedule": null,
+      "schedule_group": "Explanatory",
+      "registrations": []
     }
   ],
   "features": [
@@ -18155,7 +18292,11 @@
     "action.Action<ReleasePointerAction>": "enhanced_input",
     "resource.SessionWriter": "session_log",
     "resource.ConsoleWriter": "session_log",
-    "param-recoverable-body": "bounds_recovery"
+    "param-recoverable-body": "bounds_recovery",
+    "enhanced-reset-gameplay-action": "enhanced_input",
+    "native-focused-keyboard-dispatch": "infrastructure",
+    "ecs-component-lifecycle": "infrastructure",
+    "event-remove-action-of-gameplay": "infrastructure"
   },
   "system_links": [
     {
@@ -18861,7 +19002,10 @@
       "from": "world_spawn",
       "to": "world-ready-event",
       "kind": "trigger",
-      "label": "触发"
+      "label": "触发",
+      "notes": [
+        "场景实例完成后排入 Commands::trigger；命令应用时才触发对应实体上的 Observer。"
+      ]
     },
     {
       "id": "write-log-producer-log-file-worker",
@@ -20155,7 +20299,10 @@
       "from": "native_pointer_events",
       "to": "event-native_button_down",
       "kind": "trigger",
-      "label": "Commands::trigger"
+      "label": "Commands::trigger",
+      "notes": [
+        "pointer_events 排入 Commands::trigger；命令应用时触发事件并按实体层级传播。"
+      ]
     },
     {
       "id": "registration-plugin-ButtonPlugin-native_button_down",
@@ -20183,7 +20330,10 @@
       "from": "native_pointer_events",
       "to": "event-native_button_up",
       "kind": "trigger",
-      "label": "Commands::trigger"
+      "label": "Commands::trigger",
+      "notes": [
+        "pointer_events 排入 Commands::trigger；命令应用时触发事件并按实体层级传播。"
+      ]
     },
     {
       "id": "registration-plugin-ButtonPlugin-native_button_up",
@@ -20204,7 +20354,10 @@
       "from": "native_button_up",
       "to": "event-observe_menu_primary_clear",
       "kind": "trigger",
-      "label": "RemoveEvent（Pressed） lifecycle"
+      "label": "RemoveEvent（Pressed） lifecycle",
+      "notes": [
+        "仅按钮未禁用且已有 Pressed 时排入移除命令；命令应用后由 ECS 组件移除生命周期发出 RemoveEvent。"
+      ]
     },
     {
       "id": "observer-native_button_click",
@@ -20218,7 +20371,10 @@
       "from": "native_pointer_events",
       "to": "event-native_button_click",
       "kind": "trigger",
-      "label": "Commands::trigger"
+      "label": "Commands::trigger",
+      "notes": [
+        "pointer_events 排入 Commands::trigger；命令应用时触发事件并按实体层级传播。"
+      ]
     },
     {
       "id": "registration-plugin-ButtonPlugin-native_button_click",
@@ -20239,7 +20395,10 @@
       "from": "native_pointer_events",
       "to": "event-native_button_drag_end",
       "kind": "trigger",
-      "label": "Commands::trigger"
+      "label": "Commands::trigger",
+      "notes": [
+        "pointer_events 排入 Commands::trigger；命令应用时触发事件并按实体层级传播。"
+      ]
     },
     {
       "id": "registration-plugin-ButtonPlugin-native_button_drag_end",
@@ -20260,7 +20419,10 @@
       "from": "native_button_drag_end",
       "to": "event-observe_menu_primary_clear",
       "kind": "trigger",
-      "label": "RemoveEvent（Pressed） lifecycle"
+      "label": "RemoveEvent（Pressed） lifecycle",
+      "notes": [
+        "仅按钮未禁用且已有 Pressed 时排入移除命令；命令应用后由 ECS 组件移除生命周期发出 RemoveEvent。"
+      ]
     },
     {
       "id": "observer-native_button_cancel",
@@ -20274,7 +20436,10 @@
       "from": "native_pointer_events",
       "to": "event-native_button_cancel",
       "kind": "trigger",
-      "label": "Commands::trigger"
+      "label": "Commands::trigger",
+      "notes": [
+        "pointer_events 排入 Commands::trigger；命令应用时触发事件并按实体层级传播。"
+      ]
     },
     {
       "id": "registration-plugin-ButtonPlugin-native_button_cancel",
@@ -20295,7 +20460,10 @@
       "from": "native_button_cancel",
       "to": "event-observe_menu_primary_clear",
       "kind": "trigger",
-      "label": "RemoveEvent（Pressed） lifecycle"
+      "label": "RemoveEvent（Pressed） lifecycle",
+      "notes": [
+        "仅按钮未禁用且已有 Pressed 时排入移除命令；命令应用后由 ECS 组件移除生命周期发出 RemoveEvent。"
+      ]
     },
     {
       "id": "observer-native_button_key",
@@ -20337,14 +20505,20 @@
       "from": "native_pointer_events",
       "to": "event-observe_menu_primary_press",
       "kind": "trigger",
-      "label": "PointerPress"
+      "label": "PointerPress",
+      "notes": [
+        "pointer_events 排入 Commands::trigger；命令应用时触发事件并按实体层级传播。"
+      ]
     },
     {
       "id": "trigger-native_pointer_events-event-observe_scrollbar_press",
       "from": "native_pointer_events",
       "to": "event-observe_scrollbar_press",
       "kind": "trigger",
-      "label": "PointerPress"
+      "label": "PointerPress",
+      "notes": [
+        "pointer_events 排入 Commands::trigger；命令应用时触发事件并按实体层级传播。"
+      ]
     },
     {
       "id": "write-native_pointer_events-resource.PointerPressMessages",
@@ -20732,6 +20906,254 @@
         "path": "src/item_interaction/attachment.rs",
         "line": 125
       }
+    },
+    {
+      "id": "trigger-input_trigger-event-observe_move",
+      "from": "input_trigger",
+      "to": "event-observe_move",
+      "kind": "trigger",
+      "label": "Commands::trigger Fire<MoveAction>",
+      "notes": [
+        "动作状态对应的事件标记存在时排入命令；命令应用时触发。"
+      ]
+    },
+    {
+      "id": "trigger-input_trigger-event-observe_complete",
+      "from": "input_trigger",
+      "to": "event-observe_complete",
+      "kind": "trigger",
+      "label": "Commands::trigger Complete<MoveAction>",
+      "notes": [
+        "动作状态对应的事件标记存在时排入命令；命令应用时触发。"
+      ]
+    },
+    {
+      "id": "trigger-input_trigger-event-observe_cancel",
+      "from": "input_trigger",
+      "to": "event-observe_cancel",
+      "kind": "trigger",
+      "label": "Commands::trigger Cancel<MoveAction>",
+      "notes": [
+        "动作状态对应的事件标记存在时排入命令；命令应用时触发。",
+        "仅旧状态 Ongoing → None 时；当前 MoveAction 生产配置未产生 Ongoing。"
+      ]
+    },
+    {
+      "id": "trigger-input_trigger-event-observe_jump",
+      "from": "input_trigger",
+      "to": "event-observe_jump",
+      "kind": "trigger",
+      "label": "Commands::trigger Fire<JumpAction>",
+      "notes": [
+        "动作状态对应的事件标记存在时排入命令；命令应用时触发。"
+      ]
+    },
+    {
+      "id": "trigger-input_trigger-event-observe_interact",
+      "from": "input_trigger",
+      "to": "event-observe_interact",
+      "kind": "trigger",
+      "label": "Commands::trigger Fire<InteractAction>",
+      "notes": [
+        "动作状态对应的事件标记存在时排入命令；命令应用时触发。"
+      ]
+    },
+    {
+      "id": "trigger-input_trigger-event-observe_look",
+      "from": "input_trigger",
+      "to": "event-observe_look",
+      "kind": "trigger",
+      "label": "Commands::trigger Fire<LookAction>",
+      "notes": [
+        "动作状态对应的事件标记存在时排入命令；命令应用时触发。"
+      ]
+    },
+    {
+      "id": "trigger-input_trigger-event-observe_release_pointer",
+      "from": "input_trigger",
+      "to": "event-observe_release_pointer",
+      "kind": "trigger",
+      "label": "Commands::trigger Fire<ReleasePointerAction>",
+      "notes": [
+        "动作状态对应的事件标记存在时排入命令；命令应用时触发。"
+      ]
+    },
+    {
+      "id": "trigger-input_trigger-event-observe_menu_previous",
+      "from": "input_trigger",
+      "to": "event-observe_menu_previous",
+      "kind": "trigger",
+      "label": "Commands::trigger Fire<PreviousAction>",
+      "notes": [
+        "动作状态对应的事件标记存在时排入命令；命令应用时触发。"
+      ]
+    },
+    {
+      "id": "trigger-input_trigger-event-observe_menu_next",
+      "from": "input_trigger",
+      "to": "event-observe_menu_next",
+      "kind": "trigger",
+      "label": "Commands::trigger Fire<NextAction>",
+      "notes": [
+        "动作状态对应的事件标记存在时排入命令；命令应用时触发。"
+      ]
+    },
+    {
+      "id": "trigger-input_trigger-event-observe_menu_left",
+      "from": "input_trigger",
+      "to": "event-observe_menu_left",
+      "kind": "trigger",
+      "label": "Commands::trigger Fire<LeftAction>",
+      "notes": [
+        "动作状态对应的事件标记存在时排入命令；命令应用时触发。"
+      ]
+    },
+    {
+      "id": "trigger-input_trigger-event-observe_menu_right",
+      "from": "input_trigger",
+      "to": "event-observe_menu_right",
+      "kind": "trigger",
+      "label": "Commands::trigger Fire<RightAction>",
+      "notes": [
+        "动作状态对应的事件标记存在时排入命令；命令应用时触发。"
+      ]
+    },
+    {
+      "id": "trigger-input_trigger-event-observe_menu_confirm",
+      "from": "input_trigger",
+      "to": "event-observe_menu_confirm",
+      "kind": "trigger",
+      "label": "Commands::trigger Fire<ConfirmAction>",
+      "notes": [
+        "动作状态对应的事件标记存在时排入命令；命令应用时触发。"
+      ]
+    },
+    {
+      "id": "trigger-input_trigger-event-observe_menu_back",
+      "from": "input_trigger",
+      "to": "event-observe_menu_back",
+      "kind": "trigger",
+      "label": "Commands::trigger Fire<BackAction>",
+      "notes": [
+        "动作状态对应的事件标记存在时排入命令；命令应用时触发。"
+      ]
+    },
+    {
+      "id": "trigger-native_pointer_events-event-observe_menu_scroll",
+      "from": "native_pointer_events",
+      "to": "event-observe_menu_scroll",
+      "kind": "trigger",
+      "label": "Commands::trigger PointerScroll",
+      "notes": [
+        "向当前悬停命中实体派发，事件可沿 ChildOf 冒泡。",
+        "pointer_events 排入 Commands::trigger；命令应用时触发事件并按实体层级传播。"
+      ]
+    },
+    {
+      "id": "trigger-native_pointer_events-event-observe_scrollbar_scroll",
+      "from": "native_pointer_events",
+      "to": "event-observe_scrollbar_scroll",
+      "kind": "trigger",
+      "label": "Commands::trigger PointerScroll",
+      "notes": [
+        "向当前悬停命中实体派发，事件可沿 ChildOf 冒泡。",
+        "pointer_events 排入 Commands::trigger；命令应用时触发事件并按实体层级传播。"
+      ]
+    },
+    {
+      "id": "trigger-world_spawn-event-observe_courier_ready",
+      "from": "world_spawn",
+      "to": "event-observe_courier_ready",
+      "kind": "trigger",
+      "label": "Commands::trigger WorldInstanceReady",
+      "notes": [
+        "场景实例完成后向对应 WorldAssetRoot 实体排入就绪事件。",
+        "场景实例完成后排入 Commands::trigger；命令应用时才触发对应实体上的 Observer。"
+      ]
+    },
+    {
+      "id": "trigger-native-focused-keyboard-dispatch-native-focused-keyboard-event",
+      "from": "native-focused-keyboard-dispatch",
+      "to": "native-focused-keyboard-event",
+      "kind": "trigger",
+      "label": "Commands::trigger FocusedInput<KeyboardInput>",
+      "notes": [
+        "主窗口唯一时，向存活焦点实体或主窗口排入事件；命令应用时触发。"
+      ]
+    },
+    {
+      "id": "trigger-ecs-component-lifecycle-carry-despawn-event",
+      "from": "ecs-component-lifecycle",
+      "to": "carry-despawn-event",
+      "kind": "trigger",
+      "label": "Despawn<Character> 生命周期",
+      "notes": [
+        "实际销毁包含 Character 的实体时触发；退出 InGame 的状态清理是当前生产路径。"
+      ]
+    },
+    {
+      "id": "trigger-ecs-component-lifecycle-event-observe_menu_primary_clear",
+      "from": "ecs-component-lifecycle",
+      "to": "event-observe_menu_primary_clear",
+      "kind": "trigger",
+      "label": "Remove<Pressed> 生命周期",
+      "notes": [
+        "实际移除 Pressed 或销毁含 Pressed 的实体时触发。"
+      ]
+    },
+    {
+      "id": "trigger-ecs-component-lifecycle-event-remove-action-of-gameplay",
+      "from": "ecs-component-lifecycle",
+      "to": "event-remove-action-of-gameplay",
+      "kind": "trigger",
+      "label": "Remove<ActionOf<GameplayContext>> 生命周期",
+      "notes": [
+        "实际移除关系或销毁动作实体时，按 ActionOf<GameplayContext> 组件匹配。"
+      ]
+    },
+    {
+      "id": "observer-enhanced-reset-gameplay-action",
+      "from": "event-remove-action-of-gameplay",
+      "to": "enhanced-reset-gameplay-action",
+      "kind": "trigger",
+      "label": "Remove<ActionOf<GameplayContext>>"
+    },
+    {
+      "id": "trigger-enhanced-reset-gameplay-action-event-observe_complete",
+      "from": "enhanced-reset-gameplay-action",
+      "to": "event-observe_complete",
+      "kind": "trigger",
+      "label": "Complete<MoveAction>（旧状态 Fired）",
+      "notes": [
+        "关系移除时旧状态为 Fired 才排入 Complete；命令应用时触发。"
+      ]
+    },
+    {
+      "id": "trigger-enhanced-reset-gameplay-action-event-observe_cancel",
+      "from": "enhanced-reset-gameplay-action",
+      "to": "event-observe_cancel",
+      "kind": "trigger",
+      "label": "Cancel<MoveAction>（旧状态 Ongoing）",
+      "notes": [
+        "仅旧状态 Ongoing 时排入 Cancel；当前生产 MoveAction 配置未产生 Ongoing。"
+      ]
+    },
+    {
+      "id": "trigger-menu_clear_cancelled_primary-event-observe_menu_primary_clear",
+      "from": "menu_clear_cancelled_primary",
+      "to": "event-observe_menu_primary_clear",
+      "kind": "trigger",
+      "label": "移除 Pressed 后触发生命周期",
+      "notes": [
+        "取消、失焦或离窗清理实际移除 Pressed 时触发；命令应用时生效。"
+      ]
+    },
+    {
+      "id": "order-input_update-native-focused-keyboard-dispatch",
+      "from": "input_update",
+      "to": "native-focused-keyboard-dispatch",
+      "kind": "order",
+      "label": "after(InputSystems)"
     }
   ],
   "feature_links": [

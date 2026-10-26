@@ -35,8 +35,10 @@ flowchart TB
   classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
   classDef node_observer fill:#F4F1F9,stroke:#7B4DB2,stroke-width:1.6px,color:#1F3340
   classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_engine_flow fill:#F1F5F4,stroke:#557C78,stroke-width:1.6px,color:#1F3340
   classDef edge_schedule stroke:#334155,stroke-width:3px
   classDef edge_order stroke:#334155,stroke-width:2px
+  classDef edge_observe stroke:#B66B2D,stroke-width:1.8px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
   subgraph diagram_main[" "]
   direction LR
@@ -49,7 +51,15 @@ flowchart TB
   class n2 node_system
   n1 layout_0@~~~ n2
   end
-  subgraph sg1["PostUpdate"]
+  subgraph sg1["SpawnScene"]
+  direction TB
+  n6@{ shape: stadium, label: "**场景实例生成流程**<br/>来自Bevy 引擎 ↗：展开场景资产层级并通<br/>知实例就绪。" }
+  class n6 node_engine_flow
+  class n6 external_node
+  n0@{ shape: hex, label: "**mark_courier_animation_ready**<br/>标记主角视觉根以进入动画绑定。" }
+  class n0 node_observer
+  end
+  subgraph sg2["PostUpdate"]
   direction TB
   n4@{ shape: lin-rect, label: "**AnimationSystems**<br/>来自Bevy 引擎 ↗：采样动画图并更新骨骼<br/>局部姿态。" }
   class n4 node_system_set
@@ -62,20 +72,18 @@ flowchart TB
   n4 layout_1@~~~ n3
   n3 layout_2@~~~ n5
   end
-  subgraph sg2["Observer"]
-  direction TB
-  n0@{ shape: hex, label: "**mark_courier_animation_ready**<br/>标记主角视觉根以进入动画绑定。" }
-  class n0 node_observer
-  end
-  sg1 layout_3@~~~ sg2
   sg0 sc0@--> sg1
   class sc0 edge_schedule
+  sg1 sc1@--> sg2
+  class sc1 edge_schedule
   n1 e0@-->|"Commands"| n2
   class e0 edge_order
   n4 e1@-->|"AnimationSystems"| n3
   class e1 edge_order
   n3 e2@-->|"Propagate"| n5
   class e2 edge_order
+  n6 e3@-->|"WorldInstanceReady"| n0
+  class e3 edge_observe
   end
   e0@{ curve: basis }
   e1@{ curve: basis }

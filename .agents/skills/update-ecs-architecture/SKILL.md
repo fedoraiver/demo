@@ -18,7 +18,7 @@ description: 更新、核对或修复本项目的 ECS 架构图，包括源码�
 
 核对插件显式装配、系统及 Observer 注册、Schedule／SystemSet、运行条件、真实顺序与延迟命令可见时机；区分 Component、Resource、Local、NonSend、QueryData、SystemParam、普通辅助值及实体引用。核对 ChildOf 等关系、生成销毁、消息／事件与 Observer 条件，不把数据访问画成执行先后。
 
-14 个项目插件及 Bevy、Avian、Enhanced Input、Kira、Egui 五个基础设施入口只保留“系统与调度”和明确空态；Observer 纳入独立触发区域，不伪造固定 Schedule。实体、组件、资源、消息及其他生产对象通过各自对象图浏览，完整对象及关系目录不因视图过滤删减。`architecture-infrastructure.mjs` 维护入口、分节和文件前缀；四个第三方入口位于 Bevy 之前，插值归 Avian，Inspector 归 Egui，浏览归属不覆盖真实定义来源。系统优先使用明确 feature，否则沿用 module／提供方规则。
+14 个项目插件及 Bevy、Avian、Enhanced Input、Kira、Egui 五个基础设施入口只保留“系统与调度”和明确空态；Observer 在事件发出系统旁形成局部分支，不伪造固定 Schedule。系统图按精确事件对象将“来源 → 事件 → Observer”投影为标有事件名的直接触发线，保留原关系 ID、实际条件、生效时机与源码证据；原始关系和事件对象继续在对象图浏览，投影线不进入统一关系目录，也不扩大对象图的一跳范围。多来源不复制 Observer，不按事件名合并对象，不把全部 Observer 串成统一区域或排版链；同一发出位置的直接回调可用局部无环不可见约束控制扇出宽度。实体、组件、资源、消息及其他生产对象通过各自对象图浏览，完整对象及关系目录不因视图过滤删减。`architecture-infrastructure.mjs` 维护入口、分节和文件前缀；四个第三方入口位于 Bevy 之前，插值归 Avian，Inspector 归 Egui，浏览归属不覆盖真实定义来源。系统优先使用明确 feature，否则沿用 module／提供方规则。
 
 保留稳定节点、关系和原注册身份；别名只连接同一声明与身份，不按名称合并。每个组件投影和系统／Observer 注册分别建图，同类型、同函数及 canonical Entity 不作为合并身份。普通插件视图维持各注册的调度语义；SystemSet／Engine flow 的多个阶段保留为原对象配置，不机械复制成系统。插件局部视图的外部引用提供摘要和所属插件入口，不复制其他插件内部流程。`main / App` 纯插件装配边在系统视图过滤，在对象图中保留；项目安装第三方插件及退出刷新等其他真实关系不丢失。旧混合第三方 node 链接按真实归属替换到当前入口，无效旧入口回总览，保留工作区及其他 URL 状态。
 
@@ -42,7 +42,7 @@ Entity、Component 使用与 System 相同的原生圆角矩形，保留各自�
 
 使用真实 Mermaid 定义与编译，不手改最终路径或补画代理矩形。按[分类与视觉规范](../../../docs/diagrams/README.md#节点与连线视觉规范)维护类别、名称、短用途、选中效果和图例；`architecture-kinds.mjs` 与 `architecture-style.mjs` 分别维护语义身份和视觉表达，不得以样式猜测或覆盖 kind。分类依据真实声明，辅助函数、分组和流程聚合不冒充单个 System，缺少证据时标待核实。完整 description、字段、查询、约束及视图摘要作为数据保留。
 
-按[布局规则](../../../docs/diagrams/README.md#mermaid-布局与连线)核对方向、Schedule 标题、对象图中心和直接邻居。Schedule 阶段驱动、系统 `kind=order` 与不可见 `layoutLinks` 分开维护；排版容器不增加业务身份、关系端点或隐含执行边。完整注册参数和测试 scope 留在详情，不混入运行时分组标题。
+按[布局规则](../../../docs/diagrams/README.md#mermaid-布局与连线)核对方向、Schedule 标题、对象图中心和直接邻居。系统图及总览使用统一 Dagre 原生布局，保持阶段横排、真实系统纵排，所有候选遵守相同严格几何检查。分组的 `nodes` 只记录真实成员，Observer 与无固定 Schedule 的触发流程可作为来源分组的 `visualAttachments` 形成局部分支；没有唯一阶段来源的组件记录于 `view.observerBranches`。物理声明与真实成员分开核对，三者联合完整覆盖且每个节点唯一，不据排版包含关系推断 Schedule 注册。Schedule 阶段驱动、系统 `kind=order` 与不可见 `layoutLinks` 分开维护；加长不可见连线仍保留稳定 ID 和真实端点，排版容器不增加业务身份、关系端点或隐含执行边。完整注册参数和测试 scope 留在详情，不混入运行时分组标题。
 
 所有原生布局候选保留唯一节点、真实关系、相反读写方向和有向环，并通过 `architecture-routing.mjs` 的同一套严格检查。直线／曲线、真实轮廓、端点与标签的数值规则由上述布局规范维护，不能只检查包围框。
 
