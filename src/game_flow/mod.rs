@@ -6,7 +6,7 @@ use avian3d::{
     interpolation::TransformEasingSystems,
     prelude::{Physics, PhysicsTime},
 };
-use bevy::{prelude::*, state::app::StatesPlugin};
+use bevy::prelude::*;
 
 /// 游戏会话只在 InGame 期间存在，暂停不切换该状态。
 #[derive(States, Clone, Copy, Debug, Default, PartialEq, Eq, Hash)]
@@ -52,9 +52,6 @@ pub(crate) struct GameFlowPlugin;
 impl Plugin for GameFlowPlugin {
     fn build(&self, app: &mut App) {
         configure_feature_order(app);
-        if !app.is_plugin_added::<StatesPlugin>() {
-            app.add_plugins(StatesPlugin);
-        }
         app.init_state::<AppState>()
             .add_sub_state::<PlayState>()
             .add_systems(OnEnter(AppState::MainMenu), enter_main_menu)

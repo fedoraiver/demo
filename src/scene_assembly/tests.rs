@@ -16,6 +16,7 @@ use bevy::{
     input::{InputPlugin, mouse::MouseMotion},
     mesh::{MeshPlugin, skinning::SkinnedMesh},
     scene::ScenePlugin,
+    state::app::StatesPlugin,
     time::TimeUpdateStrategy,
     window::{CursorOptions, PrimaryWindow},
     world_serialization::{WorldInstance, WorldSerializationPlugin},
@@ -79,7 +80,7 @@ fn build_asset_app_with_camera(
         app.add_input_context::<GameplayContext>();
     }
     if with_session {
-        app.add_plugins(crate::game_flow::GameFlowPlugin)
+        app.add_plugins((StatesPlugin, crate::game_flow::GameFlowPlugin))
             .init_resource::<Time<avian3d::prelude::Physics>>();
     }
     if with_physics {
