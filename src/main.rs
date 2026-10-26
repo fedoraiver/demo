@@ -1,5 +1,3 @@
-//! 显式组装功能插件，并保留会话日志直到退出刷新完成。
-
 mod audio;
 mod bounds_recovery;
 mod character;
