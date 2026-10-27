@@ -90,7 +90,7 @@ Windows MSVC 的 `GetWindowSubclass` 等静态导入依赖 Common Controls v6 �
 
 插件的 Startup 记录表示已注册，不代表主菜单显示面板。检查器仅在游戏运行时显示，主菜单与暂停时隐藏。
 
-鼠标仍被游戏捕获时，`filter_captured_egui_input` 在 Egui 收集输入后、开始本帧之前过滤面板交互，补齐 Egui 内部残留按键的释放并清除拖拽和文本焦点。这样隐藏光标即使位于面板上也不会误编辑字段或中断玩家输入。F3 的 `ReleasePointerAction` 由相机 Observer 释放光标以操作检查器，游戏仍保持运行；Esc 通过菜单动作进入暂停。
+F3 在游戏控制与检查器操作之间切换，检查器在两种模式下均保持显示，游戏模拟继续运行。游戏模式通过主上下文的 `EguiContextSettings.input_system_settings` 关闭键鼠与输入法转发，捕获切换清除 Egui 的遗留光标位置；检查器模式恢复转发并停用玩法上下文。切换前结束输入手势的约束见 [世界检查器](usage.md#世界检查器)。Esc 通过菜单动作进入暂停。
 
 玩法组件、`PrototypeConfig` 和相机状态注册 Bevy 反射元数据，让检查器直接访问 ECS 数据。`HeldBy`／`HoldingItems` 不开放反射修改，反向索引继续由 Bevy 的关系钩子维护；鼠标捕获状态不开放反射编辑。检查器编辑仅影响内存中的本次会话。
 
@@ -125,7 +125,7 @@ NPC 身体碰撞属于 `World` 层，阻挡人物、自由箱与持箱代理，�
 
 ## 输入与相机数据流
 
-`FirstPersonPlugin` 使用显式安装的 `bevy_enhanced_input` 注册 `MoveAction`、`LookAction`、`JumpAction`、`InteractAction` 和调试用的 `ReleasePointerAction`。设备绑定位于控制者的 `GameplayContext`，Observer 从事件的 `context` 查到对应控制目标，再写入目标状态。
+`FirstPersonPlugin` 使用显式安装的 `bevy_enhanced_input` 注册 `MoveAction`、`LookAction`、`JumpAction` 和 `InteractAction`。设备绑定位于控制者的 `GameplayContext`，Observer 从事件的 `context` 查到对应控制目标，再写入目标状态。
 
 移动、跳跃和交互沿下面的路径进入固定模拟：
 
@@ -147,11 +147,11 @@ NPC 身体碰撞属于 `World` 层，阻挡人物、自由箱与持箱代理，�
 
 `sync_character_visibility` 在镜头更新后按有效控制关联隐藏对应角色视觉子实体的 `CharacterVisual`，持有物与其他角色保持显示。相机或控制者丢失、关联不再有效时恢复人物显示，避免模型停留在隐藏状态。
 
-`sync_mouse_capture` 直接读取 Esc、`MouseButtonInput` 与 `WindowFocused`，结合应用状态和控制关联更新 `MouseLookState` 与光标。底层 Esc 只用于及时释放，业务暂停仍由菜单动作执行。系统位于 `InputSystems / Egui BeginPass` 后、Enhanced Input Prepare 前。
+`sync_mouse_capture` 直接读取 F3、Esc 与 `WindowFocused`，结合应用状态和控制关联更新 `MouseLookState` 与光标。F3 管理窗口捕获生命周期，必须独立于检查器模式下停用的 `GameplayContext`，并在 Egui 输入转发及 Enhanced Input Prepare 前确定本帧归属；底层 Esc 只用于及时释放，业务暂停仍由菜单动作执行。
 
-主 Egui 上下文使用多遍 UI，界面在 `PostUpdate` 处理。捕获同步读取最近已完成 UI 的拖拽、文本焦点和菜单状态，再以当前物理光标命中已有面板布局，阻止同帧移入点击穿透。恢复捕获时跳过自由光标阶段累积位移。
+主 Egui 上下文使用多遍 UI，界面在 `PostUpdate` 处理。输入归属只由捕获模式决定，点击面板内外均不切换模式。窗口失焦释放捕获，回焦后由 F3 恢复；暂停、主菜单或控制关联失效时保持释放。恢复捕获时跳过自由光标阶段累积位移。
 
-操作检查器时通过 `ContextActivity<GameplayContext>` 停用输入上下文，而不清空全局底层键盘资源；延迟命令在动作准备前应用。停用触发动作完成或取消，已有移动意图归零，单次动作继续遵循 `require_reset` 的松键要求。F3 释放后未操作检查器时保留原有键盘控制；主菜单和暂停强制停用玩法输入，点击菜单背景不能重新捕获鼠标。
+检查器模式通过 `ContextActivity<GameplayContext>` 统一停用玩法输入，而不清空全局底层键盘资源；延迟命令在动作准备前应用。停用触发动作完成或取消，已有移动意图归零，单次动作继续遵循 `require_reset` 的松键要求。主菜单和暂停同样停用玩法输入，从暂停恢复时自动捕获鼠标。
 
 ## 调度与模拟边界
 
