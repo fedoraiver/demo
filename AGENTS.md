@@ -47,7 +47,7 @@ assets/                Runtime assets grouped by resource type
 
 ## Conventions
 
-- Each first-level directory under `src/` owns exactly one project `Plugin`. Keep implementation and headless tests in flat Rust files within that feature; do not hide additional project plugins in the directory or add directories without their own plugin. Compose project plugins explicitly in `main.rs`; cross-feature scheduling uses the shared contracts in [Current Architecture](docs/architecture.md).
+- Each first-level directory under `src/` owns exactly one project `Plugin`. Keep implementation files flat within that feature and follow the [test organization rules](docs/development.md#测试代码组织); do not hide additional project plugins in the directory or add directories without their own plugin. Compose project plugins explicitly in `main.rs`; cross-feature scheduling uses the shared contracts in [Current Architecture](docs/architecture.md).
 - All new or modified game logic must follow ECS and use this project's Bevy implementation. Keep entity identity, component data, shared resources, and system behavior in their respective roles.
 - Prefer BSN-style declarative code when assembling scenes, UI, and other entity hierarchies, clearly expressing component composition and child entity structure. Keep runtime behavior in ECS systems or Observers. See the [Scene and UI Assembly Standards](docs/development.md#场景与-ui-装配规范) for the full rules.
 - Keep all temporary repository files under the root `tmp/` directory and do not commit them. See the [Temporary File Rules](docs/development.md#临时文件管理) for details.

@@ -1,16 +1,14 @@
 //! 统一安装 Avian、重力与共享碰撞层；业务身体由角色和物品功能装配。
 
-#[cfg(test)]
-mod body;
 mod collision;
 #[cfg(test)]
 mod tests;
 
-#[cfg(test)]
-pub(crate) use body::ground_body;
 pub(crate) use collision::{
     GamePhysicsLayer, held_collision_layers, parcel_collision_layers, world_collision_layers,
 };
+#[cfg(test)]
+pub(crate) use tests::ground_body;
 
 use crate::{game_flow::FixedGameplaySystems, settings::PrototypeConfig};
 use avian3d::{prelude::*, schedule::LastPhysicsTick};
