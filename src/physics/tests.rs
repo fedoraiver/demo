@@ -15,9 +15,22 @@ use crate::{
     character::{Character, CharacterIntent, CharacterMotion, CharacterPlugin},
     game_flow::{FixedGameplaySystems, configure_feature_order},
     item_interaction::{HeldBy, HeldTarget, HoldingItems, ItemInteractionPlugin, Parcel, Pickable},
-    physics::{GamePhysicsPlugin, ground_body, world_collision_layers},
+    physics::{GamePhysicsPlugin, world_collision_layers},
     settings::PrototypeConfig,
 };
+
+/// 无窗口测试复用的有厚度地面；调用方的 Transform 表示地面顶面。
+pub(crate) fn ground_body(_config: &PrototypeConfig) -> impl Bundle {
+    (
+        RigidBody::Static,
+        Collider::compound(vec![(
+            Vec3::NEG_Y * 0.5,
+            Quat::IDENTITY,
+            Collider::cuboid(200.0, 1.0, 200.0),
+        )]),
+        world_collision_layers(),
+    )
+}
 
 /// 每帧读取真正的消息缓冲，避免在多固定步或渲染帧之间重复计算反馈。
 fn take_sound_cues(app: &mut App) -> Vec<SoundCue> {
