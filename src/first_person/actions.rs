@@ -27,11 +27,6 @@ pub struct JumpAction;
 #[action_output(bool)]
 pub struct InteractAction;
 
-/// 释放光标以操作开发检查器；Esc 保留给游戏暂停菜单。
-#[derive(InputAction)]
-#[action_output(bool)]
-pub struct ReleasePointerAction;
-
 /// 为指定玩家与角色创建键盘控制者，返回本次运行的控制者实体。
 ///
 /// 场景只为获得键盘控制权的玩家调用一次；后续手柄或远程控制者单独配置。
@@ -82,11 +77,6 @@ pub(super) fn keyboard_context() -> impl Scene {
             ActionSettings { consume_input: true, require_reset: true }
             Press
             Bindings [ Binding(KeyCode::KeyE) ]
-            --
-            Action::<ReleasePointerAction>::new()
-            ActionSettings { consume_input: true, require_reset: true }
-            Press
-            Bindings [ Binding(KeyCode::F3) ]
         ]
     }
 }

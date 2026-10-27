@@ -4,7 +4,7 @@ use std::f32::consts::TAU;
 
 use avian3d::prelude::{AngularVelocity, Collider, LinearVelocity, Position, Rotation};
 use bevy::{
-    input::{InputSystems, mouse::MouseButtonInput},
+    input::InputSystems,
     prelude::*,
     window::{CursorGrabMode, CursorOptions, PrimaryWindow, WindowFocused},
 };
@@ -12,7 +12,7 @@ use bevy_enhanced_input::prelude::{
     ContextActivity, EnhancedInputSystems, Fire, InputContextAppExt,
 };
 use bevy_inspector_egui::bevy_egui::{
-    EguiContext, EguiInput, EguiPreUpdateSet, PrimaryEguiContext, egui,
+    EguiContextSettings, EguiInput, EguiPreUpdateSet, PrimaryEguiContext,
 };
 
 use crate::{
@@ -30,11 +30,11 @@ mod facing;
 
 pub(crate) use actions::{GameplayContext, spawn_keyboard_controller};
 use actions::{
-    LookAction, ReleasePointerAction, clear_cancelled_movement, clear_completed_movement,
-    record_movement, request_interaction, request_jump,
+    LookAction, clear_cancelled_movement, clear_completed_movement, record_movement,
+    request_interaction, request_jump,
 };
 use camera::{follow_first_person_camera, on_camera_look, sync_character_visibility};
-use capture::{filter_captured_egui_input, release_pointer_for_inspector, sync_mouse_capture};
+use capture::sync_mouse_capture;
 use facing::sync_character_facing;
 
 /// 独立于本次运行实体标识的玩家身份。
@@ -116,19 +116,13 @@ impl Plugin for FirstPersonPlugin {
             .register_type::<FirstPersonCamera>()
             .add_message::<WindowFocused>()
             .add_observer(on_camera_look)
-            .add_observer(release_pointer_for_inspector)
             .add_systems(Startup, log_pose_synchronization)
-            .add_systems(
-                PreUpdate,
-                filter_captured_egui_input
-                    .after(EguiPreUpdateSet::ProcessInput)
-                    .before(EguiPreUpdateSet::BeginPass),
-            )
             .add_systems(
                 PreUpdate,
                 sync_mouse_capture
                     .after(InputSystems)
-                    .after(EguiPreUpdateSet::BeginPass)
+                    .after(EguiPreUpdateSet::InitContexts)
+                    .before(EguiPreUpdateSet::ProcessInput)
                     .before(EnhancedInputSystems::Prepare),
             )
             .add_systems(

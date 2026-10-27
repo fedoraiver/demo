@@ -380,8 +380,17 @@ mod pose_tests {
         scene::ScenePlugin,
         time::TimeUpdateStrategy,
         transform::TransformPlugin,
+        window::{CursorMoved, WindowEvent},
     };
     use bevy_enhanced_input::prelude::TriggerState;
+    use bevy_inspector_egui::bevy_egui::{
+        EguiClipboard, EguiContext, EguiGlobalSettings, EguiInput, egui,
+        input::{
+            EguiFileDragAndDropMessage, EguiInputEvent, ModifierKeysState, WindowToEguiContextMap,
+            write_egui_input_system, write_keyboard_input_messages_system,
+            write_modifiers_keys_state_system, write_pointer_moved_and_button_messages_system,
+        },
+    };
 
     use crate::{
         bounds_recovery::{BoundsRecoveryPlugin, SpawnPoint},
@@ -400,6 +409,10 @@ mod pose_tests {
     };
 
     pub(super) fn test_app() -> (App, Entity, Entity, Entity, Entity) {
+        test_app_with_states(false)
+    }
+
+    fn test_app_with_states(with_states: bool) -> (App, Entity, Entity, Entity, Entity) {
         // 窗口仅作为 ECS 数据存在，不安装 WinitPlugin 或渲染插件，也不启动完整游戏。
         let mut app = App::new();
         app.add_plugins((
@@ -419,9 +432,19 @@ mod pose_tests {
         ))
         .insert_resource(Time::<Fixed>::from_hz(60.0))
         .insert_resource(TimeUpdateStrategy::ManualDuration(Duration::ZERO))
+        .add_message::<WindowEvent>()
         .init_resource::<Assets<Mesh>>()
         .init_resource::<Assets<SkinnedMeshInverseBindposes>>();
         configure_feature_order(&mut app);
+        if with_states {
+            app.add_plugins((
+                bevy::state::app::StatesPlugin,
+                crate::game_flow::GameFlowPlugin,
+            ));
+            app.world_mut()
+                .resource_mut::<NextState<AppState>>()
+                .set(AppState::InGame);
+        }
         app.finish();
         app.cleanup();
         let config = app.world().resource::<PrototypeConfig>().clone();
@@ -510,11 +533,14 @@ mod pose_tests {
     }
 
     fn mouse_button(app: &mut App, window: Entity, state: ButtonState) {
-        app.world_mut().write_message(MouseButtonInput {
+        let event = MouseButtonInput {
             button: MouseButton::Left,
             state,
             window,
-        });
+        };
+        app.world_mut().write_message(event);
+        app.world_mut()
+            .write_message(WindowEvent::MouseButtonInput(event));
     }
 
     fn escape(app: &mut App, window: Entity, state: ButtonState) {
@@ -526,6 +552,24 @@ mod pose_tests {
             repeat: false,
             window,
         });
+    }
+
+    fn f3(app: &mut App, window: Entity, state: ButtonState) {
+        app.world_mut().write_message(KeyboardInput {
+            key_code: KeyCode::F3,
+            logical_key: Key::F3,
+            state,
+            text: None,
+            repeat: false,
+            window,
+        });
+    }
+
+    fn toggle_capture(app: &mut App, window: Entity) {
+        f3(app, window, ButtonState::Pressed);
+        app.update();
+        f3(app, window, ButtonState::Released);
+        app.update();
     }
 
     fn fire(context: Entity, delta: Vec2) -> Fire<LookAction> {
@@ -545,12 +589,33 @@ mod pose_tests {
         text_edit_rect: Option<egui::Rect>,
     }
 
-    /// 测试仅生成 egui 内存布局，沿用本帧输入顺序，不安装渲染、窗口后端或检查器插件。
+    /// 复用真实 egui 输入转换并只生成内存布局，不安装渲染、窗口后端或检查器插件。
     fn add_test_inspector(app: &mut App) -> Entity {
         app.init_resource::<TestInspectorUi>()
+            .init_resource::<EguiGlobalSettings>()
+            .init_resource::<ModifierKeysState>()
+            .init_resource::<WindowToEguiContextMap>()
+            .init_resource::<EguiClipboard>()
+            .add_message::<EguiInputEvent>()
+            .add_message::<EguiFileDragAndDropMessage>()
+            .configure_sets(
+                PreUpdate,
+                (
+                    EguiPreUpdateSet::InitContexts,
+                    EguiPreUpdateSet::ProcessInput,
+                    EguiPreUpdateSet::BeginPass,
+                )
+                    .chain(),
+            )
             .add_systems(
                 PreUpdate,
-                prepare_test_inspector_input
+                (
+                    write_modifiers_keys_state_system,
+                    write_pointer_moved_and_button_messages_system,
+                    write_keyboard_input_messages_system,
+                    write_egui_input_system,
+                )
+                    .chain()
                     .after(InputSystems)
                     .in_set(EguiPreUpdateSet::ProcessInput),
             )
@@ -566,72 +631,33 @@ mod pose_tests {
             );
         let context = app
             .world_mut()
-            .spawn((EguiContext::default(), PrimaryEguiContext))
+            .spawn((
+                EguiContext::default(),
+                EguiInput(egui::RawInput {
+                    screen_rect: Some(egui::Rect::from_min_size(
+                        egui::Pos2::ZERO,
+                        egui::vec2(640.0, 360.0),
+                    )),
+                    ..default()
+                }),
+                Camera::default(),
+                PrimaryEguiContext,
+            ))
             .id();
+        let window = app
+            .world_mut()
+            .query_filtered::<Entity, With<PrimaryWindow>>()
+            .single(app.world())
+            .unwrap();
+        let mut map = app.world_mut().resource_mut::<WindowToEguiContextMap>();
+        map.window_to_contexts
+            .entry(window)
+            .or_default()
+            .insert(context);
+        map.context_to_window.insert(context, window);
         app.update();
         app.update();
         context
-    }
-
-    fn prepare_test_inspector_input(
-        windows: Query<&Window, With<PrimaryWindow>>,
-        buttons: Res<ButtonInput<MouseButton>>,
-        mut keyboard_events: MessageReader<KeyboardInput>,
-        mut inputs: Query<&mut EguiInput, With<PrimaryEguiContext>>,
-    ) {
-        let window = windows.single().unwrap();
-        let mut input = egui::RawInput {
-            screen_rect: Some(egui::Rect::from_min_size(
-                egui::Pos2::ZERO,
-                egui::vec2(640.0, 360.0),
-            )),
-            ..default()
-        };
-        // 使用两倍 DPI，让回归同时检查物理光标到 egui 点坐标的换算。
-        input
-            .viewports
-            .get_mut(&egui::ViewportId::ROOT)
-            .unwrap()
-            .native_pixels_per_point = Some(2.0);
-        if let Some(position) = window.physical_cursor_position() {
-            let position = egui::pos2(position.x / 2.0, position.y / 2.0);
-            input.events.push(egui::Event::PointerMoved(position));
-            for pressed in [true, false] {
-                if (pressed && buttons.just_pressed(MouseButton::Left))
-                    || (!pressed && buttons.just_released(MouseButton::Left))
-                {
-                    input.events.push(egui::Event::PointerButton {
-                        pos: position,
-                        button: egui::PointerButton::Primary,
-                        pressed,
-                        modifiers: default(),
-                    });
-                }
-            }
-        }
-        for event in keyboard_events.read() {
-            let key = match event.key_code {
-                KeyCode::Escape => egui::Key::Escape,
-                KeyCode::KeyW => egui::Key::W,
-                KeyCode::KeyE => egui::Key::E,
-                KeyCode::KeyI => egui::Key::I,
-                KeyCode::Space => egui::Key::Space,
-                _ => continue,
-            };
-            input.events.push(egui::Event::Key {
-                key,
-                physical_key: Some(key),
-                pressed: event.state.is_pressed(),
-                repeat: false,
-                modifiers: default(),
-            });
-            if event.state.is_pressed() {
-                if let Some(text) = &event.text {
-                    input.events.push(egui::Event::Text(text.to_string()));
-                }
-            }
-        }
-        inputs.single_mut().unwrap().0 = input;
     }
 
     fn begin_test_inspector_pass(
@@ -666,9 +692,15 @@ mod pose_tests {
             .get_mut::<Window>(window)
             .unwrap()
             .set_physical_cursor_position(Some(bevy::math::DVec2::new(
-                f64::from(position.x * 2.0),
-                f64::from(position.y * 2.0),
+                f64::from(position.x),
+                f64::from(position.y),
             )));
+        app.world_mut()
+            .write_message(WindowEvent::CursorMoved(CursorMoved {
+                window,
+                position: Vec2::new(position.x, position.y),
+                delta: None,
+            }));
     }
 
     fn inspector_keyboard(app: &mut App, window: Entity, key_code: KeyCode, state: ButtonState) {
@@ -718,23 +750,15 @@ mod pose_tests {
     }
 
     mod capture_tests {
-        //! capture tests 的无窗口回归。
+        //! F3 输入归属切换与窗口生命周期的无窗口回归。
 
         use super::*;
 
         #[test]
-        fn f3_releases_pointer_and_click_recapture_skips_free_cursor_motion() {
-            // 使用实际 F3 绑定验证调试释放；窗口仍只是 ECS 数据，不创建桌面窗口。
-            let (mut app, window, _, camera, _) = test_app();
+        fn f3_toggles_capture_and_clicks_do_not_recapture() {
+            let (mut app, window, _, camera, controller) = test_app();
             let yaw = app.world().get::<FirstPersonCamera>(camera).unwrap().yaw;
-            app.world_mut().write_message(KeyboardInput {
-                key_code: KeyCode::F3,
-                logical_key: Key::F3,
-                state: ButtonState::Pressed,
-                text: None,
-                repeat: false,
-                window,
-            });
+            f3(&mut app, window, ButtonState::Pressed);
             app.update();
             assert!(!app.world().get::<MouseLookState>(camera).unwrap().active);
             assert!(app.world().get::<CursorOptions>(window).unwrap().visible);
@@ -742,31 +766,46 @@ mod pose_tests {
                 app.world().get::<CursorOptions>(window).unwrap().grab_mode,
                 CursorGrabMode::None
             );
+            assert!(
+                !**app
+                    .world()
+                    .get::<ContextActivity<GameplayContext>>(controller)
+                    .unwrap()
+            );
+            // 持续按住只切换一次；停用玩法上下文后，F3 仍由窗口捕获入口接收。
             for _ in 0..3 {
                 mouse_motion(&mut app, Vec2::new(50.0, 20.0));
                 app.update();
+                assert!(!app.world().get::<MouseLookState>(camera).unwrap().active);
                 assert_eq!(
                     app.world().get::<FirstPersonCamera>(camera).unwrap().yaw,
                     yaw
                 );
             }
-            app.world_mut().write_message(KeyboardInput {
-                key_code: KeyCode::F3,
-                logical_key: Key::F3,
-                state: ButtonState::Released,
-                text: None,
-                repeat: false,
-                window,
-            });
+            f3(&mut app, window, ButtonState::Released);
+            app.update();
             mouse_button(&mut app, window, ButtonState::Pressed);
+            app.update();
+            mouse_button(&mut app, window, ButtonState::Released);
+            app.update();
+            assert!(!app.world().get::<MouseLookState>(camera).unwrap().active);
+
+            f3(&mut app, window, ButtonState::Pressed);
             mouse_motion(&mut app, Vec2::new(200.0, 100.0));
             app.update();
             assert!(app.world().get::<MouseLookState>(camera).unwrap().active);
+            assert!(!app.world().get::<CursorOptions>(window).unwrap().visible);
+            assert!(
+                **app
+                    .world()
+                    .get::<ContextActivity<GameplayContext>>(controller)
+                    .unwrap()
+            );
             assert_eq!(
                 app.world().get::<FirstPersonCamera>(camera).unwrap().yaw,
                 yaw
             );
-            mouse_button(&mut app, window, ButtonState::Released);
+            f3(&mut app, window, ButtonState::Released);
             mouse_motion(&mut app, Vec2::new(10.0, 0.0));
             app.update();
             assert_ne!(
@@ -776,7 +815,7 @@ mod pose_tests {
         }
 
         #[test]
-        fn captured_pointer_over_inspector_does_not_consume_gameplay_input() {
+        fn captured_input_does_not_edit_inspector() {
             let (mut app, window, character, camera, controller) = test_app();
             let context = add_test_inspector(&mut app);
             let input_position = app
@@ -785,11 +824,12 @@ mod pose_tests {
                 .text_edit_rect
                 .unwrap()
                 .center();
+            app.world_mut()
+                .resource_mut::<TestInspectorUi>()
+                .text_edit_rect = None;
             set_cursor(&mut app, window, input_position);
             inspector_keyboard(&mut app, window, KeyCode::KeyW, ButtonState::Pressed);
             mouse_button(&mut app, window, ButtonState::Pressed);
-            app.update();
-            mouse_button(&mut app, window, ButtonState::Released);
             app.update();
             assert!(app.world().get::<MouseLookState>(camera).unwrap().active);
             assert!(
@@ -805,7 +845,12 @@ mod pose_tests {
                     .movement,
                 Vec2::Y
             );
-            assert!(app.world().resource::<TestInspectorUi>().text.is_empty());
+            let ui = app.world().resource::<TestInspectorUi>();
+            assert!(ui.text.is_empty());
+            assert!(
+                ui.text_edit_rect.is_some(),
+                "Captured mode must still draw the inspector"
+            );
             assert!(
                 !app.world_mut()
                     .get_mut::<EguiContext>(context)
@@ -813,224 +858,111 @@ mod pose_tests {
                     .get_mut()
                     .egui_wants_keyboard_input()
             );
-
+            mouse_button(&mut app, window, ButtonState::Released);
             inspector_keyboard(&mut app, window, KeyCode::KeyW, ButtonState::Released);
-            escape(&mut app, window, ButtonState::Pressed);
-            app.update();
-            assert!(!app.world().get::<MouseLookState>(camera).unwrap().active);
-            escape(&mut app, window, ButtonState::Released);
-            mouse_button(&mut app, window, ButtonState::Pressed);
-            app.update();
-            mouse_button(&mut app, window, ButtonState::Released);
-            app.update();
-            assert!(
-                app.world_mut()
-                    .get_mut::<EguiContext>(context)
-                    .unwrap()
-                    .get_mut()
-                    .egui_wants_keyboard_input()
-            );
-            inspector_keyboard(&mut app, window, KeyCode::KeyE, ButtonState::Pressed);
-            app.update();
-            assert_eq!(app.world().resource::<TestInspectorUi>().text, "e");
-            assert!(
-                !app.world()
-                    .get::<CharacterIntent>(character)
-                    .unwrap()
-                    .interact_pending
-            );
-
-            inspector_keyboard(&mut app, window, KeyCode::KeyE, ButtonState::Released);
-            set_cursor(&mut app, window, egui::pos2(500.0, 300.0));
-            mouse_button(&mut app, window, ButtonState::Pressed);
-            app.update();
-            // 恢复时 egui 已收到面板外按下；下一帧过滤松开也必须把其按下状态清干净。
-            mouse_button(&mut app, window, ButtonState::Released);
             app.update();
             assert!(
                 !app.world_mut()
                     .get_mut::<EguiContext>(context)
                     .unwrap()
                     .get_mut()
-                    .input(|input| input.pointer.any_down())
+                    .input(|input| input.pointer.any_down() || !input.keys_down.is_empty())
             );
-            escape(&mut app, window, ButtonState::Pressed);
-            app.update();
-            escape(&mut app, window, ButtonState::Released);
-            set_cursor(&mut app, window, input_position);
-            mouse_button(&mut app, window, ButtonState::Pressed);
-            app.update();
-            mouse_button(&mut app, window, ButtonState::Released);
-            app.update();
-            inspector_keyboard(&mut app, window, KeyCode::KeyI, ButtonState::Pressed);
-            app.update();
-            assert!(app.world().resource::<TestInspectorUi>().text.contains('i'));
         }
 
         #[test]
-        fn inspector_click_blocks_keyboard_actions_and_blank_click_requires_key_reset() {
+        fn inspector_mode_blocks_gameplay_inside_and_outside_panel() {
             let (mut app, window, character, camera, controller) = test_app();
-            add_test_inspector(&mut app);
-            let item = spawn_test_item(&mut app, Vec3::new(0.0, 0.3, -1.0));
-            set_cursor(&mut app, window, egui::pos2(500.0, 300.0));
-            inspector_keyboard(&mut app, window, KeyCode::KeyW, ButtonState::Pressed);
-            app.update();
-            assert_eq!(
-                app.world()
-                    .get::<CharacterIntent>(character)
-                    .unwrap()
-                    .movement,
-                Vec2::Y
-            );
-            escape(&mut app, window, ButtonState::Pressed);
-            app.update();
-            assert!(
-                **app
-                    .world()
-                    .get::<ContextActivity<GameplayContext>>(controller)
-                    .unwrap()
-            );
-
-            escape(&mut app, window, ButtonState::Released);
-            let input_position = app
-                .world()
-                .resource::<TestInspectorUi>()
-                .text_edit_rect
-                .unwrap()
-                .center();
-            set_cursor(&mut app, window, input_position);
-            mouse_button(&mut app, window, ButtonState::Pressed);
-            for key in [KeyCode::Space, KeyCode::KeyE] {
-                inspector_keyboard(&mut app, window, key, ButtonState::Pressed);
-            }
-            // 首次点击面板和按键同帧到达，必须在动作准备前停用上下文。
-            app.update();
+            let context = add_test_inspector(&mut app);
+            toggle_capture(&mut app, window);
             assert!(
                 !**app
                     .world()
                     .get::<ContextActivity<GameplayContext>>(controller)
                     .unwrap()
             );
-            assert!(!app.world().get::<MouseLookState>(camera).unwrap().active);
-            assert!(app.world().get::<CursorOptions>(window).unwrap().visible);
-            let intent = app.world().get::<CharacterIntent>(character).unwrap();
-            assert_eq!(intent.movement, Vec2::ZERO);
-            assert!(!intent.jump_pending && !intent.interact_pending);
-            fixed_step(&mut app);
-            let position = app.world().get::<Position>(character).unwrap().0;
-            assert!(Vec2::new(position.x, position.z).abs_diff_eq(Vec2::ZERO, 0.00001));
-            assert!(app.world().get::<LinearVelocity>(character).unwrap().y < 0.1);
-            assert!(app.world().get::<HeldBy>(item).is_none());
-
-            mouse_button(&mut app, window, ButtonState::Released);
-            app.update();
-            set_cursor(&mut app, window, egui::pos2(500.0, 300.0));
-            mouse_button(&mut app, window, ButtonState::Pressed);
-            app.update();
-            assert!(app.world().get::<MouseLookState>(camera).unwrap().active);
-            mouse_button(&mut app, window, ButtonState::Released);
-            inspector_keyboard(&mut app, window, KeyCode::KeyW, ButtonState::Released);
-            app.update();
-            assert!(
-                **app
-                    .world()
-                    .get::<ContextActivity<GameplayContext>>(controller)
-                    .unwrap()
-            );
-            let intent = app.world().get::<CharacterIntent>(character).unwrap();
-            assert!(!intent.jump_pending && !intent.interact_pending);
-
-            for state in [ButtonState::Released, ButtonState::Pressed] {
-                for key in [KeyCode::Space, KeyCode::KeyE] {
-                    inspector_keyboard(&mut app, window, key, state);
+            let yaw = app.world().get::<FirstPersonCamera>(camera).unwrap().yaw;
+            let input_position = app
+                .world()
+                .resource::<TestInspectorUi>()
+                .text_edit_rect
+                .unwrap()
+                .center();
+            for position in [input_position, egui::pos2(500.0, 300.0)] {
+                set_cursor(&mut app, window, position);
+                mouse_button(&mut app, window, ButtonState::Pressed);
+                app.update();
+                mouse_button(&mut app, window, ButtonState::Released);
+                app.update();
+                for key in [KeyCode::KeyW, KeyCode::Space, KeyCode::KeyE] {
+                    inspector_keyboard(&mut app, window, key, ButtonState::Pressed);
+                }
+                mouse_motion(&mut app, Vec2::new(50.0, 20.0));
+                app.update();
+                assert!(!app.world().get::<MouseLookState>(camera).unwrap().active);
+                assert!(
+                    !**app
+                        .world()
+                        .get::<ContextActivity<GameplayContext>>(controller)
+                        .unwrap()
+                );
+                let intent = app.world().get::<CharacterIntent>(character).unwrap();
+                assert_eq!(intent.movement, Vec2::ZERO);
+                assert!(!intent.jump_pending && !intent.interact_pending);
+                assert_eq!(
+                    app.world().get::<FirstPersonCamera>(camera).unwrap().yaw,
+                    yaw
+                );
+                // 隔离作用于玩法上下文，原始输入仍留给检查器等消费者。
+                assert!(
+                    app.world()
+                        .resource::<ButtonInput<KeyCode>>()
+                        .pressed(KeyCode::KeyW)
+                );
+                for key in [KeyCode::KeyW, KeyCode::Space, KeyCode::KeyE] {
+                    inspector_keyboard(&mut app, window, key, ButtonState::Released);
                 }
                 app.update();
             }
-            let intent = app.world().get::<CharacterIntent>(character).unwrap();
-            assert!(intent.jump_pending && intent.interact_pending);
-            fixed_step(&mut app);
-            assert!(app.world().get::<LinearVelocity>(character).unwrap().y > 0.0);
-            assert_eq!(
-                app.world()
-                    .get::<HoldingItems>(character)
-                    .unwrap()
-                    .iter()
-                    .next(),
-                Some(item)
-            );
-        }
-
-        #[test]
-        fn focused_inspector_keeps_keyboard_blocked_after_pointer_leaves_panel() {
-            let (mut app, window, character, _, controller) = test_app();
-            let context = add_test_inspector(&mut app);
-            escape(&mut app, window, ButtonState::Pressed);
-            app.update();
-            escape(&mut app, window, ButtonState::Released);
-            let input_position = app
-                .world()
-                .resource::<TestInspectorUi>()
-                .text_edit_rect
-                .unwrap()
-                .center();
-            set_cursor(&mut app, window, input_position);
-            mouse_button(&mut app, window, ButtonState::Pressed);
-            app.update();
-            mouse_button(&mut app, window, ButtonState::Released);
-            app.update();
+            assert!(app.world().resource::<TestInspectorUi>().text.contains('e'));
             assert!(
-                app.world_mut()
+                !app.world_mut()
                     .get_mut::<EguiContext>(context)
                     .unwrap()
                     .get_mut()
                     .egui_wants_keyboard_input()
             );
-
-            set_cursor(&mut app, window, egui::pos2(500.0, 300.0));
-            for key in [KeyCode::KeyW, KeyCode::Space, KeyCode::KeyE] {
-                inspector_keyboard(&mut app, window, key, ButtonState::Pressed);
-            }
-            app.update();
-            assert!(
-                !**app
-                    .world()
-                    .get::<ContextActivity<GameplayContext>>(controller)
-                    .unwrap()
-            );
-            let intent = app.world().get::<CharacterIntent>(character).unwrap();
-            assert_eq!(intent.movement, Vec2::ZERO);
-            assert!(!intent.jump_pending && !intent.interact_pending);
-        }
-
-        #[test]
-        fn escape_focus_and_click_gate_the_same_frames_motion() {
-            let (mut app, window, _, camera, _) = test_app();
-            assert!(!app.world().get::<CursorOptions>(window).unwrap().visible);
-            escape(&mut app, window, ButtonState::Pressed);
-            mouse_motion(&mut app, Vec2::X * 50.0);
-            app.update();
-            assert_eq!(
-                app.world().get::<FirstPersonCamera>(camera).unwrap().yaw,
-                0.0
-            );
-            assert_eq!(
-                app.world().get::<CursorOptions>(window).unwrap().grab_mode,
-                CursorGrabMode::None
-            );
-            escape(&mut app, window, ButtonState::Released);
-            mouse_button(&mut app, window, ButtonState::Pressed);
-            mouse_motion(&mut app, Vec2::X * 50.0);
+            // 所有输入已释放且空白点击结束焦点，按约定的干净边界切回游戏。
+            toggle_capture(&mut app, window);
+            inspector_keyboard(&mut app, window, KeyCode::KeyW, ButtonState::Pressed);
             app.update();
             assert!(app.world().get::<MouseLookState>(camera).unwrap().active);
             assert_eq!(
-                app.world().get::<FirstPersonCamera>(camera).unwrap().yaw,
-                0.0
+                app.world()
+                    .get::<CharacterIntent>(character)
+                    .unwrap()
+                    .movement,
+                Vec2::Y
             );
-            mouse_button(&mut app, window, ButtonState::Released);
+        }
+
+        #[test]
+        fn escape_and_focus_loss_require_f3_to_recapture() {
+            let (mut app, window, _, camera, _) = test_app();
+            let yaw = app.world().get::<FirstPersonCamera>(camera).unwrap().yaw;
+            escape(&mut app, window, ButtonState::Pressed);
             mouse_motion(&mut app, Vec2::X * 50.0);
             app.update();
-            let yaw = app.world().get::<FirstPersonCamera>(camera).unwrap().yaw;
-            assert!(yaw != 0.0);
+            assert!(!app.world().get::<MouseLookState>(camera).unwrap().active);
+            assert_eq!(
+                app.world().get::<FirstPersonCamera>(camera).unwrap().yaw,
+                yaw
+            );
+            escape(&mut app, window, ButtonState::Released);
+            app.update();
+            toggle_capture(&mut app, window);
+            assert!(app.world().get::<MouseLookState>(camera).unwrap().active);
+
             // 窗口最终仍聚焦，但消息记录曾失焦；不能自动恢复或消费本帧位移。
             app.world_mut().write_message(WindowFocused {
                 window,
@@ -1044,18 +976,20 @@ mod pose_tests {
             app.update();
             assert!(!app.world().get::<MouseLookState>(camera).unwrap().active);
             assert!(app.world().get::<CursorOptions>(window).unwrap().visible);
-            assert_eq!(
-                app.world().get::<FirstPersonCamera>(camera).unwrap().yaw,
-                yaw
-            );
-            mouse_motion(&mut app, Vec2::X * 50.0);
-            app.update();
-            assert_eq!(
-                app.world().get::<FirstPersonCamera>(camera).unwrap().yaw,
-                yaw
-            );
             mouse_button(&mut app, window, ButtonState::Pressed);
             app.update();
+            mouse_button(&mut app, window, ButtonState::Released);
+            app.update();
+            assert!(!app.world().get::<MouseLookState>(camera).unwrap().active);
+            f3(&mut app, window, ButtonState::Pressed);
+            mouse_motion(&mut app, Vec2::X * 50.0);
+            app.update();
+            assert!(app.world().get::<MouseLookState>(camera).unwrap().active);
+            assert_eq!(
+                app.world().get::<FirstPersonCamera>(camera).unwrap().yaw,
+                yaw
+            );
+            f3(&mut app, window, ButtonState::Released);
             mouse_motion(&mut app, Vec2::X * 50.0);
             app.update();
             assert_ne!(
@@ -1065,37 +999,40 @@ mod pose_tests {
         }
 
         #[test]
-        fn first_click_recaptures_even_when_focus_loss_missed_mouse_release() {
-            let (mut app, window, _, camera, _) = test_app();
-            mouse_button(&mut app, window, ButtonState::Pressed);
-            app.update();
-            app.world_mut().get_mut::<Window>(window).unwrap().focused = false;
-            app.world_mut().write_message(WindowFocused {
-                window,
-                focused: false,
-            });
-            app.update();
-            // 在窗口外松开时不一定收到 Released；回焦不能依靠缓存按下状态判断点击。
-            app.world_mut().get_mut::<Window>(window).unwrap().focused = true;
-            app.world_mut().write_message(WindowFocused {
-                window,
-                focused: true,
-            });
+        fn pause_releases_capture_and_resume_skips_free_cursor_motion() {
+            let (mut app, window, _, camera, controller) = test_app_with_states(true);
+            assert!(app.world().get::<MouseLookState>(camera).unwrap().active);
+            let yaw = app.world().get::<FirstPersonCamera>(camera).unwrap().yaw;
+            app.world_mut()
+                .resource_mut::<NextState<PlayState>>()
+                .set(PlayState::Paused);
             app.update();
             assert!(!app.world().get::<MouseLookState>(camera).unwrap().active);
-            mouse_button(&mut app, window, ButtonState::Pressed);
-            mouse_motion(&mut app, Vec2::X * 50.0);
+            assert!(app.world().get::<CursorOptions>(window).unwrap().visible);
+            assert!(
+                !**app
+                    .world()
+                    .get::<ContextActivity<GameplayContext>>(controller)
+                    .unwrap()
+            );
+            toggle_capture(&mut app, window);
+            assert!(!app.world().get::<MouseLookState>(camera).unwrap().active);
+            app.world_mut()
+                .resource_mut::<NextState<PlayState>>()
+                .set(PlayState::Running);
+            app.update();
+            mouse_motion(&mut app, Vec2::new(200.0, 100.0));
             app.update();
             assert!(app.world().get::<MouseLookState>(camera).unwrap().active);
             assert_eq!(
                 app.world().get::<FirstPersonCamera>(camera).unwrap().yaw,
-                0.0
+                yaw
             );
-            mouse_motion(&mut app, Vec2::X * 50.0);
+            mouse_motion(&mut app, Vec2::new(10.0, 0.0));
             app.update();
             assert_ne!(
                 app.world().get::<FirstPersonCamera>(camera).unwrap().yaw,
-                0.0
+                yaw
             );
         }
 
