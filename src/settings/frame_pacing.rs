@@ -1,15 +1,17 @@
-//! 渲染限帧只补足当前间隔，不更改固定步时钟。
+//! 将帧率设置交给 Bevy 原生窗口循环，不更改固定步时钟。
 
 use super::GameSettings;
-use bevy::{prelude::*, time::TimeSystems};
-use std::{
-    num::NonZeroU32,
-    time::{Duration, Instant},
+use bevy::{
+    prelude::*,
+    winit::{UpdateMode, WinitSettings},
 };
+use std::{num::NonZeroU32, time::Duration};
 
 pub(super) fn register(app: &mut App) {
-    app.add_systems(Startup, log_simulation_timestep)
-        .add_systems(First, limit_frame_rate.before(TimeSystems));
+    app.init_resource::<WinitSettings>()
+        .add_systems(Startup, log_simulation_timestep)
+        // Last 能读取本帧已应用的设置，窗口循环随后直接采用新的更新间隔。
+        .add_systems(Last, apply_frame_rate_limit);
 }
 
 /// 记录模拟频率，直接读取应用配置的固定时间步，不初始化或覆盖它。
@@ -21,42 +23,35 @@ fn log_simulation_timestep(time: Res<Time<Fixed>>) {
     );
 }
 
-/// 等待和日志去重只属于帧率系统，使用 Local 而非共享的游戏状态。
-#[derive(Default)]
-struct FramePacing {
-    last_started: Option<Instant>,
-    applied_max_fps: Option<NonZeroU32>,
-}
-
-/// 只补足上一帧起点以来剩余的间隔；计算本身已超时时立即继续，不叠加等待。
-fn limit_frame_rate(settings: Res<GameSettings>, mut pacing: Local<FramePacing>) {
-    if pacing.applied_max_fps != Some(settings.max_fps) {
-        info!(
-            target: "demo::settings",
-            max_fps_before = ?pacing.applied_max_fps.map(NonZeroU32::get),
-            max_fps_after = settings.max_fps.get(),
-            reason = if pacing.applied_max_fps.is_some() {
-                "settings_changed"
-            } else {
-                "initialization"
-            },
-            "Frame rate limit applied"
-        );
-        pacing.applied_max_fps = Some(settings.max_fps);
+/// 只同步更新策略；计时与等待由 Winit 执行，Local 仅保存已应用值以去重和记录变更。
+fn apply_frame_rate_limit(
+    settings: Res<GameSettings>,
+    mut winit: ResMut<WinitSettings>,
+    mut applied_max_fps: Local<Option<NonZeroU32>>,
+) {
+    if *applied_max_fps == Some(settings.max_fps) {
+        return;
     }
 
-    if let Some(last_started) = pacing.last_started {
-        let wait = remaining_frame_time(last_started.elapsed(), settings.max_fps);
-        if !wait.is_zero() {
-            std::thread::sleep(wait);
-        }
-    }
-    // 卡顿后从实际起点重新计时，避免为了追赶期限连续提交超出上限的帧。
-    pacing.last_started = Some(Instant::now());
-}
-
-pub(super) fn remaining_frame_time(elapsed: Duration, max_fps: NonZeroU32) -> Duration {
-    // 向上取整到纳秒，避免舍入使允许的间隔略短于帧率上限要求。
-    let interval = Duration::from_nanos(1_000_000_000_u64.div_ceil(u64::from(max_fps.get())));
-    interval.saturating_sub(elapsed)
+    let mode = UpdateMode::Reactive {
+        wait: Duration::from_nanos(1_000_000_000_u64.div_ceil(u64::from(settings.max_fps.get()))),
+        // 输入仍缓冲到下一次更新；不让鼠标等事件提前触发额外帧。
+        react_to_device_events: false,
+        react_to_user_events: false,
+        react_to_window_events: false,
+    };
+    winit.focused_mode = mode;
+    winit.unfocused_mode = mode;
+    info!(
+        target: "demo::settings",
+        max_fps_before = ?applied_max_fps.map(NonZeroU32::get),
+        max_fps_after = settings.max_fps.get(),
+        reason = if applied_max_fps.is_some() {
+            "settings_changed"
+        } else {
+            "initialization"
+        },
+        "Frame rate limit applied"
+    );
+    *applied_max_fps = Some(settings.max_fps);
 }

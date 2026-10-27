@@ -1,6 +1,6 @@
-<svg width="1613" height="899" viewBox="0.00 0.00 1613.00 899.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="schedule-db858dc879eb70dc" role="img" aria-label="schedule-db858dc879eb70dc" data-diagram-engine="graphviz">
-<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 895)">
-<polygon fill="#f6f8fb" stroke="none" points="-4,4 -4,-895 1609.44,-895 1609.44,4 -4,4"/>
+<svg width="1613" height="946" viewBox="0.00 0.00 1613.00 946.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="schedule-db858dc879eb70dc" role="img" aria-label="schedule-db858dc879eb70dc" data-diagram-engine="graphviz">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 942)">
+<polygon fill="#f6f8fb" stroke="none" points="-4,4 -4,-942 1609.44,-942 1609.44,4 -4,4"/>
 <g id="clust1" class="cluster">
 <title>clusternode_Set(SystemSetKey(5v1))</title>
 <g id="a_clust1"><a xlink:title="OnAppExitSystems">
@@ -405,9 +405,18 @@
 <!-- node_System(SystemKey(28v1)) -->
 <g id="node33" class="node">
 <title>node_System(SystemKey(28v1))</title>
-<g id="a_node33"><a xlink:title="bevy_ecs::apply_deferred">
-<path fill="#eff3f8" stroke="#3567a6" stroke-width="1.6" d="M261.46,-891C261.46,-891 176.89,-891 176.89,-891 170.89,-891 164.89,-885 164.89,-879 164.89,-879 164.89,-867 164.89,-867 164.89,-861 170.89,-855 176.89,-855 176.89,-855 261.46,-855 261.46,-855 267.46,-855 273.46,-861 273.46,-867 273.46,-867 273.46,-879 273.46,-879 273.46,-885 267.46,-891 261.46,-891"/>
-<text xml:space="preserve" text-anchor="middle" x="219.17" y="-868.8" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="14.00" fill="#1f3340">apply_deferred</text>
+<g id="a_node33"><a xlink:title="demo::settings::frame_pacing::apply_frame_rate_limit">
+<path fill="#eff3f8" stroke="#3567a6" stroke-width="1.6" d="M287.42,-891C287.42,-891 150.93,-891 150.93,-891 144.93,-891 138.93,-885 138.93,-879 138.93,-879 138.93,-867 138.93,-867 138.93,-861 144.93,-855 150.93,-855 150.93,-855 287.42,-855 287.42,-855 293.42,-855 299.42,-861 299.42,-867 299.42,-867 299.42,-879 299.42,-879 299.42,-885 293.42,-891 287.42,-891"/>
+<text xml:space="preserve" text-anchor="middle" x="219.17" y="-868.8" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="14.00" fill="#1f3340">apply_frame_rate_limit</text>
+</a>
+</g>
+</g>
+<!-- node_System(SystemKey(29v1)) -->
+<g id="node34" class="node">
+<title>node_System(SystemKey(29v1))</title>
+<g id="a_node34"><a xlink:title="bevy_ecs::apply_deferred">
+<path fill="#eff3f8" stroke="#3567a6" stroke-width="1.6" d="M261.46,-938C261.46,-938 176.89,-938 176.89,-938 170.89,-938 164.89,-932 164.89,-926 164.89,-926 164.89,-914 164.89,-914 164.89,-908 170.89,-902 176.89,-902 176.89,-902 261.46,-902 261.46,-902 267.46,-902 273.46,-908 273.46,-914 273.46,-914 273.46,-926 273.46,-926 273.46,-932 267.46,-938 261.46,-938"/>
+<text xml:space="preserve" text-anchor="middle" x="219.17" y="-915.8" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="14.00" fill="#1f3340">apply_deferred</text>
 </a>
 </g>
 </g>

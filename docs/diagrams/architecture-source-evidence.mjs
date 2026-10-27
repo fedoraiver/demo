@@ -155,6 +155,17 @@ const actionObservers = [
 
 // 事件对象 ID 表示精确匹配入口；同名事件不会在这里按名称合并。
 export const EDGE_SOURCE_EVIDENCE = Object.freeze({
+  'read-resource.GameSettings-frame_limit': [project('src/settings/frame_pacing.rs', 'if *applied_max_fps == Some(settings.max_fps)', 'operation', '读取 max_fps：与已应用值比较，决定是否同步更新策略')],
+  'read-local.FramePacing-frame_limit': [project('src/settings/frame_pacing.rs', 'if *applied_max_fps == Some(settings.max_fps)', 'operation', '读取 Local 缓存：跳过未变化的帧率设置')],
+  'write-frame_limit-local.FramePacing': [project('src/settings/frame_pacing.rs', '*applied_max_fps = Some(settings.max_fps);', 'operation', '实际赋值：策略更新后保存已应用帧率')],
+  'write-frame_limit-resource.WinitSettings': [
+    project('src/settings/frame_pacing.rs', 'winit.focused_mode = mode;', 'operation', '实际赋值：更新前台窗口循环策略'),
+    project('src/settings/frame_pacing.rs', 'winit.unfocused_mode = mode;', 'operation', '实际赋值：更新后台窗口循环策略'),
+  ],
+  'registration-plugin-SettingsPlugin-resource.WinitSettings': [
+    project('src/settings/mod.rs', 'frame_pacing::register(app);', 'configure', '项目装配：SettingsPlugin 启用帧率设置同步'),
+    project('src/settings/frame_pacing.rs', 'app.init_resource::<WinitSettings>()', 'initialize', '实际初始化：仅资源不存在时插入默认窗口更新策略'),
+  ],
   ...Object.fromEntries(actionObservers.flatMap(([observer, path, type, event, line]) => [
     [`observer-${observer}`, projectSubscription(path, `On<${type}>`)],
     [`trigger-input_trigger-event-${observer}`, actionEmission(event, line)],

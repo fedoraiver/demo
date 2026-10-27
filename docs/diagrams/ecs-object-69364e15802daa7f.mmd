@@ -30,7 +30,7 @@
 }
 ---
 flowchart LR
-  accTitle: Local<FramePacing> · 对象关系
+  accTitle: Local<Option<NonZeroU32>> · 对象关系
   accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
   %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
   classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
@@ -38,13 +38,13 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: notch-rect, label: "**Local#lt;FramePacing#gt;**<br/>保存帧间等待计时与重复日志抑制状态。" }
+  n0@{ shape: notch-rect, label: "**Local#lt;Option#lt;NonZeroU32#gt;#gt;**<br/>缓存窗口循环已采用的帧率设置。" }
   class n0 node_local
-  n1@{ shape: rounded, label: "**limit_frame_rate**<br/>补足帧间等待以控制显示帧率。" }
+  n1@{ shape: rounded, label: "**apply_frame_rate_limit**<br/>将帧率设置同步给原生窗口循环。" }
   class n1 node_system
-  n1 e0@---|"访问声明"| n0
+  n1 e0@---|"已应用值"| n0
   class e0 edge_read
-  n1 e1@-->|"访问声明"| n0
+  n1 e1@-->|"已应用值"| n0
   class e1 edge_write
   e0@{ curve: basis }
   e1@{ curve: basis }

@@ -221,11 +221,11 @@ test('all detailed and feature links are classified without changing raw contrac
   assert.equal(counts.set_membership, 18);
   assert.equal(counts.group_membership, 2);
   assert.equal(counts.constraint, 2);
-  assert.equal(counts.registration, 40);
+  assert.equal(counts.registration, 41);
   assert.equal(counts.emit, 36);
   assert.equal(counts.observe, 28);
   assert.equal(counts.dependency, 27);
-  assert.equal(counts.order, 75);
+  assert.equal(counts.order, 74);
   assert.equal(counts.relationship, 18);
   assert.equal(counts.reference, 43);
   assert.equal(JSON.stringify(model), before);
@@ -288,7 +288,7 @@ test('Schedule arrows connect visible main phases in order and only nest Egui wi
   const links = scheduleLinksFor([...model.schedule_groups].reverse());
   const main = links.filter(link => link.edgeSemantic === 'schedule');
   const chain = [main[0].from, ...main.map(link => link.to)];
-  assert.deepEqual(chain, ['Startup', 'First', 'PreUpdate', 'StateTransition', 'FixedFirst', 'FixedUpdate', 'FixedPostUpdate', 'FixedLast', 'RunFixedMainLoop.AfterFixedMainLoop', 'Update', 'SpawnScene', 'PostUpdate']);
+  assert.deepEqual(chain, ['Startup', 'First', 'PreUpdate', 'StateTransition', 'FixedFirst', 'FixedUpdate', 'FixedPostUpdate', 'FixedLast', 'RunFixedMainLoop.AfterFixedMainLoop', 'Update', 'SpawnScene', 'PostUpdate', 'Last']);
   assert.deepEqual(links.filter(link => link.edgeSemantic === 'nested'), [{ id: 'nested-PostUpdate-EguiPrimaryContextPass', from: 'PostUpdate', to: 'EguiPrimaryContextPass', edgeSemantic: 'nested', displayLabel: '' }]);
   assert.ok(links.every(link => link.displayLabel === '' && !link.mermaidId));
   assert.equal(JSON.stringify(model.schedule_groups), original);

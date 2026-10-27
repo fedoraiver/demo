@@ -41,7 +41,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: cyl, label: "**GameSettings**<br/>保存已应用的玩家设置与音量配置。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**limit_frame_rate**<br/>补足帧间等待以控制显示帧率。" }
+  n1@{ shape: rounded, label: "**apply_frame_rate_limit**<br/>将帧率设置同步给原生窗口循环。" }
   class n1 node_system
   n2@{ shape: hex, label: "**on_camera_look**<br/>来自第一人称控制 ↗：将观察输入转为第一<br/>人称水平角与俯仰角。" }
   class n2 node_observer
@@ -52,7 +52,7 @@ flowchart LR
   n4@{ shape: rounded, label: "**sync_audio_mix**<br/>来自音频播放 ↗：合成设置预览或正式配置<br/>的有效音量。" }
   class n4 node_system
   class n4 external_node
-  n0 e0@-->|"设置"| n1
+  n0 e0@-->|"max_fps"| n1
   class e0 edge_read
   n0 e1@-->|"已应用观察设置"| n2
   class e1 edge_read

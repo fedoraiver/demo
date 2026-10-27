@@ -1,8 +1,11 @@
-use bevy::time::{TimePlugin, TimeUpdateStrategy};
+use bevy::{
+    time::{TimePlugin, TimeUpdateStrategy},
+    winit::{UpdateMode, WinitSettings},
+};
 use uuid::Uuid;
 
+use super::config::read_settings;
 use super::*;
-use super::{config::read_settings, frame_pacing::remaining_frame_time};
 use std::{
     fs, io,
     num::NonZeroU32,
@@ -353,20 +356,31 @@ fn audio_draft_adjustments_preserve_custom_values_and_clamp_only_edited_field() 
 }
 
 #[test]
-fn pacing_waits_only_for_remaining_time_and_never_catches_up() {
-    let limit = NonZeroU32::new(120).unwrap();
-    assert_eq!(
-        remaining_frame_time(Duration::from_millis(3), limit),
-        Duration::from_nanos(5_333_334)
-    );
-    assert_eq!(
-        remaining_frame_time(Duration::from_millis(20), limit),
-        Duration::ZERO
-    );
-    assert_eq!(
-        remaining_frame_time(Duration::from_millis(3), NonZeroU32::new(60).unwrap()),
-        Duration::from_nanos(13_666_667)
-    );
+fn frame_rate_limit_configures_native_runner_for_both_focus_modes() {
+    for (fps, interval_ns) in [(60, 16_666_667), (75, 13_333_334), (144, 6_944_445)] {
+        let mut app = App::new();
+        app.add_plugins(TimePlugin)
+            .insert_resource(GameSettings {
+                max_fps: NonZeroU32::new(fps).unwrap(),
+                ..default()
+            })
+            .insert_resource(WinitSettings::continuous())
+            .add_plugins(SettingsPlugin);
+        app.update();
+
+        let winit = app.world().resource::<WinitSettings>();
+        for focused in [true, false] {
+            assert_eq!(
+                winit.update_mode(focused),
+                UpdateMode::Reactive {
+                    wait: Duration::from_nanos(interval_ns),
+                    react_to_device_events: false,
+                    react_to_user_events: false,
+                    react_to_window_events: false,
+                }
+            );
+        }
+    }
 }
 
 #[test]
@@ -381,8 +395,23 @@ fn changing_render_limit_preserves_fixed_simulation_timestep() {
         .add_plugins(SettingsPlugin);
     app.update();
     let timestep = app.world().resource::<Time<Fixed>>().timestep();
-    app.world_mut().resource_mut::<GameSettings>().max_fps = NonZeroU32::new(120).unwrap();
+    // 模拟菜单在 PreUpdate 应用配置，确认本帧结束时窗口循环已能读取新策略。
+    app.add_systems(PreUpdate, |mut settings: ResMut<GameSettings>| {
+        settings.max_fps = NonZeroU32::new(120).unwrap();
+    });
     app.update();
+    let winit = app.world().resource::<WinitSettings>();
+    for focused in [true, false] {
+        assert_eq!(
+            winit.update_mode(focused),
+            UpdateMode::Reactive {
+                wait: Duration::from_nanos(8_333_334),
+                react_to_device_events: false,
+                react_to_user_events: false,
+                react_to_window_events: false,
+            }
+        );
+    }
     let fixed = app.world().resource::<Time<Fixed>>();
     assert_eq!(fixed.timestep(), timestep);
     assert!((1.0 / fixed.timestep().as_secs_f64() - 60.0).abs() < 0.001);
