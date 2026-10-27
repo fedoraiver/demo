@@ -11,12 +11,17 @@ import { NODE_STYLES, EDGE_STYLES, SELECTION_STYLE, EXTERNAL_REFERENCE_STYLE } f
 import { testDocument, scriptsIn } from './test-dom.mjs';
 
 function fixture() {
-  const features=[{id:'item',label:'物品交互',plugin:'ItemPlugin'},{id:'character',label:'人物',plugin:'CharacterPlugin'}];
+  const features=[{id:'item',label:'物品交互',plugin:'ItemPlugin',contracts:['Shared public contract']},{id:'character',label:'人物',plugin:'CharacterPlugin'}];
   const source=(role,line,label=role)=>({role,label,path:'src/item.rs',line});
   const registry={
     'plugin-ItemPlugin':{id:'plugin-ItemPlugin',kind:'Plugin',name:'ItemPlugin',description:'完整插件说明',feature:'item'},
     'plugin-CharacterPlugin':{id:'plugin-CharacterPlugin',kind:'Plugin',name:'CharacterPlugin',description:'人物插件',feature:'character'},
     'plugin-physics-0':{id:'plugin-physics-0',kind:'PluginGroup',name:'PhysicsPlugins',description:'Avian插件',feature:'avian'},
+    'plugin-DefaultPlugins':{id:'plugin-DefaultPlugins',kind:'PluginGroup',name:'DefaultPlugins',description:'引擎插件组',feature:'infrastructure'},
+    'plugin-inspector-0':{id:'plugin-inspector-0',kind:'Plugin',name:'EguiPlugin',description:'Egui',feature:'egui'},
+    'plugin-inspector-1':{id:'plugin-inspector-1',kind:'Plugin',name:'WorldInspectorPlugin',description:'World inspector',feature:'egui'},
+    'plugin-physics-1':{id:'plugin-physics-1',kind:'Plugin',name:'LogPlugin',description:'日志插件',feature:'infrastructure'},
+    'plugin-ButtonPlugin':{id:'plugin-ButtonPlugin',kind:'Plugin',name:'ButtonPlugin',description:'按钮插件',feature:'infrastructure'},
     'entity-item':{id:'entity-item',kind:'Entity',name:'物品',description:'实体完整说明',feature:'item',assembled_by:['item'],components:[{id:'item.Shared'},{id:'item.Other'}],sourceEntries:[source('create',10),source('destroy',20)]},
     'entity-character':{id:'entity-character',kind:'Entity',name:'人物',description:'另一实体',feature:'character',components:[{id:'character.Shared'}]},
     'item.Shared':{id:'item.Shared',kind:'Component',name:'Shared',owner:'物品',description:'物品组件的完整说明',feature:'item',defined_in:'item',fields:['value: f32'],sourceEntries:[source('definition',30)],source:{path:'forbidden-legacy.rs',line:1}},
@@ -59,7 +64,7 @@ function viewer(query='?object=item.Shared',{historyUnavailable=false,width=1440
   const app=createArchitectureViewer({data,document,location,history,window,requestAnimationFrame:callback=>frames.push(callback),sourceEditor:{refreshLinks:scope=>refreshed.push(scope),withWorkspace:href=>href},navigation:createArchitectureNavigation(data.features,data.views.filter(view=>view.aspect==='schedule')),createSplitter:createArchitectureSplitter,createInteraction:createArchitectureInteraction,createGestures:createArchitectureGestures,createScheduleRenderer});
   function flush(){while(frames.length)frames.splice(0).forEach(callback=>callback())}flush();
   function click(element){assert.ok(element,'control exists');element.click();flush()}
-  return{data,app,document,location,history,canvas,window,emit:name=>events.get(name)?.(),refreshed,get:id=>document.getElementById(id),click,flush,choose(id){const select=document.getElementById('view-select');select.value=id;select.dispatch('change');flush()},async settle(){await app.ready;flush()},activate(id,key='Enter'){const node=document.getElementById('diagram').querySelector('[data-id="'+id+'"]');assert.ok(node,'visible node '+id);node.dispatch('keydown',{key});flush()},back(){assert.ok(index>0);location.href=entries[--index].href;events.get('popstate')();flush()},forward(){assert.ok(index+1<entries.length);location.href=entries[++index].href;events.get('popstate')();flush()}};
+  return{data,app,document,location,history,canvas,window,emit:(name,event)=>events.get(name)?.(event),refreshed,get:id=>document.getElementById(id),click,flush,choose(id){const select=document.getElementById('view-select');select.value=id;select.dispatch('change');flush()},async settle(){await app.ready;flush()},activate(id,key='Enter'){const node=document.getElementById('diagram').querySelector('[data-id="'+id+'"]');assert.ok(node,'visible node '+id);node.dispatch('keydown',{key});flush()},back(){assert.ok(index>0);location.href=entries[--index].href;events.get('popstate')();flush()},forward(){assert.ok(index+1<entries.length);location.href=entries[++index].href;events.get('popstate')();flush()}};
 }
 
 function assertFitted(page) {
@@ -151,6 +156,10 @@ test('legacy plugin and infrastructure entries open Plugin objects or the defaul
   assert.equal(viewer('?feature=third_party&node=deleted').app.view.id,'schedule-update');
   assert.equal(viewer('?feature=overview').app.view.id,'schedule-update');
   assert.equal(viewer('?feature=overview&node=plugin-ItemPlugin').app.view.id,'object:plugin-ItemPlugin');
+  const hidden=viewer('?object=plugin-physics-1&workspace=E:/work');
+  assert.equal(hidden.app.view.objectId,'plugin-physics-1');assert.ok(hidden.get('current-object-option').textContent.includes('LogPlugin'));
+  hidden.app.search('ButtonPlugin');hidden.click(hidden.get('object-results').querySelector('[data-object="plugin-ButtonPlugin"]'));
+  assert.equal(hidden.app.view.objectId,'plugin-ButtonPlugin');hidden.back();assert.equal(hidden.app.view.objectId,'plugin-physics-1');assert.equal(hidden.location.searchParams.get('workspace'),'E:/work');
 });
 
 test('old aggregate aliases offer every original projection or registration without choosing one',()=>{
@@ -216,6 +225,10 @@ test('back and forward restore object selection, edge details, zoom and Schedule
   page.back();assert.equal(page.app.view.id,'schedule-render');assert.equal(page.get('diagram').style.transform,original);
   page.forward();assert.equal(page.get('diagram').style.transform,object);
   page.click(page.get('return-context'));assert.equal(page.app.view.id,'schedule-render');
+  const direct=viewer('');direct.app.openObject('item.Shared');direct.flush();direct.activate('system-fixed');
+  direct.back();direct.forward();assert.equal(direct.app.selection.node,'system-fixed');assert.equal(direct.get('details').querySelector('h2').textContent,'update_shared');
+  direct.get('diagram').querySelector('[data-link-id="write"]').dispatch('keydown',{key:'Enter'});
+  direct.back();direct.forward();assert.equal(direct.get('details').querySelector('.badge').textContent,EDGE_STYLES.write.label);
 });
 
 test('unavailable local history and stale object routes retain working navigation',()=>{
@@ -325,7 +338,13 @@ test('object owner action opens the matching Plugin object and preserves history
 });
 
 test('top view picker selects native exports and object return retains the selected Schedule',()=>{
-  const page=viewer('');page.choose('schedule-render');assert.equal(page.app.view.id,'schedule-render');
+  const page=viewer(''),picker=page.get('view-select'),groups=picker.querySelectorAll('optgroup');
+  assert.ok(!groups.some(group=>group.getAttribute('label')==='其他插件'));
+  const infrastructure=groups.find(group=>group.getAttribute('label')==='基础设施插件').querySelectorAll('option'),egui=infrastructure.findIndex(option=>option.value==='object:plugin-inspector-0');
+  assert.ok(egui>=0);assert.equal(infrastructure[egui+1].value,'object:plugin-inspector-1');
+  assert.equal(infrastructure[egui].textContent,'Egui / Inspector · EguiPlugin');assert.equal(infrastructure[egui+1].textContent,'Egui / Inspector · WorldInspectorPlugin');
+  assert.ok(!picker.querySelectorAll('option').some(option=>['object:plugin-physics-1','object:plugin-ButtonPlugin'].includes(option.value)));
+  page.choose('schedule-render');assert.equal(page.app.view.id,'schedule-render');
   page.choose('object:plugin-ItemPlugin');assert.equal(page.app.view.id,'object:plugin-ItemPlugin');
   page.click(page.get('return-overview'));assert.equal(page.app.view.id,'schedule-render');
   assert.equal(page.get('return-overview').disabled,true);
@@ -336,6 +355,7 @@ test('Plugin and PluginGroup retain their complete details when selection is cle
     const page=viewer('?object='+id);assert.equal(page.get('details').hidden,false);
     const description=page.data.registry[id].description;
     assert.ok(page.get('details').textContent.includes(description));
+    assert.ok(!page.get('details').textContent.includes('公开契约'));assert.deepEqual(page.data.model.features[0].contracts,['Shared public contract']);
     page.click(page.get('clear-selection'));
     assert.ok(page.get('details').textContent.includes(description));assert.equal(page.get('details').querySelector('.guide'),null);
     assert.equal(page.get('view-select').value,'object:'+id);assert.equal(page.get('schedule-filter').hidden,true);
@@ -367,58 +387,85 @@ function controlledSchedules(){
   return{requests,get cancelled(){return cancelled},create:()=>({cancel(){cancelled++},render(view,filters){return new Promise((resolve,reject)=>requests.push({view,filters,resolve,reject}))}})};
 }
 const filteredResult=(label,count=1)=>({svg:'<svg><text>'+label+'</text></svg>',width:1200,height:700,systemCount:count,totalSystemCount:8,filtered:true});
-function chooseFilterPlugins(page,side,ids){if(page.get('schedule-'+side+'-menu').hidden)page.click(page.get('schedule-'+side));const search=page.get('schedule-'+side+'-search');search.value='';search.dispatch('input');page.click(page.get('schedule-'+side+'-clear'));for(const id of ids){const input=page.get('schedule-'+side+'-options').querySelectorAll('[data-filter-choice]').find(input=>input.value===id);assert.ok(input,'available Plugin group '+id);input.checked=true;input.dispatch('change')}}
-function submitFilters(page,include,exclude='',enter=false){chooseFilterPlugins(page,'include',Array.isArray(include)?include:include?[include]:[]);chooseFilterPlugins(page,'exclude',Array.isArray(exclude)?exclude:exclude?[exclude]:[]);if(enter)page.get('schedule-exclude-search').dispatch('keydown',{key:'Enter'});else page.get('schedule-filter').dispatch('submit');page.flush()}
+function filterPlugin(page,side,id,checked=true){
+  if(page.get('schedule-'+side+'-menu').hidden)page.click(page.get('schedule-'+side));
+  const input=page.get('schedule-'+side+'-options').querySelectorAll('[data-filter-choice]').find(input=>input.value===id);
+  assert.ok(input,'available Plugin group '+id);input.checked=checked;input.dispatch('change');page.flush();return input;
+}
 
-test('filter Apply and Enter are explicit, failure preserves the last successful SVG and viewport, and Clear restores the static graph',async()=>{
-  const runtime=controlledSchedules(),page=viewer('?schedule=schedule-update&workspace=E:/work#anchor',{createScheduleRenderer:runtime.create}),original=page.get('diagram').innerHTML;
-  page.click(page.get('schedule-include'));page.get('schedule-include-search').value='A';page.get('schedule-include-search').dispatch('input');assert.equal(runtime.requests.length,0);
-  submitFilters(page,'A','bevy_render');await Promise.resolve();assert.equal(runtime.requests.length,1);
-  assert.deepEqual(runtime.requests[0].filters,{includePlugins:['A'],excludePlugins:['bevy_render'],includeNames:[],excludeNames:[],include:'',exclude:''});assert.equal(page.get('diagram').innerHTML,original);assert.equal(page.canvas.getAttribute('aria-busy'),'true');
-  runtime.requests[0].resolve(filteredResult('A'));await page.settle();page.click(page.get('zoom-out'));
+test('filters change immediately without form submission and retain menu DOM, search, focus and scrolling',async()=>{
+  const runtime=controlledSchedules(),page=viewer('?schedule=schedule-update&workspace=E:/work#anchor',{createScheduleRenderer:runtime.create});
+  assert.equal(page.get('schedule-apply'),null);assert.equal(page.get('schedule-filter').tagName.toLowerCase(),'section');
+  assert.equal(page.get('schedule-filter').getAttribute('role'),'group');assert.equal(page.document.querySelector('.filter-hint'),null);
+  page.click(page.get('schedule-include'));const menu=page.get('schedule-include-menu'),options=page.get('schedule-include-options'),query=page.get('schedule-include-search');
+  query.value='Alpha';query.dispatch('input');query.focus();options.scrollTop=78;
+  const input=options.querySelector('[value="A"]'),initialHistory=page.history.length,original=page.get('diagram').innerHTML;
+  assert.equal(runtime.requests.length,0);assert.equal(page.history.length,initialHistory);
+  input.focus();input.checked=true;input.dispatch('change');page.flush();
+  assert.deepEqual(page.location.searchParams.getAll('scheduleIncludePlugin'),['A']);assert.equal(page.history.length,initialHistory+1);
+  assert.equal(menu.hidden,false);assert.equal(query.value,'Alpha');assert.equal(options.scrollTop,78);
+  assert.equal(options.querySelector('[value="A"]'),input);assert.equal(input.parentElement.parentElement,options);assert.equal(page.document.activeElement,input);
+  await Promise.resolve();assert.equal(runtime.requests.length,1);assert.equal(page.get('diagram').innerHTML,original);
+  const enter=query.dispatch('keydown',{key:'Enter'});assert.equal(enter.defaultPrevented,false);assert.equal(page.history.length,initialHistory+1);
+  runtime.requests[0].resolve(filteredResult('A'));await page.settle();
+  assert.equal(menu.hidden,false);assert.equal(query.value,'Alpha');assert.equal(options.scrollTop,78);assert.equal(page.document.activeElement,input);assert.equal(options.querySelector('[value="A"]'),input);
+  input.dispatch('change');page.flush();await Promise.resolve();assert.equal(page.history.length,initialHistory+1);assert.equal(runtime.requests.length,1);
+  page.click(page.get('schedule-include-select'));await Promise.resolve();assert.equal(page.history.length,initialHistory+1);assert.equal(runtime.requests.length,1);
+  page.click(page.get('schedule-include-clear'));assert.equal(page.history.length,initialHistory+2);assert.equal(menu.hidden,false);assert.equal(query.value,'Alpha');assert.equal(options.scrollTop,78);assert.equal(options.querySelector('[value="A"]'),input);assert.equal(input.checked,false);assert.equal(page.get('diagram').innerHTML,original);
+  assert.equal(page.location.searchParams.get('workspace'),'E:/work');assert.equal(page.location.hash,'#anchor');
+});
+
+test('realtime failure preserves the last successful SVG and viewport and all-clear restores the static graph',async()=>{
+  const runtime=controlledSchedules(),page=viewer('?schedule=schedule-update',{createScheduleRenderer:runtime.create}),original=page.get('diagram').innerHTML;
+  filterPlugin(page,'include','A');await Promise.resolve();runtime.requests[0].resolve(filteredResult('A'));await page.settle();page.click(page.get('zoom-out'));
   const lastSvg=page.get('diagram').innerHTML,lastTransform=page.get('diagram').style.transform;
-  submitFilters(page,'B','',true);await Promise.resolve();assert.equal(runtime.requests.length,2);assert.equal(page.get('diagram').innerHTML,lastSvg);
-  runtime.requests[1].reject(new Error('worker timeout'));await page.settle();assert.equal(page.get('diagram').innerHTML,lastSvg);assert.equal(page.get('diagram').style.transform,lastTransform);assert.ok(page.get('schedule-status').textContent.includes('worker timeout'));
-  page.click(page.get('schedule-clear'));assert.equal(page.get('diagram').innerHTML,original);assert.equal(page.location.searchParams.has('scheduleInclude'),false);assert.equal(page.location.searchParams.has('scheduleExclude'),false);assert.equal(page.location.searchParams.get('workspace'),'E:/work');assert.equal(page.location.hash,'#anchor');assertFitted(page);
+  filterPlugin(page,'include','B');await Promise.resolve();assert.equal(page.get('diagram').innerHTML,lastSvg);
+  runtime.requests[1].reject(new Error('worker timeout'));await page.settle();
+  assert.equal(page.get('diagram').innerHTML,lastSvg);assert.equal(page.get('diagram').style.transform,lastTransform);assert.ok(page.get('schedule-status').textContent.includes('worker timeout'));assert.equal(page.get('schedule-include-menu').hidden,false);
+  page.get('schedule-clear').focus();page.get('schedule-clear').dispatch('focusin');
+  page.click(page.get('schedule-clear'));assert.equal(page.get('diagram').innerHTML,original);assert.equal(page.location.searchParams.has('scheduleIncludePlugin'),false);
+  assert.equal(page.get('schedule-include-menu').hidden,false);assert.equal(page.document.activeElement,page.get('schedule-clear'));
+  page.get('schedule-clear').dispatch('keydown',{key:'Escape'});assert.equal(page.get('schedule-include-menu').hidden,true);assert.equal(page.document.activeElement,page.get('schedule-include'));
+  assertFitted(page);
+  const count=page.history.length;page.click(page.get('schedule-clear'));assert.equal(page.history.length,count);
 });
 
-test('Schedule and object navigation carry submitted filters without applying menu drafts or side clears',async()=>{
-  const requests=[],page=viewer('?schedule=schedule-update',{createScheduleRenderer:()=>({cancel(){},render(view,filters){requests.push(structuredClone(filters));return Promise.resolve(filteredResult(view.id))}})});
-  chooseFilterPlugins(page,'include',['A']);page.choose('schedule-render');await page.settle();
-  assert.equal(requests.length,0);assert.equal(page.location.searchParams.has('scheduleIncludePlugin'),false);assert.equal(page.app.selection.scheduleIncludePlugins,undefined);
-  page.choose('schedule-update');chooseFilterPlugins(page,'include',['A']);page.app.openObject('item.Shared');page.flush();
-  assert.equal(page.app.view.id,'object:item.Shared');assert.equal(page.location.searchParams.has('scheduleIncludePlugin'),false);
-  page.click(page.get('return-context'));await page.settle();assert.equal(requests.length,0);assert.equal(page.app.view.id,'schedule-update');
-  submitFilters(page,['A'],['B']);await page.settle();assert.deepEqual(requests[0].includePlugins,['A']);assert.deepEqual(requests[0].excludePlugins,['B']);
-  chooseFilterPlugins(page,'include',[]);chooseFilterPlugins(page,'exclude',[]);page.choose('schedule-render');await page.settle();
-  assert.deepEqual(requests[1].includePlugins,['A']);assert.deepEqual(requests[1].excludePlugins,['B']);
-  assert.deepEqual(page.location.searchParams.getAll('scheduleIncludePlugin'),['A']);assert.deepEqual(page.location.searchParams.getAll('scheduleExcludePlugin'),['B']);
-  chooseFilterPlugins(page,'include',['C']);chooseFilterPlugins(page,'exclude',[]);page.app.openObject('resource.Config');page.flush();
-  assert.deepEqual(page.app.selection.scheduleIncludePlugins,['A']);assert.deepEqual(page.app.selection.scheduleExcludePlugins,['B']);
-  page.click(page.get('return-context'));await page.settle();assert.deepEqual(requests[2].includePlugins,['A']);assert.deepEqual(requests[2].excludePlugins,['B']);
-  chooseFilterPlugins(page,'include',['C']);chooseFilterPlugins(page,'exclude',[]);page.get('schedule-filter').dispatch('submit');await page.settle();
-  assert.deepEqual(requests[3].includePlugins,['C']);assert.deepEqual(requests[3].excludePlugins,[]);assert.deepEqual(page.location.searchParams.getAll('scheduleIncludePlugin'),['C']);
-  page.back();await page.settle();assert.deepEqual(page.app.selection.scheduleIncludePlugins,['A']);assert.deepEqual(page.app.selection.scheduleExcludePlugins,['B']);
-  page.click(page.get('schedule-clear'));assert.equal(page.location.searchParams.has('scheduleIncludePlugin'),false);assert.equal(page.location.searchParams.has('scheduleExcludePlugin'),false);assert.equal(page.app.view.filtered,undefined);
-  const saved={schedule:'schedule-update',scheduleIncludePlugin:'A',scheduleExcludePlugin:'B',scheduleIncludeSystem:'demo::legacy::<(Foo, Bar)>',scheduleExcludeSystem:'engine::legacy',scheduleInclude:'legacy,condition',scheduleExclude:'old_exclusion'};
-  const legacy=viewer('?'+new URLSearchParams(saved),{createScheduleRenderer:()=>({cancel(){},render(view){return Promise.resolve(filteredResult(view.id))}})});await legacy.settle();
-  chooseFilterPlugins(legacy,'include',[]);chooseFilterPlugins(legacy,'exclude',[]);legacy.choose('schedule-startup');await legacy.settle();
-  for(const [key,value]of Object.entries(saved).filter(([key])=>key!=='schedule'))assert.equal(legacy.location.searchParams.get(key),value);
-  chooseFilterPlugins(legacy,'include',[]);legacy.app.openObject('item.Shared');legacy.flush();legacy.click(legacy.get('return-context'));await legacy.settle();
-  for(const [key,value]of Object.entries(saved).filter(([key])=>key!=='schedule'))assert.equal(legacy.location.searchParams.get(key),value);
-});
-
-test('late filter responses cannot overwrite newer requests, object navigation or a different Schedule',async()=>{
+test('late realtime responses cannot overwrite newer conditions, object navigation or a different Schedule',async()=>{
   const runtime=controlledSchedules(),page=viewer('?schedule=schedule-update',{createScheduleRenderer:runtime.create});
-  submitFilters(page,'A');await Promise.resolve();submitFilters(page,'B');await Promise.resolve();
-  runtime.requests[1].resolve(filteredResult('B'));await page.settle();runtime.requests[0].resolve(filteredResult('A'));await Promise.resolve();await Promise.resolve();page.flush();assert.ok(page.get('diagram').innerHTML.includes('B'));
-  submitFilters(page,'C');await Promise.resolve();page.app.openObject('item.Shared');page.flush();runtime.requests[2].resolve(filteredResult('C'));await Promise.resolve();await Promise.resolve();page.flush();assert.equal(page.app.view.objectId,'item.Shared');assert.equal(page.location.searchParams.getAll('scheduleIncludePlugin').join(),'C');
-  page.click(page.get('return-overview'));await Promise.resolve();assert.equal(runtime.requests[3].view.id,'schedule-update');
-  page.choose('schedule-render');await Promise.resolve();assert.equal(runtime.requests[4].view.id,'schedule-render');assert.deepEqual(runtime.requests[4].filters,{includePlugins:['C'],excludePlugins:[],includeNames:[],excludeNames:[],include:'',exclude:''});
-  runtime.requests[4].resolve(filteredResult('render C'));await page.settle();runtime.requests[3].resolve(filteredResult('old Update'));await Promise.resolve();await Promise.resolve();page.flush();assert.equal(page.app.view.id,'schedule-render');assert.ok(page.get('diagram').innerHTML.includes('render C'));assert.ok(runtime.cancelled>=6);
+  filterPlugin(page,'include','A');await Promise.resolve();filterPlugin(page,'include','B');await Promise.resolve();
+  runtime.requests[1].resolve(filteredResult('latest AB'));await page.settle();runtime.requests[0].resolve(filteredResult('stale A'));await Promise.resolve();await Promise.resolve();page.flush();assert.ok(page.get('diagram').innerHTML.includes('latest AB'));
+  filterPlugin(page,'exclude','B');await Promise.resolve();page.app.openObject('item.Shared');page.flush();runtime.requests[2].resolve(filteredResult('late object'));await Promise.resolve();await Promise.resolve();page.flush();assert.equal(page.app.view.objectId,'item.Shared');
+  assert.deepEqual(page.location.searchParams.getAll('scheduleIncludePlugin'),['A','B']);assert.deepEqual(page.location.searchParams.getAll('scheduleExcludePlugin'),['B']);
+  page.click(page.get('return-context'));await Promise.resolve();assert.equal(runtime.requests[3].view.id,'schedule-update');
+  page.choose('schedule-render');await Promise.resolve();assert.equal(runtime.requests[4].view.id,'schedule-render');
+  runtime.requests[4].resolve(filteredResult('Render AB'));await page.settle();runtime.requests[3].resolve(filteredResult('late Update'));await Promise.resolve();await Promise.resolve();page.flush();assert.equal(page.app.view.id,'schedule-render');assert.ok(page.get('diagram').innerHTML.includes('Render AB'));
 });
 
-test('filtered deep links keep the static graph until ready and zero matches are an empty state without invalid geometry',async()=>{
+test('realtime and full-navigation layouts preserve a global object search opened while they are pending',async()=>{
+  for(const initial of ['?schedule=schedule-update','?schedule=schedule-update&scheduleIncludePlugin=A']){
+    const runtime=controlledSchedules(),page=viewer(initial,{createScheduleRenderer:runtime.create});
+    if(!initial.includes('scheduleIncludePlugin'))filterPlugin(page,'include','A');await Promise.resolve();
+    const input=page.get('search');input.value='Shared';input.focus();input.dispatch('input');const results=page.get('object-results'),html=results.innerHTML;
+    runtime.requests[0].resolve(filteredResult('A'));await page.settle();
+    assert.equal(input.value,'Shared');assert.equal(page.document.activeElement,input);assert.equal(results.hidden,false);assert.equal(results.innerHTML,html);
+  }
+});
+
+test('search history is independent of in-flight or failed viewport snapshots and newer typing wins',async()=>{
+  for(const fails of [false,true]){
+    const runtime=controlledSchedules(),page=viewer('?schedule=schedule-update&scheduleIncludePlugin=A',{createScheduleRenderer:runtime.create});await Promise.resolve();
+    if(fails){runtime.requests[0].reject(new Error('failed'));await page.settle()}
+    const input=page.get('search');input.value='Shared';input.dispatch('input');
+    page.click(page.get('object-results').querySelector('[data-object="item.Shared"]'));page.back();await Promise.resolve();
+    assert.equal(page.history.state.architectureView,null);assert.equal(input.value,'shared');assert.equal(page.get('object-results').hidden,false);
+    input.value='Other';input.focus();input.dispatch('input');const results=page.get('object-results'),html=results.innerHTML;
+    runtime.requests[1].resolve({...filteredResult('restored A'),width:800,height:1100});await page.settle();
+    assert.equal(input.value,'Other');assert.equal(results.hidden,false);assert.equal(results.innerHTML,html);assert.equal(page.document.activeElement,input);assertFitted(page);
+    if(!fails){runtime.requests[0].resolve(filteredResult('stale'));await Promise.resolve();await Promise.resolve();page.flush()}
+  }
+});
+
+test('filtered deep links retain static fallback and zero matches produce an empty state without invalid geometry',async()=>{
   const runtime=controlledSchedules(),page=viewer('?schedule=schedule-render&scheduleInclude=Missing',{createScheduleRenderer:runtime.create});
   assert.equal(page.app.view.id,'schedule-render');assert.ok(page.get('diagram').innerHTML.includes('update_shared'));
   await Promise.resolve();runtime.requests[0].resolve({svg:null,width:0,height:0,systemCount:0,totalSystemCount:8,filtered:true});await page.settle();
@@ -426,30 +473,54 @@ test('filtered deep links keep the static graph until ready and zero matches are
   page.click(page.get('zoom-out'));page.emit('resize');assert.ok(!/NaN|Infinity/.test(page.get('diagram').style.transform));assert.equal(page.get('details').hidden,true);
 });
 
-test('history waits for filtered rendering before restoring its viewport and selector state',async()=>{
+test('history restores completed filter viewports but never assigns old geometry to an in-flight condition',async()=>{
   const runtime=controlledSchedules(),page=viewer('?schedule=schedule-update',{createScheduleRenderer:runtime.create});
-  submitFilters(page,'A');await Promise.resolve();runtime.requests[0].resolve(filteredResult('A'));await page.settle();page.click(page.get('zoom-out'));const transform=page.get('diagram').style.transform;
-  page.choose('schedule-render');await Promise.resolve();runtime.requests[1].resolve(filteredResult('Render A'));await page.settle();const renderSvg=page.get('diagram').innerHTML;
-  page.back();await Promise.resolve();assert.notEqual(page.get('diagram').innerHTML,renderSvg);assert.equal(page.app.view.id,'schedule-update');runtime.requests[2].resolve(filteredResult('A'));await page.settle();
-  assert.equal(page.get('diagram').style.transform,transform);assert.equal(page.get('view-select').value,'schedule-update');assert.ok(page.get('schedule-include').textContent.includes('已选 1'));assert.deepEqual(page.app.selection.scheduleIncludePlugins,['A']);
+  filterPlugin(page,'include','A');await Promise.resolve();runtime.requests[0].resolve(filteredResult('A'));await page.settle();page.click(page.get('zoom-out'));const transformA=page.get('diagram').style.transform;
+  filterPlugin(page,'include','B');await Promise.resolve();page.choose('schedule-render');await Promise.resolve();
+  runtime.requests[2].resolve(filteredResult('Render AB'));await page.settle();page.back();await Promise.resolve();
+  assert.equal(page.history.state.architectureView,null);runtime.requests[3].resolve({...filteredResult('AB'),width:840,height:1100});await page.settle();assertFitted(page);assert.notEqual(page.get('diagram').style.transform,transformA);
+  page.back();await Promise.resolve();runtime.requests[4].resolve(filteredResult('A'));await page.settle();assert.equal(page.get('diagram').style.transform,transformA);assert.deepEqual(page.app.selection.scheduleIncludePlugins,['A']);
+  runtime.requests[1].resolve(filteredResult('stale AB'));await Promise.resolve();await Promise.resolve();page.flush();assert.ok(!page.get('diagram').innerHTML.includes('stale'));
 });
 
-test('a different filtered Schedule immediately shows its own static canvas and remains recoverable after failure',async()=>{
+test('browser back and forward retain user zoom, pan and Fit without another internal navigation',async()=>{
+  const runtime=controlledSchedules(),page=viewer('?schedule=schedule-update',{createScheduleRenderer:runtime.create});
+  filterPlugin(page,'include','A');await Promise.resolve();runtime.requests[0].resolve(filteredResult('A'));await page.settle();
+  page.click(page.get('zoom-out'));page.canvas.dispatch('pointerdown',{pointerId:1,button:0,clientX:200,clientY:150});page.canvas.dispatch('pointermove',{pointerId:1,buttons:1,clientX:280,clientY:190});page.canvas.dispatch('pointerup',{pointerId:1,button:0,clientX:280,clientY:190});
+  const viewport=page.get('diagram').style.transform;page.back();page.forward();await Promise.resolve();runtime.requests[1].resolve(filteredResult('A'));await page.settle();assert.equal(page.get('diagram').style.transform,viewport);
+  page.click(page.get('fit'));const fit=page.get('diagram').style.transform;page.back();page.forward();await Promise.resolve();runtime.requests[2].resolve(filteredResult('A'));await page.settle();assert.equal(page.get('diagram').style.transform,fit);
+});
+
+test('failed and not-yet-presented filter states return by rendering and fitting their own conditions',async()=>{
+  const runtime=controlledSchedules(),page=viewer('?schedule=schedule-update',{createScheduleRenderer:runtime.create});
+  filterPlugin(page,'include','A');await Promise.resolve();runtime.requests[0].resolve(filteredResult('A'));await page.settle();page.click(page.get('zoom-out'));
+  filterPlugin(page,'include','B');await Promise.resolve();runtime.requests[1].reject(new Error('failed B'));await page.settle();
+  page.app.openObject('item.Shared');page.flush();page.back();await Promise.resolve();assert.equal(page.history.state.architectureView,null);runtime.requests[2].resolve({...filteredResult('AB restored'),width:800,height:1000});await page.settle();assertFitted(page);
+  filterPlugin(page,'include','C');await Promise.resolve();runtime.requests[3].resolve(filteredResult('ABC'));
+  await page.app.ready;
+  // 不执行排版完成后的 RAF，模拟下一次操作早于新图适合窗口。
+  page.app.openObject('item.Shared');page.flush();page.back();await Promise.resolve();assert.equal(page.history.state.architectureView,null);
+  runtime.requests[4].resolve({...filteredResult('ABC restored'),width:900,height:1300});await page.settle();assertFitted(page);
+});
+
+test('a different filtered Schedule shows its own fallback and all-clear remains recoverable after failure',async()=>{
   const runtime=controlledSchedules(),page=viewer('?object=item.Shared&scheduleInclude=character',{createScheduleRenderer:runtime.create});
-  page.click(page.get('return-overview'));await Promise.resolve();
-  assert.equal(page.app.view.id,'schedule-update');assert.equal(page.get('view-select').value,'schedule-update');
-  assert.equal(page.get('details').hidden,true);assert.equal(page.get('details-resizer').hidden,true);assert.equal(page.get('schedule-filter').hidden,false);
-  runtime.requests[0].reject(new Error('layout failed'));await page.settle();page.click(page.get('schedule-clear'));assert.equal(page.app.view.id,'schedule-update');assert.equal(page.location.searchParams.has('scheduleInclude'),false);assertFitted(page);
-  submitFilters(page,'A');await Promise.resolve();runtime.requests[1].resolve(filteredResult('Update A'));await page.settle();
-  page.choose('schedule-render');await Promise.resolve();assert.equal(page.app.view.id,'schedule-render');assert.equal(page.get('diagram').innerHTML,page.data.views.find(view=>view.id==='schedule-render').svg);
-  runtime.requests[2].reject(new Error('render failed'));await page.settle();page.click(page.get('schedule-clear'));assert.equal(page.app.view.id,'schedule-render');assert.equal(page.get('view-select').value,'schedule-render');assertFitted(page);
+  page.click(page.get('return-overview'));await Promise.resolve();assert.equal(page.app.view.id,'schedule-update');assert.equal(page.get('details').hidden,true);assert.equal(page.get('details-resizer').hidden,true);
+  runtime.requests[0].reject(new Error('layout failed'));await page.settle();page.click(page.get('schedule-clear'));assertFitted(page);
+  filterPlugin(page,'include','A');await Promise.resolve();runtime.requests[1].resolve(filteredResult('Update A'));await page.settle();
+  page.choose('schedule-render');await Promise.resolve();assert.equal(page.get('diagram').innerHTML,page.data.views.find(view=>view.id==='schedule-render').svg);
+  runtime.requests[2].reject(new Error('render failed'));await page.settle();page.click(page.get('schedule-clear'));assert.equal(page.app.view.id,'schedule-render');assertFitted(page);
 });
 
-test('pagehide cancels active work without disposing the renderer reused after BFCache restoration',async()=>{
-  let disposed=false,cancelled=0;
-  const page=viewer('?schedule=schedule-update',{createScheduleRenderer:()=>({cancel(){cancelled++},dispose(){disposed=true},render(){if(disposed)return Promise.reject(new Error('disposed'));return Promise.resolve(filteredResult('restored'))}})});
-  page.emit('pagehide');page.emit('pageshow');assert.equal(disposed,false);assert.ok(cancelled>=2);
-  submitFilters(page,'restored');await page.settle();assert.ok(page.get('diagram').innerHTML.includes('restored'));assert.equal(page.get('schedule-status').classList.contains('error'),false);
+test('BFCache resumes a cancelled pending filter without a new history entry and reuses completed views',async()=>{
+  const runtime=controlledSchedules(),page=viewer('?schedule=schedule-update',{createScheduleRenderer:runtime.create});
+  filterPlugin(page,'include','A');await Promise.resolve();runtime.requests[0].resolve(filteredResult('A'));await page.settle();page.click(page.get('zoom-out'));const transformA=page.get('diagram').style.transform;
+  page.emit('pageshow',{persisted:false});await Promise.resolve();assert.equal(runtime.requests.length,1);
+  page.emit('pagehide');page.emit('pageshow',{persisted:true});await Promise.resolve();assert.equal(runtime.requests.length,1);assert.equal(page.get('diagram').style.transform,transformA);
+  filterPlugin(page,'include','B');await Promise.resolve();const count=page.history.length,input=page.get('schedule-include-options').querySelector('[value="B"]');
+  page.emit('pagehide');runtime.requests[1].resolve(filteredResult('cancelled AB'));await Promise.resolve();await Promise.resolve();page.flush();assert.ok(!page.get('diagram').innerHTML.includes('cancelled'));
+  page.emit('pageshow',{persisted:true});await Promise.resolve();assert.equal(page.history.length,count);assert.equal(runtime.requests.length,3);assert.deepEqual(runtime.requests[2].filters.includePlugins,['A','B']);
+  runtime.requests[2].resolve(filteredResult('resumed AB'));await page.settle();assert.ok(page.get('diagram').innerHTML.includes('resumed AB'));assert.equal(page.get('schedule-include-options').querySelector('[value="B"]'),input);assert.equal(page.get('schedule-include-menu').hidden,false);
 });
 
 test('search and alias popups stay within viewport margins when the toolbar wraps and resizes',()=>{
@@ -465,70 +536,52 @@ test('search and alias popups stay within viewport margins when the toolbar wrap
   assert.equal(alias.get('object-results').style.left,'308px');assert.equal(alias.get('object-results').style.top,'88px');
 });
 
-test('separate searchable multiselects list Plugin groups and counts rather than individual systems',async()=>{
+test('searchable Plugin multiselects keep groups and counts and batch selection applies once',async()=>{
   const runtime=controlledSchedules(),page=viewer('?schedule=schedule-update',{createScheduleRenderer:runtime.create});
-  page.click(page.get('schedule-include'));const menu=page.get('schedule-include-options');
-  assert.deepEqual(menu.querySelectorAll('[data-filter-choice]').map(input=>input.value).sort(),page.data.schedulePluginCatalog.map(plugin=>plugin.id).sort());
-  assert.ok(!menu.textContent.includes('demo::alpha::one'));assert.ok(menu.querySelector('[value="A"]').parentElement.textContent.includes('2 个系统'));
-  assert.ok(menu.querySelector('[value="A"]').parentElement.textContent.includes('demo::alpha 模块'));
-  const inactive=menu.querySelector('[value="render"]');assert.ok(inactive.parentElement.textContent.includes('0 个系统'));assert.ok(inactive.parentElement.textContent.includes('不在当前 Schedule'));
-  assert.equal(page.get('schedule-exclude-menu').hidden,true);assert.equal(page.get('schedule-filter').querySelector('input[type="text"]'),null);
-  page.get('schedule-include-search').value='demo::';page.get('schedule-include-search').dispatch('input');page.click(page.get('schedule-include-select'));
-  assert.equal(runtime.requests.length,0);assert.ok(page.get('schedule-include').textContent.includes('已选 3'));
-  page.get('schedule-include-search').value='ALPHA';page.get('schedule-include-search').dispatch('input');assert.equal(menu.querySelectorAll('[data-filter-choice]').length,1);
-  const selected=menu.querySelector('[data-filter-choice]');assert.equal(selected.value,'A');assert.equal(selected.checked,true);assert.ok(selected.getAttribute('aria-label').includes('包含 Plugin AlphaPlugin'));assert.ok(selected.parentElement.getAttribute('title').includes('AlphaPlugin'));
-  chooseFilterPlugins(page,'exclude',['B']);assert.equal(page.get('schedule-include-menu').hidden,true);
-  const query=page.get('schedule-exclude-search');query.focus();query.dispatch('keydown',{key:'Enter'});page.flush();await Promise.resolve();
-  assert.deepEqual(new Set(runtime.requests[0].filters.includePlugins),new Set(['A','B','C']));assert.deepEqual(runtime.requests[0].filters.excludePlugins,['B']);assert.deepEqual(runtime.requests[0].filters.includeNames,[]);assert.deepEqual(runtime.requests[0].filters.excludeNames,[]);assert.equal(runtime.requests[0].filters.include,'');assert.equal(runtime.requests[0].filters.exclude,'');
-  assert.deepEqual(new Set(page.location.searchParams.getAll('scheduleIncludePlugin')),new Set(['A','B','C']));assert.deepEqual(page.location.searchParams.getAll('scheduleExcludePlugin'),['B']);assert.equal(page.document.activeElement,page.get('schedule-exclude'));
-  runtime.requests[0].resolve(filteredResult('exact'));await page.settle();
+  page.click(page.get('schedule-include'));const options=page.get('schedule-include-options');
+  assert.deepEqual(options.querySelectorAll('[data-filter-choice]').map(input=>input.value).sort(),page.data.schedulePluginCatalog.map(plugin=>plugin.id).sort());
+  assert.ok(!options.textContent.includes('demo::alpha::one'));assert.ok(options.querySelector('[value="A"]').parentElement.textContent.includes('2 个系统'));
+  const inactive=options.querySelector('[value="render"]');assert.ok(inactive.parentElement.textContent.includes('0 个系统'));assert.ok(inactive.parentElement.textContent.includes('不在当前 Schedule'));
+  page.get('schedule-include-search').value='demo::';page.get('schedule-include-search').dispatch('input');const a=options.querySelector('[value="A"]'),before=page.history.length;
+  page.click(page.get('schedule-include-select'));await Promise.resolve();assert.equal(runtime.requests.length,1);assert.equal(page.history.length,before+1);assert.deepEqual(new Set(runtime.requests[0].filters.includePlugins),new Set(['A','B','C']));
+  assert.equal(options.querySelector('[value="A"]'),a);assert.equal(a.checked,true);assert.equal(page.get('schedule-include-menu').hidden,false);
+  page.click(page.get('schedule-include-select'));await Promise.resolve();assert.equal(runtime.requests.length,1);assert.equal(page.history.length,before+1);
+  filterPlugin(page,'exclude','B');await Promise.resolve();assert.deepEqual(runtime.requests[1].filters.excludePlugins,['B']);runtime.requests[1].resolve(filteredResult('batch'));await page.settle();runtime.requests[0].resolve(filteredResult('stale batch'));await Promise.resolve();await Promise.resolve();page.flush();
 });
 
-test('Select all uses the current search result and keeps selections from other Schedules available for removal',async()=>{
+test('selections remain removable on another Schedule and side-clear immediately restores its static graph',async()=>{
   const runtime=controlledSchedules(),page=viewer('?schedule=schedule-update',{createScheduleRenderer:runtime.create});
-  page.click(page.get('schedule-include'));page.get('schedule-include-search').value='Alpha';page.get('schedule-include-search').dispatch('input');page.click(page.get('schedule-include-select'));
-  assert.deepEqual(page.get('schedule-include-options').querySelectorAll('[data-filter-choice]').filter(input=>input.checked).map(input=>input.value),['A']);
-  page.get('schedule-filter').dispatch('submit');await Promise.resolve();runtime.requests[0].resolve(filteredResult('A on Update'));await page.settle();
-  page.choose('schedule-render');await Promise.resolve();assert.deepEqual(runtime.requests[1].filters.includePlugins,['A']);
-  page.click(page.get('schedule-include'));const missing=page.get('schedule-include-options').querySelectorAll('[data-filter-choice]').find(input=>input.value==='A');assert.ok(missing);assert.equal(missing.checked,true);assert.ok(missing.parentElement.textContent.includes('不在当前 Schedule'));
-  page.get('schedule-include-search').value='Alpha';page.get('schedule-include-search').dispatch('input');page.click(page.get('schedule-include-clear'));page.click(page.get('schedule-include-select'));assert.ok(page.get('schedule-include').textContent.includes('全部'));
-  page.get('schedule-include-search').dispatch('keydown',{key:'Enter'});page.flush();assert.equal(page.location.searchParams.has('scheduleIncludePlugin'),false);assert.equal(page.app.view.id,'schedule-render');
+  filterPlugin(page,'include','A');await Promise.resolve();runtime.requests[0].resolve(filteredResult('A on Update'));await page.settle();
+  page.choose('schedule-render');await Promise.resolve();assert.deepEqual(runtime.requests[1].filters.includePlugins,['A']);page.click(page.get('schedule-include'));
+  const input=page.get('schedule-include-options').querySelector('[value="A"]');assert.equal(input.checked,true);assert.ok(input.parentElement.textContent.includes('不在当前 Schedule'));
+  page.get('schedule-include-search').value='Alpha';page.get('schedule-include-search').dispatch('input');const retained=page.get('schedule-include-options').querySelector('[value="A"]');
+  page.click(page.get('schedule-include-clear'));assert.equal(page.location.searchParams.has('scheduleIncludePlugin'),false);assert.equal(page.app.view.id,'schedule-render');assert.equal(page.get('schedule-include-options').querySelector('[value="A"]'),retained);assert.equal(retained.checked,false);
+  const count=page.history.length;page.click(page.get('schedule-include-select'));assert.equal(page.history.length,count);assert.equal(page.get('schedule-include-menu').hidden,false);
   runtime.requests[1].resolve(filteredResult('stale'));await Promise.resolve();await Promise.resolve();page.flush();assert.ok(!page.get('diagram').innerHTML.includes('stale'));
-  page.back();await Promise.resolve();runtime.requests[2].resolve(filteredResult('A on Render'));await page.settle();page.click(page.get('schedule-include'));assert.deepEqual(page.app.selection.scheduleIncludePlugins,['A']);assert.equal(page.get('schedule-include-options').querySelectorAll('[data-filter-choice]').find(input=>input.value==='A').checked,true);
-  page.click(page.get('schedule-clear'));assert.equal(page.location.searchParams.has('scheduleIncludePlugin'),false);assert.equal(page.location.searchParams.has('scheduleExcludePlugin'),false);
+  page.back();await Promise.resolve();runtime.requests[2].resolve(filteredResult('A on Render'));await page.settle();assert.deepEqual(page.app.selection.scheduleIncludePlugins,['A']);
 });
 
-test('saved legacy substring conditions remain cancellable checkbox items without free text filtering',async()=>{
-  const runtime=controlledSchedules(),page=viewer('?schedule=schedule-update&scheduleInclude=character,ui&scheduleExclude=bevy',{createScheduleRenderer:runtime.create});
-  await Promise.resolve();page.click(page.get('schedule-include'));const legacy=page.get('schedule-include-options').querySelector('[data-filter-legacy]');assert.ok(legacy);assert.equal(legacy.checked,true);assert.ok(legacy.parentElement.textContent.includes('已保存的旧条件'));assert.ok(legacy.parentElement.textContent.includes('character,ui'));
-  legacy.checked=false;legacy.dispatch('change');page.get('schedule-include-search').dispatch('keydown',{key:'Enter'});page.flush();await Promise.resolve();
-  assert.deepEqual(runtime.requests[1].filters,{includePlugins:[],excludePlugins:[],includeNames:[],excludeNames:[],include:'',exclude:'bevy'});assert.equal(page.location.searchParams.has('scheduleInclude'),false);assert.equal(page.location.searchParams.get('scheduleExclude'),'bevy');
-  page.click(page.get('schedule-exclude'));page.click(page.get('schedule-exclude-clear'));page.get('schedule-filter').dispatch('submit');page.flush();assert.equal(page.location.searchParams.has('scheduleExclude'),false);
-  for(const request of runtime.requests)request.resolve(filteredResult('cancelled legacy'));await Promise.resolve();await Promise.resolve();page.flush();assert.equal(page.app.view.filtered,undefined);
+test('legacy text conditions apply immediately but their candidates remain available through async updates',async()=>{
+  const runtime=controlledSchedules(),page=viewer('?schedule=schedule-update&scheduleInclude=character,ui&scheduleExclude=bevy',{createScheduleRenderer:runtime.create});await Promise.resolve();
+  page.click(page.get('schedule-include'));const options=page.get('schedule-include-options'),legacy=options.querySelector('[data-filter-legacy]');assert.equal(legacy.checked,true);
+  legacy.focus();legacy.checked=false;legacy.dispatch('change');await Promise.resolve();assert.equal(page.location.searchParams.has('scheduleInclude'),false);assert.equal(options.querySelector('[data-filter-legacy]'),legacy);
+  runtime.requests[1].resolve(filteredResult('without legacy include'));await page.settle();assert.equal(page.document.activeElement,legacy);assert.equal(options.querySelector('[data-filter-legacy]'),legacy);
+  legacy.checked=true;legacy.dispatch('change');await Promise.resolve();assert.equal(page.location.searchParams.get('scheduleInclude'),'character,ui');
+  page.click(page.get('schedule-clear'));assert.equal(page.app.view.filtered,undefined);for(const request of runtime.requests)request.resolve(filteredResult('stale'));await Promise.resolve();await Promise.resolve();page.flush();
 });
 
-test('unknown Plugin groups remain removable and legacy full system names are separate from Plugin choices',async()=>{
+test('unknown Plugin and full system candidates survive unchecking, searching and side-clear',async()=>{
   const runtime=controlledSchedules(),system='demo::generic::<(Foo, Bar), "value&x">',unknown='plugin-Unknown<&T>';
   const params=new URLSearchParams({schedule:'schedule-update',scheduleIncludePlugin:unknown,scheduleIncludeSystem:system,scheduleExcludeSystem:'A'});
-  const page=viewer('?'+params,{createScheduleRenderer:runtime.create});await Promise.resolve();
-  assert.deepEqual(runtime.requests[0].filters,{includePlugins:[unknown],excludePlugins:[],includeNames:[system],excludeNames:['A'],include:'',exclude:''});
-  page.click(page.get('schedule-include'));const options=page.get('schedule-include-options'),missing=options.querySelectorAll('[data-filter-choice]').find(input=>input.value===unknown),legacy=options.querySelector('[data-filter-system]');
-  assert.ok(missing);assert.equal(missing.checked,true);assert.ok(missing.parentElement.textContent.includes('未知 Plugin'));assert.ok(missing.parentElement.textContent.includes('不在当前 Schedule'));
-  assert.equal(legacy.value,system);assert.equal(legacy.checked,true);assert.ok(legacy.parentElement.textContent.includes('已保存的系统条件'));
-  assert.equal(options.querySelectorAll('[data-filter-choice]').some(input=>input.value===system),false);
-  missing.checked=false;missing.dispatch('change');legacy.checked=false;legacy.dispatch('change');
-  page.get('schedule-include-search').value='generic';page.get('schedule-include-search').dispatch('input');
-  assert.equal(options.querySelector('[data-filter-system]').checked,false);options.querySelector('[data-filter-system]').checked=true;options.querySelector('[data-filter-system]').dispatch('change');
-  page.get('schedule-include-search').dispatch('keydown',{key:'Enter'});page.flush();await Promise.resolve();
-  assert.deepEqual(runtime.requests[1].filters,{includePlugins:[],excludePlugins:[],includeNames:[system],excludeNames:['A'],include:'',exclude:''});
-  assert.equal(page.location.searchParams.has('scheduleIncludePlugin'),false);assert.equal(page.location.searchParams.get('scheduleIncludeSystem'),system);
-  page.click(page.get('schedule-exclude'));const exclude=page.get('schedule-exclude-options');
-  assert.equal(exclude.querySelector('[data-filter-system]').value,'A');assert.equal(exclude.querySelector('[data-filter-choice="exclude"][value="A"]').checked,false);
-  page.click(page.get('schedule-exclude-clear'));page.get('schedule-filter').dispatch('submit');page.flush();await Promise.resolve();
-  assert.deepEqual(runtime.requests[2].filters.excludeNames,[]);assert.equal(page.location.searchParams.has('scheduleExcludeSystem'),false);
-  page.click(page.get('schedule-clear'));assert.equal(page.app.view.filtered,undefined);
-  for(const key of ['scheduleIncludePlugin','scheduleExcludePlugin','scheduleIncludeSystem','scheduleExcludeSystem'])assert.equal(page.location.searchParams.has(key),false);
-  for(const request of runtime.requests)request.resolve(filteredResult('stale'));await Promise.resolve();await Promise.resolve();page.flush();assert.equal(page.app.view.filtered,undefined);
+  const page=viewer('?'+params,{createScheduleRenderer:runtime.create});await Promise.resolve();page.click(page.get('schedule-include'));
+  const options=page.get('schedule-include-options'),missing=options.querySelectorAll('[data-filter-choice]').find(input=>input.value===unknown),legacy=options.querySelector('[data-filter-system]');
+  missing.checked=false;missing.dispatch('change');legacy.checked=false;legacy.dispatch('change');await Promise.resolve();
+  assert.equal(options.querySelectorAll('[data-filter-choice]').find(input=>input.value===unknown),missing);assert.equal(options.querySelector('[data-filter-system]'),legacy);assert.equal(page.location.searchParams.has('scheduleIncludePlugin'),false);assert.equal(page.location.searchParams.has('scheduleIncludeSystem'),false);
+  page.get('schedule-include-search').value='Unknown';page.get('schedule-include-search').dispatch('input');const recovered=options.querySelectorAll('[data-filter-choice]').find(input=>input.value===unknown);assert.ok(recovered);assert.equal(recovered.checked,false);
+  recovered.checked=true;recovered.dispatch('change');await Promise.resolve();assert.equal(page.location.searchParams.get('scheduleIncludePlugin'),unknown);
+  page.get('schedule-include-search').value='generic';page.get('schedule-include-search').dispatch('input');const full=options.querySelector('[data-filter-system]');assert.equal(full.value,system);assert.equal(full.checked,false);full.checked=true;full.dispatch('change');await Promise.resolve();assert.equal(page.location.searchParams.get('scheduleIncludeSystem'),system);
+  page.click(page.get('schedule-exclude'));const exclude=page.get('schedule-exclude-options'),old=exclude.querySelector('[data-filter-system]');assert.equal(old.value,'A');page.click(page.get('schedule-exclude-clear'));await Promise.resolve();assert.equal(old.checked,false);assert.equal(exclude.querySelector('[data-filter-system]'),old);assert.equal(page.location.searchParams.has('scheduleExcludeSystem'),false);
+  page.click(page.get('schedule-clear'));for(const request of runtime.requests)request.resolve(filteredResult('stale'));await Promise.resolve();await Promise.resolve();page.flush();
 });
 
 test('filter menus clamp to the viewport, allow Tab, and close mutually with object results, Escape or outside focus',()=>{
