@@ -13,11 +13,12 @@ import { buildComponentCatalog } from './architecture-components.mjs';
 import { buildObjectCatalog } from './architecture-objects.mjs';
 import { sourceEntriesFor, sourcePolicyKindFor, sourcePolicyFor, auditProductionEcsCoverage } from './architecture-source-policy.mjs';
 import { DATA_GROUP_LABELS, entityComponentColumns } from './architecture-renderer.mjs';
-import { buildAppSchedule, APP_SCHEDULE_GROUPS } from './architecture-app-schedule.mjs';
 import { displayEndpoints, inspectViewRoutes, ROUTING_STYLE, nativeSvgProperty, nativeMarkerProperty } from './architecture-routing.mjs';
 import { INFRASTRUCTURE_FEATURES, infrastructureFeature, architectureViewId } from './architecture-infrastructure.mjs';
 import { DEPENDENCY_SOURCE_DEFINITIONS } from './architecture-source-definitions.mjs';
 import { readCargoMetadata, createDependencySourceResolver, dependencySourceKey, checkDependencySources } from './dependency-sources.mjs';
+import { checkDebugdumpViews } from './debugdump.mjs';
+import { buildSchedulePluginGroups } from './schedule-plugins.mjs';
 
 const legacyAspects = ['systems', 'data', 'events'];
 const linkKinds = new Set(['order', 'read', 'write', 'trigger', 'transition', 'reference', 'relationship', 'registration', 'dependency']);
@@ -228,7 +229,7 @@ export function checkMermaidLayout(view) {
 function checkMermaidSource(view, registry, scheduleDefinitions) {
   const appSchedule = view.layout === 'app-schedule';
   requireCondition(view.scheduleOrientation === undefined, `Obsolete Schedule orientation metadata: ${view.id}`);
-  if (appSchedule) scheduleDefinitions = new Map(APP_SCHEDULE_GROUPS.map(group => [group.id, group]));
+  requireCondition(!appSchedule, `Retired manual App schedule view: ${view.id}`);
   requireCondition(view.diagramType === 'flowchart' && /^\s*flowchart\s+(LR|RL|TB)\s*$/m.test(view.mermaid), `Expected Mermaid flowchart LR, RL or TB: ${view.id}`);
   if (view.routing) checkMermaidLayout(view);
   requireCondition(!/^\s*(?:subgraph\s+)?legend(?:_\w*)?\b/m.test(view.mermaid), `Legend declaration remains in business Mermaid: ${view.id}`);
@@ -442,21 +443,6 @@ const placementNodeIds = nodes => nodes.map(node => typeof node === 'string' ? n
 const observerBranchKey = ({ id, nodes, anchorSourceIds }) => ({ id, nodes: placementNodeIds(nodes), anchorSourceIds });
 const visualPlacementKey = groups => groups.map(({ id, nodes, visualAttachments = [] }) => ({ id, nodes: placementNodeIds(nodes), visualAttachments: placementNodeIds(visualAttachments) }));
 
-export function checkAppSchedule(view, model, registry) {
-  requireCondition(view.id === 'overview' && view.feature === null && view.aspect === 'overview' && view.layout === 'app-schedule', 'Overview must show the App system schedule');
-  requireCondition(view.scheduleOrientation === undefined, 'Obsolete Schedule orientation metadata: overview');
-  const expected = buildAppSchedule(model, registry);
-  const nodeKeys = nodes => nodes.map(node => [node.id, node.role]).sort(([a], [b]) => a.localeCompare(b));
-  requireCondition(isDeepStrictEqual(nodeKeys(view.nodes), nodeKeys(expected.graph.nodes)), 'App schedule node coverage mismatch');
-  const linkKeys = links => links.map(systemLinkKey).sort((a, b) => a.id.localeCompare(b.id));
-  requireCondition(isDeepStrictEqual(linkKeys(view.links), linkKeys(expected.graph.links)), 'App schedule dependency coverage mismatch');
-  const groupKeys = groups => groups.map(({ id, label, order, track, parent, schedule, notes, nodes, visualAttachments = [] }) => ({ id, label, order, track, parent, schedule, notes, nodes: nodes.map(node => typeof node === 'string' ? node : node.id), visualAttachments: visualAttachments.map(node => typeof node === 'string' ? node : node.id) }));
-  requireCondition(isDeepStrictEqual(groupKeys(view.scheduleGroups), groupKeys(expected.groups)), 'App schedule phase or registration mismatch');
-  requireCondition(isDeepStrictEqual((view.observerBranches || []).map(observerBranchKey), expected.branches.map(observerBranchKey)), 'App Observer source branch coverage mismatch');
-  const phaseKeys = links => links.map(({ id, from, to, edgeSemantic, displayLabel, notes }) => ({ id, from, to, edgeSemantic, displayLabel, notes }));
-  requireCondition(isDeepStrictEqual(phaseKeys(view.scheduleLinks), phaseKeys(expected.phaseLinks)), 'App schedule execution path mismatch');
-}
-
 /** 对象图只展开中心的一跳；投影和注册身份不因同名、同函数而合并。 */
 export function checkObjectViews(views, catalog) {
   requireCondition(Array.isArray(views), 'Invalid architecture view list');
@@ -478,7 +464,11 @@ export function checkObjectViews(views, catalog) {
     seen.add(object.id);
     requireCondition(view.centerNodeId === object.id && view.nodes.filter(node => node.id === object.id).length === 1, `Object view center mismatch: ${view.id}`);
     requireCondition(!view.links.some(link => link.projection === 'observer-trigger'), `Observer trigger projection outside a system view: ${view.id}`);
-    // 实体中心只隐藏组件几何；其它关系仍逐项核对，组件自身图继续保留包含关系。
+    // 插件专属图为单卡，关系仍保留在目录和其他对象图；实体中心隐藏组件几何。
+    if (['Plugin', 'PluginGroup'].includes(object.kind)) {
+      requireCondition(view.nodes.length === 1 && view.links.length === 0 && (view.scheduleLinks || []).length === 0,
+        `Plugin object view must contain only its own card: ${view.id}`);
+    }
     if (object.kind === 'Entity') {
       const isComponent = id => objects.get(id)?.kind === 'Component';
       requireCondition(!view.nodes.some(node => isComponent(node.id))
@@ -528,24 +518,34 @@ export function checkArchitecture(root, { dependencyDefinitions = DEPENDENCY_SOU
     features.set(feature.id, feature);
   }
   const featureIds = new Set([...features.keys(), ...INFRASTRUCTURE_FEATURES.map(feature => feature.id)]);
-  const expectedViews = new Map([['overview', { feature: null, aspect: 'overview' }]]);
-  for (const feature of featureIds) for (const aspect of artifact.schemaVersion === 3 ? ['systems'] : legacyAspects) {
-    expectedViews.set(architectureViewId(feature, aspect), { feature, aspect });
+  const expectedViews = new Map();
+  if (artifact.schemaVersion === 4) {
+    const schedules = artifact.views.filter(view => view.aspect === 'schedule');
+    checkDebugdumpViews(directory, repository, schedules);
+    const grouped = buildSchedulePluginGroups({ model, views: schedules });
+    requireCondition(isDeepStrictEqual(artifact.schedulePluginCatalog, grouped.catalog), 'Schedule Plugin source catalog is stale');
+    requireCondition(schedules.every((view, index) => isDeepStrictEqual(view.schedulePluginGroups, grouped.views[index].schedulePluginGroups)), 'Schedule Plugin source membership is stale');
+    for (const view of schedules) expectedViews.set(view.id, { feature: null, aspect: 'schedule' });
+  } else {
+    expectedViews.set('overview', { feature: null, aspect: 'overview' });
+    for (const feature of featureIds) for (const aspect of artifact.schemaVersion === 3 ? ['systems'] : legacyAspects) {
+      expectedViews.set(architectureViewId(feature, aspect), { feature, aspect });
+    }
   }
   const registry = artifact.registry;
   const dependencyResolver = createDependencySourceResolver(cargoMetadata ?? readCargoMetadata(repository));
   checkDependencySources(registry, dependencyResolver, dependencyDefinitions, requireDependencyDefinitions);
   let componentTypes = [];
   let objectCatalog;
-  if ([2, 3].includes(artifact.schemaVersion)) {
+  if ([2, 3, 4].includes(artifact.schemaVersion)) {
     if (artifact.schemaVersion === 2) requireCondition(Array.isArray(artifact.componentTypes), 'Missing component type catalog');
     const fresh = buildArchitectureModel(model);
     if (requireDependencyDefinitions) {
       for (const [id, node] of Object.entries(fresh.registry)) if (registry[id]?.definition_source) node.definition_source = registry[id].definition_source;
     }
-    const catalog = buildComponentCatalog(model, fresh.registry, { readSource: filename => fs.readFileSync(path.join(repository, filename), 'utf8'), mergeSystems: artifact.schemaVersion !== 3 });
+    const catalog = buildComponentCatalog(model, fresh.registry, { readSource: filename => fs.readFileSync(path.join(repository, filename), 'utf8'), mergeSystems: artifact.schemaVersion < 3 });
     componentTypes = catalog.types;
-    if (artifact.schemaVersion === 3) {
+    if (artifact.schemaVersion >= 3) {
       for (const [id, node] of Object.entries(fresh.registry)) {
         node.sourceEntries = registry[id]?.sourceEntries;
         node.sourceGaps = registry[id]?.sourceGaps;
@@ -555,7 +555,7 @@ export function checkArchitecture(root, { dependencyDefinitions = DEPENDENCY_SOU
       requireCondition(isDeepStrictEqual(artifact.objectAliases, model.object_aliases || {}), 'Object alias catalog differs from maintained compatibility targets');
       checkObjectViews(artifact.views, objectCatalog);
       for (const object of objectCatalog.objects) expectedViews.set(object.viewId, { feature: object.feature, aspect: 'object', object });
-      for (const feature of featureIds) {
+      for (const feature of artifact.schemaVersion === 3 ? featureIds : []) {
         const expected = expectedViews.get(architectureViewId(feature, 'systems'));
         expected.graph = fresh.graphFor(feature, 'systems');
         expected.placement = buildObserverPlacement(expected.graph, registry, fresh.scheduleGroups(expected.graph));
@@ -572,7 +572,7 @@ export function checkArchitecture(root, { dependencyDefinitions = DEPENDENCY_SOU
       requireCondition(isDeepStrictEqual(filtered, node.sourceEntries), `Source entry outside the card policy: ${node.id}`);
       if (node.kind === 'Component') requireCondition(node.sourceEntries.length > 0 || node.sourceGaps.length > 0, `Component has no definition evidence or pending explanation: ${node.id}`);
     }
-    if (artifact.schemaVersion === 3) {
+    if (artifact.schemaVersion >= 3) {
       const coverage = auditProductionEcsCoverage(registry, { model, repository, registry, dependencyContext: { metadata: cargoMetadata, resolver: dependencyResolver } });
       requireCondition(!coverage.gaps.length, `Production ECS source coverage mismatch: ${coverage.gaps.join('; ')}`);
     }
@@ -586,7 +586,7 @@ export function checkArchitecture(root, { dependencyDefinitions = DEPENDENCY_SOU
   for (const [id, node] of Object.entries(registry)) {
     requireCondition(node && node.id === id, `Registry node ID mismatch: ${id}`);
     const kind = nodeKindOf(node);
-    if ([2, 3].includes(artifact.schemaVersion)) requireCondition(node.kind === kind, `Noncanonical node category: ${id}/${node.kind}`);
+    if ([2, 3, 4].includes(artifact.schemaVersion)) requireCondition(node.kind === kind, `Noncanonical node category: ${id}/${node.kind}`);
     requireCondition(NODE_KINDS[kind], `Unclassified architecture node: ${id}`);
     requireCondition(featureIds.has(node.feature), `Invalid node feature: ${id}`);
   }
@@ -649,6 +649,11 @@ export function checkArchitecture(root, { dependencyDefinitions = DEPENDENCY_SOU
     requireCondition(expected && !seenViews.has(view.id), `Invalid or duplicate architecture view: ${view.id}`);
     seenViews.add(view.id);
     requireCondition(view.feature === expected.feature && view.aspect === expected.aspect, `Architecture view metadata mismatch: ${view.id}`);
+    if (expected.aspect === 'schedule') {
+      artifactViewIds.add(view.id);
+      filenames.add(view.filename);
+      continue;
+    }
     if (artifact.schemaVersion === 3 && expected.aspect === 'systems') {
       const nodes = graph => graph.nodes.map(({ id, role }) => [id, role]).sort(([a], [b]) => a.localeCompare(b));
       const links = graph => graph.links.map(systemLinkKey).sort((a, b) => a.id.localeCompare(b.id));
@@ -759,7 +764,7 @@ export function checkArchitecture(root, { dependencyDefinitions = DEPENDENCY_SOU
     if (artifact.schemaVersion === 3) checkObserverTriggerProjections(view, model, registry, originalLinkEvidence);
     if (styledView(view)) {
       requireCondition(Array.isArray(view.scheduleLinks), `Missing Schedule link manifest: ${view.id}`);
-      const expectedScheduleLinks = (view.layout === 'app-schedule' ? buildAppSchedule(model, registry).phaseLinks : scheduleLinksFor(view.scheduleGroups)).map(({ id, from, to, edgeSemantic, displayLabel }) => ({ id, from, to, edgeSemantic, displayLabel }));
+      const expectedScheduleLinks = scheduleLinksFor(view.scheduleGroups).map(({ id, from, to, edgeSemantic, displayLabel }) => ({ id, from, to, edgeSemantic, displayLabel }));
       const actualScheduleLinks = view.scheduleLinks.map(({ id, from, to, edgeSemantic, displayLabel }) => ({ id, from, to, edgeSemantic, displayLabel }));
       requireCondition(isDeepStrictEqual(actualScheduleLinks, expectedScheduleLinks), `Schedule relation manifest mismatch: ${view.id}`);
     }
@@ -783,15 +788,22 @@ export function checkArchitecture(root, { dependencyDefinitions = DEPENDENCY_SOU
   requireCondition(isDeepStrictEqual(actualFilenames, [...filenames].sort()), 'Architecture SVG file set does not match view manifest');
   const actualMermaidFilenames = fs.readdirSync(directory).filter(filename => /^ecs-.*\.mmd$/.test(filename)).sort();
   requireCondition(isDeepStrictEqual(actualMermaidFilenames, [...mermaidFilenames].sort()), 'Architecture Mermaid file set does not match view manifest');
+  if (artifact.schemaVersion === 4) {
+    const actualDotFilenames = fs.readdirSync(directory).filter(filename => /^ecs-.*\.dot$/.test(filename)).sort();
+    const expectedDotFilenames = artifact.views.filter(view => view.engine === 'graphviz').map(view => view.dotFilename).sort();
+    requireCondition(isDeepStrictEqual(actualDotFilenames, expectedDotFilenames), 'Architecture DOT file set does not match view manifest');
+    requireCondition(artifact.views.every(view => ['schedule', 'object'].includes(view.aspect)), 'Retired architecture system view remains in the manifest');
+  }
   const overview = artifact.views.find(view => view.id === 'overview');
-  if ([2, 3].includes(artifact.schemaVersion)) checkAppSchedule(overview, model, registry);
   for (const feature of INFRASTRUCTURE_FEATURES) {
     requireCondition(registry[feature.overviewNode]?.feature === feature.id && ['Plugin', 'PluginGroup'].includes(registry[feature.overviewNode]?.kind)
-      && (overview.layout === 'app-schedule' || overview.nodes.some(node => node.id === feature.overviewNode && node.role === 'plugin')), `Infrastructure entrance is missing from overview: ${feature.id}`);
+      && (artifact.schemaVersion === 4 ? objectCatalog.objects.some(object => object.id === feature.overviewNode)
+        : overview.layout === 'app-schedule' || overview.nodes.some(node => node.id === feature.overviewNode && node.role === 'plugin')), `Infrastructure entrance is missing${artifact.schemaVersion === 4 ? '' : ' from overview'}: ${feature.id}`);
   }
   for (const feature of features.values()) {
     const id = `plugin-${feature.plugin}`;
-    requireCondition(registry[id]?.feature === feature.id && (overview.layout === 'app-schedule' || overview.nodes.some(node => node.id === id && node.role === 'plugin')), `Plugin is missing from overview: ${feature.plugin}`);
+    requireCondition(registry[id]?.feature === feature.id && (artifact.schemaVersion === 4 ? objectCatalog.objects.some(object => object.id === id)
+      : overview.layout === 'app-schedule' || overview.nodes.some(node => node.id === id && node.role === 'plugin')), `Plugin is missing${artifact.schemaVersion === 4 ? '' : ' from overview'}: ${feature.plugin}`);
     const pluginIdentities = new Set(Object.values(registry).filter(node => String(node.kind).toLowerCase() === 'plugin' && node.name === feature.plugin && node.feature === feature.id).map(node => resolveNode(node.id)));
     requireCondition(pluginIdentities.size === 1 && pluginIdentities.has(id), `Duplicate semantic project plugin: ${feature.plugin}`);
   }
@@ -829,10 +841,10 @@ export function checkArchitecture(root, { dependencyDefinitions = DEPENDENCY_SOU
     requireCondition(typeof link.id === 'string' && link.id && !systemLinkIds.has(link.id) && linkKinds.has(link.kind), `Invalid or duplicate system link: ${link.id}`);
     systemLinkIds.add(link.id);
     requireCondition(Object.hasOwn(registry, link.from) && Object.hasOwn(registry, link.to), `Unknown system link endpoint: ${link.id}`);
-    if (artifact.schemaVersion === 3) {
+    if (artifact.schemaVersion >= 3) {
       const refined = objectCatalog.links.find(candidate => candidate.id === link.id);
       requireCondition(refined && refined.from === resolveNode(link.from) && refined.to === resolveNode(link.to), `Original system link identity was lost: ${link.id}`);
-      requireLink(refined, 'System link');
+      if (![refined.from, refined.to].every(id => ['Plugin', 'PluginGroup'].includes(nodeKindOf(registry[id])))) requireLink(refined, 'System link');
     } else if (!isMainPluginRegistration({ ...link, from: resolveNode(link.from), to: resolveNode(link.to) }, registry)) requireLink(link, 'System link');
   }
   for (const relation of model.relationships || []) {

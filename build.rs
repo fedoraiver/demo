@@ -2,6 +2,10 @@
 
 fn main() {
     println!("cargo::rerun-if-changed=build.rs");
+    println!(
+        "cargo::rustc-env=DEMO_BUILD_TARGET={}",
+        std::env::var("TARGET").unwrap()
+    );
 
     // 按编译目标判断平台，避免从 macOS 交叉编译时把宿主平台当作目标平台。
     let target_os = std::env::var("CARGO_CFG_TARGET_OS").unwrap();

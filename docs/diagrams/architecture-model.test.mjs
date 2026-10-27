@@ -45,8 +45,8 @@ test('Bevy 与四个第三方入口分别浏览，具体泛型契约和类型定
 });
 
 test('第三方业务节点各有唯一入口，拆分旧聚合身份而不展开跨入口内部实现', () => {
-  const counts = { avian: 104, enhanced_input: 40, kira: 6, egui: 13 };
-  // 8d78c14 的已核实入口保持稳定；仅移除新版已不存在的 Egui 标记资源。
+  const counts = { avian: 104, enhanced_input: 39, kira: 6, egui: 13 };
+  // 已核实入口保持稳定；移除新版已不存在的 Egui 标记及已停用的调试动作。
   const originalNodes = {
     avian: [
       'physics_prepare', 'physics_step', 'physics_writeback', 'easing_reset',
@@ -468,7 +468,7 @@ test('系统清单分别记录实际 Schedule，Observer 不冒充固定调度',
     'interaction', 'held_apply', 'held_fixed', 'facing_update',
     'held_update', 'camera_follow', 'transform_propagate', 'render',
     'visibility_update', 'startup_inspector', 'egui_input', 'egui_begin',
-    'capture_apply', 'inspector_pass', 'filter_egui_input', 'grounded_fixed',
+    'capture_apply', 'inspector_pass', 'grounded_fixed',
     'grounded_after', 'gravity_sync', 'orphan_cleanup', 'orphan_apply',
     'velocity_log', 'collision_log', 'physics_prepare', 'physics_step',
     'physics_writeback', 'easing_reset', 'easing_end', 'easing_apply',
@@ -479,7 +479,7 @@ test('系统清单分别记录实际 Schedule，Observer 不冒充固定调度',
     'flow_enter_menu', 'flow_pause', 'flow_suspend', 'flow_resume',
     'menu_spawn_controller', 'menu_sync_context', 'menu_handle_requests', 'menu_pointer',
     'menu_rebuild', 'menu_style', 'menu_description', 'menu_scroll_focus',
-    'menu_backdrop_spawn', 'menu_asset_failures', 'observe_release_pointer', 'observe_menu_previous',
+    'menu_backdrop_spawn', 'menu_asset_failures', 'observe_menu_previous',
     'observe_menu_next', 'observe_menu_left', 'observe_menu_right', 'observe_menu_confirm',
     'observe_menu_back', 'observe_menu_scroll', 'observe_courier_ready', 'menu_animation_play',
     'audio_preload', 'audio_load_failures', 'audio_play', 'audio_stop',
@@ -501,6 +501,11 @@ test('系统清单分别记录实际 Schedule，Observer 不冒充固定调度',
     'enhanced-reset-gameplay-action', 'native-focused-keyboard-dispatch',
   ];
   assert.deepEqual(new Set(model.systems.map(system => system.id)), new Set([...originalIds, ...addedIds]), 'Original registrations retain their stable IDs');
+  for (const id of ['filter_egui_input', 'observe_release_pointer']) assert.equal(architecture.registry[id], undefined, `${id}: 已删除系统不保留为生产对象`);
+  assert.deepEqual(architecture.registry.mouse_capture.registrations, [{
+    schedule: 'PreUpdate', scope: 'runtime', after: ['InputSystems', 'EguiPreUpdateSet::InitContexts'],
+    before: ['EguiPreUpdateSet::ProcessInput', 'EnhancedInputSystems::Prepare'],
+  }]);
   for (const system of model.systems) {
     assert.ok(Object.hasOwn(system, 'schedule'), system.id);
     if (system.kind === 'Observer') {

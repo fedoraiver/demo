@@ -3,7 +3,7 @@ import test from 'node:test';
 import { createArchitectureGestures } from './architecture-gestures.mjs';
 import { testDocument } from './test-dom.mjs';
 
-function fixture({ viewport = { scale: 1, x: 0, y: 0 }, left = 0, top = 0, diagram = true } = {}) {
+function fixture({ viewport = { scale: 1, x: 0, y: 0 }, left = 0, top = 0, diagram = true, clampScale } = {}) {
   const document = testDocument('<div id="canvas"><span id="target"></span></div>');
   const canvas = document.getElementById('canvas'), listeners = new Map(), activations = [], updates = [];
   let current = { ...viewport };
@@ -11,7 +11,7 @@ function fixture({ viewport = { scale: 1, x: 0, y: 0 }, left = 0, top = 0, diagr
   const window = { addEventListener(name, listener) { listeners.set(name, listener); } };
   const controller = createArchitectureGestures({ canvas, window, hasDiagram: () => diagram,
     getViewport: () => ({ ...current }), setViewport: next => { current = { ...next }; updates.push(current); },
-    activate: (x, y) => activations.push({ x, y }) });
+    activate: (x, y) => activations.push({ x, y }), clampScale });
   const pointer = (name, id, x, y, extra = {}) => canvas.dispatch(name, {
     button: 0, pointerType: 'touch', pointerId: id, clientX: x + left, clientY: y + top, ...extra,
   });
@@ -93,6 +93,16 @@ test('coincident initial touches remain finite and their midpoint can still tran
   pair(page, [100, 100], [100, 100]);
   page.pointer('pointermove', 2, 140, 120);
   close(page.viewport, { scale: .7, x: 32, y: 5 });
+});
+
+test('a caller-supplied lower limit keeps tiny Schedule pinch gestures anchored', () => {
+  const page = fixture({ viewport: { scale: .002, x: 25, y: -20 }, clampScale: value => Math.min(2.4, Math.max(.0005, value)) });
+  pair(page);
+  page.pointer('pointermove', 1, 125, 100); page.pointer('pointermove', 2, 175, 100);
+  close(page.viewport, { scale: .001, x: 87.5, y: 40 });
+  page.pointer('pointermove', 1, 149.5, 100); page.pointer('pointermove', 2, 150.5, 100);
+  close(page.viewport, { scale: .0005, x: 118.75, y: 70 });
+  assert.equal((150 - page.viewport.x) / page.viewport.scale, (150 - 25) / .002);
 });
 
 test('two fingers become a single drag without a jump or a final false tap', () => {

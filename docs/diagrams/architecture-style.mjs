@@ -1,5 +1,6 @@
 // 节点、连线、图例与导出共同使用这份视觉语义，不修改清单中的 Rust 类型或关系身份。
 import { NODE_KINDS, nodeKindOf } from './architecture-kinds.mjs';
+export const ARCHITECTURE_TEXT_STYLE = { fontFamily: 'Segoe UI, Microsoft YaHei, sans-serif', color: '#1F3340', fontSize: 14 };
 export const SELECTION_STYLE = {
   fillStrokeRatio: .22, strokeExtraPx: 2, ringWidthPx: 2, ringGapPx: 1,
   ringColor: '#2563EB', ringOpacity: .85, filterPaddingPx: 2,

@@ -132,7 +132,7 @@
       ],
       "source": {
         "path": "src/first_person/mod.rs",
-        "line": 164
+        "line": 158
       },
       "feature": "first_person",
       "registered_by": "first_person",
@@ -272,18 +272,16 @@
       "kind": "System",
       "phase": "PreUpdate",
       "module": "first_person",
-      "description": "按窗口焦点、当前游戏状态、控制关联与检查器占用统一更新捕获和 GameplayContext；主菜单与暂停始终释放光标。",
+      "description": "按 F3、窗口焦点、游戏状态和控制关联切换光标捕获，统一设置 GameplayContext 活动与 Egui 输入转发；主菜单和暂停始终释放光标。",
       "display_summary": "管理光标捕获及玩法输入启停。",
       "reads": [
         "resource.ButtonInputKeyCode",
-        "resource.MouseButtonInputMessages",
         "resource.WindowFocusedMessages",
         "window.Window",
         "controller.ControlsCharacter",
         "controller.ControlsCamera",
         "camera.FirstPersonCamera",
         "camera.MouseLookState",
-        "camera.EguiContext",
         "controller.ContextActivity",
         "resource.AppState",
         "resource.PlayState"
@@ -291,7 +289,8 @@
       "writes": [
         "window.CursorOptions",
         "camera.MouseLookState",
-        "camera.EguiContext",
+        "camera.EguiContextSettings",
+        "camera.EguiInput",
         "controller.ContextActivity"
       ],
       "filters": [
@@ -299,23 +298,23 @@
         "控制者：With<GameplayContext>",
         "角色：Query<(), With<Character>>，只验证实体存在",
         "相机：具有 FirstPersonCamera 与 MouseLookState",
-        "UI：With<PrimaryEguiContext>，只在查询唯一上下文成功时读取"
+        "UI：With<PrimaryEguiContext>，遍历已有主上下文"
       ],
       "events": [
-        "读取缓冲 Message：MouseButtonInput、WindowFocused"
+        "读取缓冲 Message：WindowFocused",
+        "恢复捕获时向 EguiInput.events 追加 egui::Event::PointerGone；不是 Bevy Event 或 Message"
       ],
       "notes": [
-        "显式 .after(InputSystems).after(EguiPreUpdateSet::BeginPass).before(EnhancedInputSystems::Prepare)。",
-        "CursorOptions 与 MouseLookState 在系统中直接更新；ContextActivity 是不可变组件，替换通过 Commands 延迟执行，必须在 Prepare 前应用。",
-        "EguiContext 以 &mut 查询，writes 表示调度层面的可变访问权限；此系统只查询 UI 状态，不构建面板或修改检查器字段。",
-        "点击当前 UI 面板、拖拽仍占用指针或弹窗打开时，不把左键视为恢复游戏捕获；当前 Window 光标命中已缓存的 UI 层。",
-        "UI 要求键盘、弹窗、指针拖拽或自由鼠标悬于面板时停用整个 GameplayContext；失焦或关联失效也停用。Esc 的暂停业务由菜单 Enhanced Input 执行；底层 Esc 只处理光标生命周期。",
-        "停用动作上下文不清空 ButtonInput；动作完成或取消清除持续移动轴，重新启用继续遵循按钮动作的 require_reset。",
-        "默认主上下文是 multipass，BeginPass 系统过滤掉它；此依赖是集合边界，不表示主检查器已经完成本帧 UI。实际 EguiPrimaryContextPass 由 PostUpdate 循环调用。"
+        "显式 after(InputSystems)、after(EguiPreUpdateSet::InitContexts)、before(EguiPreUpdateSet::ProcessInput) 与 before(EnhancedInputSystems::Prepare)。",
+        "F3 独立于 GameplayContext 切换游戏与检查器输入归属；检查器两种模式下均可显示，点击面板内外不切换模式。",
+        "CursorOptions、MouseLookState、EguiContextSettings 与 EguiInput 直接修改；ContextActivity 是不可变组件，通过 Commands 替换，并在动作 Prepare 前应用。",
+        "捕获时关闭主 Egui 上下文的指针、滚轮、键盘与输入法转发；恢复捕获时追加 PointerGone 清除遗留悬停，不终止拖拽或文本编辑。切换前须结束其他输入手势。",
+        "失焦、菜单、暂停或控制关联失效释放捕获并停用玩法上下文；回焦后由 F3 恢复，从暂停恢复则重新初始化捕获。Esc 暂停由菜单动作处理，底层 Esc 只释放光标。",
+        "停用上下文不清空 ButtonInput；动作完成或取消清除持续移动轴，重新启用仍遵循 require_reset。"
       ],
       "source": {
         "path": "src/first_person/capture.rs",
-        "line": 94
+        "line": 7
       },
       "feature": "first_person",
       "registered_by": "first_person",
@@ -327,9 +326,10 @@
           "scope": "runtime",
           "after": [
             "InputSystems",
-            "EguiPreUpdateSet::BeginPass"
+            "EguiPreUpdateSet::InitContexts"
           ],
           "before": [
+            "EguiPreUpdateSet::ProcessInput",
             "EnhancedInputSystems::Prepare"
           ]
         }
@@ -358,7 +358,7 @@
       "events": [],
       "notes": [
         "由 EnhancedInputPlugin 的 update_pending 完成。",
-        "Prepare 在 InputSystems、Egui BeginPass 集合与 sync_mouse_capture 的上下文命令应用之后；接着进入框架 Update。",
+        "Prepare 在 InputSystems 与 sync_mouse_capture 的上下文命令应用之后；Egui 输入转发和 Prepare 之间没有额外的项目顺序约束。",
         "图中列出当前输入相关资源，未展开框架所有设备与局部缓存。"
       ],
       "source": null,
@@ -428,7 +428,7 @@
         "按 ContextInstances<PreUpdate> 索引访问上下文",
         "动作：Without<ExternallyMocked>",
         "绑定：Without<ActionSettings>",
-        "当前 JumpAction、InteractAction、ReleasePointerAction 带 Press"
+        "当前 JumpAction、InteractAction 带 Press"
       ],
       "events": [],
       "notes": [
@@ -469,8 +469,7 @@
         "action.Action<LookAction>",
         "action.Action<MoveAction>",
         "action.Action<JumpAction>",
-        "action.Action<InteractAction>",
-        "action.Action<ReleasePointerAction>"
+        "action.Action<InteractAction>"
       ],
       "filters": [
         "上下文：Without<ActionFns>",
@@ -519,7 +518,7 @@
         "动作：With<ActionFns>"
       ],
       "events": [
-        "排入 EntityEvent：Fire<MoveAction>、Complete<MoveAction>、Cancel<MoveAction>、Fire<JumpAction>、Fire<InteractAction>、Fire<LookAction>、Fire<ReleasePointerAction>",
+        "排入 EntityEvent：Fire<MoveAction>、Complete<MoveAction>、Cancel<MoveAction>、Fire<JumpAction>、Fire<InteractAction>、Fire<LookAction>",
         "菜单动作：Fire<PreviousAction>、Fire<NextAction>、Fire<LeftAction>、Fire<RightAction>、Fire<ConfirmAction>、Fire<BackAction>"
       ],
       "notes": [
@@ -571,7 +570,7 @@
       ],
       "source": {
         "path": "src/first_person/actions.rs",
-        "line": 95
+        "line": 85
       },
       "feature": "first_person",
       "registered_by": "first_person",
@@ -606,7 +605,7 @@
       ],
       "source": {
         "path": "src/first_person/actions.rs",
-        "line": 114
+        "line": 104
       },
       "feature": "first_person",
       "registered_by": "first_person",
@@ -641,7 +640,7 @@
       ],
       "source": {
         "path": "src/first_person/actions.rs",
-        "line": 133
+        "line": 123
       },
       "feature": "first_person",
       "registered_by": "first_person",
@@ -675,7 +674,7 @@
       ],
       "source": {
         "path": "src/first_person/actions.rs",
-        "line": 153
+        "line": 143
       },
       "feature": "first_person",
       "registered_by": "first_person",
@@ -709,7 +708,7 @@
       ],
       "source": {
         "path": "src/first_person/actions.rs",
-        "line": 167
+        "line": 157
       },
       "feature": "first_person",
       "registered_by": "first_person",
@@ -1578,7 +1577,7 @@
       ],
       "source": {
         "path": "src/inspector/mod.rs",
-        "line": 23
+        "line": 33
       },
       "feature": "inspector",
       "registered_by": "inspector",
@@ -1640,7 +1639,7 @@
       "kind": "SystemSet",
       "phase": "PreUpdate",
       "module": "bevy_egui",
-      "description": "Egui 输入准备后的集合边界；项目捕获系统显式等待此集合完成。",
+      "description": "Egui 输入准备后的集合边界；单轮上下文在此开始计算，主检查器使用 PostUpdate 内部的多轮上下文调度。",
       "display_summary": "界定检查器界面开始计算前的输入准备阶段。",
       "reads": [],
       "writes": [],
@@ -1651,8 +1650,7 @@
       "notes": [
         "PrimaryEguiContext 默认要求 EguiSchedule，当前主相机具有 EguiSchedule，所以这里不对主 UI 执行 begin_pass。",
         "主检查器的本帧 UI 在 PostUpdate 的上下文循环内部计算；此节点表示排序边界，不能标为主 UI 本帧已处理完成。",
-        "单轮上下文的 begin_pass_system 会读 EguiContextSettings、取出 EguiInput 并可变访问 EguiContext；这些是过滤条件下的引擎行为，此图不把它们算作当前主相机访问。",
-        "filter_captured_egui_input.before(BeginPass) 与 sync_mouse_capture.after(BeginPass) 在该集合两侧明确排序；即使当前主上下文采用 multipass，这仍是相关系统的排序边界。"
+        "单轮上下文的 begin_pass_system 会读 EguiContextSettings、取出 EguiInput 并可变访问 EguiContext；这些是过滤条件下的引擎行为，此图不把它们算作当前主相机访问。"
       ],
       "source": null,
       "feature": "egui",
@@ -1690,7 +1688,7 @@
       ],
       "source": {
         "path": "src/first_person/mod.rs",
-        "line": 106
+        "line": 126
       },
       "feature": "infrastructure",
       "registered_by": "first_person",
@@ -1795,61 +1793,6 @@
           "driver_set": "EguiPostUpdateSet::EndPass",
           "run_if": [
             "gameplay_running"
-          ]
-        }
-      ]
-    },
-    {
-      "id": "filter_egui_input",
-      "name": "filter_captured_egui_input",
-      "kind": "System",
-      "phase": "PreUpdate",
-      "module": "first_person",
-      "description": "鼠标由游戏捕获时过滤本帧 UI 输入，补齐释放并清理 UI 拖拽和焦点，防止检查器接收游戏操作。",
-      "display_summary": "隔离游戏操作与检查器界面输入。",
-      "reads": [
-        "resource.ButtonInputKeyCode",
-        "window.Window",
-        "window.CursorOptions",
-        "camera.EguiContext"
-      ],
-      "writes": [
-        "camera.EguiInput",
-        "camera.EguiContext"
-      ],
-      "filters": [
-        "窗口：With<PrimaryWindow>，要求唯一",
-        "UI：With<PrimaryEguiContext>",
-        "仅窗口聚焦、光标隐藏且抓取有效、Esc 未在本帧按下时过滤"
-      ],
-      "events": [
-        "修改 EguiInput 内部 egui::Event：释放按键、释放指针、PointerGone；不是 Bevy EntityEvent 或 Message"
-      ],
-      "notes": [
-        "显式 .after(EguiPreUpdateSet::ProcessInput).before(EguiPreUpdateSet::BeginPass)，随后才运行 sync_mouse_capture。",
-        "读取尚未由后续捕获系统更新的 CursorOptions，但单独读取 Esc.just_pressed，使释放当帧立即放行 UI。",
-        "清空映射后的 EguiInput.events，再补仍按住的 UI 按键和指针释放事件、PointerGone；调用 stop_dragging 与 surrender_focus 清理 UI 状态。",
-        "不清空 Bevy ButtonInput，不写角色意图或相机观察角，也不隐藏检查器；窗口原始焦点字段仍保留。",
-        "默认主 UI 为 multipass，过滤后的 EguiInput 最终由 PostUpdate 的 UI 循环消费，而非由 PreUpdate BeginPass 系统消费。",
-        "检查器仅在 Running 绘制；F3 的 ReleasePointerAction 释放光标后可操作检查器。"
-      ],
-      "source": {
-        "path": "src/first_person/capture.rs",
-        "line": 36
-      },
-      "feature": "first_person",
-      "registered_by": "first_person",
-      "schedule": "PreUpdate",
-      "schedule_group": "PreUpdate",
-      "registrations": [
-        {
-          "schedule": "PreUpdate",
-          "scope": "runtime",
-          "after": [
-            "EguiPreUpdateSet::ProcessInput"
-          ],
-          "before": [
-            "EguiPreUpdateSet::BeginPass"
           ]
         }
       ]
@@ -2024,7 +1967,7 @@
       ],
       "source": {
         "path": "src/physics/mod.rs",
-        "line": 89
+        "line": 87
       },
       "feature": "physics",
       "registered_by": "physics",
@@ -3413,7 +3356,7 @@
       ],
       "source": {
         "path": "src/first_person/mod.rs",
-        "line": 172
+        "line": 166
       },
       "feature": "first_person",
       "registered_by": "first_person",
@@ -3451,7 +3394,7 @@
       ],
       "source": {
         "path": "src/first_person/mod.rs",
-        "line": 172
+        "line": 166
       },
       "feature": "first_person",
       "registered_by": "first_person",
@@ -3987,43 +3930,6 @@
           "scope": "runtime"
         }
       ]
-    },
-    {
-      "id": "observe_release_pointer",
-      "name": "release_pointer_for_inspector",
-      "kind": "Observer",
-      "phase": "匹配事件触发时",
-      "module": "first_person",
-      "description": "F3 按下经控制者路由释放光标并跳过运动，为检查器交互做准备；保持游戏运行。",
-      "display_summary": "释放光标以允许操作世界检查器。",
-      "reads": [
-        "controller.ControlsCamera",
-        "window.Window"
-      ],
-      "writes": [
-        "camera.MouseLookState",
-        "window.CursorOptions"
-      ],
-      "filters": [
-        "With<GameplayContext>",
-        "With<PrimaryWindow>",
-        "window.focused"
-      ],
-      "events": [
-        "响应 EntityEvent：Fire<ReleasePointerAction>"
-      ],
-      "notes": [
-        "require_reset 与 Press 保证按住不重复；下一帧统一捕获系统处理恢复。"
-      ],
-      "source": {
-        "path": "src/first_person/capture.rs",
-        "line": 6
-      },
-      "feature": "first_person",
-      "registered_by": "first_person",
-      "schedule": null,
-      "schedule_group": "EventTriggered",
-      "registrations": []
     },
     {
       "id": "observe_menu_previous",
@@ -5698,7 +5604,7 @@
       "notes": [],
       "source": {
         "path": "src/game_flow/mod.rs",
-        "line": 112
+        "line": 109
       },
       "feature": "game_flow",
       "registered_by": "game_flow",
@@ -5729,7 +5635,7 @@
       "notes": [],
       "source": {
         "path": "src/game_flow/mod.rs",
-        "line": 122
+        "line": 119
       },
       "feature": "game_flow",
       "registered_by": "game_flow",
@@ -5760,7 +5666,7 @@
       "notes": [],
       "source": {
         "path": "src/game_flow/mod.rs",
-        "line": 141
+        "line": 138
       },
       "feature": "game_flow",
       "registered_by": "game_flow",
@@ -5790,7 +5696,7 @@
       "notes": [],
       "source": {
         "path": "src/first_person/mod.rs",
-        "line": 193
+        "line": 187
       },
       "feature": "first_person",
       "registered_by": "first_person",
@@ -5948,7 +5854,7 @@
       ],
       "source": {
         "path": "src/physics/mod.rs",
-        "line": 43
+        "line": 41
       },
       "schedule": "FixedPostUpdate",
       "schedule_group": "FixedPostUpdate",
@@ -5991,7 +5897,7 @@
       ],
       "source": {
         "path": "src/physics/mod.rs",
-        "line": 29
+        "line": 27
       },
       "schedule": "FixedPostUpdate",
       "schedule_group": "FixedPostUpdate",
@@ -6499,7 +6405,7 @@
           "description": "用于日志与调试的控制者名称。",
           "source": {
             "path": "src/first_person/actions.rs",
-            "line": 47
+            "line": 42
           },
           "feature": "infrastructure",
           "defined_in": "infrastructure"
@@ -6541,7 +6447,7 @@
           "display_summary": "配置玩法上下文的手柄输入来源。",
           "source": {
             "path": "src/first_person/actions.rs",
-            "line": 66
+            "line": 61
           },
           "feature": "enhanced_input",
           "defined_in": "enhanced_input"
@@ -6580,11 +6486,11 @@
           "fields": [
             "动作实体集合: Vec<Entity>"
           ],
-          "description": "ActionOf<GameplayContext> 自动反向索引，当前五个玩法/调试动作。MenuContext 是独立持久控制者。",
+          "description": "ActionOf<GameplayContext> 自动反向索引，当前四个玩法动作。MenuContext 是独立持久控制者。",
           "display_summary": "索引控制上下文拥有的动作实体。",
           "source": {
             "path": "src/first_person/actions.rs",
-            "line": 67
+            "line": 62
           },
           "feature": "enhanced_input",
           "defined_in": "enhanced_input"
@@ -6610,7 +6516,7 @@
           "fields": [
             "active: bool"
           ],
-          "description": "菜单/暂停、失焦、控制关联失效或检查器占用输入时，通过 Commands 替换为停用；动作完成/取消清零意图，恢复遵循 require_reset。",
+          "description": "菜单、暂停、失焦、控制关联失效或检查器模式停用玩法上下文；通过 Commands 替换，动作完成／取消清零持续意图，恢复遵循 require_reset。",
           "display_summary": "保存动作上下文的启用状态。",
           "source": {
             "path": "src/first_person/actions.rs",
@@ -8109,7 +8015,7 @@
             "skip_motion: bool",
             "target_available: bool"
           ],
-          "description": "鼠标捕获、初始化、跳过位移和目标可用状态。主菜单与暂停强制释放；F3 释放后未操作检查器时仍可使用玩法键盘，检查器占用由 ContextActivity 停用整个 GameplayContext。",
+          "description": "保存捕获、初始化、跳过位移与目标可用状态。F3 在游戏控制和检查器操作之间切换；主菜单、暂停及失焦释放光标，检查器模式停用整个 GameplayContext。",
           "display_summary": "保存光标捕获与观察输入初始化状态。",
           "source": {
             "path": "src/first_person/mod.rs",
@@ -8155,11 +8061,11 @@
           "fields": [
             "ctx: egui::Context"
           ],
-          "description": "显式 PrimaryEguiContext 要求 EguiContext；保存共享 UI 状态。捕获系统查询面板、指针和焦点，过滤系统在游戏捕获期间终止 UI 拖拽并移除 UI 键盘焦点。",
+          "description": "PrimaryEguiContext 要求的共享 UI 状态，由检查器界面计算与反射面板使用；捕获系统通过 EguiContextSettings 控制输入转发，不读取面板命中或文本焦点。",
           "display_summary": "保存世界检查器的界面交互状态。",
           "source": {
-            "path": "src/first_person/capture.rs",
-            "line": 111
+            "path": "src/scene_assembly/loading.rs",
+            "line": 21
           },
           "feature": "egui",
           "defined_in": "egui"
@@ -8186,11 +8092,11 @@
             "enable_cursor_icon_updates: bool",
             "enable_ime: bool"
           ],
-          "description": "EguiContext 要求的组件；控制上下文输入与输出处理，当前保留插件默认值。",
+          "description": "EguiContext 要求的组件；捕获系统按模式切换主上下文的指针、滚轮、键盘与输入法转发。",
           "display_summary": "配置检查器上下文的输入与输出处理。",
           "source": {
             "path": "src/inspector/mod.rs",
-            "line": 15
+            "line": 25
           },
           "feature": "egui",
           "defined_in": "egui"
@@ -8201,11 +8107,11 @@
           "fields": [
             "0: egui::RawInput"
           ],
-          "description": "UI 输入缓冲组件，包含映射后的窗口输入；不是玩法 Resource 或动作意图。",
+          "description": "检查器的 RawInput 缓冲；引擎按上下文转发配置写入，项目仅在恢复捕获时追加 PointerGone 清除遗留悬停。",
           "display_summary": "缓冲检查器界面收到的输入。",
           "source": {
             "path": "src/inspector/mod.rs",
-            "line": 15
+            "line": 25
           },
           "feature": "egui",
           "defined_in": "egui"
@@ -8220,7 +8126,7 @@
           "display_summary": "指定检查器上下文的内部界面调度。",
           "source": {
             "path": "src/inspector/mod.rs",
-            "line": 15
+            "line": 25
           },
           "feature": "egui",
           "defined_in": "egui"
@@ -8235,7 +8141,7 @@
           "display_summary": "保存检查器界面计算产生的输出。",
           "source": {
             "path": "src/inspector/mod.rs",
-            "line": 15
+            "line": 25
           },
           "feature": "egui",
           "defined_in": "egui"
@@ -8555,8 +8461,8 @@
     {
       "id": "action",
       "name": "动作实体",
-      "count": 5,
-      "description": "GameplayContext 的五个动作实体：Look、Move、Jump、Interact、ReleasePointer。另一个 MenuContext 独立拥有六个菜单动作，未混入该类别。InputAction 标记不是组件，组件为 Action<A>。",
+      "count": 4,
+      "description": "GameplayContext 的四个动作实体：Look、Move、Jump、Interact。MenuContext 独立拥有六个菜单动作，未混入该类别。InputAction 标记不是组件，组件为 Action<A>。",
       "display_summary": "保存玩法或调试动作的评估结果与触发状态。",
       "components": [
         {
@@ -8568,7 +8474,7 @@
           "description": "Action<A> 要求的动作名称，用于插件诊断。",
           "source": {
             "path": "src/first_person/actions.rs",
-            "line": 68
+            "line": 63
           },
           "feature": "infrastructure",
           "defined_in": "infrastructure"
@@ -8583,7 +8489,7 @@
           "display_summary": "保存LookAction动作的当前输出。",
           "source": {
             "path": "src/first_person/actions.rs",
-            "line": 68
+            "line": 63
           },
           "feature": "enhanced_input",
           "defined_in": "enhanced_input",
@@ -8599,7 +8505,7 @@
           "display_summary": "保存MoveAction动作的当前输出。",
           "source": {
             "path": "src/first_person/actions.rs",
-            "line": 72
+            "line": 67
           },
           "feature": "enhanced_input",
           "defined_in": "enhanced_input",
@@ -8615,7 +8521,7 @@
           "display_summary": "保存JumpAction动作的当前输出。",
           "source": {
             "path": "src/first_person/actions.rs",
-            "line": 76
+            "line": 71
           },
           "feature": "enhanced_input",
           "defined_in": "enhanced_input",
@@ -8631,27 +8537,11 @@
           "display_summary": "保存InteractAction动作的当前输出。",
           "source": {
             "path": "src/first_person/actions.rs",
-            "line": 81
+            "line": 76
           },
           "feature": "enhanced_input",
           "defined_in": "enhanced_input",
           "rust_type": "bevy_enhanced_input::action::Action<crate::first_person::actions::InteractAction>"
-        },
-        {
-          "id": "action.Action<ReleasePointerAction>",
-          "name": "Action<ReleasePointerAction>",
-          "fields": [
-            "输出: bool"
-          ],
-          "description": "ReleasePointerAction 动作实体上的具体 Action 泛型组件，由 Enhanced Input 的 Apply 阶段写入当前输出。",
-          "display_summary": "保存ReleasePointerAction动作的当前输出。",
-          "source": {
-            "path": "src/first_person/actions.rs",
-            "line": 86
-          },
-          "feature": "enhanced_input",
-          "defined_in": "enhanced_input",
-          "rust_type": "bevy_enhanced_input::action::Action<crate::first_person::actions::ReleasePointerAction>"
         },
         {
           "id": "action.ActionSettings",
@@ -8661,11 +8551,11 @@
             "require_reset: bool",
             "consume_input: bool"
           ],
-          "description": "五个动作 consume_input=true；Jump、Interact、ReleasePointer 使用 require_reset=true，其余保持默认。消费只影响动作评估。",
+          "description": "四个玩法动作 consume_input=true；Jump、Interact 使用 require_reset=true，其余保持默认。消费只影响动作评估。",
           "display_summary": "保存动作的输入消费与重新激活策略。",
           "source": {
             "path": "src/first_person/actions.rs",
-            "line": 69
+            "line": 64
           },
           "feature": "enhanced_input",
           "defined_in": "enhanced_input"
@@ -8680,7 +8570,7 @@
           "display_summary": "将动作关联到所属控制上下文。",
           "source": {
             "path": "src/first_person/actions.rs",
-            "line": 67
+            "line": 62
           },
           "feature": "enhanced_input",
           "defined_in": "enhanced_input"
@@ -8691,11 +8581,11 @@
           "fields": [
             "绑定实体集合: Vec<Entity>"
           ],
-          "description": "BindingOf 自动反向索引；MoveAction 四条，其余四个 GameplayContext 动作各一条。",
+          "description": "BindingOf 自动反向索引；MoveAction 四条，其余三个 GameplayContext 动作各一条。",
           "display_summary": "索引动作拥有的输入绑定。",
           "source": {
             "path": "src/first_person/actions.rs",
-            "line": 70
+            "line": 65
           },
           "feature": "enhanced_input",
           "defined_in": "enhanced_input"
@@ -8707,11 +8597,11 @@
             "actuation: f32",
             "actuated: bool（内部状态）"
           ],
-          "description": "三个按钮动作使用 Press；每次按下触发一次，按住不重复。",
+          "description": "JumpAction 与 InteractAction 使用 Press；每次按下触发一次，按住不重复。",
           "display_summary": "将按钮按下转换为一次触发。",
           "source": {
             "path": "src/first_person/actions.rs",
-            "line": 78
+            "line": 73
           },
           "feature": "enhanced_input",
           "defined_in": "enhanced_input"
@@ -8726,7 +8616,7 @@
           "display_summary": "保存动作评估产生的通用输入值。",
           "source": {
             "path": "src/first_person/actions.rs",
-            "line": 68
+            "line": 63
           },
           "feature": "enhanced_input",
           "defined_in": "enhanced_input"
@@ -8741,7 +8631,7 @@
           "display_summary": "保存本次动作评估的触发状态。",
           "source": {
             "path": "src/first_person/actions.rs",
-            "line": 68
+            "line": 63
           },
           "feature": "enhanced_input",
           "defined_in": "enhanced_input"
@@ -8756,7 +8646,7 @@
           "display_summary": "保存本次待派发的动作事件。",
           "source": {
             "path": "src/first_person/actions.rs",
-            "line": 68
+            "line": 63
           },
           "feature": "enhanced_input",
           "defined_in": "enhanced_input"
@@ -8771,7 +8661,7 @@
           "description": "动作持续与触发计时，由插件评估更新。",
           "source": {
             "path": "src/first_person/actions.rs",
-            "line": 68
+            "line": 63
           },
           "feature": "enhanced_input",
           "defined_in": "enhanced_input"
@@ -8789,7 +8679,7 @@
           "display_summary": "保存测试使用的模拟动作输入。",
           "source": {
             "path": "src/first_person/actions.rs",
-            "line": 68
+            "line": 63
           },
           "feature": "enhanced_input",
           "defined_in": "enhanced_input"
@@ -8804,7 +8694,7 @@
           "display_summary": "将通用动作值适配为具体动作组件。",
           "source": {
             "path": "src/first_person/actions.rs",
-            "line": 68
+            "line": 63
           },
           "feature": "enhanced_input",
           "defined_in": "enhanced_input"
@@ -8815,11 +8705,11 @@
           "fields": [
             "输入条件评估函数表"
           ],
-          "description": "三个带 Press 的动作具有此适配；插件访问并更新条件。",
+          "description": "两个带 Press 的玩法动作具有此适配；插件访问并更新条件。",
           "display_summary": "保存动作触发条件的执行适配。",
           "source": {
             "path": "src/first_person/actions.rs",
-            "line": 78
+            "line": 73
           },
           "feature": "enhanced_input",
           "defined_in": "enhanced_input"
@@ -8850,7 +8740,7 @@
           "display_summary": "保存设备输入到动作的映射。",
           "source": {
             "path": "src/first_person/actions.rs",
-            "line": 70
+            "line": 65
           },
           "feature": "enhanced_input",
           "defined_in": "enhanced_input"
@@ -8865,7 +8755,7 @@
           "display_summary": "将输入绑定关联到所属动作。",
           "source": {
             "path": "src/first_person/actions.rs",
-            "line": 70
+            "line": 65
           },
           "feature": "enhanced_input",
           "defined_in": "enhanced_input"
@@ -8880,7 +8770,7 @@
           "display_summary": "记录绑定重新启用时的首次激活状态。",
           "source": {
             "path": "src/first_person/actions.rs",
-            "line": 70
+            "line": 65
           },
           "feature": "enhanced_input",
           "defined_in": "enhanced_input"
@@ -8897,7 +8787,7 @@
           "display_summary": "反转绑定输入的方向符号。",
           "source": {
             "path": "src/first_person/actions.rs",
-            "line": 74
+            "line": 69
           },
           "feature": "enhanced_input",
           "defined_in": "enhanced_input"
@@ -8912,7 +8802,7 @@
           "display_summary": "将输入标量映射到指定坐标轴。",
           "source": {
             "path": "src/first_person/actions.rs",
-            "line": 74
+            "line": 69
           },
           "feature": "enhanced_input",
           "defined_in": "enhanced_input"
@@ -8927,7 +8817,7 @@
           "display_summary": "保存输入修饰器的执行适配。",
           "source": {
             "path": "src/first_person/actions.rs",
-            "line": 74
+            "line": 69
           },
           "feature": "enhanced_input",
           "defined_in": "enhanced_input"
@@ -11059,7 +10949,7 @@
       "display_summary": "提供固定模拟的时间步长。",
       "source": {
         "path": "src/main.rs",
-        "line": 36
+        "line": 70
       },
       "feature": "infrastructure",
       "defined_in": "infrastructure",
@@ -11091,7 +10981,7 @@
       "display_summary": "提供不随游戏暂停的真实时间。",
       "source": {
         "path": "src/main.rs",
-        "line": 36
+        "line": 46
       },
       "feature": "infrastructure",
       "defined_in": "infrastructure",
@@ -11140,7 +11030,7 @@
       "display_summary": "保存鼠标按钮的当前状态与变化。",
       "source": {
         "path": "src/main.rs",
-        "line": 48
+        "line": 57
       },
       "feature": "infrastructure",
       "defined_in": "infrastructure",
@@ -11156,7 +11046,7 @@
       "display_summary": "汇总本帧鼠标位移供观察动作使用。",
       "source": {
         "path": "src/first_person/actions.rs",
-        "line": 70
+        "line": 65
       },
       "feature": "infrastructure",
       "defined_in": "infrastructure",
@@ -11172,7 +11062,7 @@
       "display_summary": "缓冲底层键盘输入消息。",
       "source": {
         "path": "src/main.rs",
-        "line": 48
+        "line": 57
       },
       "feature": "infrastructure",
       "defined_in": "infrastructure",
@@ -11188,7 +11078,7 @@
       "display_summary": "通知输入系统清理失焦后残留的按键。",
       "source": {
         "path": "src/main.rs",
-        "line": 48
+        "line": 57
       },
       "feature": "infrastructure",
       "defined_in": "infrastructure",
@@ -11202,11 +11092,11 @@
         "state: ButtonState",
         "window: Entity"
       ],
-      "description": "引擎输入系统与 sync_mouse_capture 各自持有独立读取游标；后者只检查窗口左键按下以恢复捕获。",
+      "description": "底层鼠标按钮输入缓冲；引擎输入与 Egui 转发各自消费，捕获系统不读取此消息。",
       "display_summary": "缓冲底层鼠标按钮输入消息。",
       "source": {
-        "path": "src/first_person/capture.rs",
-        "line": 97
+        "path": "src/first_person/mod.rs",
+        "line": 6
       },
       "feature": "infrastructure",
       "defined_in": "infrastructure",
@@ -11239,7 +11129,7 @@
       "display_summary": "缓冲底层鼠标位移消息。",
       "source": {
         "path": "src/main.rs",
-        "line": 48
+        "line": 57
       },
       "feature": "infrastructure",
       "defined_in": "infrastructure",
@@ -11320,7 +11210,7 @@
       "display_summary": "配置窗口主循环的更新策略。",
       "source": {
         "path": "src/main.rs",
-        "line": 61
+        "line": 69
       },
       "feature": "infrastructure",
       "defined_in": "infrastructure",
@@ -11477,7 +11367,7 @@
       "display_summary": "配置检查器界面的上下文与输入处理。",
       "source": {
         "path": "src/inspector/mod.rs",
-        "line": 15
+        "line": 25
       },
       "feature": "egui",
       "defined_in": "egui",
@@ -11493,7 +11383,7 @@
       "display_summary": "保存物理世界使用的全局重力。",
       "source": {
         "path": "src/physics/mod.rs",
-        "line": 89
+        "line": 87
       },
       "feature": "avian",
       "defined_in": "avian",
@@ -12307,7 +12197,7 @@
       "display_summary": "区分外部修改与上一物理步自身的回写。",
       "source": {
         "path": "src/physics/mod.rs",
-        "line": 65
+        "line": 63
       },
       "feature": "avian",
       "defined_in": "avian",
@@ -12473,7 +12363,7 @@
           "role": "operation",
           "label": "插入：控制者保存角色 Entity",
           "path": "src/first_person/actions.rs",
-          "line": 49,
+          "line": 44,
           "column": 1
         }
       ],
@@ -12565,7 +12455,7 @@
       "description": "插件关系；销毁上下文会连带销毁其动作实体，反向索引由 Bevy 自动维护。",
       "source": {
         "path": "src/first_person/actions.rs",
-        "line": 67
+        "line": 62
       },
       "from_component": "action.ActionOf",
       "component_field": "entity"
@@ -12582,7 +12472,7 @@
       "description": "插件关系；销毁动作会连带销毁其绑定实体。",
       "source": {
         "path": "src/first_person/actions.rs",
-        "line": 70
+        "line": 65
       },
       "from_component": "binding.BindingOf",
       "component_field": "0"
@@ -13243,12 +13133,6 @@
       "description": "标记主角视觉 pending；后续 Update 等待 16 个命名片段后绑定。"
     },
     {
-      "event": "Fire<ReleasePointerAction>",
-      "system": "observe_release_pointer",
-      "target": "事件 context 的 GameplayContext 控制者",
-      "description": "F3 按下经控制者路由释放光标并跳过运动，为检查器交互做准备；保持游戏运行。"
-    },
-    {
       "event": "Fire<PreviousAction>",
       "system": "observe_menu_previous",
       "target": "MenuContext 动作事件",
@@ -13382,17 +13266,17 @@
     "BSN 与 Bundle 辅助数据、MapAsset / ItemPlacement、动画节点和 QueryData 不作为独立玩法 ECS 组件列出。",
     "统一 tracing 的文件与控制台各有后台线程和无界队列，属于外部 I/O；SessionLogGuard 由 main 持有，退出 Flush，Drop 排空并 join，panic 文件屏障 sync_data。",
     "GameAudioPlugin 初始化 AudioMix；UI 注册滑条采样与已有视觉同步，设置草稿可即时预览音量。",
-    "FirstPersonPlugin 注册观察与释放光标 Observer、捕获同步及第一人称显示链；相机引用角色，CharacterVisual 初始隐藏并在关联失效时恢复。",
+    "FirstPersonPlugin 注册观察 Observer、F3 捕获切换及第一人称显示链；相机引用角色，CharacterVisual 初始隐藏并在关联失效时恢复。",
     "玩法配置、固定时间步、姿态同步和检查器启用四项只读 Startup 日志分别由对应功能插件注册，彼此无显式顺序。",
     "主入口显式安装十四个功能插件和 EnhancedInputPlugin；CharacterPlugin 不自动安装物理、交互或音频。",
     "SessionLogPlugin 在 DefaultPlugins 之前安装真实 LogPlugin；主入口守卫持有文件与控制台线程直到退出刷新完成。",
     "GameFlowPlugin 通过 FixedGameplaySystems、PresentationSystems 和音频阶段建立跨功能顺序；无状态测试可单独调用 configure_feature_order。"
   ],
   "general_notes": [
-    "systems 的固定 ID 用于布局。kind=engine 是引擎或输入框架阶段的概览，kind=sync 是延迟命令应用点，kind=observer 是触发式响应，其余为项目系统。",
-    "业务系统列出访问声明和实际用途；可变访问中读取的数据也列入 reads。EguiContext 的可变接口用于查询 UI，其 writes 表示调度访问权限，不意味着项目修改 UI 内容。With/Without 是筛选而非数据读取；Commands 结构变更在同步点才可见。",
+    "systems 使用规范 kind；固定 ID 保留对象与各次注册身份，System、Observer、SystemSet、Synchronization 和 Engine flow 分别表达系统、触发响应、系统集、同步点和引擎流程。",
+    "业务系统列出访问声明和实际用途；可变访问中读取的数据也列入 reads。With／Without 是筛选而非字段读取；Commands 结构变更在同步点才可见。",
     "引擎概览的 reads/writes 只列与当前原型有关的数据，未展开全部内部组件、资源、条件函数表、消息游标与局部缓存。部分组件通过 required components 自动出现，部分关系反向索引只在关联存在时出现；组件列表不表示所有组件始终同时存在。",
-    "source.path 使用仓库相对路径。项目类型引用声明行，引擎或插件类型引用项目内的使用、生成或注册行；kind=engine 概览 source=null。父图应把这些位置标为源码入口，不能宣称是引擎类型定义。",
+    "源码入口以 sourceEntries 的角色和核实证据为准；依赖声明通过锁定包身份与实际依赖源码定位，原 source 不自动成为定义入口。",
     "RunFixedMainLoop 每个渲染帧执行 0..N 次固定阶段；固定步不是渲染帧的一对一后续步骤。当前 fixed 为 60 Hz，默认渲染上限 60 FPS，自定义上限可高于 60，性能不足也可能低于上限。",
     "EnhancedInputSystems::Apply 写入动作输出并调用 Commands::trigger；这个 Apply 阶段不是 ECS 的 ApplyDeferred。排入的动作事件在下一命令同步点触发，默认 PreUpdate 完成时已经应用，随后固定循环可读到最新意图。",
     "MouseButtonInput、WindowFocused 等是缓冲 Message，拥有独立读取游标，默认缓冲不是永久队列。Enhanced Input 的 Fire、Complete、Cancel 是触发式 EntityEvent；两类通信必须使用不同图例。",
@@ -13401,9 +13285,9 @@
     "普通 Entity 引用不提供生命周期；ActionOf、BindingOf、ChildOf 和 ColliderOf 关系启用 linked_spawn；HeldBy 不启用，真实箱体独立于人物生命周期。",
     "该文件记录源码结构，未启动游戏，未执行窗口或视觉验收。",
     "世界检查器由 EguiPlugin 与 WorldInspectorPlugin 提供，数据留在 ECS 内，通过反射动态读取和可选编辑。Egui 输入映射、BeginPass 集合与嵌套 EguiPrimaryContextPass 以概览节点表示；未展开全部输入、提取和绘制系统。",
-    "PreUpdate 的已核对相关路线为 InputSystems → Egui ProcessInput → filter_captured_egui_input → Egui BeginPass 集合 → sync_mouse_capture → 自动 ApplyDeferred → EnhancedInput Prepare → Update → Apply → 事件命令应用。只描述相关显式依赖，未展开全部引擎系统。",
+    "PreUpdate 中 sync_mouse_capture 位于 InputSystems 与 Egui InitContexts 之后、Egui ProcessInput 与 EnhancedInput Prepare 之前；上下文命令在动作 Prepare 前应用。Egui ProcessInput 与 Prepare 之间没有额外的项目顺序约束。",
     "EguiPlugin::default() 默认 multipass=true；主上下文的 EguiPrimaryContextPass 在 PostUpdate 的上下文循环内部运行，可一帧多轮。PreUpdate BeginPass 排序边界不等于主检查器 UI 在该时刻开始或完成。",
-    "EguiInput 内部的 egui::Event 只是 UI RawInput 的事件枚举，不等同于 Bevy ECS Event、EntityEvent 或缓冲 Message。捕获期间的 UI 过滤与 UI 占用时的 GameplayContext 停用构成两个方向的输入边界。",
+    "EguiInput 内的 egui::Event 属于 RawInput 事件枚举，不等同于 Bevy Event、EntityEvent 或缓冲 Message。F3 模式切换通过 EguiContextSettings 控制 UI 输入转发，通过 ContextActivity 控制玩法输入。",
     "Avian 0.8 默认在 FixedPostUpdate 执行 First → Prepare → StepSimulation（嵌套 PhysicsSchedule 与默认 6 个求解子步）→ Writeback。项目在 First 中排队外部变化唤醒并在 Prepare 前应用命令；接地与速度日志 after(Writeback)，碰撞日志仅 after(StepSimulation)。",
     "Position/Rotation/Velocity 为真实物理状态；Transform 为呈现。HeldAttachment.local_pose 是组合箱体姿态的唯一来源，HeldTarget 仅握持目标检查数据。",
     "拾取保持真实姿态并开始挂接，连续安全小步对齐；释放先停用/卸载代理，再恢复独立刚体、自由碰撞、原质量及安全姿态和动量。",
@@ -13418,10 +13302,10 @@
     "CarryGrip 是每件物品的目标握持偏移，缺省 PrototypeConfig.hold_offset；实际局部姿态存于 HeldAttachment，拾取对齐不瞬移，持握不计算内部力。",
     "FixedPostUpdate：Avian Writeback 后 sync_held_physics 与接地/速度日志独立；FixedLast 记录自由体插值终点。AfterFixedMainLoop：Ease → 朝向 → 真实持物同步 → 呈现 → 相机 → 可见性 → UpdateEasingTick，零固定步同样执行。",
     "引擎资产实例化、AnimationSystems 与 GLB 层级为相关流程概览，未准确展开的全部 loader/骨骼内部系统、内部动画缓存、渲染批次、灯光组件与 GPU 流程不声称完整建模。",
-    "World::trigger 在调用期间触发 Observer；Commands::trigger 在命令应用时触发。玩法/相机的七个动作 Observer 与菜单六个动作 Observer、指针滚动及模型 Ready Observer 按事件响应，不组成注册顺序流水线。",
+    "World::trigger 在调用期间触发 Observer；Commands::trigger 在命令应用时触发。玩法/相机的六个动作 Observer 与菜单六个动作 Observer、指针滚动及模型 Ready Observer 按事件响应，不组成注册顺序流水线。",
     "RenderApp 包含提取、准备、排序与 GPU 渲染等步骤，也可能使用流水线；render 节点是渲染概览，不是紧接 PostUpdate 的单个普通系统。日志通过 tracing 文件输出，不是 ECS Event 或 Message。",
-    "PreUpdate 相关依赖：InputSystems 后更新 MenuContext；Egui ProcessInput → 过滤 → BeginPass → 捕获/命令应用在 Enhanced Prepare 前。动作 Apply 后消费菜单请求；StateTransition 随后在固定循环前执行。",
-    "菜单与暂停强制停用 GameplayContext；检查器占用、失焦或关联失效也停用。F3 释放光标后未操作检查器仍可使用玩法键盘；Esc 的业务暂停由菜单 Enhanced Input 处理，底层读取仅负责光标生命周期。",
+    "PreUpdate 相关依赖：InputSystems 后更新 MenuContext；sync_mouse_capture 位于 InputSystems 与 Egui InitContexts 之后、Egui ProcessInput 与 Enhanced Prepare 之前，ContextActivity 命令在 Prepare 前应用。菜单请求消费位于 Enhanced Trigger 之后；StateTransition 随后在固定循环前执行。",
+    "菜单、暂停、失焦、关联失效或检查器模式停用 GameplayContext；F3 恢复捕获后才恢复玩法键盘输入。Esc 的业务暂停由菜单 Enhanced Input 处理，底层读取仅负责光标生命周期。",
     "可操作按钮带 Button/MenuButton；Continue、Multiplayer 及未实现设置是静态 Coming Soon 节点，不带动作、不保存虚构设置、不参与键盘序号。",
     "状态类型 AppState/PlayState 对应 State 与 NextState 资源；MenuPage/SettingsTab 是 MenuState 内部值。UiRequest 是缓冲 Message，Fire/Pointer/WorldInstanceReady 是触发事件，不混用图例。",
     "展示 WorldAssetRoot 异步展开 GLB，字体使用预加载句柄；BSN 构造辅助函数不是 Schedule 系统。模型 Ready 与滚动回调用 on(...) 在具体实体注册 Observer。",
@@ -13486,8 +13370,8 @@
     {
       "name": "main / App",
       "kind": "App",
-      "description": "创建 App 与会话日志，配置默认插件，加载设置，装配功能插件后进入主循环。退出时记录结果并刷新日志。",
-      "display_summary": "装配应用、设置与插件并管理主循环和退出。",
+      "description": "解析启动方式后创建 App 与会话日志，配置默认插件、加载设置并装配功能插件；正常启动进入游戏循环，debugdump 模式在插件就绪和 finish 后导出已注册调度并返回。两种模式均记录退出结果并刷新日志。",
+      "display_summary": "装配应用、执行游戏或调度导出并管理退出。",
       "notes": [
         "main 创建 App 与独立会话日志；DefaultPlugins 禁用 Bevy 默认 AudioPlugin，由 Kira 提供音频设备输出。",
         "InspectorPlugin 内部先注册 EguiPlugin，再注册 WorldInspectorPlugin；检查器只在 InGame / Running 显示。功能插件装配顺序不等于系统全序。",
@@ -13502,7 +13386,7 @@
         "BSN 与 Bundle 辅助数据、MapAsset / ItemPlacement、动画节点和 QueryData 不作为独立玩法 ECS 组件列出。",
         "统一 tracing 的文件与控制台各有后台线程和无界队列，属于外部 I/O；SessionLogGuard 由 main 持有，退出 Flush，Drop 排空并 join，panic 文件屏障 sync_data。",
         "GameAudioPlugin 初始化 AudioMix；UI 注册滑条采样与已有视觉同步，设置草稿可即时预览音量。",
-        "FirstPersonPlugin 注册观察与释放光标 Observer、捕获同步及第一人称显示链；相机引用角色，CharacterVisual 初始隐藏并在关联失效时恢复。",
+        "FirstPersonPlugin 注册观察 Observer、F3 捕获切换及第一人称显示链；相机引用角色，CharacterVisual 初始隐藏并在关联失效时恢复。",
         "玩法配置、固定时间步、姿态同步和检查器启用四项只读 Startup 日志分别由对应功能插件注册，彼此无显式顺序。",
         "主入口显式安装十四个功能插件和 EnhancedInputPlugin；CharacterPlugin 不自动安装物理、交互或音频。",
         "SessionLogPlugin 在 DefaultPlugins 之前安装真实 LogPlugin；主入口守卫持有文件与控制台线程直到退出刷新完成。",
@@ -13510,7 +13394,7 @@
       ],
       "source": {
         "path": "src/main.rs",
-        "line": 36
+        "line": 46
       },
       "id": "app-main",
       "feature": "infrastructure",
@@ -13553,7 +13437,7 @@
       ],
       "source": {
         "path": "src/main.rs",
-        "line": 48
+        "line": 57
       },
       "feature": "infrastructure",
       "aspects": [
@@ -13574,7 +13458,7 @@
       ],
       "source": {
         "path": "src/main.rs",
-        "line": 64
+        "line": 72
       },
       "feature": "enhanced_input",
       "aspects": [
@@ -13596,7 +13480,7 @@
       ],
       "source": {
         "path": "src/inspector/mod.rs",
-        "line": 9
+        "line": 19
       },
       "feature": "inspector",
       "aspects": [
@@ -13701,7 +13585,7 @@
       ],
       "source": {
         "path": "src/physics/mod.rs",
-        "line": 20
+        "line": 18
       },
       "feature": "physics",
       "aspects": [
@@ -13868,7 +13752,7 @@
       ],
       "source": {
         "path": "src/physics/mod.rs",
-        "line": 24
+        "line": 22
       },
       "id": "plugin-physics-0",
       "feature": "avian",
@@ -13911,7 +13795,7 @@
       ],
       "source": {
         "path": "src/inspector/mod.rs",
-        "line": 15
+        "line": 25
       },
       "feature": "egui",
       "aspects": [
@@ -13933,7 +13817,7 @@
       ],
       "source": {
         "path": "src/inspector/mod.rs",
-        "line": 16
+        "line": 26
       },
       "feature": "egui",
       "aspects": [
@@ -14184,7 +14068,6 @@
         "Fire<JumpAction>",
         "Fire<InteractAction>",
         "Fire<LookAction>",
-        "Fire<ReleasePointerAction>",
         "Fire<PreviousAction>",
         "Fire<NextAction>",
         "Fire<LeftAction>",
@@ -15858,7 +15741,7 @@
       ],
       "source": {
         "path": "src/first_person/actions.rs",
-        "line": 95
+        "line": 85
       },
       "id": "result-observe_move",
       "feature": "first_person",
@@ -15900,7 +15783,7 @@
       ],
       "source": {
         "path": "src/first_person/actions.rs",
-        "line": 114
+        "line": 104
       },
       "id": "result-observe_complete",
       "feature": "first_person",
@@ -15942,7 +15825,7 @@
       ],
       "source": {
         "path": "src/first_person/actions.rs",
-        "line": 133
+        "line": 123
       },
       "id": "result-observe_cancel",
       "feature": "first_person",
@@ -15983,7 +15866,7 @@
       ],
       "source": {
         "path": "src/first_person/actions.rs",
-        "line": 153
+        "line": 143
       },
       "id": "result-observe_jump",
       "feature": "first_person",
@@ -16024,7 +15907,7 @@
       ],
       "source": {
         "path": "src/first_person/actions.rs",
-        "line": 167
+        "line": 157
       },
       "id": "result-observe_interact",
       "feature": "first_person",
@@ -16085,26 +15968,26 @@
     {
       "name": "捕获与输入上下文",
       "kind": "Note",
-      "description": "捕获与焦点状态写入相机和窗口；UI 占用通过 Commands 改变控制者的 ContextActivity，命令在动作 Prepare 前应用。",
+      "description": "相机与窗口保存捕获状态；F3 切换模式，直接配置主 Egui 输入转发，并通过 Commands 替换 GameplayContext 的 ContextActivity。",
       "display_summary": "保存光标捕获与玩法输入启用状态。",
       "writes": [
         "window.CursorOptions",
         "camera.MouseLookState",
-        "camera.EguiContext",
+        "camera.EguiContextSettings",
+        "camera.EguiInput",
         "controller.ContextActivity"
       ],
       "notes": [
-        "显式 .after(InputSystems).after(EguiPreUpdateSet::BeginPass).before(EnhancedInputSystems::Prepare)。",
-        "CursorOptions 与 MouseLookState 在系统中直接更新；ContextActivity 是不可变组件，替换通过 Commands 延迟执行，必须在 Prepare 前应用。",
-        "EguiContext 以 &mut 查询，writes 表示调度层面的可变访问权限；此系统只查询 UI 状态，不构建面板或修改检查器字段。",
-        "点击当前 UI 面板、拖拽仍占用指针或弹窗打开时，不把左键视为恢复游戏捕获；当前 Window 光标命中已缓存的 UI 层。",
-        "UI 要求键盘、弹窗、指针拖拽或自由鼠标悬于面板时停用整个 GameplayContext；失焦或关联失效也停用。Esc 的暂停业务由菜单 Enhanced Input 执行；底层 Esc 只处理光标生命周期。",
-        "停用动作上下文不清空 ButtonInput；动作完成或取消清除持续移动轴，重新启用继续遵循按钮动作的 require_reset。",
-        "默认主上下文是 multipass，BeginPass 系统过滤掉它；此依赖是集合边界，不表示主检查器已经完成本帧 UI。实际 EguiPrimaryContextPass 由 PostUpdate 循环调用。"
+        "显式 after(InputSystems)、after(EguiPreUpdateSet::InitContexts)、before(EguiPreUpdateSet::ProcessInput) 与 before(EnhancedInputSystems::Prepare)。",
+        "F3 独立于 GameplayContext 切换游戏与检查器输入归属；检查器两种模式下均可显示，点击面板内外不切换模式。",
+        "CursorOptions、MouseLookState、EguiContextSettings 与 EguiInput 直接修改；ContextActivity 是不可变组件，通过 Commands 替换，并在动作 Prepare 前应用。",
+        "捕获时关闭主 Egui 上下文的指针、滚轮、键盘与输入法转发；恢复捕获时追加 PointerGone 清除遗留悬停，不终止拖拽或文本编辑。切换前须结束其他输入手势。",
+        "失焦、菜单、暂停或控制关联失效释放捕获并停用玩法上下文；回焦后由 F3 恢复，从暂停恢复则重新初始化捕获。Esc 暂停由菜单动作处理，底层 Esc 只释放光标。",
+        "停用上下文不清空 ButtonInput；动作完成或取消清除持续移动轴，重新启用仍遵循 require_reset。"
       ],
       "source": {
         "path": "src/first_person/capture.rs",
-        "line": 94
+        "line": 7
       },
       "id": "capture-state",
       "aspects": [
@@ -16202,57 +16085,6 @@
       "aspects": [
         "events"
       ],
-      "schedule": null,
-      "schedule_group": "Explanatory",
-      "registrations": []
-    },
-    {
-      "name": "Fire<ReleasePointerAction>",
-      "kind": "EntityEvent",
-      "description": "F3 按下经控制者路由释放光标并跳过运动，为检查器交互做准备；保持游戏运行。",
-      "display_summary": "通知控制者释放光标以操作检查器。",
-      "id": "event-observe_release_pointer",
-      "feature": "first_person",
-      "aspects": [
-        "events"
-      ],
-      "schedule": null,
-      "schedule_group": "Explanatory",
-      "registrations": []
-    },
-    {
-      "id": "result-observe_release_pointer",
-      "name": "调试释放捕获",
-      "kind": "Operation result",
-      "phase": "匹配事件触发时",
-      "module": "first_person",
-      "description": "F3 按下经控制者路由释放光标并跳过运动，为检查器交互做准备；保持游戏运行。",
-      "reads": [
-        "controller.ControlsCamera",
-        "window.Window"
-      ],
-      "writes": [
-        "camera.MouseLookState",
-        "window.CursorOptions"
-      ],
-      "filters": [
-        "With<GameplayContext>",
-        "With<PrimaryWindow>",
-        "window.focused"
-      ],
-      "events": [
-        "响应 EntityEvent：Fire<ReleasePointerAction>"
-      ],
-      "notes": [
-        "require_reset 与 Press 保证按住不重复；下一帧统一捕获系统处理恢复。"
-      ],
-      "source": {
-        "path": "src/first_person/capture.rs",
-        "line": 6
-      },
-      "alias_of": "observe_release_pointer",
-      "feature": "first_person",
-      "aspects": [],
       "schedule": null,
       "schedule_group": "Explanatory",
       "registrations": []
@@ -17480,7 +17312,7 @@
       ],
       "source": {
         "path": "src/physics/mod.rs",
-        "line": 20
+        "line": 18
       }
     },
     {
@@ -17584,7 +17416,7 @@
       ],
       "source": {
         "path": "src/inspector/mod.rs",
-        "line": 9
+        "line": 19
       }
     },
     {
@@ -18047,8 +17879,6 @@
     "log-producer": "session_log",
     "log-file-worker": "session_log",
     "log-console-worker": "session_log",
-    "event-observe_release_pointer": "first_person",
-    "result-observe_release_pointer": "first_person",
     "event-observe_menu_previous": "ui",
     "result-observe_menu_previous": "ui",
     "event-observe_menu_next": "ui",
@@ -18162,7 +17992,6 @@
     "visibility_update": "first_person",
     "startup_inspector": "inspector",
     "capture_apply": "infrastructure",
-    "filter_egui_input": "first_person",
     "grounded_fixed": "character",
     "grounded_after": "character",
     "gravity_sync": "physics",
@@ -18198,7 +18027,6 @@
     "menu_scroll_focus": "ui",
     "menu_backdrop_spawn": "ui",
     "menu_asset_failures": "ui",
-    "observe_release_pointer": "first_person",
     "observe_menu_previous": "ui",
     "observe_menu_next": "ui",
     "observe_menu_left": "ui",
@@ -18289,7 +18117,6 @@
     "action.Action<MoveAction>": "enhanced_input",
     "action.Action<JumpAction>": "enhanced_input",
     "action.Action<InteractAction>": "enhanced_input",
-    "action.Action<ReleasePointerAction>": "enhanced_input",
     "resource.SessionWriter": "session_log",
     "resource.ConsoleWriter": "session_log",
     "param-recoverable-body": "bounds_recovery",
@@ -18513,27 +18340,6 @@
       "id": "order-input_update-egui_input",
       "from": "input_update",
       "to": "egui_input",
-      "kind": "order",
-      "label": ""
-    },
-    {
-      "id": "order-egui_input-filter_egui_input",
-      "from": "egui_input",
-      "to": "filter_egui_input",
-      "kind": "order",
-      "label": ""
-    },
-    {
-      "id": "order-filter_egui_input-egui_begin",
-      "from": "filter_egui_input",
-      "to": "egui_begin",
-      "kind": "order",
-      "label": ""
-    },
-    {
-      "id": "order-egui_begin-mouse_capture",
-      "from": "egui_begin",
-      "to": "mouse_capture",
       "kind": "order",
       "label": ""
     },
@@ -18954,16 +18760,6 @@
       ]
     },
     {
-      "id": "read-window-messages-mouse_capture-message-MouseButtonInput",
-      "from": "message-MouseButtonInput",
-      "to": "mouse_capture",
-      "kind": "read",
-      "label": "读取",
-      "originalLinkIds": [
-        "read-window-messages-mouse_capture"
-      ]
-    },
-    {
       "id": "write-mouse_capture-capture-state",
       "from": "mouse_capture",
       "to": "capture-state",
@@ -19302,13 +19098,6 @@
       "label": "WorldInstanceReady"
     },
     {
-      "id": "observer-observe_release_pointer",
-      "from": "event-observe_release_pointer",
-      "to": "observe_release_pointer",
-      "kind": "trigger",
-      "label": "Fire<ReleasePointerAction>"
-    },
-    {
       "id": "observer-observe_menu_previous",
       "from": "event-observe_menu_previous",
       "to": "observe_menu_previous",
@@ -19426,7 +19215,7 @@
       "label": "ActionOf<GameplayContext>",
       "source": {
         "path": "src/first_person/actions.rs",
-        "line": 67
+        "line": 62
       }
     },
     {
@@ -19437,7 +19226,7 @@
       "label": "BindingOf",
       "source": {
         "path": "src/first_person/actions.rs",
-        "line": 70
+        "line": 65
       }
     },
     {
@@ -20083,7 +19872,7 @@
       "label": "应用排队的 WakeBody",
       "source": {
         "path": "src/physics/mod.rs",
-        "line": 29
+        "line": 27
       }
     },
     {
@@ -20094,7 +19883,7 @@
       "label": "before Prepare",
       "source": {
         "path": "src/physics/mod.rs",
-        "line": 29
+        "line": 27
       }
     },
     {
@@ -20105,7 +19894,7 @@
       "label": "上一物理步末尾 tick",
       "source": {
         "path": "src/physics/mod.rs",
-        "line": 79
+        "line": 77
       }
     },
     {
@@ -20116,7 +19905,7 @@
       "label": "tracing 唤醒日志",
       "source": {
         "path": "src/physics/mod.rs",
-        "line": 82
+        "line": 80
       }
     },
     {
@@ -20969,16 +20758,6 @@
       ]
     },
     {
-      "id": "trigger-input_trigger-event-observe_release_pointer",
-      "from": "input_trigger",
-      "to": "event-observe_release_pointer",
-      "kind": "trigger",
-      "label": "Commands::trigger Fire<ReleasePointerAction>",
-      "notes": [
-        "动作状态对应的事件标记存在时排入命令；命令应用时触发。"
-      ]
-    },
-    {
       "id": "trigger-input_trigger-event-observe_menu_previous",
       "from": "input_trigger",
       "to": "event-observe_menu_previous",
@@ -21154,6 +20933,27 @@
       "to": "native-focused-keyboard-dispatch",
       "kind": "order",
       "label": "after(InputSystems)"
+    },
+    {
+      "id": "order-input_update-mouse_capture",
+      "from": "input_update",
+      "to": "mouse_capture",
+      "kind": "order",
+      "label": "after(InputSystems)"
+    },
+    {
+      "id": "order-mouse_capture-egui_input",
+      "from": "mouse_capture",
+      "to": "egui_input",
+      "kind": "order",
+      "label": "before(EguiPreUpdateSet::ProcessInput)"
+    },
+    {
+      "id": "order-egui_input-egui_begin",
+      "from": "egui_input",
+      "to": "egui_begin",
+      "kind": "order",
+      "label": "EguiPreUpdateSet chain"
     }
   ],
   "feature_links": [
@@ -21640,8 +21440,7 @@
       "action.Action<LookAction>",
       "action.Action<MoveAction>",
       "action.Action<JumpAction>",
-      "action.Action<InteractAction>",
-      "action.Action<ReleasePointerAction>"
+      "action.Action<InteractAction>"
     ]
   }
 }

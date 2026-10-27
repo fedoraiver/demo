@@ -1,5 +1,15 @@
 //! 封装世界检查器的装配和启用日志，复用统一会话日志设施。
 
+mod launch;
+#[cfg(feature = "debugdump")]
+mod schedule_dump;
+#[cfg(test)]
+mod tests;
+
+pub use launch::{LaunchMode, parse_launch_mode, print_help};
+#[cfg(feature = "debugdump")]
+pub use schedule_dump::dump_schedules;
+
 use bevy::prelude::*;
 use bevy_inspector_egui::{bevy_egui::EguiPlugin, quick::WorldInspectorPlugin};
 

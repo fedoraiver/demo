@@ -124,9 +124,9 @@ export function buildObjectCatalog(model, registry, { components = { accesses: [
   function graphFor(id) {
     const object = objectById[resolve(id)];
     if (!object) throw new Error(`未知 ECS 对象：${id}`);
-    // 实体图只展示非组件关系；完整组件关系仍保留在目录及各组件自己的图中。
+    // 插件只展示自身卡片；实体图隐藏组件，完整关系仍保留在共享目录中。
     const incident = neighbors.get(object.id);
-    const selected = object.kind === 'Entity'
+    const selected = ['Plugin', 'PluginGroup'].includes(object.kind) ? [] : object.kind === 'Entity'
       ? incident.filter(link => [link.from, link.to].every(id => nodeKindOf(registry[id]) !== 'Component')) : incident;
     const ids = unique([object.id, ...selected.flatMap(link => [link.from, link.to])]);
     return { centerNodeId: object.id, empty: false,

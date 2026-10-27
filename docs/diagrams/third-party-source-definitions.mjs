@@ -166,7 +166,7 @@ export const THIRD_PARTY_SOURCE_DEFINITIONS = {
   "camera.EguiInput": egui.EguiInput,
   "camera.EguiMultipassSchedule": egui.EguiSchedule,
   "camera.EguiFullOutput": egui.EguiFullOutput,
-  ...Object.fromEntries(['LookAction', 'MoveAction', 'JumpAction', 'InteractAction', 'ReleasePointerAction'].map(type => [`action.Action<${type}>`, input.Action])),
+  ...Object.fromEntries(['LookAction', 'MoveAction', 'JumpAction', 'InteractAction'].map(type => [`action.Action<${type}>`, input.Action])),
   "action.ActionSettings": input.ActionSettings,
   "action.ActionOf": input.ActionOf,
   "action.Bindings": input.Bindings,

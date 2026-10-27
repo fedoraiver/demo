@@ -222,8 +222,8 @@ test('all detailed and feature links are classified without changing raw contrac
   assert.equal(counts.group_membership, 2);
   assert.equal(counts.constraint, 2);
   assert.equal(counts.registration, 40);
-  assert.equal(counts.emit, 37);
-  assert.equal(counts.observe, 29);
+  assert.equal(counts.emit, 36);
+  assert.equal(counts.observe, 28);
   assert.equal(counts.dependency, 27);
   assert.equal(counts.order, 75);
   assert.equal(counts.relationship, 18);

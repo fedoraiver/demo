@@ -467,7 +467,9 @@ test('当前清单全部真实组件有专属图，HeldTarget 保持批准样稿
   registry.inspector_pass.definition_source = definition('src/quick.rs', 92, 'bevy-inspector-egui');
   const catalog = buildComponentCatalog(model, registry, { readDependencySource: () => null }), projections = model.entities.flatMap(entity => entity.components.map(component => component.id));
   assert.deepEqual(new Set(Object.keys(catalog.typeByProjectionId)), new Set(projections));
-  assert.equal(catalog.types.length, 166);
+  assert.equal(catalog.types.length, 165);
+  assert.equal(catalog.typeByProjectionId['action.Action<ReleasePointerAction>'], undefined);
+  assert.deepEqual(model.object_aliases['action.Action'], ['action.Action<LookAction>', 'action.Action<MoveAction>', 'action.Action<JumpAction>', 'action.Action<InteractAction>']);
   const declaredCount = model.systems.reduce((count, system) => count + [...system.reads, ...system.writes].filter(id => projections.includes(id)).length, 0);
   assert.equal(catalog.declarations.length, declaredCount);
   assert.ok(catalog.deferredAccesses.every(access => registry[access.system].kind === 'Synchronization'));

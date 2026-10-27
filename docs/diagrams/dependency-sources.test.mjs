@@ -101,6 +101,7 @@ test('all maintained dependency types and execution nodes resolve real declarati
   const usages = structuredClone(Object.fromEntries(Object.entries(registry).map(([id, node]) => [id, node.source])));
   const targets = dependencyDefinitionTargets(registry);
   assert.deepEqual(new Set(targets), new Set(Object.keys(DEPENDENCY_SOURCE_DEFINITIONS)));
+  assert.equal(DEPENDENCY_SOURCE_DEFINITIONS['action.Action<ReleasePointerAction>'], undefined);
   const resolver = createDependencySourceResolver(readCargoMetadata(repository));
   attachDependencySources(registry, resolver, DEPENDENCY_SOURCE_DEFINITIONS);
   checkDependencySources(registry, resolver, DEPENDENCY_SOURCE_DEFINITIONS);

@@ -1,53 +1,68 @@
-// 共享离线页面的导航规则；纯函数与内嵌脚本共用实现，避免 URL 状态分叉。
+// 离线页面与测试共用导航；旧插件入口由查看器按真实对象目录迁移。
 import { INFRASTRUCTURE_FEATURES } from './architecture-infrastructure.mjs';
 
 const infrastructureIds = INFRASTRUCTURE_FEATURES.map(feature => feature.id);
 
-/** 将查询参数解析为一个已知功能与页签；无效入口回到可见的默认页面。 */
-export function resolveArchitectureSelection(search, features) {
-  // 旧合并入口先保留 node，查看器再依据清单归属标准化到实际页面。
+export function defaultArchitectureSchedule(schedules) {
+  return schedules.find(view => view.application === 'main' && view.scheduleLabel === 'Update' && view.systemCount > 0)?.id
+    || schedules.find(view => view.systemCount > 0)?.id || schedules[0]?.id || null;
+}
+
+export function resolveArchitectureSelection(search, features, schedules = []) {
+  const params = new URLSearchParams(search), requestedSchedule = params.get('schedule')?.trim();
+  const schedule = schedules.some(view => view.id === requestedSchedule) ? requestedSchedule : defaultArchitectureSchedule(schedules);
   const ids = new Set(['overview', 'third_party', ...infrastructureIds, ...features.map(feature => typeof feature === 'string' ? feature : feature.id)]);
-  const params = new URLSearchParams(search);
-  const requested = params.get('feature') || 'overview';
-  const feature = ids.has(requested) ? requested : 'overview';
-  const aspect = feature === 'overview' ? 'overview' : 'systems';
-  const node = feature === requested ? params.get('node')?.trim() || null : null;
+  const requestedFeature = params.get('feature'), legacyFeature = ids.has(requestedFeature) ? requestedFeature : null;
   const object = params.get('object')?.trim() || params.get('component')?.trim();
+  const node = (!requestedFeature || legacyFeature || object) ? params.get('node')?.trim() || null : null;
   const legacyAspect = ['data', 'events'].includes(params.get('tab')) ? params.get('tab') : null;
-  return { feature, aspect, node, ...(object ? { object } : {}), ...(legacyAspect ? { legacyAspect } : {}) };
+  const filters = Object.fromEntries(['scheduleInclude', 'scheduleExclude'].map(key => [key, params.get(key)?.trim()]).filter(([, value]) => value));
+  for (const [key, parameter] of [['scheduleIncludeSystems', 'scheduleIncludeSystem'], ['scheduleExcludeSystems', 'scheduleExcludeSystem'], ['scheduleIncludePlugins', 'scheduleIncludePlugin'], ['scheduleExcludePlugins', 'scheduleExcludePlugin']]) {
+    const names = [...new Set(params.getAll(parameter).filter(Boolean))];
+    if (names.length) filters[key] = names;
+  }
+  return { schedule, node, ...filters, ...(object ? { object } : {}), ...(legacyFeature ? { legacyFeature } : {}), ...(legacyAspect ? { legacyAspect } : {}) };
 }
 
 /** 只更新架构导航参数，保留工作区、其他参数与片段，不触发实际页面导航。 */
-export function architectureUrl(selection, href, features) {
+export function architectureUrl(selection, href, features, schedules = []) {
   const params = new URLSearchParams();
-  params.set('feature', selection.feature || 'overview');
-  if (selection.aspect) params.set('tab', selection.aspect);
+  if (selection.schedule) params.set('schedule', selection.schedule);
   if (selection.node) params.set('node', selection.node);
   if (selection.object || selection.component) params.set('object', selection.object || selection.component);
-  const normalized = resolveArchitectureSelection(params, features);
+  if (selection.feature || selection.legacyFeature) params.set('feature', selection.feature || selection.legacyFeature);
+  for (const key of ['scheduleInclude', 'scheduleExclude']) if (selection[key]?.trim()) params.set(key, selection[key].trim());
+  for (const [key, parameter] of [['scheduleIncludeSystems', 'scheduleIncludeSystem'], ['scheduleExcludeSystems', 'scheduleExcludeSystem'], ['scheduleIncludePlugins', 'scheduleIncludePlugin'], ['scheduleExcludePlugins', 'scheduleExcludePlugin']]) {
+    for (const name of selection[key] || []) if (name) params.append(parameter, name);
+  }
+  const normalized = resolveArchitectureSelection(params, features, schedules);
   const url = new URL(href);
-  url.searchParams.set('feature', normalized.feature);
-  if (normalized.aspect === 'overview') url.searchParams.delete('tab');
-  else url.searchParams.set('tab', normalized.aspect);
-  if (normalized.node) url.searchParams.set('node', normalized.node);
-  else url.searchParams.delete('node');
-  if (normalized.object) url.searchParams.set('object', normalized.object);
-  else url.searchParams.delete('object');
-  url.searchParams.delete('component');
+  for (const key of ['schedule', 'object', 'node', 'scheduleInclude', 'scheduleExclude']) {
+    if (normalized[key]) url.searchParams.set(key, normalized[key]);
+    else url.searchParams.delete(key);
+  }
+  for (const [key, parameter] of [['scheduleIncludeSystems', 'scheduleIncludeSystem'], ['scheduleExcludeSystems', 'scheduleExcludeSystem'], ['scheduleIncludePlugins', 'scheduleIncludePlugin'], ['scheduleExcludePlugins', 'scheduleExcludePlugin']]) {
+    url.searchParams.delete(parameter);
+    for (const name of normalized[key] || []) url.searchParams.append(parameter, name);
+  }
+  if (normalized.legacyFeature) url.searchParams.set('feature', normalized.legacyFeature);
+  else url.searchParams.delete('feature');
+  url.searchParams.delete('tab'); url.searchParams.delete('component');
   return url.href;
 }
 
 /** 为当前清单创建同一组可供构建工具和页面调用的导航函数。 */
-export function createArchitectureNavigation(features) {
+export function createArchitectureNavigation(features, schedules = []) {
   return {
-    resolve: search => resolveArchitectureSelection(search, features),
-    url: (selection, href) => architectureUrl(selection, href, features),
+    resolve: search => resolveArchitectureSelection(search, features, schedules),
+    url: (selection, href) => architectureUrl(selection, href, features, schedules),
   };
 }
 
 /** 返回完全内嵌的导航代码；功能名称作为安全 JSON 数据进入页面。 */
-export function architectureNavigationAssets(features) {
+export function architectureNavigationAssets(features, schedules = []) {
   const ids = features.map(feature => typeof feature === 'string' ? feature : feature.id);
-  const serialized = JSON.stringify(ids).replace(/</g, '\\u003c');
-  return { script: `const architectureNavigation=(()=>{\nconst infrastructureIds=${JSON.stringify(infrastructureIds)};\n${resolveArchitectureSelection.toString()}\n${architectureUrl.toString()}\n${createArchitectureNavigation.toString()}\nreturn createArchitectureNavigation(${serialized});\n})();` };
+  const entries = schedules.map(({ id, application, scheduleLabel, systemCount }) => ({ id, application, scheduleLabel, systemCount }));
+  const serialize = value => JSON.stringify(value).replace(/</g, '\\u003c');
+  return { script: `const architectureNavigation=(()=>{\nconst infrastructureIds=${serialize(infrastructureIds)};\n${defaultArchitectureSchedule.toString()}\n${resolveArchitectureSelection.toString()}\n${architectureUrl.toString()}\n${createArchitectureNavigation.toString()}\nreturn createArchitectureNavigation(${serialize(ids)},${serialize(entries)});\n})();` };
 }

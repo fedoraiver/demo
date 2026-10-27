@@ -19,7 +19,7 @@ use character::CharacterPlugin;
 use character_animation::CharacterAnimationPlugin;
 use first_person::FirstPersonPlugin;
 use game_flow::GameFlowPlugin;
-use inspector::InspectorPlugin;
+use inspector::{InspectorPlugin, LaunchMode};
 use item_interaction::ItemInteractionPlugin;
 use physics::GamePhysicsPlugin;
 use scene_assembly::SceneAssemblyPlugin;
@@ -32,6 +32,17 @@ use bevy::{log::LogPlugin, prelude::*};
 use bevy_enhanced_input::EnhancedInputPlugin;
 
 fn main() -> AppExit {
+    let launch_mode = match inspector::parse_launch_mode(std::env::args_os().skip(1)) {
+        Ok(LaunchMode::Help) => {
+            inspector::print_help();
+            return AppExit::Success;
+        }
+        Ok(mode) => mode,
+        Err(error) => {
+            eprintln!("{error}");
+            return AppExit::error();
+        }
+    };
     let mut app = App::new();
     let (logging, session) = match SessionLogPlugin::prepare() {
         Ok(prepared) => prepared,
@@ -54,8 +65,7 @@ fn main() -> AppExit {
             }),
     );
 
-    let exit = app
-        .insert_resource(GameSettings::load(std::path::Path::new("settings.json")))
+    app.insert_resource(GameSettings::load(std::path::Path::new("settings.json")))
         .insert_resource(bevy::winit::WinitSettings::continuous())
         .insert_resource(Time::<Fixed>::from_hz(60.0))
         .add_plugins((
@@ -73,8 +83,24 @@ fn main() -> AppExit {
             SceneAssemblyPlugin,
             GameUiPlugin,
             GameAudioPlugin,
-        ))
-        .run();
+        ));
+
+    let exit = match launch_mode {
+        LaunchMode::Game => app.run(),
+        LaunchMode::Help => unreachable!("help returns before app initialization"),
+        #[cfg(feature = "debugdump")]
+        LaunchMode::DumpSchedules(directory) => {
+            match inspector::dump_schedules(&mut app, &directory) {
+                Ok(_) => AppExit::Success,
+                Err(error) => {
+                    error!(target: "demo::inspector", directory = %directory.display(), %error,
+                    "Schedule export failed");
+                    AppExit::error()
+                }
+            }
+        }
+    };
+    drop(app);
 
     if let Err(error) = session.record_exit(&exit) {
         eprintln!("Failed to flush session log on exit: {error}");
