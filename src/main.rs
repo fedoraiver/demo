@@ -66,7 +66,6 @@ fn main() -> AppExit {
     );
 
     app.insert_resource(GameSettings::load(std::path::Path::new("settings.json")))
-        .insert_resource(bevy::winit::WinitSettings::continuous())
         .insert_resource(Time::<Fixed>::from_hz(60.0))
         .add_plugins((
             EnhancedInputPlugin,

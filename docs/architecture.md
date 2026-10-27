@@ -101,7 +101,7 @@ F3 在游戏控制与检查器操作之间切换，检查器在两种模式下�
 - **可搬物品实体**以 `Parcel / Pickable` 表达身份和能力，根位于模型中心。自由时拥有独立动态刚体，持握时通过 `HeldBy / HeldAttachment` 连接持有者与同形碰撞代理；业务根始终独立，具体装卸见 [持有关系与生命周期](#持有关系与生命周期)。
 - **展示 NPC 实例**保存 `DisplayNpc`，保留原模型和固定姿态；其 `IslandCollider` 子实体保存静态刚体与身体胶囊碰撞，不加入 `Character`、玩家意图、移动或拾取能力。碰撞随原实例和地图层级一同清理。
 - **相机实体**通过 `FirstPersonCamera` 保存控制目标与观察姿态，`MouseLookState` 保存捕获状态；跟随系统根据人物本帧插值位置计算眼位，并把位置与朝向写入 `Transform`。
-- **共享资源**保存跨系统配置、菜单、音频预览与资源加载状态；限帧计时和连续数据日志采样使用各系统的 `Local`。
+- **共享资源**保存跨系统配置、菜单、音频预览与资源加载状态；帧率设置的已应用值和连续数据日志采样使用各系统的 `Local`。
 
 模型通过 `ChildOf` 属于业务根，人物视觉根带 `CharacterVisual`。玩法查询操作业务组件，网格、材质和骨骼留在视觉子树。持有关系与视觉父子关系相互独立；`Forces / RecoverableBody` 是 `QueryData`，`SpatialQuery / CarryRotationQuery` 是 `SystemParam`，几何辅助值也不作为 ECS 组件或独立系统。
 
@@ -159,7 +159,6 @@ NPC 身体碰撞属于 `World` 层，阻挡人物、自由箱与持箱代理，�
 | --- | --- |
 | 插件构建 | `SessionLogPlugin` 先安装日志并记录会话开始；场景插件初始化 `ArtAssets`，由 `FromWorld` 发起五份 GLB 加载，并初始化独立的 `ArtLoadState`。 |
 | `Startup` | 记录加载请求并创建菜单输入控制者；玩法、设置、相机与检查器插件分别注册自身初始化日志，启动日志不依赖已生成玩法实体。 |
-| `First` | `limit_frame_rate.before(TimeSystems)` 在引擎更新时钟前补足帧间剩余时间。 |
 | `PreUpdate` | 更新鼠标捕获和菜单上下文，Enhanced Input 评估动作并通过 Observer 更新意图与观察角度；动作应用后消费菜单请求。 |
 | `StateTransition` | 紧随 `PreUpdate`；主菜单入口生成展示舞台，游戏入口准备海岛会话的光照和加载相机，暂停入口清意图并冻结时间，退出状态清理对应实体。 |
 | `FixedFirst` | 落水与释放各自恢复临时暂停的插值通道，均在 `TransformEasingSystems::Reset` 后、`UpdateStart` 前，彼此无全序。 |
@@ -169,6 +168,7 @@ NPC 身体碰撞属于 `World` 层，阻挡人物、自由箱与持箱代理，�
 | `RunFixedMainLoop` 固定循环之后 | `PresentationSystems` 在 `TransformEasingSystems::Ease` 之后、`UpdateEasingTick` 之前依次连接 `Facing → HeldPhysics → HeldPresentation → Camera → Visibility`。第一人称与物品插件分别注册自己的系统，依次同步角色朝向、持箱物理姿态、本帧箱体与 `HeldTarget`、镜头和人物可见性。 |
 | `Update` | 资源轮询、海岛装配链、主角动画链、菜单动画绑定各自运行，彼此无显式全序。UI 局部依赖见 [BSN 页面](#bsn-页面与菜单展示资产)；UI Style 发布预览后，依次执行 Audio Mix 与 Playback。 |
 | `PostUpdate` | 骨骼动画求值 → 鞋底视觉补偿 → 变换传播；Egui 检查器为独立分支。布局后同步滚动条；Kira 排队播放阶段后补同步实例增益。 |
+| `Last` | 将本帧已应用的 `max_fps` 同步到 `WinitSettings`，由原生窗口循环调度后续更新。 |
 
 相机与玩法的固定步顺序由显式依赖表达；跨阶段数据流依赖 Bevy 默认主调度，`PreUpdate` 结束时应用动作命令，完成状态转换后进入固定循环。玩法模拟和相机姿态同步只在 `Running` 执行。一次渲染帧可以没有固定步，也可以有多个固定步，因此输入 Observer 不直接积分角色位置。
 
@@ -188,7 +188,7 @@ Avian 在默认固定调度中处理重力、速度积分与碰撞。接地通�
 
 运动与尺寸参数以 [PrototypeConfig](../src/settings/prototype.rs) 的定义和默认值为准；重力每个固定步同步到物理资源，检查器编辑只影响当前会话。
 
-渲染限帧与固定 60 Hz 模拟分别管理。限帧系统只等待剩余间隔，超时后从实际帧起点计时；`WinitSettings::continuous()` 避免失焦时再叠加更新限制，`AutoNoVsync` 仍可能被平台回退。海岛入口依靠斜坡碰撞通行，没有通用自动跨台阶控制器。
+渲染限帧与固定 60 Hz 模拟分别管理。`SettingsPlugin` 将 `WinitSettings` 的前台与后台模式统一设为 `UpdateMode::Reactive`，以 `1 / max_fps` 为近似更新间隔，关闭设备、用户与窗口事件触发的提前更新；输入缓冲到下一次更新。计时、等待和超时处理由 Bevy 原生窗口循环负责，启动与生命周期切换可强制更新，不保证任意相邻帧的严格最小间隔。`AutoNoVsync` 独立控制呈现方式，仍可能被平台回退。海岛入口依靠斜坡碰撞通行，没有通用自动跨台阶控制器。
 
 ## 持有关系与生命周期
 

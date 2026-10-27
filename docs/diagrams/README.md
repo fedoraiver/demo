@@ -45,7 +45,7 @@ Schedule 使用顶栏下的完整画布，不显示右侧详情、分隔条或�
 
 快照表示导出时的注册结构，不表示系统已经执行、条件已经满足或实际运行次数，也不包含随后运行时动态新增的注册。Observer 的触发关系、组件读写和业务实体说明仍在对象图浏览，不能从调度图补推。
 
-导出成功或返回错误时，经正常应用退出路径刷新会话日志；初始化 panic 由会话 panic hook 记录，不发布成功清单。导出不进入游戏循环，不执行 Startup 或状态切换；完整插件装配仍可能初始化 GPU、音频设备并请求资产加载。因此真实导出由用户运行，Agent 只运行最小无窗口夹具和静态文档构建，边界见[验证参考](../testing/README.md#agent-验证边界)。
+导出成功或返回错误时，经正常应用退出路径刷新会话日志；初始化 panic 由会话 panic hook 记录，不发布成功清单。导出不进入游戏循环，不执行 Startup 或状态切换；完整插件装配仍可能初始化 GPU、音频设备并请求资产加载。Agent 可直接运行该专用导出，执行边界见[验证参考](../testing/README.md#agent-验证边界)。
 
 ## 调度筛选与重新布局
 
@@ -267,7 +267,7 @@ Entity、Component 与 System 使用相同的 Mermaid 原生圆角矩形。Entit
 
 ### 生成与校验命令
 
-Rust 源码或锁定依赖变化后，先由用户从仓库根运行专用导出命令。该入口需要 `debugdump` feature；正式依赖版本以 [Cargo.toml](../../Cargo.toml) 和 [Cargo.lock](../../Cargo.lock) 为准：
+Rust 源码或锁定依赖变化后，先从仓库根运行专用导出命令，Agent 可直接执行。该入口需要 `debugdump` feature；正式依赖版本以 [Cargo.toml](../../Cargo.toml) 和 [Cargo.lock](../../Cargo.lock) 为准：
 
 ```powershell
 cargo run --locked --features debugdump -- --dump-schedules tmp/debugdump

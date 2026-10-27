@@ -458,7 +458,7 @@ test('非系统节点缺少明确归属时失败，不静默归入基础设施',
 });
 
 test('系统清单分别记录实际 Schedule，Observer 不冒充固定调度', () => {
-  const scheduleNames = new Set(['Startup', 'First', 'PreUpdate', 'FixedFirst', 'FixedUpdate', 'FixedPostUpdate', 'FixedLast', 'RunFixedMainLoop', 'Update', 'SpawnScene', 'PostUpdate', 'EguiPrimaryContextPass', 'Render', 'OnEnter(AppState::MainMenu)', 'OnEnter(AppState::InGame)', 'OnEnter(PlayState::Paused)', 'OnEnter(PlayState::Running)']);
+  const scheduleNames = new Set(['Startup', 'First', 'PreUpdate', 'FixedFirst', 'FixedUpdate', 'FixedPostUpdate', 'FixedLast', 'RunFixedMainLoop', 'Update', 'SpawnScene', 'PostUpdate', 'Last', 'EguiPrimaryContextPass', 'Render', 'OnEnter(AppState::MainMenu)', 'OnEnter(AppState::InGame)', 'OnEnter(PlayState::Paused)', 'OnEnter(PlayState::Running)']);
   const originalIds = [
     'startup_spawn', 'startup_config', 'startup_timestep', 'startup_pose',
     'frame_limit', 'time_update', 'input_update', 'mouse_capture',
@@ -519,6 +519,18 @@ test('系统清单分别记录实际 Schedule，Observer 不冒充固定调度',
   assert.equal(architecture.registry.window_install.schedule, 'PreUpdate');
   assert.deepEqual(architecture.registry.menu_sync_scrollbars.registrations[0].after, ['bevy::ui::UiSystems::Layout']);
   assert.deepEqual(architecture.registry.movement.registrations[0].run_if, ['gameplay_running']);
+});
+
+test('帧率设置在 Last 写入原生窗口策略，保留对象入口并移除旧时钟依赖', () => {
+  const system = architecture.registry.frame_limit;
+  assert.equal(system.name, 'apply_frame_rate_limit');
+  assert.deepEqual(system.registrations, [{ schedule: 'Last', scope: 'runtime' }]);
+  assert.equal(architecture.registry['local.FramePacing'].name, 'Local<Option<NonZeroU32>>');
+  const graph = objects.graphFor('frame_limit');
+  assert(graph.links.some(link => link.from === 'resource.GameSettings' && link.to === system.id && link.kind === 'read'));
+  assert(graph.links.some(link => link.from === system.id && link.to === 'resource.WinitSettings' && link.kind === 'write'));
+  assert(!graph.nodes.some(node => node.id === 'time_update'));
+  assert(!model.system_links.some(link => link.id === 'order-frame_limit-time_update'));
 });
 
 test('Schedule 横向分组按引擎真实顺序，每个 canonical 节点只出现一次', () => {

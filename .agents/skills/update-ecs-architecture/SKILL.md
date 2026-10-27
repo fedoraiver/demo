@@ -18,13 +18,13 @@ description: 更新、核对或修复本项目的 ECS 架构图，包括真实 S
 
 按[调度快照](../../../docs/diagrams/README.md#调度快照)核对覆盖和边界。导出复用真实应用装配，在插件就绪并完成 `finish` 后、`cleanup` 前，记录主应用及可访问子应用中的全部已注册 Schedule。应用与 Schedule 共同标识图，不按标签名称合并不同应用的调度。
 
-真实导出由用户执行：
+需要更新真实调度快照时，Agent 直接运行专用导出命令：
 
 ```powershell
 cargo run --locked --features debugdump -- --dump-schedules tmp/debugdump
 ```
 
-导出不进入游戏循环、不执行 Startup，但完整装配可能初始化 GPU、音频设备及资产。遵守[Agent 验证边界](../../../docs/testing/README.md#agent-验证边界)：Agent 不运行该完整导出；仅运行最小无窗口夹具和静态文档构建。缺少有效导出时完成独立工作并明确缺项，不用测试夹具或旧系统图冒充真实结果。
+该专用导出允许 Agent 执行，不进入游戏循环、不执行 Startup，但完整装配可能初始化 GPU、音频设备及资产。执行边界见[验证参考](../../../docs/testing/README.md#agent-验证边界)；不得省略 `--dump-schedules` 或改为启动、操作游戏。导出失败时完成独立工作并明确缺项，不用测试夹具或旧系统图冒充真实结果。
 
 检查导出清单的应用、Schedule、稳定文件身份、依赖版本、内容哈希及源码指纹。缺失、冲突或过期输入必须使导入失败。正式清单、DOT、SVG 和 HTML 一起保留，源码指纹匹配时可从正式 DOT 离线重建。
 
@@ -62,7 +62,7 @@ Graphviz 由锁定的 `@viz-js/viz` 生成默认 SVG，并在浏览器离线 Wor
 
 ## 生成与校验
 
-已有有效正式 DOT 时直接重建；Rust 源码或锁定依赖变化时先由用户提供新的真实导出。从仓库根依次运行，失败修复后重试：
+已有有效正式 DOT 时直接重建；Rust 源码或锁定依赖变化时先运行上述专用命令生成新的真实导出。从仓库根依次运行，失败修复后重试：
 
 ```text
 npm ci --prefix docs/diagrams

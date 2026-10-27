@@ -100,7 +100,7 @@
       ],
       "source": {
         "path": "src/settings/frame_pacing.rs",
-        "line": 16
+        "line": 18
       },
       "feature": "settings",
       "registered_by": "settings",
@@ -147,40 +147,40 @@
     },
     {
       "id": "frame_limit",
-      "name": "limit_frame_rate",
+      "name": "apply_frame_rate_limit",
       "kind": "System",
-      "phase": "First",
+      "phase": "Last",
       "module": "settings",
-      "description": "补足上一帧起点以来剩余间隔并更新局部计时。",
-      "display_summary": "补足帧间等待以控制显示帧率。",
+      "description": "将已应用的 max_fps 同步到 WinitSettings 的前台与后台更新策略，由 Bevy 原生窗口循环负责计时与等待。",
+      "display_summary": "将帧率设置同步给原生窗口循环。",
       "reads": [
         "resource.GameSettings",
         "local.FramePacing"
       ],
       "writes": [
+        "resource.WinitSettings",
         "local.FramePacing"
       ],
       "filters": [],
       "events": [],
       "notes": [
-        "显式 .before(TimeSystems)。",
-        "默认上限 60；等待超过目标间隔时不会继续补等；不修改 Time<Fixed>。"
+        "Last 读取本帧已应用的设置；窗口循环在 app.update() 返回后采用新策略，不修改 Time<Fixed>。",
+        "前台与后台均使用 UpdateMode::Reactive；wait 为向上取整到纳秒的 1 / max_fps，三个 react_to_* 标记均为 false。",
+        "事件仍缓冲到下一次更新；原生 wait 是近似帧间隔，启动与生命周期变化可强制更新。",
+        "Local 只保存已应用值以去重和记录变更，不再维护帧起点或自行休眠。"
       ],
       "source": {
         "path": "src/settings/frame_pacing.rs",
-        "line": 32
+        "line": 27
       },
       "feature": "settings",
       "registered_by": "settings",
-      "schedule": "First",
-      "schedule_group": "First",
+      "schedule": "Last",
+      "schedule_group": "Last",
       "registrations": [
         {
-          "schedule": "First",
-          "scope": "runtime",
-          "before": [
-            "TimeSystems"
-          ]
+          "schedule": "Last",
+          "scope": "runtime"
         }
       ]
     },
@@ -205,7 +205,6 @@
       "filters": [],
       "events": [],
       "notes": [
-        "limit_frame_rate 在此之前等待。",
         "RunFixedMainLoop 根据累计时间执行 0..N 个固定步；固定循环还会更新 Time<Fixed> 并切换通用 Time，此处没有把循环折叠成一次时间更新。",
         "TimePlugin 将 time_system 加入 TimeSystems；本卡片表示集合标签，关联函数不是另一个合并身份。"
       ],
@@ -11204,13 +11203,14 @@
       "id": "resource.WinitSettings",
       "name": "WinitSettings",
       "fields": [
-        "当前策略: continuous()"
+        "focused_mode: UpdateMode",
+        "unfocused_mode: UpdateMode"
       ],
-      "description": "主循环采用连续更新策略，帧间等待由 limit_frame_rate 负责。",
+      "description": "Bevy 窗口循环的更新策略资源；SettingsPlugin 初始化，apply_frame_rate_limit 在 Last 将前台与后台统一配置为按 max_fps 定时更新的 Reactive 模式。三个事件提前更新开关均关闭，输入缓冲到下一次更新；原生循环负责近似帧间隔及超时处理，VSync 仍由窗口 PresentMode 独立控制。",
       "display_summary": "配置窗口主循环的更新策略。",
       "source": {
-        "path": "src/main.rs",
-        "line": 69
+        "path": "src/settings/frame_pacing.rs",
+        "line": 11
       },
       "feature": "infrastructure",
       "defined_in": "infrastructure",
@@ -11289,16 +11289,15 @@
     },
     {
       "id": "local.FramePacing",
-      "name": "Local<FramePacing>",
+      "name": "Local<Option<NonZeroU32>>",
       "fields": [
-        "last_started: Option<Instant>",
-        "applied_max_fps: Option<NonZeroU32>"
+        "applied_max_fps: Option<NonZeroU32> = None"
       ],
-      "description": "只属于 limit_frame_rate 系统实例的局部等待和日志去重状态，不是共享 Resource。",
-      "display_summary": "保存帧间等待计时与重复日志抑制状态。",
+      "description": "只属于 apply_frame_rate_limit 系统实例的局部缓存；初始 None，应用原生窗口更新策略后保存 max_fps，避免无变化时重复写入策略和记录日志。",
+      "display_summary": "缓存窗口循环已采用的帧率设置。",
       "source": {
         "path": "src/settings/frame_pacing.rs",
-        "line": 26
+        "line": 30
       },
       "feature": "settings",
       "defined_in": "settings",
@@ -17398,7 +17397,8 @@
         "resource.GameSettings",
         "resource.PrototypeConfig",
         "resource.SettingsDraft",
-        "resource.SettingsFile"
+        "resource.SettingsFile",
+        "resource.WinitSettings"
       ],
       "source": {
         "path": "src/settings/mod.rs",
@@ -18131,7 +18131,60 @@
       "from": "resource.GameSettings",
       "to": "frame_limit",
       "kind": "read",
-      "label": "R 设置"
+      "label": "max_fps",
+      "operation": "read",
+      "evidence": [
+        "source"
+      ]
+    },
+    {
+      "id": "read-local.FramePacing-frame_limit",
+      "from": "local.FramePacing",
+      "to": "frame_limit",
+      "kind": "read",
+      "label": "已应用值",
+      "operation": "read",
+      "evidence": [
+        "source"
+      ]
+    },
+    {
+      "id": "write-frame_limit-local.FramePacing",
+      "from": "frame_limit",
+      "to": "local.FramePacing",
+      "kind": "write",
+      "label": "已应用值",
+      "operation": "write",
+      "evidence": [
+        "source"
+      ],
+      "notes": [
+        "仅 max_fps 与缓存不同的初始化或设置变更路径写入；原生窗口策略配置完成后更新缓存。"
+      ]
+    },
+    {
+      "id": "write-frame_limit-resource.WinitSettings",
+      "from": "frame_limit",
+      "to": "resource.WinitSettings",
+      "kind": "write",
+      "label": "focused_mode / unfocused_mode",
+      "operation": "write",
+      "evidence": [
+        "source"
+      ],
+      "notes": [
+        "仅 max_fps 与缓存不同的初始化或设置变更路径赋值两个字段；不插入或移除资源。"
+      ]
+    },
+    {
+      "id": "registration-plugin-SettingsPlugin-resource.WinitSettings",
+      "from": "plugin-SettingsPlugin",
+      "to": "resource.WinitSettings",
+      "kind": "registration",
+      "label": "init_resource",
+      "notes": [
+        "SettingsPlugin::build 调用 frame_pacing::register；已有 WinitSettings 时 init_resource 保留原资源，Last 再按设置更新模式。"
+      ]
     },
     {
       "id": "write-observe_move-character.CharacterIntent",
@@ -18265,13 +18318,6 @@
       "to": "window-native-policy",
       "kind": "reference",
       "label": "安装 / 刷新 / Drop"
-    },
-    {
-      "id": "order-frame_limit-time_update",
-      "from": "frame_limit",
-      "to": "time_update",
-      "kind": "order",
-      "label": ""
     },
     {
       "id": "order-physics_prepare-physics_step",
@@ -21149,7 +21195,7 @@
       "order": 10,
       "track": "frame",
       "notes": [
-        "每帧一次；项目限帧在 TimeSystems 之前。"
+        "每帧一次；TimeSystems 更新真实、虚拟与通用时钟。"
       ]
     },
     {
@@ -21260,6 +21306,15 @@
       "parent": "PostUpdate",
       "notes": [
         "Egui 多轮 pass 由 PostUpdate 驱动；不是整个 PostUpdate 结束后再运行的主调度阶段，也不保证每帧只执行一次。"
+      ]
+    },
+    {
+      "id": "Last",
+      "label": "Last",
+      "order": 120,
+      "track": "frame",
+      "notes": [
+        "帧末同步已应用的帧率设置；原生窗口循环在 app.update() 返回后读取 WinitSettings 并调度后续更新。"
       ]
     },
     {
