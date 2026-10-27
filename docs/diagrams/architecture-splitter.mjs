@@ -1,8 +1,8 @@
 // 宽度只保存在当前查看器内存中，不写入工作区配置或浏览器存储。
-export function createArchitectureSplitter({ workspace, separator, canvas, window, onResize }) {
+export function createArchitectureSplitter({ workspace, separator, canvas, window, onResize, enabled = () => true }) {
   let width = 286, drag = null;
   const limits = () => ({ min: 240, max: Math.min(720, Math.max(240, workspace.clientWidth - 28 - 10 - 360)) });
-  const desktop = () => !(window.innerWidth <= 900);
+  const desktop = () => !(window.innerWidth <= 900) && enabled();
   function apply(requested, preserveCenter = true) {
     const { min, max } = limits(), before = canvas.clientWidth;
     width = Math.max(min, Math.min(max, requested));

@@ -1,4 +1,5 @@
 import { DOMParser, XMLSerializer } from '@xmldom/xmldom';
+import { VIEWER_BACKGROUND } from './viewer-theme.mjs';
 import { measureMermaidNodes } from './svg-shape-geometry.mjs';
 import { NODE_STYLES, EDGE_STYLES } from './architecture-style.mjs';
 import { DATA_GROUP_LABELS, entityComponentColumns } from './architecture-renderer.mjs';
@@ -164,7 +165,7 @@ export function normalizeMermaidSvg(view, source, registry, { clusterLabelBounds
     for (let index = sections.length - 1; index >= dataSections.length; index--) if (dataSections.some(section => section.label === sections[index].label)) sections.splice(index, 1);
   }
   svg.setAttribute('width', String(bounds[2])); svg.setAttribute('height', String(bounds[3]));
-  svg.setAttribute('style', 'background-color:#F6F8FB');
+  svg.setAttribute('style', 'background-color:' + VIEWER_BACKGROUND);
   svg.setAttribute('data-diagram-engine', 'mermaid');
   const style = document.createElementNS(svg.namespaceURI, 'style');
   style.textContent = '[data-id],[data-entity-owner],.edge{cursor:pointer}[data-id]:focus{outline:none}[data-id]:focus-visible:not(.selected):not(.entity-container),.entity-container:focus-visible:not(.selected)>[data-shape-part]{outline:2px solid #2563EB;outline-offset:4px}.node.dim:not(.entity-container),[data-entity-header].dim{opacity:.22}.entity-container.dim>[data-shape-part]{opacity:.22}.edge.dim{opacity:.16}.edge.focused{stroke-width:calc(var(--edge-width) + 1.2px)!important}';

@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import test from 'node:test';
 import { buildArchitectureModel, isMainPluginRegistration, isUnscheduledTriggerNode } from './architecture-model.mjs';
-import { renderGraphView, renderOverview, mermaidConfiguration, entityComponentColumns, dataLayoutColumns, dataObserverLayoutPairs, observerBranchLayoutPairs } from './architecture-renderer.mjs';
+import { renderGraphView, mermaidConfiguration, entityComponentColumns, dataLayoutColumns, dataObserverLayoutPairs, observerBranchLayoutPairs } from './architecture-renderer.mjs';
 import { NODE_STYLES, EDGE_STYLES, EXTERNAL_REFERENCE_STYLE } from './architecture-style.mjs';
 import { INFRASTRUCTURE_FEATURES } from './architecture-infrastructure.mjs';
 
@@ -40,7 +40,7 @@ function viewFor(feature, aspect) {
 }
 
 function isolatedView(record, { role = 'internal', aspect = 'data' } = {}) {
-  const graph = { nodes: [{ id: record.id, role }], links: [] };
+  const graph = { centerNodeId: record.id, nodes: [{ id: record.id, role }], links: [] };
   const groups = aspect === 'systems' ? [{ id: 'Update', label: 'Update', order: 90, track: 'frame', nodes: graph.nodes }] : [];
   return renderGraphView({ id: 'isolated-test', feature: 'first_person', aspect, label: '测试', summary: '测试' }, graph, { [record.id]: record }, architecture.features, groups);
 }
@@ -239,10 +239,10 @@ test('组件完整用途保留在注册表，事件页组件不增加实体容�
   for (const feature of featureIds) for (const node of viewFor(feature, 'events').nodes.filter(node => node.visualType === 'component')) assert.ok(!node.contextLabel[0].includes(architecture.registry[node.id].owner + '：'));
 });
 
-test('App overview cards preserve complete system names and responsibilities', () => {
+test('object cards preserve complete system names and responsibilities', () => {
   const id = 'frame_limit', description = '等待本帧剩余时间并更新本地计时状态。'.repeat(8);
   const registry = { ...architecture.registry, [id]: { ...architecture.registry[id], description, display_summary: undefined } };
-  const view = renderOverview(model, registry, architecture.features);
+  const view = isolatedView(registry[id], { aspect: 'object' });
   const node = view.nodes.find(item => item.id === id);
   assert.equal(node.nameLabel, registry[id].name);
   assert.deepEqual(node.contextLabel, [description]);
@@ -250,11 +250,11 @@ test('App overview cards preserve complete system names and responsibilities', (
   assert.doesNotMatch(node.displayLabel, /…/);
 });
 
-test('App overview reuses canonical system summaries without rewriting full descriptions', () => {
+test('object cards reuse canonical system summaries without rewriting full descriptions', () => {
   const id = 'frame_limit';
   const registry = { ...architecture.registry, [id]: { ...architecture.registry[id], display_summary: '等待本帧剩余时间。' } };
   const description = registry[id].description;
-  const view = renderOverview(model, registry, architecture.features), node = view.nodes.find(item => item.id === id);
+  const view = isolatedView(registry[id], { aspect: 'object' }), node = view.nodes.find(item => item.id === id);
   assert.equal(node.nameLabel, registry[id].name);
   assert.deepEqual(node.contextLabel, [registry[id].display_summary]);
   assert.equal(registry[id].description, description);
@@ -287,7 +287,7 @@ test('data stays compact while source-local trigger schedules retain the origina
     assert.doesNotMatch(view.mermaid, /diagram_main/);
     for (const group of ['catalog', 'relations', 'column_0', 'relation_0']) assert.match(view.mermaid, new RegExp(`subgraph ${group}\\[`));
   }
-  for (const view of [viewFor('ui', 'events'), renderOverview(model, architecture.registry, architecture.features)]) {
+  for (const view of [viewFor('ui', 'events')]) {
     assert.equal(view.scheduleOrientation, undefined);
     assert.match(view.mermaid, /^flowchart LR$/m);
     assert.equal(JSON.parse(/^---\n([\s\S]*?)\n---/.exec(view.mermaid)[1]).config.layout, 'dagre');
@@ -416,18 +416,6 @@ test('data group captions describe their contents while retaining stable group a
     assert.deepEqual(view.links.map(endpoints), graph.links.map(endpoints), feature);
   }
   assert.ok(catalogs > 0 && relations > 0);
-});
-
-test('overview displays the App schedule while plugin entrances remain in their own views', () => {
-  const view = renderOverview(model, architecture.registry, architecture.features);
-  assert.equal(view.layout, 'app-schedule');
-  assert.equal(new Set(view.nodes.map(node => node.id)).size, view.nodes.length);
-  for (const system of model.systems) assert.ok(view.nodes.some(node => node.id === system.id), system.id);
-  for (const entry of INFRASTRUCTURE_FEATURES) assert.ok(architecture.graphFor(entry.id, 'events').nodes.some(node => node.id === entry.overviewNode), entry.id);
-  assert.ok(!view.nodes.some(node => node.id === 'third-party-plugins'));
-  assert.ok(view.links.every(link => ['order', 'registration'].includes(link.kind) || (link.kind === 'trigger' && link.projection === 'observer-trigger')));
-  assert.ok(view.nodes.filter(node => isUnscheduledTriggerNode(architecture.registry[node.id])).every(node => !view.scheduleGroups.some(group => group.nodes.includes(node.id))));
-  assert.ok(view.nodes.every(node => node.role === 'internal'));
 });
 
 test('empty tabs have neither Mermaid source nor an export filename', () => {

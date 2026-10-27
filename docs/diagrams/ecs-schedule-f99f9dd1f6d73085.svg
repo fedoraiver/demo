@@ -1,0 +1,88 @@
+<svg width="629" height="252" viewBox="0.00 0.00 629.00 252.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="schedule-f99f9dd1f6d73085" role="img" aria-label="schedule-f99f9dd1f6d73085" data-diagram-engine="graphviz">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 248)">
+<polygon fill="#f6f8fb" stroke="none" points="-4,4 -4,-248 624.5,-248 624.5,4 -4,4"/>
+<g id="clust1" class="cluster">
+<title>clusternode_Set(SystemSetKey(2v1))</title>
+<g id="a_clust1"><a xlink:title="Propagate">
+<path fill="#f3f4f6" stroke="#6a778c" stroke-width="1.6" d="M30.52,-8C30.52,-8 600.5,-8 600.5,-8 606.5,-8 612.5,-14 612.5,-20 612.5,-20 612.5,-88 612.5,-88 612.5,-94 606.5,-100 600.5,-100 600.5,-100 30.52,-100 30.52,-100 24.52,-100 18.52,-94 18.52,-88 18.52,-88 18.52,-20 18.52,-20 18.52,-14 24.52,-8 30.52,-8"/>
+
+
+</a>
+</g>
+</g>
+<g id="clust2" class="cluster">
+<title>clusternode_Set(SystemSetKey(7v1))</title>
+<g id="a_clust2"><a xlink:title="CameraUpdateSystems">
+<path fill="#f3f4f6" stroke="#6a778c" stroke-width="1.6" d="M12,-108C12,-108 162.63,-108 162.63,-108 168.63,-108 174.63,-114 174.63,-120 174.63,-120 174.63,-188 174.63,-188 174.63,-194 168.63,-200 162.63,-200 162.63,-200 12,-200 12,-200 6,-200 0,-194 0,-188 0,-188 0,-120 0,-120 0,-114 6,-108 12,-108"/>
+
+
+</a>
+</g>
+</g>
+<!-- set_marker_node_Set(SystemSetKey(2v1)) -->
+<!-- node_System(SystemKey(1v1)) -->
+<g id="node2" class="node">
+<title>node_System(SystemKey(1v1))</title>
+<g id="a_node2"><a xlink:title="bevy_transform::systems::mark_dirty_trees">
+<path fill="#eff3f8" stroke="#3567a6" stroke-width="1.6" d="M135.11,-67C135.11,-67 38.52,-67 38.52,-67 32.52,-67 26.52,-61 26.52,-55 26.52,-55 26.52,-43 26.52,-43 26.52,-37 32.52,-31 38.52,-31 38.52,-31 135.11,-31 135.11,-31 141.11,-31 147.11,-37 147.11,-43 147.11,-43 147.11,-55 147.11,-55 147.11,-61 141.11,-67 135.11,-67"/>
+<text xml:space="preserve" text-anchor="middle" x="86.82" y="-44.8" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="14.00" fill="#1f3340">mark_dirty_trees</text>
+</a>
+</g>
+</g>
+<!-- node_System(SystemKey(2v1)) -->
+<g id="node3" class="node">
+<title>node_System(SystemKey(2v1))</title>
+<g id="a_node3"><a xlink:title="bevy_transform::systems::parallel::propagate_parent_transforms">
+<path fill="#eff3f8" stroke="#3567a6" stroke-width="1.6" d="M391.31,-67C391.31,-67 220.14,-67 220.14,-67 214.14,-67 208.14,-61 208.14,-55 208.14,-55 208.14,-43 208.14,-43 208.14,-37 214.14,-31 220.14,-31 220.14,-31 391.31,-31 391.31,-31 397.31,-31 403.31,-37 403.31,-43 403.31,-43 403.31,-55 403.31,-55 403.31,-61 397.31,-67 391.31,-67"/>
+<text xml:space="preserve" text-anchor="middle" x="305.73" y="-44.8" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="14.00" fill="#1f3340">propagate_parent_transforms</text>
+</a>
+</g>
+</g>
+<!-- node_System(SystemKey(1v1))&#45;&gt;node_System(SystemKey(2v1)) -->
+<g id="edge1" class="edge">
+<title>node_System(SystemKey(1v1))-&gt;node_System(SystemKey(2v1))</title>
+<g id="a_edge1"><a xlink:title="mark_dirty_trees → propagate_parent_transforms">
+<path fill="none" stroke="#334155" stroke-width="2" d="M147.66,-49C162.31,-49 178.44,-49 194.63,-49"/>
+<polygon fill="#334155" stroke="#334155" stroke-width="2" points="194.56,-52.5 204.56,-49 194.56,-45.5 194.56,-52.5"/>
+</a>
+</g>
+</g>
+<!-- node_System(SystemKey(3v1)) -->
+<g id="node4" class="node">
+<title>node_System(SystemKey(3v1))</title>
+<g id="a_node4"><a xlink:title="bevy_transform::systems::sync_simple_transforms">
+<path fill="#eff3f8" stroke="#3567a6" stroke-width="1.6" d="M592.5,-67C592.5,-67 451.31,-67 451.31,-67 445.31,-67 439.31,-61 439.31,-55 439.31,-55 439.31,-43 439.31,-43 439.31,-37 445.31,-31 451.31,-31 451.31,-31 592.5,-31 592.5,-31 598.5,-31 604.5,-37 604.5,-43 604.5,-43 604.5,-55 604.5,-55 604.5,-61 598.5,-67 592.5,-67"/>
+<text xml:space="preserve" text-anchor="middle" x="521.91" y="-44.8" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="14.00" fill="#1f3340">sync_simple_transforms</text>
+</a>
+</g>
+</g>
+<!-- node_System(SystemKey(2v1))&#45;&gt;node_System(SystemKey(3v1)) -->
+<g id="edge2" class="edge">
+<title>node_System(SystemKey(2v1))-&gt;node_System(SystemKey(3v1))</title>
+<g id="a_edge2"><a xlink:title="propagate_parent_transforms → sync_simple_transforms">
+<path fill="none" stroke="#334155" stroke-width="2" d="M404.1,-49C411.36,-49 418.67,-49 425.9,-49"/>
+<polygon fill="#334155" stroke="#334155" stroke-width="2" points="425.79,-52.5 435.79,-49 425.79,-45.5 425.79,-52.5"/>
+</a>
+</g>
+</g>
+<!-- set_marker_node_Set(SystemSetKey(7v1)) -->
+<!-- node_System(SystemKey(5v1)) -->
+<g id="node6" class="node">
+<title>node_System(SystemKey(5v1))</title>
+<g id="a_node6"><a xlink:title="bevy_render::camera::camera_system">
+<path fill="#eff3f8" stroke="#3567a6" stroke-width="1.6" d="M129.61,-167C129.61,-167 44.03,-167 44.03,-167 38.03,-167 32.03,-161 32.03,-155 32.03,-155 32.03,-143 32.03,-143 32.03,-137 38.03,-131 44.03,-131 44.03,-131 129.61,-131 129.61,-131 135.61,-131 141.61,-137 141.61,-143 141.61,-143 141.61,-155 141.61,-155 141.61,-161 135.61,-167 129.61,-167"/>
+<text xml:space="preserve" text-anchor="middle" x="86.82" y="-144.8" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="14.00" fill="#1f3340">camera_system</text>
+</a>
+</g>
+</g>
+<!-- node_System(SystemKey(4v1)) -->
+<g id="node7" class="node">
+<title>node_System(SystemKey(4v1))</title>
+<g id="a_node7"><a xlink:title="bevy_input_focus::set_initial_focus">
+<path fill="#eff3f8" stroke="#3567a6" stroke-width="1.6" d="M133.85,-244C133.85,-244 39.79,-244 39.79,-244 33.79,-244 27.79,-238 27.79,-232 27.79,-232 27.79,-220 27.79,-220 27.79,-214 33.79,-208 39.79,-208 39.79,-208 133.85,-208 133.85,-208 139.85,-208 145.85,-214 145.85,-220 145.85,-220 145.85,-232 145.85,-232 145.85,-238 139.85,-244 133.85,-244"/>
+<text xml:space="preserve" text-anchor="middle" x="86.82" y="-221.8" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="14.00" fill="#1f3340">set_initial_focus</text>
+</a>
+</g>
+</g>
+<g id="schedule-f99f9dd1f6d73085-cluster-title-0" class="schedule-cluster-title" data-cluster-id="clust1" data-cluster-name="clusternode_Set(SystemSetKey(2v1))"><g id="schedule-f99f9dd1f6d73085-cluster-title-0-a_clust1"><a xlink:title="Propagate"><polygon fill="#f3f4f6" stroke="none" points="276.52,-79.2 276.52,-96 354.5,-96 354.5,-79.2 276.52,-79.2"/><text xml:space="preserve" text-anchor="start" x="287.52" y="-82" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="14.00" fill="#1f3340">Propagate</text></a></g></g><g id="schedule-f99f9dd1f6d73085-cluster-title-1" class="schedule-cluster-title" data-cluster-id="clust2" data-cluster-name="clusternode_Set(SystemSetKey(7v1))"><g id="schedule-f99f9dd1f6d73085-cluster-title-1-a_clust2"><a xlink:title="CameraUpdateSystems"><polygon fill="#f3f4f6" stroke="none" points="8,-179.2 8,-196 166.63,-196 166.63,-179.2 8,-179.2"/><text xml:space="preserve" text-anchor="start" x="22" y="-182" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="14.00" fill="#1f3340">CameraUpdateSystems</text></a></g></g></g>
+</svg>

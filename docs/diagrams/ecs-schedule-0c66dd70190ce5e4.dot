@@ -1,0 +1,35 @@
+digraph "" {
+	"compound"="true";
+	"splines"="spline";
+	"rankdir"="LR";
+	"bgcolor"="#0d1117";
+	"fontname"="Helvetica";
+	"nodesep"="0.15";
+	edge ["penwidth"="2"];
+	node ["shape"="box", "style"="filled"];
+	subgraph "clusternode_Set(SystemSetKey(2v1))" {
+		"style"="rounded,filled";
+		"label"="Prepare";
+		"tooltip"="Prepare";
+		"fillcolor"="#ffffff44";
+		"fontcolor"="#ffffff";
+		"color"="#ffffff50";
+		"penwidth"="2";
+		"set_marker_node_Set(SystemSetKey(2v1))" ["style"="invis", "label"="", "shape"="point"]
+		"node_System(SystemKey(1v1))" ["label"="prepare_egui_transforms_system", "tooltip"="bevy_egui::render::systems::prepare_egui_transforms_system", "fillcolor"="#eff1f3", "fontname"="Helvetica", "fontcolor"="#15191d", "color"="#b4bec7", "penwidth"="1"]
+	}
+	
+	subgraph "clusternode_Set(SystemSetKey(4v1))" {
+		"style"="rounded,filled";
+		"label"="Queue";
+		"tooltip"="Queue";
+		"fillcolor"="#ffffff44";
+		"fontcolor"="#ffffff";
+		"color"="#ffffff50";
+		"penwidth"="2";
+		"set_marker_node_Set(SystemSetKey(4v1))" ["style"="invis", "label"="", "shape"="point"]
+		"node_System(SystemKey(2v1))" ["label"="queue_bind_groups_system", "tooltip"="bevy_egui::render::systems::queue_bind_groups_system", "fillcolor"="#eff1f3", "fontname"="Helvetica", "fontcolor"="#15191d", "color"="#b4bec7", "penwidth"="1"]
+		"node_System(SystemKey(3v1))" ["label"="queue_pipelines_system", "tooltip"="bevy_egui::render::systems::queue_pipelines_system", "fillcolor"="#eff1f3", "fontname"="Helvetica", "fontcolor"="#15191d", "color"="#b4bec7", "penwidth"="1"]
+	}
+	
+}

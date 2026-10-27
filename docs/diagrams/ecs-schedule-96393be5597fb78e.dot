@@ -1,0 +1,21 @@
+digraph "" {
+	"compound"="true";
+	"splines"="spline";
+	"rankdir"="LR";
+	"bgcolor"="#0d1117";
+	"fontname"="Helvetica";
+	"nodesep"="0.15";
+	edge ["penwidth"="2"];
+	node ["shape"="box", "style"="filled"];
+	"node_System(SystemKey(1v1))" ["label"="spawn_gizmo_meshes", "tooltip"="bevy_gizmos_render::transform_gizmo_render::spawn_gizmo_meshes"]
+	"node_System(SystemKey(2v1))" ["label"="spawn_mouse_pointer", "tooltip"="bevy_picking::input::spawn_mouse_pointer"]
+	"node_System(SystemKey(3v1))" ["label"="log_world_inspector", "tooltip"="demo::inspector::log_world_inspector"]
+	"node_System(SystemKey(4v1))" ["label"="log_policy", "tooltip"="demo::window_policy::log_policy"]
+	"node_System(SystemKey(5v1))" ["label"="log_simulation_timestep", "tooltip"="demo::settings::frame_pacing::log_simulation_timestep"]
+	"node_System(SystemKey(6v1))" ["label"="log_configuration", "tooltip"="demo::character::log_configuration"]
+	"node_System(SystemKey(7v1))" ["label"="log_pose_synchronization", "tooltip"="demo::first_person::log_pose_synchronization"]
+	"node_System(SystemKey(8v1))" ["label"="log_asset_requests", "tooltip"="demo::scene_assembly::assets::log_asset_requests"]
+	"node_System(SystemKey(9v1))" ["label"="spawn_lighting", "tooltip"="demo::scene_assembly::loading::spawn_lighting"]
+	"node_System(SystemKey(10v1))" ["label"="spawn_menu_controller", "tooltip"="demo::ui::navigation::spawn_menu_controller"]
+	"node_System(SystemKey(11v1))" ["label"="preload_sounds", "tooltip"="demo::audio::playback::preload_sounds"]
+}

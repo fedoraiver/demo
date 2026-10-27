@@ -30,19 +30,9 @@
 ---
 flowchart LR
   accTitle: UiWidgetsPlugins · 对象关系
-  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  accDescr: 插件单卡；完整说明、契约、归属及源码在右侧查看。
   %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
-  classDef node_plugin fill:#F1F3F6,stroke:#4A6389,stroke-width:2.2px,color:#1F3340
   classDef node_plugin_group fill:#F4F2F6,stroke:#735C93,stroke-width:2.2px,color:#1F3340
-  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: fr-rect, label: "**UiWidgetsPlugins**<br/>注册无样式UI控件插件组。" }
   class n0 node_plugin_group
-  n1@{ shape: fr-rect, label: "**DefaultPlugins**<br/>提供窗口、时间、资产、动画与渲染基础设<br/>施。" }
-  class n1 node_plugin_group
-  n2@{ shape: fr-rect, label: "**ButtonPlugin**<br/>为原生按钮注册六个事件Observer。" }
-  class n2 node_plugin
-  n1 e0@--> n0
-  class e0 edge_registration
-  n0 e1@--> n2
-  class e1 edge_registration

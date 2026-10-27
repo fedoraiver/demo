@@ -57,10 +57,8 @@ flowchart LR
   class n5 node_system
   n6@{ shape: rounded, label: "**suspend_controls**<br/>停用玩法输入并释放光标。" }
   class n6 node_system
-  n7@{ shape: hex, label: "**release_pointer_for_inspector**<br/>释放光标以允许操作世界检查器。" }
-  class n7 node_observer
-  n8@{ shape: rounded, label: "**resume_capture**<br/>重置光标捕获并丢弃自由光标阶段位移。" }
-  class n8 node_system
+  n7@{ shape: rounded, label: "**resume_capture**<br/>重置光标捕获并丢弃自由光标阶段位移。" }
+  class n7 node_system
   n0 e0@-->|"可能挂载于"| n1
   class e0 edge_reference
   n2 e1@-->|"可变访问"| n0
@@ -77,13 +75,11 @@ flowchart LR
   class e6 edge_write
   n7 e7@-->|"可变访问"| n0
   class e7 edge_write
-  n8 e8@-->|"可变访问"| n0
-  class e8 edge_write
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
   e3@{ curve: basis }
   e4@{ curve: basis }
+  e5@{ curve: basis }
   e6@{ curve: basis }
   e7@{ curve: basis }
-  e8@{ curve: basis }

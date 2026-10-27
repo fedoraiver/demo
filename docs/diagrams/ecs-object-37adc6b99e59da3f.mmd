@@ -30,26 +30,9 @@
 ---
 flowchart LR
   accTitle: InteractionPlugin · 对象关系
-  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  accDescr: 插件单卡；完整说明、契约、归属及源码在右侧查看。
   %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
-  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
   classDef node_plugin fill:#F1F3F6,stroke:#4A6389,stroke-width:2.2px,color:#1F3340
-  classDef node_plugin_group fill:#F4F2F6,stroke:#735C93,stroke-width:2.2px,color:#1F3340
-  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: fr-rect, label: "**InteractionPlugin**<br/>生成悬停状态、指针事件和消息缓冲。" }
   class n0 node_plugin
-  n1@{ shape: fr-rect, label: "**DefaultPickingPlugins**<br/>注册指针输入、Picking和交互插件。" }
-  class n1 node_plugin_group
-  n2@{ shape: rounded, label: "**pointer_events**<br/>生成指针EntityEvent并同时发布对<br/>应Message。" }
-  class n2 node_system
-  n3@{ shape: rounded, label: "**update_is_hovered**<br/>按鼠标HoverMap及祖先关系替换已<br/>有Hovered值。" }
-  class n3 node_system
-  n1 e0@--> n0
-  class e0 edge_registration
-  n0 e1@--> n2
-  class e1 edge_registration
-  n0 e2@--> n3
-  class e2 edge_registration
-  e1@{ curve: basis }
-  e2@{ curve: basis }

@@ -25,7 +25,7 @@
       "useMaxWidth": false,
       "curve": "linear"
     },
-    "themeCSS": "#object-134fe9172a5a5bc1-e10{marker-start:url(#object-134fe9172a5a5bc1_flowchart-v2-pointStart)!important}\n#object-134fe9172a5a5bc1_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}"
+    "themeCSS": "#object-134fe9172a5a5bc1-e8{marker-start:url(#object-134fe9172a5a5bc1_flowchart-v2-pointStart)!important}\n#object-134fe9172a5a5bc1_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}"
   }
 }
 ---
@@ -34,7 +34,6 @@ flowchart LR
   accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
   %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
   classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
-  classDef node_observer fill:#F4F1F9,stroke:#7B4DB2,stroke-width:1.6px,color:#1F3340
   classDef node_entity fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
   classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
   classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
@@ -53,35 +52,29 @@ flowchart LR
   n3@{ shape: rounded, label: "**sync_mouse_capture**<br/>来自第一人称控制 ↗：管理光标捕获及玩法<br/>输入启停。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**filter_captured_egui_input**<br/>来自第一人称控制 ↗：隔离游戏操作与检查<br/>器界面输入。" }
+  n4@{ shape: rounded, label: "**sync_context**<br/>来自菜单与界面 ↗：跟随窗口焦点启停菜单<br/>输入。" }
   class n4 node_system
   class n4 external_node
-  n5@{ shape: rounded, label: "**sync_context**<br/>来自菜单与界面 ↗：跟随窗口焦点启停菜单<br/>输入。" }
+  n5@{ shape: rounded, label: "**pointer_interaction**<br/>来自菜单与界面 ↗：将真实鼠标交互转换为<br/>共享菜单请求。" }
   class n5 node_system
   class n5 external_node
-  n6@{ shape: rounded, label: "**pointer_interaction**<br/>来自菜单与界面 ↗：将真实鼠标交互转换为<br/>共享菜单请求。" }
+  n6@{ shape: rounded, label: "**rebuild_page**<br/>来自菜单与界面 ↗：按页面结构变化重建菜<br/>单界面。" }
   class n6 node_system
   class n6 external_node
-  n7@{ shape: rounded, label: "**rebuild_page**<br/>来自菜单与界面 ↗：按页面结构变化重建菜<br/>单界面。" }
+  n7@{ shape: rounded, label: "**sample_slider_pointer**<br/>来自菜单与界面 ↗：从光标位置生成音量采<br/>样与释放请求。" }
   class n7 node_system
   class n7 external_node
-  n8@{ shape: hex, label: "**release_pointer_for_inspector**<br/>来自第一人称控制 ↗：释放光标以允许操作<br/>世界检查器。" }
-  class n8 node_observer
+  n8@{ shape: rounded, label: "**install_native_policy**<br/>来自窗口策略 ↗：安装并维护原生窗口比例<br/>与尺寸策略。" }
+  class n8 node_system
   class n8 external_node
-  n9@{ shape: rounded, label: "**sample_slider_pointer**<br/>来自菜单与界面 ↗：从光标位置生成音量采<br/>样与释放请求。" }
+  n9@{ shape: rounded, label: "**clear_cancelled_primary_presses**<br/>来自菜单与界面 ↗：清理被取消、失焦或离<br/>窗的菜单主键按压。" }
   class n9 node_system
   class n9 external_node
-  n10@{ shape: rounded, label: "**install_native_policy**<br/>来自窗口策略 ↗：安装并维护原生窗口比例<br/>与尺寸策略。" }
-  class n10 node_system
+  n10@{ shape: lin-rect, label: "**EguiPreUpdateSet::ProcessInput**<br/>来自Egui / Inspector ↗：将窗口和设备<br/>输入转换为检查器界面输入。" }
+  class n10 node_system_set
   class n10 external_node
-  n11@{ shape: rounded, label: "**clear_cancelled_primary_presses**<br/>来自菜单与界面 ↗：清理被取消、失焦或离<br/>窗的菜单主键按压。" }
+  n11@{ shape: rounded, label: "**dispatch_focused_**<br/>**input#lt;KeyboardInput#gt;**<br/>将键盘消息转为焦点实体上的键盘事件。" }
   class n11 node_system
-  class n11 external_node
-  n12@{ shape: lin-rect, label: "**EguiPreUpdateSet::ProcessInput**<br/>来自Egui / Inspector ↗：将窗口和设备<br/>输入转换为检查器界面输入。" }
-  class n12 node_system_set
-  class n12 external_node
-  n13@{ shape: rounded, label: "**dispatch_focused_**<br/>**input#lt;KeyboardInput#gt;**<br/>将键盘消息转为焦点实体上的键盘事件。" }
-  class n13 node_system
   n1 e0@-->|"应用尺寸"| n0
   class e0 edge_write
   n0 e1@-->|"可能挂载于"| n2
@@ -96,30 +89,24 @@ flowchart LR
   class e5 edge_read
   n0 e6@-->|"查询访问"| n7
   class e6 edge_read
-  n0 e7@-->|"查询访问"| n8
-  class e7 edge_read
-  n0 e8@-->|"查询访问"| n9
+  n8 e7@-->|"可变访问"| n0
+  class e7 edge_write
+  n8 e8@---|"查询访问"| n0
   class e8 edge_read
-  n10 e9@-->|"可变访问"| n0
-  class e9 edge_write
-  n10 e10@---|"查询访问"| n0
+  n0 e9@-->|"查询访问"| n9
+  class e9 edge_read
+  n0 e10@-->|"查询访问"| n10
   class e10 edge_read
   n0 e11@-->|"查询访问"| n11
   class e11 edge_read
-  n0 e12@-->|"查询访问"| n12
-  class e12 edge_read
-  n0 e13@-->|"查询访问"| n13
-  class e13 edge_read
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
   e3@{ curve: basis }
   e4@{ curve: basis }
-  e5@{ curve: basis }
-  e7@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: bumpX }
   e8@{ curve: basis }
-  e9@{ curve: bumpX }
+  e9@{ curve: basis }
   e10@{ curve: basis }
   e11@{ curve: basis }
-  e12@{ curve: basis }
-  e13@{ curve: basis }

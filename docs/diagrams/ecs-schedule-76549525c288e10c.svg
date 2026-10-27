@@ -1,0 +1,41 @@
+<svg width="167" height="185" viewBox="0.00 0.00 167.00 185.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="schedule-76549525c288e10c" role="img" aria-label="schedule-76549525c288e10c" data-diagram-engine="graphviz">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 181)">
+<polygon fill="#f6f8fb" stroke="none" points="-4,4 -4,-181 162.69,-181 162.69,4 -4,4"/>
+<!-- node_System(SystemKey(1v1)) -->
+<g id="node1" class="node">
+<title>node_System(SystemKey(1v1))</title>
+<g id="a_node1"><a xlink:title="demo::game_flow::pause_simulation">
+<path fill="#eff3f8" stroke="#3567a6" stroke-width="1.6" d="M128.82,-36C128.82,-36 29.87,-36 29.87,-36 23.87,-36 17.87,-30 17.87,-24 17.87,-24 17.87,-12 17.87,-12 17.87,-6 23.87,0 29.87,0 29.87,0 128.82,0 128.82,0 134.82,0 140.82,-6 140.82,-12 140.82,-12 140.82,-24 140.82,-24 140.82,-30 134.82,-36 128.82,-36"/>
+<text xml:space="preserve" text-anchor="middle" x="79.34" y="-13.8" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="14.00" fill="#1f3340">pause_simulation</text>
+</a>
+</g>
+</g>
+<!-- node_System(SystemKey(2v1)) -->
+<g id="node2" class="node">
+<title>node_System(SystemKey(2v1))</title>
+<g id="a_node2"><a xlink:title="demo::character::lifecycle::clear_character_intents">
+<path fill="#eff3f8" stroke="#3567a6" stroke-width="1.6" d="M146.69,-83C146.69,-83 12,-83 12,-83 6,-83 0,-77 0,-71 0,-71 0,-59 0,-59 0,-53 6,-47 12,-47 12,-47 146.69,-47 146.69,-47 152.69,-47 158.69,-53 158.69,-59 158.69,-59 158.69,-71 158.69,-71 158.69,-77 152.69,-83 146.69,-83"/>
+<text xml:space="preserve" text-anchor="middle" x="79.34" y="-60.8" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="14.00" fill="#1f3340">clear_character_intents</text>
+</a>
+</g>
+</g>
+<!-- node_System(SystemKey(3v1)) -->
+<g id="node3" class="node">
+<title>node_System(SystemKey(3v1))</title>
+<g id="a_node3"><a xlink:title="demo::first_person::suspend_controls">
+<path fill="#eff3f8" stroke="#3567a6" stroke-width="1.6" d="M128.43,-130C128.43,-130 30.26,-130 30.26,-130 24.26,-130 18.26,-124 18.26,-118 18.26,-118 18.26,-106 18.26,-106 18.26,-100 24.26,-94 30.26,-94 30.26,-94 128.43,-94 128.43,-94 134.43,-94 140.43,-100 140.43,-106 140.43,-106 140.43,-118 140.43,-118 140.43,-124 134.43,-130 128.43,-130"/>
+<text xml:space="preserve" text-anchor="middle" x="79.34" y="-107.8" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="14.00" fill="#1f3340">suspend_controls</text>
+</a>
+</g>
+</g>
+<!-- node_System(SystemKey(4v1)) -->
+<g id="node4" class="node">
+<title>node_System(SystemKey(4v1))</title>
+<g id="a_node4"><a xlink:title="demo::ui::lifecycle::show_pause_menu">
+<path fill="#eff3f8" stroke="#3567a6" stroke-width="1.6" d="M132.81,-177C132.81,-177 25.87,-177 25.87,-177 19.87,-177 13.87,-171 13.87,-165 13.87,-165 13.87,-153 13.87,-153 13.87,-147 19.87,-141 25.87,-141 25.87,-141 132.81,-141 132.81,-141 138.81,-141 144.81,-147 144.81,-153 144.81,-153 144.81,-165 144.81,-165 144.81,-171 138.81,-177 132.81,-177"/>
+<text xml:space="preserve" text-anchor="middle" x="79.34" y="-154.8" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="14.00" fill="#1f3340">show_pause_menu</text>
+</a>
+</g>
+</g>
+</g>
+</svg>

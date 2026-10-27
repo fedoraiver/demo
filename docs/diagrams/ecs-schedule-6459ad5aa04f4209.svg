@@ -1,0 +1,324 @@
+<svg width="1026" height="248" viewBox="0.00 0.00 1026.00 248.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="schedule-6459ad5aa04f4209" role="img" aria-label="schedule-6459ad5aa04f4209" data-diagram-engine="graphviz">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 244)">
+<polygon fill="#f6f8fb" stroke="none" points="-4,4 -4,-244 1022.27,-244 1022.27,4 -4,4"/>
+<g id="clust1" class="cluster">
+<title>clusternode_Set(SystemSetKey(1v1))</title>
+<g id="a_clust1"><a xlink:title="Prepass">
+<path fill="#f3f4f6" stroke="#6a778c" stroke-width="1.6" d="M30.51,-118C30.51,-118 85.29,-118 85.29,-118 91.29,-118 97.29,-124 97.29,-130 97.29,-130 97.29,-151 97.29,-151 97.29,-157 91.29,-163 85.29,-163 85.29,-163 30.51,-163 30.51,-163 24.51,-163 18.51,-157 18.51,-151 18.51,-151 18.51,-130 18.51,-130 18.51,-124 24.51,-118 30.51,-118"/>
+
+
+</a>
+</g>
+</g>
+<g id="clust2" class="cluster">
+<title>clusternode_Set(SystemSetKey(2v1))</title>
+<g id="a_clust2"><a xlink:title="MainPass">
+<path fill="#f3f4f6" stroke="#6a778c" stroke-width="1.6" d="M154.8,-100C154.8,-100 515.71,-100 515.71,-100 521.71,-100 527.71,-106 527.71,-112 527.71,-112 527.71,-180 527.71,-180 527.71,-186 521.71,-192 515.71,-192 515.71,-192 154.8,-192 154.8,-192 148.8,-192 142.8,-186 142.8,-180 142.8,-180 142.8,-112 142.8,-112 142.8,-106 148.8,-100 154.8,-100"/>
+
+
+</a>
+</g>
+</g>
+<g id="clust3" class="cluster">
+<title>clusternode_Set(SystemSetKey(3v1))</title>
+<g id="a_clust3"><a xlink:title="EarlyPostProcess">
+<path fill="#f3f4f6" stroke="#6a778c" stroke-width="1.6" d="M373.23,-47C373.23,-47 488.45,-47 488.45,-47 494.45,-47 500.45,-53 500.45,-59 500.45,-59 500.45,-80 500.45,-80 500.45,-86 494.45,-92 488.45,-92 488.45,-92 373.23,-92 373.23,-92 367.23,-92 361.23,-86 361.23,-80 361.23,-80 361.23,-59 361.23,-59 361.23,-53 367.23,-47 373.23,-47"/>
+
+
+</a>
+</g>
+</g>
+<g id="clust4" class="cluster">
+<title>clusternode_Set(SystemSetKey(4v1))</title>
+<g id="a_clust4"><a xlink:title="PostProcess">
+<path fill="#f3f4f6" stroke="#6a778c" stroke-width="1.6" d="M589.72,-72C589.72,-72 998.27,-72 998.27,-72 1004.27,-72 1010.27,-78 1010.27,-84 1010.27,-84 1010.27,-184 1010.27,-184 1010.27,-190 1004.27,-196 998.27,-196 998.27,-196 589.72,-196 589.72,-196 583.72,-196 577.72,-190 577.72,-184 577.72,-184 577.72,-84 577.72,-84 577.72,-78 583.72,-72 589.72,-72"/>
+
+
+</a>
+</g>
+</g>
+<!-- set_marker_node_Set(SystemSetKey(1v1)) -->
+<!-- set_marker_node_Set(SystemSetKey(2v1)) -->
+<!-- set_marker_node_Set(SystemSetKey(1v1))&#45;&gt;set_marker_node_Set(SystemSetKey(2v1)) -->
+<g id="edge2" class="edge">
+<title>set_marker_node_Set(SystemSetKey(1v1))-&gt;set_marker_node_Set(SystemSetKey(2v1))</title>
+<g id="a_edge2"><a xlink:title="Prepass → MainPass">
+<path fill="none" stroke="#334155" stroke-width="2" d="M97.28,-123.2C107.62,-121.96 119.03,-120.63 130.17,-119.38"/>
+<polygon fill="#334155" stroke="#334155" stroke-width="2" points="130.23,-122.9 139.79,-118.33 129.47,-115.94 130.23,-122.9"/>
+</a>
+</g>
+</g>
+<!-- set_marker_node_Set(SystemSetKey(3v1)) -->
+<!-- set_marker_node_Set(SystemSetKey(2v1))&#45;&gt;set_marker_node_Set(SystemSetKey(3v1)) -->
+<g id="edge18" class="edge">
+<title>set_marker_node_Set(SystemSetKey(2v1))-&gt;set_marker_node_Set(SystemSetKey(3v1))</title>
+<g id="a_edge18"><a xlink:title="MainPass → EarlyPostProcess">
+<path fill="none" stroke="#334155" stroke-width="2" d="M266.71,-100C289.91,-93.87 320.52,-85.77 348.92,-78.26"/>
+<polygon fill="#334155" stroke="#334155" stroke-width="2" points="349.54,-81.72 358.31,-75.78 347.75,-74.95 349.54,-81.72"/>
+</a>
+</g>
+</g>
+<!-- node_System(SystemKey(13v1)) -->
+<g id="node17" class="node">
+<title>node_System(SystemKey(13v1))</title>
+<g id="a_node17"><a xlink:title="bevy_egui::render::render_pass::egui_pass">
+<path fill="#eff3f8" stroke="#3567a6" stroke-width="1.6" d="M456.47,-36C456.47,-36 404.21,-36 404.21,-36 398.21,-36 392.21,-30 392.21,-24 392.21,-24 392.21,-12 392.21,-12 392.21,-6 398.21,0 404.21,0 404.21,0 456.47,0 456.47,0 462.47,0 468.47,-6 468.47,-12 468.47,-12 468.47,-24 468.47,-24 468.47,-30 462.47,-36 456.47,-36"/>
+<text xml:space="preserve" text-anchor="middle" x="430.34" y="-13.8" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="14.00" fill="#1f3340">egui_pass</text>
+</a>
+</g>
+</g>
+<!-- set_marker_node_Set(SystemSetKey(2v1))&#45;&gt;node_System(SystemKey(13v1)) -->
+<g id="edge11" class="edge">
+<title>set_marker_node_Set(SystemSetKey(2v1))-&gt;node_System(SystemKey(13v1))</title>
+<g id="a_edge11"><a xlink:title="MainPass → egui_pass">
+<path fill="none" stroke="#334155" stroke-width="2" d="M243.58,-100C264.46,-86.14 304.29,-60.99 340.97,-45 353.1,-39.71 366.59,-35.03 379.31,-31.11"/>
+<polygon fill="#334155" stroke="#334155" stroke-width="2" points="380.18,-34.5 388.78,-28.31 378.2,-27.79 380.18,-34.5"/>
+</a>
+</g>
+</g>
+<!-- node_System(SystemKey(1v1)) -->
+<g id="node3" class="node">
+<title>node_System(SystemKey(1v1))</title>
+<g id="a_node3"><a xlink:title="bevy_core_pipeline::core_2d::main_opaque_pass_2d_node::main_opaque_pass_2d">
+<path fill="#eff3f8" stroke="#3567a6" stroke-width="1.6" d="M292.97,-159C292.97,-159 162.8,-159 162.8,-159 156.8,-159 150.8,-153 150.8,-147 150.8,-147 150.8,-135 150.8,-135 150.8,-129 156.8,-123 162.8,-123 162.8,-123 292.97,-123 292.97,-123 298.97,-123 304.97,-129 304.97,-135 304.97,-135 304.97,-147 304.97,-147 304.97,-153 298.97,-159 292.97,-159"/>
+<text xml:space="preserve" text-anchor="middle" x="227.88" y="-136.8" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="14.00" fill="#1f3340">main_opaque_pass_2d</text>
+</a>
+</g>
+</g>
+<!-- node_System(SystemKey(2v1)) -->
+<g id="node4" class="node">
+<title>node_System(SystemKey(2v1))</title>
+<g id="a_node4"><a xlink:title="bevy_core_pipeline::core_2d::main_transparent_pass_2d_node::main_transparent_pass_2d">
+<path fill="#eff3f8" stroke="#3567a6" stroke-width="1.6" d="M507.71,-159C507.71,-159 352.97,-159 352.97,-159 346.97,-159 340.97,-153 340.97,-147 340.97,-147 340.97,-135 340.97,-135 340.97,-129 346.97,-123 352.97,-123 352.97,-123 507.71,-123 507.71,-123 513.71,-123 519.71,-129 519.71,-135 519.71,-135 519.71,-147 519.71,-147 519.71,-153 513.71,-159 507.71,-159"/>
+<text xml:space="preserve" text-anchor="middle" x="430.34" y="-136.8" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="14.00" fill="#1f3340">main_transparent_pass_2d</text>
+</a>
+</g>
+</g>
+<!-- node_System(SystemKey(1v1))&#45;&gt;node_System(SystemKey(2v1)) -->
+<g id="edge9" class="edge">
+<title>node_System(SystemKey(1v1))-&gt;node_System(SystemKey(2v1))</title>
+<g id="a_edge9"><a xlink:title="main_opaque_pass_2d → main_transparent_pass_2d">
+<path fill="none" stroke="#334155" stroke-width="2" d="M305.53,-141C312.73,-141 320.11,-141 327.49,-141"/>
+<polygon fill="#334155" stroke="#334155" stroke-width="2" points="327.31,-144.5 337.31,-141 327.31,-137.5 327.31,-144.5"/>
+</a>
+</g>
+</g>
+<!-- set_marker_node_Set(SystemSetKey(4v1)) -->
+<!-- set_marker_node_Set(SystemSetKey(3v1))&#45;&gt;set_marker_node_Set(SystemSetKey(4v1)) -->
+<g id="edge4" class="edge">
+<title>set_marker_node_Set(SystemSetKey(3v1))-&gt;set_marker_node_Set(SystemSetKey(4v1))</title>
+<g id="a_edge4"><a xlink:title="EarlyPostProcess → PostProcess">
+<path fill="none" stroke="#334155" stroke-width="2" d="M500.45,-66.56C522.02,-69.55 545.31,-72.77 565,-75.49"/>
+<polygon fill="#334155" stroke="#334155" stroke-width="2" points="564.34,-78.94 574.73,-76.84 565.3,-72 564.34,-78.94"/>
+</a>
+</g>
+</g>
+<!-- node_System(SystemKey(4v1)) -->
+<g id="node12" class="node">
+<title>node_System(SystemKey(4v1))</title>
+<g id="a_node12"><a xlink:title="bevy_core_pipeline::upscaling::node::upscaling">
+<path fill="#eff3f8" stroke="#3567a6" stroke-width="1.6" d="M900.27,-64C900.27,-64 849.58,-64 849.58,-64 843.58,-64 837.58,-58 837.58,-52 837.58,-52 837.58,-40 837.58,-40 837.58,-34 843.58,-28 849.58,-28 849.58,-28 900.27,-28 900.27,-28 906.27,-28 912.27,-34 912.27,-40 912.27,-40 912.27,-52 912.27,-52 912.27,-58 906.27,-64 900.27,-64"/>
+<text xml:space="preserve" text-anchor="middle" x="874.93" y="-41.8" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="14.00" fill="#1f3340">upscaling</text>
+</a>
+</g>
+</g>
+<!-- set_marker_node_Set(SystemSetKey(4v1))&#45;&gt;node_System(SystemKey(4v1)) -->
+<g id="edge10" class="edge">
+<title>set_marker_node_Set(SystemSetKey(4v1))-&gt;node_System(SystemKey(4v1))</title>
+<g id="a_edge10"><a xlink:title="PostProcess → upscaling">
+<path fill="none" stroke="#334155" stroke-width="2" d="M790.56,-72C794.27,-71.37 797.95,-70.71 801.58,-70 809.16,-68.53 817.04,-66.48 824.7,-64.19"/>
+<polygon fill="#334155" stroke="#334155" stroke-width="2" points="825.51,-67.6 833.98,-61.24 823.39,-60.93 825.51,-67.6"/>
+</a>
+</g>
+</g>
+<!-- node_System(SystemKey(11v1)) -->
+<g id="node15" class="node">
+<title>node_System(SystemKey(11v1))</title>
+<g id="a_node15"><a xlink:title="bevy_ui_render::render_pass::ui_pass">
+<path fill="#eff3f8" stroke="#3567a6" stroke-width="1.6" d="M772.91,-64C772.91,-64 734.99,-64 734.99,-64 728.99,-64 722.99,-58 722.99,-52 722.99,-52 722.99,-40 722.99,-40 722.99,-34 728.99,-28 734.99,-28 734.99,-28 772.91,-28 772.91,-28 778.91,-28 784.91,-34 784.91,-40 784.91,-40 784.91,-52 784.91,-52 784.91,-58 778.91,-64 772.91,-64"/>
+<text xml:space="preserve" text-anchor="middle" x="753.95" y="-41.8" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="14.00" fill="#1f3340">ui_pass</text>
+</a>
+</g>
+</g>
+<!-- set_marker_node_Set(SystemSetKey(4v1))&#45;&gt;node_System(SystemKey(11v1)) -->
+<g id="edge12" class="edge">
+<title>set_marker_node_Set(SystemSetKey(4v1))-&gt;node_System(SystemKey(11v1))</title>
+<g id="a_edge12"><a xlink:title="PostProcess → ui_pass">
+<path fill="none" stroke="#334155" stroke-width="2" d="M652.59,-72C670.45,-67.38 691.72,-61.87 710.08,-57.11"/>
+<polygon fill="#334155" stroke="#334155" stroke-width="2" points="710.6,-60.59 719.41,-54.69 708.85,-53.81 710.6,-60.59"/>
+</a>
+</g>
+</g>
+<!-- node_System(SystemKey(3v1)) -->
+<g id="node7" class="node">
+<title>node_System(SystemKey(3v1))</title>
+<g id="a_node7"><a xlink:title="bevy_core_pipeline::tonemapping::node::tonemapping">
+<path fill="#eff3f8" stroke="#3567a6" stroke-width="1.6" d="M789.58,-163C789.58,-163 718.32,-163 718.32,-163 712.32,-163 706.32,-157 706.32,-151 706.32,-151 706.32,-139 706.32,-139 706.32,-133 712.32,-127 718.32,-127 718.32,-127 789.58,-127 789.58,-127 795.58,-127 801.58,-133 801.58,-139 801.58,-139 801.58,-151 801.58,-151 801.58,-157 795.58,-163 789.58,-163"/>
+<text xml:space="preserve" text-anchor="middle" x="753.95" y="-140.8" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="14.00" fill="#1f3340">tonemapping</text>
+</a>
+</g>
+</g>
+<!-- node_System(SystemKey(8v1)) -->
+<g id="node9" class="node">
+<title>node_System(SystemKey(8v1))</title>
+<g id="a_node9"><a xlink:title="bevy_anti_alias::fxaa::node::fxaa">
+<path fill="#eff3f8" stroke="#3567a6" stroke-width="1.6" d="M889.93,-116C889.93,-116 859.93,-116 859.93,-116 853.93,-116 847.93,-110 847.93,-104 847.93,-104 847.93,-92 847.93,-92 847.93,-86 853.93,-80 859.93,-80 859.93,-80 889.93,-80 889.93,-80 895.93,-80 901.93,-86 901.93,-92 901.93,-92 901.93,-104 901.93,-104 901.93,-110 895.93,-116 889.93,-116"/>
+<text xml:space="preserve" text-anchor="middle" x="874.93" y="-93.8" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="14.00" fill="#1f3340">fxaa</text>
+</a>
+</g>
+</g>
+<!-- node_System(SystemKey(3v1))&#45;&gt;node_System(SystemKey(8v1)) -->
+<g id="edge3" class="edge">
+<title>node_System(SystemKey(3v1))-&gt;node_System(SystemKey(8v1))</title>
+<g id="a_edge3"><a xlink:title="SystemTypeSet:bevy_core_pipeline::tonemapping::node::tonemapping → fxaa">
+<path fill="none" stroke="#334155" stroke-width="2" d="M802.31,-126.29C813.31,-121.95 824.87,-117.38 835.43,-113.21"/>
+<polygon fill="#334155" stroke="#334155" stroke-width="2" points="836.43,-116.57 844.45,-109.64 833.86,-110.06 836.43,-116.57"/>
+</a>
+</g>
+</g>
+<!-- node_System(SystemKey(9v1)) -->
+<g id="node10" class="node">
+<title>node_System(SystemKey(9v1))</title>
+<g id="a_node10"><a xlink:title="bevy_anti_alias::smaa::smaa">
+<path fill="#eff3f8" stroke="#3567a6" stroke-width="1.6" d="M889.93,-163C889.93,-163 859.93,-163 859.93,-163 853.93,-163 847.93,-157 847.93,-151 847.93,-151 847.93,-139 847.93,-139 847.93,-133 853.93,-127 859.93,-127 859.93,-127 889.93,-127 889.93,-127 895.93,-127 901.93,-133 901.93,-139 901.93,-139 901.93,-151 901.93,-151 901.93,-157 895.93,-163 889.93,-163"/>
+<text xml:space="preserve" text-anchor="middle" x="874.93" y="-140.8" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="14.00" fill="#1f3340">smaa</text>
+</a>
+</g>
+</g>
+<!-- node_System(SystemKey(3v1))&#45;&gt;node_System(SystemKey(9v1)) -->
+<g id="edge16" class="edge">
+<title>node_System(SystemKey(3v1))-&gt;node_System(SystemKey(9v1))</title>
+<g id="a_edge16"><a xlink:title="SystemTypeSet:bevy_core_pipeline::tonemapping::node::tonemapping → smaa">
+<path fill="none" stroke="#334155" stroke-width="2" d="M802.31,-145C812.95,-145 824.12,-145 834.4,-145"/>
+<polygon fill="#334155" stroke="#334155" stroke-width="2" points="834.24,-148.5 844.24,-145 834.24,-141.5 834.24,-148.5"/>
+</a>
+</g>
+</g>
+<!-- node_System(SystemKey(6v1)) -->
+<g id="node8" class="node">
+<title>node_System(SystemKey(6v1))</title>
+<g id="a_node8"><a xlink:title="bevy_post_process::bloom::bloom">
+<path fill="#eff3f8" stroke="#3567a6" stroke-width="1.6" d="M628.3,-163C628.3,-163 597.72,-163 597.72,-163 591.72,-163 585.72,-157 585.72,-151 585.72,-151 585.72,-139 585.72,-139 585.72,-133 591.72,-127 597.72,-127 597.72,-127 628.3,-127 628.3,-127 634.3,-127 640.3,-133 640.3,-139 640.3,-139 640.3,-151 640.3,-151 640.3,-157 634.3,-163 628.3,-163"/>
+<text xml:space="preserve" text-anchor="middle" x="613.01" y="-140.8" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="14.00" fill="#1f3340">bloom</text>
+</a>
+</g>
+</g>
+<!-- node_System(SystemKey(6v1))&#45;&gt;node_System(SystemKey(3v1)) -->
+<g id="edge6" class="edge">
+<title>node_System(SystemKey(6v1))-&gt;node_System(SystemKey(3v1))</title>
+<g id="a_edge6"><a xlink:title="bloom → SystemTypeSet:bevy_core_pipeline::tonemapping::node::tonemapping">
+<path fill="none" stroke="#334155" stroke-width="2" d="M640.8,-145C655.59,-145 674.58,-145 692.72,-145"/>
+<polygon fill="#334155" stroke="#334155" stroke-width="2" points="692.68,-148.5 702.68,-145 692.68,-141.5 692.68,-148.5"/>
+</a>
+</g>
+</g>
+<!-- node_System(SystemKey(7v1)) -->
+<g id="node14" class="node">
+<title>node_System(SystemKey(7v1))</title>
+<g id="a_node14"><a xlink:title="bevy_post_process::effect_stack::post_processing">
+<path fill="#eff3f8" stroke="#3567a6" stroke-width="1.6" d="M658.32,-240C658.32,-240 567.71,-240 567.71,-240 561.71,-240 555.71,-234 555.71,-228 555.71,-228 555.71,-216 555.71,-216 555.71,-210 561.71,-204 567.71,-204 567.71,-204 658.32,-204 658.32,-204 664.32,-204 670.32,-210 670.32,-216 670.32,-216 670.32,-228 670.32,-228 670.32,-234 664.32,-240 658.32,-240"/>
+<text xml:space="preserve" text-anchor="middle" x="613.01" y="-217.8" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="14.00" fill="#1f3340">post_processing</text>
+</a>
+</g>
+</g>
+<!-- node_System(SystemKey(6v1))&#45;&gt;node_System(SystemKey(7v1)) -->
+<g id="edge14" class="edge">
+<title>node_System(SystemKey(6v1))-&gt;node_System(SystemKey(7v1))</title>
+<g id="a_edge14"><a xlink:title="SystemTypeSet:bevy_post_process::bloom::bloom → post_processing">
+<path fill="none" stroke="#334155" stroke-width="2" d="M613.01,-163.65C613.01,-172.53 613.01,-181.41 613.01,-190.3"/>
+<polygon fill="#334155" stroke="#334155" stroke-width="2" points="609.51,-190.28 613.01,-200.28 616.51,-190.28 609.51,-190.28"/>
+</a>
+</g>
+</g>
+<!-- node_System(SystemKey(10v1)) -->
+<g id="node11" class="node">
+<title>node_System(SystemKey(10v1))</title>
+<g id="a_node11"><a xlink:title="bevy_anti_alias::contrast_adaptive_sharpening::node::cas">
+<path fill="#eff3f8" stroke="#3567a6" stroke-width="1.6" d="M990.27,-139C990.27,-139 960.27,-139 960.27,-139 954.27,-139 948.27,-133 948.27,-127 948.27,-127 948.27,-115 948.27,-115 948.27,-109 954.27,-103 960.27,-103 960.27,-103 990.27,-103 990.27,-103 996.27,-103 1002.27,-109 1002.27,-115 1002.27,-115 1002.27,-127 1002.27,-127 1002.27,-133 996.27,-139 990.27,-139"/>
+<text xml:space="preserve" text-anchor="middle" x="975.27" y="-116.8" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="14.00" fill="#1f3340">cas</text>
+</a>
+</g>
+</g>
+<!-- node_System(SystemKey(8v1))&#45;&gt;node_System(SystemKey(10v1)) -->
+<g id="edge15" class="edge">
+<title>node_System(SystemKey(8v1))-&gt;node_System(SystemKey(10v1))</title>
+<g id="a_edge15"><a xlink:title="SystemTypeSet:bevy_anti_alias::fxaa::node::fxaa → cas">
+<path fill="none" stroke="#334155" stroke-width="2" d="M902.54,-104.22C912.6,-106.58 924.26,-109.3 935.23,-111.87"/>
+<polygon fill="#334155" stroke="#334155" stroke-width="2" points="934.16,-115.21 944.69,-114.08 935.75,-108.4 934.16,-115.21"/>
+</a>
+</g>
+</g>
+<!-- node_System(SystemKey(9v1))&#45;&gt;node_System(SystemKey(10v1)) -->
+<g id="edge17" class="edge">
+<title>node_System(SystemKey(9v1))-&gt;node_System(SystemKey(10v1))</title>
+<g id="a_edge17"><a xlink:title="SystemTypeSet:bevy_anti_alias::smaa::smaa → cas">
+<path fill="none" stroke="#334155" stroke-width="2" d="M902.54,-138.51C912.6,-136.05 924.26,-133.2 935.23,-130.53"/>
+<polygon fill="#334155" stroke="#334155" stroke-width="2" points="935.81,-133.99 944.7,-128.22 934.15,-127.19 935.81,-133.99"/>
+</a>
+</g>
+</g>
+<!-- node_System(SystemKey(5v1)) -->
+<g id="node13" class="node">
+<title>node_System(SystemKey(5v1))</title>
+<g id="a_node13"><a xlink:title="bevy_post_process::msaa_writeback::msaa_writeback">
+<path fill="#eff3f8" stroke="#3567a6" stroke-width="1.6" d="M102.8,-110C102.8,-110 12,-110 12,-110 6,-110 0,-104 0,-98 0,-98 0,-86 0,-86 0,-80 6,-74 12,-74 12,-74 102.8,-74 102.8,-74 108.8,-74 114.8,-80 114.8,-86 114.8,-86 114.8,-98 114.8,-98 114.8,-104 108.8,-110 102.8,-110"/>
+<text xml:space="preserve" text-anchor="middle" x="57.4" y="-87.8" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="14.00" fill="#1f3340">msaa_writeback</text>
+</a>
+</g>
+</g>
+<!-- node_System(SystemKey(5v1))&#45;&gt;set_marker_node_Set(SystemSetKey(2v1)) -->
+<g id="edge13" class="edge">
+<title>node_System(SystemKey(5v1))-&gt;set_marker_node_Set(SystemSetKey(2v1))</title>
+<g id="a_edge13"><a xlink:title="msaa_writeback → MainPass">
+<path fill="none" stroke="#334155" stroke-width="2" d="M115.44,-98.09C120.27,-98.61 125.22,-99.14 130.24,-99.68"/>
+<polygon fill="#334155" stroke="#334155" stroke-width="2" points="129.47,-103.11 139.79,-100.7 130.22,-96.15 129.47,-103.11"/>
+</a>
+</g>
+</g>
+<!-- node_System(SystemKey(7v1))&#45;&gt;node_System(SystemKey(3v1)) -->
+<g id="edge1" class="edge">
+<title>node_System(SystemKey(7v1))-&gt;node_System(SystemKey(3v1))</title>
+<g id="a_edge1"><a xlink:title="post_processing → SystemTypeSet:bevy_core_pipeline::tonemapping::node::tonemapping">
+<path fill="none" stroke="#334155" stroke-width="2" d="M659.8,-203.25C663.4,-201.55 666.94,-199.79 670.32,-198 685.65,-189.89 701.86,-179.85 715.81,-170.69"/>
+<polygon fill="#334155" stroke="#334155" stroke-width="2" points="717.57,-173.73 723.95,-165.28 713.68,-167.91 717.57,-173.73"/>
+</a>
+</g>
+</g>
+<!-- node_System(SystemKey(11v1))&#45;&gt;node_System(SystemKey(4v1)) -->
+<g id="edge8" class="edge">
+<title>node_System(SystemKey(11v1))-&gt;node_System(SystemKey(4v1))</title>
+<g id="a_edge8"><a xlink:title="ui_pass → SystemTypeSet:bevy_core_pipeline::upscaling::node::upscaling">
+<path fill="none" stroke="#334155" stroke-width="2" d="M785.59,-46C797.36,-46 811.12,-46 824.23,-46"/>
+<polygon fill="#334155" stroke="#334155" stroke-width="2" points="824,-49.5 834,-46 824,-42.5 824,-49.5"/>
+</a>
+</g>
+</g>
+<!-- node_System(SystemKey(12v1)) -->
+<g id="node16" class="node">
+<title>node_System(SystemKey(12v1))</title>
+<g id="a_node16"><a xlink:title="bevy_egui::render::render_pass::prepare_egui_pass">
+<path fill="#eff3f8" stroke="#3567a6" stroke-width="1.6" d="M280.73,-36C280.73,-36 175.03,-36 175.03,-36 169.03,-36 163.03,-30 163.03,-24 163.03,-24 163.03,-12 163.03,-12 163.03,-6 169.03,0 175.03,0 175.03,0 280.73,0 280.73,0 286.73,0 292.73,-6 292.73,-12 292.73,-12 292.73,-24 292.73,-24 292.73,-30 286.73,-36 280.73,-36"/>
+<text xml:space="preserve" text-anchor="middle" x="227.88" y="-13.8" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="14.00" fill="#1f3340">prepare_egui_pass</text>
+</a>
+</g>
+</g>
+<!-- node_System(SystemKey(12v1))&#45;&gt;node_System(SystemKey(13v1)) -->
+<g id="edge7" class="edge">
+<title>node_System(SystemKey(12v1))-&gt;node_System(SystemKey(13v1))</title>
+<g id="a_edge7"><a xlink:title="prepare_egui_pass → egui_pass">
+<path fill="none" stroke="#334155" stroke-width="2" d="M293.41,-18C320.99,-18 352.73,-18 378.59,-18"/>
+<polygon fill="#334155" stroke="#334155" stroke-width="2" points="378.5,-21.5 388.5,-18 378.5,-14.5 378.5,-21.5"/>
+</a>
+</g>
+</g>
+<!-- node_System(SystemKey(13v1))&#45;&gt;node_System(SystemKey(4v1)) -->
+<g id="edge5" class="edge">
+<title>node_System(SystemKey(13v1))-&gt;node_System(SystemKey(4v1))</title>
+<g id="a_edge5"><a xlink:title="egui_pass → SystemTypeSet:bevy_core_pipeline::upscaling::node::upscaling">
+<path fill="none" stroke="#334155" stroke-width="2" d="M469.23,-14.87C536.62,-10.12 681.49,-3.54 801.58,-23 809.08,-24.22 816.87,-26.05 824.44,-28.16"/>
+<polygon fill="#334155" stroke="#334155" stroke-width="2" points="823.4,-31.51 833.99,-31.05 825.43,-24.8 823.4,-31.51"/>
+</a>
+</g>
+</g>
+<g id="schedule-6459ad5aa04f4209-cluster-title-0" class="schedule-cluster-title" data-cluster-id="clust1" data-cluster-name="clusternode_Set(SystemSetKey(1v1))"><g id="schedule-6459ad5aa04f4209-cluster-title-0-a_clust1"><a xlink:title="Prepass"><polygon fill="#f3f4f6" stroke="none" points="26.51,-142.2 26.51,-159 89.29,-159 89.29,-142.2 26.51,-142.2"/><text xml:space="preserve" text-anchor="start" x="36.51" y="-145" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="14.00" fill="#1f3340">Prepass</text></a></g></g><g id="schedule-6459ad5aa04f4209-cluster-title-1" class="schedule-cluster-title" data-cluster-id="clust2" data-cluster-name="clusternode_Set(SystemSetKey(2v1))"><g id="schedule-6459ad5aa04f4209-cluster-title-1-a_clust2"><a xlink:title="MainPass"><polygon fill="#f3f4f6" stroke="none" points="297.03,-171.2 297.03,-188 373.48,-188 373.48,-171.2 297.03,-171.2"/><text xml:space="preserve" text-anchor="start" x="308.03" y="-174" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="14.00" fill="#1f3340">MainPass</text></a></g></g><g id="schedule-6459ad5aa04f4209-cluster-title-2" class="schedule-cluster-title" data-cluster-id="clust3" data-cluster-name="clusternode_Set(SystemSetKey(3v1))"><g id="schedule-6459ad5aa04f4209-cluster-title-2-a_clust3"><a xlink:title="EarlyPostProcess"><polygon fill="#f3f4f6" stroke="none" points="369.23,-71.2 369.23,-88 492.45,-88 492.45,-71.2 369.23,-71.2"/><text xml:space="preserve" text-anchor="start" x="382.23" y="-74" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="14.00" fill="#1f3340">EarlyPostProcess</text></a></g></g><g id="schedule-6459ad5aa04f4209-cluster-title-3" class="schedule-cluster-title" data-cluster-id="clust4" data-cluster-name="clusternode_Set(SystemSetKey(4v1))"><g id="schedule-6459ad5aa04f4209-cluster-title-3-a_clust4"><a xlink:title="PostProcess"><polygon fill="#f3f4f6" stroke="none" points="748.55,-175.2 748.55,-192 839.45,-192 839.45,-175.2 748.55,-175.2"/><text xml:space="preserve" text-anchor="start" x="760.55" y="-178" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="14.00" fill="#1f3340">PostProcess</text></a></g></g></g>
+</svg>

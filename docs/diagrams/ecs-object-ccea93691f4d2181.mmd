@@ -46,7 +46,7 @@ flowchart LR
   n1@{ shape: rounded, label: "**第一人称相机实体**<br/>来自场景装配 ↗：提供跟随角色的第一人称<br/>视角与观察输入状态。" }
   class n1 node_entity
   class n1 external_node
-  n2@{ shape: rounded, label: "**filter_captured_egui_input**<br/>来自第一人称控制 ↗：隔离游戏操作与检查<br/>器界面输入。" }
+  n2@{ shape: rounded, label: "**sync_mouse_capture**<br/>来自第一人称控制 ↗：管理光标捕获及玩法<br/>输入启停。" }
   class n2 node_system
   class n2 external_node
   n3@{ shape: lin-rect, label: "**EguiPreUpdateSet::ProcessInput**<br/>将窗口和设备输入转换为检查器界面输入。" }

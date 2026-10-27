@@ -212,6 +212,17 @@ test('Entity object validation accepts hidden component geometry while preservin
   assert.ok(views.find(view => view.objectId === 'actor.Flag').links.some(link => link.id === 'component-target'));
 });
 
+test('Plugin object validation rejects reintroduced neighbors and relations', () => {
+  for (const geometry of ['node', 'edge', 'schedule']) {
+    const { views, catalog } = entityObjectFixture(), plugin = views.find(view => view.objectId === 'plugin-ExamplePlugin');
+    assert.equal(checkObjectViews(views, catalog), catalog.objects.length);
+    if (geometry === 'node') plugin.nodes.push({ id: 'entity-actor', role: 'internal' });
+    else if (geometry === 'edge') plugin.links.push(catalog.links.find(link => link.operation === 'assembly'));
+    else plugin.scheduleLinks = [{ id: 'invented', from: 'a', to: 'b' }];
+    assert.throws(() => checkObjectViews(views, catalog), /Plugin object view must contain only its own card/);
+  }
+});
+
 test('Entity object validation rejects either a reintroduced Component card or an edge touching a hidden Component', () => {
   for (const geometry of ['node', 'edge']) {
     const { views, catalog } = entityObjectFixture(), actor = views.find(view => view.objectId === 'entity-actor');

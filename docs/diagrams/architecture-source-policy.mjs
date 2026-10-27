@@ -551,7 +551,7 @@ function sourcesForNode(record, registry, context, gaps) {
   }
   if (kind === 'app') {
     const file = context.read({ path: 'src/main.rs', line: 1 });
-    return [...[['App::new()', 'create', '创建 App'], ['.run();', 'run', '进入应用运行']].flatMap(([contains, role, label]) => context.resolveEvidence({ path: file.path, contains, role, label })), ...context.callsIn(file).filter(call => call.method === 'add_plugins').map(call => context.sourceAt(file, call.start, 'assembly', '应用装配：安装插件或插件组'))];
+    return [...[['App::new()', 'create', '创建 App'], ['LaunchMode::Game => app.run()', 'run', '进入游戏应用运行'], ['inspector::dump_schedules(&mut app, &directory)', 'run', '导出已注册调度并返回']].flatMap(([contains, role, label]) => context.resolveEvidence({ path: file.path, contains, role, label })), ...context.callsIn(file).filter(call => call.method === 'add_plugins').map(call => context.sourceAt(file, call.start, 'assembly', '应用装配：安装插件或插件组'))];
   }
   if (['system_group', 'observer_group', 'engine_flow', 'registration_helper'].includes(kind)) {
     const sources = [];

@@ -1,5 +1,5 @@
 // 每个触点独立保存；增减触点时重设基准，避免双指缩放退化为单指拖动。
-export function createArchitectureGestures({ canvas, window, hasDiagram, getViewport, setViewport, activate }) {
+export function createArchitectureGestures({ canvas, window, hasDiagram, getViewport, setViewport, activate, clampScale = value => Math.min(2.4, Math.max(.08, value)) }) {
   const pointers = new Map();
   let baseline = null, consumed = false;
   function rebase() {
@@ -37,7 +37,7 @@ export function createArchitectureGestures({ canvas, window, hasDiagram, getView
     const cx = (first.x + second.x) / 2 - rect.left, cy = (first.y + second.y) / 2 - rect.top;
     const distance = Math.hypot(first.x - second.x, first.y - second.y);
     const scale = baseline.count > 1 && baseline.distance > 0
-      ? Math.min(2.4, Math.max(.08, baseline.scale * distance / baseline.distance)) : baseline.scale;
+      ? clampScale(baseline.scale * distance / baseline.distance) : baseline.scale;
     setViewport({ scale, x: cx - (baseline.cx - baseline.x) * scale / baseline.scale,
       y: cy - (baseline.cy - baseline.y) * scale / baseline.scale });
     canvas.classList.add('dragging');

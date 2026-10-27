@@ -150,7 +150,6 @@ const actionObservers = [
   ['observe_jump', 'src/first_person/actions.rs', 'Fire<JumpAction>', 'Fire', 110],
   ['observe_interact', 'src/first_person/actions.rs', 'Fire<InteractAction>', 'Fire', 110],
   ['observe_look', 'src/first_person/camera.rs', 'Fire<LookAction>', 'Fire', 110],
-  ['observe_release_pointer', 'src/first_person/capture.rs', 'Fire<ReleasePointerAction>', 'Fire', 110],
   ...['previous', 'next', 'left', 'right', 'confirm', 'back'].map(name => [`observe_menu_${name}`, 'src/ui/navigation.rs', `Fire<${name[0].toUpperCase()}${name.slice(1)}Action>`, 'Fire', 110]),
 ];
 

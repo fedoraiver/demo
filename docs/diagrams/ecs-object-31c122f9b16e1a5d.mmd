@@ -51,9 +51,6 @@ flowchart LR
   n4@{ shape: lin-rect, label: "**EnhancedInputSystems::Update**<br/>来自Enhanced Input ↗：评估绑定输入并<br/>更新动作值与触发状态。" }
   class n4 node_system_set
   class n4 external_node
-  n5@{ shape: rounded, label: "**filter_captured_egui_input**<br/>来自第一人称控制 ↗：隔离游戏操作与检查<br/>器界面输入。" }
-  class n5 node_system
-  class n5 external_node
   n1 e0@-->|"访问声明"| n0
   class e0 edge_write
   n0 e1@-->|"访问声明"| n2
@@ -62,9 +59,5 @@ flowchart LR
   class e2 edge_read
   n0 e3@-->|"访问声明"| n4
   class e3 edge_read
-  n0 e4@-->|"访问声明"| n5
-  class e4 edge_read
   e1@{ curve: basis }
-  e2@{ curve: basis }
   e3@{ curve: basis }
-  e4@{ curve: basis }

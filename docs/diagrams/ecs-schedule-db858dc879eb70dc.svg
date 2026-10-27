@@ -1,0 +1,415 @@
+<svg width="1613" height="899" viewBox="0.00 0.00 1613.00 899.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="schedule-db858dc879eb70dc" role="img" aria-label="schedule-db858dc879eb70dc" data-diagram-engine="graphviz">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 895)">
+<polygon fill="#f6f8fb" stroke="none" points="-4,4 -4,-895 1609.44,-895 1609.44,4 -4,4"/>
+<g id="clust1" class="cluster">
+<title>clusternode_Set(SystemSetKey(5v1))</title>
+<g id="a_clust1"><a xlink:title="OnAppExitSystems">
+<path fill="#f3f4f6" stroke="#6a778c" stroke-width="1.6" d="M936.45,-8C936.45,-8 1212.21,-8 1212.21,-8 1218.21,-8 1224.21,-14 1224.21,-20 1224.21,-20 1224.21,-88 1224.21,-88 1224.21,-94 1218.21,-100 1212.21,-100 1212.21,-100 936.45,-100 936.45,-100 930.45,-100 924.45,-94 924.45,-88 924.45,-88 924.45,-20 924.45,-20 924.45,-14 930.45,-8 936.45,-8"/>
+
+
+</a>
+</g>
+</g>
+<g id="clust2" class="cluster">
+<title>clusternode_Set(SystemSetKey(7v1))</title>
+<g id="a_clust2"><a xlink:title="ValidateParentHasComponentSystems">
+<path fill="#f3f4f6" stroke="#6a778c" stroke-width="1.6" d="M57.66,-44C57.66,-44 380.69,-44 380.69,-44 386.69,-44 392.69,-50 392.69,-56 392.69,-56 392.69,-171 392.69,-171 392.69,-177 386.69,-183 380.69,-183 380.69,-183 57.66,-183 57.66,-183 51.66,-183 45.66,-177 45.66,-171 45.66,-171 45.66,-56 45.66,-56 45.66,-50 51.66,-44 57.66,-44"/>
+
+
+</a>
+</g>
+</g>
+<g id="clust3" class="cluster">
+<title>clusternode_Set(SystemSetKey(9v1))</title>
+<g id="a_clust3"><a xlink:title="ExitSystems">
+<path fill="#f3f4f6" stroke="#6a778c" stroke-width="1.6" d="M623.48,-8C623.48,-8 747.32,-8 747.32,-8 753.32,-8 759.32,-14 759.32,-20 759.32,-20 759.32,-88 759.32,-88 759.32,-94 753.32,-100 747.32,-100 747.32,-100 623.48,-100 623.48,-100 617.48,-100 611.48,-94 611.48,-88 611.48,-88 611.48,-20 611.48,-20 611.48,-14 617.48,-8 623.48,-8"/>
+
+
+</a>
+</g>
+</g>
+<g id="clust4" class="cluster">
+<title>clusternode_Set(SystemSetKey(16v1))</title>
+<g id="a_clust4"><a xlink:title="Update">
+<path fill="#f3f4f6" stroke="#6a778c" stroke-width="1.6" d="M168.88,-191C168.88,-191 269.47,-191 269.47,-191 275.47,-191 281.47,-197 281.47,-203 281.47,-203 281.47,-271 281.47,-271 281.47,-277 275.47,-283 269.47,-283 269.47,-283 168.88,-283 168.88,-283 162.88,-283 156.88,-277 156.88,-271 156.88,-271 156.88,-203 156.88,-203 156.88,-197 162.88,-191 168.88,-191"/>
+
+
+</a>
+</g>
+</g>
+<g id="clust5" class="cluster">
+<title>clusternode_Set(SystemSetKey(19v1))</title>
+<g id="a_clust5"><a xlink:title="GizmoMeshSystems">
+<path fill="#f3f4f6" stroke="#6a778c" stroke-width="1.6" d="M478.35,-416C478.35,-416 892.45,-416 892.45,-416 898.45,-416 904.45,-422 904.45,-428 904.45,-428 904.45,-684 904.45,-684 904.45,-690 898.45,-696 892.45,-696 892.45,-696 478.35,-696 478.35,-696 472.35,-696 466.35,-690 466.35,-684 466.35,-684 466.35,-428 466.35,-428 466.35,-422 472.35,-416 478.35,-416"/>
+
+
+</a>
+</g>
+</g>
+<!-- set_marker_node_Set(SystemSetKey(5v1)) -->
+<!-- node_System(SystemKey(10v1)) -->
+<g id="node22" class="node">
+<title>node_System(SystemKey(10v1))</title>
+<g id="a_node22"><a xlink:title="bevy_winit::system::despawn_windows">
+<path fill="#eff3f8" stroke="#3567a6" stroke-width="1.6" d="M1371.16,-90C1371.16,-90 1264.21,-90 1264.21,-90 1258.21,-90 1252.21,-84 1252.21,-78 1252.21,-78 1252.21,-66 1252.21,-66 1252.21,-60 1258.21,-54 1264.21,-54 1264.21,-54 1371.16,-54 1371.16,-54 1377.16,-54 1383.16,-60 1383.16,-66 1383.16,-66 1383.16,-78 1383.16,-78 1383.16,-84 1377.16,-90 1371.16,-90"/>
+<text xml:space="preserve" text-anchor="middle" x="1317.68" y="-67.8" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="14.00" fill="#1f3340">despawn_windows</text>
+</a>
+</g>
+</g>
+<!-- set_marker_node_Set(SystemSetKey(5v1))&#45;&gt;node_System(SystemKey(10v1)) -->
+<g id="edge3" class="edge">
+<title>set_marker_node_Set(SystemSetKey(5v1))-&gt;node_System(SystemKey(10v1))</title>
+<g id="a_edge3"><a xlink:title="OnAppExitSystems → despawn_windows">
+<path fill="none" stroke="#334155" stroke-width="2" d="M1224.21,-25C1242.42,-29.82 1261.19,-38.55 1277.02,-47.18"/>
+<polygon fill="#334155" stroke="#334155" stroke-width="2" points="1274.92,-50.02 1285.35,-51.91 1278.38,-43.93 1274.92,-50.02"/>
+</a>
+</g>
+</g>
+<!-- node_System(SystemKey(4v1)) -->
+<g id="node2" class="node">
+<title>node_System(SystemKey(4v1))</title>
+<g id="a_node2"><a xlink:title="bevy_time::delayed_commands::silence_delayed_command_queues_on_exit">
+<path fill="#eff3f8" stroke="#3567a6" stroke-width="1.6" d="M1204.21,-67C1204.21,-67 944.45,-67 944.45,-67 938.45,-67 932.45,-61 932.45,-55 932.45,-55 932.45,-43 932.45,-43 932.45,-37 938.45,-31 944.45,-31 944.45,-31 1204.21,-31 1204.21,-31 1210.21,-31 1216.21,-37 1216.21,-43 1216.21,-43 1216.21,-55 1216.21,-55 1216.21,-61 1210.21,-67 1204.21,-67"/>
+<text xml:space="preserve" text-anchor="middle" x="1074.33" y="-44.8" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="14.00" fill="#1f3340">silence_delayed_command_queues_on_exit</text>
+</a>
+</g>
+</g>
+<!-- set_marker_node_Set(SystemSetKey(7v1)) -->
+<!-- node_System(SystemKey(5v1)) -->
+<g id="node4" class="node">
+<title>node_System(SystemKey(5v1))</title>
+<g id="a_node4"><a xlink:title="bevy_app::hierarchy::check_parent_has_component&lt;bevy_transform::components::global_transform::GlobalTransform&gt;">
+<path fill="#eff3f8" stroke="#3567a6" stroke-width="1.6" d="M368.45,-103C368.45,-103 69.9,-103 69.9,-103 63.9,-103 57.9,-97 57.9,-91 57.9,-91 57.9,-79 57.9,-79 57.9,-73 63.9,-67 69.9,-67 69.9,-67 368.45,-67 368.45,-67 374.45,-67 380.45,-73 380.45,-79 380.45,-79 380.45,-91 380.45,-91 380.45,-97 374.45,-103 368.45,-103"/>
+<text xml:space="preserve" text-anchor="middle" x="219.17" y="-80.8" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="14.00" fill="#1f3340">check_parent_has_component&lt;GlobalTransform&gt;</text>
+</a>
+</g>
+</g>
+<!-- node_System(SystemKey(13v1)) -->
+<g id="node5" class="node">
+<title>node_System(SystemKey(13v1))</title>
+<g id="a_node5"><a xlink:title="bevy_app::hierarchy::check_parent_has_component&lt;bevy_camera::visibility::InheritedVisibility&gt;">
+<path fill="#eff3f8" stroke="#3567a6" stroke-width="1.6" d="M372.69,-150C372.69,-150 65.66,-150 65.66,-150 59.66,-150 53.66,-144 53.66,-138 53.66,-138 53.66,-126 53.66,-126 53.66,-120 59.66,-114 65.66,-114 65.66,-114 372.69,-114 372.69,-114 378.69,-114 384.69,-120 384.69,-126 384.69,-126 384.69,-138 384.69,-138 384.69,-144 378.69,-150 372.69,-150"/>
+<text xml:space="preserve" text-anchor="middle" x="219.17" y="-127.8" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="14.00" fill="#1f3340">check_parent_has_component&lt;InheritedVisibility&gt;</text>
+</a>
+</g>
+</g>
+<!-- set_marker_node_Set(SystemSetKey(9v1)) -->
+<!-- set_marker_node_Set(SystemSetKey(9v1))&#45;&gt;set_marker_node_Set(SystemSetKey(5v1)) -->
+<g id="edge7" class="edge">
+<title>set_marker_node_Set(SystemSetKey(9v1))-&gt;set_marker_node_Set(SystemSetKey(5v1))</title>
+<g id="a_edge7"><a xlink:title="ExitSystems → OnAppExitSystems">
+<path fill="none" stroke="#334155" stroke-width="2" d="M759.31,-18C802.37,-18 858.67,-18 911.68,-18"/>
+<polygon fill="#334155" stroke="#334155" stroke-width="2" points="911.43,-21.5 921.43,-18 911.43,-14.5 911.43,-21.5"/>
+</a>
+</g>
+</g>
+<!-- node_System(SystemKey(6v1)) -->
+<g id="node7" class="node">
+<title>node_System(SystemKey(6v1))</title>
+<g id="a_node7"><a xlink:title="bevy_window::system::exit_on_all_closed">
+<path fill="#eff3f8" stroke="#3567a6" stroke-width="1.6" d="M739.32,-67C739.32,-67 631.48,-67 631.48,-67 625.48,-67 619.48,-61 619.48,-55 619.48,-55 619.48,-43 619.48,-43 619.48,-37 625.48,-31 631.48,-31 631.48,-31 739.32,-31 739.32,-31 745.32,-31 751.32,-37 751.32,-43 751.32,-43 751.32,-55 751.32,-55 751.32,-61 745.32,-67 739.32,-67"/>
+<text xml:space="preserve" text-anchor="middle" x="685.4" y="-44.8" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="14.00" fill="#1f3340">exit_on_all_closed</text>
+</a>
+</g>
+</g>
+<!-- set_marker_node_Set(SystemSetKey(16v1)) -->
+<!-- node_System(SystemKey(12v1)) -->
+<g id="node9" class="node">
+<title>node_System(SystemKey(12v1))</title>
+<g id="a_node9"><a xlink:title="bevy_winit::cursor::update_cursors">
+<path fill="#eff3f8" stroke="#3567a6" stroke-width="1.6" d="M261.47,-250C261.47,-250 176.88,-250 176.88,-250 170.88,-250 164.88,-244 164.88,-238 164.88,-238 164.88,-226 164.88,-226 164.88,-220 170.88,-214 176.88,-214 176.88,-214 261.47,-214 261.47,-214 267.47,-214 273.47,-220 273.47,-226 273.47,-226 273.47,-238 273.47,-238 273.47,-244 267.47,-250 261.47,-250"/>
+<text xml:space="preserve" text-anchor="middle" x="219.17" y="-227.8" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="14.00" fill="#1f3340">update_cursors</text>
+</a>
+</g>
+</g>
+<!-- set_marker_node_Set(SystemSetKey(19v1)) -->
+<!-- node_System(SystemKey(15v1)) -->
+<g id="node11" class="node">
+<title>node_System(SystemKey(15v1))</title>
+<g id="a_node11"><a xlink:title="bevy_gizmos::update_gizmo_meshes&lt;bevy_light::gizmos::LightGizmoConfigGroup&gt;">
+<path fill="#eff3f8" stroke="#3567a6" stroke-width="1.6" d="M836.37,-475C836.37,-475 534.43,-475 534.43,-475 528.43,-475 522.43,-469 522.43,-463 522.43,-463 522.43,-451 522.43,-451 522.43,-445 528.43,-439 534.43,-439 534.43,-439 836.37,-439 836.37,-439 842.37,-439 848.37,-445 848.37,-451 848.37,-451 848.37,-463 848.37,-463 848.37,-469 842.37,-475 836.37,-475"/>
+<text xml:space="preserve" text-anchor="middle" x="685.4" y="-452.8" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="14.00" fill="#1f3340">update_gizmo_meshes&lt;LightGizmoConfigGroup&gt;</text>
+</a>
+</g>
+</g>
+<!-- node_System(SystemKey(18v1)) -->
+<g id="node12" class="node">
+<title>node_System(SystemKey(18v1))</title>
+<g id="a_node12"><a xlink:title="bevy_gizmos::update_gizmo_meshes&lt;bevy_gizmos::config::DefaultGizmoConfigGroup&gt;">
+<path fill="#eff3f8" stroke="#3567a6" stroke-width="1.6" d="M842.75,-522C842.75,-522 528.05,-522 528.05,-522 522.05,-522 516.05,-516 516.05,-510 516.05,-510 516.05,-498 516.05,-498 516.05,-492 522.05,-486 528.05,-486 528.05,-486 842.75,-486 842.75,-486 848.75,-486 854.75,-492 854.75,-498 854.75,-498 854.75,-510 854.75,-510 854.75,-516 848.75,-522 842.75,-522"/>
+<text xml:space="preserve" text-anchor="middle" x="685.4" y="-499.8" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="14.00" fill="#1f3340">update_gizmo_meshes&lt;DefaultGizmoConfigGroup&gt;</text>
+</a>
+</g>
+</g>
+<!-- node_System(SystemKey(20v1)) -->
+<g id="node13" class="node">
+<title>node_System(SystemKey(20v1))</title>
+<g id="a_node13"><a xlink:title="bevy_gizmos::update_gizmo_meshes&lt;bevy_gizmos::aabb::AabbGizmoConfigGroup&gt;">
+<path fill="#eff3f8" stroke="#3567a6" stroke-width="1.6" d="M836.08,-569C836.08,-569 534.72,-569 534.72,-569 528.72,-569 522.72,-563 522.72,-557 522.72,-557 522.72,-545 522.72,-545 522.72,-539 528.72,-533 534.72,-533 534.72,-533 836.08,-533 836.08,-533 842.08,-533 848.08,-539 848.08,-545 848.08,-545 848.08,-557 848.08,-557 848.08,-563 842.08,-569 836.08,-569"/>
+<text xml:space="preserve" text-anchor="middle" x="685.4" y="-546.8" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="14.00" fill="#1f3340">update_gizmo_meshes&lt;AabbGizmoConfigGroup&gt;</text>
+</a>
+</g>
+</g>
+<!-- node_System(SystemKey(22v1)) -->
+<g id="node14" class="node">
+<title>node_System(SystemKey(22v1))</title>
+<g id="a_node14"><a xlink:title="bevy_gizmos::update_gizmo_meshes&lt;bevy_gizmos::frustum::FrustumGizmoConfigGroup&gt;">
+<path fill="#eff3f8" stroke="#3567a6" stroke-width="1.6" d="M845.1,-616C845.1,-616 525.7,-616 525.7,-616 519.7,-616 513.7,-610 513.7,-604 513.7,-604 513.7,-592 513.7,-592 513.7,-586 519.7,-580 525.7,-580 525.7,-580 845.1,-580 845.1,-580 851.1,-580 857.1,-586 857.1,-592 857.1,-592 857.1,-604 857.1,-604 857.1,-610 851.1,-616 845.1,-616"/>
+<text xml:space="preserve" text-anchor="middle" x="685.4" y="-593.8" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="14.00" fill="#1f3340">update_gizmo_meshes&lt;FrustumGizmoConfigGroup&gt;</text>
+</a>
+</g>
+</g>
+<!-- node_System(SystemKey(25v1)) -->
+<g id="node15" class="node">
+<title>node_System(SystemKey(25v1))</title>
+<g id="a_node15"><a xlink:title="bevy_gizmos::update_gizmo_meshes&lt;bevy_gizmos::skinned_mesh_bounds::SkinnedMeshBoundsGizmoConfigGroup&gt;">
+<path fill="#eff3f8" stroke="#3567a6" stroke-width="1.6" d="M884.45,-663C884.45,-663 486.35,-663 486.35,-663 480.35,-663 474.35,-657 474.35,-651 474.35,-651 474.35,-639 474.35,-639 474.35,-633 480.35,-627 486.35,-627 486.35,-627 884.45,-627 884.45,-627 890.45,-627 896.45,-633 896.45,-639 896.45,-639 896.45,-651 896.45,-651 896.45,-657 890.45,-663 884.45,-663"/>
+<text xml:space="preserve" text-anchor="middle" x="685.4" y="-640.8" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="14.00" fill="#1f3340">update_gizmo_meshes&lt;SkinnedMeshBoundsGizmoConfigGroup&gt;</text>
+</a>
+</g>
+</g>
+<!-- node_System(SystemKey(1v1)) -->
+<g id="node16" class="node">
+<title>node_System(SystemKey(1v1))</title>
+<g id="a_node16"><a xlink:title="bevy_ecs::system::system_registry::despawn_unused_registered_systems">
+<path fill="#eff3f8" stroke="#3567a6" stroke-width="1.6" d="M329,-609C329,-609 109.34,-609 109.34,-609 103.34,-609 97.34,-603 97.34,-597 97.34,-597 97.34,-585 97.34,-585 97.34,-579 103.34,-573 109.34,-573 109.34,-573 329,-573 329,-573 335,-573 341,-579 341,-585 341,-585 341,-597 341,-597 341,-603 335,-609 329,-609"/>
+<text xml:space="preserve" text-anchor="middle" x="219.17" y="-586.8" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="14.00" fill="#1f3340">despawn_unused_registered_systems</text>
+</a>
+</g>
+</g>
+<!-- node_System(SystemKey(2v1)) -->
+<g id="node17" class="node">
+<title>node_System(SystemKey(2v1))</title>
+<g id="a_node17"><a xlink:title="bevy_app::task_pool_plugin::tick_global_task_pools">
+<path fill="#eff3f8" stroke="#3567a6" stroke-width="1.6" d="M286.27,-656C286.27,-656 152.08,-656 152.08,-656 146.08,-656 140.08,-650 140.08,-644 140.08,-644 140.08,-632 140.08,-632 140.08,-626 146.08,-620 152.08,-620 152.08,-620 286.27,-620 286.27,-620 292.27,-620 298.27,-626 298.27,-632 298.27,-632 298.27,-644 298.27,-644 298.27,-650 292.27,-656 286.27,-656"/>
+<text xml:space="preserve" text-anchor="middle" x="219.17" y="-633.8" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="14.00" fill="#1f3340">tick_global_task_pools</text>
+</a>
+</g>
+</g>
+<!-- node_System(SystemKey(3v1)) -->
+<g id="node18" class="node">
+<title>node_System(SystemKey(3v1))</title>
+<g id="a_node18"><a xlink:title="bevy_diagnostic::frame_count::update_frame_count">
+<path fill="#eff3f8" stroke="#3567a6" stroke-width="1.6" d="M277.74,-703C277.74,-703 160.6,-703 160.6,-703 154.6,-703 148.6,-697 148.6,-691 148.6,-691 148.6,-679 148.6,-679 148.6,-673 154.6,-667 160.6,-667 160.6,-667 277.74,-667 277.74,-667 283.74,-667 289.74,-673 289.74,-679 289.74,-679 289.74,-691 289.74,-691 289.74,-697 283.74,-703 277.74,-703"/>
+<text xml:space="preserve" text-anchor="middle" x="219.17" y="-680.8" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="14.00" fill="#1f3340">update_frame_count</text>
+</a>
+</g>
+</g>
+<!-- node_System(SystemKey(7v1)) -->
+<g id="node19" class="node">
+<title>node_System(SystemKey(7v1))</title>
+<g id="a_node19"><a xlink:title="bevy_window::system::close_when_requested">
+<path fill="#eff3f8" stroke="#3567a6" stroke-width="1.6" d="M284.14,-36C284.14,-36 154.21,-36 154.21,-36 148.21,-36 142.21,-30 142.21,-24 142.21,-24 142.21,-12 142.21,-12 142.21,-6 148.21,0 154.21,0 154.21,0 284.14,0 284.14,0 290.14,0 296.14,-6 296.14,-12 296.14,-12 296.14,-24 296.14,-24 296.14,-30 290.14,-36 284.14,-36"/>
+<text xml:space="preserve" text-anchor="middle" x="219.17" y="-13.8" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="14.00" fill="#1f3340">close_when_requested</text>
+</a>
+</g>
+</g>
+<!-- node_System(SystemKey(7v1))&#45;&gt;set_marker_node_Set(SystemSetKey(9v1)) -->
+<g id="edge2" class="edge">
+<title>node_System(SystemKey(7v1))-&gt;set_marker_node_Set(SystemSetKey(9v1))</title>
+<g id="a_edge2"><a xlink:title="close_when_requested → ExitSystems">
+<path fill="none" stroke="#334155" stroke-width="2" d="M296.83,-18C379.88,-18 512.07,-18 598.55,-18"/>
+<polygon fill="#334155" stroke="#334155" stroke-width="2" points="598.46,-21.5 608.46,-18 598.46,-14.5 598.46,-21.5"/>
+</a>
+</g>
+</g>
+<!-- node_System(SystemKey(8v1)) -->
+<g id="node20" class="node">
+<title>node_System(SystemKey(8v1))</title>
+<g id="a_node20"><a xlink:title="bevy_winit::system::changed_windows">
+<path fill="#eff3f8" stroke="#3567a6" stroke-width="1.6" d="M737.7,-144C737.7,-144 633.1,-144 633.1,-144 627.1,-144 621.1,-138 621.1,-132 621.1,-132 621.1,-120 621.1,-120 621.1,-114 627.1,-108 633.1,-108 633.1,-108 737.7,-108 737.7,-108 743.7,-108 749.7,-114 749.7,-120 749.7,-120 749.7,-132 749.7,-132 749.7,-138 743.7,-144 737.7,-144"/>
+<text xml:space="preserve" text-anchor="middle" x="685.4" y="-121.8" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="14.00" fill="#1f3340">changed_windows</text>
+</a>
+</g>
+</g>
+<!-- node_System(SystemKey(9v1)) -->
+<g id="node21" class="node">
+<title>node_System(SystemKey(9v1))</title>
+<g id="a_node21"><a xlink:title="bevy_winit::system::changed_cursor_options">
+<path fill="#eff3f8" stroke="#3567a6" stroke-width="1.6" d="M1144.92,-144C1144.92,-144 1003.74,-144 1003.74,-144 997.74,-144 991.74,-138 991.74,-132 991.74,-132 991.74,-120 991.74,-120 991.74,-114 997.74,-108 1003.74,-108 1003.74,-108 1144.92,-108 1144.92,-108 1150.92,-108 1156.92,-114 1156.92,-120 1156.92,-120 1156.92,-132 1156.92,-132 1156.92,-138 1150.92,-144 1144.92,-144"/>
+<text xml:space="preserve" text-anchor="middle" x="1074.33" y="-121.8" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="14.00" fill="#1f3340">changed_cursor_options</text>
+</a>
+</g>
+</g>
+<!-- node_System(SystemKey(8v1))&#45;&gt;node_System(SystemKey(9v1)) -->
+<g id="edge6" class="edge">
+<title>node_System(SystemKey(8v1))-&gt;node_System(SystemKey(9v1))</title>
+<g id="a_edge6"><a xlink:title="changed_windows → changed_cursor_options">
+<path fill="none" stroke="#334155" stroke-width="2" d="M750.29,-126C812.33,-126 907.26,-126 978.18,-126"/>
+<polygon fill="#334155" stroke="#334155" stroke-width="2" points="978.11,-129.5 988.11,-126 978.11,-122.5 978.11,-129.5"/>
+</a>
+</g>
+</g>
+<!-- node_System(SystemKey(9v1))&#45;&gt;node_System(SystemKey(10v1)) -->
+<g id="edge1" class="edge">
+<title>node_System(SystemKey(9v1))-&gt;node_System(SystemKey(10v1))</title>
+<g id="a_edge1"><a xlink:title="changed_cursor_options → despawn_windows">
+<path fill="none" stroke="#334155" stroke-width="2" d="M1157.69,-115.04C1179.45,-111.52 1202.83,-107.16 1224.21,-102 1233.12,-99.85 1242.41,-97.26 1251.52,-94.52"/>
+<polygon fill="#334155" stroke="#334155" stroke-width="2" points="1252.38,-97.92 1260.89,-91.61 1250.3,-91.23 1252.38,-97.92"/>
+</a>
+</g>
+</g>
+<!-- node_System(SystemKey(11v1)) -->
+<g id="node23" class="node">
+<title>node_System(SystemKey(11v1))</title>
+<g id="a_node23"><a xlink:title="bevy_winit::system::check_keyboard_focus_lost">
+<path fill="#eff3f8" stroke="#3567a6" stroke-width="1.6" d="M1593.44,-90C1593.44,-90 1431.16,-90 1431.16,-90 1425.16,-90 1419.16,-84 1419.16,-78 1419.16,-78 1419.16,-66 1419.16,-66 1419.16,-60 1425.16,-54 1431.16,-54 1431.16,-54 1593.44,-54 1593.44,-54 1599.44,-54 1605.44,-60 1605.44,-66 1605.44,-66 1605.44,-78 1605.44,-78 1605.44,-84 1599.44,-90 1593.44,-90"/>
+<text xml:space="preserve" text-anchor="middle" x="1512.3" y="-67.8" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="14.00" fill="#1f3340">check_keyboard_focus_lost</text>
+</a>
+</g>
+</g>
+<!-- node_System(SystemKey(10v1))&#45;&gt;node_System(SystemKey(11v1)) -->
+<g id="edge4" class="edge">
+<title>node_System(SystemKey(10v1))-&gt;node_System(SystemKey(11v1))</title>
+<g id="a_edge4"><a xlink:title="despawn_windows → check_keyboard_focus_lost">
+<path fill="none" stroke="#334155" stroke-width="2" d="M1383.89,-72C1390.94,-72 1398.23,-72 1405.6,-72"/>
+<polygon fill="#334155" stroke="#334155" stroke-width="2" points="1405.44,-75.5 1415.44,-72 1405.44,-68.5 1405.44,-75.5"/>
+</a>
+</g>
+</g>
+<!-- node_System(SystemKey(14v1)) -->
+<g id="node24" class="node">
+<title>node_System(SystemKey(14v1))</title>
+<g id="a_node24"><a xlink:title="bevy_gizmos::propagate_gizmos&lt;bevy_light::gizmos::LightGizmoConfigGroup, bevy_time::fixed::Fixed&gt;">
+<path fill="#eff3f8" stroke="#3567a6" stroke-width="1.6" d="M378.26,-562C378.26,-562 60.09,-562 60.09,-562 54.09,-562 48.09,-556 48.09,-550 48.09,-550 48.09,-538 48.09,-538 48.09,-532 54.09,-526 60.09,-526 60.09,-526 378.26,-526 378.26,-526 384.26,-526 390.26,-532 390.26,-538 390.26,-538 390.26,-550 390.26,-550 390.26,-556 384.26,-562 378.26,-562"/>
+<text xml:space="preserve" text-anchor="middle" x="219.17" y="-539.8" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="14.00" fill="#1f3340">propagate_gizmos&lt;LightGizmoConfigGroup, Fixed&gt;</text>
+</a>
+</g>
+</g>
+<!-- node_System(SystemKey(14v1))&#45;&gt;set_marker_node_Set(SystemSetKey(19v1)) -->
+<g id="edge8" class="edge">
+<title>node_System(SystemKey(14v1))-&gt;set_marker_node_Set(SystemSetKey(19v1))</title>
+<g id="a_edge8"><a xlink:title="propagate_gizmos&lt;LightGizmoConfigGroup, Fixed&gt; → GizmoMeshSystems">
+<path fill="none" stroke="#334155" stroke-width="2" d="M390.93,-545.7C408.13,-540.29 424.38,-532.35 438.35,-521 466.06,-498.49 441.67,-467.28 457.35,-443.41"/>
+<polygon fill="#334155" stroke="#334155" stroke-width="2" points="459.87,-445.83 464.25,-436.19 454.81,-440.99 459.87,-445.83"/>
+</a>
+</g>
+</g>
+<!-- node_System(SystemKey(16v1)) -->
+<g id="node25" class="node">
+<title>node_System(SystemKey(16v1))</title>
+<g id="a_node25"><a xlink:title="bevy_text::pipeline::trim_source_cache">
+<path fill="#eff3f8" stroke="#3567a6" stroke-width="1.6" d="M272.8,-750C272.8,-750 165.55,-750 165.55,-750 159.55,-750 153.55,-744 153.55,-738 153.55,-738 153.55,-726 153.55,-726 153.55,-720 159.55,-714 165.55,-714 165.55,-714 272.8,-714 272.8,-714 278.8,-714 284.8,-720 284.8,-726 284.8,-726 284.8,-738 284.8,-738 284.8,-744 278.8,-750 272.8,-750"/>
+<text xml:space="preserve" text-anchor="middle" x="219.17" y="-727.8" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="14.00" fill="#1f3340">trim_source_cache</text>
+</a>
+</g>
+</g>
+<!-- node_System(SystemKey(17v1)) -->
+<g id="node26" class="node">
+<title>node_System(SystemKey(17v1))</title>
+<g id="a_node26"><a xlink:title="bevy_gizmos::propagate_gizmos&lt;bevy_gizmos::config::DefaultGizmoConfigGroup, bevy_time::fixed::Fixed&gt;">
+<path fill="#eff3f8" stroke="#3567a6" stroke-width="1.6" d="M384.64,-515C384.64,-515 53.7,-515 53.7,-515 47.7,-515 41.7,-509 41.7,-503 41.7,-503 41.7,-491 41.7,-491 41.7,-485 47.7,-479 53.7,-479 53.7,-479 384.64,-479 384.64,-479 390.64,-479 396.64,-485 396.64,-491 396.64,-491 396.64,-503 396.64,-503 396.64,-509 390.64,-515 384.64,-515"/>
+<text xml:space="preserve" text-anchor="middle" x="219.17" y="-492.8" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="14.00" fill="#1f3340">propagate_gizmos&lt;DefaultGizmoConfigGroup, Fixed&gt;</text>
+</a>
+</g>
+</g>
+<!-- node_System(SystemKey(17v1))&#45;&gt;set_marker_node_Set(SystemSetKey(19v1)) -->
+<g id="edge9" class="edge">
+<title>node_System(SystemKey(17v1))-&gt;set_marker_node_Set(SystemSetKey(19v1))</title>
+<g id="a_edge9"><a xlink:title="propagate_gizmos&lt;DefaultGizmoConfigGroup, Fixed&gt; → GizmoMeshSystems">
+<path fill="none" stroke="#334155" stroke-width="2" d="M397.39,-491.61C411.77,-487.25 425.63,-481.49 438.35,-474 452.51,-465.65 450.34,-452.94 456.76,-442.76"/>
+<polygon fill="#334155" stroke="#334155" stroke-width="2" points="459.09,-445.37 464.11,-436.04 454.37,-440.2 459.09,-445.37"/>
+</a>
+</g>
+</g>
+<!-- node_System(SystemKey(19v1)) -->
+<g id="node27" class="node">
+<title>node_System(SystemKey(19v1))</title>
+<g id="a_node27"><a xlink:title="bevy_gizmos::propagate_gizmos&lt;bevy_gizmos::aabb::AabbGizmoConfigGroup, bevy_time::fixed::Fixed&gt;">
+<path fill="#eff3f8" stroke="#3567a6" stroke-width="1.6" d="M377.98,-468C377.98,-468 60.37,-468 60.37,-468 54.37,-468 48.37,-462 48.37,-456 48.37,-456 48.37,-444 48.37,-444 48.37,-438 54.37,-432 60.37,-432 60.37,-432 377.98,-432 377.98,-432 383.98,-432 389.98,-438 389.98,-444 389.98,-444 389.98,-456 389.98,-456 389.98,-462 383.98,-468 377.98,-468"/>
+<text xml:space="preserve" text-anchor="middle" x="219.17" y="-445.8" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="14.00" fill="#1f3340">propagate_gizmos&lt;AabbGizmoConfigGroup, Fixed&gt;</text>
+</a>
+</g>
+</g>
+<!-- node_System(SystemKey(19v1))&#45;&gt;set_marker_node_Set(SystemSetKey(19v1)) -->
+<g id="edge5" class="edge">
+<title>node_System(SystemKey(19v1))-&gt;set_marker_node_Set(SystemSetKey(19v1))</title>
+<g id="a_edge5"><a xlink:title="propagate_gizmos&lt;AabbGizmoConfigGroup, Fixed&gt; → GizmoMeshSystems">
+<path fill="none" stroke="#334155" stroke-width="2" d="M390.64,-438.29C411.65,-437 432.99,-435.76 453.61,-434.66"/>
+<polygon fill="#334155" stroke="#334155" stroke-width="2" points="453.52,-438.17 463.32,-434.16 453.16,-431.18 453.52,-438.17"/>
+</a>
+</g>
+</g>
+<!-- node_System(SystemKey(21v1)) -->
+<g id="node28" class="node">
+<title>node_System(SystemKey(21v1))</title>
+<g id="a_node28"><a xlink:title="bevy_gizmos::propagate_gizmos&lt;bevy_gizmos::frustum::FrustumGizmoConfigGroup, bevy_time::fixed::Fixed&gt;">
+<path fill="#eff3f8" stroke="#3567a6" stroke-width="1.6" d="M386.99,-421C386.99,-421 51.36,-421 51.36,-421 45.36,-421 39.36,-415 39.36,-409 39.36,-409 39.36,-397 39.36,-397 39.36,-391 45.36,-385 51.36,-385 51.36,-385 386.99,-385 386.99,-385 392.99,-385 398.99,-391 398.99,-397 398.99,-397 398.99,-409 398.99,-409 398.99,-415 392.99,-421 386.99,-421"/>
+<text xml:space="preserve" text-anchor="middle" x="219.17" y="-398.8" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="14.00" fill="#1f3340">propagate_gizmos&lt;FrustumGizmoConfigGroup, Fixed&gt;</text>
+</a>
+</g>
+</g>
+<!-- node_System(SystemKey(21v1))&#45;&gt;set_marker_node_Set(SystemSetKey(19v1)) -->
+<g id="edge11" class="edge">
+<title>node_System(SystemKey(21v1))-&gt;set_marker_node_Set(SystemSetKey(19v1))</title>
+<g id="a_edge11"><a xlink:title="propagate_gizmos&lt;FrustumGizmoConfigGroup, Fixed&gt; → GizmoMeshSystems">
+<path fill="none" stroke="#334155" stroke-width="2" d="M399.66,-411.89C422.59,-413.03 446.24,-414.2 469.66,-415.36"/>
+<polygon fill="#334155" stroke="#334155" stroke-width="2" points="469.45,-418.85 479.61,-415.85 469.8,-411.86 469.45,-418.85"/>
+</a>
+</g>
+</g>
+<!-- node_System(SystemKey(23v1)) -->
+<g id="node29" class="node">
+<title>node_System(SystemKey(23v1))</title>
+<g id="a_node29"><a xlink:title="bevy_gizmos::global::flush_global_gizmos">
+<path fill="#eff3f8" stroke="#3567a6" stroke-width="1.6" d="M279.21,-374C279.21,-374 159.14,-374 159.14,-374 153.14,-374 147.14,-368 147.14,-362 147.14,-362 147.14,-350 147.14,-350 147.14,-344 153.14,-338 159.14,-338 159.14,-338 279.21,-338 279.21,-338 285.21,-338 291.21,-344 291.21,-350 291.21,-350 291.21,-362 291.21,-362 291.21,-368 285.21,-374 279.21,-374"/>
+<text xml:space="preserve" text-anchor="middle" x="219.17" y="-351.8" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="14.00" fill="#1f3340">flush_global_gizmos</text>
+</a>
+</g>
+</g>
+<!-- node_System(SystemKey(23v1))&#45;&gt;set_marker_node_Set(SystemSetKey(19v1)) -->
+<g id="edge10" class="edge">
+<title>node_System(SystemKey(23v1))-&gt;set_marker_node_Set(SystemSetKey(19v1))</title>
+<g id="a_edge10"><a xlink:title="flush_global_gizmos → GizmoMeshSystems">
+<path fill="none" stroke="#334155" stroke-width="2" d="M291.59,-362.49C334.28,-366.71 389.53,-372.76 438.35,-380 502.01,-389.44 574.37,-403.35 624.05,-413.4"/>
+<polygon fill="#334155" stroke="#334155" stroke-width="2" points="623.34,-416.83 633.84,-415.4 624.74,-409.97 623.34,-416.83"/>
+</a>
+</g>
+</g>
+<!-- node_System(SystemKey(24v1)) -->
+<g id="node30" class="node">
+<title>node_System(SystemKey(24v1))</title>
+<g id="a_node30"><a xlink:title="bevy_gizmos::propagate_gizmos&lt;bevy_gizmos::skinned_mesh_bounds::SkinnedMeshBoundsGizmoConfigGroup, bevy_time::fixed::Fixed&gt;">
+<path fill="#eff3f8" stroke="#3567a6" stroke-width="1.6" d="M426.35,-327C426.35,-327 12,-327 12,-327 6,-327 0,-321 0,-315 0,-315 0,-303 0,-303 0,-297 6,-291 12,-291 12,-291 426.35,-291 426.35,-291 432.35,-291 438.35,-297 438.35,-303 438.35,-303 438.35,-315 438.35,-315 438.35,-321 432.35,-327 426.35,-327"/>
+<text xml:space="preserve" text-anchor="middle" x="219.17" y="-304.8" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="14.00" fill="#1f3340">propagate_gizmos&lt;SkinnedMeshBoundsGizmoConfigGroup, Fixed&gt;</text>
+</a>
+</g>
+</g>
+<!-- node_System(SystemKey(24v1))&#45;&gt;set_marker_node_Set(SystemSetKey(19v1)) -->
+<g id="edge12" class="edge">
+<title>node_System(SystemKey(24v1))-&gt;set_marker_node_Set(SystemSetKey(19v1))</title>
+<g id="a_edge12"><a xlink:title="propagate_gizmos&lt;SkinnedMeshBoundsGizmoConfigGroup, Fixed&gt; → GizmoMeshSystems">
+<path fill="none" stroke="#334155" stroke-width="2" d="M414.22,-327.77C422.4,-329.37 430.47,-331.11 438.35,-333 517.38,-351.96 605.44,-389.51 651.78,-410.63"/>
+<polygon fill="#334155" stroke="#334155" stroke-width="2" points="650.14,-413.73 660.69,-414.73 653.07,-407.37 650.14,-413.73"/>
+</a>
+</g>
+</g>
+<!-- node_System(SystemKey(26v1)) -->
+<g id="node31" class="node">
+<title>node_System(SystemKey(26v1))</title>
+<g id="a_node31"><a xlink:title="bevy_picking::input::deactivate_touch_pointers">
+<path fill="#eff3f8" stroke="#3567a6" stroke-width="1.6" d="M295.65,-797C295.65,-797 142.7,-797 142.7,-797 136.7,-797 130.7,-791 130.7,-785 130.7,-785 130.7,-773 130.7,-773 130.7,-767 136.7,-761 142.7,-761 142.7,-761 295.65,-761 295.65,-761 301.65,-761 307.65,-767 307.65,-773 307.65,-773 307.65,-785 307.65,-785 307.65,-791 301.65,-797 295.65,-797"/>
+<text xml:space="preserve" text-anchor="middle" x="219.17" y="-774.8" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="14.00" fill="#1f3340">deactivate_touch_pointers</text>
+</a>
+</g>
+</g>
+<!-- node_System(SystemKey(27v1)) -->
+<g id="node32" class="node">
+<title>node_System(SystemKey(27v1))</title>
+<g id="a_node32"><a xlink:title="bevy_egui::free_egui_textures_system">
+<path fill="#eff3f8" stroke="#3567a6" stroke-width="1.6" d="M297.2,-844C297.2,-844 141.14,-844 141.14,-844 135.14,-844 129.14,-838 129.14,-832 129.14,-832 129.14,-820 129.14,-820 129.14,-814 135.14,-808 141.14,-808 141.14,-808 297.2,-808 297.2,-808 303.2,-808 309.2,-814 309.2,-820 309.2,-820 309.2,-832 309.2,-832 309.2,-838 303.2,-844 297.2,-844"/>
+<text xml:space="preserve" text-anchor="middle" x="219.17" y="-821.8" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="14.00" fill="#1f3340">free_egui_textures_system</text>
+</a>
+</g>
+</g>
+<!-- node_System(SystemKey(28v1)) -->
+<g id="node33" class="node">
+<title>node_System(SystemKey(28v1))</title>
+<g id="a_node33"><a xlink:title="bevy_ecs::apply_deferred">
+<path fill="#eff3f8" stroke="#3567a6" stroke-width="1.6" d="M261.46,-891C261.46,-891 176.89,-891 176.89,-891 170.89,-891 164.89,-885 164.89,-879 164.89,-879 164.89,-867 164.89,-867 164.89,-861 170.89,-855 176.89,-855 176.89,-855 261.46,-855 261.46,-855 267.46,-855 273.46,-861 273.46,-867 273.46,-867 273.46,-879 273.46,-879 273.46,-885 267.46,-891 261.46,-891"/>
+<text xml:space="preserve" text-anchor="middle" x="219.17" y="-868.8" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="14.00" fill="#1f3340">apply_deferred</text>
+</a>
+</g>
+</g>
+<g id="schedule-db858dc879eb70dc-cluster-title-0" class="schedule-cluster-title" data-cluster-id="clust1" data-cluster-name="clusternode_Set(SystemSetKey(5v1))"><g id="schedule-db858dc879eb70dc-cluster-title-0-a_clust1"><a xlink:title="OnAppExitSystems"><polygon fill="#f3f4f6" stroke="none" points="1005.72,-79.2 1005.72,-96 1142.95,-96 1142.95,-79.2 1005.72,-79.2"/><text xml:space="preserve" text-anchor="start" x="1018.72" y="-82" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="14.00" fill="#1f3340">OnAppExitSystems</text></a></g></g><g id="schedule-db858dc879eb70dc-cluster-title-1" class="schedule-cluster-title" data-cluster-id="clust2" data-cluster-name="clusternode_Set(SystemSetKey(7v1))"><g id="schedule-db858dc879eb70dc-cluster-title-1-a_clust2"><a xlink:title="ValidateParentHasComponentSystems"><polygon fill="#f3f4f6" stroke="none" points="92.69,-162.2 92.69,-179 345.66,-179 345.66,-162.2 92.69,-162.2"/><text xml:space="preserve" text-anchor="start" x="110.69" y="-165" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="14.00" fill="#1f3340">ValidateParentHasComponentSystems</text></a></g></g><g id="schedule-db858dc879eb70dc-cluster-title-2" class="schedule-cluster-title" data-cluster-id="clust3" data-cluster-name="clusternode_Set(SystemSetKey(9v1))"><g id="schedule-db858dc879eb70dc-cluster-title-2-a_clust3"><a xlink:title="ExitSystems"><polygon fill="#f3f4f6" stroke="none" points="638.4,-79.2 638.4,-96 732.4,-96 732.4,-79.2 638.4,-79.2"/><text xml:space="preserve" text-anchor="start" x="650.4" y="-82" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="14.00" fill="#1f3340">ExitSystems</text></a></g></g><g id="schedule-db858dc879eb70dc-cluster-title-3" class="schedule-cluster-title" data-cluster-id="clust4" data-cluster-name="clusternode_Set(SystemSetKey(16v1))"><g id="schedule-db858dc879eb70dc-cluster-title-3-a_clust4"><a xlink:title="Update"><polygon fill="#f3f4f6" stroke="none" points="188.96,-262.2 188.96,-279 249.39,-279 249.39,-262.2 188.96,-262.2"/><text xml:space="preserve" text-anchor="start" x="198.96" y="-265" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="14.00" fill="#1f3340">Update</text></a></g></g><g id="schedule-db858dc879eb70dc-cluster-title-4" class="schedule-cluster-title" data-cluster-id="clust5" data-cluster-name="clusternode_Set(SystemSetKey(19v1))"><g id="schedule-db858dc879eb70dc-cluster-title-4-a_clust5"><a xlink:title="GizmoMeshSystems"><polygon fill="#f3f4f6" stroke="none" points="614.46,-675.2 614.46,-692 756.35,-692 756.35,-675.2 614.46,-675.2"/><text xml:space="preserve" text-anchor="start" x="627.46" y="-678" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="14.00" fill="#1f3340">GizmoMeshSystems</text></a></g></g></g>
+</svg>

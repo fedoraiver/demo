@@ -1,0 +1,110 @@
+<svg width="528" height="209" viewBox="0.00 0.00 528.00 209.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="schedule-c06fd598249f8de7" role="img" aria-label="schedule-c06fd598249f8de7" data-diagram-engine="graphviz">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 205)">
+<polygon fill="#f6f8fb" stroke="none" points="-4,4 -4,-205 524.23,-205 524.23,4 -4,4"/>
+<g id="clust1" class="cluster">
+<title>clusternode_Set(SystemSetKey(2v1))</title>
+<g id="a_clust1"><a xlink:title="AnonymousSet(0)">
+<path fill="#f3f4f6" stroke="#6a778c" stroke-width="1.6" d="M367.55,-108C367.55,-108 488.21,-108 488.21,-108 494.21,-108 500.21,-114 500.21,-120 500.21,-120 500.21,-141 500.21,-141 500.21,-147 494.21,-153 488.21,-153 488.21,-153 367.55,-153 367.55,-153 361.55,-153 355.55,-147 355.55,-141 355.55,-141 355.55,-120 355.55,-120 355.55,-114 361.55,-108 367.55,-108"/>
+
+
+</a>
+</g>
+</g>
+<g id="clust2" class="cluster">
+<title>clusternode_Set(SystemSetKey(4v1))</title>
+<g id="a_clust2"><a xlink:title="InitContexts">
+<path fill="#f3f4f6" stroke="#6a778c" stroke-width="1.6" d="M354.53,-8C354.53,-8 500.23,-8 500.23,-8 506.23,-8 512.23,-14 512.23,-20 512.23,-20 512.23,-88 512.23,-88 512.23,-94 506.23,-100 500.23,-100 500.23,-100 354.53,-100 354.53,-100 348.53,-100 342.53,-94 342.53,-88 342.53,-88 342.53,-20 342.53,-20 342.53,-14 348.53,-8 354.53,-8"/>
+
+
+</a>
+</g>
+</g>
+<!-- set_marker_node_Set(SystemSetKey(2v1)) -->
+<!-- set_marker_node_Set(SystemSetKey(4v1)) -->
+<!-- node_System(SystemKey(4v1)) -->
+<g id="node3" class="node">
+<title>node_System(SystemKey(4v1))</title>
+<g id="a_node3"><a xlink:title="bevy_egui::update_ui_screen_rect">
+<path fill="#eff3f8" stroke="#3567a6" stroke-width="1.6" d="M492.23,-67C492.23,-67 362.53,-67 362.53,-67 356.53,-67 350.53,-61 350.53,-55 350.53,-55 350.53,-43 350.53,-43 350.53,-37 356.53,-31 362.53,-31 362.53,-31 492.23,-31 492.23,-31 498.23,-31 504.23,-37 504.23,-43 504.23,-43 504.23,-55 504.23,-55 504.23,-61 498.23,-67 492.23,-67"/>
+<text xml:space="preserve" text-anchor="middle" x="427.38" y="-44.8" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="14.00" fill="#1f3340">update_ui_screen_rect</text>
+</a>
+</g>
+</g>
+<!-- node_System(SystemKey(1v1)) -->
+<g id="node4" class="node">
+<title>node_System(SystemKey(1v1))</title>
+<g id="a_node4"><a xlink:title="bevy_gilrs::gilrs_system::gilrs_event_startup_system">
+<path fill="#eff3f8" stroke="#3567a6" stroke-width="1.6" d="M237.14,-154C237.14,-154 77.38,-154 77.38,-154 71.38,-154 65.38,-148 65.38,-142 65.38,-142 65.38,-130 65.38,-130 65.38,-124 71.38,-118 77.38,-118 77.38,-118 237.14,-118 237.14,-118 243.14,-118 249.14,-124 249.14,-130 249.14,-130 249.14,-142 249.14,-142 249.14,-148 243.14,-154 237.14,-154"/>
+<text xml:space="preserve" text-anchor="middle" x="157.26" y="-131.8" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="14.00" fill="#1f3340">gilrs_event_startup_system</text>
+</a>
+</g>
+</g>
+<!-- node_System(SystemKey(5v1)) -->
+<g id="node5" class="node">
+<title>node_System(SystemKey(5v1))</title>
+<g id="a_node5"><a xlink:title="bevy_ecs::apply_deferred">
+<path fill="#eff3f8" stroke="#3567a6" stroke-width="1.6" d="M199.55,-201C199.55,-201 114.98,-201 114.98,-201 108.98,-201 102.98,-195 102.98,-189 102.98,-189 102.98,-177 102.98,-177 102.98,-171 108.98,-165 114.98,-165 114.98,-165 199.55,-165 199.55,-165 205.55,-165 211.55,-171 211.55,-177 211.55,-177 211.55,-189 211.55,-189 211.55,-195 205.55,-201 199.55,-201"/>
+<text xml:space="preserve" text-anchor="middle" x="157.26" y="-178.8" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="14.00" fill="#1f3340">apply_deferred</text>
+</a>
+</g>
+</g>
+<!-- node_System(SystemKey(2v1)) -->
+<g id="node6" class="node">
+<title>node_System(SystemKey(2v1))</title>
+<g id="a_node6"><a xlink:title="bevy_egui::setup_primary_egui_context_system">
+<path fill="#eff3f8" stroke="#3567a6" stroke-width="1.6" d="M302.53,-106.8C302.53,-106.8 12,-106.8 12,-106.8 6,-106.8 0,-100.8 0,-94.8 0,-94.8 0,-77.2 0,-77.2 0,-71.2 6,-65.2 12,-65.2 12,-65.2 302.53,-65.2 302.53,-65.2 308.53,-65.2 314.53,-71.2 314.53,-77.2 314.53,-77.2 314.53,-94.8 314.53,-94.8 314.53,-100.8 308.53,-106.8 302.53,-106.8"/>
+<text xml:space="preserve" text-anchor="middle" x="157.26" y="-90.2" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="14.00" fill="#1f3340">setup_primary_egui_context_system</text>
+<text xml:space="preserve" text-anchor="middle" x="157.26" y="-73.4" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="14.00" fill="#1f3340">In multiple sets, AnonymousSet(0), InitContexts</text>
+</a>
+</g>
+</g>
+<!-- node_System(SystemKey(2v1))&#45;&gt;set_marker_node_Set(SystemSetKey(2v1)) -->
+<g id="edge1" class="edge">
+<title>node_System(SystemKey(2v1))-&gt;set_marker_node_Set(SystemSetKey(2v1))</title>
+<path fill="none" stroke="#334155" stroke-width="2" d="M315,-104.71C329.08,-106.39 342.81,-108.03 355.55,-109.55"/>
+</g>
+<!-- node_System(SystemKey(2v1))&#45;&gt;set_marker_node_Set(SystemSetKey(4v1)) -->
+<g id="edge2" class="edge">
+<title>node_System(SystemKey(2v1))-&gt;set_marker_node_Set(SystemSetKey(4v1))</title>
+<path fill="none" stroke="#334155" stroke-width="2" d="M303.83,-64.54C307.49,-62.82 311.06,-60.98 314.53,-59 331.23,-49.46 325.48,-34.9 342.53,-26"/>
+</g>
+<!-- node_System(SystemKey(2v1))&#45;&gt;node_System(SystemKey(4v1)) -->
+<g id="edge6" class="edge">
+<title>node_System(SystemKey(2v1))-&gt;node_System(SystemKey(4v1))</title>
+<g id="a_edge6"><a xlink:title="setup_primary_egui_context_system → update_ui_screen_rect">
+<path fill="none" stroke="#334155" stroke-width="2" d="M314.61,-64.42C322.32,-63.36 329.93,-62.31 337.33,-61.29"/>
+<polygon fill="#334155" stroke="#334155" stroke-width="2" points="337.55,-64.79 346.98,-59.96 336.59,-57.86 337.55,-64.79"/>
+</a>
+</g>
+</g>
+<!-- node_System(SystemKey(3v1)) -->
+<g id="node7" class="node">
+<title>node_System(SystemKey(3v1))</title>
+<g id="a_node7"><a xlink:title="bevy_ecs::apply_deferred">
+<path fill="#eff3f8" stroke="#3567a6" stroke-width="1.6" d="M302.53,-53.8C302.53,-53.8 12,-53.8 12,-53.8 6,-53.8 0,-47.8 0,-41.8 0,-41.8 0,-24.2 0,-24.2 0,-18.2 6,-12.2 12,-12.2 12,-12.2 302.53,-12.2 302.53,-12.2 308.53,-12.2 314.53,-18.2 314.53,-24.2 314.53,-24.2 314.53,-41.8 314.53,-41.8 314.53,-47.8 308.53,-53.8 302.53,-53.8"/>
+<text xml:space="preserve" text-anchor="middle" x="157.26" y="-37.2" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="14.00" fill="#1f3340">apply_deferred</text>
+<text xml:space="preserve" text-anchor="middle" x="157.26" y="-20.4" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="14.00" fill="#1f3340">In multiple sets, AnonymousSet(0), InitContexts</text>
+</a>
+</g>
+</g>
+<!-- node_System(SystemKey(3v1))&#45;&gt;set_marker_node_Set(SystemSetKey(2v1)) -->
+<g id="edge3" class="edge">
+<title>node_System(SystemKey(3v1))-&gt;set_marker_node_Set(SystemSetKey(2v1))</title>
+<path fill="none" stroke="#334155" stroke-width="2" d="M305.25,-54.52C308.43,-56.22 311.53,-58.05 314.53,-60 333.33,-72.24 323.83,-89.6 342.53,-102 346.58,-104.69 350.97,-106.95 355.55,-108.85"/>
+</g>
+<!-- node_System(SystemKey(3v1))&#45;&gt;set_marker_node_Set(SystemSetKey(4v1)) -->
+<g id="edge4" class="edge">
+<title>node_System(SystemKey(3v1))-&gt;set_marker_node_Set(SystemSetKey(4v1))</title>
+<path fill="none" stroke="#334155" stroke-width="2" d="M315,-24.23C324.39,-23.71 333.63,-23.19 342.53,-22.69"/>
+</g>
+<!-- node_System(SystemKey(3v1))&#45;&gt;node_System(SystemKey(4v1)) -->
+<g id="edge5" class="edge">
+<title>node_System(SystemKey(3v1))-&gt;node_System(SystemKey(4v1))</title>
+<g id="a_edge5"><a xlink:title="apply_deferred → update_ui_screen_rect">
+<path fill="none" stroke="#334155" stroke-width="2" d="M315,-42.35C322.52,-42.8 329.94,-43.25 337.17,-43.68"/>
+<polygon fill="#334155" stroke="#334155" stroke-width="2" points="336.73,-47.16 346.92,-44.26 337.15,-40.17 336.73,-47.16"/>
+</a>
+</g>
+</g>
+<g id="schedule-c06fd598249f8de7-cluster-title-0" class="schedule-cluster-title" data-cluster-id="clust1" data-cluster-name="clusternode_Set(SystemSetKey(2v1))"><g id="schedule-c06fd598249f8de7-cluster-title-0-a_clust1"><a xlink:title="AnonymousSet(0)"><polygon fill="#f3f4f6" stroke="none" points="363.55,-132.2 363.55,-149 492.21,-149 492.21,-132.2 363.55,-132.2"/><text xml:space="preserve" text-anchor="start" x="376.55" y="-135" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="14.00" fill="#1f3340">AnonymousSet(0)</text></a></g></g><g id="schedule-c06fd598249f8de7-cluster-title-1" class="schedule-cluster-title" data-cluster-id="clust2" data-cluster-name="clusternode_Set(SystemSetKey(4v1))"><g id="schedule-c06fd598249f8de7-cluster-title-1-a_clust2"><a xlink:title="InitContexts"><polygon fill="#f3f4f6" stroke="none" points="380.77,-79.2 380.77,-96 473.99,-96 473.99,-79.2 380.77,-79.2"/><text xml:space="preserve" text-anchor="start" x="392.77" y="-82" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="14.00" fill="#1f3340">InitContexts</text></a></g></g></g>
+</svg>

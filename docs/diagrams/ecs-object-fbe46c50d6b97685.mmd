@@ -42,7 +42,7 @@ flowchart LR
   class n1 node_external_io
   n2@{ shape: lean-l, label: "**tracing producer**<br/>格式化日志并交给独立文件与控制台队列。" }
   class n2 node_external_io
-  n3@{ shape: fr-rect, label: "**main / App**<br/>来自Bevy 引擎 ↗：装配应用、设置与插件<br/>并管理主循环和退出。" }
+  n3@{ shape: fr-rect, label: "**main / App**<br/>来自Bevy 引擎 ↗：装配应用、执行游戏或<br/>调度导出并管理退出。" }
   class n3 node_app
   class n3 external_node
   n0 e0@-->|"write_all / flush"| n1

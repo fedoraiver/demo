@@ -1,0 +1,162 @@
+digraph "" {
+	"compound"="true";
+	"splines"="spline";
+	"rankdir"="LR";
+	"bgcolor"="#0d1117";
+	"fontname"="Helvetica";
+	"nodesep"="0.15";
+	edge ["penwidth"="2"];
+	node ["shape"="box", "style"="filled"];
+	subgraph "clusternode_Set(SystemSetKey(1v1))" {
+		"style"="rounded,filled";
+		"label"="Recover";
+		"tooltip"="Recover";
+		"fillcolor"="#ffffff44";
+		"fontcolor"="#ffffff";
+		"color"="#ffffff50";
+		"penwidth"="2";
+		"set_marker_node_Set(SystemSetKey(1v1))" ["style"="invis", "label"="", "shape"="point"]
+		"node_System(SystemKey(15v1))" ["label"="recover_from_water", "tooltip"="demo::bounds_recovery::recovery::recover_from_water", "fillcolor"="#eff1f3", "fontname"="Helvetica", "fontcolor"="#15191d", "color"="#b4bec7", "penwidth"="1"]
+	}
+	
+	subgraph "clusternode_Set(SystemSetKey(2v1))" {
+		"style"="rounded,filled";
+		"label"="Facing";
+		"tooltip"="Facing";
+		"fillcolor"="#ffffff44";
+		"fontcolor"="#ffffff";
+		"color"="#ffffff50";
+		"penwidth"="2";
+		"set_marker_node_Set(SystemSetKey(2v1))" ["style"="invis", "label"="", "shape"="point"]
+		"node_System(SystemKey(14v1))" ["label"="sync_character_facing", "tooltip"="demo::first_person::facing::sync_character_facing", "fillcolor"="#eff1f3", "fontname"="Helvetica", "fontcolor"="#15191d", "color"="#b4bec7", "penwidth"="1"]
+	}
+	
+	subgraph "clusternode_Set(SystemSetKey(3v1))" {
+		"style"="rounded,filled";
+		"label"="Motion";
+		"tooltip"="Motion";
+		"fillcolor"="#ffffff44";
+		"fontcolor"="#ffffff";
+		"color"="#ffffff50";
+		"penwidth"="2";
+		"set_marker_node_Set(SystemSetKey(3v1))" ["style"="invis", "label"="", "shape"="point"]
+	}
+	
+	subgraph "clusternode_Set(SystemSetKey(4v1))" {
+		"style"="rounded,filled";
+		"label"="Interaction";
+		"tooltip"="Interaction";
+		"fillcolor"="#ffffff44";
+		"fontcolor"="#ffffff";
+		"color"="#ffffff50";
+		"penwidth"="2";
+		"set_marker_node_Set(SystemSetKey(4v1))" ["style"="invis", "label"="", "shape"="point"]
+		"node_System(SystemKey(5v1))" ["label"="handle_interaction", "tooltip"="demo::item_interaction::interaction::handle_interaction", "fillcolor"="#eff1f3", "fontname"="Helvetica", "fontcolor"="#15191d", "color"="#b4bec7", "penwidth"="1"]
+	}
+	
+	subgraph "clusternode_Set(SystemSetKey(5v1))" {
+		"style"="rounded,filled";
+		"label"="Target";
+		"tooltip"="Target";
+		"fillcolor"="#ffffff44";
+		"fontcolor"="#ffffff";
+		"color"="#ffffff50";
+		"penwidth"="2";
+		"set_marker_node_Set(SystemSetKey(5v1))" ["style"="invis", "label"="", "shape"="point"]
+		"node_System(SystemKey(6v1))" ["label"="sync_held_presentation", "tooltip"="demo::item_interaction::pose::sync_held_presentation", "fillcolor"="#eff1f3", "fontname"="Helvetica", "fontcolor"="#15191d", "color"="#b4bec7", "penwidth"="1"]
+	}
+	
+	subgraph "clusternode_Set(SystemSetKey(6v1))" {
+		"style"="rounded,filled";
+		"label"="Attachment";
+		"tooltip"="Attachment";
+		"fillcolor"="#ffffff44";
+		"fontcolor"="#ffffff";
+		"color"="#ffffff50";
+		"penwidth"="2";
+		"set_marker_node_Set(SystemSetKey(6v1))" ["style"="invis", "label"="", "shape"="point"]
+	}
+	
+	subgraph "clusternode_Set(SystemSetKey(8v1))" {
+		"style"="rounded,filled";
+		"label"="AnonymousSet(0)";
+		"tooltip"="AnonymousSet(0)";
+		"fillcolor"="#ffffff44";
+		"fontcolor"="#ffffff";
+		"color"="#ffffff50";
+		"penwidth"="2";
+		"set_marker_node_Set(SystemSetKey(8v1))" ["style"="invis", "label"="", "shape"="point"]
+	}
+	
+	subgraph "clusternode_Set(SystemSetKey(14v1))" {
+		"style"="rounded,filled";
+		"label"="AnonymousSet(1)";
+		"tooltip"="AnonymousSet(1)";
+		"fillcolor"="#ffffff44";
+		"fontcolor"="#ffffff";
+		"color"="#ffffff50";
+		"penwidth"="2";
+		"set_marker_node_Set(SystemSetKey(14v1))" ["style"="invis", "label"="", "shape"="point"]
+	}
+	
+	"node_System(SystemKey(1v1))" ["label"="sync_gravity", "tooltip"="demo::physics::sync_gravity"]
+	"node_System(SystemKey(13v1))" ["label"="warn_hold_strain", "tooltip"="demo::item_interaction::audio_events::warn_hold_strain"]
+	"node_System(SystemKey(16v1))" ["label"="apply_deferred", "tooltip"="bevy_ecs::apply_deferred"]
+	"node_System(SystemKey(17v1))" ["label"="apply_deferred", "tooltip"="bevy_ecs::apply_deferred"]
+	"node_System(SystemKey(18v1))" ["label"="apply_deferred", "tooltip"="bevy_ecs::apply_deferred"]
+	"node_System(SystemKey(19v1))" ["label"="apply_deferred", "tooltip"="bevy_ecs::apply_deferred"]
+	"node_System(SystemKey(20v1))" ["label"="apply_deferred", "tooltip"="bevy_ecs::apply_deferred"]
+	"node_System(SystemKey(21v1))" ["label"="apply_deferred", "tooltip"="bevy_ecs::apply_deferred"]
+	"node_System(SystemKey(22v1))" ["label"="apply_deferred", "tooltip"="bevy_ecs::apply_deferred"]
+	"node_System(SystemKey(23v1))" ["label"="apply_deferred", "tooltip"="bevy_ecs::apply_deferred"]
+	"node_System(SystemKey(2v1))" -> "set_marker_node_Set(SystemSetKey(3v1))" ["dir"="none", "color"="blue", "lhead"="clusternode_Set(SystemSetKey(3v1))"]
+	"node_System(SystemKey(2v1))" -> "set_marker_node_Set(SystemSetKey(8v1))" ["dir"="none", "color"="blue", "lhead"="clusternode_Set(SystemSetKey(8v1))"]
+	"node_System(SystemKey(2v1))" ["label"="update_grounded
+In multiple sets, Motion, AnonymousSet(0)", "tooltip"="demo::character::motion::update_grounded"]
+	"node_System(SystemKey(3v1))" -> "set_marker_node_Set(SystemSetKey(3v1))" ["dir"="none", "color"="blue", "lhead"="clusternode_Set(SystemSetKey(3v1))"]
+	"node_System(SystemKey(3v1))" -> "set_marker_node_Set(SystemSetKey(8v1))" ["dir"="none", "color"="blue", "lhead"="clusternode_Set(SystemSetKey(8v1))"]
+	"node_System(SystemKey(3v1))" ["label"="move_characters
+In multiple sets, Motion, AnonymousSet(0)", "tooltip"="demo::character::motion::move_characters"]
+	"node_System(SystemKey(4v1))" -> "set_marker_node_Set(SystemSetKey(3v1))" ["dir"="none", "color"="blue", "lhead"="clusternode_Set(SystemSetKey(3v1))"]
+	"node_System(SystemKey(4v1))" -> "set_marker_node_Set(SystemSetKey(8v1))" ["dir"="none", "color"="blue", "lhead"="clusternode_Set(SystemSetKey(8v1))"]
+	"node_System(SystemKey(4v1))" ["label"="jump_characters
+In multiple sets, Motion, AnonymousSet(0)", "tooltip"="demo::character::motion::jump_characters"]
+	"node_System(SystemKey(7v1))" -> "set_marker_node_Set(SystemSetKey(6v1))" ["dir"="none", "color"="blue", "lhead"="clusternode_Set(SystemSetKey(6v1))"]
+	"node_System(SystemKey(7v1))" -> "set_marker_node_Set(SystemSetKey(14v1))" ["dir"="none", "color"="blue", "lhead"="clusternode_Set(SystemSetKey(14v1))"]
+	"node_System(SystemKey(7v1))" ["label"="release_orphaned_items
+In multiple sets, Attachment, AnonymousSet(1)", "tooltip"="demo::item_interaction::lifecycle::release_orphaned_items"]
+	"node_System(SystemKey(8v1))" -> "set_marker_node_Set(SystemSetKey(6v1))" ["dir"="none", "color"="blue", "lhead"="clusternode_Set(SystemSetKey(6v1))"]
+	"node_System(SystemKey(8v1))" -> "set_marker_node_Set(SystemSetKey(14v1))" ["dir"="none", "color"="blue", "lhead"="clusternode_Set(SystemSetKey(14v1))"]
+	"node_System(SystemKey(8v1))" ["label"="cleanup_orphaned_colliders
+In multiple sets, Attachment, AnonymousSet(1)", "tooltip"="demo::item_interaction::lifecycle::cleanup_orphaned_colliders"]
+	"node_System(SystemKey(9v1))" -> "set_marker_node_Set(SystemSetKey(6v1))" ["dir"="none", "color"="blue", "lhead"="clusternode_Set(SystemSetKey(6v1))"]
+	"node_System(SystemKey(9v1))" -> "set_marker_node_Set(SystemSetKey(14v1))" ["dir"="none", "color"="blue", "lhead"="clusternode_Set(SystemSetKey(14v1))"]
+	"node_System(SystemKey(9v1))" ["label"="restore_empty_holder_mass
+In multiple sets, Attachment, AnonymousSet(1)", "tooltip"="demo::item_interaction::lifecycle::restore_empty_holder_mass"]
+	"node_System(SystemKey(10v1))" -> "set_marker_node_Set(SystemSetKey(6v1))" ["dir"="none", "color"="blue", "lhead"="clusternode_Set(SystemSetKey(6v1))"]
+	"node_System(SystemKey(10v1))" -> "set_marker_node_Set(SystemSetKey(14v1))" ["dir"="none", "color"="blue", "lhead"="clusternode_Set(SystemSetKey(14v1))"]
+	"node_System(SystemKey(10v1))" ["label"="finish_attachments
+In multiple sets, Attachment, AnonymousSet(1)", "tooltip"="demo::item_interaction::attachment::finish_attachments"]
+	"node_System(SystemKey(11v1))" -> "set_marker_node_Set(SystemSetKey(6v1))" ["dir"="none", "color"="blue", "lhead"="clusternode_Set(SystemSetKey(6v1))"]
+	"node_System(SystemKey(11v1))" -> "set_marker_node_Set(SystemSetKey(14v1))" ["dir"="none", "color"="blue", "lhead"="clusternode_Set(SystemSetKey(14v1))"]
+	"node_System(SystemKey(11v1))" ["label"="align_attachments
+In multiple sets, Attachment, AnonymousSet(1)", "tooltip"="demo::item_interaction::attachment::align_attachments"]
+	"node_System(SystemKey(12v1))" -> "set_marker_node_Set(SystemSetKey(6v1))" ["dir"="none", "color"="blue", "lhead"="clusternode_Set(SystemSetKey(6v1))"]
+	"node_System(SystemKey(12v1))" -> "set_marker_node_Set(SystemSetKey(14v1))" ["dir"="none", "color"="blue", "lhead"="clusternode_Set(SystemSetKey(14v1))"]
+	"node_System(SystemKey(12v1))" ["label"="sync_held_physics
+In multiple sets, Attachment, AnonymousSet(1)", "tooltip"="demo::item_interaction::pose::sync_held_physics"]
+	"set_marker_node_Set(SystemSetKey(4v1))" -> "set_marker_node_Set(SystemSetKey(5v1))" ["lhead"="clusternode_Set(SystemSetKey(5v1))", "ltail"="clusternode_Set(SystemSetKey(4v1))", "tooltip"="Interaction → Target", "color"="#eede00"]
+	"set_marker_node_Set(SystemSetKey(1v1))" -> "set_marker_node_Set(SystemSetKey(2v1))" ["lhead"="clusternode_Set(SystemSetKey(2v1))", "ltail"="clusternode_Set(SystemSetKey(1v1))", "tooltip"="Recover → Facing", "color"="#881877"]
+	"set_marker_node_Set(SystemSetKey(5v1))" -> "set_marker_node_Set(SystemSetKey(6v1))" ["lhead"="clusternode_Set(SystemSetKey(6v1))", "ltail"="clusternode_Set(SystemSetKey(5v1))", "tooltip"="Target → Attachment", "color"="#00b0cc"]
+	"set_marker_node_Set(SystemSetKey(3v1))" -> "set_marker_node_Set(SystemSetKey(4v1))" ["lhead"="clusternode_Set(SystemSetKey(4v1))", "ltail"="clusternode_Set(SystemSetKey(3v1))", "tooltip"="Motion → Interaction", "color"="#aa3a55"]
+	"node_System(SystemKey(1v1))" -> "set_marker_node_Set(SystemSetKey(3v1))" ["lhead"="clusternode_Set(SystemSetKey(3v1))", "ltail"="", "tooltip"="sync_gravity → Motion", "color"="#44d488"]
+	"node_System(SystemKey(9v1))" -> "node_System(SystemKey(10v1))" ["lhead"="", "ltail"="", "tooltip"="restore_empty_holder_mass → finish_attachments", "color"="#0090cc"]
+	"node_System(SystemKey(7v1))" -> "node_System(SystemKey(8v1))" ["lhead"="", "ltail"="", "tooltip"="release_orphaned_items → cleanup_orphaned_colliders", "color"="#ee9e44"]
+	"node_System(SystemKey(8v1))" -> "node_System(SystemKey(9v1))" ["lhead"="", "ltail"="", "tooltip"="cleanup_orphaned_colliders → restore_empty_holder_mass", "color"="#663699"]
+	"node_System(SystemKey(10v1))" -> "node_System(SystemKey(11v1))" ["lhead"="", "ltail"="", "tooltip"="finish_attachments → align_attachments", "color"="#3363bb"]
+	"node_System(SystemKey(11v1))" -> "node_System(SystemKey(12v1))" ["lhead"="", "ltail"="", "tooltip"="align_attachments → sync_held_physics", "color"="#22c2bb"]
+	"set_marker_node_Set(SystemSetKey(5v1))" -> "node_System(SystemKey(13v1))" ["lhead"="", "ltail"="clusternode_Set(SystemSetKey(5v1))", "tooltip"="Target → warn_hold_strain", "color"="#99d955"]
+	"set_marker_node_Set(SystemSetKey(2v1))" -> "set_marker_node_Set(SystemSetKey(3v1))" ["lhead"="clusternode_Set(SystemSetKey(3v1))", "ltail"="clusternode_Set(SystemSetKey(2v1))", "tooltip"="Facing → Motion", "color"="#eede00"]
+	"node_System(SystemKey(2v1))" -> "node_System(SystemKey(3v1))" ["lhead"="", "ltail"="", "tooltip"="update_grounded → move_characters", "color"="#881877"]
+	"node_System(SystemKey(3v1))" -> "node_System(SystemKey(4v1))" ["lhead"="", "ltail"="", "tooltip"="move_characters → jump_characters", "color"="#00b0cc"]
+}

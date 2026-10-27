@@ -1,0 +1,173 @@
+digraph "" {
+	"compound"="true";
+	"splines"="spline";
+	"rankdir"="LR";
+	"bgcolor"="#0d1117";
+	"fontname"="Helvetica";
+	"nodesep"="0.15";
+	edge ["penwidth"="2"];
+	node ["shape"="box", "style"="filled"];
+	subgraph "clusternode_Set(SystemSetKey(1v1))" {
+		"style"="rounded,filled";
+		"label"="BeforeFixedMainLoop";
+		"tooltip"="BeforeFixedMainLoop";
+		"fillcolor"="#ffffff44";
+		"fontcolor"="#ffffff";
+		"color"="#ffffff50";
+		"penwidth"="2";
+		"set_marker_node_Set(SystemSetKey(1v1))" ["style"="invis", "label"="", "shape"="point"]
+		"node_System(SystemKey(2v1))" ["label"="start_gizmo_context<LightGizmoConfigGroup, Fixed>", "tooltip"="bevy_gizmos::start_gizmo_context<bevy_light::gizmos::LightGizmoConfigGroup, bevy_time::fixed::Fixed>", "fillcolor"="#eff1f3", "fontname"="Helvetica", "fontcolor"="#15191d", "color"="#b4bec7", "penwidth"="1"]
+		"node_System(SystemKey(4v1))" ["label"="start_gizmo_context<DefaultGizmoConfigGroup, Fixed>", "tooltip"="bevy_gizmos::start_gizmo_context<bevy_gizmos::config::DefaultGizmoConfigGroup, bevy_time::fixed::Fixed>", "fillcolor"="#eff1f3", "fontname"="Helvetica", "fontcolor"="#15191d", "color"="#b4bec7", "penwidth"="1"]
+		"node_System(SystemKey(6v1))" ["label"="start_gizmo_context<AabbGizmoConfigGroup, Fixed>", "tooltip"="bevy_gizmos::start_gizmo_context<bevy_gizmos::aabb::AabbGizmoConfigGroup, bevy_time::fixed::Fixed>", "fillcolor"="#eff1f3", "fontname"="Helvetica", "fontcolor"="#15191d", "color"="#b4bec7", "penwidth"="1"]
+		"node_System(SystemKey(8v1))" ["label"="start_gizmo_context<FrustumGizmoConfigGroup, Fixed>", "tooltip"="bevy_gizmos::start_gizmo_context<bevy_gizmos::frustum::FrustumGizmoConfigGroup, bevy_time::fixed::Fixed>", "fillcolor"="#eff1f3", "fontname"="Helvetica", "fontcolor"="#15191d", "color"="#b4bec7", "penwidth"="1"]
+		"node_System(SystemKey(10v1))" ["label"="start_gizmo_context<SkinnedMeshBoundsGizmoConfigGroup, Fixed>", "tooltip"="bevy_gizmos::start_gizmo_context<bevy_gizmos::skinned_mesh_bounds::SkinnedMeshBoundsGizmoConfigGroup, bevy_time::fixed::Fixed>", "fillcolor"="#eff1f3", "fontname"="Helvetica", "fontcolor"="#15191d", "color"="#b4bec7", "penwidth"="1"]
+	}
+	
+	subgraph "clusternode_Set(SystemSetKey(2v1))" {
+		"style"="rounded,filled";
+		"label"="FixedMainLoop";
+		"tooltip"="FixedMainLoop";
+		"fillcolor"="#ffffff44";
+		"fontcolor"="#ffffff";
+		"color"="#ffffff50";
+		"penwidth"="2";
+		"set_marker_node_Set(SystemSetKey(2v1))" ["style"="invis", "label"="", "shape"="point"]
+		"node_System(SystemKey(1v1))" ["label"="run_fixed_main_schedule", "tooltip"="bevy_time::fixed::run_fixed_main_schedule", "fillcolor"="#c7ddbd", "fontname"="Helvetica", "fontcolor"="#162111", "color"="#8dba79", "penwidth"="1"]
+	}
+	
+	subgraph "clusternode_Set(SystemSetKey(3v1))" {
+		"style"="rounded,filled";
+		"label"="AfterFixedMainLoop";
+		"tooltip"="AfterFixedMainLoop";
+		"fillcolor"="#ffffff44";
+		"fontcolor"="#ffffff";
+		"color"="#ffffff50";
+		"penwidth"="2";
+		"set_marker_node_Set(SystemSetKey(3v1))" ["style"="invis", "label"="", "shape"="point"]
+		subgraph "clusternode_Set(SystemSetKey(15v1))" {
+			"style"="rounded,filled";
+			"label"="Facing";
+			"tooltip"="Facing";
+			"fillcolor"="#ffffff44";
+			"fontcolor"="#ffffff";
+			"color"="#ffffff50";
+			"penwidth"="2";
+			"set_marker_node_Set(SystemSetKey(15v1))" ["style"="invis", "label"="", "shape"="point"]
+		}
+		
+		subgraph "clusternode_Set(SystemSetKey(16v1))" {
+			"style"="rounded,filled";
+			"label"="Ease";
+			"tooltip"="Ease";
+			"fillcolor"="#ffffff44";
+			"fontcolor"="#ffffff";
+			"color"="#ffffff50";
+			"penwidth"="2";
+			"set_marker_node_Set(SystemSetKey(16v1))" ["style"="invis", "label"="", "shape"="point"]
+			"node_System(SystemKey(12v1))" ["label"="ease_translation_hermite<LinVelSource>", "tooltip"="bevy_transform_interpolation::hermite::ease_translation_hermite<avian3d::interpolation::LinVelSource>", "fillcolor"="#eff1f3", "fontname"="Helvetica", "fontcolor"="#15191d", "color"="#b4bec7", "penwidth"="1"]
+			"node_System(SystemKey(13v1))" ["label"="ease_rotation_hermite<AngVelSource>", "tooltip"="bevy_transform_interpolation::hermite::ease_rotation_hermite<avian3d::interpolation::AngVelSource>", "fillcolor"="#eff1f3", "fontname"="Helvetica", "fontcolor"="#15191d", "color"="#b4bec7", "penwidth"="1"]
+			"node_System(SystemKey(20v1))" ["label"="ease_translation_lerp", "tooltip"="bevy_transform_interpolation::ease_translation_lerp", "fillcolor"="#eff1f3", "fontname"="Helvetica", "fontcolor"="#15191d", "color"="#b4bec7", "penwidth"="1"]
+			"node_System(SystemKey(21v1))" ["label"="ease_rotation_slerp", "tooltip"="bevy_transform_interpolation::ease_rotation_slerp", "fillcolor"="#eff1f3", "fontname"="Helvetica", "fontcolor"="#15191d", "color"="#b4bec7", "penwidth"="1"]
+			"node_System(SystemKey(22v1))" ["label"="ease_scale_lerp", "tooltip"="bevy_transform_interpolation::ease_scale_lerp", "fillcolor"="#eff1f3", "fontname"="Helvetica", "fontcolor"="#15191d", "color"="#b4bec7", "penwidth"="1"]
+		}
+		
+		subgraph "clusternode_Set(SystemSetKey(17v1))" {
+			"style"="rounded,filled";
+			"label"="UpdateEasingTick";
+			"tooltip"="UpdateEasingTick";
+			"fillcolor"="#ffffff44";
+			"fontcolor"="#ffffff";
+			"color"="#ffffff50";
+			"penwidth"="2";
+			"set_marker_node_Set(SystemSetKey(17v1))" ["style"="invis", "label"="", "shape"="point"]
+			"node_System(SystemKey(23v1))" ["label"="update_last_easing_tick", "tooltip"="bevy_transform_interpolation::update_last_easing_tick", "fillcolor"="#eff1f3", "fontname"="Helvetica", "fontcolor"="#15191d", "color"="#b4bec7", "penwidth"="1"]
+		}
+		
+		subgraph "clusternode_Set(SystemSetKey(18v1))" {
+			"style"="rounded,filled";
+			"label"="HeldPhysics";
+			"tooltip"="HeldPhysics";
+			"fillcolor"="#ffffff44";
+			"fontcolor"="#ffffff";
+			"color"="#ffffff50";
+			"penwidth"="2";
+			"set_marker_node_Set(SystemSetKey(18v1))" ["style"="invis", "label"="", "shape"="point"]
+			"node_System(SystemKey(14v1))" ["label"="sync_held_physics", "tooltip"="demo::item_interaction::pose::sync_held_physics", "fillcolor"="#eff1f3", "fontname"="Helvetica", "fontcolor"="#15191d", "color"="#b4bec7", "penwidth"="1"]
+		}
+		
+		subgraph "clusternode_Set(SystemSetKey(19v1))" {
+			"style"="rounded,filled";
+			"label"="HeldPresentation";
+			"tooltip"="HeldPresentation";
+			"fillcolor"="#ffffff44";
+			"fontcolor"="#ffffff";
+			"color"="#ffffff50";
+			"penwidth"="2";
+			"set_marker_node_Set(SystemSetKey(19v1))" ["style"="invis", "label"="", "shape"="point"]
+			"node_System(SystemKey(15v1))" ["label"="sync_held_presentation", "tooltip"="demo::item_interaction::pose::sync_held_presentation", "fillcolor"="#eff1f3", "fontname"="Helvetica", "fontcolor"="#15191d", "color"="#b4bec7", "penwidth"="1"]
+		}
+		
+		subgraph "clusternode_Set(SystemSetKey(20v1))" {
+			"style"="rounded,filled";
+			"label"="Camera";
+			"tooltip"="Camera";
+			"fillcolor"="#ffffff44";
+			"fontcolor"="#ffffff";
+			"color"="#ffffff50";
+			"penwidth"="2";
+			"set_marker_node_Set(SystemSetKey(20v1))" ["style"="invis", "label"="", "shape"="point"]
+		}
+		
+		subgraph "clusternode_Set(SystemSetKey(21v1))" {
+			"style"="rounded,filled";
+			"label"="Visibility";
+			"tooltip"="Visibility";
+			"fillcolor"="#ffffff44";
+			"fontcolor"="#ffffff";
+			"color"="#ffffff50";
+			"penwidth"="2";
+			"set_marker_node_Set(SystemSetKey(21v1))" ["style"="invis", "label"="", "shape"="point"]
+		}
+		
+		"node_System(SystemKey(3v1))" ["label"="end_gizmo_context<LightGizmoConfigGroup, Fixed>", "tooltip"="bevy_gizmos::end_gizmo_context<bevy_light::gizmos::LightGizmoConfigGroup, bevy_time::fixed::Fixed>", "fillcolor"="#eff1f3", "fontname"="Helvetica", "fontcolor"="#15191d", "color"="#b4bec7", "penwidth"="1"]
+		"node_System(SystemKey(5v1))" ["label"="end_gizmo_context<DefaultGizmoConfigGroup, Fixed>", "tooltip"="bevy_gizmos::end_gizmo_context<bevy_gizmos::config::DefaultGizmoConfigGroup, bevy_time::fixed::Fixed>", "fillcolor"="#eff1f3", "fontname"="Helvetica", "fontcolor"="#15191d", "color"="#b4bec7", "penwidth"="1"]
+		"node_System(SystemKey(7v1))" ["label"="end_gizmo_context<AabbGizmoConfigGroup, Fixed>", "tooltip"="bevy_gizmos::end_gizmo_context<bevy_gizmos::aabb::AabbGizmoConfigGroup, bevy_time::fixed::Fixed>", "fillcolor"="#eff1f3", "fontname"="Helvetica", "fontcolor"="#15191d", "color"="#b4bec7", "penwidth"="1"]
+		"node_System(SystemKey(9v1))" ["label"="end_gizmo_context<FrustumGizmoConfigGroup, Fixed>", "tooltip"="bevy_gizmos::end_gizmo_context<bevy_gizmos::frustum::FrustumGizmoConfigGroup, bevy_time::fixed::Fixed>", "fillcolor"="#eff1f3", "fontname"="Helvetica", "fontcolor"="#15191d", "color"="#b4bec7", "penwidth"="1"]
+		"node_System(SystemKey(11v1))" ["label"="end_gizmo_context<SkinnedMeshBoundsGizmoConfigGroup, Fixed>", "tooltip"="bevy_gizmos::end_gizmo_context<bevy_gizmos::skinned_mesh_bounds::SkinnedMeshBoundsGizmoConfigGroup, bevy_time::fixed::Fixed>", "fillcolor"="#eff1f3", "fontname"="Helvetica", "fontcolor"="#15191d", "color"="#b4bec7", "penwidth"="1"]
+	}
+	
+	subgraph "clusternode_Set(SystemSetKey(26v1))" {
+		"style"="rounded,filled";
+		"label"="AnonymousSet(0)";
+		"tooltip"="AnonymousSet(0)";
+		"fillcolor"="#ffffff44";
+		"fontcolor"="#ffffff";
+		"color"="#ffffff50";
+		"penwidth"="2";
+		"set_marker_node_Set(SystemSetKey(26v1))" ["style"="invis", "label"="", "shape"="point"]
+	}
+	
+	"node_System(SystemKey(19v1))" ["label"="reset_easing_states_on_transform_change", "tooltip"="bevy_transform_interpolation::reset_easing_states_on_transform_change"]
+	"node_System(SystemKey(24v1))" ["label"="apply_deferred", "tooltip"="bevy_ecs::apply_deferred"]
+	"node_System(SystemKey(16v1))" -> "set_marker_node_Set(SystemSetKey(15v1))" ["dir"="none", "color"="blue", "lhead"="clusternode_Set(SystemSetKey(15v1))"]
+	"node_System(SystemKey(16v1))" -> "set_marker_node_Set(SystemSetKey(26v1))" ["dir"="none", "color"="blue", "lhead"="clusternode_Set(SystemSetKey(26v1))"]
+	"node_System(SystemKey(16v1))" ["label"="sync_character_facing
+In multiple sets, Facing, AnonymousSet(0)", "tooltip"="demo::first_person::facing::sync_character_facing"]
+	"node_System(SystemKey(17v1))" -> "set_marker_node_Set(SystemSetKey(20v1))" ["dir"="none", "color"="blue", "lhead"="clusternode_Set(SystemSetKey(20v1))"]
+	"node_System(SystemKey(17v1))" -> "set_marker_node_Set(SystemSetKey(26v1))" ["dir"="none", "color"="blue", "lhead"="clusternode_Set(SystemSetKey(26v1))"]
+	"node_System(SystemKey(17v1))" ["label"="follow_first_person_camera
+In multiple sets, Camera, AnonymousSet(0)", "tooltip"="demo::first_person::camera::follow_first_person_camera"]
+	"node_System(SystemKey(18v1))" -> "set_marker_node_Set(SystemSetKey(21v1))" ["dir"="none", "color"="blue", "lhead"="clusternode_Set(SystemSetKey(21v1))"]
+	"node_System(SystemKey(18v1))" -> "set_marker_node_Set(SystemSetKey(26v1))" ["dir"="none", "color"="blue", "lhead"="clusternode_Set(SystemSetKey(26v1))"]
+	"node_System(SystemKey(18v1))" ["label"="sync_character_visibility
+In multiple sets, Visibility, AnonymousSet(0)", "tooltip"="demo::first_person::camera::sync_character_visibility"]
+	"set_marker_node_Set(SystemSetKey(1v1))" -> "set_marker_node_Set(SystemSetKey(2v1))" ["lhead"="clusternode_Set(SystemSetKey(2v1))", "ltail"="clusternode_Set(SystemSetKey(1v1))", "tooltip"="BeforeFixedMainLoop → FixedMainLoop", "color"="#eede00"]
+	"set_marker_node_Set(SystemSetKey(16v1))" -> "set_marker_node_Set(SystemSetKey(15v1))" ["lhead"="clusternode_Set(SystemSetKey(15v1))", "ltail"="clusternode_Set(SystemSetKey(16v1))", "tooltip"="Ease → Facing", "color"="#881877"]
+	"set_marker_node_Set(SystemSetKey(20v1))" -> "set_marker_node_Set(SystemSetKey(21v1))" ["lhead"="clusternode_Set(SystemSetKey(21v1))", "ltail"="clusternode_Set(SystemSetKey(20v1))", "tooltip"="Camera → Visibility", "color"="#00b0cc"]
+	"set_marker_node_Set(SystemSetKey(15v1))" -> "set_marker_node_Set(SystemSetKey(18v1))" ["lhead"="clusternode_Set(SystemSetKey(18v1))", "ltail"="clusternode_Set(SystemSetKey(15v1))", "tooltip"="Facing → HeldPhysics", "color"="#aa3a55"]
+	"node_System(SystemKey(19v1))" -> "set_marker_node_Set(SystemSetKey(16v1))" ["lhead"="clusternode_Set(SystemSetKey(16v1))", "ltail"="", "tooltip"="reset_easing_states_on_transform_change → Ease", "color"="#44d488"]
+	"set_marker_node_Set(SystemSetKey(19v1))" -> "set_marker_node_Set(SystemSetKey(20v1))" ["lhead"="clusternode_Set(SystemSetKey(20v1))", "ltail"="clusternode_Set(SystemSetKey(19v1))", "tooltip"="HeldPresentation → Camera", "color"="#0090cc"]
+	"set_marker_node_Set(SystemSetKey(21v1))" -> "set_marker_node_Set(SystemSetKey(17v1))" ["lhead"="clusternode_Set(SystemSetKey(17v1))", "ltail"="clusternode_Set(SystemSetKey(21v1))", "tooltip"="Visibility → UpdateEasingTick", "color"="#ee9e44"]
+	"set_marker_node_Set(SystemSetKey(2v1))" -> "set_marker_node_Set(SystemSetKey(3v1))" ["lhead"="clusternode_Set(SystemSetKey(3v1))", "ltail"="clusternode_Set(SystemSetKey(2v1))", "tooltip"="FixedMainLoop → AfterFixedMainLoop", "color"="#663699"]
+	"set_marker_node_Set(SystemSetKey(18v1))" -> "set_marker_node_Set(SystemSetKey(19v1))" ["lhead"="clusternode_Set(SystemSetKey(19v1))", "ltail"="clusternode_Set(SystemSetKey(18v1))", "tooltip"="HeldPhysics → HeldPresentation", "color"="#3363bb"]
+}

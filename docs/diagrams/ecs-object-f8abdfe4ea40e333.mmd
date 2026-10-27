@@ -33,10 +33,8 @@ flowchart LR
   accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
   %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
   classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
-  classDef node_observer fill:#F4F1F9,stroke:#7B4DB2,stroke-width:1.6px,color:#1F3340
   classDef node_entity fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
   classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
-  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
@@ -47,33 +45,19 @@ flowchart LR
   n2@{ shape: rounded, label: "**sync_mouse_capture**<br/>来自第一人称控制 ↗：管理光标捕获及玩法<br/>输入启停。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**filter_captured_egui_input**<br/>来自第一人称控制 ↗：隔离游戏操作与检查<br/>器界面输入。" }
+  n3@{ shape: rounded, label: "**suspend_controls**<br/>来自第一人称控制 ↗：停用玩法输入并释放<br/>光标。" }
   class n3 node_system
   class n3 external_node
   n4@{ shape: rounded, label: "**suspend_controls**<br/>来自第一人称控制 ↗：停用玩法输入并释放<br/>光标。" }
   class n4 node_system
   class n4 external_node
-  n5@{ shape: rounded, label: "**suspend_controls**<br/>来自第一人称控制 ↗：停用玩法输入并释放<br/>光标。" }
-  class n5 node_system
-  class n5 external_node
-  n6@{ shape: hex, label: "**release_pointer_for_inspector**<br/>来自第一人称控制 ↗：释放光标以允许操作<br/>世界检查器。" }
-  class n6 node_observer
-  class n6 external_node
   n0 e0@-->|"可能挂载于"| n1
   class e0 edge_reference
   n2 e1@-->|"可变访问"| n0
   class e1 edge_write
-  n0 e2@-->|"查询访问"| n3
-  class e2 edge_read
+  n3 e2@-->|"可变访问"| n0
+  class e2 edge_write
   n4 e3@-->|"可变访问"| n0
   class e3 edge_write
-  n5 e4@-->|"可变访问"| n0
-  class e4 edge_write
-  n6 e5@-->|"可变访问"| n0
-  class e5 edge_write
-  e0@{ curve: basis }
   e1@{ curve: basis }
-  e2@{ curve: basis }
   e3@{ curve: basis }
-  e4@{ curve: basis }
-  e5@{ curve: basis }

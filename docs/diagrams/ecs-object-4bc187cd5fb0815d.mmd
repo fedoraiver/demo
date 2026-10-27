@@ -30,39 +30,9 @@
 ---
 flowchart LR
   accTitle: GameFlowPlugin · 对象关系
-  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  accDescr: 插件单卡；完整说明、契约、归属及源码在右侧查看。
   %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
-  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
-  classDef node_sync fill:#F6F3F0,stroke:#8B6A42,stroke-width:1.6px,color:#1F3340
   classDef node_plugin fill:#F1F3F6,stroke:#4A6389,stroke-width:2.2px,color:#1F3340
-  classDef node_app fill:#EFF4F5,stroke:#3A7B87,stroke-width:2.2px,color:#1F3340
-  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: fr-rect, label: "**GameFlowPlugin**<br/>管理应用状态、时钟及跨功能阶段顺序。" }
   class n0 node_plugin
-  n1@{ shape: fr-rect, label: "**main / App**<br/>来自Bevy 引擎 ↗：装配应用、设置与插件<br/>并管理主循环和退出。" }
-  class n1 node_app
-  class n1 external_node
-  n2@{ shape: rounded, label: "**ApplyDeferred（交互 → 呈现 / 挂接）**<br/>来自Bevy 引擎 ↗：使拿放后的关系与刚体<br/>变更对后续系统可见。" }
-  class n2 node_sync
-  class n2 external_node
-  n3@{ shape: rounded, label: "**enter_main_menu**<br/>保留主菜单展示时间并冻结物理模拟。" }
-  class n3 node_system
-  n4@{ shape: rounded, label: "**pause_simulation**<br/>冻结游戏与物理时钟并清零当前增量。" }
-  class n4 node_system
-  n5@{ shape: rounded, label: "**resume_simulation**<br/>恢复游戏与物理时钟。" }
-  class n5 node_system
-  n1 e0@--> n0
-  class e0 edge_registration
-  n0 e1@--> n2
-  class e1 edge_registration
-  n0 e2@--> n3
-  class e2 edge_registration
-  n0 e3@--> n4
-  class e3 edge_registration
-  n0 e4@--> n5
-  class e4 edge_registration
-  e1@{ curve: basis }
-  e2@{ curve: basis }
-  e3@{ curve: basis }
-  e4@{ curve: basis }

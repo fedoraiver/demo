@@ -1,0 +1,52 @@
+<svg width="259" height="263" viewBox="0.00 0.00 259.00 263.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="schedule-0c66dd70190ce5e4" role="img" aria-label="schedule-0c66dd70190ce5e4" data-diagram-engine="graphviz">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 259)">
+<polygon fill="#f6f8fb" stroke="none" points="-4,4 -4,-259 254.63,-259 254.63,4 -4,4"/>
+<g id="clust1" class="cluster">
+<title>clusternode_Set(SystemSetKey(2v1))</title>
+<g id="a_clust1"><a xlink:title="Prepare">
+<path fill="#f3f4f6" stroke="#6a778c" stroke-width="1.6" d="M20,-8C20,-8 230.63,-8 230.63,-8 236.63,-8 242.63,-14 242.63,-20 242.63,-20 242.63,-88 242.63,-88 242.63,-94 236.63,-100 230.63,-100 230.63,-100 20,-100 20,-100 14,-100 8,-94 8,-88 8,-88 8,-20 8,-20 8,-14 14,-8 20,-8"/>
+
+
+</a>
+</g>
+</g>
+<g id="clust2" class="cluster">
+<title>clusternode_Set(SystemSetKey(4v1))</title>
+<g id="a_clust2"><a xlink:title="Queue">
+<path fill="#f3f4f6" stroke="#6a778c" stroke-width="1.6" d="M36.44,-108C36.44,-108 214.2,-108 214.2,-108 220.2,-108 226.2,-114 226.2,-120 226.2,-120 226.2,-235 226.2,-235 226.2,-241 220.2,-247 214.2,-247 214.2,-247 36.44,-247 36.44,-247 30.44,-247 24.44,-241 24.44,-235 24.44,-235 24.44,-120 24.44,-120 24.44,-114 30.44,-108 36.44,-108"/>
+
+
+</a>
+</g>
+</g>
+<!-- set_marker_node_Set(SystemSetKey(2v1)) -->
+<!-- node_System(SystemKey(1v1)) -->
+<g id="node2" class="node">
+<title>node_System(SystemKey(1v1))</title>
+<g id="a_node2"><a xlink:title="bevy_egui::render::systems::prepare_egui_transforms_system">
+<path fill="#eff3f8" stroke="#3567a6" stroke-width="1.6" d="M222.63,-67C222.63,-67 28,-67 28,-67 22,-67 16,-61 16,-55 16,-55 16,-43 16,-43 16,-37 22,-31 28,-31 28,-31 222.63,-31 222.63,-31 228.63,-31 234.63,-37 234.63,-43 234.63,-43 234.63,-55 234.63,-55 234.63,-61 228.63,-67 222.63,-67"/>
+<text xml:space="preserve" text-anchor="middle" x="125.32" y="-44.8" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="14.00" fill="#1f3340">prepare_egui_transforms_system</text>
+</a>
+</g>
+</g>
+<!-- set_marker_node_Set(SystemSetKey(4v1)) -->
+<!-- node_System(SystemKey(2v1)) -->
+<g id="node4" class="node">
+<title>node_System(SystemKey(2v1))</title>
+<g id="a_node4"><a xlink:title="bevy_egui::render::systems::queue_bind_groups_system">
+<path fill="#eff3f8" stroke="#3567a6" stroke-width="1.6" d="M206.2,-167C206.2,-167 44.44,-167 44.44,-167 38.44,-167 32.44,-161 32.44,-155 32.44,-155 32.44,-143 32.44,-143 32.44,-137 38.44,-131 44.44,-131 44.44,-131 206.2,-131 206.2,-131 212.2,-131 218.2,-137 218.2,-143 218.2,-143 218.2,-155 218.2,-155 218.2,-161 212.2,-167 206.2,-167"/>
+<text xml:space="preserve" text-anchor="middle" x="125.32" y="-144.8" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="14.00" fill="#1f3340">queue_bind_groups_system</text>
+</a>
+</g>
+</g>
+<!-- node_System(SystemKey(3v1)) -->
+<g id="node5" class="node">
+<title>node_System(SystemKey(3v1))</title>
+<g id="a_node5"><a xlink:title="bevy_egui::render::systems::queue_pipelines_system">
+<path fill="#eff3f8" stroke="#3567a6" stroke-width="1.6" d="M195.91,-214C195.91,-214 54.73,-214 54.73,-214 48.73,-214 42.73,-208 42.73,-202 42.73,-202 42.73,-190 42.73,-190 42.73,-184 48.73,-178 54.73,-178 54.73,-178 195.91,-178 195.91,-178 201.91,-178 207.91,-184 207.91,-190 207.91,-190 207.91,-202 207.91,-202 207.91,-208 201.91,-214 195.91,-214"/>
+<text xml:space="preserve" text-anchor="middle" x="125.32" y="-191.8" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="14.00" fill="#1f3340">queue_pipelines_system</text>
+</a>
+</g>
+</g>
+<g id="schedule-0c66dd70190ce5e4-cluster-title-0" class="schedule-cluster-title" data-cluster-id="clust1" data-cluster-name="clusternode_Set(SystemSetKey(2v1))"><g id="schedule-0c66dd70190ce5e4-cluster-title-0-a_clust1"><a xlink:title="Prepare"><polygon fill="#f3f4f6" stroke="none" points="93.94,-79.2 93.94,-96 156.69,-96 156.69,-79.2 93.94,-79.2"/><text xml:space="preserve" text-anchor="start" x="103.94" y="-82" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="14.00" fill="#1f3340">Prepare</text></a></g></g><g id="schedule-0c66dd70190ce5e4-cluster-title-1" class="schedule-cluster-title" data-cluster-id="clust2" data-cluster-name="clusternode_Set(SystemSetKey(4v1))"><g id="schedule-0c66dd70190ce5e4-cluster-title-1-a_clust2"><a xlink:title="Queue"><polygon fill="#f3f4f6" stroke="none" points="97.05,-226.2 97.05,-243 153.59,-243 153.59,-226.2 97.05,-226.2"/><text xml:space="preserve" text-anchor="start" x="107.05" y="-229" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="14.00" fill="#1f3340">Queue</text></a></g></g></g>
+</svg>

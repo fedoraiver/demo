@@ -30,15 +30,9 @@
 ---
 flowchart LR
   accTitle: WorldInspectorPlugin · 对象关系
-  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  accDescr: 插件单卡；完整说明、契约、归属及源码在右侧查看。
   %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
   classDef node_plugin fill:#F1F3F6,stroke:#4A6389,stroke-width:2.2px,color:#1F3340
-  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: fr-rect, label: "**WorldInspectorPlugin**<br/>展示并编辑开放反射的世界数据。" }
   class n0 node_plugin
-  n1@{ shape: fr-rect, label: "**InspectorPlugin**<br/>来自世界检查器 ↗：安装可读写世界数据的<br/>检查器界面。" }
-  class n1 node_plugin
-  class n1 external_node
-  n1 e0@-->|"Inspector"| n0
-  class e0 edge_registration

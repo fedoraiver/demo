@@ -4,14 +4,19 @@ version = "0.1.0"
 edition = "2024"
 rust-version = "1.97.1"
 
+[features]
+debugdump = ["dep:bevy_mod_debugdump", "dep:sha2"]
+
 [dependencies]
 avian3d = { version = "0.8.0", default-features = false, features = ["3d", "parry-f32"] }
 bevy = "0.20.0"
+bevy_mod_debugdump = { version = "=0.17.0", default-features = false, optional = true }
 bevy-inspector-egui = { version = "0.38.0", features = ["highlight_changes"] }
 bevy_enhanced_input = "0.27.0"
 bevy_kira_audio = { version = "=0.27.1", default-features = false, features = ["ogg", "wav"] }
 serde = { version = "1.0.229", features = ["derive"] }
 serde_json = "1.0.151"
+sha2 = { version = "0.10.9", optional = true }
 uuid = { version = "1.26.1", features = ["v4"] }
 
 # 原生窗口约束只在对应桌面平台编译。

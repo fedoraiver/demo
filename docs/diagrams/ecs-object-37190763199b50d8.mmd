@@ -65,8 +65,6 @@ flowchart LR
   n9@{ shape: rounded, label: "**spawn_actors**<br/>来自场景装配 ↗：装配玩家、可搬物、控制<br/>者与相机。" }
   class n9 node_system
   class n9 external_node
-  n10@{ shape: hex, label: "**release_pointer_for_inspector**<br/>释放光标以允许操作世界检查器。" }
-  class n10 node_observer
   n0 e0@-->|"可能挂载于"| n1
   class e0 edge_reference
   n0 e1@-->|"0"| n2
@@ -87,16 +85,12 @@ flowchart LR
   class e8 edge_read
   n9 e9@-->|"添加"| n0
   class e9 edge_write
-  n0 e10@-->|"查询访问"| n10
-  class e10 edge_read
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
   e3@{ curve: bumpX }
   e4@{ curve: basis }
-  e5@{ curve: basis }
   e6@{ curve: basis }
   e7@{ curve: basis }
   e8@{ curve: basis }
   e9@{ curve: basis }
-  e10@{ curve: basis }

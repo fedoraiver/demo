@@ -3,7 +3,7 @@ import test from 'node:test';
 import { createArchitectureSplitter } from './architecture-splitter.mjs';
 import { testDocument } from './test-dom.mjs';
 
-function fixture(innerWidth = 1440, available = 1200) {
+function fixture(innerWidth = 1440, available = 1200, enabled = () => true) {
   const document = testDocument('<section id="workspace"><div id="canvas"></div><div id="separator" role="separator" aria-orientation="vertical"></div></section>');
   const workspace = document.getElementById('workspace'), canvas = document.getElementById('canvas'), separator = document.getElementById('separator');
   const window = { innerWidth }, transform = { scale: .8, x: 20 }, changes = [];
@@ -11,7 +11,7 @@ function fixture(innerWidth = 1440, available = 1200) {
   workspace.clientWidth = available;
   Object.defineProperty(canvas, 'clientWidth', { get: () => workspace.clientWidth - 38 - Number.parseFloat(workspace.style['--details-width'] || 286) });
   const center = () => (canvas.clientWidth / 2 - transform.x) / transform.scale;
-  const controller = createArchitectureSplitter({ workspace, canvas, separator, window, onResize: delta => { transform.x += delta / 2; changes.push(delta); } });
+  const controller = createArchitectureSplitter({ workspace, canvas, separator, window, enabled, onResize: delta => { transform.x += delta / 2; changes.push(delta); } });
   return { workspace, canvas, separator, window, controller, transform, center, changes, width: () => Number.parseFloat(workspace.style['--details-width']) };
 }
 
@@ -35,6 +35,18 @@ test('pointer dragging uses capture, clamps width and preserves the world center
   assert.equal(page.workspace.classList.contains('resizing'), false);
   page.separator.dispatch('pointermove', { pointerId: 1, clientX: 800 });
   assert.equal(page.width(), 240);
+});
+
+test('Schedule mode disables resizing, cancels capture and retains the object panel width', () => {
+  let enabled = true;
+  const page = fixture(1440, 1200, () => enabled);
+  page.separator.dispatch('keydown', { key: 'ArrowLeft' });assert.equal(page.width(), 302);
+  page.separator.dispatch('pointerdown', { button: 0, pointerId: 7, clientX: 600 });
+  enabled = false;page.controller.refresh();
+  assert.equal(page.separator.hidden, true);assert.equal(page.separator.hasPointerCapture(7), false);
+  page.separator.dispatch('keydown', { key: 'End' });page.separator.dispatch('pointerdown', { button: 0, pointerId: 8, clientX: 500 });page.separator.dispatch('pointermove', { pointerId: 8, clientX: 0 });
+  assert.equal(page.width(), 302);assert.equal(page.separator.getAttribute('aria-disabled'), 'true');
+  enabled = true;page.controller.refresh();assert.equal(page.separator.hidden, false);assert.equal(page.width(), 302);
 });
 
 test('touch cancellation and capture loss end resizing without a canvas gesture', () => {

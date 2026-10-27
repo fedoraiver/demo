@@ -3,6 +3,7 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import puppeteer from 'puppeteer';
+import { VIEWER_BACKGROUND } from './viewer-theme.mjs';
 import { renderMermaid } from '@mermaid-js/mermaid-cli';
 import { DOMParser, XMLSerializer } from '@xmldom/xmldom';
 import { svgElements, shapeBounds } from './svg-shape-geometry.mjs';
@@ -89,7 +90,7 @@ export async function compileNativeView(browser, view, registry) {
     return page;
   } };
   const { data } = await renderMermaid(measuredBrowser, view.mermaid, 'svg', {
-    fontEmbed: false, svgId: view.id, backgroundColor: '#F6F8FB', mermaidConfig: { startOnLoad: false, maxTextSize: mermaidConfiguration(view.aspect).maxTextSize },
+    fontEmbed: false, svgId: view.id, backgroundColor: VIEWER_BACKGROUND, mermaidConfig: { startOnLoad: false, maxTextSize: mermaidConfiguration(view.aspect).maxTextSize },
   });
   return normalizeMermaidSvg(view, Buffer.from(data).toString('utf8'), registry, { clusterLabelBounds });
 }
@@ -113,7 +114,11 @@ export async function compileArchitectureArtifacts(views, registry) {
   fs.mkdirSync(temporary, { recursive: true });
   const cacheDirectory = path.join(temporary, 'geometry-cache');
   fs.mkdirSync(cacheDirectory, { recursive: true });
-  const dependencies = fs.readFileSync(path.join(root, 'docs/diagrams/package-lock.json'), 'utf8');
+  // Graphviz 的独立版本变化不影响对象图的 Mermaid 布局缓存。
+  const lock = JSON.parse(fs.readFileSync(path.join(root, 'docs/diagrams/package-lock.json'), 'utf8'));
+  delete lock.packages[''].devDependencies['@viz-js/viz'];
+  delete lock.packages['node_modules/@viz-js/viz'];
+  const dependencies = JSON.stringify(lock, null, 2) + '\n';
   const profile = fs.mkdtempSync(path.join(temporary, 'profile-'));
   const browser = await puppeteer.launch({ executablePath: chromiumPath(), headless: true, userDataDir: profile });
   try {

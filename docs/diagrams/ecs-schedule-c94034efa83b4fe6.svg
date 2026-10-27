@@ -1,0 +1,97 @@
+<svg width="603" height="252" viewBox="0.00 0.00 603.00 252.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="schedule-c94034efa83b4fe6" role="img" aria-label="schedule-c94034efa83b4fe6" data-diagram-engine="graphviz">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 248)">
+<polygon fill="#f6f8fb" stroke="none" points="-4,4 -4,-248 598.73,-248 598.73,4 -4,4"/>
+<g id="clust1" class="cluster">
+<title>clusternode_Set(SystemSetKey(2v1))</title>
+<g id="a_clust1"><a xlink:title="WorldInstanceSpawn">
+<path fill="#f3f4f6" stroke="#6a778c" stroke-width="1.6" d="M20,-108C20,-108 432.81,-108 432.81,-108 438.81,-108 444.81,-114 444.81,-120 444.81,-120 444.81,-188 444.81,-188 444.81,-194 438.81,-200 432.81,-200 432.81,-200 20,-200 20,-200 14,-200 8,-194 8,-188 8,-188 8,-120 8,-120 8,-114 14,-108 20,-108"/>
+
+
+</a>
+</g>
+</g>
+<g id="clust2" class="cluster">
+<title>clusternode_Set(SystemSetKey(5v1))</title>
+<g id="a_clust2"><a xlink:title="SceneSpawn">
+<path fill="#f3f4f6" stroke="#6a778c" stroke-width="1.6" d="M254.53,-8C254.53,-8 574.73,-8 574.73,-8 580.73,-8 586.73,-14 586.73,-20 586.73,-20 586.73,-88 586.73,-88 586.73,-94 580.73,-100 574.73,-100 574.73,-100 254.53,-100 254.53,-100 248.53,-100 242.53,-94 242.53,-88 242.53,-88 242.53,-20 242.53,-20 242.53,-14 248.53,-8 254.53,-8"/>
+
+
+</a>
+</g>
+</g>
+<!-- set_marker_node_Set(SystemSetKey(2v1)) -->
+<!-- node_System(SystemKey(3v1)) -->
+<g id="node5" class="node">
+<title>node_System(SystemKey(3v1))</title>
+<g id="a_node5"><a xlink:title="bevy_scene::spawn::resolve_scene_patches">
+<path fill="#eff3f8" stroke="#3567a6" stroke-width="1.6" d="M393.78,-67C393.78,-67 262.53,-67 262.53,-67 256.53,-67 250.53,-61 250.53,-55 250.53,-55 250.53,-43 250.53,-43 250.53,-37 256.53,-31 262.53,-31 262.53,-31 393.78,-31 393.78,-31 399.78,-31 405.78,-37 405.78,-43 405.78,-43 405.78,-55 405.78,-55 405.78,-61 399.78,-67 393.78,-67"/>
+<text xml:space="preserve" text-anchor="middle" x="328.15" y="-44.8" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="14.00" fill="#1f3340">resolve_scene_patches</text>
+</a>
+</g>
+</g>
+<!-- set_marker_node_Set(SystemSetKey(2v1))&#45;&gt;node_System(SystemKey(3v1)) -->
+<g id="edge1" class="edge">
+<title>set_marker_node_Set(SystemSetKey(2v1))-&gt;node_System(SystemKey(3v1))</title>
+<g id="a_edge1"><a xlink:title="WorldInstanceSpawn → resolve_scene_patches">
+<path fill="none" stroke="#334155" stroke-width="2" d="M133.56,-108C164.84,-98.47 213.06,-83.77 253.55,-71.43"/>
+<polygon fill="#334155" stroke="#334155" stroke-width="2" points="254.22,-74.89 262.77,-68.62 252.18,-68.19 254.22,-74.89"/>
+</a>
+</g>
+</g>
+<!-- node_System(SystemKey(1v1)) -->
+<g id="node2" class="node">
+<title>node_System(SystemKey(1v1))</title>
+<g id="a_node2"><a xlink:title="bevy_world_serialization::world_asset_spawner::world_instance_spawner">
+<path fill="#eff3f8" stroke="#3567a6" stroke-width="1.6" d="M171.5,-167C171.5,-167 28,-167 28,-167 22,-167 16,-161 16,-155 16,-155 16,-143 16,-143 16,-137 22,-131 28,-131 28,-131 171.5,-131 171.5,-131 177.5,-131 183.5,-137 183.5,-143 183.5,-143 183.5,-155 183.5,-155 183.5,-161 177.5,-167 171.5,-167"/>
+<text xml:space="preserve" text-anchor="middle" x="99.75" y="-144.8" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="14.00" fill="#1f3340">world_instance_spawner</text>
+</a>
+</g>
+</g>
+<!-- node_System(SystemKey(2v1)) -->
+<g id="node3" class="node">
+<title>node_System(SystemKey(2v1))</title>
+<g id="a_node3"><a xlink:title="bevy_world_serialization::world_asset_spawner::world_instance_spawner_system">
+<path fill="#eff3f8" stroke="#3567a6" stroke-width="1.6" d="M424.81,-167C424.81,-167 231.5,-167 231.5,-167 225.5,-167 219.5,-161 219.5,-155 219.5,-155 219.5,-143 219.5,-143 219.5,-137 225.5,-131 231.5,-131 231.5,-131 424.81,-131 424.81,-131 430.81,-131 436.81,-137 436.81,-143 436.81,-143 436.81,-155 436.81,-155 436.81,-161 430.81,-167 424.81,-167"/>
+<text xml:space="preserve" text-anchor="middle" x="328.15" y="-144.8" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="14.00" fill="#1f3340">world_instance_spawner_system</text>
+</a>
+</g>
+</g>
+<!-- node_System(SystemKey(1v1))&#45;&gt;node_System(SystemKey(2v1)) -->
+<g id="edge2" class="edge">
+<title>node_System(SystemKey(1v1))-&gt;node_System(SystemKey(2v1))</title>
+<g id="a_edge2"><a xlink:title="world_instance_spawner → world_instance_spawner_system">
+<path fill="none" stroke="#334155" stroke-width="2" d="M184.09,-149C191.27,-149 198.62,-149 206.02,-149"/>
+<polygon fill="#334155" stroke="#334155" stroke-width="2" points="205.9,-152.5 215.9,-149 205.9,-145.5 205.9,-152.5"/>
+</a>
+</g>
+</g>
+<!-- set_marker_node_Set(SystemSetKey(5v1)) -->
+<!-- node_System(SystemKey(4v1)) -->
+<g id="node6" class="node">
+<title>node_System(SystemKey(4v1))</title>
+<g id="a_node6"><a xlink:title="bevy_scene::spawn::spawn_queued">
+<path fill="#eff3f8" stroke="#3567a6" stroke-width="1.6" d="M566.73,-67C566.73,-67 484.81,-67 484.81,-67 478.81,-67 472.81,-61 472.81,-55 472.81,-55 472.81,-43 472.81,-43 472.81,-37 478.81,-31 484.81,-31 484.81,-31 566.73,-31 566.73,-31 572.73,-31 578.73,-37 578.73,-43 578.73,-43 578.73,-55 578.73,-55 578.73,-61 572.73,-67 566.73,-67"/>
+<text xml:space="preserve" text-anchor="middle" x="525.77" y="-44.8" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="14.00" fill="#1f3340">spawn_queued</text>
+</a>
+</g>
+</g>
+<!-- node_System(SystemKey(3v1))&#45;&gt;node_System(SystemKey(4v1)) -->
+<g id="edge3" class="edge">
+<title>node_System(SystemKey(3v1))-&gt;node_System(SystemKey(4v1))</title>
+<g id="a_edge3"><a xlink:title="resolve_scene_patches → spawn_queued">
+<path fill="none" stroke="#334155" stroke-width="2" d="M406.47,-49C424,-49 442.45,-49 459.43,-49"/>
+<polygon fill="#334155" stroke="#334155" stroke-width="2" points="459.06,-52.5 469.06,-49 459.06,-45.5 459.06,-52.5"/>
+</a>
+</g>
+</g>
+<!-- node_System(SystemKey(5v1)) -->
+<g id="node7" class="node">
+<title>node_System(SystemKey(5v1))</title>
+<g id="a_node7"><a xlink:title="bevy_ecs::apply_deferred">
+<path fill="#eff3f8" stroke="#3567a6" stroke-width="1.6" d="M142.04,-244C142.04,-244 57.46,-244 57.46,-244 51.46,-244 45.46,-238 45.46,-232 45.46,-232 45.46,-220 45.46,-220 45.46,-214 51.46,-208 57.46,-208 57.46,-208 142.04,-208 142.04,-208 148.04,-208 154.04,-214 154.04,-220 154.04,-220 154.04,-232 154.04,-232 154.04,-238 148.04,-244 142.04,-244"/>
+<text xml:space="preserve" text-anchor="middle" x="99.75" y="-221.8" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="14.00" fill="#1f3340">apply_deferred</text>
+</a>
+</g>
+</g>
+<g id="schedule-c94034efa83b4fe6-cluster-title-0" class="schedule-cluster-title" data-cluster-id="clust1" data-cluster-name="clusternode_Set(SystemSetKey(2v1))"><g id="schedule-c94034efa83b4fe6-cluster-title-0-a_clust1"><a xlink:title="WorldInstanceSpawn"><polygon fill="#f3f4f6" stroke="none" points="152.15,-179.2 152.15,-196 300.66,-196 300.66,-179.2 152.15,-179.2"/><text xml:space="preserve" text-anchor="start" x="166.15" y="-182" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="14.00" fill="#1f3340">WorldInstanceSpawn</text></a></g></g><g id="schedule-c94034efa83b4fe6-cluster-title-1" class="schedule-cluster-title" data-cluster-id="clust2" data-cluster-name="clusternode_Set(SystemSetKey(5v1))"><g id="schedule-c94034efa83b4fe6-cluster-title-1-a_clust2"><a xlink:title="SceneSpawn"><polygon fill="#f3f4f6" stroke="none" points="367.86,-79.2 367.86,-96 461.4,-96 461.4,-79.2 367.86,-79.2"/><text xml:space="preserve" text-anchor="start" x="378.86" y="-82" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="14.00" fill="#1f3340">SceneSpawn</text></a></g></g></g>
+</svg>

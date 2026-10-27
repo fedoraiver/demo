@@ -25,7 +25,7 @@
       "useMaxWidth": false,
       "curve": "linear"
     },
-    "themeCSS": "#object-fbc21a242f45a53c-e2{marker-start:url(#object-fbc21a242f45a53c_flowchart-v2-pointStart)!important}\n#object-fbc21a242f45a53c-e4{marker-start:url(#object-fbc21a242f45a53c_flowchart-v2-pointStart)!important}\n#object-fbc21a242f45a53c-e5{marker-start:url(#object-fbc21a242f45a53c_flowchart-v2-pointStart)!important}\n#object-fbc21a242f45a53c_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}"
+    "themeCSS": "#object-fbc21a242f45a53c-e1{marker-start:url(#object-fbc21a242f45a53c_flowchart-v2-pointStart)!important}\n#object-fbc21a242f45a53c_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}"
   }
 }
 ---
@@ -45,31 +45,13 @@ flowchart LR
   n1@{ shape: rounded, label: "**第一人称相机实体**<br/>来自场景装配 ↗：提供跟随角色的第一人称<br/>视角与观察输入状态。" }
   class n1 node_entity
   class n1 external_node
-  n2@{ shape: rounded, label: "**sync_mouse_capture**<br/>来自第一人称控制 ↗：管理光标捕获及玩法<br/>输入启停。" }
+  n2@{ shape: rounded, label: "**world_inspector_ui**<br/>展示并编辑开放反射的实体、资源与资产。" }
   class n2 node_system
-  class n2 external_node
-  n3@{ shape: rounded, label: "**filter_captured_egui_input**<br/>来自第一人称控制 ↗：隔离游戏操作与检查<br/>器界面输入。" }
-  class n3 node_system
-  class n3 external_node
-  n4@{ shape: rounded, label: "**world_inspector_ui**<br/>展示并编辑开放反射的实体、资源与资产。" }
-  class n4 node_system
   n0 e0@-->|"可能挂载于"| n1
   class e0 edge_reference
-  n2 e1@-->|"可变访问"| n0
-  class e1 edge_write
-  n2 e2@---|"查询访问"| n0
-  class e2 edge_read
-  n3 e3@-->|"可变访问"| n0
-  class e3 edge_write
-  n3 e4@---|"查询访问"| n0
-  class e4 edge_read
-  n4 e5@---|"查询访问"| n0
-  class e5 edge_read
-  n4 e6@-->|"可变访问"| n0
-  class e6 edge_write
+  n2 e1@---|"查询访问"| n0
+  class e1 edge_read
+  n2 e2@-->|"可变访问"| n0
+  class e2 edge_write
   e1@{ curve: basis }
   e2@{ curve: basis }
-  e3@{ curve: basis }
-  e4@{ curve: basis }
-  e5@{ curve: basis }
-  e6@{ curve: basis }

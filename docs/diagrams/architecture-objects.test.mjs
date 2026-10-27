@@ -74,9 +74,25 @@ test('实体图隐藏包含及字段目标的组件端点，保留实体关系�
   assert.ok(catalog.graphFor('b.Flag').links.some(link => link.id === 'component-target'));
   assert.ok(catalog.graphFor('a.Flag').links.some(link => link.operation === 'contains' && link.to === 'entity-a'));
   assert.deepEqual(registry['entity-a'].components, model.entities[0].components);
-  for (const id of ['fixed', 'a.Flag', 'plugin-SamplePlugin']) {
+  for (const id of ['fixed', 'a.Flag']) {
     assert.deepEqual(catalog.graphFor(id).links, catalog.links.filter(link => link.from === id || link.to === id));
   }
+});
+
+test('插件与插件组专属图为单卡，其他对象仍保留真实装配与注册关系', () => {
+  const { model, registry, components } = fixture();
+  registry['plugin-group'] = { id: 'plugin-group', name: 'SamplePlugins', kind: 'PluginGroup', feature: 'sample', sourceEntries: [] };
+  model.nodes.push(registry['plugin-group']);
+  model.system_links.push({ id: 'group-plugin', from: 'plugin-group', to: 'plugin-SamplePlugin', kind: 'registration' });
+  const catalog = buildObjectCatalog(model, registry, { components });
+  for (const id of ['plugin-SamplePlugin', 'plugin-group']) {
+    const graph = catalog.graphFor(id);
+    assert.deepEqual(graph.nodes.map(node => node.id), [id]);
+    assert.deepEqual(graph.links, []);
+    assert.equal(graph.empty, false);
+    assert.ok(catalog.links.some(link => link.from === id || link.to === id));
+  }
+  assert.ok(catalog.graphFor('fixed').links.some(link => link.from === 'plugin-SamplePlugin' && link.to === 'fixed'));
 });
 
 test('仅有组件关系的实体过滤后生成正常单卡图，组件目录及自身包含关系完整保留', () => {
@@ -123,7 +139,8 @@ test('真实实体引用与装配归属补进对象的一跳关系，不从相�
   const catalog = buildObjectCatalog(model, registry);
   assert.ok(catalog.graphFor('a.Flag').links.some(link => link.operation === 'entity_target' && link.to === 'entity-b'));
   assert.ok(!catalog.graphFor('b.Flag').links.some(link => link.operation === 'entity_target'));
-  assert.ok(catalog.graphFor('plugin-SamplePlugin').links.some(link => link.operation === 'assembly' && link.to === 'entity-a'));
+  assert.ok(catalog.links.some(link => link.from === 'plugin-SamplePlugin' && link.operation === 'assembly' && link.to === 'entity-a'));
+  assert.ok(catalog.graphFor('entity-a').links.some(link => link.from === 'plugin-SamplePlugin' && link.operation === 'assembly'));
 });
 
 test('对象原生布局保留双向读写的端点和箭头，只以渲染方向消除布局环', () => {

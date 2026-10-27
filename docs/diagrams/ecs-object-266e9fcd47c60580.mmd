@@ -47,50 +47,56 @@ flowchart LR
   n1@{ shape: lin-rect, label: "**InputSystems**<br/>来自Bevy 引擎 ↗：汇总键盘与鼠标输入状<br/>态。" }
   class n1 node_system_set
   class n1 external_node
-  n2@{ shape: rounded, label: "**filter_captured_egui_input**<br/>来自第一人称控制 ↗：隔离游戏操作与检查<br/>器界面输入。" }
+  n2@{ shape: rounded, label: "**sync_mouse_capture**<br/>来自第一人称控制 ↗：管理光标捕获及玩法<br/>输入启停。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**Window**<br/>来自Bevy 引擎 ↗：保存主窗口的尺寸与显<br/>示配置。" }
-  class n3 node_component
-  class n3 external_node
-  n4@{ shape: rounded, label: "**EguiContextSettings**<br/>配置检查器上下文的输入与输出处理。" }
+  n3@{ shape: lin-rect, label: "**EguiPreUpdateSet::BeginPass**<br/>界定检查器界面开始计算前的输入准备阶段。" }
+  class n3 node_system_set
+  n4@{ shape: rounded, label: "**Window**<br/>来自Bevy 引擎 ↗：保存主窗口的尺寸与显<br/>示配置。" }
   class n4 node_component
-  n5@{ shape: rounded, label: "**EguiInput**<br/>缓冲检查器界面收到的输入。" }
+  class n4 external_node
+  n5@{ shape: rounded, label: "**EguiContextSettings**<br/>配置检查器上下文的输入与输出处理。" }
   class n5 node_component
-  n6@{ shape: cyl, label: "**EguiGlobalSettings**<br/>配置检查器界面的上下文与输入处理。" }
-  class n6 node_resource
-  n7@{ shape: cyl, label: "**Messages#lt;KeyboardInput#gt;**<br/>来自Bevy 引擎 ↗：缓冲底层键盘输入消<br/>息。" }
-  class n7 node_message_buffer
-  class n7 external_node
-  n8@{ shape: cyl, label: "**Messages#lt;MouseButtonInput#gt;**<br/>来自Bevy 引擎 ↗：缓冲底层鼠标按钮输入<br/>消息。" }
+  n6@{ shape: rounded, label: "**EguiInput**<br/>缓冲检查器界面收到的输入。" }
+  class n6 node_component
+  n7@{ shape: cyl, label: "**EguiGlobalSettings**<br/>配置检查器界面的上下文与输入处理。" }
+  class n7 node_resource
+  n8@{ shape: cyl, label: "**Messages#lt;KeyboardInput#gt;**<br/>来自Bevy 引擎 ↗：缓冲底层键盘输入消<br/>息。" }
   class n8 node_message_buffer
   class n8 external_node
-  n9@{ shape: cyl, label: "**Time#lt;Real#gt;**<br/>来自Bevy 引擎 ↗：提供不随游戏暂停的真<br/>实时间。" }
-  class n9 node_resource
+  n9@{ shape: cyl, label: "**Messages#lt;MouseButtonInput#gt;**<br/>来自Bevy 引擎 ↗：缓冲底层鼠标按钮输入<br/>消息。" }
+  class n9 node_message_buffer
   class n9 external_node
+  n10@{ shape: cyl, label: "**Time#lt;Real#gt;**<br/>来自Bevy 引擎 ↗：提供不随游戏暂停的真<br/>实时间。" }
+  class n10 node_resource
+  class n10 external_node
   n1 e0@--> n0
   class e0 edge_order
-  n0 e1@--> n2
+  n2 e1@-->|"EguiPreUpdateSet::ProcessInput"| n0
   class e1 edge_order
-  n3 e2@-->|"查询访问"| n0
-  class e2 edge_read
+  n0 e2@-->|"EguiPreUpdateSet chain"| n3
+  class e2 edge_order
   n4 e3@-->|"查询访问"| n0
   class e3 edge_read
-  n0 e4@-->|"可变访问"| n5
-  class e4 edge_write
-  n6 e5@-->|"访问声明"| n0
-  class e5 edge_read
+  n5 e4@-->|"查询访问"| n0
+  class e4 edge_read
+  n0 e5@-->|"可变访问"| n6
+  class e5 edge_write
   n7 e6@-->|"访问声明"| n0
-  class e6 edge_consume
+  class e6 edge_read
   n8 e7@-->|"访问声明"| n0
   class e7 edge_consume
   n9 e8@-->|"访问声明"| n0
-  class e8 edge_read
+  class e8 edge_consume
+  n10 e9@-->|"访问声明"| n0
+  class e9 edge_read
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
   e3@{ curve: basis }
   e4@{ curve: basis }
+  e5@{ curve: basis }
   e6@{ curve: basis }
   e7@{ curve: basis }
   e8@{ curve: basis }
+  e9@{ curve: basis }

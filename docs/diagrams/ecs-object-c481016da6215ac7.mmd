@@ -25,7 +25,7 @@
       "useMaxWidth": false,
       "curve": "linear"
     },
-    "themeCSS": "#object-c481016da6215ac7-e10{marker-start:url(#object-c481016da6215ac7_flowchart-v2-pointStart)!important}\n#object-c481016da6215ac7-e12{marker-start:url(#object-c481016da6215ac7_flowchart-v2-pointStart)!important}\n#object-c481016da6215ac7-e14{marker-start:url(#object-c481016da6215ac7_flowchart-v2-pointStart)!important}\n#object-c481016da6215ac7_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}"
+    "themeCSS": "#object-c481016da6215ac7-e10{marker-start:url(#object-c481016da6215ac7_flowchart-v2-pointStart)!important}\n#object-c481016da6215ac7-e12{marker-start:url(#object-c481016da6215ac7_flowchart-v2-pointStart)!important}\n#object-c481016da6215ac7_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}"
   }
 }
 ---
@@ -50,20 +50,20 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**sync_mouse_capture**<br/>管理光标捕获及玩法输入启停。" }
   class n0 node_system
-  n1@{ shape: lin-rect, label: "**EguiPreUpdateSet::BeginPass**<br/>来自Egui / Inspector ↗：界定检查器界<br/>面开始计算前的输入准备阶段。" }
-  class n1 node_system_set
+  n1@{ shape: rounded, label: "**ApplyDeferred（捕获 → 动作准备）**<br/>来自Bevy 引擎 ↗：使本帧玩法输入启停变<br/>更对动作评估可见。" }
+  class n1 node_sync
   class n1 external_node
-  n2@{ shape: rounded, label: "**ApplyDeferred（捕获 → 动作准备）**<br/>来自Bevy 引擎 ↗：使本帧玩法输入启停变<br/>更对动作评估可见。" }
-  class n2 node_sync
+  n2@{ shape: lean-r, label: "**WindowFocused**<br/>来自Bevy 引擎 ↗：记录窗口获得或失去焦<br/>点。" }
+  class n2 node_message
   class n2 external_node
-  n3@{ shape: lean-r, label: "**WindowFocused**<br/>来自Bevy 引擎 ↗：记录窗口获得或失去焦<br/>点。" }
-  class n3 node_message
-  class n3 external_node
-  n4@{ shape: lean-r, label: "**MouseButtonInput**<br/>来自Bevy 引擎 ↗：记录鼠标按钮按下或松<br/>开。" }
-  class n4 node_message
+  n3@{ shape: doc, label: "**捕获与输入上下文**<br/>保存光标捕获与玩法输入启用状态。" }
+  class n3 node_note
+  n4@{ shape: lin-rect, label: "**InputSystems**<br/>来自Bevy 引擎 ↗：汇总键盘与鼠标输入状<br/>态。" }
+  class n4 node_system_set
   class n4 external_node
-  n5@{ shape: doc, label: "**捕获与输入上下文**<br/>保存光标捕获与玩法输入启用状态。" }
-  class n5 node_note
+  n5@{ shape: lin-rect, label: "**EguiPreUpdateSet::ProcessInput**<br/>来自Egui / Inspector ↗：将窗口和设备<br/>输入转换为检查器界面输入。" }
+  class n5 node_system_set
+  class n5 external_node
   n6@{ shape: rounded, label: "**Window**<br/>来自Bevy 引擎 ↗：保存主窗口的尺寸与显<br/>示配置。" }
   class n6 node_component
   class n6 external_node
@@ -81,14 +81,14 @@ flowchart LR
   class n11 node_component
   n12@{ shape: rounded, label: "**MouseLookState**<br/>保存光标捕获与观察输入初始化状态。" }
   class n12 node_component
-  n13@{ shape: rounded, label: "**EguiContext**<br/>来自Egui / Inspector ↗：保存世界检查<br/>器的界面交互状态。" }
+  n13@{ shape: rounded, label: "**EguiContextSettings**<br/>来自Egui / Inspector ↗：配置检查器上<br/>下文的输入与输出处理。" }
   class n13 node_component
   class n13 external_node
-  n14@{ shape: cyl, label: "**ButtonInput#lt;KeyCode#gt;**<br/>来自Bevy 引擎 ↗：保存键盘按键的当前状<br/>态与变化。" }
-  class n14 node_resource
+  n14@{ shape: rounded, label: "**EguiInput**<br/>来自Egui / Inspector ↗：缓冲检查器界<br/>面收到的输入。" }
+  class n14 node_component
   class n14 external_node
-  n15@{ shape: cyl, label: "**Messages#lt;MouseButtonInput#gt;**<br/>来自Bevy 引擎 ↗：缓冲底层鼠标按钮输入<br/>消息。" }
-  class n15 node_message_buffer
+  n15@{ shape: cyl, label: "**ButtonInput#lt;KeyCode#gt;**<br/>来自Bevy 引擎 ↗：保存键盘按键的当前状<br/>态与变化。" }
+  class n15 node_resource
   class n15 external_node
   n16@{ shape: cyl, label: "**Messages#lt;WindowFocused#gt;**<br/>来自Bevy 引擎 ↗：缓冲窗口焦点变化消<br/>息。" }
   class n16 node_message_buffer
@@ -101,16 +101,16 @@ flowchart LR
   class n18 external_node
   n19@{ shape: fr-rect, label: "**FirstPersonPlugin**<br/>管理玩法动作、光标捕获、朝向与第一人称镜<br/>头。" }
   class n19 node_plugin
-  n1 e0@--> n0
+  n0 e0@--> n1
   class e0 edge_order
-  n0 e1@--> n2
-  class e1 edge_order
-  n3 e2@--> n0
-  class e2 edge_consume
-  n4 e3@--> n0
-  class e3 edge_consume
-  n0 e4@--> n5
-  class e4 edge_write
+  n2 e1@--> n0
+  class e1 edge_consume
+  n0 e2@--> n3
+  class e2 edge_write
+  n4 e3@-->|"InputSystems"| n0
+  class e3 edge_order
+  n0 e4@-->|"EguiPreUpdateSet::ProcessInput"| n5
+  class e4 edge_order
   n6 e5@-->|"查询访问"| n0
   class e5 edge_read
   n0 e6@-->|"可变访问"| n7
@@ -129,33 +129,31 @@ flowchart LR
   class e12 edge_write
   n12 e13@-->|"查询访问"| n0
   class e13 edge_read
-  n13 e14@---|"可变访问"| n0
+  n0 e14@-->|"可变访问"| n13
   class e14 edge_write
-  n13 e15@-->|"查询访问"| n0
-  class e15 edge_read
-  n14 e16@-->|"访问声明"| n0
+  n0 e15@-->|"可变访问"| n14
+  class e15 edge_write
+  n15 e16@-->|"访问声明"| n0
   class e16 edge_read
-  n15 e17@-->|"访问声明"| n0
+  n16 e17@-->|"访问声明"| n0
   class e17 edge_consume
-  n16 e18@-->|"访问声明"| n0
-  class e18 edge_consume
-  n17 e19@-->|"访问声明"| n0
+  n17 e18@-->|"访问声明"| n0
+  class e18 edge_read
+  n18 e19@-->|"访问声明"| n0
   class e19 edge_read
-  n18 e20@-->|"访问声明"| n0
-  class e20 edge_read
-  n19 e21@--> n0
-  class e21 edge_registration
+  n19 e20@--> n0
+  class e20 edge_registration
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
   e3@{ curve: basis }
+  e4@{ curve: basis }
   e5@{ curve: basis }
   e6@{ curve: basis }
   e7@{ curve: basis }
   e8@{ curve: basis }
   e9@{ curve: basis }
   e10@{ curve: basis }
-  e11@{ curve: basis }
   e12@{ curve: basis }
   e13@{ curve: basis }
   e14@{ curve: basis }
@@ -165,4 +163,3 @@ flowchart LR
   e18@{ curve: basis }
   e19@{ curve: basis }
   e20@{ curve: basis }
-  e21@{ curve: basis }

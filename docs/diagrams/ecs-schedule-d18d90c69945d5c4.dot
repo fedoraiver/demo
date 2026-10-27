@@ -1,0 +1,236 @@
+digraph "" {
+	"compound"="true";
+	"splines"="spline";
+	"rankdir"="LR";
+	"bgcolor"="#0d1117";
+	"fontname"="Helvetica";
+	"nodesep"="0.15";
+	edge ["penwidth"="2"];
+	node ["shape"="box", "style"="filled"];
+	subgraph "clusternode_Set(SystemSetKey(2v1))" {
+		"style"="rounded,filled";
+		"label"="First";
+		"tooltip"="First";
+		"fillcolor"="#ffffff44";
+		"fontcolor"="#ffffff";
+		"color"="#ffffff50";
+		"penwidth"="2";
+		"set_marker_node_Set(SystemSetKey(2v1))" ["style"="invis", "label"="", "shape"="point"]
+		"node_System(SystemKey(3v1))" ["label"="assert_components_finite", "tooltip"="avian3d::schedule::assert_components_finite", "fillcolor"="#eff1f3", "fontname"="Helvetica", "fontcolor"="#15191d", "color"="#b4bec7", "penwidth"="1"]
+		"node_System(SystemKey(20v1))" ["label"="wake_changed_bodies", "tooltip"="demo::physics::wake_changed_bodies", "fillcolor"="#eff1f3", "fontname"="Helvetica", "fontcolor"="#15191d", "color"="#b4bec7", "penwidth"="1"]
+	}
+	
+	subgraph "clusternode_Set(SystemSetKey(3v1))" {
+		"style"="rounded,filled";
+		"label"="Propagate";
+		"tooltip"="Propagate";
+		"fillcolor"="#ffffff44";
+		"fontcolor"="#ffffff";
+		"color"="#ffffff50";
+		"penwidth"="2";
+		"set_marker_node_Set(SystemSetKey(3v1))" ["style"="invis", "label"="", "shape"="point"]
+	}
+	
+	subgraph "clusternode_Set(SystemSetKey(4v1))" {
+		"style"="rounded,filled";
+		"label"="Prepare";
+		"tooltip"="Prepare";
+		"fillcolor"="#ffffff44";
+		"fontcolor"="#ffffff";
+		"color"="#ffffff50";
+		"penwidth"="2";
+		"set_marker_node_Set(SystemSetKey(4v1))" ["style"="invis", "label"="", "shape"="point"]
+		subgraph "clusternode_Set(SystemSetKey(10v1))" {
+			"style"="rounded,filled";
+			"label"="UpdateColliderMassProperties";
+			"tooltip"="UpdateColliderMassProperties";
+			"fillcolor"="#ffffff44";
+			"fontcolor"="#ffffff";
+			"color"="#ffffff50";
+			"penwidth"="2";
+			"set_marker_node_Set(SystemSetKey(10v1))" ["style"="invis", "label"="", "shape"="point"]
+			"node_System(SystemKey(10v1))" ["label"="update_collider_mass_properties<Collider>", "tooltip"="avian3d::collision::collider::backend::update_collider_mass_properties<avian3d::collision::collider::parry::Collider>", "fillcolor"="#eff1f3", "fontname"="Helvetica", "fontcolor"="#15191d", "color"="#b4bec7", "penwidth"="1"]
+		}
+		
+		subgraph "clusternode_Set(SystemSetKey(11v1))" {
+			"style"="rounded,filled";
+			"label"="TransformToPosition";
+			"tooltip"="TransformToPosition";
+			"fillcolor"="#ffffff44";
+			"fontcolor"="#ffffff";
+			"color"="#ffffff50";
+			"penwidth"="2";
+			"set_marker_node_Set(SystemSetKey(11v1))" ["style"="invis", "label"="", "shape"="point"]
+			"node_System(SystemKey(18v1))" ["label"="transform_to_position", "tooltip"="avian3d::physics_transform::transform_to_position", "fillcolor"="#eff1f3", "fontname"="Helvetica", "fontcolor"="#15191d", "color"="#b4bec7", "penwidth"="1"]
+		}
+		
+		subgraph "clusternode_Set(SystemSetKey(12v1))" {
+			"style"="rounded,filled";
+			"label"="QueueRecomputation";
+			"tooltip"="QueueRecomputation";
+			"fillcolor"="#ffffff44";
+			"fontcolor"="#ffffff";
+			"color"="#ffffff50";
+			"penwidth"="2";
+			"set_marker_node_Set(SystemSetKey(12v1))" ["style"="invis", "label"="", "shape"="point"]
+			"node_System(SystemKey(4v1))" ["label"="queue_mass_recomputation_on_mass_change", "tooltip"="avian3d::dynamics::rigid_body::mass_properties::queue_mass_recomputation_on_mass_change", "fillcolor"="#eff1f3", "fontname"="Helvetica", "fontcolor"="#15191d", "color"="#b4bec7", "penwidth"="1"]
+			"node_System(SystemKey(5v1))" ["label"="queue_mass_recomputation_on_collider_mass_change", "tooltip"="avian3d::dynamics::rigid_body::mass_properties::queue_mass_recomputation_on_collider_mass_change", "fillcolor"="#eff1f3", "fontname"="Helvetica", "fontcolor"="#15191d", "color"="#b4bec7", "penwidth"="1"]
+		}
+		
+		subgraph "clusternode_Set(SystemSetKey(13v1))" {
+			"style"="rounded,filled";
+			"label"="UpdateComputedMassProperties";
+			"tooltip"="UpdateComputedMassProperties";
+			"fillcolor"="#ffffff44";
+			"fontcolor"="#ffffff";
+			"color"="#ffffff50";
+			"penwidth"="2";
+			"set_marker_node_Set(SystemSetKey(13v1))" ["style"="invis", "label"="", "shape"="point"]
+			"node_System(SystemKey(6v1))" ["label"="update_mass_properties", "tooltip"="avian3d::dynamics::rigid_body::mass_properties::update_mass_properties", "fillcolor"="#eff1f3", "fontname"="Helvetica", "fontcolor"="#15191d", "color"="#b4bec7", "penwidth"="1"]
+			"node_System(SystemKey(7v1))" ["label"="warn_invalid_mass", "tooltip"="avian3d::dynamics::rigid_body::mass_properties::warn_invalid_mass", "fillcolor"="#eff1f3", "fontname"="Helvetica", "fontcolor"="#15191d", "color"="#b4bec7", "penwidth"="1"]
+		}
+		
+		subgraph "clusternode_Set(SystemSetKey(19v1))" {
+			"style"="rounded,filled";
+			"label"="Propagate";
+			"tooltip"="Propagate";
+			"fillcolor"="#ffffff44";
+			"fontcolor"="#ffffff";
+			"color"="#ffffff50";
+			"penwidth"="2";
+			"set_marker_node_Set(SystemSetKey(19v1))" ["style"="invis", "label"="", "shape"="point"]
+			"node_System(SystemKey(8v1))" ["label"="propagate_collider_transforms", "tooltip"="avian3d::collision::collider::collider_transform::plugin::propagate_collider_transforms", "fillcolor"="#eff1f3", "fontname"="Helvetica", "fontcolor"="#15191d", "color"="#b4bec7", "penwidth"="1"]
+		}
+		
+		"node_System(SystemKey(9v1))" ["label"="update_collider_scale<Collider>", "tooltip"="avian3d::collision::collider::backend::update_collider_scale<avian3d::collision::collider::parry::Collider>", "fillcolor"="#eff1f3", "fontname"="Helvetica", "fontcolor"="#15191d", "color"="#b4bec7", "penwidth"="1"]
+	}
+	
+	subgraph "clusternode_Set(SystemSetKey(5v1))" {
+		"style"="rounded,filled";
+		"label"="StepSimulation";
+		"tooltip"="StepSimulation";
+		"fillcolor"="#ffffff44";
+		"fontcolor"="#ffffff";
+		"color"="#ffffff50";
+		"penwidth"="2";
+		"set_marker_node_Set(SystemSetKey(5v1))" ["style"="invis", "label"="", "shape"="point"]
+		"node_System(SystemKey(2v1))" ["label"="run_physics_schedule", "tooltip"="avian3d::schedule::run_physics_schedule", "fillcolor"="#eff1f3", "fontname"="Helvetica", "fontcolor"="#15191d", "color"="#b4bec7", "penwidth"="1"]
+	}
+	
+	subgraph "clusternode_Set(SystemSetKey(6v1))" {
+		"style"="rounded,filled";
+		"label"="Writeback";
+		"tooltip"="Writeback";
+		"fillcolor"="#ffffff44";
+		"fontcolor"="#ffffff";
+		"color"="#ffffff50";
+		"penwidth"="2";
+		"set_marker_node_Set(SystemSetKey(6v1))" ["style"="invis", "label"="", "shape"="point"]
+		subgraph "clusternode_Set(SystemSetKey(32v1))" {
+			"style"="rounded,filled";
+			"label"="PositionToTransform";
+			"tooltip"="PositionToTransform";
+			"fillcolor"="#ffffff44";
+			"fontcolor"="#ffffff";
+			"color"="#ffffff50";
+			"penwidth"="2";
+			"set_marker_node_Set(SystemSetKey(32v1))" ["style"="invis", "label"="", "shape"="point"]
+			"node_System(SystemKey(19v1))" ["label"="position_to_transform", "tooltip"="avian3d::physics_transform::position_to_transform", "fillcolor"="#eff1f3", "fontname"="Helvetica", "fontcolor"="#15191d", "color"="#b4bec7", "penwidth"="1"]
+		}
+		
+	}
+	
+	subgraph "clusternode_Set(SystemSetKey(7v1))" {
+		"style"="rounded,filled";
+		"label"="Last";
+		"tooltip"="Last";
+		"fillcolor"="#ffffff44";
+		"fontcolor"="#ffffff";
+		"color"="#ffffff50";
+		"penwidth"="2";
+		"set_marker_node_Set(SystemSetKey(7v1))" ["style"="invis", "label"="", "shape"="point"]
+	}
+	
+	subgraph "clusternode_Set(SystemSetKey(22v1))" {
+		"style"="rounded,filled";
+		"label"="SpatialQuerySystems";
+		"tooltip"="SpatialQuerySystems";
+		"fillcolor"="#ffffff44";
+		"fontcolor"="#ffffff";
+		"color"="#ffffff50";
+		"penwidth"="2";
+		"set_marker_node_Set(SystemSetKey(22v1))" ["style"="invis", "label"="", "shape"="point"]
+		"node_System(SystemKey(11v1))" ["label"="update_ray_caster_positions", "tooltip"="avian3d::spatial_query::update_ray_caster_positions", "fillcolor"="#eff1f3", "fontname"="Helvetica", "fontcolor"="#15191d", "color"="#b4bec7", "penwidth"="1"]
+		"node_System(SystemKey(12v1))" ["label"="update_shape_caster_positions", "tooltip"="avian3d::spatial_query::update_shape_caster_positions", "fillcolor"="#eff1f3", "fontname"="Helvetica", "fontcolor"="#15191d", "color"="#b4bec7", "penwidth"="1"]
+		"node_System(SystemKey(13v1))" ["label"="raycast", "tooltip"="avian3d::spatial_query::raycast", "fillcolor"="#eff1f3", "fontname"="Helvetica", "fontcolor"="#15191d", "color"="#b4bec7", "penwidth"="1"]
+		"node_System(SystemKey(14v1))" ["label"="shapecast", "tooltip"="avian3d::spatial_query::shapecast", "fillcolor"="#eff1f3", "fontname"="Helvetica", "fontcolor"="#15191d", "color"="#b4bec7", "penwidth"="1"]
+	}
+	
+	subgraph "clusternode_Set(SystemSetKey(27v1))" {
+		"style"="rounded,filled";
+		"label"="AnonymousSet(0)";
+		"tooltip"="AnonymousSet(0)";
+		"fillcolor"="#ffffff44";
+		"fontcolor"="#ffffff";
+		"color"="#ffffff50";
+		"penwidth"="2";
+		"set_marker_node_Set(SystemSetKey(27v1))" ["style"="invis", "label"="", "shape"="point"]
+	}
+	
+	subgraph "clusternode_Set(SystemSetKey(36v1))" {
+		"style"="rounded,filled";
+		"label"="AnonymousSet(1)";
+		"tooltip"="AnonymousSet(1)";
+		"fillcolor"="#ffffff44";
+		"fontcolor"="#ffffff";
+		"color"="#ffffff50";
+		"penwidth"="2";
+		"set_marker_node_Set(SystemSetKey(36v1))" ["style"="invis", "label"="", "shape"="point"]
+		"node_System(SystemKey(22v1))" ["label"="update_grounded", "tooltip"="demo::character::motion::update_grounded", "fillcolor"="#eff1f3", "fontname"="Helvetica", "fontcolor"="#15191d", "color"="#b4bec7", "penwidth"="1"]
+		"node_System(SystemKey(23v1))" ["label"="log_character_velocity", "tooltip"="demo::character::motion::log_character_velocity", "fillcolor"="#eff1f3", "fontname"="Helvetica", "fontcolor"="#15191d", "color"="#b4bec7", "penwidth"="1"]
+	}
+	
+	"node_System(SystemKey(1v1))" ["label"="signal_message_update_system", "tooltip"="bevy_ecs::message::update::signal_message_update_system"]
+	"node_System(SystemKey(21v1))" ["label"="log_collisions", "tooltip"="demo::physics::collision::log_collisions"]
+	"node_System(SystemKey(24v1))" ["label"="sync_held_physics", "tooltip"="demo::item_interaction::pose::sync_held_physics"]
+	"node_System(SystemKey(25v1))" ["label"="emit_parcel_land", "tooltip"="demo::item_interaction::audio_events::emit_parcel_land"]
+	"node_System(SystemKey(26v1))" ["label"="apply_deferred", "tooltip"="bevy_ecs::apply_deferred"]
+	"node_System(SystemKey(27v1))" ["label"="apply_deferred", "tooltip"="bevy_ecs::apply_deferred"]
+	"node_System(SystemKey(28v1))" ["label"="apply_deferred", "tooltip"="bevy_ecs::apply_deferred"]
+	"node_System(SystemKey(15v1))" -> "set_marker_node_Set(SystemSetKey(19v1))" ["dir"="none", "color"="blue", "lhead"="clusternode_Set(SystemSetKey(19v1))"]
+	"node_System(SystemKey(15v1))" -> "set_marker_node_Set(SystemSetKey(27v1))" ["dir"="none", "color"="blue", "lhead"="clusternode_Set(SystemSetKey(27v1))"]
+	"node_System(SystemKey(15v1))" ["label"="mark_dirty_trees
+In multiple sets, Propagate, AnonymousSet(0)", "tooltip"="bevy_transform::systems::mark_dirty_trees"]
+	"node_System(SystemKey(16v1))" -> "set_marker_node_Set(SystemSetKey(19v1))" ["dir"="none", "color"="blue", "lhead"="clusternode_Set(SystemSetKey(19v1))"]
+	"node_System(SystemKey(16v1))" -> "set_marker_node_Set(SystemSetKey(27v1))" ["dir"="none", "color"="blue", "lhead"="clusternode_Set(SystemSetKey(27v1))"]
+	"node_System(SystemKey(16v1))" ["label"="propagate_parent_transforms
+In multiple sets, Propagate, AnonymousSet(0)", "tooltip"="bevy_transform::systems::parallel::propagate_parent_transforms"]
+	"node_System(SystemKey(17v1))" -> "set_marker_node_Set(SystemSetKey(19v1))" ["dir"="none", "color"="blue", "lhead"="clusternode_Set(SystemSetKey(19v1))"]
+	"node_System(SystemKey(17v1))" -> "set_marker_node_Set(SystemSetKey(27v1))" ["dir"="none", "color"="blue", "lhead"="clusternode_Set(SystemSetKey(27v1))"]
+	"node_System(SystemKey(17v1))" ["label"="sync_simple_transforms
+In multiple sets, Propagate, AnonymousSet(0)", "tooltip"="bevy_transform::systems::sync_simple_transforms"]
+	"set_marker_node_Set(SystemSetKey(5v1))" -> "set_marker_node_Set(SystemSetKey(6v1))" ["lhead"="clusternode_Set(SystemSetKey(6v1))", "ltail"="clusternode_Set(SystemSetKey(5v1))", "tooltip"="StepSimulation → Writeback", "color"="#eede00"]
+	"node_System(SystemKey(13v1))" -> "node_System(SystemKey(14v1))" ["lhead"="", "ltail"="", "tooltip"="raycast → shapecast", "color"="#881877"]
+	"node_System(SystemKey(20v1))" -> "set_marker_node_Set(SystemSetKey(4v1))" ["lhead"="clusternode_Set(SystemSetKey(4v1))", "ltail"="", "tooltip"="wake_changed_bodies → Prepare", "color"="#00b0cc"]
+	"set_marker_node_Set(SystemSetKey(5v1))" -> "node_System(SystemKey(25v1))" ["lhead"="", "ltail"="clusternode_Set(SystemSetKey(5v1))", "tooltip"="StepSimulation → emit_parcel_land", "color"="#aa3a55"]
+	"set_marker_node_Set(SystemSetKey(11v1))" -> "node_System(SystemKey(9v1))" ["lhead"="", "ltail"="clusternode_Set(SystemSetKey(11v1))", "tooltip"="TransformToPosition → update_collider_scale<Collider>", "color"="#44d488"]
+	"node_System(SystemKey(12v1))" -> "node_System(SystemKey(13v1))" ["lhead"="", "ltail"="", "tooltip"="update_shape_caster_positions → raycast", "color"="#0090cc"]
+	"set_marker_node_Set(SystemSetKey(6v1))" -> "set_marker_node_Set(SystemSetKey(7v1))" ["lhead"="clusternode_Set(SystemSetKey(7v1))", "ltail"="clusternode_Set(SystemSetKey(6v1))", "tooltip"="Writeback → Last", "color"="#ee9e44"]
+	"node_System(SystemKey(22v1))" -> "node_System(SystemKey(23v1))" ["lhead"="", "ltail"="", "tooltip"="update_grounded → log_character_velocity", "color"="#663699"]
+	"set_marker_node_Set(SystemSetKey(6v1))" -> "node_System(SystemKey(22v1))" ["lhead"="", "ltail"="clusternode_Set(SystemSetKey(6v1))", "tooltip"="Writeback → update_grounded", "color"="#3363bb"]
+	"node_System(SystemKey(16v1))" -> "node_System(SystemKey(17v1))" ["lhead"="", "ltail"="", "tooltip"="propagate_parent_transforms → sync_simple_transforms", "color"="#22c2bb"]
+	"set_marker_node_Set(SystemSetKey(3v1))" -> "set_marker_node_Set(SystemSetKey(22v1))" ["lhead"="clusternode_Set(SystemSetKey(22v1))", "ltail"="clusternode_Set(SystemSetKey(3v1))", "tooltip"="Propagate → SpatialQuerySystems", "color"="#99d955"]
+	"set_marker_node_Set(SystemSetKey(10v1))" -> "set_marker_node_Set(SystemSetKey(12v1))" ["lhead"="clusternode_Set(SystemSetKey(12v1))", "ltail"="clusternode_Set(SystemSetKey(10v1))", "tooltip"="UpdateColliderMassProperties → QueueRecomputation", "color"="#eede00"]
+	"node_System(SystemKey(9v1))" -> "node_System(SystemKey(10v1))" ["lhead"="", "ltail"="", "tooltip"="update_collider_scale<Collider> → update_collider_mass_properties<Collider>", "color"="#881877"]
+	"set_marker_node_Set(SystemSetKey(12v1))" -> "set_marker_node_Set(SystemSetKey(13v1))" ["lhead"="clusternode_Set(SystemSetKey(13v1))", "ltail"="clusternode_Set(SystemSetKey(12v1))", "tooltip"="QueueRecomputation → UpdateComputedMassProperties", "color"="#00b0cc"]
+	"set_marker_node_Set(SystemSetKey(6v1))" -> "node_System(SystemKey(24v1))" ["lhead"="", "ltail"="clusternode_Set(SystemSetKey(6v1))", "tooltip"="Writeback → sync_held_physics", "color"="#aa3a55"]
+	"node_System(SystemKey(6v1))" -> "node_System(SystemKey(7v1))" ["lhead"="", "ltail"="", "tooltip"="update_mass_properties → warn_invalid_mass", "color"="#44d488"]
+	"set_marker_node_Set(SystemSetKey(5v1))" -> "node_System(SystemKey(21v1))" ["lhead"="", "ltail"="clusternode_Set(SystemSetKey(5v1))", "tooltip"="StepSimulation → log_collisions", "color"="#0090cc"]
+	"set_marker_node_Set(SystemSetKey(7v1))" -> "set_marker_node_Set(SystemSetKey(3v1))" ["lhead"="clusternode_Set(SystemSetKey(3v1))", "ltail"="clusternode_Set(SystemSetKey(7v1))", "tooltip"="Last → Propagate", "color"="#ee9e44"]
+	"set_marker_node_Set(SystemSetKey(4v1))" -> "set_marker_node_Set(SystemSetKey(5v1))" ["lhead"="clusternode_Set(SystemSetKey(5v1))", "ltail"="clusternode_Set(SystemSetKey(4v1))", "tooltip"="Prepare → StepSimulation", "color"="#663699"]
+	"node_System(SystemKey(11v1))" -> "node_System(SystemKey(12v1))" ["lhead"="", "ltail"="", "tooltip"="update_ray_caster_positions → update_shape_caster_positions", "color"="#3363bb"]
+	"set_marker_node_Set(SystemSetKey(19v1))" -> "set_marker_node_Set(SystemSetKey(11v1))" ["lhead"="clusternode_Set(SystemSetKey(11v1))", "ltail"="clusternode_Set(SystemSetKey(19v1))", "tooltip"="Propagate → TransformToPosition", "color"="#22c2bb"]
+	"node_System(SystemKey(15v1))" -> "node_System(SystemKey(16v1))" ["lhead"="", "ltail"="", "tooltip"="mark_dirty_trees → propagate_parent_transforms", "color"="#99d955"]
+	"set_marker_node_Set(SystemSetKey(11v1))" -> "set_marker_node_Set(SystemSetKey(10v1))" ["lhead"="clusternode_Set(SystemSetKey(10v1))", "ltail"="clusternode_Set(SystemSetKey(11v1))", "tooltip"="TransformToPosition → UpdateColliderMassProperties", "color"="#eede00"]
+	"set_marker_node_Set(SystemSetKey(2v1))" -> "set_marker_node_Set(SystemSetKey(4v1))" ["lhead"="clusternode_Set(SystemSetKey(4v1))", "ltail"="clusternode_Set(SystemSetKey(2v1))", "tooltip"="First → Prepare", "color"="#881877"]
+}

@@ -1,0 +1,32 @@
+<svg width="267" height="44" viewBox="0.00 0.00 267.00 44.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="schedule-98f59e30f7e043d5" role="img" aria-label="schedule-98f59e30f7e043d5" data-diagram-engine="graphviz">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 40)">
+<polygon fill="#f6f8fb" stroke="none" points="-4,4 -4,-40 262.62,-40 262.62,4 -4,4"/>
+<!-- node_System(SystemKey(1v1)) -->
+<g id="node1" class="node">
+<title>node_System(SystemKey(1v1))</title>
+<g id="a_node1"><a xlink:title="bevy_render::run_render_schedule">
+<path fill="#eff3f8" stroke="#3567a6" stroke-width="1.6" d="M132.03,-36C132.03,-36 12,-36 12,-36 6,-36 0,-30 0,-24 0,-24 0,-12 0,-12 0,-6 6,0 12,0 12,0 132.03,0 132.03,0 138.03,0 144.03,-6 144.03,-12 144.03,-12 144.03,-24 144.03,-24 144.03,-30 138.03,-36 132.03,-36"/>
+<text xml:space="preserve" text-anchor="middle" x="72.02" y="-13.8" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="14.00" fill="#1f3340">run_render_schedule</text>
+</a>
+</g>
+</g>
+<!-- node_System(SystemKey(2v1)) -->
+<g id="node2" class="node">
+<title>node_System(SystemKey(2v1))</title>
+<g id="a_node2"><a xlink:title="bevy_render::send_time">
+<path fill="#eff3f8" stroke="#3567a6" stroke-width="1.6" d="M246.62,-36C246.62,-36 192.03,-36 192.03,-36 186.03,-36 180.03,-30 180.03,-24 180.03,-24 180.03,-12 180.03,-12 180.03,-6 186.03,0 192.03,0 192.03,0 246.62,0 246.62,0 252.62,0 258.62,-6 258.62,-12 258.62,-12 258.62,-24 258.62,-24 258.62,-30 252.62,-36 246.62,-36"/>
+<text xml:space="preserve" text-anchor="middle" x="219.33" y="-13.8" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="14.00" fill="#1f3340">send_time</text>
+</a>
+</g>
+</g>
+<!-- node_System(SystemKey(1v1))&#45;&gt;node_System(SystemKey(2v1)) -->
+<g id="edge1" class="edge">
+<title>node_System(SystemKey(1v1))-&gt;node_System(SystemKey(2v1))</title>
+<g id="a_edge1"><a xlink:title="run_render_schedule → send_time">
+<path fill="none" stroke="#334155" stroke-width="2" d="M144.82,-18C152.05,-18 159.3,-18 166.27,-18"/>
+<polygon fill="#334155" stroke="#334155" stroke-width="2" points="166.22,-21.5 176.22,-18 166.22,-14.5 166.22,-21.5"/>
+</a>
+</g>
+</g>
+</g>
+</svg>

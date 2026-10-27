@@ -1,0 +1,126 @@
+<svg width="851" height="205" viewBox="0.00 0.00 851.00 205.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="schedule-67c9b5d87331e390" role="img" aria-label="schedule-67c9b5d87331e390" data-diagram-engine="graphviz">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 201)">
+<polygon fill="#f6f8fb" stroke="none" points="-4,4 -4,-201 846.54,-201 846.54,4 -4,4"/>
+<g id="clust1" class="cluster">
+<title>clusternode_Set(SystemSetKey(1v1))</title>
+<g id="a_clust1"><a xlink:title="Begin">
+<path fill="#f3f4f6" stroke="#6a778c" stroke-width="1.6" d="M20,-61C20,-61 165.71,-61 165.71,-61 171.71,-61 177.71,-67 177.71,-73 177.71,-73 177.71,-141 177.71,-141 177.71,-147 171.71,-153 165.71,-153 165.71,-153 20,-153 20,-153 14,-153 8,-147 8,-141 8,-141 8,-73 8,-73 8,-67 14,-61 20,-61"/>
+
+
+</a>
+</g>
+</g>
+<g id="clust2" class="cluster">
+<title>clusternode_Set(SystemSetKey(2v1))</title>
+<g id="a_clust2"><a xlink:title="Render">
+<path fill="#f3f4f6" stroke="#6a778c" stroke-width="1.6" d="M209.71,-61C209.71,-61 305.83,-61 305.83,-61 311.83,-61 317.83,-67 317.83,-73 317.83,-73 317.83,-141 317.83,-141 317.83,-147 311.83,-153 305.83,-153 305.83,-153 209.71,-153 209.71,-153 203.71,-153 197.71,-147 197.71,-141 197.71,-141 197.71,-73 197.71,-73 197.71,-67 203.71,-61 209.71,-61"/>
+
+
+</a>
+</g>
+</g>
+<g id="clust3" class="cluster">
+<title>clusternode_Set(SystemSetKey(3v1))</title>
+<g id="a_clust3"><a xlink:title="Submit">
+<path fill="#f3f4f6" stroke="#6a778c" stroke-width="1.6" d="M349.83,-61C349.83,-61 822.54,-61 822.54,-61 828.54,-61 834.54,-67 834.54,-73 834.54,-73 834.54,-141 834.54,-141 834.54,-147 828.54,-153 822.54,-153 822.54,-153 349.83,-153 349.83,-153 343.83,-153 337.83,-147 337.83,-141 337.83,-141 337.83,-73 337.83,-73 337.83,-67 343.83,-61 349.83,-61"/>
+
+
+</a>
+</g>
+</g>
+<g id="clust4" class="cluster">
+<title>clusternode_Set(SystemSetKey(4v1))</title>
+<g id="a_clust4"><a xlink:title="Finish">
+<path fill="#f3f4f6" stroke="#6a778c" stroke-width="1.6" d="M697.12,-8C697.12,-8 744.13,-8 744.13,-8 750.13,-8 756.13,-14 756.13,-20 756.13,-20 756.13,-41 756.13,-41 756.13,-47 750.13,-53 744.13,-53 744.13,-53 697.12,-53 697.12,-53 691.12,-53 685.12,-47 685.12,-41 685.12,-41 685.12,-20 685.12,-20 685.12,-14 691.12,-8 697.12,-8"/>
+
+
+</a>
+</g>
+</g>
+<!-- set_marker_node_Set(SystemSetKey(1v1)) -->
+<!-- set_marker_node_Set(SystemSetKey(2v1)) -->
+<!-- set_marker_node_Set(SystemSetKey(1v1))&#45;&gt;set_marker_node_Set(SystemSetKey(2v1)) -->
+<g id="edge1" class="edge">
+<title>set_marker_node_Set(SystemSetKey(1v1))-&gt;set_marker_node_Set(SystemSetKey(2v1))</title>
+<g id="a_edge1"><a xlink:title="Begin → Render">
+<path fill="none" stroke="#334155" stroke-width="2" d="M177.71,-71C180.12,-71 182.53,-71 184.93,-71"/>
+<polygon fill="#334155" stroke="#334155" stroke-width="2" points="184.69,-74.5 194.69,-71 184.69,-67.5 184.69,-74.5"/>
+</a>
+</g>
+</g>
+<!-- node_System(SystemKey(4v1)) -->
+<g id="node2" class="node">
+<title>node_System(SystemKey(4v1))</title>
+<g id="a_node2"><a xlink:title="bevy_render::render_resource::sparse_buffer_vec::update_sparse_buffers">
+<path fill="#eff3f8" stroke="#3567a6" stroke-width="1.6" d="M157.71,-120C157.71,-120 28,-120 28,-120 22,-120 16,-114 16,-108 16,-108 16,-96 16,-96 16,-90 22,-84 28,-84 28,-84 157.71,-84 157.71,-84 163.71,-84 169.71,-90 169.71,-96 169.71,-96 169.71,-108 169.71,-108 169.71,-114 163.71,-120 157.71,-120"/>
+<text xml:space="preserve" text-anchor="middle" x="92.86" y="-97.8" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="14.00" fill="#1f3340">update_sparse_buffers</text>
+</a>
+</g>
+</g>
+<!-- set_marker_node_Set(SystemSetKey(3v1)) -->
+<!-- set_marker_node_Set(SystemSetKey(2v1))&#45;&gt;set_marker_node_Set(SystemSetKey(3v1)) -->
+<g id="edge3" class="edge">
+<title>set_marker_node_Set(SystemSetKey(2v1))-&gt;set_marker_node_Set(SystemSetKey(3v1))</title>
+<g id="a_edge3"><a xlink:title="Render → Submit">
+<path fill="none" stroke="#334155" stroke-width="2" d="M317.83,-71C320.13,-71 322.46,-71 324.83,-71"/>
+<polygon fill="#334155" stroke="#334155" stroke-width="2" points="324.8,-74.5 334.8,-71 324.8,-67.5 324.8,-74.5"/>
+</a>
+</g>
+</g>
+<!-- node_System(SystemKey(1v1)) -->
+<g id="node4" class="node">
+<title>node_System(SystemKey(1v1))</title>
+<g id="a_node4"><a xlink:title="bevy_core_pipeline::schedule::camera_driver">
+<path fill="#eff3f8" stroke="#3567a6" stroke-width="1.6" d="M297.83,-120C297.83,-120 217.71,-120 217.71,-120 211.71,-120 205.71,-114 205.71,-108 205.71,-108 205.71,-96 205.71,-96 205.71,-90 211.71,-84 217.71,-84 217.71,-84 297.83,-84 297.83,-84 303.83,-84 309.83,-90 309.83,-96 309.83,-96 309.83,-108 309.83,-108 309.83,-114 303.83,-120 297.83,-120"/>
+<text xml:space="preserve" text-anchor="middle" x="257.77" y="-97.8" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="14.00" fill="#1f3340">camera_driver</text>
+</a>
+</g>
+</g>
+<!-- set_marker_node_Set(SystemSetKey(4v1)) -->
+<!-- set_marker_node_Set(SystemSetKey(3v1))&#45;&gt;set_marker_node_Set(SystemSetKey(4v1)) -->
+<g id="edge2" class="edge">
+<title>set_marker_node_Set(SystemSetKey(3v1))-&gt;set_marker_node_Set(SystemSetKey(4v1))</title>
+<g id="a_edge2"><a xlink:title="Submit → Finish">
+<path fill="none" stroke="#334155" stroke-width="2" d="M511.13,-61C557.51,-51.41 627.05,-37.03 672.75,-27.59"/>
+<polygon fill="#334155" stroke="#334155" stroke-width="2" points="673.07,-31.1 682.15,-25.64 671.65,-24.24 673.07,-31.1"/>
+</a>
+</g>
+</g>
+<!-- node_System(SystemKey(2v1)) -->
+<g id="node6" class="node">
+<title>node_System(SystemKey(2v1))</title>
+<g id="a_node6"><a xlink:title="bevy_core_pipeline::schedule::submit_pending_command_buffers">
+<path fill="#eff3f8" stroke="#3567a6" stroke-width="1.6" d="M565.7,-120C565.7,-120 357.83,-120 357.83,-120 351.83,-120 345.83,-114 345.83,-108 345.83,-108 345.83,-96 345.83,-96 345.83,-90 351.83,-84 357.83,-84 357.83,-84 565.7,-84 565.7,-84 571.7,-84 577.7,-90 577.7,-96 577.7,-96 577.7,-108 577.7,-108 577.7,-114 571.7,-120 565.7,-120"/>
+<text xml:space="preserve" text-anchor="middle" x="461.77" y="-97.8" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="14.00" fill="#1f3340">submit_pending_command_buffers</text>
+</a>
+</g>
+</g>
+<!-- node_System(SystemKey(3v1)) -->
+<g id="node7" class="node">
+<title>node_System(SystemKey(3v1))</title>
+<g id="a_node7"><a xlink:title="bevy_core_pipeline::schedule::handle_uncovered_swap_chains">
+<path fill="#eff3f8" stroke="#3567a6" stroke-width="1.6" d="M814.54,-120C814.54,-120 625.7,-120 625.7,-120 619.7,-120 613.7,-114 613.7,-108 613.7,-108 613.7,-96 613.7,-96 613.7,-90 619.7,-84 625.7,-84 625.7,-84 814.54,-84 814.54,-84 820.54,-84 826.54,-90 826.54,-96 826.54,-96 826.54,-108 826.54,-108 826.54,-114 820.54,-120 814.54,-120"/>
+<text xml:space="preserve" text-anchor="middle" x="720.12" y="-97.8" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="14.00" fill="#1f3340">handle_uncovered_swap_chains</text>
+</a>
+</g>
+</g>
+<!-- node_System(SystemKey(2v1))&#45;&gt;node_System(SystemKey(3v1)) -->
+<g id="edge4" class="edge">
+<title>node_System(SystemKey(2v1))-&gt;node_System(SystemKey(3v1))</title>
+<g id="a_edge4"><a xlink:title="submit_pending_command_buffers → handle_uncovered_swap_chains">
+<path fill="none" stroke="#334155" stroke-width="2" d="M578.19,-102C585.42,-102 592.7,-102 599.94,-102"/>
+<polygon fill="#334155" stroke="#334155" stroke-width="2" points="599.89,-105.5 609.89,-102 599.89,-98.5 599.89,-105.5"/>
+</a>
+</g>
+</g>
+<!-- node_System(SystemKey(5v1)) -->
+<g id="node9" class="node">
+<title>node_System(SystemKey(5v1))</title>
+<g id="a_node9"><a xlink:title="bevy_ecs::apply_deferred">
+<path fill="#eff3f8" stroke="#3567a6" stroke-width="1.6" d="M135.14,-197C135.14,-197 50.57,-197 50.57,-197 44.57,-197 38.57,-191 38.57,-185 38.57,-185 38.57,-173 38.57,-173 38.57,-167 44.57,-161 50.57,-161 50.57,-161 135.14,-161 135.14,-161 141.14,-161 147.14,-167 147.14,-173 147.14,-173 147.14,-185 147.14,-185 147.14,-191 141.14,-197 135.14,-197"/>
+<text xml:space="preserve" text-anchor="middle" x="92.86" y="-174.8" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="14.00" fill="#1f3340">apply_deferred</text>
+</a>
+</g>
+</g>
+<g id="schedule-67c9b5d87331e390-cluster-title-0" class="schedule-cluster-title" data-cluster-id="clust1" data-cluster-name="clusternode_Set(SystemSetKey(1v1))"><g id="schedule-67c9b5d87331e390-cluster-title-0-a_clust1"><a xlink:title="Begin"><polygon fill="#f3f4f6" stroke="none" points="66.14,-132.2 66.14,-149 119.58,-149 119.58,-132.2 66.14,-132.2"/><text xml:space="preserve" text-anchor="start" x="76.14" y="-135" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="14.00" fill="#1f3340">Begin</text></a></g></g><g id="schedule-67c9b5d87331e390-cluster-title-1" class="schedule-cluster-title" data-cluster-id="clust2" data-cluster-name="clusternode_Set(SystemSetKey(2v1))"><g id="schedule-67c9b5d87331e390-cluster-title-1-a_clust2"><a xlink:title="Render"><polygon fill="#f3f4f6" stroke="none" points="227.56,-132.2 227.56,-149 287.98,-149 287.98,-132.2 227.56,-132.2"/><text xml:space="preserve" text-anchor="start" x="237.56" y="-135" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="14.00" fill="#1f3340">Render</text></a></g></g><g id="schedule-67c9b5d87331e390-cluster-title-2" class="schedule-cluster-title" data-cluster-id="clust3" data-cluster-name="clusternode_Set(SystemSetKey(3v1))"><g id="schedule-67c9b5d87331e390-cluster-title-2-a_clust3"><a xlink:title="Submit"><polygon fill="#f3f4f6" stroke="none" points="555.96,-132.2 555.96,-149 616.41,-149 616.41,-132.2 555.96,-132.2"/><text xml:space="preserve" text-anchor="start" x="565.96" y="-135" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="14.00" fill="#1f3340">Submit</text></a></g></g><g id="schedule-67c9b5d87331e390-cluster-title-3" class="schedule-cluster-title" data-cluster-id="clust4" data-cluster-name="clusternode_Set(SystemSetKey(4v1))"><g id="schedule-67c9b5d87331e390-cluster-title-3-a_clust4"><a xlink:title="Finish"><polygon fill="#f3f4f6" stroke="none" points="693.12,-32.2 693.12,-49 748.13,-49 748.13,-32.2 693.12,-32.2"/><text xml:space="preserve" text-anchor="start" x="703.12" y="-35" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="14.00" fill="#1f3340">Finish</text></a></g></g></g>
+</svg>

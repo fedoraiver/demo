@@ -1,0 +1,13 @@
+digraph "" {
+	"compound"="true";
+	"splines"="spline";
+	"rankdir"="LR";
+	"bgcolor"="#0d1117";
+	"fontname"="Helvetica";
+	"nodesep"="0.15";
+	edge ["penwidth"="2"];
+	node ["shape"="box", "style"="filled"];
+	"node_System(SystemKey(1v1))" ["label"="resume_simulation", "tooltip"="demo::game_flow::resume_simulation"]
+	"node_System(SystemKey(2v1))" ["label"="resume_capture", "tooltip"="demo::first_person::resume_capture"]
+	"node_System(SystemKey(3v1))" ["label"="hide_menu", "tooltip"="demo::ui::lifecycle::hide_menu"]
+}

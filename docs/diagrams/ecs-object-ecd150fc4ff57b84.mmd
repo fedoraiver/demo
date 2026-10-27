@@ -66,41 +66,38 @@ flowchart LR
   n8@{ shape: stadium, label: "**Fire#lt;LookAction#gt;**<br/>来自第一人称控制 ↗：通知目标控制者更新<br/>观察输入。" }
   class n8 node_event
   class n8 external_node
-  n9@{ shape: stadium, label: "**Fire#lt;ReleasePointerAction#gt;**<br/>来自第一人称控制 ↗：通知控制者释放光标<br/>以操作检查器。" }
+  n9@{ shape: stadium, label: "**Fire#lt;PreviousAction#gt;**<br/>来自菜单与界面 ↗：向上循环选择可操作按<br/>钮。" }
   class n9 node_event
   class n9 external_node
-  n10@{ shape: stadium, label: "**Fire#lt;PreviousAction#gt;**<br/>来自菜单与界面 ↗：向上循环选择可操作按<br/>钮。" }
+  n10@{ shape: stadium, label: "**Fire#lt;NextAction#gt;**<br/>来自菜单与界面 ↗：向下循环选择可操作按<br/>钮。" }
   class n10 node_event
   class n10 external_node
-  n11@{ shape: stadium, label: "**Fire#lt;NextAction#gt;**<br/>来自菜单与界面 ↗：向下循环选择可操作按<br/>钮。" }
+  n11@{ shape: stadium, label: "**Fire#lt;LeftAction#gt;**<br/>来自菜单与界面 ↗：向左调整当前聚焦的真<br/>实设置字段。" }
   class n11 node_event
   class n11 external_node
-  n12@{ shape: stadium, label: "**Fire#lt;LeftAction#gt;**<br/>来自菜单与界面 ↗：向左调整当前聚焦的真<br/>实设置字段。" }
+  n12@{ shape: stadium, label: "**Fire#lt;RightAction#gt;**<br/>来自菜单与界面 ↗：向右调整当前聚焦的真<br/>实设置字段。" }
   class n12 node_event
   class n12 external_node
-  n13@{ shape: stadium, label: "**Fire#lt;RightAction#gt;**<br/>来自菜单与界面 ↗：向右调整当前聚焦的真<br/>实设置字段。" }
+  n13@{ shape: stadium, label: "**Fire#lt;ConfirmAction#gt;**<br/>来自菜单与界面 ↗：通知执行当前聚焦按钮<br/>的菜单动作。" }
   class n13 node_event
   class n13 external_node
-  n14@{ shape: stadium, label: "**Fire#lt;ConfirmAction#gt;**<br/>来自菜单与界面 ↗：通知执行当前聚焦按钮<br/>的菜单动作。" }
+  n14@{ shape: stadium, label: "**Fire#lt;BackAction#gt;**<br/>来自菜单与界面 ↗：通知菜单执行返回、暂<br/>停或恢复操作。" }
   class n14 node_event
   class n14 external_node
-  n15@{ shape: stadium, label: "**Fire#lt;BackAction#gt;**<br/>来自菜单与界面 ↗：通知菜单执行返回、暂<br/>停或恢复操作。" }
-  class n15 node_event
-  class n15 external_node
-  n16@{ shape: rounded, label: "**Actions#lt;GameplayContext#gt;**<br/>索引控制上下文拥有的动作实体。" }
+  n15@{ shape: rounded, label: "**Actions#lt;GameplayContext#gt;**<br/>索引控制上下文拥有的动作实体。" }
+  class n15 node_component
+  n16@{ shape: rounded, label: "**ActionFns**<br/>将通用动作值适配为具体动作组件。" }
   class n16 node_component
-  n17@{ shape: rounded, label: "**ActionFns**<br/>将通用动作值适配为具体动作组件。" }
+  n17@{ shape: rounded, label: "**ActionValue**<br/>保存动作评估产生的通用输入值。" }
   class n17 node_component
-  n18@{ shape: rounded, label: "**ActionValue**<br/>保存动作评估产生的通用输入值。" }
+  n18@{ shape: rounded, label: "**TriggerState**<br/>保存本次动作评估的触发状态。" }
   class n18 node_component
-  n19@{ shape: rounded, label: "**TriggerState**<br/>保存本次动作评估的触发状态。" }
+  n19@{ shape: rounded, label: "**ActionEvents**<br/>保存本次待派发的动作事件。" }
   class n19 node_component
-  n20@{ shape: rounded, label: "**ActionEvents**<br/>保存本次待派发的动作事件。" }
+  n20@{ shape: rounded, label: "**ActionTime**<br/>动作持续与触发计时，由插件评估更新。" }
   class n20 node_component
-  n21@{ shape: rounded, label: "**ActionTime**<br/>动作持续与触发计时，由插件评估更新。" }
-  class n21 node_component
-  n22@{ shape: cyl, label: "**ContextInstances#lt;PreUpdate#gt;**<br/>索引输入框架当前运行的动作上下文。" }
-  class n22 node_resource
+  n21@{ shape: cyl, label: "**ContextInstances#lt;PreUpdate#gt;**<br/>索引输入框架当前运行的动作上下文。" }
+  class n21 node_resource
   n0 e0@--> n1
   class e0 edge_order
   n2 e1@--> n0
@@ -117,20 +114,20 @@ flowchart LR
   class e6 edge_emit
   n0 e7@-->|"Commands::trigger Fire#lt;LookAction#gt;"| n8
   class e7 edge_emit
-  n0 e8@-->|"Commands::trigger<br/>Fire#lt;ReleasePointerAction#gt;"| n9
+  n0 e8@-->|"Commands::trigger<br/>Fire#lt;PreviousAction#gt;"| n9
   class e8 edge_emit
-  n0 e9@-->|"Commands::trigger<br/>Fire#lt;PreviousAction#gt;"| n10
+  n0 e9@-->|"Commands::trigger Fire#lt;NextAction#gt;"| n10
   class e9 edge_emit
-  n0 e10@-->|"Commands::trigger Fire#lt;NextAction#gt;"| n11
+  n0 e10@-->|"Commands::trigger Fire#lt;LeftAction#gt;"| n11
   class e10 edge_emit
-  n0 e11@-->|"Commands::trigger Fire#lt;LeftAction#gt;"| n12
+  n0 e11@-->|"Commands::trigger Fire#lt;RightAction#gt;"| n12
   class e11 edge_emit
-  n0 e12@-->|"Commands::trigger Fire#lt;RightAction#gt;"| n13
+  n0 e12@-->|"Commands::trigger<br/>Fire#lt;ConfirmAction#gt;"| n13
   class e12 edge_emit
-  n0 e13@-->|"Commands::trigger<br/>Fire#lt;ConfirmAction#gt;"| n14
+  n0 e13@-->|"Commands::trigger Fire#lt;BackAction#gt;"| n14
   class e13 edge_emit
-  n0 e14@-->|"Commands::trigger Fire#lt;BackAction#gt;"| n15
-  class e14 edge_emit
+  n15 e14@-->|"查询访问"| n0
+  class e14 edge_read
   n16 e15@-->|"查询访问"| n0
   class e15 edge_read
   n17 e16@-->|"查询访问"| n0
@@ -141,10 +138,8 @@ flowchart LR
   class e18 edge_read
   n20 e19@-->|"查询访问"| n0
   class e19 edge_read
-  n21 e20@-->|"查询访问"| n0
+  n21 e20@-->|"访问声明"| n0
   class e20 edge_read
-  n22 e21@-->|"访问声明"| n0
-  class e21 edge_read
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
@@ -152,7 +147,6 @@ flowchart LR
   e4@{ curve: basis }
   e5@{ curve: basis }
   e6@{ curve: basis }
-  e7@{ curve: basis }
   e8@{ curve: basis }
   e9@{ curve: basis }
   e10@{ curve: basis }
@@ -166,4 +160,3 @@ flowchart LR
   e18@{ curve: basis }
   e19@{ curve: basis }
   e20@{ curve: basis }
-  e21@{ curve: basis }

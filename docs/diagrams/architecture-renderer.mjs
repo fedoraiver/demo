@@ -1,7 +1,6 @@
 // Mermaid 定义、业务身份和图例共用视觉语义；不手工重画编译后的图形。
-import { NODE_STYLES, EDGE_STYLES, EXTERNAL_REFERENCE_STYLE, visualTypeOf, edgeSemanticOf, displayLabelOf, scheduleLinksFor, mermaidStyleDefinitions } from './architecture-style.mjs';
+import { NODE_STYLES, EDGE_STYLES, EXTERNAL_REFERENCE_STYLE, ARCHITECTURE_TEXT_STYLE, visualTypeOf, edgeSemanticOf, displayLabelOf, scheduleLinksFor, mermaidStyleDefinitions } from './architecture-style.mjs';
 import { INFRASTRUCTURE_FEATURES } from './architecture-infrastructure.mjs';
-import { buildAppSchedule } from './architecture-app-schedule.mjs';
 import { buildObserverPlacement } from './architecture-model.mjs';
 
 export const DATA_GROUP_LABELS = { catalog: '数据与实体', relations: '数据流与关系' };
@@ -152,8 +151,8 @@ function nodeText(name, context) {
 }
 
 export function mermaidConfiguration(aspect) {
-  return { theme: 'base', look: 'classic', layout: 'dagre', maxTextSize: 200000, htmlLabels: false, fontFamily: 'Segoe UI, Microsoft YaHei, sans-serif',
-    themeVariables: { primaryTextColor: '#1F3340', lineColor: '#64748B', clusterBkg: '#F8FAFC', clusterBorder: '#DDE4ED', edgeLabelBackground: '#FFFFFF', fontSize: '14px' },
+  return { theme: 'base', look: 'classic', layout: 'dagre', maxTextSize: 200000, htmlLabels: false, fontFamily: ARCHITECTURE_TEXT_STYLE.fontFamily,
+    themeVariables: { primaryTextColor: ARCHITECTURE_TEXT_STYLE.color, lineColor: '#64748B', clusterBkg: '#F8FAFC', clusterBorder: '#DDE4ED', edgeLabelBackground: '#FFFFFF', fontSize: ARCHITECTURE_TEXT_STYLE.fontSize + 'px' },
     flowchart: { htmlLabels: false, nodeSpacing: 32, rankSpacing: aspect === 'data' ? 8 : 56, padding: 16, wrappingWidth: 280, minNodeWidth: 180, useMaxWidth: false, curve: 'linear' },
   };
 }
@@ -303,10 +302,4 @@ function definition(view, graph, registry, features, scheduleGroups = []) {
 
 export function renderGraphView(view, graph, registry, features, scheduleGroups) {
   return definition(view, graph, registry, features, scheduleGroups);
-}
-
-export function renderOverview(model, registry, features) {
-  const app = buildAppSchedule(model, registry);
-  const view = { id: 'overview', feature: null, aspect: 'overview', layout: 'app-schedule', label: 'App 系统调度总览', summary: '启动流程只执行一次；每帧依次处理输入、状态、固定循环与呈现。固定循环可执行零到多步；Observer 按事件来源连接，不属于固定 Schedule。原生回调和渲染子应用分别展示，组内仅显式顺序边表示执行依赖。', phaseLinks: app.phaseLinks };
-  return definition(view, app.graph, registry, features, app.groups);
 }

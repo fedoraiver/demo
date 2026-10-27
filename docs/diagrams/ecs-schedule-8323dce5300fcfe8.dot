@@ -1,0 +1,136 @@
+digraph "" {
+	"compound"="true";
+	"splines"="spline";
+	"rankdir"="LR";
+	"bgcolor"="#0d1117";
+	"fontname"="Helvetica";
+	"nodesep"="0.15";
+	edge ["penwidth"="2"];
+	node ["shape"="box", "style"="filled"];
+	subgraph "clusternode_Set(SystemSetKey(7v1))" {
+		"style"="rounded,filled";
+		"label"="Style";
+		"tooltip"="Style";
+		"fillcolor"="#ffffff44";
+		"fontcolor"="#ffffff";
+		"color"="#ffffff50";
+		"penwidth"="2";
+		"set_marker_node_Set(SystemSetKey(7v1))" ["style"="invis", "label"="", "shape"="point"]
+		"node_System(SystemKey(17v1))" ["label"="style_buttons", "tooltip"="demo::ui::style::style_buttons", "fillcolor"="#eff1f3", "fontname"="Helvetica", "fontcolor"="#15191d", "color"="#b4bec7", "penwidth"="1"]
+		"node_System(SystemKey(18v1))" ["label"="update_settings_text", "tooltip"="demo::ui::style::update_settings_text", "fillcolor"="#eff1f3", "fontname"="Helvetica", "fontcolor"="#15191d", "color"="#b4bec7", "penwidth"="1"]
+		"node_System(SystemKey(19v1))" ["label"="update_description", "tooltip"="demo::ui::style::update_description", "fillcolor"="#eff1f3", "fontname"="Helvetica", "fontcolor"="#15191d", "color"="#b4bec7", "penwidth"="1"]
+		"node_System(SystemKey(20v1))" ["label"="publish_audio_preview", "tooltip"="demo::ui::style::publish_audio_preview", "fillcolor"="#eff1f3", "fontname"="Helvetica", "fontcolor"="#15191d", "color"="#b4bec7", "penwidth"="1"]
+		"node_System(SystemKey(21v1))" ["label"="scroll_focused_button", "tooltip"="demo::ui::scroll::scroll_focused_button", "fillcolor"="#eff1f3", "fontname"="Helvetica", "fontcolor"="#15191d", "color"="#b4bec7", "penwidth"="1"]
+	}
+	
+	subgraph "clusternode_Set(SystemSetKey(8v1))" {
+		"style"="rounded,filled";
+		"label"="Mix";
+		"tooltip"="Mix";
+		"fillcolor"="#ffffff44";
+		"fontcolor"="#ffffff";
+		"color"="#ffffff50";
+		"penwidth"="2";
+		"set_marker_node_Set(SystemSetKey(8v1))" ["style"="invis", "label"="", "shape"="point"]
+		"node_System(SystemKey(27v1))" ["label"="log_load_failures", "tooltip"="demo::audio::playback::log_load_failures", "fillcolor"="#eff1f3", "fontname"="Helvetica", "fontcolor"="#15191d", "color"="#b4bec7", "penwidth"="1"]
+		"node_System(SystemKey(28v1))" ["label"="sync_audio_mix", "tooltip"="demo::audio::mix::sync_audio_mix", "fillcolor"="#eff1f3", "fontname"="Helvetica", "fontcolor"="#15191d", "color"="#b4bec7", "penwidth"="1"]
+		"node_System(SystemKey(29v1))" ["label"="sync_voice_volumes", "tooltip"="demo::audio::mix::sync_voice_volumes", "fillcolor"="#eff1f3", "fontname"="Helvetica", "fontcolor"="#15191d", "color"="#b4bec7", "penwidth"="1"]
+	}
+	
+	subgraph "clusternode_Set(SystemSetKey(9v1))" {
+		"style"="rounded,filled";
+		"label"="Playback";
+		"tooltip"="Playback";
+		"fillcolor"="#ffffff44";
+		"fontcolor"="#ffffff";
+		"color"="#ffffff50";
+		"penwidth"="2";
+		"set_marker_node_Set(SystemSetKey(9v1))" ["style"="invis", "label"="", "shape"="point"]
+		"node_System(SystemKey(30v1))" ["label"="play_requests", "tooltip"="demo::audio::playback::play_requests", "fillcolor"="#eff1f3", "fontname"="Helvetica", "fontcolor"="#15191d", "color"="#b4bec7", "penwidth"="1"]
+		"node_System(SystemKey(31v1))" ["label"="stop_on_exit", "tooltip"="demo::audio::playback::stop_on_exit", "fillcolor"="#eff1f3", "fontname"="Helvetica", "fontcolor"="#15191d", "color"="#b4bec7", "penwidth"="1"]
+	}
+	
+	subgraph "clusternode_Set(SystemSetKey(12v1))" {
+		"style"="rounded,filled";
+		"label"="AnonymousSet(0)";
+		"tooltip"="AnonymousSet(0)";
+		"fillcolor"="#ffffff44";
+		"fontcolor"="#ffffff";
+		"color"="#ffffff50";
+		"penwidth"="2";
+		"set_marker_node_Set(SystemSetKey(12v1))" ["style"="invis", "label"="", "shape"="point"]
+		"node_System(SystemKey(9v1))" ["label"="initialize_ready_couriers", "tooltip"="demo::character_animation::binding::initialize_ready_couriers", "fillcolor"="#eff1f3", "fontname"="Helvetica", "fontcolor"="#15191d", "color"="#b4bec7", "penwidth"="1"]
+		"node_System(SystemKey(10v1))" ["label"="sync_courier_animation", "tooltip"="demo::character_animation::state::sync_courier_animation", "fillcolor"="#eff1f3", "fontname"="Helvetica", "fontcolor"="#15191d", "color"="#b4bec7", "penwidth"="1"]
+	}
+	
+	subgraph "clusternode_Set(SystemSetKey(16v1))" {
+		"style"="rounded,filled";
+		"label"="AnonymousSet(1)";
+		"tooltip"="AnonymousSet(1)";
+		"fillcolor"="#ffffff44";
+		"fontcolor"="#ffffff";
+		"color"="#ffffff50";
+		"penwidth"="2";
+		"set_marker_node_Set(SystemSetKey(16v1))" ["style"="invis", "label"="", "shape"="point"]
+		"node_System(SystemKey(12v1))" ["label"="begin_island", "tooltip"="demo::scene_assembly::loading::begin_island", "fillcolor"="#eff1f3", "fontname"="Helvetica", "fontcolor"="#15191d", "color"="#b4bec7", "penwidth"="1"]
+		"node_System(SystemKey(13v1))" ["label"="prepare_island", "tooltip"="demo::scene_assembly::loading::prepare_island", "fillcolor"="#eff1f3", "fontname"="Helvetica", "fontcolor"="#15191d", "color"="#b4bec7", "penwidth"="1"]
+		"node_System(SystemKey(14v1))" ["label"="spawn_actors", "tooltip"="demo::scene_assembly::actors::spawn_actors", "fillcolor"="#eff1f3", "fontname"="Helvetica", "fontcolor"="#15191d", "color"="#b4bec7", "penwidth"="1"]
+	}
+	
+	subgraph "clusternode_Set(SystemSetKey(20v1))" {
+		"style"="rounded,filled";
+		"label"="Build";
+		"tooltip"="Build";
+		"fillcolor"="#ffffff44";
+		"fontcolor"="#ffffff";
+		"color"="#ffffff50";
+		"penwidth"="2";
+		"set_marker_node_Set(SystemSetKey(20v1))" ["style"="invis", "label"="", "shape"="point"]
+		"node_System(SystemKey(16v1))" ["label"="rebuild_page", "tooltip"="demo::ui::pages::rebuild_page", "fillcolor"="#eff1f3", "fontname"="Helvetica", "fontcolor"="#15191d", "color"="#b4bec7", "penwidth"="1"]
+	}
+	
+	subgraph "clusternode_Set(SystemSetKey(21v1))" {
+		"style"="rounded,filled";
+		"label"="Pointer";
+		"tooltip"="Pointer";
+		"fillcolor"="#ffffff44";
+		"fontcolor"="#ffffff";
+		"color"="#ffffff50";
+		"penwidth"="2";
+		"set_marker_node_Set(SystemSetKey(21v1))" ["style"="invis", "label"="", "shape"="point"]
+		"node_System(SystemKey(15v1))" ["label"="pointer_interaction", "tooltip"="demo::ui::pointer::pointer_interaction", "fillcolor"="#eff1f3", "fontname"="Helvetica", "fontcolor"="#15191d", "color"="#b4bec7", "penwidth"="1"]
+	}
+	
+	"node_System(SystemKey(1v1))" ["label"="TerminalCtrlCHandlerPlugin::exit_on_flag", "tooltip"="bevy_app::terminal_ctrl_c_handler::TerminalCtrlCHandlerPlugin::exit_on_flag"]
+	"node_System(SystemKey(2v1))" ["label"="trigger_screenshots", "tooltip"="bevy_render::view::window::screenshot::trigger_screenshots"]
+	"node_System(SystemKey(3v1))" ["label"="automatically_add_parallax_correction_components", "tooltip"="bevy_light::probe::automatically_add_parallax_correction_components"]
+	"node_System(SystemKey(4v1))" ["label"="check_msaa", "tooltip"="bevy_core_pipeline::oit::check_msaa"]
+	"node_System(SystemKey(5v1))" ["label"="update_tilemap_chunk_indices", "tooltip"="bevy_sprite_render::tilemap_chunk::update_tilemap_chunk_indices"]
+	"node_System(SystemKey(6v1))" ["label"="sync_dialog_z", "tooltip"="bevy_ui_widgets::dialog::sync_dialog_z"]
+	"node_System(SystemKey(7v1))" ["label"="init_collider_constructors", "tooltip"="avian3d::collision::collider::backend::init_collider_constructors"]
+	"node_System(SystemKey(8v1))" ["label"="init_collider_constructor_hierarchies", "tooltip"="avian3d::collision::collider::backend::init_collider_constructor_hierarchies"]
+	"node_System(SystemKey(11v1))" ["label"="poll_art_assets", "tooltip"="demo::scene_assembly::assets::poll_art_assets"]
+	"node_System(SystemKey(22v1))" ["label"="bind_settings_scrollbars", "tooltip"="demo::ui::scroll::bind_settings_scrollbars"]
+	"node_System(SystemKey(23v1))" ["label"="sample_slider_pointer", "tooltip"="demo::ui::volume::sample_slider_pointer"]
+	"node_System(SystemKey(24v1))" ["label"="update_volume_visuals", "tooltip"="demo::ui::volume::update_volume_visuals"]
+	"node_System(SystemKey(25v1))" ["label"="play_courier_animation", "tooltip"="demo::ui::backdrop::play_courier_animation"]
+	"node_System(SystemKey(26v1))" ["label"="log_asset_failures", "tooltip"="demo::ui::backdrop::log_asset_failures"]
+	"node_System(SystemKey(32v1))" ["label"="generate_environment_map_light", "tooltip"="bevy_pbr::light_probe::generate::generate_environment_map_light"]
+	"node_System(SystemKey(33v1))" ["label"="apply_deferred", "tooltip"="bevy_ecs::apply_deferred"]
+	"node_System(SystemKey(34v1))" ["label"="apply_deferred", "tooltip"="bevy_ecs::apply_deferred"]
+	"node_System(SystemKey(9v1))" -> "node_System(SystemKey(10v1))" ["lhead"="", "ltail"="", "tooltip"="initialize_ready_couriers → sync_courier_animation", "color"="#eede00"]
+	"set_marker_node_Set(SystemSetKey(7v1))" -> "set_marker_node_Set(SystemSetKey(8v1))" ["lhead"="clusternode_Set(SystemSetKey(8v1))", "ltail"="clusternode_Set(SystemSetKey(7v1))", "tooltip"="Style → Mix", "color"="#881877"]
+	"set_marker_node_Set(SystemSetKey(8v1))" -> "set_marker_node_Set(SystemSetKey(9v1))" ["lhead"="clusternode_Set(SystemSetKey(9v1))", "ltail"="clusternode_Set(SystemSetKey(8v1))", "tooltip"="Mix → Playback", "color"="#00b0cc"]
+	"node_System(SystemKey(13v1))" -> "node_System(SystemKey(14v1))" ["lhead"="", "ltail"="", "tooltip"="prepare_island → spawn_actors", "color"="#aa3a55"]
+	"set_marker_node_Set(SystemSetKey(20v1))" -> "set_marker_node_Set(SystemSetKey(21v1))" ["lhead"="clusternode_Set(SystemSetKey(21v1))", "ltail"="clusternode_Set(SystemSetKey(20v1))", "tooltip"="Build → Pointer", "color"="#44d488"]
+	"node_System(SystemKey(12v1))" -> "node_System(SystemKey(13v1))" ["lhead"="", "ltail"="", "tooltip"="begin_island → prepare_island", "color"="#0090cc"]
+	"node_System(SystemKey(27v1))" -> "node_System(SystemKey(28v1))" ["lhead"="", "ltail"="", "tooltip"="log_load_failures → sync_audio_mix", "color"="#ee9e44"]
+	"set_marker_node_Set(SystemSetKey(21v1))" -> "node_System(SystemKey(24v1))" ["lhead"="", "ltail"="clusternode_Set(SystemSetKey(21v1))", "tooltip"="Pointer → update_volume_visuals", "color"="#663699"]
+	"node_System(SystemKey(28v1))" -> "node_System(SystemKey(29v1))" ["lhead"="", "ltail"="", "tooltip"="sync_audio_mix → sync_voice_volumes", "color"="#3363bb"]
+	"set_marker_node_Set(SystemSetKey(20v1))" -> "node_System(SystemKey(22v1))" ["lhead"="", "ltail"="clusternode_Set(SystemSetKey(20v1))", "tooltip"="Build → bind_settings_scrollbars", "color"="#22c2bb"]
+	"node_System(SystemKey(22v1))" -> "set_marker_node_Set(SystemSetKey(7v1))" ["lhead"="clusternode_Set(SystemSetKey(7v1))", "ltail"="", "tooltip"="bind_settings_scrollbars → Style", "color"="#99d955"]
+	"set_marker_node_Set(SystemSetKey(21v1))" -> "node_System(SystemKey(23v1))" ["lhead"="", "ltail"="clusternode_Set(SystemSetKey(21v1))", "tooltip"="Pointer → sample_slider_pointer", "color"="#eede00"]
+	"node_System(SystemKey(30v1))" -> "node_System(SystemKey(31v1))" ["lhead"="", "ltail"="", "tooltip"="play_requests → stop_on_exit", "color"="#881877"]
+	"node_System(SystemKey(23v1))" -> "set_marker_node_Set(SystemSetKey(7v1))" ["lhead"="clusternode_Set(SystemSetKey(7v1))", "ltail"="", "tooltip"="sample_slider_pointer → Style", "color"="#00b0cc"]
+	"node_System(SystemKey(24v1))" -> "set_marker_node_Set(SystemSetKey(7v1))" ["lhead"="clusternode_Set(SystemSetKey(7v1))", "ltail"="", "tooltip"="update_volume_visuals → Style", "color"="#aa3a55"]
+}

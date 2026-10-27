@@ -418,14 +418,27 @@ test('current registry and merged function cards have verified source scope acro
   const audit = applyArchitectureSourcePolicies(registry, { repository, model, dependencyContext: { metadata, resolver } });
   const coverage = auditProductionEcsCoverage(registry, { context: audit.context });
   assert.deepEqual(coverage.gaps, []);
-  assert.equal(coverage.declarations.length, 91);
-  assert.equal(coverage.registrations.length, 84);
+  assert.equal(coverage.declarations.length, 90);
+  assert.equal(coverage.registrations.length, 82);
+  assert(!coverage.declarations.some(declaration => declaration.name === 'ReleasePointerAction'));
+  for (const id of ['filter_egui_input', 'observe_release_pointer', 'event-observe_release_pointer', 'action.Action<ReleasePointerAction>']) {
+    assert.equal(registry[id], undefined, `${id}: 已删除声明不能留在当前对象目录`);
+  }
+  assert.deepEqual(registry.mouse_capture.registrations, [{
+    schedule: 'PreUpdate', scope: 'runtime', after: ['InputSystems', 'EguiPreUpdateSet::InitContexts'],
+    before: ['EguiPreUpdateSet::ProcessInput', 'EnhancedInputSystems::Prepare'],
+  }]);
+  assert(registry.mouse_capture.writes.includes('camera.EguiContextSettings'));
+  assert(registry.mouse_capture.writes.includes('camera.EguiInput'));
+  assert(!registry.mouse_capture.reads.includes('resource.MouseButtonInputMessages'));
   assert.ok(coverage.declarations.some(declaration => declaration.name === 'RecoverableBody'));
   assert.ok(!coverage.declarations.some(declaration => declaration.name === 'WaterRecoveryOrder'));
   const sourceLine = source => source.dependency ? resolver.read(source).lines[source.line - 1]
     : fs.readFileSync(path.join(repository, source.path), 'utf8').split(/\r?\n/)[source.line - 1];
   const hasSource = (id, role, sourcePath, pattern, packageName) => registry[id].sourceEntries.some(source =>
     source.role === role && source.path === sourcePath && source.dependency?.name === packageName && pattern.test(sourceLine(source)));
+  assert(hasSource('app-main', 'run', 'src/main.rs', /LaunchMode::Game => app\.run\(\)/));
+  assert(hasSource('app-main', 'run', 'src/main.rs', /inspector::dump_schedules\(&mut app, &directory\)/));
   assert(audit.entries > 1000);
   for (const record of Object.values(registry)) {
     assert(record.sourceEntries.length || record.sourceGaps.length, `${record.id}: source entry or explicit missing evidence`);
