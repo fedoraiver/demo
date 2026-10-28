@@ -1,0 +1,80 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: MainEntity · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_query_data fill:#F1F4F1,stroke:#567A51,stroke-width:1.6px,color:#1F3340
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: notch-rect, label: "**MainEntity**<br/>查询渲染对象所对应的主世界实体身份。" }
+  class n0 node_query_data
+  n1@{ shape: rounded, label: "**extract_cameras**<br/>把主世界活动相机的目标、视口、变换、可见<br/>实体和渲染设置提取到渲染实体，并维护视图<br/>所需格式；对停用或目标尺寸无效的相机移除<br/>失效提取状态。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**prepare_lights**<br/>汇总提取后的各类光源，为视图准备光照<br/>GPU 参数、聚簇索引及阴影贴图和阴影视<br/>图，维护对应缓存及阶段记录，并检查设备和<br/>实现支持的数量限制。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**prepare_screenshots**<br/>为本帧窗口、图像或手工纹理视图的截图请求<br/>创建匹配尺寸和格式的截图资源，并替换相应<br/>输出附件以供捕获；未知目标被跳过。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**prepare_windows**<br/>为有相机输出或需要首次呈现的窗口取得交换<br/>链纹理，保留可复用的未呈现帧，并处理尺<br/>寸、模式变化及表面获取错误。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**cleanup_view_targets_for_resize**<br/>在窗口尺寸或呈现模式变化时撤销旧视图目<br/>标。" }
+  class n5 node_system
+  n6@{ shape: rounded, label: "**prepare_view_attachments**<br/>按相机输出目标准备可共享的颜色附件。" }
+  class n6 node_system
+  n7@{ shape: rounded, label: "**render_system**<br/>运行根 RenderGraph 调度，提交截图及<br/>GPU 回读收尾命令，并呈现需要输出的窗口<br/>交换链；随后收集截图结果。" }
+  class n7 node_system
+  n8@{ shape: rounded, label: "**camera_driver**<br/>遍历辅助根视图及已排序相机，为有效视图设<br/>置 CurrentView 并运行其专属渲染调度；<br/>跳过失效窗口目标，结束后移除<br/>CurrentView 并记录本帧相机覆盖的窗口集<br/>合。" }
+  class n8 node_system
+  n0 e0@-->|"参数 / 查询数据"| n1
+  class e0 edge_reference
+  n0 e1@-->|"参数 / 查询数据"| n2
+  class e1 edge_reference
+  n0 e2@-->|"参数 / 查询数据"| n3
+  class e2 edge_reference
+  n0 e3@-->|"参数 / 查询数据"| n4
+  class e3 edge_reference
+  n0 e4@-->|"参数 / 查询数据"| n5
+  class e4 edge_reference
+  n0 e5@-->|"参数 / 查询数据"| n6
+  class e5 edge_reference
+  n0 e6@-->|"参数 / 查询数据"| n7
+  class e6 edge_reference
+  n0 e7@-->|"参数 / 查询数据"| n8
+  class e7 edge_reference
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }

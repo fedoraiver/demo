@@ -1,0 +1,64 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: SolverConfig · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: cyl, label: "**SolverConfig**<br/>配置接触与关节约束求解参数。" }
+  class n0 node_resource
+  n1@{ shape: rounded, label: "**solve_restitution**<br/>遍历接触约束，按恢复系数、速度阈值和配置<br/>迭代次数对求解器刚体施加恢复冲量；溢出约<br/>束串行处理，其余按约束颜色并行处理。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**update_contact_softness**<br/>按时间步和配置更新接触柔度系数。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**warm_start**<br/>按 warm_start_coefficient 把上一帧或<br/>子步保存的接触冲量重新应用到求解器刚体，<br/>作为约束求解初始值；溢出约束串行、其他颜<br/>色并行处理。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**solve_contacts#lt;true#gt;**<br/>迭代接触约束并向碰撞刚体施加冲量；泛型<br/>USE_BIAS 决定是否加入重叠修正，用带偏置<br/>求解和无偏置松弛分别处理穿透与速度过冲。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**solve_contacts#lt;false#gt;**<br/>迭代接触约束并向碰撞刚体施加冲量；泛型<br/>USE_BIAS 决定是否加入重叠修正，用带偏置<br/>求解和无偏置松弛分别处理穿透与速度过冲。" }
+  class n5 node_system
+  n0 e0@--> n1
+  class e0 edge_read
+  n0 e1@--> n2
+  class e1 edge_read
+  n0 e2@--> n3
+  class e2 edge_read
+  n0 e3@--> n4
+  class e3 edge_read
+  n0 e4@--> n5
+  class e4 edge_read
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }

@@ -1,0 +1,197 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#object-d4e3fc7b0477747d-e6{marker-start:url(#object-d4e3fc7b0477747d_flowchart-v2-pointStart)!important}\n#object-d4e3fc7b0477747d-e8{marker-start:url(#object-d4e3fc7b0477747d_flowchart-v2-pointStart)!important}\n#object-d4e3fc7b0477747d-e13{marker-start:url(#object-d4e3fc7b0477747d_flowchart-v2-pointStart)!important}\n#object-d4e3fc7b0477747d-e15{marker-start:url(#object-d4e3fc7b0477747d_flowchart-v2-pointStart)!important}\n#object-d4e3fc7b0477747d-e20{marker-start:url(#object-d4e3fc7b0477747d_flowchart-v2-pointStart)!important}\n#object-d4e3fc7b0477747d-e22{marker-start:url(#object-d4e3fc7b0477747d_flowchart-v2-pointStart)!important}\n#object-d4e3fc7b0477747d-e24{marker-start:url(#object-d4e3fc7b0477747d_flowchart-v2-pointStart)!important}\n#object-d4e3fc7b0477747d_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}"
+  }
+}
+---
+flowchart LR
+  accTitle: jump_characters · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_engine_flow fill:#F1F5F4,stroke:#557C78,stroke-width:1.6px,color:#1F3340
+  classDef node_plugin fill:#F1F3F6,stroke:#4A6389,stroke-width:2.2px,color:#1F3340
+  classDef edge_order stroke:#334155,stroke-width:2px
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**jump_characters**<br/>执行角色跳跃并消费单次请求。" }
+  class n0 node_system
+  n1@{ shape: rounded, label: "**move_characters**<br/>按移动意图和速度为角色施加水平运动力。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**handle_interaction**<br/>来自物品交互 ↗：处理物品拾取、共享持握<br/>与主动释放。" }
+  class n2 node_system
+  class n2 external_node
+  n3@{ shape: stadium, label: "**main · FixedUpdate**<br/>来自Bevy 引擎 ↗：保存本应用调度的注册<br/>上下文与成员。" }
+  class n3 node_engine_flow
+  class n3 external_node
+  n4@{ shape: lin-rect, label: "**FixedGameplaySystems::Motion**<br/>来自应用流程 ↗：观察接地并施加角色移动<br/>与跳跃。" }
+  class n4 node_system_set
+  class n4 external_node
+  n5@{ shape: lin-rect, label: "**AnonymousSet(0)**<br/>来自Bevy 引擎 ↗：保存本组系统共同的运<br/>行条件。" }
+  class n5 node_system_set
+  class n5 external_node
+  n6@{ shape: rounded, label: "**ComputedMass**<br/>来自Avian ↗：保存物理求解使用的计算质<br/>量。" }
+  class n6 node_component
+  class n6 external_node
+  n7@{ shape: rounded, label: "**CharacterIntent**<br/>保存持续移动方向与单次跳跃、交互请求。" }
+  class n7 node_component
+  n8@{ shape: rounded, label: "**CharacterMotion**<br/>保存角色接地等运动观察结果。" }
+  class n8 node_component
+  n9@{ shape: rounded, label: "**Position**<br/>来自Avian ↗：保存物理模拟中的真实位<br/>置。" }
+  class n9 node_component
+  class n9 external_node
+  n10@{ shape: rounded, label: "**Rotation**<br/>来自Avian ↗：保存物理模拟中的真实旋<br/>转。" }
+  class n10 node_component
+  class n10 external_node
+  n11@{ shape: rounded, label: "**LinearVelocity**<br/>来自Avian ↗：实际线速度，由冲量、外<br/>力、重力与接触求解改变。" }
+  class n11 node_component
+  class n11 external_node
+  n12@{ shape: rounded, label: "**AngularVelocity**<br/>来自Avian ↗：保存物理模拟中的角速度。" }
+  class n12 node_component
+  class n12 external_node
+  n13@{ shape: rounded, label: "**ComputedAngularInertia**<br/>来自Avian ↗：保存物理求解使用的计算角<br/>惯量。" }
+  class n13 node_component
+  class n13 external_node
+  n14@{ shape: rounded, label: "**ComputedCenterOfMass**<br/>来自Avian ↗：保存物理求解使用的计算质<br/>心。" }
+  class n14 node_component
+  class n14 external_node
+  n15@{ shape: rounded, label: "**LockedAxes**<br/>来自Avian ↗：限制刚体可移动或旋转的<br/>轴。" }
+  class n15 node_component
+  class n15 external_node
+  n16@{ shape: rounded, label: "**VelocityIntegrationData**<br/>来自Avian ↗：累计本物理步的世界加速度<br/>与外力。" }
+  class n16 node_component
+  class n16 external_node
+  n17@{ shape: rounded, label: "**AccumulatedLocalAcceleration**<br/>来自Avian ↗：累计本物理步的局部加速<br/>度。" }
+  class n17 node_component
+  class n17 external_node
+  n18@{ shape: rounded, label: "**SleepTimer**<br/>来自Avian ↗：记录刚体休眠计时。" }
+  class n18 node_component
+  class n18 external_node
+  n19@{ shape: cyl, label: "**PrototypeConfig**<br/>来自设置与参数 ↗：保存运动、重力、拾取<br/>与握持的共享参数。" }
+  class n19 node_resource
+  class n19 external_node
+  n20@{ shape: cyl, label: "**State#lt;AppState#gt; /**<br/>**NextState#lt;AppState#gt;**<br/>来自应用流程 ↗：保存应用主状态及待处理<br/>的会话切换。" }
+  class n20 node_resource
+  class n20 external_node
+  n21@{ shape: cyl, label: "**State#lt;PlayState#gt; /**<br/>**NextState#lt;PlayState#gt;**<br/>来自应用流程 ↗：保存游戏运行、暂停及待<br/>处理的切换请求。" }
+  class n21 node_resource
+  class n21 external_node
+  n22@{ shape: fr-rect, label: "**CharacterPlugin**<br/>提供角色身份、运动、接地与跳跃。" }
+  class n22 node_plugin
+  n1 e0@--> n0
+  class e0 edge_order
+  n0 e1@--> n2
+  class e1 edge_order
+  n3 e2@-->|"main / FixedUpdate"| n0
+  class e2 edge_registration
+  n4 e3@--> n0
+  class e3 edge_set_membership
+  n5 e4@--> n0
+  class e4 edge_set_membership
+  n6 e5@-->|"查询访问"| n0
+  class e5 edge_read
+  n7 e6@---|"可变访问"| n0
+  class e6 edge_write
+  n7 e7@-->|"查询访问"| n0
+  class e7 edge_read
+  n8 e8@---|"可变访问"| n0
+  class e8 edge_write
+  n8 e9@-->|"查询访问"| n0
+  class e9 edge_read
+  n9 e10@-->|"查询访问"| n0
+  class e10 edge_read
+  n10 e11@-->|"查询访问"| n0
+  class e11 edge_read
+  n11 e12@-->|"查询访问"| n0
+  class e12 edge_read
+  n11 e13@---|"可变访问"| n0
+  class e13 edge_write
+  n12 e14@-->|"查询访问"| n0
+  class e14 edge_read
+  n12 e15@---|"可变访问"| n0
+  class e15 edge_write
+  n13 e16@-->|"查询访问"| n0
+  class e16 edge_read
+  n14 e17@-->|"查询访问"| n0
+  class e17 edge_read
+  n15 e18@-->|"查询访问"| n0
+  class e18 edge_read
+  n16 e19@-->|"查询访问"| n0
+  class e19 edge_read
+  n16 e20@---|"可变访问"| n0
+  class e20 edge_write
+  n17 e21@-->|"查询访问"| n0
+  class e21 edge_read
+  n17 e22@---|"可变访问"| n0
+  class e22 edge_write
+  n18 e23@-->|"查询访问"| n0
+  class e23 edge_read
+  n18 e24@---|"可变访问"| n0
+  class e24 edge_write
+  n19 e25@-->|"访问声明"| n0
+  class e25 edge_read
+  n20 e26@-->|"访问声明"| n0
+  class e26 edge_read
+  n21 e27@-->|"访问声明"| n0
+  class e27 edge_read
+  n22 e28@--> n0
+  class e28 edge_registration
+  e0@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e17@{ curve: basis }
+  e18@{ curve: basis }
+  e19@{ curve: basis }
+  e20@{ curve: basis }
+  e21@{ curve: basis }
+  e22@{ curve: basis }
+  e23@{ curve: basis }
+  e24@{ curve: basis }
+  e25@{ curve: basis }
+  e26@{ curve: basis }
+  e27@{ curve: basis }
+  e28@{ curve: basis }

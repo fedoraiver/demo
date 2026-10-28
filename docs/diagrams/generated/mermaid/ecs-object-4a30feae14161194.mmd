@@ -1,0 +1,62 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: clear_screenshots · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_system_param fill:#EFF5F6,stroke:#3B8790,stroke-width:1.6px,color:#1F3340
+  classDef node_sync fill:#F6F3F0,stroke:#8B6A42,stroke-width:1.6px,color:#1F3340
+  classDef node_engine_flow fill:#F1F5F4,stroke:#557C78,stroke-width:1.6px,color:#1F3340
+  classDef edge_order stroke:#334155,stroke-width:2px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**clear_screenshots**<br/>通过延迟命令销毁已带 Captured 标记的截<br/>图实体，清理已经完成捕获的请求。" }
+  class n0 node_system
+  n1@{ shape: stadium, label: "**main · First**<br/>保存本应用调度的注册上下文与成员。" }
+  class n1 node_engine_flow
+  n2@{ shape: rounded, label: "**ApplyDeferred · 类型集合端点**<br/>标记延迟命令同步依赖的类型集合端点。" }
+  class n2 node_sync
+  n3@{ shape: rounded, label: "**message_update_system**<br/>轮换所有已登记消息缓冲区的当前批次并清理<br/>超出保留窗口的消息，保留读者的独立读取游<br/>标。" }
+  class n3 node_system
+  n4@{ shape: notch-rect, label: "**Commands**<br/>保存延迟执行的 World 操作队列" }
+  class n4 node_system_param
+  n1 e0@-->|"main / First"| n0
+  class e0 edge_registration
+  n0 e1@--> n2
+  class e1 edge_order
+  n3 e2@--> n0
+  class e2 edge_order
+  n4 e3@-->|"参数 / 查询数据"| n0
+  class e3 edge_reference
+  e0@{ curve: basis }
+  e3@{ curve: basis }

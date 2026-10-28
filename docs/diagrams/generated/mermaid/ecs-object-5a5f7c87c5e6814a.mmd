@@ -1,0 +1,93 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 4,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: PointLight · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**PointLight**<br/>配置向四周发光的点光源。" }
+  class n0 node_component
+  n1@{ shape: rounded, label: "**check_point_light_mesh_visibility**<br/>计算点光与聚光灯阴影可见的网格。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**assign_objects_to_clusters**<br/>将灯光、探针及贴花分配到视图分簇。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**update_point_light_frusta**<br/>更新可见点光的六面阴影视锥。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**update_point_light_bounding_spheres**<br/>按点光位置和范围更新剔除包围球。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**draw_lights**<br/>为带 ShowLightGizmo 的点光源、聚光灯、<br/>方向光和矩形光源绘制调试轮廓；按组件或配<br/>置选择手动颜色、实体区分色、光源颜色或类<br/>型颜色。" }
+  class n5 node_system
+  n6@{ shape: rounded, label: "**draw_all_lights**<br/>按配置颜色模式绘制全部灯光调试图形。" }
+  class n6 node_system
+  n7@{ shape: rounded, label: "**extract_lights**<br/>同步可见点光、聚光、平行光及矩形光的渲染<br/>参数和阴影可见实体，提取变化的阴影贴图设<br/>置；隐藏或失效光源不继续保留有效渲染状<br/>态。" }
+  class n7 node_system
+  n8@{ shape: rounded, label: "**extract_shadow_lod_origin**<br/>解析点光与聚光阴影 LOD 的距离参考位置。" }
+  class n8 node_system
+  n0 e0@--> n1
+  class e0 edge_read
+  n0 e1@-->|"存在 / 变更过滤"| n1
+  class e1 edge_reference
+  n0 e2@--> n2
+  class e2 edge_read
+  n0 e3@--> n3
+  class e3 edge_read
+  n0 e4@-->|"存在 / 变更过滤"| n3
+  class e4 edge_reference
+  n0 e5@--> n4
+  class e5 edge_read
+  n0 e6@-->|"存在 / 变更过滤"| n4
+  class e6 edge_reference
+  n0 e7@--> n5
+  class e7 edge_read
+  n0 e8@--> n6
+  class e8 edge_read
+  n0 e9@--> n7
+  class e9 edge_read
+  n0 e10@-->|"存在 / 变更过滤"| n7
+  class e10 edge_reference
+  n0 e11@-->|"存在 / 变更过滤"| n8
+  class e11 edge_reference
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }

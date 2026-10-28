@@ -1,0 +1,161 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: main · SubstepSchedule · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_engine_flow fill:#F1F5F4,stroke:#557C78,stroke-width:1.6px,color:#1F3340
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: stadium, label: "**main · SubstepSchedule**<br/>保存本应用调度的注册上下文与成员。" }
+  class n0 node_engine_flow
+  n1@{ shape: rounded, label: "**apply_local_acceleration**<br/>来自Avian ↗：在子步中把局部加速度作用<br/>到世界速度。" }
+  class n1 node_system
+  class n1 external_node
+  n2@{ shape: rounded, label: "**integrate_velocities**<br/>来自Avian ↗：对采用默认速度积分的活跃<br/>动态刚体，先应用线性和角速度阻尼，再累加<br/>当前步的速度增量；运动学刚体跳过该积分，<br/>并记录诊断耗时。" }
+  class n2 node_system
+  class n2 external_node
+  n3@{ shape: rounded, label: "**clamp_velocities**<br/>来自Avian ↗：分别按 MaxLinearSpeed<br/>和 MaxAngularSpeed 限制求解器刚体的速<br/>度大小，超过上限时保持方向缩放；线速度和<br/>角速度查询通过 ParamSet 分开访问。" }
+  class n3 node_system
+  class n3 external_node
+  n4@{ shape: rounded, label: "**update_solver_body_angular_inertia**<br/>来自Avian ↗：按当前朝向刷新求解器的有<br/>效逆惯量。" }
+  class n4 node_system
+  class n4 external_node
+  n5@{ shape: rounded, label: "**integrate_positions**<br/>来自Avian ↗：依据求解器刚体速度与本子<br/>步时间累加 delta_position 和 delta_<br/>rotation；带自定义位置积分标志的刚体跳<br/>过默认积分。" }
+  class n5 node_system
+  class n5 external_node
+  n6@{ shape: rounded, label: "**warm_start**<br/>来自Avian ↗：按 warm_start_<br/>coefficient 把上一帧或子步保存的接触冲<br/>量重新应用到求解器刚体，作为约束求解初始<br/>值；溢出约束串行、其他颜色并行处理。" }
+  class n6 node_system
+  class n6 external_node
+  n7@{ shape: rounded, label: "**solve_contacts#lt;true#gt;**<br/>来自Avian ↗：迭代接触约束并向碰撞刚体<br/>施加冲量；泛型 USE_BIAS 决定是否加入重<br/>叠修正，用带偏置求解和无偏置松弛分别处理<br/>穿透与速度过冲。" }
+  class n7 node_system
+  class n7 external_node
+  n8@{ shape: rounded, label: "**solve_contacts#lt;false#gt;**<br/>来自Avian ↗：迭代接触约束并向碰撞刚体<br/>施加冲量；泛型 USE_BIAS 决定是否加入重<br/>叠修正，用带偏置求解和无偏置松弛分别处理<br/>穿透与速度过冲。" }
+  class n8 node_system
+  class n8 external_node
+  n9@{ shape: rounded, label: "**joint_damping#lt;avian3d::dynamics::**<br/>**joints::fixed::FixedJoint#gt;**<br/>来自Avian ↗：读取指定关节及<br/>JointDamping，查找两端刚体的求解器索引<br/>并按时间步修正相对速度；静态端使用占位刚<br/>体，同一索引不重复处理。" }
+  class n9 node_system
+  class n9 external_node
+  n10@{ shape: rounded, label: "**joint_damping#lt;avian3d::dynamics::**<br/>**joints::revolute::RevoluteJoint#gt;**<br/>来自Avian ↗：读取指定关节及<br/>JointDamping，查找两端刚体的求解器索引<br/>并按时间步修正相对速度；静态端使用占位刚<br/>体，同一索引不重复处理。" }
+  class n10 node_system
+  class n10 external_node
+  n11@{ shape: rounded, label: "**joint_damping#lt;avian3d::dynamics::**<br/>**joints::spherical::SphericalJoint#gt;**<br/>来自Avian ↗：读取指定关节及<br/>JointDamping，查找两端刚体的求解器索引<br/>并按时间步修正相对速度；静态端使用占位刚<br/>体，同一索引不重复处理。" }
+  class n11 node_system
+  class n11 external_node
+  n12@{ shape: rounded, label: "**joint_damping#lt;avian3d::dynamics::**<br/>**joints::prismatic::PrismaticJoint#gt;**<br/>来自Avian ↗：读取指定关节及<br/>JointDamping，查找两端刚体的求解器索引<br/>并按时间步修正相对速度；静态端使用占位刚<br/>体，同一索引不重复处理。" }
+  class n12 node_system
+  class n12 external_node
+  n13@{ shape: rounded, label: "**joint_damping#lt;avian3d::dynamics::**<br/>**joints::distance::DistanceJoint#gt;**<br/>来自Avian ↗：读取指定关节及<br/>JointDamping，查找两端刚体的求解器索引<br/>并按时间步修正相对速度；静态端使用占位刚<br/>体，同一索引不重复处理。" }
+  class n13 node_system
+  class n13 external_node
+  n14@{ shape: lin-rect, label: "**IntegrationSystems::Velocity**<br/>来自Avian ↗：把速度增量应用到刚体速<br/>度。" }
+  class n14 node_system_set
+  class n14 external_node
+  n15@{ shape: lin-rect, label: "**ForceSystems::ApplyLocalAcceleration**<br/>来自Avian ↗：按当前姿态应用局部空间加<br/>速度。" }
+  class n15 node_system_set
+  class n15 external_node
+  n16@{ shape: lin-rect, label: "**IntegrationSystems::Position**<br/>来自Avian ↗：按子步速度推进求解器姿<br/>态。" }
+  class n16 node_system_set
+  class n16 external_node
+  n17@{ shape: lin-rect, label: "**SubstepSolverSystems::WarmStart**<br/>来自Avian ↗：以历史接触冲量热启动求解<br/>器。" }
+  class n17 node_system_set
+  class n17 external_node
+  n18@{ shape: lin-rect, label: "**SubstepSolverSystems::**<br/>**SolveConstraints**<br/>来自Avian ↗：用位置偏置求解速度约束。" }
+  class n18 node_system_set
+  class n18 external_node
+  n19@{ shape: lin-rect, label: "**SubstepSolverSystems::Relax**<br/>来自Avian ↗：用无偏置约束求解放松过强<br/>响应。" }
+  class n19 node_system_set
+  class n19 external_node
+  n20@{ shape: lin-rect, label: "**SubstepSolverSystems::Damping**<br/>来自Avian ↗：对约束施加基于相对速度的<br/>阻尼。" }
+  class n20 node_system_set
+  class n20 external_node
+  n0 e0@-->|"main / SubstepSchedule"| n1
+  class e0 edge_registration
+  n0 e1@-->|"main / SubstepSchedule"| n2
+  class e1 edge_registration
+  n0 e2@-->|"main / SubstepSchedule"| n3
+  class e2 edge_registration
+  n0 e3@-->|"main / SubstepSchedule"| n4
+  class e3 edge_registration
+  n0 e4@-->|"main / SubstepSchedule"| n5
+  class e4 edge_registration
+  n0 e5@-->|"main / SubstepSchedule"| n6
+  class e5 edge_registration
+  n0 e6@-->|"main / SubstepSchedule"| n7
+  class e6 edge_registration
+  n0 e7@-->|"main / SubstepSchedule"| n8
+  class e7 edge_registration
+  n0 e8@-->|"main / SubstepSchedule"| n9
+  class e8 edge_registration
+  n0 e9@-->|"main / SubstepSchedule"| n10
+  class e9 edge_registration
+  n0 e10@-->|"main / SubstepSchedule"| n11
+  class e10 edge_registration
+  n0 e11@-->|"main / SubstepSchedule"| n12
+  class e11 edge_registration
+  n0 e12@-->|"main / SubstepSchedule"| n13
+  class e12 edge_registration
+  n0 e13@-->|"main / SubstepSchedule"| n14
+  class e13 edge_registration
+  n0 e14@-->|"main / SubstepSchedule"| n15
+  class e14 edge_registration
+  n0 e15@-->|"main / SubstepSchedule"| n16
+  class e15 edge_registration
+  n0 e16@-->|"main / SubstepSchedule"| n17
+  class e16 edge_registration
+  n0 e17@-->|"main / SubstepSchedule"| n18
+  class e17 edge_registration
+  n0 e18@-->|"main / SubstepSchedule"| n19
+  class e18 edge_registration
+  n0 e19@-->|"main / SubstepSchedule"| n20
+  class e19 edge_registration
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e17@{ curve: basis }
+  e18@{ curve: basis }
+  e19@{ curve: basis }

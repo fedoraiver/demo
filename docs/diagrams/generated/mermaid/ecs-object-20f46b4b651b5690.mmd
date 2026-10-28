@@ -1,0 +1,74 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: ImageNode · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**ImageNode**<br/>描述 UI 图像及其绘制参数。" }
+  class n0 node_component
+  n1@{ shape: rounded, label: "**mark_images_as_changed_if_their_**<br/>**assets_changed**<br/>使图像或图集资产变化触发 UI 图像更新。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**update_texture_atlas_layout_**<br/>**components**<br/>同步 UI 图像所引用的图集布局组件。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**update_image_content_size_system**<br/>按图像或图集区域更新 UI 的固有尺寸测<br/>量。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**image_changed**<br/>非按钮 ImageNode 改变时从 UI 子节点提<br/>取说明，设置无障碍图像角色和标签；尚无<br/>AccessibilityNode 时排入创建命令。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**extract_uinode_changes**<br/>使变化或移除的 UI 数据失效并清理旧渲染<br/>实体。" }
+  class n5 node_system
+  n6@{ shape: rounded, label: "**extract_uinode_images**<br/>按节点视觉盒与图集区域提取普通 UI 图<br/>像。" }
+  class n6 node_system
+  n1 e0@--> n0
+  class e0 edge_write
+  n0 e1@--> n2
+  class e1 edge_read
+  n0 e2@-->|"存在 / 变更过滤"| n2
+  class e2 edge_reference
+  n0 e3@--> n3
+  class e3 edge_read
+  n0 e4@-->|"存在 / 变更过滤"| n4
+  class e4 edge_reference
+  n0 e5@-->|"存在 / 变更过滤"| n5
+  class e5 edge_reference
+  n0 e6@--> n6
+  class e6 edge_read
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }

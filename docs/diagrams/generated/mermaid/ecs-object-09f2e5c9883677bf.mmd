@@ -1,0 +1,68 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: collect_erased_render_assets_to_reextract<bevy_sprite_render::mesh2d::material::MeshMaterial2d<bevy_sprite_render::sprite_mesh::sprite_mesh_material::SpriteMeshMaterial>> · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef node_system_param fill:#EFF5F6,stroke:#3B8790,stroke-width:1.6px,color:#1F3340
+  classDef node_engine_flow fill:#F1F5F4,stroke:#557C78,stroke-width:1.6px,color:#1F3340
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**collect_erased_render_assets_to_**<br/>**reextract#lt;bevy_sprite_render::**<br/>**mesh2d::material::**<br/>**MeshMaterial2d#lt;bevy_sprite_render::**<br/>**sprite_mesh::sprite_mesh_material::**<br/>**SpriteMeshMaterial#gt;#gt;**<br/>按源材质类型排空擦除资产并请求重新提取。" }
+  class n0 node_system
+  n1@{ shape: stadium, label: "**RenderApp · RenderStartup**<br/>保存本应用调度的注册上下文与成员。" }
+  class n1 node_engine_flow
+  n2@{ shape: notch-rect, label: "**Commands**<br/>保存延迟执行的 World 操作队列" }
+  class n2 node_system_param
+  n3@{ shape: cyl, label: "**ErasedRenderAssets#lt;ErasedAsset#gt;**<br/>存储源资产对应的类型擦除 GPU 表示。" }
+  class n3 node_resource
+  n4@{ shape: cyl, label: "**PrepareNextFrameAssets#lt;MeshMaterial2**<br/>**d#lt;SpriteMeshMaterial#gt;#gt;**<br/>保留下一帧需要继续准备的资产。" }
+  class n4 node_resource
+  n5@{ shape: cyl, label: "**ErasedRenderAssetsToReExtract#lt;MeshMa**<br/>**terial2d#lt;SpriteMeshMaterial#gt;#gt;**<br/>记录设备恢复后需重新提取的资产身份。" }
+  class n5 node_resource
+  n1 e0@-->|"RenderApp / RenderStartup"| n0
+  class e0 edge_registration
+  n2 e1@-->|"参数 / 查询数据"| n0
+  class e1 edge_reference
+  n0 e2@--> n3
+  class e2 edge_write
+  n0 e3@--> n4
+  class e3 edge_write
+  n0 e4@-->|"延迟添加"| n5
+  class e4 edge_write
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e4@{ curve: basis }

@@ -1,0 +1,72 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: SkinUniforms · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: cyl, label: "**SkinUniforms**<br/>以双缓冲保存蒙皮前后帧关节矩阵。" }
+  class n0 node_resource
+  n1@{ shape: rounded, label: "**extract_skins**<br/>按蒙皮可见性和资产变化分配或回收骨骼缓冲<br/>区域，提取关节全局变换与逆绑定姿势到暂存<br/>数据，并清理移除的蒙皮记录。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**set_mesh_motion_vector_flags**<br/>在提取完成后标记网格可用的前帧蒙皮和形<br/>变。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**collect_meshes_for_gpu_building**<br/>把线程提取队列整理为 GPU 网格实例和输入<br/>缓冲。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**prepare_skins**<br/>交换本帧与上一帧的骨骼 GPU 缓冲，按暂存<br/>关节矩阵数量扩容并上传数据；新建上一帧缓<br/>冲时使用当前姿势填充。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**prepare_mesh_bind_groups**<br/>按预处理路径准备网格、蒙皮和形变资源绑<br/>定。" }
+  class n5 node_system
+  n6@{ shape: rounded, label: "**skin_uniforms_from_world**<br/>初始化当前与前帧蒙皮矩阵缓冲及分配器。" }
+  class n6 node_system
+  n1 e0@--> n0
+  class e0 edge_write
+  n0 e1@--> n2
+  class e1 edge_read
+  n0 e2@--> n3
+  class e2 edge_read
+  n4 e3@--> n0
+  class e3 edge_write
+  n0 e4@--> n5
+  class e4 edge_read
+  n6 e5@-->|"延迟添加"| n0
+  class e5 edge_write
+  n1 layout_input_0@~~~ n4
+  n4 layout_input_1@~~~ n6
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }

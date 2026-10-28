@@ -1,0 +1,101 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#object-337ed9f6a7006233-e6{marker-start:url(#object-337ed9f6a7006233_flowchart-v2-pointStart)!important}\n#object-337ed9f6a7006233_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}"
+  }
+}
+---
+flowchart LR
+  accTitle: Time<Real> · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: cyl, label: "**Time#lt;Real#gt;**<br/>提供不随游戏暂停的真实时间。" }
+  class n0 node_resource
+  n1@{ shape: rounded, label: "**time_system**<br/>依据 TimeUpdateStrategy 和可用的渲染<br/>时间通道更新真实时钟，再推进虚拟时钟及当<br/>前通用 Time；固定步长策略使用<br/>Time#lt;Fixed#gt; 的步长。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**update_editable_text_layout**<br/>刷新可编辑文本的字形布局和编辑反馈。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**play_gilrs_rumble**<br/>执行手柄振动请求并清除过期效果。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**text_input_autoscroll_system**<br/>在拖选越出文字视口时自动滚动。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**Enhanced Input update**<br/>来自Enhanced Input ↗：按上下文优先级<br/>评估输入绑定、修饰器和条件，计算动作值及<br/>触发状态；此卡片的名称由系统参数元组生<br/>成。" }
+  class n5 node_system
+  class n5 external_node
+  n6@{ shape: rounded, label: "**write_egui_input_system**<br/>来自Egui / Inspector ↗：把界面输入和<br/>文件拖放写入 Egui 输入批次。" }
+  class n6 node_system
+  class n6 external_node
+  n7@{ shape: lin-rect, label: "**TimeSystems**<br/>推进真实时间与游戏时间。" }
+  class n7 node_system_set
+  n8@{ shape: lin-rect, label: "**EnhancedInputSystems::Update**<br/>来自Enhanced Input ↗：评估绑定输入并<br/>更新动作值与触发状态。" }
+  class n8 node_system_set
+  class n8 external_node
+  n9@{ shape: lin-rect, label: "**EguiPreUpdateSet::ProcessInput**<br/>来自Egui / Inspector ↗：将窗口和设备<br/>输入转换为检查器界面输入。" }
+  class n9 node_system_set
+  class n9 external_node
+  n10@{ shape: rounded, label: "**play_requests**<br/>来自音频播放 ↗：按有效音量与播放策略处<br/>理短音请求。" }
+  class n10 node_system
+  class n10 external_node
+  n1 e0@--> n0
+  class e0 edge_write
+  n0 e1@--> n2
+  class e1 edge_read
+  n0 e2@--> n3
+  class e2 edge_read
+  n0 e3@--> n4
+  class e3 edge_read
+  n0 e4@--> n5
+  class e4 edge_read
+  n0 e5@--> n6
+  class e5 edge_read
+  n7 e6@---|"访问声明"| n0
+  class e6 edge_read
+  n7 e7@-->|"访问声明"| n0
+  class e7 edge_write
+  n0 e8@-->|"访问声明"| n8
+  class e8 edge_read
+  n0 e9@-->|"访问声明"| n9
+  class e9 edge_read
+  n0 e10@-->|"访问声明"| n10
+  class e10 edge_read
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }

@@ -1,0 +1,79 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: UiCameraView · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**UiCameraView**<br/>从主渲染目标视图定位对应的 UI 视图。" }
+  class n0 node_component
+  n1@{ shape: rounded, label: "**ui_pass**<br/>找到 UI 相机对应的视图、颜色目标及透明<br/>UI 阶段，按相机视口渲染已排队的 UI 项；<br/>视图缺失或阶段为空时不创建绘制通道。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**ui_pass**<br/>找到 UI 相机对应的视图、颜色目标及透明<br/>UI 阶段，按相机视口渲染已排队的 UI 项；<br/>视图缺失或阶段为空时不创建绘制通道。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**extract_ui_camera_view**<br/>为活动二维或三维相机维护独立 UI 视图。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**queue_uinodes**<br/>为提取的 UI 节点找到目标相机的透明 UI<br/>阶段，按目标格式与 UI 抗锯齿设置选择管<br/>线，并以节点堆叠顺序加入本帧绘制项。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**queue_ui_slices**<br/>将 UI 图像切片排入对应相机透明阶段。" }
+  class n5 node_system
+  n6@{ shape: rounded, label: "**queue_gradient**<br/>将提取的背景和边框渐变加入目标相机的透<br/>明 UI 阶段，按颜色空间、目标格式及抗锯<br/>齿配置选择管线，并保留各自堆叠偏移。" }
+  class n6 node_system
+  n7@{ shape: rounded, label: "**queue_shadows**<br/>为提取的 UI 阴影选择匹配目标格式和阴影<br/>采样数的管线，按节点堆叠顺序及阴影层偏移<br/>加入透明 UI 绘制阶段。" }
+  class n7 node_system
+  n0 e0@--> n1
+  class e0 edge_read
+  n0 e1@--> n2
+  class e1 edge_read
+  n3 e2@-->|"延迟添加"| n0
+  class e2 edge_write
+  n3 e3@-->|"延迟移除"| n0
+  class e3 edge_write
+  n0 e4@--> n4
+  class e4 edge_read
+  n0 e5@--> n5
+  class e5 edge_read
+  n0 e6@--> n6
+  class e6 edge_read
+  n0 e7@--> n7
+  class e7 edge_read
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }

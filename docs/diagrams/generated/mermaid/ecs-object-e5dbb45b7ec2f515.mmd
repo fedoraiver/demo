@@ -1,0 +1,182 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#object-e5dbb45b7ec2f515-e24{marker-start:url(#object-e5dbb45b7ec2f515_flowchart-v2-pointStart)!important}\n#object-e5dbb45b7ec2f515_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}"
+  }
+}
+---
+flowchart LR
+  accTitle: update_mass_properties · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_system_param fill:#EFF5F6,stroke:#3B8790,stroke-width:1.6px,color:#1F3340
+  classDef node_query_data fill:#F1F4F1,stroke:#567A51,stroke-width:1.6px,color:#1F3340
+  classDef node_engine_flow fill:#F1F5F4,stroke:#557C78,stroke-width:1.6px,color:#1F3340
+  classDef edge_order stroke:#334155,stroke-width:2px
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**update_mass_properties**<br/>遍历已标记 RecomputeMassProperties 的<br/>实体，通过 MassPropertyHelper 重算质<br/>量属性，随后移除本轮重算标记。" }
+  class n0 node_system
+  n1@{ shape: stadium, label: "**main · FixedPostUpdate**<br/>来自Bevy 引擎 ↗：保存本应用调度的注册<br/>上下文与成员。" }
+  class n1 node_engine_flow
+  class n1 external_node
+  n2@{ shape: lin-rect, label: "**MassPropertySystems::**<br/>**UpdateComputedMassProperties**<br/>重新计算刚体有效质量、质心和惯量。" }
+  class n2 node_system_set
+  n3@{ shape: rounded, label: "**warn_invalid_mass**<br/>报告动态刚体无效的总质量或总惯量。" }
+  class n3 node_system
+  n4@{ shape: notch-rect, label: "**Commands**<br/>来自Bevy 引擎 ↗：保存延迟执行的<br/>World 操作队列" }
+  class n4 node_system_param
+  class n4 external_node
+  n5@{ shape: rounded, label: "**RecomputeMassProperties**<br/>请求重新计算刚体质量属性。" }
+  class n5 node_component
+  n6@{ shape: notch-rect, label: "**MassPropertyHelper**<br/>汇集质量属性计算与更新操作。" }
+  class n6 node_system_param
+  n7@{ shape: notch-rect, label: "**Read#lt;Mass#gt;**<br/>来自Bevy 引擎 ↗：静态只读查询接<br/>口：Mass" }
+  class n7 node_query_data
+  class n7 external_node
+  n8@{ shape: notch-rect, label: "**Read#lt;AngularInertia#gt;**<br/>来自Bevy 引擎 ↗：静态只读查询接<br/>口：AngularInertia" }
+  class n8 node_query_data
+  class n8 external_node
+  n9@{ shape: notch-rect, label: "**Read#lt;CenterOfMass#gt;**<br/>来自Bevy 引擎 ↗：静态只读查询接<br/>口：CenterOfMass" }
+  class n9 node_query_data
+  class n9 external_node
+  n10@{ shape: notch-rect, label: "**Read#lt;ColliderMassProperties#gt;**<br/>来自Bevy 引擎 ↗：静态只读查询接<br/>口：ColliderMassProperties" }
+  class n10 node_query_data
+  class n10 external_node
+  n11@{ shape: notch-rect, label: "**Read#lt;ColliderTransform#gt;**<br/>来自Bevy 引擎 ↗：静态只读查询接<br/>口：ColliderTransform" }
+  class n11 node_query_data
+  class n11 external_node
+  n12@{ shape: rounded, label: "**Sensor**<br/>将碰撞体设为不阻挡运动的触发器。" }
+  class n12 node_component
+  n13@{ shape: rounded, label: "**Mass**<br/>指定实体自身的质量输入。" }
+  class n13 node_component
+  n14@{ shape: rounded, label: "**AngularInertia**<br/>指定实体自身的局部角惯量。" }
+  class n14 node_component
+  n15@{ shape: rounded, label: "**CenterOfMass**<br/>指定实体自身的局部质心。" }
+  class n15 node_component
+  n16@{ shape: rounded, label: "**ColliderMassProperties**<br/>缓存由碰撞形状计算的质量属性。" }
+  class n16 node_component
+  n17@{ shape: rounded, label: "**ColliderTransform**<br/>缓存碰撞体相对于刚体的变换。" }
+  class n17 node_component
+  n18@{ shape: notch-rect, label: "**Write#lt;ComputedMass#gt;**<br/>来自Bevy 引擎 ↗：静态可变查询接<br/>口：ComputedMass" }
+  class n18 node_query_data
+  class n18 external_node
+  n19@{ shape: notch-rect, label: "**Write#lt;ComputedAngularInertia#gt;**<br/>来自Bevy 引擎 ↗：静态可变查询接<br/>口：ComputedAngularInertia" }
+  class n19 node_query_data
+  class n19 external_node
+  n20@{ shape: notch-rect, label: "**Write#lt;ComputedCenterOfMass#gt;**<br/>来自Bevy 引擎 ↗：静态可变查询接<br/>口：ComputedCenterOfMass" }
+  class n20 node_query_data
+  class n20 external_node
+  n21@{ shape: rounded, label: "**NoAutoMass**<br/>阻止后代贡献总质量。" }
+  class n21 node_component
+  n22@{ shape: rounded, label: "**NoAutoAngularInertia**<br/>阻止后代贡献总角惯量。" }
+  class n22 node_component
+  n23@{ shape: rounded, label: "**NoAutoCenterOfMass**<br/>阻止后代贡献总质心。" }
+  class n23 node_component
+  n24@{ shape: notch-rect, label: "**Read#lt;Children#gt;**<br/>来自Bevy 引擎 ↗：静态只读查询接<br/>口：Children" }
+  class n24 node_query_data
+  class n24 external_node
+  n1 e0@-->|"main / FixedPostUpdate"| n0
+  class e0 edge_registration
+  n2 e1@--> n0
+  class e1 edge_set_membership
+  n0 e2@--> n3
+  class e2 edge_order
+  n4 e3@-->|"参数 / 查询数据"| n0
+  class e3 edge_reference
+  n5 e4@-->|"存在 / 变更过滤"| n0
+  class e4 edge_reference
+  n6 e5@-->|"参数 / 查询数据"| n0
+  class e5 edge_reference
+  n7 e6@-->|"参数 / 查询数据"| n0
+  class e6 edge_reference
+  n8 e7@-->|"参数 / 查询数据"| n0
+  class e7 edge_reference
+  n9 e8@-->|"参数 / 查询数据"| n0
+  class e8 edge_reference
+  n10 e9@-->|"参数 / 查询数据"| n0
+  class e9 edge_reference
+  n11 e10@-->|"参数 / 查询数据"| n0
+  class e10 edge_reference
+  n12 e11@-->|"存在 / 变更过滤"| n0
+  class e11 edge_reference
+  n13 e12@-->|"存在 / 变更过滤"| n0
+  class e12 edge_reference
+  n14 e13@-->|"存在 / 变更过滤"| n0
+  class e13 edge_reference
+  n15 e14@-->|"存在 / 变更过滤"| n0
+  class e14 edge_reference
+  n16 e15@-->|"存在 / 变更过滤"| n0
+  class e15 edge_reference
+  n17 e16@-->|"存在 / 变更过滤"| n0
+  class e16 edge_reference
+  n18 e17@-->|"参数 / 查询数据"| n0
+  class e17 edge_reference
+  n19 e18@-->|"参数 / 查询数据"| n0
+  class e18 edge_reference
+  n20 e19@-->|"参数 / 查询数据"| n0
+  class e19 edge_reference
+  n21 e20@-->|"存在 / 变更过滤"| n0
+  class e20 edge_reference
+  n22 e21@-->|"存在 / 变更过滤"| n0
+  class e21 edge_reference
+  n23 e22@-->|"存在 / 变更过滤"| n0
+  class e22 edge_reference
+  n24 e23@-->|"参数 / 查询数据"| n0
+  class e23 edge_reference
+  n5 e24@---|"延迟移除"| n0
+  class e24 edge_write
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e17@{ curve: basis }
+  e18@{ curve: basis }
+  e19@{ curve: basis }
+  e20@{ curve: basis }
+  e21@{ curve: basis }
+  e22@{ curve: basis }
+  e23@{ curve: basis }
+  e24@{ curve: basis }

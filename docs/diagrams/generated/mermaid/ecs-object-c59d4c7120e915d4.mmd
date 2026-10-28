@@ -1,0 +1,197 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: spawn_backdrop · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef node_engine_flow fill:#F1F5F4,stroke:#557C78,stroke-width:1.6px,color:#1F3340
+  classDef node_plugin fill:#F1F3F6,stroke:#4A6389,stroke-width:2.2px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  subgraph layout_card_n0[" "]
+  n0@{ shape: rounded, label: "**spawn_backdrop**<br/>装配主菜单海岛展示舞台、相机与日光。" }
+  class n0 node_system
+  end
+  style layout_card_n0 fill:none,stroke:none
+  subgraph layout_card_n1[" "]
+  n1@{ shape: stadium, label: "**main · OnEnter(MainMenu)**<br/>来自Bevy 引擎 ↗：保存本应用调度的注册<br/>上下文与成员。" }
+  class n1 node_engine_flow
+  class n1 external_node
+  end
+  style layout_card_n1 fill:none,stroke:none
+  subgraph layout_card_n2[" "]
+  n2@{ shape: rounded, label: "**MenuBackdrop**<br/>舞台根标记。" }
+  class n2 node_component
+  end
+  style layout_card_n2 fill:none,stroke:none
+  subgraph layout_card_n3[" "]
+  n3@{ shape: rounded, label: "**DespawnOnExit**<br/>来自Bevy 引擎 ↗：标记退出所属应用状态<br/>时销毁此实体。" }
+  class n3 node_component
+  class n3 external_node
+  end
+  style layout_card_n3 fill:none,stroke:none
+  subgraph layout_card_n4[" "]
+  n4@{ shape: rounded, label: "**Visibility**<br/>来自Bevy 引擎 ↗：通过父子树传播展示可<br/>见性。" }
+  class n4 node_component
+  class n4 external_node
+  end
+  style layout_card_n4 fill:none,stroke:none
+  subgraph layout_card_n5[" "]
+  n5@{ shape: rounded, label: "**Children**<br/>来自Bevy 引擎 ↗：索引当前实体的直接子<br/>实体。" }
+  class n5 node_component
+  class n5 external_node
+  end
+  style layout_card_n5 fill:none,stroke:none
+  subgraph layout_card_n6[" "]
+  n6@{ shape: rounded, label: "**WorldAssetRoot**<br/>来自Bevy 引擎 ↗：指定需要展开的场景资<br/>产实例。" }
+  class n6 node_component
+  class n6 external_node
+  end
+  style layout_card_n6 fill:none,stroke:none
+  subgraph layout_card_n7[" "]
+  n7@{ shape: rounded, label: "**CourierAnimation**<br/>保存展示快递员的模型来源以绑定命名动画。" }
+  class n7 node_component
+  end
+  style layout_card_n7 fill:none,stroke:none
+  subgraph layout_card_n8[" "]
+  n8@{ shape: rounded, label: "**Camera3d**<br/>来自Bevy 引擎 ↗：标记三维场景相机。" }
+  class n8 node_component
+  class n8 external_node
+  end
+  style layout_card_n8 fill:none,stroke:none
+  subgraph layout_card_n9[" "]
+  n9@{ shape: rounded, label: "**IsDefaultUiCamera**<br/>来自Bevy 引擎 ↗：指定菜单界面的默认绘<br/>制相机。" }
+  class n9 node_component
+  class n9 external_node
+  end
+  style layout_card_n9 fill:none,stroke:none
+  subgraph layout_card_n10[" "]
+  n10@{ shape: rounded, label: "**PrimaryEguiContext**<br/>来自Egui / Inspector ↗：指定主检查器<br/>界面的相机上下文。" }
+  class n10 node_component
+  class n10 external_node
+  end
+  style layout_card_n10 fill:none,stroke:none
+  subgraph layout_card_n11[" "]
+  n11@{ shape: rounded, label: "**Transform**<br/>来自Bevy 引擎 ↗：提供展示舞台父子变换<br/>的根姿态。" }
+  class n11 node_component
+  class n11 external_node
+  end
+  style layout_card_n11 fill:none,stroke:none
+  subgraph layout_card_n12[" "]
+  n12@{ shape: rounded, label: "**Transform**<br/>来自Bevy 引擎 ↗：保存菜单界面与展示模<br/>型的相机构图。" }
+  class n12 node_component
+  class n12 external_node
+  end
+  style layout_card_n12 fill:none,stroke:none
+  subgraph layout_card_n13[" "]
+  n13@{ shape: rounded, label: "**ChildOf**<br/>来自Bevy 引擎 ↗：舞台根的直接子实体，<br/>根销毁时连带清理。" }
+  class n13 node_component
+  class n13 external_node
+  end
+  style layout_card_n13 fill:none,stroke:none
+  subgraph layout_card_n14[" "]
+  n14@{ shape: rounded, label: "**Transform**<br/>来自Bevy 引擎 ↗：保存模型及展示包裹的<br/>局部姿态。" }
+  class n14 node_component
+  class n14 external_node
+  end
+  style layout_card_n14 fill:none,stroke:none
+  subgraph layout_card_n15[" "]
+  n15@{ shape: cyl, label: "**AssetServer**<br/>来自Bevy 引擎 ↗：加载并查询递归依赖。" }
+  class n15 node_resource
+  class n15 external_node
+  end
+  style layout_card_n15 fill:none,stroke:none
+  subgraph layout_card_n16[" "]
+  n16@{ shape: cyl, label: "**State#lt;AppState#gt; /**<br/>**NextState#lt;AppState#gt;**<br/>来自应用流程 ↗：保存应用主状态及待处理<br/>的会话切换。" }
+  class n16 node_resource
+  class n16 external_node
+  end
+  style layout_card_n16 fill:none,stroke:none
+  subgraph layout_card_n17[" "]
+  n17@{ shape: fr-rect, label: "**GameUiPlugin**<br/>管理菜单、设置编辑、导航与主菜单展示场<br/>景。" }
+  class n17 node_plugin
+  end
+  style layout_card_n17 fill:none,stroke:none
+  n1 e0@-->|"main / OnEnter(MainMenu)"| n0
+  class e0 edge_registration
+  n0 e1@-->|"添加"| n2
+  class e1 edge_write
+  n0 e2@-->|"添加"| n3
+  class e2 edge_write
+  n0 e3@-->|"添加"| n4
+  class e3 edge_write
+  n0 e4@-->|"添加"| n5
+  class e4 edge_write
+  n0 e5@-->|"添加"| n6
+  class e5 edge_write
+  n0 e6@-->|"添加"| n7
+  class e6 edge_write
+  n0 e7@-->|"添加"| n8
+  class e7 edge_write
+  n0 e8@-->|"添加"| n9
+  class e8 edge_write
+  n0 e9@-->|"添加"| n10
+  class e9 edge_write
+  n0 e10@-->|"可变访问"| n11
+  class e10 edge_write
+  n0 e11@-->|"可变访问"| n12
+  class e11 edge_write
+  n0 e12@-->|"可变访问"| n13
+  class e12 edge_write
+  n0 e13@-->|"可变访问"| n14
+  class e13 edge_write
+  n15 e14@-->|"访问声明"| n0
+  class e14 edge_read
+  n16 e15@-->|"访问声明"| n0
+  class e15 edge_read
+  n17 e16@--> n0
+  class e16 edge_registration
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }

@@ -1,0 +1,65 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: ClusteredDecal · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**ClusteredDecal**<br/>在立方体范围内向表面投射材质贴花。" }
+  class n0 node_component
+  n1@{ shape: rounded, label: "**assign_objects_to_clusters**<br/>将灯光、探针及贴花分配到视图分簇。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**add_light_probe_and_decal_aabbs**<br/>为尚无 Aabb 的光照探针及聚簇贴花补入以<br/>原点为中心的单位立方体包围盒，使它们参与<br/>后续可见性判定；实际尺寸由全局变换缩放表<br/>达。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**extract_decals**<br/>从主世界提取可见聚簇贴花及点光、聚光和平<br/>行光的光照纹理，重建渲染贴花缓冲，并记录<br/>真正参与聚簇计算的贴花数量。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**extract_clustered_decal**<br/>批量复制主世界的聚簇贴花组件。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**prepare_decals**<br/>把已提取聚簇贴花的实体与贴花索引写入<br/>GlobalClusterableObjectMeta，供后续聚<br/>簇计算关联场景对象。" }
+  class n5 node_system
+  n0 e0@-->|"存在 / 变更过滤"| n1
+  class e0 edge_reference
+  n0 e1@-->|"存在 / 变更过滤"| n2
+  class e1 edge_reference
+  n0 e2@--> n3
+  class e2 edge_read
+  n0 e3@--> n4
+  class e3 edge_read
+  n0 e4@-->|"存在 / 变更过滤"| n5
+  class e4 edge_reference
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }

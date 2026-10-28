@@ -1,0 +1,112 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: smaa · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_system_param fill:#EFF5F6,stroke:#3B8790,stroke-width:1.6px,color:#1F3340
+  classDef node_engine_flow fill:#F1F5F4,stroke:#557C78,stroke-width:1.6px,color:#1F3340
+  classDef edge_order stroke:#334155,stroke-width:2px
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**smaa**<br/>按边缘检测、混合权重计算和邻域混合三个阶<br/>段执行 SMAA，将抗锯齿结果写入视图后处理<br/>目标；任何所需管线未就绪时跳过整个流程。" }
+  class n0 node_system
+  n1@{ shape: stadium, label: "**RenderApp · Core2d**<br/>保存本应用调度的注册上下文与成员。" }
+  class n1 node_engine_flow
+  n2@{ shape: lin-rect, label: "**Core2dSystems::PostProcess**<br/>执行二维色调映射及最终屏幕后处理。" }
+  class n2 node_system_set
+  n3@{ shape: rounded, label: "**tonemapping**<br/>为启用色调映射的 HDR 视图绑定颜色源、视<br/>图参数和 LUT，执行全屏色调映射并写入后<br/>处理目标；模式关闭或管线尚未就绪时跳过。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**cas**<br/>绑定视图颜色和 CAS 参数，执行对比度自适<br/>应锐化并写入后处理目标；缓存对应参数缓冲<br/>与源纹理的绑定组，管线或参数不可用时跳<br/>过。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**ViewTarget**<br/>管理视图主颜色纹理及最终输出附件。" }
+  class n5 node_component
+  n6@{ shape: rounded, label: "**ViewSmaaPipelines**<br/>记录当前视图三个 SMAA 管线的标识。" }
+  class n6 node_component
+  n7@{ shape: rounded, label: "**SmaaInfoUniformOffset**<br/>定位视图在 SMAA 参数缓冲中的位置。" }
+  class n7 node_component
+  n8@{ shape: rounded, label: "**SmaaTextures**<br/>保存 SMAA 的边缘、模板与混合中间纹理。" }
+  class n8 node_component
+  n9@{ shape: rounded, label: "**SmaaBindGroups**<br/>保存视图三个 SMAA 阶段的资源绑定。" }
+  class n9 node_component
+  n10@{ shape: cyl, label: "**SmaaPipelines**<br/>保存 SMAA 三个阶段的基础管线。" }
+  class n10 node_resource
+  n11@{ shape: cyl, label: "**SmaaInfoUniformBuffer**<br/>保存全部视图的 SMAA GPU 参数。" }
+  class n11 node_resource
+  n12@{ shape: cyl, label: "**PipelineCache**<br/>缓存 GPU 渲染、计算管线与待创建队列。" }
+  class n12 node_resource
+  n13@{ shape: notch-rect, label: "**RenderContext**<br/>向渲染系统提供命令编码器和 GPU 设备。" }
+  class n13 node_system_param
+  n1 e0@-->|"RenderApp / Core2d"| n0
+  class e0 edge_registration
+  n2 e1@--> n0
+  class e1 edge_set_membership
+  n3 e2@--> n0
+  class e2 edge_order
+  n0 e3@--> n4
+  class e3 edge_order
+  n5 e4@--> n0
+  class e4 edge_read
+  n6 e5@--> n0
+  class e5 edge_read
+  n7 e6@--> n0
+  class e6 edge_read
+  n8 e7@--> n0
+  class e7 edge_read
+  n9 e8@--> n0
+  class e8 edge_read
+  n10 e9@--> n0
+  class e9 edge_read
+  n11 e10@--> n0
+  class e10 edge_read
+  n12 e11@--> n0
+  class e11 edge_read
+  n13 e12@-->|"参数 / 查询数据"| n0
+  class e12 edge_reference
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }

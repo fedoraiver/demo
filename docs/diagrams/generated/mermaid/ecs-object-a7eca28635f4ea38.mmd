@@ -1,0 +1,63 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: MeshMaterial2d<TilemapChunkMaterial> · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**MeshMaterial2d#lt;TilemapChunkMaterial#gt;**<br/>为二维网格指定材质资产。" }
+  class n0 node_component
+  n1@{ shape: rounded, label: "**mark_2d_meshes_as_changed_if_their_**<br/>**materials_changed#lt;bevy_sprite_**<br/>**render::tilemap_chunk::tilemap_**<br/>**chunk_material::**<br/>**TilemapChunkMaterial#gt;**<br/>让材质变化触发二维网格重新提取。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**check_entities_needing_**<br/>**specialization#lt;bevy_sprite_render::**<br/>**tilemap_chunk::tilemap_chunk_**<br/>**material::TilemapChunkMaterial#gt;**<br/>收集二维网格材质需重建或移除专用化的实<br/>体。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**update_tilemap_chunk_indices**<br/>将变化的瓦片块索引打包写入材质图像。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**extract_mesh_materials_2d#lt;bevy_**<br/>**sprite_render::tilemap_chunk::**<br/>**tilemap_chunk_material::**<br/>**TilemapChunkMaterial#gt;**<br/>同步可见二维网格使用的材质资产身份。" }
+  class n4 node_system
+  n0 e0@-->|"存在 / 变更过滤"| n1
+  class e0 edge_reference
+  n0 e1@-->|"存在 / 变更过滤"| n2
+  class e1 edge_reference
+  n0 e2@--> n3
+  class e2 edge_read
+  n0 e3@--> n4
+  class e3 edge_read
+  n0 e4@-->|"存在 / 变更过滤"| n4
+  class e4 edge_reference
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }

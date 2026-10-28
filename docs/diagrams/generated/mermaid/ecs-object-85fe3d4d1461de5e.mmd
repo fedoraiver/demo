@@ -1,0 +1,129 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 4,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#object-85fe3d4d1461de5e-e2{marker-start:url(#object-85fe3d4d1461de5e_flowchart-v2-pointStart)!important}\n#object-85fe3d4d1461de5e-e4{marker-start:url(#object-85fe3d4d1461de5e_flowchart-v2-pointStart)!important}\n#object-85fe3d4d1461de5e-e6{marker-start:url(#object-85fe3d4d1461de5e_flowchart-v2-pointStart)!important}\n#object-85fe3d4d1461de5e-e8{marker-start:url(#object-85fe3d4d1461de5e_flowchart-v2-pointStart)!important}\n#object-85fe3d4d1461de5e-e12{marker-start:url(#object-85fe3d4d1461de5e_flowchart-v2-pointStart)!important}\n#object-85fe3d4d1461de5e-e16{marker-start:url(#object-85fe3d4d1461de5e_flowchart-v2-pointStart)!important}\n#object-85fe3d4d1461de5e_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}"
+  }
+}
+---
+flowchart LR
+  accTitle: ColliderOf · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**ColliderOf**<br/>指定碰撞体附着的刚体。" }
+  class n0 node_component
+  n1@{ shape: rounded, label: "**queue_mass_recomputation_on_mass_**<br/>**change**<br/>在刚体自身的质量、惯量或质心组件变化时添<br/>加 RecomputeMassProperties，安排后续<br/>重算；附属于刚体的碰撞体由另一条更新路径<br/>处理。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**queue_mass_recomputation_on_**<br/>**collider_mass_change**<br/>在附属碰撞体质量输入变化时请求刚体重算。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**recover_from_water**<br/>来自越界恢复 ↗：将落水实体恢复到各自出<br/>生姿态。" }
+  class n3 node_system
+  class n3 external_node
+  n4@{ shape: rounded, label: "**sync_character_facing**<br/>来自第一人称控制 ↗：同步人物朝向并处理<br/>持物转向受阻。" }
+  class n4 node_system
+  class n4 external_node
+  n5@{ shape: rounded, label: "**handle_interaction**<br/>来自物品交互 ↗：处理物品拾取、共享持握<br/>与主动释放。" }
+  class n5 node_system
+  class n5 external_node
+  n6@{ shape: rounded, label: "**release_orphaned_items**<br/>来自物品交互 ↗：清理失效持握并恢复物品<br/>独立运动。" }
+  class n6 node_system
+  class n6 external_node
+  n7@{ shape: rounded, label: "**cleanup_orphaned_colliders**<br/>来自物品交互 ↗：清理物品销毁后残留的碰<br/>撞代理。" }
+  class n7 node_system
+  class n7 external_node
+  n8@{ shape: rounded, label: "**finish_attachments**<br/>来自物品交互 ↗：为持物装配共享碰撞代理<br/>并累计质量。" }
+  class n8 node_system
+  class n8 external_node
+  n9@{ shape: rounded, label: "**align_attachments**<br/>来自物品交互 ↗：沿安全碰撞路径将物品对<br/>齐双手。" }
+  class n9 node_system
+  class n9 external_node
+  n10@{ shape: rounded, label: "**update_child_collider_position**<br/>由所属刚体位姿更新附属碰撞体的世界位姿。" }
+  class n10 node_system
+  n11@{ shape: rounded, label: "**update_body_size_metrics#lt;avian3d::**<br/>**collision::collider::parry::**<br/>**Collider#gt;**<br/>重算刚体的 CCD 厚度和最大扫掠半径。" }
+  class n11 node_system
+  n12@{ shape: rounded, label: "**sync_character_facing**<br/>来自第一人称控制 ↗：同步人物朝向并处理<br/>持物转向受阻。" }
+  class n12 node_system
+  class n12 external_node
+  n0 e0@-->|"存在 / 变更过滤"| n1
+  class e0 edge_reference
+  n0 e1@--> n2
+  class e1 edge_read
+  n3 e2@---|"延迟只读访问"| n0
+  class e2 edge_read
+  n3 e3@-->|"延迟移除"| n0
+  class e3 edge_write
+  n4 e4@---|"延迟只读访问"| n0
+  class e4 edge_read
+  n4 e5@-->|"延迟移除"| n0
+  class e5 edge_write
+  n5 e6@---|"延迟只读访问"| n0
+  class e6 edge_read
+  n5 e7@-->|"延迟移除"| n0
+  class e7 edge_write
+  n6 e8@---|"延迟只读访问"| n0
+  class e8 edge_read
+  n6 e9@-->|"延迟移除"| n0
+  class e9 edge_write
+  n7 e10@-->|"延迟移除"| n0
+  class e10 edge_write
+  n8 e11@-->|"延迟添加"| n0
+  class e11 edge_write
+  n9 e12@---|"延迟只读访问"| n0
+  class e12 edge_read
+  n9 e13@-->|"延迟移除"| n0
+  class e13 edge_write
+  n0 e14@--> n10
+  class e14 edge_read
+  n0 e15@--> n11
+  class e15 edge_read
+  n12 e16@---|"延迟只读访问"| n0
+  class e16 edge_read
+  n12 e17@-->|"延迟移除"| n0
+  class e17 edge_write
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e17@{ curve: basis }

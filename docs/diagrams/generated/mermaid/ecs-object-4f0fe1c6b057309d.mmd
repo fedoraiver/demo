@@ -1,0 +1,292 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: update_narrow_phase<avian3d::collision::collider::parry::Collider, ()> · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef node_message_buffer fill:#EDF4F6,stroke:#247B91,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_system_param fill:#EFF5F6,stroke:#3B8790,stroke-width:1.6px,color:#1F3340
+  classDef node_query_data fill:#F1F4F1,stroke:#567A51,stroke-width:1.6px,color:#1F3340
+  classDef node_engine_flow fill:#F1F5F4,stroke:#557C78,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_publish stroke:#247B91,stroke-width:1.8px,stroke-dasharray:10 4 2 4
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**update_narrow_phase#lt;avian3d::**<br/>**collision::collider::parry::**<br/>**Collider, ()#gt;**<br/>更新窄相接触并输出碰撞变化消息。" }
+  class n0 node_system
+  n1@{ shape: stadium, label: "**main · PhysicsSchedule**<br/>来自Bevy 引擎 ↗：保存本应用调度的注册<br/>上下文与成员。" }
+  class n1 node_engine_flow
+  class n1 external_node
+  n2@{ shape: lin-rect, label: "**NarrowPhaseSystems::Update**<br/>更新精确接触并处理接触状态变化。" }
+  class n2 node_system_set
+  n3@{ shape: notch-rect, label: "**NarrowPhase#lt;Collider#gt;**<br/>组织窄相接触更新与碰撞事件。" }
+  class n3 node_system_param
+  n4@{ shape: notch-rect, label: "**ColliderQuery#lt;Collider#gt;**<br/>汇集窄相所需的碰撞体数据。" }
+  class n4 node_query_data
+  n5@{ shape: notch-rect, label: "**Entity**<br/>来自Bevy 引擎 ↗：以实体索引和代际组成<br/>实体身份" }
+  class n5 node_system_param
+  class n5 external_node
+  n6@{ shape: notch-rect, label: "**Read#lt;ColliderOf#gt;**<br/>来自Bevy 引擎 ↗：静态只读查询接<br/>口：ColliderOf" }
+  class n6 node_system_param
+  class n6 external_node
+  n7@{ shape: notch-rect, label: "**Read#lt;Collider#gt;**<br/>来自Bevy 引擎 ↗：静态只读查询接<br/>口：Collider" }
+  class n7 node_system_param
+  class n7 external_node
+  n8@{ shape: notch-rect, label: "**Read#lt;EnlargedAabb#gt;**<br/>来自Bevy 引擎 ↗：静态只读查询接<br/>口：EnlargedAabb" }
+  class n8 node_system_param
+  class n8 external_node
+  n9@{ shape: notch-rect, label: "**Read#lt;Position#gt;**<br/>来自Bevy 引擎 ↗：静态只读查询接<br/>口：Position" }
+  class n9 node_system_param
+  class n9 external_node
+  n10@{ shape: notch-rect, label: "**Read#lt;Rotation#gt;**<br/>来自Bevy 引擎 ↗：静态只读查询接<br/>口：Rotation" }
+  class n10 node_system_param
+  class n10 external_node
+  n11@{ shape: notch-rect, label: "**Read#lt;ColliderTransform#gt;**<br/>来自Bevy 引擎 ↗：静态只读查询接<br/>口：ColliderTransform" }
+  class n11 node_system_param
+  class n11 external_node
+  n12@{ shape: notch-rect, label: "**Read#lt;CollisionLayers#gt;**<br/>来自Bevy 引擎 ↗：静态只读查询接<br/>口：CollisionLayers" }
+  class n12 node_system_param
+  class n12 external_node
+  n13@{ shape: notch-rect, label: "**Read#lt;Friction#gt;**<br/>来自Bevy 引擎 ↗：静态只读查询接<br/>口：Friction" }
+  class n13 node_system_param
+  class n13 external_node
+  n14@{ shape: notch-rect, label: "**Read#lt;Restitution#gt;**<br/>来自Bevy 引擎 ↗：静态只读查询接<br/>口：Restitution" }
+  class n14 node_system_param
+  class n14 external_node
+  n15@{ shape: notch-rect, label: "**Read#lt;CollisionMargin#gt;**<br/>来自Bevy 引擎 ↗：静态只读查询接<br/>口：CollisionMargin" }
+  class n15 node_system_param
+  class n15 external_node
+  n16@{ shape: rounded, label: "**Sensor**<br/>将碰撞体设为不阻挡运动的触发器。" }
+  class n16 node_component
+  n17@{ shape: rounded, label: "**ColliderDisabled**<br/>暂停碰撞体检测和空间查询。" }
+  class n17 node_component
+  n18@{ shape: rounded, label: "**CollidingEntities**<br/>记录当前与碰撞体相交的实体。" }
+  class n18 node_component
+  n19@{ shape: notch-rect, label: "**RigidBodyQuery**<br/>汇集窄相所需的刚体运动数据。" }
+  class n19 node_query_data
+  n20@{ shape: notch-rect, label: "**Read#lt;RigidBody#gt;**<br/>来自Bevy 引擎 ↗：静态只读查询接<br/>口：RigidBody" }
+  class n20 node_system_param
+  class n20 external_node
+  n21@{ shape: notch-rect, label: "**Read#lt;ComputedCenterOfMass#gt;**<br/>来自Bevy 引擎 ↗：静态只读查询接<br/>口：ComputedCenterOfMass" }
+  class n21 node_system_param
+  class n21 external_node
+  n22@{ shape: notch-rect, label: "**Read#lt;LinearVelocity#gt;**<br/>来自Bevy 引擎 ↗：静态只读查询接<br/>口：LinearVelocity" }
+  class n22 node_system_param
+  class n22 external_node
+  n23@{ shape: notch-rect, label: "**Read#lt;AngularVelocity#gt;**<br/>来自Bevy 引擎 ↗：静态只读查询接<br/>口：AngularVelocity" }
+  class n23 node_system_param
+  class n23 external_node
+  n24@{ shape: notch-rect, label: "**Read#lt;SpeculativeCcd#gt;**<br/>来自Bevy 引擎 ↗：静态只读查询接<br/>口：SpeculativeCcd" }
+  class n24 node_system_param
+  class n24 external_node
+  n25@{ shape: notch-rect, label: "**Read#lt;BodySizeMetrics#gt;**<br/>来自Bevy 引擎 ↗：静态只读查询接<br/>口：BodySizeMetrics" }
+  class n25 node_system_param
+  class n25 external_node
+  n26@{ shape: rounded, label: "**RigidBodyDisabled**<br/>暂停刚体求解和附着关节。" }
+  class n26 node_component
+  n27@{ shape: cyl, label: "**ContactGraph**<br/>保存物理解算后的真实接触结果。" }
+  class n27 node_resource
+  n28@{ shape: cyl, label: "**ContactStatusChangeQueue**<br/>暂存窄相产生的接触状态变化。" }
+  class n28 node_resource
+  n29@{ shape: cyl, label: "**ContactStatusBits**<br/>标记接触对新增或移除的状态。" }
+  class n29 node_resource
+  n30@{ shape: cyl, label: "**NarrowPhaseConfig**<br/>配置窄相的接触容差。" }
+  class n30 node_resource
+  n31@{ shape: cyl, label: "**DefaultFriction**<br/>提供未单独配置时的默认摩擦。" }
+  class n31 node_resource
+  n32@{ shape: cyl, label: "**DefaultRestitution**<br/>提供未单独配置时的默认恢复系数。" }
+  class n32 node_resource
+  n33@{ shape: cyl, label: "**Messages#lt;CollisionStart#gt;**<br/>缓冲物理接触开始消息。" }
+  class n33 node_message_buffer
+  n34@{ shape: cyl, label: "**Messages#lt;CollisionEnd#gt;**<br/>缓冲物理接触结束消息。" }
+  class n34 node_message_buffer
+  n35@{ shape: cyl, label: "**Time**<br/>来自Bevy 引擎 ↗：提供当前运行阶段的通<br/>用时间。" }
+  class n35 node_resource
+  class n35 external_node
+  n36@{ shape: notch-rect, label: "**StaticSystemParam#lt;()#gt;**<br/>来自Bevy 引擎 ↗：适配泛型 SystemParam" }
+  class n36 node_system_param
+  class n36 external_node
+  n37@{ shape: notch-rect, label: "**StaticSystemParam#lt;Context#gt;**<br/>来自Bevy 引擎 ↗：适配泛型 SystemParam" }
+  class n37 node_system_param
+  class n37 external_node
+  n38@{ shape: cyl, label: "**CollisionDiagnostics**<br/>汇总碰撞检测耗时与接触数量。" }
+  class n38 node_resource
+  n1 e0@-->|"main / PhysicsSchedule"| n0
+  class e0 edge_registration
+  n2 e1@--> n0
+  class e1 edge_set_membership
+  n3 e2@-->|"参数 / 查询数据"| n0
+  class e2 edge_reference
+  n4 e3@-->|"参数 / 查询数据"| n0
+  class e3 edge_reference
+  n5 e4@-->|"参数 / 查询数据"| n0
+  class e4 edge_reference
+  n6 e5@-->|"参数 / 查询数据"| n0
+  class e5 edge_reference
+  n7 e6@-->|"参数 / 查询数据"| n0
+  class e6 edge_reference
+  n8 e7@-->|"参数 / 查询数据"| n0
+  class e7 edge_reference
+  n9 e8@-->|"参数 / 查询数据"| n0
+  class e8 edge_reference
+  n10 e9@-->|"参数 / 查询数据"| n0
+  class e9 edge_reference
+  n11 e10@-->|"参数 / 查询数据"| n0
+  class e10 edge_reference
+  n12 e11@-->|"参数 / 查询数据"| n0
+  class e11 edge_reference
+  n13 e12@-->|"参数 / 查询数据"| n0
+  class e12 edge_reference
+  n14 e13@-->|"参数 / 查询数据"| n0
+  class e13 edge_reference
+  n15 e14@-->|"参数 / 查询数据"| n0
+  class e14 edge_reference
+  n16 e15@-->|"存在 / 变更过滤"| n0
+  class e15 edge_reference
+  n17 e16@-->|"存在 / 变更过滤"| n0
+  class e16 edge_reference
+  n0 e17@--> n18
+  class e17 edge_write
+  n19 e18@-->|"参数 / 查询数据"| n0
+  class e18 edge_reference
+  n20 e19@-->|"参数 / 查询数据"| n0
+  class e19 edge_reference
+  n21 e20@-->|"参数 / 查询数据"| n0
+  class e20 edge_reference
+  n22 e21@-->|"参数 / 查询数据"| n0
+  class e21 edge_reference
+  n23 e22@-->|"参数 / 查询数据"| n0
+  class e22 edge_reference
+  n24 e23@-->|"参数 / 查询数据"| n0
+  class e23 edge_reference
+  n25 e24@-->|"参数 / 查询数据"| n0
+  class e24 edge_reference
+  n26 e25@-->|"存在 / 变更过滤"| n0
+  class e25 edge_reference
+  n0 e26@--> n27
+  class e26 edge_write
+  n0 e27@--> n28
+  class e27 edge_write
+  n0 e28@--> n29
+  class e28 edge_write
+  n30 e29@--> n0
+  class e29 edge_read
+  n31 e30@--> n0
+  class e30 edge_read
+  n32 e31@--> n0
+  class e31 edge_read
+  n0 e32@--> n33
+  class e32 edge_publish
+  n0 e33@--> n34
+  class e33 edge_publish
+  n35 e34@--> n0
+  class e34 edge_read
+  n36 e35@-->|"参数 / 查询数据"| n0
+  class e35 edge_reference
+  n37 e36@-->|"参数 / 查询数据"| n0
+  class e36 edge_reference
+  n0 e37@--> n38
+  class e37 edge_write
+  n1 layout_input_0@~~~ n2
+  n2 layout_input_1@~~~ n3
+  n3 layout_input_2@~~~ n4
+  n4 layout_input_3@~~~ n5
+  n5 layout_input_4@~~~ n6
+  n6 layout_input_5@~~~ n7
+  n7 layout_input_6@~~~ n8
+  n8 layout_input_7@~~~ n9
+  n9 layout_input_8@~~~ n10
+  n10 layout_input_9@~~~ n11
+  n11 layout_input_10@~~~ n12
+  n12 layout_input_11@~~~ n13
+  n13 layout_input_12@~~~ n14
+  n14 layout_input_13@~~~ n15
+  n15 layout_input_14@~~~ n16
+  n16 layout_input_15@~~~ n17
+  n17 layout_input_16@~~~ n19
+  n19 layout_input_17@~~~ n20
+  n20 layout_input_18@~~~ n21
+  n21 layout_input_19@~~~ n22
+  n22 layout_input_20@~~~ n23
+  n23 layout_input_21@~~~ n24
+  n24 layout_input_22@~~~ n25
+  n25 layout_input_23@~~~ n26
+  n26 layout_input_24@~~~ n30
+  n30 layout_input_25@~~~ n31
+  n31 layout_input_26@~~~ n32
+  n32 layout_input_27@~~~ n35
+  n35 layout_input_28@~~~ n36
+  n36 layout_input_29@~~~ n37
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e17@{ curve: basis }
+  e18@{ curve: basis }
+  e19@{ curve: basis }
+  e20@{ curve: basis }
+  e21@{ curve: basis }
+  e22@{ curve: basis }
+  e23@{ curve: basis }
+  e24@{ curve: basis }
+  e25@{ curve: basis }
+  e26@{ curve: basis }
+  e27@{ curve: basis }
+  e28@{ curve: basis }
+  e29@{ curve: basis }
+  e30@{ curve: basis }
+  e31@{ curve: basis }
+  e32@{ curve: basis }
+  e33@{ curve: basis }
+  e34@{ curve: basis }
+  e35@{ curve: basis }
+  e36@{ curve: basis }
+  e37@{ curve: basis }

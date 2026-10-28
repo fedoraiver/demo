@@ -1,0 +1,214 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: main · Last · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_sync fill:#F6F3F0,stroke:#8B6A42,stroke-width:1.6px,color:#1F3340
+  classDef node_engine_flow fill:#F1F5F4,stroke:#557C78,stroke-width:1.6px,color:#1F3340
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: stadium, label: "**main · Last**<br/>保存本应用调度的注册上下文与成员。" }
+  class n0 node_engine_flow
+  n1@{ shape: rounded, label: "**silence_delayed_command_queues_on_**<br/>**exit**<br/>在退出时关闭未执行延迟队列的丢弃警告。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**check_parent_has_component#lt;bevy_**<br/>**transform::components::global_**<br/>**transform::GlobalTransform#gt;**<br/>报告仍不满足组件层级要求的父子关系。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**check_parent_has_component#lt;bevy_**<br/>**camera::visibility::**<br/>**InheritedVisibility#gt;**<br/>报告仍不满足组件层级要求的父子关系。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**exit_on_all_closed**<br/>窗口查询为空时写入 AppExit::Success，<br/>通知应用正常退出；仍有窗口时不发送退出消<br/>息。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**update_cursors**<br/>处理 CursorIcon 的变化与待重试窗口，准<br/>备原生或自定义光标；自定义图像按裁切、翻<br/>转和热点生成或复用缓存，资源尚未加载时保<br/>留重试。" }
+  class n5 node_system
+  n6@{ shape: rounded, label: "**update_gizmo_meshes#lt;bevy_light::**<br/>**gizmos::LightGizmoConfigGroup#gt;**<br/>把配置组即时线条缓冲转交 Gizmo 资产。" }
+  class n6 node_system
+  n7@{ shape: rounded, label: "**update_gizmo_meshes#lt;bevy_gizmos::**<br/>**config::DefaultGizmoConfigGroup#gt;**<br/>把配置组即时线条缓冲转交 Gizmo 资产。" }
+  class n7 node_system
+  n8@{ shape: rounded, label: "**update_gizmo_meshes#lt;bevy_gizmos::**<br/>**aabb::AabbGizmoConfigGroup#gt;**<br/>把配置组即时线条缓冲转交 Gizmo 资产。" }
+  class n8 node_system
+  n9@{ shape: rounded, label: "**update_gizmo_meshes#lt;bevy_gizmos::**<br/>**frustum::FrustumGizmoConfigGroup#gt;**<br/>把配置组即时线条缓冲转交 Gizmo 资产。" }
+  class n9 node_system
+  n10@{ shape: rounded, label: "**update_gizmo_meshes#lt;bevy_gizmos::**<br/>**skinned_mesh_bounds::**<br/>**SkinnedMeshBoundsGizmoConfigGroup#gt;**<br/>把配置组即时线条缓冲转交 Gizmo 资产。" }
+  class n10 node_system
+  n11@{ shape: rounded, label: "**despawn_unused_registered_systems**<br/>消费已注册系统的释放队列，对<br/>SystemHandle 引用计数已归零的系统实体<br/>排入安全销毁命令；已被手工销毁的实体不报<br/>错。" }
+  class n11 node_system
+  n12@{ shape: rounded, label: "**tick_global_task_pools**<br/>在主线程推进全局任务池，使等待主线程轮询<br/>的后台任务继续执行；NonSendMarker 保证<br/>该系统不会调度到其他线程。" }
+  class n12 node_system
+  n13@{ shape: rounded, label: "**update_frame_count**<br/>递增应用帧计数。" }
+  class n13 node_system
+  n14@{ shape: rounded, label: "**close_when_requested**<br/>将 WindowCloseRequested 对应窗口标为<br/>ClosingWindow，并销毁上一轮已带该标记<br/>的窗口实体，使原生窗口后端有机会先处理关<br/>闭通知。" }
+  class n14 node_system
+  n15@{ shape: rounded, label: "**changed_windows**<br/>将 Window 组件与 CachedWindow 比较，<br/>把标题、模式、位置、分辨率等受支持的变化<br/>同步到 winit 原生窗口，并发布调整尺寸或<br/>缩放等消息；渲染呈现模式由渲染模块另行处<br/>理。" }
+  class n15 node_system
+  n16@{ shape: rounded, label: "**changed_cursor_options**<br/>把光标配置变化同步到原生窗口。" }
+  class n16 node_system
+  n17@{ shape: rounded, label: "**despawn_windows**<br/>处理 ClosingWindow、Window 组件移除<br/>和 AppExit，通知窗口即将关闭，移出<br/>winit 窗口表并发布 WindowClosed；原生<br/>窗口包装保留到下一轮再由主线程释放。" }
+  class n17 node_system
+  n18@{ shape: rounded, label: "**check_keyboard_focus_lost**<br/>处理跨窗口键盘焦点丢失并补发释放。" }
+  class n18 node_system
+  n19@{ shape: rounded, label: "**propagate_gizmos#lt;bevy_light::**<br/>**gizmos::LightGizmoConfigGroup, bevy_**<br/>**time::fixed::Fixed#gt;**<br/>把指定上下文与清理阶段的 GizmoStorage<br/>追加到 Update 图元存储，供后续网格构建<br/>和渲染使用；具体配置组和阶段由泛型实参区<br/>分。" }
+  class n19 node_system
+  n20@{ shape: rounded, label: "**trim_source_cache**<br/>裁减排版字体来源缓存。" }
+  class n20 node_system
+  n21@{ shape: rounded, label: "**propagate_gizmos#lt;bevy_gizmos::**<br/>**config::DefaultGizmoConfigGroup,**<br/>**bevy_time::fixed::Fixed#gt;**<br/>把指定上下文与清理阶段的 GizmoStorage<br/>追加到 Update 图元存储，供后续网格构建<br/>和渲染使用；具体配置组和阶段由泛型实参区<br/>分。" }
+  class n21 node_system
+  n22@{ shape: rounded, label: "**propagate_gizmos#lt;bevy_gizmos::aabb::**<br/>**AabbGizmoConfigGroup, bevy_time::**<br/>**fixed::Fixed#gt;**<br/>把指定上下文与清理阶段的 GizmoStorage<br/>追加到 Update 图元存储，供后续网格构建<br/>和渲染使用；具体配置组和阶段由泛型实参区<br/>分。" }
+  class n22 node_system
+  n23@{ shape: rounded, label: "**propagate_gizmos#lt;bevy_gizmos::**<br/>**frustum::FrustumGizmoConfigGroup,**<br/>**bevy_time::fixed::Fixed#gt;**<br/>把指定上下文与清理阶段的 GizmoStorage<br/>追加到 Update 图元存储，供后续网格构建<br/>和渲染使用；具体配置组和阶段由泛型实参区<br/>分。" }
+  class n23 node_system
+  n24@{ shape: rounded, label: "**flush_global_gizmos**<br/>在锁内取走全局 Gizmo 缓冲，把线带和独立<br/>线段的位置、颜色追加到当前 Gizmos 参<br/>数，清空全局暂存并交由本轮图元流程处理。" }
+  class n24 node_system
+  n25@{ shape: rounded, label: "**propagate_gizmos#lt;bevy_gizmos::**<br/>**skinned_mesh_bounds::**<br/>**SkinnedMeshBoundsGizmoConfigGroup,**<br/>**bevy_time::fixed::Fixed#gt;**<br/>把指定上下文与清理阶段的 GizmoStorage<br/>追加到 Update 图元存储，供后续网格构建<br/>和渲染使用；具体配置组和阶段由泛型实参区<br/>分。" }
+  class n25 node_system
+  n26@{ shape: rounded, label: "**deactivate_touch_pointers**<br/>销毁已经结束或取消的触摸指针。" }
+  class n26 node_system
+  n27@{ shape: rounded, label: "**free_egui_textures_system**<br/>来自Egui / Inspector ↗：回收 Egui 已<br/>释放或失效的纹理引用。" }
+  class n27 node_system
+  class n27 external_node
+  n28@{ shape: rounded, label: "**apply_frame_rate_limit**<br/>来自设置与参数 ↗：将帧率设置同步给原生<br/>窗口循环。" }
+  class n28 node_system
+  class n28 external_node
+  n29@{ shape: rounded, label: "**ApplyDeferred**<br/>在调度建立的同步点应用前序系统暂存的<br/>Commands 等延迟操作，使后续系统可以观察<br/>到结构变化；此卡片是 ApplyDeferred 的<br/>System 实现。" }
+  class n29 node_sync
+  n30@{ shape: lin-rect, label: "**OnAppExitSystems**<br/>在退出消息发出后执行应用收尾。" }
+  class n30 node_system_set
+  n31@{ shape: lin-rect, label: "**ValidateParentHasComponentSystems**<br/>复核父子层级是否满足组件要求。" }
+  class n31 node_system_set
+  n32@{ shape: lin-rect, label: "**ExitSystems**<br/>按窗口关闭策略请求应用退出。" }
+  class n32 node_system_set
+  n33@{ shape: lin-rect, label: "**CursorSystems::Update**<br/>把 CursorIcon 变化准备给窗口后端。" }
+  class n33 node_system_set
+  n34@{ shape: lin-rect, label: "**GizmoMeshSystems**<br/>把调试绘制存储转换为渲染网格。" }
+  class n34 node_system_set
+  n0 e0@-->|"main / Last"| n1
+  class e0 edge_registration
+  n0 e1@-->|"main / Last"| n2
+  class e1 edge_registration
+  n0 e2@-->|"main / Last"| n3
+  class e2 edge_registration
+  n0 e3@-->|"main / Last"| n4
+  class e3 edge_registration
+  n0 e4@-->|"main / Last"| n5
+  class e4 edge_registration
+  n0 e5@-->|"main / Last"| n6
+  class e5 edge_registration
+  n0 e6@-->|"main / Last"| n7
+  class e6 edge_registration
+  n0 e7@-->|"main / Last"| n8
+  class e7 edge_registration
+  n0 e8@-->|"main / Last"| n9
+  class e8 edge_registration
+  n0 e9@-->|"main / Last"| n10
+  class e9 edge_registration
+  n0 e10@-->|"main / Last"| n11
+  class e10 edge_registration
+  n0 e11@-->|"main / Last"| n12
+  class e11 edge_registration
+  n0 e12@-->|"main / Last"| n13
+  class e12 edge_registration
+  n0 e13@-->|"main / Last"| n14
+  class e13 edge_registration
+  n0 e14@-->|"main / Last"| n15
+  class e14 edge_registration
+  n0 e15@-->|"main / Last"| n16
+  class e15 edge_registration
+  n0 e16@-->|"main / Last"| n17
+  class e16 edge_registration
+  n0 e17@-->|"main / Last"| n18
+  class e17 edge_registration
+  n0 e18@-->|"main / Last"| n19
+  class e18 edge_registration
+  n0 e19@-->|"main / Last"| n20
+  class e19 edge_registration
+  n0 e20@-->|"main / Last"| n21
+  class e20 edge_registration
+  n0 e21@-->|"main / Last"| n22
+  class e21 edge_registration
+  n0 e22@-->|"main / Last"| n23
+  class e22 edge_registration
+  n0 e23@-->|"main / Last"| n24
+  class e23 edge_registration
+  n0 e24@-->|"main / Last"| n25
+  class e24 edge_registration
+  n0 e25@-->|"main / Last"| n26
+  class e25 edge_registration
+  n0 e26@-->|"main / Last"| n27
+  class e26 edge_registration
+  n0 e27@-->|"main / Last"| n28
+  class e27 edge_registration
+  n0 e28@-->|"main / Last"| n29
+  class e28 edge_registration
+  n0 e29@-->|"main / Last"| n30
+  class e29 edge_registration
+  n0 e30@-->|"main / Last"| n31
+  class e30 edge_registration
+  n0 e31@-->|"main / Last"| n32
+  class e31 edge_registration
+  n0 e32@-->|"main / Last"| n33
+  class e32 edge_registration
+  n0 e33@-->|"main / Last"| n34
+  class e33 edge_registration
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e17@{ curve: basis }
+  e18@{ curve: basis }
+  e19@{ curve: basis }
+  e20@{ curve: basis }
+  e21@{ curve: basis }
+  e22@{ curve: basis }
+  e23@{ curve: basis }
+  e24@{ curve: basis }
+  e25@{ curve: basis }
+  e26@{ curve: basis }
+  e27@{ curve: basis }
+  e28@{ curve: basis }
+  e29@{ curve: basis }
+  e30@{ curve: basis }
+  e31@{ curve: basis }
+  e32@{ curve: basis }
+  e33@{ curve: basis }

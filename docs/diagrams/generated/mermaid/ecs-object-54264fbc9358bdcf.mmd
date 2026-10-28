@@ -1,0 +1,69 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: ComputedAngularInertia · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**ComputedAngularInertia**<br/>保存汇总后的刚体局部角惯量。" }
+  class n0 node_component
+  n1@{ shape: rounded, label: "**warn_invalid_mass**<br/>报告动态刚体无效的总质量或总惯量。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**prepare_solver_bodies**<br/>把 ECS 刚体状态准备成子步求解数据。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**apply_constant_local_torques**<br/>按局部惯量把恒定局部扭矩转成角加速度。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**integrate_velocities**<br/>对采用默认速度积分的活跃动态刚体，先应用<br/>线性和角速度阻尼，再累加当前步的速度增<br/>量；运动学刚体跳过该积分，并记录诊断耗<br/>时。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**update_solver_body_angular_inertia**<br/>按当前朝向刷新求解器的有效逆惯量。" }
+  class n5 node_system
+  n0 e0@--> n1
+  class e0 edge_read
+  n0 e1@-->|"存在 / 变更过滤"| n1
+  class e1 edge_reference
+  n0 e2@--> n2
+  class e2 edge_read
+  n0 e3@--> n3
+  class e3 edge_read
+  n0 e4@--> n4
+  class e4 edge_read
+  n0 e5@--> n5
+  class e5 edge_read
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }

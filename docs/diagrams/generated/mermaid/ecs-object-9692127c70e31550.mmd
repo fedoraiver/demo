@@ -1,0 +1,90 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: RenderAdapter · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: cyl, label: "**RenderAdapter**<br/>标识渲染使用的物理 GPU 适配器。" }
+  class n0 node_resource
+  n1@{ shape: rounded, label: "**prepare_prepass_textures**<br/>按三维预通道配置分配各类输出纹理。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**prepare_mip_generator_pipelines**<br/>为本帧 mip 生成任务准备并复用 GPU 资<br/>源。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**prepare_mesh_view_bind_groups**<br/>为视图绑定光照、阴影及各可选渲染效果资<br/>源。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**create_surfaces**<br/>根据提取窗口的原生句柄创建 GPU 表面，选<br/>择支持的纹理格式、显示及透明模式并配置<br/>SurfaceData；已有表面则按窗口变化更新<br/>配置。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**init_mesh_pipeline_view_layouts**<br/>按设备能力汇集网格视图资源布局参数。" }
+  class n5 node_system
+  n6@{ shape: rounded, label: "**init_mesh_pipeline**<br/>初始化三维网格着色器及设备缓冲策略。" }
+  class n6 node_system
+  n7@{ shape: rounded, label: "**init_prepass_pipeline**<br/>初始化带运动矢量及普通预通道的资源布局。" }
+  class n7 node_system
+  n8@{ shape: rounded, label: "**init_render_lightmaps**<br/>初始化光照贴图槽位和设备绑定数组能力。" }
+  class n8 node_system
+  n9@{ shape: rounded, label: "**init_screen_space_reflections_**<br/>**pipeline**<br/>初始化屏幕空间反射的全屏渲染管线资源。" }
+  class n9 node_system
+  n10@{ shape: rounded, label: "**initialize_generated_environment_**<br/>**map_resources**<br/>初始化环境图降采样、复制和卷积的 GPU 接<br/>口。" }
+  class n10 node_system
+  n0 e0@--> n1
+  class e0 edge_read
+  n0 e1@--> n2
+  class e1 edge_read
+  n0 e2@--> n3
+  class e2 edge_read
+  n0 e3@--> n4
+  class e3 edge_read
+  n0 e4@--> n5
+  class e4 edge_read
+  n0 e5@--> n6
+  class e5 edge_read
+  n0 e6@--> n7
+  class e6 edge_read
+  n0 e7@--> n8
+  class e7 edge_read
+  n0 e8@--> n9
+  class e8 edge_read
+  n0 e9@--> n10
+  class e9 edge_read
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }

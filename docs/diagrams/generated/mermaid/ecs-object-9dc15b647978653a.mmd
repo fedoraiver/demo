@@ -1,0 +1,421 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#object-9dc15b647978653a-e53{marker-start:url(#object-9dc15b647978653a_flowchart-v2-pointStart)!important}\n#object-9dc15b647978653a-e55{marker-start:url(#object-9dc15b647978653a_flowchart-v2-pointStart)!important}\n#object-9dc15b647978653a-e56{marker-start:url(#object-9dc15b647978653a_flowchart-v2-pointStart)!important}\n#object-9dc15b647978653a_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}"
+  }
+}
+---
+flowchart LR
+  accTitle: extract_lights · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef node_local fill:#F8F5F1,stroke:#AA8752,stroke-width:1.6px,color:#1F3340
+  classDef node_system_param fill:#EFF5F6,stroke:#3B8790,stroke-width:1.6px,color:#1F3340
+  classDef node_query_data fill:#F1F4F1,stroke:#567A51,stroke-width:1.6px,color:#1F3340
+  classDef node_engine_flow fill:#F1F5F4,stroke:#557C78,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  subgraph layout_card_n0[" "]
+  n0@{ shape: rounded, label: "**extract_lights**<br/>同步可见点光、聚光、平行光及矩形光的渲染<br/>参数和阴影可见实体，提取变化的阴影贴图设<br/>置；隐藏或失效光源不继续保留有效渲染状<br/>态。" }
+  class n0 node_system
+  end
+  style layout_card_n0 fill:none,stroke:none
+  subgraph layout_card_n1[" "]
+  n1@{ shape: stadium, label: "**RenderApp · ExtractSchedule**<br/>保存本应用调度的注册上下文与成员。" }
+  class n1 node_engine_flow
+  end
+  style layout_card_n1 fill:none,stroke:none
+  subgraph layout_card_n2[" "]
+  n2@{ shape: notch-rect, label: "**Commands**<br/>保存延迟执行的 World 操作队列" }
+  class n2 node_system_param
+  end
+  style layout_card_n2 fill:none,stroke:none
+  subgraph layout_card_n3[" "]
+  n3@{ shape: cyl, label: "**PointLightShadowMap**<br/>配置点光源立方体阴影贴图分辨率。" }
+  class n3 node_resource
+  end
+  style layout_card_n3 fill:none,stroke:none
+  subgraph layout_card_n4[" "]
+  n4@{ shape: cyl, label: "**DirectionalLightShadowMap**<br/>配置方向光与聚光灯阴影贴图分辨率。" }
+  class n4 node_resource
+  end
+  style layout_card_n4 fill:none,stroke:none
+  subgraph layout_card_n5[" "]
+  n5@{ shape: notch-rect, label: "**RenderEntity**<br/>记录主实体对应的渲染世界实体。" }
+  class n5 node_query_data
+  end
+  style layout_card_n5 fill:none,stroke:none
+  subgraph layout_card_n6[" "]
+  n6@{ shape: rounded, label: "**PointLight**<br/>配置向四周发光的点光源。" }
+  class n6 node_component
+  end
+  style layout_card_n6 fill:none,stroke:none
+  subgraph layout_card_n7[" "]
+  n7@{ shape: rounded, label: "**CubemapVisibleEntities**<br/>记录立方体阴影六面的可见网格。" }
+  class n7 node_component
+  end
+  style layout_card_n7 fill:none,stroke:none
+  subgraph layout_card_n8[" "]
+  n8@{ shape: rounded, label: "**GlobalTransform**<br/>保存实体合并祖先变换后的世界空间仿射变换" }
+  class n8 node_component
+  end
+  style layout_card_n8 fill:none,stroke:none
+  subgraph layout_card_n9[" "]
+  n9@{ shape: rounded, label: "**ViewVisibility**<br/>记录实体是否应被提取用于渲染。" }
+  class n9 node_component
+  end
+  style layout_card_n9 fill:none,stroke:none
+  subgraph layout_card_n10[" "]
+  n10@{ shape: rounded, label: "**CubemapFrusta**<br/>保存立方体阴影六面的视锥。" }
+  class n10 node_component
+  end
+  style layout_card_n10 fill:none,stroke:none
+  subgraph layout_card_n11[" "]
+  n11@{ shape: rounded, label: "**RenderLayers**<br/>限定相机与实体可相交的渲染层。" }
+  class n11 node_component
+  end
+  style layout_card_n11 fill:none,stroke:none
+  subgraph layout_card_n12[" "]
+  n12@{ shape: rounded, label: "**VolumetricLight**<br/>让带阴影的方向光参与体积雾照明。" }
+  class n12 node_component
+  end
+  style layout_card_n12 fill:none,stroke:none
+  subgraph layout_card_n13[" "]
+  n13@{ shape: rounded, label: "**SpotLight**<br/>配置沿指定方向照射的聚光灯。" }
+  class n13 node_component
+  end
+  style layout_card_n13 fill:none,stroke:none
+  subgraph layout_card_n14[" "]
+  n14@{ shape: rounded, label: "**VisibleMeshEntities**<br/>保存光源视图可见的三维网格。" }
+  class n14 node_component
+  end
+  style layout_card_n14 fill:none,stroke:none
+  subgraph layout_card_n15[" "]
+  n15@{ shape: rounded, label: "**Frustum**<br/>描述相机可见空间并参与视锥裁剪。" }
+  class n15 node_component
+  end
+  style layout_card_n15 fill:none,stroke:none
+  subgraph layout_card_n16[" "]
+  n16@{ shape: rounded, label: "**DirectionalLight**<br/>配置平行方向光的颜色、照度和阴影。" }
+  class n16 node_component
+  end
+  style layout_card_n16 fill:none,stroke:none
+  subgraph layout_card_n17[" "]
+  n17@{ shape: rounded, label: "**CascadesVisibleEntities**<br/>记录每个视图及级联的可见网格。" }
+  class n17 node_component
+  end
+  style layout_card_n17 fill:none,stroke:none
+  subgraph layout_card_n18[" "]
+  n18@{ shape: rounded, label: "**Cascades**<br/>按视图保存方向光的阴影级联。" }
+  class n18 node_component
+  end
+  style layout_card_n18 fill:none,stroke:none
+  subgraph layout_card_n19[" "]
+  n19@{ shape: rounded, label: "**CascadeShadowConfig**<br/>配置方向光阴影级联的距离与重叠。" }
+  class n19 node_component
+  end
+  style layout_card_n19 fill:none,stroke:none
+  subgraph layout_card_n20[" "]
+  n20@{ shape: rounded, label: "**CascadesFrusta**<br/>保存各视图的级联阴影视锥。" }
+  class n20 node_component
+  end
+  style layout_card_n20 fill:none,stroke:none
+  subgraph layout_card_n21[" "]
+  n21@{ shape: rounded, label: "**OcclusionCulling**<br/>启用视图的 GPU 遮挡裁剪。" }
+  class n21 node_component
+  end
+  style layout_card_n21 fill:none,stroke:none
+  subgraph layout_card_n22[" "]
+  n22@{ shape: rounded, label: "**SunDisk**<br/>配置天空中太阳圆盘的角尺寸与亮度。" }
+  class n22 node_component
+  end
+  style layout_card_n22 fill:none,stroke:none
+  subgraph layout_card_n23[" "]
+  n23@{ shape: rounded, label: "**RectLight**<br/>配置朝局部负 Z 发光的矩形区域光。" }
+  class n23 node_component
+  end
+  style layout_card_n23 fill:none,stroke:none
+  subgraph layout_card_n24[" "]
+  n24@{ shape: notch-rect, label: "**VisibilityExtractionSystemParam**<br/>为可见性提取提供主实体到渲染实体映射。" }
+  class n24 node_system_param
+  end
+  style layout_card_n24 fill:none,stroke:none
+  subgraph layout_card_n25[" "]
+  n25@{ shape: notch-rect, label: "**SQuery#lt;Read#lt;RenderEntity#gt;#gt;**<br/>为 Query 提供静态生命周期形式" }
+  class n25 node_system_param
+  end
+  style layout_card_n25 fill:none,stroke:none
+  subgraph layout_card_n26[" "]
+  n26@{ shape: rounded, label: "**RenderExtractedShadowMapVisibleEntit**<br/>**ies**<br/>暂存各阴影子视图经 CPU 判定可见的实体。" }
+  class n26 node_component
+  end
+  style layout_card_n26 fill:none,stroke:none
+  subgraph layout_card_n27[" "]
+  n27@{ shape: rounded, label: "**RenderShadowMapVisibleEntities**<br/>保存每个阴影子视图最终收集的可见实体。" }
+  class n27 node_component
+  end
+  style layout_card_n27 fill:none,stroke:none
+  subgraph layout_card_n28[" "]
+  n28@{ shape: notch-rect, label: "**EntityHashSet**<br/>记录本轮成功提取的渲染光源实体。" }
+  class n28 node_local
+  end
+  style layout_card_n28 fill:none,stroke:none
+  subgraph layout_card_n29[" "]
+  n29@{ shape: notch-rect, label: "**bool**<br/>避免区域光缺少 LUT 功能的警告重复输出。" }
+  class n29 node_local
+  end
+  style layout_card_n29 fill:none,stroke:none
+  subgraph layout_card_n30[" "]
+  n30@{ shape: notch-rect, label: "**SystemChangeTick**<br/>提供系统上次与本次运行的变化刻度" }
+  class n30 node_system_param
+  end
+  style layout_card_n30 fill:none,stroke:none
+  subgraph layout_card_n31[" "]
+  n31@{ shape: cyl, label: "**PointLightShadowMap**<br/>配置点光源立方体阴影贴图分辨率。" }
+  class n31 node_resource
+  end
+  style layout_card_n31 fill:none,stroke:none
+  subgraph layout_card_n32[" "]
+  n32@{ shape: cyl, label: "**DirectionalLightShadowMap**<br/>配置方向光与聚光灯阴影贴图分辨率。" }
+  class n32 node_resource
+  end
+  style layout_card_n32 fill:none,stroke:none
+  subgraph layout_card_n33[" "]
+  n33@{ shape: rounded, label: "**ExtractedPointLight**<br/>保存渲染侧点光或聚光的光照参数。" }
+  class n33 node_component
+  end
+  style layout_card_n33 fill:none,stroke:none
+  subgraph layout_card_n34[" "]
+  n34@{ shape: rounded, label: "**MainEntity**<br/>在子世界中关联原始主世界实体。" }
+  class n34 node_component
+  end
+  style layout_card_n34 fill:none,stroke:none
+  subgraph layout_card_n35[" "]
+  n35@{ shape: rounded, label: "**ExtractedDirectionalLight**<br/>保存渲染侧平行光和级联阴影设置。" }
+  class n35 node_component
+  end
+  style layout_card_n35 fill:none,stroke:none
+  subgraph layout_card_n36[" "]
+  n36@{ shape: rounded, label: "**ExtractedRectLight**<br/>保存渲染侧矩形光源的尺寸与光照。" }
+  class n36 node_component
+  end
+  style layout_card_n36 fill:none,stroke:none
+  n1 e0@-->|"RenderApp / ExtractSchedule"| n0
+  class e0 edge_registration
+  n2 e1@-->|"参数 / 查询数据"| n0
+  class e1 edge_reference
+  n3 e2@--> n0
+  class e2 edge_read
+  n4 e3@--> n0
+  class e3 edge_read
+  n5 e4@-->|"参数 / 查询数据"| n0
+  class e4 edge_reference
+  n6 e5@--> n0
+  class e5 edge_read
+  n7 e6@--> n0
+  class e6 edge_read
+  n8 e7@--> n0
+  class e7 edge_read
+  n9 e8@--> n0
+  class e8 edge_read
+  n10 e9@--> n0
+  class e9 edge_read
+  n11 e10@--> n0
+  class e10 edge_read
+  n12 e11@--> n0
+  class e11 edge_read
+  n6 e12@-->|"存在 / 变更过滤"| n0
+  class e12 edge_reference
+  n7 e13@-->|"存在 / 变更过滤"| n0
+  class e13 edge_reference
+  n8 e14@-->|"存在 / 变更过滤"| n0
+  class e14 edge_reference
+  n9 e15@-->|"存在 / 变更过滤"| n0
+  class e15 edge_reference
+  n11 e16@-->|"存在 / 变更过滤"| n0
+  class e16 edge_reference
+  n10 e17@-->|"存在 / 变更过滤"| n0
+  class e17 edge_reference
+  n12 e18@-->|"存在 / 变更过滤"| n0
+  class e18 edge_reference
+  n13 e19@--> n0
+  class e19 edge_read
+  n14 e20@--> n0
+  class e20 edge_read
+  n15 e21@--> n0
+  class e21 edge_read
+  n13 e22@-->|"存在 / 变更过滤"| n0
+  class e22 edge_reference
+  n14 e23@-->|"存在 / 变更过滤"| n0
+  class e23 edge_reference
+  n15 e24@-->|"存在 / 变更过滤"| n0
+  class e24 edge_reference
+  n16 e25@--> n0
+  class e25 edge_read
+  n17 e26@--> n0
+  class e26 edge_read
+  n18 e27@--> n0
+  class e27 edge_read
+  n19 e28@--> n0
+  class e28 edge_read
+  n20 e29@--> n0
+  class e29 edge_read
+  n21 e30@-->|"存在 / 变更过滤"| n0
+  class e30 edge_reference
+  n22 e31@--> n0
+  class e31 edge_read
+  n16 e32@-->|"存在 / 变更过滤"| n0
+  class e32 edge_reference
+  n17 e33@-->|"存在 / 变更过滤"| n0
+  class e33 edge_reference
+  n18 e34@-->|"存在 / 变更过滤"| n0
+  class e34 edge_reference
+  n19 e35@-->|"存在 / 变更过滤"| n0
+  class e35 edge_reference
+  n20 e36@-->|"存在 / 变更过滤"| n0
+  class e36 edge_reference
+  n22 e37@-->|"存在 / 变更过滤"| n0
+  class e37 edge_reference
+  n23 e38@--> n0
+  class e38 edge_read
+  n23 e39@-->|"存在 / 变更过滤"| n0
+  class e39 edge_reference
+  n24 e40@-->|"参数 / 查询数据"| n0
+  class e40 edge_reference
+  n25 e41@-->|"参数 / 查询数据"| n0
+  class e41 edge_reference
+  n0 e42@--> n26
+  class e42 edge_write
+  n0 e43@--> n27
+  class e43 edge_write
+  n0 e44@--> n28
+  class e44 edge_write
+  n0 e45@--> n29
+  class e45 edge_write
+  n30 e46@-->|"参数 / 查询数据"| n0
+  class e46 edge_reference
+  n0 e47@-->|"延迟添加"| n31
+  class e47 edge_write
+  n0 e48@-->|"延迟添加"| n32
+  class e48 edge_write
+  n0 e49@-->|"延迟移除"| n33
+  class e49 edge_write
+  n0 e50@-->|"延迟添加"| n26
+  class e50 edge_write
+  n0 e51@-->|"延迟添加"| n27
+  class e51 edge_write
+  n0 e52@-->|"延迟添加"| n33
+  class e52 edge_write
+  n10 e53@---|"延迟添加"| n0
+  class e53 edge_write
+  n0 e54@-->|"延迟添加"| n34
+  class e54 edge_write
+  n11 e55@---|"延迟添加"| n0
+  class e55 edge_write
+  n15 e56@---|"延迟添加"| n0
+  class e56 edge_write
+  n0 e57@-->|"延迟移除"| n35
+  class e57 edge_write
+  n0 e58@-->|"延迟移除"| n26
+  class e58 edge_write
+  n0 e59@-->|"延迟添加"| n35
+  class e59 edge_write
+  n0 e60@-->|"延迟移除"| n36
+  class e60 edge_write
+  n0 e61@-->|"延迟添加"| n36
+  class e61 edge_write
+  n0 e62@-->|"延迟移除"| n27
+  class e62 edge_write
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e17@{ curve: basis }
+  e18@{ curve: basis }
+  e19@{ curve: basis }
+  e20@{ curve: basis }
+  e21@{ curve: basis }
+  e22@{ curve: basis }
+  e23@{ curve: basis }
+  e24@{ curve: basis }
+  e25@{ curve: basis }
+  e26@{ curve: basis }
+  e27@{ curve: basis }
+  e28@{ curve: basis }
+  e29@{ curve: basis }
+  e30@{ curve: basis }
+  e31@{ curve: basis }
+  e32@{ curve: basis }
+  e33@{ curve: basis }
+  e34@{ curve: basis }
+  e35@{ curve: basis }
+  e36@{ curve: basis }
+  e37@{ curve: basis }
+  e38@{ curve: basis }
+  e39@{ curve: basis }
+  e40@{ curve: basis }
+  e41@{ curve: basis }
+  e42@{ curve: basis }
+  e43@{ curve: basis }
+  e44@{ curve: basis }
+  e45@{ curve: basis }
+  e46@{ curve: basis }
+  e47@{ curve: basis }
+  e48@{ curve: basis }
+  e49@{ curve: basis }
+  e50@{ curve: basis }
+  e51@{ curve: basis }
+  e52@{ curve: basis }
+  e53@{ curve: basis }
+  e54@{ curve: basis }
+  e55@{ curve: basis }
+  e56@{ curve: basis }
+  e57@{ curve: basis }
+  e58@{ curve: basis }
+  e59@{ curve: basis }
+  e60@{ curve: basis }
+  e61@{ curve: basis }
+  e62@{ curve: basis }

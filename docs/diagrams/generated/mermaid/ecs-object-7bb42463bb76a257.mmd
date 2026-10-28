@@ -1,0 +1,56 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#object-7bb42463bb76a257-e0{marker-start:url(#object-7bb42463bb76a257_flowchart-v2-pointStart)!important}\n#object-7bb42463bb76a257_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}"
+  }
+}
+---
+flowchart LR
+  accTitle: RawHandleWrapper · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**RawHandleWrapper**<br/>持有原始窗口及显示服务器句柄" }
+  class n0 node_component
+  n1@{ shape: rounded, label: "**extract_windows**<br/>将主世界窗口尺寸、显示模式、原生句柄和主<br/>窗口身份同步到渲染世界，标记尺寸及模式变<br/>化，并处理关闭窗口或移除句柄造成的失效状<br/>态。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**create_surfaces**<br/>根据提取窗口的原生句柄创建 GPU 表面，选<br/>择支持的纹理格式、显示及透明模式并配置<br/>SurfaceData；已有表面则按窗口变化更新<br/>配置。" }
+  class n2 node_system
+  n1 e0@--- n0
+  class e0 edge_read
+  n1 e1@-->|"延迟添加"| n0
+  class e1 edge_write
+  n1 e2@-->|"延迟移除"| n0
+  class e2 edge_write
+  n0 e3@--> n2
+  class e3 edge_read
+  e0@{ curve: basis }
+  e2@{ curve: basis }

@@ -1,0 +1,88 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: update_ray_caster_positions · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_query_data fill:#F1F4F1,stroke:#567A51,stroke-width:1.6px,color:#1F3340
+  classDef node_engine_flow fill:#F1F5F4,stroke:#557C78,stroke-width:1.6px,color:#1F3340
+  classDef edge_order stroke:#334155,stroke-width:2px
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**update_ray_caster_positions**<br/>把射线发射器的局部原点和方向换到世界空<br/>间。" }
+  class n0 node_system
+  n1@{ shape: stadium, label: "**main · FixedPostUpdate**<br/>来自Bevy 引擎 ↗：保存本应用调度的注册<br/>上下文与成员。" }
+  class n1 node_engine_flow
+  class n1 external_node
+  n2@{ shape: lin-rect, label: "**SpatialQuerySystems**<br/>刷新空间投射器并执行射线和形状查询。" }
+  class n2 node_system_set
+  n3@{ shape: rounded, label: "**update_shape_caster_positions**<br/>把形状扫掠的原点、方向和形状朝向换到世界<br/>空间。" }
+  class n3 node_system
+  n4@{ shape: notch-rect, label: "**RayCasterPositionQueryComponents**<br/>汇集射线发射器世界位姿的输入。" }
+  class n4 node_query_data
+  n5@{ shape: rounded, label: "**Position**<br/>保存刚体或碰撞体的世界位置。" }
+  class n5 node_component
+  n6@{ shape: rounded, label: "**Rotation**<br/>保存刚体或碰撞体的世界旋转。" }
+  class n6 node_component
+  n7@{ shape: rounded, label: "**GlobalTransform**<br/>来自Bevy 引擎 ↗：保存实体合并祖先变换<br/>后的世界空间仿射变换" }
+  class n7 node_component
+  class n7 external_node
+  n8@{ shape: rounded, label: "**Children**<br/>来自Bevy 引擎 ↗：保存以 ChildOf 指向<br/>当前父实体的子实体集合" }
+  class n8 node_component
+  class n8 external_node
+  n1 e0@-->|"main / FixedPostUpdate"| n0
+  class e0 edge_registration
+  n2 e1@--> n0
+  class e1 edge_set_membership
+  n0 e2@--> n3
+  class e2 edge_order
+  n4 e3@-->|"参数 / 查询数据"| n0
+  class e3 edge_reference
+  n5 e4@--> n0
+  class e4 edge_read
+  n6 e5@--> n0
+  class e5 edge_read
+  n7 e6@--> n0
+  class e6 edge_read
+  n8 e7@-->|"存在 / 变更过滤"| n0
+  class e7 edge_reference
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e3@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }

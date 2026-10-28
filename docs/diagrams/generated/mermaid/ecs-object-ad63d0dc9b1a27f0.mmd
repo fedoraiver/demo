@@ -1,0 +1,54 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 4,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: BoxShadow · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**BoxShadow**<br/>配置节点的多层阴影。" }
+  class n0 node_component
+  n1@{ shape: rounded, label: "**extract_uinode_changes**<br/>使变化或移除的 UI 数据失效并清理旧渲染<br/>实体。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**extract_shadows**<br/>从主世界提取变化后的可见 UI 阴影，解析<br/>尺寸、变换、裁剪和目标相机，替换对应的渲<br/>染阴影实体；不可见、空阴影及已移除的数据<br/>不进入绘制。" }
+  class n2 node_system
+  n0 e0@-->|"存在 / 变更过滤"| n1
+  class e0 edge_reference
+  n0 e1@--> n2
+  class e1 edge_read
+  n0 e2@-->|"存在 / 变更过滤"| n2
+  class e2 edge_reference
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }

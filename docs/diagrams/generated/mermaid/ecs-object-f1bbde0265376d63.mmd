@@ -1,0 +1,50 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: Button · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**Button**<br/>标记兼容旧 API 的 UI 按钮。" }
+  class n0 node_component
+  n1@{ shape: rounded, label: "**button_changed**<br/>Button 改变时从 UI 子节点提取文本标<br/>签，更新已有 AccessibilityNode 的按钮<br/>角色和标签，或通过命令补入对应无障碍节<br/>点。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**image_changed**<br/>非按钮 ImageNode 改变时从 UI 子节点提<br/>取说明，设置无障碍图像角色和标签；尚无<br/>AccessibilityNode 时排入创建命令。" }
+  class n2 node_system
+  n0 e0@-->|"存在 / 变更过滤"| n1
+  class e0 edge_reference
+  n0 e1@-->|"存在 / 变更过滤"| n2
+  class e1 edge_reference
+  e0@{ curve: basis }
+  e1@{ curve: basis }

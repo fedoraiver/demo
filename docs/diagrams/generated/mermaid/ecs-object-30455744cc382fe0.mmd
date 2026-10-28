@@ -1,0 +1,78 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: PointerLocation · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**PointerLocation**<br/>保存指针当前目标及该目标上的位置" }
+  class n0 node_component
+  n1@{ shape: rounded, label: "**viewport_picking**<br/>收集正被悬停或拖动的 ViewportNode，将<br/>外部指针位置转换到其相机视口，并以该视口<br/>专用的 PointerId 转发 PointerInput；<br/>未使用的视口清除指针位置。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**touch_pick_events**<br/>把触摸阶段转换为独立拾取指针。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**sprite_picking**<br/>将可见、变换有效的精灵按深度排序，结合指<br/>针射线、相机、精灵图像和拾取配置计算命<br/>中，并向拾取后端发布 PointerHits。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**ui_picking**<br/>把各指针位置映射到匹配相机的视口坐标，<br/>按 UiStack 的绘制顺序检查 UI 节点及拾<br/>取规则，输出 PointerHits 供悬停与交互<br/>阶段汇总。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**update_window_hits**<br/>把所在窗口作为拾取的最底层命中。" }
+  class n5 node_system
+  n6@{ shape: rounded, label: "**receive**<br/>消费 PointerInput，按 PointerId 更新<br/>指针实体的按钮按下状态与位置，使拾取后端<br/>读取本帧一致的指针输入状态。" }
+  class n6 node_system
+  n7@{ shape: rounded, label: "**repopulate**<br/>清空 RayMap，再为指针位置落在有效相机视<br/>口内的每个相机与指针组合创建世界射线，并<br/>按 RayId 保存。" }
+  class n7 node_system
+  n1 e0@--> n0
+  class e0 edge_write
+  n2 e1@-->|"延迟添加"| n0
+  class e1 edge_write
+  n0 e2@--> n3
+  class e2 edge_read
+  n0 e3@--> n4
+  class e3 edge_read
+  n0 e4@--> n5
+  class e4 edge_read
+  n6 e5@--> n0
+  class e5 edge_write
+  n0 e6@--> n7
+  class e6 edge_read
+  n1 layout_input_0@~~~ n2
+  n2 layout_input_1@~~~ n6
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }

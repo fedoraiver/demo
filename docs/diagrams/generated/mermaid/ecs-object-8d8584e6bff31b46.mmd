@@ -1,0 +1,86 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: OrderIndependentTransparencySettings · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**OrderIndependentTransparencySettings**<br/>配置透明片元排序容量和混合阈值。" }
+  class n0 node_component
+  n1@{ shape: rounded, label: "**check_msaa**<br/>检查启用了顺序无关透明设置的相机；若同时<br/>使用多于一个 MSAA 采样则直接报错，避免<br/>执行不受支持的透明渲染组合。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**main_transparent_pass_3d**<br/>绘制三维透明物体并保护 OIT 链表状态。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**extract_components#lt;bevy_core_**<br/>**pipeline::oit::**<br/>**OrderIndependentTransparencySettings**<br/>**, bevy_render::RenderApp, ()#gt;**<br/>对已同步到子世界的实体读取<br/>ExtractComponent 指定的查询数据，批量<br/>写入转换后的目标组件；转换返回 None 时<br/>移除对应目标组件。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**configure_camera_depth_usages**<br/>允许 OIT 相机采样自己的深度纹理。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**queue_oit_resolve_pipeline**<br/>按 OIT 相机设置缓存透明解析管线。" }
+  class n5 node_system
+  n6@{ shape: rounded, label: "**prepare_oit_buffers**<br/>调整共享 OIT 存储并上传逐相机设置。" }
+  class n6 node_system
+  n7@{ shape: rounded, label: "**check_views_need_specialization**<br/>汇总视图渲染特性并检测管线配置变化。" }
+  class n7 node_system
+  n0 e0@-->|"存在 / 变更过滤"| n1
+  class e0 edge_reference
+  n0 e1@-->|"存在 / 变更过滤"| n2
+  class e1 edge_reference
+  n3 e2@-->|"延迟移除"| n0
+  class e2 edge_write
+  n3 e3@-->|"延迟添加"| n0
+  class e3 edge_write
+  n0 e4@-->|"存在 / 变更过滤"| n4
+  class e4 edge_reference
+  n0 e5@--> n5
+  class e5 edge_read
+  n0 e6@-->|"存在 / 变更过滤"| n5
+  class e6 edge_reference
+  n0 e7@--> n6
+  class e7 edge_read
+  n0 e8@-->|"存在 / 变更过滤"| n6
+  class e8 edge_reference
+  n0 e9@-->|"存在 / 变更过滤"| n7
+  class e9 edge_reference
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }

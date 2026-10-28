@@ -1,0 +1,64 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: OcclusionCullingSubview · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**OcclusionCullingSubview**<br/>为非相机视图保存遮挡裁剪深度资源。" }
+  class n0 node_component
+  n1@{ shape: rounded, label: "**late_downsample_depth**<br/>更新供下一帧早期遮挡测试使用的深度金字<br/>塔。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**early_downsample_depth**<br/>生成供本帧晚期遮挡测试使用的深度金字塔。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**prepare_lights**<br/>汇总提取后的各类光源，为视图准备光照<br/>GPU 参数、聚簇索引及阴影贴图和阴影视<br/>图，维护对应缓存及阶段记录，并检查设备和<br/>实现支持的数量限制。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**prepare_downsample_depth_view_bind_**<br/>**groups**<br/>将主视图或阴影深度绑定到降采样管线。" }
+  class n4 node_system
+  n0 e0@--> n1
+  class e0 edge_read
+  n0 e1@--> n2
+  class e1 edge_read
+  n3 e2@-->|"延迟添加"| n0
+  class e2 edge_write
+  n0 e3@--> n4
+  class e3 edge_read
+  n0 e4@-->|"存在 / 变更过滤"| n4
+  class e4 edge_reference
+  e0@{ curve: basis }
+  e1@{ curve: bumpX }
+  e3@{ curve: basis }
+  e4@{ curve: basis }

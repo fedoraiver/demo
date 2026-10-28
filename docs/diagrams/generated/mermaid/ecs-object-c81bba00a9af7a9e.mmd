@@ -1,0 +1,54 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: StaticSystemParam<Param> · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_system_param fill:#EFF5F6,stroke:#3B8790,stroke-width:1.6px,color:#1F3340
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: notch-rect, label: "**StaticSystemParam#lt;Param#gt;**<br/>适配泛型 SystemParam" }
+  class n0 node_system_param
+  n1@{ shape: rounded, label: "**batch_and_prepare_binned_render_**<br/>**phase#lt;bevy_core_pipeline::core_2d::**<br/>**Opaque2d, bevy_sprite_render::**<br/>**mesh2d::mesh::Mesh2dPipeline#gt;**<br/>在不使用 GPU 数据预处理的路径上逐个读取<br/>分桶实体的批次数据，写入实例缓冲并生成绘<br/>制区间；动态 Uniform 偏移变化时拆分批<br/>次，不可合批项单独记录索引。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**batch_and_prepare_binned_render_**<br/>**phase#lt;bevy_core_pipeline::core_2d::**<br/>**AlphaMask2d, bevy_sprite_render::**<br/>**mesh2d::mesh::Mesh2dPipeline#gt;**<br/>在不使用 GPU 数据预处理的路径上逐个读取<br/>分桶实体的批次数据，写入实例缓冲并生成绘<br/>制区间；动态 Uniform 偏移变化时拆分批<br/>次，不可合批项单独记录索引。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**batch_and_prepare_sorted_render_**<br/>**phase#lt;bevy_core_pipeline::core_2d::**<br/>**Transparent2d, bevy_sprite_render::**<br/>**mesh2d::mesh::Mesh2dPipeline#gt;**<br/>为有序渲染阶段在 CPU 上构建实例数据，按<br/>绘制元数据合并兼容项，并给阶段项记录实例<br/>区间及可选的动态 Uniform 偏移。" }
+  class n3 node_system
+  n0 e0@-->|"参数 / 查询数据"| n1
+  class e0 edge_reference
+  n0 e1@-->|"参数 / 查询数据"| n2
+  class e1 edge_reference
+  n0 e2@-->|"参数 / 查询数据"| n3
+  class e2 edge_reference
+  e0@{ curve: basis }
+  e2@{ curve: basis }

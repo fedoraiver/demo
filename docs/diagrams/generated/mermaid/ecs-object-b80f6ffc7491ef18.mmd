@@ -1,0 +1,283 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: RenderApp · Core3d · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_engine_flow fill:#F1F5F4,stroke:#557C78,stroke-width:1.6px,color:#1F3340
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: stadium, label: "**RenderApp · Core3d**<br/>保存本应用调度的注册上下文与成员。" }
+  class n0 node_engine_flow
+  n1@{ shape: rounded, label: "**early_prepass**<br/>从当前视图取得深度、预通道纹理及前后帧参<br/>数，调用共享预通道实现绘制不透明和<br/>AlphaMask 预通道阶段，供后续深度、法线<br/>及运动矢量相关处理使用。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**early_deferred_prepass**<br/>执行早期延迟预通道并保存深度结果。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**late_prepass**<br/>仅在遮挡剔除开启且允许间接绘制时执行晚期<br/>预通道，复用共享实现绘制对应的不透明和<br/>AlphaMask 预通道阶段；其他视图直接跳<br/>过。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**late_deferred_prepass**<br/>为遮挡剔除执行晚期延迟预通道。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**cluster_on_gpu**<br/>执行深度切片、计数、分配和填充的 GPU 聚<br/>簇。" }
+  class n5 node_system
+  n6@{ shape: rounded, label: "**main_opaque_pass_3d**<br/>绘制三维不透明、AlphaMask 与天空盒。" }
+  class n6 node_system
+  n7@{ shape: rounded, label: "**main_transparent_pass_3d**<br/>绘制三维透明物体并保护 OIT 链表状态。" }
+  class n7 node_system
+  n8@{ shape: rounded, label: "**oit_resolve**<br/>在透明主通道之后解析顺序无关透明数据并合<br/>成到视图颜色，同时重置 OIT 原子计数与链<br/>表头，避免下一次透明通道使用损坏的数据。" }
+  class n8 node_system
+  n9@{ shape: rounded, label: "**screen_space_reflections**<br/>采样场景颜色、深度与蓝噪声绘制屏幕空间反<br/>射。" }
+  class n9 node_system
+  n10@{ shape: rounded, label: "**main_transmissive_pass_3d**<br/>分层复制场景颜色并绘制三维透射物体。" }
+  class n10 node_system
+  n11@{ shape: rounded, label: "**deferred_lighting**<br/>绑定网格视图、延迟光照管线及通道深度标识<br/>参数，在延迟光照深度附件约束下执行全屏光<br/>照计算，将结果写入视图颜色。" }
+  class n11 node_system
+  n12@{ shape: rounded, label: "**temporal_anti_alias**<br/>混合当前颜色与历史帧并更新 TAA 历史目<br/>标。" }
+  class n12 node_system
+  n13@{ shape: rounded, label: "**tonemapping**<br/>为启用色调映射的 HDR 视图绑定颜色源、视<br/>图参数和 LUT，执行全屏色调映射并写入后<br/>处理目标；模式关闭或管线尚未就绪时跳过。" }
+  class n13 node_system
+  n14@{ shape: rounded, label: "**late_downsample_depth**<br/>更新供下一帧早期遮挡测试使用的深度金字<br/>塔。" }
+  class n14 node_system
+  n15@{ shape: rounded, label: "**bloom**<br/>对 HDR 视图颜色执行 Bloom 降采样和上采<br/>样通道，将亮部扩散合成回视图；强度为零、<br/>非 HDR 或所需管线和参数缓冲未就绪时不执<br/>行。" }
+  class n15 node_system
+  n16@{ shape: rounded, label: "**motion_blur**<br/>读取当前视图颜色、预通道运动矢量和深度，<br/>按快门角度及采样数执行运动模糊；采样关<br/>闭、所需纹理或管线不可用时跳过。" }
+  class n16 node_system
+  n17@{ shape: rounded, label: "**fxaa**<br/>在 FXAA 开启且相机管线就绪时，读取当前<br/>视图颜色并执行全屏抗锯齿，写入下一后处理<br/>目标；复用与源纹理对应的绑定组。" }
+  class n17 node_system
+  n18@{ shape: rounded, label: "**smaa**<br/>按边缘检测、混合权重计算和邻域混合三个阶<br/>段执行 SMAA，将抗锯齿结果写入视图后处理<br/>目标；任何所需管线未就绪时跳过整个流程。" }
+  class n18 node_system
+  n19@{ shape: rounded, label: "**cas**<br/>绑定视图颜色和 CAS 参数，执行对比度自适<br/>应锐化并写入后处理目标；缓存对应参数缓冲<br/>与源纹理的绑定组，管线或参数不可用时跳<br/>过。" }
+  class n19 node_system
+  n20@{ shape: rounded, label: "**copy_deferred_lighting_id**<br/>把延迟光照通道标识复制到深度目标。" }
+  class n20 node_system
+  n21@{ shape: rounded, label: "**upscaling**<br/>把视图主颜色纹理通过 Blit 管线写入最终<br/>输出附件，遵循相机的输出模式、清屏颜色和<br/>视口；输出模式为 Skip 时不写入。" }
+  class n21 node_system
+  n22@{ shape: rounded, label: "**early_downsample_depth**<br/>生成供本帧晚期遮挡测试使用的深度金字塔。" }
+  class n22 node_system
+  n23@{ shape: rounded, label: "**msaa_writeback**<br/>在 MSAA 开启时把当前后处理颜色绘制回多<br/>采样主纹理，并解析到下一颜色目标，使后续<br/>通道继续使用一致的多采样附件；MSAA 关闭<br/>时跳过。" }
+  class n23 node_system
+  n24@{ shape: rounded, label: "**depth_of_field**<br/>以两阶段全屏通道执行景深模糊。" }
+  class n24 node_system
+  n25@{ shape: rounded, label: "**post_processing**<br/>为当前视图组合已启用的色差、暗角和镜头畸<br/>变效果，绑定各效果参数及颜色 LUT 后执行<br/>全屏后处理；没有效果或所需资产和管线未就<br/>绪时跳过。" }
+  class n25 node_system
+  n26@{ shape: rounded, label: "**ui_pass**<br/>找到 UI 相机对应的视图、颜色目标及透明<br/>UI 阶段，按相机视口渲染已排队的 UI 项；<br/>视图缺失或阶段为空时不创建绘制通道。" }
+  class n26 node_system
+  n27@{ shape: rounded, label: "**volumetric_fog**<br/>逐个处理视图中的体积雾区域，结合场景深<br/>度、光照和可选密度纹理绘制雾光照；根据相<br/>机位于雾体内外选择平面或立方体网格。" }
+  class n27 node_system
+  n28@{ shape: rounded, label: "**per_view_shadow_pass#lt;false#gt;**<br/>绘制相机相关的平行光级联阴影。" }
+  class n28 node_system
+  n29@{ shape: rounded, label: "**per_view_shadow_pass#lt;true#gt;**<br/>绘制相机相关的平行光级联阴影。" }
+  class n29 node_system
+  n30@{ shape: rounded, label: "**shared_shadow_pass#lt;false#gt;**<br/>绘制跨相机共享的点光或聚光阴影。" }
+  class n30 node_system
+  n31@{ shape: rounded, label: "**shared_shadow_pass#lt;true#gt;**<br/>绘制跨相机共享的点光或聚光阴影。" }
+  class n31 node_system
+  n32@{ shape: rounded, label: "**prepare_egui_pass**<br/>来自Egui / Inspector ↗：消费每个<br/>Egui 视图暂缓处理的绘制回调更新，构造视<br/>口、裁剪、像素比例和目标尺寸信息，并在当<br/>前渲染世界调用回调的 update。" }
+  class n32 node_system
+  class n32 external_node
+  n33@{ shape: rounded, label: "**egui_pass**<br/>来自Egui / Inspector ↗：读取当前<br/>Egui 视图已准备的绘制数据、纹理绑定及变<br/>换缓冲，在目标颜色附件上执行 Egui 绘制<br/>命令，并按相机视口设置渲染范围。" }
+  class n33 node_system
+  class n33 external_node
+  n34@{ shape: rounded, label: "**ssao**<br/>依据视口尺寸依次调度深度预处理、屏幕空间<br/>环境光遮蔽及空间去噪计算通道，为当前视图<br/>生成 SSAO 结果；所需管线未完成编译时跳<br/>过。" }
+  class n34 node_system
+  n35@{ shape: rounded, label: "**allocate_uniforms**<br/>遍历当前视图及其阴影级联的各批次集合，<br/>在 GPU 上执行局部扫描、全局扫描和分配计<br/>算，确定 MeshUniform 的存储位置，避免<br/>CPU 每帧遍历全部可见网格。" }
+  class n35 node_system
+  n36@{ shape: rounded, label: "**unpack_bins**<br/>针对当前视图及其阴影级联的索引和非索引批<br/>次，在 GPU 上解包已缓存的分桶数据，生成<br/>后续网格预处理所需的任务列表。" }
+  class n36 node_system
+  n37@{ shape: rounded, label: "**early_gpu_preprocess**<br/>为当前视图及阴影级联执行早期网格转换与裁<br/>剪。" }
+  class n37 node_system
+  n38@{ shape: rounded, label: "**early_prepass_build_indirect_**<br/>**parameters**<br/>构建早期预通道使用的多重间接绘制参数。" }
+  class n38 node_system
+  n39@{ shape: rounded, label: "**late_gpu_preprocess**<br/>对后期遮挡工作项执行间接网格预处理。" }
+  class n39 node_system
+  n40@{ shape: rounded, label: "**late_prepass_build_indirect_**<br/>**parameters**<br/>为本帧新显露对象构建后期预通道间接参数。" }
+  class n40 node_system
+  n41@{ shape: rounded, label: "**main_build_indirect_parameters**<br/>为主不透明及透明通道构建间接绘制参数。" }
+  class n41 node_system
+  n42@{ shape: rounded, label: "**atmosphere_luts**<br/>根据当前大气、视图和光照参数调度计算管<br/>线，生成透射、多重散射、天空视图及空气透<br/>视查找表，供天空和大气渲染使用。" }
+  class n42 node_system
+  n43@{ shape: rounded, label: "**atmosphere_environment**<br/>使用当前视图的大气和光照参数，为每个大气<br/>环境贴图的六个立方体面调度计算着色器，更<br/>新环境光源纹理。" }
+  class n43 node_system
+  n44@{ shape: rounded, label: "**render_sky**<br/>绑定大气查找表及视图、光照参数，按相机视<br/>口和可选分辨率覆盖设置绘制全屏天空，将结<br/>果写入视图颜色附件。" }
+  class n44 node_system
+  n45@{ shape: lin-rect, label: "**Core3dSystems::Prepass**<br/>在三维主绘制前执行深度及延迟预通道。" }
+  class n45 node_system_set
+  n46@{ shape: lin-rect, label: "**Core3dSystems::MainPass**<br/>绘制三维主场景及其光照、透明与透射效果。" }
+  class n46 node_system_set
+  n47@{ shape: lin-rect, label: "**Core3dSystems::EarlyPostProcess**<br/>安排三维主绘制后的早期后处理。" }
+  class n47 node_system_set
+  n48@{ shape: lin-rect, label: "**Core3dSystems::PostProcess**<br/>执行三维色调映射及最终屏幕后处理。" }
+  class n48 node_system_set
+  n0 e0@-->|"RenderApp / Core3d"| n1
+  class e0 edge_registration
+  n0 e1@-->|"RenderApp / Core3d"| n2
+  class e1 edge_registration
+  n0 e2@-->|"RenderApp / Core3d"| n3
+  class e2 edge_registration
+  n0 e3@-->|"RenderApp / Core3d"| n4
+  class e3 edge_registration
+  n0 e4@-->|"RenderApp / Core3d"| n5
+  class e4 edge_registration
+  n0 e5@-->|"RenderApp / Core3d"| n6
+  class e5 edge_registration
+  n0 e6@-->|"RenderApp / Core3d"| n7
+  class e6 edge_registration
+  n0 e7@-->|"RenderApp / Core3d"| n8
+  class e7 edge_registration
+  n0 e8@-->|"RenderApp / Core3d"| n9
+  class e8 edge_registration
+  n0 e9@-->|"RenderApp / Core3d"| n10
+  class e9 edge_registration
+  n0 e10@-->|"RenderApp / Core3d"| n11
+  class e10 edge_registration
+  n0 e11@-->|"RenderApp / Core3d"| n12
+  class e11 edge_registration
+  n0 e12@-->|"RenderApp / Core3d"| n13
+  class e12 edge_registration
+  n0 e13@-->|"RenderApp / Core3d"| n14
+  class e13 edge_registration
+  n0 e14@-->|"RenderApp / Core3d"| n15
+  class e14 edge_registration
+  n0 e15@-->|"RenderApp / Core3d"| n16
+  class e15 edge_registration
+  n0 e16@-->|"RenderApp / Core3d"| n17
+  class e16 edge_registration
+  n0 e17@-->|"RenderApp / Core3d"| n18
+  class e17 edge_registration
+  n0 e18@-->|"RenderApp / Core3d"| n19
+  class e18 edge_registration
+  n0 e19@-->|"RenderApp / Core3d"| n20
+  class e19 edge_registration
+  n0 e20@-->|"RenderApp / Core3d"| n21
+  class e20 edge_registration
+  n0 e21@-->|"RenderApp / Core3d"| n22
+  class e21 edge_registration
+  n0 e22@-->|"RenderApp / Core3d"| n23
+  class e22 edge_registration
+  n0 e23@-->|"RenderApp / Core3d"| n24
+  class e23 edge_registration
+  n0 e24@-->|"RenderApp / Core3d"| n25
+  class e24 edge_registration
+  n0 e25@-->|"RenderApp / Core3d"| n26
+  class e25 edge_registration
+  n0 e26@-->|"RenderApp / Core3d"| n27
+  class e26 edge_registration
+  n0 e27@-->|"RenderApp / Core3d"| n28
+  class e27 edge_registration
+  n0 e28@-->|"RenderApp / Core3d"| n29
+  class e28 edge_registration
+  n0 e29@-->|"RenderApp / Core3d"| n30
+  class e29 edge_registration
+  n0 e30@-->|"RenderApp / Core3d"| n31
+  class e30 edge_registration
+  n0 e31@-->|"RenderApp / Core3d"| n32
+  class e31 edge_registration
+  n0 e32@-->|"RenderApp / Core3d"| n33
+  class e32 edge_registration
+  n0 e33@-->|"RenderApp / Core3d"| n34
+  class e33 edge_registration
+  n0 e34@-->|"RenderApp / Core3d"| n35
+  class e34 edge_registration
+  n0 e35@-->|"RenderApp / Core3d"| n36
+  class e35 edge_registration
+  n0 e36@-->|"RenderApp / Core3d"| n37
+  class e36 edge_registration
+  n0 e37@-->|"RenderApp / Core3d"| n38
+  class e37 edge_registration
+  n0 e38@-->|"RenderApp / Core3d"| n39
+  class e38 edge_registration
+  n0 e39@-->|"RenderApp / Core3d"| n40
+  class e39 edge_registration
+  n0 e40@-->|"RenderApp / Core3d"| n41
+  class e40 edge_registration
+  n0 e41@-->|"RenderApp / Core3d"| n42
+  class e41 edge_registration
+  n0 e42@-->|"RenderApp / Core3d"| n43
+  class e42 edge_registration
+  n0 e43@-->|"RenderApp / Core3d"| n44
+  class e43 edge_registration
+  n0 e44@-->|"RenderApp / Core3d"| n45
+  class e44 edge_registration
+  n0 e45@-->|"RenderApp / Core3d"| n46
+  class e45 edge_registration
+  n0 e46@-->|"RenderApp / Core3d"| n47
+  class e46 edge_registration
+  n0 e47@-->|"RenderApp / Core3d"| n48
+  class e47 edge_registration
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e17@{ curve: basis }
+  e18@{ curve: basis }
+  e19@{ curve: basis }
+  e20@{ curve: basis }
+  e21@{ curve: basis }
+  e22@{ curve: basis }
+  e23@{ curve: basis }
+  e24@{ curve: basis }
+  e25@{ curve: basis }
+  e26@{ curve: basis }
+  e27@{ curve: basis }
+  e28@{ curve: basis }
+  e29@{ curve: basis }
+  e30@{ curve: basis }
+  e31@{ curve: basis }
+  e32@{ curve: basis }
+  e33@{ curve: basis }
+  e34@{ curve: basis }
+  e35@{ curve: basis }
+  e36@{ curve: basis }
+  e37@{ curve: basis }
+  e38@{ curve: basis }
+  e39@{ curve: basis }
+  e40@{ curve: basis }
+  e41@{ curve: basis }
+  e42@{ curve: basis }
+  e43@{ curve: basis }
+  e44@{ curve: basis }
+  e45@{ curve: basis }
+  e46@{ curve: basis }
+  e47@{ curve: basis }

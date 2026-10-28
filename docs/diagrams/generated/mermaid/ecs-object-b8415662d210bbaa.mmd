@@ -1,0 +1,123 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: image_changed · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_system_param fill:#EFF5F6,stroke:#3B8790,stroke-width:1.6px,color:#1F3340
+  classDef node_engine_flow fill:#F1F5F4,stroke:#557C78,stroke-width:1.6px,color:#1F3340
+  classDef edge_order stroke:#334155,stroke-width:2px
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**image_changed**<br/>非按钮 ImageNode 改变时从 UI 子节点提<br/>取说明，设置无障碍图像角色和标签；尚无<br/>AccessibilityNode 时排入创建命令。" }
+  class n0 node_system
+  n1@{ shape: stadium, label: "**main · PostUpdate**<br/>保存本应用调度的注册上下文与成员。" }
+  class n1 node_engine_flow
+  n2@{ shape: lin-rect, label: "**UiSystems::PostLayout**<br/>根据完成的布局生成裁切和文字几何。" }
+  class n2 node_system_set
+  n3@{ shape: lin-rect, label: "**AccessibilityUiSystems**<br/>更新 UI 控件的可访问性语义和几何。" }
+  class n3 node_system_set
+  n4@{ shape: rounded, label: "**sync_bounds_and_transforms**<br/>把 UI 几何同步到无障碍树。" }
+  class n4 node_system
+  n5@{ shape: lin-rect, label: "**AccessibilitySystems::Update**<br/>同步原生可访问性树和窗口节点。" }
+  class n5 node_system_set
+  n6@{ shape: notch-rect, label: "**Commands**<br/>保存延迟执行的 World 操作队列" }
+  class n6 node_system_param
+  n7@{ shape: rounded, label: "**AccessibilityNode**<br/>把实体转换为 AccessKit 可访问性节点" }
+  class n7 node_component
+  n8@{ shape: rounded, label: "**ImageNode**<br/>描述 UI 图像及其绘制参数。" }
+  class n8 node_component
+  n9@{ shape: rounded, label: "**Button**<br/>标记兼容旧 API 的 UI 按钮。" }
+  class n9 node_component
+  n10@{ shape: notch-rect, label: "**UiChildren**<br/>按 UI 层级访问子节点。" }
+  class n10 node_system_param
+  n11@{ shape: rounded, label: "**Children**<br/>保存以 ChildOf 指向当前父实体的子实体集<br/>合" }
+  class n11 node_component
+  n12@{ shape: rounded, label: "**Node**<br/>声明 UI 节点的布局规则。" }
+  class n12 node_component
+  n13@{ shape: rounded, label: "**ChildOf**<br/>保存当前实体的父实体身份" }
+  class n13 node_component
+  n14@{ shape: notch-rect, label: "**TextUiReader**<br/>按 UI 文本根读取文本层级。" }
+  class n14 node_system_param
+  n1 e0@-->|"main / PostUpdate"| n0
+  class e0 edge_registration
+  n2 e1@--> n0
+  class e1 edge_set_membership
+  n3 e2@--> n0
+  class e2 edge_set_membership
+  n0 e3@--> n4
+  class e3 edge_order
+  n0 e4@--> n5
+  class e4 edge_order
+  n6 e5@-->|"参数 / 查询数据"| n0
+  class e5 edge_reference
+  n0 e6@--> n7
+  class e6 edge_write
+  n8 e7@-->|"存在 / 变更过滤"| n0
+  class e7 edge_reference
+  n9 e8@-->|"存在 / 变更过滤"| n0
+  class e8 edge_reference
+  n10 e9@-->|"参数 / 查询数据"| n0
+  class e9 edge_reference
+  n11 e10@--> n0
+  class e10 edge_read
+  n12 e11@-->|"存在 / 变更过滤"| n0
+  class e11 edge_reference
+  n11 e12@-->|"存在 / 变更过滤"| n0
+  class e12 edge_reference
+  n13 e13@--> n0
+  class e13 edge_read
+  n14 e14@-->|"参数 / 查询数据"| n0
+  class e14 edge_reference
+  n0 e15@-->|"延迟添加"| n7
+  class e15 edge_write
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: bumpX }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }

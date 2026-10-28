@@ -1,0 +1,50 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: ErasedRenderAssetsToReExtract<MeshMaterial2d<TilemapChunkMaterial>> · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: cyl, label: "**ErasedRenderAssetsToReExtract#lt;MeshMa**<br/>**terial2d#lt;TilemapChunkMaterial#gt;#gt;**<br/>记录设备恢复后需重新提取的资产身份。" }
+  class n0 node_resource
+  n1@{ shape: rounded, label: "**extract_erased_render_asset#lt;bevy_**<br/>**sprite_render::mesh2d::material::**<br/>**MeshMaterial2d#lt;bevy_sprite_render::**<br/>**tilemap_chunk::tilemap_chunk_**<br/>**material::TilemapChunkMaterial#gt;#gt;**<br/>提取变化及设备恢复后失效的擦除渲染资产。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**collect_erased_render_assets_to_**<br/>**reextract#lt;bevy_sprite_render::**<br/>**mesh2d::material::**<br/>**MeshMaterial2d#lt;bevy_sprite_render::**<br/>**tilemap_chunk::tilemap_chunk_**<br/>**material::TilemapChunkMaterial#gt;#gt;**<br/>按源材质类型排空擦除资产并请求重新提取。" }
+  class n2 node_system
+  n1 e0@--> n0
+  class e0 edge_write
+  n2 e1@-->|"延迟添加"| n0
+  class e1 edge_write
+  e0@{ curve: basis }
+  e1@{ curve: basis }

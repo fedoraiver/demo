@@ -1,0 +1,125 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: wake_changed_bodies · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_sync fill:#F6F3F0,stroke:#8B6A42,stroke-width:1.6px,color:#1F3340
+  classDef node_engine_flow fill:#F1F5F4,stroke:#557C78,stroke-width:1.6px,color:#1F3340
+  classDef node_plugin fill:#F1F3F6,stroke:#4A6389,stroke-width:2.2px,color:#1F3340
+  classDef node_external_io fill:#F1F3F4,stroke:#526A78,stroke-width:1.6px,color:#1F3340
+  classDef edge_order stroke:#334155,stroke-width:2px
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**wake_changed_bodies**<br/>使休眠身体的外部受力和位姿修改在本固定步<br/>生效。" }
+  class n0 node_system
+  n1@{ shape: rounded, label: "**ApplyDeferred（提前唤醒 → 物理准备）**<br/>使提前唤醒命令在物理准备前可见。" }
+  class n1 node_sync
+  n2@{ shape: cyl, label: "**LastPhysicsTick**<br/>来自Avian ↗：区分外部修改与上一物理步<br/>自身的回写。" }
+  class n2 node_resource
+  class n2 external_node
+  n3@{ shape: lean-l, label: "**tracing producer**<br/>来自会话日志 ↗：格式化日志并交给独立文<br/>件与控制台队列。" }
+  class n3 node_external_io
+  class n3 external_node
+  n4@{ shape: stadium, label: "**main · FixedPostUpdate**<br/>来自Bevy 引擎 ↗：保存本应用调度的注册<br/>上下文与成员。" }
+  class n4 node_engine_flow
+  class n4 external_node
+  n5@{ shape: lin-rect, label: "**PhysicsSystems::First**<br/>来自Avian ↗：在所有 Avian 物理系统之<br/>前提供准备边界。" }
+  class n5 node_system_set
+  class n5 external_node
+  n6@{ shape: lin-rect, label: "**PhysicsSystems::Prepare**<br/>来自Avian ↗：准备物理步所需的位姿、质<br/>量与碰撞查询数据。" }
+  class n6 node_system_set
+  class n6 external_node
+  n7@{ shape: rounded, label: "**Sleeping**<br/>来自Avian ↗：可选休眠标记；外部变化触<br/>发提前 WakeBody，未变化时继续休眠。" }
+  class n7 node_component
+  class n7 external_node
+  n8@{ shape: rounded, label: "**Sleeping**<br/>来自Avian ↗：标记刚体当前处于休眠。" }
+  class n8 node_component
+  class n8 external_node
+  n9@{ shape: rounded, label: "**SleepTimer**<br/>来自Avian ↗：记录刚体休眠计时。" }
+  class n9 node_component
+  class n9 external_node
+  n10@{ shape: rounded, label: "**SleepTimer**<br/>来自Avian ↗：记录刚体休眠计时。" }
+  class n10 node_component
+  class n10 external_node
+  n11@{ shape: rounded, label: "**SolverBodyIndex**<br/>来自Avian ↗：Avian 活动动态刚体在<br/>SolverBodies 中的索引；休眠或移除刚体<br/>时删除，唤醒时由框架重新插入。该组件具有<br/>明确的可选生命周期。" }
+  class n11 node_component
+  class n11 external_node
+  n12@{ shape: rounded, label: "**SolverBodyIndex**<br/>来自Avian ↗：Avian 活动动态刚体在<br/>SolverBodies 中的索引；休眠或移除刚体<br/>时删除，唤醒时由框架重新插入。该组件具有<br/>明确的可选生命周期。" }
+  class n12 node_component
+  class n12 external_node
+  n13@{ shape: fr-rect, label: "**GamePhysicsPlugin**<br/>安装物理引擎并管理重力、提前唤醒与碰撞日<br/>志。" }
+  class n13 node_plugin
+  n0 e0@-->|"应用排队的 WakeBody"| n1
+  class e0 edge_order
+  n2 e1@-->|"上一物理步末尾 tick"| n0
+  class e1 edge_read
+  n0 e2@-->|"tracing 唤醒日志"| n3
+  class e2 edge_write
+  n4 e3@-->|"main / FixedPostUpdate"| n0
+  class e3 edge_registration
+  n5 e4@--> n0
+  class e4 edge_set_membership
+  n0 e5@--> n6
+  class e5 edge_order
+  n0 e6@-->|"唤醒命令：移除"| n7
+  class e6 edge_write
+  n0 e7@-->|"唤醒命令：移除"| n8
+  class e7 edge_write
+  n0 e8@-->|"唤醒命令：可变访问"| n9
+  class e8 edge_write
+  n0 e9@-->|"唤醒命令：可变访问"| n10
+  class e9 edge_write
+  n0 e10@-->|"唤醒命令：添加"| n11
+  class e10 edge_write
+  n0 e11@-->|"唤醒命令：添加"| n12
+  class e11 edge_write
+  n13 e12@--> n0
+  class e12 edge_registration
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }

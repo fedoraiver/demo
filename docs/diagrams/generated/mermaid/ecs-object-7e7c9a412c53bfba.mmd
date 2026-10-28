@@ -1,0 +1,151 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#object-7e7c9a412c53bfba-e5{marker-start:url(#object-7e7c9a412c53bfba_flowchart-v2-pointStart)!important}\n#object-7e7c9a412c53bfba-e10{marker-start:url(#object-7e7c9a412c53bfba_flowchart-v2-pointStart)!important}\n#object-7e7c9a412c53bfba_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}"
+  }
+}
+---
+flowchart LR
+  accTitle: NoIndirectDrawing · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**NoIndirectDrawing**<br/>关闭相机的间接绘制模式。" }
+  class n0 node_component
+  n1@{ shape: rounded, label: "**per_view_shadow_pass#lt;false#gt;**<br/>绘制相机相关的平行光级联阴影。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**per_view_shadow_pass#lt;true#gt;**<br/>绘制相机相关的平行光级联阴影。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**early_gpu_preprocess**<br/>为当前视图及阴影级联执行早期网格转换与裁<br/>剪。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**late_gpu_preprocess**<br/>对后期遮挡工作项执行间接网格预处理。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**extract_meshes_for_gpu_building**<br/>增量提取变化或需重试网格到线程队列。" }
+  class n5 node_system
+  n6@{ shape: rounded, label: "**extract_cameras**<br/>把主世界活动相机的目标、视口、变换、可见<br/>实体和渲染设置提取到渲染实体，并维护视图<br/>所需格式；对停用或目标尺寸无效的相机移除<br/>失效提取状态。" }
+  class n6 node_system
+  n7@{ shape: rounded, label: "**extract_core_3d_camera_phases**<br/>为活动三维相机准备主渲染阶段。" }
+  class n7 node_system
+  n8@{ shape: rounded, label: "**extract_camera_prepass_phase**<br/>同步三维相机的预通道标记与渲染阶段。" }
+  class n8 node_system
+  n9@{ shape: rounded, label: "**prepare_lights**<br/>汇总提取后的各类光源，为视图准备光照<br/>GPU 参数、聚簇索引及阴影贴图和阴影视<br/>图，维护对应缓存及阶段记录，并检查设备和<br/>实现支持的数量限制。" }
+  class n9 node_system
+  n10@{ shape: rounded, label: "**configure_occlusion_culling_view_**<br/>**targets**<br/>让遮挡剔除相机的深度纹理可被采样。" }
+  class n10 node_system
+  n11@{ shape: rounded, label: "**batch_and_prepare_binned_render_**<br/>**phase#lt;bevy_core_pipeline::core_3d::**<br/>**Opaque3d, bevy_pbr::render::mesh::**<br/>**MeshPipeline#gt;**<br/>为分桶渲染阶段建立 GPU 预处理批次。" }
+  class n11 node_system
+  n12@{ shape: rounded, label: "**batch_and_prepare_binned_render_**<br/>**phase#lt;bevy_core_pipeline::core_3d::**<br/>**AlphaMask3d, bevy_pbr::render::**<br/>**mesh::MeshPipeline#gt;**<br/>为分桶渲染阶段建立 GPU 预处理批次。" }
+  class n12 node_system
+  n13@{ shape: rounded, label: "**batch_and_prepare_binned_render_**<br/>**phase#lt;bevy_pbr::render::light::**<br/>**Shadow, bevy_pbr::render::mesh::**<br/>**MeshPipeline#gt;**<br/>为分桶渲染阶段建立 GPU 预处理批次。" }
+  class n13 node_system
+  n14@{ shape: rounded, label: "**batch_and_prepare_binned_render_**<br/>**phase#lt;bevy_core_pipeline::deferred::**<br/>**Opaque3dDeferred, bevy_pbr::render::**<br/>**mesh::MeshPipeline#gt;**<br/>为分桶渲染阶段建立 GPU 预处理批次。" }
+  class n14 node_system
+  n15@{ shape: rounded, label: "**batch_and_prepare_binned_render_**<br/>**phase#lt;bevy_core_pipeline::deferred::**<br/>**AlphaMask3dDeferred, bevy_pbr::**<br/>**render::mesh::MeshPipeline#gt;**<br/>为分桶渲染阶段建立 GPU 预处理批次。" }
+  class n15 node_system
+  n16@{ shape: rounded, label: "**batch_and_prepare_sorted_render_**<br/>**phase#lt;bevy_pbr::transmission::**<br/>**phase::Transmissive3d, bevy_pbr::**<br/>**render::mesh::MeshPipeline#gt;**<br/>按已有绘制顺序合并 GPU 预处理阶段批次。" }
+  class n16 node_system
+  n17@{ shape: rounded, label: "**batch_and_prepare_sorted_render_**<br/>**phase#lt;bevy_core_pipeline::core_3d::**<br/>**Transparent3d, bevy_pbr::render::**<br/>**mesh::MeshPipeline#gt;**<br/>按已有绘制顺序合并 GPU 预处理阶段批次。" }
+  class n17 node_system
+  n18@{ shape: rounded, label: "**batch_and_prepare_binned_render_**<br/>**phase#lt;bevy_core_pipeline::prepass::**<br/>**Opaque3dPrepass, bevy_pbr::render::**<br/>**mesh::MeshPipeline#gt;**<br/>为分桶渲染阶段建立 GPU 预处理批次。" }
+  class n18 node_system
+  n19@{ shape: rounded, label: "**batch_and_prepare_binned_render_**<br/>**phase#lt;bevy_core_pipeline::prepass::**<br/>**AlphaMask3dPrepass, bevy_pbr::**<br/>**render::mesh::MeshPipeline#gt;**<br/>为分桶渲染阶段建立 GPU 预处理批次。" }
+  class n19 node_system
+  n20@{ shape: rounded, label: "**prepare_view_depth_pyramids**<br/>为遮挡剔除视图维护深度金字塔。" }
+  class n20 node_system
+  n0 e0@-->|"存在 / 变更过滤"| n1
+  class e0 edge_reference
+  n0 e1@-->|"存在 / 变更过滤"| n2
+  class e1 edge_reference
+  n0 e2@-->|"存在 / 变更过滤"| n3
+  class e2 edge_reference
+  n0 e3@-->|"存在 / 变更过滤"| n4
+  class e3 edge_reference
+  n0 e4@-->|"存在 / 变更过滤"| n5
+  class e4 edge_reference
+  n6 e5@---|"存在 / 变更过滤"| n0
+  class e5 edge_reference
+  n6 e6@-->|"延迟移除"| n0
+  class e6 edge_write
+  n6 e7@-->|"延迟添加"| n0
+  class e7 edge_write
+  n0 e8@-->|"存在 / 变更过滤"| n7
+  class e8 edge_reference
+  n0 e9@-->|"存在 / 变更过滤"| n8
+  class e9 edge_reference
+  n9 e10@---|"存在 / 变更过滤"| n0
+  class e10 edge_reference
+  n9 e11@-->|"延迟添加"| n0
+  class e11 edge_write
+  n0 e12@-->|"存在 / 变更过滤"| n10
+  class e12 edge_reference
+  n0 e13@-->|"存在 / 变更过滤"| n11
+  class e13 edge_reference
+  n0 e14@-->|"存在 / 变更过滤"| n12
+  class e14 edge_reference
+  n0 e15@-->|"存在 / 变更过滤"| n13
+  class e15 edge_reference
+  n0 e16@-->|"存在 / 变更过滤"| n14
+  class e16 edge_reference
+  n0 e17@-->|"存在 / 变更过滤"| n15
+  class e17 edge_reference
+  n0 e18@-->|"存在 / 变更过滤"| n16
+  class e18 edge_reference
+  n0 e19@-->|"存在 / 变更过滤"| n17
+  class e19 edge_reference
+  n0 e20@-->|"存在 / 变更过滤"| n18
+  class e20 edge_reference
+  n0 e21@-->|"存在 / 变更过滤"| n19
+  class e21 edge_reference
+  n0 e22@-->|"存在 / 变更过滤"| n20
+  class e22 edge_reference
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e17@{ curve: basis }
+  e18@{ curve: basis }
+  e19@{ curve: basis }
+  e20@{ curve: basis }
+  e21@{ curve: basis }
+  e22@{ curve: basis }

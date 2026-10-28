@@ -1,0 +1,215 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: RenderEntity · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_query_data fill:#F1F4F1,stroke:#567A51,stroke-width:1.6px,color:#1F3340
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: notch-rect, label: "**RenderEntity**<br/>记录主实体对应的渲染世界实体。" }
+  class n0 node_query_data
+  n1@{ shape: rounded, label: "**extract_ui_camera_view**<br/>为活动二维或三维相机维护独立 UI 视图。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**extract_shadows**<br/>从主世界提取变化后的可见 UI 阴影，解析<br/>尺寸、变换、裁剪和目标相机，替换对应的渲<br/>染阴影实体；不可见、空阴影及已移除的数据<br/>不进入绘制。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**extract_uinode_background_colors**<br/>提取 UI 节点背景与外侧填充色。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**extract_viewport_nodes**<br/>把视口节点所引用相机的输出图像嵌入 UI。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**extract_uinode_images**<br/>按节点视觉盒与图集区域提取普通 UI 图<br/>像。" }
+  class n5 node_system
+  n6@{ shape: rounded, label: "**extract_ui_texture_slices**<br/>增量提取九宫格或平铺 UI 图像切片。" }
+  class n6 node_system
+  n7@{ shape: rounded, label: "**extract_uinode_borders**<br/>提取 UI 各边颜色边框与外轮廓。" }
+  class n7 node_system
+  n8@{ shape: rounded, label: "**extract_text_decorations**<br/>提取 UI 文字背景、删除线和下划线。" }
+  class n8 node_system
+  n9@{ shape: rounded, label: "**extract_text_shadows**<br/>提取 UI 文字及装饰线的偏移阴影。" }
+  class n9 node_system
+  n10@{ shape: rounded, label: "**extract_text_sections**<br/>按图集提取 UI 字形并处理选中文字颜色。" }
+  class n10 node_system
+  n11@{ shape: rounded, label: "**extract_text_cursor**<br/>提取文字光标和带圆角的选区背景。" }
+  class n11 node_system
+  n12@{ shape: rounded, label: "**extract_preedit_underlines**<br/>把输入法预编辑下划线提取为 UI 矩形。" }
+  class n12 node_system
+  n13@{ shape: rounded, label: "**extract_debug_overlay**<br/>为变化的 UI 节点提取调试轮廓。" }
+  class n13 node_system
+  n14@{ shape: rounded, label: "**extract_inline_images**<br/>把文字行内图像提取为 UI 绘制项。" }
+  class n14 node_system
+  n15@{ shape: rounded, label: "**extract_gradients**<br/>提取变化后的 UI 背景与边框渐变，解析颜<br/>色停靠点、节点几何、裁剪和目标相机，并替<br/>换渲染世界中的对应渐变项；无效或不可见项<br/>被清理。" }
+  class n15 node_system
+  n16@{ shape: rounded, label: "**extract_windows**<br/>将主世界窗口尺寸、显示模式、原生句柄和主<br/>窗口身份同步到渲染世界，标记尺寸及模式变<br/>化，并处理关闭窗口或移除句柄造成的失效状<br/>态。" }
+  class n16 node_system
+  n17@{ shape: rounded, label: "**extract_cameras**<br/>把主世界活动相机的目标、视口、变换、可见<br/>实体和渲染设置提取到渲染实体，并维护视图<br/>所需格式；对停用或目标尺寸无效的相机移除<br/>失效提取状态。" }
+  class n17 node_system
+  n18@{ shape: rounded, label: "**extract_skybox**<br/>将主世界 Skybox 及相机曝光转换为天空盒<br/>亮度和逆旋转 Uniform，连同天空盒组件批<br/>量写入对应渲染实体。" }
+  class n18 node_system
+  n19@{ shape: rounded, label: "**extract_camera_prepass_phase**<br/>同步三维相机的预通道标记与渲染阶段。" }
+  class n19 node_system
+  n20@{ shape: rounded, label: "**extract_depth_of_field_settings**<br/>把透视相机景深设置转换为 GPU 参数。" }
+  class n20 node_system
+  n21@{ shape: rounded, label: "**extract_camera_previous_view_data**<br/>把活动三维相机的前帧视图数据提取到渲染<br/>侧。" }
+  class n21 node_system
+  n22@{ shape: rounded, label: "**gather_light_probes#lt;bevy_light::**<br/>**probe::EnvironmentMapLight#gt;**<br/>按相机可见集合和距离分配已就绪光照探针。" }
+  class n22 node_system
+  n23@{ shape: rounded, label: "**gather_light_probes#lt;bevy_light::**<br/>**probe::IrradianceVolume#gt;**<br/>按相机可见集合和距离分配已就绪光照探针。" }
+  class n23 node_system
+  n24@{ shape: rounded, label: "**extract_volumetric_fog**<br/>从主世界提取体积雾、雾体积及体积光配置。" }
+  class n24 node_system
+  n25@{ shape: rounded, label: "**extract_decals**<br/>从主世界提取可见聚簇贴花及点光、聚光和平<br/>行光的光照纹理，重建渲染贴花缓冲，并记录<br/>真正参与聚簇计算的贴花数量。" }
+  class n25 node_system
+  n26@{ shape: rounded, label: "**extract_clustered_decal**<br/>批量复制主世界的聚簇贴花组件。" }
+  class n26 node_system
+  n27@{ shape: rounded, label: "**extract_atmosphere**<br/>为每个启用 AtmosphereSettings 的三维<br/>相机选择世界距离最近的大气实体，复制大气<br/>和 GPU 设置到渲染世界；设置移除或没有候<br/>选大气时清理旧状态。" }
+  class n27 node_system
+  n28@{ shape: rounded, label: "**extract_clusters_for_cpu_clustering**<br/>把 CPU 聚簇结果转换为渲染侧对象列表。" }
+  class n28 node_system
+  n29@{ shape: rounded, label: "**extract_clusters_for_gpu_clustering**<br/>提取视图聚簇配置并回传上帧 GPU 统计。" }
+  class n29 node_system
+  n30@{ shape: rounded, label: "**extract_lights**<br/>同步可见点光、聚光、平行光及矩形光的渲染<br/>参数和阴影可见实体，提取变化的阴影贴图设<br/>置；隐藏或失效光源不继续保留有效渲染状<br/>态。" }
+  class n30 node_system
+  n31@{ shape: rounded, label: "**extract_ambient_light**<br/>批量复制主世界实体的环境光设置。" }
+  class n31 node_system
+  n32@{ shape: rounded, label: "**extract_shadow_filtering_method**<br/>批量同步实体的阴影过滤方式。" }
+  class n32 node_system
+  n33@{ shape: rounded, label: "**extract_ssao_settings**<br/>向渲染相机提取屏幕空间环境光遮蔽配置。" }
+  class n33 node_system
+  n34@{ shape: rounded, label: "**extract_generated_environment_map_**<br/>**entities**<br/>提取环境图生成所需的三张 GPU 图像。" }
+  class n34 node_system
+  n35@{ shape: rounded, label: "**extract_egui_camera_view_system**<br/>来自Egui / Inspector ↗：为活动相机提<br/>取独立 Egui 渲染视图。" }
+  class n35 node_system
+  class n35 external_node
+  n0 e0@-->|"参数 / 查询数据"| n1
+  class e0 edge_reference
+  n0 e1@-->|"参数 / 查询数据"| n2
+  class e1 edge_reference
+  n0 e2@-->|"参数 / 查询数据"| n3
+  class e2 edge_reference
+  n0 e3@-->|"参数 / 查询数据"| n4
+  class e3 edge_reference
+  n0 e4@-->|"参数 / 查询数据"| n5
+  class e4 edge_reference
+  n0 e5@-->|"参数 / 查询数据"| n6
+  class e5 edge_reference
+  n0 e6@-->|"参数 / 查询数据"| n7
+  class e6 edge_reference
+  n0 e7@-->|"参数 / 查询数据"| n8
+  class e7 edge_reference
+  n0 e8@-->|"参数 / 查询数据"| n9
+  class e8 edge_reference
+  n0 e9@-->|"参数 / 查询数据"| n10
+  class e9 edge_reference
+  n0 e10@-->|"参数 / 查询数据"| n11
+  class e10 edge_reference
+  n0 e11@-->|"参数 / 查询数据"| n12
+  class e11 edge_reference
+  n0 e12@-->|"参数 / 查询数据"| n13
+  class e12 edge_reference
+  n0 e13@-->|"参数 / 查询数据"| n14
+  class e13 edge_reference
+  n0 e14@-->|"参数 / 查询数据"| n15
+  class e14 edge_reference
+  n0 e15@-->|"参数 / 查询数据"| n16
+  class e15 edge_reference
+  n0 e16@-->|"参数 / 查询数据"| n17
+  class e16 edge_reference
+  n0 e17@-->|"参数 / 查询数据"| n18
+  class e17 edge_reference
+  n0 e18@-->|"参数 / 查询数据"| n19
+  class e18 edge_reference
+  n0 e19@-->|"参数 / 查询数据"| n20
+  class e19 edge_reference
+  n0 e20@-->|"参数 / 查询数据"| n21
+  class e20 edge_reference
+  n0 e21@-->|"参数 / 查询数据"| n22
+  class e21 edge_reference
+  n0 e22@-->|"参数 / 查询数据"| n23
+  class e22 edge_reference
+  n0 e23@-->|"参数 / 查询数据"| n24
+  class e23 edge_reference
+  n0 e24@-->|"参数 / 查询数据"| n25
+  class e24 edge_reference
+  n0 e25@-->|"参数 / 查询数据"| n26
+  class e25 edge_reference
+  n0 e26@-->|"参数 / 查询数据"| n27
+  class e26 edge_reference
+  n0 e27@-->|"参数 / 查询数据"| n28
+  class e27 edge_reference
+  n0 e28@-->|"正文查询数据"| n29
+  class e28 edge_reference
+  n0 e29@-->|"参数 / 查询数据"| n30
+  class e29 edge_reference
+  n0 e30@-->|"参数 / 查询数据"| n31
+  class e30 edge_reference
+  n0 e31@-->|"参数 / 查询数据"| n32
+  class e31 edge_reference
+  n0 e32@-->|"参数 / 查询数据"| n33
+  class e32 edge_reference
+  n0 e33@-->|"参数 / 查询数据"| n34
+  class e33 edge_reference
+  n0 e34@-->|"正文查询数据"| n35
+  class e34 edge_reference
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e18@{ curve: basis }
+  e19@{ curve: basis }
+  e20@{ curve: basis }
+  e21@{ curve: basis }
+  e22@{ curve: basis }
+  e23@{ curve: basis }
+  e24@{ curve: basis }
+  e25@{ curve: basis }
+  e26@{ curve: basis }
+  e27@{ curve: basis }
+  e28@{ curve: basis }
+  e29@{ curve: basis }
+  e30@{ curve: basis }
+  e31@{ curve: basis }
+  e32@{ curve: basis }
+  e33@{ curve: basis }
+  e34@{ curve: basis }

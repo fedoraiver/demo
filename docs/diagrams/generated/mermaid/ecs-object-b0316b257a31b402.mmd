@@ -1,0 +1,300 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#object-b0316b257a31b402-e3{marker-start:url(#object-b0316b257a31b402_flowchart-v2-pointStart)!important}\n#object-b0316b257a31b402-e6{marker-start:url(#object-b0316b257a31b402_flowchart-v2-pointStart)!important}\n#object-b0316b257a31b402-e8{marker-start:url(#object-b0316b257a31b402_flowchart-v2-pointStart)!important}\n#object-b0316b257a31b402-e10{marker-start:url(#object-b0316b257a31b402_flowchart-v2-pointStart)!important}\n#object-b0316b257a31b402-e12{marker-start:url(#object-b0316b257a31b402_flowchart-v2-pointStart)!important}\n#object-b0316b257a31b402-e14{marker-start:url(#object-b0316b257a31b402_flowchart-v2-pointStart)!important}\n#object-b0316b257a31b402-e17{marker-start:url(#object-b0316b257a31b402_flowchart-v2-pointStart)!important}\n#object-b0316b257a31b402-e21{marker-start:url(#object-b0316b257a31b402_flowchart-v2-pointStart)!important}\n#object-b0316b257a31b402-e23{marker-start:url(#object-b0316b257a31b402_flowchart-v2-pointStart)!important}\n#object-b0316b257a31b402-e25{marker-start:url(#object-b0316b257a31b402_flowchart-v2-pointStart)!important}\n#object-b0316b257a31b402-e27{marker-start:url(#object-b0316b257a31b402_flowchart-v2-pointStart)!important}\n#object-b0316b257a31b402-e29{marker-start:url(#object-b0316b257a31b402_flowchart-v2-pointStart)!important}\n#object-b0316b257a31b402-e31{marker-start:url(#object-b0316b257a31b402_flowchart-v2-pointStart)!important}\n#object-b0316b257a31b402-e33{marker-start:url(#object-b0316b257a31b402_flowchart-v2-pointStart)!important}\n#object-b0316b257a31b402-e35{marker-start:url(#object-b0316b257a31b402_flowchart-v2-pointStart)!important}\n#object-b0316b257a31b402-e37{marker-start:url(#object-b0316b257a31b402_flowchart-v2-pointStart)!important}\n#object-b0316b257a31b402-e39{marker-start:url(#object-b0316b257a31b402_flowchart-v2-pointStart)!important}\n#object-b0316b257a31b402-e41{marker-start:url(#object-b0316b257a31b402_flowchart-v2-pointStart)!important}\n#object-b0316b257a31b402-e43{marker-start:url(#object-b0316b257a31b402_flowchart-v2-pointStart)!important}\n#object-b0316b257a31b402-e45{marker-start:url(#object-b0316b257a31b402_flowchart-v2-pointStart)!important}\n#object-b0316b257a31b402-e53{marker-start:url(#object-b0316b257a31b402_flowchart-v2-pointStart)!important}\n#object-b0316b257a31b402_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}"
+  }
+}
+---
+flowchart LR
+  accTitle: world_inspector_ui · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef node_engine_flow fill:#F1F5F4,stroke:#557C78,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**world_inspector_ui**<br/>展示并编辑开放反射的实体、资源与资产。" }
+  class n0 node_system
+  n1@{ shape: stadium, label: "**main · EguiPrimaryContextPass**<br/>来自Bevy 引擎 ↗：保存本应用调度的注册<br/>上下文与成员。" }
+  class n1 node_engine_flow
+  class n1 external_node
+  n2@{ shape: rounded, label: "**EguiContext**<br/>包装一个 egui::Context" }
+  class n2 node_component
+  n3@{ shape: rounded, label: "**HeldTarget**<br/>来自物品交互 ↗：保存本帧握持姿态的检查<br/>目标。" }
+  class n3 node_component
+  class n3 external_node
+  n4@{ shape: rounded, label: "**Character**<br/>来自角色运动 ↗：标识具有角色运动能力的<br/>实体。" }
+  class n4 node_component
+  class n4 external_node
+  n5@{ shape: rounded, label: "**CharacterIntent**<br/>来自角色运动 ↗：保存持续移动方向与单次<br/>跳跃、交互请求。" }
+  class n5 node_component
+  class n5 external_node
+  n6@{ shape: rounded, label: "**CharacterMotion**<br/>来自角色运动 ↗：保存角色接地等运动观察<br/>结果。" }
+  class n6 node_component
+  class n6 external_node
+  n7@{ shape: rounded, label: "**PlayerId**<br/>来自第一人称控制 ↗：独立于运行时<br/>Entity 的业务身份。" }
+  class n7 node_component
+  class n7 external_node
+  n8@{ shape: rounded, label: "**ControlsCharacter**<br/>来自第一人称控制 ↗：普通实体引用，指向<br/>受控角色。" }
+  class n8 node_component
+  class n8 external_node
+  n9@{ shape: rounded, label: "**ControlsCamera**<br/>来自第一人称控制 ↗：普通实体引用，指向<br/>受控相机。" }
+  class n9 node_component
+  class n9 external_node
+  n10@{ shape: rounded, label: "**CharacterVisual**<br/>来自第一人称控制 ↗：标记随第一人称视角<br/>隐藏的角色模型。" }
+  class n10 node_component
+  class n10 external_node
+  n11@{ shape: rounded, label: "**FirstPersonCamera**<br/>来自第一人称控制 ↗：保存跟随目标、眼高<br/>与观察角度。" }
+  class n11 node_component
+  class n11 external_node
+  n12@{ shape: rounded, label: "**Parcel**<br/>来自物品交互 ↗：快递身份标记。" }
+  class n12 node_component
+  class n12 external_node
+  n13@{ shape: rounded, label: "**Pickable**<br/>来自物品交互 ↗：标记可被玩家拾取的物<br/>品。" }
+  class n13 node_component
+  class n13 external_node
+  n14@{ shape: rounded, label: "**CarryGrip**<br/>来自物品交互 ↗：保存握持对齐使用的模型<br/>偏移。" }
+  class n14 node_component
+  class n14 external_node
+  n15@{ shape: rounded, label: "**ItemModel**<br/>来自场景装配 ↗：标识物品采用的美术模型<br/>种类。" }
+  class n15 node_component
+  class n15 external_node
+  n16@{ shape: rounded, label: "**SpawnPoint**<br/>来自越界恢复 ↗：每个业务根独立保存出生<br/>姿态。" }
+  class n16 node_component
+  class n16 external_node
+  n17@{ shape: rounded, label: "**SpawnPoint**<br/>来自越界恢复 ↗：每个业务根独立保存出生<br/>姿态。" }
+  class n17 node_component
+  class n17 external_node
+  n18@{ shape: rounded, label: "**EguiContext**<br/>保存世界检查器的界面交互状态。" }
+  class n18 node_component
+  n19@{ shape: rounded, label: "**Transform**<br/>来自Bevy 引擎 ↗：保存角色经插值生成的<br/>显示姿态。" }
+  class n19 node_component
+  class n19 external_node
+  n20@{ shape: rounded, label: "**Transform**<br/>来自Bevy 引擎 ↗：保存自由运动或共享持<br/>握时的显示姿态。" }
+  class n20 node_component
+  class n20 external_node
+  n21@{ shape: rounded, label: "**Transform**<br/>来自Bevy 引擎 ↗：保存第一人称镜头的显<br/>示姿态。" }
+  class n21 node_component
+  class n21 external_node
+  n22@{ shape: rounded, label: "**Transform**<br/>来自Bevy 引擎 ↗：保存模型相对业务根的<br/>局部显示姿态。" }
+  class n22 node_component
+  class n22 external_node
+  n23@{ shape: rounded, label: "**Visibility**<br/>来自Bevy 引擎 ↗：根实体的可见性，视觉<br/>子实体继承层级可见性。" }
+  class n23 node_component
+  class n23 external_node
+  n24@{ shape: rounded, label: "**Visibility**<br/>来自Bevy 引擎 ↗：根实体可见性。" }
+  class n24 node_component
+  class n24 external_node
+  n25@{ shape: rounded, label: "**Visibility**<br/>来自Bevy 引擎 ↗：控制实体及视觉子树的<br/>显示状态。" }
+  class n25 node_component
+  class n25 external_node
+  n26@{ shape: rounded, label: "**EguiInput**<br/>缓冲检查器界面收到的输入。" }
+  class n26 node_component
+  n27@{ shape: rounded, label: "**EguiContextSettings**<br/>配置检查器上下文的输入与输出处理。" }
+  class n27 node_component
+  n28@{ shape: rounded, label: "**EguiSchedule**<br/>指定检查器上下文的内部界面调度。" }
+  class n28 node_component
+  n29@{ shape: rounded, label: "**EguiFullOutput**<br/>保存检查器界面计算产生的输出。" }
+  class n29 node_component
+  n30@{ shape: cyl, label: "**AppTypeRegistry**<br/>来自Bevy 引擎 ↗：登记检查器可以读取和<br/>编辑的数据类型。" }
+  class n30 node_resource
+  class n30 external_node
+  n31@{ shape: cyl, label: "**PrototypeConfig**<br/>来自设置与参数 ↗：保存运动、重力、拾取<br/>与握持的共享参数。" }
+  class n31 node_resource
+  class n31 external_node
+  n32@{ shape: cyl, label: "**State#lt;AppState#gt; /**<br/>**NextState#lt;AppState#gt;**<br/>来自应用流程 ↗：保存应用主状态及待处理<br/>的会话切换。" }
+  class n32 node_resource
+  class n32 external_node
+  n33@{ shape: cyl, label: "**State#lt;PlayState#gt; /**<br/>**NextState#lt;PlayState#gt;**<br/>来自应用流程 ↗：保存游戏运行、暂停及待<br/>处理的切换请求。" }
+  class n33 node_resource
+  class n33 external_node
+  n1 e0@-->|"main / EguiPrimaryContextPass"| n0
+  class e0 edge_registration
+  n0 e1@-->|"正文可变访问"| n2
+  class e1 edge_write
+  n3 e2@-->|"反射查看"| n0
+  class e2 edge_read
+  n3 e3@---|"反射可选编辑"| n0
+  class e3 edge_write
+  n4 e4@-->|"反射查看"| n0
+  class e4 edge_read
+  n5 e5@-->|"反射查看"| n0
+  class e5 edge_read
+  n5 e6@---|"反射可选编辑"| n0
+  class e6 edge_write
+  n6 e7@-->|"反射查看"| n0
+  class e7 edge_read
+  n6 e8@---|"反射可选编辑"| n0
+  class e8 edge_write
+  n7 e9@-->|"反射查看"| n0
+  class e9 edge_read
+  n7 e10@---|"反射可选编辑"| n0
+  class e10 edge_write
+  n8 e11@-->|"反射查看"| n0
+  class e11 edge_read
+  n8 e12@---|"反射可选编辑"| n0
+  class e12 edge_write
+  n9 e13@-->|"反射查看"| n0
+  class e13 edge_read
+  n9 e14@---|"反射可选编辑"| n0
+  class e14 edge_write
+  n10 e15@-->|"反射查看"| n0
+  class e15 edge_read
+  n11 e16@-->|"反射查看"| n0
+  class e16 edge_read
+  n11 e17@---|"反射可选编辑"| n0
+  class e17 edge_write
+  n12 e18@-->|"反射查看"| n0
+  class e18 edge_read
+  n13 e19@-->|"反射查看"| n0
+  class e19 edge_read
+  n14 e20@-->|"反射查看"| n0
+  class e20 edge_read
+  n14 e21@---|"反射可选编辑"| n0
+  class e21 edge_write
+  n15 e22@-->|"反射查看"| n0
+  class e22 edge_read
+  n15 e23@---|"反射可选编辑"| n0
+  class e23 edge_write
+  n16 e24@-->|"反射查看"| n0
+  class e24 edge_read
+  n16 e25@---|"反射可选编辑"| n0
+  class e25 edge_write
+  n17 e26@-->|"反射查看"| n0
+  class e26 edge_read
+  n17 e27@---|"反射可选编辑"| n0
+  class e27 edge_write
+  n18 e28@-->|"查询访问"| n0
+  class e28 edge_read
+  n18 e29@---|"可变访问"| n0
+  class e29 edge_write
+  n19 e30@-->|"查询访问"| n0
+  class e30 edge_read
+  n19 e31@---|"可变访问"| n0
+  class e31 edge_write
+  n20 e32@-->|"查询访问"| n0
+  class e32 edge_read
+  n20 e33@---|"可变访问"| n0
+  class e33 edge_write
+  n21 e34@-->|"查询访问"| n0
+  class e34 edge_read
+  n21 e35@---|"可变访问"| n0
+  class e35 edge_write
+  n22 e36@-->|"查询访问"| n0
+  class e36 edge_read
+  n22 e37@---|"可变访问"| n0
+  class e37 edge_write
+  n23 e38@-->|"查询访问"| n0
+  class e38 edge_read
+  n23 e39@---|"可变访问"| n0
+  class e39 edge_write
+  n24 e40@-->|"查询访问"| n0
+  class e40 edge_read
+  n24 e41@---|"可变访问"| n0
+  class e41 edge_write
+  n25 e42@-->|"查询访问"| n0
+  class e42 edge_read
+  n25 e43@---|"可变访问"| n0
+  class e43 edge_write
+  n26 e44@-->|"查询访问"| n0
+  class e44 edge_read
+  n26 e45@---|"可变访问"| n0
+  class e45 edge_write
+  n27 e46@-->|"查询访问"| n0
+  class e46 edge_read
+  n28 e47@-->|"查询访问"| n0
+  class e47 edge_read
+  n0 e48@-->|"可变访问"| n29
+  class e48 edge_write
+  n30 e49@-->|"访问声明"| n0
+  class e49 edge_read
+  n31 e50@-->|"访问声明"| n0
+  class e50 edge_read
+  n32 e51@-->|"访问声明"| n0
+  class e51 edge_read
+  n33 e52@-->|"访问声明"| n0
+  class e52 edge_read
+  n31 e53@---|"访问声明"| n0
+  class e53 edge_write
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e17@{ curve: basis }
+  e18@{ curve: basis }
+  e19@{ curve: basis }
+  e20@{ curve: basis }
+  e21@{ curve: basis }
+  e22@{ curve: basis }
+  e23@{ curve: basis }
+  e24@{ curve: basis }
+  e25@{ curve: basis }
+  e26@{ curve: basis }
+  e27@{ curve: basis }
+  e28@{ curve: basis }
+  e29@{ curve: basis }
+  e30@{ curve: basis }
+  e31@{ curve: basis }
+  e32@{ curve: basis }
+  e33@{ curve: basis }
+  e34@{ curve: basis }
+  e35@{ curve: basis }
+  e36@{ curve: basis }
+  e37@{ curve: basis }
+  e38@{ curve: basis }
+  e39@{ curve: basis }
+  e40@{ curve: basis }
+  e41@{ curve: basis }
+  e42@{ curve: basis }
+  e43@{ curve: basis }
+  e44@{ curve: basis }
+  e45@{ curve: basis }
+  e46@{ curve: basis }
+  e47@{ curve: basis }
+  e48@{ curve: basis }
+  e49@{ curve: basis }
+  e50@{ curve: basis }
+  e51@{ curve: basis }
+  e52@{ curve: basis }
+  e53@{ curve: basis }

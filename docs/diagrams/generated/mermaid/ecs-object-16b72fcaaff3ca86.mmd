@@ -1,0 +1,255 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#object-16b72fcaaff3ca86-e34{marker-start:url(#object-16b72fcaaff3ca86_flowchart-v2-pointStart)!important}\n#object-16b72fcaaff3ca86_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}"
+  }
+}
+---
+flowchart LR
+  accTitle: ViewTarget · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**ViewTarget**<br/>管理视图主颜色纹理及最终输出附件。" }
+  class n0 node_component
+  n1@{ shape: rounded, label: "**main_opaque_pass_2d**<br/>绘制二维不透明和 AlphaMask 阶段。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**main_transparent_pass_2d**<br/>使用已有深度绘制二维透明阶段。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**tonemapping**<br/>为启用色调映射的 HDR 视图绑定颜色源、视<br/>图参数和 LUT，执行全屏色调映射并写入后<br/>处理目标；模式关闭或管线尚未就绪时跳过。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**bloom**<br/>对 HDR 视图颜色执行 Bloom 降采样和上采<br/>样通道，将亮部扩散合成回视图；强度为零、<br/>非 HDR 或所需管线和参数缓冲未就绪时不执<br/>行。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**fxaa**<br/>在 FXAA 开启且相机管线就绪时，读取当前<br/>视图颜色并执行全屏抗锯齿，写入下一后处理<br/>目标；复用与源纹理对应的绑定组。" }
+  class n5 node_system
+  n6@{ shape: rounded, label: "**smaa**<br/>按边缘检测、混合权重计算和邻域混合三个阶<br/>段执行 SMAA，将抗锯齿结果写入视图后处理<br/>目标；任何所需管线未就绪时跳过整个流程。" }
+  class n6 node_system
+  n7@{ shape: rounded, label: "**cas**<br/>绑定视图颜色和 CAS 参数，执行对比度自适<br/>应锐化并写入后处理目标；缓存对应参数缓冲<br/>与源纹理的绑定组，管线或参数不可用时跳<br/>过。" }
+  class n7 node_system
+  n8@{ shape: rounded, label: "**upscaling**<br/>把视图主颜色纹理通过 Blit 管线写入最终<br/>输出附件，遵循相机的输出模式、清屏颜色和<br/>视口；输出模式为 Skip 时不写入。" }
+  class n8 node_system
+  n9@{ shape: rounded, label: "**msaa_writeback**<br/>在 MSAA 开启时把当前后处理颜色绘制回多<br/>采样主纹理，并解析到下一颜色目标，使后续<br/>通道继续使用一致的多采样附件；MSAA 关闭<br/>时跳过。" }
+  class n9 node_system
+  n10@{ shape: rounded, label: "**post_processing**<br/>为当前视图组合已启用的色差、暗角和镜头畸<br/>变效果，绑定各效果参数及颜色 LUT 后执行<br/>全屏后处理；没有效果或所需资产和管线未就<br/>绪时跳过。" }
+  class n10 node_system
+  n11@{ shape: rounded, label: "**ui_pass**<br/>找到 UI 相机对应的视图、颜色目标及透明<br/>UI 阶段，按相机视口渲染已排队的 UI 项；<br/>视图缺失或阶段为空时不创建绘制通道。" }
+  class n11 node_system
+  n12@{ shape: rounded, label: "**egui_pass**<br/>来自Egui / Inspector ↗：读取当前<br/>Egui 视图已准备的绘制数据、纹理绑定及变<br/>换缓冲，在目标颜色附件上执行 Egui 绘制<br/>命令，并按相机视口设置渲染范围。" }
+  class n12 node_system
+  class n12 external_node
+  n13@{ shape: rounded, label: "**main_opaque_pass_3d**<br/>绘制三维不透明、AlphaMask 与天空盒。" }
+  class n13 node_system
+  n14@{ shape: rounded, label: "**main_transparent_pass_3d**<br/>绘制三维透明物体并保护 OIT 链表状态。" }
+  class n14 node_system
+  n15@{ shape: rounded, label: "**oit_resolve**<br/>在透明主通道之后解析顺序无关透明数据并合<br/>成到视图颜色，同时重置 OIT 原子计数与链<br/>表头，避免下一次透明通道使用损坏的数据。" }
+  class n15 node_system
+  n16@{ shape: rounded, label: "**screen_space_reflections**<br/>采样场景颜色、深度与蓝噪声绘制屏幕空间反<br/>射。" }
+  class n16 node_system
+  n17@{ shape: rounded, label: "**main_transmissive_pass_3d**<br/>分层复制场景颜色并绘制三维透射物体。" }
+  class n17 node_system
+  n18@{ shape: rounded, label: "**deferred_lighting**<br/>绑定网格视图、延迟光照管线及通道深度标识<br/>参数，在延迟光照深度附件约束下执行全屏光<br/>照计算，将结果写入视图颜色。" }
+  class n18 node_system
+  n19@{ shape: rounded, label: "**temporal_anti_alias**<br/>混合当前颜色与历史帧并更新 TAA 历史目<br/>标。" }
+  class n19 node_system
+  n20@{ shape: rounded, label: "**tonemapping**<br/>为启用色调映射的 HDR 视图绑定颜色源、视<br/>图参数和 LUT，执行全屏色调映射并写入后<br/>处理目标；模式关闭或管线尚未就绪时跳过。" }
+  class n20 node_system
+  n21@{ shape: rounded, label: "**bloom**<br/>对 HDR 视图颜色执行 Bloom 降采样和上采<br/>样通道，将亮部扩散合成回视图；强度为零、<br/>非 HDR 或所需管线和参数缓冲未就绪时不执<br/>行。" }
+  class n21 node_system
+  n22@{ shape: rounded, label: "**motion_blur**<br/>读取当前视图颜色、预通道运动矢量和深度，<br/>按快门角度及采样数执行运动模糊；采样关<br/>闭、所需纹理或管线不可用时跳过。" }
+  class n22 node_system
+  n23@{ shape: rounded, label: "**fxaa**<br/>在 FXAA 开启且相机管线就绪时，读取当前<br/>视图颜色并执行全屏抗锯齿，写入下一后处理<br/>目标；复用与源纹理对应的绑定组。" }
+  class n23 node_system
+  n24@{ shape: rounded, label: "**smaa**<br/>按边缘检测、混合权重计算和邻域混合三个阶<br/>段执行 SMAA，将抗锯齿结果写入视图后处理<br/>目标；任何所需管线未就绪时跳过整个流程。" }
+  class n24 node_system
+  n25@{ shape: rounded, label: "**cas**<br/>绑定视图颜色和 CAS 参数，执行对比度自适<br/>应锐化并写入后处理目标；缓存对应参数缓冲<br/>与源纹理的绑定组，管线或参数不可用时跳<br/>过。" }
+  class n25 node_system
+  n26@{ shape: rounded, label: "**copy_deferred_lighting_id**<br/>把延迟光照通道标识复制到深度目标。" }
+  class n26 node_system
+  n27@{ shape: rounded, label: "**upscaling**<br/>把视图主颜色纹理通过 Blit 管线写入最终<br/>输出附件，遵循相机的输出模式、清屏颜色和<br/>视口；输出模式为 Skip 时不写入。" }
+  class n27 node_system
+  n28@{ shape: rounded, label: "**msaa_writeback**<br/>在 MSAA 开启时把当前后处理颜色绘制回多<br/>采样主纹理，并解析到下一颜色目标，使后续<br/>通道继续使用一致的多采样附件；MSAA 关闭<br/>时跳过。" }
+  class n28 node_system
+  n29@{ shape: rounded, label: "**depth_of_field**<br/>以两阶段全屏通道执行景深模糊。" }
+  class n29 node_system
+  n30@{ shape: rounded, label: "**post_processing**<br/>为当前视图组合已启用的色差、暗角和镜头畸<br/>变效果，绑定各效果参数及颜色 LUT 后执行<br/>全屏后处理；没有效果或所需资产和管线未就<br/>绪时跳过。" }
+  class n30 node_system
+  n31@{ shape: rounded, label: "**ui_pass**<br/>找到 UI 相机对应的视图、颜色目标及透明<br/>UI 阶段，按相机视口渲染已排队的 UI 项；<br/>视图缺失或阶段为空时不创建绘制通道。" }
+  class n31 node_system
+  n32@{ shape: rounded, label: "**volumetric_fog**<br/>逐个处理视图中的体积雾区域，结合场景深<br/>度、光照和可选密度纹理绘制雾光照；根据相<br/>机位于雾体内外选择平面或立方体网格。" }
+  class n32 node_system
+  n33@{ shape: rounded, label: "**egui_pass**<br/>来自Egui / Inspector ↗：读取当前<br/>Egui 视图已准备的绘制数据、纹理绑定及变<br/>换缓冲，在目标颜色附件上执行 Egui 绘制<br/>命令，并按相机视口设置渲染范围。" }
+  class n33 node_system
+  class n33 external_node
+  n34@{ shape: rounded, label: "**render_sky**<br/>绑定大气查找表及视图、光照参数，按相机视<br/>口和可选分辨率覆盖设置绘制全屏天空，将结<br/>果写入视图颜色附件。" }
+  class n34 node_system
+  n35@{ shape: rounded, label: "**cleanup_view_targets_for_resize**<br/>在窗口尺寸或呈现模式变化时撤销旧视图目<br/>标。" }
+  class n35 node_system
+  n36@{ shape: rounded, label: "**prepare_view_targets**<br/>为视图维护主颜色双缓冲及可选多采样目标。" }
+  class n36 node_system
+  n37@{ shape: rounded, label: "**prepare_auxiliary_depth_of_field_**<br/>**textures**<br/>为 Bokeh 景深分配第二颜色输出。" }
+  class n37 node_system
+  n38@{ shape: rounded, label: "**prepare_view_tonemapping_pipelines**<br/>按视图实际颜色分级需求专用化色调映射。" }
+  class n38 node_system
+  n39@{ shape: rounded, label: "**prepare_view_upscaling_pipelines**<br/>按相机合成方式准备输出缩放管线。" }
+  class n39 node_system
+  n40@{ shape: rounded, label: "**prepare_msaa_writeback_pipelines**<br/>为需要保留已有颜色的多采样相机准备回写管<br/>线。" }
+  class n40 node_system
+  n41@{ shape: rounded, label: "**render_system**<br/>运行根 RenderGraph 调度，提交截图及<br/>GPU 回读收尾命令，并呈现需要输出的窗口<br/>交换链；随后收集截图结果。" }
+  class n41 node_system
+  n0 e0@--> n1
+  class e0 edge_read
+  n0 e1@--> n2
+  class e1 edge_read
+  n0 e2@--> n3
+  class e2 edge_read
+  n0 e3@--> n4
+  class e3 edge_read
+  n0 e4@--> n5
+  class e4 edge_read
+  n0 e5@--> n6
+  class e5 edge_read
+  n0 e6@--> n7
+  class e6 edge_read
+  n0 e7@--> n8
+  class e7 edge_read
+  n0 e8@--> n9
+  class e8 edge_read
+  n0 e9@--> n10
+  class e9 edge_read
+  n0 e10@--> n11
+  class e10 edge_read
+  n0 e11@--> n12
+  class e11 edge_read
+  n0 e12@--> n13
+  class e12 edge_read
+  n0 e13@--> n14
+  class e13 edge_read
+  n0 e14@--> n15
+  class e14 edge_read
+  n0 e15@--> n16
+  class e15 edge_read
+  n0 e16@--> n17
+  class e16 edge_read
+  n0 e17@--> n18
+  class e17 edge_read
+  n0 e18@--> n19
+  class e18 edge_read
+  n0 e19@--> n20
+  class e19 edge_read
+  n0 e20@--> n21
+  class e20 edge_read
+  n0 e21@--> n22
+  class e21 edge_read
+  n0 e22@--> n23
+  class e22 edge_read
+  n0 e23@--> n24
+  class e23 edge_read
+  n0 e24@--> n25
+  class e24 edge_read
+  n0 e25@--> n26
+  class e25 edge_read
+  n0 e26@--> n27
+  class e26 edge_read
+  n0 e27@--> n28
+  class e27 edge_read
+  n0 e28@--> n29
+  class e28 edge_read
+  n0 e29@--> n30
+  class e29 edge_read
+  n0 e30@--> n31
+  class e30 edge_read
+  n0 e31@--> n32
+  class e31 edge_read
+  n0 e32@--> n33
+  class e32 edge_read
+  n0 e33@--> n34
+  class e33 edge_read
+  n35 e34@---|"存在 / 变更过滤"| n0
+  class e34 edge_reference
+  n35 e35@-->|"延迟移除"| n0
+  class e35 edge_write
+  n36 e36@-->|"延迟移除"| n0
+  class e36 edge_write
+  n36 e37@-->|"延迟添加"| n0
+  class e37 edge_write
+  n0 e38@--> n37
+  class e38 edge_read
+  n0 e39@-->|"存在 / 变更过滤"| n38
+  class e39 edge_reference
+  n0 e40@--> n39
+  class e40 edge_read
+  n0 e41@--> n40
+  class e41 edge_read
+  n0 e42@--> n41
+  class e42 edge_read
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e17@{ curve: basis }
+  e18@{ curve: basis }
+  e20@{ curve: basis }
+  e21@{ curve: basis }
+  e22@{ curve: basis }
+  e23@{ curve: basis }
+  e24@{ curve: basis }
+  e25@{ curve: basis }
+  e26@{ curve: basis }
+  e27@{ curve: basis }
+  e28@{ curve: basis }
+  e29@{ curve: basis }
+  e30@{ curve: basis }
+  e31@{ curve: basis }
+  e32@{ curve: basis }
+  e33@{ curve: basis }
+  e34@{ curve: basis }
+  e35@{ curve: bumpX }
+  e36@{ curve: bumpX }
+  e37@{ curve: basis }
+  e38@{ curve: basis }
+  e39@{ curve: basis }
+  e40@{ curve: basis }
+  e41@{ curve: basis }
+  e42@{ curve: basis }

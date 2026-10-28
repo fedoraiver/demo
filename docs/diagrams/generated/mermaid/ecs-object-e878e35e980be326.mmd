@@ -1,0 +1,68 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: IntegrationSystems::Position · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_engine_flow fill:#F1F5F4,stroke:#557C78,stroke-width:1.6px,color:#1F3340
+  classDef edge_order stroke:#334155,stroke-width:2px
+  classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: lin-rect, label: "**IntegrationSystems::Position**<br/>按子步速度推进求解器姿态。" }
+  class n0 node_system_set
+  n1@{ shape: stadium, label: "**main · SubstepSchedule**<br/>来自Bevy 引擎 ↗：保存本应用调度的注册<br/>上下文与成员。" }
+  class n1 node_engine_flow
+  class n1 external_node
+  n2@{ shape: rounded, label: "**update_solver_body_angular_inertia**<br/>按当前朝向刷新求解器的有效逆惯量。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**integrate_positions**<br/>依据求解器刚体速度与本子步时间累加<br/>delta_position 和 delta_rotation；带<br/>自定义位置积分标志的刚体跳过默认积分。" }
+  class n3 node_system
+  n4@{ shape: lin-rect, label: "**SubstepSolverSystems::**<br/>**SolveConstraints**<br/>用位置偏置求解速度约束。" }
+  class n4 node_system_set
+  n5@{ shape: lin-rect, label: "**SubstepSolverSystems::Relax**<br/>用无偏置约束求解放松过强响应。" }
+  class n5 node_system_set
+  n1 e0@-->|"main / SubstepSchedule"| n0
+  class e0 edge_registration
+  n0 e1@--> n2
+  class e1 edge_set_membership
+  n0 e2@--> n3
+  class e2 edge_set_membership
+  n4 e3@--> n0
+  class e3 edge_order
+  n0 e4@--> n5
+  class e4 edge_order
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }

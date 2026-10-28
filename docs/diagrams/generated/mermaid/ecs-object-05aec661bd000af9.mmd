@@ -1,0 +1,122 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: PhysicsStepSystems::Solver · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_engine_flow fill:#F1F5F4,stroke:#557C78,stroke-width:1.6px,color:#1F3340
+  classDef edge_order stroke:#334155,stroke-width:2px
+  classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: lin-rect, label: "**PhysicsStepSystems::Solver**<br/>运行约束求解器及子步循环。" }
+  class n0 node_system_set
+  n1@{ shape: stadium, label: "**main · PhysicsSchedule**<br/>来自Bevy 引擎 ↗：保存本应用调度的注册<br/>上下文与成员。" }
+  class n1 node_engine_flow
+  class n1 external_node
+  n2@{ shape: lin-rect, label: "**SolverSystems::PostSubstep**<br/>在子步循环后清理积分累计。" }
+  class n2 node_system_set
+  n3@{ shape: lin-rect, label: "**SolverSystems::Finalize**<br/>把求解器内部状态写回刚体。" }
+  class n3 node_system_set
+  n4@{ shape: lin-rect, label: "**SolverSystems::PrepareSolverBodies**<br/>建立子步循环使用的求解器刚体。" }
+  class n4 node_system_set
+  n5@{ shape: lin-rect, label: "**SolverSystems::PrepareJoints**<br/>为子步求解预留关节约束准备阶段。" }
+  class n5 node_system_set
+  n6@{ shape: lin-rect, label: "**SolverSystems::**<br/>**PrepareContactConstraints**<br/>为子步求解准备接触约束。" }
+  class n6 node_system_set
+  n7@{ shape: lin-rect, label: "**SolverSystems::PreSubstep**<br/>在子步循环前汇总速度积分输入。" }
+  class n7 node_system_set
+  n8@{ shape: lin-rect, label: "**SolverSystems::Substep**<br/>重复运行物理子步调度。" }
+  class n8 node_system_set
+  n9@{ shape: lin-rect, label: "**SolverSystems::Restitution**<br/>在重叠求解后施加恢复冲量。" }
+  class n9 node_system_set
+  n10@{ shape: lin-rect, label: "**SolverSystems::ContinuousCollision**<br/>处理快速动态刚体的连续碰撞。" }
+  class n10 node_system_set
+  n11@{ shape: lin-rect, label: "**SolverSystems::StoreContactImpulses**<br/>保存接触冲量供下一次热启动。" }
+  class n11 node_system_set
+  n12@{ shape: rounded, label: "**apply_contact_status_changes**<br/>把接触增删同步到约束图和物理岛。" }
+  class n12 node_system
+  n13@{ shape: rounded, label: "**apply_joint_graph_changes**<br/>把关节连接变化同步到模拟岛。" }
+  class n13 node_system
+  n14@{ shape: rounded, label: "**update_body_size_metrics#lt;avian3d::**<br/>**collision::collider::parry::**<br/>**Collider#gt;**<br/>重算刚体的 CCD 厚度和最大扫掠半径。" }
+  class n14 node_system
+  n15@{ shape: lin-rect, label: "**PhysicsStepSystems::NarrowPhase**<br/>刷新接触几何与接触图状态。" }
+  class n15 node_system_set
+  n16@{ shape: lin-rect, label: "**PhysicsStepSystems::Sleeping**<br/>决定物理岛的休眠与唤醒。" }
+  class n16 node_system_set
+  n1 e0@-->|"main / PhysicsSchedule"| n0
+  class e0 edge_registration
+  n0 e1@--> n2
+  class e1 edge_set_membership
+  n0 e2@--> n3
+  class e2 edge_set_membership
+  n0 e3@--> n4
+  class e3 edge_set_membership
+  n0 e4@--> n5
+  class e4 edge_set_membership
+  n0 e5@--> n6
+  class e5 edge_set_membership
+  n0 e6@--> n7
+  class e6 edge_set_membership
+  n0 e7@--> n8
+  class e7 edge_set_membership
+  n0 e8@--> n9
+  class e8 edge_set_membership
+  n0 e9@--> n10
+  class e9 edge_set_membership
+  n0 e10@--> n11
+  class e10 edge_set_membership
+  n0 e11@--> n12
+  class e11 edge_set_membership
+  n0 e12@--> n13
+  class e12 edge_set_membership
+  n14 e13@--> n0
+  class e13 edge_order
+  n15 e14@--> n0
+  class e14 edge_order
+  n0 e15@--> n16
+  class e15 edge_order
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }

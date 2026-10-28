@@ -1,0 +1,239 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: RenderSystems::Prepare · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_engine_flow fill:#F1F5F4,stroke:#557C78,stroke-width:1.6px,color:#1F3340
+  classDef edge_order stroke:#334155,stroke-width:2px
+  classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: lin-rect, label: "**RenderSystems::Prepare**<br/>按已排序绘制项准备 GPU 资源及绑定。" }
+  class n0 node_system_set
+  n1@{ shape: stadium, label: "**RenderApp · Render**<br/>保存本应用调度的注册上下文与成员。" }
+  class n1 node_engine_flow
+  n2@{ shape: lin-rect, label: "**RenderSystems::PrepareResources**<br/>初始化绘制绑定需要的缓冲、纹理和<br/>Uniform。" }
+  class n2 node_system_set
+  n3@{ shape: lin-rect, label: "**RenderSystems::**<br/>**PrepareResourcesBatchPhases**<br/>为各渲染阶段生成绘制批次。" }
+  class n3 node_system_set
+  n4@{ shape: lin-rect, label: "**RenderSystems::**<br/>**PrepareResourcesWritePhaseBuffers**<br/>把各渲染阶段的批次缓冲写入 GPU。" }
+  class n4 node_system_set
+  n5@{ shape: lin-rect, label: "**RenderSystems::**<br/>**PrepareResourcesCollectPhaseBuffers**<br/>汇总阶段合批生成的实例和绘制缓冲。" }
+  class n5 node_system_set
+  n6@{ shape: lin-rect, label: "**RenderSystems::PrepareResourcesFlush**<br/>在资源准备后、绑定创建前上传缓冲。" }
+  class n6 node_system_set
+  n7@{ shape: lin-rect, label: "**RenderSystems::PrepareBindGroups**<br/>把已准备的渲染资源组成 GPU 绑定组。" }
+  class n7 node_system_set
+  n8@{ shape: rounded, label: "**prepare_skybox_pipelines**<br/>按目标格式与采样数准备天空盒管线。" }
+  class n8 node_system
+  n9@{ shape: rounded, label: "**prepare_view_tonemapping_pipelines**<br/>按视图实际颜色分级需求专用化色调映射。" }
+  class n9 node_system
+  n10@{ shape: rounded, label: "**prepare_view_upscaling_pipelines**<br/>按相机合成方式准备输出缩放管线。" }
+  class n10 node_system
+  n11@{ shape: rounded, label: "**create_downsample_depth_pipelines**<br/>在支持 GPU 剔除时一次性建立深度降采样管<br/>线。" }
+  class n11 node_system
+  n12@{ shape: rounded, label: "**prepare_msaa_writeback_pipelines**<br/>为需要保留已有颜色的多采样相机准备回写管<br/>线。" }
+  class n12 node_system
+  n13@{ shape: rounded, label: "**prepare_downsampling_pipeline**<br/>按预过滤和缩放设置准备 Bloom 降采样变<br/>体。" }
+  class n13 node_system
+  n14@{ shape: rounded, label: "**prepare_upsampling_pipeline**<br/>为 Bloom 中间合成和最终目标准备升采样管<br/>线。" }
+  class n14 node_system
+  n15@{ shape: rounded, label: "**prepare_motion_blur_pipelines**<br/>按颜色格式与采样数准备运动模糊管线。" }
+  class n15 node_system
+  n16@{ shape: rounded, label: "**prepare_depth_of_field_view_bind_**<br/>**group_layouts**<br/>为景深视图创建单输入与 Bokeh 双输入布<br/>局。" }
+  class n16 node_system
+  n17@{ shape: rounded, label: "**prepare_depth_of_field_pipelines**<br/>按景深模式和视图格式准备两阶段管线。" }
+  class n17 node_system
+  n18@{ shape: rounded, label: "**prepare_post_processing_pipelines**<br/>按视图颜色格式准备内置后处理管线。" }
+  class n18 node_system
+  n19@{ shape: rounded, label: "**prepare_post_processing_uniforms**<br/>收集并上传逐视图色差、暗角和畸变参数。" }
+  class n19 node_system
+  n20@{ shape: rounded, label: "**prepare_fxaa_pipelines**<br/>按相机边缘阈值与目标格式准备 FXAA 管<br/>线。" }
+  class n20 node_system
+  n21@{ shape: rounded, label: "**prepare_smaa_pipelines**<br/>按质量预设准备视图的三条 SMAA 管线。" }
+  class n21 node_system
+  n22@{ shape: rounded, label: "**prepare_taa_pipelines**<br/>准备 TAA 当前状态及下一帧恢复用管线。" }
+  class n22 node_system
+  n23@{ shape: rounded, label: "**prepare_cas_pipelines**<br/>按去噪与目标格式准备视图锐化管线。" }
+  class n23 node_system
+  n24@{ shape: rounded, label: "**prepare_volumetric_fog_pipelines**<br/>为体积雾视图准备有密度纹理和无密度纹理两<br/>类管线。" }
+  class n24 node_system
+  n25@{ shape: rounded, label: "**prepare_volumetric_fog_uniforms**<br/>把各视图和雾体积组合转换为体积雾<br/>Uniform。" }
+  class n25 node_system
+  n26@{ shape: rounded, label: "**prepare_view_depth_textures_for_**<br/>**volumetric_fog**<br/>允许体积雾着色器读取三维相机深度纹理。" }
+  class n26 node_system
+  n27@{ shape: rounded, label: "**prepare_ssr_pipelines**<br/>为具备反射及深度、延迟预通道的视图选择管<br/>线。" }
+  class n27 node_system
+  n28@{ shape: rounded, label: "**prepare_deferred_lighting_pipelines**<br/>为有效延迟视图选择与前向一致的光照管线。" }
+  class n28 node_system
+  n29@{ shape: rounded, label: "**cleanup_background_motion_vectors**<br/>从不再启用运动矢量预通道或已标记<br/>NoBackgroundMotionVectors 的视图移除<br/>背景运动矢量管线及绑定组，清理失效渲染状<br/>态。" }
+  class n29 node_system
+  n30@{ shape: rounded, label: "**prepare_background_motion_vectors_**<br/>**pipelines**<br/>按采样数和法线预通道准备背景运动管线。" }
+  class n30 node_system
+  n31@{ shape: rounded, label: "**prepare_ssao_pipelines**<br/>按遮蔽质量和时间抖动配置选择计算管线。" }
+  class n31 node_system
+  n32@{ shape: rounded, label: "**prepare_preprocess_pipelines**<br/>按设备裁剪能力准备网格预处理管线变体。" }
+  class n32 node_system
+  n33@{ shape: rounded, label: "**prepare_atmosphere_uniforms**<br/>把提取的大气几何转换为 GPU Uniform 组<br/>件。" }
+  class n33 node_system
+  n34@{ shape: rounded, label: "**prepare_egui_transforms_system**<br/>来自Egui / Inspector ↗：上传 Egui 屏<br/>幕变换缓冲。" }
+  class n34 node_system
+  class n34 external_node
+  n35@{ shape: rounded, label: "**prepare_egui_render_target_data_**<br/>**system**<br/>来自Egui / Inspector ↗：准备 Egui 顶<br/>点索引和裁剪绘制命令。" }
+  class n35 node_system
+  class n35 external_node
+  n36@{ shape: rounded, label: "**prepare_clustering_pipelines**<br/>为视图取得 GPU 聚簇五阶段的管线标识。" }
+  class n36 node_system
+  n37@{ shape: rounded, label: "**prepare_cluster_dummy_textures**<br/>为聚簇光栅通道准备视口占位纹理。" }
+  class n37 node_system
+  n38@{ shape: lin-rect, label: "**RenderSystems::Render**<br/>处理待建管线并执行实际渲染。" }
+  class n38 node_system_set
+  n39@{ shape: lin-rect, label: "**RenderSystems::PhaseSort**<br/>排序透明渲染阶段及分箱绘制键。" }
+  class n39 node_system_set
+  n1 e0@-->|"RenderApp / Render"| n0
+  class e0 edge_registration
+  n0 e1@--> n2
+  class e1 edge_set_membership
+  n0 e2@--> n3
+  class e2 edge_set_membership
+  n0 e3@--> n4
+  class e3 edge_set_membership
+  n0 e4@--> n5
+  class e4 edge_set_membership
+  n0 e5@--> n6
+  class e5 edge_set_membership
+  n0 e6@--> n7
+  class e6 edge_set_membership
+  n0 e7@--> n8
+  class e7 edge_set_membership
+  n0 e8@--> n9
+  class e8 edge_set_membership
+  n0 e9@--> n10
+  class e9 edge_set_membership
+  n0 e10@--> n11
+  class e10 edge_set_membership
+  n0 e11@--> n12
+  class e11 edge_set_membership
+  n0 e12@--> n13
+  class e12 edge_set_membership
+  n0 e13@--> n14
+  class e13 edge_set_membership
+  n0 e14@--> n15
+  class e14 edge_set_membership
+  n0 e15@--> n16
+  class e15 edge_set_membership
+  n0 e16@--> n17
+  class e16 edge_set_membership
+  n0 e17@--> n18
+  class e17 edge_set_membership
+  n0 e18@--> n19
+  class e18 edge_set_membership
+  n0 e19@--> n20
+  class e19 edge_set_membership
+  n0 e20@--> n21
+  class e20 edge_set_membership
+  n0 e21@--> n22
+  class e21 edge_set_membership
+  n0 e22@--> n23
+  class e22 edge_set_membership
+  n0 e23@--> n24
+  class e23 edge_set_membership
+  n0 e24@--> n25
+  class e24 edge_set_membership
+  n0 e25@--> n26
+  class e25 edge_set_membership
+  n0 e26@--> n27
+  class e26 edge_set_membership
+  n0 e27@--> n28
+  class e27 edge_set_membership
+  n0 e28@--> n29
+  class e28 edge_set_membership
+  n0 e29@--> n30
+  class e29 edge_set_membership
+  n0 e30@--> n31
+  class e30 edge_set_membership
+  n0 e31@--> n32
+  class e31 edge_set_membership
+  n0 e32@--> n33
+  class e32 edge_set_membership
+  n0 e33@--> n34
+  class e33 edge_set_membership
+  n0 e34@--> n35
+  class e34 edge_set_membership
+  n0 e35@--> n36
+  class e35 edge_set_membership
+  n0 e36@--> n37
+  class e36 edge_set_membership
+  n0 e37@--> n38
+  class e37 edge_order
+  n39 e38@--> n0
+  class e38 edge_order
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e17@{ curve: basis }
+  e18@{ curve: basis }
+  e20@{ curve: basis }
+  e21@{ curve: basis }
+  e22@{ curve: basis }
+  e23@{ curve: basis }
+  e24@{ curve: basis }
+  e25@{ curve: basis }
+  e26@{ curve: basis }
+  e27@{ curve: basis }
+  e28@{ curve: basis }
+  e29@{ curve: basis }
+  e30@{ curve: basis }
+  e31@{ curve: basis }
+  e32@{ curve: basis }
+  e33@{ curve: basis }
+  e34@{ curve: basis }
+  e35@{ curve: basis }
+  e36@{ curve: basis }
+  e37@{ curve: basis }
+  e38@{ curve: basis }

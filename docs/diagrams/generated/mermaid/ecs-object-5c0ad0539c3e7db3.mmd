@@ -1,0 +1,98 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: RenderSystems::PrepareResourcesWritePhaseBuffers · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_engine_flow fill:#F1F5F4,stroke:#557C78,stroke-width:1.6px,color:#1F3340
+  classDef edge_order stroke:#334155,stroke-width:2px
+  classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: lin-rect, label: "**RenderSystems::**<br/>**PrepareResourcesWritePhaseBuffers**<br/>把各渲染阶段的批次缓冲写入 GPU。" }
+  class n0 node_system_set
+  n1@{ shape: stadium, label: "**RenderApp · Render**<br/>保存本应用调度的注册上下文与成员。" }
+  class n1 node_engine_flow
+  n2@{ shape: lin-rect, label: "**RenderSystems::Prepare**<br/>按已排序绘制项准备 GPU 资源及绑定。" }
+  class n2 node_system_set
+  n3@{ shape: rounded, label: "**write_binned_instance_buffers#lt;bevy_**<br/>**core_pipeline::core_3d::Opaque3d,**<br/>**bevy_pbr::render::mesh::**<br/>**MeshPipeline#gt;**<br/>上传多重绘制分桶并生成 GPU 解包任务。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**write_binned_instance_buffers#lt;bevy_**<br/>**core_pipeline::core_3d::**<br/>**AlphaMask3d, bevy_pbr::render::**<br/>**mesh::MeshPipeline#gt;**<br/>上传多重绘制分桶并生成 GPU 解包任务。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**write_binned_instance_buffers#lt;bevy_**<br/>**pbr::render::light::Shadow, bevy_**<br/>**pbr::render::mesh::MeshPipeline#gt;**<br/>上传多重绘制分桶并生成 GPU 解包任务。" }
+  class n5 node_system
+  n6@{ shape: rounded, label: "**write_binned_instance_buffers#lt;bevy_**<br/>**core_pipeline::deferred::**<br/>**Opaque3dDeferred, bevy_pbr::render::**<br/>**mesh::MeshPipeline#gt;**<br/>上传多重绘制分桶并生成 GPU 解包任务。" }
+  class n6 node_system
+  n7@{ shape: rounded, label: "**write_binned_instance_buffers#lt;bevy_**<br/>**core_pipeline::deferred::**<br/>**AlphaMask3dDeferred, bevy_pbr::**<br/>**render::mesh::MeshPipeline#gt;**<br/>上传多重绘制分桶并生成 GPU 解包任务。" }
+  class n7 node_system
+  n8@{ shape: rounded, label: "**write_binned_instance_buffers#lt;bevy_**<br/>**core_pipeline::prepass::**<br/>**Opaque3dPrepass, bevy_pbr::render::**<br/>**mesh::MeshPipeline#gt;**<br/>上传多重绘制分桶并生成 GPU 解包任务。" }
+  class n8 node_system
+  n9@{ shape: rounded, label: "**write_binned_instance_buffers#lt;bevy_**<br/>**core_pipeline::prepass::**<br/>**AlphaMask3dPrepass, bevy_pbr::**<br/>**render::mesh::MeshPipeline#gt;**<br/>上传多重绘制分桶并生成 GPU 解包任务。" }
+  class n9 node_system
+  n10@{ shape: lin-rect, label: "**RenderSystems::**<br/>**PrepareResourcesCollectPhaseBuffers**<br/>汇总阶段合批生成的实例和绘制缓冲。" }
+  class n10 node_system_set
+  n11@{ shape: lin-rect, label: "**RenderSystems::**<br/>**PrepareResourcesBatchPhases**<br/>为各渲染阶段生成绘制批次。" }
+  class n11 node_system_set
+  n1 e0@-->|"RenderApp / Render"| n0
+  class e0 edge_registration
+  n2 e1@--> n0
+  class e1 edge_set_membership
+  n0 e2@--> n3
+  class e2 edge_set_membership
+  n0 e3@--> n4
+  class e3 edge_set_membership
+  n0 e4@--> n5
+  class e4 edge_set_membership
+  n0 e5@--> n6
+  class e5 edge_set_membership
+  n0 e6@--> n7
+  class e6 edge_set_membership
+  n0 e7@--> n8
+  class e7 edge_set_membership
+  n0 e8@--> n9
+  class e8 edge_set_membership
+  n0 e9@--> n10
+  class e9 edge_order
+  n11 e10@--> n0
+  class e10 edge_order
+  e0@{ curve: basis }
+  e1@{ curve: bumpX }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }

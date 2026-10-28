@@ -1,0 +1,57 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: init_gpu_resource<bevy_render::render_resource::pipeline_specializer::SpecializedRenderPipelines<bevy_pbr::atmosphere::resources::RenderSkyBindGroupLayouts>> · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef node_system_param fill:#EFF5F6,stroke:#3B8790,stroke-width:1.6px,color:#1F3340
+  classDef node_engine_flow fill:#F1F5F4,stroke:#557C78,stroke-width:1.6px,color:#1F3340
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_render::**<br/>**render_resource::pipeline_**<br/>**specializer::**<br/>**SpecializedRenderPipelines#lt;bevy_**<br/>**pbr::atmosphere::resources::**<br/>**RenderSkyBindGroupLayouts#gt;#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n0 node_system
+  n1@{ shape: stadium, label: "**RenderApp · RenderStartup**<br/>保存本应用调度的注册上下文与成员。" }
+  class n1 node_engine_flow
+  n2@{ shape: notch-rect, label: "**World**<br/>保存实体、组件、资源及关联元数据" }
+  class n2 node_system_param
+  n3@{ shape: cyl, label: "**SpecializedRenderPipelines#lt;RenderSky**<br/>**BindGroupLayouts#gt;**<br/>按配置键缓存渲染管线变体。" }
+  class n3 node_resource
+  n1 e0@-->|"RenderApp / RenderStartup"| n0
+  class e0 edge_registration
+  n0 e1@--> n2
+  class e1 edge_write
+  n0 e2@-->|"正文添加"| n3
+  class e2 edge_write
+  e1@{ curve: basis }
+  e2@{ curve: basis }

@@ -1,0 +1,610 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: main · PhysicsSchedule · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_sync fill:#F6F3F0,stroke:#8B6A42,stroke-width:1.6px,color:#1F3340
+  classDef node_engine_flow fill:#F1F5F4,stroke:#557C78,stroke-width:1.6px,color:#1F3340
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: stadium, label: "**main · PhysicsSchedule**<br/>保存本应用调度的注册上下文与成员。" }
+  class n0 node_engine_flow
+  n1@{ shape: rounded, label: "**update_child_collider_position**<br/>来自Avian ↗：由所属刚体位姿更新附属碰<br/>撞体的世界位姿。" }
+  class n1 node_system
+  class n1 external_node
+  n2@{ shape: rounded, label: "**apply_contact_status_changes**<br/>来自Avian ↗：把接触增删同步到约束图和<br/>物理岛。" }
+  class n2 node_system
+  class n2 external_node
+  n3@{ shape: rounded, label: "**on_change_joint_entities#lt;avian3d::**<br/>**dynamics::joints::fixed::FixedJoint#gt;**<br/>来自Avian ↗：在关节换端后重接刚体连接<br/>图。" }
+  class n3 node_system
+  class n3 external_node
+  n4@{ shape: rounded, label: "**on_change_joint_entities#lt;avian3d::**<br/>**dynamics::joints::revolute::**<br/>**RevoluteJoint#gt;**<br/>来自Avian ↗：在关节换端后重接刚体连接<br/>图。" }
+  class n4 node_system
+  class n4 external_node
+  n5@{ shape: rounded, label: "**on_change_joint_entities#lt;avian3d::**<br/>**dynamics::joints::prismatic::**<br/>**PrismaticJoint#gt;**<br/>来自Avian ↗：在关节换端后重接刚体连接<br/>图。" }
+  class n5 node_system
+  class n5 external_node
+  n6@{ shape: rounded, label: "**on_change_joint_entities#lt;avian3d::**<br/>**dynamics::joints::distance::**<br/>**DistanceJoint#gt;**<br/>来自Avian ↗：在关节换端后重接刚体连接<br/>图。" }
+  class n6 node_system
+  class n6 external_node
+  n7@{ shape: rounded, label: "**on_change_joint_entities#lt;avian3d::**<br/>**dynamics::joints::spherical::**<br/>**SphericalJoint#gt;**<br/>来自Avian ↗：在关节换端后重接刚体连接<br/>图。" }
+  class n7 node_system
+  class n7 external_node
+  n8@{ shape: rounded, label: "**update_previous_velocity**<br/>来自Avian ↗：更新平滑显示所需的历史速<br/>度快照。" }
+  class n8 node_system
+  class n8 external_node
+  n9@{ shape: rounded, label: "**update_moved_collider_**<br/>**aabbs#lt;avian3d::collision::collider::**<br/>**parry::Collider#gt;**<br/>来自Avian ↗：重算物理步后被手动改变的<br/>碰撞边界。" }
+  class n9 node_system
+  class n9 external_node
+  n10@{ shape: rounded, label: "**collect_collision_pairs#lt;()#gt;**<br/>来自Avian ↗：为移动碰撞代理收集广相候<br/>选接触。" }
+  class n10 node_system
+  class n10 external_node
+  n11@{ shape: rounded, label: "**optimize_trees**<br/>来自Avian ↗：依据碰撞代理移动比例和优<br/>化设置维护碰撞体 BVH；可在主线程原位优<br/>化，或提交与物理求解并行的后台任务，并记<br/>录树优化耗时。" }
+  class n11 node_system
+  class n11 external_node
+  n12@{ shape: rounded, label: "**update_narrow_phase#lt;avian3d::**<br/>**collision::collider::parry::**<br/>**Collider, ()#gt;**<br/>来自Avian ↗：更新窄相接触并输出碰撞变<br/>化消息。" }
+  class n12 node_system
+  class n12 external_node
+  n13@{ shape: rounded, label: "**clear_accumulated_local_acceleration**<br/>来自Avian ↗：清空本轮已变化的局部加速<br/>度缓存。" }
+  class n13 node_system
+  class n13 external_node
+  n14@{ shape: rounded, label: "**clear_velocity_increments**<br/>来自Avian ↗：在子步循环后清零速度积分<br/>增量。" }
+  class n14 node_system
+  class n14 external_node
+  n15@{ shape: rounded, label: "**finish_optimize_trees**<br/>来自Avian ↗：合并完成的碰撞体树优化结<br/>果。" }
+  class n15 node_system
+  class n15 external_node
+  n16@{ shape: rounded, label: "**writeback_solver_bodies**<br/>来自Avian ↗：将求解后的位姿和速度回写<br/>ECS。" }
+  class n16 node_system
+  class n16 external_node
+  n17@{ shape: rounded, label: "**split_island**<br/>来自Avian ↗：物理岛存在待拆分候选时，<br/>根据刚体碰撞体、接触图和关节图重新划分该<br/>岛，并更新刚体所属岛；拆分用于随后正确决<br/>定休眠。" }
+  class n17 node_system
+  class n17 external_node
+  n18@{ shape: rounded, label: "**prepare_solver_bodies**<br/>来自Avian ↗：把 ECS 刚体状态准备成子<br/>步求解数据。" }
+  class n18 node_system
+  class n18 external_node
+  n19@{ shape: rounded, label: "**prepare_contact_constraints**<br/>来自Avian ↗：从有效接触流形生成本轮求<br/>解约束。" }
+  class n19 node_system
+  class n19 external_node
+  n20@{ shape: rounded, label: "**apply_constant_forces**<br/>来自Avian ↗：按总质量把恒力换成待积分<br/>线加速度。" }
+  class n20 node_system
+  class n20 external_node
+  n21@{ shape: rounded, label: "**apply_constant_torques**<br/>来自Avian ↗：按求解器有效惯量换算世界<br/>恒定扭矩。" }
+  class n21 node_system
+  class n21 external_node
+  n22@{ shape: rounded, label: "**apply_constant_linear_acceleration**<br/>来自Avian ↗：把恒定世界线加速度加入待<br/>积分增量。" }
+  class n22 node_system
+  class n22 external_node
+  n23@{ shape: rounded, label: "**apply_constant_angular_acceleration**<br/>来自Avian ↗：把恒定世界角加速度加入待<br/>积分增量。" }
+  class n23 node_system
+  class n23 external_node
+  n24@{ shape: rounded, label: "**apply_constant_local_forces**<br/>来自Avian ↗：按总质量把局部恒力转成局<br/>部线加速度。" }
+  class n24 node_system
+  class n24 external_node
+  n25@{ shape: rounded, label: "**apply_constant_local_torques**<br/>来自Avian ↗：按局部惯量把恒定局部扭矩<br/>转成角加速度。" }
+  class n25 node_system
+  class n25 external_node
+  n26@{ shape: rounded, label: "**apply_constant_local_linear_**<br/>**acceleration**<br/>来自Avian ↗：累加刚体局部坐标中的恒定<br/>线加速度。" }
+  class n26 node_system
+  class n26 external_node
+  n27@{ shape: rounded, label: "**apply_constant_local_angular_**<br/>**acceleration**<br/>来自Avian ↗：累加刚体局部坐标中的恒定<br/>角加速度。" }
+  class n27 node_system
+  class n27 external_node
+  n28@{ shape: rounded, label: "**pre_process_velocity_increments**<br/>来自Avian ↗：把加速度、重力和轴锁转成<br/>子步速度增量。" }
+  class n28 node_system
+  class n28 external_node
+  n29@{ shape: rounded, label: "**run_substep_schedule**<br/>来自Avian ↗：按 SubstepCount 平分本<br/>物理步时间，切换通用 Time 为子步时钟并<br/>重复运行 SubstepSchedule，结束后恢复<br/>Time#lt;Physics#gt; 对应的通用时钟。" }
+  class n29 node_system
+  class n29 external_node
+  n30@{ shape: rounded, label: "**solve_restitution**<br/>来自Avian ↗：遍历接触约束，按恢复系<br/>数、速度阈值和配置迭代次数对求解器刚体施<br/>加恢复冲量；溢出约束串行处理，其余按约束<br/>颜色并行处理。" }
+  class n30 node_system
+  class n30 external_node
+  n31@{ shape: rounded, label: "**solve_continuous**<br/>来自Avian ↗：对单步位移相对厚度过大的<br/>动态刚体执行连续碰撞扫掠；发现碰撞时缩短<br/>累计运动，使刚体停在首次撞击位置，并保留<br/>后续接触处理所需信息。" }
+  class n31 node_system
+  class n31 external_node
+  n32@{ shape: rounded, label: "**store_contact_impulses**<br/>来自Avian ↗：保存已求得的接触冲量供下<br/>一轮热启动。" }
+  class n32 node_system
+  class n32 external_node
+  n33@{ shape: rounded, label: "**apply_contact_status_changes**<br/>来自Avian ↗：把接触增删同步到约束图和<br/>物理岛。" }
+  class n33 node_system
+  class n33 external_node
+  n34@{ shape: rounded, label: "**apply_joint_graph_changes**<br/>来自Avian ↗：把关节连接变化同步到模拟<br/>岛。" }
+  class n34 node_system
+  class n34 external_node
+  n35@{ shape: rounded, label: "**trigger_collision_events**<br/>来自Avian ↗：把碰撞开始和结束消息触发<br/>为实体事件。" }
+  class n35 node_system
+  class n35 external_node
+  n36@{ shape: rounded, label: "**update_local_frames**<br/>来自Avian ↗：将固定关节参考框架换算到<br/>两端局部空间。" }
+  class n36 node_system
+  class n36 external_node
+  n37@{ shape: rounded, label: "**update_local_anchors**<br/>来自Avian ↗：将距离关节的锚点换算到刚<br/>体局部空间。" }
+  class n37 node_system
+  class n37 external_node
+  n38@{ shape: rounded, label: "**update_local_frames**<br/>来自Avian ↗：将滑动关节参考框架换算到<br/>局部空间。" }
+  class n38 node_system
+  class n38 external_node
+  n39@{ shape: rounded, label: "**update_local_frames**<br/>来自Avian ↗：将旋转关节参考框架换算到<br/>局部空间。" }
+  class n39 node_system
+  class n39 external_node
+  n40@{ shape: rounded, label: "**update_local_frames**<br/>来自Avian ↗：将球铰参考框架换算到局部<br/>空间。" }
+  class n40 node_system
+  class n40 external_node
+  n41@{ shape: rounded, label: "**reset**<br/>来自Avian ↗：清零当前物理诊断类型的计<br/>数及耗时采样，准备记录下一次物理步。" }
+  class n41 node_system
+  class n41 external_node
+  n42@{ shape: rounded, label: "**reset**<br/>来自Avian ↗：清零当前物理诊断类型的计<br/>数及耗时采样，准备记录下一次物理步。" }
+  class n42 node_system
+  class n42 external_node
+  n43@{ shape: rounded, label: "**reset**<br/>来自Avian ↗：清零当前物理诊断类型的计<br/>数及耗时采样，准备记录下一次物理步。" }
+  class n43 node_system
+  class n43 external_node
+  n44@{ shape: rounded, label: "**reset**<br/>来自Avian ↗：清零当前物理诊断类型的计<br/>数及耗时采样，准备记录下一次物理步。" }
+  class n44 node_system
+  class n44 external_node
+  n45@{ shape: rounded, label: "**update_last_physics_tick**<br/>来自Avian ↗：记录本次物理阶段结束的<br/>ECS 变化刻度。" }
+  class n45 node_system
+  class n45 external_node
+  n46@{ shape: rounded, label: "**clear_moved_proxies**<br/>来自Avian ↗：清空本轮广相使用的移动代<br/>理目录。" }
+  class n46 node_system
+  class n46 external_node
+  n47@{ shape: rounded, label: "**update_solver_body_aabbs#lt;avian3d::**<br/>**collision::collider::parry::**<br/>**Collider#gt;**<br/>来自Avian ↗：按物理结果更新活跃刚体的<br/>碰撞边界。" }
+  class n47 node_system
+  class n47 external_node
+  n48@{ shape: rounded, label: "**update_body_size_metrics#lt;avian3d::**<br/>**collision::collider::parry::**<br/>**Collider#gt;**<br/>来自Avian ↗：重算刚体的 CCD 厚度和最<br/>大扫掠半径。" }
+  class n48 node_system
+  class n48 external_node
+  n49@{ shape: rounded, label: "**update_contact_softness**<br/>来自Avian ↗：按时间步和配置更新接触柔<br/>度系数。" }
+  class n49 node_system
+  class n49 external_node
+  n50@{ shape: rounded, label: "**ApplyDeferred**<br/>在调度建立的同步点应用前序系统暂存的<br/>Commands 等延迟操作，使后续系统可以观察<br/>到结构变化；此卡片是 ApplyDeferred 的<br/>System 实现。" }
+  class n50 node_sync
+  n51@{ shape: rounded, label: "**ApplyDeferred**<br/>在调度建立的同步点应用前序系统暂存的<br/>Commands 等延迟操作，使后续系统可以观察<br/>到结构变化；此卡片是 ApplyDeferred 的<br/>System 实现。" }
+  class n51 node_sync
+  n52@{ shape: rounded, label: "**ApplyDeferred**<br/>在调度建立的同步点应用前序系统暂存的<br/>Commands 等延迟操作，使后续系统可以观察<br/>到结构变化；此卡片是 ApplyDeferred 的<br/>System 实现。" }
+  class n52 node_sync
+  n53@{ shape: rounded, label: "**ApplyDeferred**<br/>在调度建立的同步点应用前序系统暂存的<br/>Commands 等延迟操作，使后续系统可以观察<br/>到结构变化；此卡片是 ApplyDeferred 的<br/>System 实现。" }
+  class n53 node_sync
+  n54@{ shape: rounded, label: "**ApplyDeferred**<br/>在调度建立的同步点应用前序系统暂存的<br/>Commands 等延迟操作，使后续系统可以观察<br/>到结构变化；此卡片是 ApplyDeferred 的<br/>System 实现。" }
+  class n54 node_sync
+  n55@{ shape: rounded, label: "**ApplyDeferred**<br/>在调度建立的同步点应用前序系统暂存的<br/>Commands 等延迟操作，使后续系统可以观察<br/>到结构变化；此卡片是 ApplyDeferred 的<br/>System 实现。" }
+  class n55 node_sync
+  n56@{ shape: rounded, label: "**ApplyDeferred**<br/>在调度建立的同步点应用前序系统暂存的<br/>Commands 等延迟操作，使后续系统可以观察<br/>到结构变化；此卡片是 ApplyDeferred 的<br/>System 实现。" }
+  class n56 node_sync
+  n57@{ shape: rounded, label: "**update_sleeping_states**<br/>来自Avian ↗：按刚体静止时间判断物理岛<br/>的休眠资格。" }
+  class n57 node_system
+  class n57 external_node
+  n58@{ shape: rounded, label: "**wake_islands_with_sleeping_disabled**<br/>来自Avian ↗：让禁止休眠或已禁用的刚体<br/>所属岛保持清醒。" }
+  class n58 node_system
+  class n58 external_node
+  n59@{ shape: rounded, label: "**wake_on_changed**<br/>来自Avian ↗：因外部位姿、速度或受力变<br/>化标记物理岛唤醒。" }
+  class n59 node_system
+  class n59 external_node
+  n60@{ shape: rounded, label: "**wake_all_islands**<br/>来自Avian ↗：批量请求唤醒当前全部休眠<br/>物理岛。" }
+  class n60 node_system
+  class n60 external_node
+  n61@{ shape: rounded, label: "**sleep_islands**<br/>来自Avian ↗：依据活跃岛位图和待拆分状<br/>态收集需要休眠或唤醒的物理岛，通过<br/>World 命令应用状态变化，并同步岛内刚体<br/>的休眠状态。" }
+  class n61 node_system
+  class n61 external_node
+  n62@{ shape: lin-rect, label: "**PhysicsStepSystems::First**<br/>来自Avian ↗：在物理调度开头处理状态与<br/>关系变化。" }
+  class n62 node_system_set
+  class n62 external_node
+  n63@{ shape: lin-rect, label: "**PhysicsStepSystems::BroadPhase**<br/>来自Avian ↗：用包围范围建立潜在接触集<br/>合。" }
+  class n63 node_system_set
+  class n63 external_node
+  n64@{ shape: lin-rect, label: "**ColliderTreeSystems::UpdateAabbs**<br/>来自Avian ↗：刷新移动碰撞体的包围盒。" }
+  class n64 node_system_set
+  class n64 external_node
+  n65@{ shape: lin-rect, label: "**BroadPhaseSystems::First**<br/>来自Avian ↗：提供广相开始前的扩展边<br/>界。" }
+  class n65 node_system_set
+  class n65 external_node
+  n66@{ shape: lin-rect, label: "**BroadPhaseSystems::CollectCollisions**<br/>来自Avian ↗：搜集包围盒重叠的潜在碰撞<br/>对。" }
+  class n66 node_system_set
+  class n66 external_node
+  n67@{ shape: lin-rect, label: "**BroadPhaseSystems::Last**<br/>来自Avian ↗：提供广相结束后的收尾边<br/>界。" }
+  class n67 node_system_set
+  class n67 external_node
+  n68@{ shape: lin-rect, label: "**ColliderTreeSystems::BeginOptimize**<br/>来自Avian ↗：启动碰撞体树的后台优化。" }
+  class n68 node_system_set
+  class n68 external_node
+  n69@{ shape: lin-rect, label: "**PhysicsStepSystems::NarrowPhase**<br/>来自Avian ↗：刷新接触几何与接触图状<br/>态。" }
+  class n69 node_system_set
+  class n69 external_node
+  n70@{ shape: lin-rect, label: "**NarrowPhaseSystems::First**<br/>来自Avian ↗：提供窄相开始前的扩展位<br/>置。" }
+  class n70 node_system_set
+  class n70 external_node
+  n71@{ shape: lin-rect, label: "**NarrowPhaseSystems::Update**<br/>来自Avian ↗：更新精确接触并处理接触状<br/>态变化。" }
+  class n71 node_system_set
+  class n71 external_node
+  n72@{ shape: lin-rect, label: "**NarrowPhaseSystems::Last**<br/>来自Avian ↗：提供窄相完成后的扩展位<br/>置。" }
+  class n72 node_system_set
+  class n72 external_node
+  n73@{ shape: lin-rect, label: "**PhysicsStepSystems::Solver**<br/>来自Avian ↗：运行约束求解器及子步循<br/>环。" }
+  class n73 node_system_set
+  class n73 external_node
+  n74@{ shape: lin-rect, label: "**SolverSystems::PostSubstep**<br/>来自Avian ↗：在子步循环后清理积分累<br/>计。" }
+  class n74 node_system_set
+  class n74 external_node
+  n75@{ shape: lin-rect, label: "**ForceSystems::Clear**<br/>来自Avian ↗：清空本物理步的局部作用累<br/>计。" }
+  class n75 node_system_set
+  class n75 external_node
+  n76@{ shape: lin-rect, label: "**IntegrationSystems::**<br/>**ClearVelocityIncrements**<br/>来自Avian ↗：在子步循环后清除速度增<br/>量。" }
+  class n76 node_system_set
+  class n76 external_node
+  n77@{ shape: lin-rect, label: "**SolverSystems::Finalize**<br/>来自Avian ↗：把求解器内部状态写回刚<br/>体。" }
+  class n77 node_system_set
+  class n77 external_node
+  n78@{ shape: lin-rect, label: "**ColliderTreeSystems::EndOptimize**<br/>来自Avian ↗：接收并合并碰撞体树优化结<br/>果。" }
+  class n78 node_system_set
+  class n78 external_node
+  n79@{ shape: lin-rect, label: "**SolverSystems::PrepareSolverBodies**<br/>来自Avian ↗：建立子步循环使用的求解器<br/>刚体。" }
+  class n79 node_system_set
+  class n79 external_node
+  n80@{ shape: lin-rect, label: "**SolverSystems::PrepareJoints**<br/>来自Avian ↗：为子步求解预留关节约束准<br/>备阶段。" }
+  class n80 node_system_set
+  class n80 external_node
+  n81@{ shape: lin-rect, label: "**SolverSystems::**<br/>**PrepareContactConstraints**<br/>来自Avian ↗：为子步求解准备接触约束。" }
+  class n81 node_system_set
+  class n81 external_node
+  n82@{ shape: lin-rect, label: "**SolverSystems::PreSubstep**<br/>来自Avian ↗：在子步循环前汇总速度积分<br/>输入。" }
+  class n82 node_system_set
+  class n82 external_node
+  n83@{ shape: lin-rect, label: "**IntegrationSystems::**<br/>**UpdateVelocityIncrements**<br/>来自Avian ↗：为子步积分准备外力和重力<br/>增量。" }
+  class n83 node_system_set
+  class n83 external_node
+  n84@{ shape: lin-rect, label: "**ForceSystems::ApplyConstantForces**<br/>来自Avian ↗：把恒定作用累加为世界或局<br/>部速度增量。" }
+  class n84 node_system_set
+  class n84 external_node
+  n85@{ shape: lin-rect, label: "**SolverSystems::Substep**<br/>来自Avian ↗：重复运行物理子步调度。" }
+  class n85 node_system_set
+  class n85 external_node
+  n86@{ shape: lin-rect, label: "**SolverSystems::Restitution**<br/>来自Avian ↗：在重叠求解后施加恢复冲<br/>量。" }
+  class n86 node_system_set
+  class n86 external_node
+  n87@{ shape: lin-rect, label: "**SolverSystems::ContinuousCollision**<br/>来自Avian ↗：处理快速动态刚体的连续碰<br/>撞。" }
+  class n87 node_system_set
+  class n87 external_node
+  n88@{ shape: lin-rect, label: "**SolverSystems::StoreContactImpulses**<br/>来自Avian ↗：保存接触冲量供下一次热启<br/>动。" }
+  class n88 node_system_set
+  class n88 external_node
+  n89@{ shape: lin-rect, label: "**PhysicsStepSystems::Sleeping**<br/>来自Avian ↗：决定物理岛的休眠与唤醒。" }
+  class n89 node_system_set
+  class n89 external_node
+  n90@{ shape: lin-rect, label: "**PhysicsStepSystems::Finalize**<br/>来自Avian ↗：在核心物理步后派发事件并<br/>收尾。" }
+  class n90 node_system_set
+  class n90 external_node
+  n91@{ shape: lin-rect, label: "**CollisionEventSystems**<br/>来自Avian ↗：在求解完成后触发碰撞开始<br/>与结束事件。" }
+  class n91 node_system_set
+  class n91 external_node
+  n92@{ shape: lin-rect, label: "**PhysicsStepSystems::Last**<br/>来自Avian ↗：提供物理调度最终的扩展边<br/>界。" }
+  class n92 node_system_set
+  class n92 external_node
+  n93@{ shape: lin-rect, label: "**IntegrationSystems::Velocity**<br/>来自Avian ↗：把速度增量应用到刚体速<br/>度。" }
+  class n93 node_system_set
+  class n93 external_node
+  n94@{ shape: lin-rect, label: "**AnonymousSet(0)**<br/>保存本组系统共同的运行条件。" }
+  class n94 node_system_set
+  n95@{ shape: lin-rect, label: "**JointSystems::PrepareLocalFrames**<br/>来自Avian ↗：把关节锚点和坐标架转换到<br/>局部空间。" }
+  class n95 node_system_set
+  class n95 external_node
+  n96@{ shape: lin-rect, label: "**PhysicsDiagnosticsSystems::Reset**<br/>来自Avian ↗：开始新物理步前重置诊断采<br/>样。" }
+  class n96 node_system_set
+  class n96 external_node
+  n0 e0@-->|"main / PhysicsSchedule"| n1
+  class e0 edge_registration
+  n0 e1@-->|"main / PhysicsSchedule"| n2
+  class e1 edge_registration
+  n0 e2@-->|"main / PhysicsSchedule"| n3
+  class e2 edge_registration
+  n0 e3@-->|"main / PhysicsSchedule"| n4
+  class e3 edge_registration
+  n0 e4@-->|"main / PhysicsSchedule"| n5
+  class e4 edge_registration
+  n0 e5@-->|"main / PhysicsSchedule"| n6
+  class e5 edge_registration
+  n0 e6@-->|"main / PhysicsSchedule"| n7
+  class e6 edge_registration
+  n0 e7@-->|"main / PhysicsSchedule"| n8
+  class e7 edge_registration
+  n0 e8@-->|"main / PhysicsSchedule"| n9
+  class e8 edge_registration
+  n0 e9@-->|"main / PhysicsSchedule"| n10
+  class e9 edge_registration
+  n0 e10@-->|"main / PhysicsSchedule"| n11
+  class e10 edge_registration
+  n0 e11@-->|"main / PhysicsSchedule"| n12
+  class e11 edge_registration
+  n0 e12@-->|"main / PhysicsSchedule"| n13
+  class e12 edge_registration
+  n0 e13@-->|"main / PhysicsSchedule"| n14
+  class e13 edge_registration
+  n0 e14@-->|"main / PhysicsSchedule"| n15
+  class e14 edge_registration
+  n0 e15@-->|"main / PhysicsSchedule"| n16
+  class e15 edge_registration
+  n0 e16@-->|"main / PhysicsSchedule"| n17
+  class e16 edge_registration
+  n0 e17@-->|"main / PhysicsSchedule"| n18
+  class e17 edge_registration
+  n0 e18@-->|"main / PhysicsSchedule"| n19
+  class e18 edge_registration
+  n0 e19@-->|"main / PhysicsSchedule"| n20
+  class e19 edge_registration
+  n0 e20@-->|"main / PhysicsSchedule"| n21
+  class e20 edge_registration
+  n0 e21@-->|"main / PhysicsSchedule"| n22
+  class e21 edge_registration
+  n0 e22@-->|"main / PhysicsSchedule"| n23
+  class e22 edge_registration
+  n0 e23@-->|"main / PhysicsSchedule"| n24
+  class e23 edge_registration
+  n0 e24@-->|"main / PhysicsSchedule"| n25
+  class e24 edge_registration
+  n0 e25@-->|"main / PhysicsSchedule"| n26
+  class e25 edge_registration
+  n0 e26@-->|"main / PhysicsSchedule"| n27
+  class e26 edge_registration
+  n0 e27@-->|"main / PhysicsSchedule"| n28
+  class e27 edge_registration
+  n0 e28@-->|"main / PhysicsSchedule"| n29
+  class e28 edge_registration
+  n0 e29@-->|"main / PhysicsSchedule"| n30
+  class e29 edge_registration
+  n0 e30@-->|"main / PhysicsSchedule"| n31
+  class e30 edge_registration
+  n0 e31@-->|"main / PhysicsSchedule"| n32
+  class e31 edge_registration
+  n0 e32@-->|"main / PhysicsSchedule"| n33
+  class e32 edge_registration
+  n0 e33@-->|"main / PhysicsSchedule"| n34
+  class e33 edge_registration
+  n0 e34@-->|"main / PhysicsSchedule"| n35
+  class e34 edge_registration
+  n0 e35@-->|"main / PhysicsSchedule"| n36
+  class e35 edge_registration
+  n0 e36@-->|"main / PhysicsSchedule"| n37
+  class e36 edge_registration
+  n0 e37@-->|"main / PhysicsSchedule"| n38
+  class e37 edge_registration
+  n0 e38@-->|"main / PhysicsSchedule"| n39
+  class e38 edge_registration
+  n0 e39@-->|"main / PhysicsSchedule"| n40
+  class e39 edge_registration
+  n0 e40@-->|"main / PhysicsSchedule"| n41
+  class e40 edge_registration
+  n0 e41@-->|"main / PhysicsSchedule"| n42
+  class e41 edge_registration
+  n0 e42@-->|"main / PhysicsSchedule"| n43
+  class e42 edge_registration
+  n0 e43@-->|"main / PhysicsSchedule"| n44
+  class e43 edge_registration
+  n0 e44@-->|"main / PhysicsSchedule"| n45
+  class e44 edge_registration
+  n0 e45@-->|"main / PhysicsSchedule"| n46
+  class e45 edge_registration
+  n0 e46@-->|"main / PhysicsSchedule"| n47
+  class e46 edge_registration
+  n0 e47@-->|"main / PhysicsSchedule"| n48
+  class e47 edge_registration
+  n0 e48@-->|"main / PhysicsSchedule"| n49
+  class e48 edge_registration
+  n0 e49@-->|"main / PhysicsSchedule"| n50
+  class e49 edge_registration
+  n0 e50@-->|"main / PhysicsSchedule"| n51
+  class e50 edge_registration
+  n0 e51@-->|"main / PhysicsSchedule"| n52
+  class e51 edge_registration
+  n0 e52@-->|"main / PhysicsSchedule"| n53
+  class e52 edge_registration
+  n0 e53@-->|"main / PhysicsSchedule"| n54
+  class e53 edge_registration
+  n0 e54@-->|"main / PhysicsSchedule"| n55
+  class e54 edge_registration
+  n0 e55@-->|"main / PhysicsSchedule"| n56
+  class e55 edge_registration
+  n0 e56@-->|"main / PhysicsSchedule"| n57
+  class e56 edge_registration
+  n0 e57@-->|"main / PhysicsSchedule"| n58
+  class e57 edge_registration
+  n0 e58@-->|"main / PhysicsSchedule"| n59
+  class e58 edge_registration
+  n0 e59@-->|"main / PhysicsSchedule"| n60
+  class e59 edge_registration
+  n0 e60@-->|"main / PhysicsSchedule"| n61
+  class e60 edge_registration
+  n0 e61@-->|"main / PhysicsSchedule"| n62
+  class e61 edge_registration
+  n0 e62@-->|"main / PhysicsSchedule"| n63
+  class e62 edge_registration
+  n0 e63@-->|"main / PhysicsSchedule"| n64
+  class e63 edge_registration
+  n0 e64@-->|"main / PhysicsSchedule"| n65
+  class e64 edge_registration
+  n0 e65@-->|"main / PhysicsSchedule"| n66
+  class e65 edge_registration
+  n0 e66@-->|"main / PhysicsSchedule"| n67
+  class e66 edge_registration
+  n0 e67@-->|"main / PhysicsSchedule"| n68
+  class e67 edge_registration
+  n0 e68@-->|"main / PhysicsSchedule"| n69
+  class e68 edge_registration
+  n0 e69@-->|"main / PhysicsSchedule"| n70
+  class e69 edge_registration
+  n0 e70@-->|"main / PhysicsSchedule"| n71
+  class e70 edge_registration
+  n0 e71@-->|"main / PhysicsSchedule"| n72
+  class e71 edge_registration
+  n0 e72@-->|"main / PhysicsSchedule"| n73
+  class e72 edge_registration
+  n0 e73@-->|"main / PhysicsSchedule"| n74
+  class e73 edge_registration
+  n0 e74@-->|"main / PhysicsSchedule"| n75
+  class e74 edge_registration
+  n0 e75@-->|"main / PhysicsSchedule"| n76
+  class e75 edge_registration
+  n0 e76@-->|"main / PhysicsSchedule"| n77
+  class e76 edge_registration
+  n0 e77@-->|"main / PhysicsSchedule"| n78
+  class e77 edge_registration
+  n0 e78@-->|"main / PhysicsSchedule"| n79
+  class e78 edge_registration
+  n0 e79@-->|"main / PhysicsSchedule"| n80
+  class e79 edge_registration
+  n0 e80@-->|"main / PhysicsSchedule"| n81
+  class e80 edge_registration
+  n0 e81@-->|"main / PhysicsSchedule"| n82
+  class e81 edge_registration
+  n0 e82@-->|"main / PhysicsSchedule"| n83
+  class e82 edge_registration
+  n0 e83@-->|"main / PhysicsSchedule"| n84
+  class e83 edge_registration
+  n0 e84@-->|"main / PhysicsSchedule"| n85
+  class e84 edge_registration
+  n0 e85@-->|"main / PhysicsSchedule"| n86
+  class e85 edge_registration
+  n0 e86@-->|"main / PhysicsSchedule"| n87
+  class e86 edge_registration
+  n0 e87@-->|"main / PhysicsSchedule"| n88
+  class e87 edge_registration
+  n0 e88@-->|"main / PhysicsSchedule"| n89
+  class e88 edge_registration
+  n0 e89@-->|"main / PhysicsSchedule"| n90
+  class e89 edge_registration
+  n0 e90@-->|"main / PhysicsSchedule"| n91
+  class e90 edge_registration
+  n0 e91@-->|"main / PhysicsSchedule"| n92
+  class e91 edge_registration
+  n0 e92@-->|"main / PhysicsSchedule"| n93
+  class e92 edge_registration
+  n0 e93@-->|"main / PhysicsSchedule"| n94
+  class e93 edge_registration
+  n0 e94@-->|"main / PhysicsSchedule"| n95
+  class e94 edge_registration
+  n0 e95@-->|"main / PhysicsSchedule"| n96
+  class e95 edge_registration
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e17@{ curve: basis }
+  e18@{ curve: basis }
+  e19@{ curve: basis }
+  e20@{ curve: basis }
+  e21@{ curve: basis }
+  e22@{ curve: basis }
+  e23@{ curve: basis }
+  e24@{ curve: basis }
+  e25@{ curve: basis }
+  e26@{ curve: basis }
+  e27@{ curve: basis }
+  e28@{ curve: basis }
+  e29@{ curve: basis }
+  e30@{ curve: basis }
+  e31@{ curve: basis }
+  e32@{ curve: basis }
+  e33@{ curve: basis }
+  e34@{ curve: basis }
+  e35@{ curve: basis }
+  e36@{ curve: basis }
+  e37@{ curve: basis }
+  e38@{ curve: basis }
+  e39@{ curve: basis }
+  e40@{ curve: basis }
+  e41@{ curve: basis }
+  e42@{ curve: basis }
+  e43@{ curve: basis }
+  e44@{ curve: basis }
+  e45@{ curve: basis }
+  e46@{ curve: basis }
+  e47@{ curve: basis }
+  e48@{ curve: basis }
+  e49@{ curve: basis }
+  e50@{ curve: basis }
+  e51@{ curve: basis }
+  e52@{ curve: basis }
+  e53@{ curve: basis }
+  e54@{ curve: basis }
+  e55@{ curve: basis }
+  e56@{ curve: basis }
+  e57@{ curve: basis }
+  e58@{ curve: basis }
+  e59@{ curve: basis }
+  e60@{ curve: basis }
+  e61@{ curve: basis }
+  e62@{ curve: basis }
+  e63@{ curve: basis }
+  e64@{ curve: basis }
+  e65@{ curve: basis }
+  e66@{ curve: basis }
+  e67@{ curve: basis }
+  e68@{ curve: basis }
+  e69@{ curve: basis }
+  e70@{ curve: basis }
+  e71@{ curve: basis }
+  e72@{ curve: basis }
+  e73@{ curve: basis }
+  e74@{ curve: basis }
+  e75@{ curve: basis }
+  e76@{ curve: basis }
+  e77@{ curve: basis }
+  e78@{ curve: basis }
+  e79@{ curve: basis }
+  e80@{ curve: basis }
+  e81@{ curve: basis }
+  e82@{ curve: basis }
+  e83@{ curve: basis }
+  e84@{ curve: basis }
+  e85@{ curve: basis }
+  e86@{ curve: basis }
+  e87@{ curve: basis }
+  e88@{ curve: basis }
+  e89@{ curve: basis }
+  e90@{ curve: basis }
+  e91@{ curve: basis }
+  e92@{ curve: basis }
+  e93@{ curve: basis }
+  e94@{ curve: basis }
+  e95@{ curve: basis }

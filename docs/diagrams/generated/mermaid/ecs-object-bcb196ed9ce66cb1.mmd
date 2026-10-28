@@ -1,0 +1,95 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#object-bcb196ed9ce66cb1-e0{marker-start:url(#object-bcb196ed9ce66cb1_flowchart-v2-pointStart)!important}\n#object-bcb196ed9ce66cb1_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}"
+  }
+}
+---
+flowchart LR
+  accTitle: RenderVisibleEntities · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**RenderVisibleEntities**<br/>按类别保存视图的可见实体及变化列表。" }
+  class n0 node_component
+  n1@{ shape: rounded, label: "**extract_cameras**<br/>把主世界活动相机的目标、视口、变换、可见<br/>实体和渲染设置提取到渲染实体，并维护视图<br/>所需格式；对停用或目标尺寸无效的相机移除<br/>失效提取状态。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**specialize_prepass_material_meshes**<br/>按深度、材质和运动特性生成预通道专用管<br/>线。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**collect_gpu_culled_meshes**<br/>按渲染层把 GPU 裁剪对象分配到各视图列<br/>表。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**specialize_material2d_meshes**<br/>为可见二维网格重建失效的材质专用化。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**specialize_material_meshes**<br/>为变化的可见网格生成并缓存材质专用管线。" }
+  class n5 node_system
+  n6@{ shape: rounded, label: "**queue_material2d_meshes**<br/>按透明模式更新二维网格渲染批次。" }
+  class n6 node_system
+  n7@{ shape: rounded, label: "**queue_prepass_material_meshes**<br/>把有效材质网格分入预通道或延迟几何阶段。" }
+  class n7 node_system
+  n8@{ shape: rounded, label: "**queue_material_meshes**<br/>按材质模式把可见网格加入相应绘制阶段。" }
+  class n8 node_system
+  n9@{ shape: rounded, label: "**queue_sprites**<br/>按相机可见性筛选已提取精灵，结合目标格<br/>式、MSAA、色调映射和合成空间选择精灵管<br/>线，并将绘制项加入对应透明二维阶段。" }
+  class n9 node_system
+  n10@{ shape: rounded, label: "**collect_visible_cpu_culled_entities**<br/>汇总相机与阴影子视图的 CPU 剔除可见实<br/>体。" }
+  class n10 node_system
+  n1 e0@---|"存在 / 变更过滤"| n0
+  class e0 edge_reference
+  n1 e1@-->|"延迟移除"| n0
+  class e1 edge_write
+  n0 e2@--> n2
+  class e2 edge_read
+  n3 e3@--> n0
+  class e3 edge_write
+  n0 e4@--> n4
+  class e4 edge_read
+  n0 e5@--> n5
+  class e5 edge_read
+  n0 e6@--> n6
+  class e6 edge_read
+  n0 e7@--> n7
+  class e7 edge_read
+  n0 e8@--> n8
+  class e8 edge_read
+  n0 e9@--> n9
+  class e9 edge_read
+  n10 e10@--> n0
+  class e10 edge_write
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: bumpX }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }

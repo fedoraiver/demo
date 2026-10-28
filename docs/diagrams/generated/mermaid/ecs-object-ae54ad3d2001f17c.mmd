@@ -1,0 +1,234 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: update_editable_text_layout · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef node_local fill:#F8F5F1,stroke:#AA8752,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_engine_flow fill:#F1F5F4,stroke:#557C78,stroke-width:1.6px,color:#1F3340
+  classDef edge_order stroke:#334155,stroke-width:2px
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  subgraph layout_card_n0[" "]
+  n0@{ shape: rounded, label: "**update_editable_text_layout**<br/>刷新可编辑文本的字形布局和编辑反馈。" }
+  class n0 node_system
+  end
+  style layout_card_n0 fill:none,stroke:none
+  subgraph layout_card_n1[" "]
+  n1@{ shape: stadium, label: "**main · PostUpdate**<br/>保存本应用调度的注册上下文与成员。" }
+  class n1 node_engine_flow
+  end
+  style layout_card_n1 fill:none,stroke:none
+  subgraph layout_card_n2[" "]
+  n2@{ shape: lin-rect, label: "**UiSystems::PostLayout**<br/>根据完成的布局生成裁切和文字几何。" }
+  class n2 node_system_set
+  end
+  style layout_card_n2 fill:none,stroke:none
+  subgraph layout_card_n3[" "]
+  n3@{ shape: lin-rect, label: "**AssetEventSystems**<br/>发布资产容器积累的变更消息。" }
+  class n3 node_system_set
+  end
+  style layout_card_n3 fill:none,stroke:none
+  subgraph layout_card_n4[" "]
+  n4@{ shape: rounded, label: "**update_ime_position**<br/>把输入法候选窗口放到当前文字光标下方。" }
+  class n4 node_system
+  end
+  style layout_card_n4 fill:none,stroke:none
+  subgraph layout_card_n5[" "]
+  n5@{ shape: rounded, label: "**apply_queued_select_all**<br/>在指针释放时应用延后的文本全选。" }
+  class n5 node_system
+  end
+  style layout_card_n5 fill:none,stroke:none
+  subgraph layout_card_n6[" "]
+  n6@{ shape: lin-rect, label: "**InputFocusSystems::FocusChangeEvents**<br/>派发记录中的焦点获得和失去事件。" }
+  class n6 node_system_set
+  end
+  style layout_card_n6 fill:none,stroke:none
+  subgraph layout_card_n7[" "]
+  n7@{ shape: cyl, label: "**FontCx**<br/>维护字体数据库、家族解析与字体缓存" }
+  class n7 node_resource
+  end
+  style layout_card_n7 fill:none,stroke:none
+  subgraph layout_card_n8[" "]
+  n8@{ shape: cyl, label: "**LayoutCx**<br/>持有 Parley 文字布局上下文" }
+  class n8 node_resource
+  end
+  style layout_card_n8 fill:none,stroke:none
+  subgraph layout_card_n9[" "]
+  n9@{ shape: cyl, label: "**ScaleCx**<br/>持有字形缩放上下文" }
+  class n9 node_resource
+  end
+  style layout_card_n9 fill:none,stroke:none
+  subgraph layout_card_n10[" "]
+  n10@{ shape: cyl, label: "**FontAtlasSet**<br/>保存字体光栅化结果所在的 FontAtlas 集<br/>合" }
+  class n10 node_resource
+  end
+  style layout_card_n10 fill:none,stroke:none
+  subgraph layout_card_n11[" "]
+  n11@{ shape: cyl, label: "**Assets#lt;Image#gt;**<br/>按资产身份存储对象并暂存变化消息。" }
+  class n11 node_resource
+  end
+  style layout_card_n11 fill:none,stroke:none
+  subgraph layout_card_n12[" "]
+  n12@{ shape: rounded, label: "**TextFont**<br/>保存文字段的字体来源、字号及抗锯齿方式等<br/>字体样式" }
+  class n12 node_component
+  end
+  style layout_card_n12 fill:none,stroke:none
+  subgraph layout_card_n13[" "]
+  n13@{ shape: rounded, label: "**TextLayout**<br/>保存文字块的内部对齐与换行策略" }
+  class n13 node_component
+  end
+  style layout_card_n13 fill:none,stroke:none
+  subgraph layout_card_n14[" "]
+  n14@{ shape: rounded, label: "**FontHinting**<br/>选择字形光栅化时是否启用字体 hinting" }
+  class n14 node_component
+  end
+  style layout_card_n14 fill:none,stroke:none
+  subgraph layout_card_n15[" "]
+  n15@{ shape: rounded, label: "**ComputedUiRenderTargetInfo**<br/>缓存 UI 目标的尺寸与缩放。" }
+  class n15 node_component
+  end
+  style layout_card_n15 fill:none,stroke:none
+  subgraph layout_card_n16[" "]
+  n16@{ shape: rounded, label: "**EditableText**<br/>持有 Parley 编辑器、文本、光标及待应用<br/>编辑操作" }
+  class n16 node_component
+  end
+  style layout_card_n16 fill:none,stroke:none
+  subgraph layout_card_n17[" "]
+  n17@{ shape: rounded, label: "**TextLayoutInfo**<br/>保存文字块完成排版后的缩放、字形位置、文<br/>字运行几何及尺寸" }
+  class n17 node_component
+  end
+  style layout_card_n17 fill:none,stroke:none
+  subgraph layout_card_n18[" "]
+  n18@{ shape: rounded, label: "**EditableTextGeneration**<br/>保存 Parley 排版代数" }
+  class n18 node_component
+  end
+  style layout_card_n18 fill:none,stroke:none
+  subgraph layout_card_n19[" "]
+  n19@{ shape: cyl, label: "**RemSize**<br/>保存全局根字号" }
+  class n19 node_resource
+  end
+  style layout_card_n19 fill:none,stroke:none
+  subgraph layout_card_n20[" "]
+  n20@{ shape: cyl, label: "**InputFocus**<br/>保存当前输入焦点实体、待派发的焦点变化及<br/>原焦点" }
+  class n20 node_resource
+  end
+  style layout_card_n20 fill:none,stroke:none
+  subgraph layout_card_n21[" "]
+  n21@{ shape: notch-rect, label: "**Duration**<br/>累计可编辑文本光标的闪烁时间。" }
+  class n21 node_local
+  end
+  style layout_card_n21 fill:none,stroke:none
+  subgraph layout_card_n22[" "]
+  n22@{ shape: notch-rect, label: "**Option#lt;Entity#gt;**<br/>记录上一轮可编辑文本的焦点实体。" }
+  class n22 node_local
+  end
+  style layout_card_n22 fill:none,stroke:none
+  subgraph layout_card_n23[" "]
+  n23@{ shape: cyl, label: "**Time#lt;Real#gt;**<br/>提供不随游戏暂停的真实时间。" }
+  class n23 node_resource
+  end
+  style layout_card_n23 fill:none,stroke:none
+  n1 e0@-->|"main / PostUpdate"| n0
+  class e0 edge_registration
+  n2 e1@--> n0
+  class e1 edge_set_membership
+  n0 e2@--> n3
+  class e2 edge_order
+  n0 e3@--> n4
+  class e3 edge_order
+  n5 e4@--> n0
+  class e4 edge_order
+  n0 e5@--> n6
+  class e5 edge_order
+  n0 e6@--> n7
+  class e6 edge_write
+  n0 e7@--> n8
+  class e7 edge_write
+  n0 e8@--> n9
+  class e8 edge_write
+  n0 e9@--> n10
+  class e9 edge_write
+  n0 e10@--> n11
+  class e10 edge_write
+  n12 e11@--> n0
+  class e11 edge_read
+  n13 e12@--> n0
+  class e12 edge_read
+  n14 e13@--> n0
+  class e13 edge_read
+  n15 e14@--> n0
+  class e14 edge_read
+  n0 e15@--> n16
+  class e15 edge_write
+  n0 e16@--> n17
+  class e16 edge_write
+  n0 e17@--> n18
+  class e17 edge_write
+  n19 e18@--> n0
+  class e18 edge_read
+  n20 e19@--> n0
+  class e19 edge_read
+  n0 e20@--> n21
+  class e20 edge_write
+  n0 e21@--> n22
+  class e21 edge_write
+  n23 e22@--> n0
+  class e22 edge_read
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e17@{ curve: basis }
+  e18@{ curve: basis }
+  e19@{ curve: basis }
+  e20@{ curve: basis }
+  e21@{ curve: basis }
+  e22@{ curve: basis }

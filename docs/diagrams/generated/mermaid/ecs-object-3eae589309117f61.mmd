@@ -1,0 +1,82 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: sync_gravity · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_engine_flow fill:#F1F5F4,stroke:#557C78,stroke-width:1.6px,color:#1F3340
+  classDef node_plugin fill:#F1F3F6,stroke:#4A6389,stroke-width:2.2px,color:#1F3340
+  classDef edge_order stroke:#334155,stroke-width:2px
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**sync_gravity**<br/>将共享重力配置同步到物理世界。" }
+  class n0 node_system
+  n1@{ shape: rounded, label: "**update_grounded**<br/>来自角色运动 ↗：准备运动前更新接地状<br/>态。" }
+  class n1 node_system
+  class n1 external_node
+  n2@{ shape: cyl, label: "**PrototypeConfig**<br/>来自设置与参数 ↗：保存运动、重力、拾取<br/>与握持的共享参数。" }
+  class n2 node_resource
+  class n2 external_node
+  n3@{ shape: stadium, label: "**main · FixedUpdate**<br/>来自Bevy 引擎 ↗：保存本应用调度的注册<br/>上下文与成员。" }
+  class n3 node_engine_flow
+  class n3 external_node
+  n4@{ shape: lin-rect, label: "**FixedGameplaySystems::Motion**<br/>来自应用流程 ↗：观察接地并施加角色移动<br/>与跳跃。" }
+  class n4 node_system_set
+  class n4 external_node
+  n5@{ shape: cyl, label: "**Gravity**<br/>来自Avian ↗：保存物理世界使用的全局重<br/>力。" }
+  class n5 node_resource
+  class n5 external_node
+  n6@{ shape: fr-rect, label: "**GamePhysicsPlugin**<br/>安装物理引擎并管理重力、提前唤醒与碰撞日<br/>志。" }
+  class n6 node_plugin
+  n0 e0@--> n1
+  class e0 edge_order
+  n2 e1@-->|"共享重力参数"| n0
+  class e1 edge_read
+  n3 e2@-->|"main / FixedUpdate"| n0
+  class e2 edge_registration
+  n0 e3@--> n4
+  class e3 edge_order
+  n0 e4@-->|"访问声明"| n5
+  class e4 edge_write
+  n6 e5@--> n0
+  class e5 edge_registration
+  n2 layout_input_0@~~~ n3
+  n3 layout_input_1@~~~ n6
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }

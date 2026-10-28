@@ -1,0 +1,63 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: RectLight · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**RectLight**<br/>配置朝局部负 Z 发光的矩形区域光。" }
+  class n0 node_component
+  n1@{ shape: rounded, label: "**assign_objects_to_clusters**<br/>将灯光、探针及贴花分配到视图分簇。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**draw_lights**<br/>为带 ShowLightGizmo 的点光源、聚光灯、<br/>方向光和矩形光源绘制调试轮廓；按组件或配<br/>置选择手动颜色、实体区分色、光源颜色或类<br/>型颜色。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**draw_all_lights**<br/>按配置颜色模式绘制全部灯光调试图形。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**extract_lights**<br/>同步可见点光、聚光、平行光及矩形光的渲染<br/>参数和阴影可见实体，提取变化的阴影贴图设<br/>置；隐藏或失效光源不继续保留有效渲染状<br/>态。" }
+  class n4 node_system
+  n0 e0@--> n1
+  class e0 edge_read
+  n0 e1@--> n2
+  class e1 edge_read
+  n0 e2@--> n3
+  class e2 edge_read
+  n0 e3@--> n4
+  class e3 edge_read
+  n0 e4@-->|"存在 / 变更过滤"| n4
+  class e4 edge_reference
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }

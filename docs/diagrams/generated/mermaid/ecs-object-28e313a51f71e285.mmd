@@ -1,0 +1,67 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#object-28e313a51f71e285-e0{marker-start:url(#object-28e313a51f71e285_flowchart-v2-pointStart)!important}\n#object-28e313a51f71e285_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}"
+  }
+}
+---
+flowchart LR
+  accTitle: Propagate<ComputedUiRenderTargetInfo> · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**Propagate#lt;ComputedUiRenderTargetInfo**<br/>**#gt;**<br/>从当前实体向直接及间接关系目标传播内部组<br/>件值" }
+  class n0 node_component
+  n1@{ shape: rounded, label: "**propagate_ui_target_cameras**<br/>为 UI 根配置目标相机和视口信息传播源。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**update_source#lt;bevy_ui::ui_node::**<br/>**ComputedUiRenderTargetInfo, (),**<br/>**bevy_ecs::hierarchy::ChildOf#gt;**<br/>为直接带 Propagate#lt;C#gt; 的实体同步<br/>Inherited#lt;C#gt;；传播源被移除时沿关系查找<br/>可继承值，必要时移除失效的继承状态。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**propagate_inherited#lt;bevy_ui::ui_**<br/>**node::ComputedUiRenderTargetInfo,**<br/>**(), bevy_ecs::hierarchy::ChildOf#gt;**<br/>当 Inherited#lt;C#gt; 改变或关系结构变化时，<br/>沿指定关系向后代传播继承值，并遵守传播覆<br/>盖及停止标记；具体组件、过滤器和关系由泛<br/>型实参决定。" }
+  class n3 node_system
+  n1 e0@---|"存在 / 变更过滤"| n0
+  class e0 edge_reference
+  n1 e1@-->|"延迟移除"| n0
+  class e1 edge_write
+  n1 e2@-->|"延迟添加"| n0
+  class e2 edge_write
+  n0 e3@--> n2
+  class e3 edge_read
+  n0 e4@-->|"存在 / 变更过滤"| n2
+  class e4 edge_reference
+  n0 e5@-->|"存在 / 变更过滤"| n3
+  class e5 edge_reference
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: bumpX }
+  e5@{ curve: basis }

@@ -1,0 +1,282 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: AssetEventSystems · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_engine_flow fill:#F1F5F4,stroke:#557C78,stroke-width:1.6px,color:#1F3340
+  classDef edge_order stroke:#334155,stroke-width:2px
+  classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: lin-rect, label: "**AssetEventSystems**<br/>发布资产容器积累的变更消息。" }
+  class n0 node_system_set
+  n1@{ shape: stadium, label: "**main · PostUpdate**<br/>保存本应用调度的注册上下文与成员。" }
+  class n1 node_engine_flow
+  n2@{ shape: rounded, label: "**asset_events**<br/>将 Assets 暂存的<br/>Added、Modified、Removed 等变化批量写<br/>入对应 AssetEvent 消息；存在<br/>AssetChanges 时同步记录当前系统 tick，<br/>随后清空待发队列。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**asset_events**<br/>将 Assets 暂存的<br/>Added、Modified、Removed 等变化批量写<br/>入对应 AssetEvent 消息；存在<br/>AssetChanges 时同步记录当前系统 tick，<br/>随后清空待发队列。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**asset_events**<br/>将 Assets 暂存的<br/>Added、Modified、Removed 等变化批量写<br/>入对应 AssetEvent 消息；存在<br/>AssetChanges 时同步记录当前系统 tick，<br/>随后清空待发队列。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**asset_events**<br/>将 Assets 暂存的<br/>Added、Modified、Removed 等变化批量写<br/>入对应 AssetEvent 消息；存在<br/>AssetChanges 时同步记录当前系统 tick，<br/>随后清空待发队列。" }
+  class n5 node_system
+  n6@{ shape: rounded, label: "**asset_events**<br/>将 Assets 暂存的<br/>Added、Modified、Removed 等变化批量写<br/>入对应 AssetEvent 消息；存在<br/>AssetChanges 时同步记录当前系统 tick，<br/>随后清空待发队列。" }
+  class n6 node_system
+  n7@{ shape: rounded, label: "**asset_events**<br/>将 Assets 暂存的<br/>Added、Modified、Removed 等变化批量写<br/>入对应 AssetEvent 消息；存在<br/>AssetChanges 时同步记录当前系统 tick，<br/>随后清空待发队列。" }
+  class n7 node_system
+  n8@{ shape: rounded, label: "**asset_events**<br/>将 Assets 暂存的<br/>Added、Modified、Removed 等变化批量写<br/>入对应 AssetEvent 消息；存在<br/>AssetChanges 时同步记录当前系统 tick，<br/>随后清空待发队列。" }
+  class n8 node_system
+  n9@{ shape: rounded, label: "**asset_events**<br/>将 Assets 暂存的<br/>Added、Modified、Removed 等变化批量写<br/>入对应 AssetEvent 消息；存在<br/>AssetChanges 时同步记录当前系统 tick，<br/>随后清空待发队列。" }
+  class n9 node_system
+  n10@{ shape: rounded, label: "**asset_events**<br/>将 Assets 暂存的<br/>Added、Modified、Removed 等变化批量写<br/>入对应 AssetEvent 消息；存在<br/>AssetChanges 时同步记录当前系统 tick，<br/>随后清空待发队列。" }
+  class n10 node_system
+  n11@{ shape: rounded, label: "**asset_events**<br/>将 Assets 暂存的<br/>Added、Modified、Removed 等变化批量写<br/>入对应 AssetEvent 消息；存在<br/>AssetChanges 时同步记录当前系统 tick，<br/>随后清空待发队列。" }
+  class n11 node_system
+  n12@{ shape: rounded, label: "**asset_events**<br/>将 Assets 暂存的<br/>Added、Modified、Removed 等变化批量写<br/>入对应 AssetEvent 消息；存在<br/>AssetChanges 时同步记录当前系统 tick，<br/>随后清空待发队列。" }
+  class n12 node_system
+  n13@{ shape: rounded, label: "**asset_events**<br/>将 Assets 暂存的<br/>Added、Modified、Removed 等变化批量写<br/>入对应 AssetEvent 消息；存在<br/>AssetChanges 时同步记录当前系统 tick，<br/>随后清空待发队列。" }
+  class n13 node_system
+  n14@{ shape: rounded, label: "**asset_events**<br/>将 Assets 暂存的<br/>Added、Modified、Removed 等变化批量写<br/>入对应 AssetEvent 消息；存在<br/>AssetChanges 时同步记录当前系统 tick，<br/>随后清空待发队列。" }
+  class n14 node_system
+  n15@{ shape: rounded, label: "**asset_events**<br/>将 Assets 暂存的<br/>Added、Modified、Removed 等变化批量写<br/>入对应 AssetEvent 消息；存在<br/>AssetChanges 时同步记录当前系统 tick，<br/>随后清空待发队列。" }
+  class n15 node_system
+  n16@{ shape: rounded, label: "**asset_events**<br/>将 Assets 暂存的<br/>Added、Modified、Removed 等变化批量写<br/>入对应 AssetEvent 消息；存在<br/>AssetChanges 时同步记录当前系统 tick，<br/>随后清空待发队列。" }
+  class n16 node_system
+  n17@{ shape: rounded, label: "**asset_events**<br/>将 Assets 暂存的<br/>Added、Modified、Removed 等变化批量写<br/>入对应 AssetEvent 消息；存在<br/>AssetChanges 时同步记录当前系统 tick，<br/>随后清空待发队列。" }
+  class n17 node_system
+  n18@{ shape: rounded, label: "**asset_events**<br/>将 Assets 暂存的<br/>Added、Modified、Removed 等变化批量写<br/>入对应 AssetEvent 消息；存在<br/>AssetChanges 时同步记录当前系统 tick，<br/>随后清空待发队列。" }
+  class n18 node_system
+  n19@{ shape: rounded, label: "**asset_events**<br/>将 Assets 暂存的<br/>Added、Modified、Removed 等变化批量写<br/>入对应 AssetEvent 消息；存在<br/>AssetChanges 时同步记录当前系统 tick，<br/>随后清空待发队列。" }
+  class n19 node_system
+  n20@{ shape: rounded, label: "**asset_events**<br/>将 Assets 暂存的<br/>Added、Modified、Removed 等变化批量写<br/>入对应 AssetEvent 消息；存在<br/>AssetChanges 时同步记录当前系统 tick，<br/>随后清空待发队列。" }
+  class n20 node_system
+  n21@{ shape: rounded, label: "**asset_events**<br/>将 Assets 暂存的<br/>Added、Modified、Removed 等变化批量写<br/>入对应 AssetEvent 消息；存在<br/>AssetChanges 时同步记录当前系统 tick，<br/>随后清空待发队列。" }
+  class n21 node_system
+  n22@{ shape: rounded, label: "**asset_events**<br/>将 Assets 暂存的<br/>Added、Modified、Removed 等变化批量写<br/>入对应 AssetEvent 消息；存在<br/>AssetChanges 时同步记录当前系统 tick，<br/>随后清空待发队列。" }
+  class n22 node_system
+  n23@{ shape: rounded, label: "**asset_events**<br/>将 Assets 暂存的<br/>Added、Modified、Removed 等变化批量写<br/>入对应 AssetEvent 消息；存在<br/>AssetChanges 时同步记录当前系统 tick，<br/>随后清空待发队列。" }
+  class n23 node_system
+  n24@{ shape: rounded, label: "**asset_events**<br/>将 Assets 暂存的<br/>Added、Modified、Removed 等变化批量写<br/>入对应 AssetEvent 消息；存在<br/>AssetChanges 时同步记录当前系统 tick，<br/>随后清空待发队列。" }
+  class n24 node_system
+  n25@{ shape: rounded, label: "**asset_events**<br/>将 Assets 暂存的<br/>Added、Modified、Removed 等变化批量写<br/>入对应 AssetEvent 消息；存在<br/>AssetChanges 时同步记录当前系统 tick，<br/>随后清空待发队列。" }
+  class n25 node_system
+  n26@{ shape: rounded, label: "**asset_events**<br/>将 Assets 暂存的<br/>Added、Modified、Removed 等变化批量写<br/>入对应 AssetEvent 消息；存在<br/>AssetChanges 时同步记录当前系统 tick，<br/>随后清空待发队列。" }
+  class n26 node_system
+  n27@{ shape: rounded, label: "**asset_events**<br/>将 Assets 暂存的<br/>Added、Modified、Removed 等变化批量写<br/>入对应 AssetEvent 消息；存在<br/>AssetChanges 时同步记录当前系统 tick，<br/>随后清空待发队列。" }
+  class n27 node_system
+  n28@{ shape: rounded, label: "**asset_events**<br/>将 Assets 暂存的<br/>Added、Modified、Removed 等变化批量写<br/>入对应 AssetEvent 消息；存在<br/>AssetChanges 时同步记录当前系统 tick，<br/>随后清空待发队列。" }
+  class n28 node_system
+  n29@{ shape: rounded, label: "**asset_events**<br/>将 Assets 暂存的<br/>Added、Modified、Removed 等变化批量写<br/>入对应 AssetEvent 消息；存在<br/>AssetChanges 时同步记录当前系统 tick，<br/>随后清空待发队列。" }
+  class n29 node_system
+  n30@{ shape: rounded, label: "**asset_events**<br/>将 Assets 暂存的<br/>Added、Modified、Removed 等变化批量写<br/>入对应 AssetEvent 消息；存在<br/>AssetChanges 时同步记录当前系统 tick，<br/>随后清空待发队列。" }
+  class n30 node_system
+  n31@{ shape: rounded, label: "**asset_events**<br/>将 Assets 暂存的<br/>Added、Modified、Removed 等变化批量写<br/>入对应 AssetEvent 消息；存在<br/>AssetChanges 时同步记录当前系统 tick，<br/>随后清空待发队列。" }
+  class n31 node_system
+  n32@{ shape: rounded, label: "**asset_events**<br/>将 Assets 暂存的<br/>Added、Modified、Removed 等变化批量写<br/>入对应 AssetEvent 消息；存在<br/>AssetChanges 时同步记录当前系统 tick，<br/>随后清空待发队列。" }
+  class n32 node_system
+  n33@{ shape: rounded, label: "**check_entities_needing_**<br/>**specialization#lt;bevy_pbr::extended_**<br/>**material::ExtendedMaterial#lt;bevy_**<br/>**pbr::pbr_material::**<br/>**StandardMaterial, bevy_pbr::decal::**<br/>**forward::ForwardDecalMaterialExt#gt;#gt;**<br/>收集几何或材质变化及移除的三维网格。" }
+  class n33 node_system
+  n34@{ shape: rounded, label: "**extract_chromatic_phase_textures**<br/>将已加载色度相函数纹理转换为散射曲线。" }
+  class n34 node_system
+  n35@{ shape: lin-rect, label: "**VisibilitySystems::CalculateBounds**<br/>为可见性检查计算并插入对象包围盒。" }
+  class n35 node_system_set
+  n36@{ shape: rounded, label: "**mark_2d_meshes_as_changed_if_their_**<br/>**assets_changed**<br/>资产内容变化时标记对应二维网格已变更。" }
+  class n36 node_system
+  n37@{ shape: rounded, label: "**update_editable_text_layout**<br/>刷新可编辑文本的字形布局和编辑反馈。" }
+  class n37 node_system
+  n38@{ shape: rounded, label: "**thread_animation_graphs**<br/>维护动画图的快速求值结构。" }
+  class n38 node_system
+  n39@{ shape: rounded, label: "**camera_system**<br/>响应窗口创建、尺寸与缩放变化及图像目标变<br/>化，更新 Camera 与 Projection 的目标<br/>尺寸和投影信息；只读取相机实际引用的图像<br/>目标。" }
+  class n39 node_system
+  n40@{ shape: rounded, label: "**check_entities_needing_**<br/>**specialization#lt;bevy_sprite_render::**<br/>**mesh2d::color_material::**<br/>**ColorMaterial#gt;**<br/>收集二维网格材质需重建或移除专用化的实<br/>体。" }
+  class n40 node_system
+  n41@{ shape: rounded, label: "**add_material**<br/>精灵、锚点或网格材料计数改变时，清理失效<br/>缓存并按 Sprite 与 Anchor 复用或创建<br/>SpriteMeshMaterial，再插入<br/>MeshMaterial2d；已有材料计数非零的实体<br/>跳过。" }
+  class n41 node_system
+  n42@{ shape: rounded, label: "**check_entities_needing_**<br/>**specialization#lt;bevy_sprite_render::**<br/>**tilemap_chunk::tilemap_chunk_**<br/>**material::TilemapChunkMaterial#gt;**<br/>收集二维网格材质需重建或移除专用化的实<br/>体。" }
+  class n42 node_system
+  n43@{ shape: rounded, label: "**mark_images_as_changed_if_their_**<br/>**assets_changed**<br/>使图像或图集资产变化触发 UI 图像更新。" }
+  class n43 node_system
+  n44@{ shape: rounded, label: "**mark_3d_meshes_as_changed_if_their_**<br/>**assets_changed**<br/>资产内容变化时标记对应三维网格已变更。" }
+  class n44 node_system
+  n45@{ shape: rounded, label: "**update_text2d_layout**<br/>重新排版变化的二维文字并准备字形。" }
+  class n45 node_system
+  n46@{ shape: rounded, label: "**check_entities_needing_**<br/>**specialization#lt;bevy_sprite_render::**<br/>**sprite_mesh::sprite_mesh_material::**<br/>**SpriteMeshMaterial#gt;**<br/>收集二维网格材质需重建或移除专用化的实<br/>体。" }
+  class n46 node_system
+  n47@{ shape: rounded, label: "**check_entities_needing_**<br/>**specialization#lt;bevy_pbr::pbr_**<br/>**material::StandardMaterial#gt;**<br/>收集几何或材质变化及移除的三维网格。" }
+  class n47 node_system
+  n48@{ shape: rounded, label: "**text_system**<br/>文本节点尺寸、字形提示或重排标志变化时，<br/>通过 TextPipeline 重算排版并写入<br/>TextLayoutInfo；同时更新字体图集，等待<br/>测量函数的文本暂不排版。" }
+  class n48 node_system
+  n1 e0@-->|"main / PostUpdate"| n0
+  class e0 edge_registration
+  n0 e1@--> n2
+  class e1 edge_set_membership
+  n0 e2@--> n3
+  class e2 edge_set_membership
+  n0 e3@--> n4
+  class e3 edge_set_membership
+  n0 e4@--> n5
+  class e4 edge_set_membership
+  n0 e5@--> n6
+  class e5 edge_set_membership
+  n0 e6@--> n7
+  class e6 edge_set_membership
+  n0 e7@--> n8
+  class e7 edge_set_membership
+  n0 e8@--> n9
+  class e8 edge_set_membership
+  n0 e9@--> n10
+  class e9 edge_set_membership
+  n0 e10@--> n11
+  class e10 edge_set_membership
+  n0 e11@--> n12
+  class e11 edge_set_membership
+  n0 e12@--> n13
+  class e12 edge_set_membership
+  n0 e13@--> n14
+  class e13 edge_set_membership
+  n0 e14@--> n15
+  class e14 edge_set_membership
+  n0 e15@--> n16
+  class e15 edge_set_membership
+  n0 e16@--> n17
+  class e16 edge_set_membership
+  n0 e17@--> n18
+  class e17 edge_set_membership
+  n0 e18@--> n19
+  class e18 edge_set_membership
+  n0 e19@--> n20
+  class e19 edge_set_membership
+  n0 e20@--> n21
+  class e20 edge_set_membership
+  n0 e21@--> n22
+  class e21 edge_set_membership
+  n0 e22@--> n23
+  class e22 edge_set_membership
+  n0 e23@--> n24
+  class e23 edge_set_membership
+  n0 e24@--> n25
+  class e24 edge_set_membership
+  n0 e25@--> n26
+  class e25 edge_set_membership
+  n0 e26@--> n27
+  class e26 edge_set_membership
+  n0 e27@--> n28
+  class e27 edge_set_membership
+  n0 e28@--> n29
+  class e28 edge_set_membership
+  n0 e29@--> n30
+  class e29 edge_set_membership
+  n0 e30@--> n31
+  class e30 edge_set_membership
+  n0 e31@--> n32
+  class e31 edge_set_membership
+  n0 e32@--> n33
+  class e32 edge_order
+  n0 e33@--> n34
+  class e33 edge_order
+  n0 e34@--> n35
+  class e34 edge_order
+  n0 e35@--> n36
+  class e35 edge_order
+  n37 e36@--> n0
+  class e36 edge_order
+  n38 e37@--> n0
+  class e37 edge_order
+  n39 e38@--> n0
+  class e38 edge_order
+  n0 e39@--> n40
+  class e39 edge_order
+  n41 e40@--> n0
+  class e40 edge_order
+  n0 e41@--> n42
+  class e41 edge_order
+  n0 e42@--> n43
+  class e42 edge_order
+  n0 e43@--> n44
+  class e43 edge_order
+  n45 e44@--> n0
+  class e44 edge_order
+  n0 e45@--> n46
+  class e45 edge_order
+  n0 e46@--> n47
+  class e46 edge_order
+  n48 e47@--> n0
+  class e47 edge_order
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e17@{ curve: basis }
+  e18@{ curve: basis }
+  e19@{ curve: basis }
+  e20@{ curve: basis }
+  e22@{ curve: basis }
+  e23@{ curve: basis }
+  e24@{ curve: basis }
+  e25@{ curve: basis }
+  e26@{ curve: basis }
+  e27@{ curve: basis }
+  e28@{ curve: basis }
+  e29@{ curve: basis }
+  e30@{ curve: basis }
+  e31@{ curve: basis }
+  e32@{ curve: basis }
+  e33@{ curve: basis }
+  e34@{ curve: basis }
+  e35@{ curve: basis }
+  e36@{ curve: basis }
+  e37@{ curve: basis }
+  e38@{ curve: basis }
+  e39@{ curve: basis }
+  e40@{ curve: basis }
+  e41@{ curve: basis }
+  e42@{ curve: basis }
+  e43@{ curve: basis }
+  e44@{ curve: basis }
+  e45@{ curve: basis }
+  e46@{ curve: basis }
+  e47@{ curve: basis }

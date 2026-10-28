@@ -1,0 +1,117 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: TextLayoutInfo · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**TextLayoutInfo**<br/>保存文字块完成排版后的缩放、字形位置、文<br/>字运行几何及尺寸" }
+  class n0 node_component
+  n1@{ shape: rounded, label: "**calculate_bounds_text2d**<br/>按文字布局与锚点更新二维文字包围盒。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**text_system**<br/>文本节点尺寸、字形提示或重排标志变化时，<br/>通过 TextPipeline 重算排版并写入<br/>TextLayoutInfo；同时更新字体图集，等待<br/>测量函数的文本暂不排版。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**update_editable_text_layout**<br/>刷新可编辑文本的字形布局和编辑反馈。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**update_text2d_layout**<br/>重新排版变化的二维文字并准备字形。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**text_input_autoscroll_system**<br/>在拖选越出文字视口时自动滚动。" }
+  class n5 node_system
+  n6@{ shape: rounded, label: "**ui_picking**<br/>把各指针位置映射到匹配相机的视口坐标，<br/>按 UiStack 的绘制顺序检查 UI 节点及拾<br/>取规则，输出 PointerHits 供悬停与交互<br/>阶段汇总。" }
+  class n6 node_system
+  n7@{ shape: rounded, label: "**extract_uinode_changes**<br/>使变化或移除的 UI 数据失效并清理旧渲染<br/>实体。" }
+  class n7 node_system
+  n8@{ shape: rounded, label: "**extract_text_decorations**<br/>提取 UI 文字背景、删除线和下划线。" }
+  class n8 node_system
+  n9@{ shape: rounded, label: "**extract_text_shadows**<br/>提取 UI 文字及装饰线的偏移阴影。" }
+  class n9 node_system
+  n10@{ shape: rounded, label: "**extract_text_sections**<br/>按图集提取 UI 字形并处理选中文字颜色。" }
+  class n10 node_system
+  n11@{ shape: rounded, label: "**extract_text_cursor**<br/>提取文字光标和带圆角的选区背景。" }
+  class n11 node_system
+  n12@{ shape: rounded, label: "**extract_preedit_underlines**<br/>把输入法预编辑下划线提取为 UI 矩形。" }
+  class n12 node_system
+  n13@{ shape: rounded, label: "**extract_inline_images**<br/>把文字行内图像提取为 UI 绘制项。" }
+  class n13 node_system
+  n14@{ shape: rounded, label: "**extract_text2d_sprite**<br/>把可见二维文字及装饰提取为精灵切片。" }
+  class n14 node_system
+  n0 e0@--> n1
+  class e0 edge_read
+  n0 e1@-->|"存在 / 变更过滤"| n1
+  class e1 edge_reference
+  n2 e2@--> n0
+  class e2 edge_write
+  n3 e3@--> n0
+  class e3 edge_write
+  n4 e4@--> n0
+  class e4 edge_write
+  n0 e5@--> n5
+  class e5 edge_read
+  n0 e6@--> n6
+  class e6 edge_read
+  n0 e7@-->|"存在 / 变更过滤"| n7
+  class e7 edge_reference
+  n0 e8@--> n8
+  class e8 edge_read
+  n0 e9@--> n9
+  class e9 edge_read
+  n0 e10@--> n10
+  class e10 edge_read
+  n0 e11@--> n11
+  class e11 edge_read
+  n0 e12@--> n12
+  class e12 edge_read
+  n0 e13@--> n13
+  class e13 edge_read
+  n0 e14@--> n14
+  class e14 edge_read
+  n2 layout_input_0@~~~ n3
+  n3 layout_input_1@~~~ n4
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }

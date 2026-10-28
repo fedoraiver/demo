@@ -1,0 +1,77 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#object-a28d1a6cc53d7672-e0{marker-start:url(#object-a28d1a6cc53d7672_flowchart-v2-pointStart)!important}\n#object-a28d1a6cc53d7672_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}"
+  }
+}
+---
+flowchart LR
+  accTitle: Time<Physics> · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: cyl, label: "**Time#lt;Physics#gt;**<br/>保存可随游戏暂停的物理模拟时间。" }
+  class n0 node_resource
+  n1@{ shape: rounded, label: "**run_physics_schedule**<br/>使用物理时钟推进 PhysicsSchedule 并恢<br/>复原时钟。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**run_substep_schedule**<br/>按 SubstepCount 平分本物理步时间，切换<br/>通用 Time 为子步时钟并重复运行<br/>SubstepSchedule，结束后恢复<br/>Time#lt;Physics#gt; 对应的通用时钟。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**update_contact_softness**<br/>按时间步和配置更新接触柔度系数。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**enter_main_menu**<br/>来自应用流程 ↗：保留主菜单展示时间并冻<br/>结物理模拟。" }
+  class n4 node_system
+  class n4 external_node
+  n5@{ shape: rounded, label: "**pause_simulation**<br/>来自应用流程 ↗：冻结游戏与物理时钟并清<br/>零当前增量。" }
+  class n5 node_system
+  class n5 external_node
+  n6@{ shape: rounded, label: "**resume_simulation**<br/>来自应用流程 ↗：恢复游戏与物理时钟。" }
+  class n6 node_system
+  class n6 external_node
+  n1 e0@---|"正文只读访问"| n0
+  class e0 edge_read
+  n1 e1@-->|"正文可变访问"| n0
+  class e1 edge_write
+  n0 e2@-->|"正文只读访问"| n2
+  class e2 edge_read
+  n0 e3@--> n3
+  class e3 edge_read
+  n4 e4@-->|"访问声明"| n0
+  class e4 edge_write
+  n5 e5@-->|"访问声明"| n0
+  class e5 edge_write
+  n6 e6@-->|"访问声明"| n0
+  class e6 edge_write
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }

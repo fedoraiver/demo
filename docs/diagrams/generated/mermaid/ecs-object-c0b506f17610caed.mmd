@@ -1,0 +1,224 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: Enhanced Input update · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef node_local fill:#F8F5F1,stroke:#AA8752,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_system_param fill:#EFF5F6,stroke:#3B8790,stroke-width:1.6px,color:#1F3340
+  classDef node_query_data fill:#F1F4F1,stroke:#567A51,stroke-width:1.6px,color:#1F3340
+  classDef node_engine_flow fill:#F1F5F4,stroke:#557C78,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**Enhanced Input update**<br/>按上下文优先级评估输入绑定、修饰器和条<br/>件，计算动作值及触发状态；此卡片的名称由<br/>系统参数元组生成。" }
+  class n0 node_system
+  n1@{ shape: stadium, label: "**main · PreUpdate**<br/>来自Bevy 引擎 ↗：保存本应用调度的注册<br/>上下文与成员。" }
+  class n1 node_engine_flow
+  class n1 external_node
+  n2@{ shape: lin-rect, label: "**EnhancedInputSystems::Update**<br/>评估绑定输入并更新动作值与触发状态。" }
+  class n2 node_system_set
+  n3@{ shape: notch-rect, label: "**Vec#lt;Binding#gt;**<br/>来自Bevy 引擎 ↗：暂存本次动作求值后需<br/>要消费的输入绑定。" }
+  class n3 node_local
+  class n3 external_node
+  n4@{ shape: notch-rect, label: "**ContextTime**<br/>提供动作条件和修饰器使用的当前调度时钟与<br/>真实时钟" }
+  class n4 node_system_param
+  n5@{ shape: cyl, label: "**Time**<br/>来自Bevy 引擎 ↗：提供当前运行阶段的通<br/>用时间。" }
+  class n5 node_resource
+  class n5 external_node
+  n6@{ shape: cyl, label: "**Time#lt;Real#gt;**<br/>来自Bevy 引擎 ↗：提供不随游戏暂停的真<br/>实时间。" }
+  class n6 node_resource
+  class n6 external_node
+  n7@{ shape: notch-rect, label: "**InputReader**<br/>聚合键盘、鼠标、手柄和自定义输入" }
+  class n7 node_system_param
+  n8@{ shape: cyl, label: "**ButtonInput#lt;KeyCode#gt;**<br/>来自Bevy 引擎 ↗：保存指定按钮类型当前<br/>按下、本帧刚按下和刚释放的集合" }
+  class n8 node_resource
+  class n8 external_node
+  n9@{ shape: cyl, label: "**ButtonInput#lt;MouseButton#gt;**<br/>来自Bevy 引擎 ↗：保存指定按钮类型当前<br/>按下、本帧刚按下和刚释放的集合" }
+  class n9 node_resource
+  class n9 external_node
+  n10@{ shape: cyl, label: "**AccumulatedMouseMotion**<br/>来自Bevy 引擎 ↗：汇总本帧鼠标位移供观<br/>察动作使用。" }
+  class n10 node_resource
+  class n10 external_node
+  n11@{ shape: cyl, label: "**ActionSources**<br/>配置输入框架允许使用的输入来源。" }
+  class n11 node_resource
+  n12@{ shape: cyl, label: "**CustomInputs**<br/>保存自定义输入编号到动作值的映射" }
+  class n12 node_resource
+  n13@{ shape: cyl, label: "**ConsumedInputs**<br/>记录本轮动作评估已经消费的输入。" }
+  class n13 node_resource
+  n14@{ shape: cyl, label: "**PendingBindings**<br/>保存上下文停用后仍需重置的输入绑定。" }
+  class n14 node_resource
+  n15@{ shape: notch-rect, label: "**GamepadDevice**<br/>保存输入读取器当前选择的游戏手柄。" }
+  class n15 node_local
+  n16@{ shape: notch-rect, label: "**bool**<br/>来自Bevy 引擎 ↗：控制输入读取器是否跳<br/>过忽略绑定检查。" }
+  class n16 node_local
+  class n16 external_node
+  n17@{ shape: cyl, label: "**ContextInstances#lt;PreUpdate#gt;**<br/>索引输入框架当前运行的动作上下文。" }
+  class n17 node_resource
+  n18@{ shape: notch-rect, label: "**FilteredEntityMut**<br/>来自Bevy 引擎 ↗：按已声明 Access 集合<br/>提供一个实体的可变组件访问" }
+  class n18 node_query_data
+  class n18 external_node
+  n19@{ shape: notch-rect, label: "**Entity**<br/>来自Bevy 引擎 ↗：以实体索引和代际组成<br/>实体身份" }
+  class n19 node_query_data
+  class n19 external_node
+  n20@{ shape: rounded, label: "**Name**<br/>来自Bevy 引擎 ↗：保存供调试和界面展示<br/>的实体名称及缓存哈希" }
+  class n20 node_component
+  class n20 external_node
+  n21@{ shape: rounded, label: "**ActionSettings**<br/>配置输入动作的值累积、首次激活重置及输入<br/>吞取消费策略" }
+  class n21 node_component
+  n22@{ shape: rounded, label: "**Bindings**<br/>保存属于当前动作实体的输入绑定实体集合" }
+  class n22 node_component
+  n23@{ shape: rounded, label: "**ModifierFns**<br/>保存动态获取修饰器组件的函数接口" }
+  class n23 node_component
+  n24@{ shape: rounded, label: "**ConditionFns**<br/>保存动态获取条件组件的函数接口" }
+  class n24 node_component
+  n25@{ shape: rounded, label: "**ActionMock**<br/>保存模拟动作的触发状态、值、模拟时段和启<br/>用状态" }
+  class n25 node_component
+  n26@{ shape: rounded, label: "**ExternallyMocked**<br/>标记由外部手动模拟的动作" }
+  class n26 node_component
+  n27@{ shape: rounded, label: "**ActionValue**<br/>以布尔、一维、二维或三维轴的形式保存类型<br/>擦除的动作值" }
+  class n27 node_component
+  n28@{ shape: rounded, label: "**TriggerState**<br/>记录条件或动作的触发状态：未触发、进行中<br/>和已满足条件" }
+  class n28 node_component
+  n29@{ shape: rounded, label: "**ActionEvents**<br/>保存动作状态转换产生的事件标记" }
+  class n29 node_component
+  n30@{ shape: rounded, label: "**ActionTime**<br/>累计动作处于 Ongoing 或 Fired 状态的时<br/>间" }
+  class n30 node_component
+  n31@{ shape: rounded, label: "**Binding**<br/>描述动作输入源" }
+  class n31 node_component
+  n32@{ shape: rounded, label: "**FirstActivation**<br/>记录绑定是否已出现过有效激活" }
+  class n32 node_component
+  n1 e0@-->|"main / PreUpdate"| n0
+  class e0 edge_registration
+  n2 e1@--> n0
+  class e1 edge_set_membership
+  n0 e2@--> n3
+  class e2 edge_write
+  n4 e3@-->|"参数 / 查询数据"| n0
+  class e3 edge_reference
+  n5 e4@--> n0
+  class e4 edge_read
+  n6 e5@--> n0
+  class e5 edge_read
+  n7 e6@-->|"参数 / 查询数据"| n0
+  class e6 edge_reference
+  n8 e7@--> n0
+  class e7 edge_read
+  n9 e8@--> n0
+  class e8 edge_read
+  n10 e9@--> n0
+  class e9 edge_read
+  n11 e10@--> n0
+  class e10 edge_read
+  n12 e11@--> n0
+  class e11 edge_read
+  n0 e12@--> n13
+  class e12 edge_write
+  n0 e13@--> n14
+  class e13 edge_write
+  n0 e14@--> n15
+  class e14 edge_write
+  n0 e15@--> n16
+  class e15 edge_write
+  n17 e16@--> n0
+  class e16 edge_read
+  n18 e17@-->|"参数 / 查询数据"| n0
+  class e17 edge_reference
+  n19 e18@-->|"参数 / 查询数据"| n0
+  class e18 edge_reference
+  n20 e19@--> n0
+  class e19 edge_read
+  n21 e20@--> n0
+  class e20 edge_read
+  n22 e21@--> n0
+  class e21 edge_read
+  n23 e22@--> n0
+  class e22 edge_read
+  n24 e23@--> n0
+  class e23 edge_read
+  n0 e24@--> n25
+  class e24 edge_write
+  n26 e25@-->|"存在 / 变更过滤"| n0
+  class e25 edge_reference
+  n0 e26@--> n27
+  class e26 edge_write
+  n0 e27@--> n28
+  class e27 edge_write
+  n0 e28@--> n29
+  class e28 edge_write
+  n0 e29@--> n30
+  class e29 edge_write
+  n31 e30@--> n0
+  class e30 edge_read
+  n0 e31@--> n32
+  class e31 edge_write
+  n21 e32@-->|"存在 / 变更过滤"| n0
+  class e32 edge_reference
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e17@{ curve: basis }
+  e18@{ curve: basis }
+  e19@{ curve: basis }
+  e20@{ curve: basis }
+  e21@{ curve: basis }
+  e22@{ curve: basis }
+  e23@{ curve: basis }
+  e24@{ curve: bumpX }
+  e25@{ curve: basis }
+  e26@{ curve: basis }
+  e27@{ curve: basis }
+  e28@{ curve: basis }
+  e29@{ curve: basis }
+  e30@{ curve: basis }
+  e31@{ curve: basis }
+  e32@{ curve: basis }

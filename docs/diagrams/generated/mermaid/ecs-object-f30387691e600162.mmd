@@ -1,0 +1,276 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: main · Update · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_sync fill:#F6F3F0,stroke:#8B6A42,stroke-width:1.6px,color:#1F3340
+  classDef node_engine_flow fill:#F1F5F4,stroke:#557C78,stroke-width:1.6px,color:#1F3340
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: stadium, label: "**main · Update**<br/>保存本应用调度的注册上下文与成员。" }
+  class n0 node_engine_flow
+  n1@{ shape: rounded, label: "**style_buttons**<br/>来自菜单与界面 ↗：按当前输入来源更新按<br/>钮背景与焦点边框。" }
+  class n1 node_system
+  class n1 external_node
+  n2@{ shape: rounded, label: "**update_settings_text**<br/>来自菜单与界面 ↗：原位更新设置草稿数值<br/>与保存提示。" }
+  class n2 node_system
+  class n2 external_node
+  n3@{ shape: rounded, label: "**update_description**<br/>来自菜单与界面 ↗：更新当前聚焦设置的说<br/>明标题与正文。" }
+  class n3 node_system
+  class n3 external_node
+  n4@{ shape: rounded, label: "**publish_audio_preview**<br/>来自菜单与界面 ↗：向音频功能发布或清除<br/>临时音量预览。" }
+  class n4 node_system
+  class n4 external_node
+  n5@{ shape: rounded, label: "**scroll_focused_button**<br/>来自菜单与界面 ↗：将当前聚焦设置按钮滚<br/>入可视范围。" }
+  class n5 node_system
+  class n5 external_node
+  n6@{ shape: rounded, label: "**log_load_failures**<br/>来自音频播放 ↗：记录声音资源加载失败的<br/>路径与错误。" }
+  class n6 node_system
+  class n6 external_node
+  n7@{ shape: rounded, label: "**sync_audio_mix**<br/>来自音频播放 ↗：合成设置预览或正式配置<br/>的有效音量。" }
+  class n7 node_system
+  class n7 external_node
+  n8@{ shape: rounded, label: "**sync_voice_volumes**<br/>来自音频播放 ↗：将有效混音与素材音量同<br/>步到播放实例。" }
+  class n8 node_system
+  class n8 external_node
+  n9@{ shape: rounded, label: "**play_requests**<br/>来自音频播放 ↗：按有效音量与播放策略处<br/>理短音请求。" }
+  class n9 node_system
+  class n9 external_node
+  n10@{ shape: rounded, label: "**stop_on_exit**<br/>来自音频播放 ↗：停止音频通道并记录退<br/>出。" }
+  class n10 node_system
+  class n10 external_node
+  n11@{ shape: rounded, label: "**initialize_ready_couriers**<br/>来自角色动画 ↗：绑定主角命名动画并缓存<br/>鞋底补偿节点。" }
+  class n11 node_system
+  class n11 external_node
+  n12@{ shape: rounded, label: "**sync_courier_animation**<br/>来自角色动画 ↗：按角色运动状态连续混合<br/>移动与跳跃动画。" }
+  class n12 node_system
+  class n12 external_node
+  n13@{ shape: rounded, label: "**begin_island**<br/>来自场景装配 ↗：请求创建已加载海岛的运<br/>行实例。" }
+  class n13 node_system
+  class n13 external_node
+  n14@{ shape: rounded, label: "**prepare_island**<br/>来自场景装配 ↗：从海岛模型构建静态碰<br/>撞、坡道与人物碰撞。" }
+  class n14 node_system
+  class n14 external_node
+  n15@{ shape: rounded, label: "**spawn_actors**<br/>来自场景装配 ↗：装配玩家、可搬物、控制<br/>者与相机。" }
+  class n15 node_system
+  class n15 external_node
+  n16@{ shape: rounded, label: "**rebuild_page**<br/>来自菜单与界面 ↗：按页面结构变化重建菜<br/>单界面。" }
+  class n16 node_system
+  class n16 external_node
+  n17@{ shape: rounded, label: "**pointer_interaction**<br/>来自菜单与界面 ↗：将真实鼠标交互转换为<br/>共享菜单请求。" }
+  class n17 node_system
+  class n17 external_node
+  n18@{ shape: rounded, label: "**exit_on_flag**<br/>把终端中断请求转换为应用退出消息。" }
+  class n18 node_system
+  n19@{ shape: rounded, label: "**trigger_screenshots**<br/>接收截图后台通道中已完成的图像，为对应请<br/>求实体添加 Captured，并触发携带图像的<br/>ScreenshotCaptured 事件。" }
+  class n19 node_system
+  n20@{ shape: rounded, label: "**automatically_add_parallax_**<br/>**correction_components**<br/>为同时带 EnvironmentMapLight 和<br/>LightProbe、但尚无<br/>ParallaxCorrection 的反射探针补入默认<br/>视差校正组件。" }
+  class n20 node_system
+  n21@{ shape: rounded, label: "**check_msaa**<br/>检查启用了顺序无关透明设置的相机；若同时<br/>使用多于一个 MSAA 采样则直接报错，避免<br/>执行不受支持的透明渲染组合。" }
+  class n21 node_system
+  n22@{ shape: rounded, label: "**update_tilemap_chunk_indices**<br/>将变化的瓦片块索引打包写入材质图像。" }
+  class n22 node_system
+  n23@{ shape: rounded, label: "**sync_dialog_z**<br/>按对话框栈顺序设置全局层级。" }
+  class n23 node_system
+  n24@{ shape: rounded, label: "**init_collider_constructors**<br/>来自Avian ↗：把就绪的碰撞构造配置变成<br/>实际形状。" }
+  class n24 node_system
+  class n24 external_node
+  n25@{ shape: rounded, label: "**init_collider_constructor_**<br/>**hierarchies**<br/>来自Avian ↗：按<br/>ColliderConstructorHierarchy 的默认<br/>及逐名称配置为后代生成碰撞体，写入碰撞层<br/>和密度；需要场景实例时等待就绪，需要网格<br/>时等待资产可用。完成该层级处理后移除构造<br/>配置并发出<br/>ColliderConstructorHierarchyReady。" }
+  class n25 node_system
+  class n25 external_node
+  n26@{ shape: rounded, label: "**poll_art_assets**<br/>来自场景装配 ↗：检查资源及其依赖的加载<br/>结果。" }
+  class n26 node_system
+  class n26 external_node
+  n27@{ shape: rounded, label: "**bind_settings_scrollbars**<br/>来自菜单与界面 ↗：将设置滚动条绑定到对<br/>应内容视口。" }
+  class n27 node_system
+  class n27 external_node
+  n28@{ shape: rounded, label: "**sample_slider_pointer**<br/>来自菜单与界面 ↗：从光标位置生成音量采<br/>样与释放请求。" }
+  class n28 node_system
+  class n28 external_node
+  n29@{ shape: rounded, label: "**update_volume_visuals**<br/>来自菜单与界面 ↗：原位更新音量百分比文<br/>字与轨道填充。" }
+  class n29 node_system
+  class n29 external_node
+  n30@{ shape: rounded, label: "**play_courier_animation**<br/>来自菜单与界面 ↗：绑定并循环播放展示快<br/>递员的持物待机动画。" }
+  class n30 node_system
+  class n30 external_node
+  n31@{ shape: rounded, label: "**log_asset_failures**<br/>来自菜单与界面 ↗：记录菜单模型与界面资<br/>源加载失败。" }
+  class n31 node_system
+  class n31 external_node
+  n32@{ shape: rounded, label: "**generate_environment_map_light**<br/>为环境光生成分配漫反射和镜面目标图像。" }
+  class n32 node_system
+  n33@{ shape: rounded, label: "**ApplyDeferred**<br/>在调度建立的同步点应用前序系统暂存的<br/>Commands 等延迟操作，使后续系统可以观察<br/>到结构变化；此卡片是 ApplyDeferred 的<br/>System 实现。" }
+  class n33 node_sync
+  n34@{ shape: rounded, label: "**ApplyDeferred**<br/>在调度建立的同步点应用前序系统暂存的<br/>Commands 等延迟操作，使后续系统可以观察<br/>到结构变化；此卡片是 ApplyDeferred 的<br/>System 实现。" }
+  class n34 node_sync
+  n35@{ shape: lin-rect, label: "**UiSystems::Style**<br/>来自菜单与界面 ↗：组织菜单显示、数值与<br/>说明的原位更新。" }
+  class n35 node_system_set
+  class n35 external_node
+  n36@{ shape: lin-rect, label: "**AudioSystems::Mix**<br/>来自音频播放 ↗：在播放请求前更新有效音<br/>量。" }
+  class n36 node_system_set
+  class n36 external_node
+  n37@{ shape: lin-rect, label: "**AudioSystems::Playback**<br/>来自音频播放 ↗：消费声音请求并处理场景<br/>退出停播。" }
+  class n37 node_system_set
+  class n37 external_node
+  n38@{ shape: lin-rect, label: "**AnonymousSet(0)**<br/>保存本组系统共同的运行条件。" }
+  class n38 node_system_set
+  n39@{ shape: lin-rect, label: "**AnonymousSet(1)**<br/>保存本组系统共同的运行条件。" }
+  class n39 node_system_set
+  n40@{ shape: lin-rect, label: "**UiSystems::Build**<br/>来自菜单与界面 ↗：按页面和视口变化重建<br/>菜单实体树。" }
+  class n40 node_system_set
+  class n40 external_node
+  n41@{ shape: lin-rect, label: "**UiSystems::Pointer**<br/>来自菜单与界面 ↗：在菜单实体树就绪后处<br/>理指针交互。" }
+  class n41 node_system_set
+  class n41 external_node
+  n0 e0@-->|"main / Update"| n1
+  class e0 edge_registration
+  n0 e1@-->|"main / Update"| n2
+  class e1 edge_registration
+  n0 e2@-->|"main / Update"| n3
+  class e2 edge_registration
+  n0 e3@-->|"main / Update"| n4
+  class e3 edge_registration
+  n0 e4@-->|"main / Update"| n5
+  class e4 edge_registration
+  n0 e5@-->|"main / Update"| n6
+  class e5 edge_registration
+  n0 e6@-->|"main / Update"| n7
+  class e6 edge_registration
+  n0 e7@-->|"main / Update"| n8
+  class e7 edge_registration
+  n0 e8@-->|"main / Update"| n9
+  class e8 edge_registration
+  n0 e9@-->|"main / Update"| n10
+  class e9 edge_registration
+  n0 e10@-->|"main / Update"| n11
+  class e10 edge_registration
+  n0 e11@-->|"main / Update"| n12
+  class e11 edge_registration
+  n0 e12@-->|"main / Update"| n13
+  class e12 edge_registration
+  n0 e13@-->|"main / Update"| n14
+  class e13 edge_registration
+  n0 e14@-->|"main / Update"| n15
+  class e14 edge_registration
+  n0 e15@-->|"main / Update"| n16
+  class e15 edge_registration
+  n0 e16@-->|"main / Update"| n17
+  class e16 edge_registration
+  n0 e17@-->|"main / Update"| n18
+  class e17 edge_registration
+  n0 e18@-->|"main / Update"| n19
+  class e18 edge_registration
+  n0 e19@-->|"main / Update"| n20
+  class e19 edge_registration
+  n0 e20@-->|"main / Update"| n21
+  class e20 edge_registration
+  n0 e21@-->|"main / Update"| n22
+  class e21 edge_registration
+  n0 e22@-->|"main / Update"| n23
+  class e22 edge_registration
+  n0 e23@-->|"main / Update"| n24
+  class e23 edge_registration
+  n0 e24@-->|"main / Update"| n25
+  class e24 edge_registration
+  n0 e25@-->|"main / Update"| n26
+  class e25 edge_registration
+  n0 e26@-->|"main / Update"| n27
+  class e26 edge_registration
+  n0 e27@-->|"main / Update"| n28
+  class e27 edge_registration
+  n0 e28@-->|"main / Update"| n29
+  class e28 edge_registration
+  n0 e29@-->|"main / Update"| n30
+  class e29 edge_registration
+  n0 e30@-->|"main / Update"| n31
+  class e30 edge_registration
+  n0 e31@-->|"main / Update"| n32
+  class e31 edge_registration
+  n0 e32@-->|"main / Update"| n33
+  class e32 edge_registration
+  n0 e33@-->|"main / Update"| n34
+  class e33 edge_registration
+  n0 e34@-->|"main / Update"| n35
+  class e34 edge_registration
+  n0 e35@-->|"main / Update"| n36
+  class e35 edge_registration
+  n0 e36@-->|"main / Update"| n37
+  class e36 edge_registration
+  n0 e37@-->|"main / Update"| n38
+  class e37 edge_registration
+  n0 e38@-->|"main / Update"| n39
+  class e38 edge_registration
+  n0 e39@-->|"main / Update"| n40
+  class e39 edge_registration
+  n0 e40@-->|"main / Update"| n41
+  class e40 edge_registration
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e17@{ curve: basis }
+  e18@{ curve: basis }
+  e19@{ curve: basis }
+  e21@{ curve: basis }
+  e22@{ curve: basis }
+  e23@{ curve: basis }
+  e24@{ curve: basis }
+  e25@{ curve: basis }
+  e26@{ curve: basis }
+  e27@{ curve: basis }
+  e28@{ curve: basis }
+  e29@{ curve: basis }
+  e30@{ curve: basis }
+  e31@{ curve: basis }
+  e32@{ curve: basis }
+  e33@{ curve: basis }
+  e34@{ curve: basis }
+  e35@{ curve: basis }
+  e36@{ curve: basis }
+  e37@{ curve: basis }
+  e38@{ curve: basis }
+  e39@{ curve: basis }
+  e40@{ curve: basis }

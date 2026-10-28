@@ -1,0 +1,73 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: SkinnedMesh · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**SkinnedMesh**<br/>关联蒙皮网格的关节与逆绑定姿态。" }
+  class n0 node_component
+  n1@{ shape: rounded, label: "**update_skinned_mesh_bounds**<br/>依据当前关节姿态更新动态蒙皮包围盒。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**no_automatic_skin_batching**<br/>在 Uniform 限制路径上禁止蒙皮网格自动合<br/>批。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**draw_skinned_mesh_bounds**<br/>绘制带独立显示标记的动态蒙皮包围区域。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**draw_all_skinned_mesh_bounds**<br/>绘制未单独标记的动态蒙皮网格包围区域。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**extract_meshes_for_gpu_building**<br/>增量提取变化或需重试网格到线程队列。" }
+  class n5 node_system
+  n6@{ shape: rounded, label: "**extract_skins**<br/>按蒙皮可见性和资产变化分配或回收骨骼缓冲<br/>区域，提取关节全局变换与逆绑定姿势到暂存<br/>数据，并清理移除的蒙皮记录。" }
+  class n6 node_system
+  n0 e0@--> n1
+  class e0 edge_read
+  n0 e1@-->|"存在 / 变更过滤"| n2
+  class e1 edge_reference
+  n0 e2@--> n3
+  class e2 edge_read
+  n0 e3@--> n4
+  class e3 edge_read
+  n0 e4@-->|"存在 / 变更过滤"| n5
+  class e4 edge_reference
+  n0 e5@--> n6
+  class e5 edge_read
+  n0 e6@-->|"存在 / 变更过滤"| n6
+  class e6 edge_reference
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }

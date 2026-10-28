@@ -1,0 +1,50 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#object-87e7319b10d16aa1-e0{marker-start:url(#object-87e7319b10d16aa1_flowchart-v2-pointStart)!important}\n#object-87e7319b10d16aa1_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}"
+  }
+}
+---
+flowchart LR
+  accTitle: ColliderConstructorHierarchy · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**ColliderConstructorHierarchy**<br/>批量配置层级中的碰撞体构造。" }
+  class n0 node_component
+  n1@{ shape: rounded, label: "**init_collider_constructor_**<br/>**hierarchies**<br/>按 ColliderConstructorHierarchy 的默<br/>认及逐名称配置为后代生成碰撞体，写入碰撞<br/>层和密度；需要场景实例时等待就绪，需要网<br/>格时等待资产可用。完成该层级处理后移除构<br/>造配置并发出<br/>ColliderConstructorHierarchyReady。" }
+  class n1 node_system
+  n1 e0@--- n0
+  class e0 edge_read
+  n1 e1@-->|"延迟移除"| n0
+  class e1 edge_write
+  e0@{ curve: basis }
+  e1@{ curve: basis }

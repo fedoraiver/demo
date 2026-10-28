@@ -1,0 +1,1670 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: Commands · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_system_param fill:#EFF5F6,stroke:#3B8790,stroke-width:1.6px,color:#1F3340
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: notch-rect, label: "**Commands**<br/>保存延迟执行的 World 操作队列" }
+  class n0 node_system_param
+  n1@{ shape: rounded, label: "**viewport_picking**<br/>收集正被悬停或拖动的 ViewportNode，将<br/>外部指针位置转换到其相机视口，并以该视口<br/>专用的 PointerId 转发 PointerInput；<br/>未使用的视口清除指针位置。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**touch_pick_events**<br/>把触摸阶段转换为独立拾取指针。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**clear_screenshots**<br/>通过延迟命令销毁已带 Captured 标记的截<br/>图实体，清理已经完成捕获的请求。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**cleanup_readback_once**<br/>从带 ReadbackOnce 的请求实体移除<br/>Readback 和 ReadbackOnce，结束一次性<br/>GPU 回读请求；实体自身继续保留。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**queue_mass_recomputation_on_mass_**<br/>**change**<br/>来自Avian ↗：在刚体自身的质量、惯量或<br/>质心组件变化时添加<br/>RecomputeMassProperties，安排后续重<br/>算；附属于刚体的碰撞体由另一条更新路径处<br/>理。" }
+  class n5 node_system
+  class n5 external_node
+  n6@{ shape: rounded, label: "**queue_mass_recomputation_on_**<br/>**collider_mass_change**<br/>来自Avian ↗：在附属碰撞体质量输入变化<br/>时请求刚体重算。" }
+  class n6 node_system
+  class n6 external_node
+  n7@{ shape: rounded, label: "**update_mass_properties**<br/>来自Avian ↗：遍历已标记<br/>RecomputeMassProperties 的实体，通过<br/>MassPropertyHelper 重算质量属性，随后<br/>移除本轮重算标记。" }
+  class n7 node_system
+  class n7 external_node
+  n8@{ shape: rounded, label: "**update_cursors**<br/>处理 CursorIcon 的变化与待重试窗口，准<br/>备原生或自定义光标；自定义图像按裁切、翻<br/>转和热点生成或复用缓存，资源尚未加载时保<br/>留重试。" }
+  class n8 node_system
+  n9@{ shape: rounded, label: "**despawn_unused_registered_systems**<br/>消费已注册系统的释放队列，对<br/>SystemHandle 引用计数已归零的系统实体<br/>排入安全销毁命令；已被手工销毁的实体不报<br/>错。" }
+  class n9 node_system
+  n10@{ shape: rounded, label: "**close_when_requested**<br/>将 WindowCloseRequested 对应窗口标为<br/>ClosingWindow，并销毁上一轮已带该标记<br/>的窗口实体，使原生窗口后端有机会先处理关<br/>闭通知。" }
+  class n10 node_system
+  n11@{ shape: rounded, label: "**changed_windows**<br/>将 Window 组件与 CachedWindow 比较，<br/>把标题、模式、位置、分辨率等受支持的变化<br/>同步到 winit 原生窗口，并发布调整尺寸或<br/>缩放等消息；渲染呈现模式由渲染模块另行处<br/>理。" }
+  class n11 node_system
+  n12@{ shape: rounded, label: "**deactivate_touch_pointers**<br/>销毁已经结束或取消的触摸指针。" }
+  class n12 node_system
+  n13@{ shape: rounded, label: "**apply_contact_status_changes**<br/>来自Avian ↗：把接触增删同步到约束图和<br/>物理岛。" }
+  class n13 node_system
+  class n13 external_node
+  n14@{ shape: rounded, label: "**on_change_joint_entities#lt;avian3d::**<br/>**dynamics::joints::fixed::FixedJoint#gt;**<br/>来自Avian ↗：在关节换端后重接刚体连接<br/>图。" }
+  class n14 node_system
+  class n14 external_node
+  n15@{ shape: rounded, label: "**on_change_joint_entities#lt;avian3d::**<br/>**dynamics::joints::revolute::**<br/>**RevoluteJoint#gt;**<br/>来自Avian ↗：在关节换端后重接刚体连接<br/>图。" }
+  class n15 node_system
+  class n15 external_node
+  n16@{ shape: rounded, label: "**on_change_joint_entities#lt;avian3d::**<br/>**dynamics::joints::prismatic::**<br/>**PrismaticJoint#gt;**<br/>来自Avian ↗：在关节换端后重接刚体连接<br/>图。" }
+  class n16 node_system
+  class n16 external_node
+  n17@{ shape: rounded, label: "**on_change_joint_entities#lt;avian3d::**<br/>**dynamics::joints::distance::**<br/>**DistanceJoint#gt;**<br/>来自Avian ↗：在关节换端后重接刚体连接<br/>图。" }
+  class n17 node_system
+  class n17 external_node
+  n18@{ shape: rounded, label: "**on_change_joint_entities#lt;avian3d::**<br/>**dynamics::joints::spherical::**<br/>**SphericalJoint#gt;**<br/>来自Avian ↗：在关节换端后重接刚体连接<br/>图。" }
+  class n18 node_system
+  class n18 external_node
+  n19@{ shape: rounded, label: "**apply_contact_status_changes**<br/>来自Avian ↗：把接触增删同步到约束图和<br/>物理岛。" }
+  class n19 node_system
+  class n19 external_node
+  n20@{ shape: rounded, label: "**apply_joint_graph_changes**<br/>来自Avian ↗：把关节连接变化同步到模拟<br/>岛。" }
+  class n20 node_system
+  class n20 external_node
+  n21@{ shape: rounded, label: "**wake_all_islands**<br/>来自Avian ↗：批量请求唤醒当前全部休眠<br/>物理岛。" }
+  class n21 node_system
+  class n21 external_node
+  n22@{ shape: rounded, label: "**sleep_islands**<br/>来自Avian ↗：依据活跃岛位图和待拆分状<br/>态收集需要休眠或唤醒的物理岛，通过<br/>World 命令应用状态变化，并同步岛内刚体<br/>的休眠状态。" }
+  class n22 node_system
+  class n22 external_node
+  n23@{ shape: rounded, label: "**process_recorded_focus_changes**<br/>按记录顺序派发焦点获得和失去事件。" }
+  class n23 node_system
+  n24@{ shape: rounded, label: "**calculate_bounds**<br/>为允许自动包围盒计算的 Mesh3d 实体补充<br/>Aabb，并在网格句柄或资产变化时重新计算<br/>已有包围盒；NoFrustumCulling 和<br/>NoAutoAabb 排除自动处理。" }
+  class n24 node_system
+  n25@{ shape: rounded, label: "**calculate_bounds_2d**<br/>为二维网格和精灵计算局部包围盒。" }
+  class n25 node_system
+  n26@{ shape: rounded, label: "**calculate_bounds_text2d**<br/>按文字布局与锚点更新二维文字包围盒。" }
+  class n26 node_system
+  n27@{ shape: rounded, label: "**check_dir_light_mesh_visibility**<br/>计算方向光各相机级联可见的投影网格。" }
+  class n27 node_system
+  n28@{ shape: rounded, label: "**update_point_light_bounding_spheres**<br/>按点光位置和范围更新剔除包围球。" }
+  class n28 node_system
+  n29@{ shape: rounded, label: "**update_spot_light_bounding_spheres**<br/>按聚光灯位置和范围更新剔除包围球。" }
+  class n29 node_system
+  n30@{ shape: rounded, label: "**add_light_probe_and_decal_aabbs**<br/>为尚无 Aabb 的光照探针及聚簇贴花补入以<br/>原点为中心的单位立方体包围盒，使它们参与<br/>后续可见性判定；实际尺寸由全局变换缩放表<br/>达。" }
+  class n30 node_system
+  n31@{ shape: rounded, label: "**trigger_untargeted_animation_events**<br/>派发动画片段的根目标事件。" }
+  class n31 node_system
+  n32@{ shape: rounded, label: "**apply_text_edits**<br/>应用可编辑文字排队的编辑操作。" }
+  class n32 node_system
+  n33@{ shape: rounded, label: "**propagate_ui_target_cameras**<br/>为 UI 根配置目标相机和视口信息传播源。" }
+  class n33 node_system
+  n34@{ shape: rounded, label: "**update_source#lt;bevy_ui::ui_node::**<br/>**ComputedUiTargetCamera, (), bevy_**<br/>**ecs::hierarchy::ChildOf#gt;**<br/>为直接带 Propagate#lt;C#gt; 的实体同步<br/>Inherited#lt;C#gt;；传播源被移除时沿关系查找<br/>可继承值，必要时移除失效的继承状态。" }
+  class n34 node_system
+  n35@{ shape: rounded, label: "**propagate_inherited#lt;bevy_ui::ui_**<br/>**node::ComputedUiTargetCamera, (),**<br/>**bevy_ecs::hierarchy::ChildOf#gt;**<br/>当 Inherited#lt;C#gt; 改变或关系结构变化时，<br/>沿指定关系向后代传播继承值，并遵守传播覆<br/>盖及停止标记；具体组件、过滤器和关系由泛<br/>型实参决定。" }
+  class n35 node_system
+  n36@{ shape: rounded, label: "**propagate_output#lt;bevy_ui::ui_node::**<br/>**ComputedUiTargetCamera, ()#gt;**<br/>把变化的 Inherited#lt;C#gt; 写入实体实际的<br/>C 组件；继承状态消失且没有重新添加传播<br/>来源时，移除失去来源的输出组件。" }
+  class n36 node_system
+  n37@{ shape: rounded, label: "**update_source#lt;bevy_ui::ui_node::**<br/>**ComputedUiRenderTargetInfo, (),**<br/>**bevy_ecs::hierarchy::ChildOf#gt;**<br/>为直接带 Propagate#lt;C#gt; 的实体同步<br/>Inherited#lt;C#gt;；传播源被移除时沿关系查找<br/>可继承值，必要时移除失效的继承状态。" }
+  class n37 node_system
+  n38@{ shape: rounded, label: "**propagate_inherited#lt;bevy_ui::ui_**<br/>**node::ComputedUiRenderTargetInfo,**<br/>**(), bevy_ecs::hierarchy::ChildOf#gt;**<br/>当 Inherited#lt;C#gt; 改变或关系结构变化时，<br/>沿指定关系向后代传播继承值，并遵守传播覆<br/>盖及停止标记；具体组件、过滤器和关系由泛<br/>型实参决定。" }
+  class n38 node_system
+  n39@{ shape: rounded, label: "**propagate_output#lt;bevy_ui::ui_node::**<br/>**ComputedUiRenderTargetInfo, ()#gt;**<br/>把变化的 Inherited#lt;C#gt; 写入实体实际的<br/>C 组件；继承状态消失且没有重新添加传播<br/>来源时，移除失去来源的输出组件。" }
+  class n39 node_system
+  n40@{ shape: rounded, label: "**update_clipping_system**<br/>从 UI 根递归更新继承裁剪范围。" }
+  class n40 node_system
+  n41@{ shape: rounded, label: "**update_texture_atlas_layout_**<br/>**components**<br/>同步 UI 图像所引用的图集布局组件。" }
+  class n41 node_system
+  n42@{ shape: rounded, label: "**process_output_system**<br/>来自Egui / Inspector ↗：拆分 Egui 绘<br/>制输出并执行平台命令。" }
+  class n42 node_system
+  class n42 external_node
+  n43@{ shape: rounded, label: "**add_mesh**<br/>首次需要时创建并缓存单位矩形网格，为新加<br/>入 Sprite 的实体插入共享的 Mesh2d，使<br/>精灵进入网格渲染路径。" }
+  class n43 node_system
+  n44@{ shape: rounded, label: "**add_material**<br/>精灵、锚点或网格材料计数改变时，清理失效<br/>缓存并按 Sprite 与 Anchor 复用或创建<br/>SpriteMeshMaterial，再插入<br/>MeshMaterial2d；已有材料计数非零的实体<br/>跳过。" }
+  class n44 node_system
+  n45@{ shape: rounded, label: "**no_automatic_skin_batching**<br/>在 Uniform 限制路径上禁止蒙皮网格自动合<br/>批。" }
+  class n45 node_system
+  n46@{ shape: rounded, label: "**no_automatic_morph_batching**<br/>在 Uniform 限制路径上禁止形变网格自动合<br/>批。" }
+  class n46 node_system
+  n47@{ shape: rounded, label: "**insert_deferred_lighting_pass_id_**<br/>**component**<br/>为启用了 DeferredPrepass 且尚无通道深<br/>度标识的视图插入默认<br/>PbrDeferredLightingDepthId，供后续延<br/>迟光照通道筛选使用。" }
+  class n47 node_system
+  n48@{ shape: rounded, label: "**menu_on_lose_focus**<br/>关闭不再持有内部焦点的菜单。" }
+  class n48 node_system
+  n49@{ shape: rounded, label: "**update_tablist_derived_state**<br/>从标签选择和焦点派生每个标签的状态。" }
+  class n49 node_system
+  n50@{ shape: rounded, label: "**button_changed**<br/>Button 改变时从 UI 子节点提取文本标<br/>签，更新已有 AccessibilityNode 的按钮<br/>角色和标签，或通过命令补入对应无障碍节<br/>点。" }
+  class n50 node_system
+  n51@{ shape: rounded, label: "**image_changed**<br/>非按钮 ImageNode 改变时从 UI 子节点提<br/>取说明，设置无障碍图像角色和标签；尚无<br/>AccessibilityNode 时排入创建命令。" }
+  class n51 node_system
+  n52@{ shape: rounded, label: "**label_changed**<br/>Label 改变时收集其文本元素，把拼接后的<br/>内容写为无障碍标签节点的值；已有节点原位<br/>更新，缺少节点时排入创建命令。" }
+  class n52 node_system
+  n53@{ shape: rounded, label: "**gilrs_event_startup_system**<br/>登记启动时已经连接的手柄。" }
+  class n53 node_system
+  n54@{ shape: rounded, label: "**setup_primary_egui_context_system**<br/>来自Egui / Inspector ↗：为首个合适相<br/>机建立主 Egui 上下文。" }
+  class n54 node_system
+  class n54 external_node
+  n55@{ shape: rounded, label: "**gamepad_connection_system**<br/>按连接消息添加或移除手柄组件。" }
+  class n55 node_system
+  n56@{ shape: rounded, label: "**dispatch_focused_input#lt;bevy_input::**<br/>**gamepad::GamepadButtonChangedEvent#gt;**<br/>读取对应输入消息并向当前焦点实体派发可冒<br/>泡的 FocusedInput；焦点无效时回退到主<br/>窗口。" }
+  class n56 node_system
+  n57@{ shape: rounded, label: "**dispatch_focused_input#lt;bevy_input::**<br/>**mouse::MouseWheel#gt;**<br/>读取对应输入消息并向当前焦点实体派发可冒<br/>泡的 FocusedInput；焦点无效时回退到主<br/>窗口。" }
+  class n57 node_system
+  n58@{ shape: rounded, label: "**update_interactions**<br/>依据当前与上一帧 HoverMap 更新指针的深<br/>度排序命中列表，合并多个指针对目标的交互<br/>状态，并更新或插入<br/>PickingInteraction。" }
+  class n58 node_system
+  n59@{ shape: rounded, label: "**update_is_directly_hovered**<br/>更新鼠标直接悬停的实体标记。" }
+  class n59 node_system
+  n60@{ shape: rounded, label: "**setup_primary_egui_context_system**<br/>来自Egui / Inspector ↗：为首个合适相<br/>机建立主 Egui 上下文。" }
+  class n60 node_system
+  class n60 external_node
+  n61@{ shape: rounded, label: "**Enhanced Input trigger**<br/>来自Enhanced Input ↗：依据动作事件标<br/>记向对应动作实体排入带类型的触发事件，并<br/>清理失效实例；此卡片的名称由系统参数元组<br/>生成。" }
+  class n61 node_system
+  class n61 external_node
+  n62@{ shape: rounded, label: "**check_delayed_command_queues**<br/>提交到期的延迟命令并删除队列实体。" }
+  class n62 node_system
+  n63@{ shape: rounded, label: "**update_mesh_previous_global_**<br/>**transforms**<br/>为下帧保存网格的当前世界变换。" }
+  class n63 node_system
+  n64@{ shape: rounded, label: "**update_previous_view_data**<br/>记录三维及阴影视图未抖动的变换矩阵。" }
+  class n64 node_system
+  n65@{ shape: rounded, label: "**gilrs_event_system**<br/>把 gilrs 原始手柄事件转换为 Bevy 消<br/>息。" }
+  class n65 node_system
+  n66@{ shape: rounded, label: "**write_pointer_moved_and_button_**<br/>**messages_system**<br/>来自Egui / Inspector ↗：按原生事件顺<br/>序转换 Egui 指针输入。" }
+  class n66 node_system
+  class n66 external_node
+  n67@{ shape: rounded, label: "**write_window_touch_messages_system**<br/>来自Egui / Inspector ↗：把窗口触摸转<br/>换为 Egui 指针和触摸事件。" }
+  class n67 node_system
+  class n67 external_node
+  n68@{ shape: rounded, label: "**queue_bind_groups_system**<br/>来自Egui / Inspector ↗：建立 Egui 纹<br/>理与采样器绑定。" }
+  class n68 node_system
+  class n68 external_node
+  n69@{ shape: rounded, label: "**queue_pipelines_system**<br/>来自Egui / Inspector ↗：按目标格式选<br/>择 Egui 渲染管线。" }
+  class n69 node_system
+  class n69 external_node
+  n70@{ shape: rounded, label: "**world_instance_spawner**<br/>根据世界资产根组件排队生成或替换实例。" }
+  class n70 node_system
+  n71@{ shape: rounded, label: "**spawn_gizmo_meshes**<br/>创建变换操作器各轴网格、材质和覆盖相机。" }
+  class n71 node_system
+  n72@{ shape: rounded, label: "**spawn_mouse_pointer**<br/>创建携带 PointerId::Mouse 的默认鼠标指<br/>针实体，让后续输入接收与拾取流程能够关联<br/>鼠标状态。" }
+  class n72 node_system
+  n73@{ shape: rounded, label: "**apply_state_transition#lt;demo::game_**<br/>**flow::AppState#gt;**<br/>取出 NextState 中待提交的新状态及是否<br/>允许同值切换的设置；当前状态存在时交给内<br/>部状态转换逻辑更新状态、保留前态并发布转<br/>换消息。" }
+  class n73 node_system
+  n74@{ shape: rounded, label: "**子状态转换闭包**<br/>监听父状态变化与待处理的子状态切换，计<br/>算 demo::game_flow::PlayState 是否仍<br/>应存在，应用转换并写入状态转换消息；闭包<br/>由 demo::game_flow::AppState 的<br/>StateSet 实现注册。" }
+  class n74 node_system
+  n75@{ shape: rounded, label: "**despawn_entities_on_exit_**<br/>**state#lt;demo::game_flow::AppState#gt;**<br/>读取最新状态转换消息，对<br/>DespawnOnExit 值匹配退出状态的实体排入<br/>销毁；包括禁用实体，未发生有效转换时不遍<br/>历。" }
+  class n75 node_system
+  n76@{ shape: rounded, label: "**disable_entities_on_exit_**<br/>**state#lt;demo::game_flow::AppState#gt;**<br/>有效状态转换退出指定值时，对匹配<br/>DisableOnExit 的实体及 Children 后代<br/>递归添加 Disabled，停用整条子树。" }
+  class n76 node_system
+  n77@{ shape: rounded, label: "**enable_entities_on_exit_state#lt;demo::**<br/>**game_flow::AppState#gt;**<br/>有效状态转换退出指定值时，对匹配<br/>EnableOnExit 且已禁用的实体及<br/>Children 后代递归移除 Disabled，重新启<br/>用该子树。" }
+  class n77 node_system
+  n78@{ shape: rounded, label: "**despawn_entities_on_exit_**<br/>**state#lt;demo::game_flow::PlayState#gt;**<br/>读取最新状态转换消息，对<br/>DespawnOnExit 值匹配退出状态的实体排入<br/>销毁；包括禁用实体，未发生有效转换时不遍<br/>历。" }
+  class n78 node_system
+  n79@{ shape: rounded, label: "**disable_entities_on_exit_**<br/>**state#lt;demo::game_flow::PlayState#gt;**<br/>有效状态转换退出指定值时，对匹配<br/>DisableOnExit 的实体及 Children 后代<br/>递归添加 Disabled，停用整条子树。" }
+  class n79 node_system
+  n80@{ shape: rounded, label: "**enable_entities_on_exit_state#lt;demo::**<br/>**game_flow::PlayState#gt;**<br/>有效状态转换退出指定值时，对匹配<br/>EnableOnExit 且已禁用的实体及<br/>Children 后代递归移除 Disabled，重新启<br/>用该子树。" }
+  class n80 node_system
+  n81@{ shape: rounded, label: "**despawn_entities_when_state#lt;demo::**<br/>**game_flow::AppState#gt;**<br/>读取最新有效状态转换，逐个调用<br/>DespawnWhen 保存的转换判定函数；判定命<br/>中时安全销毁实体，包括当前已禁用的实体。" }
+  class n81 node_system
+  n82@{ shape: rounded, label: "**disable_entities_when_state#lt;demo::**<br/>**game_flow::AppState#gt;**<br/>读取最新有效状态转换，调用<br/>DisableWhen 的转换判定函数；命中时给实<br/>体及 Children 后代递归添加 Disabled。" }
+  class n82 node_system
+  n83@{ shape: rounded, label: "**enable_entities_when_state#lt;demo::**<br/>**game_flow::AppState#gt;**<br/>读取最新有效状态转换，调用 EnableWhen<br/>的转换判定函数；命中时从当前禁用实体及<br/>Children 后代递归移除 Disabled。" }
+  class n83 node_system
+  n84@{ shape: rounded, label: "**despawn_entities_when_state#lt;demo::**<br/>**game_flow::PlayState#gt;**<br/>读取最新有效状态转换，逐个调用<br/>DespawnWhen 保存的转换判定函数；判定命<br/>中时安全销毁实体，包括当前已禁用的实体。" }
+  class n84 node_system
+  n85@{ shape: rounded, label: "**disable_entities_when_state#lt;demo::**<br/>**game_flow::PlayState#gt;**<br/>读取最新有效状态转换，调用<br/>DisableWhen 的转换判定函数；命中时给实<br/>体及 Children 后代递归添加 Disabled。" }
+  class n85 node_system
+  n86@{ shape: rounded, label: "**enable_entities_when_state#lt;demo::**<br/>**game_flow::PlayState#gt;**<br/>读取最新有效状态转换，调用 EnableWhen<br/>的转换判定函数；命中时从当前禁用实体及<br/>Children 后代递归移除 Disabled。" }
+  class n86 node_system
+  n87@{ shape: rounded, label: "**despawn_entities_on_enter_**<br/>**state#lt;demo::game_flow::AppState#gt;**<br/>读取最新状态转换消息，对<br/>DespawnOnEnter 值匹配进入状态的实体排<br/>入销毁；包括禁用实体，未发生有效转换时跳<br/>过。" }
+  class n87 node_system
+  n88@{ shape: rounded, label: "**disable_entities_on_enter_**<br/>**state#lt;demo::game_flow::AppState#gt;**<br/>有效状态转换进入指定值时，对匹配<br/>DisableOnEnter 的实体及 Children 后代<br/>递归添加 Disabled。" }
+  class n88 node_system
+  n89@{ shape: rounded, label: "**enable_entities_on_enter_**<br/>**state#lt;demo::game_flow::AppState#gt;**<br/>有效状态转换进入指定值时，对匹配<br/>EnableOnEnter 且已禁用的实体及<br/>Children 后代递归移除 Disabled。" }
+  class n89 node_system
+  n90@{ shape: rounded, label: "**despawn_entities_on_enter_**<br/>**state#lt;demo::game_flow::PlayState#gt;**<br/>读取最新状态转换消息，对<br/>DespawnOnEnter 值匹配进入状态的实体排<br/>入销毁；包括禁用实体，未发生有效转换时跳<br/>过。" }
+  class n90 node_system
+  n91@{ shape: rounded, label: "**disable_entities_on_enter_**<br/>**state#lt;demo::game_flow::PlayState#gt;**<br/>有效状态转换进入指定值时，对匹配<br/>DisableOnEnter 的实体及 Children 后代<br/>递归添加 Disabled。" }
+  class n91 node_system
+  n92@{ shape: rounded, label: "**enable_entities_on_enter_**<br/>**state#lt;demo::game_flow::PlayState#gt;**<br/>有效状态转换进入指定值时，对匹配<br/>EnableOnEnter 且已禁用的实体及<br/>Children 后代递归移除 Disabled。" }
+  class n92 node_system
+  n93@{ shape: rounded, label: "**trigger_screenshots**<br/>接收截图后台通道中已完成的图像，为对应请<br/>求实体添加 Captured，并触发携带图像的<br/>ScreenshotCaptured 事件。" }
+  class n93 node_system
+  n94@{ shape: rounded, label: "**automatically_add_parallax_**<br/>**correction_components**<br/>为同时带 EnvironmentMapLight 和<br/>LightProbe、但尚无<br/>ParallaxCorrection 的反射探针补入默认<br/>视差校正组件。" }
+  class n94 node_system
+  n95@{ shape: rounded, label: "**sync_dialog_z**<br/>按对话框栈顺序设置全局层级。" }
+  class n95 node_system
+  n96@{ shape: rounded, label: "**init_collider_constructors**<br/>来自Avian ↗：把就绪的碰撞构造配置变成<br/>实际形状。" }
+  class n96 node_system
+  class n96 external_node
+  n97@{ shape: rounded, label: "**init_collider_constructor_**<br/>**hierarchies**<br/>来自Avian ↗：按<br/>ColliderConstructorHierarchy 的默认<br/>及逐名称配置为后代生成碰撞体，写入碰撞层<br/>和密度；需要场景实例时等待就绪，需要网格<br/>时等待资产可用。完成该层级处理后移除构造<br/>配置并发出<br/>ColliderConstructorHierarchyReady。" }
+  class n97 node_system
+  class n97 external_node
+  n98@{ shape: rounded, label: "**generate_environment_map_light**<br/>为环境光生成分配漫反射和镜面目标图像。" }
+  class n98 node_system
+  n99@{ shape: rounded, label: "**extract_uinode_changes**<br/>使变化或移除的 UI 数据失效并清理旧渲染<br/>实体。" }
+  class n99 node_system
+  n100@{ shape: rounded, label: "**extract_ui_camera_view**<br/>为活动二维或三维相机维护独立 UI 视图。" }
+  class n100 node_system
+  n101@{ shape: rounded, label: "**extract_shadows**<br/>从主世界提取变化后的可见 UI 阴影，解析<br/>尺寸、变换、裁剪和目标相机，替换对应的渲<br/>染阴影实体；不可见、空阴影及已移除的数据<br/>不进入绘制。" }
+  class n101 node_system
+  n102@{ shape: rounded, label: "**extract_uinode_background_colors**<br/>提取 UI 节点背景与外侧填充色。" }
+  class n102 node_system
+  n103@{ shape: rounded, label: "**extract_viewport_nodes**<br/>把视口节点所引用相机的输出图像嵌入 UI。" }
+  class n103 node_system
+  n104@{ shape: rounded, label: "**extract_uinode_images**<br/>按节点视觉盒与图集区域提取普通 UI 图<br/>像。" }
+  class n104 node_system
+  n105@{ shape: rounded, label: "**extract_ui_texture_slices**<br/>增量提取九宫格或平铺 UI 图像切片。" }
+  class n105 node_system
+  n106@{ shape: rounded, label: "**extract_uinode_borders**<br/>提取 UI 各边颜色边框与外轮廓。" }
+  class n106 node_system
+  n107@{ shape: rounded, label: "**extract_text_decorations**<br/>提取 UI 文字背景、删除线和下划线。" }
+  class n107 node_system
+  n108@{ shape: rounded, label: "**extract_text_shadows**<br/>提取 UI 文字及装饰线的偏移阴影。" }
+  class n108 node_system
+  n109@{ shape: rounded, label: "**extract_text_sections**<br/>按图集提取 UI 字形并处理选中文字颜色。" }
+  class n109 node_system
+  n110@{ shape: rounded, label: "**extract_text_cursor**<br/>提取文字光标和带圆角的选区背景。" }
+  class n110 node_system
+  n111@{ shape: rounded, label: "**extract_preedit_underlines**<br/>把输入法预编辑下划线提取为 UI 矩形。" }
+  class n111 node_system
+  n112@{ shape: rounded, label: "**extract_debug_overlay**<br/>为变化的 UI 节点提取调试轮廓。" }
+  class n112 node_system
+  n113@{ shape: rounded, label: "**extract_inline_images**<br/>把文字行内图像提取为 UI 绘制项。" }
+  class n113 node_system
+  n114@{ shape: rounded, label: "**extract_gradients**<br/>提取变化后的 UI 背景与边框渐变，解析颜<br/>色停靠点、节点几何、裁剪和目标相机，并替<br/>换渲染世界中的对应渐变项；无效或不可见项<br/>被清理。" }
+  class n114 node_system
+  n115@{ shape: rounded, label: "**extract_windows**<br/>将主世界窗口尺寸、显示模式、原生句柄和主<br/>窗口身份同步到渲染世界，标记尺寸及模式变<br/>化，并处理关闭窗口或移除句柄造成的失效状<br/>态。" }
+  class n115 node_system
+  n116@{ shape: rounded, label: "**extract_resource#lt;bevy_camera::clear_**<br/>**color::ClearColor, bevy_render::**<br/>**RenderApp, ()#gt;**<br/>读取主世界中的可选源资源，经<br/>ExtractResource 转换后更新子世界目标资<br/>源；源值变化时替换现有目标，目标不存在时<br/>通过 Commands 插入。" }
+  class n116 node_system
+  n117@{ shape: rounded, label: "**extract_components#lt;bevy_camera::**<br/>**camera::CameraMainTextureUsages,**<br/>**bevy_render::RenderApp, ()#gt;**<br/>对已同步到子世界的实体读取<br/>ExtractComponent 指定的查询数据，批量<br/>写入转换后的目标组件；转换返回 None 时<br/>移除对应目标组件。" }
+  class n117 node_system
+  n118@{ shape: rounded, label: "**extract_cameras**<br/>把主世界活动相机的目标、视口、变换、可见<br/>实体和渲染设置提取到渲染实体，并维护视图<br/>所需格式；对停用或目标尺寸无效的相机移除<br/>失效提取状态。" }
+  class n118 node_system
+  n119@{ shape: rounded, label: "**extract_components#lt;bevy_render::**<br/>**view::Msaa, bevy_render::RenderApp,**<br/>**()#gt;**<br/>对已同步到子世界的实体读取<br/>ExtractComponent 指定的查询数据，批量<br/>写入转换后的目标组件；转换返回 None 时<br/>移除对应目标组件。" }
+  class n119 node_system
+  n120@{ shape: rounded, label: "**extract_components#lt;bevy_render::**<br/>**occlusion_culling::**<br/>**OcclusionCulling, bevy_render::**<br/>**RenderApp, ()#gt;**<br/>对已同步到子世界的实体读取<br/>ExtractComponent 指定的查询数据，批量<br/>写入转换后的目标组件；转换返回 None 时<br/>移除对应目标组件。" }
+  class n120 node_system
+  n121@{ shape: rounded, label: "**extract_frame_count**<br/>将主世界帧计数同步到渲染世界。" }
+  class n121 node_system
+  n122@{ shape: rounded, label: "**extract_time**<br/>将主世界当前 Time 值复制并插入渲染世<br/>界，供渲染侧全局时间参数使用。" }
+  class n122 node_system
+  n123@{ shape: rounded, label: "**extract_resource#lt;bevy_render::**<br/>**texture::manual_texture_view::**<br/>**ManualTextureViews, bevy_render::**<br/>**RenderApp, ()#gt;**<br/>读取主世界中的可选源资源，经<br/>ExtractResource 转换后更新子世界目标资<br/>源；源值变化时替换现有目标，目标不存在时<br/>通过 Commands 插入。" }
+  class n123 node_system
+  n124@{ shape: rounded, label: "**extract_components#lt;bevy_render::gpu_**<br/>**readback::Readback, bevy_render::**<br/>**RenderApp, ()#gt;**<br/>对已同步到子世界的实体读取<br/>ExtractComponent 指定的查询数据，批量<br/>写入转换后的目标组件；转换返回 None 时<br/>移除对应目标组件。" }
+  class n124 node_system
+  n125@{ shape: rounded, label: "**extract_components#lt;bevy_camera::**<br/>**components::Camera2d, bevy_render::**<br/>**RenderApp, ()#gt;**<br/>对已同步到子世界的实体读取<br/>ExtractComponent 指定的查询数据，批量<br/>写入转换后的目标组件；转换返回 None 时<br/>移除对应目标组件。" }
+  class n125 node_system
+  n126@{ shape: rounded, label: "**extract_skybox**<br/>将主世界 Skybox 及相机曝光转换为天空盒<br/>亮度和逆旋转 Uniform，连同天空盒组件批<br/>量写入对应渲染实体。" }
+  class n126 node_system
+  n127@{ shape: rounded, label: "**extract_components#lt;bevy_camera::**<br/>**components::Camera3d, bevy_render::**<br/>**RenderApp, ()#gt;**<br/>对已同步到子世界的实体读取<br/>ExtractComponent 指定的查询数据，批量<br/>写入转换后的目标组件；转换返回 None 时<br/>移除对应目标组件。" }
+  class n127 node_system
+  n128@{ shape: rounded, label: "**extract_camera_prepass_phase**<br/>同步三维相机的预通道标记与渲染阶段。" }
+  class n128 node_system
+  n129@{ shape: rounded, label: "**extract_resource#lt;bevy_core_**<br/>**pipeline::tonemapping::**<br/>**TonemappingLuts, bevy_render::**<br/>**RenderApp, ()#gt;**<br/>读取主世界中的可选源资源，经<br/>ExtractResource 转换后更新子世界目标资<br/>源；源值变化时替换现有目标，目标不存在时<br/>通过 Commands 插入。" }
+  class n129 node_system
+  n130@{ shape: rounded, label: "**extract_components#lt;bevy_render::**<br/>**view::Tonemapping, bevy_render::**<br/>**RenderApp, ()#gt;**<br/>对已同步到子世界的实体读取<br/>ExtractComponent 指定的查询数据，批量<br/>写入转换后的目标组件；转换返回 None 时<br/>移除对应目标组件。" }
+  class n130 node_system
+  n131@{ shape: rounded, label: "**extract_components#lt;bevy_render::**<br/>**view::DebandDither, bevy_render::**<br/>**RenderApp, ()#gt;**<br/>对已同步到子世界的实体读取<br/>ExtractComponent 指定的查询数据，批量<br/>写入转换后的目标组件；转换返回 None 时<br/>移除对应目标组件。" }
+  class n131 node_system
+  n132@{ shape: rounded, label: "**extract_components#lt;bevy_core_**<br/>**pipeline::oit::**<br/>**OrderIndependentTransparencySettings**<br/>**, bevy_render::RenderApp, ()#gt;**<br/>对已同步到子世界的实体读取<br/>ExtractComponent 指定的查询数据，批量<br/>写入转换后的目标组件；转换返回 None 时<br/>移除对应目标组件。" }
+  class n132 node_system
+  n133@{ shape: rounded, label: "**extract_components#lt;bevy_core_**<br/>**pipeline::prepass::background_**<br/>**motion_vectors::**<br/>**NoBackgroundMotionVectors, bevy_**<br/>**render::RenderApp, ()#gt;**<br/>对已同步到子世界的实体读取<br/>ExtractComponent 指定的查询数据，批量<br/>写入转换后的目标组件；转换返回 None 时<br/>移除对应目标组件。" }
+  class n133 node_system
+  n134@{ shape: rounded, label: "**extract_components#lt;bevy_post_**<br/>**process::bloom::settings::Bloom,**<br/>**bevy_render::RenderApp, ()#gt;**<br/>对已同步到子世界的实体读取<br/>ExtractComponent 指定的查询数据，批量<br/>写入转换后的目标组件；转换返回 None 时<br/>移除对应目标组件。" }
+  class n134 node_system
+  n135@{ shape: rounded, label: "**extract_components#lt;bevy_post_**<br/>**process::motion_blur::MotionBlur,**<br/>**bevy_render::RenderApp, ()#gt;**<br/>对已同步到子世界的实体读取<br/>ExtractComponent 指定的查询数据，批量<br/>写入转换后的目标组件；转换返回 None 时<br/>移除对应目标组件。" }
+  class n135 node_system
+  n136@{ shape: rounded, label: "**extract_depth_of_field_settings**<br/>把透视相机景深设置转换为 GPU 参数。" }
+  class n136 node_system
+  n137@{ shape: rounded, label: "**extract_components#lt;bevy_post_**<br/>**process::effect_stack::chromatic_**<br/>**aberration::ChromaticAberration,**<br/>**bevy_render::RenderApp, ()#gt;**<br/>对已同步到子世界的实体读取<br/>ExtractComponent 指定的查询数据，批量<br/>写入转换后的目标组件；转换返回 None 时<br/>移除对应目标组件。" }
+  class n137 node_system
+  n138@{ shape: rounded, label: "**extract_components#lt;bevy_post_**<br/>**process::effect_stack::lens_**<br/>**distortion::LensDistortion, bevy_**<br/>**render::RenderApp, ()#gt;**<br/>对已同步到子世界的实体读取<br/>ExtractComponent 指定的查询数据，批量<br/>写入转换后的目标组件；转换返回 None 时<br/>移除对应目标组件。" }
+  class n138 node_system
+  n139@{ shape: rounded, label: "**extract_components#lt;bevy_post_**<br/>**process::effect_stack::vignette::**<br/>**Vignette, bevy_render::RenderApp,**<br/>**()#gt;**<br/>对已同步到子世界的实体读取<br/>ExtractComponent 指定的查询数据，批量<br/>写入转换后的目标组件；转换返回 None 时<br/>移除对应目标组件。" }
+  class n139 node_system
+  n140@{ shape: rounded, label: "**extract_components#lt;bevy_anti_alias::**<br/>**fxaa::Fxaa, bevy_render::RenderApp,**<br/>**()#gt;**<br/>对已同步到子世界的实体读取<br/>ExtractComponent 指定的查询数据，批量<br/>写入转换后的目标组件；转换返回 None 时<br/>移除对应目标组件。" }
+  class n140 node_system
+  n141@{ shape: rounded, label: "**extract_components#lt;bevy_anti_alias::**<br/>**smaa::Smaa, bevy_render::RenderApp,**<br/>**()#gt;**<br/>对已同步到子世界的实体读取<br/>ExtractComponent 指定的查询数据，批量<br/>写入转换后的目标组件；转换返回 None 时<br/>移除对应目标组件。" }
+  class n141 node_system
+  n142@{ shape: rounded, label: "**extract_taa_settings**<br/>提取有效相机的 TAA 设置并消费历史重置信<br/>号。" }
+  class n142 node_system
+  n143@{ shape: rounded, label: "**extract_components#lt;bevy_anti_alias::**<br/>**contrast_adaptive_sharpening::**<br/>**ContrastAdaptiveSharpening, bevy_**<br/>**render::RenderApp, ()#gt;**<br/>对已同步到子世界的实体读取<br/>ExtractComponent 指定的查询数据，批量<br/>写入转换后的目标组件；转换返回 None 时<br/>移除对应目标组件。" }
+  class n143 node_system
+  n144@{ shape: rounded, label: "**extract_text2d_sprite**<br/>把可见二维文字及装饰提取为精灵切片。" }
+  class n144 node_system
+  n145@{ shape: rounded, label: "**extract_camera_previous_view_data**<br/>把活动三维相机的前帧视图数据提取到渲染<br/>侧。" }
+  class n145 node_system
+  n146@{ shape: rounded, label: "**extract_components#lt;bevy_pbr::fog::**<br/>**DistanceFog, bevy_render::**<br/>**RenderApp, ()#gt;**<br/>对已同步到子世界的实体读取<br/>ExtractComponent 指定的查询数据，批量<br/>写入转换后的目标组件；转换返回 None 时<br/>移除对应目标组件。" }
+  class n146 node_system
+  n147@{ shape: rounded, label: "**extract_resource#lt;bevy_pbr::**<br/>**material::**<br/>**DefaultOpaqueRendererMethod, bevy_**<br/>**render::RenderApp, ()#gt;**<br/>读取主世界中的可选源资源，经<br/>ExtractResource 转换后更新子世界目标资<br/>源；源值变化时替换现有目标，目标不存在时<br/>通过 Commands 插入。" }
+  class n147 node_system
+  n148@{ shape: rounded, label: "**gather_light_probes#lt;bevy_light::**<br/>**probe::EnvironmentMapLight#gt;**<br/>按相机可见集合和距离分配已就绪光照探针。" }
+  class n148 node_system
+  n149@{ shape: rounded, label: "**gather_light_probes#lt;bevy_light::**<br/>**probe::IrradianceVolume#gt;**<br/>按相机可见集合和距离分配已就绪光照探针。" }
+  class n149 node_system
+  n150@{ shape: rounded, label: "**extract_volumetric_fog**<br/>从主世界提取体积雾、雾体积及体积光配置。" }
+  class n150 node_system
+  n151@{ shape: rounded, label: "**extract_components#lt;bevy_pbr::ssr::**<br/>**ScreenSpaceReflections, bevy_**<br/>**render::RenderApp, ()#gt;**<br/>对已同步到子世界的实体读取<br/>ExtractComponent 指定的查询数据，批量<br/>写入转换后的目标组件；转换返回 None 时<br/>移除对应目标组件。" }
+  class n151 node_system
+  n152@{ shape: rounded, label: "**extract_components#lt;bevy_pbr::**<br/>**transmission::**<br/>**ScreenSpaceTransmission, bevy_**<br/>**render::RenderApp, ()#gt;**<br/>对已同步到子世界的实体读取<br/>ExtractComponent 指定的查询数据，批量<br/>写入转换后的目标组件；转换返回 None 时<br/>移除对应目标组件。" }
+  class n152 node_system
+  n153@{ shape: rounded, label: "**extract_clustered_decal**<br/>批量复制主世界的聚簇贴花组件。" }
+  class n153 node_system
+  n154@{ shape: rounded, label: "**extract_components#lt;bevy_pbr::**<br/>**contact_shadows::ContactShadows,**<br/>**bevy_render::RenderApp, ()#gt;**<br/>对已同步到子世界的实体读取<br/>ExtractComponent 指定的查询数据，批量<br/>写入转换后的目标组件；转换返回 None 时<br/>移除对应目标组件。" }
+  class n154 node_system
+  n155@{ shape: rounded, label: "**extract_components#lt;bevy_pbr::**<br/>**atmosphere::environment::**<br/>**AtmosphereEnvironmentMap, bevy_**<br/>**render::RenderApp, ()#gt;**<br/>对已同步到子世界的实体读取<br/>ExtractComponent 指定的查询数据，批量<br/>写入转换后的目标组件；转换返回 None 时<br/>移除对应目标组件。" }
+  class n155 node_system
+  n156@{ shape: rounded, label: "**extract_atmosphere**<br/>为每个启用 AtmosphereSettings 的三维<br/>相机选择世界距离最近的大气实体，复制大气<br/>和 GPU 设置到渲染世界；设置移除或没有候<br/>选大气时清理旧状态。" }
+  class n156 node_system
+  n157@{ shape: rounded, label: "**extract_resource#lt;bevy_light::**<br/>**cluster::GlobalClusterSettings,**<br/>**bevy_render::RenderApp, bevy_pbr::**<br/>**cluster::gpu::GpuClusteringPlugin#gt;**<br/>读取主世界中的可选源资源，经<br/>ExtractResource 转换后更新子世界目标资<br/>源；源值变化时替换现有目标，目标不存在时<br/>通过 Commands 插入。" }
+  class n157 node_system
+  n158@{ shape: rounded, label: "**extract_components#lt;bevy_pbr::**<br/>**deferred::**<br/>**PbrDeferredLightingDepthId, bevy_**<br/>**render::RenderApp, ()#gt;**<br/>对已同步到子世界的实体读取<br/>ExtractComponent 指定的查询数据，批量<br/>写入转换后的目标组件；转换返回 None 时<br/>移除对应目标组件。" }
+  class n158 node_system
+  n159@{ shape: rounded, label: "**extract_clusters_for_cpu_clustering**<br/>把 CPU 聚簇结果转换为渲染侧对象列表。" }
+  class n159 node_system
+  n160@{ shape: rounded, label: "**extract_clusters_for_gpu_clustering**<br/>提取视图聚簇配置并回传上帧 GPU 统计。" }
+  class n160 node_system
+  n161@{ shape: rounded, label: "**extract_lights**<br/>同步可见点光、聚光、平行光及矩形光的渲染<br/>参数和阴影可见实体，提取变化的阴影贴图设<br/>置；隐藏或失效光源不继续保留有效渲染状<br/>态。" }
+  class n161 node_system
+  n162@{ shape: rounded, label: "**extract_ambient_light_resource**<br/>在源存在时同步全局环境光资源。" }
+  class n162 node_system
+  n163@{ shape: rounded, label: "**extract_ambient_light**<br/>批量复制主世界实体的环境光设置。" }
+  class n163 node_system
+  n164@{ shape: rounded, label: "**extract_shadow_filtering_method**<br/>批量同步实体的阴影过滤方式。" }
+  class n164 node_system
+  n165@{ shape: rounded, label: "**extract_resource#lt;bevy_gizmos_**<br/>**render::LineGizmoEntities, bevy_**<br/>**render::RenderApp, ()#gt;**<br/>读取主世界中的可选源资源，经<br/>ExtractResource 转换后更新子世界目标资<br/>源；源值变化时替换现有目标，目标不存在时<br/>通过 Commands 插入。" }
+  class n165 node_system
+  n166@{ shape: rounded, label: "**extract_resource#lt;bevy_egui::**<br/>**EguiUserTextures, bevy_render::**<br/>**RenderApp, ()#gt;**<br/>读取主世界中的可选源资源，经<br/>ExtractResource 转换后更新子世界目标资<br/>源；源值变化时替换现有目标，目标不存在时<br/>通过 Commands 插入。" }
+  class n166 node_system
+  n167@{ shape: rounded, label: "**extract_resource#lt;bevy_egui::render::**<br/>**systems::**<br/>**ExtractedEguiManagedTextures, bevy_**<br/>**render::RenderApp, ()#gt;**<br/>读取主世界中的可选源资源，经<br/>ExtractResource 转换后更新子世界目标资<br/>源；源值变化时替换现有目标，目标不存在时<br/>通过 Commands 插入。" }
+  class n167 node_system
+  n168@{ shape: rounded, label: "**extract_ssao_settings**<br/>向渲染相机提取屏幕空间环境光遮蔽配置。" }
+  class n168 node_system
+  n169@{ shape: rounded, label: "**extract_generated_environment_map_**<br/>**entities**<br/>提取环境图生成所需的三张 GPU 图像。" }
+  class n169 node_system
+  n170@{ shape: rounded, label: "**extract_egui_camera_view_system**<br/>来自Egui / Inspector ↗：为活动相机提<br/>取独立 Egui 渲染视图。" }
+  class n170 node_system
+  class n170 external_node
+  n171@{ shape: rounded, label: "**prepare_lights**<br/>汇总提取后的各类光源，为视图准备光照<br/>GPU 参数、聚簇索引及阴影贴图和阴影视<br/>图，维护对应缓存及阶段记录，并检查设备和<br/>实现支持的数量限制。" }
+  class n171 node_system
+  n172@{ shape: rounded, label: "**cleanup_view_targets_for_resize**<br/>在窗口尺寸或呈现模式变化时撤销旧视图目<br/>标。" }
+  class n172 node_system
+  n173@{ shape: rounded, label: "**prepare_view_targets**<br/>为视图维护主颜色双缓冲及可选多采样目标。" }
+  class n173 node_system
+  n174@{ shape: rounded, label: "**prepare_auxiliary_depth_of_field_**<br/>**textures**<br/>为 Bokeh 景深分配第二颜色输出。" }
+  class n174 node_system
+  n175@{ shape: rounded, label: "**queue_oit_resolve_pipeline**<br/>按 OIT 相机设置缓存透明解析管线。" }
+  class n175 node_system
+  n176@{ shape: rounded, label: "**queue_render_sky_pipelines**<br/>按多重采样和混合能力选择天空管线。" }
+  class n176 node_system
+  n177@{ shape: rounded, label: "**queue_bind_groups_system**<br/>来自Egui / Inspector ↗：建立 Egui 纹<br/>理与采样器绑定。" }
+  class n177 node_system
+  class n177 external_node
+  n178@{ shape: rounded, label: "**queue_pipelines_system**<br/>来自Egui / Inspector ↗：按目标格式选<br/>择 Egui 渲染管线。" }
+  class n178 node_system
+  class n178 external_node
+  n179@{ shape: rounded, label: "**prepare_view_uniforms**<br/>生成视图投影、抖动、裁剪及 LOD 的 GPU<br/>参数。" }
+  class n179 node_system
+  n180@{ shape: rounded, label: "**prepare_core_2d_depth_textures**<br/>为有效二维视图准备共享目标深度纹理。" }
+  class n180 node_system
+  n181@{ shape: rounded, label: "**prepare_uniform_components#lt;bevy_**<br/>**core_pipeline::skybox::**<br/>**SkyboxUniforms#gt;**<br/>将组件值批量上传为动态着色器参数。" }
+  class n181 node_system
+  n182@{ shape: rounded, label: "**prepare_core_3d_depth_textures**<br/>按共享目标准备三维深度纹理与清除方式。" }
+  class n182 node_system
+  n183@{ shape: rounded, label: "**prepare_prepass_textures**<br/>按三维预通道配置分配各类输出纹理。" }
+  class n183 node_system
+  n184@{ shape: rounded, label: "**prepare_deferred_lighting_id_**<br/>**textures**<br/>为延迟预通道相机分配光照标识深度纹理。" }
+  class n184 node_system
+  n185@{ shape: rounded, label: "**prepare_oit_buffers**<br/>调整共享 OIT 存储并上传逐相机设置。" }
+  class n185 node_system
+  n186@{ shape: rounded, label: "**prepare_uniform_components#lt;bevy_**<br/>**post_process::bloom::downsampling_**<br/>**pipeline::BloomUniforms#gt;**<br/>将组件值批量上传为动态着色器参数。" }
+  class n186 node_system
+  n187@{ shape: rounded, label: "**prepare_bloom_textures**<br/>按视口比例分配 Bloom 多级纹理。" }
+  class n187 node_system
+  n188@{ shape: rounded, label: "**prepare_uniform_components#lt;bevy_**<br/>**post_process::motion_blur::**<br/>**MotionBlurUniform#gt;**<br/>将组件值批量上传为动态着色器参数。" }
+  class n188 node_system
+  n189@{ shape: rounded, label: "**prepare_uniform_components#lt;bevy_**<br/>**post_process::dof::**<br/>**DepthOfFieldUniform#gt;**<br/>将组件值批量上传为动态着色器参数。" }
+  class n189 node_system
+  n190@{ shape: rounded, label: "**prepare_smaa_uniforms**<br/>上传各 SMAA 视图的尺寸及倒数参数。" }
+  class n190 node_system
+  n191@{ shape: rounded, label: "**prepare_smaa_textures**<br/>为 SMAA 分配边缘、模板和混合权重纹理。" }
+  class n191 node_system
+  n192@{ shape: rounded, label: "**prepare_taa_history_textures**<br/>按帧奇偶为 TAA 轮换读写历史纹理。" }
+  class n192 node_system
+  n193@{ shape: rounded, label: "**prepare_uniform_components#lt;bevy_**<br/>**anti_alias::contrast_adaptive_**<br/>**sharpening::CasUniform#gt;**<br/>将组件值批量上传为动态着色器参数。" }
+  class n193 node_system
+  n194@{ shape: rounded, label: "**prepare_previous_view_uniforms**<br/>重建前帧抖动矩阵并上传视图历史参数。" }
+  class n194 node_system
+  n195@{ shape: rounded, label: "**prepare_fog**<br/>把各提取视图的 DistanceFog 转换为线<br/>性、指数、平方指数或大气模式的 GPU 参<br/>数，写入雾 Uniform 缓冲，并记录视图所用<br/>偏移。" }
+  class n195 node_system
+  n196@{ shape: rounded, label: "**upload_light_probes**<br/>上传各视图的环境图、反射与辐照探针参数。" }
+  class n196 node_system
+  n197@{ shape: rounded, label: "**prepare_ssr_settings**<br/>上传各视图反射参数并记录动态缓冲偏移。" }
+  class n197 node_system
+  n198@{ shape: rounded, label: "**prepare_core_3d_transmission_**<br/>**textures**<br/>为需要多步透射的视图准备场景颜色拷贝纹<br/>理。" }
+  class n198 node_system
+  n199@{ shape: rounded, label: "**prepare_contact_shadows_settings**<br/>上传各视图接触阴影设置并记录动态偏移。" }
+  class n199 node_system
+  n200@{ shape: rounded, label: "**prepare_uniform_components#lt;bevy_**<br/>**pbr::atmosphere::resources::**<br/>**GpuAtmosphere#gt;**<br/>将组件值批量上传为动态着色器参数。" }
+  class n200 node_system
+  n201@{ shape: rounded, label: "**prepare_uniform_components#lt;bevy_**<br/>**pbr::atmosphere::**<br/>**GpuAtmosphereSettings#gt;**<br/>将组件值批量上传为动态着色器参数。" }
+  class n201 node_system
+  n202@{ shape: rounded, label: "**prepare_uniform_components#lt;bevy_**<br/>**pbr::deferred::**<br/>**PbrDeferredLightingDepthId#gt;**<br/>将组件值批量上传为动态着色器参数。" }
+  class n202 node_system
+  n203@{ shape: rounded, label: "**prepare_clusters_for_cpu_clustering**<br/>把 CPU 聚簇列表转换并上传为 GPU 索引缓<br/>冲。" }
+  class n203 node_system
+  n204@{ shape: rounded, label: "**prepare_uniform_components#lt;bevy_**<br/>**gizmos_render::LineGizmoUniform#gt;**<br/>将组件值批量上传为动态着色器参数。" }
+  class n204 node_system
+  n205@{ shape: rounded, label: "**prepare_ssao_textures**<br/>为环境光遮蔽分配中间纹理及参数缓冲。" }
+  class n205 node_system
+  n206@{ shape: rounded, label: "**prepare_generated_environment_map_**<br/>**intermediate_textures**<br/>按源立方图尺寸分配完整 mip 链中间纹理。" }
+  class n206 node_system
+  n207@{ shape: rounded, label: "**prepare_atmosphere_textures**<br/>按大气设置准备四类查找纹理。" }
+  class n207 node_system
+  n208@{ shape: rounded, label: "**prepare_probe_textures**<br/>为环境探针借用大气查找纹理并创建输出视<br/>图。" }
+  class n208 node_system
+  n209@{ shape: rounded, label: "**prepare_atmosphere_transforms**<br/>按相机位置构造大气局部坐标变换。" }
+  class n209 node_system
+  n210@{ shape: rounded, label: "**prepare_atmosphere_buffers**<br/>上传各视图的大气和采样设置缓冲。" }
+  class n210 node_system
+  n211@{ shape: rounded, label: "**prepare_skybox_bind_groups**<br/>为有效天空盒图像建立视图绑定组。" }
+  class n211 node_system
+  n212@{ shape: rounded, label: "**prepare_bloom_bind_groups**<br/>为 Bloom 各 mip 层准备降采样与升采样绑<br/>定。" }
+  class n212 node_system
+  n213@{ shape: rounded, label: "**prepare_smaa_bind_groups**<br/>为视图绑定 SMAA 中间纹理与查找表。" }
+  class n213 node_system
+  n214@{ shape: rounded, label: "**prepare_mesh2d_view_bind_groups**<br/>为二维相机绑定视图、全局参数与色调<br/>LUT。" }
+  class n214 node_system
+  n215@{ shape: rounded, label: "**prepare_sprite_view_bind_groups**<br/>为精灵视图绑定参数和色调映射 LUT。" }
+  class n215 node_system
+  n216@{ shape: rounded, label: "**prepare_uinodes**<br/>按透明 UI 阶段顺序生成裁剪后的节点顶点<br/>和索引，按图像合并绘制批次，维护视图及图<br/>像绑定组，并上传本帧 UI 几何数据。" }
+  class n216 node_system
+  n217@{ shape: rounded, label: "**prepare_ui_slices**<br/>为 UI 切片生成裁剪几何并合并图像批次。" }
+  class n217 node_system
+  n218@{ shape: rounded, label: "**prepare_gradient**<br/>将已排队的线性、径向和锥形渐变转换为<br/>GPU 顶点、索引与颜色停靠点数据，建立渐<br/>变绘制批次并上传相关缓冲。" }
+  class n218 node_system
+  n219@{ shape: rounded, label: "**prepare_shadows**<br/>为已排队的 UI 阴影生成经过裁剪的四边形<br/>顶点、索引和阴影参数，为每项记录对应相机<br/>及绘制区间，建立绑定组并上传本帧阴影几<br/>何。" }
+  class n219 node_system
+  n220@{ shape: rounded, label: "**prepare_mesh_bind_groups**<br/>按预处理路径准备网格、蒙皮和形变资源绑<br/>定。" }
+  class n220 node_system
+  n221@{ shape: rounded, label: "**prepare_mesh_view_bind_groups**<br/>为视图绑定光照、阴影及各可选渲染效果资<br/>源。" }
+  class n221 node_system
+  n222@{ shape: rounded, label: "**prepare_oit_resolve_bind_group**<br/>为 OIT 解析阶段绑定视图和片元链表。" }
+  class n222 node_system
+  n223@{ shape: rounded, label: "**prepare_background_motion_vectors_**<br/>**bind_groups**<br/>为背景运动矢量绑定前后两帧视图参数。" }
+  class n223 node_system
+  n224@{ shape: rounded, label: "**prepare_ssao_bind_groups**<br/>准备深度预处理、遮蔽与空间降噪的资源绑<br/>定。" }
+  class n224 node_system
+  n225@{ shape: rounded, label: "**prepare_generated_environment_map_**<br/>**bind_groups**<br/>为环境图各 mip 的降采样和卷积建立绑定。" }
+  class n225 node_system
+  n226@{ shape: rounded, label: "**prepare_preprocess_bind_groups**<br/>绑定各视图网格预处理和间接参数构建资源。" }
+  class n226 node_system
+  n227@{ shape: rounded, label: "**prepare_atmosphere_probe_bind_groups**<br/>为大气环境探针绑定光照、查找表和输出纹<br/>理。" }
+  class n227 node_system
+  n228@{ shape: rounded, label: "**prepare_atmosphere_bind_groups**<br/>为大气查找表计算和天空绘制绑定视图资源。" }
+  class n228 node_system
+  n229@{ shape: rounded, label: "**prepare_clustering_bind_groups**<br/>为视图的聚簇计算与光栅阶段绑定工作缓冲。" }
+  class n229 node_system
+  n230@{ shape: rounded, label: "**prepare_skybox_pipelines**<br/>按目标格式与采样数准备天空盒管线。" }
+  class n230 node_system
+  n231@{ shape: rounded, label: "**prepare_view_tonemapping_pipelines**<br/>按视图实际颜色分级需求专用化色调映射。" }
+  class n231 node_system
+  n232@{ shape: rounded, label: "**prepare_view_upscaling_pipelines**<br/>按相机合成方式准备输出缩放管线。" }
+  class n232 node_system
+  n233@{ shape: rounded, label: "**create_downsample_depth_pipelines**<br/>在支持 GPU 剔除时一次性建立深度降采样管<br/>线。" }
+  class n233 node_system
+  n234@{ shape: rounded, label: "**prepare_msaa_writeback_pipelines**<br/>为需要保留已有颜色的多采样相机准备回写管<br/>线。" }
+  class n234 node_system
+  n235@{ shape: rounded, label: "**prepare_downsampling_pipeline**<br/>按预过滤和缩放设置准备 Bloom 降采样变<br/>体。" }
+  class n235 node_system
+  n236@{ shape: rounded, label: "**prepare_upsampling_pipeline**<br/>为 Bloom 中间合成和最终目标准备升采样管<br/>线。" }
+  class n236 node_system
+  n237@{ shape: rounded, label: "**prepare_motion_blur_pipelines**<br/>按颜色格式与采样数准备运动模糊管线。" }
+  class n237 node_system
+  n238@{ shape: rounded, label: "**prepare_depth_of_field_view_bind_**<br/>**group_layouts**<br/>为景深视图创建单输入与 Bokeh 双输入布<br/>局。" }
+  class n238 node_system
+  n239@{ shape: rounded, label: "**prepare_depth_of_field_pipelines**<br/>按景深模式和视图格式准备两阶段管线。" }
+  class n239 node_system
+  n240@{ shape: rounded, label: "**prepare_post_processing_pipelines**<br/>按视图颜色格式准备内置后处理管线。" }
+  class n240 node_system
+  n241@{ shape: rounded, label: "**prepare_post_processing_uniforms**<br/>收集并上传逐视图色差、暗角和畸变参数。" }
+  class n241 node_system
+  n242@{ shape: rounded, label: "**prepare_fxaa_pipelines**<br/>按相机边缘阈值与目标格式准备 FXAA 管<br/>线。" }
+  class n242 node_system
+  n243@{ shape: rounded, label: "**prepare_smaa_pipelines**<br/>按质量预设准备视图的三条 SMAA 管线。" }
+  class n243 node_system
+  n244@{ shape: rounded, label: "**prepare_taa_pipelines**<br/>准备 TAA 当前状态及下一帧恢复用管线。" }
+  class n244 node_system
+  n245@{ shape: rounded, label: "**prepare_cas_pipelines**<br/>按去噪与目标格式准备视图锐化管线。" }
+  class n245 node_system
+  n246@{ shape: rounded, label: "**prepare_volumetric_fog_pipelines**<br/>为体积雾视图准备有密度纹理和无密度纹理两<br/>类管线。" }
+  class n246 node_system
+  n247@{ shape: rounded, label: "**prepare_volumetric_fog_uniforms**<br/>把各视图和雾体积组合转换为体积雾<br/>Uniform。" }
+  class n247 node_system
+  n248@{ shape: rounded, label: "**prepare_ssr_pipelines**<br/>为具备反射及深度、延迟预通道的视图选择管<br/>线。" }
+  class n248 node_system
+  n249@{ shape: rounded, label: "**prepare_deferred_lighting_pipelines**<br/>为有效延迟视图选择与前向一致的光照管线。" }
+  class n249 node_system
+  n250@{ shape: rounded, label: "**cleanup_background_motion_vectors**<br/>从不再启用运动矢量预通道或已标记<br/>NoBackgroundMotionVectors 的视图移除<br/>背景运动矢量管线及绑定组，清理失效渲染状<br/>态。" }
+  class n250 node_system
+  n251@{ shape: rounded, label: "**prepare_background_motion_vectors_**<br/>**pipelines**<br/>按采样数和法线预通道准备背景运动管线。" }
+  class n251 node_system
+  n252@{ shape: rounded, label: "**prepare_ssao_pipelines**<br/>按遮蔽质量和时间抖动配置选择计算管线。" }
+  class n252 node_system
+  n253@{ shape: rounded, label: "**prepare_atmosphere_uniforms**<br/>把提取的大气几何转换为 GPU Uniform 组<br/>件。" }
+  class n253 node_system
+  n254@{ shape: rounded, label: "**clear_batches**<br/>在渲染清理阶段从所有 UI 批次实体移除<br/>UiBatch，供下一帧重新生成批次，不销毁这<br/>些实体本身。" }
+  class n254 node_system
+  n255@{ shape: rounded, label: "**prepare_mesh_metadata_fallback_**<br/>**buffer**<br/>取得回退网格所在的元数据 GPU 缓冲。" }
+  class n255 node_system
+  n256@{ shape: rounded, label: "**create_surfaces**<br/>根据提取窗口的原生句柄创建 GPU 表面，选<br/>择支持的纹理格式、显示及透明模式并配置<br/>SurfaceData；已有表面则按窗口变化更新<br/>配置。" }
+  class n256 node_system
+  n257@{ shape: rounded, label: "**prepare_view_depth_pyramids**<br/>为遮挡剔除视图维护深度金字塔。" }
+  class n257 node_system
+  n258@{ shape: rounded, label: "**prepare_downsample_depth_view_bind_**<br/>**groups**<br/>将主视图或阴影深度绑定到降采样管线。" }
+  class n258 node_system
+  n259@{ shape: rounded, label: "**prepare_clustering_pipelines**<br/>为视图取得 GPU 聚簇五阶段的管线标识。" }
+  class n259 node_system
+  n260@{ shape: rounded, label: "**prepare_cluster_dummy_textures**<br/>为聚簇光栅通道准备视口占位纹理。" }
+  class n260 node_system
+  n261@{ shape: rounded, label: "**prepare_clusters_for_gpu_clustering**<br/>按视图规模和回读容量分配 GPU 聚簇缓冲。" }
+  class n261 node_system
+  n262@{ shape: rounded, label: "**init_mesh_pipeline_view_layouts**<br/>按设备能力汇集网格视图资源布局参数。" }
+  class n262 node_system
+  n263@{ shape: rounded, label: "**init_mesh_pipeline**<br/>初始化三维网格着色器及设备缓冲策略。" }
+  class n263 node_system
+  n264@{ shape: rounded, label: "**init_screenshot_to_screen_pipeline**<br/>建立把截图纹理复制到屏幕的管线资源。" }
+  class n264 node_system
+  n265@{ shape: rounded, label: "**collect_render_assets_to_**<br/>**reextract#lt;bevy_render::mesh::**<br/>**RenderMesh#gt;**<br/>排空渲染资产并登记设备恢复后的重新提取。" }
+  class n265 node_system
+  n266@{ shape: rounded, label: "**collect_render_assets_to_**<br/>**reextract#lt;bevy_render::texture::gpu_**<br/>**image::GpuImage#gt;**<br/>排空渲染资产并登记设备恢复后的重新提取。" }
+  class n266 node_system
+  n267@{ shape: rounded, label: "**collect_render_assets_to_**<br/>**reextract#lt;bevy_render::storage::**<br/>**GpuShaderBuffer#gt;**<br/>排空渲染资产并登记设备恢复后的重新提取。" }
+  class n267 node_system
+  n268@{ shape: rounded, label: "**init_fallback_resources**<br/>创建材质绑定的采样器及缓冲回退资源。" }
+  class n268 node_system
+  n269@{ shape: rounded, label: "**init_skybox_pipeline**<br/>加载天空盒着色器并建立管线资源。" }
+  class n269 node_system
+  n270@{ shape: rounded, label: "**init_copy_deferred_lighting_id_**<br/>**pipeline**<br/>建立延迟光照标识到深度的复制管线。" }
+  class n270 node_system
+  n271@{ shape: rounded, label: "**init_blit_pipeline**<br/>建立全屏颜色复制与缩放的 Blit 资源。" }
+  class n271 node_system
+  n272@{ shape: rounded, label: "**init_tonemapping_pipeline**<br/>建立色调映射的颜色、视图与 LUT 输入布<br/>局。" }
+  class n272 node_system
+  n273@{ shape: rounded, label: "**clear_view_upscaling_pipelines**<br/>从所有已有视图移除<br/>ViewUpscalingPipeline，使渲染设备恢复<br/>后的流程重新准备有效的输出放大管线。" }
+  class n273 node_system
+  n274@{ shape: rounded, label: "**init_oit_buffers**<br/>创建可立即绑定的 OIT 初始缓冲。" }
+  class n274 node_system
+  n275@{ shape: rounded, label: "**init_depth_pyramid_dummy_texture**<br/>创建深度金字塔的占位纹理资源。" }
+  class n275 node_system
+  n276@{ shape: rounded, label: "**init_bloom_downsampling_pipeline**<br/>建立 Bloom 降采样的纹理与参数管线。" }
+  class n276 node_system
+  n277@{ shape: rounded, label: "**init_bloom_upscaling_pipeline**<br/>建立 Bloom 升采样的纹理和参数布局。" }
+  class n277 node_system
+  n278@{ shape: rounded, label: "**init_motion_blur_pipeline**<br/>加载运动模糊着色器并构造管线资源。" }
+  class n278 node_system
+  n279@{ shape: rounded, label: "**init_dof_global_bind_group_layout**<br/>建立景深共享参数布局和线性采样器。" }
+  class n279 node_system
+  n280@{ shape: rounded, label: "**init_post_processing_pipeline**<br/>建立色差、暗角和镜头畸变的共用后处理资<br/>源。" }
+  class n280 node_system
+  n281@{ shape: rounded, label: "**init_fxaa_pipeline**<br/>建立 FXAA 的纹理采样布局和着色器资源。" }
+  class n281 node_system
+  n282@{ shape: rounded, label: "**init_smaa_pipelines**<br/>建立 SMAA 三个阶段的布局和着色器资源。" }
+  class n282 node_system
+  n283@{ shape: rounded, label: "**init_taa_pipeline**<br/>建立 TAA 的当前帧、历史帧和预通道输入布<br/>局。" }
+  class n283 node_system
+  n284@{ shape: rounded, label: "**init_cas_pipeline**<br/>建立 CAS 锐化的纹理、参数布局和管线变体<br/>资源。" }
+  class n284 node_system
+  n285@{ shape: rounded, label: "**init_mesh_2d_pipeline**<br/>建立二维网格的视图、实例及元数据输入布<br/>局。" }
+  class n285 node_system
+  n286@{ shape: rounded, label: "**init_batched_instance_buffer**<br/>依据设备限制建立二维网格实例批缓冲。" }
+  class n286 node_system
+  n287@{ shape: rounded, label: "**init_material_2d_pipeline**<br/>以二维网格基础管线建立材质管线资源。" }
+  class n287 node_system
+  n288@{ shape: rounded, label: "**initialize_material2d_shaders#lt;bevy_**<br/>**sprite_render::mesh2d::color_**<br/>**material::ColorMaterial#gt;**<br/>解析二维材质的自定义顶点与片元着色器。" }
+  class n288 node_system
+  n289@{ shape: rounded, label: "**initialize_material2d_shaders#lt;bevy_**<br/>**sprite_render::sprite_mesh::sprite_**<br/>**mesh_material::SpriteMeshMaterial#gt;**<br/>解析二维材质的自定义顶点与片元着色器。" }
+  class n289 node_system
+  n290@{ shape: rounded, label: "**initialize_material2d_shaders#lt;bevy_**<br/>**sprite_render::tilemap_chunk::**<br/>**tilemap_chunk_material::**<br/>**TilemapChunkMaterial#gt;**<br/>解析二维材质的自定义顶点与片元着色器。" }
+  class n290 node_system
+  n291@{ shape: rounded, label: "**init_sprite_pipeline**<br/>建立精灵视图和图像材质管线资源。" }
+  class n291 node_system
+  n292@{ shape: rounded, label: "**init_ui_pipeline**<br/>建立 UI 图形的视图、图像和采样器布局。" }
+  class n292 node_system
+  n293@{ shape: rounded, label: "**init_ui_texture_slice_pipeline**<br/>建立 UI 图像切片的视图和纹理管线资源。" }
+  class n293 node_system
+  n294@{ shape: rounded, label: "**init_gradient_pipeline**<br/>建立 UI 渐变的视图布局和着色器资源。" }
+  class n294 node_system
+  n295@{ shape: rounded, label: "**init_box_shadow_pipeline**<br/>建立 UI 盒阴影的视图布局和着色器资源。" }
+  class n295 node_system
+  n296@{ shape: rounded, label: "**init_prepass_pipeline**<br/>初始化带运动矢量及普通预通道的资源布局。" }
+  class n296 node_system
+  n297@{ shape: rounded, label: "**init_prepass_view_bind_group**<br/>建立预通道的空绑定组及待准备状态。" }
+  class n297 node_system
+  n298@{ shape: rounded, label: "**init_material_pipeline**<br/>初始化与网格管线共享接口的材质管线资源。" }
+  class n298 node_system
+  n299@{ shape: rounded, label: "**init_render_lightmaps**<br/>初始化光照贴图槽位和设备绑定数组能力。" }
+  class n299 node_system
+  n300@{ shape: rounded, label: "**init_volumetric_fog_pipeline**<br/>初始化体积雾管线的视图布局与着色器。" }
+  class n300 node_system
+  n301@{ shape: rounded, label: "**init_screen_space_reflections_**<br/>**pipeline**<br/>初始化屏幕空间反射的全屏渲染管线资源。" }
+  class n301 node_system
+  n302@{ shape: rounded, label: "**collect_render_assets_to_**<br/>**reextract#lt;bevy_pbr::medium::**<br/>**GpuScatteringMedium#gt;**<br/>排空渲染资产并登记设备恢复后的重新提取。" }
+  class n302 node_system
+  n303@{ shape: rounded, label: "**init_scattering_medium_sampler**<br/>初始化散射介质查找表的线性采样器。" }
+  class n303 node_system
+  n304@{ shape: rounded, label: "**init_deferred_lighting_layout**<br/>初始化延迟光照的深度标识绑定与着色器。" }
+  class n304 node_system
+  n305@{ shape: rounded, label: "**init_shadow_samplers**<br/>创建点光与平行光的深度比较采样器。" }
+  class n305 node_system
+  n306@{ shape: rounded, label: "**init_global_clusterable_object_meta**<br/>按设备缓冲能力初始化全局聚簇元数据。" }
+  class n306 node_system
+  n307@{ shape: rounded, label: "**collect_render_assets_to_**<br/>**reextract#lt;bevy_gizmos_render::**<br/>**GpuLineGizmo#gt;**<br/>排空渲染资产并登记设备恢复后的重新提取。" }
+  class n307 node_system
+  n308@{ shape: rounded, label: "**init_line_gizmo_pipelines**<br/>建立二维 Gizmo 线段和接头管线。" }
+  class n308 node_system
+  n309@{ shape: rounded, label: "**init_line_gizmo_pipelines**<br/>建立三维 Gizmo 线条深度管线和接头资源。" }
+  class n309 node_system
+  n310@{ shape: rounded, label: "**init_sparse_buffer_update_pipelines**<br/>按设备存储绑定能力建立稀疏更新计算资源。" }
+  class n310 node_system
+  n311@{ shape: rounded, label: "**init_sparse_buffer_update_bind_**<br/>**groups**<br/>准备稀疏更新管线标识与弱键绑定缓存。" }
+  class n311 node_system
+  n312@{ shape: rounded, label: "**init_background_motion_vectors_**<br/>**pipeline**<br/>建立背景运动矢量的全屏管线资源。" }
+  class n312 node_system
+  n313@{ shape: rounded, label: "**collect_erased_render_assets_to_**<br/>**reextract#lt;bevy_sprite_render::**<br/>**mesh2d::material::**<br/>**MeshMaterial2d#lt;bevy_sprite_render::**<br/>**mesh2d::color_material::**<br/>**ColorMaterial#gt;#gt;**<br/>按源材质类型排空擦除资产并请求重新提取。" }
+  class n313 node_system
+  n314@{ shape: rounded, label: "**collect_erased_render_assets_to_**<br/>**reextract#lt;bevy_sprite_render::**<br/>**mesh2d::material::**<br/>**MeshMaterial2d#lt;bevy_sprite_render::**<br/>**sprite_mesh::sprite_mesh_material::**<br/>**SpriteMeshMaterial#gt;#gt;**<br/>按源材质类型排空擦除资产并请求重新提取。" }
+  class n314 node_system
+  n315@{ shape: rounded, label: "**collect_erased_render_assets_to_**<br/>**reextract#lt;bevy_sprite_render::**<br/>**mesh2d::material::**<br/>**MeshMaterial2d#lt;bevy_sprite_render::**<br/>**tilemap_chunk::tilemap_chunk_**<br/>**material::TilemapChunkMaterial#gt;#gt;**<br/>按源材质类型排空擦除资产并请求重新提取。" }
+  class n315 node_system
+  n316@{ shape: rounded, label: "**skin_uniforms_from_world**<br/>初始化当前与前帧蒙皮矩阵缓冲及分配器。" }
+  class n316 node_system
+  n317@{ shape: rounded, label: "**collect_erased_render_assets_to_**<br/>**reextract#lt;bevy_pbr::mesh_material::**<br/>**MeshMaterial3d#lt;bevy_pbr::pbr_**<br/>**material::StandardMaterial#gt;#gt;**<br/>按源材质类型排空擦除资产并请求重新提取。" }
+  class n317 node_system
+  n318@{ shape: rounded, label: "**initialize_generated_environment_**<br/>**map_resources**<br/>初始化环境图降采样、复制和卷积的 GPU 接<br/>口。" }
+  class n318 node_system
+  n319@{ shape: rounded, label: "**collect_erased_render_assets_to_**<br/>**reextract#lt;bevy_pbr::mesh_material::**<br/>**MeshMaterial3d#lt;bevy_pbr::extended_**<br/>**material::ExtendedMaterial#lt;bevy_**<br/>**pbr::pbr_material::**<br/>**StandardMaterial, bevy_pbr::decal::**<br/>**forward::ForwardDecalMaterialExt#gt;#gt;#gt;**<br/>按源材质类型排空擦除资产并请求重新提取。" }
+  class n319 node_system
+  n320@{ shape: rounded, label: "**init_atmosphere_probe_layout**<br/>定义大气环境探针的计算资源接口。" }
+  class n320 node_system
+  n321@{ shape: rounded, label: "**init_atmosphere_probe_pipeline**<br/>排队创建大气环境贴图生成计算管线。" }
+  class n321 node_system
+  n0 e0@-->|"参数 / 查询数据"| n1
+  class e0 edge_reference
+  n0 e1@-->|"参数 / 查询数据"| n2
+  class e1 edge_reference
+  n0 e2@-->|"参数 / 查询数据"| n3
+  class e2 edge_reference
+  n0 e3@-->|"参数 / 查询数据"| n4
+  class e3 edge_reference
+  n0 e4@-->|"参数 / 查询数据"| n5
+  class e4 edge_reference
+  n0 e5@-->|"参数 / 查询数据"| n6
+  class e5 edge_reference
+  n0 e6@-->|"参数 / 查询数据"| n7
+  class e6 edge_reference
+  n0 e7@-->|"参数 / 查询数据"| n8
+  class e7 edge_reference
+  n0 e8@-->|"参数 / 查询数据"| n9
+  class e8 edge_reference
+  n0 e9@-->|"参数 / 查询数据"| n10
+  class e9 edge_reference
+  n0 e10@-->|"参数 / 查询数据"| n11
+  class e10 edge_reference
+  n0 e11@-->|"参数 / 查询数据"| n12
+  class e11 edge_reference
+  n0 e12@-->|"参数 / 查询数据"| n13
+  class e12 edge_reference
+  n0 e13@-->|"参数 / 查询数据"| n14
+  class e13 edge_reference
+  n0 e14@-->|"参数 / 查询数据"| n15
+  class e14 edge_reference
+  n0 e15@-->|"参数 / 查询数据"| n16
+  class e15 edge_reference
+  n0 e16@-->|"参数 / 查询数据"| n17
+  class e16 edge_reference
+  n0 e17@-->|"参数 / 查询数据"| n18
+  class e17 edge_reference
+  n0 e18@-->|"参数 / 查询数据"| n19
+  class e18 edge_reference
+  n0 e19@-->|"参数 / 查询数据"| n20
+  class e19 edge_reference
+  n0 e20@-->|"参数 / 查询数据"| n21
+  class e20 edge_reference
+  n0 e21@-->|"参数 / 查询数据"| n22
+  class e21 edge_reference
+  n0 e22@-->|"参数 / 查询数据"| n23
+  class e22 edge_reference
+  n0 e23@-->|"参数 / 查询数据"| n24
+  class e23 edge_reference
+  n0 e24@-->|"参数 / 查询数据"| n25
+  class e24 edge_reference
+  n0 e25@-->|"参数 / 查询数据"| n26
+  class e25 edge_reference
+  n0 e26@-->|"参数 / 查询数据"| n27
+  class e26 edge_reference
+  n0 e27@-->|"参数 / 查询数据"| n28
+  class e27 edge_reference
+  n0 e28@-->|"参数 / 查询数据"| n29
+  class e28 edge_reference
+  n0 e29@-->|"参数 / 查询数据"| n30
+  class e29 edge_reference
+  n0 e30@-->|"参数 / 查询数据"| n31
+  class e30 edge_reference
+  n0 e31@-->|"参数 / 查询数据"| n32
+  class e31 edge_reference
+  n0 e32@-->|"参数 / 查询数据"| n33
+  class e32 edge_reference
+  n0 e33@-->|"参数 / 查询数据"| n34
+  class e33 edge_reference
+  n0 e34@-->|"参数 / 查询数据"| n35
+  class e34 edge_reference
+  n0 e35@-->|"参数 / 查询数据"| n36
+  class e35 edge_reference
+  n0 e36@-->|"参数 / 查询数据"| n37
+  class e36 edge_reference
+  n0 e37@-->|"参数 / 查询数据"| n38
+  class e37 edge_reference
+  n0 e38@-->|"参数 / 查询数据"| n39
+  class e38 edge_reference
+  n0 e39@-->|"参数 / 查询数据"| n40
+  class e39 edge_reference
+  n0 e40@-->|"参数 / 查询数据"| n41
+  class e40 edge_reference
+  n0 e41@-->|"参数 / 查询数据"| n42
+  class e41 edge_reference
+  n0 e42@-->|"参数 / 查询数据"| n43
+  class e42 edge_reference
+  n0 e43@-->|"参数 / 查询数据"| n44
+  class e43 edge_reference
+  n0 e44@-->|"参数 / 查询数据"| n45
+  class e44 edge_reference
+  n0 e45@-->|"参数 / 查询数据"| n46
+  class e45 edge_reference
+  n0 e46@-->|"参数 / 查询数据"| n47
+  class e46 edge_reference
+  n0 e47@-->|"参数 / 查询数据"| n48
+  class e47 edge_reference
+  n0 e48@-->|"参数 / 查询数据"| n49
+  class e48 edge_reference
+  n0 e49@-->|"参数 / 查询数据"| n50
+  class e49 edge_reference
+  n0 e50@-->|"参数 / 查询数据"| n51
+  class e50 edge_reference
+  n0 e51@-->|"参数 / 查询数据"| n52
+  class e51 edge_reference
+  n0 e52@-->|"参数 / 查询数据"| n53
+  class e52 edge_reference
+  n0 e53@-->|"参数 / 查询数据"| n54
+  class e53 edge_reference
+  n0 e54@-->|"参数 / 查询数据"| n55
+  class e54 edge_reference
+  n0 e55@-->|"参数 / 查询数据"| n56
+  class e55 edge_reference
+  n0 e56@-->|"参数 / 查询数据"| n57
+  class e56 edge_reference
+  n0 e57@-->|"参数 / 查询数据"| n58
+  class e57 edge_reference
+  n0 e58@-->|"参数 / 查询数据"| n59
+  class e58 edge_reference
+  n0 e59@-->|"参数 / 查询数据"| n60
+  class e59 edge_reference
+  n0 e60@-->|"参数 / 查询数据"| n61
+  class e60 edge_reference
+  n0 e61@-->|"参数 / 查询数据"| n62
+  class e61 edge_reference
+  n0 e62@-->|"参数 / 查询数据"| n63
+  class e62 edge_reference
+  n0 e63@-->|"参数 / 查询数据"| n64
+  class e63 edge_reference
+  n0 e64@-->|"参数 / 查询数据"| n65
+  class e64 edge_reference
+  n0 e65@-->|"参数 / 查询数据"| n66
+  class e65 edge_reference
+  n0 e66@-->|"参数 / 查询数据"| n67
+  class e66 edge_reference
+  n0 e67@-->|"参数 / 查询数据"| n68
+  class e67 edge_reference
+  n0 e68@-->|"参数 / 查询数据"| n69
+  class e68 edge_reference
+  n0 e69@-->|"参数 / 查询数据"| n70
+  class e69 edge_reference
+  n0 e70@-->|"参数 / 查询数据"| n71
+  class e70 edge_reference
+  n0 e71@-->|"参数 / 查询数据"| n72
+  class e71 edge_reference
+  n0 e72@-->|"参数 / 查询数据"| n73
+  class e72 edge_reference
+  n0 e73@-->|"参数 / 查询数据"| n74
+  class e73 edge_reference
+  n0 e74@-->|"参数 / 查询数据"| n75
+  class e74 edge_reference
+  n0 e75@-->|"参数 / 查询数据"| n76
+  class e75 edge_reference
+  n0 e76@-->|"参数 / 查询数据"| n77
+  class e76 edge_reference
+  n0 e77@-->|"参数 / 查询数据"| n78
+  class e77 edge_reference
+  n0 e78@-->|"参数 / 查询数据"| n79
+  class e78 edge_reference
+  n0 e79@-->|"参数 / 查询数据"| n80
+  class e79 edge_reference
+  n0 e80@-->|"参数 / 查询数据"| n81
+  class e80 edge_reference
+  n0 e81@-->|"参数 / 查询数据"| n82
+  class e81 edge_reference
+  n0 e82@-->|"参数 / 查询数据"| n83
+  class e82 edge_reference
+  n0 e83@-->|"参数 / 查询数据"| n84
+  class e83 edge_reference
+  n0 e84@-->|"参数 / 查询数据"| n85
+  class e84 edge_reference
+  n0 e85@-->|"参数 / 查询数据"| n86
+  class e85 edge_reference
+  n0 e86@-->|"参数 / 查询数据"| n87
+  class e86 edge_reference
+  n0 e87@-->|"参数 / 查询数据"| n88
+  class e87 edge_reference
+  n0 e88@-->|"参数 / 查询数据"| n89
+  class e88 edge_reference
+  n0 e89@-->|"参数 / 查询数据"| n90
+  class e89 edge_reference
+  n0 e90@-->|"参数 / 查询数据"| n91
+  class e90 edge_reference
+  n0 e91@-->|"参数 / 查询数据"| n92
+  class e91 edge_reference
+  n0 e92@-->|"参数 / 查询数据"| n93
+  class e92 edge_reference
+  n0 e93@-->|"参数 / 查询数据"| n94
+  class e93 edge_reference
+  n0 e94@-->|"参数 / 查询数据"| n95
+  class e94 edge_reference
+  n0 e95@-->|"参数 / 查询数据"| n96
+  class e95 edge_reference
+  n0 e96@-->|"参数 / 查询数据"| n97
+  class e96 edge_reference
+  n0 e97@-->|"参数 / 查询数据"| n98
+  class e97 edge_reference
+  n0 e98@-->|"参数 / 查询数据"| n99
+  class e98 edge_reference
+  n0 e99@-->|"参数 / 查询数据"| n100
+  class e99 edge_reference
+  n0 e100@-->|"参数 / 查询数据"| n101
+  class e100 edge_reference
+  n0 e101@-->|"参数 / 查询数据"| n102
+  class e101 edge_reference
+  n0 e102@-->|"参数 / 查询数据"| n103
+  class e102 edge_reference
+  n0 e103@-->|"参数 / 查询数据"| n104
+  class e103 edge_reference
+  n0 e104@-->|"参数 / 查询数据"| n105
+  class e104 edge_reference
+  n0 e105@-->|"参数 / 查询数据"| n106
+  class e105 edge_reference
+  n0 e106@-->|"参数 / 查询数据"| n107
+  class e106 edge_reference
+  n0 e107@-->|"参数 / 查询数据"| n108
+  class e107 edge_reference
+  n0 e108@-->|"参数 / 查询数据"| n109
+  class e108 edge_reference
+  n0 e109@-->|"参数 / 查询数据"| n110
+  class e109 edge_reference
+  n0 e110@-->|"参数 / 查询数据"| n111
+  class e110 edge_reference
+  n0 e111@-->|"参数 / 查询数据"| n112
+  class e111 edge_reference
+  n0 e112@-->|"参数 / 查询数据"| n113
+  class e112 edge_reference
+  n0 e113@-->|"参数 / 查询数据"| n114
+  class e113 edge_reference
+  n0 e114@-->|"参数 / 查询数据"| n115
+  class e114 edge_reference
+  n0 e115@-->|"参数 / 查询数据"| n116
+  class e115 edge_reference
+  n0 e116@-->|"参数 / 查询数据"| n117
+  class e116 edge_reference
+  n0 e117@-->|"参数 / 查询数据"| n118
+  class e117 edge_reference
+  n0 e118@-->|"参数 / 查询数据"| n119
+  class e118 edge_reference
+  n0 e119@-->|"参数 / 查询数据"| n120
+  class e119 edge_reference
+  n0 e120@-->|"参数 / 查询数据"| n121
+  class e120 edge_reference
+  n0 e121@-->|"参数 / 查询数据"| n122
+  class e121 edge_reference
+  n0 e122@-->|"参数 / 查询数据"| n123
+  class e122 edge_reference
+  n0 e123@-->|"参数 / 查询数据"| n124
+  class e123 edge_reference
+  n0 e124@-->|"参数 / 查询数据"| n125
+  class e124 edge_reference
+  n0 e125@-->|"参数 / 查询数据"| n126
+  class e125 edge_reference
+  n0 e126@-->|"参数 / 查询数据"| n127
+  class e126 edge_reference
+  n0 e127@-->|"参数 / 查询数据"| n128
+  class e127 edge_reference
+  n0 e128@-->|"参数 / 查询数据"| n129
+  class e128 edge_reference
+  n0 e129@-->|"参数 / 查询数据"| n130
+  class e129 edge_reference
+  n0 e130@-->|"参数 / 查询数据"| n131
+  class e130 edge_reference
+  n0 e131@-->|"参数 / 查询数据"| n132
+  class e131 edge_reference
+  n0 e132@-->|"参数 / 查询数据"| n133
+  class e132 edge_reference
+  n0 e133@-->|"参数 / 查询数据"| n134
+  class e133 edge_reference
+  n0 e134@-->|"参数 / 查询数据"| n135
+  class e134 edge_reference
+  n0 e135@-->|"参数 / 查询数据"| n136
+  class e135 edge_reference
+  n0 e136@-->|"参数 / 查询数据"| n137
+  class e136 edge_reference
+  n0 e137@-->|"参数 / 查询数据"| n138
+  class e137 edge_reference
+  n0 e138@-->|"参数 / 查询数据"| n139
+  class e138 edge_reference
+  n0 e139@-->|"参数 / 查询数据"| n140
+  class e139 edge_reference
+  n0 e140@-->|"参数 / 查询数据"| n141
+  class e140 edge_reference
+  n0 e141@-->|"参数 / 查询数据"| n142
+  class e141 edge_reference
+  n0 e142@-->|"参数 / 查询数据"| n143
+  class e142 edge_reference
+  n0 e143@-->|"参数 / 查询数据"| n144
+  class e143 edge_reference
+  n0 e144@-->|"参数 / 查询数据"| n145
+  class e144 edge_reference
+  n0 e145@-->|"参数 / 查询数据"| n146
+  class e145 edge_reference
+  n0 e146@-->|"参数 / 查询数据"| n147
+  class e146 edge_reference
+  n0 e147@-->|"参数 / 查询数据"| n148
+  class e147 edge_reference
+  n0 e148@-->|"参数 / 查询数据"| n149
+  class e148 edge_reference
+  n0 e149@-->|"参数 / 查询数据"| n150
+  class e149 edge_reference
+  n0 e150@-->|"参数 / 查询数据"| n151
+  class e150 edge_reference
+  n0 e151@-->|"参数 / 查询数据"| n152
+  class e151 edge_reference
+  n0 e152@-->|"参数 / 查询数据"| n153
+  class e152 edge_reference
+  n0 e153@-->|"参数 / 查询数据"| n154
+  class e153 edge_reference
+  n0 e154@-->|"参数 / 查询数据"| n155
+  class e154 edge_reference
+  n0 e155@-->|"参数 / 查询数据"| n156
+  class e155 edge_reference
+  n0 e156@-->|"参数 / 查询数据"| n157
+  class e156 edge_reference
+  n0 e157@-->|"参数 / 查询数据"| n158
+  class e157 edge_reference
+  n0 e158@-->|"参数 / 查询数据"| n159
+  class e158 edge_reference
+  n0 e159@-->|"参数 / 查询数据"| n160
+  class e159 edge_reference
+  n0 e160@-->|"参数 / 查询数据"| n161
+  class e160 edge_reference
+  n0 e161@-->|"参数 / 查询数据"| n162
+  class e161 edge_reference
+  n0 e162@-->|"参数 / 查询数据"| n163
+  class e162 edge_reference
+  n0 e163@-->|"参数 / 查询数据"| n164
+  class e163 edge_reference
+  n0 e164@-->|"参数 / 查询数据"| n165
+  class e164 edge_reference
+  n0 e165@-->|"参数 / 查询数据"| n166
+  class e165 edge_reference
+  n0 e166@-->|"参数 / 查询数据"| n167
+  class e166 edge_reference
+  n0 e167@-->|"参数 / 查询数据"| n168
+  class e167 edge_reference
+  n0 e168@-->|"参数 / 查询数据"| n169
+  class e168 edge_reference
+  n0 e169@-->|"参数 / 查询数据"| n170
+  class e169 edge_reference
+  n0 e170@-->|"参数 / 查询数据"| n171
+  class e170 edge_reference
+  n0 e171@-->|"参数 / 查询数据"| n172
+  class e171 edge_reference
+  n0 e172@-->|"参数 / 查询数据"| n173
+  class e172 edge_reference
+  n0 e173@-->|"参数 / 查询数据"| n174
+  class e173 edge_reference
+  n0 e174@-->|"参数 / 查询数据"| n175
+  class e174 edge_reference
+  n0 e175@-->|"参数 / 查询数据"| n176
+  class e175 edge_reference
+  n0 e176@-->|"参数 / 查询数据"| n177
+  class e176 edge_reference
+  n0 e177@-->|"参数 / 查询数据"| n178
+  class e177 edge_reference
+  n0 e178@-->|"参数 / 查询数据"| n179
+  class e178 edge_reference
+  n0 e179@-->|"参数 / 查询数据"| n180
+  class e179 edge_reference
+  n0 e180@-->|"参数 / 查询数据"| n181
+  class e180 edge_reference
+  n0 e181@-->|"参数 / 查询数据"| n182
+  class e181 edge_reference
+  n0 e182@-->|"参数 / 查询数据"| n183
+  class e182 edge_reference
+  n0 e183@-->|"参数 / 查询数据"| n184
+  class e183 edge_reference
+  n0 e184@-->|"参数 / 查询数据"| n185
+  class e184 edge_reference
+  n0 e185@-->|"参数 / 查询数据"| n186
+  class e185 edge_reference
+  n0 e186@-->|"参数 / 查询数据"| n187
+  class e186 edge_reference
+  n0 e187@-->|"参数 / 查询数据"| n188
+  class e187 edge_reference
+  n0 e188@-->|"参数 / 查询数据"| n189
+  class e188 edge_reference
+  n0 e189@-->|"参数 / 查询数据"| n190
+  class e189 edge_reference
+  n0 e190@-->|"参数 / 查询数据"| n191
+  class e190 edge_reference
+  n0 e191@-->|"参数 / 查询数据"| n192
+  class e191 edge_reference
+  n0 e192@-->|"参数 / 查询数据"| n193
+  class e192 edge_reference
+  n0 e193@-->|"参数 / 查询数据"| n194
+  class e193 edge_reference
+  n0 e194@-->|"参数 / 查询数据"| n195
+  class e194 edge_reference
+  n0 e195@-->|"参数 / 查询数据"| n196
+  class e195 edge_reference
+  n0 e196@-->|"参数 / 查询数据"| n197
+  class e196 edge_reference
+  n0 e197@-->|"参数 / 查询数据"| n198
+  class e197 edge_reference
+  n0 e198@-->|"参数 / 查询数据"| n199
+  class e198 edge_reference
+  n0 e199@-->|"参数 / 查询数据"| n200
+  class e199 edge_reference
+  n0 e200@-->|"参数 / 查询数据"| n201
+  class e200 edge_reference
+  n0 e201@-->|"参数 / 查询数据"| n202
+  class e201 edge_reference
+  n0 e202@-->|"参数 / 查询数据"| n203
+  class e202 edge_reference
+  n0 e203@-->|"参数 / 查询数据"| n204
+  class e203 edge_reference
+  n0 e204@-->|"参数 / 查询数据"| n205
+  class e204 edge_reference
+  n0 e205@-->|"参数 / 查询数据"| n206
+  class e205 edge_reference
+  n0 e206@-->|"参数 / 查询数据"| n207
+  class e206 edge_reference
+  n0 e207@-->|"参数 / 查询数据"| n208
+  class e207 edge_reference
+  n0 e208@-->|"参数 / 查询数据"| n209
+  class e208 edge_reference
+  n0 e209@-->|"参数 / 查询数据"| n210
+  class e209 edge_reference
+  n0 e210@-->|"参数 / 查询数据"| n211
+  class e210 edge_reference
+  n0 e211@-->|"参数 / 查询数据"| n212
+  class e211 edge_reference
+  n0 e212@-->|"参数 / 查询数据"| n213
+  class e212 edge_reference
+  n0 e213@-->|"参数 / 查询数据"| n214
+  class e213 edge_reference
+  n0 e214@-->|"参数 / 查询数据"| n215
+  class e214 edge_reference
+  n0 e215@-->|"参数 / 查询数据"| n216
+  class e215 edge_reference
+  n0 e216@-->|"参数 / 查询数据"| n217
+  class e216 edge_reference
+  n0 e217@-->|"参数 / 查询数据"| n218
+  class e217 edge_reference
+  n0 e218@-->|"参数 / 查询数据"| n219
+  class e218 edge_reference
+  n0 e219@-->|"参数 / 查询数据"| n220
+  class e219 edge_reference
+  n0 e220@-->|"参数 / 查询数据"| n221
+  class e220 edge_reference
+  n0 e221@-->|"参数 / 查询数据"| n222
+  class e221 edge_reference
+  n0 e222@-->|"参数 / 查询数据"| n223
+  class e222 edge_reference
+  n0 e223@-->|"参数 / 查询数据"| n224
+  class e223 edge_reference
+  n0 e224@-->|"参数 / 查询数据"| n225
+  class e224 edge_reference
+  n0 e225@-->|"参数 / 查询数据"| n226
+  class e225 edge_reference
+  n0 e226@-->|"参数 / 查询数据"| n227
+  class e226 edge_reference
+  n0 e227@-->|"参数 / 查询数据"| n228
+  class e227 edge_reference
+  n0 e228@-->|"参数 / 查询数据"| n229
+  class e228 edge_reference
+  n0 e229@-->|"参数 / 查询数据"| n230
+  class e229 edge_reference
+  n0 e230@-->|"参数 / 查询数据"| n231
+  class e230 edge_reference
+  n0 e231@-->|"参数 / 查询数据"| n232
+  class e231 edge_reference
+  n0 e232@-->|"参数 / 查询数据"| n233
+  class e232 edge_reference
+  n0 e233@-->|"参数 / 查询数据"| n234
+  class e233 edge_reference
+  n0 e234@-->|"参数 / 查询数据"| n235
+  class e234 edge_reference
+  n0 e235@-->|"参数 / 查询数据"| n236
+  class e235 edge_reference
+  n0 e236@-->|"参数 / 查询数据"| n237
+  class e236 edge_reference
+  n0 e237@-->|"参数 / 查询数据"| n238
+  class e237 edge_reference
+  n0 e238@-->|"参数 / 查询数据"| n239
+  class e238 edge_reference
+  n0 e239@-->|"参数 / 查询数据"| n240
+  class e239 edge_reference
+  n0 e240@-->|"参数 / 查询数据"| n241
+  class e240 edge_reference
+  n0 e241@-->|"参数 / 查询数据"| n242
+  class e241 edge_reference
+  n0 e242@-->|"参数 / 查询数据"| n243
+  class e242 edge_reference
+  n0 e243@-->|"参数 / 查询数据"| n244
+  class e243 edge_reference
+  n0 e244@-->|"参数 / 查询数据"| n245
+  class e244 edge_reference
+  n0 e245@-->|"参数 / 查询数据"| n246
+  class e245 edge_reference
+  n0 e246@-->|"参数 / 查询数据"| n247
+  class e246 edge_reference
+  n0 e247@-->|"参数 / 查询数据"| n248
+  class e247 edge_reference
+  n0 e248@-->|"参数 / 查询数据"| n249
+  class e248 edge_reference
+  n0 e249@-->|"参数 / 查询数据"| n250
+  class e249 edge_reference
+  n0 e250@-->|"参数 / 查询数据"| n251
+  class e250 edge_reference
+  n0 e251@-->|"参数 / 查询数据"| n252
+  class e251 edge_reference
+  n0 e252@-->|"参数 / 查询数据"| n253
+  class e252 edge_reference
+  n0 e253@-->|"参数 / 查询数据"| n254
+  class e253 edge_reference
+  n0 e254@-->|"参数 / 查询数据"| n255
+  class e254 edge_reference
+  n0 e255@-->|"参数 / 查询数据"| n256
+  class e255 edge_reference
+  n0 e256@-->|"参数 / 查询数据"| n257
+  class e256 edge_reference
+  n0 e257@-->|"参数 / 查询数据"| n258
+  class e257 edge_reference
+  n0 e258@-->|"参数 / 查询数据"| n259
+  class e258 edge_reference
+  n0 e259@-->|"参数 / 查询数据"| n260
+  class e259 edge_reference
+  n0 e260@-->|"参数 / 查询数据"| n261
+  class e260 edge_reference
+  n0 e261@-->|"参数 / 查询数据"| n262
+  class e261 edge_reference
+  n0 e262@-->|"参数 / 查询数据"| n263
+  class e262 edge_reference
+  n0 e263@-->|"参数 / 查询数据"| n264
+  class e263 edge_reference
+  n0 e264@-->|"参数 / 查询数据"| n265
+  class e264 edge_reference
+  n0 e265@-->|"参数 / 查询数据"| n266
+  class e265 edge_reference
+  n0 e266@-->|"参数 / 查询数据"| n267
+  class e266 edge_reference
+  n0 e267@-->|"参数 / 查询数据"| n268
+  class e267 edge_reference
+  n0 e268@-->|"参数 / 查询数据"| n269
+  class e268 edge_reference
+  n0 e269@-->|"参数 / 查询数据"| n270
+  class e269 edge_reference
+  n0 e270@-->|"参数 / 查询数据"| n271
+  class e270 edge_reference
+  n0 e271@-->|"参数 / 查询数据"| n272
+  class e271 edge_reference
+  n0 e272@-->|"参数 / 查询数据"| n273
+  class e272 edge_reference
+  n0 e273@-->|"参数 / 查询数据"| n274
+  class e273 edge_reference
+  n0 e274@-->|"参数 / 查询数据"| n275
+  class e274 edge_reference
+  n0 e275@-->|"参数 / 查询数据"| n276
+  class e275 edge_reference
+  n0 e276@-->|"参数 / 查询数据"| n277
+  class e276 edge_reference
+  n0 e277@-->|"参数 / 查询数据"| n278
+  class e277 edge_reference
+  n0 e278@-->|"参数 / 查询数据"| n279
+  class e278 edge_reference
+  n0 e279@-->|"参数 / 查询数据"| n280
+  class e279 edge_reference
+  n0 e280@-->|"参数 / 查询数据"| n281
+  class e280 edge_reference
+  n0 e281@-->|"参数 / 查询数据"| n282
+  class e281 edge_reference
+  n0 e282@-->|"参数 / 查询数据"| n283
+  class e282 edge_reference
+  n0 e283@-->|"参数 / 查询数据"| n284
+  class e283 edge_reference
+  n0 e284@-->|"参数 / 查询数据"| n285
+  class e284 edge_reference
+  n0 e285@-->|"参数 / 查询数据"| n286
+  class e285 edge_reference
+  n0 e286@-->|"参数 / 查询数据"| n287
+  class e286 edge_reference
+  n0 e287@-->|"参数 / 查询数据"| n288
+  class e287 edge_reference
+  n0 e288@-->|"参数 / 查询数据"| n289
+  class e288 edge_reference
+  n0 e289@-->|"参数 / 查询数据"| n290
+  class e289 edge_reference
+  n0 e290@-->|"参数 / 查询数据"| n291
+  class e290 edge_reference
+  n0 e291@-->|"参数 / 查询数据"| n292
+  class e291 edge_reference
+  n0 e292@-->|"参数 / 查询数据"| n293
+  class e292 edge_reference
+  n0 e293@-->|"参数 / 查询数据"| n294
+  class e293 edge_reference
+  n0 e294@-->|"参数 / 查询数据"| n295
+  class e294 edge_reference
+  n0 e295@-->|"参数 / 查询数据"| n296
+  class e295 edge_reference
+  n0 e296@-->|"参数 / 查询数据"| n297
+  class e296 edge_reference
+  n0 e297@-->|"参数 / 查询数据"| n298
+  class e297 edge_reference
+  n0 e298@-->|"参数 / 查询数据"| n299
+  class e298 edge_reference
+  n0 e299@-->|"参数 / 查询数据"| n300
+  class e299 edge_reference
+  n0 e300@-->|"参数 / 查询数据"| n301
+  class e300 edge_reference
+  n0 e301@-->|"参数 / 查询数据"| n302
+  class e301 edge_reference
+  n0 e302@-->|"参数 / 查询数据"| n303
+  class e302 edge_reference
+  n0 e303@-->|"参数 / 查询数据"| n304
+  class e303 edge_reference
+  n0 e304@-->|"参数 / 查询数据"| n305
+  class e304 edge_reference
+  n0 e305@-->|"参数 / 查询数据"| n306
+  class e305 edge_reference
+  n0 e306@-->|"参数 / 查询数据"| n307
+  class e306 edge_reference
+  n0 e307@-->|"参数 / 查询数据"| n308
+  class e307 edge_reference
+  n0 e308@-->|"参数 / 查询数据"| n309
+  class e308 edge_reference
+  n0 e309@-->|"参数 / 查询数据"| n310
+  class e309 edge_reference
+  n0 e310@-->|"参数 / 查询数据"| n311
+  class e310 edge_reference
+  n0 e311@-->|"参数 / 查询数据"| n312
+  class e311 edge_reference
+  n0 e312@-->|"参数 / 查询数据"| n313
+  class e312 edge_reference
+  n0 e313@-->|"参数 / 查询数据"| n314
+  class e313 edge_reference
+  n0 e314@-->|"参数 / 查询数据"| n315
+  class e314 edge_reference
+  n0 e315@-->|"参数 / 查询数据"| n316
+  class e315 edge_reference
+  n0 e316@-->|"参数 / 查询数据"| n317
+  class e316 edge_reference
+  n0 e317@-->|"参数 / 查询数据"| n318
+  class e317 edge_reference
+  n0 e318@-->|"参数 / 查询数据"| n319
+  class e318 edge_reference
+  n0 e319@-->|"参数 / 查询数据"| n320
+  class e319 edge_reference
+  n0 e320@-->|"参数 / 查询数据"| n321
+  class e320 edge_reference
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e17@{ curve: basis }
+  e18@{ curve: basis }
+  e19@{ curve: basis }
+  e20@{ curve: basis }
+  e21@{ curve: basis }
+  e22@{ curve: basis }
+  e23@{ curve: basis }
+  e24@{ curve: basis }
+  e25@{ curve: basis }
+  e26@{ curve: basis }
+  e27@{ curve: basis }
+  e28@{ curve: basis }
+  e29@{ curve: basis }
+  e30@{ curve: basis }
+  e31@{ curve: basis }
+  e32@{ curve: basis }
+  e33@{ curve: basis }
+  e34@{ curve: basis }
+  e35@{ curve: basis }
+  e36@{ curve: basis }
+  e37@{ curve: basis }
+  e38@{ curve: basis }
+  e39@{ curve: basis }
+  e40@{ curve: basis }
+  e41@{ curve: basis }
+  e42@{ curve: basis }
+  e43@{ curve: basis }
+  e44@{ curve: basis }
+  e45@{ curve: basis }
+  e46@{ curve: basis }
+  e47@{ curve: basis }
+  e48@{ curve: basis }
+  e49@{ curve: basis }
+  e50@{ curve: basis }
+  e51@{ curve: basis }
+  e52@{ curve: basis }
+  e53@{ curve: basis }
+  e54@{ curve: basis }
+  e55@{ curve: basis }
+  e56@{ curve: basis }
+  e57@{ curve: basis }
+  e58@{ curve: basis }
+  e59@{ curve: basis }
+  e60@{ curve: basis }
+  e61@{ curve: basis }
+  e62@{ curve: basis }
+  e63@{ curve: basis }
+  e64@{ curve: basis }
+  e65@{ curve: basis }
+  e66@{ curve: basis }
+  e67@{ curve: basis }
+  e68@{ curve: basis }
+  e69@{ curve: basis }
+  e70@{ curve: basis }
+  e71@{ curve: basis }
+  e72@{ curve: basis }
+  e73@{ curve: basis }
+  e74@{ curve: basis }
+  e75@{ curve: basis }
+  e76@{ curve: basis }
+  e77@{ curve: basis }
+  e78@{ curve: basis }
+  e79@{ curve: basis }
+  e80@{ curve: basis }
+  e81@{ curve: basis }
+  e82@{ curve: basis }
+  e83@{ curve: basis }
+  e84@{ curve: basis }
+  e85@{ curve: basis }
+  e86@{ curve: basis }
+  e87@{ curve: basis }
+  e88@{ curve: basis }
+  e89@{ curve: basis }
+  e90@{ curve: basis }
+  e91@{ curve: basis }
+  e92@{ curve: basis }
+  e93@{ curve: basis }
+  e94@{ curve: basis }
+  e95@{ curve: basis }
+  e96@{ curve: basis }
+  e97@{ curve: basis }
+  e98@{ curve: basis }
+  e99@{ curve: basis }
+  e100@{ curve: basis }
+  e101@{ curve: basis }
+  e102@{ curve: basis }
+  e103@{ curve: basis }
+  e104@{ curve: basis }
+  e105@{ curve: basis }
+  e106@{ curve: basis }
+  e107@{ curve: basis }
+  e108@{ curve: basis }
+  e109@{ curve: basis }
+  e110@{ curve: basis }
+  e111@{ curve: basis }
+  e112@{ curve: basis }
+  e113@{ curve: basis }
+  e114@{ curve: basis }
+  e115@{ curve: basis }
+  e116@{ curve: basis }
+  e117@{ curve: basis }
+  e118@{ curve: basis }
+  e119@{ curve: basis }
+  e120@{ curve: basis }
+  e121@{ curve: basis }
+  e122@{ curve: basis }
+  e123@{ curve: basis }
+  e124@{ curve: basis }
+  e125@{ curve: basis }
+  e126@{ curve: basis }
+  e127@{ curve: basis }
+  e128@{ curve: basis }
+  e129@{ curve: basis }
+  e130@{ curve: basis }
+  e131@{ curve: basis }
+  e132@{ curve: basis }
+  e133@{ curve: basis }
+  e134@{ curve: basis }
+  e135@{ curve: basis }
+  e136@{ curve: basis }
+  e137@{ curve: basis }
+  e138@{ curve: basis }
+  e139@{ curve: basis }
+  e140@{ curve: basis }
+  e141@{ curve: basis }
+  e142@{ curve: basis }
+  e143@{ curve: basis }
+  e144@{ curve: basis }
+  e145@{ curve: basis }
+  e146@{ curve: basis }
+  e147@{ curve: basis }
+  e148@{ curve: basis }
+  e149@{ curve: basis }
+  e150@{ curve: basis }
+  e151@{ curve: basis }
+  e152@{ curve: basis }
+  e153@{ curve: basis }
+  e154@{ curve: basis }
+  e155@{ curve: basis }
+  e156@{ curve: basis }
+  e157@{ curve: basis }
+  e158@{ curve: basis }
+  e159@{ curve: basis }
+  e161@{ curve: basis }
+  e162@{ curve: basis }
+  e163@{ curve: basis }
+  e164@{ curve: basis }
+  e165@{ curve: basis }
+  e166@{ curve: basis }
+  e167@{ curve: basis }
+  e168@{ curve: basis }
+  e169@{ curve: basis }
+  e170@{ curve: basis }
+  e171@{ curve: basis }
+  e172@{ curve: basis }
+  e173@{ curve: basis }
+  e174@{ curve: basis }
+  e175@{ curve: basis }
+  e176@{ curve: basis }
+  e177@{ curve: basis }
+  e178@{ curve: basis }
+  e179@{ curve: basis }
+  e180@{ curve: basis }
+  e181@{ curve: basis }
+  e182@{ curve: basis }
+  e183@{ curve: basis }
+  e184@{ curve: basis }
+  e185@{ curve: basis }
+  e186@{ curve: basis }
+  e187@{ curve: basis }
+  e188@{ curve: basis }
+  e189@{ curve: basis }
+  e190@{ curve: basis }
+  e191@{ curve: basis }
+  e192@{ curve: basis }
+  e193@{ curve: basis }
+  e194@{ curve: basis }
+  e195@{ curve: basis }
+  e196@{ curve: basis }
+  e197@{ curve: basis }
+  e198@{ curve: basis }
+  e199@{ curve: basis }
+  e200@{ curve: basis }
+  e201@{ curve: basis }
+  e202@{ curve: basis }
+  e203@{ curve: basis }
+  e204@{ curve: basis }
+  e205@{ curve: basis }
+  e206@{ curve: basis }
+  e207@{ curve: basis }
+  e208@{ curve: basis }
+  e209@{ curve: basis }
+  e210@{ curve: basis }
+  e211@{ curve: basis }
+  e212@{ curve: basis }
+  e213@{ curve: basis }
+  e214@{ curve: basis }
+  e215@{ curve: basis }
+  e216@{ curve: basis }
+  e217@{ curve: basis }
+  e218@{ curve: basis }
+  e219@{ curve: basis }
+  e220@{ curve: basis }
+  e221@{ curve: basis }
+  e222@{ curve: basis }
+  e223@{ curve: basis }
+  e224@{ curve: basis }
+  e225@{ curve: basis }
+  e226@{ curve: basis }
+  e227@{ curve: basis }
+  e228@{ curve: basis }
+  e229@{ curve: basis }
+  e230@{ curve: basis }
+  e231@{ curve: basis }
+  e232@{ curve: basis }
+  e233@{ curve: basis }
+  e234@{ curve: basis }
+  e235@{ curve: basis }
+  e236@{ curve: basis }
+  e237@{ curve: basis }
+  e238@{ curve: basis }
+  e239@{ curve: basis }
+  e240@{ curve: basis }
+  e241@{ curve: basis }
+  e242@{ curve: basis }
+  e243@{ curve: basis }
+  e244@{ curve: basis }
+  e245@{ curve: basis }
+  e246@{ curve: basis }
+  e247@{ curve: basis }
+  e248@{ curve: basis }
+  e249@{ curve: basis }
+  e250@{ curve: basis }
+  e251@{ curve: basis }
+  e252@{ curve: basis }
+  e253@{ curve: basis }
+  e254@{ curve: basis }
+  e255@{ curve: basis }
+  e256@{ curve: basis }
+  e257@{ curve: basis }
+  e258@{ curve: basis }
+  e259@{ curve: basis }
+  e260@{ curve: basis }
+  e261@{ curve: basis }
+  e262@{ curve: basis }
+  e263@{ curve: basis }
+  e264@{ curve: basis }
+  e265@{ curve: basis }
+  e266@{ curve: basis }
+  e267@{ curve: basis }
+  e268@{ curve: basis }
+  e269@{ curve: basis }
+  e270@{ curve: basis }
+  e271@{ curve: basis }
+  e272@{ curve: basis }
+  e273@{ curve: basis }
+  e274@{ curve: basis }
+  e275@{ curve: basis }
+  e276@{ curve: basis }
+  e277@{ curve: basis }
+  e278@{ curve: basis }
+  e279@{ curve: basis }
+  e280@{ curve: basis }
+  e281@{ curve: basis }
+  e282@{ curve: basis }
+  e283@{ curve: basis }
+  e284@{ curve: basis }
+  e285@{ curve: basis }
+  e286@{ curve: basis }
+  e287@{ curve: basis }
+  e288@{ curve: basis }
+  e289@{ curve: basis }
+  e290@{ curve: basis }
+  e291@{ curve: basis }
+  e292@{ curve: basis }
+  e293@{ curve: basis }
+  e294@{ curve: basis }
+  e295@{ curve: basis }
+  e296@{ curve: basis }
+  e297@{ curve: basis }
+  e298@{ curve: basis }
+  e299@{ curve: basis }
+  e300@{ curve: basis }
+  e301@{ curve: basis }
+  e302@{ curve: basis }
+  e303@{ curve: basis }
+  e304@{ curve: basis }
+  e305@{ curve: basis }
+  e306@{ curve: basis }
+  e307@{ curve: basis }
+  e308@{ curve: basis }
+  e309@{ curve: basis }
+  e310@{ curve: basis }
+  e311@{ curve: basis }
+  e312@{ curve: basis }
+  e313@{ curve: basis }
+  e314@{ curve: basis }
+  e315@{ curve: basis }
+  e316@{ curve: basis }
+  e317@{ curve: basis }
+  e318@{ curve: basis }
+  e319@{ curve: basis }
+  e320@{ curve: basis }

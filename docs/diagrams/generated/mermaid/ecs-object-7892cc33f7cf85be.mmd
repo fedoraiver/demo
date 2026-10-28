@@ -1,0 +1,81 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: prepare_erased_assets<bevy_pbr::mesh_material::MeshMaterial3d<bevy_pbr::pbr_material::StandardMaterial>> · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_system_param fill:#EFF5F6,stroke:#3B8790,stroke-width:1.6px,color:#1F3340
+  classDef node_engine_flow fill:#F1F5F4,stroke:#557C78,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**prepare_erased_assets#lt;bevy_pbr::**<br/>**mesh_material::MeshMaterial3d#lt;bevy_**<br/>**pbr::pbr_material::**<br/>**StandardMaterial#gt;#gt;**<br/>在上传预算内准备擦除资产并管理重试卸载。" }
+  class n0 node_system
+  n1@{ shape: stadium, label: "**RenderApp · Render**<br/>保存本应用调度的注册上下文与成员。" }
+  class n1 node_engine_flow
+  n2@{ shape: lin-rect, label: "**RenderSystems::PrepareAssets**<br/>将本帧资产变化转换为可渲染资产。" }
+  class n2 node_system_set
+  n3@{ shape: cyl, label: "**ExtractedAssets#lt;MeshMaterial3d#lt;Stand**<br/>**ardMaterial#gt;#gt;**<br/>暂存本帧类型擦除资产的提取与增删记录。" }
+  class n3 node_resource
+  n4@{ shape: cyl, label: "**ErasedRenderAssets#lt;ErasedAsset#gt;**<br/>存储源资产对应的类型擦除 GPU 表示。" }
+  class n4 node_resource
+  n5@{ shape: cyl, label: "**PrepareNextFrameAssets#lt;MeshMaterial3**<br/>**d#lt;StandardMaterial#gt;#gt;**<br/>保留下一帧需要继续准备的资产。" }
+  class n5 node_resource
+  n6@{ shape: notch-rect, label: "**StaticSystemParam#lt;#lt;MeshMaterial3d#lt;St**<br/>**andardMaterial#gt; as**<br/>**ErasedRenderAsset#gt;::Param#gt;**<br/>适配泛型 SystemParam" }
+  class n6 node_system_param
+  n7@{ shape: cyl, label: "**RenderAssetBytesPerFrameLimiter**<br/>统计并限制本帧渲染资产传输字节数。" }
+  class n7 node_resource
+  n1 e0@-->|"RenderApp / Render"| n0
+  class e0 edge_registration
+  n2 e1@--> n0
+  class e1 edge_set_membership
+  n0 e2@--> n3
+  class e2 edge_write
+  n0 e3@--> n4
+  class e3 edge_write
+  n0 e4@--> n5
+  class e4 edge_write
+  n6 e5@-->|"参数 / 查询数据"| n0
+  class e5 edge_reference
+  n7 e6@--> n0
+  class e6 edge_read
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }

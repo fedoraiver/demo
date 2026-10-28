@@ -1,0 +1,81 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: EguiPreUpdateSet::InitContexts · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_sync fill:#F6F3F0,stroke:#8B6A42,stroke-width:1.6px,color:#1F3340
+  classDef node_engine_flow fill:#F1F5F4,stroke:#557C78,stroke-width:1.6px,color:#1F3340
+  classDef edge_order stroke:#334155,stroke-width:2px
+  classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: lin-rect, label: "**EguiPreUpdateSet::InitContexts**<br/>维护新渲染目标的 Egui 上下文。" }
+  class n0 node_system_set
+  n1@{ shape: stadium, label: "**main · PreUpdate**<br/>来自Bevy 引擎 ↗：保存本应用调度的注册<br/>上下文与成员。" }
+  class n1 node_engine_flow
+  class n1 external_node
+  n2@{ shape: rounded, label: "**setup_primary_egui_context_system**<br/>为首个合适相机建立主 Egui 上下文。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**on_egui_context_added_system**<br/>登记新 Egui 上下文对应的窗口。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**on_egui_context_removed_system**<br/>移除已销毁 Egui 上下文的窗口索引。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**ApplyDeferred**<br/>来自Bevy 引擎 ↗：在调度建立的同步点应<br/>用前序系统暂存的 Commands 等延迟操作，<br/>使后续系统可以观察到结构变化；此卡片是<br/>ApplyDeferred 的 System 实现。" }
+  class n5 node_sync
+  class n5 external_node
+  n6@{ shape: rounded, label: "**update_ui_screen_rect**<br/>把相机视口换算为 Egui 逻辑屏幕区域。" }
+  class n6 node_system
+  n7@{ shape: rounded, label: "**sync_mouse_capture**<br/>来自第一人称控制 ↗：管理光标捕获及玩法<br/>输入启停。" }
+  class n7 node_system
+  class n7 external_node
+  n1 e0@-->|"main / PreUpdate"| n0
+  class e0 edge_registration
+  n0 e1@--> n2
+  class e1 edge_set_membership
+  n0 e2@--> n3
+  class e2 edge_set_membership
+  n0 e3@--> n4
+  class e3 edge_set_membership
+  n0 e4@--> n5
+  class e4 edge_set_membership
+  n0 e5@--> n6
+  class e5 edge_set_membership
+  n0 e6@--> n7
+  class e6 edge_order
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }

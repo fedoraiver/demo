@@ -1,0 +1,52 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: Messages<UiRequest> · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_message_buffer fill:#EDF4F6,stroke:#247B91,stroke-width:1.6px,color:#1F3340
+  classDef edge_publish stroke:#247B91,stroke-width:1.8px,stroke-dasharray:10 4 2 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: cyl, label: "**Messages#lt;UiRequest#gt;**<br/>保存 UiRequest 消息。" }
+  class n0 node_message_buffer
+  n1@{ shape: rounded, label: "**pointer_interaction**<br/>来自菜单与界面 ↗：将真实鼠标交互转换为<br/>共享菜单请求。" }
+  class n1 node_system
+  class n1 external_node
+  n2@{ shape: rounded, label: "**sample_slider_pointer**<br/>来自菜单与界面 ↗：从光标位置生成音量采<br/>样与释放请求。" }
+  class n2 node_system
+  class n2 external_node
+  n1 e0@-->|"正文发布消息"| n0
+  class e0 edge_publish
+  n2 e1@-->|"正文发布消息"| n0
+  class e1 edge_publish
+  e0@{ curve: basis }
+  e1@{ curve: basis }

@@ -1,0 +1,110 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: UiSystems::PostLayout · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_engine_flow fill:#F1F5F4,stroke:#557C78,stroke-width:1.6px,color:#1F3340
+  classDef edge_order stroke:#334155,stroke-width:2px
+  classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: lin-rect, label: "**UiSystems::PostLayout**<br/>根据完成的布局生成裁切和文字几何。" }
+  class n0 node_system_set
+  n1@{ shape: stadium, label: "**main · PostUpdate**<br/>保存本应用调度的注册上下文与成员。" }
+  class n1 node_engine_flow
+  n2@{ shape: rounded, label: "**update_clipping_system**<br/>从 UI 根递归更新继承裁剪范围。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**text_system**<br/>文本节点尺寸、字形提示或重排标志变化时，<br/>通过 TextPipeline 重算排版并写入<br/>TextLayoutInfo；同时更新字体图集，等待<br/>测量函数的文本暂不排版。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**update_editable_text_layout**<br/>刷新可编辑文本的字形布局和编辑反馈。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**apply_queued_select_all**<br/>在指针释放时应用延后的文本全选。" }
+  class n5 node_system
+  n6@{ shape: rounded, label: "**update_viewport_render_target_size**<br/>按 UI 视口节点尺寸调整相机图像目标。" }
+  class n6 node_system
+  n7@{ shape: rounded, label: "**button_changed**<br/>Button 改变时从 UI 子节点提取文本标<br/>签，更新已有 AccessibilityNode 的按钮<br/>角色和标签，或通过命令补入对应无障碍节<br/>点。" }
+  class n7 node_system
+  n8@{ shape: rounded, label: "**image_changed**<br/>非按钮 ImageNode 改变时从 UI 子节点提<br/>取说明，设置无障碍图像角色和标签；尚无<br/>AccessibilityNode 时排入创建命令。" }
+  class n8 node_system
+  n9@{ shape: rounded, label: "**label_changed**<br/>Label 改变时收集其文本元素，把拼接后的<br/>内容写为无障碍标签节点的值；已有节点原位<br/>更新，缺少节点时排入创建命令。" }
+  class n9 node_system
+  n10@{ shape: rounded, label: "**sync_bounds_and_transforms**<br/>把 UI 几何同步到无障碍树。" }
+  class n10 node_system
+  n11@{ shape: rounded, label: "**update_ime_position**<br/>把输入法候选窗口放到当前文字光标下方。" }
+  class n11 node_system
+  n12@{ shape: lin-rect, label: "**EditableTextSystems**<br/>统一应用可编辑文字的待处理操作。" }
+  class n12 node_system_set
+  n13@{ shape: rounded, label: "**menu_on_lose_focus**<br/>关闭不再持有内部焦点的菜单。" }
+  class n13 node_system
+  n1 e0@-->|"main / PostUpdate"| n0
+  class e0 edge_registration
+  n0 e1@--> n2
+  class e1 edge_set_membership
+  n0 e2@--> n3
+  class e2 edge_set_membership
+  n0 e3@--> n4
+  class e3 edge_set_membership
+  n0 e4@--> n5
+  class e4 edge_set_membership
+  n0 e5@--> n6
+  class e5 edge_set_membership
+  n0 e6@--> n7
+  class e6 edge_set_membership
+  n0 e7@--> n8
+  class e7 edge_set_membership
+  n0 e8@--> n9
+  class e8 edge_set_membership
+  n0 e9@--> n10
+  class e9 edge_set_membership
+  n0 e10@--> n11
+  class e10 edge_set_membership
+  n12 e11@--> n0
+  class e11 edge_order
+  n13 e12@--> n0
+  class e12 edge_order
+  n1 layout_input_0@~~~ n12
+  n12 layout_input_1@~~~ n13
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }

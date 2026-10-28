@@ -1,0 +1,94 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: check_tonemapping_none · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_system_param fill:#EFF5F6,stroke:#3B8790,stroke-width:1.6px,color:#1F3340
+  classDef node_query_data fill:#F1F4F1,stroke:#567A51,stroke-width:1.6px,color:#1F3340
+  classDef node_engine_flow fill:#F1F5F4,stroke:#557C78,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**check_tonemapping_none**<br/>警告关闭色调映射后仍配置无效效果的相机。" }
+  class n0 node_system
+  n1@{ shape: stadium, label: "**main · PostUpdate**<br/>保存本应用调度的注册上下文与成员。" }
+  class n1 node_engine_flow
+  n2@{ shape: notch-rect, label: "**NameOrEntity**<br/>查询可选的实体 Name 和必有的 Entity 身<br/>份" }
+  class n2 node_query_data
+  n3@{ shape: rounded, label: "**Name**<br/>保存供调试和界面展示的实体名称及缓存哈希" }
+  class n3 node_component
+  n4@{ shape: notch-rect, label: "**Entity**<br/>以实体索引和代际组成实体身份" }
+  class n4 node_system_param
+  n5@{ shape: rounded, label: "**Tonemapping**<br/>选择 HDR 颜色到显示颜色的映射方式。" }
+  class n5 node_component
+  n6@{ shape: rounded, label: "**DebandDither**<br/>控制颜色输出的去色带抖动。" }
+  class n6 node_component
+  n7@{ shape: rounded, label: "**ColorGrading**<br/>配置整幅图像及明暗分区的电影式调色。" }
+  class n7 node_component
+  n8@{ shape: rounded, label: "**Camera**<br/>配置相机视口、输出目标和渲染顺序。" }
+  class n8 node_component
+  n1 e0@-->|"main / PostUpdate"| n0
+  class e0 edge_registration
+  n2 e1@-->|"参数 / 查询数据"| n0
+  class e1 edge_reference
+  n3 e2@--> n0
+  class e2 edge_read
+  n4 e3@-->|"参数 / 查询数据"| n0
+  class e3 edge_reference
+  n5 e4@--> n0
+  class e4 edge_read
+  n6 e5@--> n0
+  class e5 edge_read
+  n7 e6@--> n0
+  class e6 edge_read
+  n8 e7@-->|"存在 / 变更过滤"| n0
+  class e7 edge_reference
+  n5 e8@-->|"存在 / 变更过滤"| n0
+  class e8 edge_reference
+  n6 e9@-->|"存在 / 变更过滤"| n0
+  class e9 edge_reference
+  n7 e10@-->|"存在 / 变更过滤"| n0
+  class e10 edge_reference
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: bumpX }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }

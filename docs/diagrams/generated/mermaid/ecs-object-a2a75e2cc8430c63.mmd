@@ -1,0 +1,128 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: bloom · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_system_param fill:#EFF5F6,stroke:#3B8790,stroke-width:1.6px,color:#1F3340
+  classDef node_engine_flow fill:#F1F5F4,stroke:#557C78,stroke-width:1.6px,color:#1F3340
+  classDef edge_order stroke:#334155,stroke-width:2px
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**bloom**<br/>对 HDR 视图颜色执行 Bloom 降采样和上采<br/>样通道，将亮部扩散合成回视图；强度为零、<br/>非 HDR 或所需管线和参数缓冲未就绪时不执<br/>行。" }
+  class n0 node_system
+  n1@{ shape: stadium, label: "**RenderApp · Core2d**<br/>保存本应用调度的注册上下文与成员。" }
+  class n1 node_engine_flow
+  n2@{ shape: lin-rect, label: "**Core2dSystems::PostProcess**<br/>执行二维色调映射及最终屏幕后处理。" }
+  class n2 node_system_set
+  n3@{ shape: rounded, label: "**tonemapping**<br/>为启用色调映射的 HDR 视图绑定颜色源、视<br/>图参数和 LUT，执行全屏色调映射并写入后<br/>处理目标；模式关闭或管线尚未就绪时跳过。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**post_processing**<br/>为当前视图组合已启用的色差、暗角和镜头畸<br/>变效果，绑定各效果参数及颜色 LUT 后执行<br/>全屏后处理；没有效果或所需资产和管线未就<br/>绪时跳过。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**ExtractedCamera**<br/>保存渲染世界相机的目标和绘制配置。" }
+  class n5 node_component
+  n6@{ shape: rounded, label: "**ViewTarget**<br/>管理视图主颜色纹理及最终输出附件。" }
+  class n6 node_component
+  n7@{ shape: rounded, label: "**BloomTexture**<br/>保存 Bloom 逐级缩小的中间纹理。" }
+  class n7 node_component
+  n8@{ shape: rounded, label: "**BloomBindGroups**<br/>缓存视图 Bloom 各级降采样和上采样绑定。" }
+  class n8 node_component
+  n9@{ shape: rounded, label: "**DynamicUniformIndex#lt;BloomUniforms#gt;**<br/>定位组件参数在共享 Uniform 缓冲中的位<br/>置。" }
+  class n9 node_component
+  n10@{ shape: rounded, label: "**Bloom**<br/>为 HDR 相机配置亮部扩散光晕。" }
+  class n10 node_component
+  n11@{ shape: rounded, label: "**UpsamplingPipelineIds**<br/>记录 Bloom 主上采样及最终合成管线。" }
+  class n11 node_component
+  n12@{ shape: rounded, label: "**BloomDownsamplingPipelineIds**<br/>记录 Bloom 首级和后续降采样管线。" }
+  class n12 node_component
+  n13@{ shape: cyl, label: "**BloomDownsamplingPipeline**<br/>提供 Bloom 降采样的着色器和资源布局。" }
+  class n13 node_resource
+  n14@{ shape: cyl, label: "**PipelineCache**<br/>缓存 GPU 渲染、计算管线与待创建队列。" }
+  class n14 node_resource
+  n15@{ shape: cyl, label: "**ComponentUniforms#lt;BloomUniforms#gt;**<br/>汇集同类组件的动态 Uniform 数据。" }
+  class n15 node_resource
+  n16@{ shape: notch-rect, label: "**RenderContext**<br/>向渲染系统提供命令编码器和 GPU 设备。" }
+  class n16 node_system_param
+  n1 e0@-->|"RenderApp / Core2d"| n0
+  class e0 edge_registration
+  n2 e1@--> n0
+  class e1 edge_set_membership
+  n0 e2@--> n3
+  class e2 edge_order
+  n0 e3@--> n4
+  class e3 edge_order
+  n5 e4@--> n0
+  class e4 edge_read
+  n6 e5@--> n0
+  class e5 edge_read
+  n7 e6@--> n0
+  class e6 edge_read
+  n8 e7@--> n0
+  class e7 edge_read
+  n9 e8@--> n0
+  class e8 edge_read
+  n10 e9@--> n0
+  class e9 edge_read
+  n11 e10@--> n0
+  class e10 edge_read
+  n12 e11@--> n0
+  class e11 edge_read
+  n13 e12@--> n0
+  class e12 edge_read
+  n14 e13@--> n0
+  class e13 edge_read
+  n15 e14@--> n0
+  class e14 edge_read
+  n16 e15@-->|"参数 / 查询数据"| n0
+  class e15 edge_reference
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }

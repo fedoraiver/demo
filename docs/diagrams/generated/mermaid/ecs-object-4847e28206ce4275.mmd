@@ -1,0 +1,65 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: PreviousViewUniforms · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: cyl, label: "**PreviousViewUniforms**<br/>集中上传各视图上一帧的相机矩阵。" }
+  class n0 node_resource
+  n1@{ shape: rounded, label: "**prepare_previous_view_uniforms**<br/>重建前帧抖动矩阵并上传视图历史参数。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**prepare_prepass_view_bind_group**<br/>绑定预通道的视图、全局和前帧缓冲。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**prepare_background_motion_vectors_**<br/>**bind_groups**<br/>为背景运动矢量绑定前后两帧视图参数。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**prepare_preprocess_bind_groups**<br/>绑定各视图网格预处理和间接参数构建资源。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_core_**<br/>**pipeline::prepass::**<br/>**PreviousViewUniforms#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n5 node_system
+  n1 e0@--> n0
+  class e0 edge_write
+  n0 e1@--> n2
+  class e1 edge_read
+  n0 e2@--> n3
+  class e2 edge_read
+  n0 e3@--> n4
+  class e3 edge_read
+  n5 e4@-->|"正文添加"| n0
+  class e4 edge_write
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }

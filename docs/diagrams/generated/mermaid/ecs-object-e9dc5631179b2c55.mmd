@@ -1,0 +1,69 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: main · OnEnter(MainMenu) · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_engine_flow fill:#F1F5F4,stroke:#557C78,stroke-width:1.6px,color:#1F3340
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: stadium, label: "**main · OnEnter(MainMenu)**<br/>保存本应用调度的注册上下文与成员。" }
+  class n0 node_engine_flow
+  n1@{ shape: rounded, label: "**enter_main_menu**<br/>来自应用流程 ↗：保留主菜单展示时间并冻<br/>结物理模拟。" }
+  class n1 node_system
+  class n1 external_node
+  n2@{ shape: rounded, label: "**clear_character_intents**<br/>来自角色运动 ↗：清空持续移动意图与单次<br/>动作请求。" }
+  class n2 node_system
+  class n2 external_node
+  n3@{ shape: rounded, label: "**suspend_controls**<br/>来自第一人称控制 ↗：停用玩法输入并释放<br/>光标。" }
+  class n3 node_system
+  class n3 external_node
+  n4@{ shape: rounded, label: "**show_main_menu**<br/>来自菜单与界面 ↗：打开主菜单并重置页<br/>面、返回来源与焦点。" }
+  class n4 node_system
+  class n4 external_node
+  n5@{ shape: rounded, label: "**spawn_backdrop**<br/>来自菜单与界面 ↗：装配主菜单海岛展示舞<br/>台、相机与日光。" }
+  class n5 node_system
+  class n5 external_node
+  n0 e0@-->|"main / OnEnter(MainMenu)"| n1
+  class e0 edge_registration
+  n0 e1@-->|"main / OnEnter(MainMenu)"| n2
+  class e1 edge_registration
+  n0 e2@-->|"main / OnEnter(MainMenu)"| n3
+  class e2 edge_registration
+  n0 e3@-->|"main / OnEnter(MainMenu)"| n4
+  class e3 edge_registration
+  n0 e4@-->|"main / OnEnter(MainMenu)"| n5
+  class e4 edge_registration
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }

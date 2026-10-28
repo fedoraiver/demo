@@ -1,0 +1,124 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: Messages<StateTransitionEvent<PlayState>> · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_message_buffer fill:#EDF4F6,stroke:#247B91,stroke-width:1.6px,color:#1F3340
+  classDef node_system_group fill:#F2F5F7,stroke:#607C96,stroke-width:1.6px,color:#1F3340
+  classDef edge_publish stroke:#247B91,stroke-width:1.8px,stroke-dasharray:10 4 2 4
+  classDef edge_consume stroke:#247B91,stroke-width:1.8px,stroke-dasharray:2 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: cyl, label: "**Messages#lt;StateTransitionEvent#lt;PlaySt**<br/>**ate#gt;#gt;**<br/>缓冲游戏运行与暂停转换的日志输入。" }
+  class n0 node_message_buffer
+  n1@{ shape: rounded, label: "**子状态转换闭包**<br/>来自Bevy 引擎 ↗：监听父状态变化与待处<br/>理的子状态切换，计算 demo::game_flow::<br/>PlayState 是否仍应存在，应用转换并写入<br/>状态转换消息；闭包由 demo::game_flow::<br/>AppState 的 StateSet 实现注册。" }
+  class n1 node_system
+  class n1 external_node
+  n2@{ shape: fr-rect, label: "**Pipe(bevy_state::state::**<br/>**transitions::last_transition#lt;demo::**<br/>**game_flow::PlayState#gt;, bevy_state::**<br/>**state::transitions::run_exit#lt;demo::**<br/>**game_flow::PlayState#gt;)**<br/>来自Bevy 引擎 ↗：按管道顺序执行组合系<br/>统。" }
+  class n2 node_system_group
+  class n2 external_node
+  n3@{ shape: rounded, label: "**despawn_entities_on_exit_**<br/>**state#lt;demo::game_flow::PlayState#gt;**<br/>来自Bevy 引擎 ↗：读取最新状态转换消<br/>息，对 DespawnOnExit 值匹配退出状态的<br/>实体排入销毁；包括禁用实体，未发生有效转<br/>换时不遍历。" }
+  class n3 node_system
+  class n3 external_node
+  n4@{ shape: rounded, label: "**disable_entities_on_exit_**<br/>**state#lt;demo::game_flow::PlayState#gt;**<br/>来自Bevy 引擎 ↗：有效状态转换退出指定<br/>值时，对匹配 DisableOnExit 的实体及<br/>Children 后代递归添加 Disabled，停用整<br/>条子树。" }
+  class n4 node_system
+  class n4 external_node
+  n5@{ shape: rounded, label: "**enable_entities_on_exit_state#lt;demo::**<br/>**game_flow::PlayState#gt;**<br/>来自Bevy 引擎 ↗：有效状态转换退出指定<br/>值时，对匹配 EnableOnExit 且已禁用的实<br/>体及 Children 后代递归移除 Disabled，<br/>重新启用该子树。" }
+  class n5 node_system
+  class n5 external_node
+  n6@{ shape: fr-rect, label: "**Pipe(bevy_state::state::**<br/>**transitions::last_transition#lt;demo::**<br/>**game_flow::PlayState#gt;, bevy_state::**<br/>**state::transitions::run_**<br/>**transition#lt;demo::game_flow::**<br/>**PlayState#gt;)**<br/>来自Bevy 引擎 ↗：按管道顺序执行组合系<br/>统。" }
+  class n6 node_system_group
+  class n6 external_node
+  n7@{ shape: rounded, label: "**despawn_entities_when_state#lt;demo::**<br/>**game_flow::PlayState#gt;**<br/>来自Bevy 引擎 ↗：读取最新有效状态转<br/>换，逐个调用 DespawnWhen 保存的转换判<br/>定函数；判定命中时安全销毁实体，包括当前<br/>已禁用的实体。" }
+  class n7 node_system
+  class n7 external_node
+  n8@{ shape: rounded, label: "**disable_entities_when_state#lt;demo::**<br/>**game_flow::PlayState#gt;**<br/>来自Bevy 引擎 ↗：读取最新有效状态转<br/>换，调用 DisableWhen 的转换判定函数；<br/>命中时给实体及 Children 后代递归添加<br/>Disabled。" }
+  class n8 node_system
+  class n8 external_node
+  n9@{ shape: rounded, label: "**enable_entities_when_state#lt;demo::**<br/>**game_flow::PlayState#gt;**<br/>来自Bevy 引擎 ↗：读取最新有效状态转<br/>换，调用 EnableWhen 的转换判定函数；命<br/>中时从当前禁用实体及 Children 后代递归<br/>移除 Disabled。" }
+  class n9 node_system
+  class n9 external_node
+  n10@{ shape: fr-rect, label: "**Pipe(bevy_state::state::**<br/>**transitions::last_transition#lt;demo::**<br/>**game_flow::PlayState#gt;, bevy_state::**<br/>**state::transitions::run_enter#lt;demo::**<br/>**game_flow::PlayState#gt;)**<br/>来自Bevy 引擎 ↗：按管道顺序执行组合系<br/>统。" }
+  class n10 node_system_group
+  class n10 external_node
+  n11@{ shape: rounded, label: "**despawn_entities_on_enter_**<br/>**state#lt;demo::game_flow::PlayState#gt;**<br/>来自Bevy 引擎 ↗：读取最新状态转换消<br/>息，对 DespawnOnEnter 值匹配进入状态的<br/>实体排入销毁；包括禁用实体，未发生有效转<br/>换时跳过。" }
+  class n11 node_system
+  class n11 external_node
+  n12@{ shape: rounded, label: "**disable_entities_on_enter_**<br/>**state#lt;demo::game_flow::PlayState#gt;**<br/>来自Bevy 引擎 ↗：有效状态转换进入指定<br/>值时，对匹配 DisableOnEnter 的实体及<br/>Children 后代递归添加 Disabled。" }
+  class n12 node_system
+  class n12 external_node
+  n13@{ shape: rounded, label: "**enable_entities_on_enter_**<br/>**state#lt;demo::game_flow::PlayState#gt;**<br/>来自Bevy 引擎 ↗：有效状态转换进入指定<br/>值时，对匹配 EnableOnEnter 且已禁用的<br/>实体及 Children 后代递归移除<br/>Disabled。" }
+  class n13 node_system
+  class n13 external_node
+  n14@{ shape: rounded, label: "**hide_menu**<br/>来自菜单与界面 ↗：隐藏菜单并清除提示。" }
+  class n14 node_system
+  class n14 external_node
+  n1 e0@--> n0
+  class e0 edge_publish
+  n0 e1@--> n2
+  class e1 edge_consume
+  n0 e2@--> n3
+  class e2 edge_consume
+  n0 e3@--> n4
+  class e3 edge_consume
+  n0 e4@--> n5
+  class e4 edge_consume
+  n0 e5@--> n6
+  class e5 edge_consume
+  n0 e6@--> n7
+  class e6 edge_consume
+  n0 e7@--> n8
+  class e7 edge_consume
+  n0 e8@--> n9
+  class e8 edge_consume
+  n0 e9@--> n10
+  class e9 edge_consume
+  n0 e10@--> n11
+  class e10 edge_consume
+  n0 e11@--> n12
+  class e11 edge_consume
+  n0 e12@--> n13
+  class e12 edge_consume
+  n0 e13@-->|"访问声明"| n14
+  class e13 edge_consume
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }

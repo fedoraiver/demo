@@ -1,0 +1,101 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: main · FixedLast · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_engine_flow fill:#F1F5F4,stroke:#557C78,stroke-width:1.6px,color:#1F3340
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: stadium, label: "**main · FixedLast**<br/>保存本应用调度的注册上下文与成员。" }
+  class n0 node_engine_flow
+  n1@{ shape: rounded, label: "**update_translation_interpolation_end**<br/>来自Avian ↗：把当前位置记录为插值终<br/>点。" }
+  class n1 node_system
+  class n1 external_node
+  n2@{ shape: rounded, label: "**update_rotation_interpolation_end**<br/>来自Avian ↗：把当前旋转记录为插值终<br/>点。" }
+  class n2 node_system
+  class n2 external_node
+  n3@{ shape: rounded, label: "**update_scale_interpolation_end**<br/>来自Avian ↗：把当前缩放记录为插值终<br/>点。" }
+  class n3 node_system
+  class n3 external_node
+  n4@{ shape: rounded, label: "**update_translation_extrapolation_**<br/>**states#lt;avian3d::interpolation::**<br/>**LinVelSource#gt;**<br/>来自Avian ↗：依据当前线速度预测下一个<br/>位置端点。" }
+  class n4 node_system
+  class n4 external_node
+  n5@{ shape: rounded, label: "**update_rotation_extrapolation_**<br/>**states#lt;avian3d::interpolation::**<br/>**AngVelSource#gt;**<br/>来自Avian ↗：依据当前角速度预测下一个<br/>旋转端点。" }
+  class n5 node_system
+  class n5 external_node
+  n6@{ shape: rounded, label: "**collect_requested_gizmos#lt;bevy_**<br/>**light::gizmos::**<br/>**LightGizmoConfigGroup, bevy_time::**<br/>**fixed::Fixed#gt;**<br/>把默认 Update 存储中本轮请求的 Gizmo<br/>图元追加到指定清理上下文，再清空默认请求<br/>存储，使图元按该上下文的生命周期保留。" }
+  class n6 node_system
+  n7@{ shape: rounded, label: "**collect_requested_gizmos#lt;bevy_**<br/>**gizmos::config::**<br/>**DefaultGizmoConfigGroup, bevy_time::**<br/>**fixed::Fixed#gt;**<br/>把默认 Update 存储中本轮请求的 Gizmo<br/>图元追加到指定清理上下文，再清空默认请求<br/>存储，使图元按该上下文的生命周期保留。" }
+  class n7 node_system
+  n8@{ shape: rounded, label: "**collect_requested_gizmos#lt;bevy_**<br/>**gizmos::aabb::AabbGizmoConfigGroup,**<br/>**bevy_time::fixed::Fixed#gt;**<br/>把默认 Update 存储中本轮请求的 Gizmo<br/>图元追加到指定清理上下文，再清空默认请求<br/>存储，使图元按该上下文的生命周期保留。" }
+  class n8 node_system
+  n9@{ shape: rounded, label: "**collect_requested_gizmos#lt;bevy_**<br/>**gizmos::frustum::**<br/>**FrustumGizmoConfigGroup, bevy_time::**<br/>**fixed::Fixed#gt;**<br/>把默认 Update 存储中本轮请求的 Gizmo<br/>图元追加到指定清理上下文，再清空默认请求<br/>存储，使图元按该上下文的生命周期保留。" }
+  class n9 node_system
+  n10@{ shape: rounded, label: "**collect_requested_gizmos#lt;bevy_**<br/>**gizmos::skinned_mesh_bounds::**<br/>**SkinnedMeshBoundsGizmoConfigGroup,**<br/>**bevy_time::fixed::Fixed#gt;**<br/>把默认 Update 存储中本轮请求的 Gizmo<br/>图元追加到指定清理上下文，再清空默认请求<br/>存储，使图元按该上下文的生命周期保留。" }
+  class n10 node_system
+  n11@{ shape: lin-rect, label: "**TransformEasingSystems::UpdateEnd**<br/>来自Avian ↗：记录固定步结束位置供显示<br/>插值。" }
+  class n11 node_system_set
+  class n11 external_node
+  n0 e0@-->|"main / FixedLast"| n1
+  class e0 edge_registration
+  n0 e1@-->|"main / FixedLast"| n2
+  class e1 edge_registration
+  n0 e2@-->|"main / FixedLast"| n3
+  class e2 edge_registration
+  n0 e3@-->|"main / FixedLast"| n4
+  class e3 edge_registration
+  n0 e4@-->|"main / FixedLast"| n5
+  class e4 edge_registration
+  n0 e5@-->|"main / FixedLast"| n6
+  class e5 edge_registration
+  n0 e6@-->|"main / FixedLast"| n7
+  class e6 edge_registration
+  n0 e7@-->|"main / FixedLast"| n8
+  class e7 edge_registration
+  n0 e8@-->|"main / FixedLast"| n9
+  class e8 edge_registration
+  n0 e9@-->|"main / FixedLast"| n10
+  class e9 edge_registration
+  n0 e10@-->|"main / FixedLast"| n11
+  class e10 edge_registration
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }

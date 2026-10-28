@@ -1,0 +1,1064 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: main · PostUpdate · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_sync fill:#F6F3F0,stroke:#8B6A42,stroke-width:1.6px,color:#1F3340
+  classDef node_engine_flow fill:#F1F5F4,stroke:#557C78,stroke-width:1.6px,color:#1F3340
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: stadium, label: "**main · PostUpdate**<br/>保存本应用调度的注册上下文与成员。" }
+  class n0 node_engine_flow
+  n1@{ shape: rounded, label: "**update_gizmo_meshes**<br/>将变换操作器对齐焦点并更新模式与高亮。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**propagate_transforms_for#lt;bevy_ecs::**<br/>**query::filter::Or#lt;(bevy_ecs::query::**<br/>**filter::With#lt;bevy_gizmos::transform_**<br/>**gizmo::TransformGizmoRoot#gt;, bevy_**<br/>**ecs::query::filter::With#lt;bevy_**<br/>**gizmos_render::transform_gizmo_**<br/>**render::GizmoOverlayCamera#gt;, bevy_**<br/>**ecs::query::filter::With#lt;bevy_**<br/>**gizmos::transform_gizmo::**<br/>**TransformGizmoMeshMarker#gt;)#gt;#gt;**<br/>按指定查询过滤器即时计算世界变换。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**mark_dirty_trees**<br/>沿祖先链标记需要重算变换的子树。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**propagate_parent_transforms**<br/>沿父子层级并行合成世界变换。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**sync_simple_transforms**<br/>同步没有父子层级的独立实体世界变换。" }
+  class n5 node_system
+  n6@{ shape: rounded, label: "**process_recorded_focus_changes**<br/>按记录顺序派发焦点获得和失去事件。" }
+  class n6 node_system
+  n7@{ shape: rounded, label: "**asset_events**<br/>将 Assets 暂存的<br/>Added、Modified、Removed 等变化批量写<br/>入对应 AssetEvent 消息；存在<br/>AssetChanges 时同步记录当前系统 tick，<br/>随后清空待发队列。" }
+  class n7 node_system
+  n8@{ shape: rounded, label: "**asset_events**<br/>将 Assets 暂存的<br/>Added、Modified、Removed 等变化批量写<br/>入对应 AssetEvent 消息；存在<br/>AssetChanges 时同步记录当前系统 tick，<br/>随后清空待发队列。" }
+  class n8 node_system
+  n9@{ shape: rounded, label: "**asset_events**<br/>将 Assets 暂存的<br/>Added、Modified、Removed 等变化批量写<br/>入对应 AssetEvent 消息；存在<br/>AssetChanges 时同步记录当前系统 tick，<br/>随后清空待发队列。" }
+  class n9 node_system
+  n10@{ shape: rounded, label: "**asset_events**<br/>将 Assets 暂存的<br/>Added、Modified、Removed 等变化批量写<br/>入对应 AssetEvent 消息；存在<br/>AssetChanges 时同步记录当前系统 tick，<br/>随后清空待发队列。" }
+  class n10 node_system
+  n11@{ shape: rounded, label: "**asset_events**<br/>将 Assets 暂存的<br/>Added、Modified、Removed 等变化批量写<br/>入对应 AssetEvent 消息；存在<br/>AssetChanges 时同步记录当前系统 tick，<br/>随后清空待发队列。" }
+  class n11 node_system
+  n12@{ shape: rounded, label: "**asset_events**<br/>将 Assets 暂存的<br/>Added、Modified、Removed 等变化批量写<br/>入对应 AssetEvent 消息；存在<br/>AssetChanges 时同步记录当前系统 tick，<br/>随后清空待发队列。" }
+  class n12 node_system
+  n13@{ shape: rounded, label: "**asset_events**<br/>将 Assets 暂存的<br/>Added、Modified、Removed 等变化批量写<br/>入对应 AssetEvent 消息；存在<br/>AssetChanges 时同步记录当前系统 tick，<br/>随后清空待发队列。" }
+  class n13 node_system
+  n14@{ shape: rounded, label: "**asset_events**<br/>将 Assets 暂存的<br/>Added、Modified、Removed 等变化批量写<br/>入对应 AssetEvent 消息；存在<br/>AssetChanges 时同步记录当前系统 tick，<br/>随后清空待发队列。" }
+  class n14 node_system
+  n15@{ shape: rounded, label: "**asset_events**<br/>将 Assets 暂存的<br/>Added、Modified、Removed 等变化批量写<br/>入对应 AssetEvent 消息；存在<br/>AssetChanges 时同步记录当前系统 tick，<br/>随后清空待发队列。" }
+  class n15 node_system
+  n16@{ shape: rounded, label: "**asset_events**<br/>将 Assets 暂存的<br/>Added、Modified、Removed 等变化批量写<br/>入对应 AssetEvent 消息；存在<br/>AssetChanges 时同步记录当前系统 tick，<br/>随后清空待发队列。" }
+  class n16 node_system
+  n17@{ shape: rounded, label: "**asset_events**<br/>将 Assets 暂存的<br/>Added、Modified、Removed 等变化批量写<br/>入对应 AssetEvent 消息；存在<br/>AssetChanges 时同步记录当前系统 tick，<br/>随后清空待发队列。" }
+  class n17 node_system
+  n18@{ shape: rounded, label: "**asset_events**<br/>将 Assets 暂存的<br/>Added、Modified、Removed 等变化批量写<br/>入对应 AssetEvent 消息；存在<br/>AssetChanges 时同步记录当前系统 tick，<br/>随后清空待发队列。" }
+  class n18 node_system
+  n19@{ shape: rounded, label: "**asset_events**<br/>将 Assets 暂存的<br/>Added、Modified、Removed 等变化批量写<br/>入对应 AssetEvent 消息；存在<br/>AssetChanges 时同步记录当前系统 tick，<br/>随后清空待发队列。" }
+  class n19 node_system
+  n20@{ shape: rounded, label: "**asset_events**<br/>将 Assets 暂存的<br/>Added、Modified、Removed 等变化批量写<br/>入对应 AssetEvent 消息；存在<br/>AssetChanges 时同步记录当前系统 tick，<br/>随后清空待发队列。" }
+  class n20 node_system
+  n21@{ shape: rounded, label: "**asset_events**<br/>将 Assets 暂存的<br/>Added、Modified、Removed 等变化批量写<br/>入对应 AssetEvent 消息；存在<br/>AssetChanges 时同步记录当前系统 tick，<br/>随后清空待发队列。" }
+  class n21 node_system
+  n22@{ shape: rounded, label: "**asset_events**<br/>将 Assets 暂存的<br/>Added、Modified、Removed 等变化批量写<br/>入对应 AssetEvent 消息；存在<br/>AssetChanges 时同步记录当前系统 tick，<br/>随后清空待发队列。" }
+  class n22 node_system
+  n23@{ shape: rounded, label: "**asset_events**<br/>将 Assets 暂存的<br/>Added、Modified、Removed 等变化批量写<br/>入对应 AssetEvent 消息；存在<br/>AssetChanges 时同步记录当前系统 tick，<br/>随后清空待发队列。" }
+  class n23 node_system
+  n24@{ shape: rounded, label: "**asset_events**<br/>将 Assets 暂存的<br/>Added、Modified、Removed 等变化批量写<br/>入对应 AssetEvent 消息；存在<br/>AssetChanges 时同步记录当前系统 tick，<br/>随后清空待发队列。" }
+  class n24 node_system
+  n25@{ shape: rounded, label: "**asset_events**<br/>将 Assets 暂存的<br/>Added、Modified、Removed 等变化批量写<br/>入对应 AssetEvent 消息；存在<br/>AssetChanges 时同步记录当前系统 tick，<br/>随后清空待发队列。" }
+  class n25 node_system
+  n26@{ shape: rounded, label: "**asset_events**<br/>将 Assets 暂存的<br/>Added、Modified、Removed 等变化批量写<br/>入对应 AssetEvent 消息；存在<br/>AssetChanges 时同步记录当前系统 tick，<br/>随后清空待发队列。" }
+  class n26 node_system
+  n27@{ shape: rounded, label: "**asset_events**<br/>将 Assets 暂存的<br/>Added、Modified、Removed 等变化批量写<br/>入对应 AssetEvent 消息；存在<br/>AssetChanges 时同步记录当前系统 tick，<br/>随后清空待发队列。" }
+  class n27 node_system
+  n28@{ shape: rounded, label: "**asset_events**<br/>将 Assets 暂存的<br/>Added、Modified、Removed 等变化批量写<br/>入对应 AssetEvent 消息；存在<br/>AssetChanges 时同步记录当前系统 tick，<br/>随后清空待发队列。" }
+  class n28 node_system
+  n29@{ shape: rounded, label: "**asset_events**<br/>将 Assets 暂存的<br/>Added、Modified、Removed 等变化批量写<br/>入对应 AssetEvent 消息；存在<br/>AssetChanges 时同步记录当前系统 tick，<br/>随后清空待发队列。" }
+  class n29 node_system
+  n30@{ shape: rounded, label: "**asset_events**<br/>将 Assets 暂存的<br/>Added、Modified、Removed 等变化批量写<br/>入对应 AssetEvent 消息；存在<br/>AssetChanges 时同步记录当前系统 tick，<br/>随后清空待发队列。" }
+  class n30 node_system
+  n31@{ shape: rounded, label: "**asset_events**<br/>将 Assets 暂存的<br/>Added、Modified、Removed 等变化批量写<br/>入对应 AssetEvent 消息；存在<br/>AssetChanges 时同步记录当前系统 tick，<br/>随后清空待发队列。" }
+  class n31 node_system
+  n32@{ shape: rounded, label: "**asset_events**<br/>将 Assets 暂存的<br/>Added、Modified、Removed 等变化批量写<br/>入对应 AssetEvent 消息；存在<br/>AssetChanges 时同步记录当前系统 tick，<br/>随后清空待发队列。" }
+  class n32 node_system
+  n33@{ shape: rounded, label: "**asset_events**<br/>将 Assets 暂存的<br/>Added、Modified、Removed 等变化批量写<br/>入对应 AssetEvent 消息；存在<br/>AssetChanges 时同步记录当前系统 tick，<br/>随后清空待发队列。" }
+  class n33 node_system
+  n34@{ shape: rounded, label: "**asset_events**<br/>将 Assets 暂存的<br/>Added、Modified、Removed 等变化批量写<br/>入对应 AssetEvent 消息；存在<br/>AssetChanges 时同步记录当前系统 tick，<br/>随后清空待发队列。" }
+  class n34 node_system
+  n35@{ shape: rounded, label: "**asset_events**<br/>将 Assets 暂存的<br/>Added、Modified、Removed 等变化批量写<br/>入对应 AssetEvent 消息；存在<br/>AssetChanges 时同步记录当前系统 tick，<br/>随后清空待发队列。" }
+  class n35 node_system
+  n36@{ shape: rounded, label: "**asset_events**<br/>将 Assets 暂存的<br/>Added、Modified、Removed 等变化批量写<br/>入对应 AssetEvent 消息；存在<br/>AssetChanges 时同步记录当前系统 tick，<br/>随后清空待发队列。" }
+  class n36 node_system
+  n37@{ shape: rounded, label: "**asset_events**<br/>将 Assets 暂存的<br/>Added、Modified、Removed 等变化批量写<br/>入对应 AssetEvent 消息；存在<br/>AssetChanges 时同步记录当前系统 tick，<br/>随后清空待发队列。" }
+  class n37 node_system
+  n38@{ shape: rounded, label: "**poll_receivers**<br/>轮询各窗口无障碍动作请求处理器，在持有其<br/>锁期间取出排队请求，并包装为<br/>ActionRequestWrapper 消息供应用消费。" }
+  class n38 node_system
+  n39@{ shape: rounded, label: "**update_accessibility_nodes**<br/>把变化的可访问性节点同步给原生适配器。" }
+  class n39 node_system
+  n40@{ shape: rounded, label: "**window_closed**<br/>消费 WindowClosed 消息，移除对应窗口<br/>的 AccessKit 适配器和无障碍请求处理<br/>器，避免关闭后的窗口继续保留后端状态。" }
+  class n40 node_system
+  n41@{ shape: rounded, label: "**camera_system**<br/>响应窗口创建、尺寸与缩放变化及图像目标变<br/>化，更新 Camera 与 Projection 的目标<br/>尺寸和投影信息；只读取相机实际引用的图像<br/>目标。" }
+  class n41 node_system
+  n42@{ shape: rounded, label: "**update_frusta**<br/>相机 GlobalTransform 或 Projection<br/>改变时，根据投影和世界变换重新计算<br/>Frustum，供后续可见性裁剪使用。" }
+  class n42 node_system
+  n43@{ shape: rounded, label: "**check_visibility_cpu_culling**<br/>按层、距离和视锥收集各相机可见实体。" }
+  class n43 node_system
+  n44@{ shape: rounded, label: "**check_visibility_gpu_culling**<br/>同步退出 CPU 裁剪对象的层级可见状态。" }
+  class n44 node_system
+  n45@{ shape: rounded, label: "**check_visibility_ranges**<br/>按视图距离计算实体可见范围位掩码。" }
+  class n45 node_system
+  n46@{ shape: rounded, label: "**visibility_propagate_system**<br/>沿父子层级传播可见意图的变化。" }
+  class n46 node_system
+  n47@{ shape: rounded, label: "**reset_view_visibility**<br/>为本帧可见性检查保留上帧状态。" }
+  class n47 node_system
+  n48@{ shape: rounded, label: "**mark_newly_hidden_entities_invisible**<br/>提交本帧已不再可见的对象状态。" }
+  class n48 node_system
+  n49@{ shape: rounded, label: "**calculate_bounds**<br/>为允许自动包围盒计算的 Mesh3d 实体补充<br/>Aabb，并在网格句柄或资产变化时重新计算<br/>已有包围盒；NoFrustumCulling 和<br/>NoAutoAabb 排除自动处理。" }
+  class n49 node_system
+  n50@{ shape: rounded, label: "**update_skinned_mesh_bounds**<br/>依据当前关节姿态更新动态蒙皮包围盒。" }
+  class n50 node_system
+  n51@{ shape: rounded, label: "**calculate_bounds_2d**<br/>为二维网格和精灵计算局部包围盒。" }
+  class n51 node_system
+  n52@{ shape: rounded, label: "**calculate_bounds_text2d**<br/>按文字布局与锚点更新二维文字包围盒。" }
+  class n52 node_system
+  n53@{ shape: rounded, label: "**check_dir_light_mesh_visibility**<br/>计算方向光各相机级联可见的投影网格。" }
+  class n53 node_system
+  n54@{ shape: rounded, label: "**check_point_light_mesh_visibility**<br/>计算点光与聚光灯阴影可见的网格。" }
+  class n54 node_system
+  n55@{ shape: rounded, label: "**assign_objects_to_clusters**<br/>将灯光、探针及贴花分配到视图分簇。" }
+  class n55 node_system
+  n56@{ shape: rounded, label: "**update_directional_light_frusta**<br/>从方向光级联投影更新阴影视锥。" }
+  class n56 node_system
+  n57@{ shape: rounded, label: "**update_point_light_frusta**<br/>更新可见点光的六面阴影视锥。" }
+  class n57 node_system
+  n58@{ shape: rounded, label: "**update_spot_light_frusta**<br/>更新可见聚光灯的阴影视锥。" }
+  class n58 node_system
+  n59@{ shape: rounded, label: "**build_directional_light_cascades**<br/>为投射阴影的方向光构建逐相机级联。" }
+  class n59 node_system
+  n60@{ shape: rounded, label: "**draw_frustum_gizmos**<br/>绘制带标记实体的视锥调试图形。" }
+  class n60 node_system
+  n61@{ shape: rounded, label: "**draw_all_frustum_gizmos**<br/>绘制未单独标记实体的视锥调试图形。" }
+  class n61 node_system
+  n62@{ shape: rounded, label: "**update_point_light_bounding_spheres**<br/>按点光位置和范围更新剔除包围球。" }
+  class n62 node_system
+  n63@{ shape: rounded, label: "**update_spot_light_bounding_spheres**<br/>按聚光灯位置和范围更新剔除包围球。" }
+  class n63 node_system
+  n64@{ shape: rounded, label: "**add_light_probe_and_decal_aabbs**<br/>为尚无 Aabb 的光照探针及聚簇贴花补入以<br/>原点为中心的单位立方体包围盒，使它们参与<br/>后续可见性判定；实际尺寸由全局变换缩放表<br/>达。" }
+  class n64 node_system
+  n65@{ shape: rounded, label: "**thread_animation_graphs**<br/>维护动画图的快速求值结构。" }
+  class n65 node_system
+  n66@{ shape: rounded, label: "**advance_transitions**<br/>按帧时间衰减动画过渡权重，从最近的过渡开<br/>始分配剩余权重并更新 AnimationPlayer，<br/>使过渡动画与主动画保持归一化混合。" }
+  class n66 node_system
+  n67@{ shape: rounded, label: "**advance_animations**<br/>依据帧时间推进各 AnimationPlayer 正在<br/>播放的动画；结合动画图和片段时长更新播放<br/>进度及图节点对应的活动动画状态。" }
+  class n67 node_system
+  n68@{ shape: rounded, label: "**animate_targets**<br/>依据目标的<br/>AnimatedBy、AnimationTargetId 和当前<br/>动画图，评估正在播放的动画并把结果写入骨<br/>骼等动画目标；缺少播放器或图资产时跳过该<br/>目标。" }
+  class n68 node_system
+  n69@{ shape: rounded, label: "**trigger_untargeted_animation_events**<br/>派发动画片段的根目标事件。" }
+  class n69 node_system
+  n70@{ shape: rounded, label: "**expire_completed_transitions**<br/>结束已完全淡出的动画过渡。" }
+  class n70 node_system
+  n71@{ shape: rounded, label: "**apply_text_edits**<br/>应用可编辑文字排队的编辑操作。" }
+  class n71 node_system
+  n72@{ shape: rounded, label: "**propagate_ui_target_cameras**<br/>为 UI 根配置目标相机和视口信息传播源。" }
+  class n72 node_system
+  n73@{ shape: rounded, label: "**update_source#lt;bevy_ui::ui_node::**<br/>**ComputedUiTargetCamera, (), bevy_**<br/>**ecs::hierarchy::ChildOf#gt;**<br/>为直接带 Propagate#lt;C#gt; 的实体同步<br/>Inherited#lt;C#gt;；传播源被移除时沿关系查找<br/>可继承值，必要时移除失效的继承状态。" }
+  class n73 node_system
+  n74@{ shape: rounded, label: "**update_removed_limit#lt;bevy_ui::ui_**<br/>**node::ComputedUiTargetCamera, (),**<br/>**bevy_ecs::hierarchy::ChildOf#gt;**<br/>读取 PropagateOver 或 PropagateStop<br/>的移除记录，将对应实体的 Inherited 标<br/>记为已变化，促使原先受阻或覆盖的继承链重<br/>新传播。" }
+  class n74 node_system
+  n75@{ shape: rounded, label: "**propagate_inherited#lt;bevy_ui::ui_**<br/>**node::ComputedUiTargetCamera, (),**<br/>**bevy_ecs::hierarchy::ChildOf#gt;**<br/>当 Inherited#lt;C#gt; 改变或关系结构变化时，<br/>沿指定关系向后代传播继承值，并遵守传播覆<br/>盖及停止标记；具体组件、过滤器和关系由泛<br/>型实参决定。" }
+  class n75 node_system
+  n76@{ shape: rounded, label: "**propagate_output#lt;bevy_ui::ui_node::**<br/>**ComputedUiTargetCamera, ()#gt;**<br/>把变化的 Inherited#lt;C#gt; 写入实体实际的<br/>C 组件；继承状态消失且没有重新添加传播<br/>来源时，移除失去来源的输出组件。" }
+  class n76 node_system
+  n77@{ shape: rounded, label: "**update_source#lt;bevy_ui::ui_node::**<br/>**ComputedUiRenderTargetInfo, (),**<br/>**bevy_ecs::hierarchy::ChildOf#gt;**<br/>为直接带 Propagate#lt;C#gt; 的实体同步<br/>Inherited#lt;C#gt;；传播源被移除时沿关系查找<br/>可继承值，必要时移除失效的继承状态。" }
+  class n77 node_system
+  n78@{ shape: rounded, label: "**update_removed_limit#lt;bevy_ui::ui_**<br/>**node::ComputedUiRenderTargetInfo,**<br/>**(), bevy_ecs::hierarchy::ChildOf#gt;**<br/>读取 PropagateOver 或 PropagateStop<br/>的移除记录，将对应实体的 Inherited 标<br/>记为已变化，促使原先受阻或覆盖的继承链重<br/>新传播。" }
+  class n78 node_system
+  n79@{ shape: rounded, label: "**propagate_inherited#lt;bevy_ui::ui_**<br/>**node::ComputedUiRenderTargetInfo,**<br/>**(), bevy_ecs::hierarchy::ChildOf#gt;**<br/>当 Inherited#lt;C#gt; 改变或关系结构变化时，<br/>沿指定关系向后代传播继承值，并遵守传播覆<br/>盖及停止标记；具体组件、过滤器和关系由泛<br/>型实参决定。" }
+  class n79 node_system
+  n80@{ shape: rounded, label: "**propagate_output#lt;bevy_ui::ui_node::**<br/>**ComputedUiRenderTargetInfo, ()#gt;**<br/>把变化的 Inherited#lt;C#gt; 写入实体实际的<br/>C 组件；继承状态消失且没有重新添加传播<br/>来源时，移除失去来源的输出组件。" }
+  class n80 node_system
+  n81@{ shape: rounded, label: "**update_inline_image_boxes**<br/>把内联图像尺寸同步到文本排版盒。" }
+  class n81 node_system
+  n82@{ shape: rounded, label: "**measure_text_system**<br/>在文本变化后更新内容测量并安排文字重排。" }
+  class n82 node_system
+  n83@{ shape: rounded, label: "**update_editable_text_content_size**<br/>按可见字符宽度和行数设置输入框固有尺寸。" }
+  class n83 node_system
+  n84@{ shape: rounded, label: "**update_editable_text_styles**<br/>把字体和排版配置同步到可编辑文本引擎。" }
+  class n84 node_system
+  n85@{ shape: rounded, label: "**sync_font_size_to_em_size**<br/>把文本字号解析为节点的 EmSize。" }
+  class n85 node_system
+  n86@{ shape: rounded, label: "**ui_layout_system**<br/>求解 UI 布局并回写节点尺寸和二维变换。" }
+  class n86 node_system
+  n87@{ shape: rounded, label: "**position_popover**<br/>根据父节点几何、窗口边距和 Popover 配置<br/>计算弹出层位置，调整 Node 与局部、全局<br/>UI 变换，并同步受影响后代的全局变换。" }
+  class n87 node_system
+  n88@{ shape: rounded, label: "**update_scrollbar_thumb**<br/>按内容与视口比例更新滚动条滑块几何。" }
+  class n88 node_system
+  n89@{ shape: rounded, label: "**update_clipping_system**<br/>从 UI 根递归更新继承裁剪范围。" }
+  class n89 node_system
+  n90@{ shape: rounded, label: "**text_system**<br/>文本节点尺寸、字形提示或重排标志变化时，<br/>通过 TextPipeline 重算排版并写入<br/>TextLayoutInfo；同时更新字体图集，等待<br/>测量函数的文本暂不排版。" }
+  class n90 node_system
+  n91@{ shape: rounded, label: "**update_editable_text_layout**<br/>刷新可编辑文本的字形布局和编辑反馈。" }
+  class n91 node_system
+  n92@{ shape: rounded, label: "**apply_queued_select_all**<br/>在指针释放时应用延后的文本全选。" }
+  class n92 node_system
+  n93@{ shape: rounded, label: "**ui_stack_system**<br/>重建稳定的 UI 绘制和命中顺序。" }
+  class n93 node_system
+  n94@{ shape: rounded, label: "**mark_images_as_changed_if_their_**<br/>**assets_changed**<br/>使图像或图集资产变化触发 UI 图像更新。" }
+  class n94 node_system
+  n95@{ shape: rounded, label: "**update_texture_atlas_layout_**<br/>**components**<br/>同步 UI 图像所引用的图集布局组件。" }
+  class n95 node_system
+  n96@{ shape: rounded, label: "**play_gilrs_rumble**<br/>执行手柄振动请求并清除过期效果。" }
+  class n96 node_system
+  n97@{ shape: rounded, label: "**menu_acquire_focus**<br/>在菜单打开时为菜单项取得焦点。" }
+  class n97 node_system
+  n98@{ shape: rounded, label: "**run_egui_context_pass_loop_system**<br/>来自Egui / Inspector ↗：运行每个自动<br/>Egui 上下文的专属调度。" }
+  class n98 node_system
+  class n98 external_node
+  n99@{ shape: rounded, label: "**end_pass_system**<br/>来自Egui / Inspector ↗：结束 Egui 界<br/>面帧并保存完整输出。" }
+  class n99 node_system
+  class n99 external_node
+  n100@{ shape: rounded, label: "**process_output_system**<br/>来自Egui / Inspector ↗：拆分 Egui 绘<br/>制输出并执行平台命令。" }
+  class n100 node_system
+  class n100 external_node
+  n101@{ shape: rounded, label: "**write_egui_wants_input_system**<br/>来自Egui / Inspector ↗：汇总所有<br/>Egui 上下文的输入占用。" }
+  class n101 node_system
+  class n101 external_node
+  n102@{ shape: rounded, label: "**process_ime_system**<br/>来自Egui / Inspector ↗：同步 Egui 编<br/>辑区域的原生输入法状态。" }
+  class n102 node_system
+  class n102 external_node
+  n103@{ shape: rounded, label: "**update_egui_textures_system**<br/>来自Egui / Inspector ↗：应用 Egui 托<br/>管纹理的图像增量。" }
+  class n103 node_system
+  class n103 external_node
+  n104@{ shape: rounded, label: "**play_dynamic_channels**<br/>来自Kira ↗：执行按名称创建的动态音频通<br/>道命令。" }
+  class n104 node_system
+  class n104 external_node
+  n105@{ shape: rounded, label: "**play_audio_channel#lt;bevy_kira_audio::**<br/>**MainTrack#gt;**<br/>来自Kira ↗：执行指定类型音频通道的命令<br/>队列。" }
+  class n105 node_system
+  class n105 external_node
+  n106@{ shape: rounded, label: "**play_audio_channel#lt;demo::audio::**<br/>**UiTrack#gt;**<br/>来自Kira ↗：执行指定类型音频通道的命令<br/>队列。" }
+  class n106 node_system
+  class n106 external_node
+  n107@{ shape: rounded, label: "**play_audio_channel#lt;demo::audio::**<br/>**SfxTrack#gt;**<br/>来自Kira ↗：执行指定类型音频通道的命令<br/>队列。" }
+  class n107 node_system
+  class n107 external_node
+  n108@{ shape: rounded, label: "**mark_2d_meshes_as_changed_if_their_**<br/>**assets_changed**<br/>资产内容变化时标记对应二维网格已变更。" }
+  class n108 node_system
+  n109@{ shape: rounded, label: "**mark_3d_meshes_as_changed_if_their_**<br/>**assets_changed**<br/>资产内容变化时标记对应三维网格已变更。" }
+  class n109 node_system
+  n110@{ shape: rounded, label: "**validate_shadow_map_size**<br/>将方向光阴影贴图尺寸纠正为二的幂。" }
+  class n110 node_system
+  n111@{ shape: rounded, label: "**extract_chromatic_phase_textures**<br/>将已加载色度相函数纹理转换为散射曲线。" }
+  class n111 node_system
+  n112@{ shape: rounded, label: "**draw_lights**<br/>为带 ShowLightGizmo 的点光源、聚光灯、<br/>方向光和矩形光源绘制调试轮廓；按组件或配<br/>置选择手动颜色、实体区分色、光源颜色或类<br/>型颜色。" }
+  class n112 node_system
+  n113@{ shape: rounded, label: "**draw_all_lights**<br/>按配置颜色模式绘制全部灯光调试图形。" }
+  class n113 node_system
+  n114@{ shape: rounded, label: "**check_msaa**<br/>检查带 DeferredPrepass 的相机，发现启<br/>用 MSAA 时发出警告并改为 Msaa::Off，避<br/>免延迟渲染使用不兼容的多重采样。" }
+  class n114 node_system
+  n115@{ shape: rounded, label: "**check_tonemapping_none**<br/>警告关闭色调映射后仍配置无效效果的相机。" }
+  class n115 node_system
+  n116@{ shape: rounded, label: "**update_text2d_layout**<br/>重新排版变化的二维文字并准备字形。" }
+  class n116 node_system
+  n117@{ shape: rounded, label: "**mark_2d_meshes_as_changed_if_their_**<br/>**materials_changed#lt;bevy_sprite_**<br/>**render::mesh2d::color_material::**<br/>**ColorMaterial#gt;**<br/>让材质变化触发二维网格重新提取。" }
+  class n117 node_system
+  n118@{ shape: rounded, label: "**check_entities_needing_**<br/>**specialization#lt;bevy_sprite_render::**<br/>**mesh2d::color_material::**<br/>**ColorMaterial#gt;**<br/>收集二维网格材质需重建或移除专用化的实<br/>体。" }
+  class n118 node_system
+  n119@{ shape: rounded, label: "**mark_2d_meshes_as_changed_if_their_**<br/>**materials_changed#lt;bevy_sprite_**<br/>**render::sprite_mesh::sprite_mesh_**<br/>**material::SpriteMeshMaterial#gt;**<br/>让材质变化触发二维网格重新提取。" }
+  class n119 node_system
+  n120@{ shape: rounded, label: "**check_entities_needing_**<br/>**specialization#lt;bevy_sprite_render::**<br/>**sprite_mesh::sprite_mesh_material::**<br/>**SpriteMeshMaterial#gt;**<br/>收集二维网格材质需重建或移除专用化的实<br/>体。" }
+  class n120 node_system
+  n121@{ shape: rounded, label: "**add_mesh**<br/>首次需要时创建并缓存单位矩形网格，为新加<br/>入 Sprite 的实体插入共享的 Mesh2d，使<br/>精灵进入网格渲染路径。" }
+  class n121 node_system
+  n122@{ shape: rounded, label: "**add_material**<br/>精灵、锚点或网格材料计数改变时，清理失效<br/>缓存并按 Sprite 与 Anchor 复用或创建<br/>SpriteMeshMaterial，再插入<br/>MeshMaterial2d；已有材料计数非零的实体<br/>跳过。" }
+  class n122 node_system
+  n123@{ shape: rounded, label: "**mark_2d_meshes_as_changed_if_their_**<br/>**materials_changed#lt;bevy_sprite_**<br/>**render::tilemap_chunk::tilemap_**<br/>**chunk_material::**<br/>**TilemapChunkMaterial#gt;**<br/>让材质变化触发二维网格重新提取。" }
+  class n123 node_system
+  n124@{ shape: rounded, label: "**check_entities_needing_**<br/>**specialization#lt;bevy_sprite_render::**<br/>**tilemap_chunk::tilemap_chunk_**<br/>**material::TilemapChunkMaterial#gt;**<br/>收集二维网格材质需重建或移除专用化的实<br/>体。" }
+  class n124 node_system
+  n125@{ shape: rounded, label: "**load_font_assets_into_font_**<br/>**collection**<br/>把字体资产注册到排版字体数据库。" }
+  class n125 node_system
+  n126@{ shape: rounded, label: "**detect_text_needs_rerender**<br/>把文字段和层级变化标为需要重绘。" }
+  class n126 node_system
+  n127@{ shape: rounded, label: "**sync_editable_text_viewports**<br/>在文本编辑前同步可编辑区域的视口。" }
+  class n127 node_system
+  n128@{ shape: rounded, label: "**no_automatic_skin_batching**<br/>在 Uniform 限制路径上禁止蒙皮网格自动合<br/>批。" }
+  class n128 node_system
+  n129@{ shape: rounded, label: "**no_automatic_morph_batching**<br/>在 Uniform 限制路径上禁止形变网格自动合<br/>批。" }
+  class n129 node_system
+  n130@{ shape: rounded, label: "**mark_meshes_as_changed_if_their_**<br/>**materials_changed#lt;bevy_pbr::pbr_**<br/>**material::StandardMaterial#gt;**<br/>材质组件或资产变化时请求网格重新提取。" }
+  class n130 node_system
+  n131@{ shape: rounded, label: "**check_entities_needing_**<br/>**specialization#lt;bevy_pbr::pbr_**<br/>**material::StandardMaterial#gt;**<br/>收集几何或材质变化及移除的三维网格。" }
+  class n131 node_system
+  n132@{ shape: rounded, label: "**mark_meshes_as_changed_if_their_**<br/>**materials_changed#lt;bevy_pbr::**<br/>**extended_material::**<br/>**ExtendedMaterial#lt;bevy_pbr::pbr_**<br/>**material::StandardMaterial, bevy_**<br/>**pbr::decal::forward::**<br/>**ForwardDecalMaterialExt#gt;#gt;**<br/>材质组件或资产变化时请求网格重新提取。" }
+  class n132 node_system
+  n133@{ shape: rounded, label: "**check_entities_needing_**<br/>**specialization#lt;bevy_pbr::extended_**<br/>**material::ExtendedMaterial#lt;bevy_**<br/>**pbr::pbr_material::**<br/>**StandardMaterial, bevy_pbr::decal::**<br/>**forward::ForwardDecalMaterialExt#gt;#gt;**<br/>收集几何或材质变化及移除的三维网格。" }
+  class n133 node_system
+  n134@{ shape: rounded, label: "**insert_deferred_lighting_pass_id_**<br/>**component**<br/>为启用了 DeferredPrepass 且尚无通道深<br/>度标识的视图插入默认<br/>PbrDeferredLightingDepthId，供后续延<br/>迟光照通道筛选使用。" }
+  class n134 node_system
+  n135@{ shape: rounded, label: "**draw_aabbs**<br/>为带 ShowAabbGizmo 且可见的实体，使用<br/>Aabb 和 GlobalTransform 绘制三维包围<br/>盒；颜色来自组件、配置默认值或实体派生<br/>色。" }
+  class n135 node_system
+  n136@{ shape: rounded, label: "**draw_all_aabbs**<br/>绘制未单独标记实体的可见 AABB 调试线<br/>框。" }
+  class n136 node_system
+  n137@{ shape: rounded, label: "**draw_skinned_mesh_bounds**<br/>绘制带独立显示标记的动态蒙皮包围区域。" }
+  class n137 node_system
+  n138@{ shape: rounded, label: "**draw_all_skinned_mesh_bounds**<br/>绘制未单独标记的动态蒙皮网格包围区域。" }
+  class n138 node_system
+  n139@{ shape: rounded, label: "**text_input_autoscroll_system**<br/>在拖选越出文字视口时自动滚动。" }
+  class n139 node_system
+  n140@{ shape: rounded, label: "**menu_on_lose_focus**<br/>关闭不再持有内部焦点的菜单。" }
+  class n140 node_system
+  n141@{ shape: rounded, label: "**update_tablist_derived_state**<br/>从标签选择和焦点派生每个标签的状态。" }
+  class n141 node_system
+  n142@{ shape: rounded, label: "**compensate_courier_sole_penetration**<br/>来自角色动画 ↗：补偿鞋底穿地并平滑恢复<br/>视觉高度。" }
+  class n142 node_system
+  class n142 external_node
+  n143@{ shape: rounded, label: "**sync_settings_scrollbars**<br/>来自菜单与界面 ↗：同步滚动条显隐、拾取<br/>范围与高亮。" }
+  class n143 node_system
+  class n143 external_node
+  n144@{ shape: rounded, label: "**sync_voice_volumes**<br/>来自音频播放 ↗：为新就绪的播放实例补同<br/>步有效音量。" }
+  class n144 node_system
+  class n144 external_node
+  n145@{ shape: rounded, label: "**ApplyDeferred**<br/>在调度建立的同步点应用前序系统暂存的<br/>Commands 等延迟操作，使后续系统可以观察<br/>到结构变化；此卡片是 ApplyDeferred 的<br/>System 实现。" }
+  class n145 node_sync
+  n146@{ shape: rounded, label: "**ApplyDeferred**<br/>在调度建立的同步点应用前序系统暂存的<br/>Commands 等延迟操作，使后续系统可以观察<br/>到结构变化；此卡片是 ApplyDeferred 的<br/>System 实现。" }
+  class n146 node_sync
+  n147@{ shape: rounded, label: "**ApplyDeferred**<br/>在调度建立的同步点应用前序系统暂存的<br/>Commands 等延迟操作，使后续系统可以观察<br/>到结构变化；此卡片是 ApplyDeferred 的<br/>System 实现。" }
+  class n147 node_sync
+  n148@{ shape: rounded, label: "**ApplyDeferred**<br/>在调度建立的同步点应用前序系统暂存的<br/>Commands 等延迟操作，使后续系统可以观察<br/>到结构变化；此卡片是 ApplyDeferred 的<br/>System 实现。" }
+  class n148 node_sync
+  n149@{ shape: rounded, label: "**ApplyDeferred**<br/>在调度建立的同步点应用前序系统暂存的<br/>Commands 等延迟操作，使后续系统可以观察<br/>到结构变化；此卡片是 ApplyDeferred 的<br/>System 实现。" }
+  class n149 node_sync
+  n150@{ shape: rounded, label: "**ApplyDeferred**<br/>在调度建立的同步点应用前序系统暂存的<br/>Commands 等延迟操作，使后续系统可以观察<br/>到结构变化；此卡片是 ApplyDeferred 的<br/>System 实现。" }
+  class n150 node_sync
+  n151@{ shape: rounded, label: "**ApplyDeferred**<br/>在调度建立的同步点应用前序系统暂存的<br/>Commands 等延迟操作，使后续系统可以观察<br/>到结构变化；此卡片是 ApplyDeferred 的<br/>System 实现。" }
+  class n151 node_sync
+  n152@{ shape: rounded, label: "**ApplyDeferred**<br/>在调度建立的同步点应用前序系统暂存的<br/>Commands 等延迟操作，使后续系统可以观察<br/>到结构变化；此卡片是 ApplyDeferred 的<br/>System 实现。" }
+  class n152 node_sync
+  n153@{ shape: rounded, label: "**ApplyDeferred**<br/>在调度建立的同步点应用前序系统暂存的<br/>Commands 等延迟操作，使后续系统可以观察<br/>到结构变化；此卡片是 ApplyDeferred 的<br/>System 实现。" }
+  class n153 node_sync
+  n154@{ shape: rounded, label: "**ApplyDeferred**<br/>在调度建立的同步点应用前序系统暂存的<br/>Commands 等延迟操作，使后续系统可以观察<br/>到结构变化；此卡片是 ApplyDeferred 的<br/>System 实现。" }
+  class n154 node_sync
+  n155@{ shape: rounded, label: "**update_image_content_size_system**<br/>按图像或图集区域更新 UI 的固有尺寸测<br/>量。" }
+  class n155 node_system
+  n156@{ shape: rounded, label: "**update_viewport_render_target_size**<br/>按 UI 视口节点尺寸调整相机图像目标。" }
+  class n156 node_system
+  n157@{ shape: rounded, label: "**button_changed**<br/>Button 改变时从 UI 子节点提取文本标<br/>签，更新已有 AccessibilityNode 的按钮<br/>角色和标签，或通过命令补入对应无障碍节<br/>点。" }
+  class n157 node_system
+  n158@{ shape: rounded, label: "**image_changed**<br/>非按钮 ImageNode 改变时从 UI 子节点提<br/>取说明，设置无障碍图像角色和标签；尚无<br/>AccessibilityNode 时排入创建命令。" }
+  class n158 node_system
+  n159@{ shape: rounded, label: "**label_changed**<br/>Label 改变时收集其文本元素，把拼接后的<br/>内容写为无障碍标签节点的值；已有节点原位<br/>更新，缺少节点时排入创建命令。" }
+  class n159 node_system
+  n160@{ shape: rounded, label: "**sync_bounds_and_transforms**<br/>把 UI 几何同步到无障碍树。" }
+  class n160 node_system
+  n161@{ shape: rounded, label: "**update_ime_position**<br/>把输入法候选窗口放到当前文字光标下方。" }
+  class n161 node_system
+  n162@{ shape: lin-rect, label: "**TransformGizmoRenderStep**<br/>准备变换操纵器的网格和显示变换。" }
+  class n162 node_system_set
+  n163@{ shape: lin-rect, label: "**TransformSystems::Propagate**<br/>沿实体层级传播世界变换。" }
+  class n163 node_system_set
+  n164@{ shape: lin-rect, label: "**InputFocusSystems::FocusChangeEvents**<br/>派发记录中的焦点获得和失去事件。" }
+  class n164 node_system_set
+  n165@{ shape: lin-rect, label: "**AssetEventSystems**<br/>发布资产容器积累的变更消息。" }
+  class n165 node_system_set
+  n166@{ shape: lin-rect, label: "**AccessibilitySystems::Update**<br/>同步原生可访问性树和窗口节点。" }
+  class n166 node_system_set
+  n167@{ shape: lin-rect, label: "**CameraUpdateSystems**<br/>统一更新相机目标、视口与投影计算结果。" }
+  class n167 node_system_set
+  n168@{ shape: lin-rect, label: "**VisibilitySystems::UpdateFrusta**<br/>根据相机投影与世界变换更新视锥。" }
+  class n168 node_system_set
+  n169@{ shape: lin-rect, label: "**VisibilitySystems::CheckVisibility**<br/>汇总各视图可见对象并更新实体可见标记。" }
+  class n169 node_system_set
+  n170@{ shape: lin-rect, label: "**VisibilitySystems::**<br/>**VisibilityPropagate**<br/>在项目显隐同步后传播可见性。" }
+  class n170 node_system_set
+  n171@{ shape: lin-rect, label: "**VisibilitySystems::**<br/>**MarkNewlyHiddenEntitiesInvisible**<br/>把未被任何视图标为可见的对象置为隐藏。" }
+  class n171 node_system_set
+  n172@{ shape: lin-rect, label: "**VisibilitySystems::CalculateBounds**<br/>为可见性检查计算并插入对象包围盒。" }
+  class n172 node_system_set
+  n173@{ shape: lin-rect, label: "**SimulationLightSystems::**<br/>**CheckLightVisibility**<br/>为投影阴影的光源筛选可见网格。" }
+  class n173 node_system_set
+  n174@{ shape: lin-rect, label: "**SimulationLightSystems::**<br/>**AssignLightsToClusters**<br/>将光源及聚簇对象分配到视图空间簇。" }
+  class n174 node_system_set
+  n175@{ shape: lin-rect, label: "**SimulationLightSystems::**<br/>**UpdateLightFrusta**<br/>更新投影阴影光源的视锥。" }
+  class n175 node_system_set
+  n176@{ shape: lin-rect, label: "**SimulationLightSystems::**<br/>**UpdateDirectionalLightCascades**<br/>更新平行光各相机相关的级联阴影范围。" }
+  class n176 node_system_set
+  n177@{ shape: lin-rect, label: "**FrustumGizmoSystems**<br/>收集并绘制相机视锥调试线。" }
+  class n177 node_system_set
+  n178@{ shape: lin-rect, label: "**SimulationLightSystems::UpdateBounds**<br/>更新聚簇光照对象的包围盒与包围球。" }
+  class n178 node_system_set
+  n179@{ shape: lin-rect, label: "**AnimationSystems**<br/>采样动画图并更新骨骼局部姿态。" }
+  class n179 node_system_set
+  n180@{ shape: lin-rect, label: "**PropagateSet · { _p:**<br/>**PhantomData#lt;fn() -#gt; bevy_text::**<br/>**text::TextFont#gt; }**<br/>沿关系层级传播指定组件值。" }
+  class n180 node_system_set
+  n181@{ shape: lin-rect, label: "**EditableTextSystems**<br/>统一应用可编辑文字的待处理操作。" }
+  class n181 node_system_set
+  n182@{ shape: lin-rect, label: "**UiSystems::Prepare**<br/>建立 PostUpdate 中 UI 更新的准备边界。" }
+  class n182 node_system_set
+  n183@{ shape: lin-rect, label: "**UiSystems::Propagate**<br/>沿 UI 层级传播布局所需的组件值。" }
+  class n183 node_system_set
+  n184@{ shape: lin-rect, label: "**PropagateSet · { _p:**<br/>**PhantomData#lt;fn() -#gt; bevy_ui::ui_**<br/>**node::ComputedUiTargetCamera#gt; }**<br/>沿关系层级传播指定组件值。" }
+  class n184 node_system_set
+  n185@{ shape: lin-rect, label: "**PropagateSet · { _p:**<br/>**PhantomData#lt;fn() -#gt; bevy_ui::ui_**<br/>**node::ComputedUiRenderTargetInfo#gt; }**<br/>沿关系层级传播指定组件值。" }
+  class n185 node_system_set
+  n186@{ shape: lin-rect, label: "**UiSystems::Content**<br/>在 UI 布局前测量文字和内容需求。" }
+  class n186 node_system_set
+  n187@{ shape: lin-rect, label: "**UiSystems::Layout**<br/>计算界面内容与视口的本帧布局。" }
+  class n187 node_system_set
+  n188@{ shape: lin-rect, label: "**UiSystems::PostLayout**<br/>根据完成的布局生成裁切和文字几何。" }
+  class n188 node_system_set
+  n189@{ shape: lin-rect, label: "**UiSystems::Stack**<br/>按层级和 Z 顺序重建 UI 绘制栈。" }
+  class n189 node_system_set
+  n190@{ shape: lin-rect, label: "**AmbiguousWithText**<br/>声明图像类 UI 更新可与 UI 文字系统无<br/>序。" }
+  class n190 node_system_set
+  n191@{ shape: lin-rect, label: "**AmbiguousWithUpdateText2dLayout**<br/>声明图像类 UI 更新可与二维文字布局无<br/>序。" }
+  class n191 node_system_set
+  n192@{ shape: lin-rect, label: "**AccessibilityUiSystems**<br/>更新 UI 控件的可访问性语义和几何。" }
+  class n192 node_system_set
+  n193@{ shape: lin-rect, label: "**ImageNodeAssetChangedSystems**<br/>将底层图像和图集资产变化反馈给 UI 节<br/>点。" }
+  class n193 node_system_set
+  n194@{ shape: lin-rect, label: "**RumbleSystems**<br/>维护手柄振动效果的生命周期。" }
+  class n194 node_system_set
+  n195@{ shape: lin-rect, label: "**ImeSystems::UpdatePosition**<br/>让输入法候选窗口跟随文字光标。" }
+  class n195 node_system_set
+  n196@{ shape: lin-rect, label: "**MenuFocusSystem**<br/>为新打开的菜单取得首个内部焦点。" }
+  class n196 node_system_set
+  n197@{ shape: lin-rect, label: "**EguiPostUpdateSet::EndPass**<br/>来自Egui / Inspector ↗：完成 Egui 上<br/>下文的界面帧。" }
+  class n197 node_system_set
+  class n197 external_node
+  n198@{ shape: lin-rect, label: "**EguiPostUpdateSet::ProcessOutput**<br/>来自Egui / Inspector ↗：拆分 Egui 输<br/>出并更新平台输入需求。" }
+  class n198 node_system_set
+  class n198 external_node
+  n199@{ shape: lin-rect, label: "**EguiPostUpdateSet::PostProcessOutput**<br/>来自Egui / Inspector ↗：应用 Egui 输<br/>出产生的后续资源变化。" }
+  class n199 node_system_set
+  class n199 external_node
+  n200@{ shape: lin-rect, label: "**AudioSystemSet::PlayDynamicChannels**<br/>来自Kira ↗：处理动态音频通道的播放与控<br/>制命令。" }
+  class n200 node_system_set
+  class n200 external_node
+  n201@{ shape: lin-rect, label: "**AudioSystemSet::PlayTypedChannels**<br/>来自Kira ↗：将排队声音句柄转为已就绪播<br/>放实例。" }
+  class n201 node_system_set
+  class n201 external_node
+  n0 e0@-->|"main / PostUpdate"| n1
+  class e0 edge_registration
+  n0 e1@-->|"main / PostUpdate"| n2
+  class e1 edge_registration
+  n0 e2@-->|"main / PostUpdate"| n3
+  class e2 edge_registration
+  n0 e3@-->|"main / PostUpdate"| n4
+  class e3 edge_registration
+  n0 e4@-->|"main / PostUpdate"| n5
+  class e4 edge_registration
+  n0 e5@-->|"main / PostUpdate"| n6
+  class e5 edge_registration
+  n0 e6@-->|"main / PostUpdate"| n7
+  class e6 edge_registration
+  n0 e7@-->|"main / PostUpdate"| n8
+  class e7 edge_registration
+  n0 e8@-->|"main / PostUpdate"| n9
+  class e8 edge_registration
+  n0 e9@-->|"main / PostUpdate"| n10
+  class e9 edge_registration
+  n0 e10@-->|"main / PostUpdate"| n11
+  class e10 edge_registration
+  n0 e11@-->|"main / PostUpdate"| n12
+  class e11 edge_registration
+  n0 e12@-->|"main / PostUpdate"| n13
+  class e12 edge_registration
+  n0 e13@-->|"main / PostUpdate"| n14
+  class e13 edge_registration
+  n0 e14@-->|"main / PostUpdate"| n15
+  class e14 edge_registration
+  n0 e15@-->|"main / PostUpdate"| n16
+  class e15 edge_registration
+  n0 e16@-->|"main / PostUpdate"| n17
+  class e16 edge_registration
+  n0 e17@-->|"main / PostUpdate"| n18
+  class e17 edge_registration
+  n0 e18@-->|"main / PostUpdate"| n19
+  class e18 edge_registration
+  n0 e19@-->|"main / PostUpdate"| n20
+  class e19 edge_registration
+  n0 e20@-->|"main / PostUpdate"| n21
+  class e20 edge_registration
+  n0 e21@-->|"main / PostUpdate"| n22
+  class e21 edge_registration
+  n0 e22@-->|"main / PostUpdate"| n23
+  class e22 edge_registration
+  n0 e23@-->|"main / PostUpdate"| n24
+  class e23 edge_registration
+  n0 e24@-->|"main / PostUpdate"| n25
+  class e24 edge_registration
+  n0 e25@-->|"main / PostUpdate"| n26
+  class e25 edge_registration
+  n0 e26@-->|"main / PostUpdate"| n27
+  class e26 edge_registration
+  n0 e27@-->|"main / PostUpdate"| n28
+  class e27 edge_registration
+  n0 e28@-->|"main / PostUpdate"| n29
+  class e28 edge_registration
+  n0 e29@-->|"main / PostUpdate"| n30
+  class e29 edge_registration
+  n0 e30@-->|"main / PostUpdate"| n31
+  class e30 edge_registration
+  n0 e31@-->|"main / PostUpdate"| n32
+  class e31 edge_registration
+  n0 e32@-->|"main / PostUpdate"| n33
+  class e32 edge_registration
+  n0 e33@-->|"main / PostUpdate"| n34
+  class e33 edge_registration
+  n0 e34@-->|"main / PostUpdate"| n35
+  class e34 edge_registration
+  n0 e35@-->|"main / PostUpdate"| n36
+  class e35 edge_registration
+  n0 e36@-->|"main / PostUpdate"| n37
+  class e36 edge_registration
+  n0 e37@-->|"main / PostUpdate"| n38
+  class e37 edge_registration
+  n0 e38@-->|"main / PostUpdate"| n39
+  class e38 edge_registration
+  n0 e39@-->|"main / PostUpdate"| n40
+  class e39 edge_registration
+  n0 e40@-->|"main / PostUpdate"| n41
+  class e40 edge_registration
+  n0 e41@-->|"main / PostUpdate"| n42
+  class e41 edge_registration
+  n0 e42@-->|"main / PostUpdate"| n43
+  class e42 edge_registration
+  n0 e43@-->|"main / PostUpdate"| n44
+  class e43 edge_registration
+  n0 e44@-->|"main / PostUpdate"| n45
+  class e44 edge_registration
+  n0 e45@-->|"main / PostUpdate"| n46
+  class e45 edge_registration
+  n0 e46@-->|"main / PostUpdate"| n47
+  class e46 edge_registration
+  n0 e47@-->|"main / PostUpdate"| n48
+  class e47 edge_registration
+  n0 e48@-->|"main / PostUpdate"| n49
+  class e48 edge_registration
+  n0 e49@-->|"main / PostUpdate"| n50
+  class e49 edge_registration
+  n0 e50@-->|"main / PostUpdate"| n51
+  class e50 edge_registration
+  n0 e51@-->|"main / PostUpdate"| n52
+  class e51 edge_registration
+  n0 e52@-->|"main / PostUpdate"| n53
+  class e52 edge_registration
+  n0 e53@-->|"main / PostUpdate"| n54
+  class e53 edge_registration
+  n0 e54@-->|"main / PostUpdate"| n55
+  class e54 edge_registration
+  n0 e55@-->|"main / PostUpdate"| n56
+  class e55 edge_registration
+  n0 e56@-->|"main / PostUpdate"| n57
+  class e56 edge_registration
+  n0 e57@-->|"main / PostUpdate"| n58
+  class e57 edge_registration
+  n0 e58@-->|"main / PostUpdate"| n59
+  class e58 edge_registration
+  n0 e59@-->|"main / PostUpdate"| n60
+  class e59 edge_registration
+  n0 e60@-->|"main / PostUpdate"| n61
+  class e60 edge_registration
+  n0 e61@-->|"main / PostUpdate"| n62
+  class e61 edge_registration
+  n0 e62@-->|"main / PostUpdate"| n63
+  class e62 edge_registration
+  n0 e63@-->|"main / PostUpdate"| n64
+  class e63 edge_registration
+  n0 e64@-->|"main / PostUpdate"| n65
+  class e64 edge_registration
+  n0 e65@-->|"main / PostUpdate"| n66
+  class e65 edge_registration
+  n0 e66@-->|"main / PostUpdate"| n67
+  class e66 edge_registration
+  n0 e67@-->|"main / PostUpdate"| n68
+  class e67 edge_registration
+  n0 e68@-->|"main / PostUpdate"| n69
+  class e68 edge_registration
+  n0 e69@-->|"main / PostUpdate"| n70
+  class e69 edge_registration
+  n0 e70@-->|"main / PostUpdate"| n71
+  class e70 edge_registration
+  n0 e71@-->|"main / PostUpdate"| n72
+  class e71 edge_registration
+  n0 e72@-->|"main / PostUpdate"| n73
+  class e72 edge_registration
+  n0 e73@-->|"main / PostUpdate"| n74
+  class e73 edge_registration
+  n0 e74@-->|"main / PostUpdate"| n75
+  class e74 edge_registration
+  n0 e75@-->|"main / PostUpdate"| n76
+  class e75 edge_registration
+  n0 e76@-->|"main / PostUpdate"| n77
+  class e76 edge_registration
+  n0 e77@-->|"main / PostUpdate"| n78
+  class e77 edge_registration
+  n0 e78@-->|"main / PostUpdate"| n79
+  class e78 edge_registration
+  n0 e79@-->|"main / PostUpdate"| n80
+  class e79 edge_registration
+  n0 e80@-->|"main / PostUpdate"| n81
+  class e80 edge_registration
+  n0 e81@-->|"main / PostUpdate"| n82
+  class e81 edge_registration
+  n0 e82@-->|"main / PostUpdate"| n83
+  class e82 edge_registration
+  n0 e83@-->|"main / PostUpdate"| n84
+  class e83 edge_registration
+  n0 e84@-->|"main / PostUpdate"| n85
+  class e84 edge_registration
+  n0 e85@-->|"main / PostUpdate"| n86
+  class e85 edge_registration
+  n0 e86@-->|"main / PostUpdate"| n87
+  class e86 edge_registration
+  n0 e87@-->|"main / PostUpdate"| n88
+  class e87 edge_registration
+  n0 e88@-->|"main / PostUpdate"| n89
+  class e88 edge_registration
+  n0 e89@-->|"main / PostUpdate"| n90
+  class e89 edge_registration
+  n0 e90@-->|"main / PostUpdate"| n91
+  class e90 edge_registration
+  n0 e91@-->|"main / PostUpdate"| n92
+  class e91 edge_registration
+  n0 e92@-->|"main / PostUpdate"| n93
+  class e92 edge_registration
+  n0 e93@-->|"main / PostUpdate"| n94
+  class e93 edge_registration
+  n0 e94@-->|"main / PostUpdate"| n95
+  class e94 edge_registration
+  n0 e95@-->|"main / PostUpdate"| n96
+  class e95 edge_registration
+  n0 e96@-->|"main / PostUpdate"| n97
+  class e96 edge_registration
+  n0 e97@-->|"main / PostUpdate"| n98
+  class e97 edge_registration
+  n0 e98@-->|"main / PostUpdate"| n99
+  class e98 edge_registration
+  n0 e99@-->|"main / PostUpdate"| n100
+  class e99 edge_registration
+  n0 e100@-->|"main / PostUpdate"| n101
+  class e100 edge_registration
+  n0 e101@-->|"main / PostUpdate"| n102
+  class e101 edge_registration
+  n0 e102@-->|"main / PostUpdate"| n103
+  class e102 edge_registration
+  n0 e103@-->|"main / PostUpdate"| n104
+  class e103 edge_registration
+  n0 e104@-->|"main / PostUpdate"| n105
+  class e104 edge_registration
+  n0 e105@-->|"main / PostUpdate"| n106
+  class e105 edge_registration
+  n0 e106@-->|"main / PostUpdate"| n107
+  class e106 edge_registration
+  n0 e107@-->|"main / PostUpdate"| n108
+  class e107 edge_registration
+  n0 e108@-->|"main / PostUpdate"| n109
+  class e108 edge_registration
+  n0 e109@-->|"main / PostUpdate"| n110
+  class e109 edge_registration
+  n0 e110@-->|"main / PostUpdate"| n111
+  class e110 edge_registration
+  n0 e111@-->|"main / PostUpdate"| n112
+  class e111 edge_registration
+  n0 e112@-->|"main / PostUpdate"| n113
+  class e112 edge_registration
+  n0 e113@-->|"main / PostUpdate"| n114
+  class e113 edge_registration
+  n0 e114@-->|"main / PostUpdate"| n115
+  class e114 edge_registration
+  n0 e115@-->|"main / PostUpdate"| n116
+  class e115 edge_registration
+  n0 e116@-->|"main / PostUpdate"| n117
+  class e116 edge_registration
+  n0 e117@-->|"main / PostUpdate"| n118
+  class e117 edge_registration
+  n0 e118@-->|"main / PostUpdate"| n119
+  class e118 edge_registration
+  n0 e119@-->|"main / PostUpdate"| n120
+  class e119 edge_registration
+  n0 e120@-->|"main / PostUpdate"| n121
+  class e120 edge_registration
+  n0 e121@-->|"main / PostUpdate"| n122
+  class e121 edge_registration
+  n0 e122@-->|"main / PostUpdate"| n123
+  class e122 edge_registration
+  n0 e123@-->|"main / PostUpdate"| n124
+  class e123 edge_registration
+  n0 e124@-->|"main / PostUpdate"| n125
+  class e124 edge_registration
+  n0 e125@-->|"main / PostUpdate"| n126
+  class e125 edge_registration
+  n0 e126@-->|"main / PostUpdate"| n127
+  class e126 edge_registration
+  n0 e127@-->|"main / PostUpdate"| n128
+  class e127 edge_registration
+  n0 e128@-->|"main / PostUpdate"| n129
+  class e128 edge_registration
+  n0 e129@-->|"main / PostUpdate"| n130
+  class e129 edge_registration
+  n0 e130@-->|"main / PostUpdate"| n131
+  class e130 edge_registration
+  n0 e131@-->|"main / PostUpdate"| n132
+  class e131 edge_registration
+  n0 e132@-->|"main / PostUpdate"| n133
+  class e132 edge_registration
+  n0 e133@-->|"main / PostUpdate"| n134
+  class e133 edge_registration
+  n0 e134@-->|"main / PostUpdate"| n135
+  class e134 edge_registration
+  n0 e135@-->|"main / PostUpdate"| n136
+  class e135 edge_registration
+  n0 e136@-->|"main / PostUpdate"| n137
+  class e136 edge_registration
+  n0 e137@-->|"main / PostUpdate"| n138
+  class e137 edge_registration
+  n0 e138@-->|"main / PostUpdate"| n139
+  class e138 edge_registration
+  n0 e139@-->|"main / PostUpdate"| n140
+  class e139 edge_registration
+  n0 e140@-->|"main / PostUpdate"| n141
+  class e140 edge_registration
+  n0 e141@-->|"main / PostUpdate"| n142
+  class e141 edge_registration
+  n0 e142@-->|"main / PostUpdate"| n143
+  class e142 edge_registration
+  n0 e143@-->|"main / PostUpdate"| n144
+  class e143 edge_registration
+  n0 e144@-->|"main / PostUpdate"| n145
+  class e144 edge_registration
+  n0 e145@-->|"main / PostUpdate"| n146
+  class e145 edge_registration
+  n0 e146@-->|"main / PostUpdate"| n147
+  class e146 edge_registration
+  n0 e147@-->|"main / PostUpdate"| n148
+  class e147 edge_registration
+  n0 e148@-->|"main / PostUpdate"| n149
+  class e148 edge_registration
+  n0 e149@-->|"main / PostUpdate"| n150
+  class e149 edge_registration
+  n0 e150@-->|"main / PostUpdate"| n151
+  class e150 edge_registration
+  n0 e151@-->|"main / PostUpdate"| n152
+  class e151 edge_registration
+  n0 e152@-->|"main / PostUpdate"| n153
+  class e152 edge_registration
+  n0 e153@-->|"main / PostUpdate"| n154
+  class e153 edge_registration
+  n0 e154@-->|"main / PostUpdate"| n155
+  class e154 edge_registration
+  n0 e155@-->|"main / PostUpdate"| n156
+  class e155 edge_registration
+  n0 e156@-->|"main / PostUpdate"| n157
+  class e156 edge_registration
+  n0 e157@-->|"main / PostUpdate"| n158
+  class e157 edge_registration
+  n0 e158@-->|"main / PostUpdate"| n159
+  class e158 edge_registration
+  n0 e159@-->|"main / PostUpdate"| n160
+  class e159 edge_registration
+  n0 e160@-->|"main / PostUpdate"| n161
+  class e160 edge_registration
+  n0 e161@-->|"main / PostUpdate"| n162
+  class e161 edge_registration
+  n0 e162@-->|"main / PostUpdate"| n163
+  class e162 edge_registration
+  n0 e163@-->|"main / PostUpdate"| n164
+  class e163 edge_registration
+  n0 e164@-->|"main / PostUpdate"| n165
+  class e164 edge_registration
+  n0 e165@-->|"main / PostUpdate"| n166
+  class e165 edge_registration
+  n0 e166@-->|"main / PostUpdate"| n167
+  class e166 edge_registration
+  n0 e167@-->|"main / PostUpdate"| n168
+  class e167 edge_registration
+  n0 e168@-->|"main / PostUpdate"| n169
+  class e168 edge_registration
+  n0 e169@-->|"main / PostUpdate"| n170
+  class e169 edge_registration
+  n0 e170@-->|"main / PostUpdate"| n171
+  class e170 edge_registration
+  n0 e171@-->|"main / PostUpdate"| n172
+  class e171 edge_registration
+  n0 e172@-->|"main / PostUpdate"| n173
+  class e172 edge_registration
+  n0 e173@-->|"main / PostUpdate"| n174
+  class e173 edge_registration
+  n0 e174@-->|"main / PostUpdate"| n175
+  class e174 edge_registration
+  n0 e175@-->|"main / PostUpdate"| n176
+  class e175 edge_registration
+  n0 e176@-->|"main / PostUpdate"| n177
+  class e176 edge_registration
+  n0 e177@-->|"main / PostUpdate"| n178
+  class e177 edge_registration
+  n0 e178@-->|"main / PostUpdate"| n179
+  class e178 edge_registration
+  n0 e179@-->|"main / PostUpdate"| n180
+  class e179 edge_registration
+  n0 e180@-->|"main / PostUpdate"| n181
+  class e180 edge_registration
+  n0 e181@-->|"main / PostUpdate"| n182
+  class e181 edge_registration
+  n0 e182@-->|"main / PostUpdate"| n183
+  class e182 edge_registration
+  n0 e183@-->|"main / PostUpdate"| n184
+  class e183 edge_registration
+  n0 e184@-->|"main / PostUpdate"| n185
+  class e184 edge_registration
+  n0 e185@-->|"main / PostUpdate"| n186
+  class e185 edge_registration
+  n0 e186@-->|"main / PostUpdate"| n187
+  class e186 edge_registration
+  n0 e187@-->|"main / PostUpdate"| n188
+  class e187 edge_registration
+  n0 e188@-->|"main / PostUpdate"| n189
+  class e188 edge_registration
+  n0 e189@-->|"main / PostUpdate"| n190
+  class e189 edge_registration
+  n0 e190@-->|"main / PostUpdate"| n191
+  class e190 edge_registration
+  n0 e191@-->|"main / PostUpdate"| n192
+  class e191 edge_registration
+  n0 e192@-->|"main / PostUpdate"| n193
+  class e192 edge_registration
+  n0 e193@-->|"main / PostUpdate"| n194
+  class e193 edge_registration
+  n0 e194@-->|"main / PostUpdate"| n195
+  class e194 edge_registration
+  n0 e195@-->|"main / PostUpdate"| n196
+  class e195 edge_registration
+  n0 e196@-->|"main / PostUpdate"| n197
+  class e196 edge_registration
+  n0 e197@-->|"main / PostUpdate"| n198
+  class e197 edge_registration
+  n0 e198@-->|"main / PostUpdate"| n199
+  class e198 edge_registration
+  n0 e199@-->|"main / PostUpdate"| n200
+  class e199 edge_registration
+  n0 e200@-->|"main / PostUpdate"| n201
+  class e200 edge_registration
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e17@{ curve: basis }
+  e18@{ curve: basis }
+  e19@{ curve: basis }
+  e20@{ curve: basis }
+  e21@{ curve: basis }
+  e22@{ curve: basis }
+  e23@{ curve: basis }
+  e24@{ curve: basis }
+  e25@{ curve: basis }
+  e26@{ curve: basis }
+  e27@{ curve: basis }
+  e28@{ curve: basis }
+  e29@{ curve: basis }
+  e30@{ curve: basis }
+  e31@{ curve: basis }
+  e32@{ curve: basis }
+  e33@{ curve: basis }
+  e34@{ curve: basis }
+  e35@{ curve: basis }
+  e36@{ curve: basis }
+  e37@{ curve: basis }
+  e38@{ curve: basis }
+  e39@{ curve: basis }
+  e40@{ curve: basis }
+  e41@{ curve: basis }
+  e42@{ curve: basis }
+  e43@{ curve: basis }
+  e44@{ curve: basis }
+  e45@{ curve: basis }
+  e46@{ curve: basis }
+  e47@{ curve: basis }
+  e48@{ curve: basis }
+  e49@{ curve: basis }
+  e50@{ curve: basis }
+  e51@{ curve: basis }
+  e52@{ curve: basis }
+  e53@{ curve: basis }
+  e54@{ curve: basis }
+  e55@{ curve: basis }
+  e56@{ curve: basis }
+  e57@{ curve: basis }
+  e58@{ curve: basis }
+  e59@{ curve: basis }
+  e60@{ curve: basis }
+  e61@{ curve: basis }
+  e62@{ curve: basis }
+  e63@{ curve: basis }
+  e64@{ curve: basis }
+  e65@{ curve: basis }
+  e66@{ curve: basis }
+  e67@{ curve: basis }
+  e68@{ curve: basis }
+  e69@{ curve: basis }
+  e70@{ curve: basis }
+  e71@{ curve: basis }
+  e72@{ curve: basis }
+  e73@{ curve: basis }
+  e74@{ curve: basis }
+  e75@{ curve: basis }
+  e76@{ curve: basis }
+  e77@{ curve: basis }
+  e78@{ curve: basis }
+  e79@{ curve: basis }
+  e80@{ curve: basis }
+  e81@{ curve: basis }
+  e82@{ curve: basis }
+  e83@{ curve: basis }
+  e84@{ curve: basis }
+  e85@{ curve: basis }
+  e86@{ curve: basis }
+  e87@{ curve: basis }
+  e88@{ curve: basis }
+  e89@{ curve: basis }
+  e90@{ curve: basis }
+  e91@{ curve: basis }
+  e92@{ curve: basis }
+  e93@{ curve: basis }
+  e94@{ curve: basis }
+  e95@{ curve: basis }
+  e96@{ curve: basis }
+  e97@{ curve: basis }
+  e98@{ curve: basis }
+  e99@{ curve: basis }
+  e101@{ curve: basis }
+  e102@{ curve: basis }
+  e103@{ curve: basis }
+  e104@{ curve: basis }
+  e105@{ curve: basis }
+  e106@{ curve: basis }
+  e107@{ curve: basis }
+  e108@{ curve: basis }
+  e109@{ curve: basis }
+  e110@{ curve: basis }
+  e111@{ curve: basis }
+  e112@{ curve: basis }
+  e113@{ curve: basis }
+  e114@{ curve: basis }
+  e115@{ curve: basis }
+  e116@{ curve: basis }
+  e117@{ curve: basis }
+  e118@{ curve: basis }
+  e119@{ curve: basis }
+  e120@{ curve: basis }
+  e121@{ curve: basis }
+  e122@{ curve: basis }
+  e123@{ curve: basis }
+  e124@{ curve: basis }
+  e125@{ curve: basis }
+  e126@{ curve: basis }
+  e127@{ curve: basis }
+  e128@{ curve: basis }
+  e129@{ curve: basis }
+  e130@{ curve: basis }
+  e131@{ curve: basis }
+  e132@{ curve: basis }
+  e133@{ curve: basis }
+  e134@{ curve: basis }
+  e135@{ curve: basis }
+  e136@{ curve: basis }
+  e137@{ curve: basis }
+  e138@{ curve: basis }
+  e139@{ curve: basis }
+  e140@{ curve: basis }
+  e141@{ curve: basis }
+  e142@{ curve: basis }
+  e143@{ curve: basis }
+  e144@{ curve: basis }
+  e145@{ curve: basis }
+  e146@{ curve: basis }
+  e147@{ curve: basis }
+  e148@{ curve: basis }
+  e149@{ curve: basis }
+  e150@{ curve: basis }
+  e151@{ curve: basis }
+  e152@{ curve: basis }
+  e153@{ curve: basis }
+  e154@{ curve: basis }
+  e155@{ curve: basis }
+  e156@{ curve: basis }
+  e157@{ curve: basis }
+  e158@{ curve: basis }
+  e159@{ curve: basis }
+  e160@{ curve: basis }
+  e161@{ curve: basis }
+  e162@{ curve: basis }
+  e163@{ curve: basis }
+  e164@{ curve: basis }
+  e165@{ curve: basis }
+  e166@{ curve: basis }
+  e167@{ curve: basis }
+  e168@{ curve: basis }
+  e169@{ curve: basis }
+  e170@{ curve: basis }
+  e171@{ curve: basis }
+  e172@{ curve: basis }
+  e173@{ curve: basis }
+  e174@{ curve: basis }
+  e175@{ curve: basis }
+  e176@{ curve: basis }
+  e177@{ curve: basis }
+  e178@{ curve: basis }
+  e179@{ curve: basis }
+  e180@{ curve: basis }
+  e181@{ curve: basis }
+  e182@{ curve: basis }
+  e183@{ curve: basis }
+  e184@{ curve: basis }
+  e185@{ curve: basis }
+  e186@{ curve: basis }
+  e187@{ curve: basis }
+  e188@{ curve: basis }
+  e189@{ curve: basis }
+  e190@{ curve: basis }
+  e191@{ curve: basis }
+  e192@{ curve: basis }
+  e193@{ curve: basis }
+  e194@{ curve: basis }
+  e195@{ curve: basis }
+  e196@{ curve: basis }
+  e197@{ curve: basis }
+  e198@{ curve: basis }
+  e199@{ curve: basis }
+  e200@{ curve: basis }

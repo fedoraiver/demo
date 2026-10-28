@@ -1,0 +1,49 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: State<AppState> · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: cyl, label: "**State#lt;AppState#gt;**<br/>保存某个状态类型当前生效的值" }
+  class n0 node_resource
+  n1@{ shape: rounded, label: "**apply_state_transition#lt;demo::game_**<br/>**flow::AppState#gt;**<br/>取出 NextState 中待提交的新状态及是否<br/>允许同值切换的设置；当前状态存在时交给内<br/>部状态转换逻辑更新状态、保留前态并发布转<br/>换消息。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**子状态转换闭包**<br/>监听父状态变化与待处理的子状态切换，计<br/>算 demo::game_flow::PlayState 是否仍<br/>应存在，应用转换并写入状态转换消息；闭包<br/>由 demo::game_flow::AppState 的<br/>StateSet 实现注册。" }
+  class n2 node_system
+  n1 e0@--> n0
+  class e0 edge_write
+  n0 e1@--> n2
+  class e1 edge_read

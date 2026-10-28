@@ -1,0 +1,788 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: RenderApp · ExtractSchedule · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_scheduling_constraint fill:#F5F3F8,stroke:#7C6AA6,stroke-width:1.6px,color:#1F3340
+  classDef node_engine_flow fill:#F1F5F4,stroke:#557C78,stroke-width:1.6px,color:#1F3340
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: stadium, label: "**RenderApp · ExtractSchedule**<br/>保存本应用调度的注册上下文与成员。" }
+  class n0 node_engine_flow
+  n1@{ shape: rounded, label: "**clear_dirty_specializations**<br/>清空新帧材质专用化的变化记录。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**clear_dirty_wireframe_**<br/>**specializations**<br/>清空新帧线框专用化的变化记录。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**extract_entities_needs_**<br/>**specialization#lt;bevy_sprite_render::**<br/>**mesh2d::color_material::**<br/>**ColorMaterial#gt;**<br/>把二维材质变化实体标为渲染专用化脏项。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**extract_entities_needs_**<br/>**specialization#lt;bevy_sprite_render::**<br/>**sprite_mesh::sprite_mesh_material::**<br/>**SpriteMeshMaterial#gt;**<br/>把二维材质变化实体标为渲染专用化脏项。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**extract_entities_needs_**<br/>**specialization#lt;bevy_sprite_render::**<br/>**tilemap_chunk::tilemap_chunk_**<br/>**material::TilemapChunkMaterial#gt;**<br/>把二维材质变化实体标为渲染专用化脏项。" }
+  class n5 node_system
+  n6@{ shape: rounded, label: "**extract_entities_needs_**<br/>**specialization#lt;bevy_pbr::pbr_**<br/>**material::StandardMaterial#gt;**<br/>把主世界待刷新材质管线的实体身份提取到渲<br/>染侧。" }
+  class n6 node_system
+  n7@{ shape: rounded, label: "**extract_entities_needs_**<br/>**specialization#lt;bevy_pbr::extended_**<br/>**material::ExtendedMaterial#lt;bevy_**<br/>**pbr::pbr_material::**<br/>**StandardMaterial, bevy_pbr::decal::**<br/>**forward::ForwardDecalMaterialExt#gt;#gt;**<br/>把主世界待刷新材质管线的实体身份提取到渲<br/>染侧。" }
+  class n7 node_system
+  n8@{ shape: rounded, label: "**extract_entities_that_need_**<br/>**specializations_removed#lt;bevy_sprite_**<br/>**render::mesh2d::color_material::**<br/>**ColorMaterial#gt;**<br/>把二维材质移除实体登记到专用化清理表。" }
+  class n8 node_system
+  n9@{ shape: rounded, label: "**extract_entities_that_need_**<br/>**specializations_removed#lt;bevy_sprite_**<br/>**render::sprite_mesh::sprite_mesh_**<br/>**material::SpriteMeshMaterial#gt;**<br/>把二维材质移除实体登记到专用化清理表。" }
+  class n9 node_system
+  n10@{ shape: rounded, label: "**extract_entities_that_need_**<br/>**specializations_removed#lt;bevy_sprite_**<br/>**render::tilemap_chunk::tilemap_**<br/>**chunk_material::**<br/>**TilemapChunkMaterial#gt;**<br/>把二维材质移除实体登记到专用化清理表。" }
+  class n10 node_system
+  n11@{ shape: rounded, label: "**extract_entities_that_need_**<br/>**specializations_removed#lt;bevy_pbr::**<br/>**pbr_material::StandardMaterial#gt;**<br/>提取需要移除材质管线专用化的实体。" }
+  class n11 node_system
+  n12@{ shape: rounded, label: "**extract_entities_that_need_**<br/>**specializations_removed#lt;bevy_pbr::**<br/>**extended_material::**<br/>**ExtendedMaterial#lt;bevy_pbr::pbr_**<br/>**material::StandardMaterial, bevy_**<br/>**pbr::decal::forward::**<br/>**ForwardDecalMaterialExt#gt;#gt;**<br/>提取需要移除材质管线专用化的实体。" }
+  class n12 node_system
+  n13@{ shape: rounded, label: "**expire_specializations_for_views**<br/>移除已失效视图的材质专用化脏标记。" }
+  class n13 node_system
+  n14@{ shape: rounded, label: "**expire_wireframe_specializations_**<br/>**for_views**<br/>移除已失效视图的线框专用化脏标记。" }
+  class n14 node_system
+  n15@{ shape: rounded, label: "**extract_render_asset#lt;bevy_render::**<br/>**mesh::RenderMesh#gt;**<br/>每轮先清空旧提取队列，再根据源资产新增、<br/>修改及设备恢复请求提取 GPU 数据，按<br/>RenderAssetUsages 选择克隆或移出资产数<br/>据；最后一个句柄释放时记录渲染侧移除。" }
+  class n15 node_system
+  n16@{ shape: rounded, label: "**extract_render_asset#lt;bevy_render::**<br/>**texture::gpu_image::GpuImage#gt;**<br/>每轮先清空旧提取队列，再根据源资产新增、<br/>修改及设备恢复请求提取 GPU 数据，按<br/>RenderAssetUsages 选择克隆或移出资产数<br/>据；最后一个句柄释放时记录渲染侧移除。" }
+  class n16 node_system
+  n17@{ shape: rounded, label: "**extract_render_asset#lt;bevy_render::**<br/>**storage::GpuShaderBuffer#gt;**<br/>每轮先清空旧提取队列，再根据源资产新增、<br/>修改及设备恢复请求提取 GPU 数据，按<br/>RenderAssetUsages 选择克隆或移出资产数<br/>据；最后一个句柄释放时记录渲染侧移除。" }
+  class n17 node_system
+  n18@{ shape: rounded, label: "**extract_render_asset#lt;bevy_pbr::**<br/>**medium::GpuScatteringMedium#gt;**<br/>每轮先清空旧提取队列，再根据源资产新增、<br/>修改及设备恢复请求提取 GPU 数据，按<br/>RenderAssetUsages 选择克隆或移出资产数<br/>据；最后一个句柄释放时记录渲染侧移除。" }
+  class n18 node_system
+  n19@{ shape: rounded, label: "**extract_render_asset#lt;bevy_gizmos_**<br/>**render::GpuLineGizmo#gt;**<br/>每轮先清空旧提取队列，再根据源资产新增、<br/>修改及设备恢复请求提取 GPU 数据，按<br/>RenderAssetUsages 选择克隆或移出资产数<br/>据；最后一个句柄释放时记录渲染侧移除。" }
+  class n19 node_system
+  n20@{ shape: rounded, label: "**extract_uinode_changes**<br/>使变化或移除的 UI 数据失效并清理旧渲染<br/>实体。" }
+  class n20 node_system
+  n21@{ shape: rounded, label: "**extract_ui_camera_view**<br/>为活动二维或三维相机维护独立 UI 视图。" }
+  class n21 node_system
+  n22@{ shape: rounded, label: "**extract_shadows**<br/>从主世界提取变化后的可见 UI 阴影，解析<br/>尺寸、变换、裁剪和目标相机，替换对应的渲<br/>染阴影实体；不可见、空阴影及已移除的数据<br/>不进入绘制。" }
+  class n22 node_system
+  n23@{ shape: rounded, label: "**extract_uinode_background_colors**<br/>提取 UI 节点背景与外侧填充色。" }
+  class n23 node_system
+  n24@{ shape: rounded, label: "**extract_viewport_nodes**<br/>把视口节点所引用相机的输出图像嵌入 UI。" }
+  class n24 node_system
+  n25@{ shape: rounded, label: "**extract_uinode_images**<br/>按节点视觉盒与图集区域提取普通 UI 图<br/>像。" }
+  class n25 node_system
+  n26@{ shape: rounded, label: "**extract_ui_texture_slices**<br/>增量提取九宫格或平铺 UI 图像切片。" }
+  class n26 node_system
+  n27@{ shape: rounded, label: "**extract_uinode_borders**<br/>提取 UI 各边颜色边框与外轮廓。" }
+  class n27 node_system
+  n28@{ shape: rounded, label: "**extract_text_decorations**<br/>提取 UI 文字背景、删除线和下划线。" }
+  class n28 node_system
+  n29@{ shape: rounded, label: "**extract_text_shadows**<br/>提取 UI 文字及装饰线的偏移阴影。" }
+  class n29 node_system
+  n30@{ shape: rounded, label: "**extract_text_sections**<br/>按图集提取 UI 字形并处理选中文字颜色。" }
+  class n30 node_system
+  n31@{ shape: rounded, label: "**extract_text_cursor**<br/>提取文字光标和带圆角的选区背景。" }
+  class n31 node_system
+  n32@{ shape: rounded, label: "**extract_preedit_underlines**<br/>把输入法预编辑下划线提取为 UI 矩形。" }
+  class n32 node_system
+  n33@{ shape: rounded, label: "**extract_debug_overlay**<br/>为变化的 UI 节点提取调试轮廓。" }
+  class n33 node_system
+  n34@{ shape: rounded, label: "**extract_inline_images**<br/>把文字行内图像提取为 UI 绘制项。" }
+  class n34 node_system
+  n35@{ shape: rounded, label: "**extract_gradients**<br/>提取变化后的 UI 背景与边框渐变，解析颜<br/>色停靠点、节点几何、裁剪和目标相机，并替<br/>换渲染世界中的对应渐变项；无效或不可见项<br/>被清理。" }
+  class n35 node_system
+  n36@{ shape: rounded, label: "**extract_meshes_for_gpu_building**<br/>增量提取变化或需重试网格到线程队列。" }
+  class n36 node_system
+  n37@{ shape: rounded, label: "**extract_mesh_materials#lt;bevy_pbr::**<br/>**pbr_material::StandardMaterial#gt;**<br/>根据可见性和材质变化更新渲染实例映射。" }
+  class n37 node_system
+  n38@{ shape: rounded, label: "**extract_mesh_materials#lt;bevy_pbr::**<br/>**extended_material::**<br/>**ExtendedMaterial#lt;bevy_pbr::pbr_**<br/>**material::StandardMaterial, bevy_**<br/>**pbr::decal::forward::**<br/>**ForwardDecalMaterialExt#gt;#gt;**<br/>根据可见性和材质变化更新渲染实例映射。" }
+  class n38 node_system
+  n39@{ shape: rounded, label: "**extract_erased_render_asset#lt;bevy_**<br/>**sprite_render::mesh2d::material::**<br/>**MeshMaterial2d#lt;bevy_sprite_render::**<br/>**mesh2d::color_material::**<br/>**ColorMaterial#gt;#gt;**<br/>提取变化及设备恢复后失效的擦除渲染资产。" }
+  class n39 node_system
+  n40@{ shape: rounded, label: "**extract_erased_render_asset#lt;bevy_**<br/>**sprite_render::mesh2d::material::**<br/>**MeshMaterial2d#lt;bevy_sprite_render::**<br/>**sprite_mesh::sprite_mesh_material::**<br/>**SpriteMeshMaterial#gt;#gt;**<br/>提取变化及设备恢复后失效的擦除渲染资产。" }
+  class n40 node_system
+  n41@{ shape: rounded, label: "**extract_erased_render_asset#lt;bevy_**<br/>**sprite_render::mesh2d::material::**<br/>**MeshMaterial2d#lt;bevy_sprite_render::**<br/>**tilemap_chunk::tilemap_chunk_**<br/>**material::TilemapChunkMaterial#gt;#gt;**<br/>提取变化及设备恢复后失效的擦除渲染资产。" }
+  class n41 node_system
+  n42@{ shape: rounded, label: "**extract_erased_render_asset#lt;bevy_**<br/>**pbr::mesh_material::**<br/>**MeshMaterial3d#lt;bevy_pbr::pbr_**<br/>**material::StandardMaterial#gt;#gt;**<br/>提取变化及设备恢复后失效的擦除渲染资产。" }
+  class n42 node_system
+  n43@{ shape: rounded, label: "**extract_erased_render_asset#lt;bevy_**<br/>**pbr::mesh_material::**<br/>**MeshMaterial3d#lt;bevy_pbr::extended_**<br/>**material::ExtendedMaterial#lt;bevy_**<br/>**pbr::pbr_material::**<br/>**StandardMaterial, bevy_pbr::decal::**<br/>**forward::ForwardDecalMaterialExt#gt;#gt;#gt;**<br/>提取变化及设备恢复后失效的擦除渲染资产。" }
+  class n43 node_system
+  n44@{ shape: rounded, label: "**extract_screenshots**<br/>在主世界收集尚未捕获的截图请求，规范化窗<br/>口或纹理目标并为本帧去重；记录渲染截图目<br/>标、标记 Capturing，并销毁同一目标的重<br/>复请求实体。" }
+  class n44 node_system
+  n45@{ shape: rounded, label: "**extract_windows**<br/>将主世界窗口尺寸、显示模式、原生句柄和主<br/>窗口身份同步到渲染世界，标记尺寸及模式变<br/>化，并处理关闭窗口或移除句柄造成的失效状<br/>态。" }
+  class n45 node_system
+  n46@{ shape: rounded, label: "**extract_resource#lt;bevy_camera::clear_**<br/>**color::ClearColor, bevy_render::**<br/>**RenderApp, ()#gt;**<br/>读取主世界中的可选源资源，经<br/>ExtractResource 转换后更新子世界目标资<br/>源；源值变化时替换现有目标，目标不存在时<br/>通过 Commands 插入。" }
+  class n46 node_system
+  n47@{ shape: rounded, label: "**extract_components#lt;bevy_camera::**<br/>**camera::CameraMainTextureUsages,**<br/>**bevy_render::RenderApp, ()#gt;**<br/>对已同步到子世界的实体读取<br/>ExtractComponent 指定的查询数据，批量<br/>写入转换后的目标组件；转换返回 None 时<br/>移除对应目标组件。" }
+  class n47 node_system
+  n48@{ shape: rounded, label: "**extract_cameras**<br/>把主世界活动相机的目标、视口、变换、可见<br/>实体和渲染设置提取到渲染实体，并维护视图<br/>所需格式；对停用或目标尺寸无效的相机移除<br/>失效提取状态。" }
+  class n48 node_system
+  n49@{ shape: rounded, label: "**extract_components#lt;bevy_render::**<br/>**view::Msaa, bevy_render::RenderApp,**<br/>**()#gt;**<br/>对已同步到子世界的实体读取<br/>ExtractComponent 指定的查询数据，批量<br/>写入转换后的目标组件；转换返回 None 时<br/>移除对应目标组件。" }
+  class n49 node_system
+  n50@{ shape: rounded, label: "**extract_components#lt;bevy_render::**<br/>**occlusion_culling::**<br/>**OcclusionCulling, bevy_render::**<br/>**RenderApp, ()#gt;**<br/>对已同步到子世界的实体读取<br/>ExtractComponent 指定的查询数据，批量<br/>写入转换后的目标组件；转换返回 None 时<br/>移除对应目标组件。" }
+  class n50 node_system
+  n51@{ shape: rounded, label: "**extract_visibility_ranges**<br/>在可见距离变化后重建渲染侧范围表。" }
+  class n51 node_system
+  n52@{ shape: rounded, label: "**extract_frame_count**<br/>将主世界帧计数同步到渲染世界。" }
+  class n52 node_system
+  n53@{ shape: rounded, label: "**extract_time**<br/>将主世界当前 Time 值复制并插入渲染世<br/>界，供渲染侧全局时间参数使用。" }
+  class n53 node_system
+  n54@{ shape: rounded, label: "**extract_resource#lt;bevy_render::**<br/>**texture::manual_texture_view::**<br/>**ManualTextureViews, bevy_render::**<br/>**RenderApp, ()#gt;**<br/>读取主世界中的可选源资源，经<br/>ExtractResource 转换后更新子世界目标资<br/>源；源值变化时替换现有目标，目标不存在时<br/>通过 Commands 插入。" }
+  class n54 node_system
+  n55@{ shape: rounded, label: "**extract_components#lt;bevy_render::gpu_**<br/>**readback::Readback, bevy_render::**<br/>**RenderApp, ()#gt;**<br/>对已同步到子世界的实体读取<br/>ExtractComponent 指定的查询数据，批量<br/>写入转换后的目标组件；转换返回 None 时<br/>移除对应目标组件。" }
+  class n55 node_system
+  n56@{ shape: rounded, label: "**sync_readbacks**<br/>接收已映射 GPU 回读任务的完成数据，在主<br/>世界触发 ReadbackComplete，再归还暂存<br/>缓冲并清理超过保留帧数的缓冲池条目。" }
+  class n56 node_system
+  n57@{ shape: rounded, label: "**extract_render_asset_bytes_per_frame**<br/>同步主世界设定的每帧渲染资产上传上限。" }
+  class n57 node_system
+  n58@{ shape: rounded, label: "**extract_shaders**<br/>消费主世界 Shader 资产变更，合并全局<br/>shader 定义并更新或移除管线缓存中的着色<br/>器；全量重载时重新提交全部 Shader 并清<br/>空已覆盖的事件。" }
+  class n58 node_system
+  n59@{ shape: rounded, label: "**extract_components#lt;bevy_camera::**<br/>**components::Camera2d, bevy_render::**<br/>**RenderApp, ()#gt;**<br/>对已同步到子世界的实体读取<br/>ExtractComponent 指定的查询数据，批量<br/>写入转换后的目标组件；转换返回 None 时<br/>移除对应目标组件。" }
+  class n59 node_system
+  n60@{ shape: rounded, label: "**extract_core_2d_camera_phases**<br/>为活动二维相机准备渲染阶段并清理失效视<br/>图。" }
+  class n60 node_system
+  n61@{ shape: rounded, label: "**extract_skybox**<br/>将主世界 Skybox 及相机曝光转换为天空盒<br/>亮度和逆旋转 Uniform，连同天空盒组件批<br/>量写入对应渲染实体。" }
+  class n61 node_system
+  n62@{ shape: rounded, label: "**extract_components#lt;bevy_camera::**<br/>**components::Camera3d, bevy_render::**<br/>**RenderApp, ()#gt;**<br/>对已同步到子世界的实体读取<br/>ExtractComponent 指定的查询数据，批量<br/>写入转换后的目标组件；转换返回 None 时<br/>移除对应目标组件。" }
+  class n62 node_system
+  n63@{ shape: rounded, label: "**extract_core_3d_camera_phases**<br/>为活动三维相机准备主渲染阶段。" }
+  class n63 node_system
+  n64@{ shape: rounded, label: "**extract_camera_prepass_phase**<br/>同步三维相机的预通道标记与渲染阶段。" }
+  class n64 node_system
+  n65@{ shape: rounded, label: "**extract_resource#lt;bevy_core_**<br/>**pipeline::tonemapping::**<br/>**TonemappingLuts, bevy_render::**<br/>**RenderApp, ()#gt;**<br/>读取主世界中的可选源资源，经<br/>ExtractResource 转换后更新子世界目标资<br/>源；源值变化时替换现有目标，目标不存在时<br/>通过 Commands 插入。" }
+  class n65 node_system
+  n66@{ shape: rounded, label: "**extract_components#lt;bevy_render::**<br/>**view::Tonemapping, bevy_render::**<br/>**RenderApp, ()#gt;**<br/>对已同步到子世界的实体读取<br/>ExtractComponent 指定的查询数据，批量<br/>写入转换后的目标组件；转换返回 None 时<br/>移除对应目标组件。" }
+  class n66 node_system
+  n67@{ shape: rounded, label: "**extract_components#lt;bevy_render::**<br/>**view::DebandDither, bevy_render::**<br/>**RenderApp, ()#gt;**<br/>对已同步到子世界的实体读取<br/>ExtractComponent 指定的查询数据，批量<br/>写入转换后的目标组件；转换返回 None 时<br/>移除对应目标组件。" }
+  class n67 node_system
+  n68@{ shape: rounded, label: "**extract_components#lt;bevy_core_**<br/>**pipeline::oit::**<br/>**OrderIndependentTransparencySettings**<br/>**, bevy_render::RenderApp, ()#gt;**<br/>对已同步到子世界的实体读取<br/>ExtractComponent 指定的查询数据，批量<br/>写入转换后的目标组件；转换返回 None 时<br/>移除对应目标组件。" }
+  class n68 node_system
+  n69@{ shape: rounded, label: "**extract_components#lt;bevy_core_**<br/>**pipeline::prepass::background_**<br/>**motion_vectors::**<br/>**NoBackgroundMotionVectors, bevy_**<br/>**render::RenderApp, ()#gt;**<br/>对已同步到子世界的实体读取<br/>ExtractComponent 指定的查询数据，批量<br/>写入转换后的目标组件；转换返回 None 时<br/>移除对应目标组件。" }
+  class n69 node_system
+  n70@{ shape: rounded, label: "**extract_components#lt;bevy_post_**<br/>**process::bloom::settings::Bloom,**<br/>**bevy_render::RenderApp, ()#gt;**<br/>对已同步到子世界的实体读取<br/>ExtractComponent 指定的查询数据，批量<br/>写入转换后的目标组件；转换返回 None 时<br/>移除对应目标组件。" }
+  class n70 node_system
+  n71@{ shape: rounded, label: "**extract_components#lt;bevy_post_**<br/>**process::motion_blur::MotionBlur,**<br/>**bevy_render::RenderApp, ()#gt;**<br/>对已同步到子世界的实体读取<br/>ExtractComponent 指定的查询数据，批量<br/>写入转换后的目标组件；转换返回 None 时<br/>移除对应目标组件。" }
+  class n71 node_system
+  n72@{ shape: rounded, label: "**extract_depth_of_field_settings**<br/>把透视相机景深设置转换为 GPU 参数。" }
+  class n72 node_system
+  n73@{ shape: rounded, label: "**extract_components#lt;bevy_post_**<br/>**process::effect_stack::chromatic_**<br/>**aberration::ChromaticAberration,**<br/>**bevy_render::RenderApp, ()#gt;**<br/>对已同步到子世界的实体读取<br/>ExtractComponent 指定的查询数据，批量<br/>写入转换后的目标组件；转换返回 None 时<br/>移除对应目标组件。" }
+  class n73 node_system
+  n74@{ shape: rounded, label: "**extract_components#lt;bevy_post_**<br/>**process::effect_stack::lens_**<br/>**distortion::LensDistortion, bevy_**<br/>**render::RenderApp, ()#gt;**<br/>对已同步到子世界的实体读取<br/>ExtractComponent 指定的查询数据，批量<br/>写入转换后的目标组件；转换返回 None 时<br/>移除对应目标组件。" }
+  class n74 node_system
+  n75@{ shape: rounded, label: "**extract_components#lt;bevy_post_**<br/>**process::effect_stack::vignette::**<br/>**Vignette, bevy_render::RenderApp,**<br/>**()#gt;**<br/>对已同步到子世界的实体读取<br/>ExtractComponent 指定的查询数据，批量<br/>写入转换后的目标组件；转换返回 None 时<br/>移除对应目标组件。" }
+  class n75 node_system
+  n76@{ shape: rounded, label: "**extract_components#lt;bevy_anti_alias::**<br/>**fxaa::Fxaa, bevy_render::RenderApp,**<br/>**()#gt;**<br/>对已同步到子世界的实体读取<br/>ExtractComponent 指定的查询数据，批量<br/>写入转换后的目标组件；转换返回 None 时<br/>移除对应目标组件。" }
+  class n76 node_system
+  n77@{ shape: rounded, label: "**extract_components#lt;bevy_anti_alias::**<br/>**smaa::Smaa, bevy_render::RenderApp,**<br/>**()#gt;**<br/>对已同步到子世界的实体读取<br/>ExtractComponent 指定的查询数据，批量<br/>写入转换后的目标组件；转换返回 None 时<br/>移除对应目标组件。" }
+  class n77 node_system
+  n78@{ shape: rounded, label: "**extract_taa_settings**<br/>提取有效相机的 TAA 设置并消费历史重置信<br/>号。" }
+  class n78 node_system
+  n79@{ shape: rounded, label: "**extract_components#lt;bevy_anti_alias::**<br/>**contrast_adaptive_sharpening::**<br/>**ContrastAdaptiveSharpening, bevy_**<br/>**render::RenderApp, ()#gt;**<br/>对已同步到子世界的实体读取<br/>ExtractComponent 指定的查询数据，批量<br/>写入转换后的目标组件；转换返回 None 时<br/>移除对应目标组件。" }
+  class n79 node_system
+  n80@{ shape: rounded, label: "**extract_2d_meshes**<br/>增量同步二维网格变换和渲染实例信息。" }
+  class n80 node_system
+  n81@{ shape: rounded, label: "**extract_mesh_materials_2d#lt;bevy_**<br/>**sprite_render::mesh2d::color_**<br/>**material::ColorMaterial#gt;**<br/>同步可见二维网格使用的材质资产身份。" }
+  class n81 node_system
+  n82@{ shape: rounded, label: "**extract_mesh_materials_2d#lt;bevy_**<br/>**sprite_render::sprite_mesh::sprite_**<br/>**mesh_material::SpriteMeshMaterial#gt;**<br/>同步可见二维网格使用的材质资产身份。" }
+  class n82 node_system
+  n83@{ shape: rounded, label: "**extract_mesh_materials_2d#lt;bevy_**<br/>**sprite_render::tilemap_chunk::**<br/>**tilemap_chunk_material::**<br/>**TilemapChunkMaterial#gt;**<br/>同步可见二维网格使用的材质资产身份。" }
+  class n83 node_system
+  n84@{ shape: rounded, label: "**extract_sprite_events**<br/>把主世界图像资产事件复制给精灵渲染。" }
+  class n84 node_system
+  n85@{ shape: rounded, label: "**extract_text2d_sprite**<br/>把可见二维文字及装饰提取为精灵切片。" }
+  class n85 node_system
+  n86@{ shape: rounded, label: "**extract_skins**<br/>按蒙皮可见性和资产变化分配或回收骨骼缓冲<br/>区域，提取关节全局变换与逆绑定姿势到暂存<br/>数据，并清理移除的蒙皮记录。" }
+  class n86 node_system
+  n87@{ shape: rounded, label: "**extract_morphs**<br/>提取可见网格的形变权重，重建本帧权重缓冲<br/>及实体索引，同时保留上一帧权重位置以计算<br/>运动矢量；按 GPU 缓冲能力选择对齐和存储<br/>方式。" }
+  class n87 node_system
+  n88@{ shape: rounded, label: "**clear_batched_gpu_instance_**<br/>**buffers#lt;bevy_pbr::render::mesh::**<br/>**MeshPipeline#gt;**<br/>在提取写入实例数据之前清空本帧 GPU 批处<br/>理实例缓冲的内容和索引，保留既有缓冲分配<br/>以便复用。" }
+  class n88 node_system
+  n89@{ shape: rounded, label: "**extract_camera_previous_view_data**<br/>把活动三维相机的前帧视图数据提取到渲染<br/>侧。" }
+  class n89 node_system
+  n90@{ shape: rounded, label: "**early_sweep_material_instances#lt;bevy_**<br/>**pbr::pbr_material::StandardMaterial#gt;**<br/>按材质移除消息清扫未被本帧替换的实例。" }
+  class n90 node_system
+  n91@{ shape: rounded, label: "**extract_components#lt;bevy_pbr::fog::**<br/>**DistanceFog, bevy_render::**<br/>**RenderApp, ()#gt;**<br/>对已同步到子世界的实体读取<br/>ExtractComponent 指定的查询数据，批量<br/>写入转换后的目标组件；转换返回 None 时<br/>移除对应目标组件。" }
+  class n91 node_system
+  n92@{ shape: rounded, label: "**extract_resource#lt;bevy_pbr::**<br/>**material::**<br/>**DefaultOpaqueRendererMethod, bevy_**<br/>**render::RenderApp, ()#gt;**<br/>读取主世界中的可选源资源，经<br/>ExtractResource 转换后更新子世界目标资<br/>源；源值变化时替换现有目标，目标不存在时<br/>通过 Commands 插入。" }
+  class n92 node_system
+  n93@{ shape: rounded, label: "**extract_lightmaps**<br/>为可见的新增光照贴图分配渲染槽位，记录<br/>UV 和采样设置，释放移除项，并在 GPU 图<br/>像就绪后完成待处理槽位的纹理更新。" }
+  class n93 node_system
+  n94@{ shape: rounded, label: "**extract_all#lt;bevy_pbr::light_probe::**<br/>**environment_map::EnvironmentMapIds,**<br/>**bevy_render::RenderApp#gt;**<br/>清空当前 ExtractedInstances 映射，遍<br/>历主世界中符合 ExtractInstance 查询条<br/>件的实体，将成功转换的实例按主实体身份存<br/>入子世界资源。" }
+  class n94 node_system
+  n95@{ shape: rounded, label: "**gather_light_probes#lt;bevy_light::**<br/>**probe::EnvironmentMapLight#gt;**<br/>按相机可见集合和距离分配已就绪光照探针。" }
+  class n95 node_system
+  n96@{ shape: rounded, label: "**gather_light_probes#lt;bevy_light::**<br/>**probe::IrradianceVolume#gt;**<br/>按相机可见集合和距离分配已就绪光照探针。" }
+  class n96 node_system
+  n97@{ shape: rounded, label: "**extract_volumetric_fog**<br/>从主世界提取体积雾、雾体积及体积光配置。" }
+  class n97 node_system
+  n98@{ shape: rounded, label: "**extract_components#lt;bevy_pbr::ssr::**<br/>**ScreenSpaceReflections, bevy_**<br/>**render::RenderApp, ()#gt;**<br/>对已同步到子世界的实体读取<br/>ExtractComponent 指定的查询数据，批量<br/>写入转换后的目标组件；转换返回 None 时<br/>移除对应目标组件。" }
+  class n98 node_system
+  n99@{ shape: rounded, label: "**extract_components#lt;bevy_pbr::**<br/>**transmission::**<br/>**ScreenSpaceTransmission, bevy_**<br/>**render::RenderApp, ()#gt;**<br/>对已同步到子世界的实体读取<br/>ExtractComponent 指定的查询数据，批量<br/>写入转换后的目标组件；转换返回 None 时<br/>移除对应目标组件。" }
+  class n99 node_system
+  n100@{ shape: rounded, label: "**extract_transmissive_camera_phases**<br/>为活动三维相机准备本帧透射阶段并清理失效<br/>视图。" }
+  class n100 node_system
+  n101@{ shape: rounded, label: "**extract_decals**<br/>从主世界提取可见聚簇贴花及点光、聚光和平<br/>行光的光照纹理，重建渲染贴花缓冲，并记录<br/>真正参与聚簇计算的贴花数量。" }
+  class n101 node_system
+  n102@{ shape: rounded, label: "**extract_clustered_decal**<br/>批量复制主世界的聚簇贴花组件。" }
+  class n102 node_system
+  n103@{ shape: rounded, label: "**extract_components#lt;bevy_pbr::**<br/>**contact_shadows::ContactShadows,**<br/>**bevy_render::RenderApp, ()#gt;**<br/>对已同步到子世界的实体读取<br/>ExtractComponent 指定的查询数据，批量<br/>写入转换后的目标组件；转换返回 None 时<br/>移除对应目标组件。" }
+  class n103 node_system
+  n104@{ shape: rounded, label: "**early_sweep_material_instances#lt;bevy_**<br/>**pbr::extended_material::**<br/>**ExtendedMaterial#lt;bevy_pbr::pbr_**<br/>**material::StandardMaterial, bevy_**<br/>**pbr::decal::forward::**<br/>**ForwardDecalMaterialExt#gt;#gt;**<br/>按材质移除消息清扫未被本帧替换的实例。" }
+  class n104 node_system
+  n105@{ shape: rounded, label: "**extract_components#lt;bevy_pbr::**<br/>**atmosphere::environment::**<br/>**AtmosphereEnvironmentMap, bevy_**<br/>**render::RenderApp, ()#gt;**<br/>对已同步到子世界的实体读取<br/>ExtractComponent 指定的查询数据，批量<br/>写入转换后的目标组件；转换返回 None 时<br/>移除对应目标组件。" }
+  class n105 node_system
+  n106@{ shape: rounded, label: "**extract_atmosphere**<br/>为每个启用 AtmosphereSettings 的三维<br/>相机选择世界距离最近的大气实体，复制大气<br/>和 GPU 设置到渲染世界；设置移除或没有候<br/>选大气时清理旧状态。" }
+  class n106 node_system
+  n107@{ shape: rounded, label: "**extract_resource#lt;bevy_light::**<br/>**cluster::GlobalClusterSettings,**<br/>**bevy_render::RenderApp, bevy_pbr::**<br/>**cluster::gpu::GpuClusteringPlugin#gt;**<br/>读取主世界中的可选源资源，经<br/>ExtractResource 转换后更新子世界目标资<br/>源；源值变化时替换现有目标，目标不存在时<br/>通过 Commands 插入。" }
+  class n107 node_system
+  n108@{ shape: rounded, label: "**extract_components#lt;bevy_pbr::**<br/>**deferred::**<br/>**PbrDeferredLightingDepthId, bevy_**<br/>**render::RenderApp, ()#gt;**<br/>对已同步到子世界的实体读取<br/>ExtractComponent 指定的查询数据，批量<br/>写入转换后的目标组件；转换返回 None 时<br/>移除对应目标组件。" }
+  class n108 node_system
+  n109@{ shape: rounded, label: "**extract_clusters_for_cpu_clustering**<br/>把 CPU 聚簇结果转换为渲染侧对象列表。" }
+  class n109 node_system
+  n110@{ shape: rounded, label: "**extract_clusters_for_gpu_clustering**<br/>提取视图聚簇配置并回传上帧 GPU 统计。" }
+  class n110 node_system
+  n111@{ shape: rounded, label: "**extract_lights**<br/>同步可见点光、聚光、平行光及矩形光的渲染<br/>参数和阴影可见实体，提取变化的阴影贴图设<br/>置；隐藏或失效光源不继续保留有效渲染状<br/>态。" }
+  class n111 node_system
+  n112@{ shape: rounded, label: "**extract_ambient_light_resource**<br/>在源存在时同步全局环境光资源。" }
+  class n112 node_system
+  n113@{ shape: rounded, label: "**extract_ambient_light**<br/>批量复制主世界实体的环境光设置。" }
+  class n113 node_system
+  n114@{ shape: rounded, label: "**extract_shadow_filtering_method**<br/>批量同步实体的阴影过滤方式。" }
+  class n114 node_system
+  n115@{ shape: rounded, label: "**extract_shadow_lod_origin**<br/>解析点光与聚光阴影 LOD 的距离参考位置。" }
+  class n115 node_system
+  n116@{ shape: rounded, label: "**late_sweep_material_instances**<br/>清扫失效网格材质实例并推进本帧刻度。" }
+  class n116 node_system
+  n117@{ shape: rounded, label: "**extract_resource#lt;bevy_gizmos_**<br/>**render::LineGizmoEntities, bevy_**<br/>**render::RenderApp, ()#gt;**<br/>读取主世界中的可选源资源，经<br/>ExtractResource 转换后更新子世界目标资<br/>源；源值变化时替换现有目标，目标不存在时<br/>通过 Commands 插入。" }
+  class n117 node_system
+  n118@{ shape: rounded, label: "**extract_gizmo_data**<br/>把启用的即时 Gizmo 数据提取为渲染实体。" }
+  class n118 node_system
+  n119@{ shape: rounded, label: "**extract_linegizmos**<br/>从保留式 Gizmo 实体提取全局变换、线宽、<br/>接头、虚线样式及渲染层，生成本帧临时线段<br/>渲染实体和对应 Uniform。" }
+  class n119 node_system
+  n120@{ shape: rounded, label: "**extract_resource#lt;bevy_egui::**<br/>**EguiUserTextures, bevy_render::**<br/>**RenderApp, ()#gt;**<br/>读取主世界中的可选源资源，经<br/>ExtractResource 转换后更新子世界目标资<br/>源；源值变化时替换现有目标，目标不存在时<br/>通过 Commands 插入。" }
+  class n120 node_system
+  n121@{ shape: rounded, label: "**extract_resource#lt;bevy_egui::render::**<br/>**systems::**<br/>**ExtractedEguiManagedTextures, bevy_**<br/>**render::RenderApp, ()#gt;**<br/>读取主世界中的可选源资源，经<br/>ExtractResource 转换后更新子世界目标资<br/>源；源值变化时替换现有目标，目标不存在时<br/>通过 Commands 插入。" }
+  class n121 node_system
+  n122@{ shape: rounded, label: "**clear_sparse_buffer_jobs**<br/>清空新帧的稀疏缓冲更新任务。" }
+  class n122 node_system
+  n123@{ shape: rounded, label: "**extract_ssao_settings**<br/>向渲染相机提取屏幕空间环境光遮蔽配置。" }
+  class n123 node_system
+  n124@{ shape: rounded, label: "**extract_generated_environment_map_**<br/>**entities**<br/>提取环境图生成所需的三张 GPU 图像。" }
+  class n124 node_system
+  n125@{ shape: rounded, label: "**extract_egui_camera_view_system**<br/>来自Egui / Inspector ↗：为活动相机提<br/>取独立 Egui 渲染视图。" }
+  class n125 node_system
+  class n125 external_node
+  n126@{ shape: lin-rect, label: "**DirtySpecializationSystems::Clear**<br/>清空上一帧的渲染专用化变更集合。" }
+  class n126 node_system_set
+  n127@{ shape: lin-rect, label: "**DirtySpecializationSystems::**<br/>**CheckForChanges**<br/>收集需要重新专用化渲染管线的实体。" }
+  class n127 node_system_set
+  n128@{ shape: lin-rect, label: "**DirtySpecializationSystems::**<br/>**CheckForRemovals**<br/>识别应从渲染阶段移除的失效实体。" }
+  class n128 node_system_set
+  n129@{ shape: lin-rect, label: "**RenderSystems::Cleanup**<br/>清理本帧渲染缓存、资产变化和回读状态。" }
+  class n129 node_system_set
+  n130@{ shape: lin-rect, label: "**AssetExtractionSystems**<br/>提取各 RenderAsset 类型的资产变化。" }
+  class n130 node_system_set
+  n131@{ shape: lin-rect, label: "**RenderUiSystems::ExtractChanges**<br/>标记变化的 UI 节点并销毁其过期渲染图<br/>元。" }
+  class n131 node_system_set
+  n132@{ shape: lin-rect, label: "**RenderUiSystems::ExtractCameraViews**<br/>为 UI 绘制提取相机视图与投影。" }
+  class n132 node_system_set
+  n133@{ shape: lin-rect, label: "**RenderUiSystems::ExtractBoxShadows**<br/>提取 UI 盒阴影的绘制数据。" }
+  class n133 node_system_set
+  n134@{ shape: lin-rect, label: "**RenderUiSystems::ExtractBackgrounds**<br/>提取 UI 背景填充的渲染数据。" }
+  class n134 node_system_set
+  n135@{ shape: lin-rect, label: "**RenderUiSystems::**<br/>**ExtractViewportNodes**<br/>提取嵌入相机视口的 UI 图元。" }
+  class n135 node_system_set
+  n136@{ shape: lin-rect, label: "**RenderUiSystems::ExtractImages**<br/>提取 UI 图像节点的纹理及几何数据。" }
+  class n136 node_system_set
+  n137@{ shape: lin-rect, label: "**RenderUiSystems::ExtractTextureSlice**<br/>提取 UI 切片纹理的分块绘制数据。" }
+  class n137 node_system_set
+  n138@{ shape: lin-rect, label: "**RenderUiSystems::ExtractBorders**<br/>提取 UI 边框的绘制数据。" }
+  class n138 node_system_set
+  n139@{ shape: lin-rect, label: "**RenderUiSystems::**<br/>**ExtractTextBackgrounds**<br/>提取 UI 文字背景和装饰矩形。" }
+  class n139 node_system_set
+  n140@{ shape: lin-rect, label: "**RenderUiSystems::ExtractTextShadows**<br/>提取 UI 文字阴影的字形绘制数据。" }
+  class n140 node_system_set
+  n141@{ shape: lin-rect, label: "**RenderUiSystems::ExtractText**<br/>提取 UI 文字各字形的绘制数据。" }
+  class n141 node_system_set
+  n142@{ shape: lin-rect, label: "**RenderUiSystems::ExtractCursor**<br/>提取文字光标与输入法预编辑下划线。" }
+  class n142 node_system_set
+  n143@{ shape: lin-rect, label: "**RenderUiSystems::ExtractDebug**<br/>提取 UI 调试叠层的轮廓图元。" }
+  class n143 node_system_set
+  n144@{ shape: lin-rect, label: "**RenderUiSystems::ExtractInlineImages**<br/>提取富文本行内图像的绘制数据。" }
+  class n144 node_system_set
+  n145@{ shape: lin-rect, label: "**RenderUiSystems::ExtractGradient**<br/>提取 UI 渐变填充的渲染图元。" }
+  class n145 node_system_set
+  n146@{ shape: lin-rect, label: "**MeshExtractionSystems**<br/>向渲染世界提取三维网格的实例数据。" }
+  class n146 node_system_set
+  n147@{ shape: lin-rect, label: "**MaterialExtractionSystems**<br/>按材质类型提取三维网格材质实例。" }
+  class n147 node_system_set
+  n148@{ shape: lin-rect, label: "**AssetExtractionSystems**<br/>提取采用类型擦除渲染接口的资产变化。" }
+  class n148 node_system_set
+  n149@{ shape: lin-rect, label: "**#lt;missing#gt; generate_environment_map_**<br/>**light**<br/>保留本调度中未注册目标系统的顺序约束。" }
+  class n149 node_scheduling_constraint
+  n0 e0@-->|"RenderApp / ExtractSchedule"| n1
+  class e0 edge_registration
+  n0 e1@-->|"RenderApp / ExtractSchedule"| n2
+  class e1 edge_registration
+  n0 e2@-->|"RenderApp / ExtractSchedule"| n3
+  class e2 edge_registration
+  n0 e3@-->|"RenderApp / ExtractSchedule"| n4
+  class e3 edge_registration
+  n0 e4@-->|"RenderApp / ExtractSchedule"| n5
+  class e4 edge_registration
+  n0 e5@-->|"RenderApp / ExtractSchedule"| n6
+  class e5 edge_registration
+  n0 e6@-->|"RenderApp / ExtractSchedule"| n7
+  class e6 edge_registration
+  n0 e7@-->|"RenderApp / ExtractSchedule"| n8
+  class e7 edge_registration
+  n0 e8@-->|"RenderApp / ExtractSchedule"| n9
+  class e8 edge_registration
+  n0 e9@-->|"RenderApp / ExtractSchedule"| n10
+  class e9 edge_registration
+  n0 e10@-->|"RenderApp / ExtractSchedule"| n11
+  class e10 edge_registration
+  n0 e11@-->|"RenderApp / ExtractSchedule"| n12
+  class e11 edge_registration
+  n0 e12@-->|"RenderApp / ExtractSchedule"| n13
+  class e12 edge_registration
+  n0 e13@-->|"RenderApp / ExtractSchedule"| n14
+  class e13 edge_registration
+  n0 e14@-->|"RenderApp / ExtractSchedule"| n15
+  class e14 edge_registration
+  n0 e15@-->|"RenderApp / ExtractSchedule"| n16
+  class e15 edge_registration
+  n0 e16@-->|"RenderApp / ExtractSchedule"| n17
+  class e16 edge_registration
+  n0 e17@-->|"RenderApp / ExtractSchedule"| n18
+  class e17 edge_registration
+  n0 e18@-->|"RenderApp / ExtractSchedule"| n19
+  class e18 edge_registration
+  n0 e19@-->|"RenderApp / ExtractSchedule"| n20
+  class e19 edge_registration
+  n0 e20@-->|"RenderApp / ExtractSchedule"| n21
+  class e20 edge_registration
+  n0 e21@-->|"RenderApp / ExtractSchedule"| n22
+  class e21 edge_registration
+  n0 e22@-->|"RenderApp / ExtractSchedule"| n23
+  class e22 edge_registration
+  n0 e23@-->|"RenderApp / ExtractSchedule"| n24
+  class e23 edge_registration
+  n0 e24@-->|"RenderApp / ExtractSchedule"| n25
+  class e24 edge_registration
+  n0 e25@-->|"RenderApp / ExtractSchedule"| n26
+  class e25 edge_registration
+  n0 e26@-->|"RenderApp / ExtractSchedule"| n27
+  class e26 edge_registration
+  n0 e27@-->|"RenderApp / ExtractSchedule"| n28
+  class e27 edge_registration
+  n0 e28@-->|"RenderApp / ExtractSchedule"| n29
+  class e28 edge_registration
+  n0 e29@-->|"RenderApp / ExtractSchedule"| n30
+  class e29 edge_registration
+  n0 e30@-->|"RenderApp / ExtractSchedule"| n31
+  class e30 edge_registration
+  n0 e31@-->|"RenderApp / ExtractSchedule"| n32
+  class e31 edge_registration
+  n0 e32@-->|"RenderApp / ExtractSchedule"| n33
+  class e32 edge_registration
+  n0 e33@-->|"RenderApp / ExtractSchedule"| n34
+  class e33 edge_registration
+  n0 e34@-->|"RenderApp / ExtractSchedule"| n35
+  class e34 edge_registration
+  n0 e35@-->|"RenderApp / ExtractSchedule"| n36
+  class e35 edge_registration
+  n0 e36@-->|"RenderApp / ExtractSchedule"| n37
+  class e36 edge_registration
+  n0 e37@-->|"RenderApp / ExtractSchedule"| n38
+  class e37 edge_registration
+  n0 e38@-->|"RenderApp / ExtractSchedule"| n39
+  class e38 edge_registration
+  n0 e39@-->|"RenderApp / ExtractSchedule"| n40
+  class e39 edge_registration
+  n0 e40@-->|"RenderApp / ExtractSchedule"| n41
+  class e40 edge_registration
+  n0 e41@-->|"RenderApp / ExtractSchedule"| n42
+  class e41 edge_registration
+  n0 e42@-->|"RenderApp / ExtractSchedule"| n43
+  class e42 edge_registration
+  n0 e43@-->|"RenderApp / ExtractSchedule"| n44
+  class e43 edge_registration
+  n0 e44@-->|"RenderApp / ExtractSchedule"| n45
+  class e44 edge_registration
+  n0 e45@-->|"RenderApp / ExtractSchedule"| n46
+  class e45 edge_registration
+  n0 e46@-->|"RenderApp / ExtractSchedule"| n47
+  class e46 edge_registration
+  n0 e47@-->|"RenderApp / ExtractSchedule"| n48
+  class e47 edge_registration
+  n0 e48@-->|"RenderApp / ExtractSchedule"| n49
+  class e48 edge_registration
+  n0 e49@-->|"RenderApp / ExtractSchedule"| n50
+  class e49 edge_registration
+  n0 e50@-->|"RenderApp / ExtractSchedule"| n51
+  class e50 edge_registration
+  n0 e51@-->|"RenderApp / ExtractSchedule"| n52
+  class e51 edge_registration
+  n0 e52@-->|"RenderApp / ExtractSchedule"| n53
+  class e52 edge_registration
+  n0 e53@-->|"RenderApp / ExtractSchedule"| n54
+  class e53 edge_registration
+  n0 e54@-->|"RenderApp / ExtractSchedule"| n55
+  class e54 edge_registration
+  n0 e55@-->|"RenderApp / ExtractSchedule"| n56
+  class e55 edge_registration
+  n0 e56@-->|"RenderApp / ExtractSchedule"| n57
+  class e56 edge_registration
+  n0 e57@-->|"RenderApp / ExtractSchedule"| n58
+  class e57 edge_registration
+  n0 e58@-->|"RenderApp / ExtractSchedule"| n59
+  class e58 edge_registration
+  n0 e59@-->|"RenderApp / ExtractSchedule"| n60
+  class e59 edge_registration
+  n0 e60@-->|"RenderApp / ExtractSchedule"| n61
+  class e60 edge_registration
+  n0 e61@-->|"RenderApp / ExtractSchedule"| n62
+  class e61 edge_registration
+  n0 e62@-->|"RenderApp / ExtractSchedule"| n63
+  class e62 edge_registration
+  n0 e63@-->|"RenderApp / ExtractSchedule"| n64
+  class e63 edge_registration
+  n0 e64@-->|"RenderApp / ExtractSchedule"| n65
+  class e64 edge_registration
+  n0 e65@-->|"RenderApp / ExtractSchedule"| n66
+  class e65 edge_registration
+  n0 e66@-->|"RenderApp / ExtractSchedule"| n67
+  class e66 edge_registration
+  n0 e67@-->|"RenderApp / ExtractSchedule"| n68
+  class e67 edge_registration
+  n0 e68@-->|"RenderApp / ExtractSchedule"| n69
+  class e68 edge_registration
+  n0 e69@-->|"RenderApp / ExtractSchedule"| n70
+  class e69 edge_registration
+  n0 e70@-->|"RenderApp / ExtractSchedule"| n71
+  class e70 edge_registration
+  n0 e71@-->|"RenderApp / ExtractSchedule"| n72
+  class e71 edge_registration
+  n0 e72@-->|"RenderApp / ExtractSchedule"| n73
+  class e72 edge_registration
+  n0 e73@-->|"RenderApp / ExtractSchedule"| n74
+  class e73 edge_registration
+  n0 e74@-->|"RenderApp / ExtractSchedule"| n75
+  class e74 edge_registration
+  n0 e75@-->|"RenderApp / ExtractSchedule"| n76
+  class e75 edge_registration
+  n0 e76@-->|"RenderApp / ExtractSchedule"| n77
+  class e76 edge_registration
+  n0 e77@-->|"RenderApp / ExtractSchedule"| n78
+  class e77 edge_registration
+  n0 e78@-->|"RenderApp / ExtractSchedule"| n79
+  class e78 edge_registration
+  n0 e79@-->|"RenderApp / ExtractSchedule"| n80
+  class e79 edge_registration
+  n0 e80@-->|"RenderApp / ExtractSchedule"| n81
+  class e80 edge_registration
+  n0 e81@-->|"RenderApp / ExtractSchedule"| n82
+  class e81 edge_registration
+  n0 e82@-->|"RenderApp / ExtractSchedule"| n83
+  class e82 edge_registration
+  n0 e83@-->|"RenderApp / ExtractSchedule"| n84
+  class e83 edge_registration
+  n0 e84@-->|"RenderApp / ExtractSchedule"| n85
+  class e84 edge_registration
+  n0 e85@-->|"RenderApp / ExtractSchedule"| n86
+  class e85 edge_registration
+  n0 e86@-->|"RenderApp / ExtractSchedule"| n87
+  class e86 edge_registration
+  n0 e87@-->|"RenderApp / ExtractSchedule"| n88
+  class e87 edge_registration
+  n0 e88@-->|"RenderApp / ExtractSchedule"| n89
+  class e88 edge_registration
+  n0 e89@-->|"RenderApp / ExtractSchedule"| n90
+  class e89 edge_registration
+  n0 e90@-->|"RenderApp / ExtractSchedule"| n91
+  class e90 edge_registration
+  n0 e91@-->|"RenderApp / ExtractSchedule"| n92
+  class e91 edge_registration
+  n0 e92@-->|"RenderApp / ExtractSchedule"| n93
+  class e92 edge_registration
+  n0 e93@-->|"RenderApp / ExtractSchedule"| n94
+  class e93 edge_registration
+  n0 e94@-->|"RenderApp / ExtractSchedule"| n95
+  class e94 edge_registration
+  n0 e95@-->|"RenderApp / ExtractSchedule"| n96
+  class e95 edge_registration
+  n0 e96@-->|"RenderApp / ExtractSchedule"| n97
+  class e96 edge_registration
+  n0 e97@-->|"RenderApp / ExtractSchedule"| n98
+  class e97 edge_registration
+  n0 e98@-->|"RenderApp / ExtractSchedule"| n99
+  class e98 edge_registration
+  n0 e99@-->|"RenderApp / ExtractSchedule"| n100
+  class e99 edge_registration
+  n0 e100@-->|"RenderApp / ExtractSchedule"| n101
+  class e100 edge_registration
+  n0 e101@-->|"RenderApp / ExtractSchedule"| n102
+  class e101 edge_registration
+  n0 e102@-->|"RenderApp / ExtractSchedule"| n103
+  class e102 edge_registration
+  n0 e103@-->|"RenderApp / ExtractSchedule"| n104
+  class e103 edge_registration
+  n0 e104@-->|"RenderApp / ExtractSchedule"| n105
+  class e104 edge_registration
+  n0 e105@-->|"RenderApp / ExtractSchedule"| n106
+  class e105 edge_registration
+  n0 e106@-->|"RenderApp / ExtractSchedule"| n107
+  class e106 edge_registration
+  n0 e107@-->|"RenderApp / ExtractSchedule"| n108
+  class e107 edge_registration
+  n0 e108@-->|"RenderApp / ExtractSchedule"| n109
+  class e108 edge_registration
+  n0 e109@-->|"RenderApp / ExtractSchedule"| n110
+  class e109 edge_registration
+  n0 e110@-->|"RenderApp / ExtractSchedule"| n111
+  class e110 edge_registration
+  n0 e111@-->|"RenderApp / ExtractSchedule"| n112
+  class e111 edge_registration
+  n0 e112@-->|"RenderApp / ExtractSchedule"| n113
+  class e112 edge_registration
+  n0 e113@-->|"RenderApp / ExtractSchedule"| n114
+  class e113 edge_registration
+  n0 e114@-->|"RenderApp / ExtractSchedule"| n115
+  class e114 edge_registration
+  n0 e115@-->|"RenderApp / ExtractSchedule"| n116
+  class e115 edge_registration
+  n0 e116@-->|"RenderApp / ExtractSchedule"| n117
+  class e116 edge_registration
+  n0 e117@-->|"RenderApp / ExtractSchedule"| n118
+  class e117 edge_registration
+  n0 e118@-->|"RenderApp / ExtractSchedule"| n119
+  class e118 edge_registration
+  n0 e119@-->|"RenderApp / ExtractSchedule"| n120
+  class e119 edge_registration
+  n0 e120@-->|"RenderApp / ExtractSchedule"| n121
+  class e120 edge_registration
+  n0 e121@-->|"RenderApp / ExtractSchedule"| n122
+  class e121 edge_registration
+  n0 e122@-->|"RenderApp / ExtractSchedule"| n123
+  class e122 edge_registration
+  n0 e123@-->|"RenderApp / ExtractSchedule"| n124
+  class e123 edge_registration
+  n0 e124@-->|"RenderApp / ExtractSchedule"| n125
+  class e124 edge_registration
+  n0 e125@-->|"RenderApp / ExtractSchedule"| n126
+  class e125 edge_registration
+  n0 e126@-->|"RenderApp / ExtractSchedule"| n127
+  class e126 edge_registration
+  n0 e127@-->|"RenderApp / ExtractSchedule"| n128
+  class e127 edge_registration
+  n0 e128@-->|"RenderApp / ExtractSchedule"| n129
+  class e128 edge_registration
+  n0 e129@-->|"RenderApp / ExtractSchedule"| n130
+  class e129 edge_registration
+  n0 e130@-->|"RenderApp / ExtractSchedule"| n131
+  class e130 edge_registration
+  n0 e131@-->|"RenderApp / ExtractSchedule"| n132
+  class e131 edge_registration
+  n0 e132@-->|"RenderApp / ExtractSchedule"| n133
+  class e132 edge_registration
+  n0 e133@-->|"RenderApp / ExtractSchedule"| n134
+  class e133 edge_registration
+  n0 e134@-->|"RenderApp / ExtractSchedule"| n135
+  class e134 edge_registration
+  n0 e135@-->|"RenderApp / ExtractSchedule"| n136
+  class e135 edge_registration
+  n0 e136@-->|"RenderApp / ExtractSchedule"| n137
+  class e136 edge_registration
+  n0 e137@-->|"RenderApp / ExtractSchedule"| n138
+  class e137 edge_registration
+  n0 e138@-->|"RenderApp / ExtractSchedule"| n139
+  class e138 edge_registration
+  n0 e139@-->|"RenderApp / ExtractSchedule"| n140
+  class e139 edge_registration
+  n0 e140@-->|"RenderApp / ExtractSchedule"| n141
+  class e140 edge_registration
+  n0 e141@-->|"RenderApp / ExtractSchedule"| n142
+  class e141 edge_registration
+  n0 e142@-->|"RenderApp / ExtractSchedule"| n143
+  class e142 edge_registration
+  n0 e143@-->|"RenderApp / ExtractSchedule"| n144
+  class e143 edge_registration
+  n0 e144@-->|"RenderApp / ExtractSchedule"| n145
+  class e144 edge_registration
+  n0 e145@-->|"RenderApp / ExtractSchedule"| n146
+  class e145 edge_registration
+  n0 e146@-->|"RenderApp / ExtractSchedule"| n147
+  class e146 edge_registration
+  n0 e147@-->|"RenderApp / ExtractSchedule"| n148
+  class e147 edge_registration
+  n0 e148@-->|"依赖端点"| n149
+  class e148 edge_reference
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e17@{ curve: basis }
+  e18@{ curve: basis }
+  e19@{ curve: basis }
+  e20@{ curve: basis }
+  e21@{ curve: basis }
+  e22@{ curve: basis }
+  e23@{ curve: basis }
+  e24@{ curve: basis }
+  e25@{ curve: basis }
+  e26@{ curve: basis }
+  e27@{ curve: basis }
+  e28@{ curve: basis }
+  e29@{ curve: basis }
+  e30@{ curve: basis }
+  e31@{ curve: basis }
+  e32@{ curve: basis }
+  e33@{ curve: basis }
+  e34@{ curve: basis }
+  e35@{ curve: basis }
+  e36@{ curve: basis }
+  e37@{ curve: basis }
+  e38@{ curve: basis }
+  e39@{ curve: basis }
+  e40@{ curve: basis }
+  e41@{ curve: basis }
+  e42@{ curve: basis }
+  e43@{ curve: basis }
+  e44@{ curve: basis }
+  e45@{ curve: basis }
+  e46@{ curve: basis }
+  e47@{ curve: basis }
+  e48@{ curve: basis }
+  e49@{ curve: basis }
+  e50@{ curve: basis }
+  e51@{ curve: basis }
+  e52@{ curve: basis }
+  e53@{ curve: basis }
+  e54@{ curve: basis }
+  e55@{ curve: basis }
+  e56@{ curve: basis }
+  e57@{ curve: basis }
+  e58@{ curve: basis }
+  e59@{ curve: basis }
+  e60@{ curve: basis }
+  e61@{ curve: basis }
+  e62@{ curve: basis }
+  e63@{ curve: basis }
+  e64@{ curve: basis }
+  e65@{ curve: basis }
+  e66@{ curve: basis }
+  e67@{ curve: basis }
+  e68@{ curve: basis }
+  e69@{ curve: basis }
+  e70@{ curve: basis }
+  e71@{ curve: basis }
+  e72@{ curve: basis }
+  e73@{ curve: basis }
+  e75@{ curve: basis }
+  e76@{ curve: basis }
+  e77@{ curve: basis }
+  e78@{ curve: basis }
+  e79@{ curve: basis }
+  e80@{ curve: basis }
+  e81@{ curve: basis }
+  e82@{ curve: basis }
+  e83@{ curve: basis }
+  e84@{ curve: basis }
+  e85@{ curve: basis }
+  e86@{ curve: basis }
+  e87@{ curve: basis }
+  e88@{ curve: basis }
+  e89@{ curve: basis }
+  e90@{ curve: basis }
+  e91@{ curve: basis }
+  e92@{ curve: basis }
+  e93@{ curve: basis }
+  e94@{ curve: basis }
+  e95@{ curve: basis }
+  e96@{ curve: basis }
+  e97@{ curve: basis }
+  e98@{ curve: basis }
+  e99@{ curve: basis }
+  e100@{ curve: basis }
+  e101@{ curve: basis }
+  e102@{ curve: basis }
+  e103@{ curve: basis }
+  e104@{ curve: basis }
+  e105@{ curve: basis }
+  e106@{ curve: basis }
+  e107@{ curve: basis }
+  e108@{ curve: basis }
+  e109@{ curve: basis }
+  e110@{ curve: basis }
+  e111@{ curve: basis }
+  e112@{ curve: basis }
+  e113@{ curve: basis }
+  e114@{ curve: basis }
+  e115@{ curve: basis }
+  e116@{ curve: basis }
+  e117@{ curve: basis }
+  e118@{ curve: basis }
+  e119@{ curve: basis }
+  e120@{ curve: basis }
+  e121@{ curve: basis }
+  e122@{ curve: basis }
+  e123@{ curve: basis }
+  e124@{ curve: basis }
+  e125@{ curve: basis }
+  e126@{ curve: basis }
+  e127@{ curve: basis }
+  e128@{ curve: basis }
+  e129@{ curve: basis }
+  e130@{ curve: basis }
+  e131@{ curve: basis }
+  e132@{ curve: basis }
+  e133@{ curve: basis }
+  e134@{ curve: basis }
+  e135@{ curve: basis }
+  e136@{ curve: basis }
+  e137@{ curve: basis }
+  e138@{ curve: basis }
+  e139@{ curve: basis }
+  e140@{ curve: basis }
+  e141@{ curve: basis }
+  e142@{ curve: basis }
+  e143@{ curve: basis }
+  e144@{ curve: basis }
+  e145@{ curve: basis }
+  e146@{ curve: basis }
+  e147@{ curve: basis }
+  e148@{ curve: basis }

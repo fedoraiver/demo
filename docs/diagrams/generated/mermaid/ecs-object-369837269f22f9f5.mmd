@@ -1,0 +1,117 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: update_clipping_system · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_system_param fill:#EFF5F6,stroke:#3B8790,stroke-width:1.6px,color:#1F3340
+  classDef node_engine_flow fill:#F1F5F4,stroke:#557C78,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**update_clipping_system**<br/>从 UI 根递归更新继承裁剪范围。" }
+  class n0 node_system
+  n1@{ shape: stadium, label: "**main · PostUpdate**<br/>保存本应用调度的注册上下文与成员。" }
+  class n1 node_engine_flow
+  n2@{ shape: lin-rect, label: "**UiSystems::PostLayout**<br/>根据完成的布局生成裁切和文字几何。" }
+  class n2 node_system_set
+  n3@{ shape: notch-rect, label: "**Commands**<br/>保存延迟执行的 World 操作队列" }
+  class n3 node_system_param
+  n4@{ shape: notch-rect, label: "**UiRootNodes**<br/>枚举 UI 布局的根节点。" }
+  class n4 node_system_param
+  n5@{ shape: rounded, label: "**Node**<br/>声明 UI 节点的布局规则。" }
+  class n5 node_component
+  n6@{ shape: rounded, label: "**ComputedNode**<br/>保存 UI 布局计算后的物理尺寸。" }
+  class n6 node_component
+  n7@{ shape: rounded, label: "**UiGlobalTransform**<br/>保存 UI 节点的绝对二维变换。" }
+  class n7 node_component
+  n8@{ shape: rounded, label: "**CalculatedClip**<br/>缓存节点从祖先继承的裁剪结果。" }
+  class n8 node_component
+  n9@{ shape: rounded, label: "**OverrideClip**<br/>忽略祖先施加的 UI 裁剪。" }
+  class n9 node_component
+  n10@{ shape: rounded, label: "**FixedNode**<br/>将子 UI 节点按视口根节点布局。" }
+  class n10 node_component
+  n11@{ shape: notch-rect, label: "**UiChildren**<br/>按 UI 层级访问子节点。" }
+  class n11 node_system_param
+  n12@{ shape: rounded, label: "**Children**<br/>保存以 ChildOf 指向当前父实体的子实体集<br/>合" }
+  class n12 node_component
+  n13@{ shape: rounded, label: "**ChildOf**<br/>保存当前实体的父实体身份" }
+  class n13 node_component
+  n1 e0@-->|"main / PostUpdate"| n0
+  class e0 edge_registration
+  n2 e1@--> n0
+  class e1 edge_set_membership
+  n3 e2@-->|"参数 / 查询数据"| n0
+  class e2 edge_reference
+  n4 e3@-->|"参数 / 查询数据"| n0
+  class e3 edge_reference
+  n5 e4@--> n0
+  class e4 edge_read
+  n6 e5@--> n0
+  class e5 edge_read
+  n7 e6@--> n0
+  class e6 edge_read
+  n0 e7@--> n8
+  class e7 edge_write
+  n9 e8@-->|"存在 / 变更过滤"| n0
+  class e8 edge_reference
+  n10 e9@-->|"存在 / 变更过滤"| n0
+  class e9 edge_reference
+  n11 e10@-->|"参数 / 查询数据"| n0
+  class e10 edge_reference
+  n12 e11@--> n0
+  class e11 edge_read
+  n5 e12@-->|"存在 / 变更过滤"| n0
+  class e12 edge_reference
+  n12 e13@-->|"存在 / 变更过滤"| n0
+  class e13 edge_reference
+  n13 e14@--> n0
+  class e14 edge_read
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }

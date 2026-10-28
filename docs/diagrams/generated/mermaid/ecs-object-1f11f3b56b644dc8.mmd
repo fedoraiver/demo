@@ -1,0 +1,74 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: RenderViewLightProbes<EnvironmentMapLight> · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**RenderViewLightProbes#lt;EnvironmentMap**<br/>**Light#gt;**<br/>维护视图光照探针及纹理绑定索引。" }
+  class n0 node_component
+  n1@{ shape: rounded, label: "**gather_light_probes#lt;bevy_light::**<br/>**probe::EnvironmentMapLight#gt;**<br/>按相机可见集合和距离分配已就绪光照探针。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**upload_light_probes**<br/>上传各视图的环境图、反射与辐照探针参数。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**prepare_clusters_for_cpu_clustering**<br/>把 CPU 聚簇列表转换并上传为 GPU 索引缓<br/>冲。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**prepare_mesh_view_bind_groups**<br/>为视图绑定光照、阴影及各可选渲染效果资<br/>源。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**check_views_need_specialization**<br/>汇总视图渲染特性并检测管线配置变化。" }
+  class n5 node_system
+  n6@{ shape: rounded, label: "**prepare_clusters_for_gpu_clustering**<br/>按视图规模和回读容量分配 GPU 聚簇缓冲。" }
+  class n6 node_system
+  n1 e0@-->|"延迟移除"| n0
+  class e0 edge_write
+  n1 e1@-->|"延迟添加"| n0
+  class e1 edge_write
+  n0 e2@--> n2
+  class e2 edge_read
+  n0 e3@--> n3
+  class e3 edge_read
+  n0 e4@--> n4
+  class e4 edge_read
+  n0 e5@-->|"存在 / 变更过滤"| n5
+  class e5 edge_reference
+  n0 e6@--> n6
+  class e6 edge_read
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }

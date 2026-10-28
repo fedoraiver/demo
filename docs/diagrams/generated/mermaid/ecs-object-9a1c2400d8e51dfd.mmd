@@ -1,0 +1,59 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: PrepassPipeline · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: cyl, label: "**PrepassPipeline**<br/>描述深度等预通道的网格渲染接口。" }
+  class n0 node_resource
+  n1@{ shape: rounded, label: "**specialize_shadows**<br/>按阴影视图、网格及材质变化重新选择专用阴<br/>影渲染管线，清理失效缓存，并整理需要补齐<br/>或重新排队的阴影网格任务。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**prepare_prepass_view_bind_group**<br/>绑定预通道的视图、全局和前帧缓冲。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**init_prepass_pipeline**<br/>初始化带运动矢量及普通预通道的资源布局。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**init_prepass_view_bind_group**<br/>建立预通道的空绑定组及待准备状态。" }
+  class n4 node_system
+  n0 e0@-->|"正文只读访问"| n1
+  class e0 edge_read
+  n0 e1@--> n2
+  class e1 edge_read
+  n3 e2@-->|"延迟添加"| n0
+  class e2 edge_write
+  n0 e3@--> n4
+  class e3 edge_read
+  e0@{ curve: basis }
+  e3@{ curve: basis }

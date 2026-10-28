@@ -1,0 +1,120 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: ViewDepthStencilTexture · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**ViewDepthStencilTexture**<br/>提供视图绘制的深度模板附件。" }
+  class n0 node_component
+  n1@{ shape: rounded, label: "**main_opaque_pass_2d**<br/>绘制二维不透明和 AlphaMask 阶段。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**main_transparent_pass_2d**<br/>使用已有深度绘制二维透明阶段。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**main_opaque_pass_3d**<br/>绘制三维不透明、AlphaMask 与天空盒。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**main_transparent_pass_3d**<br/>绘制三维透明物体并保护 OIT 链表状态。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**oit_resolve**<br/>在透明主通道之后解析顺序无关透明数据并合<br/>成到视图颜色，同时重置 OIT 原子计数与链<br/>表头，避免下一次透明通道使用损坏的数据。" }
+  class n5 node_system
+  n6@{ shape: rounded, label: "**main_transmissive_pass_3d**<br/>分层复制场景颜色并绘制三维透射物体。" }
+  class n6 node_system
+  n7@{ shape: rounded, label: "**late_downsample_depth**<br/>更新供下一帧早期遮挡测试使用的深度金字<br/>塔。" }
+  class n7 node_system
+  n8@{ shape: rounded, label: "**motion_blur**<br/>读取当前视图颜色、预通道运动矢量和深度，<br/>按快门角度及采样数执行运动模糊；采样关<br/>闭、所需纹理或管线不可用时跳过。" }
+  class n8 node_system
+  n9@{ shape: rounded, label: "**early_downsample_depth**<br/>生成供本帧晚期遮挡测试使用的深度金字塔。" }
+  class n9 node_system
+  n10@{ shape: rounded, label: "**depth_of_field**<br/>以两阶段全屏通道执行景深模糊。" }
+  class n10 node_system
+  n11@{ shape: rounded, label: "**volumetric_fog**<br/>逐个处理视图中的体积雾区域，结合场景深<br/>度、光照和可选密度纹理绘制雾光照；根据相<br/>机位于雾体内外选择平面或立方体网格。" }
+  class n11 node_system
+  n12@{ shape: rounded, label: "**prepare_core_2d_depth_textures**<br/>为有效二维视图准备共享目标深度纹理。" }
+  class n12 node_system
+  n13@{ shape: rounded, label: "**prepare_core_3d_depth_textures**<br/>按共享目标准备三维深度纹理与清除方式。" }
+  class n13 node_system
+  n14@{ shape: rounded, label: "**prepare_atmosphere_bind_groups**<br/>为大气查找表计算和天空绘制绑定视图资源。" }
+  class n14 node_system
+  n15@{ shape: rounded, label: "**prepare_downsample_depth_view_bind_**<br/>**groups**<br/>将主视图或阴影深度绑定到降采样管线。" }
+  class n15 node_system
+  n0 e0@--> n1
+  class e0 edge_read
+  n0 e1@--> n2
+  class e1 edge_read
+  n0 e2@--> n3
+  class e2 edge_read
+  n0 e3@--> n4
+  class e3 edge_read
+  n0 e4@--> n5
+  class e4 edge_read
+  n0 e5@--> n6
+  class e5 edge_read
+  n0 e6@--> n7
+  class e6 edge_read
+  n0 e7@--> n8
+  class e7 edge_read
+  n0 e8@--> n9
+  class e8 edge_read
+  n0 e9@--> n10
+  class e9 edge_read
+  n0 e10@--> n11
+  class e10 edge_read
+  n12 e11@-->|"延迟添加"| n0
+  class e11 edge_write
+  n13 e12@-->|"延迟添加"| n0
+  class e12 edge_write
+  n0 e13@--> n14
+  class e13 edge_read
+  n0 e14@--> n15
+  class e14 edge_read
+  n0 e15@-->|"存在 / 变更过滤"| n15
+  class e15 edge_reference
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }

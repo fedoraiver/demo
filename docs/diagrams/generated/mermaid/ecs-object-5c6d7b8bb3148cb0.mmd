@@ -1,0 +1,109 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: GizmoMeshSystems · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_engine_flow fill:#F1F5F4,stroke:#557C78,stroke-width:1.6px,color:#1F3340
+  classDef edge_order stroke:#334155,stroke-width:2px
+  classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: lin-rect, label: "**GizmoMeshSystems**<br/>把调试绘制存储转换为渲染网格。" }
+  class n0 node_system_set
+  n1@{ shape: stadium, label: "**main · Last**<br/>保存本应用调度的注册上下文与成员。" }
+  class n1 node_engine_flow
+  n2@{ shape: rounded, label: "**update_gizmo_meshes#lt;bevy_light::**<br/>**gizmos::LightGizmoConfigGroup#gt;**<br/>把配置组即时线条缓冲转交 Gizmo 资产。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**update_gizmo_meshes#lt;bevy_gizmos::**<br/>**config::DefaultGizmoConfigGroup#gt;**<br/>把配置组即时线条缓冲转交 Gizmo 资产。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**update_gizmo_meshes#lt;bevy_gizmos::**<br/>**aabb::AabbGizmoConfigGroup#gt;**<br/>把配置组即时线条缓冲转交 Gizmo 资产。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**update_gizmo_meshes#lt;bevy_gizmos::**<br/>**frustum::FrustumGizmoConfigGroup#gt;**<br/>把配置组即时线条缓冲转交 Gizmo 资产。" }
+  class n5 node_system
+  n6@{ shape: rounded, label: "**update_gizmo_meshes#lt;bevy_gizmos::**<br/>**skinned_mesh_bounds::**<br/>**SkinnedMeshBoundsGizmoConfigGroup#gt;**<br/>把配置组即时线条缓冲转交 Gizmo 资产。" }
+  class n6 node_system
+  n7@{ shape: rounded, label: "**propagate_gizmos#lt;bevy_gizmos::aabb::**<br/>**AabbGizmoConfigGroup, bevy_time::**<br/>**fixed::Fixed#gt;**<br/>把指定上下文与清理阶段的 GizmoStorage<br/>追加到 Update 图元存储，供后续网格构建<br/>和渲染使用；具体配置组和阶段由泛型实参区<br/>分。" }
+  class n7 node_system
+  n8@{ shape: rounded, label: "**propagate_gizmos#lt;bevy_light::**<br/>**gizmos::LightGizmoConfigGroup, bevy_**<br/>**time::fixed::Fixed#gt;**<br/>把指定上下文与清理阶段的 GizmoStorage<br/>追加到 Update 图元存储，供后续网格构建<br/>和渲染使用；具体配置组和阶段由泛型实参区<br/>分。" }
+  class n8 node_system
+  n9@{ shape: rounded, label: "**propagate_gizmos#lt;bevy_gizmos::**<br/>**config::DefaultGizmoConfigGroup,**<br/>**bevy_time::fixed::Fixed#gt;**<br/>把指定上下文与清理阶段的 GizmoStorage<br/>追加到 Update 图元存储，供后续网格构建<br/>和渲染使用；具体配置组和阶段由泛型实参区<br/>分。" }
+  class n9 node_system
+  n10@{ shape: rounded, label: "**flush_global_gizmos**<br/>在锁内取走全局 Gizmo 缓冲，把线带和独立<br/>线段的位置、颜色追加到当前 Gizmos 参<br/>数，清空全局暂存并交由本轮图元流程处理。" }
+  class n10 node_system
+  n11@{ shape: rounded, label: "**propagate_gizmos#lt;bevy_gizmos::**<br/>**frustum::FrustumGizmoConfigGroup,**<br/>**bevy_time::fixed::Fixed#gt;**<br/>把指定上下文与清理阶段的 GizmoStorage<br/>追加到 Update 图元存储，供后续网格构建<br/>和渲染使用；具体配置组和阶段由泛型实参区<br/>分。" }
+  class n11 node_system
+  n12@{ shape: rounded, label: "**propagate_gizmos#lt;bevy_gizmos::**<br/>**skinned_mesh_bounds::**<br/>**SkinnedMeshBoundsGizmoConfigGroup,**<br/>**bevy_time::fixed::Fixed#gt;**<br/>把指定上下文与清理阶段的 GizmoStorage<br/>追加到 Update 图元存储，供后续网格构建<br/>和渲染使用；具体配置组和阶段由泛型实参区<br/>分。" }
+  class n12 node_system
+  n1 e0@-->|"main / Last"| n0
+  class e0 edge_registration
+  n0 e1@--> n2
+  class e1 edge_set_membership
+  n0 e2@--> n3
+  class e2 edge_set_membership
+  n0 e3@--> n4
+  class e3 edge_set_membership
+  n0 e4@--> n5
+  class e4 edge_set_membership
+  n0 e5@--> n6
+  class e5 edge_set_membership
+  n7 e6@--> n0
+  class e6 edge_order
+  n8 e7@--> n0
+  class e7 edge_order
+  n9 e8@--> n0
+  class e8 edge_order
+  n10 e9@--> n0
+  class e9 edge_order
+  n11 e10@--> n0
+  class e10 edge_order
+  n12 e11@--> n0
+  class e11 edge_order
+  n1 layout_input_0@~~~ n7
+  n7 layout_input_1@~~~ n8
+  n8 layout_input_2@~~~ n9
+  n9 layout_input_3@~~~ n10
+  n10 layout_input_4@~~~ n11
+  n11 layout_input_5@~~~ n12
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }

@@ -1,0 +1,59 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: MeshMaterial3d<ExtendedMaterial<StandardMaterial, ForwardDecalMaterialExt>> · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**MeshMaterial3d#lt;ExtendedMaterial#lt;Stan**<br/>**dardMaterial,**<br/>**ForwardDecalMaterialExt#gt;#gt;**<br/>为三维网格指定材质资产。" }
+  class n0 node_component
+  n1@{ shape: rounded, label: "**mark_meshes_as_changed_if_their_**<br/>**materials_changed#lt;bevy_pbr::**<br/>**extended_material::**<br/>**ExtendedMaterial#lt;bevy_pbr::pbr_**<br/>**material::StandardMaterial, bevy_**<br/>**pbr::decal::forward::**<br/>**ForwardDecalMaterialExt#gt;#gt;**<br/>材质组件或资产变化时请求网格重新提取。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**check_entities_needing_**<br/>**specialization#lt;bevy_pbr::extended_**<br/>**material::ExtendedMaterial#lt;bevy_**<br/>**pbr::pbr_material::**<br/>**StandardMaterial, bevy_pbr::decal::**<br/>**forward::ForwardDecalMaterialExt#gt;#gt;**<br/>收集几何或材质变化及移除的三维网格。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**extract_mesh_materials#lt;bevy_pbr::**<br/>**extended_material::**<br/>**ExtendedMaterial#lt;bevy_pbr::pbr_**<br/>**material::StandardMaterial, bevy_**<br/>**pbr::decal::forward::**<br/>**ForwardDecalMaterialExt#gt;#gt;**<br/>根据可见性和材质变化更新渲染实例映射。" }
+  class n3 node_system
+  n0 e0@-->|"存在 / 变更过滤"| n1
+  class e0 edge_reference
+  n0 e1@-->|"存在 / 变更过滤"| n2
+  class e1 edge_reference
+  n0 e2@--> n3
+  class e2 edge_read
+  n0 e3@-->|"存在 / 变更过滤"| n3
+  class e3 edge_reference
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }

@@ -1,0 +1,58 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: Readback · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**Readback**<br/>请求异步读取 GPU 纹理或缓冲内容。" }
+  class n0 node_component
+  n1@{ shape: rounded, label: "**cleanup_readback_once**<br/>从带 ReadbackOnce 的请求实体移除<br/>Readback 和 ReadbackOnce，结束一次性<br/>GPU 回读请求；实体自身继续保留。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**extract_components#lt;bevy_render::gpu_**<br/>**readback::Readback, bevy_render::**<br/>**RenderApp, ()#gt;**<br/>对已同步到子世界的实体读取<br/>ExtractComponent 指定的查询数据，批量<br/>写入转换后的目标组件；转换返回 None 时<br/>移除对应目标组件。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**prepare_buffers**<br/>读取 GPU 回读请求，为纹理或存储缓冲的指<br/>定区段从缓冲池取得暂存空间并创建异步完成<br/>通道；越界缓冲区段会报错。" }
+  class n3 node_system
+  n1 e0@-->|"延迟移除"| n0
+  class e0 edge_write
+  n2 e1@-->|"延迟移除"| n0
+  class e1 edge_write
+  n2 e2@-->|"延迟添加"| n0
+  class e2 edge_write
+  n0 e3@--> n3
+  class e3 edge_read
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }

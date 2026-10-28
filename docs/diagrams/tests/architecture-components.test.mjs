@@ -1,0 +1,541 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import { buildComponentCatalog, maskRustSource } from '../src/architecture-components.mjs';
+import { buildArchitectureModel } from '../src/architecture-model.mjs';
+import { DEPENDENCY_SOURCE_DEFINITIONS } from '../catalog/architecture-source-definitions.mjs';
+
+function fixture({ components, systems = [], files = {}, links = [], dependencyFiles = {}, mergeSystems = true }) {
+  const model = { entities: components.map((component, index) => ({ id: `owner${index}`, name: `Owner ${index}`, components: [component] })), systems, system_links: links };
+  const registry = Object.fromEntries(model.entities.flatMap(entity => [
+    [`entity-${entity.id}`, { ...entity, id: `entity-${entity.id}`, kind: 'Entity', feature: 'example' }],
+    ...entity.components.map(component => [component.id, { ...component, kind: 'Component', feature: 'example', defined_in: 'example' }]),
+  ]));
+  for (const system of systems) registry[system.id] = { kind: 'System', feature: 'example', ...system };
+  return { model, registry, catalog: buildComponentCatalog(model, registry, { mergeSystems, readSource: filename => files[filename], readDependencySource: source => dependencyFiles[source.path] }) };
+}
+const component = (id, name = 'Flag', source = { path: 'src/types.rs', line: 1 }) => ({ id, name, source });
+const system = (id, source, reads = [], writes = [], extra = {}) => ({ id, kind: 'System', name: 'run', source, reads, writes,
+  registrations: [{ schedule: 'Update', scope: 'runtime' }], ...extra });
+const definition = (path, line, name = 'bevy_test', root = 'C:/cargo/test') => ({ path, line, dependency: { name, version: '1.0.0', root } });
+
+test('try_remove 保留真实移除位置，With 与 Has 标记不冒充字段读取', () => {
+  const { catalog } = fixture({
+    components: [component('button.PrimaryPress', 'PrimaryPress'), component('button.MenuButton', 'MenuButton')],
+    systems: [system('run', { path: 'src/run.rs', line: 1 }, ['button.PrimaryPress', 'button.MenuButton'], ['button.PrimaryPress'])],
+    files: { 'src/run.rs': `fn run(buttons: Query<(), With<MenuButton>>, pressed: Query<Has<PrimaryPress>>, mut commands: Commands) {
+    if buttons.contains(entity) && pressed.get(entity).unwrap_or(false) {
+        commands.entity(entity).try_remove::<PrimaryPress>();
+    }
+}` },
+  });
+  const links = catalog.graphFor('button.PrimaryPress').links.filter(link => link.operation !== 'contains');
+  assert.deepEqual(new Set(links.map(link => link.operation)), new Set(['filter', 'remove']));
+  const removal = links.find(link => link.operation === 'remove');
+  assert.equal(removal.sourceGaps.length, 0);
+  assert.ok(removal.sourceEntries.some(source => source.role === 'operation' && source.path === 'src/run.rs' && source.line === 3));
+  assert.deepEqual(catalog.graphFor('button.MenuButton').links.filter(link => link.operation !== 'contains').map(link => link.operation), ['filter']);
+});
+
+test('原生 Button 的存在过滤与 Pressed 插入使用锁定依赖中的独立操作证据', () => {
+  const { catalog } = fixture({
+    components: [component('menu_button.Button', 'Button'), component('menu_button.Pressed', 'Pressed')],
+    systems: [system('native_button_down', definition('src/button.rs', 1, 'bevy_ui_widgets'),
+      ['menu_button.Button', 'menu_button.Pressed'], ['menu_button.Pressed'], { name: 'button_on_pointer_down', kind: 'Observer' })],
+    dependencyFiles: { 'src/button.rs': `fn button_on_pointer_down(state: Query<Has<Pressed>, With<Button>>, mut commands: Commands) {
+    commands.entity(entity).insert(Pressed);
+}` },
+  });
+  const links = catalog.graphFor('menu_button.Pressed').links.filter(link => link.operation !== 'contains');
+  assert.deepEqual(new Set(links.map(link => link.operation)), new Set(['filter', 'insert']));
+  assert.ok(links.every(link => !link.sourceGaps.length));
+  assert.ok(links.find(link => link.operation === 'insert').sourceEntries.some(source => source.dependency.name === 'bevy_ui_widgets' && source.role === 'operation' && source.line === 2));
+  assert.deepEqual(catalog.graphFor('menu_button.Button').links.filter(link => link.operation !== 'contains').map(link => link.operation), ['filter']);
+});
+
+test('排队唤醒保留整岛生命周期操作证据，Ref 变更元数据不冒充字段读取', () => {
+  const source = { path: 'src/physics/mod.rs', line: 1 };
+  const dep = definition('src/dynamics/rigid_body/sleeping.rs', 1, 'avian3d');
+  const { catalog } = fixture({
+    components: ['Sleeping', 'SleepTimer', 'SolverBodyIndex', 'Position'].map(name => ({ ...component(`character.${name}`, name), definition_source: dep })),
+    systems: [system('wake_changed_bodies', source, [], ['character.Sleeping', 'character.SleepTimer', 'character.SolverBodyIndex'], { name: 'wake_changed_bodies' })],
+    files: { 'src/physics/mod.rs': `fn wake_changed_bodies(bodies: Query<Ref<Position>, (With<Sleeping>, Changed<Position>)>, mut commands: Commands) {
+      commands.queue(WakeBody(entity));
+    }` },
+    dependencyFiles: {
+      'src/dynamics/solver/islands/sleeping.rs': `impl Command for WakeIslands {
+        WakeIslands(vec![body_island.island_id]).apply(world);
+        sleep_timer.0 = 0.0;
+        world.entity_mut(entity).remove::<Sleeping>();
+      }`,
+      'src/dynamics/solver/solver_body/plugin.rs': `fn build() {
+        app.add_observer(|trigger: On<Remove<Sleeping>>| {});
+        commands.entity(entity).try_insert(index);
+      }`,
+    },
+  });
+  for (const [name, operation, line] of [['Sleeping', 'remove', 4], ['SleepTimer', 'write', 3], ['SolverBodyIndex', 'insert', 3]]) {
+    const edge = catalog.graphFor(`character.${name}`).links.find(link => link.operation === operation);
+    assert.ok(edge);
+    assert.equal(edge.sourceGaps.length, 0);
+    assert.ok(edge.sourceEntries.some(entry => entry.path === source.path && entry.line === 2));
+    assert.ok(edge.sourceEntries.some(entry => entry.dependency?.name === 'avian3d' && entry.role === 'operation' && entry.line === line));
+  }
+  const position = catalog.graphFor('character.Position').links.filter(link => link.operation !== 'contains');
+  assert.deepEqual(position.map(link => link.operation), ['filter']);
+  assert.ok(!catalog.graphFor('character.Sleeping').links.some(link => link.operation === 'read'));
+});
+
+test('BSN 0.20 裸值组件保留参数类型，嵌入场景沿 helper 归属调用系统', () => {
+  const { catalog } = fixture({ components: [component('a.Flag', 'Flag'), component('a.Value', 'Value')],
+    systems: [system('run', { path: 'src/run.rs', line: 1 }, [], ['a.Flag', 'a.Value'])],
+    files: { 'src/run.rs': `fn run(mut commands: Commands) { commands.spawn_scene(scene(Value::default())); }
+fn scene(value: Value) -> impl Scene { bsn! { value Children [@child() -- Flag] } }
+fn child() -> impl Scene { bsn! { Flag } }` },
+  });
+  for (const name of ['Flag', 'Value']) {
+    const insertion = catalog.graphFor(`a.${name}`).links.find(link => link.operation === 'insert');
+    assert.ok(insertion);
+    assert.ok(insertion.sourceEntries.some(entry => entry.path === 'src/run.rs' && entry.line === 2));
+  }
+  assert.ok(catalog.graphFor('a.Flag').links.find(link => link.operation === 'insert').sourceEntries.some(entry => entry.line === 3));
+});
+
+test('BodySizeMetrics 在求解前重算的两个变化分支有实际赋值证据', () => {
+  const path = 'src/dynamics/rigid_body/body_size_metrics.rs';
+  const { catalog } = fixture({ components: [{ ...component('character.BodySizeMetrics', 'BodySizeMetrics'), definition_source: definition(path, 1, 'avian3d') }],
+    systems: [system('physics_step', null, ['character.BodySizeMetrics'], ['character.BodySizeMetrics'], { kind: 'SystemSet', name: 'PhysicsSystems::StepSimulation' })],
+    dependencyFiles: { [path]: `app.add_systems(PhysicsSchedule, update_body_size_metrics::<C>.before(PhysicsStepSystems::Solver));
+fn update_body_size_metrics<C>() {
+    *size_metrics = compute(rb_colliders, com);
+    *size_metrics = compute(rb_colliders, com);
+}` },
+  });
+  const write = catalog.graphFor('character.BodySizeMetrics').links.find(link => link.operation === 'write');
+  assert.equal(write.sourceGaps.length, 0);
+  assert.deepEqual(write.sourceEntries.filter(source => source.role === 'operation').map(source => source.line), [3, 4]);
+  assert.ok(write.sourceEntries.some(source => source.role === 'registration' && source.line === 1));
+});
+
+test('同一真实声明聚合多个实体投影，原 ID 和全部 owner 保留', () => {
+  const result = fixture({ components: [component('a.Flag'), component('b.Flag')] });
+  const [type] = result.catalog.types;
+  assert.equal(result.catalog.types.length, 1);
+  assert.deepEqual(type.projectionIds, ['a.Flag', 'b.Flag']);
+  assert.deepEqual(type.ownerEntityIds, ['entity-owner0', 'entity-owner1']);
+  assert.equal(type.componentNodeId, 'a.Flag');
+  assert.equal(result.registry['b.Flag'].id, 'b.Flag');
+  const graph = result.catalog.graphFor('b.Flag');
+  assert.equal(graph.nodes.filter(node => node.id === 'a.Flag').length, 1);
+  assert.ok(!graph.nodes.some(node => node.id === 'b.Flag'));
+  assert.equal(graph.links.filter(link => link.operation === 'contains').length, 2);
+});
+
+test('已核实的同一声明不因 Rust 导入路径写法拆图，泛型实参继续区分', () => {
+  const source = definition('src/hover.rs', 1, 'bevy_picking');
+  const { catalog } = fixture({ components: [
+    { ...component('a.Hovered', 'Hovered'), rust_type: 'bevy::picking::hover::Hovered', definition_source: source },
+    { ...component('b.Hovered', 'Hovered'), definition_source: source },
+    { ...component('a.Generic', 'Generic<A>'), rust_type: 'bevy::Generic<A>', definition_source: source },
+    { ...component('b.Generic', 'Generic<B>'), definition_source: source },
+  ] });
+  assert.equal(catalog.types.length, 3);
+  assert.equal(catalog.typeByProjectionId['a.Hovered'], catalog.typeByProjectionId['b.Hovered']);
+  assert.notEqual(catalog.typeByProjectionId['a.Generic'], catalog.typeByProjectionId['b.Generic']);
+});
+
+test('同名不同声明、不同泛型实参以及无定义证据的投影不会误合并', () => {
+  const components = [component('a.Pickable', 'Pickable', { path: 'src/a.rs', line: 1 }), component('b.Pickable', 'Pickable', { path: 'src/b.rs', line: 1 }),
+    { ...component('a.Generic', 'Generic<A>'), definition_source: definition('src/generic.rs', 5) },
+    { ...component('b.Generic', 'Generic<B>'), definition_source: definition('src/generic.rs', 5) }];
+  const result = fixture({ components });
+  assert.equal(result.catalog.types.length, 4);
+  const missing = fixture({ components: [{ id: 'a.Missing', name: 'Missing' }, { id: 'b.Missing', name: 'Missing' }] });
+  assert.equal(missing.catalog.types.length, 2);
+  assert.ok(missing.catalog.types.every(type => !type.identityVerified && type.sourceGaps.length));
+});
+
+test('依赖安装根目录不影响类型 ID；明确 Rust 类型可作为归并证据', () => {
+  const first = fixture({ components: [{ id: 'a.F', name: 'Flag', definition_source: definition('src/type.rs', 9) }] });
+  const second = fixture({ components: [{ id: 'a.F', name: 'Flag', definition_source: definition('src/type.rs', 9, 'bevy_test', 'D:/other/cache') }] });
+  assert.equal(first.catalog.types[0].id, second.catalog.types[0].id);
+  const explicit = fixture({ components: [{ id: 'a.F', name: 'Flag', rust_type: 'crate::a::Flag' }, { id: 'b.F', name: 'Flag', rust_type: 'crate::a::Flag' }] });
+  assert.equal(explicit.catalog.types.length, 1);
+});
+
+test('重复构建同一 registry 不改变类型身份，也不把展示类型文字当新的归并依据', () => {
+  const { model, registry, catalog } = fixture({ components: [component('a.Flag'), component('b.Flag')] });
+  const again = buildComponentCatalog(model, registry, { readSource: () => '' });
+  assert.deepEqual(again.types.map(type => type.id), catalog.types.map(type => type.id));
+  assert.deepEqual(again.typeByProjectionId, catalog.typeByProjectionId);
+  assert.deepEqual(again.types.map(type => type.details), catalog.types.map(type => type.details));
+});
+
+test('类型详情保留各实体投影的完整正文和字段，完整泛型名称不覆盖原投影', () => {
+  const { catalog, registry } = fixture({ components: [
+    { ...component('a.Flag', 'Flag<State>'), description: '用于状态 A', fields: ['A'], notes: ['共同约束', 'A 约束'], display_summary: '管理退出清理。', owner: '实体 A' },
+    { ...component('b.Flag', 'Flag<State>'), description: '用于状态 B', fields: ['B', 'A'], notes: ['共同约束', 'B 约束'], owner: '实体 B' },
+  ] });
+  const details = catalog.types[0].details;
+  assert.equal(details.name, 'Flag<State>');
+  assert.equal(details.rust_type, 'crate::types::Flag<State>');
+  assert.equal(details.qualified_type, 'crate::types::Flag<State>');
+  assert.equal(details.description, '实体 A：用于状态 A\n实体 B：用于状态 B');
+  assert.deepEqual(details.fields, ['A', 'B']);
+  assert.deepEqual(details.notes, ['共同约束', 'A 约束', 'B 约束']);
+  assert.equal(details.display_summary, '管理退出清理。');
+  assert.equal(registry['a.Flag'].description, '用于状态 A');
+  assert.deepEqual(registry['b.Flag'].fields, ['B', 'A']);
+});
+
+test('同函数只显示一次，原注册 ID、完整参数与注册专属说明分别保留', () => {
+  const source = { path: 'src/run.rs', line: 1 };
+  const records = [system('fixed', source, [], ['a.Flag'], { notes: ['共享', '固定步说明'], registrations: [{ schedule: 'FixedUpdate', scope: 'runtime', sets: ['FixedSet'], run_if: ['running'] }] }),
+    system('frame', source, [], ['a.Flag'], { notes: ['共享', '逐帧说明'], registrations: [{ schedule: 'Update', scope: 'runtime', before: ['Camera'] }] })];
+  const { catalog, registry } = fixture({ components: [component('a.Flag')], systems: records, files: { 'src/run.rs': 'fn run(mut query: Query<&mut Flag>) {}' } });
+  const id = catalog.functionIdBySystemId.fixed;
+  assert.equal(catalog.functionIdBySystemId.frame, id);
+  assert.deepEqual(registry[id].registrationIds, ['fixed', 'frame']);
+  assert.deepEqual(registry[id].notes, ['共享']);
+  assert.deepEqual(registry[id].registrations.map(registration => registration.notes), [['固定步说明'], ['逐帧说明']]);
+  assert.deepEqual(registry[id].registrations[0].run_if, ['running']);
+  assert.equal(registry[id].targetNodeId, 'fixed');
+  assert.equal(catalog.graphFor('a.Flag').nodes.filter(node => node.id === id).length, 1);
+});
+
+test('对象事实模式保留同函数的每个注册，不创建合并函数节点', () => {
+  const source = { path: 'src/run.rs', line: 1 };
+  const { catalog, registry } = fixture({ mergeSystems: false, components: [component('a.Flag')], systems: [
+    system('fixed', source, ['a.Flag'], [], { registrations: [{ schedule: 'FixedUpdate', scope: 'runtime' }] }),
+    system('frame', source, ['a.Flag'], [], { registrations: [{ schedule: 'Update', scope: 'runtime' }] }),
+  ], files: { 'src/run.rs': 'fn run(query: Query<&Flag>) {}' } });
+  assert.equal(catalog.functionIdBySystemId.fixed, 'fixed');
+  assert.equal(catalog.functionIdBySystemId.frame, 'frame');
+  assert.ok(!Object.keys(registry).some(id => id.startsWith('component-function-')));
+  assert.deepEqual(new Set(catalog.accesses.map(access => access.system)), new Set(['fixed', 'frame']));
+  assert.ok(catalog.accesses.every(access => access.component === 'a.Flag'));
+});
+
+test('归并函数只在公共正文保留通用说明，各注册专属正文进入自己的 notes', () => {
+  const source = { path: 'src/run.rs', line: 1 };
+  const { catalog, registry } = fixture({ components: [component('a.Flag')], systems: [
+    system('fixed', source, [], ['a.Flag'], { description: '同步当前数据。' }),
+    system('post', source, [], ['a.Flag'], { description: '引擎回写后再次同步。', registrations: [{ schedule: 'PostUpdate', scope: 'runtime' }] }),
+  ], files: { 'src/run.rs': 'fn run(mut query: Query<&mut Flag>) {}' } });
+  const merged = registry[catalog.functionIdBySystemId.fixed];
+  assert.equal(merged.description, '同步当前数据。');
+  assert.deepEqual(merged.registrations[0].notes, []);
+  assert.deepEqual(merged.registrations[1].notes, ['引擎回写后再次同步。']);
+  assert.deepEqual(merged.registrationDescriptions.map(entry => entry.description), ['同步当前数据。', '引擎回写后再次同步。']);
+});
+
+test('同名函数的不同定义不合并，Observer 保留真实节点类别', () => {
+  const { catalog } = fixture({ components: [component('a.Flag')], systems: [
+    system('one', { path: 'src/one.rs', line: 1 }, ['a.Flag']),
+    system('two', { path: 'src/two.rs', line: 1 }, ['a.Flag'], [], { kind: 'Observer', registrations: [] }),
+  ] });
+  assert.notEqual(catalog.functionIdBySystemId.one, catalog.functionIdBySystemId.two);
+  assert.equal(catalog.systemByFunctionId.two.kind, 'Observer');
+});
+
+test('集合与分组保留独立身份，不因关联同一源码位置合并为真实系统函数', () => {
+  const source = { path: 'src/run.rs', line: 1 };
+  const { catalog, registry } = fixture({ components: [component('a.Flag')], systems: [
+    system('fixed', source, ['a.Flag']), system('frame', source, ['a.Flag']),
+    system('set', source, ['a.Flag'], [], { kind: 'SystemSet', name: 'Stage' }),
+    system('group', source, ['a.Flag'], [], { kind: 'System group', name: 'Tuple' }),
+  ] });
+  const functionId = catalog.functionIdBySystemId.fixed;
+  assert.equal(catalog.functionIdBySystemId.frame, functionId);
+  assert.deepEqual(registry[functionId].registrationIds, ['fixed', 'frame']);
+  for (const [id, kind] of [['set', 'SystemSet'], ['group', 'System group']]) {
+    assert.equal(catalog.functionIdBySystemId[id], id);
+    assert.equal(catalog.systemByFunctionId[id].kind, kind);
+    assert.deepEqual(catalog.systemByFunctionId[id].registrationIds, [id]);
+  }
+  assert.deepEqual(new Set(catalog.graphFor('a.Flag').nodes.map(node => node.id)), new Set(['entity-owner0', 'a.Flag', functionId, 'set', 'group']));
+});
+
+test('明确 insert/remove、可变 Query 与实际字段赋值保留不同访问操作和行号', () => {
+  const body = `fn run(mut commands: Commands, mut query: Query<&mut Flag>) {
+    commands.entity(entity).insert(Flag { value: 1 });
+    for mut flag in &mut query {
+        flag.value = 2;
+    }
+    commands.entity(entity).remove::<Flag>();
+}`;
+  const { catalog } = fixture({ components: [component('a.Flag')], systems: [system('run', { path: 'src/run.rs', line: 1 }, [], ['a.Flag'])], files: { 'src/run.rs': body } });
+  const links = catalog.graphFor('a.Flag').links;
+  for (const operation of ['insert', 'remove', 'write']) assert.ok(links.some(link => link.operation === operation));
+  assert.ok(links.find(link => link.operation === 'insert').sourceEntries.some(source => source.line === 2));
+  assert.ok(links.find(link => link.operation === 'write').sourceEntries.some(source => source.line === 4));
+  assert.equal(links.find(link => link.operation === 'write').label, '字段赋值');
+  assert.ok(links.find(link => link.operation === 'remove').sourceEntries.some(source => source.line === 6));
+});
+
+test('get_mut 和 single_mut 解构绑定追踪实际字段赋值，可变参数本身不表示赋值', () => {
+  const { catalog } = fixture({ components: [component('a.Flag')], systems: [
+    system('mutating', { path: 'src/run.rs', line: 1 }, [], ['a.Flag']),
+    system('borrowing', { path: 'src/run.rs', line: 7 }, [], ['a.Flag']),
+  ], files: { 'src/run.rs': `fn mutating(mut query: Query<(Entity, &mut Flag)>) {
+    let Ok((entity, mut flag)) = query.get_mut(entity) else { return; };
+    flag.value = 2;
+    if let Ok((_, mut other)) = query.single_mut() { other.value += 1; }
+}
+
+fn borrowing(mut query: Query<&mut Flag>) {
+    let Ok(mut local) = query.single_mut() else { return; };
+    let local = local;
+}` } });
+  const links = catalog.graphFor('a.Flag').links;
+  const write = links.find(link => link.from === 'mutating');
+  assert.deepEqual(write.accesses.filter(access => access.accessMode === 'field-write').map(access => access.sourceEntries.at(-1).line), [3, 4]);
+  assert.equal(write.label, '字段赋值');
+  assert.equal(write.sourceGaps.length, 0);
+  const borrowed = links.find(link => link.from === 'borrowing');
+  assert.equal(borrowed.label, '可变访问');
+  assert.ok(borrowed.sourceGaps.some(gap => gap.includes('可变借用本身不保证发生修改')));
+});
+
+test('QueryData 字段与可选 Write 解构定位真实赋值，ParamSet 绑定不串到其它查询', () => {
+  const { catalog } = fixture({ components: [component('a.Flag'), component('a.Other', 'Other')],
+    systems: [system('run', { path: 'src/run.rs', line: 6 }, [], ['a.Flag', 'a.Other'])], files: { 'src/run.rs': `#[derive(QueryData)]
+struct Body {
+    flag: Write<Flag>,
+    optional: Option<Write<Other>>,
+}
+fn run(mut bodies: ParamSet<(Query<Body>, Query<&mut Flag>)>) {
+    for mut body in &mut bodies.p0() {
+        body.flag.value = 1;
+        if let Some(mut value) = body.optional { value.0 = 2; }
+    }
+    for mut unrelated in &mut bodies.p1() { unrelated.0 = 3; }
+}` } });
+  const flag = catalog.graphFor('a.Flag').links.find(link => link.operation === 'write');
+  const other = catalog.graphFor('a.Other').links.find(link => link.operation === 'write');
+  assert.deepEqual(flag.accesses.filter(access => access.accessMode === 'field-write').map(access => access.sourceEntries.at(-1).line), [8, 11]);
+  assert.deepEqual(other.accesses.filter(access => access.accessMode === 'field-write').map(access => access.sourceEntries.at(-1).line), [9]);
+});
+
+test('项目显式注册与 ReflectComponent 定义共同确认 Inspector，别名及同名类型按真实声明区分', () => {
+  const types = `#[derive(Component, Reflect)]
+#[reflect(Component)]
+pub struct Flag(pub u64);
+#[derive(Reflect)]
+pub struct Plain;
+#[derive(Component, Reflect)]
+#[reflect(Component)]
+pub struct Unregistered;`;
+  const { catalog, registry } = fixture({ components: [component('a.Flag', 'Flag', { path: 'src/types.rs', line: 3 }),
+    component('b.Flag', 'Flag', { path: 'src/other.rs', line: 3 }), component('a.Plain', 'Plain', { path: 'src/types.rs', line: 5 }),
+    component('a.Unregistered', 'Unregistered', { path: 'src/types.rs', line: 8 })], systems: [
+    system('setup', { path: 'src/plugin/mod.rs', line: 2 }),
+    system('inspector_pass', { path: 'src/inspect.rs', line: 1 }, [], [], { definition_source: definition('src/quick.rs', 92, 'bevy-inspector-egui') }),
+  ], files: { 'src/types.rs': types, 'src/other.rs': types,
+    'src/plugin/mod.rs': `use crate::types::{Flag as LocalFlag, Plain};
+fn setup(app: &mut App) {
+    app.register_type::<LocalFlag>().register_type::<Plain>();
+}` } });
+  const reflected = catalog.graphFor('a.Flag').links.filter(link => link.operation.startsWith('reflect_'));
+  assert.deepEqual(reflected.map(link => link.operation), ['reflect_read', 'reflect_write']);
+  assert.ok(reflected.every(link => link.sourceEntries.some(source => source.path === 'src/plugin/mod.rs' && source.line === 3)));
+  assert.ok(reflected.every(link => link.sourceEntries.some(source => source.dependency?.name === 'bevy-inspector-egui')));
+  for (const id of ['b.Flag', 'a.Plain', 'a.Unregistered']) assert.ok(!catalog.graphFor(id).links.some(link => link.operation.startsWith('reflect_')));
+  assert.ok(registry.inspector_pass.reads.includes('a.Flag'));
+  assert.ok(registry.inspector_pass.writes.includes('a.Flag'));
+  assert.ok(!registry.inspector_pass.reads.includes('b.Flag'));
+  assert.ok(registry.inspector_pass.notes.some(note => note.includes('并不穷尽')));
+});
+
+test('辅助函数的结构操作归属于调用系统，保存调用处和实际操作处', () => {
+  const body = `fn run(mut commands: Commands) {
+    release(&mut commands);
+}
+fn release(commands: &mut Commands) {
+    commands.queue(move |world: &mut World| {
+        world.entity_mut(entity).remove::<Flag>();
+    });
+}`;
+  const { catalog } = fixture({ components: [component('a.Flag')], systems: [system('run', { path: 'src/run.rs', line: 1 }, [], ['a.Flag'])], files: { 'src/run.rs': body } });
+  const graph = catalog.graphFor('a.Flag'), removal = graph.links.find(link => link.operation === 'remove');
+  assert.ok(removal);
+  assert.ok(removal.sourceEntries.some(source => source.role === 'call' && source.line === 2));
+  assert.ok(removal.sourceEntries.some(source => source.role === 'operation' && source.line === 6));
+  assert.ok(!graph.nodes.some(node => node.id === 'release'));
+});
+
+test('QueryData 的 Write/Read/Has 归属使用它的系统，BSN 裸标记计为添加', () => {
+  const body = `#[derive(QueryData)]
+struct Body {
+    flag: Write<Flag>,
+}
+fn run(mut bodies: Query<Body>, mut commands: Commands) {
+    commands.spawn_scene(bsn! { Flag });
+}`;
+  const { catalog } = fixture({ components: [component('a.Flag')], systems: [system('run', { path: 'src/run.rs', line: 5 }, [], ['a.Flag'])], files: { 'src/run.rs': body } });
+  const links = catalog.graphFor('a.Flag').links;
+  assert.ok(links.some(link => link.operation === 'write' && link.sourceEntries.some(source => source.line === 3)));
+  assert.ok(links.some(link => link.operation === 'insert' && link.sourceEntries.some(source => source.line === 6)));
+});
+
+test('裸标记 insert 保留结构语义，remove 泛型参数不是被移除的组件', () => {
+  const { catalog } = fixture({ components: [component('a.Flag'), component('a.Wrapper', 'Wrapper<Flag>')],
+    systems: [system('run', { path: 'src/run.rs', line: 1 }, [], ['a.Flag', 'a.Wrapper'])],
+    files: { 'src/run.rs': `fn run(mut commands: Commands) {
+    commands.entity(entity).insert(Flag);
+    commands.entity(entity).remove::<Wrapper<Flag>>();
+}` } });
+  assert.ok(catalog.graphFor('a.Flag').links.some(link => link.operation === 'insert'));
+  assert.ok(!catalog.graphFor('a.Flag').links.some(link => link.operation === 'remove'));
+  assert.ok(catalog.graphFor('a.Wrapper').links.some(link => link.operation === 'remove'));
+});
+
+test('insert 与 BSN 只把实体层值视为组件，嵌套字段和 helper 比较不是独立挂载', () => {
+  const body = `fn run(mut commands: Commands) {
+    commands.entity(entity).insert(Envelope { nested: Flag { value: 1 } });
+    commands.spawn_scene(bsn! {
+        Envelope { nested: Flag { value: 2 } }
+        Children [(Child)]
+        template_value(bundle())
+    });
+}
+fn bundle() -> impl Bundle {
+    let value = if Flag::DEFAULT { 1 } else { 2 };
+    (Envelope { nested: Child }, Flag)
+}`;
+  const { catalog } = fixture({ components: [component('a.Flag'), component('a.Envelope', 'Envelope'), component('a.Child', 'Child')],
+    systems: [system('run', { path: 'src/run.rs', line: 1 }, [], ['a.Flag', 'a.Envelope', 'a.Child'])], files: { 'src/run.rs': body } });
+  const flag = catalog.graphFor('a.Flag').links.find(link => link.operation === 'insert');
+  assert.deepEqual(flag.sourceEntries.filter(source => source.role === 'operation').map(source => source.line), [11]);
+  const child = catalog.graphFor('a.Child').links.find(link => link.operation === 'insert');
+  assert.deepEqual(child.sourceEntries.filter(source => source.role === 'operation').map(source => source.line), [5]);
+  assert.ok(catalog.graphFor('a.Envelope').links.some(link => link.operation === 'insert'));
+});
+
+test('明确 bevy::picking::Pickable 导入将 BSN Type::CONST 精确指向 UI 类型', () => {
+  const { catalog } = fixture({ components: [component('business.Pickable', 'Pickable'),
+    { ...component('ui.Pickable', 'Pickable'), definition_source: definition('src/lib.rs', 198, 'bevy_picking') }],
+    systems: [system('run', { path: 'src/run.rs', line: 2 })], files: { 'src/run.rs': `use bevy::picking::Pickable;
+fn run(mut commands: Commands) { commands.spawn_scene(bsn! { Pickable::IGNORE }); }` } });
+  assert.ok(catalog.graphFor('ui.Pickable').links.some(link => link.operation === 'insert'));
+  assert.ok(!catalog.graphFor('business.Pickable').links.some(link => link.operation === 'insert'));
+});
+
+test('源码注释、普通和 raw 字符串、字符字面量不生成虚假操作', () => {
+  const body = `fn run(mut query: Query<&mut Flag>) {
+    // commands.entity(entity).remove::<Flag>();
+    let text = "commands.entity(entity).insert(Flag {})";
+    let raw = r#"commands.entity(entity).remove::<Flag>();"#;
+    let bracket = '}';
+}`;
+  const masked = maskRustSource(body);
+  assert.equal(masked.length, body.length);
+  assert.equal(masked.split('\n').length, body.split('\n').length);
+  const { catalog } = fixture({ components: [component('a.Flag')], systems: [system('run', { path: 'src/run.rs', line: 1 }, [], ['a.Flag'])], files: { 'src/run.rs': body } });
+  assert.ok(!catalog.graphFor('a.Flag').links.some(link => ['insert', 'remove'].includes(link.operation)));
+});
+
+test('类型歧义时不猜 insert/remove，未细分的声明写访问明确标为待核实', () => {
+  const { catalog } = fixture({ components: [component('a.Flag', 'Flag', { path: 'src/a.rs', line: 1 }), component('b.Flag', 'Flag', { path: 'src/b.rs', line: 1 })],
+    systems: [system('run', { path: 'src/run.rs', line: 1 }, [], ['a.Flag', 'b.Flag'])], files: { 'src/run.rs': 'fn run(mut commands: Commands) { commands.entity(entity).insert(Flag); }' } });
+  for (const type of catalog.types) {
+    const write = catalog.graphFor(type.id).links.find(link => link.operation === 'write');
+    assert.ok(write.sourceGaps.length);
+    assert.ok(!catalog.graphFor(type.id).links.some(link => link.operation === 'insert'));
+  }
+});
+
+test('投影后的组件边使用新 ID 并保留原关系身份', () => {
+  const { catalog } = fixture({ components: [component('a.Flag')], systems: [system('run', { path: 'src/run.rs', line: 1 }, ['a.Flag'])],
+    links: [{ id: 'old-read', from: 'a.Flag', to: 'run', kind: 'read', label: '检查状态' }] });
+  const read = catalog.graphFor('a.Flag').links.find(link => link.operation === 'read');
+  assert.notEqual(read.id, 'old-read');
+  assert.deepEqual(read.originalLinkIds, ['old-read']);
+});
+
+test('当前清单全部真实组件有专属图，HeldTarget 保持批准样稿的函数及操作覆盖', () => {
+  const model = JSON.parse(fs.readFileSync(new URL('../catalog/ecs-data.json', import.meta.url), 'utf8'));
+  const { registry } = buildArchitectureModel(model);
+  // 定义描述符提供类型身份；本测试不依赖个人 Cargo 安装目录或已生成 HTML。
+  const descriptors = new Map();
+  for (const [id, descriptor] of Object.entries(DEPENDENCY_SOURCE_DEFINITIONS)) {
+    if (registry[id]?.kind !== 'Component') continue;
+    const key = JSON.stringify(descriptor);
+    if (!descriptors.has(key)) descriptors.set(key, descriptors.size + 1);
+    registry[id].definition_source = { path: descriptor.path, line: descriptors.get(key), dependency: { name: descriptor.package, version: '0.0.0', root: '/locked-dependency' } };
+  }
+  registry.inspector_pass.definition_source = definition('src/quick.rs', 92, 'bevy-inspector-egui');
+  const catalog = buildComponentCatalog(model, registry, { readDependencySource: () => null }), projections = model.entities.flatMap(entity => entity.components.map(component => component.id));
+  assert.deepEqual(new Set(Object.keys(catalog.typeByProjectionId)), new Set(projections));
+  assert.equal(catalog.types.length, 165);
+  assert.equal(catalog.typeByProjectionId['action.Action<ReleasePointerAction>'], undefined);
+  assert.deepEqual(model.object_aliases['action.Action'], ['action.Action<LookAction>', 'action.Action<MoveAction>', 'action.Action<JumpAction>', 'action.Action<InteractAction>']);
+  const declaredCount = model.systems.reduce((count, system) => count + [...system.reads, ...system.writes].filter(id => projections.includes(id)).length, 0);
+  assert.equal(catalog.declarations.length, declaredCount);
+  assert.ok(catalog.deferredAccesses.every(access => registry[access.system].kind === 'Synchronization'));
+  for (const type of catalog.types) {
+    const graph = catalog.graphFor(type.id), ids = new Set(graph.nodes.map(node => node.id));
+    assert.equal(ids.size, graph.nodes.length);
+    assert.ok(graph.links.every(link => ids.has(link.from) && ids.has(link.to)));
+    assert.equal(graph.nodes.filter(node => projections.includes(node.id)).length, 1);
+  }
+  const held = catalog.graphFor('parcel.HeldTarget');
+  assert.equal(held.nodes.length, 9);
+  assert.equal(held.links.length, 11);
+  assert.equal(held.links.filter(link => link.operation === 'remove').length, 5);
+  assert.equal(held.links.filter(link => link.operation === 'write').length, 1);
+  assert.equal(held.links.find(link => link.operation === 'write').label, '&mut HeldTarget');
+  assert.equal(held.links.find(link => link.operation === 'filter').kind, 'reference');
+  assert.equal(held.links.find(link => link.operation === 'filter').label, 'With<HeldTarget>');
+  assert.ok(!held.nodes.some(node => ['held_apply', 'orphan_apply'].includes(node.id)));
+  assert.ok(!catalog.typeByProjectionId['capture-state']);
+  assert.notEqual(catalog.typeByProjectionId['parcel.Pickable'], catalog.typeByProjectionId['settings_scrollbar.Pickable']);
+  assert.notEqual(catalog.typeByProjectionId['menu_model.CourierAnimation'], catalog.typeByProjectionId['animation_player.CourierAnimation']);
+  const reflected = catalog.types.filter(type => catalog.graphFor(type.id).links.some(link => link.operation === 'reflect_read'));
+  assert.deepEqual(reflected.map(type => type.rustType).sort(), [
+    'crate::first_person::PlayerId', 'crate::first_person::ControlsCharacter', 'crate::first_person::ControlsCamera',
+    'crate::first_person::FirstPersonCamera', 'crate::first_person::CharacterVisual', 'crate::bounds_recovery::SpawnPoint',
+    'crate::character::components::Character', 'crate::character::components::CharacterIntent', 'crate::character::components::CharacterMotion',
+    'crate::item_interaction::components::Parcel', 'crate::item_interaction::components::Pickable',
+    'crate::item_interaction::components::CarryGrip', 'crate::item_interaction::components::HeldTarget', 'crate::scene_assembly::assets::ItemModel',
+  ].sort());
+  assert.ok(!catalog.graphFor('settings_scrollbar.Pickable').links.some(link => link.operation.startsWith('reflect_')));
+  for (const name of ['Character', 'Parcel', 'Pickable', 'CharacterVisual']) {
+    const type = reflected.find(type => type.name === name);
+    assert.ok(type);
+    const reflection = catalog.graphFor(type.id).links.filter(link => link.operation.startsWith('reflect_'));
+    assert.deepEqual(reflection.map(link => link.operation), ['reflect_read']);
+    assert.ok(reflection[0].notes.some(note => note.includes('无字段标记')));
+    assert.ok(type.projectionIds.every(id => registry.inspector_pass.reads.includes(id) && !registry.inspector_pass.writes.includes(id)));
+    assert.ok(!catalog.graphFor(type.id).links.some(link => link.from === 'inspector_pass' && link.operation === 'write'));
+  }
+  assert.equal(catalog.disprovedDeclarations.length, 4);
+  assert.ok(catalog.disprovedDeclarations.every(access => catalog.declarations.some(original => original.system === access.system && original.component === access.component && original.operation === access.operation)));
+  assert.ok(catalog.graphFor('parcel.Pickable').links.some(link => link.operation === 'insert'));
+  const transformInsert = catalog.graphFor('parcel.Transform').links.filter(link => link.operation === 'insert');
+  assert.ok(transformInsert.every(link => !link.sourceEntries.some(source => source.path === 'src/item_interaction/attachment.rs' && source.line === 34)));
+  const modelInsert = catalog.graphFor('parcel.ItemModel').links.find(link => link.operation === 'insert');
+  assert.ok(modelInsert.sourceEntries.some(source => source.path === 'src/scene_assembly/actors.rs' && source.line === 49));
+  assert.ok(!modelInsert.sourceEntries.some(source => source.path === 'src/scene_assembly/actors.rs' && source.line === 38));
+  for (const id of ['controller.PlayerId', 'camera.FirstPersonCamera', 'character.CollisionEventsEnabled', 'character.TranslationInterpolation', 'parcel.TransformInterpolation']) {
+    assert.ok(catalog.graphFor(id).links.some(link => link.operation === 'insert' && link.from === 'actors_spawn'));
+  }
+  for (const id of [...model.object_aliases['action.Action'], 'model_node.MeshMaterial3d']) {
+    const type = catalog.typeById[catalog.typeByProjectionId[id]];
+    assert.equal(type.identityVerified, true);
+    assert.ok(!type.aggregateProjection);
+    assert.equal(type.sourceGaps.length, 0);
+    assert.deepEqual(type.details.sourceGaps, type.sourceGaps);
+    assert.ok(type.definition_source);
+  }
+  const uiPickable = catalog.graphFor('settings_scrollbar.Pickable').links.find(link => link.operation === 'insert' && link.from === 'menu_rebuild');
+  assert.ok(uiPickable);
+  assert.ok([88, 100].every(line => uiPickable.sourceEntries.some(source => source.path === 'src/ui/scroll.rs' && source.line === line)));
+  for (const id of ['grounded_fixed', 'carry_physics_fixed', 'audio_voice_volumes']) {
+    const merged = registry[catalog.functionIdBySystemId[id]];
+    assert.ok(!merged.description.includes('\n'));
+    for (const original of merged.registrationDescriptions.filter(entry => entry.description !== merged.description)) {
+      assert.ok(merged.registrations.filter(registration => registration.registrationId === original.registrationId && registration.scope === 'runtime').every(registration => registration.notes.includes(original.description)));
+    }
+  }
+});

@@ -1,0 +1,682 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#object-424ed7235ba3cb2e-e16{marker-start:url(#object-424ed7235ba3cb2e_flowchart-v2-pointStart)!important}\n#object-424ed7235ba3cb2e-e17{marker-start:url(#object-424ed7235ba3cb2e_flowchart-v2-pointStart)!important}\n#object-424ed7235ba3cb2e-e18{marker-start:url(#object-424ed7235ba3cb2e_flowchart-v2-pointStart)!important}\n#object-424ed7235ba3cb2e-e19{marker-start:url(#object-424ed7235ba3cb2e_flowchart-v2-pointStart)!important}\n#object-424ed7235ba3cb2e-e30{marker-start:url(#object-424ed7235ba3cb2e_flowchart-v2-pointStart)!important}\n#object-424ed7235ba3cb2e-e34{marker-start:url(#object-424ed7235ba3cb2e_flowchart-v2-pointStart)!important}\n#object-424ed7235ba3cb2e-e36{marker-start:url(#object-424ed7235ba3cb2e_flowchart-v2-pointStart)!important}\n#object-424ed7235ba3cb2e-e38{marker-start:url(#object-424ed7235ba3cb2e_flowchart-v2-pointStart)!important}\n#object-424ed7235ba3cb2e-e40{marker-start:url(#object-424ed7235ba3cb2e_flowchart-v2-pointStart)!important}\n#object-424ed7235ba3cb2e-e42{marker-start:url(#object-424ed7235ba3cb2e_flowchart-v2-pointStart)!important}\n#object-424ed7235ba3cb2e-e45{marker-start:url(#object-424ed7235ba3cb2e_flowchart-v2-pointStart)!important}\n#object-424ed7235ba3cb2e-e48{marker-start:url(#object-424ed7235ba3cb2e_flowchart-v2-pointStart)!important}\n#object-424ed7235ba3cb2e-e55{marker-start:url(#object-424ed7235ba3cb2e_flowchart-v2-pointStart)!important}\n#object-424ed7235ba3cb2e-e63{marker-start:url(#object-424ed7235ba3cb2e_flowchart-v2-pointStart)!important}\n#object-424ed7235ba3cb2e_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}"
+  }
+}
+---
+flowchart LR
+  accTitle: sync_character_facing · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef node_message_buffer fill:#EDF4F6,stroke:#247B91,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_system_param fill:#EFF5F6,stroke:#3B8790,stroke-width:1.6px,color:#1F3340
+  classDef node_engine_flow fill:#F1F5F4,stroke:#557C78,stroke-width:1.6px,color:#1F3340
+  classDef node_plugin fill:#F1F3F6,stroke:#4A6389,stroke-width:2.2px,color:#1F3340
+  classDef edge_order stroke:#334155,stroke-width:2px
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_publish stroke:#247B91,stroke-width:1.8px,stroke-dasharray:10 4 2 4
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  subgraph layout_card_n0[" "]
+  n0@{ shape: rounded, label: "**sync_character_facing**<br/>同步人物朝向并处理持物转向受阻。" }
+  class n0 node_system
+  end
+  style layout_card_n0 fill:none,stroke:none
+  subgraph layout_card_n1[" "]
+  n1@{ shape: rounded, label: "**FirstPersonCamera**<br/>保存跟随目标、眼高与观察角度。" }
+  class n1 node_component
+  end
+  style layout_card_n1 fill:none,stroke:none
+  subgraph layout_card_n2[" "]
+  n2@{ shape: lin-rect, label: "**TransformEasingSystems::Ease**<br/>来自Avian ↗：混合固定步端点以生成平滑<br/>显示姿态。" }
+  class n2 node_system_set
+  class n2 external_node
+  end
+  style layout_card_n2 fill:none,stroke:none
+  subgraph layout_card_n3[" "]
+  n3@{ shape: rounded, label: "**sync_held_physics**<br/>来自物品交互 ↗：同步本帧持物碰撞朝向与<br/>显示朝向。" }
+  class n3 node_system
+  class n3 external_node
+  end
+  style layout_card_n3 fill:none,stroke:none
+  subgraph layout_card_n4[" "]
+  n4@{ shape: lin-rect, label: "**PresentationSystems**<br/>来自应用流程 ↗：协调插值后的持物、镜头<br/>与可见性同步。" }
+  class n4 node_system_set
+  class n4 external_node
+  end
+  style layout_card_n4 fill:none,stroke:none
+  subgraph layout_card_n5[" "]
+  n5@{ shape: notch-rect, label: "**CarryRotationQuery**<br/>来自物品交互 ↗：提供持物转向与对齐的连<br/>续碰撞路径查询。" }
+  class n5 node_system_param
+  class n5 external_node
+  end
+  style layout_card_n5 fill:none,stroke:none
+  subgraph layout_card_n6[" "]
+  n6@{ shape: stadium, label: "**main · RunFixedMainLoop**<br/>来自Bevy 引擎 ↗：保存本应用调度的注册<br/>上下文与成员。" }
+  class n6 node_engine_flow
+  class n6 external_node
+  end
+  style layout_card_n6 fill:none,stroke:none
+  subgraph layout_card_n7[" "]
+  n7@{ shape: lin-rect, label: "**PresentationSystems::Facing**<br/>来自应用流程 ↗：在插值后处理本帧人物转<br/>向。" }
+  class n7 node_system_set
+  class n7 external_node
+  end
+  style layout_card_n7 fill:none,stroke:none
+  subgraph layout_card_n8[" "]
+  n8@{ shape: lin-rect, label: "**AnonymousSet(0)**<br/>来自Bevy 引擎 ↗：保存本组系统共同的运<br/>行条件。" }
+  class n8 node_system_set
+  class n8 external_node
+  end
+  style layout_card_n8 fill:none,stroke:none
+  subgraph layout_card_n9[" "]
+  n9@{ shape: rounded, label: "**Rotation**<br/>来自Avian ↗：保存刚体或碰撞体的世界旋<br/>转。" }
+  class n9 node_component
+  class n9 external_node
+  end
+  style layout_card_n9 fill:none,stroke:none
+  subgraph layout_card_n10[" "]
+  n10@{ shape: cyl, label: "**Messages#lt;SoundRequest#gt;**<br/>来自Bevy 引擎 ↗：保存 SoundRequest<br/>消息。" }
+  class n10 node_message_buffer
+  class n10 external_node
+  end
+  style layout_card_n10 fill:none,stroke:none
+  subgraph layout_card_n11[" "]
+  n11@{ shape: rounded, label: "**HeldAttachment**<br/>来自物品交互 ↗：保存物品挂接姿态与装卸<br/>状态。" }
+  class n11 node_component
+  class n11 external_node
+  end
+  style layout_card_n11 fill:none,stroke:none
+  subgraph layout_card_n12[" "]
+  n12@{ shape: rounded, label: "**HeldBy**<br/>来自物品交互 ↗：关联当前物品的持有者。" }
+  class n12 node_component
+  class n12 external_node
+  end
+  style layout_card_n12 fill:none,stroke:none
+  subgraph layout_card_n13[" "]
+  n13@{ shape: rounded, label: "**HeldTarget**<br/>来自物品交互 ↗：保存本帧握持姿态的检查<br/>目标。" }
+  class n13 node_component
+  class n13 external_node
+  end
+  style layout_card_n13 fill:none,stroke:none
+  subgraph layout_card_n14[" "]
+  n14@{ shape: rounded, label: "**ColliderOf**<br/>来自Avian ↗：指定碰撞体附着的刚体。" }
+  class n14 node_component
+  class n14 external_node
+  end
+  style layout_card_n14 fill:none,stroke:none
+  subgraph layout_card_n15[" "]
+  n15@{ shape: rounded, label: "**CarryBaseMass**<br/>来自物品交互 ↗：挂接时保存，释放或箱体<br/>销毁时恢复原人物质量。" }
+  class n15 node_component
+  class n15 external_node
+  end
+  style layout_card_n15 fill:none,stroke:none
+  subgraph layout_card_n16[" "]
+  n16@{ shape: rounded, label: "**ColliderDisabled**<br/>来自Avian ↗：暂停碰撞体检测和空间查<br/>询。" }
+  class n16 node_component
+  class n16 external_node
+  end
+  style layout_card_n16 fill:none,stroke:none
+  subgraph layout_card_n17[" "]
+  n17@{ shape: rounded, label: "**Sleeping**<br/>来自Avian ↗：标记暂不参与模拟的休眠刚<br/>体。" }
+  class n17 node_component
+  class n17 external_node
+  end
+  style layout_card_n17 fill:none,stroke:none
+  subgraph layout_card_n18[" "]
+  n18@{ shape: rounded, label: "**RigidBody**<br/>来自Avian ↗：选择动态、静态或运动学刚<br/>体行为。" }
+  class n18 node_component
+  class n18 external_node
+  end
+  style layout_card_n18 fill:none,stroke:none
+  subgraph layout_card_n19[" "]
+  n19@{ shape: rounded, label: "**Position**<br/>来自Avian ↗：保存刚体或碰撞体的世界位<br/>置。" }
+  class n19 node_component
+  class n19 external_node
+  end
+  style layout_card_n19 fill:none,stroke:none
+  subgraph layout_card_n20[" "]
+  n20@{ shape: rounded, label: "**Transform**<br/>来自Bevy 引擎 ↗：保存实体相对父实体的<br/>平移、旋转和缩放" }
+  class n20 node_component
+  class n20 external_node
+  end
+  style layout_card_n20 fill:none,stroke:none
+  subgraph layout_card_n21[" "]
+  n21@{ shape: rounded, label: "**LinearVelocity**<br/>来自Avian ↗：保存刚体的世界线速度。" }
+  class n21 node_component
+  class n21 external_node
+  end
+  style layout_card_n21 fill:none,stroke:none
+  subgraph layout_card_n22[" "]
+  n22@{ shape: rounded, label: "**AngularVelocity**<br/>来自Avian ↗：保存刚体的世界角速度。" }
+  class n22 node_component
+  class n22 external_node
+  end
+  style layout_card_n22 fill:none,stroke:none
+  subgraph layout_card_n23[" "]
+  n23@{ shape: rounded, label: "**CollisionLayers**<br/>来自Avian ↗：声明碰撞体所属层和可交互<br/>层。" }
+  class n23 node_component
+  class n23 external_node
+  end
+  style layout_card_n23 fill:none,stroke:none
+  subgraph layout_card_n24[" "]
+  n24@{ shape: rounded, label: "**ResumeCarryEasing**<br/>来自物品交互 ↗：记录物品释放后需要恢复<br/>的插值通道。" }
+  class n24 node_component
+  class n24 external_node
+  end
+  style layout_card_n24 fill:none,stroke:none
+  subgraph layout_card_n25[" "]
+  n25@{ shape: rounded, label: "**Mass**<br/>来自Avian ↗：指定实体自身的质量输入。" }
+  class n25 node_component
+  class n25 external_node
+  end
+  style layout_card_n25 fill:none,stroke:none
+  subgraph layout_card_n26[" "]
+  n26@{ shape: rounded, label: "**HeldTarget**<br/>来自物品交互 ↗：保存本帧握持姿态的检查<br/>目标。" }
+  class n26 node_component
+  class n26 external_node
+  end
+  style layout_card_n26 fill:none,stroke:none
+  subgraph layout_card_n27[" "]
+  n27@{ shape: rounded, label: "**ControlsCharacter**<br/>普通实体引用，指向受控角色。" }
+  class n27 node_component
+  end
+  style layout_card_n27 fill:none,stroke:none
+  subgraph layout_card_n28[" "]
+  n28@{ shape: rounded, label: "**ControlsCamera**<br/>普通实体引用，指向受控相机。" }
+  class n28 node_component
+  end
+  style layout_card_n28 fill:none,stroke:none
+  subgraph layout_card_n29[" "]
+  n29@{ shape: rounded, label: "**HoldingItems**<br/>来自物品交互 ↗：索引角色当前持有的物<br/>品。" }
+  class n29 node_component
+  class n29 external_node
+  end
+  style layout_card_n29 fill:none,stroke:none
+  subgraph layout_card_n30[" "]
+  n30@{ shape: rounded, label: "**HeldAttachment**<br/>来自物品交互 ↗：保存物品挂接姿态与装卸<br/>状态。" }
+  class n30 node_component
+  class n30 external_node
+  end
+  style layout_card_n30 fill:none,stroke:none
+  subgraph layout_card_n31[" "]
+  n31@{ shape: rounded, label: "**LinearVelocity**<br/>来自Avian ↗：实际线速度，由冲量、外<br/>力、重力与接触求解改变。" }
+  class n31 node_component
+  class n31 external_node
+  end
+  style layout_card_n31 fill:none,stroke:none
+  subgraph layout_card_n32[" "]
+  n32@{ shape: rounded, label: "**AngularVelocity**<br/>来自Avian ↗：保存物理模拟中的角速度。" }
+  class n32 node_component
+  class n32 external_node
+  end
+  style layout_card_n32 fill:none,stroke:none
+  subgraph layout_card_n33[" "]
+  n33@{ shape: rounded, label: "**Name**<br/>来自Bevy 引擎 ↗：保存碰撞体的美术来源<br/>名称以定位障碍。" }
+  class n33 node_component
+  class n33 external_node
+  end
+  style layout_card_n33 fill:none,stroke:none
+  subgraph layout_card_n34[" "]
+  n34@{ shape: rounded, label: "**HeldBy**<br/>来自物品交互 ↗：关联当前物品的持有者。" }
+  class n34 node_component
+  class n34 external_node
+  end
+  style layout_card_n34 fill:none,stroke:none
+  subgraph layout_card_n35[" "]
+  n35@{ shape: rounded, label: "**Sleeping**<br/>来自Avian ↗：标记刚体当前处于休眠。" }
+  class n35 node_component
+  class n35 external_node
+  end
+  style layout_card_n35 fill:none,stroke:none
+  subgraph layout_card_n36[" "]
+  n36@{ shape: rounded, label: "**CarryBaseMass**<br/>来自物品交互 ↗：挂接时保存，释放或箱体<br/>销毁时恢复原人物质量。" }
+  class n36 node_component
+  class n36 external_node
+  end
+  style layout_card_n36 fill:none,stroke:none
+  subgraph layout_card_n37[" "]
+  n37@{ shape: rounded, label: "**RigidBody**<br/>来自Avian ↗：定义实体参与物理模拟的刚<br/>体模式。" }
+  class n37 node_component
+  class n37 external_node
+  end
+  style layout_card_n37 fill:none,stroke:none
+  subgraph layout_card_n38[" "]
+  n38@{ shape: rounded, label: "**Position**<br/>来自Avian ↗：保存物理模拟中的真实位<br/>置。" }
+  class n38 node_component
+  class n38 external_node
+  end
+  style layout_card_n38 fill:none,stroke:none
+  subgraph layout_card_n39[" "]
+  n39@{ shape: rounded, label: "**ResumeCarryEasing**<br/>来自物品交互 ↗：记录物品释放后需要恢复<br/>的插值通道。" }
+  class n39 node_component
+  class n39 external_node
+  end
+  style layout_card_n39 fill:none,stroke:none
+  subgraph layout_card_n40[" "]
+  n40@{ shape: rounded, label: "**Mass**<br/>来自Avian ↗：保存显式配置的质量。" }
+  class n40 node_component
+  class n40 external_node
+  end
+  style layout_card_n40 fill:none,stroke:none
+  subgraph layout_card_n41[" "]
+  n41@{ shape: rounded, label: "**CollisionLayers**<br/>来自Avian ↗：配置实体之间允许发生碰撞<br/>的层。" }
+  class n41 node_component
+  class n41 external_node
+  end
+  style layout_card_n41 fill:none,stroke:none
+  subgraph layout_card_n42[" "]
+  n42@{ shape: rounded, label: "**Transform**<br/>来自Bevy 引擎 ↗：保存角色经插值生成的<br/>显示姿态。" }
+  class n42 node_component
+  class n42 external_node
+  end
+  style layout_card_n42 fill:none,stroke:none
+  subgraph layout_card_n43[" "]
+  n43@{ shape: rounded, label: "**Position**<br/>来自Avian ↗：保存物理模拟中的真实位<br/>置。" }
+  class n43 node_component
+  class n43 external_node
+  end
+  style layout_card_n43 fill:none,stroke:none
+  subgraph layout_card_n44[" "]
+  n44@{ shape: rounded, label: "**Collider**<br/>来自Avian ↗：保存参与物理碰撞的实体形<br/>状。" }
+  class n44 node_component
+  class n44 external_node
+  end
+  style layout_card_n44 fill:none,stroke:none
+  subgraph layout_card_n45[" "]
+  n45@{ shape: rounded, label: "**Position**<br/>来自Avian ↗：保存物理模拟中的真实位<br/>置。" }
+  class n45 node_component
+  class n45 external_node
+  end
+  style layout_card_n45 fill:none,stroke:none
+  subgraph layout_card_n46[" "]
+  n46@{ shape: rounded, label: "**Rotation**<br/>来自Avian ↗：保存物理模拟中的真实旋<br/>转。" }
+  class n46 node_component
+  class n46 external_node
+  end
+  style layout_card_n46 fill:none,stroke:none
+  subgraph layout_card_n47[" "]
+  n47@{ shape: rounded, label: "**Collider**<br/>来自Avian ↗：保存参与物理碰撞的实体形<br/>状。" }
+  class n47 node_component
+  class n47 external_node
+  end
+  style layout_card_n47 fill:none,stroke:none
+  subgraph layout_card_n48[" "]
+  n48@{ shape: rounded, label: "**CollisionLayers**<br/>来自Avian ↗：配置实体之间允许发生碰撞<br/>的层。" }
+  class n48 node_component
+  class n48 external_node
+  end
+  style layout_card_n48 fill:none,stroke:none
+  subgraph layout_card_n49[" "]
+  n49@{ shape: rounded, label: "**ColliderOf**<br/>来自Avian ↗：关联碰撞体所属的刚体。" }
+  class n49 node_component
+  class n49 external_node
+  end
+  style layout_card_n49 fill:none,stroke:none
+  subgraph layout_card_n50[" "]
+  n50@{ shape: rounded, label: "**Sensor**<br/>来自Avian ↗：标记传感器碰撞体。" }
+  class n50 node_component
+  class n50 external_node
+  end
+  style layout_card_n50 fill:none,stroke:none
+  subgraph layout_card_n51[" "]
+  n51@{ shape: rounded, label: "**ColliderDisabled**<br/>来自Avian ↗：暂时停用碰撞体。" }
+  class n51 node_component
+  class n51 external_node
+  end
+  style layout_card_n51 fill:none,stroke:none
+  subgraph layout_card_n52[" "]
+  n52@{ shape: rounded, label: "**ColliderOf**<br/>来自Avian ↗：关联碰撞体所属的刚体。" }
+  class n52 node_component
+  class n52 external_node
+  end
+  style layout_card_n52 fill:none,stroke:none
+  subgraph layout_card_n53[" "]
+  n53@{ shape: rounded, label: "**ColliderAabb**<br/>来自Avian ↗：保存碰撞查询使用的轴对齐<br/>包围盒。" }
+  class n53 node_component
+  class n53 external_node
+  end
+  style layout_card_n53 fill:none,stroke:none
+  subgraph layout_card_n54[" "]
+  n54@{ shape: rounded, label: "**Rotation**<br/>来自Avian ↗：保存物理模拟中的真实旋<br/>转。" }
+  class n54 node_component
+  class n54 external_node
+  end
+  style layout_card_n54 fill:none,stroke:none
+  subgraph layout_card_n55[" "]
+  n55@{ shape: rounded, label: "**ColliderDisabled**<br/>来自Avian ↗：暂时停用碰撞体。" }
+  class n55 node_component
+  class n55 external_node
+  end
+  style layout_card_n55 fill:none,stroke:none
+  subgraph layout_card_n56[" "]
+  n56@{ shape: rounded, label: "**Rotation**<br/>来自Avian ↗：保存物理模拟中的真实旋<br/>转。" }
+  class n56 node_component
+  class n56 external_node
+  end
+  style layout_card_n56 fill:none,stroke:none
+  subgraph layout_card_n57[" "]
+  n57@{ shape: rounded, label: "**Transform**<br/>来自Bevy 引擎 ↗：保存自由运动或共享持<br/>握时的显示姿态。" }
+  class n57 node_component
+  class n57 external_node
+  end
+  style layout_card_n57 fill:none,stroke:none
+  subgraph layout_card_n58[" "]
+  n58@{ shape: rounded, label: "**ColliderOf**<br/>来自Avian ↗：关联碰撞体所属的刚体。" }
+  class n58 node_component
+  class n58 external_node
+  end
+  style layout_card_n58 fill:none,stroke:none
+  subgraph layout_card_n59[" "]
+  n59@{ shape: rounded, label: "**RigidBodyColliders**<br/>来自Avian ↗：索引属于同一刚体的全部碰<br/>撞体。" }
+  class n59 node_component
+  class n59 external_node
+  end
+  style layout_card_n59 fill:none,stroke:none
+  subgraph layout_card_n60[" "]
+  n60@{ shape: rounded, label: "**ColliderDisabled**<br/>来自Avian ↗：标记暂时停用的代理碰撞<br/>体。" }
+  class n60 node_component
+  class n60 external_node
+  end
+  style layout_card_n60 fill:none,stroke:none
+  subgraph layout_card_n61[" "]
+  n61@{ shape: cyl, label: "**ColliderTrees**<br/>来自Avian ↗：索引碰撞体以加速接地、拾<br/>取与持物路径查询。" }
+  class n61 node_resource
+  class n61 external_node
+  end
+  style layout_card_n61 fill:none,stroke:none
+  subgraph layout_card_n62[" "]
+  n62@{ shape: cyl, label: "**State#lt;AppState#gt; /**<br/>**NextState#lt;AppState#gt;**<br/>来自应用流程 ↗：保存应用主状态及待处理<br/>的会话切换。" }
+  class n62 node_resource
+  class n62 external_node
+  end
+  style layout_card_n62 fill:none,stroke:none
+  subgraph layout_card_n63[" "]
+  n63@{ shape: cyl, label: "**State#lt;PlayState#gt; /**<br/>**NextState#lt;PlayState#gt;**<br/>来自应用流程 ↗：保存游戏运行、暂停及待<br/>处理的切换请求。" }
+  class n63 node_resource
+  class n63 external_node
+  end
+  style layout_card_n63 fill:none,stroke:none
+  subgraph layout_card_n64[" "]
+  n64@{ shape: cyl, label: "**Messages#lt;SoundRequest#gt;**<br/>来自音频播放 ↗：缓冲菜单交互与物品反馈<br/>的短音请求。" }
+  class n64 node_message_buffer
+  class n64 external_node
+  end
+  style layout_card_n64 fill:none,stroke:none
+  subgraph layout_card_n65[" "]
+  n65@{ shape: fr-rect, label: "**FirstPersonPlugin**<br/>管理玩法动作、光标捕获、朝向与第一人称镜<br/>头。" }
+  class n65 node_plugin
+  end
+  style layout_card_n65 fill:none,stroke:none
+  n1 e0@-->|"查询访问"| n0
+  class e0 edge_read
+  n2 e1@--> n0
+  class e1 edge_order
+  n0 e2@--> n3
+  class e2 edge_order
+  n4 e3@-->|"Facing"| n0
+  class e3 edge_set_membership
+  n5 e4@-->|"CarryRotationQuery 参数"| n0
+  class e4 edge_reference
+  n6 e5@-->|"main / RunFixedMainLoop"| n0
+  class e5 edge_registration
+  n7 e6@--> n0
+  class e6 edge_set_membership
+  n8 e7@--> n0
+  class e7 edge_set_membership
+  n0 e8@-->|"延迟添加"| n9
+  class e8 edge_write
+  n0 e9@-->|"延迟发布消息"| n10
+  class e9 edge_publish
+  n11 e10@-->|"延迟只读访问"| n0
+  class e10 edge_read
+  n12 e11@-->|"延迟只读访问"| n0
+  class e11 edge_read
+  n13 e12@-->|"延迟只读访问"| n0
+  class e12 edge_read
+  n14 e13@-->|"延迟只读访问"| n0
+  class e13 edge_read
+  n15 e14@-->|"延迟只读访问"| n0
+  class e14 edge_read
+  n0 e15@-->|"延迟添加"| n16
+  class e15 edge_write
+  n14 e16@---|"延迟移除"| n0
+  class e16 edge_write
+  n12 e17@---|"延迟移除"| n0
+  class e17 edge_write
+  n13 e18@---|"延迟移除"| n0
+  class e18 edge_write
+  n11 e19@---|"延迟移除"| n0
+  class e19 edge_write
+  n0 e20@-->|"延迟移除"| n17
+  class e20 edge_write
+  n0 e21@-->|"延迟添加"| n18
+  class e21 edge_write
+  n0 e22@-->|"延迟添加"| n19
+  class e22 edge_write
+  n0 e23@-->|"延迟添加"| n20
+  class e23 edge_write
+  n0 e24@-->|"延迟添加"| n21
+  class e24 edge_write
+  n0 e25@-->|"延迟添加"| n22
+  class e25 edge_write
+  n0 e26@-->|"延迟添加"| n23
+  class e26 edge_write
+  n0 e27@-->|"延迟添加"| n24
+  class e27 edge_write
+  n0 e28@-->|"延迟移除"| n16
+  class e28 edge_write
+  n0 e29@-->|"延迟添加"| n25
+  class e29 edge_write
+  n15 e30@---|"延迟移除"| n0
+  class e30 edge_write
+  n0 e31@-->|"转向受阻时移除"| n26
+  class e31 edge_write
+  n27 e32@-->|"查询访问"| n0
+  class e32 edge_read
+  n28 e33@-->|"查询访问"| n0
+  class e33 edge_read
+  n1 e34@---|"可变访问"| n0
+  class e34 edge_write
+  n29 e35@-->|"查询访问"| n0
+  class e35 edge_read
+  n29 e36@---|"可变访问"| n0
+  class e36 edge_write
+  n30 e37@-->|"查询访问"| n0
+  class e37 edge_read
+  n30 e38@---|"移除"| n0
+  class e38 edge_write
+  n31 e39@-->|"查询访问"| n0
+  class e39 edge_read
+  n31 e40@---|"添加"| n0
+  class e40 edge_write
+  n32 e41@-->|"查询访问"| n0
+  class e41 edge_read
+  n32 e42@---|"添加"| n0
+  class e42 edge_write
+  n33 e43@-->|"查询访问"| n0
+  class e43 edge_read
+  n34 e44@-->|"查询访问"| n0
+  class e44 edge_read
+  n34 e45@---|"移除"| n0
+  class e45 edge_write
+  n0 e46@-->|"移除"| n35
+  class e46 edge_write
+  n36 e47@-->|"查询访问"| n0
+  class e47 edge_read
+  n36 e48@---|"移除"| n0
+  class e48 edge_write
+  n0 e49@-->|"添加"| n37
+  class e49 edge_write
+  n0 e50@-->|"添加"| n38
+  class e50 edge_write
+  n0 e51@-->|"添加"| n39
+  class e51 edge_write
+  n0 e52@-->|"添加"| n40
+  class e52 edge_write
+  n0 e53@-->|"添加"| n41
+  class e53 edge_write
+  n42 e54@-->|"查询访问"| n0
+  class e54 edge_read
+  n42 e55@---|"可变访问"| n0
+  class e55 edge_write
+  n43 e56@-->|"查询访问"| n0
+  class e56 edge_read
+  n44 e57@-->|"查询访问"| n0
+  class e57 edge_read
+  n45 e58@-->|"查询访问"| n0
+  class e58 edge_read
+  n46 e59@-->|"查询访问"| n0
+  class e59 edge_read
+  n47 e60@-->|"查询访问"| n0
+  class e60 edge_read
+  n48 e61@-->|"查询访问"| n0
+  class e61 edge_read
+  n49 e62@-->|"查询访问"| n0
+  class e62 edge_read
+  n49 e63@---|"可变访问"| n0
+  class e63 edge_write
+  n50 e64@-->|"查询访问"| n0
+  class e64 edge_read
+  n51 e65@-->|"查询访问"| n0
+  class e65 edge_read
+  n52 e66@-->|"查询访问"| n0
+  class e66 edge_read
+  n53 e67@-->|"查询访问"| n0
+  class e67 edge_read
+  n0 e68@-->|"可变访问"| n54
+  class e68 edge_write
+  n0 e69@-->|"可变访问"| n55
+  class e69 edge_write
+  n0 e70@-->|"可变访问"| n56
+  class e70 edge_write
+  n0 e71@-->|"可变访问"| n57
+  class e71 edge_write
+  n0 e72@-->|"可变访问"| n58
+  class e72 edge_write
+  n0 e73@-->|"可变访问"| n59
+  class e73 edge_write
+  n0 e74@-->|"可变访问"| n60
+  class e74 edge_write
+  n61 e75@-->|"访问声明"| n0
+  class e75 edge_read
+  n62 e76@-->|"访问声明"| n0
+  class e76 edge_read
+  n63 e77@-->|"访问声明"| n0
+  class e77 edge_read
+  n0 e78@-->|"访问声明"| n64
+  class e78 edge_publish
+  n65 e79@--> n0
+  class e79 edge_registration
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e17@{ curve: basis }
+  e18@{ curve: basis }
+  e19@{ curve: basis }
+  e20@{ curve: basis }
+  e21@{ curve: basis }
+  e22@{ curve: basis }
+  e23@{ curve: basis }
+  e24@{ curve: basis }
+  e25@{ curve: basis }
+  e26@{ curve: basis }
+  e27@{ curve: basis }
+  e28@{ curve: basis }
+  e29@{ curve: basis }
+  e30@{ curve: basis }
+  e31@{ curve: basis }
+  e32@{ curve: basis }
+  e33@{ curve: basis }
+  e34@{ curve: basis }
+  e35@{ curve: basis }
+  e36@{ curve: basis }
+  e37@{ curve: basis }
+  e38@{ curve: basis }
+  e39@{ curve: basis }
+  e40@{ curve: basis }
+  e41@{ curve: basis }
+  e42@{ curve: basis }
+  e43@{ curve: basis }
+  e44@{ curve: basis }
+  e45@{ curve: basis }
+  e46@{ curve: basis }
+  e47@{ curve: basis }
+  e48@{ curve: basis }
+  e49@{ curve: basis }
+  e50@{ curve: basis }
+  e51@{ curve: basis }
+  e52@{ curve: basis }
+  e53@{ curve: basis }
+  e54@{ curve: basis }
+  e55@{ curve: basis }
+  e56@{ curve: basis }
+  e57@{ curve: basis }
+  e58@{ curve: basis }
+  e59@{ curve: basis }
+  e60@{ curve: basis }
+  e61@{ curve: basis }
+  e62@{ curve: basis }
+  e63@{ curve: basis }
+  e64@{ curve: basis }
+  e65@{ curve: basis }
+  e66@{ curve: basis }
+  e67@{ curve: basis }
+  e68@{ curve: basis }
+  e69@{ curve: basis }
+  e70@{ curve: basis }
+  e71@{ curve: basis }
+  e72@{ curve: basis }
+  e73@{ curve: basis }
+  e74@{ curve: basis }
+  e75@{ curve: basis }
+  e76@{ curve: basis }
+  e77@{ curve: basis }
+  e78@{ curve: basis }
+  e79@{ curve: basis }

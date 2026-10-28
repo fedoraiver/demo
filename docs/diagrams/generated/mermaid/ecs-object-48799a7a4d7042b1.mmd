@@ -1,0 +1,107 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#object-48799a7a4d7042b1-e2{marker-start:url(#object-48799a7a4d7042b1_flowchart-v2-pointStart)!important}\n#object-48799a7a4d7042b1_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}"
+  }
+}
+---
+flowchart LR
+  accTitle: DepthPrepass · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**DepthPrepass**<br/>为三维相机生成独立的深度纹理。" }
+  class n0 node_component
+  n1@{ shape: rounded, label: "**oit_resolve**<br/>在透明主通道之后解析顺序无关透明数据并合<br/>成到视图颜色，同时重置 OIT 原子计数与链<br/>表头，避免下一次透明通道使用损坏的数据。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**late_gpu_preprocess**<br/>对后期遮挡工作项执行间接网格预处理。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**extract_camera_prepass_phase**<br/>同步三维相机的预通道标记与渲染阶段。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**extract_ssao_settings**<br/>向渲染相机提取屏幕空间环境光遮蔽配置。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**configure_occlusion_culling_view_**<br/>**targets**<br/>让遮挡剔除相机的深度纹理可被采样。" }
+  class n5 node_system
+  n6@{ shape: rounded, label: "**prepare_taa_jitter**<br/>为 TAA 相机逐帧设置 Halton 投影抖动。" }
+  class n6 node_system
+  n7@{ shape: rounded, label: "**queue_oit_resolve_pipeline**<br/>按 OIT 相机设置缓存透明解析管线。" }
+  class n7 node_system
+  n8@{ shape: rounded, label: "**prepare_core_3d_depth_textures**<br/>按共享目标准备三维深度纹理与清除方式。" }
+  class n8 node_system
+  n9@{ shape: rounded, label: "**prepare_prepass_textures**<br/>按三维预通道配置分配各类输出纹理。" }
+  class n9 node_system
+  n10@{ shape: rounded, label: "**prepare_ssr_pipelines**<br/>为具备反射及深度、延迟预通道的视图选择管<br/>线。" }
+  class n10 node_system
+  n11@{ shape: rounded, label: "**check_prepass_views_need_**<br/>**specialization**<br/>检测采样和预通道配置变化并标记视图待刷<br/>新。" }
+  class n11 node_system
+  n12@{ shape: rounded, label: "**check_views_need_specialization**<br/>汇总视图渲染特性并检测管线配置变化。" }
+  class n12 node_system
+  n0 e0@-->|"存在 / 变更过滤"| n1
+  class e0 edge_reference
+  n0 e1@-->|"存在 / 变更过滤"| n2
+  class e1 edge_reference
+  n3 e2@---|"存在 / 变更过滤"| n0
+  class e2 edge_reference
+  n3 e3@-->|"延迟添加"| n0
+  class e3 edge_write
+  n3 e4@-->|"延迟移除"| n0
+  class e4 edge_write
+  n0 e5@-->|"存在 / 变更过滤"| n4
+  class e5 edge_reference
+  n0 e6@-->|"存在 / 变更过滤"| n5
+  class e6 edge_reference
+  n0 e7@-->|"存在 / 变更过滤"| n6
+  class e7 edge_reference
+  n0 e8@-->|"存在 / 变更过滤"| n7
+  class e8 edge_reference
+  n0 e9@--> n8
+  class e9 edge_read
+  n0 e10@-->|"存在 / 变更过滤"| n9
+  class e10 edge_reference
+  n0 e11@-->|"存在 / 变更过滤"| n10
+  class e11 edge_reference
+  n0 e12@--> n11
+  class e12 edge_read
+  n0 e13@-->|"存在 / 变更过滤"| n12
+  class e13 edge_reference
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }

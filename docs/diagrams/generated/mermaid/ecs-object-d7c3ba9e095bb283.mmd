@@ -1,0 +1,111 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: update_editable_text_content_size · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_engine_flow fill:#F1F5F4,stroke:#557C78,stroke-width:1.6px,color:#1F3340
+  classDef edge_order stroke:#334155,stroke-width:2px
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**update_editable_text_content_size**<br/>按可见字符宽度和行数设置输入框固有尺寸。" }
+  class n0 node_system
+  n1@{ shape: stadium, label: "**main · PostUpdate**<br/>保存本应用调度的注册上下文与成员。" }
+  class n1 node_engine_flow
+  n2@{ shape: lin-rect, label: "**UiSystems::Content**<br/>在 UI 布局前测量文字和内容需求。" }
+  class n2 node_system_set
+  n3@{ shape: rounded, label: "**load_font_assets_into_font_**<br/>**collection**<br/>把字体资产注册到排版字体数据库。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**update_editable_text_styles**<br/>把字体和排版配置同步到可编辑文本引擎。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**EditableText**<br/>持有 Parley 编辑器、文本、光标及待应用<br/>编辑操作" }
+  class n5 node_component
+  n6@{ shape: rounded, label: "**TextFont**<br/>保存文字段的字体来源、字号及抗锯齿方式等<br/>字体样式" }
+  class n6 node_component
+  n7@{ shape: rounded, label: "**LineHeight**<br/>配置每行文字的高度" }
+  class n7 node_component
+  n8@{ shape: rounded, label: "**ComputedUiRenderTargetInfo**<br/>缓存 UI 目标的尺寸与缩放。" }
+  class n8 node_component
+  n9@{ shape: rounded, label: "**ContentSize**<br/>提供内容驱动的固有尺寸测量。" }
+  class n9 node_component
+  n10@{ shape: rounded, label: "**EditableTextContentSizeState**<br/>缓存可编辑文本的尺寸测量输入。" }
+  class n10 node_component
+  n11@{ shape: cyl, label: "**Assets#lt;Font#gt;**<br/>按资产身份存储对象并暂存变化消息。" }
+  class n11 node_resource
+  n12@{ shape: cyl, label: "**FontCx**<br/>维护字体数据库、家族解析与字体缓存" }
+  class n12 node_resource
+  n13@{ shape: cyl, label: "**RemSize**<br/>保存全局根字号" }
+  class n13 node_resource
+  n1 e0@-->|"main / PostUpdate"| n0
+  class e0 edge_registration
+  n2 e1@--> n0
+  class e1 edge_set_membership
+  n3 e2@--> n0
+  class e2 edge_order
+  n0 e3@--> n4
+  class e3 edge_order
+  n5 e4@--> n0
+  class e4 edge_read
+  n6 e5@--> n0
+  class e5 edge_read
+  n7 e6@--> n0
+  class e6 edge_read
+  n8 e7@--> n0
+  class e7 edge_read
+  n0 e8@--> n9
+  class e8 edge_write
+  n0 e9@--> n10
+  class e9 edge_write
+  n11 e10@--> n0
+  class e10 edge_read
+  n0 e11@--> n12
+  class e11 edge_write
+  n13 e12@--> n0
+  class e12 edge_read
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }

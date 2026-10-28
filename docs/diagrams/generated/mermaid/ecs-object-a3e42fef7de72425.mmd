@@ -1,0 +1,177 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: extract_gradients · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_system_param fill:#EFF5F6,stroke:#3B8790,stroke-width:1.6px,color:#1F3340
+  classDef node_query_data fill:#F1F4F1,stroke:#567A51,stroke-width:1.6px,color:#1F3340
+  classDef node_engine_flow fill:#F1F5F4,stroke:#557C78,stroke-width:1.6px,color:#1F3340
+  classDef edge_order stroke:#334155,stroke-width:2px
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**extract_gradients**<br/>提取变化后的 UI 背景与边框渐变，解析颜<br/>色停靠点、节点几何、裁剪和目标相机，并替<br/>换渲染世界中的对应渐变项；无效或不可见项<br/>被清理。" }
+  class n0 node_system
+  n1@{ shape: stadium, label: "**RenderApp · ExtractSchedule**<br/>保存本应用调度的注册上下文与成员。" }
+  class n1 node_engine_flow
+  n2@{ shape: lin-rect, label: "**RenderUiSystems::ExtractGradient**<br/>提取 UI 渐变填充的渲染图元。" }
+  class n2 node_system_set
+  n3@{ shape: rounded, label: "**extract_uinode_background_colors**<br/>提取 UI 节点背景与外侧填充色。" }
+  class n3 node_system
+  n4@{ shape: notch-rect, label: "**Commands**<br/>保存延迟执行的 World 操作队列" }
+  class n4 node_system_param
+  n5@{ shape: cyl, label: "**ExtractedGradients**<br/>保存已提取的 UI 背景与边框渐变。" }
+  class n5 node_resource
+  n6@{ shape: rounded, label: "**ComputedNode**<br/>保存 UI 布局计算后的物理尺寸。" }
+  class n6 node_component
+  n7@{ shape: rounded, label: "**ComputedStackIndex**<br/>保存节点计算后的绘制堆叠位置。" }
+  class n7 node_component
+  n8@{ shape: rounded, label: "**ComputedUiRenderTargetInfo**<br/>缓存 UI 目标的尺寸与缩放。" }
+  class n8 node_component
+  n9@{ shape: rounded, label: "**UiGlobalTransform**<br/>保存 UI 节点的绝对二维变换。" }
+  class n9 node_component
+  n10@{ shape: rounded, label: "**BackgroundGradient**<br/>为 UI 节点背景配置渐变。" }
+  class n10 node_component
+  n11@{ shape: rounded, label: "**BorderGradient**<br/>为 UI 节点边框配置渐变。" }
+  class n11 node_component
+  n12@{ shape: notch-rect, label: "**RemovedComponents#lt;ComputedNode#gt;**<br/>读取曾移除指定组件或连同该组件一起销毁的<br/>实体身份" }
+  class n12 node_system_param
+  n13@{ shape: notch-rect, label: "**RemovedComponents#lt;ComputedStackIndex**<br/>**#gt;**<br/>读取曾移除指定组件或连同该组件一起销毁的<br/>实体身份" }
+  class n13 node_system_param
+  n14@{ shape: notch-rect, label: "**RemovedComponents#lt;ComputedUiTargetCa**<br/>**mera#gt;**<br/>读取曾移除指定组件或连同该组件一起销毁的<br/>实体身份" }
+  class n14 node_system_param
+  n15@{ shape: notch-rect, label: "**RemovedComponents#lt;ComputedUiRenderTa**<br/>**rgetInfo#gt;**<br/>读取曾移除指定组件或连同该组件一起销毁的<br/>实体身份" }
+  class n15 node_system_param
+  n16@{ shape: notch-rect, label: "**RemovedComponents#lt;UiGlobalTransform#gt;**<br/>读取曾移除指定组件或连同该组件一起销毁的<br/>实体身份" }
+  class n16 node_system_param
+  n17@{ shape: notch-rect, label: "**RemovedComponents#lt;InheritedVisibilit**<br/>**y#gt;**<br/>读取曾移除指定组件或连同该组件一起销毁的<br/>实体身份" }
+  class n17 node_system_param
+  n18@{ shape: notch-rect, label: "**RemovedComponents#lt;CalculatedClip#gt;**<br/>读取曾移除指定组件或连同该组件一起销毁的<br/>实体身份" }
+  class n18 node_system_param
+  n19@{ shape: notch-rect, label: "**RemovedComponents#lt;BackgroundGradient**<br/>**#gt;**<br/>读取曾移除指定组件或连同该组件一起销毁的<br/>实体身份" }
+  class n19 node_system_param
+  n20@{ shape: notch-rect, label: "**RemovedComponents#lt;BorderGradient#gt;**<br/>读取曾移除指定组件或连同该组件一起销毁的<br/>实体身份" }
+  class n20 node_system_param
+  n21@{ shape: notch-rect, label: "**UiCameraMap**<br/>把 UI 目标相机映射到对应渲染实体。" }
+  class n21 node_system_param
+  n22@{ shape: notch-rect, label: "**RenderEntity**<br/>记录主实体对应的渲染世界实体。" }
+  class n22 node_query_data
+  n1 e0@-->|"RenderApp / ExtractSchedule"| n0
+  class e0 edge_registration
+  n2 e1@--> n0
+  class e1 edge_set_membership
+  n3 e2@--> n0
+  class e2 edge_order
+  n4 e3@-->|"参数 / 查询数据"| n0
+  class e3 edge_reference
+  n0 e4@--> n5
+  class e4 edge_write
+  n6 e5@--> n0
+  class e5 edge_read
+  n7 e6@--> n0
+  class e6 edge_read
+  n8 e7@--> n0
+  class e7 edge_read
+  n9 e8@--> n0
+  class e8 edge_read
+  n10 e9@--> n0
+  class e9 edge_read
+  n11 e10@--> n0
+  class e10 edge_read
+  n6 e11@-->|"存在 / 变更过滤"| n0
+  class e11 edge_reference
+  n7 e12@-->|"存在 / 变更过滤"| n0
+  class e12 edge_reference
+  n8 e13@-->|"存在 / 变更过滤"| n0
+  class e13 edge_reference
+  n9 e14@-->|"存在 / 变更过滤"| n0
+  class e14 edge_reference
+  n10 e15@-->|"存在 / 变更过滤"| n0
+  class e15 edge_reference
+  n11 e16@-->|"存在 / 变更过滤"| n0
+  class e16 edge_reference
+  n12 e17@-->|"参数 / 查询数据"| n0
+  class e17 edge_reference
+  n13 e18@-->|"参数 / 查询数据"| n0
+  class e18 edge_reference
+  n14 e19@-->|"参数 / 查询数据"| n0
+  class e19 edge_reference
+  n15 e20@-->|"参数 / 查询数据"| n0
+  class e20 edge_reference
+  n16 e21@-->|"参数 / 查询数据"| n0
+  class e21 edge_reference
+  n17 e22@-->|"参数 / 查询数据"| n0
+  class e22 edge_reference
+  n18 e23@-->|"参数 / 查询数据"| n0
+  class e23 edge_reference
+  n19 e24@-->|"参数 / 查询数据"| n0
+  class e24 edge_reference
+  n20 e25@-->|"参数 / 查询数据"| n0
+  class e25 edge_reference
+  n21 e26@-->|"参数 / 查询数据"| n0
+  class e26 edge_reference
+  n22 e27@-->|"参数 / 查询数据"| n0
+  class e27 edge_reference
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: bumpX }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e17@{ curve: basis }
+  e18@{ curve: basis }
+  e19@{ curve: basis }
+  e20@{ curve: basis }
+  e21@{ curve: basis }
+  e22@{ curve: basis }
+  e23@{ curve: basis }
+  e24@{ curve: basis }
+  e25@{ curve: basis }
+  e26@{ curve: basis }
+  e27@{ curve: basis }

@@ -1,0 +1,93 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#object-e916a7fa2e43007d-e2{marker-start:url(#object-e916a7fa2e43007d_flowchart-v2-pointStart)!important}\n#object-e916a7fa2e43007d_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}"
+  }
+}
+---
+flowchart LR
+  accTitle: DeferredPrepass · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**DeferredPrepass**<br/>为三维相机启用延迟材质 G-buffer 预通<br/>道。" }
+  class n0 node_component
+  n1@{ shape: rounded, label: "**check_msaa**<br/>检查带 DeferredPrepass 的相机，发现启<br/>用 MSAA 时发出警告并改为 Msaa::Off，避<br/>免延迟渲染使用不兼容的多重采样。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**insert_deferred_lighting_pass_id_**<br/>**component**<br/>为启用了 DeferredPrepass 且尚无通道深<br/>度标识的视图插入默认<br/>PbrDeferredLightingDepthId，供后续延<br/>迟光照通道筛选使用。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**extract_camera_prepass_phase**<br/>同步三维相机的预通道标记与渲染阶段。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**specialize_prepass_material_meshes**<br/>按深度、材质和运动特性生成预通道专用管<br/>线。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**prepare_prepass_textures**<br/>按三维预通道配置分配各类输出纹理。" }
+  class n5 node_system
+  n6@{ shape: rounded, label: "**prepare_deferred_lighting_id_**<br/>**textures**<br/>为延迟预通道相机分配光照标识深度纹理。" }
+  class n6 node_system
+  n7@{ shape: rounded, label: "**prepare_ssr_pipelines**<br/>为具备反射及深度、延迟预通道的视图选择管<br/>线。" }
+  class n7 node_system
+  n8@{ shape: rounded, label: "**prepare_deferred_lighting_pipelines**<br/>为有效延迟视图选择与前向一致的光照管线。" }
+  class n8 node_system
+  n9@{ shape: rounded, label: "**check_views_need_specialization**<br/>汇总视图渲染特性并检测管线配置变化。" }
+  class n9 node_system
+  n0 e0@-->|"存在 / 变更过滤"| n1
+  class e0 edge_reference
+  n0 e1@-->|"存在 / 变更过滤"| n2
+  class e1 edge_reference
+  n3 e2@---|"存在 / 变更过滤"| n0
+  class e2 edge_reference
+  n3 e3@-->|"延迟添加"| n0
+  class e3 edge_write
+  n3 e4@-->|"延迟移除"| n0
+  class e4 edge_write
+  n0 e5@--> n4
+  class e5 edge_read
+  n0 e6@-->|"存在 / 变更过滤"| n5
+  class e6 edge_reference
+  n0 e7@-->|"存在 / 变更过滤"| n6
+  class e7 edge_reference
+  n0 e8@-->|"存在 / 变更过滤"| n7
+  class e8 edge_reference
+  n0 e9@-->|"存在 / 变更过滤"| n8
+  class e9 edge_reference
+  n0 e10@-->|"存在 / 变更过滤"| n9
+  class e10 edge_reference
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }

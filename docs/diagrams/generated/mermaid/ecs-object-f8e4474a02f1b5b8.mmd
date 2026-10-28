@@ -1,0 +1,129 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#object-f8e4474a02f1b5b8-e3{marker-start:url(#object-f8e4474a02f1b5b8_flowchart-v2-pointStart)!important}\n#object-f8e4474a02f1b5b8-e12{marker-start:url(#object-f8e4474a02f1b5b8_flowchart-v2-pointStart)!important}\n#object-f8e4474a02f1b5b8-e13{marker-start:url(#object-f8e4474a02f1b5b8_flowchart-v2-pointStart)!important}\n#object-f8e4474a02f1b5b8_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}"
+  }
+}
+---
+flowchart LR
+  accTitle: changed_windows · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef node_message_buffer fill:#EDF4F6,stroke:#247B91,stroke-width:1.6px,color:#1F3340
+  classDef node_system_param fill:#EFF5F6,stroke:#3B8790,stroke-width:1.6px,color:#1F3340
+  classDef node_engine_flow fill:#F1F5F4,stroke:#557C78,stroke-width:1.6px,color:#1F3340
+  classDef edge_order stroke:#334155,stroke-width:2px
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_publish stroke:#247B91,stroke-width:1.8px,stroke-dasharray:10 4 2 4
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**changed_windows**<br/>将 Window 组件与 CachedWindow 比较，<br/>把标题、模式、位置、分辨率等受支持的变化<br/>同步到 winit 原生窗口，并发布调整尺寸或<br/>缩放等消息；渲染呈现模式由渲染模块另行处<br/>理。" }
+  class n0 node_system
+  n1@{ shape: stadium, label: "**main · Last**<br/>保存本应用调度的注册上下文与成员。" }
+  class n1 node_engine_flow
+  n2@{ shape: rounded, label: "**changed_cursor_options**<br/>把光标配置变化同步到原生窗口。" }
+  class n2 node_system
+  n3@{ shape: notch-rect, label: "**Commands**<br/>保存延迟执行的 World 操作队列" }
+  class n3 node_system_param
+  n4@{ shape: rounded, label: "**Window**<br/>保存窗口的呈现模式、位置、分辨率、标题、<br/>全屏及平台行为配置" }
+  class n4 node_component
+  n5@{ shape: rounded, label: "**CachedWindow**<br/>缓存上次同步到原生窗口的 Window 状态" }
+  class n5 node_component
+  n6@{ shape: rounded, label: "**OnMonitor**<br/>保存窗口当前所在显示器的关系目标" }
+  class n6 node_component
+  n7@{ shape: cyl, label: "**WinitMonitors**<br/>保存 Winit 显示器句柄与对应 Bevy 实体<br/>的映射" }
+  class n7 node_resource
+  n8@{ shape: cyl, label: "**Messages#lt;WindowResized#gt;**<br/>保存 WindowResized 消息。" }
+  class n8 node_message_buffer
+  n9@{ shape: cyl, label: "**Messages#lt;WindowEvent#gt;**<br/>保存 WindowEvent 消息。" }
+  class n9 node_message_buffer
+  n10@{ shape: cyl, label: "**Messages#lt;WindowScaleFactorChanged#gt;**<br/>保存 WindowScaleFactorChanged 消息。" }
+  class n10 node_message_buffer
+  n11@{ shape: notch-rect, label: "**NonSendMarker**<br/>利用不可 Send 的标记约束系统在主线程运<br/>行" }
+  class n11 node_system_param
+  n12@{ shape: cyl, label: "**Messages#lt;Messages#lt;WindowResized#gt;#gt;**<br/>保存 Messages#lt;WindowResized#gt; 消息。" }
+  class n12 node_message_buffer
+  n13@{ shape: cyl, label: "**Messages#lt;Messages#lt;WindowScaleFactorC**<br/>**hanged#gt;#gt;**<br/>保存<br/>Messages#lt;WindowScaleFactorChanged#gt;<br/>消息。" }
+  class n13 node_message_buffer
+  n14@{ shape: cyl, label: "**Messages#lt;Messages#lt;WindowEvent#gt;#gt;**<br/>保存 Messages#lt;WindowEvent#gt; 消息。" }
+  class n14 node_message_buffer
+  n1 e0@-->|"main / Last"| n0
+  class e0 edge_registration
+  n0 e1@--> n2
+  class e1 edge_order
+  n3 e2@-->|"参数 / 查询数据"| n0
+  class e2 edge_reference
+  n4 e3@--- n0
+  class e3 edge_write
+  n0 e4@--> n5
+  class e4 edge_write
+  n6 e5@--> n0
+  class e5 edge_read
+  n4 e6@-->|"存在 / 变更过滤"| n0
+  class e6 edge_reference
+  n7 e7@--> n0
+  class e7 edge_read
+  n0 e8@--> n8
+  class e8 edge_publish
+  n0 e9@--> n9
+  class e9 edge_publish
+  n0 e10@--> n10
+  class e10 edge_publish
+  n11 e11@-->|"参数 / 查询数据"| n0
+  class e11 edge_reference
+  n6 e12@---|"延迟添加"| n0
+  class e12 edge_write
+  n6 e13@---|"延迟移除"| n0
+  class e13 edge_write
+  n0 e14@-->|"正文发布消息"| n12
+  class e14 edge_publish
+  n0 e15@-->|"正文发布消息"| n13
+  class e15 edge_publish
+  n0 e16@-->|"正文发布消息"| n14
+  class e16 edge_publish
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }

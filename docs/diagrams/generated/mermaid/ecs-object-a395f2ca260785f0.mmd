@@ -1,0 +1,218 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#object-a395f2ca260785f0-e12{marker-start:url(#object-a395f2ca260785f0_flowchart-v2-pointStart)!important}\n#object-a395f2ca260785f0-e18{marker-start:url(#object-a395f2ca260785f0_flowchart-v2-pointStart)!important}\n#object-a395f2ca260785f0_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}"
+  }
+}
+---
+flowchart LR
+  accTitle: initialize_ready_couriers · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_engine_flow fill:#F1F5F4,stroke:#557C78,stroke-width:1.6px,color:#1F3340
+  classDef node_plugin fill:#F1F3F6,stroke:#4A6389,stroke-width:2.2px,color:#1F3340
+  classDef edge_order stroke:#334155,stroke-width:2px
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**initialize_ready_couriers**<br/>绑定主角命名动画并缓存鞋底补偿节点。" }
+  class n0 node_system
+  n1@{ shape: rounded, label: "**sync_courier_animation**<br/>按角色运动状态连续混合移动与跳跃动画。" }
+  class n1 node_system
+  n2@{ shape: stadium, label: "**main · Update**<br/>来自Bevy 引擎 ↗：保存本应用调度的注册<br/>上下文与成员。" }
+  class n2 node_engine_flow
+  class n2 external_node
+  n3@{ shape: lin-rect, label: "**AnonymousSet(0)**<br/>来自Bevy 引擎 ↗：保存本组系统共同的运<br/>行条件。" }
+  class n3 node_system_set
+  class n3 external_node
+  n4@{ shape: rounded, label: "**CourierAnimationPending**<br/>实例就绪后等待命名动画绑定。" }
+  class n4 node_component
+  n5@{ shape: rounded, label: "**AnimationTransitions**<br/>来自Bevy 引擎 ↗：管理动画混合权重的淡<br/>出过程" }
+  class n5 node_component
+  class n5 external_node
+  n6@{ shape: rounded, label: "**AnimationGraphHandle**<br/>来自Bevy 引擎 ↗：选择播放器使用的动画<br/>图资产。" }
+  class n6 node_component
+  class n6 external_node
+  n7@{ shape: rounded, label: "**CourierAnimation**<br/>保存角色动画混合权重、步相位与跳跃阶段。" }
+  class n7 node_component
+  n8@{ shape: rounded, label: "**CourierFootGrounding**<br/>保存鞋底高度补偿与骨链引用。" }
+  class n8 node_component
+  n9@{ shape: rounded, label: "**CourierVisual**<br/>保存主角模型来源并作为动画绑定入口。" }
+  class n9 node_component
+  n10@{ shape: rounded, label: "**ChildOf**<br/>来自Bevy 引擎 ↗：关联父实体并跟随父级<br/>生命周期。" }
+  class n10 node_component
+  class n10 external_node
+  n11@{ shape: rounded, label: "**CourierAnimationPending**<br/>实例就绪后等待命名动画绑定。" }
+  class n11 node_component
+  n12@{ shape: rounded, label: "**LinearVelocity**<br/>来自Avian ↗：实际线速度，由冲量、外<br/>力、重力与接触求解改变。" }
+  class n12 node_component
+  class n12 external_node
+  n13@{ shape: rounded, label: "**CharacterMotion**<br/>来自角色运动 ↗：保存角色接地等运动观察<br/>结果。" }
+  class n13 node_component
+  class n13 external_node
+  n14@{ shape: rounded, label: "**HoldingItems**<br/>来自物品交互 ↗：索引角色当前持有的物<br/>品。" }
+  class n14 node_component
+  class n14 external_node
+  n15@{ shape: rounded, label: "**Children**<br/>来自Bevy 引擎 ↗：索引当前实体的直接子<br/>实体。" }
+  class n15 node_component
+  class n15 external_node
+  n16@{ shape: rounded, label: "**Name**<br/>来自Bevy 引擎 ↗：保存用于绑定鞋底节点<br/>的模型名称。" }
+  class n16 node_component
+  class n16 external_node
+  n17@{ shape: rounded, label: "**AnimationPlayer**<br/>来自Bevy 引擎 ↗：驱动模型的动画播放。" }
+  class n17 node_component
+  class n17 external_node
+  n18@{ shape: rounded, label: "**AnimationGraphHandle**<br/>来自Bevy 引擎 ↗：本次绑定生成的命名动<br/>作图。" }
+  class n18 node_component
+  class n18 external_node
+  n19@{ shape: rounded, label: "**CourierAnimation**<br/>保存角色动画混合权重、步相位与跳跃阶段。" }
+  class n19 node_component
+  n20@{ shape: rounded, label: "**CourierFootGrounding**<br/>保存鞋底高度补偿与骨链引用。" }
+  class n20 node_component
+  n21@{ shape: rounded, label: "**Transform**<br/>来自Bevy 引擎 ↗：保存模型相对业务根的<br/>局部显示姿态。" }
+  class n21 node_component
+  class n21 external_node
+  n22@{ shape: rounded, label: "**Transform**<br/>来自Bevy 引擎 ↗：保存角色经插值生成的<br/>显示姿态。" }
+  class n22 node_component
+  class n22 external_node
+  n23@{ shape: cyl, label: "**Assets#lt;Gltf#gt;**<br/>来自Bevy 引擎 ↗：保存导入场景与命名动<br/>画的资源引用。" }
+  class n23 node_resource
+  class n23 external_node
+  n24@{ shape: cyl, label: "**Assets#lt;AnimationClip#gt;**<br/>来自Bevy 引擎 ↗：保存主角与展示模型使<br/>用的动画片段。" }
+  class n24 node_resource
+  class n24 external_node
+  n25@{ shape: cyl, label: "**State#lt;AppState#gt; /**<br/>**NextState#lt;AppState#gt;**<br/>来自应用流程 ↗：保存应用主状态及待处理<br/>的会话切换。" }
+  class n25 node_resource
+  class n25 external_node
+  n26@{ shape: cyl, label: "**State#lt;PlayState#gt; /**<br/>**NextState#lt;PlayState#gt;**<br/>来自应用流程 ↗：保存游戏运行、暂停及待<br/>处理的切换请求。" }
+  class n26 node_resource
+  class n26 external_node
+  n27@{ shape: cyl, label: "**Assets#lt;AnimationGraph#gt;**<br/>来自Bevy 引擎 ↗：保存模型使用的动画混<br/>合图。" }
+  class n27 node_resource
+  class n27 external_node
+  n28@{ shape: fr-rect, label: "**CharacterAnimationPlugin**<br/>绑定并混合角色动画，补偿视觉接地。" }
+  class n28 node_plugin
+  n0 e0@-->|"Commands"| n1
+  class e0 edge_order
+  n2 e1@-->|"main / Update"| n0
+  class e1 edge_registration
+  n3 e2@--> n0
+  class e2 edge_set_membership
+  n0 e3@--> n1
+  class e3 edge_order
+  n0 e4@-->|"延迟移除"| n4
+  class e4 edge_write
+  n0 e5@-->|"延迟移除"| n5
+  class e5 edge_write
+  n0 e6@-->|"延迟添加"| n6
+  class e6 edge_write
+  n0 e7@-->|"延迟添加"| n7
+  class e7 edge_write
+  n0 e8@-->|"延迟添加"| n8
+  class e8 edge_write
+  n9 e9@-->|"查询访问"| n0
+  class e9 edge_read
+  n10 e10@-->|"查询访问"| n0
+  class e10 edge_read
+  n11 e11@-->|"存在 / 变更过滤"| n0
+  class e11 edge_reference
+  n11 e12@---|"移除"| n0
+  class e12 edge_write
+  n12 e13@-->|"查询访问"| n0
+  class e13 edge_read
+  n13 e14@-->|"查询访问"| n0
+  class e14 edge_read
+  n14 e15@-->|"查询访问"| n0
+  class e15 edge_read
+  n15 e16@-->|"查询访问"| n0
+  class e16 edge_read
+  n16 e17@-->|"查询访问"| n0
+  class e17 edge_read
+  n17 e18@---|"可变访问"| n0
+  class e18 edge_write
+  n17 e19@-->|"查询访问"| n0
+  class e19 edge_read
+  n0 e20@-->|"添加"| n18
+  class e20 edge_write
+  n0 e21@-->|"添加"| n19
+  class e21 edge_write
+  n0 e22@-->|"添加"| n20
+  class e22 edge_write
+  n21 e23@-->|"查询访问"| n0
+  class e23 edge_read
+  n22 e24@-->|"查询访问"| n0
+  class e24 edge_read
+  n23 e25@-->|"访问声明"| n0
+  class e25 edge_read
+  n24 e26@-->|"访问声明"| n0
+  class e26 edge_read
+  n25 e27@-->|"访问声明"| n0
+  class e27 edge_read
+  n26 e28@-->|"访问声明"| n0
+  class e28 edge_read
+  n0 e29@-->|"访问声明"| n27
+  class e29 edge_write
+  n28 e30@--> n0
+  class e30 edge_registration
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e17@{ curve: basis }
+  e18@{ curve: basis }
+  e19@{ curve: basis }
+  e20@{ curve: basis }
+  e21@{ curve: basis }
+  e22@{ curve: basis }
+  e23@{ curve: basis }
+  e24@{ curve: basis }
+  e25@{ curve: basis }
+  e26@{ curve: basis }
+  e27@{ curve: basis }
+  e28@{ curve: basis }
+  e29@{ curve: basis }
+  e30@{ curve: basis }

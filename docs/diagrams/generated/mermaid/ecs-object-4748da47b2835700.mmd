@@ -1,0 +1,267 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#object-4748da47b2835700-e2{marker-start:url(#object-4748da47b2835700_flowchart-v2-pointStart)!important}\n#object-4748da47b2835700-e3{marker-start:url(#object-4748da47b2835700_flowchart-v2-pointStart)!important}\n#object-4748da47b2835700_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}"
+  }
+}
+---
+flowchart LR
+  accTitle: Camera · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**Camera**<br/>配置相机视口、输出目标和渲染顺序。" }
+  class n0 node_component
+  n1@{ shape: rounded, label: "**viewport_picking**<br/>收集正被悬停或拖动的 ViewportNode，将<br/>外部指针位置转换到其相机视口，并以该视口<br/>专用的 PointerId 转发 PointerInput；<br/>未使用的视口清除指针位置。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**camera_system**<br/>响应窗口创建、尺寸与缩放变化及图像目标变<br/>化，更新 Camera 与 Projection 的目标<br/>尺寸和投影信息；只读取相机实际引用的图像<br/>目标。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**update_gizmo_meshes**<br/>将变换操作器对齐焦点并更新模式与高亮。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**camera_system**<br/>响应窗口创建、尺寸与缩放变化及图像目标变<br/>化，更新 Camera 与 Projection 的目标<br/>尺寸和投影信息；只读取相机实际引用的图像<br/>目标。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**check_visibility_cpu_culling**<br/>按层、距离和视锥收集各相机可见实体。" }
+  class n5 node_system
+  n6@{ shape: rounded, label: "**check_visibility_ranges**<br/>按视图距离计算实体可见范围位掩码。" }
+  class n6 node_system
+  n7@{ shape: rounded, label: "**check_point_light_mesh_visibility**<br/>计算点光与聚光灯阴影可见的网格。" }
+  class n7 node_system
+  n8@{ shape: rounded, label: "**assign_objects_to_clusters**<br/>将灯光、探针及贴花分配到视图分簇。" }
+  class n8 node_system
+  n9@{ shape: rounded, label: "**update_directional_light_frusta**<br/>从方向光级联投影更新阴影视锥。" }
+  class n9 node_system
+  n10@{ shape: rounded, label: "**build_directional_light_cascades**<br/>为投射阴影的方向光构建逐相机级联。" }
+  class n10 node_system
+  n11@{ shape: rounded, label: "**propagate_ui_target_cameras**<br/>为 UI 根配置目标相机和视口信息传播源。" }
+  class n11 node_system
+  n12@{ shape: rounded, label: "**check_msaa**<br/>检查带 DeferredPrepass 的相机，发现启<br/>用 MSAA 时发出警告并改为 Msaa::Off，避<br/>免延迟渲染使用不兼容的多重采样。" }
+  class n12 node_system
+  n13@{ shape: rounded, label: "**check_tonemapping_none**<br/>警告关闭色调映射后仍配置无效效果的相机。" }
+  class n13 node_system
+  n14@{ shape: rounded, label: "**update_text2d_layout**<br/>重新排版变化的二维文字并准备字形。" }
+  class n14 node_system
+  n15@{ shape: rounded, label: "**update_ui_screen_rect**<br/>来自Egui / Inspector ↗：把相机视口换<br/>算为 Egui 逻辑屏幕区域。" }
+  class n15 node_system
+  class n15 external_node
+  n16@{ shape: rounded, label: "**setup_primary_egui_context_system**<br/>来自Egui / Inspector ↗：为首个合适相<br/>机建立主 Egui 上下文。" }
+  class n16 node_system
+  class n16 external_node
+  n17@{ shape: rounded, label: "**sprite_picking**<br/>将可见、变换有效的精灵按深度排序，结合指<br/>针射线、相机、精灵图像和拾取配置计算命<br/>中，并向拾取后端发布 PointerHits。" }
+  class n17 node_system
+  n18@{ shape: rounded, label: "**ui_picking**<br/>把各指针位置映射到匹配相机的视口坐标，<br/>按 UiStack 的绘制顺序检查 UI 节点及拾<br/>取规则，输出 PointerHits 供悬停与交互<br/>阶段汇总。" }
+  class n18 node_system
+  n19@{ shape: rounded, label: "**ui_focus_system**<br/>按鼠标和触摸更新旧式 UI 交互状态。" }
+  class n19 node_system
+  n20@{ shape: rounded, label: "**repopulate**<br/>清空 RayMap，再为指针位置落在有效相机视<br/>口内的每个相机与指针组合创建世界射线，并<br/>按 RayId 保存。" }
+  class n20 node_system
+  n21@{ shape: rounded, label: "**setup_primary_egui_context_system**<br/>来自Egui / Inspector ↗：为首个合适相<br/>机建立主 Egui 上下文。" }
+  class n21 node_system
+  class n21 external_node
+  n22@{ shape: rounded, label: "**update_ui_screen_rect**<br/>来自Egui / Inspector ↗：把相机视口换<br/>算为 Egui 逻辑屏幕区域。" }
+  class n22 node_system
+  class n22 external_node
+  n23@{ shape: rounded, label: "**update_mesh_previous_global_**<br/>**transforms**<br/>为下帧保存网格的当前世界变换。" }
+  class n23 node_system
+  n24@{ shape: rounded, label: "**update_previous_view_data**<br/>记录三维及阴影视图未抖动的变换矩阵。" }
+  class n24 node_system
+  n25@{ shape: rounded, label: "**write_egui_input_system**<br/>来自Egui / Inspector ↗：把界面输入和<br/>文件拖放写入 Egui 输入批次。" }
+  class n25 node_system
+  class n25 external_node
+  n26@{ shape: rounded, label: "**spawn_gizmo_meshes**<br/>创建变换操作器各轴网格、材质和覆盖相机。" }
+  class n26 node_system
+  n27@{ shape: rounded, label: "**extract_ui_camera_view**<br/>为活动二维或三维相机维护独立 UI 视图。" }
+  class n27 node_system
+  n28@{ shape: rounded, label: "**extract_viewport_nodes**<br/>把视口节点所引用相机的输出图像嵌入 UI。" }
+  class n28 node_system
+  n29@{ shape: rounded, label: "**extract_meshes_for_gpu_building**<br/>增量提取变化或需重试网格到线程队列。" }
+  class n29 node_system
+  n30@{ shape: rounded, label: "**extract_cameras**<br/>把主世界活动相机的目标、视口、变换、可见<br/>实体和渲染设置提取到渲染实体，并维护视图<br/>所需格式；对停用或目标尺寸无效的相机移除<br/>失效提取状态。" }
+  class n30 node_system
+  n31@{ shape: rounded, label: "**extract_core_2d_camera_phases**<br/>为活动二维相机准备渲染阶段并清理失效视<br/>图。" }
+  class n31 node_system
+  n32@{ shape: rounded, label: "**extract_core_3d_camera_phases**<br/>为活动三维相机准备主渲染阶段。" }
+  class n32 node_system
+  n33@{ shape: rounded, label: "**extract_camera_prepass_phase**<br/>同步三维相机的预通道标记与渲染阶段。" }
+  class n33 node_system
+  n34@{ shape: rounded, label: "**extract_taa_settings**<br/>提取有效相机的 TAA 设置并消费历史重置信<br/>号。" }
+  class n34 node_system
+  n35@{ shape: rounded, label: "**extract_camera_previous_view_data**<br/>把活动三维相机的前帧视图数据提取到渲染<br/>侧。" }
+  class n35 node_system
+  n36@{ shape: rounded, label: "**extract_transmissive_camera_phases**<br/>为活动三维相机准备本帧透射阶段并清理失效<br/>视图。" }
+  class n36 node_system
+  n37@{ shape: rounded, label: "**extract_clusters_for_cpu_clustering**<br/>把 CPU 聚簇结果转换为渲染侧对象列表。" }
+  class n37 node_system
+  n38@{ shape: rounded, label: "**extract_clusters_for_gpu_clustering**<br/>提取视图聚簇配置并回传上帧 GPU 统计。" }
+  class n38 node_system
+  n39@{ shape: rounded, label: "**extract_shadow_lod_origin**<br/>解析点光与聚光阴影 LOD 的距离参考位置。" }
+  class n39 node_system
+  n40@{ shape: rounded, label: "**extract_ssao_settings**<br/>向渲染相机提取屏幕空间环境光遮蔽配置。" }
+  class n40 node_system
+  n41@{ shape: rounded, label: "**extract_egui_camera_view_system**<br/>来自Egui / Inspector ↗：为活动相机提<br/>取独立 Egui 渲染视图。" }
+  class n41 node_system
+  class n41 external_node
+  n42@{ shape: rounded, label: "**queue_render_sky_pipelines**<br/>按多重采样和混合能力选择天空管线。" }
+  class n42 node_system
+  n0 e0@--> n1
+  class e0 edge_read
+  n2 e1@--> n0
+  class e1 edge_write
+  n3 e2@--- n0
+  class e2 edge_read
+  n3 e3@---|"存在 / 变更过滤"| n0
+  class e3 edge_reference
+  n3 e4@--> n0
+  class e4 edge_write
+  n4 e5@--> n0
+  class e5 edge_write
+  n0 e6@--> n5
+  class e6 edge_read
+  n0 e7@-->|"存在 / 变更过滤"| n6
+  class e7 edge_reference
+  n0 e8@-->|"存在 / 变更过滤"| n7
+  class e8 edge_reference
+  n0 e9@--> n8
+  class e9 edge_read
+  n0 e10@-->|"存在 / 变更过滤"| n9
+  class e10 edge_reference
+  n0 e11@--> n10
+  class e11 edge_read
+  n0 e12@--> n11
+  class e12 edge_read
+  n0 e13@-->|"存在 / 变更过滤"| n11
+  class e13 edge_reference
+  n0 e14@-->|"存在 / 变更过滤"| n12
+  class e14 edge_reference
+  n0 e15@-->|"存在 / 变更过滤"| n13
+  class e15 edge_reference
+  n0 e16@--> n14
+  class e16 edge_read
+  n0 e17@--> n15
+  class e17 edge_read
+  n0 e18@-->|"存在 / 变更过滤"| n16
+  class e18 edge_reference
+  n0 e19@--> n17
+  class e19 edge_read
+  n0 e20@--> n18
+  class e20 edge_read
+  n0 e21@--> n19
+  class e21 edge_read
+  n0 e22@--> n20
+  class e22 edge_read
+  n0 e23@-->|"存在 / 变更过滤"| n21
+  class e23 edge_reference
+  n0 e24@--> n22
+  class e24 edge_read
+  n0 e25@--> n23
+  class e25 edge_read
+  n0 e26@--> n24
+  class e26 edge_read
+  n0 e27@--> n25
+  class e27 edge_read
+  n26 e28@-->|"延迟添加"| n0
+  class e28 edge_write
+  n0 e29@--> n27
+  class e29 edge_read
+  n0 e30@--> n28
+  class e30 edge_read
+  n0 e31@-->|"存在 / 变更过滤"| n29
+  class e31 edge_reference
+  n0 e32@--> n30
+  class e32 edge_read
+  n0 e33@--> n31
+  class e33 edge_read
+  n0 e34@--> n32
+  class e34 edge_read
+  n0 e35@--> n33
+  class e35 edge_read
+  n0 e36@-->|"正文只读访问"| n34
+  class e36 edge_read
+  n0 e37@--> n35
+  class e37 edge_read
+  n0 e38@--> n36
+  class e38 edge_read
+  n0 e39@--> n37
+  class e39 edge_read
+  n0 e40@-->|"正文只读访问"| n38
+  class e40 edge_read
+  n0 e41@-->|"存在 / 变更过滤"| n39
+  class e41 edge_reference
+  n0 e42@--> n40
+  class e42 edge_read
+  n0 e43@-->|"正文只读访问"| n41
+  class e43 edge_read
+  n0 e44@-->|"存在 / 变更过滤"| n42
+  class e44 edge_reference
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e17@{ curve: basis }
+  e18@{ curve: basis }
+  e19@{ curve: basis }
+  e20@{ curve: basis }
+  e21@{ curve: basis }
+  e22@{ curve: basis }
+  e23@{ curve: basis }
+  e25@{ curve: basis }
+  e26@{ curve: basis }
+  e27@{ curve: basis }
+  e28@{ curve: basis }
+  e29@{ curve: basis }
+  e30@{ curve: basis }
+  e31@{ curve: basis }
+  e32@{ curve: basis }
+  e33@{ curve: basis }
+  e34@{ curve: basis }
+  e35@{ curve: basis }
+  e36@{ curve: basis }
+  e37@{ curve: basis }
+  e38@{ curve: basis }
+  e39@{ curve: basis }
+  e40@{ curve: basis }
+  e41@{ curve: basis }
+  e42@{ curve: basis }
+  e43@{ curve: basis }
+  e44@{ curve: basis }

@@ -1,0 +1,72 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: Entity · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_system_param fill:#EFF5F6,stroke:#3B8790,stroke-width:1.6px,color:#1F3340
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: notch-rect, label: "**Entity**<br/>以实体索引和代际组成实体身份" }
+  class n0 node_system_param
+  n1@{ shape: rounded, label: "**update_narrow_phase#lt;avian3d::**<br/>**collision::collider::parry::**<br/>**Collider, ()#gt;**<br/>来自Avian ↗：更新窄相接触并输出碰撞变<br/>化消息。" }
+  class n1 node_system
+  class n1 external_node
+  n2@{ shape: rounded, label: "**solve_continuous**<br/>来自Avian ↗：对单步位移相对厚度过大的<br/>动态刚体执行连续碰撞扫掠；发现碰撞时缩短<br/>累计运动，使刚体停在首次撞击位置，并保留<br/>后续接触处理所需信息。" }
+  class n2 node_system
+  class n2 external_node
+  n3@{ shape: rounded, label: "**set_initial_focus**<br/>在没有焦点目标时使用主窗口。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**check_tonemapping_none**<br/>警告关闭色调映射后仍配置无效效果的相机。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**ui_picking**<br/>把各指针位置映射到匹配相机的视口坐标，<br/>按 UiStack 的绘制顺序检查 UI 节点及拾<br/>取规则，输出 PointerHits 供悬停与交互<br/>阶段汇总。" }
+  class n5 node_system
+  n6@{ shape: rounded, label: "**ui_focus_system**<br/>按鼠标和触摸更新旧式 UI 交互状态。" }
+  class n6 node_system
+  n0 e0@-->|"参数 / 查询数据"| n1
+  class e0 edge_reference
+  n0 e1@-->|"参数 / 查询数据"| n2
+  class e1 edge_reference
+  n0 e2@-->|"参数 / 查询数据"| n3
+  class e2 edge_reference
+  n0 e3@-->|"参数 / 查询数据"| n4
+  class e3 edge_reference
+  n0 e4@-->|"参数 / 查询数据"| n5
+  class e4 edge_reference
+  n0 e5@-->|"参数 / 查询数据"| n6
+  class e5 edge_reference
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }

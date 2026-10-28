@@ -1,0 +1,284 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: main · FixedPostUpdate · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_sync fill:#F6F3F0,stroke:#8B6A42,stroke-width:1.6px,color:#1F3340
+  classDef node_engine_flow fill:#F1F5F4,stroke:#557C78,stroke-width:1.6px,color:#1F3340
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: stadium, label: "**main · FixedPostUpdate**<br/>保存本应用调度的注册上下文与成员。" }
+  class n0 node_engine_flow
+  n1@{ shape: rounded, label: "**assert_components_finite**<br/>来自Avian ↗：在调试构建检查物理位置和<br/>速度是否有限。" }
+  class n1 node_system
+  class n1 external_node
+  n2@{ shape: rounded, label: "**wake_changed_bodies**<br/>来自物理基础 ↗：使休眠身体的外部受力和<br/>位姿修改在本固定步生效。" }
+  class n2 node_system
+  class n2 external_node
+  n3@{ shape: rounded, label: "**update_collider_mass_**<br/>**properties#lt;avian3d::collision::**<br/>**collider::parry::Collider#gt;**<br/>来自Avian ↗：按变化的形状和密度重算碰<br/>撞体质量。" }
+  class n3 node_system
+  class n3 external_node
+  n4@{ shape: rounded, label: "**transform_to_position**<br/>来自Avian ↗：把用户改变的世界变换同步<br/>到物理位姿。" }
+  class n4 node_system
+  class n4 external_node
+  n5@{ shape: rounded, label: "**queue_mass_recomputation_on_mass_**<br/>**change**<br/>来自Avian ↗：在刚体自身的质量、惯量或<br/>质心组件变化时添加<br/>RecomputeMassProperties，安排后续重<br/>算；附属于刚体的碰撞体由另一条更新路径处<br/>理。" }
+  class n5 node_system
+  class n5 external_node
+  n6@{ shape: rounded, label: "**queue_mass_recomputation_on_**<br/>**collider_mass_change**<br/>来自Avian ↗：在附属碰撞体质量输入变化<br/>时请求刚体重算。" }
+  class n6 node_system
+  class n6 external_node
+  n7@{ shape: rounded, label: "**update_mass_properties**<br/>来自Avian ↗：遍历已标记<br/>RecomputeMassProperties 的实体，通过<br/>MassPropertyHelper 重算质量属性，随后<br/>移除本轮重算标记。" }
+  class n7 node_system
+  class n7 external_node
+  n8@{ shape: rounded, label: "**warn_invalid_mass**<br/>来自Avian ↗：报告动态刚体无效的总质量<br/>或总惯量。" }
+  class n8 node_system
+  class n8 external_node
+  n9@{ shape: rounded, label: "**propagate_collider_transforms**<br/>来自Avian ↗：沿实体层级计算碰撞体相对<br/>刚体的变换。" }
+  class n9 node_system
+  class n9 external_node
+  n10@{ shape: rounded, label: "**update_collider_scale#lt;avian3d::**<br/>**collision::collider::parry::**<br/>**Collider#gt;**<br/>来自Avian ↗：把根节点和附属碰撞体的缩<br/>放传给形状。" }
+  class n10 node_system
+  class n10 external_node
+  n11@{ shape: rounded, label: "**run_physics_schedule**<br/>来自Avian ↗：使用物理时钟推进<br/>PhysicsSchedule 并恢复原时钟。" }
+  class n11 node_system
+  class n11 external_node
+  n12@{ shape: rounded, label: "**position_to_transform**<br/>来自Avian ↗：将物理 Position 和<br/>Rotation 同步到显示 Transform；有父实<br/>体时依据父级世界位姿换算本地变换，使嵌套<br/>刚体仍能独立运动。" }
+  class n12 node_system
+  class n12 external_node
+  n13@{ shape: rounded, label: "**update_ray_caster_positions**<br/>来自Avian ↗：把射线发射器的局部原点和<br/>方向换到世界空间。" }
+  class n13 node_system
+  class n13 external_node
+  n14@{ shape: rounded, label: "**update_shape_caster_positions**<br/>来自Avian ↗：把形状扫掠的原点、方向和<br/>形状朝向换到世界空间。" }
+  class n14 node_system
+  class n14 external_node
+  n15@{ shape: rounded, label: "**raycast**<br/>来自Avian ↗：遍历 RayCaster，使用<br/>SpatialQuery 执行已启用的射线查询并更<br/>新 RayHits；禁用时清除旧命中，最后记录<br/>射线查询耗时。" }
+  class n15 node_system
+  class n15 external_node
+  n16@{ shape: rounded, label: "**shapecast**<br/>来自Avian ↗：遍历 ShapeCaster，使用<br/>SpatialQuery 执行已启用的形状扫掠并更<br/>新 ShapeHits；禁用时清除旧命中，最后记<br/>录形状查询耗时。" }
+  class n16 node_system
+  class n16 external_node
+  n17@{ shape: rounded, label: "**update_grounded**<br/>来自角色运动 ↗：物理回写之后观察实际接<br/>地状态。" }
+  class n17 node_system
+  class n17 external_node
+  n18@{ shape: rounded, label: "**log_character_velocity**<br/>来自角色运动 ↗：定期记录角色实际速度与<br/>接地状态。" }
+  class n18 node_system
+  class n18 external_node
+  n19@{ shape: rounded, label: "**signal_message_update_system**<br/>标记消息缓冲在当前固定步中需要更新，使消<br/>息轮换与固定步执行协调。" }
+  class n19 node_system
+  n20@{ shape: rounded, label: "**log_collisions**<br/>来自物理基础 ↗：将碰撞开始与结束写入统<br/>一日志。" }
+  class n20 node_system
+  class n20 external_node
+  n21@{ shape: rounded, label: "**sync_held_physics**<br/>来自物品交互 ↗：按最新物理位姿同步持物<br/>与碰撞代理。" }
+  class n21 node_system
+  class n21 external_node
+  n22@{ shape: rounded, label: "**emit_parcel_land**<br/>来自物品交互 ↗：识别自由物品落地并发出<br/>声音请求。" }
+  class n22 node_system
+  class n22 external_node
+  n23@{ shape: rounded, label: "**ApplyDeferred**<br/>在调度建立的同步点应用前序系统暂存的<br/>Commands 等延迟操作，使后续系统可以观察<br/>到结构变化；此卡片是 ApplyDeferred 的<br/>System 实现。" }
+  class n23 node_sync
+  n24@{ shape: rounded, label: "**ApplyDeferred**<br/>在调度建立的同步点应用前序系统暂存的<br/>Commands 等延迟操作，使后续系统可以观察<br/>到结构变化；此卡片是 ApplyDeferred 的<br/>System 实现。" }
+  class n24 node_sync
+  n25@{ shape: rounded, label: "**ApplyDeferred**<br/>在调度建立的同步点应用前序系统暂存的<br/>Commands 等延迟操作，使后续系统可以观察<br/>到结构变化；此卡片是 ApplyDeferred 的<br/>System 实现。" }
+  class n25 node_sync
+  n26@{ shape: rounded, label: "**mark_dirty_trees**<br/>沿祖先链标记需要重算变换的子树。" }
+  class n26 node_system
+  n27@{ shape: rounded, label: "**propagate_parent_transforms**<br/>沿父子层级并行合成世界变换。" }
+  class n27 node_system
+  n28@{ shape: rounded, label: "**sync_simple_transforms**<br/>同步没有父子层级的独立实体世界变换。" }
+  class n28 node_system
+  n29@{ shape: lin-rect, label: "**PhysicsSystems::First**<br/>来自Avian ↗：在所有 Avian 物理系统之<br/>前提供准备边界。" }
+  class n29 node_system_set
+  class n29 external_node
+  n30@{ shape: lin-rect, label: "**TransformSystems::Propagate**<br/>沿实体层级传播世界变换。" }
+  class n30 node_system_set
+  n31@{ shape: lin-rect, label: "**PhysicsSystems::Prepare**<br/>来自Avian ↗：准备物理步所需的位姿、质<br/>量与碰撞查询数据。" }
+  class n31 node_system_set
+  class n31 external_node
+  n32@{ shape: lin-rect, label: "**MassPropertySystems::**<br/>**UpdateColliderMassProperties**<br/>来自Avian ↗：从碰撞体几何和密度更新质<br/>量属性。" }
+  class n32 node_system_set
+  class n32 external_node
+  n33@{ shape: lin-rect, label: "**PhysicsTransformSystems::**<br/>**TransformToPosition**<br/>来自Avian ↗：把外部变换变化同步到物理<br/>姿态。" }
+  class n33 node_system_set
+  class n33 external_node
+  n34@{ shape: lin-rect, label: "**MassPropertySystems::**<br/>**QueueRecomputation**<br/>来自Avian ↗：标记需要重新计算质量属性<br/>的实体。" }
+  class n34 node_system_set
+  class n34 external_node
+  n35@{ shape: lin-rect, label: "**MassPropertySystems::**<br/>**UpdateComputedMassProperties**<br/>来自Avian ↗：重新计算刚体有效质量、质<br/>心和惯量。" }
+  class n35 node_system_set
+  class n35 external_node
+  n36@{ shape: lin-rect, label: "**PhysicsSystems::StepSimulation**<br/>来自Avian ↗：执行碰撞求解、重力积分与<br/>刚体运动。" }
+  class n36 node_system_set
+  class n36 external_node
+  n37@{ shape: lin-rect, label: "**PhysicsSystems::Writeback**<br/>来自Avian ↗：将求解后的物理位姿写回显<br/>示变换。" }
+  class n37 node_system_set
+  class n37 external_node
+  n38@{ shape: lin-rect, label: "**PhysicsTransformSystems::**<br/>**PositionToTransform**<br/>来自Avian ↗：把物理位置和旋转同步到显<br/>示变换。" }
+  class n38 node_system_set
+  class n38 external_node
+  n39@{ shape: lin-rect, label: "**PhysicsSystems::Last**<br/>来自Avian ↗：在所有 Avian 物理系统之<br/>后提供收尾边界。" }
+  class n39 node_system_set
+  class n39 external_node
+  n40@{ shape: lin-rect, label: "**SpatialQuerySystems**<br/>来自Avian ↗：刷新空间投射器并执行射线<br/>和形状查询。" }
+  class n40 node_system_set
+  class n40 external_node
+  n41@{ shape: lin-rect, label: "**AnonymousSet(0)**<br/>保存本组系统共同的运行条件。" }
+  class n41 node_system_set
+  n42@{ shape: lin-rect, label: "**AnonymousSet(1)**<br/>保存本组系统共同的运行条件。" }
+  class n42 node_system_set
+  n0 e0@-->|"main / FixedPostUpdate"| n1
+  class e0 edge_registration
+  n0 e1@-->|"main / FixedPostUpdate"| n2
+  class e1 edge_registration
+  n0 e2@-->|"main / FixedPostUpdate"| n3
+  class e2 edge_registration
+  n0 e3@-->|"main / FixedPostUpdate"| n4
+  class e3 edge_registration
+  n0 e4@-->|"main / FixedPostUpdate"| n5
+  class e4 edge_registration
+  n0 e5@-->|"main / FixedPostUpdate"| n6
+  class e5 edge_registration
+  n0 e6@-->|"main / FixedPostUpdate"| n7
+  class e6 edge_registration
+  n0 e7@-->|"main / FixedPostUpdate"| n8
+  class e7 edge_registration
+  n0 e8@-->|"main / FixedPostUpdate"| n9
+  class e8 edge_registration
+  n0 e9@-->|"main / FixedPostUpdate"| n10
+  class e9 edge_registration
+  n0 e10@-->|"main / FixedPostUpdate"| n11
+  class e10 edge_registration
+  n0 e11@-->|"main / FixedPostUpdate"| n12
+  class e11 edge_registration
+  n0 e12@-->|"main / FixedPostUpdate"| n13
+  class e12 edge_registration
+  n0 e13@-->|"main / FixedPostUpdate"| n14
+  class e13 edge_registration
+  n0 e14@-->|"main / FixedPostUpdate"| n15
+  class e14 edge_registration
+  n0 e15@-->|"main / FixedPostUpdate"| n16
+  class e15 edge_registration
+  n0 e16@-->|"main / FixedPostUpdate"| n17
+  class e16 edge_registration
+  n0 e17@-->|"main / FixedPostUpdate"| n18
+  class e17 edge_registration
+  n0 e18@-->|"main / FixedPostUpdate"| n19
+  class e18 edge_registration
+  n0 e19@-->|"main / FixedPostUpdate"| n20
+  class e19 edge_registration
+  n0 e20@-->|"main / FixedPostUpdate"| n21
+  class e20 edge_registration
+  n0 e21@-->|"main / FixedPostUpdate"| n22
+  class e21 edge_registration
+  n0 e22@-->|"main / FixedPostUpdate"| n23
+  class e22 edge_registration
+  n0 e23@-->|"main / FixedPostUpdate"| n24
+  class e23 edge_registration
+  n0 e24@-->|"main / FixedPostUpdate"| n25
+  class e24 edge_registration
+  n0 e25@-->|"main / FixedPostUpdate"| n26
+  class e25 edge_registration
+  n0 e26@-->|"main / FixedPostUpdate"| n27
+  class e26 edge_registration
+  n0 e27@-->|"main / FixedPostUpdate"| n28
+  class e27 edge_registration
+  n0 e28@-->|"main / FixedPostUpdate"| n29
+  class e28 edge_registration
+  n0 e29@-->|"main / FixedPostUpdate"| n30
+  class e29 edge_registration
+  n0 e30@-->|"main / FixedPostUpdate"| n31
+  class e30 edge_registration
+  n0 e31@-->|"main / FixedPostUpdate"| n32
+  class e31 edge_registration
+  n0 e32@-->|"main / FixedPostUpdate"| n33
+  class e32 edge_registration
+  n0 e33@-->|"main / FixedPostUpdate"| n34
+  class e33 edge_registration
+  n0 e34@-->|"main / FixedPostUpdate"| n35
+  class e34 edge_registration
+  n0 e35@-->|"main / FixedPostUpdate"| n36
+  class e35 edge_registration
+  n0 e36@-->|"main / FixedPostUpdate"| n37
+  class e36 edge_registration
+  n0 e37@-->|"main / FixedPostUpdate"| n38
+  class e37 edge_registration
+  n0 e38@-->|"main / FixedPostUpdate"| n39
+  class e38 edge_registration
+  n0 e39@-->|"main / FixedPostUpdate"| n40
+  class e39 edge_registration
+  n0 e40@-->|"main / FixedPostUpdate"| n41
+  class e40 edge_registration
+  n0 e41@-->|"main / FixedPostUpdate"| n42
+  class e41 edge_registration
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e17@{ curve: basis }
+  e18@{ curve: basis }
+  e19@{ curve: basis }
+  e20@{ curve: basis }
+  e21@{ curve: basis }
+  e22@{ curve: basis }
+  e23@{ curve: basis }
+  e24@{ curve: basis }
+  e25@{ curve: basis }
+  e26@{ curve: basis }
+  e27@{ curve: basis }
+  e28@{ curve: basis }
+  e29@{ curve: basis }
+  e30@{ curve: basis }
+  e31@{ curve: basis }
+  e32@{ curve: basis }
+  e33@{ curve: basis }
+  e34@{ curve: basis }
+  e35@{ curve: basis }
+  e36@{ curve: basis }
+  e37@{ curve: basis }
+  e38@{ curve: basis }
+  e39@{ curve: basis }
+  e40@{ curve: basis }
+  e41@{ curve: basis }

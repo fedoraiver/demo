@@ -1,0 +1,141 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: animate_targets · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef node_local fill:#F8F5F1,stroke:#AA8752,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_system_param fill:#EFF5F6,stroke:#3B8790,stroke-width:1.6px,color:#1F3340
+  classDef node_query_data fill:#F1F4F1,stroke:#567A51,stroke-width:1.6px,color:#1F3340
+  classDef node_engine_flow fill:#F1F5F4,stroke:#557C78,stroke-width:1.6px,color:#1F3340
+  classDef edge_order stroke:#334155,stroke-width:2px
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**animate_targets**<br/>依据目标的<br/>AnimatedBy、AnimationTargetId 和当前<br/>动画图，评估正在播放的动画并把结果写入骨<br/>骼等动画目标；缺少播放器或图资产时跳过该<br/>目标。" }
+  class n0 node_system
+  n1@{ shape: stadium, label: "**main · PostUpdate**<br/>保存本应用调度的注册上下文与成员。" }
+  class n1 node_engine_flow
+  n2@{ shape: lin-rect, label: "**AnimationSystems**<br/>采样动画图并更新骨骼局部姿态。" }
+  class n2 node_system_set
+  n3@{ shape: rounded, label: "**advance_animations**<br/>依据帧时间推进各 AnimationPlayer 正在<br/>播放的动画；结合动画图和片段时长更新播放<br/>进度及图节点对应的活动动画状态。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**trigger_untargeted_animation_events**<br/>派发动画片段的根目标事件。" }
+  class n4 node_system
+  n5@{ shape: notch-rect, label: "**ParallelCommands**<br/>在并行查询等多线程上下文中排入延迟命令" }
+  class n5 node_system_param
+  n6@{ shape: notch-rect, label: "**Deferred#lt;ParallelCommandQueue#gt;**<br/>保存稍后在 ApplyDeferred 中应用的系统<br/>缓冲" }
+  class n6 node_system_param
+  n7@{ shape: rounded, label: "**EntityAllocator**<br/>并发分配唯一实体身份并追踪可复用索引" }
+  class n7 node_component
+  n8@{ shape: rounded, label: "**Entities**<br/>保存所有已知实体索引及其代际和位置元数据" }
+  class n8 node_component
+  n9@{ shape: cyl, label: "**Assets#lt;AnimationClip#gt;**<br/>保存主角与展示模型使用的动画片段。" }
+  class n9 node_resource
+  n10@{ shape: cyl, label: "**Assets#lt;AnimationGraph#gt;**<br/>保存模型使用的动画混合图。" }
+  class n10 node_resource
+  n11@{ shape: cyl, label: "**ThreadedAnimationGraphs**<br/>缓存动画图的线程化遍历加速结构" }
+  class n11 node_resource
+  n12@{ shape: rounded, label: "**AnimationPlayer**<br/>保存当前激活动画及其播放控制状态" }
+  class n12 node_component
+  n13@{ shape: rounded, label: "**AnimationGraphHandle**<br/>选择播放器使用的动画图资产。" }
+  class n13 node_component
+  n14@{ shape: rounded, label: "**AnimationTargetId**<br/>使用 UUID 标识动画曲线的目标路径" }
+  class n14 node_component
+  n15@{ shape: rounded, label: "**AnimatedBy**<br/>把动画目标连接到驱动它的<br/>AnimationPlayer 实体" }
+  class n15 node_component
+  n16@{ shape: notch-rect, label: "**AnimationEntityMut**<br/>动画求值使用的 EntityMutExcept 查询别<br/>名" }
+  class n16 node_query_data
+  n17@{ shape: rounded, label: "**IsResource**<br/>标记承载资源值的内部实体并保存实际资源组<br/>件的 ComponentId" }
+  class n17 node_component
+  n18@{ shape: notch-rect, label: "**ThreadLocal#lt;RefCell#lt;AnimationEvaluat**<br/>**ionState#gt;#gt;**<br/>为并行动画求值复用各线程的求值工作状态。" }
+  class n18 node_local
+  n1 e0@-->|"main / PostUpdate"| n0
+  class e0 edge_registration
+  n2 e1@--> n0
+  class e1 edge_set_membership
+  n3 e2@--> n0
+  class e2 edge_order
+  n0 e3@--> n4
+  class e3 edge_order
+  n5 e4@-->|"参数 / 查询数据"| n0
+  class e4 edge_reference
+  n6 e5@-->|"参数 / 查询数据"| n0
+  class e5 edge_reference
+  n7 e6@--> n0
+  class e6 edge_read
+  n8 e7@--> n0
+  class e7 edge_read
+  n9 e8@--> n0
+  class e8 edge_read
+  n10 e9@--> n0
+  class e9 edge_read
+  n11 e10@--> n0
+  class e10 edge_read
+  n12 e11@--> n0
+  class e11 edge_read
+  n13 e12@--> n0
+  class e12 edge_read
+  n14 e13@--> n0
+  class e13 edge_read
+  n15 e14@--> n0
+  class e14 edge_read
+  n16 e15@-->|"参数 / 查询数据"| n0
+  class e15 edge_reference
+  n17 e16@-->|"存在 / 变更过滤"| n0
+  class e16 edge_reference
+  n0 e17@--> n18
+  class e17 edge_write
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e17@{ curve: basis }

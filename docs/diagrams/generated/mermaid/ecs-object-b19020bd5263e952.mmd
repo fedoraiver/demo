@@ -1,0 +1,125 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: RenderSystems::Queue · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_engine_flow fill:#F1F5F4,stroke:#557C78,stroke-width:1.6px,color:#1F3340
+  classDef edge_order stroke:#334155,stroke-width:2px
+  classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: lin-rect, label: "**RenderSystems::Queue**<br/>把可绘制实体排入对应渲染阶段。" }
+  class n0 node_system_set
+  n1@{ shape: stadium, label: "**RenderApp · Render**<br/>保存本应用调度的注册上下文与成员。" }
+  class n1 node_engine_flow
+  n2@{ shape: lin-rect, label: "**RenderSystems::QueueMeshes**<br/>在网格资产准备后排入网格绘制项。" }
+  class n2 node_system_set
+  n3@{ shape: lin-rect, label: "**RenderSystems::QueueSweep**<br/>从绘制分箱移除不可见或已切换阶段的网格。" }
+  class n3 node_system_set
+  n4@{ shape: lin-rect, label: "**GizmoRenderSystems::**<br/>**QueueLineGizmos2d**<br/>把二维线条调试图元加入透明绘制阶段。" }
+  class n4 node_system_set
+  n5@{ shape: lin-rect, label: "**GizmoRenderSystems::**<br/>**QueueLineGizmos3d**<br/>把三维线条调试图元加入透明绘制阶段。" }
+  class n5 node_system_set
+  n6@{ shape: rounded, label: "**queue_sprites**<br/>按相机可见性筛选已提取精灵，结合目标格<br/>式、MSAA、色调映射和合成空间选择精灵管<br/>线，并将绘制项加入对应透明二维阶段。" }
+  class n6 node_system
+  n7@{ shape: rounded, label: "**queue_uinodes**<br/>为提取的 UI 节点找到目标相机的透明 UI<br/>阶段，按目标格式与 UI 抗锯齿设置选择管<br/>线，并以节点堆叠顺序加入本帧绘制项。" }
+  class n7 node_system
+  n8@{ shape: rounded, label: "**queue_ui_slices**<br/>将 UI 图像切片排入对应相机透明阶段。" }
+  class n8 node_system
+  n9@{ shape: rounded, label: "**queue_gradient**<br/>将提取的背景和边框渐变加入目标相机的透<br/>明 UI 阶段，按颜色空间、目标格式及抗锯<br/>齿配置选择管线，并保留各自堆叠偏移。" }
+  class n9 node_system
+  n10@{ shape: rounded, label: "**queue_shadows**<br/>为提取的 UI 阴影选择匹配目标格式和阴影<br/>采样数的管线，按节点堆叠顺序及阴影层偏移<br/>加入透明 UI 绘制阶段。" }
+  class n10 node_system
+  n11@{ shape: rounded, label: "**queue_oit_resolve_pipeline**<br/>按 OIT 相机设置缓存透明解析管线。" }
+  class n11 node_system
+  n12@{ shape: rounded, label: "**queue_render_sky_pipelines**<br/>按多重采样和混合能力选择天空管线。" }
+  class n12 node_system
+  n13@{ shape: rounded, label: "**queue_bind_groups_system**<br/>来自Egui / Inspector ↗：建立 Egui 纹<br/>理与采样器绑定。" }
+  class n13 node_system
+  class n13 external_node
+  n14@{ shape: rounded, label: "**queue_pipelines_system**<br/>来自Egui / Inspector ↗：按目标格式选<br/>择 Egui 渲染管线。" }
+  class n14 node_system
+  class n14 external_node
+  n15@{ shape: lin-rect, label: "**RenderSystems::PrepareViews**<br/>准备相机及阴影视图的目标和附件资源。" }
+  class n15 node_system_set
+  n16@{ shape: lin-rect, label: "**RenderSystems::PhaseSort**<br/>排序透明渲染阶段及分箱绘制键。" }
+  class n16 node_system_set
+  n1 e0@-->|"RenderApp / Render"| n0
+  class e0 edge_registration
+  n0 e1@--> n2
+  class e1 edge_set_membership
+  n0 e2@--> n3
+  class e2 edge_set_membership
+  n0 e3@--> n4
+  class e3 edge_set_membership
+  n0 e4@--> n5
+  class e4 edge_set_membership
+  n0 e5@--> n6
+  class e5 edge_set_membership
+  n0 e6@--> n7
+  class e6 edge_set_membership
+  n0 e7@--> n8
+  class e7 edge_set_membership
+  n0 e8@--> n9
+  class e8 edge_set_membership
+  n0 e9@--> n10
+  class e9 edge_set_membership
+  n0 e10@--> n11
+  class e10 edge_set_membership
+  n0 e11@--> n12
+  class e11 edge_set_membership
+  n0 e12@--> n13
+  class e12 edge_set_membership
+  n0 e13@--> n14
+  class e13 edge_set_membership
+  n15 e14@--> n0
+  class e14 edge_order
+  n0 e15@--> n16
+  class e15 edge_order
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }

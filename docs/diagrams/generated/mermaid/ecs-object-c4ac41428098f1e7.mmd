@@ -1,0 +1,65 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: MorphIndices · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: cyl, label: "**MorphIndices**<br/>关联形变网格与当前及上一帧权重位置。" }
+  class n0 node_resource
+  n1@{ shape: rounded, label: "**extract_morphs**<br/>提取可见网格的形变权重，重建本帧权重缓冲<br/>及实体索引，同时保留上一帧权重位置以计算<br/>运动矢量；按 GPU 缓冲能力选择对齐和存储<br/>方式。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**set_mesh_motion_vector_flags**<br/>在提取完成后标记网格可用的前帧蒙皮和形<br/>变。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**prepare_morph_descriptors**<br/>稳定分配形变描述符索引并回收失效项。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**collect_meshes_for_gpu_building**<br/>把线程提取队列整理为 GPU 网格实例和输入<br/>缓冲。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_pbr::render::**<br/>**morph::MorphIndices#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n5 node_system
+  n1 e0@--> n0
+  class e0 edge_write
+  n0 e1@--> n2
+  class e1 edge_read
+  n3 e2@--> n0
+  class e2 edge_write
+  n0 e3@--> n4
+  class e3 edge_read
+  n5 e4@-->|"正文添加"| n0
+  class e4 edge_write
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }

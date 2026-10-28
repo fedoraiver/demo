@@ -1,0 +1,83 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: RenderSystems::Specialize · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_engine_flow fill:#F1F5F4,stroke:#557C78,stroke-width:1.6px,color:#1F3340
+  classDef edge_order stroke:#334155,stroke-width:2px
+  classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: lin-rect, label: "**RenderSystems::Specialize**<br/>为材质网格和阴影视图专用化渲染管线。" }
+  class n0 node_system_set
+  n1@{ shape: stadium, label: "**RenderApp · Render**<br/>保存本应用调度的注册上下文与成员。" }
+  class n1 node_engine_flow
+  n2@{ shape: rounded, label: "**prepare_pending_mesh_material2d_**<br/>**queues**<br/>轮换二维材质待就绪队列并清理失效视图。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**specialize_material2d_meshes**<br/>为可见二维网格重建失效的材质专用化。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**specialize_material_meshes**<br/>为变化的可见网格生成并缓存材质专用管线。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**check_views_lights_need_**<br/>**specialization**<br/>检测阴影视图投影类型并标记管线待刷新。" }
+  class n5 node_system
+  n6@{ shape: rounded, label: "**specialize_shadows**<br/>按阴影视图、网格及材质变化重新选择专用阴<br/>影渲染管线，清理失效缓存，并整理需要补齐<br/>或重新排队的阴影网格任务。" }
+  class n6 node_system
+  n7@{ shape: lin-rect, label: "**RenderSystems::CreateViews**<br/>创建附加渲染视图并建立视图相关状态。" }
+  class n7 node_system_set
+  n8@{ shape: lin-rect, label: "**RenderSystems::PrepareViews**<br/>准备相机及阴影视图的目标和附件资源。" }
+  class n8 node_system_set
+  n1 e0@-->|"RenderApp / Render"| n0
+  class e0 edge_registration
+  n0 e1@--> n2
+  class e1 edge_set_membership
+  n0 e2@--> n3
+  class e2 edge_set_membership
+  n0 e3@--> n4
+  class e3 edge_set_membership
+  n0 e4@--> n5
+  class e4 edge_set_membership
+  n0 e5@--> n6
+  class e5 edge_set_membership
+  n7 e6@--> n0
+  class e6 edge_order
+  n0 e7@--> n8
+  class e7 edge_order
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }

@@ -1,0 +1,50 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: RenderAssetsToReExtract<GpuImage> · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: cyl, label: "**RenderAssetsToReExtract#lt;GpuImage#gt;**<br/>记录设备恢复后需重建的渲染资产。" }
+  class n0 node_resource
+  n1@{ shape: rounded, label: "**extract_render_asset#lt;bevy_render::**<br/>**texture::gpu_image::GpuImage#gt;**<br/>每轮先清空旧提取队列，再根据源资产新增、<br/>修改及设备恢复请求提取 GPU 数据，按<br/>RenderAssetUsages 选择克隆或移出资产数<br/>据；最后一个句柄释放时记录渲染侧移除。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**collect_render_assets_to_**<br/>**reextract#lt;bevy_render::texture::gpu_**<br/>**image::GpuImage#gt;**<br/>排空渲染资产并登记设备恢复后的重新提取。" }
+  class n2 node_system
+  n1 e0@--> n0
+  class e0 edge_write
+  n2 e1@-->|"延迟添加"| n0
+  class e1 edge_write
+  e0@{ curve: basis }
+  e1@{ curve: basis }

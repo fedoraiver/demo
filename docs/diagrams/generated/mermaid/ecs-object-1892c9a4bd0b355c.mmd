@@ -1,0 +1,88 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#object-1892c9a4bd0b355c-e6{marker-start:url(#object-1892c9a4bd0b355c_flowchart-v2-pointStart)!important}\n#object-1892c9a4bd0b355c-e7{marker-start:url(#object-1892c9a4bd0b355c_flowchart-v2-pointStart)!important}\n#object-1892c9a4bd0b355c_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}"
+  }
+}
+---
+flowchart LR
+  accTitle: TimeSystems · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_engine_flow fill:#F1F5F4,stroke:#557C78,stroke-width:1.6px,color:#1F3340
+  classDef edge_order stroke:#334155,stroke-width:2px
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: lin-rect, label: "**TimeSystems**<br/>推进真实时间与游戏时间。" }
+  class n0 node_system_set
+  n1@{ shape: stadium, label: "**main · First**<br/>保存本应用调度的注册上下文与成员。" }
+  class n1 node_engine_flow
+  n2@{ shape: rounded, label: "**time_system**<br/>依据 TimeUpdateStrategy 和可用的渲染<br/>时间通道更新真实时钟，再推进虚拟时钟及当<br/>前通用 Time；固定步长策略使用<br/>Time#lt;Fixed#gt; 的步长。" }
+  class n2 node_system
+  n3@{ shape: lin-rect, label: "**PickingSystems::Input**<br/>把设备动作转换为拾取指针输入。" }
+  class n3 node_system_set
+  n4@{ shape: cyl, label: "**Time#lt;Fixed#gt;**<br/>提供固定模拟的时间步长。" }
+  class n4 node_resource
+  n5@{ shape: cyl, label: "**Time#lt;Real#gt;**<br/>提供不随游戏暂停的真实时间。" }
+  class n5 node_resource
+  n6@{ shape: cyl, label: "**Time#lt;Virtual#gt;**<br/>提供可暂停的游戏时间，作为固定步时间来<br/>源。" }
+  class n6 node_resource
+  n7@{ shape: cyl, label: "**Time**<br/>提供当前运行阶段的通用时间。" }
+  class n7 node_resource
+  n1 e0@-->|"main / First"| n0
+  class e0 edge_registration
+  n0 e1@--> n2
+  class e1 edge_set_membership
+  n0 e2@--> n3
+  class e2 edge_order
+  n4 e3@-->|"访问声明"| n0
+  class e3 edge_read
+  n5 e4@-->|"访问声明"| n0
+  class e4 edge_read
+  n6 e5@-->|"访问声明"| n0
+  class e5 edge_read
+  n5 e6@---|"访问声明"| n0
+  class e6 edge_write
+  n6 e7@---|"访问声明"| n0
+  class e7 edge_write
+  n0 e8@-->|"访问声明"| n7
+  class e8 edge_write
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }

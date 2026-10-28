@@ -1,0 +1,120 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: early_gpu_preprocess · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef node_system_param fill:#EFF5F6,stroke:#3B8790,stroke-width:1.6px,color:#1F3340
+  classDef node_engine_flow fill:#F1F5F4,stroke:#557C78,stroke-width:1.6px,color:#1F3340
+  classDef edge_order stroke:#334155,stroke-width:2px
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**early_gpu_preprocess**<br/>为当前视图及阴影级联执行早期网格转换与裁<br/>剪。" }
+  class n0 node_system
+  n1@{ shape: stadium, label: "**RenderApp · Core3d**<br/>保存本应用调度的注册上下文与成员。" }
+  class n1 node_engine_flow
+  n2@{ shape: rounded, label: "**early_prepass_build_indirect_**<br/>**parameters**<br/>构建早期预通道使用的多重间接绘制参数。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**unpack_bins**<br/>针对当前视图及其阴影级联的索引和非索引批<br/>次，在 GPU 上解包已缓存的分桶数据，生成<br/>后续网格预处理所需的任务列表。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**ViewLightEntities**<br/>保存相机相关的全部级联阴影视图。" }
+  class n4 node_component
+  n5@{ shape: rounded, label: "**SkipGpuPreprocess**<br/>避免视图重复执行 GPU 网格预处理。" }
+  class n5 node_component
+  n6@{ shape: rounded, label: "**ExtractedView**<br/>描述渲染视图的身份、投影与空间状态。" }
+  class n6 node_component
+  n7@{ shape: rounded, label: "**PreprocessBindGroups**<br/>为视图各绘制阶段保存网格预处理绑定。" }
+  class n7 node_component
+  n8@{ shape: rounded, label: "**ViewUniformOffset**<br/>定位当前视图在共享 Uniform 缓冲中的参<br/>数。" }
+  class n8 node_component
+  n9@{ shape: rounded, label: "**NoIndirectDrawing**<br/>关闭相机的间接绘制模式。" }
+  class n9 node_component
+  n10@{ shape: rounded, label: "**OcclusionCulling**<br/>启用视图的 GPU 遮挡裁剪。" }
+  class n10 node_component
+  n11@{ shape: rounded, label: "**LightEntity**<br/>标识阴影视图对应的光源面或级联。" }
+  class n11 node_component
+  n12@{ shape: cyl, label: "**BatchedInstanceBuffers#lt;MeshUniform,**<br/>**MeshInputUniform#gt;**<br/>保存批次绘制的 GPU 输入与实例缓冲。" }
+  class n12 node_resource
+  n13@{ shape: cyl, label: "**PipelineCache**<br/>缓存 GPU 渲染、计算管线与待创建队列。" }
+  class n13 node_resource
+  n14@{ shape: cyl, label: "**PreprocessPipelines**<br/>汇集网格预处理与间接参数构建管线。" }
+  class n14 node_resource
+  n15@{ shape: notch-rect, label: "**RenderContext**<br/>向渲染系统提供命令编码器和 GPU 设备。" }
+  class n15 node_system_param
+  n1 e0@-->|"RenderApp / Core3d"| n0
+  class e0 edge_registration
+  n0 e1@--> n2
+  class e1 edge_order
+  n3 e2@--> n0
+  class e2 edge_order
+  n4 e3@--> n0
+  class e3 edge_read
+  n5 e4@-->|"存在 / 变更过滤"| n0
+  class e4 edge_reference
+  n6 e5@--> n0
+  class e5 edge_read
+  n7 e6@--> n0
+  class e6 edge_read
+  n8 e7@--> n0
+  class e7 edge_read
+  n9 e8@-->|"存在 / 变更过滤"| n0
+  class e8 edge_reference
+  n10 e9@-->|"存在 / 变更过滤"| n0
+  class e9 edge_reference
+  n11 e10@--> n0
+  class e10 edge_read
+  n12 e11@--> n0
+  class e11 edge_read
+  n13 e12@--> n0
+  class e12 edge_read
+  n14 e13@--> n0
+  class e13 edge_read
+  n15 e14@-->|"参数 / 查询数据"| n0
+  class e14 edge_reference
+  e0@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }

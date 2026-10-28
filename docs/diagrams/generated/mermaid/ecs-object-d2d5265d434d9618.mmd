@@ -1,0 +1,235 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: main · RunFixedMainLoop · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_sync fill:#F6F3F0,stroke:#8B6A42,stroke-width:1.6px,color:#1F3340
+  classDef node_engine_flow fill:#F1F5F4,stroke:#557C78,stroke-width:1.6px,color:#1F3340
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: stadium, label: "**main · RunFixedMainLoop**<br/>保存本应用调度的注册上下文与成员。" }
+  class n0 node_engine_flow
+  n1@{ shape: rounded, label: "**start_gizmo_context#lt;bevy_light::**<br/>**gizmos::LightGizmoConfigGroup, bevy_**<br/>**time::fixed::Fixed#gt;**<br/>把默认 Gizmo 存储与当前上下文的交换缓冲<br/>互换，暂存父上下文并开始新的清理上下文；<br/>必须与对应结束阶段配对使用。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**start_gizmo_context#lt;bevy_gizmos::**<br/>**config::DefaultGizmoConfigGroup,**<br/>**bevy_time::fixed::Fixed#gt;**<br/>把默认 Gizmo 存储与当前上下文的交换缓冲<br/>互换，暂存父上下文并开始新的清理上下文；<br/>必须与对应结束阶段配对使用。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**start_gizmo_context#lt;bevy_gizmos::**<br/>**aabb::AabbGizmoConfigGroup, bevy_**<br/>**time::fixed::Fixed#gt;**<br/>把默认 Gizmo 存储与当前上下文的交换缓冲<br/>互换，暂存父上下文并开始新的清理上下文；<br/>必须与对应结束阶段配对使用。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**start_gizmo_context#lt;bevy_gizmos::**<br/>**frustum::FrustumGizmoConfigGroup,**<br/>**bevy_time::fixed::Fixed#gt;**<br/>把默认 Gizmo 存储与当前上下文的交换缓冲<br/>互换，暂存父上下文并开始新的清理上下文；<br/>必须与对应结束阶段配对使用。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**start_gizmo_context#lt;bevy_gizmos::**<br/>**skinned_mesh_bounds::**<br/>**SkinnedMeshBoundsGizmoConfigGroup,**<br/>**bevy_time::fixed::Fixed#gt;**<br/>把默认 Gizmo 存储与当前上下文的交换缓冲<br/>互换，暂存父上下文并开始新的清理上下文；<br/>必须与对应结束阶段配对使用。" }
+  class n5 node_system
+  n6@{ shape: rounded, label: "**run_fixed_main_schedule**<br/>累积虚拟时间并按固定时钟步长重复运行<br/>FixedMain，保存剩余 overstep。" }
+  class n6 node_system
+  n7@{ shape: rounded, label: "**ease_translation_hermite#lt;avian3d::**<br/>**interpolation::LinVelSource#gt;**<br/>来自Avian ↗：用两端线速度做 Hermite<br/>位置平滑。" }
+  class n7 node_system
+  class n7 external_node
+  n8@{ shape: rounded, label: "**ease_rotation_hermite#lt;avian3d::**<br/>**interpolation::AngVelSource#gt;**<br/>来自Avian ↗：用两端角速度做 Hermite<br/>旋转平滑。" }
+  class n8 node_system
+  class n8 external_node
+  n9@{ shape: rounded, label: "**ease_translation_lerp**<br/>来自Avian ↗：按固定步剩余比例线性插值<br/>显示位置。" }
+  class n9 node_system
+  class n9 external_node
+  n10@{ shape: rounded, label: "**ease_rotation_slerp**<br/>来自Avian ↗：按固定步剩余比例球面插值<br/>显示旋转。" }
+  class n10 node_system
+  class n10 external_node
+  n11@{ shape: rounded, label: "**ease_scale_lerp**<br/>来自Avian ↗：按固定步剩余比例线性插值<br/>显示缩放。" }
+  class n11 node_system
+  class n11 external_node
+  n12@{ shape: rounded, label: "**update_last_easing_tick**<br/>来自Avian ↗：记录平滑系统完成后的变化<br/>检测边界。" }
+  class n12 node_system
+  class n12 external_node
+  n13@{ shape: rounded, label: "**sync_held_physics**<br/>来自物品交互 ↗：同步本帧持物碰撞朝向与<br/>显示朝向。" }
+  class n13 node_system
+  class n13 external_node
+  n14@{ shape: rounded, label: "**sync_held_presentation**<br/>来自物品交互 ↗：按人物呈现姿态同步持物<br/>模型与握持目标。" }
+  class n14 node_system
+  class n14 external_node
+  n15@{ shape: rounded, label: "**end_gizmo_context#lt;bevy_light::**<br/>**gizmos::LightGizmoConfigGroup, bevy_**<br/>**time::fixed::Fixed#gt;**<br/>清空当前默认 Gizmo 存储，再与上下文交换<br/>缓冲互换，恢复先前保存的父上下文，供后续<br/>图元网格生成使用。" }
+  class n15 node_system
+  n16@{ shape: rounded, label: "**end_gizmo_context#lt;bevy_gizmos::**<br/>**config::DefaultGizmoConfigGroup,**<br/>**bevy_time::fixed::Fixed#gt;**<br/>清空当前默认 Gizmo 存储，再与上下文交换<br/>缓冲互换，恢复先前保存的父上下文，供后续<br/>图元网格生成使用。" }
+  class n16 node_system
+  n17@{ shape: rounded, label: "**end_gizmo_context#lt;bevy_gizmos::**<br/>**aabb::AabbGizmoConfigGroup, bevy_**<br/>**time::fixed::Fixed#gt;**<br/>清空当前默认 Gizmo 存储，再与上下文交换<br/>缓冲互换，恢复先前保存的父上下文，供后续<br/>图元网格生成使用。" }
+  class n17 node_system
+  n18@{ shape: rounded, label: "**end_gizmo_context#lt;bevy_gizmos::**<br/>**frustum::FrustumGizmoConfigGroup,**<br/>**bevy_time::fixed::Fixed#gt;**<br/>清空当前默认 Gizmo 存储，再与上下文交换<br/>缓冲互换，恢复先前保存的父上下文，供后续<br/>图元网格生成使用。" }
+  class n18 node_system
+  n19@{ shape: rounded, label: "**end_gizmo_context#lt;bevy_gizmos::**<br/>**skinned_mesh_bounds::**<br/>**SkinnedMeshBoundsGizmoConfigGroup,**<br/>**bevy_time::fixed::Fixed#gt;**<br/>清空当前默认 Gizmo 存储，再与上下文交换<br/>缓冲互换，恢复先前保存的父上下文，供后续<br/>图元网格生成使用。" }
+  class n19 node_system
+  n20@{ shape: rounded, label: "**reset_easing_states_on_transform_**<br/>**change**<br/>来自Avian ↗：在外部直接改变变换时取消<br/>失效的平滑区间。" }
+  class n20 node_system
+  class n20 external_node
+  n21@{ shape: rounded, label: "**ApplyDeferred**<br/>在调度建立的同步点应用前序系统暂存的<br/>Commands 等延迟操作，使后续系统可以观察<br/>到结构变化；此卡片是 ApplyDeferred 的<br/>System 实现。" }
+  class n21 node_sync
+  n22@{ shape: rounded, label: "**sync_character_facing**<br/>来自第一人称控制 ↗：同步人物朝向并处理<br/>持物转向受阻。" }
+  class n22 node_system
+  class n22 external_node
+  n23@{ shape: rounded, label: "**follow_first_person_camera**<br/>来自第一人称控制 ↗：按人物本帧位置与观<br/>察角度更新第一人称镜头。" }
+  class n23 node_system
+  class n23 external_node
+  n24@{ shape: rounded, label: "**sync_character_visibility**<br/>来自第一人称控制 ↗：隐藏第一人称控制角<br/>色的自身模型。" }
+  class n24 node_system
+  class n24 external_node
+  n25@{ shape: lin-rect, label: "**RunFixedMainLoopSystems::**<br/>**BeforeFixedMainLoop**<br/>在固定循环之前采集或准备本帧输入。" }
+  class n25 node_system_set
+  n26@{ shape: lin-rect, label: "**RunFixedMainLoopSystems::**<br/>**FixedMainLoop**<br/>根据虚拟时间推进零次或多次固定更新。" }
+  class n26 node_system_set
+  n27@{ shape: lin-rect, label: "**RunFixedMainLoopSystems::**<br/>**AfterFixedMainLoop**<br/>在固定循环之后执行插值与呈现。" }
+  class n27 node_system_set
+  n28@{ shape: lin-rect, label: "**PresentationSystems::Facing**<br/>来自应用流程 ↗：在插值后处理本帧人物转<br/>向。" }
+  class n28 node_system_set
+  class n28 external_node
+  n29@{ shape: lin-rect, label: "**TransformEasingSystems::Ease**<br/>来自Avian ↗：混合固定步端点以生成平滑<br/>显示姿态。" }
+  class n29 node_system_set
+  class n29 external_node
+  n30@{ shape: lin-rect, label: "**TransformEasingSystems::**<br/>**UpdateEasingTick**<br/>来自Avian ↗：记录显示变更，区分插值更<br/>新与外部瞬移。" }
+  class n30 node_system_set
+  class n30 external_node
+  n31@{ shape: lin-rect, label: "**PresentationSystems::HeldPhysics**<br/>来自应用流程 ↗：在显示帧同步持物碰撞姿<br/>态。" }
+  class n31 node_system_set
+  class n31 external_node
+  n32@{ shape: lin-rect, label: "**PresentationSystems::**<br/>**HeldPresentation**<br/>来自应用流程 ↗：在显示帧同步持物模型及<br/>检查目标。" }
+  class n32 node_system_set
+  class n32 external_node
+  n33@{ shape: lin-rect, label: "**PresentationSystems::Camera**<br/>来自应用流程 ↗：在持物呈现同步之后更新<br/>第一人称相机。" }
+  class n33 node_system_set
+  class n33 external_node
+  n34@{ shape: lin-rect, label: "**PresentationSystems::Visibility**<br/>来自应用流程 ↗：在相机更新后隐藏受控角<br/>色自身模型。" }
+  class n34 node_system_set
+  class n34 external_node
+  n35@{ shape: lin-rect, label: "**AnonymousSet(0)**<br/>保存本组系统共同的运行条件。" }
+  class n35 node_system_set
+  n0 e0@-->|"main / RunFixedMainLoop"| n1
+  class e0 edge_registration
+  n0 e1@-->|"main / RunFixedMainLoop"| n2
+  class e1 edge_registration
+  n0 e2@-->|"main / RunFixedMainLoop"| n3
+  class e2 edge_registration
+  n0 e3@-->|"main / RunFixedMainLoop"| n4
+  class e3 edge_registration
+  n0 e4@-->|"main / RunFixedMainLoop"| n5
+  class e4 edge_registration
+  n0 e5@-->|"main / RunFixedMainLoop"| n6
+  class e5 edge_registration
+  n0 e6@-->|"main / RunFixedMainLoop"| n7
+  class e6 edge_registration
+  n0 e7@-->|"main / RunFixedMainLoop"| n8
+  class e7 edge_registration
+  n0 e8@-->|"main / RunFixedMainLoop"| n9
+  class e8 edge_registration
+  n0 e9@-->|"main / RunFixedMainLoop"| n10
+  class e9 edge_registration
+  n0 e10@-->|"main / RunFixedMainLoop"| n11
+  class e10 edge_registration
+  n0 e11@-->|"main / RunFixedMainLoop"| n12
+  class e11 edge_registration
+  n0 e12@-->|"main / RunFixedMainLoop"| n13
+  class e12 edge_registration
+  n0 e13@-->|"main / RunFixedMainLoop"| n14
+  class e13 edge_registration
+  n0 e14@-->|"main / RunFixedMainLoop"| n15
+  class e14 edge_registration
+  n0 e15@-->|"main / RunFixedMainLoop"| n16
+  class e15 edge_registration
+  n0 e16@-->|"main / RunFixedMainLoop"| n17
+  class e16 edge_registration
+  n0 e17@-->|"main / RunFixedMainLoop"| n18
+  class e17 edge_registration
+  n0 e18@-->|"main / RunFixedMainLoop"| n19
+  class e18 edge_registration
+  n0 e19@-->|"main / RunFixedMainLoop"| n20
+  class e19 edge_registration
+  n0 e20@-->|"main / RunFixedMainLoop"| n21
+  class e20 edge_registration
+  n0 e21@-->|"main / RunFixedMainLoop"| n22
+  class e21 edge_registration
+  n0 e22@-->|"main / RunFixedMainLoop"| n23
+  class e22 edge_registration
+  n0 e23@-->|"main / RunFixedMainLoop"| n24
+  class e23 edge_registration
+  n0 e24@-->|"main / RunFixedMainLoop"| n25
+  class e24 edge_registration
+  n0 e25@-->|"main / RunFixedMainLoop"| n26
+  class e25 edge_registration
+  n0 e26@-->|"main / RunFixedMainLoop"| n27
+  class e26 edge_registration
+  n0 e27@-->|"main / RunFixedMainLoop"| n28
+  class e27 edge_registration
+  n0 e28@-->|"main / RunFixedMainLoop"| n29
+  class e28 edge_registration
+  n0 e29@-->|"main / RunFixedMainLoop"| n30
+  class e29 edge_registration
+  n0 e30@-->|"main / RunFixedMainLoop"| n31
+  class e30 edge_registration
+  n0 e31@-->|"main / RunFixedMainLoop"| n32
+  class e31 edge_registration
+  n0 e32@-->|"main / RunFixedMainLoop"| n33
+  class e32 edge_registration
+  n0 e33@-->|"main / RunFixedMainLoop"| n34
+  class e33 edge_registration
+  n0 e34@-->|"main / RunFixedMainLoop"| n35
+  class e34 edge_registration
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e18@{ curve: basis }
+  e19@{ curve: basis }
+  e20@{ curve: basis }
+  e21@{ curve: basis }
+  e22@{ curve: basis }
+  e23@{ curve: basis }
+  e24@{ curve: basis }
+  e25@{ curve: basis }
+  e26@{ curve: basis }
+  e27@{ curve: basis }
+  e28@{ curve: basis }
+  e29@{ curve: basis }
+  e30@{ curve: basis }
+  e31@{ curve: basis }
+  e32@{ curve: basis }
+  e33@{ curve: basis }
+  e34@{ curve: basis }

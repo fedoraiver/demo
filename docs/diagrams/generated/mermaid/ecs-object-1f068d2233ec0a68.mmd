@@ -1,0 +1,145 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#object-1f068d2233ec0a68-e8{marker-start:url(#object-1f068d2233ec0a68_flowchart-v2-pointStart)!important}\n#object-1f068d2233ec0a68-e11{marker-start:url(#object-1f068d2233ec0a68_flowchart-v2-pointStart)!important}\n#object-1f068d2233ec0a68-e12{marker-start:url(#object-1f068d2233ec0a68_flowchart-v2-pointStart)!important}\n#object-1f068d2233ec0a68-e16{marker-start:url(#object-1f068d2233ec0a68_flowchart-v2-pointStart)!important}\n#object-1f068d2233ec0a68-e17{marker-start:url(#object-1f068d2233ec0a68_flowchart-v2-pointStart)!important}\n#object-1f068d2233ec0a68_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}"
+  }
+}
+---
+flowchart LR
+  accTitle: RenderLayers · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**RenderLayers**<br/>限定相机与实体可相交的渲染层。" }
+  class n0 node_component
+  n1@{ shape: rounded, label: "**check_visibility_cpu_culling**<br/>按层、距离和视锥收集各相机可见实体。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**check_dir_light_mesh_visibility**<br/>计算方向光各相机级联可见的投影网格。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**check_point_light_mesh_visibility**<br/>计算点光与聚光灯阴影可见的网格。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**assign_objects_to_clusters**<br/>将灯光、探针及贴花分配到视图分簇。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**update_text2d_layout**<br/>重新排版变化的二维文字并准备字形。" }
+  class n5 node_system
+  n6@{ shape: rounded, label: "**sprite_picking**<br/>将可见、变换有效的精灵按深度排序，结合指<br/>针射线、相机、精灵图像和拾取配置计算命<br/>中，并向拾取后端发布 PointerHits。" }
+  class n6 node_system
+  n7@{ shape: rounded, label: "**spawn_gizmo_meshes**<br/>创建变换操作器各轴网格、材质和覆盖相机。" }
+  class n7 node_system
+  n8@{ shape: rounded, label: "**extract_meshes_for_gpu_building**<br/>增量提取变化或需重试网格到线程队列。" }
+  class n8 node_system
+  n9@{ shape: rounded, label: "**extract_cameras**<br/>把主世界活动相机的目标、视口、变换、可见<br/>实体和渲染设置提取到渲染实体，并维护视图<br/>所需格式；对停用或目标尺寸无效的相机移除<br/>失效提取状态。" }
+  class n9 node_system
+  n10@{ shape: rounded, label: "**extract_lights**<br/>同步可见点光、聚光、平行光及矩形光的渲染<br/>参数和阴影可见实体，提取变化的阴影贴图设<br/>置；隐藏或失效光源不继续保留有效渲染状<br/>态。" }
+  class n10 node_system
+  n11@{ shape: rounded, label: "**extract_linegizmos**<br/>从保留式 Gizmo 实体提取全局变换、线宽、<br/>接头、虚线样式及渲染层，生成本帧临时线段<br/>渲染实体和对应 Uniform。" }
+  class n11 node_system
+  n12@{ shape: rounded, label: "**collect_gpu_culled_meshes**<br/>按渲染层把 GPU 裁剪对象分配到各视图列<br/>表。" }
+  class n12 node_system
+  n13@{ shape: rounded, label: "**prepare_lights**<br/>汇总提取后的各类光源，为视图准备光照<br/>GPU 参数、聚簇索引及阴影贴图和阴影视<br/>图，维护对应缓存及阶段记录，并检查设备和<br/>实现支持的数量限制。" }
+  class n13 node_system
+  n14@{ shape: rounded, label: "**queue_shadows**<br/>遍历各阴影视图中可见的网格，按专用材质管<br/>线、渲染层及投影资格更新阴影分桶；移除失<br/>效项，将资产或管线尚未就绪的网格留到后续<br/>重试。" }
+  class n14 node_system
+  n15@{ shape: rounded, label: "**queue_line_and_joint_gizmos_2d**<br/>将二维 Gizmo 线段与接头加入透明阶段。" }
+  class n15 node_system
+  n16@{ shape: rounded, label: "**queue_line_gizmos_3d**<br/>将三维 Gizmo 线列表和线条带加入透明阶<br/>段。" }
+  class n16 node_system
+  n17@{ shape: rounded, label: "**queue_line_joint_gizmos_3d**<br/>将三维 Gizmo 折线接头加入透明阶段。" }
+  class n17 node_system
+  n0 e0@--> n1
+  class e0 edge_read
+  n0 e1@--> n2
+  class e1 edge_read
+  n0 e2@--> n3
+  class e2 edge_read
+  n0 e3@--> n4
+  class e3 edge_read
+  n0 e4@--> n5
+  class e4 edge_read
+  n0 e5@--> n6
+  class e5 edge_read
+  n7 e6@-->|"延迟添加"| n0
+  class e6 edge_write
+  n0 e7@-->|"存在 / 变更过滤"| n8
+  class e7 edge_reference
+  n9 e8@--- n0
+  class e8 edge_read
+  n9 e9@-->|"延迟移除"| n0
+  class e9 edge_write
+  n9 e10@-->|"延迟添加"| n0
+  class e10 edge_write
+  n10 e11@--- n0
+  class e11 edge_read
+  n10 e12@---|"存在 / 变更过滤"| n0
+  class e12 edge_reference
+  n10 e13@-->|"延迟添加"| n0
+  class e13 edge_write
+  n0 e14@--> n11
+  class e14 edge_read
+  n0 e15@--> n12
+  class e15 edge_read
+  n13 e16@--- n0
+  class e16 edge_read
+  n13 e17@---|"存在 / 变更过滤"| n0
+  class e17 edge_reference
+  n13 e18@-->|"延迟添加"| n0
+  class e18 edge_write
+  n0 e19@--> n14
+  class e19 edge_read
+  n0 e20@--> n15
+  class e20 edge_read
+  n0 e21@--> n16
+  class e21 edge_read
+  n0 e22@--> n17
+  class e22 edge_read
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: bumpX }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e17@{ curve: basis }
+  e18@{ curve: basis }
+  e19@{ curve: basis }
+  e20@{ curve: basis }
+  e21@{ curve: basis }
+  e22@{ curve: basis }

@@ -1,0 +1,75 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#object-235c698ae6595532-e1{marker-start:url(#object-235c698ae6595532_flowchart-v2-pointStart)!important}\n#object-235c698ae6595532_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}"
+  }
+}
+---
+flowchart LR
+  accTitle: AccumulatedLocalAcceleration · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**AccumulatedLocalAcceleration**<br/>累积物理步前的局部加速度。" }
+  class n0 node_component
+  n1@{ shape: rounded, label: "**clear_accumulated_local_acceleration**<br/>清空本轮已变化的局部加速度缓存。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**apply_constant_local_forces**<br/>按总质量把局部恒力转成局部线加速度。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**apply_constant_local_torques**<br/>按局部惯量把恒定局部扭矩转成角加速度。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**apply_constant_local_linear_**<br/>**acceleration**<br/>累加刚体局部坐标中的恒定线加速度。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**apply_constant_local_angular_**<br/>**acceleration**<br/>累加刚体局部坐标中的恒定角加速度。" }
+  class n5 node_system
+  n6@{ shape: rounded, label: "**apply_local_acceleration**<br/>在子步中把局部加速度作用到世界速度。" }
+  class n6 node_system
+  n1 e0@--> n0
+  class e0 edge_write
+  n1 e1@---|"存在 / 变更过滤"| n0
+  class e1 edge_reference
+  n2 e2@--> n0
+  class e2 edge_write
+  n3 e3@--> n0
+  class e3 edge_write
+  n4 e4@--> n0
+  class e4 edge_write
+  n5 e5@--> n0
+  class e5 edge_write
+  n0 e6@--> n6
+  class e6 edge_read
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }

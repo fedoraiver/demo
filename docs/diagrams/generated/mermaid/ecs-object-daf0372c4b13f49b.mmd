@@ -1,0 +1,98 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#object-daf0372c4b13f49b-e3{marker-start:url(#object-daf0372c4b13f49b_flowchart-v2-pointStart)!important}\n#object-daf0372c4b13f49b_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}"
+  }
+}
+---
+flowchart LR
+  accTitle: update_settings_text · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_engine_flow fill:#F1F5F4,stroke:#557C78,stroke-width:1.6px,color:#1F3340
+  classDef node_plugin fill:#F1F3F6,stroke:#4A6389,stroke-width:2.2px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**update_settings_text**<br/>原位更新设置草稿数值与保存提示。" }
+  class n0 node_system
+  n1@{ shape: lin-rect, label: "**UiSystems::Style**<br/>组织菜单显示、数值与说明的原位更新。" }
+  class n1 node_system_set
+  n2@{ shape: cyl, label: "**SettingsDraft**<br/>来自设置与参数 ↗：保存待应用的设置草稿<br/>与临时音量编辑。" }
+  class n2 node_resource
+  class n2 external_node
+  n3@{ shape: stadium, label: "**main · Update**<br/>来自Bevy 引擎 ↗：保存本应用调度的注册<br/>上下文与成员。" }
+  class n3 node_engine_flow
+  class n3 external_node
+  n4@{ shape: rounded, label: "**Text**<br/>来自Bevy 引擎 ↗：保存界面实际显示的文<br/>字。" }
+  class n4 node_component
+  class n4 external_node
+  n5@{ shape: rounded, label: "**SettingValue**<br/>标识草稿值文字，原位更新。" }
+  class n5 node_component
+  n6@{ shape: rounded, label: "**SettingsStatus**<br/>标识保存提示文字，原位更新。" }
+  class n6 node_component
+  n7@{ shape: cyl, label: "**MenuState**<br/>保存菜单页面、设置分类、返回来源与提示。" }
+  class n7 node_resource
+  n8@{ shape: fr-rect, label: "**GameUiPlugin**<br/>管理菜单、设置编辑、导航与主菜单展示场<br/>景。" }
+  class n8 node_plugin
+  n1 e0@--> n0
+  class e0 edge_set_membership
+  n2 e1@-->|"草稿显示"| n0
+  class e1 edge_read
+  n3 e2@-->|"main / Update"| n0
+  class e2 edge_registration
+  n4 e3@---|"可变访问"| n0
+  class e3 edge_write
+  n4 e4@-->|"查询访问"| n0
+  class e4 edge_read
+  n5 e5@-->|"查询访问"| n0
+  class e5 edge_read
+  n5 e6@-->|"存在 / 变更过滤"| n0
+  class e6 edge_reference
+  n6 e7@-->|"存在 / 变更过滤"| n0
+  class e7 edge_reference
+  n7 e8@-->|"访问声明"| n0
+  class e8 edge_read
+  n8 e9@--> n0
+  class e9 edge_registration
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: bumpX }
+  e5@{ curve: bumpX }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }

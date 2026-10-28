@@ -1,0 +1,74 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: RemovedComponents<ChildOf> · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_system_param fill:#EFF5F6,stroke:#3B8790,stroke-width:1.6px,color:#1F3340
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: notch-rect, label: "**RemovedComponents#lt;ChildOf#gt;**<br/>读取曾移除指定组件或连同该组件一起销毁的<br/>实体身份" }
+  class n0 node_system_param
+  n1@{ shape: rounded, label: "**mark_dirty_trees**<br/>沿祖先链标记需要重算变换的子树。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**sync_simple_transforms**<br/>同步没有父子层级的独立实体世界变换。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**mark_dirty_trees**<br/>沿祖先链标记需要重算变换的子树。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**sync_simple_transforms**<br/>同步没有父子层级的独立实体世界变换。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**mark_dirty_trees**<br/>沿祖先链标记需要重算变换的子树。" }
+  class n5 node_system
+  n6@{ shape: rounded, label: "**sync_simple_transforms**<br/>同步没有父子层级的独立实体世界变换。" }
+  class n6 node_system
+  n7@{ shape: rounded, label: "**visibility_propagate_system**<br/>沿父子层级传播可见意图的变化。" }
+  class n7 node_system
+  n0 e0@-->|"参数 / 查询数据"| n1
+  class e0 edge_reference
+  n0 e1@-->|"参数 / 查询数据"| n2
+  class e1 edge_reference
+  n0 e2@-->|"参数 / 查询数据"| n3
+  class e2 edge_reference
+  n0 e3@-->|"参数 / 查询数据"| n4
+  class e3 edge_reference
+  n0 e4@-->|"参数 / 查询数据"| n5
+  class e4 edge_reference
+  n0 e5@-->|"参数 / 查询数据"| n6
+  class e5 edge_reference
+  n0 e6@-->|"参数 / 查询数据"| n7
+  class e6 edge_reference
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }

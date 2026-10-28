@@ -1,0 +1,175 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#object-82a0d5231d1066b4-e9{marker-start:url(#object-82a0d5231d1066b4_flowchart-v2-pointStart)!important}\n#object-82a0d5231d1066b4_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}"
+  }
+}
+---
+flowchart LR
+  accTitle: Rotation · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**Rotation**<br/>保存刚体或碰撞体的世界旋转。" }
+  class n0 node_component
+  n1@{ shape: rounded, label: "**transform_to_position**<br/>把用户改变的世界变换同步到物理位姿。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**update_ray_caster_positions**<br/>把射线发射器的局部原点和方向换到世界空<br/>间。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**update_shape_caster_positions**<br/>把形状扫掠的原点、方向和形状朝向换到世界<br/>空间。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**recover_from_water**<br/>来自越界恢复 ↗：将落水实体恢复到各自出<br/>生姿态。" }
+  class n4 node_system
+  class n4 external_node
+  n5@{ shape: rounded, label: "**sync_character_facing**<br/>来自第一人称控制 ↗：同步人物朝向并处理<br/>持物转向受阻。" }
+  class n5 node_system
+  class n5 external_node
+  n6@{ shape: rounded, label: "**handle_interaction**<br/>来自物品交互 ↗：处理物品拾取、共享持握<br/>与主动释放。" }
+  class n6 node_system
+  class n6 external_node
+  n7@{ shape: rounded, label: "**release_orphaned_items**<br/>来自物品交互 ↗：清理失效持握并恢复物品<br/>独立运动。" }
+  class n7 node_system
+  class n7 external_node
+  n8@{ shape: rounded, label: "**align_attachments**<br/>来自物品交互 ↗：沿安全碰撞路径将物品对<br/>齐双手。" }
+  class n8 node_system
+  class n8 external_node
+  n9@{ shape: rounded, label: "**update_child_collider_position**<br/>由所属刚体位姿更新附属碰撞体的世界位姿。" }
+  class n9 node_system
+  n10@{ shape: rounded, label: "**update_moved_collider_**<br/>**aabbs#lt;avian3d::collision::collider::**<br/>**parry::Collider#gt;**<br/>重算物理步后被手动改变的碰撞边界。" }
+  class n10 node_system
+  n11@{ shape: rounded, label: "**writeback_solver_bodies**<br/>将求解后的位姿和速度回写 ECS。" }
+  class n11 node_system
+  n12@{ shape: rounded, label: "**prepare_solver_bodies**<br/>把 ECS 刚体状态准备成子步求解数据。" }
+  class n12 node_system
+  n13@{ shape: rounded, label: "**solve_continuous**<br/>对单步位移相对厚度过大的动态刚体执行连续<br/>碰撞扫掠；发现碰撞时缩短累计运动，使刚体<br/>停在首次撞击位置，并保留后续接触处理所需<br/>信息。" }
+  class n13 node_system
+  n14@{ shape: rounded, label: "**update_local_frames**<br/>将固定关节参考框架换算到两端局部空间。" }
+  class n14 node_system
+  n15@{ shape: rounded, label: "**update_local_anchors**<br/>将距离关节的锚点换算到刚体局部空间。" }
+  class n15 node_system
+  n16@{ shape: rounded, label: "**update_local_frames**<br/>将滑动关节参考框架换算到局部空间。" }
+  class n16 node_system
+  n17@{ shape: rounded, label: "**update_local_frames**<br/>将旋转关节参考框架换算到局部空间。" }
+  class n17 node_system
+  n18@{ shape: rounded, label: "**update_local_frames**<br/>将球铰参考框架换算到局部空间。" }
+  class n18 node_system
+  n19@{ shape: rounded, label: "**update_solver_body_aabbs#lt;avian3d::**<br/>**collision::collider::parry::**<br/>**Collider#gt;**<br/>按物理结果更新活跃刚体的碰撞边界。" }
+  class n19 node_system
+  n20@{ shape: rounded, label: "**wake_on_changed**<br/>因外部位姿、速度或受力变化标记物理岛唤<br/>醒。" }
+  class n20 node_system
+  n21@{ shape: rounded, label: "**sync_character_facing**<br/>来自第一人称控制 ↗：同步人物朝向并处理<br/>持物转向受阻。" }
+  class n21 node_system
+  class n21 external_node
+  n22@{ shape: rounded, label: "**apply_local_acceleration**<br/>在子步中把局部加速度作用到世界速度。" }
+  class n22 node_system
+  n23@{ shape: rounded, label: "**integrate_velocities**<br/>对采用默认速度积分的活跃动态刚体，先应用<br/>线性和角速度阻尼，再累加当前步的速度增<br/>量；运动学刚体跳过该积分，并记录诊断耗<br/>时。" }
+  class n23 node_system
+  n24@{ shape: rounded, label: "**update_solver_body_angular_inertia**<br/>按当前朝向刷新求解器的有效逆惯量。" }
+  class n24 node_system
+  n1 e0@--> n0
+  class e0 edge_write
+  n0 e1@--> n2
+  class e1 edge_read
+  n0 e2@--> n3
+  class e2 edge_read
+  n4 e3@-->|"延迟添加"| n0
+  class e3 edge_write
+  n5 e4@-->|"延迟添加"| n0
+  class e4 edge_write
+  n6 e5@-->|"延迟添加"| n0
+  class e5 edge_write
+  n7 e6@-->|"延迟添加"| n0
+  class e6 edge_write
+  n8 e7@-->|"延迟添加"| n0
+  class e7 edge_write
+  n9 e8@--> n0
+  class e8 edge_write
+  n9 e9@--- n0
+  class e9 edge_read
+  n0 e10@--> n10
+  class e10 edge_read
+  n11 e11@--> n0
+  class e11 edge_write
+  n0 e12@--> n12
+  class e12 edge_read
+  n0 e13@--> n13
+  class e13 edge_read
+  n0 e14@--> n14
+  class e14 edge_read
+  n0 e15@--> n15
+  class e15 edge_read
+  n0 e16@--> n16
+  class e16 edge_read
+  n0 e17@--> n17
+  class e17 edge_read
+  n0 e18@--> n18
+  class e18 edge_read
+  n0 e19@--> n19
+  class e19 edge_read
+  n0 e20@--> n20
+  class e20 edge_read
+  n0 e21@-->|"存在 / 变更过滤"| n20
+  class e21 edge_reference
+  n21 e22@-->|"延迟添加"| n0
+  class e22 edge_write
+  n0 e23@--> n22
+  class e23 edge_read
+  n0 e24@--> n23
+  class e24 edge_read
+  n0 e25@--> n24
+  class e25 edge_read
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e17@{ curve: basis }
+  e18@{ curve: basis }
+  e19@{ curve: basis }
+  e20@{ curve: basis }
+  e21@{ curve: basis }
+  e22@{ curve: basis }
+  e23@{ curve: basis }
+  e24@{ curve: basis }
+  e25@{ curve: basis }

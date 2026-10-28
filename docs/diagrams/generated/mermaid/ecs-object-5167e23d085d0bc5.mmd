@@ -1,0 +1,69 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#object-5167e23d085d0bc5-e2{marker-start:url(#object-5167e23d085d0bc5_flowchart-v2-pointStart)!important}\n#object-5167e23d085d0bc5-e4{marker-start:url(#object-5167e23d085d0bc5_flowchart-v2-pointStart)!important}\n#object-5167e23d085d0bc5_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}"
+  }
+}
+---
+flowchart LR
+  accTitle: ViewUpscalingPipeline · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**ViewUpscalingPipeline**<br/>记录视图颜色输出所用的缩放管线。" }
+  class n0 node_component
+  n1@{ shape: rounded, label: "**upscaling**<br/>把视图主颜色纹理通过 Blit 管线写入最终<br/>输出附件，遵循相机的输出模式、清屏颜色和<br/>视口；输出模式为 Skip 时不写入。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**upscaling**<br/>把视图主颜色纹理通过 Blit 管线写入最终<br/>输出附件，遵循相机的输出模式、清屏颜色和<br/>视口；输出模式为 Skip 时不写入。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**prepare_view_upscaling_pipelines**<br/>按相机合成方式准备输出缩放管线。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**clear_view_upscaling_pipelines**<br/>从所有已有视图移除<br/>ViewUpscalingPipeline，使渲染设备恢复<br/>后的流程重新准备有效的输出放大管线。" }
+  class n4 node_system
+  n0 e0@--> n1
+  class e0 edge_read
+  n0 e1@--> n2
+  class e1 edge_read
+  n3 e2@--- n0
+  class e2 edge_read
+  n3 e3@-->|"延迟添加"| n0
+  class e3 edge_write
+  n4 e4@---|"存在 / 变更过滤"| n0
+  class e4 edge_reference
+  n4 e5@-->|"延迟移除"| n0
+  class e5 edge_write
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: bumpX }
+  e4@{ curve: basis }
+  e5@{ curve: basis }

@@ -1,0 +1,95 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: ViewBinnedRenderPhases<Opaque3dPrepass> · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: cyl, label: "**ViewBinnedRenderPhases#lt;Opaque3dPrepa**<br/>**ss#gt;**<br/>汇集各视图按分桶组织的绘制指令。" }
+  class n0 node_resource
+  n1@{ shape: rounded, label: "**early_prepass**<br/>从当前视图取得深度、预通道纹理及前后帧参<br/>数，调用共享预通道实现绘制不透明和<br/>AlphaMask 预通道阶段，供后续深度、法线<br/>及运动矢量相关处理使用。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**late_prepass**<br/>仅在遮挡剔除开启且允许间接绘制时执行晚期<br/>预通道，复用共享实现绘制对应的不透明和<br/>AlphaMask 预通道阶段；其他视图直接跳<br/>过。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**extract_camera_prepass_phase**<br/>同步三维相机的预通道标记与渲染阶段。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**specialize_prepass_material_meshes**<br/>按深度、材质和运动特性生成预通道专用管<br/>线。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**queue_prepass_material_meshes**<br/>把有效材质网格分入预通道或延迟几何阶段。" }
+  class n5 node_system
+  n6@{ shape: rounded, label: "**sort_binned_render_phase#lt;bevy_core_**<br/>**pipeline::prepass::Opaque3dPrepass#gt;**<br/>按分桶键对各视图阶段的多绘制、可批处理、<br/>不可批处理网格及非网格项分别排序，使后续<br/>批次准备使用确定的键顺序。" }
+  class n6 node_system
+  n7@{ shape: rounded, label: "**prepare_prepass_textures**<br/>按三维预通道配置分配各类输出纹理。" }
+  class n7 node_system
+  n8@{ shape: rounded, label: "**batch_and_prepare_binned_render_**<br/>**phase#lt;bevy_core_pipeline::prepass::**<br/>**Opaque3dPrepass, bevy_pbr::render::**<br/>**mesh::MeshPipeline#gt;**<br/>在不使用 GPU 数据预处理的路径上逐个读取<br/>分桶实体的批次数据，写入实例缓冲并生成绘<br/>制区间；动态 Uniform 偏移变化时拆分批<br/>次，不可合批项单独记录索引。" }
+  class n8 node_system
+  n9@{ shape: rounded, label: "**batch_and_prepare_binned_render_**<br/>**phase#lt;bevy_core_pipeline::prepass::**<br/>**Opaque3dPrepass, bevy_pbr::render::**<br/>**mesh::MeshPipeline#gt;**<br/>为分桶渲染阶段建立 GPU 预处理批次。" }
+  class n9 node_system
+  n10@{ shape: rounded, label: "**write_binned_instance_buffers#lt;bevy_**<br/>**core_pipeline::prepass::**<br/>**Opaque3dPrepass, bevy_pbr::render::**<br/>**mesh::MeshPipeline#gt;**<br/>上传多重绘制分桶并生成 GPU 解包任务。" }
+  class n10 node_system
+  n11@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_render::**<br/>**render_phase::**<br/>**ViewBinnedRenderPhases#lt;bevy_core_**<br/>**pipeline::prepass::Opaque3dPrepass#gt;#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n11 node_system
+  n0 e0@--> n1
+  class e0 edge_read
+  n0 e1@--> n2
+  class e1 edge_read
+  n3 e2@--> n0
+  class e2 edge_write
+  n0 e3@--> n4
+  class e3 edge_read
+  n5 e4@--> n0
+  class e4 edge_write
+  n6 e5@--> n0
+  class e5 edge_write
+  n0 e6@--> n7
+  class e6 edge_read
+  n8 e7@--> n0
+  class e7 edge_write
+  n9 e8@--> n0
+  class e8 edge_write
+  n10 e9@--> n0
+  class e9 edge_write
+  n11 e10@-->|"正文添加"| n0
+  class e10 edge_write
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }

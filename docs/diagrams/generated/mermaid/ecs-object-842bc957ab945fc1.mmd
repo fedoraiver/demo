@@ -1,0 +1,132 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#object-842bc957ab945fc1-e0{marker-start:url(#object-842bc957ab945fc1_flowchart-v2-pointStart)!important}\n#object-842bc957ab945fc1_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}"
+  }
+}
+---
+flowchart LR
+  accTitle: ComputedUiTargetCamera · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**ComputedUiTargetCamera**<br/>缓存 UI 节点实际采用的相机。" }
+  class n0 node_component
+  n1@{ shape: rounded, label: "**propagate_output#lt;bevy_ui::ui_node::**<br/>**ComputedUiTargetCamera, ()#gt;**<br/>把变化的 Inherited#lt;C#gt; 写入实体实际的<br/>C 组件；继承状态消失且没有重新添加传播<br/>来源时，移除失去来源的输出组件。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**ui_picking**<br/>把各指针位置映射到匹配相机的视口坐标，<br/>按 UiStack 的绘制顺序检查 UI 节点及拾<br/>取规则，输出 PointerHits 供悬停与交互<br/>阶段汇总。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**ui_focus_system**<br/>按鼠标和触摸更新旧式 UI 交互状态。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**extract_uinode_changes**<br/>使变化或移除的 UI 数据失效并清理旧渲染<br/>实体。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**extract_shadows**<br/>从主世界提取变化后的可见 UI 阴影，解析<br/>尺寸、变换、裁剪和目标相机，替换对应的渲<br/>染阴影实体；不可见、空阴影及已移除的数据<br/>不进入绘制。" }
+  class n5 node_system
+  n6@{ shape: rounded, label: "**extract_uinode_background_colors**<br/>提取 UI 节点背景与外侧填充色。" }
+  class n6 node_system
+  n7@{ shape: rounded, label: "**extract_viewport_nodes**<br/>把视口节点所引用相机的输出图像嵌入 UI。" }
+  class n7 node_system
+  n8@{ shape: rounded, label: "**extract_uinode_images**<br/>按节点视觉盒与图集区域提取普通 UI 图<br/>像。" }
+  class n8 node_system
+  n9@{ shape: rounded, label: "**extract_uinode_borders**<br/>提取 UI 各边颜色边框与外轮廓。" }
+  class n9 node_system
+  n10@{ shape: rounded, label: "**extract_text_decorations**<br/>提取 UI 文字背景、删除线和下划线。" }
+  class n10 node_system
+  n11@{ shape: rounded, label: "**extract_text_shadows**<br/>提取 UI 文字及装饰线的偏移阴影。" }
+  class n11 node_system
+  n12@{ shape: rounded, label: "**extract_text_sections**<br/>按图集提取 UI 字形并处理选中文字颜色。" }
+  class n12 node_system
+  n13@{ shape: rounded, label: "**extract_text_cursor**<br/>提取文字光标和带圆角的选区背景。" }
+  class n13 node_system
+  n14@{ shape: rounded, label: "**extract_preedit_underlines**<br/>把输入法预编辑下划线提取为 UI 矩形。" }
+  class n14 node_system
+  n15@{ shape: rounded, label: "**extract_debug_overlay**<br/>为变化的 UI 节点提取调试轮廓。" }
+  class n15 node_system
+  n16@{ shape: rounded, label: "**extract_inline_images**<br/>把文字行内图像提取为 UI 绘制项。" }
+  class n16 node_system
+  n1 e0@--- n0
+  class e0 edge_read
+  n1 e1@-->|"延迟添加"| n0
+  class e1 edge_write
+  n1 e2@-->|"延迟移除"| n0
+  class e2 edge_write
+  n0 e3@--> n2
+  class e3 edge_read
+  n0 e4@--> n3
+  class e4 edge_read
+  n0 e5@-->|"存在 / 变更过滤"| n4
+  class e5 edge_reference
+  n0 e6@--> n5
+  class e6 edge_read
+  n0 e7@-->|"存在 / 变更过滤"| n5
+  class e7 edge_reference
+  n0 e8@--> n6
+  class e8 edge_read
+  n0 e9@--> n7
+  class e9 edge_read
+  n0 e10@--> n8
+  class e10 edge_read
+  n0 e11@--> n9
+  class e11 edge_read
+  n0 e12@--> n10
+  class e12 edge_read
+  n0 e13@--> n11
+  class e13 edge_read
+  n0 e14@--> n12
+  class e14 edge_read
+  n0 e15@--> n13
+  class e15 edge_read
+  n0 e16@--> n14
+  class e16 edge_read
+  n0 e17@--> n15
+  class e17 edge_read
+  n0 e18@--> n16
+  class e18 edge_read
+  e0@{ curve: basis }
+  e1@{ curve: bumpX }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e17@{ curve: basis }
+  e18@{ curve: basis }

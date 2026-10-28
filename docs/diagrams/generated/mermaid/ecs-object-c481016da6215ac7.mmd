@@ -1,0 +1,197 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#object-c481016da6215ac7-e16{marker-start:url(#object-c481016da6215ac7_flowchart-v2-pointStart)!important}\n#object-c481016da6215ac7-e18{marker-start:url(#object-c481016da6215ac7_flowchart-v2-pointStart)!important}\n#object-c481016da6215ac7_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}"
+  }
+}
+---
+flowchart LR
+  accTitle: sync_mouse_capture · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef node_message fill:#EDF4F6,stroke:#247B91,stroke-width:1.6px,color:#1F3340
+  classDef node_message_buffer fill:#EDF4F6,stroke:#247B91,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_sync fill:#F6F3F0,stroke:#8B6A42,stroke-width:1.6px,color:#1F3340
+  classDef node_engine_flow fill:#F1F5F4,stroke:#557C78,stroke-width:1.6px,color:#1F3340
+  classDef node_plugin fill:#F1F3F6,stroke:#4A6389,stroke-width:2.2px,color:#1F3340
+  classDef node_note fill:#F7F7F5,stroke:#9A9B88,stroke-width:1.2px,color:#1F3340
+  classDef edge_order stroke:#334155,stroke-width:2px
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_consume stroke:#247B91,stroke-width:1.8px,stroke-dasharray:2 4
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**sync_mouse_capture**<br/>管理光标捕获及玩法输入启停。" }
+  class n0 node_system
+  n1@{ shape: rounded, label: "**ApplyDeferred（捕获 → 动作准备）**<br/>来自Bevy 引擎 ↗：使本帧玩法输入启停变<br/>更对动作评估可见。" }
+  class n1 node_sync
+  class n1 external_node
+  n2@{ shape: lean-r, label: "**WindowFocused**<br/>来自Bevy 引擎 ↗：记录窗口获得或失去焦<br/>点。" }
+  class n2 node_message
+  class n2 external_node
+  n3@{ shape: doc, label: "**捕获与输入上下文**<br/>保存光标捕获与玩法输入启用状态。" }
+  class n3 node_note
+  n4@{ shape: lin-rect, label: "**InputSystems**<br/>来自Bevy 引擎 ↗：汇总键盘与鼠标输入状<br/>态。" }
+  class n4 node_system_set
+  class n4 external_node
+  n5@{ shape: lin-rect, label: "**EguiPreUpdateSet::ProcessInput**<br/>来自Egui / Inspector ↗：将窗口和设备<br/>输入转换为检查器界面输入。" }
+  class n5 node_system_set
+  class n5 external_node
+  n6@{ shape: stadium, label: "**main · PreUpdate**<br/>来自Bevy 引擎 ↗：保存本应用调度的注册<br/>上下文与成员。" }
+  class n6 node_engine_flow
+  class n6 external_node
+  n7@{ shape: lin-rect, label: "**EnhancedInputSystems::Prepare**<br/>来自Enhanced Input ↗：准备动作评估并<br/>清理待释放的输入。" }
+  class n7 node_system_set
+  class n7 external_node
+  n8@{ shape: lin-rect, label: "**EguiPreUpdateSet::InitContexts**<br/>来自Egui / Inspector ↗：维护新渲染目<br/>标的 Egui 上下文。" }
+  class n8 node_system_set
+  class n8 external_node
+  n9@{ shape: rounded, label: "**ContextActivity#lt;GameplayContext#gt;**<br/>来自Enhanced Input ↗：控制保留绑定的<br/>输入上下文启停。" }
+  class n9 node_component
+  class n9 external_node
+  n10@{ shape: rounded, label: "**Window**<br/>来自Bevy 引擎 ↗：保存主窗口的尺寸与显<br/>示配置。" }
+  class n10 node_component
+  class n10 external_node
+  n11@{ shape: rounded, label: "**CursorOptions**<br/>来自Bevy 引擎 ↗：配置光标可见性与抓取<br/>模式。" }
+  class n11 node_component
+  class n11 external_node
+  n12@{ shape: rounded, label: "**ControlsCharacter**<br/>普通实体引用，指向受控角色。" }
+  class n12 node_component
+  n13@{ shape: rounded, label: "**ControlsCamera**<br/>普通实体引用，指向受控相机。" }
+  class n13 node_component
+  n14@{ shape: rounded, label: "**ContextActivity#lt;GameplayContext#gt;**<br/>来自Enhanced Input ↗：保存动作上下文<br/>的启用状态。" }
+  class n14 node_component
+  class n14 external_node
+  n15@{ shape: rounded, label: "**FirstPersonCamera**<br/>保存跟随目标、眼高与观察角度。" }
+  class n15 node_component
+  n16@{ shape: rounded, label: "**MouseLookState**<br/>保存光标捕获与观察输入初始化状态。" }
+  class n16 node_component
+  n17@{ shape: rounded, label: "**EguiContextSettings**<br/>来自Egui / Inspector ↗：配置检查器上<br/>下文的输入与输出处理。" }
+  class n17 node_component
+  class n17 external_node
+  n18@{ shape: rounded, label: "**EguiInput**<br/>来自Egui / Inspector ↗：缓冲检查器界<br/>面收到的输入。" }
+  class n18 node_component
+  class n18 external_node
+  n19@{ shape: cyl, label: "**ButtonInput#lt;KeyCode#gt;**<br/>来自Bevy 引擎 ↗：保存键盘按键的当前状<br/>态与变化。" }
+  class n19 node_resource
+  class n19 external_node
+  n20@{ shape: cyl, label: "**Messages#lt;WindowFocused#gt;**<br/>来自Bevy 引擎 ↗：缓冲窗口焦点变化消<br/>息。" }
+  class n20 node_message_buffer
+  class n20 external_node
+  n21@{ shape: cyl, label: "**State#lt;AppState#gt; /**<br/>**NextState#lt;AppState#gt;**<br/>来自应用流程 ↗：保存应用主状态及待处理<br/>的会话切换。" }
+  class n21 node_resource
+  class n21 external_node
+  n22@{ shape: cyl, label: "**State#lt;PlayState#gt; /**<br/>**NextState#lt;PlayState#gt;**<br/>来自应用流程 ↗：保存游戏运行、暂停及待<br/>处理的切换请求。" }
+  class n22 node_resource
+  class n22 external_node
+  n23@{ shape: fr-rect, label: "**FirstPersonPlugin**<br/>管理玩法动作、光标捕获、朝向与第一人称镜<br/>头。" }
+  class n23 node_plugin
+  n0 e0@--> n1
+  class e0 edge_order
+  n2 e1@--> n0
+  class e1 edge_consume
+  n0 e2@--> n3
+  class e2 edge_write
+  n4 e3@-->|"InputSystems"| n0
+  class e3 edge_order
+  n0 e4@-->|"EguiPreUpdateSet::ProcessInput"| n5
+  class e4 edge_order
+  n6 e5@-->|"main / PreUpdate"| n0
+  class e5 edge_registration
+  n4 e6@--> n0
+  class e6 edge_order
+  n0 e7@--> n7
+  class e7 edge_order
+  n0 e8@--> n5
+  class e8 edge_order
+  n8 e9@--> n0
+  class e9 edge_order
+  n0 e10@-->|"延迟添加"| n9
+  class e10 edge_write
+  n10 e11@-->|"查询访问"| n0
+  class e11 edge_read
+  n0 e12@-->|"可变访问"| n11
+  class e12 edge_write
+  n12 e13@-->|"查询访问"| n0
+  class e13 edge_read
+  n13 e14@-->|"查询访问"| n0
+  class e14 edge_read
+  n14 e15@-->|"查询访问"| n0
+  class e15 edge_read
+  n14 e16@---|"添加"| n0
+  class e16 edge_write
+  n15 e17@-->|"查询访问"| n0
+  class e17 edge_read
+  n16 e18@---|"可变访问"| n0
+  class e18 edge_write
+  n16 e19@-->|"查询访问"| n0
+  class e19 edge_read
+  n0 e20@-->|"可变访问"| n17
+  class e20 edge_write
+  n0 e21@-->|"可变访问"| n18
+  class e21 edge_write
+  n19 e22@-->|"访问声明"| n0
+  class e22 edge_read
+  n20 e23@-->|"访问声明"| n0
+  class e23 edge_consume
+  n21 e24@-->|"访问声明"| n0
+  class e24 edge_read
+  n22 e25@-->|"访问声明"| n0
+  class e25 edge_read
+  n23 e26@--> n0
+  class e26 edge_registration
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e17@{ curve: basis }
+  e18@{ curve: basis }
+  e19@{ curve: basis }
+  e20@{ curve: basis }
+  e21@{ curve: basis }
+  e22@{ curve: basis }
+  e23@{ curve: basis }
+  e24@{ curve: basis }
+  e25@{ curve: basis }
+  e26@{ curve: basis }

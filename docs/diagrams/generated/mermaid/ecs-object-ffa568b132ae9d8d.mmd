@@ -1,0 +1,77 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#object-ffa568b132ae9d8d-e0{marker-start:url(#object-ffa568b132ae9d8d_flowchart-v2-pointStart)!important}\n#object-ffa568b132ae9d8d_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}"
+  }
+}
+---
+flowchart LR
+  accTitle: NormalPrepass · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**NormalPrepass**<br/>输出已应用法线贴图的世界空间法线。" }
+  class n0 node_component
+  n1@{ shape: rounded, label: "**extract_camera_prepass_phase**<br/>同步三维相机的预通道标记与渲染阶段。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**extract_ssao_settings**<br/>向渲染相机提取屏幕空间环境光遮蔽配置。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**prepare_prepass_textures**<br/>按三维预通道配置分配各类输出纹理。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**prepare_background_motion_vectors_**<br/>**pipelines**<br/>按采样数和法线预通道准备背景运动管线。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**check_prepass_views_need_**<br/>**specialization**<br/>检测采样和预通道配置变化并标记视图待刷<br/>新。" }
+  class n5 node_system
+  n6@{ shape: rounded, label: "**check_views_need_specialization**<br/>汇总视图渲染特性并检测管线配置变化。" }
+  class n6 node_system
+  n1 e0@---|"存在 / 变更过滤"| n0
+  class e0 edge_reference
+  n1 e1@-->|"延迟添加"| n0
+  class e1 edge_write
+  n1 e2@-->|"延迟移除"| n0
+  class e2 edge_write
+  n0 e3@-->|"存在 / 变更过滤"| n2
+  class e3 edge_reference
+  n0 e4@-->|"存在 / 变更过滤"| n3
+  class e4 edge_reference
+  n0 e5@-->|"存在 / 变更过滤"| n4
+  class e5 edge_reference
+  n0 e6@--> n5
+  class e6 edge_read
+  n0 e7@-->|"存在 / 变更过滤"| n6
+  class e7 edge_reference
+  e0@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }

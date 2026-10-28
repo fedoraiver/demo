@@ -1,0 +1,102 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: ExtractedAtmosphere · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**ExtractedAtmosphere**<br/>保存尚未转为 GPU 参数的大气数据。" }
+  class n0 node_component
+  n1@{ shape: rounded, label: "**extract_atmosphere**<br/>为每个启用 AtmosphereSettings 的三维<br/>相机选择世界距离最近的大气实体，复制大气<br/>和 GPU 设置到渲染世界；设置移除或没有候<br/>选大气时清理旧状态。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**configure_camera_depth_usages**<br/>允许大气相机的深度纹理被着色器采样。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**queue_render_sky_pipelines**<br/>按多重采样和混合能力选择天空管线。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**prepare_atmosphere_textures**<br/>按大气设置准备四类查找纹理。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**prepare_probe_textures**<br/>为环境探针借用大气查找纹理并创建输出视<br/>图。" }
+  class n5 node_system
+  n6@{ shape: rounded, label: "**prepare_atmosphere_transforms**<br/>按相机位置构造大气局部坐标变换。" }
+  class n6 node_system
+  n7@{ shape: rounded, label: "**prepare_atmosphere_buffers**<br/>上传各视图的大气和采样设置缓冲。" }
+  class n7 node_system
+  n8@{ shape: rounded, label: "**prepare_mesh_view_bind_groups**<br/>为视图绑定光照、阴影及各可选渲染效果资<br/>源。" }
+  class n8 node_system
+  n9@{ shape: rounded, label: "**prepare_atmosphere_bind_groups**<br/>为大气查找表计算和天空绘制绑定视图资源。" }
+  class n9 node_system
+  n10@{ shape: rounded, label: "**prepare_atmosphere_uniforms**<br/>把提取的大气几何转换为 GPU Uniform 组<br/>件。" }
+  class n10 node_system
+  n11@{ shape: rounded, label: "**check_views_need_specialization**<br/>汇总视图渲染特性并检测管线配置变化。" }
+  class n11 node_system
+  n1 e0@-->|"延迟移除"| n0
+  class e0 edge_write
+  n1 e1@-->|"延迟添加"| n0
+  class e1 edge_write
+  n0 e2@-->|"存在 / 变更过滤"| n2
+  class e2 edge_reference
+  n0 e3@-->|"存在 / 变更过滤"| n3
+  class e3 edge_reference
+  n0 e4@-->|"存在 / 变更过滤"| n4
+  class e4 edge_reference
+  n0 e5@-->|"存在 / 变更过滤"| n5
+  class e5 edge_reference
+  n0 e6@-->|"存在 / 变更过滤"| n6
+  class e6 edge_reference
+  n0 e7@-->|"存在 / 变更过滤"| n7
+  class e7 edge_reference
+  n0 e8@-->|"存在 / 变更过滤"| n8
+  class e8 edge_reference
+  n0 e9@--> n9
+  class e9 edge_read
+  n0 e10@-->|"存在 / 变更过滤"| n9
+  class e10 edge_reference
+  n0 e11@--> n10
+  class e11 edge_read
+  n0 e12@-->|"存在 / 变更过滤"| n11
+  class e12 edge_reference
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }

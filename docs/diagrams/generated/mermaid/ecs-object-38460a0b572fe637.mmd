@@ -1,0 +1,63 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#object-38460a0b572fe637-e3{marker-start:url(#object-38460a0b572fe637_flowchart-v2-pointStart)!important}\n#object-38460a0b572fe637_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}"
+  }
+}
+---
+flowchart LR
+  accTitle: RevoluteJoint · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**RevoluteJoint**<br/>将相对旋转限制在枢轴周围。" }
+  class n0 node_component
+  n1@{ shape: rounded, label: "**on_change_joint_entities#lt;avian3d::**<br/>**dynamics::joints::revolute::**<br/>**RevoluteJoint#gt;**<br/>在关节换端后重接刚体连接图。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**update_local_frames**<br/>将旋转关节参考框架换算到局部空间。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**joint_damping#lt;avian3d::dynamics::**<br/>**joints::revolute::RevoluteJoint#gt;**<br/>读取指定关节及 JointDamping，查找两端<br/>刚体的求解器索引并按时间步修正相对速度；<br/>静态端使用占位刚体，同一索引不重复处理。" }
+  class n3 node_system
+  n0 e0@--> n1
+  class e0 edge_read
+  n0 e1@-->|"存在 / 变更过滤"| n1
+  class e1 edge_reference
+  n2 e2@--> n0
+  class e2 edge_write
+  n2 e3@---|"存在 / 变更过滤"| n0
+  class e3 edge_reference
+  n0 e4@--> n3
+  class e4 edge_read
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }

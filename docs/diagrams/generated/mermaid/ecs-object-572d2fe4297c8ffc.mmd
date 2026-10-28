@@ -1,0 +1,118 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: Core3dSystems::MainPass · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_engine_flow fill:#F1F5F4,stroke:#557C78,stroke-width:1.6px,color:#1F3340
+  classDef edge_order stroke:#334155,stroke-width:2px
+  classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: lin-rect, label: "**Core3dSystems::MainPass**<br/>绘制三维主场景及其光照、透明与透射效果。" }
+  class n0 node_system_set
+  n1@{ shape: stadium, label: "**RenderApp · Core3d**<br/>保存本应用调度的注册上下文与成员。" }
+  class n1 node_engine_flow
+  n2@{ shape: rounded, label: "**main_opaque_pass_3d**<br/>绘制三维不透明、AlphaMask 与天空盒。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**main_transparent_pass_3d**<br/>绘制三维透明物体并保护 OIT 链表状态。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**oit_resolve**<br/>在透明主通道之后解析顺序无关透明数据并合<br/>成到视图颜色，同时重置 OIT 原子计数与链<br/>表头，避免下一次透明通道使用损坏的数据。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**screen_space_reflections**<br/>采样场景颜色、深度与蓝噪声绘制屏幕空间反<br/>射。" }
+  class n5 node_system
+  n6@{ shape: rounded, label: "**main_transmissive_pass_3d**<br/>分层复制场景颜色并绘制三维透射物体。" }
+  class n6 node_system
+  n7@{ shape: rounded, label: "**deferred_lighting**<br/>绑定网格视图、延迟光照管线及通道深度标识<br/>参数，在延迟光照深度附件约束下执行全屏光<br/>照计算，将结果写入视图颜色。" }
+  class n7 node_system
+  n8@{ shape: rounded, label: "**atmosphere_environment**<br/>使用当前视图的大气和光照参数，为每个大气<br/>环境贴图的六个立方体面调度计算着色器，更<br/>新环境光源纹理。" }
+  class n8 node_system
+  n9@{ shape: rounded, label: "**main_build_indirect_parameters**<br/>为主不透明及透明通道构建间接绘制参数。" }
+  class n9 node_system
+  n10@{ shape: rounded, label: "**copy_deferred_lighting_id**<br/>把延迟光照通道标识复制到深度目标。" }
+  class n10 node_system
+  n11@{ shape: rounded, label: "**volumetric_fog**<br/>逐个处理视图中的体积雾区域，结合场景深<br/>度、光照和可选密度纹理绘制雾光照；根据相<br/>机位于雾体内外选择平面或立方体网格。" }
+  class n11 node_system
+  n12@{ shape: rounded, label: "**shared_shadow_pass#lt;true#gt;**<br/>绘制跨相机共享的点光或聚光阴影。" }
+  class n12 node_system
+  n13@{ shape: rounded, label: "**ssao**<br/>依据视口尺寸依次调度深度预处理、屏幕空间<br/>环境光遮蔽及空间去噪计算通道，为当前视图<br/>生成 SSAO 结果；所需管线未完成编译时跳<br/>过。" }
+  class n13 node_system
+  n14@{ shape: rounded, label: "**msaa_writeback**<br/>在 MSAA 开启时把当前后处理颜色绘制回多<br/>采样主纹理，并解析到下一颜色目标，使后续<br/>通道继续使用一致的多采样附件；MSAA 关闭<br/>时跳过。" }
+  class n14 node_system
+  n15@{ shape: rounded, label: "**per_view_shadow_pass#lt;true#gt;**<br/>绘制相机相关的平行光级联阴影。" }
+  class n15 node_system
+  n1 e0@-->|"RenderApp / Core3d"| n0
+  class e0 edge_registration
+  n0 e1@--> n2
+  class e1 edge_set_membership
+  n0 e2@--> n3
+  class e2 edge_set_membership
+  n0 e3@--> n4
+  class e3 edge_set_membership
+  n0 e4@--> n5
+  class e4 edge_set_membership
+  n0 e5@--> n6
+  class e5 edge_set_membership
+  n0 e6@--> n7
+  class e6 edge_set_membership
+  n8 e7@--> n0
+  class e7 edge_order
+  n9 e8@--> n0
+  class e8 edge_order
+  n10 e9@--> n0
+  class e9 edge_order
+  n0 e10@--> n11
+  class e10 edge_order
+  n12 e11@--> n0
+  class e11 edge_order
+  n13 e12@--> n0
+  class e12 edge_order
+  n14 e13@--> n0
+  class e13 edge_order
+  n15 e14@--> n0
+  class e14 edge_order
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: bumpX }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }

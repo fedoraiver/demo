@@ -1,0 +1,81 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: update_removed_limit<bevy_ui::ui_node::ComputedUiRenderTargetInfo, (), bevy_ecs::hierarchy::ChildOf> · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_system_param fill:#EFF5F6,stroke:#3B8790,stroke-width:1.6px,color:#1F3340
+  classDef node_engine_flow fill:#F1F5F4,stroke:#557C78,stroke-width:1.6px,color:#1F3340
+  classDef edge_order stroke:#334155,stroke-width:2px
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**update_removed_limit#lt;bevy_ui::ui_**<br/>**node::ComputedUiRenderTargetInfo,**<br/>**(), bevy_ecs::hierarchy::ChildOf#gt;**<br/>读取 PropagateOver 或 PropagateStop<br/>的移除记录，将对应实体的 Inherited 标<br/>记为已变化，促使原先受阻或覆盖的继承链重<br/>新传播。" }
+  class n0 node_system
+  n1@{ shape: stadium, label: "**main · PostUpdate**<br/>保存本应用调度的注册上下文与成员。" }
+  class n1 node_engine_flow
+  n2@{ shape: lin-rect, label: "**PropagateSet · { _p:**<br/>**PhantomData#lt;fn() -#gt; bevy_ui::ui_**<br/>**node::ComputedUiRenderTargetInfo#gt; }**<br/>沿关系层级传播指定组件值。" }
+  class n2 node_system_set
+  n3@{ shape: rounded, label: "**propagate_inherited#lt;bevy_ui::ui_**<br/>**node::ComputedUiRenderTargetInfo,**<br/>**(), bevy_ecs::hierarchy::ChildOf#gt;**<br/>当 Inherited#lt;C#gt; 改变或关系结构变化时，<br/>沿指定关系向后代传播继承值，并遵守传播覆<br/>盖及停止标记；具体组件、过滤器和关系由泛<br/>型实参决定。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**update_source#lt;bevy_ui::ui_node::**<br/>**ComputedUiRenderTargetInfo, (),**<br/>**bevy_ecs::hierarchy::ChildOf#gt;**<br/>为直接带 Propagate#lt;C#gt; 的实体同步<br/>Inherited#lt;C#gt;；传播源被移除时沿关系查找<br/>可继承值，必要时移除失效的继承状态。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**Inherited#lt;ComputedUiRenderTargetInfo**<br/>**#gt;**<br/>保存层级传播算法继承到当前节点的中间组件<br/>值" }
+  class n5 node_component
+  n6@{ shape: notch-rect, label: "**RemovedComponents#lt;PropagateOver#lt;Comp**<br/>**utedUiRenderTargetInfo#gt;#gt;**<br/>读取曾移除指定组件或连同该组件一起销毁的<br/>实体身份" }
+  class n6 node_system_param
+  n7@{ shape: notch-rect, label: "**RemovedComponents#lt;PropagateStop#lt;Comp**<br/>**utedUiRenderTargetInfo#gt;#gt;**<br/>读取曾移除指定组件或连同该组件一起销毁的<br/>实体身份" }
+  class n7 node_system_param
+  n1 e0@-->|"main / PostUpdate"| n0
+  class e0 edge_registration
+  n2 e1@--> n0
+  class e1 edge_set_membership
+  n0 e2@--> n3
+  class e2 edge_order
+  n4 e3@--> n0
+  class e3 edge_order
+  n0 e4@--> n5
+  class e4 edge_write
+  n6 e5@-->|"参数 / 查询数据"| n0
+  class e5 edge_reference
+  n7 e6@-->|"参数 / 查询数据"| n0
+  class e6 edge_reference
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }

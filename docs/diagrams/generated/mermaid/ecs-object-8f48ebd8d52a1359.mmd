@@ -1,0 +1,54 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: PropagateStop<ComputedUiTargetCamera> · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**PropagateStop#lt;ComputedUiTargetCamera**<br/>**#gt;**<br/>在当前实体截断该组件的层级传播" }
+  class n0 node_component
+  n1@{ shape: rounded, label: "**update_source#lt;bevy_ui::ui_node::**<br/>**ComputedUiTargetCamera, (), bevy_**<br/>**ecs::hierarchy::ChildOf#gt;**<br/>为直接带 Propagate#lt;C#gt; 的实体同步<br/>Inherited#lt;C#gt;；传播源被移除时沿关系查找<br/>可继承值，必要时移除失效的继承状态。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**propagate_inherited#lt;bevy_ui::ui_**<br/>**node::ComputedUiTargetCamera, (),**<br/>**bevy_ecs::hierarchy::ChildOf#gt;**<br/>当 Inherited#lt;C#gt; 改变或关系结构变化时，<br/>沿指定关系向后代传播继承值，并遵守传播覆<br/>盖及停止标记；具体组件、过滤器和关系由泛<br/>型实参决定。" }
+  class n2 node_system
+  n0 e0@-->|"存在 / 变更过滤"| n1
+  class e0 edge_reference
+  n0 e1@-->|"存在 / 变更过滤"| n2
+  class e1 edge_reference
+  n0 e2@--> n2
+  class e2 edge_read
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }

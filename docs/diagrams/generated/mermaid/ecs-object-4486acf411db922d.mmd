@@ -1,0 +1,1126 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: RenderApp · RenderStartup · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_sync fill:#F6F3F0,stroke:#8B6A42,stroke-width:1.6px,color:#1F3340
+  classDef node_engine_flow fill:#F1F5F4,stroke:#557C78,stroke-width:1.6px,color:#1F3340
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: stadium, label: "**RenderApp · RenderStartup**<br/>保存本应用调度的注册上下文与成员。" }
+  class n0 node_engine_flow
+  n1@{ shape: rounded, label: "**init_mesh_pipeline_view_layouts**<br/>按设备能力汇集网格视图资源布局参数。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**init_mesh_pipeline**<br/>初始化三维网格着色器及设备缓冲策略。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_render::**<br/>**render_resource::pipeline_**<br/>**specializer::**<br/>**SpecializedRenderPipelines#lt;bevy_**<br/>**render::view::window::screenshot::**<br/>**ScreenshotToScreenPipeline#gt;#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**init_screenshot_to_screen_pipeline**<br/>建立把截图纹理复制到屏幕的管线资源。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_render::**<br/>**view::visibility::range::**<br/>**RenderVisibilityRanges#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n5 node_system
+  n6@{ shape: rounded, label: "**collect_render_assets_to_**<br/>**reextract#lt;bevy_render::mesh::**<br/>**RenderMesh#gt;**<br/>排空渲染资产并登记设备恢复后的重新提取。" }
+  class n6 node_system
+  n7@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_render::**<br/>**globals::GlobalsBuffer#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n7 node_system
+  n8@{ shape: rounded, label: "**collect_render_assets_to_**<br/>**reextract#lt;bevy_render::texture::gpu_**<br/>**image::GpuImage#gt;**<br/>排空渲染资产并登记设备恢复后的重新提取。" }
+  class n8 node_system
+  n9@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_render::**<br/>**texture::texture_cache::**<br/>**TextureCache#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n9 node_system
+  n10@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_render::**<br/>**batching::gpu_preprocessing::**<br/>**IndirectParametersBuffers#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n10 node_system
+  n11@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_render::**<br/>**batching::gpu_preprocessing::**<br/>**SceneUnpackingBuffers#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n11 node_system
+  n12@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_render::**<br/>**batching::gpu_preprocessing::**<br/>**IndirectParametersBuildJobs#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n12 node_system
+  n13@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_render::**<br/>**batching::gpu_preprocessing::**<br/>**BuildIndirectParametersMetadata#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n13 node_system
+  n14@{ shape: rounded, label: "**collect_render_assets_to_**<br/>**reextract#lt;bevy_render::storage::**<br/>**GpuShaderBuffer#gt;**<br/>排空渲染资产并登记设备恢复后的重新提取。" }
+  class n14 node_system
+  n15@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_render::**<br/>**material_bind_groups::**<br/>**RenderMaterialBindings#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n15 node_system
+  n16@{ shape: rounded, label: "**init_fallback_resources**<br/>创建材质绑定的采样器及缓冲回退资源。" }
+  class n16 node_system
+  n17@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_render::**<br/>**renderer::render_context::**<br/>**PendingCommandBuffers#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n17 node_system
+  n18@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_render::**<br/>**uniform::ComponentUniforms#lt;bevy_**<br/>**core_pipeline::skybox::**<br/>**SkyboxUniforms#gt;#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n18 node_system
+  n19@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_render::**<br/>**render_resource::pipeline_**<br/>**specializer::**<br/>**SpecializedRenderPipelines#lt;bevy_**<br/>**core_pipeline::skybox::**<br/>**SkyboxPipeline#gt;#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n19 node_system
+  n20@{ shape: rounded, label: "**init_skybox_pipeline**<br/>加载天空盒着色器并建立管线资源。" }
+  class n20 node_system
+  n21@{ shape: rounded, label: "**init_copy_deferred_lighting_id_**<br/>**pipeline**<br/>建立延迟光照标识到深度的复制管线。" }
+  class n21 node_system
+  n22@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_render::**<br/>**render_resource::pipeline_**<br/>**specializer::**<br/>**SpecializedRenderPipelines#lt;bevy_**<br/>**core_pipeline::blit::BlitPipeline#gt;#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n22 node_system
+  n23@{ shape: rounded, label: "**init_blit_pipeline**<br/>建立全屏颜色复制与缩放的 Blit 资源。" }
+  class n23 node_system
+  n24@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_render::**<br/>**render_resource::pipeline_**<br/>**specializer::**<br/>**SpecializedRenderPipelines#lt;bevy_**<br/>**core_pipeline::tonemapping::**<br/>**TonemappingPipeline#gt;#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n24 node_system
+  n25@{ shape: rounded, label: "**init_tonemapping_pipeline**<br/>建立色调映射的颜色、视图与 LUT 输入布<br/>局。" }
+  class n25 node_system
+  n26@{ shape: rounded, label: "**clear_view_upscaling_pipelines**<br/>从所有已有视图移除<br/>ViewUpscalingPipeline，使渲染设备恢复<br/>后的流程重新准备有效的输出放大管线。" }
+  class n26 node_system
+  n27@{ shape: rounded, label: "**init_oit_buffers**<br/>创建可立即绑定的 OIT 初始缓冲。" }
+  class n27 node_system
+  n28@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_render::**<br/>**render_resource::pipeline_**<br/>**specializer::**<br/>**SpecializedComputePipelines#lt;bevy_**<br/>**core_pipeline::mip_generation::**<br/>**experimental::depth::**<br/>**DownsampleDepthPipeline#gt;#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n28 node_system
+  n29@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_core_**<br/>**pipeline::mip_generation::**<br/>**DownsamplePipeline#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n29 node_system
+  n30@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_render::**<br/>**render_resource::pipeline_**<br/>**specializer::**<br/>**SpecializedComputePipelines#lt;bevy_**<br/>**core_pipeline::mip_generation::**<br/>**DownsamplePipeline#gt;#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n30 node_system
+  n31@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_core_**<br/>**pipeline::mip_generation::**<br/>**MipGenerationPipelines#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n31 node_system
+  n32@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_core_**<br/>**pipeline::mip_generation::**<br/>**MipGenerationResources#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n32 node_system
+  n33@{ shape: rounded, label: "**init_depth_pyramid_dummy_texture**<br/>创建深度金字塔的占位纹理资源。" }
+  class n33 node_system
+  n34@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_core_**<br/>**pipeline::prepass::**<br/>**PreviousViewUniforms#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n34 node_system
+  n35@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_render::**<br/>**uniform::ComponentUniforms#lt;bevy_**<br/>**post_process::bloom::downsampling_**<br/>**pipeline::BloomUniforms#gt;#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n35 node_system
+  n36@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_render::**<br/>**render_resource::pipeline_**<br/>**specializer::**<br/>**SpecializedRenderPipelines#lt;bevy_**<br/>**post_process::bloom::downsampling_**<br/>**pipeline::**<br/>**BloomDownsamplingPipeline#gt;#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n36 node_system
+  n37@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_render::**<br/>**render_resource::pipeline_**<br/>**specializer::**<br/>**SpecializedRenderPipelines#lt;bevy_**<br/>**post_process::bloom::upsampling_**<br/>**pipeline::BloomUpsamplingPipeline#gt;#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n37 node_system
+  n38@{ shape: rounded, label: "**init_bloom_downsampling_pipeline**<br/>建立 Bloom 降采样的纹理与参数管线。" }
+  class n38 node_system
+  n39@{ shape: rounded, label: "**init_bloom_upscaling_pipeline**<br/>建立 Bloom 升采样的纹理和参数布局。" }
+  class n39 node_system
+  n40@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_render::**<br/>**uniform::ComponentUniforms#lt;bevy_**<br/>**post_process::motion_blur::**<br/>**MotionBlurUniform#gt;#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n40 node_system
+  n41@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_render::**<br/>**render_resource::pipeline_**<br/>**specializer::**<br/>**SpecializedRenderPipelines#lt;bevy_**<br/>**post_process::motion_blur::**<br/>**pipeline::MotionBlurPipeline#gt;#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n41 node_system
+  n42@{ shape: rounded, label: "**init_motion_blur_pipeline**<br/>加载运动模糊着色器并构造管线资源。" }
+  class n42 node_system
+  n43@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_render::**<br/>**uniform::ComponentUniforms#lt;bevy_**<br/>**post_process::dof::**<br/>**DepthOfFieldUniform#gt;#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n43 node_system
+  n44@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_render::**<br/>**render_resource::pipeline_**<br/>**specializer::**<br/>**SpecializedRenderPipelines#lt;bevy_**<br/>**post_process::dof::**<br/>**DepthOfFieldPipeline#gt;#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n44 node_system
+  n45@{ shape: rounded, label: "**init_dof_global_bind_group_layout**<br/>建立景深共享参数布局和线性采样器。" }
+  class n45 node_system
+  n46@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_render::**<br/>**render_resource::pipeline_**<br/>**specializer::**<br/>**SpecializedRenderPipelines#lt;bevy_**<br/>**post_process::effect_stack::**<br/>**PostProcessingPipeline#gt;#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n46 node_system
+  n47@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_post_**<br/>**process::effect_stack::**<br/>**PostProcessingUniformBuffers#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n47 node_system
+  n48@{ shape: rounded, label: "**init_post_processing_pipeline**<br/>建立色差、暗角和镜头畸变的共用后处理资<br/>源。" }
+  class n48 node_system
+  n49@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_render::**<br/>**render_resource::pipeline_**<br/>**specializer::**<br/>**SpecializedRenderPipelines#lt;bevy_**<br/>**anti_alias::fxaa::FxaaPipeline#gt;#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n49 node_system
+  n50@{ shape: rounded, label: "**init_fxaa_pipeline**<br/>建立 FXAA 的纹理采样布局和着色器资源。" }
+  class n50 node_system
+  n51@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_anti_alias::**<br/>**smaa::SmaaInfoUniformBuffer#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n51 node_system
+  n52@{ shape: rounded, label: "**init_smaa_pipelines**<br/>建立 SMAA 三个阶段的布局和着色器资源。" }
+  class n52 node_system
+  n53@{ shape: rounded, label: "**init_taa_pipeline**<br/>建立 TAA 的当前帧、历史帧和预通道输入布<br/>局。" }
+  class n53 node_system
+  n54@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_render::**<br/>**uniform::ComponentUniforms#lt;bevy_**<br/>**anti_alias::contrast_adaptive_**<br/>**sharpening::CasUniform#gt;#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n54 node_system
+  n55@{ shape: rounded, label: "**init_cas_pipeline**<br/>建立 CAS 锐化的纹理、参数布局和管线变体<br/>资源。" }
+  class n55 node_system
+  n56@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_render::**<br/>**render_resource::pipeline_**<br/>**specializer::**<br/>**SpecializedMeshPipelines#lt;bevy_**<br/>**sprite_render::mesh2d::mesh::**<br/>**Mesh2dPipeline#gt;#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n56 node_system
+  n57@{ shape: rounded, label: "**init_mesh_2d_pipeline**<br/>建立二维网格的视图、实例及元数据输入布<br/>局。" }
+  class n57 node_system
+  n58@{ shape: rounded, label: "**init_batched_instance_buffer**<br/>依据设备限制建立二维网格实例批缓冲。" }
+  class n58 node_system
+  n59@{ shape: rounded, label: "**load_mesh2d_bindings**<br/>按运行设备能力加载二维网格绑定着色器。" }
+  class n59 node_system
+  n60@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_sprite_**<br/>**render::mesh2d::material::**<br/>**SpecializedMaterial2dPipelineCache#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n60 node_system
+  n61@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_render::**<br/>**render_resource::pipeline_**<br/>**specializer::**<br/>**SpecializedMeshPipelines#lt;bevy_**<br/>**sprite_render::mesh2d::material::**<br/>**Material2dPipelineSpecializer#gt;#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n61 node_system
+  n62@{ shape: rounded, label: "**init_material_2d_pipeline**<br/>以二维网格基础管线建立材质管线资源。" }
+  class n62 node_system
+  n63@{ shape: rounded, label: "**initialize_material2d_shaders#lt;bevy_**<br/>**sprite_render::mesh2d::color_**<br/>**material::ColorMaterial#gt;**<br/>解析二维材质的自定义顶点与片元着色器。" }
+  class n63 node_system
+  n64@{ shape: rounded, label: "**add_material2d_bind_group_**<br/>**allocator#lt;bevy_sprite_render::**<br/>**mesh2d::color_material::**<br/>**ColorMaterial#gt;**<br/>为二维材质类型注册 GPU 绑定组分配器。" }
+  class n64 node_system
+  n65@{ shape: rounded, label: "**initialize_material2d_shaders#lt;bevy_**<br/>**sprite_render::sprite_mesh::sprite_**<br/>**mesh_material::SpriteMeshMaterial#gt;**<br/>解析二维材质的自定义顶点与片元着色器。" }
+  class n65 node_system
+  n66@{ shape: rounded, label: "**add_material2d_bind_group_**<br/>**allocator#lt;bevy_sprite_render::**<br/>**sprite_mesh::sprite_mesh_material::**<br/>**SpriteMeshMaterial#gt;**<br/>为二维材质类型注册 GPU 绑定组分配器。" }
+  class n66 node_system
+  n67@{ shape: rounded, label: "**initialize_material2d_shaders#lt;bevy_**<br/>**sprite_render::tilemap_chunk::**<br/>**tilemap_chunk_material::**<br/>**TilemapChunkMaterial#gt;**<br/>解析二维材质的自定义顶点与片元着色器。" }
+  class n67 node_system
+  n68@{ shape: rounded, label: "**add_material2d_bind_group_**<br/>**allocator#lt;bevy_sprite_render::**<br/>**tilemap_chunk::tilemap_chunk_**<br/>**material::TilemapChunkMaterial#gt;**<br/>为二维材质类型注册 GPU 绑定组分配器。" }
+  class n68 node_system
+  n69@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_render::**<br/>**render_resource::pipeline_**<br/>**specializer::**<br/>**SpecializedRenderPipelines#lt;bevy_**<br/>**sprite_render::render::**<br/>**SpritePipeline#gt;#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n69 node_system
+  n70@{ shape: rounded, label: "**init_sprite_pipeline**<br/>建立精灵视图和图像材质管线资源。" }
+  class n70 node_system
+  n71@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_render::**<br/>**render_resource::pipeline_**<br/>**specializer::**<br/>**SpecializedRenderPipelines#lt;bevy_ui_**<br/>**render::pipeline::UiPipeline#gt;#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n71 node_system
+  n72@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_ui_render::**<br/>**ImageNodeBindGroups#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n72 node_system
+  n73@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_ui_render::**<br/>**UiMeta#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n73 node_system
+  n74@{ shape: rounded, label: "**init_ui_pipeline**<br/>建立 UI 图形的视图、图像和采样器布局。" }
+  class n74 node_system
+  n75@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_ui_render::**<br/>**ui_texture_slice_pipeline::**<br/>**UiTextureSliceMeta#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n75 node_system
+  n76@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_ui_render::**<br/>**ui_texture_slice_pipeline::**<br/>**UiTextureSliceImageBindGroups#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n76 node_system
+  n77@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_render::**<br/>**render_resource::pipeline_**<br/>**specializer::**<br/>**SpecializedRenderPipelines#lt;bevy_ui_**<br/>**render::ui_texture_slice_pipeline::**<br/>**UiTextureSlicePipeline#gt;#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n77 node_system
+  n78@{ shape: rounded, label: "**init_ui_texture_slice_pipeline**<br/>建立 UI 图像切片的视图和纹理管线资源。" }
+  class n78 node_system
+  n79@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_ui_render::**<br/>**gradient::GradientMeta#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n79 node_system
+  n80@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_render::**<br/>**render_resource::pipeline_**<br/>**specializer::**<br/>**SpecializedRenderPipelines#lt;bevy_ui_**<br/>**render::gradient::GradientPipeline#gt;#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n80 node_system
+  n81@{ shape: rounded, label: "**init_gradient_pipeline**<br/>建立 UI 渐变的视图布局和着色器资源。" }
+  class n81 node_system
+  n82@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_ui_render::**<br/>**box_shadow::BoxShadowMeta#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n82 node_system
+  n83@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_render::**<br/>**render_resource::pipeline_**<br/>**specializer::**<br/>**SpecializedRenderPipelines#lt;bevy_ui_**<br/>**render::box_shadow::**<br/>**BoxShadowPipeline#gt;#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n83 node_system
+  n84@{ shape: rounded, label: "**init_box_shadow_pipeline**<br/>建立 UI 盒阴影的视图布局和着色器资源。" }
+  class n84 node_system
+  n85@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_render::**<br/>**render_phase::**<br/>**ViewBinnedRenderPhases#lt;bevy_core_**<br/>**pipeline::core_3d::Opaque3d#gt;#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n85 node_system
+  n86@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_render::**<br/>**batching::gpu_preprocessing::**<br/>**PhaseBatchedInstanceBuffers#lt;bevy_**<br/>**core_pipeline::core_3d::Opaque3d,**<br/>**bevy_pbr::render::mesh::**<br/>**MeshUniform#gt;#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n86 node_system
+  n87@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_render::**<br/>**batching::gpu_preprocessing::**<br/>**PhaseIndirectParametersBuffers#lt;bevy_**<br/>**core_pipeline::core_3d::Opaque3d#gt;#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n87 node_system
+  n88@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_render::**<br/>**render_phase::**<br/>**ViewBinnedRenderPhases#lt;bevy_core_**<br/>**pipeline::core_3d::AlphaMask3d#gt;#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n88 node_system
+  n89@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_render::**<br/>**batching::gpu_preprocessing::**<br/>**PhaseBatchedInstanceBuffers#lt;bevy_**<br/>**core_pipeline::core_3d::**<br/>**AlphaMask3d, bevy_pbr::render::**<br/>**mesh::MeshUniform#gt;#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n89 node_system
+  n90@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_render::**<br/>**batching::gpu_preprocessing::**<br/>**PhaseIndirectParametersBuffers#lt;bevy_**<br/>**core_pipeline::core_3d::**<br/>**AlphaMask3d#gt;#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n90 node_system
+  n91@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_render::**<br/>**render_phase::**<br/>**ViewBinnedRenderPhases#lt;bevy_pbr::**<br/>**render::light::Shadow#gt;#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n91 node_system
+  n92@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_render::**<br/>**batching::gpu_preprocessing::**<br/>**PhaseBatchedInstanceBuffers#lt;bevy_**<br/>**pbr::render::light::Shadow, bevy_**<br/>**pbr::render::mesh::MeshUniform#gt;#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n92 node_system
+  n93@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_render::**<br/>**batching::gpu_preprocessing::**<br/>**PhaseIndirectParametersBuffers#lt;bevy_**<br/>**pbr::render::light::Shadow#gt;#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n93 node_system
+  n94@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_render::**<br/>**render_phase::**<br/>**ViewBinnedRenderPhases#lt;bevy_core_**<br/>**pipeline::deferred::**<br/>**Opaque3dDeferred#gt;#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n94 node_system
+  n95@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_render::**<br/>**batching::gpu_preprocessing::**<br/>**PhaseBatchedInstanceBuffers#lt;bevy_**<br/>**core_pipeline::deferred::**<br/>**Opaque3dDeferred, bevy_pbr::render::**<br/>**mesh::MeshUniform#gt;#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n95 node_system
+  n96@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_render::**<br/>**batching::gpu_preprocessing::**<br/>**PhaseIndirectParametersBuffers#lt;bevy_**<br/>**core_pipeline::deferred::**<br/>**Opaque3dDeferred#gt;#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n96 node_system
+  n97@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_render::**<br/>**render_phase::**<br/>**ViewBinnedRenderPhases#lt;bevy_core_**<br/>**pipeline::deferred::**<br/>**AlphaMask3dDeferred#gt;#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n97 node_system
+  n98@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_render::**<br/>**batching::gpu_preprocessing::**<br/>**PhaseBatchedInstanceBuffers#lt;bevy_**<br/>**core_pipeline::deferred::**<br/>**AlphaMask3dDeferred, bevy_pbr::**<br/>**render::mesh::MeshUniform#gt;#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n98 node_system
+  n99@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_render::**<br/>**batching::gpu_preprocessing::**<br/>**PhaseIndirectParametersBuffers#lt;bevy_**<br/>**core_pipeline::deferred::**<br/>**AlphaMask3dDeferred#gt;#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n99 node_system
+  n100@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_render::**<br/>**render_phase::**<br/>**ViewSortedRenderPhases#lt;bevy_pbr::**<br/>**transmission::phase::**<br/>**Transmissive3d#gt;#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n100 node_system
+  n101@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_render::**<br/>**batching::gpu_preprocessing::**<br/>**PhaseBatchedInstanceBuffers#lt;bevy_**<br/>**pbr::transmission::phase::**<br/>**Transmissive3d, bevy_pbr::render::**<br/>**mesh::MeshUniform#gt;#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n101 node_system
+  n102@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_render::**<br/>**batching::gpu_preprocessing::**<br/>**PhaseIndirectParametersBuffers#lt;bevy_**<br/>**pbr::transmission::phase::**<br/>**Transmissive3d#gt;#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n102 node_system
+  n103@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_render::**<br/>**render_phase::**<br/>**ViewSortedRenderPhases#lt;bevy_core_**<br/>**pipeline::core_3d::Transparent3d#gt;#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n103 node_system
+  n104@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_render::**<br/>**batching::gpu_preprocessing::**<br/>**PhaseBatchedInstanceBuffers#lt;bevy_**<br/>**core_pipeline::core_3d::**<br/>**Transparent3d, bevy_pbr::render::**<br/>**mesh::MeshUniform#gt;#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n104 node_system
+  n105@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_render::**<br/>**batching::gpu_preprocessing::**<br/>**PhaseIndirectParametersBuffers#lt;bevy_**<br/>**core_pipeline::core_3d::**<br/>**Transparent3d#gt;#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n105 node_system
+  n106@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_pbr::render::**<br/>**mesh::MeshCullingDataBuffer#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n106 node_system
+  n107@{ shape: rounded, label: "**init_prepass_pipeline**<br/>初始化带运动矢量及普通预通道的资源布局。" }
+  class n107 node_system
+  n108@{ shape: rounded, label: "**init_prepass_view_bind_group**<br/>建立预通道的空绑定组及待准备状态。" }
+  class n108 node_system
+  n109@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_render::**<br/>**render_resource::pipeline_**<br/>**specializer::**<br/>**SpecializedMeshPipelines#lt;bevy_pbr::**<br/>**prepass::**<br/>**PrepassPipelineSpecializer#gt;#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n109 node_system
+  n110@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_render::**<br/>**render_phase::**<br/>**ViewBinnedRenderPhases#lt;bevy_core_**<br/>**pipeline::prepass::Opaque3dPrepass#gt;#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n110 node_system
+  n111@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_render::**<br/>**batching::gpu_preprocessing::**<br/>**PhaseBatchedInstanceBuffers#lt;bevy_**<br/>**core_pipeline::prepass::**<br/>**Opaque3dPrepass, bevy_pbr::render::**<br/>**mesh::MeshUniform#gt;#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n111 node_system
+  n112@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_render::**<br/>**batching::gpu_preprocessing::**<br/>**PhaseIndirectParametersBuffers#lt;bevy_**<br/>**core_pipeline::prepass::**<br/>**Opaque3dPrepass#gt;#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n112 node_system
+  n113@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_render::**<br/>**render_phase::**<br/>**ViewBinnedRenderPhases#lt;bevy_core_**<br/>**pipeline::prepass::**<br/>**AlphaMask3dPrepass#gt;#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n113 node_system
+  n114@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_render::**<br/>**batching::gpu_preprocessing::**<br/>**PhaseBatchedInstanceBuffers#lt;bevy_**<br/>**core_pipeline::prepass::**<br/>**AlphaMask3dPrepass, bevy_pbr::**<br/>**render::mesh::MeshUniform#gt;#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n114 node_system
+  n115@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_render::**<br/>**batching::gpu_preprocessing::**<br/>**PhaseIndirectParametersBuffers#lt;bevy_**<br/>**core_pipeline::prepass::**<br/>**AlphaMask3dPrepass#gt;#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n115 node_system
+  n116@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_pbr::**<br/>**prepass::ViewKeyPrepassCache#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n116 node_system
+  n117@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_pbr::**<br/>**prepass::**<br/>**SpecializedPrepassMaterialPipelineCa**<br/>**che#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n117 node_system
+  n118@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_pbr::**<br/>**prepass::**<br/>**PendingPrepassMeshMaterialQueues#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n118 node_system
+  n119@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_pbr::**<br/>**material::**<br/>**SpecializedMaterialPipelineCache#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n119 node_system
+  n120@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_render::**<br/>**render_resource::pipeline_**<br/>**specializer::**<br/>**SpecializedMeshPipelines#lt;bevy_pbr::**<br/>**material::**<br/>**MaterialPipelineSpecializer#gt;#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n120 node_system
+  n121@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_pbr::render::**<br/>**light::LightKeyCache#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n121 node_system
+  n122@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_pbr::render::**<br/>**light::**<br/>**SpecializedShadowMaterialPipelineCac**<br/>**he#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n122 node_system
+  n123@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_pbr::**<br/>**material::PendingMeshMaterialQueues#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n123 node_system
+  n124@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_pbr::render::**<br/>**light::PendingShadowQueues#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n124 node_system
+  n125@{ shape: rounded, label: "**init_material_pipeline**<br/>初始化与网格管线共享接口的材质管线资源。" }
+  class n125 node_system
+  n126@{ shape: rounded, label: "**add_material_bind_group_**<br/>**allocator#lt;bevy_pbr::pbr_material::**<br/>**StandardMaterial#gt;**<br/>为具体材质类型注册 GPU 绑定分配器。" }
+  class n126 node_system
+  n127@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_pbr::render::**<br/>**fog::FogMeta#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n127 node_system
+  n128@{ shape: rounded, label: "**init_render_lightmaps**<br/>初始化光照贴图槽位和设备绑定数组能力。" }
+  class n128 node_system
+  n129@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_pbr::light_**<br/>**probe::LightProbesBuffer#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n129 node_system
+  n130@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_render::**<br/>**render_resource::pipeline_**<br/>**specializer::**<br/>**SpecializedRenderPipelines#lt;bevy_**<br/>**pbr::volumetric_fog::render::**<br/>**VolumetricFogPipeline#gt;#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n130 node_system
+  n131@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_pbr::**<br/>**volumetric_fog::render::**<br/>**VolumetricFogUniformBuffer#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n131 node_system
+  n132@{ shape: rounded, label: "**init_volumetric_fog_pipeline**<br/>初始化体积雾管线的视图布局与着色器。" }
+  class n132 node_system
+  n133@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_pbr::ssr::**<br/>**ScreenSpaceReflectionsBuffer#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n133 node_system
+  n134@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_render::**<br/>**render_resource::pipeline_**<br/>**specializer::**<br/>**SpecializedRenderPipelines#lt;bevy_**<br/>**pbr::ssr::**<br/>**ScreenSpaceReflectionsPipeline#gt;#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n134 node_system
+  n135@{ shape: rounded, label: "**init_screen_space_reflections_**<br/>**pipeline**<br/>初始化屏幕空间反射的全屏渲染管线资源。" }
+  class n135 node_system
+  n136@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_pbr::decal::**<br/>**clustered::DecalsBuffer#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n136 node_system
+  n137@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_pbr::contact_**<br/>**shadows::ContactShadowsBuffer#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n137 node_system
+  n138@{ shape: rounded, label: "**add_material_bind_group_**<br/>**allocator#lt;bevy_pbr::extended_**<br/>**material::ExtendedMaterial#lt;bevy_**<br/>**pbr::pbr_material::**<br/>**StandardMaterial, bevy_pbr::decal::**<br/>**forward::ForwardDecalMaterialExt#gt;#gt;**<br/>为具体材质类型注册 GPU 绑定分配器。" }
+  class n138 node_system
+  n139@{ shape: rounded, label: "**collect_render_assets_to_**<br/>**reextract#lt;bevy_pbr::medium::**<br/>**GpuScatteringMedium#gt;**<br/>排空渲染资产并登记设备恢复后的重新提取。" }
+  class n139 node_system
+  n140@{ shape: rounded, label: "**init_scattering_medium_sampler**<br/>初始化散射介质查找表的线性采样器。" }
+  class n140 node_system
+  n141@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_render::**<br/>**uniform::ComponentUniforms#lt;bevy_**<br/>**pbr::atmosphere::resources::**<br/>**GpuAtmosphere#gt;#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n141 node_system
+  n142@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_render::**<br/>**uniform::ComponentUniforms#lt;bevy_**<br/>**pbr::atmosphere::**<br/>**GpuAtmosphereSettings#gt;#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n142 node_system
+  n143@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_render::**<br/>**uniform::ComponentUniforms#lt;bevy_**<br/>**pbr::deferred::**<br/>**PbrDeferredLightingDepthId#gt;#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n143 node_system
+  n144@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_render::**<br/>**render_resource::pipeline_**<br/>**specializer::**<br/>**SpecializedRenderPipelines#lt;bevy_**<br/>**pbr::deferred::**<br/>**DeferredLightingLayout#gt;#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n144 node_system
+  n145@{ shape: rounded, label: "**init_deferred_lighting_layout**<br/>初始化延迟光照的深度标识绑定与着色器。" }
+  class n145 node_system
+  n146@{ shape: rounded, label: "**init_shadow_samplers**<br/>创建点光与平行光的深度比较采样器。" }
+  class n146 node_system
+  n147@{ shape: rounded, label: "**init_global_clusterable_object_meta**<br/>按设备缓冲能力初始化全局聚簇元数据。" }
+  class n147 node_system
+  n148@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_pbr::render::**<br/>**light::LightMeta#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n148 node_system
+  n149@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_render::**<br/>**uniform::ComponentUniforms#lt;bevy_**<br/>**gizmos_render::LineGizmoUniform#gt;#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n149 node_system
+  n150@{ shape: rounded, label: "**collect_render_assets_to_**<br/>**reextract#lt;bevy_gizmos_render::**<br/>**GpuLineGizmo#gt;**<br/>排空渲染资产并登记设备恢复后的重新提取。" }
+  class n150 node_system
+  n151@{ shape: rounded, label: "**init_line_gizmo_uniform_bind_group_**<br/>**layout**<br/>建立 Gizmo 线条动态参数的 GPU 布局。" }
+  class n151 node_system
+  n152@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_render::**<br/>**render_resource::pipeline_**<br/>**specializer::**<br/>**SpecializedRenderPipelines#lt;bevy_**<br/>**gizmos_render::pipeline_2d::**<br/>**LineGizmoPipeline#gt;#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n152 node_system
+  n153@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_render::**<br/>**render_resource::pipeline_**<br/>**specializer::**<br/>**SpecializedRenderPipelines#lt;bevy_**<br/>**gizmos_render::pipeline_2d::**<br/>**LineJointGizmoPipeline#gt;#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n153 node_system
+  n154@{ shape: rounded, label: "**init_line_gizmo_pipelines**<br/>建立二维 Gizmo 线段和接头管线。" }
+  class n154 node_system
+  n155@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_render::**<br/>**render_resource::pipeline_**<br/>**specializer::**<br/>**SpecializedRenderPipelines#lt;bevy_**<br/>**gizmos_render::pipeline_3d::**<br/>**LineJointGizmoPipeline#gt;#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n155 node_system
+  n156@{ shape: rounded, label: "**init_line_gizmo_pipelines**<br/>建立三维 Gizmo 线条深度管线和接头资源。" }
+  class n156 node_system
+  n157@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_render::**<br/>**view::ViewUniforms#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n157 node_system
+  n158@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_render::**<br/>**view::ViewTargetAttachments#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n158 node_system
+  n159@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_render::**<br/>**mesh::morph::**<br/>**RenderMorphTargetAllocator#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n159 node_system
+  n160@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_render::**<br/>**mesh::allocator::MeshAllocator#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n160 node_system
+  n161@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_render::**<br/>**render_resource::texture::**<br/>**DefaultImageSampler#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n161 node_system
+  n162@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_render::**<br/>**texture::fallback_image::**<br/>**FallbackImage#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n162 node_system
+  n163@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_render::**<br/>**texture::fallback_image::**<br/>**FallbackImageZero#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n163 node_system
+  n164@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_render::**<br/>**texture::fallback_image::**<br/>**FallbackImageCubemap#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n164 node_system
+  n165@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_render::**<br/>**texture::fallback_image::**<br/>**FallbackImageFormatMsaaCache#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n165 node_system
+  n166@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_render::**<br/>**batching::gpu_preprocessing::**<br/>**GpuPreprocessingSupport#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n166 node_system
+  n167@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_render::**<br/>**render_resource::sparse_buffer_vec::**<br/>**SparseBufferUpdateJobs#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n167 node_system
+  n168@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_render::**<br/>**render_resource::pipeline_**<br/>**specializer::**<br/>**SpecializedComputePipelines#lt;bevy_**<br/>**render::render_resource::sparse_**<br/>**buffer_vec::**<br/>**SparseBufferUpdatePipelines#gt;#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n168 node_system
+  n169@{ shape: rounded, label: "**init_sparse_buffer_update_pipelines**<br/>按设备存储绑定能力建立稀疏更新计算资源。" }
+  class n169 node_system
+  n170@{ shape: rounded, label: "**init_sparse_buffer_update_bind_**<br/>**groups**<br/>准备稀疏更新管线标识与弱键绑定缓存。" }
+  class n170 node_system
+  n171@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_render::**<br/>**render_resource::pipeline_**<br/>**specializer::**<br/>**SpecializedRenderPipelines#lt;bevy_**<br/>**core_pipeline::prepass::background_**<br/>**motion_vectors::**<br/>**BackgroundMotionVectorsPipeline#gt;#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n171 node_system
+  n172@{ shape: rounded, label: "**init_background_motion_vectors_**<br/>**pipeline**<br/>建立背景运动矢量的全屏管线资源。" }
+  class n172 node_system
+  n173@{ shape: rounded, label: "**collect_erased_render_assets_to_**<br/>**reextract#lt;bevy_sprite_render::**<br/>**mesh2d::material::**<br/>**MeshMaterial2d#lt;bevy_sprite_render::**<br/>**mesh2d::color_material::**<br/>**ColorMaterial#gt;#gt;**<br/>按源材质类型排空擦除资产并请求重新提取。" }
+  class n173 node_system
+  n174@{ shape: rounded, label: "**collect_erased_render_assets_to_**<br/>**reextract#lt;bevy_sprite_render::**<br/>**mesh2d::material::**<br/>**MeshMaterial2d#lt;bevy_sprite_render::**<br/>**sprite_mesh::sprite_mesh_material::**<br/>**SpriteMeshMaterial#gt;#gt;**<br/>按源材质类型排空擦除资产并请求重新提取。" }
+  class n174 node_system
+  n175@{ shape: rounded, label: "**collect_erased_render_assets_to_**<br/>**reextract#lt;bevy_sprite_render::**<br/>**mesh2d::material::**<br/>**MeshMaterial2d#lt;bevy_sprite_render::**<br/>**tilemap_chunk::tilemap_chunk_**<br/>**material::TilemapChunkMaterial#gt;#gt;**<br/>按源材质类型排空擦除资产并请求重新提取。" }
+  class n175 node_system
+  n176@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_pbr::render::**<br/>**morph::MorphIndices#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n176 node_system
+  n177@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_pbr::render::**<br/>**morph::MorphUniforms#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n177 node_system
+  n178@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_pbr::render::**<br/>**mesh::ViewKeyCache#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n178 node_system
+  n179@{ shape: rounded, label: "**skin_uniforms_from_world**<br/>初始化当前与前帧蒙皮矩阵缓冲及分配器。" }
+  class n179 node_system
+  n180@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_render::**<br/>**batching::gpu_preprocessing::**<br/>**BatchedInstanceBuffers#lt;bevy_pbr::**<br/>**render::mesh::MeshUniform, bevy_**<br/>**pbr::render::mesh::**<br/>**MeshInputUniform#gt;#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n180 node_system
+  n181@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_pbr::render::**<br/>**mesh::RenderMeshInstanceGpuQueues#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n181 node_system
+  n182@{ shape: rounded, label: "**mark_all_meshes_for_reextraction**<br/>清空网格实例并把全部实体标为待重新提取。" }
+  class n182 node_system
+  n183@{ shape: rounded, label: "**collect_erased_render_assets_to_**<br/>**reextract#lt;bevy_pbr::mesh_material::**<br/>**MeshMaterial3d#lt;bevy_pbr::pbr_**<br/>**material::StandardMaterial#gt;#gt;**<br/>按源材质类型排空擦除资产并请求重新提取。" }
+  class n183 node_system
+  n184@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_pbr::ssao::**<br/>**SsaoPipelines#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n184 node_system
+  n185@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_render::**<br/>**render_resource::pipeline_**<br/>**specializer::**<br/>**SpecializedComputePipelines#lt;bevy_**<br/>**pbr::ssao::SsaoPipelines#gt;#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n185 node_system
+  n186@{ shape: rounded, label: "**initialize_generated_environment_**<br/>**map_resources**<br/>初始化环境图降采样、复制和卷积的 GPU 接<br/>口。" }
+  class n186 node_system
+  n187@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_pbr::render::**<br/>**gpu_preprocess::**<br/>**BinUnpackingBindGroups#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n187 node_system
+  n188@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_pbr::render::**<br/>**gpu_preprocess::**<br/>**UniformAllocationBindGroups#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n188 node_system
+  n189@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_pbr::render::**<br/>**gpu_preprocess::PreprocessPipelines#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n189 node_system
+  n190@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_render::**<br/>**render_resource::pipeline_**<br/>**specializer::**<br/>**SpecializedComputePipelines#lt;bevy_**<br/>**pbr::render::gpu_preprocess::**<br/>**PreprocessPipeline#gt;#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n190 node_system
+  n191@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_render::**<br/>**render_resource::pipeline_**<br/>**specializer::**<br/>**SpecializedComputePipelines#lt;bevy_**<br/>**pbr::render::gpu_preprocess::**<br/>**ResetIndirectBatchSetsPipeline#gt;#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n191 node_system
+  n192@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_render::**<br/>**render_resource::pipeline_**<br/>**specializer::**<br/>**SpecializedComputePipelines#lt;bevy_**<br/>**pbr::render::gpu_preprocess::**<br/>**BuildIndirectParametersPipeline#gt;#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n192 node_system
+  n193@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_render::**<br/>**render_resource::pipeline_**<br/>**specializer::**<br/>**SpecializedComputePipelines#lt;bevy_**<br/>**pbr::render::gpu_preprocess::**<br/>**BinUnpackingPipeline#gt;#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n193 node_system
+  n194@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_render::**<br/>**render_resource::pipeline_**<br/>**specializer::**<br/>**SpecializedComputePipelines#lt;bevy_**<br/>**pbr::render::gpu_preprocess::**<br/>**UniformAllocationLocalScanPipeline#gt;#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n194 node_system
+  n195@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_render::**<br/>**render_resource::pipeline_**<br/>**specializer::**<br/>**SpecializedComputePipelines#lt;bevy_**<br/>**pbr::render::gpu_preprocess::**<br/>**UniformAllocationGlobalScanPipeline#gt;**<br/>**#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n195 node_system
+  n196@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_render::**<br/>**render_resource::pipeline_**<br/>**specializer::**<br/>**SpecializedComputePipelines#lt;bevy_**<br/>**pbr::render::gpu_preprocess::**<br/>**UniformAllocationFanPipeline#gt;#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n196 node_system
+  n197@{ shape: rounded, label: "**collect_erased_render_assets_to_**<br/>**reextract#lt;bevy_pbr::mesh_material::**<br/>**MeshMaterial3d#lt;bevy_pbr::extended_**<br/>**material::ExtendedMaterial#lt;bevy_**<br/>**pbr::pbr_material::**<br/>**StandardMaterial, bevy_pbr::decal::**<br/>**forward::ForwardDecalMaterialExt#gt;#gt;#gt;**<br/>按源材质类型排空擦除资产并请求重新提取。" }
+  class n197 node_system
+  n198@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_pbr::**<br/>**atmosphere::resources::**<br/>**RenderSkyBindGroupLayouts#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n198 node_system
+  n199@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_pbr::**<br/>**atmosphere::resources::**<br/>**AtmosphereSampler#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n199 node_system
+  n200@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_pbr::**<br/>**atmosphere::resources::**<br/>**AtmosphereLutPipelines#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n200 node_system
+  n201@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_pbr::**<br/>**atmosphere::resources::**<br/>**AtmosphereTransforms#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n201 node_system
+  n202@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_render::**<br/>**render_resource::pipeline_**<br/>**specializer::**<br/>**SpecializedRenderPipelines#lt;bevy_**<br/>**pbr::atmosphere::resources::**<br/>**RenderSkyBindGroupLayouts#gt;#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n202 node_system
+  n203@{ shape: rounded, label: "**init_atmosphere_probe_layout**<br/>定义大气环境探针的计算资源接口。" }
+  class n203 node_system
+  n204@{ shape: rounded, label: "**init_atmosphere_probe_pipeline**<br/>排队创建大气环境贴图生成计算管线。" }
+  class n204 node_system
+  n205@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_render::**<br/>**render_resource::pipeline_**<br/>**specializer::**<br/>**SpecializedRenderPipelines#lt;bevy_**<br/>**pbr::cluster::gpu::**<br/>**ClusteringRasterPipeline#gt;#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n205 node_system
+  n206@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_render::**<br/>**render_resource::pipeline_**<br/>**specializer::**<br/>**SpecializedComputePipelines#lt;bevy_**<br/>**pbr::cluster::gpu::**<br/>**ClusteringZSlicingPipeline#gt;#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n206 node_system
+  n207@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_render::**<br/>**render_resource::pipeline_**<br/>**specializer::**<br/>**SpecializedComputePipelines#lt;bevy_**<br/>**pbr::cluster::gpu::**<br/>**ClusteringAllocationPipeline#gt;#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n207 node_system
+  n208@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_pbr::**<br/>**cluster::gpu::**<br/>**RenderViewClusteringReadbackData#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n208 node_system
+  n209@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_pbr::**<br/>**cluster::gpu::**<br/>**GpuClusteringMeshBuffers#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n209 node_system
+  n210@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_pbr::**<br/>**cluster::gpu::**<br/>**ClusteringRasterPipeline#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n210 node_system
+  n211@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_pbr::**<br/>**cluster::gpu::**<br/>**ClusteringZSlicingPipeline#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n211 node_system
+  n212@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_pbr::**<br/>**cluster::gpu::**<br/>**ClusteringAllocationPipeline#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n212 node_system
+  n213@{ shape: rounded, label: "**ApplyDeferred**<br/>在调度建立的同步点应用前序系统暂存的<br/>Commands 等延迟操作，使后续系统可以观察<br/>到结构变化；此卡片是 ApplyDeferred 的<br/>System 实现。" }
+  class n213 node_sync
+  n214@{ shape: rounded, label: "**ApplyDeferred**<br/>在调度建立的同步点应用前序系统暂存的<br/>Commands 等延迟操作，使后续系统可以观察<br/>到结构变化；此卡片是 ApplyDeferred 的<br/>System 实现。" }
+  class n214 node_sync
+  n215@{ shape: rounded, label: "**ApplyDeferred**<br/>在调度建立的同步点应用前序系统暂存的<br/>Commands 等延迟操作，使后续系统可以观察<br/>到结构变化；此卡片是 ApplyDeferred 的<br/>System 实现。" }
+  class n215 node_sync
+  n216@{ shape: rounded, label: "**ApplyDeferred**<br/>在调度建立的同步点应用前序系统暂存的<br/>Commands 等延迟操作，使后续系统可以观察<br/>到结构变化；此卡片是 ApplyDeferred 的<br/>System 实现。" }
+  class n216 node_sync
+  n217@{ shape: lin-rect, label: "**MeshPipelineSystems**<br/>先初始化网格视图布局，再初始化三维网格管<br/>线。" }
+  class n217 node_system_set
+  n0 e0@-->|"RenderApp / RenderStartup"| n1
+  class e0 edge_registration
+  n0 e1@-->|"RenderApp / RenderStartup"| n2
+  class e1 edge_registration
+  n0 e2@-->|"RenderApp / RenderStartup"| n3
+  class e2 edge_registration
+  n0 e3@-->|"RenderApp / RenderStartup"| n4
+  class e3 edge_registration
+  n0 e4@-->|"RenderApp / RenderStartup"| n5
+  class e4 edge_registration
+  n0 e5@-->|"RenderApp / RenderStartup"| n6
+  class e5 edge_registration
+  n0 e6@-->|"RenderApp / RenderStartup"| n7
+  class e6 edge_registration
+  n0 e7@-->|"RenderApp / RenderStartup"| n8
+  class e7 edge_registration
+  n0 e8@-->|"RenderApp / RenderStartup"| n9
+  class e8 edge_registration
+  n0 e9@-->|"RenderApp / RenderStartup"| n10
+  class e9 edge_registration
+  n0 e10@-->|"RenderApp / RenderStartup"| n11
+  class e10 edge_registration
+  n0 e11@-->|"RenderApp / RenderStartup"| n12
+  class e11 edge_registration
+  n0 e12@-->|"RenderApp / RenderStartup"| n13
+  class e12 edge_registration
+  n0 e13@-->|"RenderApp / RenderStartup"| n14
+  class e13 edge_registration
+  n0 e14@-->|"RenderApp / RenderStartup"| n15
+  class e14 edge_registration
+  n0 e15@-->|"RenderApp / RenderStartup"| n16
+  class e15 edge_registration
+  n0 e16@-->|"RenderApp / RenderStartup"| n17
+  class e16 edge_registration
+  n0 e17@-->|"RenderApp / RenderStartup"| n18
+  class e17 edge_registration
+  n0 e18@-->|"RenderApp / RenderStartup"| n19
+  class e18 edge_registration
+  n0 e19@-->|"RenderApp / RenderStartup"| n20
+  class e19 edge_registration
+  n0 e20@-->|"RenderApp / RenderStartup"| n21
+  class e20 edge_registration
+  n0 e21@-->|"RenderApp / RenderStartup"| n22
+  class e21 edge_registration
+  n0 e22@-->|"RenderApp / RenderStartup"| n23
+  class e22 edge_registration
+  n0 e23@-->|"RenderApp / RenderStartup"| n24
+  class e23 edge_registration
+  n0 e24@-->|"RenderApp / RenderStartup"| n25
+  class e24 edge_registration
+  n0 e25@-->|"RenderApp / RenderStartup"| n26
+  class e25 edge_registration
+  n0 e26@-->|"RenderApp / RenderStartup"| n27
+  class e26 edge_registration
+  n0 e27@-->|"RenderApp / RenderStartup"| n28
+  class e27 edge_registration
+  n0 e28@-->|"RenderApp / RenderStartup"| n29
+  class e28 edge_registration
+  n0 e29@-->|"RenderApp / RenderStartup"| n30
+  class e29 edge_registration
+  n0 e30@-->|"RenderApp / RenderStartup"| n31
+  class e30 edge_registration
+  n0 e31@-->|"RenderApp / RenderStartup"| n32
+  class e31 edge_registration
+  n0 e32@-->|"RenderApp / RenderStartup"| n33
+  class e32 edge_registration
+  n0 e33@-->|"RenderApp / RenderStartup"| n34
+  class e33 edge_registration
+  n0 e34@-->|"RenderApp / RenderStartup"| n35
+  class e34 edge_registration
+  n0 e35@-->|"RenderApp / RenderStartup"| n36
+  class e35 edge_registration
+  n0 e36@-->|"RenderApp / RenderStartup"| n37
+  class e36 edge_registration
+  n0 e37@-->|"RenderApp / RenderStartup"| n38
+  class e37 edge_registration
+  n0 e38@-->|"RenderApp / RenderStartup"| n39
+  class e38 edge_registration
+  n0 e39@-->|"RenderApp / RenderStartup"| n40
+  class e39 edge_registration
+  n0 e40@-->|"RenderApp / RenderStartup"| n41
+  class e40 edge_registration
+  n0 e41@-->|"RenderApp / RenderStartup"| n42
+  class e41 edge_registration
+  n0 e42@-->|"RenderApp / RenderStartup"| n43
+  class e42 edge_registration
+  n0 e43@-->|"RenderApp / RenderStartup"| n44
+  class e43 edge_registration
+  n0 e44@-->|"RenderApp / RenderStartup"| n45
+  class e44 edge_registration
+  n0 e45@-->|"RenderApp / RenderStartup"| n46
+  class e45 edge_registration
+  n0 e46@-->|"RenderApp / RenderStartup"| n47
+  class e46 edge_registration
+  n0 e47@-->|"RenderApp / RenderStartup"| n48
+  class e47 edge_registration
+  n0 e48@-->|"RenderApp / RenderStartup"| n49
+  class e48 edge_registration
+  n0 e49@-->|"RenderApp / RenderStartup"| n50
+  class e49 edge_registration
+  n0 e50@-->|"RenderApp / RenderStartup"| n51
+  class e50 edge_registration
+  n0 e51@-->|"RenderApp / RenderStartup"| n52
+  class e51 edge_registration
+  n0 e52@-->|"RenderApp / RenderStartup"| n53
+  class e52 edge_registration
+  n0 e53@-->|"RenderApp / RenderStartup"| n54
+  class e53 edge_registration
+  n0 e54@-->|"RenderApp / RenderStartup"| n55
+  class e54 edge_registration
+  n0 e55@-->|"RenderApp / RenderStartup"| n56
+  class e55 edge_registration
+  n0 e56@-->|"RenderApp / RenderStartup"| n57
+  class e56 edge_registration
+  n0 e57@-->|"RenderApp / RenderStartup"| n58
+  class e57 edge_registration
+  n0 e58@-->|"RenderApp / RenderStartup"| n59
+  class e58 edge_registration
+  n0 e59@-->|"RenderApp / RenderStartup"| n60
+  class e59 edge_registration
+  n0 e60@-->|"RenderApp / RenderStartup"| n61
+  class e60 edge_registration
+  n0 e61@-->|"RenderApp / RenderStartup"| n62
+  class e61 edge_registration
+  n0 e62@-->|"RenderApp / RenderStartup"| n63
+  class e62 edge_registration
+  n0 e63@-->|"RenderApp / RenderStartup"| n64
+  class e63 edge_registration
+  n0 e64@-->|"RenderApp / RenderStartup"| n65
+  class e64 edge_registration
+  n0 e65@-->|"RenderApp / RenderStartup"| n66
+  class e65 edge_registration
+  n0 e66@-->|"RenderApp / RenderStartup"| n67
+  class e66 edge_registration
+  n0 e67@-->|"RenderApp / RenderStartup"| n68
+  class e67 edge_registration
+  n0 e68@-->|"RenderApp / RenderStartup"| n69
+  class e68 edge_registration
+  n0 e69@-->|"RenderApp / RenderStartup"| n70
+  class e69 edge_registration
+  n0 e70@-->|"RenderApp / RenderStartup"| n71
+  class e70 edge_registration
+  n0 e71@-->|"RenderApp / RenderStartup"| n72
+  class e71 edge_registration
+  n0 e72@-->|"RenderApp / RenderStartup"| n73
+  class e72 edge_registration
+  n0 e73@-->|"RenderApp / RenderStartup"| n74
+  class e73 edge_registration
+  n0 e74@-->|"RenderApp / RenderStartup"| n75
+  class e74 edge_registration
+  n0 e75@-->|"RenderApp / RenderStartup"| n76
+  class e75 edge_registration
+  n0 e76@-->|"RenderApp / RenderStartup"| n77
+  class e76 edge_registration
+  n0 e77@-->|"RenderApp / RenderStartup"| n78
+  class e77 edge_registration
+  n0 e78@-->|"RenderApp / RenderStartup"| n79
+  class e78 edge_registration
+  n0 e79@-->|"RenderApp / RenderStartup"| n80
+  class e79 edge_registration
+  n0 e80@-->|"RenderApp / RenderStartup"| n81
+  class e80 edge_registration
+  n0 e81@-->|"RenderApp / RenderStartup"| n82
+  class e81 edge_registration
+  n0 e82@-->|"RenderApp / RenderStartup"| n83
+  class e82 edge_registration
+  n0 e83@-->|"RenderApp / RenderStartup"| n84
+  class e83 edge_registration
+  n0 e84@-->|"RenderApp / RenderStartup"| n85
+  class e84 edge_registration
+  n0 e85@-->|"RenderApp / RenderStartup"| n86
+  class e85 edge_registration
+  n0 e86@-->|"RenderApp / RenderStartup"| n87
+  class e86 edge_registration
+  n0 e87@-->|"RenderApp / RenderStartup"| n88
+  class e87 edge_registration
+  n0 e88@-->|"RenderApp / RenderStartup"| n89
+  class e88 edge_registration
+  n0 e89@-->|"RenderApp / RenderStartup"| n90
+  class e89 edge_registration
+  n0 e90@-->|"RenderApp / RenderStartup"| n91
+  class e90 edge_registration
+  n0 e91@-->|"RenderApp / RenderStartup"| n92
+  class e91 edge_registration
+  n0 e92@-->|"RenderApp / RenderStartup"| n93
+  class e92 edge_registration
+  n0 e93@-->|"RenderApp / RenderStartup"| n94
+  class e93 edge_registration
+  n0 e94@-->|"RenderApp / RenderStartup"| n95
+  class e94 edge_registration
+  n0 e95@-->|"RenderApp / RenderStartup"| n96
+  class e95 edge_registration
+  n0 e96@-->|"RenderApp / RenderStartup"| n97
+  class e96 edge_registration
+  n0 e97@-->|"RenderApp / RenderStartup"| n98
+  class e97 edge_registration
+  n0 e98@-->|"RenderApp / RenderStartup"| n99
+  class e98 edge_registration
+  n0 e99@-->|"RenderApp / RenderStartup"| n100
+  class e99 edge_registration
+  n0 e100@-->|"RenderApp / RenderStartup"| n101
+  class e100 edge_registration
+  n0 e101@-->|"RenderApp / RenderStartup"| n102
+  class e101 edge_registration
+  n0 e102@-->|"RenderApp / RenderStartup"| n103
+  class e102 edge_registration
+  n0 e103@-->|"RenderApp / RenderStartup"| n104
+  class e103 edge_registration
+  n0 e104@-->|"RenderApp / RenderStartup"| n105
+  class e104 edge_registration
+  n0 e105@-->|"RenderApp / RenderStartup"| n106
+  class e105 edge_registration
+  n0 e106@-->|"RenderApp / RenderStartup"| n107
+  class e106 edge_registration
+  n0 e107@-->|"RenderApp / RenderStartup"| n108
+  class e107 edge_registration
+  n0 e108@-->|"RenderApp / RenderStartup"| n109
+  class e108 edge_registration
+  n0 e109@-->|"RenderApp / RenderStartup"| n110
+  class e109 edge_registration
+  n0 e110@-->|"RenderApp / RenderStartup"| n111
+  class e110 edge_registration
+  n0 e111@-->|"RenderApp / RenderStartup"| n112
+  class e111 edge_registration
+  n0 e112@-->|"RenderApp / RenderStartup"| n113
+  class e112 edge_registration
+  n0 e113@-->|"RenderApp / RenderStartup"| n114
+  class e113 edge_registration
+  n0 e114@-->|"RenderApp / RenderStartup"| n115
+  class e114 edge_registration
+  n0 e115@-->|"RenderApp / RenderStartup"| n116
+  class e115 edge_registration
+  n0 e116@-->|"RenderApp / RenderStartup"| n117
+  class e116 edge_registration
+  n0 e117@-->|"RenderApp / RenderStartup"| n118
+  class e117 edge_registration
+  n0 e118@-->|"RenderApp / RenderStartup"| n119
+  class e118 edge_registration
+  n0 e119@-->|"RenderApp / RenderStartup"| n120
+  class e119 edge_registration
+  n0 e120@-->|"RenderApp / RenderStartup"| n121
+  class e120 edge_registration
+  n0 e121@-->|"RenderApp / RenderStartup"| n122
+  class e121 edge_registration
+  n0 e122@-->|"RenderApp / RenderStartup"| n123
+  class e122 edge_registration
+  n0 e123@-->|"RenderApp / RenderStartup"| n124
+  class e123 edge_registration
+  n0 e124@-->|"RenderApp / RenderStartup"| n125
+  class e124 edge_registration
+  n0 e125@-->|"RenderApp / RenderStartup"| n126
+  class e125 edge_registration
+  n0 e126@-->|"RenderApp / RenderStartup"| n127
+  class e126 edge_registration
+  n0 e127@-->|"RenderApp / RenderStartup"| n128
+  class e127 edge_registration
+  n0 e128@-->|"RenderApp / RenderStartup"| n129
+  class e128 edge_registration
+  n0 e129@-->|"RenderApp / RenderStartup"| n130
+  class e129 edge_registration
+  n0 e130@-->|"RenderApp / RenderStartup"| n131
+  class e130 edge_registration
+  n0 e131@-->|"RenderApp / RenderStartup"| n132
+  class e131 edge_registration
+  n0 e132@-->|"RenderApp / RenderStartup"| n133
+  class e132 edge_registration
+  n0 e133@-->|"RenderApp / RenderStartup"| n134
+  class e133 edge_registration
+  n0 e134@-->|"RenderApp / RenderStartup"| n135
+  class e134 edge_registration
+  n0 e135@-->|"RenderApp / RenderStartup"| n136
+  class e135 edge_registration
+  n0 e136@-->|"RenderApp / RenderStartup"| n137
+  class e136 edge_registration
+  n0 e137@-->|"RenderApp / RenderStartup"| n138
+  class e137 edge_registration
+  n0 e138@-->|"RenderApp / RenderStartup"| n139
+  class e138 edge_registration
+  n0 e139@-->|"RenderApp / RenderStartup"| n140
+  class e139 edge_registration
+  n0 e140@-->|"RenderApp / RenderStartup"| n141
+  class e140 edge_registration
+  n0 e141@-->|"RenderApp / RenderStartup"| n142
+  class e141 edge_registration
+  n0 e142@-->|"RenderApp / RenderStartup"| n143
+  class e142 edge_registration
+  n0 e143@-->|"RenderApp / RenderStartup"| n144
+  class e143 edge_registration
+  n0 e144@-->|"RenderApp / RenderStartup"| n145
+  class e144 edge_registration
+  n0 e145@-->|"RenderApp / RenderStartup"| n146
+  class e145 edge_registration
+  n0 e146@-->|"RenderApp / RenderStartup"| n147
+  class e146 edge_registration
+  n0 e147@-->|"RenderApp / RenderStartup"| n148
+  class e147 edge_registration
+  n0 e148@-->|"RenderApp / RenderStartup"| n149
+  class e148 edge_registration
+  n0 e149@-->|"RenderApp / RenderStartup"| n150
+  class e149 edge_registration
+  n0 e150@-->|"RenderApp / RenderStartup"| n151
+  class e150 edge_registration
+  n0 e151@-->|"RenderApp / RenderStartup"| n152
+  class e151 edge_registration
+  n0 e152@-->|"RenderApp / RenderStartup"| n153
+  class e152 edge_registration
+  n0 e153@-->|"RenderApp / RenderStartup"| n154
+  class e153 edge_registration
+  n0 e154@-->|"RenderApp / RenderStartup"| n155
+  class e154 edge_registration
+  n0 e155@-->|"RenderApp / RenderStartup"| n156
+  class e155 edge_registration
+  n0 e156@-->|"RenderApp / RenderStartup"| n157
+  class e156 edge_registration
+  n0 e157@-->|"RenderApp / RenderStartup"| n158
+  class e157 edge_registration
+  n0 e158@-->|"RenderApp / RenderStartup"| n159
+  class e158 edge_registration
+  n0 e159@-->|"RenderApp / RenderStartup"| n160
+  class e159 edge_registration
+  n0 e160@-->|"RenderApp / RenderStartup"| n161
+  class e160 edge_registration
+  n0 e161@-->|"RenderApp / RenderStartup"| n162
+  class e161 edge_registration
+  n0 e162@-->|"RenderApp / RenderStartup"| n163
+  class e162 edge_registration
+  n0 e163@-->|"RenderApp / RenderStartup"| n164
+  class e163 edge_registration
+  n0 e164@-->|"RenderApp / RenderStartup"| n165
+  class e164 edge_registration
+  n0 e165@-->|"RenderApp / RenderStartup"| n166
+  class e165 edge_registration
+  n0 e166@-->|"RenderApp / RenderStartup"| n167
+  class e166 edge_registration
+  n0 e167@-->|"RenderApp / RenderStartup"| n168
+  class e167 edge_registration
+  n0 e168@-->|"RenderApp / RenderStartup"| n169
+  class e168 edge_registration
+  n0 e169@-->|"RenderApp / RenderStartup"| n170
+  class e169 edge_registration
+  n0 e170@-->|"RenderApp / RenderStartup"| n171
+  class e170 edge_registration
+  n0 e171@-->|"RenderApp / RenderStartup"| n172
+  class e171 edge_registration
+  n0 e172@-->|"RenderApp / RenderStartup"| n173
+  class e172 edge_registration
+  n0 e173@-->|"RenderApp / RenderStartup"| n174
+  class e173 edge_registration
+  n0 e174@-->|"RenderApp / RenderStartup"| n175
+  class e174 edge_registration
+  n0 e175@-->|"RenderApp / RenderStartup"| n176
+  class e175 edge_registration
+  n0 e176@-->|"RenderApp / RenderStartup"| n177
+  class e176 edge_registration
+  n0 e177@-->|"RenderApp / RenderStartup"| n178
+  class e177 edge_registration
+  n0 e178@-->|"RenderApp / RenderStartup"| n179
+  class e178 edge_registration
+  n0 e179@-->|"RenderApp / RenderStartup"| n180
+  class e179 edge_registration
+  n0 e180@-->|"RenderApp / RenderStartup"| n181
+  class e180 edge_registration
+  n0 e181@-->|"RenderApp / RenderStartup"| n182
+  class e181 edge_registration
+  n0 e182@-->|"RenderApp / RenderStartup"| n183
+  class e182 edge_registration
+  n0 e183@-->|"RenderApp / RenderStartup"| n184
+  class e183 edge_registration
+  n0 e184@-->|"RenderApp / RenderStartup"| n185
+  class e184 edge_registration
+  n0 e185@-->|"RenderApp / RenderStartup"| n186
+  class e185 edge_registration
+  n0 e186@-->|"RenderApp / RenderStartup"| n187
+  class e186 edge_registration
+  n0 e187@-->|"RenderApp / RenderStartup"| n188
+  class e187 edge_registration
+  n0 e188@-->|"RenderApp / RenderStartup"| n189
+  class e188 edge_registration
+  n0 e189@-->|"RenderApp / RenderStartup"| n190
+  class e189 edge_registration
+  n0 e190@-->|"RenderApp / RenderStartup"| n191
+  class e190 edge_registration
+  n0 e191@-->|"RenderApp / RenderStartup"| n192
+  class e191 edge_registration
+  n0 e192@-->|"RenderApp / RenderStartup"| n193
+  class e192 edge_registration
+  n0 e193@-->|"RenderApp / RenderStartup"| n194
+  class e193 edge_registration
+  n0 e194@-->|"RenderApp / RenderStartup"| n195
+  class e194 edge_registration
+  n0 e195@-->|"RenderApp / RenderStartup"| n196
+  class e195 edge_registration
+  n0 e196@-->|"RenderApp / RenderStartup"| n197
+  class e196 edge_registration
+  n0 e197@-->|"RenderApp / RenderStartup"| n198
+  class e197 edge_registration
+  n0 e198@-->|"RenderApp / RenderStartup"| n199
+  class e198 edge_registration
+  n0 e199@-->|"RenderApp / RenderStartup"| n200
+  class e199 edge_registration
+  n0 e200@-->|"RenderApp / RenderStartup"| n201
+  class e200 edge_registration
+  n0 e201@-->|"RenderApp / RenderStartup"| n202
+  class e201 edge_registration
+  n0 e202@-->|"RenderApp / RenderStartup"| n203
+  class e202 edge_registration
+  n0 e203@-->|"RenderApp / RenderStartup"| n204
+  class e203 edge_registration
+  n0 e204@-->|"RenderApp / RenderStartup"| n205
+  class e204 edge_registration
+  n0 e205@-->|"RenderApp / RenderStartup"| n206
+  class e205 edge_registration
+  n0 e206@-->|"RenderApp / RenderStartup"| n207
+  class e206 edge_registration
+  n0 e207@-->|"RenderApp / RenderStartup"| n208
+  class e207 edge_registration
+  n0 e208@-->|"RenderApp / RenderStartup"| n209
+  class e208 edge_registration
+  n0 e209@-->|"RenderApp / RenderStartup"| n210
+  class e209 edge_registration
+  n0 e210@-->|"RenderApp / RenderStartup"| n211
+  class e210 edge_registration
+  n0 e211@-->|"RenderApp / RenderStartup"| n212
+  class e211 edge_registration
+  n0 e212@-->|"RenderApp / RenderStartup"| n213
+  class e212 edge_registration
+  n0 e213@-->|"RenderApp / RenderStartup"| n214
+  class e213 edge_registration
+  n0 e214@-->|"RenderApp / RenderStartup"| n215
+  class e214 edge_registration
+  n0 e215@-->|"RenderApp / RenderStartup"| n216
+  class e215 edge_registration
+  n0 e216@-->|"RenderApp / RenderStartup"| n217
+  class e216 edge_registration
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e17@{ curve: basis }
+  e18@{ curve: basis }
+  e19@{ curve: basis }
+  e20@{ curve: basis }
+  e21@{ curve: basis }
+  e22@{ curve: basis }
+  e23@{ curve: basis }
+  e24@{ curve: basis }
+  e25@{ curve: basis }
+  e26@{ curve: basis }
+  e27@{ curve: basis }
+  e28@{ curve: basis }
+  e29@{ curve: basis }
+  e30@{ curve: basis }
+  e31@{ curve: basis }
+  e32@{ curve: basis }
+  e33@{ curve: basis }
+  e34@{ curve: basis }
+  e35@{ curve: basis }
+  e36@{ curve: basis }
+  e37@{ curve: basis }
+  e38@{ curve: basis }
+  e39@{ curve: basis }
+  e40@{ curve: basis }
+  e41@{ curve: basis }
+  e42@{ curve: basis }
+  e43@{ curve: basis }
+  e44@{ curve: basis }
+  e45@{ curve: basis }
+  e46@{ curve: basis }
+  e47@{ curve: basis }
+  e48@{ curve: basis }
+  e49@{ curve: basis }
+  e50@{ curve: basis }
+  e51@{ curve: basis }
+  e52@{ curve: basis }
+  e53@{ curve: basis }
+  e54@{ curve: basis }
+  e55@{ curve: basis }
+  e56@{ curve: basis }
+  e57@{ curve: basis }
+  e58@{ curve: basis }
+  e59@{ curve: basis }
+  e60@{ curve: basis }
+  e61@{ curve: basis }
+  e62@{ curve: basis }
+  e63@{ curve: basis }
+  e64@{ curve: basis }
+  e65@{ curve: basis }
+  e66@{ curve: basis }
+  e67@{ curve: basis }
+  e68@{ curve: basis }
+  e69@{ curve: basis }
+  e70@{ curve: basis }
+  e71@{ curve: basis }
+  e72@{ curve: basis }
+  e73@{ curve: basis }
+  e74@{ curve: basis }
+  e75@{ curve: basis }
+  e76@{ curve: basis }
+  e77@{ curve: basis }
+  e78@{ curve: basis }
+  e79@{ curve: basis }
+  e80@{ curve: basis }
+  e81@{ curve: basis }
+  e82@{ curve: basis }
+  e83@{ curve: basis }
+  e84@{ curve: basis }
+  e85@{ curve: basis }
+  e86@{ curve: basis }
+  e87@{ curve: basis }
+  e88@{ curve: basis }
+  e89@{ curve: basis }
+  e90@{ curve: basis }
+  e91@{ curve: basis }
+  e92@{ curve: basis }
+  e93@{ curve: basis }
+  e94@{ curve: basis }
+  e95@{ curve: basis }
+  e96@{ curve: basis }
+  e97@{ curve: basis }
+  e98@{ curve: basis }
+  e99@{ curve: basis }
+  e100@{ curve: basis }
+  e101@{ curve: basis }
+  e102@{ curve: basis }
+  e103@{ curve: basis }
+  e104@{ curve: basis }
+  e105@{ curve: basis }
+  e106@{ curve: basis }
+  e107@{ curve: basis }
+  e109@{ curve: basis }
+  e110@{ curve: basis }
+  e111@{ curve: basis }
+  e112@{ curve: basis }
+  e113@{ curve: basis }
+  e114@{ curve: basis }
+  e115@{ curve: basis }
+  e116@{ curve: basis }
+  e117@{ curve: basis }
+  e118@{ curve: basis }
+  e119@{ curve: basis }
+  e120@{ curve: basis }
+  e121@{ curve: basis }
+  e122@{ curve: basis }
+  e123@{ curve: basis }
+  e124@{ curve: basis }
+  e125@{ curve: basis }
+  e126@{ curve: basis }
+  e127@{ curve: basis }
+  e128@{ curve: basis }
+  e129@{ curve: basis }
+  e130@{ curve: basis }
+  e131@{ curve: basis }
+  e132@{ curve: basis }
+  e133@{ curve: basis }
+  e134@{ curve: basis }
+  e135@{ curve: basis }
+  e136@{ curve: basis }
+  e137@{ curve: basis }
+  e138@{ curve: basis }
+  e139@{ curve: basis }
+  e140@{ curve: basis }
+  e141@{ curve: basis }
+  e142@{ curve: basis }
+  e143@{ curve: basis }
+  e144@{ curve: basis }
+  e145@{ curve: basis }
+  e146@{ curve: basis }
+  e147@{ curve: basis }
+  e148@{ curve: basis }
+  e149@{ curve: basis }
+  e150@{ curve: basis }
+  e151@{ curve: basis }
+  e152@{ curve: basis }
+  e153@{ curve: basis }
+  e154@{ curve: basis }
+  e155@{ curve: basis }
+  e156@{ curve: basis }
+  e157@{ curve: basis }
+  e158@{ curve: basis }
+  e159@{ curve: basis }
+  e160@{ curve: basis }
+  e161@{ curve: basis }
+  e162@{ curve: basis }
+  e163@{ curve: basis }
+  e164@{ curve: basis }
+  e165@{ curve: basis }
+  e166@{ curve: basis }
+  e167@{ curve: basis }
+  e168@{ curve: basis }
+  e169@{ curve: basis }
+  e170@{ curve: basis }
+  e171@{ curve: basis }
+  e172@{ curve: basis }
+  e173@{ curve: basis }
+  e174@{ curve: basis }
+  e175@{ curve: basis }
+  e176@{ curve: basis }
+  e177@{ curve: basis }
+  e178@{ curve: basis }
+  e179@{ curve: basis }
+  e180@{ curve: basis }
+  e181@{ curve: basis }
+  e182@{ curve: basis }
+  e183@{ curve: basis }
+  e184@{ curve: basis }
+  e185@{ curve: basis }
+  e186@{ curve: basis }
+  e187@{ curve: basis }
+  e188@{ curve: basis }
+  e189@{ curve: basis }
+  e190@{ curve: basis }
+  e191@{ curve: basis }
+  e192@{ curve: basis }
+  e193@{ curve: basis }
+  e194@{ curve: basis }
+  e195@{ curve: basis }
+  e196@{ curve: basis }
+  e197@{ curve: basis }
+  e198@{ curve: basis }
+  e199@{ curve: basis }
+  e200@{ curve: basis }
+  e201@{ curve: basis }
+  e202@{ curve: basis }
+  e203@{ curve: basis }
+  e204@{ curve: basis }
+  e205@{ curve: basis }
+  e206@{ curve: basis }
+  e207@{ curve: basis }
+  e208@{ curve: basis }
+  e209@{ curve: basis }
+  e210@{ curve: basis }
+  e211@{ curve: basis }
+  e212@{ curve: basis }
+  e213@{ curve: basis }
+  e214@{ curve: basis }
+  e215@{ curve: basis }
+  e216@{ curve: basis }

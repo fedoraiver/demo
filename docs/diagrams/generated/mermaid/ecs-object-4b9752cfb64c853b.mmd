@@ -1,0 +1,87 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#object-4b9752cfb64c853b-e2{marker-start:url(#object-4b9752cfb64c853b_flowchart-v2-pointStart)!important}\n#object-4b9752cfb64c853b_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}"
+  }
+}
+---
+flowchart LR
+  accTitle: Messages<PointerInput> · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_message_buffer fill:#EDF4F6,stroke:#247B91,stroke-width:1.6px,color:#1F3340
+  classDef edge_publish stroke:#247B91,stroke-width:1.8px,stroke-dasharray:10 4 2 4
+  classDef edge_consume stroke:#247B91,stroke-width:1.8px,stroke-dasharray:2 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: cyl, label: "**Messages#lt;PointerInput#gt;**<br/>Picking 归一化输入消息；项目仅消费<br/>Cancel 以补清原生按压生命周期。" }
+  class n0 node_message_buffer
+  n1@{ shape: rounded, label: "**clear_cancelled_primary_presses**<br/>来自菜单与界面 ↗：清理被取消、失焦或离<br/>窗的菜单主键按压。" }
+  class n1 node_system
+  class n1 external_node
+  n2@{ shape: rounded, label: "**pointer_events**<br/>生成指针EntityEvent并同时发布对<br/>应Message。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**viewport_picking**<br/>收集正被悬停或拖动的 ViewportNode，将<br/>外部指针位置转换到其相机视口，并以该视口<br/>专用的 PointerId 转发 PointerInput；<br/>未使用的视口清除指针位置。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**mouse_pick_events**<br/>把窗口鼠标事件转换为拾取指针动作。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**touch_pick_events**<br/>把触摸阶段转换为独立拾取指针。" }
+  class n5 node_system
+  n6@{ shape: rounded, label: "**receive**<br/>消费 PointerInput，按 PointerId 更新<br/>指针实体的按钮按下状态与位置，使拾取后端<br/>读取本帧一致的指针输入状态。" }
+  class n6 node_system
+  n7@{ shape: rounded, label: "**generate_hovermap**<br/>汇总指针输入与各拾取后端的命中，重建当前<br/>和上一帧悬停映射；处理释放或取消后的捕<br/>获，并把仍有效的指针捕获应用到最终<br/>HoverMap。" }
+  class n7 node_system
+  n0 e0@-->|"缓冲消息"| n1
+  class e0 edge_consume
+  n0 e1@--> n2
+  class e1 edge_consume
+  n3 e2@--- n0
+  class e2 edge_consume
+  n3 e3@-->|"延迟发布消息"| n0
+  class e3 edge_publish
+  n4 e4@--> n0
+  class e4 edge_publish
+  n4 e5@-->|"正文发布消息"| n0
+  class e5 edge_publish
+  n5 e6@--> n0
+  class e6 edge_publish
+  n5 e7@-->|"正文发布消息"| n0
+  class e7 edge_publish
+  n0 e8@--> n6
+  class e8 edge_consume
+  n0 e9@--> n7
+  class e9 edge_consume
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: bumpX }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }

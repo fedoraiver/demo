@@ -1,0 +1,214 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#object-558a2c5b817e3c5f-e3{marker-start:url(#object-558a2c5b817e3c5f_flowchart-v2-pointStart)!important}\n#object-558a2c5b817e3c5f_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}"
+  }
+}
+---
+flowchart LR
+  accTitle: Time · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_observer fill:#F4F1F9,stroke:#7B4DB2,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: cyl, label: "**Time**<br/>提供当前运行阶段的通用时间。" }
+  class n0 node_resource
+  n1@{ shape: rounded, label: "**time_system**<br/>依据 TimeUpdateStrategy 和可用的渲染<br/>时间通道更新真实时钟，再推进虚拟时钟及当<br/>前通用 Time；固定步长策略使用<br/>Time#lt;Fixed#gt; 的步长。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**update_translation_extrapolation_**<br/>**states#lt;avian3d::interpolation::**<br/>**LinVelSource#gt;**<br/>来自Avian ↗：依据当前线速度预测下一个<br/>位置端点。" }
+  class n2 node_system
+  class n2 external_node
+  n3@{ shape: rounded, label: "**update_rotation_extrapolation_**<br/>**states#lt;avian3d::interpolation::**<br/>**AngVelSource#gt;**<br/>来自Avian ↗：依据当前角速度预测下一个<br/>旋转端点。" }
+  class n3 node_system
+  class n3 external_node
+  n4@{ shape: rounded, label: "**run_physics_schedule**<br/>来自Avian ↗：使用物理时钟推进<br/>PhysicsSchedule 并恢复原时钟。" }
+  class n4 node_system
+  class n4 external_node
+  n5@{ shape: rounded, label: "**update_narrow_phase#lt;avian3d::**<br/>**collision::collider::parry::**<br/>**Collider, ()#gt;**<br/>来自Avian ↗：更新窄相接触并输出碰撞变<br/>化消息。" }
+  class n5 node_system
+  class n5 external_node
+  n6@{ shape: rounded, label: "**run_substep_schedule**<br/>来自Avian ↗：按 SubstepCount 平分本<br/>物理步时间，切换通用 Time 为子步时钟并<br/>重复运行 SubstepSchedule，结束后恢复<br/>Time#lt;Physics#gt; 对应的通用时钟。" }
+  class n6 node_system
+  class n6 external_node
+  n7@{ shape: rounded, label: "**solve_continuous**<br/>来自Avian ↗：对单步位移相对厚度过大的<br/>动态刚体执行连续碰撞扫掠；发现碰撞时缩短<br/>累计运动，使刚体停在首次撞击位置，并保留<br/>后续接触处理所需信息。" }
+  class n7 node_system
+  class n7 external_node
+  n8@{ shape: rounded, label: "**update_solver_body_aabbs#lt;avian3d::**<br/>**collision::collider::parry::**<br/>**Collider#gt;**<br/>来自Avian ↗：按物理结果更新活跃刚体的<br/>碰撞边界。" }
+  class n8 node_system
+  class n8 external_node
+  n9@{ shape: rounded, label: "**update_sleeping_states**<br/>来自Avian ↗：按刚体静止时间判断物理岛<br/>的休眠资格。" }
+  class n9 node_system
+  class n9 external_node
+  n10@{ shape: rounded, label: "**advance_transitions**<br/>按帧时间衰减动画过渡权重，从最近的过渡开<br/>始分配剩余权重并更新 AnimationPlayer，<br/>使过渡动画与主动画保持归一化混合。" }
+  class n10 node_system
+  n11@{ shape: rounded, label: "**advance_animations**<br/>依据帧时间推进各 AnimationPlayer 正在<br/>播放的动画；结合动画图和片段时长更新播放<br/>进度及图节点对应的活动动画状态。" }
+  class n11 node_system
+  n12@{ shape: rounded, label: "**Enhanced Input update**<br/>来自Enhanced Input ↗：按上下文优先级<br/>评估输入绑定、修饰器和条件，计算动作值及<br/>触发状态；此卡片的名称由系统参数元组生<br/>成。" }
+  class n12 node_system
+  class n12 external_node
+  n13@{ shape: rounded, label: "**check_delayed_command_queues**<br/>提交到期的延迟命令并删除队列实体。" }
+  class n13 node_system
+  n14@{ shape: rounded, label: "**run_fixed_main_schedule**<br/>累积虚拟时间并按固定时钟步长重复运行<br/>FixedMain，保存剩余 overstep。" }
+  class n14 node_system
+  n15@{ shape: rounded, label: "**integrate_velocities**<br/>来自Avian ↗：对采用默认速度积分的活跃<br/>动态刚体，先应用线性和角速度阻尼，再累加<br/>当前步的速度增量；运动学刚体跳过该积分，<br/>并记录诊断耗时。" }
+  class n15 node_system
+  class n15 external_node
+  n16@{ shape: rounded, label: "**integrate_positions**<br/>来自Avian ↗：依据求解器刚体速度与本子<br/>步时间累加 delta_position 和 delta_<br/>rotation；带自定义位置积分标志的刚体跳<br/>过默认积分。" }
+  class n16 node_system
+  class n16 external_node
+  n17@{ shape: rounded, label: "**solve_contacts#lt;true#gt;**<br/>来自Avian ↗：迭代接触约束并向碰撞刚体<br/>施加冲量；泛型 USE_BIAS 决定是否加入重<br/>叠修正，用带偏置求解和无偏置松弛分别处理<br/>穿透与速度过冲。" }
+  class n17 node_system
+  class n17 external_node
+  n18@{ shape: rounded, label: "**solve_contacts#lt;false#gt;**<br/>来自Avian ↗：迭代接触约束并向碰撞刚体<br/>施加冲量；泛型 USE_BIAS 决定是否加入重<br/>叠修正，用带偏置求解和无偏置松弛分别处理<br/>穿透与速度过冲。" }
+  class n18 node_system
+  class n18 external_node
+  n19@{ shape: rounded, label: "**joint_damping#lt;avian3d::dynamics::**<br/>**joints::fixed::FixedJoint#gt;**<br/>来自Avian ↗：读取指定关节及<br/>JointDamping，查找两端刚体的求解器索引<br/>并按时间步修正相对速度；静态端使用占位刚<br/>体，同一索引不重复处理。" }
+  class n19 node_system
+  class n19 external_node
+  n20@{ shape: rounded, label: "**joint_damping#lt;avian3d::dynamics::**<br/>**joints::revolute::RevoluteJoint#gt;**<br/>来自Avian ↗：读取指定关节及<br/>JointDamping，查找两端刚体的求解器索引<br/>并按时间步修正相对速度；静态端使用占位刚<br/>体，同一索引不重复处理。" }
+  class n20 node_system
+  class n20 external_node
+  n21@{ shape: rounded, label: "**joint_damping#lt;avian3d::dynamics::**<br/>**joints::spherical::SphericalJoint#gt;**<br/>来自Avian ↗：读取指定关节及<br/>JointDamping，查找两端刚体的求解器索引<br/>并按时间步修正相对速度；静态端使用占位刚<br/>体，同一索引不重复处理。" }
+  class n21 node_system
+  class n21 external_node
+  n22@{ shape: rounded, label: "**joint_damping#lt;avian3d::dynamics::**<br/>**joints::prismatic::PrismaticJoint#gt;**<br/>来自Avian ↗：读取指定关节及<br/>JointDamping，查找两端刚体的求解器索引<br/>并按时间步修正相对速度；静态端使用占位刚<br/>体，同一索引不重复处理。" }
+  class n22 node_system
+  class n22 external_node
+  n23@{ shape: rounded, label: "**joint_damping#lt;avian3d::dynamics::**<br/>**joints::distance::DistanceJoint#gt;**<br/>来自Avian ↗：读取指定关节及<br/>JointDamping，查找两端刚体的求解器索引<br/>并按时间步修正相对速度；静态端使用占位刚<br/>体，同一索引不重复处理。" }
+  class n23 node_system
+  class n23 external_node
+  n24@{ shape: rounded, label: "**extract_time**<br/>将主世界当前 Time 值复制并插入渲染世<br/>界，供渲染侧全局时间参数使用。" }
+  class n24 node_system
+  n25@{ shape: lin-rect, label: "**TimeSystems**<br/>推进真实时间与游戏时间。" }
+  class n25 node_system_set
+  n26@{ shape: lin-rect, label: "**EnhancedInputSystems::Update**<br/>来自Enhanced Input ↗：评估绑定输入并<br/>更新动作值与触发状态。" }
+  class n26 node_system_set
+  class n26 external_node
+  n27@{ shape: hex, label: "**on_camera_look**<br/>来自第一人称控制 ↗：将观察输入转为第一<br/>人称水平角与俯仰角。" }
+  class n27 node_observer
+  class n27 external_node
+  n28@{ shape: rounded, label: "**sync_courier_animation**<br/>来自角色动画 ↗：按角色运动状态连续混合<br/>移动与跳跃动画。" }
+  class n28 node_system
+  class n28 external_node
+  n29@{ shape: rounded, label: "**compensate_courier_sole_penetration**<br/>来自角色动画 ↗：补偿鞋底穿地并平滑恢复<br/>视觉高度。" }
+  class n29 node_system
+  class n29 external_node
+  n1 e0@--> n0
+  class e0 edge_write
+  n0 e1@--> n2
+  class e1 edge_read
+  n0 e2@--> n3
+  class e2 edge_read
+  n4 e3@---|"正文只读访问"| n0
+  class e3 edge_read
+  n4 e4@-->|"正文可变访问"| n0
+  class e4 edge_write
+  n0 e5@--> n5
+  class e5 edge_read
+  n6 e6@-->|"正文可变访问"| n0
+  class e6 edge_write
+  n0 e7@--> n7
+  class e7 edge_read
+  n0 e8@--> n8
+  class e8 edge_read
+  n0 e9@--> n9
+  class e9 edge_read
+  n0 e10@--> n10
+  class e10 edge_read
+  n0 e11@--> n11
+  class e11 edge_read
+  n0 e12@--> n12
+  class e12 edge_read
+  n0 e13@--> n13
+  class e13 edge_read
+  n14 e14@-->|"正文可变访问"| n0
+  class e14 edge_write
+  n0 e15@--> n15
+  class e15 edge_read
+  n0 e16@--> n16
+  class e16 edge_read
+  n0 e17@--> n17
+  class e17 edge_read
+  n0 e18@--> n18
+  class e18 edge_read
+  n0 e19@--> n19
+  class e19 edge_read
+  n0 e20@--> n20
+  class e20 edge_read
+  n0 e21@--> n21
+  class e21 edge_read
+  n0 e22@--> n22
+  class e22 edge_read
+  n0 e23@--> n23
+  class e23 edge_read
+  n0 e24@--> n24
+  class e24 edge_read
+  n25 e25@-->|"访问声明"| n0
+  class e25 edge_write
+  n0 e26@-->|"访问声明"| n26
+  class e26 edge_read
+  n0 e27@-->|"访问声明"| n27
+  class e27 edge_read
+  n0 e28@-->|"访问声明"| n28
+  class e28 edge_read
+  n0 e29@-->|"访问声明"| n29
+  class e29 edge_read
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e17@{ curve: basis }
+  e18@{ curve: basis }
+  e19@{ curve: basis }
+  e20@{ curve: basis }
+  e21@{ curve: basis }
+  e22@{ curve: basis }
+  e23@{ curve: basis }
+  e24@{ curve: basis }
+  e25@{ curve: basis }
+  e26@{ curve: basis }
+  e27@{ curve: basis }
+  e28@{ curve: basis }
+  e29@{ curve: basis }

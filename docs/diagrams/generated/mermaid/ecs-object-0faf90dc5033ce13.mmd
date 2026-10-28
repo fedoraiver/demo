@@ -1,0 +1,55 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: EguiPipelines · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: cyl, label: "**EguiPipelines**<br/>索引每个Egui视图的专用化绘制管线。" }
+  class n0 node_resource
+  n1@{ shape: rounded, label: "**egui_pass**<br/>读取当前 Egui 视图已准备的绘制数据、纹<br/>理绑定及变换缓冲，在目标颜色附件上执行<br/>Egui 绘制命令，并按相机视口设置渲染范<br/>围。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**egui_pass**<br/>读取当前 Egui 视图已准备的绘制数据、纹<br/>理绑定及变换缓冲，在目标颜色附件上执行<br/>Egui 绘制命令，并按相机视口设置渲染范<br/>围。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**queue_pipelines_system**<br/>按目标格式选择 Egui 渲染管线。" }
+  class n3 node_system
+  n0 e0@-->|"正文只读访问"| n1
+  class e0 edge_read
+  n0 e1@-->|"正文只读访问"| n2
+  class e1 edge_read
+  n3 e2@-->|"延迟添加"| n0
+  class e2 edge_write
+  e0@{ curve: basis }
+  e1@{ curve: basis }

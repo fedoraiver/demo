@@ -1,0 +1,110 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: EguiContextSettings · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**EguiContextSettings**<br/>保存单个 Egui 上下文的运行、输入、指针<br/>捕获、光标和 IME 集成选项" }
+  class n0 node_component
+  n1@{ shape: rounded, label: "**end_pass_system**<br/>结束 Egui 界面帧并保存完整输出。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**process_output_system**<br/>拆分 Egui 绘制输出并执行平台命令。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**process_ime_system**<br/>同步 Egui 编辑区域的原生输入法状态。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**update_ui_screen_rect**<br/>把相机视口换算为 Egui 逻辑屏幕区域。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**update_ui_screen_rect**<br/>把相机视口换算为 Egui 逻辑屏幕区域。" }
+  class n5 node_system
+  n6@{ shape: rounded, label: "**begin_pass_system**<br/>把本轮输入交给 Egui 并开始界面帧。" }
+  class n6 node_system
+  n7@{ shape: rounded, label: "**write_pointer_moved_and_button_**<br/>**messages_system**<br/>按原生事件顺序转换 Egui 指针输入。" }
+  class n7 node_system
+  n8@{ shape: rounded, label: "**write_window_touch_messages_system**<br/>把窗口触摸转换为 Egui 指针和触摸事件。" }
+  class n8 node_system
+  n9@{ shape: rounded, label: "**write_non_window_pointer_moved_**<br/>**messages_system**<br/>刷新非窗口 Egui 界面的指针位置。" }
+  class n9 node_system
+  n10@{ shape: rounded, label: "**write_non_window_touch_messages_**<br/>**system**<br/>向聚焦的非窗口 Egui 界面传递触摸。" }
+  class n10 node_system
+  n11@{ shape: rounded, label: "**write_mouse_wheel_messages_system**<br/>向悬停 Egui 上下文传递滚轮输入。" }
+  class n11 node_system
+  n12@{ shape: rounded, label: "**write_keyboard_input_messages_system**<br/>把键盘文本与按键转换为 Egui 输入。" }
+  class n12 node_system
+  n13@{ shape: rounded, label: "**write_ime_messages_system**<br/>向聚焦的 Egui 上下文传递输入法文本。" }
+  class n13 node_system
+  n14@{ shape: rounded, label: "**write_file_dnd_messages_system**<br/>把文件拖放路由到对应 Egui 上下文。" }
+  class n14 node_system
+  n0 e0@--> n1
+  class e0 edge_read
+  n0 e1@--> n2
+  class e1 edge_read
+  n0 e2@--> n3
+  class e2 edge_read
+  n0 e3@--> n4
+  class e3 edge_read
+  n0 e4@--> n5
+  class e4 edge_read
+  n0 e5@--> n6
+  class e5 edge_read
+  n0 e6@--> n7
+  class e6 edge_read
+  n0 e7@--> n8
+  class e7 edge_read
+  n0 e8@--> n9
+  class e8 edge_read
+  n0 e9@--> n10
+  class e9 edge_read
+  n0 e10@--> n11
+  class e10 edge_read
+  n0 e11@--> n12
+  class e11 edge_read
+  n0 e12@--> n13
+  class e12 edge_read
+  n0 e13@--> n14
+  class e13 edge_read
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }

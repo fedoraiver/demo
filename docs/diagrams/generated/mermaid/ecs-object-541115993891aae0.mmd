@@ -1,0 +1,94 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: ExtractedWindow · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**ExtractedWindow**<br/>保存渲染侧窗口尺寸、呈现模式和交换链状<br/>态。" }
+  class n0 node_component
+  n1@{ shape: rounded, label: "**extract_windows**<br/>将主世界窗口尺寸、显示模式、原生句柄和主<br/>窗口身份同步到渲染世界，标记尺寸及模式变<br/>化，并处理关闭窗口或移除句柄造成的失效状<br/>态。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**extract_cameras**<br/>把主世界活动相机的目标、视口、变换、可见<br/>实体和渲染设置提取到渲染实体，并维护视图<br/>所需格式；对停用或目标尺寸无效的相机移除<br/>失效提取状态。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**prepare_windows**<br/>为有相机输出或需要首次呈现的窗口取得交换<br/>链纹理，保留可复用的未呈现帧，并处理尺<br/>寸、模式变化及表面获取错误。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**cleanup_view_targets_for_resize**<br/>在窗口尺寸或呈现模式变化时撤销旧视图目<br/>标。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**prepare_view_attachments**<br/>按相机输出目标准备可共享的颜色附件。" }
+  class n5 node_system
+  n6@{ shape: rounded, label: "**render_system**<br/>运行根 RenderGraph 调度，提交截图及<br/>GPU 回读收尾命令，并呈现需要输出的窗口<br/>交换链；随后收集截图结果。" }
+  class n6 node_system
+  n7@{ shape: rounded, label: "**create_surfaces**<br/>根据提取窗口的原生句柄创建 GPU 表面，选<br/>择支持的纹理格式、显示及透明模式并配置<br/>SurfaceData；已有表面则按窗口变化更新<br/>配置。" }
+  class n7 node_system
+  n8@{ shape: rounded, label: "**camera_driver**<br/>遍历辅助根视图及已排序相机，为有效视图设<br/>置 CurrentView 并运行其专属渲染调度；<br/>跳过失效窗口目标，结束后移除<br/>CurrentView 并记录本帧相机覆盖的窗口集<br/>合。" }
+  class n8 node_system
+  n9@{ shape: rounded, label: "**handle_uncovered_swap_chains**<br/>清除本帧没有相机覆盖的窗口交换链。" }
+  class n9 node_system
+  n1 e0@--> n0
+  class e0 edge_write
+  n1 e1@-->|"延迟添加"| n0
+  class e1 edge_write
+  n1 e2@-->|"延迟移除"| n0
+  class e2 edge_write
+  n0 e3@--> n2
+  class e3 edge_read
+  n3 e4@--> n0
+  class e4 edge_write
+  n0 e5@--> n4
+  class e5 edge_read
+  n0 e6@--> n5
+  class e6 edge_read
+  n6 e7@--> n0
+  class e7 edge_write
+  n7 e8@--> n0
+  class e8 edge_write
+  n0 e9@--> n8
+  class e9 edge_read
+  n0 e10@-->|"正文只读访问"| n9
+  class e10 edge_read
+  n1 layout_input_0@~~~ n3
+  n3 layout_input_1@~~~ n6
+  n6 layout_input_2@~~~ n7
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }

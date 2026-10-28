@@ -1,0 +1,143 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: TransformEasingSystems::Ease · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_engine_flow fill:#F1F5F4,stroke:#557C78,stroke-width:1.6px,color:#1F3340
+  classDef edge_order stroke:#334155,stroke-width:2px
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: lin-rect, label: "**TransformEasingSystems::Ease**<br/>混合固定步端点以生成平滑显示姿态。" }
+  class n0 node_system_set
+  n1@{ shape: rounded, label: "**sync_character_facing**<br/>来自第一人称控制 ↗：同步人物朝向并处理<br/>持物转向受阻。" }
+  class n1 node_system
+  class n1 external_node
+  n2@{ shape: stadium, label: "**main · RunFixedMainLoop**<br/>来自Bevy 引擎 ↗：保存本应用调度的注册<br/>上下文与成员。" }
+  class n2 node_engine_flow
+  class n2 external_node
+  n3@{ shape: lin-rect, label: "**RunFixedMainLoopSystems::**<br/>**AfterFixedMainLoop**<br/>来自Bevy 引擎 ↗：在固定循环之后执行插<br/>值与呈现。" }
+  class n3 node_system_set
+  class n3 external_node
+  n4@{ shape: rounded, label: "**ease_translation_hermite#lt;avian3d::**<br/>**interpolation::LinVelSource#gt;**<br/>用两端线速度做 Hermite 位置平滑。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**ease_rotation_hermite#lt;avian3d::**<br/>**interpolation::AngVelSource#gt;**<br/>用两端角速度做 Hermite 旋转平滑。" }
+  class n5 node_system
+  n6@{ shape: rounded, label: "**ease_translation_lerp**<br/>按固定步剩余比例线性插值显示位置。" }
+  class n6 node_system
+  n7@{ shape: rounded, label: "**ease_rotation_slerp**<br/>按固定步剩余比例球面插值显示旋转。" }
+  class n7 node_system
+  n8@{ shape: rounded, label: "**ease_scale_lerp**<br/>按固定步剩余比例线性插值显示缩放。" }
+  class n8 node_system
+  n9@{ shape: lin-rect, label: "**PresentationSystems::Facing**<br/>来自应用流程 ↗：在插值后处理本帧人物转<br/>向。" }
+  class n9 node_system_set
+  class n9 external_node
+  n10@{ shape: rounded, label: "**reset_easing_states_on_transform_**<br/>**change**<br/>在外部直接改变变换时取消失效的平滑区间。" }
+  class n10 node_system
+  n11@{ shape: rounded, label: "**TranslationEasingState**<br/>保存固定步平移插值的起止端点。" }
+  class n11 node_component
+  n12@{ shape: rounded, label: "**TranslationEasingState**<br/>保存固定步平移插值的起止端点。" }
+  class n12 node_component
+  n13@{ shape: rounded, label: "**RotationEasingState**<br/>保存旋转显示插值的起止端点。" }
+  class n13 node_component
+  n14@{ shape: rounded, label: "**ScaleEasingState**<br/>保存缩放显示插值的起止端点。" }
+  class n14 node_component
+  n15@{ shape: rounded, label: "**Transform**<br/>来自Bevy 引擎 ↗：保存角色经插值生成的<br/>显示姿态。" }
+  class n15 node_component
+  class n15 external_node
+  n16@{ shape: rounded, label: "**Transform**<br/>来自Bevy 引擎 ↗：保存自由运动或共享持<br/>握时的显示姿态。" }
+  class n16 node_component
+  class n16 external_node
+  n17@{ shape: cyl, label: "**Time#lt;Fixed#gt;**<br/>来自Bevy 引擎 ↗：提供固定模拟的时间步<br/>长。" }
+  class n17 node_resource
+  class n17 external_node
+  n18@{ shape: cyl, label: "**LastEasingTick**<br/>记录最近显示插值变更以识别外部瞬移。" }
+  class n18 node_resource
+  n0 e0@--> n1
+  class e0 edge_order
+  n2 e1@-->|"main / RunFixedMainLoop"| n0
+  class e1 edge_registration
+  n3 e2@--> n0
+  class e2 edge_set_membership
+  n0 e3@--> n4
+  class e3 edge_set_membership
+  n0 e4@--> n5
+  class e4 edge_set_membership
+  n0 e5@--> n6
+  class e5 edge_set_membership
+  n0 e6@--> n7
+  class e6 edge_set_membership
+  n0 e7@--> n8
+  class e7 edge_set_membership
+  n0 e8@--> n9
+  class e8 edge_order
+  n10 e9@--> n0
+  class e9 edge_order
+  n11 e10@-->|"查询访问"| n0
+  class e10 edge_read
+  n12 e11@-->|"查询访问"| n0
+  class e11 edge_read
+  n13 e12@-->|"查询访问"| n0
+  class e12 edge_read
+  n14 e13@-->|"查询访问"| n0
+  class e13 edge_read
+  n0 e14@-->|"可变访问"| n15
+  class e14 edge_write
+  n0 e15@-->|"可变访问"| n16
+  class e15 edge_write
+  n17 e16@-->|"访问声明"| n0
+  class e16 edge_read
+  n18 e17@-->|"访问声明"| n0
+  class e17 edge_read
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: bumpX }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e17@{ curve: basis }

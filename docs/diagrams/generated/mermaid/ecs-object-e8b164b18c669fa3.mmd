@@ -1,0 +1,162 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 80,
+      "rankSpacing": 112,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#object-e8b164b18c669fa3-e0{marker-start:url(#object-e8b164b18c669fa3_flowchart-v2-pointStart)!important}\n#object-e8b164b18c669fa3_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}"
+  }
+}
+---
+flowchart LR
+  accTitle: ComputedUiRenderTargetInfo · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  subgraph layout_card_n0[" "]
+  n0@{ shape: rounded, label: "**ComputedUiRenderTargetInfo**<br/>缓存 UI 目标的尺寸与缩放。" }
+  class n0 node_component
+  end
+  style layout_card_n0 fill:none,stroke:none
+  subgraph layout_card_n1[" "]
+  n1@{ shape: rounded, label: "**propagate_output#lt;bevy_ui::ui_node::**<br/>**ComputedUiRenderTargetInfo, ()#gt;**<br/>把变化的 Inherited#lt;C#gt; 写入实体实际的<br/>C 组件；继承状态消失且没有重新添加传播<br/>来源时，移除失去来源的输出组件。" }
+  class n1 node_system
+  end
+  style layout_card_n1 fill:none,stroke:none
+  subgraph layout_card_n2[" "]
+  n2@{ shape: rounded, label: "**measure_text_system**<br/>在文本变化后更新内容测量并安排文字重排。" }
+  class n2 node_system
+  end
+  style layout_card_n2 fill:none,stroke:none
+  subgraph layout_card_n3[" "]
+  n3@{ shape: rounded, label: "**update_editable_text_content_size**<br/>按可见字符宽度和行数设置输入框固有尺寸。" }
+  class n3 node_system
+  end
+  style layout_card_n3 fill:none,stroke:none
+  subgraph layout_card_n4[" "]
+  n4@{ shape: rounded, label: "**update_editable_text_styles**<br/>把字体和排版配置同步到可编辑文本引擎。" }
+  class n4 node_system
+  end
+  style layout_card_n4 fill:none,stroke:none
+  subgraph layout_card_n5[" "]
+  n5@{ shape: rounded, label: "**sync_font_size_to_em_size**<br/>把文本字号解析为节点的 EmSize。" }
+  class n5 node_system
+  end
+  style layout_card_n5 fill:none,stroke:none
+  subgraph layout_card_n6[" "]
+  n6@{ shape: rounded, label: "**ui_layout_system**<br/>求解 UI 布局并回写节点尺寸和二维变换。" }
+  class n6 node_system
+  end
+  style layout_card_n6 fill:none,stroke:none
+  subgraph layout_card_n7[" "]
+  n7@{ shape: rounded, label: "**position_popover**<br/>根据父节点几何、窗口边距和 Popover 配置<br/>计算弹出层位置，调整 Node 与局部、全局<br/>UI 变换，并同步受影响后代的全局变换。" }
+  class n7 node_system
+  end
+  style layout_card_n7 fill:none,stroke:none
+  subgraph layout_card_n8[" "]
+  n8@{ shape: rounded, label: "**update_editable_text_layout**<br/>刷新可编辑文本的字形布局和编辑反馈。" }
+  class n8 node_system
+  end
+  style layout_card_n8 fill:none,stroke:none
+  subgraph layout_card_n9[" "]
+  n9@{ shape: rounded, label: "**text_input_autoscroll_system**<br/>在拖选越出文字视口时自动滚动。" }
+  class n9 node_system
+  end
+  style layout_card_n9 fill:none,stroke:none
+  subgraph layout_card_n10[" "]
+  n10@{ shape: rounded, label: "**update_image_content_size_system**<br/>按图像或图集区域更新 UI 的固有尺寸测<br/>量。" }
+  class n10 node_system
+  end
+  style layout_card_n10 fill:none,stroke:none
+  subgraph layout_card_n11[" "]
+  n11@{ shape: rounded, label: "**update_ime_position**<br/>把输入法候选窗口放到当前文字光标下方。" }
+  class n11 node_system
+  end
+  style layout_card_n11 fill:none,stroke:none
+  subgraph layout_card_n12[" "]
+  n12@{ shape: rounded, label: "**extract_shadows**<br/>从主世界提取变化后的可见 UI 阴影，解析<br/>尺寸、变换、裁剪和目标相机，替换对应的渲<br/>染阴影实体；不可见、空阴影及已移除的数据<br/>不进入绘制。" }
+  class n12 node_system
+  end
+  style layout_card_n12 fill:none,stroke:none
+  subgraph layout_card_n13[" "]
+  n13@{ shape: rounded, label: "**extract_gradients**<br/>提取变化后的 UI 背景与边框渐变，解析颜<br/>色停靠点、节点几何、裁剪和目标相机，并替<br/>换渲染世界中的对应渐变项；无效或不可见项<br/>被清理。" }
+  class n13 node_system
+  end
+  style layout_card_n13 fill:none,stroke:none
+  n1 e0@--- n0
+  class e0 edge_read
+  n1 e1@-->|"延迟添加"| n0
+  class e1 edge_write
+  n1 e2@-->|"延迟移除"| n0
+  class e2 edge_write
+  n0 e3@--> n2
+  class e3 edge_read
+  n0 e4@--> n3
+  class e4 edge_read
+  n0 e5@--> n4
+  class e5 edge_read
+  n0 e6@--> n5
+  class e6 edge_read
+  n0 e7@--> n6
+  class e7 edge_read
+  n0 e8@--> n7
+  class e8 edge_read
+  n0 e9@--> n8
+  class e9 edge_read
+  n0 e10@--> n9
+  class e10 edge_read
+  n0 e11@--> n10
+  class e11 edge_read
+  n0 e12@--> n11
+  class e12 edge_read
+  n0 e13@--> n12
+  class e13 edge_read
+  n0 e14@-->|"存在 / 变更过滤"| n12
+  class e14 edge_reference
+  n0 e15@--> n13
+  class e15 edge_read
+  n0 e16@-->|"存在 / 变更过滤"| n13
+  class e16 edge_reference
+  e0@{ curve: basis }
+  e1@{ curve: bumpX }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }

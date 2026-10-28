@@ -1,0 +1,191 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#object-15c58417d3c0727b-e12{marker-start:url(#object-15c58417d3c0727b_flowchart-v2-pointStart)!important}\n#object-15c58417d3c0727b_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}"
+  }
+}
+---
+flowchart LR
+  accTitle: update_solver_body_aabbs<avian3d::collision::collider::parry::Collider> · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_system_param fill:#EFF5F6,stroke:#3B8790,stroke-width:1.6px,color:#1F3340
+  classDef node_engine_flow fill:#F1F5F4,stroke:#557C78,stroke-width:1.6px,color:#1F3340
+  classDef edge_order stroke:#334155,stroke-width:2px
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**update_solver_body_aabbs#lt;avian3d::**<br/>**collision::collider::parry::**<br/>**Collider#gt;**<br/>按物理结果更新活跃刚体的碰撞边界。" }
+  class n0 node_system
+  n1@{ shape: stadium, label: "**main · PhysicsSchedule**<br/>来自Bevy 引擎 ↗：保存本应用调度的注册<br/>上下文与成员。" }
+  class n1 node_engine_flow
+  class n1 external_node
+  n2@{ shape: rounded, label: "**clear_moved_proxies**<br/>清空本轮广相使用的移动代理目录。" }
+  class n2 node_system
+  n3@{ shape: lin-rect, label: "**PhysicsStepSystems::Last**<br/>提供物理调度最终的扩展边界。" }
+  class n3 node_system_set
+  n4@{ shape: rounded, label: "**Position**<br/>保存刚体或碰撞体的世界位置。" }
+  class n4 node_component
+  n5@{ shape: rounded, label: "**ComputedCenterOfMass**<br/>保存汇总后的刚体局部质心。" }
+  class n5 node_component
+  n6@{ shape: rounded, label: "**LinearVelocity**<br/>保存刚体的世界线速度。" }
+  class n6 node_component
+  n7@{ shape: rounded, label: "**AngularVelocity**<br/>保存刚体的世界角速度。" }
+  class n7 node_component
+  n8@{ shape: rounded, label: "**RigidBodyColliders**<br/>维护刚体附着的碰撞体集合。" }
+  class n8 node_component
+  n9@{ shape: rounded, label: "**SpeculativeCcd**<br/>配置基于速度的预测接触范围。" }
+  class n9 node_component
+  n10@{ shape: rounded, label: "**SolverBodyIndex**<br/>定位实体对应的求解器刚体。" }
+  class n10 node_component
+  n11@{ shape: rounded, label: "**Collider**<br/>保存 Parry 碰撞后端的几何形状。" }
+  class n11 node_component
+  n12@{ shape: rounded, label: "**ColliderAabb**<br/>保存碰撞体的世界轴对齐包围盒。" }
+  class n12 node_component
+  n13@{ shape: rounded, label: "**EnlargedAabb**<br/>保存用于树更新的扩大包围盒。" }
+  class n13 node_component
+  n14@{ shape: rounded, label: "**ColliderAabbMargin**<br/>控制碰撞体树包围盒的扩大余量。" }
+  class n14 node_component
+  n15@{ shape: rounded, label: "**ColliderTreeProxyKey**<br/>定位特定碰撞体树中的代理。" }
+  class n15 node_component
+  n16@{ shape: rounded, label: "**Rotation**<br/>保存刚体或碰撞体的世界旋转。" }
+  class n16 node_component
+  n17@{ shape: rounded, label: "**CollisionMargin**<br/>为碰撞形状添加接触外皮。" }
+  class n17 node_component
+  n18@{ shape: rounded, label: "**ColliderDisabled**<br/>暂停碰撞体检测和空间查询。" }
+  class n18 node_component
+  n19@{ shape: cyl, label: "**NarrowPhaseConfig**<br/>配置窄相的接触容差。" }
+  class n19 node_resource
+  n20@{ shape: cyl, label: "**Time**<br/>来自Bevy 引擎 ↗：提供当前运行阶段的通<br/>用时间。" }
+  class n20 node_resource
+  class n20 external_node
+  n21@{ shape: cyl, label: "**ColliderTrees**<br/>索引碰撞体以加速接地、拾取与持物路径查<br/>询。" }
+  class n21 node_resource
+  n22@{ shape: cyl, label: "**MovedProxies**<br/>收集需要重检碰撞对的移动代理。" }
+  class n22 node_resource
+  n23@{ shape: cyl, label: "**EnlargedProxies**<br/>标记需要扩大边界的碰撞代理。" }
+  class n23 node_resource
+  n24@{ shape: notch-rect, label: "**StaticSystemParam#lt;Context#gt;**<br/>来自Bevy 引擎 ↗：适配泛型 SystemParam" }
+  class n24 node_system_param
+  class n24 external_node
+  n25@{ shape: cyl, label: "**ColliderTreeDiagnostics**<br/>记录碰撞体树维护耗时。" }
+  class n25 node_resource
+  n26@{ shape: cyl, label: "**LastDynamicKinematicAabbUpdate**<br/>记录动态与运动学 AABB 更新刻度。" }
+  class n26 node_resource
+  n27@{ shape: notch-rect, label: "**SystemChangeTick**<br/>来自Bevy 引擎 ↗：提供系统上次与本次运<br/>行的变化刻度" }
+  class n27 node_system_param
+  class n27 external_node
+  n1 e0@-->|"main / PhysicsSchedule"| n0
+  class e0 edge_registration
+  n2 e1@--> n0
+  class e1 edge_order
+  n0 e2@--> n3
+  class e2 edge_order
+  n4 e3@--> n0
+  class e3 edge_read
+  n5 e4@--> n0
+  class e4 edge_read
+  n6 e5@--> n0
+  class e5 edge_read
+  n7 e6@--> n0
+  class e6 edge_read
+  n8 e7@--> n0
+  class e7 edge_read
+  n9 e8@--> n0
+  class e8 edge_read
+  n10 e9@-->|"存在 / 变更过滤"| n0
+  class e9 edge_reference
+  n11 e10@--> n0
+  class e10 edge_read
+  n0 e11@--> n12
+  class e11 edge_write
+  n13 e12@--- n0
+  class e12 edge_write
+  n0 e13@--> n14
+  class e13 edge_write
+  n15 e14@--> n0
+  class e14 edge_read
+  n16 e15@--> n0
+  class e15 edge_read
+  n17 e16@--> n0
+  class e16 edge_read
+  n18 e17@-->|"存在 / 变更过滤"| n0
+  class e17 edge_reference
+  n13 e18@--> n0
+  class e18 edge_read
+  n19 e19@--> n0
+  class e19 edge_read
+  n20 e20@--> n0
+  class e20 edge_read
+  n0 e21@--> n21
+  class e21 edge_write
+  n0 e22@--> n22
+  class e22 edge_write
+  n0 e23@--> n23
+  class e23 edge_write
+  n24 e24@-->|"参数 / 查询数据"| n0
+  class e24 edge_reference
+  n0 e25@--> n25
+  class e25 edge_write
+  n0 e26@--> n26
+  class e26 edge_write
+  n27 e27@-->|"参数 / 查询数据"| n0
+  class e27 edge_reference
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e17@{ curve: basis }
+  e18@{ curve: basis }
+  e19@{ curve: basis }
+  e20@{ curve: basis }
+  e21@{ curve: basis }
+  e22@{ curve: basis }
+  e23@{ curve: basis }
+  e24@{ curve: basis }
+  e25@{ curve: basis }
+  e26@{ curve: basis }
+  e27@{ curve: basis }

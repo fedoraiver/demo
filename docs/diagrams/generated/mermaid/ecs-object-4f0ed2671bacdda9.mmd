@@ -1,0 +1,133 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: RenderSystems::PrepareViews · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_engine_flow fill:#F1F5F4,stroke:#557C78,stroke-width:1.6px,color:#1F3340
+  classDef edge_order stroke:#334155,stroke-width:2px
+  classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: lin-rect, label: "**RenderSystems::PrepareViews**<br/>准备相机及阴影视图的目标和附件资源。" }
+  class n0 node_system_set
+  n1@{ shape: stadium, label: "**RenderApp · Render**<br/>保存本应用调度的注册上下文与成员。" }
+  class n1 node_engine_flow
+  n2@{ shape: rounded, label: "**prepare_screenshots**<br/>为本帧窗口、图像或手工纹理视图的截图请求<br/>创建匹配尺寸和格式的截图资源，并替换相应<br/>输出附件以供捕获；未知目标被跳过。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**prepare_windows**<br/>为有相机输出或需要首次呈现的窗口取得交换<br/>链纹理，保留可复用的未呈现帧，并处理尺<br/>寸、模式变化及表面获取错误。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**clear_view_attachments**<br/>清空上一帧的视图输出附件表。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**cleanup_view_targets_for_resize**<br/>在窗口尺寸或呈现模式变化时撤销旧视图目<br/>标。" }
+  class n5 node_system
+  n6@{ shape: rounded, label: "**prepare_view_attachments**<br/>按相机输出目标准备可共享的颜色附件。" }
+  class n6 node_system
+  n7@{ shape: rounded, label: "**prepare_view_targets**<br/>为视图维护主颜色双缓冲及可选多采样目标。" }
+  class n7 node_system
+  n8@{ shape: rounded, label: "**clear_indirect_parameters_buffers**<br/>清空各渲染阶段上一轮间接绘制参数。" }
+  class n8 node_system
+  n9@{ shape: rounded, label: "**configure_occlusion_culling_view_**<br/>**targets**<br/>让遮挡剔除相机的深度纹理可被采样。" }
+  class n9 node_system
+  n10@{ shape: rounded, label: "**configure_camera_depth_usages**<br/>允许 OIT 相机采样自己的深度纹理。" }
+  class n10 node_system
+  n11@{ shape: rounded, label: "**prepare_view_depth_texture_usages_**<br/>**for_motion_blur**<br/>让运动模糊相机的深度纹理可被采样。" }
+  class n11 node_system
+  n12@{ shape: rounded, label: "**configure_depth_of_field_view_**<br/>**targets**<br/>允许景深相机采样自己的深度纹理。" }
+  class n12 node_system
+  n13@{ shape: rounded, label: "**prepare_auxiliary_depth_of_field_**<br/>**textures**<br/>为 Bokeh 景深分配第二颜色输出。" }
+  class n13 node_system
+  n14@{ shape: rounded, label: "**prepare_taa_jitter**<br/>为 TAA 相机逐帧设置 Halton 投影抖动。" }
+  class n14 node_system
+  n15@{ shape: rounded, label: "**prepare_decals**<br/>把已提取聚簇贴花的实体与贴花索引写入<br/>GlobalClusterableObjectMeta，供后续聚<br/>簇计算关联场景对象。" }
+  class n15 node_system
+  n16@{ shape: rounded, label: "**configure_camera_depth_usages**<br/>允许大气相机的深度纹理被着色器采样。" }
+  class n16 node_system
+  n17@{ shape: lin-rect, label: "**RenderSystems::Specialize**<br/>为材质网格和阴影视图专用化渲染管线。" }
+  class n17 node_system_set
+  n18@{ shape: lin-rect, label: "**RenderSystems::Queue**<br/>把可绘制实体排入对应渲染阶段。" }
+  class n18 node_system_set
+  n1 e0@-->|"RenderApp / Render"| n0
+  class e0 edge_registration
+  n0 e1@--> n2
+  class e1 edge_set_membership
+  n0 e2@--> n3
+  class e2 edge_set_membership
+  n0 e3@--> n4
+  class e3 edge_set_membership
+  n0 e4@--> n5
+  class e4 edge_set_membership
+  n0 e5@--> n6
+  class e5 edge_set_membership
+  n0 e6@--> n7
+  class e6 edge_set_membership
+  n0 e7@--> n8
+  class e7 edge_set_membership
+  n0 e8@--> n9
+  class e8 edge_set_membership
+  n0 e9@--> n10
+  class e9 edge_set_membership
+  n0 e10@--> n11
+  class e10 edge_set_membership
+  n0 e11@--> n12
+  class e11 edge_set_membership
+  n0 e12@--> n13
+  class e12 edge_set_membership
+  n0 e13@--> n14
+  class e13 edge_set_membership
+  n0 e14@--> n15
+  class e14 edge_set_membership
+  n0 e15@--> n16
+  class e15 edge_set_membership
+  n17 e16@--> n0
+  class e16 edge_order
+  n0 e17@--> n18
+  class e17 edge_order
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e17@{ curve: basis }

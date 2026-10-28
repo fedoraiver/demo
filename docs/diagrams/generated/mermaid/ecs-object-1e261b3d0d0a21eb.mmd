@@ -1,0 +1,115 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: Enhanced Input trigger · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_system_param fill:#EFF5F6,stroke:#3B8790,stroke-width:1.6px,color:#1F3340
+  classDef node_query_data fill:#F1F4F1,stroke:#567A51,stroke-width:1.6px,color:#1F3340
+  classDef node_engine_flow fill:#F1F5F4,stroke:#557C78,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**Enhanced Input trigger**<br/>依据动作事件标记向对应动作实体排入带类型<br/>的触发事件，并清理失效实例；此卡片的名称<br/>由系统参数元组生成。" }
+  class n0 node_system
+  n1@{ shape: stadium, label: "**main · PreUpdate**<br/>来自Bevy 引擎 ↗：保存本应用调度的注册<br/>上下文与成员。" }
+  class n1 node_engine_flow
+  class n1 external_node
+  n2@{ shape: lin-rect, label: "**EnhancedInputSystems::Trigger**<br/>按上下文顺序排入动作事件命令。" }
+  class n2 node_system_set
+  n3@{ shape: notch-rect, label: "**Commands**<br/>来自Bevy 引擎 ↗：保存延迟执行的<br/>World 操作队列" }
+  class n3 node_system_param
+  class n3 external_node
+  n4@{ shape: cyl, label: "**ContextInstances#lt;PreUpdate#gt;**<br/>索引输入框架当前运行的动作上下文。" }
+  class n4 node_resource
+  n5@{ shape: notch-rect, label: "**FilteredEntityRef**<br/>来自Bevy 引擎 ↗：按已声明 Access 集合<br/>提供一个实体的只读组件访问" }
+  class n5 node_query_data
+  class n5 external_node
+  n6@{ shape: rounded, label: "**ActionFns**<br/>保存动作类型对应的函数指针" }
+  class n6 node_component
+  n7@{ shape: notch-rect, label: "**EntityRef**<br/>来自Bevy 引擎 ↗：提供一个实体及其全部<br/>组件的只读引用" }
+  class n7 node_query_data
+  class n7 external_node
+  n8@{ shape: rounded, label: "**ContextInstances#lt;PreUpdate#gt;**<br/>保存某一 Schedule 的上下文实例及其优先<br/>顺序" }
+  class n8 node_component
+  n9@{ shape: rounded, label: "**ActionValue**<br/>以布尔、一维、二维或三维轴的形式保存类型<br/>擦除的动作值" }
+  class n9 node_component
+  n10@{ shape: rounded, label: "**TriggerState**<br/>记录条件或动作的触发状态：未触发、进行中<br/>和已满足条件" }
+  class n10 node_component
+  n11@{ shape: rounded, label: "**ActionEvents**<br/>保存动作状态转换产生的事件标记" }
+  class n11 node_component
+  n12@{ shape: rounded, label: "**ActionTime**<br/>累计动作处于 Ongoing 或 Fired 状态的时<br/>间" }
+  class n12 node_component
+  n1 e0@-->|"main / PreUpdate"| n0
+  class e0 edge_registration
+  n2 e1@--> n0
+  class e1 edge_set_membership
+  n3 e2@-->|"参数 / 查询数据"| n0
+  class e2 edge_reference
+  n4 e3@--> n0
+  class e3 edge_read
+  n5 e4@-->|"参数 / 查询数据"| n0
+  class e4 edge_reference
+  n6 e5@-->|"存在 / 变更过滤"| n0
+  class e5 edge_reference
+  n7 e6@-->|"参数 / 查询数据"| n0
+  class e6 edge_reference
+  n8 e7@-->|"存在 / 变更过滤"| n0
+  class e7 edge_reference
+  n6 e8@-->|"正文只读访问"| n0
+  class e8 edge_read
+  n9 e9@-->|"正文只读访问"| n0
+  class e9 edge_read
+  n10 e10@-->|"正文只读访问"| n0
+  class e10 edge_read
+  n11 e11@-->|"正文只读访问"| n0
+  class e11 edge_read
+  n12 e12@-->|"正文只读访问"| n0
+  class e12 edge_read
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }

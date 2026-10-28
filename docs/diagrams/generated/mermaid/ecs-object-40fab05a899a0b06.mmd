@@ -1,0 +1,343 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#object-40fab05a899a0b06-e58{marker-start:url(#object-40fab05a899a0b06_flowchart-v2-pointStart)!important}\n#object-40fab05a899a0b06_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}"
+  }
+}
+---
+flowchart LR
+  accTitle: pointer_events · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef node_message_buffer fill:#EDF4F6,stroke:#247B91,stroke-width:1.6px,color:#1F3340
+  classDef node_event fill:#F9F3EE,stroke:#B66B2D,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_engine_flow fill:#F1F5F4,stroke:#557C78,stroke-width:1.6px,color:#1F3340
+  classDef node_plugin fill:#F1F3F6,stroke:#4A6389,stroke-width:2.2px,color:#1F3340
+  classDef edge_order stroke:#334155,stroke-width:2px
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_publish stroke:#247B91,stroke-width:1.8px,stroke-dasharray:10 4 2 4
+  classDef edge_consume stroke:#247B91,stroke-width:1.8px,stroke-dasharray:2 4
+  classDef edge_emit stroke:#B66B2D,stroke-width:1.8px
+  classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**pointer_events**<br/>生成指针EntityEvent并同时发布对<br/>应Message。" }
+  class n0 node_system
+  n1@{ shape: rounded, label: "**update_is_hovered**<br/>按鼠标HoverMap及祖先关系替换已<br/>有Hovered值。" }
+  class n1 node_system
+  n2@{ shape: fr-rect, label: "**InteractionPlugin**<br/>生成悬停状态、指针事件和消息缓冲。" }
+  class n2 node_plugin
+  n3@{ shape: lin-rect, label: "**PickingSystems::Hover**<br/>更新HoverMap、悬停组件与指针事件。" }
+  class n3 node_system_set
+  n4@{ shape: stadium, label: "**PointerPress**<br/>按压时插入原生Pressed；可<br/>选ActivateOnPress会发Activate。" }
+  class n4 node_event
+  n5@{ shape: stadium, label: "**PointerRelease**<br/>释放时移除原生Pressed。" }
+  class n5 node_event
+  n6@{ shape: stadium, label: "**PointerClick**<br/>满足条件时派发原生Activate。" }
+  class n6 node_event
+  n7@{ shape: stadium, label: "**PointerDragEnd**<br/>拖动结束时移除原生Pressed。" }
+  class n7 node_event
+  n8@{ shape: stadium, label: "**PointerCancel**<br/>收到取消事件时移除原生Pressed。" }
+  class n8 node_event
+  n9@{ shape: stadium, label: "**PointerPress**<br/>事件 entity 上具有 MenuButton，且为<br/>Primary 指针键" }
+  class n9 node_event
+  n10@{ shape: stadium, label: "**PointerPress**<br/>通知滚动条接管鼠标输入来源。" }
+  class n10 node_event
+  n11@{ shape: cyl, label: "**Messages#lt;PointerPress#gt;**<br/>Bevy Picking 同时发布缓冲按下消息与<br/>EntityEvent；菜单和音量捕获分别使用独<br/>立 MessageReader 游标。" }
+  class n11 node_message_buffer
+  n12@{ shape: cyl, label: "**Messages#lt;PointerInput#gt;**<br/>Picking 归一化输入消息；项目仅消费<br/>Cancel 以补清原生按压生命周期。" }
+  class n12 node_message_buffer
+  n13@{ shape: cyl, label: "**HoverMap**<br/>保存原生指针处理状态。" }
+  class n13 node_resource
+  n14@{ shape: stadium, label: "**PointerScroll**<br/>通知设置内容视口处理滚轮输入。" }
+  class n14 node_event
+  n15@{ shape: stadium, label: "**PointerScroll**<br/>通知内容视口处理滚动条上的滚轮输入。" }
+  class n15 node_event
+  n16@{ shape: stadium, label: "**main · PreUpdate**<br/>保存本应用调度的注册上下文与成员。" }
+  class n16 node_engine_flow
+  n17@{ shape: rounded, label: "**update_is_directly_hovered**<br/>更新鼠标直接悬停的实体标记。" }
+  class n17 node_system
+  n18@{ shape: stadium, label: "**PointerOut**<br/>通知指针离开目标并向全部祖先传播。" }
+  class n18 node_event
+  n19@{ shape: cyl, label: "**Messages#lt;PointerOut#gt;**<br/>保存 PointerOut 消息。" }
+  class n19 node_message_buffer
+  n20@{ shape: stadium, label: "**PointerLeave**<br/>通知指针离开目标或其独有祖先范围。" }
+  class n20 node_event
+  n21@{ shape: cyl, label: "**Messages#lt;PointerLeave#gt;**<br/>保存 PointerLeave 消息。" }
+  class n21 node_message_buffer
+  n22@{ shape: stadium, label: "**PointerDragLeave**<br/>通知拖拽对象离开接收目标。" }
+  class n22 node_event
+  n23@{ shape: cyl, label: "**Messages#lt;PointerDragLeave#gt;**<br/>保存 PointerDragLeave 消息。" }
+  class n23 node_message_buffer
+  n24@{ shape: stadium, label: "**PointerDragEnter**<br/>通知携带拖拽对象的指针进入接收目标。" }
+  class n24 node_event
+  n25@{ shape: cyl, label: "**Messages#lt;PointerDragEnter#gt;**<br/>保存 PointerDragEnter 消息。" }
+  class n25 node_message_buffer
+  n26@{ shape: stadium, label: "**PointerEnter**<br/>通知指针进入目标或其独有祖先范围。" }
+  class n26 node_event
+  n27@{ shape: cyl, label: "**Messages#lt;PointerEnter#gt;**<br/>保存 PointerEnter 消息。" }
+  class n27 node_message_buffer
+  n28@{ shape: stadium, label: "**PointerOver**<br/>通知指针进入目标并向全部祖先传播。" }
+  class n28 node_event
+  n29@{ shape: cyl, label: "**Messages#lt;PointerOver#gt;**<br/>保存 PointerOver 消息。" }
+  class n29 node_message_buffer
+  n30@{ shape: stadium, label: "**PointerPress**<br/>通知目标上的指针按钮按下及连按次数。" }
+  class n30 node_event
+  n31@{ shape: cyl, label: "**Messages#lt;PointerPress#gt;**<br/>保存 PointerPress 消息。" }
+  class n31 node_message_buffer
+  n32@{ shape: stadium, label: "**PointerClick**<br/>通知同一目标的成对按压和释放点击。" }
+  class n32 node_event
+  n33@{ shape: cyl, label: "**Messages#lt;PointerClick#gt;**<br/>保存 PointerClick 消息。" }
+  class n33 node_message_buffer
+  n34@{ shape: stadium, label: "**PointerRelease**<br/>通知目标上的指针按钮释放。" }
+  class n34 node_event
+  n35@{ shape: cyl, label: "**Messages#lt;PointerRelease#gt;**<br/>保存 PointerRelease 消息。" }
+  class n35 node_message_buffer
+  n36@{ shape: stadium, label: "**PointerDragDrop**<br/>通知被拖拽实体释放到接收目标。" }
+  class n36 node_event
+  n37@{ shape: cyl, label: "**Messages#lt;PointerDragDrop#gt;**<br/>保存 PointerDragDrop 消息。" }
+  class n37 node_message_buffer
+  n38@{ shape: stadium, label: "**PointerDragEnd**<br/>通知拖拽按钮释放及最终累计位移。" }
+  class n38 node_event
+  n39@{ shape: cyl, label: "**Messages#lt;PointerDragEnd#gt;**<br/>保存 PointerDragEnd 消息。" }
+  class n39 node_message_buffer
+  n40@{ shape: stadium, label: "**PointerDragStart**<br/>通知按下后移动开始拖拽目标。" }
+  class n40 node_event
+  n41@{ shape: cyl, label: "**Messages#lt;PointerDragStart#gt;**<br/>保存 PointerDragStart 消息。" }
+  class n41 node_message_buffer
+  n42@{ shape: stadium, label: "**PointerDrag**<br/>通知正在拖拽的目标及累计和本次位移。" }
+  class n42 node_event
+  n43@{ shape: cyl, label: "**Messages#lt;PointerDrag#gt;**<br/>保存 PointerDrag 消息。" }
+  class n43 node_message_buffer
+  n44@{ shape: stadium, label: "**PointerDragOver**<br/>通知拖拽对象正悬停于接收目标。" }
+  class n44 node_event
+  n45@{ shape: cyl, label: "**Messages#lt;PointerDragOver#gt;**<br/>保存 PointerDragOver 消息。" }
+  class n45 node_message_buffer
+  n46@{ shape: stadium, label: "**PointerMove**<br/>通知目标上的指针移动及屏幕位移。" }
+  class n46 node_event
+  n47@{ shape: cyl, label: "**Messages#lt;PointerMove#gt;**<br/>保存 PointerMove 消息。" }
+  class n47 node_message_buffer
+  n48@{ shape: stadium, label: "**PointerScroll**<br/>通知目标上的横向和纵向滚动输入。" }
+  class n48 node_event
+  n49@{ shape: cyl, label: "**Messages#lt;PointerScroll#gt;**<br/>保存 PointerScroll 消息。" }
+  class n49 node_message_buffer
+  n50@{ shape: stadium, label: "**PointerCancel**<br/>通知指针取消并丢弃当前交互状态。" }
+  class n50 node_event
+  n51@{ shape: cyl, label: "**Messages#lt;PointerCancel#gt;**<br/>保存 PointerCancel 消息。" }
+  class n51 node_message_buffer
+  n52@{ shape: rounded, label: "**ChildOf**<br/>关联父实体并跟随父级生命周期。" }
+  class n52 node_component
+  n53@{ shape: cyl, label: "**PointerMap**<br/>保存原生指针处理状态。" }
+  class n53 node_resource
+  n54@{ shape: cyl, label: "**PreviousHoverMap**<br/>保存原生指针处理状态。" }
+  class n54 node_resource
+  n55@{ shape: cyl, label: "**PickingSettings**<br/>保存原生指针处理状态。" }
+  class n55 node_resource
+  n56@{ shape: cyl, label: "**PointerState**<br/>保存原生指针处理状态。" }
+  class n56 node_resource
+  n1 e0@-->|"InteractionPlugin chain"| n0
+  class e0 edge_order
+  n2 e1@--> n0
+  class e1 edge_registration
+  n3 e2@-->|"in_set(Hover)"| n0
+  class e2 edge_set_membership
+  n0 e3@-->|"Commands::trigger"| n4
+  class e3 edge_emit
+  n0 e4@-->|"Commands::trigger"| n5
+  class e4 edge_emit
+  n0 e5@-->|"Commands::trigger"| n6
+  class e5 edge_emit
+  n0 e6@-->|"Commands::trigger"| n7
+  class e6 edge_emit
+  n0 e7@-->|"Commands::trigger"| n8
+  class e7 edge_emit
+  n0 e8@-->|"PointerPress"| n9
+  class e8 edge_emit
+  n0 e9@-->|"PointerPress"| n10
+  class e9 edge_emit
+  n0 e10@-->|"缓冲按下消息"| n11
+  class e10 edge_publish
+  n12 e11@--> n0
+  class e11 edge_consume
+  n13 e12@--> n0
+  class e12 edge_read
+  n0 e13@-->|"Commands::trigger PointerScroll"| n14
+  class e13 edge_emit
+  n0 e14@-->|"Commands::trigger PointerScroll"| n15
+  class e14 edge_emit
+  n16 e15@-->|"main / PreUpdate"| n0
+  class e15 edge_registration
+  n3 e16@--> n0
+  class e16 edge_set_membership
+  n1 e17@--> n0
+  class e17 edge_order
+  n17 e18@--> n0
+  class e18 edge_order
+  n0 e19@-->|"延迟触发事件"| n18
+  class e19 edge_emit
+  n0 e20@-->|"正文发布消息"| n19
+  class e20 edge_publish
+  n0 e21@-->|"延迟触发事件"| n20
+  class e21 edge_emit
+  n0 e22@-->|"正文发布消息"| n21
+  class e22 edge_publish
+  n0 e23@-->|"延迟触发事件"| n22
+  class e23 edge_emit
+  n0 e24@-->|"正文发布消息"| n23
+  class e24 edge_publish
+  n0 e25@-->|"延迟触发事件"| n24
+  class e25 edge_emit
+  n0 e26@-->|"正文发布消息"| n25
+  class e26 edge_publish
+  n0 e27@-->|"延迟触发事件"| n26
+  class e27 edge_emit
+  n0 e28@-->|"正文发布消息"| n27
+  class e28 edge_publish
+  n0 e29@-->|"延迟触发事件"| n28
+  class e29 edge_emit
+  n0 e30@-->|"正文发布消息"| n29
+  class e30 edge_publish
+  n0 e31@-->|"延迟触发事件"| n30
+  class e31 edge_emit
+  n0 e32@-->|"正文发布消息"| n31
+  class e32 edge_publish
+  n0 e33@-->|"延迟触发事件"| n32
+  class e33 edge_emit
+  n0 e34@-->|"正文发布消息"| n33
+  class e34 edge_publish
+  n0 e35@-->|"延迟触发事件"| n34
+  class e35 edge_emit
+  n0 e36@-->|"正文发布消息"| n35
+  class e36 edge_publish
+  n0 e37@-->|"延迟触发事件"| n36
+  class e37 edge_emit
+  n0 e38@-->|"正文发布消息"| n37
+  class e38 edge_publish
+  n0 e39@-->|"延迟触发事件"| n38
+  class e39 edge_emit
+  n0 e40@-->|"正文发布消息"| n39
+  class e40 edge_publish
+  n0 e41@-->|"延迟触发事件"| n40
+  class e41 edge_emit
+  n0 e42@-->|"正文发布消息"| n41
+  class e42 edge_publish
+  n0 e43@-->|"延迟触发事件"| n42
+  class e43 edge_emit
+  n0 e44@-->|"正文发布消息"| n43
+  class e44 edge_publish
+  n0 e45@-->|"延迟触发事件"| n44
+  class e45 edge_emit
+  n0 e46@-->|"正文发布消息"| n45
+  class e46 edge_publish
+  n0 e47@-->|"延迟触发事件"| n46
+  class e47 edge_emit
+  n0 e48@-->|"正文发布消息"| n47
+  class e48 edge_publish
+  n0 e49@-->|"延迟触发事件"| n48
+  class e49 edge_emit
+  n0 e50@-->|"正文发布消息"| n49
+  class e50 edge_publish
+  n0 e51@-->|"延迟触发事件"| n50
+  class e51 edge_emit
+  n0 e52@-->|"正文发布消息"| n51
+  class e52 edge_publish
+  n52 e53@-->|"查询访问"| n0
+  class e53 edge_read
+  n53 e54@-->|"访问声明"| n0
+  class e54 edge_read
+  n54 e55@-->|"访问声明"| n0
+  class e55 edge_read
+  n55 e56@-->|"访问声明"| n0
+  class e56 edge_read
+  n56 e57@-->|"访问声明"| n0
+  class e57 edge_read
+  n56 e58@---|"访问声明"| n0
+  class e58 edge_write
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e17@{ curve: basis }
+  e18@{ curve: basis }
+  e19@{ curve: basis }
+  e20@{ curve: basis }
+  e21@{ curve: basis }
+  e22@{ curve: basis }
+  e23@{ curve: basis }
+  e24@{ curve: basis }
+  e25@{ curve: basis }
+  e26@{ curve: basis }
+  e27@{ curve: basis }
+  e28@{ curve: basis }
+  e29@{ curve: basis }
+  e30@{ curve: basis }
+  e31@{ curve: basis }
+  e32@{ curve: basis }
+  e33@{ curve: basis }
+  e34@{ curve: basis }
+  e35@{ curve: basis }
+  e36@{ curve: basis }
+  e37@{ curve: basis }
+  e38@{ curve: basis }
+  e39@{ curve: basis }
+  e40@{ curve: basis }
+  e41@{ curve: basis }
+  e42@{ curve: basis }
+  e43@{ curve: basis }
+  e44@{ curve: basis }
+  e45@{ curve: basis }
+  e46@{ curve: basis }
+  e47@{ curve: basis }
+  e48@{ curve: basis }
+  e49@{ curve: basis }
+  e50@{ curve: basis }
+  e51@{ curve: basis }
+  e52@{ curve: basis }
+  e53@{ curve: basis }
+  e54@{ curve: basis }
+  e55@{ curve: basis }
+  e56@{ curve: basis }
+  e57@{ curve: basis }
+  e58@{ curve: basis }

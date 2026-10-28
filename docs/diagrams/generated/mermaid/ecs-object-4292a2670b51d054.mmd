@@ -1,0 +1,107 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: main · First · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_sync fill:#F6F3F0,stroke:#8B6A42,stroke-width:1.6px,color:#1F3340
+  classDef node_engine_flow fill:#F1F5F4,stroke:#557C78,stroke-width:1.6px,color:#1F3340
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: stadium, label: "**main · First**<br/>保存本应用调度的注册上下文与成员。" }
+  class n0 node_engine_flow
+  n1@{ shape: rounded, label: "**message_update_system**<br/>轮换所有已登记消息缓冲区的当前批次并清理<br/>超出保留窗口的消息，保留读者的独立读取游<br/>标。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**time_system**<br/>依据 TimeUpdateStrategy 和可用的渲染<br/>时间通道更新真实时钟，再推进虚拟时钟及当<br/>前通用 Time；固定步长策略使用<br/>Time#lt;Fixed#gt; 的步长。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**viewport_picking**<br/>收集正被悬停或拖动的 ViewportNode，将<br/>外部指针位置转换到其相机视口，并以该视口<br/>专用的 PointerId 转发 PointerInput；<br/>未使用的视口清除指针位置。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**mouse_pick_events**<br/>把窗口鼠标事件转换为拾取指针动作。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**touch_pick_events**<br/>把触摸阶段转换为独立拾取指针。" }
+  class n5 node_system
+  n6@{ shape: rounded, label: "**clear_screenshots**<br/>通过延迟命令销毁已带 Captured 标记的截<br/>图实体，清理已经完成捕获的请求。" }
+  class n6 node_system
+  n7@{ shape: rounded, label: "**cleanup_readback_once**<br/>从带 ReadbackOnce 的请求实体移除<br/>Readback 和 ReadbackOnce，结束一次性<br/>GPU 回读请求；实体自身继续保留。" }
+  class n7 node_system
+  n8@{ shape: rounded, label: "**ApplyDeferred**<br/>在调度建立的同步点应用前序系统暂存的<br/>Commands 等延迟操作，使后续系统可以观察<br/>到结构变化；此卡片是 ApplyDeferred 的<br/>System 实现。" }
+  class n8 node_sync
+  n9@{ shape: lin-rect, label: "**MessageUpdateSystems**<br/>统一轮换已登记的消息缓冲。" }
+  class n9 node_system_set
+  n10@{ shape: lin-rect, label: "**TimeSystems**<br/>推进真实时间与游戏时间。" }
+  class n10 node_system_set
+  n11@{ shape: lin-rect, label: "**PickingSystems::PostInput**<br/>在指针输入生成后、命令提交前处理输入。" }
+  class n11 node_system_set
+  n12@{ shape: lin-rect, label: "**PickingSystems::Input**<br/>把设备动作转换为拾取指针输入。" }
+  class n12 node_system_set
+  n13@{ shape: rounded, label: "**ApplyDeferred · 类型集合端点**<br/>标记延迟命令同步依赖的类型集合端点。" }
+  class n13 node_sync
+  n0 e0@-->|"main / First"| n1
+  class e0 edge_registration
+  n0 e1@-->|"main / First"| n2
+  class e1 edge_registration
+  n0 e2@-->|"main / First"| n3
+  class e2 edge_registration
+  n0 e3@-->|"main / First"| n4
+  class e3 edge_registration
+  n0 e4@-->|"main / First"| n5
+  class e4 edge_registration
+  n0 e5@-->|"main / First"| n6
+  class e5 edge_registration
+  n0 e6@-->|"main / First"| n7
+  class e6 edge_registration
+  n0 e7@-->|"main / First"| n8
+  class e7 edge_registration
+  n0 e8@-->|"main / First"| n9
+  class e8 edge_registration
+  n0 e9@-->|"main / First"| n10
+  class e9 edge_registration
+  n0 e10@-->|"main / First"| n11
+  class e10 edge_registration
+  n0 e11@-->|"main / First"| n12
+  class e11 edge_registration
+  n0 e12@-->|"依赖端点"| n13
+  class e12 edge_reference
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }

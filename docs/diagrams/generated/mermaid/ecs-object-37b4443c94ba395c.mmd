@@ -1,0 +1,113 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#object-37b4443c94ba395c-e7{marker-start:url(#object-37b4443c94ba395c_flowchart-v2-pointStart)!important}\n#object-37b4443c94ba395c-e9{marker-start:url(#object-37b4443c94ba395c_flowchart-v2-pointStart)!important}\n#object-37b4443c94ba395c-e10{marker-start:url(#object-37b4443c94ba395c_flowchart-v2-pointStart)!important}\n#object-37b4443c94ba395c-e12{marker-start:url(#object-37b4443c94ba395c_flowchart-v2-pointStart)!important}\n#object-37b4443c94ba395c-e13{marker-start:url(#object-37b4443c94ba395c_flowchart-v2-pointStart)!important}\n#object-37b4443c94ba395c_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}"
+  }
+}
+---
+flowchart LR
+  accTitle: Frustum · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**Frustum**<br/>描述相机可见空间并参与视锥裁剪。" }
+  class n0 node_component
+  n1@{ shape: rounded, label: "**update_frusta**<br/>相机 GlobalTransform 或 Projection<br/>改变时，根据投影和世界变换重新计算<br/>Frustum，供后续可见性裁剪使用。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**check_visibility_cpu_culling**<br/>按层、距离和视锥收集各相机可见实体。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**check_point_light_mesh_visibility**<br/>计算点光与聚光灯阴影可见的网格。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**assign_objects_to_clusters**<br/>将灯光、探针及贴花分配到视图分簇。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**update_spot_light_frusta**<br/>更新可见聚光灯的阴影视锥。" }
+  class n5 node_system
+  n6@{ shape: rounded, label: "**draw_frustum_gizmos**<br/>绘制带标记实体的视锥调试图形。" }
+  class n6 node_system
+  n7@{ shape: rounded, label: "**draw_all_frustum_gizmos**<br/>绘制未单独标记实体的视锥调试图形。" }
+  class n7 node_system
+  n8@{ shape: rounded, label: "**extract_cameras**<br/>把主世界活动相机的目标、视口、变换、可见<br/>实体和渲染设置提取到渲染实体，并维护视图<br/>所需格式；对停用或目标尺寸无效的相机移除<br/>失效提取状态。" }
+  class n8 node_system
+  n9@{ shape: rounded, label: "**extract_lights**<br/>同步可见点光、聚光、平行光及矩形光的渲染<br/>参数和阴影可见实体，提取变化的阴影贴图设<br/>置；隐藏或失效光源不继续保留有效渲染状<br/>态。" }
+  class n9 node_system
+  n10@{ shape: rounded, label: "**prepare_lights**<br/>汇总提取后的各类光源，为视图准备光照<br/>GPU 参数、聚簇索引及阴影贴图和阴影视<br/>图，维护对应缓存及阶段记录，并检查设备和<br/>实现支持的数量限制。" }
+  class n10 node_system
+  n11@{ shape: rounded, label: "**prepare_view_uniforms**<br/>生成视图投影、抖动、裁剪及 LOD 的 GPU<br/>参数。" }
+  class n11 node_system
+  n1 e0@--> n0
+  class e0 edge_write
+  n0 e1@--> n2
+  class e1 edge_read
+  n0 e2@--> n3
+  class e2 edge_read
+  n0 e3@--> n4
+  class e3 edge_read
+  n5 e4@--> n0
+  class e4 edge_write
+  n0 e5@--> n6
+  class e5 edge_read
+  n0 e6@--> n7
+  class e6 edge_read
+  n8 e7@--- n0
+  class e7 edge_read
+  n8 e8@-->|"延迟添加"| n0
+  class e8 edge_write
+  n9 e9@--- n0
+  class e9 edge_read
+  n9 e10@---|"存在 / 变更过滤"| n0
+  class e10 edge_reference
+  n9 e11@-->|"延迟添加"| n0
+  class e11 edge_write
+  n10 e12@--- n0
+  class e12 edge_read
+  n10 e13@---|"存在 / 变更过滤"| n0
+  class e13 edge_reference
+  n10 e14@-->|"延迟添加"| n0
+  class e14 edge_write
+  n0 e15@--> n11
+  class e15 edge_read
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }

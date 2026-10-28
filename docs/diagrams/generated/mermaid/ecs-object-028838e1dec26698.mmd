@@ -1,0 +1,225 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: ChildOf · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**ChildOf**<br/>保存当前实体的父实体身份" }
+  class n0 node_component
+  n1@{ shape: rounded, label: "**propagate_collider_transforms**<br/>来自Avian ↗：沿实体层级计算碰撞体相对<br/>刚体的变换。" }
+  class n1 node_system
+  class n1 external_node
+  n2@{ shape: rounded, label: "**update_collider_scale#lt;avian3d::**<br/>**collision::collider::parry::**<br/>**Collider#gt;**<br/>来自Avian ↗：把根节点和附属碰撞体的缩<br/>放传给形状。" }
+  class n2 node_system
+  class n2 external_node
+  n3@{ shape: rounded, label: "**mark_dirty_trees**<br/>沿祖先链标记需要重算变换的子树。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**propagate_parent_transforms**<br/>沿父子层级并行合成世界变换。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**sync_simple_transforms**<br/>同步没有父子层级的独立实体世界变换。" }
+  class n5 node_system
+  n6@{ shape: rounded, label: "**check_parent_has_component#lt;bevy_**<br/>**transform::components::global_**<br/>**transform::GlobalTransform#gt;**<br/>报告仍不满足组件层级要求的父子关系。" }
+  class n6 node_system
+  n7@{ shape: rounded, label: "**check_parent_has_component#lt;bevy_**<br/>**camera::visibility::**<br/>**InheritedVisibility#gt;**<br/>报告仍不满足组件层级要求的父子关系。" }
+  class n7 node_system
+  n8@{ shape: rounded, label: "**mark_dirty_trees**<br/>沿祖先链标记需要重算变换的子树。" }
+  class n8 node_system
+  n9@{ shape: rounded, label: "**propagate_parent_transforms**<br/>沿父子层级并行合成世界变换。" }
+  class n9 node_system
+  n10@{ shape: rounded, label: "**sync_simple_transforms**<br/>同步没有父子层级的独立实体世界变换。" }
+  class n10 node_system
+  n11@{ shape: rounded, label: "**propagate_transforms_for#lt;bevy_ecs::**<br/>**query::filter::Or#lt;(bevy_ecs::query::**<br/>**filter::With#lt;bevy_gizmos::transform_**<br/>**gizmo::TransformGizmoRoot#gt;, bevy_**<br/>**ecs::query::filter::With#lt;bevy_**<br/>**gizmos_render::transform_gizmo_**<br/>**render::GizmoOverlayCamera#gt;, bevy_**<br/>**ecs::query::filter::With#lt;bevy_**<br/>**gizmos::transform_gizmo::**<br/>**TransformGizmoMeshMarker#gt;)#gt;#gt;**<br/>按指定查询过滤器即时计算世界变换。" }
+  class n11 node_system
+  n12@{ shape: rounded, label: "**mark_dirty_trees**<br/>沿祖先链标记需要重算变换的子树。" }
+  class n12 node_system
+  n13@{ shape: rounded, label: "**propagate_parent_transforms**<br/>沿父子层级并行合成世界变换。" }
+  class n13 node_system
+  n14@{ shape: rounded, label: "**sync_simple_transforms**<br/>同步没有父子层级的独立实体世界变换。" }
+  class n14 node_system
+  n15@{ shape: rounded, label: "**update_accessibility_nodes**<br/>把变化的可访问性节点同步给原生适配器。" }
+  class n15 node_system
+  n16@{ shape: rounded, label: "**visibility_propagate_system**<br/>沿父子层级传播可见意图的变化。" }
+  class n16 node_system
+  n17@{ shape: rounded, label: "**propagate_ui_target_cameras**<br/>为 UI 根配置目标相机和视口信息传播源。" }
+  class n17 node_system
+  n18@{ shape: rounded, label: "**update_source#lt;bevy_ui::ui_node::**<br/>**ComputedUiTargetCamera, (), bevy_**<br/>**ecs::hierarchy::ChildOf#gt;**<br/>为直接带 Propagate#lt;C#gt; 的实体同步<br/>Inherited#lt;C#gt;；传播源被移除时沿关系查找<br/>可继承值，必要时移除失效的继承状态。" }
+  class n18 node_system
+  n19@{ shape: rounded, label: "**update_source#lt;bevy_ui::ui_node::**<br/>**ComputedUiRenderTargetInfo, (),**<br/>**bevy_ecs::hierarchy::ChildOf#gt;**<br/>为直接带 Propagate#lt;C#gt; 的实体同步<br/>Inherited#lt;C#gt;；传播源被移除时沿关系查找<br/>可继承值，必要时移除失效的继承状态。" }
+  class n19 node_system
+  n20@{ shape: rounded, label: "**ui_layout_system**<br/>求解 UI 布局并回写节点尺寸和二维变换。" }
+  class n20 node_system
+  n21@{ shape: rounded, label: "**position_popover**<br/>根据父节点几何、窗口边距和 Popover 配置<br/>计算弹出层位置，调整 Node 与局部、全局<br/>UI 变换，并同步受影响后代的全局变换。" }
+  class n21 node_system
+  n22@{ shape: rounded, label: "**update_clipping_system**<br/>从 UI 根递归更新继承裁剪范围。" }
+  class n22 node_system
+  n23@{ shape: rounded, label: "**ui_stack_system**<br/>重建稳定的 UI 绘制和命中顺序。" }
+  class n23 node_system
+  n24@{ shape: rounded, label: "**menu_acquire_focus**<br/>在菜单打开时为菜单项取得焦点。" }
+  class n24 node_system
+  n25@{ shape: rounded, label: "**detect_text_needs_rerender**<br/>把文字段和层级变化标为需要重绘。" }
+  class n25 node_system
+  n26@{ shape: rounded, label: "**menu_on_lose_focus**<br/>关闭不再持有内部焦点的菜单。" }
+  class n26 node_system
+  n27@{ shape: rounded, label: "**button_changed**<br/>Button 改变时从 UI 子节点提取文本标<br/>签，更新已有 AccessibilityNode 的按钮<br/>角色和标签，或通过命令补入对应无障碍节<br/>点。" }
+  class n27 node_system
+  n28@{ shape: rounded, label: "**image_changed**<br/>非按钮 ImageNode 改变时从 UI 子节点提<br/>取说明，设置无障碍图像角色和标签；尚无<br/>AccessibilityNode 时排入创建命令。" }
+  class n28 node_system
+  n29@{ shape: rounded, label: "**sync_bounds_and_transforms**<br/>把 UI 几何同步到无障碍树。" }
+  class n29 node_system
+  n30@{ shape: rounded, label: "**spawn_gizmo_meshes**<br/>创建变换操作器各轴网格、材质和覆盖相机。" }
+  class n30 node_system
+  n31@{ shape: rounded, label: "**prepare_island**<br/>来自场景装配 ↗：从海岛模型构建静态碰<br/>撞、坡道与人物碰撞。" }
+  class n31 node_system
+  class n31 external_node
+  n32@{ shape: rounded, label: "**extract_uinode_changes**<br/>使变化或移除的 UI 数据失效并清理旧渲染<br/>实体。" }
+  class n32 node_system
+  n0 e0@-->|"存在 / 变更过滤"| n1
+  class e0 edge_reference
+  n0 e1@--> n1
+  class e1 edge_read
+  n0 e2@-->|"存在 / 变更过滤"| n2
+  class e2 edge_reference
+  n0 e3@-->|"存在 / 变更过滤"| n3
+  class e3 edge_reference
+  n0 e4@--> n3
+  class e4 edge_read
+  n0 e5@-->|"存在 / 变更过滤"| n4
+  class e5 edge_reference
+  n0 e6@-->|"存在 / 变更过滤"| n5
+  class e6 edge_reference
+  n0 e7@--> n6
+  class e7 edge_read
+  n0 e8@--> n7
+  class e8 edge_read
+  n0 e9@-->|"存在 / 变更过滤"| n8
+  class e9 edge_reference
+  n0 e10@--> n8
+  class e10 edge_read
+  n0 e11@-->|"存在 / 变更过滤"| n9
+  class e11 edge_reference
+  n0 e12@-->|"存在 / 变更过滤"| n10
+  class e12 edge_reference
+  n0 e13@--> n11
+  class e13 edge_read
+  n0 e14@-->|"存在 / 变更过滤"| n12
+  class e14 edge_reference
+  n0 e15@--> n12
+  class e15 edge_read
+  n0 e16@-->|"存在 / 变更过滤"| n13
+  class e16 edge_reference
+  n0 e17@-->|"存在 / 变更过滤"| n14
+  class e17 edge_reference
+  n0 e18@--> n15
+  class e18 edge_read
+  n0 e19@--> n16
+  class e19 edge_read
+  n0 e20@-->|"存在 / 变更过滤"| n16
+  class e20 edge_reference
+  n0 e21@--> n17
+  class e21 edge_read
+  n0 e22@--> n18
+  class e22 edge_read
+  n0 e23@--> n19
+  class e23 edge_read
+  n0 e24@-->|"存在 / 变更过滤"| n20
+  class e24 edge_reference
+  n0 e25@--> n20
+  class e25 edge_read
+  n0 e26@--> n21
+  class e26 edge_read
+  n0 e27@--> n22
+  class e27 edge_read
+  n0 e28@--> n23
+  class e28 edge_read
+  n0 e29@--> n24
+  class e29 edge_read
+  n0 e30@--> n25
+  class e30 edge_read
+  n0 e31@-->|"存在 / 变更过滤"| n25
+  class e31 edge_reference
+  n0 e32@--> n26
+  class e32 edge_read
+  n0 e33@--> n27
+  class e33 edge_read
+  n0 e34@--> n28
+  class e34 edge_read
+  n0 e35@--> n29
+  class e35 edge_read
+  n30 e36@-->|"延迟添加"| n0
+  class e36 edge_write
+  n31 e37@-->|"延迟添加"| n0
+  class e37 edge_write
+  n0 e38@--> n32
+  class e38 edge_read
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e17@{ curve: basis }
+  e19@{ curve: basis }
+  e20@{ curve: basis }
+  e21@{ curve: basis }
+  e22@{ curve: basis }
+  e23@{ curve: basis }
+  e24@{ curve: basis }
+  e25@{ curve: basis }
+  e26@{ curve: basis }
+  e27@{ curve: basis }
+  e28@{ curve: basis }
+  e29@{ curve: basis }
+  e30@{ curve: basis }
+  e31@{ curve: basis }
+  e32@{ curve: basis }
+  e33@{ curve: basis }
+  e34@{ curve: basis }
+  e35@{ curve: basis }
+  e36@{ curve: basis }
+  e37@{ curve: basis }
+  e38@{ curve: basis }

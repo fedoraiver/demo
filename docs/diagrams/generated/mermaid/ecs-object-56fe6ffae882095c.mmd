@@ -1,0 +1,52 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: FilteredEntityRef · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_query_data fill:#F1F4F1,stroke:#567A51,stroke-width:1.6px,color:#1F3340
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: notch-rect, label: "**FilteredEntityRef**<br/>按已声明 Access 集合提供一个实体的只读<br/>组件访问" }
+  class n0 node_query_data
+  n1@{ shape: rounded, label: "**Enhanced Input trigger**<br/>来自Enhanced Input ↗：依据动作事件标<br/>记向对应动作实体排入带类型的触发事件，并<br/>清理失效实例；此卡片的名称由系统参数元组<br/>生成。" }
+  class n1 node_system
+  class n1 external_node
+  n2@{ shape: rounded, label: "**Enhanced Input apply**<br/>来自Enhanced Input ↗：把类型擦除的动<br/>作值应用到各动作的强类型组件，保持动作实<br/>例与所属上下文一致；此卡片的名称由系统参<br/>数元组生成。" }
+  class n2 node_system
+  class n2 external_node
+  n0 e0@-->|"参数 / 查询数据"| n1
+  class e0 edge_reference
+  n0 e1@-->|"参数 / 查询数据"| n2
+  class e1 edge_reference
+  e0@{ curve: basis }
+  e1@{ curve: basis }

@@ -1,0 +1,54 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: Entities · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**Entities**<br/>保存所有已知实体索引及其代际和位置元数据" }
+  class n0 node_component
+  n1@{ shape: rounded, label: "**animate_targets**<br/>依据目标的<br/>AnimatedBy、AnimationTargetId 和当前<br/>动画图，评估正在播放的动画并把结果写入骨<br/>骼等动画目标；缺少播放器或图资产时跳过该<br/>目标。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**dispatch_focused_input#lt;bevy_input::**<br/>**gamepad::GamepadButtonChangedEvent#gt;**<br/>读取对应输入消息并向当前焦点实体派发可冒<br/>泡的 FocusedInput；焦点无效时回退到主<br/>窗口。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**dispatch_focused_input#lt;bevy_input::**<br/>**mouse::MouseWheel#gt;**<br/>读取对应输入消息并向当前焦点实体派发可冒<br/>泡的 FocusedInput；焦点无效时回退到主<br/>窗口。" }
+  class n3 node_system
+  n0 e0@--> n1
+  class e0 edge_read
+  n0 e1@--> n2
+  class e1 edge_read
+  n0 e2@--> n3
+  class e2 edge_read
+  e0@{ curve: basis }
+  e2@{ curve: basis }

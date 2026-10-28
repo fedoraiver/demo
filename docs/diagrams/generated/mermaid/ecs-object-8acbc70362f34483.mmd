@@ -1,0 +1,130 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: StaticSystemParam<Param> · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_system_param fill:#EFF5F6,stroke:#3B8790,stroke-width:1.6px,color:#1F3340
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: notch-rect, label: "**StaticSystemParam#lt;Param#gt;**<br/>适配泛型 SystemParam" }
+  class n0 node_system_param
+  n1@{ shape: rounded, label: "**batch_and_prepare_binned_render_**<br/>**phase#lt;bevy_core_pipeline::core_3d::**<br/>**Opaque3d, bevy_pbr::render::mesh::**<br/>**MeshPipeline#gt;**<br/>在不使用 GPU 数据预处理的路径上逐个读取<br/>分桶实体的批次数据，写入实例缓冲并生成绘<br/>制区间；动态 Uniform 偏移变化时拆分批<br/>次，不可合批项单独记录索引。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**batch_and_prepare_binned_render_**<br/>**phase#lt;bevy_core_pipeline::core_3d::**<br/>**Opaque3d, bevy_pbr::render::mesh::**<br/>**MeshPipeline#gt;**<br/>为分桶渲染阶段建立 GPU 预处理批次。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**batch_and_prepare_binned_render_**<br/>**phase#lt;bevy_core_pipeline::core_3d::**<br/>**AlphaMask3d, bevy_pbr::render::**<br/>**mesh::MeshPipeline#gt;**<br/>在不使用 GPU 数据预处理的路径上逐个读取<br/>分桶实体的批次数据，写入实例缓冲并生成绘<br/>制区间；动态 Uniform 偏移变化时拆分批<br/>次，不可合批项单独记录索引。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**batch_and_prepare_binned_render_**<br/>**phase#lt;bevy_core_pipeline::core_3d::**<br/>**AlphaMask3d, bevy_pbr::render::**<br/>**mesh::MeshPipeline#gt;**<br/>为分桶渲染阶段建立 GPU 预处理批次。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**batch_and_prepare_binned_render_**<br/>**phase#lt;bevy_pbr::render::light::**<br/>**Shadow, bevy_pbr::render::mesh::**<br/>**MeshPipeline#gt;**<br/>在不使用 GPU 数据预处理的路径上逐个读取<br/>分桶实体的批次数据，写入实例缓冲并生成绘<br/>制区间；动态 Uniform 偏移变化时拆分批<br/>次，不可合批项单独记录索引。" }
+  class n5 node_system
+  n6@{ shape: rounded, label: "**batch_and_prepare_binned_render_**<br/>**phase#lt;bevy_pbr::render::light::**<br/>**Shadow, bevy_pbr::render::mesh::**<br/>**MeshPipeline#gt;**<br/>为分桶渲染阶段建立 GPU 预处理批次。" }
+  class n6 node_system
+  n7@{ shape: rounded, label: "**batch_and_prepare_binned_render_**<br/>**phase#lt;bevy_core_pipeline::deferred::**<br/>**Opaque3dDeferred, bevy_pbr::render::**<br/>**mesh::MeshPipeline#gt;**<br/>在不使用 GPU 数据预处理的路径上逐个读取<br/>分桶实体的批次数据，写入实例缓冲并生成绘<br/>制区间；动态 Uniform 偏移变化时拆分批<br/>次，不可合批项单独记录索引。" }
+  class n7 node_system
+  n8@{ shape: rounded, label: "**batch_and_prepare_binned_render_**<br/>**phase#lt;bevy_core_pipeline::deferred::**<br/>**Opaque3dDeferred, bevy_pbr::render::**<br/>**mesh::MeshPipeline#gt;**<br/>为分桶渲染阶段建立 GPU 预处理批次。" }
+  class n8 node_system
+  n9@{ shape: rounded, label: "**batch_and_prepare_binned_render_**<br/>**phase#lt;bevy_core_pipeline::deferred::**<br/>**AlphaMask3dDeferred, bevy_pbr::**<br/>**render::mesh::MeshPipeline#gt;**<br/>在不使用 GPU 数据预处理的路径上逐个读取<br/>分桶实体的批次数据，写入实例缓冲并生成绘<br/>制区间；动态 Uniform 偏移变化时拆分批<br/>次，不可合批项单独记录索引。" }
+  class n9 node_system
+  n10@{ shape: rounded, label: "**batch_and_prepare_binned_render_**<br/>**phase#lt;bevy_core_pipeline::deferred::**<br/>**AlphaMask3dDeferred, bevy_pbr::**<br/>**render::mesh::MeshPipeline#gt;**<br/>为分桶渲染阶段建立 GPU 预处理批次。" }
+  class n10 node_system
+  n11@{ shape: rounded, label: "**batch_and_prepare_sorted_render_**<br/>**phase#lt;bevy_pbr::transmission::**<br/>**phase::Transmissive3d, bevy_pbr::**<br/>**render::mesh::MeshPipeline#gt;**<br/>为有序渲染阶段在 CPU 上构建实例数据，按<br/>绘制元数据合并兼容项，并给阶段项记录实例<br/>区间及可选的动态 Uniform 偏移。" }
+  class n11 node_system
+  n12@{ shape: rounded, label: "**batch_and_prepare_sorted_render_**<br/>**phase#lt;bevy_pbr::transmission::**<br/>**phase::Transmissive3d, bevy_pbr::**<br/>**render::mesh::MeshPipeline#gt;**<br/>按已有绘制顺序合并 GPU 预处理阶段批次。" }
+  class n12 node_system
+  n13@{ shape: rounded, label: "**batch_and_prepare_sorted_render_**<br/>**phase#lt;bevy_core_pipeline::core_3d::**<br/>**Transparent3d, bevy_pbr::render::**<br/>**mesh::MeshPipeline#gt;**<br/>为有序渲染阶段在 CPU 上构建实例数据，按<br/>绘制元数据合并兼容项，并给阶段项记录实例<br/>区间及可选的动态 Uniform 偏移。" }
+  class n13 node_system
+  n14@{ shape: rounded, label: "**batch_and_prepare_sorted_render_**<br/>**phase#lt;bevy_core_pipeline::core_3d::**<br/>**Transparent3d, bevy_pbr::render::**<br/>**mesh::MeshPipeline#gt;**<br/>按已有绘制顺序合并 GPU 预处理阶段批次。" }
+  class n14 node_system
+  n15@{ shape: rounded, label: "**batch_and_prepare_binned_render_**<br/>**phase#lt;bevy_core_pipeline::prepass::**<br/>**Opaque3dPrepass, bevy_pbr::render::**<br/>**mesh::MeshPipeline#gt;**<br/>在不使用 GPU 数据预处理的路径上逐个读取<br/>分桶实体的批次数据，写入实例缓冲并生成绘<br/>制区间；动态 Uniform 偏移变化时拆分批<br/>次，不可合批项单独记录索引。" }
+  class n15 node_system
+  n16@{ shape: rounded, label: "**batch_and_prepare_binned_render_**<br/>**phase#lt;bevy_core_pipeline::prepass::**<br/>**Opaque3dPrepass, bevy_pbr::render::**<br/>**mesh::MeshPipeline#gt;**<br/>为分桶渲染阶段建立 GPU 预处理批次。" }
+  class n16 node_system
+  n17@{ shape: rounded, label: "**batch_and_prepare_binned_render_**<br/>**phase#lt;bevy_core_pipeline::prepass::**<br/>**AlphaMask3dPrepass, bevy_pbr::**<br/>**render::mesh::MeshPipeline#gt;**<br/>在不使用 GPU 数据预处理的路径上逐个读取<br/>分桶实体的批次数据，写入实例缓冲并生成绘<br/>制区间；动态 Uniform 偏移变化时拆分批<br/>次，不可合批项单独记录索引。" }
+  class n17 node_system
+  n18@{ shape: rounded, label: "**batch_and_prepare_binned_render_**<br/>**phase#lt;bevy_core_pipeline::prepass::**<br/>**AlphaMask3dPrepass, bevy_pbr::**<br/>**render::mesh::MeshPipeline#gt;**<br/>为分桶渲染阶段建立 GPU 预处理批次。" }
+  class n18 node_system
+  n0 e0@-->|"参数 / 查询数据"| n1
+  class e0 edge_reference
+  n0 e1@-->|"参数 / 查询数据"| n2
+  class e1 edge_reference
+  n0 e2@-->|"参数 / 查询数据"| n3
+  class e2 edge_reference
+  n0 e3@-->|"参数 / 查询数据"| n4
+  class e3 edge_reference
+  n0 e4@-->|"参数 / 查询数据"| n5
+  class e4 edge_reference
+  n0 e5@-->|"参数 / 查询数据"| n6
+  class e5 edge_reference
+  n0 e6@-->|"参数 / 查询数据"| n7
+  class e6 edge_reference
+  n0 e7@-->|"参数 / 查询数据"| n8
+  class e7 edge_reference
+  n0 e8@-->|"参数 / 查询数据"| n9
+  class e8 edge_reference
+  n0 e9@-->|"参数 / 查询数据"| n10
+  class e9 edge_reference
+  n0 e10@-->|"参数 / 查询数据"| n11
+  class e10 edge_reference
+  n0 e11@-->|"参数 / 查询数据"| n12
+  class e11 edge_reference
+  n0 e12@-->|"参数 / 查询数据"| n13
+  class e12 edge_reference
+  n0 e13@-->|"参数 / 查询数据"| n14
+  class e13 edge_reference
+  n0 e14@-->|"参数 / 查询数据"| n15
+  class e14 edge_reference
+  n0 e15@-->|"参数 / 查询数据"| n16
+  class e15 edge_reference
+  n0 e16@-->|"参数 / 查询数据"| n17
+  class e16 edge_reference
+  n0 e17@-->|"参数 / 查询数据"| n18
+  class e17 edge_reference
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e17@{ curve: basis }

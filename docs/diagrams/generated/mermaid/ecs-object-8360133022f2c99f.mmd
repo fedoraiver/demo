@@ -1,0 +1,207 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: AssetTrackingSystems · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_engine_flow fill:#F1F5F4,stroke:#557C78,stroke-width:1.6px,color:#1F3340
+  classDef edge_order stroke:#334155,stroke-width:2px
+  classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: lin-rect, label: "**AssetTrackingSystems**<br/>追踪资产句柄生命周期并处理待释放资产。" }
+  class n0 node_system_set
+  n1@{ shape: stadium, label: "**main · PreUpdate**<br/>保存本应用调度的注册上下文与成员。" }
+  class n1 node_engine_flow
+  n2@{ shape: rounded, label: "**track_assets**<br/>持有 AssetServer 资产信息锁处理句柄释<br/>放通知，确认没有新强句柄后移除已释放资<br/>产，使 Assets 集合与资产服务器的引用状<br/>态保持一致。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**track_assets**<br/>持有 AssetServer 资产信息锁处理句柄释<br/>放通知，确认没有新强句柄后移除已释放资<br/>产，使 Assets 集合与资产服务器的引用状<br/>态保持一致。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**track_assets**<br/>持有 AssetServer 资产信息锁处理句柄释<br/>放通知，确认没有新强句柄后移除已释放资<br/>产，使 Assets 集合与资产服务器的引用状<br/>态保持一致。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**track_assets**<br/>持有 AssetServer 资产信息锁处理句柄释<br/>放通知，确认没有新强句柄后移除已释放资<br/>产，使 Assets 集合与资产服务器的引用状<br/>态保持一致。" }
+  class n5 node_system
+  n6@{ shape: rounded, label: "**track_assets**<br/>持有 AssetServer 资产信息锁处理句柄释<br/>放通知，确认没有新强句柄后移除已释放资<br/>产，使 Assets 集合与资产服务器的引用状<br/>态保持一致。" }
+  class n6 node_system
+  n7@{ shape: rounded, label: "**track_assets**<br/>持有 AssetServer 资产信息锁处理句柄释<br/>放通知，确认没有新强句柄后移除已释放资<br/>产，使 Assets 集合与资产服务器的引用状<br/>态保持一致。" }
+  class n7 node_system
+  n8@{ shape: rounded, label: "**track_assets**<br/>持有 AssetServer 资产信息锁处理句柄释<br/>放通知，确认没有新强句柄后移除已释放资<br/>产，使 Assets 集合与资产服务器的引用状<br/>态保持一致。" }
+  class n8 node_system
+  n9@{ shape: rounded, label: "**track_assets**<br/>持有 AssetServer 资产信息锁处理句柄释<br/>放通知，确认没有新强句柄后移除已释放资<br/>产，使 Assets 集合与资产服务器的引用状<br/>态保持一致。" }
+  class n9 node_system
+  n10@{ shape: rounded, label: "**track_assets**<br/>持有 AssetServer 资产信息锁处理句柄释<br/>放通知，确认没有新强句柄后移除已释放资<br/>产，使 Assets 集合与资产服务器的引用状<br/>态保持一致。" }
+  class n10 node_system
+  n11@{ shape: rounded, label: "**track_assets**<br/>持有 AssetServer 资产信息锁处理句柄释<br/>放通知，确认没有新强句柄后移除已释放资<br/>产，使 Assets 集合与资产服务器的引用状<br/>态保持一致。" }
+  class n11 node_system
+  n12@{ shape: rounded, label: "**track_assets**<br/>持有 AssetServer 资产信息锁处理句柄释<br/>放通知，确认没有新强句柄后移除已释放资<br/>产，使 Assets 集合与资产服务器的引用状<br/>态保持一致。" }
+  class n12 node_system
+  n13@{ shape: rounded, label: "**track_assets**<br/>持有 AssetServer 资产信息锁处理句柄释<br/>放通知，确认没有新强句柄后移除已释放资<br/>产，使 Assets 集合与资产服务器的引用状<br/>态保持一致。" }
+  class n13 node_system
+  n14@{ shape: rounded, label: "**track_assets**<br/>持有 AssetServer 资产信息锁处理句柄释<br/>放通知，确认没有新强句柄后移除已释放资<br/>产，使 Assets 集合与资产服务器的引用状<br/>态保持一致。" }
+  class n14 node_system
+  n15@{ shape: rounded, label: "**track_assets**<br/>持有 AssetServer 资产信息锁处理句柄释<br/>放通知，确认没有新强句柄后移除已释放资<br/>产，使 Assets 集合与资产服务器的引用状<br/>态保持一致。" }
+  class n15 node_system
+  n16@{ shape: rounded, label: "**track_assets**<br/>持有 AssetServer 资产信息锁处理句柄释<br/>放通知，确认没有新强句柄后移除已释放资<br/>产，使 Assets 集合与资产服务器的引用状<br/>态保持一致。" }
+  class n16 node_system
+  n17@{ shape: rounded, label: "**track_assets**<br/>持有 AssetServer 资产信息锁处理句柄释<br/>放通知，确认没有新强句柄后移除已释放资<br/>产，使 Assets 集合与资产服务器的引用状<br/>态保持一致。" }
+  class n17 node_system
+  n18@{ shape: rounded, label: "**track_assets**<br/>持有 AssetServer 资产信息锁处理句柄释<br/>放通知，确认没有新强句柄后移除已释放资<br/>产，使 Assets 集合与资产服务器的引用状<br/>态保持一致。" }
+  class n18 node_system
+  n19@{ shape: rounded, label: "**track_assets**<br/>持有 AssetServer 资产信息锁处理句柄释<br/>放通知，确认没有新强句柄后移除已释放资<br/>产，使 Assets 集合与资产服务器的引用状<br/>态保持一致。" }
+  class n19 node_system
+  n20@{ shape: rounded, label: "**track_assets**<br/>持有 AssetServer 资产信息锁处理句柄释<br/>放通知，确认没有新强句柄后移除已释放资<br/>产，使 Assets 集合与资产服务器的引用状<br/>态保持一致。" }
+  class n20 node_system
+  n21@{ shape: rounded, label: "**track_assets**<br/>持有 AssetServer 资产信息锁处理句柄释<br/>放通知，确认没有新强句柄后移除已释放资<br/>产，使 Assets 集合与资产服务器的引用状<br/>态保持一致。" }
+  class n21 node_system
+  n22@{ shape: rounded, label: "**track_assets**<br/>持有 AssetServer 资产信息锁处理句柄释<br/>放通知，确认没有新强句柄后移除已释放资<br/>产，使 Assets 集合与资产服务器的引用状<br/>态保持一致。" }
+  class n22 node_system
+  n23@{ shape: rounded, label: "**track_assets**<br/>持有 AssetServer 资产信息锁处理句柄释<br/>放通知，确认没有新强句柄后移除已释放资<br/>产，使 Assets 集合与资产服务器的引用状<br/>态保持一致。" }
+  class n23 node_system
+  n24@{ shape: rounded, label: "**track_assets**<br/>持有 AssetServer 资产信息锁处理句柄释<br/>放通知，确认没有新强句柄后移除已释放资<br/>产，使 Assets 集合与资产服务器的引用状<br/>态保持一致。" }
+  class n24 node_system
+  n25@{ shape: rounded, label: "**track_assets**<br/>持有 AssetServer 资产信息锁处理句柄释<br/>放通知，确认没有新强句柄后移除已释放资<br/>产，使 Assets 集合与资产服务器的引用状<br/>态保持一致。" }
+  class n25 node_system
+  n26@{ shape: rounded, label: "**track_assets**<br/>持有 AssetServer 资产信息锁处理句柄释<br/>放通知，确认没有新强句柄后移除已释放资<br/>产，使 Assets 集合与资产服务器的引用状<br/>态保持一致。" }
+  class n26 node_system
+  n27@{ shape: rounded, label: "**track_assets**<br/>持有 AssetServer 资产信息锁处理句柄释<br/>放通知，确认没有新强句柄后移除已释放资<br/>产，使 Assets 集合与资产服务器的引用状<br/>态保持一致。" }
+  class n27 node_system
+  n28@{ shape: rounded, label: "**track_assets**<br/>持有 AssetServer 资产信息锁处理句柄释<br/>放通知，确认没有新强句柄后移除已释放资<br/>产，使 Assets 集合与资产服务器的引用状<br/>态保持一致。" }
+  class n28 node_system
+  n29@{ shape: rounded, label: "**track_assets**<br/>持有 AssetServer 资产信息锁处理句柄释<br/>放通知，确认没有新强句柄后移除已释放资<br/>产，使 Assets 集合与资产服务器的引用状<br/>态保持一致。" }
+  class n29 node_system
+  n30@{ shape: rounded, label: "**track_assets**<br/>持有 AssetServer 资产信息锁处理句柄释<br/>放通知，确认没有新强句柄后移除已释放资<br/>产，使 Assets 集合与资产服务器的引用状<br/>态保持一致。" }
+  class n30 node_system
+  n31@{ shape: rounded, label: "**track_assets**<br/>持有 AssetServer 资产信息锁处理句柄释<br/>放通知，确认没有新强句柄后移除已释放资<br/>产，使 Assets 集合与资产服务器的引用状<br/>态保持一致。" }
+  class n31 node_system
+  n32@{ shape: rounded, label: "**track_assets**<br/>持有 AssetServer 资产信息锁处理句柄释<br/>放通知，确认没有新强句柄后移除已释放资<br/>产，使 Assets 集合与资产服务器的引用状<br/>态保持一致。" }
+  class n32 node_system
+  n33@{ shape: rounded, label: "**handle_internal_asset_events**<br/>消费资产服务器内部的加载、依赖就绪和失败<br/>通知，完成资产状态更新、唤醒等待任务并发<br/>布对应消息；启用热重载时继续处理依赖和文<br/>件变化。" }
+  class n33 node_system
+  n1 e0@-->|"main / PreUpdate"| n0
+  class e0 edge_registration
+  n0 e1@--> n2
+  class e1 edge_set_membership
+  n0 e2@--> n3
+  class e2 edge_set_membership
+  n0 e3@--> n4
+  class e3 edge_set_membership
+  n0 e4@--> n5
+  class e4 edge_set_membership
+  n0 e5@--> n6
+  class e5 edge_set_membership
+  n0 e6@--> n7
+  class e6 edge_set_membership
+  n0 e7@--> n8
+  class e7 edge_set_membership
+  n0 e8@--> n9
+  class e8 edge_set_membership
+  n0 e9@--> n10
+  class e9 edge_set_membership
+  n0 e10@--> n11
+  class e10 edge_set_membership
+  n0 e11@--> n12
+  class e11 edge_set_membership
+  n0 e12@--> n13
+  class e12 edge_set_membership
+  n0 e13@--> n14
+  class e13 edge_set_membership
+  n0 e14@--> n15
+  class e14 edge_set_membership
+  n0 e15@--> n16
+  class e15 edge_set_membership
+  n0 e16@--> n17
+  class e16 edge_set_membership
+  n0 e17@--> n18
+  class e17 edge_set_membership
+  n0 e18@--> n19
+  class e18 edge_set_membership
+  n0 e19@--> n20
+  class e19 edge_set_membership
+  n0 e20@--> n21
+  class e20 edge_set_membership
+  n0 e21@--> n22
+  class e21 edge_set_membership
+  n0 e22@--> n23
+  class e22 edge_set_membership
+  n0 e23@--> n24
+  class e23 edge_set_membership
+  n0 e24@--> n25
+  class e24 edge_set_membership
+  n0 e25@--> n26
+  class e25 edge_set_membership
+  n0 e26@--> n27
+  class e26 edge_set_membership
+  n0 e27@--> n28
+  class e27 edge_set_membership
+  n0 e28@--> n29
+  class e28 edge_set_membership
+  n0 e29@--> n30
+  class e29 edge_set_membership
+  n0 e30@--> n31
+  class e30 edge_set_membership
+  n0 e31@--> n32
+  class e31 edge_set_membership
+  n33 e32@--> n0
+  class e32 edge_order
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e17@{ curve: basis }
+  e18@{ curve: basis }
+  e19@{ curve: basis }
+  e20@{ curve: basis }
+  e21@{ curve: basis }
+  e22@{ curve: basis }
+  e23@{ curve: basis }
+  e24@{ curve: basis }
+  e25@{ curve: basis }
+  e26@{ curve: basis }
+  e27@{ curve: basis }
+  e28@{ curve: basis }
+  e29@{ curve: basis }
+  e30@{ curve: basis }
+  e31@{ curve: basis }
+  e32@{ curve: basis }

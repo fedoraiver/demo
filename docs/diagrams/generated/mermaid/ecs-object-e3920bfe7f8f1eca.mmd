@@ -1,0 +1,108 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: EnhancedInputSystems::Apply · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_engine_flow fill:#F1F5F4,stroke:#557C78,stroke-width:1.6px,color:#1F3340
+  classDef edge_order stroke:#334155,stroke-width:2px
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: lin-rect, label: "**EnhancedInputSystems::Apply**<br/>把评估结果写回强类型动作值。" }
+  class n0 node_system_set
+  n1@{ shape: lin-rect, label: "**EnhancedInputSystems::Update**<br/>评估绑定输入并更新动作值与触发状态。" }
+  class n1 node_system_set
+  n2@{ shape: lin-rect, label: "**EnhancedInputSystems::Trigger**<br/>按上下文顺序排入动作事件命令。" }
+  class n2 node_system_set
+  n3@{ shape: stadium, label: "**main · PreUpdate**<br/>来自Bevy 引擎 ↗：保存本应用调度的注册<br/>上下文与成员。" }
+  class n3 node_engine_flow
+  class n3 external_node
+  n4@{ shape: rounded, label: "**Enhanced Input apply**<br/>把类型擦除的动作值应用到各动作的强类型组<br/>件，保持动作实例与所属上下文一致；此卡片<br/>的名称由系统参数元组生成。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**Actions#lt;GameplayContext#gt;**<br/>索引控制上下文拥有的动作实体。" }
+  class n5 node_component
+  n6@{ shape: rounded, label: "**ActionFns**<br/>将通用动作值适配为具体动作组件。" }
+  class n6 node_component
+  n7@{ shape: rounded, label: "**ActionValue**<br/>保存动作评估产生的通用输入值。" }
+  class n7 node_component
+  n8@{ shape: rounded, label: "**Action#lt;LookAction#gt;**<br/>保存LookAction动作的当前输出。" }
+  class n8 node_component
+  n9@{ shape: rounded, label: "**Action#lt;MoveAction#gt;**<br/>保存MoveAction动作的当前输出。" }
+  class n9 node_component
+  n10@{ shape: rounded, label: "**Action#lt;JumpAction#gt;**<br/>保存JumpAction动作的当前输出。" }
+  class n10 node_component
+  n11@{ shape: rounded, label: "**Action#lt;InteractAction#gt;**<br/>保存InteractAction动作的当前输出。" }
+  class n11 node_component
+  n12@{ shape: cyl, label: "**ContextInstances#lt;PreUpdate#gt;**<br/>索引输入框架当前运行的动作上下文。" }
+  class n12 node_resource
+  n1 e0@--> n0
+  class e0 edge_order
+  n0 e1@--> n2
+  class e1 edge_order
+  n3 e2@-->|"main / PreUpdate"| n0
+  class e2 edge_registration
+  n0 e3@--> n4
+  class e3 edge_set_membership
+  n5 e4@-->|"查询访问"| n0
+  class e4 edge_read
+  n6 e5@-->|"查询访问"| n0
+  class e5 edge_read
+  n7 e6@-->|"查询访问"| n0
+  class e6 edge_read
+  n0 e7@-->|"可变访问"| n8
+  class e7 edge_write
+  n0 e8@-->|"可变访问"| n9
+  class e8 edge_write
+  n0 e9@-->|"可变访问"| n10
+  class e9 edge_write
+  n0 e10@-->|"可变访问"| n11
+  class e10 edge_write
+  n12 e11@-->|"访问声明"| n0
+  class e11 edge_read
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }

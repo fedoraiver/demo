@@ -1,0 +1,317 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: Transform · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**Transform**<br/>保存实体相对父实体的平移、旋转和缩放" }
+  class n0 node_component
+  n1@{ shape: rounded, label: "**update_translation_interpolation_**<br/>**start**<br/>来自Avian ↗：把当前位置记录为插值起<br/>点。" }
+  class n1 node_system
+  class n1 external_node
+  n2@{ shape: rounded, label: "**update_rotation_interpolation_start**<br/>来自Avian ↗：把当前旋转记录为插值起<br/>点。" }
+  class n2 node_system
+  class n2 external_node
+  n3@{ shape: rounded, label: "**update_scale_interpolation_start**<br/>来自Avian ↗：把当前缩放记录为插值起<br/>点。" }
+  class n3 node_system
+  class n3 external_node
+  n4@{ shape: rounded, label: "**complete_translation_easing**<br/>来自Avian ↗：在新一轮插值前完成上一段<br/>平移。" }
+  class n4 node_system
+  class n4 external_node
+  n5@{ shape: rounded, label: "**complete_rotation_easing**<br/>来自Avian ↗：在新一轮插值前完成上一段<br/>旋转。" }
+  class n5 node_system
+  class n5 external_node
+  n6@{ shape: rounded, label: "**complete_scale_easing**<br/>来自Avian ↗：在新一轮插值前完成上一段<br/>缩放。" }
+  class n6 node_system
+  class n6 external_node
+  n7@{ shape: rounded, label: "**reset_translation_extrapolation**<br/>来自Avian ↗：在固定步开始前还原真实位<br/>置。" }
+  class n7 node_system
+  class n7 external_node
+  n8@{ shape: rounded, label: "**reset_rotation_extrapolation**<br/>来自Avian ↗：在固定步开始前还原真实旋<br/>转。" }
+  class n8 node_system
+  class n8 external_node
+  n9@{ shape: rounded, label: "**update_translation_interpolation_end**<br/>来自Avian ↗：把当前位置记录为插值终<br/>点。" }
+  class n9 node_system
+  class n9 external_node
+  n10@{ shape: rounded, label: "**update_rotation_interpolation_end**<br/>来自Avian ↗：把当前旋转记录为插值终<br/>点。" }
+  class n10 node_system
+  class n10 external_node
+  n11@{ shape: rounded, label: "**update_scale_interpolation_end**<br/>来自Avian ↗：把当前缩放记录为插值终<br/>点。" }
+  class n11 node_system
+  class n11 external_node
+  n12@{ shape: rounded, label: "**update_translation_extrapolation_**<br/>**states#lt;avian3d::interpolation::**<br/>**LinVelSource#gt;**<br/>来自Avian ↗：依据当前线速度预测下一个<br/>位置端点。" }
+  class n12 node_system
+  class n12 external_node
+  n13@{ shape: rounded, label: "**update_rotation_extrapolation_**<br/>**states#lt;avian3d::interpolation::**<br/>**AngVelSource#gt;**<br/>来自Avian ↗：依据当前角速度预测下一个<br/>旋转端点。" }
+  class n13 node_system
+  class n13 external_node
+  n14@{ shape: rounded, label: "**propagate_collider_transforms**<br/>来自Avian ↗：沿实体层级计算碰撞体相对<br/>刚体的变换。" }
+  class n14 node_system
+  class n14 external_node
+  n15@{ shape: rounded, label: "**update_collider_scale#lt;avian3d::**<br/>**collision::collider::parry::**<br/>**Collider#gt;**<br/>来自Avian ↗：把根节点和附属碰撞体的缩<br/>放传给形状。" }
+  class n15 node_system
+  class n15 external_node
+  n16@{ shape: rounded, label: "**mark_dirty_trees**<br/>沿祖先链标记需要重算变换的子树。" }
+  class n16 node_system
+  n17@{ shape: rounded, label: "**propagate_parent_transforms**<br/>沿父子层级并行合成世界变换。" }
+  class n17 node_system
+  n18@{ shape: rounded, label: "**sync_simple_transforms**<br/>同步没有父子层级的独立实体世界变换。" }
+  class n18 node_system
+  n19@{ shape: rounded, label: "**recover_from_water**<br/>来自越界恢复 ↗：将落水实体恢复到各自出<br/>生姿态。" }
+  class n19 node_system
+  class n19 external_node
+  n20@{ shape: rounded, label: "**sync_character_facing**<br/>来自第一人称控制 ↗：同步人物朝向并处理<br/>持物转向受阻。" }
+  class n20 node_system
+  class n20 external_node
+  n21@{ shape: rounded, label: "**handle_interaction**<br/>来自物品交互 ↗：处理物品拾取、共享持握<br/>与主动释放。" }
+  class n21 node_system
+  class n21 external_node
+  n22@{ shape: rounded, label: "**release_orphaned_items**<br/>来自物品交互 ↗：清理失效持握并恢复物品<br/>独立运动。" }
+  class n22 node_system
+  class n22 external_node
+  n23@{ shape: rounded, label: "**finish_attachments**<br/>来自物品交互 ↗：为持物装配共享碰撞代理<br/>并累计质量。" }
+  class n23 node_system
+  class n23 external_node
+  n24@{ shape: rounded, label: "**align_attachments**<br/>来自物品交互 ↗：沿安全碰撞路径将物品对<br/>齐双手。" }
+  class n24 node_system
+  class n24 external_node
+  n25@{ shape: rounded, label: "**mark_dirty_trees**<br/>沿祖先链标记需要重算变换的子树。" }
+  class n25 node_system
+  n26@{ shape: rounded, label: "**propagate_parent_transforms**<br/>沿父子层级并行合成世界变换。" }
+  class n26 node_system
+  n27@{ shape: rounded, label: "**sync_simple_transforms**<br/>同步没有父子层级的独立实体世界变换。" }
+  class n27 node_system
+  n28@{ shape: rounded, label: "**update_gizmo_meshes**<br/>将变换操作器对齐焦点并更新模式与高亮。" }
+  class n28 node_system
+  n29@{ shape: rounded, label: "**propagate_transforms_for#lt;bevy_ecs::**<br/>**query::filter::Or#lt;(bevy_ecs::query::**<br/>**filter::With#lt;bevy_gizmos::transform_**<br/>**gizmo::TransformGizmoRoot#gt;, bevy_**<br/>**ecs::query::filter::With#lt;bevy_**<br/>**gizmos_render::transform_gizmo_**<br/>**render::GizmoOverlayCamera#gt;, bevy_**<br/>**ecs::query::filter::With#lt;bevy_**<br/>**gizmos::transform_gizmo::**<br/>**TransformGizmoMeshMarker#gt;)#gt;#gt;**<br/>按指定查询过滤器即时计算世界变换。" }
+  class n29 node_system
+  n30@{ shape: rounded, label: "**mark_dirty_trees**<br/>沿祖先链标记需要重算变换的子树。" }
+  class n30 node_system
+  n31@{ shape: rounded, label: "**propagate_parent_transforms**<br/>沿父子层级并行合成世界变换。" }
+  class n31 node_system
+  n32@{ shape: rounded, label: "**sync_simple_transforms**<br/>同步没有父子层级的独立实体世界变换。" }
+  class n32 node_system
+  n33@{ shape: rounded, label: "**ease_translation_hermite#lt;avian3d::**<br/>**interpolation::LinVelSource#gt;**<br/>来自Avian ↗：用两端线速度做 Hermite<br/>位置平滑。" }
+  class n33 node_system
+  class n33 external_node
+  n34@{ shape: rounded, label: "**ease_rotation_hermite#lt;avian3d::**<br/>**interpolation::AngVelSource#gt;**<br/>来自Avian ↗：用两端角速度做 Hermite<br/>旋转平滑。" }
+  class n34 node_system
+  class n34 external_node
+  n35@{ shape: rounded, label: "**ease_translation_lerp**<br/>来自Avian ↗：按固定步剩余比例线性插值<br/>显示位置。" }
+  class n35 node_system
+  class n35 external_node
+  n36@{ shape: rounded, label: "**ease_rotation_slerp**<br/>来自Avian ↗：按固定步剩余比例球面插值<br/>显示旋转。" }
+  class n36 node_system
+  class n36 external_node
+  n37@{ shape: rounded, label: "**ease_scale_lerp**<br/>来自Avian ↗：按固定步剩余比例线性插值<br/>显示缩放。" }
+  class n37 node_system
+  class n37 external_node
+  n38@{ shape: rounded, label: "**reset_easing_states_on_transform_**<br/>**change**<br/>来自Avian ↗：在外部直接改变变换时取消<br/>失效的平滑区间。" }
+  class n38 node_system
+  class n38 external_node
+  n39@{ shape: rounded, label: "**sync_character_facing**<br/>来自第一人称控制 ↗：同步人物朝向并处理<br/>持物转向受阻。" }
+  class n39 node_system
+  class n39 external_node
+  n40@{ shape: rounded, label: "**spawn_gizmo_meshes**<br/>创建变换操作器各轴网格、材质和覆盖相机。" }
+  class n40 node_system
+  n41@{ shape: rounded, label: "**prepare_island**<br/>来自场景装配 ↗：从海岛模型构建静态碰<br/>撞、坡道与人物碰撞。" }
+  class n41 node_system
+  class n41 external_node
+  n42@{ shape: rounded, label: "**spawn_actors**<br/>来自场景装配 ↗：装配玩家、可搬物、控制<br/>者与相机。" }
+  class n42 node_system
+  class n42 external_node
+  n0 e0@--> n1
+  class e0 edge_read
+  n0 e1@--> n2
+  class e1 edge_read
+  n0 e2@--> n3
+  class e2 edge_read
+  n4 e3@--> n0
+  class e3 edge_write
+  n5 e4@--> n0
+  class e4 edge_write
+  n6 e5@--> n0
+  class e5 edge_write
+  n7 e6@--> n0
+  class e6 edge_write
+  n8 e7@--> n0
+  class e7 edge_write
+  n0 e8@--> n9
+  class e8 edge_read
+  n0 e9@--> n10
+  class e9 edge_read
+  n0 e10@--> n11
+  class e10 edge_read
+  n0 e11@--> n12
+  class e11 edge_read
+  n0 e12@--> n13
+  class e12 edge_read
+  n0 e13@--> n14
+  class e13 edge_read
+  n0 e14@--> n15
+  class e14 edge_read
+  n0 e15@-->|"存在 / 变更过滤"| n15
+  class e15 edge_reference
+  n0 e16@-->|"存在 / 变更过滤"| n16
+  class e16 edge_reference
+  n0 e17@--> n17
+  class e17 edge_read
+  n0 e18@--> n18
+  class e18 edge_read
+  n0 e19@-->|"存在 / 变更过滤"| n18
+  class e19 edge_reference
+  n19 e20@-->|"延迟添加"| n0
+  class e20 edge_write
+  n20 e21@-->|"延迟添加"| n0
+  class e21 edge_write
+  n21 e22@-->|"延迟添加"| n0
+  class e22 edge_write
+  n22 e23@-->|"延迟添加"| n0
+  class e23 edge_write
+  n23 e24@-->|"延迟添加"| n0
+  class e24 edge_write
+  n24 e25@-->|"延迟添加"| n0
+  class e25 edge_write
+  n0 e26@-->|"存在 / 变更过滤"| n25
+  class e26 edge_reference
+  n0 e27@--> n26
+  class e27 edge_read
+  n0 e28@--> n27
+  class e28 edge_read
+  n0 e29@-->|"存在 / 变更过滤"| n27
+  class e29 edge_reference
+  n28 e30@--> n0
+  class e30 edge_write
+  n0 e31@--> n29
+  class e31 edge_read
+  n0 e32@-->|"存在 / 变更过滤"| n30
+  class e32 edge_reference
+  n0 e33@--> n31
+  class e33 edge_read
+  n0 e34@--> n32
+  class e34 edge_read
+  n0 e35@-->|"存在 / 变更过滤"| n32
+  class e35 edge_reference
+  n33 e36@--> n0
+  class e36 edge_write
+  n34 e37@--> n0
+  class e37 edge_write
+  n35 e38@--> n0
+  class e38 edge_write
+  n36 e39@--> n0
+  class e39 edge_write
+  n37 e40@--> n0
+  class e40 edge_write
+  n0 e41@--> n38
+  class e41 edge_read
+  n0 e42@-->|"存在 / 变更过滤"| n38
+  class e42 edge_reference
+  n39 e43@-->|"延迟添加"| n0
+  class e43 edge_write
+  n40 e44@-->|"延迟添加"| n0
+  class e44 edge_write
+  n41 e45@-->|"延迟添加"| n0
+  class e45 edge_write
+  n42 e46@-->|"延迟添加"| n0
+  class e46 edge_write
+  n4 layout_input_0@~~~ n5
+  n5 layout_input_1@~~~ n6
+  n6 layout_input_2@~~~ n7
+  n7 layout_input_3@~~~ n8
+  n8 layout_input_4@~~~ n19
+  n19 layout_input_5@~~~ n20
+  n20 layout_input_6@~~~ n21
+  n21 layout_input_7@~~~ n22
+  n22 layout_input_8@~~~ n23
+  n23 layout_input_9@~~~ n24
+  n24 layout_input_10@~~~ n28
+  n28 layout_input_11@~~~ n33
+  n33 layout_input_12@~~~ n34
+  n34 layout_input_13@~~~ n35
+  n35 layout_input_14@~~~ n36
+  n36 layout_input_15@~~~ n37
+  n37 layout_input_16@~~~ n39
+  n39 layout_input_17@~~~ n40
+  n40 layout_input_18@~~~ n41
+  n41 layout_input_19@~~~ n42
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e17@{ curve: basis }
+  e18@{ curve: basis }
+  e19@{ curve: basis }
+  e20@{ curve: basis }
+  e21@{ curve: basis }
+  e22@{ curve: basis }
+  e23@{ curve: basis }
+  e24@{ curve: basis }
+  e25@{ curve: basis }
+  e26@{ curve: basis }
+  e27@{ curve: basis }
+  e28@{ curve: basis }
+  e29@{ curve: basis }
+  e30@{ curve: basis }
+  e31@{ curve: basis }
+  e32@{ curve: basis }
+  e33@{ curve: basis }
+  e34@{ curve: basis }
+  e35@{ curve: basis }
+  e36@{ curve: basis }
+  e37@{ curve: basis }
+  e38@{ curve: basis }
+  e39@{ curve: basis }
+  e40@{ curve: basis }
+  e41@{ curve: basis }
+  e42@{ curve: basis }
+  e43@{ curve: basis }
+  e44@{ curve: basis }
+  e45@{ curve: basis }
+  e46@{ curve: basis }

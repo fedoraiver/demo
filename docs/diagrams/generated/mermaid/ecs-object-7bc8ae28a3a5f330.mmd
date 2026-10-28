@@ -1,0 +1,97 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: RenderSystems::Cleanup · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_engine_flow fill:#F1F5F4,stroke:#557C78,stroke-width:1.6px,color:#1F3340
+  classDef edge_order stroke:#334155,stroke-width:2px
+  classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: lin-rect, label: "**RenderSystems::Cleanup**<br/>清理本帧渲染缓存、资产变化和回读状态。" }
+  class n0 node_system_set
+  n1@{ shape: stadium, label: "**RenderApp · Render**<br/>保存本应用调度的注册上下文与成员。" }
+  class n1 node_engine_flow
+  n2@{ shape: rounded, label: "**update_texture_cache_system**<br/>淘汰纹理缓存中长期未使用的纹理。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**clear_changed_shader_buffers**<br/>清空新帧着色器缓冲的变化记录。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**map_buffers**<br/>取出本帧 GPU 回读请求，对暂存缓冲启动异<br/>步只读映射；完成后复制字节、解除映射，并<br/>通过任务通道发送实体、缓冲及结果数据。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**reset_render_asset_bytes_per_frame**<br/>重置新帧渲染资产上传的已用预算。" }
+  class n5 node_system
+  n6@{ shape: rounded, label: "**reset_mip_generation_jobs**<br/>清空上一帧登记的 mip 生成任务。" }
+  class n6 node_system
+  n7@{ shape: rounded, label: "**clear_batched_cpu_instance_**<br/>**buffers#lt;bevy_sprite_render::mesh2d::**<br/>**mesh::Mesh2dPipeline#gt;**<br/>在 CPU 批处理使用实例缓冲之前清空其本帧<br/>内容；资源尚未创建时直接跳过。" }
+  class n7 node_system
+  n8@{ shape: rounded, label: "**clear_batches**<br/>在渲染清理阶段从所有 UI 批次实体移除<br/>UiBatch，供下一帧重新生成批次，不销毁这<br/>些实体本身。" }
+  class n8 node_system
+  n9@{ shape: rounded, label: "**clear_batched_cpu_instance_**<br/>**buffers#lt;bevy_pbr::render::mesh::**<br/>**MeshPipeline#gt;**<br/>在 CPU 批处理使用实例缓冲之前清空其本帧<br/>内容；资源尚未创建时直接跳过。" }
+  class n9 node_system
+  n10@{ shape: lin-rect, label: "**RenderSystems::PostCleanup**<br/>在资源清理后销毁临时渲染实体。" }
+  class n10 node_system_set
+  n11@{ shape: lin-rect, label: "**RenderSystems::Render**<br/>处理待建管线并执行实际渲染。" }
+  class n11 node_system_set
+  n1 e0@-->|"RenderApp / Render"| n0
+  class e0 edge_registration
+  n0 e1@--> n2
+  class e1 edge_set_membership
+  n0 e2@--> n3
+  class e2 edge_set_membership
+  n0 e3@--> n4
+  class e3 edge_set_membership
+  n0 e4@--> n5
+  class e4 edge_set_membership
+  n0 e5@--> n6
+  class e5 edge_set_membership
+  n0 e6@--> n7
+  class e6 edge_set_membership
+  n0 e7@--> n8
+  class e7 edge_set_membership
+  n0 e8@--> n9
+  class e8 edge_set_membership
+  n0 e9@--> n10
+  class e9 edge_order
+  n11 e10@--> n0
+  class e10 edge_order
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }

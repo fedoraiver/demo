@@ -1,0 +1,227 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#object-48d74afa189b2819-e6{marker-start:url(#object-48d74afa189b2819_flowchart-v2-pointStart)!important}\n#object-48d74afa189b2819-e12{marker-start:url(#object-48d74afa189b2819_flowchart-v2-pointStart)!important}\n#object-48d74afa189b2819-e32{marker-start:url(#object-48d74afa189b2819_flowchart-v2-pointStart)!important}\n#object-48d74afa189b2819_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}"
+  }
+}
+---
+flowchart LR
+  accTitle: rebuild_page · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef node_local fill:#F8F5F1,stroke:#AA8752,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_engine_flow fill:#F1F5F4,stroke:#557C78,stroke-width:1.6px,color:#1F3340
+  classDef node_plugin fill:#F1F3F6,stroke:#4A6389,stroke-width:2.2px,color:#1F3340
+  classDef edge_order stroke:#334155,stroke-width:2px
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**rebuild_page**<br/>按页面结构变化重建菜单界面。" }
+  class n0 node_system
+  n1@{ shape: rounded, label: "**pointer_interaction**<br/>将真实鼠标交互转换为共享菜单请求。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**bind_settings_scrollbars**<br/>将设置滚动条绑定到对应内容视口。" }
+  class n2 node_system
+  n3@{ shape: stadium, label: "**main · Update**<br/>来自Bevy 引擎 ↗：保存本应用调度的注册<br/>上下文与成员。" }
+  class n3 node_engine_flow
+  class n3 external_node
+  n4@{ shape: lin-rect, label: "**UiSystems::Build**<br/>按页面和视口变化重建菜单实体树。" }
+  class n4 node_system_set
+  n5@{ shape: rounded, label: "**Window**<br/>来自Bevy 引擎 ↗：保存主窗口的尺寸与显<br/>示配置。" }
+  class n5 node_component
+  class n5 external_node
+  n6@{ shape: rounded, label: "**MenuRoot**<br/>标记菜单页面以统一清理其界面。" }
+  class n6 node_component
+  n7@{ shape: rounded, label: "**GlobalZIndex**<br/>来自Bevy 引擎 ↗：菜单显示在展示场景与<br/>玩法画面上。" }
+  class n7 node_component
+  class n7 external_node
+  n8@{ shape: rounded, label: "**Children**<br/>来自Bevy 引擎 ↗：索引当前实体的直接子<br/>实体。" }
+  class n8 node_component
+  class n8 external_node
+  n9@{ shape: rounded, label: "**Text**<br/>来自Bevy 引擎 ↗：保存界面实际显示的文<br/>字。" }
+  class n9 node_component
+  class n9 external_node
+  n10@{ shape: rounded, label: "**TextFont**<br/>来自Bevy 引擎 ↗：保存文字字体与字号。" }
+  class n10 node_component
+  class n10 external_node
+  n11@{ shape: rounded, label: "**TextColor**<br/>来自Bevy 引擎 ↗：保存界面文字的显示颜<br/>色。" }
+  class n11 node_component
+  class n11 external_node
+  n12@{ shape: rounded, label: "**MenuButton**<br/>保存菜单动作及按钮的导航序号。" }
+  class n12 node_component
+  n13@{ shape: rounded, label: "**SettingsStatus**<br/>标识保存提示文字，原位更新。" }
+  class n13 node_component
+  n14@{ shape: rounded, label: "**SettingsPanel**<br/>标记设置内容面板。" }
+  class n14 node_component
+  n15@{ shape: rounded, label: "**SettingValue**<br/>标识草稿值文字，原位更新。" }
+  class n15 node_component
+  n16@{ shape: rounded, label: "**VolumeSlider**<br/>标识滑条编辑的音量设置项。" }
+  class n16 node_component
+  n17@{ shape: rounded, label: "**VolumeFill**<br/>标记音量轨道填充对应的设置项。" }
+  class n17 node_component
+  n18@{ shape: rounded, label: "**VolumeValue**<br/>标记音量百分比或静音状态文字。" }
+  class n18 node_component
+  n19@{ shape: rounded, label: "**MenuScroll**<br/>滚动视口标记。" }
+  class n19 node_component
+  n20@{ shape: rounded, label: "**ScrollPosition**<br/>来自Bevy 引擎 ↗：保存内容视口的滚动偏<br/>移。" }
+  class n20 node_component
+  class n20 external_node
+  n21@{ shape: rounded, label: "**SettingsScrollbar**<br/>标记需要绑定内容视口的滚动条。" }
+  class n21 node_component
+  n22@{ shape: rounded, label: "**SettingsScrollbarThumb**<br/>项目滑块身份。" }
+  class n22 node_component
+  n23@{ shape: rounded, label: "**Node**<br/>来自Bevy 引擎 ↗：保存界面节点的布局约<br/>束。" }
+  class n23 node_component
+  class n23 external_node
+  n24@{ shape: rounded, label: "**Node**<br/>来自Bevy 引擎 ↗：保存界面节点的布局约<br/>束。" }
+  class n24 node_component
+  class n24 external_node
+  n25@{ shape: rounded, label: "**Node**<br/>来自Bevy 引擎 ↗：保存界面节点的布局约<br/>束。" }
+  class n25 node_component
+  class n25 external_node
+  n26@{ shape: rounded, label: "**Node**<br/>来自Bevy 引擎 ↗：保存音量轨道填充的视<br/>觉布局。" }
+  class n26 node_component
+  class n26 external_node
+  n27@{ shape: cyl, label: "**MenuState**<br/>保存菜单页面、设置分类、返回来源与提示。" }
+  class n27 node_resource
+  n28@{ shape: cyl, label: "**SettingsDraft**<br/>来自设置与参数 ↗：保存待应用的设置草稿<br/>与临时音量编辑。" }
+  class n28 node_resource
+  class n28 external_node
+  n29@{ shape: cyl, label: "**UiTheme**<br/>保存菜单使用的字体主题。" }
+  class n29 node_resource
+  n30@{ shape: notch-rect, label: "**Local · previous_layout**<br/>保存上次菜单结构以判断是否需要重建。" }
+  class n30 node_local
+  n31@{ shape: fr-rect, label: "**GameUiPlugin**<br/>管理菜单、设置编辑、导航与主菜单展示场<br/>景。" }
+  class n31 node_plugin
+  n0 e0@-->|"Build"| n1
+  class e0 edge_order
+  n0 e1@-->|"Build → Bind"| n2
+  class e1 edge_order
+  n3 e2@-->|"main / Update"| n0
+  class e2 edge_registration
+  n4 e3@--> n0
+  class e3 edge_set_membership
+  n5 e4@-->|"查询访问"| n0
+  class e4 edge_read
+  n6 e5@-->|"存在 / 变更过滤"| n0
+  class e5 edge_reference
+  n6 e6@---|"添加"| n0
+  class e6 edge_write
+  n0 e7@-->|"添加"| n7
+  class e7 edge_write
+  n0 e8@-->|"添加"| n8
+  class e8 edge_write
+  n0 e9@-->|"添加"| n9
+  class e9 edge_write
+  n0 e10@-->|"添加"| n10
+  class e10 edge_write
+  n0 e11@-->|"添加"| n11
+  class e11 edge_write
+  n12 e12@---|"添加"| n0
+  class e12 edge_write
+  n12 e13@-->|"查询访问"| n0
+  class e13 edge_read
+  n0 e14@-->|"添加"| n13
+  class e14 edge_write
+  n0 e15@-->|"添加"| n14
+  class e15 edge_write
+  n0 e16@-->|"添加"| n15
+  class e16 edge_write
+  n0 e17@-->|"添加"| n16
+  class e17 edge_write
+  n0 e18@-->|"添加"| n17
+  class e18 edge_write
+  n0 e19@-->|"添加"| n18
+  class e19 edge_write
+  n0 e20@-->|"添加"| n19
+  class e20 edge_write
+  n0 e21@-->|"添加"| n20
+  class e21 edge_write
+  n0 e22@-->|"添加"| n21
+  class e22 edge_write
+  n0 e23@-->|"添加"| n22
+  class e23 edge_write
+  n0 e24@-->|"可变访问"| n23
+  class e24 edge_write
+  n0 e25@-->|"可变访问"| n24
+  class e25 edge_write
+  n0 e26@-->|"可变访问"| n25
+  class e26 edge_write
+  n0 e27@-->|"可变访问"| n26
+  class e27 edge_write
+  n27 e28@-->|"访问声明"| n0
+  class e28 edge_read
+  n28 e29@-->|"访问声明"| n0
+  class e29 edge_read
+  n29 e30@-->|"访问声明"| n0
+  class e30 edge_read
+  n30 e31@-->|"访问声明"| n0
+  class e31 edge_read
+  n30 e32@---|"访问声明"| n0
+  class e32 edge_write
+  n31 e33@--> n0
+  class e33 edge_registration
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e18@{ curve: basis }
+  e19@{ curve: basis }
+  e20@{ curve: basis }
+  e21@{ curve: basis }
+  e22@{ curve: basis }
+  e23@{ curve: basis }
+  e24@{ curve: basis }
+  e25@{ curve: basis }
+  e26@{ curve: basis }
+  e27@{ curve: basis }
+  e28@{ curve: basis }
+  e29@{ curve: basis }
+  e30@{ curve: basis }
+  e31@{ curve: basis }
+  e32@{ curve: basis }
+  e33@{ curve: basis }

@@ -1,0 +1,133 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#object-26c8305c5b6abe6f-e12{marker-start:url(#object-26c8305c5b6abe6f_flowchart-v2-pointStart)!important}\n#object-26c8305c5b6abe6f-e14{marker-start:url(#object-26c8305c5b6abe6f_flowchart-v2-pointStart)!important}\n#object-26c8305c5b6abe6f-e16{marker-start:url(#object-26c8305c5b6abe6f_flowchart-v2-pointStart)!important}\n#object-26c8305c5b6abe6f-e18{marker-start:url(#object-26c8305c5b6abe6f_flowchart-v2-pointStart)!important}\n#object-26c8305c5b6abe6f_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}"
+  }
+}
+---
+flowchart LR
+  accTitle: extract_windows · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_message_buffer fill:#EDF4F6,stroke:#247B91,stroke-width:1.6px,color:#1F3340
+  classDef node_system_param fill:#EFF5F6,stroke:#3B8790,stroke-width:1.6px,color:#1F3340
+  classDef node_query_data fill:#F1F4F1,stroke:#567A51,stroke-width:1.6px,color:#1F3340
+  classDef node_engine_flow fill:#F1F5F4,stroke:#557C78,stroke-width:1.6px,color:#1F3340
+  classDef edge_order stroke:#334155,stroke-width:2px
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_consume stroke:#247B91,stroke-width:1.8px,stroke-dasharray:2 4
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**extract_windows**<br/>将主世界窗口尺寸、显示模式、原生句柄和主<br/>窗口身份同步到渲染世界，标记尺寸及模式变<br/>化，并处理关闭窗口或移除句柄造成的失效状<br/>态。" }
+  class n0 node_system
+  n1@{ shape: stadium, label: "**RenderApp · ExtractSchedule**<br/>保存本应用调度的注册上下文与成员。" }
+  class n1 node_engine_flow
+  n2@{ shape: rounded, label: "**extract_cameras**<br/>把主世界活动相机的目标、视口、变换、可见<br/>实体和渲染设置提取到渲染实体，并维护视图<br/>所需格式；对停用或目标尺寸无效的相机移除<br/>失效提取状态。" }
+  class n2 node_system
+  n3@{ shape: notch-rect, label: "**Commands**<br/>保存延迟执行的 World 操作队列" }
+  class n3 node_system_param
+  n4@{ shape: rounded, label: "**ExtractedWindow**<br/>保存渲染侧窗口尺寸、呈现模式和交换链状<br/>态。" }
+  class n4 node_component
+  n5@{ shape: cyl, label: "**Messages#lt;WindowClosing#gt;**<br/>保存 WindowClosing 消息。" }
+  class n5 node_message_buffer
+  n6@{ shape: notch-rect, label: "**RenderEntity**<br/>记录主实体对应的渲染世界实体。" }
+  class n6 node_query_data
+  n7@{ shape: rounded, label: "**Window**<br/>保存窗口的呈现模式、位置、分辨率、标题、<br/>全屏及平台行为配置" }
+  class n7 node_component
+  n8@{ shape: rounded, label: "**RawHandleWrapper**<br/>持有原始窗口及显示服务器句柄" }
+  class n8 node_component
+  n9@{ shape: rounded, label: "**PrimaryWindow**<br/>标识唯一的主窗口" }
+  class n9 node_component
+  n10@{ shape: notch-rect, label: "**RemovedComponents#lt;RawHandleWrapper#gt;**<br/>读取曾移除指定组件或连同该组件一起销毁的<br/>实体身份" }
+  class n10 node_system_param
+  n11@{ shape: notch-rect, label: "**RemovedComponents#lt;PrimaryWindow#gt;**<br/>读取曾移除指定组件或连同该组件一起销毁的<br/>实体身份" }
+  class n11 node_system_param
+  n12@{ shape: rounded, label: "**RenderEntity**<br/>记录主实体对应的渲染世界实体。" }
+  class n12 node_component
+  n13@{ shape: rounded, label: "**SurfaceData**<br/>保存窗口 GPU 表面及其呈现配置。" }
+  class n13 node_component
+  n1 e0@-->|"RenderApp / ExtractSchedule"| n0
+  class e0 edge_registration
+  n0 e1@--> n2
+  class e1 edge_order
+  n3 e2@-->|"参数 / 查询数据"| n0
+  class e2 edge_reference
+  n0 e3@--> n4
+  class e3 edge_write
+  n5 e4@--> n0
+  class e4 edge_consume
+  n6 e5@-->|"参数 / 查询数据"| n0
+  class e5 edge_reference
+  n7 e6@--> n0
+  class e6 edge_read
+  n8 e7@--> n0
+  class e7 edge_read
+  n9 e8@-->|"存在 / 变更过滤"| n0
+  class e8 edge_reference
+  n10 e9@-->|"参数 / 查询数据"| n0
+  class e9 edge_reference
+  n11 e10@-->|"参数 / 查询数据"| n0
+  class e10 edge_reference
+  n12 e11@--> n0
+  class e11 edge_read
+  n9 e12@---|"延迟添加"| n0
+  class e12 edge_write
+  n0 e13@-->|"延迟添加"| n4
+  class e13 edge_write
+  n8 e14@---|"延迟添加"| n0
+  class e14 edge_write
+  n0 e15@-->|"延迟移除"| n4
+  class e15 edge_write
+  n8 e16@---|"延迟移除"| n0
+  class e16 edge_write
+  n0 e17@-->|"延迟移除"| n13
+  class e17 edge_write
+  n9 e18@---|"延迟移除"| n0
+  class e18 edge_write
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: bumpX }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e17@{ curve: basis }
+  e18@{ curve: basis }

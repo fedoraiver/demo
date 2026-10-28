@@ -1,0 +1,329 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#object-d8d7e0a87c477cf3-e6{marker-start:url(#object-d8d7e0a87c477cf3_flowchart-v2-pointStart)!important}\n#object-d8d7e0a87c477cf3-e11{marker-start:url(#object-d8d7e0a87c477cf3_flowchart-v2-pointStart)!important}\n#object-d8d7e0a87c477cf3-e17{marker-start:url(#object-d8d7e0a87c477cf3_flowchart-v2-pointStart)!important}\n#object-d8d7e0a87c477cf3-e53{marker-start:url(#object-d8d7e0a87c477cf3_flowchart-v2-pointStart)!important}\n#object-d8d7e0a87c477cf3_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}"
+  }
+}
+---
+flowchart LR
+  accTitle: GlobalTransform · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**GlobalTransform**<br/>保存实体合并祖先变换后的世界空间仿射变换" }
+  class n0 node_component
+  n1@{ shape: rounded, label: "**transform_to_position**<br/>来自Avian ↗：把用户改变的世界变换同步<br/>到物理位姿。" }
+  class n1 node_system
+  class n1 external_node
+  n2@{ shape: rounded, label: "**update_ray_caster_positions**<br/>来自Avian ↗：把射线发射器的局部原点和<br/>方向换到世界空间。" }
+  class n2 node_system
+  class n2 external_node
+  n3@{ shape: rounded, label: "**update_shape_caster_positions**<br/>来自Avian ↗：把形状扫掠的原点、方向和<br/>形状朝向换到世界空间。" }
+  class n3 node_system
+  class n3 external_node
+  n4@{ shape: rounded, label: "**mark_dirty_trees**<br/>沿祖先链标记需要重算变换的子树。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**propagate_parent_transforms**<br/>沿父子层级并行合成世界变换。" }
+  class n5 node_system
+  n6@{ shape: rounded, label: "**sync_simple_transforms**<br/>同步没有父子层级的独立实体世界变换。" }
+  class n6 node_system
+  n7@{ shape: rounded, label: "**check_parent_has_component#lt;bevy_**<br/>**transform::components::global_**<br/>**transform::GlobalTransform#gt;**<br/>报告仍不满足组件层级要求的父子关系。" }
+  class n7 node_system
+  n8@{ shape: rounded, label: "**mark_dirty_trees**<br/>沿祖先链标记需要重算变换的子树。" }
+  class n8 node_system
+  n9@{ shape: rounded, label: "**propagate_parent_transforms**<br/>沿父子层级并行合成世界变换。" }
+  class n9 node_system
+  n10@{ shape: rounded, label: "**sync_simple_transforms**<br/>同步没有父子层级的独立实体世界变换。" }
+  class n10 node_system
+  n11@{ shape: rounded, label: "**update_gizmo_meshes**<br/>将变换操作器对齐焦点并更新模式与高亮。" }
+  class n11 node_system
+  n12@{ shape: rounded, label: "**propagate_transforms_for#lt;bevy_ecs::**<br/>**query::filter::Or#lt;(bevy_ecs::query::**<br/>**filter::With#lt;bevy_gizmos::transform_**<br/>**gizmo::TransformGizmoRoot#gt;, bevy_**<br/>**ecs::query::filter::With#lt;bevy_**<br/>**gizmos_render::transform_gizmo_**<br/>**render::GizmoOverlayCamera#gt;, bevy_**<br/>**ecs::query::filter::With#lt;bevy_**<br/>**gizmos::transform_gizmo::**<br/>**TransformGizmoMeshMarker#gt;)#gt;#gt;**<br/>按指定查询过滤器即时计算世界变换。" }
+  class n12 node_system
+  n13@{ shape: rounded, label: "**mark_dirty_trees**<br/>沿祖先链标记需要重算变换的子树。" }
+  class n13 node_system
+  n14@{ shape: rounded, label: "**propagate_parent_transforms**<br/>沿父子层级并行合成世界变换。" }
+  class n14 node_system
+  n15@{ shape: rounded, label: "**sync_simple_transforms**<br/>同步没有父子层级的独立实体世界变换。" }
+  class n15 node_system
+  n16@{ shape: rounded, label: "**update_frusta**<br/>相机 GlobalTransform 或 Projection<br/>改变时，根据投影和世界变换重新计算<br/>Frustum，供后续可见性裁剪使用。" }
+  class n16 node_system
+  n17@{ shape: rounded, label: "**check_visibility_cpu_culling**<br/>按层、距离和视锥收集各相机可见实体。" }
+  class n17 node_system
+  n18@{ shape: rounded, label: "**check_visibility_ranges**<br/>按视图距离计算实体可见范围位掩码。" }
+  class n18 node_system
+  n19@{ shape: rounded, label: "**update_skinned_mesh_bounds**<br/>依据当前关节姿态更新动态蒙皮包围盒。" }
+  class n19 node_system
+  n20@{ shape: rounded, label: "**check_dir_light_mesh_visibility**<br/>计算方向光各相机级联可见的投影网格。" }
+  class n20 node_system
+  n21@{ shape: rounded, label: "**check_point_light_mesh_visibility**<br/>计算点光与聚光灯阴影可见的网格。" }
+  class n21 node_system
+  n22@{ shape: rounded, label: "**assign_objects_to_clusters**<br/>将灯光、探针及贴花分配到视图分簇。" }
+  class n22 node_system
+  n23@{ shape: rounded, label: "**update_point_light_frusta**<br/>更新可见点光的六面阴影视锥。" }
+  class n23 node_system
+  n24@{ shape: rounded, label: "**update_spot_light_frusta**<br/>更新可见聚光灯的阴影视锥。" }
+  class n24 node_system
+  n25@{ shape: rounded, label: "**build_directional_light_cascades**<br/>为投射阴影的方向光构建逐相机级联。" }
+  class n25 node_system
+  n26@{ shape: rounded, label: "**update_point_light_bounding_spheres**<br/>按点光位置和范围更新剔除包围球。" }
+  class n26 node_system
+  n27@{ shape: rounded, label: "**update_spot_light_bounding_spheres**<br/>按聚光灯位置和范围更新剔除包围球。" }
+  class n27 node_system
+  n28@{ shape: rounded, label: "**draw_lights**<br/>为带 ShowLightGizmo 的点光源、聚光灯、<br/>方向光和矩形光源绘制调试轮廓；按组件或配<br/>置选择手动颜色、实体区分色、光源颜色或类<br/>型颜色。" }
+  class n28 node_system
+  n29@{ shape: rounded, label: "**draw_all_lights**<br/>按配置颜色模式绘制全部灯光调试图形。" }
+  class n29 node_system
+  n30@{ shape: rounded, label: "**draw_aabbs**<br/>为带 ShowAabbGizmo 且可见的实体，使用<br/>Aabb 和 GlobalTransform 绘制三维包围<br/>盒；颜色来自组件、配置默认值或实体派生<br/>色。" }
+  class n30 node_system
+  n31@{ shape: rounded, label: "**draw_all_aabbs**<br/>绘制未单独标记实体的可见 AABB 调试线<br/>框。" }
+  class n31 node_system
+  n32@{ shape: rounded, label: "**draw_skinned_mesh_bounds**<br/>绘制带独立显示标记的动态蒙皮包围区域。" }
+  class n32 node_system
+  n33@{ shape: rounded, label: "**draw_all_skinned_mesh_bounds**<br/>绘制未单独标记的动态蒙皮网格包围区域。" }
+  class n33 node_system
+  n34@{ shape: rounded, label: "**sprite_picking**<br/>将可见、变换有效的精灵按深度排序，结合指<br/>针射线、相机、精灵图像和拾取配置计算命<br/>中，并向拾取后端发布 PointerHits。" }
+  class n34 node_system
+  n35@{ shape: rounded, label: "**repopulate**<br/>清空 RayMap，再为指针位置落在有效相机视<br/>口内的每个相机与指针组合创建世界射线，并<br/>按 RayId 保存。" }
+  class n35 node_system
+  n36@{ shape: rounded, label: "**update_mesh_previous_global_**<br/>**transforms**<br/>为下帧保存网格的当前世界变换。" }
+  class n36 node_system
+  n37@{ shape: rounded, label: "**update_previous_view_data**<br/>记录三维及阴影视图未抖动的变换矩阵。" }
+  class n37 node_system
+  n38@{ shape: rounded, label: "**extract_meshes_for_gpu_building**<br/>增量提取变化或需重试网格到线程队列。" }
+  class n38 node_system
+  n39@{ shape: rounded, label: "**extract_cameras**<br/>把主世界活动相机的目标、视口、变换、可见<br/>实体和渲染设置提取到渲染实体，并维护视图<br/>所需格式；对停用或目标尺寸无效的相机移除<br/>失效提取状态。" }
+  class n39 node_system
+  n40@{ shape: rounded, label: "**extract_2d_meshes**<br/>增量同步二维网格变换和渲染实例信息。" }
+  class n40 node_system
+  n41@{ shape: rounded, label: "**extract_text2d_sprite**<br/>把可见二维文字及装饰提取为精灵切片。" }
+  class n41 node_system
+  n42@{ shape: rounded, label: "**extract_skins**<br/>按蒙皮可见性和资产变化分配或回收骨骼缓冲<br/>区域，提取关节全局变换与逆绑定姿势到暂存<br/>数据，并清理移除的蒙皮记录。" }
+  class n42 node_system
+  n43@{ shape: rounded, label: "**gather_light_probes#lt;bevy_light::**<br/>**probe::EnvironmentMapLight#gt;**<br/>按相机可见集合和距离分配已就绪光照探针。" }
+  class n43 node_system
+  n44@{ shape: rounded, label: "**gather_light_probes#lt;bevy_light::**<br/>**probe::IrradianceVolume#gt;**<br/>按相机可见集合和距离分配已就绪光照探针。" }
+  class n44 node_system
+  n45@{ shape: rounded, label: "**extract_volumetric_fog**<br/>从主世界提取体积雾、雾体积及体积光配置。" }
+  class n45 node_system
+  n46@{ shape: rounded, label: "**extract_decals**<br/>从主世界提取可见聚簇贴花及点光、聚光和平<br/>行光的光照纹理，重建渲染贴花缓冲，并记录<br/>真正参与聚簇计算的贴花数量。" }
+  class n46 node_system
+  n47@{ shape: rounded, label: "**extract_atmosphere**<br/>为每个启用 AtmosphereSettings 的三维<br/>相机选择世界距离最近的大气实体，复制大气<br/>和 GPU 设置到渲染世界；设置移除或没有候<br/>选大气时清理旧状态。" }
+  class n47 node_system
+  n48@{ shape: rounded, label: "**extract_lights**<br/>同步可见点光、聚光、平行光及矩形光的渲染<br/>参数和阴影可见实体，提取变化的阴影贴图设<br/>置；隐藏或失效光源不继续保留有效渲染状<br/>态。" }
+  class n48 node_system
+  n49@{ shape: rounded, label: "**extract_shadow_lod_origin**<br/>解析点光与聚光阴影 LOD 的距离参考位置。" }
+  class n49 node_system
+  n50@{ shape: rounded, label: "**prepare_volumetric_fog_uniforms**<br/>把各视图和雾体积组合转换为体积雾<br/>Uniform。" }
+  class n50 node_system
+  n0 e0@--> n1
+  class e0 edge_read
+  n0 e1@--> n2
+  class e1 edge_read
+  n0 e2@--> n3
+  class e2 edge_read
+  n0 e3@-->|"存在 / 变更过滤"| n4
+  class e3 edge_reference
+  n5 e4@--> n0
+  class e4 edge_write
+  n6 e5@--> n0
+  class e5 edge_write
+  n6 e6@---|"存在 / 变更过滤"| n0
+  class e6 edge_reference
+  n0 e7@-->|"存在 / 变更过滤"| n7
+  class e7 edge_reference
+  n0 e8@-->|"存在 / 变更过滤"| n8
+  class e8 edge_reference
+  n9 e9@--> n0
+  class e9 edge_write
+  n10 e10@--> n0
+  class e10 edge_write
+  n10 e11@---|"存在 / 变更过滤"| n0
+  class e11 edge_reference
+  n0 e12@--> n11
+  class e12 edge_read
+  n12 e13@--> n0
+  class e13 edge_write
+  n0 e14@-->|"存在 / 变更过滤"| n13
+  class e14 edge_reference
+  n14 e15@--> n0
+  class e15 edge_write
+  n15 e16@--> n0
+  class e16 edge_write
+  n15 e17@---|"存在 / 变更过滤"| n0
+  class e17 edge_reference
+  n0 e18@--> n16
+  class e18 edge_read
+  n0 e19@-->|"存在 / 变更过滤"| n16
+  class e19 edge_reference
+  n0 e20@--> n17
+  class e20 edge_read
+  n0 e21@--> n18
+  class e21 edge_read
+  n0 e22@--> n19
+  class e22 edge_read
+  n0 e23@--> n20
+  class e23 edge_read
+  n0 e24@--> n21
+  class e24 edge_read
+  n0 e25@--> n22
+  class e25 edge_read
+  n0 e26@--> n23
+  class e26 edge_read
+  n0 e27@-->|"存在 / 变更过滤"| n23
+  class e27 edge_reference
+  n0 e28@--> n24
+  class e28 edge_read
+  n0 e29@-->|"存在 / 变更过滤"| n24
+  class e29 edge_reference
+  n0 e30@--> n25
+  class e30 edge_read
+  n0 e31@--> n26
+  class e31 edge_read
+  n0 e32@-->|"存在 / 变更过滤"| n26
+  class e32 edge_reference
+  n0 e33@--> n27
+  class e33 edge_read
+  n0 e34@-->|"存在 / 变更过滤"| n27
+  class e34 edge_reference
+  n0 e35@--> n28
+  class e35 edge_read
+  n0 e36@--> n29
+  class e36 edge_read
+  n0 e37@--> n30
+  class e37 edge_read
+  n0 e38@--> n31
+  class e38 edge_read
+  n0 e39@--> n32
+  class e39 edge_read
+  n0 e40@--> n33
+  class e40 edge_read
+  n0 e41@--> n34
+  class e41 edge_read
+  n0 e42@--> n35
+  class e42 edge_read
+  n0 e43@--> n36
+  class e43 edge_read
+  n0 e44@--> n37
+  class e44 edge_read
+  n0 e45@-->|"存在 / 变更过滤"| n38
+  class e45 edge_reference
+  n0 e46@--> n39
+  class e46 edge_read
+  n0 e47@-->|"存在 / 变更过滤"| n40
+  class e47 edge_reference
+  n0 e48@--> n41
+  class e48 edge_read
+  n0 e49@--> n42
+  class e49 edge_read
+  n0 e50@-->|"存在 / 变更过滤"| n42
+  class e50 edge_reference
+  n0 e51@--> n43
+  class e51 edge_read
+  n0 e52@--> n44
+  class e52 edge_read
+  n45 e53@--- n0
+  class e53 edge_read
+  n45 e54@-->|"延迟添加"| n0
+  class e54 edge_write
+  n0 e55@--> n46
+  class e55 edge_read
+  n0 e56@--> n47
+  class e56 edge_read
+  n0 e57@--> n48
+  class e57 edge_read
+  n0 e58@-->|"存在 / 变更过滤"| n48
+  class e58 edge_reference
+  n0 e59@--> n49
+  class e59 edge_read
+  n0 e60@--> n50
+  class e60 edge_read
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: bumpX }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e17@{ curve: basis }
+  e18@{ curve: basis }
+  e19@{ curve: basis }
+  e20@{ curve: basis }
+  e21@{ curve: basis }
+  e22@{ curve: basis }
+  e23@{ curve: basis }
+  e24@{ curve: basis }
+  e25@{ curve: basis }
+  e26@{ curve: basis }
+  e27@{ curve: basis }
+  e28@{ curve: basis }
+  e29@{ curve: basis }
+  e30@{ curve: basis }
+  e31@{ curve: basis }
+  e32@{ curve: basis }
+  e33@{ curve: basis }
+  e34@{ curve: basis }
+  e35@{ curve: basis }
+  e36@{ curve: basis }
+  e37@{ curve: basis }
+  e38@{ curve: basis }
+  e39@{ curve: basis }
+  e40@{ curve: basis }
+  e41@{ curve: basis }
+  e42@{ curve: basis }
+  e43@{ curve: basis }
+  e44@{ curve: basis }
+  e45@{ curve: basis }
+  e46@{ curve: basis }
+  e47@{ curve: basis }
+  e48@{ curve: basis }
+  e49@{ curve: basis }
+  e50@{ curve: basis }
+  e51@{ curve: basis }
+  e52@{ curve: basis }
+  e53@{ curve: basis }
+  e54@{ curve: basis }
+  e55@{ curve: basis }
+  e56@{ curve: basis }
+  e57@{ curve: basis }
+  e58@{ curve: basis }
+  e59@{ curve: basis }
+  e60@{ curve: basis }

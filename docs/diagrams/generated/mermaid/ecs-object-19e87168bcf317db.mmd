@@ -1,0 +1,217 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: main · FixedUpdate · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_sync fill:#F6F3F0,stroke:#8B6A42,stroke-width:1.6px,color:#1F3340
+  classDef node_engine_flow fill:#F1F5F4,stroke:#557C78,stroke-width:1.6px,color:#1F3340
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: stadium, label: "**main · FixedUpdate**<br/>保存本应用调度的注册上下文与成员。" }
+  class n0 node_engine_flow
+  n1@{ shape: rounded, label: "**recover_from_water**<br/>来自越界恢复 ↗：将落水实体恢复到各自出<br/>生姿态。" }
+  class n1 node_system
+  class n1 external_node
+  n2@{ shape: rounded, label: "**sync_character_facing**<br/>来自第一人称控制 ↗：同步人物朝向并处理<br/>持物转向受阻。" }
+  class n2 node_system
+  class n2 external_node
+  n3@{ shape: rounded, label: "**handle_interaction**<br/>来自物品交互 ↗：处理物品拾取、共享持握<br/>与主动释放。" }
+  class n3 node_system
+  class n3 external_node
+  n4@{ shape: rounded, label: "**sync_held_presentation**<br/>来自物品交互 ↗：按人物呈现姿态同步持物<br/>模型与握持目标。" }
+  class n4 node_system
+  class n4 external_node
+  n5@{ shape: rounded, label: "**sync_gravity**<br/>来自物理基础 ↗：将共享重力配置同步到物<br/>理世界。" }
+  class n5 node_system
+  class n5 external_node
+  n6@{ shape: rounded, label: "**warn_hold_strain**<br/>来自物品交互 ↗：检查持续持握偏差并发出<br/>失稳提示音。" }
+  class n6 node_system
+  class n6 external_node
+  n7@{ shape: rounded, label: "**ApplyDeferred**<br/>在调度建立的同步点应用前序系统暂存的<br/>Commands 等延迟操作，使后续系统可以观察<br/>到结构变化；此卡片是 ApplyDeferred 的<br/>System 实现。" }
+  class n7 node_sync
+  n8@{ shape: rounded, label: "**ApplyDeferred**<br/>在调度建立的同步点应用前序系统暂存的<br/>Commands 等延迟操作，使后续系统可以观察<br/>到结构变化；此卡片是 ApplyDeferred 的<br/>System 实现。" }
+  class n8 node_sync
+  n9@{ shape: rounded, label: "**ApplyDeferred**<br/>在调度建立的同步点应用前序系统暂存的<br/>Commands 等延迟操作，使后续系统可以观察<br/>到结构变化；此卡片是 ApplyDeferred 的<br/>System 实现。" }
+  class n9 node_sync
+  n10@{ shape: rounded, label: "**ApplyDeferred**<br/>在调度建立的同步点应用前序系统暂存的<br/>Commands 等延迟操作，使后续系统可以观察<br/>到结构变化；此卡片是 ApplyDeferred 的<br/>System 实现。" }
+  class n10 node_sync
+  n11@{ shape: rounded, label: "**ApplyDeferred**<br/>在调度建立的同步点应用前序系统暂存的<br/>Commands 等延迟操作，使后续系统可以观察<br/>到结构变化；此卡片是 ApplyDeferred 的<br/>System 实现。" }
+  class n11 node_sync
+  n12@{ shape: rounded, label: "**ApplyDeferred**<br/>在调度建立的同步点应用前序系统暂存的<br/>Commands 等延迟操作，使后续系统可以观察<br/>到结构变化；此卡片是 ApplyDeferred 的<br/>System 实现。" }
+  class n12 node_sync
+  n13@{ shape: rounded, label: "**ApplyDeferred**<br/>在调度建立的同步点应用前序系统暂存的<br/>Commands 等延迟操作，使后续系统可以观察<br/>到结构变化；此卡片是 ApplyDeferred 的<br/>System 实现。" }
+  class n13 node_sync
+  n14@{ shape: rounded, label: "**ApplyDeferred**<br/>在调度建立的同步点应用前序系统暂存的<br/>Commands 等延迟操作，使后续系统可以观察<br/>到结构变化；此卡片是 ApplyDeferred 的<br/>System 实现。" }
+  class n14 node_sync
+  n15@{ shape: rounded, label: "**update_grounded**<br/>来自角色运动 ↗：准备运动前更新接地状<br/>态。" }
+  class n15 node_system
+  class n15 external_node
+  n16@{ shape: rounded, label: "**move_characters**<br/>来自角色运动 ↗：按移动意图和速度为角色<br/>施加水平运动力。" }
+  class n16 node_system
+  class n16 external_node
+  n17@{ shape: rounded, label: "**jump_characters**<br/>来自角色运动 ↗：执行角色跳跃并消费单次<br/>请求。" }
+  class n17 node_system
+  class n17 external_node
+  n18@{ shape: rounded, label: "**release_orphaned_items**<br/>来自物品交互 ↗：清理失效持握并恢复物品<br/>独立运动。" }
+  class n18 node_system
+  class n18 external_node
+  n19@{ shape: rounded, label: "**cleanup_orphaned_colliders**<br/>来自物品交互 ↗：清理物品销毁后残留的碰<br/>撞代理。" }
+  class n19 node_system
+  class n19 external_node
+  n20@{ shape: rounded, label: "**restore_empty_holder_mass**<br/>来自物品交互 ↗：归还不再持物角色的原有<br/>质量。" }
+  class n20 node_system
+  class n20 external_node
+  n21@{ shape: rounded, label: "**finish_attachments**<br/>来自物品交互 ↗：为持物装配共享碰撞代理<br/>并累计质量。" }
+  class n21 node_system
+  class n21 external_node
+  n22@{ shape: rounded, label: "**align_attachments**<br/>来自物品交互 ↗：沿安全碰撞路径将物品对<br/>齐双手。" }
+  class n22 node_system
+  class n22 external_node
+  n23@{ shape: rounded, label: "**sync_held_physics**<br/>来自物品交互 ↗：按人物物理姿态同步持物<br/>位置与碰撞代理。" }
+  class n23 node_system
+  class n23 external_node
+  n24@{ shape: lin-rect, label: "**FixedGameplaySystems::Recover**<br/>来自应用流程 ↗：在固定步开始恢复越界实<br/>体。" }
+  class n24 node_system_set
+  class n24 external_node
+  n25@{ shape: lin-rect, label: "**FixedGameplaySystems::Facing**<br/>来自应用流程 ↗：在固定步运动前处理人物<br/>朝向。" }
+  class n25 node_system_set
+  class n25 external_node
+  n26@{ shape: lin-rect, label: "**FixedGameplaySystems::Motion**<br/>来自应用流程 ↗：观察接地并施加角色移动<br/>与跳跃。" }
+  class n26 node_system_set
+  class n26 external_node
+  n27@{ shape: lin-rect, label: "**FixedGameplaySystems::Interaction**<br/>来自应用流程 ↗：在固定步内处理拾取和释<br/>放请求。" }
+  class n27 node_system_set
+  class n27 external_node
+  n28@{ shape: lin-rect, label: "**FixedGameplaySystems::Target**<br/>来自应用流程 ↗：在装配前同步本帧持物呈<br/>现目标。" }
+  class n28 node_system_set
+  class n28 external_node
+  n29@{ shape: lin-rect, label: "**FixedGameplaySystems::Attachment**<br/>来自应用流程 ↗：完成持物关系清理和共享<br/>碰撞体装配。" }
+  class n29 node_system_set
+  class n29 external_node
+  n30@{ shape: lin-rect, label: "**AnonymousSet(0)**<br/>保存本组系统共同的运行条件。" }
+  class n30 node_system_set
+  n31@{ shape: lin-rect, label: "**AnonymousSet(1)**<br/>保存本组系统共同的运行条件。" }
+  class n31 node_system_set
+  n0 e0@-->|"main / FixedUpdate"| n1
+  class e0 edge_registration
+  n0 e1@-->|"main / FixedUpdate"| n2
+  class e1 edge_registration
+  n0 e2@-->|"main / FixedUpdate"| n3
+  class e2 edge_registration
+  n0 e3@-->|"main / FixedUpdate"| n4
+  class e3 edge_registration
+  n0 e4@-->|"main / FixedUpdate"| n5
+  class e4 edge_registration
+  n0 e5@-->|"main / FixedUpdate"| n6
+  class e5 edge_registration
+  n0 e6@-->|"main / FixedUpdate"| n7
+  class e6 edge_registration
+  n0 e7@-->|"main / FixedUpdate"| n8
+  class e7 edge_registration
+  n0 e8@-->|"main / FixedUpdate"| n9
+  class e8 edge_registration
+  n0 e9@-->|"main / FixedUpdate"| n10
+  class e9 edge_registration
+  n0 e10@-->|"main / FixedUpdate"| n11
+  class e10 edge_registration
+  n0 e11@-->|"main / FixedUpdate"| n12
+  class e11 edge_registration
+  n0 e12@-->|"main / FixedUpdate"| n13
+  class e12 edge_registration
+  n0 e13@-->|"main / FixedUpdate"| n14
+  class e13 edge_registration
+  n0 e14@-->|"main / FixedUpdate"| n15
+  class e14 edge_registration
+  n0 e15@-->|"main / FixedUpdate"| n16
+  class e15 edge_registration
+  n0 e16@-->|"main / FixedUpdate"| n17
+  class e16 edge_registration
+  n0 e17@-->|"main / FixedUpdate"| n18
+  class e17 edge_registration
+  n0 e18@-->|"main / FixedUpdate"| n19
+  class e18 edge_registration
+  n0 e19@-->|"main / FixedUpdate"| n20
+  class e19 edge_registration
+  n0 e20@-->|"main / FixedUpdate"| n21
+  class e20 edge_registration
+  n0 e21@-->|"main / FixedUpdate"| n22
+  class e21 edge_registration
+  n0 e22@-->|"main / FixedUpdate"| n23
+  class e22 edge_registration
+  n0 e23@-->|"main / FixedUpdate"| n24
+  class e23 edge_registration
+  n0 e24@-->|"main / FixedUpdate"| n25
+  class e24 edge_registration
+  n0 e25@-->|"main / FixedUpdate"| n26
+  class e25 edge_registration
+  n0 e26@-->|"main / FixedUpdate"| n27
+  class e26 edge_registration
+  n0 e27@-->|"main / FixedUpdate"| n28
+  class e27 edge_registration
+  n0 e28@-->|"main / FixedUpdate"| n29
+  class e28 edge_registration
+  n0 e29@-->|"main / FixedUpdate"| n30
+  class e29 edge_registration
+  n0 e30@-->|"main / FixedUpdate"| n31
+  class e30 edge_registration
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e16@{ curve: basis }
+  e17@{ curve: basis }
+  e18@{ curve: basis }
+  e19@{ curve: basis }
+  e20@{ curve: basis }
+  e21@{ curve: basis }
+  e22@{ curve: basis }
+  e23@{ curve: basis }
+  e24@{ curve: basis }
+  e25@{ curve: basis }
+  e26@{ curve: basis }
+  e27@{ curve: basis }
+  e28@{ curve: basis }
+  e29@{ curve: basis }
+  e30@{ curve: basis }

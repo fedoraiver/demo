@@ -1,0 +1,81 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: NonSendMarker · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_system_param fill:#EFF5F6,stroke:#3B8790,stroke-width:1.6px,color:#1F3340
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: notch-rect, label: "**NonSendMarker**<br/>利用不可 Send 的标记约束系统在主线程运<br/>行" }
+  class n0 node_system_param
+  n1@{ shape: rounded, label: "**tick_global_task_pools**<br/>在主线程推进全局任务池，使等待主线程轮询<br/>的后台任务继续执行；NonSendMarker 保证<br/>该系统不会调度到其他线程。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**changed_windows**<br/>将 Window 组件与 CachedWindow 比较，<br/>把标题、模式、位置、分辨率等受支持的变化<br/>同步到 winit 原生窗口，并发布调整尺寸或<br/>缩放等消息；渲染呈现模式由渲染模块另行处<br/>理。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**changed_cursor_options**<br/>把光标配置变化同步到原生窗口。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**despawn_windows**<br/>处理 ClosingWindow、Window 组件移除<br/>和 AppExit，通知窗口即将关闭，移出<br/>winit 窗口表并发布 WindowClosed；原生<br/>窗口包装保留到下一轮再由主线程释放。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**update_accessibility_nodes**<br/>把变化的可访问性节点同步给原生适配器。" }
+  class n5 node_system
+  n6@{ shape: rounded, label: "**window_closed**<br/>消费 WindowClosed 消息，移除对应窗口<br/>的 AccessKit 适配器和无障碍请求处理<br/>器，避免关闭后的窗口继续保留后端状态。" }
+  class n6 node_system
+  n7@{ shape: rounded, label: "**process_ime_system**<br/>来自Egui / Inspector ↗：同步 Egui 编<br/>辑区域的原生输入法状态。" }
+  class n7 node_system
+  class n7 external_node
+  n8@{ shape: rounded, label: "**create_surfaces**<br/>根据提取窗口的原生句柄创建 GPU 表面，选<br/>择支持的纹理格式、显示及透明模式并配置<br/>SurfaceData；已有表面则按窗口变化更新<br/>配置。" }
+  class n8 node_system
+  n0 e0@-->|"参数 / 查询数据"| n1
+  class e0 edge_reference
+  n0 e1@-->|"参数 / 查询数据"| n2
+  class e1 edge_reference
+  n0 e2@-->|"参数 / 查询数据"| n3
+  class e2 edge_reference
+  n0 e3@-->|"参数 / 查询数据"| n4
+  class e3 edge_reference
+  n0 e4@-->|"参数 / 查询数据"| n5
+  class e4 edge_reference
+  n0 e5@-->|"参数 / 查询数据"| n6
+  class e5 edge_reference
+  n0 e6@-->|"参数 / 查询数据"| n7
+  class e6 edge_reference
+  n0 e7@-->|"参数 / 查询数据"| n8
+  class e7 edge_reference
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }

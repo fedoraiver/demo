@@ -1,0 +1,143 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 4,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#object-bdde8fdb6751e714-e17{marker-start:url(#object-bdde8fdb6751e714_flowchart-v2-pointStart)!important}\n#object-bdde8fdb6751e714_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}"
+  }
+}
+---
+flowchart LR
+  accTitle: PrimaryWindow · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**PrimaryWindow**<br/>标识唯一的主窗口" }
+  class n0 node_component
+  n1@{ shape: rounded, label: "**mouse_pick_events**<br/>把窗口鼠标事件转换为拾取指针动作。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**touch_pick_events**<br/>把触摸阶段转换为独立拾取指针。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**camera_system**<br/>响应窗口创建、尺寸与缩放变化及图像目标变<br/>化，更新 Camera 与 Projection 的目标<br/>尺寸和投影信息；只读取相机实际引用的图像<br/>目标。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**set_initial_focus**<br/>在没有焦点目标时使用主窗口。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**update_accessibility_nodes**<br/>把变化的可访问性节点同步给原生适配器。" }
+  class n5 node_system
+  n6@{ shape: rounded, label: "**camera_system**<br/>响应窗口创建、尺寸与缩放变化及图像目标变<br/>化，更新 Camera 与 Projection 的目标<br/>尺寸和投影信息；只读取相机实际引用的图像<br/>目标。" }
+  class n6 node_system
+  n7@{ shape: rounded, label: "**propagate_ui_target_cameras**<br/>为 UI 根配置目标相机和视口信息传播源。" }
+  class n7 node_system
+  n8@{ shape: rounded, label: "**update_text2d_layout**<br/>重新排版变化的二维文字并准备字形。" }
+  class n8 node_system
+  n9@{ shape: rounded, label: "**update_ime_position**<br/>把输入法候选窗口放到当前文字光标下方。" }
+  class n9 node_system
+  n10@{ shape: rounded, label: "**dispatch_focused_input#lt;bevy_input::**<br/>**gamepad::GamepadButtonChangedEvent#gt;**<br/>读取对应输入消息并向当前焦点实体派发可冒<br/>泡的 FocusedInput；焦点无效时回退到主<br/>窗口。" }
+  class n10 node_system
+  n11@{ shape: rounded, label: "**dispatch_focused_input#lt;bevy_input::**<br/>**mouse::MouseWheel#gt;**<br/>读取对应输入消息并向当前焦点实体派发可冒<br/>泡的 FocusedInput；焦点无效时回退到主<br/>窗口。" }
+  class n11 node_system
+  n12@{ shape: rounded, label: "**sprite_picking**<br/>将可见、变换有效的精灵按深度排序，结合指<br/>针射线、相机、精灵图像和拾取配置计算命<br/>中，并向拾取后端发布 PointerHits。" }
+  class n12 node_system
+  n13@{ shape: rounded, label: "**ui_picking**<br/>把各指针位置映射到匹配相机的视口坐标，<br/>按 UiStack 的绘制顺序检查 UI 节点及拾<br/>取规则，输出 PointerHits 供悬停与交互<br/>阶段汇总。" }
+  class n13 node_system
+  n14@{ shape: rounded, label: "**ui_focus_system**<br/>按鼠标和触摸更新旧式 UI 交互状态。" }
+  class n14 node_system
+  n15@{ shape: rounded, label: "**listen_for_ime_input_when_text_**<br/>**input_focused**<br/>按可编辑焦点控制主窗口输入法。" }
+  class n15 node_system
+  n16@{ shape: rounded, label: "**repopulate**<br/>清空 RayMap，再为指针位置落在有效相机视<br/>口内的每个相机与指针组合创建世界射线，并<br/>按 RayId 保存。" }
+  class n16 node_system
+  n17@{ shape: rounded, label: "**on_egui_context_added_system**<br/>来自Egui / Inspector ↗：登记新 Egui<br/>上下文对应的窗口。" }
+  class n17 node_system
+  class n17 external_node
+  n18@{ shape: rounded, label: "**extract_windows**<br/>将主世界窗口尺寸、显示模式、原生句柄和主<br/>窗口身份同步到渲染世界，标记尺寸及模式变<br/>化，并处理关闭窗口或移除句柄造成的失效状<br/>态。" }
+  class n18 node_system
+  n19@{ shape: rounded, label: "**extract_cameras**<br/>把主世界活动相机的目标、视口、变换、可见<br/>实体和渲染设置提取到渲染实体，并维护视图<br/>所需格式；对停用或目标尺寸无效的相机移除<br/>失效提取状态。" }
+  class n19 node_system
+  n0 e0@-->|"存在 / 变更过滤"| n1
+  class e0 edge_reference
+  n0 e1@-->|"存在 / 变更过滤"| n2
+  class e1 edge_reference
+  n0 e2@-->|"存在 / 变更过滤"| n3
+  class e2 edge_reference
+  n0 e3@-->|"存在 / 变更过滤"| n4
+  class e3 edge_reference
+  n0 e4@-->|"存在 / 变更过滤"| n5
+  class e4 edge_reference
+  n0 e5@-->|"存在 / 变更过滤"| n6
+  class e5 edge_reference
+  n0 e6@-->|"存在 / 变更过滤"| n7
+  class e6 edge_reference
+  n0 e7@-->|"存在 / 变更过滤"| n8
+  class e7 edge_reference
+  n0 e8@-->|"存在 / 变更过滤"| n9
+  class e8 edge_reference
+  n0 e9@-->|"存在 / 变更过滤"| n10
+  class e9 edge_reference
+  n0 e10@-->|"存在 / 变更过滤"| n11
+  class e10 edge_reference
+  n0 e11@-->|"存在 / 变更过滤"| n12
+  class e11 edge_reference
+  n0 e12@-->|"存在 / 变更过滤"| n13
+  class e12 edge_reference
+  n0 e13@-->|"存在 / 变更过滤"| n14
+  class e13 edge_reference
+  n0 e14@-->|"存在 / 变更过滤"| n15
+  class e14 edge_reference
+  n0 e15@-->|"存在 / 变更过滤"| n16
+  class e15 edge_reference
+  n0 e16@-->|"存在 / 变更过滤"| n17
+  class e16 edge_reference
+  n18 e17@---|"存在 / 变更过滤"| n0
+  class e17 edge_reference
+  n18 e18@-->|"延迟添加"| n0
+  class e18 edge_write
+  n18 e19@-->|"延迟移除"| n0
+  class e19 edge_write
+  n0 e20@-->|"存在 / 变更过滤"| n19
+  class e20 edge_reference
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e17@{ curve: basis }
+  e19@{ curve: basis }
+  e20@{ curve: basis }

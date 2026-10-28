@@ -5,10 +5,12 @@ assets/audio/sources/*-License.txt -whitespace
 # 清单包含生成器自身的哈希，因此检出也不能改变其换行。
 scripts/audio_pipeline.py -text
 # 真实调度 DOT 保留原始字节与上游行尾空白，按普通文本展示差异。
-docs/diagrams/ecs-schedule-*.dot -text diff whitespace=cr-at-eol,-blank-at-eol
+docs/diagrams/generated/dot/*.dot -text diff whitespace=cr-at-eol,-blank-at-eol
 # 生成图与源码快照参与哈希或精确内容校验，检出时保留原始换行。
-docs/diagrams/ecs-*.svg -text whitespace=cr-at-eol
-docs/diagrams/ecs-*.mmd -text whitespace=cr-at-eol
-docs/diagrams/ecs-*.html -text whitespace=cr-at-eol
+docs/diagrams/generated/svg/**/*.svg -text whitespace=cr-at-eol
+docs/diagrams/generated/mermaid/*.mmd -text whitespace=cr-at-eol
+docs/diagrams/generated/pages/*.html -text whitespace=cr-at-eol
+docs/diagrams/generated/data/**/*.json -text
+docs/diagrams/generated/data/*.json -text
 # 分发运行库的完整许可证保留来源格式。
-docs/diagrams/SCHEDULE-RUNTIME-LICENSES.txt -text -whitespace
+docs/diagrams/licenses/SCHEDULE-RUNTIME-LICENSES.txt -text -whitespace

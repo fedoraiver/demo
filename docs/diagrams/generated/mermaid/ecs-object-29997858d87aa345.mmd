@@ -1,0 +1,70 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: SkipGpuPreprocess · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**SkipGpuPreprocess**<br/>避免视图重复执行 GPU 网格预处理。" }
+  class n0 node_component
+  n1@{ shape: rounded, label: "**per_view_shadow_pass#lt;false#gt;**<br/>绘制相机相关的平行光级联阴影。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**per_view_shadow_pass#lt;true#gt;**<br/>绘制相机相关的平行光级联阴影。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**allocate_uniforms**<br/>遍历当前视图及其阴影级联的各批次集合，<br/>在 GPU 上执行局部扫描、全局扫描和分配计<br/>算，确定 MeshUniform 的存储位置，避免<br/>CPU 每帧遍历全部可见网格。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**unpack_bins**<br/>针对当前视图及其阴影级联的索引和非索引批<br/>次，在 GPU 上解包已缓存的分桶数据，生成<br/>后续网格预处理所需的任务列表。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**early_gpu_preprocess**<br/>为当前视图及阴影级联执行早期网格转换与裁<br/>剪。" }
+  class n5 node_system
+  n6@{ shape: rounded, label: "**late_gpu_preprocess**<br/>对后期遮挡工作项执行间接网格预处理。" }
+  class n6 node_system
+  n0 e0@-->|"存在 / 变更过滤"| n1
+  class e0 edge_reference
+  n0 e1@-->|"存在 / 变更过滤"| n2
+  class e1 edge_reference
+  n0 e2@-->|"存在 / 变更过滤"| n3
+  class e2 edge_reference
+  n0 e3@-->|"存在 / 变更过滤"| n4
+  class e3 edge_reference
+  n0 e4@-->|"存在 / 变更过滤"| n5
+  class e4 edge_reference
+  n0 e5@-->|"存在 / 变更过滤"| n6
+  class e5 edge_reference
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }

@@ -1,0 +1,126 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#object-3ebc3e1f173772a5-e1{marker-start:url(#object-3ebc3e1f173772a5_flowchart-v2-pointStart)!important}\n#object-3ebc3e1f173772a5_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}"
+  }
+}
+---
+flowchart LR
+  accTitle: Time<Fixed> · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: cyl, label: "**Time#lt;Fixed#gt;**<br/>提供固定模拟的时间步长。" }
+  class n0 node_resource
+  n1@{ shape: rounded, label: "**time_system**<br/>依据 TimeUpdateStrategy 和可用的渲染<br/>时间通道更新真实时钟，再推进虚拟时钟及当<br/>前通用 Time；固定步长策略使用<br/>Time#lt;Fixed#gt; 的步长。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**run_fixed_main_schedule**<br/>累积虚拟时间并按固定时钟步长重复运行<br/>FixedMain，保存剩余 overstep。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**ease_translation_hermite#lt;avian3d::**<br/>**interpolation::LinVelSource#gt;**<br/>来自Avian ↗：用两端线速度做 Hermite<br/>位置平滑。" }
+  class n3 node_system
+  class n3 external_node
+  n4@{ shape: rounded, label: "**ease_rotation_hermite#lt;avian3d::**<br/>**interpolation::AngVelSource#gt;**<br/>来自Avian ↗：用两端角速度做 Hermite<br/>旋转平滑。" }
+  class n4 node_system
+  class n4 external_node
+  n5@{ shape: rounded, label: "**ease_translation_lerp**<br/>来自Avian ↗：按固定步剩余比例线性插值<br/>显示位置。" }
+  class n5 node_system
+  class n5 external_node
+  n6@{ shape: rounded, label: "**ease_rotation_slerp**<br/>来自Avian ↗：按固定步剩余比例球面插值<br/>显示旋转。" }
+  class n6 node_system
+  class n6 external_node
+  n7@{ shape: rounded, label: "**ease_scale_lerp**<br/>来自Avian ↗：按固定步剩余比例线性插值<br/>显示缩放。" }
+  class n7 node_system
+  class n7 external_node
+  n8@{ shape: rounded, label: "**log_simulation_timestep**<br/>来自设置与参数 ↗：记录固定模拟频率。" }
+  class n8 node_system
+  class n8 external_node
+  n9@{ shape: lin-rect, label: "**TimeSystems**<br/>推进真实时间与游戏时间。" }
+  class n9 node_system_set
+  n10@{ shape: rounded, label: "**move_characters**<br/>来自角色运动 ↗：按移动意图和速度为角色<br/>施加水平运动力。" }
+  class n10 node_system
+  class n10 external_node
+  n11@{ shape: rounded, label: "**log_character_velocity**<br/>来自角色运动 ↗：定期记录角色实际速度与<br/>接地状态。" }
+  class n11 node_system
+  class n11 external_node
+  n12@{ shape: lin-rect, label: "**TransformEasingSystems::Ease**<br/>来自Avian ↗：混合固定步端点以生成平滑<br/>显示姿态。" }
+  class n12 node_system_set
+  class n12 external_node
+  n13@{ shape: rounded, label: "**warn_hold_strain**<br/>来自物品交互 ↗：检查持续持握偏差并发出<br/>失稳提示音。" }
+  class n13 node_system
+  class n13 external_node
+  n14@{ shape: rounded, label: "**align_attachments**<br/>来自物品交互 ↗：沿安全碰撞路径将物品对<br/>齐双手。" }
+  class n14 node_system
+  class n14 external_node
+  n0 e0@--> n1
+  class e0 edge_read
+  n2 e1@---|"正文只读访问"| n0
+  class e1 edge_read
+  n2 e2@-->|"正文可变访问"| n0
+  class e2 edge_write
+  n0 e3@--> n3
+  class e3 edge_read
+  n0 e4@--> n4
+  class e4 edge_read
+  n0 e5@--> n5
+  class e5 edge_read
+  n0 e6@--> n6
+  class e6 edge_read
+  n0 e7@--> n7
+  class e7 edge_read
+  n0 e8@-->|"访问声明"| n8
+  class e8 edge_read
+  n0 e9@-->|"访问声明"| n9
+  class e9 edge_read
+  n0 e10@-->|"访问声明"| n10
+  class e10 edge_read
+  n0 e11@-->|"访问声明"| n11
+  class e11 edge_read
+  n0 e12@-->|"访问声明"| n12
+  class e12 edge_read
+  n0 e13@-->|"访问声明"| n13
+  class e13 edge_read
+  n0 e14@-->|"访问声明"| n14
+  class e14 edge_read
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }

@@ -1,0 +1,61 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: PostProcessingUniformBuffers · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: cyl, label: "**PostProcessingUniformBuffers**<br/>集中保存内置后处理效果的 GPU 参数。" }
+  class n0 node_resource
+  n1@{ shape: rounded, label: "**post_processing**<br/>为当前视图组合已启用的色差、暗角和镜头畸<br/>变效果，绑定各效果参数及颜色 LUT 后执行<br/>全屏后处理；没有效果或所需资产和管线未就<br/>绪时跳过。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**post_processing**<br/>为当前视图组合已启用的色差、暗角和镜头畸<br/>变效果，绑定各效果参数及颜色 LUT 后执行<br/>全屏后处理；没有效果或所需资产和管线未就<br/>绪时跳过。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**prepare_post_processing_uniforms**<br/>收集并上传逐视图色差、暗角和畸变参数。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**init_gpu_resource#lt;bevy_post_**<br/>**process::effect_stack::**<br/>**PostProcessingUniformBuffers#gt;**<br/>通过 FromWorld 构建指定的 GPU 资源，并<br/>将初始化结果插入当前世界。" }
+  class n4 node_system
+  n0 e0@--> n1
+  class e0 edge_read
+  n0 e1@--> n2
+  class e1 edge_read
+  n3 e2@--> n0
+  class e2 edge_write
+  n4 e3@-->|"正文添加"| n0
+  class e3 edge_write
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }

@@ -1,0 +1,168 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#object-03d11d78a7498f5c-e1{marker-start:url(#object-03d11d78a7498f5c_flowchart-v2-pointStart)!important}\n#object-03d11d78a7498f5c-e2{marker-start:url(#object-03d11d78a7498f5c_flowchart-v2-pointStart)!important}\n#object-03d11d78a7498f5c-e4{marker-start:url(#object-03d11d78a7498f5c_flowchart-v2-pointStart)!important}\n#object-03d11d78a7498f5c-e20{marker-start:url(#object-03d11d78a7498f5c_flowchart-v2-pointStart)!important}\n#object-03d11d78a7498f5c_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}"
+  }
+}
+---
+flowchart LR
+  accTitle: handle_requests · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef node_local fill:#F8F5F1,stroke:#AA8752,stroke-width:1.6px,color:#1F3340
+  classDef node_message_buffer fill:#EDF4F6,stroke:#247B91,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_sync fill:#F6F3F0,stroke:#8B6A42,stroke-width:1.6px,color:#1F3340
+  classDef node_engine_flow fill:#F1F5F4,stroke:#557C78,stroke-width:1.6px,color:#1F3340
+  classDef node_plugin fill:#F1F3F6,stroke:#4A6389,stroke-width:2.2px,color:#1F3340
+  classDef node_operation_result fill:#F5F6F3,stroke:#7D8963,stroke-width:1.2px,color:#1F3340
+  classDef edge_order stroke:#334155,stroke-width:2px
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_publish stroke:#247B91,stroke-width:1.8px,stroke-dasharray:10 4 2 4
+  classDef edge_consume stroke:#247B91,stroke-width:1.8px,stroke-dasharray:2 4
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**handle_requests**<br/>处理菜单导航、设置应用与音量编辑请求。" }
+  class n0 node_system
+  n1@{ shape: cyl, label: "**Messages#lt;UiRequest#gt;**<br/>缓冲鼠标与动作输入共用的菜单请求。" }
+  class n1 node_message_buffer
+  n2@{ shape: cyl, label: "**SettingsDraft**<br/>来自设置与参数 ↗：保存待应用的设置草稿<br/>与临时音量编辑。" }
+  class n2 node_resource
+  class n2 external_node
+  n3@{ shape: cyl, label: "**MenuState**<br/>保存菜单页面、设置分类、返回来源与提示。" }
+  class n3 node_resource
+  n4@{ shape: doc, label: "**NextState → StateTransition**<br/>来自应用流程 ↗：将开始、返回、暂停与恢<br/>复请求提交状态切换。" }
+  class n4 node_operation_result
+  class n4 external_node
+  n5@{ shape: cyl, label: "**GameSettings**<br/>来自设置与参数 ↗：保存已应用的玩家设置<br/>与音量配置。" }
+  class n5 node_resource
+  class n5 external_node
+  n6@{ shape: rounded, label: "**ApplyDeferred · 动作事件**<br/>应用动作事件命令以触发匹配的观察系统。" }
+  class n6 node_sync
+  n7@{ shape: stadium, label: "**main · PreUpdate**<br/>来自Bevy 引擎 ↗：保存本应用调度的注册<br/>上下文与成员。" }
+  class n7 node_engine_flow
+  class n7 external_node
+  n8@{ shape: lin-rect, label: "**EnhancedInputSystems::Trigger**<br/>来自Enhanced Input ↗：按上下文顺序排<br/>入动作事件命令。" }
+  class n8 node_system_set
+  class n8 external_node
+  n9@{ shape: cyl, label: "**Messages#lt;AppExit#gt;**<br/>来自Bevy 引擎 ↗：通知音频停止并进入应<br/>用退出流程。" }
+  class n9 node_message_buffer
+  class n9 external_node
+  n10@{ shape: cyl, label: "**Messages#lt;SoundRequest#gt;**<br/>来自Bevy 引擎 ↗：保存 SoundRequest<br/>消息。" }
+  class n10 node_message_buffer
+  class n10 external_node
+  n11@{ shape: rounded, label: "**MenuContext**<br/>标记独立于玩法的菜单动作上下文。" }
+  class n11 node_component
+  n12@{ shape: cyl, label: "**SettingsFile**<br/>来自设置与参数 ↗：保存玩家设置文件的存<br/>储路径。" }
+  class n12 node_resource
+  class n12 external_node
+  n13@{ shape: notch-rect, label: "**Local#lt;Option#lt;(SettingKey, u8)#gt;#gt;**<br/>记录连续音量编辑以在结束时汇总确认。" }
+  class n13 node_local
+  n14@{ shape: cyl, label: "**MenuFocus**<br/>保存当前可操作按钮的导航序号。" }
+  class n14 node_resource
+  n15@{ shape: cyl, label: "**State#lt;AppState#gt; /**<br/>**NextState#lt;AppState#gt;**<br/>来自应用流程 ↗：保存应用主状态及待处理<br/>的会话切换。" }
+  class n15 node_resource
+  class n15 external_node
+  n16@{ shape: cyl, label: "**State#lt;PlayState#gt; /**<br/>**NextState#lt;PlayState#gt;**<br/>来自应用流程 ↗：保存游戏运行、暂停及待<br/>处理的切换请求。" }
+  class n16 node_resource
+  class n16 external_node
+  n17@{ shape: cyl, label: "**Messages#lt;SoundRequest#gt;**<br/>来自音频播放 ↗：缓冲菜单交互与物品反馈<br/>的短音请求。" }
+  class n17 node_message_buffer
+  class n17 external_node
+  n18@{ shape: fr-rect, label: "**GameUiPlugin**<br/>管理菜单、设置编辑、导航与主菜单展示场<br/>景。" }
+  class n18 node_plugin
+  n1 e0@--> n0
+  class e0 edge_consume
+  n2 e1@---|"草稿"| n0
+  class e1 edge_write
+  n3 e2@---|"页面"| n0
+  class e2 edge_write
+  n0 e3@-->|"状态请求"| n4
+  class e3 edge_write
+  n5 e4@---|"保存成功后应用"| n0
+  class e4 edge_write
+  n6 e5@--> n0
+  class e5 edge_order
+  n7 e6@-->|"main / PreUpdate"| n0
+  class e6 edge_registration
+  n8 e7@--> n0
+  class e7 edge_order
+  n0 e8@-->|"正文发布消息"| n9
+  class e8 edge_publish
+  n0 e9@-->|"正文发布消息"| n10
+  class e9 edge_publish
+  n11 e10@-->|"存在 / 变更过滤"| n0
+  class e10 edge_reference
+  n3 e11@-->|"访问声明"| n0
+  class e11 edge_read
+  n5 e12@-->|"访问声明"| n0
+  class e12 edge_read
+  n2 e13@-->|"访问声明"| n0
+  class e13 edge_read
+  n12 e14@-->|"访问声明"| n0
+  class e14 edge_read
+  n13 e15@-->|"访问声明"| n0
+  class e15 edge_read
+  n0 e16@-->|"访问声明"| n14
+  class e16 edge_write
+  n0 e17@-->|"访问声明"| n15
+  class e17 edge_write
+  n0 e18@-->|"访问声明"| n16
+  class e18 edge_write
+  n0 e19@-->|"访问声明"| n17
+  class e19 edge_publish
+  n13 e20@---|"访问声明"| n0
+  class e20 edge_write
+  n18 e21@--> n0
+  class e21 edge_registration
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e17@{ curve: basis }
+  e18@{ curve: basis }
+  e19@{ curve: basis }
+  e20@{ curve: basis }
+  e21@{ curve: basis }

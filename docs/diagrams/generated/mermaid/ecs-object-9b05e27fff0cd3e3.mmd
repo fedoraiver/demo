@@ -1,0 +1,50 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: PrepareNextFrameAssets<MeshMaterial3d<ExtendedMaterial<StandardMaterial, ForwardDecalMaterialExt>>> · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: cyl, label: "**PrepareNextFrameAssets#lt;MeshMaterial3**<br/>**d#lt;ExtendedMaterial#lt;StandardMaterial,**<br/>**ForwardDecalMaterialExt#gt;#gt;#gt;**<br/>保留下一帧需要继续准备的资产。" }
+  class n0 node_resource
+  n1@{ shape: rounded, label: "**prepare_erased_assets#lt;bevy_pbr::**<br/>**mesh_material::MeshMaterial3d#lt;bevy_**<br/>**pbr::extended_material::**<br/>**ExtendedMaterial#lt;bevy_pbr::pbr_**<br/>**material::StandardMaterial, bevy_**<br/>**pbr::decal::forward::**<br/>**ForwardDecalMaterialExt#gt;#gt;#gt;**<br/>在上传预算内准备擦除资产并管理重试卸载。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**collect_erased_render_assets_to_**<br/>**reextract#lt;bevy_pbr::mesh_material::**<br/>**MeshMaterial3d#lt;bevy_pbr::extended_**<br/>**material::ExtendedMaterial#lt;bevy_**<br/>**pbr::pbr_material::**<br/>**StandardMaterial, bevy_pbr::decal::**<br/>**forward::ForwardDecalMaterialExt#gt;#gt;#gt;**<br/>按源材质类型排空擦除资产并请求重新提取。" }
+  class n2 node_system
+  n1 e0@--> n0
+  class e0 edge_write
+  n2 e1@--> n0
+  class e1 edge_write
+  e0@{ curve: basis }
+  e1@{ curve: basis }

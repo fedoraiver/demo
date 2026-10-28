@@ -1,0 +1,87 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: Core3dSystems::Prepass · 对象关系
+  accDescr: 中心对象与所有直接关联对象；完整保留入边、出边及原投影和注册身份，不递归展开间接关系。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_engine_flow fill:#F1F5F4,stroke:#557C78,stroke-width:1.6px,color:#1F3340
+  classDef edge_order stroke:#334155,stroke-width:2px
+  classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: lin-rect, label: "**Core3dSystems::Prepass**<br/>在三维主绘制前执行深度及延迟预通道。" }
+  class n0 node_system_set
+  n1@{ shape: stadium, label: "**RenderApp · Core3d**<br/>保存本应用调度的注册上下文与成员。" }
+  class n1 node_engine_flow
+  n2@{ shape: rounded, label: "**early_prepass**<br/>从当前视图取得深度、预通道纹理及前后帧参<br/>数，调用共享预通道实现绘制不透明和<br/>AlphaMask 预通道阶段，供后续深度、法线<br/>及运动矢量相关处理使用。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**early_deferred_prepass**<br/>执行早期延迟预通道并保存深度结果。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**late_prepass**<br/>仅在遮挡剔除开启且允许间接绘制时执行晚期<br/>预通道，复用共享实现绘制对应的不透明和<br/>AlphaMask 预通道阶段；其他视图直接跳<br/>过。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**late_deferred_prepass**<br/>为遮挡剔除执行晚期延迟预通道。" }
+  class n5 node_system
+  n6@{ shape: rounded, label: "**cluster_on_gpu**<br/>执行深度切片、计数、分配和填充的 GPU 聚<br/>簇。" }
+  class n6 node_system
+  n7@{ shape: rounded, label: "**ssao**<br/>依据视口尺寸依次调度深度预处理、屏幕空间<br/>环境光遮蔽及空间去噪计算通道，为当前视图<br/>生成 SSAO 结果；所需管线未完成编译时跳<br/>过。" }
+  class n7 node_system
+  n8@{ shape: rounded, label: "**atmosphere_luts**<br/>根据当前大气、视图和光照参数调度计算管<br/>线，生成透射、多重散射、天空视图及空气透<br/>视查找表，供天空和大气渲染使用。" }
+  class n8 node_system
+  n9@{ shape: rounded, label: "**copy_deferred_lighting_id**<br/>把延迟光照通道标识复制到深度目标。" }
+  class n9 node_system
+  n1 e0@-->|"RenderApp / Core3d"| n0
+  class e0 edge_registration
+  n0 e1@--> n2
+  class e1 edge_set_membership
+  n0 e2@--> n3
+  class e2 edge_set_membership
+  n0 e3@--> n4
+  class e3 edge_set_membership
+  n0 e4@--> n5
+  class e4 edge_set_membership
+  n0 e5@--> n6
+  class e5 edge_set_membership
+  n0 e6@--> n7
+  class e6 edge_order
+  n0 e7@--> n8
+  class e7 edge_order
+  n0 e8@--> n9
+  class e8 edge_order
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
