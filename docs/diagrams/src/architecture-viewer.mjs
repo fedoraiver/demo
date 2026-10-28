@@ -392,11 +392,22 @@ export async function startExternalArchitecture(options) {
   }
 }
 
+// The orchestrating schedules precede their children; this is a navigation order,
+// not a claim that independently triggered schedules form a total execution order.
+const mainScheduleOrder = ['Main', 'PreStartup', 'Startup', 'PostStartup', 'First', 'PreUpdate', 'RunFixedMainLoop', 'FixedMain', 'FixedFirst', 'FixedPreUpdate', 'FixedUpdate', 'FixedPostUpdate', 'FixedLast', 'Update', 'SpawnScene', 'PostUpdate', 'Last'];
+
+export function orderScheduleOptions(views, application) {
+  const ranks = new Map((application === 'main' ? mainScheduleOrder : []).map((label, index) => [label, index]));
+  return views.filter(view => view.application === application).sort((a, b) =>
+    (ranks.get(a.scheduleLabel) ?? Infinity) - (ranks.get(b.scheduleLabel) ?? Infinity)
+    || a.scheduleLabel.localeCompare(b.scheduleLabel) || a.id.localeCompare(b.id));
+}
+
 export function renderArchitectureViewer({ model, registry, views, features, guideSamples, objects = [], objectAliases = {}, sourceRoleLabels = {}, schedulePluginCatalog = [], scheduleInteractions = { schemaVersion: 1, views: [] }, runtimeAssets = { script: '' }, externalBootstrap = null }) {
   const scheduleViews = views.filter(view => view.aspect === 'schedule');
   const objectViews = views.filter(view => view.aspect === 'object');
   const option = (view, label) => `<option value="${escape(view.id)}">${escape(label || view.label)}</option>`;
-  const scheduleOptions = [...new Set(scheduleViews.map(view => view.application))].map(application => `<optgroup label="${escape(application)} Schedule">${scheduleViews.filter(view => view.application === application).map(view => option(view, `${view.scheduleLabel} · ${view.systemCount} systems`)).join('')}</optgroup>`).join('');
+  const scheduleOptions = [...new Set(scheduleViews.map(view => view.application))].map(application => `<optgroup label="${escape(application)} Schedule">${orderScheduleOptions(scheduleViews, application).map(view => option(view, `${view.scheduleLabel} · ${view.systemCount} systems`)).join('')}</optgroup>`).join('');
   const usedPlugins = new Set();
   const pluginOptions = (entries, label) => {
     const options = entries.map(entry => {
