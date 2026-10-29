@@ -2,7 +2,7 @@
 
 use bevy::{prelude::*, window::PrimaryWindow};
 
-use crate::settings::SettingsDraft;
+use crate::settings::{MAX_AUDIO_VOLUME, SettingsDraft};
 
 use super::{
     MenuButton, MenuFocus, MenuInputSource, MenuPage, MenuState, SettingKey, SettingsTab, UiAction,
@@ -197,7 +197,12 @@ fn value_at_pointer(
     }
     let local = transform.try_inverse()?.transform_point2(cursor);
     let offset = local.x + node.size().x / 2.0 - node.padding.min_inset.x - node.border.min_inset.x;
-    Some((offset / track_width * 100.0).round().clamp(0.0, 100.0) as u8)
+    let max_volume = f32::from(MAX_AUDIO_VOLUME);
+    Some(
+        (offset / track_width * max_volume)
+            .round()
+            .clamp(0.0, max_volume) as u8,
+    )
 }
 
 /// Enhanced Input 负责菜单语义动作，但无法表示 UI 命中后的局部绝对横坐标。

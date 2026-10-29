@@ -1,7 +1,7 @@
 //! 有效混音及排队、已播放实例的增益同步。
 
 use super::{AudioPreview, MASTER_GAIN, playback::SoundBank};
-use crate::settings::{AudioSettings, GameSettings};
+use crate::settings::{AudioSettings, GameSettings, MAX_AUDIO_VOLUME};
 use bevy::prelude::*;
 use bevy_kira_audio::{AudioInstance, AudioTween, prelude::Decibels};
 
@@ -19,7 +19,9 @@ impl AudioMix {
         } else {
             self.settings.sfx_volume
         };
-        MASTER_GAIN * f64::from(self.settings.master_volume) * f64::from(category) / 10_000.0
+        let volume_scale = f64::from(MAX_AUDIO_VOLUME);
+        MASTER_GAIN * f64::from(self.settings.master_volume) * f64::from(category)
+            / (volume_scale * volume_scale)
     }
 }
 
