@@ -5,7 +5,7 @@ use super::*;
 pub(super) fn lighting_scene() -> impl Scene {
     bsn! {
         Name("Island daylight")
-        DespawnOnExit::<AppState>(AppState::InGame)
+        DespawnOnEnter::<AppState>(AppState::MainMenu)
         DirectionalLight { illuminance: 12_000.0, shadow_maps_enabled: true }
         Transform::from_xyz(6.0, 10.0, 8.0).looking_at(Vec3::ZERO, Vec3::Y)
     }
@@ -19,7 +19,7 @@ pub(super) fn spawn_lighting(mut commands: Commands) {
         Camera3d
         IsDefaultUiCamera
         bevy_inspector_egui::bevy_egui::PrimaryEguiContext
-        DespawnOnExit::<AppState>(AppState::InGame)
+        DespawnOnEnter::<AppState>(AppState::MainMenu)
         LoadingCamera
         Transform::from_xyz(-1.8, 6.0, 11.5).looking_at(Vec3::new(-1.8, 0.8, 3.5), Vec3::Y)
     });
@@ -31,7 +31,7 @@ pub(super) struct LoadingCamera;
 pub(super) fn island_scene(scene: Handle<WorldAsset>) -> impl Scene {
     bsn! {
         Name("Courier island") IslandMap WorldAssetRoot(scene)
-        DespawnOnExit::<AppState>(AppState::InGame)
+        DespawnOnEnter::<AppState>(AppState::MainMenu)
     }
 }
 

@@ -22,14 +22,10 @@ pub(super) fn sync_mouse_capture(
     mut cameras: Query<(Entity, &FirstPersonCamera, &mut MouseLookState)>,
     mut egui_contexts: Query<(&mut EguiContextSettings, &mut EguiInput), With<PrimaryEguiContext>>,
     app_state: Option<Res<State<AppState>>>,
-    play_state: Option<Res<State<PlayState>>>,
 ) {
-    let running = app_state.as_ref().is_none_or(|state| {
-        *state.get() == AppState::InGame
-            && play_state
-                .as_ref()
-                .is_some_and(|state| *state.get() == PlayState::Running)
-    });
+    let running = app_state
+        .as_ref()
+        .is_none_or(|state| *state.get() == AppState::Running);
     let Ok((window_entity, window, mut cursor)) = windows.single_mut() else {
         focus_events.clear();
         for (camera, _, mut state) in &mut cameras {
