@@ -51,7 +51,7 @@ impl FromWorld for ArtAssets {
     fn from_world(world: &mut World) -> Self {
         let server = world.resource::<AssetServer>();
         let load = |path: &'static str| {
-            server
+            let handle = server
                 .load_builder()
                 .with_settings(|settings: &mut GltfLoaderSettings| {
                     // 静态碰撞需要 CPU 顶点；禁止在上传 GPU 后丢弃地图几何。
@@ -60,7 +60,10 @@ impl FromWorld for ArtAssets {
                     settings.load_cameras = false;
                     settings.load_lights = false;
                 })
-                .load(path)
+                .load(path);
+            info!(target: "demo::art_assets", path, state = "loading",
+                reason = "asset_initialization", "Art asset requested");
+            handle
         };
         Self {
             island: load(ISLAND_PATH),
@@ -99,13 +102,6 @@ pub(crate) enum ArtLoadState {
     Loading,
     Ready,
     Failed,
-}
-
-pub(super) fn log_asset_requests(assets: Res<ArtAssets>) {
-    for (path, _) in assets.entries() {
-        info!(target: "demo::art_assets", path, state = "loading",
-            reason = "scene_startup", "Art asset requested");
-    }
 }
 
 /// 连同子资产检查失败；只记录状态切换，避免每帧刷写相同错误。

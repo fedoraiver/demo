@@ -109,7 +109,7 @@ F3 在游戏控制与检查器操作之间切换，检查器在两种模式下�
 
 `ArtAssets` 持有海岛、主角和三类箱体的运行 GLB 强句柄，路径由 [assets.rs](../src/scene_assembly/assets.rs) 定义。制作与坐标约定见 [美术说明](../art/ASSET_GUIDE.md)，运行时不依赖 Blender。
 
-`SceneAssemblyPlugin` 在构建时发起加载，Startup 记录请求。`ArtLoadState` 独立保存 `Loading / Ready / Failed`，Update 轮询模型及递归依赖，主菜单期间也可完成加载。
+`SceneAssemblyPlugin` 在构建时初始化 `ArtAssets`，每次发起加载后立即记录请求。`ArtLoadState` 独立保存 `Loading / Ready / Failed`，Update 轮询模型及递归依赖，主菜单期间也可完成加载。
 
 同一插件在运行且资源 Ready 后，以 BSN 装配地图；`SpawnScene` 实例化 `WorldAssetRoot` 并触发 `WorldInstanceReady`，后续 Update 消费待准备标记。`source_asset` 元数据只在此边界识别美术实例，玩法身份与能力使用业务组件。
 
@@ -157,8 +157,8 @@ NPC 身体碰撞属于 `World` 层，阻挡人物、自由箱与持箱代理，�
 
 | 阶段 | 数据变换与执行依赖 |
 | --- | --- |
-| 插件构建 | `SessionLogPlugin` 先安装日志并记录会话开始；场景插件初始化 `ArtAssets`，由 `FromWorld` 发起五份 GLB 加载，并初始化独立的 `ArtLoadState`。 |
-| `Startup` | 记录加载请求并创建菜单输入控制者；玩法、设置、相机与检查器插件分别注册自身初始化日志，启动日志不依赖已生成玩法实体。 |
+| 插件构建 | `SessionLogPlugin` 先安装日志并记录会话开始；场景插件初始化 `ArtAssets`，由 `FromWorld` 发起五份 GLB 加载并分别记录请求，再初始化独立的 `ArtLoadState`。 |
+| `Startup` | 创建菜单输入控制者；玩法、设置与检查器插件分别注册自身初始化日志，启动日志不依赖已生成玩法实体。 |
 | `PreUpdate` | 更新鼠标捕获和菜单上下文，Enhanced Input 评估动作并通过 Observer 更新意图与观察角度；动作应用后消费菜单请求。 |
 | `StateTransition` | 紧随 `PreUpdate`；主菜单入口生成展示舞台，游戏入口准备海岛会话的光照和加载相机，暂停入口清意图并冻结时间，退出状态清理对应实体。 |
 | `FixedFirst` | 落水与释放各自恢复临时暂停的插值通道，均在 `TransformEasingSystems::Reset` 后、`UpdateStart` 前，彼此无全序。 |
@@ -258,6 +258,6 @@ UI 在 Style 阶段发布 `AudioPreview(Some(SettingsDraft.audio))`，设置页�
 
 panic hook 尽力记录错误，优先等待文件队列写完并调用 `sync_data`，然后调用原有 hook；不先等待可能阻塞的控制台。写入线程自身发生 panic 时由线程内部捕获并反馈，避免等待自己的队列。panic 日志通过已安装的 subscriber 输出，不能保证覆盖日志插件就绪前的异常或进程被强制终止的情况。慢写入端隔离与完整刷新回归见 [验证指南](testing/README.md#按变更类型选择检查)。
 
-玩法、设置、相机和检查器在各自插件的 `Startup` 注册初始化日志；配置值从实际资源只读取得，不由日志系统初始化或覆盖。各条记录及其与场景生成之间无全序，也不依赖已生成玩法实体；缺失插件不会由别处代报初始化。
+玩法、设置和检查器在各自插件的 `Startup` 注册初始化日志；配置值从实际资源只读取得，不由日志系统初始化或覆盖。各条记录及其与场景生成之间无全序，也不依赖已生成玩法实体；缺失插件不会由别处代报初始化。
 
 连续角度和世界速度按 `debug` 每 0.5 秒最多采样一次，离散输入与捕获变化用 `info`。会话位置见 [使用说明](usage.md#会话日志)，过滤配置见 [开发规范](development.md#日志排查)，字段与实际运行核对见 [日志验收](testing/game-acceptance.md#日志检查与问题反馈)。

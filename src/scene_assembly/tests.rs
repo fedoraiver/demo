@@ -37,6 +37,120 @@ use crate::{
     physics::GamePhysicsLayer,
 };
 
+mod asset_request_tests {
+    use std::{fs, path::Path, sync::Arc};
+
+    use bevy::{
+        ecs::schedule::SingleThreadedExecutor,
+        log::{tracing, tracing_subscriber},
+    };
+    use uuid::Uuid;
+
+    use super::*;
+
+    #[test]
+    fn art_asset_requests_are_logged_during_initialization_and_only_once() {
+        // tracing 调用点缓存跨线程共享；子进程隔离其他场景测试的首次调用。
+        if std::env::var_os("DEMO_ART_ASSET_LOG_TEST_CHILD").is_none() {
+            let output = std::process::Command::new(std::env::current_exe().unwrap())
+                .args([
+                    "--exact",
+                    "scene_assembly::tests::asset_request_tests::art_asset_requests_are_logged_during_initialization_and_only_once",
+                    "--nocapture",
+                ])
+                .env("DEMO_ART_ASSET_LOG_TEST_CHILD", "1")
+                .current_dir(env!("CARGO_MANIFEST_DIR"))
+                .output()
+                .unwrap();
+            let stdout = String::from_utf8_lossy(&output.stdout);
+            let stderr = String::from_utf8_lossy(&output.stderr);
+            assert!(output.status.success(), "{stdout}\n{stderr}");
+            assert!(
+                stdout.contains("running 1 test"),
+                "Unexpected child test selection: {stdout}"
+            );
+            return;
+        }
+
+        let directory = Path::new(env!("CARGO_MANIFEST_DIR")).join("tmp/art-asset-log-tests");
+        fs::create_dir_all(&directory).unwrap();
+        let path = directory.join(format!("{}.log", Uuid::new_v4()));
+        let subscriber = tracing_subscriber::fmt()
+            .without_time()
+            .with_ansi(false)
+            .with_writer(Arc::new(fs::File::create_new(&path).unwrap()))
+            .finish();
+
+        tracing::subscriber::with_default(subscriber, || {
+            // 保持主菜单状态，不装配地图；只检查同步请求，不等待异步加载结果。
+            let mut app = App::new();
+            app.add_plugins((MinimalPlugins, AssetPlugin::default()))
+                .init_asset::<Gltf>()
+                .insert_resource(State::new(AppState::MainMenu))
+                .insert_resource(TimeUpdateStrategy::ManualDuration(Duration::ZERO))
+                .add_plugins(SceneAssemblyPlugin)
+                // 局部 subscriber 只覆盖当前线程，两阶段串行执行以捕获意外的重复日志。
+                .edit_schedule(Startup, |schedule| {
+                    schedule.set_executor(SingleThreadedExecutor::new());
+                })
+                .edit_schedule(Update, |schedule| {
+                    schedule.set_executor(SingleThreadedExecutor::new());
+                });
+
+            assert_asset_requests(&path);
+            app.init_resource::<ArtAssets>()
+                .init_resource::<ArtAssets>();
+            assert_asset_requests(&path);
+            app.finish();
+            app.cleanup();
+            for _ in 0..3 {
+                app.update();
+            }
+            assert_asset_requests(&path);
+            assert_eq!(
+                app.world_mut().query::<&Window>().iter(app.world()).count(),
+                0
+            );
+            assert_eq!(
+                app.world_mut().query::<&Camera>().iter(app.world()).count(),
+                0
+            );
+        });
+        fs::remove_file(path).unwrap();
+    }
+
+    fn assert_asset_requests(path: &Path) {
+        let contents = fs::read_to_string(path).unwrap();
+        let records: Vec<_> = contents
+            .lines()
+            .filter(|line| line.contains("Art asset requested"))
+            .collect();
+        assert_eq!(records.len(), 5, "{contents}");
+        for asset_path in [
+            "maps/courier_island.glb",
+            "models/characters/chr_courier.glb",
+            "models/props/prop_parcel_standard.glb",
+            "models/props/prop_parcel_fragile.glb",
+            "models/props/prop_crate.glb",
+        ] {
+            let matching: Vec<_> = records
+                .iter()
+                .filter(|line| line.contains(&format!("path=\"{asset_path}\"")))
+                .collect();
+            assert_eq!(matching.len(), 1, "{contents}");
+            let record = matching[0];
+            for field in [
+                "INFO",
+                "demo::art_assets",
+                "state=\"loading\"",
+                "reason=\"asset_initialization\"",
+            ] {
+                assert!(record.contains(field), "Missing {field}: {record}");
+            }
+        }
+    }
+}
+
 fn asset_app() -> App {
     build_asset_app(false, None, false)
 }
