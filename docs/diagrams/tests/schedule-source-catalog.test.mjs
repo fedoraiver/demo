@@ -160,12 +160,19 @@ test('unreviewed parameter tuple names are rejected instead of assigned an input
   assert.throws(()=>catalog.resolveSystem('(Res<Settings>,Local<bool>)'),/has not been reviewed/);
 });
 
-test('sub-state closure binds parent and child resources and points at actual definition and registration',()=>{
-  const result=real().resolveSystem('<demo::game_flow::AppState as bevy_state::state::state_set::StateSet>::register_sub_state_systems_in_schedule<demo::game_flow::PlayState>::{{closure}}');
+test('sub-state closure binds synthetic parent and child resources and points at actual framework definition and registration',t=>{
+  const parent=path.join(repository,'tmp/ecs-architecture/schedule-source-tests');fs.mkdirSync(parent,{recursive:true});
+  const root=fs.mkdtempSync(path.join(parent,'sub-state-'));fs.mkdirSync(path.join(root,'src'));
+  fs.writeFileSync(path.join(root,'src/lib.rs'),'enum Parent { Menu } enum Child { Running }');
+  t.after(()=>fs.rmSync(root,{recursive:true,force:true,maxRetries:10,retryDelay:100}));
+  const metadata=readCargoMetadata(repository);
+  metadata.packages.push({name:'fixture',version:'0.1.0',manifest_path:path.join(root,'Cargo.toml')});
+  const catalog=createScheduleSourceCatalog({repository:root,metadata,strictPurposes:false});
+  const result=catalog.resolveSystem('<fixture::Parent as bevy_state::state::state_set::StateSet>::register_sub_state_systems_in_schedule<fixture::Child>::{{closure}}');
   assert.equal(result.definition.line,176);
   assert.ok(result.sourceEntries.some(source=>source.role==='registration'&&source.line===239));
-  assert.ok(result.accesses.some(access=>access.fullName.includes('State<demo::game_flow::PlayState>')));
-  assert.ok(result.accesses.some(access=>access.fullName.includes('StateTransitionEvent<demo::game_flow::AppState>')));
+  assert.ok(result.accesses.some(access=>access.fullName.includes('State<fixture::Child>')));
+  assert.ok(result.accesses.some(access=>access.fullName.includes('StateTransitionEvent<fixture::Parent>')));
   assert.ok(!result.accesses.some(access=>/\bS::RawState\b|<T>/.test(access.fullName)));
 });
 

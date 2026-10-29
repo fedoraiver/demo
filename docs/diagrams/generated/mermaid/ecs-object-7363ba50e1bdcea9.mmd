@@ -50,7 +50,7 @@ flowchart LR
   class n1 node_engine_flow
   n2@{ shape: lin-rect, label: "**ApplyStateTransition ·**<br/>**(PhantomData#lt;demo::game_flow::**<br/>**AppState#gt;)**<br/>应用待处理状态及其依赖子状态转换。" }
   class n2 node_system_set
-  n3@{ shape: cyl, label: "**Messages#lt;StateTransitionEvent#lt;AppSta**<br/>**te#gt;#gt;**<br/>来自应用流程 ↗：缓冲应用主状态转换的日<br/>志输入。" }
+  n3@{ shape: cyl, label: "**Messages#lt;StateTransitionEvent#lt;AppSta**<br/>**te#gt;#gt;**<br/>来自应用流程 ↗：缓冲唯一 AppState 的<br/>真实转换来源。" }
   class n3 node_message_buffer
   class n3 external_node
   n4@{ shape: notch-rect, label: "**Commands**<br/>保存延迟执行的 World 操作队列" }

@@ -514,9 +514,11 @@ test('current registry and merged function cards have verified source scope acro
   const audit = applyArchitectureSourcePolicies(registry, { repository, model, components, dependencyContext: { metadata, resolver } });
   const coverage = auditProductionEcsCoverage(registry, { context: audit.context });
   assert.deepEqual(coverage.gaps, []);
-  assert.equal(coverage.declarations.length, 90);
+  assert.equal(coverage.declarations.length, 89);
   assert.equal(coverage.registrations.length, 80);
   assert(!coverage.declarations.some(declaration => declaration.name === 'ReleasePointerAction'));
+  assert(!coverage.declarations.some(declaration => declaration.name === 'PlayState'));
+  assert(coverage.declarations.some(declaration => declaration.name === 'AppState'));
   for (const id of ['filter_egui_input', 'observe_release_pointer', 'event-observe_release_pointer', 'action.Action<ReleasePointerAction>']) {
     assert.equal(registry[id], undefined, `${id}: 已删除声明不能留在当前对象目录`);
   }
@@ -567,6 +569,9 @@ test('current registry and merged function cards have verified source scope acro
   assert(createsAt('character.SpawnPoint', 'src/scene_assembly/actors.rs', 23));
   assert(!createsAt('character.SpawnPoint', 'src/scene_assembly/actors.rs', 50));
   assert.deepEqual(registry['camera.Transform'].sourceEntries.filter(source => source.role === 'create').map(source => [source.path, source.line]), [['src/scene_assembly/loading.rs', 24]], 'Directional-light Transform must not be attributed to the camera');
+  assert(createsAt('island.DespawnOnEnter', 'src/scene_assembly/loading.rs', 34), '岛屿清理标记保留实际 BSN 装配证据');
+  assert(createsAt('island.DespawnOnEnter', 'src/scene_assembly/loading.rs', 56), '岛屿清理标记保留场景 helper 调用证据');
+  assert.deepEqual(registry['island.DespawnOnEnter'].sourceGaps, []);
   assert(createsAt('visual.Name', 'src/scene_assembly/actors.rs', 53));
   assert(!createsAt('visual.Name', 'src/scene_assembly/actors.rs', 45), 'A nested visual recipe must not inherit the parcel-root name');
   assert(createsAt('settings_scrollbar_thumb.BackgroundColor', 'src/ui/scroll.rs', 101));
@@ -607,14 +612,19 @@ test('current registry and merged function cards have verified source scope acro
   assert.equal(registry['model_node.MeshMaterial3d'].rust_type, 'bevy::pbr::MeshMaterial3d<bevy::pbr::StandardMaterial>');
   assert.ok(audit.context.projectFiles.every(file => !/\bGltfExtensionHandler\b/.test(file.code)));
   assert(hasSource('entity-parcel', 'create', 'src/scene_assembly/actors.rs', /commands\.spawn_scene\(carryable_scene/));
-  assert(hasSource('entity-parcel', 'destroy', 'src/scene_assembly/actors.rs', /entity\.insert\(\(parcel_body\(&config\), DespawnOnExit/));
-  assert(hasSource('entity-parcel', 'destroy', 'src/ui/requests.rs', /app_state\.set\(AppState::MainMenu\)/));
-  assert(hasSource('entity-parcel', 'destroy', 'src/state_scoped.rs', /commands\.despawn_all_where::<&DespawnOnExit<S>/, 'bevy_state'));
+  assert(hasSource('entity-parcel', 'destroy', 'src/scene_assembly/actors.rs', /entity\.insert\(\(parcel_body\(&config\), DespawnOnEnter/));
+  assert(hasSource('entity-parcel', 'destroy', 'src/ui/requests.rs', /app_state\.set_if_different\(AppState::MainMenu\)/));
+  assert(hasSource('entity-parcel', 'destroy', 'src/state_scoped.rs', /\.despawn_all_where::<&DespawnOnEnter<S>/, 'bevy_state'));
   assert(registry['resource.UiRequestMessages'].sourceEntries.some(source => source.role === 'message_definition'));
   assert.deepEqual(registry['resource.UiRequestMessages'].fields, ['UiRequest.action: UiAction']);
   const generated = pathsForRepository(repository).generatedDirectory;
   const artifactManifest = JSON.parse(fs.readFileSync(path.join(generated, 'data/manifest.json'), 'utf8'));
   const artifactRuntime = JSON.parse(fs.readFileSync(path.join(generated, artifactManifest.runtime.path), 'utf8'));
+  const generatedCleanup = ['controller', 'character', 'parcel', 'camera', 'island'].map(owner => artifactRuntime.registry[owner + '.DespawnOnEnter']);
+  assert.deepEqual([...new Set(generatedCleanup.map(record => record.componentRustType))], ['DespawnOnEnter<crate::game_flow::AppState>']);
+  assert.equal(new Set(generatedCleanup.map(record => record.componentTypeId)).size, 1);
+  assert.deepEqual(artifactRuntime.registry['island.DespawnOnEnter'].sourceGaps, []);
+  for (const line of [34, 56]) assert(artifactRuntime.registry['island.DespawnOnEnter'].sourceEntries.some(source => source.role === 'create' && source.path === 'src/scene_assembly/loading.rs' && source.line === line));
   assert.deepEqual(artifactRuntime.registry['resource.UiRequestMessages'].fields, ['UiRequest.action: UiAction']);
   assert(artifactRuntime.registry['resource.UiRequestMessages'].sourceEntries.some(source => source.role === 'message_definition'));
   for (const [id, field] of Object.entries({ 'controller.ControlsCharacter': 'character', 'controller.ControlsCamera': 'camera', 'parcel.HeldBy': 'holder', 'held_proxy.HeldCollider': 'item' })) {
@@ -668,8 +678,8 @@ test('current registry and merged function cards have verified source scope acro
   assert.equal(registry['audio-producers'].sourceEntries.filter(source => source.role === 'implementation').length, 8, 'Two facing registrations share a single actual function definition');
   assert(registry['audio-producers'].sourceEntries.some(source => source.role === 'configure' && /Observer/.test(source.label)), 'Observer producers use Observer registrations rather than fabricated Schedules');
   assert.deepEqual(registry['audio-producers'].sourceGaps, []);
-  assert(hasSource('ui-next-state', 'related', 'src/ui/requests.rs', /app_state\.set\(AppState::InGame\)/));
-  assert(hasSource('ui-next-state', 'related', 'src/ui/requests.rs', /play_state\.set\(PlayState::Paused\)/));
+  assert(hasSource('ui-next-state', 'related', 'src/ui/requests.rs', /app_state\.set_if_different\(AppState::Running\)/));
+  assert(hasSource('ui-next-state', 'related', 'src/ui/requests.rs', /app_state\.set_if_different\(AppState::Paused\)/));
 
   assert.equal(registry.wake_apply.sourcePolicyKind, 'sync');
   assert(hasSource('wake_apply', 'definition', 'src/schedule/executor/mod.rs', /^pub struct ApplyDeferred;/, 'bevy_ecs'));

@@ -46,7 +46,7 @@ flowchart LR
   n1@{ shape: stadium, label: "**main · OnEnter(Running)**<br/>来自Bevy 引擎 ↗：保存本应用调度的注册<br/>上下文与成员。" }
   class n1 node_engine_flow
   class n1 external_node
-  n2@{ shape: cyl, label: "**Messages#lt;StateTransitionEvent#lt;PlaySt**<br/>**ate#gt;#gt;**<br/>来自应用流程 ↗：缓冲游戏运行与暂停转换<br/>的日志输入。" }
+  n2@{ shape: cyl, label: "**Messages#lt;StateTransitionEvent#lt;AppSta**<br/>**te#gt;#gt;**<br/>来自应用流程 ↗：缓冲唯一 AppState 的<br/>真实转换来源。" }
   class n2 node_message_buffer
   class n2 external_node
   n3@{ shape: cyl, label: "**MenuState**<br/>保存菜单页面、设置分类、返回来源与提示。" }

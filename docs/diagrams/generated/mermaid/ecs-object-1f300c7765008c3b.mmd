@@ -56,7 +56,7 @@ flowchart LR
   n3@{ shape: lin-rect, label: "**AnonymousSet(1)**<br/>来自Bevy 引擎 ↗：保存本组系统共同的运<br/>行条件。" }
   class n3 node_system_set
   class n3 external_node
-  n4@{ shape: rounded, label: "**DespawnOnExit#lt;AppState#gt;**<br/>来自Bevy 引擎 ↗：指定离开某状态时自动<br/>销毁的实体。" }
+  n4@{ shape: rounded, label: "**DespawnOnEnter#lt;AppState#gt;**<br/>来自Bevy 引擎 ↗：指定进入某状态时自动<br/>销毁的实体。" }
   class n4 node_component
   class n4 external_node
   n5@{ shape: rounded, label: "**Collider**<br/>来自Avian ↗：保存 Parry 碰撞后端的几<br/>何形状。" }
@@ -172,14 +172,11 @@ flowchart LR
   n44@{ shape: cyl, label: "**Assets#lt;Gltf#gt;**<br/>来自Bevy 引擎 ↗：保存导入场景与命名动<br/>画的资源引用。" }
   class n44 node_resource
   class n44 external_node
-  n45@{ shape: cyl, label: "**State#lt;AppState#gt; /**<br/>**NextState#lt;AppState#gt;**<br/>来自应用流程 ↗：保存应用主状态及待处理<br/>的会话切换。" }
+  n45@{ shape: cyl, label: "**State#lt;AppState#gt; /**<br/>**NextState#lt;AppState#gt;**<br/>来自应用流程 ↗：保存主菜单、运行和暂停<br/>状态及下一次转换。" }
   class n45 node_resource
   class n45 external_node
-  n46@{ shape: cyl, label: "**State#lt;PlayState#gt; /**<br/>**NextState#lt;PlayState#gt;**<br/>来自应用流程 ↗：保存游戏运行、暂停及待<br/>处理的切换请求。" }
-  class n46 node_resource
-  class n46 external_node
-  n47@{ shape: fr-rect, label: "**SceneAssemblyPlugin**<br/>加载运行资源并装配海岛、碰撞与业务实体。" }
-  class n47 node_plugin
+  n46@{ shape: fr-rect, label: "**SceneAssemblyPlugin**<br/>加载运行资源并装配海岛、碰撞与业务实体。" }
+  class n46 node_plugin
   n1 e0@-->|"Commands"| n0
   class e0 edge_order
   n2 e1@-->|"main / Update"| n0
@@ -274,10 +271,8 @@ flowchart LR
   class e45 edge_read
   n45 e46@-->|"访问声明"| n0
   class e46 edge_read
-  n46 e47@-->|"访问声明"| n0
-  class e47 edge_read
-  n47 e48@--> n0
-  class e48 edge_registration
+  n46 e47@--> n0
+  class e47 edge_registration
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
@@ -325,4 +320,3 @@ flowchart LR
   e45@{ curve: basis }
   e46@{ curve: basis }
   e47@{ curve: basis }
-  e48@{ curve: basis }

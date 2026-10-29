@@ -2,12 +2,12 @@
   "schemaVersion": 1,
   "bevyVersion": "0.20.0",
   "debugdumpVersion": "0.17.0",
-  "exportedAt": 1793292795,
+  "exportedAt": 1793300110,
   "target": "x86_64-pc-windows-msvc",
   "features": [
     "debugdump"
   ],
-  "sourceFingerprint": "19430f969b189d9eae45c73eb6522355600b513e2f8cf367bba5f0efdce9244b",
+  "sourceFingerprint": "b2c34865012dc79234613f2ce07b92fefbd849e5235ba6f598326dfceb02ae1b",
   "schedules": [
     {
       "id": "03f3e444e48b95ed",
@@ -100,16 +100,6 @@
       "svgSha256": "7b9c23a66e30d5e0728f96d1d5e5624eb0eb6877d920e9d41da4dd7cc03636d2"
     },
     {
-      "id": "5266185b578c1d31",
-      "app": "main",
-      "label": "OnEnter(InGame)",
-      "filename": "ecs-schedule-5266185b578c1d31.dot",
-      "sha256": "ad59f2e48c249815dacd817b0764181e149cf743700328378f059974d2b888f3",
-      "systemCount": 1,
-      "modelSha256": "4ea32299b9ac6661b512e2675db248ea38ef1ab1bce9e4a281bee6c8a86b157c",
-      "svgSha256": "153994508aadc7e56626867f8796b9d416129a81f97b3346a238d53ed85ac962"
-    },
-    {
       "id": "208cc5c24ce9edd9",
       "app": "main",
       "label": "OnEnter(MainMenu)",
@@ -138,6 +128,16 @@
       "systemCount": 3,
       "modelSha256": "fe9a38353c6d9f8d36832acb16188c8ad089f42f0e60e46add38a8af8c8d8926",
       "svgSha256": "d11d636e2c2c6b34d91b5d8feae91b85cfc4c1a169445001f6d4e4fb0face38f"
+    },
+    {
+      "id": "a1dcd4558e6f5d56",
+      "app": "main",
+      "label": "OnExit(MainMenu)",
+      "filename": "ecs-schedule-a1dcd4558e6f5d56.dot",
+      "sha256": "ad59f2e48c249815dacd817b0764181e149cf743700328378f059974d2b888f3",
+      "systemCount": 1,
+      "modelSha256": "4ea32299b9ac6661b512e2675db248ea38ef1ab1bce9e4a281bee6c8a86b157c",
+      "svgSha256": "c70c7ee5d3d4cdacd08a3da33958fcded0c74f4397ba870bdf33e083e3e0d6fb"
     },
     {
       "id": "6f934477cee31ce5",
@@ -234,10 +234,10 @@
       "app": "main",
       "label": "StateTransition",
       "filename": "ecs-schedule-6916d185b39f9634.dot",
-      "sha256": "8849612d76b21a5d8570c4fb571bf300a2e2f8b81563e3b03691d85cdd13c31e",
-      "systemCount": 30,
-      "modelSha256": "74dc0a9f2717efbd41ddd10c8deccde5228d7f5f8c0c121f07781ffb087c856a",
-      "svgSha256": "d3e76dc812fb932bcd932658370b4aa9eb05742ccb4dbef460495a5a25f54805"
+      "sha256": "2719db62aca97922eec3c11a7436f97b84c5b6cc3beacf3688467857d0410122",
+      "systemCount": 16,
+      "modelSha256": "9f0c840990d7b65ec32691735163fd5a05c137686c4080a2fd06d6a5aa77f155",
+      "svgSha256": "5cd563a98b890ed5e0d8248bd881420e3b67bd12f1c601bb08afda5188403c5c"
     },
     {
       "id": "c1cc822ec515c124",

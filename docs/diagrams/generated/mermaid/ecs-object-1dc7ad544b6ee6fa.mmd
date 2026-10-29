@@ -55,16 +55,10 @@ flowchart LR
   class n5 external_node
   n6@{ shape: rounded, label: "**enable_entities_on_exit_state#lt;demo::**<br/>**game_flow::AppState#gt;**<br/>有效状态转换退出指定值时，对匹配<br/>EnableOnExit 且已禁用的实体及<br/>Children 后代递归移除 Disabled，重新启<br/>用该子树。" }
   class n6 node_system
-  n7@{ shape: rounded, label: "**enable_entities_on_exit_state#lt;demo::**<br/>**game_flow::PlayState#gt;**<br/>有效状态转换退出指定值时，对匹配<br/>EnableOnExit 且已禁用的实体及<br/>Children 后代递归移除 Disabled，重新启<br/>用该子树。" }
+  n7@{ shape: rounded, label: "**enable_entities_when_state#lt;demo::**<br/>**game_flow::AppState#gt;**<br/>读取最新有效状态转换，调用 EnableWhen<br/>的转换判定函数；命中时从当前禁用实体及<br/>Children 后代递归移除 Disabled。" }
   class n7 node_system
-  n8@{ shape: rounded, label: "**enable_entities_when_state#lt;demo::**<br/>**game_flow::AppState#gt;**<br/>读取最新有效状态转换，调用 EnableWhen<br/>的转换判定函数；命中时从当前禁用实体及<br/>Children 后代递归移除 Disabled。" }
+  n8@{ shape: rounded, label: "**enable_entities_on_enter_**<br/>**state#lt;demo::game_flow::AppState#gt;**<br/>有效状态转换进入指定值时，对匹配<br/>EnableOnEnter 且已禁用的实体及<br/>Children 后代递归移除 Disabled。" }
   class n8 node_system
-  n9@{ shape: rounded, label: "**enable_entities_when_state#lt;demo::**<br/>**game_flow::PlayState#gt;**<br/>读取最新有效状态转换，调用 EnableWhen<br/>的转换判定函数；命中时从当前禁用实体及<br/>Children 后代递归移除 Disabled。" }
-  class n9 node_system
-  n10@{ shape: rounded, label: "**enable_entities_on_enter_**<br/>**state#lt;demo::game_flow::AppState#gt;**<br/>有效状态转换进入指定值时，对匹配<br/>EnableOnEnter 且已禁用的实体及<br/>Children 后代递归移除 Disabled。" }
-  class n10 node_system
-  n11@{ shape: rounded, label: "**enable_entities_on_enter_**<br/>**state#lt;demo::game_flow::PlayState#gt;**<br/>有效状态转换进入指定值时，对匹配<br/>EnableOnEnter 且已禁用的实体及<br/>Children 后代递归移除 Disabled。" }
-  class n11 node_system
   n0 e0@-->|"存在 / 变更过滤"| n1
   class e0 edge_reference
   n0 e1@-->|"存在 / 变更过滤"| n2
@@ -81,19 +75,11 @@ flowchart LR
   class e6 edge_reference
   n0 e7@-->|"存在 / 变更过滤"| n8
   class e7 edge_reference
-  n0 e8@-->|"存在 / 变更过滤"| n9
-  class e8 edge_reference
-  n0 e9@-->|"存在 / 变更过滤"| n10
-  class e9 edge_reference
-  n0 e10@-->|"存在 / 变更过滤"| n11
-  class e10 edge_reference
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
   e3@{ curve: basis }
   e4@{ curve: basis }
+  e5@{ curve: basis }
   e6@{ curve: basis }
   e7@{ curve: basis }
-  e8@{ curve: basis }
-  e9@{ curve: basis }
-  e10@{ curve: basis }

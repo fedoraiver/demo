@@ -101,14 +101,11 @@ flowchart LR
   n19@{ shape: cyl, label: "**PrototypeConfig**<br/>来自设置与参数 ↗：保存运动、重力、拾取<br/>与握持的共享参数。" }
   class n19 node_resource
   class n19 external_node
-  n20@{ shape: cyl, label: "**State#lt;AppState#gt; /**<br/>**NextState#lt;AppState#gt;**<br/>来自应用流程 ↗：保存应用主状态及待处理<br/>的会话切换。" }
+  n20@{ shape: cyl, label: "**State#lt;AppState#gt; /**<br/>**NextState#lt;AppState#gt;**<br/>来自应用流程 ↗：保存主菜单、运行和暂停<br/>状态及下一次转换。" }
   class n20 node_resource
   class n20 external_node
-  n21@{ shape: cyl, label: "**State#lt;PlayState#gt; /**<br/>**NextState#lt;PlayState#gt;**<br/>来自应用流程 ↗：保存游戏运行、暂停及待<br/>处理的切换请求。" }
-  class n21 node_resource
-  class n21 external_node
-  n22@{ shape: fr-rect, label: "**CharacterPlugin**<br/>提供角色身份、运动、接地与跳跃。" }
-  class n22 node_plugin
+  n21@{ shape: fr-rect, label: "**CharacterPlugin**<br/>提供角色身份、运动、接地与跳跃。" }
+  class n21 node_plugin
   n1 e0@--> n0
   class e0 edge_order
   n0 e1@--> n2
@@ -163,10 +160,8 @@ flowchart LR
   class e25 edge_read
   n20 e26@-->|"访问声明"| n0
   class e26 edge_read
-  n21 e27@-->|"访问声明"| n0
-  class e27 edge_read
-  n22 e28@--> n0
-  class e28 edge_registration
+  n21 e27@--> n0
+  class e27 edge_registration
   e0@{ curve: basis }
   e2@{ curve: basis }
   e3@{ curve: basis }
@@ -194,4 +189,3 @@ flowchart LR
   e25@{ curve: basis }
   e26@{ curve: basis }
   e27@{ curve: basis }
-  e28@{ curve: basis }

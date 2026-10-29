@@ -25,7 +25,7 @@
       "useMaxWidth": false,
       "curve": "linear"
     },
-    "themeCSS": "#object-94e415e219662983-e16{marker-start:url(#object-94e415e219662983_flowchart-v2-pointStart)!important}\n#object-94e415e219662983_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}"
+    "themeCSS": "#object-94e415e219662983-e15{marker-start:url(#object-94e415e219662983_flowchart-v2-pointStart)!important}\n#object-94e415e219662983_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}"
   }
 }
 ---
@@ -87,14 +87,11 @@ flowchart LR
   class n13 external_node
   n14@{ shape: notch-rect, label: "**Local#lt;HashMap#lt;Entity, HoldStrain#gt;#gt;**<br/>记录持握偏差计时与失稳提示锁存。" }
   class n14 node_local
-  n15@{ shape: cyl, label: "**State#lt;AppState#gt; /**<br/>**NextState#lt;AppState#gt;**<br/>来自应用流程 ↗：保存应用主状态及待处理<br/>的会话切换。" }
+  n15@{ shape: cyl, label: "**State#lt;AppState#gt; /**<br/>**NextState#lt;AppState#gt;**<br/>来自应用流程 ↗：保存主菜单、运行和暂停<br/>状态及下一次转换。" }
   class n15 node_resource
   class n15 external_node
-  n16@{ shape: cyl, label: "**State#lt;PlayState#gt; /**<br/>**NextState#lt;PlayState#gt;**<br/>来自应用流程 ↗：保存游戏运行、暂停及待<br/>处理的切换请求。" }
-  class n16 node_resource
-  class n16 external_node
-  n17@{ shape: fr-rect, label: "**ItemInteractionPlugin**<br/>管理物品拾取、共享持握、安全释放与反馈。" }
-  class n17 node_plugin
+  n16@{ shape: fr-rect, label: "**ItemInteractionPlugin**<br/>管理物品拾取、共享持握、安全释放与反馈。" }
+  class n16 node_plugin
   n1 e0@-->|"Target"| n0
   class e0 edge_order
   n0 e1@--> n2
@@ -125,12 +122,10 @@ flowchart LR
   class e13 edge_read
   n15 e14@-->|"访问声明"| n0
   class e14 edge_read
-  n16 e15@-->|"访问声明"| n0
-  class e15 edge_read
-  n14 e16@---|"访问声明"| n0
-  class e16 edge_write
-  n17 e17@--> n0
-  class e17 edge_registration
+  n14 e15@---|"访问声明"| n0
+  class e15 edge_write
+  n16 e16@--> n0
+  class e16 edge_registration
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
@@ -140,7 +135,6 @@ flowchart LR
   e6@{ curve: basis }
   e7@{ curve: basis }
   e8@{ curve: basis }
-  e9@{ curve: basis }
   e10@{ curve: basis }
   e11@{ curve: basis }
   e12@{ curve: basis }
@@ -148,4 +142,3 @@ flowchart LR
   e14@{ curve: basis }
   e15@{ curve: basis }
   e16@{ curve: basis }
-  e17@{ curve: basis }

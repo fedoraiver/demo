@@ -25,7 +25,7 @@
       "useMaxWidth": false,
       "curve": "linear"
     },
-    "themeCSS": "#object-03d11d78a7498f5c-e1{marker-start:url(#object-03d11d78a7498f5c_flowchart-v2-pointStart)!important}\n#object-03d11d78a7498f5c-e2{marker-start:url(#object-03d11d78a7498f5c_flowchart-v2-pointStart)!important}\n#object-03d11d78a7498f5c-e4{marker-start:url(#object-03d11d78a7498f5c_flowchart-v2-pointStart)!important}\n#object-03d11d78a7498f5c-e20{marker-start:url(#object-03d11d78a7498f5c_flowchart-v2-pointStart)!important}\n#object-03d11d78a7498f5c_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}"
+    "themeCSS": "#object-03d11d78a7498f5c-e1{marker-start:url(#object-03d11d78a7498f5c_flowchart-v2-pointStart)!important}\n#object-03d11d78a7498f5c-e2{marker-start:url(#object-03d11d78a7498f5c_flowchart-v2-pointStart)!important}\n#object-03d11d78a7498f5c-e4{marker-start:url(#object-03d11d78a7498f5c_flowchart-v2-pointStart)!important}\n#object-03d11d78a7498f5c-e19{marker-start:url(#object-03d11d78a7498f5c_flowchart-v2-pointStart)!important}\n#object-03d11d78a7498f5c_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}"
   }
 }
 ---
@@ -89,17 +89,14 @@ flowchart LR
   class n13 node_local
   n14@{ shape: cyl, label: "**MenuFocus**<br/>保存当前可操作按钮的导航序号。" }
   class n14 node_resource
-  n15@{ shape: cyl, label: "**State#lt;AppState#gt; /**<br/>**NextState#lt;AppState#gt;**<br/>来自应用流程 ↗：保存应用主状态及待处理<br/>的会话切换。" }
+  n15@{ shape: cyl, label: "**State#lt;AppState#gt; /**<br/>**NextState#lt;AppState#gt;**<br/>来自应用流程 ↗：保存主菜单、运行和暂停<br/>状态及下一次转换。" }
   class n15 node_resource
   class n15 external_node
-  n16@{ shape: cyl, label: "**State#lt;PlayState#gt; /**<br/>**NextState#lt;PlayState#gt;**<br/>来自应用流程 ↗：保存游戏运行、暂停及待<br/>处理的切换请求。" }
-  class n16 node_resource
+  n16@{ shape: cyl, label: "**Messages#lt;SoundRequest#gt;**<br/>来自音频播放 ↗：缓冲菜单交互与物品反馈<br/>的短音请求。" }
+  class n16 node_message_buffer
   class n16 external_node
-  n17@{ shape: cyl, label: "**Messages#lt;SoundRequest#gt;**<br/>来自音频播放 ↗：缓冲菜单交互与物品反馈<br/>的短音请求。" }
-  class n17 node_message_buffer
-  class n17 external_node
-  n18@{ shape: fr-rect, label: "**GameUiPlugin**<br/>管理菜单、设置编辑、导航与主菜单展示场<br/>景。" }
-  class n18 node_plugin
+  n17@{ shape: fr-rect, label: "**GameUiPlugin**<br/>管理菜单、设置编辑、导航与主菜单展示场<br/>景。" }
+  class n17 node_plugin
   n1 e0@--> n0
   class e0 edge_consume
   n2 e1@---|"草稿"| n0
@@ -137,13 +134,11 @@ flowchart LR
   n0 e17@-->|"访问声明"| n15
   class e17 edge_write
   n0 e18@-->|"访问声明"| n16
-  class e18 edge_write
-  n0 e19@-->|"访问声明"| n17
-  class e19 edge_publish
-  n13 e20@---|"访问声明"| n0
-  class e20 edge_write
-  n18 e21@--> n0
-  class e21 edge_registration
+  class e18 edge_publish
+  n13 e19@---|"访问声明"| n0
+  class e19 edge_write
+  n17 e20@--> n0
+  class e20 edge_registration
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
@@ -165,4 +160,3 @@ flowchart LR
   e18@{ curve: basis }
   e19@{ curve: basis }
   e20@{ curve: basis }
-  e21@{ curve: basis }

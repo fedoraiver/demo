@@ -41,7 +41,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**spawn_lighting**<br/>为游戏会话创建日光与加载相机。" }
   class n0 node_system
-  n1@{ shape: stadium, label: "**main · OnEnter(InGame)**<br/>来自Bevy 引擎 ↗：保存本应用调度的注册<br/>上下文与成员。" }
+  n1@{ shape: stadium, label: "**main · OnExit(MainMenu)**<br/>来自Bevy 引擎 ↗：保存本应用调度的注册<br/>上下文与成员。" }
   class n1 node_engine_flow
   class n1 external_node
   n2@{ shape: rounded, label: "**Camera3d**<br/>来自Bevy 引擎 ↗：标记三维场景相机。" }
@@ -53,7 +53,7 @@ flowchart LR
   n4@{ shape: rounded, label: "**PrimaryEguiContext**<br/>来自Egui / Inspector ↗：指定主检查器<br/>界面的相机上下文。" }
   class n4 node_component
   class n4 external_node
-  n5@{ shape: rounded, label: "**DespawnOnExit**<br/>来自Bevy 引擎 ↗：标记退出所属应用状态<br/>时销毁此实体。" }
+  n5@{ shape: rounded, label: "**DespawnOnEnter**<br/>来自Bevy 引擎 ↗：返回主菜单时清理当前<br/>会话根。" }
   class n5 node_component
   class n5 external_node
   n6@{ shape: rounded, label: "**LoadingCamera**<br/>加载期间相机身份，准备后移除。" }
@@ -63,7 +63,7 @@ flowchart LR
   class n7 external_node
   n8@{ shape: fr-rect, label: "**SceneAssemblyPlugin**<br/>加载运行资源并装配海岛、碰撞与业务实体。" }
   class n8 node_plugin
-  n1 e0@-->|"main / OnEnter(InGame)"| n0
+  n1 e0@-->|"main / OnExit(MainMenu)"| n0
   class e0 edge_registration
   n0 e1@-->|"添加"| n2
   class e1 edge_write

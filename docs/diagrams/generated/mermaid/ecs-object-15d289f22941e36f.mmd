@@ -71,14 +71,11 @@ flowchart LR
   n9@{ shape: rounded, label: "**Transform**<br/>来自Bevy 引擎 ↗：保存角色经插值生成的<br/>显示姿态。" }
   class n9 node_component
   class n9 external_node
-  n10@{ shape: cyl, label: "**State#lt;AppState#gt; /**<br/>**NextState#lt;AppState#gt;**<br/>来自应用流程 ↗：保存应用主状态及待处理<br/>的会话切换。" }
+  n10@{ shape: cyl, label: "**State#lt;AppState#gt; /**<br/>**NextState#lt;AppState#gt;**<br/>来自应用流程 ↗：保存主菜单、运行和暂停<br/>状态及下一次转换。" }
   class n10 node_resource
   class n10 external_node
-  n11@{ shape: cyl, label: "**State#lt;PlayState#gt; /**<br/>**NextState#lt;PlayState#gt;**<br/>来自应用流程 ↗：保存游戏运行、暂停及待<br/>处理的切换请求。" }
-  class n11 node_resource
-  class n11 external_node
-  n12@{ shape: fr-rect, label: "**FirstPersonPlugin**<br/>管理玩法动作、光标捕获、朝向与第一人称镜<br/>头。" }
-  class n12 node_plugin
+  n11@{ shape: fr-rect, label: "**FirstPersonPlugin**<br/>管理玩法动作、光标捕获、朝向与第一人称镜<br/>头。" }
+  class n11 node_plugin
   n0 e0@--> n1
   class e0 edge_order
   n2 e1@--> n0
@@ -99,19 +96,15 @@ flowchart LR
   class e8 edge_read
   n10 e9@-->|"访问声明"| n0
   class e9 edge_read
-  n11 e10@-->|"访问声明"| n0
-  class e10 edge_read
-  n12 e11@--> n0
-  class e11 edge_registration
+  n11 e10@--> n0
+  class e10 edge_registration
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
   e3@{ curve: basis }
   e4@{ curve: basis }
-  e5@{ curve: basis }
   e6@{ curve: basis }
   e7@{ curve: basis }
   e8@{ curve: basis }
   e9@{ curve: basis }
   e10@{ curve: basis }
-  e11@{ curve: basis }

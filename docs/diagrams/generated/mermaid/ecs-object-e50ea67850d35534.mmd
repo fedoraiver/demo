@@ -44,17 +44,13 @@ flowchart LR
   class n1 node_engine_flow
   n2@{ shape: lin-rect, label: "**ApplyStateTransition ·**<br/>**(PhantomData#lt;demo::game_flow::**<br/>**AppState#gt;)**<br/>应用待处理状态及其依赖子状态转换。" }
   class n2 node_system_set
-  n3@{ shape: lin-rect, label: "**ApplyStateTransition ·**<br/>**(PhantomData#lt;demo::game_flow::**<br/>**PlayState#gt;)**<br/>应用待处理状态及其依赖子状态转换。" }
+  n3@{ shape: lin-rect, label: "**ExitSchedules**<br/>执行旧状态的退出调度和退出生命周期。" }
   class n3 node_system_set
-  n4@{ shape: lin-rect, label: "**ExitSchedules**<br/>执行旧状态的退出调度和退出生命周期。" }
-  class n4 node_system_set
   n1 e0@-->|"main / StateTransition"| n0
   class e0 edge_registration
   n0 e1@--> n2
   class e1 edge_set_membership
   n0 e2@--> n3
-  class e2 edge_set_membership
-  n0 e3@--> n4
-  class e3 edge_order
+  class e2 edge_order
   e1@{ curve: basis }
-  e3@{ curve: basis }
+  e2@{ curve: basis }

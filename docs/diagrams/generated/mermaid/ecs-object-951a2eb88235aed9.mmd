@@ -83,14 +83,11 @@ flowchart LR
   n13@{ shape: cyl, label: "**Time**<br/>来自Bevy 引擎 ↗：提供当前运行阶段的通<br/>用时间。" }
   class n13 node_resource
   class n13 external_node
-  n14@{ shape: cyl, label: "**State#lt;AppState#gt; /**<br/>**NextState#lt;AppState#gt;**<br/>来自应用流程 ↗：保存应用主状态及待处理<br/>的会话切换。" }
+  n14@{ shape: cyl, label: "**State#lt;AppState#gt; /**<br/>**NextState#lt;AppState#gt;**<br/>来自应用流程 ↗：保存主菜单、运行和暂停<br/>状态及下一次转换。" }
   class n14 node_resource
   class n14 external_node
-  n15@{ shape: cyl, label: "**State#lt;PlayState#gt; /**<br/>**NextState#lt;PlayState#gt;**<br/>来自应用流程 ↗：保存游戏运行、暂停及待<br/>处理的切换请求。" }
-  class n15 node_resource
-  class n15 external_node
-  n16@{ shape: fr-rect, label: "**CharacterAnimationPlugin**<br/>绑定并混合角色动画，补偿视觉接地。" }
-  class n16 node_plugin
+  n15@{ shape: fr-rect, label: "**CharacterAnimationPlugin**<br/>绑定并混合角色动画，补偿视觉接地。" }
+  class n15 node_plugin
   n1 e0@-->|"Commands"| n0
   class e0 edge_order
   n2 e1@-->|"main / Update"| n0
@@ -127,10 +124,8 @@ flowchart LR
   class e16 edge_read
   n14 e17@-->|"访问声明"| n0
   class e17 edge_read
-  n15 e18@-->|"访问声明"| n0
-  class e18 edge_read
-  n16 e19@--> n0
-  class e19 edge_registration
+  n15 e18@--> n0
+  class e18 edge_registration
   n1 layout_input_0@~~~ n2
   n2 layout_input_1@~~~ n3
   n3 layout_input_2@~~~ n6
@@ -142,7 +137,6 @@ flowchart LR
   n11 layout_input_8@~~~ n13
   n13 layout_input_9@~~~ n14
   n14 layout_input_10@~~~ n15
-  n15 layout_input_11@~~~ n16
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
@@ -162,4 +156,3 @@ flowchart LR
   e16@{ curve: basis }
   e17@{ curve: basis }
   e18@{ curve: basis }
-  e19@{ curve: basis }

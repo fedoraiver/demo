@@ -25,7 +25,7 @@
       "useMaxWidth": false,
       "curve": "linear"
     },
-    "themeCSS": "#object-c76542e48f669eb7-e17{marker-start:url(#object-c76542e48f669eb7_flowchart-v2-pointStart)!important}\n#object-c76542e48f669eb7-e38{marker-start:url(#object-c76542e48f669eb7_flowchart-v2-pointStart)!important}\n#object-c76542e48f669eb7_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}"
+    "themeCSS": "#object-c76542e48f669eb7-e17{marker-start:url(#object-c76542e48f669eb7_flowchart-v2-pointStart)!important}\n#object-c76542e48f669eb7-e37{marker-start:url(#object-c76542e48f669eb7_flowchart-v2-pointStart)!important}\n#object-c76542e48f669eb7_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}"
   }
 }
 ---
@@ -136,14 +136,11 @@ flowchart LR
   class n32 external_node
   n33@{ shape: cyl, label: "**ArtLoadState**<br/>保存运行资源的加载进度与就绪结果。" }
   class n33 node_resource
-  n34@{ shape: cyl, label: "**State#lt;AppState#gt; /**<br/>**NextState#lt;AppState#gt;**<br/>来自应用流程 ↗：保存应用主状态及待处理<br/>的会话切换。" }
+  n34@{ shape: cyl, label: "**State#lt;AppState#gt; /**<br/>**NextState#lt;AppState#gt;**<br/>来自应用流程 ↗：保存主菜单、运行和暂停<br/>状态及下一次转换。" }
   class n34 node_resource
   class n34 external_node
-  n35@{ shape: cyl, label: "**State#lt;PlayState#gt; /**<br/>**NextState#lt;PlayState#gt;**<br/>来自应用流程 ↗：保存游戏运行、暂停及待<br/>处理的切换请求。" }
-  class n35 node_resource
-  class n35 external_node
-  n36@{ shape: fr-rect, label: "**SceneAssemblyPlugin**<br/>加载运行资源并装配海岛、碰撞与业务实体。" }
-  class n36 node_plugin
+  n35@{ shape: fr-rect, label: "**SceneAssemblyPlugin**<br/>加载运行资源并装配海岛、碰撞与业务实体。" }
+  class n35 node_plugin
   n1 e0@-->|"Commands"| n0
   class e0 edge_order
   n0 e1@-->|"Commands"| n2
@@ -218,12 +215,10 @@ flowchart LR
   class e35 edge_read
   n34 e36@-->|"访问声明"| n0
   class e36 edge_read
-  n35 e37@-->|"访问声明"| n0
-  class e37 edge_read
-  n33 e38@---|"访问声明"| n0
-  class e38 edge_write
-  n36 e39@--> n0
-  class e39 edge_registration
+  n33 e37@---|"访问声明"| n0
+  class e37 edge_write
+  n35 e38@--> n0
+  class e38 edge_registration
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
@@ -263,4 +258,3 @@ flowchart LR
   e36@{ curve: basis }
   e37@{ curve: basis }
   e38@{ curve: basis }
-  e39@{ curve: basis }

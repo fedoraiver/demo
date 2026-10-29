@@ -25,7 +25,7 @@
       "useMaxWidth": false,
       "curve": "linear"
     },
-    "themeCSS": "#object-60635aae29dfa138-e5{marker-start:url(#object-60635aae29dfa138_flowchart-v2-pointStart)!important}\n#object-60635aae29dfa138-e12{marker-start:url(#object-60635aae29dfa138_flowchart-v2-pointStart)!important}\n#object-60635aae29dfa138_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}"
+    "themeCSS": "#object-60635aae29dfa138-e5{marker-start:url(#object-60635aae29dfa138_flowchart-v2-pointStart)!important}\n#object-60635aae29dfa138-e11{marker-start:url(#object-60635aae29dfa138_flowchart-v2-pointStart)!important}\n#object-60635aae29dfa138_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}"
   }
 }
 ---
@@ -68,14 +68,11 @@ flowchart LR
   class n7 external_node
   n8@{ shape: cyl, label: "**ArtLoadState**<br/>保存运行资源的加载进度与就绪结果。" }
   class n8 node_resource
-  n9@{ shape: cyl, label: "**State#lt;AppState#gt; /**<br/>**NextState#lt;AppState#gt;**<br/>来自应用流程 ↗：保存应用主状态及待处理<br/>的会话切换。" }
+  n9@{ shape: cyl, label: "**State#lt;AppState#gt; /**<br/>**NextState#lt;AppState#gt;**<br/>来自应用流程 ↗：保存主菜单、运行和暂停<br/>状态及下一次转换。" }
   class n9 node_resource
   class n9 external_node
-  n10@{ shape: cyl, label: "**State#lt;PlayState#gt; /**<br/>**NextState#lt;PlayState#gt;**<br/>来自应用流程 ↗：保存游戏运行、暂停及待<br/>处理的切换请求。" }
-  class n10 node_resource
-  class n10 external_node
-  n11@{ shape: fr-rect, label: "**SceneAssemblyPlugin**<br/>加载运行资源并装配海岛、碰撞与业务实体。" }
-  class n11 node_plugin
+  n10@{ shape: fr-rect, label: "**SceneAssemblyPlugin**<br/>加载运行资源并装配海岛、碰撞与业务实体。" }
+  class n10 node_plugin
   n0 e0@-->|"Commands"| n1
   class e0 edge_order
   n2 e1@-->|"main / Update"| n0
@@ -98,12 +95,10 @@ flowchart LR
   class e9 edge_read
   n9 e10@-->|"访问声明"| n0
   class e10 edge_read
-  n10 e11@-->|"访问声明"| n0
-  class e11 edge_read
-  n8 e12@---|"访问声明"| n0
-  class e12 edge_write
-  n11 e13@--> n0
-  class e13 edge_registration
+  n8 e11@---|"访问声明"| n0
+  class e11 edge_write
+  n10 e12@--> n0
+  class e12 edge_registration
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
@@ -112,8 +107,8 @@ flowchart LR
   e5@{ curve: basis }
   e6@{ curve: basis }
   e7@{ curve: basis }
+  e8@{ curve: basis }
   e9@{ curve: basis }
   e10@{ curve: basis }
   e11@{ curve: basis }
   e12@{ curve: basis }
-  e13@{ curve: basis }

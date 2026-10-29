@@ -418,28 +418,22 @@ flowchart LR
   end
   style layout_card_n61 fill:none,stroke:none
   subgraph layout_card_n62[" "]
-  n62@{ shape: cyl, label: "**State#lt;AppState#gt; /**<br/>**NextState#lt;AppState#gt;**<br/>来自应用流程 ↗：保存应用主状态及待处理<br/>的会话切换。" }
+  n62@{ shape: cyl, label: "**State#lt;AppState#gt; /**<br/>**NextState#lt;AppState#gt;**<br/>来自应用流程 ↗：保存主菜单、运行和暂停<br/>状态及下一次转换。" }
   class n62 node_resource
   class n62 external_node
   end
   style layout_card_n62 fill:none,stroke:none
   subgraph layout_card_n63[" "]
-  n63@{ shape: cyl, label: "**State#lt;PlayState#gt; /**<br/>**NextState#lt;PlayState#gt;**<br/>来自应用流程 ↗：保存游戏运行、暂停及待<br/>处理的切换请求。" }
-  class n63 node_resource
+  n63@{ shape: cyl, label: "**Messages#lt;SoundRequest#gt;**<br/>来自音频播放 ↗：缓冲菜单交互与物品反馈<br/>的短音请求。" }
+  class n63 node_message_buffer
   class n63 external_node
   end
   style layout_card_n63 fill:none,stroke:none
   subgraph layout_card_n64[" "]
-  n64@{ shape: cyl, label: "**Messages#lt;SoundRequest#gt;**<br/>来自音频播放 ↗：缓冲菜单交互与物品反馈<br/>的短音请求。" }
-  class n64 node_message_buffer
-  class n64 external_node
+  n64@{ shape: fr-rect, label: "**FirstPersonPlugin**<br/>管理玩法动作、光标捕获、朝向与第一人称镜<br/>头。" }
+  class n64 node_plugin
   end
   style layout_card_n64 fill:none,stroke:none
-  subgraph layout_card_n65[" "]
-  n65@{ shape: fr-rect, label: "**FirstPersonPlugin**<br/>管理玩法动作、光标捕获、朝向与第一人称镜<br/>头。" }
-  class n65 node_plugin
-  end
-  style layout_card_n65 fill:none,stroke:none
   n1 e0@-->|"查询访问"| n0
   class e0 edge_read
   n2 e1@--> n0
@@ -594,12 +588,10 @@ flowchart LR
   class e75 edge_read
   n62 e76@-->|"访问声明"| n0
   class e76 edge_read
-  n63 e77@-->|"访问声明"| n0
-  class e77 edge_read
-  n0 e78@-->|"访问声明"| n64
-  class e78 edge_publish
-  n65 e79@--> n0
-  class e79 edge_registration
+  n0 e77@-->|"访问声明"| n63
+  class e77 edge_publish
+  n64 e78@--> n0
+  class e78 edge_registration
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
@@ -679,4 +671,3 @@ flowchart LR
   e76@{ curve: basis }
   e77@{ curve: basis }
   e78@{ curve: basis }
-  e79@{ curve: basis }

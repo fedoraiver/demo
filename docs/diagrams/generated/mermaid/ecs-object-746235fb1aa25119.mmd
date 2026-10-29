@@ -124,14 +124,11 @@ flowchart LR
   n26@{ shape: cyl, label: "**ColliderTrees**<br/>来自Avian ↗：索引碰撞体以加速接地、拾<br/>取与持物路径查询。" }
   class n26 node_resource
   class n26 external_node
-  n27@{ shape: cyl, label: "**State#lt;AppState#gt; /**<br/>**NextState#lt;AppState#gt;**<br/>来自应用流程 ↗：保存应用主状态及待处理<br/>的会话切换。" }
+  n27@{ shape: cyl, label: "**State#lt;AppState#gt; /**<br/>**NextState#lt;AppState#gt;**<br/>来自应用流程 ↗：保存主菜单、运行和暂停<br/>状态及下一次转换。" }
   class n27 node_resource
   class n27 external_node
-  n28@{ shape: cyl, label: "**State#lt;PlayState#gt; /**<br/>**NextState#lt;PlayState#gt;**<br/>来自应用流程 ↗：保存游戏运行、暂停及待<br/>处理的切换请求。" }
-  class n28 node_resource
-  class n28 external_node
-  n29@{ shape: fr-rect, label: "**CharacterPlugin**<br/>提供角色身份、运动、接地与跳跃。" }
-  class n29 node_plugin
+  n28@{ shape: fr-rect, label: "**CharacterPlugin**<br/>提供角色身份、运动、接地与跳跃。" }
+  class n28 node_plugin
   n1 e0@--> n0
   class e0 edge_order
   n0 e1@--> n2
@@ -188,10 +185,8 @@ flowchart LR
   class e26 edge_read
   n27 e27@-->|"访问声明"| n0
   class e27 edge_read
-  n28 e28@-->|"访问声明"| n0
-  class e28 edge_read
-  n29 e29@--> n0
-  class e29 edge_registration
+  n28 e28@--> n0
+  class e28 edge_registration
   e0@{ curve: basis }
   e2@{ curve: basis }
   e3@{ curve: basis }
@@ -206,6 +201,7 @@ flowchart LR
   e12@{ curve: basis }
   e13@{ curve: basis }
   e14@{ curve: basis }
+  e15@{ curve: basis }
   e16@{ curve: basis }
   e17@{ curve: basis }
   e18@{ curve: basis }
@@ -219,4 +215,3 @@ flowchart LR
   e26@{ curve: basis }
   e27@{ curve: basis }
   e28@{ curve: basis }
-  e29@{ curve: basis }

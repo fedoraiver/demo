@@ -25,7 +25,7 @@
       "useMaxWidth": false,
       "curve": "linear"
     },
-    "themeCSS": "#object-191e27dc9b06dd6f-e9{marker-start:url(#object-191e27dc9b06dd6f_flowchart-v2-pointStart)!important}\n#object-191e27dc9b06dd6f_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}"
+    "themeCSS": "#object-191e27dc9b06dd6f-e8{marker-start:url(#object-191e27dc9b06dd6f_flowchart-v2-pointStart)!important}\n#object-191e27dc9b06dd6f_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}"
   }
 }
 ---
@@ -66,14 +66,11 @@ flowchart LR
   class n6 external_node
   n7@{ shape: notch-rect, label: "**Local#lt;f64#gt;（next_log_time）**<br/>保存角色速度日志的下次采样时间。" }
   class n7 node_local
-  n8@{ shape: cyl, label: "**State#lt;AppState#gt; /**<br/>**NextState#lt;AppState#gt;**<br/>来自应用流程 ↗：保存应用主状态及待处理<br/>的会话切换。" }
+  n8@{ shape: cyl, label: "**State#lt;AppState#gt; /**<br/>**NextState#lt;AppState#gt;**<br/>来自应用流程 ↗：保存主菜单、运行和暂停<br/>状态及下一次转换。" }
   class n8 node_resource
   class n8 external_node
-  n9@{ shape: cyl, label: "**State#lt;PlayState#gt; /**<br/>**NextState#lt;PlayState#gt;**<br/>来自应用流程 ↗：保存游戏运行、暂停及待<br/>处理的切换请求。" }
-  class n9 node_resource
-  class n9 external_node
-  n10@{ shape: fr-rect, label: "**CharacterPlugin**<br/>提供角色身份、运动、接地与跳跃。" }
-  class n10 node_plugin
+  n9@{ shape: fr-rect, label: "**CharacterPlugin**<br/>提供角色身份、运动、接地与跳跃。" }
+  class n9 node_plugin
   n1 e0@--> n0
   class e0 edge_order
   n2 e1@-->|"main / FixedPostUpdate"| n0
@@ -90,19 +87,17 @@ flowchart LR
   class e6 edge_read
   n8 e7@-->|"访问声明"| n0
   class e7 edge_read
-  n9 e8@-->|"访问声明"| n0
-  class e8 edge_read
-  n7 e9@---|"访问声明"| n0
-  class e9 edge_write
-  n10 e10@--> n0
-  class e10 edge_registration
+  n7 e8@---|"访问声明"| n0
+  class e8 edge_write
+  n9 e9@--> n0
+  class e9 edge_registration
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
   e3@{ curve: basis }
   e4@{ curve: basis }
+  e5@{ curve: basis }
   e6@{ curve: basis }
   e7@{ curve: basis }
   e8@{ curve: basis }
   e9@{ curve: basis }
-  e10@{ curve: basis }

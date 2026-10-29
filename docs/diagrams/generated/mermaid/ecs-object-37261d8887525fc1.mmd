@@ -53,7 +53,7 @@ flowchart LR
   n4@{ shape: rounded, label: "**PrimaryEguiContext**<br/>来自Egui / Inspector ↗：指定主检查器<br/>界面的相机上下文。" }
   class n4 node_component
   class n4 external_node
-  n5@{ shape: rounded, label: "**DespawnOnExit**<br/>来自Bevy 引擎 ↗：标记退出所属应用状态<br/>时销毁此实体。" }
+  n5@{ shape: rounded, label: "**DespawnOnEnter**<br/>来自Bevy 引擎 ↗：返回主菜单时清理当前<br/>会话根。" }
   class n5 node_component
   class n5 external_node
   n6@{ shape: rounded, label: "**LoadingCamera**<br/>加载期间相机身份，准备后移除。" }
