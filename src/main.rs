@@ -18,7 +18,7 @@ use bounds_recovery::BoundsRecoveryPlugin;
 use character::CharacterPlugin;
 use character_animation::CharacterAnimationPlugin;
 use first_person::FirstPersonPlugin;
-use game_flow::GameFlowPlugin;
+use game_flow::{FIXED_SIMULATION_HZ, GameFlowPlugin};
 use inspector::{InspectorPlugin, LaunchMode};
 use item_interaction::ItemInteractionPlugin;
 use physics::GamePhysicsPlugin;
@@ -66,7 +66,7 @@ fn main() -> AppExit {
     );
 
     app.insert_resource(GameSettings::load(std::path::Path::new("settings.json")))
-        .insert_resource(Time::<Fixed>::from_hz(60.0))
+        .insert_resource(Time::<Fixed>::from_hz(FIXED_SIMULATION_HZ))
         .add_plugins((
             EnhancedInputPlugin,
             InspectorPlugin,

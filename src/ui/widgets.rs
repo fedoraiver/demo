@@ -4,6 +4,12 @@
 use super::{MenuButton, SettingKey, UiAction, theme::*};
 use bevy::{prelude::*, text::FontSourceTemplate};
 
+// 控件尺寸以缩放前的逻辑像素计。
+pub(super) const SETTING_CONTROL_MIN_HEIGHT_PX: f32 = 43.0;
+pub(super) const SETTING_ARROW_MIN_WIDTH_PX: f32 = 34.0;
+const SETTING_TITLE_MIN_WIDTH_PX: f32 = 130.0;
+const SETTING_VALUE_WIDTH_PX: f32 = 130.0;
+
 /// 说明文本属于按钮实体，焦点变化时只更新右侧说明，不重建页面。
 #[derive(Component, Default, Clone, Copy)]
 pub(super) struct SettingDescription {
@@ -47,7 +53,7 @@ pub(super) fn label<Value: Into<String>>(
         Text(value)
         TextFont {
             font: {FontSourceTemplate::Handle(theme.body.clone().into())},
-            font_size: px(theme.size(size).max(14.0)),
+            font_size: px(theme.size(size).max(MIN_FONT_SIZE_PX)),
         }
         TextColor(color)
         // 文字保留自然测量宽度，横排短标签与纵排正文共用同一布局规则。
@@ -66,7 +72,7 @@ pub(super) fn heading<Value: Into<String>>(
         Text(value)
         TextFont {
             font: {FontSourceTemplate::Handle(theme.heading.clone().into())},
-            font_size: px(theme.size(size).max(14.0)),
+            font_size: px(theme.size(size).max(MIN_FONT_SIZE_PX)),
         }
         TextColor(color)
         Node { flex_shrink: 1.0 }
@@ -248,17 +254,17 @@ pub(super) fn setting_row(
         BackgroundColor(SUBTLE)
         Children [
             @label(theme, title, 21.0, INK)
-            Node { flex_grow: 1.0, min_width: px(theme.size(130.0)) }
+            Node { flex_grow: 1.0, min_width: px(theme.size(SETTING_TITLE_MIN_WIDTH_PX)) }
             --
             Node { align_items: AlignItems::Center, column_gap: px(theme.size(8.0)) }
             Children [
                 @small_button(theme, "<", UiAction::Adjust(key, -1), index)
                 details
-                Node { padding: px(theme.size(7.0)), min_width: px(theme.size(34.0)) }
+                Node { padding: px(theme.size(7.0)), min_width: px(theme.size(SETTING_ARROW_MIN_WIDTH_PX)) }
                 --
                 Node {
-                    width: px(theme.size(130.0)),
-                    min_height: px(theme.size(43.0)),
+                    width: px(theme.size(SETTING_VALUE_WIDTH_PX)),
+                    min_height: px(theme.size(SETTING_CONTROL_MIN_HEIGHT_PX)),
                     justify_content: JustifyContent::Center,
                     align_items: AlignItems::Center,
                     padding: px(theme.size(5.0)),
@@ -274,7 +280,7 @@ pub(super) fn setting_row(
                 --
                 @small_button(theme, ">", UiAction::Adjust(key, 1), index + 1)
                 details
-                Node { padding: px(theme.size(7.0)), min_width: px(theme.size(34.0)) }
+                Node { padding: px(theme.size(7.0)), min_width: px(theme.size(SETTING_ARROW_MIN_WIDTH_PX)) }
             ]
         ]
     }

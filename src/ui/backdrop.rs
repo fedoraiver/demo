@@ -19,6 +19,16 @@ pub(super) const COURIER_POSITION: Vec3 = Vec3::new(3.2, 0.02, 2.6);
 /// 物流站在菜单舞台中的位置。
 pub(super) const STATION_POSITION: Vec3 = Vec3::new(4.5, 0.02, -4.5);
 
+// 展示舞台的构图、天空与光照独立于玩法场景，位置与目标以米计。
+const MENU_CAMERA_POSITION_M: Vec3 = Vec3::new(-2.0, 4.2, 10.0);
+const MENU_CAMERA_TARGET_M: Vec3 = Vec3::new(0.0, 1.5, -4.0);
+const MENU_CAMERA_FOV_DEGREES: f32 = 46.0;
+const MENU_SKY_COLOR: Color = Color::srgb(0.50, 0.68, 0.79);
+const MENU_DAYLIGHT_POSITION_M: Vec3 = Vec3::new(-8.0, 14.0, 9.0);
+const MENU_DAYLIGHT_ILLUMINANCE_LUX: f32 = 12_000.0;
+const MENU_AMBIENT_COLOR: Color = Color::srgb(1.0, 0.95, 0.84);
+const MENU_AMBIENT_BRIGHTNESS: f32 = 450.0;
+
 /// 标记整个展示舞台的根，状态退出时连同相机、灯光和模型一起清理。
 #[derive(Component, Default, Clone)]
 pub(super) struct MenuBackdrop;
@@ -57,10 +67,10 @@ fn spawn_backdrop(mut commands: Commands, asset_server: Res<AssetServer>) {
                 --
                 #MenuDaylight
                 DirectionalLight {
-                    illuminance: 12_000.0,
+                    illuminance: MENU_DAYLIGHT_ILLUMINANCE_LUX,
                     shadow_maps_enabled: true,
                 }
-                Transform::from_xyz(-8.0, 14.0, 9.0)
+                Transform::from_translation(MENU_DAYLIGHT_POSITION_M)
                 .looking_at(Vec3::ZERO, Vec3::Y)
                 --
                 // 地形与海水保持原来的相对位置，把北岸移到据点后方形成真实海岸线。
@@ -120,16 +130,16 @@ pub(super) fn menu_camera() -> impl Scene {
         #MenuCamera
         Camera3d
         Camera {
-            clear_color: {ClearColorConfig::Custom(Color::srgb(0.50, 0.68, 0.79))},
+            clear_color: {ClearColorConfig::Custom(MENU_SKY_COLOR)},
         }
         IsDefaultUiCamera
         PrimaryEguiContext
         AmbientLight {
-            color: {Color::srgb(1.0, 0.95, 0.84)},
-            brightness: 450.0,
+            color: MENU_AMBIENT_COLOR,
+            brightness: MENU_AMBIENT_BRIGHTNESS,
         }
         Projection::Perspective({PerspectiveProjection {
-                    fov: 46.0_f32.to_radians(),
+                    fov: MENU_CAMERA_FOV_DEGREES.to_radians(),
                     ..default()
         }})
         Tonemapping::AcesFitted
@@ -139,7 +149,7 @@ pub(super) fn menu_camera() -> impl Scene {
 
 /// 菜单镜头统一朝向舞台右侧的角色与物流站。
 pub(super) fn camera_transform() -> Transform {
-    Transform::from_xyz(-2.0, 4.2, 10.0).looking_at(Vec3::new(0.0, 1.5, -4.0), Vec3::Y)
+    Transform::from_translation(MENU_CAMERA_POSITION_M).looking_at(MENU_CAMERA_TARGET_M, Vec3::Y)
 }
 
 /// 可复用的 BSN 模型声明；WorldAssetRoot 在场景资产加载后展开其子树。

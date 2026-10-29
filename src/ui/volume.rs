@@ -9,6 +9,8 @@ use super::{
     UiRequest, UiSystems, theme::*, widgets::*,
 };
 
+const VOLUME_SLIDER_BASIS_PX: f32 = 130.0;
+
 /// 滑条仍是普通菜单按钮，左右导航共用字段，鼠标数值由局部坐标决定。
 #[derive(Component, Clone)]
 pub(super) struct VolumeSlider {
@@ -111,15 +113,15 @@ pub(super) fn volume_row(
             Children [
                 @small_button(theme, "<", UiAction::Adjust(key, -1), index)
                 details
-                Node { padding: px(theme.size(7.0)), min_width: px(theme.size(34.0)), flex_shrink: 0.0 }
+                Node { padding: px(theme.size(7.0)), min_width: px(theme.size(SETTING_ARROW_MIN_WIDTH_PX)), flex_shrink: 0.0 }
                 --
                 MenuButton { action: UiAction::Adjust(key, 0), index: {index + 1} }
                 VolumeSlider { key }
                 details
                 Node {
-                    min_height: px(theme.size(43.0)),
+                    min_height: px(theme.size(SETTING_CONTROL_MIN_HEIGHT_PX)),
                     min_width: px(theme.size(95.0)),
-                    flex_basis: px(theme.size(130.0)),
+                    flex_basis: px(theme.size(VOLUME_SLIDER_BASIS_PX)),
                     flex_grow: 1.0,
                     padding: UiRect::axes(px(theme.size(10.0)), px(theme.size(9.0))),
                     border: px(2),
@@ -163,11 +165,11 @@ pub(super) fn volume_row(
                 --
                 @small_button(theme, ">", UiAction::Adjust(key, 1), index + 2)
                 details
-                Node { padding: px(theme.size(7.0)), min_width: px(theme.size(34.0)), flex_shrink: 0.0 }
+                Node { padding: px(theme.size(7.0)), min_width: px(theme.size(SETTING_ARROW_MIN_WIDTH_PX)), flex_shrink: 0.0 }
                 --
                 Node {
                     width: px(theme.size(64.0)),
-                    min_height: px(theme.size(43.0)),
+                    min_height: px(theme.size(SETTING_CONTROL_MIN_HEIGHT_PX)),
                     align_items: AlignItems::Center,
                     justify_content: JustifyContent::Center,
                     flex_shrink: 0.0,

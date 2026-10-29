@@ -8,6 +8,9 @@ use avian3d::{
 };
 use bevy::prelude::*;
 
+/// 固定玩法模拟频率；渲染限帧由设置功能独立管理。
+pub(crate) const FIXED_SIMULATION_HZ: f64 = 60.0;
+
 /// 应用的唯一运行状态；暂停保留当前会话，返回主菜单才清理实体。
 #[derive(States, Clone, Copy, Debug, Default, PartialEq, Eq, Hash)]
 pub(crate) enum AppState {

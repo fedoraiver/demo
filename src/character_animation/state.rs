@@ -12,6 +12,12 @@ pub(super) const WALK_SPEED_THRESHOLD: f32 = 0.15;
 pub(super) const FULL_WALK_BLEND_SPEED: f32 = 0.65;
 pub(super) const BLEND_TIME_CONSTANT: f32 = 0.075;
 pub(super) const AIRBORNE_DELAY: f32 = 0.06;
+// 起跳覆盖接地标记与首次确认离地分属两项判定，速度单位均为米／秒。
+pub(super) const TAKEOFF_MIN_VERTICAL_SPEED_MPS: f32 = 0.5;
+pub(super) const AIRBORNE_MIN_VERTICAL_SPEED_MPS: f32 = 0.5;
+pub(super) const RISING_ENTER_SPEED_MPS: f32 = 0.35;
+const FALLING_ENTER_SPEED_MPS: f32 = -0.25;
+const DOMINANT_ANIMATION_WEIGHT_HYSTERESIS: f32 = 0.1;
 // 资产以 0.8 秒完成双步；前后每步约 0.6 米，横移每步约 0.44 米。
 // 步频依实际物理速度计算，修改玩法目标速度不应直接改变该美术标定。
 pub(super) const GAIT_CYCLE_DURATION: f32 = 0.8;
@@ -154,7 +160,7 @@ pub(super) struct CourierAnimation {
 impl CourierAnimation {
     pub(super) fn update_grounded(&mut self, motion: &CharacterMotion, velocity: Vec3, delta: f32) {
         // 起跳当帧的向上速度优先于尚未刷新的接地标记，不能多播一帧站姿。
-        if velocity.y > 0.5 {
+        if velocity.y > TAKEOFF_MIN_VERTICAL_SPEED_MPS {
             self.grounded = false;
             self.ungrounded_time = 0.0;
         } else if motion.grounded {
@@ -163,19 +169,23 @@ impl CourierAnimation {
         } else {
             self.ungrounded_time += delta;
             // 真实起跳立即接入空中姿态；台阶或接地探测的短暂丢失保留地面动作。
-            if velocity.y > 0.5 || self.ungrounded_time >= AIRBORNE_DELAY {
+            if velocity.y > TAKEOFF_MIN_VERTICAL_SPEED_MPS || self.ungrounded_time >= AIRBORNE_DELAY
+            {
                 self.grounded = false;
             }
         }
         // 最高点附近保留此前姿态，避免垂直速度的小幅噪声使动作来回切换。
-        if velocity.y > 0.35 {
+        if velocity.y > RISING_ENTER_SPEED_MPS {
             self.rising = true;
-        } else if velocity.y < -0.25 {
+        } else if velocity.y < FALLING_ENTER_SPEED_MPS {
             self.rising = false;
         }
         // 首次绑定可能早于第一次支撑探测；只有明确竖直运动或持续离地才允许落地缓冲。
         // 真实高处坠落即使从零速度开始，也会在无支撑达到过滤时限后被确认。
-        if !self.grounded && (velocity.y.abs() > 0.5 || self.ungrounded_time >= AIRBORNE_DELAY) {
+        if !self.grounded
+            && (velocity.y.abs() > AIRBORNE_MIN_VERTICAL_SPEED_MPS
+                || self.ungrounded_time >= AIRBORNE_DELAY)
+        {
             self.airborne_confirmed = true;
         }
         let next = if !self.grounded {
@@ -325,7 +335,9 @@ pub(super) fn dominant_animation(
     CourierAnimationState::ALL
         .into_iter()
         .fold(previous, |current, candidate| {
-            if weights[candidate as usize] > weights[current as usize] + 0.1 {
+            if weights[candidate as usize]
+                > weights[current as usize] + DOMINANT_ANIMATION_WEIGHT_HYSTERESIS
+            {
                 candidate
             } else {
                 current

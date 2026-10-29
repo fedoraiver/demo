@@ -12,6 +12,8 @@ use bevy::{ecs::relationship::Relationship, prelude::*};
 const ALIGN_SPEED: f32 = 5.0;
 const ALIGN_ANGULAR_SPEED: f32 = std::f32::consts::TAU;
 const ALIGN_BLOCKED_TIMEOUT: f32 = 0.35;
+const ALIGN_POSITION_TOLERANCE_SQUARED_M2: f32 = 1e-8;
+const ALIGN_ANGLE_TOLERANCE_RAD: f32 = 0.0001;
 
 /// 开始挂接但不改变箱子的世界姿态，等待刚体移除及其 Observer 命令完成。
 pub(super) fn begin_attachment(
@@ -154,12 +156,14 @@ pub(super) fn align_attachments(
         let target = grip.map_or(config.hold_offset, |grip| grip.offset);
         let offset = target - attachment.local_pose.translation;
         let angle = attachment.local_pose.rotation.angle_between(Quat::IDENTITY);
-        if offset.length_squared() < 1e-8 && angle < 0.0001 {
+        if offset.length_squared() < ALIGN_POSITION_TOLERANCE_SQUARED_M2
+            && angle < ALIGN_ANGLE_TOLERANCE_RAD
+        {
             continue;
         }
         let mut candidate = attachment.local_pose;
         candidate.translation += offset.clamp_length_max(ALIGN_SPEED * time.delta_secs());
-        if angle > 0.0001 {
+        if angle > ALIGN_ANGLE_TOLERANCE_RAD {
             candidate.rotation = candidate.rotation.slerp(
                 Quat::IDENTITY,
                 (ALIGN_ANGULAR_SPEED * time.delta_secs() / angle).min(1.0),

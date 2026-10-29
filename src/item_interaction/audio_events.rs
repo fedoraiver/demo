@@ -10,6 +10,14 @@ use avian3d::prelude::*;
 use bevy::{ecs::relationship::Relationship, prelude::*};
 use std::collections::{HashMap, HashSet};
 
+const LANDING_MIN_SUPPORT_NORMAL_Y: f32 = 0.65;
+// 支撑碰撞的法向冲量以 kg·m/s 计；持握误差以米计，等待时间以秒计。
+const LANDING_MIN_NORMAL_IMPULSE: f32 = 1.8;
+const HOLD_STRAIN_CLEAR_DISTANCE_M: f32 = 0.45;
+const HOLD_STRAIN_WARN_DISTANCE_M: f32 = 0.65;
+const HOLD_STRAIN_GRACE_SECONDS: f32 = 0.5;
+const HOLD_STRAIN_WARN_AFTER_SECONDS: f32 = 0.35;
+
 /// 反馈注册由物品交互插件调用；独立回归只组合这部分真实系统以隔离物理设备依赖。
 pub(super) fn register_feedback(app: &mut App) {
     use crate::game_flow::{FixedGameplaySystems, gameplay_running};
@@ -57,9 +65,9 @@ fn emit_parcel_land(
                 } else {
                     manifold.normal.y
                 };
-                if support_y >= 0.65 {
+                if support_y >= LANDING_MIN_SUPPORT_NORMAL_Y {
                     state.supported.insert(parcel);
-                    landed |= manifold.total_normal_impulse() >= 1.8;
+                    landed |= manifold.total_normal_impulse() >= LANDING_MIN_NORMAL_IMPULSE;
                 }
             }
             if landed && state.reported.insert(parcel) {
@@ -117,12 +125,12 @@ pub(super) fn warn_hold_strain(
             };
         }
         state.age += time.delta_secs();
-        if distance < 0.45 {
+        if distance < HOLD_STRAIN_CLEAR_DISTANCE_M {
             state.strained_for = 0.0;
             state.warned = false;
-        } else if distance > 0.65 && state.age >= 0.5 {
+        } else if distance > HOLD_STRAIN_WARN_DISTANCE_M && state.age >= HOLD_STRAIN_GRACE_SECONDS {
             state.strained_for += time.delta_secs();
-            if state.strained_for >= 0.35 && !state.warned {
+            if state.strained_for >= HOLD_STRAIN_WARN_AFTER_SECONDS && !state.warned {
                 state.warned = true;
                 sounds.write(SoundRequest::new(SoundCue::InstabilityWarning, parcel));
                 info!(target: "demo::audio_events",

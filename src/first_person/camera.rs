@@ -2,6 +2,8 @@
 
 use super::*;
 
+const LOOK_LOG_SAMPLE_INTERVAL_SECONDS: f64 = 0.5;
+
 /// Fire 已携带本帧汇总位移，直接更新角度；有向水平转角留给下一次碰撞检查消费。
 pub(super) fn on_camera_look(
     event: On<Fire<LookAction>>,
@@ -37,7 +39,7 @@ pub(super) fn on_camera_look(
             controller = ?event.context, yaw_before = before_yaw, yaw_after = view.yaw,
             pitch_before = before_pitch, pitch_after = view.pitch,
             reason = "mouse_motion_sample", "Camera look angles changed");
-        *next_log_at = time.elapsed_secs_f64() + 0.5;
+        *next_log_at = time.elapsed_secs_f64() + LOOK_LOG_SAMPLE_INTERVAL_SECONDS;
     }
 }
 
