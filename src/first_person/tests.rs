@@ -3,7 +3,7 @@
 use super::*;
 
 mod action_tests {
-    use crate::item_interaction::parcel_body;
+    use crate::item_interaction::item_body;
     use std::time::Duration;
 
     use avian3d::prelude::{
@@ -13,7 +13,7 @@ mod action_tests {
 
     use crate::{
         character::CharacterMotion,
-        item_interaction::{HeldBy, HeldTarget, HoldingItems, Parcel, Pickable},
+        item_interaction::{HeldBy, HeldTarget, HoldingItems, Item, Pickable},
         settings::PrototypeConfig,
     };
 
@@ -249,10 +249,10 @@ mod action_tests {
         let item = app
             .world_mut()
             .spawn((
-                Parcel,
+                Item::StandardParcel,
                 Pickable,
-                Transform::from_xyz(0.0, config.parcel_half_height, -1.0),
-                parcel_body(&config),
+                Transform::from_xyz(0.0, config.item_half_height, -1.0),
+                item_body(&config),
             ))
             .id();
         // 接地由真实碰撞探测建立，测试不预先伪造 grounded。
@@ -364,7 +364,7 @@ mod action_tests {
 
 mod pose_tests {
     use crate::character::character_body;
-    use crate::item_interaction::parcel_body;
+    use crate::item_interaction::{Item, item_body};
     use avian3d::prelude::{LinearVelocity, Position, RigidBody};
     use std::time::Duration;
 
@@ -515,8 +515,9 @@ mod pose_tests {
         let config = app.world().resource::<PrototypeConfig>().clone();
         app.world_mut()
             .spawn((
+                Item::StandardParcel,
                 Pickable,
-                parcel_body(&config),
+                item_body(&config),
                 Transform::from_translation(position),
             ))
             .id()
@@ -1837,7 +1838,7 @@ mod pose_tests {
                 let released_transform = *app.world().get::<Transform>(item).unwrap();
                 assert!(
                     released_position.y
-                        > app.world().resource::<PrototypeConfig>().parcel_half_height + 0.1
+                        > app.world().resource::<PrototypeConfig>().item_half_height + 0.1
                 );
                 for _ in 0..6 {
                     mouse_motion(&mut app, Vec2::new(50.0, 10.0));

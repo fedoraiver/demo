@@ -2,7 +2,7 @@
 
 use crate::character::character_body;
 use crate::character::character_collider;
-use crate::item_interaction::parcel_body;
+use crate::item_interaction::item_body;
 use std::collections::BTreeMap;
 
 use avian3d::prelude::{Collider, RigidBody, TrimeshFlags};
@@ -17,7 +17,7 @@ use crate::{
     first_person::spawn_keyboard_controller,
     first_person::{CharacterVisual, ControlsCamera, FirstPersonCamera, MouseLookState},
     game_flow::{AppState, gameplay_running},
-    item_interaction::{CarryGrip, Parcel, Pickable},
+    item_interaction::{CarryGrip, Item, Pickable},
     physics::world_collision_layers,
     settings::PrototypeConfig,
 };
@@ -29,7 +29,7 @@ mod loading;
 
 use actors::*;
 use assets::poll_art_assets;
-pub(crate) use assets::{ArtAssets, ArtLoadState, ItemModel};
+pub(crate) use assets::{ArtAssets, ArtLoadState};
 use collision::*;
 use loading::*;
 
@@ -50,7 +50,7 @@ pub(crate) struct IslandCollider;
 
 #[derive(Clone)]
 struct ItemPlacement {
-    model: ItemModel,
+    item: Item,
     pose: Transform,
 }
 
@@ -72,8 +72,7 @@ pub(crate) struct SceneAssemblyPlugin;
 
 impl Plugin for SceneAssemblyPlugin {
     fn build(&self, app: &mut App) {
-        app.register_type::<ItemModel>()
-            .init_resource::<ArtAssets>()
+        app.init_resource::<ArtAssets>()
             .init_resource::<ArtLoadState>()
             .add_systems(Update, poll_art_assets)
             .insert_resource(ClearColor(Color::srgb(0.72, 0.84, 0.94)))

@@ -55,7 +55,7 @@ fn log_configuration(config: Res<PrototypeConfig>) {
     // 刚体与持握方式属于玩法配置，合并到同一记录便于沿用日志筛选。
     info!(target: "demo::gameplay", ?config,
         physics_engine = "avian3d", physics_version = "0.7.0",
-        character_body = "dynamic", parcel_body = "dynamic_free_shared_held",
+        character_body = "dynamic", item_body = "dynamic_free_shared_held",
         grip_mode = "shared_body", release_mode = "preserve_velocity",
         "Prototype gameplay initialized");
 }

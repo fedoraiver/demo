@@ -4,7 +4,7 @@ use super::{
     HeldAttachment, HeldBy, HeldCollider, HeldTarget, HoldingItems, Pickable,
     components::{CarryBaseMass, ResumeCarryEasing},
 };
-use crate::{character::Character, physics::parcel_collision_layers};
+use crate::{character::Character, physics::item_collision_layers};
 use avian3d::prelude::*;
 use bevy::{
     ecs::relationship::{Relationship, RelationshipTarget},
@@ -55,7 +55,7 @@ pub(crate) fn release_item(
                 pose,
                 LinearVelocity(linear_velocity),
                 AngularVelocity(angular_velocity),
-                parcel_collision_layers(),
+                item_collision_layers(),
             ));
         if let Some(attachment) = attachment {
             item_entity.insert(ResumeCarryEasing {

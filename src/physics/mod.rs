@@ -5,7 +5,7 @@ mod collision;
 mod tests;
 
 pub(crate) use collision::{
-    GamePhysicsLayer, held_collision_layers, parcel_collision_layers, world_collision_layers,
+    GamePhysicsLayer, held_collision_layers, item_collision_layers, world_collision_layers,
 };
 #[cfg(test)]
 pub(crate) use tests::ground_body;

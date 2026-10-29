@@ -6,7 +6,7 @@ use super::WaterRecoveryOrder;
 use crate::{
     character::{Character, CharacterIntent, CharacterMotion},
     item_interaction::{HeldBy, HeldTarget, Pickable, release_item},
-    physics::parcel_collision_layers,
+    physics::item_collision_layers,
 };
 use avian3d::prelude::*;
 use bevy::{
@@ -135,7 +135,7 @@ pub(super) fn recover_from_water(
             commands
                 .entity(entity)
                 .remove::<(HeldBy, HeldTarget)>()
-                .insert(parcel_collision_layers());
+                .insert(item_collision_layers());
         }
 
         let spawn = body.spawn.pose;
