@@ -1,0 +1,35 @@
+name: Number issue 11 tasks
+
+on:
+  issues:
+    types: [edited]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  number-tasks:
+    if: >-
+      github.repository == 'fedoraiver/demo' &&
+      (github.event_name == 'workflow_dispatch' ||
+       (github.event.issue.number == 11 && github.event.changes.body != null))
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    concurrency:
+      group: issue-11-numbering
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+          sparse-checkout: scripts
+      - name: Test task numbering
+        run: node --test scripts/renumber_issue_tasks.test.cjs
+      - name: Synchronize issue 11
+        uses: actions/github-script@373c709c69115d41ff229c7e5df9f8788daa9553 # v9
+        with:
+          script: |
+            const { synchronizeIssue } = require('./scripts/renumber_issue_tasks.cjs');
+            await synchronizeIssue({ github, context, core });
