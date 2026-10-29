@@ -25,7 +25,9 @@ pub(super) fn begin_attachment(
     collider_was_disabled: bool,
 ) {
     let inverse = holder_pose.rotation.inverse();
-    let collider = commands.spawn_empty().id();
+    let collider = commands
+        .spawn(Name::new("Held parcel collision proxy"))
+        .id();
     // 活动 ColliderOf 卸载时会迁移 BVH；先移出旧索引，避免恢复时重复注册同一碰撞实体。
     commands.entity(item).insert(ColliderDisabled);
     commands.entity(item).remove::<RigidBody>().insert((
@@ -86,7 +88,6 @@ pub(super) fn finish_attachments(
         commands
             .entity(attachment.collider)
             .insert((
-                Name::new("Held parcel collision proxy"),
                 HeldCollider { item },
                 collider.clone(),
                 *layers,
