@@ -202,9 +202,38 @@ mod action_tests {
             .iter()
             .flat_map(|action| app.world().get::<Bindings>(*action).unwrap().iter())
             .collect::<Vec<_>>();
+        assert_eq!(actions.len(), 4);
+        assert_eq!(bindings.len(), 7);
+        let mut binding_names = bindings
+            .iter()
+            .map(|entity| app.world().get::<Name>(*entity).unwrap().as_str())
+            .collect::<Vec<_>>();
+        binding_names.sort_unstable();
+        assert_eq!(
+            binding_names,
+            [
+                "Interact binding",
+                "Jump binding",
+                "Mouse look binding",
+                "Move backward binding",
+                "Move forward binding",
+                "Move left binding",
+                "Move right binding",
+            ]
+        );
+        for entity in &actions {
+            assert!(
+                !app.world()
+                    .get::<Name>(*entity)
+                    .unwrap()
+                    .as_str()
+                    .is_empty()
+            );
+        }
 
         for (pressed, released, expected) in [
-            (vec![KeyCode::KeyW, KeyCode::KeyD], vec![], Vec2::ONE),
+            (vec![KeyCode::KeyW], vec![], Vec2::Y),
+            (vec![KeyCode::KeyD], vec![], Vec2::ONE),
             (vec![KeyCode::KeyA], vec![], Vec2::Y),
             (vec![KeyCode::KeyS], vec![KeyCode::KeyW], Vec2::NEG_Y),
             (
@@ -212,6 +241,9 @@ mod action_tests {
                 vec![KeyCode::KeyA, KeyCode::KeyD, KeyCode::KeyS],
                 Vec2::ZERO,
             ),
+            (vec![KeyCode::KeyA], vec![], Vec2::NEG_X),
+            (vec![KeyCode::KeyD], vec![KeyCode::KeyA], Vec2::X),
+            (vec![], vec![KeyCode::KeyD], Vec2::ZERO),
         ] {
             let mut keys = app.world_mut().resource_mut::<ButtonInput<KeyCode>>();
             for key in pressed {

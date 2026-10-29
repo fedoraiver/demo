@@ -90,6 +90,7 @@ pub(super) fn volume_row(
         body: description,
     };
     bsn! {
+        Name({format!("Volume row: {title}")})
         column(8.0 * scale)
         Node {
             width: percent(100),
@@ -101,6 +102,7 @@ pub(super) fn volume_row(
         Children [
             @label(theme, title, 21.0, INK)
             --
+            Name("Volume controls")
             Node {
                 width: percent(100),
                 align_items: AlignItems::Center,
@@ -113,6 +115,7 @@ pub(super) fn volume_row(
                 details
                 Node { padding: px(theme.size(7.0)), min_width: px(theme.size(34.0)), flex_shrink: 0.0 }
                 --
+                Name({format!("Volume slider: {title}")})
                 MenuButton { action: UiAction::Adjust(key, 0), index: {index + 1} }
                 VolumeSlider { key }
                 details
@@ -130,6 +133,7 @@ pub(super) fn volume_row(
                 BorderColor::all(CREAM)
                 Children [
                     // 填充和手柄只负责绘制，命中仍由外层 Button 统一处理。
+                    Name("Volume slider track")
                     Pickable::IGNORE
                     Node {
                         width: percent(100),
@@ -138,6 +142,7 @@ pub(super) fn volume_row(
                     }
                     BackgroundColor(SUBTLE)
                     Children [
+                        Name("Volume slider fill")
                         Pickable::IGNORE
                         VolumeFill { key }
                         Node {
@@ -147,6 +152,7 @@ pub(super) fn volume_row(
                         }
                         BackgroundColor(GOLD)
                         Children [
+                            Name("Volume slider handle")
                             Pickable::IGNORE
                             Node {
                                 position_type: PositionType::Absolute,
@@ -165,6 +171,7 @@ pub(super) fn volume_row(
                 details
                 Node { padding: px(theme.size(7.0)), min_width: px(theme.size(34.0)), flex_shrink: 0.0 }
                 --
+                Name("Volume value display")
                 Node {
                     width: px(theme.size(64.0)),
                     min_height: px(theme.size(43.0)),
@@ -174,6 +181,7 @@ pub(super) fn volume_row(
                 }
                 Children [
                     @label(theme, volume_text(value), 20.0, INK)
+                    Name("Volume value label")
                     VolumeValue { key }
                 ]
             ]

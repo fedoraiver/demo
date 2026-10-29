@@ -80,6 +80,26 @@ mod attachment_tests {
     #[test]
     fn pickup_aligns_without_teleporting_and_release_restores_the_original_mass() {
         let mut app = app();
+        #[derive(Resource)]
+        struct ReservedProxy {
+            entity: Entity,
+        }
+        app.add_observer(
+            |event: On<Add<HeldAttachment>>,
+             attachments: Query<&HeldAttachment>,
+             names: Query<&Name>,
+             mut commands: Commands| {
+                let attachment = attachments.get(event.entity).unwrap();
+                assert!(attachment.pending);
+                assert_eq!(
+                    names.get(attachment.collider).unwrap().as_str(),
+                    "Held parcel collision proxy"
+                );
+                commands.insert_resource(ReservedProxy {
+                    entity: attachment.collider,
+                });
+            },
+        );
         let (holder, item) = actors(&mut app);
         steps(&mut app, 30);
         let before = app.world().get::<Position>(item).unwrap().0;
@@ -92,6 +112,11 @@ mod attachment_tests {
         );
         assert!(app.world().get::<RigidBody>(item).is_none());
         let proxy = app.world().get::<HeldAttachment>(item).unwrap().collider;
+        assert_eq!(app.world().resource::<ReservedProxy>().entity, proxy);
+        assert_eq!(
+            app.world().get::<Name>(proxy).unwrap().as_str(),
+            "Held parcel collision proxy"
+        );
         assert_eq!(app.world().get::<ColliderOf>(proxy).unwrap().body, holder);
         assert!(app.world().get::<ColliderDisabled>(item).is_some());
         assert!(app.world().get::<ChildOf>(item).is_none());
