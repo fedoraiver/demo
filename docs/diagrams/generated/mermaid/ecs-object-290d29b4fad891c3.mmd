@@ -58,6 +58,9 @@ flowchart LR
   class n6 node_resource
   n7@{ shape: cyl, label: "**ConsoleWriter**<br/>把控制台写入器暂存到 App，随后交给控制<br/>台日志 layer。" }
   class n7 node_resource
+  n8@{ shape: fr-rect, label: "**SceneAssemblyPlugin**<br/>来自场景装配 ↗：加载运行资源并装配海<br/>岛、碰撞与业务实体。" }
+  class n8 node_plugin
+  class n8 external_node
   n0 e0@-->|"入队"| n1
   class e0 edge_write
   n0 e1@-->|"入队"| n2
@@ -72,9 +75,13 @@ flowchart LR
   class e5 edge_reference
   n7 e6@-->|"日志 layer 取走并持有"| n0
   class e6 edge_reference
+  n8 e7@-->|"初始化时记录资源请求"| n0
+  class e7 edge_write
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
   e3@{ curve: basis }
+  e4@{ curve: basis }
   e5@{ curve: basis }
   e6@{ curve: basis }
+  e7@{ curve: basis }

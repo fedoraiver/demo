@@ -38,23 +38,17 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: cyl, label: "**ArtAssets**<br/>保存运行模型资源并维持其加载寿命。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**log_asset_requests**<br/>记录运行模型资源的加载请求。" }
+  n1@{ shape: rounded, label: "**poll_art_assets**<br/>检查资源及其依赖的加载结果。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**poll_art_assets**<br/>检查资源及其依赖的加载结果。" }
+  n2@{ shape: rounded, label: "**begin_island**<br/>请求创建已加载海岛的运行实例。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**begin_island**<br/>请求创建已加载海岛的运行实例。" }
+  n3@{ shape: rounded, label: "**spawn_actors**<br/>装配玩家、可搬物、控制者与相机。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**spawn_actors**<br/>装配玩家、可搬物、控制者与相机。" }
-  class n4 node_system
   n0 e0@-->|"访问声明"| n1
   class e0 edge_read
   n0 e1@-->|"访问声明"| n2
   class e1 edge_read
   n0 e2@-->|"访问声明"| n3
   class e2 edge_read
-  n0 e3@-->|"访问声明"| n4
-  class e3 edge_read
   e0@{ curve: basis }
-  e1@{ curve: basis }
   e2@{ curve: basis }
-  e3@{ curve: basis }
