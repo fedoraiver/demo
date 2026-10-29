@@ -299,14 +299,14 @@ test('共享实体的关系只在定义功能展开，使用功能仅保留必�
   }
 });
 
-test('PlayState 暂停是状态转换，只出现在数据视图，不伪装为 ECS 事件', () => {
-  const id = 'transition-resource.PlayState-state-paused';
+test('AppState 暂停是状态转换，只出现在数据视图，不伪装为 ECS 事件', () => {
+  const id = 'transition-resource.AppState-state-paused';
   const transition = architecture.graphFor('game_flow', 'data').links.find(link => link.id === id);
   assert.equal(transition?.kind, 'transition');
-  assert.equal(transition.from, 'resource.PlayState');
+  assert.equal(transition.from, 'resource.AppState');
   assert.equal(transition.to, 'state-paused');
   assert.ok(!architecture.graphFor('game_flow', 'events').links.some(link => link.id === id));
-  assert.ok(!model.system_links.some(link => link.id === 'trigger-resource.PlayState-state-paused'));
+  assert.ok(!model.system_links.some(link => link.id === 'trigger-resource.AppState-state-paused'));
 });
 
 test('所有系统、Observer、关键节点和实体关系均保留在可浏览图中', () => {
@@ -468,7 +468,7 @@ test('非系统节点缺少明确归属时失败，不静默归入基础设施',
 });
 
 test('系统清单分别记录实际 Schedule，Observer 不冒充固定调度', () => {
-  const scheduleNames = new Set(['Startup', 'First', 'PreUpdate', 'FixedFirst', 'FixedUpdate', 'FixedPostUpdate', 'FixedLast', 'RunFixedMainLoop', 'Update', 'SpawnScene', 'PostUpdate', 'Last', 'EguiPrimaryContextPass', 'Render', 'OnEnter(AppState::MainMenu)', 'OnEnter(AppState::InGame)', 'OnEnter(PlayState::Paused)', 'OnEnter(PlayState::Running)']);
+  const scheduleNames = new Set(['Startup', 'First', 'PreUpdate', 'FixedFirst', 'FixedUpdate', 'FixedPostUpdate', 'FixedLast', 'RunFixedMainLoop', 'Update', 'SpawnScene', 'PostUpdate', 'Last', 'EguiPrimaryContextPass', 'Render', 'OnEnter(AppState::MainMenu)', 'OnExit(AppState::MainMenu)', 'OnEnter(AppState::Paused)', 'OnEnter(AppState::Running)']);
   const originalIds = [
     'startup_spawn', 'startup_config', 'startup_timestep',
     'frame_limit', 'time_update', 'input_update', 'mouse_capture',
@@ -580,8 +580,8 @@ test('固定循环之后仍属于 RunFixedMainLoop，条件状态入口与 Start
   assert.equal(groups.get('StateTransition').track, 'conditional');
   assert.ok(groups.get('StateTransition').notes.some(note => note.includes('PreStartup')));
   assert.deepEqual(architecture.registry.character_clear_intents.registrations.map(registration => registration.schedule), ['OnEnter(AppState::MainMenu)']);
-  assert.deepEqual(architecture.registry.character_clear_intents_paused.registrations.map(registration => registration.schedule), ['OnEnter(PlayState::Paused)']);
-  assert.equal(architecture.registry.startup_spawn.schedule, 'OnEnter(AppState::InGame)');
+  assert.deepEqual(architecture.registry.character_clear_intents_paused.registrations.map(registration => registration.schedule), ['OnEnter(AppState::Paused)']);
+  assert.equal(architecture.registry.startup_spawn.schedule, 'OnExit(AppState::MainMenu)');
   assert.ok(architecture.registry.startup_spawn.registrations.some(registration => registration.schedule === 'Startup' && registration.scope === 'headless-test'));
   assert.equal(groups.get('EguiPrimaryContextPass').parent, 'PostUpdate');
   assert.equal(groups.get('RenderApp').track, 'external');
@@ -591,17 +591,17 @@ test('固定循环之后仍属于 RunFixedMainLoop，条件状态入口与 Start
 
 test('状态分组标题只显示类型，完整运行时注册、身份与生命周期说明继续保留', () => {
   const targets = new Map([
-    ['game_flow', ['OnEnter(AppState::MainMenu)', 'OnEnter(PlayState::Paused)', 'OnEnter(PlayState::Running)']],
-    ['first_person', ['OnEnter(AppState::MainMenu)', 'OnEnter(PlayState::Paused)', 'OnEnter(PlayState::Running)']],
-    ['character', ['OnEnter(AppState::MainMenu)', 'OnEnter(PlayState::Paused)']],
-    ['scene_assembly', ['OnEnter(AppState::InGame)']],
-    ['ui', ['OnEnter(AppState::MainMenu)', 'OnEnter(PlayState::Paused)', 'OnEnter(PlayState::Running)']],
+    ['game_flow', ['OnEnter(AppState::MainMenu)', 'OnEnter(AppState::Paused)', 'OnEnter(AppState::Running)']],
+    ['first_person', ['OnEnter(AppState::MainMenu)', 'OnEnter(AppState::Paused)', 'OnEnter(AppState::Running)']],
+    ['character', ['OnEnter(AppState::MainMenu)', 'OnEnter(AppState::Paused)']],
+    ['scene_assembly', ['OnExit(AppState::MainMenu)']],
+    ['ui', ['OnEnter(AppState::MainMenu)', 'OnEnter(AppState::Paused)', 'OnEnter(AppState::Running)']],
   ]);
   const definitions = new Map(model.schedule_groups.map(group => [group.id, group]));
   for (const feature of featureIds) {
     const groups = architecture.scheduleGroups(architecture.graphFor(feature, 'systems'));
     const state = groups.find(group => group.id === 'StateTransition');
-    assert.equal(state?.label, targets.has(feature) ? 'OnEnter' : undefined, feature);
+    assert.equal(state?.label, targets.has(feature) ? feature === 'scene_assembly' ? 'OnExit' : 'OnEnter' : undefined, feature);
     const schedules = state && [...new Set(state.nodes.flatMap(node => architecture.registry[node.id].registrations.filter(registration => registration.scope === 'runtime').map(registration => registration.schedule)))];
     assert.deepEqual(schedules?.toSorted(), targets.get(feature)?.toSorted(), feature);
     for (const group of groups) {
@@ -617,7 +617,7 @@ test('状态分组标题只显示类型，完整运行时注册、身份与生�
   }
   assert.ok(definitions.get('Startup').notes.some(note => note.includes('执行一次')));
   assert.deepEqual(architecture.registry.flow_suspend.registrations.map(registration => registration.schedule), ['OnEnter(AppState::MainMenu)']);
-  assert.deepEqual(architecture.registry.flow_suspend_paused.registrations.map(registration => registration.schedule), ['OnEnter(PlayState::Paused)']);
+  assert.deepEqual(architecture.registry.flow_suspend_paused.registrations.map(registration => registration.schedule), ['OnEnter(AppState::Paused)']);
 });
 
 test('指定调度标题只显示名称，原始说明、阶段身份和其他标题不被改写', () => {
@@ -654,7 +654,7 @@ test('状态标题按首次出现列出不同 Schedule 类型，参数和每条�
     ] },
     b: { registrations: [
       { schedule: 'OnExit(AppState::InGame)', scope: 'runtime' },
-      { schedule: 'OnEnter(PlayState::Paused)', scope: 'runtime' },
+      { schedule: 'OnEnter(AppState::Paused)', scope: 'runtime' },
       { schedule: 'OnTransition { exited: PlayState::Running, entered: PlayState::Paused }', scope: 'runtime' },
       { schedule: 'OnExit(TestState::Ready)', scope: 'headless-test' },
     ] },
@@ -712,4 +712,22 @@ test('主调度边界与条件、嵌套阶段不转成跨 Schedule 的系统执�
   assert.equal(architecture.registry.inspector_pass.registrations[0].driver_schedule, 'PostUpdate');
   assert.equal(architecture.registry.inspector_pass.registrations[0].driver_set, 'EguiPostUpdateSet::EndPass');
   assert.equal(architecture.registry.physics_step.registrations[0].nested_schedule, 'PhysicsSchedule');
+});
+
+test('single application state retires child-state resources while preserving distinct enter/exit cleanup identities', () => {
+  assert.deepEqual(architecture.registry['resource.AppState'].fields, ['MainMenu（默认）', 'Running', 'Paused']);
+  for (const id of ['resource.PlayState', 'resource.PlayTransitionMessages']) {
+    assert.equal(architecture.registry[id], undefined);
+    assert(!model.system_links.some(link => link.from === id || link.to === id));
+  }
+  for (const owner of ['controller', 'character', 'parcel', 'camera', 'island']) {
+    const marker = architecture.registry[owner + '.DespawnOnEnter'];
+    assert(marker);
+    assert.deepEqual(marker.fields, ['AppState::MainMenu']);
+    assert.equal(architecture.registry[owner + '.DespawnOnExit'], undefined);
+  }
+  assert.deepEqual(architecture.registry['menu_backdrop.DespawnOnExit'].fields, ['AppState::MainMenu']);
+  for (const id of ['flow_enter_menu', 'flow_pause', 'flow_resume']) {
+    assert(architecture.registry[id].reads.includes('resource.AppTransitionMessages'), id);
+  }
 });

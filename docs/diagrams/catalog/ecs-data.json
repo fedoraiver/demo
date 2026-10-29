@@ -6,23 +6,23 @@
       "id": "startup_spawn",
       "name": "spawn_lighting",
       "kind": "System",
-      "phase": "OnEnter(AppState::InGame)；无状态测试使用 Startup",
+      "phase": "OnExit(AppState::MainMenu)；无状态测试使用 Startup",
       "module": "scene_assembly",
-      "description": "进入游戏会话时以 BSN 创建日光与加载相机；资源与海岛静态碰撞准备成功后由 Update 链复用相机并生成动态业务实体。",
+      "description": "离开 MainMenu 时装配日光和加载相机；Running/Paused 切换保留会话环境，海岛与动态业务实体只在 Running 的 Update 装配。",
       "display_summary": "为游戏会话创建日光与加载相机。",
       "reads": [],
       "writes": [
         "camera.Camera3d",
         "camera.LoadingCamera",
         "camera.Transform",
-        "camera.DespawnOnExit",
+        "camera.DespawnOnEnter",
         "camera.IsDefaultUiCamera",
         "camera.PrimaryEguiContext"
       ],
       "filters": [],
       "events": [],
       "notes": [
-        "日光与加载相机标记 DespawnOnExit(InGame)；退出会话清理，暂停不重建。",
+        "离开 MainMenu 时创建日光与加载相机，标记 DespawnOnEnter(MainMenu)；返回主菜单清理，暂停恢复不重建。",
         "准备完成后复用加载相机，不创建第二台玩法相机。",
         "最小无窗口测试未安装 State<AppState> 时沿用 Startup 入口。"
       ],
@@ -32,11 +32,11 @@
       },
       "feature": "scene_assembly",
       "registered_by": "scene_assembly",
-      "schedule": "OnEnter(AppState::InGame)",
+      "schedule": "OnExit(AppState::MainMenu)",
       "schedule_group": "StateTransition",
       "registrations": [
         {
-          "schedule": "OnEnter(AppState::InGame)",
+          "schedule": "OnExit(AppState::MainMenu)",
           "scope": "runtime"
         },
         {
@@ -250,8 +250,7 @@
         "camera.FirstPersonCamera",
         "camera.MouseLookState",
         "controller.ContextActivity",
-        "resource.AppState",
-        "resource.PlayState"
+        "resource.AppState"
       ],
       "writes": [
         "window.CursorOptions",
@@ -753,7 +752,6 @@
         "world.Sensor",
         "world.ColliderDisabled",
         "resource.AppState",
-        "resource.PlayState",
         "world.ColliderOf",
         "world.ColliderAabb",
         "world.Name"
@@ -788,7 +786,7 @@
         "控制者：With<GameplayContext>",
         "角色：With<Character>",
         "要求 FirstPersonCamera.target == ControlsCharacter.character",
-        "run_if(gameplay_running)：AppState::InGame 且 PlayState::Running；独立无状态测试兼容运行。"
+        "run_if(gameplay_running)：AppState::Running；独立无状态测试兼容运行。"
       ],
       "events": [],
       "notes": [
@@ -847,8 +845,7 @@
         "character.VelocityIntegrationData",
         "character.AccumulatedLocalAcceleration",
         "character.SleepTimer",
-        "resource.AppState",
-        "resource.PlayState"
+        "resource.AppState"
       ],
       "writes": [
         "character.LinearVelocity",
@@ -859,7 +856,7 @@
       ],
       "filters": [
         "With<Character>",
-        "run_if(gameplay_running)：AppState::InGame 且 PlayState::Running；独立无状态测试兼容运行。"
+        "run_if(gameplay_running)：AppState::Running；独立无状态测试兼容运行。"
       ],
       "events": [],
       "notes": [
@@ -914,8 +911,7 @@
         "character.VelocityIntegrationData",
         "character.AccumulatedLocalAcceleration",
         "character.SleepTimer",
-        "resource.AppState",
-        "resource.PlayState"
+        "resource.AppState"
       ],
       "writes": [
         "character.CharacterIntent",
@@ -928,7 +924,7 @@
       ],
       "filters": [
         "With<Character>",
-        "run_if(gameplay_running)：AppState::InGame 且 PlayState::Running；独立无状态测试兼容运行。"
+        "run_if(gameplay_running)：AppState::Running；独立无状态测试兼容运行。"
       ],
       "events": [],
       "notes": [
@@ -990,7 +986,6 @@
         "world.Collider",
         "world.ColliderAabb",
         "resource.AppState",
-        "resource.PlayState",
         "parcel.Transform",
         "parcel.RigidBody",
         "parcel.NoTranslationEasing",
@@ -1028,7 +1023,7 @@
         "角色：(With<Character>, Without<Pickable>)",
         "候选物：(With<Pickable>, Without<HeldBy>, Without<Character>)",
         "已持有物：(With<Pickable>, With<HeldBy>, Without<Character>)",
-        "run_if(gameplay_running)：AppState::InGame 且 PlayState::Running；独立无状态测试兼容运行。"
+        "run_if(gameplay_running)：AppState::Running；独立无状态测试兼容运行。"
       ],
       "events": [
         "Commands::write_message：parcel_pickup / parcel_release"
@@ -1124,8 +1119,7 @@
         "parcel.HeldBy",
         "parcel.HeldAttachment",
         "parcel.CarryGrip",
-        "resource.AppState",
-        "resource.PlayState"
+        "resource.AppState"
       ],
       "writes": [
         "parcel.HeldTarget",
@@ -1134,7 +1128,7 @@
       "filters": [
         "角色：(With<Character>, Without<Pickable>)",
         "物体：(With<Pickable>, Without<Character>)，具有 HeldBy 与 HeldTarget",
-        "run_if(gameplay_running)：AppState::InGame 且 PlayState::Running；独立无状态测试兼容运行。"
+        "run_if(gameplay_running)：AppState::Running；独立无状态测试兼容运行。"
       ],
       "events": [],
       "notes": [
@@ -1196,7 +1190,6 @@
         "world.Sensor",
         "world.ColliderDisabled",
         "resource.AppState",
-        "resource.PlayState",
         "world.ColliderOf",
         "world.ColliderAabb",
         "world.Name"
@@ -1231,7 +1224,7 @@
         "控制者：With<GameplayContext>",
         "角色：With<Character>",
         "要求 FirstPersonCamera.target == ControlsCharacter.character",
-        "run_if(gameplay_running)：AppState::InGame 且 PlayState::Running；独立无状态测试兼容运行。"
+        "run_if(gameplay_running)：AppState::Running；独立无状态测试兼容运行。"
       ],
       "events": [],
       "notes": [
@@ -1280,8 +1273,7 @@
         "parcel.HeldBy",
         "parcel.HeldAttachment",
         "parcel.CarryGrip",
-        "resource.AppState",
-        "resource.PlayState"
+        "resource.AppState"
       ],
       "writes": [
         "parcel.HeldTarget",
@@ -1290,7 +1282,7 @@
       "filters": [
         "角色：(With<Character>, Without<Pickable>)",
         "物体：(With<Pickable>, Without<Character>)，具有 HeldBy 与 HeldTarget",
-        "run_if(gameplay_running)：AppState::InGame 且 PlayState::Running；独立无状态测试兼容运行。"
+        "run_if(gameplay_running)：AppState::Running；独立无状态测试兼容运行。"
       ],
       "events": [],
       "notes": [
@@ -1336,8 +1328,7 @@
       "reads": [
         "character.Transform",
         "camera.FirstPersonCamera",
-        "resource.AppState",
-        "resource.PlayState"
+        "resource.AppState"
       ],
       "writes": [
         "camera.Transform"
@@ -1345,7 +1336,7 @@
       "filters": [
         "角色：With<Character>",
         "相机查询：Without<Character>，具有 FirstPersonCamera 与 Transform；没有额外 With<Camera3d> 过滤",
-        "run_if(gameplay_running)：AppState::InGame 且 PlayState::Running；独立无状态测试兼容运行。"
+        "run_if(gameplay_running)：AppState::Running；独立无状态测试兼容运行。"
       ],
       "events": [],
       "notes": [
@@ -1486,8 +1477,7 @@
         "camera.FirstPersonCamera",
         "visual.ChildOf",
         "visual.Visibility",
-        "resource.AppState",
-        "resource.PlayState"
+        "resource.AppState"
       ],
       "writes": [
         "visual.Visibility"
@@ -1497,7 +1487,7 @@
         "控制者：With<GameplayContext>",
         "按 ChildOf 查所属角色并确认 FirstPersonCamera.target 匹配",
         "角色：Query<(), With<Character>>，检查所属业务角色存在",
-        "run_if(gameplay_running)：AppState::InGame 且 PlayState::Running；独立无状态测试兼容运行。"
+        "run_if(gameplay_running)：AppState::Running；独立无状态测试兼容运行。"
       ],
       "events": [],
       "notes": [
@@ -1707,8 +1697,7 @@
         "camera.EguiInput",
         "camera.EguiContextSettings",
         "camera.EguiMultipassSchedule",
-        "resource.AppState",
-        "resource.PlayState"
+        "resource.AppState"
       ],
       "writes": [
         "camera.EguiContext",
@@ -1736,7 +1725,7 @@
       "filters": [
         "UI：With<PrimaryEguiContext>",
         "独占 &mut World，按运行时反射注册动态访问数据",
-        "run_if(gameplay_running)：AppState::InGame 且 PlayState::Running；独立无状态测试兼容运行。"
+        "run_if(gameplay_running)：AppState::Running；独立无状态测试兼容运行。"
       ],
       "events": [],
       "notes": [
@@ -1794,7 +1783,6 @@
         "world.Collider",
         "world.ColliderAabb",
         "resource.AppState",
-        "resource.PlayState",
         "held_proxy.HeldCollider"
       ],
       "writes": [
@@ -1803,7 +1791,7 @@
       "filters": [
         "With<Character>",
         "碰撞体查询：Option<CollisionLayers>、Has<HeldBy>、Has<HeldCollider>、Has<Sensor>",
-        "run_if(gameplay_running)：AppState::InGame 且 PlayState::Running；独立无状态测试兼容运行。",
+        "run_if(gameplay_running)：AppState::Running；独立无状态测试兼容运行。",
         "支撑候选排除 HeldBy 或 HeldCollider，避免持物代理自支撑。"
       ],
       "events": [],
@@ -1868,7 +1856,6 @@
         "world.Collider",
         "world.ColliderAabb",
         "resource.AppState",
-        "resource.PlayState",
         "held_proxy.HeldCollider"
       ],
       "writes": [
@@ -1877,7 +1864,7 @@
       "filters": [
         "With<Character>",
         "碰撞体查询：Option<CollisionLayers>、Has<HeldBy>、Has<HeldCollider>、Has<Sensor>",
-        "run_if(gameplay_running)：AppState::InGame 且 PlayState::Running；独立无状态测试兼容运行。",
+        "run_if(gameplay_running)：AppState::Running；独立无状态测试兼容运行。",
         "支撑候选排除 HeldBy 或 HeldCollider，避免持物代理自支撑。"
       ],
       "events": [],
@@ -1993,7 +1980,7 @@
       "filters": [
         "角色：With<Character>",
         "物体：With<HeldTarget>，HeldBy 可选",
-        "run_if(gameplay_running)：AppState::InGame 且 PlayState::Running；独立无状态测试兼容运行。"
+        "run_if(gameplay_running)：AppState::Running；独立无状态测试兼容运行。"
       ],
       "events": [],
       "notes": [
@@ -2078,15 +2065,14 @@
         "character.LinearVelocity",
         "character.CharacterMotion",
         "local.VelocityLog",
-        "resource.AppState",
-        "resource.PlayState"
+        "resource.AppState"
       ],
       "writes": [
         "local.VelocityLog"
       ],
       "filters": [
         "With<Character>",
-        "run_if(gameplay_running)：AppState::InGame 且 PlayState::Running；独立无状态测试兼容运行。"
+        "run_if(gameplay_running)：AppState::Running；独立无状态测试兼容运行。"
       ],
       "events": [],
       "notes": [
@@ -2519,8 +2505,7 @@
         "resource.AssetsGltf",
         "resource.ArtLoadState",
         "island.IslandMap",
-        "resource.AppState",
-        "resource.PlayState"
+        "resource.AppState"
       ],
       "writes": [
         "resource.ArtLoadState",
@@ -2529,7 +2514,7 @@
       ],
       "filters": [
         "With<IslandMap>",
-        "run_if(gameplay_running)：AppState::InGame 且 PlayState::Running；无状态测试仍可运行。"
+        "run_if(gameplay_running)：AppState::Running；无状态测试仍可运行。"
       ],
       "events": [],
       "description": "五份资源就绪且地图不存在时请求海岛实例。",
@@ -2537,7 +2522,7 @@
       "notes": [
         "begin_island → prepare_island → spawn_actors 使用 chain，延迟结构命令在依赖处应用。",
         "仅请求 WorldAssetRoot；模板请求不等于静态碰撞已就绪。",
-        "InGame 根实体使用 DespawnOnExit；地图和视觉后代使用 ChildOf 随根清理。"
+        "会话根实体使用 DespawnOnEnter(MainMenu)；地图和视觉后代使用 ChildOf 随根清理。"
       ],
       "source": {
         "path": "src/scene_assembly/loading.rs",
@@ -2609,7 +2594,6 @@
         "resource.PrototypeConfig",
         "resource.ArtLoadState",
         "resource.AppState",
-        "resource.PlayState",
         "model_node.Name"
       ],
       "writes": [
@@ -2628,7 +2612,7 @@
       ],
       "filters": [
         "With<IslandPending>",
-        "run_if(gameplay_running)：AppState::InGame 且 PlayState::Running；无状态测试仍可运行。"
+        "run_if(gameplay_running)：AppState::Running；无状态测试仍可运行。"
       ],
       "events": [],
       "description": "导入元数据与 CPU 几何，构建完整玩法静态碰撞、入口坡道和四名 NPC 的身体胶囊。",
@@ -2673,8 +2657,7 @@
         "resource.ArtAssets",
         "resource.AssetsGltf",
         "camera.LoadingCamera",
-        "resource.AppState",
-        "resource.PlayState"
+        "resource.AppState"
       ],
       "writes": [
         "island.ActorsSpawned",
@@ -2695,7 +2678,7 @@
       ],
       "filters": [
         "Without<ActorsSpawned>",
-        "run_if(gameplay_running)：AppState::InGame 且 PlayState::Running；无状态测试仍可运行。"
+        "run_if(gameplay_running)：AppState::Running；无状态测试仍可运行。"
       ],
       "events": [],
       "description": "碰撞命令可见后生成一名玩家、五件物品与控制者，复用加载相机。",
@@ -2704,7 +2687,7 @@
         "玩家和可搬物是独立世界根，不是地图的子实体。",
         "业务根保存刚体；直属视觉根通过 BSN Children 挂接 GLB 模板。",
         "普通纸箱、易碎纸箱、三只木箱复用同一玩法能力，偏移来自 CarryGrip。",
-        "InGame 根实体使用 DespawnOnExit；地图和视觉后代使用 ChildOf 随根清理。",
+        "会话根实体使用 DespawnOnEnter(MainMenu)；地图和视觉后代使用 ChildOf 随根清理。",
         "加载相机替换为 FirstPersonCamera，初始平视且眼位固定；CharacterVisual 装配时已设 Hidden，避免等待下一帧可见性同步时露出自身模型。"
       ],
       "source": {
@@ -2781,8 +2764,7 @@
         "resource.AssetsGltf",
         "resource.AssetsAnimationClip",
         "animation_player.AnimationPlayer",
-        "resource.AppState",
-        "resource.PlayState"
+        "resource.AppState"
       ],
       "writes": [
         "resource.AssetsAnimationGraph",
@@ -2795,7 +2777,7 @@
       "filters": [
         "With<CourierAnimationPending>",
         "With<Character>",
-        "run_if(gameplay_running)：AppState::InGame 且 PlayState::Running；无状态测试仍可运行。"
+        "run_if(gameplay_running)：AppState::Running；无状态测试仍可运行。"
       ],
       "events": [],
       "description": "等待 16 个命名片段与合法时长，绑定播放器及统一步相位；缓存八个鞋底节点用于视觉高度补偿。",
@@ -2838,8 +2820,7 @@
         "character.HoldingItems",
         "animation_player.CourierAnimation",
         "animation_player.AnimationPlayer",
-        "resource.AppState",
-        "resource.PlayState"
+        "resource.AppState"
       ],
       "writes": [
         "animation_player.AnimationPlayer",
@@ -2848,7 +2829,7 @@
       ],
       "filters": [
         "With<Character>",
-        "run_if(gameplay_running)：AppState::InGame 且 PlayState::Running；无状态测试仍可运行。"
+        "run_if(gameplay_running)：AppState::Running；无状态测试仍可运行。"
       ],
       "events": [],
       "description": "真实速度转入角色局部空间，连续混合四向静走、持箱与跳跃/下落/落地阶段。",
@@ -2894,7 +2875,6 @@
         "character.Position",
         "parcel.Position",
         "resource.AppState",
-        "resource.PlayState",
         "parcel.HeldAttachment",
         "parcel.Rotation",
         "parcel.Transform",
@@ -2941,7 +2921,7 @@
       "filters": [
         "Or<(With<Character>, With<Pickable>)>",
         "SpawnPoint 必须存在",
-        "run_if(gameplay_running)：AppState::InGame 且 PlayState::Running；无状态测试仍可运行。"
+        "run_if(gameplay_running)：AppState::Running；无状态测试仍可运行。"
       ],
       "events": [],
       "description": "物理 y < -1.5 时回各自出生姿态，清除速度与单次请求，解除持握。",
@@ -2983,8 +2963,7 @@
       "reads": [
         "character.ResumeInterpolation",
         "parcel.ResumeInterpolation",
-        "resource.AppState",
-        "resource.PlayState"
+        "resource.AppState"
       ],
       "writes": [
         "character.ResumeInterpolation",
@@ -2996,7 +2975,7 @@
       ],
       "filters": [
         "ResumeInterpolation",
-        "run_if(gameplay_running)：AppState::InGame 且 PlayState::Running；无状态测试仍可运行。"
+        "run_if(gameplay_running)：AppState::Running；无状态测试仍可运行。"
       ],
       "events": [],
       "description": "下一固定步清理本模块添加的插值暂停，再从恢复位置采样。",
@@ -3082,8 +3061,7 @@
         "visual.ChildOf",
         "model_node.Transform",
         "model_node.ChildOf",
-        "resource.AppState",
-        "resource.PlayState"
+        "resource.AppState"
       ],
       "writes": [
         "visual.Transform",
@@ -3091,7 +3069,7 @@
       ],
       "filters": [
         "With<CourierFootGrounding>",
-        "run_if(gameplay_running)：仅 InGame / Running；无状态测试可运行。"
+        "run_if(gameplay_running)：仅 AppState::Running；无状态测试可运行。"
       ],
       "events": [],
       "description": "根据本帧鞋底节点姿态向上补偿主角视觉根，解除时平滑回落。",
@@ -3241,11 +3219,13 @@
       "id": "flow_pause",
       "name": "show_pause_menu",
       "kind": "System",
-      "phase": "OnEnter(PlayState::Paused) · StateTransition",
+      "phase": "OnEnter(AppState::Paused) · StateTransition",
       "module": "ui",
-      "description": "打开 Pause 页面并重置焦点；不退出 InGame，也不生成或销毁玩法实体。",
+      "description": "进入 AppState::Paused 时打开暂停页面并重置焦点；保留会话实体，记录实际转换来源。",
       "display_summary": "打开暂停菜单并重置焦点。",
-      "reads": [],
+      "reads": [
+        "resource.AppTransitionMessages"
+      ],
       "writes": [
         "resource.MenuState",
         "resource.MenuFocus"
@@ -3261,11 +3241,11 @@
       },
       "feature": "ui",
       "registered_by": "ui",
-      "schedule": "OnEnter(PlayState::Paused)",
+      "schedule": "OnEnter(AppState::Paused)",
       "schedule_group": "StateTransition",
       "registrations": [
         {
-          "schedule": "OnEnter(PlayState::Paused)",
+          "schedule": "OnEnter(AppState::Paused)",
           "scope": "runtime"
         }
       ]
@@ -3312,7 +3292,7 @@
       "id": "flow_suspend_paused",
       "name": "suspend_controls",
       "kind": "System",
-      "phase": "OnEnter(PlayState::Paused) · StateTransition",
+      "phase": "OnEnter(AppState::Paused) · StateTransition",
       "module": "first_person",
       "description": "进入主菜单或暂停时停用 GameplayContext 并释放光标；角色意图由 CharacterPlugin 的独立生命周期系统清空。",
       "display_summary": "停用玩法输入并释放光标。",
@@ -3333,11 +3313,11 @@
       },
       "feature": "first_person",
       "registered_by": "first_person",
-      "schedule": "OnEnter(PlayState::Paused)",
+      "schedule": "OnEnter(AppState::Paused)",
       "schedule_group": "StateTransition",
       "registrations": [
         {
-          "schedule": "OnEnter(PlayState::Paused)",
+          "schedule": "OnEnter(AppState::Paused)",
           "scope": "runtime"
         }
       ],
@@ -3350,12 +3330,12 @@
       "id": "flow_resume",
       "name": "hide_menu",
       "kind": "System",
-      "phase": "OnEnter(PlayState::Running) · StateTransition",
+      "phase": "OnEnter(AppState::Running) · StateTransition",
       "module": "ui",
       "description": "进入 Running 时隐藏菜单并清提示；捕获恢复和时钟由所属功能响应同一状态。",
       "display_summary": "隐藏菜单并清除提示。",
       "reads": [
-        "resource.PlayTransitionMessages"
+        "resource.AppTransitionMessages"
       ],
       "writes": [
         "resource.MenuState"
@@ -3367,15 +3347,15 @@
       ],
       "source": {
         "path": "src/ui/lifecycle.rs",
-        "line": 36
+        "line": 41
       },
       "feature": "ui",
       "registered_by": "ui",
-      "schedule": "OnEnter(PlayState::Running)",
+      "schedule": "OnEnter(AppState::Running)",
       "schedule_group": "StateTransition",
       "registrations": [
         {
-          "schedule": "OnEnter(PlayState::Running)",
+          "schedule": "OnEnter(AppState::Running)",
           "scope": "runtime"
         }
       ]
@@ -3482,7 +3462,6 @@
         "resource.SettingsDraft",
         "resource.GameSettings",
         "resource.AppState",
-        "resource.PlayState",
         "resource.SoundRequestMessages",
         "resource.AppExitMessages",
         "local.VolumeEdit"
@@ -4374,7 +4353,6 @@
         "parcel.Position",
         "local.HoldStrain",
         "resource.AppState",
-        "resource.PlayState",
         "parcel.CarryGrip"
       ],
       "writes": [
@@ -4392,7 +4370,7 @@
         "新持握宽限 0.5 秒；误差 >0.65 米持续 0.35 秒警告，降至 <0.45 米重新布防。",
         "Local 只保留当前持握包裹；解除关系或销毁后清理，不新增玩法状态。",
         "此观察位于本固定步玩法链之后、物理解算之前。",
-        "run_if(gameplay_running)：仅 InGame / Running 收集反馈；没有状态资源的最小物理测试保持可用。",
+        "run_if(gameplay_running)：仅 AppState::Running 收集反馈；没有状态资源的最小物理测试保持可用。",
         "持握目标优先读取物品 CarryGrip；未配置时回退 PrototypeConfig.hold_offset，与物理和呈现使用同一偏移来源。"
       ],
       "source": {
@@ -4429,8 +4407,7 @@
         "parcel.Parcel",
         "parcel.HeldBy",
         "local.LandingContacts",
-        "resource.AppState",
-        "resource.PlayState"
+        "resource.AppState"
       ],
       "writes": [
         "local.LandingContacts",
@@ -4446,7 +4423,7 @@
         "检查活动与休眠接触；向上支撑法线 y≥0.65 且总法向冲量≥1.8 才提示。",
         "锁存到完全离开支撑，避免预测接触漏声、静置或休眠后重复提示；墙面不充当落地。",
         "只 after(StepSimulation)；与碰撞日志、Writeback 后接地与速度观察没有额外全序。",
-        "run_if(gameplay_running)：仅 InGame / Running 收集反馈；没有状态资源的最小物理测试保持可用。"
+        "run_if(gameplay_running)：仅 AppState::Running 收集反馈；没有状态资源的最小物理测试保持可用。"
       ],
       "source": {
         "path": "src/item_interaction/audio_events.rs",
@@ -5022,7 +4999,7 @@
       ],
       "filters": [
         "箱体 With<Pickable>；代理具有 HeldCollider",
-        "run_if(gameplay_running)：InGame / Running；无状态最小测试兼容运行。"
+        "run_if(gameplay_running)：AppState::Running；无状态最小测试兼容运行。"
       ],
       "events": [],
       "notes": [
@@ -5069,7 +5046,7 @@
       ],
       "filters": [
         "With<Character>",
-        "run_if(gameplay_running)：InGame / Running；无状态最小测试兼容运行。"
+        "run_if(gameplay_running)：AppState::Running；无状态最小测试兼容运行。"
       ],
       "events": [],
       "notes": [
@@ -5134,7 +5111,7 @@
       ],
       "filters": [
         "箱体 With<Pickable>/Without<RigidBody>；人物 With<Character>",
-        "run_if(gameplay_running)：InGame / Running；无状态最小测试兼容运行。"
+        "run_if(gameplay_running)：AppState::Running；无状态最小测试兼容运行。"
       ],
       "events": [],
       "notes": [
@@ -5218,7 +5195,7 @@
       ],
       "filters": [
         "人物 With<Character>；物品 With<Pickable>/Without<Character>",
-        "run_if(gameplay_running)：InGame / Running；无状态最小测试兼容运行。"
+        "run_if(gameplay_running)：AppState::Running；无状态最小测试兼容运行。"
       ],
       "events": [],
       "notes": [
@@ -5277,7 +5254,7 @@
       "filters": [
         "人物 With<Character>/Without<Pickable>；箱体 With<Pickable>/Without<Character>",
         "代理 With<HeldCollider>/Without<Pickable>/Without<Character>",
-        "run_if(gameplay_running)：InGame / Running；无状态最小测试兼容运行。"
+        "run_if(gameplay_running)：AppState::Running；无状态最小测试兼容运行。"
       ],
       "events": [],
       "notes": [
@@ -5341,7 +5318,7 @@
       "filters": [
         "人物 With<Character>/Without<Pickable>；箱体 With<Pickable>/Without<Character>",
         "代理 With<HeldCollider>/Without<Pickable>/Without<Character>",
-        "run_if(gameplay_running)：InGame / Running；无状态最小测试兼容运行。"
+        "run_if(gameplay_running)：AppState::Running；无状态最小测试兼容运行。"
       ],
       "events": [],
       "notes": [
@@ -5404,7 +5381,7 @@
       "filters": [
         "人物 With<Character>/Without<Pickable>；箱体 With<Pickable>/Without<Character>",
         "代理 With<HeldCollider>/Without<Pickable>/Without<Character>",
-        "run_if(gameplay_running)：InGame / Running；无状态最小测试兼容运行。"
+        "run_if(gameplay_running)：AppState::Running；无状态最小测试兼容运行。"
       ],
       "events": [],
       "notes": [
@@ -5455,7 +5432,7 @@
       ],
       "filters": [
         "具有 ResumeCarryEasing",
-        "run_if(gameplay_running)：InGame / Running；无状态最小测试兼容运行。"
+        "run_if(gameplay_running)：AppState::Running；无状态最小测试兼容运行。"
       ],
       "events": [],
       "notes": [
@@ -5539,7 +5516,7 @@
       "notes": [],
       "source": {
         "path": "src/game_flow/mod.rs",
-        "line": 109
+        "line": 94
       },
       "feature": "game_flow",
       "registered_by": "game_flow",
@@ -5557,7 +5534,7 @@
       "name": "pause_simulation",
       "kind": "System",
       "module": "game_flow",
-      "phase": "OnEnter(PlayState::Paused) · StateTransition",
+      "phase": "OnEnter(AppState::Paused) · StateTransition",
       "description": "暂停虚拟与物理时钟，立即清零当帧增量。",
       "display_summary": "冻结游戏与物理时钟并清零当前增量。",
       "reads": [],
@@ -5570,15 +5547,15 @@
       "notes": [],
       "source": {
         "path": "src/game_flow/mod.rs",
-        "line": 119
+        "line": 104
       },
       "feature": "game_flow",
       "registered_by": "game_flow",
-      "schedule": "OnEnter(PlayState::Paused)",
+      "schedule": "OnEnter(AppState::Paused)",
       "schedule_group": "StateTransition",
       "registrations": [
         {
-          "schedule": "OnEnter(PlayState::Paused)",
+          "schedule": "OnEnter(AppState::Paused)",
           "scope": "runtime"
         }
       ]
@@ -5588,7 +5565,7 @@
       "name": "resume_simulation",
       "kind": "System",
       "module": "game_flow",
-      "phase": "OnEnter(PlayState::Running) · StateTransition",
+      "phase": "OnEnter(AppState::Running) · StateTransition",
       "description": "恢复虚拟与物理时钟，保留现有会话实体。",
       "display_summary": "恢复游戏与物理时钟。",
       "reads": [],
@@ -5601,15 +5578,15 @@
       "notes": [],
       "source": {
         "path": "src/game_flow/mod.rs",
-        "line": 138
+        "line": 123
       },
       "feature": "game_flow",
       "registered_by": "game_flow",
-      "schedule": "OnEnter(PlayState::Running)",
+      "schedule": "OnEnter(AppState::Running)",
       "schedule_group": "StateTransition",
       "registrations": [
         {
-          "schedule": "OnEnter(PlayState::Running)",
+          "schedule": "OnEnter(AppState::Running)",
           "scope": "runtime"
         }
       ]
@@ -5619,7 +5596,7 @@
       "name": "resume_capture",
       "kind": "System",
       "module": "first_person",
-      "phase": "OnEnter(PlayState::Running) · StateTransition",
+      "phase": "OnEnter(AppState::Running) · StateTransition",
       "description": "标记下一次捕获初始化，并丢弃自由光标阶段累积位移。",
       "display_summary": "重置光标捕获并丢弃自由光标阶段位移。",
       "reads": [],
@@ -5635,11 +5612,11 @@
       },
       "feature": "first_person",
       "registered_by": "first_person",
-      "schedule": "OnEnter(PlayState::Running)",
+      "schedule": "OnEnter(AppState::Running)",
       "schedule_group": "StateTransition",
       "registrations": [
         {
-          "schedule": "OnEnter(PlayState::Running)",
+          "schedule": "OnEnter(AppState::Running)",
           "scope": "runtime"
         }
       ]
@@ -5721,7 +5698,7 @@
       "name": "clear_character_intents",
       "kind": "System",
       "module": "character",
-      "phase": "OnEnter(PlayState::Paused) · StateTransition",
+      "phase": "OnEnter(AppState::Paused) · StateTransition",
       "description": "角色功能在暂停或返回主菜单时清空持续移动轴及一次性请求，不依赖设备或相机插件。",
       "display_summary": "清空持续移动意图与单次动作请求。",
       "reads": [],
@@ -5739,11 +5716,11 @@
       },
       "feature": "character",
       "registered_by": "character",
-      "schedule": "OnEnter(PlayState::Paused)",
+      "schedule": "OnEnter(AppState::Paused)",
       "schedule_group": "StateTransition",
       "registrations": [
         {
-          "schedule": "OnEnter(PlayState::Paused)",
+          "schedule": "OnEnter(AppState::Paused)",
           "scope": "runtime"
         }
       ],
@@ -6270,7 +6247,7 @@
         "由 add_input_context::<GameplayContext>() 安装的独立泛型 Observer；不与 MenuContext 注册合并。",
         "不产生 Fire；项目只为 MoveAction 接入 Complete／Cancel Observer，其他动作的结束事件不在此展开。",
         "当前 MoveAction 没有产生 Ongoing 的条件，Cancel 分支保留为条件路径，当前生产配置未到达该状态。",
-        "退出 InGame 销毁控制者时，Actions<GameplayContext> 的 linked_spawn 清理动作；暂停或失焦停用上下文走 Update → Trigger 路径。",
+        "返回 MainMenu 销毁控制者时，Actions<GameplayContext> 的 linked_spawn 清理动作；暂停或失焦停用上下文走 Update → Trigger 路径。",
         "Commands::trigger 排入命令，命令应用时才触发对应 Observer。"
       ],
       "source": null,
@@ -6328,7 +6305,7 @@
       "id": "controller",
       "name": "键盘控制者",
       "count": 1,
-      "description": "输入上下文实体，保存 PlayerId { id: 1 }、设备选择和控制目标。控制者与角色、相机是独立实体。 仅在 InGame 存在，Paused 保留；退出 InGame 时清理。",
+      "description": "输入上下文实体，保存 PlayerId { id: 1 }、设备选择和控制目标。控制者与角色、相机是独立实体。 离开 MainMenu 后建立会话，Running/Paused 切换保留；返回 MainMenu 时清理。",
       "display_summary": "保存玩家身份、输入上下文与受控角色及相机。",
       "components": [
         {
@@ -6461,13 +6438,13 @@
           "defined_in": "enhanced_input"
         },
         {
-          "id": "controller.DespawnOnExit",
-          "name": "DespawnOnExit",
+          "id": "controller.DespawnOnEnter",
+          "name": "DespawnOnEnter",
           "fields": [
-            "AppState::InGame"
+            "AppState::MainMenu"
           ],
-          "description": "状态退出销毁此根；内置 ChildOf 子树随根清理。",
-          "display_summary": "标记退出游戏会话时清理控制者。",
+          "description": "会话根标记；StateTransition 的 EnterSchedules 框架清理系统在进入 MainMenu 时销毁，Running/Paused 切换保留。",
+          "display_summary": "返回主菜单时清理当前会话根。",
           "source": {
             "path": "src/scene_assembly/actors.rs",
             "line": 82
@@ -6488,7 +6465,7 @@
       "id": "character",
       "name": "角色业务根实体",
       "count": 1,
-      "description": "动态角色根对应脚底。Position/Rotation 与速度由 Avian 管理；Transform 是插值呈现，水平朝向受镜头控制。 仅在 InGame 存在，Paused 保留；退出 InGame 时清理。",
+      "description": "动态角色根对应脚底。Position/Rotation 与速度由 Avian 管理；Transform 是插值呈现，水平朝向受镜头控制。 离开 MainMenu 后建立会话，Running/Paused 切换保留；返回 MainMenu 时清理。",
       "display_summary": "承载角色身份、运动意图与动态物理身体。",
       "components": [
         {
@@ -6996,13 +6973,13 @@
           "defined_in": "avian"
         },
         {
-          "id": "character.DespawnOnExit",
-          "name": "DespawnOnExit",
+          "id": "character.DespawnOnEnter",
+          "name": "DespawnOnEnter",
           "fields": [
-            "AppState::InGame"
+            "AppState::MainMenu"
           ],
-          "description": "状态退出销毁此根；内置 ChildOf 子树随根清理。",
-          "display_summary": "标记退出所属应用状态时销毁此实体。",
+          "description": "会话根标记；StateTransition 的 EnterSchedules 框架清理系统在进入 MainMenu 时销毁，Running/Paused 切换保留。",
+          "display_summary": "返回主菜单时清理当前会话根。",
           "source": {
             "path": "src/scene_assembly/actors.rs",
             "line": 77
@@ -7740,13 +7717,13 @@
           "defined_in": "scene_assembly"
         },
         {
-          "id": "parcel.DespawnOnExit",
-          "name": "DespawnOnExit",
+          "id": "parcel.DespawnOnEnter",
+          "name": "DespawnOnEnter",
           "fields": [
-            "AppState::InGame"
+            "AppState::MainMenu"
           ],
-          "description": "状态退出销毁此根；内置 ChildOf 子树随根清理。",
-          "display_summary": "标记退出所属应用状态时销毁此实体。",
+          "description": "会话根标记；StateTransition 的 EnterSchedules 框架清理系统在进入 MainMenu 时销毁，Running/Paused 切换保留。",
+          "display_summary": "返回主菜单时清理当前会话根。",
           "source": {
             "path": "src/scene_assembly/actors.rs",
             "line": 90
@@ -8094,13 +8071,13 @@
           "defined_in": "scene_assembly"
         },
         {
-          "id": "camera.DespawnOnExit",
-          "name": "DespawnOnExit",
+          "id": "camera.DespawnOnEnter",
+          "name": "DespawnOnEnter",
           "fields": [
-            "AppState::InGame"
+            "AppState::MainMenu"
           ],
-          "description": "状态退出销毁此根；内置 ChildOf 子树随根清理。",
-          "display_summary": "标记退出所属应用状态时销毁此实体。",
+          "description": "会话根标记；StateTransition 的 EnterSchedules 框架清理系统在进入 MainMenu 时销毁，Running/Paused 切换保留。",
+          "display_summary": "返回主菜单时清理当前会话根。",
           "source": {
             "path": "src/scene_assembly/loading.rs",
             "line": 14
@@ -9058,12 +9035,12 @@
           "defined_in": "infrastructure"
         },
         {
-          "id": "island.DespawnOnExit",
-          "name": "DespawnOnExit<AppState>",
-          "description": "进入 InGame 时创建，退出 InGame 时清理；Paused 保留本次会话。",
-          "display_summary": "标记退出所属应用状态时销毁此实体。",
+          "id": "island.DespawnOnEnter",
+          "name": "DespawnOnEnter<AppState>",
+          "description": "会话根标记；StateTransition 的 EnterSchedules 框架清理系统在进入 MainMenu 时销毁，Running/Paused 切换保留。",
+          "display_summary": "返回主菜单时清理当前会话根。",
           "fields": [
-            "AppState::InGame"
+            "AppState::MainMenu"
           ],
           "source": {
             "path": "src/scene_assembly/loading.rs",
@@ -9872,7 +9849,7 @@
           "description": "舞台根标记。",
           "source": {
             "path": "src/ui/backdrop.rs",
-            "line": 20
+            "line": 24
           },
           "feature": "ui",
           "defined_in": "ui"
@@ -10055,7 +10032,7 @@
           "display_summary": "保存展示快递员的模型来源以绑定命名动画。",
           "source": {
             "path": "src/ui/backdrop.rs",
-            "line": 24
+            "line": 28
           },
           "feature": "ui",
           "defined_in": "ui"
@@ -10068,7 +10045,7 @@
           "display_summary": "标记等待命名动画绑定的模型。",
           "source": {
             "path": "src/ui/backdrop.rs",
-            "line": 32
+            "line": 36
           },
           "feature": "ui",
           "defined_in": "ui"
@@ -11521,36 +11498,15 @@
       "name": "State<AppState> / NextState<AppState>",
       "fields": [
         "MainMenu（默认）",
-        "InGame"
+        "Running",
+        "Paused"
       ],
-      "description": "唯一应用状态；只进入/退出 InGame 生成/销毁玩法会话，菜单子页面不改变它。",
-      "display_summary": "保存应用主状态及待处理的会话切换。",
+      "description": "应用唯一运行状态与待处理转换；离开 MainMenu 建立会话，Running/Paused 切换保留，返回 MainMenu 清理；菜单子页面不改变应用状态。",
+      "display_summary": "保存主菜单、运行和暂停状态及下一次转换。",
       "source": {
         "path": "src/game_flow/mod.rs",
         "line": 13
       },
-      "feature": "game_flow",
-      "defined_in": "game_flow",
-      "kind": "Resource"
-    },
-    {
-      "id": "resource.PlayState",
-      "name": "State<PlayState> / NextState<PlayState>",
-      "fields": [
-        "Running（默认）",
-        "Paused",
-        "source: AppState::InGame"
-      ],
-      "description": "State<PlayState> 是 InGame 内的 Running / Paused 子状态，只在 InGame 存在；NextState<PlayState> 在插件注册时初始化并跨会话保留，用于菜单请求后续状态切换。",
-      "display_summary": "保存游戏运行、暂停及待处理的切换请求。",
-      "source": {
-        "path": "src/game_flow/mod.rs",
-        "line": 22
-      },
-      "notes": [
-        "退出 InGame 移除当前 State<PlayState>；NextState<PlayState> 不随会话移除。",
-        "菜单 handle_requests 在 MainMenu 仍可访问 NextState<PlayState>；请求由后续 StateTransition 消费。"
-      ],
       "feature": "game_flow",
       "defined_in": "game_flow",
       "kind": "Resource"
@@ -11717,28 +11673,11 @@
         "exited: Option<AppState>",
         "entered: Option<AppState>"
       ],
-      "description": "应用状态转换的缓冲日志输入，由 show_main_menu 的独立 MessageReader 读取。",
-      "display_summary": "缓冲应用主状态转换的日志输入。",
+      "description": "应用状态转换缓冲；主菜单、暂停和运行入口各用独立 MessageReader 读取 exited，记录真实来源，初始来源可为 None。",
+      "display_summary": "缓冲唯一 AppState 的真实转换来源。",
       "source": {
         "path": "src/ui/lifecycle.rs",
         "line": 15
-      },
-      "feature": "game_flow",
-      "defined_in": "game_flow",
-      "kind": "Messages<T>"
-    },
-    {
-      "id": "resource.PlayTransitionMessages",
-      "name": "Messages<StateTransitionEvent<PlayState>>",
-      "fields": [
-        "exited: Option<PlayState>",
-        "entered: Option<PlayState>"
-      ],
-      "description": "游戏子状态转换的缓冲日志输入，由 UI hide_menu 的独立 MessageReader 读取。",
-      "display_summary": "缓冲游戏运行与暂停转换的日志输入。",
-      "source": {
-        "path": "src/ui/lifecycle.rs",
-        "line": 36
       },
       "feature": "game_flow",
       "defined_in": "game_flow",
@@ -13189,12 +13128,12 @@
   ],
   "startup_notes": [
     "main 创建 App 与独立会话日志；DefaultPlugins 禁用 Bevy 默认 AudioPlugin，由 Kira 提供音频设备输出。",
-    "InspectorPlugin 内部先注册 EguiPlugin，再注册 WorldInspectorPlugin；检查器只在 InGame / Running 显示。功能插件装配顺序不等于系统全序。",
-    "GameFlowPlugin 默认进入 MainMenu；当前 State<PlayState> 只在 InGame 存在，NextState<PlayState> 从插件注册起跨会话保留。Startup 创建持久 MenuContext 控制者、预加载短音并记录启动日志；美术请求由 ArtAssets::from_world 在资源初始化时逐份记录。",
+    "InspectorPlugin 内部先注册 EguiPlugin，再注册 WorldInspectorPlugin；检查器只在 AppState::Running 显示。功能插件装配顺序不等于系统全序。",
+    "GameFlowPlugin 初始化唯一 AppState，默认 MainMenu，Running/Paused 使用同一 State 与 NextState。Startup 创建持久 MenuContext 控制者、预加载短音并记录启动日志；美术请求由 ArtAssets::from_world 在资源初始化时逐份记录。",
     "SceneAssemblyPlugin 保持五份运行 GLB 强句柄，Update 轮询 Loading / Ready / Failed；地图 CPU 网格保留以生成静态碰撞。",
-    "OnEnter(InGame) 创建日光和加载相机。Running 的 Update 海岛链 begin_island → prepare_island → spawn_actors 在各依赖处应用延迟命令。",
+    "OnExit(MainMenu) 创建日光和加载相机，Running/Paused 切换不重建会话。Running 的 Update 海岛链 begin_island → prepare_island → spawn_actors 在各依赖处应用延迟命令。",
     "海岛资源与全部静态碰撞就绪后生成一名主角、一名控制者、普通纸箱与易碎纸箱各一件及三只木箱，并复用加载相机。NPC 沿原地图层级保留。",
-    "Pause 清空玩法意图、停用上下文、释放光标并冻结虚拟与物理时间，保留全部会话实体；返回 MainMenu 用 DespawnOnExit(InGame) / ChildOf 清理。",
+    "Paused 清空玩法意图、停用上下文、释放光标并冻结虚拟与物理时间，保留会话实体及装配进度；返回 MainMenu 用 DespawnOnEnter(MainMenu) / ChildOf 清理。",
     "菜单相机与独立 GLB 展示舞台属于 MainMenu；退出主菜单后销毁，由玩法相机接管 UI 与 Egui 上下文。",
     "主角 WorldInstanceReady 添加 pending；Update initialize_ready_couriers → sync_courier_animation 读取真实速度与持有关系，仅在 Running 绑定 16 个命名片段并连续混合。",
     "主菜单模板就绪只标记菜单 pending；Update 按 Carry_Idle 名称等待片段，不依赖 GLTF 动作排序。",
@@ -13242,7 +13181,7 @@
     "PreUpdate 相关依赖：InputSystems 后更新 MenuContext；sync_mouse_capture 位于 InputSystems 与 Egui InitContexts 之后、Egui ProcessInput 与 Enhanced Prepare 之前，ContextActivity 命令在 Prepare 前应用。菜单请求消费位于 Enhanced Trigger 之后；StateTransition 随后在固定循环前执行。",
     "菜单、暂停、失焦、关联失效或检查器模式停用 GameplayContext；F3 恢复捕获后才恢复玩法键盘输入。Esc 的业务暂停由菜单 Enhanced Input 处理，底层读取仅负责光标生命周期。",
     "可操作按钮带 Button/MenuButton；Continue、Multiplayer 及未实现设置是静态 Coming Soon 节点，不带动作、不保存虚构设置、不参与键盘序号。",
-    "状态类型 AppState/PlayState 对应 State 与 NextState 资源；MenuPage/SettingsTab 是 MenuState 内部值。UiRequest 是缓冲 Message，Fire/Pointer/WorldInstanceReady 是触发事件，不混用图例。",
+    "AppState 是 MainMenu/Running/Paused 的唯一来源，对应 State 与 NextState 资源；MenuPage/SettingsTab 是 MenuState 内部值。UiRequest 是缓冲 Message，Fire/Pointer/WorldInstanceReady 是触发事件，不混用图例。",
     "展示 WorldAssetRoot 异步展开 GLB，字体使用预加载句柄；BSN 构造辅助函数不是 Schedule 系统。模型 Ready 与滚动回调用 on(...) 在具体实体注册 Observer。",
     "文字叶节点保留默认自动最小宽度，避免 Bevy 0.19 在自动横排测量中把显式 min_width:0 解析为零宽；布局计算与真实字形的无窗口回归不替代用户最终视觉验收。",
     "SoundRequest 是缓冲 Message，由真实菜单焦点、接受的菜单请求、成功拿放命令、固定步持握观察与真实支撑撞击写入；Update 在 UI Style 后播放，不从原始按键猜测业务成功。",
@@ -13309,12 +13248,12 @@
       "display_summary": "装配应用、执行游戏或调度导出并管理退出。",
       "notes": [
         "main 创建 App 与独立会话日志；DefaultPlugins 禁用 Bevy 默认 AudioPlugin，由 Kira 提供音频设备输出。",
-        "InspectorPlugin 内部先注册 EguiPlugin，再注册 WorldInspectorPlugin；检查器只在 InGame / Running 显示。功能插件装配顺序不等于系统全序。",
-        "GameFlowPlugin 默认进入 MainMenu；当前 State<PlayState> 只在 InGame 存在，NextState<PlayState> 从插件注册起跨会话保留。Startup 创建持久 MenuContext 控制者、预加载短音并记录启动日志；美术请求由 ArtAssets::from_world 在资源初始化时逐份记录。",
+        "InspectorPlugin 内部先注册 EguiPlugin，再注册 WorldInspectorPlugin；检查器只在 AppState::Running 显示。功能插件装配顺序不等于系统全序。",
+        "GameFlowPlugin 初始化唯一 AppState，默认 MainMenu，Running/Paused 使用同一 State 与 NextState。Startup 创建持久 MenuContext 控制者、预加载短音并记录启动日志；美术请求由 ArtAssets::from_world 在资源初始化时逐份记录。",
         "SceneAssemblyPlugin 保持五份运行 GLB 强句柄，Update 轮询 Loading / Ready / Failed；地图 CPU 网格保留以生成静态碰撞。",
-        "OnEnter(InGame) 创建日光和加载相机。Running 的 Update 海岛链 begin_island → prepare_island → spawn_actors 在各依赖处应用延迟命令。",
+        "OnExit(MainMenu) 创建日光和加载相机，Running/Paused 切换不重建会话。Running 的 Update 海岛链 begin_island → prepare_island → spawn_actors 在各依赖处应用延迟命令。",
         "海岛资源与全部静态碰撞就绪后生成一名主角、一名控制者、普通纸箱与易碎纸箱各一件及三只木箱，并复用加载相机。NPC 沿原地图层级保留。",
-        "Pause 清空玩法意图、停用上下文、释放光标并冻结虚拟与物理时间，保留全部会话实体；返回 MainMenu 用 DespawnOnExit(InGame) / ChildOf 清理。",
+        "Paused 清空玩法意图、停用上下文、释放光标并冻结虚拟与物理时间，保留会话实体及装配进度；返回 MainMenu 用 DespawnOnEnter(MainMenu) / ChildOf 清理。",
         "菜单相机与独立 GLB 展示舞台属于 MainMenu；退出主菜单后销毁，由玩法相机接管 UI 与 Egui 上下文。",
         "主角 WorldInstanceReady 添加 pending；Update initialize_ready_couriers → sync_courier_animation 读取真实速度与持有关系，仅在 Running 绑定 16 个命名片段并连续混合。",
         "主菜单模板就绪只标记菜单 pending；Update 按 Carry_Idle 名称等待片段，不依赖 GLTF 动作排序。",
@@ -13457,7 +13396,7 @@
       ],
       "source": {
         "path": "src/game_flow/mod.rs",
-        "line": 50
+        "line": 42
       },
       "feature": "game_flow",
       "aspects": [
@@ -13764,7 +13703,7 @@
     },
     {
       "id": "state-paused",
-      "name": "InGame / Paused",
+      "name": "AppState::Paused",
       "kind": "Lifecycle note",
       "description": "OnEnter：UI / 输入 / 时钟分别响应；Time<Virtual> / Time<Physics> 暂停并清本帧 delta；保留业务实体；释放光标，隐藏 Inspector",
       "display_summary": "保留会话实体并暂停模拟与玩法输入。",
@@ -14253,7 +14192,7 @@
       "id": "carry-character-state",
       "name": "同一人物业务根 · 持握状态",
       "count": 1,
-      "description": "动态角色根对应脚底。Position/Rotation 与速度由 Avian 管理；Transform 是插值呈现，水平朝向受镜头控制。 仅在 InGame 存在，Paused 保留；退出 InGame 时清理。",
+      "description": "动态角色根对应脚底。Position/Rotation 与速度由 Avian 管理；Transform 是插值呈现，水平朝向受镜头控制。 离开 MainMenu 后建立会话，Running/Paused 切换保留；返回 MainMenu 时清理。",
       "components": [
         {
           "id": "character.Name",
@@ -14760,13 +14699,13 @@
           "defined_in": "avian"
         },
         {
-          "id": "character.DespawnOnExit",
-          "name": "DespawnOnExit",
+          "id": "character.DespawnOnEnter",
+          "name": "DespawnOnEnter",
           "fields": [
-            "AppState::InGame"
+            "AppState::MainMenu"
           ],
-          "description": "状态退出销毁此根；内置 ChildOf 子树随根清理。",
-          "display_summary": "标记退出所属应用状态时销毁此实体。",
+          "description": "会话根标记；StateTransition 的 EnterSchedules 框架清理系统在进入 MainMenu 时销毁，Running/Paused 切换保留。",
+          "display_summary": "返回主菜单时清理当前会话根。",
           "source": {
             "path": "src/scene_assembly/actors.rs",
             "line": 77
@@ -15499,13 +15438,13 @@
           "defined_in": "scene_assembly"
         },
         {
-          "id": "parcel.DespawnOnExit",
-          "name": "DespawnOnExit",
+          "id": "parcel.DespawnOnEnter",
+          "name": "DespawnOnEnter",
           "fields": [
-            "AppState::InGame"
+            "AppState::MainMenu"
           ],
-          "description": "状态退出销毁此根；内置 ChildOf 子树随根清理。",
-          "display_summary": "标记退出所属应用状态时销毁此实体。",
+          "description": "会话根标记；StateTransition 的 EnterSchedules 框架清理系统在进入 MainMenu 时销毁，Running/Paused 切换保留。",
+          "display_summary": "返回主菜单时清理当前会话根。",
           "source": {
             "path": "src/scene_assembly/actors.rs",
             "line": 90
@@ -16496,7 +16435,7 @@
       "id": "ui-next-state",
       "name": "NextState → StateTransition",
       "kind": "Operation result",
-      "description": "Start Game / ReturnToMenu：AppState；Pause / Resume：PlayState",
+      "description": "菜单开始、返回、暂停和恢复请求均调用 NextState<AppState>::set_if_different，由后续 StateTransition 应用；设置和帮助仅切换菜单页面。",
       "display_summary": "将开始、返回、暂停与恢复请求提交状态切换。",
       "aspects": [
         "data",
@@ -16624,7 +16563,7 @@
       ],
       "source": {
         "path": "src/game_flow/mod.rs",
-        "line": 30
+        "line": 22
       },
       "schedule": "FixedUpdate",
       "schedule_group": "FixedUpdate",
@@ -16654,7 +16593,7 @@
       ],
       "source": {
         "path": "src/game_flow/mod.rs",
-        "line": 41
+        "line": 33
       },
       "schedule": "RunFixedMainLoop",
       "schedule_group": "RunFixedMainLoop.AfterFixedMainLoop",
@@ -17141,7 +17080,7 @@
         "这是 World 内部生命周期流程，不是独立注册系统，也没有固定 Schedule。",
         "Commands 的移除与销毁要等命令应用；直接 World 操作在操作过程中触发。",
         "实体销毁会派发 DespawnEvent，并为其组件派发 RemoveEvent；匹配组件仍由各 Observer 的 EventPattern 限定。",
-        "人物与 GameplayContext 控制者退出 InGame 的生产清理由 DespawnOnExit<AppState> 驱动。"
+        "人物与 GameplayContext 控制者返回 MainMenu 的生产清理由 DespawnOnEnter<AppState> 驱动。"
       ],
       "source": null,
       "schedule": null,
@@ -17176,14 +17115,13 @@
       "description": "管理状态和时钟，通过公开系统集配置跨功能顺序。",
       "contracts": [
         "resource.AppState",
-        "resource.PlayState",
         "fixed-gameplay-set",
         "presentation-set",
         "flow-audio-order"
       ],
       "source": {
         "path": "src/game_flow/mod.rs",
-        "line": 50
+        "line": 42
       }
     },
     {
@@ -17428,7 +17366,6 @@
     "resource.AssetsAnimationClip": "infrastructure",
     "resource.AssetsAnimationGraph": "infrastructure",
     "resource.AppState": "game_flow",
-    "resource.PlayState": "game_flow",
     "resource.MenuState": "ui",
     "resource.MenuFocus": "ui",
     "resource.MenuInputSource": "ui",
@@ -17439,7 +17376,6 @@
     "resource.TimePhysics": "avian",
     "resource.AssetLoadFailedMessages": "infrastructure",
     "resource.AppTransitionMessages": "game_flow",
-    "resource.PlayTransitionMessages": "game_flow",
     "resource.SoundRequestMessages": "audio",
     "resource.SoundBank": "audio",
     "resource.UiAudioChannel": "audio",
@@ -17471,7 +17407,7 @@
     "controller.Actions": "enhanced_input",
     "controller.ContextPriority": "enhanced_input",
     "controller.ContextActivity": "enhanced_input",
-    "controller.DespawnOnExit": "infrastructure",
+    "controller.DespawnOnEnter": "infrastructure",
     "character.Name": "infrastructure",
     "character.Character": "character",
     "character.CharacterIntent": "character",
@@ -17507,7 +17443,7 @@
     "character.ResumeInterpolation": "bounds_recovery",
     "character.NoTranslationEasing": "avian",
     "character.NoRotationEasing": "avian",
-    "character.DespawnOnExit": "infrastructure",
+    "character.DespawnOnEnter": "infrastructure",
     "character.CarryBaseMass": "item_interaction",
     "character.RigidBodyColliders": "avian",
     "parcel.Name": "infrastructure",
@@ -17554,7 +17490,7 @@
     "parcel.NoRotationEasing": "avian",
     "parcel.CarryGrip": "item_interaction",
     "parcel.ItemModel": "scene_assembly",
-    "parcel.DespawnOnExit": "infrastructure",
+    "parcel.DespawnOnEnter": "infrastructure",
     "parcel.HeldAttachment": "item_interaction",
     "parcel.ResumeCarryEasing": "item_interaction",
     "parcel.ColliderDisabled": "avian",
@@ -17573,7 +17509,7 @@
     "camera.EguiMultipassSchedule": "egui",
     "camera.EguiFullOutput": "egui",
     "camera.LoadingCamera": "scene_assembly",
-    "camera.DespawnOnExit": "infrastructure",
+    "camera.DespawnOnEnter": "infrastructure",
     "camera.IsDefaultUiCamera": "infrastructure",
     "visual.Name": "infrastructure",
     "visual.Transform": "infrastructure",
@@ -17627,7 +17563,7 @@
     "island.ActorsSpawned": "scene_assembly",
     "island.WorldAssetRoot": "infrastructure",
     "island.Children": "infrastructure",
-    "island.DespawnOnExit": "infrastructure",
+    "island.DespawnOnEnter": "infrastructure",
     "npc.DisplayNpc": "scene_assembly",
     "npc.ChildOf": "infrastructure",
     "npc.Children": "infrastructure",
@@ -18163,11 +18099,11 @@
       "label": "W 世界变换"
     },
     {
-      "id": "transition-resource.PlayState-state-paused",
-      "from": "resource.PlayState",
+      "id": "transition-resource.AppState-state-paused",
+      "from": "resource.AppState",
       "to": "state-paused",
       "kind": "transition",
-      "label": "进入 PlayState::Paused"
+      "label": "进入 AppState::Paused"
     },
     {
       "id": "order-menu_rebuild-menu_pointer",
@@ -20847,7 +20783,7 @@
       "kind": "trigger",
       "label": "Despawn<Character> 生命周期",
       "notes": [
-        "实际销毁包含 Character 的实体时触发；退出 InGame 的状态清理是当前生产路径。"
+        "实际销毁包含 Character 的实体时触发；返回 MainMenu 的状态清理是当前生产路径。"
       ]
     },
     {
@@ -20944,6 +20880,13 @@
       "notes": [
         "SceneAssemblyPlugin::build 通过 init_resource 调用 ArtAssets::from_world；每份资源发起加载后记录一次，不表示已就绪，也不属于 Startup 系统。"
       ]
+    },
+    {
+      "id": "read-resource.AppTransitionMessages-flow_pause",
+      "from": "resource.AppTransitionMessages",
+      "to": "flow_pause",
+      "kind": "read",
+      "label": "读取实际状态转换来源"
     }
   ],
   "feature_links": [

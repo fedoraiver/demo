@@ -18,7 +18,8 @@ const labels = {
 };
 // 这些清单显示名省略泛型参数；实参分别来自对应 BSN 场景、动作列表和状态清理声明。
 const reviewedTypeNames = {
-  ...Object.fromEntries(['controller', 'character', 'parcel', 'camera', 'island', 'menu_backdrop'].map(entity => [`${entity}.DespawnOnExit`, 'DespawnOnExit<crate::game_flow::AppState>'])),
+  ...Object.fromEntries(['controller', 'character', 'parcel', 'camera', 'island'].map(entity => [`${entity}.DespawnOnEnter`, 'DespawnOnEnter<crate::game_flow::AppState>'])),
+  'menu_backdrop.DespawnOnExit': 'DespawnOnExit<crate::game_flow::AppState>',
   ...Object.fromEntries(['Actions', 'ContextPriority', 'ContextActivity'].flatMap(type => [
     [`controller.${type}`, `${type}<crate::first_person::actions::GameplayContext>`],
     [`menu_controller.${type}`, `${type}<crate::ui::navigation::MenuContext>`],

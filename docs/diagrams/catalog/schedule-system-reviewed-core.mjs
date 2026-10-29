@@ -542,7 +542,7 @@ export const CORE_SCHEDULE_SYSTEM_PURPOSES = Object.freeze({
   },
   "demo::ui::lifecycle::show_pause_menu": {
     "summary": "打开暂停菜单并重置焦点。",
-    "description": "打开 Pause 页面并重置焦点；不退出 InGame，也不生成或销毁玩法实体。"
+    "description": "进入 AppState::Paused 时打开暂停页面并重置焦点；读取实际 AppState 转换来源，保留会话实体。"
   },
   "demo::ui::navigation::sync_context": {
     "summary": "跟随窗口焦点启停菜单输入。",
