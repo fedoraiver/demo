@@ -317,6 +317,11 @@ const actionObservers = [
 
 // 事件对象 ID 表示精确匹配入口；同名事件不会在这里按名称合并。
 export const EDGE_SOURCE_EVIDENCE = Object.freeze({
+  'write-plugin-SceneAssemblyPlugin-log-producer': [
+    project('src/scene_assembly/mod.rs', '.init_resource::<ArtAssets>()', 'configure', '插件装配：缺少 ArtAssets 时执行资源初始化'),
+    project('src/scene_assembly/assets.rs', '.load(path);', 'operation', '初始化实际请求：逐份发起 GLB 加载'),
+    project('src/scene_assembly/assets.rs', 'info!(target: "demo::art_assets", path, state = "loading",', 'operation', '请求后记录：通过 tracing 输出资源路径与 loading 状态'),
+  ],
   'read-resource.GameSettings-frame_limit': [project('src/settings/frame_pacing.rs', 'if *applied_max_fps == Some(settings.max_fps)', 'operation', '读取 max_fps：与已应用值比较，决定是否同步更新策略')],
   'read-local.FramePacing-frame_limit': [project('src/settings/frame_pacing.rs', 'if *applied_max_fps == Some(settings.max_fps)', 'operation', '读取 Local 缓存：跳过未变化的帧率设置')],
   'write-frame_limit-local.FramePacing': [project('src/settings/frame_pacing.rs', '*applied_max_fps = Some(settings.max_fps);', 'operation', '实际赋值：策略更新后保存已应用帧率')],

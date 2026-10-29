@@ -104,7 +104,7 @@ test('all real Schedule systems have a source group without modifying any raw gr
     unknown += current.schedulePluginGroups.find(group => group.id === 'source:unclassified')?.systemNames.length || 0;
     project += current.schedulePluginGroups.filter(group => group.id.startsWith('plugin-')).reduce((sum, group) => sum + group.systemNames.length, 0);
   }
-  assert.equal(count, 1235);
+  assert.equal(count, 1233);
   assert.equal(unknown, 3);
-  assert.equal(project, 82);
+  assert.equal(project, 80);
 });

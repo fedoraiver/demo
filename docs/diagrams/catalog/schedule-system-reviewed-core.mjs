@@ -504,10 +504,6 @@ export const CORE_SCHEDULE_SYSTEM_PURPOSES = Object.freeze({
     "summary": "使休眠身体的外部受力和位姿修改在本固定步生效。",
     "description": "物理准备前检查休眠身体的变更 tick；仅当外部位姿、速度或施力计时变化晚于上一物理步末尾时，排队 WakeBody 唤醒所属物理岛。"
   },
-  "demo::scene_assembly::assets::log_asset_requests": {
-    "summary": "记录运行模型资源的加载请求。",
-    "description": "记录五份运行 GLB 的请求；实际加载在资源初始化时开始。"
-  },
   "demo::scene_assembly::assets::poll_art_assets": {
     "summary": "检查资源及其依赖的加载结果。",
     "description": "检查全部资源及递归依赖，进入 Ready 或 Failed。"
