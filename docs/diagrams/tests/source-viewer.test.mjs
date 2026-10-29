@@ -236,21 +236,20 @@ test('embedded script and HTML fragments survive exactly as text without creatin
   assert.deepEqual(JSON.parse(page.get('sources').textContent), [{ path: 'src/danger.rs', text }]);
 });
 
-test('actual architecture details retain only the VS Code source entry and preserve full node descriptions', () => {
+test('actual architecture card details keep only name, description, object entry and source locations', () => {
   const html = fs.readFileSync(path.join(root, 'docs', 'diagrams', 'generated', 'pages', 'ecs-architecture.html'), 'utf8');
   const script = scriptsIn(html).find(item => item.script.includes('function sourcesList('))?.script;
   assert.ok(script, 'Generated architecture must contain source links');
   // 从交付 HTML 提取真实函数，只替代无关的图形渲染；断言调用产生的详细面板。
   const definitions = script.split(/\r?\n/).filter(line =>
     /^\s*const (safe|canonical)=/.test(line)).join('\n')
-    + '\n' + script.slice(script.indexOf('function list('), script.indexOf('function guide('))
+    + '\n' + script.slice(script.indexOf('function sourcesList('), script.indexOf('function guide('))
     + '\n' + script.slice(script.indexOf('function showDetail('), script.indexOf('function releaseDiagramFocus('));
   const details = new Element('aside');
-  const clear = {};
   let refreshScope;
   const context = vm.createContext({
-    details, componentEntities: new Map(), view: { nodes: [] }, DATA: { model: { features: [], entities: [] }, registry: { source: { name: 'update', description: '完整节点说明保留注册顺序与生命周期约束。', sourceEntries: [{ role: 'definition', label: '函数定义', path: 'src/中文 #%.rs', line: 8, column: 3 }], source: { path: 'src/legacy.rs', line: 1 } }, data: { name: 'Resource' } } },
-    select() {}, guide() {}, objectView: () => null, document: { getElementById: () => clear },
+    details, view: { objectId: 'data' }, DATA: { registry: { source: { name: 'update', description: '完整节点说明保留注册顺序与生命周期约束。', feature: 'item', owner: '隐藏归属', reads: ['data'], fields: ['隐藏字段'], sourceGaps: ['隐藏缺口'], sourceEntries: [{ role: 'definition', label: '函数定义', path: 'src/中文 #%.rs', line: 8, column: 3 }], source: { path: 'src/legacy.rs', line: 1 } }, data: { name: 'Resource' } } },
+    guide() {}, objectView: () => ({}),
     sourceEditor: { refreshLinks(scope) { refreshScope = scope; } },
   });
   vm.runInContext(definitions + '\nshowDetail("source");', context);
@@ -260,10 +259,15 @@ test('actual architecture details retain only the VS Code source entry and prese
   assert.equal(links[0].dataset.vscodeLine, '8');
   assert.equal(links[0].dataset.vscodeColumn, '3');
   assert.ok(details.textContent.includes('完整节点说明保留注册顺序与生命周期约束。'));
+  assert.deepEqual(details.children.map(child => child.tagName), ['h2', 'p', 'button', 'section']);
+  assert.equal(details.querySelector('[data-object]').dataset.object, 'source');
+  assert.equal(details.querySelector('#clear-selection'), null);
+  assert.doesNotMatch(details.textContent, /隐藏归属|隐藏字段|隐藏缺口|src\/legacy\.rs/);
   assert.doesNotMatch(details.textContent, /离线源码快照/);
   assert.equal(refreshScope, details);
   vm.runInContext('showDetail("data");', context);
   assert.equal(details.querySelectorAll('a').length, 0);
+  assert.deepEqual(details.children.map(child => child.tagName), ['h2', 'p']);
   for (const source of [{}, { path: 'src/a.rs' }, { path: 'src/a.rs', line: 0 }, { path: 'src/a.rs', line: 1.5 }]) {
     context.invalidSource = source;
     assert.equal(vm.runInContext('sourcesList([invalidSource])', context), '');

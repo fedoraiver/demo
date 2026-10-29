@@ -30,16 +30,14 @@ header{flex:none;padding:8px 12px;display:flex;align-items:center;gap:8px;flex-w
 .details-resizer[hidden]{display:none}.workspace.resizing,.workspace.resizing *{cursor:col-resize!important;user-select:none!important}
 .side{min-width:0;background:var(--ui-surface);border:1px solid var(--ui-border);border-radius:var(--ui-radius);overflow:auto;padding:18px;overflow-wrap:anywhere;box-shadow:0 1px 2px #0F172A04}
 .side h2{font-size:18px;line-height:1.45;margin:8px 0 14px;font-weight:650}.side h3{font-size:12px;color:var(--ui-muted);margin:22px 0 8px;font-weight:600}
-.side h2:first-child{margin-top:0}.access-group h4{font-size:11px;color:var(--ui-muted);font-weight:500;margin:10px 0 4px}
-.access-group{padding-inline-start:16px;min-width:0}.side .access-group ul{padding-inline-start:16px}
-.schedule-registration{margin:10px 0;padding:10px;background:var(--ui-bg);border-radius:6px}.schedule-registration dl{margin:0}.registration-field{display:flex;flex-wrap:wrap;align-items:baseline;gap:0 6px;margin:5px 0}.registration-field dt{font:11px/1.7 Consolas,monospace;color:var(--ui-muted)}.registration-field dt::after{content:':'}.registration-field dd{margin:0;flex:1 1 120px;min-width:0}.registration-value{display:block}.registration-value+.registration-value{margin-top:4px}.side .registration-value code{padding:0;background:transparent}
+.side h2:first-child{margin-top:0}
 .side p{margin:8px 0}.side ul{padding-left:16px;margin:6px 0}.side li{margin:6px 0}
 .side code,.side .data-link{font:11px/1.7 Consolas,monospace;background:var(--ui-bg);padding:3px 6px;border:0;border-radius:4px;overflow-wrap:anywhere;max-width:100%;text-align:left}
 .side .data-link:hover{background:var(--ui-active);color:var(--ui-accent)}
 .badge{display:inline-block;background:var(--ui-hover);color:var(--ui-muted);font-size:10px;padding:3px 7px;border-radius:4px}
 .side .source{display:block;font-size:11px;padding:7px 9px;background:var(--ui-bg);border-radius:6px;margin:5px 0}.side .source:hover{background:var(--ui-active)}
 .source-group-label{font-size:11px;color:var(--ui-muted);font-weight:500;margin:14px 0 6px}.side .source-entry-label{font-size:11px;margin:10px 0 4px;color:var(--ui-muted)}.source-entry,.source-actions{min-width:0}
-.side button[data-owner],.side button[data-object]{margin:8px 0;color:var(--ui-accent);background:var(--ui-active);font-size:12px}.side button[data-owner]:hover,.side button[data-object]:hover{background:#DBEAFE}
+.side button[data-object]{margin:8px 0;color:var(--ui-accent);background:var(--ui-active);font-size:12px}.side button[data-object]:hover{background:#DBEAFE}
 .reset{width:100%;margin-top:24px;border-color:var(--ui-border);font-size:12px;color:var(--ui-muted)}
 .guide h3:first-child{margin-top:0}.guide-row{display:grid;grid-template-columns:88px minmax(0,1fr);gap:12px;align-items:center;margin:14px 0;font-size:12px;line-height:1.6}
 .guide-sample{display:flex;align-items:center;justify-content:center;height:44px}.guide-sample svg,.guide-sample img{display:block;width:88px;height:44px;max-width:100%;overflow:visible;object-fit:contain}
@@ -63,7 +61,7 @@ button,input,select{font:inherit;color:inherit}button,a,select{touch-action:mani
 <p data-workspace-error role="alert"></p>
 <div class="source-editor-buttons"><button type="submit">保存目录</button><button type="button" data-workspace-reset>恢复默认</button><button type="button" data-workspace-cancel>取消</button></div>
 </form>
-</dialog><script id="architecture-data" type="application/json">{"schemaVersion":6,"buildId":"5f9f050a3a31c1605bc5df87825c70164f9d964115cf14e8a412d4be0663f405","runtimeUrl":"../data/runtime.json","runtimeSha256":"a01fc67acfa6aa158dd63a85ab2da8fc80c531433dbefce6dbd20a80eca5db40","manifestUrl":"../data/manifest.json","manifestSha256":"c1bf2e7b7bb4057a008ecb47a7a8b4ba7c80debef46098c58b1dd51a6c158735"}</script><script>const sourceEditor = (() => {
+</dialog><script id="architecture-data" type="application/json">{"schemaVersion":6,"buildId":"7c1365f4586b06e9175f8bc2ab4bf2891e1265330651fa3712f958842eaaaa8a","runtimeUrl":"../data/runtime.json","runtimeSha256":"ea1fbfd5918dd39a5a1416a803ce9af90cec91ea74634a308084980943fd094d","manifestUrl":"../data/manifest.json","manifestSha256":"2102f59d7cceb330a0ef01429f4a39b0e6893836e28d07d6a128f33f8079e823"}</script><script>const sourceEditor = (() => {
 function normalizeWorkspaceRoot(value) {
   if (typeof value !== 'string' || !value.trim() || /[\u0000-\u001f\u007f]/.test(value)) {
     throw new Error('Invalid workspace root');
@@ -828,7 +826,6 @@ window.architectureReady=startExternalArchitecture({bootstrap:JSON.parse(documen
   let desiredViewId=null,viewLoading=null,loadAbort=null,lastSuccessful=null,retryTarget=null,searchRevision=0;
   let selection=navigation.resolve(location.search),view,scale=1,panX=0,panY=0,activeSelection={kind:'none'},canvasSize,objectOrigin=history.state?.architectureObjectOrigin||null,aliasCandidates=[],renderedObject=false,renderRequest=0,pendingRender=Promise.resolve(),displayedScheduleKey=null,pageSuspended=false,resultIndex=-1,openFilter=null,filterState={includePlugins:[],excludePlugins:[],includeNames:[],excludeNames:[],include:'',exclude:''},filterLegacy={include:'',exclude:'',includeNames:[],excludeNames:[],includePlugins:[],excludePlugins:[]};
   const canonical=id=>DATA.registry[id]?.alias_of||id;
-  const featureLabel=id=>DATA.model.features.find(feature=>feature.id===id)?.label||DATA.infrastructureFeatures.find(feature=>feature.id===id)?.label||id;
   const objectView=id=>objectViews.find(candidate=>candidate.objectId===canonical(id));
   const pluginView=target=>['Plugin','PluginGroup'].includes(DATA.registry[target?.objectId]?.kind);
   const ownerObject=feature=>{const entry=DATA.model.features.find(entry=>entry.id===feature)||DATA.infrastructureFeatures.find(entry=>entry.id===feature);return canonical(entry?.overviewNode||(entry?.plugin?'plugin-'+entry.plugin:null))};
@@ -888,22 +885,6 @@ window.architectureReady=startExternalArchitecture({bootstrap:JSON.parse(documen
     if(!items?.length)return '';
     return'<h'+level+'>'+safe(title)+'</h'+level+'><ul>'+items.map(item=>{const value=typeof item==='string'?item:item?.id||JSON.stringify(item),key=DATA.registry[value]?value:String(value).split(' ')[0],record=DATA.registry[key];return'<li>'+(record?'<button class="data-link" data-open="'+safe(key)+'">'+safe(record.name)+' '+safe(String(value).slice(key.length))+'</button>':'<code>'+safe(value)+'</code>')+'</li>'}).join('')+'</ul>';
   }
-  function accessList(title,items){
-    if(!items?.length)return '';
-    const labels={Entity:'Entity',Resource:'Resource',Local:'Local<T>',NonSend:'NonSend<T>'},groups=new Map(Object.keys(labels).map(kind=>[kind,new Set()]));
-    for(const item of items){const id=componentEntities.get(canonical(item))||canonical(item),kind=DATA.registry[id]?.kind||'其他';if(!groups.has(kind))groups.set(kind,new Set());groups.get(kind).add(id)}
-    return'<section class="access-section" data-access="'+safe(title)+'"><h3>'+safe(title)+'</h3>'+[...groups].filter(([,ids])=>ids.size).map(([kind,ids])=>'<div class="access-group" data-access-kind="'+safe(kind)+'">'+list(labels[kind]||kind,[...ids],4)+'</div>').join('')+'</section>';
-  }
-  function bodyOperationsList(operations){
-    if(!operations?.length)return '';
-    const labels={insert:'添加',remove:'移除',initialize:'初始化',read:'只读访问',mutable_access:'可变访问（不表示实际修改）',trigger:'触发事件',publish:'发布消息',reference:'查询接口'},interfaces={commands:'Commands',world:'World',message_writer:'MessageWriter'};
-    return'<section class="body-operations" data-access="body"><h3>函数体操作</h3><ul>'+operations.map(operation=>'<li data-body-operation="'+safe(operation.operation)+'" data-body-object="'+safe(operation.objectId)+'"><p><strong>'+safe(labels[operation.operation]||operation.operation)+'</strong> '+edgeEndpoint(operation.objectId,false)+'</p><p>'+safe(interfaces[operation.via]||operation.via)+' · '+(operation.deferred?'延迟应用':'直接调用')+' · '+(operation.scope==='main'?'主应用世界':'当前应用世界')+'</p><p><code>'+safe(operation.method)+'</code></p>'+(operation.condition?'<p>条件：'+safe(operation.condition)+'</p>':'')+(operation.helper?'<p>经 helper：<code>'+safe(operation.helper)+'</code></p>':'')+sourcesList(operation.sourceEntries)+'</li>').join('')+'</ul></section>';
-  }
-  function registrationList(registrations){
-    if(!registrations?.length)return '';
-    const text=value=>typeof value==='object'&&value!==null?JSON.stringify(value):String(value);
-    return'<section class="schedule-registrations"><h3>Schedule</h3>'+registrations.map((registration,index)=>'<div class="schedule-registration" data-registration-index="'+index+'"><dl>'+Object.entries(registration).map(([key,value])=>'<div class="registration-field" data-registration-field="'+safe(key)+'"><dt>'+safe(key)+'</dt><dd>'+(Array.isArray(value)?(value.length?value:['[]']):[value]).map(item=>'<div class="registration-value"><code>'+safe(text(item))+'</code></div>').join('')+'</dd></div>').join('')+'</dl></div>').join('')+'</section>';
-  }
   function sourcesList(entries){
     if(!entries?.length)return '';
     const labels={definition:'定义位置',registration:'注册位置',create:'创建位置',destroy:'销毁位置',initialize:'初始化位置',insert:'插入位置',remove:'移除位置',parameter:'参数位置',cleanup:'清理实现',message_definition:'消息类型定义',action_definition:'动作类型定义',build:'构建实现',install:'安装位置',assembly:'装配位置',run:'运行入口',configure:'配置位置',implementation:'实际实现',close:'关闭位置',related:'相关实现',operation:'操作位置',...DATA.sourceRoleLabels},groups=new Map();
@@ -928,8 +909,7 @@ window.architectureReady=startExternalArchitecture({bootstrap:JSON.parse(documen
   function guideSample(value){if(!value)return '';return value.trim().startsWith('<svg')?value:'<img src="'+safe(value)+'" alt="" loading="lazy" decoding="async">'}
   function showDetail(id){
     id=canonical(id);if(!DATA.registry[id]){guide();return}const record=DATA.registry[id];
-    const owners=record.owners;
-    details.innerHTML='<h2>'+safe(record.name||id)+'</h2><p>'+safe(record.description||'')+'</p>'+(objectView(id)&&view.objectId!==id?'<button data-object="'+safe(id)+'">打开对象关系图 ↗</button>':'')+(record.feature?'<p>功能归属：'+safe(featureLabel(record.feature))+'</p><button data-owner="'+safe(record.feature)+'" data-target="'+safe(id)+'">打开所属插件 ↗</button>':'')+(record.registered_by?'<p>注册功能：'+safe(featureLabel(record.registered_by))+'</p>':'')+(record.defined_in?'<p>定义归属：'+safe(featureLabel(record.defined_in))+'</p>':'')+(record.assembled_by?'<p>装配来源：'+safe(record.assembled_by.map(featureLabel).join(' / '))+'</p>':'')+(owners?.length?list('所属实体',owners):(record.owner?'<p>所属实体：'+safe(record.owner)+'</p>':''))+registrationList(record.registrations)+list('同函数其他注册',(record.registrationFamilyIds||[]).filter(other=>other!==id).map(other=>other+' '+objectContext(other)))+accessList('Read',record.reads)+accessList('Write',record.writes)+bodyOperationsList(record.bodyOperations)+list('Query',record.filters)+list('事件 / 消息',record.events)+list('字段',record.fields)+(record.kind==='System'?'':list('约束与说明',[...(record.notes||[]),...(record.sourceGaps||[])]))+(record.components?list('完整实体组件',record.components.map(component=>component.id||component)):'')+sourcesList(record.sourceEntries)+'<button class="reset" id="clear-selection">清除选择</button>';
+    details.innerHTML='<h2>'+safe(record.name||id)+'</h2><p>'+safe(record.description||'')+'</p>'+(objectView(id)&&view.objectId!==id?'<button data-object="'+safe(id)+'">打开对象关系图 ↗</button>':'')+sourcesList(record.sourceEntries);
     sourceEditor.refreshLinks(details);details.scrollTop=0;
   }
   function releaseDiagramFocus(){const active=document.activeElement;if(active?.closest('#diagram')||active?.id==='clear-selection')canvas.focus({preventScroll:true})}
@@ -1158,7 +1138,6 @@ window.architectureReady=startExternalArchitecture({bootstrap:JSON.parse(documen
     if(!event.target.closest('.schedule-multiselect')&&!event.target.closest('#schedule-clear'))closeFilterMenu();
     const clear=event.target.closest('#clear-selection');if(clear){select(null);return}
     const schedule=event.target.closest('[data-schedule]');if(schedule){focusSchedule(schedule.dataset.schedule);return}
-    const owner=event.target.closest('[data-owner]');if(owner){openOwner(owner.dataset.owner,owner.dataset.target);return}
     const object=event.target.closest('[data-object]');if(object){openObject(object.dataset.object);return}
     const open=event.target.closest('[data-open]');if(open)openNode(open.dataset.open);
   });

@@ -638,9 +638,14 @@ export function checkArchitecture(root, { dependencyDefinitions = DEPENDENCY_SOU
           node.sourceGaps = registry[id]?.sourceGaps;
         }
       }
+      if (artifact.schemaVersion === 5 && requireDependencyDefinitions) {
+        const componentRecords = Object.fromEntries(Object.entries(fresh.registry).filter(([, node]) => node.kind === 'Component'));
+        applyArchitectureSourcePolicies(componentRecords, { model, components: catalog, repository, dependencyContext: { metadata, resolver: dependencyResolver } });
+        for (const [id, node] of Object.entries(componentRecords)) requireCondition(isDeepStrictEqual(node.sourceEntries, registry[id]?.sourceEntries), `Component lifecycle source evidence differs from its projection: ${id}`);
+      }
       if (artifact.schemaVersion === 5) {
         const extensionRecords = Object.fromEntries(Object.entries(fresh.registry).filter(([, node]) => node.scheduleEvidence?.schemaVersion === 1));
-        applyArchitectureSourcePolicies(extensionRecords, { model, repository, registry: fresh.registry, dependencyContext: { metadata, resolver: dependencyResolver } });
+        applyArchitectureSourcePolicies(extensionRecords, { model, components: catalog, repository, registry: fresh.registry, dependencyContext: { metadata, resolver: dependencyResolver } });
       }
       objectCatalog = buildObjectCatalog(model, fresh.registry, { components: catalog });
       if (artifact.schemaVersion === 5) checkScheduleObjectMetadata(registry, fresh.registry, objectCatalog.unresolvedAccesses);
@@ -663,7 +668,7 @@ export function checkArchitecture(root, { dependencyDefinitions = DEPENDENCY_SOU
       requireCondition(Array.isArray(node.sourceEntries) && Array.isArray(node.sourceGaps), `Missing semantic source policy: ${node.id}`);
       const filtered = sourceEntriesFor(node, { kind: sourcePolicyKindFor(node), reviewedEntries: node.sourceEntries });
       requireCondition(isDeepStrictEqual(filtered, node.sourceEntries), `Source entry outside the card policy: ${node.id}`);
-      if (node.kind === 'Component') requireCondition(node.sourceEntries.length > 0 || node.sourceGaps.length > 0, `Component has no definition evidence or pending explanation: ${node.id}`);
+      if (node.kind === 'Component') requireCondition(node.sourceEntries.some(source => source.role === 'definition') || node.sourceGaps.some(gap => gap.includes('Component 类型定义')), `Component has no definition evidence or pending explanation: ${node.id}`);
     }
     if (artifact.schemaVersion >= 3) {
       const coverage = auditProductionEcsCoverage(registry, { model, repository, registry, dependencyContext: { metadata, resolver: dependencyResolver } });

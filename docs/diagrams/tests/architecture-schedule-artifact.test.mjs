@@ -89,7 +89,11 @@ test('all exported Schedule cards paint and restore their own real Graphviz outl
         assert.equal(target.dispatch('keydown', { key: 'F10', shiftKey: true }).defaultPrevented, false);
         assert.equal(location.searchParams.get('scheduleNode'), binding.id);
         if (title) { assert.equal(title.getAttribute('tabindex'), null); assert.equal(title.classList.contains('selected'), false); }
-        get('clear-selection').click(); flush();
+        assert.equal(get('clear-selection'), null);
+        document.elementFromPoint = () => canvas;
+        canvas.dispatch('pointerdown', { pointerType: 'mouse', pointerId: 1, button: 0, clientX: 120, clientY: 130 });
+        canvas.dispatch('pointerup', { pointerType: 'mouse', pointerId: 1, button: 0, clientX: 120, clientY: 130 });
+        canvas.dispatch('click', { detail: 1 }); flush();
         assert.deepEqual(shapes.map(snapshot), originals);
         assert.deepEqual(masks.map(snapshot), maskOriginals);
         assert.deepEqual(nested.map(snapshot), nestedOriginals);

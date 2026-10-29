@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { normalizeSourceEntry, sourceEntriesFor, sourcePolicyFor, sourcePolicyKindFor, applyArchitectureSourcePolicies, applyArchitectureEdgeSourcePolicies, auditProductionEcsCoverage } from '../src/architecture-source-policy.mjs';
+import { normalizeSourceEntry, sourceEntriesFor, sourcePolicyFor, sourcePolicyKindFor, applyArchitectureSourcePolicies, applyArchitectureEdgeSourcePolicies, auditProductionEcsCoverage, createArchitectureSourceContext } from '../src/architecture-source-policy.mjs';
 import { buildArchitectureModel } from '../src/architecture-model.mjs';
 import { readCargoMetadata, createDependencySourceResolver, attachDependencySources } from '../src/dependency-sources.mjs';
 import { DEPENDENCY_SOURCE_DEFINITIONS } from '../catalog/architecture-source-definitions.mjs';
@@ -63,7 +63,7 @@ test('Observer 来源保留精确泛型注册、真实发出操作和投影原�
 
 test('every semantic card kind has its approved source role scope', () => {
   const cases = {
-    Component: ['definition'], Entity: ['create', 'destroy'], System: ['definition', 'registration'],
+    Component: ['definition', 'create', 'destroy'], Entity: ['create', 'destroy'], System: ['definition', 'registration'],
     Observer: ['definition', 'registration'], Resource: ['definition', 'initialize', 'insert', 'remove'],
     'Local<T>': ['parameter', 'definition', 'initialize'],
     'NonSend<T>': ['definition', 'initialize', 'insert', 'remove', 'cleanup'], Message: ['definition'],
@@ -190,6 +190,65 @@ function sourceFixture(t, text) {
   });
   return fixture;
 }
+
+test('Component lifecycle sources keep exact assembly, reviewed insert/remove and owning entity destruction without borrowing other projections', t => {
+  const fixture = sourceFixture(t, [
+    'pub struct Flag;',
+    'fn flag_scene() -> impl Scene {',
+    ' bsn! { Name("Courier")',
+    '  Flag',
+    '  Children [',
+    '   Flag',
+    '   --',
+    '   Flag',
+    '  ]',
+    ' }',
+    '}',
+    'fn spawn_other(commands: &mut Commands) { commands.spawn(Flag); }',
+    'fn insert_flag(commands: &mut Commands, entity: Entity) { commands.entity(entity).insert(Flag); }',
+    'fn remove_flag(commands: &mut Commands, entity: Entity) { commands.entity(entity).remove::<Flag>(); }',
+    'fn cleanup(commands: &mut Commands, entity: Entity) { commands.entity(entity).despawn(); }',
+    'fn update(mut flags: Query<&mut Flag>) {}',
+    'fn foreign_bundle() -> impl Bundle {',
+    ' (Flag,)',
+    '}',
+  ].join('\n'));
+  fs.mkdirSync(path.join(fixture, 'src/scene_assembly'), { recursive: true });
+  fs.renameSync(path.join(fixture, 'src/example/mod.rs'), path.join(fixture, 'src/scene_assembly/actors.rs'));
+  const source = (role, line) => ({ role, path: 'src/scene_assembly/actors.rs', line, label: `line ${line}` });
+  const registry = {
+    assembled: { id: 'assembled', kind: 'Component', name: 'Flag', source: source(undefined, 2) },
+    later: { id: 'later', kind: 'Component', name: 'Flag', source: source(undefined, 1) },
+    foreign: { id: 'foreign', kind: 'Component', name: 'Flag', source: source(undefined, 17) },
+  };
+  const model = { entities: [{ id: 'character', components: [{ id: 'assembled' }, { id: 'later' }] }, { id: 'unrelated', components: [{ id: 'foreign' }] }] };
+  const components = { accesses: [
+    { component: 'assembled', projectionIds: ['assembled'], operation: 'insert', evidence: 'source', targetScope: 'declared-candidates', sourceEntries: [source('operation', 4)] },
+    { component: 'assembled', projectionIds: ['assembled'], operation: 'insert', evidence: 'source', targetScope: 'declared-candidates', sourceEntries: [source('operation', 6)] },
+    { component: 'assembled', projectionIds: ['assembled'], operation: 'insert', evidence: 'source', targetScope: 'declared-candidates', sourceEntries: [source('operation', 8)] },
+    { component: 'foreign', projectionIds: ['foreign'], operation: 'insert', evidence: 'source', targetScope: 'declared-candidates', sourceEntries: [source('operation', 12)] },
+    { component: 'assembled', operation: 'insert', evidence: 'source', targetScope: 'type-only', sourceEntries: [source('operation', 12)] },
+    { component: 'foreign', operation: 'insert', evidence: 'reviewed', targetScope: 'type-only', sourceEntries: [source('operation', 12)] },
+    { component: 'assembled', projectionIds: ['assembled', 'foreign'], operation: 'insert', evidence: 'source', targetScope: 'declared-candidates', sourceEntries: [source('operation', 4)] },
+    { component: 'later', operation: 'insert', evidence: 'reviewed', sourceEntries: [source('operation', 13)] },
+    { component: 'later', operation: 'remove', evidence: 'reviewed', sourceEntries: [source('call', 13), source('operation', 14)] },
+    { component: 'foreign', operation: 'write', evidence: 'reviewed', sourceEntries: [source('parameter', 16)] },
+    { component: 'foreign', projectionIds: ['foreign'], operation: 'insert', evidence: 'source', targetScope: 'declared-candidates', sourceEntries: [source('operation', 18)] },
+  ] };
+  const before = structuredClone(components);
+  const context = createArchitectureSourceContext({ repository: fixture, model, components });
+  // 夹具只提供已审阅的所属实体生命周期；普通 spawn 不证明任何组件随其创建。
+  context.resolveEvidence = descriptor => [{ ...source(descriptor.role, descriptor.role === 'create' ? 3 : 15), label: descriptor.label }];
+  applyArchitectureSourcePolicies(registry, { context });
+  assert.deepEqual(registry.assembled.sourceEntries.filter(entry => entry.role === 'create').map(entry => entry.line), [4]);
+  assert.deepEqual(registry.later.sourceEntries.filter(entry => entry.role === 'create').map(entry => entry.line), [13]);
+  assert.deepEqual(registry.later.sourceEntries.filter(entry => entry.role === 'destroy').map(entry => entry.line), [13, 14, 15]);
+  assert(registry.assembled.sourceEntries.some(entry => entry.role === 'destroy' && entry.line === 15 && entry.label.includes('所属实体销毁')));
+  assert.deepEqual(registry.foreign.sourceEntries.map(entry => entry.role), ['definition']);
+  assert(registry.foreign.sourceGaps.some(gap => gap.includes('创建、装配或插入')));
+  assert(registry.foreign.sourceGaps.some(gap => gap.includes('移除或所属实体销毁')));
+  assert.deepEqual(components, before);
+});
 
 test('Schedule source entries retain exact roles and still reject invalid source locations', t => {
   const fixture = sourceFixture(t, 'fn update<T>() {}\nfn install() {}');
@@ -427,9 +486,9 @@ test('current registry and merged function cards have verified source scope acro
   const { registry } = buildArchitectureModel(model);
   const metadata = readCargoMetadata(repository), resolver = createDependencySourceResolver(metadata);
   attachDependencySources(registry, resolver, DEPENDENCY_SOURCE_DEFINITIONS);
-  buildComponentCatalog(model, registry);
+  const components = buildComponentCatalog(model, registry);
   const inspectorBody = structuredClone({ description: registry.inspector_pass.description, notes: registry.inspector_pass.notes, registrations: registry.inspector_pass.registrations });
-  const audit = applyArchitectureSourcePolicies(registry, { repository, model, dependencyContext: { metadata, resolver } });
+  const audit = applyArchitectureSourcePolicies(registry, { repository, model, components, dependencyContext: { metadata, resolver } });
   const coverage = auditProductionEcsCoverage(registry, { context: audit.context });
   assert.deepEqual(coverage.gaps, []);
   assert.equal(coverage.declarations.length, 90);
@@ -464,9 +523,25 @@ test('current registry and merged function cards have verified source scope acro
     }
     if (sourcePolicyFor(sourcePolicyKindFor(record)).kind === 'component') {
       assert(record.sourceEntries.length, `${record.id}: actual component declaration exists`);
-      assert(record.sourceEntries.every(source => source.role === 'definition'), `${record.id}: component definitions only`);
+      assert(record.sourceEntries.some(source => source.role === 'definition'), `${record.id}: component definition remains present`);
+      for (const role of ['create', 'destroy']) assert(record.sourceEntries.some(source => source.role === role)
+        || record.sourceGaps.some(gap => gap.includes(role === 'create' ? '创建、装配或插入' : '移除或所属实体销毁')), `${record.id}: ${role} evidence or explicit gap`);
     }
   }
+  const createsAt = (id, filename, line) => registry[id].sourceEntries.some(source => source.role === 'create' && source.path === filename && source.line === line);
+  assert(createsAt('character.Character', 'src/scene_assembly/actors.rs', 20));
+  assert(createsAt('parcel.SpawnPoint', 'src/scene_assembly/actors.rs', 50));
+  assert(!createsAt('parcel.SpawnPoint', 'src/scene_assembly/actors.rs', 23));
+  assert(createsAt('character.SpawnPoint', 'src/scene_assembly/actors.rs', 23));
+  assert(!createsAt('character.SpawnPoint', 'src/scene_assembly/actors.rs', 50));
+  assert.deepEqual(registry['camera.Transform'].sourceEntries.filter(source => source.role === 'create').map(source => [source.path, source.line]), [['src/scene_assembly/loading.rs', 24]], 'Directional-light Transform must not be attributed to the camera');
+  assert(createsAt('visual.Name', 'src/scene_assembly/actors.rs', 53));
+  assert(!createsAt('visual.Name', 'src/scene_assembly/actors.rs', 45), 'A nested visual recipe must not inherit the parcel-root name');
+  assert(createsAt('settings_scrollbar_thumb.BackgroundColor', 'src/ui/scroll.rs', 101));
+  assert(!createsAt('settings_scrollbar_thumb.BackgroundColor', 'src/ui/widgets.rs', 264), 'An old usage locator does not establish thumb assembly');
+  assert(createsAt('parcel.HeldBy', 'src/item_interaction/interaction.rs', 110));
+  assert(createsAt('held_proxy.HeldCollider', 'src/item_interaction/attachment.rs', 88));
+  assert(registry['parcel.RigidBody'].sourceEntries.some(source => source.role === 'destroy' && source.path === 'src/item_interaction/attachment.rs' && source.line === 31));
   for (const id of ['held_fixed', 'held_update', 'facing_fixed', 'facing_update']) {
     assert.equal(registry[id].sourceEntries.filter(source => source.role === 'definition').length, 1);
     assert.equal(registry[id].sourceEntries.filter(source => source.role === 'registration').length, 1);

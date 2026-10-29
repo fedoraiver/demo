@@ -45,7 +45,7 @@ for (const feature of features) {
 registry['app-main'].source = locateSource('src/main.rs', /^\s*fn\s+main\b/);
 attachDependencySources(registry, dependencySources, DEPENDENCY_SOURCE_DEFINITIONS);
 const components = buildComponentCatalog(model, registry, { mergeSystems: false });
-const sourceOptions = { model, repository: root, registry, dependencyContext: { metadata: cargoMetadata, resolver: dependencySources } };
+const sourceOptions = { model, components, repository: root, registry, dependencyContext: { metadata: cargoMetadata, resolver: dependencySources } };
 const sourceAudit = applyArchitectureSourcePolicies(registry, sourceOptions);
 const coverage = auditProductionEcsCoverage(registry, { ...sourceOptions, context: sourceAudit.context });
 if (coverage.gaps.length) throw new Error(coverage.gaps.join('\n'));

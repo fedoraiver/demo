@@ -70,6 +70,168 @@ export const ENTITY_SOURCE_EVIDENCE = Object.freeze({
   'entity-held_proxy': [project('src/item_interaction/attachment.rs', 'commands.spawn_empty().id()', 'create', '创建：持物碰撞代理（初始为空实体）'), project('src/item_interaction/lifecycle.rs', 'proxy.despawn();', 'destroy', '实际销毁：释放物品时移除代理'), project('src/item_interaction/lifecycle.rs', '.despawn();', 'destroy', '实际销毁：业务物品失效后清理代理', { line: 113 })],
 });
 
+export const COMPONENT_BUNDLE_SOURCE_EVIDENCE = Object.freeze({
+  'entity-character': [project('src/character/body.rs', 'pub(crate) fn character_body(', 'create', '组件 Bundle 工厂：角色根的动态身体配置'), project('src/scene_assembly/actors.rs', '.insert((character_body(&config), DespawnOnExit(AppState::InGame)))', 'create', '项目插入：把 character_body 返回的 Bundle 插入角色根')],
+  'entity-parcel': [project('src/item_interaction/body.rs', 'pub(crate) fn parcel_body(', 'create', '组件 Bundle 工厂：自由物品根的动态身体配置'), project('src/scene_assembly/actors.rs', 'entity.insert((parcel_body(&config), DespawnOnExit(AppState::InGame)))', 'create', '项目插入：把 parcel_body 返回的 Bundle 插入物品根')],
+});
+
+export const COMPONENT_SCENE_SOURCE_EVIDENCE = Object.freeze({
+  'entity-controller': [project('src/first_person/actions.rs', '        GameplayContext', 'create', 'BSN 根定位：keyboard_context 创建玩法控制者')],
+  'entity-island': [project('src/scene_assembly/loading.rs', 'Name("Courier island") IslandMap WorldAssetRoot(scene)', 'create', 'BSN 根定位：island_scene 创建海岛实例根')],
+});
+
+const requiredComponent = (packageName, path, contains, label, line) => dependency(packageName, path, contains, 'create', label, line ? { line } : {});
+const bodyAssemblies = {
+  character: [project('src/character/body.rs', '        RigidBody::Dynamic,', 'create', '项目装配：角色 Bundle 插入 Dynamic 刚体')],
+  parcel: [project('src/item_interaction/body.rs', '        RigidBody::Dynamic,', 'create', '项目装配：自由物品 Bundle 插入 Dynamic 刚体')],
+  world: [project('src/scene_assembly/loading.rs', '                RigidBody::Static', 'create', '项目装配：静态碰撞子实体插入 Static 刚体', { line: 213 }), project('src/scene_assembly/loading.rs', '                    RigidBody::Static', 'create', '项目装配：展示 NPC 碰撞子实体插入 Static 刚体', { line: 232 })],
+};
+const rigidBodyRequirements = {
+  Position: ['Position::PLACEHOLDER,', 268], Rotation: ['Rotation::PLACEHOLDER,', 269],
+  LinearVelocity: ['LinearVelocity,', 270], AngularVelocity: ['AngularVelocity,', 271],
+  ComputedMass: ['ComputedMass,', 272], ComputedAngularInertia: ['ComputedAngularInertia,', 273],
+  ComputedCenterOfMass: ['ComputedCenterOfMass,', 274], BodySizeMetrics: ['BodySizeMetrics,', 277],
+  AccumulatedLocalAcceleration: ['AccumulatedLocalAcceleration,', 279],
+};
+const rigidBodyComponentEvidence = Object.fromEntries(Object.entries(bodyAssemblies).flatMap(([owner, assembly]) =>
+  Object.entries(rigidBodyRequirements).filter(([name]) => owner !== 'world' || ['Position', 'Rotation'].includes(name)).map(([name, [contains, line]]) => [`${owner}.${name}`, [
+    ...assembly,
+    requiredComponent('avian3d', 'src/dynamics/rigid_body/mod.rs', contains, `框架必需组件：插入 RigidBody 时补齐缺少的 ${name}`, line),
+  ]])));
+const transformRequirement = requiredComponent('bevy_transform', 'src/components/transform.rs', '    require(GlobalTransform, TransformTreeChanged)', '框架必需组件：插入 Transform 时补齐缺少的 GlobalTransform', 75);
+const worldRootTransform = requiredComponent('bevy_world_serialization', 'src/components.rs', '#[require(Transform)]', '框架必需组件：WorldAssetRoot 自动补齐缺少的 Transform', 21);
+const gltfRuntimeInsertion = dependency('bevy_world_serialization', 'src/world_asset_spawner.rs', 'world_asset.write_to_world_with(', 'create', '运行实例化：把已加载资产组件写入运行 World', { line: 346 });
+const importedComponentEvidence = Object.fromEntries([
+  ['model_node.Name', 'node.insert(name.clone());', 'glTF 装配：为模型节点插入名称'],
+  ['model_node.Transform', 'let mut node = child_spawner.spawn((transform, Visibility::default()));', 'glTF 装配：创建带局部变换的模型节点'],
+  ['model_node.Visibility', 'let mut node = child_spawner.spawn((transform, Visibility::default()));', 'glTF 装配：为模型节点插入可见性'],
+  ['model_node.Mesh3d', 'Mesh3d(load_context.get_label_handle(primitive_label.to_string())),', 'glTF 装配：为网格原语子实体插入 Mesh3d'],
+  ['model_node.SkinnedMesh', 'entity.insert(SkinnedMesh {', 'glTF 装配：为带蒙皮的网格原语插入蒙皮组件'],
+  ['model_node.AnimationTargetId', 'AnimationTargetId::from_names(animation_context.path.iter()),', 'glTF 装配：为动画层级中的节点生成动画目标标识'],
+  ['model_node.AnimatedBy', 'AnimatedBy(animation_context.root),', 'glTF 装配：让动画节点关联当前动画根'],
+  ['animation_player.AnimationPlayer', '.insert(AnimationPlayer::default());', 'glTF 装配：仅为动画根节点插入 AnimationPlayer'],
+  ['menu_model.AnimationPlayer', '.insert(AnimationPlayer::default());', 'glTF 装配：菜单角色的动画根插入 AnimationPlayer'],
+].map(([id, contains, label]) => [id, [dependency('bevy_gltf', 'src/loader/mod.rs', contains, 'create', label), gltfRuntimeInsertion]]));
+
+// 这些位置的接收实体和必需组件链已逐项核实；不按短名或同一函数推断投影归属。
+export const COMPONENT_SOURCE_EVIDENCE = Object.freeze({
+  ...rigidBodyComponentEvidence,
+  ...importedComponentEvidence,
+  ...Object.fromEntries(['character', 'parcel'].flatMap(owner => [
+    ['ResumeInterpolation', 'recovered.remove::<Sleeping>().insert(ResumeInterpolation {', 'entity.remove::<ResumeInterpolation>();'],
+    ['NoTranslationEasing', 'recovered.insert(NoTranslationEasing);', 'entity.remove::<NoTranslationEasing>();'],
+    ['NoRotationEasing', 'recovered.insert(NoRotationEasing);', 'entity.remove::<NoRotationEasing>();'],
+  ].map(([name, insert, remove]) => [`${owner}.${name}`, [
+    project('src/bounds_recovery/recovery.rs', insert, 'create', `落水恢复：给当前${owner === 'character' ? '角色' : '物品'}插入 ${name}`),
+    project('src/bounds_recovery/recovery.rs', remove, 'destroy', `恢复插值：移除当前${owner === 'character' ? '角色' : '物品'}的 ${name}`),
+  ]]))),
+  ...Object.fromEntries(['character', 'parcel'].map(owner => [`${owner}.GlobalTransform`, [
+    project('src/scene_assembly/actors.rs', '        pose', 'create', `项目装配：${owner === 'character' ? '角色' : '物品'}根插入传入的 Transform`, { line: owner === 'character' ? 24 : 51 }), transformRequirement,
+  ]])),
+  'camera.GlobalTransform': [project('src/scene_assembly/loading.rs', '        Transform::from_xyz(-1.8, 6.0, 11.5)', 'create', '项目装配：加载相机插入 Transform'), transformRequirement],
+  'visual.Transform': [project('src/scene_assembly/actors.rs', 'Name("Courier visual") CharacterVisual CourierVisual(gltf) WorldAssetRoot(scene)', 'create', '项目装配：角色视觉根插入 WorldAssetRoot'), project('src/scene_assembly/actors.rs', 'Children [Name("Carryable visual") WorldAssetRoot(scene)]', 'create', '项目装配：物品视觉子实体插入 WorldAssetRoot'), worldRootTransform],
+  'visual.GlobalTransform': [project('src/scene_assembly/actors.rs', 'Name("Courier visual") CharacterVisual CourierVisual(gltf) WorldAssetRoot(scene)', 'create', '项目装配：角色视觉根插入 WorldAssetRoot'), project('src/scene_assembly/actors.rs', 'Children [Name("Carryable visual") WorldAssetRoot(scene)]', 'create', '项目装配：物品视觉子实体插入 WorldAssetRoot'), worldRootTransform, transformRequirement],
+  'model_node.GlobalTransform': [dependency('bevy_gltf', 'src/loader/mod.rs', 'let mut node = child_spawner.spawn((transform, Visibility::default()));', 'create', 'glTF 装配：创建带 Transform 的模型节点'), transformRequirement, gltfRuntimeInsertion],
+  ...Object.fromEntries(['character', 'parcel', 'world'].map(owner => [`${owner}.ColliderAabb`, [
+    ...bodyAssemblies[owner], requiredComponent('avian3d', 'src/collision/collider/parry/mod.rs', '    ColliderAabb,', '框架必需组件：插入 Collider 时补齐缺少的 ColliderAabb', 376),
+    ...(owner === 'character' ? [project('src/character/body.rs', '        character_collider(config),', 'create', '项目装配：角色 Bundle 插入胶囊复合碰撞体')]
+      : owner === 'parcel' ? [project('src/item_interaction/body.rs', '        Collider::cuboid(size, size, size),', 'create', '项目装配：自由物品 Bundle 插入箱体碰撞形状')]
+        : [project('src/scene_assembly/loading.rs', '                collider', 'create', '项目装配：静态碰撞子实体插入已生成的碰撞形状', { line: 214 })]),
+  ]])),
+  ...Object.fromEntries(['Translation', 'Rotation', 'Scale'].map(axis => [`parcel.${axis}Interpolation`, [
+    project('src/item_interaction/body.rs', '        TransformInterpolation,', 'create', '项目装配：自由物品 Bundle 插入完整变换插值标记'),
+    requiredComponent('bevy_transform_interpolation', 'src/interpolation.rs', '#[require(TranslationInterpolation, RotationInterpolation, ScaleInterpolation)]', `框架必需组件：完整变换插值补齐 ${axis}Interpolation`, 220),
+  ]])),
+  ...Object.fromEntries([['character', 'Translation'], ['parcel', 'Translation'], ['parcel', 'Rotation'], ['parcel', 'Scale']].map(([owner, axis]) => [`${owner}.${axis}EasingState`, [
+    project(owner === 'character' ? 'src/character/body.rs' : 'src/item_interaction/body.rs', owner === 'character' ? '        TranslationInterpolation,' : '        TransformInterpolation,', 'create', `项目装配：${owner === 'character' ? '角色平移' : '物品完整变换'}插值标记`),
+    ...(owner === 'parcel' ? [requiredComponent('bevy_transform_interpolation', 'src/interpolation.rs', '#[require(TranslationInterpolation, RotationInterpolation, ScaleInterpolation)]', `框架必需组件：完整变换插值补齐 ${axis}Interpolation`, 220)] : []),
+    requiredComponent('bevy_transform_interpolation', 'src/interpolation.rs', `#[require(${axis}EasingState)]`, `框架必需组件：${axis}Interpolation 补齐 ${axis}EasingState`, { Translation: 229, Rotation: 238, Scale: 247 }[axis]),
+  ]])),
+  ...Object.fromEntries(['EguiContext', 'EguiMultipassSchedule', 'EguiContextSettings', 'EguiInput', 'EguiFullOutput'].map(name => [`camera.${name}`, [
+    project('src/scene_assembly/loading.rs', 'bevy_inspector_egui::bevy_egui::PrimaryEguiContext', 'create', '项目装配：加载相机声明 PrimaryEguiContext'),
+    requiredComponent('bevy_egui', 'src/lib.rs', '#[require(EguiContext, EguiSchedule::new(EguiPrimaryContextPass))]', '框架必需组件：PrimaryEguiContext 补齐 EguiContext 与主上下文 Schedule', 467),
+    ...(['EguiContextSettings', 'EguiInput', 'EguiFullOutput'].includes(name) ? [requiredComponent('bevy_egui', 'src/lib.rs', `    ${name},`, `框架必需组件：EguiContext 补齐缺少的 ${name}`, { EguiContextSettings: 558, EguiInput: 559, EguiFullOutput: 564 }[name])] : []),
+  ]])),
+  ...Object.fromEntries(['ContextPriority', 'ContextActivity'].map(name => [`controller.${name}`, [
+    project('src/first_person/mod.rs', 'app.add_input_context::<GameplayContext>()', 'create', '项目启用：注册 GameplayContext 的必需状态'),
+    project('src/first_person/actions.rs', '        GameplayContext', 'create', '项目装配：键盘控制者插入 GameplayContext'),
+    requiredComponent('bevy_enhanced_input', 'src/context.rs', `let _ = self.try_register_required_components::<C, ${name}<C>>();`, `框架必需组件：输入上下文补齐缺少的 ${name}<C>`),
+  ]])),
+  ...Object.fromEntries(['LookAction', 'MoveAction', 'JumpAction', 'InteractAction'].map(name => [`action.Action<${name}>`, [project('src/first_person/actions.rs', `            Action::<${name}>::new()`, 'create', `关系场景装配：创建独立 ${name} 动作实体`), ...relatedSceneCreation]])),
+  ...Object.fromEntries([['Name', 'Name::new(any::type_name::<A>()),', 74], ['ActionFns', 'ActionFns::new::<A>(),', 75], ['ActionValue', 'ActionValue::zero(A::Output::DIM),', 76], ['TriggerState', 'TriggerState,', 78], ['ActionEvents', 'ActionEvents,', 79], ['ActionTime', 'ActionTime,', 80], ['ActionMock', 'ActionMock,', 81]].map(([name, contains, line]) => [`action.${name}`, [
+    project('src/first_person/actions.rs', '        Actions<GameplayContext> [', 'create', '项目装配：动作列表分别插入四个已声明的 Action<A>'),
+    requiredComponent('bevy_enhanced_input', 'src/action.rs', contains, `框架必需组件：Action<A> 补齐缺少的 ${name}`, line),
+  ]])),
+  'binding.Binding': [project('src/first_person/actions.rs', 'Bindings [ Binding::mouse_motion() ]', 'create', '关系场景装配：鼠标动作的绑定子实体'), project('src/first_person/actions.rs', 'Bindings [ Binding(KeyCode::Space) ]', 'create', '关系场景装配：跳跃动作的按键绑定'), project('src/first_person/actions.rs', 'Bindings [ Binding(KeyCode::KeyE) ]', 'create', '关系场景装配：交互动作的按键绑定'), dependency('bevy_enhanced_input', 'src/preset/cardinal.rs', 'pub fn wasd_keys() -> impl SceneList', 'create', '预设装配：WASD 返回四个绑定子场景'), ...relatedSceneCreation],
+  'binding.FirstActivation': [project('src/first_person/actions.rs', 'Bindings [ Binding::mouse_motion() ]', 'create', '项目装配：绑定子实体插入 Binding'), requiredComponent('bevy_enhanced_input', 'src/binding.rs', '#[require(FirstActivation)]', '框架必需组件：Binding 补齐 FirstActivation', 59)],
+  'binding.Negate': [project('src/first_person/actions.rs', 'Bindings [ {preset::cardinal::wasd_keys()} ]', 'create', '项目装配：启用 WASD 方向绑定预设'), dependency('bevy_enhanced_input', 'src/preset/cardinal.rs', '@{super::binding_scene((Negate::all(), west))}', 'create', '预设装配：西向绑定插入 Negate'), dependency('bevy_enhanced_input', 'src/preset/cardinal.rs', '@{super::binding_scene((Negate::all(), south, SwizzleAxis::YXZ))}', 'create', '预设装配：南向绑定插入 Negate')],
+  'binding.SwizzleAxis': [project('src/first_person/actions.rs', 'Bindings [ {preset::cardinal::wasd_keys()} ]', 'create', '项目装配：启用 WASD 方向绑定预设'), dependency('bevy_enhanced_input', 'src/preset/cardinal.rs', '@{super::binding_scene((north, SwizzleAxis::YXZ))}', 'create', '预设装配：北向绑定插入轴交换'), dependency('bevy_enhanced_input', 'src/preset/cardinal.rs', '@{super::binding_scene((Negate::all(), south, SwizzleAxis::YXZ))}', 'create', '预设装配：南向绑定插入轴交换')],
+  'controller.GameplayContext': [project('src/first_person/actions.rs', '        GameplayContext', 'create', 'BSN：为键盘控制者插入 GameplayContext')],
+  'controller.Actions': [project('src/first_person/actions.rs', '        Actions<GameplayContext> [', 'create', '关系场景声明：控制者拥有 GameplayContext 动作列表'), dependency('bevy_enhanced_input', 'src/action/relationship.rs', '#[relationship_target(relationship = ActionOf<C>, linked_spawn)]', 'create', '关系声明：Actions<C> 是 ActionOf<C> 的目标组件'), dependency('bevy_ecs', 'src/relationship/mod.rs', 'let mut target = Self::RelationshipTarget::with_capacity(1);', 'create', '框架关系 hook：首次关联动作时为目标控制者创建 Actions<C>')],
+  'character.HoldingItems': [project('src/item_interaction/components.rs', '#[relationship(relationship_target = HoldingItems)]', 'create', '关系声明：HeldBy 的目标自动维护 HoldingItems'), project('src/item_interaction/interaction.rs', '                HeldBy(character),', 'create', '项目触发：拾取物品时将 HeldBy 指向当前角色'), dependency('bevy_ecs', 'src/relationship/mod.rs', 'let mut target = Self::RelationshipTarget::with_capacity(1);', 'create', '框架关系 hook：首次持有物品时为角色创建 HoldingItems')],
+  'menu_button.Button': [project('src/ui/widgets.rs', '        MenuButton { action, index }', 'create', '项目装配：菜单按钮场景插入 MenuButton', { all: true }), project('src/ui/mod.rs', '#[require(Button, Node, Hovered, BackgroundColor, BorderColor)]', 'create', '项目必需组件声明：MenuButton 自动补齐缺少的 Button')],
+  ...Object.fromEntries(['menu_button', 'menu_scroll'].flatMap(owner => ['ComputedNode', 'UiGlobalTransform'].map(name => [`${owner}.${name}`, [
+    ...(owner === 'menu_button' ? [project('src/ui/widgets.rs', '        MenuButton { action, index }', 'create', '项目装配：菜单按钮场景插入 MenuButton', { all: true }), project('src/ui/mod.rs', '#[require(Button, Node, Hovered, BackgroundColor, BorderColor)]', 'create', '项目必需组件声明：MenuButton 自动补齐缺少的 Node')]
+      : [project('src/ui/scroll.rs', '        MenuScroll', 'create', '项目装配：滚动区域根声明 MenuScroll', { line: 251 }), project('src/ui/scroll.rs', '        Node {', 'create', '项目装配：滚动区域根声明布局 Node', { line: 252 })]),
+    requiredComponent('bevy_ui', 'src/ui_node.rs', name === 'ComputedNode' ? '    ComputedNode,' : '    UiTransform,', `框架必需组件：Node 补齐缺少的 ${name === 'ComputedNode' ? 'ComputedNode' : 'UiTransform'}`, name === 'ComputedNode' ? 464 : 469),
+    ...(name === 'UiGlobalTransform' ? [requiredComponent('bevy_ui', 'src/ui_transform.rs', '#[require(UiGlobalTransform)]', '框架必需组件：UiTransform 补齐缺少的 UiGlobalTransform', 143)] : []),
+  ]]))),
+  'model_node.GltfExtras': [dependency('bevy_gltf', 'src/loader/mod.rs', 'node.insert(GltfExtras {', 'create', 'glTF 装配：仅为含 extras 的模型节点插入 GltfExtras'), dependency('bevy_gltf', 'src/loader/mod.rs', 'mesh_entity.insert(GltfExtras {', 'create', 'glTF 装配：仅为含 extras 的网格原语插入 GltfExtras'), gltfRuntimeInsertion],
+  'model_node.MeshMaterial3d': [dependency('bevy_pbr', 'src/gltf.rs', 'entity.insert(MeshMaterial3d(handle));', 'create', 'PBR glTF 扩展装配：网格原语插入 StandardMaterial 句柄'), gltfRuntimeInsertion],
+  'controller.PlayerId': [project('src/first_person/actions.rs', '            player_id,', 'create', '装配：把调用方 PlayerId 插入新控制者')],
+  'controller.Name': [project('src/first_person/actions.rs', '            Name::new(format!("Keyboard controller {id}")),', 'create', '装配：为新键盘控制者插入运行名称')],
+  'controller.DespawnOnExit': [project('src/scene_assembly/actors.rs', '.insert(DespawnOnExit(AppState::InGame));', 'create', '装配：为当前玩法控制者插入会话清理标记')],
+  'character.DespawnOnExit': [project('src/scene_assembly/actors.rs', '.insert((character_body(&config), DespawnOnExit(AppState::InGame)))', 'create', '装配：角色根与身体配置一起插入会话清理标记')],
+  'parcel.DespawnOnExit': [project('src/scene_assembly/actors.rs', 'entity.insert((parcel_body(&config), DespawnOnExit(AppState::InGame)))', 'create', '装配：物品根与身体配置一起插入会话清理标记')],
+  'controller.ControlsCharacter': [project('src/first_person/actions.rs', '            ControlsCharacter(character),', 'create', '装配：新控制者关联当前角色')],
+  'controller.ControlsCamera': [project('src/scene_assembly/actors.rs', 'commands.entity(controller).insert(ControlsCamera(camera))', 'create', '装配：资源就绪后让控制者关联复用的相机')],
+  'character.Transform': [project('src/scene_assembly/actors.rs', '        pose', 'create', 'BSN：角色根装配传入的 Transform', { line: 24 })],
+  'parcel.Transform': [project('src/scene_assembly/actors.rs', '        pose', 'create', 'BSN：物品根装配传入的 Transform', { line: 51 })],
+  'character.CarryBaseMass': [project('src/item_interaction/attachment.rs', 'commands.entity(holder).insert(CarryBaseMass(holder_mass.0))', 'create', '持握开始：为持有者保存基础质量')],
+  'island.IslandPending': [project('src/scene_assembly/loading.rs', 'commands.entity(ready.entity).insert(IslandPending);', 'create', '资源就绪：为匹配的海岛实例根插入碰撞装配等待标记')],
+  'island.IslandReady': [project('src/scene_assembly/loading.rs', '.insert(IslandReady { player, items });', 'create', '碰撞准备完成：为海岛根插入玩家与物品放置清单')],
+  'island.ActorsSpawned': [project('src/scene_assembly/actors.rs', 'commands.entity(map).insert(ActorsSpawned);', 'create', '动态装配完成：为当前海岛根插入完成标记')],
+  'visual.CourierAnimationPending': [project('src/character_animation/binding.rs', '.insert(CourierAnimationPending);', 'create', '角色视觉根资源就绪：等待动画玩家绑定')],
+  'visual.CourierFootGrounding': [project('src/character_animation/binding.rs', 'commands.entity(visual_root).insert(CourierFootGrounding {', 'create', '足底标记齐备：为角色视觉根插入接地显示状态')],
+  'animation_player.CourierAnimation': [project('src/character_animation/binding.rs', '                CourierAnimation {', 'create', '绑定：为当前角色视觉树中的动画玩家插入播放状态')],
+  'animation_player.AnimationGraphHandle': [project('src/character_animation/binding.rs', 'AnimationGraphHandle(graph_handle.clone()),', 'create', '绑定：为当前角色视觉树中的动画玩家插入动画图句柄')],
+  'menu_model.CourierAnimationPending': [project('src/ui/backdrop.rs', '.insert(CourierAnimationPending);', 'create', '菜单角色根资源就绪：等待独立展示动画绑定')],
+  'menu_model.AnimationGraphHandle': [project('src/ui/backdrop.rs', '.insert(AnimationGraphHandle(graph.clone()));', 'create', '菜单展示子树：为真实动画玩家插入动画图句柄')],
+  'menu_text.DescriptionTitle': [project('src/ui/pages.rs', '            DescriptionTitle', 'create', 'BSN：设置说明标题文字添加身份标记')],
+  'menu_text.DescriptionBody': [project('src/ui/pages.rs', '            DescriptionBody', 'create', 'BSN：设置说明正文文字添加身份标记')],
+  'menu_text.SettingsStatus': [project('src/ui/pages.rs', '@label(theme, status.to_owned(), 17.0, MUTED) SettingsStatus', 'create', 'BSN：设置状态文字添加更新目标标记')],
+  'menu_text.SettingValue': [project('src/ui/widgets.rs', '                    SettingValue(key)', 'create', 'BSN：设置值文字添加对应字段标记')],
+  'menu_text.VolumeValue': [project('src/ui/volume.rs', '                    VolumeValue(key)', 'create', 'BSN：音量值文字添加对应音量字段标记')],
+  'menu_button.VolumeSlider': [project('src/ui/volume.rs', '                VolumeSlider { key }', 'create', 'BSN：音量滑条按钮添加字段标记')],
+  'menu_button.SettingDescription': [
+    ...[252, 272].map(line => project('src/ui/widgets.rs', '                details', 'create', 'BSN：步进按钮装配已构造的 SettingDescription', { line })),
+    ...[105, 110, 157].map(line => project('src/ui/volume.rs', 'details', 'create', 'BSN：音量按钮装配已构造的 SettingDescription', { line })),
+  ],
+  'parcel.HeldBy': [project('src/item_interaction/interaction.rs', '                HeldBy(character),', 'create', '拾取成功：为当前物品插入持有者关系')],
+  'parcel.HeldAttachment': [project('src/item_interaction/attachment.rs', '        HeldAttachment {', 'create', 'begin_attachment：给当前物品插入挂接状态')],
+  'parcel.RigidBody': [project('src/item_interaction/attachment.rs', 'commands.entity(item).remove::<RigidBody>()', 'destroy', '持握开始：移除当前物品的独立刚体')],
+  'parcel.ResumeCarryEasing': [project('src/item_interaction/lifecycle.rs', 'item_entity.insert(ResumeCarryEasing {', 'create', '释放物品：按原挂接状态插入插值恢复标记')],
+  'camera.FirstPersonCamera': [project('src/scene_assembly/actors.rs', '            first_person,', 'create', '装配：把角色目标对应的第一人称状态插入加载相机')],
+  'camera.MouseLookState': [project('src/scene_assembly/actors.rs', '            MouseLookState::default(),', 'create', '装配：为复用的玩法相机初始化观察输入状态')],
+  'camera.LoadingCamera': [project('src/scene_assembly/loading.rs', '        LoadingCamera', 'create', 'BSN：为加载相机添加阶段标记'), project('src/scene_assembly/actors.rs', 'commands.entity(camera).remove::<LoadingCamera>()', 'destroy', '玩法装配完成：移除加载阶段标记')],
+  'menu_controller.MenuContext': [project('src/ui/navigation.rs', '        MenuContext', 'create', 'BSN：菜单控制者装配独立输入上下文')],
+  'menu_controller.ContextPriority': [project('src/ui/navigation.rs', '        ContextPriority::<MenuContext>::new(10)', 'create', 'BSN：菜单控制者装配输入优先级')],
+  'menu_controller.ContextActivity': [project('src/ui/navigation.rs', '.insert(ContextActivity::<MenuContext>::new(focused))', 'create', '上下文同步：为菜单控制者插入当前聚焦活动状态')],
+  'menu_controller.GamepadDevice': [project('src/ui/navigation.rs', '        GamepadDevice::Any', 'create', 'BSN：菜单控制者接受任意手柄')],
+  'menu_controller.Actions': [project('src/ui/navigation.rs', '        Actions<MenuContext> [', 'create', 'BSN：为菜单控制者装配动作关系列表')],
+  'held_proxy.HeldCollider': [project('src/item_interaction/attachment.rs', '                HeldCollider(item),', 'create', '挂接就绪：给 attachment.collider 代理插入物品归属')],
+  'held_proxy.Name': [project('src/item_interaction/attachment.rs', 'Name::new("Held parcel collision proxy"),', 'create', '挂接就绪：为当前持物碰撞代理插入名称')],
+  'held_proxy.ColliderOf': [project('src/item_interaction/attachment.rs', '.insert(ColliderOf { body: holder })', 'create', '挂接就绪：让当前代理碰撞体关联持有者刚体')],
+  'held_proxy.ColliderTransform': [project('src/item_interaction/attachment.rs', '.insert(ColliderTransform::from(attachment.local_pose));', 'create', '挂接就绪：为当前碰撞代理插入局部姿态')],
+  'held_proxy.ColliderDisabled': [project('src/item_interaction/attachment.rs', '.insert(ColliderDisabled);', 'create', '挂接就绪：原碰撞体已停用时给当前代理插入停用标记', { line: 101 })],
+  'held_proxy.Collider': [project('src/item_interaction/attachment.rs', '                collider.clone(),', 'create', '挂接就绪：给代理装配物品碰撞形状')],
+  'held_proxy.CollisionLayers': [project('src/item_interaction/attachment.rs', '                *layers,', 'create', '挂接就绪：给代理装配物品碰撞层')],
+  'held_proxy.Friction': [project('src/item_interaction/attachment.rs', '                *friction,', 'create', '挂接就绪：给代理装配物品摩擦参数')],
+  'held_proxy.Restitution': [project('src/item_interaction/attachment.rs', '                *restitution,', 'create', '挂接就绪：给代理装配物品恢复参数')],
+  'held_proxy.Transform': [project('src/item_interaction/attachment.rs', '                Transform::IDENTITY,', 'create', '挂接就绪：给代理装配局部恒等变换')],
+  'held_proxy.CollisionEventsEnabled': [project('src/item_interaction/attachment.rs', '                CollisionEventsEnabled,', 'create', '挂接就绪：为代理启用碰撞事件')],
+});
+
 // 这些实体的 ChildOf/关系所有权已由源码和清单核实；不把普通 Entity 字段当作级联关系。
 export const HIERARCHY_OWNED_ENTITIES = Object.freeze(new Set([
   'entity-visual', 'entity-action', 'entity-binding', 'entity-world', 'entity-npc',
