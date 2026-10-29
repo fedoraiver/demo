@@ -75,5 +75,5 @@ test('all 34 real schedules keep every native geometry element and normalize ide
     clusterTitles += layers.length;
   }
   assert.equal(manifest.schedules.length, 34);
-  assert.equal(clusterTitles, 243);
+  assert.equal(clusterTitles, 239);
 });

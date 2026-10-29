@@ -1,5 +1,6 @@
 // 基于锁定源码声明、字段和直接调用用途逐族审阅；已有对象仅按相同定义入口精确复用。
 export const CORE_SCHEDULE_TYPE_PURPOSES = Object.freeze({
+  "bevy_state::state_scoped::DespawnOnEnter":{"summary":"指定进入某状态时自动销毁的实体。","description":"泛型组件保存目标状态值；StateTransition 的 EnterSchedules 框架系统读取最新转换，在进入该值时排入销毁，包括禁用实体。本项目会话根保存 AppState::MainMenu，暂停恢复保持身份；后代由现有层级关系清理。"},
   "bevy_transform_interpolation::interpolation::TransformInterpolation":{"summary":"为实体启用平移、旋转和缩放插值。","description":"组合标记通过required components启用TranslationInterpolation、RotationInterpolation和ScaleInterpolation，使FixedUpdate内的变换变化在渲染帧之间平滑；实际端点分别由各通道的EasingState保存。"},
   "bevy_extract::sync_world::MainEntity":{"summary":"在子世界中关联原始主世界实体。","description":"子世界组件封装主世界Entity，保存同步实体对应的原始实体身份；提取系统把它插入新建的渲染实体，以供保留视图、缓存和跨世界实体映射使用。它不是主世界实体本身的额外数据副本。"},
   "bevy_state::state_scoped::DespawnOnExit":{"summary":"指定离开某状态时自动销毁的实体。","description":"泛型组件保存状态值S，状态作用域清理系统在离开该值时销毁带有此组件的实体；本实例明确保存对应AppState，子树清理由已有实体层级生命周期负责。"},

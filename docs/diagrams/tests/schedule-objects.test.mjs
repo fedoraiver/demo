@@ -377,19 +377,19 @@ test('body facts require operation proof and cannot disguise an event or query i
 test('reviewed Startup fallback remains a separate registration and shares only exact declaration facts', () => {
   const original = { id: 'startup_spawn', name: 'spawn_lighting', kind: 'System', module: 'scene_assembly', feature: 'scene_assembly', registered_by: 'scene_assembly',
     source: { path: 'src/scene_assembly/loading.rs', line: 14 }, reads: ['resource.input'], writes: ['resource.output'], fields: ['已核实声明字段'], filters: [], events: [],
-    registrations: [{ schedule: 'OnEnter(AppState::InGame)', scope: 'runtime' }, { schedule: 'Startup', scope: 'headless-test', run_if: ['not(resource_exists::<State<AppState>>)'] }] };
+    registrations: [{ schedule: 'OnExit(AppState::MainMenu)', scope: 'runtime' }, { schedule: 'Startup', scope: 'headless-test', run_if: ['not(resource_exists::<State<AppState>>)'] }] };
   const source = catalog({ resolveSystem(fullName, context) { assert.equal(context.skipParameterAccess, true); return { name: 'spawn_lighting', description: '生成光照及加载相机。', sourceEntries: [location()], accesses: [] }; } });
   const g = graph([system('spawn', 'demo::scene_assembly::loading::spawn_lighting')]);
   const model = base({ systems: [original], resources: [{ id: 'resource.input', kind: 'Resource' }, { id: 'resource.output', kind: 'Resource' }], nodes: [{ id: 'set', kind: 'SystemSet' }],
     system_links: [{ id: 'read', from: 'resource.input', to: 'startup_spawn', kind: 'read', sourceEntries: [location('parameter')] }, { id: 'order', from: 'set', to: 'startup_spawn', kind: 'order' }, { id: 'member', from: 'set', to: 'startup_spawn', kind: 'registration' }] });
-  const result = build(model, [view('startup', g, { scheduleLabel: 'Startup' }), view('enter', g, { scheduleLabel: 'OnEnter(InGame)' })], source);
-  const startupId = result.scheduleInteractions.views[0].bindings[0].objectId, enterId = result.scheduleInteractions.views[1].bindings[0].objectId;
-  assert.notEqual(startupId, enterId); assert.equal(enterId, 'startup_spawn'); assert.equal(result.model.systems.length, 2);
-  const startup = result.model.systems.find(record => record.id === startupId), enter = result.model.systems.find(record => record.id === enterId);
+  const result = build(model, [view('startup', g, { scheduleLabel: 'Startup' }), view('session-exit', g, { scheduleLabel: 'OnExit(MainMenu)' })], source);
+  const startupId = result.scheduleInteractions.views[0].bindings[0].objectId, sessionId = result.scheduleInteractions.views[1].bindings[0].objectId;
+  assert.notEqual(startupId, sessionId); assert.equal(sessionId, 'startup_spawn'); assert.equal(result.model.systems.length, 2);
+  const startup = result.model.systems.find(record => record.id === startupId), session = result.model.systems.find(record => record.id === sessionId);
   assert.deepEqual(startup.source, original.source); assert.deepEqual(startup.reads, original.reads); assert.deepEqual(startup.writes, original.writes); assert.deepEqual(startup.fields, original.fields);
   assert.deepEqual(startup.registrations, [{ application: 'main', schedule: 'Startup', scope: 'headless-test', run_if: ['not(resource_exists::<State<AppState>>)'] }]);
-  assert.deepEqual(enter.registrations, [{ schedule: 'OnEnter(AppState::InGame)', scope: 'runtime' }]);
-  assert.deepEqual(startup.registrationFamilyIds, ['startup_spawn', startupId]); assert.deepEqual(enter.registrationFamilyIds, startup.registrationFamilyIds);
+  assert.deepEqual(session.registrations, [{ schedule: 'OnExit(AppState::MainMenu)', scope: 'runtime' }]);
+  assert.deepEqual(startup.registrationFamilyIds, ['startup_spawn', startupId]); assert.deepEqual(session.registrationFamilyIds, startup.registrationFamilyIds);
   assert.ok(result.model.system_links.some(link => link.from === 'resource.input' && link.to === startupId && link.kind === 'read'));
   assert.ok(!result.model.system_links.some(link => link.from === 'set' && link.to === startupId));
   assert.deepEqual(model.systems[0], original);

@@ -29,10 +29,11 @@ export const TYPE_PACKAGES = Object.freeze({
 
 const project = (path, contains, role, label, extra = {}) => ({ path, contains, role, label, ...extra });
 const dependency = (packageName, path, contains, role, label, extra = {}) => ({ package: packageName, path, contains, role, label, ...extra });
-const stateCleanup = dependency('bevy_state', 'src/state_scoped.rs', 'commands.despawn_all_where::<&DespawnOnExit<S>, Allow<Disabled>>', 'destroy', '框架执行：退出状态后销毁匹配的 DespawnOnExit 实体');
-const gameExit = project('src/ui/requests.rs', 'app_state.set(AppState::MainMenu)', 'destroy', '触发退出游戏会话：切换至 MainMenu');
-const rootState = (path, contains, extra = {}) => [project(path, contains, 'destroy', '配置：DespawnOnExit(AppState::InGame)', extra), gameExit, stateCleanup];
-const menuCleanup = [project('src/ui/backdrop.rs', 'DespawnOnExit::<AppState>(AppState::MainMenu)', 'destroy', '配置：退出主菜单时清理展示舞台'), stateCleanup];
+const exitStateCleanup = dependency('bevy_state', 'src/state_scoped.rs', 'commands.despawn_all_where::<&DespawnOnExit<S>, Allow<Disabled>>', 'destroy', '框架执行：StateTransition.ExitSchedules 按退出状态销毁 DespawnOnExit 实体');
+const enterStateCleanup = dependency('bevy_state', 'src/state_scoped.rs', '.despawn_all_where::<&DespawnOnEnter<S>, Allow<Disabled>>', 'destroy', '框架执行：StateTransition.EnterSchedules 按进入状态销毁 DespawnOnEnter 实体');
+const gameReturn = project('src/ui/requests.rs', 'app_state.set_if_different(AppState::MainMenu)', 'destroy', '触发会话清理：请求返回 MainMenu');
+const rootState = (path, contains, extra = {}) => [project(path, contains, 'destroy', '配置：返回 MainMenu 清理会话根', extra), gameReturn, enterStateCleanup];
+const menuCleanup = [project('src/ui/backdrop.rs', 'DespawnOnExit::<AppState>(AppState::MainMenu)', 'destroy', '配置：退出主菜单时清理展示舞台'), exitStateCleanup];
 const pageCleanup = project('src/ui/pages.rs', 'commands.entity(entity).despawn();', 'destroy', '页面结构变化或隐藏：销毁旧菜单根及其后代');
 const relatedSceneCreation = [
   dependency('bevy_scene_macros', 'src/bsn/codegen.rs', '#bevy_scene::RelatedScenes::<#relationship_path>::new(#scenes)', 'create', '配置展开：关系场景列表交由 RelatedScenes 装配'),
@@ -42,16 +43,16 @@ const relatedSceneCreation = [
 ];
 
 export const ENTITY_SOURCE_EVIDENCE = Object.freeze({
-  'entity-controller': [project('src/first_person/actions.rs', '.spawn_scene(keyboard_context())', 'create', '创建：spawn_keyboard_controller 请求键盘上下文场景'), ...rootState('src/scene_assembly/actors.rs', '.insert(DespawnOnExit(AppState::InGame));')],
-  'entity-character': [project('src/scene_assembly/actors.rs', '.spawn_scene(courier_scene(', 'create', '创建：装配角色业务根'), project('src/scene_assembly/actors.rs', 'Name("Courier")', 'create', 'BSN：角色根的组件组合'), ...rootState('src/scene_assembly/actors.rs', '.insert((character_body(&config), DespawnOnExit(AppState::InGame)))')],
-  'entity-parcel': [project('src/scene_assembly/actors.rs', 'let mut entity = commands.spawn_scene(carryable_scene', 'create', '创建：独立可搬物品业务根'), project('src/scene_assembly/actors.rs', 'Name({model.name()})', 'create', 'BSN：可搬物品根的组件组合'), ...rootState('src/scene_assembly/actors.rs', 'entity.insert((parcel_body(&config), DespawnOnExit(AppState::InGame)))')],
-  'entity-camera': [project('src/scene_assembly/loading.rs', 'commands.spawn_scene(bsn!', 'create', '创建：spawn_scene 装配加载相机，随后复用为玩法相机', { line: 17 }), ...rootState('src/scene_assembly/loading.rs', 'DespawnOnExit::<AppState>(AppState::InGame)', { line: 22 })],
+  'entity-controller': [project('src/first_person/actions.rs', '.spawn_scene(keyboard_context())', 'create', '创建：spawn_keyboard_controller 请求键盘上下文场景'), ...rootState('src/scene_assembly/actors.rs', '.insert(DespawnOnEnter(AppState::MainMenu));')],
+  'entity-character': [project('src/scene_assembly/actors.rs', '.spawn_scene(courier_scene(', 'create', '创建：装配角色业务根'), project('src/scene_assembly/actors.rs', 'Name("Courier")', 'create', 'BSN：角色根的组件组合'), ...rootState('src/scene_assembly/actors.rs', '.insert((character_body(&config), DespawnOnEnter(AppState::MainMenu)))')],
+  'entity-parcel': [project('src/scene_assembly/actors.rs', 'let mut entity = commands.spawn_scene(carryable_scene', 'create', '创建：独立可搬物品业务根'), project('src/scene_assembly/actors.rs', 'Name({model.name()})', 'create', 'BSN：可搬物品根的组件组合'), ...rootState('src/scene_assembly/actors.rs', 'entity.insert((parcel_body(&config), DespawnOnEnter(AppState::MainMenu)))')],
+  'entity-camera': [project('src/scene_assembly/loading.rs', 'commands.spawn_scene(bsn!', 'create', '创建：spawn_scene 装配加载相机，随后复用为玩法相机', { line: 17 }), ...rootState('src/scene_assembly/loading.rs', 'DespawnOnEnter::<AppState>(AppState::MainMenu)', { line: 22 })],
   'entity-visual': [project('src/scene_assembly/actors.rs', 'Name("Courier visual")', 'create', '场景声明：角色直属视觉根'), project('src/scene_assembly/actors.rs', 'Children [Name("Carryable visual")', 'create', '关系场景声明：物品直属视觉根'), ...relatedSceneCreation],
   'entity-window': [dependency('bevy_window', 'src/lib.rs', 'app.world_mut().spawn(primary_window.clone())', 'create', '框架创建：WindowPlugin 创建主窗口'), dependency('bevy_window', 'src/lib.rs', 'app.add_systems(Last, close_when_requested.before(ExitSystems))', 'destroy', '配置：WindowPlugin 在 Last 中注册窗口关闭清理'), dependency('bevy_window', 'src/system.rs', 'commands.entity(window).despawn();', 'destroy', '框架执行：窗口关闭标记后销毁窗口实体')],
   'entity-action': [project('src/first_person/actions.rs', 'Actions<GameplayContext> [', 'create', '关系场景声明：玩法动作子实体列表'), ...relatedSceneCreation],
   'entity-binding': [project('src/first_person/actions.rs', 'Bindings [ Binding::mouse_motion() ]', 'create', '关系场景声明：鼠标绑定子实体'), project('src/first_person/actions.rs', 'Bindings [ {preset::cardinal::wasd_keys()} ]', 'create', '关系场景声明：WASD 绑定子实体'), dependency('bevy_enhanced_input', 'src/preset/cardinal.rs', 'pub fn wasd_keys() -> impl SceneList', 'create', '预设展开：WASD 返回四个绑定子场景'), ...relatedSceneCreation],
   'entity-world': [project('src/scene_assembly/loading.rs', 'commands.spawn_scene(bsn!', 'create', '创建：spawn_scene 装配地图静态碰撞子实体', { line: 210 }), project('src/scene_assembly/loading.rs', 'Name("Display NPC collider")', 'create', 'BSN：展示 NPC 碰撞子实体')],
-  'entity-island': [project('src/scene_assembly/loading.rs', 'commands.spawn_scene(island_scene(scene.clone()))', 'create', '创建：spawn_scene 装配海岛实例根'), ...rootState('src/scene_assembly/loading.rs', 'DespawnOnExit::<AppState>(AppState::InGame)', { line: 34 })],
+  'entity-island': [project('src/scene_assembly/loading.rs', 'commands.spawn_scene(island_scene(scene.clone()))', 'create', '创建：spawn_scene 装配海岛实例根'), ...rootState('src/scene_assembly/loading.rs', 'DespawnOnEnter::<AppState>(AppState::MainMenu)', { line: 34 })],
   'entity-npc': [],
   'entity-animation_player': [],
   'entity-model_node': [],
@@ -71,8 +72,8 @@ export const ENTITY_SOURCE_EVIDENCE = Object.freeze({
 });
 
 export const COMPONENT_BUNDLE_SOURCE_EVIDENCE = Object.freeze({
-  'entity-character': [project('src/character/body.rs', 'pub(crate) fn character_body(', 'create', '组件 Bundle 工厂：角色根的动态身体配置'), project('src/scene_assembly/actors.rs', '.insert((character_body(&config), DespawnOnExit(AppState::InGame)))', 'create', '项目插入：把 character_body 返回的 Bundle 插入角色根')],
-  'entity-parcel': [project('src/item_interaction/body.rs', 'pub(crate) fn parcel_body(', 'create', '组件 Bundle 工厂：自由物品根的动态身体配置'), project('src/scene_assembly/actors.rs', 'entity.insert((parcel_body(&config), DespawnOnExit(AppState::InGame)))', 'create', '项目插入：把 parcel_body 返回的 Bundle 插入物品根')],
+  'entity-character': [project('src/character/body.rs', 'pub(crate) fn character_body(', 'create', '组件 Bundle 工厂：角色根的动态身体配置'), project('src/scene_assembly/actors.rs', '.insert((character_body(&config), DespawnOnEnter(AppState::MainMenu)))', 'create', '项目插入：把 character_body 返回的 Bundle 插入角色根')],
+  'entity-parcel': [project('src/item_interaction/body.rs', 'pub(crate) fn parcel_body(', 'create', '组件 Bundle 工厂：自由物品根的动态身体配置'), project('src/scene_assembly/actors.rs', 'entity.insert((parcel_body(&config), DespawnOnEnter(AppState::MainMenu)))', 'create', '项目插入：把 parcel_body 返回的 Bundle 插入物品根')],
 });
 
 export const COMPONENT_SCENE_SOURCE_EVIDENCE = Object.freeze({
@@ -180,9 +181,9 @@ export const COMPONENT_SOURCE_EVIDENCE = Object.freeze({
   'model_node.MeshMaterial3d': [dependency('bevy_pbr', 'src/gltf.rs', 'entity.insert(MeshMaterial3d(handle));', 'create', 'PBR glTF 扩展装配：网格原语插入 StandardMaterial 句柄'), gltfRuntimeInsertion],
   'controller.PlayerId': [project('src/first_person/actions.rs', '            player_id,', 'create', '装配：把调用方 PlayerId 插入新控制者')],
   'controller.Name': [project('src/first_person/actions.rs', '            Name::new(format!("Keyboard controller {id}")),', 'create', '装配：为新键盘控制者插入运行名称')],
-  'controller.DespawnOnExit': [project('src/scene_assembly/actors.rs', '.insert(DespawnOnExit(AppState::InGame));', 'create', '装配：为当前玩法控制者插入会话清理标记')],
-  'character.DespawnOnExit': [project('src/scene_assembly/actors.rs', '.insert((character_body(&config), DespawnOnExit(AppState::InGame)))', 'create', '装配：角色根与身体配置一起插入会话清理标记')],
-  'parcel.DespawnOnExit': [project('src/scene_assembly/actors.rs', 'entity.insert((parcel_body(&config), DespawnOnExit(AppState::InGame)))', 'create', '装配：物品根与身体配置一起插入会话清理标记')],
+  'controller.DespawnOnEnter': [project('src/scene_assembly/actors.rs', '.insert(DespawnOnEnter(AppState::MainMenu));', 'create', '装配：为当前玩法控制者插入会话清理标记')],
+  'character.DespawnOnEnter': [project('src/scene_assembly/actors.rs', '.insert((character_body(&config), DespawnOnEnter(AppState::MainMenu)))', 'create', '装配：角色根与身体配置一起插入会话清理标记')],
+  'parcel.DespawnOnEnter': [project('src/scene_assembly/actors.rs', 'entity.insert((parcel_body(&config), DespawnOnEnter(AppState::MainMenu)))', 'create', '装配：物品根与身体配置一起插入会话清理标记')],
   'controller.ControlsCharacter': [project('src/first_person/actions.rs', '            ControlsCharacter { character },', 'create', '装配：新控制者关联当前角色')],
   'controller.ControlsCamera': [project('src/scene_assembly/actors.rs', '.insert(ControlsCamera { camera });', 'create', '装配：资源就绪后让控制者关联复用的相机')],
   'character.Transform': [project('src/scene_assembly/actors.rs', '        pose', 'create', 'BSN：角色根装配传入的 Transform', { line: 24 })],
@@ -249,7 +250,8 @@ export const RELATED_IMPLEMENTATIONS = Object.freeze({
     dependency('bevy_ecs', 'src/world/mod.rs', 'self.register_event_key::<DespawnEvent>()', 'configure', 'World 初始化：注册实体销毁生命周期事件'),
     dependency('bevy_ecs', 'src/world/entity_access/world_mut.rs', 'pub(crate) fn despawn_no_free_no_flush_with_caller(', 'implementation', '实际销毁：派发实体销毁与组件移除事件'),
     dependency('bevy_ecs', 'src/bundle/remove.rs', '&mut RemoveEvent { entity },', 'implementation', '实际移除：按待移除组件集合派发生命周期事件'),
-    dependency('bevy_state', 'src/state_scoped.rs', 'commands.despawn_all_where::<&DespawnOnExit<S>, Allow<Disabled>>', 'implementation', '生产清理路径：退出状态后销毁匹配的 DespawnOnExit 实体'),
+    dependency('bevy_state', 'src/state_scoped.rs', 'commands.despawn_all_where::<&DespawnOnExit<S>, Allow<Disabled>>', 'implementation', '菜单舞台清理：StateTransition.ExitSchedules 按退出状态销毁 DespawnOnExit 实体'),
+    dependency('bevy_state', 'src/state_scoped.rs', '.despawn_all_where::<&DespawnOnEnter<S>, Allow<Disabled>>', 'implementation', '会话根清理：StateTransition.EnterSchedules 按进入状态销毁 DespawnOnEnter 实体'),
   ],
   'resource.SessionWriter': [project('src/session_log/lifecycle.rs', 'writer: SessionWriter {', 'initialize', '初始化：创建文件日志写入器'), project('src/session_log/mod.rs', 'app.insert_resource(self.writer.clone());', 'insert', '构建期暂存：将文件写入器插入 App'), project('src/session_log/lifecycle.rs', '.remove_resource::<SessionWriter>()', 'remove', '构建期移交：文件日志 layer 取走写入器')],
   'resource.ConsoleWriter': [project('src/session_log/lifecycle.rs', 'console: ConsoleWriter {', 'initialize', '初始化：创建控制台日志写入器'), project('src/session_log/mod.rs', 'app.insert_resource(self.console.clone());', 'insert', '构建期暂存：将控制台写入器插入 App'), project('src/session_log/lifecycle.rs', '.remove_resource::<ConsoleWriter>()', 'remove', '构建期移交：控制台日志 layer 取走写入器')],
@@ -261,14 +263,14 @@ export const RELATED_IMPLEMENTATIONS = Object.freeze({
   'animation_engine': [dependency('bevy_animation', 'src/lib.rs', '.in_set(AnimationSystems)', 'configure', '集合配置：AnimationPlugin 把动画执行链加入 AnimationSystems')],
   'kira-play-typed': [dependency('bevy_kira_audio', 'src/audio.rs', 'play_audio_channel::<T>.in_set(AudioSystemSet::PlayTypedChannels)', 'configure', '集合配置：AudioApp 为类型通道安装 PlayTypedChannels 成员')],
   'native-visibility': [dependency('bevy_camera', 'src/visibility/mod.rs', '(UpdateFrusta, VisibilityPropagate)', 'configure', '集合约束：VisibilityPlugin 配置传播阶段与可见性检查的顺序'), dependency('bevy_camera', 'src/visibility/mod.rs', '.in_set(VisibilityPropagate)', 'configure', '集合配置：VisibilityPlugin 安装可见性传播成员')],
-  'state-paused': [project('src/game_flow/mod.rs', '.add_systems(OnEnter(PlayState::Paused), pause_simulation)', 'related', '生命周期说明：进入暂停状态的实际系统注册')],
+  'state-paused': [project('src/game_flow/mod.rs', '.add_systems(OnEnter(AppState::Paused), pause_simulation)', 'related', '生命周期说明：进入暂停状态的实际系统注册')],
   'volume-request-source': [project('src/ui/volume.rs', 'fn sample_slider_pointer(', 'related', '交互说明：滑条局部捕获与消息采样实现')],
-  'ui-next-state': [project('src/ui/requests.rs', 'app_state.set(', 'related', '实际赋值：菜单请求写入 NextState<AppState>', { all: true }), project('src/ui/requests.rs', 'play_state.set(', 'related', '实际赋值：暂停／恢复写入 NextState<PlayState>', { all: true })],
+  'ui-next-state': [project('src/ui/requests.rs', 'app_state.set_if_different(', 'related', '实际赋值：开始、返回、暂停与恢复均写入 NextState<AppState>', { all: true })],
   'ui-volume-set': [project('src/ui/volume.rs', '(sample_slider_pointer, update_volume_visuals)', 'configure', '匿名系统元组配置：成员及 before／after 约束')],
   'plugin-sound-events': [project('src/item_interaction/mod.rs', 'audio_events::register_feedback(app)', 'configure', '装配调用：ItemInteractionPlugin 启用反馈系统')],
   'world_spawn': [dependency('bevy_world_serialization', 'src/lib.rs', '(world_instance_spawner, world_instance_spawner_system)', 'configure', '流程安装：WorldSerializationPlugin 注册场景实例化链'), dependency('bevy_world_serialization', 'src/world_asset_spawner.rs', 'pub fn world_instance_spawner_system(', 'implementation', '流程执行：场景实例队列与生命周期处理'), dependency('bevy_world_serialization', 'src/world_asset_spawner.rs', 'pub fn world_instance_spawner(', 'implementation', '流程执行：WorldAssetRoot 实例化请求')],
   'render': [dependency('bevy_render', 'src/lib.rs', 'impl Plugin for RenderPlugin {', 'configure', '流程安装：RenderPlugin 创建并装配渲染子应用')],
-  'audio-output': [project('src/audio/mod.rs', '.configure_sets(Update, (AudioSystems::Mix, AudioSystems::Playback).chain())', 'configure', '播放流程配置：混音与播放阶段约束'), project('src/audio/mod.rs', '(play_requests, stop_on_exit)', 'configure', '播放流程配置：请求播放与退出停止系统'), project('src/game_flow/mod.rs', '.configure_sets(', 'configure', '跨功能配置：UI Style → Mix → Playback', { line: 92 })],
+  'audio-output': [project('src/audio/mod.rs', '.configure_sets(Update, (AudioSystems::Mix, AudioSystems::Playback).chain())', 'configure', '播放流程配置：混音与播放阶段约束'), project('src/audio/mod.rs', '(play_requests, stop_on_exit)', 'configure', '播放流程配置：请求播放与退出停止系统'), project('src/game_flow/mod.rs', '.configure_sets(', 'configure', '跨功能配置：UI Style → Mix → Playback', { line: 83 })],
   'kira-output': [project('src/audio/mod.rs', '.add_audio_channel::<UiTrack>()', 'configure', '项目启用：界面类型通道'), project('src/audio/mod.rs', '.add_audio_channel::<SfxTrack>()', 'configure', '项目启用：物品音效类型通道'), dependency('bevy_kira_audio', 'src/audio.rs', 'play_audio_channel::<T>.in_set(AudioSystemSet::PlayTypedChannels)', 'configure', '框架配置：类型通道播放系统加入 PlayTypedChannels'), dependency('bevy_kira_audio', 'src/audio_output.rs', 'pub(crate) fn play_audio_channel<T: Resource>(', 'implementation', '框架执行：消费类型通道命令并播放')],
   'physics-file-log': [project('src/session_log/lifecycle.rs', 'fn create_session_file(', 'create', '创建：会话日志文件'), project('src/session_log/output.rs', 'sink.write_all(&bytes)', 'implementation', '执行：后台线程把排队记录写入文件'), project('src/session_log/lifecycle.rs', 'self.file_worker.shutdown()', 'close', '关闭：会话守卫等待文件后台线程刷新退出')],
   'log-file-worker': [project('src/session_log/output.rs', 'fn spawn(', 'create', '创建：文件后台线程', { all: true }), project('src/session_log/output.rs', 'sink.write_all(&bytes)', 'implementation', '执行：排队记录写入 sink'), project('src/session_log/output.rs', 'fn shutdown(', 'close', '关闭：提交 Shutdown 并等待线程退出')],

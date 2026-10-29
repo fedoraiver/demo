@@ -10,11 +10,11 @@ export const EXISTING_SCHEDULE_SYSTEM_NAMES = Object.freeze({
 });
 
 // 两处 add_systems 都存在于正常装配；Startup 仅以 run_if 限制无状态测试用途。
-// 旧对象保留进入游戏的身份，另一个真实注册实例复用同声明的数据访问证据。
+// 旧对象保留离开主菜单装配会话的身份，另一个真实注册实例复用同声明的数据访问证据。
 export const SCHEDULE_REVIEWED_REGISTRATION_SPLITS = Object.freeze({
   startup_spawn: {
     fullName: 'demo::scene_assembly::loading::spawn_lighting',
-    reuse: { application: 'main', schedule: 'OnEnter(AppState::InGame)' },
+    reuse: { application: 'main', schedule: 'OnExit(AppState::MainMenu)' },
     instances: [{ application: 'main', schedule: 'Startup', scope: 'headless-test', run_if: ['not(resource_exists::<State<AppState>>)'] }],
   },
 });
@@ -82,7 +82,6 @@ export const EXISTING_MAIN_WORLD_RESOURCE_NAMES = Object.freeze({
   'resource.AssetsAnimationGraph': 'bevy_asset::assets::Assets<bevy_animation::graph::AnimationGraph>',
   'resource.TimePhysics': 'bevy_time::time::Time<avian3d::schedule::time::Physics>',
   'resource.AppTransitionMessages': 'bevy_ecs::message::messages::Messages<bevy_state::state::transitions::StateTransitionEvent<demo::game_flow::AppState>>',
-  'resource.PlayTransitionMessages': 'bevy_ecs::message::messages::Messages<bevy_state::state::transitions::StateTransitionEvent<demo::game_flow::PlayState>>',
   'resource.UiAudioChannel': 'bevy_kira_audio::channel::typed::AudioChannel<demo::audio::UiTrack>',
   'resource.SfxAudioChannel': 'bevy_kira_audio::channel::typed::AudioChannel<demo::audio::SfxTrack>',
   'resource.AudioSources': 'bevy_asset::assets::Assets<bevy_kira_audio::source::AudioSource>',

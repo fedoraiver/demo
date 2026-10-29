@@ -467,7 +467,12 @@ test('当前清单全部真实组件有专属图，HeldTarget 保持批准样稿
   registry.inspector_pass.definition_source = definition('src/quick.rs', 92, 'bevy-inspector-egui');
   const catalog = buildComponentCatalog(model, registry, { readDependencySource: () => null }), projections = model.entities.flatMap(entity => entity.components.map(component => component.id));
   assert.deepEqual(new Set(Object.keys(catalog.typeByProjectionId)), new Set(projections));
-  assert.equal(catalog.types.length, 165);
+  assert.equal(catalog.types.length, 166);
+  const sessionCleanup = ['controller', 'character', 'parcel', 'camera', 'island'].map(owner => owner + '.DespawnOnEnter');
+  assert.equal(new Set(sessionCleanup.map(id => catalog.typeByProjectionId[id])).size, 1, '同一 DespawnOnEnter<AppState> 声明的实体投影共享完整泛型类型身份');
+  const sessionCleanupType = catalog.types.find(type => type.id === catalog.typeByProjectionId[sessionCleanup[0]]);
+  assert.equal(sessionCleanupType.rustType, 'DespawnOnEnter<crate::game_flow::AppState>');
+  assert.notEqual(catalog.typeByProjectionId['menu_backdrop.DespawnOnExit'], sessionCleanupType.id, '保留的菜单退出清理是不同声明');
   assert.equal(catalog.typeByProjectionId['action.Action<ReleasePointerAction>'], undefined);
   assert.deepEqual(model.object_aliases['action.Action'], ['action.Action<LookAction>', 'action.Action<MoveAction>', 'action.Action<JumpAction>', 'action.Action<InteractAction>']);
   const declaredCount = model.systems.reduce((count, system) => count + [...system.reads, ...system.writes].filter(id => projections.includes(id)).length, 0);

@@ -3089,27 +3089,27 @@ export const CORE_SCHEDULE_BODY_OPERATIONS = {
   "demo::scene_assembly::actors::spawn_actors": [
     {
       "kind": "Component",
-      "type": "bevy_state::state_scoped::DespawnOnExit<demo::game_flow::AppState>",
+      "type": "bevy_state::state_scoped::DespawnOnEnter<demo::game_flow::AppState>",
       "operation": "insert",
       "via": "commands",
       "method": "insert",
-      "match": ".insert((character_body(&config), DespawnOnExit(AppState::InGame)))"
+      "match": ".insert((character_body(&config), DespawnOnEnter(AppState::MainMenu)))"
     },
     {
       "kind": "Component",
-      "type": "bevy_state::state_scoped::DespawnOnExit<demo::game_flow::AppState>",
+      "type": "bevy_state::state_scoped::DespawnOnEnter<demo::game_flow::AppState>",
       "operation": "insert",
       "via": "commands",
       "method": "insert",
-      "match": ".insert(DespawnOnExit(AppState::InGame))"
+      "match": ".insert(DespawnOnEnter(AppState::MainMenu))"
     },
     {
       "kind": "Component",
-      "type": "bevy_state::state_scoped::DespawnOnExit<demo::game_flow::AppState>",
+      "type": "bevy_state::state_scoped::DespawnOnEnter<demo::game_flow::AppState>",
       "operation": "insert",
       "via": "commands",
       "method": "insert",
-      "match": "entity.insert((parcel_body(&config), DespawnOnExit(AppState::InGame)))"
+      "match": "entity.insert((parcel_body(&config), DespawnOnEnter(AppState::MainMenu)))"
     },
     {
       "kind": "Component",
@@ -3186,7 +3186,7 @@ export const CORE_SCHEDULE_BODY_OPERATIONS = {
       "operation": "insert",
       "via": "commands",
       "method": "insert",
-      "match": ".insert((character_body(&config), DespawnOnExit(AppState::InGame)))",
+      "match": ".insert((character_body(&config), DespawnOnEnter(AppState::MainMenu)))",
       "proofs": [
         {
           "path": "src/character/body.rs",
@@ -3202,7 +3202,7 @@ export const CORE_SCHEDULE_BODY_OPERATIONS = {
       "operation": "insert",
       "via": "commands",
       "method": "insert",
-      "match": ".insert((character_body(&config), DespawnOnExit(AppState::InGame)))",
+      "match": ".insert((character_body(&config), DespawnOnEnter(AppState::MainMenu)))",
       "proofs": [
         {
           "path": "src/character/body.rs",
@@ -3218,7 +3218,7 @@ export const CORE_SCHEDULE_BODY_OPERATIONS = {
       "operation": "insert",
       "via": "commands",
       "method": "insert",
-      "match": ".insert((character_body(&config), DespawnOnExit(AppState::InGame)))",
+      "match": ".insert((character_body(&config), DespawnOnEnter(AppState::MainMenu)))",
       "proofs": [
         {
           "path": "src/character/body.rs",
@@ -3234,7 +3234,7 @@ export const CORE_SCHEDULE_BODY_OPERATIONS = {
       "operation": "insert",
       "via": "commands",
       "method": "insert",
-      "match": ".insert((character_body(&config), DespawnOnExit(AppState::InGame)))",
+      "match": ".insert((character_body(&config), DespawnOnEnter(AppState::MainMenu)))",
       "proofs": [
         {
           "path": "src/character/body.rs",
@@ -3250,7 +3250,7 @@ export const CORE_SCHEDULE_BODY_OPERATIONS = {
       "operation": "insert",
       "via": "commands",
       "method": "insert",
-      "match": ".insert((character_body(&config), DespawnOnExit(AppState::InGame)))",
+      "match": ".insert((character_body(&config), DespawnOnEnter(AppState::MainMenu)))",
       "proofs": [
         {
           "path": "src/character/body.rs",
@@ -3266,7 +3266,7 @@ export const CORE_SCHEDULE_BODY_OPERATIONS = {
       "operation": "insert",
       "via": "commands",
       "method": "insert",
-      "match": ".insert((character_body(&config), DespawnOnExit(AppState::InGame)))",
+      "match": ".insert((character_body(&config), DespawnOnEnter(AppState::MainMenu)))",
       "proofs": [
         {
           "path": "src/character/body.rs",
@@ -3282,7 +3282,7 @@ export const CORE_SCHEDULE_BODY_OPERATIONS = {
       "operation": "insert",
       "via": "commands",
       "method": "insert",
-      "match": ".insert((character_body(&config), DespawnOnExit(AppState::InGame)))",
+      "match": ".insert((character_body(&config), DespawnOnEnter(AppState::MainMenu)))",
       "proofs": [
         {
           "path": "src/character/body.rs",
@@ -3298,7 +3298,7 @@ export const CORE_SCHEDULE_BODY_OPERATIONS = {
       "operation": "insert",
       "via": "commands",
       "method": "insert",
-      "match": ".insert((character_body(&config), DespawnOnExit(AppState::InGame)))",
+      "match": ".insert((character_body(&config), DespawnOnEnter(AppState::MainMenu)))",
       "proofs": [
         {
           "path": "src/character/body.rs",
@@ -3314,7 +3314,7 @@ export const CORE_SCHEDULE_BODY_OPERATIONS = {
       "operation": "insert",
       "via": "commands",
       "method": "insert",
-      "match": ".insert((character_body(&config), DespawnOnExit(AppState::InGame)))",
+      "match": ".insert((character_body(&config), DespawnOnEnter(AppState::MainMenu)))",
       "proofs": [
         {
           "path": "src/character/body.rs",
@@ -3330,7 +3330,7 @@ export const CORE_SCHEDULE_BODY_OPERATIONS = {
       "operation": "insert",
       "via": "commands",
       "method": "insert",
-      "match": ".insert((character_body(&config), DespawnOnExit(AppState::InGame)))",
+      "match": ".insert((character_body(&config), DespawnOnEnter(AppState::MainMenu)))",
       "proofs": [
         {
           "path": "src/character/body.rs",
@@ -3346,7 +3346,7 @@ export const CORE_SCHEDULE_BODY_OPERATIONS = {
       "operation": "insert",
       "via": "commands",
       "method": "insert",
-      "match": ".insert((character_body(&config), DespawnOnExit(AppState::InGame)))",
+      "match": ".insert((character_body(&config), DespawnOnEnter(AppState::MainMenu)))",
       "proofs": [
         {
           "path": "src/character/body.rs",
@@ -3362,7 +3362,7 @@ export const CORE_SCHEDULE_BODY_OPERATIONS = {
       "operation": "insert",
       "via": "commands",
       "method": "insert",
-      "match": "entity.insert((parcel_body(&config), DespawnOnExit(AppState::InGame)))",
+      "match": "entity.insert((parcel_body(&config), DespawnOnEnter(AppState::MainMenu)))",
       "proofs": [
         {
           "path": "src/item_interaction/body.rs",
@@ -3378,7 +3378,7 @@ export const CORE_SCHEDULE_BODY_OPERATIONS = {
       "operation": "insert",
       "via": "commands",
       "method": "insert",
-      "match": "entity.insert((parcel_body(&config), DespawnOnExit(AppState::InGame)))",
+      "match": "entity.insert((parcel_body(&config), DespawnOnEnter(AppState::MainMenu)))",
       "proofs": [
         {
           "path": "src/item_interaction/body.rs",
@@ -3394,7 +3394,7 @@ export const CORE_SCHEDULE_BODY_OPERATIONS = {
       "operation": "insert",
       "via": "commands",
       "method": "insert",
-      "match": "entity.insert((parcel_body(&config), DespawnOnExit(AppState::InGame)))",
+      "match": "entity.insert((parcel_body(&config), DespawnOnEnter(AppState::MainMenu)))",
       "proofs": [
         {
           "path": "src/item_interaction/body.rs",
@@ -3410,7 +3410,7 @@ export const CORE_SCHEDULE_BODY_OPERATIONS = {
       "operation": "insert",
       "via": "commands",
       "method": "insert",
-      "match": "entity.insert((parcel_body(&config), DespawnOnExit(AppState::InGame)))",
+      "match": "entity.insert((parcel_body(&config), DespawnOnEnter(AppState::MainMenu)))",
       "proofs": [
         {
           "path": "src/item_interaction/body.rs",
@@ -3426,7 +3426,7 @@ export const CORE_SCHEDULE_BODY_OPERATIONS = {
       "operation": "insert",
       "via": "commands",
       "method": "insert",
-      "match": "entity.insert((parcel_body(&config), DespawnOnExit(AppState::InGame)))",
+      "match": "entity.insert((parcel_body(&config), DespawnOnEnter(AppState::MainMenu)))",
       "proofs": [
         {
           "path": "src/item_interaction/body.rs",
@@ -3442,7 +3442,7 @@ export const CORE_SCHEDULE_BODY_OPERATIONS = {
       "operation": "insert",
       "via": "commands",
       "method": "insert",
-      "match": "entity.insert((parcel_body(&config), DespawnOnExit(AppState::InGame)))",
+      "match": "entity.insert((parcel_body(&config), DespawnOnEnter(AppState::MainMenu)))",
       "proofs": [
         {
           "path": "src/item_interaction/body.rs",
@@ -3458,7 +3458,7 @@ export const CORE_SCHEDULE_BODY_OPERATIONS = {
       "operation": "insert",
       "via": "commands",
       "method": "insert",
-      "match": "entity.insert((parcel_body(&config), DespawnOnExit(AppState::InGame)))",
+      "match": "entity.insert((parcel_body(&config), DespawnOnEnter(AppState::MainMenu)))",
       "proofs": [
         {
           "path": "src/item_interaction/body.rs",
@@ -3474,7 +3474,7 @@ export const CORE_SCHEDULE_BODY_OPERATIONS = {
       "operation": "insert",
       "via": "commands",
       "method": "insert",
-      "match": "entity.insert((parcel_body(&config), DespawnOnExit(AppState::InGame)))",
+      "match": "entity.insert((parcel_body(&config), DespawnOnEnter(AppState::MainMenu)))",
       "proofs": [
         {
           "path": "src/item_interaction/body.rs",
@@ -3490,7 +3490,7 @@ export const CORE_SCHEDULE_BODY_OPERATIONS = {
       "operation": "insert",
       "via": "commands",
       "method": "insert",
-      "match": "entity.insert((parcel_body(&config), DespawnOnExit(AppState::InGame)))",
+      "match": "entity.insert((parcel_body(&config), DespawnOnEnter(AppState::MainMenu)))",
       "proofs": [
         {
           "path": "src/item_interaction/body.rs",
@@ -3506,7 +3506,7 @@ export const CORE_SCHEDULE_BODY_OPERATIONS = {
       "operation": "insert",
       "via": "commands",
       "method": "insert",
-      "match": "entity.insert((parcel_body(&config), DespawnOnExit(AppState::InGame)))",
+      "match": "entity.insert((parcel_body(&config), DespawnOnEnter(AppState::MainMenu)))",
       "proofs": [
         {
           "path": "src/item_interaction/body.rs",
@@ -3522,7 +3522,7 @@ export const CORE_SCHEDULE_BODY_OPERATIONS = {
       "operation": "insert",
       "via": "commands",
       "method": "insert",
-      "match": "entity.insert((parcel_body(&config), DespawnOnExit(AppState::InGame)))",
+      "match": "entity.insert((parcel_body(&config), DespawnOnEnter(AppState::MainMenu)))",
       "proofs": [
         {
           "path": "src/item_interaction/body.rs",

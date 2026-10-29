@@ -443,7 +443,7 @@ mod pose_tests {
             ));
             app.world_mut()
                 .resource_mut::<NextState<AppState>>()
-                .set(AppState::InGame);
+                .set(AppState::Running);
         }
         app.finish();
         app.cleanup();
@@ -1007,8 +1007,8 @@ mod pose_tests {
             assert!(app.world().get::<MouseLookState>(camera).unwrap().active);
             let yaw = app.world().get::<FirstPersonCamera>(camera).unwrap().yaw;
             app.world_mut()
-                .resource_mut::<NextState<PlayState>>()
-                .set(PlayState::Paused);
+                .resource_mut::<NextState<AppState>>()
+                .set(AppState::Paused);
             app.update();
             assert!(!app.world().get::<MouseLookState>(camera).unwrap().active);
             assert!(app.world().get::<CursorOptions>(window).unwrap().visible);
@@ -1021,8 +1021,8 @@ mod pose_tests {
             toggle_capture(&mut app, window);
             assert!(!app.world().get::<MouseLookState>(camera).unwrap().active);
             app.world_mut()
-                .resource_mut::<NextState<PlayState>>()
-                .set(PlayState::Running);
+                .resource_mut::<NextState<AppState>>()
+                .set(AppState::Running);
             app.update();
             mouse_motion(&mut app, Vec2::new(200.0, 100.0));
             app.update();

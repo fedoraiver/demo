@@ -8,7 +8,7 @@
 
 | 功能与源码入口 | 唯一项目 Plugin | 职责 |
 | --- | --- | --- |
-| [game_flow/](../src/game_flow/mod.rs) | `GameFlowPlugin` | 管理应用与运行子状态、模拟时钟，以及跨功能调度集合的依赖。 |
+| [game_flow/](../src/game_flow/mod.rs) | `GameFlowPlugin` | 管理应用状态、模拟时钟，以及跨功能调度集合的依赖。 |
 | [first_person/](../src/first_person/mod.rs) | `FirstPersonPlugin` | 注册玩家动作与控制者路由，管理捕获、朝向、镜头和自身视觉显示。 |
 | [character/](../src/character/mod.rs) | `CharacterPlugin` | 定义角色身份、身体、意图和运动状态，执行接地、移动与跳跃。 |
 | [item_interaction/](../src/item_interaction/mod.rs) | `ItemInteractionPlugin` | 定义物品身体，管理拾取、共享刚体持握、转向碰撞、释放和音效反馈。 |
@@ -31,9 +31,9 @@
 
 ## 菜单与会话生命周期
 
-`AppState` 区分 `MainMenu / InGame`；`PlayState` 是只在 `InGame` 存在的 `Running / Paused` 子状态。进入游戏先准备会话光照与加载相机，运行时才推进 [场景装配](#美术加载与-bsn-场景装配)。暂停保留实体、持有关系和装配进度，不退出会话。
+`AppState` 是应用运行状态的唯一来源，区分 `MainMenu / Running / Paused`。离开主菜单时准备会话光照与加载相机，仅在 `Running` 推进 [场景装配](#美术加载与-bsn-场景装配)。`Running / Paused` 切换保留实体、持有关系和装配进度。
 
-地图根、独立业务根、控制者、相机和灯光通过 `DespawnOnExit(AppState::InGame)` 清理，NPC、碰撞和视觉子树沿 `ChildOf` 清理。`ArtAssets` 强句柄与 `ArtLoadState` 跨会话保留；再次开始复用资源，创建新地图实例。
+地图根、独立业务根、控制者、相机和灯光通过 `DespawnOnEnter(AppState::MainMenu)` 在返回主菜单时清理，NPC、碰撞和视觉子树沿 `ChildOf` 清理。`ArtAssets` 强句柄与 `ArtLoadState` 跨会话保留；再次开始复用资源，创建新地图实例。
 
 `MenuState` 管理页面、分类、返回来源与提示；`MenuFocus` 保存可操作按钮序号，`MenuInputSource` 区分鼠标与导航来源。设置和帮助切换页面，不改变其主菜单或暂停来源。`SettingsDraft` 与已应用的 `GameSettings` 分离；切换分类保留草稿，成功保存后才替换已应用值。预览与返回规则见 [设置](usage.md#设置)。
 
@@ -43,7 +43,7 @@
 
 音量滑条通过主键 `PointerPress` 命中开始捕获，并局部读取底层左键与物理光标位置，表达菜单动作无法提供的绝对轨道坐标。滑条不走普通按钮请求路径；同帧完整点击仍采样最终位置并结束捕获，释放、失焦、光标离窗或页面销毁时也结束捕获。原生 `Pressed` 移除时清理项目 `PrimaryPress`；`PickingSystems::Last` 后还按指针身份补清取消状态，窗口失焦或鼠标离窗也清理鼠标按压，避免后续副键继承残留样式。
 
-`CharacterPlugin` 在 `OnEnter(AppState::MainMenu)` 和 `OnEnter(PlayState::Paused)` 清空 `CharacterIntent`。暂停时，第一人称功能响应同一状态停用 `GameplayContext` 并释放鼠标，应用流程冻结 `Time<Virtual>` 与 `Time<Physics>`，UI 切换到暂停页；各功能只处理自己拥有的状态。物理增量立即归零，避免复用前一步增量。玩法、显示同步、动画状态和落水恢复受 `gameplay_running` 门控；输入捕获检查仍执行。菜单继续响应，恢复后重新启用时间，捕获恢复当帧跳过自由光标位移。主菜单只运行虚拟时间以播放展示动画，物理时间暂停。无应用状态的最小测试中，`gameplay_running` 允许独立玩法系统执行。
+`CharacterPlugin` 在 `OnEnter(AppState::MainMenu)` 和 `OnEnter(AppState::Paused)` 清空 `CharacterIntent`。暂停时，第一人称功能响应同一状态停用 `GameplayContext` 并释放鼠标，应用流程冻结 `Time<Virtual>` 与 `Time<Physics>`，UI 切换到暂停页；各功能只处理自己拥有的状态。物理增量立即归零，避免复用前一步增量。玩法、显示同步、动画状态和落水恢复受 `gameplay_running` 门控；输入捕获检查仍执行。菜单继续响应，恢复后重新启用时间，捕获恢复当帧跳过自由光标位移。主菜单只运行虚拟时间以播放展示动画，物理时间暂停。无应用状态的最小测试中，`gameplay_running` 允许独立玩法系统执行。
 
 `Continue`、`Multiplayer` 和未实现设置项只声明灰色 `Coming Soon` 展示节点，不包含 `Button`、`MenuButton` 或业务动作，因而不会进入鼠标行为或键盘焦点列表。菜单行为与占位说明见 [使用说明](usage.md#菜单与占位功能)。
 
@@ -160,7 +160,7 @@ NPC 身体碰撞属于 `World` 层，阻挡人物、自由箱与持箱代理，�
 | 插件构建 | `SessionLogPlugin` 先安装日志并记录会话开始；场景插件初始化 `ArtAssets`，由 `FromWorld` 发起五份 GLB 加载并分别记录请求，再初始化独立的 `ArtLoadState`。 |
 | `Startup` | 创建菜单输入控制者；玩法、设置与检查器插件分别注册自身初始化日志，启动日志不依赖已生成玩法实体。 |
 | `PreUpdate` | 更新鼠标捕获和菜单上下文，Enhanced Input 评估动作并通过 Observer 更新意图与观察角度；动作应用后消费菜单请求。 |
-| `StateTransition` | 紧随 `PreUpdate`；主菜单入口生成展示舞台，游戏入口准备海岛会话的光照和加载相机，暂停入口清意图并冻结时间，退出状态清理对应实体。 |
+| `StateTransition` | 紧随 `PreUpdate`；主菜单入口清理海岛会话并生成展示舞台，离开主菜单准备会话光照和加载相机，暂停入口清意图并冻结时间；恢复仅启用时钟与捕获，不重建会话。 |
 | `FixedFirst` | 落水与释放各自恢复临时暂停的插值通道，均在 `TransformEasingSystems::Reset` 后、`UpdateStart` 前，彼此无全序。 |
 | `FixedUpdate` | `FixedGameplaySystems` 依次连接 `Recover → Facing → Motion → Interaction → Target → Attachment`：落水恢复、转向检查、接地／移动／跳跃、交互、持物目标与呈现、挂接维护。物品插件的 Attachment 内部链执行失效箱释放 → 孤儿代理清理 → 质量恢复 → 挂接 → 安全对齐 → 真实姿态同步；结构依赖处应用命令。重力同步只约束在 Motion 前。 |
 | `FixedPostUpdate` | 物理 First 阶段检测外部修改的休眠身体，并在 Avian `Prepare` 前应用 `WakeBody`；随后求解速度、位姿与碰撞。`Writeback` 后持物真实同步与“接地 → 速度日志”是独立分支；落地反馈只依赖 `StepSimulation`，不与日志或回写建立额外全序。 |
