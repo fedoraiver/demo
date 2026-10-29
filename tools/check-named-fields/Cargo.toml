@@ -1,0 +1,10 @@
+[package]
+name = "check-named-fields"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.97.1"
+publish = false
+
+[dependencies]
+proc-macro2 = { version = "=1.0.107", default-features = false, features = ["span-locations"] }
+syn = { version = "=3.0.6", default-features = false, features = ["full", "parsing", "visit"] }
