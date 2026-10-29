@@ -401,22 +401,16 @@ flowchart LR
   end
   style layout_card_n59 fill:none,stroke:none
   subgraph layout_card_n60[" "]
-  n60@{ shape: cyl, label: "**State#lt;AppState#gt; /**<br/>**NextState#lt;AppState#gt;**<br/>来自应用流程 ↗：保存应用主状态及待处理<br/>的会话切换。" }
+  n60@{ shape: cyl, label: "**State#lt;AppState#gt; /**<br/>**NextState#lt;AppState#gt;**<br/>来自应用流程 ↗：保存主菜单、运行和暂停<br/>状态及下一次转换。" }
   class n60 node_resource
   class n60 external_node
   end
   style layout_card_n60 fill:none,stroke:none
   subgraph layout_card_n61[" "]
-  n61@{ shape: cyl, label: "**State#lt;PlayState#gt; /**<br/>**NextState#lt;PlayState#gt;**<br/>来自应用流程 ↗：保存游戏运行、暂停及待<br/>处理的切换请求。" }
-  class n61 node_resource
-  class n61 external_node
+  n61@{ shape: fr-rect, label: "**BoundsRecoveryPlugin**<br/>管理落水恢复与恢复期间的插值状态。" }
+  class n61 node_plugin
   end
   style layout_card_n61 fill:none,stroke:none
-  subgraph layout_card_n62[" "]
-  n62@{ shape: fr-rect, label: "**BoundsRecoveryPlugin**<br/>管理落水恢复与恢复期间的插值状态。" }
-  class n62 node_plugin
-  end
-  style layout_card_n62 fill:none,stroke:none
   n0 e0@-->|"恢复后按视角转向"| n1
   class e0 edge_order
   n2 e1@-->|"查询访问"| n0
@@ -571,10 +565,8 @@ flowchart LR
   class e75 edge_write
   n60 e76@-->|"访问声明"| n0
   class e76 edge_read
-  n61 e77@-->|"访问声明"| n0
-  class e77 edge_read
-  n62 e78@--> n0
-  class e78 edge_registration
+  n61 e77@--> n0
+  class e77 edge_registration
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
@@ -653,4 +645,3 @@ flowchart LR
   e75@{ curve: basis }
   e76@{ curve: basis }
   e77@{ curve: basis }
-  e78@{ curve: basis }

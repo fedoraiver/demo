@@ -80,14 +80,11 @@ flowchart LR
   n13@{ shape: cyl, label: "**PrototypeConfig**<br/>来自设置与参数 ↗：保存运动、重力、拾取<br/>与握持的共享参数。" }
   class n13 node_resource
   class n13 external_node
-  n14@{ shape: cyl, label: "**State#lt;AppState#gt; /**<br/>**NextState#lt;AppState#gt;**<br/>来自应用流程 ↗：保存应用主状态及待处理<br/>的会话切换。" }
+  n14@{ shape: cyl, label: "**State#lt;AppState#gt; /**<br/>**NextState#lt;AppState#gt;**<br/>来自应用流程 ↗：保存主菜单、运行和暂停<br/>状态及下一次转换。" }
   class n14 node_resource
   class n14 external_node
-  n15@{ shape: cyl, label: "**State#lt;PlayState#gt; /**<br/>**NextState#lt;PlayState#gt;**<br/>来自应用流程 ↗：保存游戏运行、暂停及待<br/>处理的切换请求。" }
-  class n15 node_resource
-  class n15 external_node
-  n16@{ shape: fr-rect, label: "**ItemInteractionPlugin**<br/>管理物品拾取、共享持握、安全释放与反馈。" }
-  class n16 node_plugin
+  n15@{ shape: fr-rect, label: "**ItemInteractionPlugin**<br/>管理物品拾取、共享持握、安全释放与反馈。" }
+  class n15 node_plugin
   n1 e0@--> n0
   class e0 edge_order
   n0 e1@-->|"Target"| n2
@@ -116,10 +113,8 @@ flowchart LR
   class e12 edge_read
   n14 e13@-->|"访问声明"| n0
   class e13 edge_read
-  n15 e14@-->|"访问声明"| n0
-  class e14 edge_read
-  n16 e15@--> n0
-  class e15 edge_registration
+  n15 e14@--> n0
+  class e14 edge_registration
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
@@ -128,11 +123,9 @@ flowchart LR
   e5@{ curve: basis }
   e6@{ curve: basis }
   e7@{ curve: basis }
-  e8@{ curve: basis }
   e9@{ curve: basis }
   e10@{ curve: basis }
   e11@{ curve: basis }
   e12@{ curve: basis }
   e13@{ curve: basis }
   e14@{ curve: basis }
-  e15@{ curve: basis }

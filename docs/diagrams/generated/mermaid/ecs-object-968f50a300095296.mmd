@@ -205,507 +205,487 @@ flowchart LR
   class n72 node_system
   n73@{ shape: rounded, label: "**apply_state_transition#lt;demo::game_**<br/>**flow::AppState#gt;**<br/>取出 NextState 中待提交的新状态及是否<br/>允许同值切换的设置；当前状态存在时交给内<br/>部状态转换逻辑更新状态、保留前态并发布转<br/>换消息。" }
   class n73 node_system
-  n74@{ shape: rounded, label: "**子状态转换闭包**<br/>监听父状态变化与待处理的子状态切换，计<br/>算 demo::game_flow::PlayState 是否仍<br/>应存在，应用转换并写入状态转换消息；闭包<br/>由 demo::game_flow::AppState 的<br/>StateSet 实现注册。" }
+  n74@{ shape: rounded, label: "**despawn_entities_on_exit_**<br/>**state#lt;demo::game_flow::AppState#gt;**<br/>读取最新状态转换消息，对<br/>DespawnOnExit 值匹配退出状态的实体排入<br/>销毁；包括禁用实体，未发生有效转换时不遍<br/>历。" }
   class n74 node_system
-  n75@{ shape: rounded, label: "**despawn_entities_on_exit_**<br/>**state#lt;demo::game_flow::AppState#gt;**<br/>读取最新状态转换消息，对<br/>DespawnOnExit 值匹配退出状态的实体排入<br/>销毁；包括禁用实体，未发生有效转换时不遍<br/>历。" }
+  n75@{ shape: rounded, label: "**disable_entities_on_exit_**<br/>**state#lt;demo::game_flow::AppState#gt;**<br/>有效状态转换退出指定值时，对匹配<br/>DisableOnExit 的实体及 Children 后代<br/>递归添加 Disabled，停用整条子树。" }
   class n75 node_system
-  n76@{ shape: rounded, label: "**disable_entities_on_exit_**<br/>**state#lt;demo::game_flow::AppState#gt;**<br/>有效状态转换退出指定值时，对匹配<br/>DisableOnExit 的实体及 Children 后代<br/>递归添加 Disabled，停用整条子树。" }
+  n76@{ shape: rounded, label: "**enable_entities_on_exit_state#lt;demo::**<br/>**game_flow::AppState#gt;**<br/>有效状态转换退出指定值时，对匹配<br/>EnableOnExit 且已禁用的实体及<br/>Children 后代递归移除 Disabled，重新启<br/>用该子树。" }
   class n76 node_system
-  n77@{ shape: rounded, label: "**enable_entities_on_exit_state#lt;demo::**<br/>**game_flow::AppState#gt;**<br/>有效状态转换退出指定值时，对匹配<br/>EnableOnExit 且已禁用的实体及<br/>Children 后代递归移除 Disabled，重新启<br/>用该子树。" }
+  n77@{ shape: rounded, label: "**despawn_entities_when_state#lt;demo::**<br/>**game_flow::AppState#gt;**<br/>读取最新有效状态转换，逐个调用<br/>DespawnWhen 保存的转换判定函数；判定命<br/>中时安全销毁实体，包括当前已禁用的实体。" }
   class n77 node_system
-  n78@{ shape: rounded, label: "**despawn_entities_on_exit_**<br/>**state#lt;demo::game_flow::PlayState#gt;**<br/>读取最新状态转换消息，对<br/>DespawnOnExit 值匹配退出状态的实体排入<br/>销毁；包括禁用实体，未发生有效转换时不遍<br/>历。" }
+  n78@{ shape: rounded, label: "**disable_entities_when_state#lt;demo::**<br/>**game_flow::AppState#gt;**<br/>读取最新有效状态转换，调用<br/>DisableWhen 的转换判定函数；命中时给实<br/>体及 Children 后代递归添加 Disabled。" }
   class n78 node_system
-  n79@{ shape: rounded, label: "**disable_entities_on_exit_**<br/>**state#lt;demo::game_flow::PlayState#gt;**<br/>有效状态转换退出指定值时，对匹配<br/>DisableOnExit 的实体及 Children 后代<br/>递归添加 Disabled，停用整条子树。" }
+  n79@{ shape: rounded, label: "**enable_entities_when_state#lt;demo::**<br/>**game_flow::AppState#gt;**<br/>读取最新有效状态转换，调用 EnableWhen<br/>的转换判定函数；命中时从当前禁用实体及<br/>Children 后代递归移除 Disabled。" }
   class n79 node_system
-  n80@{ shape: rounded, label: "**enable_entities_on_exit_state#lt;demo::**<br/>**game_flow::PlayState#gt;**<br/>有效状态转换退出指定值时，对匹配<br/>EnableOnExit 且已禁用的实体及<br/>Children 后代递归移除 Disabled，重新启<br/>用该子树。" }
+  n80@{ shape: rounded, label: "**despawn_entities_on_enter_**<br/>**state#lt;demo::game_flow::AppState#gt;**<br/>读取最新状态转换消息，对<br/>DespawnOnEnter 值匹配进入状态的实体排<br/>入销毁；包括禁用实体，未发生有效转换时跳<br/>过。" }
   class n80 node_system
-  n81@{ shape: rounded, label: "**despawn_entities_when_state#lt;demo::**<br/>**game_flow::AppState#gt;**<br/>读取最新有效状态转换，逐个调用<br/>DespawnWhen 保存的转换判定函数；判定命<br/>中时安全销毁实体，包括当前已禁用的实体。" }
+  n81@{ shape: rounded, label: "**disable_entities_on_enter_**<br/>**state#lt;demo::game_flow::AppState#gt;**<br/>有效状态转换进入指定值时，对匹配<br/>DisableOnEnter 的实体及 Children 后代<br/>递归添加 Disabled。" }
   class n81 node_system
-  n82@{ shape: rounded, label: "**disable_entities_when_state#lt;demo::**<br/>**game_flow::AppState#gt;**<br/>读取最新有效状态转换，调用<br/>DisableWhen 的转换判定函数；命中时给实<br/>体及 Children 后代递归添加 Disabled。" }
+  n82@{ shape: rounded, label: "**enable_entities_on_enter_**<br/>**state#lt;demo::game_flow::AppState#gt;**<br/>有效状态转换进入指定值时，对匹配<br/>EnableOnEnter 且已禁用的实体及<br/>Children 后代递归移除 Disabled。" }
   class n82 node_system
-  n83@{ shape: rounded, label: "**enable_entities_when_state#lt;demo::**<br/>**game_flow::AppState#gt;**<br/>读取最新有效状态转换，调用 EnableWhen<br/>的转换判定函数；命中时从当前禁用实体及<br/>Children 后代递归移除 Disabled。" }
+  n83@{ shape: rounded, label: "**trigger_screenshots**<br/>接收截图后台通道中已完成的图像，为对应请<br/>求实体添加 Captured，并触发携带图像的<br/>ScreenshotCaptured 事件。" }
   class n83 node_system
-  n84@{ shape: rounded, label: "**despawn_entities_when_state#lt;demo::**<br/>**game_flow::PlayState#gt;**<br/>读取最新有效状态转换，逐个调用<br/>DespawnWhen 保存的转换判定函数；判定命<br/>中时安全销毁实体，包括当前已禁用的实体。" }
+  n84@{ shape: rounded, label: "**automatically_add_parallax_**<br/>**correction_components**<br/>为同时带 EnvironmentMapLight 和<br/>LightProbe、但尚无<br/>ParallaxCorrection 的反射探针补入默认<br/>视差校正组件。" }
   class n84 node_system
-  n85@{ shape: rounded, label: "**disable_entities_when_state#lt;demo::**<br/>**game_flow::PlayState#gt;**<br/>读取最新有效状态转换，调用<br/>DisableWhen 的转换判定函数；命中时给实<br/>体及 Children 后代递归添加 Disabled。" }
+  n85@{ shape: rounded, label: "**sync_dialog_z**<br/>按对话框栈顺序设置全局层级。" }
   class n85 node_system
-  n86@{ shape: rounded, label: "**enable_entities_when_state#lt;demo::**<br/>**game_flow::PlayState#gt;**<br/>读取最新有效状态转换，调用 EnableWhen<br/>的转换判定函数；命中时从当前禁用实体及<br/>Children 后代递归移除 Disabled。" }
+  n86@{ shape: rounded, label: "**init_collider_constructors**<br/>来自Avian ↗：把就绪的碰撞构造配置变成<br/>实际形状。" }
   class n86 node_system
-  n87@{ shape: rounded, label: "**despawn_entities_on_enter_**<br/>**state#lt;demo::game_flow::AppState#gt;**<br/>读取最新状态转换消息，对<br/>DespawnOnEnter 值匹配进入状态的实体排<br/>入销毁；包括禁用实体，未发生有效转换时跳<br/>过。" }
+  class n86 external_node
+  n87@{ shape: rounded, label: "**init_collider_constructor_**<br/>**hierarchies**<br/>来自Avian ↗：按<br/>ColliderConstructorHierarchy 的默认<br/>及逐名称配置为后代生成碰撞体，写入碰撞层<br/>和密度；需要场景实例时等待就绪，需要网格<br/>时等待资产可用。完成该层级处理后移除构造<br/>配置并发出<br/>ColliderConstructorHierarchyReady。" }
   class n87 node_system
-  n88@{ shape: rounded, label: "**disable_entities_on_enter_**<br/>**state#lt;demo::game_flow::AppState#gt;**<br/>有效状态转换进入指定值时，对匹配<br/>DisableOnEnter 的实体及 Children 后代<br/>递归添加 Disabled。" }
+  class n87 external_node
+  n88@{ shape: rounded, label: "**generate_environment_map_light**<br/>为环境光生成分配漫反射和镜面目标图像。" }
   class n88 node_system
-  n89@{ shape: rounded, label: "**enable_entities_on_enter_**<br/>**state#lt;demo::game_flow::AppState#gt;**<br/>有效状态转换进入指定值时，对匹配<br/>EnableOnEnter 且已禁用的实体及<br/>Children 后代递归移除 Disabled。" }
+  n89@{ shape: rounded, label: "**extract_uinode_changes**<br/>使变化或移除的 UI 数据失效并清理旧渲染<br/>实体。" }
   class n89 node_system
-  n90@{ shape: rounded, label: "**despawn_entities_on_enter_**<br/>**state#lt;demo::game_flow::PlayState#gt;**<br/>读取最新状态转换消息，对<br/>DespawnOnEnter 值匹配进入状态的实体排<br/>入销毁；包括禁用实体，未发生有效转换时跳<br/>过。" }
+  n90@{ shape: rounded, label: "**extract_ui_camera_view**<br/>为活动二维或三维相机维护独立 UI 视图。" }
   class n90 node_system
-  n91@{ shape: rounded, label: "**disable_entities_on_enter_**<br/>**state#lt;demo::game_flow::PlayState#gt;**<br/>有效状态转换进入指定值时，对匹配<br/>DisableOnEnter 的实体及 Children 后代<br/>递归添加 Disabled。" }
+  n91@{ shape: rounded, label: "**extract_shadows**<br/>从主世界提取变化后的可见 UI 阴影，解析<br/>尺寸、变换、裁剪和目标相机，替换对应的渲<br/>染阴影实体；不可见、空阴影及已移除的数据<br/>不进入绘制。" }
   class n91 node_system
-  n92@{ shape: rounded, label: "**enable_entities_on_enter_**<br/>**state#lt;demo::game_flow::PlayState#gt;**<br/>有效状态转换进入指定值时，对匹配<br/>EnableOnEnter 且已禁用的实体及<br/>Children 后代递归移除 Disabled。" }
+  n92@{ shape: rounded, label: "**extract_uinode_background_colors**<br/>提取 UI 节点背景与外侧填充色。" }
   class n92 node_system
-  n93@{ shape: rounded, label: "**trigger_screenshots**<br/>接收截图后台通道中已完成的图像，为对应请<br/>求实体添加 Captured，并触发携带图像的<br/>ScreenshotCaptured 事件。" }
+  n93@{ shape: rounded, label: "**extract_viewport_nodes**<br/>把视口节点所引用相机的输出图像嵌入 UI。" }
   class n93 node_system
-  n94@{ shape: rounded, label: "**automatically_add_parallax_**<br/>**correction_components**<br/>为同时带 EnvironmentMapLight 和<br/>LightProbe、但尚无<br/>ParallaxCorrection 的反射探针补入默认<br/>视差校正组件。" }
+  n94@{ shape: rounded, label: "**extract_uinode_images**<br/>按节点视觉盒与图集区域提取普通 UI 图<br/>像。" }
   class n94 node_system
-  n95@{ shape: rounded, label: "**sync_dialog_z**<br/>按对话框栈顺序设置全局层级。" }
+  n95@{ shape: rounded, label: "**extract_ui_texture_slices**<br/>增量提取九宫格或平铺 UI 图像切片。" }
   class n95 node_system
-  n96@{ shape: rounded, label: "**init_collider_constructors**<br/>来自Avian ↗：把就绪的碰撞构造配置变成<br/>实际形状。" }
+  n96@{ shape: rounded, label: "**extract_uinode_borders**<br/>提取 UI 各边颜色边框与外轮廓。" }
   class n96 node_system
-  class n96 external_node
-  n97@{ shape: rounded, label: "**init_collider_constructor_**<br/>**hierarchies**<br/>来自Avian ↗：按<br/>ColliderConstructorHierarchy 的默认<br/>及逐名称配置为后代生成碰撞体，写入碰撞层<br/>和密度；需要场景实例时等待就绪，需要网格<br/>时等待资产可用。完成该层级处理后移除构造<br/>配置并发出<br/>ColliderConstructorHierarchyReady。" }
+  n97@{ shape: rounded, label: "**extract_text_decorations**<br/>提取 UI 文字背景、删除线和下划线。" }
   class n97 node_system
-  class n97 external_node
-  n98@{ shape: rounded, label: "**generate_environment_map_light**<br/>为环境光生成分配漫反射和镜面目标图像。" }
+  n98@{ shape: rounded, label: "**extract_text_shadows**<br/>提取 UI 文字及装饰线的偏移阴影。" }
   class n98 node_system
-  n99@{ shape: rounded, label: "**extract_uinode_changes**<br/>使变化或移除的 UI 数据失效并清理旧渲染<br/>实体。" }
+  n99@{ shape: rounded, label: "**extract_text_sections**<br/>按图集提取 UI 字形并处理选中文字颜色。" }
   class n99 node_system
-  n100@{ shape: rounded, label: "**extract_ui_camera_view**<br/>为活动二维或三维相机维护独立 UI 视图。" }
+  n100@{ shape: rounded, label: "**extract_text_cursor**<br/>提取文字光标和带圆角的选区背景。" }
   class n100 node_system
-  n101@{ shape: rounded, label: "**extract_shadows**<br/>从主世界提取变化后的可见 UI 阴影，解析<br/>尺寸、变换、裁剪和目标相机，替换对应的渲<br/>染阴影实体；不可见、空阴影及已移除的数据<br/>不进入绘制。" }
+  n101@{ shape: rounded, label: "**extract_preedit_underlines**<br/>把输入法预编辑下划线提取为 UI 矩形。" }
   class n101 node_system
-  n102@{ shape: rounded, label: "**extract_uinode_background_colors**<br/>提取 UI 节点背景与外侧填充色。" }
+  n102@{ shape: rounded, label: "**extract_debug_overlay**<br/>为变化的 UI 节点提取调试轮廓。" }
   class n102 node_system
-  n103@{ shape: rounded, label: "**extract_viewport_nodes**<br/>把视口节点所引用相机的输出图像嵌入 UI。" }
+  n103@{ shape: rounded, label: "**extract_inline_images**<br/>把文字行内图像提取为 UI 绘制项。" }
   class n103 node_system
-  n104@{ shape: rounded, label: "**extract_uinode_images**<br/>按节点视觉盒与图集区域提取普通 UI 图<br/>像。" }
+  n104@{ shape: rounded, label: "**extract_gradients**<br/>提取变化后的 UI 背景与边框渐变，解析颜<br/>色停靠点、节点几何、裁剪和目标相机，并替<br/>换渲染世界中的对应渐变项；无效或不可见项<br/>被清理。" }
   class n104 node_system
-  n105@{ shape: rounded, label: "**extract_ui_texture_slices**<br/>增量提取九宫格或平铺 UI 图像切片。" }
+  n105@{ shape: rounded, label: "**extract_windows**<br/>将主世界窗口尺寸、显示模式、原生句柄和主<br/>窗口身份同步到渲染世界，标记尺寸及模式变<br/>化，并处理关闭窗口或移除句柄造成的失效状<br/>态。" }
   class n105 node_system
-  n106@{ shape: rounded, label: "**extract_uinode_borders**<br/>提取 UI 各边颜色边框与外轮廓。" }
+  n106@{ shape: rounded, label: "**extract_resource#lt;bevy_camera::clear_**<br/>**color::ClearColor, bevy_render::**<br/>**RenderApp, ()#gt;**<br/>读取主世界中的可选源资源，经<br/>ExtractResource 转换后更新子世界目标资<br/>源；源值变化时替换现有目标，目标不存在时<br/>通过 Commands 插入。" }
   class n106 node_system
-  n107@{ shape: rounded, label: "**extract_text_decorations**<br/>提取 UI 文字背景、删除线和下划线。" }
+  n107@{ shape: rounded, label: "**extract_components#lt;bevy_camera::**<br/>**camera::CameraMainTextureUsages,**<br/>**bevy_render::RenderApp, ()#gt;**<br/>对已同步到子世界的实体读取<br/>ExtractComponent 指定的查询数据，批量<br/>写入转换后的目标组件；转换返回 None 时<br/>移除对应目标组件。" }
   class n107 node_system
-  n108@{ shape: rounded, label: "**extract_text_shadows**<br/>提取 UI 文字及装饰线的偏移阴影。" }
+  n108@{ shape: rounded, label: "**extract_cameras**<br/>把主世界活动相机的目标、视口、变换、可见<br/>实体和渲染设置提取到渲染实体，并维护视图<br/>所需格式；对停用或目标尺寸无效的相机移除<br/>失效提取状态。" }
   class n108 node_system
-  n109@{ shape: rounded, label: "**extract_text_sections**<br/>按图集提取 UI 字形并处理选中文字颜色。" }
+  n109@{ shape: rounded, label: "**extract_components#lt;bevy_render::**<br/>**view::Msaa, bevy_render::RenderApp,**<br/>**()#gt;**<br/>对已同步到子世界的实体读取<br/>ExtractComponent 指定的查询数据，批量<br/>写入转换后的目标组件；转换返回 None 时<br/>移除对应目标组件。" }
   class n109 node_system
-  n110@{ shape: rounded, label: "**extract_text_cursor**<br/>提取文字光标和带圆角的选区背景。" }
+  n110@{ shape: rounded, label: "**extract_components#lt;bevy_render::**<br/>**occlusion_culling::**<br/>**OcclusionCulling, bevy_render::**<br/>**RenderApp, ()#gt;**<br/>对已同步到子世界的实体读取<br/>ExtractComponent 指定的查询数据，批量<br/>写入转换后的目标组件；转换返回 None 时<br/>移除对应目标组件。" }
   class n110 node_system
-  n111@{ shape: rounded, label: "**extract_preedit_underlines**<br/>把输入法预编辑下划线提取为 UI 矩形。" }
+  n111@{ shape: rounded, label: "**extract_frame_count**<br/>将主世界帧计数同步到渲染世界。" }
   class n111 node_system
-  n112@{ shape: rounded, label: "**extract_debug_overlay**<br/>为变化的 UI 节点提取调试轮廓。" }
+  n112@{ shape: rounded, label: "**extract_time**<br/>将主世界当前 Time 值复制并插入渲染世<br/>界，供渲染侧全局时间参数使用。" }
   class n112 node_system
-  n113@{ shape: rounded, label: "**extract_inline_images**<br/>把文字行内图像提取为 UI 绘制项。" }
+  n113@{ shape: rounded, label: "**extract_resource#lt;bevy_render::**<br/>**texture::manual_texture_view::**<br/>**ManualTextureViews, bevy_render::**<br/>**RenderApp, ()#gt;**<br/>读取主世界中的可选源资源，经<br/>ExtractResource 转换后更新子世界目标资<br/>源；源值变化时替换现有目标，目标不存在时<br/>通过 Commands 插入。" }
   class n113 node_system
-  n114@{ shape: rounded, label: "**extract_gradients**<br/>提取变化后的 UI 背景与边框渐变，解析颜<br/>色停靠点、节点几何、裁剪和目标相机，并替<br/>换渲染世界中的对应渐变项；无效或不可见项<br/>被清理。" }
+  n114@{ shape: rounded, label: "**extract_components#lt;bevy_render::gpu_**<br/>**readback::Readback, bevy_render::**<br/>**RenderApp, ()#gt;**<br/>对已同步到子世界的实体读取<br/>ExtractComponent 指定的查询数据，批量<br/>写入转换后的目标组件；转换返回 None 时<br/>移除对应目标组件。" }
   class n114 node_system
-  n115@{ shape: rounded, label: "**extract_windows**<br/>将主世界窗口尺寸、显示模式、原生句柄和主<br/>窗口身份同步到渲染世界，标记尺寸及模式变<br/>化，并处理关闭窗口或移除句柄造成的失效状<br/>态。" }
+  n115@{ shape: rounded, label: "**extract_components#lt;bevy_camera::**<br/>**components::Camera2d, bevy_render::**<br/>**RenderApp, ()#gt;**<br/>对已同步到子世界的实体读取<br/>ExtractComponent 指定的查询数据，批量<br/>写入转换后的目标组件；转换返回 None 时<br/>移除对应目标组件。" }
   class n115 node_system
-  n116@{ shape: rounded, label: "**extract_resource#lt;bevy_camera::clear_**<br/>**color::ClearColor, bevy_render::**<br/>**RenderApp, ()#gt;**<br/>读取主世界中的可选源资源，经<br/>ExtractResource 转换后更新子世界目标资<br/>源；源值变化时替换现有目标，目标不存在时<br/>通过 Commands 插入。" }
+  n116@{ shape: rounded, label: "**extract_skybox**<br/>将主世界 Skybox 及相机曝光转换为天空盒<br/>亮度和逆旋转 Uniform，连同天空盒组件批<br/>量写入对应渲染实体。" }
   class n116 node_system
-  n117@{ shape: rounded, label: "**extract_components#lt;bevy_camera::**<br/>**camera::CameraMainTextureUsages,**<br/>**bevy_render::RenderApp, ()#gt;**<br/>对已同步到子世界的实体读取<br/>ExtractComponent 指定的查询数据，批量<br/>写入转换后的目标组件；转换返回 None 时<br/>移除对应目标组件。" }
+  n117@{ shape: rounded, label: "**extract_components#lt;bevy_camera::**<br/>**components::Camera3d, bevy_render::**<br/>**RenderApp, ()#gt;**<br/>对已同步到子世界的实体读取<br/>ExtractComponent 指定的查询数据，批量<br/>写入转换后的目标组件；转换返回 None 时<br/>移除对应目标组件。" }
   class n117 node_system
-  n118@{ shape: rounded, label: "**extract_cameras**<br/>把主世界活动相机的目标、视口、变换、可见<br/>实体和渲染设置提取到渲染实体，并维护视图<br/>所需格式；对停用或目标尺寸无效的相机移除<br/>失效提取状态。" }
+  n118@{ shape: rounded, label: "**extract_camera_prepass_phase**<br/>同步三维相机的预通道标记与渲染阶段。" }
   class n118 node_system
-  n119@{ shape: rounded, label: "**extract_components#lt;bevy_render::**<br/>**view::Msaa, bevy_render::RenderApp,**<br/>**()#gt;**<br/>对已同步到子世界的实体读取<br/>ExtractComponent 指定的查询数据，批量<br/>写入转换后的目标组件；转换返回 None 时<br/>移除对应目标组件。" }
+  n119@{ shape: rounded, label: "**extract_resource#lt;bevy_core_**<br/>**pipeline::tonemapping::**<br/>**TonemappingLuts, bevy_render::**<br/>**RenderApp, ()#gt;**<br/>读取主世界中的可选源资源，经<br/>ExtractResource 转换后更新子世界目标资<br/>源；源值变化时替换现有目标，目标不存在时<br/>通过 Commands 插入。" }
   class n119 node_system
-  n120@{ shape: rounded, label: "**extract_components#lt;bevy_render::**<br/>**occlusion_culling::**<br/>**OcclusionCulling, bevy_render::**<br/>**RenderApp, ()#gt;**<br/>对已同步到子世界的实体读取<br/>ExtractComponent 指定的查询数据，批量<br/>写入转换后的目标组件；转换返回 None 时<br/>移除对应目标组件。" }
+  n120@{ shape: rounded, label: "**extract_components#lt;bevy_render::**<br/>**view::Tonemapping, bevy_render::**<br/>**RenderApp, ()#gt;**<br/>对已同步到子世界的实体读取<br/>ExtractComponent 指定的查询数据，批量<br/>写入转换后的目标组件；转换返回 None 时<br/>移除对应目标组件。" }
   class n120 node_system
-  n121@{ shape: rounded, label: "**extract_frame_count**<br/>将主世界帧计数同步到渲染世界。" }
+  n121@{ shape: rounded, label: "**extract_components#lt;bevy_render::**<br/>**view::DebandDither, bevy_render::**<br/>**RenderApp, ()#gt;**<br/>对已同步到子世界的实体读取<br/>ExtractComponent 指定的查询数据，批量<br/>写入转换后的目标组件；转换返回 None 时<br/>移除对应目标组件。" }
   class n121 node_system
-  n122@{ shape: rounded, label: "**extract_time**<br/>将主世界当前 Time 值复制并插入渲染世<br/>界，供渲染侧全局时间参数使用。" }
+  n122@{ shape: rounded, label: "**extract_components#lt;bevy_core_**<br/>**pipeline::oit::**<br/>**OrderIndependentTransparencySettings**<br/>**, bevy_render::RenderApp, ()#gt;**<br/>对已同步到子世界的实体读取<br/>ExtractComponent 指定的查询数据，批量<br/>写入转换后的目标组件；转换返回 None 时<br/>移除对应目标组件。" }
   class n122 node_system
-  n123@{ shape: rounded, label: "**extract_resource#lt;bevy_render::**<br/>**texture::manual_texture_view::**<br/>**ManualTextureViews, bevy_render::**<br/>**RenderApp, ()#gt;**<br/>读取主世界中的可选源资源，经<br/>ExtractResource 转换后更新子世界目标资<br/>源；源值变化时替换现有目标，目标不存在时<br/>通过 Commands 插入。" }
+  n123@{ shape: rounded, label: "**extract_components#lt;bevy_core_**<br/>**pipeline::prepass::background_**<br/>**motion_vectors::**<br/>**NoBackgroundMotionVectors, bevy_**<br/>**render::RenderApp, ()#gt;**<br/>对已同步到子世界的实体读取<br/>ExtractComponent 指定的查询数据，批量<br/>写入转换后的目标组件；转换返回 None 时<br/>移除对应目标组件。" }
   class n123 node_system
-  n124@{ shape: rounded, label: "**extract_components#lt;bevy_render::gpu_**<br/>**readback::Readback, bevy_render::**<br/>**RenderApp, ()#gt;**<br/>对已同步到子世界的实体读取<br/>ExtractComponent 指定的查询数据，批量<br/>写入转换后的目标组件；转换返回 None 时<br/>移除对应目标组件。" }
+  n124@{ shape: rounded, label: "**extract_components#lt;bevy_post_**<br/>**process::bloom::settings::Bloom,**<br/>**bevy_render::RenderApp, ()#gt;**<br/>对已同步到子世界的实体读取<br/>ExtractComponent 指定的查询数据，批量<br/>写入转换后的目标组件；转换返回 None 时<br/>移除对应目标组件。" }
   class n124 node_system
-  n125@{ shape: rounded, label: "**extract_components#lt;bevy_camera::**<br/>**components::Camera2d, bevy_render::**<br/>**RenderApp, ()#gt;**<br/>对已同步到子世界的实体读取<br/>ExtractComponent 指定的查询数据，批量<br/>写入转换后的目标组件；转换返回 None 时<br/>移除对应目标组件。" }
+  n125@{ shape: rounded, label: "**extract_components#lt;bevy_post_**<br/>**process::motion_blur::MotionBlur,**<br/>**bevy_render::RenderApp, ()#gt;**<br/>对已同步到子世界的实体读取<br/>ExtractComponent 指定的查询数据，批量<br/>写入转换后的目标组件；转换返回 None 时<br/>移除对应目标组件。" }
   class n125 node_system
-  n126@{ shape: rounded, label: "**extract_skybox**<br/>将主世界 Skybox 及相机曝光转换为天空盒<br/>亮度和逆旋转 Uniform，连同天空盒组件批<br/>量写入对应渲染实体。" }
+  n126@{ shape: rounded, label: "**extract_depth_of_field_settings**<br/>把透视相机景深设置转换为 GPU 参数。" }
   class n126 node_system
-  n127@{ shape: rounded, label: "**extract_components#lt;bevy_camera::**<br/>**components::Camera3d, bevy_render::**<br/>**RenderApp, ()#gt;**<br/>对已同步到子世界的实体读取<br/>ExtractComponent 指定的查询数据，批量<br/>写入转换后的目标组件；转换返回 None 时<br/>移除对应目标组件。" }
+  n127@{ shape: rounded, label: "**extract_components#lt;bevy_post_**<br/>**process::effect_stack::chromatic_**<br/>**aberration::ChromaticAberration,**<br/>**bevy_render::RenderApp, ()#gt;**<br/>对已同步到子世界的实体读取<br/>ExtractComponent 指定的查询数据，批量<br/>写入转换后的目标组件；转换返回 None 时<br/>移除对应目标组件。" }
   class n127 node_system
-  n128@{ shape: rounded, label: "**extract_camera_prepass_phase**<br/>同步三维相机的预通道标记与渲染阶段。" }
+  n128@{ shape: rounded, label: "**extract_components#lt;bevy_post_**<br/>**process::effect_stack::lens_**<br/>**distortion::LensDistortion, bevy_**<br/>**render::RenderApp, ()#gt;**<br/>对已同步到子世界的实体读取<br/>ExtractComponent 指定的查询数据，批量<br/>写入转换后的目标组件；转换返回 None 时<br/>移除对应目标组件。" }
   class n128 node_system
-  n129@{ shape: rounded, label: "**extract_resource#lt;bevy_core_**<br/>**pipeline::tonemapping::**<br/>**TonemappingLuts, bevy_render::**<br/>**RenderApp, ()#gt;**<br/>读取主世界中的可选源资源，经<br/>ExtractResource 转换后更新子世界目标资<br/>源；源值变化时替换现有目标，目标不存在时<br/>通过 Commands 插入。" }
+  n129@{ shape: rounded, label: "**extract_components#lt;bevy_post_**<br/>**process::effect_stack::vignette::**<br/>**Vignette, bevy_render::RenderApp,**<br/>**()#gt;**<br/>对已同步到子世界的实体读取<br/>ExtractComponent 指定的查询数据，批量<br/>写入转换后的目标组件；转换返回 None 时<br/>移除对应目标组件。" }
   class n129 node_system
-  n130@{ shape: rounded, label: "**extract_components#lt;bevy_render::**<br/>**view::Tonemapping, bevy_render::**<br/>**RenderApp, ()#gt;**<br/>对已同步到子世界的实体读取<br/>ExtractComponent 指定的查询数据，批量<br/>写入转换后的目标组件；转换返回 None 时<br/>移除对应目标组件。" }
+  n130@{ shape: rounded, label: "**extract_components#lt;bevy_anti_alias::**<br/>**fxaa::Fxaa, bevy_render::RenderApp,**<br/>**()#gt;**<br/>对已同步到子世界的实体读取<br/>ExtractComponent 指定的查询数据，批量<br/>写入转换后的目标组件；转换返回 None 时<br/>移除对应目标组件。" }
   class n130 node_system
-  n131@{ shape: rounded, label: "**extract_components#lt;bevy_render::**<br/>**view::DebandDither, bevy_render::**<br/>**RenderApp, ()#gt;**<br/>对已同步到子世界的实体读取<br/>ExtractComponent 指定的查询数据，批量<br/>写入转换后的目标组件；转换返回 None 时<br/>移除对应目标组件。" }
+  n131@{ shape: rounded, label: "**extract_components#lt;bevy_anti_alias::**<br/>**smaa::Smaa, bevy_render::RenderApp,**<br/>**()#gt;**<br/>对已同步到子世界的实体读取<br/>ExtractComponent 指定的查询数据，批量<br/>写入转换后的目标组件；转换返回 None 时<br/>移除对应目标组件。" }
   class n131 node_system
-  n132@{ shape: rounded, label: "**extract_components#lt;bevy_core_**<br/>**pipeline::oit::**<br/>**OrderIndependentTransparencySettings**<br/>**, bevy_render::RenderApp, ()#gt;**<br/>对已同步到子世界的实体读取<br/>ExtractComponent 指定的查询数据，批量<br/>写入转换后的目标组件；转换返回 None 时<br/>移除对应目标组件。" }
+  n132@{ shape: rounded, label: "**extract_taa_settings**<br/>提取有效相机的 TAA 设置并消费历史重置信<br/>号。" }
   class n132 node_system
-  n133@{ shape: rounded, label: "**extract_components#lt;bevy_core_**<br/>**pipeline::prepass::background_**<br/>**motion_vectors::**<br/>**NoBackgroundMotionVectors, bevy_**<br/>**render::RenderApp, ()#gt;**<br/>对已同步到子世界的实体读取<br/>ExtractComponent 指定的查询数据，批量<br/>写入转换后的目标组件；转换返回 None 时<br/>移除对应目标组件。" }
+  n133@{ shape: rounded, label: "**extract_components#lt;bevy_anti_alias::**<br/>**contrast_adaptive_sharpening::**<br/>**ContrastAdaptiveSharpening, bevy_**<br/>**render::RenderApp, ()#gt;**<br/>对已同步到子世界的实体读取<br/>ExtractComponent 指定的查询数据，批量<br/>写入转换后的目标组件；转换返回 None 时<br/>移除对应目标组件。" }
   class n133 node_system
-  n134@{ shape: rounded, label: "**extract_components#lt;bevy_post_**<br/>**process::bloom::settings::Bloom,**<br/>**bevy_render::RenderApp, ()#gt;**<br/>对已同步到子世界的实体读取<br/>ExtractComponent 指定的查询数据，批量<br/>写入转换后的目标组件；转换返回 None 时<br/>移除对应目标组件。" }
+  n134@{ shape: rounded, label: "**extract_text2d_sprite**<br/>把可见二维文字及装饰提取为精灵切片。" }
   class n134 node_system
-  n135@{ shape: rounded, label: "**extract_components#lt;bevy_post_**<br/>**process::motion_blur::MotionBlur,**<br/>**bevy_render::RenderApp, ()#gt;**<br/>对已同步到子世界的实体读取<br/>ExtractComponent 指定的查询数据，批量<br/>写入转换后的目标组件；转换返回 None 时<br/>移除对应目标组件。" }
+  n135@{ shape: rounded, label: "**extract_camera_previous_view_data**<br/>把活动三维相机的前帧视图数据提取到渲染<br/>侧。" }
   class n135 node_system
-  n136@{ shape: rounded, label: "**extract_depth_of_field_settings**<br/>把透视相机景深设置转换为 GPU 参数。" }
+  n136@{ shape: rounded, label: "**extract_components#lt;bevy_pbr::fog::**<br/>**DistanceFog, bevy_render::**<br/>**RenderApp, ()#gt;**<br/>对已同步到子世界的实体读取<br/>ExtractComponent 指定的查询数据，批量<br/>写入转换后的目标组件；转换返回 None 时<br/>移除对应目标组件。" }
   class n136 node_system
-  n137@{ shape: rounded, label: "**extract_components#lt;bevy_post_**<br/>**process::effect_stack::chromatic_**<br/>**aberration::ChromaticAberration,**<br/>**bevy_render::RenderApp, ()#gt;**<br/>对已同步到子世界的实体读取<br/>ExtractComponent 指定的查询数据，批量<br/>写入转换后的目标组件；转换返回 None 时<br/>移除对应目标组件。" }
+  n137@{ shape: rounded, label: "**extract_resource#lt;bevy_pbr::**<br/>**material::**<br/>**DefaultOpaqueRendererMethod, bevy_**<br/>**render::RenderApp, ()#gt;**<br/>读取主世界中的可选源资源，经<br/>ExtractResource 转换后更新子世界目标资<br/>源；源值变化时替换现有目标，目标不存在时<br/>通过 Commands 插入。" }
   class n137 node_system
-  n138@{ shape: rounded, label: "**extract_components#lt;bevy_post_**<br/>**process::effect_stack::lens_**<br/>**distortion::LensDistortion, bevy_**<br/>**render::RenderApp, ()#gt;**<br/>对已同步到子世界的实体读取<br/>ExtractComponent 指定的查询数据，批量<br/>写入转换后的目标组件；转换返回 None 时<br/>移除对应目标组件。" }
+  n138@{ shape: rounded, label: "**gather_light_probes#lt;bevy_light::**<br/>**probe::EnvironmentMapLight#gt;**<br/>按相机可见集合和距离分配已就绪光照探针。" }
   class n138 node_system
-  n139@{ shape: rounded, label: "**extract_components#lt;bevy_post_**<br/>**process::effect_stack::vignette::**<br/>**Vignette, bevy_render::RenderApp,**<br/>**()#gt;**<br/>对已同步到子世界的实体读取<br/>ExtractComponent 指定的查询数据，批量<br/>写入转换后的目标组件；转换返回 None 时<br/>移除对应目标组件。" }
+  n139@{ shape: rounded, label: "**gather_light_probes#lt;bevy_light::**<br/>**probe::IrradianceVolume#gt;**<br/>按相机可见集合和距离分配已就绪光照探针。" }
   class n139 node_system
-  n140@{ shape: rounded, label: "**extract_components#lt;bevy_anti_alias::**<br/>**fxaa::Fxaa, bevy_render::RenderApp,**<br/>**()#gt;**<br/>对已同步到子世界的实体读取<br/>ExtractComponent 指定的查询数据，批量<br/>写入转换后的目标组件；转换返回 None 时<br/>移除对应目标组件。" }
+  n140@{ shape: rounded, label: "**extract_volumetric_fog**<br/>从主世界提取体积雾、雾体积及体积光配置。" }
   class n140 node_system
-  n141@{ shape: rounded, label: "**extract_components#lt;bevy_anti_alias::**<br/>**smaa::Smaa, bevy_render::RenderApp,**<br/>**()#gt;**<br/>对已同步到子世界的实体读取<br/>ExtractComponent 指定的查询数据，批量<br/>写入转换后的目标组件；转换返回 None 时<br/>移除对应目标组件。" }
+  n141@{ shape: rounded, label: "**extract_components#lt;bevy_pbr::ssr::**<br/>**ScreenSpaceReflections, bevy_**<br/>**render::RenderApp, ()#gt;**<br/>对已同步到子世界的实体读取<br/>ExtractComponent 指定的查询数据，批量<br/>写入转换后的目标组件；转换返回 None 时<br/>移除对应目标组件。" }
   class n141 node_system
-  n142@{ shape: rounded, label: "**extract_taa_settings**<br/>提取有效相机的 TAA 设置并消费历史重置信<br/>号。" }
+  n142@{ shape: rounded, label: "**extract_components#lt;bevy_pbr::**<br/>**transmission::**<br/>**ScreenSpaceTransmission, bevy_**<br/>**render::RenderApp, ()#gt;**<br/>对已同步到子世界的实体读取<br/>ExtractComponent 指定的查询数据，批量<br/>写入转换后的目标组件；转换返回 None 时<br/>移除对应目标组件。" }
   class n142 node_system
-  n143@{ shape: rounded, label: "**extract_components#lt;bevy_anti_alias::**<br/>**contrast_adaptive_sharpening::**<br/>**ContrastAdaptiveSharpening, bevy_**<br/>**render::RenderApp, ()#gt;**<br/>对已同步到子世界的实体读取<br/>ExtractComponent 指定的查询数据，批量<br/>写入转换后的目标组件；转换返回 None 时<br/>移除对应目标组件。" }
+  n143@{ shape: rounded, label: "**extract_clustered_decal**<br/>批量复制主世界的聚簇贴花组件。" }
   class n143 node_system
-  n144@{ shape: rounded, label: "**extract_text2d_sprite**<br/>把可见二维文字及装饰提取为精灵切片。" }
+  n144@{ shape: rounded, label: "**extract_components#lt;bevy_pbr::**<br/>**contact_shadows::ContactShadows,**<br/>**bevy_render::RenderApp, ()#gt;**<br/>对已同步到子世界的实体读取<br/>ExtractComponent 指定的查询数据，批量<br/>写入转换后的目标组件；转换返回 None 时<br/>移除对应目标组件。" }
   class n144 node_system
-  n145@{ shape: rounded, label: "**extract_camera_previous_view_data**<br/>把活动三维相机的前帧视图数据提取到渲染<br/>侧。" }
+  n145@{ shape: rounded, label: "**extract_components#lt;bevy_pbr::**<br/>**atmosphere::environment::**<br/>**AtmosphereEnvironmentMap, bevy_**<br/>**render::RenderApp, ()#gt;**<br/>对已同步到子世界的实体读取<br/>ExtractComponent 指定的查询数据，批量<br/>写入转换后的目标组件；转换返回 None 时<br/>移除对应目标组件。" }
   class n145 node_system
-  n146@{ shape: rounded, label: "**extract_components#lt;bevy_pbr::fog::**<br/>**DistanceFog, bevy_render::**<br/>**RenderApp, ()#gt;**<br/>对已同步到子世界的实体读取<br/>ExtractComponent 指定的查询数据，批量<br/>写入转换后的目标组件；转换返回 None 时<br/>移除对应目标组件。" }
+  n146@{ shape: rounded, label: "**extract_atmosphere**<br/>为每个启用 AtmosphereSettings 的三维<br/>相机选择世界距离最近的大气实体，复制大气<br/>和 GPU 设置到渲染世界；设置移除或没有候<br/>选大气时清理旧状态。" }
   class n146 node_system
-  n147@{ shape: rounded, label: "**extract_resource#lt;bevy_pbr::**<br/>**material::**<br/>**DefaultOpaqueRendererMethod, bevy_**<br/>**render::RenderApp, ()#gt;**<br/>读取主世界中的可选源资源，经<br/>ExtractResource 转换后更新子世界目标资<br/>源；源值变化时替换现有目标，目标不存在时<br/>通过 Commands 插入。" }
+  n147@{ shape: rounded, label: "**extract_resource#lt;bevy_light::**<br/>**cluster::GlobalClusterSettings,**<br/>**bevy_render::RenderApp, bevy_pbr::**<br/>**cluster::gpu::GpuClusteringPlugin#gt;**<br/>读取主世界中的可选源资源，经<br/>ExtractResource 转换后更新子世界目标资<br/>源；源值变化时替换现有目标，目标不存在时<br/>通过 Commands 插入。" }
   class n147 node_system
-  n148@{ shape: rounded, label: "**gather_light_probes#lt;bevy_light::**<br/>**probe::EnvironmentMapLight#gt;**<br/>按相机可见集合和距离分配已就绪光照探针。" }
+  n148@{ shape: rounded, label: "**extract_components#lt;bevy_pbr::**<br/>**deferred::**<br/>**PbrDeferredLightingDepthId, bevy_**<br/>**render::RenderApp, ()#gt;**<br/>对已同步到子世界的实体读取<br/>ExtractComponent 指定的查询数据，批量<br/>写入转换后的目标组件；转换返回 None 时<br/>移除对应目标组件。" }
   class n148 node_system
-  n149@{ shape: rounded, label: "**gather_light_probes#lt;bevy_light::**<br/>**probe::IrradianceVolume#gt;**<br/>按相机可见集合和距离分配已就绪光照探针。" }
+  n149@{ shape: rounded, label: "**extract_clusters_for_cpu_clustering**<br/>把 CPU 聚簇结果转换为渲染侧对象列表。" }
   class n149 node_system
-  n150@{ shape: rounded, label: "**extract_volumetric_fog**<br/>从主世界提取体积雾、雾体积及体积光配置。" }
+  n150@{ shape: rounded, label: "**extract_clusters_for_gpu_clustering**<br/>提取视图聚簇配置并回传上帧 GPU 统计。" }
   class n150 node_system
-  n151@{ shape: rounded, label: "**extract_components#lt;bevy_pbr::ssr::**<br/>**ScreenSpaceReflections, bevy_**<br/>**render::RenderApp, ()#gt;**<br/>对已同步到子世界的实体读取<br/>ExtractComponent 指定的查询数据，批量<br/>写入转换后的目标组件；转换返回 None 时<br/>移除对应目标组件。" }
+  n151@{ shape: rounded, label: "**extract_lights**<br/>同步可见点光、聚光、平行光及矩形光的渲染<br/>参数和阴影可见实体，提取变化的阴影贴图设<br/>置；隐藏或失效光源不继续保留有效渲染状<br/>态。" }
   class n151 node_system
-  n152@{ shape: rounded, label: "**extract_components#lt;bevy_pbr::**<br/>**transmission::**<br/>**ScreenSpaceTransmission, bevy_**<br/>**render::RenderApp, ()#gt;**<br/>对已同步到子世界的实体读取<br/>ExtractComponent 指定的查询数据，批量<br/>写入转换后的目标组件；转换返回 None 时<br/>移除对应目标组件。" }
+  n152@{ shape: rounded, label: "**extract_ambient_light_resource**<br/>在源存在时同步全局环境光资源。" }
   class n152 node_system
-  n153@{ shape: rounded, label: "**extract_clustered_decal**<br/>批量复制主世界的聚簇贴花组件。" }
+  n153@{ shape: rounded, label: "**extract_ambient_light**<br/>批量复制主世界实体的环境光设置。" }
   class n153 node_system
-  n154@{ shape: rounded, label: "**extract_components#lt;bevy_pbr::**<br/>**contact_shadows::ContactShadows,**<br/>**bevy_render::RenderApp, ()#gt;**<br/>对已同步到子世界的实体读取<br/>ExtractComponent 指定的查询数据，批量<br/>写入转换后的目标组件；转换返回 None 时<br/>移除对应目标组件。" }
+  n154@{ shape: rounded, label: "**extract_shadow_filtering_method**<br/>批量同步实体的阴影过滤方式。" }
   class n154 node_system
-  n155@{ shape: rounded, label: "**extract_components#lt;bevy_pbr::**<br/>**atmosphere::environment::**<br/>**AtmosphereEnvironmentMap, bevy_**<br/>**render::RenderApp, ()#gt;**<br/>对已同步到子世界的实体读取<br/>ExtractComponent 指定的查询数据，批量<br/>写入转换后的目标组件；转换返回 None 时<br/>移除对应目标组件。" }
+  n155@{ shape: rounded, label: "**extract_resource#lt;bevy_gizmos_**<br/>**render::LineGizmoEntities, bevy_**<br/>**render::RenderApp, ()#gt;**<br/>读取主世界中的可选源资源，经<br/>ExtractResource 转换后更新子世界目标资<br/>源；源值变化时替换现有目标，目标不存在时<br/>通过 Commands 插入。" }
   class n155 node_system
-  n156@{ shape: rounded, label: "**extract_atmosphere**<br/>为每个启用 AtmosphereSettings 的三维<br/>相机选择世界距离最近的大气实体，复制大气<br/>和 GPU 设置到渲染世界；设置移除或没有候<br/>选大气时清理旧状态。" }
+  n156@{ shape: rounded, label: "**extract_resource#lt;bevy_egui::**<br/>**EguiUserTextures, bevy_render::**<br/>**RenderApp, ()#gt;**<br/>读取主世界中的可选源资源，经<br/>ExtractResource 转换后更新子世界目标资<br/>源；源值变化时替换现有目标，目标不存在时<br/>通过 Commands 插入。" }
   class n156 node_system
-  n157@{ shape: rounded, label: "**extract_resource#lt;bevy_light::**<br/>**cluster::GlobalClusterSettings,**<br/>**bevy_render::RenderApp, bevy_pbr::**<br/>**cluster::gpu::GpuClusteringPlugin#gt;**<br/>读取主世界中的可选源资源，经<br/>ExtractResource 转换后更新子世界目标资<br/>源；源值变化时替换现有目标，目标不存在时<br/>通过 Commands 插入。" }
+  n157@{ shape: rounded, label: "**extract_resource#lt;bevy_egui::render::**<br/>**systems::**<br/>**ExtractedEguiManagedTextures, bevy_**<br/>**render::RenderApp, ()#gt;**<br/>读取主世界中的可选源资源，经<br/>ExtractResource 转换后更新子世界目标资<br/>源；源值变化时替换现有目标，目标不存在时<br/>通过 Commands 插入。" }
   class n157 node_system
-  n158@{ shape: rounded, label: "**extract_components#lt;bevy_pbr::**<br/>**deferred::**<br/>**PbrDeferredLightingDepthId, bevy_**<br/>**render::RenderApp, ()#gt;**<br/>对已同步到子世界的实体读取<br/>ExtractComponent 指定的查询数据，批量<br/>写入转换后的目标组件；转换返回 None 时<br/>移除对应目标组件。" }
+  n158@{ shape: rounded, label: "**extract_ssao_settings**<br/>向渲染相机提取屏幕空间环境光遮蔽配置。" }
   class n158 node_system
-  n159@{ shape: rounded, label: "**extract_clusters_for_cpu_clustering**<br/>把 CPU 聚簇结果转换为渲染侧对象列表。" }
+  n159@{ shape: rounded, label: "**extract_generated_environment_map_**<br/>**entities**<br/>提取环境图生成所需的三张 GPU 图像。" }
   class n159 node_system
-  n160@{ shape: rounded, label: "**extract_clusters_for_gpu_clustering**<br/>提取视图聚簇配置并回传上帧 GPU 统计。" }
+  n160@{ shape: rounded, label: "**extract_egui_camera_view_system**<br/>来自Egui / Inspector ↗：为活动相机提<br/>取独立 Egui 渲染视图。" }
   class n160 node_system
-  n161@{ shape: rounded, label: "**extract_lights**<br/>同步可见点光、聚光、平行光及矩形光的渲染<br/>参数和阴影可见实体，提取变化的阴影贴图设<br/>置；隐藏或失效光源不继续保留有效渲染状<br/>态。" }
+  class n160 external_node
+  n161@{ shape: rounded, label: "**prepare_lights**<br/>汇总提取后的各类光源，为视图准备光照<br/>GPU 参数、聚簇索引及阴影贴图和阴影视<br/>图，维护对应缓存及阶段记录，并检查设备和<br/>实现支持的数量限制。" }
   class n161 node_system
-  n162@{ shape: rounded, label: "**extract_ambient_light_resource**<br/>在源存在时同步全局环境光资源。" }
+  n162@{ shape: rounded, label: "**cleanup_view_targets_for_resize**<br/>在窗口尺寸或呈现模式变化时撤销旧视图目<br/>标。" }
   class n162 node_system
-  n163@{ shape: rounded, label: "**extract_ambient_light**<br/>批量复制主世界实体的环境光设置。" }
+  n163@{ shape: rounded, label: "**prepare_view_targets**<br/>为视图维护主颜色双缓冲及可选多采样目标。" }
   class n163 node_system
-  n164@{ shape: rounded, label: "**extract_shadow_filtering_method**<br/>批量同步实体的阴影过滤方式。" }
+  n164@{ shape: rounded, label: "**prepare_auxiliary_depth_of_field_**<br/>**textures**<br/>为 Bokeh 景深分配第二颜色输出。" }
   class n164 node_system
-  n165@{ shape: rounded, label: "**extract_resource#lt;bevy_gizmos_**<br/>**render::LineGizmoEntities, bevy_**<br/>**render::RenderApp, ()#gt;**<br/>读取主世界中的可选源资源，经<br/>ExtractResource 转换后更新子世界目标资<br/>源；源值变化时替换现有目标，目标不存在时<br/>通过 Commands 插入。" }
+  n165@{ shape: rounded, label: "**queue_oit_resolve_pipeline**<br/>按 OIT 相机设置缓存透明解析管线。" }
   class n165 node_system
-  n166@{ shape: rounded, label: "**extract_resource#lt;bevy_egui::**<br/>**EguiUserTextures, bevy_render::**<br/>**RenderApp, ()#gt;**<br/>读取主世界中的可选源资源，经<br/>ExtractResource 转换后更新子世界目标资<br/>源；源值变化时替换现有目标，目标不存在时<br/>通过 Commands 插入。" }
+  n166@{ shape: rounded, label: "**queue_render_sky_pipelines**<br/>按多重采样和混合能力选择天空管线。" }
   class n166 node_system
-  n167@{ shape: rounded, label: "**extract_resource#lt;bevy_egui::render::**<br/>**systems::**<br/>**ExtractedEguiManagedTextures, bevy_**<br/>**render::RenderApp, ()#gt;**<br/>读取主世界中的可选源资源，经<br/>ExtractResource 转换后更新子世界目标资<br/>源；源值变化时替换现有目标，目标不存在时<br/>通过 Commands 插入。" }
+  n167@{ shape: rounded, label: "**queue_bind_groups_system**<br/>来自Egui / Inspector ↗：建立 Egui 纹<br/>理与采样器绑定。" }
   class n167 node_system
-  n168@{ shape: rounded, label: "**extract_ssao_settings**<br/>向渲染相机提取屏幕空间环境光遮蔽配置。" }
+  class n167 external_node
+  n168@{ shape: rounded, label: "**queue_pipelines_system**<br/>来自Egui / Inspector ↗：按目标格式选<br/>择 Egui 渲染管线。" }
   class n168 node_system
-  n169@{ shape: rounded, label: "**extract_generated_environment_map_**<br/>**entities**<br/>提取环境图生成所需的三张 GPU 图像。" }
+  class n168 external_node
+  n169@{ shape: rounded, label: "**prepare_view_uniforms**<br/>生成视图投影、抖动、裁剪及 LOD 的 GPU<br/>参数。" }
   class n169 node_system
-  n170@{ shape: rounded, label: "**extract_egui_camera_view_system**<br/>来自Egui / Inspector ↗：为活动相机提<br/>取独立 Egui 渲染视图。" }
+  n170@{ shape: rounded, label: "**prepare_core_2d_depth_textures**<br/>为有效二维视图准备共享目标深度纹理。" }
   class n170 node_system
-  class n170 external_node
-  n171@{ shape: rounded, label: "**prepare_lights**<br/>汇总提取后的各类光源，为视图准备光照<br/>GPU 参数、聚簇索引及阴影贴图和阴影视<br/>图，维护对应缓存及阶段记录，并检查设备和<br/>实现支持的数量限制。" }
+  n171@{ shape: rounded, label: "**prepare_uniform_components#lt;bevy_**<br/>**core_pipeline::skybox::**<br/>**SkyboxUniforms#gt;**<br/>将组件值批量上传为动态着色器参数。" }
   class n171 node_system
-  n172@{ shape: rounded, label: "**cleanup_view_targets_for_resize**<br/>在窗口尺寸或呈现模式变化时撤销旧视图目<br/>标。" }
+  n172@{ shape: rounded, label: "**prepare_core_3d_depth_textures**<br/>按共享目标准备三维深度纹理与清除方式。" }
   class n172 node_system
-  n173@{ shape: rounded, label: "**prepare_view_targets**<br/>为视图维护主颜色双缓冲及可选多采样目标。" }
+  n173@{ shape: rounded, label: "**prepare_prepass_textures**<br/>按三维预通道配置分配各类输出纹理。" }
   class n173 node_system
-  n174@{ shape: rounded, label: "**prepare_auxiliary_depth_of_field_**<br/>**textures**<br/>为 Bokeh 景深分配第二颜色输出。" }
+  n174@{ shape: rounded, label: "**prepare_deferred_lighting_id_**<br/>**textures**<br/>为延迟预通道相机分配光照标识深度纹理。" }
   class n174 node_system
-  n175@{ shape: rounded, label: "**queue_oit_resolve_pipeline**<br/>按 OIT 相机设置缓存透明解析管线。" }
+  n175@{ shape: rounded, label: "**prepare_oit_buffers**<br/>调整共享 OIT 存储并上传逐相机设置。" }
   class n175 node_system
-  n176@{ shape: rounded, label: "**queue_render_sky_pipelines**<br/>按多重采样和混合能力选择天空管线。" }
+  n176@{ shape: rounded, label: "**prepare_uniform_components#lt;bevy_**<br/>**post_process::bloom::downsampling_**<br/>**pipeline::BloomUniforms#gt;**<br/>将组件值批量上传为动态着色器参数。" }
   class n176 node_system
-  n177@{ shape: rounded, label: "**queue_bind_groups_system**<br/>来自Egui / Inspector ↗：建立 Egui 纹<br/>理与采样器绑定。" }
+  n177@{ shape: rounded, label: "**prepare_bloom_textures**<br/>按视口比例分配 Bloom 多级纹理。" }
   class n177 node_system
-  class n177 external_node
-  n178@{ shape: rounded, label: "**queue_pipelines_system**<br/>来自Egui / Inspector ↗：按目标格式选<br/>择 Egui 渲染管线。" }
+  n178@{ shape: rounded, label: "**prepare_uniform_components#lt;bevy_**<br/>**post_process::motion_blur::**<br/>**MotionBlurUniform#gt;**<br/>将组件值批量上传为动态着色器参数。" }
   class n178 node_system
-  class n178 external_node
-  n179@{ shape: rounded, label: "**prepare_view_uniforms**<br/>生成视图投影、抖动、裁剪及 LOD 的 GPU<br/>参数。" }
+  n179@{ shape: rounded, label: "**prepare_uniform_components#lt;bevy_**<br/>**post_process::dof::**<br/>**DepthOfFieldUniform#gt;**<br/>将组件值批量上传为动态着色器参数。" }
   class n179 node_system
-  n180@{ shape: rounded, label: "**prepare_core_2d_depth_textures**<br/>为有效二维视图准备共享目标深度纹理。" }
+  n180@{ shape: rounded, label: "**prepare_smaa_uniforms**<br/>上传各 SMAA 视图的尺寸及倒数参数。" }
   class n180 node_system
-  n181@{ shape: rounded, label: "**prepare_uniform_components#lt;bevy_**<br/>**core_pipeline::skybox::**<br/>**SkyboxUniforms#gt;**<br/>将组件值批量上传为动态着色器参数。" }
+  n181@{ shape: rounded, label: "**prepare_smaa_textures**<br/>为 SMAA 分配边缘、模板和混合权重纹理。" }
   class n181 node_system
-  n182@{ shape: rounded, label: "**prepare_core_3d_depth_textures**<br/>按共享目标准备三维深度纹理与清除方式。" }
+  n182@{ shape: rounded, label: "**prepare_taa_history_textures**<br/>按帧奇偶为 TAA 轮换读写历史纹理。" }
   class n182 node_system
-  n183@{ shape: rounded, label: "**prepare_prepass_textures**<br/>按三维预通道配置分配各类输出纹理。" }
+  n183@{ shape: rounded, label: "**prepare_uniform_components#lt;bevy_**<br/>**anti_alias::contrast_adaptive_**<br/>**sharpening::CasUniform#gt;**<br/>将组件值批量上传为动态着色器参数。" }
   class n183 node_system
-  n184@{ shape: rounded, label: "**prepare_deferred_lighting_id_**<br/>**textures**<br/>为延迟预通道相机分配光照标识深度纹理。" }
+  n184@{ shape: rounded, label: "**prepare_previous_view_uniforms**<br/>重建前帧抖动矩阵并上传视图历史参数。" }
   class n184 node_system
-  n185@{ shape: rounded, label: "**prepare_oit_buffers**<br/>调整共享 OIT 存储并上传逐相机设置。" }
+  n185@{ shape: rounded, label: "**prepare_fog**<br/>把各提取视图的 DistanceFog 转换为线<br/>性、指数、平方指数或大气模式的 GPU 参<br/>数，写入雾 Uniform 缓冲，并记录视图所用<br/>偏移。" }
   class n185 node_system
-  n186@{ shape: rounded, label: "**prepare_uniform_components#lt;bevy_**<br/>**post_process::bloom::downsampling_**<br/>**pipeline::BloomUniforms#gt;**<br/>将组件值批量上传为动态着色器参数。" }
+  n186@{ shape: rounded, label: "**upload_light_probes**<br/>上传各视图的环境图、反射与辐照探针参数。" }
   class n186 node_system
-  n187@{ shape: rounded, label: "**prepare_bloom_textures**<br/>按视口比例分配 Bloom 多级纹理。" }
+  n187@{ shape: rounded, label: "**prepare_ssr_settings**<br/>上传各视图反射参数并记录动态缓冲偏移。" }
   class n187 node_system
-  n188@{ shape: rounded, label: "**prepare_uniform_components#lt;bevy_**<br/>**post_process::motion_blur::**<br/>**MotionBlurUniform#gt;**<br/>将组件值批量上传为动态着色器参数。" }
+  n188@{ shape: rounded, label: "**prepare_core_3d_transmission_**<br/>**textures**<br/>为需要多步透射的视图准备场景颜色拷贝纹<br/>理。" }
   class n188 node_system
-  n189@{ shape: rounded, label: "**prepare_uniform_components#lt;bevy_**<br/>**post_process::dof::**<br/>**DepthOfFieldUniform#gt;**<br/>将组件值批量上传为动态着色器参数。" }
+  n189@{ shape: rounded, label: "**prepare_contact_shadows_settings**<br/>上传各视图接触阴影设置并记录动态偏移。" }
   class n189 node_system
-  n190@{ shape: rounded, label: "**prepare_smaa_uniforms**<br/>上传各 SMAA 视图的尺寸及倒数参数。" }
+  n190@{ shape: rounded, label: "**prepare_uniform_components#lt;bevy_**<br/>**pbr::atmosphere::resources::**<br/>**GpuAtmosphere#gt;**<br/>将组件值批量上传为动态着色器参数。" }
   class n190 node_system
-  n191@{ shape: rounded, label: "**prepare_smaa_textures**<br/>为 SMAA 分配边缘、模板和混合权重纹理。" }
+  n191@{ shape: rounded, label: "**prepare_uniform_components#lt;bevy_**<br/>**pbr::atmosphere::**<br/>**GpuAtmosphereSettings#gt;**<br/>将组件值批量上传为动态着色器参数。" }
   class n191 node_system
-  n192@{ shape: rounded, label: "**prepare_taa_history_textures**<br/>按帧奇偶为 TAA 轮换读写历史纹理。" }
+  n192@{ shape: rounded, label: "**prepare_uniform_components#lt;bevy_**<br/>**pbr::deferred::**<br/>**PbrDeferredLightingDepthId#gt;**<br/>将组件值批量上传为动态着色器参数。" }
   class n192 node_system
-  n193@{ shape: rounded, label: "**prepare_uniform_components#lt;bevy_**<br/>**anti_alias::contrast_adaptive_**<br/>**sharpening::CasUniform#gt;**<br/>将组件值批量上传为动态着色器参数。" }
+  n193@{ shape: rounded, label: "**prepare_clusters_for_cpu_clustering**<br/>把 CPU 聚簇列表转换并上传为 GPU 索引缓<br/>冲。" }
   class n193 node_system
-  n194@{ shape: rounded, label: "**prepare_previous_view_uniforms**<br/>重建前帧抖动矩阵并上传视图历史参数。" }
+  n194@{ shape: rounded, label: "**prepare_uniform_components#lt;bevy_**<br/>**gizmos_render::LineGizmoUniform#gt;**<br/>将组件值批量上传为动态着色器参数。" }
   class n194 node_system
-  n195@{ shape: rounded, label: "**prepare_fog**<br/>把各提取视图的 DistanceFog 转换为线<br/>性、指数、平方指数或大气模式的 GPU 参<br/>数，写入雾 Uniform 缓冲，并记录视图所用<br/>偏移。" }
+  n195@{ shape: rounded, label: "**prepare_ssao_textures**<br/>为环境光遮蔽分配中间纹理及参数缓冲。" }
   class n195 node_system
-  n196@{ shape: rounded, label: "**upload_light_probes**<br/>上传各视图的环境图、反射与辐照探针参数。" }
+  n196@{ shape: rounded, label: "**prepare_generated_environment_map_**<br/>**intermediate_textures**<br/>按源立方图尺寸分配完整 mip 链中间纹理。" }
   class n196 node_system
-  n197@{ shape: rounded, label: "**prepare_ssr_settings**<br/>上传各视图反射参数并记录动态缓冲偏移。" }
+  n197@{ shape: rounded, label: "**prepare_atmosphere_textures**<br/>按大气设置准备四类查找纹理。" }
   class n197 node_system
-  n198@{ shape: rounded, label: "**prepare_core_3d_transmission_**<br/>**textures**<br/>为需要多步透射的视图准备场景颜色拷贝纹<br/>理。" }
+  n198@{ shape: rounded, label: "**prepare_probe_textures**<br/>为环境探针借用大气查找纹理并创建输出视<br/>图。" }
   class n198 node_system
-  n199@{ shape: rounded, label: "**prepare_contact_shadows_settings**<br/>上传各视图接触阴影设置并记录动态偏移。" }
+  n199@{ shape: rounded, label: "**prepare_atmosphere_transforms**<br/>按相机位置构造大气局部坐标变换。" }
   class n199 node_system
-  n200@{ shape: rounded, label: "**prepare_uniform_components#lt;bevy_**<br/>**pbr::atmosphere::resources::**<br/>**GpuAtmosphere#gt;**<br/>将组件值批量上传为动态着色器参数。" }
+  n200@{ shape: rounded, label: "**prepare_atmosphere_buffers**<br/>上传各视图的大气和采样设置缓冲。" }
   class n200 node_system
-  n201@{ shape: rounded, label: "**prepare_uniform_components#lt;bevy_**<br/>**pbr::atmosphere::**<br/>**GpuAtmosphereSettings#gt;**<br/>将组件值批量上传为动态着色器参数。" }
+  n201@{ shape: rounded, label: "**prepare_skybox_bind_groups**<br/>为有效天空盒图像建立视图绑定组。" }
   class n201 node_system
-  n202@{ shape: rounded, label: "**prepare_uniform_components#lt;bevy_**<br/>**pbr::deferred::**<br/>**PbrDeferredLightingDepthId#gt;**<br/>将组件值批量上传为动态着色器参数。" }
+  n202@{ shape: rounded, label: "**prepare_bloom_bind_groups**<br/>为 Bloom 各 mip 层准备降采样与升采样绑<br/>定。" }
   class n202 node_system
-  n203@{ shape: rounded, label: "**prepare_clusters_for_cpu_clustering**<br/>把 CPU 聚簇列表转换并上传为 GPU 索引缓<br/>冲。" }
+  n203@{ shape: rounded, label: "**prepare_smaa_bind_groups**<br/>为视图绑定 SMAA 中间纹理与查找表。" }
   class n203 node_system
-  n204@{ shape: rounded, label: "**prepare_uniform_components#lt;bevy_**<br/>**gizmos_render::LineGizmoUniform#gt;**<br/>将组件值批量上传为动态着色器参数。" }
+  n204@{ shape: rounded, label: "**prepare_mesh2d_view_bind_groups**<br/>为二维相机绑定视图、全局参数与色调<br/>LUT。" }
   class n204 node_system
-  n205@{ shape: rounded, label: "**prepare_ssao_textures**<br/>为环境光遮蔽分配中间纹理及参数缓冲。" }
+  n205@{ shape: rounded, label: "**prepare_sprite_view_bind_groups**<br/>为精灵视图绑定参数和色调映射 LUT。" }
   class n205 node_system
-  n206@{ shape: rounded, label: "**prepare_generated_environment_map_**<br/>**intermediate_textures**<br/>按源立方图尺寸分配完整 mip 链中间纹理。" }
+  n206@{ shape: rounded, label: "**prepare_uinodes**<br/>按透明 UI 阶段顺序生成裁剪后的节点顶点<br/>和索引，按图像合并绘制批次，维护视图及图<br/>像绑定组，并上传本帧 UI 几何数据。" }
   class n206 node_system
-  n207@{ shape: rounded, label: "**prepare_atmosphere_textures**<br/>按大气设置准备四类查找纹理。" }
+  n207@{ shape: rounded, label: "**prepare_ui_slices**<br/>为 UI 切片生成裁剪几何并合并图像批次。" }
   class n207 node_system
-  n208@{ shape: rounded, label: "**prepare_probe_textures**<br/>为环境探针借用大气查找纹理并创建输出视<br/>图。" }
+  n208@{ shape: rounded, label: "**prepare_gradient**<br/>将已排队的线性、径向和锥形渐变转换为<br/>GPU 顶点、索引与颜色停靠点数据，建立渐<br/>变绘制批次并上传相关缓冲。" }
   class n208 node_system
-  n209@{ shape: rounded, label: "**prepare_atmosphere_transforms**<br/>按相机位置构造大气局部坐标变换。" }
+  n209@{ shape: rounded, label: "**prepare_shadows**<br/>为已排队的 UI 阴影生成经过裁剪的四边形<br/>顶点、索引和阴影参数，为每项记录对应相机<br/>及绘制区间，建立绑定组并上传本帧阴影几<br/>何。" }
   class n209 node_system
-  n210@{ shape: rounded, label: "**prepare_atmosphere_buffers**<br/>上传各视图的大气和采样设置缓冲。" }
+  n210@{ shape: rounded, label: "**prepare_mesh_bind_groups**<br/>按预处理路径准备网格、蒙皮和形变资源绑<br/>定。" }
   class n210 node_system
-  n211@{ shape: rounded, label: "**prepare_skybox_bind_groups**<br/>为有效天空盒图像建立视图绑定组。" }
+  n211@{ shape: rounded, label: "**prepare_mesh_view_bind_groups**<br/>为视图绑定光照、阴影及各可选渲染效果资<br/>源。" }
   class n211 node_system
-  n212@{ shape: rounded, label: "**prepare_bloom_bind_groups**<br/>为 Bloom 各 mip 层准备降采样与升采样绑<br/>定。" }
+  n212@{ shape: rounded, label: "**prepare_oit_resolve_bind_group**<br/>为 OIT 解析阶段绑定视图和片元链表。" }
   class n212 node_system
-  n213@{ shape: rounded, label: "**prepare_smaa_bind_groups**<br/>为视图绑定 SMAA 中间纹理与查找表。" }
+  n213@{ shape: rounded, label: "**prepare_background_motion_vectors_**<br/>**bind_groups**<br/>为背景运动矢量绑定前后两帧视图参数。" }
   class n213 node_system
-  n214@{ shape: rounded, label: "**prepare_mesh2d_view_bind_groups**<br/>为二维相机绑定视图、全局参数与色调<br/>LUT。" }
+  n214@{ shape: rounded, label: "**prepare_ssao_bind_groups**<br/>准备深度预处理、遮蔽与空间降噪的资源绑<br/>定。" }
   class n214 node_system
-  n215@{ shape: rounded, label: "**prepare_sprite_view_bind_groups**<br/>为精灵视图绑定参数和色调映射 LUT。" }
+  n215@{ shape: rounded, label: "**prepare_generated_environment_map_**<br/>**bind_groups**<br/>为环境图各 mip 的降采样和卷积建立绑定。" }
   class n215 node_system
-  n216@{ shape: rounded, label: "**prepare_uinodes**<br/>按透明 UI 阶段顺序生成裁剪后的节点顶点<br/>和索引，按图像合并绘制批次，维护视图及图<br/>像绑定组，并上传本帧 UI 几何数据。" }
+  n216@{ shape: rounded, label: "**prepare_preprocess_bind_groups**<br/>绑定各视图网格预处理和间接参数构建资源。" }
   class n216 node_system
-  n217@{ shape: rounded, label: "**prepare_ui_slices**<br/>为 UI 切片生成裁剪几何并合并图像批次。" }
+  n217@{ shape: rounded, label: "**prepare_atmosphere_probe_bind_groups**<br/>为大气环境探针绑定光照、查找表和输出纹<br/>理。" }
   class n217 node_system
-  n218@{ shape: rounded, label: "**prepare_gradient**<br/>将已排队的线性、径向和锥形渐变转换为<br/>GPU 顶点、索引与颜色停靠点数据，建立渐<br/>变绘制批次并上传相关缓冲。" }
+  n218@{ shape: rounded, label: "**prepare_atmosphere_bind_groups**<br/>为大气查找表计算和天空绘制绑定视图资源。" }
   class n218 node_system
-  n219@{ shape: rounded, label: "**prepare_shadows**<br/>为已排队的 UI 阴影生成经过裁剪的四边形<br/>顶点、索引和阴影参数，为每项记录对应相机<br/>及绘制区间，建立绑定组并上传本帧阴影几<br/>何。" }
+  n219@{ shape: rounded, label: "**prepare_clustering_bind_groups**<br/>为视图的聚簇计算与光栅阶段绑定工作缓冲。" }
   class n219 node_system
-  n220@{ shape: rounded, label: "**prepare_mesh_bind_groups**<br/>按预处理路径准备网格、蒙皮和形变资源绑<br/>定。" }
+  n220@{ shape: rounded, label: "**prepare_skybox_pipelines**<br/>按目标格式与采样数准备天空盒管线。" }
   class n220 node_system
-  n221@{ shape: rounded, label: "**prepare_mesh_view_bind_groups**<br/>为视图绑定光照、阴影及各可选渲染效果资<br/>源。" }
+  n221@{ shape: rounded, label: "**prepare_view_tonemapping_pipelines**<br/>按视图实际颜色分级需求专用化色调映射。" }
   class n221 node_system
-  n222@{ shape: rounded, label: "**prepare_oit_resolve_bind_group**<br/>为 OIT 解析阶段绑定视图和片元链表。" }
+  n222@{ shape: rounded, label: "**prepare_view_upscaling_pipelines**<br/>按相机合成方式准备输出缩放管线。" }
   class n222 node_system
-  n223@{ shape: rounded, label: "**prepare_background_motion_vectors_**<br/>**bind_groups**<br/>为背景运动矢量绑定前后两帧视图参数。" }
+  n223@{ shape: rounded, label: "**create_downsample_depth_pipelines**<br/>在支持 GPU 剔除时一次性建立深度降采样管<br/>线。" }
   class n223 node_system
-  n224@{ shape: rounded, label: "**prepare_ssao_bind_groups**<br/>准备深度预处理、遮蔽与空间降噪的资源绑<br/>定。" }
+  n224@{ shape: rounded, label: "**prepare_msaa_writeback_pipelines**<br/>为需要保留已有颜色的多采样相机准备回写管<br/>线。" }
   class n224 node_system
-  n225@{ shape: rounded, label: "**prepare_generated_environment_map_**<br/>**bind_groups**<br/>为环境图各 mip 的降采样和卷积建立绑定。" }
+  n225@{ shape: rounded, label: "**prepare_downsampling_pipeline**<br/>按预过滤和缩放设置准备 Bloom 降采样变<br/>体。" }
   class n225 node_system
-  n226@{ shape: rounded, label: "**prepare_preprocess_bind_groups**<br/>绑定各视图网格预处理和间接参数构建资源。" }
+  n226@{ shape: rounded, label: "**prepare_upsampling_pipeline**<br/>为 Bloom 中间合成和最终目标准备升采样管<br/>线。" }
   class n226 node_system
-  n227@{ shape: rounded, label: "**prepare_atmosphere_probe_bind_groups**<br/>为大气环境探针绑定光照、查找表和输出纹<br/>理。" }
+  n227@{ shape: rounded, label: "**prepare_motion_blur_pipelines**<br/>按颜色格式与采样数准备运动模糊管线。" }
   class n227 node_system
-  n228@{ shape: rounded, label: "**prepare_atmosphere_bind_groups**<br/>为大气查找表计算和天空绘制绑定视图资源。" }
+  n228@{ shape: rounded, label: "**prepare_depth_of_field_view_bind_**<br/>**group_layouts**<br/>为景深视图创建单输入与 Bokeh 双输入布<br/>局。" }
   class n228 node_system
-  n229@{ shape: rounded, label: "**prepare_clustering_bind_groups**<br/>为视图的聚簇计算与光栅阶段绑定工作缓冲。" }
+  n229@{ shape: rounded, label: "**prepare_depth_of_field_pipelines**<br/>按景深模式和视图格式准备两阶段管线。" }
   class n229 node_system
-  n230@{ shape: rounded, label: "**prepare_skybox_pipelines**<br/>按目标格式与采样数准备天空盒管线。" }
+  n230@{ shape: rounded, label: "**prepare_post_processing_pipelines**<br/>按视图颜色格式准备内置后处理管线。" }
   class n230 node_system
-  n231@{ shape: rounded, label: "**prepare_view_tonemapping_pipelines**<br/>按视图实际颜色分级需求专用化色调映射。" }
+  n231@{ shape: rounded, label: "**prepare_post_processing_uniforms**<br/>收集并上传逐视图色差、暗角和畸变参数。" }
   class n231 node_system
-  n232@{ shape: rounded, label: "**prepare_view_upscaling_pipelines**<br/>按相机合成方式准备输出缩放管线。" }
+  n232@{ shape: rounded, label: "**prepare_fxaa_pipelines**<br/>按相机边缘阈值与目标格式准备 FXAA 管<br/>线。" }
   class n232 node_system
-  n233@{ shape: rounded, label: "**create_downsample_depth_pipelines**<br/>在支持 GPU 剔除时一次性建立深度降采样管<br/>线。" }
+  n233@{ shape: rounded, label: "**prepare_smaa_pipelines**<br/>按质量预设准备视图的三条 SMAA 管线。" }
   class n233 node_system
-  n234@{ shape: rounded, label: "**prepare_msaa_writeback_pipelines**<br/>为需要保留已有颜色的多采样相机准备回写管<br/>线。" }
+  n234@{ shape: rounded, label: "**prepare_taa_pipelines**<br/>准备 TAA 当前状态及下一帧恢复用管线。" }
   class n234 node_system
-  n235@{ shape: rounded, label: "**prepare_downsampling_pipeline**<br/>按预过滤和缩放设置准备 Bloom 降采样变<br/>体。" }
+  n235@{ shape: rounded, label: "**prepare_cas_pipelines**<br/>按去噪与目标格式准备视图锐化管线。" }
   class n235 node_system
-  n236@{ shape: rounded, label: "**prepare_upsampling_pipeline**<br/>为 Bloom 中间合成和最终目标准备升采样管<br/>线。" }
+  n236@{ shape: rounded, label: "**prepare_volumetric_fog_pipelines**<br/>为体积雾视图准备有密度纹理和无密度纹理两<br/>类管线。" }
   class n236 node_system
-  n237@{ shape: rounded, label: "**prepare_motion_blur_pipelines**<br/>按颜色格式与采样数准备运动模糊管线。" }
+  n237@{ shape: rounded, label: "**prepare_volumetric_fog_uniforms**<br/>把各视图和雾体积组合转换为体积雾<br/>Uniform。" }
   class n237 node_system
-  n238@{ shape: rounded, label: "**prepare_depth_of_field_view_bind_**<br/>**group_layouts**<br/>为景深视图创建单输入与 Bokeh 双输入布<br/>局。" }
+  n238@{ shape: rounded, label: "**prepare_ssr_pipelines**<br/>为具备反射及深度、延迟预通道的视图选择管<br/>线。" }
   class n238 node_system
-  n239@{ shape: rounded, label: "**prepare_depth_of_field_pipelines**<br/>按景深模式和视图格式准备两阶段管线。" }
+  n239@{ shape: rounded, label: "**prepare_deferred_lighting_pipelines**<br/>为有效延迟视图选择与前向一致的光照管线。" }
   class n239 node_system
-  n240@{ shape: rounded, label: "**prepare_post_processing_pipelines**<br/>按视图颜色格式准备内置后处理管线。" }
+  n240@{ shape: rounded, label: "**cleanup_background_motion_vectors**<br/>从不再启用运动矢量预通道或已标记<br/>NoBackgroundMotionVectors 的视图移除<br/>背景运动矢量管线及绑定组，清理失效渲染状<br/>态。" }
   class n240 node_system
-  n241@{ shape: rounded, label: "**prepare_post_processing_uniforms**<br/>收集并上传逐视图色差、暗角和畸变参数。" }
+  n241@{ shape: rounded, label: "**prepare_background_motion_vectors_**<br/>**pipelines**<br/>按采样数和法线预通道准备背景运动管线。" }
   class n241 node_system
-  n242@{ shape: rounded, label: "**prepare_fxaa_pipelines**<br/>按相机边缘阈值与目标格式准备 FXAA 管<br/>线。" }
+  n242@{ shape: rounded, label: "**prepare_ssao_pipelines**<br/>按遮蔽质量和时间抖动配置选择计算管线。" }
   class n242 node_system
-  n243@{ shape: rounded, label: "**prepare_smaa_pipelines**<br/>按质量预设准备视图的三条 SMAA 管线。" }
+  n243@{ shape: rounded, label: "**prepare_atmosphere_uniforms**<br/>把提取的大气几何转换为 GPU Uniform 组<br/>件。" }
   class n243 node_system
-  n244@{ shape: rounded, label: "**prepare_taa_pipelines**<br/>准备 TAA 当前状态及下一帧恢复用管线。" }
+  n244@{ shape: rounded, label: "**clear_batches**<br/>在渲染清理阶段从所有 UI 批次实体移除<br/>UiBatch，供下一帧重新生成批次，不销毁这<br/>些实体本身。" }
   class n244 node_system
-  n245@{ shape: rounded, label: "**prepare_cas_pipelines**<br/>按去噪与目标格式准备视图锐化管线。" }
+  n245@{ shape: rounded, label: "**prepare_mesh_metadata_fallback_**<br/>**buffer**<br/>取得回退网格所在的元数据 GPU 缓冲。" }
   class n245 node_system
-  n246@{ shape: rounded, label: "**prepare_volumetric_fog_pipelines**<br/>为体积雾视图准备有密度纹理和无密度纹理两<br/>类管线。" }
+  n246@{ shape: rounded, label: "**create_surfaces**<br/>根据提取窗口的原生句柄创建 GPU 表面，选<br/>择支持的纹理格式、显示及透明模式并配置<br/>SurfaceData；已有表面则按窗口变化更新<br/>配置。" }
   class n246 node_system
-  n247@{ shape: rounded, label: "**prepare_volumetric_fog_uniforms**<br/>把各视图和雾体积组合转换为体积雾<br/>Uniform。" }
+  n247@{ shape: rounded, label: "**prepare_view_depth_pyramids**<br/>为遮挡剔除视图维护深度金字塔。" }
   class n247 node_system
-  n248@{ shape: rounded, label: "**prepare_ssr_pipelines**<br/>为具备反射及深度、延迟预通道的视图选择管<br/>线。" }
+  n248@{ shape: rounded, label: "**prepare_downsample_depth_view_bind_**<br/>**groups**<br/>将主视图或阴影深度绑定到降采样管线。" }
   class n248 node_system
-  n249@{ shape: rounded, label: "**prepare_deferred_lighting_pipelines**<br/>为有效延迟视图选择与前向一致的光照管线。" }
+  n249@{ shape: rounded, label: "**prepare_clustering_pipelines**<br/>为视图取得 GPU 聚簇五阶段的管线标识。" }
   class n249 node_system
-  n250@{ shape: rounded, label: "**cleanup_background_motion_vectors**<br/>从不再启用运动矢量预通道或已标记<br/>NoBackgroundMotionVectors 的视图移除<br/>背景运动矢量管线及绑定组，清理失效渲染状<br/>态。" }
+  n250@{ shape: rounded, label: "**prepare_cluster_dummy_textures**<br/>为聚簇光栅通道准备视口占位纹理。" }
   class n250 node_system
-  n251@{ shape: rounded, label: "**prepare_background_motion_vectors_**<br/>**pipelines**<br/>按采样数和法线预通道准备背景运动管线。" }
+  n251@{ shape: rounded, label: "**prepare_clusters_for_gpu_clustering**<br/>按视图规模和回读容量分配 GPU 聚簇缓冲。" }
   class n251 node_system
-  n252@{ shape: rounded, label: "**prepare_ssao_pipelines**<br/>按遮蔽质量和时间抖动配置选择计算管线。" }
+  n252@{ shape: rounded, label: "**init_mesh_pipeline_view_layouts**<br/>按设备能力汇集网格视图资源布局参数。" }
   class n252 node_system
-  n253@{ shape: rounded, label: "**prepare_atmosphere_uniforms**<br/>把提取的大气几何转换为 GPU Uniform 组<br/>件。" }
+  n253@{ shape: rounded, label: "**init_mesh_pipeline**<br/>初始化三维网格着色器及设备缓冲策略。" }
   class n253 node_system
-  n254@{ shape: rounded, label: "**clear_batches**<br/>在渲染清理阶段从所有 UI 批次实体移除<br/>UiBatch，供下一帧重新生成批次，不销毁这<br/>些实体本身。" }
+  n254@{ shape: rounded, label: "**init_screenshot_to_screen_pipeline**<br/>建立把截图纹理复制到屏幕的管线资源。" }
   class n254 node_system
-  n255@{ shape: rounded, label: "**prepare_mesh_metadata_fallback_**<br/>**buffer**<br/>取得回退网格所在的元数据 GPU 缓冲。" }
+  n255@{ shape: rounded, label: "**collect_render_assets_to_**<br/>**reextract#lt;bevy_render::mesh::**<br/>**RenderMesh#gt;**<br/>排空渲染资产并登记设备恢复后的重新提取。" }
   class n255 node_system
-  n256@{ shape: rounded, label: "**create_surfaces**<br/>根据提取窗口的原生句柄创建 GPU 表面，选<br/>择支持的纹理格式、显示及透明模式并配置<br/>SurfaceData；已有表面则按窗口变化更新<br/>配置。" }
+  n256@{ shape: rounded, label: "**collect_render_assets_to_**<br/>**reextract#lt;bevy_render::texture::gpu_**<br/>**image::GpuImage#gt;**<br/>排空渲染资产并登记设备恢复后的重新提取。" }
   class n256 node_system
-  n257@{ shape: rounded, label: "**prepare_view_depth_pyramids**<br/>为遮挡剔除视图维护深度金字塔。" }
+  n257@{ shape: rounded, label: "**collect_render_assets_to_**<br/>**reextract#lt;bevy_render::storage::**<br/>**GpuShaderBuffer#gt;**<br/>排空渲染资产并登记设备恢复后的重新提取。" }
   class n257 node_system
-  n258@{ shape: rounded, label: "**prepare_downsample_depth_view_bind_**<br/>**groups**<br/>将主视图或阴影深度绑定到降采样管线。" }
+  n258@{ shape: rounded, label: "**init_fallback_resources**<br/>创建材质绑定的采样器及缓冲回退资源。" }
   class n258 node_system
-  n259@{ shape: rounded, label: "**prepare_clustering_pipelines**<br/>为视图取得 GPU 聚簇五阶段的管线标识。" }
+  n259@{ shape: rounded, label: "**init_skybox_pipeline**<br/>加载天空盒着色器并建立管线资源。" }
   class n259 node_system
-  n260@{ shape: rounded, label: "**prepare_cluster_dummy_textures**<br/>为聚簇光栅通道准备视口占位纹理。" }
+  n260@{ shape: rounded, label: "**init_copy_deferred_lighting_id_**<br/>**pipeline**<br/>建立延迟光照标识到深度的复制管线。" }
   class n260 node_system
-  n261@{ shape: rounded, label: "**prepare_clusters_for_gpu_clustering**<br/>按视图规模和回读容量分配 GPU 聚簇缓冲。" }
+  n261@{ shape: rounded, label: "**init_blit_pipeline**<br/>建立全屏颜色复制与缩放的 Blit 资源。" }
   class n261 node_system
-  n262@{ shape: rounded, label: "**init_mesh_pipeline_view_layouts**<br/>按设备能力汇集网格视图资源布局参数。" }
+  n262@{ shape: rounded, label: "**init_tonemapping_pipeline**<br/>建立色调映射的颜色、视图与 LUT 输入布<br/>局。" }
   class n262 node_system
-  n263@{ shape: rounded, label: "**init_mesh_pipeline**<br/>初始化三维网格着色器及设备缓冲策略。" }
+  n263@{ shape: rounded, label: "**clear_view_upscaling_pipelines**<br/>从所有已有视图移除<br/>ViewUpscalingPipeline，使渲染设备恢复<br/>后的流程重新准备有效的输出放大管线。" }
   class n263 node_system
-  n264@{ shape: rounded, label: "**init_screenshot_to_screen_pipeline**<br/>建立把截图纹理复制到屏幕的管线资源。" }
+  n264@{ shape: rounded, label: "**init_oit_buffers**<br/>创建可立即绑定的 OIT 初始缓冲。" }
   class n264 node_system
-  n265@{ shape: rounded, label: "**collect_render_assets_to_**<br/>**reextract#lt;bevy_render::mesh::**<br/>**RenderMesh#gt;**<br/>排空渲染资产并登记设备恢复后的重新提取。" }
+  n265@{ shape: rounded, label: "**init_depth_pyramid_dummy_texture**<br/>创建深度金字塔的占位纹理资源。" }
   class n265 node_system
-  n266@{ shape: rounded, label: "**collect_render_assets_to_**<br/>**reextract#lt;bevy_render::texture::gpu_**<br/>**image::GpuImage#gt;**<br/>排空渲染资产并登记设备恢复后的重新提取。" }
+  n266@{ shape: rounded, label: "**init_bloom_downsampling_pipeline**<br/>建立 Bloom 降采样的纹理与参数管线。" }
   class n266 node_system
-  n267@{ shape: rounded, label: "**collect_render_assets_to_**<br/>**reextract#lt;bevy_render::storage::**<br/>**GpuShaderBuffer#gt;**<br/>排空渲染资产并登记设备恢复后的重新提取。" }
+  n267@{ shape: rounded, label: "**init_bloom_upscaling_pipeline**<br/>建立 Bloom 升采样的纹理和参数布局。" }
   class n267 node_system
-  n268@{ shape: rounded, label: "**init_fallback_resources**<br/>创建材质绑定的采样器及缓冲回退资源。" }
+  n268@{ shape: rounded, label: "**init_motion_blur_pipeline**<br/>加载运动模糊着色器并构造管线资源。" }
   class n268 node_system
-  n269@{ shape: rounded, label: "**init_skybox_pipeline**<br/>加载天空盒着色器并建立管线资源。" }
+  n269@{ shape: rounded, label: "**init_dof_global_bind_group_layout**<br/>建立景深共享参数布局和线性采样器。" }
   class n269 node_system
-  n270@{ shape: rounded, label: "**init_copy_deferred_lighting_id_**<br/>**pipeline**<br/>建立延迟光照标识到深度的复制管线。" }
+  n270@{ shape: rounded, label: "**init_post_processing_pipeline**<br/>建立色差、暗角和镜头畸变的共用后处理资<br/>源。" }
   class n270 node_system
-  n271@{ shape: rounded, label: "**init_blit_pipeline**<br/>建立全屏颜色复制与缩放的 Blit 资源。" }
+  n271@{ shape: rounded, label: "**init_fxaa_pipeline**<br/>建立 FXAA 的纹理采样布局和着色器资源。" }
   class n271 node_system
-  n272@{ shape: rounded, label: "**init_tonemapping_pipeline**<br/>建立色调映射的颜色、视图与 LUT 输入布<br/>局。" }
+  n272@{ shape: rounded, label: "**init_smaa_pipelines**<br/>建立 SMAA 三个阶段的布局和着色器资源。" }
   class n272 node_system
-  n273@{ shape: rounded, label: "**clear_view_upscaling_pipelines**<br/>从所有已有视图移除<br/>ViewUpscalingPipeline，使渲染设备恢复<br/>后的流程重新准备有效的输出放大管线。" }
+  n273@{ shape: rounded, label: "**init_taa_pipeline**<br/>建立 TAA 的当前帧、历史帧和预通道输入布<br/>局。" }
   class n273 node_system
-  n274@{ shape: rounded, label: "**init_oit_buffers**<br/>创建可立即绑定的 OIT 初始缓冲。" }
+  n274@{ shape: rounded, label: "**init_cas_pipeline**<br/>建立 CAS 锐化的纹理、参数布局和管线变体<br/>资源。" }
   class n274 node_system
-  n275@{ shape: rounded, label: "**init_depth_pyramid_dummy_texture**<br/>创建深度金字塔的占位纹理资源。" }
+  n275@{ shape: rounded, label: "**init_mesh_2d_pipeline**<br/>建立二维网格的视图、实例及元数据输入布<br/>局。" }
   class n275 node_system
-  n276@{ shape: rounded, label: "**init_bloom_downsampling_pipeline**<br/>建立 Bloom 降采样的纹理与参数管线。" }
+  n276@{ shape: rounded, label: "**init_batched_instance_buffer**<br/>依据设备限制建立二维网格实例批缓冲。" }
   class n276 node_system
-  n277@{ shape: rounded, label: "**init_bloom_upscaling_pipeline**<br/>建立 Bloom 升采样的纹理和参数布局。" }
+  n277@{ shape: rounded, label: "**init_material_2d_pipeline**<br/>以二维网格基础管线建立材质管线资源。" }
   class n277 node_system
-  n278@{ shape: rounded, label: "**init_motion_blur_pipeline**<br/>加载运动模糊着色器并构造管线资源。" }
+  n278@{ shape: rounded, label: "**initialize_material2d_shaders#lt;bevy_**<br/>**sprite_render::mesh2d::color_**<br/>**material::ColorMaterial#gt;**<br/>解析二维材质的自定义顶点与片元着色器。" }
   class n278 node_system
-  n279@{ shape: rounded, label: "**init_dof_global_bind_group_layout**<br/>建立景深共享参数布局和线性采样器。" }
+  n279@{ shape: rounded, label: "**initialize_material2d_shaders#lt;bevy_**<br/>**sprite_render::sprite_mesh::sprite_**<br/>**mesh_material::SpriteMeshMaterial#gt;**<br/>解析二维材质的自定义顶点与片元着色器。" }
   class n279 node_system
-  n280@{ shape: rounded, label: "**init_post_processing_pipeline**<br/>建立色差、暗角和镜头畸变的共用后处理资<br/>源。" }
+  n280@{ shape: rounded, label: "**initialize_material2d_shaders#lt;bevy_**<br/>**sprite_render::tilemap_chunk::**<br/>**tilemap_chunk_material::**<br/>**TilemapChunkMaterial#gt;**<br/>解析二维材质的自定义顶点与片元着色器。" }
   class n280 node_system
-  n281@{ shape: rounded, label: "**init_fxaa_pipeline**<br/>建立 FXAA 的纹理采样布局和着色器资源。" }
+  n281@{ shape: rounded, label: "**init_sprite_pipeline**<br/>建立精灵视图和图像材质管线资源。" }
   class n281 node_system
-  n282@{ shape: rounded, label: "**init_smaa_pipelines**<br/>建立 SMAA 三个阶段的布局和着色器资源。" }
+  n282@{ shape: rounded, label: "**init_ui_pipeline**<br/>建立 UI 图形的视图、图像和采样器布局。" }
   class n282 node_system
-  n283@{ shape: rounded, label: "**init_taa_pipeline**<br/>建立 TAA 的当前帧、历史帧和预通道输入布<br/>局。" }
+  n283@{ shape: rounded, label: "**init_ui_texture_slice_pipeline**<br/>建立 UI 图像切片的视图和纹理管线资源。" }
   class n283 node_system
-  n284@{ shape: rounded, label: "**init_cas_pipeline**<br/>建立 CAS 锐化的纹理、参数布局和管线变体<br/>资源。" }
+  n284@{ shape: rounded, label: "**init_gradient_pipeline**<br/>建立 UI 渐变的视图布局和着色器资源。" }
   class n284 node_system
-  n285@{ shape: rounded, label: "**init_mesh_2d_pipeline**<br/>建立二维网格的视图、实例及元数据输入布<br/>局。" }
+  n285@{ shape: rounded, label: "**init_box_shadow_pipeline**<br/>建立 UI 盒阴影的视图布局和着色器资源。" }
   class n285 node_system
-  n286@{ shape: rounded, label: "**init_batched_instance_buffer**<br/>依据设备限制建立二维网格实例批缓冲。" }
+  n286@{ shape: rounded, label: "**init_prepass_pipeline**<br/>初始化带运动矢量及普通预通道的资源布局。" }
   class n286 node_system
-  n287@{ shape: rounded, label: "**init_material_2d_pipeline**<br/>以二维网格基础管线建立材质管线资源。" }
+  n287@{ shape: rounded, label: "**init_prepass_view_bind_group**<br/>建立预通道的空绑定组及待准备状态。" }
   class n287 node_system
-  n288@{ shape: rounded, label: "**initialize_material2d_shaders#lt;bevy_**<br/>**sprite_render::mesh2d::color_**<br/>**material::ColorMaterial#gt;**<br/>解析二维材质的自定义顶点与片元着色器。" }
+  n288@{ shape: rounded, label: "**init_material_pipeline**<br/>初始化与网格管线共享接口的材质管线资源。" }
   class n288 node_system
-  n289@{ shape: rounded, label: "**initialize_material2d_shaders#lt;bevy_**<br/>**sprite_render::sprite_mesh::sprite_**<br/>**mesh_material::SpriteMeshMaterial#gt;**<br/>解析二维材质的自定义顶点与片元着色器。" }
+  n289@{ shape: rounded, label: "**init_render_lightmaps**<br/>初始化光照贴图槽位和设备绑定数组能力。" }
   class n289 node_system
-  n290@{ shape: rounded, label: "**initialize_material2d_shaders#lt;bevy_**<br/>**sprite_render::tilemap_chunk::**<br/>**tilemap_chunk_material::**<br/>**TilemapChunkMaterial#gt;**<br/>解析二维材质的自定义顶点与片元着色器。" }
+  n290@{ shape: rounded, label: "**init_volumetric_fog_pipeline**<br/>初始化体积雾管线的视图布局与着色器。" }
   class n290 node_system
-  n291@{ shape: rounded, label: "**init_sprite_pipeline**<br/>建立精灵视图和图像材质管线资源。" }
+  n291@{ shape: rounded, label: "**init_screen_space_reflections_**<br/>**pipeline**<br/>初始化屏幕空间反射的全屏渲染管线资源。" }
   class n291 node_system
-  n292@{ shape: rounded, label: "**init_ui_pipeline**<br/>建立 UI 图形的视图、图像和采样器布局。" }
+  n292@{ shape: rounded, label: "**collect_render_assets_to_**<br/>**reextract#lt;bevy_pbr::medium::**<br/>**GpuScatteringMedium#gt;**<br/>排空渲染资产并登记设备恢复后的重新提取。" }
   class n292 node_system
-  n293@{ shape: rounded, label: "**init_ui_texture_slice_pipeline**<br/>建立 UI 图像切片的视图和纹理管线资源。" }
+  n293@{ shape: rounded, label: "**init_scattering_medium_sampler**<br/>初始化散射介质查找表的线性采样器。" }
   class n293 node_system
-  n294@{ shape: rounded, label: "**init_gradient_pipeline**<br/>建立 UI 渐变的视图布局和着色器资源。" }
+  n294@{ shape: rounded, label: "**init_deferred_lighting_layout**<br/>初始化延迟光照的深度标识绑定与着色器。" }
   class n294 node_system
-  n295@{ shape: rounded, label: "**init_box_shadow_pipeline**<br/>建立 UI 盒阴影的视图布局和着色器资源。" }
+  n295@{ shape: rounded, label: "**init_shadow_samplers**<br/>创建点光与平行光的深度比较采样器。" }
   class n295 node_system
-  n296@{ shape: rounded, label: "**init_prepass_pipeline**<br/>初始化带运动矢量及普通预通道的资源布局。" }
+  n296@{ shape: rounded, label: "**init_global_clusterable_object_meta**<br/>按设备缓冲能力初始化全局聚簇元数据。" }
   class n296 node_system
-  n297@{ shape: rounded, label: "**init_prepass_view_bind_group**<br/>建立预通道的空绑定组及待准备状态。" }
+  n297@{ shape: rounded, label: "**collect_render_assets_to_**<br/>**reextract#lt;bevy_gizmos_render::**<br/>**GpuLineGizmo#gt;**<br/>排空渲染资产并登记设备恢复后的重新提取。" }
   class n297 node_system
-  n298@{ shape: rounded, label: "**init_material_pipeline**<br/>初始化与网格管线共享接口的材质管线资源。" }
+  n298@{ shape: rounded, label: "**init_line_gizmo_pipelines**<br/>建立二维 Gizmo 线段和接头管线。" }
   class n298 node_system
-  n299@{ shape: rounded, label: "**init_render_lightmaps**<br/>初始化光照贴图槽位和设备绑定数组能力。" }
+  n299@{ shape: rounded, label: "**init_line_gizmo_pipelines**<br/>建立三维 Gizmo 线条深度管线和接头资源。" }
   class n299 node_system
-  n300@{ shape: rounded, label: "**init_volumetric_fog_pipeline**<br/>初始化体积雾管线的视图布局与着色器。" }
+  n300@{ shape: rounded, label: "**init_sparse_buffer_update_pipelines**<br/>按设备存储绑定能力建立稀疏更新计算资源。" }
   class n300 node_system
-  n301@{ shape: rounded, label: "**init_screen_space_reflections_**<br/>**pipeline**<br/>初始化屏幕空间反射的全屏渲染管线资源。" }
+  n301@{ shape: rounded, label: "**init_sparse_buffer_update_bind_**<br/>**groups**<br/>准备稀疏更新管线标识与弱键绑定缓存。" }
   class n301 node_system
-  n302@{ shape: rounded, label: "**collect_render_assets_to_**<br/>**reextract#lt;bevy_pbr::medium::**<br/>**GpuScatteringMedium#gt;**<br/>排空渲染资产并登记设备恢复后的重新提取。" }
+  n302@{ shape: rounded, label: "**init_background_motion_vectors_**<br/>**pipeline**<br/>建立背景运动矢量的全屏管线资源。" }
   class n302 node_system
-  n303@{ shape: rounded, label: "**init_scattering_medium_sampler**<br/>初始化散射介质查找表的线性采样器。" }
+  n303@{ shape: rounded, label: "**collect_erased_render_assets_to_**<br/>**reextract#lt;bevy_sprite_render::**<br/>**mesh2d::material::**<br/>**MeshMaterial2d#lt;bevy_sprite_render::**<br/>**mesh2d::color_material::**<br/>**ColorMaterial#gt;#gt;**<br/>按源材质类型排空擦除资产并请求重新提取。" }
   class n303 node_system
-  n304@{ shape: rounded, label: "**init_deferred_lighting_layout**<br/>初始化延迟光照的深度标识绑定与着色器。" }
+  n304@{ shape: rounded, label: "**collect_erased_render_assets_to_**<br/>**reextract#lt;bevy_sprite_render::**<br/>**mesh2d::material::**<br/>**MeshMaterial2d#lt;bevy_sprite_render::**<br/>**sprite_mesh::sprite_mesh_material::**<br/>**SpriteMeshMaterial#gt;#gt;**<br/>按源材质类型排空擦除资产并请求重新提取。" }
   class n304 node_system
-  n305@{ shape: rounded, label: "**init_shadow_samplers**<br/>创建点光与平行光的深度比较采样器。" }
+  n305@{ shape: rounded, label: "**collect_erased_render_assets_to_**<br/>**reextract#lt;bevy_sprite_render::**<br/>**mesh2d::material::**<br/>**MeshMaterial2d#lt;bevy_sprite_render::**<br/>**tilemap_chunk::tilemap_chunk_**<br/>**material::TilemapChunkMaterial#gt;#gt;**<br/>按源材质类型排空擦除资产并请求重新提取。" }
   class n305 node_system
-  n306@{ shape: rounded, label: "**init_global_clusterable_object_meta**<br/>按设备缓冲能力初始化全局聚簇元数据。" }
+  n306@{ shape: rounded, label: "**skin_uniforms_from_world**<br/>初始化当前与前帧蒙皮矩阵缓冲及分配器。" }
   class n306 node_system
-  n307@{ shape: rounded, label: "**collect_render_assets_to_**<br/>**reextract#lt;bevy_gizmos_render::**<br/>**GpuLineGizmo#gt;**<br/>排空渲染资产并登记设备恢复后的重新提取。" }
+  n307@{ shape: rounded, label: "**collect_erased_render_assets_to_**<br/>**reextract#lt;bevy_pbr::mesh_material::**<br/>**MeshMaterial3d#lt;bevy_pbr::pbr_**<br/>**material::StandardMaterial#gt;#gt;**<br/>按源材质类型排空擦除资产并请求重新提取。" }
   class n307 node_system
-  n308@{ shape: rounded, label: "**init_line_gizmo_pipelines**<br/>建立二维 Gizmo 线段和接头管线。" }
+  n308@{ shape: rounded, label: "**initialize_generated_environment_**<br/>**map_resources**<br/>初始化环境图降采样、复制和卷积的 GPU 接<br/>口。" }
   class n308 node_system
-  n309@{ shape: rounded, label: "**init_line_gizmo_pipelines**<br/>建立三维 Gizmo 线条深度管线和接头资源。" }
+  n309@{ shape: rounded, label: "**collect_erased_render_assets_to_**<br/>**reextract#lt;bevy_pbr::mesh_material::**<br/>**MeshMaterial3d#lt;bevy_pbr::extended_**<br/>**material::ExtendedMaterial#lt;bevy_**<br/>**pbr::pbr_material::**<br/>**StandardMaterial, bevy_pbr::decal::**<br/>**forward::ForwardDecalMaterialExt#gt;#gt;#gt;**<br/>按源材质类型排空擦除资产并请求重新提取。" }
   class n309 node_system
-  n310@{ shape: rounded, label: "**init_sparse_buffer_update_pipelines**<br/>按设备存储绑定能力建立稀疏更新计算资源。" }
+  n310@{ shape: rounded, label: "**init_atmosphere_probe_layout**<br/>定义大气环境探针的计算资源接口。" }
   class n310 node_system
-  n311@{ shape: rounded, label: "**init_sparse_buffer_update_bind_**<br/>**groups**<br/>准备稀疏更新管线标识与弱键绑定缓存。" }
+  n311@{ shape: rounded, label: "**init_atmosphere_probe_pipeline**<br/>排队创建大气环境贴图生成计算管线。" }
   class n311 node_system
-  n312@{ shape: rounded, label: "**init_background_motion_vectors_**<br/>**pipeline**<br/>建立背景运动矢量的全屏管线资源。" }
-  class n312 node_system
-  n313@{ shape: rounded, label: "**collect_erased_render_assets_to_**<br/>**reextract#lt;bevy_sprite_render::**<br/>**mesh2d::material::**<br/>**MeshMaterial2d#lt;bevy_sprite_render::**<br/>**mesh2d::color_material::**<br/>**ColorMaterial#gt;#gt;**<br/>按源材质类型排空擦除资产并请求重新提取。" }
-  class n313 node_system
-  n314@{ shape: rounded, label: "**collect_erased_render_assets_to_**<br/>**reextract#lt;bevy_sprite_render::**<br/>**mesh2d::material::**<br/>**MeshMaterial2d#lt;bevy_sprite_render::**<br/>**sprite_mesh::sprite_mesh_material::**<br/>**SpriteMeshMaterial#gt;#gt;**<br/>按源材质类型排空擦除资产并请求重新提取。" }
-  class n314 node_system
-  n315@{ shape: rounded, label: "**collect_erased_render_assets_to_**<br/>**reextract#lt;bevy_sprite_render::**<br/>**mesh2d::material::**<br/>**MeshMaterial2d#lt;bevy_sprite_render::**<br/>**tilemap_chunk::tilemap_chunk_**<br/>**material::TilemapChunkMaterial#gt;#gt;**<br/>按源材质类型排空擦除资产并请求重新提取。" }
-  class n315 node_system
-  n316@{ shape: rounded, label: "**skin_uniforms_from_world**<br/>初始化当前与前帧蒙皮矩阵缓冲及分配器。" }
-  class n316 node_system
-  n317@{ shape: rounded, label: "**collect_erased_render_assets_to_**<br/>**reextract#lt;bevy_pbr::mesh_material::**<br/>**MeshMaterial3d#lt;bevy_pbr::pbr_**<br/>**material::StandardMaterial#gt;#gt;**<br/>按源材质类型排空擦除资产并请求重新提取。" }
-  class n317 node_system
-  n318@{ shape: rounded, label: "**initialize_generated_environment_**<br/>**map_resources**<br/>初始化环境图降采样、复制和卷积的 GPU 接<br/>口。" }
-  class n318 node_system
-  n319@{ shape: rounded, label: "**collect_erased_render_assets_to_**<br/>**reextract#lt;bevy_pbr::mesh_material::**<br/>**MeshMaterial3d#lt;bevy_pbr::extended_**<br/>**material::ExtendedMaterial#lt;bevy_**<br/>**pbr::pbr_material::**<br/>**StandardMaterial, bevy_pbr::decal::**<br/>**forward::ForwardDecalMaterialExt#gt;#gt;#gt;**<br/>按源材质类型排空擦除资产并请求重新提取。" }
-  class n319 node_system
-  n320@{ shape: rounded, label: "**init_atmosphere_probe_layout**<br/>定义大气环境探针的计算资源接口。" }
-  class n320 node_system
-  n321@{ shape: rounded, label: "**init_atmosphere_probe_pipeline**<br/>排队创建大气环境贴图生成计算管线。" }
-  class n321 node_system
   n0 e0@-->|"参数 / 查询数据"| n1
   class e0 edge_reference
   n0 e1@-->|"参数 / 查询数据"| n2
@@ -1328,26 +1308,6 @@ flowchart LR
   class e309 edge_reference
   n0 e310@-->|"参数 / 查询数据"| n311
   class e310 edge_reference
-  n0 e311@-->|"参数 / 查询数据"| n312
-  class e311 edge_reference
-  n0 e312@-->|"参数 / 查询数据"| n313
-  class e312 edge_reference
-  n0 e313@-->|"参数 / 查询数据"| n314
-  class e313 edge_reference
-  n0 e314@-->|"参数 / 查询数据"| n315
-  class e314 edge_reference
-  n0 e315@-->|"参数 / 查询数据"| n316
-  class e315 edge_reference
-  n0 e316@-->|"参数 / 查询数据"| n317
-  class e316 edge_reference
-  n0 e317@-->|"参数 / 查询数据"| n318
-  class e317 edge_reference
-  n0 e318@-->|"参数 / 查询数据"| n319
-  class e318 edge_reference
-  n0 e319@-->|"参数 / 查询数据"| n320
-  class e319 edge_reference
-  n0 e320@-->|"参数 / 查询数据"| n321
-  class e320 edge_reference
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
@@ -1503,11 +1463,11 @@ flowchart LR
   e152@{ curve: basis }
   e153@{ curve: basis }
   e154@{ curve: basis }
-  e155@{ curve: basis }
   e156@{ curve: basis }
   e157@{ curve: basis }
   e158@{ curve: basis }
   e159@{ curve: basis }
+  e160@{ curve: basis }
   e161@{ curve: basis }
   e162@{ curve: basis }
   e163@{ curve: basis }
@@ -1658,13 +1618,3 @@ flowchart LR
   e308@{ curve: basis }
   e309@{ curve: basis }
   e310@{ curve: basis }
-  e311@{ curve: basis }
-  e312@{ curve: basis }
-  e313@{ curve: basis }
-  e314@{ curve: basis }
-  e315@{ curve: basis }
-  e316@{ curve: basis }
-  e317@{ curve: basis }
-  e318@{ curve: basis }
-  e319@{ curve: basis }
-  e320@{ curve: basis }

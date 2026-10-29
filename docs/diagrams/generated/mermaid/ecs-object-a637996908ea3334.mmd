@@ -109,14 +109,11 @@ flowchart LR
   n22@{ shape: cyl, label: "**Time#lt;Fixed#gt;**<br/>来自Bevy 引擎 ↗：提供固定模拟的时间步<br/>长。" }
   class n22 node_resource
   class n22 external_node
-  n23@{ shape: cyl, label: "**State#lt;AppState#gt; /**<br/>**NextState#lt;AppState#gt;**<br/>来自应用流程 ↗：保存应用主状态及待处理<br/>的会话切换。" }
+  n23@{ shape: cyl, label: "**State#lt;AppState#gt; /**<br/>**NextState#lt;AppState#gt;**<br/>来自应用流程 ↗：保存主菜单、运行和暂停<br/>状态及下一次转换。" }
   class n23 node_resource
   class n23 external_node
-  n24@{ shape: cyl, label: "**State#lt;PlayState#gt; /**<br/>**NextState#lt;PlayState#gt;**<br/>来自应用流程 ↗：保存游戏运行、暂停及待<br/>处理的切换请求。" }
-  class n24 node_resource
-  class n24 external_node
-  n25@{ shape: fr-rect, label: "**CharacterPlugin**<br/>提供角色身份、运动、接地与跳跃。" }
-  class n25 node_plugin
+  n24@{ shape: fr-rect, label: "**CharacterPlugin**<br/>提供角色身份、运动、接地与跳跃。" }
+  class n24 node_plugin
   n1 e0@-->|"查询访问"| n0
   class e0 edge_read
   n2 e1@--> n0
@@ -173,10 +170,8 @@ flowchart LR
   class e26 edge_read
   n23 e27@-->|"访问声明"| n0
   class e27 edge_read
-  n24 e28@-->|"访问声明"| n0
-  class e28 edge_read
-  n25 e29@--> n0
-  class e29 edge_registration
+  n24 e28@--> n0
+  class e28 edge_registration
   e0@{ curve: basis }
   e1@{ curve: basis }
   e3@{ curve: basis }
@@ -205,4 +200,3 @@ flowchart LR
   e26@{ curve: basis }
   e27@{ curve: basis }
   e28@{ curve: basis }
-  e29@{ curve: basis }

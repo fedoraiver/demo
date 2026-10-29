@@ -782,7 +782,7 @@ mod jump_tests {
 
     #[test]
     fn pause_gate_freezes_jump_clock_and_evaluated_pose_without_restarting_on_resume() {
-        use crate::game_flow::{AppState, PlayState};
+        use crate::game_flow::AppState;
         let mut app = animation_app();
         let asset = courier_asset(&mut app);
         let (character, visual, player) = spawn_courier(&mut app, asset.clone());
@@ -793,12 +793,11 @@ mod jump_tests {
         step(&mut app, 0.06);
         let seek = phase_seek(&app, player, CourierAnimationState::Jump);
         let pose = *app.world().get::<Transform>(bone).unwrap();
-        app.insert_resource(State::new(AppState::InGame))
-            .insert_resource(State::new(PlayState::Paused));
+        app.insert_resource(State::new(AppState::Paused));
         step(&mut app, 0.5);
         assert_eq!(phase_seek(&app, player, CourierAnimationState::Jump), seek);
         assert_eq!(*app.world().get::<Transform>(bone).unwrap(), pose);
-        app.insert_resource(State::new(PlayState::Running));
+        app.insert_resource(State::new(AppState::Running));
         step(&mut app, 0.01);
         assert!(
             (phase_seek(&app, player, CourierAnimationState::Jump)

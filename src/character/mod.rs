@@ -14,7 +14,7 @@ use avian3d::prelude::PhysicsSystems;
 use bevy::prelude::*;
 
 use crate::{
-    game_flow::{AppState, FixedGameplaySystems, PlayState, gameplay_running},
+    game_flow::{AppState, FixedGameplaySystems, gameplay_running},
     settings::PrototypeConfig,
 };
 use lifecycle::clear_character_intents;
@@ -32,7 +32,7 @@ impl Plugin for CharacterPlugin {
             .init_resource::<PrototypeConfig>()
             .add_systems(Startup, log_configuration)
             .add_systems(OnEnter(AppState::MainMenu), clear_character_intents)
-            .add_systems(OnEnter(PlayState::Paused), clear_character_intents)
+            .add_systems(OnEnter(AppState::Paused), clear_character_intents)
             .add_systems(
                 FixedUpdate,
                 (update_grounded, move_characters, jump_characters)

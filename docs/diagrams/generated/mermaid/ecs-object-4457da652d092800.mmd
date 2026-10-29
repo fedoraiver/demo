@@ -35,7 +35,6 @@ flowchart LR
   classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
   classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
   classDef node_engine_flow fill:#F1F5F4,stroke:#557C78,stroke-width:1.6px,color:#1F3340
-  classDef edge_order stroke:#334155,stroke-width:2px
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
@@ -47,17 +46,11 @@ flowchart LR
   class n2 node_system_set
   n3@{ shape: rounded, label: "**apply_state_transition#lt;demo::game_**<br/>**flow::AppState#gt;**<br/>取出 NextState 中待提交的新状态及是否<br/>允许同值切换的设置；当前状态存在时交给内<br/>部状态转换逻辑更新状态、保留前态并发布转<br/>换消息。" }
   class n3 node_system
-  n4@{ shape: lin-rect, label: "**ApplyStateTransition ·**<br/>**(PhantomData#lt;demo::game_flow::**<br/>**PlayState#gt;)**<br/>应用待处理状态及其依赖子状态转换。" }
-  class n4 node_system_set
   n1 e0@-->|"main / StateTransition"| n0
   class e0 edge_registration
   n2 e1@--> n0
   class e1 edge_set_membership
   n0 e2@--> n3
   class e2 edge_set_membership
-  n0 e3@--> n4
-  class e3 edge_order
   e0@{ curve: basis }
   e1@{ curve: basis }
-  e2@{ curve: basis }
-  e3@{ curve: basis }

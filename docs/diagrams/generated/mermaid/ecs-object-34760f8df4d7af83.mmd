@@ -34,91 +34,95 @@ flowchart LR
   %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
   classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
   classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef node_lifecycle_note fill:#F6F4F3,stroke:#8E766D,stroke-width:1.2px,color:#1F3340
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_transition stroke:#A64E76,stroke-width:2px,stroke-dasharray:10 4 2 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**State#lt;AppState#gt; /**<br/>**NextState#lt;AppState#gt;**<br/>保存应用主状态及待处理的会话切换。" }
+  n0@{ shape: cyl, label: "**State#lt;AppState#gt; /**<br/>**NextState#lt;AppState#gt;**<br/>保存主菜单、运行和暂停状态及下一次转换。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**sync_mouse_capture**<br/>来自第一人称控制 ↗：管理光标捕获及玩法<br/>输入启停。" }
-  class n1 node_system
-  class n1 external_node
-  n2@{ shape: rounded, label: "**sync_character_facing**<br/>来自第一人称控制 ↗：同步人物朝向并处理<br/>持物转向受阻。" }
+  n1@{ shape: doc, label: "**AppState::Paused**<br/>保留会话实体并暂停模拟与玩法输入。" }
+  class n1 node_lifecycle_note
+  n2@{ shape: rounded, label: "**sync_mouse_capture**<br/>来自第一人称控制 ↗：管理光标捕获及玩法<br/>输入启停。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**move_characters**<br/>来自角色运动 ↗：按移动意图和速度为角色<br/>施加水平运动力。" }
+  n3@{ shape: rounded, label: "**sync_character_facing**<br/>来自第一人称控制 ↗：同步人物朝向并处理<br/>持物转向受阻。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**jump_characters**<br/>来自角色运动 ↗：执行角色跳跃并消费单次<br/>请求。" }
+  n4@{ shape: rounded, label: "**move_characters**<br/>来自角色运动 ↗：按移动意图和速度为角色<br/>施加水平运动力。" }
   class n4 node_system
   class n4 external_node
-  n5@{ shape: rounded, label: "**handle_interaction**<br/>来自物品交互 ↗：处理物品拾取、共享持握<br/>与主动释放。" }
+  n5@{ shape: rounded, label: "**jump_characters**<br/>来自角色运动 ↗：执行角色跳跃并消费单次<br/>请求。" }
   class n5 node_system
   class n5 external_node
-  n6@{ shape: rounded, label: "**sync_held_presentation**<br/>来自物品交互 ↗：按人物呈现姿态同步持物<br/>模型与握持目标。" }
+  n6@{ shape: rounded, label: "**handle_interaction**<br/>来自物品交互 ↗：处理物品拾取、共享持握<br/>与主动释放。" }
   class n6 node_system
   class n6 external_node
-  n7@{ shape: rounded, label: "**sync_character_facing**<br/>来自第一人称控制 ↗：同步人物朝向并处理<br/>持物转向受阻。" }
+  n7@{ shape: rounded, label: "**sync_held_presentation**<br/>来自物品交互 ↗：按人物呈现姿态同步持物<br/>模型与握持目标。" }
   class n7 node_system
   class n7 external_node
-  n8@{ shape: rounded, label: "**sync_held_presentation**<br/>来自物品交互 ↗：按人物呈现姿态同步持物<br/>模型与握持目标。" }
+  n8@{ shape: rounded, label: "**sync_character_facing**<br/>来自第一人称控制 ↗：同步人物朝向并处理<br/>持物转向受阻。" }
   class n8 node_system
   class n8 external_node
-  n9@{ shape: rounded, label: "**follow_first_person_camera**<br/>来自第一人称控制 ↗：按人物本帧位置与观<br/>察角度更新第一人称镜头。" }
+  n9@{ shape: rounded, label: "**sync_held_presentation**<br/>来自物品交互 ↗：按人物呈现姿态同步持物<br/>模型与握持目标。" }
   class n9 node_system
   class n9 external_node
-  n10@{ shape: rounded, label: "**sync_character_visibility**<br/>来自第一人称控制 ↗：隐藏第一人称控制角<br/>色的自身模型。" }
+  n10@{ shape: rounded, label: "**follow_first_person_camera**<br/>来自第一人称控制 ↗：按人物本帧位置与观<br/>察角度更新第一人称镜头。" }
   class n10 node_system
   class n10 external_node
-  n11@{ shape: rounded, label: "**world_inspector_ui**<br/>来自Egui / Inspector ↗：展示并编辑开<br/>放反射的实体、资源与资产。" }
+  n11@{ shape: rounded, label: "**sync_character_visibility**<br/>来自第一人称控制 ↗：隐藏第一人称控制角<br/>色的自身模型。" }
   class n11 node_system
   class n11 external_node
-  n12@{ shape: rounded, label: "**update_grounded**<br/>来自角色运动 ↗：准备运动前更新接地状<br/>态。" }
+  n12@{ shape: rounded, label: "**world_inspector_ui**<br/>来自Egui / Inspector ↗：展示并编辑开<br/>放反射的实体、资源与资产。" }
   class n12 node_system
   class n12 external_node
-  n13@{ shape: rounded, label: "**update_grounded**<br/>来自角色运动 ↗：物理回写之后观察实际接<br/>地状态。" }
+  n13@{ shape: rounded, label: "**update_grounded**<br/>来自角色运动 ↗：准备运动前更新接地状<br/>态。" }
   class n13 node_system
   class n13 external_node
-  n14@{ shape: rounded, label: "**log_character_velocity**<br/>来自角色运动 ↗：定期记录角色实际速度与<br/>接地状态。" }
+  n14@{ shape: rounded, label: "**update_grounded**<br/>来自角色运动 ↗：物理回写之后观察实际接<br/>地状态。" }
   class n14 node_system
   class n14 external_node
-  n15@{ shape: rounded, label: "**begin_island**<br/>来自场景装配 ↗：请求创建已加载海岛的运<br/>行实例。" }
+  n15@{ shape: rounded, label: "**log_character_velocity**<br/>来自角色运动 ↗：定期记录角色实际速度与<br/>接地状态。" }
   class n15 node_system
   class n15 external_node
-  n16@{ shape: rounded, label: "**prepare_island**<br/>来自场景装配 ↗：从海岛模型构建静态碰<br/>撞、坡道与人物碰撞。" }
+  n16@{ shape: rounded, label: "**begin_island**<br/>来自场景装配 ↗：请求创建已加载海岛的运<br/>行实例。" }
   class n16 node_system
   class n16 external_node
-  n17@{ shape: rounded, label: "**spawn_actors**<br/>来自场景装配 ↗：装配玩家、可搬物、控制<br/>者与相机。" }
+  n17@{ shape: rounded, label: "**prepare_island**<br/>来自场景装配 ↗：从海岛模型构建静态碰<br/>撞、坡道与人物碰撞。" }
   class n17 node_system
   class n17 external_node
-  n18@{ shape: rounded, label: "**initialize_ready_couriers**<br/>来自角色动画 ↗：绑定主角命名动画并缓存<br/>鞋底补偿节点。" }
+  n18@{ shape: rounded, label: "**spawn_actors**<br/>来自场景装配 ↗：装配玩家、可搬物、控制<br/>者与相机。" }
   class n18 node_system
   class n18 external_node
-  n19@{ shape: rounded, label: "**sync_courier_animation**<br/>来自角色动画 ↗：按角色运动状态连续混合<br/>移动与跳跃动画。" }
+  n19@{ shape: rounded, label: "**initialize_ready_couriers**<br/>来自角色动画 ↗：绑定主角命名动画并缓存<br/>鞋底补偿节点。" }
   class n19 node_system
   class n19 external_node
-  n20@{ shape: rounded, label: "**recover_from_water**<br/>来自越界恢复 ↗：将落水实体恢复到各自出<br/>生姿态。" }
+  n20@{ shape: rounded, label: "**sync_courier_animation**<br/>来自角色动画 ↗：按角色运动状态连续混合<br/>移动与跳跃动画。" }
   class n20 node_system
   class n20 external_node
-  n21@{ shape: rounded, label: "**resume_interpolation**<br/>来自越界恢复 ↗：撤销落水恢复添加的临时<br/>插值暂停。" }
+  n21@{ shape: rounded, label: "**recover_from_water**<br/>来自越界恢复 ↗：将落水实体恢复到各自出<br/>生姿态。" }
   class n21 node_system
   class n21 external_node
-  n22@{ shape: rounded, label: "**compensate_courier_sole_penetration**<br/>来自角色动画 ↗：补偿鞋底穿地并平滑恢复<br/>视觉高度。" }
+  n22@{ shape: rounded, label: "**resume_interpolation**<br/>来自越界恢复 ↗：撤销落水恢复添加的临时<br/>插值暂停。" }
   class n22 node_system
   class n22 external_node
-  n23@{ shape: rounded, label: "**handle_requests**<br/>来自菜单与界面 ↗：处理菜单导航、设置应<br/>用与音量编辑请求。" }
+  n23@{ shape: rounded, label: "**compensate_courier_sole_penetration**<br/>来自角色动画 ↗：补偿鞋底穿地并平滑恢复<br/>视觉高度。" }
   class n23 node_system
   class n23 external_node
-  n24@{ shape: rounded, label: "**spawn_backdrop**<br/>来自菜单与界面 ↗：装配主菜单海岛展示舞<br/>台、相机与日光。" }
+  n24@{ shape: rounded, label: "**handle_requests**<br/>来自菜单与界面 ↗：处理菜单导航、设置应<br/>用与音量编辑请求。" }
   class n24 node_system
   class n24 external_node
-  n25@{ shape: rounded, label: "**warn_hold_strain**<br/>来自物品交互 ↗：检查持续持握偏差并发出<br/>失稳提示音。" }
+  n25@{ shape: rounded, label: "**spawn_backdrop**<br/>来自菜单与界面 ↗：装配主菜单海岛展示舞<br/>台、相机与日光。" }
   class n25 node_system
   class n25 external_node
-  n26@{ shape: rounded, label: "**emit_parcel_land**<br/>来自物品交互 ↗：识别自由物品落地并发出<br/>声音请求。" }
+  n26@{ shape: rounded, label: "**warn_hold_strain**<br/>来自物品交互 ↗：检查持续持握偏差并发出<br/>失稳提示音。" }
   class n26 node_system
   class n26 external_node
-  n0 e0@-->|"访问声明"| n1
-  class e0 edge_read
+  n27@{ shape: rounded, label: "**emit_parcel_land**<br/>来自物品交互 ↗：识别自由物品落地并发出<br/>声音请求。" }
+  class n27 node_system
+  class n27 external_node
+  n0 e0@-->|"进入 AppState::Paused"| n1
+  class e0 edge_transition
   n0 e1@-->|"访问声明"| n2
   class e1 edge_read
   n0 e2@-->|"访问声明"| n3
@@ -161,14 +165,16 @@ flowchart LR
   class e20 edge_read
   n0 e21@-->|"访问声明"| n22
   class e21 edge_read
-  n23 e22@-->|"访问声明"| n0
-  class e22 edge_write
-  n0 e23@-->|"访问声明"| n24
-  class e23 edge_read
+  n0 e22@-->|"访问声明"| n23
+  class e22 edge_read
+  n24 e23@-->|"访问声明"| n0
+  class e23 edge_write
   n0 e24@-->|"访问声明"| n25
   class e24 edge_read
   n0 e25@-->|"访问声明"| n26
   class e25 edge_read
+  n0 e26@-->|"访问声明"| n27
+  class e26 edge_read
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
@@ -181,6 +187,7 @@ flowchart LR
   e9@{ curve: basis }
   e10@{ curve: basis }
   e11@{ curve: basis }
+  e12@{ curve: basis }
   e13@{ curve: basis }
   e14@{ curve: basis }
   e15@{ curve: basis }
@@ -190,6 +197,7 @@ flowchart LR
   e19@{ curve: basis }
   e20@{ curve: basis }
   e21@{ curve: basis }
-  e23@{ curve: basis }
+  e22@{ curve: basis }
   e24@{ curve: basis }
   e25@{ curve: basis }
+  e26@{ curve: basis }

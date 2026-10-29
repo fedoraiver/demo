@@ -45,24 +45,16 @@ flowchart LR
   class n1 node_engine_flow
   n2@{ shape: lin-rect, label: "**ExitSchedules · (PhantomData#lt;demo::**<br/>**game_flow::AppState#gt;)**<br/>执行旧状态的退出调度和退出生命周期。" }
   class n2 node_system_set
-  n3@{ shape: lin-rect, label: "**ExitSchedules · (PhantomData#lt;demo::**<br/>**game_flow::PlayState#gt;)**<br/>执行旧状态的退出调度和退出生命周期。" }
-  class n3 node_system_set
-  n4@{ shape: rounded, label: "**despawn_entities_on_exit_**<br/>**state#lt;demo::game_flow::AppState#gt;**<br/>读取最新状态转换消息，对<br/>DespawnOnExit 值匹配退出状态的实体排入<br/>销毁；包括禁用实体，未发生有效转换时不遍<br/>历。" }
+  n3@{ shape: rounded, label: "**despawn_entities_on_exit_**<br/>**state#lt;demo::game_flow::AppState#gt;**<br/>读取最新状态转换消息，对<br/>DespawnOnExit 值匹配退出状态的实体排入<br/>销毁；包括禁用实体，未发生有效转换时不遍<br/>历。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**disable_entities_on_exit_**<br/>**state#lt;demo::game_flow::AppState#gt;**<br/>有效状态转换退出指定值时，对匹配<br/>DisableOnExit 的实体及 Children 后代<br/>递归添加 Disabled，停用整条子树。" }
   class n4 node_system
-  n5@{ shape: rounded, label: "**disable_entities_on_exit_**<br/>**state#lt;demo::game_flow::AppState#gt;**<br/>有效状态转换退出指定值时，对匹配<br/>DisableOnExit 的实体及 Children 后代<br/>递归添加 Disabled，停用整条子树。" }
+  n5@{ shape: rounded, label: "**enable_entities_on_exit_state#lt;demo::**<br/>**game_flow::AppState#gt;**<br/>有效状态转换退出指定值时，对匹配<br/>EnableOnExit 且已禁用的实体及<br/>Children 后代递归移除 Disabled，重新启<br/>用该子树。" }
   class n5 node_system
-  n6@{ shape: rounded, label: "**enable_entities_on_exit_state#lt;demo::**<br/>**game_flow::AppState#gt;**<br/>有效状态转换退出指定值时，对匹配<br/>EnableOnExit 且已禁用的实体及<br/>Children 后代递归移除 Disabled，重新启<br/>用该子树。" }
-  class n6 node_system
-  n7@{ shape: rounded, label: "**despawn_entities_on_exit_**<br/>**state#lt;demo::game_flow::PlayState#gt;**<br/>读取最新状态转换消息，对<br/>DespawnOnExit 值匹配退出状态的实体排入<br/>销毁；包括禁用实体，未发生有效转换时不遍<br/>历。" }
-  class n7 node_system
-  n8@{ shape: rounded, label: "**disable_entities_on_exit_**<br/>**state#lt;demo::game_flow::PlayState#gt;**<br/>有效状态转换退出指定值时，对匹配<br/>DisableOnExit 的实体及 Children 后代<br/>递归添加 Disabled，停用整条子树。" }
-  class n8 node_system
-  n9@{ shape: rounded, label: "**enable_entities_on_exit_state#lt;demo::**<br/>**game_flow::PlayState#gt;**<br/>有效状态转换退出指定值时，对匹配<br/>EnableOnExit 且已禁用的实体及<br/>Children 后代递归移除 Disabled，重新启<br/>用该子树。" }
-  class n9 node_system
-  n10@{ shape: lin-rect, label: "**StateTransitionSystems::**<br/>**DependentTransitions**<br/>先计算彼此依赖的状态转换。" }
-  class n10 node_system_set
-  n11@{ shape: lin-rect, label: "**TransitionSchedules**<br/>执行特定状态对的转换和谓词生命周期。" }
-  class n11 node_system_set
+  n6@{ shape: lin-rect, label: "**StateTransitionSystems::**<br/>**DependentTransitions**<br/>先计算彼此依赖的状态转换。" }
+  class n6 node_system_set
+  n7@{ shape: lin-rect, label: "**TransitionSchedules**<br/>执行特定状态对的转换和谓词生命周期。" }
+  class n7 node_system_set
   n1 e0@-->|"main / StateTransition"| n0
   class e0 edge_registration
   n0 e1@--> n2
@@ -73,25 +65,13 @@ flowchart LR
   class e3 edge_set_membership
   n0 e4@--> n5
   class e4 edge_set_membership
-  n0 e5@--> n6
-  class e5 edge_set_membership
+  n6 e5@--> n0
+  class e5 edge_order
   n0 e6@--> n7
-  class e6 edge_set_membership
-  n0 e7@--> n8
-  class e7 edge_set_membership
-  n0 e8@--> n9
-  class e8 edge_set_membership
-  n10 e9@--> n0
-  class e9 edge_order
-  n0 e10@--> n11
-  class e10 edge_order
+  class e6 edge_order
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
-  e3@{ curve: basis }
   e4@{ curve: basis }
+  e5@{ curve: basis }
   e6@{ curve: basis }
-  e7@{ curve: basis }
-  e8@{ curve: basis }
-  e9@{ curve: basis }
-  e10@{ curve: basis }

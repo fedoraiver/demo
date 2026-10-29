@@ -28,18 +28,6 @@ digraph "" {
 			"node_System(SystemKey(1v1))" ["label"="apply_state_transition<AppState>", "tooltip"="bevy_state::state::freely_mutable_state::apply_state_transition<demo::game_flow::AppState>", "fillcolor"="#eff1f3", "fontname"="Helvetica", "fontcolor"="#15191d", "color"="#b4bec7", "penwidth"="1"]
 		}
 		
-		subgraph "clusternode_Set(SystemSetKey(23v1))" {
-			"style"="rounded,filled";
-			"label"="ApplyStateTransition(PhantomData<demo::game_flow::PlayState>)";
-			"tooltip"="ApplyStateTransition(PhantomData<demo::game_flow::PlayState>)";
-			"fillcolor"="#ffffff44";
-			"fontcolor"="#ffffff";
-			"color"="#ffffff50";
-			"penwidth"="2";
-			"set_marker_node_Set(SystemSetKey(23v1))" ["style"="invis", "label"="", "shape"="point"]
-			"node_System(SystemKey(14v1))" ["label"="<AppState as StateSet>::register_sub_state_systems_in_schedule<PlayState>::{{closure}}", "tooltip"="<demo::game_flow::AppState as bevy_state::state::state_set::StateSet>::register_sub_state_systems_in_schedule<demo::game_flow::PlayState>::{{closure}}", "fillcolor"="#eff1f3", "fontname"="Helvetica", "fontcolor"="#15191d", "color"="#b4bec7", "penwidth"="1"]
-		}
-		
 	}
 	
 	subgraph "clusternode_Set(SystemSetKey(2v1))" {
@@ -63,24 +51,9 @@ digraph "" {
 			"node_System(SystemKey(2v1))" ["label"="Pipe(last_transition<AppState>, run_exit<AppState>)", "tooltip"="Pipe(bevy_state::state::transitions::last_transition<demo::game_flow::AppState>, bevy_state::state::transitions::run_exit<demo::game_flow::AppState>)", "fillcolor"="#eff1f3", "fontname"="Helvetica", "fontcolor"="#15191d", "color"="#b4bec7", "penwidth"="1"]
 		}
 		
-		subgraph "clusternode_Set(SystemSetKey(24v1))" {
-			"style"="rounded,filled";
-			"label"="ExitSchedules(PhantomData<demo::game_flow::PlayState>)";
-			"tooltip"="ExitSchedules(PhantomData<demo::game_flow::PlayState>)";
-			"fillcolor"="#ffffff44";
-			"fontcolor"="#ffffff";
-			"color"="#ffffff50";
-			"penwidth"="2";
-			"set_marker_node_Set(SystemSetKey(24v1))" ["style"="invis", "label"="", "shape"="point"]
-			"node_System(SystemKey(15v1))" ["label"="Pipe(last_transition<PlayState>, run_exit<PlayState>)", "tooltip"="Pipe(bevy_state::state::transitions::last_transition<demo::game_flow::PlayState>, bevy_state::state::transitions::run_exit<demo::game_flow::PlayState>)", "fillcolor"="#eff1f3", "fontname"="Helvetica", "fontcolor"="#15191d", "color"="#b4bec7", "penwidth"="1"]
-		}
-		
 		"node_System(SystemKey(5v1))" ["label"="despawn_entities_on_exit_state<AppState>", "tooltip"="bevy_state::state_scoped::despawn_entities_on_exit_state<demo::game_flow::AppState>", "fillcolor"="#eff1f3", "fontname"="Helvetica", "fontcolor"="#15191d", "color"="#b4bec7", "penwidth"="1"]
 		"node_System(SystemKey(6v1))" ["label"="disable_entities_on_exit_state<AppState>", "tooltip"="bevy_state::state_scoped::disable_entities_on_exit_state<demo::game_flow::AppState>", "fillcolor"="#eff1f3", "fontname"="Helvetica", "fontcolor"="#15191d", "color"="#b4bec7", "penwidth"="1"]
 		"node_System(SystemKey(7v1))" ["label"="enable_entities_on_exit_state<AppState>", "tooltip"="bevy_state::state_scoped::enable_entities_on_exit_state<demo::game_flow::AppState>", "fillcolor"="#eff1f3", "fontname"="Helvetica", "fontcolor"="#15191d", "color"="#b4bec7", "penwidth"="1"]
-		"node_System(SystemKey(18v1))" ["label"="despawn_entities_on_exit_state<PlayState>", "tooltip"="bevy_state::state_scoped::despawn_entities_on_exit_state<demo::game_flow::PlayState>", "fillcolor"="#eff1f3", "fontname"="Helvetica", "fontcolor"="#15191d", "color"="#b4bec7", "penwidth"="1"]
-		"node_System(SystemKey(19v1))" ["label"="disable_entities_on_exit_state<PlayState>", "tooltip"="bevy_state::state_scoped::disable_entities_on_exit_state<demo::game_flow::PlayState>", "fillcolor"="#eff1f3", "fontname"="Helvetica", "fontcolor"="#15191d", "color"="#b4bec7", "penwidth"="1"]
-		"node_System(SystemKey(20v1))" ["label"="enable_entities_on_exit_state<PlayState>", "tooltip"="bevy_state::state_scoped::enable_entities_on_exit_state<demo::game_flow::PlayState>", "fillcolor"="#eff1f3", "fontname"="Helvetica", "fontcolor"="#15191d", "color"="#b4bec7", "penwidth"="1"]
 	}
 	
 	subgraph "clusternode_Set(SystemSetKey(3v1))" {
@@ -104,24 +77,9 @@ digraph "" {
 			"node_System(SystemKey(3v1))" ["label"="Pipe(last_transition<AppState>, run_transition<AppState>)", "tooltip"="Pipe(bevy_state::state::transitions::last_transition<demo::game_flow::AppState>, bevy_state::state::transitions::run_transition<demo::game_flow::AppState>)", "fillcolor"="#eff1f3", "fontname"="Helvetica", "fontcolor"="#15191d", "color"="#b4bec7", "penwidth"="1"]
 		}
 		
-		subgraph "clusternode_Set(SystemSetKey(25v1))" {
-			"style"="rounded,filled";
-			"label"="TransitionSchedules(PhantomData<demo::game_flow::PlayState>)";
-			"tooltip"="TransitionSchedules(PhantomData<demo::game_flow::PlayState>)";
-			"fillcolor"="#ffffff44";
-			"fontcolor"="#ffffff";
-			"color"="#ffffff50";
-			"penwidth"="2";
-			"set_marker_node_Set(SystemSetKey(25v1))" ["style"="invis", "label"="", "shape"="point"]
-			"node_System(SystemKey(16v1))" ["label"="Pipe(last_transition<PlayState>, run_transition<PlayState>)", "tooltip"="Pipe(bevy_state::state::transitions::last_transition<demo::game_flow::PlayState>, bevy_state::state::transitions::run_transition<demo::game_flow::PlayState>)", "fillcolor"="#eff1f3", "fontname"="Helvetica", "fontcolor"="#15191d", "color"="#b4bec7", "penwidth"="1"]
-		}
-		
 		"node_System(SystemKey(11v1))" ["label"="despawn_entities_when_state<AppState>", "tooltip"="bevy_state::state_scoped::despawn_entities_when_state<demo::game_flow::AppState>", "fillcolor"="#eff1f3", "fontname"="Helvetica", "fontcolor"="#15191d", "color"="#b4bec7", "penwidth"="1"]
 		"node_System(SystemKey(12v1))" ["label"="disable_entities_when_state<AppState>", "tooltip"="bevy_state::state_scoped::disable_entities_when_state<demo::game_flow::AppState>", "fillcolor"="#eff1f3", "fontname"="Helvetica", "fontcolor"="#15191d", "color"="#b4bec7", "penwidth"="1"]
 		"node_System(SystemKey(13v1))" ["label"="enable_entities_when_state<AppState>", "tooltip"="bevy_state::state_scoped::enable_entities_when_state<demo::game_flow::AppState>", "fillcolor"="#eff1f3", "fontname"="Helvetica", "fontcolor"="#15191d", "color"="#b4bec7", "penwidth"="1"]
-		"node_System(SystemKey(24v1))" ["label"="despawn_entities_when_state<PlayState>", "tooltip"="bevy_state::state_scoped::despawn_entities_when_state<demo::game_flow::PlayState>", "fillcolor"="#eff1f3", "fontname"="Helvetica", "fontcolor"="#15191d", "color"="#b4bec7", "penwidth"="1"]
-		"node_System(SystemKey(25v1))" ["label"="disable_entities_when_state<PlayState>", "tooltip"="bevy_state::state_scoped::disable_entities_when_state<demo::game_flow::PlayState>", "fillcolor"="#eff1f3", "fontname"="Helvetica", "fontcolor"="#15191d", "color"="#b4bec7", "penwidth"="1"]
-		"node_System(SystemKey(26v1))" ["label"="enable_entities_when_state<PlayState>", "tooltip"="bevy_state::state_scoped::enable_entities_when_state<demo::game_flow::PlayState>", "fillcolor"="#eff1f3", "fontname"="Helvetica", "fontcolor"="#15191d", "color"="#b4bec7", "penwidth"="1"]
 	}
 	
 	subgraph "clusternode_Set(SystemSetKey(4v1))" {
@@ -145,34 +103,15 @@ digraph "" {
 			"node_System(SystemKey(4v1))" ["label"="Pipe(last_transition<AppState>, run_enter<AppState>)", "tooltip"="Pipe(bevy_state::state::transitions::last_transition<demo::game_flow::AppState>, bevy_state::state::transitions::run_enter<demo::game_flow::AppState>)", "fillcolor"="#eff1f3", "fontname"="Helvetica", "fontcolor"="#15191d", "color"="#b4bec7", "penwidth"="1"]
 		}
 		
-		subgraph "clusternode_Set(SystemSetKey(26v1))" {
-			"style"="rounded,filled";
-			"label"="EnterSchedules(PhantomData<demo::game_flow::PlayState>)";
-			"tooltip"="EnterSchedules(PhantomData<demo::game_flow::PlayState>)";
-			"fillcolor"="#ffffff44";
-			"fontcolor"="#ffffff";
-			"color"="#ffffff50";
-			"penwidth"="2";
-			"set_marker_node_Set(SystemSetKey(26v1))" ["style"="invis", "label"="", "shape"="point"]
-			"node_System(SystemKey(17v1))" ["label"="Pipe(last_transition<PlayState>, run_enter<PlayState>)", "tooltip"="Pipe(bevy_state::state::transitions::last_transition<demo::game_flow::PlayState>, bevy_state::state::transitions::run_enter<demo::game_flow::PlayState>)", "fillcolor"="#eff1f3", "fontname"="Helvetica", "fontcolor"="#15191d", "color"="#b4bec7", "penwidth"="1"]
-		}
-		
 		"node_System(SystemKey(8v1))" ["label"="despawn_entities_on_enter_state<AppState>", "tooltip"="bevy_state::state_scoped::despawn_entities_on_enter_state<demo::game_flow::AppState>", "fillcolor"="#eff1f3", "fontname"="Helvetica", "fontcolor"="#15191d", "color"="#b4bec7", "penwidth"="1"]
 		"node_System(SystemKey(9v1))" ["label"="disable_entities_on_enter_state<AppState>", "tooltip"="bevy_state::state_scoped::disable_entities_on_enter_state<demo::game_flow::AppState>", "fillcolor"="#eff1f3", "fontname"="Helvetica", "fontcolor"="#15191d", "color"="#b4bec7", "penwidth"="1"]
 		"node_System(SystemKey(10v1))" ["label"="enable_entities_on_enter_state<AppState>", "tooltip"="bevy_state::state_scoped::enable_entities_on_enter_state<demo::game_flow::AppState>", "fillcolor"="#eff1f3", "fontname"="Helvetica", "fontcolor"="#15191d", "color"="#b4bec7", "penwidth"="1"]
-		"node_System(SystemKey(21v1))" ["label"="despawn_entities_on_enter_state<PlayState>", "tooltip"="bevy_state::state_scoped::despawn_entities_on_enter_state<demo::game_flow::PlayState>", "fillcolor"="#eff1f3", "fontname"="Helvetica", "fontcolor"="#15191d", "color"="#b4bec7", "penwidth"="1"]
-		"node_System(SystemKey(22v1))" ["label"="disable_entities_on_enter_state<PlayState>", "tooltip"="bevy_state::state_scoped::disable_entities_on_enter_state<demo::game_flow::PlayState>", "fillcolor"="#eff1f3", "fontname"="Helvetica", "fontcolor"="#15191d", "color"="#b4bec7", "penwidth"="1"]
-		"node_System(SystemKey(23v1))" ["label"="enable_entities_on_enter_state<PlayState>", "tooltip"="bevy_state::state_scoped::enable_entities_on_enter_state<demo::game_flow::PlayState>", "fillcolor"="#eff1f3", "fontname"="Helvetica", "fontcolor"="#15191d", "color"="#b4bec7", "penwidth"="1"]
 	}
 	
-	"node_System(SystemKey(27v1))" ["label"="apply_deferred", "tooltip"="bevy_ecs::apply_deferred"]
-	"node_System(SystemKey(28v1))" ["label"="apply_deferred", "tooltip"="bevy_ecs::apply_deferred"]
-	"node_System(SystemKey(29v1))" ["label"="apply_deferred", "tooltip"="bevy_ecs::apply_deferred"]
-	"node_System(SystemKey(30v1))" ["label"="apply_deferred", "tooltip"="bevy_ecs::apply_deferred"]
+	"node_System(SystemKey(14v1))" ["label"="apply_deferred", "tooltip"="bevy_ecs::apply_deferred"]
+	"node_System(SystemKey(15v1))" ["label"="apply_deferred", "tooltip"="bevy_ecs::apply_deferred"]
+	"node_System(SystemKey(16v1))" ["label"="apply_deferred", "tooltip"="bevy_ecs::apply_deferred"]
 	"set_marker_node_Set(SystemSetKey(1v1))" -> "set_marker_node_Set(SystemSetKey(2v1))" ["lhead"="clusternode_Set(SystemSetKey(2v1))", "ltail"="clusternode_Set(SystemSetKey(1v1))", "tooltip"="DependentTransitions → ExitSchedules", "color"="#eede00"]
-	"set_marker_node_Set(SystemSetKey(5v1))" -> "set_marker_node_Set(SystemSetKey(23v1))" ["lhead"="clusternode_Set(SystemSetKey(23v1))", "ltail"="clusternode_Set(SystemSetKey(5v1))", "tooltip"="ApplyStateTransition(PhantomData<demo::game_flow::AppState>) → ApplyStateTransition(PhantomData<demo::game_flow::PlayState>)", "color"="#881877"]
+	"set_marker_node_Set(SystemSetKey(2v1))" -> "set_marker_node_Set(SystemSetKey(3v1))" ["lhead"="clusternode_Set(SystemSetKey(3v1))", "ltail"="clusternode_Set(SystemSetKey(2v1))", "tooltip"="ExitSchedules → TransitionSchedules", "color"="#881877"]
 	"set_marker_node_Set(SystemSetKey(3v1))" -> "set_marker_node_Set(SystemSetKey(4v1))" ["lhead"="clusternode_Set(SystemSetKey(4v1))", "ltail"="clusternode_Set(SystemSetKey(3v1))", "tooltip"="TransitionSchedules → EnterSchedules", "color"="#00b0cc"]
-	"set_marker_node_Set(SystemSetKey(24v1))" -> "set_marker_node_Set(SystemSetKey(6v1))" ["lhead"="clusternode_Set(SystemSetKey(6v1))", "ltail"="clusternode_Set(SystemSetKey(24v1))", "tooltip"="ExitSchedules(PhantomData<demo::game_flow::PlayState>) → ExitSchedules(PhantomData<demo::game_flow::AppState>)", "color"="#aa3a55"]
-	"set_marker_node_Set(SystemSetKey(2v1))" -> "set_marker_node_Set(SystemSetKey(3v1))" ["lhead"="clusternode_Set(SystemSetKey(3v1))", "ltail"="clusternode_Set(SystemSetKey(2v1))", "tooltip"="ExitSchedules → TransitionSchedules", "color"="#44d488"]
-	"set_marker_node_Set(SystemSetKey(8v1))" -> "set_marker_node_Set(SystemSetKey(26v1))" ["lhead"="clusternode_Set(SystemSetKey(26v1))", "ltail"="clusternode_Set(SystemSetKey(8v1))", "tooltip"="EnterSchedules(PhantomData<demo::game_flow::AppState>) → EnterSchedules(PhantomData<demo::game_flow::PlayState>)", "color"="#0090cc"]
 }

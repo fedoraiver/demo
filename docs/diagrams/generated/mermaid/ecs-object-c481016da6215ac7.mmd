@@ -106,14 +106,11 @@ flowchart LR
   n20@{ shape: cyl, label: "**Messages#lt;WindowFocused#gt;**<br/>来自Bevy 引擎 ↗：缓冲窗口焦点变化消<br/>息。" }
   class n20 node_message_buffer
   class n20 external_node
-  n21@{ shape: cyl, label: "**State#lt;AppState#gt; /**<br/>**NextState#lt;AppState#gt;**<br/>来自应用流程 ↗：保存应用主状态及待处理<br/>的会话切换。" }
+  n21@{ shape: cyl, label: "**State#lt;AppState#gt; /**<br/>**NextState#lt;AppState#gt;**<br/>来自应用流程 ↗：保存主菜单、运行和暂停<br/>状态及下一次转换。" }
   class n21 node_resource
   class n21 external_node
-  n22@{ shape: cyl, label: "**State#lt;PlayState#gt; /**<br/>**NextState#lt;PlayState#gt;**<br/>来自应用流程 ↗：保存游戏运行、暂停及待<br/>处理的切换请求。" }
-  class n22 node_resource
-  class n22 external_node
-  n23@{ shape: fr-rect, label: "**FirstPersonPlugin**<br/>管理玩法动作、光标捕获、朝向与第一人称镜<br/>头。" }
-  class n23 node_plugin
+  n22@{ shape: fr-rect, label: "**FirstPersonPlugin**<br/>管理玩法动作、光标捕获、朝向与第一人称镜<br/>头。" }
+  class n22 node_plugin
   n0 e0@--> n1
   class e0 edge_order
   n2 e1@--> n0
@@ -164,10 +161,8 @@ flowchart LR
   class e23 edge_consume
   n21 e24@-->|"访问声明"| n0
   class e24 edge_read
-  n22 e25@-->|"访问声明"| n0
-  class e25 edge_read
-  n23 e26@--> n0
-  class e26 edge_registration
+  n22 e25@--> n0
+  class e25 edge_registration
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
@@ -175,7 +170,7 @@ flowchart LR
   e4@{ curve: basis }
   e5@{ curve: basis }
   e6@{ curve: basis }
-  e7@{ curve: basis }
+  e7@{ curve: bumpX }
   e8@{ curve: basis }
   e9@{ curve: basis }
   e10@{ curve: basis }
@@ -194,4 +189,3 @@ flowchart LR
   e23@{ curve: basis }
   e24@{ curve: basis }
   e25@{ curve: basis }
-  e26@{ curve: basis }

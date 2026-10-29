@@ -52,7 +52,7 @@ flowchart LR
   class n2 node_system_set
   n3@{ shape: notch-rect, label: "**Commands**<br/>保存延迟执行的 World 操作队列" }
   class n3 node_system_param
-  n4@{ shape: cyl, label: "**Messages#lt;StateTransitionEvent#lt;AppSta**<br/>**te#gt;#gt;**<br/>来自应用流程 ↗：缓冲应用主状态转换的日<br/>志输入。" }
+  n4@{ shape: cyl, label: "**Messages#lt;StateTransitionEvent#lt;AppSta**<br/>**te#gt;#gt;**<br/>来自应用流程 ↗：缓冲唯一 AppState 的<br/>真实转换来源。" }
   class n4 node_message_buffer
   class n4 external_node
   n5@{ shape: rounded, label: "**EnableOnEnter#lt;AppState#gt;**<br/>指定进入某一状态时重新启用当前实体的生命<br/>周期规则" }

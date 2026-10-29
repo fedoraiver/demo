@@ -82,14 +82,11 @@ flowchart LR
   n13@{ shape: rounded, label: "**NoRotationEasing**<br/>来自Avian ↗：暂停独立旋转插值。" }
   class n13 node_component
   class n13 external_node
-  n14@{ shape: cyl, label: "**State#lt;AppState#gt; /**<br/>**NextState#lt;AppState#gt;**<br/>来自应用流程 ↗：保存应用主状态及待处理<br/>的会话切换。" }
+  n14@{ shape: cyl, label: "**State#lt;AppState#gt; /**<br/>**NextState#lt;AppState#gt;**<br/>来自应用流程 ↗：保存主菜单、运行和暂停<br/>状态及下一次转换。" }
   class n14 node_resource
   class n14 external_node
-  n15@{ shape: cyl, label: "**State#lt;PlayState#gt; /**<br/>**NextState#lt;PlayState#gt;**<br/>来自应用流程 ↗：保存游戏运行、暂停及待<br/>处理的切换请求。" }
-  class n15 node_resource
-  class n15 external_node
-  n16@{ shape: fr-rect, label: "**BoundsRecoveryPlugin**<br/>管理落水恢复与恢复期间的插值状态。" }
-  class n16 node_plugin
+  n15@{ shape: fr-rect, label: "**BoundsRecoveryPlugin**<br/>管理落水恢复与恢复期间的插值状态。" }
+  class n15 node_plugin
   n1 e0@--> n0
   class e0 edge_order
   n0 e1@--> n2
@@ -122,17 +119,14 @@ flowchart LR
   class e14 edge_write
   n14 e15@-->|"访问声明"| n0
   class e15 edge_read
-  n15 e16@-->|"访问声明"| n0
-  class e16 edge_read
-  n16 e17@--> n0
-  class e17 edge_registration
+  n15 e16@--> n0
+  class e16 edge_registration
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
   e3@{ curve: basis }
   e4@{ curve: basis }
   e5@{ curve: basis }
-  e6@{ curve: basis }
   e7@{ curve: basis }
   e8@{ curve: basis }
   e9@{ curve: basis }
@@ -143,4 +137,3 @@ flowchart LR
   e14@{ curve: basis }
   e15@{ curve: basis }
   e16@{ curve: basis }
-  e17@{ curve: basis }
