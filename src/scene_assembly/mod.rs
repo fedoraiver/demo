@@ -28,8 +28,8 @@ mod collision;
 mod loading;
 
 use actors::*;
+use assets::poll_art_assets;
 pub(crate) use assets::{ArtAssets, ArtLoadState, ItemModel};
-use assets::{log_asset_requests, poll_art_assets};
 use collision::*;
 use loading::*;
 
@@ -75,7 +75,6 @@ impl Plugin for SceneAssemblyPlugin {
         app.register_type::<ItemModel>()
             .init_resource::<ArtAssets>()
             .init_resource::<ArtLoadState>()
-            .add_systems(Startup, log_asset_requests)
             .add_systems(Update, poll_art_assets)
             .insert_resource(ClearColor(Color::srgb(0.72, 0.84, 0.94)))
             .insert_resource(GlobalAmbientLight {

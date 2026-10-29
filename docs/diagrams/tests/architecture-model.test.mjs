@@ -418,6 +418,16 @@ test('碰撞日志只进入 tracing，由两个后台输出分支处理，文件
   for (const id of ['collision_log', 'log-producer', 'log-file-worker', 'log-console-worker', 'physics-file-log']) assert.equal(graph.nodes.filter(node => node.id === id).length, 1, id);
 });
 
+test('资源请求日志归于插件初始化，不保留虚构的 Startup 日志系统', () => {
+  for (const id of ['startup_pose', 'startup_assets']) assert.equal(architecture.registry[id], undefined);
+  assert.ok(!model.systems.some(system => system.name === 'from_world'));
+  const writes = model.system_links.filter(link => link.kind === 'write' && link.from === 'plugin-SceneAssemblyPlugin');
+  assert.deepEqual(writes.map(link => link.to), ['log-producer']);
+  const graph = architecture.graphFor('session_log', 'events');
+  assert.ok(graph.links.some(link => link.id === writes[0].id));
+  assert.ok(!graph.links.some(link => link.from === 'plugin-SceneAssemblyPlugin' && ['log-file-worker', 'log-console-worker', 'physics-file-log'].includes(link.to)));
+});
+
 test('物理插件只引用 tracing 入口，不展开日志插件内部的文件与工作线程', () => {
   const graph = architecture.graphFor('physics', 'events');
   assert.equal(graph.nodes.find(node => node.id === 'collision_log').role, 'internal');
@@ -460,7 +470,7 @@ test('非系统节点缺少明确归属时失败，不静默归入基础设施',
 test('系统清单分别记录实际 Schedule，Observer 不冒充固定调度', () => {
   const scheduleNames = new Set(['Startup', 'First', 'PreUpdate', 'FixedFirst', 'FixedUpdate', 'FixedPostUpdate', 'FixedLast', 'RunFixedMainLoop', 'Update', 'SpawnScene', 'PostUpdate', 'Last', 'EguiPrimaryContextPass', 'Render', 'OnEnter(AppState::MainMenu)', 'OnEnter(AppState::InGame)', 'OnEnter(PlayState::Paused)', 'OnEnter(PlayState::Running)']);
   const originalIds = [
-    'startup_spawn', 'startup_config', 'startup_timestep', 'startup_pose',
+    'startup_spawn', 'startup_config', 'startup_timestep',
     'frame_limit', 'time_update', 'input_update', 'mouse_capture',
     'enhanced_prepare', 'enhanced_evaluate', 'input_apply', 'observe_move',
     'observe_complete', 'observe_cancel', 'observe_jump', 'observe_interact',
@@ -472,7 +482,7 @@ test('系统清单分别记录实际 Schedule，Observer 不冒充固定调度',
     'grounded_after', 'gravity_sync', 'orphan_cleanup', 'orphan_apply',
     'velocity_log', 'collision_log', 'physics_prepare', 'physics_step',
     'physics_writeback', 'easing_reset', 'easing_end', 'easing_apply',
-    'easing_tick', 'startup_assets', 'asset_poll', 'island_begin',
+    'easing_tick', 'asset_poll', 'island_begin',
     'island_ready_observer', 'island_prepare', 'actors_spawn', 'courier_ready_observer',
     'animation_initialize', 'animation_sync', 'water_recover', 'interpolation_resume',
     'world_spawn', 'animation_grounding', 'animation_engine', 'easing_start',

@@ -22,7 +22,6 @@ export const EXTRA_SCHEDULE_PURPOSES = Object.freeze({
   'bevy_picking::input::spawn_mouse_pointer': '创建携带 PointerId::Mouse 的默认鼠标指针实体，让后续输入接收与拾取流程能够关联鼠标状态。',
   'demo::inspector::log_world_inspector': '记录 WorldInspectorPlugin 已完成装配的初始化日志；该记录不依赖面板当前是否可见或场景中是否已有实体。',
   'demo::window_policy::log_policy': '记录本项目窗口的目标宽高比、初始尺寸、最小尺寸及当前平台是否启用原生尺寸约束，供初始化诊断使用。',
-  'demo::first_person::log_pose_synchronization': '记录模拟、携物、物理及第一人称显示分别使用的调度，以及插值、角色朝向、持物位姿、相机和显隐的显示同步顺序。',
   'demo::ui::navigation::spawn_menu_controller': '通过 BSN 创建高优先级菜单输入上下文，为方向、确认和返回动作绑定键盘及手柄；动作要求重置并消费输入，菜单返回动作在运行中也用于暂停。',
   'bevy_state::state::freely_mutable_state::apply_state_transition': '取出 NextState 中待提交的新状态及是否允许同值切换的设置；当前状态存在时交给内部状态转换逻辑更新状态、保留前态并发布转换消息。',
   'bevy_state::state_scoped::despawn_entities_on_exit_state': '读取最新状态转换消息，对 DespawnOnExit 值匹配退出状态的实体排入销毁；包括禁用实体，未发生有效转换时不遍历。',

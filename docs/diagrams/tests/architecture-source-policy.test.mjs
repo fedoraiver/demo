@@ -492,7 +492,7 @@ test('current registry and merged function cards have verified source scope acro
   const coverage = auditProductionEcsCoverage(registry, { context: audit.context });
   assert.deepEqual(coverage.gaps, []);
   assert.equal(coverage.declarations.length, 90);
-  assert.equal(coverage.registrations.length, 82);
+  assert.equal(coverage.registrations.length, 80);
   assert(!coverage.declarations.some(declaration => declaration.name === 'ReleasePointerAction'));
   for (const id of ['filter_egui_input', 'observe_release_pointer', 'event-observe_release_pointer', 'action.Action<ReleasePointerAction>']) {
     assert.equal(registry[id], undefined, `${id}: 已删除声明不能留在当前对象目录`);
@@ -510,6 +510,15 @@ test('current registry and merged function cards have verified source scope acro
     : fs.readFileSync(path.join(repository, source.path), 'utf8').split(/\r?\n/)[source.line - 1];
   const hasSource = (id, role, sourcePath, pattern, packageName) => registry[id].sourceEntries.some(source =>
     source.role === role && source.path === sourcePath && source.dependency?.name === packageName && pattern.test(sourceLine(source)));
+  assert(hasSource('resource.ArtAssets', 'initialize', 'src/scene_assembly/assets.rs', /^impl FromWorld for ArtAssets/));
+  const assetLogging = model.system_links.find(link => link.id === 'write-plugin-SceneAssemblyPlugin-log-producer');
+  applyArchitectureEdgeSourcePolicies([assetLogging], { repository, model, components, dependencyContext: { metadata, resolver }, context: audit.context });
+  assert.deepEqual(assetLogging.sourceGaps || [], []);
+  for (const [role, sourcePath, pattern] of [
+    ['configure', 'src/scene_assembly/mod.rs', /init_resource::<ArtAssets>/],
+    ['operation', 'src/scene_assembly/assets.rs', /\.load\(path\);/],
+    ['operation', 'src/scene_assembly/assets.rs', /info!\(target: "demo::art_assets", path, state = "loading"/],
+  ]) assert(assetLogging.sourceEntries.some(source => source.role === role && source.path === sourcePath && pattern.test(sourceLine(source))));
   assert(hasSource('app-main', 'run', 'src/main.rs', /LaunchMode::Game => app\.run\(\)/));
   assert(hasSource('app-main', 'run', 'src/main.rs', /inspector::dump_schedules\(&mut app, &directory\)/));
   assert(audit.entries > 1000);
