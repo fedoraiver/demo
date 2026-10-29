@@ -76,7 +76,9 @@ pub(super) fn finish_attachments(
             continue;
         };
         if base_mass.is_none() {
-            commands.entity(holder).insert(CarryBaseMass(holder_mass.0));
+            commands.entity(holder).insert(CarryBaseMass {
+                mass: holder_mass.0,
+            });
         }
         commands.entity(holder).insert(Mass(holder_mass.0 + mass.0));
         // RigidBodyColliders 的 linked_spawn 会销毁附属碰撞，因此使用代理保护独立业务箱。
@@ -85,7 +87,7 @@ pub(super) fn finish_attachments(
             .entity(attachment.collider)
             .insert((
                 Name::new("Held parcel collision proxy"),
-                HeldCollider(item),
+                HeldCollider { item },
                 collider.clone(),
                 *layers,
                 *friction,
@@ -149,7 +151,7 @@ pub(super) fn align_attachments(
         else {
             continue;
         };
-        let target = grip.map_or(config.hold_offset, |grip| grip.0);
+        let target = grip.map_or(config.hold_offset, |grip| grip.offset);
         let offset = target - attachment.local_pose.translation;
         let angle = attachment.local_pose.rotation.angle_between(Quat::IDENTITY);
         if offset.length_squared() < 1e-8 && angle < 0.0001 {

@@ -21,7 +21,7 @@ fn open_page(menu: &mut MenuState, focus: &mut MenuFocus, page: MenuPage) {
     menu.return_page = menu.page;
     menu.page = page;
     menu.status = None;
-    focus.0 = 0;
+    focus.index = 0;
 }
 
 /// 每帧只消费一项语义请求，避免鼠标与确认键同时激活，或旧页面动作穿过页面切换。
@@ -39,7 +39,7 @@ fn handle_requests(
     mut sounds: MessageWriter<SoundRequest>,
     mut volume_edit: Local<Option<(SettingKey, u8)>>,
 ) {
-    let mut actions = requests.read().map(|request| request.0);
+    let mut actions = requests.read().map(|request| request.action);
     let action = actions.next();
     // 同一拖动帧可同时包含最后坐标与释放；键盘操作优先于上一帧排队的拖动，避免吞掉 Esc。
     let mut finished_volume = false;
@@ -105,7 +105,7 @@ fn handle_requests(
                 *draft = SettingsDraft::from_settings(&settings);
                 menu.page = menu.return_page;
                 menu.status = None;
-                focus.0 = 0;
+                focus.index = 0;
                 cue = SoundCue::MenuCancel;
             }
             MenuPage::Main => return,
@@ -116,7 +116,7 @@ fn handle_requests(
             }
             menu.tab = tab;
             menu.status = None;
-            focus.0 = match tab {
+            focus.index = match tab {
                 SettingsTab::Graphics => 0,
                 SettingsTab::Audio => 1,
                 SettingsTab::Controls => 2,
@@ -194,10 +194,10 @@ fn handle_requests(
         UiAction::ApplySettings if menu.page == MenuPage::Settings => {
             match draft
                 .to_settings()
-                .and_then(|updated| updated.save(&path.0).map(|()| updated))
+                .and_then(|updated| updated.save(&path.path).map(|()| updated))
             {
                 Ok(updated) => {
-                    info!(target: "demo::settings", path = %path.0.display(),
+                    info!(target: "demo::settings", path = %path.path.display(),
                         max_fps_before = settings.max_fps.get(), max_fps_after = updated.max_fps.get(),
                         sensitivity_before = settings.camera.mouse_sensitivity, sensitivity_after = updated.camera.mouse_sensitivity,
                         invert_y_before = settings.camera.invert_y, invert_y_after = updated.camera.invert_y,
@@ -209,7 +209,7 @@ fn handle_requests(
                     menu.status = Some("Settings applied.".into());
                 }
                 Err(error) => {
-                    error!(target: "demo::settings", path = %path.0.display(), %error, operation = "apply_settings", "Failed to save settings");
+                    error!(target: "demo::settings", path = %path.path.display(), %error, operation = "apply_settings", "Failed to save settings");
                     menu.status = Some("Could not save settings. Your changes are still available; try Apply again.".into());
                     cue = SoundCue::MenuCancel;
                 }

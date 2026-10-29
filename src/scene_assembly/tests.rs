@@ -622,7 +622,7 @@ fn assert_clear_turn_frame(
     );
     let character_pose = world.get::<Transform>(character).unwrap();
     let parcel_pose = world.get::<Transform>(parcel).unwrap();
-    let grip = world.get::<CarryGrip>(parcel).unwrap().0;
+    let grip = world.get::<CarryGrip>(parcel).unwrap().offset;
     assert!(
         parcel_pose
             .translation
@@ -875,7 +875,7 @@ mod collision_tests {
             .query::<(Entity, &ItemModel, &SpawnPoint)>()
             .iter(world)
             .filter(|(_, model, _)| **model != ItemModel::WoodenCrate)
-            .map(|(entity, _, spawn)| (entity, spawn.0.translation))
+            .map(|(entity, _, spawn)| (entity, spawn.pose.translation))
             .collect();
         assert_eq!(papers.len(), 2);
         let wooden_crates: Vec<_> = world
@@ -1277,7 +1277,7 @@ mod collision_tests {
                     assert_eq!(world.get::<HeldBy>(parcel).unwrap().get(), character);
                     let character_position = world.get::<Position>(character).unwrap().0;
                     let character_rotation = world.get::<Rotation>(character).unwrap().0;
-                    let grip = world.get::<CarryGrip>(parcel).unwrap().0;
+                    let grip = world.get::<CarryGrip>(parcel).unwrap().offset;
                     if touched_npc {
                         assert!(
                             position
@@ -1647,10 +1647,10 @@ mod turn_tests {
             let controller = world
                 .query::<(Entity, &ControlsCharacter)>()
                 .iter(world)
-                .find(|(_, controlled)| controlled.0 == character)
+                .find(|(_, controlled)| controlled.character == character)
                 .unwrap()
                 .0;
-            let camera = world.get::<ControlsCamera>(controller).unwrap().0;
+            let camera = world.get::<ControlsCamera>(controller).unwrap().camera;
             let descendants: Vec<_> = world
                 .query::<&Children>()
                 .query(world)
@@ -1667,7 +1667,7 @@ mod turn_tests {
                 .reparented_to(&root);
             let source_collider = world.get::<Collider>(parcel).unwrap().clone();
             let held_pose = *world.get::<Transform>(parcel).unwrap();
-            let grip = world.get::<CarryGrip>(parcel).unwrap().0;
+            let grip = world.get::<CarryGrip>(parcel).unwrap().offset;
             let half = source_collider.shape().as_cuboid().unwrap().half_extents;
             let radius = Vec2::new(grip.x, grip.z).length() + Vec2::new(half.x, half.z).length();
             let envelope = Collider::cuboid(2.0 * radius, 2.0 * half.y, 2.0 * radius);
@@ -1766,7 +1766,7 @@ mod turn_tests {
                     );
                     let character_pose = world.get::<Transform>(character).unwrap();
                     let parcel_pose = world.get::<Transform>(parcel).unwrap();
-                    let grip = world.get::<CarryGrip>(parcel).unwrap().0;
+                    let grip = world.get::<CarryGrip>(parcel).unwrap().offset;
                     assert!(
                         parcel_pose
                             .translation
@@ -1832,10 +1832,10 @@ mod turn_tests {
             let controller = world
                 .query::<(Entity, &ControlsCharacter)>()
                 .iter(world)
-                .find(|(_, controlled)| controlled.0 == character)
+                .find(|(_, controlled)| controlled.character == character)
                 .unwrap()
                 .0;
-            let camera = world.get::<ControlsCamera>(controller).unwrap().0;
+            let camera = world.get::<ControlsCamera>(controller).unwrap().camera;
             let descendants: Vec<_> = world
                 .query::<&Children>()
                 .query(world)
@@ -1892,7 +1892,7 @@ mod turn_tests {
                 let holder_rotation = world.get::<Rotation>(character).unwrap().0;
                 let source_position = world.get::<Position>(parcel).unwrap().0;
                 let source_rotation = world.get::<Rotation>(parcel).unwrap().0;
-                let grip = world.get::<CarryGrip>(parcel).unwrap().0;
+                let grip = world.get::<CarryGrip>(parcel).unwrap().offset;
                 let collider = world.get::<Collider>(parcel).unwrap().clone();
                 let target_position = holder_position + holder_rotation * grip;
                 let mut query = SystemState::<SpatialQuery>::new(world);
@@ -2024,10 +2024,10 @@ mod turn_tests {
             let controller = world
                 .query::<(Entity, &ControlsCharacter)>()
                 .iter(world)
-                .find(|(_, controlled)| controlled.0 == character)
+                .find(|(_, controlled)| controlled.character == character)
                 .unwrap()
                 .0;
-            let camera = world.get::<ControlsCamera>(controller).unwrap().0;
+            let camera = world.get::<ControlsCamera>(controller).unwrap().camera;
             let descendants: Vec<_> = world
                 .query::<&Children>()
                 .query(world)
@@ -2199,11 +2199,11 @@ mod lifecycle_tests {
             .query::<(&PlayerId, &ControlsCharacter, &ControlsCamera)>()
             .single(world)
             .unwrap();
-        assert_eq!(controller.0.0, 1);
-        assert_eq!(controller.1.0, character);
+        assert_eq!(controller.0.id, 1);
+        assert_eq!(controller.1.character, character);
         assert_eq!(
             world
-                .get::<FirstPersonCamera>(controller.2.0)
+                .get::<FirstPersonCamera>(controller.2.camera)
                 .unwrap()
                 .target,
             character
@@ -2367,7 +2367,7 @@ mod lifecycle_tests {
         };
         let courier = world
             .resource::<Assets<Gltf>>()
-            .get(&world.get::<CourierVisual>(visual).unwrap().0)
+            .get(&world.get::<CourierVisual>(visual).unwrap().gltf)
             .unwrap();
         // 真正加载全部方向与持箱动作；GLB 改名或丢失曲线必须在无窗口回归中暴露。
         let clips = world.resource::<Assets<AnimationClip>>();

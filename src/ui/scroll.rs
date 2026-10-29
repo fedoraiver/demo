@@ -291,7 +291,7 @@ pub(super) fn scroll_focused_button(
 ) {
     let Some((entity, _, button_node, button_transform)) = buttons
         .iter()
-        .find(|(_, button, _, _)| button.index == focus.0)
+        .find(|(_, button, _, _)| button.index == focus.index)
     else {
         return;
     };

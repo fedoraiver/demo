@@ -21,7 +21,7 @@ fn show_main_menu(
     menu.page = MenuPage::Main;
     menu.return_page = MenuPage::Main;
     menu.status = None;
-    focus.0 = 0;
+    focus.index = 0;
     info!(target: "demo::ui", ?state_before, state_after = "main_menu", reason = "enter_main_menu", "Application state changed");
 }
 
@@ -29,7 +29,7 @@ fn show_pause_menu(mut menu: ResMut<MenuState>, mut focus: ResMut<MenuFocus>) {
     menu.page = MenuPage::Pause;
     menu.return_page = MenuPage::Pause;
     menu.status = None;
-    focus.0 = 0;
+    focus.index = 0;
     info!(target: "demo::ui", state_before = "running", state_after = "paused", reason = "pause_action", "Application state changed");
 }
 

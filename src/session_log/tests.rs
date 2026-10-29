@@ -36,7 +36,9 @@ fn log_plugin_records_session_lifecycle() {
         assert!(contents.contains("Test panic context"));
         // 安装真实 Session hook 后，日志工作线程自身异常仍能结束，不能自等 Sync。
         let mut failed_worker = LogWorker::spawn(
-            Box::new(FaultSink(Fault::Panic)),
+            Box::new(FaultSink {
+                fault: Fault::Panic,
+            }),
             "controlled-hook-panic".to_owned(),
             "demo-log-test-hook-panic",
         )
@@ -175,15 +177,19 @@ fn failed_console_does_not_fallback_to_synchronous_stderr_or_block_panic_file_sy
         // 保留真实文件与 panic hook，只用可控 Write 故障替换控制台设备。
         guard.console_worker.shutdown().unwrap();
         guard.console_worker = LogWorker::spawn(
-            Box::new(FaultSink(Fault::Write)),
+            Box::new(FaultSink {
+                fault: Fault::Write,
+            }),
             "controlled-failed-console".to_owned(),
             "demo-log-test-failed-console",
         )
         .unwrap();
-        guard.console = ConsoleWriter(guard.console_worker.writer.clone());
+        guard.console = ConsoleWriter {
+            writer: guard.console_worker.writer.clone(),
+        };
         logging.console = guard.console.clone();
         app.add_plugins(logging);
-        assert!(guard.console.0.flush_output().is_err());
+        assert!(guard.console.writer.flush_output().is_err());
         // 已知设备故障后仍走实际格式化路径，文件必须收到完整事件。
         info!(target: "demo::test", "Info event after console failure");
         error!(target: "demo::test", "Error event after console failure");
@@ -571,7 +577,7 @@ mod output_tests {
             (Fault::Panic, "Test writer panic"),
         ] {
             let mut worker = LogWorker::spawn(
-                Box::new(FaultSink(fault)),
+                Box::new(FaultSink { fault }),
                 "controlled-failed-sink".to_owned(),
                 "demo-log-test-failure",
             )
@@ -673,11 +679,13 @@ mod test_support {
         Panic,
     }
 
-    pub(super) struct FaultSink(pub(super) Fault);
+    pub(super) struct FaultSink {
+        pub(super) fault: Fault,
+    }
 
     impl Write for FaultSink {
         fn write(&mut self, buffer: &[u8]) -> io::Result<usize> {
-            match self.0 {
+            match self.fault {
                 Fault::Write => Err(io::Error::new(io::ErrorKind::StorageFull, "Test disk full")),
                 Fault::Panic => panic!("Test writer panic"),
                 _ => Ok(buffer.len()),
@@ -685,7 +693,7 @@ mod test_support {
         }
 
         fn flush(&mut self) -> io::Result<()> {
-            match self.0 {
+            match self.fault {
                 Fault::Flush => Err(io::Error::other("Test flush failure")),
                 _ => Ok(()),
             }
@@ -694,7 +702,7 @@ mod test_support {
 
     impl LogSink for FaultSink {
         fn sync(&mut self) -> io::Result<()> {
-            match self.0 {
+            match self.fault {
                 Fault::Sync => Err(io::Error::other("Test sync failure")),
                 _ => self.flush(),
             }

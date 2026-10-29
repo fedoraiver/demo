@@ -17,10 +17,14 @@ pub(super) struct VolumeSlider {
 
 /// 数字与填充各自保存设置键，草稿更新不需要重建实体树。
 #[derive(Component, Clone)]
-struct VolumeValue(SettingKey);
+struct VolumeValue {
+    key: SettingKey,
+}
 
 #[derive(Component, Clone)]
-struct VolumeFill(SettingKey);
+struct VolumeFill {
+    key: SettingKey,
+}
 
 impl Default for VolumeSlider {
     fn default() -> Self {
@@ -32,13 +36,17 @@ impl Default for VolumeSlider {
 
 impl Default for VolumeValue {
     fn default() -> Self {
-        Self(SettingKey::MasterVolume)
+        Self {
+            key: SettingKey::MasterVolume,
+        }
     }
 }
 
 impl Default for VolumeFill {
     fn default() -> Self {
-        Self(SettingKey::MasterVolume)
+        Self {
+            key: SettingKey::MasterVolume,
+        }
     }
 }
 
@@ -131,7 +139,7 @@ pub(super) fn volume_row(
                     BackgroundColor(SUBTLE)
                     Children [
                         Pickable::IGNORE
-                        VolumeFill(key)
+                        VolumeFill { key }
                         Node {
                             width: percent(f32::from(value)),
                             height: percent(100),
@@ -166,7 +174,7 @@ pub(super) fn volume_row(
                 }
                 Children [
                     @label(theme, volume_text(value), 20.0, INK)
-                    VolumeValue(key)
+                    VolumeValue { key }
                 ]
             ]
         ]
@@ -224,7 +232,9 @@ pub(super) fn sample_slider_pointer(
     let Ok(window) = windows.single() else {
         presses.clear();
         if drag.take().is_some() {
-            requests.write(UiRequest(UiAction::FinishVolumeEdit));
+            requests.write(UiRequest {
+                action: UiAction::FinishVolumeEdit,
+            });
         }
         return;
     };
@@ -255,7 +265,7 @@ pub(super) fn sample_slider_pointer(
             entity,
             last_value: None,
         });
-        focus.0 = index;
+        focus.index = index;
         *source = MenuInputSource::Pointer;
     }
     let Some(active) = drag.as_mut() else {
@@ -263,7 +273,9 @@ pub(super) fn sample_slider_pointer(
     };
     let Ok((_, slider, _, node, transform)) = sliders.get(active.entity) else {
         // 窗口宽度变化会重建实体；结束原手势，集中请求系统也清理其初值缓存。
-        requests.write(UiRequest(UiAction::FinishVolumeEdit));
+        requests.write(UiRequest {
+            action: UiAction::FinishVolumeEdit,
+        });
         *drag = None;
         return;
     };
@@ -272,7 +284,9 @@ pub(super) fn sample_slider_pointer(
         && let Some(value) = value_at_pointer(node, transform, cursor)
         && active.last_value != Some(value)
     {
-        requests.write(UiRequest(UiAction::SetVolume(slider.key, value)));
+        requests.write(UiRequest {
+            action: UiAction::SetVolume(slider.key, value),
+        });
         active.last_value = Some(value);
         *source = MenuInputSource::Pointer;
     }
@@ -281,7 +295,9 @@ pub(super) fn sample_slider_pointer(
         || !window.focused
         || window.physical_cursor_position().is_none()
     {
-        requests.write(UiRequest(UiAction::FinishVolumeEdit));
+        requests.write(UiRequest {
+            action: UiAction::FinishVolumeEdit,
+        });
         *drag = None;
     }
 }
@@ -296,7 +312,7 @@ fn update_volume_visuals(
         return;
     }
     for (key, mut text) in &mut values {
-        if let Some(value) = draft.volume(key.0) {
+        if let Some(value) = draft.volume(key.key) {
             let value = volume_text(value);
             if text.0 != value {
                 text.0 = value;
@@ -304,7 +320,7 @@ fn update_volume_visuals(
         }
     }
     for (key, mut node) in &mut fills {
-        if let Some(value) = draft.volume(key.0) {
+        if let Some(value) = draft.volume(key.key) {
             let width = percent(f32::from(value));
             if node.width != width {
                 node.width = width;

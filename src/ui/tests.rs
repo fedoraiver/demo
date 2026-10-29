@@ -84,7 +84,7 @@ mod test_support {
     }
 
     pub(super) fn request(app: &mut App, action: UiAction) {
-        app.world_mut().write_message(UiRequest(action));
+        app.world_mut().write_message(UiRequest { action });
         app.update();
     }
 
@@ -668,7 +668,7 @@ mod page_layout_tests {
             for (entity, index) in buttons {
                 wheel_over(&mut app, entity, MouseScrollUnit::Line, -10.0);
                 wheel_over(&mut app, entity, MouseScrollUnit::Pixel, 100.0);
-                app.world_mut().resource_mut::<MenuFocus>().0 = index;
+                app.world_mut().resource_mut::<MenuFocus>().index = index;
                 app.update();
             }
             let world = app.world_mut();
@@ -832,7 +832,7 @@ mod page_layout_tests {
             assert_eq!(app.world().get::<ScrollPosition>(area).unwrap().y, range);
             app.add_systems(Update, scroll_focused_button);
             for (_, _, index) in &fixed_buttons {
-                app.world_mut().resource_mut::<MenuFocus>().0 = *index;
+                app.world_mut().resource_mut::<MenuFocus>().index = *index;
                 app.update();
                 assert_eq!(
                     app.world().get::<ScrollPosition>(area).unwrap().y,
@@ -841,7 +841,7 @@ mod page_layout_tests {
                 );
             }
             if let Some((entity, _, index)) = adjustment {
-                app.world_mut().resource_mut::<MenuFocus>().0 = index;
+                app.world_mut().resource_mut::<MenuFocus>().index = index;
                 app.update();
                 let area_rect = node_rect(
                     app.world().get::<ComputedNode>(area).unwrap(),
@@ -913,7 +913,7 @@ mod page_layout_tests {
             .map(|(entity, button, transform)| (entity, button.index, *transform))
             .collect();
         app.add_systems(Update, scroll_focused_button);
-        app.world_mut().resource_mut::<MenuFocus>().0 = index;
+        app.world_mut().resource_mut::<MenuFocus>().index = index;
         app.update();
         let offset = app.world().get::<ScrollPosition>(area).unwrap().y;
         assert!(
@@ -933,7 +933,7 @@ mod page_layout_tests {
                 *app.world().get::<UiGlobalTransform>(entity).unwrap(),
                 transform
             );
-            app.world_mut().resource_mut::<MenuFocus>().0 = index;
+            app.world_mut().resource_mut::<MenuFocus>().index = index;
             app.update();
             assert_eq!(
                 app.world().get::<ScrollPosition>(area).unwrap().y,
@@ -1164,7 +1164,7 @@ mod page_refresh_tests {
 
     fn request_action(app: &mut App, action: UiAction) {
         app.world_mut()
-            .write_message(super::super::UiRequest(action));
+            .write_message(super::super::UiRequest { action });
         app.update();
     }
 
@@ -1253,7 +1253,7 @@ mod page_refresh_tests {
         let (_, text, node, layout) = world
             .query::<(&SettingValue, &Text, &ComputedNode, &TextLayoutInfo)>()
             .iter(world)
-            .find(|(value, _, _, _)| value.0 == key)
+            .find(|(value, _, _, _)| value.key == key)
             .unwrap();
         assert!(node.size().x > 0.0 && node.size().y > 0.0 && !layout.glyphs.is_empty());
         text.0.clone()
@@ -1263,7 +1263,7 @@ mod page_refresh_tests {
     fn frame_rate_clicks_refresh_values_without_resetting_scroll_or_focus() {
         let mut app = live_settings_app();
         // 先建立此字段的真实说明与焦点，按钮调整时不能借重建重新滚入或回到顶部。
-        app.world_mut().resource_mut::<MenuFocus>().0 = 5;
+        app.world_mut().resource_mut::<MenuFocus>().index = 5;
         app.update();
         let (area, _) = scroll_settings_for_edit(&mut app);
         let identity = settings_identity(&mut app);
@@ -1285,7 +1285,7 @@ mod page_refresh_tests {
             assert_eq!(setting_text(&mut app, SettingKey::FrameRate), expected);
             assert_panel_preserved(&mut app, &identity, area, offset);
             assert_eq!(
-                app.world().resource::<MenuFocus>().0,
+                app.world().resource::<MenuFocus>().index,
                 app.world().get::<MenuButton>(button).unwrap().index
             );
             assert_eq!(
@@ -1313,7 +1313,9 @@ mod page_refresh_tests {
         std::fs::create_dir_all(&folder).unwrap();
         let saved = folder.join("settings.json");
         app.world_mut()
-            .insert_resource(crate::settings::SettingsFile(saved.clone()));
+            .insert_resource(crate::settings::SettingsFile {
+                path: saved.clone(),
+            });
         let (area, _) = scroll_settings_for_edit(&mut app);
         let identity = settings_identity(&mut app);
         for action in [
@@ -1341,7 +1343,9 @@ mod page_refresh_tests {
         assert!(saved.is_file());
         // 真实保存失败提示更长，但也只能更改文字和合法滚动范围。
         app.world_mut()
-            .insert_resource(crate::settings::SettingsFile(folder.clone()));
+            .insert_resource(crate::settings::SettingsFile {
+                path: folder.clone(),
+            });
         let offset = app.world().get::<ScrollPosition>(area).unwrap().y;
         request_action(&mut app, UiAction::ApplySettings);
         assert_panel_preserved(&mut app, &identity, area, offset);
@@ -1410,7 +1414,7 @@ mod page_refresh_tests {
         let mut app = live_settings_app();
         request_action(&mut app, UiAction::SelectTab(SettingsTab::Audio));
         // 先让真实布局完成并建立导航焦点，再滚出非零偏移，避免焦点滚入掩盖重建。
-        app.world_mut().resource_mut::<MenuFocus>().0 = 5;
+        app.world_mut().resource_mut::<MenuFocus>().index = 5;
         for _ in 0..3 {
             app.update();
         }
@@ -1426,7 +1430,7 @@ mod page_refresh_tests {
         request_action(&mut app, UiAction::SetVolume(SettingKey::MasterVolume, 37));
         assert_panel_preserved(&mut app, &identity, area, old_offset);
         assert!(app.world().get::<VolumeSlider>(slider).is_some());
-        assert_eq!(app.world().resource::<MenuFocus>().0, 5);
+        assert_eq!(app.world().resource::<MenuFocus>().index, 5);
         let group = app.world().get::<ChildOf>(slider).unwrap().parent();
         let world = app.world_mut();
         let value = world
@@ -1668,7 +1672,7 @@ mod page_structure_tests {
                 ..default()
             })
             .init_resource::<SettingsDraft>()
-            .insert_resource(MenuFocus(5))
+            .insert_resource(MenuFocus { index: 5 })
             .insert_resource(MenuInputSource::Navigation)
             .init_resource::<crate::audio::AudioPreview>()
             .add_message::<super::super::UiRequest>()
@@ -1701,7 +1705,7 @@ mod page_structure_tests {
                 .get::<super::super::volume::VolumeSlider>(slider)
                 .is_some()
         );
-        assert_eq!(app.world().resource::<MenuFocus>().0, 5);
+        assert_eq!(app.world().resource::<MenuFocus>().index, 5);
         assert_eq!(app.world().get::<BackgroundColor>(slider).unwrap().0, GOLD);
         let mut text = app.world_mut().query::<&Text>();
         assert!(text.iter(app.world()).any(|text| text.0 == "Muted"));
@@ -1720,7 +1724,7 @@ mod page_structure_tests {
     #[test]
     fn keyboard_focus_is_visible_only_for_navigation_source() {
         let mut app = App::new();
-        app.insert_resource(MenuFocus(1))
+        app.insert_resource(MenuFocus { index: 1 })
             .insert_resource(MenuInputSource::Navigation)
             .add_systems(Update, style_buttons);
         let category = app
@@ -1757,7 +1761,7 @@ mod page_structure_tests {
             BorderColor::all(INK)
         );
         assert_eq!(app.world().get::<BackgroundColor>(apply).unwrap().0, GOLD);
-        app.world_mut().resource_mut::<MenuFocus>().0 = 0;
+        app.world_mut().resource_mut::<MenuFocus>().index = 0;
         app.update();
         assert_eq!(
             *app.world().get::<BorderColor>(category).unwrap(),
@@ -1820,7 +1824,9 @@ mod pointer_tests {
                 if !app.world().entity(button).contains::<Pressed>() {
                     app.world_mut().entity_mut(button).insert((
                         Pressed,
-                        PrimaryPress(bevy::picking::pointer::PointerId::Mouse),
+                        PrimaryPress {
+                            pointer: bevy::picking::pointer::PointerId::Mouse,
+                        },
                     ));
                     pointer_press(app.world_mut(), button, PointerButton::Primary);
                 }
@@ -1955,7 +1961,7 @@ mod pointer_tests {
             *app.world().resource::<MenuInputSource>(),
             MenuInputSource::Navigation
         );
-        assert_eq!(app.world().resource::<MenuFocus>().0, 1);
+        assert_eq!(app.world().resource::<MenuFocus>().index, 1);
         assert_button_highlight(&app, buttons[0].1, false);
         assert_button_highlight(&app, buttons[1].1, true);
         app.world_mut()
@@ -1976,7 +1982,7 @@ mod pointer_tests {
             *app.world().resource::<MenuInputSource>(),
             MenuInputSource::Pointer
         );
-        assert_eq!(app.world().resource::<MenuFocus>().0, 1);
+        assert_eq!(app.world().resource::<MenuFocus>().index, 1);
         for (_, entity) in &buttons {
             assert_button_highlight(&app, *entity, false);
         }
@@ -2006,7 +2012,7 @@ mod pointer_tests {
         request(&mut app, UiAction::OpenHelp);
         assert_page_hover_cycle(&mut app);
         request(&mut app, UiAction::Back);
-        app.world_mut().resource_mut::<MenuFocus>().0 = 2;
+        app.world_mut().resource_mut::<MenuFocus>().index = 2;
         app.world_mut()
             .resource_mut::<ButtonInput<KeyCode>>()
             .press(KeyCode::Enter);
@@ -2026,7 +2032,9 @@ mod pointer_tests {
         // 点击返回在下一帧消费；页面重置序号后仍保持鼠标模式，Start 不会无故常亮。
         app.world_mut().entity_mut(back).insert((
             Pressed,
-            PrimaryPress(bevy::picking::pointer::PointerId::Mouse),
+            PrimaryPress {
+                pointer: bevy::picking::pointer::PointerId::Mouse,
+            },
         ));
         pointer_press(app.world_mut(), back, PointerButton::Primary);
         app.update();
@@ -2058,7 +2066,7 @@ mod pointer_tests {
         window.set_cursor_position(Some(Vec2::new(80.0, 80.0)));
         let window = app.world_mut().spawn((window, PrimaryWindow)).id();
         app.update();
-        app.world_mut().resource_mut::<MenuFocus>().0 = 4;
+        app.world_mut().resource_mut::<MenuFocus>().index = 4;
         *app.world_mut().resource_mut::<MenuInputSource>() = MenuInputSource::Navigation;
 
         let action = UiAction::SelectTab(SettingsTab::Graphics);
@@ -2067,7 +2075,7 @@ mod pointer_tests {
             .spawn((MenuButton { action, index: 0 }, Hovered(true)))
             .id();
         app.update();
-        assert_eq!(app.world().resource::<MenuFocus>().0, 4);
+        assert_eq!(app.world().resource::<MenuFocus>().index, 4);
         assert_eq!(
             *app.world().resource::<MenuInputSource>(),
             MenuInputSource::Navigation
@@ -2079,7 +2087,7 @@ mod pointer_tests {
                 .spawn((MenuButton { action, index: 0 }, Hovered(true)))
                 .id();
             app.update();
-            assert_eq!(app.world().resource::<MenuFocus>().0, 4);
+            assert_eq!(app.world().resource::<MenuFocus>().index, 4);
             assert_eq!(
                 *app.world().resource::<MenuInputSource>(),
                 MenuInputSource::Navigation
@@ -2092,21 +2100,23 @@ mod pointer_tests {
             .unwrap()
             .set_cursor_position(Some(Vec2::new(82.0, 80.0)));
         app.update();
-        assert_eq!(app.world().resource::<MenuFocus>().0, 0);
+        assert_eq!(app.world().resource::<MenuFocus>().index, 0);
         assert_eq!(
             *app.world().resource::<MenuInputSource>(),
             MenuInputSource::Pointer
         );
 
-        app.world_mut().resource_mut::<MenuFocus>().0 = 4;
+        app.world_mut().resource_mut::<MenuFocus>().index = 4;
         *app.world_mut().resource_mut::<MenuInputSource>() = MenuInputSource::Navigation;
         app.world_mut().entity_mut(hovered).insert((
             Pressed,
-            PrimaryPress(bevy::picking::pointer::PointerId::Mouse),
+            PrimaryPress {
+                pointer: bevy::picking::pointer::PointerId::Mouse,
+            },
         ));
         pointer_press(app.world_mut(), hovered, PointerButton::Primary);
         app.update();
-        assert_eq!(app.world().resource::<MenuFocus>().0, 0);
+        assert_eq!(app.world().resource::<MenuFocus>().index, 0);
         assert_eq!(
             *app.world().resource::<MenuInputSource>(),
             MenuInputSource::Pointer
@@ -2115,7 +2125,7 @@ mod pointer_tests {
             .world_mut()
             .resource_mut::<Messages<UiRequest>>()
             .drain()
-            .map(|request| request.0)
+            .map(|request| request.action)
             .collect();
         assert_eq!(requests, vec![action]);
         app.update();
@@ -2149,7 +2159,9 @@ mod pointer_tests {
             window::WindowRef,
         };
         #[derive(Resource, Default)]
-        struct Activations(usize);
+        struct Activations {
+            count: usize,
+        }
         let mut app = menu_app_with(|app| {
             app.add_plugins((
                 InputFocusPlugin,
@@ -2159,7 +2171,7 @@ mod pointer_tests {
             ))
             .init_resource::<Activations>()
             .add_observer(|_: On<Activate>, mut activations: ResMut<Activations>| {
-                activations.0 += 1
+                activations.count += 1
             });
         });
         request(&mut app, UiAction::OpenSettings);
@@ -2229,7 +2241,7 @@ mod pointer_tests {
             ButtonState::Pressed,
             false,
         );
-        assert_eq!(app.world().resource::<Activations>().0, 1);
+        assert_eq!(app.world().resource::<Activations>().count, 1);
         assert!(!app.world().entity(graphics).contains::<Pressed>());
         assert_eq!(
             *app.world().resource::<MenuInputSource>(),
@@ -2250,7 +2262,7 @@ mod pointer_tests {
             false,
         );
         // 原生焦点留在 Graphics，Enhanced Input 的菜单焦点选择 Audio，只能产生 Audio 的单次请求。
-        app.world_mut().resource_mut::<MenuFocus>().0 = 1;
+        app.world_mut().resource_mut::<MenuFocus>().index = 1;
         key(
             &mut app,
             window,
@@ -2259,12 +2271,12 @@ mod pointer_tests {
             false,
         );
         assert_eq!(app.world().resource::<MenuState>().tab, SettingsTab::Audio);
-        assert_eq!(app.world().resource::<Activations>().0, 2);
+        assert_eq!(app.world().resource::<Activations>().count, 2);
         let requests: Vec<_> = app
             .world_mut()
             .resource_mut::<Messages<UiRequest>>()
             .drain()
-            .map(|request| request.0)
+            .map(|request| request.action)
             .collect();
         assert_eq!(requests, [UiAction::SelectTab(SettingsTab::Audio)]);
         assert_eq!(
@@ -2280,7 +2292,7 @@ mod pointer_tests {
                 .count(),
             0
         );
-        assert_eq!(app.world().resource::<Activations>().0, 2);
+        assert_eq!(app.world().resource::<Activations>().count, 2);
     }
 }
 
@@ -2323,7 +2335,7 @@ mod requests_tests {
             UiAction::SetVolume(SettingKey::SfxVolume, 33),
             UiAction::FinishVolumeEdit,
         ] {
-            app.world_mut().write_message(UiRequest(action));
+            app.world_mut().write_message(UiRequest { action });
         }
         app.update();
         assert_eq!(app.world().resource::<SettingsDraft>().audio.sfx_volume, 33);
@@ -2362,7 +2374,7 @@ mod requests_tests {
                     .then_some((entity, button.index))
             })
             .unwrap();
-        app.world_mut().resource_mut::<MenuFocus>().0 = index;
+        app.world_mut().resource_mut::<MenuFocus>().index = index;
         app.world_mut()
             .resource_mut::<ButtonInput<KeyCode>>()
             .press(KeyCode::ArrowLeft);
@@ -2425,9 +2437,12 @@ mod requests_tests {
         assert_eq!(drain_sounds(&mut app), [SoundCue::MenuConfirm]);
         request(&mut app, UiAction::SetVolume(SettingKey::MasterVolume, 70));
         // 上一帧鼠标采样已排队，本帧 Esc 必须立即接受并取消整个草稿。
-        app.world_mut()
-            .write_message(UiRequest(UiAction::SetVolume(SettingKey::MasterVolume, 60)));
-        app.world_mut().write_message(UiRequest(UiAction::Back));
+        app.world_mut().write_message(UiRequest {
+            action: UiAction::SetVolume(SettingKey::MasterVolume, 60),
+        });
+        app.world_mut().write_message(UiRequest {
+            action: UiAction::Back,
+        });
         app.update();
         assert_eq!(app.world().resource::<MenuState>().page, MenuPage::Main);
         assert_eq!(
@@ -2442,11 +2457,11 @@ mod requests_tests {
     #[test]
     fn audio_apply_cancel_defaults_and_failed_save_preserve_committed_values() {
         let mut app = test_app();
-        assert_eq!(app.world().resource::<AudioPreview>().0, None);
+        assert_eq!(app.world().resource::<AudioPreview>().settings, None);
         let directory = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("tmp/ui-settings-tests");
         std::fs::create_dir_all(&directory).unwrap();
         let path = directory.join(format!("{}.json", uuid::Uuid::new_v4()));
-        app.insert_resource(SettingsFile(path.clone()));
+        app.insert_resource(SettingsFile { path: path.clone() });
         request(&mut app, UiAction::OpenSettings);
         request(&mut app, UiAction::SelectTab(SettingsTab::Audio));
         request(&mut app, UiAction::SetVolume(SettingKey::MasterVolume, 73));
@@ -2462,7 +2477,7 @@ mod requests_tests {
             100
         );
         assert_eq!(
-            app.world().resource::<AudioPreview>().0,
+            app.world().resource::<AudioPreview>().settings,
             Some(app.world().resource::<SettingsDraft>().audio)
         );
         request(&mut app, UiAction::ApplySettings);
@@ -2471,7 +2486,10 @@ mod requests_tests {
         assert_eq!(committed.sfx_volume, 0);
         assert_eq!(committed.ui_volume, 49);
         assert_eq!(GameSettings::load(&path).audio, committed);
-        assert_eq!(app.world().resource::<AudioPreview>().0, Some(committed));
+        assert_eq!(
+            app.world().resource::<AudioPreview>().settings,
+            Some(committed)
+        );
         let saved = std::fs::read_to_string(&path).unwrap();
 
         request(&mut app, UiAction::RestoreDefaults);
@@ -2481,12 +2499,12 @@ mod requests_tests {
         );
         assert_eq!(app.world().resource::<GameSettings>().audio, committed);
         assert_eq!(
-            app.world().resource::<AudioPreview>().0,
+            app.world().resource::<AudioPreview>().settings,
             Some(crate::settings::AudioSettings::default())
         );
         request(&mut app, UiAction::Back);
         assert_eq!(app.world().resource::<SettingsDraft>().audio, committed);
-        assert_eq!(app.world().resource::<AudioPreview>().0, None);
+        assert_eq!(app.world().resource::<AudioPreview>().settings, None);
         request(&mut app, UiAction::OpenSettings);
         request(&mut app, UiAction::SelectTab(SettingsTab::Audio));
         request(&mut app, UiAction::Adjust(SettingKey::MasterVolume, -1));
@@ -2495,7 +2513,7 @@ mod requests_tests {
             68
         );
         // 保存目标改为实际目录，触发可复现的 I/O 失败而不触及用户配置。
-        app.insert_resource(SettingsFile(directory));
+        app.insert_resource(SettingsFile { path: directory });
         request(&mut app, UiAction::ApplySettings);
         assert_eq!(app.world().resource::<GameSettings>().audio, committed);
         assert_eq!(
@@ -2504,7 +2522,7 @@ mod requests_tests {
         );
         assert_eq!(std::fs::read_to_string(&path).unwrap(), saved);
         assert_eq!(
-            app.world().resource::<AudioPreview>().0,
+            app.world().resource::<AudioPreview>().settings,
             Some(app.world().resource::<SettingsDraft>().audio)
         );
         assert!(
@@ -2517,7 +2535,7 @@ mod requests_tests {
         );
         request(&mut app, UiAction::Back);
         assert_eq!(app.world().resource::<SettingsDraft>().audio, committed);
-        assert_eq!(app.world().resource::<AudioPreview>().0, None);
+        assert_eq!(app.world().resource::<AudioPreview>().settings, None);
         std::fs::remove_file(path).unwrap();
     }
 
@@ -2533,8 +2551,12 @@ mod requests_tests {
         drain_sounds(&mut app);
         let draft = app.world().resource::<SettingsDraft>().clone();
         // 同帧重复试听也只产生一个素材请求，来源是菜单而非角色或包裹。
-        app.world_mut().write_message(UiRequest(UiAction::TestSfx));
-        app.world_mut().write_message(UiRequest(UiAction::TestSfx));
+        app.world_mut().write_message(UiRequest {
+            action: UiAction::TestSfx,
+        });
+        app.world_mut().write_message(UiRequest {
+            action: UiAction::TestSfx,
+        });
         app.update();
         let samples: Vec<_> = app
             .world_mut()
@@ -2564,9 +2586,12 @@ mod requests_tests {
         assert!(drain_sounds(&mut app).is_empty());
 
         // 同帧多种输入只消费首项，声音与最终接受的菜单动作对应。
-        app.world_mut()
-            .write_message(UiRequest(UiAction::OpenSettings));
-        app.world_mut().write_message(UiRequest(UiAction::OpenHelp));
+        app.world_mut().write_message(UiRequest {
+            action: UiAction::OpenSettings,
+        });
+        app.world_mut().write_message(UiRequest {
+            action: UiAction::OpenHelp,
+        });
         app.update();
         assert_eq!(drain_sounds(&mut app), [SoundCue::MenuConfirm]);
         request(&mut app, UiAction::SelectTab(SettingsTab::Graphics));
@@ -2662,7 +2687,9 @@ mod requests_tests {
         // 同一帧键盘返回与旧页按钮的点击并存；真实 Build 必须先清理旧按钮。
         app.world_mut().entity_mut(old_back).insert(Pressed);
         pointer_press(app.world_mut(), old_back, PointerButton::Primary);
-        app.world_mut().write_message(UiRequest(UiAction::Back));
+        app.world_mut().write_message(UiRequest {
+            action: UiAction::Back,
+        });
         app.update();
         assert!(app.world().get_entity(old_back).is_err());
         assert_eq!(drain_sounds(&mut app), [SoundCue::MenuCancel]);
@@ -2689,7 +2716,8 @@ mod requests_tests {
             .join("ui-settings-tests")
             .join(format!("{}.json", uuid::Uuid::new_v4()));
         std::fs::create_dir_all(path.parent().unwrap()).unwrap();
-        app.world_mut().insert_resource(SettingsFile(path.clone()));
+        app.world_mut()
+            .insert_resource(SettingsFile { path: path.clone() });
         request(&mut app, UiAction::OpenSettings);
         request(&mut app, UiAction::Adjust(SettingKey::FrameRate, 1));
         assert_eq!(app.world().resource::<SettingsDraft>().max_fps, 90);
@@ -2708,8 +2736,9 @@ mod requests_tests {
         std::fs::remove_file(&path).unwrap();
 
         // 保存目标是目录时产生真实 I/O 失败，界面保留草稿而运行设置保持原值。
-        app.world_mut()
-            .insert_resource(SettingsFile(path.parent().unwrap().to_path_buf()));
+        app.world_mut().insert_resource(SettingsFile {
+            path: path.parent().unwrap().to_path_buf(),
+        });
         request(&mut app, UiAction::Adjust(SettingKey::FrameRate, 1));
         drain_sounds(&mut app);
         request(&mut app, UiAction::ApplySettings);
@@ -2729,7 +2758,7 @@ mod requests_tests {
     #[test]
     fn held_confirm_fires_once_and_navigation_stops_when_window_loses_focus() {
         let mut app = test_app();
-        app.world_mut().resource_mut::<MenuFocus>().0 = 1;
+        app.world_mut().resource_mut::<MenuFocus>().index = 1;
         app.world_mut()
             .resource_mut::<ButtonInput<KeyCode>>()
             .press(KeyCode::Enter);
@@ -2742,7 +2771,7 @@ mod requests_tests {
             app.world().resource::<MenuState>().return_page,
             MenuPage::Main
         );
-        let original = app.world().resource::<MenuFocus>().0;
+        let original = app.world().resource::<MenuFocus>().index;
         let window = app
             .world_mut()
             .query_filtered::<Entity, With<PrimaryWindow>>()
@@ -2753,7 +2782,7 @@ mod requests_tests {
             .resource_mut::<ButtonInput<KeyCode>>()
             .press(KeyCode::ArrowDown);
         app.update();
-        assert_eq!(app.world().resource::<MenuFocus>().0, original);
+        assert_eq!(app.world().resource::<MenuFocus>().index, original);
     }
 
     #[test]
@@ -3281,7 +3310,7 @@ mod volume_tests {
         app.world_mut()
             .resource_mut::<Messages<UiRequest>>()
             .drain()
-            .map(|request| request.0)
+            .map(|request| request.action)
             .collect()
     }
 
@@ -3305,7 +3334,7 @@ mod volume_tests {
             requests(&mut app),
             vec![UiAction::SetVolume(SettingKey::MasterVolume, 25)]
         );
-        assert_eq!(app.world().resource::<MenuFocus>().0, 5);
+        assert_eq!(app.world().resource::<MenuFocus>().index, 5);
         assert_eq!(
             *app.world().resource::<MenuInputSource>(),
             MenuInputSource::Pointer
@@ -3593,7 +3622,7 @@ mod widgets_tests {
                 .world_mut()
                 .resource_mut::<Messages<UiRequest>>()
                 .drain()
-                .map(|request| request.0)
+                .map(|request| request.action)
                 .collect();
             assert!(
                 matches!(
@@ -3615,7 +3644,7 @@ mod widgets_tests {
                 .world_mut()
                 .resource_mut::<Messages<UiRequest>>()
                 .drain()
-                .map(|request| request.0)
+                .map(|request| request.action)
                 .collect();
             assert_eq!(actions, [UiAction::FinishVolumeEdit]);
             app.world_mut()
@@ -3895,7 +3924,7 @@ mod widgets_tests {
         app.world_mut()
             .resource_mut::<Messages<super::super::UiRequest>>()
             .drain()
-            .map(|request| request.0)
+            .map(|request| request.action)
             .collect()
     }
 
@@ -3958,7 +3987,7 @@ mod widgets_tests {
         assert!(!app.world().entity(target).contains::<PrimaryPress>());
         for button in [PointerButton::Secondary, PointerButton::Middle] {
             *app.world_mut().resource_mut::<MenuInputSource>() = MenuInputSource::Navigation;
-            app.world_mut().resource_mut::<MenuFocus>().0 = 0;
+            app.world_mut().resource_mut::<MenuFocus>().index = 0;
             native_input(&mut app, window, position, PointerAction::Press(button));
             app.update();
             assert!(native_requests(&mut app).is_empty());

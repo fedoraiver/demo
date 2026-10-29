@@ -119,7 +119,7 @@ NPC 身体碰撞属于 `World` 层，阻挡人物、自由箱与持箱代理，�
 
 静态碰撞从地形、建筑、码头、固定道具和棕榈树干的结构网格提取顶点与三角形，应用节点的实际变换后合并生成。建筑保持开放前厅与入口，不能用覆盖整栋模型的包围盒封住通道。海水、草和棕榈叶片不生成碰撞；台阶显示保留原始网格，原步阶不参与碰撞。三个商铺与两栋住宅的五组入口台阶按包围体生成不可见斜坡，并与各自实际地板边界配对：斜坡顶面接到室内地板高度，向地板内延伸 `0.05 m`，消除台阶与地板间的门槛落差和间隙。入口通行依赖这些斜坡，没有通用自动跨台阶控制器。物理组件位于静态业务根或碰撞实体，模型视觉层级不重复添加刚体。
 
-场景生成 `PlayerId(1)` 的控制者、人物、五件可搬物和一台跟随相机。初始姿态由 [actors.rs](../src/scene_assembly/actors.rs) 装配，木箱位于不穿透的室内位置。角色和物品业务根各自保存 `SpawnPoint`，供落水恢复读取。
+场景生成 `PlayerId { id: 1 }` 的控制者、人物、五件可搬物和一台跟随相机。初始姿态由 [actors.rs](../src/scene_assembly/actors.rs) 装配，木箱位于不穿透的室内位置。角色和物品业务根各自保存 `SpawnPoint`，供落水恢复读取。
 
 资源加载失败记录路径和原始错误，不提前生成玩家。交付资源规则见 [美术与字体准备](usage.md#美术与字体准备)，装配检查见 [无窗口验证](testing/README.md#海岛资源与无窗口验证)。
 
@@ -242,7 +242,7 @@ Avian 在默认固定调度中处理重力、速度积分与碰撞。接地通�
 
 物品反馈收集受 Running 门控；`GameAudioPlugin` 的 Mix 阶段依次处理加载错误、选择混音与同步实例增益，Playback 阶段依次消费请求和处理退出。跨功能组合约束 `UiSystems::Style → AudioSystems::Mix → AudioSystems::Playback`。UI/SFX 使用独立类型通道，为 UI 预留并发；`Queued` 同样计数，未加载请求直接丢弃。冷却使用 `Time<Real>`，所以暂停菜单仍可反馈。声音是全局二维输出，退出停止通道且不等待确认音播完；主入口禁用 Bevy 内建音频，避免双后端初始化。
 
-UI 在 Style 阶段发布 `AudioPreview(Some(SettingsDraft.audio))`，设置页的分类切换保留预览，离页时发布 `None`。音频后端只读取这一可选数据和 `GameSettings.audio`：有预览时采用草稿音量，清空后采用最近成功应用值，不读取菜单状态或草稿资源。`sync_voice_volumes` 将有效增益与素材基准相乘后逐实例写入 Kira，避免通道 `set_volume` 覆盖素材响度；`PostUpdate` 在 `PlayTypedChannels` 后补同步刚就绪的实例。零增益用 `Decibels::SILENCE`，静音新请求不占冷却或并发，恢复不补播。
+UI 在 Style 阶段发布 `AudioPreview.settings = Some(SettingsDraft.audio)`，设置页的分类切换保留预览，离页时设为 `None`。音频后端只读取这一可选数据和 `GameSettings.audio`：有预览时采用草稿音量，清空后采用最近成功应用值，不读取菜单状态或草稿资源。`sync_voice_volumes` 将有效增益与素材基准相乘后逐实例写入 Kira，避免通道 `set_volume` 覆盖素材响度；`PostUpdate` 在 `PlayTypedChannels` 后补同步刚就绪的实例。零增益用 `Decibels::SILENCE`，静音新请求不占冷却或并发，恢复不补播。
 
 清单在编译时嵌入，启动校验后由 `AssetServer` 加载；清单无效只禁用声音，加载错误保留路径和外部错误。物品与 UI 的消息生产不安装 Kira。素材制作、来源与预留 cue 见 [音频管线](audio.md)，无窗口检查见 [音频验证](testing/README.md#音频无窗口验证)。
 

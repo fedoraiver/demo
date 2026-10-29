@@ -107,7 +107,7 @@ pub(super) fn handle_interaction(
             // 同批次延迟命令尚未应用，预留集合防止两个角色同时占用一件物体。
             reserved.insert(item);
             commands.entity(item).insert((
-                HeldBy(character),
+                HeldBy { holder: character },
                 HeldTarget {
                     translation: position.0 + transform.rotation * config.hold_offset,
                     rotation: transform.rotation,

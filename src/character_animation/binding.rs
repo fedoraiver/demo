@@ -56,7 +56,7 @@ pub(super) fn initialize_ready_couriers(
                 .remove::<CourierAnimationPending>();
             continue;
         };
-        let Some(gltf) = gltfs.get(&visual.0) else {
+        let Some(gltf) = gltfs.get(&visual.gltf) else {
             continue;
         };
         let named_clips: Result<Vec<_>, _> = CourierAnimationState::ALL

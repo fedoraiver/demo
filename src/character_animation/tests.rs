@@ -77,7 +77,11 @@ mod test_support {
             .id();
         let visual = app
             .world_mut()
-            .spawn((CourierVisual(asset), CharacterVisual, ChildOf(character)))
+            .spawn((
+                CourierVisual { gltf: asset },
+                CharacterVisual,
+                ChildOf(character),
+            ))
             .id();
         let armature = app
             .world_mut()
@@ -238,7 +242,12 @@ mod binding_tests {
             .id();
         let invalid_visual = app
             .world_mut()
-            .spawn((CourierVisual(asset.clone()), ChildOf(npc)))
+            .spawn((
+                CourierVisual {
+                    gltf: asset.clone(),
+                },
+                ChildOf(npc),
+            ))
             .id();
         let invalid_player = app
             .world_mut()
