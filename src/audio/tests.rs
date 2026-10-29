@@ -74,24 +74,24 @@ fn preview_overrides_saved_mix_and_clearing_uses_latest_applied_values() {
         ui_volume: 50,
     };
     app.world_mut().resource_mut::<GameSettings>().audio = saved;
-    app.world_mut().resource_mut::<AudioPreview>().0 = Some(preview);
+    app.world_mut().resource_mut::<AudioPreview>().settings = Some(preview);
     app.update();
     assert_eq!(app.world().resource::<AudioMix>().settings, preview);
     assert_eq!(app.world().resource::<GameSettings>().audio, saved);
     app.update();
     assert_eq!(app.world().resource::<AudioMix>().settings, preview);
-    app.world_mut().resource_mut::<AudioPreview>().0 = None;
+    app.world_mut().resource_mut::<AudioPreview>().settings = None;
     app.update();
     assert_eq!(app.world().resource::<AudioMix>().settings, saved);
     assert!(!app.world().resource::<AudioMix>().preview);
     app.world_mut().resource_mut::<GameSettings>().audio = preview;
-    app.world_mut().resource_mut::<AudioPreview>().0 = Some(AudioSettings {
+    app.world_mut().resource_mut::<AudioPreview>().settings = Some(AudioSettings {
         master_volume: 5,
         ..preview
     });
     app.update();
     assert_eq!(app.world().resource::<AudioMix>().settings.master_volume, 5);
-    app.world_mut().resource_mut::<AudioPreview>().0 = None;
+    app.world_mut().resource_mut::<AudioPreview>().settings = None;
     app.update();
     assert_eq!(app.world().resource::<AudioMix>().settings, preview);
 }

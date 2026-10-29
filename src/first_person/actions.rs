@@ -35,13 +35,13 @@ pub fn spawn_keyboard_controller(
     player_id: PlayerId,
     character: Entity,
 ) -> Entity {
-    let id = player_id.0;
+    let id = player_id.id;
     let controller = commands
         .spawn_scene(keyboard_context())
         .insert((
             Name::new(format!("Keyboard controller {id}")),
             player_id,
-            ControlsCharacter(character),
+            ControlsCharacter { character },
         ))
         .id();
     info!(
@@ -90,11 +90,11 @@ pub(super) fn record_movement(
     let Ok(controlled) = controllers.get(event.context) else {
         return;
     };
-    let Ok(mut intent) = characters.get_mut(controlled.0) else {
+    let Ok(mut intent) = characters.get_mut(controlled.character) else {
         return;
     };
     if intent.movement != event.value {
-        info!(target: "demo::input", controller = ?event.context, character = ?controlled.0,
+        info!(target: "demo::input", controller = ?event.context, character = ?controlled.character,
             before = ?intent.movement, after = ?event.value, reason = "move_action",
             "Character movement input changed");
         intent.movement = event.value;
@@ -109,11 +109,11 @@ pub(super) fn clear_completed_movement(
     let Ok(controlled) = controllers.get(event.context) else {
         return;
     };
-    let Ok(mut intent) = characters.get_mut(controlled.0) else {
+    let Ok(mut intent) = characters.get_mut(controlled.character) else {
         return;
     };
     if intent.movement != Vec2::ZERO {
-        info!(target: "demo::input", controller = ?event.context, character = ?controlled.0,
+        info!(target: "demo::input", controller = ?event.context, character = ?controlled.character,
             before = ?intent.movement, after = ?Vec2::ZERO, reason = "move_action_completed",
             "Character movement input changed");
         intent.movement = Vec2::ZERO;
@@ -128,11 +128,11 @@ pub(super) fn clear_cancelled_movement(
     let Ok(controlled) = controllers.get(event.context) else {
         return;
     };
-    let Ok(mut intent) = characters.get_mut(controlled.0) else {
+    let Ok(mut intent) = characters.get_mut(controlled.character) else {
         return;
     };
     if intent.movement != Vec2::ZERO {
-        info!(target: "demo::input", controller = ?event.context, character = ?controlled.0,
+        info!(target: "demo::input", controller = ?event.context, character = ?controlled.character,
             before = ?intent.movement, after = ?Vec2::ZERO, reason = "move_action_cancelled",
             "Character movement input changed");
         intent.movement = Vec2::ZERO;
@@ -148,7 +148,7 @@ pub(super) fn request_jump(
     let Ok(controlled) = controllers.get(event.context) else {
         return;
     };
-    let Ok(mut intent) = characters.get_mut(controlled.0) else {
+    let Ok(mut intent) = characters.get_mut(controlled.character) else {
         return;
     };
     intent.jump_pending = true;
@@ -162,7 +162,7 @@ pub(super) fn request_interaction(
     let Ok(controlled) = controllers.get(event.context) else {
         return;
     };
-    let Ok(mut intent) = characters.get_mut(controlled.0) else {
+    let Ok(mut intent) = characters.get_mut(controlled.character) else {
         return;
     };
     intent.interact_pending = true;

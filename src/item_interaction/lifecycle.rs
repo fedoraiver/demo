@@ -69,7 +69,7 @@ pub(crate) fn release_item(
             item_entity.remove::<ColliderDisabled>();
         }
         if let Some(holder) = holder
-            && let Some(base) = world.get::<CarryBaseMass>(holder).map(|base| base.0)
+            && let Some(base) = world.get::<CarryBaseMass>(holder).map(|base| base.mass)
         {
             world
                 .entity_mut(holder)
@@ -105,7 +105,7 @@ pub(super) fn cleanup_orphaned_colliders(
     proxies: Query<(Entity, &HeldCollider)>,
 ) {
     for (proxy, item) in &proxies {
-        if !items.contains(item.0) {
+        if !items.contains(item.item) {
             commands
                 .entity(proxy)
                 .insert(ColliderDisabled)
@@ -160,9 +160,9 @@ pub(super) fn restore_empty_holder_mass(
         if holding.is_some_and(|holding| holding.iter().next().is_some()) {
             continue;
         }
-        mass.0 = base.0;
+        mass.0 = base.mass;
         commands.entity(holder).remove::<CarryBaseMass>();
-        info!(target: "demo::carry", ?holder, mass = base.0,
+        info!(target: "demo::carry", ?holder, mass = base.mass,
             reason = "held_item_missing", "Holder mass restored after carry relation disappeared");
     }
 }

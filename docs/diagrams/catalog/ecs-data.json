@@ -787,7 +787,7 @@
       "filters": [
         "控制者：With<GameplayContext>",
         "角色：With<Character>",
-        "要求 FirstPersonCamera.target == ControlsCharacter.0",
+        "要求 FirstPersonCamera.target == ControlsCharacter.character",
         "run_if(gameplay_running)：AppState::InGame 且 PlayState::Running；独立无状态测试兼容运行。"
       ],
       "events": [],
@@ -1230,7 +1230,7 @@
       "filters": [
         "控制者：With<GameplayContext>",
         "角色：With<Character>",
-        "要求 FirstPersonCamera.target == ControlsCharacter.0",
+        "要求 FirstPersonCamera.target == ControlsCharacter.character",
         "run_if(gameplay_running)：AppState::InGame 且 PlayState::Running；独立无状态测试兼容运行。"
       ],
       "events": [],
@@ -1655,7 +1655,7 @@
       ],
       "source": {
         "path": "src/first_person/mod.rs",
-        "line": 125
+        "line": 133
       },
       "feature": "infrastructure",
       "registered_by": "first_person",
@@ -3291,7 +3291,7 @@
       ],
       "source": {
         "path": "src/first_person/mod.rs",
-        "line": 157
+        "line": 165
       },
       "feature": "first_person",
       "registered_by": "first_person",
@@ -3329,7 +3329,7 @@
       ],
       "source": {
         "path": "src/first_person/mod.rs",
-        "line": 157
+        "line": 165
       },
       "feature": "first_person",
       "registered_by": "first_person",
@@ -3563,7 +3563,7 @@
       ],
       "source": {
         "path": "src/ui/pointer.rs",
-        "line": 88
+        "line": 90
       },
       "feature": "ui",
       "registered_by": "ui",
@@ -3965,7 +3965,7 @@
       ],
       "source": {
         "path": "src/ui/navigation.rs",
-        "line": 207
+        "line": 209
       },
       "feature": "ui",
       "registered_by": "ui",
@@ -3998,7 +3998,7 @@
       ],
       "source": {
         "path": "src/ui/navigation.rs",
-        "line": 221
+        "line": 223
       },
       "feature": "ui",
       "registered_by": "ui",
@@ -4032,7 +4032,7 @@
       ],
       "source": {
         "path": "src/ui/navigation.rs",
-        "line": 235
+        "line": 237
       },
       "feature": "ui",
       "registered_by": "ui",
@@ -4062,7 +4062,7 @@
       ],
       "source": {
         "path": "src/ui/navigation.rs",
-        "line": 251
+        "line": 255
       },
       "feature": "ui",
       "registered_by": "ui",
@@ -4510,7 +4510,7 @@
       ],
       "source": {
         "path": "src/ui/volume.rs",
-        "line": 197
+        "line": 205
       },
       "feature": "ui",
       "registered_by": "ui",
@@ -4554,7 +4554,7 @@
       ],
       "source": {
         "path": "src/ui/volume.rs",
-        "line": 290
+        "line": 306
       },
       "feature": "ui",
       "registered_by": "ui",
@@ -5227,7 +5227,7 @@
       ],
       "source": {
         "path": "src/item_interaction/attachment.rs",
-        "line": 121
+        "line": 123
       },
       "feature": "item_interaction",
       "registered_by": "item_interaction",
@@ -5631,7 +5631,7 @@
       "notes": [],
       "source": {
         "path": "src/first_person/mod.rs",
-        "line": 178
+        "line": 186
       },
       "feature": "first_person",
       "registered_by": "first_person",
@@ -5870,12 +5870,12 @@
         "响应 EntityEvent：PointerPress"
       ],
       "notes": [
-        "仅 event.button == PointerButton::Primary；Commands 插入 PrimaryPress(event.pointer.id)，不写 UiRequest。",
+        "仅 event.button == PointerButton::Primary；Commands 插入 PrimaryPress { pointer: event.pointer.id }，不写 UiRequest。",
         "原生 Button 自己维护任意指针键的 Pressed；项目标记只筛选主键样式来源。"
       ],
       "source": {
         "path": "src/ui/pointer.rs",
-        "line": 32
+        "line": 34
       },
       "feature": "ui",
       "registered_by": "ui",
@@ -5909,7 +5909,7 @@
       ],
       "source": {
         "path": "src/ui/pointer.rs",
-        "line": 45
+        "line": 47
       },
       "feature": "ui",
       "registered_by": "ui",
@@ -5942,13 +5942,13 @@
       ],
       "notes": [
         "显式 after(PickingSystems::Last)，原生命中与事件命令已应用。",
-        "读取 PrimaryPress.0 与 input.pointer_id 比较，删除匹配实体的 (PrimaryPress, Pressed)。",
+        "读取 PrimaryPress.pointer 与 input.pointer_id 比较，删除匹配实体的 (PrimaryPress, Pressed)。",
         "窗口不存在、失焦或 cursor_position=None 时，仅删除 PointerId::Mouse 对应的两组件；触摸或自定义指针只按取消消息清理。",
         "Bevy 的 HoverMap 可先排除取消指针，导致原生 PointerCancel 未派发；鼠标后端也不把失焦或离窗转换为 Cancel，故局部补清。"
       ],
       "source": {
         "path": "src/ui/pointer.rs",
-        "line": 58
+        "line": 60
       },
       "feature": "ui",
       "registered_by": "ui",
@@ -6328,7 +6328,7 @@
       "id": "controller",
       "name": "键盘控制者",
       "count": 1,
-      "description": "输入上下文实体，保存 PlayerId(1)、设备选择和控制目标。控制者与角色、相机是独立实体。 仅在 InGame 存在，Paused 保留；退出 InGame 时清理。",
+      "description": "输入上下文实体，保存 PlayerId { id: 1 }、设备选择和控制目标。控制者与角色、相机是独立实体。 仅在 InGame 存在，Paused 保留；退出 InGame 时清理。",
       "display_summary": "保存玩家身份、输入上下文与受控角色及相机。",
       "components": [
         {
@@ -6349,7 +6349,7 @@
           "id": "controller.PlayerId",
           "name": "PlayerId",
           "fields": [
-            "0: u64 = 1"
+            "id: u64 = 1"
           ],
           "description": "独立于运行时 Entity 的业务身份。",
           "source": {
@@ -6391,12 +6391,12 @@
           "id": "controller.ControlsCharacter",
           "name": "ControlsCharacter",
           "fields": [
-            "0: Entity"
+            "character: Entity"
           ],
           "description": "普通实体引用，指向受控角色。",
           "source": {
             "path": "src/first_person/mod.rs",
-            "line": 48
+            "line": 50
           },
           "feature": "first_person",
           "defined_in": "first_person"
@@ -6405,12 +6405,12 @@
           "id": "controller.ControlsCamera",
           "name": "ControlsCamera",
           "fields": [
-            "0: Entity"
+            "camera: Entity"
           ],
           "description": "普通实体引用，指向受控相机。",
           "source": {
             "path": "src/first_person/mod.rs",
-            "line": 53
+            "line": 58
           },
           "feature": "first_person",
           "defined_in": "first_person"
@@ -6614,12 +6614,12 @@
           "id": "character.HoldingItems",
           "name": "HoldingItems",
           "fields": [
-            "0: Vec<Entity>"
+            "items: Vec<Entity>"
           ],
           "description": "HeldBy 的自动反向索引，仅在关系需要时存在；业务读取第一件持有物，容器本身可容纳多件。",
           "source": {
             "path": "src/item_interaction/components.rs",
-            "line": 29
+            "line": 33
           },
           "feature": "item_interaction",
           "defined_in": "item_interaction",
@@ -6944,7 +6944,7 @@
           "id": "character.SpawnPoint",
           "name": "SpawnPoint",
           "fields": [
-            "0: Transform"
+            "pose: Transform"
           ],
           "description": "每个业务根独立保存出生姿态。",
           "source": {
@@ -7014,12 +7014,12 @@
           "id": "character.CarryBaseMass",
           "name": "CarryBaseMass",
           "fields": [
-            "0: f32（原质量）"
+            "mass: f32（原质量）"
           ],
           "description": "挂接时保存，释放或箱体销毁时恢复原人物质量。",
           "source": {
             "path": "src/item_interaction/components.rs",
-            "line": 58
+            "line": 66
           },
           "feature": "item_interaction",
           "defined_in": "item_interaction"
@@ -7034,7 +7034,7 @@
           "display_summary": "索引属于同一刚体的全部碰撞体。",
           "source": {
             "path": "src/item_interaction/attachment.rs",
-            "line": 126
+            "line": 128
           },
           "feature": "avian",
           "defined_in": "avian"
@@ -7218,13 +7218,13 @@
           "id": "parcel.HeldBy",
           "name": "HeldBy",
           "fields": [
-            "0: Entity"
+            "holder: Entity"
           ],
           "description": "可选关系组件，仅持有时存在；指向持有者，增删通过 Commands 延迟执行。",
           "display_summary": "关联当前物品的持有者。",
           "source": {
             "path": "src/item_interaction/components.rs",
-            "line": 24
+            "line": 26
           },
           "feature": "item_interaction",
           "defined_in": "item_interaction"
@@ -7621,7 +7621,7 @@
           "display_summary": "保存本帧握持姿态的检查目标。",
           "source": {
             "path": "src/item_interaction/components.rs",
-            "line": 34
+            "line": 40
           },
           "feature": "item_interaction",
           "defined_in": "item_interaction"
@@ -7658,7 +7658,7 @@
           "id": "parcel.SpawnPoint",
           "name": "SpawnPoint",
           "fields": [
-            "0: Transform"
+            "pose: Transform"
           ],
           "description": "每个业务根独立保存出生姿态。",
           "source": {
@@ -7713,7 +7713,7 @@
           "id": "parcel.CarryGrip",
           "name": "CarryGrip",
           "fields": [
-            "0: Vec3（模型握持偏移）"
+            "offset: Vec3（模型握持偏移）"
           ],
           "description": "安全对齐目标与呈现检查目标共享的模型偏移；实际挂接姿态由 HeldAttachment 决定。",
           "display_summary": "保存握持对齐使用的模型偏移。",
@@ -7769,7 +7769,7 @@
           "display_summary": "保存物品挂接姿态与装卸状态。",
           "source": {
             "path": "src/item_interaction/components.rs",
-            "line": 41
+            "line": 47
           },
           "feature": "item_interaction",
           "defined_in": "item_interaction"
@@ -7785,7 +7785,7 @@
           "display_summary": "记录物品释放后需要恢复的插值通道。",
           "source": {
             "path": "src/item_interaction/components.rs",
-            "line": 62
+            "line": 72
           },
           "feature": "item_interaction",
           "defined_in": "item_interaction"
@@ -7936,7 +7936,7 @@
           "display_summary": "保存跟随目标、眼高与观察角度。",
           "source": {
             "path": "src/first_person/mod.rs",
-            "line": 63
+            "line": 71
           },
           "feature": "first_person",
           "defined_in": "first_person"
@@ -7954,7 +7954,7 @@
           "display_summary": "保存光标捕获与观察输入初始化状态。",
           "source": {
             "path": "src/first_person/mod.rs",
-            "line": 98
+            "line": 106
           },
           "feature": "first_person",
           "defined_in": "first_person"
@@ -8220,7 +8220,7 @@
           "description": "角色直属视觉根标记；第一人称隐藏对应主角模型，独立包裹模型不隐藏。",
           "source": {
             "path": "src/first_person/mod.rs",
-            "line": 58
+            "line": 66
           },
           "feature": "first_person",
           "defined_in": "first_person",
@@ -8230,7 +8230,7 @@
           "id": "visual.CourierVisual",
           "name": "CourierVisual",
           "fields": [
-            "0: Handle<Gltf>"
+            "gltf: Handle<Gltf>"
           ],
           "description": "仅主角直属视觉根携带父 GLTF 句柄，并要求 Transform，作为命名动画绑定入口。",
           "display_summary": "保存主角模型来源并作为动画绑定入口。",
@@ -9499,7 +9499,7 @@
           "description": "仅清理菜单页面，不改变展示舞台或玩法会话。",
           "source": {
             "path": "src/ui/mod.rs",
-            "line": 98
+            "line": 100
           },
           "feature": "ui",
           "defined_in": "ui",
@@ -9575,7 +9575,7 @@
           "description": "业务动作与连续导航序号，不依赖按钮文字或实体名。",
           "source": {
             "path": "src/ui/mod.rs",
-            "line": 91
+            "line": 93
           },
           "feature": "ui",
           "defined_in": "ui",
@@ -9604,7 +9604,7 @@
           "display_summary": "启用原生界面按钮命中处理。",
           "source": {
             "path": "src/ui/mod.rs",
-            "line": 90
+            "line": 92
           },
           "feature": "infrastructure",
           "defined_in": "infrastructure",
@@ -9620,7 +9620,7 @@
           "display_summary": "保存界面节点的布局约束。",
           "source": {
             "path": "src/ui/widgets.rs",
-            "line": 90
+            "line": 94
           },
           "feature": "infrastructure",
           "defined_in": "infrastructure"
@@ -9725,7 +9725,7 @@
           "display_summary": "保存按钮或其子树是否被悬停。",
           "source": {
             "path": "src/ui/mod.rs",
-            "line": 90
+            "line": 92
           },
           "feature": "infrastructure",
           "defined_in": "infrastructure",
@@ -9749,7 +9749,7 @@
           "id": "menu_button.PrimaryPress",
           "name": "PrimaryPress",
           "fields": [
-            "0: PointerId"
+            "pointer: PointerId"
           ],
           "description": "菜单主键按下的指针身份；主键 PointerPress Observer 插入，Pressed 移除及取消/窗口生命周期清理时删除。",
           "display_summary": "区分菜单主键按压与其他按钮来源。",
@@ -9845,7 +9845,7 @@
           "display_summary": "保存界面节点的布局约束。",
           "source": {
             "path": "src/ui/widgets.rs",
-            "line": 90
+            "line": 94
           },
           "feature": "infrastructure",
           "defined_in": "infrastructure"
@@ -10158,7 +10158,7 @@
           "display_summary": "保存界面实际显示的文字。",
           "source": {
             "path": "src/ui/widgets.rs",
-            "line": 35
+            "line": 39
           },
           "feature": "infrastructure",
           "defined_in": "infrastructure"
@@ -10174,7 +10174,7 @@
           "display_summary": "保存文字字体与字号。",
           "source": {
             "path": "src/ui/widgets.rs",
-            "line": 35
+            "line": 39
           },
           "feature": "infrastructure",
           "defined_in": "infrastructure"
@@ -10188,7 +10188,7 @@
           "description": "纸色/深墨色文字，区分正文与静态占位。",
           "source": {
             "path": "src/ui/widgets.rs",
-            "line": 35
+            "line": 39
           },
           "feature": "infrastructure",
           "defined_in": "infrastructure",
@@ -10229,7 +10229,7 @@
           "display_summary": "保存界面节点的布局约束。",
           "source": {
             "path": "src/ui/widgets.rs",
-            "line": 90
+            "line": 94
           },
           "feature": "infrastructure",
           "defined_in": "infrastructure"
@@ -10238,7 +10238,7 @@
           "id": "menu_text.VolumeValue",
           "name": "VolumeValue",
           "fields": [
-            "0: SettingKey"
+            "key: SettingKey"
           ],
           "description": "音量百分比 / Muted 文字身份，草稿变化时只改已有 Text。",
           "display_summary": "标记音量百分比或静音状态文字。",
@@ -10265,7 +10265,7 @@
           "id": "menu_text.SettingValue",
           "name": "SettingValue",
           "fields": [
-            "0: SettingKey"
+            "key: SettingKey"
           ],
           "description": "标识草稿值文字，原位更新。",
           "source": {
@@ -10294,13 +10294,13 @@
           "id": "menu_volume.VolumeFill",
           "name": "VolumeFill",
           "fields": [
-            "0: SettingKey"
+            "key: SettingKey"
           ],
           "description": "保存填充对应字段键，更新已有 Node 的百分比宽度。",
           "display_summary": "标记音量轨道填充对应的设置项。",
           "source": {
             "path": "src/ui/volume.rs",
-            "line": 23
+            "line": 25
           },
           "feature": "ui",
           "defined_in": "ui"
@@ -10316,7 +10316,7 @@
           "display_summary": "保存音量轨道填充的视觉布局。",
           "source": {
             "path": "src/ui/volume.rs",
-            "line": 71
+            "line": 79
           },
           "feature": "infrastructure",
           "defined_in": "infrastructure"
@@ -10585,7 +10585,7 @@
           "description": "悬停或拖动显示黄色，导航来源恢复纸色。",
           "source": {
             "path": "src/ui/widgets.rs",
-            "line": 264
+            "line": 268
           },
           "feature": "infrastructure",
           "defined_in": "infrastructure",
@@ -10625,13 +10625,13 @@
           "id": "held_proxy.HeldCollider",
           "name": "HeldCollider",
           "fields": [
-            "0: Entity（真实箱体）"
+            "item: Entity（真实箱体）"
           ],
           "description": "普通 Entity 引用用于孤儿代理清理。",
           "display_summary": "关联代理所对应的真实物品。",
           "source": {
             "path": "src/item_interaction/components.rs",
-            "line": 54
+            "line": 60
           },
           "feature": "item_interaction",
           "defined_in": "item_interaction"
@@ -10646,7 +10646,7 @@
           "display_summary": "关联碰撞体所属的刚体。",
           "source": {
             "path": "src/item_interaction/attachment.rs",
-            "line": 96
+            "line": 98
           },
           "feature": "avian",
           "defined_in": "avian"
@@ -10663,7 +10663,7 @@
           "display_summary": "保存相对刚体的局部碰撞姿态。",
           "source": {
             "path": "src/item_interaction/attachment.rs",
-            "line": 97
+            "line": 99
           },
           "feature": "avian",
           "defined_in": "avian"
@@ -10678,7 +10678,7 @@
           "display_summary": "保存参与物理碰撞的实体形状。",
           "source": {
             "path": "src/item_interaction/attachment.rs",
-            "line": 89
+            "line": 91
           },
           "feature": "avian",
           "defined_in": "avian"
@@ -10693,7 +10693,7 @@
           "display_summary": "配置实体之间允许发生碰撞的层。",
           "source": {
             "path": "src/item_interaction/attachment.rs",
-            "line": 90
+            "line": 92
           },
           "feature": "avian",
           "defined_in": "avian"
@@ -10752,7 +10752,7 @@
           "description": "保持原表面摩擦。",
           "source": {
             "path": "src/item_interaction/attachment.rs",
-            "line": 91
+            "line": 93
           },
           "feature": "avian",
           "defined_in": "avian"
@@ -10766,7 +10766,7 @@
           "description": "保持原反弹配置。",
           "source": {
             "path": "src/item_interaction/attachment.rs",
-            "line": 92
+            "line": 94
           },
           "feature": "avian",
           "defined_in": "avian"
@@ -10805,7 +10805,7 @@
           "description": "持物无视觉碰撞代理的调试名称。",
           "source": {
             "path": "src/item_interaction/attachment.rs",
-            "line": 87
+            "line": 89
           },
           "feature": "infrastructure",
           "defined_in": "infrastructure"
@@ -11163,7 +11163,7 @@
       "display_summary": "索引输入框架当前运行的动作上下文。",
       "source": {
         "path": "src/first_person/mod.rs",
-        "line": 154
+        "line": 162
       },
       "feature": "enhanced_input",
       "defined_in": "enhanced_input",
@@ -11184,7 +11184,7 @@
       "display_summary": "配置输入框架允许使用的输入来源。",
       "source": {
         "path": "src/first_person/mod.rs",
-        "line": 154
+        "line": 162
       },
       "feature": "enhanced_input",
       "defined_in": "enhanced_input",
@@ -11200,7 +11200,7 @@
       "display_summary": "记录本轮动作评估已经消费的输入。",
       "source": {
         "path": "src/first_person/mod.rs",
-        "line": 154
+        "line": 162
       },
       "feature": "enhanced_input",
       "defined_in": "enhanced_input",
@@ -11217,7 +11217,7 @@
       "display_summary": "保存上下文停用后仍需重置的输入绑定。",
       "source": {
         "path": "src/first_person/mod.rs",
-        "line": 154
+        "line": 162
       },
       "feature": "enhanced_input",
       "defined_in": "enhanced_input",
@@ -11578,7 +11578,7 @@
       "id": "resource.MenuFocus",
       "name": "MenuFocus",
       "fields": [
-        "0: usize"
+        "index: usize"
       ],
       "description": "可操作按钮的连续序号；未实现的灰色占位不进入焦点列表。",
       "display_summary": "保存当前可操作按钮的导航序号。",
@@ -11601,7 +11601,7 @@
       "display_summary": "保存当前可见焦点使用的输入来源。",
       "source": {
         "path": "src/ui/mod.rs",
-        "line": 61
+        "line": 63
       },
       "feature": "ui",
       "defined_in": "ui",
@@ -11630,7 +11630,7 @@
       "id": "resource.SettingsFile",
       "name": "SettingsFile",
       "fields": [
-        "0: PathBuf = settings.json"
+        "path: PathBuf = settings.json"
       ],
       "description": "设置文件路径；保存使用根 tmp/settings-save 唯一临时文件、同步关闭后 rename，错误保留原文件。",
       "display_summary": "保存玩家设置文件的存储路径。",
@@ -11664,13 +11664,13 @@
       "id": "resource.UiRequestMessages",
       "name": "Messages<UiRequest>",
       "fields": [
-        "0: UiAction"
+        "UiRequest.action: UiAction"
       ],
       "description": "鼠标与 Enhanced Input 共享的缓冲请求；普通动作每帧接受第一项。同一滑条数值归并、释放合并，返回语义优先于旧采样。",
       "display_summary": "缓冲鼠标与动作输入共用的菜单请求。",
       "source": {
         "path": "src/ui/mod.rs",
-        "line": 102
+        "line": 104
       },
       "feature": "ui",
       "defined_in": "ui",
@@ -11789,7 +11789,7 @@
       "display_summary": "承载界面短音的播放命令。",
       "source": {
         "path": "src/audio/mod.rs",
-        "line": 48
+        "line": 50
       },
       "feature": "audio",
       "defined_in": "audio",
@@ -11805,7 +11805,7 @@
       "display_summary": "承载物品等音效短音的播放命令。",
       "source": {
         "path": "src/audio/mod.rs",
-        "line": 49
+        "line": 51
       },
       "feature": "audio",
       "defined_in": "audio",
@@ -11819,7 +11819,7 @@
       "display_summary": "标识界面短音通道的类型。",
       "source": {
         "path": "src/audio/mod.rs",
-        "line": 38
+        "line": 40
       },
       "feature": "audio",
       "defined_in": "audio",
@@ -11833,7 +11833,7 @@
       "display_summary": "标识音效短音通道的类型。",
       "source": {
         "path": "src/audio/mod.rs",
-        "line": 40
+        "line": 42
       },
       "feature": "audio",
       "defined_in": "audio",
@@ -11948,7 +11948,7 @@
       "display_summary": "保存上次光标位置以识别真实移动。",
       "source": {
         "path": "src/ui/pointer.rs",
-        "line": 88
+        "line": 90
       },
       "feature": "ui",
       "defined_in": "ui",
@@ -11964,7 +11964,7 @@
       "display_summary": "保存上次悬停按钮以识别真实进入。",
       "source": {
         "path": "src/ui/pointer.rs",
-        "line": 88
+        "line": 90
       },
       "feature": "ui",
       "defined_in": "ui",
@@ -12014,7 +12014,7 @@
       "display_summary": "保存音量滑条的局部捕获身份与最后采样值。",
       "source": {
         "path": "src/ui/volume.rs",
-        "line": 46
+        "line": 54
       },
       "feature": "ui",
       "defined_in": "ui",
@@ -12113,7 +12113,7 @@
       "description": "设置界面发布的 Option<AudioSettings>；清空后音频立即使用正式配置。",
       "display_summary": "向音频功能提供设置界面的临时音量。",
       "fields": [
-        "Option<AudioSettings>：仅 Settings 页面有预览值"
+        "settings: Option<AudioSettings>：仅 Settings 页面有预览值"
       ],
       "source": {
         "path": "src/audio/mod.rs",
@@ -12148,7 +12148,7 @@
       "display_summary": "Bevy Picking 同时发布缓冲按下消息与 EntityEvent；菜单和音量捕获分别使用独立 MessageReader 游标。",
       "source": {
         "path": "src/ui/pointer.rs",
-        "line": 21
+        "line": 23
       },
       "feature": "infrastructure",
       "defined_in": "infrastructure",
@@ -12164,7 +12164,7 @@
       "display_summary": "Picking 归一化输入消息；项目仅消费 Cancel 以补清原生按压生命周期。",
       "source": {
         "path": "src/ui/pointer.rs",
-        "line": 22
+        "line": 24
       },
       "feature": "infrastructure",
       "defined_in": "infrastructure",
@@ -12247,7 +12247,7 @@
       "display_summary": "把文件日志写入器暂存到 App，随后交给文件日志 layer。",
       "source": {
         "path": "src/session_log/lifecycle.rs",
-        "line": 155
+        "line": 157
       },
       "feature": "session_log",
       "defined_in": "session_log"
@@ -12257,13 +12257,13 @@
       "name": "ConsoleWriter",
       "kind": "Resource",
       "fields": [
-        "0: QueuedWriter"
+        "writer: QueuedWriter"
       ],
       "description": "把控制台写入器暂存到 App，随后交给控制台日志 layer。",
       "display_summary": "把控制台写入器暂存到 App，随后交给控制台日志 layer。",
       "source": {
         "path": "src/session_log/lifecycle.rs",
-        "line": 171
+        "line": 174
       },
       "feature": "session_log",
       "defined_in": "session_log"
@@ -12282,10 +12282,10 @@
       "description": "普通 Entity 引用；#[entities] 用于实体映射，不提供反向索引或连带销毁。",
       "source": {
         "path": "src/first_person/mod.rs",
-        "line": 48
+        "line": 50
       },
       "from_component": "controller.ControlsCharacter",
-      "component_field": "0",
+      "component_field": "character",
       "component_target_sources": [
         {
           "role": "operation",
@@ -12318,16 +12318,16 @@
       "description": "普通 Entity 引用，由场景生成补入控制者。",
       "source": {
         "path": "src/first_person/mod.rs",
-        "line": 53
+        "line": 58
       },
       "from_component": "controller.ControlsCamera",
-      "component_field": "0",
+      "component_field": "camera",
       "component_target_sources": [
         {
           "role": "operation",
           "label": "插入：控制者保存复用的玩法相机 Entity",
           "path": "src/scene_assembly/actors.rs",
-          "line": 114,
+          "line": 116,
           "column": 1
         }
       ],
@@ -12347,7 +12347,7 @@
       "description": "相机目标引用必须与同一控制者的 ControlsCharacter 一致，朝向系统才会同步。",
       "source": {
         "path": "src/first_person/mod.rs",
-        "line": 63
+        "line": 71
       },
       "from_component": "camera.FirstPersonCamera",
       "component_field": "target",
@@ -12363,7 +12363,7 @@
           "role": "operation",
           "label": "初始化：FirstPersonCamera 保存 target Entity",
           "path": "src/first_person/mod.rs",
-          "line": 77,
+          "line": 85,
           "column": 1
         },
         {
@@ -12458,10 +12458,10 @@
       "description": "无 linked_spawn；独立业务箱不随人物销毁，失效时卸载代理、恢复自由刚体与碰撞。",
       "source": {
         "path": "src/item_interaction/components.rs",
-        "line": 24
+        "line": 26
       },
       "from_component": "parcel.HeldBy",
-      "component_field": "0",
+      "component_field": "holder",
       "component_target_sources": [
         {
           "role": "operation",
@@ -12648,7 +12648,7 @@
       "description": "聚合多层 BSN 子树；文字可以直接属于按钮、按键框、编号块或正文容器，根清理时沿层级销毁。",
       "source": {
         "path": "src/ui/widgets.rs",
-        "line": 35
+        "line": 39
       }
     },
     {
@@ -12663,7 +12663,7 @@
       "description": "聚合多层 BSN 子树，不宣称填充直接 ChildOf 滑条；页面根销毁时完整清理。",
       "source": {
         "path": "src/ui/volume.rs",
-        "line": 71
+        "line": 79
       }
     },
     {
@@ -12907,7 +12907,7 @@
       "description": "箱业务根保存代理 Entity，不是 ChildOf。",
       "source": {
         "path": "src/item_interaction/components.rs",
-        "line": 41
+        "line": 47
       },
       "from_component": "parcel.HeldAttachment",
       "component_field": "collider",
@@ -12949,7 +12949,7 @@
       "id": "held_proxy_item",
       "from": "held_proxy",
       "to": "parcel",
-      "name": "HeldCollider.0",
+      "name": "HeldCollider.item",
       "kind": "reference",
       "reverse": null,
       "linked_spawn": null,
@@ -12957,23 +12957,23 @@
       "description": "代理保存真实箱身份，孤儿清理据此检查。",
       "source": {
         "path": "src/item_interaction/components.rs",
-        "line": 54
+        "line": 60
       },
       "from_component": "held_proxy.HeldCollider",
-      "component_field": "0",
+      "component_field": "item",
       "component_target_sources": [
         {
           "role": "operation",
           "label": "定位：当前挂接状态中的碰撞代理",
           "path": "src/item_interaction/attachment.rs",
-          "line": 85,
+          "line": 87,
           "column": 1
         },
         {
           "role": "operation",
           "label": "插入：代理保存对应的独立物品 Entity",
           "path": "src/item_interaction/attachment.rs",
-          "line": 88,
+          "line": 90,
           "column": 1
         }
       ],
@@ -12993,7 +12993,7 @@
       "description": "共享人物刚体；Avian linked_spawn 只销毁无视觉代理，不销毁真实箱根。",
       "source": {
         "path": "src/item_interaction/attachment.rs",
-        "line": 96
+        "line": 98
       },
       "from_component": "held_proxy.ColliderOf",
       "component_field": "body",
@@ -13009,7 +13009,7 @@
           "role": "operation",
           "label": "插入：碰撞代理归属该角色刚体",
           "path": "src/item_interaction/attachment.rs",
-          "line": 96,
+          "line": 98,
           "column": 1
         }
       ],
@@ -13562,7 +13562,7 @@
       ],
       "source": {
         "path": "src/first_person/mod.rs",
-        "line": 106
+        "line": 114
       },
       "feature": "first_person",
       "aspects": [
@@ -13583,7 +13583,7 @@
       ],
       "source": {
         "path": "src/audio/mod.rs",
-        "line": 43
+        "line": 45
       },
       "feature": "audio",
       "aspects": [
@@ -13625,7 +13625,7 @@
       ],
       "source": {
         "path": "src/character_animation/mod.rs",
-        "line": 21
+        "line": 23
       },
       "feature": "character_animation",
       "aspects": [
@@ -13646,7 +13646,7 @@
       ],
       "source": {
         "path": "src/bounds_recovery/mod.rs",
-        "line": 23
+        "line": 27
       },
       "feature": "bounds_recovery",
       "aspects": [
@@ -13667,7 +13667,7 @@
       ],
       "source": {
         "path": "src/ui/mod.rs",
-        "line": 113
+        "line": 117
       },
       "feature": "ui",
       "aspects": [
@@ -13801,7 +13801,7 @@
       "display_summary": "提供短音资产加载、通道播放与混音基础设施。",
       "source": {
         "path": "src/audio/mod.rs",
-        "line": 47
+        "line": 49
       },
       "id": "plugin-kira",
       "feature": "kira",
@@ -13974,7 +13974,7 @@
       "description": "local_pose：唯一实际局部姿态；ColliderOf 代理共享人物刚体；HeldTarget 仅握持目标检查",
       "source": {
         "path": "src/item_interaction/components.rs",
-        "line": 41
+        "line": 47
       },
       "kind": "Note",
       "owner": "可搬物品业务根实体",
@@ -14200,7 +14200,7 @@
       "description": "第一人称目标与观察状态；默认水平角和俯仰为 0°，俯仰限制 -85°..85°，眼位在角色脚底上方 1.65 m；实际姿态由 Transform 保存。pending_yaw_delta 使用 reflect(ignore)，留给朝向系统消费完整转角。",
       "source": {
         "path": "src/first_person/mod.rs",
-        "line": 63
+        "line": 71
       },
       "kind": "Note",
       "owner": "第一人称相机实体",
@@ -14378,12 +14378,12 @@
           "id": "character.HoldingItems",
           "name": "HoldingItems",
           "fields": [
-            "0: Vec<Entity>"
+            "items: Vec<Entity>"
           ],
           "description": "HeldBy 的自动反向索引，仅在关系需要时存在；业务读取第一件持有物，容器本身可容纳多件。",
           "source": {
             "path": "src/item_interaction/components.rs",
-            "line": 29
+            "line": 33
           },
           "feature": "item_interaction",
           "defined_in": "item_interaction",
@@ -14708,7 +14708,7 @@
           "id": "character.SpawnPoint",
           "name": "SpawnPoint",
           "fields": [
-            "0: Transform"
+            "pose: Transform"
           ],
           "description": "每个业务根独立保存出生姿态。",
           "source": {
@@ -14778,12 +14778,12 @@
           "id": "character.CarryBaseMass",
           "name": "CarryBaseMass",
           "fields": [
-            "0: f32（原质量）"
+            "mass: f32（原质量）"
           ],
           "description": "挂接时保存，释放或箱体销毁时恢复原人物质量。",
           "source": {
             "path": "src/item_interaction/components.rs",
-            "line": 58
+            "line": 66
           },
           "feature": "item_interaction",
           "defined_in": "item_interaction"
@@ -14798,7 +14798,7 @@
           "display_summary": "索引属于同一刚体的全部碰撞体。",
           "source": {
             "path": "src/item_interaction/attachment.rs",
-            "line": 126
+            "line": 128
           },
           "feature": "avian",
           "defined_in": "avian"
@@ -14977,13 +14977,13 @@
           "id": "parcel.HeldBy",
           "name": "HeldBy",
           "fields": [
-            "0: Entity"
+            "holder: Entity"
           ],
           "description": "可选关系组件，仅持有时存在；指向持有者，增删通过 Commands 延迟执行。",
           "display_summary": "关联当前物品的持有者。",
           "source": {
             "path": "src/item_interaction/components.rs",
-            "line": 24
+            "line": 26
           },
           "feature": "item_interaction",
           "defined_in": "item_interaction"
@@ -15380,7 +15380,7 @@
           "display_summary": "保存本帧握持姿态的检查目标。",
           "source": {
             "path": "src/item_interaction/components.rs",
-            "line": 34
+            "line": 40
           },
           "feature": "item_interaction",
           "defined_in": "item_interaction"
@@ -15417,7 +15417,7 @@
           "id": "parcel.SpawnPoint",
           "name": "SpawnPoint",
           "fields": [
-            "0: Transform"
+            "pose: Transform"
           ],
           "description": "每个业务根独立保存出生姿态。",
           "source": {
@@ -15472,7 +15472,7 @@
           "id": "parcel.CarryGrip",
           "name": "CarryGrip",
           "fields": [
-            "0: Vec3（模型握持偏移）"
+            "offset: Vec3（模型握持偏移）"
           ],
           "description": "安全对齐目标与呈现检查目标共享的模型偏移；实际挂接姿态由 HeldAttachment 决定。",
           "display_summary": "保存握持对齐使用的模型偏移。",
@@ -15528,7 +15528,7 @@
           "display_summary": "保存物品挂接姿态与装卸状态。",
           "source": {
             "path": "src/item_interaction/components.rs",
-            "line": 41
+            "line": 47
           },
           "feature": "item_interaction",
           "defined_in": "item_interaction"
@@ -15544,7 +15544,7 @@
           "display_summary": "记录物品释放后需要恢复的插值通道。",
           "source": {
             "path": "src/item_interaction/components.rs",
-            "line": 62
+            "line": 72
           },
           "feature": "item_interaction",
           "defined_in": "item_interaction"
@@ -16131,7 +16131,7 @@
       ],
       "source": {
         "path": "src/ui/navigation.rs",
-        "line": 207
+        "line": 209
       },
       "id": "event-observe_menu_left",
       "feature": "ui",
@@ -16160,7 +16160,7 @@
       ],
       "source": {
         "path": "src/ui/navigation.rs",
-        "line": 207
+        "line": 209
       },
       "id": "result-observe_menu_left",
       "feature": "ui",
@@ -16178,7 +16178,7 @@
       ],
       "source": {
         "path": "src/ui/navigation.rs",
-        "line": 221
+        "line": 223
       },
       "id": "event-observe_menu_right",
       "feature": "ui",
@@ -16207,7 +16207,7 @@
       ],
       "source": {
         "path": "src/ui/navigation.rs",
-        "line": 221
+        "line": 223
       },
       "id": "result-observe_menu_right",
       "feature": "ui",
@@ -16226,7 +16226,7 @@
       ],
       "source": {
         "path": "src/ui/navigation.rs",
-        "line": 235
+        "line": 237
       },
       "id": "event-observe_menu_confirm",
       "feature": "ui",
@@ -16255,7 +16255,7 @@
       ],
       "source": {
         "path": "src/ui/navigation.rs",
-        "line": 235
+        "line": 237
       },
       "id": "result-observe_menu_confirm",
       "feature": "ui",
@@ -16274,7 +16274,7 @@
       ],
       "source": {
         "path": "src/ui/navigation.rs",
-        "line": 251
+        "line": 255
       },
       "id": "event-observe_menu_back",
       "feature": "ui",
@@ -16299,7 +16299,7 @@
       ],
       "source": {
         "path": "src/ui/navigation.rs",
-        "line": 251
+        "line": 255
       },
       "id": "result-observe_menu_back",
       "feature": "ui",
@@ -16701,7 +16701,7 @@
       "display_summary": "公开音量混合与播放的调度阶段。",
       "source": {
         "path": "src/audio/mod.rs",
-        "line": 32
+        "line": 34
       },
       "schedule": "Update",
       "schedule_group": "Update",
@@ -16738,7 +16738,7 @@
       "display_summary": "事件 entity 上具有 MenuButton，且为 Primary 指针键",
       "source": {
         "path": "src/ui/pointer.rs",
-        "line": 32
+        "line": 34
       },
       "feature": "infrastructure",
       "aspects": [
@@ -16756,7 +16756,7 @@
       "display_summary": "正移除 Pressed 且仍具有 MenuButton 的实体",
       "source": {
         "path": "src/ui/pointer.rs",
-        "line": 45
+        "line": 47
       },
       "feature": "infrastructure",
       "aspects": [
@@ -16775,7 +16775,7 @@
       "display_summary": "界定原生命中处理完成后的清理时机。",
       "source": {
         "path": "src/ui/pointer.rs",
-        "line": 27
+        "line": 29
       },
       "feature": "infrastructure",
       "aspects": [
@@ -17199,7 +17199,7 @@
       ],
       "source": {
         "path": "src/first_person/mod.rs",
-        "line": 106
+        "line": 114
       }
     },
     {
@@ -17261,7 +17261,7 @@
       ],
       "source": {
         "path": "src/bounds_recovery/mod.rs",
-        "line": 23
+        "line": 27
       }
     },
     {
@@ -17291,7 +17291,7 @@
       ],
       "source": {
         "path": "src/character_animation/mod.rs",
-        "line": 21
+        "line": 23
       }
     },
     {
@@ -17306,7 +17306,7 @@
       ],
       "source": {
         "path": "src/ui/mod.rs",
-        "line": 113
+        "line": 117
       }
     },
     {
@@ -17321,7 +17321,7 @@
       ],
       "source": {
         "path": "src/audio/mod.rs",
-        "line": 43
+        "line": 45
       }
     },
     {
@@ -19162,7 +19162,7 @@
       "label": "ControlsCharacter",
       "source": {
         "path": "src/first_person/mod.rs",
-        "line": 48
+        "line": 50
       }
     },
     {
@@ -19173,7 +19173,7 @@
       "label": "ControlsCamera",
       "source": {
         "path": "src/first_person/mod.rs",
-        "line": 53
+        "line": 58
       }
     },
     {
@@ -19184,7 +19184,7 @@
       "label": "FirstPersonCamera.target",
       "source": {
         "path": "src/first_person/mod.rs",
-        "line": 63
+        "line": 71
       }
     },
     {
@@ -19239,7 +19239,7 @@
       "label": "HeldBy",
       "source": {
         "path": "src/item_interaction/components.rs",
-        "line": 24
+        "line": 26
       }
     },
     {
@@ -19338,7 +19338,7 @@
       "label": "ChildOf 层级",
       "source": {
         "path": "src/ui/widgets.rs",
-        "line": 35
+        "line": 39
       }
     },
     {
@@ -19349,7 +19349,7 @@
       "label": "ChildOf 子树",
       "source": {
         "path": "src/ui/volume.rs",
-        "line": 71
+        "line": 79
       }
     },
     {
@@ -19448,7 +19448,7 @@
       "label": "HeldAttachment.collider",
       "source": {
         "path": "src/item_interaction/components.rs",
-        "line": 41
+        "line": 47
       }
     },
     {
@@ -19456,10 +19456,10 @@
       "from": "entity-held_proxy",
       "to": "entity-parcel",
       "kind": "reference",
-      "label": "HeldCollider.0",
+      "label": "HeldCollider.item",
       "source": {
         "path": "src/item_interaction/components.rs",
-        "line": 54
+        "line": 60
       }
     },
     {
@@ -19470,7 +19470,7 @@
       "label": "ColliderOf",
       "source": {
         "path": "src/item_interaction/attachment.rs",
-        "line": 96
+        "line": 98
       }
     },
     {
@@ -20673,7 +20673,7 @@
       "label": "CarryRotationQuery 参数",
       "source": {
         "path": "src/item_interaction/attachment.rs",
-        "line": 125
+        "line": 127
       }
     },
     {
@@ -21306,7 +21306,7 @@
       "sourceEntries": [
         {
           "path": "src/ui/pointer.rs",
-          "line": 34,
+          "line": 36,
           "role": "parameter",
           "label": "只验证MenuButton存在",
           "column": 1
@@ -21334,7 +21334,7 @@
       "sourceEntries": [
         {
           "path": "src/ui/pointer.rs",
-          "line": 52,
+          "line": 54,
           "role": "operation",
           "label": "延迟安全移除主键来源",
           "column": 1
@@ -21348,7 +21348,7 @@
       "sourceEntries": [
         {
           "path": "src/ui/pointer.rs",
-          "line": 60,
+          "line": 62,
           "role": "parameter",
           "label": "读取按压指针ID",
           "column": 1
@@ -21362,7 +21362,7 @@
       "sourceEntries": [
         {
           "path": "src/ui/pointer.rs",
-          "line": 70,
+          "line": 72,
           "role": "operation",
           "label": "取消/窗口生命周期删除两组件",
           "column": 1
@@ -21376,7 +21376,7 @@
       "sourceEntries": [
         {
           "path": "src/ui/pointer.rs",
-          "line": 70,
+          "line": 72,
           "role": "operation",
           "label": "取消/窗口生命周期删除两组件",
           "column": 1
@@ -21390,7 +21390,7 @@
       "sourceEntries": [
         {
           "path": "src/ui/pointer.rs",
-          "line": 93,
+          "line": 95,
           "role": "parameter",
           "label": "Has仅判断存在",
           "column": 1

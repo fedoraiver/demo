@@ -38,8 +38,8 @@ pub(super) fn sync_audio_mix(
     preview: Res<AudioPreview>,
     mut mix: ResMut<AudioMix>,
 ) {
-    let desired_settings = preview.0.unwrap_or(settings.audio);
-    let preview = preview.0.is_some();
+    let desired_settings = preview.settings.unwrap_or(settings.audio);
+    let preview = preview.settings.is_some();
     let desired = AudioMix {
         settings: desired_settings,
         preview,

@@ -9,10 +9,31 @@ import { readCargoMetadata, createDependencySourceResolver, attachDependencySour
 import { DEPENDENCY_SOURCE_DEFINITIONS } from '../catalog/architecture-source-definitions.mjs';
 import { buildComponentCatalog } from '../src/architecture-components.mjs';
 import { NODE_KINDS } from '../src/architecture-kinds.mjs';
-import { EDGE_SOURCE_EVIDENCE } from '../src/architecture-source-evidence.mjs';
+import * as sourceEvidence from '../src/architecture-source-evidence.mjs';
+import { pathsForRepository } from '../src/paths.mjs';
 
 const entry = (role, overrides = {}) => ({ role, label: role, path: 'src/example.rs', line: 12, ...overrides });
 const dependency = { name: 'bevy_ecs', version: '0.17.3', root: 'C:/cargo/registry/bevy_ecs-0.17.3' };
+
+test('已审阅项目源码描述符均能按真实定位协议解析，旧片段或失效行号不得静默丢失', () => {
+  const context = createArchitectureSourceContext({ repository: fileURLToPath(new URL('../../..', import.meta.url)) });
+  const descriptors = [];
+  const collect = value => {
+    if (!value || typeof value !== 'object') return;
+    if (typeof value.path === 'string' && typeof value.contains === 'string') {
+      if (!value.package) descriptors.push(value);
+      return;
+    }
+    for (const child of Object.values(value)) collect(child);
+  };
+  collect(sourceEvidence);
+  assert(descriptors.length > 0);
+  for (const descriptor of descriptors) {
+    const entries = context.resolveEvidence(descriptor);
+    assert(entries.length > 0, `${descriptor.path}:${descriptor.line || '*'}: ${descriptor.contains}`);
+    if (descriptor.line) assert.deepEqual(entries.map(entry => entry.line), [descriptor.line]);
+  }
+});
 
 test('Observer 来源保留精确泛型注册、真实发出操作和投影原链证据', () => {
   const model = JSON.parse(fs.readFileSync(new URL('../catalog/ecs-data.json', import.meta.url), 'utf8'));
@@ -35,7 +56,7 @@ test('Observer 来源保留精确泛型注册、真实发出操作和投影原�
   assert(reset.sourceEntries.some(source => source.role === 'registration' && /add_observer\(reset_action::<C>\)/.test(actual(source))));
   const links = structuredClone(model.system_links);
   applyArchitectureEdgeSourcePolicies(links, { ...options, context });
-  for (const link of links.filter(link => EDGE_SOURCE_EVIDENCE[link.id])) {
+  for (const link of links.filter(link => sourceEvidence.EDGE_SOURCE_EVIDENCE[link.id])) {
     assert(link.sourceEntries.length, link.id);
     assert.deepEqual(link.sourceGaps || [], [], link.id);
   }
@@ -459,15 +480,17 @@ test('生产声明与注册覆盖审计排除测试项，保留普通声明和�
 test('已审阅实体目标定位实际赋值及装配操作，未审阅关系不借字段声明伪造操作', () => {
   const model = JSON.parse(fs.readFileSync(path.join(repository, 'docs/diagrams/catalog/ecs-data.json'), 'utf8'));
   const expected = {
-    controls_character: 'ControlsCharacter(character)', controls_camera: 'ControlsCamera(camera)', camera_target: 'FirstPersonCamera::new(character)',
-    held_by: 'HeldBy(character)', held_attachment_proxy: 'collider,', held_proxy_item: 'HeldCollider(item)', held_proxy_body: 'ColliderOf { body: holder }',
+    controls_character: 'ControlsCharacter { character }', controls_camera: 'ControlsCamera { camera }', camera_target: 'FirstPersonCamera::new(character)',
+    held_by: 'HeldBy { holder: character }', held_attachment_proxy: 'collider,', held_proxy_item: 'HeldCollider { item }', held_proxy_body: 'ColliderOf { body: holder }',
     animation_character: 'character,', grounding_character: 'character,', grounding_player: 'animation_player: first_player.expect',
     grounding_soles: 'sole_markers: sole_markers', settings_scrollbar_target: 'Scrollbar::new(',
   };
+  const namedTargetFields = { controls_character: 'character', controls_camera: 'camera', held_by: 'holder', held_proxy_item: 'item' };
   for (const relation of model.relationships) {
     const sources = relation.component_target_sources || [];
     if (!expected[relation.id]) { assert.equal(sources.length, 0); continue; }
     assert.ok(relation.from_component);
+    if (namedTargetFields[relation.id]) assert.equal(relation.component_field, namedTargetFields[relation.id]);
     assert.ok(relation.component_target_notes.some(note => note.includes('Commands') && note.includes('helper')));
     const lines = sources.map(source => {
       assert.equal(source.role, 'operation');
@@ -549,7 +572,12 @@ test('current registry and merged function cards have verified source scope acro
   assert(createsAt('settings_scrollbar_thumb.BackgroundColor', 'src/ui/scroll.rs', 101));
   assert(!createsAt('settings_scrollbar_thumb.BackgroundColor', 'src/ui/widgets.rs', 264), 'An old usage locator does not establish thumb assembly');
   assert(createsAt('parcel.HeldBy', 'src/item_interaction/interaction.rs', 110));
-  assert(createsAt('held_proxy.HeldCollider', 'src/item_interaction/attachment.rs', 88));
+  assert(createsAt('held_proxy.HeldCollider', 'src/item_interaction/attachment.rs', 90));
+  assert(hasSource('character.CarryBaseMass', 'create', 'src/item_interaction/attachment.rs', /insert\(CarryBaseMass \{/));
+  for (const [filename, lines] of [['src/ui/widgets.rs', [256, 276]], ['src/ui/volume.rs', [113, 118, 165]]]) {
+    for (const line of lines) assert(createsAt('menu_button.SettingDescription', filename, line));
+  }
+  assert(createsAt('held_proxy.ColliderDisabled', 'src/item_interaction/attachment.rs', 103));
   assert(registry['parcel.RigidBody'].sourceEntries.some(source => source.role === 'destroy' && source.path === 'src/item_interaction/attachment.rs' && source.line === 31));
   for (const id of ['held_fixed', 'held_update', 'facing_fixed', 'facing_update']) {
     assert.equal(registry[id].sourceEntries.filter(source => source.role === 'definition').length, 1);
@@ -583,6 +611,15 @@ test('current registry and merged function cards have verified source scope acro
   assert(hasSource('entity-parcel', 'destroy', 'src/ui/requests.rs', /app_state\.set\(AppState::MainMenu\)/));
   assert(hasSource('entity-parcel', 'destroy', 'src/state_scoped.rs', /commands\.despawn_all_where::<&DespawnOnExit<S>/, 'bevy_state'));
   assert(registry['resource.UiRequestMessages'].sourceEntries.some(source => source.role === 'message_definition'));
+  assert.deepEqual(registry['resource.UiRequestMessages'].fields, ['UiRequest.action: UiAction']);
+  const generated = pathsForRepository(repository).generatedDirectory;
+  const artifactManifest = JSON.parse(fs.readFileSync(path.join(generated, 'data/manifest.json'), 'utf8'));
+  const artifactRuntime = JSON.parse(fs.readFileSync(path.join(generated, artifactManifest.runtime.path), 'utf8'));
+  assert.deepEqual(artifactRuntime.registry['resource.UiRequestMessages'].fields, ['UiRequest.action: UiAction']);
+  assert(artifactRuntime.registry['resource.UiRequestMessages'].sourceEntries.some(source => source.role === 'message_definition'));
+  for (const [id, field] of Object.entries({ 'controller.ControlsCharacter': 'character', 'controller.ControlsCamera': 'camera', 'parcel.HeldBy': 'holder', 'held_proxy.HeldCollider': 'item' })) {
+    assert(artifactRuntime.registry[id].fields.some(value => value.startsWith(`${field}:`)), `${id}: formal named-field metadata`);
+  }
   assert(!registry['resource.UiRequestMessages'].sourceEntries.some(source => source.role === 'remove'), 'Generic deregistration capability is not an observed removal of this resource');
   assert.deepEqual(registry['resource.UiTrack'].sourceEntries.map(source => source.role), ['definition']);
   assert.equal(registry['resource.EnableMultipassForPrimaryContext'], undefined, 'Egui 0.43 no longer installs a multipass marker Resource');

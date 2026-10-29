@@ -54,7 +54,9 @@ pub struct MenuState {
 
 /// 当前可操作按钮的序号，由键盘导航和鼠标悬停共同维护。
 #[derive(Resource, Default)]
-pub struct MenuFocus(pub usize);
+pub struct MenuFocus {
+    pub index: usize,
+}
 
 /// 输入来源单独决定焦点是否可见；鼠标离开后仍保留序号供后续导航使用。
 #[derive(Resource, Clone, Copy, Debug, Default, PartialEq, Eq)]
@@ -99,7 +101,9 @@ pub struct MenuRoot;
 
 /// 输入系统只产生请求，集中处理系统修改状态或保存设置。
 #[derive(Message)]
-pub struct UiRequest(pub UiAction);
+pub struct UiRequest {
+    pub action: UiAction,
+}
 
 /// 请求在 PreUpdate 消费后，Update 依次生成 BSN 页面并更新视觉焦点。
 #[derive(SystemSet, Clone, Copy, Debug, PartialEq, Eq, Hash)]

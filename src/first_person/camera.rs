@@ -14,7 +14,7 @@ pub(super) fn on_camera_look(
     let Ok(controlled) = controllers.get(event.context) else {
         return;
     };
-    let Ok((mut view, state)) = cameras.get_mut(controlled.0) else {
+    let Ok((mut view, state)) = cameras.get_mut(controlled.camera) else {
         return;
     };
     if !state.active || state.skip_motion {
@@ -33,7 +33,7 @@ pub(super) fn on_camera_look(
     view.apply_vertical_look(vertical);
     // 连续角度只采样调试日志，捕获和失效状态仍逐次记录。
     if time.elapsed_secs_f64() >= *next_log_at {
-        debug!(target: "demo::camera", camera = ?controlled.0, character = ?view.target,
+        debug!(target: "demo::camera", camera = ?controlled.camera, character = ?view.target,
             controller = ?event.context, yaw_before = before_yaw, yaw_after = view.yaw,
             pitch_before = before_pitch, pitch_after = view.pitch,
             reason = "mouse_motion_sample", "Camera look angles changed");
@@ -66,9 +66,9 @@ pub(super) fn sync_character_visibility(
             .iter()
             .any(|(controlled_character, controlled_camera)| {
                 characters.contains(character)
-                    && controlled_character.0 == character
+                    && controlled_character.character == character
                     && cameras
-                        .get(controlled_camera.0)
+                        .get(controlled_camera.camera)
                         .is_ok_and(|view| view.target == character)
             });
         let after = if hide_visual {

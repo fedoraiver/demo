@@ -1393,7 +1393,7 @@ export const CORE_SCHEDULE_BODY_OPERATIONS = {
       "operation": "insert",
       "via": "commands",
       "method": "insert",
-      "match": "commands.entity(holder).insert(CarryBaseMass(holder_mass.0))",
+      "match": "commands.entity(holder).insert(CarryBaseMass {",
       "condition": "挂接尚未记录持有者原始质量。"
     },
     {
@@ -3170,7 +3170,7 @@ export const CORE_SCHEDULE_BODY_OPERATIONS = {
       "operation": "insert",
       "via": "commands",
       "method": "insert",
-      "match": "commands.entity(controller).insert(ControlsCamera(camera))"
+      "match": ".insert(ControlsCamera { camera });"
     },
     {
       "kind": "Component",
@@ -3839,7 +3839,7 @@ export const CORE_SCHEDULE_BODY_OPERATIONS = {
       "operation": "publish",
       "via": "message_writer",
       "method": "write",
-      "match": "requests.write(UiRequest(button.action))",
+      "match": "requests.write(UiRequest {\n                        action: button.action,\n                    })",
       "condition": "主键点击命中当前页面按钮且动作不是无效 Adjust。"
     },
     {
@@ -3888,7 +3888,7 @@ export const CORE_SCHEDULE_BODY_OPERATIONS = {
       "operation": "publish",
       "via": "message_writer",
       "method": "write",
-      "match": "requests.write(UiRequest(UiAction::FinishVolumeEdit))",
+      "match": "requests.write(UiRequest {\n                action: UiAction::FinishVolumeEdit,\n            })",
       "allMatches": true,
       "condition": "滑条捕获因窗口失效、实体重建、释放、离窗或失焦而结束。"
     },
@@ -3898,7 +3898,7 @@ export const CORE_SCHEDULE_BODY_OPERATIONS = {
       "operation": "publish",
       "via": "message_writer",
       "method": "write",
-      "match": "requests.write(UiRequest(UiAction::SetVolume(slider.key, value)))",
+      "match": "requests.write(UiRequest {\n            action: UiAction::SetVolume(slider.key, value),\n        })",
       "condition": "音频设置页有效捕获中的滑条坐标换算出不同音量值。"
     }
   ]

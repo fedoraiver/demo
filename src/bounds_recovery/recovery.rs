@@ -81,7 +81,7 @@ pub(super) fn recover_from_water(
                             rotation: rotation.0,
                             scale: transform.scale,
                         },
-                        |spawn| spawn.0,
+                        |spawn| spawn.pose,
                     ),
                     if recovered.is_some() {
                         Vec3::ZERO
@@ -104,7 +104,7 @@ pub(super) fn recover_from_water(
 
         let entity = body.entity;
         #[cfg(test)]
-        recovery_order.0.push(entity);
+        recovery_order.entities.push(entity);
         let position_before = body.position.0;
         if body.character {
             for &(item, holder, pose, velocity, angular) in &held_items {
@@ -127,7 +127,7 @@ pub(super) fn recover_from_water(
             release_item(
                 &mut commands,
                 entity,
-                body.spawn.0,
+                body.spawn.pose,
                 Vec3::ZERO,
                 Vec3::ZERO,
                 "item_water_recovery",
@@ -138,7 +138,7 @@ pub(super) fn recover_from_water(
                 .insert(parcel_collision_layers());
         }
 
-        let spawn = body.spawn.0;
+        let spawn = body.spawn.pose;
         body.position.0 = spawn.translation;
         body.rotation.0 = spawn.rotation;
         *body.transform = spawn;

@@ -100,8 +100,8 @@ pub(super) fn sync_held_presentation(
         let Ok(holder) = holders.get(held_by.get()) else {
             continue;
         };
-        target.translation =
-            holder.translation + holder.rotation * grip.map_or(config.hold_offset, |grip| grip.0);
+        target.translation = holder.translation
+            + holder.rotation * grip.map_or(config.hold_offset, |grip| grip.offset);
         target.rotation = holder.rotation;
         if let Some(attachment) = attachment
             && !attachment.pending

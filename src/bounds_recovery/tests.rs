@@ -62,7 +62,7 @@ fn spawn_character(app: &mut App, position: Vec3, spawn: Transform) -> Entity {
                 interact_pending: true,
             },
             CharacterMotion { grounded: true },
-            SpawnPoint(spawn),
+            SpawnPoint { pose: spawn },
             character_body(&PrototypeConfig::default()),
             Transform::from_translation(position),
         ))
@@ -73,7 +73,7 @@ fn spawn_item(app: &mut App, position: Vec3, spawn: Transform) -> Entity {
     app.world_mut()
         .spawn((
             Pickable,
-            SpawnPoint(spawn),
+            SpawnPoint { pose: spawn },
             parcel_body(&PrototypeConfig::default()),
             Transform::from_translation(position),
         ))

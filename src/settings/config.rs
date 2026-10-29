@@ -77,11 +77,15 @@ impl Default for CameraSettings {
 
 /// 设置文件的保存位置；测试可覆盖该资源而不触及玩家的真实配置。
 #[derive(Resource, Debug)]
-pub struct SettingsFile(pub PathBuf);
+pub struct SettingsFile {
+    pub path: PathBuf,
+}
 
 impl Default for SettingsFile {
     fn default() -> Self {
-        Self(PathBuf::from("settings.json"))
+        Self {
+            path: PathBuf::from("settings.json"),
+        }
     }
 }
 

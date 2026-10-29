@@ -29,9 +29,9 @@ fn publish_audio_preview(
     draft: Res<SettingsDraft>,
     mut preview: ResMut<AudioPreview>,
 ) {
-    preview.set_if_neq(AudioPreview(
-        (menu.page == MenuPage::Settings).then_some(draft.audio),
-    ));
+    preview.set_if_neq(AudioPreview {
+        settings: (menu.page == MenuPage::Settings).then_some(draft.audio),
+    });
 }
 
 pub(super) fn style_buttons(
@@ -50,7 +50,7 @@ pub(super) fn style_buttons(
         // 只显示当前输入来源的焦点；分类和 Apply 也在鼠标离开后恢复普通纸色。
         let focused = match *source {
             MenuInputSource::Pointer => hovered.0 || (pressed && primary),
-            MenuInputSource::Navigation => button.index == focus.0,
+            MenuInputSource::Navigation => button.index == focus.index,
         };
         let color = if pressed && primary {
             Color::srgb(0.94, 0.65, 0.20)
@@ -103,7 +103,7 @@ fn update_settings_text(
                     .unwrap_or(DEFAULT_SETTINGS_STATUS)
                     .to_owned()
             },
-            |key| setting_value(&draft, key.0),
+            |key| setting_value(&draft, key.key),
         );
         if text.0 != value {
             text.0 = value;
@@ -121,7 +121,7 @@ fn update_description(
 ) {
     let details = buttons
         .iter()
-        .find_map(|(button, details)| (button.index == focus.0).then_some(details));
+        .find_map(|(button, details)| (button.index == focus.index).then_some(details));
     let Some(details) = details else {
         return;
     };

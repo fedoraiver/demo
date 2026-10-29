@@ -48,11 +48,11 @@ mod action_tests {
             .id();
         let first_context = app
             .world_mut()
-            .spawn((GameplayContext, ControlsCharacter(first)))
+            .spawn((GameplayContext, ControlsCharacter { character: first }))
             .id();
         let second_context = app
             .world_mut()
-            .spawn((GameplayContext, ControlsCharacter(second)))
+            .spawn((GameplayContext, ControlsCharacter { character: second }))
             .id();
 
         app.world_mut()
@@ -99,11 +99,11 @@ mod action_tests {
             .id();
         let first_context = app
             .world_mut()
-            .spawn((GameplayContext, ControlsCharacter(first)))
+            .spawn((GameplayContext, ControlsCharacter { character: first }))
             .id();
         let second_context = app
             .world_mut()
-            .spawn((GameplayContext, ControlsCharacter(second)))
+            .spawn((GameplayContext, ControlsCharacter { character: second }))
             .id();
 
         app.world_mut().trigger(Complete::<MoveAction> {
@@ -482,8 +482,11 @@ mod pose_tests {
             .id();
         let controller = {
             let mut commands = app.world_mut().commands();
-            let controller = spawn_keyboard_controller(&mut commands, PlayerId(1), character);
-            commands.entity(controller).insert(ControlsCamera(camera));
+            let controller =
+                spawn_keyboard_controller(&mut commands, PlayerId { id: 1 }, character);
+            commands
+                .entity(controller)
+                .insert(ControlsCamera { camera });
             controller
         };
         app.world_mut().flush();
@@ -1122,7 +1125,7 @@ mod pose_tests {
                 .id();
             let second_controller = app
                 .world_mut()
-                .spawn((GameplayContext, ControlsCamera(second)))
+                .spawn((GameplayContext, ControlsCamera { camera: second }))
                 .id();
             app.world_mut()
                 .trigger(fire(second_controller, Vec2::new(30.0, 10000.0)));
@@ -1481,7 +1484,7 @@ mod pose_tests {
                 Transform::from_xyz(4.0, 0.03, 5.0).with_rotation(Quat::from_rotation_y(-0.6));
             app.world_mut()
                 .entity_mut(character)
-                .insert(SpawnPoint(spawn));
+                .insert(SpawnPoint { pose: spawn });
             // 通过真实输入上下文持续按住 W，避免下一帧 Enhanced Input 清空手写的移动意图。
             inspector_keyboard(&mut app, window, KeyCode::KeyW, ButtonState::Pressed);
             mouse_motion(&mut app, Vec2::new(-500.0, 0.0));
@@ -1641,7 +1644,9 @@ mod pose_tests {
                     .id();
                 let item = spawn_test_item(&mut app, Vec3::new(0.0, 0.3, -1.0));
                 if let Some(grip) = grip {
-                    app.world_mut().entity_mut(item).insert(CarryGrip(grip));
+                    app.world_mut()
+                        .entity_mut(item)
+                        .insert(CarryGrip { offset: grip });
                 }
                 let grip_offset =
                     grip.unwrap_or_else(|| app.world().resource::<PrototypeConfig>().hold_offset);
@@ -1765,7 +1770,9 @@ mod pose_tests {
                 let (mut app, _, character, camera, _) = test_app();
                 let item = spawn_test_item(&mut app, Vec3::new(0.0, 0.3, -1.0));
                 if let Some(grip) = grip {
-                    app.world_mut().entity_mut(item).insert(CarryGrip(grip));
+                    app.world_mut()
+                        .entity_mut(item)
+                        .insert(CarryGrip { offset: grip });
                 }
                 let grip_offset =
                     grip.unwrap_or_else(|| app.world().resource::<PrototypeConfig>().hold_offset);
