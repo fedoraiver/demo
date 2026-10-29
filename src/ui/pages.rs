@@ -24,6 +24,7 @@ pub(super) struct SettingsPanel;
 pub(super) struct SettingsStatus;
 
 pub(super) const DEFAULT_SETTINGS_STATUS: &str = "Changes are saved only when you choose Apply.";
+const COMPACT_MENU_BREAKPOINT_PX: f32 = 1000.0;
 
 pub(super) fn register(app: &mut App) {
     app.init_resource::<UiTheme>()
@@ -40,7 +41,7 @@ pub(super) fn rebuild_page(
     roots: Query<Entity, With<MenuRoot>>,
     mut previous_layout: Local<Option<(MenuPage, SettingsTab, MenuPage, UVec2)>>,
 ) {
-    let viewport = windows.single().map_or(Vec2::new(1440.0, 810.0), |window| {
+    let viewport = windows.single().map_or(DESIGN_VIEWPORT, |window| {
         Vec2::new(window.width(), window.height())
     });
     let layout = (
@@ -79,7 +80,7 @@ pub(super) fn page_scene(
     } else {
         theme.for_width(viewport.x)
     };
-    let compact = viewport.x < 1000.0;
+    let compact = viewport.x < COMPACT_MENU_BREAKPOINT_PX;
     let content: Box<dyn Scene> = match state.page {
         MenuPage::Main => Box::new(main_page(&theme, false)),
         MenuPage::Pause => Box::new(main_page(&theme, true)),

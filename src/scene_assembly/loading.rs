@@ -2,6 +2,11 @@
 
 use super::*;
 
+const ENTRY_FLOOR_MAX_HEIGHT_GAP_M: f32 = 0.3;
+const ENTRY_FLOOR_MAX_EDGE_DISTANCE_M: f32 = 1.0;
+const ENTRY_FLOOR_RAMP_OVERLAP_M: f32 = 0.05;
+const PLAYER_SPAWN_LIFT_M: f32 = 0.03;
+
 pub(super) fn lighting_scene() -> impl Scene {
     bsn! {
         Name("Island daylight")
@@ -173,8 +178,8 @@ pub(super) fn prepare_island(
                 .map(|&bounds| transform_bounds(bounds, inverse))
                 .filter(|(floor_min, floor_max)| {
                     (floor_min.x..=floor_max.x).contains(&center_x)
-                        && (0.0..=0.3).contains(&(floor_max.y - max.y))
-                        && (floor_max.z - min.z).abs() < 1.0
+                        && (0.0..=ENTRY_FLOOR_MAX_HEIGHT_GAP_M).contains(&(floor_max.y - max.y))
+                        && (floor_max.z - min.z).abs() < ENTRY_FLOOR_MAX_EDGE_DISTANCE_M
                 })
                 .min_by(|(_, a), (_, b)| (a.z - min.z).abs().total_cmp(&(b.z - min.z).abs()));
             let Some((_, floor_max)) = floor else {
@@ -183,12 +188,12 @@ pub(super) fn prepare_island(
                 return;
             };
             // 台阶与地板间仍有空隙和 18cm 高差；连接实际前缘并重叠 5cm，避免走入室内时腾空。
-            min.z = floor_max.z - 0.05;
+            min.z = floor_max.z - ENTRY_FLOOR_RAMP_OVERLAP_M;
             max.y = floor_max.y;
             colliders.push((parent, stair_ramp(min, max)));
             ramp_count += 1;
         }
-        player.translation.y += 0.03;
+        player.translation.y += PLAYER_SPAWN_LIFT_M;
         for (model, offset) in [
             (ItemModel::StandardParcel, Vec3::new(0.0, 0.3, -1.3)),
             (ItemModel::FragileParcel, Vec3::new(1.2, 0.3, -1.3)),
