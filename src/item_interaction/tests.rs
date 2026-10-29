@@ -53,7 +53,9 @@ mod attachment_tests {
             .spawn((
                 Parcel,
                 Pickable,
-                CarryGrip(Vec3::new(0.0, 1.3, -0.48)),
+                CarryGrip {
+                    offset: Vec3::new(0.0, 1.3, -0.48),
+                },
                 Transform::from_xyz(0.0, 0.3, -1.1),
                 parcel_body(&config),
             ))
@@ -433,7 +435,9 @@ mod frame_tests {
                 CharacterMotion { grounded: true },
                 character_body(&config),
                 Transform::IDENTITY,
-                SpawnPoint(Transform::IDENTITY),
+                SpawnPoint {
+                    pose: Transform::IDENTITY,
+                },
             ))
             .id();
         let camera_state = FirstPersonCamera::new(character);
@@ -443,8 +447,10 @@ mod frame_tests {
             .spawn((camera_state, MouseLookState::default(), camera_pose))
             .id();
         let mut commands = app.world_mut().commands();
-        let controller = spawn_keyboard_controller(&mut commands, PlayerId(1), character);
-        commands.entity(controller).insert(ControlsCamera(camera));
+        let controller = spawn_keyboard_controller(&mut commands, PlayerId { id: 1 }, character);
+        commands
+            .entity(controller)
+            .insert(ControlsCamera { camera });
         app.world_mut().flush();
         let parcel = app
             .world_mut()
@@ -453,7 +459,9 @@ mod frame_tests {
                 Pickable,
                 parcel_body(&config),
                 Transform::from_xyz(0.0, 0.35, -1.0),
-                SpawnPoint(Transform::from_xyz(0.0, 0.35, -1.0)),
+                SpawnPoint {
+                    pose: Transform::from_xyz(0.0, 0.35, -1.0),
+                },
             ))
             .id();
         if preserve_easing_pause {
@@ -462,7 +470,9 @@ mod frame_tests {
                 .insert((NoTranslationEasing, NoRotationEasing));
         }
         if let Some(grip) = grip {
-            app.world_mut().entity_mut(parcel).insert(CarryGrip(grip));
+            app.world_mut()
+                .entity_mut(parcel)
+                .insert(CarryGrip { offset: grip });
         }
         let grip = grip.unwrap_or(config.hold_offset);
         let visual_offset = Vec3::new(0.0, 0.18, 0.0);
@@ -883,7 +893,7 @@ mod frame_tests {
             .app
             .world_mut()
             .entity_mut(fixture.character)
-            .insert(SpawnPoint(spawn));
+            .insert(SpawnPoint { pose: spawn });
         fixture
             .app
             .world_mut()
@@ -941,7 +951,7 @@ mod frame_tests {
             .0;
         let spawn = Transform::from_xyz(-12.0, 0.35, 9.0).with_rotation(Quat::from_rotation_y(0.7));
         fixture.app.world_mut().entity_mut(fixture.parcel).insert((
-            SpawnPoint(spawn),
+            SpawnPoint { pose: spawn },
             Position(Vec3::new(3.0, -1.6, 4.0)),
             LinearVelocity(Vec3::new(1.0, -3.0, 0.5)),
             AngularVelocity(Vec3::Y * 2.0),
@@ -1035,17 +1045,17 @@ mod frame_tests {
             // 先让真实系统更新自己的查询缓存，再准备同时落水；观测结果只来自该系统。
             fixture.app.update();
             let world = fixture.app.world_mut();
-            world.resource_mut::<WaterRecoveryOrder>().0.clear();
+            world.resource_mut::<WaterRecoveryOrder>().entities.clear();
             let holder_spawn = Transform::from_xyz(20.0, 0.0, 14.0);
             let parcel_spawn =
                 Transform::from_xyz(-12.0, 0.35, 9.0).with_rotation(Quat::from_rotation_y(0.7));
             world.entity_mut(fixture.character).insert((
-                SpawnPoint(holder_spawn),
+                SpawnPoint { pose: holder_spawn },
                 Position(Vec3::new(3.0, -2.9, 4.0)),
                 LinearVelocity(Vec3::new(1.0, -3.0, 0.5)),
             ));
             world.entity_mut(fixture.parcel).insert((
-                SpawnPoint(parcel_spawn),
+                SpawnPoint { pose: parcel_spawn },
                 Position(Vec3::new(3.0, -1.6, 3.52)),
                 LinearVelocity(Vec3::new(1.0, -3.0, 0.5)),
                 AngularVelocity(Vec3::Y * 2.0),
@@ -1056,7 +1066,7 @@ mod frame_tests {
             assert_free_after_recovery(&fixture);
             let world = fixture.app.world();
             assert_eq!(
-                world.resource::<WaterRecoveryOrder>().0,
+                world.resource::<WaterRecoveryOrder>().entities,
                 if parcel_first {
                     vec![fixture.parcel, fixture.character]
                 } else {
@@ -1186,11 +1196,13 @@ mod interaction_tests {
             let mut app = test_app();
             let character = spawn_character(&mut app, Vec3::ZERO, default());
             let item = spawn_box(&mut app, Vec3::new(0.0, 0.3, -1.3));
-            app.world_mut().entity_mut(item).insert(CarryGrip(grip));
+            app.world_mut()
+                .entity_mut(item)
+                .insert(CarryGrip { offset: grip });
             step(&mut app, 30);
             let before_pickup = app.world().get::<Position>(item).unwrap().0;
             interact(&mut app, character);
-            assert_eq!(app.world().get::<HeldBy>(item).unwrap().0, character);
+            assert_eq!(app.world().get::<HeldBy>(item).unwrap().holder, character);
             assert!(app.world().get::<RigidBody>(item).is_none());
             let proxy = app
                 .world()
@@ -1243,7 +1255,7 @@ mod interaction_tests {
         step(&mut app, 30);
         let before = app.world().get::<Position>(item).unwrap().0;
         interact(&mut app, character);
-        assert_eq!(app.world().get::<HeldBy>(item).unwrap().0, character);
+        assert_eq!(app.world().get::<HeldBy>(item).unwrap().holder, character);
         assert!(app.world().get::<RigidBody>(item).is_none());
         let proxy = app
             .world()
@@ -1275,7 +1287,7 @@ mod interaction_tests {
         step(&mut app, 90);
         let position = app.world().get::<Position>(item).unwrap().0;
         assert!(position.z > -1.3, "Held box crossed wall: {position:?}");
-        assert_eq!(app.world().get::<HeldBy>(item).unwrap().0, character);
+        assert_eq!(app.world().get::<HeldBy>(item).unwrap().holder, character);
         let holder_position = app.world().get::<Position>(character).unwrap().0;
         assert!(
             holder_position.z > -0.4,
@@ -1364,7 +1376,9 @@ mod interaction_tests {
         let character = spawn_character(&mut app, Vec3::new(0.0, 0.0, 2.0), default());
         let item = spawn_box(&mut app, Vec3::new(0.0, 0.3, 1.1));
         let grip = Vec3::new(0.0, 1.3, -0.48);
-        app.world_mut().entity_mut(item).insert(CarryGrip(grip));
+        app.world_mut()
+            .entity_mut(item)
+            .insert(CarryGrip { offset: grip });
         let config = app.world().resource::<PrototypeConfig>().clone();
         let obstacle = app
             .world_mut()
@@ -2327,7 +2341,7 @@ mod audio_event_tests {
                 .spawn((
                     Parcel,
                     <HeldBy as Relationship>::from(holder),
-                    CarryGrip(grip),
+                    CarryGrip { offset: grip },
                     Position(target + rotation * Vec3::Z * 0.3),
                 ))
                 .id();

@@ -15,7 +15,9 @@ use state::*;
 /// 挂在 Character 直属视觉根上的 glTF 引用；只有标记的快递员接入玩法动画。
 #[derive(Component, Clone, Default, FromTemplate)]
 #[require(Transform)]
-pub struct CourierVisual(pub Handle<Gltf>);
+pub struct CourierVisual {
+    pub gltf: Handle<Gltf>,
+}
 
 /// 注册场景就绪后的动画绑定，以及固定模拟和同帧呈现朝向同步后的动作混合。
 pub(crate) struct CharacterAnimationPlugin;

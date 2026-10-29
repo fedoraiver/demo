@@ -18,13 +18,14 @@ pub(super) fn sync_character_facing(
     collision: CarryRotationQuery,
 ) {
     for (controlled_character, controlled_camera) in &controllers {
-        let Ok(mut view) = cameras.get_mut(controlled_camera.0) else {
+        let Ok(mut view) = cameras.get_mut(controlled_camera.camera) else {
             continue;
         };
-        if view.target != controlled_character.0 {
+        if view.target != controlled_character.character {
             continue;
         }
-        let Ok((mut transform, position, holding)) = characters.get_mut(controlled_character.0)
+        let Ok((mut transform, position, holding)) =
+            characters.get_mut(controlled_character.character)
         else {
             continue;
         };
@@ -47,11 +48,11 @@ pub(super) fn sync_character_facing(
                     transform.rotation,
                     turn,
                     attachment.local_pose.into(),
-                    &[controlled_character.0, item],
+                    &[controlled_character.character, item],
                 )
             {
                 // 仅记录自动放下这一状态变化的阻挡来源，便于区分真实碰障与查询误报。
-                info!(target: "demo::camera", ?item, holder = ?controlled_character.0,
+                info!(target: "demo::camera", ?item, holder = ?controlled_character.character,
                     ?blocker, blocker_name = names.get(blocker).map_or("unnamed", Name::as_str),
                     yaw_delta = turn, reason = "turn_collision", "Held parcel turn blocked");
                 let local = attachment.local_pose;
@@ -73,7 +74,7 @@ pub(super) fn sync_character_facing(
             transform.rotation = rotation;
             // 只同步安全朝向，不积分平移；延迟命令在同帧持箱同步前应用，避免零固定步状态分裂。
             commands
-                .entity(controlled_character.0)
+                .entity(controlled_character.character)
                 .insert(Rotation(rotation));
         }
     }

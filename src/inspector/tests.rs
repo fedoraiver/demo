@@ -64,7 +64,9 @@ mod schedule_dump {
         },
     };
 
-    struct Fixture(PathBuf);
+    struct Fixture {
+        path: PathBuf,
+    }
 
     impl Fixture {
         fn new() -> Self {
@@ -76,13 +78,13 @@ mod schedule_dump {
             fs::write(path.join("Cargo.lock"), "version = 4\n").unwrap();
             fs::write(path.join("src/main.rs"), "fn main() {}\n").unwrap();
             fs::write(path.join("src/nested/other.rs"), "struct Other;\n").unwrap();
-            Self(path)
+            Self { path }
         }
     }
 
     impl Drop for Fixture {
         fn drop(&mut self) {
-            fs::remove_dir_all(&self.0).unwrap();
+            fs::remove_dir_all(&self.path).unwrap();
         }
     }
 
@@ -96,7 +98,9 @@ mod schedule_dump {
     struct EmptySchedule;
 
     #[derive(Resource, Default)]
-    struct Finished(bool);
+    struct Finished {
+        finished: bool,
+    }
 
     struct FinishRegistration;
 
@@ -107,7 +111,7 @@ mod schedule_dump {
         }
 
         fn finish(&self, app: &mut App) {
-            app.world_mut().resource_mut::<Finished>().0 = true;
+            app.world_mut().resource_mut::<Finished>().finished = true;
             app.add_systems(Update, registered_during_finish);
         }
 
@@ -123,7 +127,7 @@ mod schedule_dump {
     #[test]
     fn exports_main_subapp_and_empty_schedule_without_running_systems_or_cleanup() {
         let fixture = Fixture::new();
-        let output = fixture.0.join("output");
+        let output = fixture.path.join("output");
         let mut app = App::new();
         app.add_plugins(FinishRegistration);
         let mut sub_app = SubApp::new();
@@ -135,7 +139,7 @@ mod schedule_dump {
         app.insert_sub_app(NoSchedules, no_schedules);
 
         let count = dump_schedules(&mut app, &output).unwrap();
-        assert!(app.world().resource::<Finished>().0);
+        assert!(app.world().resource::<Finished>().finished);
         assert_eq!(app.plugins_state(), PluginsState::Finished);
         let manifest: Value =
             serde_json::from_slice(&fs::read(output.join("manifest.json")).unwrap()).unwrap();
@@ -175,20 +179,24 @@ mod schedule_dump {
         let fixture = Fixture::new();
         let expected_source = "Cargo.lock\0version = 4\n\0Cargo.toml\0[package]\nname='fixture'\n\0src/main.rs\0fn main() {}\n\0src/nested/other.rs\0struct Other;\n\0";
         assert_eq!(
-            source_fingerprint(&fixture.0).unwrap(),
+            source_fingerprint(&fixture.path).unwrap(),
             sha256(expected_source.as_bytes())
         );
-        fs::write(fixture.0.join("src/main.rs"), "fn main() {}\r\n").unwrap();
-        fs::write(fixture.0.join("src/ignored.txt"), "not a Rust source").unwrap();
+        fs::write(fixture.path.join("src/main.rs"), "fn main() {}\r\n").unwrap();
+        fs::write(fixture.path.join("src/ignored.txt"), "not a Rust source").unwrap();
         assert_eq!(
-            source_fingerprint(&fixture.0).unwrap(),
+            source_fingerprint(&fixture.path).unwrap(),
             sha256(expected_source.as_bytes())
         );
-        fs::write(fixture.0.join("build.rs"), "fn main() {}\n").unwrap();
-        let with_build = source_fingerprint(&fixture.0).unwrap();
+        fs::write(fixture.path.join("build.rs"), "fn main() {}\n").unwrap();
+        let with_build = source_fingerprint(&fixture.path).unwrap();
         assert_ne!(with_build, sha256(expected_source.as_bytes()));
-        fs::write(fixture.0.join("src/nested/other.rs"), "struct Changed;\n").unwrap();
-        assert_ne!(source_fingerprint(&fixture.0).unwrap(), with_build);
+        fs::write(
+            fixture.path.join("src/nested/other.rs"),
+            "struct Changed;\n",
+        )
+        .unwrap();
+        assert_ne!(source_fingerprint(&fixture.path).unwrap(), with_build);
     }
 
     fn first() {}
@@ -197,7 +205,7 @@ mod schedule_dump {
     #[test]
     fn failed_schedule_build_does_not_leave_a_success_manifest() {
         let fixture = Fixture::new();
-        let output = fixture.0.join("output");
+        let output = fixture.path.join("output");
         fs::create_dir_all(&output).unwrap();
         fs::write(output.join("manifest.json"), "previous successful export").unwrap();
         let mut app = App::new();
@@ -212,7 +220,9 @@ mod schedule_dump {
     }
 
     #[derive(Component)]
-    struct MainMarker(u32);
+    struct MainMarker {
+        value: u32,
+    }
 
     #[derive(Resource)]
     struct MainSnapshot {
@@ -227,7 +237,7 @@ mod schedule_dump {
         fn from_world(world: &mut World) -> Self {
             let snapshot = world.resource::<MainSnapshot>();
             assert_eq!(world.id(), snapshot.world_id);
-            assert_eq!(world.get::<MainMarker>(snapshot.entity).unwrap().0, 41);
+            assert_eq!(world.get::<MainMarker>(snapshot.entity).unwrap().value, 41);
             snapshot.initialized.fetch_add(1, Ordering::SeqCst);
             Self
         }
@@ -242,7 +252,7 @@ mod schedule_dump {
     fn extraction_app() -> (App, WorldId, Entity, Arc<AtomicUsize>) {
         let mut app = App::new();
         let world_id = app.world().id();
-        let entity = app.world_mut().spawn(MainMarker(41)).id();
+        let entity = app.world_mut().spawn(MainMarker { value: 41 }).id();
         let initialized = Arc::new(AtomicUsize::new(0));
         app.insert_resource(MainSnapshot {
             world_id,
@@ -258,7 +268,7 @@ mod schedule_dump {
 
     fn assert_main_world_restored(app: &App, world_id: WorldId, entity: Entity) {
         assert_eq!(app.world().id(), world_id);
-        assert_eq!(app.world().get::<MainMarker>(entity).unwrap().0, 41);
+        assert_eq!(app.world().get::<MainMarker>(entity).unwrap().value, 41);
         let snapshot = app.world().resource::<MainSnapshot>();
         assert_eq!(snapshot.world_id, world_id);
         assert_eq!(snapshot.entity, entity);
@@ -274,7 +284,7 @@ mod schedule_dump {
     #[test]
     fn exports_extract_params_against_real_main_world_and_restores_it() {
         let fixture = Fixture::new();
-        let output = fixture.0.join("output");
+        let output = fixture.path.join("output");
         let (mut app, world_id, entity, initialized) = extraction_app();
 
         dump_schedules(&mut app, &output).unwrap();
@@ -297,7 +307,7 @@ mod schedule_dump {
     #[test]
     fn restores_main_world_after_extract_schedule_build_error() {
         let fixture = Fixture::new();
-        let output = fixture.0.join("output");
+        let output = fixture.path.join("output");
         let (mut app, world_id, entity, initialized) = extraction_app();
         app.get_sub_app_mut(RenderApp).unwrap().add_systems(
             ExtractSchedule,
@@ -332,7 +342,7 @@ mod schedule_dump {
     #[test]
     fn restores_main_world_after_extract_parameter_initialization_panics() {
         let fixture = Fixture::new();
-        let output = fixture.0.join("output");
+        let output = fixture.path.join("output");
         let (mut app, world_id, entity, initialized) = extraction_app();
         app.get_sub_app_mut(RenderApp)
             .unwrap()
@@ -361,7 +371,7 @@ mod schedule_dump {
     #[test]
     fn rejects_existing_subapp_main_world_without_replacing_it() {
         let fixture = Fixture::new();
-        let output = fixture.0.join("output");
+        let output = fixture.path.join("output");
         let (mut app, world_id, entity, initialized) = extraction_app();
         let existing = MainWorld::default();
         let existing_world_id = existing.id();
@@ -377,7 +387,7 @@ mod schedule_dump {
                 .contains("MainWorld resource is already present")
         );
         assert_eq!(app.world().id(), world_id);
-        assert_eq!(app.world().get::<MainMarker>(entity).unwrap().0, 41);
+        assert_eq!(app.world().get::<MainMarker>(entity).unwrap().value, 41);
         assert_eq!(app.world().resource::<MainSnapshot>().entity, entity);
         assert_eq!(initialized.load(Ordering::SeqCst), 0);
         assert_eq!(

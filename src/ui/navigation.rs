@@ -150,12 +150,12 @@ fn step_focus(
         .unwrap_or(0);
     if count > 0 {
         *source = MenuInputSource::Navigation;
-        let before = focus.0;
-        focus.0 = (focus.0 as i32 + direction).rem_euclid(count as i32) as usize;
-        if focus.0 != before {
+        let before = focus.index;
+        focus.index = (focus.index as i32 + direction).rem_euclid(count as i32) as usize;
+        if focus.index != before {
             return buttons
                 .iter()
-                .find_map(|(entity, button)| (button.index == focus.0).then_some(entity));
+                .find_map(|(entity, button)| (button.index == focus.index).then_some(entity));
         }
     }
     None
@@ -197,10 +197,12 @@ fn adjust_focused(
     if menu.page != MenuPage::Settings {
         return;
     }
-    if let Some(button) = buttons.iter().find(|button| button.index == focus.0)
+    if let Some(button) = buttons.iter().find(|button| button.index == focus.index)
         && let UiAction::Adjust(key, _) = button.action
     {
-        requests.write(UiRequest(UiAction::Adjust(key, direction)));
+        requests.write(UiRequest {
+            action: UiAction::Adjust(key, direction),
+        });
     }
 }
 
@@ -241,10 +243,12 @@ fn confirm(
     mut requests: MessageWriter<UiRequest>,
 ) {
     if menu.page != MenuPage::Hidden
-        && let Some(button) = buttons.iter().find(|button| button.index == focus.0)
+        && let Some(button) = buttons.iter().find(|button| button.index == focus.index)
     {
         *source = MenuInputSource::Navigation;
-        requests.write(UiRequest(button.action));
+        requests.write(UiRequest {
+            action: button.action,
+        });
     }
 }
 
@@ -254,5 +258,7 @@ fn back(
     mut requests: MessageWriter<UiRequest>,
 ) {
     *source = MenuInputSource::Navigation;
-    requests.write(UiRequest(UiAction::Back));
+    requests.write(UiRequest {
+        action: UiAction::Back,
+    });
 }

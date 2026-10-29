@@ -105,7 +105,7 @@ pub(super) fn warn_hold_strain(
             continue;
         };
         // 告警按物品实际持握偏移计算目标位置。
-        let offset = grip.map_or(config.hold_offset, |grip| grip.0);
+        let offset = grip.map_or(config.hold_offset, |grip| grip.offset);
         let target = holder_position.0 + holder_transform.rotation * offset;
         let distance = position.0.distance(target);
         let state = strain.entry(parcel).or_default();
