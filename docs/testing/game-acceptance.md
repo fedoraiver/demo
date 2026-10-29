@@ -120,9 +120,8 @@ Windows MSVC 用户先确认能够显示主菜单并创建本次会话日志，�
 
 会话文件命名和位置见 [使用说明](../usage.md#会话日志)，日志规则与调试过滤配置见 [开发规范](../development.md)。验收时先确认本次文件的会话开始时间、版本和配置，再将日志中的实体、前后值和原因与操作步骤对应。
 
-- `demo::gameplay` 的 `Prototype gameplay initialized`、`demo::settings` 的 `Fixed simulation timestep initialized`、`demo::camera` 的 `Camera pose synchronization configured` 与 `demo::inspector` 的 `World inspector enabled` 均应以 `info` 级别各出现一次，四条之间无先后要求。玩法记录应对应实际 `PrototypeConfig`，固定模拟频率应对应实际 `Time<Fixed>`；暂停、恢复和重新开始游戏不能重复这些启动记录。用户覆盖 `RUST_LOG` 时按实际过滤规则核对，低于过滤级别的记录缺失不能直接判定插件未注册。
+- `demo::gameplay` 的 `Prototype gameplay initialized`、`demo::settings` 的 `Fixed simulation timestep initialized` 与 `demo::inspector` 的 `World inspector enabled` 均应以 `info` 级别各出现一次，三条之间无先后要求。玩法记录应对应实际 `PrototypeConfig`，固定模拟频率应对应实际 `Time<Fixed>`；暂停、恢复和重新开始游戏不能重复这些启动记录。用户覆盖 `RUST_LOG` 时按实际过滤规则核对，低于过滤级别的记录缺失不能直接判定插件未注册。
 - 鼠标捕获及实际移动输入的离散变化，默认以 `info` 级别落盘，应能对应释放、恢复、失焦和移动输入变化。
-- 启动时应有 `Camera pose synchronization configured`，字段为 `simulation_schedule="FixedUpdate"`、`carry_schedule="FixedUpdate"`、`grip_mode="shared_body"`、`physics_schedule="FixedPostUpdate"`、`presentation_schedule="RunFixedMainLoop"`、`presentation_order="interpolation_character_facing_carry_pose_camera_visibility"`。这条日志说明采用的同步配置，人物与箱体运动、持握转动与镜头跟随是否稳定仍需按上述步骤目测确认。
 - 美术与场景日志应记录所需资源的加载、失败路径、地图实例与碰撞准备状态，以及动态实体生成；结构碰撞日志用于核对实际地图范围和组成。玩法日志记录起跳、接地变化，以及 `Carryable item picked up`、`Carryable item released`；物理碰撞日志用于核对阻挡发生的实体。释放日志应能对应释放前的真实位置和速度；异常关联清理应记录原因。所有日志均写入本次会话日志，提供问题反馈时保留该文件。
 - `demo::character_animation` 应记录 `Courier animation initialized` 与 `Courier animation changed`，动作字段匹配实际命名动作，如 `Idle`、`Walk`、`Carry_Idle`；切换日志包含 `animation_before`、`animation_after` 和原因，持续播放同一动作不逐帧重复输出切换记录。绑定失败应保留缺失动作或失效关联信息。
 - `demo::island_recovery` 的 `Entity recovered after entering water` 应包含恢复实体、`position_before`、`position_after` 和 `reason="water_recovery"`；持箱落水还应出现 `Held item released during water recovery`，确认解除持握。连续更新不应重复记录同一次恢复。恢复后箱体碰撞与人物输入是否正确仍需结合无窗口回归和上述用户步骤确认。

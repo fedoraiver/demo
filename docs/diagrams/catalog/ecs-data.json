@@ -114,38 +114,6 @@
       ]
     },
     {
-      "id": "startup_pose",
-      "name": "log_pose_synchronization",
-      "kind": "System",
-      "phase": "Startup",
-      "module": "first_person",
-      "description": "记录准备力、物理解算和插值后显示同步的各个调度阶段及顺序。",
-      "display_summary": "记录物理模拟与显示同步的阶段安排。",
-      "reads": [],
-      "writes": [],
-      "filters": [],
-      "events": [],
-      "notes": [
-        "FixedUpdate 准备控制力、交互与共享刚体挂接；FixedPostUpdate 物理回写后同步持物真实姿态。",
-        "AfterFixedMainLoop：Ease → 朝向 → 持物物理同步 → 呈现 → 镜头 → 可见性 → UpdateEasingTick。",
-        "只记录约定，不建立其他 Startup 系统全序；日志 target demo::camera。"
-      ],
-      "source": {
-        "path": "src/first_person/mod.rs",
-        "line": 158
-      },
-      "feature": "first_person",
-      "registered_by": "first_person",
-      "schedule": "Startup",
-      "schedule_group": "Startup",
-      "registrations": [
-        {
-          "schedule": "Startup",
-          "scope": "runtime"
-        }
-      ]
-    },
-    {
       "id": "frame_limit",
       "name": "apply_frame_rate_limit",
       "kind": "System",
@@ -1687,7 +1655,7 @@
       ],
       "source": {
         "path": "src/first_person/mod.rs",
-        "line": 126
+        "line": 125
       },
       "feature": "infrastructure",
       "registered_by": "first_person",
@@ -2504,38 +2472,6 @@
       ]
     },
     {
-      "id": "startup_assets",
-      "name": "log_asset_requests",
-      "kind": "System",
-      "module": "scene_assembly",
-      "phase": "Startup",
-      "reads": [
-        "resource.ArtAssets"
-      ],
-      "writes": [],
-      "filters": [],
-      "events": [],
-      "description": "记录五份运行 GLB 的请求；实际加载在资源初始化时开始。",
-      "display_summary": "记录运行模型资源的加载请求。",
-      "notes": [
-        "art/ 是制作源，运行时仅依赖 assets/。"
-      ],
-      "source": {
-        "path": "src/scene_assembly/assets.rs",
-        "line": 104
-      },
-      "feature": "scene_assembly",
-      "registered_by": "scene_assembly",
-      "schedule": "Startup",
-      "schedule_group": "Startup",
-      "registrations": [
-        {
-          "schedule": "Startup",
-          "scope": "runtime"
-        }
-      ]
-    },
-    {
       "id": "asset_poll",
       "name": "poll_art_assets",
       "kind": "System",
@@ -2559,7 +2495,7 @@
       ],
       "source": {
         "path": "src/scene_assembly/assets.rs",
-        "line": 112
+        "line": 108
       },
       "feature": "scene_assembly",
       "registered_by": "scene_assembly",
@@ -3355,7 +3291,7 @@
       ],
       "source": {
         "path": "src/first_person/mod.rs",
-        "line": 166
+        "line": 157
       },
       "feature": "first_person",
       "registered_by": "first_person",
@@ -3393,7 +3329,7 @@
       ],
       "source": {
         "path": "src/first_person/mod.rs",
-        "line": 166
+        "line": 157
       },
       "feature": "first_person",
       "registered_by": "first_person",
@@ -5695,7 +5631,7 @@
       "notes": [],
       "source": {
         "path": "src/first_person/mod.rs",
-        "line": 187
+        "line": 178
       },
       "feature": "first_person",
       "registered_by": "first_person",
@@ -11193,7 +11129,7 @@
       "display_summary": "保存场景的全局环境光配置。",
       "source": {
         "path": "src/scene_assembly/mod.rs",
-        "line": 81
+        "line": 80
       },
       "feature": "infrastructure",
       "defined_in": "infrastructure",
@@ -11227,7 +11163,7 @@
       "display_summary": "索引输入框架当前运行的动作上下文。",
       "source": {
         "path": "src/first_person/mod.rs",
-        "line": 155
+        "line": 154
       },
       "feature": "enhanced_input",
       "defined_in": "enhanced_input",
@@ -11248,7 +11184,7 @@
       "display_summary": "配置输入框架允许使用的输入来源。",
       "source": {
         "path": "src/first_person/mod.rs",
-        "line": 155
+        "line": 154
       },
       "feature": "enhanced_input",
       "defined_in": "enhanced_input",
@@ -11264,7 +11200,7 @@
       "display_summary": "记录本轮动作评估已经消费的输入。",
       "source": {
         "path": "src/first_person/mod.rs",
-        "line": 155
+        "line": 154
       },
       "feature": "enhanced_input",
       "defined_in": "enhanced_input",
@@ -11281,7 +11217,7 @@
       "display_summary": "保存上下文停用后仍需重置的输入绑定。",
       "source": {
         "path": "src/first_person/mod.rs",
-        "line": 155
+        "line": 154
       },
       "feature": "enhanced_input",
       "defined_in": "enhanced_input",
@@ -11480,7 +11416,7 @@
       "fields": [
         "island / courier / standard / fragile / wooden_crate: Handle<Gltf>"
       ],
-      "description": "五份强句柄持有资源生命周期。",
+      "description": "资源初始化时逐份发起五份运行 GLB 加载并记录请求；强句柄维持资源寿命，加载就绪由轮询独立确认。",
       "display_summary": "保存运行模型资源并维持其加载寿命。",
       "source": {
         "path": "src/scene_assembly/assets.rs",
@@ -11500,7 +11436,7 @@
       "display_summary": "保存运行资源的加载进度与就绪结果。",
       "source": {
         "path": "src/scene_assembly/assets.rs",
-        "line": 97
+        "line": 100
       },
       "feature": "scene_assembly",
       "defined_in": "scene_assembly"
@@ -11515,7 +11451,7 @@
       "description": "加载并查询递归依赖。",
       "source": {
         "path": "src/scene_assembly/assets.rs",
-        "line": 112
+        "line": 108
       },
       "feature": "infrastructure",
       "defined_in": "infrastructure"
@@ -13254,7 +13190,7 @@
   "startup_notes": [
     "main 创建 App 与独立会话日志；DefaultPlugins 禁用 Bevy 默认 AudioPlugin，由 Kira 提供音频设备输出。",
     "InspectorPlugin 内部先注册 EguiPlugin，再注册 WorldInspectorPlugin；检查器只在 InGame / Running 显示。功能插件装配顺序不等于系统全序。",
-    "GameFlowPlugin 默认进入 MainMenu；当前 State<PlayState> 只在 InGame 存在，NextState<PlayState> 从插件注册起跨会话保留。Startup 创建持久 MenuContext 控制者、预加载短音、记录四项启动日志与美术请求。",
+    "GameFlowPlugin 默认进入 MainMenu；当前 State<PlayState> 只在 InGame 存在，NextState<PlayState> 从插件注册起跨会话保留。Startup 创建持久 MenuContext 控制者、预加载短音并记录启动日志；美术请求由 ArtAssets::from_world 在资源初始化时逐份记录。",
     "SceneAssemblyPlugin 保持五份运行 GLB 强句柄，Update 轮询 Loading / Ready / Failed；地图 CPU 网格保留以生成静态碰撞。",
     "OnEnter(InGame) 创建日光和加载相机。Running 的 Update 海岛链 begin_island → prepare_island → spawn_actors 在各依赖处应用延迟命令。",
     "海岛资源与全部静态碰撞就绪后生成一名主角、一名控制者、普通纸箱与易碎纸箱各一件及三只木箱，并复用加载相机。NPC 沿原地图层级保留。",
@@ -13266,7 +13202,7 @@
     "统一 tracing 的文件与控制台各有后台线程和无界队列，属于外部 I/O；SessionLogGuard 由 main 持有，退出 Flush，Drop 排空并 join，panic 文件屏障 sync_data。",
     "GameAudioPlugin 初始化 AudioMix；UI 注册滑条采样与已有视觉同步，设置草稿可即时预览音量。",
     "FirstPersonPlugin 注册观察 Observer、F3 捕获切换及第一人称显示链；相机引用角色，CharacterVisual 初始隐藏并在关联失效时恢复。",
-    "玩法配置、固定时间步、姿态同步和检查器启用四项只读 Startup 日志分别由对应功能插件注册，彼此无显式顺序。",
+    "玩法配置、固定时间步和检查器启用三项只读 Startup 日志分别由对应功能插件注册，彼此无显式顺序。",
     "主入口显式安装十四个功能插件和 EnhancedInputPlugin；CharacterPlugin 不自动安装物理、交互或音频。",
     "SessionLogPlugin 在 DefaultPlugins 之前安装真实 LogPlugin；主入口守卫持有文件与控制台线程直到退出刷新完成。",
     "GameFlowPlugin 通过 FixedGameplaySystems、PresentationSystems 和音频阶段建立跨功能顺序；无状态测试可单独调用 configure_feature_order。"
@@ -13374,7 +13310,7 @@
       "notes": [
         "main 创建 App 与独立会话日志；DefaultPlugins 禁用 Bevy 默认 AudioPlugin，由 Kira 提供音频设备输出。",
         "InspectorPlugin 内部先注册 EguiPlugin，再注册 WorldInspectorPlugin；检查器只在 InGame / Running 显示。功能插件装配顺序不等于系统全序。",
-        "GameFlowPlugin 默认进入 MainMenu；当前 State<PlayState> 只在 InGame 存在，NextState<PlayState> 从插件注册起跨会话保留。Startup 创建持久 MenuContext 控制者、预加载短音、记录四项启动日志与美术请求。",
+        "GameFlowPlugin 默认进入 MainMenu；当前 State<PlayState> 只在 InGame 存在，NextState<PlayState> 从插件注册起跨会话保留。Startup 创建持久 MenuContext 控制者、预加载短音并记录启动日志；美术请求由 ArtAssets::from_world 在资源初始化时逐份记录。",
         "SceneAssemblyPlugin 保持五份运行 GLB 强句柄，Update 轮询 Loading / Ready / Failed；地图 CPU 网格保留以生成静态碰撞。",
         "OnEnter(InGame) 创建日光和加载相机。Running 的 Update 海岛链 begin_island → prepare_island → spawn_actors 在各依赖处应用延迟命令。",
         "海岛资源与全部静态碰撞就绪后生成一名主角、一名控制者、普通纸箱与易碎纸箱各一件及三只木箱，并复用加载相机。NPC 沿原地图层级保留。",
@@ -13386,7 +13322,7 @@
         "统一 tracing 的文件与控制台各有后台线程和无界队列，属于外部 I/O；SessionLogGuard 由 main 持有，退出 Flush，Drop 排空并 join，panic 文件屏障 sync_data。",
         "GameAudioPlugin 初始化 AudioMix；UI 注册滑条采样与已有视觉同步，设置草稿可即时预览音量。",
         "FirstPersonPlugin 注册观察 Observer、F3 捕获切换及第一人称显示链；相机引用角色，CharacterVisual 初始隐藏并在关联失效时恢复。",
-        "玩法配置、固定时间步、姿态同步和检查器启用四项只读 Startup 日志分别由对应功能插件注册，彼此无显式顺序。",
+        "玩法配置、固定时间步和检查器启用三项只读 Startup 日志分别由对应功能插件注册，彼此无显式顺序。",
         "主入口显式安装十四个功能插件和 EnhancedInputPlugin；CharacterPlugin 不自动安装物理、交互或音频。",
         "SessionLogPlugin 在 DefaultPlugins 之前安装真实 LogPlugin；主入口守卫持有文件与控制台线程直到退出刷新完成。",
         "GameFlowPlugin 通过 FixedGameplaySystems、PresentationSystems 和音频阶段建立跨功能顺序；无状态测试可单独调用 configure_feature_order。"
@@ -17967,7 +17903,6 @@
     "startup_spawn": "scene_assembly",
     "startup_config": "character",
     "startup_timestep": "settings",
-    "startup_pose": "first_person",
     "frame_limit": "settings",
     "time_update": "infrastructure",
     "input_update": "infrastructure",
@@ -17999,7 +17934,6 @@
     "orphan_apply": "infrastructure",
     "velocity_log": "character",
     "collision_log": "physics",
-    "startup_assets": "scene_assembly",
     "asset_poll": "scene_assembly",
     "island_begin": "scene_assembly",
     "island_ready_observer": "scene_assembly",
@@ -21000,6 +20934,16 @@
       "to": "egui_begin",
       "kind": "order",
       "label": "EguiPreUpdateSet chain"
+    },
+    {
+      "id": "write-plugin-SceneAssemblyPlugin-log-producer",
+      "from": "plugin-SceneAssemblyPlugin",
+      "to": "log-producer",
+      "kind": "write",
+      "label": "初始化时记录资源请求",
+      "notes": [
+        "SceneAssemblyPlugin::build 通过 init_resource 调用 ArtAssets::from_world；每份资源发起加载后记录一次，不表示已就绪，也不属于 Startup 系统。"
+      ]
     }
   ],
   "feature_links": [

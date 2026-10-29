@@ -54,21 +54,15 @@ flowchart LR
   n6@{ shape: rounded, label: "**log_configuration**<br/>来自角色运动 ↗：记录角色运动与持物行为<br/>的初始化配置。" }
   class n6 node_system
   class n6 external_node
-  n7@{ shape: rounded, label: "**log_pose_synchronization**<br/>来自第一人称控制 ↗：记录物理模拟与显示<br/>同步的阶段安排。" }
+  n7@{ shape: rounded, label: "**spawn_lighting**<br/>来自场景装配 ↗：进入游戏会话时创建日光<br/>场景和加载相机，配置默认 UI、主 Egui 上<br/>下文及退出清理；资源就绪后继续复用同一相<br/>机实体。" }
   class n7 node_system
   class n7 external_node
-  n8@{ shape: rounded, label: "**log_asset_requests**<br/>来自场景装配 ↗：记录运行模型资源的加载<br/>请求。" }
+  n8@{ shape: rounded, label: "**spawn_menu_controller**<br/>来自菜单与界面 ↗：创建菜单动作控制者及<br/>键盘、手柄绑定。" }
   class n8 node_system
   class n8 external_node
-  n9@{ shape: rounded, label: "**spawn_lighting**<br/>来自场景装配 ↗：进入游戏会话时创建日光<br/>场景和加载相机，配置默认 UI、主 Egui 上<br/>下文及退出清理；资源就绪后继续复用同一相<br/>机实体。" }
+  n9@{ shape: rounded, label: "**preload_sounds**<br/>来自音频播放 ↗：预加载界面与音效短音并<br/>保存播放策略。" }
   class n9 node_system
   class n9 external_node
-  n10@{ shape: rounded, label: "**spawn_menu_controller**<br/>来自菜单与界面 ↗：创建菜单动作控制者及<br/>键盘、手柄绑定。" }
-  class n10 node_system
-  class n10 external_node
-  n11@{ shape: rounded, label: "**preload_sounds**<br/>来自音频播放 ↗：预加载界面与音效短音并<br/>保存播放策略。" }
-  class n11 node_system
-  class n11 external_node
   n0 e0@-->|"main / Startup"| n1
   class e0 edge_registration
   n0 e1@-->|"main / Startup"| n2
@@ -87,17 +81,11 @@ flowchart LR
   class e7 edge_registration
   n0 e8@-->|"main / Startup"| n9
   class e8 edge_registration
-  n0 e9@-->|"main / Startup"| n10
-  class e9 edge_registration
-  n0 e10@-->|"main / Startup"| n11
-  class e10 edge_registration
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
   e3@{ curve: basis }
-  e4@{ curve: basis }
+  e5@{ curve: basis }
   e6@{ curve: basis }
   e7@{ curve: basis }
   e8@{ curve: basis }
-  e9@{ curve: basis }
-  e10@{ curve: basis }

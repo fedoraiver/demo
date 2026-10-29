@@ -88,16 +88,15 @@ mod initialization_tests {
     use uuid::Uuid;
 
     use crate::{
-        character::CharacterPlugin, first_person::FirstPersonPlugin, game_flow::AppState,
-        inspector::InspectorPlugin, item_interaction::ItemInteractionPlugin,
-        physics::GamePhysicsPlugin, settings::PrototypeConfig, settings::SettingsPlugin,
+        character::CharacterPlugin, game_flow::AppState, inspector::InspectorPlugin,
+        item_interaction::ItemInteractionPlugin, physics::GamePhysicsPlugin,
+        settings::PrototypeConfig, settings::SettingsPlugin,
     };
 
     #[derive(Clone, Copy, Debug, PartialEq, Eq)]
     enum Feature {
         Gameplay,
         Settings,
-        Camera,
         Inspector,
     }
 
@@ -109,12 +108,7 @@ mod initialization_tests {
 
     #[test]
     fn absent_feature_plugins_do_not_report_initialization() {
-        for omitted in [
-            Feature::Gameplay,
-            Feature::Settings,
-            Feature::Camera,
-            Feature::Inspector,
-        ] {
+        for omitted in [Feature::Gameplay, Feature::Settings, Feature::Inspector] {
             let contents = capture_initialization_logs(Some(omitted));
             assert_initialization_logs(&contents, Some(omitted));
         }
@@ -139,7 +133,6 @@ mod initialization_tests {
                 ..default()
             },
         ))
-        .add_plugins(bevy_enhanced_input::EnhancedInputPlugin)
         .init_asset::<Image>()
         .init_asset::<Shader>()
         // 启动日志不受菜单状态限制；停用逐帧玩法可独立测试缺少任一功能插件的装配。
@@ -151,9 +144,6 @@ mod initialization_tests {
         }
         if omitted != Some(Feature::Settings) {
             app.add_plugins(SettingsPlugin);
-        }
-        if omitted != Some(Feature::Camera) {
-            app.add_plugins(FirstPersonPlugin);
         }
         if omitted != Some(Feature::Inspector) {
             app.add_plugins(InspectorPlugin);
@@ -211,7 +201,6 @@ mod initialization_tests {
             for message in [
                 "Prototype gameplay initialized",
                 "Fixed simulation timestep initialized",
-                "Camera pose synchronization configured",
                 "World inspector enabled",
             ] {
                 assert!(!before_startup.contains(message), "{before_startup}");
@@ -271,20 +260,6 @@ mod initialization_tests {
                 "demo::settings",
                 "Fixed simulation timestep initialized",
                 vec!["simulation_hz=4"],
-            ),
-            (
-                Feature::Camera,
-                "demo::camera",
-                "Camera pose synchronization configured",
-                vec![
-                    "simulation_schedule=\"FixedUpdate\"",
-                    "carry_schedule=\"FixedUpdate\"",
-                    "grip_mode=\"shared_body\"",
-                    "physics_schedule=\"FixedPostUpdate\"",
-                    "presentation_schedule=\"RunFixedMainLoop\"",
-                    "presentation_order=\"interpolation_character_facing_carry_pose_camera_visibility\"",
-                    "reason=\"initialization\"",
-                ],
             ),
             (
                 Feature::Inspector,

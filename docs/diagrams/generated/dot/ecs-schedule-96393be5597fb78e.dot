@@ -13,9 +13,7 @@ digraph "" {
 	"node_System(SystemKey(4v1))" ["label"="log_policy", "tooltip"="demo::window_policy::log_policy"]
 	"node_System(SystemKey(5v1))" ["label"="log_simulation_timestep", "tooltip"="demo::settings::frame_pacing::log_simulation_timestep"]
 	"node_System(SystemKey(6v1))" ["label"="log_configuration", "tooltip"="demo::character::log_configuration"]
-	"node_System(SystemKey(7v1))" ["label"="log_pose_synchronization", "tooltip"="demo::first_person::log_pose_synchronization"]
-	"node_System(SystemKey(8v1))" ["label"="log_asset_requests", "tooltip"="demo::scene_assembly::assets::log_asset_requests"]
-	"node_System(SystemKey(9v1))" ["label"="spawn_lighting", "tooltip"="demo::scene_assembly::loading::spawn_lighting"]
-	"node_System(SystemKey(10v1))" ["label"="spawn_menu_controller", "tooltip"="demo::ui::navigation::spawn_menu_controller"]
-	"node_System(SystemKey(11v1))" ["label"="preload_sounds", "tooltip"="demo::audio::playback::preload_sounds"]
+	"node_System(SystemKey(7v1))" ["label"="spawn_lighting", "tooltip"="demo::scene_assembly::loading::spawn_lighting"]
+	"node_System(SystemKey(8v1))" ["label"="spawn_menu_controller", "tooltip"="demo::ui::navigation::spawn_menu_controller"]
+	"node_System(SystemKey(9v1))" ["label"="preload_sounds", "tooltip"="demo::audio::playback::preload_sounds"]
 }
