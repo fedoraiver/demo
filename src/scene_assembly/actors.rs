@@ -2,6 +2,12 @@
 
 use super::*;
 
+// 角色局部握点与木箱局部碰撞几何均使用米制；纸箱尺寸仍由 PrototypeConfig 提供。
+const PARCEL_CARRY_GRIP_M: Vec3 = Vec3::new(0.0, 1.3, -0.48);
+const WOODEN_CRATE_CARRY_GRIP_M: Vec3 = Vec3::new(0.0, 1.3, -0.62);
+const WOODEN_CRATE_COLLIDER_CENTER_M: Vec3 = Vec3::new(0.0, 0.01625, 0.01625);
+const WOODEN_CRATE_COLLIDER_SIZE_M: Vec3 = Vec3::new(0.84, 0.6825, 0.8145);
+
 pub(super) fn courier_visual(scene: Handle<WorldAsset>, gltf: Handle<Gltf>) -> impl Scene {
     // 玩家在 Update 装配，早于下一帧相机可见性同步；先隐藏自身，避免首帧进入眼位。
     bsn! {
@@ -32,15 +38,11 @@ pub(super) fn carryable_scene(
     pose: Transform,
     scene: Handle<WorldAsset>,
 ) -> impl Scene {
-    let grip = Vec3::new(
-        0.0,
-        1.3,
-        if model == ItemModel::WoodenCrate {
-            -0.62
-        } else {
-            -0.48
-        },
-    );
+    let grip = if model == ItemModel::WoodenCrate {
+        WOODEN_CRATE_CARRY_GRIP_M
+    } else {
+        PARCEL_CARRY_GRIP_M
+    };
     bsn! {
         Name({model.name()})
         Parcel
@@ -91,9 +93,13 @@ pub(super) fn spawn_actors(
             if item.model == ItemModel::WoodenCrate {
                 // 木箱边框超出纸箱尺寸，中心偏移来自导出几何，视觉与碰撞使用相同米制比例。
                 entity.insert(Collider::compound(vec![(
-                    Vec3::new(0.0, 0.01625, 0.01625),
+                    WOODEN_CRATE_COLLIDER_CENTER_M,
                     Quat::IDENTITY,
-                    Collider::cuboid(0.84, 0.6825, 0.8145),
+                    Collider::cuboid(
+                        WOODEN_CRATE_COLLIDER_SIZE_M.x,
+                        WOODEN_CRATE_COLLIDER_SIZE_M.y,
+                        WOODEN_CRATE_COLLIDER_SIZE_M.z,
+                    ),
                 )]));
             }
             let parcel = entity.id();
