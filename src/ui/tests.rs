@@ -342,7 +342,7 @@ mod backdrop_tests {
 
         app.world_mut()
             .resource_mut::<NextState<AppState>>()
-            .set(AppState::InGame);
+            .set(AppState::Running);
         app.update();
 
         assert!(app.world().get_entity(root).is_err());
@@ -2300,7 +2300,7 @@ mod requests_tests {
     use super::test_support::{drain_sounds, menu_app as test_app, pointer_press, request};
     use super::*;
     use crate::audio::AudioPreview;
-    use crate::game_flow::{AppState, PlayState};
+    use crate::game_flow::AppState;
     use crate::ui::navigation::MenuContext;
     use crate::{audio::SoundCue, settings::GameSettings};
     use bevy::ui::Pressed;
@@ -2569,8 +2569,8 @@ mod requests_tests {
         assert_eq!(*app.world().resource::<SettingsDraft>(), draft);
         assert!(app.world().resource::<Time<Virtual>>().is_paused());
         assert_eq!(
-            *app.world().resource::<State<PlayState>>().get(),
-            PlayState::Paused
+            *app.world().resource::<State<AppState>>().get(),
+            AppState::Paused
         );
         request(&mut app, UiAction::SelectTab(SettingsTab::Graphics));
         drain_sounds(&mut app);
@@ -2695,8 +2695,8 @@ mod requests_tests {
         assert_eq!(drain_sounds(&mut app), [SoundCue::MenuCancel]);
         assert_eq!(app.world().resource::<MenuState>().page, MenuPage::Pause);
         assert_eq!(
-            *app.world().resource::<State<PlayState>>().get(),
-            PlayState::Paused
+            *app.world().resource::<State<AppState>>().get(),
+            AppState::Paused
         );
 
         // 检查帧末后再推进一帧，防止残留 Back 在暂停页被解释为 Resume。
@@ -2704,8 +2704,8 @@ mod requests_tests {
         assert!(drain_sounds(&mut app).is_empty());
         assert_eq!(app.world().resource::<MenuState>().page, MenuPage::Pause);
         assert_eq!(
-            *app.world().resource::<State<PlayState>>().get(),
-            PlayState::Paused
+            *app.world().resource::<State<AppState>>().get(),
+            AppState::Paused
         );
     }
 
@@ -2791,12 +2791,12 @@ mod requests_tests {
         request(&mut app, UiAction::StartGame);
         assert_eq!(
             *app.world().resource::<State<AppState>>().get(),
-            AppState::InGame
+            AppState::Running
         );
         request(&mut app, UiAction::Back);
         assert_eq!(
-            *app.world().resource::<State<PlayState>>().get(),
-            PlayState::Paused
+            *app.world().resource::<State<AppState>>().get(),
+            AppState::Paused
         );
         request(&mut app, UiAction::OpenHelp);
         assert_eq!(
@@ -2809,14 +2809,38 @@ mod requests_tests {
         request(&mut app, UiAction::Back);
         assert_eq!(app.world().resource::<MenuState>().page, MenuPage::Pause);
         assert_eq!(
-            *app.world().resource::<State<PlayState>>().get(),
-            PlayState::Paused
+            *app.world().resource::<State<AppState>>().get(),
+            AppState::Paused
         );
         request(&mut app, UiAction::Resume);
         assert_eq!(app.world().resource::<MenuState>().page, MenuPage::Hidden);
         assert_eq!(
-            *app.world().resource::<State<PlayState>>().get(),
-            PlayState::Running
+            *app.world().resource::<State<AppState>>().get(),
+            AppState::Running
+        );
+
+        request(&mut app, UiAction::Back);
+        request(&mut app, UiAction::ReturnToMenu);
+        assert_eq!(app.world().resource::<MenuState>().page, MenuPage::Main);
+        assert_eq!(
+            *app.world().resource::<State<AppState>>().get(),
+            AppState::MainMenu
+        );
+        assert!(!app.world().resource::<Time<Virtual>>().is_paused());
+        for action in [UiAction::OpenHelp, UiAction::OpenSettings] {
+            request(&mut app, action);
+            assert_eq!(
+                app.world().resource::<MenuState>().return_page,
+                MenuPage::Main
+            );
+            request(&mut app, UiAction::Back);
+            assert_eq!(app.world().resource::<MenuState>().page, MenuPage::Main);
+        }
+        request(&mut app, UiAction::StartGame);
+        assert_eq!(app.world().resource::<MenuState>().page, MenuPage::Hidden);
+        assert_eq!(
+            *app.world().resource::<State<AppState>>().get(),
+            AppState::Running
         );
     }
 }

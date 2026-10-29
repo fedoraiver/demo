@@ -3,7 +3,7 @@
 use super::{navigation::MenuContext, *};
 use crate::{
     audio::{SoundCue, SoundRequest},
-    game_flow::{AppState, PlayState},
+    game_flow::AppState,
     settings::{GameSettings, SettingsDraft, SettingsFile},
 };
 use bevy::prelude::*;
@@ -33,7 +33,6 @@ fn handle_requests(
     mut settings: ResMut<GameSettings>,
     path: Res<SettingsFile>,
     mut app_state: ResMut<NextState<AppState>>,
-    mut play_state: ResMut<NextState<PlayState>>,
     mut exits: MessageWriter<AppExit>,
     controllers: Query<Entity, With<MenuContext>>,
     mut sounds: MessageWriter<SoundRequest>,
@@ -75,7 +74,9 @@ fn handle_requests(
     let before = menu.page;
     let mut cue = SoundCue::MenuConfirm;
     match action {
-        UiAction::StartGame if menu.page == MenuPage::Main => app_state.set(AppState::InGame),
+        UiAction::StartGame if menu.page == MenuPage::Main => {
+            app_state.set_if_different(AppState::Running)
+        }
         UiAction::OpenSettings if matches!(menu.page, MenuPage::Main | MenuPage::Pause) => {
             *draft = SettingsDraft::from_settings(&settings);
             menu.tab = SettingsTab::Graphics;
@@ -88,17 +89,17 @@ fn handle_requests(
             exits.write(AppExit::Success);
         }
         UiAction::Resume if menu.page == MenuPage::Pause => {
-            play_state.set(PlayState::Running);
+            app_state.set_if_different(AppState::Running);
             cue = SoundCue::MenuCancel;
         }
         UiAction::ReturnToMenu if menu.page == MenuPage::Pause => {
-            app_state.set(AppState::MainMenu);
+            app_state.set_if_different(AppState::MainMenu);
             cue = SoundCue::MenuCancel;
         }
         UiAction::Back => match menu.page {
-            MenuPage::Hidden => play_state.set(PlayState::Paused),
+            MenuPage::Hidden => app_state.set_if_different(AppState::Paused),
             MenuPage::Pause => {
-                play_state.set(PlayState::Running);
+                app_state.set_if_different(AppState::Running);
                 cue = SoundCue::MenuCancel;
             }
             MenuPage::Settings | MenuPage::Help => {

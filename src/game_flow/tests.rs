@@ -29,7 +29,7 @@ fn pause_freezes_actual_physics_immediately_and_resume_does_not_catch_up() {
     app.update();
     app.world_mut()
         .resource_mut::<NextState<AppState>>()
-        .set(AppState::InGame);
+        .set(AppState::Running);
     app.update();
     let body = app
         .world_mut()
@@ -48,16 +48,24 @@ fn pause_freezes_actual_physics_immediately_and_resume_does_not_catch_up() {
     assert!(position.x > 0.0);
     assert!(velocity.y < 0.0);
     app.world_mut()
-        .resource_mut::<NextState<PlayState>>()
-        .set(PlayState::Paused);
+        .resource_mut::<NextState<AppState>>()
+        .set(AppState::Paused);
     for _ in 0..12 {
         app.update();
         assert_eq!(*app.world().get::<Position>(body).unwrap(), position);
         assert_eq!(*app.world().get::<LinearVelocity>(body).unwrap(), velocity);
+        assert_eq!(
+            app.world().resource::<Time<Physics>>().delta(),
+            Duration::ZERO
+        );
+        assert_eq!(
+            app.world().resource::<Time<Virtual>>().delta(),
+            Duration::ZERO
+        );
     }
     app.world_mut()
-        .resource_mut::<NextState<PlayState>>()
-        .set(PlayState::Running);
+        .resource_mut::<NextState<AppState>>()
+        .set(AppState::Running);
     app.update();
     app.update();
     let resumed = app.world().get::<Position>(body).unwrap();
@@ -66,6 +74,27 @@ fn pause_freezes_actual_physics_immediately_and_resume_does_not_catch_up() {
         resumed.x - position.x < 0.08,
         "resume must not integrate paused wall time"
     );
+
+    // 返回菜单重新推进展示动画的虚拟时钟，但遗留测试刚体也不能继续模拟。
+    app.world_mut()
+        .resource_mut::<NextState<AppState>>()
+        .set(AppState::Paused);
+    app.update();
+    let position = *app.world().get::<Position>(body).unwrap();
+    app.world_mut()
+        .resource_mut::<NextState<AppState>>()
+        .set(AppState::MainMenu);
+    app.update();
+    let menu_started = app.world().resource::<Time<Virtual>>().elapsed();
+    for _ in 0..3 {
+        app.update();
+        assert_eq!(*app.world().get::<Position>(body).unwrap(), position);
+        assert_eq!(
+            app.world().resource::<Time<Physics>>().delta(),
+            Duration::ZERO
+        );
+    }
+    assert!(app.world().resource::<Time<Virtual>>().elapsed() > menu_started);
 }
 
 mod initialization_tests {

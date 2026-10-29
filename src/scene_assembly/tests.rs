@@ -1389,7 +1389,6 @@ mod turn_tests {
     fn island_sessions_wait_for_assets_survive_pause_and_clean_up_on_menu_return() {
         use std::collections::HashSet;
 
-        use crate::game_flow::PlayState;
         use bevy::ecs::resource::IsResource;
 
         let mut app = build_asset_app(false, None, true);
@@ -1413,7 +1412,7 @@ mod turn_tests {
         // 先进入加载视图，再立即返回；不能遗留灯光或等待中的相机。
         app.world_mut()
             .resource_mut::<NextState<AppState>>()
-            .set(AppState::InGame);
+            .set(AppState::Running);
         app.update();
         assert!(
             app.world_mut()
@@ -1450,7 +1449,7 @@ mod turn_tests {
         // 资源 Ready 后确定地图已经请求、业务尚未装配，再暂停并取消这次加载。
         app.world_mut()
             .resource_mut::<NextState<AppState>>()
-            .set(AppState::InGame);
+            .set(AppState::Running);
         app.update();
         assert_eq!(
             app.world_mut()
@@ -1467,8 +1466,13 @@ mod turn_tests {
             0
         );
         app.world_mut()
-            .resource_mut::<NextState<PlayState>>()
-            .set(PlayState::Paused);
+            .resource_mut::<NextState<AppState>>()
+            .set(AppState::Paused);
+        let loading_camera = app
+            .world_mut()
+            .query_filtered::<Entity, With<LoadingCamera>>()
+            .single(app.world())
+            .unwrap();
         for _ in 0..3 {
             app.update();
         }
@@ -1490,6 +1494,7 @@ mod turn_tests {
                 .count(),
             1
         );
+        assert!(app.world().get::<LoadingCamera>(loading_camera).is_some());
         app.world_mut()
             .resource_mut::<NextState<AppState>>()
             .set(AppState::MainMenu);
@@ -1501,7 +1506,7 @@ mod turn_tests {
         for _ in 0..2 {
             app.world_mut()
                 .resource_mut::<NextState<AppState>>()
-                .set(AppState::InGame);
+                .set(AppState::Running);
             wait_until(&mut app, |world| {
                 world.query::<&Character>().iter(world).count() == 1
                     && world.query::<&SkinnedMesh>().iter(world).count() > 0
@@ -1518,6 +1523,16 @@ mod turn_tests {
                 .collect();
             assert_eq!(parcels.len(), 5);
             let npc_colliders = assert_npc_colliders(app.world_mut());
+            let camera = app
+                .world_mut()
+                .query_filtered::<Entity, With<Camera3d>>()
+                .single(app.world())
+                .unwrap();
+            let controller = app
+                .world_mut()
+                .query_filtered::<Entity, With<ControlsCharacter>>()
+                .single(app.world())
+                .unwrap();
             assert_eq!(
                 app.world_mut()
                     .query::<&Camera3d>()
@@ -1533,8 +1548,8 @@ mod turn_tests {
             intent.jump_pending = true;
             intent.interact_pending = true;
             app.world_mut()
-                .resource_mut::<NextState<PlayState>>()
-                .set(PlayState::Paused);
+                .resource_mut::<NextState<AppState>>()
+                .set(AppState::Paused);
             app.update();
             let intent = app.world().get::<CharacterIntent>(character).unwrap();
             assert_eq!(intent.movement, Vec2::ZERO);
@@ -1545,16 +1560,16 @@ mod turn_tests {
                     .is_paused()
             );
             assert_eq!(
-                *app.world()
-                    .resource::<State<crate::game_flow::PlayState>>()
-                    .get(),
-                crate::game_flow::PlayState::Paused
+                *app.world().resource::<State<AppState>>().get(),
+                AppState::Paused
             );
             app.world_mut()
-                .resource_mut::<NextState<PlayState>>()
-                .set(PlayState::Running);
+                .resource_mut::<NextState<AppState>>()
+                .set(AppState::Running);
             app.update();
             assert!(app.world().get::<Character>(character).is_some());
+            assert!(app.world().get::<ControlsCharacter>(controller).is_some());
+            assert!(app.world().get::<FirstPersonCamera>(camera).is_some());
             assert_eq!(
                 app.world_mut()
                     .query::<&Character>()
@@ -1577,10 +1592,8 @@ mod turn_tests {
                 1
             );
             assert_eq!(
-                *app.world()
-                    .resource::<State<crate::game_flow::PlayState>>()
-                    .get(),
-                crate::game_flow::PlayState::Running
+                *app.world().resource::<State<AppState>>().get(),
+                AppState::Running
             );
             assert_eq!(assert_npc_colliders(app.world_mut()), npc_colliders);
 

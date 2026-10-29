@@ -18,7 +18,7 @@ use bevy_inspector_egui::bevy_egui::{
 use crate::{
     audio::{SoundCue, SoundRequest},
     character::{Character, CharacterIntent},
-    game_flow::{AppState, FixedGameplaySystems, PlayState, PresentationSystems, gameplay_running},
+    game_flow::{AppState, FixedGameplaySystems, PresentationSystems, gameplay_running},
     item_interaction::{CarryRotationQuery, HeldAttachment, HoldingItems, release_item},
     settings::GameSettings,
 };
@@ -148,8 +148,8 @@ impl Plugin for FirstPersonPlugin {
                     .run_if(gameplay_running),
             )
             .add_systems(OnEnter(AppState::MainMenu), suspend_controls)
-            .add_systems(OnEnter(PlayState::Paused), suspend_controls)
-            .add_systems(OnEnter(PlayState::Running), resume_capture);
+            .add_systems(OnEnter(AppState::Paused), suspend_controls)
+            .add_systems(OnEnter(AppState::Running), resume_capture);
     }
 }
 

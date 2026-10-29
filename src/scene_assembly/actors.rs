@@ -74,12 +74,12 @@ pub(super) fn spawn_actors(
                 courier.clone(),
                 assets.courier.clone(),
             ))
-            .insert((character_body(&config), DespawnOnExit(AppState::InGame)))
+            .insert((character_body(&config), DespawnOnEnter(AppState::MainMenu)))
             .id();
         let controller = spawn_keyboard_controller(&mut commands, PlayerId { id: 1 }, character);
         commands
             .entity(controller)
-            .insert(DespawnOnExit(AppState::InGame));
+            .insert(DespawnOnEnter(AppState::MainMenu));
         for item in &placement.items {
             let scene = gltfs
                 .get(assets.item(item.model))
@@ -87,7 +87,7 @@ pub(super) fn spawn_actors(
                 .scenes[0]
                 .clone();
             let mut entity = commands.spawn_scene(carryable_scene(item.model, item.pose, scene));
-            entity.insert((parcel_body(&config), DespawnOnExit(AppState::InGame)));
+            entity.insert((parcel_body(&config), DespawnOnEnter(AppState::MainMenu)));
             if item.model == ItemModel::WoodenCrate {
                 // 木箱边框超出纸箱尺寸，中心偏移来自导出几何，视觉与碰撞使用相同米制比例。
                 entity.insert(Collider::compound(vec![(

@@ -2174,8 +2174,8 @@ mod audio_event_tests {
 
     use super::audio_events::{register_feedback, warn_hold_strain};
     use super::*;
+    use crate::game_flow::AppState;
     use crate::game_flow::configure_feature_order;
-    use crate::game_flow::{AppState, PlayState};
     use crate::{
         audio::{SoundCue, SoundRequest},
         character::Character,
@@ -2191,8 +2191,7 @@ mod audio_event_tests {
         app.init_resource::<PrototypeConfig>()
             .init_resource::<ContactGraph>()
             .insert_resource(Time::<Fixed>::from_hz(60.0))
-            .insert_resource(State::new(AppState::MainMenu))
-            .insert_resource(State::new(PlayState::Running));
+            .insert_resource(State::new(AppState::MainMenu));
         register_feedback(&mut app);
         app.world_mut()
             .resource_mut::<Time<Fixed>>()
@@ -2223,7 +2222,7 @@ mod audio_event_tests {
         }
         assert!(app.world().resource::<Messages<SoundRequest>>().is_empty());
 
-        app.insert_resource(State::new(AppState::InGame));
+        app.insert_resource(State::new(AppState::Running));
         app.world_mut().run_schedule(FixedUpdate);
         app.world_mut().run_schedule(FixedPostUpdate);
         let cues: Vec<_> = app
@@ -2234,13 +2233,13 @@ mod audio_event_tests {
             .collect();
         assert_eq!(cues, [SoundCue::ParcelLand]);
 
-        app.insert_resource(State::new(PlayState::Paused));
+        app.insert_resource(State::new(AppState::Paused));
         for _ in 0..20 {
             app.world_mut().run_schedule(FixedUpdate);
             app.world_mut().run_schedule(FixedPostUpdate);
         }
         assert!(app.world().resource::<Messages<SoundRequest>>().is_empty());
-        app.insert_resource(State::new(PlayState::Running));
+        app.insert_resource(State::new(AppState::Running));
         for _ in 0..10 {
             app.world_mut().run_schedule(FixedUpdate);
             app.world_mut().run_schedule(FixedPostUpdate);

@@ -8,19 +8,11 @@ use avian3d::{
 };
 use bevy::prelude::*;
 
-/// 游戏会话只在 InGame 期间存在，暂停不切换该状态。
+/// 应用的唯一运行状态；暂停保留当前会话，返回主菜单才清理实体。
 #[derive(States, Clone, Copy, Debug, Default, PartialEq, Eq, Hash)]
 pub(crate) enum AppState {
     #[default]
     MainMenu,
-    InGame,
-}
-
-/// 会话内的运行状态；暂停保留场景、角色和持有关系。
-#[derive(SubStates, Clone, Copy, Debug, Default, PartialEq, Eq, Hash)]
-#[source(AppState = AppState::InGame)]
-pub(crate) enum PlayState {
-    #[default]
     Running,
     Paused,
 }
@@ -53,10 +45,9 @@ impl Plugin for GameFlowPlugin {
     fn build(&self, app: &mut App) {
         configure_feature_order(app);
         app.init_state::<AppState>()
-            .add_sub_state::<PlayState>()
             .add_systems(OnEnter(AppState::MainMenu), enter_main_menu)
-            .add_systems(OnEnter(PlayState::Paused), pause_simulation)
-            .add_systems(OnEnter(PlayState::Running), resume_simulation);
+            .add_systems(OnEnter(AppState::Paused), pause_simulation)
+            .add_systems(OnEnter(AppState::Running), resume_simulation);
     }
 }
 
@@ -95,15 +86,9 @@ pub(crate) fn configure_feature_order(app: &mut App) {
     );
 }
 
-/// 独立功能测试没有应用状态；真实游戏要求同时处于会话和运行子状态。
-pub(crate) fn gameplay_running(
-    app_state: Option<Res<State<AppState>>>,
-    play_state: Option<Res<State<PlayState>>>,
-) -> bool {
-    app_state.is_none_or(|state| {
-        *state.get() == AppState::InGame
-            && play_state.is_some_and(|state| *state.get() == PlayState::Running)
-    })
+/// 独立功能测试没有应用状态；真实游戏只在 Running 推进玩法。
+pub(crate) fn gameplay_running(app_state: Option<Res<State<AppState>>>) -> bool {
+    app_state.is_none_or(|state| *state.get() == AppState::Running)
 }
 
 fn enter_main_menu(
