@@ -81,6 +81,17 @@ function controlledViews(){
 }
 const advance=async()=>{for(let step=0;step<8;step++)await Promise.resolve()};
 
+function assertCardDetails(page,id){
+  const details=page.get('details'),record=page.data.registry[id],opensObject=page.app.view.objectId!==id;
+  const sources=(record.sourceEntries||[]).filter(source=>source.path&&Number.isSafeInteger(source.line)&&source.line>0);
+  assert.deepEqual(details.children.map(child=>child.tagName),['h2','p',...(opensObject?['button']:[]),...(sources.length?['section']:[])]);
+  assert.equal(details.children[0].textContent,record.name);assert.equal(details.children[1].textContent,record.description||'');
+  assert.deepEqual(details.querySelectorAll('[data-object]').map(button=>button.dataset.object),opensObject?[id]:[]);
+  assert.deepEqual(details.querySelectorAll('[data-vscode-line]').map(anchor=>anchor.dataset.vscodeLine),sources.map(source=>String(source.line)));
+  assert.equal(details.querySelector('[data-owner]'),null);assert.equal(details.querySelector('[data-open]'),null);assert.equal(details.querySelector('#clear-selection'),null);
+  assert.equal(details.querySelector('[data-access]'),null);assert.equal(details.querySelector('.schedule-registration'),null);assert.equal(details.querySelector('.badge'),null);
+}
+
 test('external views defer deep-link selection until metadata arrives without hydrating the descriptor index',async()=>{
   const loader=controlledViews(),page=viewer('?object=item.Shared&node=system-fixed&workspace=E:/work',{...loader});
   assert.equal(page.app.view,undefined);assert.equal(page.canvas.getAttribute('aria-busy'),'true');
@@ -115,7 +126,7 @@ test('external Schedule filtering uses full metadata and preserves the open filt
   const checkbox=filterPlugin(page,'include','A'),menu=page.get('schedule-include-menu');page.get('schedule-include-search').value='Alpha';page.get('schedule-include-search').dispatch('input');checkbox.focus();page.get('schedule-include-options').scrollTop=33;
   await advance();loader.resolve(page,1);await advance();assert.deepEqual(runtime.requests[0].view.schedulePluginGroups.find(group=>group.id==='A').systemNames,['demo::alpha::one','demo::alpha::two','demo::alpha::one']);
   assert.equal(menu.hidden,false);assert.equal(page.get('schedule-include-search').value,'Alpha');assert.equal(page.document.activeElement,checkbox);assert.equal(page.get('schedule-include-options').scrollTop,33);
-  runtime.requests[0].reject(new Error('layout failed'));await page.settle();assert.equal(page.location.searchParams.get('scheduleNode'),'fixed-card');assert.ok(page.get('details').textContent.includes('FixedUpdate'));
+  runtime.requests[0].reject(new Error('layout failed'));await page.settle();assert.equal(page.location.searchParams.get('scheduleNode'),'fixed-card');assertCardDetails(page,'system-fixed');
   page.click(page.get('schedule-clear'));await advance();loader.resolve(page,2);await page.settle();assert.equal(page.app.view.filtered,undefined);assertScheduleHighlight(page,'fixed-card');
   page.back();await advance();loader.resolve(page,3);await advance();runtime.requests[1].resolve({...filteredResult('filtered'),legendKinds:['system']});await page.settle();assert.deepEqual(page.app.selection.scheduleIncludePlugins,['A']);assert.equal(page.location.searchParams.has('scheduleNode'),false);assert.ok(page.get('details').querySelector('.guide'));
 });
@@ -194,10 +205,10 @@ test('Schedule left-click binds exact cards, nested sets, title layers and conte
   const fixed=scheduleElement(page,'fixed-card');page.click(fixed);assert.equal(page.get('details').hidden,false);
   assert.equal(leftClick(page,'fixed-card').defaultPrevented,true);
   assert.equal(page.get('details').hidden,false);assert.equal(page.get('details-resizer').hidden,false);assert.equal(page.get('details').querySelector('h2').textContent,'update_shared');
-  assert.ok(page.get('details').textContent.includes('FixedUpdate'));assert.ok(!page.get('details').textContent.includes('约束与说明'));
+  assertCardDetails(page,'system-fixed');
   assert.equal(page.location.searchParams.get('scheduleNode'),'fixed-card');assert.equal(page.location.searchParams.has('object'),false);assert.equal(page.history.length,count);assert.equal(page.app.view.id,'schedule-update');
   assert.equal(page.get('view-select').value,'schedule-update');assert.equal(fixed.classList.contains('selected'),true);
-  leftClick(page,'update-card');assert.ok(page.get('details').textContent.includes('RunFixedMainLoop'));assert.equal(page.location.searchParams.get('scheduleNode'),'update-card');
+  leftClick(page,'update-card');assertCardDetails(page,'system-update');assert.equal(page.location.searchParams.get('scheduleNode'),'update-card');
   for(const className of ['cluster','schedule-cluster-title']){leftClick(page,'inner-set',className);assert.equal(page.get('details').querySelector('h2').textContent,'SharedSet');assert.equal(page.location.searchParams.get('scheduleNode'),'inner-set')}
   leftClick(page,'sync-card');assert.ok(page.get('details').textContent.includes('同步依赖端点'));
   leftClick(page,'missing-card');assert.ok(page.get('details').textContent.includes('不是本调度中的已注册系统'));
@@ -206,13 +217,13 @@ test('Schedule left-click binds exact cards, nested sets, title layers and conte
   assert.equal(page.location.searchParams.get('workspace'),'E:/work');assert.equal(page.location.searchParams.get('keep'),'1');assert.equal(page.location.hash,'#anchor');
 });
 
-test('Schedule Enter and Space selection leaves native context actions untouched and clearing preserves unrelated focus',()=>{
+test('Schedule Enter and Space selection leaves native context actions untouched and blank clearing focuses the canvas',()=>{
   const page=viewer('?schedule=schedule-update',{edit:interactiveSchedules}),node=scheduleElement(page,'fixed-card'),count=page.history.length;
-  node.focus();assert.equal(node.dispatch('keydown',{key:'Enter'}).defaultPrevented,true);assert.equal(page.get('details').hidden,false);page.click(page.get('clear-selection'));node.focus();
-  for(const action of [{key:'ContextMenu'},{key:'F10',shiftKey:true}])assert.equal(node.dispatch('keydown',action).defaultPrevented,false);assert.equal(node.dispatch('contextmenu').defaultPrevented,false);assert.equal(page.get('details').hidden,false);assert.equal(page.document.activeElement,node);
+  node.focus();assert.equal(node.dispatch('keydown',{key:'Enter'}).defaultPrevented,true);assert.equal(page.get('details').hidden,false);mouseClick(page,page.canvas);node.focus();
+  for(const action of [{key:'ContextMenu'},{key:'F10',shiftKey:true}])assert.equal(node.dispatch('keydown',action).defaultPrevented,false);assert.equal(node.dispatch('contextmenu').defaultPrevented,false);assert.equal(page.get('details').hidden,false);assert.ok(page.document.activeElement===node);
   const set=scheduleElement(page,'outer-set','cluster');set.focus();assert.equal(set.dispatch('keydown',{key:' '}).defaultPrevented,true);assert.equal(page.location.searchParams.get('scheduleNode'),'outer-set');
-  page.get('search').focus();page.click(page.get('clear-selection'));assert.equal(page.document.activeElement,page.get('search'));assert.equal(page.get('details').hidden,false);assert.equal(page.get('details-resizer').hidden,false);assert.equal(page.location.searchParams.has('scheduleNode'),false);
-  leftClick(page,'fixed-card');page.get('clear-selection').focus();page.click(page.get('clear-selection'));assert.equal(page.document.activeElement,page.canvas);assert.equal(page.history.length,count);
+  page.get('search').focus();page.app.select(null);assert.ok(page.document.activeElement===page.get('search'));assert.equal(page.get('details').hidden,false);assert.equal(page.get('details-resizer').hidden,false);assert.equal(page.location.searchParams.has('scheduleNode'),false);
+  leftClick(page,'fixed-card');node.focus();mouseClick(page,page.canvas);assert.ok(page.document.activeElement===page.canvas);assert.equal(page.history.length,count);
 });
 
 test('Schedule selection uses the object outline treatment and a set title selects only its entire native boundary',()=>{
@@ -227,7 +238,7 @@ test('Schedule selection uses the object outline treatment and a set title selec
   assert.ok(Number.parseFloat(boundary.style.getPropertyValue('stroke-width'))>NODE_STYLES.system_set.width);assert.equal(page.get('diagram').querySelectorAll('[data-selection-filter]').length,1);
   for(const id of ['hidden-marker','inner-edge','inner-label','unbound-title'])for(const child of page.get(id).children)assert.equal(child.style.getPropertyValue('filter'),'');
   const before=Number.parseFloat(boundary.style.getPropertyValue('stroke-width'));page.click(page.get('zoom-out'));const after=Number.parseFloat(boundary.style.getPropertyValue('stroke-width'));assert.ok(after>before,'native scale is used to keep the extra outline width stable on screen');
-  page.click(page.get('clear-selection'));assert.equal(boundary.style.getPropertyValue('fill'),'');assert.equal(boundary.style.getPropertyValue('stroke-width'),'');assert.equal(boundary.style.getPropertyValue('filter'),'');assert.equal(page.get('diagram').querySelectorAll('[data-selection-filter]').length,0);
+  mouseClick(page,page.canvas);assert.equal(boundary.style.getPropertyValue('fill'),'');assert.equal(boundary.style.getPropertyValue('stroke-width'),'');assert.equal(boundary.style.getPropertyValue('filter'),'');assert.equal(page.get('diagram').querySelectorAll('[data-selection-filter]').length,0);
   assert.equal(page.app.view.svg,original);assert.equal(page.data.views.find(view=>view.id==='schedule-update').svg,original);
 });
 
@@ -245,7 +256,7 @@ test('SystemSet title masks follow only their exact border and restore their own
     assert.deepEqual(state(inner).slice(1),innerOriginal.slice(1));assert.deepEqual(state(outer),outerOriginal);assert.deepEqual(state(text),textOriginal);assert.deepEqual(state(system),systemOriginal);assert.deepEqual(state(wrong.querySelector('polygon')),wrongOriginal);
     const fill=inner.style.getPropertyValue('fill');page.click(page.get('zoom-out'));assert.equal(inner.style.getPropertyValue('fill'),fill);assert.deepEqual(state(inner).slice(1),innerOriginal.slice(1));assert.equal(diagram.querySelectorAll('[data-selection-filter]').length,1);
     leftClick(page,'outer-set','cluster');assertScheduleHighlight(page,'outer-set','set');assert.deepEqual(state(inner),innerOriginal);assert.deepEqual(state(system),systemOriginal);
-    if(repeat%2)mouseClick(page,page.canvas);else page.click(page.get('clear-selection'));
+    mouseClick(page,repeat%2?page.canvas:diagram);
     assert.deepEqual(state(inner),innerOriginal);assert.deepEqual(state(outer),outerOriginal);assert.equal(diagram.querySelectorAll('[data-selection-filter]').length,0);
   }
   assert.equal(page.app.view.svg,original);assert.equal(inner.getAttribute('fill'),NODE_STYLES.system_set.fill);assert.equal(inner.getAttribute('stroke'),'none');
@@ -257,7 +268,7 @@ test('Schedule default legend uses only native samples for the visible kinds and
   assert.deepEqual(kinds(),['system','system_set','context','order','set_membership']);assert.deepEqual(details.querySelectorAll('[data-schedule-sample]').map(sample=>sample.dataset.scheduleSample),kinds());assert.equal(details.querySelectorAll('[data-sample]').length,0);assert.deepEqual(details.querySelectorAll('h3').map(heading=>heading.textContent),['Nodes','Edges']);
   for(const label of Object.values(SCHEDULE_LEGEND_LABELS))assert.ok(details.textContent.includes(label));assert.equal(details.hidden,false);assert.equal(page.get('details-resizer').hidden,false);assert.equal(page.get('details-resizer').getAttribute('aria-disabled'),'false');
   workspace.clientWidth=1300;Object.defineProperty(page.canvas,'clientWidth',{get:()=>1000-Number.parseFloat(workspace.style.getPropertyValue('--details-width'))-10});page.click(page.get('fit'));const viewport=page.get('diagram').style.transform;
-  leftClick(page,'fixed-card');assert.equal(details.querySelector('h2').textContent,'update_shared');assert.equal(page.get('diagram').style.transform,viewport);page.click(page.get('clear-selection'));assert.deepEqual(kinds(),['system','system_set','context','order','set_membership']);assert.equal(page.get('diagram').style.transform,viewport);
+  leftClick(page,'fixed-card');assert.equal(details.querySelector('h2').textContent,'update_shared');assert.equal(page.get('diagram').style.transform,viewport);mouseClick(page,page.canvas);assert.deepEqual(kinds(),['system','system_set','context','order','set_membership']);assert.equal(page.get('diagram').style.transform,viewport);
   page.get('details-resizer').dispatch('keydown',{key:'ArrowLeft'});const resized=page.get('diagram').style.transform;assert.equal(workspace.style.getPropertyValue('--details-width'),'302px');leftClick(page,'inner-set','schedule-cluster-title');mouseClick(page,page.canvas);assert.equal(page.get('diagram').style.transform,resized);assert.deepEqual(kinds(),['system','system_set','context','order','set_membership']);
 });
 
@@ -372,7 +383,7 @@ test('Schedule detail sizing preserves canvas center and zoom and shares the exi
   const before=viewport(),point=(page.canvas.clientWidth/2-before[0])/before[2];
   leftClick(page,'fixed-card');let after=viewport();assert.equal(after[2],before[2]);assert.ok(Math.abs((page.canvas.clientWidth/2-after[0])/after[2]-point)<1e-6);
   page.get('details-resizer').dispatch('keydown',{key:'ArrowLeft'});after=viewport();assert.equal(after[2],before[2]);assert.ok(Math.abs((page.canvas.clientWidth/2-after[0])/after[2]-point)<1e-6);
-  const width=workspace.style.getPropertyValue('--details-width'),resized=viewport();page.click(page.get('clear-selection'));assert.deepEqual(viewport(),resized);
+  const width=workspace.style.getPropertyValue('--details-width'),resized=viewport();mouseClick(page,page.canvas);assert.deepEqual(viewport(),resized);
   leftClick(page,'fixed-card');assert.equal(workspace.style.getPropertyValue('--details-width'),width);
 });
 
@@ -386,18 +397,18 @@ test('compact Schedule details preserve the vertical center when opening and cle
   const shown=page.get('diagram').innerHTML;
   filterPlugin(page,'include','A');await Promise.resolve();runtime.requests[0].reject(new Error('offline layout failed'));await page.settle();
   assert.equal(page.get('diagram').innerHTML,shown);assert.equal(page.location.searchParams.get('scheduleNode'),'fixed-card');assertCenter();
-  page.click(page.get('clear-selection'));assertCenter();assert.deepEqual(viewport(),before);assert.equal(page.get('details').hidden,false);
+  mouseClick(page,page.canvas);assertCenter();assert.deepEqual(viewport(),before);assert.equal(page.get('details').hidden,false);
   assert.equal(page.history.length,historyLength+1,'only the filter operation adds history');
 });
 
 test('Schedule selected deep links return from object diagrams and restore history without guessing stale identities',()=>{
   const page=viewer('?schedule=schedule-update&scheduleNode=update-card&workspace=E:/work#anchor',{edit:interactiveSchedules});
-  assert.equal(page.get('details').hidden,false);assert.ok(page.get('details').textContent.includes('RunFixedMainLoop'));
+  assert.equal(page.get('details').hidden,false);assertCardDetails(page,'system-update');
   page.click(page.get('zoom-out'));const viewport=page.get('diagram').style.transform;
   page.click(page.get('details').querySelector('[data-object="system-update"]'));assert.equal(page.app.view.objectId,'system-update');assert.equal(page.location.searchParams.get('scheduleNode'),'update-card');
   page.back();assert.equal(page.app.view.id,'schedule-update');assert.equal(page.get('details').hidden,false);assert.equal(page.get('diagram').style.transform,viewport);assert.equal(page.location.searchParams.get('scheduleNode'),'update-card');
   page.forward();page.click(page.get('return-context'));assert.equal(page.app.view.id,'schedule-update');assert.equal(page.location.searchParams.get('scheduleNode'),'update-card');assert.equal(page.get('diagram').style.transform,viewport);
-  page.choose('schedule-render');assert.equal(page.location.searchParams.has('scheduleNode'),false);assert.equal(page.get('details').hidden,false);leftClick(page,'render-card');assert.ok(page.get('details').textContent.includes('RunFixedMainLoop'));
+  page.choose('schedule-render');assert.equal(page.location.searchParams.has('scheduleNode'),false);assert.equal(page.get('details').hidden,false);leftClick(page,'render-card');assertCardDetails(page,'system-update');
   for(const query of ['?schedule=schedule-update&scheduleNode=deleted','?schedule=schedule-render&scheduleNode=fixed-card']){
     const stale=viewer(query,{edit:interactiveSchedules});assert.equal(stale.get('details').hidden,false);assert.equal(stale.location.searchParams.has('scheduleNode'),false);assert.equal(stale.history.length,1);
   }
@@ -430,7 +441,7 @@ test('SystemSet title fills restore selected and cleared history through object 
   assertScheduleHighlight(page,'inner-set','set');page.click(page.get('zoom-out'));const viewport=page.get('diagram').style.transform;
   page.click(page.get('details').querySelector('[data-object="set-shared"]'));page.back();assertScheduleHighlight(page,'inner-set','set');assert.equal(page.get('diagram').style.transform,viewport);
   page.forward();page.click(page.get('return-context'));assertScheduleHighlight(page,'inner-set','set');assert.equal(page.get('diagram').style.transform,viewport);
-  page.click(page.get('clear-selection'));page.choose('schedule-render');page.back();assert.equal(page.location.searchParams.has('scheduleNode'),false);assert.equal(page.get('title-mask-inner-set').style.getPropertyValue('fill'),'');assert.equal(page.get('diagram').querySelectorAll('[data-selection-filter]').length,0);
+  mouseClick(page,page.canvas);page.choose('schedule-render');page.back();assert.equal(page.location.searchParams.has('scheduleNode'),false);assert.equal(page.get('title-mask-inner-set').style.getPropertyValue('fill'),'');assert.equal(page.get('diagram').querySelectorAll('[data-selection-filter]').length,0);
   leftClick(page,'outer-set','cluster');filterPlugin(page,'include','A');await Promise.resolve();runtime.requests[0].resolve(scheduleSubset(page,['inner-set','outer-set']));await page.settle();assertScheduleHighlight(page,'outer-set','set');
   leftClick(page,'inner-set','schedule-cluster-title');assertScheduleHighlight(page,'inner-set','set');page.back();assertScheduleHighlight(page,'outer-set','set');assert.equal(page.get('title-mask-inner-set').style.getPropertyValue('fill'),'');
   page.forward();await Promise.resolve();runtime.requests[1].resolve(scheduleSubset(page,['inner-set','outer-set']));await page.settle();assertScheduleHighlight(page,'inner-set','set');assert.equal(scheduleElement(page,'outer-set','schedule-cluster-title').querySelector('polygon').style.getPropertyValue('fill'),'');
@@ -460,7 +471,7 @@ test('Schedule async failures and stale results retain the last successful card 
   const newest=page.get('details').querySelector('h2');runtime.requests[2].resolve(scheduleSubset(page,['fixed-card','update-card']));await page.settle();
   runtime.requests[1].resolve(scheduleSubset(page,[]));await Promise.resolve();await Promise.resolve();page.flush();
   assert.equal(page.location.searchParams.get('scheduleNode'),'update-card');assert.equal(page.get('details').querySelector('h2'),newest);assert.equal(page.get('details').hidden,false);
-  filterPlugin(page,'exclude','B');await Promise.resolve();page.click(page.get('clear-selection'));runtime.requests[3].resolve(scheduleSubset(page,['fixed-card','update-card']));await page.settle();
+  filterPlugin(page,'exclude','B');await Promise.resolve();mouseClick(page,page.canvas);runtime.requests[3].resolve(scheduleSubset(page,['fixed-card','update-card']));await page.settle();
   assert.equal(page.location.searchParams.has('scheduleNode'),false);assert.equal(page.get('details').hidden,false);
 });
 
@@ -518,7 +529,7 @@ test('object cards preserve details and explicit navigation returns through obje
   const page=viewer('');
   assert.equal(page.app.view.id,'schedule-update');
   page.app.openObject('item.Shared');page.flush();page.activate('system-fixed');
-  assert.equal(page.get('details').querySelectorAll('.schedule-registration').length,1);
+  assertCardDetails(page,'system-fixed');
   page.click(page.get('details').querySelector('[data-object="system-fixed"]'));
   assert.equal(page.app.view.id,'object:system-fixed');assertFitted(page);
   assert.equal(page.location.searchParams.get('object'),'system-fixed');
@@ -572,20 +583,18 @@ test('old aggregate aliases offer every original projection or registration with
   const standalone=viewer('?feature=item&node=old-function');assert.equal(standalone.get('object-results').querySelector('h2').textContent,'选择原对象');
 });
 
-test('each projection and registration retains its own description, fields, sources and family links',()=>{
+test('each projection and registration keeps its own description and source locations in minimal card details',()=>{
   const page=viewer('?feature=item&object=item.Shared');
-  assert.ok(page.get('details').textContent.includes('物品组件的完整说明'));
+  assertCardDetails(page,'item.Shared');assert.ok(page.get('details').textContent.includes('物品组件的完整说明'));
   assert.ok(!page.get('details').textContent.includes('另一投影说明'));
   page.app.openObject('character.Shared');page.flush();
-  assert.equal(page.app.view.id,'object:character.Shared');assert.ok(page.get('details').textContent.includes('另一投影说明'));
+  assert.equal(page.app.view.id,'object:character.Shared');assertCardDetails(page,'character.Shared');assert.ok(page.get('details').textContent.includes('另一投影说明'));
   assert.ok(!page.get('details').textContent.includes('value: f32'));
   page.app.openObject('system-fixed');page.flush();
-  assert.equal(page.get('details').querySelectorAll('.schedule-registration').length,1);
-  assert.deepEqual(page.get('details').querySelectorAll('[data-vscode-line]').map(anchor=>anchor.dataset.vscodeLine),['40','50']);
-  const family=page.get('details').querySelector('[data-open="system-update"]');assert.ok(family.textContent.includes('RunFixedMainLoop'));
-  page.click(family);assert.equal(page.app.view.id,'object:system-update');
-  assert.equal(page.get('details').querySelectorAll('.schedule-registration').length,1);
-  assert.deepEqual(page.get('details').querySelectorAll('[data-vscode-line]').map(anchor=>anchor.dataset.vscodeLine),['40','60']);
+  assertCardDetails(page,'system-fixed');assert.equal(page.data.registry['system-fixed'].registrations[0].schedule,'FixedUpdate');
+  assert.deepEqual(page.data.registry['system-fixed'].registrationFamilyIds,['system-fixed','system-update']);
+  page.app.search('update_shared');page.click(page.get('object-results').querySelector('[data-object="system-update"]'));assert.equal(page.app.view.id,'object:system-update');
+  assertCardDetails(page,'system-update');assert.equal(page.data.registry['system-update'].registrations[0].schedule,'RunFixedMainLoop');
 });
 
 test('global search reaches isolated objects and distinguishes same names by owner and Schedule',()=>{
@@ -693,13 +702,13 @@ test('old aggregate candidates remain complete despite restrictive search catego
   assert.ok(page.get('object-results').textContent.includes('此旧入口'));
 });
 
-test('Entity details keep all components and related links enter exact object views',()=>{
+test('Entity details omit the component list while global search still opens exact component objects',()=>{
   const page=viewer('?feature=item&object=entity-item');
   assert.equal(page.document.querySelector('[data-entity-toggle]'),null);
   for(const id of ['item.Shared','item.Other'])assert.equal(page.get('diagram').querySelector('[data-id="'+id+'"]'),null);
   assert.deepEqual(page.app.view.nodes.map(node=>node.id),['entity-item']);
-  assert.deepEqual(page.get('details').querySelectorAll('[data-open]').map(button=>button.dataset.open),['item.Shared','item.Other']);
-  page.click(page.get('details').querySelector('[data-open="item.Shared"]'));
+  assertCardDetails(page,'entity-item');assert.deepEqual(page.data.registry['entity-item'].components,[{id:'item.Shared'},{id:'item.Other'}]);
+  page.app.search('Shared');page.click(page.get('object-results').querySelector('[data-object="item.Shared"]'));
   assert.equal(page.app.view.id,'object:item.Shared');
   page.activate('entity-item');assert.equal(page.app.view.id,'object:item.Shared');
   page.click(page.get('details').querySelector('[data-object="entity-item"]'));assert.equal(page.app.view.id,'object:entity-item');
@@ -727,13 +736,13 @@ test('unavailable local history and stale object routes retain working navigatio
   const unrelated=viewer('?object=item.Shared&node=resource.Config');assert.equal(unrelated.app.selection.node,'item.Shared');
 });
 
-test('node details preserve canonical Read/Write summaries, full query and authoritative source entries',()=>{
+test('card details omit access, query, ownership and source gaps while keeping authoritative source entries',()=>{
   const page=viewer('?feature=item&object=system-fixed');const details=page.get('details');
-  const read=details.querySelector('[data-access="Read"]');assert.deepEqual(read.querySelectorAll('[data-access-kind]').map(group=>group.dataset.accessKind),['Entity','Resource','Local','NonSend']);
-  assert.deepEqual(read.querySelector('[data-access-kind="Entity"]').querySelectorAll('[data-open]').map(button=>button.dataset.open),['entity-item','entity-character']);
-  assert.ok(details.textContent.includes('Query<&mut Shared>'));
-  page.click(details.querySelector('[data-owner]'));assert.equal(page.app.view.id,'object:plugin-ItemPlugin');assert.equal(page.location.searchParams.get('object'),'plugin-ItemPlugin');
-  page.app.openObject('item.Other');page.flush();assert.equal(details.querySelector('[data-vscode-path]'),null);assert.ok(details.textContent.includes('待核实'));assert.ok(!details.textContent.includes('not-a-definition.rs'));
+  assertCardDetails(page,'system-fixed');assert.ok(!details.textContent.includes('Query<&mut Shared>'));
+  assert.deepEqual(page.data.registry['system-fixed'].reads,['item.Shared','item.Other','character.Shared','resource.Config','local.State','non_send.Native']);
+  assert.deepEqual(page.data.registry['system-fixed'].filters,['Query<&mut Shared>','With<Pickable>']);
+  page.app.openObject('item.Other');page.flush();assertCardDetails(page,'item.Other');assert.equal(details.querySelector('[data-vscode-path]'),null);assert.ok(!details.textContent.includes('待核实'));assert.ok(!details.textContent.includes('not-a-definition.rs'));
+  assert.deepEqual(page.data.registry['item.Other'].sourceGaps,['待核实：没有类型定义证据']);
 });
 
 function bodyOperationDetails(data){
@@ -753,30 +762,22 @@ function bodyOperationDetails(data){
   Object.assign(data.registry['set-shared'],{kind:'QueryData',name:'ReadyQuery'});
 }
 
-test('system details separate reviewed body-only operations from parameter Write and retain exact targets and evidence',()=>{
-  const page=viewer('?object=system-fixed',{edit:bodyOperationDetails}),details=page.get('details'),body=details.querySelector('[data-access="body"]');
-  assert.equal(body.querySelector('h3').textContent,'函数体操作');
-  assert.deepEqual(body.querySelectorAll('[data-body-operation]').map(item=>item.dataset.bodyOperation),['insert','remove','initialize','read','mutable_access','trigger','publish','reference']);
-  assert.deepEqual(details.querySelector('[data-access="Write"]').querySelectorAll('[data-open]').map(button=>button.dataset.open),['resource.Config']);
-  assert.deepEqual(details.querySelector('[data-access="Read"]').querySelectorAll('[data-open]').map(button=>button.dataset.open),['resource.Config']);
-  assert.deepEqual(body.querySelectorAll('strong').map(label=>label.textContent),['添加','移除','初始化','只读访问','可变访问（不表示实际修改）','触发事件','发布消息','查询接口']);
-  const inserted=body.querySelector('[data-body-operation="insert"]');assert.ok(inserted.textContent.includes('Commands · 延迟应用 · 当前应用世界'));assert.ok(inserted.textContent.includes('目标缺少 <Other> 时'));assert.ok(inserted.textContent.includes('prepare::<Other>'));assert.equal(inserted.querySelector('Other'),null);
-  assert.ok(body.querySelector('[data-body-operation="initialize"]').textContent.includes('World · 直接调用 · 主应用世界'));
-  assert.ok(body.querySelector('[data-body-operation="publish"]').textContent.includes('MessageWriter · 直接调用 · 当前应用世界'));
-  const dependency=body.querySelector('[data-vscode-line="143"]');assert.equal(dependency.dataset.vscodeDependencyName,'example');assert.equal(dependency.dataset.vscodeDependencyVersion,'0.20.0');
-  assert.deepEqual(body.querySelectorAll('[data-vscode-line]').map(anchor=>anchor.dataset.vscodeLine),['141','142','143','144','145','146','147','148']);
+test('system card details omit body-only operations and their nested sources without changing the reviewed data',()=>{
+  const page=viewer('?object=system-fixed',{edit:bodyOperationDetails}),details=page.get('details');
+  assertCardDetails(page,'system-fixed');assert.equal(details.querySelector('[data-body-operation]'),null);
+  assert.deepEqual(page.data.registry['system-fixed'].bodyOperations.map(operation=>operation.operation),['insert','remove','initialize','read','mutable_access','trigger','publish','reference']);
+  assert.deepEqual(page.data.registry['system-fixed'].bodyOperations.map(operation=>operation.sourceEntries[0].line),[141,142,143,144,145,146,147,148]);
   assert.equal(page.refreshed.at(-1),details);
-  page.click(inserted.querySelector('[data-open="item.Other"]'));assert.equal(page.app.view.objectId,'item.Other');
-  page.back();assert.equal(page.app.view.objectId,'system-fixed');assert.equal(page.get('details').querySelectorAll('[data-body-operation]').length,8);
-  page.app.openObject('system-update');page.flush();assert.equal(page.get('details').querySelector('[data-access="body"]'),null);
+  page.app.openObject('system-update');page.flush();assertCardDetails(page,'system-update');
+  page.back();assert.equal(page.app.view.objectId,'system-fixed');assertCardDetails(page,'system-fixed');
 });
 
-test('Schedule left-click and object roundtrip expose body-only access without altering the displayed schedule',()=>{
+test('Schedule left-click and object roundtrip keep minimal details without altering the displayed schedule',()=>{
   const page=viewer('?schedule=schedule-update',{edit:data=>{interactiveSchedules(data);bodyOperationDetails(data)}}),svg=page.app.view.svg;
-  leftClick(page,'fixed-card');assert.equal(page.get('details').querySelectorAll('[data-body-operation]').length,8);
-  const body=page.get('details').querySelector('[data-access="body"]');page.click(body.querySelector('[data-open="item.Other"]'));
-  assert.equal(page.app.view.objectId,'item.Other');page.click(page.get('return-context'));
-  assert.equal(page.app.view.id,'schedule-update');assert.equal(page.app.view.svg,svg);assert.equal(page.location.searchParams.get('scheduleNode'),'fixed-card');assert.equal(page.get('details').querySelectorAll('[data-body-operation]').length,8);
+  leftClick(page,'fixed-card');assertCardDetails(page,'system-fixed');
+  page.click(page.get('details').querySelector('[data-object="system-fixed"]'));
+  assert.equal(page.app.view.objectId,'system-fixed');assertCardDetails(page,'system-fixed');page.click(page.get('return-context'));
+  assert.equal(page.app.view.id,'schedule-update');assert.equal(page.app.view.svg,svg);assert.equal(page.location.searchParams.get('scheduleNode'),'fixed-card');assertCardDetails(page,'system-fixed');
 });
 
 test('clear returns actual view legend and releases only graph or disappearing-button focus',()=>{
@@ -784,7 +785,7 @@ test('clear returns actual view legend and releases only graph or disappearing-b
   assert.equal(page.get('details').querySelector('.guide').getAttribute('aria-label'),'Legend');
   assert.deepEqual(page.get('details').querySelectorAll('[data-guide-node-type]').map(row=>row.dataset.guideNodeType),['system','entity','component']);
   assert.deepEqual(page.get('details').querySelectorAll('[data-guide-edge-semantic]').map(row=>row.dataset.guideEdgeSemantic),['read','write','reference']);
-  page.activate('item.Shared');page.get('clear-selection').focus();page.click(page.get('clear-selection'));assert.equal(page.document.activeElement,page.canvas);
+  page.get('diagram').querySelector('[data-link-id="write"]').dispatch('keydown',{key:'Enter'});page.get('clear-selection').focus();page.click(page.get('clear-selection'));assert.equal(page.document.activeElement,page.canvas);
   assert.equal(page.get('diagram').querySelectorAll('[data-selection-filter]').length,0);
   page.activate('item.Shared');page.get('diagram').querySelector('[data-id="item.Shared"]').focus();page.app.select(null);assert.equal(page.document.activeElement,page.canvas);
 });
@@ -886,9 +887,9 @@ test('generated embedded scripts execute their search factory and category handl
   assert.equal(document.getElementById('section'),null);assert.equal(document.getElementById('object-results').hidden,false);
 });
 
-test('object owner action opens the matching Plugin object and preserves history and workspace',()=>{
+test('plugin picker navigation preserves object selection history and workspace after owner links are removed',()=>{
   const page=viewer('?workspace=D%3A%2Fdemo&object=system-fixed');
-  page.click(page.get('details').querySelector('[data-owner]'));assert.equal(page.app.view.id,'object:plugin-ItemPlugin');
+  assert.equal(page.get('details').querySelector('[data-owner]'),null);page.choose('object:plugin-ItemPlugin');assert.equal(page.app.view.id,'object:plugin-ItemPlugin');
   page.back();assert.equal(page.app.view.id,'object:system-fixed');assert.equal(page.app.selection.node,'system-fixed');assert.equal(page.location.searchParams.get('workspace'),'D:/demo');
 });
 
@@ -911,7 +912,7 @@ test('Plugin and PluginGroup show details only while selected and return to thei
     const description=page.data.registry[id].description;
     assert.ok(page.get('details').querySelector('.guide'));assert.equal(page.location.searchParams.has('node'),false);page.activate(id);assert.ok(page.get('details').textContent.includes(description));
     assert.ok(!page.get('details').textContent.includes('公开契约'));assert.deepEqual(page.data.model.features[0].contracts,['Shared public contract']);
-    page.click(page.get('clear-selection'));
+    assertCardDetails(page,id);mouseClick(page,page.canvas);
     assert.ok(page.get('details').querySelector('.guide'));assert.ok(!page.get('details').textContent.includes(description));
     assert.equal(page.get('view-select').value,'object:'+id);assert.equal(page.get('schedule-filter').hidden,true);
     page.choose('schedule-update');page.emit('resize');assert.equal(page.get('details').hidden,false);assert.equal(page.get('details-resizer').hidden,false);
@@ -925,9 +926,9 @@ test('ordinary Plugin entry points default to an unselected card while explicit 
   for(const [id,feature]of entries){
     for(const query of ['?object='+id,'?object='+id+'&node=deleted','?feature='+feature,'?feature='+feature+'&node=deleted'])unselected(viewer(query),id);
     for(const query of ['?object='+id+'&node='+id,'?node='+id,'?feature='+feature+'&node='+id]){const page=viewer(query);assert.equal(page.location.searchParams.get('node'),id);assert.equal(page.get('details').querySelector('h2').textContent,page.data.registry[id].name);assert.ok(page.get('diagram').querySelectorAll('[data-selection-filter]').length>0)}
-    for(const entry of ['menu','search','owner','api']){
+    for(const entry of ['menu','search','api']){
       const page=viewer('?object=system-fixed',{edit:data=>{if(feature==='avian')data.registry['system-fixed'].feature='avian'}});
-      if(entry==='menu')page.choose('object:'+id);else if(entry==='search'){page.app.search(page.data.registry[id].name);page.click(page.get('object-results').querySelector('[data-object="'+id+'"]'))}else if(entry==='owner')page.click(page.get('details').querySelector('[data-owner]'));else{page.app.openObject(id);page.flush()}
+      if(entry==='menu')page.choose('object:'+id);else if(entry==='search'){page.app.search(page.data.registry[id].name);page.click(page.get('object-results').querySelector('[data-object="'+id+'"]'))}else{page.app.openObject(id);page.flush()}
       unselected(page,id);page.activate(id);const length=page.history.length;page.app.openObject(id);page.flush();unselected(page,id);assert.equal(page.history.length,length);
     }
     const alias=viewer('?object=old-plugin',{edit:data=>data.objectAliases['old-plugin']=[id]});unselected(alias,id);

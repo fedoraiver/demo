@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { NODE_KINDS, nodeKindOf } from './architecture-kinds.mjs';
-import { TYPE_PACKAGES, ENTITY_SOURCE_EVIDENCE, HIERARCHY_OWNED_ENTITIES, IMPORTED_ENTITIES, MARKER_ONLY_RESOURCES, RELATED_IMPLEMENTATIONS, SYSTEM_REGISTRATION_EVIDENCE, EDGE_SOURCE_EVIDENCE } from './architecture-source-evidence.mjs';
+import { TYPE_PACKAGES, ENTITY_SOURCE_EVIDENCE, COMPONENT_SOURCE_EVIDENCE, COMPONENT_BUNDLE_SOURCE_EVIDENCE, COMPONENT_SCENE_SOURCE_EVIDENCE, HIERARCHY_OWNED_ENTITIES, IMPORTED_ENTITIES, MARKER_ONLY_RESOURCES, RELATED_IMPLEMENTATIONS, SYSTEM_REGISTRATION_EVIDENCE, EDGE_SOURCE_EVIDENCE } from './architecture-source-evidence.mjs';
 
 const roleLabels = Object.freeze({
   definition: '定义位置', registration: '注册位置', create: '创建位置', destroy: '销毁位置',
@@ -13,7 +13,7 @@ const roleLabels = Object.freeze({
 });
 
 const policies = {
-  component: ['definition'],
+  component: ['definition', 'create', 'destroy'],
   entity: ['create', 'destroy'],
   system: ['definition', 'registration'],
   observer: ['definition', 'registration'],
@@ -260,7 +260,7 @@ function rustCalls(file) {
 }
 
 /** Read-only source index shared by node and edge audits during one build. */
-export function createArchitectureSourceContext({ repository, dependencyContext = {}, model } = {}) {
+export function createArchitectureSourceContext({ repository, dependencyContext = {}, model, components } = {}) {
   if (!repository) throw new Error('Source policies require the repository root');
   const roots = (dependencyContext.metadata?.packages || []).filter(item => item.source?.startsWith('registry+')).map(item => ({ name: item.name, version: item.version, root: slash(path.dirname(item.manifest_path)) }));
   const files = new Map(), packageFiles = new Map(), projectFiles = [];
@@ -335,7 +335,7 @@ export function createArchitectureSourceContext({ repository, dependencyContext 
     if (normalized.line > file.lines.length) throw new Error(`Source line out of bounds: ${normalized.path}:${normalized.line}`);
     return normalized;
   }
-  return { repository, roots, projectFiles, read, inPackage, sourceAt, callsIn, declaration, resolveEvidence, verified, model };
+  return { repository, roots, projectFiles, read, inPackage, sourceAt, callsIn, declaration, resolveEvidence, verified, model, components };
 }
 
 function typeDefinitions(record, context) {
@@ -458,8 +458,98 @@ function entitySources(record, context, gaps) {
   return sources;
 }
 
+function componentSources(record, context, gaps) {
+  const definitions = record.scheduleEvidence?.schemaVersion === 1
+    ? (record.sourceEntries || []).filter(source => source.role === 'definition').map(source => context.verified(source, source.role, source.label))
+    : typeDefinitions(record, context);
+  const sources = [...definitions];
+  for (const descriptor of COMPONENT_SOURCE_EVIDENCE[record.id] || []) {
+    const resolved = context.resolveEvidence(descriptor);
+    if (!resolved.length) gaps.push(`未能唯一核实${descriptor.label}（${descriptor.path}）`);
+    sources.push(...resolved);
+  }
+  const owner = context.model?.entities?.find(entity => entity.components.some(component => component.id === record.id));
+  const ownerSources = owner ? entitySources({ ...owner, id: `entity-${owner.id}` }, context, []) : [];
+  // Bundle 工厂归属由已核对清单给出；旧 source 或类型相同不能证明使用了同一装配方。
+  const bundleSources = owner ? (COMPONENT_BUNDLE_SOURCE_EVIDENCE[owner.canonical_entity || `entity-${owner.id}`] || []).flatMap(descriptor => context.resolveEvidence(descriptor)) : [];
+  const bundles = bundleSources.flatMap(source => {
+    const file = context.read(source);
+    return [...file.code.matchAll(/\bfn\s+[A-Za-z_]\w*(?:\s*<[^;{}]*>)?\s*\(/g)].flatMap(match => {
+      const parameterStart = file.code.indexOf('(', match.index), parameterEnd = balancedEnd(file.code, parameterStart);
+      const start = file.code.indexOf('{', parameterEnd), end = start < 0 ? -1 : balancedEnd(file.code, start, '{', '}');
+      const declarationLine = file.text.slice(0, match.index).split('\n').length, endLine = file.text.slice(0, end).split('\n').length;
+      if (source.line < declarationLine || source.line > endLine || !/->\s*impl\s+Bundle\b/.test(file.code.slice(parameterEnd, start))) return [];
+      return [{ file, firstLine: file.text.slice(0, start).split('\n').length, lastLine: endLine }];
+    });
+  });
+  function entityPath(code, start, offset) {
+    const path = [];
+    for (let index = start; index < offset; index++) {
+      if (code[index] === '[') path.push([index, 0]);
+      else if (code[index] === ']') path.pop();
+      else if (code.slice(index, index + 2) === '--' && path.length) { path.at(-1)[1]++; index++; }
+    }
+    return path;
+  }
+  // 创建证据可以指向内嵌子实体；用列表层级与同级序号定位该实体，而不是整个工厂根。
+  const extraSceneDescriptors = owner ? COMPONENT_SCENE_SOURCE_EVIDENCE[owner.canonical_entity || `entity-${owner.id}`] || [] : [];
+  const sceneDescriptors = [...(owner ? ENTITY_SOURCE_EVIDENCE[owner.canonical_entity || `entity-${owner.id}`] || [] : []), ...extraSceneDescriptors];
+  const sceneSources = [...ownerSources, ...extraSceneDescriptors.flatMap(descriptor => context.resolveEvidence(descriptor))];
+  const scenes = sceneSources.filter(source => source.role === 'create' && !source.dependency).flatMap(source => {
+    const descriptors = sceneDescriptors;
+    const descriptor = descriptors.find(entry => entry.path === source.path && entry.label === source.label);
+    if (!descriptor) return [];
+    const file = context.read(source), line = file.lines[source.line - 1], position = line.indexOf(descriptor.contains);
+    if (position < 0) return [];
+    const lineStart = file.lines.slice(0, source.line - 1).join('\n').length + (source.line > 1 ? 1 : 0);
+    const bracket = descriptor.contains.lastIndexOf('['), marker = lineStart + position + (bracket >= 0 ? bracket + 1 : 0);
+    return [...file.code.matchAll(/\bbsn\s*!\s*\{/g)].flatMap(match => {
+      const start = match.index + match[0].lastIndexOf('{'), end = balancedEnd(file.code, start, '{', '}');
+      const sameLine = file.text.slice(0, start).split('\n').length === source.line;
+      if (!(marker > start && marker < end) && !(sameLine && marker <= start && /bsn\s*!/.test(descriptor.contains))) return [];
+      const target = Math.max(marker, start + 1);
+      return [{ file, start, end, target: entityPath(file.code, start + 1, target), collection: descriptor.contains.trimEnd().endsWith('[') }];
+    });
+  });
+  function isAssembly(source) {
+    if (bundles.some(range => source.path === range.file.path && source.dependency?.name === range.file.dependency?.name && source.line >= range.firstLine && source.line <= range.lastLine)) return true;
+    const symbol = /插入\s+([a-z_]\w*)\s*:/.exec(source.label || '')?.[1] || firstType(record.name);
+    return scenes.some(scene => source.path === scene.file.path && !source.dependency && [...scene.file.code.slice(scene.start + 1, scene.end).matchAll(new RegExp(`\\b${word(symbol)}\\b`, 'g'))].some(token => {
+      const offset = scene.start + 1 + token.index;
+      if (scene.file.text.slice(0, offset).split('\n').length !== source.line) return false;
+      const actual = entityPath(scene.file.code, scene.start + 1, offset);
+      return actual.length === scene.target.length && actual.every(([list, sibling], index) => list === scene.target[index][0] && (scene.collection && index === actual.length - 1 || sibling === scene.target[index][1]));
+    }));
+  }
+  for (const fact of context.components?.accesses || []) {
+    if (!['insert', 'remove'].includes(fact.operation) || !['reviewed', 'source'].includes(fact.evidence)) continue;
+    const ids = fact.projectionIds?.length ? fact.projectionIds : [fact.component];
+    if (fact.evidence === 'source') {
+      const type = context.components.typeByProjectionId?.[record.id];
+      const sameType = type && type === context.components.typeByProjectionId?.[fact.component];
+      if (!sameType && !ids.includes(record.id)) continue;
+      const matches = fact.operation === 'insert' && (fact.sourceEntries || []).filter(source => source.role === 'operation').some(isAssembly);
+      if (!matches) continue;
+    } else {
+      if (!ids.includes(record.id) || fact.targetScope === 'type-only' && !fact.projectionIds?.length) continue;
+    }
+    const role = fact.operation === 'insert' ? 'create' : 'destroy';
+    for (const source of fact.sourceEntries || []) if (['operation', 'call', 'configure'].includes(source.role)) {
+      sources.push(context.verified(source, role, `${role === 'create' ? '创建／装配' : '移除组件'}：${source.label || record.name}`));
+    }
+  }
+  for (const source of ownerSources.filter(source => source.role === 'destroy')) {
+    sources.push({ ...source, label: `所属实体销毁时清理仍挂载的组件：${source.label}` });
+  }
+  if (!definitions.length) gaps.push('实际 Component 类型定义尚未唯一核实');
+  if (!sources.some(source => source.role === 'create')) gaps.push('该组件投影的创建、装配或插入位置尚未完整核实；不以所属实体创建位置代替');
+  if (!sources.some(source => source.role === 'destroy')) gaps.push('该组件投影的移除或所属实体销毁位置尚未完整核实');
+  return sources;
+}
+
 function sourcesForNode(record, registry, context, gaps) {
   const kind = sourcePolicyFor(sourcePolicyKindFor(record)).kind;
+  if (kind === 'component') return componentSources(record, context, gaps);
   // 调度增量目录已按完整路径解析声明；重新核对位置后沿用各入口角色，不退回短名映射。
   if (record.scheduleEvidence?.schemaVersion === 1) {
     return (record.sourceEntries || []).map(source => context.verified(source, source.role, source.label));
@@ -467,11 +557,6 @@ function sourcesForNode(record, registry, context, gaps) {
   if (record.memberIds?.length || record.registrationIds?.length) {
     const members = (record.memberIds || record.registrationIds).map(id => registry[id]).filter(member => member && member !== record);
     if (members.length && kind === 'system') return members.flatMap(member => sourcesForNode(member, registry, context, gaps));
-  }
-  if (kind === 'component') {
-    const result = typeDefinitions(record, context);
-    if (!result.length) gaps.push('实际 Component 类型定义尚未唯一核实');
-    return result;
   }
   if (kind === 'entity') return entitySources(record, context, gaps);
   if (['system', 'observer'].includes(kind)) {

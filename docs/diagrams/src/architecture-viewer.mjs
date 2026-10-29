@@ -29,7 +29,6 @@ export function createArchitectureViewer({ data: DATA, document, location, histo
   let desiredViewId=null,viewLoading=null,loadAbort=null,lastSuccessful=null,retryTarget=null,searchRevision=0;
   let selection=navigation.resolve(location.search),view,scale=1,panX=0,panY=0,activeSelection={kind:'none'},canvasSize,objectOrigin=history.state?.architectureObjectOrigin||null,aliasCandidates=[],renderedObject=false,renderRequest=0,pendingRender=Promise.resolve(),displayedScheduleKey=null,pageSuspended=false,resultIndex=-1,openFilter=null,filterState={includePlugins:[],excludePlugins:[],includeNames:[],excludeNames:[],include:'',exclude:''},filterLegacy={include:'',exclude:'',includeNames:[],excludeNames:[],includePlugins:[],excludePlugins:[]};
   const canonical=id=>DATA.registry[id]?.alias_of||id;
-  const featureLabel=id=>DATA.model.features.find(feature=>feature.id===id)?.label||DATA.infrastructureFeatures.find(feature=>feature.id===id)?.label||id;
   const objectView=id=>objectViews.find(candidate=>candidate.objectId===canonical(id));
   const pluginView=target=>['Plugin','PluginGroup'].includes(DATA.registry[target?.objectId]?.kind);
   const ownerObject=feature=>{const entry=DATA.model.features.find(entry=>entry.id===feature)||DATA.infrastructureFeatures.find(entry=>entry.id===feature);return canonical(entry?.overviewNode||(entry?.plugin?'plugin-'+entry.plugin:null))};
@@ -89,22 +88,6 @@ export function createArchitectureViewer({ data: DATA, document, location, histo
     if(!items?.length)return '';
     return'<h'+level+'>'+safe(title)+'</h'+level+'><ul>'+items.map(item=>{const value=typeof item==='string'?item:item?.id||JSON.stringify(item),key=DATA.registry[value]?value:String(value).split(' ')[0],record=DATA.registry[key];return'<li>'+(record?'<button class="data-link" data-open="'+safe(key)+'">'+safe(record.name)+' '+safe(String(value).slice(key.length))+'</button>':'<code>'+safe(value)+'</code>')+'</li>'}).join('')+'</ul>';
   }
-  function accessList(title,items){
-    if(!items?.length)return '';
-    const labels={Entity:'Entity',Resource:'Resource',Local:'Local<T>',NonSend:'NonSend<T>'},groups=new Map(Object.keys(labels).map(kind=>[kind,new Set()]));
-    for(const item of items){const id=componentEntities.get(canonical(item))||canonical(item),kind=DATA.registry[id]?.kind||'其他';if(!groups.has(kind))groups.set(kind,new Set());groups.get(kind).add(id)}
-    return'<section class="access-section" data-access="'+safe(title)+'"><h3>'+safe(title)+'</h3>'+[...groups].filter(([,ids])=>ids.size).map(([kind,ids])=>'<div class="access-group" data-access-kind="'+safe(kind)+'">'+list(labels[kind]||kind,[...ids],4)+'</div>').join('')+'</section>';
-  }
-  function bodyOperationsList(operations){
-    if(!operations?.length)return '';
-    const labels={insert:'添加',remove:'移除',initialize:'初始化',read:'只读访问',mutable_access:'可变访问（不表示实际修改）',trigger:'触发事件',publish:'发布消息',reference:'查询接口'},interfaces={commands:'Commands',world:'World',message_writer:'MessageWriter'};
-    return'<section class="body-operations" data-access="body"><h3>函数体操作</h3><ul>'+operations.map(operation=>'<li data-body-operation="'+safe(operation.operation)+'" data-body-object="'+safe(operation.objectId)+'"><p><strong>'+safe(labels[operation.operation]||operation.operation)+'</strong> '+edgeEndpoint(operation.objectId,false)+'</p><p>'+safe(interfaces[operation.via]||operation.via)+' · '+(operation.deferred?'延迟应用':'直接调用')+' · '+(operation.scope==='main'?'主应用世界':'当前应用世界')+'</p><p><code>'+safe(operation.method)+'</code></p>'+(operation.condition?'<p>条件：'+safe(operation.condition)+'</p>':'')+(operation.helper?'<p>经 helper：<code>'+safe(operation.helper)+'</code></p>':'')+sourcesList(operation.sourceEntries)+'</li>').join('')+'</ul></section>';
-  }
-  function registrationList(registrations){
-    if(!registrations?.length)return '';
-    const text=value=>typeof value==='object'&&value!==null?JSON.stringify(value):String(value);
-    return'<section class="schedule-registrations"><h3>Schedule</h3>'+registrations.map((registration,index)=>'<div class="schedule-registration" data-registration-index="'+index+'"><dl>'+Object.entries(registration).map(([key,value])=>'<div class="registration-field" data-registration-field="'+safe(key)+'"><dt>'+safe(key)+'</dt><dd>'+(Array.isArray(value)?(value.length?value:['[]']):[value]).map(item=>'<div class="registration-value"><code>'+safe(text(item))+'</code></div>').join('')+'</dd></div>').join('')+'</dl></div>').join('')+'</section>';
-  }
   function sourcesList(entries){
     if(!entries?.length)return '';
     const labels={definition:'定义位置',registration:'注册位置',create:'创建位置',destroy:'销毁位置',initialize:'初始化位置',insert:'插入位置',remove:'移除位置',parameter:'参数位置',cleanup:'清理实现',message_definition:'消息类型定义',action_definition:'动作类型定义',build:'构建实现',install:'安装位置',assembly:'装配位置',run:'运行入口',configure:'配置位置',implementation:'实际实现',close:'关闭位置',related:'相关实现',operation:'操作位置',...DATA.sourceRoleLabels},groups=new Map();
@@ -129,8 +112,7 @@ export function createArchitectureViewer({ data: DATA, document, location, histo
   function guideSample(value){if(!value)return '';return value.trim().startsWith('<svg')?value:'<img src="'+safe(value)+'" alt="" loading="lazy" decoding="async">'}
   function showDetail(id){
     id=canonical(id);if(!DATA.registry[id]){guide();return}const record=DATA.registry[id];
-    const owners=record.owners;
-    details.innerHTML='<h2>'+safe(record.name||id)+'</h2><p>'+safe(record.description||'')+'</p>'+(objectView(id)&&view.objectId!==id?'<button data-object="'+safe(id)+'">打开对象关系图 ↗</button>':'')+(record.feature?'<p>功能归属：'+safe(featureLabel(record.feature))+'</p><button data-owner="'+safe(record.feature)+'" data-target="'+safe(id)+'">打开所属插件 ↗</button>':'')+(record.registered_by?'<p>注册功能：'+safe(featureLabel(record.registered_by))+'</p>':'')+(record.defined_in?'<p>定义归属：'+safe(featureLabel(record.defined_in))+'</p>':'')+(record.assembled_by?'<p>装配来源：'+safe(record.assembled_by.map(featureLabel).join(' / '))+'</p>':'')+(owners?.length?list('所属实体',owners):(record.owner?'<p>所属实体：'+safe(record.owner)+'</p>':''))+registrationList(record.registrations)+list('同函数其他注册',(record.registrationFamilyIds||[]).filter(other=>other!==id).map(other=>other+' '+objectContext(other)))+accessList('Read',record.reads)+accessList('Write',record.writes)+bodyOperationsList(record.bodyOperations)+list('Query',record.filters)+list('事件 / 消息',record.events)+list('字段',record.fields)+(record.kind==='System'?'':list('约束与说明',[...(record.notes||[]),...(record.sourceGaps||[])]))+(record.components?list('完整实体组件',record.components.map(component=>component.id||component)):'')+sourcesList(record.sourceEntries)+'<button class="reset" id="clear-selection">清除选择</button>';
+    details.innerHTML='<h2>'+safe(record.name||id)+'</h2><p>'+safe(record.description||'')+'</p>'+(objectView(id)&&view.objectId!==id?'<button data-object="'+safe(id)+'">打开对象关系图 ↗</button>':'')+sourcesList(record.sourceEntries);
     sourceEditor.refreshLinks(details);details.scrollTop=0;
   }
   function releaseDiagramFocus(){const active=document.activeElement;if(active?.closest('#diagram')||active?.id==='clear-selection')canvas.focus({preventScroll:true})}
@@ -359,7 +341,6 @@ export function createArchitectureViewer({ data: DATA, document, location, histo
     if(!event.target.closest('.schedule-multiselect')&&!event.target.closest('#schedule-clear'))closeFilterMenu();
     const clear=event.target.closest('#clear-selection');if(clear){select(null);return}
     const schedule=event.target.closest('[data-schedule]');if(schedule){focusSchedule(schedule.dataset.schedule);return}
-    const owner=event.target.closest('[data-owner]');if(owner){openOwner(owner.dataset.owner,owner.dataset.target);return}
     const object=event.target.closest('[data-object]');if(object){openObject(object.dataset.object);return}
     const open=event.target.closest('[data-open]');if(open)openNode(open.dataset.open);
   });
