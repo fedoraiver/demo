@@ -40,17 +40,25 @@ use facing::sync_character_facing;
 /// 独立于本次运行实体标识的玩家身份。
 #[derive(Component, Reflect, Clone, Copy, Debug, PartialEq, Eq, Hash)]
 #[reflect(Component)]
-pub(crate) struct PlayerId(pub u64);
+pub(crate) struct PlayerId {
+    pub id: u64,
+}
 
 /// 控制者当前关联的角色，设备和角色状态分别保存。
 #[derive(Component, Reflect)]
 #[reflect(Component)]
-pub(crate) struct ControlsCharacter(#[entities] pub Entity);
+pub(crate) struct ControlsCharacter {
+    #[entities]
+    pub character: Entity,
+}
 
 /// 控制者当前关联的第一人称相机。
 #[derive(Component, Reflect)]
 #[reflect(Component)]
-pub(crate) struct ControlsCamera(#[entities] pub Entity);
+pub(crate) struct ControlsCamera {
+    #[entities]
+    pub camera: Entity,
+}
 
 /// 相机仅隐藏受控角色的视觉子树。
 #[derive(Component, Reflect, Default, Clone)]

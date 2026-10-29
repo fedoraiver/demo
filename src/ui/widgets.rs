@@ -13,12 +13,16 @@ pub(super) struct SettingDescription {
 
 /// 数值文字只保存对应字段；草稿变化时原位更新 Text，不销毁滚动区域和焦点实体。
 #[derive(Component, Clone)]
-pub(super) struct SettingValue(pub SettingKey);
+pub(super) struct SettingValue {
+    pub key: SettingKey,
+}
 
 impl Default for SettingValue {
     fn default() -> Self {
         // BSN 模板需要组件初值；setting_row 装配时始终用实际字段 key 覆盖它。
-        Self(SettingKey::FrameRate)
+        Self {
+            key: SettingKey::FrameRate,
+        }
     }
 }
 
@@ -265,7 +269,7 @@ pub(super) fn setting_row(
                 BorderColor::all(Color::srgba(0.2, 0.25, 0.32, 0.15))
                 Children [
                     @label(theme, value, 20.0, INK)
-                    SettingValue(key)
+                    SettingValue { key }
                 ]
                 --
                 @small_button(theme, ">", UiAction::Adjust(key, 1), index + 1)

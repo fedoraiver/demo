@@ -25,7 +25,9 @@ const RESERVED_UI_VOICES: usize = 1;
 
 /// 设置界面发布的临时音量；清空后立即使用最近成功应用的配置。
 #[derive(Resource, Default, Clone, Copy, Debug, PartialEq, Eq)]
-pub(crate) struct AudioPreview(pub Option<AudioSettings>);
+pub(crate) struct AudioPreview {
+    pub settings: Option<AudioSettings>,
+}
 
 /// 跨功能只约束混音与播放阶段，具体资源和实例处理顺序留在音频内部。
 #[derive(SystemSet, Clone, Copy, Debug, PartialEq, Eq, Hash)]

@@ -5,7 +5,7 @@ use super::*;
 pub(super) fn courier_visual(scene: Handle<WorldAsset>, gltf: Handle<Gltf>) -> impl Scene {
     // 玩家在 Update 装配，早于下一帧相机可见性同步；先隐藏自身，避免首帧进入眼位。
     bsn! {
-        Name("Courier visual") CharacterVisual CourierVisual(gltf) WorldAssetRoot(scene)
+        Name("Courier visual") CharacterVisual CourierVisual { gltf } WorldAssetRoot(scene)
         Visibility::Hidden
     }
 }
@@ -20,7 +20,7 @@ pub(super) fn courier_scene(
         Character
         CharacterIntent
         CharacterMotion { grounded: false }
-        SpawnPoint(pose)
+        SpawnPoint { pose }
         pose
         Visibility
         Children [@courier_visual(scene, gltf)]
@@ -45,9 +45,9 @@ pub(super) fn carryable_scene(
         Name({model.name()})
         Parcel
         Pickable
-        CarryGrip(grip)
+        CarryGrip { offset: grip }
         model
-        SpawnPoint(pose)
+        SpawnPoint { pose }
         pose
         Visibility
         Children [Name("Carryable visual") WorldAssetRoot(scene)]
@@ -76,7 +76,7 @@ pub(super) fn spawn_actors(
             ))
             .insert((character_body(&config), DespawnOnExit(AppState::InGame)))
             .id();
-        let controller = spawn_keyboard_controller(&mut commands, PlayerId(1), character);
+        let controller = spawn_keyboard_controller(&mut commands, PlayerId { id: 1 }, character);
         commands
             .entity(controller)
             .insert(DespawnOnExit(AppState::InGame));
@@ -111,7 +111,9 @@ pub(super) fn spawn_actors(
             MouseLookState::default(),
             camera_transform,
         ));
-        commands.entity(controller).insert(ControlsCamera(camera));
+        commands
+            .entity(controller)
+            .insert(ControlsCamera { camera });
         commands.entity(map).insert(ActorsSpawned);
         info!(target: "demo::camera", ?camera, ?character, ?controller,
             position = ?camera_transform.translation, reason = "island_ready", "First-person camera spawned");

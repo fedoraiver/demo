@@ -85,7 +85,7 @@ impl SessionLogGuard {
             ),
         }
         let file = self.writer.flush_file();
-        let console = self.console.0.flush_output();
+        let console = self.console.writer.flush_output();
         file.and(console)
     }
 }
@@ -144,7 +144,9 @@ pub(super) fn create_session_file(directory: &Path) -> io::Result<SessionLogGuar
             output: file_worker.writer.clone(),
             path: Arc::new(path),
         },
-        console: ConsoleWriter(console_worker.writer.clone()),
+        console: ConsoleWriter {
+            writer: console_worker.writer.clone(),
+        },
         file_worker,
         console_worker,
         session_id,
@@ -167,14 +169,17 @@ impl SessionWriter {
     }
 }
 
+/// 控制台格式层使用的队列写入器，日志生产者不直接等待 stderr。
 #[derive(Clone, Resource)]
-pub(super) struct ConsoleWriter(pub(super) QueuedWriter);
+pub(super) struct ConsoleWriter {
+    pub(super) writer: QueuedWriter,
+}
 
 impl<'a> MakeWriter<'a> for ConsoleWriter {
     type Writer = QueuedWriter;
 
     fn make_writer(&'a self) -> Self::Writer {
-        self.0.clone()
+        self.writer.clone()
     }
 }
 

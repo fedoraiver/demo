@@ -15,7 +15,9 @@ use bevy::{
 
 /// 原生 Button 对任意指针键维护 Pressed；菜单单独保留主键来源以筛选动作和样式。
 #[derive(Component)]
-pub(super) struct PrimaryPress(pub PointerId);
+pub(super) struct PrimaryPress {
+    pub pointer: PointerId,
+}
 
 pub(super) fn register(app: &mut App) {
     app.add_message::<PointerPress>()
@@ -35,9 +37,9 @@ fn primary_press(
     mut commands: Commands,
 ) {
     if event.button == PointerButton::Primary && buttons.contains(event.entity) {
-        commands
-            .entity(event.entity)
-            .insert(PrimaryPress(event.pointer.id));
+        commands.entity(event.entity).insert(PrimaryPress {
+            pointer: event.pointer.id,
+        });
     }
 }
 
@@ -66,7 +68,7 @@ fn clear_cancelled_primary_presses(
         .filter(|input| matches!(input.action, PointerAction::Cancel))
     {
         for (entity, press) in &pressed {
-            if press.0 == input.pointer_id {
+            if press.pointer == input.pointer_id {
                 commands.entity(entity).remove::<(PrimaryPress, Pressed)>();
             }
         }
@@ -77,7 +79,7 @@ fn clear_cancelled_primary_presses(
         .is_ok_and(|window| window.focused && window.cursor_position().is_some())
     {
         for (entity, press) in &pressed {
-            if press.0 == PointerId::Mouse {
+            if press.pointer == PointerId::Mouse {
                 commands.entity(entity).remove::<(PrimaryPress, Pressed)>();
             }
         }
@@ -122,9 +124,11 @@ pub(super) fn pointer_interaction(
             if let Ok((_, button, _, _)) = buttons.get(entity) {
                 clicked = Some(entity);
                 *source = MenuInputSource::Pointer;
-                focus.0 = button.index;
+                focus.index = button.index;
                 if !matches!(button.action, UiAction::Adjust(_, 0)) {
-                    requests.write(UiRequest(button.action));
+                    requests.write(UiRequest {
+                        action: button.action,
+                    });
                 }
                 break;
             }
@@ -140,7 +144,7 @@ pub(super) fn pointer_interaction(
     // 键盘原生 Activate 不进入菜单请求；键盘与手柄仍只经过 Enhanced Input。
     for (entity, button, hovered, pressed) in &buttons {
         if !pressed && hovered.0 && pointer_moved && clicked != Some(entity) {
-            focus.0 = button.index;
+            focus.index = button.index;
             if *previous_hover != Some(entity) && !hovered.is_added() {
                 sounds.write(SoundRequest::new(SoundCue::MenuHover, entity));
             }
