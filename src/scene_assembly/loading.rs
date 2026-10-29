@@ -2,17 +2,14 @@
 
 use super::*;
 
-pub(super) fn lighting_scene() -> impl Scene {
-    bsn! {
+/// 为海岛会话创建日光和加载相机。
+pub(super) fn spawn_session_environment(mut commands: Commands) {
+    commands.spawn_scene(bsn! {
         Name("Island daylight")
         DespawnOnEnter::<AppState>(AppState::MainMenu)
         DirectionalLight { illuminance: 12_000.0, shadow_maps_enabled: true }
         Transform::from_xyz(6.0, 10.0, 8.0).looking_at(Vec3::ZERO, Vec3::Y)
-    }
-}
-
-pub(super) fn spawn_lighting(mut commands: Commands) {
-    commands.spawn_scene(lighting_scene());
+    });
     // 加载期间提供一个相机；准备好后复用同一实体，避免短暂出现两台主相机。
     commands.spawn_scene(bsn! {
         Name("Island loading camera")

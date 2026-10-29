@@ -84,10 +84,10 @@ impl Plugin for SceneAssemblyPlugin {
             })
             .add_systems(
                 Startup,
-                spawn_lighting.run_if(not(resource_exists::<State<AppState>>)),
+                spawn_session_environment.run_if(not(resource_exists::<State<AppState>>)),
             )
             // 会话只在离开主菜单时创建，暂停恢复不能重复生成灯光或加载相机。
-            .add_systems(OnExit(AppState::MainMenu), spawn_lighting)
+            .add_systems(OnExit(AppState::MainMenu), spawn_session_environment)
             .add_observer(mark_island_ready)
             // 每步提交延迟标记和碰撞，之后才允许动态实体生成。
             .add_systems(

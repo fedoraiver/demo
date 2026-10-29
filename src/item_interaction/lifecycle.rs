@@ -2,7 +2,7 @@
 
 use super::{
     HeldAttachment, HeldBy, HeldCollider, HeldTarget, HoldingItems, Pickable,
-    components::{CarryBaseMass, ResumeCarryEasing},
+    components::{CarryBaseMass, ResumeInterpolation},
 };
 use crate::{character::Character, physics::parcel_collision_layers};
 use avian3d::prelude::*;
@@ -58,7 +58,7 @@ pub(crate) fn release_item(
                 parcel_collision_layers(),
             ));
         if let Some(attachment) = attachment {
-            item_entity.insert(ResumeCarryEasing {
+            item_entity.insert(ResumeInterpolation {
                 translation: !attachment.translation_was_paused,
                 rotation: !attachment.rotation_was_paused,
             });
@@ -168,9 +168,9 @@ pub(super) fn restore_empty_holder_mass(
 }
 
 /// 下一固定步在旧端点清除后恢复自由箱插值，保留原本由其他模块设置的暂停项。
-pub(super) fn resume_carry_easing(
+pub(super) fn resume_interpolation(
     mut commands: Commands,
-    items: Query<(Entity, &ResumeCarryEasing)>,
+    items: Query<(Entity, &ResumeInterpolation)>,
 ) {
     for (item, resume) in &items {
         let mut item = commands.entity(item);
@@ -180,6 +180,6 @@ pub(super) fn resume_carry_easing(
         if resume.rotation {
             item.remove::<NoRotationEasing>();
         }
-        item.remove::<ResumeCarryEasing>();
+        item.remove::<ResumeInterpolation>();
     }
 }

@@ -26,7 +26,7 @@ use bevy::prelude::*;
 use interaction::handle_interaction;
 use lifecycle::{
     cleanup_orphaned_colliders, prepare_holder_despawn, release_orphaned_items,
-    restore_empty_holder_mass, resume_carry_easing,
+    restore_empty_holder_mass, resume_interpolation,
 };
 use pose::{sync_held_physics, sync_held_presentation};
 
@@ -41,7 +41,7 @@ impl Plugin for ItemInteractionPlugin {
             .register_type::<HeldTarget>()
             .add_systems(
                 FixedFirst,
-                resume_carry_easing
+                resume_interpolation
                     .after(TransformEasingSystems::Reset)
                     .before(TransformEasingSystems::UpdateStart)
                     .run_if(gameplay_running),
