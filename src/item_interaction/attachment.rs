@@ -86,7 +86,7 @@ pub(super) fn finish_attachments(
         commands
             .entity(attachment.collider)
             .insert((
-                Name::new("Held parcel collision proxy"),
+                Name::new("Held item collision proxy"),
                 HeldCollider { item },
                 collider.clone(),
                 *layers,

@@ -98,7 +98,7 @@ F3 在游戏控制与检查器操作之间切换，检查器在两种模式下�
 
 - **控制者实体**保存 `PlayerId`、`GameplayContext`、设备绑定、`ControlsCharacter` 和 `ControlsCamera`。`PlayerId` 表达业务身份，两个控制组件使用运行时 `Entity` 指向角色与相机。
 - **角色业务实体**通过 `Character`、意图与运动组件表达能力，Avian 动态刚体保存物理状态，`Transform` 表达插值呈现。根位于脚底；物理旋转锁定以防倾倒，水平朝向由相机系统同步。
-- **可搬物品实体**以 `Parcel / Pickable` 表达身份和能力，根位于模型中心。自由时拥有独立动态刚体，持握时通过 `HeldBy / HeldAttachment` 连接持有者与同形碰撞代理；业务根始终独立，具体装卸见 [持有关系与生命周期](#持有关系与生命周期)。
+- **可搬物品实体**以 `Item / Pickable` 表达种类和拾取能力；`Item` 由物品交互插件定义并注册反射，场景直接使用该组件，物品根位于模型中心。自由时拥有独立动态刚体，持握时通过 `HeldBy / HeldAttachment` 连接持有者与同形碰撞代理；业务根始终独立，具体装卸见 [持有关系与生命周期](#持有关系与生命周期)。
 - **展示 NPC 实例**保存 `DisplayNpc`，保留原模型和固定姿态；其 `IslandCollider` 子实体保存静态刚体与身体胶囊碰撞，不加入 `Character`、玩家意图、移动或拾取能力。碰撞随原实例和地图层级一同清理。
 - **相机实体**通过 `FirstPersonCamera` 保存控制目标与观察姿态，`MouseLookState` 保存捕获状态；跟随系统根据人物本帧插值位置计算眼位，并把位置与朝向写入 `Transform`。
 - **共享资源**保存跨系统配置、菜单、音频预览与资源加载状态；帧率设置的已应用值和连续数据日志采样使用各系统的 `Local`。
@@ -204,11 +204,11 @@ Avian 在默认固定调度中处理重力、速度积分与碰撞。接地通�
 
 三角网格查询仅在能证明整段路径分离时跳过完整连续查询：使用平面距离、支撑映射与转动位移上界，必要时二分区间；不能把离散安全姿态当作证明。起点分离用零余量，仅同一平面的真实已有接触允许 `0.001 m` 数值余量。有限三角面与方盒采用支持映射最近点查询，复合箱体逐子形状分派；无法证明安全或达到细分上限时回到完整查询，仍阻挡中途薄墙和再次穿入。查询入口与扫掠几何分别见 [rotation_query.rs](../src/item_interaction/rotation_query.rs) 和 [rotation_sweep.rs](../src/item_interaction/rotation_sweep.rs)。
 
-自动释放记录 `Held parcel turn blocked`，包含阻挡实体、导入名称与实际有向转角，便于区分建筑、平台和栏杆来源。
+自动释放记录 `Held item turn blocked`，包含阻挡实体、导入名称与实际有向转角，便于区分建筑、平台和栏杆来源。
 
 `CarryGrip` 是每件物品相对角色脚底与水平朝向的目标偏移，由场景按模型尺寸设置。实际挂接姿态存于 `HeldAttachment.local_pose`，供真实碰撞和呈现共同读取；拾取对齐朝目标逐步推进，不直接以目标覆盖真实姿态。
 
-`GamePhysicsLayer` 分为 `World`、`Character` 和 `Parcel`。自由箱体与持箱代理都保留外部碰撞；同一人物刚体内的形状由 Avian 排除自碰，转向查询另按 `ColliderOf.body` 排除整套自身碰撞，持握不会忽略其他角色所属的 `Character` 层。
+`GamePhysicsLayer` 分为 `World`、`Character` 和 `Item`。自由箱体与持箱代理都保留外部碰撞；同一人物刚体内的形状由 Avian 排除自碰，转向查询另按 `ColliderOf.body` 排除整套自身碰撞，持握不会忽略其他角色所属的 `Character` 层。
 
 当持有者销毁、落水或持有关系异常解除时，统一清理连接与失效目标，恢复箱体独立动态刚体、自由碰撞和插值，并还原仍存在的持有者质量。箱体业务根不属于人物子树，因此不会随人物级联消失；恢复独立物理后从安全世界位置自然下落，不把它瞬移到地面。清理记录失效关联及原因日志。
 
@@ -238,7 +238,7 @@ Avian 在默认固定调度中处理重力、速度积分与碰撞。接地通�
 
 `warn_hold_strain` 用模拟 `Position`、最新水平角与 `CarryGrip` 判断持续误差；`Local` 只保存当前持物的计时和锁存状态，解除关系或销毁时清理。它是音频提示，不引入额外失稳规则；正常整体持握与直走受阻不应误报警。
 
-`emit_parcel_land` 在 `StepSimulation` 后只读 `ContactGraph`，持续检查活动与休眠的真实支撑接触，仅为自由 `Parcel` 发声并锁存到完全失去支撑。预测接触的 `CollisionStart` 可能早于实际冲量，不能据此只检查首步；碰撞开始／结束日志是独立消费者。
+`emit_item_land` 在 `StepSimulation` 后只读 `ContactGraph`，持续检查活动与休眠的真实支撑接触，仅为自由 `Item` 发声并锁存到完全失去支撑。预测接触的 `CollisionStart` 可能早于实际冲量，不能据此只检查首步；碰撞开始／结束日志是独立消费者。
 
 物品反馈收集受 Running 门控；`GameAudioPlugin` 的 Mix 阶段依次处理加载错误、选择混音与同步实例增益，Playback 阶段依次消费请求和处理退出。跨功能组合约束 `UiSystems::Style → AudioSystems::Mix → AudioSystems::Playback`。UI/SFX 使用独立类型通道，为 UI 预留并发；`Queued` 同样计数，未加载请求直接丢弃。冷却使用 `Time<Real>`，所以暂停菜单仍可反馈。声音是全局二维输出，退出停止通道且不等待确认音播完；主入口禁用 Bevy 内建音频，避免双后端初始化。
 

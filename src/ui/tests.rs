@@ -2564,7 +2564,7 @@ mod requests_tests {
             .drain()
             .collect();
         assert_eq!(samples.len(), 1);
-        assert_eq!(samples[0].cue, SoundCue::ParcelPickup);
+        assert_eq!(samples[0].cue, SoundCue::ItemPickup);
         assert!(app.world().get::<MenuContext>(samples[0].source).is_some());
         assert_eq!(*app.world().resource::<SettingsDraft>(), draft);
         assert!(app.world().resource::<Time<Virtual>>().is_paused());

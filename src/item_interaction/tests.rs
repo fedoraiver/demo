@@ -7,11 +7,11 @@ mod attachment_tests {
 
     use super::*;
     use crate::character::character_body;
-    use crate::item_interaction::parcel_body;
+    use crate::item_interaction::item_body;
     use crate::{
         character::{Character, CharacterIntent, CharacterMotion, CharacterPlugin},
         game_flow::configure_feature_order,
-        physics::{GamePhysicsPlugin, ground_body, parcel_collision_layers},
+        physics::{GamePhysicsPlugin, ground_body, item_collision_layers},
         settings::PrototypeConfig,
     };
     use avian3d::prelude::*;
@@ -51,13 +51,13 @@ mod attachment_tests {
         let item = app
             .world_mut()
             .spawn((
-                Parcel,
+                Item::StandardParcel,
                 Pickable,
                 CarryGrip {
                     offset: Vec3::new(0.0, 1.3, -0.48),
                 },
                 Transform::from_xyz(0.0, 0.3, -1.1),
-                parcel_body(&config),
+                item_body(&config),
             ))
             .id();
         (holder, item)
@@ -145,7 +145,7 @@ mod attachment_tests {
         assert_eq!(world.get::<Mass>(holder).unwrap().0, 75.0);
         assert_eq!(
             world.get::<CollisionLayers>(item),
-            Some(&parcel_collision_layers())
+            Some(&item_collision_layers())
         );
         assert!(world.get::<HeldAttachment>(item).is_none());
         assert_eq!(world.get::<RigidBody>(item), Some(&RigidBody::Dynamic));
@@ -261,7 +261,7 @@ mod frame_tests {
     //! 在实际帧末核对整体持箱与释放，不安装窗口后端、渲染器或完整游戏。
 
     use crate::character::character_body;
-    use crate::item_interaction::parcel_body;
+    use crate::item_interaction::item_body;
     use std::time::Duration;
 
     use avian3d::prelude::*;
@@ -289,11 +289,9 @@ mod frame_tests {
         },
         game_flow::{FixedGameplaySystems, configure_feature_order},
         item_interaction::{
-            CarryGrip, HeldAttachment, HeldBy, HeldTarget, ItemInteractionPlugin, Parcel, Pickable,
+            CarryGrip, HeldAttachment, HeldBy, HeldTarget, Item, ItemInteractionPlugin, Pickable,
         },
-        physics::{
-            GamePhysicsPlugin, ground_body, parcel_collision_layers, world_collision_layers,
-        },
+        physics::{GamePhysicsPlugin, ground_body, item_collision_layers, world_collision_layers},
         settings::{GameSettings, PrototypeConfig},
     };
     use bevy_enhanced_input::prelude::EnhancedInputPlugin;
@@ -303,14 +301,14 @@ mod frame_tests {
         window: Entity,
         character: Entity,
         camera: Entity,
-        parcel: Entity,
+        item: Entity,
         visual: Entity,
         grip: Vec3,
         visual_offset: Vec3,
     }
 
     #[test]
-    fn open_mesh_ground_turn_keeps_actual_held_parcel_in_zero_step_frame() {
+    fn open_mesh_ground_turn_keeps_actual_held_item_in_zero_step_frame() {
         for exact_ground_pose in [false, true] {
             let mut fixture = carry_fixture(Some(Vec3::new(0.0, 1.3, -0.48)));
             let world = fixture.app.world_mut();
@@ -376,9 +374,9 @@ mod frame_tests {
                     .abs_diff_eq(camera_before, 0.000001)
             );
             assert_eq!(
-                world.get::<HeldBy>(fixture.parcel).map(Relationship::get),
+                world.get::<HeldBy>(fixture.item).map(Relationship::get),
                 Some(fixture.character),
-                "An unobstructed turn above the ground must keep the parcel held"
+                "An unobstructed turn above the ground must keep the item held"
             );
             assert_held_pose(&fixture);
         }
@@ -452,12 +450,12 @@ mod frame_tests {
             .entity(controller)
             .insert(ControlsCamera { camera });
         app.world_mut().flush();
-        let parcel = app
+        let item = app
             .world_mut()
             .spawn((
-                Parcel,
+                Item::StandardParcel,
                 Pickable,
-                parcel_body(&config),
+                item_body(&config),
                 Transform::from_xyz(0.0, 0.35, -1.0),
                 SpawnPoint {
                     pose: Transform::from_xyz(0.0, 0.35, -1.0),
@@ -466,19 +464,19 @@ mod frame_tests {
             .id();
         if preserve_easing_pause {
             app.world_mut()
-                .entity_mut(parcel)
+                .entity_mut(item)
                 .insert((NoTranslationEasing, NoRotationEasing));
         }
         if let Some(grip) = grip {
             app.world_mut()
-                .entity_mut(parcel)
+                .entity_mut(item)
                 .insert(CarryGrip { offset: grip });
         }
         let grip = grip.unwrap_or(config.hold_offset);
         let visual_offset = Vec3::new(0.0, 0.18, 0.0);
         let visual = app
             .world_mut()
-            .spawn((Transform::from_translation(visual_offset), ChildOf(parcel)))
+            .spawn((Transform::from_translation(visual_offset), ChildOf(item)))
             .id();
         // 捕获初始化及端点建立只发生在发出待验证输入之前。
         app.update();
@@ -489,7 +487,7 @@ mod frame_tests {
         }
         interaction_key(&mut app, window, ButtonState::Pressed);
         app.update();
-        assert_eq!(app.world().get::<HeldBy>(parcel).unwrap().get(), character);
+        assert_eq!(app.world().get::<HeldBy>(item).unwrap().get(), character);
         interaction_key(&mut app, window, ButtonState::Released);
         app.update();
         // 拾取允许短暂对齐，先完成这段初始化；随后输入后的帧末断言绝不补跑模拟。
@@ -501,7 +499,7 @@ mod frame_tests {
             window,
             character,
             camera,
-            parcel,
+            item,
             visual,
             grip,
             visual_offset,
@@ -523,14 +521,14 @@ mod frame_tests {
     fn assert_held_pose(fixture: &CarryFixture) {
         let world = fixture.app.world();
         let character = world.get::<Transform>(fixture.character).unwrap();
-        let parcel = world.get::<Transform>(fixture.parcel).unwrap();
+        let item = world.get::<Transform>(fixture.item).unwrap();
         let expected_position = character.transform_point(fixture.grip);
         assert!(
-            parcel.translation.abs_diff_eq(expected_position, 0.0001),
-            "The actual held parcel must follow in the current frame: actual={:?}, expected={expected_position:?}",
-            parcel.translation
+            item.translation.abs_diff_eq(expected_position, 0.0001),
+            "The actual held item must follow in the current frame: actual={:?}, expected={expected_position:?}",
+            item.translation
         );
-        let target = world.get::<HeldTarget>(fixture.parcel).unwrap();
+        let target = world.get::<HeldTarget>(fixture.item).unwrap();
         assert!(target.translation.abs_diff_eq(expected_position, 0.0001));
         let visual = world
             .get::<GlobalTransform>(fixture.visual)
@@ -539,26 +537,23 @@ mod frame_tests {
         assert!(
             visual
                 .translation
-                .abs_diff_eq(parcel.transform_point(fixture.visual_offset), 0.0001)
+                .abs_diff_eq(item.transform_point(fixture.visual_offset), 0.0001)
         );
         for axis in [Vec3::NEG_Z, Vec3::Y] {
-            assert!((parcel.rotation * axis).abs_diff_eq(character.rotation * axis, 0.0001));
-            assert!((visual.rotation * axis).abs_diff_eq(parcel.rotation * axis, 0.0001));
+            assert!((item.rotation * axis).abs_diff_eq(character.rotation * axis, 0.0001));
+            assert!((visual.rotation * axis).abs_diff_eq(item.rotation * axis, 0.0001));
         }
-        let proxy = world
-            .get::<HeldAttachment>(fixture.parcel)
-            .unwrap()
-            .collider;
+        let proxy = world.get::<HeldAttachment>(fixture.item).unwrap().collider;
         assert_eq!(
             world.get::<ColliderOf>(proxy).unwrap().body,
             fixture.character
         );
-        assert!(world.get::<ColliderDisabled>(fixture.parcel).is_some());
-        assert!(world.get::<RigidBody>(fixture.parcel).is_none());
-        assert!(world.get::<ChildOf>(fixture.parcel).is_none());
+        assert!(world.get::<ColliderDisabled>(fixture.item).is_some());
+        assert!(world.get::<RigidBody>(fixture.item).is_none());
+        assert!(world.get::<ChildOf>(fixture.item).is_none());
         // 内部代理必须复制真实箱体形状，不能用缩小的碰撞形状换取通过。
         let original_bounds = world
-            .get::<Collider>(fixture.parcel)
+            .get::<Collider>(fixture.item)
             .unwrap()
             .shape_scaled()
             .compute_local_aabb();
@@ -572,7 +567,7 @@ mod frame_tests {
     }
 
     #[test]
-    fn actual_held_parcel_and_visual_follow_fast_turns_at_each_frame_end() {
+    fn actual_held_item_and_visual_follow_fast_turns_at_each_frame_end() {
         for duration in [
             Duration::ZERO,
             Duration::from_millis(50),
@@ -612,33 +607,33 @@ mod frame_tests {
     }
 
     #[test]
-    fn released_parcel_keeps_its_identity_and_stops_following_zero_step_turns() {
+    fn released_item_keeps_its_identity_and_stops_following_zero_step_turns() {
         let mut fixture = carry_fixture(Some(Vec3::new(0.0, 1.3, -0.48)));
         let proxy = fixture
             .app
             .world()
-            .get::<HeldAttachment>(fixture.parcel)
+            .get::<HeldAttachment>(fixture.item)
             .unwrap()
             .collider;
         interaction_key(&mut fixture.app, fixture.window, ButtonState::Pressed);
         fixture.app.update();
         let world = fixture.app.world();
-        assert!(world.get::<HeldBy>(fixture.parcel).is_none());
-        assert!(world.get::<HeldTarget>(fixture.parcel).is_none());
+        assert!(world.get::<HeldBy>(fixture.item).is_none());
+        assert!(world.get::<HeldTarget>(fixture.item).is_none());
         assert_eq!(
-            world.get::<RigidBody>(fixture.parcel),
+            world.get::<RigidBody>(fixture.item),
             Some(&RigidBody::Dynamic)
         );
         assert_eq!(
-            world.get::<ColliderOf>(fixture.parcel).unwrap().body,
-            fixture.parcel
+            world.get::<ColliderOf>(fixture.item).unwrap().body,
+            fixture.item
         );
-        assert!(world.get::<ColliderDisabled>(fixture.parcel).is_none());
+        assert!(world.get::<ColliderDisabled>(fixture.item).is_none());
         assert!(world.get_entity(proxy).is_err());
-        assert!(world.get::<ChildOf>(fixture.parcel).is_none());
-        let position = *world.get::<Position>(fixture.parcel).unwrap();
-        let velocity = *world.get::<LinearVelocity>(fixture.parcel).unwrap();
-        let pose = *world.get::<Transform>(fixture.parcel).unwrap();
+        assert!(world.get::<ChildOf>(fixture.item).is_none());
+        let position = *world.get::<Position>(fixture.item).unwrap();
+        let velocity = *world.get::<LinearVelocity>(fixture.item).unwrap();
+        let pose = *world.get::<Transform>(fixture.item).unwrap();
         fixture
             .app
             .insert_resource(TimeUpdateStrategy::ManualDuration(Duration::ZERO));
@@ -649,14 +644,14 @@ mod frame_tests {
             });
             fixture.app.update();
             let world = fixture.app.world();
-            assert_eq!(*world.get::<Position>(fixture.parcel).unwrap(), position);
+            assert_eq!(*world.get::<Position>(fixture.item).unwrap(), position);
             assert_eq!(
-                *world.get::<LinearVelocity>(fixture.parcel).unwrap(),
+                *world.get::<LinearVelocity>(fixture.item).unwrap(),
                 velocity
             );
             assert!(
                 world
-                    .get::<Transform>(fixture.parcel)
+                    .get::<Transform>(fixture.item)
                     .unwrap()
                     .translation
                     .abs_diff_eq(pose.translation, 0.0001)
@@ -701,7 +696,7 @@ mod frame_tests {
             Transform::from_translation(character_position + Vec3::new(obstacle_x, 1.0, 0.0)),
         ));
         fixture.app.update();
-        assert!(fixture.app.world().get::<HeldBy>(fixture.parcel).is_some());
+        assert!(fixture.app.world().get::<HeldBy>(fixture.item).is_some());
         assert!(
             fixture
                 .app
@@ -712,12 +707,12 @@ mod frame_tests {
                 < 0.05,
             "The rotation probe must start with a settled character"
         );
-        let safe_position = *fixture.app.world().get::<Position>(fixture.parcel).unwrap();
-        let safe_rotation = *fixture.app.world().get::<Rotation>(fixture.parcel).unwrap();
+        let safe_position = *fixture.app.world().get::<Position>(fixture.item).unwrap();
+        let safe_rotation = *fixture.app.world().get::<Rotation>(fixture.item).unwrap();
         let proxy = fixture
             .app
             .world()
-            .get::<HeldAttachment>(fixture.parcel)
+            .get::<HeldAttachment>(fixture.item)
             .unwrap()
             .collider;
         fixture
@@ -735,26 +730,26 @@ mod frame_tests {
         fixture.app.update();
         let world = fixture.app.world();
         assert!(
-            world.get::<HeldBy>(fixture.parcel).is_none(),
-            "The blocked rotation arc must release the parcel in this frame"
+            world.get::<HeldBy>(fixture.item).is_none(),
+            "The blocked rotation arc must release the item in this frame"
         );
         assert_eq!(
-            world.get::<RigidBody>(fixture.parcel),
+            world.get::<RigidBody>(fixture.item),
             Some(&RigidBody::Dynamic)
         );
         assert!(world.get_entity(proxy).is_err());
-        let parcel = world.get::<Transform>(fixture.parcel).unwrap();
+        let item = world.get::<Transform>(fixture.item).unwrap();
         assert!(
             world
-                .get::<Position>(fixture.parcel)
+                .get::<Position>(fixture.item)
                 .unwrap()
                 .0
                 .abs_diff_eq(safe_position.0, 0.0001),
             "A blocked turn must release from the last safe physical position"
         );
-        assert!(parcel.translation.abs_diff_eq(safe_position.0, 0.0001));
+        assert!(item.translation.abs_diff_eq(safe_position.0, 0.0001));
         for axis in [Vec3::NEG_Z, Vec3::Y] {
-            assert!((parcel.rotation * axis).abs_diff_eq(safe_rotation.0 * axis, 0.0001));
+            assert!((item.rotation * axis).abs_diff_eq(safe_rotation.0 * axis, 0.0001));
         }
         let character = world.get::<Transform>(fixture.character).unwrap();
         let expected_camera = world
@@ -770,15 +765,15 @@ mod frame_tests {
         let requested_position = character.translation + Vec3::Y * 1.65;
         assert!(
             camera.translation.abs_diff_eq(requested_position, 0.0001),
-            "The first-person camera must stay at eye height despite the parcel obstruction"
+            "The first-person camera must stay at eye height despite the item obstruction"
         );
         assert!(
             (*camera.forward()).abs_diff_eq(Quat::from_rotation_y(angle) * Vec3::NEG_Z, 0.0001),
-            "The first-person camera must complete the requested turn despite the parcel obstruction"
+            "The first-person camera must complete the requested turn despite the item obstruction"
         );
     }
 
-    struct ParcelSnapshot {
+    struct ItemSnapshot {
         position: Vec3,
         rotation: Quat,
         linear_velocity: Vec3,
@@ -789,15 +784,15 @@ mod frame_tests {
 
     #[derive(Resource)]
     struct RecoveryProbe {
-        parcel: Entity,
+        item: Entity,
         proxy: Entity,
-        snapshot: Option<ParcelSnapshot>,
+        snapshot: Option<ItemSnapshot>,
     }
 
     /// 记录正常主调度中恢复后的状态，再由同一个 app.update 完成真实物理与呈现。
     fn observe_recovery_before_physics(
         mut probe: ResMut<RecoveryProbe>,
-        parcels: Query<(
+        items: Query<(
             &Position,
             &Rotation,
             &LinearVelocity,
@@ -806,8 +801,8 @@ mod frame_tests {
             Option<&RigidBody>,
         )>,
     ) {
-        let (position, rotation, linear, angular, held, body) = parcels.get(probe.parcel).unwrap();
-        probe.snapshot = Some(ParcelSnapshot {
+        let (position, rotation, linear, angular, held, body) = items.get(probe.item).unwrap();
+        probe.snapshot = Some(ItemSnapshot {
             position: position.0,
             rotation: rotation.0,
             linear_velocity: linear.0,
@@ -819,11 +814,11 @@ mod frame_tests {
 
     fn add_recovery_probe(fixture: &mut CarryFixture) {
         fixture.app.insert_resource(RecoveryProbe {
-            parcel: fixture.parcel,
+            item: fixture.item,
             proxy: fixture
                 .app
                 .world()
-                .get::<HeldAttachment>(fixture.parcel)
+                .get::<HeldAttachment>(fixture.item)
                 .unwrap()
                 .collider,
             snapshot: None,
@@ -837,33 +832,33 @@ mod frame_tests {
 
     fn assert_free_after_recovery(fixture: &CarryFixture) {
         let world = fixture.app.world();
-        assert!(world.get::<HeldBy>(fixture.parcel).is_none());
-        assert!(world.get::<HeldTarget>(fixture.parcel).is_none());
+        assert!(world.get::<HeldBy>(fixture.item).is_none());
+        assert!(world.get::<HeldTarget>(fixture.item).is_none());
         assert_eq!(
-            world.get::<RigidBody>(fixture.parcel),
+            world.get::<RigidBody>(fixture.item),
             Some(&RigidBody::Dynamic)
         );
         assert_eq!(
-            world.get::<ColliderOf>(fixture.parcel).unwrap().body,
-            fixture.parcel
+            world.get::<ColliderOf>(fixture.item).unwrap().body,
+            fixture.item
         );
-        assert!(world.get::<ColliderDisabled>(fixture.parcel).is_none());
+        assert!(world.get::<ColliderDisabled>(fixture.item).is_none());
         assert!(
             world
                 .get_entity(world.resource::<RecoveryProbe>().proxy)
                 .is_err()
         );
         assert_eq!(
-            world.get::<CollisionLayers>(fixture.parcel),
-            Some(&parcel_collision_layers())
+            world.get::<CollisionLayers>(fixture.item),
+            Some(&item_collision_layers())
         );
-        assert!(world.get::<ChildOf>(fixture.parcel).is_none());
+        assert!(world.get::<ChildOf>(fixture.item).is_none());
         let mass = world.resource::<PrototypeConfig>().character_mass;
         assert!((world.get::<Mass>(fixture.character).unwrap().0 - mass).abs() < 0.001);
     }
 
     #[test]
-    fn actual_attachment_holder_water_recovery_releases_dry_parcel_at_its_real_pose() {
+    fn actual_attachment_holder_water_recovery_releases_dry_item_at_its_real_pose() {
         let mut fixture = carry_fixture(Some(Vec3::new(0.0, 1.3, -0.48)));
         assert_held_pose(&fixture);
         // 先让组合体获得真实平移速度，避免错误清零也能通过释放速度断言。
@@ -874,16 +869,13 @@ mod frame_tests {
             .insert(LinearVelocity(Vec3::X * 2.0));
         fixture.app.update();
         let world = fixture.app.world();
-        let position = world.get::<Position>(fixture.parcel).unwrap().0;
-        let rotation = world.get::<Rotation>(fixture.parcel).unwrap().0;
-        let velocity = world.get::<LinearVelocity>(fixture.parcel).unwrap().0;
-        let angular = world.get::<AngularVelocity>(fixture.parcel).unwrap().0;
+        let position = world.get::<Position>(fixture.item).unwrap().0;
+        let rotation = world.get::<Rotation>(fixture.item).unwrap().0;
+        let velocity = world.get::<LinearVelocity>(fixture.item).unwrap().0;
+        let angular = world.get::<AngularVelocity>(fixture.item).unwrap().0;
         assert!(position.y > 0.0);
         assert!(velocity.length() > 0.1);
-        let proxy = world
-            .get::<HeldAttachment>(fixture.parcel)
-            .unwrap()
-            .collider;
+        let proxy = world.get::<HeldAttachment>(fixture.item).unwrap().collider;
         assert_eq!(
             world.get::<ColliderOf>(proxy).unwrap().body,
             fixture.character
@@ -923,7 +915,7 @@ mod frame_tests {
         );
         assert!(
             world
-                .get::<Position>(fixture.parcel)
+                .get::<Position>(fixture.item)
                 .unwrap()
                 .0
                 .distance(position)
@@ -931,7 +923,7 @@ mod frame_tests {
         );
         assert!(
             world
-                .get::<Position>(fixture.parcel)
+                .get::<Position>(fixture.item)
                 .unwrap()
                 .0
                 .distance(spawn.translation)
@@ -940,7 +932,7 @@ mod frame_tests {
     }
 
     #[test]
-    fn actual_attachment_parcel_water_recovery_restores_own_spawn_and_easing_pause() {
+    fn actual_attachment_item_water_recovery_restores_own_spawn_and_easing_pause() {
         let mut fixture = carry_fixture_with_easing(Some(Vec3::new(0.0, 1.3, -0.48)), true);
         assert_held_pose(&fixture);
         let character_position = fixture
@@ -950,7 +942,7 @@ mod frame_tests {
             .unwrap()
             .0;
         let spawn = Transform::from_xyz(-12.0, 0.35, 9.0).with_rotation(Quat::from_rotation_y(0.7));
-        fixture.app.world_mut().entity_mut(fixture.parcel).insert((
+        fixture.app.world_mut().entity_mut(fixture.item).insert((
             SpawnPoint { pose: spawn },
             Position(Vec3::new(3.0, -1.6, 4.0)),
             LinearVelocity(Vec3::new(1.0, -3.0, 0.5)),
@@ -978,14 +970,14 @@ mod frame_tests {
         );
         assert!(
             world
-                .get::<Transform>(fixture.parcel)
+                .get::<Transform>(fixture.item)
                 .unwrap()
                 .translation
                 .distance(spawn.translation)
                 < 0.05
         );
-        assert!(world.get::<NoTranslationEasing>(fixture.parcel).is_some());
-        assert!(world.get::<NoRotationEasing>(fixture.parcel).is_some());
+        assert!(world.get::<NoTranslationEasing>(fixture.item).is_some());
+        assert!(world.get::<NoRotationEasing>(fixture.item).is_some());
         // 连续无固定步帧不能从海中端点重新插值；下一固定步也保留拾取前已有的暂停设置。
         fixture
             .app
@@ -996,7 +988,7 @@ mod frame_tests {
                 fixture
                     .app
                     .world()
-                    .get::<Transform>(fixture.parcel)
+                    .get::<Transform>(fixture.item)
                     .unwrap()
                     .translation
                     .distance(spawn.translation)
@@ -1011,14 +1003,14 @@ mod frame_tests {
             fixture
                 .app
                 .world()
-                .get::<NoTranslationEasing>(fixture.parcel)
+                .get::<NoTranslationEasing>(fixture.item)
                 .is_some()
         );
         assert!(
             fixture
                 .app
                 .world()
-                .get::<NoRotationEasing>(fixture.parcel)
+                .get::<NoRotationEasing>(fixture.item)
                 .is_some()
         );
     }
@@ -1028,14 +1020,14 @@ mod frame_tests {
 
     #[test]
     fn actual_attachment_simultaneous_water_recovery_uses_item_spawn_in_both_query_orders() {
-        for parcel_first in [false, true] {
+        for item_first in [false, true] {
             let mut fixture = carry_fixture(Some(Vec3::new(0.0, 1.3, -0.48)));
             assert_held_pose(&fixture);
             // 测试标记只把指定实体移到后创建的 archetype，明确覆盖两种恢复迭代顺序。
-            let last = if parcel_first {
+            let last = if item_first {
                 fixture.character
             } else {
-                fixture.parcel
+                fixture.item
             };
             fixture
                 .app
@@ -1047,15 +1039,15 @@ mod frame_tests {
             let world = fixture.app.world_mut();
             world.resource_mut::<WaterRecoveryOrder>().entities.clear();
             let holder_spawn = Transform::from_xyz(20.0, 0.0, 14.0);
-            let parcel_spawn =
+            let item_spawn =
                 Transform::from_xyz(-12.0, 0.35, 9.0).with_rotation(Quat::from_rotation_y(0.7));
             world.entity_mut(fixture.character).insert((
                 SpawnPoint { pose: holder_spawn },
                 Position(Vec3::new(3.0, -2.9, 4.0)),
                 LinearVelocity(Vec3::new(1.0, -3.0, 0.5)),
             ));
-            world.entity_mut(fixture.parcel).insert((
-                SpawnPoint { pose: parcel_spawn },
+            world.entity_mut(fixture.item).insert((
+                SpawnPoint { pose: item_spawn },
                 Position(Vec3::new(3.0, -1.6, 3.52)),
                 LinearVelocity(Vec3::new(1.0, -3.0, 0.5)),
                 AngularVelocity(Vec3::Y * 2.0),
@@ -1067,10 +1059,10 @@ mod frame_tests {
             let world = fixture.app.world();
             assert_eq!(
                 world.resource::<WaterRecoveryOrder>().entities,
-                if parcel_first {
-                    vec![fixture.parcel, fixture.character]
+                if item_first {
+                    vec![fixture.item, fixture.character]
                 } else {
-                    vec![fixture.character, fixture.parcel]
+                    vec![fixture.character, fixture.item]
                 },
                 "The actual recovery system must exercise the requested query order"
             );
@@ -1079,8 +1071,8 @@ mod frame_tests {
             assert!(
                 recovered
                     .position
-                    .abs_diff_eq(parcel_spawn.translation, 0.0001),
-                "Simultaneous recovery must use the parcel's own spawn: parcel_first={parcel_first}, actual={:?}",
+                    .abs_diff_eq(item_spawn.translation, 0.0001),
+                "Simultaneous recovery must use the item's own spawn: item_first={item_first}, actual={:?}",
                 recovered.position
             );
             assert_eq!(recovered.linear_velocity, Vec3::ZERO);
@@ -1095,10 +1087,10 @@ mod frame_tests {
             );
             assert!(
                 world
-                    .get::<Transform>(fixture.parcel)
+                    .get::<Transform>(fixture.item)
                     .unwrap()
                     .translation
-                    .distance(parcel_spawn.translation)
+                    .distance(item_spawn.translation)
                     < 0.05
             );
         }
@@ -1110,16 +1102,12 @@ mod interaction_tests {
 
     use super::handle_interaction;
     use crate::character::character_body;
-    use crate::item_interaction::parcel_body;
+    use crate::item_interaction::item_body;
     use crate::{
         character::{Character, CharacterIntent, CharacterMotion, CharacterPlugin},
         game_flow::configure_feature_order,
-        item_interaction::{
-            CarryGrip, HeldBy, HeldTarget, ItemInteractionPlugin, Parcel, Pickable,
-        },
-        physics::{
-            GamePhysicsPlugin, ground_body, parcel_collision_layers, world_collision_layers,
-        },
+        item_interaction::{CarryGrip, HeldBy, HeldTarget, Item, ItemInteractionPlugin, Pickable},
+        physics::{GamePhysicsPlugin, ground_body, item_collision_layers, world_collision_layers},
         settings::PrototypeConfig,
     };
     use avian3d::prelude::*;
@@ -1170,14 +1158,14 @@ mod interaction_tests {
             .id()
     }
 
-    fn spawn_box(app: &mut App, position: Vec3) -> Entity {
+    fn spawn_item(app: &mut App, position: Vec3) -> Entity {
         let config = app.world().resource::<PrototypeConfig>().clone();
         app.world_mut()
             .spawn((
-                Parcel,
+                Item::StandardParcel,
                 Pickable,
                 Transform::from_translation(position),
-                parcel_body(&config),
+                item_body(&config),
             ))
             .id()
     }
@@ -1195,7 +1183,7 @@ mod interaction_tests {
         for grip in [Vec3::new(0.0, 1.3, -0.48), Vec3::new(0.0, 1.3, -0.62)] {
             let mut app = test_app();
             let character = spawn_character(&mut app, Vec3::ZERO, default());
-            let item = spawn_box(&mut app, Vec3::new(0.0, 0.3, -1.3));
+            let item = spawn_item(&mut app, Vec3::new(0.0, 0.3, -1.3));
             app.world_mut()
                 .entity_mut(item)
                 .insert(CarryGrip { offset: grip });
@@ -1251,7 +1239,7 @@ mod interaction_tests {
     fn shared_body_blocks_at_wall_and_release_keeps_velocity() {
         let mut app = test_app();
         let character = spawn_character(&mut app, Vec3::ZERO, default());
-        let item = spawn_box(&mut app, Vec3::new(0.0, 0.3, -1.3));
+        let item = spawn_item(&mut app, Vec3::new(0.0, 0.3, -1.3));
         step(&mut app, 30);
         let before = app.world().get::<Position>(item).unwrap().0;
         interact(&mut app, character);
@@ -1350,7 +1338,7 @@ mod interaction_tests {
         for despawn in [false, true] {
             let mut app = test_app();
             let character = spawn_character(&mut app, Vec3::ZERO, default());
-            let item = spawn_box(&mut app, Vec3::new(0.0, 0.3, -1.3));
+            let item = spawn_item(&mut app, Vec3::new(0.0, 0.3, -1.3));
             step(&mut app, 30);
             interact(&mut app, character);
             step(&mut app, 60);
@@ -1363,7 +1351,7 @@ mod interaction_tests {
             assert!(app.world().get::<HeldTarget>(item).is_none());
             assert_eq!(
                 *app.world().get::<CollisionLayers>(item).unwrap(),
-                parcel_collision_layers()
+                item_collision_layers()
             );
             step(&mut app, 120);
             assert!(app.world().get::<Position>(item).unwrap().y < 0.5);
@@ -1374,7 +1362,7 @@ mod interaction_tests {
     fn held_box_collision_stops_the_holder_before_it_enters_the_box() {
         let mut app = test_app();
         let character = spawn_character(&mut app, Vec3::new(0.0, 0.0, 2.0), default());
-        let item = spawn_box(&mut app, Vec3::new(0.0, 0.3, 1.1));
+        let item = spawn_item(&mut app, Vec3::new(0.0, 0.3, 1.1));
         let grip = Vec3::new(0.0, 1.3, -0.48);
         app.world_mut()
             .entity_mut(item)
@@ -2201,18 +2189,18 @@ mod audio_event_tests {
             .spawn((Character, Position::default(), Transform::default()))
             .id();
         app.world_mut().spawn((
-            Parcel,
+            Item::StandardParcel,
             <HeldBy as Relationship>::from(holder),
             Position(Vec3::X * 5.0),
         ));
-        let parcel = app.world_mut().spawn(Parcel).id();
+        let item = app.world_mut().spawn(Item::StandardParcel).id();
         let ground = app.world_mut().spawn_empty().id();
         // 只提供已解算的接触数据，验证收集系统的会话门槛，不安装物理或输出设备。
         let mut point = ContactPoint::new(Vec3::ZERO, Vec3::ZERO, Vec3::ZERO, 0.0);
         point.normal_impulse = 2.0;
         app.world_mut()
             .resource_mut::<ContactGraph>()
-            .add_edge_with(ContactEdge::new(parcel, ground), |pair| {
+            .add_edge_with(ContactEdge::new(item, ground), |pair| {
                 pair.flags.insert(ContactPairFlags::TOUCHING);
                 pair.manifolds = vec![ContactManifold::new([point], -Vec3::Y)];
             });
@@ -2231,7 +2219,7 @@ mod audio_event_tests {
             .drain()
             .map(|request| request.cue)
             .collect();
-        assert_eq!(cues, [SoundCue::ParcelLand]);
+        assert_eq!(cues, [SoundCue::ItemLand]);
 
         app.insert_resource(State::new(AppState::Paused));
         for _ in 0..20 {
@@ -2268,10 +2256,10 @@ mod audio_event_tests {
             .world_mut()
             .spawn((Character, Position::default(), Transform::default()))
             .id();
-        let parcel = app
+        let item = app
             .world_mut()
             .spawn((
-                Parcel,
+                Item::StandardParcel,
                 <HeldBy as Relationship>::from(holder),
                 Position(Vec3::X * 5.0),
             ))
@@ -2287,9 +2275,9 @@ mod audio_event_tests {
         assert_eq!(cues.len(), 1);
         assert_eq!(cues[0].cue, SoundCue::InstabilityWarning);
         let target = app.world().resource::<PrototypeConfig>().hold_offset;
-        app.world_mut().get_mut::<Position>(parcel).unwrap().0 = target;
+        app.world_mut().get_mut::<Position>(item).unwrap().0 = target;
         app.world_mut().run_schedule(FixedUpdate);
-        app.world_mut().get_mut::<Position>(parcel).unwrap().0 = Vec3::X * 5.0;
+        app.world_mut().get_mut::<Position>(item).unwrap().0 = Vec3::X * 5.0;
         for _ in 0..10 {
             app.world_mut().run_schedule(FixedUpdate);
         }
@@ -2300,7 +2288,7 @@ mod audio_event_tests {
                 .count(),
             1
         );
-        app.world_mut().entity_mut(parcel).remove::<HeldBy>();
+        app.world_mut().entity_mut(item).remove::<HeldBy>();
         app.world_mut().run_schedule(FixedUpdate);
         assert!(app.world().resource::<Messages<SoundRequest>>().is_empty());
     }
@@ -2335,10 +2323,10 @@ mod audio_event_tests {
                 ))
                 .id();
             let target = position + rotation * grip;
-            let parcel = app
+            let item = app
                 .world_mut()
                 .spawn((
-                    Parcel,
+                    Item::StandardParcel,
                     <HeldBy as Relationship>::from(holder),
                     CarryGrip { offset: grip },
                     Position(target + rotation * Vec3::Z * 0.3),
@@ -2358,13 +2346,13 @@ mod audio_event_tests {
             assert!(take_cues(&mut app).is_empty(), "grip={grip:?}");
 
             for _ in 0..2 {
-                app.world_mut().get_mut::<Position>(parcel).unwrap().0 = target + Vec3::X * 2.0;
+                app.world_mut().get_mut::<Position>(item).unwrap().0 = target + Vec3::X * 2.0;
                 for _ in 0..20 {
                     app.world_mut().run_schedule(FixedUpdate);
                 }
                 assert_eq!(
                     take_cues(&mut app),
-                    [(SoundCue::InstabilityWarning, parcel)],
+                    [(SoundCue::InstabilityWarning, item)],
                     "grip={grip:?}"
                 );
                 for _ in 0..10 {
@@ -2373,7 +2361,7 @@ mod audio_event_tests {
                 assert!(take_cues(&mut app).is_empty(), "grip={grip:?}");
 
                 // 恢复到实际物品目标后重新武装；下一轮受阻仍应发出一条警告。
-                app.world_mut().get_mut::<Position>(parcel).unwrap().0 = target;
+                app.world_mut().get_mut::<Position>(item).unwrap().0 = target;
                 app.world_mut().run_schedule(FixedUpdate);
                 assert!(take_cues(&mut app).is_empty(), "grip={grip:?}");
             }

@@ -1,7 +1,7 @@
 //! 无窗口验证恢复姿态、关系、插值暂停和单次文件日志。
 
 use crate::character::character_body;
-use crate::item_interaction::parcel_body;
+use crate::item_interaction::item_body;
 use std::{fs, sync::Arc, time::Duration};
 
 use avian3d::prelude::*;
@@ -18,8 +18,8 @@ use bevy::{
 use crate::{
     character::{Character, CharacterIntent, CharacterMotion},
     game_flow::configure_feature_order,
-    item_interaction::{HeldBy, HeldTarget, HoldingItems, Pickable},
-    physics::{held_collision_layers, parcel_collision_layers},
+    item_interaction::{HeldBy, HeldTarget, HoldingItems, Item, Pickable},
+    physics::{held_collision_layers, item_collision_layers},
     settings::PrototypeConfig,
 };
 
@@ -72,9 +72,10 @@ fn spawn_character(app: &mut App, position: Vec3, spawn: Transform) -> Entity {
 fn spawn_item(app: &mut App, position: Vec3, spawn: Transform) -> Entity {
     app.world_mut()
         .spawn((
+            Item::StandardParcel,
             Pickable,
             SpawnPoint { pose: spawn },
-            parcel_body(&PrototypeConfig::default()),
+            item_body(&PrototypeConfig::default()),
             Transform::from_translation(position),
         ))
         .id()
@@ -140,7 +141,7 @@ fn character_recovery_clears_requests_and_releases_items_without_teleporting_the
     );
     assert_eq!(
         world.get::<CollisionLayers>(item).unwrap(),
-        &parcel_collision_layers()
+        &item_collision_layers()
     );
     // 角色恢复不会重置仍在海面上方的物品，物品继续保持自己的位置和动量。
     assert!(world.get::<Position>(item).unwrap().x > 91.0);
@@ -155,34 +156,84 @@ fn character_recovery_clears_requests_and_releases_items_without_teleporting_the
 
 #[test]
 fn item_recovers_its_own_pose_and_does_not_interpolate_across_the_island() {
-    let mut app = test_app();
-    let spawn = Transform::from_xyz(-12.0, 0.3, 7.0).with_rotation(Quat::from_rotation_y(1.2));
-    let character_spawn = Transform::from_xyz(4.0, 0.03, 5.0);
-    let character = spawn_character(&mut app, character_spawn.translation, character_spawn);
-    let item = spawn_item(&mut app, Vec3::new(90.0, -2.0, -80.0), spawn);
-    app.world_mut().entity_mut(item).insert((
-        <HeldBy as Relationship>::from(character),
-        HeldTarget {
-            translation: Vec3::ZERO,
-            rotation: Quat::IDENTITY,
-        },
-        held_collision_layers(),
-    ));
-    let offset = Vec3::new(0.0, 0.15, 0.0);
-    let visual = app
-        .world_mut()
-        .spawn((Transform::from_translation(offset), ChildOf(item)))
-        .id();
-    app.update();
-    app.world_mut().get_mut::<LinearVelocity>(item).unwrap().0 = Vec3::new(40.0, -20.0, 30.0);
-    app.world_mut().get_mut::<AngularVelocity>(item).unwrap().0 = Vec3::splat(10.0);
-
-    fixed_step(&mut app);
-
-    for _ in 0..4 {
-        // 连续零固定步帧检查实际呈现姿态，旧海中端点不得重新参与插值。
+    for kind in [Item::StandardParcel, Item::FragileParcel, Item::WoodenCrate] {
+        let mut app = test_app();
+        let spawn = Transform::from_xyz(-12.0, 0.3, 7.0).with_rotation(Quat::from_rotation_y(1.2));
+        let character_spawn = Transform::from_xyz(4.0, 0.03, 5.0);
+        let character = spawn_character(&mut app, character_spawn.translation, character_spawn);
+        let item = spawn_item(&mut app, Vec3::new(90.0, -2.0, -80.0), spawn);
+        app.world_mut().entity_mut(item).insert((
+            kind,
+            <HeldBy as Relationship>::from(character),
+            HeldTarget {
+                translation: Vec3::ZERO,
+                rotation: Quat::IDENTITY,
+            },
+            held_collision_layers(),
+        ));
+        let offset = Vec3::new(0.0, 0.15, 0.0);
+        let visual = app
+            .world_mut()
+            .spawn((Transform::from_translation(offset), ChildOf(item)))
+            .id();
         app.update();
+        app.world_mut().get_mut::<LinearVelocity>(item).unwrap().0 = Vec3::new(40.0, -20.0, 30.0);
+        app.world_mut().get_mut::<AngularVelocity>(item).unwrap().0 = Vec3::splat(10.0);
+
+        fixed_step(&mut app);
+
+        for _ in 0..4 {
+            // 连续零固定步帧检查实际呈现姿态，旧海中端点不得重新参与插值。
+            app.update();
+            let world = app.world();
+            assert_eq!(world.get::<Item>(item), Some(&kind));
+            assert!(
+                world
+                    .get::<Position>(item)
+                    .unwrap()
+                    .0
+                    .abs_diff_eq(spawn.translation, 0.0001)
+            );
+            assert!(
+                world
+                    .get::<Transform>(item)
+                    .unwrap()
+                    .translation
+                    .abs_diff_eq(spawn.translation, 0.0001)
+            );
+            assert!(
+                world
+                    .get::<Rotation>(item)
+                    .unwrap()
+                    .0
+                    .abs_diff_eq(spawn.rotation, 0.0001)
+            );
+            assert!(
+                (world.get::<Transform>(item).unwrap().rotation * Vec3::NEG_Z)
+                    .abs_diff_eq(spawn.rotation * Vec3::NEG_Z, 0.0001)
+            );
+            assert!(
+                world
+                    .get::<GlobalTransform>(visual)
+                    .unwrap()
+                    .translation()
+                    .abs_diff_eq(spawn.transform_point(offset), 0.0001)
+            );
+            assert_eq!(world.get::<LinearVelocity>(item).unwrap().0, Vec3::ZERO);
+            assert_eq!(world.get::<AngularVelocity>(item).unwrap().0, Vec3::ZERO);
+            assert!(world.get::<HeldBy>(item).is_none());
+            assert!(world.get::<HeldTarget>(item).is_none());
+            assert_eq!(
+                world.get::<CollisionLayers>(item).unwrap(),
+                &item_collision_layers()
+            );
+        }
+
+        fixed_step(&mut app);
         let world = app.world();
+        assert!(world.get::<NoTranslationEasing>(item).is_none());
+        assert!(world.get::<NoRotationEasing>(item).is_none());
+        assert!(world.get::<ResumeInterpolation>(item).is_none());
         assert!(
             world
                 .get::<Position>(item)
@@ -190,55 +241,9 @@ fn item_recovers_its_own_pose_and_does_not_interpolate_across_the_island() {
                 .0
                 .abs_diff_eq(spawn.translation, 0.0001)
         );
-        assert!(
-            world
-                .get::<Transform>(item)
-                .unwrap()
-                .translation
-                .abs_diff_eq(spawn.translation, 0.0001)
-        );
-        assert!(
-            world
-                .get::<Rotation>(item)
-                .unwrap()
-                .0
-                .abs_diff_eq(spawn.rotation, 0.0001)
-        );
-        assert!(
-            (world.get::<Transform>(item).unwrap().rotation * Vec3::NEG_Z)
-                .abs_diff_eq(spawn.rotation * Vec3::NEG_Z, 0.0001)
-        );
-        assert!(
-            world
-                .get::<GlobalTransform>(visual)
-                .unwrap()
-                .translation()
-                .abs_diff_eq(spawn.transform_point(offset), 0.0001)
-        );
         assert_eq!(world.get::<LinearVelocity>(item).unwrap().0, Vec3::ZERO);
         assert_eq!(world.get::<AngularVelocity>(item).unwrap().0, Vec3::ZERO);
-        assert!(world.get::<HeldBy>(item).is_none());
-        assert!(world.get::<HeldTarget>(item).is_none());
-        assert_eq!(
-            world.get::<CollisionLayers>(item).unwrap(),
-            &parcel_collision_layers()
-        );
     }
-
-    fixed_step(&mut app);
-    let world = app.world();
-    assert!(world.get::<NoTranslationEasing>(item).is_none());
-    assert!(world.get::<NoRotationEasing>(item).is_none());
-    assert!(world.get::<ResumeInterpolation>(item).is_none());
-    assert!(
-        world
-            .get::<Position>(item)
-            .unwrap()
-            .0
-            .abs_diff_eq(spawn.translation, 0.0001)
-    );
-    assert_eq!(world.get::<LinearVelocity>(item).unwrap().0, Vec3::ZERO);
-    assert_eq!(world.get::<AngularVelocity>(item).unwrap().0, Vec3::ZERO);
 }
 
 #[test]

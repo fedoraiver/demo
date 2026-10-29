@@ -1,6 +1,6 @@
 //! 从已解算的物品接触与持续握持误差产生反馈消息，不打开音频设备。
 
-use super::{CarryGrip, HeldBy, Parcel};
+use super::{CarryGrip, HeldBy, Item};
 use crate::{
     audio::{SoundCue, SoundRequest},
     character::Character,
@@ -22,7 +22,7 @@ pub(super) fn register_feedback(app: &mut App) {
         )
         .add_systems(
             FixedPostUpdate,
-            emit_parcel_land
+            emit_item_land
                 .after(PhysicsSystems::StepSimulation)
                 .run_if(gameplay_running),
         );
@@ -35,9 +35,9 @@ struct LandingContacts {
     reported: HashSet<Entity>,
 }
 
-fn emit_parcel_land(
+fn emit_item_land(
     contacts: Res<ContactGraph>,
-    parcels: Query<(), (With<Parcel>, Without<HeldBy>)>,
+    items: Query<(), (With<Item>, Without<HeldBy>)>,
     mut state: Local<LandingContacts>,
     mut sounds: MessageWriter<SoundRequest>,
 ) {
@@ -46,8 +46,8 @@ fn emit_parcel_land(
         .iter_active_touching()
         .chain(contacts.iter_sleeping_touching())
     {
-        for (parcel, first) in [(pair.collider1, true), (pair.collider2, false)] {
-            if !parcels.contains(parcel) {
+        for (item, first) in [(pair.collider1, true), (pair.collider2, false)] {
+            if !items.contains(item) {
                 continue;
             }
             let mut landed = false;
@@ -58,14 +58,14 @@ fn emit_parcel_land(
                     manifold.normal.y
                 };
                 if support_y >= 0.65 {
-                    state.supported.insert(parcel);
+                    state.supported.insert(item);
                     landed |= manifold.total_normal_impulse() >= 1.8;
                 }
             }
-            if landed && state.reported.insert(parcel) {
-                sounds.write(SoundRequest::new(SoundCue::ParcelLand, parcel));
+            if landed && state.reported.insert(item) {
+                sounds.write(SoundRequest::new(SoundCue::ItemLand, item));
                 info!(target: "demo::audio_events",
-                    ?parcel,
+                    ?item,
                     event = "parcel_land",
                     reason = "support_impact",
                     "Audio cue emitted"
@@ -77,7 +77,7 @@ fn emit_parcel_land(
         supported,
         reported,
     } = &mut *state;
-    reported.retain(|parcel| supported.contains(parcel));
+    reported.retain(|item| supported.contains(item));
 }
 
 /// 用滞回与持续时间区分正常拾取拉近、瞬时惯性和持续受阻；每次失稳只提示一次。
@@ -94,22 +94,22 @@ pub(super) fn warn_hold_strain(
     time: Res<Time<Fixed>>,
     config: Res<PrototypeConfig>,
     holders: Query<(&Position, &Transform), With<Character>>,
-    parcels: Query<(Entity, &HeldBy, &Position, Option<&CarryGrip>), With<Parcel>>,
+    items: Query<(Entity, &HeldBy, &Position, Option<&CarryGrip>), With<Item>>,
     mut strain: Local<HashMap<Entity, HoldStrain>>,
     mut sounds: MessageWriter<SoundRequest>,
 ) {
-    strain.retain(|entity, _| parcels.contains(*entity));
-    for (parcel, held_by, position, grip) in &parcels {
+    strain.retain(|entity, _| items.contains(*entity));
+    for (item, held_by, position, grip) in &items {
         let Ok((holder_position, holder_transform)) = holders.get(held_by.get()) else {
-            strain.remove(&parcel);
+            strain.remove(&item);
             continue;
         };
         // 告警按物品实际持握偏移计算目标位置。
         let offset = grip.map_or(config.hold_offset, |grip| grip.offset);
         let target = holder_position.0 + holder_transform.rotation * offset;
         let distance = position.0.distance(target);
-        let state = strain.entry(parcel).or_default();
-        // 同一包裹切换持有者时也重启宽限，不能沿用上一持有者的警告锁存。
+        let state = strain.entry(item).or_default();
+        // 同一物品切换持有者时也重启宽限，不能沿用上一持有者的警告锁存。
         if state.holder != Some(held_by.get()) {
             *state = HoldStrain {
                 holder: Some(held_by.get()),
@@ -124,9 +124,9 @@ pub(super) fn warn_hold_strain(
             state.strained_for += time.delta_secs();
             if state.strained_for >= 0.35 && !state.warned {
                 state.warned = true;
-                sounds.write(SoundRequest::new(SoundCue::InstabilityWarning, parcel));
+                sounds.write(SoundRequest::new(SoundCue::InstabilityWarning, item));
                 info!(target: "demo::audio_events",
-                    ?parcel,
+                    ?item,
                     event = "instability_warning",
                     distance,
                     reason = "sustained_hold_error",
