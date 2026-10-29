@@ -5,13 +5,14 @@ import { INFRASTRUCTURE_FEATURES } from './architecture-infrastructure.mjs';
 import { architectureSplitterAssets } from './architecture-splitter.mjs';
 import { architectureInteractionAssets } from './architecture-interaction.mjs';
 import { architectureGestureAssets } from './architecture-gestures.mjs';
+import { architectureSearchAssets } from './architecture-search.mjs';
 import { NODE_STYLES, EDGE_STYLES, SELECTION_STYLE, EXTERNAL_REFERENCE_STYLE } from './architecture-style.mjs';
 import { SCHEDULE_LEGEND_LABELS } from './schedule-legend.mjs';
 import { assetLoaderAssets, readArchitectureResource, createArchitectureAssetLoader } from './architecture-asset-loader.mjs';
 
 const escape = value => String(value ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
-export function createArchitectureViewer({ data: DATA, document, location, history, window, requestAnimationFrame, sourceEditor, navigation, createSplitter, createInteraction, createGestures, createScheduleRenderer, loadView, pinView }) {
+export function createArchitectureViewer({ data: DATA, document, location, history, window, requestAnimationFrame, sourceEditor, navigation, createSplitter, createInteraction, createGestures, createObjectSearch, createScheduleRenderer, loadView, pinView }) {
   const canvas=document.getElementById('canvas'),diagram=document.getElementById('diagram'),details=document.getElementById('details');
   const results=document.getElementById('object-results'),picker=document.getElementById('view-select'),workspace=document.getElementById('workspace');
   const scheduleRenderer=createScheduleRenderer?.();
@@ -23,8 +24,10 @@ export function createArchitectureViewer({ data: DATA, document, location, histo
   const scheduleBindings=new Map((DATA.scheduleInteractions?.views||[]).map(entry=>[entry.viewId,new Map(entry.bindings.map(binding=>[binding.id,binding]))]));
   const scheduleElements=new Map();let selectedScheduleId=null;
   const objects=DATA.objects?.length?DATA.objects:objectViews.map(candidate=>({id:candidate.objectId,viewId:candidate.id,feature:candidate.feature}));
+  const objectSearch=createObjectSearch({objects,registry:DATA.registry});
+  let searchState={query:'',kinds:[],open:false,cleared:false},resultMode='search';
   let desiredViewId=null,viewLoading=null,loadAbort=null,lastSuccessful=null,retryTarget=null,searchRevision=0;
-  let selection=navigation.resolve(location.search),view,scale=1,panX=0,panY=0,activeSelection={kind:'none'},clearedSearchQuery=null,canvasSize,objectOrigin=history.state?.architectureObjectOrigin||null,aliasCandidates=[],renderedObject=false,renderRequest=0,pendingRender=Promise.resolve(),displayedScheduleKey=null,pageSuspended=false,resultIndex=-1,openFilter=null,filterState={includePlugins:[],excludePlugins:[],includeNames:[],excludeNames:[],include:'',exclude:''},filterLegacy={include:'',exclude:'',includeNames:[],excludeNames:[],includePlugins:[],excludePlugins:[]};
+  let selection=navigation.resolve(location.search),view,scale=1,panX=0,panY=0,activeSelection={kind:'none'},canvasSize,objectOrigin=history.state?.architectureObjectOrigin||null,aliasCandidates=[],renderedObject=false,renderRequest=0,pendingRender=Promise.resolve(),displayedScheduleKey=null,pageSuspended=false,resultIndex=-1,openFilter=null,filterState={includePlugins:[],excludePlugins:[],includeNames:[],excludeNames:[],include:'',exclude:''},filterLegacy={include:'',exclude:'',includeNames:[],excludeNames:[],includePlugins:[],excludePlugins:[]};
   const canonical=id=>DATA.registry[id]?.alias_of||id;
   const featureLabel=id=>DATA.model.features.find(feature=>feature.id===id)?.label||DATA.infrastructureFeatures.find(feature=>feature.id===id)?.label||id;
   const objectView=id=>objectViews.find(candidate=>candidate.objectId===canonical(id));
@@ -32,7 +35,7 @@ export function createArchitectureViewer({ data: DATA, document, location, histo
   const ownerObject=feature=>{const entry=DATA.model.features.find(entry=>entry.id===feature)||DATA.infrastructureFeatures.find(entry=>entry.id===feature);return canonical(entry?.overviewNode||(entry?.plugin?'plugin-'+entry.plugin:null))};
   const visibleNode=id=>canonical(id);
   function objectContext(id){const record=DATA.registry[id]||{},owner=componentEntities.get(id),schedules=(record.registrations||[]).map(registration=>registration.schedule).filter(Boolean);return[record.owner||DATA.registry[owner]?.name,...new Set(schedules),id].filter(Boolean).join(' · ')}
-  function objectResults(ids){return ids.map(id=>'<button class="result" data-object="'+safe(id)+'">'+safe(DATA.registry[id]?.name||id)+'<small>'+safe(objectContext(id))+'</small></button>').join('')}
+  function objectResults(ids){return ids.map(id=>'<button class="result" data-object="'+safe(id)+'">'+safe(DATA.registry[id]?.name||id)+'<small>'+safe([DATA.registry[id]?.kind,objectContext(id)].filter(Boolean).join(' · '))+'</small></button>').join('')}
   function transform(){diagram.style.transform='translate('+panX+'px,'+panY+'px) scale('+scale+')';interaction.setScale(scale);const percent=scale*100;document.getElementById('zoom-label').textContent=(percent<1?Number(percent.toPrecision(2)):Math.round(percent))+'%'}
   const fittedScale=()=>Math.min((canvas.clientWidth-28)/view.width,(canvas.clientHeight-28)/view.height,1);
   // 超大图在适合窗口后仍可缩小四倍；画布扩大时不把既有的小比例突然放大。
@@ -55,7 +58,7 @@ export function createArchitectureViewer({ data: DATA, document, location, histo
   function selectSchedule(id,{remember=true,preserveCenter=true}={}){
     const previous=selectedScheduleId,binding=scheduleElements.has(id)&&scheduleBinding(id);
     selectedScheduleId=binding?id:null;
-    if(binding)clearedSearchQuery=null;
+    if(binding&&remember&&searchState.query.trim()){searchState.cleared=true;activeSelection={kind:'none'}}
     if(binding)selection={...selection,scheduleNode:id};else{selection={...selection};delete selection.scheduleNode}
     const selectedOutlines=[];
     for(const [key,elements]of scheduleElements){const [element]=elements,selected=key===selectedScheduleId;element.classList.toggle('selected',selected);element.setAttribute('aria-pressed',String(selected));if(selected){const fillOnlyParts=scheduleTitleFillParts(elements,scheduleBinding(key));for(const [index,part]of scheduleOutlineParts(element).entries())selectedOutlines.push({target:part,parts:[part],fillOnlyParts:index===0?fillOnlyParts:[]})}}
@@ -69,12 +72,19 @@ export function createArchitectureViewer({ data: DATA, document, location, histo
   function scheduleKey(value=selection){return JSON.stringify([value.schedule,value.scheduleInclude||'',value.scheduleExclude||'',...['scheduleIncludePlugins','scheduleExcludePlugins','scheduleIncludeSystems','scheduleExcludeSystems'].map(key=>[...new Set(value[key]||[])].sort())])}
   const interactionPaused=()=>Boolean(viewLoading&&viewLoading.id!==view?.id);
   function viewSnapshot(){const key=scheduleKey();return !view||loadView&&view.id!==desiredViewId||view.aspect==='schedule'&&displayedScheduleKey!==key?null:{id:view.id,scale,panX,panY,active:activeSelection,...(view.aspect==='schedule'?{filterKey:key}:{})}}
-  const searchQuery=()=>activeSelection.kind==='search'?activeSelection.query:clearedSearchQuery;
-  function rememberView(){if(!view)return;const state={...history.state,architectureView:viewSnapshot(),architectureSearch:searchQuery(),architectureSearchCleared:clearedSearchQuery!==null},href=navigation.url(selection,location.href);try{history.replaceState(state,'',href)}catch{/* 本地浏览器可禁用 History API。 */}if(loadView&&!interactionPaused()&&view.id===desiredViewId)lastSuccessful={selection:{...selection},objectOrigin,state,href,view}}
+  const searchSnapshot=()=>({...searchState,kinds:[...searchState.kinds]});
+  const searchHistory=state=>({architectureObjectSearch:state,architectureSearch:state.query.trim()?state.query:null,architectureSearchCleared:state.cleared});
+  function restoredSearch(restored,state=history.state){
+    const saved=restored?restored.objectSearch:state?.architectureObjectSearch;
+    if(saved)return{query:saved.query||'',kinds:(saved.kinds||[]).filter(kind=>objectSearch.kinds.includes(kind)),open:saved.open===true,cleared:saved.cleared===true};
+    const query=(restored?restored.search:state?.architectureSearch??(state?.architectureView?.active?.kind==='search'?state.architectureView.active.query:null))||'';
+    return{query,kinds:[],open:Boolean(query),cleared:(restored?restored.searchCleared:state?.architectureSearchCleared)===true};
+  }
+  function rememberView(){if(!view)return;const state={...history.state,architectureView:viewSnapshot(),...searchHistory(searchSnapshot())},href=navigation.url(selection,location.href);try{history.replaceState(state,'',href)}catch{/* 本地浏览器可禁用 History API。 */}if(loadView&&!interactionPaused()&&view.id===desiredViewId)lastSuccessful={selection:{...selection},objectOrigin,state,href,view}}
   function liveFilterSelection(){return{scheduleInclude:filterState.include,scheduleExclude:filterState.exclude,scheduleIncludeSystems:[...filterState.includeNames],scheduleExcludeSystems:[...filterState.excludeNames],scheduleIncludePlugins:[...filterState.includePlugins],scheduleExcludePlugins:[...filterState.excludePlugins]}}
   function appliedFilterSelection(){return{scheduleInclude:selection.scheduleInclude||'',scheduleExclude:selection.scheduleExclude||'',scheduleIncludeSystems:[...(selection.scheduleIncludeSystems||[])],scheduleExcludeSystems:[...(selection.scheduleExcludeSystems||[])],scheduleIncludePlugins:[...(selection.scheduleIncludePlugins||[])],scheduleExcludePlugins:[...(selection.scheduleExcludePlugins||[])]}}
   // 筛选选择即时进入链接；完整导航继续携带当前条件。
-  function navigate(next,origin,restore=null){next={...appliedFilterSelection(),...next};rememberView();objectOrigin=origin!==undefined?origin:next.object?{selection:{...selection,...appliedFilterSelection()},view:viewSnapshot(),search:searchQuery(),searchCleared:clearedSearchQuery!==null,parent:objectOrigin}:null;const href=navigation.url(next,location.href);selection=navigation.resolve(new URL(href).search);try{history.pushState({...history.state,architectureView:restore?.view||null,architectureSearch:restore?.search||null,architectureSearchCleared:restore?.searchCleared===true,architectureObjectOrigin:objectOrigin},'',href)}catch{/* 导航不依赖文件页的历史权限。 */}renderSelection(Boolean(restore),restore)}
+  function navigate(next,origin,restore=null){next={...appliedFilterSelection(),...next};rememberView();objectOrigin=origin!==undefined?origin:next.object?{selection:{...selection,...appliedFilterSelection()},view:viewSnapshot(),objectSearch:searchSnapshot(),parent:objectOrigin}:null;const href=navigation.url(next,location.href);selection=navigation.resolve(new URL(href).search);const nextSearch=restore?restoredSearch(restore):{query:'',kinds:[...searchState.kinds],open:false,cleared:false};try{history.pushState({...history.state,architectureView:restore?.view||null,...searchHistory(nextSearch),architectureObjectOrigin:objectOrigin},'',href)}catch{/* 导航不依赖文件页的历史权限。 */}renderSelection(Boolean(restore),restore)}
   function list(title,items,level=3){
     if(!items?.length)return '';
     return'<h'+level+'>'+safe(title)+'</h'+level+'><ul>'+items.map(item=>{const value=typeof item==='string'?item:item?.id||JSON.stringify(item),key=DATA.registry[value]?value:String(value).split(' ')[0],record=DATA.registry[key];return'<li>'+(record?'<button class="data-link" data-open="'+safe(key)+'">'+safe(record.name)+' '+safe(String(value).slice(key.length))+'</button>':'<code>'+safe(value)+'</code>')+'</li>'}).join('')+'</ul>';
@@ -127,7 +137,7 @@ export function createArchitectureViewer({ data: DATA, document, location, histo
   function select(id){
     if(!view||interactionPaused())return;
     if(view.aspect==='schedule'){selection={...selection,node:null};selectSchedule(null);return}
-    id=id?visibleNode(id):null;if(id)clearedSearchQuery=null;activeSelection=id?{kind:'node',id}:{kind:'none'};if(!id)releaseDiagramFocus();
+    id=id?visibleNode(id):null;if(searchState.query.trim())searchState.cleared=true;activeSelection=id?{kind:'node',id}:{kind:'none'};if(!id)releaseDiagramFocus();
     const record=DATA.registry[id],selectedNodes=new Set(id?[id]:[]),relevant=new Set([id,...(record?.reads||[]),...(record?.writes||[]),...view.links.filter(link=>link.from===id||link.to===id||link.displayFrom===id||link.displayTo===id).flatMap(link=>[link.from,link.to])].map(visibleNode));
     const focused=new Set(id?view.links.filter(link=>relevant.has(link.displayFrom||link.from)||relevant.has(link.displayTo||link.to)).map(link=>link.id):[]);
     interaction.paint({selectedNodes,dimNodes:new Set(id?view.nodes.filter(node=>!relevant.has(node.id)).map(node=>node.id):[]),focusedEdges:focused,dimEdges:new Set(id?[...view.links,...view.scheduleLinks].filter(link=>!focused.has(link.id)).map(link=>link.id):[])});
@@ -144,9 +154,9 @@ export function createArchitectureViewer({ data: DATA, document, location, histo
     details.innerHTML='<span class="badge">'+safe(style?.label||link.edgeSemantic||link.kind)+'</span><h2>'+safe(record.name||link.displayLabel||style?.label||'关系')+'</h2><p>来源：'+edgeEndpoint(link.from,schedule)+'</p><p>目标：'+edgeEndpoint(link.to,schedule)+'</p>'+(link.eventId?'<h3>触发事件</h3><p>'+edgeEndpoint(link.eventId,false)+'</p>':'')+(link.label?'<h3>完整契约与约束</h3><p>'+safe(link.label)+'</p>':'')+((link.description||record.description)?'<p>'+safe(link.description||record.description)+'</p>':'')+['cardinality','reverse','linked_spawn'].filter(key=>Object.hasOwn(properties,key)).map(key=>'<h3>'+({cardinality:'数量约束',reverse:'反向关系',linked_spawn:'连带生命周期'}[key])+'</h3><p>'+safe(relationshipValue(properties[key]))+'</p>').join('')+list('约束与说明',[...(link.notes||record.notes||[]),...(link.sourceGaps||record.sourceGaps||[])])+sourcesList(link.sourceEntries||record.sourceEntries)+'<button class="reset" id="clear-selection">清除选择</button>';
     sourceEditor.refreshLinks(details);details.scrollTop=0;
   }
-  function paintEdge(id,schedule=false){if(!view||interactionPaused())return;const link=(schedule?view.scheduleLinks:view.links).find(candidate=>candidate.id===id);if(!link)return;clearedSearchQuery=null;activeSelection={kind:'edge',id,schedule};const endpoints=new Set([link.displayFrom||link.from,link.displayTo||link.to]);interaction.paint({selectedNodes:schedule?new Set():endpoints,dimNodes:new Set(view.nodes.filter(node=>!endpoints.has(node.id)).map(node=>node.id)),selectedSchedules:schedule?endpoints:new Set(),focusedEdges:new Set([id]),dimEdges:new Set([...view.links,...view.scheduleLinks].filter(edge=>edge.id!==id).map(edge=>edge.id))});showEdgeDetail(link,schedule);rememberView()}
+  function paintEdge(id,schedule=false){if(!view||interactionPaused())return;const link=(schedule?view.scheduleLinks:view.links).find(candidate=>candidate.id===id);if(!link)return;if(searchState.query.trim())searchState.cleared=true;activeSelection={kind:'edge',id,schedule};const endpoints=new Set([link.displayFrom||link.from,link.displayTo||link.to]);interaction.paint({selectedNodes:schedule?new Set():endpoints,dimNodes:new Set(view.nodes.filter(node=>!endpoints.has(node.id)).map(node=>node.id)),selectedSchedules:schedule?endpoints:new Set(),focusedEdges:new Set([id]),dimEdges:new Set([...view.links,...view.scheduleLinks].filter(edge=>edge.id!==id).map(edge=>edge.id))});showEdgeDetail(link,schedule);rememberView()}
   function openOwner(feature){const id=ownerObject(feature);if(objectView(id))openObject(id);else navigate({schedule:selection.schedule,node:null})}
-  function openObject(id){id=canonical(id);const target=objectView(id);if(!target){if(DATA.objectAliases?.[id]?.length){navigate({...selection,object:id,node:null});return}openOwner(DATA.registry[id]?.feature,id);return}if(view?.id===target.id&&!interactionPaused()){pluginView(target)?select(null):focusNode(target.centerNodeId||id);return}navigate({...selection,object:id,node:pluginView(target)?null:target.centerNodeId||id})}
+  function openObject(id){id=canonical(id);const target=objectView(id);if(!target){if(DATA.objectAliases?.[id]?.length){navigate({...selection,object:id,node:null});return}openOwner(DATA.registry[id]?.feature,id);return}if(view?.id===target.id&&!interactionPaused()){closeResults();if(document.activeElement?.closest('#object-results'))canvas.focus({preventScroll:true});pluginView(target)?select(null):focusNode(target.centerNodeId||id);return}navigate({...selection,object:id,node:pluginView(target)?null:target.centerNodeId||id})}
   function openNode(id){id=canonical(id);if(objectView(id)){openObject(id);return}if(view.nodes.some(node=>node.id===id))focusNode(id);else openOwner(DATA.registry[id]?.feature,id)}
   function normalizeSelection(loaded=null){
     aliasCandidates=[];
@@ -193,8 +203,9 @@ export function createArchitectureViewer({ data: DATA, document, location, histo
     }
     for(const element of titles){const binding=byGraphName.get('set|'+element.dataset.clusterName),owner=binding&&scheduleElements.get(binding.id)?.[0];if(!owner||!owner.getAttribute('id')||element.dataset.clusterId!==owner.getAttribute('id'))continue;element.setAttribute('data-schedule-node',binding.id);element.setAttribute('data-schedule-title',binding.id);element.setAttribute('aria-hidden','true');scheduleElements.get(binding.id).push(element)}
   }
-  function renderDiagram(){const focused=document.activeElement?.closest('[data-schedule-node]')?.dataset.scheduleNode;gestures.reset();interaction.paint({nativeOnly:!renderedObject});scheduleElements.clear();diagram.innerHTML=view.svg||'';renderedObject=view.aspect==='object';if(renderedObject)bindEdgeLabels();else bindScheduleObjects();if(focused)(scheduleElements.get(focused)?.[0]||canvas).focus({preventScroll:true});canvas.querySelector('.empty-state')?.remove();if(!view.svg){const empty=document.createElement('div');empty.className='empty-state';empty.innerHTML='<h3>'+(view.aspect==='schedule'?'当前筛选没有匹配系统':'当前视图没有相关节点')+'</h3>';canvas.appendChild(empty)}document.getElementById('section').hidden=view.aspect==='schedule'||['Plugin','PluginGroup'].includes(DATA.registry[view.objectId]?.kind);document.getElementById('section').innerHTML='<option value="">定位分组</option>'+(view.sections||[]).map((section,index)=>'<option value="'+index+'">'+safe(section.label)+'</option>').join('')}
-  function closeResults(){results.hidden=true;document.getElementById('search').setAttribute('aria-expanded','false');resultIndex=-1}
+  function renderDiagram(){const focused=document.activeElement?.closest('[data-schedule-node]')?.dataset.scheduleNode;gestures.reset();interaction.paint({nativeOnly:!renderedObject});scheduleElements.clear();diagram.innerHTML=view.svg||'';renderedObject=view.aspect==='object';if(renderedObject)bindEdgeLabels();else bindScheduleObjects();if(focused)(scheduleElements.get(focused)?.[0]||canvas).focus({preventScroll:true});canvas.querySelector('.empty-state')?.remove();if(!view.svg){const empty=document.createElement('div');empty.className='empty-state';empty.innerHTML='<h3>'+(view.aspect==='schedule'?'当前筛选没有匹配系统':'当前视图没有相关节点')+'</h3>';canvas.appendChild(empty)}}
+  function hideResults(){results.hidden=true;document.getElementById('search').setAttribute('aria-expanded','false');resultIndex=-1}
+  function closeResults(){if(!searchState.open&&results.hidden)return;searchState.open=false;searchRevision++;hideResults();rememberView()}
   function positionPopup(element,anchor){
     if(element.hidden)return;
     const rect=anchor.getBoundingClientRect(),width=Math.min(480,Math.max(0,window.innerWidth-24));
@@ -226,33 +237,51 @@ export function createArchitectureViewer({ data: DATA, document, location, histo
     }
   }
   function openFilterMenu(side){if(openFilter===side){closeFilterMenu();return}closeFilterMenu();closeResults();openFilter=side;const menu=document.getElementById('schedule-'+side+'-menu');menu.hidden=false;document.getElementById('schedule-'+side).setAttribute('aria-expanded','true');renderFilterOptions(side);positionPopup(menu,document.getElementById('schedule-'+side));document.getElementById('schedule-'+side+'-search').focus()}
-  function showResults(title,ids,alias=false){closeFilterMenu();results.innerHTML='<h2>'+safe(title)+'</h2>'+(alias?'<p>此旧入口包含多个投影或注册，请选择对应对象。</p>':'')+objectResults(ids);results.hidden=false;positionResults();document.getElementById('search').setAttribute('aria-expanded','true');resultIndex=-1}
+  function syncSearchKinds(){
+    const selected=new Set(searchState.kinds);
+    document.getElementById('search-kinds-toggle').textContent='类型 · '+(selected.size?'已选 '+selected.size:'全部');
+    document.getElementById('search-kinds-all').disabled=!selected.size;
+    for(const input of document.getElementById('search-kinds').querySelectorAll('[data-search-kind]'))input.checked=selected.has(input.dataset.searchKind);
+  }
+  function showResults(title,ids,alias=false){
+    resultMode=alias?'alias':'search';document.getElementById('search-kind-controls').hidden=alias;
+    document.getElementById('search-matches').innerHTML='<h2>'+safe(title)+'</h2>'+(alias?'<p>此旧入口包含多个投影或注册，请选择对应对象。</p>':'')+objectResults(ids);
+    if(searchState.open){closeFilterMenu();results.hidden=false;positionResults();document.getElementById('search').setAttribute('aria-expanded','true')}else hideResults();
+    resultIndex=-1;
+  }
   function syncPicker(target){const current=document.getElementById('current-object-option');current.innerHTML='';if(![...picker.querySelectorAll('option')].some(option=>option.value===target.id))current.innerHTML='<option value="'+safe(target.id)+'">'+safe(DATA.registry[target.objectId]?.name||target.label)+' · '+safe(target.objectId||'')+'</option>';picker.value=target.id}
   function status(message,error=false){const element=document.getElementById('schedule-status');element.textContent=message;element.hidden=!message;element.classList.toggle('error',error)}
   const restoresViewport=(snapshot,target,key)=>snapshot?.id===target.id&&(target.aspect!=='schedule'||snapshot.filterKey===key);
   function prepareView(target){
-    if(document.activeElement?.closest('#object-results'))canvas.focus({preventScroll:true});
+    if(document.activeElement?.closest('#search-matches'))canvas.focus({preventScroll:true});
     const object=target.aspect==='object';
     workspace.classList.toggle('schedule',!object);detailVisibility(true);document.getElementById('schedule-filter').hidden=object;
-    document.getElementById('return-context').hidden=!object&&!aliasCandidates.length;document.getElementById('return-overview').disabled=!object;document.getElementById('search').value='';closeResults();syncPicker(target);canvasSize=measureCanvas();
+    document.getElementById('return-context').hidden=!object&&!aliasCandidates.length;document.getElementById('return-overview').disabled=!object;hideResults();syncPicker(target);canvasSize=measureCanvas();
   }
-  function restoreSearch(query,cleared=false){if(query!==null){document.getElementById('search').value=query;search(query,{highlight:!cleared})}if(aliasCandidates.length)showResults('选择原对象',aliasCandidates,true)}
-  function applyView(target,snapshot,request,key=null,query=null,searchCleared=false){
-    view=target;displayedScheduleKey=null;activeSelection={kind:'none'};clearedSearchQuery=null;selectedScheduleId=null;const object=view.aspect==='object';
-    prepareView(view);renderDiagram();if(!object)selectSchedule(selection.scheduleNode,{remember:false,preserveCenter:false});guide();restoreSearch(query,searchCleared);const rendered=view,center=view.centerNodeId||view.objectId;
-    requestAnimationFrame(()=>{if(request!==renderRequest||view!==rendered)return;if(restoresViewport(snapshot,view,key)){scale=snapshot.scale;panX=snapshot.panX;panY=snapshot.panY;transform();if(query===null){if(snapshot.active?.kind==='edge')paintEdge(snapshot.active.id,snapshot.active.schedule);else if(snapshot.active?.kind==='node')select(snapshot.active.id)}}else{fit();const id=selection.node||(object&&!pluginView(view)?center:null);if(id&&!aliasCandidates.length&&query===null)select(id)}displayedScheduleKey=object?null:key;rememberView()});
+  function restoreSearch(state=null){
+    searchState=state?{...state,kinds:[...state.kinds]}:{query:'',kinds:[...searchState.kinds],open:Boolean(aliasCandidates.length),cleared:false};
+    document.getElementById('search').value=searchState.query;syncSearchKinds();
+    if(aliasCandidates.length)showResults('选择原对象',aliasCandidates,true);
+    else search(searchState.query,{highlight:!searchState.cleared,open:searchState.open,revise:false,remember:false});
+    const active=document.activeElement;
+    if(active?.closest('#object-results')&&(results.hidden||aliasCandidates.length&&active.closest('#search-kind-controls')))canvas.focus({preventScroll:true});
+  }
+  function applyView(target,snapshot,request,key=null,objectSearchState=null){
+    view=target;displayedScheduleKey=null;activeSelection={kind:'none'};selectedScheduleId=null;const object=view.aspect==='object';
+    prepareView(view);renderDiagram();if(!object)selectSchedule(selection.scheduleNode,{remember:false,preserveCenter:false});guide();restoreSearch(objectSearchState);const rendered=view,center=view.centerNodeId||view.objectId;
+    requestAnimationFrame(()=>{if(request!==renderRequest||view!==rendered)return;if(restoresViewport(snapshot,view,key)){scale=snapshot.scale;panX=snapshot.panX;panY=snapshot.panY;transform();if(activeSelection.kind!=='search'){if(snapshot.active?.kind==='edge')paintEdge(snapshot.active.id,snapshot.active.schedule);else if(snapshot.active?.kind==='node')select(snapshot.active.id)}}else{fit();const id=selection.node||(object&&!pluginView(view)?center:null);if(id&&!aliasCandidates.length&&!objectSearchState?.query)select(id)}displayedScheduleKey=object?null:key;rememberView()});
   }
   function presentSchedule(target,snapshot,request,key){
     view=target;displayedScheduleKey=null;renderDiagram();selectSchedule(selection.scheduleNode,{remember:false,preserveCenter:false});canvasSize=measureCanvas();
     requestAnimationFrame(()=>{if(request!==renderRequest||view!==target)return;if(restoresViewport(snapshot,target,key)){scale=snapshot.scale;panX=snapshot.panX;panY=snapshot.panY;transform()}else fit();displayedScheduleKey=key;rememberView()});
   }
-  function renderSchedule(target,snapshot,request,preserveUi=false,query=null,searchCleared=false){
+  function renderSchedule(target,snapshot,request,preserveUi=false,objectSearchState=null){
     scheduleRenderer?.cancel?.();canvas.setAttribute('aria-busy','false');
     const include=selection.scheduleInclude||'',exclude=selection.scheduleExclude||'',includeNames=[...(selection.scheduleIncludeSystems||[])],excludeNames=[...(selection.scheduleExcludeSystems||[])],includePlugins=[...(selection.scheduleIncludePlugins||[])],excludePlugins=[...(selection.scheduleExcludePlugins||[])];
     const key=scheduleKey();
-    if(!include&&!exclude&&!includeNames.length&&!excludeNames.length&&!includePlugins.length&&!excludePlugins.length){status('');preserveUi?presentSchedule(target,snapshot,request,key):applyView(target,snapshot,request,key,query,searchCleared);pendingRender=Promise.resolve();return pendingRender}
-    if(view?.id!==target.id||view.aspect!=='schedule')applyView(target,null,request,scheduleKey({schedule:target.id}),query,searchCleared);
-    else if(!preserveUi){activeSelection={kind:'none'};clearedSearchQuery=null;prepareView(target);guide();restoreSearch(query,searchCleared);rememberView()}
+    if(!include&&!exclude&&!includeNames.length&&!excludeNames.length&&!includePlugins.length&&!excludePlugins.length){status('');preserveUi?presentSchedule(target,snapshot,request,key):applyView(target,snapshot,request,key,objectSearchState);pendingRender=Promise.resolve();return pendingRender}
+    if(view?.id!==target.id||view.aspect!=='schedule')applyView(target,null,request,scheduleKey({schedule:target.id}),objectSearchState);
+    else if(!preserveUi){activeSelection={kind:'none'};prepareView(target);guide();restoreSearch(objectSearchState);rememberView()}
     status('正在生成筛选图，保留上次图…');canvas.setAttribute('aria-busy','true');
     // 旧请求即使晚于新导航完成，也不能覆盖图、错误状态或历史视口。
     pendingRender=Promise.resolve().then(()=>{if(request!==renderRequest)return null;if(!scheduleRenderer)throw new Error('Schedule filtering is unavailable');return scheduleRenderer.render(target,{includePlugins,excludePlugins,includeNames,excludeNames,include,exclude})}).then(rendered=>{
@@ -265,29 +294,29 @@ export function createArchitectureViewer({ data: DATA, document, location, histo
     filterState={include,exclude,includeNames,excludeNames,includePlugins,excludePlugins};filterLegacy={include,exclude,includeNames:[...includeNames],excludeNames:[...excludeNames],includePlugins:[...includePlugins],excludePlugins:[...excludePlugins]};closeFilterMenu();for(const side of ['include','exclude'])document.getElementById('schedule-'+side+'-search').value='';updateFilterSummary();
   }
   function renderLoadedSelection(restore=false,restored=null,loaded=null,requestId=null,preserveUi=false){
-    normalizeSelection(loaded);const target=loaded||objectView(selection.object)||scheduleViews.find(candidate=>candidate.id===selection.schedule)||scheduleViews[0]||objectViews[0],request=requestId??++renderRequest,snapshot=restore?(restored?restored.view:history.state?.architectureView):null,query=restore?(restored?restored.search:history.state?.architectureSearch??(snapshot?.active?.kind==='search'?snapshot.active.query:null)):null,searchCleared=restore&&(restored?restored.searchCleared:history.state?.architectureSearchCleared)===true;
+    normalizeSelection(loaded);const target=loaded||objectView(selection.object)||scheduleViews.find(candidate=>candidate.id===selection.schedule)||scheduleViews[0]||objectViews[0],request=requestId??++renderRequest,snapshot=restore?(restored?restored.view:history.state?.architectureView):null,objectSearchState=restore?restoredSearch(restored):null;
     desiredViewId=target.id;
     if(restore&&target.aspect==='object'&&snapshot?.id===target.id&&snapshot.active?.kind==='none'){selection={...selection,node:null};updateUrl()}
     if(!loadView)selectionFilters();
-    if(target.aspect==='schedule')return renderSchedule(target,snapshot,request,preserveUi,query,searchCleared);
-    scheduleRenderer?.cancel?.();canvas.setAttribute('aria-busy','false');status('');applyView(target,snapshot,request,null,query,searchCleared);pendingRender=Promise.resolve();return pendingRender;
+    if(target.aspect==='schedule')return renderSchedule(target,snapshot,request,preserveUi,objectSearchState);
+    scheduleRenderer?.cancel?.();canvas.setAttribute('aria-busy','false');status('');applyView(target,snapshot,request,null,objectSearchState);pendingRender=Promise.resolve();return pendingRender;
   }
   function renderSelection(restore=false,restored=null,preserveUi=false){
     if(!loadView)return renderLoadedSelection(restore,restored);
     normalizeSelection();const ref=objectView(selection.object)||scheduleViews.find(candidate=>candidate.id===selection.schedule)||scheduleViews[0]||objectViews[0],request=++renderRequest;
-    const restoration=restore?(restored||{view:history.state?.architectureView||null,search:history.state?.architectureSearch??null,searchCleared:history.state?.architectureSearchCleared===true}):null;
+    const restoration=restore?(restored||{view:history.state?.architectureView||null,objectSearch:restoredSearch(null)}):null;
     const revision=searchRevision,previous=lastSuccessful;loadAbort?.abort();scheduleRenderer?.cancel?.();const controller=new AbortController();loadAbort=controller;desiredViewId=ref.id;viewLoading={id:ref.id,request};retryTarget=null;
     if(!preserveUi)selectionFilters();canvas.setAttribute('aria-busy','true');status('正在加载 '+ref.label+'…');syncPicker(ref);
     const task=Promise.resolve().then(()=>request===renderRequest?loadView(ref,{signal:controller.signal}):null).then(loaded=>{
       if(!loaded||request!==renderRequest||pageSuspended)return;
       viewLoading=null;loadAbort=null;pinView?.(loaded.id);canvas.setAttribute('aria-busy','false');
-      const state=searchRevision!==revision?{view:restoration?.view||null,search:document.getElementById('search').value||null,searchCleared:clearedSearchQuery!==null}:restoration;
+      const state=searchRevision!==revision?{view:restoration?.view||null,objectSearch:searchSnapshot()}:restoration;
       return renderLoadedSelection(Boolean(state),state,loaded,request,preserveUi);
     }).catch(error=>{
       if(request!==renderRequest||pageSuspended)return;
       retryTarget={selection:{...selection},objectOrigin,restoration,preserveUi};viewLoading=null;loadAbort=null;canvas.setAttribute('aria-busy','false');
       if(previous){selection={...previous.selection};objectOrigin=previous.objectOrigin;desiredViewId=previous.view.id;try{history.replaceState(previous.state,'',previous.href)}catch{}selectionFilters();syncPicker(previous.view);rememberView()}
-      status('图形加载失败，已保留上一张图：'+error.message,true);const retry=document.createElement('button');retry.id='retry-view';retry.type='button';retry.textContent='重试';retry.onclick=()=>{const failed=retryTarget;if(!failed)return;selection={...failed.selection};objectOrigin=failed.objectOrigin;try{history.replaceState({...history.state,architectureObjectOrigin:objectOrigin,architectureView:failed.restoration?.view||null,architectureSearch:failed.restoration?.search||null,architectureSearchCleared:failed.restoration?.searchCleared===true},'',navigation.url(selection,location.href))}catch{}renderSelection(Boolean(failed.restoration),failed.restoration,failed.preserveUi)};document.getElementById('schedule-status').appendChild(retry);
+      status('图形加载失败，已保留上一张图：'+error.message,true);const retry=document.createElement('button');retry.id='retry-view';retry.type='button';retry.textContent='重试';retry.onclick=()=>{const failed=retryTarget;if(!failed)return;const retryRestore={view:failed.restoration?.view||null,objectSearch:searchSnapshot()};selection={...failed.selection};objectOrigin=failed.objectOrigin;try{history.replaceState({...history.state,architectureObjectOrigin:objectOrigin,architectureView:retryRestore.view,...searchHistory(retryRestore.objectSearch)},'',navigation.url(selection,location.href))}catch{}renderSelection(true,retryRestore,failed.preserveUi)};document.getElementById('schedule-status').appendChild(retry);
     });
     pendingRender=task;return task;
   }
@@ -296,7 +325,7 @@ export function createArchitectureViewer({ data: DATA, document, location, histo
     const next={schedule:selection.schedule,node:null,...(selection.scheduleNode?{scheduleNode:selection.scheduleNode}:{}),...liveFilterSelection()};
     if(scheduleKey(next)===scheduleKey())return;
     rememberView();const href=navigation.url(next,location.href);selection=navigation.resolve(new URL(href).search);objectOrigin=null;aliasCandidates=[];document.getElementById('return-context').hidden=true;
-    try{history.pushState({...history.state,architectureView:null,architectureSearch:searchQuery(),architectureSearchCleared:clearedSearchQuery!==null,architectureObjectOrigin:null},'',href)}catch{/* 本地页面禁用历史时仍即时筛选。 */}
+    try{history.pushState({...history.state,architectureView:null,...searchHistory(searchSnapshot()),architectureObjectOrigin:null},'',href)}catch{/* 本地页面禁用历史时仍即时筛选。 */}
     if(loadView)return renderSelection(false,null,true);
     return renderSchedule(scheduleViews.find(candidate=>candidate.id===selection.schedule),null,++renderRequest,true);
   }
@@ -311,7 +340,7 @@ export function createArchitectureViewer({ data: DATA, document, location, histo
   function clearCanvasSelection(){
     const selected=view.aspect==='schedule'?selectedScheduleId||selection.scheduleNode||selection.node:selection.node;
     if(!selected&&activeSelection.kind==='none')return;
-    const query=document.getElementById('search').value;clearedSearchQuery=query.trim()?query:searchQuery();activeSelection={kind:'none'};select(null);
+    searchState.cleared=Boolean(searchState.query.trim());activeSelection={kind:'none'};select(null);
   }
   function activateCanvas(x,y){
     if(interactionPaused())return;
@@ -322,6 +351,8 @@ export function createArchitectureViewer({ data: DATA, document, location, histo
     const svg=diagram.querySelector('svg'),graph=target.parentElement,tag=target.tagName.toLowerCase(),rootGraph=graph?.classList.contains('graph')&&graph.parentElement===svg;
     if(target===canvas||target===diagram||target===svg||tag==='g'&&target.classList.contains('graph')&&target.parentElement===svg||tag==='polygon'&&rootGraph&&[...graph.children].find(child=>child.tagName.toLowerCase()==='polygon')===target)clearCanvasSelection();
   }
+  // 画布会截断合成 click；提前收起浮层，不干预后续选择与平移。
+  document.addEventListener('pointerdown',event=>{if(event.button===0&&!event.target.closest('.object-search')&&!event.target.closest('#return-context'))closeResults()},true);
   document.addEventListener('click',event=>{
     if(!event.target.closest('.object-search')&&!event.target.closest('#return-context'))closeResults();
     // 全部清空仍属于筛选操作，保留正在使用的下拉。
@@ -333,15 +364,38 @@ export function createArchitectureViewer({ data: DATA, document, location, histo
     const open=event.target.closest('[data-open]');if(open)openNode(open.dataset.open);
   });
   function zoom(factor,x=canvas.clientWidth/2,y=canvas.clientHeight/2){if(!view?.svg)return;const previous=scale;scale=clampScale(scale*factor);panX=x-(x-panX)*scale/previous;panY=y-(y-panY)*scale/previous;transform();rememberView()}
-  document.getElementById('return-context').onclick=()=>{const origin=objectOrigin;navigate(origin?.selection||{schedule:selection.schedule,node:null},origin?.parent||null,origin?{view:origin.view||null,search:origin.search||null,searchCleared:origin.searchCleared===true}:null)};
-  document.getElementById('return-overview').onclick=()=>navigate({schedule:selection.schedule,node:null});document.getElementById('fit').onclick=()=>{fit();rememberView()};document.getElementById('readable').onclick=()=>{fit(true);rememberView()};document.getElementById('zoom-in').onclick=()=>zoom(1.2);document.getElementById('zoom-out').onclick=()=>zoom(1/1.2);document.getElementById('section').onchange=event=>{if(event.target.value!=='')focusSection(view.sections[Number(event.target.value)])};
+  document.getElementById('return-context').onclick=()=>{const origin=objectOrigin;navigate(origin?.selection||{schedule:selection.schedule,node:null},origin?.parent||null,origin?{view:origin.view||null,objectSearch:origin.objectSearch,search:origin.search??null,searchCleared:origin.searchCleared===true}:null)};
+  document.getElementById('return-overview').onclick=()=>navigate({schedule:selection.schedule,node:null});document.getElementById('fit').onclick=()=>{fit();rememberView()};document.getElementById('readable').onclick=()=>{fit(true);rememberView()};document.getElementById('zoom-in').onclick=()=>zoom(1.2);document.getElementById('zoom-out').onclick=()=>zoom(1/1.2);
   const gestures=createGestures({canvas,window,hasDiagram:()=>Boolean(view?.svg),clampScale,getViewport:()=>({scale,x:panX,y:panY}),setViewport:next=>{scale=next.scale;panX=next.x;panY=next.y;transform();rememberView()},activate:activateCanvas});
   canvas.addEventListener('wheel',event=>{if(window.innerWidth<=900||!view?.svg)return;event.preventDefault();const rect=canvas.getBoundingClientRect();zoom(event.deltaY<0?1.12:1/1.12,event.clientX-rect.left,event.clientY-rect.top)},{passive:false});
   diagram.addEventListener('keydown',event=>{if((event.key==='Enter'||event.key===' ')&&activateDiagram(event.target))event.preventDefault()});
-  function search(query,{highlight=true}={}){searchRevision++;const original=query;query=query.trim().toLowerCase();clearedSearchQuery=null;if(!query){closeResults();if(view?.aspect==='object')select(null);else activeSelection={kind:'none'};rememberView();return}const hits=new Set(objects.map(object=>object.id).filter(id=>JSON.stringify(DATA.registry[id]||{}).toLowerCase().includes(query))),shown=new Set([...hits].filter(id=>(view?.nodes||[]).some(node=>node.id===id)));activeSelection=highlight?{kind:'search',query,hits:[...hits]}:{kind:'none'};if(!highlight)clearedSearchQuery=original;if(view?.aspect==='object'&&!interactionPaused())interaction.paint(highlight?{selectedNodes:shown,dimNodes:new Set(view.nodes.filter(node=>!shown.has(node.id)).map(node=>node.id))}:{});showResults(hits.size+' 个匹配对象',[...hits]);rememberView()}
+  function search(query,{highlight=true,open=true,revise=true,remember=true}={}){
+    if(revise)searchRevision++;
+    searchState={...searchState,query,open,cleared:!highlight&&Boolean(query.trim())};searchInput.value=query;syncSearchKinds();
+    const hits=objectSearch.search(query,searchState.kinds),shown=new Set(hits.filter(id=>(view?.nodes||[]).some(node=>node.id===id)));
+    if(!query.trim()&&revise&&view?.aspect==='object')select(null);
+    activeSelection=query.trim()&&highlight?{kind:'search',query,hits}:{kind:'none'};
+    if(view?.aspect==='object'&&!interactionPaused())interaction.paint(query.trim()&&highlight?{selectedNodes:shown,dimNodes:new Set(view.nodes.filter(node=>!shown.has(node.id)).map(node=>node.id))}:{});
+    showResults(query.trim()?hits.length+' 个匹配对象':'输入名称或类型，例如 Time<Fixed>',hits);
+    if(remember)rememberView();
+  }
   const searchInput=document.getElementById('search');
   searchInput.addEventListener('input',event=>search(event.target.value));
-  function resultKey(event){const buttons=[...results.querySelectorAll('[data-object]')];if(event.key==='Escape'){event.preventDefault();closeResults();searchInput.focus();return}if(event.key==='ArrowDown'||event.key==='ArrowUp'){if(!buttons.length||results.hidden)return;event.preventDefault();const current=buttons.indexOf(event.target),start=current>=0?current:event.key==='ArrowDown'?-1:0;resultIndex=(start+(event.key==='ArrowDown'?1:-1)+buttons.length)%buttons.length;buttons.forEach((button,index)=>button.classList.toggle('active',index===resultIndex));buttons[resultIndex].focus();return}if((event.key==='Enter'||event.key===' ')&&event.target.dataset.object){event.preventDefault();openObject(event.target.dataset.object)}}
+  function openSearch(){
+    if(!results.hidden)return;
+    searchState.open=true;searchRevision++;
+    if(aliasCandidates.length&&resultMode==='alias')showResults('选择原对象',aliasCandidates,true);
+    else{const hits=objectSearch.search(searchState.query,searchState.kinds);showResults(searchState.query.trim()?hits.length+' 个匹配对象':'输入名称或类型，例如 Time<Fixed>',hits)}
+    rememberView();
+  }
+  searchInput.addEventListener('focus',openSearch);searchInput.addEventListener('click',openSearch);
+  const kindsPanel=document.getElementById('search-kinds');
+  const commonKinds=['Component','System','Resource'],kindOrder=kind=>commonKinds.includes(kind)?commonKinds.indexOf(kind):commonKinds.length;
+  kindsPanel.innerHTML=[...objectSearch.kinds].sort((left,right)=>kindOrder(left)-kindOrder(right)).map(kind=>'<label class="search-kind"><input type="checkbox" data-search-kind="'+safe(kind)+'"><span>'+safe(kind)+'</span></label>').join('');
+  document.getElementById('search-kinds-toggle').onclick=()=>{kindsPanel.hidden=!kindsPanel.hidden;document.getElementById('search-kinds-toggle').setAttribute('aria-expanded',String(!kindsPanel.hidden));positionResults()};
+  document.getElementById('search-kinds-all').onclick=()=>{searchState.kinds=[];search(searchState.query)};
+  kindsPanel.addEventListener('change',event=>{const kind=event.target.dataset.searchKind;if(!objectSearch.kinds.includes(kind))return;const selected=new Set(searchState.kinds);event.target.checked?selected.add(kind):selected.delete(kind);searchState.kinds=objectSearch.kinds.filter(value=>selected.has(value));search(searchState.query)});
+  function resultKey(event){const buttons=[...results.querySelectorAll('[data-object]')];if(event.key==='Escape'){event.preventDefault();searchInput.focus();closeResults();return}if(event.key==='ArrowDown'||event.key==='ArrowUp'){if(!buttons.length||results.hidden||event.target.closest('#search-kind-controls'))return;event.preventDefault();const current=buttons.indexOf(event.target),start=current>=0?current:event.key==='ArrowDown'?-1:0;resultIndex=(start+(event.key==='ArrowDown'?1:-1)+buttons.length)%buttons.length;buttons.forEach((button,index)=>button.classList.toggle('active',index===resultIndex));buttons[resultIndex].focus();return}if((event.key==='Enter'||event.key===' ')&&event.target.dataset.object){event.preventDefault();openObject(event.target.dataset.object)}}
   searchInput.addEventListener('keydown',resultKey);results.addEventListener('keydown',resultKey);
   picker.addEventListener('change',event=>{const target=DATA.views.find(view=>view.id===event.target.value);if(!target)return;if(target.aspect==='schedule')navigate({schedule:target.id,node:null});else openObject(target.objectId)});
   for(const side of ['include','exclude']){
@@ -422,12 +476,12 @@ export function renderArchitectureViewer({ model, registry, views, features, gui
   const infrastructureOptions = pluginOptions(INFRASTRUCTURE_FEATURES.flatMap(entry => entry.id === 'egui' ? [entry, { label: entry.label, overviewNode: 'plugin-inspector-1' }] : [entry]), '基础设施插件');
   const filterMenu = side => `<div class="schedule-multiselect"><button id="schedule-${side}" class="filter-toggle" type="button" aria-haspopup="dialog" aria-expanded="false" aria-controls="schedule-${side}-menu">${side === 'include' ? '包含 Plugin · 全部' : '排除 Plugin · 无'}</button><section id="schedule-${side}-menu" class="filter-menu" role="dialog" aria-label="${side === 'include' ? '包含 Plugin' : '排除 Plugin'}" hidden><input id="schedule-${side}-search" type="search" placeholder="搜索 Plugin 名称或分组说明" aria-label="搜索${side === 'include' ? '包含' : '排除'}选项" autocomplete="off"><div class="filter-actions"><button id="schedule-${side}-select" type="button">全选当前搜索结果</button><button id="schedule-${side}-clear" type="button">清空${side === 'include' ? '包含' : '排除'}</button></div><div id="schedule-${side}-options" class="filter-options"></div></section></div>`;
   const state = JSON.stringify(externalBootstrap || { schemaVersion: 5, model, registry, views, guideSamples, scheduleLegendLabels: SCHEDULE_LEGEND_LABELS, objects, objectAliases, sourceRoleLabels, schedulePluginCatalog, scheduleInteractions, infrastructureFeatures: INFRASTRUCTURE_FEATURES, styles: { nodes: NODE_STYLES, edges: EDGE_STYLES, selection: SELECTION_STYLE, externalReference: EXTERNAL_REFERENCE_STYLE } }).replace(/</g, '\\u003c');
-  const editor = sourceEditorAssets(), navigation = architectureNavigationAssets(features, scheduleViews), splitter = architectureSplitterAssets(), interaction = architectureInteractionAssets(), gestures = architectureGestureAssets();
+  const editor = sourceEditorAssets(), navigation = architectureNavigationAssets(features, scheduleViews), splitter = architectureSplitterAssets(), interaction = architectureInteractionAssets(), gestures = architectureGestureAssets(), search = architectureSearchAssets();
   const navigationScript = externalBootstrap ? `const architectureNavigationFactory=(()=>{const infrastructureIds=${JSON.stringify(INFRASTRUCTURE_FEATURES.map(feature => feature.id))};\n${[defaultArchitectureSchedule,resolveArchitectureSelection,architectureUrl,createArchitectureNavigation].map(fn=>fn.toString()).join('\n')}\nreturn createArchitectureNavigation;})();` : navigation.script;
-  const dependencies = 'document,location,history,window,requestAnimationFrame,sourceEditor,createSplitter:createArchitectureSplitter,createInteraction:createArchitectureInteraction,createGestures:createArchitectureGestures,createScheduleRenderer:window.createScheduleRenderer';
+  const dependencies = 'document,location,history,window,requestAnimationFrame,sourceEditor,createSplitter:createArchitectureSplitter,createInteraction:createArchitectureInteraction,createGestures:createArchitectureGestures,createObjectSearch:createArchitectureSearch,createScheduleRenderer:window.createScheduleRenderer';
   const startup = externalBootstrap ? `${assetLoaderAssets().script}\n${startExternalArchitecture.toString()}\nwindow.architectureReady=startExternalArchitecture({bootstrap:JSON.parse(document.getElementById("architecture-data").textContent),${dependencies},createNavigation:architectureNavigationFactory,createViewer:(${createArchitectureViewer.toString()})});` : `const architectureViewer=(${createArchitectureViewer.toString()})({data:JSON.parse(document.getElementById("architecture-data").textContent),${dependencies},navigation:architectureNavigation});`;
   return `<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Crect width='10' height='10' rx='2' fill='%232563EB'/%3E%3C/svg%3E"><title>demo · ECS 架构</title><style>
 ${architectureShellStyle}
 ${editor.style}
-</style></head><body><header><span class="brand">DEMO</span><select id="view-select" class="view-picker" aria-label="选择架构图">${scheduleOptions}${projectOptions}${infrastructureOptions}<optgroup id="current-object-option" label="当前对象"></optgroup></select><div class="object-search"><input id="search" type="search" placeholder="搜索全部对象" aria-label="搜索全部架构对象" aria-controls="object-results" aria-expanded="false" autocomplete="off"><section id="object-results" class="object-results" aria-label="对象搜索结果" hidden></section></div><div class="tools"><button id="return-context" hidden>返回原视图</button><button id="return-overview">返回调度图</button><select id="section" aria-label="定位图内分组"><option value="">定位分组</option></select><button id="zoom-out" aria-label="缩小">−</button><span id="zoom-label">100%</span><button id="zoom-in" aria-label="放大">＋</button><button id="readable">阅读大小</button><button id="fit">适合窗口</button><button type="button" data-workspace-config>配置工作区</button></div></header><main class="main"><section id="schedule-filter" class="schedule-filter" role="group" aria-label="筛选 Schedule">${filterMenu('include')}${filterMenu('exclude')}<button type="button" id="schedule-clear">清空</button></section><div id="schedule-status" class="schedule-status" role="status" aria-live="polite" hidden></div><section id="workspace" class="workspace"><section class="canvas-wrap"><div id="canvas" class="canvas" tabindex="-1" role="region" aria-label="架构图画布"><div id="diagram" class="diagram"></div></div></section><div id="details-resizer" class="details-resizer" tabindex="0" role="separator" aria-orientation="vertical" aria-label="调整详情宽度" aria-controls="details"></div><aside id="details" class="side" aria-live="polite"></aside></section></main>${editor.markup}<script id="architecture-data" type="application/json">${state}</script><script>${editor.script}</script><script>${navigationScript}</script><script>${splitter.script}</script><script>${interaction.script}</script><script>${gestures.script}</script><script>${runtimeAssets.script}</script><script>${startup}</script></body></html>`;
+</style></head><body><header><span class="brand">DEMO</span><select id="view-select" class="view-picker" aria-label="选择架构图">${scheduleOptions}${projectOptions}${infrastructureOptions}<optgroup id="current-object-option" label="当前对象"></optgroup></select><div class="object-search"><input id="search" type="search" placeholder="搜索全部对象" aria-label="搜索全部架构对象" aria-controls="object-results" aria-expanded="false" autocomplete="off"><section id="object-results" class="object-results" aria-label="对象搜索结果" hidden><div id="search-kind-controls"><div class="search-filter-header"><button id="search-kinds-toggle" type="button" aria-expanded="false" aria-controls="search-kinds">类型 · 全部</button><button id="search-kinds-all" type="button">全部类型</button></div><div id="search-kinds" class="search-kinds" role="group" aria-label="搜索对象类别" hidden></div></div><div id="search-matches" class="search-matches" aria-live="polite"></div></section></div><div class="tools"><button id="return-context" hidden>返回原视图</button><button id="return-overview">返回调度图</button><button id="zoom-out" aria-label="缩小">−</button><span id="zoom-label">100%</span><button id="zoom-in" aria-label="放大">＋</button><button id="readable">阅读大小</button><button id="fit">适合窗口</button><button type="button" data-workspace-config>配置工作区</button></div></header><main class="main"><section id="schedule-filter" class="schedule-filter" role="group" aria-label="筛选 Schedule">${filterMenu('include')}${filterMenu('exclude')}<button type="button" id="schedule-clear">清空</button></section><div id="schedule-status" class="schedule-status" role="status" aria-live="polite" hidden></div><section id="workspace" class="workspace"><section class="canvas-wrap"><div id="canvas" class="canvas" tabindex="-1" role="region" aria-label="架构图画布"><div id="diagram" class="diagram"></div></div></section><div id="details-resizer" class="details-resizer" tabindex="0" role="separator" aria-orientation="vertical" aria-label="调整详情宽度" aria-controls="details"></div><aside id="details" class="side" aria-live="polite"></aside></section></main>${editor.markup}<script id="architecture-data" type="application/json">${state}</script><script>${editor.script}</script><script>${navigationScript}</script><script>${splitter.script}</script><script>${interaction.script}</script><script>${gestures.script}</script><script>${search.script}</script><script>${runtimeAssets.script}</script><script>${startup}</script></body></html>`;
 }

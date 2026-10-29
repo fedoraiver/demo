@@ -159,21 +159,30 @@ export class Element {
     return walk(this);
   }
   querySelector(selector) { return this.querySelectorAll(selector)[0] ?? null; }
-  addEventListener(name, callback) {
+  addEventListener(name, callback, options = false) {
     if (!this.listeners.has(name)) this.listeners.set(name, []);
-    this.listeners.get(name).push(callback);
+    this.listeners.get(name).push({ callback, capture: options === true || options?.capture === true });
   }
   dispatch(name, event = {}) {
     const value = { target: this, defaultPrevented: false, ...event };
     value.preventDefault ??= () => { value.defaultPrevented = true; };
     value.stopPropagation ??= () => { value.propagationStopped = true; };
-    let current = this;
-    while (current) {
+    const path = [];
+    for (let current = this; current; current = current.parentElement) path.push(current);
+    const invoke = (current, capture) => {
+      value.currentTarget = current;
+      for (const listener of current.listeners.get(name) ?? []) if (listener.capture === capture) listener.callback(value);
+    };
+    // 捕获沿祖先向目标传播；画布截断冒泡不应使页面外部点击检查失真。
+    for (const current of [...path].reverse()) {
+      invoke(current, true);
+      if (value.propagationStopped) return value;
+    }
+    for (const current of path) {
       value.currentTarget = current;
       current['on' + name]?.(value);
-      for (const callback of current.listeners.get(name) ?? []) callback(value);
+      invoke(current, false);
       if (event.bubbles === false || value.propagationStopped) break;
-      current = current.parentElement;
     }
     return value;
   }

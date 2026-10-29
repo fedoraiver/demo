@@ -7,6 +7,7 @@ import { createArchitectureNavigation } from '../src/architecture-navigation.mjs
 import { createArchitectureInteraction } from '../src/architecture-interaction.mjs';
 import { createArchitectureSplitter } from '../src/architecture-splitter.mjs';
 import { createArchitectureGestures } from '../src/architecture-gestures.mjs';
+import { createArchitectureSearch } from '../src/architecture-search.mjs';
 import { NODE_STYLES, EDGE_STYLES, SELECTION_STYLE, EXTERNAL_REFERENCE_STYLE, selectedFillColor } from '../src/architecture-style.mjs';
 import { SCHEDULE_LEGEND_LABELS } from '../src/schedule-legend.mjs';
 import { testDocument, scriptsIn } from './test-dom.mjs';
@@ -68,7 +69,7 @@ function viewer(query='?object=item.Shared',{historyUnavailable=false,width=1440
   const window={innerWidth:width,innerHeight:900,addEventListener(name,listener){events.set(name,listener)}};
   const canvas=document.getElementById('canvas');canvas.clientWidth=950;canvas.clientHeight=600;
   const refreshed=[];
-  const app=createArchitectureViewer({data,document,location,history,window,requestAnimationFrame:callback=>frames.push(callback),sourceEditor:{refreshLinks:scope=>refreshed.push(scope),withWorkspace:href=>href},navigation:createArchitectureNavigation(data.features,data.views.filter(view=>view.aspect==='schedule')),createSplitter:createArchitectureSplitter,createInteraction:createArchitectureInteraction,createGestures:createArchitectureGestures,createScheduleRenderer,loadView,pinView});
+  const app=createArchitectureViewer({data,document,location,history,window,requestAnimationFrame:callback=>frames.push(callback),sourceEditor:{refreshLinks:scope=>refreshed.push(scope),withWorkspace:href=>href},navigation:createArchitectureNavigation(data.features,data.views.filter(view=>view.aspect==='schedule')),createSplitter:createArchitectureSplitter,createInteraction:createArchitectureInteraction,createGestures:createArchitectureGestures,createObjectSearch:createArchitectureSearch,createScheduleRenderer,loadView,pinView});
   function flush(){while(frames.length)frames.splice(0).forEach(callback=>callback())}flush();
   function click(element){assert.ok(element,'control exists');element.click();flush()}
   return{data,fullViews,app,document,location,history,historyWrites,canvas,window,emit:(name,event)=>events.get(name)?.(event),refreshed,get:id=>document.getElementById(id),click,flush,choose(id){const select=document.getElementById('view-select');select.value=id;select.dispatch('change');flush()},async settle(){await app.ready;flush()},activate(id,key='Enter'){const node=document.getElementById('diagram').querySelector('[data-id="'+id+'"]');assert.ok(node,'visible node '+id);node.dispatch('keydown',{key});flush()},back(){assert.ok(index>0);location.href=entries[--index].href;events.get('popstate')();flush()},forward(){assert.ok(index+1<entries.length);location.href=entries[++index].href;events.get('popstate')();flush()}};
@@ -338,16 +339,16 @@ test('blank clearing during pending filters survives success, failure and stale 
   leftClick(page,'update-card');runtime.requests[0].resolve(scheduleSubset(page,['fixed-card']));await Promise.resolve();await Promise.resolve();page.flush();assert.equal(page.location.searchParams.get('scheduleNode'),'update-card');assertScheduleHighlight(page,'update-card');
 });
 
-test('blank clearing preserves the original search text and popup but history and object returns do not revive highlights',()=>{
+test('blank clearing closes the popup and preserves its query without reviving highlights on history returns',()=>{
   for(const chooseNode of [false,true]){
     const page=viewer('?object=item.Shared&schedule=schedule-update&scheduleNode=fixed-card',{edit:interactiveSchedules}),input=page.get('search'),popup=page.get('object-results');input.value='Shared';input.dispatch('input');
     if(chooseNode)mouseClick(page,page.get('diagram').querySelector('[data-id="system-fixed"]'));
-    const popupHtml=popup.innerHTML,transform=page.get('diagram').style.transform;mouseClick(page,page.canvas);assert.equal(input.value,'Shared');assert.equal(popup.hidden,false);assert.equal(popup.innerHTML,popupHtml);assert.equal(page.get('diagram').querySelectorAll('[data-selection-filter]').length,0);assert.ok(page.get('details').querySelector('.guide'));assert.equal(page.history.state.architectureSearch,'Shared');assert.equal(page.history.state.architectureSearchCleared,true);assert.equal(page.history.state.architectureView.active.kind,'none');
-    page.click(popup.querySelector('[data-object="character.Shared"]'));assert.equal(page.history.state.architectureObjectOrigin.search,'Shared');assert.equal(page.history.state.architectureObjectOrigin.searchCleared,true);page.back();
-    assert.equal(page.app.view.objectId,'item.Shared');assert.equal(page.location.searchParams.has('node'),false);assert.equal(page.location.searchParams.get('scheduleNode'),'fixed-card');assert.equal(input.value,'Shared');assert.equal(popup.hidden,false);assert.equal(page.get('diagram').querySelectorAll('[data-selection-filter]').length,0);assert.equal(page.get('diagram').style.transform,transform);
+    const transform=page.get('diagram').style.transform;mouseClick(page,page.canvas);assert.equal(input.value,'Shared');assert.equal(popup.hidden,true);assert.equal(page.get('diagram').querySelectorAll('[data-selection-filter]').length,0);assert.ok(page.get('details').querySelector('.guide'));assert.equal(page.history.state.architectureSearch,'Shared');assert.equal(page.history.state.architectureSearchCleared,true);assert.equal(page.history.state.architectureView.active.kind,'none');
+    page.app.openObject('character.Shared');page.flush();assert.equal(page.history.state.architectureObjectOrigin.objectSearch.query,'Shared');assert.equal(page.history.state.architectureObjectOrigin.objectSearch.cleared,true);page.back();
+    assert.equal(page.app.view.objectId,'item.Shared');assert.equal(page.location.searchParams.has('node'),false);assert.equal(page.location.searchParams.get('scheduleNode'),'fixed-card');assert.equal(input.value,'Shared');assert.equal(popup.hidden,true);assert.equal(page.get('diagram').querySelectorAll('[data-selection-filter]').length,0);assert.equal(page.get('diagram').style.transform,transform);
     page.forward();page.click(page.get('return-context'));assert.equal(page.app.view.objectId,'item.Shared');assert.equal(input.value,'Shared');assert.equal(page.get('diagram').querySelectorAll('[data-selection-filter]').length,0);
     input.value='update_shared';input.dispatch('input');assert.equal(page.history.state.architectureSearchCleared,false);assert.ok(page.get('diagram').querySelectorAll('[data-selection-filter]').length>0);
-    mouseClick(page,page.canvas);const legacy={...page.history.state};delete legacy.architectureSearchCleared;page.history.replaceState(legacy,'',page.location.href);page.app.renderSelection(true);page.flush();assert.ok(page.get('diagram').querySelectorAll('[data-selection-filter]').length>0,'history without the new marker retains the previous search behavior');
+    mouseClick(page,page.canvas);const legacy={...page.history.state};delete legacy.architectureObjectSearch;delete legacy.architectureSearchCleared;page.history.replaceState(legacy,'',page.location.href);page.app.renderSelection(true);page.flush();assert.ok(page.get('diagram').querySelectorAll('[data-selection-filter]').length>0,'history without the new marker retains the previous search behavior');
   }
 });
 
@@ -357,7 +358,7 @@ test('cleared search histories with successful, waiting and failed filter geomet
     if(phase==='successful'){runtime.requests[0].resolve(scheduleSubset(page,['fixed-card']));await page.settle()}else if(phase==='failed'){runtime.requests[0].reject(new Error('failed geometry'));await page.settle()}
     const input=page.get('search');input.value='Shared';input.dispatch('input');mouseClick(page,page.canvas);assert.equal(page.history.state.architectureSearch,'Shared');assert.equal(page.history.state.architectureSearchCleared,true);if(phase!=='successful')assert.equal(page.history.state.architectureView,null);
     page.app.openObject('item.Shared');page.flush();phase==='failed'?page.back():page.click(page.get('return-context'));await Promise.resolve();
-    assert.equal(input.value,'Shared');assert.equal(page.get('object-results').hidden,false);assert.equal(page.location.searchParams.has('scheduleNode'),false);assert.equal(page.get('details').hidden,false);assert.equal(page.history.state.architectureSearchCleared,true);
+    assert.equal(input.value,'Shared');assert.equal(page.get('object-results').hidden,true);assert.equal(page.location.searchParams.has('scheduleNode'),false);assert.equal(page.get('details').hidden,false);assert.equal(page.history.state.architectureSearchCleared,true);
     runtime.requests[1].resolve(scheduleSubset(page,['fixed-card']));await page.settle();assert.equal(page.get('diagram').querySelectorAll('[data-selection-filter]').length,0);assert.equal(page.get('details').hidden,false);assert.equal(page.history.state.architectureSearch,'Shared');assert.equal(page.history.state.architectureView.active.kind,'none');
     if(phase==='waiting'){runtime.requests[0].resolve(scheduleSubset(page,['fixed-card','update-card']));await Promise.resolve();await Promise.resolve();page.flush();assert.equal(page.get('details').hidden,false);assert.equal(page.get('diagram').querySelectorAll('[data-selection-filter]').length,0)}
   }
@@ -594,10 +595,102 @@ test('global search reaches isolated objects and distinguishes same names by own
   assert.ok(results.some(button=>button.dataset.object==='character.Shared'&&button.textContent.includes('人物')));
   assert.ok(results.some(button=>button.dataset.object==='system-fixed'&&button.textContent.includes('FixedUpdate')));
   assert.ok(results.some(button=>button.dataset.object==='system-update'&&button.textContent.includes('RunFixedMainLoop')));
-  page.app.search('配置');assert.equal(page.get('object-results').querySelector('h2').textContent,'1 个匹配对象');
+  page.app.search('配置');assert.equal(page.get('object-results').querySelectorAll('[data-object]').length,0,'description text is not object identity');
+  page.app.search('Config');assert.equal(page.get('object-results').querySelector('h2').textContent,'1 个匹配对象');
   page.click(page.get('object-results').querySelector('[data-object="resource.Config"]'));assert.equal(page.app.view.id,'object:resource.Config');
   assert.equal(page.app.view.nodes.length,1);assertFitted(page);
-  page.back();assert.equal(page.get('object-results').querySelector('h2').textContent,'1 个匹配对象');assert.equal(page.get('search').value,'配置');
+  page.back();assert.equal(page.get('object-results').querySelector('h2').textContent,'1 个匹配对象');assert.equal(page.get('search').value,'Config');
+});
+
+function searchKind(page,kind,checked=true){
+  if(page.get('search-kinds').hidden)page.click(page.get('search-kinds-toggle'));
+  const input=page.get('search-kinds').querySelector('[data-search-kind="'+kind+'"]');assert.ok(input,'search category '+kind);
+  input.focus();input.checked=checked;input.dispatch('change');return input;
+}
+
+test('search categories filter only object identities and the same hits paint object outlines',()=>{
+  const page=viewer(),popup=page.get('object-results'),input=page.get('search');
+  input.value='Other';input.dispatch('input');assert.deepEqual(popup.querySelectorAll('[data-object]').map(button=>button.dataset.object),['item.Other'],'system access and registration records do not create matches');
+  input.value='Shared';input.dispatch('input');assert.ok(popup.textContent.includes('Component'));assert.ok(popup.textContent.includes('System'));
+  const component=searchKind(page,'Component'),panel=page.get('search-kinds');panel.scrollTop=40;
+  assert.deepEqual(popup.querySelectorAll('[data-object]').map(button=>button.dataset.object),['character.Shared','item.Shared']);
+  assert.deepEqual(page.get('diagram').querySelectorAll('[data-id]').filter(node=>node.classList.contains('selected')).map(node=>node.dataset.id),['item.Shared']);
+  const system=searchKind(page,'System');assert.equal(page.get('search-kinds').querySelector('[data-search-kind="Component"]'),component);assert.equal(page.document.activeElement,system);assert.equal(panel.scrollTop,40);
+  assert.deepEqual(new Set(popup.querySelectorAll('[data-object]').map(button=>button.dataset.object)),new Set(['character.Shared','item.Shared','system-fixed','system-update']));
+  assert.deepEqual(new Set(page.get('diagram').querySelectorAll('[data-id]').filter(node=>node.classList.contains('selected')).map(node=>node.dataset.id)),new Set(['item.Shared','system-fixed','system-update']));
+  assert.deepEqual(page.history.state.architectureObjectSearch.kinds,['Component','System']);
+  page.click(page.get('search-kinds-all'));assert.deepEqual(page.history.state.architectureObjectSearch.kinds,[]);assert.equal(popup.hidden,false);
+  input.value='';input.dispatch('input');assert.equal(popup.hidden,false);assert.equal(popup.querySelectorAll('[data-object]').length,0);assert.ok(popup.textContent.includes('输入'));
+});
+
+test('captured primary presses close search across SVG backgrounds without changing canvas gestures',()=>{
+  for(const initial of ['?object=item.Shared','?schedule=schedule-update']){
+    const page=viewer(initial,{edit:interactiveSchedules}),input=page.get('search'),popup=page.get('object-results'),diagram=page.get('diagram');
+    const backgrounds=[page.canvas,diagram,diagram.querySelector('svg'),...(initial.includes('schedule')?[page.get('schedule-background')]:[])];
+    for(const target of backgrounds){input.value='Shared';input.dispatch('input');searchKind(page,'Component');const length=page.history.length,transform=diagram.style.transform;
+      target.dispatch('pointerdown',{button:2,pointerId:9,pointerType:'mouse',clientX:70,clientY:60});assert.equal(popup.hidden,false,'secondary press keeps the popup');
+      mouseClick(page,target);assert.equal(popup.hidden,true);assert.equal(input.value,'Shared');assert.deepEqual(page.history.state.architectureObjectSearch.kinds,['Component']);assert.equal(diagram.style.transform,transform);assert.equal(page.history.length,length);
+      input.dispatch('focus');assert.equal(popup.hidden,false,'refocusing the query reopens results');assert.equal(page.get('diagram').querySelectorAll('[data-selection-filter]').length,0,'reopening does not restore cleared highlights');
+    }
+    input.value='Shared';input.dispatch('input');const selected=page.app.selection.node;
+    page.canvas.dispatch('pointerdown',{button:0,pointerId:8,pointerType:'mouse',clientX:50,clientY:50});assert.equal(popup.hidden,true);
+    page.canvas.dispatch('pointermove',{button:0,buttons:1,pointerId:8,pointerType:'mouse',clientX:100,clientY:80});page.canvas.dispatch('pointerup',{button:0,pointerId:8,pointerType:'mouse',clientX:100,clientY:80});
+    assert.equal(page.app.selection.node,selected);assert.equal(page.canvas.dispatch('click',{button:0,detail:1}).defaultPrevented,true);
+  }
+});
+
+test('query categories and a closed popup survive history and object returns while legacy states default to all kinds',()=>{
+  const page=viewer(),input=page.get('search'),popup=page.get('object-results');input.value='Shared';input.dispatch('input');searchKind(page,'Component');mouseClick(page,page.canvas);
+  const saved=structuredClone(page.history.state.architectureObjectSearch);assert.deepEqual(saved,{query:'Shared',kinds:['Component'],open:false,cleared:true});
+  page.app.openObject('item.Other');page.flush();page.back();assert.equal(popup.hidden,true);assert.deepEqual(page.history.state.architectureObjectSearch,saved);assert.equal(input.value,'Shared');
+  page.forward();page.click(page.get('return-context'));assert.equal(popup.hidden,true);assert.deepEqual(page.history.state.architectureObjectSearch,saved);assert.equal(page.get('diagram').querySelectorAll('[data-selection-filter]').length,0);
+  const legacy={...page.history.state,architectureSearch:'Shared',architectureSearchCleared:false};delete legacy.architectureObjectSearch;page.history.replaceState(legacy,'',page.location.href);page.app.renderSelection(true);page.flush();
+  assert.equal(popup.hidden,false);assert.deepEqual(page.history.state.architectureObjectSearch.kinds,[]);assert.ok(popup.querySelector('[data-object="system-fixed"]'));
+});
+
+test('category changes and outside dismissal win over pending view assets and failed retries',async()=>{
+  for(const failure of [false,true]){
+    const loader=controlledViews(),page=viewer('?object=item.Shared',loader);await advance();loader.resolve(page,0);await page.settle();page.app.openObject('item.Other');await advance();
+    const input=page.get('search');input.value='Shared';input.dispatch('input');searchKind(page,'Component');
+    page.canvas.dispatch('pointerdown',{button:0,pointerId:2,pointerType:'mouse',clientX:70,clientY:60});page.canvas.dispatch('pointerup',{button:0,pointerId:2,pointerType:'mouse',clientX:70,clientY:60});
+    if(failure){loader.requests[1].reject(new Error('unavailable'));await page.settle();page.click(page.get('retry-view'));await advance();loader.resolve(page,2)}else loader.resolve(page,1);
+    await page.settle();assert.equal(page.get('object-results').hidden,true);assert.equal(input.value,'Shared');assert.deepEqual(page.history.state.architectureObjectSearch.kinds,['Component']);
+    input.dispatch('focus');assert.deepEqual(page.get('object-results').querySelectorAll('[data-object]').map(button=>button.dataset.object),['character.Shared','item.Shared']);
+  }
+});
+
+test('pending view completion preserves the focused category checkbox while search stays open',async()=>{
+  const loader=controlledViews(),page=viewer('?object=item.Shared',loader);await advance();loader.resolve(page,0);await page.settle();page.app.openObject('item.Other');await advance();
+  const input=page.get('search');input.value='Shared';input.dispatch('input');const category=searchKind(page,'Component');assert.equal(page.document.activeElement,category);
+  loader.resolve(page,1);await page.settle();assert.equal(page.app.view.objectId,'item.Other');assert.equal(page.get('object-results').hidden,false);assert.equal(page.document.activeElement,category);assert.equal(page.get('search-kinds').querySelector('[data-search-kind="Component"]'),category);assert.equal(category.checked,true);
+  assert.deepEqual(page.get('object-results').querySelectorAll('[data-object]').map(button=>button.dataset.object),['character.Shared','item.Shared']);
+});
+
+test('explicit legacy object origins restore their search ahead of the current newer search snapshot',()=>{
+  const page=viewer(),origin={selection:{schedule:'schedule-update',object:'item.Shared',node:null},view:null,search:'Other',searchCleared:true,parent:null};
+  page.app.navigate({schedule:'schedule-update',object:'resource.Config',node:'resource.Config'},origin);page.flush();const input=page.get('search');input.value='Config';input.dispatch('input');searchKind(page,'Resource');
+  assert.deepEqual(page.history.state.architectureObjectSearch,{query:'Config',kinds:['Resource'],open:true,cleared:false});
+  page.click(page.get('return-context'));assert.equal(page.app.view.objectId,'item.Shared');assert.equal(input.value,'Other');assert.deepEqual(page.history.state.architectureObjectSearch,{query:'Other',kinds:[],open:true,cleared:true});assert.equal(page.get('object-results').hidden,false);assert.deepEqual(page.get('object-results').querySelectorAll('[data-object]').map(button=>button.dataset.object),['item.Other']);assert.equal(page.get('diagram').querySelectorAll('[data-selection-filter]').length,0);
+});
+
+test('choosing the current object from search closes results and selects it without another history entry',()=>{
+  const page=viewer(),input=page.get('search');input.value='Shared';input.dispatch('input');searchKind(page,'Component');const length=page.history.length;
+  const result=page.get('object-results').querySelector('[data-object="item.Shared"]');result.focus();result.dispatch('keydown',{key:'Enter'});assert.equal(page.document.activeElement,page.canvas);assert.equal(page.app.view.objectId,'item.Shared');assert.equal(page.app.selection.node,'item.Shared');assert.equal(page.get('details').querySelector('h2').textContent,'Shared');assert.equal(page.get('object-results').hidden,true);assert.equal(page.history.length,length);assert.deepEqual(page.history.state.architectureObjectSearch,{query:'Shared',kinds:['Component'],open:false,cleared:true});
+});
+
+test('pending Schedule layout success or failure cannot reopen dismissed category-filtered search',async()=>{
+  for(const failure of [false,true]){
+    const runtime=controlledSchedules(),page=viewer('?schedule=schedule-update',{edit:interactiveSchedules,createScheduleRenderer:runtime.create});filterPlugin(page,'include','A');await Promise.resolve();
+    const input=page.get('search');input.value='Shared';input.dispatch('input');searchKind(page,'Component');mouseClick(page,page.canvas);
+    failure?runtime.requests[0].reject(new Error('layout unavailable')):runtime.requests[0].resolve(scheduleSubset(page,['fixed-card']));await page.settle();
+    assert.equal(page.get('object-results').hidden,true);assert.equal(input.value,'Shared');assert.deepEqual(page.history.state.architectureObjectSearch,{query:'Shared',kinds:['Component'],open:false,cleared:true});assert.equal(page.get('diagram').querySelectorAll('[data-selection-filter]').length,0);
+  }
+});
+
+test('old aggregate candidates remain complete despite restrictive search categories',()=>{
+  const page=viewer(),input=page.get('search');input.value='Shared';input.dispatch('input');searchKind(page,'Resource');assert.equal(page.get('object-results').querySelectorAll('[data-object]').length,0);
+  page.app.openObject('old-component-type');page.flush();assert.deepEqual(page.get('object-results').querySelectorAll('[data-object]').map(button=>button.dataset.object),['item.Shared','character.Shared']);
+  assert.ok(page.get('object-results').textContent.includes('此旧入口'));
 });
 
 test('Entity details keep all components and related links enter exact object views',()=>{
@@ -739,7 +832,7 @@ test('native Schedule SVG keeps its guide panel and receives no Mermaid selectio
   }});
   assert.ok(page.get('details').querySelector('.guide'));
   assert.equal(page.get('details').hidden,false);assert.equal(page.get('details').querySelectorAll('[data-guide-schedule-kind]').length,1);assert.equal(page.get('details-resizer').hidden,false);assert.equal(page.get('workspace').classList.contains('schedule'),true);
-  assert.equal(page.get('section').hidden,true);assert.equal(page.get('diagram').querySelector('[data-link-label-id]'),null);
+  assert.equal(page.get('section'),null);assert.equal(page.get('diagram').querySelector('[data-link-label-id]'),null);
   const before=page.get('details').innerHTML;
   page.get('diagram').querySelector('#node1').dispatch('keydown',{key:'Enter'});assert.equal(page.get('details').innerHTML,before);
   page.document.elementFromPoint=()=>page.get('diagram').querySelector('#node1');
@@ -752,13 +845,13 @@ test('native Schedule SVG keeps its guide panel and receives no Mermaid selectio
   page.app.openObject('item.Shared');page.flush();assert.equal(nativeEdge.getAttribute('class'),classes,'leaving a Schedule does not run object edge styling on Graphviz groups');
 });
 
-test('pointer focus, drag, section zero and panel resize retain their interaction contracts',()=>{
+test('pointer focus, drag and panel resize retain their interaction contracts without the group locator',()=>{
   const page=viewer();page.document.elementFromPoint=()=>page.get('diagram').querySelector('[data-id="system-fixed"]');
   page.canvas.dispatch('pointerdown',{button:0,pointerId:1,clientX:50,clientY:50});assert.equal(page.document.activeElement,page.canvas);
   page.canvas.dispatch('pointerup',{button:0,pointerId:1,clientX:50,clientY:50});assert.equal(page.app.view.id,'object:item.Shared');assert.equal(page.get('details').querySelector('h2').textContent,'update_shared');
   assert.equal(page.get('diagram').querySelector('[data-id="system-fixed"]').dispatch('contextmenu').defaultPrevented,false);assert.equal(page.get('details').querySelector('h2').textContent,'update_shared');
   const before=page.get('diagram').style.transform;page.canvas.dispatch('pointerdown',{button:0,pointerId:2,clientX:50,clientY:50});page.canvas.dispatch('pointermove',{pointerId:2,clientX:80,clientY:100});page.canvas.dispatch('pointerup',{pointerId:2,clientX:80,clientY:100});assert.notEqual(page.get('diagram').style.transform,before);
-  page.get('section').value='0';page.get('section').dispatch('change');assert.equal(page.get('details').querySelector('h2').textContent,'全部节点');
+  assert.equal(page.get('section'),null);assert.equal(page.get('details').querySelector('h2').textContent,'update_shared');
   page.get('details-resizer').dispatch('keydown',{key:'ArrowLeft'});assert.equal(page.get('details-resizer').getAttribute('aria-valuenow'),'302');
 });
 
@@ -779,6 +872,18 @@ test('rendered HTML groups exported Schedules by application and embeds mixed of
   const groups=document.querySelectorAll('optgroup').map(group=>group.getAttribute('label'));
   assert.ok(groups.includes('main Schedule'));assert.ok(groups.includes('RenderApp Schedule'));
   const embedded=JSON.parse(/<script id="architecture-data" type="application\/json">([\s\S]*?)<\/script>/.exec(html)[1]);assert.equal(embedded.schemaVersion,5);assert.ok(embedded.objects.length);assert.ok(embedded.objectAliases['old-function']);assert.equal(embedded.registry['system-fixed'].filters[0],'Query<&mut Shared>');assert.deepEqual(embedded.schedulePluginCatalog,fixture().schedulePluginCatalog);assert.equal(embedded.scheduleInteractions.schemaVersion,1);
+});
+
+test('generated embedded scripts execute their search factory and category handlers without module globals',()=>{
+  const data=fixture(),html=renderArchitectureViewer(data),document=testDocument(html),location=new URL('file:///D:/demo/docs/diagrams/generated/pages/ecs-architecture.html?object=item.Shared&workspace=D:/demo'),frames=[],events=new Map();
+  document.getElementById('architecture-data').textContent=JSON.stringify(data);
+  const history={state:null,replaceState(state,_,href){this.state=state;location.href=href},pushState(state,_,href){this.state=state;location.href=href}},window={innerWidth:1440,innerHeight:900,addEventListener(name,listener){events.set(name,listener)}};
+  const context=vm.createContext({document,location,history,window,requestAnimationFrame:callback=>frames.push(callback),URL,URLSearchParams,AbortController,setTimeout,clearTimeout});
+  for(const{attributes,script}of scriptsIn(html))if(!attributes.includes('application/json'))new vm.Script(script).runInContext(context);
+  while(frames.length)frames.splice(0).forEach(callback=>callback());
+  const input=document.getElementById('search');input.value='Shared';input.dispatch('input');document.getElementById('search-kinds-toggle').click();const component=document.querySelector('[data-search-kind="Component"]');component.checked=true;component.dispatch('change');
+  assert.deepEqual(document.getElementById('object-results').querySelectorAll('[data-object]').map(button=>button.dataset.object),['character.Shared','item.Shared']);
+  assert.equal(document.getElementById('section'),null);assert.equal(document.getElementById('object-results').hidden,false);
 });
 
 test('object owner action opens the matching Plugin object and preserves history and workspace',()=>{
@@ -851,8 +956,11 @@ test('independent search and alias results support keyboard navigation alongside
   page.document.activeElement.dispatch('keydown',{key:'ArrowUp'});assert.equal(page.document.activeElement,first);
   first.dispatch('keydown',{key:'Enter'});page.flush();assert.equal(page.app.view.objectId,first.dataset.object);
   assert.equal(page.get('object-results').hidden,true);assert.equal(page.document.activeElement,page.canvas);
-  page.back();assert.equal(input.value,'shared');assert.equal(page.get('object-results').hidden,false);
+  page.back();assert.equal(input.value,'Shared');assert.equal(page.get('object-results').hidden,false);
   input.dispatch('keydown',{key:'Escape'});assert.equal(page.get('object-results').hidden,true);assert.equal(page.document.activeElement,input);
+  input.dispatch('focus');input.dispatch('keydown',{key:'ArrowDown'});
+  const focus=input.focus.bind(input);input.focus=()=>{const changed=page.document.activeElement!==input;focus();if(changed)input.dispatch('focus',{bubbles:false})};
+  page.document.activeElement.dispatch('keydown',{key:'Escape'});assert.equal(page.get('object-results').hidden,true,'returning focus from a result must not reopen the dismissed popup');assert.equal(page.document.activeElement,input);
   const alias=viewer('?object=old-component-type');assert.equal(alias.get('details').hidden,false);
   alias.get('search').dispatch('keydown',{key:'ArrowDown'});alias.document.activeElement.dispatch('keydown',{key:'Enter'});alias.flush();
   assert.equal(alias.app.view.objectId,'item.Shared');
@@ -933,7 +1041,7 @@ test('search history is independent of in-flight or failed viewport snapshots an
     if(fails){runtime.requests[0].reject(new Error('failed'));await page.settle()}
     const input=page.get('search');input.value='Shared';input.dispatch('input');
     page.click(page.get('object-results').querySelector('[data-object="item.Shared"]'));page.back();await Promise.resolve();
-    assert.equal(page.history.state.architectureView,null);assert.equal(input.value,'shared');assert.equal(page.get('object-results').hidden,false);
+    assert.equal(page.history.state.architectureView,null);assert.equal(input.value,'Shared');assert.equal(page.get('object-results').hidden,false);
     input.value='Other';input.focus();input.dispatch('input');const results=page.get('object-results'),html=results.innerHTML;
     runtime.requests[1].resolve({...filteredResult('restored A'),width:800,height:1100});await page.settle();
     assert.equal(input.value,'Other');assert.equal(results.hidden,false);assert.equal(results.innerHTML,html);assert.equal(page.document.activeElement,input);assertFitted(page);
