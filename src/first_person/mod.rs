@@ -116,7 +116,6 @@ impl Plugin for FirstPersonPlugin {
             .register_type::<FirstPersonCamera>()
             .add_message::<WindowFocused>()
             .add_observer(on_camera_look)
-            .add_systems(Startup, log_pose_synchronization)
             .add_systems(
                 PreUpdate,
                 sync_mouse_capture
@@ -153,14 +152,6 @@ fn register_input_actions(app: &mut App) {
         .add_observer(clear_cancelled_movement)
         .add_observer(request_jump)
         .add_observer(request_interaction);
-}
-
-fn log_pose_synchronization() {
-    info!(target: "demo::camera", simulation_schedule = "FixedUpdate",
-        carry_schedule = "FixedUpdate", grip_mode = "shared_body", physics_schedule = "FixedPostUpdate",
-        presentation_schedule = "RunFixedMainLoop",
-        presentation_order = "interpolation_character_facing_carry_pose_camera_visibility", reason = "initialization",
-        "Camera pose synchronization configured");
 }
 
 fn suspend_controls(
