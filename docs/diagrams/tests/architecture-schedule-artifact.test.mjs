@@ -5,6 +5,7 @@ import { createArchitectureViewer } from '../src/architecture-viewer.mjs';
 import { createArchitectureNavigation } from '../src/architecture-navigation.mjs';
 import { createArchitectureInteraction } from '../src/architecture-interaction.mjs';
 import { createArchitectureGestures } from '../src/architecture-gestures.mjs';
+import { createArchitectureSearch } from '../src/architecture-search.mjs';
 import { createArchitectureSplitter } from '../src/architecture-splitter.mjs';
 import { selectedFillColor } from '../src/architecture-style.mjs';
 import { readArchitectureData } from '../src/architecture-artifacts.mjs';
@@ -24,7 +25,7 @@ test('all exported Schedule cards paint and restore their own real Graphviz outl
   const app = createArchitectureViewer({ data, document, location, history, window,
     requestAnimationFrame: callback => frames.push(callback), sourceEditor: { refreshLinks() {}, withWorkspace: url => url },
     navigation: createArchitectureNavigation(data.model.features, data.views.filter(view => view.aspect === 'schedule')),
-    createInteraction: createArchitectureInteraction, createSplitter: createArchitectureSplitter, createGestures: createArchitectureGestures });
+    createInteraction: createArchitectureInteraction, createSplitter: createArchitectureSplitter, createGestures: createArchitectureGestures, createObjectSearch: createArchitectureSearch });
   const flush = () => { while (frames.length) frames.splice(0).forEach(callback => callback()); };
   const snapshot = shape => ['fill', 'stroke-width', 'filter'].map(name => [shape.style.getPropertyValue(name), shape.style.getPropertyPriority(name)]);
   let checked = 0, titles = 0, wrapped = 0;
