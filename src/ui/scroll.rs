@@ -49,6 +49,7 @@ pub(super) fn settings_scroll_frame<Content: Scene>(
     content: Content,
 ) -> impl Scene + use<Content> {
     bsn! {
+        Name("Settings scroll frame")
         Node {
             width: percent(100),
             min_width: px(0),
@@ -74,6 +75,7 @@ pub(super) fn settings_scroll_frame<Content: Scene>(
 fn settings_scrollbar(theme: &UiTheme) -> impl Scene + use<> {
     let min_thumb_length = theme.size(28.0).max(22.0);
     bsn! {
+        Name("Settings scrollbar track")
         SettingsScrollbar { min_thumb_length }
         Node {
             position_type: PositionType::Absolute,
@@ -90,6 +92,7 @@ fn settings_scrollbar(theme: &UiTheme) -> impl Scene + use<> {
         on(scrollbar_pointer_source)
         on(scroll_over_settings_scrollbar)
         Children [
+            Name("Settings scrollbar thumb")
             SettingsScrollbarThumb
             ScrollbarThumb {
                 border_radius: BorderRadius::MAX,
@@ -248,6 +251,7 @@ fn wheel_delta(unit: MouseScrollUnit, y: f32) -> f32 {
 /// 鼠标滚轮使用 Bevy UI 的指针事件；不另行读取底层滚轮，避免重复滚动。
 pub(super) fn scroll_area(theme: &UiTheme) -> impl Scene + use<> {
     bsn! {
+        Name("Settings scroll viewport")
         MenuScroll
         Node {
             flex_direction: FlexDirection::Column,
