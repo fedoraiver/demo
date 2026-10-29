@@ -3,7 +3,13 @@
 use bevy::prelude::*;
 use std::{io, num::NonZeroU32};
 
-use super::{AudioSettings, CameraSettings, GameSettings};
+use super::{AudioSettings, CameraSettings, GameSettings, MAX_AUDIO_VOLUME};
+
+// 菜单步进与范围只作用于实际编辑的字段，不参与 JSON 持久化校验。
+const MENU_MOUSE_SENSITIVITY_STEP: f32 = 0.0005;
+const MENU_MOUSE_SENSITIVITY_MIN: f32 = 0.0005;
+const MENU_MOUSE_SENSITIVITY_MAX: f32 = 0.02;
+const VOLUME_STEP: i16 = 5;
 
 /// 设置草稿中的可修改字段。
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -77,7 +83,7 @@ impl SettingsDraft {
             SettingKey::UiVolume => &mut self.audio.ui_volume,
             _ => return false,
         };
-        let value = value.min(100);
+        let value = value.min(MAX_AUDIO_VOLUME);
         if *volume == value {
             return false;
         }
@@ -94,27 +100,27 @@ impl SettingsDraft {
                     self.max_fps = OPTIONS
                         .into_iter()
                         .find(|&fps| fps > self.max_fps)
-                        .unwrap_or(240);
+                        .unwrap_or(OPTIONS[OPTIONS.len() - 1]);
                 } else if direction < 0 {
                     self.max_fps = OPTIONS
                         .into_iter()
                         .rev()
                         .find(|&fps| fps < self.max_fps)
-                        .unwrap_or(60);
+                        .unwrap_or(OPTIONS[0]);
                 }
             }
             SettingKey::MouseSensitivity => {
                 if direction != 0 {
                     self.mouse_sensitivity = (self.mouse_sensitivity
-                        + 0.0005 * f32::from(direction.signum()))
-                    .clamp(0.0005, 0.02);
+                        + MENU_MOUSE_SENSITIVITY_STEP * f32::from(direction.signum()))
+                    .clamp(MENU_MOUSE_SENSITIVITY_MIN, MENU_MOUSE_SENSITIVITY_MAX);
                 }
             }
             SettingKey::InvertY => self.invert_y = !self.invert_y,
             key @ (SettingKey::MasterVolume | SettingKey::SfxVolume | SettingKey::UiVolume) => {
-                let value =
-                    i16::from(self.volume(key).unwrap()) + 5 * i16::from(direction.signum());
-                self.set_volume(key, value.clamp(0, 100) as u8);
+                let value = i16::from(self.volume(key).unwrap())
+                    + VOLUME_STEP * i16::from(direction.signum());
+                self.set_volume(key, value.clamp(0, i16::from(MAX_AUDIO_VOLUME)) as u8);
             }
         }
     }
