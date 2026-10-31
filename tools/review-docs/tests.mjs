@@ -144,6 +144,40 @@ test('依据变动使审查过期，具名reconfirmation保留旧事件；commit
   assert.equal(report(root, loaded).coverage[0].status, 'content_reviewed');
 });
 
+test('限定范围的规则引用变化使机械与审查证据过期', async () => {
+  const references = ['scope', 'delegation', 'review-rules', 'validation']
+    .map(name => `.agents/skills/review-docs/references/${name}.md`);
+  for (const changed of references) {
+    const files = { 'README.md': '# Main\n', 'AGENTS.md': '# Rules\n' };
+    for (const reference of references) files[reference] = `# ${reference}\n`;
+    const root = fixture(files), session = start(root, ['README.md']);
+    for (const reference of references) {
+      assert.ok(session.baseline.readingEntries.includes(reference));
+      assert.equal(session.baseline.environment.rules[reference], hash(files[reference]));
+    }
+    await add(root, session, assignment('reader'));
+    await add(root, session, review('reader'));
+    await add(root, session, assignment('final', 'independent_reviewer'));
+    await add(root, session, review('final', 'independent_review'));
+    await withLock(root, session.baseline.id, async s => append(s, { type: 'mechanical', result: await check(root, s.baseline, deps) }));
+    let result = report(root, loadSession(root, session.baseline.id));
+    assert.equal(result.mechanical.status, 'pass');
+    assert.equal(result.complete, true);
+    // 会话记录自身不属于输入；追加记录后旧证据仍有效。
+    await add(root, session, review('reader'));
+    result = report(root, loadSession(root, session.baseline.id));
+    assert.equal(result.mechanical.status, 'pass');
+    assert.equal(result.complete, true);
+    write(root, changed, `${files[changed]}Changed\n`);
+    result = report(root, loadSession(root, session.baseline.id));
+    assert.equal(result.mechanical.status, 'stale');
+    assert.equal(result.coverage[0].status, 'pending');
+    assert.equal(result.coverage[0].independentReview, false);
+    assert.deepEqual(result.coverage[0].independentEvents, []);
+    assert.equal(result.complete, false);
+  }
+});
+
 test('检查期间修改输入不能记录pass；链接目标源文件也是依赖', async () => {
   const root = fixture({ 'README.md': '# A\n[source](code.rs)\n', 'code.rs': 'fn main() {}\n' });
   const session = start(root, ['README.md']);
