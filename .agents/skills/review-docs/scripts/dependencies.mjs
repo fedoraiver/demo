@@ -5,7 +5,7 @@ import path from 'node:path';
 import { createHash } from 'node:crypto';
 
 export const toolDirectory = path.dirname(fileURLToPath(import.meta.url));
-export const defaultWorkspace = path.resolve(toolDirectory, '../..');
+export const defaultWorkspace = path.resolve(toolDirectory, '../../../..');
 const digest = value => createHash('sha256').update(value).digest('hex');
 
 // 依赖只能从当前检出专用的临时运行目录解析，避免误用其他工作树的安装。
@@ -38,6 +38,6 @@ export async function dependencies() {
     return { unified: modules[0].unified, remarkParse: modules[1].default, remarkGfm: modules[2].default,
       Slugger: modules[3].default, yaml: modules[4], html: modules[5] };
   } catch (error) {
-    throw new Error(`依赖缺失或锁文件不匹配，请显式运行 scripts/check-docs.ps1 -InstallDependencies。${error.message}`);
+    throw new Error(`依赖缺失或锁文件不匹配，请显式运行 .agents/skills/review-docs/scripts/check-docs.ps1 -InstallDependencies。${error.message}`);
   }
 }

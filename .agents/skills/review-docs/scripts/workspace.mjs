@@ -84,8 +84,8 @@ export function entries(root, documents) {
   return [...result].sort();
 }
 export function toolHashes() {
-  const values = Object.fromEntries(fs.readdirSync(toolDirectory).filter(p => /\.(mjs|json)$/.test(p)).sort().map(p => [p, hash(fs.readFileSync(path.join(toolDirectory, p)))]));
-  values['scripts/check-docs.ps1'] = hash(fs.readFileSync(path.resolve(toolDirectory, '../../scripts/check-docs.ps1')));
+  const values = Object.fromEntries(fs.readdirSync(toolDirectory).filter(p => /\.(mjs|json)$/.test(p)).sort().map(p => [`.agents/skills/review-docs/scripts/${p}`, hash(fs.readFileSync(path.join(toolDirectory, p)))]));
+  values['.agents/skills/review-docs/scripts/check-docs.ps1'] = hash(fs.readFileSync(path.join(toolDirectory, 'check-docs.ps1')));
   return values;
 }
 export function environment(root, scope) {

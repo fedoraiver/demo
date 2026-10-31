@@ -9,8 +9,8 @@ param(
 $ErrorActionPreference = 'Stop'
 # 原生命令的退出码由本入口显式处理，避免调用方偏好把 CLI 的既有错误 JSON 变成第二份异常输出。
 $PSNativeCommandUseErrorActionPreference = $false
-$workspaceRoot = Split-Path -Parent $PSScriptRoot
-$toolRoot = Join-Path $workspaceRoot 'tools/review-docs'
+$toolRoot = $PSScriptRoot
+$workspaceRoot = [IO.Path]::GetFullPath((Join-Path $toolRoot '../../../..'))
 $runtimeRoot = Join-Path $workspaceRoot 'tmp/review-docs/runtime'
 $originalLocation = Get-Location
 $originalCache = $env:npm_config_cache

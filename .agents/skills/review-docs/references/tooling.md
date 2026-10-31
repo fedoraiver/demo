@@ -1,19 +1,19 @@
 # 文档审查工具
 
-该工具为 [review-docs Skill](../../.agents/skills/review-docs/SKILL.md) 提供可重复的清单、机械检查和审查记录。内容事实、文档归属、责任与义务仍需按 Skill 审查，独立终审仍由未参与编辑者完成。
+该工具为 [review-docs Skill](../SKILL.md) 提供可重复的清单、机械检查和审查记录。内容事实、文档归属、责任与义务仍需按 Skill 审查，独立终审仍由未参与编辑者完成。
 
 ## 准备
 
 安装 Node.js 22.13 或更新版本。工具使用独立的精确依赖和锁文件，不依赖架构图工具包。首次在目标 worktree 显式安装依赖：
 
 ```powershell
-pwsh -NoProfile -File .\scripts\check-docs.ps1 -InstallDependencies
+pwsh -NoProfile -File ./.agents/skills/review-docs/scripts/check-docs.ps1 -InstallDependencies
 ```
 
 依赖、缓存、会话和测试材料位于仓库根目录 `tmp/review-docs/`；安装后正常命令离线运行。脚本按自身所在 worktree 定位，可从其他工作目录通过脚本绝对路径调用。运行工具自身测试：
 
 ```powershell
-pwsh -NoProfile -File .\scripts\check-docs.ps1 -Test
+pwsh -NoProfile -File ./.agents/skills/review-docs/scripts/check-docs.ps1 -Test
 ```
 
 ## 工作流
@@ -21,9 +21,9 @@ pwsh -NoProfile -File .\scripts\check-docs.ps1 -Test
 以下示例在 worktree 根目录执行，范围是 `docs/AGENTS.md`。初始化会冻结开始时的基线；当前内容指纹与基线分开，会话文件自身不进入指纹。`--scope` 可重复，显式指定的范围不存在或没有候选文档时初始化失败，退出码为 `2`。`--base` 可指定 Git 基线；省略时冻结初始 HEAD，单纯的空提交不使证据失效。显式基线别名推进后旧证据失效，需创建新会话。
 
 ```powershell
-$init = pwsh -NoProfile -File .\scripts\check-docs.ps1 init --scope docs/AGENTS.md | ConvertFrom-Json
+$init = pwsh -NoProfile -File ./.agents/skills/review-docs/scripts/check-docs.ps1 init --scope docs/AGENTS.md | ConvertFrom-Json
 $session = $init.sessionPath
-pwsh -NoProfile -File .\scripts\check-docs.ps1 check --session $session --record
+pwsh -NoProfile -File ./.agents/skills/review-docs/scripts/check-docs.ps1 check --session $session --record
 ```
 
 检查后由代理阅读目标及依据，处理发现并记录结果。以下示例假定两名代理已经分别完成内容审查与独立终审，且均无发现；只有实际执行并有依据时才能填写这些申报。严格报告还要求记录的机械检查通过，发现问题时先处理并重新检查。输入文件放在根 `tmp/review-docs/`。若只记录内容审查，严格报告会返回未完成。
@@ -40,9 +40,9 @@ $records = @(
 $inputPath = Join-Path (Get-Location) 'tmp/review-docs/review-input.json'
 foreach ($record in $records) {
   [System.IO.File]::WriteAllText($inputPath, ($record | ConvertTo-Json -Depth 10), [System.Text.UTF8Encoding]::new($false))
-  pwsh -NoProfile -File .\scripts\check-docs.ps1 record --session $session --input $inputPath
+  pwsh -NoProfile -File ./.agents/skills/review-docs/scripts/check-docs.ps1 record --session $session --input $inputPath
 }
-pwsh -NoProfile -File .\scripts\check-docs.ps1 report --session $session --require-complete
+pwsh -NoProfile -File ./.agents/skills/review-docs/scripts/check-docs.ps1 report --session $session --require-complete
 ```
 
 `check --record` 保存检查结果；不带该选项时只检查。`report --require-complete` 对未完成的会话返回非零状态。输入或基点变化使证据过期时，重新核对受影响内容并追加重新确认记录，不改写历史。报告的机械结果、逐文件覆盖状态与内容结论分别判断：机械通过不证明内容正确，清单或申报也不证明完成了阅读。
@@ -72,4 +72,4 @@ pwsh -NoProfile -File .\scripts\check-docs.ps1 report --session $session --requi
 
 ## 检查边界
 
-工具检查本地 Markdown 链接、GFM 锚点与入链、Skill 结构、差异和记录有效性；具体实现和边界见本目录源码与测试。HTTP 外链及其他协议单列为未验证，不联网爬取。工具不修改受控文档，不自动修复链接、执行文档中的命令、启动游戏、更新架构图或提交。检查结果不代表全仓语义审查通过。
+工具检查本地 Markdown 链接、GFM 锚点与入链、Skill 结构、差异和记录有效性；具体实现和边界见[源码与测试](../scripts/)。HTTP 外链及其他协议单列为未验证，不联网爬取。工具不修改受控文档，不自动修复链接、执行文档中的命令、启动游戏、更新架构图或提交。检查结果不代表全仓语义审查通过。

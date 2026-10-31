@@ -34,7 +34,7 @@ function fixture(files = { 'README.md': '# 文档\n', 'AGENTS.md': '# Rules\n' }
   return root;
 }
 function start(root, scope = [], base) { const result = init(root, scope, base); return loadSession(root, result.session); }
-function evidence(p = 'README.md') { return [{ path: p, reference: '全文及职责核对' }]; }
+function evidence(p = 'README.md') { return [{ path: p, reference: '模拟测试证据，不表示真实阅读'  }]; }
 async function add(root, session, input) { return withLock(root, session.baseline.id, s => record(root, s, { schemaVersion: 1, ...input })); }
 function assignment(actor, role = 'reviewer', scope = ['README.md']) { return { type: 'assignment', actor, role, scope, evidence: evidence(), execution: { model: role === 'editor' ? 'gpt-6.1-terra' : 'gpt-6.1-sol', effort: 'high', forkTurns: 'none' } }; }
 function review(actor, type = 'content_review', scope = ['README.md']) { return { type, actor, scope, evidence: evidence(), result: 'no_findings', findings: [] }; }
@@ -366,7 +366,7 @@ test('未解决unverified发现阻塞strict，具名确认resolved后可完成�
 
 test('PowerShell从其他cwd调用，恢复cwd与npm cache', () => {
   const root = fixture();
-  const script = path.join(defaultWorkspace, 'scripts/check-docs.ps1');
+  const script = path.join(defaultWorkspace, '.agents/skills/review-docs/scripts/check-docs.ps1');
   const quote = value => `'${value.replaceAll("'", "''")}'`;
   const code = `$env:npm_config_cache='original-cache'; $before=(Get-Location).Path; & ${quote(script)} init --workspace ${quote(root)} --scope README.md; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }; if ((Get-Location).Path -ne $before -or $env:npm_config_cache -ne 'original-cache') { exit 9 }`;
   const output = execFileSync('pwsh', ['-NoProfile', '-Command', code], { cwd: home, encoding: 'utf8', windowsHide: true });
@@ -374,7 +374,7 @@ test('PowerShell从其他cwd调用，恢复cwd与npm cache', () => {
 });
 
 test('PowerShell低Node版本、入口缺参、依赖缺失均输出单个错误JSON并恢复环境', () => {
-  const root = fixture(), script = path.join(defaultWorkspace, 'scripts/check-docs.ps1');
+  const root = fixture(), script = path.join(defaultWorkspace, '.agents/skills/review-docs/scripts/check-docs.ps1');
   const quote = value => `'${value.replaceAll("'", "''")}'`;
   const probe = (target, args, prefix = '') => {
     const code = `$env:npm_config_cache='original-cache'; $before=(Get-Location).Path; $encodingBefore=[Console]::OutputEncoding.WebName; $pipelineBefore=$OutputEncoding.WebName; ${prefix}; $payload = & ${quote(target)} ${args}; $code = $LASTEXITCODE; @{payload=($payload -join [Environment]::NewLine); code=$code; sameLocation=((Get-Location).Path -eq $before); sameCache=($env:npm_config_cache -eq 'original-cache'); sameEncoding=([Console]::OutputEncoding.WebName -eq $encodingBefore -and $OutputEncoding.WebName -eq $pipelineBefore)} | ConvertTo-Json -Compress -EscapeHandling EscapeNonAscii`;
@@ -395,8 +395,108 @@ test('PowerShell低Node版本、入口缺参、依赖缺失均输出单个错误
     assert.equal(direct.status, 2); assert.ok(!direct.stdout.includes('\uFFFD')); assert.ok(!direct.stderr.includes('\uFFFD'));
     assert.match(JSON.parse(direct.stdout).error, /需要 Node.js/); assert.match(direct.stderr, /需要 Node.js/);
   }
-  for (const name of fs.readdirSync(toolDirectory).filter(p => /\.(mjs|json)$/.test(p))) write(root, `tools/review-docs/${name}`, fs.readFileSync(path.join(toolDirectory, name)));
-  write(root, 'scripts/check-docs.ps1', fs.readFileSync(script));
-  const missing = checkError(probe(path.join(root, 'scripts/check-docs.ps1'), 'init'));
+  for (const name of fs.readdirSync(toolDirectory).filter(p => /\.(mjs|json)$/.test(p))) write(root, `.agents/skills/review-docs/scripts/${name}`, fs.readFileSync(path.join(toolDirectory, name)));
+  write(root, '.agents/skills/review-docs/scripts/check-docs.ps1', fs.readFileSync(script));
+  const missing = checkError(probe(path.join(root, '.agents/skills/review-docs/scripts/check-docs.ps1'), 'init'));
   assert.match(missing.error, /依赖缺失|锁文件/);
+});
+
+const skillScripts = '.agents/skills/review-docs/scripts';
+function copyTool(root) {
+  for (const name of fs.readdirSync(toolDirectory).filter(p => /\.(mjs|json|ps1)$/.test(p))) {
+    write(root, `${skillScripts}/${name}`, fs.readFileSync(path.join(toolDirectory, name)));
+  }
+}
+function copyRuntime(root) {
+  // 复用已显式安装的锁定依赖；测试不联网、不重新安装。
+  fs.cpSync(path.join(defaultWorkspace, 'tmp/review-docs/runtime'), path.join(root, 'tmp/review-docs/runtime'), { recursive: true });
+  // Git checkout可能转换换行；与真实安装一致，manifest使用当前fixture自身字节。
+  for (const name of ['package.json', 'package-lock.json']) {
+    fs.copyFileSync(path.join(root, skillScripts, name), path.join(root, 'tmp/review-docs/runtime', name));
+  }
+}
+const psQuote = value => `'${value.replaceAll("'", "''")}'`;
+function powershellProbe(script, args, cwd, prefix = '') {
+  const code = `$env:npm_config_cache='original-cache'; $before=(Get-Location).Path; $encodingBefore=[Console]::OutputEncoding.CodePage; $pipelineBefore=$OutputEncoding.CodePage; ${prefix}; $payload = & ${psQuote(script)} ${args}; $code = $LASTEXITCODE; @{payload=($payload -join [Environment]::NewLine); code=$code; sameLocation=((Get-Location).Path -eq $before); sameCache=($env:npm_config_cache -eq 'original-cache'); sameEncoding=([Console]::OutputEncoding.CodePage -eq $encodingBefore -and $OutputEncoding.CodePage -eq $pipelineBefore)} | ConvertTo-Json -Compress -EscapeHandling EscapeNonAscii`;
+  return JSON.parse(execFileSync('pwsh', ['-NoProfile', '-Command', code], { cwd, encoding: 'utf8', windowsHide: true, stdio: ['ignore', 'pipe', 'pipe'] }));
+}
+function restored(result, code) {
+  assert.equal(result.code, code); assert.equal(result.sameLocation, true);
+  assert.equal(result.sameCache, true); assert.equal(result.sameEncoding, true);
+}
+
+test('真实迁移布局在中文空格linked worktree从无关cwd默认定位；显式workspace仍有效', () => {
+  const original = fixture(); copyTool(original); commit(original, '模拟迁移后工具布局');
+  const linked = `${original}-新布局 linked`; trustFixture(linked);
+  git(original, ['worktree', 'add', '-q', '-b', 'test-relocated', linked]);
+  copyRuntime(linked);
+  const target = path.join(linked, skillScripts);
+  const direct = spawnSync(process.execPath, [path.join(target, 'cli.mjs'), 'init', '--scope', 'README.md'], { cwd: original, encoding: 'utf8', windowsHide: true });
+  assert.equal(direct.status, 0, direct.stderr);
+  const created = JSON.parse(direct.stdout), session = loadSession(linked, created.session);
+  assert.equal(session.baseline.root, fs.realpathSync(linked));
+  assert.notEqual(session.baseline.gitDir, session.baseline.commonDir);
+  assert.equal(path.dirname(created.sessionPath), path.join(linked, 'tmp/review-docs/sessions'));
+  const ps = powershellProbe(path.join(target, 'check-docs.ps1'), 'init --scope README.md', original);
+  restored(ps, 0); assert.equal(loadSession(linked, JSON.parse(ps.payload).session).baseline.root, fs.realpathSync(linked));
+  const explicit = powershellProbe(path.join(target, 'check-docs.ps1'), `init --workspace ${psQuote(original)} --scope README.md`, home);
+  restored(explicit, 0); assert.equal(loadSession(original, JSON.parse(explicit.payload).session).baseline.root, fs.realpathSync(original));
+  assert.equal(fs.existsSync(path.join(linked, 'tools/review-docs')), false);
+  assert.equal(fs.existsSync(path.join(linked, 'scripts/check-docs.ps1')), false);
+});
+
+test('新布局缺依赖拒绝借用调用方worktree；默认不安装、不建缓存或会话', () => {
+  const root = fixture(); copyTool(root);
+  // 存在匹配manifest仍缺模块；主worktree有可用依赖也不能作为后备。
+  for (const name of ['package.json', 'package-lock.json']) write(root, `tmp/review-docs/runtime/${name}`, fs.readFileSync(path.join(toolDirectory, name)));
+  const script = path.join(root, skillScripts, 'check-docs.ps1');
+  const result = powershellProbe(script, 'init --scope README.md', defaultWorkspace);
+  restored(result, 2);
+  const error = JSON.parse(result.payload);
+  assert.match(error.error, /依赖缺失或锁文件不匹配/);
+  assert.ok(error.error.includes(`${skillScripts}/check-docs.ps1 -InstallDependencies`));
+  const direct = spawnSync(process.execPath, [path.join(root, skillScripts, 'cli.mjs'), 'init', '--workspace', defaultWorkspace, '--scope', 'docs/AGENTS.md'], { cwd: defaultWorkspace, encoding: 'utf8', windowsHide: true });
+  assert.equal(direct.status, 2); assert.match(JSON.parse(direct.stdout).error, /依赖缺失或锁文件不匹配/);
+  assert.equal(fs.existsSync(path.join(root, 'tmp/review-docs/sessions')), false);
+  assert.equal(fs.existsSync(path.join(root, 'tmp/review-docs/npm-cache')), false);
+});
+
+test('显式安装将manifest和npm上下文限制在自身worktree，模拟npm成功/失败均恢复环境', () => {
+  for (const npmCode of [0, 1]) {
+    const root = fixture(); copyTool(root);
+    const probePath = path.join(root, 'tmp/review-docs/npm-probe.json');
+    const prefix = `function npm { [IO.File]::WriteAllText(${psQuote(probePath)}, (@{cwd=(Get-Location).Path; cache=$env:npm_config_cache; arguments=@($args)} | ConvertTo-Json -Compress)); $global:LASTEXITCODE=${npmCode} }`;
+    const result = powershellProbe(path.join(root, skillScripts, 'check-docs.ps1'), '-InstallDependencies', home, prefix);
+    restored(result, npmCode ? 2 : 0);
+    const invocation = JSON.parse(fs.readFileSync(probePath, 'utf8'));
+    assert.equal(invocation.cwd, path.join(root, 'tmp/review-docs/runtime'));
+    assert.equal(invocation.cache, path.join(root, 'tmp/review-docs/npm-cache'));
+    assert.deepEqual(invocation.arguments, ['ci', '--ignore-scripts', '--no-audit', '--no-fund']);
+    for (const name of ['package.json', 'package-lock.json']) assert.deepEqual(fs.readFileSync(path.join(root, 'tmp/review-docs/runtime', name)), fs.readFileSync(path.join(toolDirectory, name)));
+    if (npmCode) assert.match(JSON.parse(result.payload).error, /依赖安装失败/);
+    assert.equal(fs.existsSync(path.join(root, 'tmp/review-docs/sessions')), false);
+  }
+});
+
+test('自身入口与模块变动使已记录机械证据过期，只读report保留原始历史', () => {
+  const root = fixture(); copyTool(root); copyRuntime(root); commit(root, '模拟工具布局');
+  const target = path.join(root, skillScripts);
+  const invoke = args => {
+    const result = spawnSync(process.execPath, [path.join(target, 'cli.mjs'), ...args], { cwd: home, encoding: 'utf8', windowsHide: true });
+    assert.equal(result.status, 0, result.stderr); return JSON.parse(result.stdout);
+  };
+  const created = invoke(['init', '--scope', 'README.md']);
+  invoke(['check', '--session', created.session, '--record']);
+  assert.equal(invoke(['report', '--session', created.session]).mechanical.status, 'pass');
+  const snapshot = () => Object.fromEntries(['baseline.json', 'events.jsonl', 'head.json'].map(name => [name, hash(fs.readFileSync(path.join(created.sessionPath, name)))]));
+  const before = snapshot();
+  fs.appendFileSync(path.join(target, 'check-docs.ps1'), '\n# 模拟入口变化\n');
+  assert.equal(invoke(['report', '--session', created.session]).mechanical.status, 'stale');
+  assert.deepEqual(snapshot(), before);
+  invoke(['check', '--session', created.session, '--record']);
+  assert.equal(invoke(['report', '--session', created.session]).mechanical.status, 'pass');
+  const moduleBefore = snapshot();
+  fs.appendFileSync(path.join(target, 'markdown.mjs'), '\n// 模拟模块变化\n');
+  assert.equal(invoke(['report', '--session', created.session]).mechanical.status, 'stale');
+  assert.deepEqual(snapshot(), moduleBefore);
 });
