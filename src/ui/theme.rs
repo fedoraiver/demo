@@ -2,6 +2,13 @@
 
 use bevy::prelude::*;
 
+/// 菜单布局与无窗口回退共用的设计视口，单位为逻辑像素。
+pub(super) const DESIGN_VIEWPORT: Vec2 = Vec2::new(1440.0, 810.0);
+const WIDTH_SCALE_MIN: f32 = 0.68;
+const FIXED_MENU_SCALE_MIN: f32 = 2.0 / 3.0;
+const SCALE_MAX: f32 = 1.15;
+pub(super) const MIN_FONT_SIZE_PX: f32 = 14.0;
+
 pub(super) const INK: Color = Color::srgb(0.12, 0.16, 0.22);
 pub(super) const CREAM: Color = Color::srgb(0.98, 0.95, 0.86);
 pub(super) const PAPER: Color = Color::srgba(0.98, 0.96, 0.90, 0.96);
@@ -32,7 +39,7 @@ impl UiTheme {
     /// 宽度较小时缩小字号；高度不足交给滚动区域，避免整页文字过小。
     pub fn for_width(&self, width: f32) -> Self {
         Self {
-            scale: (width / 1440.0).clamp(0.68, 1.15),
+            scale: (width / DESIGN_VIEWPORT.x).clamp(WIDTH_SCALE_MIN, SCALE_MAX),
             ..self.clone()
         }
     }
@@ -40,9 +47,9 @@ impl UiTheme {
     /// 固定菜单同时按宽高缩放；最小 960×540 窗口仍保持可读文字与完整按钮。
     pub fn for_fixed_menu(&self, viewport: Vec2) -> Self {
         Self {
-            scale: (viewport.x / 1440.0)
-                .min(viewport.y / 810.0)
-                .clamp(2.0 / 3.0, 1.15),
+            scale: (viewport.x / DESIGN_VIEWPORT.x)
+                .min(viewport.y / DESIGN_VIEWPORT.y)
+                .clamp(FIXED_MENU_SCALE_MIN, SCALE_MAX),
             ..self.clone()
         }
     }

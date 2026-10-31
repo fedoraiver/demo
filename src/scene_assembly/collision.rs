@@ -2,6 +2,9 @@
 
 use super::*;
 
+const STAIR_RAMP_APPROACH_EXTENSION_M: f32 = 0.36;
+const STAIR_RAMP_BASE_DEPTH_M: f32 = 0.05;
+
 #[derive(Default)]
 pub(super) struct CollisionGeometry {
     pub(super) vertices: Vec<Vec3>,
@@ -125,8 +128,8 @@ pub(super) fn stair_group(asset: &str, name: &str) -> Option<String> {
 }
 
 pub(super) fn stair_ramp(min: Vec3, max: Vec3) -> Collider {
-    let front = max.z + 0.36;
-    let bottom = min.y - 0.05;
+    let front = max.z + STAIR_RAMP_APPROACH_EXTENSION_M;
+    let bottom = min.y - STAIR_RAMP_BASE_DEPTH_M;
     // 楔体顶从地面升到平台，向前延长一踏面；所有当前入口朝导出坐标 +Z。
     Collider::convex_hull(&[
         Vec3::new(min.x, bottom, front),

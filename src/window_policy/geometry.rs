@@ -1,9 +1,9 @@
 //! Win32 窗口几何只计算值，供原生桥接与无窗口回归共用。
 
 use super::MIN_LOGICAL_SIZE;
+pub(super) use super::{HEIGHT_UNIT, WIDTH_UNIT};
 
-pub(super) const WIDTH_UNIT: i32 = 16;
-pub(super) const HEIGHT_UNIT: i32 = 9;
+const WINDOWS_BASE_DPI: f64 = 96.0;
 
 /// 外框使用屏幕物理坐标；与 Win32 RECT 的转换仅留在平台桥接内。
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
@@ -46,7 +46,7 @@ impl Margins {
 }
 
 pub(super) fn minimum_units(dpi: u32) -> i32 {
-    let scale = dpi as f64 / 96.0;
+    let scale = dpi as f64 / WINDOWS_BASE_DPI;
     ((MIN_LOGICAL_SIZE.x as f64 * scale / WIDTH_UNIT as f64)
         .max(MIN_LOGICAL_SIZE.y as f64 * scale / HEIGHT_UNIT as f64)
         .ceil()) as i32

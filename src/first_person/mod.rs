@@ -37,6 +37,9 @@ use camera::{follow_first_person_camera, on_camera_look, sync_character_visibili
 use capture::sync_mouse_capture;
 use facing::sync_character_facing;
 
+const EYE_HEIGHT_M: f32 = 1.65;
+const PITCH_LIMIT_DEGREES: f32 = 85.0;
+
 /// 独立于本次运行实体标识的玩家身份。
 #[derive(Component, Reflect, Clone, Copy, Debug, PartialEq, Eq, Hash)]
 #[reflect(Component)]
@@ -86,7 +89,7 @@ impl FirstPersonCamera {
             yaw: 0.0,
             pending_yaw_delta: 0.0,
             pitch: 0.0,
-            eye_height: 1.65,
+            eye_height: EYE_HEIGHT_M,
         }
     }
 
@@ -97,7 +100,10 @@ impl FirstPersonCamera {
     }
 
     fn apply_vertical_look(&mut self, delta: f32) {
-        self.pitch = (self.pitch + delta).clamp(-85.0_f32.to_radians(), 85.0_f32.to_radians());
+        self.pitch = (self.pitch + delta).clamp(
+            -PITCH_LIMIT_DEGREES.to_radians(),
+            PITCH_LIMIT_DEGREES.to_radians(),
+        );
     }
 }
 

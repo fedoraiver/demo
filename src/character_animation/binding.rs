@@ -111,8 +111,8 @@ pub(super) fn initialize_ready_couriers(
                 .expect("all animation durations were loaded"),
         };
         let graph_handle = graphs.add(graph);
-        let rising = velocity.y > 0.35;
-        let grounded = motion.grounded && velocity.y <= 0.5;
+        let rising = velocity.y > RISING_ENTER_SPEED_MPS;
+        let grounded = motion.grounded && velocity.y <= TAKEOFF_MIN_VERTICAL_SPEED_MPS;
         let jump_phase = if grounded {
             CourierJumpPhase::Grounded
         } else if rising {
@@ -159,7 +159,8 @@ pub(super) fn initialize_ready_couriers(
                     grounded,
                     ungrounded_time: 0.0,
                     rising,
-                    airborne_confirmed: !grounded && velocity.y.abs() > 0.5,
+                    airborne_confirmed: !grounded
+                        && velocity.y.abs() > AIRBORNE_MIN_VERTICAL_SPEED_MPS,
                     jump_phase,
                     jump_elapsed: 0.0,
                     fall_elapsed: 0.0,

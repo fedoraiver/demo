@@ -6,7 +6,10 @@ use objc2_app_kit::{NSView, NSWindow, NSWindowCollectionBehavior};
 use objc2_foundation::NSSize;
 use raw_window_handle::RawWindowHandle;
 
-use super::MIN_LOGICAL_SIZE;
+use super::{HEIGHT_UNIT, MIN_LOGICAL_SIZE, WIDTH_UNIT};
+
+// AppKit 内容区使用逻辑点；只校准超过此误差的系统尺寸请求。
+const CONTENT_SIZE_TOLERANCE_POINTS: f64 = 0.5;
 
 /// 保持原生窗口有效，并在守护对象释放时还原安装前的约束。
 pub(super) struct NativeWindowPolicy {
@@ -35,7 +38,9 @@ pub(super) fn install(handle: &RawHandleWrapper) -> Result<NativeWindowPolicy, S
         window,
         available: None,
     };
-    guard.window.setContentAspectRatio(NSSize::new(16.0, 9.0));
+    guard
+        .window
+        .setContentAspectRatio(NSSize::new(f64::from(WIDTH_UNIT), f64::from(HEIGHT_UNIT)));
     // 非 16:9 屏幕的全屏／平铺会绕过普通缩放，保留普通比例窗口的 Zoom。
     let mut behavior = guard.previous_behavior;
     behavior.remove(
@@ -67,8 +72,10 @@ impl NativeWindowPolicy {
         let content = self.window.contentRectForFrameRect(frame);
         let visible = screen.visibleFrame();
         let available = NSSize::new(
-            (visible.size.width - (frame.size.width - content.size.width)).max(16.0),
-            (visible.size.height - (frame.size.height - content.size.height)).max(9.0),
+            (visible.size.width - (frame.size.width - content.size.width))
+                .max(f64::from(WIDTH_UNIT)),
+            (visible.size.height - (frame.size.height - content.size.height))
+                .max(f64::from(HEIGHT_UNIT)),
         );
         let maximum = fit_size(available);
         // 工作区不足最小支持尺寸时，以能完整放入屏幕为先，并记录该边界。
@@ -92,10 +99,14 @@ impl NativeWindowPolicy {
         // 普通拖拽已由 contentAspectRatio 限制；仅校准绕过该属性的系统尺寸请求。
         let size = content.size;
         let width = size.width.clamp(minimum.width, maximum.width);
-        let height = (width * 9.0 / 16.0).clamp(minimum.height, maximum.height);
-        let constrained = NSSize::new(height * 16.0 / 9.0, height);
-        if (size.width - constrained.width).abs() > 0.5
-            || (size.height - constrained.height).abs() > 0.5
+        let height = (width * f64::from(HEIGHT_UNIT) / f64::from(WIDTH_UNIT))
+            .clamp(minimum.height, maximum.height);
+        let constrained = NSSize::new(
+            height * f64::from(WIDTH_UNIT) / f64::from(HEIGHT_UNIT),
+            height,
+        );
+        if (size.width - constrained.width).abs() > CONTENT_SIZE_TOLERANCE_POINTS
+            || (size.height - constrained.height).abs() > CONTENT_SIZE_TOLERANCE_POINTS
         {
             self.window.setContentSize(constrained);
             bevy::log::info!(
@@ -112,11 +123,11 @@ impl NativeWindowPolicy {
 
 /// 内容区扣除标题栏后，选择工作区内最大的整数 16:9 尺寸。
 pub(super) fn fit_size(available: NSSize) -> NSSize {
-    let unit = (available.width / 16.0)
-        .min(available.height / 9.0)
+    let unit = (available.width / f64::from(WIDTH_UNIT))
+        .min(available.height / f64::from(HEIGHT_UNIT))
         .floor()
         .max(1.0);
-    NSSize::new(unit * 16.0, unit * 9.0)
+    NSSize::new(unit * f64::from(WIDTH_UNIT), unit * f64::from(HEIGHT_UNIT))
 }
 
 impl Drop for NativeWindowPolicy {

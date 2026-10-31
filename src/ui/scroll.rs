@@ -9,6 +9,17 @@ use bevy::{
     ui_widgets::{ControlOrientation, Scrollbar, ScrollbarDragState, ScrollbarThumb},
 };
 
+// 滚动条尺寸为逻辑像素；缩放后的最小预算保证窄窗口仍可命中和拖动。
+const SCROLLBAR_GUTTER_PX: f32 = 24.0;
+const SCROLLBAR_MIN_GUTTER_PX: f32 = 20.0;
+const SCROLLBAR_THUMB_LENGTH_PX: f32 = 28.0;
+const SCROLLBAR_MIN_THUMB_LENGTH_PX: f32 = 22.0;
+const SCROLLBAR_RIGHT_INSET_PX: f32 = 7.0;
+const SCROLLBAR_MIN_RIGHT_INSET_PX: f32 = 5.0;
+const SCROLLBAR_WIDTH_PX: f32 = 10.0;
+const SCROLLBAR_MIN_WIDTH_PX: f32 = 10.0;
+const WHEEL_LINE_SCROLL_PX: f32 = 32.0;
+
 /// 可滚动区域的标记；用于键盘导航时把当前按钮滚入视野。
 #[derive(Component, Default, Clone)]
 pub(super) struct MenuScroll;
@@ -55,7 +66,7 @@ pub(super) fn settings_scroll_frame<Content: Scene>(
             min_height: px(0),
             flex_grow: 1.0,
             flex_basis: px(0),
-            padding: UiRect::right(px(theme.size(24.0).max(20.0))),
+            padding: UiRect::right(px(theme.size(SCROLLBAR_GUTTER_PX).max(SCROLLBAR_MIN_GUTTER_PX))),
         }
         Children [
             @scroll_area(theme)
@@ -72,15 +83,17 @@ pub(super) fn settings_scroll_frame<Content: Scene>(
 }
 
 fn settings_scrollbar(theme: &UiTheme) -> impl Scene + use<> {
-    let min_thumb_length = theme.size(28.0).max(22.0);
+    let min_thumb_length = theme
+        .size(SCROLLBAR_THUMB_LENGTH_PX)
+        .max(SCROLLBAR_MIN_THUMB_LENGTH_PX);
     bsn! {
         SettingsScrollbar { min_thumb_length }
         Node {
             position_type: PositionType::Absolute,
-            right: px(theme.size(7.0).max(5.0)),
+            right: px(theme.size(SCROLLBAR_RIGHT_INSET_PX).max(SCROLLBAR_MIN_RIGHT_INSET_PX)),
             top: px(0),
             bottom: px(0),
-            width: px(theme.size(10.0).max(10.0)),
+            width: px(theme.size(SCROLLBAR_WIDTH_PX).max(SCROLLBAR_MIN_WIDTH_PX)),
             border_radius: BorderRadius::MAX,
         }
         BackgroundColor(Color::srgba(0.06, 0.10, 0.15, 0.45))
@@ -240,7 +253,7 @@ pub(super) fn vertical_scroll_range(node: &ComputedNode) -> f32 {
 
 fn wheel_delta(unit: MouseScrollUnit, y: f32) -> f32 {
     match unit {
-        MouseScrollUnit::Line => y * 32.0,
+        MouseScrollUnit::Line => y * WHEEL_LINE_SCROLL_PX,
         MouseScrollUnit::Pixel => y,
     }
 }
