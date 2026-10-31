@@ -2,7 +2,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
-import { maskRustSource } from './architecture-components.mjs';
+import { maskRustSource } from '../../../../docs/diagrams/src/architecture-components.mjs';
 
 const digest = bytes => crypto.createHash('sha256').update(bytes).digest('hex');
 const escape = text => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');

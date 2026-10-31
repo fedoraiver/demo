@@ -1,8 +1,8 @@
 // 与正式构建共用准备路径；只返回审阅摘要，不启动浏览器或写正式产物。
 import fs from 'node:fs';
 import path from 'node:path';
-import { prepareArchitecture } from './architecture-preparation.mjs';
-import { sha256, sourceFingerprint } from './debugdump-input.mjs';
+import { prepareArchitecture } from '../../../../docs/diagrams/src/architecture-preparation.mjs';
+import { sha256, sourceFingerprint } from '../../../../docs/diagrams/src/debugdump-input.mjs';
 import { summarizeModel } from './maintenance-summary.mjs';
 
 export async function preflightArchitecture({ workspace, debugdumpDirectory } = {}) {

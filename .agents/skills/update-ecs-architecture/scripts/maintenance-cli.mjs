@@ -1,6 +1,6 @@
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { repositoryRoot } from './paths.mjs';
+import { repositoryRoot } from './maintenance-paths.mjs';
 
 const help = `ECS architecture maintenance (local execution only)
   plan | preflight | run [--resume RUN_ID] | status | report

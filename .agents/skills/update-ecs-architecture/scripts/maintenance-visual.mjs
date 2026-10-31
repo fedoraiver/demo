@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import { execFileSync } from 'node:child_process';
-import { pathsForRepository } from './paths.mjs';
+import { pathsForRepository } from '../../../../docs/diagrams/src/paths.mjs';
 
 export const hash = bytes => crypto.createHash('sha256').update(bytes).digest('hex');
 const canonical = value => JSON.stringify(value, (_, item) => item && typeof item === 'object' && !Array.isArray(item) ? Object.fromEntries(Object.entries(item).sort(([a], [b]) => a.localeCompare(b))) : item);

@@ -8,7 +8,7 @@ import { buildObjectCatalog } from '../src/architecture-objects.mjs';
 import { validatePreparedArchitecture } from '../src/maintenance-model-checks.mjs';
 import { parseDebugdump, renderDebugdump, compileDebugdump } from '../src/debugdump.mjs';
 import { repositoryRoot } from '../src/paths.mjs';
-import { preflightArchitecture } from '../src/maintenance-preflight.mjs';
+import { preflightArchitecture } from '../../../.agents/skills/update-ecs-architecture/scripts/maintenance-preflight.mjs';
 import { createArchitectureSourceContext, applyArchitectureSourcePolicies } from '../src/architecture-source-policy.mjs';
 
 const definition = { path: 'src/state_scoped.rs', line: 1, dependency: { name: 'bevy_state', version: '0.18.0', root: '/fixture' } };
@@ -91,8 +91,8 @@ test('real DOT preparation parses without SVG and rendering retains legacy compi
 });
 
 test('production preflight preparation has no browser/compiler/write dependency', () => {
-  for (const filename of ['maintenance-preflight.mjs', 'architecture-preparation.mjs']) {
-    const source = fs.readFileSync(path.join(repositoryRoot, 'docs/diagrams/src', filename), 'utf8');
+  for (const filename of ['.agents/skills/update-ecs-architecture/scripts/maintenance-preflight.mjs', 'docs/diagrams/src/architecture-preparation.mjs']) {
+    const source = fs.readFileSync(path.join(repositoryRoot, filename), 'utf8');
     assert.doesNotMatch(source, /mermaid-compiler|puppeteer|writeFile|writeArtifact|renderDebugdump|compileDebugdump/);
   }
 });

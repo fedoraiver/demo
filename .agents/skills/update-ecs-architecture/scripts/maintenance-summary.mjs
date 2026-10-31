@@ -1,4 +1,4 @@
-import { readArchitectureData } from './architecture-artifacts.mjs';
+import { readArchitectureData } from '../../../../docs/diagrams/src/architecture-artifacts.mjs';
 import fs from 'node:fs';
 import path from 'node:path';
 import { digest } from './maintenance-inputs.mjs';

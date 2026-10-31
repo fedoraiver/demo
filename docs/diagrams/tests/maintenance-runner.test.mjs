@@ -3,12 +3,13 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { planMaintenance, runMaintenance, maintenanceStatus, maintenanceReport } from '../src/maintenance-runner.mjs';
-import { fileSnapshot, digest, dependencyState, normalizedEnvironment } from '../src/maintenance-inputs.mjs';
+import { planMaintenance, runMaintenance, maintenanceStatus, maintenanceReport } from '../../../.agents/skills/update-ecs-architecture/scripts/maintenance-runner.mjs';
+import { fileSnapshot, digest, dependencyState, normalizedEnvironment, relevantInputNames } from '../../../.agents/skills/update-ecs-architecture/scripts/maintenance-inputs.mjs';
 import { sourceFingerprint, scheduleId, sha256, DEBUGDUMP_MANIFEST } from '../src/debugdump-input.mjs';
-import { summarizeModel, compareModelSummaries } from '../src/maintenance-summary.mjs';
-import { exportContextInputs, captureExportContext, validateExportContext } from '../src/maintenance-export-context.mjs';
-import { loadCompilerSelection, resolveCompilerSelection } from '../src/maintenance-compiler-selection.mjs';
+import { summarizeModel, compareModelSummaries } from '../../../.agents/skills/update-ecs-architecture/scripts/maintenance-summary.mjs';
+import { exportContextInputs, captureExportContext, validateExportContext } from '../../../.agents/skills/update-ecs-architecture/scripts/maintenance-export-context.mjs';
+import { loadCompilerSelection, resolveCompilerSelection } from '../../../.agents/skills/update-ecs-architecture/scripts/maintenance-compiler-selection.mjs';
+import { maintenanceScripts } from '../../../.agents/skills/update-ecs-architecture/scripts/maintenance-paths.mjs';
 
 const repository = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../..');
 fs.mkdirSync(path.join(repository, 'tmp'), { recursive: true });
@@ -157,6 +158,53 @@ test('new untracked input modules change the plan content fingerprint', async t 
   f.put('docs/diagrams/src/new untracked.mjs', 'export const added=1;');
   const next = await planMaintenance({ workspace: f.workspace });
   assert.notEqual(digest(first.inputs), digest(next.inputs));
+  f.put(`${maintenanceScripts}/new untracked.mjs`, 'export const added=2;');
+  const skillChange = await planMaintenance({ workspace: f.workspace });
+  assert.notEqual(digest(next.inputs), digest(skillChange.inputs));
+});
+
+test('Skill helper content invalidates downstream reuse while installed dependencies remain reusable', async t => {
+  const f = fixture(t), helper = `${maintenanceScripts}/maintenance-paths.mjs`;
+  f.put('docs/diagrams/node_modules/.package-lock.json', '{"packages":{}}');
+  f.put(helper, 'export const helper = "before";');
+  dumpFixture(f);
+  const directory = path.join(f.workspace, 'docs/diagrams/generated/dot');
+  const manifest = JSON.parse(fs.readFileSync(path.join(directory, DEBUGDUMP_MANIFEST), 'utf8'));
+  const context = await captureExportContext({ workspace: f.workspace, directory, manifest,
+    toolchainProvider: () => ({ cargo: process.execPath, rustc: process.execPath }) });
+  assert.equal(context.schemaVersion, 2);
+  assert.deepEqual(Object.keys(context.inputs), ['files', 'environment', 'invocation']);
+  const originalSidecar = fs.readFileSync(path.join(directory, 'maintenance-export-context.json'));
+  assert.equal((await planMaintenance({ workspace: f.workspace })).stages.find(stage => stage.id === 'export').action, 'reuse');
+  const names = relevantInputNames(f.workspace), before = fileSnapshot(f.workspace, names);
+  assert.ok(names.includes(maintenanceScripts));
+  assert.equal(before[helper], digest('export const helper = "before";'));
+  const stages = [
+    { id: 'dependencies', inputs: ['docs/diagrams/package.json', 'docs/diagrams/package-lock.json'], outputs: [],
+      command: { command: process.execPath, args: ['-e', "require('fs').appendFileSync('executions.txt','dependencies\\n');"] } },
+    ...pipeline().map(stage => ({ ...stage, inputs: [...stage.inputs, ...names] })),
+  ];
+  const first = await runMaintenance({ workspace: f.workspace, pipeline: stages });
+  assert.equal(first.status, 'passed');
+  f.put(helper, 'export const helper = "after";');
+  assert.notEqual(digest(fileSnapshot(f.workspace, names)), digest(before));
+  const plan = await planMaintenance({ workspace: f.workspace });
+  assert.equal(plan.debugdump.context.status, 'valid');
+  assert.equal(plan.stages.find(stage => stage.id === 'export').action, 'reuse');
+  assert.deepEqual(fs.readFileSync(path.join(directory, 'maintenance-export-context.json')), originalSidecar);
+  const status = await maintenanceStatus({ workspace: f.workspace });
+  assert.equal(status.status, 'stale');
+  assert.deepEqual(status.invalidated, ['produce', 'verify']);
+  const resumed = await runMaintenance({ workspace: f.workspace, resume: first.runId, pipeline: stages });
+  assert.equal(resumed.status, 'passed');
+  assert.deepEqual(resumed.stages.map(stage => [stage.id, stage.attempt]), [['dependencies', 1], ['produce', 1], ['verify', 1], ['produce', 2], ['verify', 2]]);
+  assert.equal(fs.readFileSync(path.join(f.workspace, 'executions.txt'), 'utf8'), 'dependencies\nproduce\nverify\nproduce\nverify\n');
+});
+
+test('full run refuses a different worktree before creating execution records', async t => {
+  const f = fixture(t);
+  await assert.rejects(runMaintenance({ workspace: f.workspace }), /entry point from the selected workspace/);
+  assert.equal(fs.existsSync(path.join(f.workspace, 'tmp')), false);
 });
 
 test('identity summaries retain independent registrations, generics, projections and source differences', () => {
@@ -260,8 +308,14 @@ test('export context binds selectors, config contents, actual toolchain bytes an
   assert.equal(JSON.stringify(inputs).includes('never-store-this-secret'), false);
   f.put('fake cargo.exe', 'cargo fixture'); f.put('fake rustc.exe', 'rustc fixture');
   const provider = () => ({ cargo: path.join(f.workspace, 'fake cargo.exe'), rustc: path.join(f.workspace, 'fake rustc.exe') });
-  await captureExportContext({ workspace: f.workspace, directory, manifest, environment, toolchainProvider: provider, configParser });
+  const context = await captureExportContext({ workspace: f.workspace, directory, manifest, environment, toolchainProvider: provider, configParser });
+  assert.equal(context.schemaVersion, 2);
+  assert.deepEqual(Object.keys(context.inputs), ['files', 'environment', 'invocation']);
   assert.equal((await validateExportContext({ workspace: f.workspace, directory, manifest, environment, configParser })).status, 'valid');
+  const originalSidecar = fs.readFileSync(path.join(directory, 'maintenance-export-context.json'));
+  f.put(`${maintenanceScripts}/maintenance-paths.mjs`, 'export const changedHelper = true;');
+  assert.equal((await validateExportContext({ workspace: f.workspace, directory, manifest, environment, configParser })).status, 'valid');
+  assert.deepEqual(fs.readFileSync(path.join(directory, 'maintenance-export-context.json')), originalSidecar);
   assert.equal((await validateExportContext({ workspace: f.workspace, directory, manifest, environment: { ...environment, RUSTFLAGS: '--cfg changed' }, configParser })).status, 'stale');
   f.put('.cargo/config.toml', '[build]\ntarget="changed"');
   assert.equal((await validateExportContext({ workspace: f.workspace, directory, manifest, environment, configParser })).status, 'stale');

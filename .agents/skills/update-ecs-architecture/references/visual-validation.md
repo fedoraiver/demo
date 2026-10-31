@@ -18,7 +18,7 @@
 
 SVG 逐图目测及用户明确限定范围的抽样目测必须委派子代理，主代理只负责统筹、汇总和证据复核。
 
-按[SVG 证据命令](../../../../docs/diagrams/README.md#svg-证据命令)执行 `visual plan/render/record/bind`，待检清单按[有效证据与抽样规则](#有效证据复用与抽样范围)确定。
+按[SVG 证据命令](../../../../docs/diagrams/README.md#svg-证据命令)调用 [Skill 视觉证据模块](../scripts/maintenance-visual.mjs)的 `visual plan/render/record/bind`，待检清单按[有效证据与抽样规则](#有效证据复用与抽样范围)确定。[静态栅格化模块](../scripts/maintenance-visual-render.mjs)使用图包的锁定依赖，不另行安装浏览器包。
 
 冻结后才渲染，零待检不启动浏览器，截图仍为待检；子代理实际观察对应全部预览与分块后显式记录检查者、时间、结论及具体备注。
 

@@ -10,7 +10,7 @@ description: 更新、核对或修复本项目的 ECS 架构图，包括真实 S
 ## 读取与范围
 
 - 从仓库根读取 [AGENTS.md](../../../AGENTS.md)、[开发规范](../../../docs/development.md)、[当前架构](../../../docs/architecture.md)、[验证参考](../../../docs/testing/README.md)及[图的说明](../../../docs/diagrams/README.md)。
-- 按[变更类型](../../../docs/testing/README.md#按变更类型选择检查)确定执行范围。仅修改本 Skill 或其说明时，只检查入口、步骤、事实、相对链接及工作区与修改保护规则，不递归执行本 Skill 的导出、构建、Node 测试或图形验收。
+- 按[变更类型](../../../docs/testing/README.md#按变更类型选择检查)确定执行范围。仅修改本 Skill 的 Markdown 说明时，只检查入口、步骤、事实、相对链接及工作区与修改保护规则，不递归执行本 Skill 的导出、构建、Node 测试或图形验收；修改执行脚本时运行相关维护回归。
 - 检查 `git status --short`、暂存与未暂存 diff。使用用户指定基线；未指定时对照原产物、清单和当前源码，保留用户修改。
 - 原图、diff、日志及截图放根 `tmp/ecs-architecture/` 下的任务目录；正式产物留在 `docs/diagrams/`。只在用户要求时暂存或提交。
 

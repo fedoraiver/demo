@@ -2,7 +2,8 @@ import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import { atomicJson, contained, hash, imageValid, loadPlan, locked } from './maintenance-visual.mjs';
-import { validateArchitectureSvg } from './architecture-asset-loader.mjs';
+import { validateArchitectureSvg } from '../../../../docs/diagrams/src/architecture-asset-loader.mjs';
+import { importDiagramDependency } from './maintenance-paths.mjs';
 
 const overviewBounds = { width: 2400, height: 1800 };
 const tileBounds = { width: 2200, height: 1600 };
@@ -25,7 +26,7 @@ export async function renderVisual({ planPath, from = 1, to, browser }) {
       atomicJson(recordsPath, previous);
       return { renderPath: recordsPath, renderedCount: 0, requiresInspection: false, records: previous.records };
     }
-    const [{ default: puppeteer }, { DOMParser }] = await Promise.all([import('puppeteer'), import('@xmldom/xmldom')]);
+    const [{ default: puppeteer }, { DOMParser }] = await Promise.all([importDiagramDependency('puppeteer'), importDiagramDependency('@xmldom/xmldom')]);
     const candidates = browser ? [browser] : [process.env.MERMAID_CHROMIUM_PATH, puppeteer.executablePath()].filter(Boolean);
     const executablePath = candidates.find(filename => fs.existsSync(filename));
     if (!executablePath) throw new Error('A local compile Chromium executable is required; set MERMAID_CHROMIUM_PATH or browser');

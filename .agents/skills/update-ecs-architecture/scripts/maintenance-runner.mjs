@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
-import { fileURLToPath } from 'node:url';
+import { exportProducerInputs, maintenanceScripts, repositoryRoot } from './maintenance-paths.mjs';
 import { fileSnapshot, relevantInputNames, dependencyState, npmCommand, headMetadata, digest, processAlive, executablePath } from './maintenance-inputs.mjs';
 import { atomicJson, executeMaintenanceCommand } from './maintenance-execution.mjs';
 import { readModelSummary, compareModelSummaries } from './maintenance-summary.mjs';
@@ -10,7 +10,7 @@ import { exportContextInputs, validateExportContext, captureExportContext } from
 const now = () => new Date().toISOString();
 const maintenanceRoot = workspace => path.join(workspace, 'tmp/ecs-architecture/maintenance');
 const generated = 'docs/diagrams/generated';
-const sourceRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../..');
+const sourceRoot = repositoryRoot;
 const requireWorkspace = workspace => {
   if (!workspace) throw new Error('--workspace is required');
   const resolved = fs.realpathSync(path.resolve(workspace));
@@ -32,7 +32,7 @@ const loadRun = (workspace, runId) => {
 };
 
 async function validDump(workspace, debugdumpDirectory) {
-  const { readDebugdump, DEBUGDUMP_MANIFEST } = await import('./debugdump-input.mjs');
+  const { readDebugdump, DEBUGDUMP_MANIFEST } = await import('../../../../docs/diagrams/src/debugdump-input.mjs');
   const directory = debugdumpDirectory ? path.resolve(workspace, debugdumpDirectory) : path.join(workspace, generated, 'dot');
   const filename = debugdumpDirectory ? 'manifest.json' : DEBUGDUMP_MANIFEST;
   try {
@@ -89,7 +89,7 @@ export async function planMaintenance({ workspace, debugdumpDirectory } = {}) {
 }
 
 function defaultPipeline({ workspace, dump, directory, dependencies }) {
-  const cli = path.join(workspace, 'docs/diagrams/src/maintenance-cli.mjs');
+  const cli = path.join(workspace, maintenanceScripts, 'maintenance-cli.mjs');
   const exportDirectory = dump.reusable ? dump.directory : path.join(directory, 'debugdump');
   const exported = dump.reusable && dump.filename !== 'manifest.json' ? [] : ['--debugdump', exportDirectory];
   const inputs = relevantInputNames(workspace);
@@ -101,12 +101,12 @@ function defaultPipeline({ workspace, dump, directory, dependencies }) {
         const state = dependencyState(workspace); if (!state.valid) throw new Error(state.reason); return state;
       } },
     { id: 'export', inputs: ['Cargo.toml', 'Cargo.lock', 'src',
-      ...['maintenance-runner.mjs', 'maintenance-inputs.mjs', 'maintenance-execution.mjs', 'maintenance-export-context.mjs', 'maintenance-compiler-selection.mjs', 'debugdump-input.mjs'].map(name => `docs/diagrams/src/${name}`),
+      ...exportProducerInputs,
       ...(fs.existsSync(path.join(workspace, 'build.rs')) ? ['build.rs'] : [])], outputs: [],
       reuse: dump.reusable, reuseReason: 'Real exported DOT, source/dependency provenance and build context are valid',
       command: { command: 'cargo', args: ['run', '--locked', '--features', 'debugdump', '--', '--dump-schedules', exportDirectory] },
       finalize: async ({ inputs: before }) => {
-        const { readDebugdump } = await import('./debugdump-input.mjs');
+        const { readDebugdump } = await import('../../../../docs/diagrams/src/debugdump-input.mjs');
         const data = readDebugdump(exportDirectory, workspace);
         await captureExportContext({ workspace, directory: exportDirectory, manifest: data.manifest, beforeInputs: before.exportContext });
       },

@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import { repositoryRoot } from '../src/paths.mjs';
-import { fixSourceLines, planSourceLineFixes, applySourceLineFixes } from '../src/maintenance-source-lines.mjs';
+import { fixSourceLines, planSourceLineFixes, applySourceLineFixes } from '../../../.agents/skills/update-ecs-architecture/scripts/maintenance-source-lines.mjs';
 
 function fixture(t, { code = '// 说明\r\n\r\npub struct DemoPlugin;\r\npub fn tick() {}\r\n', model } = {}) {
   const parent = path.join(repositoryRoot, 'tmp/ecs-architecture/source-lines-tests');

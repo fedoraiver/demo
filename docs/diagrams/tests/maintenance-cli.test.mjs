@@ -1,15 +1,39 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import fs from 'node:fs';
 import path from 'node:path';
 import { execFileSync, spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
-import { parseMaintenanceArgs } from '../src/maintenance-cli.mjs';
+import { parseMaintenanceArgs } from '../../../.agents/skills/update-ecs-architecture/scripts/maintenance-cli.mjs';
+import { npmCommand } from '../../../.agents/skills/update-ecs-architecture/scripts/maintenance-inputs.mjs';
+import { maintenanceScripts, repositoryRoot } from '../../../.agents/skills/update-ecs-architecture/scripts/maintenance-paths.mjs';
 
-const cli = fileURLToPath(new URL('../src/maintenance-cli.mjs', import.meta.url));
+const cli = fileURLToPath(new URL('../../../.agents/skills/update-ecs-architecture/scripts/maintenance-cli.mjs', import.meta.url));
 test('CLI can show help from another working directory without importing installed toolchain', () => {
   const output = execFileSync(process.execPath, [cli, '--help'], { cwd: path.parse(cli).root, encoding: 'utf8', windowsHide: true });
   assert.match(output, /preflight/);
   assert.match(output, /--apply/);
+});
+test('Skill CLI help works in an isolated workspace with spaces and no installed dependencies', t => {
+  const parent = path.join(repositoryRoot, 'tmp/ecs-architecture/maintenance-cli-tests');
+  fs.mkdirSync(parent, { recursive: true });
+  const workspace = fs.mkdtempSync(path.join(parent, 'workspace with spaces '));
+  t.after(() => fs.rmSync(workspace, { recursive: true, force: true }));
+  for (const name of [`${maintenanceScripts}/maintenance-cli.mjs`, `${maintenanceScripts}/maintenance-paths.mjs`, 'docs/diagrams/src/paths.mjs', 'docs/diagrams/package.json']) {
+    const target = path.join(workspace, name);
+    fs.mkdirSync(path.dirname(target), { recursive: true });
+    fs.copyFileSync(path.join(repositoryRoot, name), target);
+  }
+  assert.equal(fs.existsSync(path.join(workspace, 'docs/diagrams/node_modules')), false);
+  const isolatedCli = path.join(workspace, maintenanceScripts, 'maintenance-cli.mjs');
+  const output = execFileSync(process.execPath, [isolatedCli, '--help'], { cwd: path.dirname(workspace), encoding: 'utf8', windowsHide: true });
+  assert.match(output, /ECS architecture maintenance/);
+  const { command, args } = npmCommand();
+  const npmOutput = execFileSync(command, [...args, 'run', 'maintain', '--prefix', path.join(workspace, 'docs/diagrams'), '--', '--help'], { cwd: path.dirname(workspace), encoding: 'utf8', windowsHide: true });
+  assert.match(npmOutput, /ECS architecture maintenance/);
+});
+test('default workspace comes from the Skill repository instead of the caller directory', () => {
+  assert.equal(parseMaintenanceArgs(['plan']).options.workspace, repositoryRoot);
 });
 test('source repair remains read-only unless its own explicit apply flag is present', () => {
   assert.equal(parseMaintenanceArgs(['fix-source-lines']).options.apply, undefined);

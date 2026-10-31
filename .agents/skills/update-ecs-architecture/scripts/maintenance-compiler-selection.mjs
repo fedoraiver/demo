@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import os from 'node:os';
 import { executablePath, normalizedEnvironment } from './maintenance-inputs.mjs';
+import { importDiagramDependency } from './maintenance-paths.mjs';
 
 const selectors = [['rustc', 'RUSTC', 'CARGO_BUILD_RUSTC'], ['rustc-wrapper', 'RUSTC_WRAPPER', 'CARGO_BUILD_RUSTC_WRAPPER'],
   ['rustc-workspace-wrapper', 'RUSTC_WORKSPACE_WRAPPER', 'CARGO_BUILD_RUSTC_WORKSPACE_WRAPPER']];
@@ -58,7 +59,7 @@ export async function loadCompilerSelection({ workspace, environment = process.e
   const files = activeCargoConfigs(workspace, environment);
   let parse = configParser;
   if (files.length && !parse) {
-    try { parse = (await import('smol-toml')).parse; }
+    try { parse = (await importDiagramDependency('smol-toml')).parse; }
     catch { throw new Error('Cargo config compiler identity requires the locked smol-toml dependency; install diagram dependencies first'); }
   }
   const configs = files.map(filename => {

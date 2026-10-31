@@ -49,7 +49,7 @@ Schedule 始终保留右侧说明栏，未选择对象时显示当前调度的�
 
 ## 目录与加载
 
-根目录保留包配置、维护说明和 build／check／serve 薄入口。实现放在 `src/`，人工维护的清单和证据放在 `catalog/`，回归与辅助模块放在 `tests/`，许可证放在 `licenses/`。正式生成文件分类如下：
+根目录保留包配置、维护说明和 build／check／serve 薄入口。生成器、校验器、查看器及共用模型准备放在 `src/`，人工维护的清单和证据放在 `catalog/`，回归与辅助模块放在 `tests/`，许可证放在 `licenses/`。维护计划、执行与恢复、导出来源证据、源码行号修复和视觉证据脚本归 [Skill 的 scripts/](../../.agents/skills/update-ecs-architecture/scripts/maintenance-cli.mjs)；`npm run maintain` 转发到该入口。Skill 从本包 `package.json` 所在环境按需解析依赖，只使用这里的一份 `package-lock.json` 和 `node_modules`；维护回归保留在本包 `tests/`，统一参与完整 Node 测试。正式生成文件分类如下：
 
 ```text
 generated/
@@ -321,7 +321,7 @@ npm run maintain --prefix docs/diagrams -- report --format markdown
 | `status [--run-id RUN_ID]`、`report [--run-id RUN_ID]` | 查看状态、实际起止、PID、退出码、日志、失效阶段和模型差异；报告分别列自动结果与 SVG 证据。 |
 | `fix-source-lines [--apply]` | 默认预览明确且唯一的 Plugin、System／Observer 定义行号候选；显式 `--apply` 才写主 JSON 清单。 |
 
-默认工作区由入口所在仓库确定；`--workspace PATH` 可明确选择其他 worktree，不依赖调用目录。外部调用时将 `--prefix` 指向工具所属的 `docs/diagrams`。`--debugdump` 及视觉工具的相对路径选项均以指定工作区为基准解析。未知命令和选项直接失败。
+默认工作区由入口所在仓库确定；`--workspace PATH` 可明确选择其他 worktree，不依赖调用目录。外部调用时将 `--prefix` 指向工具所属的 `docs/diagrams`。完整 `run` 必须使用目标 worktree 内的入口，使源码和 build／check 根目录一致。`--debugdump` 及视觉工具的相对路径选项均以指定工作区为基准解析。未知命令和选项直接失败。
 
 运行记录保存在所属工作区 `tmp/ecs-architecture/maintenance/<run-id>/`。普通 `run` 为新运行保留独立历史，也会尝试复用上轮仍有效的阶段；指定 `--resume` 使用原运行。复用依据包括源码、清单、入口与测试、锁定工具、依赖源码内容和输出哈希；HEAD 仅记录来源。输入改变使相关阶段及下游失效，缺失或被改写的输出不复用。失败停止下游；同一 worktree 的执行锁冲突直接失败，不抢占或结束其他进程。Cargo 仍需由协调者串行安排，工作区锁不代替跨 worktree 的 Cargo 排队。
 

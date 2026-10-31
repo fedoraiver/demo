@@ -8,7 +8,7 @@
 
 ## 导出有效性与导入失败
 
-统一执行器除源码指纹、锁定版本和输入哈希外还核对构建配置与工具链上下文；旧导出缺少来源记录时为 `unknown`，`run` 专用导出一次补证。有效上下文匹配时复用，不重复导出。需要独立导出时仍可使用以下命令，再把目录传给维护入口：
+统一执行器除源码指纹、锁定版本和输入哈希外还通过 [Skill 来源证据模块](../scripts/maintenance-export-context.mjs)核对构建配置与工具链上下文；旧导出缺少来源记录时为 `unknown`，`run` 专用导出一次补证。有效上下文匹配时复用，不重复导出。需要独立导出时仍可使用以下命令，再把目录传给维护入口：
 
 ```powershell
 cargo run --locked --features debugdump -- --dump-schedules tmp/debugdump

@@ -6,7 +6,7 @@
 
 核对 `build-ecs.mjs`、调度导出与导入模块、`ecs-data.json`、对象目录、源码策略、查看器及对应 Rust 源码。修改维护入口，不手改生成 HTML、SVG 路径或源码快照。
 
-包根仅保留说明、配置和 build／check／serve 薄入口；实现、人工目录、测试及许可证分别归入 `src/`、`catalog/`、`tests/`、`licenses/`。生成文件在 `generated/` 内按页面、数据、对象／调度／图例 SVG、DOT 和 Mermaid 分类。路径由共享模块管理，新格式夹具使用相同目录策略，旧格式平铺夹具仅保留兼容验证；移动文件后更新引用、文件属性和清理清单，保持原始 SVG／DOT／Mermaid 字节与身份。
+Skill 私有维护执行器在 [scripts/](../scripts/maintenance-cli.mjs)，图包保留生成器、查看器及共用模型准备与校验模块。完整归属、统一依赖及测试目录见[目录与加载](../../../../docs/diagrams/README.md#目录与加载)，通过原有 `npm run maintain --prefix docs/diagrams -- <命令>` 调用，不另建 npm 环境。生成文件在 `generated/` 内按页面、数据、对象／调度／图例 SVG、DOT 和 Mermaid 分类。路径由共享模块管理，新格式夹具使用相同目录策略，旧格式平铺夹具仅保留兼容验证；移动文件后更新引用、文件属性和清理清单，保持原始 SVG／DOT／Mermaid 字节与身份。
 
 ## 角色与默认模型
 

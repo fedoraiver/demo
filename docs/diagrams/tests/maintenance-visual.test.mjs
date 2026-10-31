@@ -4,7 +4,8 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
-import { atomicJson, bindVisual, currentArtifacts, hash, planVisual, recordVisual, renderVisual, resolveIndex, visualReport } from '../src/maintenance-visual.mjs';
+import { atomicJson, bindVisual, currentArtifacts, hash, planVisual, recordVisual, renderVisual, resolveIndex, visualReport } from '../../../.agents/skills/update-ecs-architecture/scripts/maintenance-visual.mjs';
+import { maintenanceScripts } from '../../../.agents/skills/update-ecs-architecture/scripts/maintenance-paths.mjs';
 
 const repository = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../..');
 const fixtureDirectory = path.join(repository, 'tmp/ecs-architecture/maintenance-visual-tests');
@@ -94,7 +95,7 @@ test('relative visual index and output paths are anchored in the selected worksp
   assert.equal(resolveIndex(f.workspace, 'tmp/shared/index-v2.json'), path.join(f.workspace, 'tmp/shared/index-v2.json'));
   const planned = await f.plan({ outdir: 'tmp/relative visual batch' });
   assert.equal(planned.planPath, path.join(f.workspace, 'tmp/relative visual batch/plan.json'));
-  const output = execFileSync(process.execPath, [path.join(repository, 'docs/diagrams/src/maintenance-cli.mjs'), 'visual', 'plan', '--workspace', f.workspace, '--index', 'tmp/foreign/index-v2.json', '--outdir', 'tmp/foreign/batch'], { cwd: path.dirname(f.workspace), encoding: 'utf8', windowsHide: true });
+  const output = execFileSync(process.execPath, [path.join(repository, maintenanceScripts, 'maintenance-cli.mjs'), 'visual', 'plan', '--workspace', f.workspace, '--index', 'tmp/foreign/index-v2.json', '--outdir', 'tmp/foreign/batch'], { cwd: path.dirname(f.workspace), encoding: 'utf8', windowsHide: true });
   const foreign = JSON.parse(output);
   assert.equal(foreign.planPath, path.join(f.workspace, 'tmp/foreign/batch/plan.json'));
   assert.equal(foreign.indexPath, path.join(f.workspace, 'tmp/foreign/index-v2.json'));
