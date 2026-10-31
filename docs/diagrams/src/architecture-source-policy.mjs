@@ -281,7 +281,10 @@ export function createArchitectureSourceContext({ repository, dependencyContext 
   }
   function walk(directory, dependency, output) {
     if (!fs.existsSync(directory)) return;
-    for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {
+    const entries = fs.readdirSync(directory, { withFileTypes: true });
+    // 项目源码跨工作树按相同路径顺序收集证据；依赖源码保留现有枚举语义。
+    if (!dependency) entries.sort((a, b) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0);
+    for (const entry of entries) {
       if (entry.isDirectory()) { if (!['tests', 'examples', 'benches'].includes(entry.name)) walk(path.join(directory, entry.name), dependency, output); }
       else if (entry.name.endsWith('.rs') && !/(?:^|_)tests?\.rs$|test_support\.rs$/.test(entry.name)) {
         const filename = path.join(directory, entry.name);

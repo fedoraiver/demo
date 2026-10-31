@@ -49,7 +49,7 @@ Schedule 始终保留右侧说明栏，未选择对象时显示当前调度的�
 
 ## 目录与加载
 
-根目录保留包配置、维护说明和 build／check／serve 薄入口。实现放在 `src/`，人工维护的清单和证据放在 `catalog/`，回归与辅助模块放在 `tests/`，许可证放在 `licenses/`。正式生成文件分类如下：
+根目录保留包配置、维护说明和 build／check／serve 薄入口。生成器、校验器、查看器及共用模型准备放在 `src/`，人工维护的清单和证据放在 `catalog/`，回归与辅助模块放在 `tests/`，许可证放在 `licenses/`。维护计划、执行与恢复、导出来源证据、源码行号修复和视觉证据脚本归 [Skill 的 scripts/](../../.agents/skills/update-ecs-architecture/scripts/maintenance-cli.mjs)；`npm run maintain` 转发到该入口。Skill 从本包 `package.json` 所在环境按需解析依赖，只使用这里的一份 `package-lock.json` 和 `node_modules`；维护回归保留在本包 `tests/`，统一参与完整 Node 测试。正式生成文件分类如下：
 
 ```text
 generated/
@@ -304,19 +304,42 @@ Graphviz 调度图使用 DOT 的原生布局，不适用本节的 Mermaid 排版
 
 ### 生成与校验命令
 
-Rust 源码或锁定依赖变化后，先从仓库根运行专用导出命令，Agent 可直接执行。该入口需要 `debugdump` feature；正式依赖版本以 [Cargo.toml](../../Cargo.toml) 和 [Cargo.lock](../../Cargo.lock) 为准：
+统一入口使用项目现有 Node.js（最低 `22.13.0`）和锁定依赖，全部检查在本地执行：
 
-```powershell
-cargo run --locked --features debugdump -- --dump-schedules tmp/debugdump
+```text
+npm run maintain --prefix docs/diagrams -- plan
+npm run maintain --prefix docs/diagrams -- run
+npm run maintain --prefix docs/diagrams -- report --format markdown
 ```
 
-然后在仓库根安装文档依赖、导入并构建。Node.js 最低版本为 `22.13.0`，实际依赖以 [package.json](package.json) 和 [package-lock.json](package-lock.json) 为准：
+| 命令 | 行为 |
+| --- | --- |
+| `plan` | 只读检查依赖、真实导出、旧结果和输入，列出所需阶段，不安装或导出。 |
+| `preflight [--debugdump PATH]` | 复用有效真实导出，准备模型并核对声明、注册、泛型、组件投影、引用及源码角色，不启动 Chromium 或写正式产物。 |
+| `run [--debugdump PATH]` | 必要时安装依赖、专用导出，依次预检、保存旧模型摘要、生成、校验、完整 Node 回归。 |
+| `run --resume RUN_ID` | 重新核对指定运行的内容、输出和原始日志，复用有效阶段；中断和未知退出不作为成功。 |
+| `status [--run-id RUN_ID]`、`report [--run-id RUN_ID]` | 查看状态、实际起止、PID、退出码、日志、失效阶段和模型差异；报告分别列自动结果与 SVG 证据。 |
+| `fix-source-lines [--apply]` | 默认预览明确且唯一的 Plugin、System／Observer 定义行号候选；显式 `--apply` 才写主 JSON 清单。 |
+
+默认工作区由入口所在仓库确定；`--workspace PATH` 可明确选择其他 worktree，不依赖调用目录。外部调用时将 `--prefix` 指向工具所属的 `docs/diagrams`。完整 `run` 必须使用目标 worktree 内的入口，使源码和 build／check 根目录一致。`--debugdump` 及视觉工具的相对路径选项均以指定工作区为基准解析。未知命令和选项直接失败。
+
+运行记录保存在所属工作区 `tmp/ecs-architecture/maintenance/<run-id>/`。普通 `run` 为新运行保留独立历史，也会尝试复用上轮仍有效的阶段；指定 `--resume` 使用原运行。复用依据包括源码、清单、入口与测试、锁定工具、依赖源码内容和输出哈希；HEAD 仅记录来源。输入改变使相关阶段及下游失效，缺失或被改写的输出不复用。失败停止下游；同一 worktree 的执行锁冲突直接失败，不抢占或结束其他进程。Cargo 仍需由协调者串行安排，工作区锁不代替跨 worktree 的 Cargo 排队。
+
+真实导出除源码指纹、锁定版本和 DOT 哈希外，还需 `maintenance-export-context.json` 绑定构建配置、选择环境和已安装工具链身份。上下文只存配置内容及白名单环境值的哈希，不复制凭据；只读命令不调用 rustup。旧导出缺少这份来源证据时报告 `unknown`，`run` 做一次专用导出建立证据。已由工具导出且上下文有效时直接复用。该入口固定为 `cargo run --locked --features debugdump -- --dump-schedules <目录>`，不进入游戏循环；完整装配仍可能初始化设备及请求资产，边界见[调度快照](#调度快照)。独立 `preflight` 及底层构建沿用导出格式校验，不将旧导出的缺失上下文伪装为已补证。
+
+`fix-source-lines` 只修正具有明确声明身份、在指定源码文件中唯一定位的定义入口。裸 System `source`、别名、注册、装配和业务关系仅报告，不推断。写入前重新核对清单及源码哈希；歧义、缺失或输入竞态不写入。只替换获准的行号数字，保留其他字节及换行；`run` 不自动调用它。模型差异报告对象新增／退役／保留、关系、注册、泛型、投影及源码变化，不自动建立迁移别名。
+
+Cargo 配置通过锁定的 `smol-toml` 解析，核对环境、逐级配置选择的编译器与包装器；`include` 或会改变工具选择的配置 `[env]` 等未支持来源明确失败。项目源码按稳定路径枚举，避免不同 worktree 的目录顺序改变注册证据；依赖源码的既有枚举规则保持现状。
+
+需要单独排查时，原有入口仍可使用：
 
 ```text
 npm ci --prefix docs/diagrams
+# 仅在需要新真实输入时先执行专用导出
+cargo run --locked --features debugdump -- --dump-schedules tmp/debugdump
 node docs/diagrams/build-ecs.mjs --debugdump tmp/debugdump
 node docs/diagrams/check-ecs.mjs
-node --test docs/diagrams/tests/*.test.mjs
+node --test --test-concurrency=1 docs/diagrams/tests/*.test.mjs
 ```
 
 导出目录含 `manifest.json` 和每个 Schedule 的 DOT。清单记录应用、Schedule、稳定文件身份、依赖版本、内容哈希及源码指纹；导入拒绝缺失、冲突或过期输入。成功构建后，正式 `debugdump-manifest.json`、DOT、SVG 与 HTML 一起保留；源码指纹匹配时，省略 `--debugdump` 可直接使用正式 DOT 离线重建。没有有效导出时构建失败，不用旧系统图或测试夹具替代真实结果。
@@ -326,6 +349,26 @@ Graphviz 由锁定的 `@viz-js/viz` 生成默认 SVG，浏览器离线 Worker �
 编译器以 `view.id` 作为 `svgId`，独立编译 `.mmd` 时须使用相同 ID，或直接复用项目编译入口。需要原生反向箭头的布局通过 frontmatter 的 `themeCSS` 引用同图真实关系生成的 `pointStart` marker，`nativeReverse` 仅记录逻辑方向。SVG 归一化只添加身份与交互元数据，不移动路径或替换箭头；独立几何检查读取实际 CSS、marker 和路径，分别检查逻辑源端与目标端。
 
 生成器与校验器还依赖 [项目声明定位模块](src/source-locator.mjs)、[依赖声明定位模块](src/dependency-sources.mjs)、[源码查看页生成器](src/source-viewer.mjs)、[编辑器入口共享模块](src/source-editor.mjs) 及引用的项目与锁定依赖源码。独立校验可能报告未刷新产物的源码入口或快照不符；校验仅允许 CRLF/LF 换行差异，不忽略其他源码内容变化，并核对所有依赖声明入口、Cargo 包根目录和完整文件快照。临时文件遵循 [临时文件管理](../development.md#临时文件管理)。VS Code URI、根目录配置与生成页交互按 [源码定位验证](../testing/README.md#架构图源码定位验证) 检查；编译浏览器或无窗口回归不能代替最终 HTML 的浏览器视觉检查及本机 VS Code 的实际协议打开验证。
+
+### SVG 证据命令
+
+先完成自动检查，再冻结当前清单和全部引用文件哈希。新工具仅使用 v2 索引，默认位置为主检出根目录 `tmp/ecs-architecture/visual-checks/index-v2.json`；可用 `--index PATH` 显式指定。保留旧索引、截图和观察，工具不隐式读取或迁移旧格式。**临时 SVG 工具代码已正式化，旧目测数据迁移仍为待办；迁移前旧通过记录不参与新工具复用，可能重复检查。**
+
+```text
+npm run maintain --prefix docs/diagrams -- visual plan --batch current
+npm run maintain --prefix docs/diagrams -- visual render --plan <plan.json>
+npm run maintain --prefix docs/diagrams -- visual record --plan <plan.json> --input <observations.json>
+npm run maintain --prefix docs/diagrams -- visual bind --commit <commit>
+npm run maintain --prefix docs/diagrams -- visual report --plan <plan.json>
+```
+
+`visual plan` 校验正式清单的全部资源，按仓库相对路径、图身份、完整 SVG SHA-256 和可追溯图像证据复用实际通过记录。默认列出全部待检项。仅经用户明确限定本轮范围时才传 `--sample N --seed TEXT --scope TEXT`，按引擎、中心类型和图例分层，以固定哈希排序和平方根配额抽取；可重复 `--force-object ID`／`--force-view ID`。已有效通过的强制对象也复用。样本容纳不了各层和强制项时失败，不扩大用户数量上限。默认没有固定 100 张配置。
+
+批次默认放索引旁的 `batches/<batch>/`，用 `--outdir PATH` 可改位置。`plan.json` 冻结产物，`pending.json` 保持待检，已有批次不覆盖。待检为空时不启动浏览器；`visual render` 仅渲染冻结范围，支持 `--from N --to N` 与 `--browser PATH`，保存预览、必要的原尺寸分块及完整图像哈希。图像生成不产生通过记录。
+
+`visual record` 的输入为单条观察或 `{ "observations": [...] }`。每条必须提供清单中的 `path`、`status`（`passed`／`failed`）、`reviewer: { "id": "检查者", "role": "child", "model": "模型", "reasoningEffort": "强度" }`、`actualInspection: true`、带时区的 `checkedAt`、具体 `notes`、`observedWith`，以及渲染记录中的完整 `images: [{ "path": "绝对图片路径", "sha256": "完整哈希" }]`。子代理实际查看全部对应预览及分块后才可提交；字段是观察声明，脚本不能证明人或模型确实看过。索引以锁及原子替换更新，相同观察幂等，不重写历史事实。
+
+`visual bind` 要求目标 Git 提交的 manifest 及全部引用文件与当前产物字节一致，以独立事件绑定当前图身份及哈希匹配的有效观察；来源工作区或旧 manifest 不妨碍复用，历史未匹配的版本记录保留。使用一次 Git 树读取和文件 blob 身份核对，避免逐文件创建进程；绑定历史提交时需切换到其对应产物。`visual report` 分别列复用、新通过、失败、待检和抽样未覆盖，不把截图、自动检查或绑定事件算作实际目测。清单、SVG、图片、图身份或渲染证据变化均须重新核对。HTTP 浏览器、协议、网络模拟及真实离线分发验收继续按下面的步骤实际执行并分别记录；统一命令不会自动将它们勾为通过。
 
 ### 本地自动预览
 
