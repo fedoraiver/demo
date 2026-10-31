@@ -117,10 +117,12 @@ export async function compileArchitectureArtifacts(views, registry) {
   fs.mkdirSync(temporary, { recursive: true });
   const cacheDirectory = path.join(temporary, 'geometry-cache');
   fs.mkdirSync(cacheDirectory, { recursive: true });
-  // Graphviz 的独立版本变化不影响对象图的 Mermaid 布局缓存。
+  // 独立 Graphviz 与维护专用 TOML parser 不影响对象图的 Mermaid 布局缓存。
   const lock = JSON.parse(fs.readFileSync(path.join(pathsForRepository(root).packageRoot, 'package-lock.json'), 'utf8'));
-  delete lock.packages[''].devDependencies['@viz-js/viz'];
-  delete lock.packages['node_modules/@viz-js/viz'];
+  for (const name of ['@viz-js/viz', 'smol-toml']) {
+    delete lock.packages[''].devDependencies[name];
+    delete lock.packages['node_modules/' + name];
+  }
   const dependencies = JSON.stringify(lock, null, 2) + '\n';
   const profile = fs.mkdtempSync(path.join(temporary, 'profile-'));
   const browser = await puppeteer.launch({ executablePath: chromiumPath(), headless: true, userDataDir: profile });
