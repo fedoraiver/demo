@@ -63,8 +63,10 @@ fn spawn_menu_controller(mut commands: Commands) {
             settings()
             Press
             Bindings [
+                Name("Previous menu item keyboard binding")
                 Binding(KeyCode::ArrowUp)
                 --
+                Name("Previous menu item gamepad binding")
                 Binding(GamepadButton::DPadUp)
             ]
             --
@@ -72,8 +74,10 @@ fn spawn_menu_controller(mut commands: Commands) {
             settings()
             Press
             Bindings [
+                Name("Next menu item keyboard binding")
                 Binding(KeyCode::ArrowDown)
                 --
+                Name("Next menu item gamepad binding")
                 Binding(GamepadButton::DPadDown)
             ]
             --
@@ -81,8 +85,10 @@ fn spawn_menu_controller(mut commands: Commands) {
             settings()
             Press
             Bindings [
+                Name("Decrease menu value keyboard binding")
                 Binding(KeyCode::ArrowLeft)
                 --
+                Name("Decrease menu value gamepad binding")
                 Binding(GamepadButton::DPadLeft)
             ]
             --
@@ -90,8 +96,10 @@ fn spawn_menu_controller(mut commands: Commands) {
             settings()
             Press
             Bindings [
+                Name("Increase menu value keyboard binding")
                 Binding(KeyCode::ArrowRight)
                 --
+                Name("Increase menu value gamepad binding")
                 Binding(GamepadButton::DPadRight)
             ]
             --
@@ -99,8 +107,10 @@ fn spawn_menu_controller(mut commands: Commands) {
             settings()
             Press
             Bindings [
+                Name("Confirm menu keyboard binding")
                 Binding(KeyCode::Enter)
                 --
+                Name("Confirm menu gamepad binding")
                 Binding(GamepadButton::South)
             ]
             --
@@ -108,10 +118,13 @@ fn spawn_menu_controller(mut commands: Commands) {
             settings()
             Press
             Bindings [
+                Name("Back menu keyboard binding")
                 Binding(KeyCode::Escape)
                 --
+                Name("Back menu gamepad east binding")
                 Binding(GamepadButton::East)
                 --
+                Name("Back menu gamepad start binding")
                 Binding(GamepadButton::Start)
             ]
         ]

@@ -89,6 +89,7 @@ pub(super) fn page_scene(
     };
     // 句柄作为现成组件写入 BSN，spawn_scene 不依赖异步加载任务，旧页面不会复活。
     bsn! {
+        Name("Menu page root")
         MenuRoot
         GlobalZIndex(100)
         Node {
@@ -114,6 +115,7 @@ pub(super) fn page_scene(
 /// 主菜单、暂停和帮助使用固定内容区；不注册滚轮 Observer，也不参与焦点滚入。
 fn fixed_page_area(theme: &UiTheme) -> impl Scene + use<> {
     bsn! {
+        Name("Menu page content")
         Node {
             width: percent(100),
             min_height: px(0),
@@ -162,6 +164,7 @@ pub(super) fn main_page(theme: &UiTheme, paused: bool) -> impl Scene + use<> {
         @fixed_page_area(theme)
         Node { flex_direction: FlexDirection::Row, align_items: AlignItems::FlexStart }
         Children [
+            Name("Main menu navigation column")
             column(16.0 * scale)
             Node {
                 width: percent(32),
@@ -172,6 +175,7 @@ pub(super) fn main_page(theme: &UiTheme, paused: bool) -> impl Scene + use<> {
             Children [
                 @logo(theme, false)
                 --
+                Name("Main menu buttons")
                 column(8.0 * scale)
                 Children [
                     @fixed_menu_button(theme, first_title, ">", first_action, 0)
@@ -185,8 +189,10 @@ pub(super) fn main_page(theme: &UiTheme, paused: bool) -> impl Scene + use<> {
                     @fixed_menu_button(theme, last_title, "<", last_action, 3)
                 ]
                 --
+                Name("Main menu session status")
                 Node { align_items: AlignItems::Center, column_gap: px(theme.size(8.0)) }
                 Children [
+                    Name("Main menu session indicator")
                     Node {
                         width: px(theme.size(9.0)),
                         height: px(theme.size(9.0)),
@@ -198,6 +204,7 @@ pub(super) fn main_page(theme: &UiTheme, paused: bool) -> impl Scene + use<> {
                 ]
             ]
             --
+            Name("Main menu tagline area")
             Node {
                 flex_grow: 1.0,
                 min_width: px(0),
@@ -206,6 +213,7 @@ pub(super) fn main_page(theme: &UiTheme, paused: bool) -> impl Scene + use<> {
                 padding: UiRect::bottom(px(theme.size(20.0))),
             }
             Children [
+                Name("Main menu tagline panel")
                 Node {
                     padding: px(theme.size(17.0)),
                     border: px(1),
@@ -228,6 +236,7 @@ pub(super) fn main_page(theme: &UiTheme, paused: bool) -> impl Scene + use<> {
 
 fn footer(theme: &UiTheme) -> impl Scene + use<> {
     bsn! {
+        Name("Menu footer")
         Node {
             width: percent(100),
             min_height: px(theme.size(56.0)),
@@ -243,6 +252,7 @@ fn footer(theme: &UiTheme) -> impl Scene + use<> {
         Children [
             @label(theme, "ISLAND DELIVERY CO.  /  HANDLE WITH CARE", 14.0, CREAM)
             --
+            Name("Menu footer input hints")
             Node {
                 column_gap: px(theme.size(17.0)),
                 row_gap: px(theme.size(8.0)),
@@ -262,6 +272,7 @@ fn footer(theme: &UiTheme) -> impl Scene + use<> {
 
 fn input_hint(theme: &UiTheme, key: &'static str, title: &'static str) -> impl Scene + use<> {
     bsn! {
+        Name({format!("Menu input hint: {title}")})
         Node { align_items: AlignItems::Center, column_gap: px(theme.size(8.0)) }
         Children [
             @keycap(theme, key, true)
@@ -274,11 +285,13 @@ fn input_hint(theme: &UiTheme, key: &'static str, title: &'static str) -> impl S
 fn sidebar(theme: &UiTheme, state: &MenuState) -> impl Scene + use<> {
     let scale = theme.scale;
     bsn! {
+        Name("Settings sidebar")
         column(25.0 * scale)
         Node { width: percent(24), min_width: px(theme.size(205.0)), flex_shrink: 0.0 }
         Children [
             @logo(theme, true)
             --
+            Name("Settings categories")
             column(12.0 * scale)
             Children [
                 @menu_button(theme, "Graphics", "+", UiAction::SelectTab(SettingsTab::Graphics), 0)
@@ -316,6 +329,7 @@ pub(super) fn settings_page(
     };
     let rows: Box<dyn Scene> = match state.tab {
         SettingsTab::Graphics => Box::new(bsn! {
+            Name("Graphics settings rows")
             column(13.0 * scale)
             Children [
                 @placeholder_row(theme, "Window Mode", false)
@@ -335,6 +349,7 @@ pub(super) fn settings_page(
             ]
         }),
         SettingsTab::Audio => Box::new(bsn! {
+            Name("Audio settings rows")
             column(13.0 * scale)
             Children [
                 @volume_row(theme, "Master Volume", draft.audio.master_volume, SettingKey::MasterVolume, 4,
@@ -354,6 +369,7 @@ pub(super) fn settings_page(
             ]
         }),
         SettingsTab::Controls => Box::new(bsn! {
+            Name("Controls settings rows")
             column(13.0 * scale)
             Children [
                 @setting_row(theme, "Mouse Sensitivity", setting_value(draft, SettingKey::MouseSensitivity), SettingKey::MouseSensitivity, 4,
@@ -368,6 +384,7 @@ pub(super) fn settings_page(
             ]
         }),
         SettingsTab::Accessibility => Box::new(bsn! {
+            Name("Accessibility settings rows")
             column(13.0 * scale)
             Children [
                 @placeholder_row(theme, "UI Scale", false)
@@ -381,11 +398,13 @@ pub(super) fn settings_page(
     let status = state.status.as_deref().unwrap_or(DEFAULT_SETTINGS_STATUS);
     // 纸色设置面板中的内容整体滚动，页面外壳、分类菜单和底部操作始终固定。
     let content = bsn! {
+        Name("Settings scroll content")
         column(18.0 * scale)
         Node { width: percent(100), flex_shrink: 0.0 }
         Children [
             @heading(theme, "SETTINGS", 44.0, INK)
             --
+            Name("Settings heading accent")
             Node {
                 height: px(theme.size(4.0)),
                 width: px(theme.size(70.0)),
@@ -394,6 +413,7 @@ pub(super) fn settings_page(
             }
             BackgroundColor(GOLD)
             --
+            Name("Settings content columns")
             Node {
                 column_gap: px(theme.size(18.0)),
                 row_gap: px(theme.size(19.0)),
@@ -401,6 +421,7 @@ pub(super) fn settings_page(
                 flex_shrink: 0.0,
             }
             Children [
+                Name("Settings category content")
                 column(21.0 * scale)
                 Node {
                     flex_grow: 1.0,
@@ -429,6 +450,7 @@ pub(super) fn settings_page(
         Children [
             @sidebar(theme, state)
             --
+            Name("Settings panel and actions")
             column(18.0 * scale)
             Node { flex_grow: 1.0, flex_basis: px(0), min_height: px(0) }
             Children [
@@ -446,6 +468,7 @@ pub(super) fn settings_page(
                     @settings_scroll_frame(theme, content)
                 ]
                 --
+                Name("Settings action row")
                 Node {
                     width: percent(100),
                     justify_content: JustifyContent::SpaceBetween,
@@ -457,6 +480,7 @@ pub(super) fn settings_page(
                 Children [
                     @small_button(theme, "Restore Defaults", UiAction::RestoreDefaults, next_index)
                     --
+                    Name("Settings apply and back actions")
                     Node {
                         column_gap: px(theme.size(12.0)),
                         row_gap: px(theme.size(10.0)),
@@ -476,6 +500,7 @@ pub(super) fn settings_page(
 fn description_panel(theme: &UiTheme, compact: bool) -> impl Scene + use<> {
     let scale = theme.scale;
     bsn! {
+        Name("Setting description panel")
         column(14.0 * scale)
         Node {
             flex_basis: {if compact { Val::Auto } else { percent(30) }},
@@ -492,6 +517,7 @@ fn description_panel(theme: &UiTheme, compact: bool) -> impl Scene + use<> {
             @label(theme, "Select a setting to see what it does. Use the arrows to change its value, then Apply to save.", 18.0, MUTED)
             DescriptionBody
             --
+            Name("Setting description parcel note")
             Node {
                 margin: UiRect::top(px(theme.size(12.0))),
                 align_items: AlignItems::Center,
@@ -527,6 +553,7 @@ pub(super) fn help_page(theme: &UiTheme) -> impl Scene + use<> {
             Children [
                 @parcel_stamp(theme)
                 --
+                Name("Help title and introduction")
                 column(5.0 * scale)
                 Node { flex_grow: 1.0 }
                 Children [
@@ -536,6 +563,7 @@ pub(super) fn help_page(theme: &UiTheme) -> impl Scene + use<> {
                 ]
             ]
             --
+            Name("Help cards")
             Node {
                 width: percent(100),
                 column_gap: px(theme.size(16.0)),
@@ -590,8 +618,10 @@ fn help_card(
             row_gap: px(theme.size(12.0)),
         }
         Children [
+            Name("Help card heading row")
             Node { align_items: AlignItems::Center, column_gap: px(theme.size(12.0)) }
             Children [
+                Name("Help card number badge")
                 Node {
                     width: px(theme.size(34.0)),
                     height: px(theme.size(34.0)),
@@ -608,6 +638,7 @@ fn help_card(
                 @heading(theme, title, 26.0, INK)
             ]
             --
+            Name("Help card input hints")
             Node {
                 flex_direction: FlexDirection::Column,
                 row_gap: px(theme.size(6.0)),
@@ -631,6 +662,7 @@ fn help_card(
 
 fn help_hint(theme: &UiTheme, key: &'static str, title: &'static str) -> impl Scene + use<> {
     bsn! {
+        Name({format!("Help input hint: {title}")})
         Node { align_items: AlignItems::Center, column_gap: px(theme.size(8.0)) }
         Children [
             @keycap(theme, key, false)
