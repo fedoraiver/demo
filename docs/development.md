@@ -4,7 +4,9 @@
 
 ## 技术栈与版本
 
-Rust edition、依赖版本和构建参数以 [Cargo.toml](../Cargo.toml) 与 [Cargo.lock](../Cargo.lock) 为准。
+项目统一使用 [rust-toolchain.toml](../rust-toolchain.toml) 固定的 nightly；Rust edition、最低语言版本、依赖版本和构建参数以 [Cargo.toml](../Cargo.toml) 与 [Cargo.lock](../Cargo.lock) 为准。在仓库目录运行 rustup 管理的 Cargo 会选择该版本，工具链升级需同时验证使用 rustc 内部库的实体命名检查器。
+
+固定工具链包含 `rustfmt`、`clippy`、`rust-src`、`rustc-dev` 和 `llvm-tools-preview`。实体命名检查器与被分析代码必须使用同一编译器提交；检查入口会核验版本并准备 driver 所需的动态库路径。检查方法见[实体命名检查](testing/README.md#实体命名检查)。
 
 API 行为以对应版本的官方文档为准，示例必须匹配项目版本，不直接套用旧版 Bevy、Unity DOTS 或其他 ECS 框架的接口及限制。
 
@@ -13,6 +15,7 @@ API 行为以对应版本的官方文档为准，示例必须匹配项目版本�
 ### Entity：实体只表示身份
 
 - 使用 Bevy 的 `Entity` 标识实体，通过组件组合表达其能力和状态。
+- 项目代码创建的运行时实体必须在初始组件或场景组合中提供非空 `Name`，包括子实体、输入绑定和持物碰撞代理；允许 BSN 的 `#名称` 简写及 required 组件机制提供的非空名称，不能先创建再补名。静态检查无法确认 `Name` 存在性时也不得通过，须按定位信息明确场景或组件来源。测试夹具、第三方内部实体和导入资产内部节点不受此项约束。静态检查入口见[实体命名检查](testing/README.md#实体命名检查)。
 - 实体之间的引用使用 `Entity` 或 Bevy 关系组件，不持有其他实体组件的长期引用。
 - 不建立包含全部状态与行为的 `GameObject` / `Actor` 对象层，不自行维护一套与 Bevy 重复的实体管理器。
 - 实体可能被销毁；读取保存的实体引用时，按业务需要处理实体不存在或组件缺失的情况。
