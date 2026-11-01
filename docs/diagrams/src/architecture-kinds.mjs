@@ -12,6 +12,7 @@ export const NODE_KINDS = Object.freeze({
   Message: kind('message', 'message'),
   'Messages<T>': kind('message_buffer', 'message_buffer'),
   EntityEvent: kind('event', 'event'),
+  Event: kind('event', 'event'),
   SystemSet: kind('system_set', 'system_set'),
   SystemParam: kind('system_param', 'system_param'),
   QueryData: kind('query_data', 'query_data'),
