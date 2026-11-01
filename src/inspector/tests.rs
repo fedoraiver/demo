@@ -162,6 +162,41 @@ mod schedule_dump {
             && entry["label"] == "EmptySchedule"
             && entry["systemCount"] == 0));
         assert!(!entries.iter().any(|entry| entry["app"] == "NoSchedules"));
+        let runtime: analysis_contract::runtime::RuntimeSnapshot =
+            serde_json::from_slice(&fs::read(output.join("runtime.json")).unwrap()).unwrap();
+        assert_eq!(runtime.schema_version, 1);
+        assert_eq!(
+            runtime.source_fingerprint,
+            manifest["sourceFingerprint"].as_str().unwrap()
+        );
+        assert_eq!(runtime.schedules.len(), entries.len());
+        let main_update = runtime
+            .schedules
+            .iter()
+            .find(|schedule| schedule.app == "main" && schedule.label == "Update")
+            .unwrap();
+        let sub_update = runtime
+            .schedules
+            .iter()
+            .find(|schedule| schedule.app == "RenderApp" && schedule.label == "Update")
+            .unwrap();
+        assert_eq!(main_update.systems.len(), 1);
+        assert_eq!(sub_update.systems.len(), 1);
+        // 相同实现的类型证据共享；注册身份仍由应用、Schedule 和原生键共同确定。
+        assert_eq!(
+            main_update.systems[0].type_id,
+            sub_update.systems[0].type_id
+        );
+        assert_ne!(main_update.id, sub_update.id);
+        assert!(main_update.systems[0].type_id.starts_with("TypeId(0x"));
+        assert!(main_update.systems[0].graph_name.starts_with("node_"));
+        for schedule in &runtime.schedules {
+            assert_eq!(
+                schedule.dot_sha256,
+                sha256(&fs::read(output.join(&schedule.dot_filename)).unwrap())
+            );
+            assert!(schedule.sets.iter().all(|set| !set.type_id.is_empty()));
+        }
         for entry in entries {
             let app_name = entry["app"].as_str().unwrap();
             let label = entry["label"].as_str().unwrap();

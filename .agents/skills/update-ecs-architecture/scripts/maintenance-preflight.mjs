@@ -1,32 +1,24 @@
-// 与正式构建共用准备路径；只返回审阅摘要，不启动浏览器或写正式产物。
-import fs from 'node:fs';
+// 预检只读取编译器已发布的模型和证据，不运行 Cargo、浏览器或写正式产物。
 import path from 'node:path';
+import fs from 'node:fs';
 import { prepareArchitecture } from '../../../../docs/diagrams/src/architecture-preparation.mjs';
 import { sha256, sourceFingerprint } from '../../../../docs/diagrams/src/debugdump-input.mjs';
 import { summarizeModel } from './maintenance-summary.mjs';
+import { summarizeAnalysisGaps } from '../../../../docs/diagrams/src/rustc-model.mjs';
 
 export async function preflightArchitecture({ workspace, debugdumpDirectory } = {}) {
   const prepared = await prepareArchitecture({ workspace, debugdumpDirectory });
-  const { model, registry, components, objects, dump, schedules } = prepared;
-  const dependencyFiles = new Map();
-  function references(value) {
-    if (!value || typeof value !== 'object') return;
-    if (value.dependency && typeof value.path === 'string' && Number.isSafeInteger(value.line)) {
-      prepared.dependencySources.read(value);
-      const filename = path.resolve(value.dependency.root, value.path);
-      dependencyFiles.set(filename, { path: filename, sha256: sha256(fs.readFileSync(filename)) });
-      return;
-    }
-    for (const child of Object.values(value)) references(child);
-  }
-  references({ model, registry, views: prepared.views });
-  const dependencyInputs = [...dependencyFiles.values()].sort((a, b) => a.path.localeCompare(b.path));
-  const catalogInputs = fs.readdirSync(prepared.paths.catalogDirectory).sort().map(filename => [filename, sha256(fs.readFileSync(path.join(prepared.paths.catalogDirectory, filename)))]);
-  const fingerprint = sourceFingerprint(workspace);
-  if (fingerprint !== dump.manifest.sourceFingerprint) throw new Error('Source changed during architecture preflight; export schedules again');
+  const { model, registry, objects, dump, schedules } = prepared;
+  const dependencyInputs = model.sourceFiles.filter(source => source.dependency).map(source => ({
+    path: path.resolve(source.dependency.root, source.path), sha256: sha256(fs.readFileSync(path.resolve(source.dependency.root, source.path))),
+  })).sort((a, b) => a.path.localeCompare(b.path));
+  if (sourceFingerprint(workspace) !== dump.manifest.sourceFingerprint) throw new Error('Source changed during architecture preflight; extract again');
   return {
-    counts: { features: model.features.length, systems: model.systems.length, objects: objects.objects.length, projections: Object.keys(components.typeByProjectionId).length, componentTypes: components.types.length, relationships: objects.links.length, schedules: schedules.views.length },
-    inputFingerprint: sha256(JSON.stringify({ sourceFingerprint: fingerprint, catalogInputs, dependencyInputs, schedules: dump.schedules.map(entry => [entry.id, entry.sha256]) })),
+    counts: { features: model.features.length, systems: model.objects.filter(object => ['System', 'Observer'].includes(object.kind)).length,
+      objects: objects.objects.length, componentTypes: model.objects.filter(object => object.kind === 'Component').length,
+      relationships: objects.links.length, schedules: schedules.views.length, analysisGaps: model.analysisGaps?.length || 0 },
+    analysisGapSummary: summarizeAnalysisGaps(model),
+    inputFingerprint: sha256(JSON.stringify({ inputs: model.inputs, dependencyInputs })),
     modelSummary: summarizeModel({ model, registry, objects: objects.objects, views: prepared.views }), dependencyInputs,
   };
 }

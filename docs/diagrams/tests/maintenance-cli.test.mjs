@@ -12,7 +12,7 @@ const cli = fileURLToPath(new URL('../../../.agents/skills/update-ecs-architectu
 test('CLI can show help from another working directory without importing installed toolchain', () => {
   const output = execFileSync(process.execPath, [cli, '--help'], { cwd: path.parse(cli).root, encoding: 'utf8', windowsHide: true });
   assert.match(output, /preflight/);
-  assert.match(output, /--apply/);
+  assert.doesNotMatch(output, /fix-source-lines/);
 });
 test('Skill CLI help works in an isolated workspace with spaces and no installed dependencies', t => {
   const parent = path.join(repositoryRoot, 'tmp/ecs-architecture/maintenance-cli-tests');
@@ -35,10 +35,8 @@ test('Skill CLI help works in an isolated workspace with spaces and no installed
 test('default workspace comes from the Skill repository instead of the caller directory', () => {
   assert.equal(parseMaintenanceArgs(['plan']).options.workspace, repositoryRoot);
 });
-test('source repair remains read-only unless its own explicit apply flag is present', () => {
-  assert.equal(parseMaintenanceArgs(['fix-source-lines']).options.apply, undefined);
-  assert.equal(parseMaintenanceArgs(['fix-source-lines', '--apply']).options.apply, true);
-  assert.throws(() => parseMaintenanceArgs(['run', '--apply']), /Unsupported/);
+test('retired source-repair command is rejected', () => {
+  assert.throws(() => parseMaintenanceArgs(['fix-source-lines']), /Unknown/);
 });
 
 test('explicit worktree anchors relative input and output paths from any caller directory', () => {

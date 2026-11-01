@@ -4,9 +4,9 @@
 
 ## 技术栈与版本
 
-项目统一使用 [rust-toolchain.toml](../rust-toolchain.toml) 固定的 nightly；Rust edition、最低语言版本、依赖版本和构建参数以 [Cargo.toml](../Cargo.toml) 与 [Cargo.lock](../Cargo.lock) 为准。在仓库目录运行 rustup 管理的 Cargo 会选择该版本，工具链升级需同时验证使用 rustc 内部库的实体命名检查器。
+项目统一使用 [rust-toolchain.toml](../rust-toolchain.toml) 固定的 nightly；Rust edition、最低语言版本、依赖版本和构建参数以 [Cargo.toml](../Cargo.toml) 与 [Cargo.lock](../Cargo.lock) 为准。在仓库目录运行 rustup 管理的 Cargo 会选择该版本，工具链升级需同时验证[共享编译器分析工具](../tools/rustc-analysis/Cargo.toml)的架构事实提取和全部检查规则。
 
-固定工具链包含 `rustfmt`、`clippy`、`rust-src`、`rustc-dev` 和 `llvm-tools-preview`。使用 rustc 内部库的[实体命名检查器](testing/README.md#实体命名检查)与[具名字段检查器](testing/README.md#单字段结构体约束)必须匹配被调用的编译器提交；检查入口核验版本并准备编译器宿主所需的动态库路径。
+固定工具链包含 `rustfmt`、`clippy`、`rust-src`、`rustc-dev` 和 `llvm-tools-preview`。架构事实提取、[实体命名检查](testing/README.md#实体命名检查)和[具名字段检查](testing/README.md#单字段结构体约束)共用一个 rustc 宿主，宿主必须匹配被调用的编译器提交。统一入口核验 ABI、准备动态库路径并隔离 Cargo 产物；编译器数据只在回调内使用，对外输出独立的分析契约。检查方法见[编译器事实与架构模型检查](testing/README.md#编译器事实与架构模型检查)。
 
 API 行为以对应版本的官方文档为准，示例必须匹配项目版本，不直接套用旧版 Bevy、Unity DOTS 或其他 ECS 框架的接口及限制。
 

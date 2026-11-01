@@ -18,7 +18,8 @@ export function createArchitectureViewer({ data: DATA, document, location, histo
   const scheduleRenderer=createScheduleRenderer?.();
   const interaction=createInteraction({diagram,nodeStyles:DATA.styles.nodes,selectionStyle:DATA.styles.selection});
   const safe=value=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
-  const componentEntities=new Map(DATA.model.entities.flatMap(entity=>entity.components.map(component=>[component.id,entity.canonical_entity||'entity-'+entity.id])));
+  const componentEntities=new Map();
+  for(const entity of DATA.model.entities)for(const component of entity.components){const owners=componentEntities.get(component.id)||[];owners.push(entity.canonical_entity||'entity-'+entity.id);componentEntities.set(component.id,owners)}
   const objectViews=DATA.views.filter(candidate=>candidate.aspect==='object');
   const scheduleViews=DATA.views.filter(candidate=>candidate.aspect==='schedule');
   const scheduleBindings=new Map((DATA.scheduleInteractions?.views||[]).map(entry=>[entry.viewId,new Map(entry.bindings.map(binding=>[binding.id,binding]))]));
@@ -33,7 +34,7 @@ export function createArchitectureViewer({ data: DATA, document, location, histo
   const pluginView=target=>['Plugin','PluginGroup'].includes(DATA.registry[target?.objectId]?.kind);
   const ownerObject=feature=>{const entry=DATA.model.features.find(entry=>entry.id===feature)||DATA.infrastructureFeatures.find(entry=>entry.id===feature);return canonical(entry?.overviewNode||(entry?.plugin?'plugin-'+entry.plugin:null))};
   const visibleNode=id=>canonical(id);
-  function objectContext(id){const record=DATA.registry[id]||{},owner=componentEntities.get(id),schedules=(record.registrations||[]).map(registration=>registration.schedule).filter(Boolean);return[record.owner||DATA.registry[owner]?.name,...new Set(schedules),id].filter(Boolean).join(' · ')}
+  function objectContext(id){const record=DATA.registry[id]||{},owners=(componentEntities.get(id)||[]).map(owner=>DATA.registry[owner]?.name),schedules=(record.registrations||[]).map(registration=>registration.schedule).filter(Boolean);return[record.owner,...owners,...new Set(schedules),id].filter(Boolean).join(' · ')}
   function objectResults(ids){return ids.map(id=>'<button class="result" data-object="'+safe(id)+'">'+safe(DATA.registry[id]?.name||id)+'<small>'+safe([DATA.registry[id]?.kind,objectContext(id)].filter(Boolean).join(' · '))+'</small></button>').join('')}
   function transform(){diagram.style.transform='translate('+panX+'px,'+panY+'px) scale('+scale+')';interaction.setScale(scale);const percent=scale*100;document.getElementById('zoom-label').textContent=(percent<1?Number(percent.toPrecision(2)):Math.round(percent))+'%'}
   const fittedScale=()=>Math.min((canvas.clientWidth-28)/view.width,(canvas.clientHeight-28)/view.height,1);
@@ -454,7 +455,8 @@ export function renderArchitectureViewer({ model, registry, views, features, gui
     return options ? `<optgroup label="${escape(label)}">${options}</optgroup>` : '';
   };
   const projectOptions = pluginOptions(features, '项目插件');
-  const infrastructureOptions = pluginOptions(INFRASTRUCTURE_FEATURES.flatMap(entry => entry.id === 'egui' ? [entry, { label: entry.label, overviewNode: 'plugin-inspector-1' }] : [entry]), '基础设施插件');
+  const infrastructureOptions = pluginOptions(Object.entries(registry).filter(([, record]) => ['Plugin', 'PluginGroup'].includes(record.kind))
+    .map(([id, record]) => ({ overviewNode: id, label: features.find(feature => feature.id === record.feature)?.label || record.name })), '基础设施插件');
   const filterMenu = side => `<div class="schedule-multiselect"><button id="schedule-${side}" class="filter-toggle" type="button" aria-haspopup="dialog" aria-expanded="false" aria-controls="schedule-${side}-menu">${side === 'include' ? '包含 Plugin · 全部' : '排除 Plugin · 无'}</button><section id="schedule-${side}-menu" class="filter-menu" role="dialog" aria-label="${side === 'include' ? '包含 Plugin' : '排除 Plugin'}" hidden><input id="schedule-${side}-search" type="search" placeholder="搜索 Plugin 名称或分组说明" aria-label="搜索${side === 'include' ? '包含' : '排除'}选项" autocomplete="off"><div class="filter-actions"><button id="schedule-${side}-select" type="button">全选当前搜索结果</button><button id="schedule-${side}-clear" type="button">清空${side === 'include' ? '包含' : '排除'}</button></div><div id="schedule-${side}-options" class="filter-options"></div></section></div>`;
   const state = JSON.stringify(externalBootstrap || { schemaVersion: 5, model, registry, views, guideSamples, scheduleLegendLabels: SCHEDULE_LEGEND_LABELS, objects, objectAliases, sourceRoleLabels, schedulePluginCatalog, scheduleInteractions, infrastructureFeatures: INFRASTRUCTURE_FEATURES, styles: { nodes: NODE_STYLES, edges: EDGE_STYLES, selection: SELECTION_STYLE, externalReference: EXTERNAL_REFERENCE_STYLE } }).replace(/</g, '\\u003c');
   const editor = sourceEditorAssets(), navigation = architectureNavigationAssets(features, scheduleViews), splitter = architectureSplitterAssets(), interaction = architectureInteractionAssets(), gestures = architectureGestureAssets(), search = architectureSearchAssets();

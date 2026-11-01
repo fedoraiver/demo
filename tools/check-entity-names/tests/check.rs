@@ -964,7 +964,19 @@ fn main() -> ExitCode {
             let source = Path::new(source).canonicalize().unwrap().to_string_lossy().trim_start_matches(r"\\?\").replace('\\', "/");
             let run = if mode.starts_with("stale") { "stale-run".to_owned() } else { env::var("ENTITY_NAME_RUN").unwrap() };
             let compiler = if mode.starts_with("wrong") { "wrong-compiler" } else { "__COMPILER__" };
-            let json = format!(r#"{{"run":{:?},"configuration":{:?},"compiler":{:?},"source":{:?},"report":{{"diagnostics":[],"entities":[],"configuration":""}},"failure":null}}"#, run, env::var("ENTITY_NAME_CONFIGURATION").unwrap(), compiler, source);
+            let configuration = env::var("ENTITY_NAME_CONFIGURATION").unwrap();
+            let manifest_dir = Path::new(&env::var_os("CARGO_MANIFEST_DIR").unwrap()).canonicalize().unwrap().to_string_lossy().trim_start_matches(r"\\?\").replace('\\', "/");
+            let package = env::var("CARGO_PKG_NAME").unwrap();
+            let name = args.windows(2).find(|pair| pair[0] == "--crate-name").unwrap()[1].replace('-', "_");
+            let test = args.iter().any(|arg| arg == "--test");
+            let artifact_tag = args.iter().find_map(|arg| arg.strip_prefix("extra-filename=")).unwrap_or_default();
+            let crate_types: Vec<_> = args.windows(2).filter(|pair| pair[0] == "--crate-type").flat_map(|pair| pair[1].split(',')).collect();
+            let json = format!(r#"{{
+                "run":{run:?},"configuration":{configuration:?},"compiler":{compiler:?},
+                "target":{{"source":{source:?},"name":{name:?},"test":{test}}},
+                "manifest_dir":{manifest_dir:?},"package":{package:?},"artifact_tag":{artifact_tag:?},"crate_types":{crate_types:?},
+                "findings":[],"entities":{{"diagnostics":[],"entities":[],"configuration":""}},"facts":null,"failure":null
+            }}"#);
             fs::write(Path::new(&env::var_os("ENTITY_NAME_REPORTS").unwrap()).join("stub.json"), json).unwrap();
         }
     }
@@ -996,6 +1008,12 @@ fn main() -> ExitCode {
         let mut options = Options::new(root.clone());
         options.driver = Some(path);
         let error = workspace::check(&options).unwrap_err();
+        assert!(
+            error
+                .chain()
+                .all(|cause| cause.downcast_ref::<serde_json::Error>().is_none()),
+            "Fault injection must reach provenance validation with a valid shared report: {error:#}"
+        );
         let message = format!("{error:#}");
         assert!(
             message.contains(if mode == "missing" {

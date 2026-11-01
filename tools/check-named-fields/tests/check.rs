@@ -366,8 +366,14 @@ fn main() -> ExitCode {
     let pid = child.id();
     let status = child.wait().unwrap();
     if !status.success() { return ExitCode::from(2); }
-    let path = PathBuf::from(env::var_os("NAMED_FIELDS_REPORTS").unwrap()).join(format!("{pid}.json"));
-    if path.is_file() {
+    let directory = PathBuf::from(env::var_os("NAMED_FIELDS_REPORTS").unwrap());
+    let prefix = format!("{pid}-");
+    for entry in fs::read_dir(directory).unwrap() {
+        let path = entry.unwrap().path();
+        if path.extension().is_none_or(|extension| extension != "json")
+            || !path.file_name().unwrap().to_string_lossy().starts_with(&prefix) {
+            continue;
+        }
         let mode = env::current_exe().unwrap().file_stem().unwrap().to_string_lossy().into_owned();
         if mode.starts_with("missing") { if args.iter().any(|arg| arg == "--test") { fs::remove_file(path).unwrap(); } }
         else { let json = fs::read_to_string(&path).unwrap(); let json = if mode.starts_with("stale") { json.replace("\"run\":\"", "\"run\":\"stale-") } else { json.replace("__COMPILER__", "wrong-compiler") }; fs::write(path, json).unwrap(); }

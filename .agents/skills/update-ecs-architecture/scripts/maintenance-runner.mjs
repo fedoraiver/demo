@@ -4,8 +4,8 @@ import crypto from 'node:crypto';
 import { exportProducerInputs, maintenanceScripts, repositoryRoot } from './maintenance-paths.mjs';
 import { fileSnapshot, relevantInputNames, dependencyState, npmCommand, headMetadata, digest, processAlive, executablePath } from './maintenance-inputs.mjs';
 import { atomicJson, executeMaintenanceCommand } from './maintenance-execution.mjs';
-import { readModelSummary, compareModelSummaries } from './maintenance-summary.mjs';
-import { exportContextInputs, validateExportContext, captureExportContext } from './maintenance-export-context.mjs';
+import { readModelSummary } from './maintenance-summary.mjs';
+import { exportContextInputs } from './maintenance-export-context.mjs';
 
 const now = () => new Date().toISOString();
 const maintenanceRoot = workspace => path.join(workspace, 'tmp/ecs-architecture/maintenance');
@@ -33,12 +33,11 @@ const loadRun = (workspace, runId) => {
 
 async function validDump(workspace, debugdumpDirectory) {
   const { readDebugdump, DEBUGDUMP_MANIFEST } = await import('../../../../docs/diagrams/src/debugdump-input.mjs');
-  const directory = debugdumpDirectory ? path.resolve(workspace, debugdumpDirectory) : path.join(workspace, generated, 'dot');
-  const filename = debugdumpDirectory ? 'manifest.json' : DEBUGDUMP_MANIFEST;
+  const directory = path.resolve(workspace, debugdumpDirectory || 'tmp/ecs-architecture/compiler/debugdump');
+  const filename = directory === path.join(workspace, generated, 'dot') ? DEBUGDUMP_MANIFEST : 'manifest.json';
   try {
     const data = readDebugdump(directory, workspace, filename);
-    const context = await validateExportContext({ workspace, directory, manifest: data.manifest });
-    return { valid: true, reusable: context.status === 'valid', context, directory, filename, manifest: data.manifest,
+    return { valid: true, reusable: true, directory, filename, manifest: data.manifest,
       files: [path.join(directory, filename), ...data.schedules.map(entry => path.join(directory, entry.filename))] };
   } catch (error) { return { valid: false, reusable: false, directory, filename, reason: error.message }; }
 }
@@ -60,13 +59,14 @@ const exportProvenance = manifest => Object.fromEntries(['schemaVersion', 'bevyV
 export async function planMaintenance({ workspace, debugdumpDirectory } = {}) {
   workspace = requireWorkspace(workspace);
   const previous = loadRun(workspace);
-  const selectedDump = debugdumpDirectory || previous?.debugdumpDirectory || (previous?.exportSelection?.filename === 'manifest.json' ? previous.exportSelection.directory : undefined);
+  const selectedDump = debugdumpDirectory;
   const dependencies = dependencyState(workspace), dump = await validDump(workspace, selectedDump);
+  const analysis = await compilerAnalysisState(workspace);
   const plannedStages = [
     { id: 'dependencies', action: dependencies.valid ? 'reuse' : 'install', reason: dependencies.reason },
-    { id: 'export', action: dump.reusable ? 'reuse' : 'export', reason: dump.reason || dump.context?.reason },
-    { id: 'preflight', action: 'validate', reason: 'Verify declarations, registrations, generics, projections, sources, and locked dependency contents' },
-    { id: 'baseline', action: 'capture' }, { id: 'build', action: 'build' }, { id: 'check', action: 'check' }, { id: 'test', action: 'full-node-tests' },
+    { id: 'extract', action: analysis.facts ? 'validate' : 'extract', reason: 'Collect rustc facts and the matching real Schedule snapshot' },
+    { id: 'model', action: analysis.pending ? 'needs-descriptions' : 'compose', reason: 'Compose the compiler semantic graph and Chinese purpose annotations' },
+    { id: 'preflight', action: 'validate' }, { id: 'build', action: 'build' }, { id: 'check', action: 'check' }, { id: 'test', action: 'full-node-tests' },
   ];
   if (previous) {
     const tools = toolsForRun(), definitions = defaultPipeline({ workspace, dump, directory: path.join(maintenanceRoot(workspace), previous.runId), dependencies });
@@ -83,53 +83,61 @@ export async function planMaintenance({ workspace, debugdumpDirectory } = {}) {
     }
   }
   return { schemaVersion: 1, workspace, head: headMetadata(workspace), inputs: fileSnapshot(workspace, relevantInputNames(workspace)),
-    dependencies, debugdump: dump, baseline: readModelSummary(workspace),
+    dependencies, debugdump: dump, analysis,
     dependencyInputs: previous?.dependencyInputs || [],
     stages: plannedStages, manual: { svg: 'pending', browser: 'pending', protocol: 'pending' } };
 }
 
-function defaultPipeline({ workspace, dump, directory, dependencies }) {
+async function compilerAnalysisState(workspace) {
+  const directory = path.join(workspace, 'tmp/ecs-architecture/compiler');
+  const facts = path.join(directory, 'facts.json'), runtime = path.join(directory, 'runtime.json'), model = path.join(directory, 'model.json');
+  const result = { directory, facts: fs.existsSync(facts) && fs.existsSync(runtime), model: false, pending: 0 };
+  if (fs.existsSync(model)) {
+    try {
+      const { readCompilerModel } = await import('../../../../docs/diagrams/src/rustc-model.mjs');
+      const value = readCompilerModel(workspace, { allowPending: true }).model;
+      result.model = true; result.pending = value.annotationsRequired?.length || 0;
+    } catch (error) { result.reason = error.message; }
+  }
+  return result;
+}
+
+function defaultPipeline({ workspace, dependencies }) {
   const cli = path.join(workspace, maintenanceScripts, 'maintenance-cli.mjs');
-  const exportDirectory = dump.reusable ? dump.directory : path.join(directory, 'debugdump');
-  const exported = dump.reusable && dump.filename !== 'manifest.json' ? [] : ['--debugdump', exportDirectory];
+  const compilerDirectory = path.join(workspace, 'tmp/ecs-architecture/compiler');
+  const exportDirectory = path.join(compilerDirectory, 'debugdump');
+  const facts = path.join(compilerDirectory, 'facts.json'), runtime = path.join(compilerDirectory, 'runtime.json'), model = path.join(compilerDirectory, 'model.json');
+  const annotations = path.join(workspace, 'docs/diagrams/catalog/annotations.json');
   const inputs = relevantInputNames(workspace);
   const node = (filename, args = []) => ({ command: process.execPath, args: [filename, ...args] });
-  const definitions = [
+  const analysis = args => ({ command: 'pwsh', args: ['-NoProfile', '-File', path.join(workspace, 'scripts/rustc-analysis.ps1'), ...args] });
+  const compilerInputs = ['Cargo.toml', 'Cargo.lock', 'src', 'tools/rustc-analysis', 'scripts/rustc-analysis.ps1', ...exportProducerInputs,
+    ...(fs.existsSync(path.join(workspace, 'build.rs')) ? ['build.rs'] : [])];
+  return [
     { id: 'dependencies', inputs: ['docs/diagrams/package.json', 'docs/diagrams/package-lock.json'], outputs: [],
       reuse: dependencies.valid, reuseReason: 'Installed packages match package-lock',
-      command: () => { const npm = npmCommand(); return { command: npm.command, args: [...npm.args, 'ci', '--prefix', path.join(workspace, 'docs/diagrams')] }; }, validate: () => {
-        const state = dependencyState(workspace); if (!state.valid) throw new Error(state.reason); return state;
-      } },
-    { id: 'export', inputs: ['Cargo.toml', 'Cargo.lock', 'src',
-      ...exportProducerInputs,
-      ...(fs.existsSync(path.join(workspace, 'build.rs')) ? ['build.rs'] : [])], outputs: [],
-      reuse: dump.reusable, reuseReason: 'Real exported DOT, source/dependency provenance and build context are valid',
-      command: { command: 'cargo', args: ['run', '--locked', '--features', 'debugdump', '--', '--dump-schedules', exportDirectory] },
-      finalize: async ({ inputs: before }) => {
-        const { readDebugdump } = await import('../../../../docs/diagrams/src/debugdump-input.mjs');
-        const data = readDebugdump(exportDirectory, workspace);
-        await captureExportContext({ workspace, directory: exportDirectory, manifest: data.manifest, beforeInputs: before.exportContext });
-      },
+      command: () => { const npm = npmCommand(); return { command: npm.command, args: [...npm.args, 'ci', '--prefix', path.join(workspace, 'docs/diagrams')] }; },
+      validate: () => { const state = dependencyState(workspace); if (!state.valid) throw new Error(state.reason); return state; } },
+    { id: 'extract', inputs: compilerInputs, outputs: [facts, runtime, exportDirectory],
+      command: analysis(['extract', '--workspace', workspace, '--out', compilerDirectory]),
       validate: async () => {
-        const validated = await validDump(workspace, dump.reusable && dump.filename !== 'manifest.json' ? undefined : exportDirectory);
-        if (!validated.reusable) throw new Error(validated.reason || validated.context?.reason);
-        return { files: fileSnapshot(workspace, validated.files.slice(1)), provenance: exportProvenance(validated.manifest), contextSha256: validated.context.sha256 };
+        const { readDebugdump } = await import('../../../../docs/diagrams/src/debugdump-input.mjs');
+        const dump = readDebugdump(exportDirectory, workspace);
+        for (const filename of [facts, runtime]) { const value = JSON.parse(fs.readFileSync(filename, 'utf8')); if (!value || typeof value !== 'object') throw new Error('Invalid compiler output: ' + filename); }
+        return { files: fileSnapshot(workspace, [facts, runtime, exportDirectory], { optional: false }), sourceFingerprint: dump.manifest.sourceFingerprint };
       } },
-    { id: 'preflight', inputs, outputs: [], command: node(cli, ['preflight', '--workspace', workspace, ...exported]), dependencyInputs: true },
-    { id: 'baseline', inputs, outputs: [], action: state => { state.baseline = readModelSummary(workspace); state.baselineCapturedAt = now(); return state.baseline; } },
-    { id: 'build', inputs, outputs: [generated], command: node(path.join(workspace, 'docs/diagrams/build-ecs.mjs'), exported), dependencyInputs: true,
+    { id: 'model', inputs: [...compilerInputs, facts, runtime, annotations], outputs: [model, path.join(compilerDirectory, 'model.calls.ndjson')],
+      command: analysis(['model', '--facts', facts, '--runtime', runtime, '--annotations', annotations, '--out', model]) },
+    { id: 'preflight', inputs: [...inputs, model, path.join(compilerDirectory, 'model.calls.ndjson'), exportDirectory], outputs: [],
+      command: node(cli, ['preflight', '--workspace', workspace, '--debugdump', exportDirectory]), dependencyInputs: true },
+    { id: 'build', inputs: [...inputs, model, path.join(compilerDirectory, 'model.calls.ndjson'), exportDirectory], outputs: [generated],
+      command: node(path.join(workspace, 'docs/diagrams/build-ecs.mjs'), ['--debugdump', exportDirectory]), dependencyInputs: true,
       after: state => { state.finalModel = readModelSummary(workspace); if (!state.finalModel.available) throw new Error(state.finalModel.reason); } },
     { id: 'check', inputs: [...inputs, generated], outputs: [], command: node(path.join(workspace, 'docs/diagrams/check-ecs.mjs')), dependencyInputs: true },
     { id: 'test', inputs: [...inputs, generated], outputs: [], command: () => ({ command: process.execPath,
       args: ['--test', '--test-concurrency=1', ...fs.readdirSync(path.join(workspace, 'docs/diagrams/tests')).filter(name => name.endsWith('.test.mjs')).sort().map(name => path.join(workspace, 'docs/diagrams/tests', name))] }), dependencyInputs: true },
   ];
-  for (const stage of definitions) if (['preflight', 'baseline', 'build'].includes(stage.id)) {
-    stage.inputs = [...stage.inputs, ...(!dump.reusable || dump.filename === 'manifest.json' ? [exportDirectory] : dump.files.slice(1))];
-    stage.dumpManifest = dump.reusable && dump.filename !== 'manifest.json' ? path.join(dump.directory, dump.filename) : null;
-  }
-  return definitions;
 }
-
 function stageInputs(workspace, stage, state, tools) {
   return { files: fileSnapshot(workspace, stage.inputs || []), tools,
     exportContext: exportContextInputs(workspace),
@@ -179,7 +187,7 @@ export async function runMaintenance({ workspace, resume, debugdumpDirectory, pi
     state ||= { schemaVersion: 1, runId, workspace, createdAt: now(),
       stages: checkpoint ? [...new Map(checkpoint.stages.map(stage => [stage.id, stage])).values()].map(stage => ({ ...structuredClone(stage), sourceRunId: checkpoint.runId })) : [],
       dependencyInputs: structuredClone(checkpoint?.dependencyInputs || []), events: [],
-      ...(checkpoint ? { sourceRunId: checkpoint.runId, exportSelection: checkpoint.exportSelection, debugdumpDirectory: checkpoint.debugdumpDirectory,
+      ...(checkpoint ? { sourceRunId: checkpoint.runId,
         finalModel: checkpoint.finalModel, preflightModel: checkpoint.preflightModel } : {}),
       manual: { svg: 'pending', browser: 'pending', protocol: 'pending' } };
     if (state.workspace !== workspace) throw new Error('Resume workspace mismatch');
@@ -188,11 +196,7 @@ export async function runMaintenance({ workspace, resume, debugdumpDirectory, pi
     const save = () => { state.updatedAt = now(); atomicJson(filename, state); };
     for (const record of state.stages) if (record.status === 'running') { record.status = 'interrupted'; record.error = 'Previous invocation did not record a successful exit'; }
     save();
-    const selectedDump = debugdumpDirectory || state.debugdumpDirectory || (state.exportSelection?.filename === 'manifest.json' ? state.exportSelection.directory : undefined);
-    const dump = pipeline ? null : await validDump(workspace, selectedDump);
-    if (!pipeline) state.debugdumpDirectory = debugdumpDirectory || state.debugdumpDirectory;
-    if (!pipeline) state.exportSelection = { directory: dump.reusable ? dump.directory : path.join(directory, 'debugdump'), filename: dump.reusable ? dump.filename : 'manifest.json' };
-    const stages = pipeline || defaultPipeline({ workspace, dump, directory, dependencies: dependencyState(workspace) });
+    const stages = pipeline || defaultPipeline({ workspace, directory, dependencies: dependencyState(workspace) });
     let invalidated = false, handedOffAt = now();
     for (const stage of stages) {
       const previous = [...state.stages].reverse().find(record => record.id === stage.id);
@@ -200,7 +204,6 @@ export async function runMaintenance({ workspace, resume, debugdumpDirectory, pi
       let validation;
       try { if (stage.validate) validation = await stage.validate(); } catch { /* 执行或重建后再次验证，旧成功不可直接复用。 */ }
       if (!invalidated && matching(previous, inputs, workspace) && (!stage.validate || validation && digest(validation) === digest(previous.validation))) {
-        if (stage.id === 'baseline' && !resume) { state.baseline = readModelSummary(workspace); state.baselineCapturedAt = now(); }
         state.events.push({ kind: 'reuse', stage: stage.id, at: now(), attempt: previous.attempt, ...(previous.sourceRunId ? { sourceRunId: previous.sourceRunId } : {}) }); save(); handedOffAt = now(); continue;
       }
       invalidated = true;
@@ -243,17 +246,12 @@ export async function runMaintenance({ workspace, resume, debugdumpDirectory, pi
         if (stage.after) await stage.after(state);
         record.outputs = fileSnapshot(workspace, record.outputPaths, { optional: false });
         record.status = 'passed'; save(); handedOffAt = now();
-        if (!pipeline && stage.id === 'dependencies' && !dump.reusable) {
-          // 安装前缺少 TOML parser 不证明导出过期；安装完成后重新判定来源。
-          const refreshed = await validDump(workspace, selectedDump);
-          if (refreshed.reusable) {
-            const remaining = defaultPipeline({ workspace, dump: refreshed, directory, dependencies: dependencyState(workspace) }).slice(1);
-            stages.splice(1, stages.length - 1, ...remaining);
-            state.exportSelection = { directory: refreshed.directory, filename: refreshed.filename };
-            save();
-          }
-        }
       } catch (error) {
+        if (stage.id === 'model' && record.exitCode === 3) {
+          record.status = 'needs-descriptions'; record.error = 'Complete the Chinese descriptions requested by model.json, then resume this run';
+          state.status = 'needs-descriptions'; state.error = record.error; state.annotationsRequired = await compilerAnalysisState(workspace);
+          state.endedAt = now(); save(); return state;
+        }
         record.status = record.status === 'interrupted' ? 'interrupted' : 'failed'; record.error = error.message; record.endedAt ||= now();
         state.status = record.status; state.error = error.message; state.endedAt = now(); save(); return state;
       }
@@ -267,7 +265,7 @@ export async function runMaintenance({ workspace, resume, debugdumpDirectory, pi
       state.invalidated = stale; state.endedAt = now(); save(); return state;
     }
     state.status = 'passed'; delete state.error; state.endedAt = now();
-    state.modelChanges = compareModelSummaries(state.baseline?.summary, state.finalModel?.summary);
+
     save(); return state;
   } finally { release(); }
 }
@@ -285,13 +283,6 @@ export async function maintenanceStatus({ workspace, runId } = {}) {
     try { if (!matching(record, stageInputs(workspace, stage, state, tools), workspace)) result.invalidated.push(record.id); }
     catch { result.invalidated.push(record.id); }
     if (record.id === 'dependencies' && !dependencyState(workspace).valid) result.invalidated.push(record.id);
-    if (record.id === 'export' && record.validation?.files) {
-      try {
-        const dump = await validDump(workspace, state.exportSelection?.filename === 'manifest.json' ? state.exportSelection.directory : undefined);
-        if (!dump.reusable || digest(record.validation.files) !== digest(fileSnapshot(workspace, Object.keys(record.validation.files)))
-          || digest(record.validation.provenance) !== digest(exportProvenance(dump.manifest)) || record.validation.contextSha256 !== dump.context.sha256) result.invalidated.push(record.id);
-      } catch { result.invalidated.push(record.id); }
-    }
   }
   result.invalidated = [...new Set(result.invalidated)];
   if (state.status === 'running' && !processAlive(state.pid)) result.status = 'interrupted';
@@ -310,6 +301,16 @@ export async function maintenanceReport({ workspace, runId, format = 'json' } = 
     ...[...stages.values()].map(stage => `| ${stage.id} | ${stage.status} | ${stage.pid ?? '—'} | ${stage.startedAt || '—'} | ${stage.endedAt || '—'} | ${stage.exitCode ?? '—'} | ${[stage.stdout, stage.stderr].filter(Boolean).join(', ') || '—'} |`), '',
     'SVG 目测、浏览器与协议验收：待实际执行；自动成功不代表人工验收通过。'];
   if (state.error) lines.push('', `失败：${state.error}`);
+  const modelSummary = state.finalModel?.summary || state.preflightModel;
+  if (modelSummary?.analysisGaps) {
+    const gaps = modelSummary.analysisGaps;
+    lines.push('', `分析边界：${gaps.length} 项。`);
+    if (gaps.length) {
+      const counts = modelSummary.analysisGapSummary?.byKind || Object.fromEntries([...Map.groupBy(gaps, gap => gap.kind)].map(([kind, entries]) => [kind, entries.length]));
+      lines.push(`分类：${Object.entries(counts).map(([kind, count]) => `${kind} ${count}`).join('；')}。`, '',
+        ...gaps.map(gap => `- ${gap.unit} · ${gap.kind} · ${gap.owner}：${gap.reason}${gap.sourceEntries.length ? '（' + gap.sourceEntries.map(source => `${source.path}:${source.line}`).join('，') + '）' : ''}`));
+    }
+  }
   if (state.modelChanges?.available) {
     const changes = state.modelChanges;
     lines.push('', `对象：新增 ${changes.objects.added.length}，退役 ${changes.objects.retired.length}，保留 ${changes.objects.preserved.length}。`,

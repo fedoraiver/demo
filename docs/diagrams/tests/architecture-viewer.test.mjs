@@ -564,7 +564,7 @@ test('legacy plugin and infrastructure entries open Plugin objects or the defaul
   assert.equal(viewer('?feature=overview').app.view.id,'schedule-update');
   assert.equal(viewer('?feature=overview&node=plugin-ItemPlugin').app.view.id,'object:plugin-ItemPlugin');
   const hidden=viewer('?object=plugin-physics-1&workspace=E:/work');
-  assert.equal(hidden.app.view.objectId,'plugin-physics-1');assert.ok(hidden.get('current-object-option').textContent.includes('LogPlugin'));
+  assert.equal(hidden.app.view.objectId,'plugin-physics-1');assert.ok(hidden.get('view-select').querySelectorAll('option').find(option=>option.value==='object:plugin-physics-1').textContent.includes('LogPlugin'));
   hidden.app.search('ButtonPlugin');hidden.click(hidden.get('object-results').querySelector('[data-object="plugin-ButtonPlugin"]'));
   assert.equal(hidden.app.view.objectId,'plugin-ButtonPlugin');hidden.back();assert.equal(hidden.app.view.objectId,'plugin-physics-1');assert.equal(hidden.location.searchParams.get('workspace'),'E:/work');
 });
@@ -898,8 +898,9 @@ test('top view picker selects native exports and object return retains the selec
   assert.ok(!groups.some(group=>group.getAttribute('label')==='其他插件'));
   const infrastructure=groups.find(group=>group.getAttribute('label')==='基础设施插件').querySelectorAll('option'),egui=infrastructure.findIndex(option=>option.value==='object:plugin-inspector-0');
   assert.ok(egui>=0);assert.equal(infrastructure[egui+1].value,'object:plugin-inspector-1');
-  assert.equal(infrastructure[egui].textContent,'Egui / Inspector · EguiPlugin');assert.equal(infrastructure[egui+1].textContent,'Egui / Inspector · WorldInspectorPlugin');
-  assert.ok(!picker.querySelectorAll('option').some(option=>['object:plugin-physics-1','object:plugin-ButtonPlugin'].includes(option.value)));
+  assert.ok(infrastructure[egui].textContent.includes('EguiPlugin'));assert.ok(infrastructure[egui+1].textContent.includes('WorldInspectorPlugin'));
+  const options=new Set(picker.querySelectorAll('option').map(option=>option.value));
+  for(const [id,record]of Object.entries(page.data.registry))if(['Plugin','PluginGroup'].includes(record.kind))assert.ok(options.has('object:'+id),id);
   page.choose('schedule-render');assert.equal(page.app.view.id,'schedule-render');
   page.choose('object:plugin-ItemPlugin');assert.equal(page.app.view.id,'object:plugin-ItemPlugin');
   page.click(page.get('return-overview'));assert.equal(page.app.view.id,'schedule-render');
