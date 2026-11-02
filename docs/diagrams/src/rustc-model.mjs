@@ -96,6 +96,112 @@ function sourceReferenceValidator(snapshots) {
   };
 }
 
+// 候选组以编译器端点为准；unresolved 根上下文不补造组所有者或互斥关系。
+function validateEntityAlternatives(model, registry) {
+  const groups = new Map(), templates = new Set(), contexts = new Map(), selections = new Set(['one-of', 'unresolved']);
+  const contextFields = ['alternativeGroups', 'alternativeGroup', 'alternativeSelection', 'alternativeContext', 'possible'];
+  const identity = value => typeof value === 'string' && value.trim();
+  const contextArray = value => Array.isArray(value) && value.every(identity) && new Set(value).size === value.length;
+  const context = (record, label) => {
+    requireCondition(record.possible === undefined || typeof record.possible === 'boolean', 'Invalid compiler entity possibility: ' + label);
+    requireCondition(record.alternativeGroup == null || identity(record.alternativeGroup), 'Invalid compiler alternative group: ' + label);
+    requireCondition(record.alternativeSelection == null || selections.has(record.alternativeSelection), 'Invalid compiler alternative selection: ' + label);
+    requireCondition((record.alternativeGroup == null) === (record.alternativeSelection == null)
+      && (record.alternativeGroup == null || record.possible === true), 'Inconsistent compiler alternative context: ' + label);
+    const explicit = contextFields.some(field => Object.hasOwn(record, field));
+    requireCondition(!explicit || contextArray(record.alternativeContext)
+      && record.possible === (record.alternativeContext.length > 0)
+      && (record.alternativeGroup == null || record.alternativeContext.at(-1) === record.alternativeGroup),
+    'Invalid compiler entity alternative context: ' + label);
+    contexts.set(record.id, record.alternativeContext || []);
+  };
+  for (const object of model.objects) {
+    if (object.kind !== 'Entity') {
+      requireCondition(!contextFields.some(field => Object.hasOwn(object, field)),
+        'Compiler alternative metadata requires an Entity: ' + object.id);
+      continue;
+    }
+    context(object, object.id);
+    if (object.templateId !== undefined) {
+      requireCondition(identity(object.templateId) && !templates.has(object.templateId), 'Invalid or duplicate compiler entity template: ' + object.id);
+      templates.add(object.templateId);
+    }
+    requireCondition(object.alternativeGroups === undefined || Array.isArray(object.alternativeGroups), 'Invalid compiler alternative group list: ' + object.id);
+  }
+  for (const object of model.objects.filter(object => object.kind === 'Entity')) {
+    for (const group of object.alternativeGroups || []) {
+      requireCondition(group && identity(group.id) && !groups.has(group.id) && selections.has(group.selection)
+        && Array.isArray(group.candidates) && group.candidates.length && new Set(group.candidates).size === group.candidates.length
+        && Array.isArray(group.sourceEntries) && group.sourceEntries.every(sourceEntry), 'Invalid compiler alternative group: ' + object.id);
+      for (const candidateId of group.candidates) {
+        const candidate = registry.get(candidateId);
+        requireCondition(candidateId !== object.id && candidate?.kind === 'Entity', 'Invalid compiler alternative candidate endpoint: ' + group.id);
+        requireCondition(candidate.possible === true && candidate.alternativeGroup === group.id && candidate.alternativeSelection === group.selection
+          && isDeepStrictEqual(contexts.get(candidateId), [...contexts.get(object.id), group.id]),
+          'Compiler alternative candidate crosses its group: ' + candidateId);
+      }
+      groups.set(group.id, { ...group, owner: object.id, linked: new Set() });
+    }
+  }
+  const unresolvedRoots = new Set();
+  for (const object of model.objects.filter(object => object.kind === 'Entity' && object.alternativeGroup != null)) {
+    const group = groups.get(object.alternativeGroup);
+    requireCondition(group ? group.candidates.includes(object.id) : object.alternativeSelection === 'unresolved',
+      'Unknown compiler alternative context: ' + object.id);
+    if (!group) {
+      requireCondition(isDeepStrictEqual(contexts.get(object.id), [object.alternativeGroup]), 'Invalid unresolved compiler root context: ' + object.id);
+      unresolvedRoots.add(object.id);
+    }
+  }
+  const structuralChildren = new Map(), nested = new Set();
+  const structuralLink = (from, to) => {
+    if (!structuralChildren.has(from)) structuralChildren.set(from, []);
+    structuralChildren.get(from).push(to); nested.add(to);
+  };
+  for (const relation of model.relations) {
+    requireCondition(relation.possible === undefined || typeof relation.possible === 'boolean', 'Invalid compiler relationship possibility: ' + relation.id);
+    requireCondition(relation.alternativeGroup == null || identity(relation.alternativeGroup) && relation.possible === true,
+      'Invalid compiler relationship alternative group: ' + relation.id);
+    if (relation.kind === 'alternative') {
+      const group = groups.get(relation.alternativeGroup);
+      requireCondition(group && relation.possible === true && relation.selection === group.selection && relation.from === group.owner
+        && group.candidates.includes(relation.to) && !group.linked.has(relation.to), 'Invalid compiler alternative relationship: ' + relation.id);
+      requireCondition(contextArray(relation.alternativeContext) && isDeepStrictEqual(relation.alternativeContext, contexts.get(relation.to)),
+        'Compiler alternative relationship crosses its context: ' + relation.id);
+      requireCondition(isDeepStrictEqual(relation.sourceEntries, group.sourceEntries), 'Compiler alternative relationship evidence differs from its group: ' + relation.id);
+      group.linked.add(relation.to); structuralLink(relation.from, relation.to);
+    } else {
+      const entityId = relation.kind === 'create' ? relation.to : ['contains', 'relationship'].includes(relation.kind) ? relation.from : null;
+      const entity = registry.get(entityId);
+      const requiresContext = contexts.get(entityId)?.length > 0
+        && (['create', 'contains'].includes(relation.kind) || relation.kind === 'relationship' && relation.evidence === 'assembly');
+      if (requiresContext || ['possible', 'alternativeGroup', 'alternativeContext'].some(field => Object.hasOwn(relation, field))) {
+        requireCondition(entity?.kind === 'Entity' && relation.possible === entity.possible
+          && (relation.alternativeGroup ?? null) === (entity.alternativeGroup ?? null)
+          && relation.selection === undefined && contextArray(relation.alternativeContext) && isDeepStrictEqual(relation.alternativeContext, contexts.get(entityId))
+          && (relation.kind !== 'relationship' || registry.get(relation.to)?.kind === 'Entity'), 'Compiler relationship crosses its entity context: ' + relation.id);
+      }
+    }
+    if (relation.kind === 'relationship' && relation.evidence === 'assembly') {
+      const child = registry.get(relation.to);
+      requireCondition(registry.get(relation.from)?.kind === 'Entity' && child?.kind === 'Entity' && child.alternativeGroup == null
+        && isDeepStrictEqual(contexts.get(relation.from), contexts.get(relation.to)), 'Compiler child crosses its alternative context: ' + relation.id);
+      structuralLink(relation.from, relation.to);
+    }
+  }
+  for (const group of groups.values()) requireCondition(group.linked.size === group.candidates.length,
+    'Missing compiler alternative relationship: ' + group.id);
+  for (const root of unresolvedRoots) requireCondition(!nested.has(root), 'Unresolved compiler root is nested: ' + root);
+  for (const relation of model.relations.filter(relation => relation.kind === 'create'))
+    requireCondition(!nested.has(relation.to), 'Compiler create targets a nested template directly: ' + relation.id);
+  const reachable = new Set([...contexts].filter(([id, groups]) => !groups.length || unresolvedRoots.has(id)).map(([id]) => id));
+  const queue = [...reachable];
+  for (let index = 0; index < queue.length; index++) for (const child of structuralChildren.get(queue[index]) || []) {
+    if (!reachable.has(child)) { reachable.add(child); queue.push(child); }
+  }
+  for (const [id, groups] of contexts) requireCondition(!groups.length || reachable.has(id), 'Compiler alternative context is unreachable: ' + id);
+}
+
 // 单独检查完整调用图；架构模型仍须通过全部绑定与来源校验。
 export function validateCompilerCallGraph(model, { modelDirectory, registry, snapshots } = {}) {
   if (model.callGraph === undefined) return null;
@@ -148,6 +254,22 @@ export function validateCompilerModel(model, { workspace, checkSources = true, a
     requireCondition(features.has(object.feature), 'Unknown compiler object feature: ' + object.id);
     requireCondition(typeof object.name === 'string' && object.name, 'Missing compiler object name: ' + object.id);
     requireCondition(Array.isArray(object.sourceEntries) && Array.isArray(object.sourceGaps), 'Missing compiler object evidence: ' + object.id);
+    if (object.typeIdentity != null) {
+      const identity = object.typeIdentity;
+      requireCondition(identity && typeof identity === 'object' && identity.declarationId === object.declarationId
+        && typeof identity.declarationId === 'string' && identity.declarationId && typeof identity.crateName === 'string' && /^[A-Za-z_][A-Za-z0-9_]*$/.test(identity.crateName)
+        && typeof identity.defPath === 'string' && identity.defPath.startsWith(identity.crateName + '::') && typeof identity.local === 'boolean'
+        && Array.isArray(identity.roles) && identity.roles.every(role => typeof role === 'string' && role)
+        && new Set(identity.roles).size === identity.roles.length, 'Invalid compiler type declaration identity: ' + object.id);
+      if (identity.package !== undefined) {
+        const { name, version } = identity.package || {};
+        requireCondition(typeof name === 'string' && /^[A-Za-z0-9_][A-Za-z0-9_-]*$/.test(name)
+          && typeof version === 'string' && /^\d+\.\d+\.\d+(?:[-+][A-Za-z0-9.+-]+)?$/.test(version)
+          && object.sourceEntries.some(entry => entry.role === 'definition' && entry.dependency?.name === name && entry.dependency.version === version),
+        'Compiler type package has no definition evidence: ' + object.id);
+      }
+      requireCondition(identity.roles.includes(object.kind) || object.kind === 'NonSend', 'Compiler type role differs from object kind: ' + object.id);
+    }
     if (!allowPending) requireCondition(typeof object.description === 'string' && object.description.trim()
       && (object.display_summary === undefined || typeof object.display_summary === 'string' && object.display_summary.trim()), 'Missing Chinese object purpose: ' + object.id);
     registry.set(object.id, object);
@@ -158,6 +280,7 @@ export function validateCompilerModel(model, { workspace, checkSources = true, a
     requireCondition(Array.isArray(relation.sourceEntries || []), 'Invalid compiler relationship evidence: ' + relation.id);
     relations.add(relation.id);
   }
+  validateEntityAlternatives(model, registry);
   requireCondition(model.analysisGaps === undefined || Array.isArray(model.analysisGaps), 'Invalid compiler analysis gap list');
   for (const gap of model.analysisGaps || []) {
     requireCondition(gap && ['unit', 'owner', 'kind', 'reason'].every(field => typeof gap[field] === 'string' && gap[field].trim())
@@ -218,7 +341,7 @@ export function viewerModel(model) {
 
 // 视觉类别只映射已给出的事实类型，不改变事实端点、方向或身份。
 export function presentRelation(relation) {
-  const kind = ({ filter: 'reference', condition: 'reference', event: 'observe', trigger: 'emit', mutable_access: 'write', insert: 'write', remove: 'write', initialize: 'write',
+  const kind = ({ filter: 'reference', condition: 'reference', alternative: 'reference', event: 'observe', trigger: 'emit', mutable_access: 'write', insert: 'write', remove: 'write', initialize: 'write',
     create: 'write', modify: 'write', despawn: 'write', publish: 'write', membership: 'registration', contains: 'reference' })[relation.kind] || relation.kind;
   return kind === relation.kind ? { ...relation } : { ...relation, factKind: relation.kind, operation: relation.operation || relation.kind, kind };
 }

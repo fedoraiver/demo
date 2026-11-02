@@ -1,0 +1,1301 @@
+{
+  "provenance": {
+    "buildId": "34bdb994ba9317be97b2f811aeca043fbb0bb53e1930ecec5d85e2d968ca0330",
+    "sourceViewId": "object-8a1ebccfc813c250",
+    "note": "此静态夹具原样摘自真实编译器与runtime产物，不用于补造关系。"
+  },
+  "view": {
+    "id": "object-8a1ebccfc813c250",
+    "feature": "crate:bevy_ecs",
+    "aspect": "object",
+    "label": "bevy_ecs::schedule::condition::common_conditions::any_match_filter<(bevy_ecs::query::filter::With<bevy_pbr::render::gpu_preprocess::PreprocessBindGroups>, bevy_ecs::query::filter::Without<bevy_pbr::render::gpu_preprocess::SkipGpuPreprocess>, bevy_ecs::query::filter::Without<bevy_render::view::NoIndirectDrawing>, bevy_ecs::query::filter::Or<(bevy_ecs::query::filter::Or<(bevy_ecs::query::filter::With<bevy_core_pipeline::prepass::DepthPrepass>, bevy_ecs::query::filter::With<bevy_core_pipeline::prepass::NormalPrepass>, bevy_ecs::query::filter::With<bevy_core_pipeline::prepass::MotionVectorPrepass>, bevy_ecs::query::filter::With<bevy_core_pipeline::prepass::DeferredPrepass>)>, bevy_ecs::query::filter::With<bevy_pbr::render::light::ShadowView>)>, bevy_ecs::query::filter::With<bevy_render::occlusion_culling::OcclusionCulling>)> · 对象关系",
+    "summary": "当前对象及全部直接关联对象。",
+    "objectId": "condition-a6dd755679962b7e0a57a69f",
+    "centerNodeId": "condition-a6dd755679962b7e0a57a69f",
+    "engine": "mermaid",
+    "diagramType": "flowchart",
+    "width": 1089.7578125,
+    "height": 957.2000122070312,
+    "filename": "ecs-object-8a1ebccfc813c250.svg",
+    "mermaidFilename": "ecs-object-8a1ebccfc813c250.mmd",
+    "nodes": [
+      {
+        "id": "condition-a6dd755679962b7e0a57a69f",
+        "role": "internal",
+        "group": "当前对象",
+        "instance": "object-8a1ebccfc813c250--n0",
+        "mermaidId": "n0",
+        "visualType": "system",
+        "shape": "rounded",
+        "displayLabel": "bevy_ecs::schedule::condition::common_conditions::any_match_filter<(bevy_ecs::query::filter::With<bevy_pbr::render::gpu_preprocess::PreprocessBindGroups>, bevy_ecs::query::filter::Without<bevy_pbr::render::gpu_preprocess::SkipGpuPreprocess>, bevy_ecs::query::filter::Without<bevy_render::view::NoIndirectDrawing>, bevy_ecs::query::filter::Or<(bevy_ecs::query::filter::Or<(bevy_ecs::query::filter::With<bevy_core_pipeline::prepass::DepthPrepass>, bevy_ecs::query::filter::With<bevy_core_pipeline::prepass::NormalPrepass>, bevy_ecs::query::filter::With<bevy_core_pipeline::prepass::MotionVectorPrepass>, bevy_ecs::query::filter::With<bevy_core_pipeline::prepass::DeferredPrepass>)>, bevy_ecs::query::filter::With<bevy_pbr::render::light::ShadowView>)>, bevy_ecs::query::filter::With<bevy_render::occlusion_culling::OcclusionCulling>)>\n判断是否存在符合过滤条件的实体。",
+        "nameLabel": "bevy_ecs::schedule::condition::common_conditions::any_match_filter<(bevy_ecs::query::filter::With<bevy_pbr::render::gpu_preprocess::PreprocessBindGroups>, bevy_ecs::query::filter::Without<bevy_pbr::render::gpu_preprocess::SkipGpuPreprocess>, bevy_ecs::query::filter::Without<bevy_render::view::NoIndirectDrawing>, bevy_ecs::query::filter::Or<(bevy_ecs::query::filter::Or<(bevy_ecs::query::filter::With<bevy_core_pipeline::prepass::DepthPrepass>, bevy_ecs::query::filter::With<bevy_core_pipeline::prepass::NormalPrepass>, bevy_ecs::query::filter::With<bevy_core_pipeline::prepass::MotionVectorPrepass>, bevy_ecs::query::filter::With<bevy_core_pipeline::prepass::DeferredPrepass>)>, bevy_ecs::query::filter::With<bevy_pbr::render::light::ShadowView>)>, bevy_ecs::query::filter::With<bevy_render::occlusion_culling::OcclusionCulling>)>",
+        "contextLabel": [
+          "判断是否存在符合过滤条件的实体。"
+        ],
+        "position": {
+          "x": 417.07031250025,
+          "y": 229.7999763483926,
+          "width": 276.864257812,
+          "height": 482.2000122079999
+        }
+      },
+      {
+        "id": "type-c64c0e4ed8284860a14232b1",
+        "role": "external",
+        "group": "直接关联对象",
+        "instance": "object-8a1ebccfc813c250--n1",
+        "mermaidId": "n1",
+        "visualType": "component",
+        "shape": "rounded",
+        "displayLabel": "render::gpu_preprocess::PreprocessBindGroups\n来自crate:bevy_pbr ↗：为视图各绘制阶段保存网格预处理绑定。",
+        "nameLabel": "render::gpu_preprocess::PreprocessBindGroups",
+        "contextLabel": [
+          "来自crate:bevy_pbr ↗：为视图各绘制阶段保存网格预处理绑定。"
+        ],
+        "position": {
+          "x": 11.623535156000003,
+          "y": 8.00000000012109,
+          "width": 277.823242188,
+          "height": 97.199996948
+        }
+      },
+      {
+        "id": "registration-23aba7b995d6875232aec9e3",
+        "role": "external",
+        "group": "直接关联对象",
+        "instance": "object-8a1ebccfc813c250--n2",
+        "mermaidId": "n2",
+        "visualType": "system",
+        "shape": "rounded",
+        "displayLabel": "bevy_pbr::render::gpu_preprocess::late_prepass_build_indirect_parameters\n来自crate:bevy_pbr ↗：为本帧新显露对象构建后期预通道间接参数。",
+        "nameLabel": "bevy_pbr::render::gpu_preprocess::late_prepass_build_indirect_parameters",
+        "contextLabel": [
+          "来自crate:bevy_pbr ↗：为本帧新显露对象构建后期预通道间接参数。"
+        ],
+        "position": {
+          "x": 803.93457031225,
+          "y": 414.59997940039256,
+          "width": 277.8232421880001,
+          "height": 112.60000610399999
+        }
+      },
+      {
+        "id": "type-11ae713ca0bb76d40fad3d22",
+        "role": "external",
+        "group": "直接关联对象",
+        "instance": "object-8a1ebccfc813c250--n3",
+        "mermaidId": "n3",
+        "visualType": "component",
+        "shape": "rounded",
+        "displayLabel": "bevy_core_pipeline::prepass::DepthPrepass\n来自crate:bevy_core_pipeline ↗：为三维相机生成独立的深度纹理。",
+        "nameLabel": "bevy_core_pipeline::prepass::DepthPrepass",
+        "contextLabel": [
+          "来自crate:bevy_core_pipeline ↗：为三维相机生成独立的深度纹理。"
+        ],
+        "position": {
+          "x": 16.84765625,
+          "y": 121.19999694836328,
+          "width": 267.375,
+          "height": 97.19999694800002
+        }
+      },
+      {
+        "id": "type-b5e94c285402a26328b7eb68",
+        "role": "external",
+        "group": "直接关联对象",
+        "instance": "object-8a1ebccfc813c250--n4",
+        "mermaidId": "n4",
+        "visualType": "component",
+        "shape": "rounded",
+        "displayLabel": "prepass::DeferredPrepass\n来自crate:bevy_core_pipeline ↗：为三维相机启用延迟材质 G-buffer 预通道。",
+        "nameLabel": "prepass::DeferredPrepass",
+        "contextLabel": [
+          "来自crate:bevy_core_pipeline ↗：为三维相机启用延迟材质 G-buffer 预通道。"
+        ],
+        "position": {
+          "x": 13.035156249999972,
+          "y": 234.39999198866602,
+          "width": 275,
+          "height": 81.79999923800003
+        }
+      },
+      {
+        "id": "type-617984a9485385215c9ef53e",
+        "role": "external",
+        "group": "直接关联对象",
+        "instance": "object-8a1ebccfc813c250--n5",
+        "mermaidId": "n5",
+        "visualType": "component",
+        "shape": "rounded",
+        "displayLabel": "prepass::NormalPrepass\n来自crate:bevy_core_pipeline ↗：输出已应用法线贴图的世界空间法线。",
+        "nameLabel": "prepass::NormalPrepass",
+        "contextLabel": [
+          "来自crate:bevy_core_pipeline ↗：输出已应用法线贴图的世界空间法线。"
+        ],
+        "position": {
+          "x": 16.84765625,
+          "y": 332.19998741102927,
+          "width": 267.375,
+          "height": 81.79999923800005
+        }
+      },
+      {
+        "id": "type-9f73006b1b20000202dc7cfc",
+        "role": "external",
+        "group": "直接关联对象",
+        "instance": "object-8a1ebccfc813c250--n6",
+        "mermaidId": "n6",
+        "visualType": "component",
+        "shape": "rounded",
+        "displayLabel": "render::light::ShadowView\n来自crate:bevy_pbr ↗：描述阴影绘制的深度附件与通道名称。",
+        "nameLabel": "render::light::ShadowView",
+        "contextLabel": [
+          "来自crate:bevy_pbr ↗：描述阴影绘制的深度附件与通道名称。"
+        ],
+        "position": {
+          "x": 12.12109375,
+          "y": 429.99998283339255,
+          "width": 276.828125,
+          "height": 81.79999923800005
+        }
+      },
+      {
+        "id": "type-f1146df16a7b94a963ec3188",
+        "role": "external",
+        "group": "直接关联对象",
+        "instance": "object-8a1ebccfc813c250--n7",
+        "mermaidId": "n7",
+        "visualType": "component",
+        "shape": "rounded",
+        "displayLabel": "bevy_render::view::NoIndirectDrawing\n来自crate:bevy_render ↗：关闭相机的间接绘制模式。",
+        "nameLabel": "bevy_render::view::NoIndirectDrawing",
+        "contextLabel": [
+          "来自crate:bevy_render ↗：关闭相机的间接绘制模式。"
+        ],
+        "position": {
+          "x": 8,
+          "y": 527.7999782557558,
+          "width": 285.0703125,
+          "height": 81.79999923800005
+        }
+      },
+      {
+        "id": "type-d502c3d68e7d0c223855c7bc",
+        "role": "external",
+        "group": "直接关联对象",
+        "instance": "object-8a1ebccfc813c250--n8",
+        "mermaidId": "n8",
+        "visualType": "component",
+        "shape": "rounded",
+        "displayLabel": "bevy_render::occlusion_culling::OcclusionCulling\n来自crate:bevy_render ↗：启用视图的 GPU 遮挡裁剪。",
+        "nameLabel": "bevy_render::occlusion_culling::OcclusionCulling",
+        "contextLabel": [
+          "来自crate:bevy_render ↗：启用视图的 GPU 遮挡裁剪。"
+        ],
+        "position": {
+          "x": 16.51171875,
+          "y": 625.5999755860586,
+          "width": 268.046875,
+          "height": 97.19999694800003
+        }
+      },
+      {
+        "id": "type-d0723a920e159d1e4846cf30",
+        "role": "external",
+        "group": "直接关联对象",
+        "instance": "object-8a1ebccfc813c250--n9",
+        "mermaidId": "n9",
+        "visualType": "component",
+        "shape": "rounded",
+        "displayLabel": "bevy_core_pipeline::prepass::MotionVectorPrepass\n来自crate:bevy_core_pipeline ↗：为相机输出屏幕空间运动矢量。",
+        "nameLabel": "bevy_core_pipeline::prepass::MotionVectorPrepass",
+        "contextLabel": [
+          "来自crate:bevy_core_pipeline ↗：为相机输出屏幕空间运动矢量。"
+        ],
+        "position": {
+          "x": 16.84765625,
+          "y": 738.7999725343008,
+          "width": 267.375,
+          "height": 97.19999694800003
+        }
+      },
+      {
+        "id": "type-e07335165c9943e7fd7fefca",
+        "role": "external",
+        "group": "直接关联对象",
+        "instance": "object-8a1ebccfc813c250--n10",
+        "mermaidId": "n10",
+        "visualType": "component",
+        "shape": "rounded",
+        "displayLabel": "render::gpu_preprocess::SkipGpuPreprocess\n来自crate:bevy_pbr ↗：避免视图重复执行 GPU 网格预处理。",
+        "nameLabel": "render::gpu_preprocess::SkipGpuPreprocess",
+        "contextLabel": [
+          "来自crate:bevy_pbr ↗：避免视图重复执行 GPU 网格预处理。"
+        ],
+        "position": {
+          "x": 11.623535156000003,
+          "y": 851.999969482543,
+          "width": 277.823242188,
+          "height": 97.19999694800003
+        }
+      }
+    ],
+    "links": [
+      {
+        "evidence": "parameter",
+        "from": "type-c64c0e4ed8284860a14232b1",
+        "id": "relation-03552ffd43bbea9729f46da3",
+        "kind": "reference",
+        "label": "存在性约束",
+        "parameter": "arg0.filter.0",
+        "scope": "current",
+        "sourceEntries": [],
+        "sourceGaps": [],
+        "to": "condition-a6dd755679962b7e0a57a69f",
+        "factKind": "filter",
+        "operation": "filter",
+        "mermaidId": "e0",
+        "edgeSemantic": "reference",
+        "displayLabel": "存在性约束"
+      },
+      {
+        "evidence": "runtime",
+        "from": "condition-a6dd755679962b7e0a57a69f",
+        "id": "relation-4abc2f90afcdf15965cee82f",
+        "kind": "reference",
+        "label": "运行条件",
+        "scope": "runtime-system-condition",
+        "sourceEntries": [],
+        "sourceGaps": [],
+        "to": "registration-23aba7b995d6875232aec9e3",
+        "factKind": "condition",
+        "operation": "condition",
+        "mermaidId": "e1",
+        "edgeSemantic": "reference",
+        "displayLabel": "运行条件"
+      },
+      {
+        "evidence": "parameter",
+        "from": "type-11ae713ca0bb76d40fad3d22",
+        "id": "relation-4ac498cc46829e91531dae13",
+        "kind": "reference",
+        "label": "存在性约束",
+        "parameter": "arg0.filter.3.0.0.0.0",
+        "scope": "current",
+        "sourceEntries": [],
+        "sourceGaps": [],
+        "to": "condition-a6dd755679962b7e0a57a69f",
+        "factKind": "filter",
+        "operation": "filter",
+        "mermaidId": "e2",
+        "edgeSemantic": "reference",
+        "displayLabel": "存在性约束"
+      },
+      {
+        "evidence": "parameter",
+        "from": "type-b5e94c285402a26328b7eb68",
+        "id": "relation-5dc28bff279adcba73d72384",
+        "kind": "reference",
+        "label": "存在性约束",
+        "parameter": "arg0.filter.3.0.0.0.3",
+        "scope": "current",
+        "sourceEntries": [],
+        "sourceGaps": [],
+        "to": "condition-a6dd755679962b7e0a57a69f",
+        "factKind": "filter",
+        "operation": "filter",
+        "mermaidId": "e3",
+        "edgeSemantic": "reference",
+        "displayLabel": "存在性约束"
+      },
+      {
+        "evidence": "parameter",
+        "from": "type-617984a9485385215c9ef53e",
+        "id": "relation-94e2b9539de9cb6939ef98e3",
+        "kind": "reference",
+        "label": "存在性约束",
+        "parameter": "arg0.filter.3.0.0.0.1",
+        "scope": "current",
+        "sourceEntries": [],
+        "sourceGaps": [],
+        "to": "condition-a6dd755679962b7e0a57a69f",
+        "factKind": "filter",
+        "operation": "filter",
+        "mermaidId": "e4",
+        "edgeSemantic": "reference",
+        "displayLabel": "存在性约束"
+      },
+      {
+        "evidence": "parameter",
+        "from": "type-9f73006b1b20000202dc7cfc",
+        "id": "relation-95928e67b57eb36523835dcc",
+        "kind": "reference",
+        "label": "存在性约束",
+        "parameter": "arg0.filter.3.0.1",
+        "scope": "current",
+        "sourceEntries": [],
+        "sourceGaps": [],
+        "to": "condition-a6dd755679962b7e0a57a69f",
+        "factKind": "filter",
+        "operation": "filter",
+        "mermaidId": "e5",
+        "edgeSemantic": "reference",
+        "displayLabel": "存在性约束"
+      },
+      {
+        "evidence": "parameter",
+        "from": "type-f1146df16a7b94a963ec3188",
+        "id": "relation-a2979777b0d7a9697c1cfcee",
+        "kind": "reference",
+        "label": "存在性约束",
+        "parameter": "arg0.filter.2",
+        "scope": "current",
+        "sourceEntries": [],
+        "sourceGaps": [],
+        "to": "condition-a6dd755679962b7e0a57a69f",
+        "factKind": "filter",
+        "operation": "filter",
+        "mermaidId": "e6",
+        "edgeSemantic": "reference",
+        "displayLabel": "存在性约束"
+      },
+      {
+        "evidence": "parameter",
+        "from": "type-d502c3d68e7d0c223855c7bc",
+        "id": "relation-ac83feb63465421a84366de5",
+        "kind": "reference",
+        "label": "存在性约束",
+        "parameter": "arg0.filter.4",
+        "scope": "current",
+        "sourceEntries": [],
+        "sourceGaps": [],
+        "to": "condition-a6dd755679962b7e0a57a69f",
+        "factKind": "filter",
+        "operation": "filter",
+        "mermaidId": "e7",
+        "edgeSemantic": "reference",
+        "displayLabel": "存在性约束"
+      },
+      {
+        "evidence": "parameter",
+        "from": "type-d0723a920e159d1e4846cf30",
+        "id": "relation-cf5d66069c8ef5289e45ab93",
+        "kind": "reference",
+        "label": "存在性约束",
+        "parameter": "arg0.filter.3.0.0.0.2",
+        "scope": "current",
+        "sourceEntries": [],
+        "sourceGaps": [],
+        "to": "condition-a6dd755679962b7e0a57a69f",
+        "factKind": "filter",
+        "operation": "filter",
+        "mermaidId": "e8",
+        "edgeSemantic": "reference",
+        "displayLabel": "存在性约束"
+      },
+      {
+        "evidence": "parameter",
+        "from": "type-e07335165c9943e7fd7fefca",
+        "id": "relation-e83814d939fe4497bbb425df",
+        "kind": "reference",
+        "label": "存在性约束",
+        "parameter": "arg0.filter.1",
+        "scope": "current",
+        "sourceEntries": [],
+        "sourceGaps": [],
+        "to": "condition-a6dd755679962b7e0a57a69f",
+        "factKind": "filter",
+        "operation": "filter",
+        "mermaidId": "e9",
+        "edgeSemantic": "reference",
+        "displayLabel": "存在性约束"
+      }
+    ],
+    "scheduleLinks": [],
+    "layoutLinks": [],
+    "scheduleGroups": [],
+    "observerBranches": [],
+    "entityGroups": [],
+    "sections": [
+      {
+        "label": "当前对象",
+        "x": 417.07031250025,
+        "y": 229.7999763483926
+      },
+      {
+        "label": "直接关联对象",
+        "x": 8,
+        "y": 8.00000000012109
+      }
+    ],
+    "bounds": {
+      "x": 0,
+      "y": 0,
+      "width": 1089.7578125,
+      "height": 957.2000122070312
+    },
+    "routing": {
+      "rule": "axis-or-curve"
+    }
+  },
+  "registry": {
+    "condition-a6dd755679962b7e0a57a69f": {
+      "callableIds": [
+        "callable-0eb0a26303ba94002931f072df309cd83419e173aa523c6da987bdd95df69107"
+      ],
+      "description": "检查世界中是否存在符合指定查询过滤条件的实体，作为系统运行条件。",
+      "display_summary": "判断是否存在符合过滤条件的实体。",
+      "feature": "crate:bevy_ecs",
+      "id": "condition-a6dd755679962b7e0a57a69f",
+      "kind": "System",
+      "name": "bevy_ecs::schedule::condition::common_conditions::any_match_filter<(bevy_ecs::query::filter::With<bevy_pbr::render::gpu_preprocess::PreprocessBindGroups>, bevy_ecs::query::filter::Without<bevy_pbr::render::gpu_preprocess::SkipGpuPreprocess>, bevy_ecs::query::filter::Without<bevy_render::view::NoIndirectDrawing>, bevy_ecs::query::filter::Or<(bevy_ecs::query::filter::Or<(bevy_ecs::query::filter::With<bevy_core_pipeline::prepass::DepthPrepass>, bevy_ecs::query::filter::With<bevy_core_pipeline::prepass::NormalPrepass>, bevy_ecs::query::filter::With<bevy_core_pipeline::prepass::MotionVectorPrepass>, bevy_ecs::query::filter::With<bevy_core_pipeline::prepass::DeferredPrepass>)>, bevy_ecs::query::filter::With<bevy_pbr::render::light::ShadowView>)>, bevy_ecs::query::filter::With<bevy_render::occlusion_culling::OcclusionCulling>)>",
+      "registrationScope": "runtime-system-condition",
+      "registrations": [
+        {
+          "application": "RenderApp",
+          "schedule": "Core3d",
+          "scope": "runtime-system-condition"
+        }
+      ],
+      "runtimeTypeId": "TypeId(0x0c15bf74b02ef5cc88d6fad498a41ac5)",
+      "sourceEntries": [
+        {
+          "column": 5,
+          "dependency": {
+            "name": "bevy_ecs",
+            "root": "//?/C:/Users/cck17/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/bevy_ecs-0.20.0",
+            "version": "0.20.0"
+          },
+          "expansions": [],
+          "label": "定义位置",
+          "line": 1218,
+          "path": "src/schedule/condition.rs",
+          "role": "definition",
+          "sha256": "137d0c21640c53639299898722aaac63239889774f401bbfd46b363d961b93af"
+        }
+      ],
+      "sourceGaps": []
+    },
+    "type-c64c0e4ed8284860a14232b1": {
+      "declarationId": "decl-61a30bac4b382b16d8beb41774c11543afd86d305a4e37357e45e880face976e",
+      "description": "附加在视图上，将绘制阶段 TypeId 映射到该阶段的 GPU 网格预处理绑定组。",
+      "display_summary": "为视图各绘制阶段保存网格预处理绑定。",
+      "feature": "crate:bevy_pbr",
+      "fullName": "render::gpu_preprocess::PreprocessBindGroups",
+      "id": "type-c64c0e4ed8284860a14232b1",
+      "kind": "Component",
+      "name": "render::gpu_preprocess::PreprocessBindGroups",
+      "rust_type": "render::gpu_preprocess::PreprocessBindGroups",
+      "sourceEntries": [
+        {
+          "column": 1,
+          "dependency": {
+            "name": "bevy_pbr",
+            "root": "//?/C:/Users/cck17/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/bevy_pbr-0.20.0",
+            "version": "0.20.0"
+          },
+          "expansions": [],
+          "label": "定义位置",
+          "line": 332,
+          "path": "src/render/gpu_preprocess.rs",
+          "role": "definition",
+          "sha256": "aa01807842e1552ab7ba71d2f18becffe9f922964b1c43f5db5aa46229a69721"
+        }
+      ],
+      "sourceGaps": [],
+      "typeIdentity": {
+        "crateName": "bevy_pbr",
+        "declarationId": "decl-61a30bac4b382b16d8beb41774c11543afd86d305a4e37357e45e880face976e",
+        "defPath": "bevy_pbr::render::gpu_preprocess::PreprocessBindGroups",
+        "local": true,
+        "package": {
+          "name": "bevy_pbr",
+          "version": "0.20.0"
+        },
+        "roles": [
+          "Bundle",
+          "Component",
+          "Template"
+        ]
+      },
+      "typeInstanceId": "type-16557ccf6612f3ac6f4d0c8563d7ebe97570526db6edb6f2a4d0ebd336d4783b"
+    },
+    "registration-23aba7b995d6875232aec9e3": {
+      "callableIds": [
+        "callable-0246efbfa1dd05de905fd7c54fcf6be6999921597910b06e15c739b9151caf5b"
+      ],
+      "description": "对当前视图调用共享参数构建流程，选用 late_phase 管线，为遮挡裁剪后新出现、上一帧不可见的对象准备多重间接绘制命令。",
+      "display_summary": "为本帧新显露对象构建后期预通道间接参数。",
+      "feature": "crate:bevy_pbr",
+      "id": "registration-23aba7b995d6875232aec9e3",
+      "kind": "System",
+      "name": "bevy_pbr::render::gpu_preprocess::late_prepass_build_indirect_parameters",
+      "registrations": [
+        {
+          "application": "RenderApp",
+          "schedule": "Core3d",
+          "scope": "runtime"
+        }
+      ],
+      "runConditions": [
+        {
+          "name": "bevy_ecs::schedule::condition::common_conditions::any_match_filter<(bevy_ecs::query::filter::With<bevy_pbr::render::gpu_preprocess::PreprocessBindGroups>, bevy_ecs::query::filter::Without<bevy_pbr::render::gpu_preprocess::SkipGpuPreprocess>, bevy_ecs::query::filter::Without<bevy_render::view::NoIndirectDrawing>, bevy_ecs::query::filter::Or<(bevy_ecs::query::filter::Or<(bevy_ecs::query::filter::With<bevy_core_pipeline::prepass::DepthPrepass>, bevy_ecs::query::filter::With<bevy_core_pipeline::prepass::NormalPrepass>, bevy_ecs::query::filter::With<bevy_core_pipeline::prepass::MotionVectorPrepass>, bevy_ecs::query::filter::With<bevy_core_pipeline::prepass::DeferredPrepass>)>, bevy_ecs::query::filter::With<bevy_pbr::render::light::ShadowView>)>, bevy_ecs::query::filter::With<bevy_render::occlusion_culling::OcclusionCulling>)>",
+          "typeId": "TypeId(0x0c15bf74b02ef5cc88d6fad498a41ac5)"
+        }
+      ],
+      "runtimeTypeId": "TypeId(0xfda64878fa2881b84984998446a25581)",
+      "sourceEntries": [
+        {
+          "column": 1,
+          "dependency": {
+            "name": "bevy_pbr",
+            "root": "//?/C:/Users/cck17/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/bevy_pbr-0.20.0",
+            "version": "0.20.0"
+          },
+          "expansions": [],
+          "label": "定义位置",
+          "line": 1172,
+          "path": "src/render/gpu_preprocess.rs",
+          "role": "definition",
+          "sha256": "aa01807842e1552ab7ba71d2f18becffe9f922964b1c43f5db5aa46229a69721"
+        },
+        {
+          "column": 9,
+          "dependency": {
+            "name": "bevy_pbr",
+            "root": "//?/C:/Users/cck17/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/bevy_pbr-0.20.0",
+            "version": "0.20.0"
+          },
+          "expansions": [],
+          "label": "注册位置",
+          "line": 514,
+          "path": "src/render/gpu_preprocess.rs",
+          "role": "registration",
+          "sha256": "aa01807842e1552ab7ba71d2f18becffe9f922964b1c43f5db5aa46229a69721"
+        }
+      ],
+      "sourceGaps": [
+        "参数 ctx.0.0 的 bevy_ecs::system::system_param::Deferred 需要其 SystemParam/WorldQuery 实现证据，未从存储字段猜测访问。",
+        "参数 current_view 的 bevy_render::renderer::render_context::ViewQuery 需要其 SystemParam/WorldQuery 实现证据，未从存储字段猜测访问。",
+        "参数 arg0 的 bevy_render::renderer::render_context::ViewQuery 需要其 SystemParam/WorldQuery 实现证据，未从存储字段猜测访问。"
+      ],
+      "worldAccessScope": "finite"
+    },
+    "type-11ae713ca0bb76d40fad3d22": {
+      "declarationId": "decl-86e7c317c5e5ab102977aa0a9cfe5e79a8ba62a3ccc8342cb7d32983f73667e2",
+      "description": "将预通道深度保存到单独纹理，供主通道和需要场景深度的后处理读取。",
+      "display_summary": "为三维相机生成独立的深度纹理。",
+      "feature": "crate:bevy_core_pipeline",
+      "fullName": "bevy_core_pipeline::prepass::DepthPrepass",
+      "id": "type-11ae713ca0bb76d40fad3d22",
+      "kind": "Component",
+      "name": "bevy_core_pipeline::prepass::DepthPrepass",
+      "rust_type": "bevy_core_pipeline::prepass::DepthPrepass",
+      "sourceEntries": [
+        {
+          "column": 1,
+          "dependency": {
+            "name": "bevy_core_pipeline",
+            "root": "//?/C:/Users/cck17/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/bevy_core_pipeline-0.20.0",
+            "version": "0.20.0"
+          },
+          "expansions": [],
+          "label": "定义位置",
+          "line": 65,
+          "path": "src/prepass/mod.rs",
+          "role": "definition",
+          "sha256": "25a2b1b7d03a75a5c64326f1a135b874d58727ac61a72dc001cac86bb04a5b71"
+        }
+      ],
+      "sourceGaps": [],
+      "typeIdentity": {
+        "crateName": "bevy_core_pipeline",
+        "declarationId": "decl-86e7c317c5e5ab102977aa0a9cfe5e79a8ba62a3ccc8342cb7d32983f73667e2",
+        "defPath": "bevy_core_pipeline::prepass::DepthPrepass",
+        "local": true,
+        "package": {
+          "name": "bevy_core_pipeline",
+          "version": "0.20.0"
+        },
+        "roles": [
+          "Bundle",
+          "Component",
+          "Template"
+        ]
+      },
+      "typeInstanceId": "type-48807093bd1421116d19ab368e89a678920e308770b16e8ec72f0394b6374e01"
+    },
+    "type-b5e94c285402a26328b7eb68": {
+      "declarationId": "decl-5027fa8661cc943bc8483829ea495169ff4670c4bcab16be09d21dcf7a6561c4",
+      "description": "使三维相机的延迟材质写入 G-buffer 纹理，供后续延迟光照使用；默认延迟光照还依赖 DepthPrepass。",
+      "display_summary": "为三维相机启用延迟材质 G-buffer 预通道。",
+      "feature": "crate:bevy_core_pipeline",
+      "fullName": "prepass::DeferredPrepass",
+      "id": "type-b5e94c285402a26328b7eb68",
+      "kind": "Component",
+      "name": "prepass::DeferredPrepass",
+      "rust_type": "prepass::DeferredPrepass",
+      "sourceEntries": [
+        {
+          "column": 1,
+          "dependency": {
+            "name": "bevy_core_pipeline",
+            "root": "//?/C:/Users/cck17/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/bevy_core_pipeline-0.20.0",
+            "version": "0.20.0"
+          },
+          "expansions": [],
+          "label": "定义位置",
+          "line": 85,
+          "path": "src/prepass/mod.rs",
+          "role": "definition",
+          "sha256": "25a2b1b7d03a75a5c64326f1a135b874d58727ac61a72dc001cac86bb04a5b71"
+        }
+      ],
+      "sourceGaps": [],
+      "typeIdentity": {
+        "crateName": "bevy_core_pipeline",
+        "declarationId": "decl-5027fa8661cc943bc8483829ea495169ff4670c4bcab16be09d21dcf7a6561c4",
+        "defPath": "bevy_core_pipeline::prepass::DeferredPrepass",
+        "local": true,
+        "package": {
+          "name": "bevy_core_pipeline",
+          "version": "0.20.0"
+        },
+        "roles": [
+          "Bundle",
+          "Component",
+          "Template"
+        ]
+      },
+      "typeInstanceId": "type-591e8abf69566508d40142a67eb9ecefe7fcbf8bfbbc8fbb84e825b978e60e46"
+    },
+    "type-617984a9485385215c9ef53e": {
+      "declarationId": "decl-5e0a0bcbb7fba88e65e59e4b870b29c70ca8df046fecf7ff2a29a348ef04d2c1",
+      "description": "为三维相机把顶点世界法线写入独立预通道纹理，法线已包含法线贴图影响，可被主通道或环境光遮蔽等处理读取。",
+      "display_summary": "输出已应用法线贴图的世界空间法线。",
+      "feature": "crate:bevy_core_pipeline",
+      "fullName": "prepass::NormalPrepass",
+      "id": "type-617984a9485385215c9ef53e",
+      "kind": "Component",
+      "name": "prepass::NormalPrepass",
+      "rust_type": "prepass::NormalPrepass",
+      "sourceEntries": [
+        {
+          "column": 1,
+          "dependency": {
+            "name": "bevy_core_pipeline",
+            "root": "//?/C:/Users/cck17/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/bevy_core_pipeline-0.20.0",
+            "version": "0.20.0"
+          },
+          "expansions": [],
+          "label": "定义位置",
+          "line": 71,
+          "path": "src/prepass/mod.rs",
+          "role": "definition",
+          "sha256": "25a2b1b7d03a75a5c64326f1a135b874d58727ac61a72dc001cac86bb04a5b71"
+        }
+      ],
+      "sourceGaps": [],
+      "typeIdentity": {
+        "crateName": "bevy_core_pipeline",
+        "declarationId": "decl-5e0a0bcbb7fba88e65e59e4b870b29c70ca8df046fecf7ff2a29a348ef04d2c1",
+        "defPath": "bevy_core_pipeline::prepass::NormalPrepass",
+        "local": true,
+        "package": {
+          "name": "bevy_core_pipeline",
+          "version": "0.20.0"
+        },
+        "roles": [
+          "Bundle",
+          "Component",
+          "Template"
+        ]
+      },
+      "typeInstanceId": "type-b096031741feb43a4c2814ad7bfb47ecd1fc7466eea9052b342df2ce163ac3e0"
+    },
+    "type-9f73006b1b20000202dc7cfc": {
+      "declarationId": "decl-e4300e6b54c6ed99197b1fcdcabdbe2af41d0b097f6edf752aaa48f5b373a015",
+      "description": "在阴影视图上保存深度模板视图附件和通道名称，供阴影绘制及相关视图历史数据维护识别该视图。",
+      "display_summary": "描述阴影绘制的深度附件与通道名称。",
+      "feature": "crate:bevy_pbr",
+      "fullName": "render::light::ShadowView",
+      "id": "type-9f73006b1b20000202dc7cfc",
+      "kind": "Component",
+      "name": "render::light::ShadowView",
+      "rust_type": "render::light::ShadowView",
+      "sourceEntries": [
+        {
+          "column": 1,
+          "dependency": {
+            "name": "bevy_pbr",
+            "root": "//?/C:/Users/cck17/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/bevy_pbr-0.20.0",
+            "version": "0.20.0"
+          },
+          "expansions": [],
+          "label": "定义位置",
+          "line": 998,
+          "path": "src/render/light.rs",
+          "role": "definition",
+          "sha256": "b4172e52eb955ab25b161fbc0f470f08ec994c211d826a6fa54821f43155c333"
+        }
+      ],
+      "sourceGaps": [],
+      "typeIdentity": {
+        "crateName": "bevy_pbr",
+        "declarationId": "decl-e4300e6b54c6ed99197b1fcdcabdbe2af41d0b097f6edf752aaa48f5b373a015",
+        "defPath": "bevy_pbr::render::light::ShadowView",
+        "local": true,
+        "package": {
+          "name": "bevy_pbr",
+          "version": "0.20.0"
+        },
+        "roles": [
+          "Bundle",
+          "Component"
+        ]
+      },
+      "typeInstanceId": "type-efd9bcd368b9c577c21f8b2b0b2a97bf089c4ab0abc6cc96683d52d8819b61b3"
+    },
+    "type-f1146df16a7b94a963ec3188": {
+      "declarationId": "decl-bb5214a958a778d0ee2d4c5bc33d6dfb684e1de10c5dff487332e655b377f9d0",
+      "description": "标记需要直接绘制控制的相机，使其不采用默认的 GPU 变换与裁剪间接路径；该设置应在创建相机时确定。",
+      "display_summary": "关闭相机的间接绘制模式。",
+      "feature": "crate:bevy_render",
+      "fullName": "bevy_render::view::NoIndirectDrawing",
+      "id": "type-f1146df16a7b94a963ec3188",
+      "kind": "Component",
+      "name": "bevy_render::view::NoIndirectDrawing",
+      "rust_type": "bevy_render::view::NoIndirectDrawing",
+      "sourceEntries": [
+        {
+          "column": 1,
+          "dependency": {
+            "name": "bevy_render",
+            "root": "//?/C:/Users/cck17/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/bevy_render-0.20.0",
+            "version": "0.20.0"
+          },
+          "expansions": [],
+          "label": "定义位置",
+          "line": 903,
+          "path": "src/view/mod.rs",
+          "role": "definition",
+          "sha256": "4fff95523f84adec56bd202615b06a1ce01b87699fb5f154136730d7b23f2730"
+        }
+      ],
+      "sourceGaps": [],
+      "typeIdentity": {
+        "crateName": "bevy_render",
+        "declarationId": "decl-bb5214a958a778d0ee2d4c5bc33d6dfb684e1de10c5dff487332e655b377f9d0",
+        "defPath": "bevy_render::view::NoIndirectDrawing",
+        "local": true,
+        "package": {
+          "name": "bevy_render",
+          "version": "0.20.0"
+        },
+        "roles": [
+          "Bundle",
+          "Component"
+        ]
+      },
+      "typeInstanceId": "type-06e17988228353dd506f052ed38042fb2ac9d1f826c3c0d1e2b0ef7324fbdd57"
+    },
+    "type-d502c3d68e7d0c223855c7bc": {
+      "declarationId": "decl-6207a4f53cd210cf69d6991682601c3130d3170b2f30af9754d6e59152fca8b4",
+      "description": "通过分层深度数据剔除被不透明或 alpha 测试物体完全遮挡的对象，以避免其顶点处理；本实现依赖深度预通道，并采用前后两阶段裁剪。",
+      "display_summary": "启用视图的 GPU 遮挡裁剪。",
+      "feature": "crate:bevy_render",
+      "fullName": "bevy_render::occlusion_culling::OcclusionCulling",
+      "id": "type-d502c3d68e7d0c223855c7bc",
+      "kind": "Component",
+      "name": "bevy_render::occlusion_culling::OcclusionCulling",
+      "rust_type": "bevy_render::occlusion_culling::OcclusionCulling",
+      "sourceEntries": [
+        {
+          "column": 1,
+          "dependency": {
+            "name": "bevy_render",
+            "root": "//?/C:/Users/cck17/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/bevy_render-0.20.0",
+            "version": "0.20.0"
+          },
+          "expansions": [],
+          "label": "定义位置",
+          "line": 73,
+          "path": "src/occlusion_culling/mod.rs",
+          "role": "definition",
+          "sha256": "506941851c39d43a3dd2e08b4dddeb432832bc6eaad22ccd42bde538a692ec00"
+        }
+      ],
+      "sourceGaps": [],
+      "typeIdentity": {
+        "crateName": "bevy_render",
+        "declarationId": "decl-6207a4f53cd210cf69d6991682601c3130d3170b2f30af9754d6e59152fca8b4",
+        "defPath": "bevy_render::occlusion_culling::OcclusionCulling",
+        "local": true,
+        "package": {
+          "name": "bevy_render",
+          "version": "0.20.0"
+        },
+        "roles": [
+          "Bundle",
+          "Component",
+          "Template"
+        ]
+      },
+      "typeInstanceId": "type-fba9230262a8122debdd799edc1d379dd11a7804e81f0fcde153fb494e792e9e"
+    },
+    "type-d0723a920e159d1e4846cf30": {
+      "declarationId": "decl-b49816b48ed9cc1fc4fa8b659109f51fc07a989382c474cfd8c06bb96c67c9a9",
+      "description": "把屏幕空间运动矢量写入独立预通道纹理，供时域抗锯齿和运动模糊等效果读取；矢量坐标以向右、向下为正方向。",
+      "display_summary": "为相机输出屏幕空间运动矢量。",
+      "feature": "crate:bevy_core_pipeline",
+      "fullName": "bevy_core_pipeline::prepass::MotionVectorPrepass",
+      "id": "type-d0723a920e159d1e4846cf30",
+      "kind": "Component",
+      "name": "bevy_core_pipeline::prepass::MotionVectorPrepass",
+      "rust_type": "bevy_core_pipeline::prepass::MotionVectorPrepass",
+      "sourceEntries": [
+        {
+          "column": 1,
+          "dependency": {
+            "name": "bevy_core_pipeline",
+            "root": "//?/C:/Users/cck17/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/bevy_core_pipeline-0.20.0",
+            "version": "0.20.0"
+          },
+          "expansions": [],
+          "label": "定义位置",
+          "line": 79,
+          "path": "src/prepass/mod.rs",
+          "role": "definition",
+          "sha256": "25a2b1b7d03a75a5c64326f1a135b874d58727ac61a72dc001cac86bb04a5b71"
+        }
+      ],
+      "sourceGaps": [],
+      "typeIdentity": {
+        "crateName": "bevy_core_pipeline",
+        "declarationId": "decl-b49816b48ed9cc1fc4fa8b659109f51fc07a989382c474cfd8c06bb96c67c9a9",
+        "defPath": "bevy_core_pipeline::prepass::MotionVectorPrepass",
+        "local": true,
+        "package": {
+          "name": "bevy_core_pipeline",
+          "version": "0.20.0"
+        },
+        "roles": [
+          "Bundle",
+          "Component",
+          "Template"
+        ]
+      },
+      "typeInstanceId": "type-368b05da48742ca1bb55cd9f2f48e031bdb8aebedac853c4e21efd847c65cfe9"
+    },
+    "type-e07335165c9943e7fd7fefca": {
+      "declarationId": "decl-9bf919e244aca624f38ac0c3dce79349a5c8b0a5adbe73343871b860013b7c33",
+      "description": "使该视图跳过 GPU 预处理缓冲生成，适用于多个视图共享同一绑定组、无需重复准备的场景。",
+      "display_summary": "避免视图重复执行 GPU 网格预处理。",
+      "feature": "crate:bevy_pbr",
+      "fullName": "render::gpu_preprocess::SkipGpuPreprocess",
+      "id": "type-e07335165c9943e7fd7fefca",
+      "kind": "Component",
+      "name": "render::gpu_preprocess::SkipGpuPreprocess",
+      "rust_type": "render::gpu_preprocess::SkipGpuPreprocess",
+      "sourceEntries": [
+        {
+          "column": 1,
+          "dependency": {
+            "name": "bevy_pbr",
+            "root": "//?/C:/Users/cck17/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/bevy_pbr-0.20.0",
+            "version": "0.20.0"
+          },
+          "expansions": [],
+          "label": "定义位置",
+          "line": 484,
+          "path": "src/render/gpu_preprocess.rs",
+          "role": "definition",
+          "sha256": "aa01807842e1552ab7ba71d2f18becffe9f922964b1c43f5db5aa46229a69721"
+        }
+      ],
+      "sourceGaps": [],
+      "typeIdentity": {
+        "crateName": "bevy_pbr",
+        "declarationId": "decl-9bf919e244aca624f38ac0c3dce79349a5c8b0a5adbe73343871b860013b7c33",
+        "defPath": "bevy_pbr::render::gpu_preprocess::SkipGpuPreprocess",
+        "local": true,
+        "package": {
+          "name": "bevy_pbr",
+          "version": "0.20.0"
+        },
+        "roles": [
+          "Bundle",
+          "Component"
+        ]
+      },
+      "typeInstanceId": "type-268ae3b497ed12c135622fc68ce6b19bae3a9a8a743404653b355b0f26b08c68"
+    }
+  },
+  "features": [
+    {
+      "id": "application",
+      "label": "应用",
+      "overviewNode": "app-main",
+      "plugin": "App"
+    },
+    {
+      "id": "audio",
+      "label": "audio",
+      "overviewNode": "type-fe229a335a2015d415bcde34",
+      "plugin": "GameAudioPlugin"
+    },
+    {
+      "id": "bounds_recovery",
+      "label": "bounds_recovery",
+      "overviewNode": "type-e220f6d8bbdc8e0b1d7ae14a",
+      "plugin": "BoundsRecoveryPlugin"
+    },
+    {
+      "id": "character",
+      "label": "character",
+      "overviewNode": "type-9f5e74b8983d1d371785d7d4",
+      "plugin": "CharacterPlugin"
+    },
+    {
+      "id": "character_animation",
+      "label": "character_animation",
+      "overviewNode": "type-e43174d6ec174b267c2337bf",
+      "plugin": "CharacterAnimationPlugin"
+    },
+    {
+      "id": "crate:avian3d",
+      "label": "crate:avian3d",
+      "overviewNode": "type-e1f78f7742625bcf6867b1f9",
+      "plugin": "ColliderMarker>"
+    },
+    {
+      "id": "crate:bevy_a11y",
+      "label": "crate:bevy_a11y",
+      "overviewNode": "type-22ee1e99c1ee816d24eb559a",
+      "plugin": "AccessibilityPlugin"
+    },
+    {
+      "id": "crate:bevy_animation",
+      "label": "crate:bevy_animation",
+      "overviewNode": "type-b2001902f869411ec71bb886",
+      "plugin": "AnimationPlugin"
+    },
+    {
+      "id": "crate:bevy_anti_alias",
+      "label": "crate:bevy_anti_alias",
+      "overviewNode": "type-f0db80cec426910a806c6453",
+      "plugin": "SmaaPlugin"
+    },
+    {
+      "id": "crate:bevy_app",
+      "label": "crate:bevy_app",
+      "overviewNode": "type-3c832dc62a28243b1b249584",
+      "plugin": "ComputedUiTargetCamera>"
+    },
+    {
+      "id": "crate:bevy_asset",
+      "label": "crate:bevy_asset",
+      "overviewNode": "type-e6f0dc60b6bc4a56a44b9159",
+      "plugin": "AssetPlugin"
+    },
+    {
+      "id": "crate:bevy_audio",
+      "label": "crate:bevy_audio",
+      "overviewNode": "type-8bdf1e09991c3ce42cf0fb0c",
+      "plugin": "AudioPlugin"
+    },
+    {
+      "id": "crate:bevy_camera",
+      "label": "crate:bevy_camera",
+      "overviewNode": "type-90bcc0c83535ea3d4c560608",
+      "plugin": "VisibilityRangePlugin"
+    },
+    {
+      "id": "crate:bevy_clipboard",
+      "label": "crate:bevy_clipboard",
+      "overviewNode": "type-e05fa32f80a2267a475d9bc4",
+      "plugin": "ClipboardPlugin"
+    },
+    {
+      "id": "crate:bevy_core_pipeline",
+      "label": "crate:bevy_core_pipeline",
+      "overviewNode": "type-9d8e3b8159fb4343abe80616",
+      "plugin": "BackgroundMotionVectorsPlugin"
+    },
+    {
+      "id": "crate:bevy_diagnostic",
+      "label": "crate:bevy_diagnostic",
+      "overviewNode": "type-e162c73e9cad776da185cda6",
+      "plugin": "FrameTimeDiagnosticsPlugin"
+    },
+    {
+      "id": "crate:bevy_ecs",
+      "label": "crate:bevy_ecs",
+      "plugin": "crate:bevy_ecs"
+    },
+    {
+      "id": "crate:bevy_egui",
+      "label": "crate:bevy_egui",
+      "overviewNode": "type-ab928111e76a303dd17c8389",
+      "plugin": "EguiPlugin"
+    },
+    {
+      "id": "crate:bevy_enhanced_input",
+      "label": "crate:bevy_enhanced_input",
+      "overviewNode": "type-62e22a92ceec500a5a4d2a72",
+      "plugin": "EnhancedInputPlugin"
+    },
+    {
+      "id": "crate:bevy_extract",
+      "label": "crate:bevy_extract",
+      "overviewNode": "type-e8ed9c4f64eb29b2745793df",
+      "plugin": "RenderApp>"
+    },
+    {
+      "id": "crate:bevy_gilrs",
+      "label": "crate:bevy_gilrs",
+      "overviewNode": "type-b687ccddb78f4a878d4cc87b",
+      "plugin": "GilrsPlugin"
+    },
+    {
+      "id": "crate:bevy_gizmos",
+      "label": "crate:bevy_gizmos",
+      "overviewNode": "type-3fe51096c146b1003d83a5b5",
+      "plugin": "GizmoPlugin"
+    },
+    {
+      "id": "crate:bevy_gizmos_render",
+      "label": "crate:bevy_gizmos_render",
+      "overviewNode": "type-8a75a7b64a54e8b89b045f34",
+      "plugin": "GizmoRenderPlugin"
+    },
+    {
+      "id": "crate:bevy_gltf",
+      "label": "crate:bevy_gltf",
+      "overviewNode": "type-94db0d79bb45ec2d3f6c0809",
+      "plugin": "GltfPlugin"
+    },
+    {
+      "id": "crate:bevy_image",
+      "label": "crate:bevy_image",
+      "overviewNode": "type-b75aba73cc0b95f64e544ab0",
+      "plugin": "ImagePlugin"
+    },
+    {
+      "id": "crate:bevy_input",
+      "label": "crate:bevy_input",
+      "overviewNode": "type-0f3cbe3071e81cb4b7fc88ac",
+      "plugin": "InputPlugin"
+    },
+    {
+      "id": "crate:bevy_input_focus",
+      "label": "crate:bevy_input_focus",
+      "overviewNode": "type-b07d192a12345efaa81d9f96",
+      "plugin": "InputDispatchPlugin"
+    },
+    {
+      "id": "crate:bevy_inspector_egui",
+      "label": "crate:bevy_inspector_egui",
+      "overviewNode": "type-5a62384792aace058b6ced15",
+      "plugin": "WorldInspectorPlugin"
+    },
+    {
+      "id": "crate:bevy_internal",
+      "label": "crate:bevy_internal",
+      "overviewNode": "type-837805a25d3cbae280841076",
+      "plugin": "DefaultPlugins"
+    },
+    {
+      "id": "crate:bevy_kira_audio",
+      "label": "crate:bevy_kira_audio",
+      "overviewNode": "type-3c62dedb30f4bdad4a66352d",
+      "plugin": "AudioPlugin"
+    },
+    {
+      "id": "crate:bevy_light",
+      "label": "crate:bevy_light",
+      "overviewNode": "type-41cefcf3937caa6117604f94",
+      "plugin": "LightPlugin"
+    },
+    {
+      "id": "crate:bevy_log",
+      "label": "crate:bevy_log",
+      "overviewNode": "type-4ff7bfbe87b12d4aa389d9fa",
+      "plugin": "LogPlugin"
+    },
+    {
+      "id": "crate:bevy_mesh",
+      "label": "crate:bevy_mesh",
+      "overviewNode": "type-8e1e18c2f6d00a474d464092",
+      "plugin": "MeshPlugin"
+    },
+    {
+      "id": "crate:bevy_pbr",
+      "label": "crate:bevy_pbr",
+      "overviewNode": "type-959b53082c7bc9a301fe4157",
+      "plugin": "StandardMaterial>"
+    },
+    {
+      "id": "crate:bevy_picking",
+      "label": "crate:bevy_picking",
+      "overviewNode": "type-2a3b2071f64752680be25438",
+      "plugin": "PointerInputPlugin"
+    },
+    {
+      "id": "crate:bevy_post_process",
+      "label": "crate:bevy_post_process",
+      "overviewNode": "type-68c453138f551e5cc16ef724",
+      "plugin": "BloomPlugin"
+    },
+    {
+      "id": "crate:bevy_render",
+      "label": "crate:bevy_render",
+      "overviewNode": "type-e81d73accac27d34c20515d5",
+      "plugin": "MeshPipeline>"
+    },
+    {
+      "id": "crate:bevy_scene",
+      "label": "crate:bevy_scene",
+      "overviewNode": "type-ab99562873650edff4f7a7ad",
+      "plugin": "ScenePlugin"
+    },
+    {
+      "id": "crate:bevy_sprite",
+      "label": "crate:bevy_sprite",
+      "overviewNode": "type-c6073d0b69d4c0131195f4ed",
+      "plugin": "SpritePickingPlugin"
+    },
+    {
+      "id": "crate:bevy_sprite_render",
+      "label": "crate:bevy_sprite_render",
+      "overviewNode": "type-817fca1c4fec38573a232b60",
+      "plugin": "TilemapChunkMaterial>"
+    },
+    {
+      "id": "crate:bevy_state",
+      "label": "crate:bevy_state",
+      "overviewNode": "type-c9143a45ad14f59f1668d79f",
+      "plugin": "StatesPlugin"
+    },
+    {
+      "id": "crate:bevy_text",
+      "label": "crate:bevy_text",
+      "overviewNode": "type-ee55c938b1ae5ae3e26f619b",
+      "plugin": "TextPlugin"
+    },
+    {
+      "id": "crate:bevy_time",
+      "label": "crate:bevy_time",
+      "overviewNode": "type-7ab246f00fc33293be63c1c6",
+      "plugin": "TimePlugin"
+    },
+    {
+      "id": "crate:bevy_transform",
+      "label": "crate:bevy_transform",
+      "overviewNode": "type-c79ba41df6e9f442672a3a82",
+      "plugin": "TransformPlugin"
+    },
+    {
+      "id": "crate:bevy_transform_interpolation",
+      "label": "crate:bevy_transform_interpolation",
+      "overviewNode": "type-ce443f3ee5a407a84023eecf",
+      "plugin": "AngVelSource>"
+    },
+    {
+      "id": "crate:bevy_ui",
+      "label": "crate:bevy_ui",
+      "overviewNode": "type-56b2dd3a1ec8e60d9354baf5",
+      "plugin": "UiPlugin"
+    },
+    {
+      "id": "crate:bevy_ui_render",
+      "label": "crate:bevy_ui_render",
+      "overviewNode": "type-b2f783f6f9e01edfa952fcb6",
+      "plugin": "BoxShadowPlugin"
+    },
+    {
+      "id": "crate:bevy_ui_widgets",
+      "label": "crate:bevy_ui_widgets",
+      "overviewNode": "type-1be226c39330b0b448161bc4",
+      "plugin": "SliderPlugin"
+    },
+    {
+      "id": "crate:bevy_window",
+      "label": "crate:bevy_window",
+      "overviewNode": "type-a12d9b629f9c1b38f75be7b3",
+      "plugin": "WindowPlugin"
+    },
+    {
+      "id": "crate:bevy_winit",
+      "label": "crate:bevy_winit",
+      "overviewNode": "type-e65f084be10a29e4bc0df422",
+      "plugin": "WinitCursorPlugin"
+    },
+    {
+      "id": "crate:bevy_world_serialization",
+      "label": "crate:bevy_world_serialization",
+      "overviewNode": "type-082d0046f2578e94b72ff4ba",
+      "plugin": "WorldSerializationPlugin"
+    },
+    {
+      "id": "first_person",
+      "label": "first_person",
+      "overviewNode": "type-964734928575643b82287fc0",
+      "plugin": "FirstPersonPlugin"
+    },
+    {
+      "id": "game_flow",
+      "label": "game_flow",
+      "overviewNode": "type-23e5447be5bafd77df069a32",
+      "plugin": "GameFlowPlugin"
+    },
+    {
+      "id": "inspector",
+      "label": "inspector",
+      "overviewNode": "type-10d9c47e7bc755be7d9f37ce",
+      "plugin": "InspectorPlugin"
+    },
+    {
+      "id": "item_interaction",
+      "label": "item_interaction",
+      "overviewNode": "type-10c230d9d29f3fcd30e1055e",
+      "plugin": "ItemInteractionPlugin"
+    },
+    {
+      "id": "physics",
+      "label": "physics",
+      "overviewNode": "type-dd8b0aace3f0f286a144a5b4",
+      "plugin": "GamePhysicsPlugin"
+    },
+    {
+      "id": "scene_assembly",
+      "label": "scene_assembly",
+      "overviewNode": "type-7091fb1f981c5f2146521243",
+      "plugin": "SceneAssemblyPlugin"
+    },
+    {
+      "id": "session_log",
+      "label": "session_log",
+      "overviewNode": "type-4cdfbe7d190589dd4fd10225",
+      "plugin": "SessionLogPlugin"
+    },
+    {
+      "id": "settings",
+      "label": "settings",
+      "overviewNode": "type-4c0d11e778a577e7c8b74571",
+      "plugin": "SettingsPlugin"
+    },
+    {
+      "id": "ui",
+      "label": "ui",
+      "overviewNode": "type-9fc51c6cece34beca8c15afe",
+      "plugin": "GameUiPlugin"
+    },
+    {
+      "id": "window_policy",
+      "label": "window_policy",
+      "overviewNode": "type-cb22dafa5d6af09497c5dd40",
+      "plugin": "WindowPolicyPlugin"
+    }
+  ]
+}

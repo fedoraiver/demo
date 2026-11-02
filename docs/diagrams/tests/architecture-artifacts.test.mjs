@@ -8,7 +8,7 @@ import { startExternalArchitecture } from '../src/architecture-viewer.mjs';
 import { testDocument } from './test-dom.mjs';
 import { hashFile } from '../src/stream-files.mjs';
 
-function fixture({ sidecar = false } = {}) {
+function fixture({ sidecar = false, objectRelationRuntime } = {}) {
   const temporary = path.join(repositoryRoot, 'tmp/ecs-architecture/artifact-tests');
   fs.mkdirSync(temporary, { recursive: true });
   const paths = pathsForRepository(fs.mkdtempSync(path.join(temporary, 'case-')));
@@ -16,7 +16,7 @@ function fixture({ sidecar = false } = {}) {
   fs.mkdirSync(paths.pagesDirectory, { recursive: true });
   fs.writeFileSync(path.join(paths.catalogDirectory, 'ecs-data.json'), '{}');
   const data = { schemaVersion: 5, model: { features: [], entities: [], systems: [{ id: 'system-a', description: '中文说明' }] },
-    registry: { a: { name: 'A', description: '完整说明 <&>' } }, objects: [{ id: 'a' }], objectAliases: {},
+    registry: { a: { name: 'A', description: '完整说明 <&>' } }, objects: [{ id: 'a' }], objectAliases: {}, infrastructureFeatures: [],
     guideSamples: { nodes: { system: '<svg xmlns="http://www.w3.org/2000/svg"/>' }, edges: {}, schedule: { nodes: {}, edges: {} } },
     views: [{ id: 'object-a', aspect: 'object', engine: 'mermaid', objectId: 'a', centerNodeId: 'a', filename: 'ecs-object-a.svg',
       mermaidFilename: 'ecs-object-a.mmd', label: 'A', nodes: [{ id: 'a' }], links: [], width: 10, height: 10,
@@ -37,7 +37,7 @@ function fixture({ sidecar = false } = {}) {
     assert.equal(hashFile(destination).sha256, expectedSha256);
   };
   for (const view of data.views) if (view.svg) { writeArtifact(artifactRelativePath(view), view.svg); writeArtifact(artifactRelativePath(view, 'mermaid'), view.mermaid); }
-  const bootstrap = writeExternalArchitecture({ paths, data, writeArtifact, copyArtifact, compilerModelDirectory });
+  const bootstrap = writeExternalArchitecture({ paths, data, writeArtifact, copyArtifact, compilerModelDirectory, objectRelationRuntime });
   fs.writeFileSync(path.join(paths.pagesDirectory, 'ecs-architecture.html'), '<script id="architecture-data" type="application/json">' + JSON.stringify(bootstrap) + '</script>');
   return { paths, data, bootstrap, compilerModelDirectory };
 }
@@ -49,9 +49,34 @@ test('external architecture round trip preserves full facts, graph bytes and emp
   assert.deepEqual(Object.keys(runtime.model).sort(), ['entities', 'features']);
   assert.equal(runtime.views[0].svg, undefined); assert.equal(runtime.views[0].nodes, undefined);
   assert.equal(runtime.views[0].resources.svg.url, '../svg/object/ecs-object-a.svg');
+  assert.equal(runtime.views[0].relationCount, data.views[0].links.length);
   const metadata = JSON.parse(fs.readFileSync(path.join(paths.viewDataDirectory, 'object-a.json'), 'utf8'));
   assert.equal(metadata.svg, undefined); assert.equal(metadata.mermaid, undefined);
   assert.equal(fs.readFileSync(path.join(paths.objectSvgDirectory, 'ecs-object-a.svg'), 'utf8'), data.views[0].svg);
+});
+
+test('object relation runtime is manifest-bound while full graph exports and facts remain unchanged', () => {
+  const source = 'export function createObjectRelationRenderer() {}', { paths, data } = fixture({ objectRelationRuntime: source });
+  const manifest = JSON.parse(fs.readFileSync(path.join(paths.dataDirectory, 'manifest.json'), 'utf8'));
+  const runtime = JSON.parse(fs.readFileSync(path.join(paths.dataDirectory, 'runtime.json'), 'utf8'));
+  assert.deepEqual(manifest.objectRelationRuntime, { path: 'runtime/object-relations.mjs', ...hashFile(path.join(paths.generatedDirectory, 'runtime/object-relations.mjs')) });
+  assert.deepEqual(runtime.objectRelationRuntime, { url: '../runtime/object-relations.mjs', sha256: manifest.objectRelationRuntime.sha256, bytes: Buffer.byteLength(source) });
+  assert.deepEqual(readArchitectureData(paths.repositoryRoot), data);
+  fs.appendFileSync(path.join(paths.generatedDirectory, 'runtime/object-relations.mjs'), ' ');
+  assert.throws(() => readArchitectureData(paths.repositoryRoot), /resource hash mismatch/);
+});
+
+test('descriptor relation counts are checked against actual metadata links after transport hashes pass', () => {
+  const { paths, bootstrap } = fixture();
+  const runtimePath = path.join(paths.dataDirectory, 'runtime.json'), manifestPath = path.join(paths.dataDirectory, 'manifest.json');
+  const runtime = JSON.parse(fs.readFileSync(runtimePath, 'utf8')), manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+  runtime.views[0].relationCount++;
+  fs.writeFileSync(runtimePath, JSON.stringify(runtime));
+  manifest.runtime = { path: manifest.runtime.path, ...hashFile(runtimePath) };
+  fs.writeFileSync(manifestPath, JSON.stringify(manifest));
+  bootstrap.runtimeSha256 = manifest.runtime.sha256; bootstrap.manifestSha256 = hashFile(manifestPath).sha256;
+  fs.writeFileSync(path.join(paths.pagesDirectory, 'ecs-architecture.html'), '<script id="architecture-data">' + JSON.stringify(bootstrap) + '</script>');
+  assert.throws(() => readArchitectureData(paths.repositoryRoot), /descriptor mismatch/);
 });
 
 test('external architecture fails on changed or missing resources and malformed bootstrap paths', () => {

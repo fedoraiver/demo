@@ -2,6 +2,7 @@
 use analysis_contract::entity_names::{NameEvidence, Site};
 use rustc_hir::def_id::DefId;
 use rustc_middle::ty::{self, GenericArgsRef, Ty, TyCtxt};
+use rustc_span::Span;
 use std::collections::{BTreeMap, BTreeSet};
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
@@ -9,6 +10,7 @@ pub struct Datum<'tcx> {
     pub ty: Ty<'tcx>,
     pub kind: Kind<'tcx>,
     pub site: Option<Site>,
+    pub span: Option<Span>,
 }
 
 /// 装配解释得到的可能组件与独立子实体；保留类型而不提前转成名称。
@@ -18,6 +20,9 @@ pub struct EntityStructure<'tcx> {
     pub required: Vec<Ty<'tcx>>,
     pub children: Vec<EntityStructure<'tcx>>,
     pub site: Option<Site>,
+    pub span: Option<Span>,
+    /// 每组为同一实体的互斥结构片段；独立组不做笛卡尔拼接。
+    pub alternatives: Vec<Vec<EntityStructure<'tcx>>>,
     pub gaps: Vec<String>,
 }
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
@@ -67,6 +72,7 @@ impl<'tcx> Datum<'tcx> {
             ty,
             kind,
             site: None,
+            span: None,
         }
     }
     pub fn unknown(ty: Ty<'tcx>, reason: impl Into<String>) -> Self {

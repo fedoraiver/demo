@@ -4,13 +4,25 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
+import { setTimeout as pause } from 'node:timers/promises';
+import puppeteer from 'puppeteer';
 import { atomicJson, bindVisual, currentArtifacts, hash, planVisual, recordVisual, renderVisual, resolveIndex, visualReport } from '../../../.agents/skills/update-ecs-architecture/scripts/maintenance-visual.mjs';
+import { visualRenderJobCount } from '../../../.agents/skills/update-ecs-architecture/scripts/maintenance-visual-render.mjs';
 import { maintenanceScripts } from '../../../.agents/skills/update-ecs-architecture/scripts/maintenance-paths.mjs';
+import { browserRendererProof } from './fixtures/browser-renderer-proof.mjs';
 
 const repository = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../..');
 const fixtureDirectory = path.join(repository, 'tmp/ecs-architecture/maintenance-visual-tests');
 const png = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jFvQAAAAASUVORK5CYII=', 'base64');
 const read = filename => JSON.parse(fs.readFileSync(filename, 'utf8'));
+function renderJobs(t, jobs) {
+  const previous = process.env.MAINTENANCE_VISUAL_JOBS;
+  process.env.MAINTENANCE_VISUAL_JOBS = String(jobs);
+  t.after(() => {
+    if (previous === undefined) delete process.env.MAINTENANCE_VISUAL_JOBS;
+    else process.env.MAINTENANCE_VISUAL_JOBS = previous;
+  });
+}
 function fixture(t, { count = 5, retain = false } = {}) {
   fs.mkdirSync(fixtureDirectory, { recursive: true });
   const workspace = fs.mkdtempSync(path.join(fixtureDirectory, 'case-'));
@@ -71,6 +83,20 @@ function fixtureCommit(f) {
   git(f.workspace, ['update-ref', 'refs/heads/main', commit]); git(f.workspace, ['symbolic-ref', 'HEAD', 'refs/heads/main']);
   return commit;
 }
+
+test('static rendering concurrency reserves CPU capacity and rejects invalid explicit settings', () => {
+  for (const [parallelism, expected] of [[1, 1], [2, 1], [4, 2], [16, 12], [64, 12]])
+    assert.equal(visualRenderJobCount({ environment: {}, parallelism }), expected);
+  for (const [configured, expected] of [['1', 1], ['16', 16], ['32', 32]])
+    assert.equal(visualRenderJobCount({ environment: { MAINTENANCE_VISUAL_JOBS: configured }, parallelism: 2 }), expected);
+  for (const MAINTENANCE_VISUAL_JOBS of ['', '0', '-1', '01', '+2', '1.5', '2.0', '1e1', ' 2', '2 ', '33', 'NaN', 'Infinity', null, 2])
+    assert.throws(() => visualRenderJobCount({ environment: { MAINTENANCE_VISUAL_JOBS }, parallelism: 16 }), /MAINTENANCE_VISUAL_JOBS must be an integer from 1 to 32/);
+});
+
+test('invalid rendering concurrency fails before resolving or launching a browser', async t => {
+  const f = fixture(t), plan = await f.plan(); renderJobs(t, 0);
+  await assert.rejects(renderVisual({ planPath: plan.planPath, browser: 'unused' }), /MAINTENANCE_VISUAL_JOBS/);
+});
 
 test('all current manifest SVGs and independent legends enter a new plan', async t => {
   const f = fixture(t), plan = await f.plan();
@@ -246,4 +272,128 @@ test('real static fixture rendering produces PNG hashes and native tiles without
   for (const image of result.records[0].images) assert.equal(hash(fs.readFileSync(image.path)), image.sha256);
   const report = await visualReport({ workspace: f.workspace, planPath: plan.planPath }); assert.equal(report.newPassed, 0); assert.equal(report.pending, 2);
   assert.equal((await renderVisual({ planPath: plan.planPath, from: item.sampleIndex, to: item.sampleIndex, browser: 'unused' })).renderedCount, 0);
+});
+
+test('real parallel static rendering isolates pages, serializes each image set and checkpoints sorted pending records', { skip: !process.env.MAINTENANCE_VISUAL_CHROMIUM }, async t => {
+  const f = fixture(t, { count: 25 }); renderJobs(t, 2);
+  const ref = f.manifest.views[0].svg;
+  f.manifest.views[0].svg = f.put(ref.path, '<svg xmlns="http://www.w3.org/2000/svg" id="view-0" data-diagram-engine="graphviz" viewBox="0 0 2500 1900"><rect width="2500" height="1900" fill="#F6F8FB"/><text x="20" y="40">Parallel tiled fixture</text></svg>'); f.save();
+  const plan = await f.plan(), recordsPath = path.join(path.dirname(plan.planPath), 'render-records.json');
+  const expected = new Map(plan.items.map(item => [item.sampleIndex, item]));
+  const live = new Set(), pages = new Set(), checkpoints = [], contexts = new Set(), liveContexts = new Set(), completedPages = [];
+  let launched = 0, closed = 0, peak = 0, screenshots = 0, firstWaveReady, firstWaveFailed, rendererProof;
+  const firstWave = new Promise((resolve, reject) => { firstWaveReady = resolve; firstWaveFailed = reject; });
+  const launch = puppeteer.launch.bind(puppeteer), rename = fs.renameSync;
+  t.mock.method(fs, 'renameSync', (from, to) => {
+    const result = rename(from, to);
+    if (to === recordsPath) checkpoints.push(read(recordsPath).records.map(row => row.sampleIndex));
+    return result;
+  });
+  t.mock.method(puppeteer, 'launch', async options => {
+    launched++; const chromium = await launch(options);
+    return {
+      createBrowserContext: async () => {
+        const context = await chromium.createBrowserContext(); contexts.add(context.id); liveContexts.add(context.id);
+        return { newPage: async () => {
+          const page = await context.newPage(), close = page.close.bind(page), screenshot = page.screenshot.bind(page);
+          live.add(page); pages.add(page); peak = Math.max(peak, live.size);
+          let capturing = false;
+          page.screenshot = async options => {
+            assert.equal(capturing, false, 'A page cannot capture overview and tiles concurrently');
+            capturing = true; screenshots++;
+            try {
+              const item = expected.get(Number(path.basename(options.path).split('-')[0]));
+              assert.ok(item);
+              const actual = await page.evaluate(() => { const svg = document.querySelector('svg'); return [svg.getAttribute('id'), svg.getAttribute('data-diagram-engine')]; });
+              if (item.engine !== 'legend') assert.deepEqual(actual, [item.viewId, item.engine], 'A screenshot must contain its own planned SVG');
+              return await screenshot(options);
+            } finally { capturing = false; }
+          };
+          page.close = async () => {
+            assert.equal(capturing, false);
+            completedPages.push(page);
+            if (completedPages.length === 2) void browserRendererProof(chromium, completedPages).then(proof => {
+              rendererProof = proof; firstWaveReady();
+            }, firstWaveFailed);
+            await firstWave;
+            try { await close(); } finally { live.delete(page); }
+          };
+          return page;
+        }, close: async () => { await context.close(); liveContexts.delete(context.id); } };
+      },
+      close: async () => { assert.equal(live.size, 0); assert.equal(liveContexts.size, 0); closed++; await chromium.close(); },
+    };
+  });
+  const result = await renderVisual({ planPath: plan.planPath, browser: process.env.MAINTENANCE_VISUAL_CHROMIUM });
+  assert.equal(launched, 1); assert.equal(closed, 1); assert.equal(peak, 2); assert.equal(pages.size, 2);
+  assert.equal(contexts.size, 2); assert.equal(new Set(rendererProof.contexts).size, 2); assert.ok(rendererProof.activeRenderers.length >= 2);
+  t.diagnostic('Static SVG renderer process proof: ' + JSON.stringify(rendererProof));
+  assert.equal(result.renderedCount, plan.items.length); assert.equal(result.records.length, plan.items.length);
+  assert.deepEqual(result.records.map(row => row.sampleIndex), plan.items.map(item => item.sampleIndex));
+  assert.deepEqual(checkpoints.map(rows => rows.length), [24, 26]);
+  for (const rows of checkpoints) assert.deepEqual(rows, [...rows].sort((a, b) => a - b));
+  assert.equal(result.records.find(row => row.viewId === 'view-0').nativeTiles.length, 4);
+  assert.equal(screenshots, result.records.reduce((sum, row) => sum + row.images.length, 0));
+  assert.ok(result.records.every(row => row.status === 'pending' && !row.actualInspection));
+  for (const row of result.records) for (const image of row.images) assert.equal(hash(fs.readFileSync(image.path)), image.sha256);
+  const report = await visualReport({ workspace: f.workspace, planPath: plan.planPath });
+  assert.equal(report.newPassed, 0); assert.equal(report.pending, plan.items.length);
+  assert.equal((await renderVisual({ planPath: plan.planPath, browser: 'unused' })).renderedCount, 0);
+});
+
+test('parallel rendering waits for every in-flight page after a capture failure and never reports the partial batch as success', { skip: !process.env.MAINTENANCE_VISUAL_CHROMIUM }, async t => {
+  const f = fixture(t, { count: 3 }), plan = await f.plan(); renderJobs(t, 2);
+  const launch = puppeteer.launch.bind(puppeteer), live = new Set(), liveContexts = new Set();
+  let captures = 0, closed = 0, laterCaptureFinished = false, bothCapturing;
+  const firstWave = new Promise(resolve => { bothCapturing = resolve; });
+  t.mock.method(puppeteer, 'launch', async options => {
+    const chromium = await launch(options);
+    return {
+      createBrowserContext: async () => {
+        const context = await chromium.createBrowserContext(); liveContexts.add(context.id);
+        return { newPage: async () => {
+          const page = await context.newPage(), close = page.close.bind(page), screenshot = page.screenshot.bind(page);
+          live.add(page);
+          page.screenshot = async options => {
+            const sequence = ++captures;
+            if (sequence === 2) bothCapturing();
+            await firstWave;
+            if (sequence === 1) throw new Error('Fixture capture failed');
+            await pause(25);
+            const result = await screenshot(options); laterCaptureFinished = true; return result;
+          };
+          page.close = async () => { try { await close(); } finally { live.delete(page); } };
+          return page;
+        }, close: async () => { await context.close(); liveContexts.delete(context.id); } };
+      },
+      close: async () => {
+        assert.equal(live.size, 0); assert.equal(liveContexts.size, 0); assert.equal(laterCaptureFinished, true);
+        closed++; await chromium.close();
+      },
+    };
+  });
+  await assert.rejects(renderVisual({ planPath: plan.planPath, browser: process.env.MAINTENANCE_VISUAL_CHROMIUM }), /Fixture capture failed/);
+  assert.equal(captures, 2); assert.equal(closed, 1);
+  assert.equal(fs.existsSync(path.join(path.dirname(plan.planPath), 'render-records.json')), false);
+  assert.equal(fs.existsSync(plan.indexPath) ? read(plan.indexPath).observations.length : 0, 0);
+});
+
+test('render batches revalidate every frozen reference after producing images', { skip: !process.env.MAINTENANCE_VISUAL_CHROMIUM }, async t => {
+  const f = fixture(t, { count: 3 }), plan = await f.plan(); renderJobs(t, 2);
+  const rename = fs.renameSync;
+  let changed = false;
+  fs.renameSync = (from, to) => {
+    const result = rename(from, to);
+    if (!changed && String(to).endsWith('.png') && String(to).startsWith(path.dirname(plan.planPath))) {
+      changed = true;
+      // 清单原字节未改，变化发生在当前 SVG 以外的已冻结引用中。
+      fs.appendFileSync(path.join(f.generated, f.manifest.runtime.path), ' ');
+    }
+    return result;
+  };
+  try {
+    await assert.rejects(renderVisual({ planPath: plan.planPath, browser: process.env.MAINTENANCE_VISUAL_CHROMIUM }), /Artifact hash\/size mismatch/);
+    assert.equal(changed, true);
+    assert.equal(fs.existsSync(plan.indexPath) ? read(plan.indexPath).observations.length : 0, 0);
+  } finally { fs.renameSync = rename; }
 });

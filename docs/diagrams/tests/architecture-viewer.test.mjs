@@ -11,9 +11,10 @@ import { createArchitectureSearch } from '../src/architecture-search.mjs';
 import { NODE_STYLES, EDGE_STYLES, SELECTION_STYLE, EXTERNAL_REFERENCE_STYLE, selectedFillColor } from '../src/architecture-style.mjs';
 import { SCHEDULE_LEGEND_LABELS } from '../src/schedule-legend.mjs';
 import { testDocument, scriptsIn } from './test-dom.mjs';
+import { projectInfrastructureFeatures } from '../src/architecture-infrastructure.mjs';
 
 function fixture() {
-  const features=[{id:'item',label:'物品交互',plugin:'ItemPlugin',contracts:['Shared public contract']},{id:'character',label:'人物',plugin:'CharacterPlugin'}];
+  const features=[{id:'item',label:'物品交互',plugin:'ItemPlugin',overviewNode:'plugin-ItemPlugin',contracts:['Shared public contract']},{id:'character',label:'人物',plugin:'CharacterPlugin',overviewNode:'plugin-CharacterPlugin'}];
   const source=(role,line,label=role)=>({role,label,path:'src/item.rs',line});
   const registry={
     'plugin-ItemPlugin':{id:'plugin-ItemPlugin',kind:'Plugin',name:'ItemPlugin',description:'完整插件说明',feature:'item'},
@@ -37,6 +38,10 @@ function fixture() {
     'context-sync':{id:'context-sync',kind:'Synchronization',name:'ApplyDeferred',description:'应用延迟命令的同步依赖端点。',feature:'infrastructure',sourceEntries:[source('implementation',120)]},
     'constraint-missing':{id:'constraint-missing',kind:'Scheduling constraint',name:'<missing> update_shared',description:'仅由依赖引用的目标，不是本调度中的已注册系统。',feature:'infrastructure',sourceGaps:['待核实：本调度未注册目标系统']},
   };
+  const nativePlugin=(id,crateName,defPath)=>{registry[id].typeIdentity={declarationId:'decl:'+id,crateName,defPath,local:true,roles:[registry[id].kind],...(crateName==='demo'?{}:{package:{name:crateName==='bevy_inspector_egui'?'bevy-inspector-egui':crateName,version:'1.0.0'}})};registry[id].declarationId='decl:'+id};
+  nativePlugin('plugin-ItemPlugin','demo','demo::item::ItemPlugin');nativePlugin('plugin-CharacterPlugin','demo','demo::character::CharacterPlugin');
+  nativePlugin('plugin-physics-0','avian3d','avian3d::PhysicsPlugins');nativePlugin('plugin-DefaultPlugins','bevy_internal','bevy_internal::default_plugins::DefaultPlugins');
+  nativePlugin('plugin-inspector-0','bevy_egui','bevy_egui::EguiPlugin');nativePlugin('plugin-inspector-1','bevy_inspector_egui','bevy_inspector_egui::quick::WorldInspectorPlugin');
   const system={kind:'System',name:'update_shared',description:'完整系统说明，保留所有组件和资源访问。',feature:'item',reads:['item.Shared','item.Other','character.Shared','resource.Config','local.State','non_send.Native'],writes:['item.Shared','resource.Config'],filters:['Query<&mut Shared>','With<Pickable>'],events:['消息记录'],notes:['具体运行约束'],registrationFamilyIds:['system-fixed','system-update']};
   registry['system-fixed']={...system,id:'system-fixed',registrations:[{schedule:'FixedUpdate',scope:'runtime',sets:['Target','Other'],run_if:['running']}],sourceEntries:[source('definition',40),source('registration',50,'固定步注册')]};
   registry['system-update']={...system,id:'system-update',registrations:[{schedule:'RunFixedMainLoop',scope:'runtime',driver_set:'AfterFixedMainLoop',after:[]}],sourceEntries:[source('definition',40),source('registration',60,'逐帧注册')]};
@@ -56,20 +61,20 @@ function fixture() {
   }
   const objects=views.filter(view=>view.aspect==='object').map(view=>({id:view.objectId,viewId:view.id,feature:view.feature,kind:registry[view.objectId].kind}));
   const scheduleSamples={nodes:Object.fromEntries(['system','system_set','context'].map(kind=>[kind,'<svg data-schedule-sample="'+kind+'"></svg>'])),edges:Object.fromEntries(['order','set_membership'].map(kind=>[kind,'<svg data-schedule-sample="'+kind+'"></svg>']))};
-  return{model:{features,entities:[{id:'item',components:[{id:'item.Shared'},{id:'item.Other'}]},{id:'character',components:[{id:'character.Shared'}]}]},registry,views,objects,schedulePluginCatalog,objectAliases:{'old-component-type':['item.Shared','character.Shared'],'old-function':['system-fixed','system-update']},features,infrastructureFeatures:[{id:'avian',label:'Avian',overviewNode:'plugin-physics-0'}],scheduleLegendLabels:SCHEDULE_LEGEND_LABELS,guideSamples:{schedule:scheduleSamples,nodes:Object.fromEntries(Object.keys(NODE_STYLES).map(type=>[type,'<svg data-sample="'+type+'"></svg>'])),edges:Object.fromEntries(Object.keys(EDGE_STYLES).map(type=>[type,'<svg data-sample="'+type+'"></svg>']))},styles:{nodes:NODE_STYLES,edges:EDGE_STYLES,selection:SELECTION_STYLE,externalReference:EXTERNAL_REFERENCE_STYLE}};
+  return{model:{features,entities:[{id:'item',components:[{id:'item.Shared'},{id:'item.Other'}]},{id:'character',components:[{id:'character.Shared'}]}]},registry,views,objects,schedulePluginCatalog,objectAliases:{'old-component-type':['item.Shared','character.Shared'],'old-function':['system-fixed','system-update']},features,infrastructureFeatures:projectInfrastructureFeatures(registry),scheduleLegendLabels:SCHEDULE_LEGEND_LABELS,guideSamples:{schedule:scheduleSamples,nodes:Object.fromEntries(Object.keys(NODE_STYLES).map(type=>[type,'<svg data-sample="'+type+'"></svg>'])),edges:Object.fromEntries(Object.keys(EDGE_STYLES).map(type=>[type,'<svg data-sample="'+type+'"></svg>']))},styles:{nodes:NODE_STYLES,edges:EDGE_STYLES,selection:SELECTION_STYLE,externalReference:EXTERNAL_REFERENCE_STYLE}};
 }
 
-function viewer(query='?object=item.Shared',{historyUnavailable=false,width=1440,edit=()=>{},createScheduleRenderer,loadView,pinView}={}) {
+function viewer(query='?object=item.Shared',{historyUnavailable=false,width=1440,edit=()=>{},createScheduleRenderer,loadView,pinView,createObjectRelationRenderer}={}) {
   const data=fixture();edit(data);
   const html=renderArchitectureViewer({...data,features:data.features});
   const fullViews=data.views;
-  if(loadView)data.views=fullViews.map(view=>({...Object.fromEntries(['id','aspect','engine','label','feature','objectId','centerNodeId','application','scheduleLabel','systemCount','width','height','filename','legendKinds'].filter(key=>view[key]!==undefined).map(key=>[key,view[key]])),...(view.schedulePluginGroups?{schedulePluginGroups:view.schedulePluginGroups.map(group=>({id:group.id,systemCount:new Set(group.systemNames).size}))}:{}),resources:{data:{url:'../data/'+view.id+'.json',sha256:'a'.repeat(64)},svg:{url:'../svg/'+view.id+'.svg',sha256:'b'.repeat(64)}}}));
+  if(loadView)data.views=fullViews.map(view=>({...Object.fromEntries(['id','aspect','engine','label','feature','objectId','centerNodeId','application','scheduleLabel','systemCount','width','height','filename','legendKinds','relationCount'].filter(key=>view[key]!==undefined).map(key=>[key,view[key]])),...(view.schedulePluginGroups?{schedulePluginGroups:view.schedulePluginGroups.map(group=>({id:group.id,systemCount:new Set(group.systemNames).size}))}:{}),resources:{data:{url:'../data/'+view.id+'.json',sha256:'a'.repeat(64)},svg:{url:'../svg/'+view.id+'.svg',sha256:'b'.repeat(64)}}}));
   const document=testDocument(html),location=new URL('file:///D:/demo/docs/diagrams/ecs-architecture.html'+query),frames=[],events=new Map(),entries=[{href:location.href,state:null}],historyWrites=[];let index=0;
   const history={get state(){return entries[index].state},get length(){return entries.length},replaceState(state,_,href){if(historyUnavailable)throw new Error('unavailable');historyWrites.push('replace');location.href=new URL(href,location).href;entries[index]={href:location.href,state:structuredClone(state)}},pushState(state,_,href){if(historyUnavailable)throw new Error('unavailable');historyWrites.push('push');entries.splice(index+1);location.href=new URL(href,location).href;entries.push({href:location.href,state:structuredClone(state)});index++}};
   const window={innerWidth:width,innerHeight:900,addEventListener(name,listener){events.set(name,listener)}};
   const canvas=document.getElementById('canvas');canvas.clientWidth=950;canvas.clientHeight=600;
   const refreshed=[];
-  const app=createArchitectureViewer({data,document,location,history,window,requestAnimationFrame:callback=>frames.push(callback),sourceEditor:{refreshLinks:scope=>refreshed.push(scope),withWorkspace:href=>href},navigation:createArchitectureNavigation(data.features,data.views.filter(view=>view.aspect==='schedule')),createSplitter:createArchitectureSplitter,createInteraction:createArchitectureInteraction,createGestures:createArchitectureGestures,createObjectSearch:createArchitectureSearch,createScheduleRenderer,loadView,pinView});
+  const app=createArchitectureViewer({data,document,location,history,window,requestAnimationFrame:callback=>frames.push(callback),sourceEditor:{refreshLinks:scope=>refreshed.push(scope),withWorkspace:href=>href},navigation:createArchitectureNavigation(data.features,data.views.filter(view=>view.aspect==='schedule')),createSplitter:createArchitectureSplitter,createInteraction:createArchitectureInteraction,createGestures:createArchitectureGestures,createObjectSearch:createArchitectureSearch,createScheduleRenderer,loadView,pinView,createObjectRelationRenderer});
   function flush(){while(frames.length)frames.splice(0).forEach(callback=>callback())}flush();
   function click(element){assert.ok(element,'control exists');element.click();flush()}
   return{data,fullViews,app,document,location,history,historyWrites,canvas,window,emit:(name,event)=>events.get(name)?.(event),refreshed,get:id=>document.getElementById(id),click,flush,choose(id){const select=document.getElementById('view-select');select.value=id;select.dispatch('change');flush()},async settle(){await app.ready;flush()},activate(id,key='Enter'){const node=document.getElementById('diagram').querySelector('[data-id="'+id+'"]');assert.ok(node,'visible node '+id);node.dispatch('keydown',{key});flush()},back(){assert.ok(index>0);location.href=entries[--index].href;events.get('popstate')();flush()},forward(){assert.ok(index+1<entries.length);location.href=entries[++index].href;events.get('popstate')();flush()}};
@@ -900,7 +905,11 @@ test('top view picker selects native exports and object return retains the selec
   assert.ok(egui>=0);assert.equal(infrastructure[egui+1].value,'object:plugin-inspector-1');
   assert.ok(infrastructure[egui].textContent.includes('EguiPlugin'));assert.ok(infrastructure[egui+1].textContent.includes('WorldInspectorPlugin'));
   const options=new Set(picker.querySelectorAll('option').map(option=>option.value));
-  for(const [id,record]of Object.entries(page.data.registry))if(['Plugin','PluginGroup'].includes(record.kind))assert.ok(options.has('object:'+id),id);
+  for(const id of ['plugin-ItemPlugin','plugin-CharacterPlugin','plugin-DefaultPlugins','plugin-physics-0','plugin-inspector-0','plugin-inspector-1'])assert.ok(options.has('object:'+id),id);
+  for(const id of ['plugin-physics-1','plugin-ButtonPlugin']){
+    assert.equal(options.has('object:'+id),false);page.app.openObject(id);page.flush();assert.equal(page.app.view.objectId,id);
+    assert.equal(page.get('current-object-option').querySelector('option').value,'object:'+id);
+  }
   page.choose('schedule-render');assert.equal(page.app.view.id,'schedule-render');
   page.choose('object:plugin-ItemPlugin');assert.equal(page.app.view.id,'object:plugin-ItemPlugin');
   page.click(page.get('return-overview'));assert.equal(page.app.view.id,'schedule-render');
@@ -1180,4 +1189,88 @@ test('filter menus clamp to the viewport, allow Tab, and close mutually with obj
   page.get('view-select').focus();page.get('view-select').dispatch('focusin');assert.equal(page.get('schedule-exclude-menu').hidden,true);assert.equal(page.document.activeElement,page.get('view-select'));
   page.click(page.get('schedule-exclude'));page.click(page.canvas);assert.equal(page.get('schedule-exclude-menu').hidden,true);
   page.click(page.get('schedule-include'));page.app.search('Shared');assert.equal(menu.hidden,true);assert.equal(page.get('object-results').hidden,false);
+});
+
+
+function denseFixture(data) {
+  const target=data.views.find(view=>view.objectId==='item.Shared'),original=target.links[0];
+  target.links=Array.from({length:64},(_,index)=>({...original,id:'dense-'+index,label:'可选挂载 条件 '+index}));
+  target.relationCount=64;
+}
+function focusedRelation(target,id) {
+  const link=target.links.find(link=>link.id===id),nodes=target.nodes.filter(node=>[link.from,link.to].includes(node.id));
+  return {...target,nodes,links:[link],svg:'<svg>'+nodes.map(node=>'<g class="node" data-id="'+node.id+'" data-instance="'+node.instance+'" data-visual-type="'+node.visualType+'"><rect data-shape-part="'+node.instance+'"/></g>').join('')+'<path class="edge" data-link-id="'+id+'"/></svg>',renderKey:target.id+':relation:'+id};
+}
+function chooseRelation(page,id) { page.click(page.get('relation-list').querySelector('[data-relation="'+id+'"]')); }
+
+test('dense defaults show all canonical relationships without loading or attaching the full SVG',async()=>{
+  const requests=[];
+  const page=viewer('?object=item.Shared&workspace=D%3A%2Fdemo#keep',{edit:denseFixture,loadView:async(ref,options)=>{requests.push(options);return {...page.fullViews.find(view=>view.id===ref.id),svg:options.includeSvg?'<svg data-full-graph="true"/>':null}}});
+  await page.settle();
+  assert.equal(requests.length,1);assert.equal(requests[0].includeSvg,false);
+  assert.equal(page.get('object-relations').hidden,false);assert.equal(page.get('relation-list').querySelectorAll('[data-relation]').length,64);
+  assert.equal(page.get('diagram').querySelector('svg'),null);assert.equal(page.app.view.relationPresentation,'list');
+  assert.equal(page.get('relation-count').textContent,'64 / 64 条关系');
+  assert.equal(page.location.searchParams.get('workspace'),'D:/demo');assert.equal(page.location.hash,'#keep');
+});
+
+test('dense search retains full endpoints and contracts, selected native pair and list history keep query scroll and focus',async()=>{
+  const renders=[];
+  const page=viewer('?object=item.Shared',{edit:denseFixture,createObjectRelationRenderer:()=>({render:async(target,id)=>{renders.push({target,id});return focusedRelation(target,id)}})});
+  const search=page.get('relation-search');search.focus();search.value='条件 63';search.dispatch('input');page.get('relation-list').scrollTop=27;page.get('relation-list').dispatch('scroll');
+  assert.equal(page.get('relation-count').textContent,'1 / 64 条关系');
+  assert.match(page.get('relation-list').textContent,/Shared/);assert.match(page.get('relation-list').textContent,/物品/);
+  const button=page.get('relation-list').querySelector('[data-relation="dense-63"]');button.focus();chooseRelation(page,'dense-63');await page.settle();
+  assert.equal(renders.length,1);assert.equal(renders[0].target.links.length,64);assert.equal(page.app.view.links[0],renders[0].target.links[63]);
+  assert.equal(page.app.view.nodes.length,2);assert.equal(page.app.view.links.length,1);assert.equal(page.location.searchParams.get('objectRelation'),'dense-63');
+  assert.match(page.get('details').textContent,/条件 63/);assert.equal(page.get('details').querySelector('[data-vscode-line]').dataset.vscodeLine,'70');
+  assert.equal(page.get('relation-search').value,'条件 63');assert.equal(page.get('relation-list').scrollTop,27);assert.equal(page.document.activeElement.dataset.relation,'dense-63');
+  page.click(page.get('clear-selection'));assert.equal(page.get('details').querySelectorAll('[data-guide-node-type]').length,2);assert.equal(page.get('details').querySelectorAll('[data-guide-edge-semantic]').length,1);
+  page.click(page.get('relation-overview'));assert.equal(page.app.view.relationPresentation,'list');assert.equal(page.get('relation-search').value,'条件 63');assert.equal(page.location.searchParams.has('objectRelation'),false);
+  page.back();await page.settle();assert.equal(page.app.view.relationPresentation,'relation');assert.equal(page.get('clear-selection'),null);assert.equal(page.get('relation-search').value,'条件 63');
+  page.forward();await page.settle();assert.equal(page.app.view.relationPresentation,'list');assert.equal(page.get('relation-list').scrollTop,27);
+});
+
+test('dense unknown relations and render errors keep the complete directory and offer another relation',async()=>{
+  const page=viewer('?object=item.Shared&objectRelation=missing',{edit:denseFixture,createObjectRelationRenderer:()=>({render:async()=>{throw new Error('failure')}})});
+  assert.match(page.get('schedule-status').textContent,/已不存在/);assert.equal(page.get('relation-list').querySelectorAll('[data-relation]').length,64);
+  chooseRelation(page,'dense-1');await page.settle();assert.match(page.get('schedule-status').textContent,/显示失败/);assert.match(page.get('details').textContent,/条件 1/);
+  assert.equal(page.get('relation-list').querySelectorAll('[data-relation]').length,64);page.click(page.get('relation-overview'));assert.equal(page.app.view.relationPresentation,'list');
+});
+
+test('dense late renders cannot overwrite a newer relation, list, ordinary object or cleared selection',async()=>{
+  const requests=[];let cancelled=0;
+  const page=viewer('?object=item.Shared',{edit:denseFixture,createObjectRelationRenderer:()=>({render:(target,id)=>new Promise((resolve,reject)=>requests.push({target,id,resolve,reject})),cancel:()=>cancelled++})});
+  chooseRelation(page,'dense-1');await advance();chooseRelation(page,'dense-2');await advance();
+  requests[1].resolve(focusedRelation(requests[1].target,'dense-2'));await page.settle();requests[0].resolve(focusedRelation(requests[0].target,'dense-1'));await advance();page.flush();assert.equal(page.app.view.links[0].id,'dense-2');
+  chooseRelation(page,'dense-3');await advance();page.app.select(null);requests[2].resolve(focusedRelation(requests[2].target,'dense-3'));await page.settle();assert.equal(page.get('clear-selection'),null);
+  chooseRelation(page,'dense-4');await advance();page.click(page.get('relation-overview'));requests[3].resolve(focusedRelation(requests[3].target,'dense-4'));await advance();page.flush();assert.equal(page.app.view.relationPresentation,'list');
+  chooseRelation(page,'dense-5');await advance();page.app.openObject('resource.Config');requests[4].resolve(focusedRelation(requests[4].target,'dense-5'));await advance();page.flush();assert.equal(page.app.view.objectId,'resource.Config');assert.equal(page.get('object-relations').hidden,true);
+});
+
+test('dense explicit full view fetches complete SVG and return to directory keeps narrow-screen controls and downloads',async()=>{
+  const loads=[];
+  const page=viewer('?object=item.Shared',{width:780,edit:data=>{denseFixture(data);const view=data.views.find(view=>view.objectId==='item.Shared');view.resources={svg:{url:'generated/full.svg'},mermaid:{url:'generated/full.mmd'}}},loadView:async(ref,options)=>{loads.push(options.includeSvg);return {...page.fullViews.find(view=>view.id===ref.id),svg:options.includeSvg?'<svg data-full="yes"/>':null}}});
+  await page.settle();page.click(page.get('relation-full'));await page.settle();assert.deepEqual(loads,[false,true]);assert.equal(page.app.view.relationPresentation,'all');assert.equal(page.location.searchParams.get('objectMode'),'all');assert.ok(page.get('diagram').querySelector('[data-full]'));
+  assert.equal(page.get('relation-svg').getAttribute('href'),'generated/full.svg');assert.equal(page.get('relation-mermaid').getAttribute('href'),'generated/full.mmd');
+  page.click(page.get('relation-overview'));await page.settle();assert.equal(page.app.view.relationPresentation,'list');assert.deepEqual(loads,[false,true,false]);
+  page.get('relation-search').focus();page.get('relation-search').value='no such relation';page.get('relation-search').dispatch('input');assert.match(page.get('relation-list').textContent,/没有匹配关系/);assert.equal(page.document.activeElement.id,'relation-search');
+});
+
+test('dense failures retry without history entries, and BFCache resumes pending relation work',async()=>{
+  const requests=[];
+  const page=viewer('?object=item.Shared',{edit:denseFixture,createObjectRelationRenderer:()=>({render:(target,id)=>new Promise((resolve,reject)=>requests.push({target,id,resolve,reject})),cancel(){}})});
+  chooseRelation(page,'dense-1');await advance();requests[0].reject(new Error('failure'));await page.settle();
+  const length=page.history.length;page.click(page.get('retry-relation'));await advance();assert.equal(page.history.length,length);
+  page.emit('pagehide',{});page.emit('pageshow',{persisted:true});await advance();assert.equal(requests.length,3);
+  requests[1].resolve(focusedRelation(requests[1].target,'dense-1'));await advance();page.flush();assert.equal(page.app.view.relationPresentation,'list');
+  requests[2].resolve(focusedRelation(requests[2].target,'dense-1'));await page.settle();assert.equal(page.app.view.relationPresentation,'relation');assert.equal(page.history.length,length);
+});
+
+test('dense relation typing and scrolling during metadata loads survive the late result',async()=>{
+  let count=0,finish;
+  const page=viewer('?object=item.Shared',{edit:denseFixture,loadView:async ref=>{if(++count>1)await new Promise(resolve=>finish=resolve);return {...page.fullViews.find(view=>view.id===ref.id),svg:null}},createObjectRelationRenderer:()=>({render:async(target,id)=>focusedRelation(target,id),cancel(){}})});
+  await page.settle();chooseRelation(page,'dense-1');await advance();
+  const search=page.get('relation-search');search.focus();search.value='条件 6';search.dispatch('input');page.get('relation-list').scrollTop=48;page.get('relation-list').dispatch('scroll');page.app.select(null);
+  finish();await page.settle();assert.equal(page.get('relation-search').value,'条件 6');assert.equal(page.get('relation-list').scrollTop,48);assert.equal(page.document.activeElement.id,'relation-search');assert.equal(page.app.view.links[0].id,'dense-1');assert.equal(page.get('clear-selection'),null);
 });

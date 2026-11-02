@@ -61,7 +61,13 @@ fn extracts_real_bevy_protocols_and_bsn() {
         "-Zalways-encode-mir".into(),
         "-Zmir-opt-level=0".into(),
     ];
-    for name in ["bevy_ecs", "bevy_scene", "bevy_app"] {
+    for name in [
+        "bevy_ecs",
+        "bevy_scene",
+        "bevy_app",
+        "bevy_ui",
+        "bevy_ui_widgets",
+    ] {
         let artifact = paths
             .iter()
             .find(|path| {
@@ -205,9 +211,175 @@ fn extracts_real_bevy_protocols_and_bsn() {
             .any(|entity| !entity.children.is_empty())
     );
     assert!(
-        facts.entities.iter().all(|entity| entity.gaps.is_empty()),
+        facts
+            .entities
+            .iter()
+            .all(|entity| entity.gaps.iter().all(|gap| matches!(
+                gap.kind.as_str(),
+                "entity-alternative" | "entity-multiplicity"
+            ) || gap.reason.contains("独立结构候选")
+                || gap.reason.contains("没有可达返回状态"))),
         "{:?}",
         facts.entities
+    );
+    let component = |path: &str| {
+        let declaration = facts
+            .declarations
+            .iter()
+            .find(|declaration| declaration.full_name == path)
+            .expect(path);
+        facts
+            .types
+            .iter()
+            .find(|ty| ty.declaration.as_deref() == Some(&declaration.id))
+            .unwrap()
+            .id
+            .clone()
+    };
+    let text = component("bevy_ui::widget::text::Text");
+    let button = component("bevy_ui_widgets::button::Button");
+    assert!(
+        facts
+            .entities
+            .iter()
+            .all(|entity| !(entity.components.contains(&text)
+                && entity.components.contains(&button))),
+        "Distinct branch shapes were merged"
+    );
+    let branch_creator = |name: &str| {
+        let declaration = facts
+            .declarations
+            .iter()
+            .find(|declaration| declaration.full_name == format!("architecture_fixture::{name}"))
+            .unwrap();
+        facts
+            .callables
+            .iter()
+            .find(|callable| callable.declaration == declaration.id)
+            .unwrap()
+            .id
+            .clone()
+    };
+    let by_id: std::collections::BTreeMap<_, _> = facts
+        .entities
+        .iter()
+        .map(|entity| (&entity.id, entity))
+        .collect();
+    let root = branch_creator("branch_assembly");
+    let branches: Vec<_> = facts
+        .entities
+        .iter()
+        .filter(|entity| {
+            entity.creator == root && entity.alternative_selection.as_deref() == Some("unresolved")
+        })
+        .collect();
+    assert_eq!(branches.len(), 2);
+    assert!(
+        branches
+            .iter()
+            .all(|entity| entity.possible && entity.alternative_group.is_some())
+    );
+    for branch in branches {
+        let expected = if branch.components.contains(&text) {
+            &text
+        } else {
+            &button
+        };
+        assert!(branch.components.contains(expected));
+        assert_eq!(branch.children.len(), 1);
+        let child = by_id[&branch.children[0]];
+        assert!(
+            child.components.contains(expected),
+            "Child ordinal crossed a structural candidate boundary"
+        );
+        assert_eq!(child.alternative_context, branch.alternative_context);
+        assert!(child.possible);
+        assert!(
+            child
+                .source
+                .as_ref()
+                .is_some_and(|source| source.end_line > 0 && !source.expansions.is_empty()),
+            "Native child macro Span was lost"
+        );
+    }
+    let nested = branch_creator("nested_branch_assembly");
+    let nested: Vec<_> = facts
+        .entities
+        .iter()
+        .filter(|entity| {
+            entity.creator == nested
+                && entity.alternative_selection.as_deref() == Some("unresolved")
+        })
+        .collect();
+    assert_eq!(nested.len(), 2);
+    for root in nested {
+        assert_eq!(root.children.len(), 1);
+        let child = by_id[&root.children[0]];
+        let expected = if child.components.contains(&text) {
+            &text
+        } else {
+            &button
+        };
+        assert!(child.components.contains(expected));
+        assert_eq!(child.children.len(), 1);
+        assert!(by_id[&child.children[0]].components.contains(expected));
+    }
+    let nested = branch_creator("protocol_branch_assembly");
+    let groups: Vec<_> = facts
+        .entities
+        .iter()
+        .filter(|entity| entity.creator == nested)
+        .flat_map(|entity| &entity.alternatives)
+        .collect();
+    assert!(!groups.is_empty());
+    assert!(
+        groups
+            .iter()
+            .flat_map(|group| &group.candidates)
+            .any(|candidate| by_id[candidate].components.contains(&text))
+    );
+    assert!(
+        groups
+            .iter()
+            .flat_map(|group| &group.candidates)
+            .any(|candidate| by_id[candidate].components.contains(&button))
+    );
+    assert!(
+        groups
+            .iter()
+            .all(|group| group.selection == "one-of" && !group.candidates.is_empty())
+    );
+    let no_outcome = branch_creator("no_scene_outcome");
+    assert!(facts.entities.iter().any(|entity| {
+        entity.creator == no_outcome
+            && entity
+                .gaps
+                .iter()
+                .any(|gap| gap.reason.contains("没有可达返回状态"))
+    }));
+    assert!(
+        facts
+            .entities
+            .iter()
+            .flat_map(|entity| &entity.alternatives)
+            .all(|group| !group.candidates.is_empty())
+    );
+    let repeated = branch_creator("repeated_roots");
+    let repeated: Vec<_> = facts
+        .entities
+        .iter()
+        .filter(|entity| entity.creator == repeated)
+        .collect();
+    assert_eq!(
+        repeated.len(),
+        1,
+        "Same-shape same-origin roots reuse a template, not a runtime entity"
+    );
+    assert!(
+        repeated[0]
+            .gaps
+            .iter()
+            .any(|gap| gap.kind == "entity-multiplicity")
     );
 }
 impl Callbacks for Extractor {

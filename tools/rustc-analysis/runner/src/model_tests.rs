@@ -227,6 +227,32 @@ fn repeated_registration_retains_instances_and_access_capability() {
 }
 
 #[test]
+fn type_identity_preserves_native_declaration_across_display_and_storage_projections() {
+    for storage in ["Component", "NonSend"] {
+        let fixture = Fixture::new(true);
+        let mut facts = fixture.read("facts.json");
+        facts["units"][0]["declarations"][1]["local"] = json!(true);
+        facts["units"][0]["types"][0]["display"] = json!("presentation::DifferentName");
+        facts["units"][0]["accesses"][0]["storage"] = json!(storage);
+        fixture.write("facts.json", &facts);
+        fixture.build().unwrap();
+        let model = fixture.read("model.json");
+        let object = model["objects"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|object| object["typeInstanceId"] == "marker-type" && object["kind"] == storage)
+            .unwrap();
+        assert_eq!(object["name"], "presentation::DifferentName");
+        assert_eq!(
+            object["typeIdentity"],
+            json!({"declarationId":"marker-declaration","crateName":"demo",
+                "defPath":"demo::sample::Marker","local":true,"roles":["Component"]})
+        );
+    }
+}
+
+#[test]
 fn same_display_name_cannot_substitute_for_runtime_type_identity() {
     let fixture = Fixture::new(true);
     let mut runtime = fixture.read("runtime.json");
@@ -684,6 +710,604 @@ fn unresolved_entity_operation_keeps_fact_and_context_without_inventing_template
             .unwrap()
             .iter()
             .all(|context| context["deferred"] == true)
+    );
+}
+
+#[test]
+fn generic_bounds_and_opaque_types_keep_access_facts_without_concrete_objects() {
+    let fixture = Fixture::new(true);
+    let mut facts = fixture.read("facts.json");
+    let mut unit: UnitFacts = serde_json::from_value(facts["units"][0].clone()).unwrap();
+    unit.types.extend([
+        TypeInstance {
+            id: "generic-component".into(),
+            display: "C".into(),
+            kind: "parameter".into(),
+            roles: vec!["Component".into()],
+            ..Default::default()
+        },
+        TypeInstance {
+            id: "opaque-component".into(),
+            declaration: Some("marker-declaration".into()),
+            display: "impl Component".into(),
+            kind: "projection".into(),
+            roles: vec!["Component".into()],
+            ..Default::default()
+        },
+        TypeInstance {
+            id: "generic-plugin".into(),
+            declaration: Some("marker-declaration".into()),
+            display: "Plugin<C>".into(),
+            kind: "adt".into(),
+            roles: vec!["Plugin".into()],
+            arguments: vec![TypeArgument {
+                kind: "type".into(),
+                value: "generic-component".into(),
+            }],
+            ..Default::default()
+        },
+        TypeInstance {
+            id: "generic-self".into(),
+            declaration: Some("marker-declaration".into()),
+            display: "Self".into(),
+            kind: "parameter".into(),
+            roles: vec!["Plugin".into()],
+            ..Default::default()
+        },
+        TypeInstance {
+            id: "generic-array".into(),
+            display: "[Marker; N]".into(),
+            kind: "array".into(),
+            arguments: vec![TypeArgument {
+                kind: "type".into(),
+                value: "marker-type".into(),
+            }],
+            ..Default::default()
+        },
+    ]);
+    unit.accesses[0].type_id = "generic-component".into();
+    let mut local = unit.accesses[0].clone();
+    local.storage = "Local".into();
+    local.parameter = "local-state".into();
+    unit.accesses.push(local);
+    let mut array = unit.accesses[1].clone();
+    array.type_id = "generic-array".into();
+    array.parameter = "array-state".into();
+    unit.accesses.push(array);
+    unit.operations.push(OperationFact {
+        id: "opaque-write".into(),
+        owner: "callable".into(),
+        method: "resolved-write".into(),
+        target_type: Some("opaque-component".into()),
+        kind: "modify".into(),
+        scope: "typed-value".into(),
+        ..Default::default()
+    });
+    facts["units"][0] = serde_json::to_value(unit).unwrap();
+    fixture.write("facts.json", &facts);
+    fixture.build().unwrap();
+    let model = fixture.read("model.json");
+    assert!(model["annotationsRequired"].as_array().unwrap().is_empty());
+    assert!(
+        model["objects"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .all(|object| !matches!(
+                object["typeInstanceId"].as_str(),
+                Some("generic-component" | "opaque-component" | "generic-plugin" | "generic-self")
+            ) && object["kind"] != "Local")
+    );
+    let gaps = model["analysisGaps"].as_array().unwrap();
+    assert!(gaps.iter().any(|gap| gap["kind"] == "type-resolution"
+        && gap["owner"] == "generic-plugin"
+        && gap["unresolvedType"] == "generic-component"));
+    assert!(gaps.iter().any(|gap| gap["kind"] == "access-target"
+        && gap["access"]["storage"] == "Component"
+        && gap["access"]["typeId"] == "generic-component"
+        && gap["access"]["source"]["path"] == "src/main.rs"
+        && gap["access"]["source"]["endColumn"] == 15));
+    assert!(gaps.iter().any(|gap| gap["kind"] == "access-target"
+        && gap["access"]["storage"] == "Local"
+        && gap["access"]["parameter"] == "local-state"));
+    assert!(
+        gaps.iter()
+            .any(|gap| gap["kind"] == "access-target" && gap["unresolvedType"] == "generic-array")
+    );
+    assert!(
+        gaps.iter().any(
+            |gap| gap["kind"] == "operation-target" && gap["operation"]["id"] == "opaque-write"
+        )
+    );
+}
+
+#[test]
+fn helper_local_values_preserve_origin_gaps_without_allocating_caller_storage() {
+    let fixture = Fixture::new(true);
+    let mut facts = fixture.read("facts.json");
+    let mut unit: UnitFacts = serde_json::from_value(facts["units"][0].clone()).unwrap();
+    unit.declarations[0].docs = "调用共用辅助处理。".into();
+    let mut helper_declaration = unit.declarations[0].clone();
+    helper_declaration.id = "helper-declaration".into();
+    helper_declaration.full_name = "demo::sample::registered_helper".into();
+    helper_declaration.name = "registered_helper".into();
+    unit.declarations.push(helper_declaration);
+    unit.callables.push(Callable {
+        id: "registered-helper".into(),
+        declaration: "helper-declaration".into(),
+        display: "demo::sample::registered_helper".into(),
+        system_type_ids: vec!["helper-runtime".into()],
+        ..Default::default()
+    });
+    unit.accesses[0].storage = "Local".into();
+    unit.accesses[0].parameter = "state".into();
+    let mut helper_access = unit.accesses[0].clone();
+    helper_access.owner = "registered-helper".into();
+    helper_access.parameter = "cache".into();
+    unit.accesses.push(helper_access);
+    let mut indirect = unit.accesses[0].clone();
+    indirect.owner = "result-helper".into();
+    indirect.parameter = "arg0.0".into();
+    indirect.source = None;
+    unit.accesses.push(indirect);
+    unit.calls.extend([
+        CallFact {
+            caller: "callable".into(),
+            callee: Some("registered-helper".into()),
+            ..Default::default()
+        },
+        CallFact {
+            caller: "registered-helper".into(),
+            callee: Some("result-helper".into()),
+            ..Default::default()
+        },
+    ]);
+    facts["units"][0] = serde_json::to_value(unit).unwrap();
+    fixture.write("facts.json", &facts);
+    let mut runtime = fixture.read("runtime.json");
+    runtime["schedules"][0]["systems"][1]["typeId"] = json!("helper-runtime");
+    fixture.replace_runtime(&runtime);
+    let mut annotations = fixture.read("annotations.json");
+    for key in [
+        "demo::sample::system|state",
+        "demo::sample::registered_helper|cache",
+    ] {
+        annotations["items"][key] = json!({"description":"保存此注册实例的局部处理状态。","summary":"保存局部状态。","evidenceHash":"body"});
+    }
+    annotations["items"]["demo::sample::system|state"]["evidenceHash"] = json!(digest(
+        serde_json::to_vec(&BTreeMap::from([
+            ("function", "body"),
+            ("helper-declaration", "body")
+        ]))
+        .unwrap()
+    ));
+    fixture.write("annotations.json", &annotations);
+    fixture.build().unwrap();
+    let model = fixture.read("model.json");
+    let objects = model["objects"].as_array().unwrap();
+    let locals: Vec<_> = objects
+        .iter()
+        .filter(|object| object["kind"] == "Local")
+        .collect();
+    assert_eq!(locals.len(), 2);
+    assert!(
+        locals
+            .iter()
+            .all(|object| object["callableId"] != "result-helper")
+    );
+    let helper_root = objects
+        .iter()
+        .find(|object| object["runtimeTypeId"] == "helper-runtime")
+        .unwrap();
+    let helper_local = locals
+        .iter()
+        .find(|object| object["callableId"] == "registered-helper")
+        .unwrap();
+    let linked: Vec<_> = model["relations"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .filter(|relation| relation["to"] == helper_local["id"])
+        .collect();
+    assert_eq!(linked.len(), 1);
+    assert_eq!(linked[0]["from"], helper_root["id"]);
+    let gaps = model["analysisGaps"].as_array().unwrap();
+    assert!(gaps.iter().any(|gap| gap["kind"] == "local-origin"
+        && gap["owner"] == "registered-helper"
+        && gap["rootOwners"].as_array().unwrap().len() == 1
+        && gap["registeredOwners"].as_array().unwrap().len() == 1));
+    assert!(gaps.iter().any(|gap| gap["kind"] == "local-origin"
+        && gap["owner"] == "result-helper"
+        && gap["registeredOwners"].as_array().unwrap().len() == 2
+        && gap["rootOwners"].as_array().unwrap().is_empty()
+        && gap["access"]["parameter"] == "arg0.0"));
+    assert!(model["annotationsRequired"].as_array().unwrap().is_empty());
+}
+
+#[test]
+fn creation_operations_bind_only_unique_root_templates_at_the_same_compiler_callsite() {
+    let fixture = Fixture::new(true);
+    let mut facts = fixture.read("facts.json");
+    let mut unit: UnitFacts = serde_json::from_value(facts["units"][0].clone()).unwrap();
+    let source = unit.accesses[0].source.clone();
+    let mut method_source = source.clone().unwrap();
+    method_source.column = 4;
+    let root = EntityTemplate {
+        id: "root-template".into(),
+        creator: "callable".into(),
+        source: Some(method_source.clone()),
+        components: vec!["marker-type".into()],
+        children: vec!["child-template".into()],
+        ..Default::default()
+    };
+    let child = EntityTemplate {
+        id: "child-template".into(),
+        creator: "callable".into(),
+        source: Some(method_source),
+        ..Default::default()
+    };
+    unit.operations.push(OperationFact {
+        id: "create-root".into(),
+        owner: "callable".into(),
+        method: "resolved-spawn".into(),
+        target_type: None,
+        kind: "create".into(),
+        deferred: true,
+        scope: "current".into(),
+        source: source.clone(),
+        conditions: source.into_iter().collect(),
+        ..Default::default()
+    });
+    unit.entities.extend([root, child]);
+    let mut annotations = fixture.read("annotations.json");
+    for entity in &unit.entities {
+        annotations["items"][format!("entity:{}", entity.id)] = json!({"description":"此创建点装配独立实体。","summary":"装配独立实体。","evidenceHash":digest(serde_json::to_vec(entity).unwrap())});
+    }
+    fixture.write("annotations.json", &annotations);
+    facts["units"][0] = serde_json::to_value(&unit).unwrap();
+    fixture.write("facts.json", &facts);
+    fixture.build().unwrap();
+    let model = fixture.read("model.json");
+    assert!(model["analysisGaps"].as_array().unwrap().is_empty());
+    let root_id = identifier("entity", "root-template");
+    let create: Vec<_> = model["relations"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .filter(|relation| relation["kind"] == "create" && relation["to"] == root_id)
+        .collect();
+    assert_eq!(create.len(), 2);
+    for relation in create {
+        assert_eq!(relation["bodyOperations"][0]["operationId"], "create-root");
+        assert_eq!(relation["bodyOperations"][0]["deferred"], true);
+        assert_eq!(
+            relation["bodyOperations"][0]["conditions"]
+                .as_array()
+                .unwrap()
+                .len(),
+            1
+        );
+    }
+    let operation = &unit.operations[0];
+    let mut ambiguous = unit.entities.clone();
+    let mut second = ambiguous[0].clone();
+    second.id = "another-root".into();
+    ambiguous.push(second);
+    assert!(creation_target(operation, &creation_templates(&ambiguous)).is_none());
+    let mut other_owner = operation.clone();
+    other_owner.owner = "other-callable".into();
+    assert!(creation_target(&other_owner, &creation_templates(&unit.entities)).is_none());
+    let mut other_end = operation.clone();
+    other_end.source.as_mut().unwrap().end_column += 1;
+    assert!(creation_target(&other_end, &creation_templates(&unit.entities)).is_none());
+    let mut other_expansion = operation.clone();
+    other_expansion
+        .source
+        .as_mut()
+        .unwrap()
+        .expansions
+        .push(Expansion {
+            name: "another-macro".into(),
+            ..Default::default()
+        });
+    assert!(creation_target(&other_expansion, &creation_templates(&unit.entities)).is_none());
+}
+
+#[test]
+fn tuple_bundle_operations_keep_known_components_and_the_unresolved_remainder() {
+    let fixture = Fixture::new(true);
+    let mut facts = fixture.read("facts.json");
+    let mut unit: UnitFacts = serde_json::from_value(facts["units"][0].clone()).unwrap();
+    unit.types.extend([
+        TypeInstance {
+            id: "opaque-bundle".into(),
+            display: "impl Bundle".into(),
+            kind: "projection".into(),
+            roles: vec!["Bundle".into()],
+            ..Default::default()
+        },
+        TypeInstance {
+            id: "partial-tuple".into(),
+            kind: "tuple".into(),
+            arguments: vec![
+                TypeArgument {
+                    kind: "type".into(),
+                    value: "opaque-bundle".into(),
+                },
+                TypeArgument {
+                    kind: "type".into(),
+                    value: "marker-type".into(),
+                },
+            ],
+            ..Default::default()
+        },
+        TypeInstance {
+            id: "manual-bundle".into(),
+            kind: "adt".into(),
+            roles: vec!["Bundle".into()],
+            fields: vec![TypeField {
+                name: "unrelated-field".into(),
+                type_id: "marker-type".into(),
+                ..Default::default()
+            }],
+            ..Default::default()
+        },
+    ]);
+    for target in ["partial-tuple", "manual-bundle"] {
+        unit.operations.push(OperationFact {
+            id: format!("insert-{target}"),
+            owner: "callable".into(),
+            method: "resolved-insert".into(),
+            target_type: Some(target.into()),
+            kind: "insert".into(),
+            scope: "current".into(),
+            ..Default::default()
+        });
+    }
+    facts["units"][0] = serde_json::to_value(unit).unwrap();
+    fixture.write("facts.json", &facts);
+    fixture.build().unwrap();
+    let model = fixture.read("model.json");
+    let insert: Vec<_> = model["relations"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .filter(|relation| relation["kind"] == "insert")
+        .collect();
+    assert_eq!(insert.len(), 2);
+    assert!(insert.iter().all(
+        |relation| relation["bodyOperations"].as_array().unwrap().len() == 1
+            && relation["bodyOperations"][0]["operationId"] == "insert-partial-tuple"
+    ));
+    let gaps = model["analysisGaps"].as_array().unwrap();
+    let partial = gaps
+        .iter()
+        .find(|gap| gap["operation"]["id"] == "insert-partial-tuple")
+        .unwrap();
+    assert_eq!(
+        partial["operation"]["unresolvedParts"],
+        json!(["opaque-bundle"])
+    );
+    assert_eq!(
+        partial["operation"]["resolvedTargets"]
+            .as_array()
+            .unwrap()
+            .len(),
+        1
+    );
+    assert!(
+        gaps.iter()
+            .any(|gap| gap["operation"]["id"] == "insert-manual-bundle")
+    );
+}
+
+#[test]
+fn repeated_dependency_gaps_merge_all_unit_provenance_without_duplicate_source_gaps() {
+    let fixture = Fixture::new(true);
+    let mut facts = fixture.read("facts.json");
+    facts["units"][0]["gaps"] = json!([{"owner":"callable","kind":"dynamic-call","reason":"回调目标在运行时决定。","source":null}]);
+    let mut second = facts["units"][0].clone();
+    second["crateIdentity"] = json!("second-unit");
+    facts["units"].as_array_mut().unwrap().push(second);
+    fixture.write("facts.json", &facts);
+    fixture.build().unwrap();
+    let model = fixture.read("model.json");
+    let gaps = model["analysisGaps"].as_array().unwrap();
+    assert_eq!(gaps.len(), 1);
+    assert_eq!(gaps[0]["units"], json!(["compiled-crate", "second-unit"]));
+    for object in model["objects"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .filter(|object| object["kind"] == "System")
+    {
+        assert_eq!(object["sourceGaps"], json!(["回调目标在运行时决定。"]));
+    }
+}
+
+#[test]
+fn structure_alternatives_preserve_group_boundaries_sources_and_real_children() {
+    let fixture = Fixture::new(true);
+    let mut facts = fixture.read("facts.json");
+    let mut unit: UnitFacts = serde_json::from_value(facts["units"][0].clone()).unwrap();
+    let source = unit.declarations[0].source.clone();
+    let mut button = unit.types[0].clone();
+    button.id = "button-type".into();
+    button.runtime_type_id = Some("button-runtime".into());
+    unit.types.push(button);
+    let mut extra_source = source.clone().unwrap();
+    extra_source.line = 2;
+    extra_source.end_line = 2;
+    extra_source.expansions.push(Expansion {
+        name: "fixture-macro".into(),
+        path: extra_source.path.clone(),
+        line: 2,
+        column: 1,
+    });
+    let group = |id: &str, candidates: Vec<&str>| EntityAlternativeGroup {
+        id: id.into(),
+        candidates: candidates.into_iter().map(str::to_owned).collect(),
+        source: source.clone(),
+        selection: "one-of".into(),
+    };
+    unit.entities.push(EntityTemplate {
+        id: "choice-host".into(),
+        creator: "callable".into(),
+        source: source.clone(),
+        alternatives: vec![
+            group("shape-choice", vec!["text-choice", "button-choice"]),
+            group("independent-choice", vec!["other-a", "other-b"]),
+        ],
+        gaps: vec![Gap {
+            owner: "choice-host".into(),
+            kind: "entity-alternative".into(),
+            reason: "具体分支条件尚未导出；独立候选组不组合。".into(),
+            source: source.clone(),
+        }],
+        ..Default::default()
+    });
+    for (id, component, child, group) in [
+        (
+            "text-choice",
+            "marker-type",
+            Some("text-child"),
+            "shape-choice",
+        ),
+        (
+            "button-choice",
+            "button-type",
+            Some("button-child"),
+            "shape-choice",
+        ),
+        ("other-a", "marker-type", None, "independent-choice"),
+        ("other-b", "button-type", None, "independent-choice"),
+    ] {
+        unit.entities.push(EntityTemplate {
+            id: id.into(),
+            creator: "callable".into(),
+            source: source.clone(),
+            components: vec![component.into()],
+            children: child.into_iter().map(str::to_owned).collect(),
+            alternative_group: Some(group.into()),
+            alternative_selection: Some("one-of".into()),
+            alternative_context: vec![group.into()],
+            possible: true,
+            source_evidence: vec![extra_source.clone()],
+            ..Default::default()
+        });
+        if let Some(child) = child {
+            unit.entities.push(EntityTemplate {
+                id: child.into(),
+                creator: "callable".into(),
+                source: source.clone(),
+                components: vec![component.into()],
+                alternative_context: vec![group.into()],
+                possible: true,
+                ..Default::default()
+            });
+        }
+    }
+    unit.operations.push(OperationFact {
+        id: "spawn-host".into(),
+        owner: "callable".into(),
+        method: "resolved-spawn".into(),
+        kind: "create".into(),
+        source: source.clone(),
+        ..Default::default()
+    });
+    let mut annotations = fixture.read("annotations.json");
+    for entity in &unit.entities {
+        annotations["items"][format!("entity:{}", entity.id)] = json!({"description":"保留此原生创建结构及其独立候选。","summary":"保留独立创建结构。","evidenceHash":digest(serde_json::to_vec(entity).unwrap())});
+    }
+    fixture.write("annotations.json", &annotations);
+    facts["units"][0] = serde_json::to_value(unit).unwrap();
+    fixture.write("facts.json", &facts);
+    fixture.build().unwrap();
+    let model = fixture.read("model.json");
+    let objects = model["objects"].as_array().unwrap();
+    let relations = model["relations"].as_array().unwrap();
+    let host = objects
+        .iter()
+        .find(|object| object["templateId"] == "choice-host")
+        .unwrap();
+    assert_eq!(host["alternativeGroups"].as_array().unwrap().len(), 2);
+    let alternative: Vec<_> = relations
+        .iter()
+        .filter(|relation| relation["kind"] == "alternative")
+        .collect();
+    assert_eq!(alternative.len(), 4);
+    assert!(
+        alternative
+            .iter()
+            .all(|relation| relation["from"] == host["id"]
+                && relation["possible"] == true
+                && relation["selection"] == "one-of")
+    );
+    for (candidate, child, component) in [
+        ("text-choice", "text-child", "marker-type"),
+        ("button-choice", "button-child", "button-type"),
+    ] {
+        let candidate = objects
+            .iter()
+            .find(|object| object["templateId"] == candidate)
+            .unwrap();
+        let child = objects
+            .iter()
+            .find(|object| object["templateId"] == child)
+            .unwrap();
+        assert_eq!(candidate["alternativeGroup"], "shape-choice");
+        assert_eq!(child["alternativeContext"], json!(["shape-choice"]));
+        assert!(
+            candidate["sourceEntries"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .any(|entry| entry["line"] == 2
+                    && !entry["expansions"].as_array().unwrap().is_empty())
+        );
+        assert!(
+            relations
+                .iter()
+                .any(|relation| relation["from"] == candidate["id"]
+                    && relation["to"] == child["id"]
+                    && relation["kind"] == "relationship"
+                    && relation["possible"] == true)
+        );
+        let contains: Vec<_> = relations
+            .iter()
+            .filter(|relation| {
+                relation["from"] == candidate["id"] && relation["kind"] == "contains"
+            })
+            .collect();
+        assert_eq!(contains.len(), 1);
+        assert_eq!(
+            contains[0]["to"],
+            identifier("type", (component, "Component"))
+        );
+        assert_eq!(contains[0]["alternativeContext"], json!(["shape-choice"]));
+        assert!(
+            !relations.iter().any(|relation| relation["kind"] == "create"
+                && (relation["to"] == candidate["id"] || relation["to"] == child["id"]))
+        );
+    }
+    assert!(
+        !relations
+            .iter()
+            .any(|relation| relation["kind"] == "contains" && relation["from"] == host["id"])
+    );
+    assert_eq!(
+        relations
+            .iter()
+            .filter(|relation| relation["kind"] == "create")
+            .count(),
+        2
+    );
+    assert!(
+        model["analysisGaps"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .any(|gap| gap["kind"] == "entity-alternative")
     );
 }
 

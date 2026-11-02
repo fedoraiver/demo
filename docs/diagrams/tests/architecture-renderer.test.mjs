@@ -3,6 +3,7 @@ import test from 'node:test';
 import { renderGraphView, mermaidConfiguration, entityComponentColumns, dataLayoutColumns, dataObserverLayoutPairs, observerBranchLayoutPairs } from '../src/architecture-renderer.mjs';
 import { NODE_STYLES, EDGE_STYLES, EXTERNAL_REFERENCE_STYLE } from '../src/architecture-style.mjs';
 import { INFRASTRUCTURE_FEATURES } from '../src/architecture-infrastructure.mjs';
+import { VIEWER_BACKGROUND } from '../src/viewer-theme.mjs';
 
 function isolatedView(record, { role = 'internal', aspect = 'data' } = {}) {
   const graph = { centerNodeId: record.id, nodes: [{ id: record.id, role }], links: [] };
@@ -17,22 +18,29 @@ test('Component views rank every native relation System to Component to Entity w
     system: { kind: 'system', name: 'System', description: 'behavior', feature: 'test' },
   };
   const graph = { componentNodeId: 'component', nodes: Object.keys(registry).map(id => ({ id, role: 'internal' })), links: [
-    { id: 'owner', from: 'component', to: 'entity', kind: 'reference' },
+    { id: 'owner', from: 'component', to: 'entity', kind: 'reference', label: '所属实体' },
     { id: 'read', from: 'component', to: 'system', kind: 'read' },
     { id: 'write', from: 'system', to: 'component', kind: 'write' },
   ] };
   const before = JSON.stringify(graph), view = renderGraphView({ id: 'component-test', aspect: 'component', label: 'Component', summary: 'relations' }, graph, registry, []);
   assert.equal(JSON.stringify(graph), before);
   assert.deepEqual(view.links.map(({ from, to, nativeReverse }) => [from, to, nativeReverse]), [['component', 'entity', undefined], ['component', 'system', true], ['system', 'component', undefined]]);
-  assert.match(view.mermaid, /n2 e1@--- n1/); assert.match(view.mermaid, /n2 e2@--> n1/); assert.match(view.mermaid, /n1 e0@--> n0/);
+  assert.match(view.mermaid, /n2 e1@--- n1/); assert.match(view.mermaid, /n2 e2@--> n1/); assert.match(view.mermaid, /n1 e0@-->\|"所属实体"\| n0/);
   const config = JSON.parse(/^---\n([\s\S]*?)\n---/.exec(view.mermaid)[1]).config;
   assert.match(config.themeCSS, /#component-test-e1\{marker-start:url\(#component-test_flowchart-v2-pointStart\)!important\}/);
   assert.match(config.themeCSS, /fill:context-stroke!important;stroke:context-stroke!important/);
+  assert.ok(config.themeCSS.includes(`.edgeLabel rect { opacity:1!important; fill:${VIEWER_BACKGROUND}!important; }`));
   const enriched = renderGraphView({ id: 'component-details', aspect: 'component', componentNodeId: 'component', componentDetails: { name: 'Component<f32>', description: 'all owners', display_summary: '完整类型用途' }, label: 'Component', summary: 'relations' }, graph, registry, []);
   assert.equal(enriched.nodes.find(node => node.id === 'component').nameLabel, 'Component<f32>');
   assert.equal(enriched.nodes.find(node => node.id === 'component').contextLabel[0], '完整类型用途');
   assert.equal(enriched.nodes.find(node => node.id === 'system').nameLabel, 'System');
   assert.equal(registry.component.name, 'Component');
+});
+
+test('unlabeled views do not add label background styling', () => {
+  const view = isolatedView({ id: 'single', kind: 'Component', name: 'Single', description: '用途', feature: 'first_person' }, { aspect: 'object' });
+  const config = JSON.parse(/^---\n([\s\S]*?)\n---/.exec(view.mermaid)[1]).config;
+  assert.equal(config.themeCSS, undefined);
 });
 
 test('source-local Observer fanout layout never chains unrelated emitters or closes semantic cycles', () => {
@@ -60,7 +68,7 @@ test('cards show a full name and one purpose while all technical detail stays un
   assert.deepEqual(node.contextLabel, [record.display_summary]);
   assert.equal(node.displayLabel, `${record.name}\n${record.display_summary}`);
   const declaration = view.mermaid.split('\n').find(line => line.startsWith('  n0@{'));
-  assert.ok(declaration.replace(/\*\*|<br\/>/g, '').includes(record.name));
+  assert.ok(declaration.replace(/\*\*|<br\/>|[\u200B\uFEFF]/g, '').includes(record.name));
   assert.doesNotMatch(declaration, /…|hidden-|hidden_condition|另有注册|R \d|W \d/);
   assert.deepEqual(record, original);
 });

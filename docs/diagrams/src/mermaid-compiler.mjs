@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import { setImmediate } from 'node:timers/promises';
 import path from 'node:path';
 import crypto from 'node:crypto';
+import { availableParallelism } from 'node:os';
 import puppeteer from 'puppeteer';
 import { instance as graphvizInstance } from '@viz-js/viz';
 import { compileScheduleGuideSamples } from './schedule-legend-compiler.mjs';
@@ -12,14 +13,58 @@ import { svgElements, shapeBounds } from './svg-shape-geometry.mjs';
 import { NODE_STYLES, EDGE_STYLES, mermaidStyleDefinitions } from './architecture-style.mjs';
 
 import { mermaidConfiguration } from './architecture-renderer.mjs';
-import { checkMermaidGeometry } from './diagram-geometry.mjs';
-import { inspectViewRoutes } from './architecture-routing.mjs';
-import { normalizeMermaidSvg, compileRoutedView as compileRoutedViewCore, measureNativeLabelBounds, nativeLabelMismatches } from './mermaid-core.mjs';
+import { createMermaidCheckPool } from './mermaid-check-pool.mjs';
+import { normalizeMermaidSvg, compileRoutedView as compileRoutedViewCore, measureNativeLabelBounds } from './mermaid-core.mjs';
 import { repositoryRoot as root, pathsForRepository } from './paths.mjs';
 export { normalizeMermaidSvg, routedMermaid } from './mermaid-core.mjs';
 
 const elements = node => [...node.getElementsByTagName('*')];
 const hasClass = (node, value) => (node.getAttribute('class') || '').split(/\s+/).includes(value);
+
+// 默认预留两个核心；显式设置可使用更多核心，但最多同时运行 32 个编译任务。
+export function mermaidJobCount({ environment = process.env, parallelism = availableParallelism() } = {}) {
+  const configured = environment.MERMAID_JOBS;
+  if (configured === undefined) return Math.min(12, Math.max(1, parallelism - 2));
+  if (typeof configured !== 'string' || !/^[1-9]\d*$/.test(configured) || Number(configured) > 32)
+    throw new Error('MERMAID_JOBS must be an integer from 1 to 32');
+  return Number(configured);
+}
+
+// 每项仍自行管理独立编译页；只限制同时任务数，并按原清单位置收集结果。
+export async function compileMermaidViews(views, compile, { jobs = mermaidJobCount() } = {}) {
+  if (!Number.isSafeInteger(jobs) || jobs < 1 || jobs > 32) throw new Error('Mermaid job count must be an integer from 1 to 32');
+  const batches = [...views], compiled = new Array(batches.length);
+  let next = 0, failed = false, failure;
+  // 首次失败后停止领新图，等待已开始的独立页收尾，再让调用者关闭浏览器。
+  await Promise.allSettled(Array.from({ length: Math.min(jobs, batches.length) }, async () => {
+    while (!failed && next < batches.length) {
+      const index = next++;
+      try { compiled[index] = await compile(batches[index]); }
+      catch (error) { if (!failed) { failed = true; failure = error; } throw error; }
+      await setImmediate();
+    }
+  }));
+  if (failed) throw failure;
+  return compiled;
+}
+
+// maxEdges 是 Mermaid 的安全配置，须在每次初始化时按当前候选的全部边设置。
+export function mermaidInitializeConfig({ aspect, mermaid = '', links = [], scheduleLinks = [], layoutLinks = [] }) {
+  return { startOnLoad: false, maxTextSize: Math.max(mermaidConfiguration(aspect).maxTextSize, mermaid.length),
+    maxEdges: Math.max(500, links.length + scheduleLinks.length + layoutLinks.length) };
+}
+
+// 同一图的所有候选共享独立上下文，避免同源页面挤在同一 Chrome renderer 中。
+export async function withMermaidContext(browser, compile) {
+  const context = await browser.createBrowserContext();
+  let failure;
+  try { return await compile({ newPage: () => context.newPage() }); }
+  catch (error) { failure = error; throw error; }
+  finally {
+    try { await context.close(); }
+    catch (error) { if (!failure) throw error; }
+  }
+}
 
 function chromiumPath() {
   if (process.env.MERMAID_CHROMIUM_PATH) {
@@ -46,7 +91,9 @@ export async function compileGuideSamples(browser) {
       // 占位文字只参与原生形状的尺寸计算，样例的含义由旁边的 HTML 标签表达。
       lines.push(`g_node@{ shape: ${NODE_STYLES[type].shape}, label: "MMMMMM" }`, `class g_node node_${type}`);
     } else lines.push('g_from@{ shape: anchor, label: " " }', 'g_to@{ shape: anchor, label: " " }', 'g_from g_edge@--> g_to', `class g_edge edge_${type}`);
-    const { data } = await renderMermaid(browser, lines.join('\n'), 'svg', { fontEmbed: false, svgId: id, backgroundColor: 'transparent', mermaidConfig: { startOnLoad: false, maxTextSize: mermaidConfiguration('systems').maxTextSize } });
+    const source = lines.join('\n');
+    const { data } = await renderMermaid(browser, source, 'svg', { fontEmbed: false, svgId: id, backgroundColor: 'transparent',
+      mermaidConfig: mermaidInitializeConfig({ aspect: 'systems', mermaid: source, links: kind === 'edge' ? [{ id: 'g_edge' }] : [] }) });
     const document = new DOMParser().parseFromString(Buffer.from(data).toString('utf8'), 'image/svg+xml');
     const svg = document.documentElement, all = elements(svg);
     if (kind === 'node') {
@@ -81,25 +128,44 @@ export async function compileGuideSamples(browser) {
   return samples;
 }
 
-// CLI 仍负责全部绘图；在它关闭编译页之前读取原生标题 bbox。
-export async function compileNativeView(browser, view, registry) {
-  let clusterLabelBounds = {};
+// 延后 CLI 的页面关闭，仅在绘图成功后测量标题，再统一回收，保留原始绘图异常。
+export async function withMeasuredMermaidPage(browser, viewId, render) {
+  let page, close, failure, stage = 'render';
   const measuredBrowser = { newPage: async () => {
-    const page = await browser.newPage(), close = page.close.bind(page);
-    page.close = async () => {
-      clusterLabelBounds = await page.evaluate(measureNativeLabelBounds);
-      await close();
-    };
+    page = await browser.newPage();
+    close = page.close.bind(page);
+    page.close = async () => {};
     return page;
   } };
-  const { data } = await renderMermaid(measuredBrowser, view.mermaid, 'svg', {
-    fontEmbed: false, svgId: view.id, backgroundColor: VIEWER_BACKGROUND, mermaidConfig: { startOnLoad: false, maxTextSize: mermaidConfiguration(view.aspect).maxTextSize },
-  });
-  return normalizeMermaidSvg(view, Buffer.from(data).toString('utf8'), registry, { clusterLabelBounds });
+  try {
+    const result = await render(measuredBrowser);
+    stage = 'measure';
+    const bounds = await page.evaluate(measureNativeLabelBounds);
+    return { result, bounds };
+  } catch (error) {
+    failure = error;
+    throw new Error(`Mermaid ${stage} failed: ${viewId}: ${error.message}`, { cause: error });
+  } finally {
+    if (close) {
+      try { await close(); }
+      catch (error) {
+        if (!failure) throw new Error(`Mermaid page close failed: ${viewId}: ${error.message}`, { cause: error });
+      }
+    }
+  }
 }
 
-async function compileRoutedView(browser, view, registry) {
+export async function compileNativeView(browser, view, registry) {
+  const { result, bounds } = await withMeasuredMermaidPage(browser, view.id, measuredBrowser =>
+    renderMermaid(measuredBrowser, view.mermaid, 'svg', {
+      fontEmbed: false, svgId: view.id, backgroundColor: VIEWER_BACKGROUND, mermaidConfig: mermaidInitializeConfig(view),
+    }));
+  return normalizeMermaidSvg(view, Buffer.from(result.data).toString('utf8'), registry, { clusterLabelBounds: bounds });
+}
+
+async function compileRoutedView(browser, view, registry, checks) {
   return compileRoutedViewCore(view, registry, (candidate, records) => compileNativeView(browser, candidate, records), {
+    checks,
     onAttempt({ attempt, layoutError, invalid }) {
       console.log(`Mermaid routing: ${view.id}, attempt ${attempt}, ${[layoutError, ...invalid.map(edge => `${edge.id}[${edge.collisions.map(item => item.id).concat(edge.arrowIssues).join(',')}]`)].filter(Boolean).join('; ')}`);
     },
@@ -113,6 +179,7 @@ async function compileRoutedView(browser, view, registry) {
 }
 
 export async function compileArchitectureArtifacts(views, registry) {
+  const jobs = mermaidJobCount();
   const temporary = path.join(root, 'tmp/ecs-architecture/mermaid-build');
   fs.mkdirSync(temporary, { recursive: true });
   const cacheDirectory = path.join(temporary, 'geometry-cache');
@@ -126,8 +193,9 @@ export async function compileArchitectureArtifacts(views, registry) {
   const dependencies = JSON.stringify(lock, null, 2) + '\n';
   const profile = fs.mkdtempSync(path.join(temporary, 'profile-'));
   const browser = await puppeteer.launch({ executablePath: chromiumPath(), headless: true, userDataDir: profile });
+  const checks = createMermaidCheckPool({ jobs });
+  let failure;
   try {
-    const compiled = [];
     async function compile(view) {
       if (!view.mermaid) return view;
       // 归一化或 SVG 注解规则变化时递增版本；原生源码、依赖及完整标题变化会自动失效。
@@ -142,15 +210,20 @@ export async function compileArchitectureArtifacts(views, registry) {
           const result = { ...view, ...cached.geometry, nodes: view.nodes.map(node => ({ ...node, position: cached.positions[node.id] })),
             scheduleGroups: view.scheduleGroups.map(group => ({ ...group, ...cached.scheduleBounds[group.id] })),
           };
-          checkMermaidGeometry(result.svg, result);
-          if (nativeLabelMismatches(result).length) throw new Error('Cached native labels are incomplete');
-          const inspection = inspectViewRoutes(result);
+          await checks.geometry(result);
+          if ((await checks.labels(result)).length) throw new Error('Cached native labels are incomplete');
+          const inspection = await checks.routes(result);
           if (inspection.edges.some(edge => edge.collisions.length || edge.arrowIssues.length || (edge.axis ? edge.curved : !edge.curved))) throw new Error('Cached native routing is stale');
           console.log(`Mermaid cached: ${view.id}`);
           return result;
-        } catch { /* 几何规则更新后重新编译；缓存不代替本次严格检查。 */ }
+        } catch (error) {
+          if (checks.isFatalError(error)) throw error;
+          // 几何规则更新后重新编译；缓存不代替本次严格检查。
+        }
       }
-      const result = await compileRoutedView(browser, view, registry);
+      let result;
+      try { result = await withMermaidContext(browser, scopedBrowser => compileRoutedView(scopedBrowser, view, registry, checks)); }
+      catch (error) { throw new Error(`Mermaid view failed: ${view.id}: ${error.message}`, { cause: error }); }
       const geometry = Object.fromEntries(['svg', 'mermaid', 'width', 'height', 'bounds', 'routing', 'sections', 'entityGroups', 'layoutLinks'].map(key => [key, result[key]]));
       fs.writeFileSync(cachePath, JSON.stringify({ geometry, positions: Object.fromEntries(result.nodes.map(node => [node.id, node.position])),
         scheduleBounds: Object.fromEntries(result.scheduleGroups.map(group => [group.id, group.labelBounds ? { labelBounds: group.labelBounds } : {}])),
@@ -158,19 +231,13 @@ export async function compileArchitectureArtifacts(views, registry) {
       console.log(`Mermaid: ${view.id}`);
       return result;
     }
-    // 各图使用独立页面；有界并行缩短逐对象图的编译时间，清单顺序仍与输入一致。
-    const batches = [...views];
-    let next = 0;
-    compiled.length = batches.length;
-    await Promise.all(Array.from({ length: Math.min(6, batches.length) }, async () => {
-      while (next < batches.length) {
-        const index = next++;
-        compiled[index] = await compile(batches[index]);
-        await setImmediate();
-      }
-    }));
+    const compiled = await compileMermaidViews(views, compile, { jobs });
     const guideSamples = await compileGuideSamples(browser);
     guideSamples.schedule = await compileScheduleGuideSamples(await graphvizInstance(), { DOMParser, XMLSerializer });
     return { views: compiled, guideSamples };
-  } finally { await browser.close(); }
+  } catch (error) { failure = error; throw error; }
+  finally {
+    const closed = await Promise.allSettled([checks.close(), browser.close()]);
+    if (!failure) for (const result of closed) if (result.status === 'rejected') throw result.reason;
+  }
 }

@@ -249,6 +249,12 @@ fn compact_source_previews(facts: &mut UnitFacts) {
     }
     for entity in &mut facts.entities {
         optional(&mut entity.source);
+        for evidence in &mut entity.source_evidence {
+            source(evidence);
+        }
+        for group in &mut entity.alternatives {
+            optional(&mut group.source);
+        }
         for gap in &mut entity.gaps {
             optional(&mut gap.source);
         }
@@ -1963,22 +1969,156 @@ impl<'tcx> Collector<'tcx> {
         }
         let structures = crate::entity::analysis::structures(self.tcx)?;
         let mut sites: HashMap<String, HashMap<Span, usize>> = HashMap::new();
+        let mut groups: Vec<(
+            String,
+            Span,
+            String,
+            Vec<crate::entity::mir_value::EntityStructure<'tcx>>,
+        )> = vec![];
+        let mut group_indices = HashMap::new();
         for creation in structures {
-            let env = TypingEnv::fully_monomorphized();
-            let creator = self.callable(creation.creator.def_id(), creation.creator.args, env);
-            let source = self.source(creation.span, "create");
+            let creator = self.callable(
+                creation.creator.def_id(),
+                creation.creator.args,
+                TypingEnv::fully_monomorphized(),
+            );
             let owner_sites = sites.entry(creator.clone()).or_default();
             let next = owner_sites.len();
             let index = *owner_sites.entry(creation.span).or_insert(next);
-            self.entity_structure(
-                &creator,
-                &creation.structure,
-                source,
-                &format!("root{index}"),
-                env,
-            );
+            let next = groups.len();
+            let group = *group_indices
+                .entry((creator.clone(), creation.span))
+                .or_insert(next);
+            if group == next {
+                groups.push((creator, creation.span, format!("root{index}"), vec![]));
+            }
+            groups[group].3.push(creation.structure);
+        }
+        for (creator, span, path, structures) in groups {
+            let env = TypingEnv::fully_monomorphized();
+            let source = self.source(span, "create");
+            let observations = structures.len();
+            let mut seen = HashSet::new();
+            let candidates: Vec<_> = structures
+                .into_iter()
+                .filter(|structure| {
+                    seen.insert(self.entity_shape(structure, true, env).to_string())
+                })
+                .collect();
+            let group = (candidates.len() > 1).then(|| {
+                format!(
+                    "alternative-{}",
+                    digest(serde_json::to_vec(&(&creator, &path)).unwrap())
+                )
+            });
+            for (index, structure) in candidates.iter().enumerate() {
+                let shape = digest(self.entity_shape(structure, false, env).to_string());
+                let candidate_path = if group.is_some() {
+                    format!("{path}.candidate{index}-{}", &shape[..16])
+                } else {
+                    path.clone()
+                };
+                let id = self.entity_structure(
+                    &creator,
+                    structure,
+                    source.clone(),
+                    &candidate_path,
+                    env,
+                    group.clone(),
+                    group.is_some(),
+                    vec![],
+                );
+                if let Some(group) = &group {
+                    let gap = Gap {
+                        owner: id.clone(),
+                        kind: "entity-alternative".into(),
+                        reason: format!(
+                            "同一创建位置保留多个独立结构候选（{group}）；尚未关联具体分支或批量元素，不推断互斥或同时存在。"
+                        ),
+                        source: source.clone(),
+                    };
+                    let entity = self
+                        .facts
+                        .entities
+                        .iter_mut()
+                        .find(|entity| entity.id == id)
+                        .expect("Exported entity");
+                    entity.alternative_selection = Some("unresolved".into());
+                    entity.gaps.push(gap);
+                }
+                if observations > candidates.len() {
+                    let gap=Gap {owner:id.clone(),kind:"entity-multiplicity".into(),reason:"解释中同一来源的同构结构多次出现，已复用创建模板；该模板不表示运行时实体数量，也不推断这些出现属于同次执行。".into(),source:source.clone()};
+                    self.facts
+                        .entities
+                        .iter_mut()
+                        .find(|entity| entity.id == id)
+                        .expect("Exported entity")
+                        .gaps
+                        .push(gap);
+                }
+            }
         }
         Ok(())
+    }
+
+    fn structure_source(
+        &mut self,
+        structure: &crate::entity::mir_value::EntityStructure<'tcx>,
+    ) -> Option<SourceEvidence> {
+        structure
+            .span
+            .and_then(|span| self.source(span, "create"))
+            .or_else(|| {
+                structure.site.as_ref().map(|site| {
+                    let (_, sha256) = self.fingerprint(&site.path).unwrap_or_default();
+                    SourceEvidence {
+                        path: site.path.clone(),
+                        line: site.line,
+                        column: site.column,
+                        role: "create".into(),
+                        sha256,
+                        ..SourceEvidence::default()
+                    }
+                })
+            })
+    }
+
+    fn entity_shape(
+        &mut self,
+        structure: &crate::entity::mir_value::EntityStructure<'tcx>,
+        sources: bool,
+        env: TypingEnv<'tcx>,
+    ) -> serde_json::Value {
+        let mut components: Vec<_> = structure
+            .components
+            .iter()
+            .map(|ty| self.type_id(*ty, env, 0))
+            .collect();
+        components.sort();
+        components.dedup();
+        let mut required: Vec<_> = structure
+            .required
+            .iter()
+            .map(|ty| self.type_id(*ty, env, 0))
+            .collect();
+        required.sort();
+        required.dedup();
+        let children: Vec<_> = structure
+            .children
+            .iter()
+            .map(|child| self.entity_shape(child, sources, env))
+            .collect();
+        let alternatives: Vec<Vec<_>> = structure
+            .alternatives
+            .iter()
+            .map(|group| {
+                group
+                    .iter()
+                    .map(|candidate| self.entity_shape(candidate, sources, env))
+                    .collect()
+            })
+            .collect();
+        serde_json::json!({"components":components,"required":required,"children":children,"alternatives":alternatives,"source":if sources {self.structure_source(structure)} else {None},"gaps":if sources {structure.gaps.clone()} else {vec![]}})
     }
 
     fn entity_structure(
@@ -1988,7 +2128,13 @@ impl<'tcx> Collector<'tcx> {
         source: Option<SourceEvidence>,
         path: &str,
         env: TypingEnv<'tcx>,
+        alternative_group: Option<String>,
+        possible: bool,
+        mut alternative_context: Vec<String>,
     ) -> String {
+        if let Some(group) = &alternative_group {
+            alternative_context.push(group.clone());
+        }
         let id = format!(
             "entity-{}",
             digest(serde_json::to_vec(&(creator, path)).unwrap())
@@ -2008,30 +2154,55 @@ impl<'tcx> Collector<'tcx> {
             .iter()
             .enumerate()
             .map(|(index, child)| {
-                let child_source = child
-                    .site
-                    .as_ref()
-                    .map(|site| {
-                        let (_, sha256) = self.fingerprint(&site.path).unwrap_or_default();
-                        SourceEvidence {
-                            path: site.path.clone(),
-                            line: site.line,
-                            column: site.column,
-                            role: "create".into(),
-                            sha256,
-                            ..SourceEvidence::default()
-                        }
-                    })
-                    .or_else(|| source.clone());
+                let child_source = self.structure_source(child).or_else(|| source.clone());
                 self.entity_structure(
                     creator,
                     child,
                     child_source,
                     &format!("{path}.{index}"),
                     env,
+                    None,
+                    possible,
+                    alternative_context.clone(),
                 )
             })
             .collect();
+        let mut alternatives = vec![];
+        for (group_index, group) in structure.alternatives.iter().enumerate() {
+            let group_id = format!(
+                "alternative-{}",
+                digest(serde_json::to_vec(&(creator, path, group_index)).unwrap())
+            );
+            let mut seen = HashSet::new();
+            let mut candidates = vec![];
+            for candidate in group {
+                if !seen.insert(self.entity_shape(candidate, true, env).to_string()) {
+                    continue;
+                }
+                let index = candidates.len();
+                let candidate_source = self.structure_source(candidate).or_else(|| source.clone());
+                let shape = digest(self.entity_shape(candidate, false, env).to_string());
+                candidates.push(self.entity_structure(
+                    creator,
+                    candidate,
+                    candidate_source,
+                    &format!(
+                        "{path}.alternative{group_index}.candidate{index}-{}",
+                        &shape[..16]
+                    ),
+                    env,
+                    Some(group_id.clone()),
+                    true,
+                    alternative_context.clone(),
+                ));
+            }
+            alternatives.push(EntityAlternativeGroup {
+                id: group_id,
+                candidates,
+                source: source.clone(),
+                selection: "one-of".into(),
+            });
+        }
         let gaps = structure
             .gaps
             .iter()
@@ -2042,6 +2213,15 @@ impl<'tcx> Collector<'tcx> {
                 source: source.clone(),
             })
             .collect();
+        let mut gaps: Vec<_> = gaps;
+        if !alternatives.is_empty() {
+            gaps.push(Gap {owner:id.clone(),kind:"entity-alternative".into(),reason:"各结构候选分别来自原生场景执行分支，尚未导出候选与具体条件的对应；独立候选组不做笛卡尔组合。".into(),source:source.clone()});
+        }
+        let source_evidence = self
+            .structure_source(structure)
+            .filter(|evidence| Some(evidence) != source.as_ref())
+            .into_iter()
+            .collect();
         let record = EntityTemplate {
             id: id.clone(),
             creator: creator.into(),
@@ -2050,28 +2230,14 @@ impl<'tcx> Collector<'tcx> {
             required_components,
             children,
             gaps,
+            alternatives,
+            alternative_selection: alternative_group.as_ref().map(|_| "one-of".into()),
+            alternative_group,
+            alternative_context,
+            possible,
+            source_evidence,
         };
-        if let Some(previous) = self
-            .facts
-            .entities
-            .iter_mut()
-            .find(|entity| entity.id == id)
-        {
-            previous.components.extend(record.components);
-            previous.components.sort();
-            previous.components.dedup();
-            previous
-                .required_components
-                .extend(record.required_components);
-            previous.required_components.sort();
-            previous.required_components.dedup();
-            previous.children.extend(record.children);
-            previous.children.sort();
-            previous.children.dedup();
-            previous.gaps.extend(record.gaps);
-        } else {
-            self.facts.entities.push(record);
-        }
+        self.facts.entities.push(record);
         id
     }
 }

@@ -1,0 +1,600 @@
+{
+  "sourceModelSha256": "4456d3f5b8def6357d2c3bd302e5e32dc5cebbdcd335691e2736e8ce6d920752",
+  "targetEdgeId": "relation-436c9d3e475e0259b27c1034",
+  "view": {
+    "id": "object-dbac0571a67c07d9",
+    "feature": "crate:bevy_light",
+    "aspect": "object",
+    "objectId": "type-419f9dd7479df9e12d92fe86",
+    "centerNodeId": "type-419f9dd7479df9e12d92fe86",
+    "label": "volumetric::VolumetricFog · 对象关系",
+    "summary": "当前对象及全部直接关联对象。"
+  },
+  "graph": {
+    "centerNodeId": "type-419f9dd7479df9e12d92fe86",
+    "empty": false,
+    "nodes": [
+      {
+        "id": "type-419f9dd7479df9e12d92fe86",
+        "role": "internal",
+        "group": "当前对象"
+      },
+      {
+        "id": "registration-7c30e453007b55fec160b558",
+        "role": "external",
+        "group": "直接关联对象"
+      },
+      {
+        "id": "registration-2288a96efefe830bc9144dc6",
+        "role": "external",
+        "group": "直接关联对象"
+      },
+      {
+        "id": "registration-fbfc8176ebe003e38462dfb0",
+        "role": "external",
+        "group": "直接关联对象"
+      },
+      {
+        "id": "registration-cef9b6303b1605fd57fbd91d",
+        "role": "external",
+        "group": "直接关联对象"
+      }
+    ],
+    "links": [
+      {
+        "evidence": "parameter",
+        "from": "type-419f9dd7479df9e12d92fe86",
+        "id": "relation-0205d28d86577f02995dc0d4",
+        "kind": "read",
+        "label": "读取",
+        "parameter": "fog_volumes.data",
+        "scope": "current",
+        "sourceEntries": [
+          {
+            "column": 5,
+            "dependency": {
+              "name": "bevy_pbr",
+              "root": "//?/C:/Users/cck17/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/bevy_pbr-0.20.0",
+              "version": "0.20.0"
+            },
+            "expansions": [],
+            "label": "参数位置",
+            "line": 703,
+            "path": "src/volumetric_fog/render.rs",
+            "role": "parameter",
+            "sha256": "8dbf4ec38f6ff7a9de3fd46d1c0008abfa23bcc23e88140bbc05aa24d4a8b593"
+          }
+        ],
+        "sourceGaps": [],
+        "to": "registration-7c30e453007b55fec160b558"
+      },
+      {
+        "evidence": "parameter",
+        "from": "type-419f9dd7479df9e12d92fe86",
+        "id": "relation-322d6eb7a4f6df4277e6248f",
+        "kind": "read",
+        "label": "读取",
+        "parameter": "arg0.data.2",
+        "scope": "current",
+        "sourceEntries": [
+          {
+            "column": 5,
+            "dependency": {
+              "name": "bevy_pbr",
+              "root": "//?/C:/Users/cck17/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/bevy_pbr-0.20.0",
+              "version": "0.20.0"
+            },
+            "expansions": [],
+            "label": "参数位置",
+            "line": 618,
+            "path": "src/volumetric_fog/render.rs",
+            "role": "parameter",
+            "sha256": "8dbf4ec38f6ff7a9de3fd46d1c0008abfa23bcc23e88140bbc05aa24d4a8b593"
+          }
+        ],
+        "sourceGaps": [],
+        "to": "registration-2288a96efefe830bc9144dc6"
+      },
+      {
+        "bodyOperations": [
+          {
+            "callChain": [],
+            "callChainScope": "representative-static-path",
+            "callableId": "callable-43ff168c7c0199dc3efe2aff4ec20bedf51e615972932af6ecdf4a0e0653115f",
+            "conditions": [
+              {
+                "column": 8,
+                "dependency": {
+                  "name": "bevy_pbr",
+                  "root": "//?/C:/Users/cck17/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/bevy_pbr-0.20.0",
+                  "version": "0.20.0"
+                },
+                "expansions": [],
+                "expression": "volumetric_lights.is_empty()",
+                "guardKind": "condition",
+                "label": "操作位置",
+                "line": 247,
+                "path": "src/volumetric_fog/render.rs",
+                "role": "operation",
+                "sha256": "8dbf4ec38f6ff7a9de3fd46d1c0008abfa23bcc23e88140bbc05aa24d4a8b593"
+              },
+              {
+                "column": 9,
+                "dependency": {
+                  "name": "bevy_pbr",
+                  "root": "//?/C:/Users/cck17/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/bevy_pbr-0.20.0",
+                  "version": "0.20.0"
+                },
+                "expansions": [
+                  {
+                    "column": 9,
+                    "line": 249,
+                    "name": "desugaring of `for` loop",
+                    "path": "C:/Users/cck17/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/bevy_pbr-0.20.0/src/volumetric_fog/render.rs"
+                  }
+                ],
+                "expression": "for (entity, ..) in view_targets.iter() {\n            commands\n                .entity(entity)\n                .remove::<(VolumetricFog, ViewVolumetricFogPipelines, ViewVolumetricFog)>();\n        }",
+                "guardKind": "match-value",
+                "label": "操作位置",
+                "line": 249,
+                "path": "src/volumetric_fog/render.rs",
+                "role": "operation",
+                "sha256": "8dbf4ec38f6ff7a9de3fd46d1c0008abfa23bcc23e88140bbc05aa24d4a8b593"
+              },
+              {
+                "column": 9,
+                "dependency": {
+                  "name": "bevy_pbr",
+                  "root": "//?/C:/Users/cck17/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/bevy_pbr-0.20.0",
+                  "version": "0.20.0"
+                },
+                "expansions": [
+                  {
+                    "column": 9,
+                    "line": 249,
+                    "name": "desugaring of `for` loop",
+                    "path": "C:/Users/cck17/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/bevy_pbr-0.20.0/src/volumetric_fog/render.rs"
+                  }
+                ],
+                "expression": "for (entity, ..) in view_targets.iter() {\n            commands\n                .entity(entity)\n                .remove::<(VolumetricFog, ViewVolumetricFogPipelines, ViewVolumetricFog)>();\n        }",
+                "guardKind": "match-arm",
+                "label": "操作位置",
+                "line": 249,
+                "path": "src/volumetric_fog/render.rs",
+                "role": "operation",
+                "sha256": "8dbf4ec38f6ff7a9de3fd46d1c0008abfa23bcc23e88140bbc05aa24d4a8b593"
+              },
+              {
+                "column": 9,
+                "dependency": {
+                  "name": "bevy_pbr",
+                  "root": "//?/C:/Users/cck17/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/bevy_pbr-0.20.0",
+                  "version": "0.20.0"
+                },
+                "expansions": [
+                  {
+                    "column": 9,
+                    "line": 249,
+                    "name": "desugaring of `for` loop",
+                    "path": "C:/Users/cck17/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/bevy_pbr-0.20.0/src/volumetric_fog/render.rs"
+                  }
+                ],
+                "expression": "for (entity, ..) in view_targets.iter() {\n            commands\n                .entity(entity)\n                .remove::<(VolumetricFog, ViewVolumetricFogPipelines, ViewVolumetricFog)>();\n        }",
+                "guardKind": "match-value",
+                "label": "操作位置",
+                "line": 249,
+                "path": "src/volumetric_fog/render.rs",
+                "role": "operation",
+                "sha256": "8dbf4ec38f6ff7a9de3fd46d1c0008abfa23bcc23e88140bbc05aa24d4a8b593"
+              },
+              {
+                "column": 9,
+                "dependency": {
+                  "name": "bevy_pbr",
+                  "root": "//?/C:/Users/cck17/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/bevy_pbr-0.20.0",
+                  "version": "0.20.0"
+                },
+                "expansions": [
+                  {
+                    "column": 9,
+                    "line": 249,
+                    "name": "desugaring of `for` loop",
+                    "path": "C:/Users/cck17/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/bevy_pbr-0.20.0/src/volumetric_fog/render.rs"
+                  }
+                ],
+                "expression": "for (entity, ..) in view_targets.iter() {\n            commands\n                .entity(entity)\n                .remove::<(VolumetricFog, ViewVolumetricFogPipelines, ViewVolumetricFog)>();\n        }",
+                "guardKind": "match-arm",
+                "label": "操作位置",
+                "line": 249,
+                "path": "src/volumetric_fog/render.rs",
+                "role": "operation",
+                "sha256": "8dbf4ec38f6ff7a9de3fd46d1c0008abfa23bcc23e88140bbc05aa24d4a8b593"
+              }
+            ],
+            "deferred": true,
+            "operationId": "operation-b081aa3c901afb2cddbadecdb2aa29bdd508651443fdd1330f0f4679efac7142",
+            "registeredOwner": "registration-fbfc8176ebe003e38462dfb0",
+            "scope": "current"
+          }
+        ],
+        "evidence": "body",
+        "from": "registration-fbfc8176ebe003e38462dfb0",
+        "id": "relation-3d0d90305bf3e02f868a3137",
+        "kind": "write",
+        "label": "移除",
+        "sourceEntries": [
+          {
+            "column": 13,
+            "dependency": {
+              "name": "bevy_pbr",
+              "root": "//?/C:/Users/cck17/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/bevy_pbr-0.20.0",
+              "version": "0.20.0"
+            },
+            "expansions": [],
+            "label": "操作位置",
+            "line": 250,
+            "path": "src/volumetric_fog/render.rs",
+            "role": "operation",
+            "sha256": "8dbf4ec38f6ff7a9de3fd46d1c0008abfa23bcc23e88140bbc05aa24d4a8b593"
+          },
+          {
+            "column": 8,
+            "dependency": {
+              "name": "bevy_pbr",
+              "root": "//?/C:/Users/cck17/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/bevy_pbr-0.20.0",
+              "version": "0.20.0"
+            },
+            "expansions": [],
+            "expression": "volumetric_lights.is_empty()",
+            "guardKind": "condition",
+            "label": "操作位置",
+            "line": 247,
+            "path": "src/volumetric_fog/render.rs",
+            "role": "operation",
+            "sha256": "8dbf4ec38f6ff7a9de3fd46d1c0008abfa23bcc23e88140bbc05aa24d4a8b593"
+          },
+          {
+            "column": 9,
+            "dependency": {
+              "name": "bevy_pbr",
+              "root": "//?/C:/Users/cck17/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/bevy_pbr-0.20.0",
+              "version": "0.20.0"
+            },
+            "expansions": [
+              {
+                "column": 9,
+                "line": 249,
+                "name": "desugaring of `for` loop",
+                "path": "C:/Users/cck17/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/bevy_pbr-0.20.0/src/volumetric_fog/render.rs"
+              }
+            ],
+            "expression": "for (entity, ..) in view_targets.iter() {\n            commands\n                .entity(entity)\n                .remove::<(VolumetricFog, ViewVolumetricFogPipelines, ViewVolumetricFog)>();\n        }",
+            "guardKind": "match-value",
+            "label": "操作位置",
+            "line": 249,
+            "path": "src/volumetric_fog/render.rs",
+            "role": "operation",
+            "sha256": "8dbf4ec38f6ff7a9de3fd46d1c0008abfa23bcc23e88140bbc05aa24d4a8b593"
+          },
+          {
+            "column": 9,
+            "dependency": {
+              "name": "bevy_pbr",
+              "root": "//?/C:/Users/cck17/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/bevy_pbr-0.20.0",
+              "version": "0.20.0"
+            },
+            "expansions": [
+              {
+                "column": 9,
+                "line": 249,
+                "name": "desugaring of `for` loop",
+                "path": "C:/Users/cck17/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/bevy_pbr-0.20.0/src/volumetric_fog/render.rs"
+              }
+            ],
+            "expression": "for (entity, ..) in view_targets.iter() {\n            commands\n                .entity(entity)\n                .remove::<(VolumetricFog, ViewVolumetricFogPipelines, ViewVolumetricFog)>();\n        }",
+            "guardKind": "match-arm",
+            "label": "操作位置",
+            "line": 249,
+            "path": "src/volumetric_fog/render.rs",
+            "role": "operation",
+            "sha256": "8dbf4ec38f6ff7a9de3fd46d1c0008abfa23bcc23e88140bbc05aa24d4a8b593"
+          }
+        ],
+        "sourceGaps": [],
+        "to": "type-419f9dd7479df9e12d92fe86",
+        "factKind": "remove",
+        "operation": "remove"
+      },
+      {
+        "bodyOperations": [
+          {
+            "callChain": [],
+            "callChainScope": "representative-static-path",
+            "callableId": "callable-43ff168c7c0199dc3efe2aff4ec20bedf51e615972932af6ecdf4a0e0653115f",
+            "conditions": [
+              {
+                "column": 5,
+                "dependency": {
+                  "name": "bevy_pbr",
+                  "root": "//?/C:/Users/cck17/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/bevy_pbr-0.20.0",
+                  "version": "0.20.0"
+                },
+                "expansions": [
+                  {
+                    "column": 5,
+                    "line": 260,
+                    "name": "desugaring of `for` loop",
+                    "path": "C:/Users/cck17/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/bevy_pbr-0.20.0/src/volumetric_fog/render.rs"
+                  }
+                ],
+                "expression": "for (entity, volumetric_fog) in view_targets.iter() {\n        commands\n            .get_entity(entity)\n            .expect(\"Volumetric fog entity wasn't synced.\")\n            .insert(*volumetric_fog);\n    }",
+                "guardKind": "match-value",
+                "label": "操作位置",
+                "line": 260,
+                "path": "src/volumetric_fog/render.rs",
+                "role": "operation",
+                "sha256": "8dbf4ec38f6ff7a9de3fd46d1c0008abfa23bcc23e88140bbc05aa24d4a8b593"
+              },
+              {
+                "column": 5,
+                "dependency": {
+                  "name": "bevy_pbr",
+                  "root": "//?/C:/Users/cck17/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/bevy_pbr-0.20.0",
+                  "version": "0.20.0"
+                },
+                "expansions": [
+                  {
+                    "column": 5,
+                    "line": 260,
+                    "name": "desugaring of `for` loop",
+                    "path": "C:/Users/cck17/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/bevy_pbr-0.20.0/src/volumetric_fog/render.rs"
+                  }
+                ],
+                "expression": "for (entity, volumetric_fog) in view_targets.iter() {\n        commands\n            .get_entity(entity)\n            .expect(\"Volumetric fog entity wasn't synced.\")\n            .insert(*volumetric_fog);\n    }",
+                "guardKind": "match-arm",
+                "label": "操作位置",
+                "line": 260,
+                "path": "src/volumetric_fog/render.rs",
+                "role": "operation",
+                "sha256": "8dbf4ec38f6ff7a9de3fd46d1c0008abfa23bcc23e88140bbc05aa24d4a8b593"
+              },
+              {
+                "column": 5,
+                "dependency": {
+                  "name": "bevy_pbr",
+                  "root": "//?/C:/Users/cck17/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/bevy_pbr-0.20.0",
+                  "version": "0.20.0"
+                },
+                "expansions": [
+                  {
+                    "column": 5,
+                    "line": 260,
+                    "name": "desugaring of `for` loop",
+                    "path": "C:/Users/cck17/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/bevy_pbr-0.20.0/src/volumetric_fog/render.rs"
+                  }
+                ],
+                "expression": "for (entity, volumetric_fog) in view_targets.iter() {\n        commands\n            .get_entity(entity)\n            .expect(\"Volumetric fog entity wasn't synced.\")\n            .insert(*volumetric_fog);\n    }",
+                "guardKind": "match-value",
+                "label": "操作位置",
+                "line": 260,
+                "path": "src/volumetric_fog/render.rs",
+                "role": "operation",
+                "sha256": "8dbf4ec38f6ff7a9de3fd46d1c0008abfa23bcc23e88140bbc05aa24d4a8b593"
+              },
+              {
+                "column": 5,
+                "dependency": {
+                  "name": "bevy_pbr",
+                  "root": "//?/C:/Users/cck17/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/bevy_pbr-0.20.0",
+                  "version": "0.20.0"
+                },
+                "expansions": [
+                  {
+                    "column": 5,
+                    "line": 260,
+                    "name": "desugaring of `for` loop",
+                    "path": "C:/Users/cck17/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/bevy_pbr-0.20.0/src/volumetric_fog/render.rs"
+                  }
+                ],
+                "expression": "for (entity, volumetric_fog) in view_targets.iter() {\n        commands\n            .get_entity(entity)\n            .expect(\"Volumetric fog entity wasn't synced.\")\n            .insert(*volumetric_fog);\n    }",
+                "guardKind": "match-arm",
+                "label": "操作位置",
+                "line": 260,
+                "path": "src/volumetric_fog/render.rs",
+                "role": "operation",
+                "sha256": "8dbf4ec38f6ff7a9de3fd46d1c0008abfa23bcc23e88140bbc05aa24d4a8b593"
+              }
+            ],
+            "deferred": true,
+            "operationId": "operation-f6f09512a991c8fce51cf6d9f83ddb3d1c62ceb0631f27e8d0e00e608e655643",
+            "registeredOwner": "registration-fbfc8176ebe003e38462dfb0",
+            "scope": "current"
+          }
+        ],
+        "evidence": "body",
+        "from": "registration-fbfc8176ebe003e38462dfb0",
+        "id": "relation-436c9d3e475e0259b27c1034",
+        "kind": "write",
+        "label": "插入",
+        "sourceEntries": [
+          {
+            "column": 9,
+            "dependency": {
+              "name": "bevy_pbr",
+              "root": "//?/C:/Users/cck17/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/bevy_pbr-0.20.0",
+              "version": "0.20.0"
+            },
+            "expansions": [],
+            "label": "操作位置",
+            "line": 261,
+            "path": "src/volumetric_fog/render.rs",
+            "role": "operation",
+            "sha256": "8dbf4ec38f6ff7a9de3fd46d1c0008abfa23bcc23e88140bbc05aa24d4a8b593"
+          },
+          {
+            "column": 5,
+            "dependency": {
+              "name": "bevy_pbr",
+              "root": "//?/C:/Users/cck17/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/bevy_pbr-0.20.0",
+              "version": "0.20.0"
+            },
+            "expansions": [
+              {
+                "column": 5,
+                "line": 260,
+                "name": "desugaring of `for` loop",
+                "path": "C:/Users/cck17/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/bevy_pbr-0.20.0/src/volumetric_fog/render.rs"
+              }
+            ],
+            "expression": "for (entity, volumetric_fog) in view_targets.iter() {\n        commands\n            .get_entity(entity)\n            .expect(\"Volumetric fog entity wasn't synced.\")\n            .insert(*volumetric_fog);\n    }",
+            "guardKind": "match-value",
+            "label": "操作位置",
+            "line": 260,
+            "path": "src/volumetric_fog/render.rs",
+            "role": "operation",
+            "sha256": "8dbf4ec38f6ff7a9de3fd46d1c0008abfa23bcc23e88140bbc05aa24d4a8b593"
+          },
+          {
+            "column": 5,
+            "dependency": {
+              "name": "bevy_pbr",
+              "root": "//?/C:/Users/cck17/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/bevy_pbr-0.20.0",
+              "version": "0.20.0"
+            },
+            "expansions": [
+              {
+                "column": 5,
+                "line": 260,
+                "name": "desugaring of `for` loop",
+                "path": "C:/Users/cck17/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/bevy_pbr-0.20.0/src/volumetric_fog/render.rs"
+              }
+            ],
+            "expression": "for (entity, volumetric_fog) in view_targets.iter() {\n        commands\n            .get_entity(entity)\n            .expect(\"Volumetric fog entity wasn't synced.\")\n            .insert(*volumetric_fog);\n    }",
+            "guardKind": "match-arm",
+            "label": "操作位置",
+            "line": 260,
+            "path": "src/volumetric_fog/render.rs",
+            "role": "operation",
+            "sha256": "8dbf4ec38f6ff7a9de3fd46d1c0008abfa23bcc23e88140bbc05aa24d4a8b593"
+          }
+        ],
+        "sourceGaps": [],
+        "to": "type-419f9dd7479df9e12d92fe86",
+        "factKind": "insert",
+        "operation": "insert"
+      },
+      {
+        "evidence": "parameter",
+        "from": "type-419f9dd7479df9e12d92fe86",
+        "id": "relation-af076afef272f085e95a5da8",
+        "kind": "reference",
+        "label": "存在性约束",
+        "parameter": "arg0.filter",
+        "scope": "current",
+        "sourceEntries": [
+          {
+            "column": 5,
+            "dependency": {
+              "name": "bevy_pbr",
+              "root": "//?/C:/Users/cck17/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/bevy_pbr-0.20.0",
+              "version": "0.20.0"
+            },
+            "expansions": [],
+            "label": "参数位置",
+            "line": 572,
+            "path": "src/volumetric_fog/render.rs",
+            "role": "parameter",
+            "sha256": "8dbf4ec38f6ff7a9de3fd46d1c0008abfa23bcc23e88140bbc05aa24d4a8b593"
+          }
+        ],
+        "sourceGaps": [],
+        "to": "registration-cef9b6303b1605fd57fbd91d",
+        "factKind": "filter",
+        "operation": "filter"
+      },
+      {
+        "evidence": "parameter",
+        "from": "type-419f9dd7479df9e12d92fe86",
+        "id": "relation-d41cb6152acd1e128860965f",
+        "kind": "read",
+        "label": "读取",
+        "parameter": "arg0.data.1",
+        "scope": "current",
+        "sourceEntries": [
+          {
+            "column": 5,
+            "dependency": {
+              "name": "bevy_pbr",
+              "root": "//?/C:/Users/cck17/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/bevy_pbr-0.20.0",
+              "version": "0.20.0"
+            },
+            "expansions": [],
+            "label": "参数位置",
+            "line": 243,
+            "path": "src/volumetric_fog/render.rs",
+            "role": "parameter",
+            "sha256": "8dbf4ec38f6ff7a9de3fd46d1c0008abfa23bcc23e88140bbc05aa24d4a8b593"
+          }
+        ],
+        "sourceGaps": [],
+        "to": "registration-fbfc8176ebe003e38462dfb0"
+      }
+    ]
+  },
+  "registry": {
+    "type-419f9dd7479df9e12d92fe86": {
+      "id": "type-419f9dd7479df9e12d92fe86",
+      "name": "volumetric::VolumetricFog",
+      "kind": "Component",
+      "feature": "crate:bevy_light",
+      "description": "配置体积雾的环境光颜色和强度、射线起点抖动及步进次数，控制雾与体积光的积分质量和渲染开销。",
+      "display_summary": "为三维相机启用体积雾和光束渲染。"
+    },
+    "registration-7c30e453007b55fec160b558": {
+      "id": "registration-7c30e453007b55fec160b558",
+      "name": "bevy_pbr::volumetric_fog::render::prepare_view_depth_textures_for_volumetric_fog",
+      "kind": "System",
+      "feature": "crate:bevy_pbr",
+      "description": "存在 VolumetricFog 时，为查询到的 Camera3d 深度纹理用途加入 TEXTURE_BINDING；没有雾视图时不修改。",
+      "display_summary": "允许体积雾着色器读取三维相机深度纹理。"
+    },
+    "registration-2288a96efefe830bc9144dc6": {
+      "id": "registration-2288a96efefe830bc9144dc6",
+      "name": "bevy_pbr::volumetric_fog::render::prepare_volumetric_fog_uniforms",
+      "kind": "System",
+      "feature": "crate:bevy_pbr",
+      "description": "预先缓存雾体积的逆变换，为每个视图与雾体积组合计算局部和裁剪变换、相机内外位置及包围半径，上传颜色、光照与散射参数，并在视图保存体积列表及动态偏移。",
+      "display_summary": "把各视图和雾体积组合转换为体积雾 Uniform。"
+    },
+    "registration-fbfc8176ebe003e38462dfb0": {
+      "id": "registration-fbfc8176ebe003e38462dfb0",
+      "name": "bevy_pbr::volumetric_fog::render::extract_volumetric_fog",
+      "kind": "System",
+      "feature": "crate:bevy_pbr",
+      "description": "存在体积光时向已同步的渲染实体复制视图雾配置、雾体积及全局变换和体积光标记；没有体积光时移除相应视图雾状态和 FogVolume 后返回。",
+      "display_summary": "从主世界提取体积雾、雾体积及体积光配置。"
+    },
+    "registration-cef9b6303b1605fd57fbd91d": {
+      "id": "registration-cef9b6303b1605fd57fbd91d",
+      "name": "bevy_pbr::volumetric_fog::render::prepare_volumetric_fog_pipelines",
+      "kind": "System",
+      "feature": "crate:bevy_pbr",
+      "description": "等候雾平面网格准备完成，结合视图管线键、目标格式及平面顶点布局分别专用化两类体积雾管线；缺少视图键时跳过，完成后插入该视图的两份管线标识。",
+      "display_summary": "为体积雾视图准备有密度纹理和无密度纹理两类管线。"
+    }
+  },
+  "features": [
+    {
+      "id": "crate:bevy_light",
+      "label": "crate:bevy_light",
+      "overviewNode": "type-41cefcf3937caa6117604f94",
+      "plugin": "LightPlugin"
+    },
+    {
+      "id": "crate:bevy_pbr",
+      "label": "crate:bevy_pbr",
+      "overviewNode": "type-959b53082c7bc9a301fe4157",
+      "plugin": "StandardMaterial>"
+    }
+  ]
+}

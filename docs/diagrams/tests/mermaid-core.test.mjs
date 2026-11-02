@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { compileRoutedView, normalizeMermaidSvg, nativeLabelMismatches } from '../src/mermaid-core.mjs';
+import { compileRoutedView, normalizeMermaidSvg, nativeLabelMismatches, routedMermaid } from '../src/mermaid-core.mjs';
 import { svgElements } from '../src/svg-shape-geometry.mjs';
 
 function clearanceFixture(layout, aspect) {
@@ -85,6 +85,59 @@ test('Component fallback combines native card containers and increased spacing b
   assert.match(result.mermaid, /subgraph layout_card_/);
   assert.equal(view.mermaid, before);
   assert.equal(JSON.parse(/^---\n([\s\S]*?)\n---/.exec(result.mermaid)[1]).config.flowchart.rankSpacing, 72);
+});
+
+test('object native retries preserve default success and try selective system containers after general clearance', async () => {
+  const { view, registry, native } = clearanceFixture('dagre', 'object'), candidates = [];
+  view.nodes[0].visualType = 'system'; view.nodes[1].visualType = 'resource';
+  view.mermaid = view.mermaid.replace('class n0 node_component', 'class n0 node_system').replace('class n1 node_component', 'class n1 node_resource');
+  const before = structuredClone(view);
+  const result = await compileRoutedView(view, registry, async candidate => {
+    const wrapped = ['n0', 'n1'].map(id => candidate.mermaid.includes('subgraph layout_card_' + id));
+    candidates.push(wrapped);
+    return native(candidate, wrapped[0] && !wrapped[1]);
+  });
+  assert.deepEqual(candidates, [[false, false], [true, true], [true, false]]);
+  assert.match(result.mermaid, /subgraph layout_card_n0/);
+  assert.doesNotMatch(result.mermaid, /subgraph layout_card_n1/);
+  assert.deepEqual(view, before);
+  let calls = 0;
+  const direct = await compileRoutedView(view, registry, async candidate => { calls++; return native(candidate, true); });
+  assert.equal(calls, 1);
+  assert.doesNotMatch(direct.mermaid, /layout_card_/);
+});
+
+test('near-collinear resource edges try the exact source and target before repeating rank spans', async () => {
+  const { view, registry } = clearanceFixture('dagre', 'object'), rejected = [];
+  view.nodes[0].visualType = 'system'; view.nodes[1].visualType = 'resource';
+  view.mermaid = view.mermaid.replace('class n0 node_component', 'class n0 node_system').replace('class n1 node_component', 'class n1 node_resource');
+  view.links = [{ id: 'write', mermaidId: 'e0', from: 'a', to: 'b', kind: 'write', edgeSemantic: 'write' }];
+  view.mermaid += '  n0 e0@--> n1\n  class e0 edge_write\n';
+  const before = structuredClone(view);
+  const result = await compileRoutedView(view, registry, async candidate => {
+    const selected = !candidate.mermaid.includes('subgraph layout_card_n0') && candidate.mermaid.includes('subgraph layout_card_n1');
+    const curve = selected ? 'M80,75 C110,45 140,45 170,75.8' : 'M80,75 C110,75.267 140,75.533 170,75.8';
+    return normalizeMermaidSvg(candidate, '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 250 150">'
+      + '<g class="node" id="flowchart-n0-0"><rect x="20" y="60" width="60" height="30"/></g>'
+      + '<g class="node" id="flowchart-n1-1"><rect x="170" y="60.8" width="60" height="30"/></g>'
+      + `<path data-id="e0" d="${curve}"/></svg>`, registry);
+  }, { onAttempt: attempt => rejected.push(attempt) });
+  assert.equal(rejected.length, 2);
+  assert.ok(rejected.every(attempt => attempt.invalid[0].axis === null && !attempt.invalid[0].curved
+    && attempt.invalid[0].curveCommands && !attempt.invalid[0].collisions.length && !attempt.invalid[0].arrowIssues.length));
+  assert.deepEqual(result.links, view.links); assert.deepEqual(view, before);
+});
+
+test('endpoint card containers select exact native IDs even when cards share names and visual types', () => {
+  const { view } = clearanceFixture('dagre', 'object');
+  view.nodes.forEach(node => { node.name = 'same'; });
+  const before = structuredClone(view);
+  const source = routedMermaid(view, { cardContainers: ['n1'] });
+  assert.doesNotMatch(source, /subgraph layout_card_n0/);
+  assert.match(source, /subgraph layout_card_n1/);
+  assert.equal((source.match(/n[01]@\{/g) || []).length, 2);
+  assert.deepEqual(view, before);
+  assert.throws(() => routedMermaid(view, { cardContainers: ['missing'] }), /Missing native card container/);
 });
 
 test('native retry eligibility follows the configured layout rather than the data aspect', async () => {

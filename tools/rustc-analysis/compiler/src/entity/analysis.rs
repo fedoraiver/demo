@@ -880,6 +880,7 @@ impl<'tcx> Engine<'tcx> {
                     )
                 {
                     value.site = Some(self.site(constant.span));
+                    value.span = Some(constant.span);
                     return Ok(value);
                 }
                 Ok(self.unknown(ty, "unevaluated runtime constant", memory))
@@ -1003,6 +1004,7 @@ impl<'tcx> Engine<'tcx> {
                 };
                 let mut value = Datum::new(ty, kind);
                 value.site = Some(self.site(span));
+                value.span = Some(span);
                 value
             }
             Rvalue::Repeat(operand, count) => {

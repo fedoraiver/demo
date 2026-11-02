@@ -4,6 +4,7 @@ import crypto from 'node:crypto';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { isDeepStrictEqual } from 'node:util';
+import { DOMParser } from '@xmldom/xmldom';
 import { checkMermaidGeometry } from './diagram-geometry.mjs';
 import { NODE_STYLES, EDGE_STYLES, SELECTION_STYLE, EXTERNAL_REFERENCE_STYLE, visualTypeOf, edgeSemanticOf, displayLabelOf, scheduleLinksFor } from './architecture-style.mjs';
 import { nodeKindOf, NODE_KINDS } from './architecture-kinds.mjs';
@@ -14,7 +15,7 @@ import { isMainPluginRegistration, scheduleGroupLabel, isUnscheduledTriggerNode,
 import { validateCompilerModel, checkCompilerRegistry, createCompilerObjectCatalog, bindCompilerSchedules, SOURCE_ROLE_LABELS, sourceKey } from './rustc-model.mjs';
 import { DATA_GROUP_LABELS, entityComponentColumns } from './architecture-renderer.mjs';
 import { displayEndpoints, inspectViewRoutes, ROUTING_STYLE, nativeSvgProperty, nativeMarkerProperty } from './architecture-routing.mjs';
-import { INFRASTRUCTURE_FEATURES, infrastructureFeature, architectureViewId } from './architecture-infrastructure.mjs';
+import { projectInfrastructureFeatures } from './architecture-infrastructure.mjs';
 
 
 import { checkDebugdumpViews, normalizeScheduleSvg } from './debugdump.mjs';
@@ -24,6 +25,7 @@ import { SCHEDULE_THEME } from './schedule-theme.mjs';
 import { SCHEDULE_LEGEND_LABELS } from './schedule-legend.mjs';
 import { artifactFile, pathsForRepository, repositoryRoot } from './paths.mjs';
 import { readArchitectureData } from './architecture-artifacts.mjs';
+import { validateArchitectureSvg } from './architecture-asset-loader.mjs';
 
 const legacyAspects = ['systems', 'data', 'events'];
 const linkKinds = new Set(['order', 'read', 'write', 'trigger', 'transition', 'reference', 'relationship', 'registration', 'dependency']);
@@ -200,6 +202,14 @@ export function checkScheduleGuideSamples(samples, sampleIds = new Set()) {
     }
     requireCondition([left - bounds[0], top - bounds[1], bounds[0] + bounds[2] - right, bounds[1] + bounds[3] - bottom]
       .every(padding => Math.abs(padding - 5) < .05), `Schedule guide padding mismatch: ${kind}`);
+  }
+}
+
+export function checkMermaidAccessibility(view) {
+  const root = new DOMParser().parseFromString(view.svg, 'image/svg+xml').documentElement;
+  for (const [tag, expected] of [['title', view.label], ['desc', view.summary]]) {
+    const elements = Array.from(root.childNodes).filter(node => node.nodeType === 1 && node.localName === tag);
+    requireCondition(elements.length === 1 && elements[0].textContent === expected, `Mermaid accessibility ${tag} mismatch: ${view.id}`);
   }
 }
 
@@ -559,6 +569,7 @@ export function checkArchitecture(root) {
   const artifact = readArchitectureData(repository), model = artifact.model;
   validateCompilerModel(model, { workspace: repository, modelDirectory: paths.dataDirectory });
   checkCompilerRegistry(artifact.registry, model);
+  requireCondition(isDeepStrictEqual(artifact.infrastructureFeatures, projectInfrastructureFeatures(artifact.registry, { requireComplete: true })), 'Distributed infrastructure menu differs from compiler identity projection');
   const registry = artifact.registry, catalog = createCompilerObjectCatalog(model, registry);
   requireCondition(isDeepStrictEqual(artifact.objects, catalog.objects), 'Distributed object index differs from compiler model');
   requireCondition(isDeepStrictEqual(artifact.scheduleInteractions, model.scheduleInteractions), 'Distributed Schedule bindings differ from compiler model');
@@ -573,6 +584,8 @@ export function checkArchitecture(root) {
       'Missing or invalid rendered view: ' + view.id);
     requireCondition(!filenames.has(view.filename), 'Duplicate rendered SVG filename: ' + view.filename); filenames.add(view.filename);
     requireCondition(fs.readFileSync(artifactFile(paths, view), 'utf8') === view.svg, 'SVG artifact mismatch: ' + view.id);
+    try { validateArchitectureSvg(view.svg, { DOMParser }); }
+    catch (error) { throw new Error(`Unsafe architecture SVG: ${view.id}: ${error.message}`, { cause: error }); }
     if (view.engine === 'graphviz') continue;
     requireCondition(view.aspect === 'object' && view.engine === 'mermaid' && view.filename === `ecs-${view.id}.svg`
       && view.mermaidFilename === `ecs-${view.id}.mmd`, 'Invalid compiler object render descriptor: ' + view.id);
@@ -590,6 +603,7 @@ export function checkArchitecture(root) {
       const rendered = links.find(value => value['data-link-id'] === link.id);
       requireCondition(rendered && rendered['data-connect'] === displayEndpoints(link).join('|'), 'Rendered relation endpoint mismatch: ' + link.id);
     }
+    checkMermaidAccessibility(view);
     checkMermaidSource(view, registry, new Map());
     checkMermaidGeometry(view.svg, view);
     checkMermaidStyles(view, registry);
@@ -597,7 +611,18 @@ export function checkArchitecture(root) {
     checkEntityGroups(view);
     if (view.routing) checkViewRouting(view);
   }
+  function checkGuideSafety(samples, prefix = 'guide') {
+    for (const [name, sample] of Object.entries(samples)) {
+      const id = `${prefix}/${name}`;
+      if (typeof sample !== 'string') checkGuideSafety(sample, id);
+      else {
+        try { validateArchitectureSvg(sample, { DOMParser }); }
+        catch (error) { throw new Error(`Unsafe architecture SVG: ${id}: ${error.message}`, { cause: error }); }
+      }
+    }
+  }
   checkGuideSamples(artifact.guideSamples, artifact.styles);
+  checkGuideSafety(artifact.guideSamples);
   requireCondition(isDeepStrictEqual(artifact.scheduleLegendLabels, SCHEDULE_LEGEND_LABELS), 'Schedule guide labels mismatch');
   const actualSvgs = [paths.objectSvgDirectory, paths.scheduleSvgDirectory].flatMap(directory => fs.readdirSync(directory)).filter(name => /^ecs-.*\.svg$/.test(name)).sort();
   requireCondition(isDeepStrictEqual(actualSvgs, [...filenames].sort()), 'Architecture SVG file set does not match compiler view manifest');
