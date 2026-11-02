@@ -1,0 +1,60 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: ambient_light::AmbientLight · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_entity fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**ambient​_​light::AmbientLight**<br/>为单台相机配置均匀环境光。" }
+  class n0 node_component
+  n1@{ shape: rounded, label: "**bevy​_​pbr::render::light::extract​_​**<br/>**ambient​_​light**<br/>来自crate:bevy​_​pbr ↗：批量复制主世界<br/>实体的环境光设置。" }
+  class n1 node_system
+  class n1 external_node
+  n2@{ shape: rounded, label: "**bevy​_​pbr::render::light::prepare​_​**<br/>**lights**<br/>来自crate:bevy​_​pbr ↗：准备视图光照参<br/>数、阴影视图和阴影贴图。" }
+  class n2 node_system
+  class n2 external_node
+  n3@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：提供主菜单展示与界面的三维相<br/>机。" }
+  class n3 node_entity
+  class n3 external_node
+  n0 e0@--> n1
+  class e0 edge_read
+  n0 e1@--> n2
+  class e1 edge_read
+  n3 e2@-->|"可能包含"| n0
+  class e2 edge_reference
+  e0@{ curve: basis }
+  e1@{ curve: basis }

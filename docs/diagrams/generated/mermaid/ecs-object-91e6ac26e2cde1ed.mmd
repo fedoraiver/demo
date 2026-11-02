@@ -1,0 +1,209 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#object-91e6ac26e2cde1ed-e4{marker-start:url(#object-91e6ac26e2cde1ed_flowchart-v2-pointStart)!important}\n#object-91e6ac26e2cde1ed-e7{marker-start:url(#object-91e6ac26e2cde1ed_flowchart-v2-pointStart)!important}\n#object-91e6ac26e2cde1ed-e8{marker-start:url(#object-91e6ac26e2cde1ed_flowchart-v2-pointStart)!important}\n#object-91e6ac26e2cde1ed-e9{marker-start:url(#object-91e6ac26e2cde1ed_flowchart-v2-pointStart)!important}\n#object-91e6ac26e2cde1ed-e12{marker-start:url(#object-91e6ac26e2cde1ed_flowchart-v2-pointStart)!important}\n#object-91e6ac26e2cde1ed_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: bevy_camera::visibility::RenderLayers · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  subgraph layout_card_n0[" "]
+  n0@{ shape: rounded, label: "**bevy​_​camera::visibility::**<br/>**RenderLayers**<br/>限定相机与实体可相交的渲染层。" }
+  class n0 node_component
+  end
+  style layout_card_n0 fill:none,stroke:none
+  subgraph layout_card_n1[" "]
+  n1@{ shape: rounded, label: "**bevy​_​gizmos​_​render::retained::**<br/>**extract​_​linegizmos**<br/>来自crate:bevy​_​gizmos​_​render ↗：从保<br/>留式 Gizmo 实体提取线条渲染数据。" }
+  class n1 node_system
+  class n1 external_node
+  end
+  style layout_card_n1 fill:none,stroke:none
+  subgraph layout_card_n2[" "]
+  n2@{ shape: rounded, label: "**bevy​_​pbr::render::mesh::collect​_​gpu​_​**<br/>**culled​_​meshes**<br/>来自crate:bevy​_​pbr ↗：按渲染层把<br/>GPU 裁剪对象分配到各视图列表。" }
+  class n2 node_system
+  class n2 external_node
+  end
+  style layout_card_n2 fill:none,stroke:none
+  subgraph layout_card_n3[" "]
+  n3@{ shape: rounded, label: "**bevy​_​pbr::render::light::extract​_​**<br/>**lights**<br/>来自crate:bevy​_​pbr ↗：提取各类可见光<br/>源及阴影渲染状态。" }
+  class n3 node_system
+  class n3 external_node
+  end
+  style layout_card_n3 fill:none,stroke:none
+  subgraph layout_card_n4[" "]
+  n4@{ shape: rounded, label: "**bevy​_​gizmos​_​render::pipeline​_​3d::**<br/>**queue​_​line​_​joint​_​gizmos​_​3d**<br/>来自crate:bevy​_​gizmos​_​render ↗：将三<br/>维 Gizmo 折线接头加入透明阶段。" }
+  class n4 node_system
+  class n4 external_node
+  end
+  style layout_card_n4 fill:none,stroke:none
+  subgraph layout_card_n5[" "]
+  n5@{ shape: rounded, label: "**bevy​_​gizmos​_​render::pipeline​_​2d::**<br/>**queue​_​line​_​and​_​joint​_​gizmos​_​2d**<br/>来自crate:bevy​_​gizmos​_​render ↗：将二<br/>维 Gizmo 线段与接头加入透明阶段。" }
+  class n5 node_system
+  class n5 external_node
+  end
+  style layout_card_n5 fill:none,stroke:none
+  subgraph layout_card_n6[" "]
+  n6@{ shape: rounded, label: "**bevy​_​gizmos​_​render::pipeline​_​3d::**<br/>**queue​_​line​_​gizmos​_​3d**<br/>来自crate:bevy​_​gizmos​_​render ↗：将三<br/>维 Gizmo 线列表和线条带加入透明阶段。" }
+  class n6 node_system
+  class n6 external_node
+  end
+  style layout_card_n6 fill:none,stroke:none
+  subgraph layout_card_n7[" "]
+  n7@{ shape: rounded, label: "**bevy​_​render::camera::extract​_​cameras**<br/>来自crate:bevy​_​render ↗：把活动相机及<br/>可见实体提取到渲染世界。" }
+  class n7 node_system
+  class n7 external_node
+  end
+  style layout_card_n7 fill:none,stroke:none
+  subgraph layout_card_n8[" "]
+  n8@{ shape: rounded, label: "**bevy​_​pbr::render::light::prepare​_​**<br/>**lights**<br/>来自crate:bevy​_​pbr ↗：准备视图光照参<br/>数、阴影视图和阴影贴图。" }
+  class n8 node_system
+  class n8 external_node
+  end
+  style layout_card_n8 fill:none,stroke:none
+  subgraph layout_card_n9[" "]
+  n9@{ shape: rounded, label: "**bevy​_​light::check​_​dir​_​light​_​mesh​_​**<br/>**visibility**<br/>来自crate:bevy​_​light ↗：计算方向光各<br/>相机级联可见的投影网格。" }
+  class n9 node_system
+  class n9 external_node
+  end
+  style layout_card_n9 fill:none,stroke:none
+  subgraph layout_card_n10[" "]
+  n10@{ shape: rounded, label: "**bevy​_​light::check​_​point​_​light​_​mesh​_​**<br/>**visibility**<br/>来自crate:bevy​_​light ↗：计算点光与聚<br/>光灯阴影可见的网格。" }
+  class n10 node_system
+  class n10 external_node
+  end
+  style layout_card_n10 fill:none,stroke:none
+  subgraph layout_card_n11[" "]
+  n11@{ shape: rounded, label: "**bevy​_​pbr::render::light::queue​_​**<br/>**shadows**<br/>来自crate:bevy​_​pbr ↗：按材质与光源资<br/>格更新阴影绘制分桶。" }
+  class n11 node_system
+  class n11 external_node
+  end
+  style layout_card_n11 fill:none,stroke:none
+  subgraph layout_card_n12[" "]
+  n12@{ shape: rounded, label: "**bevy​_​pbr::render::mesh::extract​_​**<br/>**meshes​_​for​_​gpu​_​building**<br/>来自crate:bevy​_​pbr ↗：增量提取变化或<br/>需重试网格到线程队列。" }
+  class n12 node_system
+  class n12 external_node
+  end
+  style layout_card_n12 fill:none,stroke:none
+  subgraph layout_card_n13[" "]
+  n13@{ shape: rounded, label: "**bevy​_​sprite::text2d::update​_​text2d​_​**<br/>**layout**<br/>来自crate:bevy​_​sprite ↗：重新排版变化<br/>的二维文字并准备字形。" }
+  class n13 node_system
+  class n13 external_node
+  end
+  style layout_card_n13 fill:none,stroke:none
+  subgraph layout_card_n14[" "]
+  n14@{ shape: rounded, label: "**bevy​_​sprite::picking​_​backend::**<br/>**sprite​_​picking**<br/>来自crate:bevy​_​sprite ↗：按精灵图像和<br/>拾取配置计算指针命中。" }
+  class n14 node_system
+  class n14 external_node
+  end
+  style layout_card_n14 fill:none,stroke:none
+  subgraph layout_card_n15[" "]
+  n15@{ shape: rounded, label: "**bevy​_​light::cluster::assign::assign​_​**<br/>**objects​_​to​_​clusters**<br/>来自crate:bevy​_​light ↗：将灯光、探针<br/>及贴花分配到视图分簇。" }
+  class n15 node_system
+  class n15 external_node
+  end
+  style layout_card_n15 fill:none,stroke:none
+  subgraph layout_card_n16[" "]
+  n16@{ shape: rounded, label: "**bevy​_​camera::visibility::check​_​**<br/>**visibility​_​cpu​_​culling**<br/>按层、距离和视锥收集各相机可见实体。" }
+  class n16 node_system
+  end
+  style layout_card_n16 fill:none,stroke:none
+  n0 e0@--> n1
+  class e0 edge_read
+  n0 e1@--> n2
+  class e1 edge_read
+  n3 e2@-->|"插入"| n0
+  class e2 edge_write
+  n0 e3@--> n4
+  class e3 edge_read
+  n3 e4@---|"存在性约束"| n0
+  class e4 edge_reference
+  n0 e5@--> n5
+  class e5 edge_read
+  n0 e6@--> n6
+  class e6 edge_read
+  n7 e7@--- n0
+  class e7 edge_read
+  n8 e8@--- n0
+  class e8 edge_read
+  n3 e9@--- n0
+  class e9 edge_read
+  n8 e10@-->|"插入"| n0
+  class e10 edge_write
+  n0 e11@--> n9
+  class e11 edge_read
+  n8 e12@---|"存在性约束"| n0
+  class e12 edge_reference
+  n0 e13@--> n10
+  class e13 edge_read
+  n0 e14@--> n11
+  class e14 edge_read
+  n0 e15@--> n12
+  class e15 edge_read
+  n0 e16@--> n13
+  class e16 edge_read
+  n0 e17@-->|"存在性约束"| n12
+  class e17 edge_reference
+  n7 e18@-->|"插入"| n0
+  class e18 edge_write
+  n0 e19@--> n14
+  class e19 edge_read
+  n7 e20@-->|"移除"| n0
+  class e20 edge_write
+  n0 e21@--> n15
+  class e21 edge_read
+  n0 e22@--> n16
+  class e22 edge_read
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e17@{ curve: basis }
+  e18@{ curve: basis }
+  e19@{ curve: basis }
+  e20@{ curve: basis }
+  e21@{ curve: basis }
+  e22@{ curve: basis }

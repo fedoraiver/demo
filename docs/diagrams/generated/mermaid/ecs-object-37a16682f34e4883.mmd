@@ -1,0 +1,63 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: oit::resolve::OitResolvePipelineId · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**oit::resolve::OitResolvePipelineId**<br/>记录视图的透明解析管线标识。" }
+  class n0 node_component
+  n1@{ shape: rounded, label: "**bevy​_​core​_​pipeline::core​_​3d::main​_​**<br/>**transparent​_​pass​_​3d​_​node::main​_​**<br/>**transparent​_​pass​_​3d**<br/>绘制三维透明物体并保护 OIT 链表状态。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**bevy​_​core​_​pipeline::oit::resolve::**<br/>**queue​_​oit​_​resolve​_​pipeline**<br/>按 OIT 相机设置缓存透明解析管线。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**bevy​_​extract::extract​_​component::**<br/>**extract​_​components#lt;bevy​_​core​_​**<br/>**pipeline::oit::**<br/>**OrderIndependentTransparencySettings**<br/>**, bevy​_​render::RenderApp, ()#gt;**<br/>来自crate:bevy​_​extract ↗：批量同步或<br/>移除子世界的目标组件。" }
+  class n3 node_system
+  class n3 external_node
+  n4@{ shape: rounded, label: "**bevy​_​core​_​pipeline::oit::resolve::**<br/>**node::oit​_​resolve**<br/>解析透明片元并重置 OIT 链表状态。" }
+  class n4 node_system
+  n0 e0@--> n1
+  class e0 edge_read
+  n2 e1@-->|"插入"| n0
+  class e1 edge_write
+  n3 e2@-->|"移除"| n0
+  class e2 edge_write
+  n0 e3@--> n4
+  class e3 edge_read
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }

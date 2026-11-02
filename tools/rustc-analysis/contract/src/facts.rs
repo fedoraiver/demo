@@ -164,6 +164,29 @@ pub struct EntityTemplate {
     pub required_components: Vec<String>,
     pub children: Vec<String>,
     pub gaps: Vec<Gap>,
+    #[serde(default)]
+    pub alternatives: Vec<EntityAlternativeGroup>,
+    #[serde(default)]
+    pub alternative_group: Option<String>,
+    #[serde(default)]
+    pub alternative_selection: Option<String>,
+    #[serde(default)]
+    pub alternative_context: Vec<String>,
+    #[serde(default)]
+    pub possible: bool,
+    #[serde(default)]
+    pub source_evidence: Vec<SourceEvidence>,
+}
+
+/// 同一实体模板的结构候选，不表示额外子实体或同时存在的结构。
+#[derive(Clone, Debug, Default, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
+pub struct EntityAlternativeGroup {
+    pub id: String,
+    pub candidates: Vec<String>,
+    pub source: Option<SourceEvidence>,
+    /// one-of 来自单次协议调用的分支；unresolved 不推断互斥或同时存在。
+    pub selection: String,
 }
 
 #[derive(Clone, Debug, Default, Serialize, Deserialize)]

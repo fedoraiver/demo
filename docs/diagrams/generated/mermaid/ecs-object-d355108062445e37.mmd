@@ -1,0 +1,120 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: bevy_enhanced_input::context::reset_action · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_observer fill:#F4F1F9,stroke:#7B4DB2,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef node_event fill:#F9F3EE,stroke:#B66B2D,stroke-width:1.6px,color:#1F3340
+  classDef node_plugin fill:#F1F3F6,stroke:#4A6389,stroke-width:2.2px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_observe stroke:#B66B2D,stroke-width:1.8px,stroke-dasharray:2 4
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: hex, label: "**bevy​_​enhanced​_​input::context::reset​_​**<br/>**action**<br/>重置离开上下文的输入动作状态。" }
+  class n0 node_observer
+  n1@{ shape: cyl, label: "**context::input​_​reader::**<br/>**PendingBindings**<br/>等待已移除绑定的输入释放。" }
+  class n1 node_resource
+  n2@{ shape: rounded, label: "**action::value::ActionValue**<br/>以布尔、一维、二维或三维轴的形式保存类型<br/>擦除的动作值" }
+  class n2 node_component
+  n3@{ shape: rounded, label: "**action::TriggerState**<br/>记录条件或动作的触发状态：未触发、进行中<br/>和已满足条件" }
+  class n3 node_component
+  n4@{ shape: rounded, label: "**action::ActionTime**<br/>累计动作处于 Ongoing 或 Fired 状态的时<br/>间" }
+  class n4 node_component
+  n5@{ shape: rounded, label: "**binding::relationship::Bindings**<br/>保存属于当前动作实体的输入绑定实体集合" }
+  class n5 node_component
+  n6@{ shape: rounded, label: "**binding::Binding**<br/>描述动作输入源" }
+  class n6 node_component
+  n7@{ shape: rounded, label: "**action::ActionSettings**<br/>配置输入动作的值累积、首次激活重置及输入<br/>吞取消费策略" }
+  class n7 node_component
+  n8@{ shape: rounded, label: "**action::events::ActionEvents**<br/>保存动作状态转换产生的事件标记" }
+  class n8 node_component
+  n9@{ shape: fr-rect, label: "**first​_​person::FirstPersonPlugin**<br/>来自first​_​person ↗：注册第一人称动<br/>作、捕获、朝向与镜头，不安装输入基础设施<br/>或物理插件。" }
+  class n9 node_plugin
+  class n9 external_node
+  n10@{ shape: stadium, label: "**bevy​_​ecs::lifecycle::RemoveEvent**<br/>来自crate:bevy​_​ecs ↗：在组件移除前发<br/>出通知。" }
+  class n10 node_event
+  class n10 external_node
+  n11@{ shape: rounded, label: "**bevy​_​enhanced​_​input::prelude::**<br/>**ActionOf#lt;first​_​person::actions::**<br/>**GameplayContext#gt;**<br/>关联动作与其输入上下文。" }
+  class n11 node_component
+  n12@{ shape: rounded, label: "**action::fns::ActionFns**<br/>保存动作类型对应的函数指针" }
+  class n12 node_component
+  n0 e0@-->|"可变访问"| n1
+  class e0 edge_write
+  n0 e1@-->|"赋值"| n2
+  class e1 edge_write
+  n0 e2@-->|"赋值"| n3
+  class e2 edge_write
+  n0 e3@-->|"赋值"| n4
+  class e3 edge_write
+  n5 e4@--> n0
+  class e4 edge_read
+  n6 e5@--> n0
+  class e5 edge_read
+  n0 e6@-->|"可变访问"| n3
+  class e6 edge_write
+  n0 e7@-->|"可变访问"| n4
+  class e7 edge_write
+  n7 e8@--> n0
+  class e8 edge_read
+  n0 e9@-->|"可变访问"| n8
+  class e9 edge_write
+  n0 e10@-->|"赋值"| n8
+  class e10 edge_write
+  n9 e11@-->|"调用"| n0
+  class e11 edge_registration
+  n10 e12@-->|"接收事件"| n0
+  class e12 edge_observe
+  n11 e13@--> n0
+  class e13 edge_read
+  n12 e14@--> n0
+  class e14 edge_read
+  n0 e15@-->|"可变访问"| n2
+  class e15 edge_write
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }

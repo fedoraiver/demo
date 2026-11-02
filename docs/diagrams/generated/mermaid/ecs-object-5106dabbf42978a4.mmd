@@ -1,0 +1,58 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: bevy_ui::Outline · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**bevy​_​ui::Outline**<br/>绘制不占布局空间的外轮廓。" }
+  class n0 node_component
+  n1@{ shape: rounded, label: "**bevy​_​ui::layout::ui​_​layout​_​system**<br/>求解 UI 布局并回写节点尺寸和二维变换。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**bevy​_​ui​_​render::extract​_​uinode​_​**<br/>**changes**<br/>来自crate:bevy​_​ui​_​render ↗：使变化或<br/>移除的 UI 数据失效并清理旧渲染实体。" }
+  class n2 node_system
+  class n2 external_node
+  n3@{ shape: rounded, label: "**bevy​_​ui​_​render::extract​_​uinode​_​**<br/>**borders**<br/>来自crate:bevy​_​ui​_​render ↗：提取 UI<br/>各边颜色边框与外轮廓。" }
+  class n3 node_system
+  class n3 external_node
+  n0 e0@--> n1
+  class e0 edge_read
+  n0 e1@-->|"存在性约束"| n2
+  class e1 edge_reference
+  n0 e2@--> n3
+  class e2 edge_read
+  e0@{ curve: basis }
+  e2@{ curve: basis }

@@ -1,0 +1,305 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: AssetEventSystems · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef edge_order stroke:#334155,stroke-width:2px
+  classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: lin-rect, label: "**AssetEventSystems**<br/>发布资产容器积累的变更消息。" }
+  class n0 node_system_set
+  n1@{ shape: rounded, label: "**bevy​_​mesh::components::mark​_​2d​_​**<br/>**meshes​_​as​_​changed​_​if​_​their​_​assets​_​**<br/>**changed**<br/>来自crate:bevy​_​mesh ↗：资产内容变化时<br/>标记对应二维网格已变更。" }
+  class n1 node_system
+  class n1 external_node
+  n2@{ shape: rounded, label: "**bevy​_​asset::assets::Assets#lt;bevy​_​**<br/>**pbr::extended​_​material::**<br/>**ExtendedMaterial#lt;bevy​_​pbr::pbr​_​**<br/>**material::StandardMaterial, bevy​_​**<br/>**pbr::decal::forward::**<br/>**ForwardDecalMaterialExt#gt;#gt;::asset​_​**<br/>**events**<br/>发布累计的资产变化消息。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**bevy​_​asset::assets::Assets#lt;bevy​_​**<br/>**shader::shader::Shader#gt;::asset​_​**<br/>**events**<br/>发布累计的资产变化消息。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**bevy​_​asset::assets::Assets#lt;bevy​_​**<br/>**pbr::pbr​_​material::**<br/>**StandardMaterial#gt;::asset​_​events**<br/>发布累计的资产变化消息。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**bevy​_​pbr::material::check​_​entities​_​**<br/>**needing​_​specialization#lt;bevy​_​pbr::**<br/>**extended​_​material::**<br/>**ExtendedMaterial#lt;bevy​_​pbr::pbr​_​**<br/>**material::StandardMaterial, bevy​_​**<br/>**pbr::decal::forward::**<br/>**ForwardDecalMaterialExt#gt;#gt;**<br/>来自crate:bevy​_​pbr ↗：收集几何或材质<br/>变化及移除的三维网格。" }
+  class n5 node_system
+  class n5 external_node
+  n6@{ shape: rounded, label: "**bevy​_​sprite​_​render::sprite​_​mesh::**<br/>**add​_​mesh**<br/>来自crate:bevy​_​sprite​_​render ↗：为新<br/>增精灵安装共享单位矩形网格。" }
+  class n6 node_system
+  class n6 external_node
+  n7@{ shape: rounded, label: "**bevy​_​asset::assets::Assets#lt;bevy​_​**<br/>**gltf::assets::GltfNode#gt;::asset​_​**<br/>**events**<br/>发布累计的资产变化消息。" }
+  class n7 node_system
+  n8@{ shape: rounded, label: "**bevy​_​ui​_​render::image::mark​_​images​_​**<br/>**as​_​changed​_​if​_​their​_​assets​_​changed**<br/>来自crate:bevy​_​ui​_​render ↗：使图像或<br/>图集资产变化触发 UI 图像更新。" }
+  class n8 node_system
+  class n8 external_node
+  n9@{ shape: rounded, label: "**bevy​_​light::atmosphere::extract​_​**<br/>**chromatic​_​phase​_​textures**<br/>来自crate:bevy​_​light ↗：将已加载色度<br/>相函数纹理转换为散射曲线。" }
+  class n9 node_system
+  class n9 external_node
+  n10@{ shape: rounded, label: "**bevy​_​asset::assets::Assets#lt;bevy​_​**<br/>**image::image::Image#gt;::asset​_​events**<br/>发布累计的资产变化消息。" }
+  class n10 node_system
+  n11@{ shape: rounded, label: "**bevy​_​asset::assets::Assets#lt;bevy​_​**<br/>**sprite​_​render::sprite​_​mesh::sprite​_​**<br/>**mesh​_​material::SpriteMeshMaterial#gt;::**<br/>**asset​_​events**<br/>发布累计的资产变化消息。" }
+  class n11 node_system
+  n12@{ shape: rounded, label: "**bevy​_​asset::assets::Assets#lt;bevy​_​**<br/>**gltf::material::GltfMaterial#gt;::**<br/>**asset​_​events**<br/>发布累计的资产变化消息。" }
+  class n12 node_system
+  n13@{ shape: rounded, label: "**bevy​_​sprite::text2d::update​_​text2d​_​**<br/>**layout**<br/>来自crate:bevy​_​sprite ↗：重新排版变化<br/>的二维文字并准备字形。" }
+  class n13 node_system
+  class n13 external_node
+  n14@{ shape: rounded, label: "**bevy​_​asset::assets::Assets#lt;bevy​_​**<br/>**text::font::Font#gt;::asset​_​events**<br/>发布累计的资产变化消息。" }
+  class n14 node_system
+  n15@{ shape: rounded, label: "**bevy​_​asset::assets::Assets#lt;bevy​_​**<br/>**asset::assets::LoadedUntypedAsset#gt;::**<br/>**asset​_​events**<br/>发布累计的资产变化消息。" }
+  class n15 node_system
+  n16@{ shape: rounded, label: "**bevy​_​asset::assets::Assets#lt;bevy​_​**<br/>**gltf::assets::GltfSkin#gt;::asset​_​**<br/>**events**<br/>发布累计的资产变化消息。" }
+  class n16 node_system
+  n17@{ shape: rounded, label: "**bevy​_​asset::assets::Assets#lt;bevy​_​**<br/>**kira​_​audio::instance::**<br/>**AudioInstance#gt;::asset​_​events**<br/>发布累计的资产变化消息。" }
+  class n17 node_system
+  n18@{ shape: rounded, label: "**bevy​_​asset::assets::Assets#lt;bevy​_​**<br/>**animation::graph::AnimationGraph#gt;::**<br/>**asset​_​events**<br/>发布累计的资产变化消息。" }
+  class n18 node_system
+  n19@{ shape: rounded, label: "**bevy​_​asset::assets::Assets#lt;bevy​_​**<br/>**scene::scene​_​patch::**<br/>**SceneListPatch#gt;::asset​_​events**<br/>发布累计的资产变化消息。" }
+  class n19 node_system
+  n20@{ shape: rounded, label: "**bevy​_​ui::widget::text​_​input​_​layout::**<br/>**update​_​editable​_​text​_​layout**<br/>来自crate:bevy​_​ui ↗：刷新可编辑文本的<br/>字形布局和编辑反馈。" }
+  class n20 node_system
+  class n20 external_node
+  n21@{ shape: rounded, label: "**bevy​_​asset::assets::Assets#lt;bevy​_​**<br/>**gizmos::GizmoAsset#gt;::asset​_​events**<br/>发布累计的资产变化消息。" }
+  class n21 node_system
+  n22@{ shape: rounded, label: "**bevy​_​asset::assets::Assets#lt;bevy​_​**<br/>**scene::scene​_​patch::ScenePatch#gt;::**<br/>**asset​_​events**<br/>发布累计的资产变化消息。" }
+  class n22 node_system
+  n23@{ shape: rounded, label: "**bevy​_​asset::assets::Assets#lt;bevy​_​**<br/>**animation::AnimationClip#gt;::asset​_​**<br/>**events**<br/>发布累计的资产变化消息。" }
+  class n23 node_system
+  n24@{ shape: rounded, label: "**bevy​_​pbr::material::check​_​entities​_​**<br/>**needing​_​specialization#lt;bevy​_​pbr::**<br/>**pbr​_​material::StandardMaterial#gt;**<br/>来自crate:bevy​_​pbr ↗：收集几何或材质<br/>变化及移除的三维网格。" }
+  class n24 node_system
+  class n24 external_node
+  n25@{ shape: rounded, label: "**bevy​_​asset::assets::Assets#lt;bevy​_​**<br/>**mesh::skinning::**<br/>**SkinnedMeshInverseBindposes#gt;::asset​_​**<br/>**events**<br/>发布累计的资产变化消息。" }
+  class n25 node_system
+  n26@{ shape: rounded, label: "**bevy​_​asset::assets::Assets#lt;()#gt;::**<br/>**asset​_​events**<br/>发布累计的资产变化消息。" }
+  class n26 node_system
+  n27@{ shape: rounded, label: "**bevy​_​asset::assets::Assets#lt;bevy​_​**<br/>**sprite​_​render::mesh2d::color​_​**<br/>**material::ColorMaterial#gt;::asset​_​**<br/>**events**<br/>发布累计的资产变化消息。" }
+  class n27 node_system
+  n28@{ shape: rounded, label: "**bevy​_​asset::assets::Assets#lt;bevy​_​**<br/>**gltf::assets::Gltf#gt;::asset​_​events**<br/>发布累计的资产变化消息。" }
+  class n28 node_system
+  n29@{ shape: rounded, label: "**bevy​_​animation::graph::thread​_​**<br/>**animation​_​graphs**<br/>来自crate:bevy​_​animation ↗：维护动画<br/>图的快速求值结构。" }
+  class n29 node_system
+  class n29 external_node
+  n30@{ shape: rounded, label: "**bevy​_​render::camera::camera​_​system**<br/>来自crate:bevy​_​render ↗：响应目标尺寸<br/>变化并更新相机投影。" }
+  class n30 node_system
+  class n30 external_node
+  n31@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::**<br/>**material::check​_​entities​_​needing​_​**<br/>**specialization#lt;bevy​_​sprite​_​render::**<br/>**sprite​_​mesh::sprite​_​mesh​_​material::**<br/>**SpriteMeshMaterial#gt;**<br/>来自crate:bevy​_​sprite​_​render ↗：收集<br/>二维网格材质需重建或移除专用化的实体。" }
+  class n31 node_system
+  class n31 external_node
+  n32@{ shape: rounded, label: "**bevy​_​asset::assets::Assets#lt;bevy​_​**<br/>**image::texture​_​atlas::**<br/>**TextureAtlasLayout#gt;::asset​_​events**<br/>发布累计的资产变化消息。" }
+  class n32 node_system
+  n33@{ shape: rounded, label: "**bevy​_​sprite​_​render::sprite​_​mesh::**<br/>**add​_​material**<br/>来自crate:bevy​_​sprite​_​render ↗：按精<br/>灵与锚点复用或创建默认网格材质。" }
+  class n33 node_system
+  class n33 external_node
+  n34@{ shape: rounded, label: "**bevy​_​asset::assets::Assets#lt;bevy​_​**<br/>**sprite​_​render::tilemap​_​chunk::**<br/>**tilemap​_​chunk​_​material::**<br/>**TilemapChunkMaterial#gt;::asset​_​events**<br/>发布累计的资产变化消息。" }
+  class n34 node_system
+  n35@{ shape: rounded, label: "**bevy​_​asset::assets::Assets#lt;bevy​_​**<br/>**gltf::assets::GltfMesh#gt;::asset​_​**<br/>**events**<br/>发布累计的资产变化消息。" }
+  class n35 node_system
+  n36@{ shape: rounded, label: "**bevy​_​asset::assets::Assets#lt;bevy​_​**<br/>**gltf::assets::GltfPrimitive#gt;::asset​_​**<br/>**events**<br/>发布累计的资产变化消息。" }
+  class n36 node_system
+  n37@{ shape: rounded, label: "**bevy​_​asset::assets::Assets#lt;bevy​_​**<br/>**kira​_​audio::source::AudioSource#gt;::**<br/>**asset​_​events**<br/>发布累计的资产变化消息。" }
+  class n37 node_system
+  n38@{ shape: rounded, label: "**bevy​_​asset::assets::Assets#lt;bevy​_​**<br/>**light::atmosphere::**<br/>**ScatteringMedium#gt;::asset​_​events**<br/>发布累计的资产变化消息。" }
+  class n38 node_system
+  n39@{ shape: rounded, label: "**bevy​_​asset::assets::Assets#lt;bevy​_​**<br/>**world​_​serialization::world​_​asset::**<br/>**WorldAsset#gt;::asset​_​events**<br/>发布累计的资产变化消息。" }
+  class n39 node_system
+  n40@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::**<br/>**material::check​_​entities​_​needing​_​**<br/>**specialization#lt;bevy​_​sprite​_​render::**<br/>**tilemap​_​chunk::tilemap​_​chunk​_​**<br/>**material::TilemapChunkMaterial#gt;**<br/>来自crate:bevy​_​sprite​_​render ↗：收集<br/>二维网格材质需重建或移除专用化的实体。" }
+  class n40 node_system
+  class n40 external_node
+  n41@{ shape: rounded, label: "**bevy​_​mesh::components::mark​_​3d​_​**<br/>**meshes​_​as​_​changed​_​if​_​their​_​assets​_​**<br/>**changed**<br/>来自crate:bevy​_​mesh ↗：资产内容变化时<br/>标记对应三维网格已变更。" }
+  class n41 node_system
+  class n41 external_node
+  n42@{ shape: rounded, label: "**bevy​_​asset::assets::Assets#lt;bevy​_​**<br/>**render::storage::ShaderBuffer#gt;::**<br/>**asset​_​events**<br/>发布累计的资产变化消息。" }
+  class n42 node_system
+  n43@{ shape: rounded, label: "**bevy​_​asset::assets::Assets#lt;bevy​_​**<br/>**mesh::mesh::Mesh#gt;::asset​_​events**<br/>发布累计的资产变化消息。" }
+  class n43 node_system
+  n44@{ shape: rounded, label: "**bevy​_​asset::assets::Assets#lt;bevy​_​**<br/>**asset::folder::LoadedFolder#gt;::asset​_​**<br/>**events**<br/>发布累计的资产变化消息。" }
+  class n44 node_system
+  n45@{ shape: rounded, label: "**bevy​_​ui​_​render::image::update​_​**<br/>**texture​_​atlas​_​layout​_​components**<br/>来自crate:bevy​_​ui​_​render ↗：同步 UI<br/>图像所引用的图集布局组件。" }
+  class n45 node_system
+  class n45 external_node
+  n46@{ shape: lin-rect, label: "**CalculateBounds**<br/>来自crate:bevy​_​camera ↗：组织相机与实<br/>体可见性更新。" }
+  class n46 node_system_set
+  class n46 external_node
+  n47@{ shape: rounded, label: "**bevy​_​ui::widget::text::text​_​system**<br/>来自crate:bevy​_​ui ↗：重排变化的 UI 文<br/>本并更新字形图集。" }
+  class n47 node_system
+  class n47 external_node
+  n48@{ shape: rounded, label: "**bevy​_​asset::assets::Assets#lt;bevy​_​**<br/>**world​_​serialization::dynamic​_​world::**<br/>**DynamicWorld#gt;::asset​_​events**<br/>发布累计的资产变化消息。" }
+  class n48 node_system
+  n49@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::**<br/>**material::check​_​entities​_​needing​_​**<br/>**specialization#lt;bevy​_​sprite​_​render::**<br/>**mesh2d::color​_​material::**<br/>**ColorMaterial#gt;**<br/>来自crate:bevy​_​sprite​_​render ↗：收集<br/>二维网格材质需重建或移除专用化的实体。" }
+  class n49 node_system
+  class n49 external_node
+  n0 e0@-->|"先于"| n1
+  class e0 edge_order
+  n0 e1@-->|"集合成员"| n2
+  class e1 edge_set_membership
+  n0 e2@-->|"集合成员"| n3
+  class e2 edge_set_membership
+  n0 e3@-->|"集合成员"| n4
+  class e3 edge_set_membership
+  n0 e4@-->|"先于"| n5
+  class e4 edge_order
+  n6 e5@-->|"先于"| n0
+  class e5 edge_order
+  n0 e6@-->|"集合成员"| n7
+  class e6 edge_set_membership
+  n0 e7@-->|"先于"| n8
+  class e7 edge_order
+  n0 e8@-->|"先于"| n9
+  class e8 edge_order
+  n0 e9@-->|"集合成员"| n10
+  class e9 edge_set_membership
+  n0 e10@-->|"集合成员"| n11
+  class e10 edge_set_membership
+  n0 e11@-->|"集合成员"| n12
+  class e11 edge_set_membership
+  n13 e12@-->|"先于"| n0
+  class e12 edge_order
+  n0 e13@-->|"集合成员"| n14
+  class e13 edge_set_membership
+  n0 e14@-->|"集合成员"| n15
+  class e14 edge_set_membership
+  n0 e15@-->|"集合成员"| n16
+  class e15 edge_set_membership
+  n0 e16@-->|"集合成员"| n17
+  class e16 edge_set_membership
+  n0 e17@-->|"集合成员"| n18
+  class e17 edge_set_membership
+  n0 e18@-->|"集合成员"| n19
+  class e18 edge_set_membership
+  n20 e19@-->|"先于"| n0
+  class e19 edge_order
+  n0 e20@-->|"集合成员"| n21
+  class e20 edge_set_membership
+  n0 e21@-->|"集合成员"| n22
+  class e21 edge_set_membership
+  n0 e22@-->|"集合成员"| n23
+  class e22 edge_set_membership
+  n0 e23@-->|"先于"| n24
+  class e23 edge_order
+  n0 e24@-->|"集合成员"| n25
+  class e24 edge_set_membership
+  n0 e25@-->|"集合成员"| n26
+  class e25 edge_set_membership
+  n0 e26@-->|"集合成员"| n27
+  class e26 edge_set_membership
+  n0 e27@-->|"集合成员"| n28
+  class e27 edge_set_membership
+  n29 e28@-->|"先于"| n0
+  class e28 edge_order
+  n30 e29@-->|"先于"| n0
+  class e29 edge_order
+  n0 e30@-->|"先于"| n31
+  class e30 edge_order
+  n0 e31@-->|"集合成员"| n32
+  class e31 edge_set_membership
+  n33 e32@-->|"先于"| n0
+  class e32 edge_order
+  n0 e33@-->|"集合成员"| n34
+  class e33 edge_set_membership
+  n0 e34@-->|"集合成员"| n35
+  class e34 edge_set_membership
+  n0 e35@-->|"集合成员"| n36
+  class e35 edge_set_membership
+  n0 e36@-->|"集合成员"| n37
+  class e36 edge_set_membership
+  n0 e37@-->|"集合成员"| n38
+  class e37 edge_set_membership
+  n0 e38@-->|"集合成员"| n39
+  class e38 edge_set_membership
+  n0 e39@-->|"先于"| n40
+  class e39 edge_order
+  n0 e40@-->|"先于"| n41
+  class e40 edge_order
+  n0 e41@-->|"集合成员"| n42
+  class e41 edge_set_membership
+  n0 e42@-->|"集合成员"| n43
+  class e42 edge_set_membership
+  n0 e43@-->|"集合成员"| n44
+  class e43 edge_set_membership
+  n0 e44@-->|"先于"| n45
+  class e44 edge_order
+  n0 e45@-->|"先于"| n46
+  class e45 edge_order
+  n47 e46@-->|"先于"| n0
+  class e46 edge_order
+  n0 e47@-->|"集合成员"| n48
+  class e47 edge_set_membership
+  n0 e48@-->|"先于"| n49
+  class e48 edge_order
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e17@{ curve: basis }
+  e18@{ curve: basis }
+  e19@{ curve: basis }
+  e20@{ curve: basis }
+  e21@{ curve: basis }
+  e22@{ curve: basis }
+  e23@{ curve: basis }
+  e24@{ curve: basis }
+  e25@{ curve: basis }
+  e26@{ curve: basis }
+  e27@{ curve: basis }
+  e28@{ curve: bumpX }
+  e29@{ curve: basis }
+  e30@{ curve: basis }
+  e31@{ curve: basis }
+  e32@{ curve: basis }
+  e33@{ curve: basis }
+  e34@{ curve: basis }
+  e35@{ curve: basis }
+  e36@{ curve: basis }
+  e37@{ curve: basis }
+  e38@{ curve: basis }
+  e39@{ curve: basis }
+  e40@{ curve: basis }
+  e41@{ curve: basis }
+  e42@{ curve: basis }
+  e43@{ curve: basis }
+  e44@{ curve: basis }
+  e45@{ curve: basis }
+  e46@{ curve: basis }
+  e47@{ curve: basis }
+  e48@{ curve: basis }

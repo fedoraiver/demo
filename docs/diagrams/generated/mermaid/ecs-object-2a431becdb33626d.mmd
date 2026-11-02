@@ -1,0 +1,97 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: bevy_picking::window::update_window_hits · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef node_message fill:#EDF4F6,stroke:#247B91,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_plugin fill:#F1F3F6,stroke:#4A6389,stroke-width:2.2px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_publish stroke:#247B91,stroke-width:1.8px,stroke-dasharray:10 4 2 4
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**bevy​_​picking::window::update​_​window​_​**<br/>**hits**<br/>把所在窗口作为拾取的最底层命中。" }
+  class n0 node_system
+  n1@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;bevy​_​**<br/>**picking::backend::PointerHits#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  class n1 node_resource
+  class n1 external_node
+  n2@{ shape: rounded, label: "**bevy​_​picking::pointer::**<br/>**PointerLocation**<br/>保存指针当前目标及该目标上的位置" }
+  class n2 node_component
+  n3@{ shape: cyl, label: "**pointer::PointerMap**<br/>索引稳定指针编号对应的指针实体。" }
+  class n3 node_resource
+  n4@{ shape: lean-r, label: "**bevy​_​picking::backend::PointerHits**<br/>传递拾取后端的实体命中结果。" }
+  class n4 node_message
+  n5@{ shape: lin-rect, label: "**Backend**<br/>组织指针拾取和悬停处理阶段。" }
+  class n5 node_system_set
+  n6@{ shape: fr-rect, label: "**PickingPlugin**<br/>建立指针拾取的公共基础。" }
+  class n6 node_plugin
+  n7@{ shape: cyl, label: "**bevy​_​picking::backend::prelude::**<br/>**RayMap**<br/>按指针和相机组合保存拾取射线" }
+  class n7 node_resource
+  n8@{ shape: rounded, label: "**bevy​_​picking::PickingSettings::**<br/>**window​_​picking​_​should​_​run**<br/>判断是否向窗口派发拾取事件。" }
+  class n8 node_system
+  n0 e0@-->|"赋值"| n1
+  class e0 edge_write
+  n2 e1@--> n0
+  class e1 edge_read
+  n3 e2@--> n0
+  class e2 edge_read
+  n0 e3@-->|"可变访问"| n4
+  class e3 edge_publish
+  n5 e4@-->|"集合成员"| n0
+  class e4 edge_set_membership
+  n0 e5@-->|"可变访问"| n1
+  class e5 edge_write
+  n0 e6@-->|"消息"| n4
+  class e6 edge_publish
+  n6 e7@-->|"调用"| n0
+  class e7 edge_registration
+  n7 e8@--> n0
+  class e8 edge_read
+  n8 e9@-->|"运行条件"| n0
+  class e9 edge_reference
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: bumpX }
+  e4@{ curve: basis }
+  e5@{ curve: bumpX }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }

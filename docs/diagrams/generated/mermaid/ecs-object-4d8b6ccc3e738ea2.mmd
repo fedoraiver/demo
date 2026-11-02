@@ -1,0 +1,64 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: AnonymousSet(0) · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: lin-rect, label: "**AnonymousSet(0)**<br/>保存一组系统的共同配置。" }
+  class n0 node_system_set
+  n1@{ shape: rounded, label: "**demo::character::motion::move​_​**<br/>**characters**<br/>来自character ↗：用有上限的加速度趋近<br/>目标水平速度，保留碰撞和外部冲量造成的实<br/>际运动。" }
+  class n1 node_system
+  class n1 external_node
+  n2@{ shape: rounded, label: "**demo::character::motion::update​_​**<br/>**grounded**<br/>来自character ↗：脚底附近的小球向下探<br/>测支撑面；墙面法线和上升中的角色不能算接<br/>地。" }
+  class n2 node_system
+  class n2 external_node
+  n3@{ shape: rounded, label: "**demo::game​_​flow::gameplay​_​running**<br/>来自game​_​flow ↗：独立功能测试没有应用<br/>状态；真实游戏只在 Running 推进玩法。" }
+  class n3 node_system
+  class n3 external_node
+  n4@{ shape: rounded, label: "**demo::character::motion::jump​_​**<br/>**characters**<br/>来自character ↗：跳跃只消费一次，通过<br/>冲量改变速度；重力和位置积分全部交给<br/>Avian。" }
+  class n4 node_system
+  class n4 external_node
+  n0 e0@-->|"集合成员"| n1
+  class e0 edge_set_membership
+  n0 e1@-->|"集合成员"| n2
+  class e1 edge_set_membership
+  n3 e2@-->|"运行条件"| n0
+  class e2 edge_reference
+  n0 e3@-->|"集合成员"| n4
+  class e3 edge_set_membership
+  e0@{ curve: basis }
+  e3@{ curve: basis }

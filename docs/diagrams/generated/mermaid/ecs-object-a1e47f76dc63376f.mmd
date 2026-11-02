@@ -1,0 +1,52 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: gizmos::ShowLightGizmo · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**gizmos::ShowLightGizmo**<br/>显示实体光源的调试轮廓。" }
+  class n0 node_component
+  n1@{ shape: rounded, label: "**bevy​_​light::gizmos::draw​_​all​_​lights**<br/>按配置颜色模式绘制全部灯光调试图形。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**bevy​_​light::gizmos::draw​_​lights**<br/>为显式标记的各类光源绘制调试轮廓。" }
+  class n2 node_system
+  n0 e0@-->|"存在性约束"| n1
+  class e0 edge_reference
+  n0 e1@--> n2
+  class e1 edge_read
+  e0@{ curve: basis }
+  e1@{ curve: basis }

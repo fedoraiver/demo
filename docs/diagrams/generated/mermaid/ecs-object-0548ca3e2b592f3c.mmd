@@ -1,0 +1,55 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: Propagate · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: lin-rect, label: "**Propagate**<br/>组织实体层级变换传播。" }
+  class n0 node_system_set
+  n1@{ shape: rounded, label: "**bevy​_​transform::systems::sync​_​**<br/>**simple​_​transforms**<br/>同步没有父子层级的独立实体世界变换。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**bevy​_​transform::systems::parallel::**<br/>**propagate​_​parent​_​transforms**<br/>沿父子层级并行合成世界变换。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**bevy​_​transform::systems::mark​_​dirty​_​**<br/>**trees**<br/>沿祖先链标记需要重算变换的子树。" }
+  class n3 node_system
+  n0 e0@-->|"集合成员"| n1
+  class e0 edge_set_membership
+  n0 e1@-->|"集合成员"| n2
+  class e1 edge_set_membership
+  n0 e2@-->|"集合成员"| n3
+  class e2 edge_set_membership
+  e0@{ curve: basis }
+  e2@{ curve: basis }

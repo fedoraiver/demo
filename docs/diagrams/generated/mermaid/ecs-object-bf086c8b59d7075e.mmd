@@ -1,0 +1,69 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: EguiSchedule · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_entity fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**EguiSchedule**<br/>为额外 Egui 上下文指定执行 UI pass 的<br/>调度" }
+  class n0 node_component
+  n1@{ shape: rounded, label: "**bevy​_​egui::begin​_​pass​_​system**<br/>把本轮输入交给 Egui 并开始界面帧。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：提供主菜单展示与界面的三维相<br/>机。" }
+  class n2 node_entity
+  class n2 external_node
+  n3@{ shape: rounded, label: "**bevy​_​egui::end​_​pass​_​system**<br/>结束 Egui 界面帧并保存完整输出。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**spawn​_​lighting · 创建模板**<br/>来自scene​_​assembly ↗：创建可复用为玩<br/>家镜头的加载相机。" }
+  class n4 node_entity
+  class n4 external_node
+  n5@{ shape: rounded, label: "**bevy​_​egui::run​_​egui​_​context​_​pass​_​**<br/>**loop​_​system**<br/>运行每个自动 Egui 上下文的专属调度。" }
+  class n5 node_system
+  n0 e0@-->|"存在性约束"| n1
+  class e0 edge_reference
+  n2 e1@-->|"可能包含"| n0
+  class e1 edge_reference
+  n0 e2@-->|"存在性约束"| n3
+  class e2 edge_reference
+  n4 e3@-->|"可能包含"| n0
+  class e3 edge_reference
+  n0 e4@--> n5
+  class e4 edge_read
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }

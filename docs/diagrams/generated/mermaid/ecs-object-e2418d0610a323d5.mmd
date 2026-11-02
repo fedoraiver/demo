@@ -1,0 +1,197 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: bevy_ui::widget::text::measure_text_system · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef node_local fill:#F8F5F1,stroke:#AA8752,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_plugin fill:#F1F3F6,stroke:#4A6389,stroke-width:2.2px,color:#1F3340
+  classDef edge_order stroke:#334155,stroke-width:2px
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**bevy​_​ui::widget::text::measure​_​text​_​**<br/>**system**<br/>在文本变化后更新内容测量并安排文字重排。" }
+  class n0 node_system
+  n1@{ shape: rounded, label: "**bevy​_​ui::TextNodeFlags**<br/>追踪 UI 文本测量与重排状态。" }
+  class n1 node_component
+  n2@{ shape: rounded, label: "**bevy​_​text::text::detect​_​text​_​needs​_​**<br/>**rerender**<br/>来自crate:bevy​_​text ↗：把文字段和层级<br/>变化标为需要重绘。" }
+  class n2 node_system
+  class n2 external_node
+  n3@{ shape: cyl, label: "**bevy​_​text::LayoutCx**<br/>来自crate:bevy​_​text ↗：持有 Parley<br/>文字布局上下文" }
+  class n3 node_resource
+  class n3 external_node
+  n4@{ shape: rounded, label: "**bevy​_​text::ComputedTextBlock**<br/>来自crate:bevy​_​text ↗：缓存文字块的<br/>Parley 布局、文本实体树和重绘标记" }
+  class n4 node_component
+  class n4 external_node
+  n5@{ shape: rounded, label: "**bevy​_​text::font::load​_​font​_​assets​_​**<br/>**into​_​font​_​collection**<br/>来自crate:bevy​_​text ↗：把字体资产注册<br/>到排版字体数据库。" }
+  class n5 node_system
+  class n5 external_node
+  n6@{ shape: rounded, label: "**bevy​_​ui::ContentSize**<br/>提供内容驱动的固有尺寸测量。" }
+  class n6 node_component
+  n7@{ shape: rounded, label: "**bevy​_​text::TextSpan**<br/>来自crate:bevy​_​text ↗：保存附加到<br/>Text 或 Text2d 根文字块的子文本段内容" }
+  class n7 node_component
+  class n7 external_node
+  n8@{ shape: rounded, label: "**bevy​_​text::LetterSpacing**<br/>来自crate:bevy​_​text ↗：配置相邻文字之<br/>间的额外间距" }
+  class n8 node_component
+  class n8 external_node
+  n9@{ shape: rounded, label: "**bevy​_​ecs::hierarchy::Children**<br/>来自crate:bevy​_​ecs ↗：保存以<br/>ChildOf 指向当前父实体的子实体集合" }
+  class n9 node_component
+  class n9 external_node
+  n10@{ shape: rounded, label: "**bevy​_​text::LineHeight**<br/>来自crate:bevy​_​text ↗：配置每行文字的<br/>高度" }
+  class n10 node_component
+  class n10 external_node
+  n11@{ shape: rounded, label: "**bevy​_​text::TextFont**<br/>来自crate:bevy​_​text ↗：保存文字段的字<br/>体来源、字号及抗锯齿方式等字体样式" }
+  class n11 node_component
+  class n11 external_node
+  n12@{ shape: lin-rect, label: "**Content**<br/>组织界面交互、布局与堆叠更新。" }
+  class n12 node_system_set
+  n13@{ shape: rounded, label: "**bevy​_​text::InlineBox**<br/>来自crate:bevy​_​text ↗：描述与文字同行<br/>排版的盒子尺寸和流内、流外行为" }
+  class n13 node_component
+  class n13 external_node
+  n14@{ shape: rounded, label: "**bevy​_​ui::Node**<br/>声明 UI 节点的布局规则。" }
+  class n14 node_component
+  n15@{ shape: cyl, label: "**bevy​_​text::FontCx**<br/>来自crate:bevy​_​text ↗：维护字体数据<br/>库、家族解析与字体缓存" }
+  class n15 node_resource
+  class n15 external_node
+  n16@{ shape: cyl, label: "**bevy​_​asset::Assets#lt;bevy​_​text::Font#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
+  class n16 node_resource
+  class n16 external_node
+  n17@{ shape: rounded, label: "**bevy​_​ui::ComputedNode**<br/>保存 UI 布局计算后的物理尺寸。" }
+  class n17 node_component
+  n18@{ shape: cyl, label: "**bevy​_​text::RemSize**<br/>来自crate:bevy​_​text ↗：保存全局根字号" }
+  class n18 node_resource
+  class n18 external_node
+  n19@{ shape: rounded, label: "**bevy​_​ui::widget::Text**<br/>保存 UI 文本根的第一段内容。" }
+  class n19 node_component
+  n20@{ shape: fr-rect, label: "**bevy​_​ui::UiPlugin**<br/>建立界面布局与内容更新基础。" }
+  class n20 node_plugin
+  n21@{ shape: rounded, label: "**bevy​_​ui::ComputedUiRenderTargetInfo**<br/>缓存 UI 目标的尺寸与缩放。" }
+  class n21 node_component
+  n22@{ shape: rounded, label: "**bevy​_​text::TextLayout**<br/>来自crate:bevy​_​text ↗：保存文字块的内<br/>部对齐与换行策略" }
+  class n22 node_component
+  class n22 external_node
+  n23@{ shape: rounded, label: "**bevy​_​text::TextColor**<br/>来自crate:bevy​_​text ↗：保存当前文字段<br/>的前景色" }
+  class n23 node_component
+  class n23 external_node
+  n24@{ shape: notch-rect, label: "**Local · text​_​reader.0.0**<br/>复用 UI 文字测量的文本树遍历空间。" }
+  class n24 node_local
+  n25@{ shape: cyl, label: "**bevy​_​text::TextPipeline**<br/>来自crate:bevy​_​text ↗：执行文字块布局<br/>与渲染数据生成" }
+  class n25 node_resource
+  class n25 external_node
+  n0 e0@-->|"可变访问"| n1
+  class e0 edge_write
+  n2 e1@-->|"先于"| n0
+  class e1 edge_order
+  n0 e2@-->|"可变访问"| n3
+  class e2 edge_write
+  n0 e3@-->|"可变访问"| n4
+  class e3 edge_write
+  n5 e4@-->|"先于"| n0
+  class e4 edge_order
+  n0 e5@-->|"赋值"| n6
+  class e5 edge_write
+  n7 e6@--> n0
+  class e6 edge_read
+  n8 e7@--> n0
+  class e7 edge_read
+  n9 e8@--> n0
+  class e8 edge_read
+  n10 e9@--> n0
+  class e9 edge_read
+  n11 e10@--> n0
+  class e10 edge_read
+  n12 e11@-->|"集合成员"| n0
+  class e11 edge_set_membership
+  n13 e12@--> n0
+  class e12 edge_read
+  n14 e13@-->|"存在性约束"| n0
+  class e13 edge_reference
+  n0 e14@-->|"可变访问"| n15
+  class e14 edge_write
+  n16 e15@--> n0
+  class e15 edge_read
+  n17 e16@--> n0
+  class e16 edge_read
+  n18 e17@--> n0
+  class e17 edge_read
+  n0 e18@-->|"可变访问"| n6
+  class e18 edge_write
+  n19 e19@--> n0
+  class e19 edge_read
+  n20 e20@-->|"调用"| n0
+  class e20 edge_registration
+  n21 e21@--> n0
+  class e21 edge_read
+  n0 e22@-->|"赋值"| n1
+  class e22 edge_write
+  n22 e23@--> n0
+  class e23 edge_read
+  n23 e24@--> n0
+  class e24 edge_read
+  n0 e25@-->|"可变访问"| n24
+  class e25 edge_write
+  n0 e26@-->|"可变访问"| n25
+  class e26 edge_write
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e17@{ curve: basis }
+  e18@{ curve: basis }
+  e19@{ curve: basis }
+  e20@{ curve: basis }
+  e21@{ curve: basis }
+  e22@{ curve: basis }
+  e23@{ curve: basis }
+  e24@{ curve: basis }
+  e25@{ curve: basis }
+  e26@{ curve: basis }

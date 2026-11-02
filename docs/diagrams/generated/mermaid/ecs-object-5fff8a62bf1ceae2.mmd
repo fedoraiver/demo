@@ -1,0 +1,93 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#object-5fff8a62bf1ceae2-e1{marker-start:url(#object-5fff8a62bf1ceae2_flowchart-v2-pointStart)!important}\n#object-5fff8a62bf1ceae2-e6{marker-start:url(#object-5fff8a62bf1ceae2_flowchart-v2-pointStart)!important}\n#object-5fff8a62bf1ceae2-e9{marker-start:url(#object-5fff8a62bf1ceae2_flowchart-v2-pointStart)!important}\n#object-5fff8a62bf1ceae2-e10{marker-start:url(#object-5fff8a62bf1ceae2_flowchart-v2-pointStart)!important}\n#object-5fff8a62bf1ceae2_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: avian3d::collision::collider::collider_transform::plugin::update_child_collider_position · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**avian3d::collision::collider::**<br/>**collider​_​transform::plugin::update​_​**<br/>**child​_​collider​_​position**<br/>由所属刚体位姿更新附属碰撞体的世界位姿。" }
+  class n0 node_system
+  n1@{ shape: rounded, label: "**bevy​_​ecs::hierarchy::Children**<br/>来自crate:bevy​_​ecs ↗：保存以<br/>ChildOf 指向当前父实体的子实体集合" }
+  class n1 node_component
+  class n1 external_node
+  n2@{ shape: rounded, label: "**physics​_​transform::transform::**<br/>**Rotation**<br/>保存刚体或碰撞体的世界旋转。" }
+  class n2 node_component
+  n3@{ shape: rounded, label: "**dynamics::rigid​_​body::RigidBody**<br/>选择动态、静态或运动学刚体行为。" }
+  class n3 node_component
+  n4@{ shape: lin-rect, label: "**First**<br/>组织一次物理模拟步的主要阶段。" }
+  class n4 node_system_set
+  n5@{ shape: rounded, label: "**physics​_​transform::transform::**<br/>**Position**<br/>保存刚体或碰撞体的世界位置。" }
+  class n5 node_component
+  n6@{ shape: rounded, label: "**collision::collider::collider​_​**<br/>**transform::ColliderTransform**<br/>缓存碰撞体相对于刚体的变换。" }
+  class n6 node_component
+  n7@{ shape: rounded, label: "**collision::collider::collider​_​**<br/>**hierarchy::ColliderOf**<br/>指定碰撞体附着的刚体。" }
+  class n7 node_component
+  n1 e0@-->|"存在性约束"| n0
+  class e0 edge_reference
+  n2 e1@---|"赋值"| n0
+  class e1 edge_write
+  n3 e2@-->|"存在性约束"| n0
+  class e2 edge_reference
+  n2 e3@--> n0
+  class e3 edge_read
+  n4 e4@-->|"集合成员"| n0
+  class e4 edge_set_membership
+  n5 e5@--> n0
+  class e5 edge_read
+  n5 e6@---|"赋值"| n0
+  class e6 edge_write
+  n6 e7@--> n0
+  class e7 edge_read
+  n7 e8@--> n0
+  class e8 edge_read
+  n2 e9@---|"可变访问"| n0
+  class e9 edge_write
+  n5 e10@---|"可变访问"| n0
+  class e10 edge_write
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: bumpX }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }

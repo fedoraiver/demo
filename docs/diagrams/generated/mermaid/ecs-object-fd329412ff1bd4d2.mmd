@@ -1,0 +1,98 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: bevy_pbr::prepass::check_prepass_views_need_specialization · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_plugin fill:#F1F3F6,stroke:#4A6389,stroke-width:2.2px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**bevy​_​pbr::prepass::check​_​prepass​_​**<br/>**views​_​need​_​specialization**<br/>检测采样和预通道配置变化并标记视图待刷<br/>新。" }
+  class n0 node_system
+  n1@{ shape: cyl, label: "**camera::DirtySpecializations**<br/>来自crate:bevy​_​render ↗：记录需刷新或<br/>移除管线专用化的对象与视图。" }
+  class n1 node_resource
+  class n1 external_node
+  n2@{ shape: rounded, label: "**bevy​_​render::view::Msaa**<br/>来自crate:bevy​_​render ↗：选择视图的多<br/>重采样抗锯齿样本数。" }
+  class n2 node_component
+  class n2 external_node
+  n3@{ shape: cyl, label: "**prepass::ViewKeyPrepassCache**<br/>缓存预通道视图的管线配置键。" }
+  class n3 node_resource
+  n4@{ shape: rounded, label: "**bevy​_​render::view::ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
+  class n4 node_component
+  class n4 external_node
+  n5@{ shape: rounded, label: "**bevy​_​core​_​pipeline::prepass::**<br/>**DepthPrepass**<br/>来自crate:bevy​_​core​_​pipeline ↗：为三<br/>维相机生成独立的深度纹理。" }
+  class n5 node_component
+  class n5 external_node
+  n6@{ shape: fr-rect, label: "**prepass::PrepassPlugin**<br/>安装材质预通道处理。" }
+  class n6 node_plugin
+  n7@{ shape: lin-rect, label: "**PrepareAssets**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
+  class n7 node_system_set
+  class n7 external_node
+  n8@{ shape: rounded, label: "**prepass::NormalPrepass**<br/>来自crate:bevy​_​core​_​pipeline ↗：输出<br/>已应用法线贴图的世界空间法线。" }
+  class n8 node_component
+  class n8 external_node
+  n9@{ shape: rounded, label: "**bevy​_​core​_​pipeline::prepass::**<br/>**MotionVectorPrepass**<br/>来自crate:bevy​_​core​_​pipeline ↗：为相<br/>机输出屏幕空间运动矢量。" }
+  class n9 node_component
+  class n9 external_node
+  n0 e0@-->|"可变访问"| n1
+  class e0 edge_write
+  n2 e1@--> n0
+  class e1 edge_read
+  n0 e2@-->|"可变访问"| n3
+  class e2 edge_write
+  n4 e3@--> n0
+  class e3 edge_read
+  n5 e4@--> n0
+  class e4 edge_read
+  n6 e5@-->|"调用"| n0
+  class e5 edge_registration
+  n7 e6@-->|"集合成员"| n0
+  class e6 edge_set_membership
+  n8 e7@--> n0
+  class e7 edge_read
+  n9 e8@--> n0
+  class e8 edge_read
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }

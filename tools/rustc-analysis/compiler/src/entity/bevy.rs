@@ -218,6 +218,7 @@ impl<'tcx> Engine<'tcx> {
             structure.components.extend(value.components);
             structure.required.extend(value.required);
             structure.children.extend(value.children);
+            structure.alternatives.extend(value.alternatives);
             structure.gaps.extend(value.gaps);
         }
     }
@@ -917,24 +918,36 @@ impl<'tcx> Engine<'tcx> {
         let sink = self.sink(memory, self.tcx.types.unit);
         let states = self.apply_scene(value, &sink, memory.clone())?;
         let mut proofs = vec![];
-        let mut structure = EntityStructure::default();
-        if states.len() > 1 {
-            structure
-                .gaps
-                .push("场景包含多个可能分支，组件组合表示可能挂载而非每次创建均存在。".into());
-        }
+        let mut candidates = vec![];
         for mut state in states {
             proofs.push(self.sink_proof(&sink, &mut state)?);
-            let part = self.sink_structure(&sink, &state)?;
-            structure.components.extend(part.components);
-            structure.required.extend(part.required);
-            structure.children.extend(part.children);
-            structure.gaps.extend(part.gaps);
+            let mut part = self.sink_structure(&sink, &state)?;
+            part.site = value.site.clone();
+            part.span = value.span;
+            if !candidates.contains(&part) {
+                candidates.push(part);
+            }
         }
-        structure.components.sort_by_cached_key(|ty| ty.to_string());
-        structure.components.dedup();
-        structure.required.sort_by_cached_key(|ty| ty.to_string());
-        structure.required.dedup();
+        let structure = if candidates.is_empty() {
+            EntityStructure {
+                gaps: vec!["场景协议没有可达返回状态，未提供结构候选。".into()],
+                site: value.site.clone(),
+                span: value.span,
+                ..EntityStructure::default()
+            }
+        } else if candidates.len() == 1 {
+            candidates.pop().expect("Single scene outcome")
+        } else {
+            EntityStructure {
+                alternatives: vec![candidates],
+                gaps: vec![
+                    "保留各场景执行分支的独立结构候选；尚未导出候选与具体分支条件的关联。".into(),
+                ],
+                site: value.site.clone(),
+                span: value.span,
+                ..EntityStructure::default()
+            }
+        };
         Ok((NameEvidence::Alternatives(proofs), structure))
     }
     fn scene_list_structured(
@@ -961,6 +974,7 @@ impl<'tcx> Engine<'tcx> {
         {
             let (proof, mut structure) = self.scene_structured(&value.fields()[0], memory)?;
             structure.site = value.site.clone();
+            structure.span = value.span;
             return Ok((
                 vec![NameEvidence::Located {
                     site: value

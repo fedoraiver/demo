@@ -1,0 +1,144 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: bevy_pbr::render::mesh::collect_meshes_for_gpu_building · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef edge_order stroke:#334155,stroke-width:2px
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**bevy​_​pbr::render::mesh::collect​_​**<br/>**meshes​_​for​_​gpu​_​building**<br/>把线程提取队列整理为 GPU 网格实例和输入<br/>缓冲。" }
+  class n0 node_system
+  n1@{ shape: cyl, label: "**bevy​_​render::batching::gpu​_​**<br/>**preprocessing::**<br/>**BatchedInstanceBuffers#lt;render::**<br/>**mesh::MeshUniform, render::mesh::**<br/>**MeshInputUniform#gt;**<br/>来自crate:bevy​_​render ↗：保存批次绘制<br/>的 GPU 输入与实例缓冲。" }
+  class n1 node_resource
+  class n1 external_node
+  n2@{ shape: rounded, label: "**bevy​_​pbr::material::specialize​_​**<br/>**material​_​meshes**<br/>为变化的可见网格生成并缓存材质专用管线。" }
+  class n2 node_system
+  n3@{ shape: lin-rect, label: "**PrepareMeshes**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
+  class n3 node_system_set
+  class n3 external_node
+  n4@{ shape: rounded, label: "**bevy​_​pbr::render::mesh::collect​_​gpu​_​**<br/>**culled​_​meshes**<br/>按渲染层把 GPU 裁剪对象分配到各视图列<br/>表。" }
+  class n4 node_system
+  n5@{ shape: cyl, label: "**material​_​bind​_​groups::**<br/>**RenderMaterialBindings**<br/>来自crate:bevy​_​render ↗：按无类型材质<br/>身份查找绑定位置。" }
+  class n5 node_resource
+  class n5 external_node
+  n6@{ shape: cyl, label: "**lightmap::RenderLightmaps**<br/>管理渲染侧光照贴图的槽位和纹理。" }
+  class n6 node_resource
+  n7@{ shape: cyl, label: "**mesh::allocator::MeshAllocator**<br/>来自crate:bevy​_​render ↗：分配并管理网<br/>格顶点和索引 GPU 缓冲。" }
+  class n7 node_resource
+  class n7 external_node
+  n8@{ shape: cyl, label: "**render::mesh::**<br/>**MeshesToReextractNextFrame**<br/>记录因材质未准备而需要再次提取的网格。" }
+  class n8 node_resource
+  n9@{ shape: cyl, label: "**material::RenderMaterialInstances**<br/>保存提取后的实体材质实例。" }
+  class n9 node_resource
+  n10@{ shape: cyl, label: "**render::mesh::**<br/>**RenderMeshInstanceGpuQueues**<br/>暂存各线程提取的 GPU 网格实例。" }
+  class n10 node_resource
+  n11@{ shape: cyl, label: "**frame​_​count::FrameCount**<br/>来自crate:bevy​_​diagnostic ↗：记录应<br/>用启动以来的帧计数" }
+  class n11 node_resource
+  class n11 external_node
+  n12@{ shape: cyl, label: "**render::morph::MorphIndices**<br/>关联形变网格与当前及上一帧权重位置。" }
+  class n12 node_resource
+  n13@{ shape: rounded, label: "**bevy​_​pbr::render::morph::prepare​_​**<br/>**morph​_​descriptors**<br/>稳定分配形变描述符索引并回收失效项。" }
+  class n13 node_system
+  n14@{ shape: cyl, label: "**render::mesh::**<br/>**RenderGpuCulledEntities**<br/>追踪需要 GPU 裁剪的潜在可见实体。" }
+  class n14 node_resource
+  n15@{ shape: rounded, label: "**bevy​_​pbr::prepass::specialize​_​**<br/>**prepass​_​material​_​meshes**<br/>按深度、材质和运动特性生成预通道专用管<br/>线。" }
+  class n15 node_system
+  n16@{ shape: cyl, label: "**render::skin::SkinUniforms**<br/>以双缓冲保存蒙皮前后帧关节矩阵。" }
+  class n16 node_resource
+  n17@{ shape: cyl, label: "**render::mesh::RenderMeshInstances**<br/>保存 CPU 或 GPU 构建所需的网格实例。" }
+  class n17 node_resource
+  n18@{ shape: rounded, label: "**bevy​_​pbr::render::mesh::set​_​mesh​_​**<br/>**motion​_​vector​_​flags**<br/>在提取完成后标记网格可用的前帧蒙皮和形<br/>变。" }
+  class n18 node_system
+  n19@{ shape: cyl, label: "**render::mesh::MeshCullingDataBuffer**<br/>为 GPU 网格裁剪保存包围盒数据。" }
+  class n19 node_resource
+  n0 e0@-->|"可变访问"| n1
+  class e0 edge_write
+  n0 e1@-->|"先于"| n2
+  class e1 edge_order
+  n3 e2@-->|"集合成员"| n0
+  class e2 edge_set_membership
+  n0 e3@-->|"先于"| n4
+  class e3 edge_order
+  n5 e4@--> n0
+  class e4 edge_read
+  n6 e5@--> n0
+  class e5 edge_read
+  n7 e6@--> n0
+  class e6 edge_read
+  n0 e7@-->|"可变访问"| n8
+  class e7 edge_write
+  n9 e8@--> n0
+  class e8 edge_read
+  n0 e9@-->|"可变访问"| n10
+  class e9 edge_write
+  n11 e10@--> n0
+  class e10 edge_read
+  n12 e11@--> n0
+  class e11 edge_read
+  n13 e12@-->|"先于"| n0
+  class e12 edge_order
+  n0 e13@-->|"可变访问"| n14
+  class e13 edge_write
+  n0 e14@-->|"先于"| n15
+  class e14 edge_order
+  n16 e15@--> n0
+  class e15 edge_read
+  n0 e16@-->|"可变访问"| n17
+  class e16 edge_write
+  n0 e17@-->|"先于"| n18
+  class e17 edge_order
+  n0 e18@-->|"可变访问"| n19
+  class e18 edge_write
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e17@{ curve: basis }
+  e18@{ curve: basis }

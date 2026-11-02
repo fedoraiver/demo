@@ -35,6 +35,29 @@ function fixture(t) {
   return { workspace, model, object };
 }
 
+test('native type declaration identity preserves roles, package evidence and unit-local provenance', t => {
+  const { model } = fixture(t), object = model.objects[0];
+  object.declarationId = 'decl-native-plugin';
+  object.typeIdentity = { declarationId: object.declarationId, crateName: 'demo', defPath: 'demo::project::Plugin', local: false, roles: ['Plugin'] };
+  assert.doesNotThrow(() => validateCompilerModel(model, { checkSources: false }));
+  const dependency = { name: 'native-plugin', version: '1.2.3', root: 'D:/native-plugin' }, content = 'pub struct Plugin;\n';
+  model.sourceFiles.push({ path: 'src/lib.rs', dependency, content, sha256: sha(content) });
+  object.sourceEntries.push({ path: 'src/lib.rs', dependency, role: 'definition', line: 1, sha256: sha(content) });
+  object.typeIdentity.package = { name: dependency.name, version: dependency.version };
+  assert.doesNotThrow(() => validateCompilerModel(model, { checkSources: false }));
+  const original = structuredClone(object.typeIdentity);
+  for (const change of [identity => identity.declarationId = 'other', identity => identity.crateName = '', identity => identity.defPath = 'Plugin',
+    identity => identity.local = 'true', identity => identity.roles = ['Plugin', 'Plugin'], identity => identity.roles = ['Component'],
+    identity => identity.package = { name: 'demo', version: '0.1.0' }]) {
+    object.typeIdentity = structuredClone(original); change(object.typeIdentity);
+    assert.throws(() => validateCompilerModel(model, { checkSources: false }), /type declaration identity|type role differs|package has no definition evidence/);
+  }
+  object.typeIdentity = { ...original, roles: [] }; object.kind = 'NonSend';
+  assert.doesNotThrow(() => validateCompilerModel(model, { checkSources: false }));
+  object.typeIdentity = null;
+  assert.doesNotThrow(() => validateCompilerModel(model, { checkSources: false }));
+});
+
 test('compiler model is the sole input and requires declared source evidence', t => {
   const { workspace, model } = fixture(t);
   assert.doesNotThrow(() => validateCompilerModel(model, { workspace }));
@@ -112,6 +135,194 @@ test('compiler event access and trigger operations render exact observe and emit
   assert.deepEqual(model.scheduleInteractions.views, []);
   assert.equal(catalog.objects.length, model.objects.length);
   assert.equal(JSON.stringify(model), before);
+});
+
+function alternativeFixture(t) {
+  const { model, object } = fixture(t);
+  const sourceEntries = [{ path: 'src/main.rs', line: 1, column: 1, role: 'assembly' }];
+  const candidate = (id, alternativeGroup) => ({ ...object(id, 'Entity'), templateId: 'template::' + id,
+    alternativeGroups: [], alternativeGroup, alternativeSelection: 'one-of', alternativeContext: [alternativeGroup], possible: true });
+  const owner = model.objects.find(record => record.id === 'template-root');
+  Object.assign(owner, { templateId: 'template::root', alternativeGroup: null, alternativeSelection: null, alternativeContext: [], possible: false,
+    alternativeGroups: [
+      { id: 'layout-choice', candidates: ['candidate-a', 'candidate-b'], selection: 'one-of', sourceEntries },
+      { id: 'decoration-choice', candidates: ['candidate-c', 'candidate-d'], selection: 'one-of', sourceEntries },
+    ] });
+  model.objects.push(candidate('candidate-a', 'layout-choice'), candidate('candidate-b', 'layout-choice'),
+    candidate('candidate-c', 'decoration-choice'), candidate('candidate-d', 'decoration-choice'),
+    { ...object('candidate-child', 'Entity'), templateId: 'template::child', alternativeGroups: [], alternativeGroup: null, alternativeSelection: null, alternativeContext: ['layout-choice'], possible: true },
+    object('type-other', 'Component'));
+  model.relations = model.relations.filter(relation => relation.id !== 'contains');
+  for (const group of owner.alternativeGroups) for (const to of group.candidates) model.relations.push({
+    id: 'alternative-' + to, from: owner.id, to, kind: 'alternative', label: '结构候选', evidence: 'assembly',
+    alternativeGroup: group.id, selection: group.selection, alternativeContext: [group.id], possible: true, sourceEntries,
+  });
+  for (const [from, to] of [['candidate-a', 'type-component'], ['candidate-b', 'type-other']]) model.relations.push({
+    id: 'contains-' + from, from, to, kind: 'contains', label: '可能包含', evidence: 'assembly', explicit: true, required: false,
+    possible: true, alternativeGroup: 'layout-choice', alternativeContext: ['layout-choice'], sourceEntries,
+  });
+  model.relations.push({ id: 'candidate-actual-child', from: 'candidate-a', to: 'candidate-child', kind: 'relationship', label: '子实体',
+    evidence: 'assembly', possible: true, alternativeGroup: 'layout-choice', alternativeContext: ['layout-choice'], sourceEntries: [] });
+  return model;
+}
+
+test('same-entity structural candidates stay separate across independent groups and retain readable Entity edges', t => {
+  const model = alternativeFixture(t), before = JSON.stringify(model);
+  assert.doesNotThrow(() => validateCompilerModel(model));
+  const catalog = createCompilerObjectCatalog(model), registry = Object.fromEntries(model.objects.map(record => [record.id, record]));
+  const entities = viewerModel(model).entities;
+  assert.deepEqual(entities.find(entity => entity.id === 'template-root').components, []);
+  assert.deepEqual(entities.find(entity => entity.id === 'candidate-a').components, [{ id: 'type-component' }]);
+  assert.deepEqual(entities.find(entity => entity.id === 'candidate-b').components, [{ id: 'type-other' }]);
+  assert.equal(entities.length, model.objects.filter(object => object.kind === 'Entity').length);
+  const graph = catalog.graphFor('template-root');
+  assert.equal(graph.links.filter(link => link.factKind === 'alternative').length, 4);
+  assert.ok(graph.nodes.every(node => registry[node.id].kind !== 'Component'));
+  const view = renderGraphView({ id: catalog.objectById['template-root'].viewId, objectId: 'template-root', centerNodeId: 'template-root',
+    feature: 'project', aspect: 'object', label: '结构候选', summary: '分别保留独立候选组。' }, graph, registry, model.features);
+  for (const fact of model.relations.filter(relation => relation.kind === 'alternative')) {
+    const link = view.links.find(link => link.id === fact.id);
+    assert.deepEqual([link.from, link.to, link.kind, link.edgeSemantic, link.factKind, link.operation, link.displayLabel,
+      link.alternativeGroup, link.selection, link.possible, link.alternativeContext],
+    [fact.from, fact.to, 'reference', 'reference', 'alternative', 'alternative', '结构候选', fact.alternativeGroup, 'one-of', true, [fact.alternativeGroup]]);
+    assert.deepEqual(link.sourceEntries, fact.sourceEntries);
+  }
+  assert.equal(view.links.filter(link => link.edgeSemantic === 'relationship').length, 0);
+  assert.deepEqual(view.entityGroups, []);
+  const candidateGraph = catalog.graphFor('candidate-a');
+  assert.deepEqual(new Set(candidateGraph.nodes.map(node => node.id)), new Set(['candidate-a', 'template-root', 'candidate-child']));
+  assert.equal(candidateGraph.links.find(link => link.id === 'candidate-actual-child').kind, 'relationship');
+  assert.equal(candidateGraph.links.find(link => link.id === 'candidate-actual-child').possible, true);
+  assert.equal(JSON.stringify(model), before);
+});
+
+test('unresolved shared creation contexts keep possible roots without inventing one-of groups or child links', t => {
+  const { model, object } = fixture(t);
+  for (const id of ['batch-a', 'batch-b']) model.objects.push({ ...object(id, 'Entity'), templateId: 'template::' + id,
+    alternativeGroups: [], alternativeGroup: 'unresolved-creation-context', alternativeSelection: 'unresolved', alternativeContext: ['unresolved-creation-context'], possible: true });
+  const before = JSON.stringify(model);
+  assert.doesNotThrow(() => validateCompilerModel(model));
+  const catalog = createCompilerObjectCatalog(model);
+  for (const id of ['batch-a', 'batch-b']) assert.deepEqual(catalog.graphFor(id).nodes.map(node => node.id), [id]);
+  assert.equal(catalog.links.length, model.relations.length);
+  assert.equal(JSON.stringify(model), before);
+});
+
+test('nested choices append ancestor context while true children inherit it without becoming group candidates', t => {
+  const model = alternativeFixture(t), owner = model.objects.find(object => object.id === 'candidate-child');
+  const sourceEntries = owner.sourceEntries;
+  owner.alternativeGroups.push({ id: 'nested-choice', candidates: ['nested-a', 'nested-b'], selection: 'one-of', sourceEntries });
+  for (const id of ['nested-a', 'nested-b']) {
+    const alternativeContext = ['layout-choice', 'nested-choice'];
+    model.objects.push({ ...structuredClone(owner), id, templateId: 'template::' + id, alternativeGroups: [], alternativeGroup: 'nested-choice',
+      alternativeSelection: 'one-of', alternativeContext, possible: true });
+    model.relations.push({ id: 'alternative-' + id, from: owner.id, to: id, kind: 'alternative', label: '结构候选', evidence: 'assembly',
+      alternativeGroup: 'nested-choice', selection: 'one-of', alternativeContext, possible: true, sourceEntries });
+  }
+  const before = JSON.stringify(model);
+  assert.doesNotThrow(() => validateCompilerModel(model));
+  assert.equal(owner.alternativeGroup, null);
+  assert.deepEqual(owner.alternativeContext, ['layout-choice']);
+  const catalog = createCompilerObjectCatalog(model), graph = catalog.graphFor(owner.id);
+  assert.deepEqual(new Set(graph.nodes.map(node => node.id)), new Set(['candidate-child', 'candidate-a', 'nested-a', 'nested-b']));
+  assert.deepEqual(graph.links.find(link => link.to === 'nested-a').alternativeContext, ['layout-choice', 'nested-choice']);
+  assert.equal(JSON.stringify(model), before);
+});
+
+test('structural candidate validation rejects malformed metadata, crossed groups and missing exact endpoints', t => {
+  const cases = [
+    [model => { model.objects.find(object => object.id === 'candidate-a').possible = 'true'; }, /Invalid compiler entity possibility/],
+    [model => { model.objects.find(object => object.id === 'candidate-a').possible = false; }, /Inconsistent compiler alternative context/],
+    [model => { Object.assign(model.objects.find(object => object.id === 'candidate-a'), { alternativeGroup: 'decoration-choice', alternativeContext: ['decoration-choice'] }); }, /candidate crosses its group/],
+    [model => { model.objects.find(object => object.id === 'candidate-a').alternativeSelection = 'unresolved'; }, /candidate crosses its group/],
+    [model => { model.objects.find(object => object.id === 'candidate-child').alternativeGroup = 'layout-choice'; }, /Inconsistent compiler alternative context/],
+    [model => { model.objects.find(object => object.id === 'candidate-a').alternativeContext = {}; }, /Invalid compiler entity alternative context/],
+    [model => { model.objects.find(object => object.id === 'candidate-a').alternativeContext.push('layout-choice'); }, /Invalid compiler entity alternative context/],
+    [model => { model.objects.find(object => object.id === 'candidate-child').alternativeContext = ['decoration-choice']; }, /child crosses its alternative context/],
+    [model => { model.objects.find(object => object.id === 'candidate-child').possible = false; }, /Invalid compiler entity alternative context/],
+    [model => { model.objects.find(object => object.id === 'template-root').alternativeGroups[0].candidates[0] = 'type-component'; }, /candidate endpoint/],
+    [model => { model.objects.find(object => object.id === 'template-root').alternativeGroups[0].candidates.push('candidate-a'); }, /Invalid compiler alternative group/],
+    [model => { model.objects.find(object => object.id === 'template-root').alternativeGroups[1].id = 'layout-choice'; }, /Invalid compiler alternative group/],
+    [model => { model.objects.find(object => object.id === 'template-root').alternativeGroups[0].selection = 'all'; }, /Invalid compiler alternative group/],
+    [model => { model.objects.find(object => object.id === 'template-root').alternativeGroups = {}; }, /Invalid compiler alternative group list/],
+    [model => { model.relations.find(relation => relation.id === 'alternative-candidate-a').from = 'candidate-child'; }, /Invalid compiler alternative relationship/],
+    [model => { model.relations.find(relation => relation.id === 'alternative-candidate-a').to = 'candidate-c'; }, /Invalid compiler alternative relationship/],
+    [model => { model.relations.find(relation => relation.id === 'alternative-candidate-a').possible = false; }, /Invalid compiler relationship alternative group/],
+    [model => { model.relations.find(relation => relation.id === 'alternative-candidate-a').selection = 'unresolved'; }, /Invalid compiler alternative relationship/],
+    [model => { model.relations.find(relation => relation.id === 'alternative-candidate-a').alternativeContext = ['decoration-choice']; }, /relationship crosses its context/],
+    [model => { model.relations = model.relations.filter(relation => relation.id !== 'alternative-candidate-a'); }, /Missing compiler alternative relationship/],
+    [model => { model.relations.find(relation => relation.id === 'contains-candidate-a').alternativeGroup = 'decoration-choice'; }, /crosses its entity context/],
+    [model => { model.relations.find(relation => relation.id === 'candidate-actual-child').possible = false; }, /Invalid compiler relationship alternative group/],
+    [model => { model.relations.find(relation => relation.id === 'candidate-actual-child').to = 'type-component'; }, /crosses its entity context/],
+    [model => { model.relations.find(relation => relation.id === 'contains-candidate-a').alternativeContext = []; }, /crosses its entity context/],
+  ];
+  for (const [edit, error] of cases) {
+    const model = alternativeFixture(t); edit(model);
+    assert.throws(() => validateCompilerModel(model), error);
+  }
+});
+
+test('possible entity contexts require a reachable structural path and nested templates cannot be created as assembly roots', t => {
+  const orphan = alternativeFixture(t), original = orphan.objects.find(object => object.id === 'candidate-child');
+  orphan.objects.push({ ...structuredClone(original), id: 'orphan', templateId: 'template::orphan' });
+  assert.throws(() => validateCompilerModel(orphan), /alternative context is unreachable: orphan/);
+  const cycle = alternativeFixture(t), child = cycle.objects.find(object => object.id === 'candidate-child');
+  cycle.objects.push({ ...structuredClone(child), id: 'cycle-a', templateId: 'template::cycle-a' },
+    { ...structuredClone(child), id: 'cycle-b', templateId: 'template::cycle-b' });
+  for (const [from, to] of [['cycle-a', 'cycle-b'], ['cycle-b', 'cycle-a']]) cycle.relations.push({ id: from + '-child', from, to, kind: 'relationship',
+    label: '子实体', evidence: 'assembly', alternativeGroup: null, alternativeContext: ['layout-choice'], possible: true, sourceEntries: [] });
+  assert.throws(() => validateCompilerModel(cycle), /alternative context is unreachable: cycle-a/);
+  const direct = alternativeFixture(t);
+  direct.relations.push({ id: 'fabricated-nested-create', from: 'registration-1', to: 'candidate-a', kind: 'create', evidence: 'assembly',
+    alternativeGroup: 'layout-choice', alternativeContext: ['layout-choice'], possible: true, sourceEntries: [] });
+  assert.throws(() => validateCompilerModel(direct), /create targets a nested template directly/);
+});
+
+test('conditional component and child edges cannot omit their complete entity context', t => {
+  for (const id of ['contains-candidate-a', 'candidate-actual-child']) {
+    for (const fields of [['possible', 'alternativeGroup', 'alternativeContext'], ['possible'], ['alternativeGroup'], ['alternativeContext']]) {
+      const model = alternativeFixture(t), relation = model.relations.find(relation => relation.id === id);
+      for (const field of fields) delete relation[field];
+      assert.throws(() => validateCompilerModel(model), /Invalid compiler relationship alternative group|relationship crosses its entity context/);
+    }
+  }
+});
+
+test('body creates cannot target nested templates while genuine possible roots and ordinary children stay valid', t => {
+  for (const evidence of ['body', undefined]) {
+    for (const [target, alternativeGroup] of [['candidate-a', 'layout-choice'], ['candidate-child', null]]) {
+      const model = alternativeFixture(t);
+      model.relations.push({ id: 'fabricated-create', from: 'registration-1', to: target, kind: 'create', evidence,
+        alternativeGroup, alternativeContext: ['layout-choice'], possible: true, sourceEntries: [] });
+      assert.throws(() => validateCompilerModel(model), /create targets a nested template directly/);
+    }
+  }
+  const model = alternativeFixture(t), original = model.objects.find(object => object.id === 'candidate-child');
+  model.objects.push({ ...structuredClone(original), id: 'possible-root', templateId: 'template::possible-root',
+    alternativeGroup: 'unresolved-root-context', alternativeSelection: 'unresolved', alternativeContext: ['unresolved-root-context'], possible: true });
+  model.relations.push({ id: 'possible-root-create', from: 'registration-1', to: 'possible-root', kind: 'create', evidence: 'body',
+    alternativeGroup: 'unresolved-root-context', alternativeContext: ['unresolved-root-context'], possible: true, sourceEntries: [] });
+  const ordinary = { ...structuredClone(original), id: 'ordinary-child', templateId: 'template::ordinary-child', alternativeContext: [], possible: false };
+  model.objects.push(ordinary);
+  model.relations.push({ id: 'ordinary-child-edge', from: 'template-root', to: ordinary.id, kind: 'relationship', evidence: 'assembly', sourceEntries: [] });
+  assert.doesNotThrow(() => validateCompilerModel(model));
+  const missing = structuredClone(model), relation = missing.relations.find(relation => relation.id === 'possible-root-create');
+  for (const field of ['possible', 'alternativeGroup', 'alternativeContext']) delete relation[field];
+  assert.throws(() => validateCompilerModel(missing), /relationship crosses its entity context/);
+});
+
+test('structural candidate group and edge evidence require identical spans and complete valid snapshots', t => {
+  const malformed = alternativeFixture(t);
+  malformed.objects.find(object => object.id === 'template-root').alternativeGroups[0].sourceEntries = [{ path: 'src/main.rs', line: '1' }];
+  assert.throws(() => validateCompilerModel(malformed), /Invalid compiler alternative group/);
+  const mismatch = alternativeFixture(t);
+  mismatch.relations.find(relation => relation.id === 'alternative-candidate-a').sourceEntries = [];
+  assert.throws(() => validateCompilerModel(mismatch), /evidence differs from its group/);
+  const source = alternativeFixture(t);
+  source.objects.find(object => object.id === 'template-root').alternativeGroups[0].sourceEntries[0].path = 'src/not-snapshotted.rs';
+  assert.throws(() => validateCompilerModel(source), /no matching snapshot/);
+  const forged = alternativeFixture(t); forged.sourceFiles[0].sha256 = '0'.repeat(64);
+  assert.throws(() => validateCompilerModel(forged), /Invalid or duplicate compiler source snapshot/);
 });
 
 test('pending Chinese purposes stop publication without changing compiler facts', t => {

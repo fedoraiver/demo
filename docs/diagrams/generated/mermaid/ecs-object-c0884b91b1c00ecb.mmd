@@ -1,0 +1,108 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: demo::audio::playback::play_requests · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef node_message fill:#EDF4F6,stroke:#247B91,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_plugin fill:#F1F3F6,stroke:#4A6389,stroke-width:2.2px,color:#1F3340
+  classDef edge_order stroke:#334155,stroke-width:2px
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_consume stroke:#247B91,stroke-width:1.8px,stroke-dasharray:2 4
+  classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**demo::audio::playback::play​_​requests**<br/>按有效音量与播放策略处理短音请求。" }
+  class n0 node_system
+  n1@{ shape: cyl, label: "**bevy​_​kira​_​audio::**<br/>**AudioChannel#lt;audio::UiTrack#gt;**<br/>来自crate:bevy​_​kira​_​audio ↗：保存特<br/>定通道类型的音频命令队列及实例播放状态" }
+  class n1 node_resource
+  class n1 external_node
+  n2@{ shape: cyl, label: "**audio::mix::AudioMix**<br/>两条业务通道共用的有效混音源；离开设置页<br/>便回到最近成功应用的配置。" }
+  class n2 node_resource
+  n3@{ shape: rounded, label: "**demo::audio::playback::stop​_​on​_​exit**<br/>停止音频通道并记录退出。" }
+  class n3 node_system
+  n4@{ shape: cyl, label: "**bevy​_​time::Time#lt;bevy​_​time::Real#gt;**<br/>来自crate:bevy​_​time ↗：保存时钟上下<br/>文、帧间隔及累计时间" }
+  class n4 node_resource
+  class n4 external_node
+  n5@{ shape: fr-rect, label: "**audio::GameAudioPlugin**<br/>安装 Kira 输出与音频生命周期；无设备测<br/>试直接使用内部纯数据夹具。" }
+  class n5 node_plugin
+  n6@{ shape: lin-rect, label: "**Playback**<br/>跨功能只约束混音与播放阶段，具体资源和实<br/>例处理顺序留在音频内部。" }
+  class n6 node_system_set
+  n7@{ shape: cyl, label: "**bevy​_​asset::Assets#lt;source::**<br/>**AudioSource#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
+  class n7 node_resource
+  class n7 external_node
+  n8@{ shape: cyl, label: "**audio::playback::SoundBank**<br/>短音的句柄生命周期与播放状态集中维护；只<br/>保留每种事件最后一次获准的播放时间。" }
+  class n8 node_resource
+  n9@{ shape: cyl, label: "**bevy::bevy​_​ecs::message::**<br/>**Messages#lt;audio::messages::**<br/>**SoundRequest#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  class n9 node_resource
+  class n9 external_node
+  n10@{ shape: lean-r, label: "**audio::messages::SoundRequest**<br/>业务实体只用于日志和节流，不持有其组件引<br/>用，实体销毁后消息仍可被消费。" }
+  class n10 node_message
+  n11@{ shape: cyl, label: "**bevy​_​kira​_​audio::**<br/>**AudioChannel#lt;audio::SfxTrack#gt;**<br/>来自crate:bevy​_​kira​_​audio ↗：保存特<br/>定通道类型的音频命令队列及实例播放状态" }
+  class n11 node_resource
+  class n11 external_node
+  n1 e0@--> n0
+  class e0 edge_read
+  n2 e1@--> n0
+  class e1 edge_read
+  n0 e2@-->|"先于"| n3
+  class e2 edge_order
+  n4 e3@--> n0
+  class e3 edge_read
+  n5 e4@-->|"调用"| n0
+  class e4 edge_registration
+  n6 e5@-->|"集合成员"| n0
+  class e5 edge_set_membership
+  n7 e6@--> n0
+  class e6 edge_read
+  n0 e7@-->|"可变访问"| n8
+  class e7 edge_write
+  n9 e8@--> n0
+  class e8 edge_read
+  n10 e9@--> n0
+  class e9 edge_consume
+  n11 e10@--> n0
+  class e10 edge_read
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }

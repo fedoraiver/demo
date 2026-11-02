@@ -1,0 +1,55 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: bevy_render::render_asset::collect_render_assets_to_reextract#lt;bevy_gizmos_render::GpuLineGizmo#gt; · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**bevy​_​render::render​_​asset::collect​_​**<br/>**render​_​assets​_​to​_​reextract#lt;bevy​_​**<br/>**gizmos​_​render::GpuLineGizmo#gt;**<br/>排空渲染资产并登记设备恢复后的重新提取。" }
+  class n0 node_system
+  n1@{ shape: cyl, label: "**bevy​_​render::render​_​asset::**<br/>**RenderAssets#lt;GpuLineGizmo#gt;**<br/>按源资产身份保存 GPU 渲染表示。" }
+  class n1 node_resource
+  n2@{ shape: cyl, label: "**bevy​_​render::render​_​asset::**<br/>**PrepareNextFrameAssets#lt;GpuLineGizmo#gt;**<br/>保留下一帧待准备的渲染源资产。" }
+  class n2 node_resource
+  n3@{ shape: cyl, label: "**bevy​_​render::render​_​asset::**<br/>**RenderAssetsToReExtract#lt;GpuLineGizmo**<br/>**#gt;**<br/>记录设备恢复后需重建的渲染资产。" }
+  class n3 node_resource
+  n0 e0@-->|"可变访问"| n1
+  class e0 edge_write
+  n0 e1@-->|"可变访问"| n2
+  class e1 edge_write
+  n0 e2@-->|"插入"| n3
+  class e2 edge_write
+  e0@{ curve: basis }
+  e2@{ curve: basis }

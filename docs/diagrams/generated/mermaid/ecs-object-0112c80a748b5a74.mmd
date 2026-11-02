@@ -1,0 +1,89 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#object-0112c80a748b5a74-e0{marker-start:url(#object-0112c80a748b5a74_flowchart-v2-pointStart)!important}\n#object-0112c80a748b5a74-e9{marker-start:url(#object-0112c80a748b5a74_flowchart-v2-pointStart)!important}\n#object-0112c80a748b5a74_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: bevy_render::camera::TemporalJitter · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**bevy​_​render::camera::TemporalJitter**<br/>为透视相机视锥提供亚像素抖动。" }
+  class n0 node_component
+  n1@{ shape: rounded, label: "**bevy​_​anti​_​alias::taa::prepare​_​taa​_​**<br/>**jitter**<br/>来自crate:bevy​_​anti​_​alias ↗：为 TAA<br/>相机逐帧设置 Halton 投影抖动。" }
+  class n1 node_system
+  class n1 external_node
+  n2@{ shape: rounded, label: "**bevy​_​pbr::ssao::prepare​_​ssao​_​**<br/>**pipelines**<br/>来自crate:bevy​_​pbr ↗：按遮蔽质量和时<br/>间抖动配置选择计算管线。" }
+  class n2 node_system
+  class n2 external_node
+  n3@{ shape: rounded, label: "**bevy​_​render::camera::extract​_​cameras**<br/>把活动相机及可见实体提取到渲染世界。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**bevy​_​render::view::prepare​_​view​_​**<br/>**uniforms**<br/>生成视图投影、抖动、裁剪及 LOD 的 GPU<br/>参数。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**bevy​_​pbr::prepass::prepare​_​previous​_​**<br/>**view​_​uniforms**<br/>来自crate:bevy​_​pbr ↗：重建前帧抖动矩<br/>阵并上传视图历史参数。" }
+  class n5 node_system
+  class n5 external_node
+  n6@{ shape: rounded, label: "**bevy​_​pbr::render::mesh::check​_​views​_​**<br/>**need​_​specialization**<br/>来自crate:bevy​_​pbr ↗：汇总视图渲染特<br/>性并检测管线配置变化。" }
+  class n6 node_system
+  class n6 external_node
+  n1 e0@---|"存在性约束"| n0
+  class e0 edge_reference
+  n0 e1@-->|"存在性约束"| n2
+  class e1 edge_reference
+  n1 e2@-->|"可变访问"| n0
+  class e2 edge_write
+  n3 e3@-->|"移除"| n0
+  class e3 edge_write
+  n3 e4@-->|"插入"| n0
+  class e4 edge_write
+  n0 e5@--> n4
+  class e5 edge_read
+  n0 e6@--> n5
+  class e6 edge_read
+  n1 e7@-->|"赋值"| n0
+  class e7 edge_write
+  n0 e8@-->|"存在性约束"| n6
+  class e8 edge_reference
+  n3 e9@--- n0
+  class e9 edge_read
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: bumpX }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }

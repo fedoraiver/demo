@@ -1,0 +1,202 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#object-45232d4b9f39a912-e6{marker-start:url(#object-45232d4b9f39a912_flowchart-v2-pointStart)!important}\n#object-45232d4b9f39a912-e15{marker-start:url(#object-45232d4b9f39a912_flowchart-v2-pointStart)!important}\n#object-45232d4b9f39a912_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: bevy_render::view::NoIndirectDrawing · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**bevy​_​render::view::NoIndirectDrawing**<br/>关闭相机的间接绘制模式。" }
+  class n0 node_component
+  n1@{ shape: rounded, label: "**bevy​_​core​_​pipeline::prepass::node::**<br/>**late​_​prepass**<br/>来自crate:bevy​_​core​_​pipeline ↗：为遮<br/>挡剔除绘制晚期预通道。" }
+  class n1 node_system
+  class n1 external_node
+  n2@{ shape: rounded, label: "**bevy​_​pbr::render::gpu​_​preprocess::**<br/>**early​_​gpu​_​preprocess**<br/>来自crate:bevy​_​pbr ↗：为当前视图及阴<br/>影级联执行早期网格转换与裁剪。" }
+  class n2 node_system
+  class n2 external_node
+  n3@{ shape: rounded, label: "**bevy​_​ecs::schedule::condition::**<br/>**common​_​conditions::any​_​match​_​**<br/>**filter#lt;(bevy​_​ecs::query::filter::**<br/>**With#lt;bevy​_​pbr::render::gpu​_​**<br/>**preprocess::PreprocessBindGroups#gt;,**<br/>**bevy​_​ecs::query::filter::**<br/>**Without#lt;bevy​_​pbr::render::gpu​_​**<br/>**preprocess::SkipGpuPreprocess#gt;,**<br/>**bevy​_​ecs::query::filter::**<br/>**Without#lt;bevy​_​render::view::**<br/>**NoIndirectDrawing#gt;, bevy​_​ecs::**<br/>**query::filter::Or#lt;(bevy​_​ecs::query::**<br/>**filter::Or#lt;(bevy​_​ecs::query::**<br/>**filter::With#lt;bevy​_​core​_​pipeline::**<br/>**prepass::DepthPrepass#gt;, bevy​_​ecs::**<br/>**query::filter::With#lt;bevy​_​core​_​**<br/>**pipeline::prepass::NormalPrepass#gt;,**<br/>**bevy​_​ecs::query::filter::With#lt;bevy​_​**<br/>**core​_​pipeline::prepass::**<br/>**MotionVectorPrepass#gt;, bevy​_​ecs::**<br/>**query::filter::With#lt;bevy​_​core​_​**<br/>**pipeline::prepass::**<br/>**DeferredPrepass#gt;)#gt;, bevy​_​ecs::**<br/>**query::filter::With#lt;bevy​_​pbr::**<br/>**render::light::ShadowView#gt;)#gt;)#gt;**<br/>来自crate:bevy​_​ecs ↗：判断是否存在符<br/>合过滤条件的实体。" }
+  class n3 node_system
+  class n3 external_node
+  n4@{ shape: rounded, label: "**bevy​_​render::camera::extract​_​cameras**<br/>把活动相机及可见实体提取到渲染世界。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**bevy​_​render::batching::gpu​_​**<br/>**preprocessing::batch​_​and​_​prepare​_​**<br/>**binned​_​render​_​phase#lt;bevy​_​core​_​**<br/>**pipeline::deferred::**<br/>**AlphaMask3dDeferred, bevy​_​pbr::**<br/>**render::mesh::MeshPipeline#gt;**<br/>为分桶渲染阶段建立 GPU 预处理批次。" }
+  class n5 node_system
+  n6@{ shape: rounded, label: "**bevy​_​render::batching::gpu​_​**<br/>**preprocessing::batch​_​and​_​prepare​_​**<br/>**binned​_​render​_​phase#lt;bevy​_​core​_​**<br/>**pipeline::prepass::**<br/>**AlphaMask3dPrepass, bevy​_​pbr::**<br/>**render::mesh::MeshPipeline#gt;**<br/>为分桶渲染阶段建立 GPU 预处理批次。" }
+  class n6 node_system
+  n7@{ shape: rounded, label: "**bevy​_​core​_​pipeline::mip​_​generation::**<br/>**experimental::depth::prepare​_​view​_​**<br/>**depth​_​pyramids**<br/>来自crate:bevy​_​core​_​pipeline ↗：为遮<br/>挡剔除视图维护深度金字塔。" }
+  class n7 node_system
+  class n7 external_node
+  n8@{ shape: rounded, label: "**bevy​_​core​_​pipeline::core​_​3d::**<br/>**extract​_​core​_​3d​_​camera​_​phases**<br/>来自crate:bevy​_​core​_​pipeline ↗：为活<br/>动三维相机准备主渲染阶段。" }
+  class n8 node_system
+  class n8 external_node
+  n9@{ shape: rounded, label: "**bevy​_​core​_​pipeline::core​_​3d::**<br/>**extract​_​camera​_​prepass​_​phase**<br/>来自crate:bevy​_​core​_​pipeline ↗：同步<br/>三维相机的预通道标记与渲染阶段。" }
+  class n9 node_system
+  class n9 external_node
+  n10@{ shape: rounded, label: "**bevy​_​core​_​pipeline::deferred::node::**<br/>**late​_​deferred​_​prepass**<br/>来自crate:bevy​_​core​_​pipeline ↗：为遮<br/>挡剔除执行晚期延迟预通道。" }
+  class n10 node_system
+  class n10 external_node
+  n11@{ shape: rounded, label: "**bevy​_​render::batching::gpu​_​**<br/>**preprocessing::batch​_​and​_​prepare​_​**<br/>**binned​_​render​_​phase#lt;bevy​_​core​_​**<br/>**pipeline::prepass::Opaque3dPrepass,**<br/>**bevy​_​pbr::render::mesh::**<br/>**MeshPipeline#gt;**<br/>为分桶渲染阶段建立 GPU 预处理批次。" }
+  class n11 node_system
+  n12@{ shape: rounded, label: "**bevy​_​pbr::render::light::prepare​_​**<br/>**lights**<br/>来自crate:bevy​_​pbr ↗：准备视图光照参<br/>数、阴影视图和阴影贴图。" }
+  class n12 node_system
+  class n12 external_node
+  n13@{ shape: rounded, label: "**bevy​_​render::batching::gpu​_​**<br/>**preprocessing::batch​_​and​_​prepare​_​**<br/>**sorted​_​render​_​phase#lt;bevy​_​core​_​**<br/>**pipeline::core​_​3d::Transparent3d,**<br/>**bevy​_​pbr::render::mesh::**<br/>**MeshPipeline#gt;**<br/>按已有绘制顺序合并 GPU 预处理阶段批次。" }
+  class n13 node_system
+  n14@{ shape: rounded, label: "**bevy​_​render::batching::gpu​_​**<br/>**preprocessing::batch​_​and​_​prepare​_​**<br/>**binned​_​render​_​phase#lt;bevy​_​core​_​**<br/>**pipeline::core​_​3d::AlphaMask3d,**<br/>**bevy​_​pbr::render::mesh::**<br/>**MeshPipeline#gt;**<br/>为分桶渲染阶段建立 GPU 预处理批次。" }
+  class n14 node_system
+  n15@{ shape: rounded, label: "**bevy​_​render::batching::gpu​_​**<br/>**preprocessing::batch​_​and​_​prepare​_​**<br/>**binned​_​render​_​phase#lt;bevy​_​pbr::**<br/>**render::light::Shadow, bevy​_​pbr::**<br/>**render::mesh::MeshPipeline#gt;**<br/>为分桶渲染阶段建立 GPU 预处理批次。" }
+  class n15 node_system
+  n16@{ shape: rounded, label: "**bevy​_​pbr::render::mesh::extract​_​**<br/>**meshes​_​for​_​gpu​_​building**<br/>来自crate:bevy​_​pbr ↗：增量提取变化或<br/>需重试网格到线程队列。" }
+  class n16 node_system
+  class n16 external_node
+  n17@{ shape: rounded, label: "**bevy​_​pbr::render::light::per​_​view​_​**<br/>**shadow​_​pass#lt;false#gt;**<br/>来自crate:bevy​_​pbr ↗：绘制相机相关的<br/>平行光级联阴影。" }
+  class n17 node_system
+  class n17 external_node
+  n18@{ shape: rounded, label: "**bevy​_​core​_​pipeline::prepass::node::**<br/>**early​_​prepass**<br/>来自crate:bevy​_​core​_​pipeline ↗：绘制<br/>早期不透明与 AlphaMask 预通道。" }
+  class n18 node_system
+  class n18 external_node
+  n19@{ shape: rounded, label: "**bevy​_​ecs::schedule::condition::**<br/>**common​_​conditions::any​_​match​_​**<br/>**filter#lt;(bevy​_​ecs::query::filter::**<br/>**With#lt;bevy​_​pbr::render::gpu​_​**<br/>**preprocess::PreprocessBindGroups#gt;,**<br/>**bevy​_​ecs::query::filter::**<br/>**Without#lt;bevy​_​pbr::render::gpu​_​**<br/>**preprocess::SkipGpuPreprocess#gt;,**<br/>**bevy​_​ecs::query::filter::**<br/>**Without#lt;bevy​_​render::view::**<br/>**NoIndirectDrawing#gt;, bevy​_​ecs::**<br/>**query::filter::Or#lt;(bevy​_​ecs::query::**<br/>**filter::Or#lt;(bevy​_​ecs::query::**<br/>**filter::With#lt;bevy​_​core​_​pipeline::**<br/>**prepass::DepthPrepass#gt;, bevy​_​ecs::**<br/>**query::filter::With#lt;bevy​_​core​_​**<br/>**pipeline::prepass::NormalPrepass#gt;,**<br/>**bevy​_​ecs::query::filter::With#lt;bevy​_​**<br/>**core​_​pipeline::prepass::**<br/>**MotionVectorPrepass#gt;, bevy​_​ecs::**<br/>**query::filter::With#lt;bevy​_​core​_​**<br/>**pipeline::prepass::**<br/>**DeferredPrepass#gt;)#gt;, bevy​_​ecs::**<br/>**query::filter::With#lt;bevy​_​pbr::**<br/>**render::light::ShadowView#gt;)#gt;, bevy​_​**<br/>**ecs::query::filter::With#lt;bevy​_​**<br/>**render::occlusion​_​culling::**<br/>**OcclusionCulling#gt;)#gt;**<br/>来自crate:bevy​_​ecs ↗：判断是否存在符<br/>合过滤条件的实体。" }
+  class n19 node_system
+  class n19 external_node
+  n20@{ shape: rounded, label: "**bevy​_​render::batching::gpu​_​**<br/>**preprocessing::batch​_​and​_​prepare​_​**<br/>**binned​_​render​_​phase#lt;bevy​_​core​_​**<br/>**pipeline::deferred::**<br/>**Opaque3dDeferred, bevy​_​pbr::render::**<br/>**mesh::MeshPipeline#gt;**<br/>为分桶渲染阶段建立 GPU 预处理批次。" }
+  class n20 node_system
+  n21@{ shape: rounded, label: "**bevy​_​ecs::schedule::condition::**<br/>**common​_​conditions::any​_​match​_​**<br/>**filter#lt;(bevy​_​ecs::query::filter::**<br/>**With#lt;bevy​_​pbr::render::gpu​_​**<br/>**preprocess::PreprocessBindGroups#gt;,**<br/>**bevy​_​ecs::query::filter::**<br/>**Without#lt;bevy​_​pbr::render::gpu​_​**<br/>**preprocess::SkipGpuPreprocess#gt;,**<br/>**bevy​_​ecs::query::filter::**<br/>**Without#lt;bevy​_​render::view::**<br/>**NoIndirectDrawing#gt;)#gt;**<br/>来自crate:bevy​_​ecs ↗：判断是否存在符<br/>合过滤条件的实体。" }
+  class n21 node_system
+  class n21 external_node
+  n22@{ shape: rounded, label: "**bevy​_​core​_​pipeline::deferred::node::**<br/>**early​_​deferred​_​prepass**<br/>来自crate:bevy​_​core​_​pipeline ↗：执行<br/>早期延迟预通道并保存深度结果。" }
+  class n22 node_system
+  class n22 external_node
+  n23@{ shape: rounded, label: "**bevy​_​render::batching::gpu​_​**<br/>**preprocessing::batch​_​and​_​prepare​_​**<br/>**sorted​_​render​_​phase#lt;bevy​_​pbr::**<br/>**transmission::phase::**<br/>**Transmissive3d, bevy​_​pbr::render::**<br/>**mesh::MeshPipeline#gt;**<br/>按已有绘制顺序合并 GPU 预处理阶段批次。" }
+  class n23 node_system
+  n24@{ shape: rounded, label: "**bevy​_​core​_​pipeline::core​_​3d::**<br/>**configure​_​occlusion​_​culling​_​view​_​**<br/>**targets**<br/>来自crate:bevy​_​core​_​pipeline ↗：让遮<br/>挡剔除相机的深度纹理可被采样。" }
+  class n24 node_system
+  class n24 external_node
+  n25@{ shape: rounded, label: "**bevy​_​pbr::render::gpu​_​preprocess::**<br/>**late​_​gpu​_​preprocess**<br/>来自crate:bevy​_​pbr ↗：对后期遮挡工作<br/>项执行间接网格预处理。" }
+  class n25 node_system
+  class n25 external_node
+  n26@{ shape: rounded, label: "**bevy​_​pbr::render::light::per​_​view​_​**<br/>**shadow​_​pass#lt;true#gt;**<br/>来自crate:bevy​_​pbr ↗：绘制相机相关的<br/>平行光级联阴影。" }
+  class n26 node_system
+  class n26 external_node
+  n27@{ shape: rounded, label: "**bevy​_​render::batching::gpu​_​**<br/>**preprocessing::batch​_​and​_​prepare​_​**<br/>**binned​_​render​_​phase#lt;bevy​_​core​_​**<br/>**pipeline::core​_​3d::Opaque3d, bevy​_​**<br/>**pbr::render::mesh::MeshPipeline#gt;**<br/>为分桶渲染阶段建立 GPU 预处理批次。" }
+  class n27 node_system
+  n0 e0@-->|"存在性约束"| n1
+  class e0 edge_reference
+  n0 e1@-->|"存在性约束"| n2
+  class e1 edge_reference
+  n0 e2@-->|"存在性约束"| n3
+  class e2 edge_reference
+  n4 e3@-->|"移除"| n0
+  class e3 edge_write
+  n0 e4@-->|"存在性约束"| n5
+  class e4 edge_reference
+  n0 e5@-->|"存在性约束"| n6
+  class e5 edge_reference
+  n4 e6@---|"存在性约束"| n0
+  class e6 edge_reference
+  n0 e7@-->|"存在性约束"| n7
+  class e7 edge_reference
+  n0 e8@-->|"存在性约束"| n8
+  class e8 edge_reference
+  n0 e9@-->|"存在性约束"| n9
+  class e9 edge_reference
+  n0 e10@-->|"存在性约束"| n10
+  class e10 edge_reference
+  n0 e11@-->|"存在性约束"| n11
+  class e11 edge_reference
+  n12 e12@-->|"插入"| n0
+  class e12 edge_write
+  n0 e13@-->|"存在性约束"| n13
+  class e13 edge_reference
+  n0 e14@-->|"存在性约束"| n14
+  class e14 edge_reference
+  n12 e15@---|"存在性约束"| n0
+  class e15 edge_reference
+  n0 e16@-->|"存在性约束"| n15
+  class e16 edge_reference
+  n0 e17@-->|"存在性约束"| n16
+  class e17 edge_reference
+  n0 e18@-->|"存在性约束"| n17
+  class e18 edge_reference
+  n4 e19@-->|"插入"| n0
+  class e19 edge_write
+  n0 e20@-->|"存在性约束"| n18
+  class e20 edge_reference
+  n0 e21@-->|"存在性约束"| n19
+  class e21 edge_reference
+  n0 e22@-->|"存在性约束"| n20
+  class e22 edge_reference
+  n0 e23@-->|"存在性约束"| n21
+  class e23 edge_reference
+  n0 e24@-->|"存在性约束"| n22
+  class e24 edge_reference
+  n0 e25@-->|"存在性约束"| n23
+  class e25 edge_reference
+  n0 e26@-->|"存在性约束"| n24
+  class e26 edge_reference
+  n0 e27@-->|"存在性约束"| n25
+  class e27 edge_reference
+  n0 e28@-->|"存在性约束"| n26
+  class e28 edge_reference
+  n0 e29@-->|"存在性约束"| n27
+  class e29 edge_reference
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e17@{ curve: basis }
+  e18@{ curve: basis }
+  e19@{ curve: basis }
+  e20@{ curve: basis }
+  e21@{ curve: basis }
+  e22@{ curve: basis }
+  e23@{ curve: basis }
+  e24@{ curve: basis }
+  e25@{ curve: basis }
+  e26@{ curve: basis }
+  e27@{ curve: basis }
+  e28@{ curve: basis }
+  e29@{ curve: basis }

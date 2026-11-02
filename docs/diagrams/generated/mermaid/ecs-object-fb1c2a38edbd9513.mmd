@@ -1,0 +1,50 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: bevy_ecs::message::Messages#lt;bevy_asset::AssetEvent#lt;extended_material::ExtendedMaterial#lt;pbr_material::StandardMaterial, decal::forward::ForwardDecalMaterialExt#gt;#gt;#gt; · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;bevy​_​**<br/>**asset::AssetEvent#lt;extended​_​**<br/>**material::ExtendedMaterial#lt;pbr​_​**<br/>**material::StandardMaterial, decal::**<br/>**forward::ForwardDecalMaterialExt#gt;#gt;#gt;**<br/>保存最近两次轮换期间产生的指定类型消息" }
+  class n0 node_resource
+  n1@{ shape: rounded, label: "**bevy​_​asset::assets::Assets#lt;bevy​_​**<br/>**pbr::extended​_​material::**<br/>**ExtendedMaterial#lt;bevy​_​pbr::pbr​_​**<br/>**material::StandardMaterial, bevy​_​**<br/>**pbr::decal::forward::**<br/>**ForwardDecalMaterialExt#gt;#gt;::asset​_​**<br/>**events**<br/>来自crate:bevy​_​asset ↗：发布累计的资<br/>产变化消息。" }
+  class n1 node_system
+  class n1 external_node
+  n1 e0@-->|"赋值"| n0
+  class e0 edge_write
+  n1 e1@-->|"可变访问"| n0
+  class e1 edge_write
+  e0@{ curve: basis }
+  e1@{ curve: basis }

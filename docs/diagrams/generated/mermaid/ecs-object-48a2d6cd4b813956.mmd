@@ -1,0 +1,131 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: ProcessInput · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef edge_order stroke:#334155,stroke-width:2px
+  classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: lin-rect, label: "**ProcessInput**<br/>组织 Egui 上下文与输入准备。" }
+  class n0 node_system_set
+  n1@{ shape: rounded, label: "**bevy​_​egui::input::write​_​window​_​**<br/>**touch​_​messages​_​system**<br/>把窗口触摸转换为 Egui 指针和触摸事件。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**bevy​_​egui::input::write​_​pointer​_​**<br/>**moved​_​and​_​button​_​messages​_​system**<br/>按原生事件顺序转换 Egui 指针输入。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**bevy​_​egui::input::write​_​egui​_​input​_​**<br/>**system**<br/>把界面输入和文件拖放写入 Egui 输入批<br/>次。" }
+  class n3 node_system
+  n4@{ shape: lin-rect, label: "**InitContexts**<br/>组织 Egui 上下文与输入准备。" }
+  class n4 node_system_set
+  n5@{ shape: rounded, label: "**bevy​_​egui::input::write​_​modifiers​_​**<br/>**keys​_​state​_​system**<br/>更新 Egui 修饰键并清除失焦残留。" }
+  class n5 node_system
+  n6@{ shape: rounded, label: "**demo::first​_​person::capture::sync​_​**<br/>**mouse​_​capture**<br/>来自first​_​person ↗：在输入转发前确定<br/>归属；切换前约定其他按键已松开，检查器没<br/>有进行中的交互。" }
+  class n6 node_system
+  class n6 external_node
+  n7@{ shape: lin-rect, label: "**BeginPass**<br/>组织 Egui 上下文与输入准备。" }
+  class n7 node_system_set
+  n8@{ shape: rounded, label: "**bevy​_​egui::input::absorb​_​bevy​_​input​_​**<br/>**system**<br/>在 Egui 使用输入时吸收对应 Bevy 输入。" }
+  class n8 node_system
+  n9@{ shape: rounded, label: "**bevy​_​egui::input::write​_​non​_​window​_​**<br/>**touch​_​messages​_​system**<br/>向聚焦的非窗口 Egui 界面传递触摸。" }
+  class n9 node_system
+  n10@{ shape: rounded, label: "**bevy​_​egui::input::write​_​ime​_​**<br/>**messages​_​system**<br/>向聚焦的 Egui 上下文传递输入法文本。" }
+  class n10 node_system
+  n11@{ shape: rounded, label: "**bevy​_​egui::input::write​_​non​_​window​_​**<br/>**pointer​_​moved​_​messages​_​system**<br/>刷新非窗口 Egui 界面的指针位置。" }
+  class n11 node_system
+  n12@{ shape: rounded, label: "**bevy​_​egui::input::write​_​file​_​dnd​_​**<br/>**messages​_​system**<br/>把文件拖放路由到对应 Egui 上下文。" }
+  class n12 node_system
+  n13@{ shape: rounded, label: "**bevy​_​egui::input::write​_​keyboard​_​**<br/>**input​_​messages​_​system**<br/>把键盘文本与按键转换为 Egui 输入。" }
+  class n13 node_system
+  n14@{ shape: rounded, label: "**bevy​_​egui::input::read​_​egui​_​zoom​_​**<br/>**factor​_​system**<br/>记录 Egui 当前界面缩放因子。" }
+  class n14 node_system
+  n15@{ shape: rounded, label: "**bevy​_​egui::input::write​_​pinch​_​**<br/>**gesture​_​messages​_​system**<br/>把捏合手势转换为 Egui 缩放。" }
+  class n15 node_system
+  n16@{ shape: rounded, label: "**bevy​_​egui::input::write​_​mouse​_​wheel​_​**<br/>**messages​_​system**<br/>向悬停 Egui 上下文传递滚轮输入。" }
+  class n16 node_system
+  n17@{ shape: lin-rect, label: "**InputSystems**<br/>来自crate:bevy​_​input ↗：把原始设备消<br/>息汇总为本帧输入状态。" }
+  class n17 node_system_set
+  class n17 external_node
+  n0 e0@-->|"集合成员"| n1
+  class e0 edge_set_membership
+  n0 e1@-->|"集合成员"| n2
+  class e1 edge_set_membership
+  n0 e2@-->|"集合成员"| n3
+  class e2 edge_set_membership
+  n4 e3@-->|"先于"| n0
+  class e3 edge_order
+  n0 e4@-->|"集合成员"| n5
+  class e4 edge_set_membership
+  n6 e5@-->|"先于"| n0
+  class e5 edge_order
+  n0 e6@-->|"先于"| n7
+  class e6 edge_order
+  n0 e7@-->|"集合成员"| n8
+  class e7 edge_set_membership
+  n0 e8@-->|"集合成员"| n9
+  class e8 edge_set_membership
+  n0 e9@-->|"集合成员"| n10
+  class e9 edge_set_membership
+  n0 e10@-->|"集合成员"| n11
+  class e10 edge_set_membership
+  n0 e11@-->|"集合成员"| n12
+  class e11 edge_set_membership
+  n0 e12@-->|"集合成员"| n13
+  class e12 edge_set_membership
+  n0 e13@-->|"集合成员"| n14
+  class e13 edge_set_membership
+  n0 e14@-->|"集合成员"| n15
+  class e14 edge_set_membership
+  n0 e15@-->|"集合成员"| n16
+  class e15 edge_set_membership
+  n17 e16@-->|"先于"| n0
+  class e16 edge_order
+  n4 layout_input_0@~~~ n6
+  n6 layout_input_1@~~~ n17
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }

@@ -1,0 +1,555 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#object-d45fc725f2dc100e-e5{marker-start:url(#object-d45fc725f2dc100e_flowchart-v2-pointStart)!important}\n#object-d45fc725f2dc100e-e13{marker-start:url(#object-d45fc725f2dc100e_flowchart-v2-pointStart)!important}\n#object-d45fc725f2dc100e-e14{marker-start:url(#object-d45fc725f2dc100e_flowchart-v2-pointStart)!important}\n#object-d45fc725f2dc100e-e21{marker-start:url(#object-d45fc725f2dc100e_flowchart-v2-pointStart)!important}\n#object-d45fc725f2dc100e-e24{marker-start:url(#object-d45fc725f2dc100e_flowchart-v2-pointStart)!important}\n#object-d45fc725f2dc100e-e36{marker-start:url(#object-d45fc725f2dc100e_flowchart-v2-pointStart)!important}\n#object-d45fc725f2dc100e-e40{marker-start:url(#object-d45fc725f2dc100e_flowchart-v2-pointStart)!important}\n#object-d45fc725f2dc100e-e51{marker-start:url(#object-d45fc725f2dc100e_flowchart-v2-pointStart)!important}\n#object-d45fc725f2dc100e-e58{marker-start:url(#object-d45fc725f2dc100e_flowchart-v2-pointStart)!important}\n#object-d45fc725f2dc100e_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: (bevy_ecs::system::system_param::Local#lt;'_, alloc::vec::Vec#lt;bevy_enhanced_input::binding::Binding#gt;#gt;, bevy_enhanced_input::context::time::ContextTime#lt;'_#gt;, bevy_enhanced_input::context::input_reader::InputReader#lt;'_, '_#gt;, bevy_ecs::change_detection::params::Res#lt;'_, bevy_enhanced_input::context::instance::ContextInstances#lt;bevy_app::main_schedule::PreUpdate#gt;#gt;, bevy_ecs::system::query::Query#lt;'_, '_, bevy_ecs::world::entity_access::filtered::FilteredEntityMut#lt;'_, '_#gt;#gt;, bevy_ecs::system::query::Query#lt;'_, '_, (bevy_ecs::entity::Entity, #amp;bevy_ecs::name::Name, #amp;bevy_enhanced_input::action::ActionSettings, core::option::Option#lt;#amp;bevy_enhanced_input::binding::relationship::Bindings#gt;, core::option::Option#lt;#amp;bevy_enhanced_input::modifier::fns::ModifierFns#gt;, core::option::Option#lt;#amp;bevy_enhanced_input::condition::fns::ConditionFns#gt;, #amp;mut bevy_enhanced_input::action::mock::ActionMock), bevy_ecs::query::filter::Without#lt;bevy_enhanced_input::context::ExternallyMocked#gt;#gt;, bevy_ecs::system::query::Query#lt;'_, '_, (#amp;mut bevy_enhanced_input::action::value::ActionValue, #amp;mut bevy_enhanced_input::action::TriggerState, #amp;mut bevy_enhanced_input::action::events::ActionEvents, #amp;mut bevy_enhanced_input::action::ActionTime)#gt;, bevy_ecs::system::query::Query#lt;'_, '_, (bevy_ecs::entity::Entity, #amp;bevy_enhanced_input::binding::Binding, #amp;mut bevy_enhanced_input::binding::FirstActivation, core::option::Option#lt;#amp;bevy_enhanced_input::modifier::fns::ModifierFns#gt;, core::option::Option#lt;#amp;bevy_enhanced_input::condition::fns::ConditionFns#gt;), bevy_ecs::query::filter::Without#lt;bevy_enhanced_input::action::ActionSettings#gt;#gt;, bevy_ecs::system::query::Query#lt;'_, '_, bevy_ecs::world::entity_access::filtered::FilteredEntityMut#lt;'_, '_#gt;#gt;) · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef node_local fill:#F8F5F1,stroke:#AA8752,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef external_node stroke-dasharray:6 4
+  subgraph layout_card_n0[" "]
+  n0@{ shape: rounded, label: "**(bevy​_​ecs::system::system​_​param::**<br/>**Local#lt;'​_​, alloc::vec::Vec#lt;bevy​_​**<br/>**enhanced​_​input::binding::Binding#gt;#gt;,**<br/>**bevy​_​enhanced​_​input::context::time::**<br/>**ContextTime#lt;'​_​#gt;, bevy​_​enhanced​_​**<br/>**input::context::input​_​reader::**<br/>**InputReader#lt;'​_​, '​_​#gt;, bevy​_​ecs::**<br/>**change​_​detection::params::Res#lt;'​_​,**<br/>**bevy​_​enhanced​_​input::context::**<br/>**instance::ContextInstances#lt;bevy​_​**<br/>**app::main​_​schedule::PreUpdate#gt;#gt;,**<br/>**bevy​_​ecs::system::query::Query#lt;'​_​,**<br/>**'​_​, bevy​_​ecs::world::entity​_​access::**<br/>**filtered::FilteredEntityMut#lt;'​_​, '​_​**<br/>**#gt;#gt;, bevy​_​ecs::system::query::**<br/>**Query#lt;'​_​, '​_​, (bevy​_​ecs::entity::**<br/>**Entity, #amp;bevy​_​ecs::name::Name,**<br/>**#amp;bevy​_​enhanced​_​input::action::**<br/>**ActionSettings, core::option::**<br/>**Option#lt;#amp;bevy​_​enhanced​_​input::**<br/>**binding::relationship::Bindings#gt;,**<br/>**core::option::Option#lt;#amp;bevy​_​enhanced​_​**<br/>**input::modifier::fns::ModifierFns#gt;,**<br/>**core::option::Option#lt;#amp;bevy​_​enhanced​_​**<br/>**input::condition::fns::**<br/>**ConditionFns#gt;, #amp;mut bevy​_​enhanced​_​**<br/>**input::action::mock::ActionMock),**<br/>**bevy​_​ecs::query::filter::**<br/>**Without#lt;bevy​_​enhanced​_​input::**<br/>**context::ExternallyMocked#gt;#gt;, bevy​_​**<br/>**ecs::system::query::Query#lt;'​_​, '​_​,**<br/>**(#amp;mut bevy​_​enhanced​_​input::action::**<br/>**value::ActionValue, #amp;mut bevy​_​**<br/>**enhanced​_​input::action::**<br/>**TriggerState, #amp;mut bevy​_​enhanced​_​**<br/>**input::action::events::**<br/>**ActionEvents, #amp;mut bevy​_​enhanced​_​**<br/>**input::action::ActionTime)#gt;, bevy​_​**<br/>**ecs::system::query::Query#lt;'​_​, '​_​,**<br/>**(bevy​_​ecs::entity::Entity, #amp;bevy​_​**<br/>**enhanced​_​input::binding::Binding,**<br/>**#amp;mut bevy​_​enhanced​_​input::binding::**<br/>**FirstActivation, core::option::**<br/>**Option#lt;#amp;bevy​_​enhanced​_​input::**<br/>**modifier::fns::ModifierFns#gt;, core::**<br/>**option::Option#lt;#amp;bevy​_​enhanced​_​**<br/>**input::condition::fns::**<br/>**ConditionFns#gt;), bevy​_​ecs::query::**<br/>**filter::Without#lt;bevy​_​enhanced​_​**<br/>**input::action::ActionSettings#gt;#gt;,**<br/>**bevy​_​ecs::system::query::Query#lt;'​_​,**<br/>**'​_​, bevy​_​ecs::world::entity​_​access::**<br/>**filtered::FilteredEntityMut#lt;'​_​, '​_​**<br/>**#gt;#gt;)**<br/>求值上下文输入并更新动作状态。" }
+  class n0 node_system
+  end
+  style layout_card_n0 fill:none,stroke:none
+  subgraph layout_card_n1[" "]
+  n1@{ shape: rounded, label: "**bevy​_​ecs::name::Name**<br/>来自crate:bevy​_​ecs ↗：保存供调试和界<br/>面展示的实体名称及缓存哈希" }
+  class n1 node_component
+  class n1 external_node
+  end
+  style layout_card_n1 fill:none,stroke:none
+  subgraph layout_card_n2[" "]
+  n2@{ shape: notch-rect, label: "**Local · arg2.0.11**<br/>控制动作读取是否遵守输入忽略状态。" }
+  class n2 node_local
+  end
+  style layout_card_n2 fill:none,stroke:none
+  subgraph layout_card_n3[" "]
+  n3@{ shape: cyl, label: "**bevy​_​time::Time#lt;bevy​_​time::Real#gt;**<br/>来自crate:bevy​_​time ↗：保存时钟上下<br/>文、帧间隔及累计时间" }
+  class n3 node_resource
+  class n3 external_node
+  end
+  style layout_card_n3 fill:none,stroke:none
+  subgraph layout_card_n4[" "]
+  n4@{ shape: rounded, label: "**action::ActionTime**<br/>累计动作处于 Ongoing 或 Fired 状态的时<br/>间" }
+  class n4 node_component
+  end
+  style layout_card_n4 fill:none,stroke:none
+  subgraph layout_card_n5[" "]
+  n5@{ shape: cyl, label: "**mouse::AccumulatedMouseScroll**<br/>来自crate:bevy​_​input ↗：汇总本帧滚轮<br/>事件的位移与单位" }
+  class n5 node_resource
+  class n5 external_node
+  end
+  style layout_card_n5 fill:none,stroke:none
+  subgraph layout_card_n6[" "]
+  n6@{ shape: rounded, label: "**action::TriggerState**<br/>记录条件或动作的触发状态：未触发、进行中<br/>和已满足条件" }
+  class n6 node_component
+  end
+  style layout_card_n6 fill:none,stroke:none
+  subgraph layout_card_n7[" "]
+  n7@{ shape: rounded, label: "**modifier::fns::ModifierFns**<br/>保存动态获取修饰器组件的函数接口" }
+  class n7 node_component
+  end
+  style layout_card_n7 fill:none,stroke:none
+  subgraph layout_card_n8[" "]
+  n8@{ shape: rounded, label: "**binding::relationship::Bindings**<br/>保存属于当前动作实体的输入绑定实体集合" }
+  class n8 node_component
+  end
+  style layout_card_n8 fill:none,stroke:none
+  subgraph layout_card_n9[" "]
+  n9@{ shape: rounded, label: "**modifier::linear​_​step::LinearStep**<br/>按固定速率平滑逼近目标输入。" }
+  class n9 node_component
+  end
+  style layout_card_n9 fill:none,stroke:none
+  subgraph layout_card_n10[" "]
+  n10@{ shape: cyl, label: "**button​_​input::ButtonInput#lt;keyboard::**<br/>**KeyCode#gt;**<br/>来自crate:bevy​_​input ↗：保存指定按钮<br/>类型当前按下、本帧刚按下和刚释放的集合" }
+  class n10 node_resource
+  class n10 external_node
+  end
+  style layout_card_n10 fill:none,stroke:none
+  subgraph layout_card_n11[" "]
+  n11@{ shape: rounded, label: "**modifier::negate::Negate**<br/>反转指定输入轴方向。" }
+  class n11 node_component
+  end
+  style layout_card_n11 fill:none,stroke:none
+  subgraph layout_card_n12[" "]
+  n12@{ shape: rounded, label: "**condition::block​_​by::BlockBy**<br/>在指定动作活跃时阻止当前动作。" }
+  class n12 node_component
+  end
+  style layout_card_n12 fill:none,stroke:none
+  subgraph layout_card_n13[" "]
+  n13@{ shape: rounded, label: "**condition::hold​_​and​_​release::**<br/>**HoldAndRelease**<br/>识别长按完成后的松开。" }
+  class n13 node_component
+  end
+  style layout_card_n13 fill:none,stroke:none
+  subgraph layout_card_n14[" "]
+  n14@{ shape: rounded, label: "**action::value::ActionValue**<br/>以布尔、一维、二维或三维轴的形式保存类型<br/>擦除的动作值" }
+  class n14 node_component
+  end
+  style layout_card_n14 fill:none,stroke:none
+  subgraph layout_card_n15[" "]
+  n15@{ shape: rounded, label: "**condition::down::Down**<br/>在输入超过阈值时持续触发动作。" }
+  class n15 node_component
+  end
+  style layout_card_n15 fill:none,stroke:none
+  subgraph layout_card_n16[" "]
+  n16@{ shape: cyl, label: "**mouse::AccumulatedMouseMotion**<br/>来自crate:bevy​_​input ↗：累计当前帧鼠<br/>标移动位移。" }
+  class n16 node_resource
+  class n16 external_node
+  end
+  style layout_card_n16 fill:none,stroke:none
+  subgraph layout_card_n17[" "]
+  n17@{ shape: rounded, label: "**action::mock::ActionMock**<br/>保存模拟动作的触发状态、值、模拟时段和启<br/>用状态" }
+  class n17 node_component
+  end
+  style layout_card_n17 fill:none,stroke:none
+  subgraph layout_card_n18[" "]
+  n18@{ shape: rounded, label: "**binding::FirstActivation**<br/>记录绑定是否已出现过有效激活" }
+  class n18 node_component
+  end
+  style layout_card_n18 fill:none,stroke:none
+  subgraph layout_card_n19[" "]
+  n19@{ shape: rounded, label: "**gamepad::Gamepad**<br/>来自crate:bevy​_​input ↗：保存一个手柄<br/>的数字按钮状态、模拟轴值及厂商产品信息" }
+  class n19 node_component
+  class n19 external_node
+  end
+  style layout_card_n19 fill:none,stroke:none
+  subgraph layout_card_n20[" "]
+  n20@{ shape: rounded, label: "**condition::flick::Flick**<br/>识别限定时间内的快速输入拨动。" }
+  class n20 node_component
+  end
+  style layout_card_n20 fill:none,stroke:none
+  subgraph layout_card_n21[" "]
+  n21@{ shape: rounded, label: "**action::events::ActionEvents**<br/>保存动作状态转换产生的事件标记" }
+  class n21 node_component
+  end
+  style layout_card_n21 fill:none,stroke:none
+  subgraph layout_card_n22[" "]
+  n22@{ shape: rounded, label: "**condition::cooldown::Cooldown**<br/>限制动作在冷却期间再次触发。" }
+  class n22 node_component
+  end
+  style layout_card_n22 fill:none,stroke:none
+  subgraph layout_card_n23[" "]
+  n23@{ shape: rounded, label: "**action::ActionSettings**<br/>配置输入动作的值累积、首次激活重置及输入<br/>吞取消费策略" }
+  class n23 node_component
+  end
+  style layout_card_n23 fill:none,stroke:none
+  subgraph layout_card_n24[" "]
+  n24@{ shape: rounded, label: "**condition::chord::Chord**<br/>要求一组动作同时触发。" }
+  class n24 node_component
+  end
+  style layout_card_n24 fill:none,stroke:none
+  subgraph layout_card_n25[" "]
+  n25@{ shape: rounded, label: "**condition::tap::Tap**<br/>识别限定时长内完成的短按。" }
+  class n25 node_component
+  end
+  style layout_card_n25 fill:none,stroke:none
+  subgraph layout_card_n26[" "]
+  n26@{ shape: rounded, label: "**modifier::clamp::Clamp**<br/>按轴限制输入值范围。" }
+  class n26 node_component
+  end
+  style layout_card_n26 fill:none,stroke:none
+  subgraph layout_card_n27[" "]
+  n27@{ shape: rounded, label: "**bevy​_​enhanced​_​input::prelude::**<br/>**Actions#lt;first​_​person::actions::**<br/>**GameplayContext#gt;**<br/>列出上下文关联的输入动作。" }
+  class n27 node_component
+  end
+  style layout_card_n27 fill:none,stroke:none
+  subgraph layout_card_n28[" "]
+  n28@{ shape: rounded, label: "**binding::Binding**<br/>描述动作输入源" }
+  class n28 node_component
+  end
+  style layout_card_n28 fill:none,stroke:none
+  subgraph layout_card_n29[" "]
+  n29@{ shape: cyl, label: "**context::input​_​reader::custom::**<br/>**CustomInputs**<br/>保存自定义输入编号到动作值的映射" }
+  class n29 node_resource
+  end
+  style layout_card_n29 fill:none,stroke:none
+  subgraph layout_card_n30[" "]
+  n30@{ shape: rounded, label: "**condition::toggle::Toggle**<br/>在按下时切换动作触发状态。" }
+  class n30 node_component
+  end
+  style layout_card_n30 fill:none,stroke:none
+  subgraph layout_card_n31[" "]
+  n31@{ shape: cyl, label: "**bevy​_​enhanced​_​input::context::**<br/>**instance::ContextInstances#lt;bevy::**<br/>**bevy​_​app::PreUpdate#gt;**<br/>保存某一 Schedule 的上下文实例及其优先<br/>顺序" }
+  class n31 node_resource
+  end
+  style layout_card_n31 fill:none,stroke:none
+  subgraph layout_card_n32[" "]
+  n32@{ shape: rounded, label: "**modifier::smooth​_​nudge::SmoothNudge**<br/>平滑当前与上一输入值。" }
+  class n32 node_component
+  end
+  style layout_card_n32 fill:none,stroke:none
+  subgraph layout_card_n33[" "]
+  n33@{ shape: rounded, label: "**modifier::scale::Scale**<br/>逐轴缩放输入幅度。" }
+  class n33 node_component
+  end
+  style layout_card_n33 fill:none,stroke:none
+  subgraph layout_card_n34[" "]
+  n34@{ shape: rounded, label: "**condition::combo::Combo**<br/>按指定顺序识别连续动作组合。" }
+  class n34 node_component
+  end
+  style layout_card_n34 fill:none,stroke:none
+  subgraph layout_card_n35[" "]
+  n35@{ shape: rounded, label: "**modifier::dead​_​zone::DeadZone**<br/>消除输入死区并重映射响应范围。" }
+  class n35 node_component
+  end
+  style layout_card_n35 fill:none,stroke:none
+  subgraph layout_card_n36[" "]
+  n36@{ shape: rounded, label: "**modifier::delta​_​scale::DeltaScale**<br/>按帧步长缩放输入值。" }
+  class n36 node_component
+  end
+  style layout_card_n36 fill:none,stroke:none
+  subgraph layout_card_n37[" "]
+  n37@{ shape: rounded, label: "**context::GamepadDevice**<br/>选择输入上下文使用的手柄。" }
+  class n37 node_component
+  end
+  style layout_card_n37 fill:none,stroke:none
+  subgraph layout_card_n38[" "]
+  n38@{ shape: rounded, label: "**modifier::exponential​_​curve::**<br/>**ExponentialCurve**<br/>对输入应用指数响应曲线。" }
+  class n38 node_component
+  end
+  style layout_card_n38 fill:none,stroke:none
+  subgraph layout_card_n39[" "]
+  n39@{ shape: rounded, label: "**context::ExternallyMocked**<br/>标记由外部手动模拟的动作" }
+  class n39 node_component
+  end
+  style layout_card_n39 fill:none,stroke:none
+  subgraph layout_card_n40[" "]
+  n40@{ shape: rounded, label: "**modifier::swizzle​_​axis::SwizzleAxis**<br/>重新映射输入轴分量。" }
+  class n40 node_component
+  end
+  style layout_card_n40 fill:none,stroke:none
+  subgraph layout_card_n41[" "]
+  n41@{ shape: rounded, label: "**condition::fns::ConditionFns**<br/>保存动态获取条件组件的函数接口" }
+  class n41 node_component
+  end
+  style layout_card_n41 fill:none,stroke:none
+  subgraph layout_card_n42[" "]
+  n42@{ shape: cyl, label: "**context::input​_​reader::**<br/>**PendingBindings**<br/>等待已移除绑定的输入释放。" }
+  class n42 node_resource
+  end
+  style layout_card_n42 fill:none,stroke:none
+  subgraph layout_card_n43[" "]
+  n43@{ shape: cyl, label: "**context::input​_​reader::**<br/>**ConsumedInputs**<br/>逐调度记录动作已消费的输入。" }
+  class n43 node_resource
+  end
+  style layout_card_n43 fill:none,stroke:none
+  subgraph layout_card_n44[" "]
+  n44@{ shape: cyl, label: "**mouse::MouseScrollPixelsPerLine**<br/>来自crate:bevy​_​input ↗：设置滚轮像素<br/>与行数的换算比例。" }
+  class n44 node_resource
+  class n44 external_node
+  end
+  style layout_card_n44 fill:none,stroke:none
+  subgraph layout_card_n45[" "]
+  n45@{ shape: cyl, label: "**time::Time**<br/>来自crate:bevy​_​time ↗：保存时钟上下<br/>文、帧间隔及累计时间" }
+  class n45 node_resource
+  class n45 external_node
+  end
+  style layout_card_n45 fill:none,stroke:none
+  subgraph layout_card_n46[" "]
+  n46@{ shape: rounded, label: "**bevy​_​enhanced​_​input::context::**<br/>**ContextActivity#lt;first​_​person::**<br/>**actions::GameplayContext#gt;**<br/>控制保留绑定的输入上下文启停。" }
+  class n46 node_component
+  end
+  style layout_card_n46 fill:none,stroke:none
+  subgraph layout_card_n47[" "]
+  n47@{ shape: rounded, label: "**condition::press::Press**<br/>识别一次输入按下。" }
+  class n47 node_component
+  end
+  style layout_card_n47 fill:none,stroke:none
+  subgraph layout_card_n48[" "]
+  n48@{ shape: cyl, label: "**context::input​_​reader::ActionSources**<br/>配置动作可使用的输入设备来源。" }
+  class n48 node_resource
+  end
+  style layout_card_n48 fill:none,stroke:none
+  subgraph layout_card_n49[" "]
+  n49@{ shape: cyl, label: "**button​_​input::ButtonInput#lt;mouse::**<br/>**MouseButton#gt;**<br/>来自crate:bevy​_​input ↗：保存指定按钮<br/>类型当前按下、本帧刚按下和刚释放的集合" }
+  class n49 node_resource
+  class n49 external_node
+  end
+  style layout_card_n49 fill:none,stroke:none
+  subgraph layout_card_n50[" "]
+  n50@{ shape: lin-rect, label: "**Update**<br/>组织动作求值、值应用与事件触发。" }
+  class n50 node_system_set
+  end
+  style layout_card_n50 fill:none,stroke:none
+  subgraph layout_card_n51[" "]
+  n51@{ shape: rounded, label: "**condition::pulse::Pulse**<br/>在按住期间按间隔重复触发。" }
+  class n51 node_component
+  end
+  style layout_card_n51 fill:none,stroke:none
+  subgraph layout_card_n52[" "]
+  n52@{ shape: rounded, label: "**condition::hold::Hold**<br/>识别达到指定时长的长按。" }
+  class n52 node_component
+  end
+  style layout_card_n52 fill:none,stroke:none
+  subgraph layout_card_n53[" "]
+  n53@{ shape: notch-rect, label: "**Local · arg2.0.10**<br/>保存当前动作上下文的手柄选择。" }
+  class n53 node_local
+  end
+  style layout_card_n53 fill:none,stroke:none
+  subgraph layout_card_n54[" "]
+  n54@{ shape: rounded, label: "**bevy​_​enhanced​_​input::prelude::**<br/>**Actions#lt;ui::navigation::MenuContext#gt;**<br/>列出上下文关联的输入动作。" }
+  class n54 node_component
+  end
+  style layout_card_n54 fill:none,stroke:none
+  subgraph layout_card_n55[" "]
+  n55@{ shape: rounded, label: "**condition::release::Release**<br/>识别激活输入的松开。" }
+  class n55 node_component
+  end
+  style layout_card_n55 fill:none,stroke:none
+  subgraph layout_card_n56[" "]
+  n56@{ shape: rounded, label: "**bevy​_​enhanced​_​input::context::**<br/>**ContextActivity#lt;ui::navigation::**<br/>**MenuContext#gt;**<br/>控制保留绑定的输入上下文启停。" }
+  class n56 node_component
+  end
+  style layout_card_n56 fill:none,stroke:none
+  subgraph layout_card_n57[" "]
+  n57@{ shape: notch-rect, label: "**Local · arg0**<br/>暂存本次动作求值后需要消费的输入绑定。" }
+  class n57 node_local
+  end
+  style layout_card_n57 fill:none,stroke:none
+  subgraph layout_card_n58[" "]
+  n58@{ shape: rounded, label: "**modifier::accumulate​_​by::**<br/>**AccumulateBy**<br/>按关联动作状态累加输入值。" }
+  class n58 node_component
+  end
+  style layout_card_n58 fill:none,stroke:none
+  n1 e0@--> n0
+  class e0 edge_read
+  n0 e1@-->|"可变访问"| n2
+  class e1 edge_write
+  n3 e2@--> n0
+  class e2 edge_read
+  n4 e3@--> n0
+  class e3 edge_read
+  n5 e4@--> n0
+  class e4 edge_read
+  n6 e5@---|"赋值"| n0
+  class e5 edge_write
+  n7 e6@--> n0
+  class e6 edge_read
+  n8 e7@--> n0
+  class e7 edge_read
+  n0 e8@-->|"可变访问"| n9
+  class e8 edge_write
+  n10 e9@--> n0
+  class e9 edge_read
+  n0 e10@-->|"可变访问"| n11
+  class e10 edge_write
+  n0 e11@-->|"可变访问"| n12
+  class e11 edge_write
+  n0 e12@-->|"可变访问"| n13
+  class e12 edge_write
+  n4 e13@---|"可变访问"| n0
+  class e13 edge_write
+  n14 e14@---|"可变访问"| n0
+  class e14 edge_write
+  n0 e15@-->|"可变访问"| n15
+  class e15 edge_write
+  n16 e16@--> n0
+  class e16 edge_read
+  n0 e17@-->|"赋值"| n17
+  class e17 edge_write
+  n0 e18@-->|"可变访问"| n18
+  class e18 edge_write
+  n19 e19@--> n0
+  class e19 edge_read
+  n0 e20@-->|"可变访问"| n20
+  class e20 edge_write
+  n21 e21@---|"赋值"| n0
+  class e21 edge_write
+  n0 e22@-->|"可变访问"| n22
+  class e22 edge_write
+  n23 e23@--> n0
+  class e23 edge_read
+  n4 e24@---|"赋值"| n0
+  class e24 edge_write
+  n0 e25@-->|"可变访问"| n24
+  class e25 edge_write
+  n0 e26@-->|"可变访问"| n25
+  class e26 edge_write
+  n0 e27@-->|"可变访问"| n26
+  class e27 edge_write
+  n0 e28@-->|"可变访问"| n27
+  class e28 edge_write
+  n28 e29@--> n0
+  class e29 edge_read
+  n29 e30@--> n0
+  class e30 edge_read
+  n0 e31@-->|"可变访问"| n30
+  class e31 edge_write
+  n31 e32@--> n0
+  class e32 edge_read
+  n0 e33@-->|"可变访问"| n17
+  class e33 edge_write
+  n0 e34@-->|"可变访问"| n32
+  class e34 edge_write
+  n0 e35@-->|"可变访问"| n33
+  class e35 edge_write
+  n14 e36@---|"赋值"| n0
+  class e36 edge_write
+  n0 e37@-->|"可变访问"| n34
+  class e37 edge_write
+  n0 e38@-->|"可变访问"| n35
+  class e38 edge_write
+  n0 e39@-->|"可变访问"| n36
+  class e39 edge_write
+  n37 e40@---|"赋值"| n0
+  class e40 edge_write
+  n0 e41@-->|"可变访问"| n38
+  class e41 edge_write
+  n39 e42@-->|"存在性约束"| n0
+  class e42 edge_reference
+  n0 e43@-->|"可变访问"| n40
+  class e43 edge_write
+  n41 e44@--> n0
+  class e44 edge_read
+  n0 e45@-->|"可变访问"| n42
+  class e45 edge_write
+  n0 e46@-->|"可变访问"| n43
+  class e46 edge_write
+  n44 e47@--> n0
+  class e47 edge_read
+  n45 e48@--> n0
+  class e48 edge_read
+  n0 e49@-->|"可变访问"| n46
+  class e49 edge_write
+  n6 e50@--> n0
+  class e50 edge_read
+  n21 e51@---|"可变访问"| n0
+  class e51 edge_write
+  n0 e52@-->|"可变访问"| n47
+  class e52 edge_write
+  n23 e53@-->|"存在性约束"| n0
+  class e53 edge_reference
+  n21 e54@--> n0
+  class e54 edge_read
+  n48 e55@--> n0
+  class e55 edge_read
+  n49 e56@--> n0
+  class e56 edge_read
+  n50 e57@-->|"集合成员"| n0
+  class e57 edge_set_membership
+  n6 e58@---|"可变访问"| n0
+  class e58 edge_write
+  n0 e59@-->|"可变访问"| n51
+  class e59 edge_write
+  n0 e60@-->|"可变访问"| n52
+  class e60 edge_write
+  n37 e61@--> n0
+  class e61 edge_read
+  n0 e62@-->|"可变访问"| n53
+  class e62 edge_write
+  n0 e63@-->|"可变访问"| n54
+  class e63 edge_write
+  n0 e64@-->|"可变访问"| n55
+  class e64 edge_write
+  n0 e65@-->|"可变访问"| n56
+  class e65 edge_write
+  n0 e66@-->|"可变访问"| n57
+  class e66 edge_write
+  n0 e67@-->|"可变访问"| n58
+  class e67 edge_write
+  n14 e68@--> n0
+  class e68 edge_read
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e17@{ curve: basis }
+  e18@{ curve: basis }
+  e19@{ curve: basis }
+  e20@{ curve: basis }
+  e21@{ curve: basis }
+  e22@{ curve: basis }
+  e23@{ curve: basis }
+  e24@{ curve: basis }
+  e25@{ curve: basis }
+  e26@{ curve: basis }
+  e27@{ curve: basis }
+  e28@{ curve: basis }
+  e29@{ curve: basis }
+  e30@{ curve: basis }
+  e31@{ curve: basis }
+  e32@{ curve: basis }
+  e33@{ curve: basis }
+  e34@{ curve: basis }
+  e36@{ curve: basis }
+  e37@{ curve: basis }
+  e38@{ curve: basis }
+  e39@{ curve: basis }
+  e40@{ curve: basis }
+  e41@{ curve: basis }
+  e42@{ curve: basis }
+  e43@{ curve: basis }
+  e44@{ curve: basis }
+  e45@{ curve: basis }
+  e46@{ curve: basis }
+  e47@{ curve: basis }
+  e48@{ curve: basis }
+  e49@{ curve: basis }
+  e50@{ curve: basis }
+  e51@{ curve: basis }
+  e52@{ curve: basis }
+  e53@{ curve: basis }
+  e54@{ curve: basis }
+  e55@{ curve: basis }
+  e56@{ curve: basis }
+  e57@{ curve: basis }
+  e58@{ curve: basis }
+  e59@{ curve: basis }
+  e60@{ curve: basis }
+  e61@{ curve: basis }
+  e62@{ curve: basis }
+  e63@{ curve: basis }
+  e64@{ curve: basis }
+  e65@{ curve: basis }
+  e66@{ curve: basis }
+  e67@{ curve: basis }
+  e68@{ curve: basis }

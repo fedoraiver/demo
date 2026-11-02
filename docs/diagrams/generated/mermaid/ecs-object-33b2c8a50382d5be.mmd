@@ -1,0 +1,112 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: bevy::bevy_ecs::message::Messages#lt;collision::collision_events::CollisionEnd#gt; · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_observer fill:#F4F1F9,stroke:#7B4DB2,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: cyl, label: "**bevy::bevy​_​ecs::message::**<br/>**Messages#lt;collision::collision​_​**<br/>**events::CollisionEnd#gt;**<br/>保存最近两次轮换期间产生的指定类型消息" }
+  class n0 node_resource
+  n1@{ shape: hex, label: "**avian3d::collision::narrow​_​phase::**<br/>**remove​_​body​_​on**<br/>来自crate:avian3d ↗：清理已移除刚体的<br/>接触图记录。" }
+  class n1 node_observer
+  class n1 external_node
+  n2@{ shape: rounded, label: "**avian3d::collision::narrow​_​phase::**<br/>**trigger​_​collision​_​events**<br/>来自crate:avian3d ↗：把碰撞开始和结束<br/>消息触发为实体事件。" }
+  class n2 node_system
+  class n2 external_node
+  n3@{ shape: rounded, label: "**avian3d::collision::narrow​_​phase::**<br/>**update​_​narrow​_​phase#lt;avian3d::**<br/>**collision::collider::parry::**<br/>**Collider, ()#gt;**<br/>来自crate:avian3d ↗：更新窄相接触并输<br/>出碰撞变化消息。" }
+  class n3 node_system
+  class n3 external_node
+  n4@{ shape: hex, label: "**avian3d::collision::narrow​_​phase::**<br/>**on​_​remove​_​sensor**<br/>来自crate:avian3d ↗：清除传感器转回普<br/>通碰撞体的旧接触。" }
+  class n4 node_observer
+  class n4 external_node
+  n5@{ shape: hex, label: "**avian3d::collision::narrow​_​phase::**<br/>**on​_​disable​_​body**<br/>来自crate:avian3d ↗：清理被禁用刚体的<br/>接触。" }
+  class n5 node_observer
+  class n5 external_node
+  n6@{ shape: hex, label: "**avian3d::collision::narrow​_​phase::**<br/>**remove​_​collider​_​on**<br/>来自crate:avian3d ↗：清理碰撞体接触与<br/>对端碰撞记录。" }
+  class n6 node_observer
+  class n6 external_node
+  n7@{ shape: hex, label: "**avian3d::collision::narrow​_​phase::**<br/>**on​_​body​_​remove​_​rigid​_​body​_​disabled**<br/>来自crate:avian3d ↗：清除刚体重新启用<br/>时的旧接触。" }
+  class n7 node_observer
+  class n7 external_node
+  n8@{ shape: hex, label: "**avian3d::collision::narrow​_​phase::**<br/>**remove​_​body​_​on**<br/>来自crate:avian3d ↗：清理已移除刚体的<br/>接触图记录。" }
+  class n8 node_observer
+  class n8 external_node
+  n9@{ shape: rounded, label: "**demo::physics::collision::log​_​**<br/>**collisions**<br/>来自physics ↗：接触开始和结束属于离散<br/>变化，通过现有文件日志设施记录碰撞双方。" }
+  class n9 node_system
+  class n9 external_node
+  n10@{ shape: hex, label: "**avian3d::collision::narrow​_​phase::**<br/>**remove​_​collider​_​on**<br/>来自crate:avian3d ↗：清理碰撞体接触与<br/>对端碰撞记录。" }
+  class n10 node_observer
+  class n10 external_node
+  n11@{ shape: hex, label: "**avian3d::collision::narrow​_​phase::**<br/>**on​_​add​_​sensor**<br/>来自crate:avian3d ↗：清除转为传感器前<br/>的旧接触。" }
+  class n11 node_observer
+  class n11 external_node
+  n1 e0@-->|"赋值"| n0
+  class e0 edge_write
+  n0 e1@--> n2
+  class e1 edge_read
+  n3 e2@-->|"可变访问"| n0
+  class e2 edge_write
+  n4 e3@-->|"赋值"| n0
+  class e3 edge_write
+  n5 e4@-->|"赋值"| n0
+  class e4 edge_write
+  n3 e5@-->|"赋值"| n0
+  class e5 edge_write
+  n6 e6@-->|"赋值"| n0
+  class e6 edge_write
+  n7 e7@-->|"赋值"| n0
+  class e7 edge_write
+  n8 e8@-->|"赋值"| n0
+  class e8 edge_write
+  n0 e9@--> n9
+  class e9 edge_read
+  n10 e10@-->|"赋值"| n0
+  class e10 edge_write
+  n11 e11@-->|"赋值"| n0
+  class e11 edge_write
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }

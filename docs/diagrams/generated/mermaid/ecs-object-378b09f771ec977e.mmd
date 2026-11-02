@@ -1,0 +1,112 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: bevy_picking::input::touch_pick_events · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef node_local fill:#F8F5F1,stroke:#AA8752,stroke-width:1.6px,color:#1F3340
+  classDef node_message fill:#EDF4F6,stroke:#247B91,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_plugin fill:#F1F3F6,stroke:#4A6389,stroke-width:2.2px,color:#1F3340
+  classDef edge_order stroke:#334155,stroke-width:2px
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_publish stroke:#247B91,stroke-width:1.8px,stroke-dasharray:10 4 2 4
+  classDef edge_consume stroke:#247B91,stroke-width:1.8px,stroke-dasharray:2 4
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**bevy​_​picking::input::touch​_​pick​_​**<br/>**events**<br/>把触摸阶段转换为独立拾取指针。" }
+  class n0 node_system
+  n1@{ shape: rounded, label: "**window::PrimaryWindow**<br/>来自crate:bevy​_​window ↗：标识唯一的主<br/>窗口" }
+  class n1 node_component
+  class n1 external_node
+  n2@{ shape: rounded, label: "**bevy​_​picking::input::**<br/>**PointerInputSettings::is​_​touch​_​**<br/>**enabled**<br/>判断触摸拾取输入是否启用。" }
+  class n2 node_system
+  n3@{ shape: lean-r, label: "**pointer::PointerInput**<br/>传递拾取指针输入动作。" }
+  class n3 node_message
+  n4@{ shape: lin-rect, label: "**Input**<br/>组织指针拾取和悬停处理阶段。" }
+  class n4 node_system_set
+  n5@{ shape: lean-r, label: "**event::WindowEvent**<br/>来自crate:bevy​_​window ↗：按顺序汇集窗<br/>口与输入消息。" }
+  class n5 node_message
+  class n5 external_node
+  n6@{ shape: notch-rect, label: "**Local · touch​_​cache**<br/>按触点标识缓存上一次触摸输入。" }
+  class n6 node_local
+  n7@{ shape: fr-rect, label: "**input::PointerInputPlugin**<br/>转换鼠标和触摸的拾取输入。" }
+  class n7 node_plugin
+  n8@{ shape: cyl, label: "**bevy​_​ecs::message::**<br/>**Messages#lt;pointer::PointerInput#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  class n8 node_resource
+  class n8 external_node
+  n9@{ shape: rounded, label: "**bevy​_​picking::input::mouse​_​pick​_​**<br/>**events**<br/>把窗口鼠标事件转换为拾取指针动作。" }
+  class n9 node_system
+  n10@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;event::**<br/>**WindowEvent#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  class n10 node_resource
+  class n10 external_node
+  n1 e0@-->|"存在性约束"| n0
+  class e0 edge_reference
+  n2 e1@-->|"运行条件"| n0
+  class e1 edge_reference
+  n0 e2@-->|"消息"| n3
+  class e2 edge_publish
+  n4 e3@-->|"集合成员"| n0
+  class e3 edge_set_membership
+  n5 e4@--> n0
+  class e4 edge_consume
+  n0 e5@-->|"可变访问"| n6
+  class e5 edge_write
+  n7 e6@-->|"调用"| n0
+  class e6 edge_registration
+  n0 e7@-->|"可变访问"| n8
+  class e7 edge_write
+  n0 e8@-->|"赋值"| n8
+  class e8 edge_write
+  n9 e9@-->|"先于"| n0
+  class e9 edge_order
+  n10 e10@--> n0
+  class e10 edge_read
+  n0 e11@-->|"可变访问"| n3
+  class e11 edge_publish
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e5@{ curve: bumpX }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }

@@ -41,6 +41,7 @@ struct Model {
     relations: BTreeMap<String, Value>,
     features: BTreeMap<String, Value>,
     pending: BTreeMap<String, Value>,
+    rejected_types: BTreeMap<String, Value>,
     annotations: Value,
     fatal: Vec<String>,
 }
@@ -197,6 +198,107 @@ fn unique(values: Vec<Value>) -> Vec<Value> {
         .into_iter()
         .filter(|value| seen.insert(value.to_string()))
         .collect()
+}
+
+fn aggregate_gaps(values: Vec<Value>) -> Vec<Value> {
+    let mut grouped = BTreeMap::<String, (Value, BTreeSet<String>)>::new();
+    for mut value in values {
+        let unit = value.as_object_mut().and_then(|value| value.remove("unit"));
+        let units = unit.and_then(|unit| unit.as_str().map(str::to_owned));
+        let entry = grouped
+            .entry(value.to_string())
+            .or_insert_with(|| (value, BTreeSet::new()));
+        entry.1.extend(units);
+    }
+    grouped
+        .into_values()
+        .map(|(mut value, units)| {
+            value["unit"] = json!(units.first());
+            value["units"] = json!(units);
+            value
+        })
+        .collect()
+}
+
+fn access_proof(access: &AccessFact, sources: &[Value]) -> Value {
+    let mut fact = json!(access);
+    if let Some(source) = &access.source {
+        // 嵌套事实也使用包相对路径；保留完整原生 Span 与预览，沿用统一来源校验。
+        let mut normalized = sources.first().cloned().unwrap_or(Value::Null);
+        if normalized.is_object() {
+            normalized["endLine"] = json!(source.end_line);
+            normalized["endColumn"] = json!(source.end_column);
+            normalized["snippet"] = json!(source.snippet);
+        }
+        fact["source"] = normalized;
+    }
+    fact
+}
+
+type CreationSite = (String, String, String, usize, usize);
+
+fn creation_site(creator: &str, source: &SourceEvidence) -> CreationSite {
+    (
+        creator.to_owned(),
+        source.path.clone(),
+        source.sha256.clone(),
+        source.end_line,
+        source.end_column,
+    )
+}
+
+fn creation_templates(entities: &[EntityTemplate]) -> BTreeMap<CreationSite, Vec<&EntityTemplate>> {
+    let children: BTreeSet<_> = entities
+        .iter()
+        .flat_map(|entity| {
+            entity.children.iter().chain(
+                entity
+                    .alternatives
+                    .iter()
+                    .flat_map(|group| &group.candidates),
+            )
+        })
+        .collect();
+    let mut sites = BTreeMap::<_, Vec<_>>::new();
+    for entity in entities {
+        if children.contains(&entity.id) {
+            continue;
+        }
+        if let Some(source) = &entity.source {
+            sites
+                .entry(creation_site(&entity.creator, source))
+                .or_default()
+                .push(entity);
+        }
+    }
+    sites
+}
+
+fn creation_target(
+    operation: &OperationFact,
+    sites: &BTreeMap<CreationSite, Vec<&EntityTemplate>>,
+) -> Option<String> {
+    if operation.kind != "create" {
+        return None;
+    }
+    let source = operation.source.as_ref()?;
+    if source.sha256.is_empty() || source.end_line == 0 || source.end_column == 0 {
+        return None;
+    }
+    // HIR 包含接收者，MIR fn_span 从方法名开始；只连接同一调用结尾的唯一模板。
+    let candidates: BTreeSet<_> = sites
+        .get(&creation_site(&operation.owner, source))?
+        .iter()
+        .filter(|entity| {
+            let candidate = entity.source.as_ref().expect("Indexed creation source");
+            (source.line, source.column) <= (candidate.line, candidate.column)
+                && (candidate.line, candidate.column) <= (source.end_line, source.end_column)
+                && candidate.expansions == source.expansions
+        })
+        .map(|entity| &entity.id)
+        .collect();
+    (candidates.len() == 1)
+        .then(|| identifier("entity", candidates.first().expect("Single template")))
 }
 
 impl Model {
@@ -463,6 +565,11 @@ impl Model {
                 .find(|role| ty.roles.iter().any(|value| value == role))
             });
         let kind = kind?;
+        if let Some(unresolved) = self.unresolved_type(type_id) {
+            let id = identifier("type-gap", (type_id, kind));
+            self.rejected_types.entry(id).or_insert_with(|| json!({"unit":"model","owner":type_id,"kind":"type-resolution","reason":"泛型参数、未归一化投影或类型擦除值不能作为具体 ECS 对象。","sourceEntries":[],"typeInstanceId":type_id,"attemptedKind":kind,"unresolvedType":unresolved,"type":{"kind":ty.kind,"display":ty.display,"arguments":ty.arguments}}));
+            return None;
+        }
         let id = identifier("type", (type_id, kind));
         if self.objects.contains_key(&id) {
             return Some(id);
@@ -499,8 +606,16 @@ impl Model {
             docs,
             &sources,
         );
+        let type_identity = declaration.as_ref().map(|declaration| {
+            let mut identity = json!({"declarationId":declaration.id,"crateName":declaration.crate_name,
+                "defPath":declaration.full_name,"local":declaration.local,"roles":ty.roles});
+            if let Some(dependency) = sources.iter().find_map(|source| source.get("dependency")) {
+                identity["package"] = json!({"name":dependency["name"],"version":dependency["version"]});
+            }
+            identity
+        });
         let object = json!({"id":id,"name":ty.display,"fullName":ty.display,"rust_type":ty.display,"kind":kind,"feature":feature,
-            "description":description,"display_summary":summary,"sourceEntries":sources,"sourceGaps":[],"declarationId":ty.declaration,"typeInstanceId":type_id});
+            "description":description,"display_summary":summary,"sourceEntries":sources,"sourceGaps":[],"declarationId":ty.declaration,"typeInstanceId":type_id,"typeIdentity":type_identity});
         self.objects.insert(id.clone(), object);
         if kind == "Plugin" || kind == "PluginGroup" {
             let entry = self
@@ -511,6 +626,70 @@ impl Model {
             entry["overviewNode"] = json!(id);
         }
         Some(id)
+    }
+
+    fn unresolved_type(&self, type_id: &str) -> Option<String> {
+        let mut pending = vec![type_id];
+        let mut seen = BTreeSet::new();
+        while let Some(id) = pending.pop() {
+            if !seen.insert(id) {
+                continue;
+            }
+            let Some(ty) = self.types.get(id) else {
+                return Some(id.to_owned());
+            };
+            if matches!(ty.kind.as_str(), "parameter" | "projection" | "dynamic") {
+                return Some(id.to_owned());
+            }
+            // 原生 TypeId 只对已归一化且无泛型、推断变量的具体类型生成。
+            if ty.runtime_type_id.is_some() {
+                continue;
+            }
+            if matches!(ty.kind.as_str(), "value" | "array")
+                || ty.arguments.iter().any(|argument| argument.kind == "const")
+            {
+                return Some(id.to_owned());
+            }
+            pending.extend(
+                ty.arguments
+                    .iter()
+                    .filter(|argument| argument.kind == "type")
+                    .map(|argument| argument.value.as_str()),
+            );
+        }
+        None
+    }
+
+    fn tuple_components(&self, type_id: &str) -> (BTreeSet<String>, BTreeSet<String>) {
+        let mut pending = vec![type_id.to_owned()];
+        let mut seen = BTreeSet::new();
+        let mut components = BTreeSet::new();
+        let mut unresolved = BTreeSet::new();
+        while let Some(id) = pending.pop() {
+            if !seen.insert(id.clone()) {
+                continue;
+            }
+            let Some(ty) = self.types.get(&id) else {
+                unresolved.insert(id);
+                continue;
+            };
+            if ty.roles.iter().any(|role| role == "Component")
+                && self.unresolved_type(&id).is_none()
+            {
+                components.insert(id);
+            } else if ty.kind == "tuple" {
+                pending.extend(
+                    ty.arguments
+                        .iter()
+                        .filter(|argument| argument.kind == "type")
+                        .map(|argument| argument.value.clone()),
+                );
+            } else {
+                // 自定义 Bundle 的字段布局不证明其实际组件，不能据 fields 猜测。
+                unresolved.insert(id);
+            }
+        }
+        (components, unresolved)
     }
 
     fn link(
@@ -695,6 +874,7 @@ pub fn build(facts: &Path, runtime: &Path, annotations: &Path, output: &Path) ->
         relations: BTreeMap::new(),
         features: BTreeMap::new(),
         pending: BTreeMap::new(),
+        rejected_types: BTreeMap::new(),
         annotations,
         fatal: vec![],
     };
@@ -1379,6 +1559,27 @@ pub fn build(facts: &Path, runtime: &Path, annotations: &Path, output: &Path) ->
             continue;
         };
         if access.storage == "Local" {
+            let root_owners = registration_roots
+                .get(&access.owner)
+                .cloned()
+                .unwrap_or_default();
+            let (owners, inherited): (Vec<_>, Vec<_>) = owners
+                .into_iter()
+                .partition(|owner| root_owners.contains(owner));
+            if !inherited.is_empty() {
+                let sources = model.source(&access.source, "parameter");
+                let proof = access_proof(&access, &sources);
+                analysis_gaps.push(json!({"unit":"model","owner":access.owner,"kind":"local-origin","reason":"可达 helper 的 Local 包装值不证明新的系统局部存储；现有事实尚未追踪到原始参数槽。","access":proof,"registeredOwners":inherited,"rootOwners":root_owners,"sourceEntries":sources}));
+            }
+            if owners.is_empty() {
+                continue;
+            }
+            if let Some(unresolved) = model.unresolved_type(&access.type_id) {
+                let sources = model.source(&access.source, "parameter");
+                let proof = access_proof(&access, &sources);
+                analysis_gaps.push(json!({"unit":"model","owner":access.owner,"kind":"access-target","reason":"Local 的具体存储类型尚未确定，保留参数槽与访问事实。","access":proof,"unresolvedType":unresolved,"registeredOwners":owners,"sourceEntries":sources}));
+                continue;
+            }
             let callable = model.callables.get(&access.owner).cloned();
             let declaration = callable
                 .as_ref()
@@ -1421,6 +1622,10 @@ pub fn build(facts: &Path, runtime: &Path, annotations: &Path, output: &Path) ->
             for owner in owners {
                 model.link(if read {&target}else{&owner},if read {&owner}else{&target},&access.mode,&access.mode,sources.clone(),json!({"evidence":"parameter","scope":access.scope,"parameter":access.parameter}));
             }
+        } else {
+            let sources = model.source(&access.source, "parameter");
+            let proof = access_proof(&access, &sources);
+            analysis_gaps.push(json!({"unit":"model","owner":access.owner,"kind":"access-target","reason":"保留编译器确认的参数访问；目标尚不能成为具体 ECS 对象。","access":proof,"registeredOwners":owners,"sourceEntries":sources}));
         }
     }
     for registration in &registrations {
@@ -1469,48 +1674,86 @@ pub fn build(facts: &Path, runtime: &Path, annotations: &Path, output: &Path) ->
         "Architecture model: projecting {} body operations",
         operations.len()
     );
+    let creation_sites = creation_templates(&entities);
     for operation in operations {
         let Some(owners) = callable_objects.get(&operation.owner).cloned() else {
             continue;
         };
-        let Some(target) = operation
-            .target_type
-            .as_ref()
-            .and_then(|id| model.type_object(id))
-        else {
+        let mut targets = vec![];
+        let mut unresolved_parts = BTreeSet::new();
+        if operation.kind == "create" {
+            targets.extend(creation_target(&operation, &creation_sites));
+        } else if let Some(type_id) = &operation.target_type {
+            if matches!(operation.kind.as_str(), "insert" | "remove")
+                && model
+                    .types
+                    .get(type_id)
+                    .is_some_and(|ty| ty.kind == "tuple")
+            {
+                let (components, unresolved) = model.tuple_components(type_id);
+                unresolved_parts = unresolved;
+                targets.extend(
+                    components
+                        .iter()
+                        .filter_map(|id| model.type_object_as(id, Some("Component"))),
+                );
+            } else {
+                targets.extend(model.type_object(type_id));
+            }
+        }
+        if targets.is_empty() || !unresolved_parts.is_empty() {
             let sources = model.source(&operation.source, "operation");
             let conditions = model.guard_sources(&operation.conditions);
             let contexts:Vec<_>=call_contexts.range((operation.owner.clone(), String::new(), false)..).take_while(|((callable,_,_),_)|callable==&operation.owner).map(|((_,owner,deferred),_)|json!({"registeredOwner":owner,"deferred":*deferred||operation.deferred})).collect();
-            analysis_gaps.push(json!({"unit":"model","owner":operation.owner,"kind":"operation-target","reason":"编译器确认此操作，但未建立其运行时实体目标与创建模板或可见类型对象的连接。","sourceEntries":sources,"operation":{"id":operation.id,"kind":operation.kind,"method":operation.method,"targetType":operation.target_type,"apiDeferred":operation.deferred,"scope":operation.scope,"conditions":conditions,"callContexts":contexts},"registeredOwners":owners}));
-            continue;
-        };
+            let classification = if matches!(operation.kind.as_str(), "create" | "despawn") {
+                "entity-template"
+            } else if !unresolved_parts.is_empty()
+                || operation
+                    .target_type
+                    .as_deref()
+                    .and_then(|id| model.unresolved_type(id))
+                    .is_some()
+            {
+                "unresolved-type"
+            } else {
+                "non-object-type"
+            };
+            analysis_gaps.push(json!({"unit":"model","owner":operation.owner,"kind":"operation-target","classification":classification,"reason":"编译器确认此操作，但未建立其运行时实体目标与创建模板或可见类型对象的完整连接。","sourceEntries":sources,"operation":{"id":operation.id,"kind":operation.kind,"method":operation.method,"targetType":operation.target_type,"resolvedTargets":targets,"unresolvedParts":unresolved_parts,"apiDeferred":operation.deferred,"scope":operation.scope,"conditions":conditions,"callContexts":contexts},"registeredOwners":owners}));
+        }
         let mut sources = model.source(&operation.source, "operation");
         for source in &operation.call_chain {
             sources.extend(model.source(&Some(source.clone()), "operation"));
         }
-        for owner in owners {
-            let contexts: Vec<_> = call_contexts
-                .range(
-                    (operation.owner.clone(), owner.clone(), false)
-                        ..=(operation.owner.clone(), owner.clone(), true),
-                )
-                .map(|((_, _, deferred), chain)| (*deferred, chain.clone()))
-                .collect();
-            for (deferred, chain) in contexts {
-                let mut proof = sources.clone();
-                let mut call_chain: Vec<_> = operation
-                    .call_chain
-                    .iter()
-                    .flat_map(|source| model.source(&Some(source.clone()), "call"))
+        for target in targets {
+            for owner in &owners {
+                let contexts: Vec<_> = call_contexts
+                    .range(
+                        (operation.owner.clone(), owner.clone(), false)
+                            ..=(operation.owner.clone(), owner.clone(), true),
+                    )
+                    .map(|((_, _, deferred), chain)| (*deferred, chain.clone()))
                     .collect();
-                for source in &chain {
-                    call_chain.extend(model.source(&Some(source.clone()), "call"));
+                for (deferred, chain) in contexts {
+                    let mut proof = sources.clone();
+                    let mut call_chain: Vec<_> = operation
+                        .call_chain
+                        .iter()
+                        .flat_map(|source| model.source(&Some(source.clone()), "call"))
+                        .collect();
+                    for source in &chain {
+                        call_chain.extend(model.source(&Some(source.clone()), "call"));
+                    }
+                    proof.extend(call_chain.clone());
+                    let conditions = model.guard_sources(&operation.conditions);
+                    proof.extend(conditions.clone());
+                    let read = matches!(operation.kind.as_str(), "read" | "filter");
+                    let label = if operation.kind == "create" {
+                        "创建模板"
+                    } else {
+                        &operation.kind
+                    };
+                    model.link(if read {&target}else{owner},if read {owner}else{&target},&operation.kind,label,proof,json!({"evidence":"body","bodyOperations":[{"operationId":operation.id,"callableId":operation.owner,"registeredOwner":owner,"deferred":operation.deferred||deferred,"scope":operation.scope,"conditions":conditions,"callChain":call_chain,"callChainScope":"representative-static-path"}]}));
                 }
-                proof.extend(call_chain.clone());
-                let conditions = model.guard_sources(&operation.conditions);
-                proof.extend(conditions.clone());
-                let read = matches!(operation.kind.as_str(), "read" | "filter");
-                model.link(if read {&target}else{&owner},if read {&owner}else{&target},&operation.kind,&operation.kind,proof,json!({"evidence":"body","bodyOperations":[{"operationId":operation.id,"callableId":operation.owner,"registeredOwner":owner,"deferred":operation.deferred||deferred,"scope":operation.scope,"conditions":conditions,"callChain":call_chain,"callChainScope":"representative-static-path"}]}));
             }
         }
     }
@@ -1519,9 +1762,25 @@ pub fn build(facts: &Path, runtime: &Path, annotations: &Path, output: &Path) ->
         model.relations.len(),
         entities.len()
     );
+    let nested_templates: BTreeSet<_> = entities
+        .iter()
+        .flat_map(|entity| {
+            entity.children.iter().chain(
+                entity
+                    .alternatives
+                    .iter()
+                    .flat_map(|group| &group.candidates),
+            )
+        })
+        .cloned()
+        .collect();
     for entity in entities {
         let id = identifier("entity", &entity.id);
-        let sources = model.source(&entity.source, "create");
+        let mut sources = model.source(&entity.source, "create");
+        for evidence in &entity.source_evidence {
+            sources.extend(model.source(&Some(evidence.clone()), "assembly"));
+        }
+        let sources = unique(sources);
         let declaration = model
             .callables
             .get(&entity.creator)
@@ -1541,9 +1800,36 @@ pub fn build(facts: &Path, runtime: &Path, annotations: &Path, output: &Path) ->
             "",
             &sources,
         );
-        model.objects.insert(id.clone(),json!({"id":id,"name":name,"kind":"Entity","feature":feature,"description":description,"display_summary":summary,"sourceEntries":sources,"sourceGaps":entity.gaps.iter().map(|gap|gap.reason.clone()).collect::<Vec<_>>() }));
+        let mut source_gaps: Vec<_> = entity.gaps.iter().map(|gap| gap.reason.clone()).collect();
+        if entity.possible {
+            source_gaps.push(
+                "此模板位于可能结构上下文；其组件及子实体不表示各候选在同次创建中同时存在。".into(),
+            );
+        }
+        let mut alternative_groups = vec![];
+        for group in &entity.alternatives {
+            let group_sources = model.source(&group.source, "assembly");
+            let candidates: Vec<_> = group
+                .candidates
+                .iter()
+                .map(|candidate| identifier("entity", candidate))
+                .collect();
+            alternative_groups.push(json!({"id":group.id,"candidates":candidates,"selection":group.selection,"sourceEntries":group_sources}));
+            for candidate in candidates {
+                let mut context = entity.alternative_context.clone();
+                context.push(group.id.clone());
+                model.link(&id,&candidate,"alternative","结构候选",group_sources.clone(),json!({"evidence":"assembly","alternativeGroup":group.id,"alternativeContext":context,"selection":group.selection,"possible":true}));
+            }
+        }
+        model.objects.insert(id.clone(),json!({"id":id,"templateId":entity.id,"name":name,"kind":"Entity","feature":feature,"description":description,"display_summary":summary,"sourceEntries":sources,"sourceGaps":source_gaps,"alternativeGroups":alternative_groups,"alternativeGroup":entity.alternative_group,"alternativeSelection":entity.alternative_selection,"alternativeContext":entity.alternative_context,"possible":entity.possible}));
+        for gap in &entity.gaps {
+            let gap_sources = model.source(&gap.source, "assembly");
+            analysis_gaps.push(json!({"unit":"model","owner":gap.owner,"kind":gap.kind,"reason":gap.reason,"sourceEntries":gap_sources,"entityTemplateId":entity.id,"alternativeGroup":entity.alternative_group,"possible":entity.possible}));
+        }
         let assembly_sources = model.source(&entity.source, "create");
-        if let Some(owners) = callable_objects.get(&entity.creator) {
+        if !nested_templates.contains(&entity.id)
+            && let Some(owners) = callable_objects.get(&entity.creator)
+        {
             for owner in owners {
                 model.link(
                     owner,
@@ -1551,7 +1837,7 @@ pub fn build(facts: &Path, runtime: &Path, annotations: &Path, output: &Path) ->
                     "create",
                     "创建模板",
                     assembly_sources.clone(),
-                    json!({"evidence":"assembly"}),
+                    json!({"evidence":"assembly","possible":entity.possible,"alternativeGroup":entity.alternative_group,"alternativeContext":entity.alternative_context}),
                 );
             }
         }
@@ -1563,7 +1849,7 @@ pub fn build(facts: &Path, runtime: &Path, annotations: &Path, output: &Path) ->
                     "contains",
                     "可能包含",
                     assembly_sources.clone(),
-                    json!({"evidence":"assembly","explicit":entity.components.contains(component_type),"required":entity.required_components.contains(component_type)}),
+                    json!({"evidence":"assembly","explicit":entity.components.contains(component_type),"required":entity.required_components.contains(component_type),"possible":entity.possible,"alternativeGroup":entity.alternative_group,"alternativeContext":entity.alternative_context}),
                 );
             }
         }
@@ -1575,7 +1861,7 @@ pub fn build(facts: &Path, runtime: &Path, annotations: &Path, output: &Path) ->
                 "relationship",
                 "子实体",
                 vec![],
-                json!({"evidence":"assembly"}),
+                json!({"evidence":"assembly","possible":entity.possible,"alternativeGroup":entity.alternative_group,"alternativeContext":entity.alternative_context}),
             );
         }
     }
@@ -1632,6 +1918,9 @@ pub fn build(facts: &Path, runtime: &Path, annotations: &Path, output: &Path) ->
     drop(call_graph_writer);
     let call_graph = json!({"schemaVersion":2,"format":"ndjson","file":call_graph_name,"sha256":crate::host::file_digest(&call_graph_path)?,"edgeCount":call_graph_ids.len()});
     for object in model.objects.values_mut() {
+        object["sourceGaps"] = json!(unique(
+            object["sourceGaps"].as_array().cloned().unwrap_or_default()
+        ));
         if object["sourceEntries"]
             .as_array()
             .is_some_and(Vec::is_empty)
@@ -1667,11 +1956,12 @@ pub fn build(facts: &Path, runtime: &Path, annotations: &Path, output: &Path) ->
     }
     fs::create_dir_all(output_parent)?;
     let pending = model.pending.into_values().collect::<Vec<_>>();
+    analysis_gaps.extend(model.rejected_types.into_values());
     let result = json!({"schemaVersion":1,"compiler":bundle.compiler,"configuration":bundle.configuration,
         "runtimeDirectory":runtime_directory,"inputs":{"sourceFingerprint":runtime_data.source_fingerprint,"factsSha256":facts_hash,"runtimeSha256":digest(&runtime_bytes)},
         "objects":model.objects.into_values().collect::<Vec<_>>(),"relations":model.relations.into_values().collect::<Vec<_>>(),"features":model.features.into_values().collect::<Vec<_>>(),
         "sourceFiles":model.source_cache.snapshots.into_values().collect::<Vec<_>>(),"callGraph":call_graph,"scheduleInteractions":{"schemaVersion":1,"views":bindings},"schedulePluginCatalog":group_catalog.into_values().collect::<Vec<_>>(),"schedulePluginGroups":schedule_groups,
-        "annotationsRequired":pending,"bindingErrors":model.fatal,"analysisGaps":unique(analysis_gaps)});
+        "annotationsRequired":pending,"bindingErrors":model.fatal,"analysisGaps":aggregate_gaps(analysis_gaps)});
     fs::write(output, serde_json::to_vec_pretty(&result)?)?;
     fs::write(
         output_parent.join("pending-descriptions.json"),

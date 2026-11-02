@@ -1,0 +1,117 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: PostLayout · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef edge_order stroke:#334155,stroke-width:2px
+  classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: lin-rect, label: "**PostLayout**<br/>组织界面交互、布局与堆叠更新。" }
+  class n0 node_system_set
+  n1@{ shape: rounded, label: "**bevy​_​ui​_​widgets::menu::menu​_​on​_​lose​_​**<br/>**focus**<br/>来自crate:bevy​_​ui​_​widgets ↗：关闭不<br/>再持有内部焦点的菜单。" }
+  class n1 node_system
+  class n1 external_node
+  n2@{ shape: rounded, label: "**bevy​_​ui​_​widgets::text​_​input::apply​_​**<br/>**queued​_​select​_​all**<br/>来自crate:bevy​_​ui​_​widgets ↗：在指针<br/>释放时应用延后的文本全选。" }
+  class n2 node_system
+  class n2 external_node
+  n3@{ shape: rounded, label: "**bevy​_​ui::layout::clipping::update​_​**<br/>**clipping​_​system**<br/>从 UI 根递归更新继承裁剪范围。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**bevy​_​ui::widget::text::text​_​system**<br/>重排变化的 UI 文本并更新字形图集。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**bevy​_​ui::widget::viewport::update​_​**<br/>**viewport​_​render​_​target​_​size**<br/>按 UI 视口节点尺寸调整相机图像目标。" }
+  class n5 node_system
+  n6@{ shape: lin-rect, label: "**EditableTextSystems**<br/>来自crate:bevy​_​text ↗：统一应用可编辑<br/>文字的待处理操作。" }
+  class n6 node_system_set
+  class n6 external_node
+  n7@{ shape: rounded, label: "**bevy​_​ui​_​widgets::menu::menu​_​acquire​_​**<br/>**focus**<br/>来自crate:bevy​_​ui​_​widgets ↗：在菜单<br/>打开时为菜单项取得焦点。" }
+  class n7 node_system
+  class n7 external_node
+  n8@{ shape: rounded, label: "**bevy​_​ui::accessibility::button​_​**<br/>**changed**<br/>为按钮生成或更新无障碍角色与文本标签。" }
+  class n8 node_system
+  n9@{ shape: rounded, label: "**bevy​_​ui::accessibility::image​_​**<br/>**changed**<br/>为非按钮图像生成或更新无障碍标签。" }
+  class n9 node_system
+  n10@{ shape: lin-rect, label: "**Layout**<br/>组织界面交互、布局与堆叠更新。" }
+  class n10 node_system_set
+  n11@{ shape: rounded, label: "**bevy​_​ui::accessibility::label​_​**<br/>**changed**<br/>把标签子树文字写入无障碍节点。" }
+  class n11 node_system
+  n12@{ shape: rounded, label: "**bevy​_​ui::accessibility::sync​_​bounds​_​**<br/>**and​_​transforms**<br/>把 UI 几何同步到无障碍树。" }
+  class n12 node_system
+  n13@{ shape: rounded, label: "**bevy​_​ui::widget::text​_​input​_​layout::**<br/>**update​_​editable​_​text​_​layout**<br/>刷新可编辑文本的字形布局和编辑反馈。" }
+  class n13 node_system
+  n14@{ shape: rounded, label: "**bevy​_​ui​_​widgets::text​_​input::update​_​**<br/>**ime​_​position**<br/>来自crate:bevy​_​ui​_​widgets ↗：把输入<br/>法候选窗口放到当前文字光标下方。" }
+  class n14 node_system
+  class n14 external_node
+  n1 e0@-->|"先于"| n0
+  class e0 edge_order
+  n0 e1@-->|"集合成员"| n2
+  class e1 edge_set_membership
+  n0 e2@-->|"集合成员"| n3
+  class e2 edge_set_membership
+  n0 e3@-->|"集合成员"| n4
+  class e3 edge_set_membership
+  n0 e4@-->|"集合成员"| n5
+  class e4 edge_set_membership
+  n6 e5@-->|"先于"| n0
+  class e5 edge_order
+  n7 e6@-->|"先于"| n0
+  class e6 edge_order
+  n0 e7@-->|"集合成员"| n8
+  class e7 edge_set_membership
+  n0 e8@-->|"集合成员"| n9
+  class e8 edge_set_membership
+  n10 e9@-->|"先于"| n0
+  class e9 edge_order
+  n0 e10@-->|"集合成员"| n11
+  class e10 edge_set_membership
+  n0 e11@-->|"集合成员"| n12
+  class e11 edge_set_membership
+  n0 e12@-->|"集合成员"| n13
+  class e12 edge_set_membership
+  n0 e13@-->|"集合成员"| n14
+  class e13 edge_set_membership
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }

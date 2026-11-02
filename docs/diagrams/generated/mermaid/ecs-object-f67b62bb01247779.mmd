@@ -1,0 +1,142 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#object-f67b62bb01247779-e1{marker-start:url(#object-f67b62bb01247779_flowchart-v2-pointStart)!important}\n#object-f67b62bb01247779-e8{marker-start:url(#object-f67b62bb01247779_flowchart-v2-pointStart)!important}\n#object-f67b62bb01247779-e17{marker-start:url(#object-f67b62bb01247779_flowchart-v2-pointStart)!important}\n#object-f67b62bb01247779_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: bevy_sprite::calculate_bounds_2d · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_plugin fill:#F1F3F6,stroke:#4A6389,stroke-width:2.2px,color:#1F3340
+  classDef edge_order stroke:#334155,stroke-width:2px
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**bevy​_​sprite::calculate​_​bounds​_​2d**<br/>为二维网格和精灵计算局部包围盒。" }
+  class n0 node_system
+  n1@{ shape: rounded, label: "**bevy​_​mesh::components::mark​_​2d​_​**<br/>**meshes​_​as​_​changed​_​if​_​their​_​assets​_​**<br/>**changed**<br/>来自crate:bevy​_​mesh ↗：资产内容变化时<br/>标记对应二维网格已变更。" }
+  class n1 node_system
+  class n1 external_node
+  n2@{ shape: rounded, label: "**bevy​_​camera::primitives::Aabb**<br/>来自crate:bevy​_​camera ↗：以局部轴对齐<br/>包围盒支持可见性裁剪。" }
+  class n2 node_component
+  class n2 external_node
+  n3@{ shape: cyl, label: "**bevy​_​asset::Assets#lt;texture​_​atlas::**<br/>**TextureAtlasLayout#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
+  class n3 node_resource
+  class n3 external_node
+  n4@{ shape: lin-rect, label: "**CalculateBounds**<br/>来自crate:bevy​_​camera ↗：组织相机与实<br/>体可见性更新。" }
+  class n4 node_system_set
+  class n4 external_node
+  n5@{ shape: rounded, label: "**sprite::Anchor**<br/>保存二维可渲染实体相对自身尺寸的归一化锚<br/>点偏移" }
+  class n5 node_component
+  n6@{ shape: rounded, label: "**components::Mesh2d**<br/>来自crate:bevy​_​mesh ↗：为二维可绘制实<br/>体指定网格资产。" }
+  class n6 node_component
+  class n6 external_node
+  n7@{ shape: cyl, label: "**bevy​_​asset::Assets#lt;image::Image#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
+  class n7 node_resource
+  class n7 external_node
+  n8@{ shape: rounded, label: "**sprite::Sprite**<br/>描述二维精灵的图像、图集、颜色、翻转、尺<br/>寸和裁剪区域" }
+  class n8 node_component
+  n9@{ shape: fr-rect, label: "**SpritePlugin**<br/>建立二维精灵基础支持。" }
+  class n9 node_plugin
+  n10@{ shape: rounded, label: "**bevy​_​camera::visibility::NoAutoAabb**<br/>来自crate:bevy​_​camera ↗：禁止自动计算<br/>实体的轴对齐包围盒。" }
+  class n10 node_component
+  class n10 external_node
+  n11@{ shape: cyl, label: "**bevy​_​asset::asset​_​changed::**<br/>**AssetChanges#lt;mesh::Mesh#gt;**<br/>来自crate:bevy​_​asset ↗：记录资产最近<br/>变化的系统刻度。" }
+  class n11 node_resource
+  class n11 external_node
+  n12@{ shape: rounded, label: "**bevy​_​camera::visibility::**<br/>**NoFrustumCulling**<br/>来自crate:bevy​_​camera ↗：使实体退出内<br/>置视锥裁剪。" }
+  class n12 node_component
+  class n12 external_node
+  n13@{ shape: cyl, label: "**bevy​_​asset::Assets#lt;bevy​_​mesh::Mesh#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
+  class n13 node_resource
+  class n13 external_node
+  n1 e0@-->|"先于"| n0
+  class e0 edge_order
+  n2 e1@---|"赋值"| n0
+  class e1 edge_write
+  n3 e2@--> n0
+  class e2 edge_read
+  n4 e3@-->|"集合成员"| n0
+  class e3 edge_set_membership
+  n5 e4@-->|"存在性约束"| n0
+  class e4 edge_reference
+  n6 e5@--> n0
+  class e5 edge_read
+  n7 e6@--> n0
+  class e6 edge_read
+  n8 e7@--> n0
+  class e7 edge_read
+  n2 e8@---|"插入"| n0
+  class e8 edge_write
+  n9 e9@-->|"调用"| n0
+  class e9 edge_registration
+  n10 e10@-->|"存在性约束"| n0
+  class e10 edge_reference
+  n8 e11@-->|"存在性约束"| n0
+  class e11 edge_reference
+  n11 e12@--> n0
+  class e12 edge_read
+  n12 e13@-->|"存在性约束"| n0
+  class e13 edge_reference
+  n6 e14@-->|"存在性约束"| n0
+  class e14 edge_reference
+  n2 e15@-->|"存在性约束"| n0
+  class e15 edge_reference
+  n5 e16@--> n0
+  class e16 edge_read
+  n2 e17@---|"可变访问"| n0
+  class e17 edge_write
+  n13 e18@--> n0
+  class e18 edge_read
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: bumpX }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: bumpX }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e17@{ curve: basis }
+  e18@{ curve: basis }

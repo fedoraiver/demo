@@ -1,0 +1,65 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: gizmos::GizmoStorage#lt;aabb::AabbGizmoConfigGroup, ()#gt; · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: cyl, label: "**gizmos::GizmoStorage#lt;aabb::**<br/>**AabbGizmoConfigGroup, ()#gt;**<br/>按配置组和清理上下文存储调试图元。" }
+  class n0 node_resource
+  n1@{ shape: rounded, label: "**bevy​_​gizmos::propagate​_​gizmos#lt;bevy​_​**<br/>**gizmos::aabb::AabbGizmoConfigGroup,**<br/>**bevy​_​time::fixed::Fixed#gt;**<br/>汇入指定上下文保留的 Gizmo 图元。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**bevy​_​gizmos::update​_​gizmo​_​**<br/>**meshes#lt;bevy​_​gizmos::aabb::**<br/>**AabbGizmoConfigGroup#gt;**<br/>把配置组即时线条缓冲转交 Gizmo 资产。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**bevy​_​gizmos::collect​_​requested​_​**<br/>**gizmos#lt;bevy​_​gizmos::aabb::**<br/>**AabbGizmoConfigGroup, bevy​_​time::**<br/>**fixed::Fixed#gt;**<br/>把即时 Gizmo 请求转存到指定清理上下文。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**bevy​_​gizmos::end​_​gizmo​_​context#lt;bevy​_​**<br/>**gizmos::aabb::AabbGizmoConfigGroup,**<br/>**bevy​_​time::fixed::Fixed#gt;**<br/>清空当前默认 Gizmo 存储，再与上下文交换<br/>缓冲互换，恢复先前保存的父上下文，供后续<br/>图元网格生成使用。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**bevy​_​gizmos::start​_​gizmo​_​**<br/>**context#lt;bevy​_​gizmos::aabb::**<br/>**AabbGizmoConfigGroup, bevy​_​time::**<br/>**fixed::Fixed#gt;**<br/>暂存父级 Gizmo 缓冲并开始新上下文。" }
+  class n5 node_system
+  n1 e0@-->|"可变访问"| n0
+  class e0 edge_write
+  n2 e1@-->|"可变访问"| n0
+  class e1 edge_write
+  n3 e2@-->|"可变访问"| n0
+  class e2 edge_write
+  n4 e3@-->|"可变访问"| n0
+  class e3 edge_write
+  n5 e4@-->|"可变访问"| n0
+  class e4 edge_write
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }

@@ -1,0 +1,55 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#object-da9e1ff59405d423-e1{marker-start:url(#object-da9e1ff59405d423_flowchart-v2-pointStart)!important}\n#object-da9e1ff59405d423_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: window::ClosingWindow · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**window::ClosingWindow**<br/>标记窗口已收到关闭请求并正在关闭" }
+  class n0 node_component
+  n1@{ shape: rounded, label: "**bevy​_​winit::system::despawn​_​windows**<br/>来自crate:bevy​_​winit ↗：处理原生窗口<br/>关闭并延后一轮释放包装器。" }
+  class n1 node_system
+  class n1 external_node
+  n2@{ shape: rounded, label: "**bevy​_​window::system::close​_​when​_​**<br/>**requested**<br/>分两轮标记关闭请求并销毁窗口实体。" }
+  class n2 node_system
+  n0 e0@-->|"存在性约束"| n1
+  class e0 edge_reference
+  n2 e1@---|"存在性约束"| n0
+  class e1 edge_reference
+  n2 e2@-->|"插入"| n0
+  class e2 edge_write
+  e1@{ curve: basis }
+  e2@{ curve: basis }

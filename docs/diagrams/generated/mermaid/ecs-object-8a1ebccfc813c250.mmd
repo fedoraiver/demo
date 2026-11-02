@@ -1,0 +1,99 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: bevy_ecs::schedule::condition::common_conditions::any_match_filter#lt;(bevy_ecs::query::filter::With#lt;bevy_pbr::render::gpu_preprocess::PreprocessBindGroups#gt;, bevy_ecs::query::filter::Without#lt;bevy_pbr::render::gpu_preprocess::SkipGpuPreprocess#gt;, bevy_ecs::query::filter::Without#lt;bevy_render::view::NoIndirectDrawing#gt;, bevy_ecs::query::filter::Or#lt;(bevy_ecs::query::filter::Or#lt;(bevy_ecs::query::filter::With#lt;bevy_core_pipeline::prepass::DepthPrepass#gt;, bevy_ecs::query::filter::With#lt;bevy_core_pipeline::prepass::NormalPrepass#gt;, bevy_ecs::query::filter::With#lt;bevy_core_pipeline::prepass::MotionVectorPrepass#gt;, bevy_ecs::query::filter::With#lt;bevy_core_pipeline::prepass::DeferredPrepass#gt;)#gt;, bevy_ecs::query::filter::With#lt;bevy_pbr::render::light::ShadowView#gt;)#gt;, bevy_ecs::query::filter::With#lt;bevy_render::occlusion_culling::OcclusionCulling#gt;)#gt; · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**bevy​_​ecs::schedule::condition::**<br/>**common​_​conditions::any​_​match​_​**<br/>**filter#lt;(bevy​_​ecs::query::filter::**<br/>**With#lt;bevy​_​pbr::render::gpu​_​**<br/>**preprocess::PreprocessBindGroups#gt;,**<br/>**bevy​_​ecs::query::filter::**<br/>**Without#lt;bevy​_​pbr::render::gpu​_​**<br/>**preprocess::SkipGpuPreprocess#gt;,**<br/>**bevy​_​ecs::query::filter::**<br/>**Without#lt;bevy​_​render::view::**<br/>**NoIndirectDrawing#gt;, bevy​_​ecs::**<br/>**query::filter::Or#lt;(bevy​_​ecs::query::**<br/>**filter::Or#lt;(bevy​_​ecs::query::**<br/>**filter::With#lt;bevy​_​core​_​pipeline::**<br/>**prepass::DepthPrepass#gt;, bevy​_​ecs::**<br/>**query::filter::With#lt;bevy​_​core​_​**<br/>**pipeline::prepass::NormalPrepass#gt;,**<br/>**bevy​_​ecs::query::filter::With#lt;bevy​_​**<br/>**core​_​pipeline::prepass::**<br/>**MotionVectorPrepass#gt;, bevy​_​ecs::**<br/>**query::filter::With#lt;bevy​_​core​_​**<br/>**pipeline::prepass::**<br/>**DeferredPrepass#gt;)#gt;, bevy​_​ecs::**<br/>**query::filter::With#lt;bevy​_​pbr::**<br/>**render::light::ShadowView#gt;)#gt;, bevy​_​**<br/>**ecs::query::filter::With#lt;bevy​_​**<br/>**render::occlusion​_​culling::**<br/>**OcclusionCulling#gt;)#gt;**<br/>判断是否存在符合过滤条件的实体。" }
+  class n0 node_system
+  n1@{ shape: rounded, label: "**render::gpu​_​preprocess::**<br/>**PreprocessBindGroups**<br/>来自crate:bevy​_​pbr ↗：为视图各绘制阶<br/>段保存网格预处理绑定。" }
+  class n1 node_component
+  class n1 external_node
+  n2@{ shape: rounded, label: "**bevy​_​pbr::render::gpu​_​preprocess::**<br/>**late​_​prepass​_​build​_​indirect​_​**<br/>**parameters**<br/>来自crate:bevy​_​pbr ↗：为本帧新显露对<br/>象构建后期预通道间接参数。" }
+  class n2 node_system
+  class n2 external_node
+  n3@{ shape: rounded, label: "**bevy​_​core​_​pipeline::prepass::**<br/>**DepthPrepass**<br/>来自crate:bevy​_​core​_​pipeline ↗：为三<br/>维相机生成独立的深度纹理。" }
+  class n3 node_component
+  class n3 external_node
+  n4@{ shape: rounded, label: "**prepass::DeferredPrepass**<br/>来自crate:bevy​_​core​_​pipeline ↗：为三<br/>维相机启用延迟材质 G-buffer 预通道。" }
+  class n4 node_component
+  class n4 external_node
+  n5@{ shape: rounded, label: "**prepass::NormalPrepass**<br/>来自crate:bevy​_​core​_​pipeline ↗：输出<br/>已应用法线贴图的世界空间法线。" }
+  class n5 node_component
+  class n5 external_node
+  n6@{ shape: rounded, label: "**render::light::ShadowView**<br/>来自crate:bevy​_​pbr ↗：描述阴影绘制的<br/>深度附件与通道名称。" }
+  class n6 node_component
+  class n6 external_node
+  n7@{ shape: rounded, label: "**bevy​_​render::view::NoIndirectDrawing**<br/>来自crate:bevy​_​render ↗：关闭相机的间<br/>接绘制模式。" }
+  class n7 node_component
+  class n7 external_node
+  n8@{ shape: rounded, label: "**bevy​_​render::occlusion​_​culling::**<br/>**OcclusionCulling**<br/>来自crate:bevy​_​render ↗：启用视图的<br/>GPU 遮挡裁剪。" }
+  class n8 node_component
+  class n8 external_node
+  n9@{ shape: rounded, label: "**bevy​_​core​_​pipeline::prepass::**<br/>**MotionVectorPrepass**<br/>来自crate:bevy​_​core​_​pipeline ↗：为相<br/>机输出屏幕空间运动矢量。" }
+  class n9 node_component
+  class n9 external_node
+  n10@{ shape: rounded, label: "**render::gpu​_​preprocess::**<br/>**SkipGpuPreprocess**<br/>来自crate:bevy​_​pbr ↗：避免视图重复执<br/>行 GPU 网格预处理。" }
+  class n10 node_component
+  class n10 external_node
+  n1 e0@-->|"存在性约束"| n0
+  class e0 edge_reference
+  n0 e1@-->|"运行条件"| n2
+  class e1 edge_reference
+  n3 e2@-->|"存在性约束"| n0
+  class e2 edge_reference
+  n4 e3@-->|"存在性约束"| n0
+  class e3 edge_reference
+  n5 e4@-->|"存在性约束"| n0
+  class e4 edge_reference
+  n6 e5@-->|"存在性约束"| n0
+  class e5 edge_reference
+  n7 e6@-->|"存在性约束"| n0
+  class e6 edge_reference
+  n8 e7@-->|"存在性约束"| n0
+  class e7 edge_reference
+  n9 e8@-->|"存在性约束"| n0
+  class e8 edge_reference
+  n10 e9@-->|"存在性约束"| n0
+  class e9 edge_reference
+  e0@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }

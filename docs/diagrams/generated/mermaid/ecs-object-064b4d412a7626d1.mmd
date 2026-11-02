@@ -1,0 +1,92 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: bevy_pbr::render::morph::prepare_morph_descriptors · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_plugin fill:#F1F3F6,stroke:#4A6389,stroke-width:2.2px,color:#1F3340
+  classDef edge_order stroke:#334155,stroke-width:2px
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  subgraph layout_card_n0[" "]
+  n0@{ shape: rounded, label: "**bevy​_​pbr::render::morph::prepare​_​**<br/>**morph​_​descriptors**<br/>稳定分配形变描述符索引并回收失效项。" }
+  class n0 node_system
+  end
+  style layout_card_n0 fill:none,stroke:none
+  n1@{ shape: cyl, label: "**render::morph::MorphUniforms**<br/>以双缓冲保存网格前后帧形变权重。" }
+  class n1 node_resource
+  n2@{ shape: lin-rect, label: "**PrepareMeshes**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
+  class n2 node_system_set
+  class n2 external_node
+  n3@{ shape: cyl, label: "**render::morph::MorphIndices**<br/>关联形变网格与当前及上一帧权重位置。" }
+  class n3 node_resource
+  n4@{ shape: cyl, label: "**render​_​asset::RenderAssets#lt;mesh::**<br/>**RenderMesh#gt;**<br/>来自crate:bevy​_​render ↗：按源资产身份<br/>保存 GPU 渲染表示。" }
+  class n4 node_resource
+  class n4 external_node
+  n5@{ shape: cyl, label: "**render::mesh::RenderMeshInstances**<br/>保存 CPU 或 GPU 构建所需的网格实例。" }
+  class n5 node_resource
+  n6@{ shape: rounded, label: "**bevy​_​pbr::render::mesh::collect​_​**<br/>**meshes​_​for​_​gpu​_​building**<br/>把线程提取队列整理为 GPU 网格实例和输入<br/>缓冲。" }
+  class n6 node_system
+  n7@{ shape: cyl, label: "**mesh::allocator::MeshAllocator**<br/>来自crate:bevy​_​render ↗：分配并管理网<br/>格顶点和索引 GPU 缓冲。" }
+  class n7 node_resource
+  class n7 external_node
+  n8@{ shape: fr-rect, label: "**render::mesh::MeshRenderPlugin**<br/>建立三维网格绘制支持。" }
+  class n8 node_plugin
+  n0 e0@-->|"可变访问"| n1
+  class e0 edge_write
+  n2 e1@-->|"集合成员"| n0
+  class e1 edge_set_membership
+  n0 e2@-->|"可变访问"| n3
+  class e2 edge_write
+  n4 e3@--> n0
+  class e3 edge_read
+  n5 e4@--> n0
+  class e4 edge_read
+  n0 e5@-->|"先于"| n6
+  class e5 edge_order
+  n7 e6@--> n0
+  class e6 edge_read
+  n8 e7@-->|"调用"| n0
+  class e7 edge_registration
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: bumpX }
+  e3@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }

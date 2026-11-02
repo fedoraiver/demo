@@ -1,0 +1,88 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#object-58d1684ec6f4fbab-e5{marker-start:url(#object-58d1684ec6f4fbab_flowchart-v2-pointStart)!important}\n#object-58d1684ec6f4fbab_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: ScaleEasingState · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**ScaleEasingState**<br/>保存固定步缩放插值的起点与终点" }
+  class n0 node_component
+  n1@{ shape: rounded, label: "**bevy​_​transform​_​interpolation::reset​_​**<br/>**easing​_​states​_​on​_​transform​_​change**<br/>在外部直接改变变换时取消失效的平滑区间。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**bevy​_​transform​_​interpolation::**<br/>**interpolation::update​_​scale​_​**<br/>**interpolation​_​start**<br/>把当前缩放记录为插值起点。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**bevy​_​transform​_​interpolation::**<br/>**interpolation::complete​_​scale​_​easing**<br/>在新一轮插值前完成上一段缩放。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**bevy​_​transform​_​interpolation::ease​_​**<br/>**scale​_​lerp**<br/>按固定步剩余比例线性插值显示缩放。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**bevy​_​transform​_​interpolation::reset​_​**<br/>**scale​_​easing**<br/>清除旧缩放平滑的起点和终点。" }
+  class n5 node_system
+  n6@{ shape: rounded, label: "**bevy​_​transform​_​interpolation::**<br/>**interpolation::update​_​scale​_​**<br/>**interpolation​_​end**<br/>把当前缩放记录为插值终点。" }
+  class n6 node_system
+  n1 e0@-->|"可变访问"| n0
+  class e0 edge_write
+  n2 e1@-->|"赋值"| n0
+  class e1 edge_write
+  n1 e2@-->|"赋值"| n0
+  class e2 edge_write
+  n0 e3@--> n3
+  class e3 edge_read
+  n2 e4@-->|"可变访问"| n0
+  class e4 edge_write
+  n1 e5@---|"存在性约束"| n0
+  class e5 edge_reference
+  n0 e6@--> n4
+  class e6 edge_read
+  n5 e7@-->|"赋值"| n0
+  class e7 edge_write
+  n6 e8@-->|"可变访问"| n0
+  class e8 edge_write
+  n5 e9@-->|"可变访问"| n0
+  class e9 edge_write
+  n6 e10@-->|"赋值"| n0
+  class e10 edge_write
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }

@@ -1,0 +1,123 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: bevy_pbr::light_probe::gather_light_probes#lt;bevy_light::probe::IrradianceVolume#gt; · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef node_local fill:#F8F5F1,stroke:#AA8752,stroke-width:1.6px,color:#1F3340
+  classDef node_plugin fill:#F1F3F6,stroke:#4A6389,stroke-width:2.2px,color:#1F3340
+  classDef edge_order stroke:#334155,stroke-width:2px
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**bevy​_​pbr::light​_​probe::gather​_​light​_​**<br/>**probes#lt;bevy​_​light::probe::**<br/>**IrradianceVolume#gt;**<br/>按相机可见集合和距离分配已就绪光照探针。" }
+  class n0 node_system
+  n1@{ shape: rounded, label: "**light​_​probe::**<br/>**RenderViewLightProbes#lt;bevy​_​light::**<br/>**IrradianceVolume#gt;**<br/>维护视图光照探针及纹理绑定索引。" }
+  class n1 node_component
+  n2@{ shape: rounded, label: "**probe::IrradianceVolume**<br/>来自crate:bevy​_​light ↗：用三维环境光<br/>体素提供局部间接照明。" }
+  class n2 node_component
+  class n2 external_node
+  n3@{ shape: cyl, label: "**extract​_​plugin::MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
+  class n3 node_resource
+  class n3 external_node
+  n4@{ shape: rounded, label: "**components::Camera3d**<br/>来自crate:bevy​_​camera ↗：启用三维相机<br/>主渲染流程。" }
+  class n4 node_component
+  class n4 external_node
+  n5@{ shape: rounded, label: "**bevy​_​pbr::cluster::extract​_​clusters​_​**<br/>**for​_​cpu​_​clustering**<br/>把 CPU 聚簇结果转换为渲染侧对象列表。" }
+  class n5 node_system
+  n6@{ shape: rounded, label: "**probe::LightProbe**<br/>来自crate:bevy​_​light ↗：定义局部间接<br/>光照的长方体影响区域。" }
+  class n6 node_component
+  class n6 external_node
+  n7@{ shape: rounded, label: "**bevy​_​pbr::cluster::gpu::extract​_​**<br/>**clusters​_​for​_​gpu​_​clustering**<br/>提取视图聚簇配置并回传上帧 GPU 统计。" }
+  class n7 node_system
+  n8@{ shape: cyl, label: "**bevy​_​render::render​_​asset::**<br/>**RenderAssets#lt;bevy​_​render::texture::**<br/>**GpuImage#gt;**<br/>来自crate:bevy​_​render ↗：按源资产身份<br/>保存 GPU 渲染表示。" }
+  class n8 node_resource
+  class n8 external_node
+  n9@{ shape: rounded, label: "**bevy​_​extract::SubEntity#lt;bevy​_​**<br/>**render::RenderApp#gt;**<br/>来自crate:bevy​_​extract ↗：记录主实体<br/>对应的子世界实体。" }
+  class n9 node_component
+  class n9 external_node
+  n10@{ shape: notch-rect, label: "**Local · view​_​light​_​probe​_​info**<br/>为单个视图暂存已就绪并按距离排序的光照探<br/>针。" }
+  class n10 node_local
+  n11@{ shape: rounded, label: "**bevy​_​camera::visibility::**<br/>**VisibleEntities**<br/>来自crate:bevy​_​camera ↗：按类别保存当<br/>前视图可见的实体。" }
+  class n11 node_component
+  class n11 external_node
+  n12@{ shape: rounded, label: "**components::global​_​transform::**<br/>**GlobalTransform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>合并祖先变换后的世界空间仿射变换" }
+  class n12 node_component
+  class n12 external_node
+  n13@{ shape: fr-rect, label: "**light​_​probe::LightProbePlugin**<br/>提供光照探针与环境贴图光照。" }
+  class n13 node_plugin
+  n0 e0@-->|"移除"| n1
+  class e0 edge_write
+  n2 e1@--> n0
+  class e1 edge_read
+  n0 e2@-->|"插入"| n1
+  class e2 edge_write
+  n3 e3@--> n0
+  class e3 edge_read
+  n4 e4@-->|"存在性约束"| n0
+  class e4 edge_reference
+  n0 e5@-->|"先于"| n5
+  class e5 edge_order
+  n6 e6@--> n0
+  class e6 edge_read
+  n0 e7@-->|"先于"| n7
+  class e7 edge_order
+  n8 e8@--> n0
+  class e8 edge_read
+  n9 e9@--> n0
+  class e9 edge_read
+  n0 e10@-->|"可变访问"| n10
+  class e10 edge_write
+  n11 e11@--> n0
+  class e11 edge_read
+  n12 e12@--> n0
+  class e12 edge_read
+  n13 e13@-->|"调用"| n0
+  class e13 edge_registration
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }

@@ -1,0 +1,60 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: bevy_state::state_scoped::despawn_entities_on_exit_state#lt;demo::game_flow::AppState#gt; · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef node_message fill:#EDF4F6,stroke:#247B91,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_consume stroke:#247B91,stroke-width:1.8px,stroke-dasharray:2 4
+  classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**bevy​_​state::state​_​scoped::despawn​_​**<br/>**entities​_​on​_​exit​_​state#lt;demo::game​_​**<br/>**flow::AppState#gt;**<br/>离开指定状态时销毁匹配实体。" }
+  class n0 node_system
+  n1@{ shape: lean-r, label: "**bevy::bevy​_​state::state::**<br/>**StateTransitionEvent#lt;game​_​flow::**<br/>**AppState#gt;**<br/>通知状态离开和进入的变化。" }
+  class n1 node_message
+  n2@{ shape: lin-rect, label: "**ExitSchedules**<br/>组织状态转换及进入退出调度。" }
+  class n2 node_system_set
+  n3@{ shape: cyl, label: "**bevy::bevy​_​ecs::message::**<br/>**Messages#lt;bevy::bevy​_​state::state::**<br/>**StateTransitionEvent#lt;game​_​flow::**<br/>**AppState#gt;#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  class n3 node_resource
+  class n3 external_node
+  n1 e0@--> n0
+  class e0 edge_consume
+  n2 e1@-->|"集合成员"| n0
+  class e1 edge_set_membership
+  n3 e2@--> n0
+  class e2 edge_read
+  e0@{ curve: basis }
+  e2@{ curve: basis }

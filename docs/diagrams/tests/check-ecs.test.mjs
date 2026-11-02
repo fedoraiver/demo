@@ -10,8 +10,10 @@ import { NODE_STYLES, EDGE_STYLES, SELECTION_STYLE, EXTERNAL_REFERENCE_STYLE, vi
 import { isMainPluginRegistration, scheduleGroupLabel, isUnscheduledTriggerNode } from '../src/architecture-model.mjs';
 import { DATA_GROUP_LABELS } from '../src/architecture-renderer.mjs';
 import { normalizeMermaidSvg } from '../src/mermaid-compiler.mjs';
-import { INFRASTRUCTURE_FEATURES, architectureViewId } from '../src/architecture-infrastructure.mjs';
+import { INFRASTRUCTURE_FEATURES as infrastructureDefinitions, architectureViewId } from '../src/architecture-infrastructure.mjs';
 import { artifactFile, pathsForRepository } from '../src/paths.mjs';
+
+const INFRASTRUCTURE_FEATURES = infrastructureDefinitions.map(feature => ({ ...feature, overviewNode: 'fixture-plugin-' + feature.id }));
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../..');
 const temporaryRoot = path.join(root, 'tmp', 'architecture-check-tests');

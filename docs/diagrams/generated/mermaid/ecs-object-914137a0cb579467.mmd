@@ -1,0 +1,85 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: AnimationPlayer · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**AnimationPlayer**<br/>保存当前激活动画及其播放控制状态" }
+  class n0 node_component
+  n1@{ shape: rounded, label: "**bevy​_​animation::advance​_​animations**<br/>推进动画播放器中活动动画的播放时间。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**demo::character​_​animation::state::**<br/>**sync​_​courier​_​animation**<br/>来自character​_​animation ↗：Update 位<br/>于固定模拟与呈现同步之后；零固定步帧也使<br/>用本帧朝向和已有真实速度。" }
+  class n2 node_system
+  class n2 external_node
+  n3@{ shape: rounded, label: "**bevy​_​animation::animate​_​targets**<br/>评估动画图并把结果应用到动画目标。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**bevy​_​animation::transition::expire​_​**<br/>**completed​_​transitions**<br/>结束已完全淡出的动画过渡。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**demo::character​_​animation::binding::**<br/>**initialize​_​ready​_​couriers**<br/>来自character​_​animation ↗：场景就绪<br/>后只遍历该视觉根的子树，避免把 NPC 或其<br/>他模型的播放器接到主角上。" }
+  class n5 node_system
+  class n5 external_node
+  n6@{ shape: rounded, label: "**demo::ui::backdrop::play​_​courier​_​**<br/>**animation**<br/>来自ui ↗：仅遍历已展开的展示角色子树，<br/>命名资产尚未就绪时保留 pending 供下一帧<br/>重试。" }
+  class n6 node_system
+  class n6 external_node
+  n7@{ shape: rounded, label: "**bevy​_​animation::transition::advance​_​**<br/>**transitions**<br/>推进动画过渡并归一化混合权重。" }
+  class n7 node_system
+  n8@{ shape: rounded, label: "**bevy​_​animation::trigger​_​untargeted​_​**<br/>**animation​_​events**<br/>派发动画片段的根目标事件。" }
+  class n8 node_system
+  n1 e0@-->|"可变访问"| n0
+  class e0 edge_write
+  n2 e1@-->|"可变访问"| n0
+  class e1 edge_write
+  n0 e2@--> n3
+  class e2 edge_read
+  n4 e3@-->|"可变访问"| n0
+  class e3 edge_write
+  n5 e4@-->|"可变访问"| n0
+  class e4 edge_write
+  n6 e5@-->|"可变访问"| n0
+  class e5 edge_write
+  n7 e6@-->|"可变访问"| n0
+  class e6 edge_write
+  n0 e7@--> n8
+  class e7 edge_read
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }

@@ -1,0 +1,79 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: bevy_picking::input::deactivate_touch_pointers · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef node_local fill:#F8F5F1,stroke:#AA8752,stroke-width:1.6px,color:#1F3340
+  classDef node_message fill:#EDF4F6,stroke:#247B91,stroke-width:1.6px,color:#1F3340
+  classDef node_plugin fill:#F1F3F6,stroke:#4A6389,stroke-width:2.2px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_consume stroke:#247B91,stroke-width:1.8px,stroke-dasharray:2 4
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**bevy​_​picking::input::deactivate​_​**<br/>**touch​_​pointers**<br/>销毁已经结束或取消的触摸指针。" }
+  class n0 node_system
+  n1@{ shape: rounded, label: "**bevy​_​picking::input::**<br/>**PointerInputSettings::is​_​touch​_​**<br/>**enabled**<br/>判断触摸拾取输入是否启用。" }
+  class n1 node_system
+  n2@{ shape: notch-rect, label: "**Local · despawn​_​list**<br/>去重收集需要销毁的触摸指针实体。" }
+  class n2 node_local
+  n3@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;touch::**<br/>**TouchInput#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  class n3 node_resource
+  class n3 external_node
+  n4@{ shape: fr-rect, label: "**input::PointerInputPlugin**<br/>转换鼠标和触摸的拾取输入。" }
+  class n4 node_plugin
+  n5@{ shape: lean-r, label: "**touch::TouchInput**<br/>来自crate:bevy​_​input ↗：传递触点位置<br/>与触摸阶段。" }
+  class n5 node_message
+  class n5 external_node
+  n6@{ shape: rounded, label: "**bevy​_​picking::pointer::PointerId**<br/>以鼠标、触摸编号或自定义 UUID 提供稳定<br/>指针身份" }
+  class n6 node_component
+  n1 e0@-->|"运行条件"| n0
+  class e0 edge_reference
+  n0 e1@-->|"可变访问"| n2
+  class e1 edge_write
+  n3 e2@--> n0
+  class e2 edge_read
+  n4 e3@-->|"调用"| n0
+  class e3 edge_registration
+  n5 e4@--> n0
+  class e4 edge_consume
+  n6 e5@--> n0
+  class e5 edge_read
+  e0@{ curve: basis }
+  e2@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }

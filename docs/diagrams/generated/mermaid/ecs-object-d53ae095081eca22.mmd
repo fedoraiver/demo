@@ -1,0 +1,130 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#object-d53ae095081eca22-e1{marker-start:url(#object-d53ae095081eca22_flowchart-v2-pointStart)!important}\n#object-d53ae095081eca22-e14{marker-start:url(#object-d53ae095081eca22_flowchart-v2-pointStart)!important}\n#object-d53ae095081eca22_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: bevy_ui::stack::ui_stack_system · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef node_local fill:#F8F5F1,stroke:#AA8752,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_plugin fill:#F1F3F6,stroke:#4A6389,stroke-width:2.2px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**bevy​_​ui::stack::ui​_​stack​_​system**<br/>重建稳定的 UI 绘制和命中顺序。" }
+  class n0 node_system
+  n1@{ shape: notch-rect, label: "**Local · stack​_​roots**<br/>收集本轮参与排序的 UI 堆叠根。" }
+  class n1 node_local
+  n2@{ shape: rounded, label: "**bevy​_​ui::ComputedStackIndex**<br/>保存节点计算后的绘制堆叠位置。" }
+  class n2 node_component
+  n3@{ shape: notch-rect, label: "**Local · cache**<br/>为 UI 层级堆叠遍历复用实体与局部层次缓<br/>存。" }
+  class n3 node_local
+  n4@{ shape: rounded, label: "**bevy​_​ecs::hierarchy::ChildOf**<br/>来自crate:bevy​_​ecs ↗：保存当前实体的<br/>父实体身份" }
+  class n4 node_component
+  class n4 external_node
+  n5@{ shape: rounded, label: "**bevy​_​ecs::hierarchy::Children**<br/>来自crate:bevy​_​ecs ↗：保存以<br/>ChildOf 指向当前父实体的子实体集合" }
+  class n5 node_component
+  class n5 external_node
+  n6@{ shape: notch-rect, label: "**Local · visited​_​stack​_​roots**<br/>避免 UI 根同时从两条查询路径重复加入。" }
+  class n6 node_local
+  n7@{ shape: cyl, label: "**bevy​_​ui::UiStack**<br/>保存按相机分区的 UI 绘制顺序。" }
+  class n7 node_resource
+  n8@{ shape: fr-rect, label: "**bevy​_​ui::UiPlugin**<br/>建立界面布局与内容更新基础。" }
+  class n8 node_plugin
+  n9@{ shape: rounded, label: "**bevy​_​ui::GlobalZIndex**<br/>跨 UI 层级指定全局绘制层次。" }
+  class n9 node_component
+  n10@{ shape: lin-rect, label: "**Stack**<br/>组织界面交互、布局与堆叠更新。" }
+  class n10 node_system_set
+  n11@{ shape: rounded, label: "**bevy​_​ui::Node**<br/>声明 UI 节点的布局规则。" }
+  class n11 node_component
+  n12@{ shape: notch-rect, label: "**Local · stack​_​root​_​order**<br/>保留上一帧 UI 堆叠根的相对顺序。" }
+  class n12 node_local
+  n13@{ shape: rounded, label: "**bevy​_​ui::ZIndex**<br/>设置同级 UI 节点的局部前后顺序。" }
+  class n13 node_component
+  n0 e0@-->|"可变访问"| n1
+  class e0 edge_write
+  n2 e1@---|"可变访问"| n0
+  class e1 edge_write
+  n0 e2@-->|"可变访问"| n3
+  class e2 edge_write
+  n4 e3@--> n0
+  class e3 edge_read
+  n5 e4@--> n0
+  class e4 edge_read
+  n0 e5@-->|"可变访问"| n6
+  class e5 edge_write
+  n0 e6@-->|"可变访问"| n7
+  class e6 edge_write
+  n8 e7@-->|"调用"| n0
+  class e7 edge_registration
+  n2 e8@-->|"存在性约束"| n0
+  class e8 edge_reference
+  n5 e9@-->|"存在性约束"| n0
+  class e9 edge_reference
+  n9 e10@--> n0
+  class e10 edge_read
+  n10 e11@-->|"集合成员"| n0
+  class e11 edge_set_membership
+  n4 e12@-->|"存在性约束"| n0
+  class e12 edge_reference
+  n11 e13@-->|"存在性约束"| n0
+  class e13 edge_reference
+  n2 e14@---|"赋值"| n0
+  class e14 edge_write
+  n0 e15@-->|"可变访问"| n12
+  class e15 edge_write
+  n13 e16@--> n0
+  class e16 edge_read
+  n9 e17@-->|"存在性约束"| n0
+  class e17 edge_reference
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: bumpX }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e17@{ curve: basis }

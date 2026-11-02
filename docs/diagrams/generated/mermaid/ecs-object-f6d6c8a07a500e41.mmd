@@ -1,0 +1,105 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: bevy_pbr::prepass::prepare_prepass_view_bind_group · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_plugin fill:#F1F3F6,stroke:#4A6389,stroke-width:2.2px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**bevy​_​pbr::prepass::prepare​_​prepass​_​**<br/>**view​_​bind​_​group**<br/>绑定预通道的视图、全局和前帧缓冲。" }
+  class n0 node_system
+  n1@{ shape: cyl, label: "**prepass::PrepassViewBindGroup**<br/>保存预通道视图的资源绑定。" }
+  class n1 node_resource
+  n2@{ shape: fr-rect, label: "**prepass::PrepassPipelinePlugin**<br/>建立材质预通道管线基础。" }
+  class n2 node_plugin
+  n3@{ shape: cyl, label: "**view::visibility::range::**<br/>**RenderVisibilityRanges**<br/>来自crate:bevy​_​render ↗：保存渲染侧距<br/>离范围及去重后的 GPU 数据。" }
+  class n3 node_resource
+  class n3 external_node
+  n4@{ shape: cyl, label: "**bevy​_​render::view::ViewUniforms**<br/>来自crate:bevy​_​render ↗：汇集全部视图<br/>的动态 Uniform 数据。" }
+  class n4 node_resource
+  class n4 external_node
+  n5@{ shape: cyl, label: "**prepass::PreviousViewUniforms**<br/>来自crate:bevy​_​core​_​pipeline ↗：集中<br/>上传各视图上一帧的相机矩阵。" }
+  class n5 node_resource
+  class n5 external_node
+  n6@{ shape: cyl, label: "**bevy​_​render::globals::GlobalsBuffer**<br/>来自crate:bevy​_​render ↗：向着色器提供<br/>全局时间等 Uniform 数据。" }
+  class n6 node_resource
+  class n6 external_node
+  n7@{ shape: cyl, label: "**bevy​_​render::renderer::RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
+  class n7 node_resource
+  class n7 external_node
+  n8@{ shape: cyl, label: "**prepass::PrepassPipeline**<br/>描述深度等预通道的网格渲染接口。" }
+  class n8 node_resource
+  n9@{ shape: lin-rect, label: "**PrepareBindGroups**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
+  class n9 node_system_set
+  class n9 external_node
+  n10@{ shape: cyl, label: "**bevy​_​render::render​_​resource::**<br/>**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
+  class n10 node_resource
+  class n10 external_node
+  n0 e0@-->|"赋值"| n1
+  class e0 edge_write
+  n2 e1@-->|"调用"| n0
+  class e1 edge_registration
+  n3 e2@--> n0
+  class e2 edge_read
+  n4 e3@--> n0
+  class e3 edge_read
+  n0 e4@-->|"可变访问"| n1
+  class e4 edge_write
+  n5 e5@--> n0
+  class e5 edge_read
+  n6 e6@--> n0
+  class e6 edge_read
+  n7 e7@--> n0
+  class e7 edge_read
+  n8 e8@--> n0
+  class e8 edge_read
+  n9 e9@-->|"集合成员"| n0
+  class e9 edge_set_membership
+  n10 e10@--> n0
+  class e10 edge_read
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }

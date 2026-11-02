@@ -1,0 +1,107 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: bevy_render::render_phase::ViewSortedRenderPhases#lt;bevy_core_pipeline::core_3d::Transparent3d#gt; · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef external_node stroke-dasharray:6 4
+  subgraph layout_card_n0[" "]
+  n0@{ shape: cyl, label: "**bevy​_​render::render​_​phase::**<br/>**ViewSortedRenderPhases#lt;bevy​_​core​_​**<br/>**pipeline::core​_​3d::Transparent3d#gt;**<br/>汇集各视图需要排序的绘制指令。" }
+  class n0 node_resource
+  end
+  style layout_card_n0 fill:none,stroke:none
+  n1@{ shape: rounded, label: "**bevy​_​core​_​pipeline::core​_​3d::**<br/>**extract​_​core​_​3d​_​camera​_​phases**<br/>来自crate:bevy​_​core​_​pipeline ↗：为活<br/>动三维相机准备主渲染阶段。" }
+  class n1 node_system
+  class n1 external_node
+  n2@{ shape: rounded, label: "**bevy​_​gizmos​_​render::pipeline​_​3d::**<br/>**queue​_​line​_​joint​_​gizmos​_​3d**<br/>来自crate:bevy​_​gizmos​_​render ↗：将三<br/>维 Gizmo 折线接头加入透明阶段。" }
+  class n2 node_system
+  class n2 external_node
+  n3@{ shape: rounded, label: "**bevy​_​core​_​pipeline::core​_​3d::main​_​**<br/>**transparent​_​pass​_​3d​_​node::main​_​**<br/>**transparent​_​pass​_​3d**<br/>来自crate:bevy​_​core​_​pipeline ↗：绘制<br/>三维透明物体并保护 OIT 链表状态。" }
+  class n3 node_system
+  class n3 external_node
+  n4@{ shape: rounded, label: "**bevy​_​gizmos​_​render::pipeline​_​3d::**<br/>**queue​_​line​_​gizmos​_​3d**<br/>来自crate:bevy​_​gizmos​_​render ↗：将三<br/>维 Gizmo 线列表和线条带加入透明阶段。" }
+  class n4 node_system
+  class n4 external_node
+  n5@{ shape: rounded, label: "**bevy​_​pbr::transmission::texture::**<br/>**prepare​_​core​_​3d​_​transmission​_​**<br/>**textures**<br/>来自crate:bevy​_​pbr ↗：为需要多步透射<br/>的视图准备场景颜色拷贝纹理。" }
+  class n5 node_system
+  class n5 external_node
+  n6@{ shape: rounded, label: "**bevy​_​render::init​_​gpu​_​resource#lt;bevy​_​**<br/>**render::render​_​phase::**<br/>**ViewSortedRenderPhases#lt;bevy​_​core​_​**<br/>**pipeline::core​_​3d::Transparent3d#gt;#gt;**<br/>构造并插入渲染所需资源。" }
+  class n6 node_system
+  n7@{ shape: rounded, label: "**bevy​_​render::render​_​phase::sort​_​**<br/>**phase​_​system#lt;bevy​_​core​_​pipeline::**<br/>**core​_​3d::Transparent3d#gt;**<br/>按各视图重新计算并排序阶段绘制项。" }
+  class n7 node_system
+  n8@{ shape: rounded, label: "**bevy​_​render::batching::gpu​_​**<br/>**preprocessing::batch​_​and​_​prepare​_​**<br/>**sorted​_​render​_​phase#lt;bevy​_​core​_​**<br/>**pipeline::core​_​3d::Transparent3d,**<br/>**bevy​_​pbr::render::mesh::**<br/>**MeshPipeline#gt;**<br/>按已有绘制顺序合并 GPU 预处理阶段批次。" }
+  class n8 node_system
+  n9@{ shape: rounded, label: "**bevy​_​pbr::material::queue​_​material​_​**<br/>**meshes**<br/>来自crate:bevy​_​pbr ↗：按材质模式把可<br/>见网格加入相应绘制阶段。" }
+  class n9 node_system
+  class n9 external_node
+  n10@{ shape: rounded, label: "**bevy​_​pbr::material::specialize​_​**<br/>**material​_​meshes**<br/>来自crate:bevy​_​pbr ↗：为变化的可见网<br/>格生成并缓存材质专用管线。" }
+  class n10 node_system
+  class n10 external_node
+  n11@{ shape: rounded, label: "**bevy​_​render::batching::no​_​gpu​_​**<br/>**preprocessing::batch​_​and​_​prepare​_​**<br/>**sorted​_​render​_​phase#lt;bevy​_​core​_​**<br/>**pipeline::core​_​3d::Transparent3d,**<br/>**bevy​_​pbr::render::mesh::**<br/>**MeshPipeline#gt;**<br/>按绘制顺序在 CPU 路径上合并兼容批次。" }
+  class n11 node_system
+  n1 e0@-->|"可变访问"| n0
+  class e0 edge_write
+  n2 e1@-->|"可变访问"| n0
+  class e1 edge_write
+  n0 e2@--> n3
+  class e2 edge_read
+  n4 e3@-->|"可变访问"| n0
+  class e3 edge_write
+  n0 e4@--> n5
+  class e4 edge_read
+  n6 e5@-->|"插入"| n0
+  class e5 edge_write
+  n7 e6@-->|"可变访问"| n0
+  class e6 edge_write
+  n8 e7@-->|"可变访问"| n0
+  class e7 edge_write
+  n9 e8@-->|"可变访问"| n0
+  class e8 edge_write
+  n0 e9@--> n10
+  class e9 edge_read
+  n11 e10@-->|"可变访问"| n0
+  class e10 edge_write
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }

@@ -1,0 +1,65 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: avian3d::dynamics::solver::plugin::store_contact_impulses · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**avian3d::dynamics::solver::plugin::**<br/>**store​_​contact​_​impulses**<br/>保存已求得的接触冲量供下一轮热启动。" }
+  class n0 node_system
+  n1@{ shape: cyl, label: "**dynamics::solver::diagnostics::**<br/>**SolverDiagnostics**<br/>记录物理求解各阶段耗时。" }
+  class n1 node_resource
+  n2@{ shape: cyl, label: "**collision::contact​_​types::contact​_​**<br/>**graph::ContactGraph**<br/>维护碰撞体接触对及其碰撞数据。" }
+  class n2 node_resource
+  n3@{ shape: lin-rect, label: "**StoreContactImpulses**<br/>组织约束求解的准备、子步与回写。" }
+  class n3 node_system_set
+  n4@{ shape: cyl, label: "**dynamics::solver::constraint​_​graph::**<br/>**ConstraintGraph**<br/>为并行接触求解维护约束着色图。" }
+  class n4 node_resource
+  n0 e0@-->|"赋值"| n1
+  class e0 edge_write
+  n0 e1@-->|"可变访问"| n2
+  class e1 edge_write
+  n3 e2@-->|"集合成员"| n0
+  class e2 edge_set_membership
+  n0 e3@-->|"可变访问"| n1
+  class e3 edge_write
+  n0 e4@-->|"可变访问"| n4
+  class e4 edge_write
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }

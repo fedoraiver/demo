@@ -184,7 +184,7 @@ function clusterLabel(group, theme) {
   const padding = Math.ceil(theme.clusterLabelMargin + scheduleLabelLongestLine(label) * theme.fontSize * theme.fontMetricMarginPerCharacter);
   const escaped = scheduleLabelLines(label).map(line => line.replace(/[&<>"]/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[char])).join('<BR/>');
   // cluster.margin 不撑宽由标题决定的最小边界；透明侧单元格只在布局前增加水平余量，原模型文字不变。
-  return { html: '<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0" CELLPADDING="0" BGCOLOR="' + theme.systemSet.fill + '"><TR><TD WIDTH="' + padding + '"></TD><TD>' + escaped + '</TD><TD WIDTH="' + padding + '"></TD></TR></TABLE>' };
+  return { html: '<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0" CELLPADDING="0" BGCOLOR="' + theme.systemSet.fill + '"><TR><TD WIDTH="' + padding + '"></TD><TD CELLPADDING="' + theme.clusterLabelPadding + '">' + escaped + '</TD><TD WIDTH="' + padding + '"></TD></TR></TABLE>' };
 }
 
 export function scheduleGraphInput(model, theme = null) {
@@ -202,7 +202,7 @@ export function scheduleGraphInput(model, theme = null) {
     }) },
     nodes: group.nodes.map(name => nodeInput(nodes.get(name))), subgraphs: group.subgraphs.map(name => subgraphInput(groups.get(name))),
   });
-  return { name: model.name, directed: model.directed, strict: model.strict, graphAttributes: { ...model.attributes, ...common, ...(theme ? { bgcolor: theme.background } : {}) },
+  return { name: model.name, directed: model.directed, strict: model.strict, graphAttributes: { ...model.attributes, ...common, ...(theme ? { bgcolor: theme.background, splines: theme.splines } : {}) },
     nodes: model.nodes.map(nodeInput), edges: model.edges.map(edge => ({ tail: edge.tail, head: edge.head, attributes: {
       ...edge.attributes, ...(theme ? { ...common, color: theme.edge.stroke, penwidth: String(theme.edge.width) } : {}),
     } })), subgraphs: model.subgraphs.filter(group => !parents.has(group.name)).map(subgraphInput) };

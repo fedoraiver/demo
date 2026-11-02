@@ -1,0 +1,137 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: audio::messages::SoundRequest · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_observer fill:#F4F1F9,stroke:#7B4DB2,stroke-width:1.6px,color:#1F3340
+  classDef node_message fill:#EDF4F6,stroke:#247B91,stroke-width:1.6px,color:#1F3340
+  classDef edge_publish stroke:#247B91,stroke-width:1.8px,stroke-dasharray:10 4 2 4
+  classDef edge_consume stroke:#247B91,stroke-width:1.8px,stroke-dasharray:2 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: lean-r, label: "**audio::messages::SoundRequest**<br/>业务实体只用于日志和节流，不持有其组件引<br/>用，实体销毁后消息仍可被消费。" }
+  class n0 node_message
+  n1@{ shape: rounded, label: "**demo::item​_​interaction::audio​_​**<br/>**events::warn​_​hold​_​strain**<br/>来自item​_​interaction ↗：持续偏离实际<br/>握点时提示一次，误差恢复后允许下一次告<br/>警。" }
+  class n1 node_system
+  class n1 external_node
+  n2@{ shape: hex, label: "**demo::ui::navigation::next**<br/>来自ui ↗：循环选择下一个可操作菜单按<br/>钮。" }
+  class n2 node_observer
+  class n2 external_node
+  n3@{ shape: hex, label: "**demo::ui::navigation::next**<br/>来自ui ↗：循环选择下一个可操作菜单按<br/>钮。" }
+  class n3 node_observer
+  class n3 external_node
+  n4@{ shape: hex, label: "**demo::ui::navigation::next**<br/>来自ui ↗：循环选择下一个可操作菜单按<br/>钮。" }
+  class n4 node_observer
+  class n4 external_node
+  n5@{ shape: rounded, label: "**demo::item​_​interaction::audio​_​**<br/>**events::emit​_​parcel​_​land**<br/>来自item​_​interaction ↗：识别自由物品<br/>落地并发出声音请求。" }
+  class n5 node_system
+  class n5 external_node
+  n6@{ shape: hex, label: "**demo::ui::navigation::previous**<br/>来自ui ↗：循环选择上一个可操作菜单按<br/>钮。" }
+  class n6 node_observer
+  class n6 external_node
+  n7@{ shape: hex, label: "**demo::ui::navigation::previous**<br/>来自ui ↗：循环选择上一个可操作菜单按<br/>钮。" }
+  class n7 node_observer
+  class n7 external_node
+  n8@{ shape: rounded, label: "**demo::ui::requests::handle​_​requests**<br/>来自ui ↗：每帧只消费一项语义请求，避免<br/>鼠标与确认键同时激活，或旧页面动作穿过页<br/>面切换。" }
+  class n8 node_system
+  class n8 external_node
+  n9@{ shape: hex, label: "**demo::ui::navigation::previous**<br/>来自ui ↗：循环选择上一个可操作菜单按<br/>钮。" }
+  class n9 node_observer
+  class n9 external_node
+  n10@{ shape: rounded, label: "**demo::ui::pointer::pointer​_​**<br/>**interaction**<br/>来自ui ↗：Bevy 原生 UI 已完成按钮命<br/>中；这里只读取缓冲的按下事件，不另读<br/>MouseButton。" }
+  class n10 node_system
+  class n10 external_node
+  n11@{ shape: rounded, label: "**demo::audio::playback::play​_​requests**<br/>按有效音量与播放策略处理短音请求。" }
+  class n11 node_system
+  n1 e0@-->|"可变访问"| n0
+  class e0 edge_publish
+  n2 e1@-->|"可变访问"| n0
+  class e1 edge_publish
+  n3 e2@-->|"可变访问"| n0
+  class e2 edge_publish
+  n4 e3@-->|"可变访问"| n0
+  class e3 edge_publish
+  n2 e4@-->|"消息"| n0
+  class e4 edge_publish
+  n5 e5@-->|"可变访问"| n0
+  class e5 edge_publish
+  n6 e6@-->|"可变访问"| n0
+  class e6 edge_publish
+  n6 e7@-->|"消息"| n0
+  class e7 edge_publish
+  n1 e8@-->|"消息"| n0
+  class e8 edge_publish
+  n4 e9@-->|"消息"| n0
+  class e9 edge_publish
+  n7 e10@-->|"消息"| n0
+  class e10 edge_publish
+  n8 e11@-->|"消息"| n0
+  class e11 edge_publish
+  n9 e12@-->|"消息"| n0
+  class e12 edge_publish
+  n7 e13@-->|"可变访问"| n0
+  class e13 edge_publish
+  n10 e14@-->|"可变访问"| n0
+  class e14 edge_publish
+  n10 e15@-->|"消息"| n0
+  class e15 edge_publish
+  n8 e16@-->|"可变访问"| n0
+  class e16 edge_publish
+  n3 e17@-->|"消息"| n0
+  class e17 edge_publish
+  n9 e18@-->|"可变访问"| n0
+  class e18 edge_publish
+  n5 e19@-->|"消息"| n0
+  class e19 edge_publish
+  n0 e20@--> n11
+  class e20 edge_consume
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: bumpX }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e17@{ curve: bumpX }
+  e18@{ curve: basis }
+  e19@{ curve: basis }

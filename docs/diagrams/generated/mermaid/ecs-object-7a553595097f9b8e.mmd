@@ -1,0 +1,58 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: bevy_sprite_render::mesh2d::material::initialize_material2d_shaders#lt;bevy_sprite_render::mesh2d::color_material::ColorMaterial#gt; · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef edge_order stroke:#334155,stroke-width:2px
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::**<br/>**material::initialize​_​material2d​_​**<br/>**shaders#lt;bevy​_​sprite​_​render::mesh2d::**<br/>**color​_​material::ColorMaterial#gt;**<br/>解析二维材质的自定义顶点与片元着色器。" }
+  class n0 node_system
+  n1@{ shape: cyl, label: "**mesh2d::material::**<br/>**Material2dShaders#lt;mesh2d::color​_​**<br/>**material::ColorMaterial#gt;**<br/>缓存具体二维材质类型的自定义着色器句柄。" }
+  class n1 node_resource
+  n2@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::mesh::**<br/>**load​_​mesh2d​_​bindings**<br/>按运行设备能力加载二维网格绑定着色器。" }
+  class n2 node_system
+  n3@{ shape: cyl, label: "**bevy​_​asset::AssetServer**<br/>来自crate:bevy​_​asset ↗：加载资产并追<br/>踪加载状态。" }
+  class n3 node_resource
+  class n3 external_node
+  n0 e0@-->|"插入"| n1
+  class e0 edge_write
+  n2 e1@-->|"先于"| n0
+  class e1 edge_order
+  n3 e2@--> n0
+  class e2 edge_read
+  e1@{ curve: basis }
+  e2@{ curve: basis }

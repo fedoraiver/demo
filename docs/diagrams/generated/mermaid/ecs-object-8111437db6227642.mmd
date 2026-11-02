@@ -1,0 +1,72 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: demo::audio::mix::sync_voice_volumes · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_plugin fill:#F1F3F6,stroke:#4A6389,stroke-width:2.2px,color:#1F3340
+  classDef edge_order stroke:#334155,stroke-width:2px
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**demo::audio::mix::sync​_​voice​_​volumes**<br/>将有效混音与素材音量同步到播放实例。" }
+  class n0 node_system
+  n1@{ shape: cyl, label: "**audio::playback::SoundBank**<br/>短音的句柄生命周期与播放状态集中维护；只<br/>保留每种事件最后一次获准的播放时间。" }
+  class n1 node_resource
+  n2@{ shape: cyl, label: "**audio::mix::AudioMix**<br/>两条业务通道共用的有效混音源；离开设置页<br/>便回到最近成功应用的配置。" }
+  class n2 node_resource
+  n3@{ shape: lin-rect, label: "**PlayTypedChannels**<br/>来自crate:bevy​_​kira​_​audio ↗：组织音<br/>频实例清理与通道播放。" }
+  class n3 node_system_set
+  class n3 external_node
+  n4@{ shape: fr-rect, label: "**audio::GameAudioPlugin**<br/>安装 Kira 输出与音频生命周期；无设备测<br/>试直接使用内部纯数据夹具。" }
+  class n4 node_plugin
+  n5@{ shape: cyl, label: "**bevy​_​asset::Assets#lt;instance::**<br/>**AudioInstance#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
+  class n5 node_resource
+  class n5 external_node
+  n0 e0@-->|"可变访问"| n1
+  class e0 edge_write
+  n2 e1@--> n0
+  class e1 edge_read
+  n3 e2@-->|"先于"| n0
+  class e2 edge_order
+  n4 e3@-->|"调用"| n0
+  class e3 edge_registration
+  n0 e4@-->|"可变访问"| n5
+  class e4 edge_write
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }

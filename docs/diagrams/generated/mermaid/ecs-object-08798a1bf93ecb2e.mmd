@@ -1,0 +1,187 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: bevy_ui::widget::text_input_layout::update_editable_text_layout · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef node_local fill:#F8F5F1,stroke:#AA8752,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_plugin fill:#F1F3F6,stroke:#4A6389,stroke-width:2.2px,color:#1F3340
+  classDef edge_order stroke:#334155,stroke-width:2px
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**bevy​_​ui::widget::text​_​input​_​layout::**<br/>**update​_​editable​_​text​_​layout**<br/>刷新可编辑文本的字形布局和编辑反馈。" }
+  class n0 node_system
+  n1@{ shape: rounded, label: "**bevy​_​ui::ComputedUiRenderTargetInfo**<br/>缓存 UI 目标的尺寸与缩放。" }
+  class n1 node_component
+  n2@{ shape: fr-rect, label: "**bevy​_​ui::UiPlugin**<br/>建立界面布局与内容更新基础。" }
+  class n2 node_plugin
+  n3@{ shape: rounded, label: "**bevy​_​text::TextLayoutInfo**<br/>来自crate:bevy​_​text ↗：保存文字块完成<br/>排版后的缩放、字形位置、文字运行几何及尺<br/>寸" }
+  class n3 node_component
+  class n3 external_node
+  n4@{ shape: cyl, label: "**bevy​_​text::FontAtlasSet**<br/>来自crate:bevy​_​text ↗：保存字体光栅化<br/>结果所在的 FontAtlas 集合" }
+  class n4 node_resource
+  class n4 external_node
+  n5@{ shape: rounded, label: "**bevy​_​text::TextLayout**<br/>来自crate:bevy​_​text ↗：保存文字块的内<br/>部对齐与换行策略" }
+  class n5 node_component
+  class n5 external_node
+  n6@{ shape: rounded, label: "**bevy​_​text::FontHinting**<br/>来自crate:bevy​_​text ↗：选择字形光栅化<br/>时是否启用字体 hinting" }
+  class n6 node_component
+  class n6 external_node
+  n7@{ shape: cyl, label: "**bevy​_​time::Time#lt;bevy​_​time::Real#gt;**<br/>来自crate:bevy​_​time ↗：保存时钟上下<br/>文、帧间隔及累计时间" }
+  class n7 node_resource
+  class n7 external_node
+  n8@{ shape: notch-rect, label: "**Local · cursor​_​timer**<br/>累计可编辑文本光标的闪烁时间。" }
+  class n8 node_local
+  n9@{ shape: rounded, label: "**bevy​_​text::TextFont**<br/>来自crate:bevy​_​text ↗：保存文字段的字<br/>体来源、字号及抗锯齿方式等字体样式" }
+  class n9 node_component
+  class n9 external_node
+  n10@{ shape: lin-rect, label: "**FocusChangeEvents**<br/>来自crate:bevy​_​input​_​focus ↗：组织焦<br/>点输入派发与变化通知。" }
+  class n10 node_system_set
+  class n10 external_node
+  n11@{ shape: rounded, label: "**editing::EditableTextGeneration**<br/>来自crate:bevy​_​text ↗：保存 Parley<br/>排版代数" }
+  class n11 node_component
+  class n11 external_node
+  n12@{ shape: rounded, label: "**editing::EditableText**<br/>来自crate:bevy​_​text ↗：持有 Parley<br/>编辑器、文本、光标及待应用编辑操作" }
+  class n12 node_component
+  class n12 external_node
+  n13@{ shape: rounded, label: "**bevy​_​ui​_​widgets::text​_​input::apply​_​**<br/>**queued​_​select​_​all**<br/>来自crate:bevy​_​ui​_​widgets ↗：在指针<br/>释放时应用延后的文本全选。" }
+  class n13 node_system
+  class n13 external_node
+  n14@{ shape: lin-rect, label: "**AssetEventSystems**<br/>来自crate:bevy​_​asset ↗：发布资产容器<br/>积累的变更消息。" }
+  class n14 node_system_set
+  class n14 external_node
+  n15@{ shape: cyl, label: "**bevy​_​text::FontCx**<br/>来自crate:bevy​_​text ↗：维护字体数据<br/>库、家族解析与字体缓存" }
+  class n15 node_resource
+  class n15 external_node
+  n16@{ shape: cyl, label: "**bevy​_​text::LayoutCx**<br/>来自crate:bevy​_​text ↗：持有 Parley<br/>文字布局上下文" }
+  class n16 node_resource
+  class n16 external_node
+  n17@{ shape: cyl, label: "**bevy​_​text::ScaleCx**<br/>来自crate:bevy​_​text ↗：持有字形缩放上<br/>下文" }
+  class n17 node_resource
+  class n17 external_node
+  n18@{ shape: cyl, label: "**bevy​_​asset::Assets#lt;image::Image#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
+  class n18 node_resource
+  class n18 external_node
+  n19@{ shape: cyl, label: "**bevy​_​text::RemSize**<br/>来自crate:bevy​_​text ↗：保存全局根字号" }
+  class n19 node_resource
+  class n19 external_node
+  n20@{ shape: cyl, label: "**InputFocus**<br/>来自crate:bevy​_​input​_​focus ↗：保存当<br/>前输入焦点实体、待派发的焦点变化及原焦点" }
+  class n20 node_resource
+  class n20 external_node
+  n21@{ shape: lin-rect, label: "**PostLayout**<br/>组织界面交互、布局与堆叠更新。" }
+  class n21 node_system_set
+  n22@{ shape: rounded, label: "**bevy​_​ui​_​widgets::text​_​input::update​_​**<br/>**ime​_​position**<br/>来自crate:bevy​_​ui​_​widgets ↗：把输入<br/>法候选窗口放到当前文字光标下方。" }
+  class n22 node_system
+  class n22 external_node
+  n23@{ shape: notch-rect, label: "**Local · previous​_​focus**<br/>记录上一轮可编辑文本的焦点实体。" }
+  class n23 node_local
+  n1 e0@--> n0
+  class e0 edge_read
+  n2 e1@-->|"调用"| n0
+  class e1 edge_registration
+  n0 e2@-->|"可变访问"| n3
+  class e2 edge_write
+  n0 e3@-->|"可变访问"| n4
+  class e3 edge_write
+  n5 e4@--> n0
+  class e4 edge_read
+  n6 e5@--> n0
+  class e5 edge_read
+  n7 e6@--> n0
+  class e6 edge_read
+  n0 e7@-->|"可变访问"| n8
+  class e7 edge_write
+  n9 e8@--> n0
+  class e8 edge_read
+  n0 e9@-->|"先于"| n10
+  class e9 edge_order
+  n0 e10@-->|"可变访问"| n11
+  class e10 edge_write
+  n0 e11@-->|"可变访问"| n12
+  class e11 edge_write
+  n13 e12@-->|"先于"| n0
+  class e12 edge_order
+  n0 e13@-->|"先于"| n14
+  class e13 edge_order
+  n0 e14@-->|"可变访问"| n15
+  class e14 edge_write
+  n0 e15@-->|"可变访问"| n16
+  class e15 edge_write
+  n0 e16@-->|"可变访问"| n17
+  class e16 edge_write
+  n0 e17@-->|"可变访问"| n18
+  class e17 edge_write
+  n0 e18@-->|"赋值"| n3
+  class e18 edge_write
+  n19 e19@--> n0
+  class e19 edge_read
+  n20 e20@--> n0
+  class e20 edge_read
+  n0 e21@-->|"赋值"| n11
+  class e21 edge_write
+  n21 e22@-->|"集合成员"| n0
+  class e22 edge_set_membership
+  n0 e23@-->|"先于"| n22
+  class e23 edge_order
+  n0 e24@-->|"可变访问"| n23
+  class e24 edge_write
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e17@{ curve: basis }
+  e18@{ curve: basis }
+  e19@{ curve: basis }
+  e20@{ curve: basis }
+  e21@{ curve: basis }
+  e22@{ curve: basis }
+  e23@{ curve: basis }
+  e24@{ curve: basis }

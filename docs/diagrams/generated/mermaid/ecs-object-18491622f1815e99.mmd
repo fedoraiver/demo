@@ -1,0 +1,475 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: bevy_picking::events::pointer_events · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef node_local fill:#F8F5F1,stroke:#AA8752,stroke-width:1.6px,color:#1F3340
+  classDef node_message fill:#EDF4F6,stroke:#247B91,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_plugin fill:#F1F3F6,stroke:#4A6389,stroke-width:2.2px,color:#1F3340
+  classDef edge_order stroke:#334155,stroke-width:2px
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_publish stroke:#247B91,stroke-width:1.8px,stroke-dasharray:10 4 2 4
+  classDef edge_consume stroke:#247B91,stroke-width:1.8px,stroke-dasharray:2 4
+  classDef edge_emit stroke:#B66B2D,stroke-width:1.8px
+  classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**bevy​_​picking::events::pointer​_​events**<br/>根据悬停与按钮状态派发指针交互事件。" }
+  class n0 node_system
+  n1@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;events::**<br/>**PointerRelease#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  class n1 node_resource
+  class n1 external_node
+  n2@{ shape: lean-r, label: "**events::PointerDragEnd**<br/>通知拖拽按钮释放及最终累计位移。" }
+  class n2 node_message
+  n3@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;events::**<br/>**PointerScroll#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  class n3 node_resource
+  class n3 external_node
+  n4@{ shape: notch-rect, label: "**Local · sent​_​enter**<br/>去重本轮指针进入事件的接收实体。" }
+  class n4 node_local
+  n5@{ shape: cyl, label: "**hover::PreviousHoverMap**<br/>保留上一轮指针悬停目标。" }
+  class n5 node_resource
+  n6@{ shape: lean-r, label: "**events::PointerDragOver**<br/>通知拖拽对象正悬停于接收目标。" }
+  class n6 node_message
+  n7@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;events::**<br/>**PointerMove#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  class n7 node_resource
+  class n7 external_node
+  n8@{ shape: lean-r, label: "**events::PointerCancel**<br/>通知指针取消并丢弃当前交互状态。" }
+  class n8 node_message
+  n9@{ shape: cyl, label: "**pointer::PointerMap**<br/>索引稳定指针编号对应的指针实体。" }
+  class n9 node_resource
+  n10@{ shape: lean-r, label: "**events::PointerScroll**<br/>通知目标上的横向和纵向滚动输入。" }
+  class n10 node_message
+  n11@{ shape: lean-r, label: "**events::PointerMove**<br/>通知目标上的指针移动及屏幕位移。" }
+  class n11 node_message
+  n12@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;events::**<br/>**PointerOut#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  class n12 node_resource
+  class n12 external_node
+  n13@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;events::**<br/>**PointerDragEnter#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  class n13 node_resource
+  class n13 external_node
+  n14@{ shape: lean-r, label: "**events::PointerDragLeave**<br/>通知拖拽对象离开接收目标。" }
+  class n14 node_message
+  n15@{ shape: lean-r, label: "**events::PointerDragDrop**<br/>通知被拖拽实体释放到接收目标。" }
+  class n15 node_message
+  n16@{ shape: lean-r, label: "**events::PointerClick**<br/>通知同一目标的成对按压和释放点击。" }
+  class n16 node_message
+  n17@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;events::**<br/>**PointerClick#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  class n17 node_resource
+  class n17 external_node
+  n18@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;events::**<br/>**PointerDragStart#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  class n18 node_resource
+  class n18 external_node
+  n19@{ shape: lean-r, label: "**events::PointerRelease**<br/>通知目标上的指针按钮释放。" }
+  class n19 node_message
+  n20@{ shape: lean-r, label: "**events::PointerDragEnter**<br/>通知携带拖拽对象的指针进入接收目标。" }
+  class n20 node_message
+  n21@{ shape: rounded, label: "**bevy​_​ecs::hierarchy::ChildOf**<br/>来自crate:bevy​_​ecs ↗：保存当前实体的<br/>父实体身份" }
+  class n21 node_component
+  class n21 external_node
+  n22@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;events::**<br/>**PointerOver#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  class n22 node_resource
+  class n22 external_node
+  n23@{ shape: lean-r, label: "**events::PointerLeave**<br/>通知指针离开目标或其独有祖先范围。" }
+  class n23 node_message
+  n24@{ shape: cyl, label: "**PickingSettings**<br/>配置指针拾取流程行为。" }
+  class n24 node_resource
+  n25@{ shape: lean-r, label: "**events::PointerOut**<br/>通知指针离开目标并向全部祖先传播。" }
+  class n25 node_message
+  n26@{ shape: lean-r, label: "**events::PointerDrag**<br/>通知正在拖拽的目标及累计和本次位移。" }
+  class n26 node_message
+  n27@{ shape: lean-r, label: "**bevy​_​picking::events::PointerPress**<br/>通知目标上的指针按钮按下及连按次数。" }
+  class n27 node_message
+  n28@{ shape: cyl, label: "**bevy​_​ecs::message::**<br/>**Messages#lt;pointer::PointerInput#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  class n28 node_resource
+  class n28 external_node
+  n29@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;events::**<br/>**PointerDragDrop#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  class n29 node_resource
+  class n29 external_node
+  n30@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;events::**<br/>**PointerDragLeave#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  class n30 node_resource
+  class n30 external_node
+  n31@{ shape: lean-r, label: "**events::PointerEnter**<br/>通知指针进入目标或其独有祖先范围。" }
+  class n31 node_message
+  n32@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;events::**<br/>**PointerLeave#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  class n32 node_resource
+  class n32 external_node
+  n33@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;events::**<br/>**PointerPress#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  class n33 node_resource
+  class n33 external_node
+  n34@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;events::**<br/>**PointerDragOver#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  class n34 node_resource
+  class n34 external_node
+  n35@{ shape: fr-rect, label: "**InteractionPlugin**<br/>生成并冒泡指针交互事件。" }
+  class n35 node_plugin
+  n36@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;events::**<br/>**PointerDrag#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  class n36 node_resource
+  class n36 external_node
+  n37@{ shape: lean-r, label: "**events::PointerOver**<br/>通知指针进入目标并向全部祖先传播。" }
+  class n37 node_message
+  n38@{ shape: cyl, label: "**hover::HoverMap**<br/>保存各指针当前可交互的悬停目标。" }
+  class n38 node_resource
+  n39@{ shape: rounded, label: "**bevy​_​picking::pointer::**<br/>**PointerLocation**<br/>保存指针当前目标及该目标上的位置" }
+  class n39 node_component
+  n40@{ shape: notch-rect, label: "**Local · hovered​_​entity​_​ancestors**<br/>缓存当前与前轮指针悬停祖先集合。" }
+  class n40 node_local
+  n41@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;events::**<br/>**PointerCancel#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  class n41 node_resource
+  class n41 external_node
+  n42@{ shape: lean-r, label: "**events::PointerDragStart**<br/>通知按下后移动开始拖拽目标。" }
+  class n42 node_message
+  n43@{ shape: lin-rect, label: "**Hover**<br/>组织指针拾取和悬停处理阶段。" }
+  class n43 node_system_set
+  n44@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;events::**<br/>**PointerDragEnd#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  class n44 node_resource
+  class n44 external_node
+  n45@{ shape: cyl, label: "**events::PointerState**<br/>保存各指针按钮的按下和拖动状态。" }
+  class n45 node_resource
+  n46@{ shape: rounded, label: "**bevy​_​picking::hover::update​_​is​_​**<br/>**hovered**<br/>把鼠标悬停传播到实体祖先。" }
+  class n46 node_system
+  n47@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;events::**<br/>**PointerEnter#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  class n47 node_resource
+  class n47 external_node
+  n48@{ shape: notch-rect, label: "**Local · sent​_​leave**<br/>去重本轮指针离开事件的接收实体。" }
+  class n48 node_local
+  n49@{ shape: lean-r, label: "**pointer::PointerInput**<br/>传递拾取指针输入动作。" }
+  class n49 node_message
+  n50@{ shape: rounded, label: "**bevy​_​picking::hover::update​_​is​_​**<br/>**directly​_​hovered**<br/>更新鼠标直接悬停的实体标记。" }
+  class n50 node_system
+  n0 e0@-->|"可变访问"| n1
+  class e0 edge_write
+  n0 e1@-->|"触发事件"| n2
+  class e1 edge_emit
+  n0 e2@-->|"赋值"| n3
+  class e2 edge_write
+  n0 e3@-->|"可变访问"| n4
+  class e3 edge_write
+  n5 e4@--> n0
+  class e4 edge_read
+  n0 e5@-->|"触发事件"| n6
+  class e5 edge_emit
+  n0 e6@-->|"赋值"| n7
+  class e6 edge_write
+  n0 e7@-->|"触发事件"| n8
+  class e7 edge_emit
+  n0 e8@-->|"消息"| n2
+  class e8 edge_publish
+  n9 e9@--> n0
+  class e9 edge_read
+  n0 e10@-->|"可变访问"| n10
+  class e10 edge_publish
+  n0 e11@-->|"触发事件"| n11
+  class e11 edge_emit
+  n0 e12@-->|"可变访问"| n12
+  class e12 edge_write
+  n0 e13@-->|"可变访问"| n13
+  class e13 edge_write
+  n0 e14@-->|"消息"| n14
+  class e14 edge_publish
+  n0 e15@-->|"消息"| n15
+  class e15 edge_publish
+  n0 e16@-->|"可变访问"| n11
+  class e16 edge_publish
+  n0 e17@-->|"可变访问"| n16
+  class e17 edge_publish
+  n0 e18@-->|"可变访问"| n17
+  class e18 edge_write
+  n0 e19@-->|"赋值"| n18
+  class e19 edge_write
+  n0 e20@-->|"赋值"| n1
+  class e20 edge_write
+  n0 e21@-->|"可变访问"| n19
+  class e21 edge_publish
+  n0 e22@-->|"消息"| n10
+  class e22 edge_publish
+  n0 e23@-->|"消息"| n20
+  class e23 edge_publish
+  n21 e24@--> n0
+  class e24 edge_read
+  n0 e25@-->|"可变访问"| n22
+  class e25 edge_write
+  n0 e26@-->|"消息"| n23
+  class e26 edge_publish
+  n24 e27@--> n0
+  class e27 edge_read
+  n0 e28@-->|"消息"| n25
+  class e28 edge_publish
+  n0 e29@-->|"触发事件"| n16
+  class e29 edge_emit
+  n0 e30@-->|"触发事件"| n26
+  class e30 edge_emit
+  n0 e31@-->|"可变访问"| n27
+  class e31 edge_publish
+  n0 e32@-->|"可变访问"| n8
+  class e32 edge_publish
+  n28 e33@--> n0
+  class e33 edge_read
+  n0 e34@-->|"赋值"| n29
+  class e34 edge_write
+  n0 e35@-->|"赋值"| n30
+  class e35 edge_write
+  n0 e36@-->|"可变访问"| n31
+  class e36 edge_publish
+  n0 e37@-->|"可变访问"| n18
+  class e37 edge_write
+  n0 e38@-->|"可变访问"| n6
+  class e38 edge_publish
+  n0 e39@-->|"可变访问"| n20
+  class e39 edge_publish
+  n0 e40@-->|"可变访问"| n32
+  class e40 edge_write
+  n0 e41@-->|"触发事件"| n15
+  class e41 edge_emit
+  n0 e42@-->|"赋值"| n33
+  class e42 edge_write
+  n0 e43@-->|"赋值"| n34
+  class e43 edge_write
+  n0 e44@-->|"赋值"| n22
+  class e44 edge_write
+  n0 e45@-->|"消息"| n19
+  class e45 edge_publish
+  n35 e46@-->|"调用"| n0
+  class e46 edge_registration
+  n0 e47@-->|"赋值"| n36
+  class e47 edge_write
+  n0 e48@-->|"可变访问"| n23
+  class e48 edge_publish
+  n0 e49@-->|"触发事件"| n10
+  class e49 edge_emit
+  n0 e50@-->|"可变访问"| n37
+  class e50 edge_publish
+  n38 e51@--> n0
+  class e51 edge_read
+  n39 e52@--> n0
+  class e52 edge_read
+  n0 e53@-->|"消息"| n16
+  class e53 edge_publish
+  n0 e54@-->|"可变访问"| n40
+  class e54 edge_write
+  n0 e55@-->|"可变访问"| n41
+  class e55 edge_write
+  n0 e56@-->|"触发事件"| n42
+  class e56 edge_emit
+  n0 e57@-->|"赋值"| n12
+  class e57 edge_write
+  n0 e58@-->|"触发事件"| n31
+  class e58 edge_emit
+  n0 e59@-->|"可变访问"| n29
+  class e59 edge_write
+  n0 e60@-->|"触发事件"| n19
+  class e60 edge_emit
+  n43 e61@-->|"集合成员"| n0
+  class e61 edge_set_membership
+  n0 e62@-->|"赋值"| n44
+  class e62 edge_write
+  n0 e63@-->|"可变访问"| n14
+  class e63 edge_publish
+  n0 e64@-->|"可变访问"| n45
+  class e64 edge_write
+  n0 e65@-->|"触发事件"| n23
+  class e65 edge_emit
+  n0 e66@-->|"消息"| n27
+  class e66 edge_publish
+  n0 e67@-->|"消息"| n42
+  class e67 edge_publish
+  n0 e68@-->|"可变访问"| n33
+  class e68 edge_write
+  n0 e69@-->|"可变访问"| n26
+  class e69 edge_publish
+  n0 e70@-->|"赋值"| n13
+  class e70 edge_write
+  n0 e71@-->|"消息"| n11
+  class e71 edge_publish
+  n0 e72@-->|"消息"| n6
+  class e72 edge_publish
+  n0 e73@-->|"消息"| n37
+  class e73 edge_publish
+  n0 e74@-->|"消息"| n31
+  class e74 edge_publish
+  n0 e75@-->|"消息"| n26
+  class e75 edge_publish
+  n0 e76@-->|"触发事件"| n14
+  class e76 edge_emit
+  n0 e77@-->|"触发事件"| n27
+  class e77 edge_emit
+  n46 e78@-->|"先于"| n0
+  class e78 edge_order
+  n0 e79@-->|"可变访问"| n25
+  class e79 edge_publish
+  n0 e80@-->|"可变访问"| n3
+  class e80 edge_write
+  n0 e81@-->|"可变访问"| n42
+  class e81 edge_publish
+  n0 e82@-->|"可变访问"| n47
+  class e82 edge_write
+  n0 e83@-->|"消息"| n8
+  class e83 edge_publish
+  n0 e84@-->|"赋值"| n47
+  class e84 edge_write
+  n0 e85@-->|"可变访问"| n48
+  class e85 edge_write
+  n0 e86@-->|"可变访问"| n44
+  class e86 edge_write
+  n0 e87@-->|"可变访问"| n36
+  class e87 edge_write
+  n0 e88@-->|"可变访问"| n15
+  class e88 edge_publish
+  n0 e89@-->|"可变访问"| n30
+  class e89 edge_write
+  n49 e90@--> n0
+  class e90 edge_consume
+  n0 e91@-->|"赋值"| n32
+  class e91 edge_write
+  n0 e92@-->|"可变访问"| n7
+  class e92 edge_write
+  n50 e93@-->|"先于"| n0
+  class e93 edge_order
+  n0 e94@-->|"触发事件"| n37
+  class e94 edge_emit
+  n0 e95@-->|"触发事件"| n20
+  class e95 edge_emit
+  n0 e96@-->|"赋值"| n41
+  class e96 edge_write
+  n0 e97@-->|"触发事件"| n25
+  class e97 edge_emit
+  n0 e98@-->|"赋值"| n17
+  class e98 edge_write
+  n0 e99@-->|"可变访问"| n34
+  class e99 edge_write
+  n0 e100@-->|"可变访问"| n2
+  class e100 edge_publish
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e17@{ curve: basis }
+  e18@{ curve: basis }
+  e19@{ curve: basis }
+  e20@{ curve: basis }
+  e21@{ curve: basis }
+  e22@{ curve: basis }
+  e23@{ curve: basis }
+  e24@{ curve: basis }
+  e25@{ curve: bumpX }
+  e26@{ curve: basis }
+  e27@{ curve: basis }
+  e28@{ curve: basis }
+  e29@{ curve: basis }
+  e30@{ curve: basis }
+  e31@{ curve: basis }
+  e32@{ curve: basis }
+  e33@{ curve: basis }
+  e34@{ curve: basis }
+  e35@{ curve: basis }
+  e36@{ curve: basis }
+  e37@{ curve: basis }
+  e38@{ curve: basis }
+  e39@{ curve: basis }
+  e40@{ curve: basis }
+  e41@{ curve: basis }
+  e42@{ curve: basis }
+  e43@{ curve: basis }
+  e44@{ curve: basis }
+  e45@{ curve: basis }
+  e46@{ curve: bumpX }
+  e47@{ curve: basis }
+  e48@{ curve: basis }
+  e49@{ curve: basis }
+  e50@{ curve: basis }
+  e51@{ curve: basis }
+  e52@{ curve: basis }
+  e53@{ curve: basis }
+  e54@{ curve: basis }
+  e55@{ curve: basis }
+  e56@{ curve: basis }
+  e57@{ curve: basis }
+  e58@{ curve: basis }
+  e59@{ curve: basis }
+  e60@{ curve: basis }
+  e61@{ curve: basis }
+  e62@{ curve: basis }
+  e63@{ curve: basis }
+  e64@{ curve: basis }
+  e65@{ curve: basis }
+  e66@{ curve: basis }
+  e67@{ curve: basis }
+  e68@{ curve: basis }
+  e69@{ curve: basis }
+  e70@{ curve: basis }
+  e71@{ curve: basis }
+  e72@{ curve: basis }
+  e73@{ curve: basis }
+  e74@{ curve: basis }
+  e75@{ curve: basis }
+  e76@{ curve: basis }
+  e77@{ curve: basis }
+  e78@{ curve: basis }
+  e79@{ curve: basis }
+  e80@{ curve: basis }
+  e81@{ curve: basis }
+  e82@{ curve: basis }
+  e83@{ curve: basis }
+  e84@{ curve: basis }
+  e85@{ curve: basis }
+  e86@{ curve: basis }
+  e87@{ curve: basis }
+  e88@{ curve: basis }
+  e89@{ curve: basis }
+  e90@{ curve: basis }
+  e91@{ curve: basis }
+  e92@{ curve: basis }
+  e93@{ curve: basis }
+  e94@{ curve: basis }
+  e95@{ curve: basis }
+  e96@{ curve: basis }
+  e97@{ curve: basis }
+  e98@{ curve: basis }
+  e99@{ curve: basis }
+  e100@{ curve: basis }

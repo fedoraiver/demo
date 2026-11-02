@@ -1,0 +1,77 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#object-6ff8e3c14fc913b0-e3{marker-start:url(#object-6ff8e3c14fc913b0_flowchart-v2-pointStart)!important}\n#object-6ff8e3c14fc913b0-e4{marker-start:url(#object-6ff8e3c14fc913b0_flowchart-v2-pointStart)!important}\n#object-6ff8e3c14fc913b0_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: effect_stack::lens_distortion::LensDistortion · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**effect​_​stack::lens​_​distortion::**<br/>**LensDistortion**<br/>配置桶形或枕形镜头畸变。" }
+  class n0 node_component
+  n1@{ shape: rounded, label: "**bevy​_​post​_​process::effect​_​stack::**<br/>**post​_​processing**<br/>组合执行色差、暗角和镜头畸变。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**bevy​_​extract::extract​_​component::**<br/>**extract​_​components#lt;bevy​_​post​_​**<br/>**process::effect​_​stack::lens​_​**<br/>**distortion::LensDistortion, bevy​_​**<br/>**render::RenderApp, ()#gt;**<br/>来自crate:bevy​_​extract ↗：批量同步或<br/>移除子世界的目标组件。" }
+  class n2 node_system
+  class n2 external_node
+  n3@{ shape: rounded, label: "**bevy​_​post​_​process::effect​_​stack::**<br/>**prepare​_​post​_​processing​_​pipelines**<br/>按视图颜色格式准备内置后处理管线。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**bevy​_​post​_​process::effect​_​stack::**<br/>**prepare​_​post​_​processing​_​uniforms**<br/>收集并上传逐视图色差、暗角和畸变参数。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**bevy​_​post​_​process::effect​_​stack::**<br/>**post​_​processing**<br/>组合执行色差、暗角和镜头畸变。" }
+  class n5 node_system
+  n0 e0@--> n1
+  class e0 edge_read
+  n2 e1@-->|"移除"| n0
+  class e1 edge_write
+  n0 e2@-->|"存在性约束"| n3
+  class e2 edge_reference
+  n2 e3@--- n0
+  class e3 edge_read
+  n2 e4@---|"存在性约束"| n0
+  class e4 edge_reference
+  n0 e5@-->|"存在性约束"| n4
+  class e5 edge_reference
+  n0 e6@--> n5
+  class e6 edge_read
+  n0 e7@--> n4
+  class e7 edge_read
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: bumpX }
+  e6@{ curve: basis }
+  e7@{ curve: basis }

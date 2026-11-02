@@ -1,0 +1,73 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: (bevy_ecs::change_detection::params::Res#lt;'_, bevy_enhanced_input::context::instance::ContextInstances#lt;bevy_app::main_schedule::PreUpdate#gt;#gt;, bevy_ecs::system::query::Query#lt;'_, '_, bevy_ecs::world::entity_access::filtered::FilteredEntityRef#lt;'_, '_#gt;, bevy_ecs::query::filter::Without#lt;bevy_enhanced_input::action::fns::ActionFns#gt;#gt;, bevy_ecs::system::query::Query#lt;'_, '_, bevy_ecs::world::entity_access::entity_mut::EntityMut#lt;'_#gt;, (bevy_ecs::query::filter::With#lt;bevy_enhanced_input::action::fns::ActionFns#gt;, bevy_ecs::query::filter::Without#lt;bevy_enhanced_input::context::instance::ContextInstances#lt;bevy_app::main_schedule::PreUpdate#gt;#gt;)#gt;) · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**(bevy​_​ecs::change​_​detection::**<br/>**params::Res#lt;'​_​, bevy​_​enhanced​_​**<br/>**input::context::instance::**<br/>**ContextInstances#lt;bevy​_​app::main​_​**<br/>**schedule::PreUpdate#gt;#gt;, bevy​_​ecs::**<br/>**system::query::Query#lt;'​_​, '​_​, bevy​_​**<br/>**ecs::world::entity​_​access::**<br/>**filtered::FilteredEntityRef#lt;'​_​, '​_​**<br/>**#gt;, bevy​_​ecs::query::filter::**<br/>**Without#lt;bevy​_​enhanced​_​input::**<br/>**action::fns::ActionFns#gt;#gt;, bevy​_​ecs::**<br/>**system::query::Query#lt;'​_​, '​_​, bevy​_​**<br/>**ecs::world::entity​_​access::entity​_​**<br/>**mut::EntityMut#lt;'​_​#gt;, (bevy​_​ecs::**<br/>**query::filter::With#lt;bevy​_​enhanced​_​**<br/>**input::action::fns::ActionFns#gt;,**<br/>**bevy​_​ecs::query::filter::**<br/>**Without#lt;bevy​_​enhanced​_​input::**<br/>**context::instance::**<br/>**ContextInstances#lt;bevy​_​app::main​_​**<br/>**schedule::PreUpdate#gt;#gt;)#gt;)**<br/>把求值结果写入类型化输入动作。" }
+  class n0 node_system
+  n1@{ shape: rounded, label: "**action::fns::ActionFns**<br/>保存动作类型对应的函数指针" }
+  class n1 node_component
+  n2@{ shape: cyl, label: "**bevy​_​enhanced​_​input::context::**<br/>**instance::ContextInstances#lt;bevy::**<br/>**bevy​_​app::PreUpdate#gt;**<br/>保存某一 Schedule 的上下文实例及其优先<br/>顺序" }
+  class n2 node_resource
+  n3@{ shape: rounded, label: "**bevy​_​enhanced​_​input::context::**<br/>**instance::ContextInstances#lt;bevy::**<br/>**bevy​_​app::PreUpdate#gt;**<br/>保存某一 Schedule 的上下文实例及其优先<br/>顺序" }
+  class n3 node_component
+  n4@{ shape: rounded, label: "**action::value::ActionValue**<br/>以布尔、一维、二维或三维轴的形式保存类型<br/>擦除的动作值" }
+  class n4 node_component
+  n5@{ shape: lin-rect, label: "**Apply**<br/>组织动作求值、值应用与事件触发。" }
+  class n5 node_system_set
+  n1 e0@--> n0
+  class e0 edge_read
+  n2 e1@--> n0
+  class e1 edge_read
+  n3 e2@-->|"存在性约束"| n0
+  class e2 edge_reference
+  n4 e3@--> n0
+  class e3 edge_read
+  n1 e4@-->|"存在性约束"| n0
+  class e4 edge_reference
+  n5 e5@-->|"集合成员"| n0
+  class e5 edge_set_membership
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }

@@ -1,0 +1,103 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#object-be1d1620e6484d08-e7{marker-start:url(#object-be1d1620e6484d08_flowchart-v2-pointStart)!important}\n#object-be1d1620e6484d08_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: dynamics::rigid_body::forces::AccumulatedLocalAcceleration · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_entity fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**dynamics::rigid​_​body::forces::**<br/>**AccumulatedLocalAcceleration**<br/>累积物理步前的局部加速度。" }
+  class n0 node_component
+  n1@{ shape: rounded, label: "**avian3d::dynamics::rigid​_​body::**<br/>**forces::plugin::apply​_​constant​_​**<br/>**local​_​forces**<br/>按总质量把局部恒力转成局部线加速度。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**avian3d::dynamics::rigid​_​body::**<br/>**forces::plugin::apply​_​constant​_​**<br/>**local​_​torques**<br/>按局部惯量把恒定局部扭矩转成角加速度。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**prepare​_​island · 创建模板**<br/>来自scene​_​assembly ↗：为海岛导入几何<br/>创建静态碰撞子体。" }
+  class n3 node_entity
+  class n3 external_node
+  n4@{ shape: rounded, label: "**demo::character::motion::jump​_​**<br/>**characters**<br/>来自character ↗：跳跃只消费一次，通过<br/>冲量改变速度；重力和位置积分全部交给<br/>Avian。" }
+  class n4 node_system
+  class n4 external_node
+  n5@{ shape: rounded, label: "**avian3d::dynamics::rigid​_​body::**<br/>**forces::plugin::apply​_​constant​_​**<br/>**local​_​linear​_​acceleration**<br/>累加刚体局部坐标中的恒定线加速度。" }
+  class n5 node_system
+  n6@{ shape: rounded, label: "**avian3d::dynamics::rigid​_​body::**<br/>**forces::plugin::clear​_​accumulated​_​**<br/>**local​_​acceleration**<br/>清空本轮已变化的局部加速度缓存。" }
+  class n6 node_system
+  n7@{ shape: rounded, label: "**avian3d::dynamics::rigid​_​body::**<br/>**forces::plugin::apply​_​constant​_​**<br/>**local​_​angular​_​acceleration**<br/>累加刚体局部坐标中的恒定角加速度。" }
+  class n7 node_system
+  n8@{ shape: rounded, label: "**avian3d::dynamics::rigid​_​body::**<br/>**forces::plugin::apply​_​local​_​**<br/>**acceleration**<br/>在子步中把局部加速度作用到世界速度。" }
+  class n8 node_system
+  n9@{ shape: rounded, label: "**prepare​_​island · 创建模板**<br/>来自scene​_​assembly ↗：为地图展示<br/>NPC 添加静态碰撞子体。" }
+  class n9 node_entity
+  class n9 external_node
+  n10@{ shape: rounded, label: "**demo::character::motion::move​_​**<br/>**characters**<br/>来自character ↗：用有上限的加速度趋近<br/>目标水平速度，保留碰撞和外部冲量造成的实<br/>际运动。" }
+  class n10 node_system
+  class n10 external_node
+  n1 e0@-->|"可变访问"| n0
+  class e0 edge_write
+  n2 e1@-->|"可变访问"| n0
+  class e1 edge_write
+  n3 e2@-->|"可能包含"| n0
+  class e2 edge_reference
+  n4 e3@-->|"可变访问"| n0
+  class e3 edge_write
+  n5 e4@-->|"可变访问"| n0
+  class e4 edge_write
+  n6 e5@-->|"可变访问"| n0
+  class e5 edge_write
+  n7 e6@-->|"可变访问"| n0
+  class e6 edge_write
+  n6 e7@---|"存在性约束"| n0
+  class e7 edge_reference
+  n0 e8@--> n8
+  class e8 edge_read
+  n6 e9@-->|"赋值"| n0
+  class e9 edge_write
+  n9 e10@-->|"可能包含"| n0
+  class e10 edge_reference
+  n10 e11@-->|"可变访问"| n0
+  class e11 edge_write
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: bumpX }
+  e7@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }

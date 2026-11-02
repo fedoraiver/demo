@@ -1,0 +1,45 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: condition::toggle::Toggle · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**condition::toggle::Toggle**<br/>在按下时切换动作触发状态。" }
+  class n0 node_component
+  n1@{ shape: rounded, label: "**(bevy​_​ecs::system::system​_​param::**<br/>**Local#lt;'​_​, alloc::vec::Vec#lt;bevy​_​**<br/>**enhanced​_​input::binding::Binding#gt;#gt;,**<br/>**bevy​_​enhanced​_​input::context::time::**<br/>**ContextTime#lt;'​_​#gt;, bevy​_​enhanced​_​**<br/>**input::context::input​_​reader::**<br/>**InputReader#lt;'​_​, '​_​#gt;, bevy​_​ecs::**<br/>**change​_​detection::params::Res#lt;'​_​,**<br/>**bevy​_​enhanced​_​input::context::**<br/>**instance::ContextInstances#lt;bevy​_​**<br/>**app::main​_​schedule::PreUpdate#gt;#gt;,**<br/>**bevy​_​ecs::system::query::Query#lt;'​_​,**<br/>**'​_​, bevy​_​ecs::world::entity​_​access::**<br/>**filtered::FilteredEntityMut#lt;'​_​, '​_​**<br/>**#gt;#gt;, bevy​_​ecs::system::query::**<br/>**Query#lt;'​_​, '​_​, (bevy​_​ecs::entity::**<br/>**Entity, #amp;bevy​_​ecs::name::Name,**<br/>**#amp;bevy​_​enhanced​_​input::action::**<br/>**ActionSettings, core::option::**<br/>**Option#lt;#amp;bevy​_​enhanced​_​input::**<br/>**binding::relationship::Bindings#gt;,**<br/>**core::option::Option#lt;#amp;bevy​_​enhanced​_​**<br/>**input::modifier::fns::ModifierFns#gt;,**<br/>**core::option::Option#lt;#amp;bevy​_​enhanced​_​**<br/>**input::condition::fns::**<br/>**ConditionFns#gt;, #amp;mut bevy​_​enhanced​_​**<br/>**input::action::mock::ActionMock),**<br/>**bevy​_​ecs::query::filter::**<br/>**Without#lt;bevy​_​enhanced​_​input::**<br/>**context::ExternallyMocked#gt;#gt;, bevy​_​**<br/>**ecs::system::query::Query#lt;'​_​, '​_​,**<br/>**(#amp;mut bevy​_​enhanced​_​input::action::**<br/>**value::ActionValue, #amp;mut bevy​_​**<br/>**enhanced​_​input::action::**<br/>**TriggerState, #amp;mut bevy​_​enhanced​_​**<br/>**input::action::events::**<br/>**ActionEvents, #amp;mut bevy​_​enhanced​_​**<br/>**input::action::ActionTime)#gt;, bevy​_​**<br/>**ecs::system::query::Query#lt;'​_​, '​_​,**<br/>**(bevy​_​ecs::entity::Entity, #amp;bevy​_​**<br/>**enhanced​_​input::binding::Binding,**<br/>**#amp;mut bevy​_​enhanced​_​input::binding::**<br/>**FirstActivation, core::option::**<br/>**Option#lt;#amp;bevy​_​enhanced​_​input::**<br/>**modifier::fns::ModifierFns#gt;, core::**<br/>**option::Option#lt;#amp;bevy​_​enhanced​_​**<br/>**input::condition::fns::**<br/>**ConditionFns#gt;), bevy​_​ecs::query::**<br/>**filter::Without#lt;bevy​_​enhanced​_​**<br/>**input::action::ActionSettings#gt;#gt;,**<br/>**bevy​_​ecs::system::query::Query#lt;'​_​,**<br/>**'​_​, bevy​_​ecs::world::entity​_​access::**<br/>**filtered::FilteredEntityMut#lt;'​_​, '​_​**<br/>**#gt;#gt;)**<br/>求值上下文输入并更新动作状态。" }
+  class n1 node_system
+  n1 e0@-->|"可变访问"| n0
+  class e0 edge_write

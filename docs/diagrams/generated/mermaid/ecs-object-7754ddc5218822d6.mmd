@@ -1,0 +1,78 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#object-7754ddc5218822d6-e7{marker-start:url(#object-7754ddc5218822d6_flowchart-v2-pointStart)!important}\n#object-7754ddc5218822d6_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: window::CursorOptions · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**window::CursorOptions**<br/>保存窗口光标的可见、捕获和命中测试等选项" }
+  class n0 node_component
+  n1@{ shape: rounded, label: "**demo::first​_​person::suspend​_​controls**<br/>来自first​_​person ↗：停用玩法输入并释<br/>放光标。" }
+  class n1 node_system
+  class n1 external_node
+  n2@{ shape: rounded, label: "**demo::first​_​person::capture::sync​_​**<br/>**mouse​_​capture**<br/>来自first​_​person ↗：在输入转发前确定<br/>归属；切换前约定其他按键已松开，检查器没<br/>有进行中的交互。" }
+  class n2 node_system
+  class n2 external_node
+  n3@{ shape: rounded, label: "**demo::first​_​person::suspend​_​controls**<br/>来自first​_​person ↗：停用玩法输入并释<br/>放光标。" }
+  class n3 node_system
+  class n3 external_node
+  n4@{ shape: rounded, label: "**bevy​_​winit::system::changed​_​cursor​_​**<br/>**options**<br/>来自crate:bevy​_​winit ↗：把光标配置变<br/>化同步到原生窗口。" }
+  class n4 node_system
+  class n4 external_node
+  n1 e0@-->|"可变访问"| n0
+  class e0 edge_write
+  n2 e1@-->|"赋值"| n0
+  class e1 edge_write
+  n3 e2@-->|"赋值"| n0
+  class e2 edge_write
+  n4 e3@-->|"可变访问"| n0
+  class e3 edge_write
+  n2 e4@-->|"可变访问"| n0
+  class e4 edge_write
+  n3 e5@-->|"可变访问"| n0
+  class e5 edge_write
+  n1 e6@-->|"赋值"| n0
+  class e6 edge_write
+  n4 e7@---|"存在性约束"| n0
+  class e7 edge_reference
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: bumpX }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: bumpX }
+  e7@{ curve: basis }

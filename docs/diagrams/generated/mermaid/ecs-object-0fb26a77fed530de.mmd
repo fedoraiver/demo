@@ -1,0 +1,112 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: bevy_ui_render::queue_uinodes · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_plugin fill:#F1F3F6,stroke:#4A6389,stroke-width:2.2px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**bevy​_​ui​_​render::queue​_​uinodes**<br/>按目标相机和堆叠顺序排队 UI 节点。" }
+  class n0 node_system
+  n1@{ shape: lin-rect, label: "**Queue**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
+  class n1 node_system_set
+  class n1 external_node
+  n2@{ shape: rounded, label: "**bevy​_​render::view::ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
+  class n2 node_component
+  class n2 external_node
+  n3@{ shape: cyl, label: "**ExtractedUiNodes**<br/>保存提取后的 UI 节点及本帧变化集合。" }
+  class n3 node_resource
+  n4@{ shape: fr-rect, label: "**bevy​_​ui​_​render::UiRenderPlugin**<br/>提取并准备界面绘制数据。" }
+  class n4 node_plugin
+  n5@{ shape: cyl, label: "**bevy​_​render::render​_​resource::**<br/>**SpecializedRenderPipelines#lt;pipeline:**<br/>**:UiPipeline#gt;**<br/>来自crate:bevy​_​render ↗：按配置键缓存<br/>渲染管线变体。" }
+  class n5 node_resource
+  class n5 external_node
+  n6@{ shape: rounded, label: "**UiCameraView**<br/>从主渲染目标视图定位对应的 UI 视图。" }
+  class n6 node_component
+  n7@{ shape: cyl, label: "**bevy​_​render::render​_​phase::**<br/>**DrawFunctions#lt;render​_​pass::**<br/>**TransparentUi#gt;**<br/>来自crate:bevy​_​render ↗：注册并查询指<br/>定绘制项的绘制函数。" }
+  class n7 node_resource
+  class n7 external_node
+  n8@{ shape: cyl, label: "**pipeline::UiPipeline**<br/>提供普通 UI 节点的视图与图像布局。" }
+  class n8 node_resource
+  n9@{ shape: cyl, label: "**bevy​_​render::render​_​phase::**<br/>**ViewSortedRenderPhases#lt;render​_​pass::**<br/>**TransparentUi#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图需<br/>要排序的绘制指令。" }
+  class n9 node_resource
+  class n9 external_node
+  n10@{ shape: cyl, label: "**bevy​_​render::render​_​resource::**<br/>**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
+  class n10 node_resource
+  class n10 external_node
+  n11@{ shape: rounded, label: "**UiAntiAlias**<br/>控制相机中的 UI 几何抗锯齿。" }
+  class n11 node_component
+  n1 e0@-->|"集合成员"| n0
+  class e0 edge_set_membership
+  n2 e1@-->|"存在性约束"| n0
+  class e1 edge_reference
+  n2 e2@--> n0
+  class e2 edge_read
+  n3 e3@--> n0
+  class e3 edge_read
+  n4 e4@-->|"调用"| n0
+  class e4 edge_registration
+  n0 e5@-->|"可变访问"| n5
+  class e5 edge_write
+  n6 e6@--> n0
+  class e6 edge_read
+  n7 e7@--> n0
+  class e7 edge_read
+  n8 e8@--> n0
+  class e8 edge_read
+  n0 e9@-->|"可变访问"| n9
+  class e9 edge_write
+  n10 e10@--> n0
+  class e10 edge_read
+  n11 e11@--> n0
+  class e11 edge_read
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }

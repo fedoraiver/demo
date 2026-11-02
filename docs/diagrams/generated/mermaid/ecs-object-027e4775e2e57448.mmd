@@ -1,0 +1,74 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#object-027e4775e2e57448-e3{marker-start:url(#object-027e4775e2e57448_flowchart-v2-pointStart)!important}\n#object-027e4775e2e57448_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: bevy::bevy_time::Time#lt;schedule::time::Substeps#gt; · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: cyl, label: "**bevy::bevy​_​time::Time#lt;schedule::**<br/>**time::Substeps#gt;**<br/>保存时钟上下文、帧间隔及累计时间" }
+  class n0 node_resource
+  n1@{ shape: rounded, label: "**avian3d::dynamics::integrator::pre​_​**<br/>**process​_​velocity​_​increments**<br/>来自crate:avian3d ↗：把加速度、重力和<br/>轴锁转成子步速度增量。" }
+  class n1 node_system
+  class n1 external_node
+  n2@{ shape: rounded, label: "**avian3d::dynamics::rigid​_​body::**<br/>**forces::plugin::apply​_​local​_​**<br/>**acceleration**<br/>来自crate:avian3d ↗：在子步中把局部加<br/>速度作用到世界速度。" }
+  class n2 node_system
+  class n2 external_node
+  n3@{ shape: rounded, label: "**avian3d::dynamics::solver::plugin::**<br/>**update​_​contact​_​softness**<br/>来自crate:avian3d ↗：按时间步和配置更<br/>新接触柔度系数。" }
+  class n3 node_system
+  class n3 external_node
+  n4@{ shape: rounded, label: "**avian3d::dynamics::solver::**<br/>**schedule::run​_​substep​_​schedule**<br/>来自crate:avian3d ↗：按子步数划分物理<br/>时间并运行子步调度。" }
+  class n4 node_system
+  class n4 external_node
+  n5@{ shape: rounded, label: "**avian3d::schedule::run​_​physics​_​**<br/>**schedule**<br/>来自crate:avian3d ↗：使用物理时钟推<br/>进 PhysicsSchedule 并恢复原时钟。" }
+  class n5 node_system
+  class n5 external_node
+  n0 e0@--> n1
+  class e0 edge_read
+  n0 e1@--> n2
+  class e1 edge_read
+  n0 e2@--> n3
+  class e2 edge_read
+  n4 e3@--- n0
+  class e3 edge_read
+  n4 e4@-->|"可变访问"| n0
+  class e4 edge_write
+  n5 e5@-->|"可变访问"| n0
+  class e5 edge_write
+  e0@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }

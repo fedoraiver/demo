@@ -1,0 +1,68 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: render::systems::EguiTransforms · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: cyl, label: "**render::systems::EguiTransforms**<br/>保存 Egui 变换的动态统一缓冲、主世界实<br/>体到缓冲偏移的映射及对应绑定组" }
+  class n0 node_resource
+  n1@{ shape: rounded, label: "**bevy​_​egui::render::systems::prepare​_​**<br/>**egui​_​transforms​_​system**<br/>上传 Egui 屏幕变换缓冲。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**bevy​_​egui::render::systems::prepare​_​**<br/>**egui​_​transforms​_​system**<br/>上传 Egui 屏幕变换缓冲。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**bevy​_​egui::render::render​_​pass::**<br/>**egui​_​pass**<br/>把准备好的 Egui 绘制项渲染到视图目标。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**bevy​_​egui::render::render​_​pass::**<br/>**egui​_​pass**<br/>把准备好的 Egui 绘制项渲染到视图目标。" }
+  class n4 node_system
+  n1 e0@-->|"可变访问"| n0
+  class e0 edge_write
+  n2 e1@-->|"赋值"| n0
+  class e1 edge_write
+  n2 e2@-->|"可变访问"| n0
+  class e2 edge_write
+  n0 e3@--> n3
+  class e3 edge_read
+  n1 e4@-->|"赋值"| n0
+  class e4 edge_write
+  n0 e5@--> n4
+  class e5 edge_read
+  e0@{ curve: basis }
+  e1@{ curve: bumpX }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: bumpX }
+  e5@{ curve: basis }

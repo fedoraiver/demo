@@ -1,0 +1,180 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: bevy_render::camera::camera_system · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef node_message fill:#EDF4F6,stroke:#247B91,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_plugin fill:#F1F3F6,stroke:#4A6389,stroke-width:2.2px,color:#1F3340
+  classDef edge_order stroke:#334155,stroke-width:2px
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_consume stroke:#247B91,stroke-width:1.8px,stroke-dasharray:2 4
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  subgraph layout_card_n0[" "]
+  n0@{ shape: rounded, label: "**bevy​_​render::camera::camera​_​system**<br/>响应目标尺寸变化并更新相机投影。" }
+  class n0 node_system
+  end
+  style layout_card_n0 fill:none,stroke:none
+  n1@{ shape: lin-rect, label: "**CameraUpdateSystems**<br/>来自crate:bevy​_​camera ↗：统一更新相机<br/>目标、视口与投影计算结果。" }
+  class n1 node_system_set
+  class n1 external_node
+  n2@{ shape: rounded, label: "**bevy​_​gizmos​_​render::transform​_​gizmo​_​**<br/>**render::update​_​gizmo​_​meshes**<br/>来自crate:bevy​_​gizmos​_​render ↗：将变<br/>换操作器对齐焦点并更新模式与高亮。" }
+  class n2 node_system
+  class n2 external_node
+  n3@{ shape: fr-rect, label: "**camera::CameraPlugin**<br/>维护相机渲染状态与排序。" }
+  class n3 node_plugin
+  n4@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;event::**<br/>**WindowResized#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  class n4 node_resource
+  class n4 external_node
+  n5@{ shape: rounded, label: "**bevy​_​camera::Projection**<br/>来自crate:bevy​_​camera ↗：定义相机从视<br/>图到裁剪空间的投影。" }
+  class n5 node_component
+  class n5 external_node
+  n6@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;event::**<br/>**WindowScaleFactorChanged#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  class n6 node_resource
+  class n6 external_node
+  n7@{ shape: cyl, label: "**bevy​_​asset::Assets#lt;image::Image#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
+  class n7 node_resource
+  class n7 external_node
+  n8@{ shape: cyl, label: "**texture::manual​_​texture​_​view::**<br/>**ManualTextureViews**<br/>注册供相机输出的手动管理纹理视图。" }
+  class n8 node_resource
+  n9@{ shape: rounded, label: "**window::PrimaryWindow**<br/>来自crate:bevy​_​window ↗：标识唯一的主<br/>窗口" }
+  class n9 node_component
+  class n9 external_node
+  n10@{ shape: lean-r, label: "**event::WindowResized**<br/>来自crate:bevy​_​window ↗：通知窗口逻辑<br/>尺寸变化。" }
+  class n10 node_message
+  class n10 external_node
+  n11@{ shape: lean-r, label: "**event::WindowScaleFactorChanged**<br/>来自crate:bevy​_​window ↗：通知窗口显示<br/>缩放比例变化。" }
+  class n11 node_message
+  class n11 external_node
+  n12@{ shape: lin-rect, label: "**AssetEventSystems**<br/>来自crate:bevy​_​asset ↗：发布资产容器<br/>积累的变更消息。" }
+  class n12 node_system_set
+  class n12 external_node
+  n13@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;bevy​_​**<br/>**asset::AssetEvent#lt;image::Image#gt;#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  class n13 node_resource
+  class n13 external_node
+  n14@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;event::**<br/>**WindowCreated#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  class n14 node_resource
+  class n14 external_node
+  n15@{ shape: rounded, label: "**bevy​_​camera::visibility::update​_​**<br/>**frusta**<br/>来自crate:bevy​_​camera ↗：根据相机投影<br/>和世界变换更新视锥。" }
+  class n15 node_system
+  class n15 external_node
+  n16@{ shape: rounded, label: "**bevy​_​transform::systems::propagate​_​**<br/>**transforms​_​for#lt;bevy​_​ecs::query::**<br/>**filter::Or#lt;(bevy​_​ecs::query::**<br/>**filter::With#lt;bevy​_​gizmos::transform​_​**<br/>**gizmo::TransformGizmoRoot#gt;, bevy​_​**<br/>**ecs::query::filter::With#lt;bevy​_​**<br/>**gizmos​_​render::transform​_​gizmo​_​**<br/>**render::GizmoOverlayCamera#gt;, bevy​_​**<br/>**ecs::query::filter::With#lt;bevy​_​**<br/>**gizmos::transform​_​gizmo::**<br/>**TransformGizmoMeshMarker#gt;)#gt;#gt;**<br/>来自crate:bevy​_​transform ↗：按指定查<br/>询过滤器即时计算世界变换。" }
+  class n16 node_system
+  class n16 external_node
+  n17@{ shape: rounded, label: "**window::Window**<br/>来自crate:bevy​_​window ↗：保存窗口的呈<br/>现模式、位置、分辨率、标题、全屏及平台行<br/>为配置" }
+  class n17 node_component
+  class n17 external_node
+  n18@{ shape: rounded, label: "**bevy​_​camera::Camera**<br/>来自crate:bevy​_​camera ↗：配置相机视<br/>口、输出目标和渲染顺序。" }
+  class n18 node_component
+  class n18 external_node
+  n19@{ shape: lean-r, label: "**bevy​_​asset::AssetEvent#lt;image::Image#gt;**<br/>来自crate:bevy​_​asset ↗：通知指定资产<br/>及依赖发生变化。" }
+  class n19 node_message
+  class n19 external_node
+  n20@{ shape: lean-r, label: "**event::WindowCreated**<br/>来自crate:bevy​_​window ↗：通知新窗口创<br/>建完成。" }
+  class n20 node_message
+  class n20 external_node
+  n21@{ shape: rounded, label: "**bevy​_​camera::RenderTarget**<br/>来自crate:bevy​_​camera ↗：指定相机输出<br/>的窗口、图像或纹理。" }
+  class n21 node_component
+  class n21 external_node
+  n1 e0@-->|"集合成员"| n0
+  class e0 edge_set_membership
+  n0 e1@-->|"先于"| n2
+  class e1 edge_order
+  n3 e2@-->|"调用"| n0
+  class e2 edge_registration
+  n4 e3@--> n0
+  class e3 edge_read
+  n0 e4@-->|"可变访问"| n5
+  class e4 edge_write
+  n6 e5@--> n0
+  class e5 edge_read
+  n7 e6@--> n0
+  class e6 edge_read
+  n8 e7@--> n0
+  class e7 edge_read
+  n9 e8@-->|"存在性约束"| n0
+  class e8 edge_reference
+  n10 e9@--> n0
+  class e9 edge_consume
+  n11 e10@--> n0
+  class e10 edge_consume
+  n0 e11@-->|"先于"| n12
+  class e11 edge_order
+  n13 e12@--> n0
+  class e12 edge_read
+  n14 e13@--> n0
+  class e13 edge_read
+  n0 e14@-->|"先于"| n15
+  class e14 edge_order
+  n0 e15@-->|"先于"| n16
+  class e15 edge_order
+  n17 e16@--> n0
+  class e16 edge_read
+  n0 e17@-->|"赋值"| n18
+  class e17 edge_write
+  n19 e18@--> n0
+  class e18 edge_consume
+  n0 e19@-->|"可变访问"| n18
+  class e19 edge_write
+  n20 e20@--> n0
+  class e20 edge_consume
+  n21 e21@--> n0
+  class e21 edge_read
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e17@{ curve: basis }
+  e18@{ curve: basis }
+  e19@{ curve: basis }
+  e20@{ curve: basis }
+  e21@{ curve: basis }

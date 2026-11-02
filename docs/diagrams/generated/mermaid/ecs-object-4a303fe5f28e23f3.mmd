@@ -1,0 +1,76 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: ui::scroll::MenuScroll · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_entity fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**ui::scroll::MenuScroll**<br/>可滚动区域的标记；用于键盘导航时把当前按<br/>钮滚入视野。" }
+  class n0 node_component
+  n1@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>承载可滚动的设置正文视口。" }
+  class n1 node_entity
+  n2@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>承载可滚动的设置正文视口。" }
+  class n2 node_entity
+  n3@{ shape: rounded, label: "**demo::ui::scroll::bind​_​settings​_​**<br/>**scrollbars**<br/>将设置滚动条绑定到对应内容视口。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**demo::ui::scroll::scroll​_​focused​_​**<br/>**button**<br/>短窗口中键盘仍能访问所有按钮；新页面先等<br/>布局完成，再滚到焦点所在区域。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**demo::ui::scroll::sync​_​settings​_​**<br/>**scrollbars**<br/>同步滚动条显隐、拾取范围与高亮。" }
+  class n5 node_system
+  n6@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>承载可滚动的设置正文视口。" }
+  class n6 node_entity
+  n7@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>承载可滚动的设置正文视口。" }
+  class n7 node_entity
+  n1 e0@-->|"可能包含"| n0
+  class e0 edge_reference
+  n2 e1@-->|"可能包含"| n0
+  class e1 edge_reference
+  n0 e2@-->|"存在性约束"| n3
+  class e2 edge_reference
+  n0 e3@-->|"存在性约束"| n4
+  class e3 edge_reference
+  n0 e4@-->|"存在性约束"| n5
+  class e4 edge_reference
+  n6 e5@-->|"可能包含"| n0
+  class e5 edge_reference
+  n7 e6@-->|"可能包含"| n0
+  class e6 edge_reference
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }

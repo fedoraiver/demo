@@ -1,0 +1,68 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: probe::LightProbe · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**probe::LightProbe**<br/>定义局部间接光照的长方体影响区域。" }
+  class n0 node_component
+  n1@{ shape: rounded, label: "**bevy​_​light::probe::automatically​_​**<br/>**add​_​parallax​_​correction​_​components**<br/>为局部反射探针补入默认视差校正。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**bevy​_​light::cluster::assign::assign​_​**<br/>**objects​_​to​_​clusters**<br/>将灯光、探针及贴花分配到视图分簇。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**bevy​_​pbr::light​_​probe::gather​_​light​_​**<br/>**probes#lt;bevy​_​light::probe::**<br/>**IrradianceVolume#gt;**<br/>来自crate:bevy​_​pbr ↗：按相机可见集合<br/>和距离分配已就绪光照探针。" }
+  class n3 node_system
+  class n3 external_node
+  n4@{ shape: rounded, label: "**bevy​_​pbr::light​_​probe::gather​_​light​_​**<br/>**probes#lt;bevy​_​light::probe::**<br/>**EnvironmentMapLight#gt;**<br/>来自crate:bevy​_​pbr ↗：按相机可见集合<br/>和距离分配已就绪光照探针。" }
+  class n4 node_system
+  class n4 external_node
+  n5@{ shape: rounded, label: "**bevy​_​light::cluster::add​_​light​_​**<br/>**probe​_​and​_​decal​_​aabbs**<br/>为光照探针和聚簇贴花补齐包围盒。" }
+  class n5 node_system
+  n0 e0@-->|"存在性约束"| n1
+  class e0 edge_reference
+  n0 e1@-->|"存在性约束"| n2
+  class e1 edge_reference
+  n0 e2@--> n3
+  class e2 edge_read
+  n0 e3@--> n4
+  class e3 edge_read
+  n0 e4@-->|"存在性约束"| n5
+  class e4 edge_reference
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }

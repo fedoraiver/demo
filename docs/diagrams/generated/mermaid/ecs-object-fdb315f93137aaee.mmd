@@ -1,0 +1,155 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: dynamics::solver::diagnostics::SolverDiagnostics · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: cyl, label: "**dynamics::solver::diagnostics::**<br/>**SolverDiagnostics**<br/>记录物理求解各阶段耗时。" }
+  class n0 node_resource
+  n1@{ shape: rounded, label: "**avian3d::dynamics::solver::plugin::**<br/>**store​_​contact​_​impulses**<br/>保存已求得的接触冲量供下一轮热启动。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**avian3d::dynamics::integrator::**<br/>**integrate​_​velocities**<br/>为活跃动态刚体积分速度与阻尼。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**avian3d::dynamics::solver::plugin::**<br/>**warm​_​start**<br/>用历史接触冲量初始化本轮约束求解。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**avian3d::dynamics::solver::solver​_​**<br/>**body::plugin::writeback​_​solver​_​**<br/>**bodies**<br/>将求解后的位姿和速度回写 ECS。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**avian3d::dynamics::solver::plugin::**<br/>**solve​_​restitution**<br/>对接触刚体施加碰撞恢复冲量。" }
+  class n5 node_system
+  n6@{ shape: rounded, label: "**avian3d::dynamics::ccd::solve​_​**<br/>**continuous**<br/>通过连续扫掠限制快速刚体穿透。" }
+  class n6 node_system
+  n7@{ shape: rounded, label: "**avian3d::dynamics::integrator::**<br/>**clamp​_​velocities**<br/>按线速度和角速度上限约束求解器刚体。" }
+  class n7 node_system
+  n8@{ shape: rounded, label: "**avian3d::dynamics::solver::plugin::**<br/>**prepare​_​contact​_​constraints**<br/>从有效接触流形生成本轮求解约束。" }
+  class n8 node_system
+  n9@{ shape: rounded, label: "**avian3d::dynamics::integrator::pre​_​**<br/>**process​_​velocity​_​increments**<br/>把加速度、重力和轴锁转成子步速度增量。" }
+  class n9 node_system
+  n10@{ shape: rounded, label: "**#lt;avian3d::dynamics::solver::**<br/>**diagnostics::SolverDiagnostics as**<br/>**avian3d::diagnostics::**<br/>**PhysicsDiagnostics#gt;::reset**<br/>重置物理诊断测量。" }
+  class n10 node_system
+  n11@{ shape: rounded, label: "**avian3d::dynamics::integrator::**<br/>**clear​_​velocity​_​increments**<br/>在子步循环后清零速度积分增量。" }
+  class n11 node_system
+  n12@{ shape: rounded, label: "**avian3d::dynamics::rigid​_​body::**<br/>**forces::plugin::apply​_​local​_​**<br/>**acceleration**<br/>在子步中把局部加速度作用到世界速度。" }
+  class n12 node_system
+  n13@{ shape: rounded, label: "**avian3d::dynamics::integrator::**<br/>**integrate​_​positions**<br/>按子步速度积分刚体位姿增量。" }
+  class n13 node_system
+  n14@{ shape: rounded, label: "**avian3d::dynamics::solver::plugin::**<br/>**solve​_​contacts#lt;false#gt;**<br/>迭代接触冲量以处理穿透与相对速度。" }
+  class n14 node_system
+  n15@{ shape: rounded, label: "**avian3d::dynamics::solver::plugin::**<br/>**solve​_​contacts#lt;true#gt;**<br/>迭代接触冲量以处理穿透与相对速度。" }
+  class n15 node_system
+  n1 e0@-->|"赋值"| n0
+  class e0 edge_write
+  n2 e1@-->|"可变访问"| n0
+  class e1 edge_write
+  n3 e2@-->|"可变访问"| n0
+  class e2 edge_write
+  n4 e3@-->|"赋值"| n0
+  class e3 edge_write
+  n5 e4@-->|"赋值"| n0
+  class e4 edge_write
+  n3 e5@-->|"赋值"| n0
+  class e5 edge_write
+  n5 e6@-->|"可变访问"| n0
+  class e6 edge_write
+  n6 e7@-->|"赋值"| n0
+  class e7 edge_write
+  n7 e8@-->|"赋值"| n0
+  class e8 edge_write
+  n8 e9@-->|"可变访问"| n0
+  class e9 edge_write
+  n9 e10@-->|"赋值"| n0
+  class e10 edge_write
+  n10 e11@-->|"赋值"| n0
+  class e11 edge_write
+  n11 e12@-->|"赋值"| n0
+  class e12 edge_write
+  n11 e13@-->|"可变访问"| n0
+  class e13 edge_write
+  n1 e14@-->|"可变访问"| n0
+  class e14 edge_write
+  n7 e15@-->|"可变访问"| n0
+  class e15 edge_write
+  n12 e16@-->|"可变访问"| n0
+  class e16 edge_write
+  n13 e17@-->|"可变访问"| n0
+  class e17 edge_write
+  n6 e18@-->|"可变访问"| n0
+  class e18 edge_write
+  n10 e19@-->|"可变访问"| n0
+  class e19 edge_write
+  n14 e20@-->|"可变访问"| n0
+  class e20 edge_write
+  n12 e21@-->|"赋值"| n0
+  class e21 edge_write
+  n13 e22@-->|"赋值"| n0
+  class e22 edge_write
+  n2 e23@-->|"赋值"| n0
+  class e23 edge_write
+  n8 e24@-->|"赋值"| n0
+  class e24 edge_write
+  n4 e25@-->|"可变访问"| n0
+  class e25 edge_write
+  n9 e26@-->|"可变访问"| n0
+  class e26 edge_write
+  n15 e27@-->|"可变访问"| n0
+  class e27 edge_write
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: bumpX }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: bumpX }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e17@{ curve: basis }
+  e18@{ curve: basis }
+  e19@{ curve: basis }
+  e20@{ curve: basis }
+  e21@{ curve: basis }
+  e22@{ curve: basis }
+  e23@{ curve: basis }
+  e24@{ curve: basis }
+  e25@{ curve: basis }
+  e26@{ curve: basis }
+  e27@{ curve: basis }

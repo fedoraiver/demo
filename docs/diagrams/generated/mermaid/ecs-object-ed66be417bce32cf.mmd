@@ -1,0 +1,98 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: bevy_ui_render::image::update_texture_atlas_layout_components · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_plugin fill:#F1F3F6,stroke:#4A6389,stroke-width:2.2px,color:#1F3340
+  classDef edge_order stroke:#334155,stroke-width:2px
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**bevy​_​ui​_​render::image::update​_​**<br/>**texture​_​atlas​_​layout​_​components**<br/>同步 UI 图像所引用的图集布局组件。" }
+  class n0 node_system
+  n1@{ shape: rounded, label: "**bevy​_​ui::widget::ImageNode**<br/>来自crate:bevy​_​ui ↗：描述 UI 图像及其<br/>绘制参数。" }
+  class n1 node_component
+  class n1 external_node
+  n2@{ shape: fr-rect, label: "**bevy​_​ui​_​render::UiRenderPlugin**<br/>提取并准备界面绘制数据。" }
+  class n2 node_plugin
+  n3@{ shape: lin-rect, label: "**ImageNodeAssetChangedSystems**<br/>将底层图像和图集资产变化反馈给 UI 节<br/>点。" }
+  class n3 node_system_set
+  n4@{ shape: rounded, label: "**image::ImageNodeTextureAtlasLayout**<br/>缓存 UI 图像节点引用的纹理图集布局。" }
+  class n4 node_component
+  n5@{ shape: lin-rect, label: "**Update**<br/>来自crate:bevy​_​a11y ↗：组织无障碍信息<br/>更新。" }
+  class n5 node_system_set
+  class n5 external_node
+  n6@{ shape: lin-rect, label: "**Content**<br/>来自crate:bevy​_​ui ↗：组织界面交互、布<br/>局与堆叠更新。" }
+  class n6 node_system_set
+  class n6 external_node
+  n7@{ shape: lin-rect, label: "**AssetEventSystems**<br/>来自crate:bevy​_​asset ↗：发布资产容器<br/>积累的变更消息。" }
+  class n7 node_system_set
+  class n7 external_node
+  n8@{ shape: rounded, label: "**bevy​_​ui​_​render::image::mark​_​images​_​**<br/>**as​_​changed​_​if​_​their​_​assets​_​changed**<br/>使图像或图集资产变化触发 UI 图像更新。" }
+  class n8 node_system
+  n1 e0@--> n0
+  class e0 edge_read
+  n1 e1@-->|"存在性约束"| n0
+  class e1 edge_reference
+  n2 e2@-->|"调用"| n0
+  class e2 edge_registration
+  n3 e3@-->|"集合成员"| n0
+  class e3 edge_set_membership
+  n0 e4@-->|"插入"| n4
+  class e4 edge_write
+  n5 e5@-->|"先于"| n0
+  class e5 edge_order
+  n6 e6@-->|"先于"| n0
+  class e6 edge_order
+  n7 e7@-->|"先于"| n0
+  class e7 edge_order
+  n8 e8@-->|"先于"| n0
+  class e8 edge_order
+  n0 e9@-->|"移除"| n4
+  class e9 edge_write
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }

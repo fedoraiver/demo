@@ -1,0 +1,243 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 4,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: bevy_light::check_point_light_mesh_visibility · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef node_local fill:#F8F5F1,stroke:#AA8752,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_plugin fill:#F1F3F6,stroke:#4A6389,stroke-width:2.2px,color:#1F3340
+  classDef edge_order stroke:#334155,stroke-width:2px
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  subgraph layout_card_n0[" "]
+  n0@{ shape: rounded, label: "**bevy​_​light::check​_​point​_​light​_​mesh​_​**<br/>**visibility**<br/>计算点光与聚光灯阴影可见的网格。" }
+  class n0 node_system
+  end
+  style layout_card_n0 fill:none,stroke:none
+  n1@{ shape: lin-rect, label: "**CalculateBounds**<br/>来自crate:bevy​_​camera ↗：组织相机与实<br/>体可见性更新。" }
+  class n1 node_system_set
+  class n1 external_node
+  n2@{ shape: rounded, label: "**bevy​_​camera::Camera**<br/>来自crate:bevy​_​camera ↗：配置相机视<br/>口、输出目标和渲染顺序。" }
+  class n2 node_component
+  class n2 external_node
+  n3@{ shape: rounded, label: "**bevy​_​camera::primitives::Frustum**<br/>来自crate:bevy​_​camera ↗：描述相机可见<br/>空间并参与视锥裁剪。" }
+  class n3 node_component
+  class n3 external_node
+  n4@{ shape: rounded, label: "**visibility::range::VisibilityRange**<br/>来自crate:bevy​_​camera ↗：按相机距离控<br/>制网格的细节层级。" }
+  class n4 node_component
+  class n4 external_node
+  n5@{ shape: rounded, label: "**components::global​_​transform::**<br/>**GlobalTransform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>合并祖先变换后的世界空间仿射变换" }
+  class n5 node_component
+  class n5 external_node
+  n6@{ shape: lin-rect, label: "**UpdateLightFrusta**<br/>组织灯光聚簇与可见性准备。" }
+  class n6 node_system_set
+  n7@{ shape: rounded, label: "**spot​_​light::SpotLight**<br/>配置沿指定方向照射的聚光灯。" }
+  class n7 node_component
+  n8@{ shape: rounded, label: "**point​_​light::PointLight**<br/>配置向四周发光的点光源。" }
+  class n8 node_component
+  n9@{ shape: notch-rect, label: "**Local · spot​_​visible​_​entities​_​queue**<br/>并行收集聚光灯阴影视锥中的可见网格。" }
+  class n9 node_local
+  n10@{ shape: rounded, label: "**visibility::VisibleMeshEntities**<br/>来自crate:bevy​_​camera ↗：保存光源视图<br/>可见的三维网格。" }
+  class n10 node_component
+  class n10 external_node
+  n11@{ shape: rounded, label: "**bevy​_​camera::RenderTarget**<br/>来自crate:bevy​_​camera ↗：指定相机输出<br/>的窗口、图像或纹理。" }
+  class n11 node_component
+  class n11 external_node
+  n12@{ shape: rounded, label: "**camera::ShadowLodOrigin**<br/>来自crate:bevy​_​camera ↗：指定点光与聚<br/>光阴影的距离参考点。" }
+  class n12 node_component
+  class n12 external_node
+  n13@{ shape: rounded, label: "**visibility::CubemapVisibleEntities**<br/>来自crate:bevy​_​camera ↗：记录立方体阴<br/>影六面的可见网格。" }
+  class n13 node_component
+  class n13 external_node
+  n14@{ shape: notch-rect, label: "**Local · cubemap​_​visible​_​entities​_​**<br/>**queue**<br/>按线程收集点光源六个阴影面的可见网格。" }
+  class n14 node_local
+  n15@{ shape: rounded, label: "**bevy​_​camera::visibility::**<br/>**VisibleEntities**<br/>来自crate:bevy​_​camera ↗：按类别保存当<br/>前视图可见的实体。" }
+  class n15 node_component
+  class n15 external_node
+  n16@{ shape: rounded, label: "**bevy​_​camera::visibility::**<br/>**RenderLayers**<br/>来自crate:bevy​_​camera ↗：限定相机与实<br/>体可相交的渲染层。" }
+  class n16 node_component
+  class n16 external_node
+  n17@{ shape: rounded, label: "**bevy​_​camera::visibility::**<br/>**InheritedVisibility**<br/>来自crate:bevy​_​camera ↗：保存从实体层<br/>级计算出的可见性。" }
+  class n17 node_component
+  class n17 external_node
+  n18@{ shape: cyl, label: "**visibility::range::**<br/>**VisibleEntityRanges**<br/>来自crate:bevy​_​camera ↗：记录各实体是<br/>否处于视图距离范围。" }
+  class n18 node_resource
+  class n18 external_node
+  n19@{ shape: rounded, label: "**NotShadowCaster**<br/>禁止三维网格投射阴影。" }
+  class n19 node_component
+  n20@{ shape: rounded, label: "**bevy​_​camera::visibility::**<br/>**ViewVisibility**<br/>来自crate:bevy​_​camera ↗：记录实体是否<br/>应被提取用于渲染。" }
+  class n20 node_component
+  class n20 external_node
+  n21@{ shape: lin-rect, label: "**MarkNewlyHiddenEntitiesInvisible**<br/>来自crate:bevy​_​camera ↗：组织相机与实<br/>体可见性更新。" }
+  class n21 node_system_set
+  class n21 external_node
+  n22@{ shape: lin-rect, label: "**Propagate**<br/>来自crate:bevy​_​transform ↗：组织实体<br/>层级变换传播。" }
+  class n22 node_system_set
+  class n22 external_node
+  n23@{ shape: fr-rect, label: "**LightPlugin**<br/>维护光源可见性与空间聚簇。" }
+  class n23 node_plugin
+  n24@{ shape: rounded, label: "**bevy​_​mesh::Mesh3d**<br/>来自crate:bevy​_​mesh ↗：为三维可绘制实<br/>体指定网格资产。" }
+  class n24 node_component
+  class n24 external_node
+  n25@{ shape: notch-rect, label: "**Local · checked​_​lights**<br/>避免同一光源被多个相机可见列表重复处理。" }
+  class n25 node_local
+  n26@{ shape: rounded, label: "**bevy​_​camera::primitives::Aabb**<br/>来自crate:bevy​_​camera ↗：以局部轴对齐<br/>包围盒支持可见性裁剪。" }
+  class n26 node_component
+  class n26 external_node
+  n27@{ shape: rounded, label: "**directional​_​light::DirectionalLight**<br/>配置平行方向光的颜色、照度和阴影。" }
+  class n27 node_component
+  n28@{ shape: lin-rect, label: "**CheckLightVisibility**<br/>组织灯光聚簇与可见性准备。" }
+  class n28 node_system_set
+  n29@{ shape: lin-rect, label: "**CheckVisibility**<br/>来自crate:bevy​_​camera ↗：组织相机与实<br/>体可见性更新。" }
+  class n29 node_system_set
+  class n29 external_node
+  n30@{ shape: rounded, label: "**visibility::NoCpuCulling**<br/>来自crate:bevy​_​camera ↗：退出内置的<br/>CPU 视锥裁剪。" }
+  class n30 node_component
+  class n30 external_node
+  n31@{ shape: rounded, label: "**bevy​_​camera::visibility::**<br/>**NoFrustumCulling**<br/>来自crate:bevy​_​camera ↗：使实体退出内<br/>置视锥裁剪。" }
+  class n31 node_component
+  class n31 external_node
+  n32@{ shape: rounded, label: "**primitives::CubemapFrusta**<br/>来自crate:bevy​_​camera ↗：保存立方体阴<br/>影六面的视锥。" }
+  class n32 node_component
+  class n32 external_node
+  n1 e0@-->|"先于"| n0
+  class e0 edge_order
+  n2 e1@-->|"存在性约束"| n0
+  class e1 edge_reference
+  n3 e2@--> n0
+  class e2 edge_read
+  n4 e3@-->|"存在性约束"| n0
+  class e3 edge_reference
+  n5 e4@--> n0
+  class e4 edge_read
+  n6 e5@-->|"先于"| n0
+  class e5 edge_order
+  n7 e6@--> n0
+  class e6 edge_read
+  n7 e7@-->|"存在性约束"| n0
+  class e7 edge_reference
+  n8 e8@--> n0
+  class e8 edge_read
+  n0 e9@-->|"可变访问"| n9
+  class e9 edge_write
+  n0 e10@-->|"可变访问"| n10
+  class e10 edge_write
+  n11 e11@--> n0
+  class e11 edge_read
+  n8 e12@-->|"存在性约束"| n0
+  class e12 edge_reference
+  n12 e13@-->|"存在性约束"| n0
+  class e13 edge_reference
+  n0 e14@-->|"可变访问"| n13
+  class e14 edge_write
+  n0 e15@-->|"可变访问"| n14
+  class e15 edge_write
+  n15 e16@--> n0
+  class e16 edge_read
+  n16 e17@--> n0
+  class e17 edge_read
+  n17 e18@--> n0
+  class e18 edge_read
+  n18 e19@--> n0
+  class e19 edge_read
+  n19 e20@-->|"存在性约束"| n0
+  class e20 edge_reference
+  n0 e21@-->|"可变访问"| n20
+  class e21 edge_write
+  n0 e22@-->|"先于"| n21
+  class e22 edge_order
+  n22 e23@-->|"先于"| n0
+  class e23 edge_order
+  n23 e24@-->|"调用"| n0
+  class e24 edge_registration
+  n24 e25@-->|"存在性约束"| n0
+  class e25 edge_reference
+  n0 e26@-->|"可变访问"| n25
+  class e26 edge_write
+  n26 e27@--> n0
+  class e27 edge_read
+  n27 e28@-->|"存在性约束"| n0
+  class e28 edge_reference
+  n28 e29@-->|"集合成员"| n0
+  class e29 edge_set_membership
+  n29 e30@-->|"先于"| n0
+  class e30 edge_order
+  n30 e31@-->|"存在性约束"| n0
+  class e31 edge_reference
+  n31 e32@-->|"存在性约束"| n0
+  class e32 edge_reference
+  n0 e33@-->|"赋值"| n20
+  class e33 edge_write
+  n32 e34@--> n0
+  class e34 edge_read
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e18@{ curve: basis }
+  e19@{ curve: basis }
+  e20@{ curve: basis }
+  e21@{ curve: basis }
+  e22@{ curve: basis }
+  e23@{ curve: basis }
+  e24@{ curve: basis }
+  e25@{ curve: basis }
+  e26@{ curve: basis }
+  e27@{ curve: basis }
+  e28@{ curve: basis }
+  e29@{ curve: basis }
+  e30@{ curve: basis }
+  e31@{ curve: basis }
+  e32@{ curve: basis }
+  e33@{ curve: basis }
+  e34@{ curve: basis }

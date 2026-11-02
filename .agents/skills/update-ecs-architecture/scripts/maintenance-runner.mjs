@@ -111,7 +111,10 @@ function defaultPipeline({ workspace, dependencies }) {
   const inputs = relevantInputNames(workspace);
   const node = (filename, args = []) => ({ command: process.execPath, args: [filename, ...args] });
   const analysis = args => ({ command: 'pwsh', args: ['-NoProfile', '-File', path.join(workspace, 'scripts/rustc-analysis.ps1'), ...args] });
-  const compilerInputs = ['Cargo.toml', 'Cargo.lock', 'src', 'tools/rustc-analysis', 'scripts/rustc-analysis.ps1', ...exportProducerInputs,
+  const compilerInputs = ['Cargo.toml', 'Cargo.lock', 'src', 'tools/rustc-analysis/Cargo.toml', 'tools/rustc-analysis/Cargo.lock',
+    'tools/rustc-analysis/build.rs', 'tools/rustc-analysis/contract', 'tools/rustc-analysis/compiler',
+    'tools/rustc-analysis/runner/Cargo.toml', 'tools/rustc-analysis/runner/src/host.rs',
+    'tools/rustc-analysis/runner/src/lib.rs', 'tools/rustc-analysis/runner/src/main.rs', 'scripts/rustc-analysis.ps1', ...exportProducerInputs,
     ...(fs.existsSync(path.join(workspace, 'build.rs')) ? ['build.rs'] : [])];
   return [
     { id: 'dependencies', inputs: ['docs/diagrams/package.json', 'docs/diagrams/package-lock.json'], outputs: [],
@@ -123,10 +126,13 @@ function defaultPipeline({ workspace, dependencies }) {
       validate: async () => {
         const { readDebugdump } = await import('../../../../docs/diagrams/src/debugdump-input.mjs');
         const dump = readDebugdump(exportDirectory, workspace);
-        for (const filename of [facts, runtime]) { const value = JSON.parse(fs.readFileSync(filename, 'utf8')); if (!value || typeof value !== 'object') throw new Error('Invalid compiler output: ' + filename); }
+        const snapshot = JSON.parse(fs.readFileSync(runtime, 'utf8'));
+        if (snapshot?.schemaVersion !== 1 || snapshot.sourceFingerprint !== dump.manifest.sourceFingerprint || !Array.isArray(snapshot.schedules)) throw new Error('Invalid compiler runtime snapshot');
+        if (!fs.statSync(facts).isFile() || fs.statSync(facts).size === 0) throw new Error('Missing compiler facts');
+        // Rust 在下一阶段流式解析完整事实；此处用流式指纹登记原始字节，避免 JS 的单字符串大小限制。
         return { files: fileSnapshot(workspace, [facts, runtime, exportDirectory], { optional: false }), sourceFingerprint: dump.manifest.sourceFingerprint };
       } },
-    { id: 'model', inputs: [...compilerInputs, facts, runtime, annotations], outputs: [model, path.join(compilerDirectory, 'model.calls.ndjson')],
+    { id: 'model', inputs: [...compilerInputs, 'tools/rustc-analysis/runner/src/model.rs', 'tools/rustc-analysis/runner/src/model_tests.rs', facts, runtime, annotations], outputs: [model, path.join(compilerDirectory, 'model.calls.ndjson')],
       command: analysis(['model', '--facts', facts, '--runtime', runtime, '--annotations', annotations, '--out', model]) },
     { id: 'preflight', inputs: [...inputs, model, path.join(compilerDirectory, 'model.calls.ndjson'), exportDirectory], outputs: [],
       command: node(cli, ['preflight', '--workspace', workspace, '--debugdump', exportDirectory]), dependencyInputs: true },

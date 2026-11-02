@@ -1,0 +1,85 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: avian3d::collision::collider::backend::update_collider_mass_properties#lt;avian3d::collision::collider::parry::Collider#gt; · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef edge_order stroke:#334155,stroke-width:2px
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**avian3d::collision::collider::**<br/>**backend::update​_​collider​_​mass​_​**<br/>**properties#lt;avian3d::collision::**<br/>**collider::parry::Collider#gt;**<br/>按变化的形状和密度重算碰撞体质量。" }
+  class n0 node_system
+  n1@{ shape: rounded, label: "**avian3d::collision::collider::**<br/>**backend::update​_​collider​_​**<br/>**scale#lt;avian3d::collision::collider::**<br/>**parry::Collider#gt;**<br/>把根节点和附属碰撞体的缩放传给形状。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**collision::collider::Sensor**<br/>将碰撞体设为不阻挡运动的触发器。" }
+  class n2 node_component
+  n3@{ shape: rounded, label: "**collision::collider::parry::Collider**<br/>保存 Parry 碰撞后端的几何形状。" }
+  class n3 node_component
+  n4@{ shape: lin-rect, label: "**UpdateColliderMassProperties**<br/>组织质量属性重算与写回。" }
+  class n4 node_system_set
+  n5@{ shape: rounded, label: "**dynamics::rigid​_​body::mass​_​**<br/>**properties::components::collider::**<br/>**ColliderMassProperties**<br/>缓存由碰撞形状计算的质量属性。" }
+  class n5 node_component
+  n6@{ shape: rounded, label: "**dynamics::rigid​_​body::mass​_​**<br/>**properties::components::collider::**<br/>**ColliderDensity**<br/>以密度参与碰撞体质量计算。" }
+  class n6 node_component
+  n1 e0@-->|"先于"| n0
+  class e0 edge_order
+  n2 e1@-->|"存在性约束"| n0
+  class e1 edge_reference
+  n3 e2@-->|"存在性约束"| n0
+  class e2 edge_reference
+  n4 e3@-->|"集合成员"| n0
+  class e3 edge_set_membership
+  n0 e4@-->|"赋值"| n5
+  class e4 edge_write
+  n0 e5@-->|"可变访问"| n5
+  class e5 edge_write
+  n6 e6@-->|"存在性约束"| n0
+  class e6 edge_reference
+  n3 e7@--> n0
+  class e7 edge_read
+  n6 e8@--> n0
+  class e8 edge_read
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }

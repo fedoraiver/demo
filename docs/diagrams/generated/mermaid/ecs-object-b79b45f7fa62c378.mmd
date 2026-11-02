@@ -1,0 +1,51 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: bevy_app::hierarchy::CheckParentHasComponent#lt;visibility::InheritedVisibility#gt; · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_message fill:#EDF4F6,stroke:#247B91,stroke-width:1.6px,color:#1F3340
+  classDef edge_consume stroke:#247B91,stroke-width:1.8px,stroke-dasharray:2 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: lean-r, label: "**bevy​_​app::hierarchy::**<br/>**CheckParentHasComponent#lt;visibility::**<br/>**InheritedVisibility#gt;**<br/>请求复查父实体组件约束。" }
+  class n0 node_message
+  n1@{ shape: rounded, label: "**bevy​_​app::hierarchy::check​_​parent​_​**<br/>**has​_​component#lt;bevy​_​camera::**<br/>**visibility::InheritedVisibility#gt;**<br/>报告仍不满足组件层级要求的父子关系。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**bevy​_​ecs::schedule::condition::**<br/>**common​_​conditions::on​_​message#lt;bevy​_​**<br/>**app::hierarchy::**<br/>**CheckParentHasComponent#lt;bevy​_​**<br/>**camera::visibility::**<br/>**InheritedVisibility#gt;#gt;**<br/>来自crate:bevy​_​ecs ↗：判断是否收到指<br/>定类型的新消息。" }
+  class n2 node_system
+  class n2 external_node
+  n0 e0@--> n1
+  class e0 edge_consume
+  n0 e1@--> n2
+  class e1 edge_consume
+  e0@{ curve: basis }
+  e1@{ curve: basis }

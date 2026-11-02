@@ -1,0 +1,84 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: pointer::PointerInput · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_message fill:#EDF4F6,stroke:#247B91,stroke-width:1.6px,color:#1F3340
+  classDef edge_publish stroke:#247B91,stroke-width:1.8px,stroke-dasharray:10 4 2 4
+  classDef edge_consume stroke:#247B91,stroke-width:1.8px,stroke-dasharray:2 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: lean-r, label: "**pointer::PointerInput**<br/>传递拾取指针输入动作。" }
+  class n0 node_message
+  n1@{ shape: rounded, label: "**bevy​_​picking::input::mouse​_​pick​_​**<br/>**events**<br/>把窗口鼠标事件转换为拾取指针动作。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**bevy​_​picking::input::touch​_​pick​_​**<br/>**events**<br/>把触摸阶段转换为独立拾取指针。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**bevy​_​picking::pointer::**<br/>**PointerInput::receive**<br/>按输入消息更新拾取指针状态。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**demo::ui::pointer::clear​_​cancelled​_​**<br/>**primary​_​presses**<br/>来自ui ↗：Bevy 先从 HoverMap 排除取消<br/>的指针，随后可能无法为它发出<br/>PointerCancel。" }
+  class n4 node_system
+  class n4 external_node
+  n5@{ shape: rounded, label: "**bevy​_​ui::widget::viewport::viewport​_​**<br/>**picking**<br/>来自crate:bevy​_​ui ↗：把外部指针转换并<br/>转发到 UI 内嵌视口。" }
+  class n5 node_system
+  class n5 external_node
+  n6@{ shape: rounded, label: "**bevy​_​picking::hover::generate​_​**<br/>**hovermap**<br/>汇总拾取命中并应用指针捕获。" }
+  class n6 node_system
+  n7@{ shape: rounded, label: "**bevy​_​picking::events::pointer​_​events**<br/>根据悬停与按钮状态派发指针交互事件。" }
+  class n7 node_system
+  n1 e0@-->|"可变访问"| n0
+  class e0 edge_publish
+  n2 e1@-->|"消息"| n0
+  class e1 edge_publish
+  n0 e2@--> n3
+  class e2 edge_consume
+  n1 e3@-->|"消息"| n0
+  class e3 edge_publish
+  n0 e4@--> n4
+  class e4 edge_consume
+  n0 e5@--> n5
+  class e5 edge_consume
+  n0 e6@--> n6
+  class e6 edge_consume
+  n2 e7@-->|"可变访问"| n0
+  class e7 edge_publish
+  n0 e8@--> n7
+  class e8 edge_consume
+  e0@{ curve: basis }
+  e1@{ curve: bumpX }
+  e2@{ curve: basis }
+  e3@{ curve: bumpX }
+  e4@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }

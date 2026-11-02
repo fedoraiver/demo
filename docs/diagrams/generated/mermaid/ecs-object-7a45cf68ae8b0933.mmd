@@ -1,0 +1,69 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: bevy_render::extract_component::ComponentUniforms#lt;bloom::downsampling_pipeline::BloomUniforms#gt; · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: cyl, label: "**bevy​_​render::extract​_​component::**<br/>**ComponentUniforms#lt;bloom::**<br/>**downsampling​_​pipeline::**<br/>**BloomUniforms#gt;**<br/>汇集同类组件的动态 Uniform 数据。" }
+  class n0 node_resource
+  n1@{ shape: rounded, label: "**bevy​_​post​_​process::bloom::bloom**<br/>来自crate:bevy​_​post​_​process ↗：通过<br/>降采样和上采样合成 HDR 光晕。" }
+  class n1 node_system
+  class n1 external_node
+  n2@{ shape: rounded, label: "**bevy​_​render::init​_​gpu​_​resource#lt;bevy​_​**<br/>**render::uniform::**<br/>**ComponentUniforms#lt;bevy​_​post​_​**<br/>**process::bloom::downsampling​_​**<br/>**pipeline::BloomUniforms#gt;#gt;**<br/>构造并插入渲染所需资源。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**bevy​_​post​_​process::bloom::prepare​_​**<br/>**bloom​_​bind​_​groups**<br/>来自crate:bevy​_​post​_​process ↗：为<br/>Bloom 各 mip 层准备降采样与升采样绑<br/>定。" }
+  class n3 node_system
+  class n3 external_node
+  n4@{ shape: rounded, label: "**bevy​_​render::uniform::prepare​_​**<br/>**uniform​_​components#lt;bevy​_​post​_​**<br/>**process::bloom::downsampling​_​**<br/>**pipeline::BloomUniforms#gt;**<br/>将组件值批量上传为动态着色器参数。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**bevy​_​post​_​process::bloom::bloom**<br/>来自crate:bevy​_​post​_​process ↗：通过<br/>降采样和上采样合成 HDR 光晕。" }
+  class n5 node_system
+  class n5 external_node
+  n0 e0@--> n1
+  class e0 edge_read
+  n2 e1@-->|"插入"| n0
+  class e1 edge_write
+  n0 e2@--> n3
+  class e2 edge_read
+  n4 e3@-->|"可变访问"| n0
+  class e3 edge_write
+  n0 e4@--> n5
+  class e4 edge_read
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }

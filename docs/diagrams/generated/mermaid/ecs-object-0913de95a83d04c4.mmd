@@ -1,0 +1,226 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: character::components::CharacterIntent · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_observer fill:#F4F1F9,stroke:#7B4DB2,stroke-width:1.6px,color:#1F3340
+  classDef node_entity fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**character::components::**<br/>**CharacterIntent**<br/>来自控制者的玩法意图；输入状态跨帧保留，<br/>供固定步模拟读取。" }
+  class n0 node_component
+  n1@{ shape: hex, label: "**demo::first​_​person::actions::record​_​**<br/>**movement**<br/>来自first​_​person ↗：按事件所属的上下<br/>文查找角色，避免把一个玩家的动作写给其他<br/>角色。" }
+  class n1 node_observer
+  class n1 external_node
+  n2@{ shape: hex, label: "**demo::first​_​person::actions::**<br/>**request​_​interaction**<br/>来自first​_​person ↗：记录目标角色的单<br/>次交互请求。" }
+  class n2 node_observer
+  class n2 external_node
+  n3@{ shape: rounded, label: "**demo::bounds​_​recovery::recovery::**<br/>**recover​_​from​_​water**<br/>来自bounds​_​recovery ↗：恢复实体自身的<br/>出生姿态；角色落水只释放手中物品，物品落<br/>水时再独立恢复。" }
+  class n3 node_system
+  class n3 external_node
+  n4@{ shape: hex, label: "**demo::first​_​person::actions::clear​_​**<br/>**cancelled​_​movement**<br/>来自first​_​person ↗：清除已取消动作的<br/>角色移动方向。" }
+  class n4 node_observer
+  class n4 external_node
+  n5@{ shape: rounded, label: "**demo::character::lifecycle::clear​_​**<br/>**character​_​intents**<br/>在固定循环前丢弃旧移动轴和一次性请求，恢<br/>复后由当前设备输入重新建立意图。" }
+  class n5 node_system
+  n6@{ shape: hex, label: "**demo::first​_​person::actions::**<br/>**request​_​jump**<br/>来自first​_​person ↗：一次性请求保留到<br/>固定步消费，即使本渲染帧没有固定步也不会<br/>丢失。" }
+  class n6 node_observer
+  class n6 external_node
+  n7@{ shape: hex, label: "**demo::first​_​person::actions::clear​_​**<br/>**completed​_​movement**<br/>来自first​_​person ↗：清除已结束动作的<br/>角色移动方向。" }
+  class n7 node_observer
+  class n7 external_node
+  n8@{ shape: rounded, label: "**demo::character::motion::move​_​**<br/>**characters**<br/>用有上限的加速度趋近目标水平速度，保留碰<br/>撞和外部冲量造成的实际运动。" }
+  class n8 node_system
+  n9@{ shape: rounded, label: "**demo::character::motion::jump​_​**<br/>**characters**<br/>跳跃只消费一次，通过冲量改变速度；重力和<br/>位置积分全部交给 Avian。" }
+  class n9 node_system
+  n10@{ shape: hex, label: "**demo::first​_​person::actions::clear​_​**<br/>**cancelled​_​movement**<br/>来自first​_​person ↗：清除已取消动作的<br/>角色移动方向。" }
+  class n10 node_observer
+  class n10 external_node
+  n11@{ shape: hex, label: "**demo::first​_​person::actions::record​_​**<br/>**movement**<br/>来自first​_​person ↗：按事件所属的上下<br/>文查找角色，避免把一个玩家的动作写给其他<br/>角色。" }
+  class n11 node_observer
+  class n11 external_node
+  n12@{ shape: hex, label: "**demo::first​_​person::actions::clear​_​**<br/>**completed​_​movement**<br/>来自first​_​person ↗：清除已结束动作的<br/>角色移动方向。" }
+  class n12 node_observer
+  class n12 external_node
+  n13@{ shape: hex, label: "**demo::first​_​person::actions::clear​_​**<br/>**completed​_​movement**<br/>来自first​_​person ↗：清除已结束动作的<br/>角色移动方向。" }
+  class n13 node_observer
+  class n13 external_node
+  n14@{ shape: hex, label: "**demo::first​_​person::actions::**<br/>**request​_​interaction**<br/>来自first​_​person ↗：记录目标角色的单<br/>次交互请求。" }
+  class n14 node_observer
+  class n14 external_node
+  n15@{ shape: hex, label: "**demo::first​_​person::actions::**<br/>**request​_​interaction**<br/>来自first​_​person ↗：记录目标角色的单<br/>次交互请求。" }
+  class n15 node_observer
+  class n15 external_node
+  n16@{ shape: hex, label: "**demo::first​_​person::actions::clear​_​**<br/>**cancelled​_​movement**<br/>来自first​_​person ↗：清除已取消动作的<br/>角色移动方向。" }
+  class n16 node_observer
+  class n16 external_node
+  n17@{ shape: rounded, label: "**demo::character::lifecycle::clear​_​**<br/>**character​_​intents**<br/>在固定循环前丢弃旧移动轴和一次性请求，恢<br/>复后由当前设备输入重新建立意图。" }
+  class n17 node_system
+  n18@{ shape: hex, label: "**demo::first​_​person::actions::**<br/>**request​_​jump**<br/>来自first​_​person ↗：一次性请求保留到<br/>固定步消费，即使本渲染帧没有固定步也不会<br/>丢失。" }
+  class n18 node_observer
+  class n18 external_node
+  n19@{ shape: hex, label: "**demo::first​_​person::actions::record​_​**<br/>**movement**<br/>来自first​_​person ↗：按事件所属的上下<br/>文查找角色，避免把一个玩家的动作写给其他<br/>角色。" }
+  class n19 node_observer
+  class n19 external_node
+  n20@{ shape: hex, label: "**demo::first​_​person::actions::**<br/>**request​_​jump**<br/>来自first​_​person ↗：一次性请求保留到<br/>固定步消费，即使本渲染帧没有固定步也不会<br/>丢失。" }
+  class n20 node_observer
+  class n20 external_node
+  n21@{ shape: rounded, label: "**spawn​_​actors · 创建模板**<br/>来自scene​_​assembly ↗：创建海岛中的可<br/>控制快递员根实体。" }
+  class n21 node_entity
+  class n21 external_node
+  n22@{ shape: rounded, label: "**demo::item​_​interaction::**<br/>**interaction::handle​_​interaction**<br/>来自item​_​interaction ↗：拾取建立物理<br/>持握关系；释放只解除控制，保留刚体姿态、<br/>线速度和角速度。" }
+  class n22 node_system
+  class n22 external_node
+  n1 e0@-->|"赋值"| n0
+  class e0 edge_write
+  n2 e1@-->|"可变访问"| n0
+  class e1 edge_write
+  n3 e2@-->|"赋值"| n0
+  class e2 edge_write
+  n4 e3@-->|"可变访问"| n0
+  class e3 edge_write
+  n5 e4@-->|"赋值"| n0
+  class e4 edge_write
+  n6 e5@-->|"赋值"| n0
+  class e5 edge_write
+  n7 e6@-->|"赋值"| n0
+  class e6 edge_write
+  n0 e7@--> n8
+  class e7 edge_read
+  n9 e8@-->|"可变访问"| n0
+  class e8 edge_write
+  n7 e9@-->|"可变访问"| n0
+  class e9 edge_write
+  n10 e10@-->|"可变访问"| n0
+  class e10 edge_write
+  n11 e11@-->|"赋值"| n0
+  class e11 edge_write
+  n1 e12@-->|"可变访问"| n0
+  class e12 edge_write
+  n12 e13@-->|"赋值"| n0
+  class e13 edge_write
+  n13 e14@-->|"赋值"| n0
+  class e14 edge_write
+  n14 e15@-->|"赋值"| n0
+  class e15 edge_write
+  n12 e16@-->|"可变访问"| n0
+  class e16 edge_write
+  n15 e17@-->|"赋值"| n0
+  class e17 edge_write
+  n10 e18@-->|"赋值"| n0
+  class e18 edge_write
+  n16 e19@-->|"赋值"| n0
+  class e19 edge_write
+  n17 e20@-->|"可变访问"| n0
+  class e20 edge_write
+  n3 e21@-->|"可变访问"| n0
+  class e21 edge_write
+  n18 e22@-->|"赋值"| n0
+  class e22 edge_write
+  n11 e23@-->|"可变访问"| n0
+  class e23 edge_write
+  n5 e24@-->|"可变访问"| n0
+  class e24 edge_write
+  n16 e25@-->|"可变访问"| n0
+  class e25 edge_write
+  n19 e26@-->|"赋值"| n0
+  class e26 edge_write
+  n20 e27@-->|"可变访问"| n0
+  class e27 edge_write
+  n15 e28@-->|"可变访问"| n0
+  class e28 edge_write
+  n14 e29@-->|"可变访问"| n0
+  class e29 edge_write
+  n6 e30@-->|"可变访问"| n0
+  class e30 edge_write
+  n2 e31@-->|"赋值"| n0
+  class e31 edge_write
+  n20 e32@-->|"赋值"| n0
+  class e32 edge_write
+  n18 e33@-->|"可变访问"| n0
+  class e33 edge_write
+  n4 e34@-->|"赋值"| n0
+  class e34 edge_write
+  n19 e35@-->|"可变访问"| n0
+  class e35 edge_write
+  n17 e36@-->|"赋值"| n0
+  class e36 edge_write
+  n13 e37@-->|"可变访问"| n0
+  class e37 edge_write
+  n21 e38@-->|"可能包含"| n0
+  class e38 edge_reference
+  n22 e39@-->|"可变访问"| n0
+  class e39 edge_write
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e17@{ curve: basis }
+  e18@{ curve: basis }
+  e19@{ curve: basis }
+  e20@{ curve: basis }
+  e21@{ curve: basis }
+  e22@{ curve: basis }
+  e23@{ curve: basis }
+  e24@{ curve: basis }
+  e25@{ curve: basis }
+  e26@{ curve: basis }
+  e27@{ curve: basis }
+  e28@{ curve: basis }
+  e29@{ curve: basis }
+  e30@{ curve: bumpX }
+  e31@{ curve: basis }
+  e32@{ curve: basis }
+  e33@{ curve: basis }
+  e34@{ curve: basis }
+  e35@{ curve: basis }
+  e36@{ curve: basis }
+  e37@{ curve: basis }
+  e38@{ curve: basis }
+  e39@{ curve: basis }

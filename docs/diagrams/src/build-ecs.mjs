@@ -6,15 +6,16 @@ import { renderArchitectureViewer } from './architecture-viewer.mjs';
 import { SOURCE_ROLE_LABELS, sourceKey, summarizeAnalysisGaps } from './rustc-model.mjs';
 import { DEBUGDUMP_MANIFEST, renderDebugdump, obsoleteArchitectureArtifacts, sourceFingerprint } from './debugdump.mjs';
 import { scheduleRuntimeAssets } from './schedule-runtime.mjs';
+import { objectRelationRuntimeAssets } from './object-relation-runtime-assets.mjs';
 
 import { prepareArchitecture } from './architecture-preparation.mjs';
 import { writeSourceViewer } from './source-viewer.mjs';
 import { pathsForRepository, repositoryRoot, artifactRelativePath } from './paths.mjs';
 import { writeExternalArchitecture, obsoleteExternalReferences } from './architecture-artifacts.mjs';
-import { INFRASTRUCTURE_FEATURES } from './architecture-infrastructure.mjs';
+import { projectInfrastructureFeatures } from './architecture-infrastructure.mjs';
 import { NODE_STYLES, EDGE_STYLES, SELECTION_STYLE, EXTERNAL_REFERENCE_STYLE } from './architecture-style.mjs';
 import { SCHEDULE_LEGEND_LABELS } from './schedule-legend.mjs';
-import { hashFile } from './stream-files.mjs';
+import { replaceArtifactSync, copyVerifiedArtifactSync } from './architecture-artifact-writer.mjs';
 
 const root = repositoryRoot, paths = pathsForRepository(root), directory = paths.generatedDirectory;
 const previousManifestPath = path.join(paths.dataDirectory, 'manifest.json');
@@ -22,6 +23,7 @@ const previousManifest = fs.existsSync(previousManifestPath) ? JSON.parse(fs.rea
 const args = process.argv.slice(2);
 if (args.length && (args.length !== 2 || args[0] !== '--debugdump' || !args[1])) throw new Error('Usage: node docs/diagrams/build-ecs.mjs [--debugdump <export-directory>]');
 const { dump, schedules: parsedSchedules, model, analysisFilename, registry, features, objects, pluginGroups, scheduleInteractions, views: objectViews } = await prepareArchitecture({ workspace: root, debugdumpDirectory: args[1] });
+const infrastructureFeatures = projectInfrastructureFeatures(registry, { requireComplete: true });
 const schedules = await renderDebugdump(parsedSchedules);
 let views = objectViews;
 const compiled = await compileArchitectureArtifacts(views, registry);
@@ -40,16 +42,14 @@ function writeArtifact(filename, content) {
   fs.mkdirSync(path.dirname(staged), { recursive: true });
   fs.mkdirSync(path.dirname(target), { recursive: true });
   fs.writeFileSync(staged, content);
-  fs.renameSync(staged, target);
+  replaceArtifactSync(staged, target);
 }
 function copyArtifact(filename, source, expectedSha256) {
   const target = path.resolve(directory, filename), staged = path.resolve(stagedArtifacts, filename);
   if (!target.startsWith(directory + path.sep) || !staged.startsWith(stagedArtifacts + path.sep)) throw new Error('Unsafe compiler sidecar output path');
   fs.mkdirSync(path.dirname(staged), { recursive: true });
-  fs.copyFileSync(source, staged);
-  if (hashFile(staged).sha256 !== expectedSha256) throw new Error('Compiler call graph changed during artifact copy');
   fs.mkdirSync(path.dirname(target), { recursive: true });
-  fs.renameSync(staged, target);
+  copyVerifiedArtifactSync(source, staged, target, expectedSha256);
 }
 for (const view of artifactViews) if (view.svg) {
   writeArtifact(artifactRelativePath(view), view.svg);
@@ -62,11 +62,12 @@ const sources = model.sourceFiles.map(source => ({ path: sourceKey(source), text
   ...(source.dependency ? { source: { path: source.path, line: 1, dependency: source.dependency } } : {}) }));
 writeSourceViewer({ outputDirectory: paths.pagesDirectory, sources });
 const runtimeAssets = await scheduleRuntimeAssets();
+const objectRuntimeAssets = await objectRelationRuntimeAssets();
 const data = { schemaVersion: 5, model, registry, views, guideSamples: compiled.guideSamples, scheduleLegendLabels: SCHEDULE_LEGEND_LABELS,
   objects: objects.objects, objectAliases: model.object_aliases || {}, sourceRoleLabels: SOURCE_ROLE_LABELS,
-  schedulePluginCatalog: pluginGroups.catalog, scheduleInteractions, infrastructureFeatures: INFRASTRUCTURE_FEATURES,
+  schedulePluginCatalog: pluginGroups.catalog, scheduleInteractions, infrastructureFeatures,
   styles: { nodes: NODE_STYLES, edges: EDGE_STYLES, selection: SELECTION_STYLE, externalReference: EXTERNAL_REFERENCE_STYLE } };
-const externalBootstrap = writeExternalArchitecture({ paths, data, writeArtifact, copyArtifact, compilerModelDirectory: path.dirname(analysisFilename) });
+const externalBootstrap = writeExternalArchitecture({ paths, data, writeArtifact, copyArtifact, compilerModelDirectory: path.dirname(analysisFilename), objectRelationRuntime: objectRuntimeAssets.module });
 writeArtifact('pages/ecs-architecture.html', renderArchitectureViewer({ ...data, features, runtimeAssets, externalBootstrap }));
 for (const filename of obsoleteArchitectureArtifacts(paths, artifactViews)) fs.unlinkSync(path.join(directory, filename));
 const currentManifest = JSON.parse(fs.readFileSync(previousManifestPath, 'utf8'));

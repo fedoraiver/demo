@@ -1,0 +1,67 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: atmosphere::resources::GpuAtmosphere · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**atmosphere::resources::GpuAtmosphere**<br/>以 Uniform 格式描述大气几何与地面。" }
+  class n0 node_component
+  n1@{ shape: rounded, label: "**bevy​_​pbr::atmosphere::resources::**<br/>**prepare​_​atmosphere​_​buffers**<br/>上传各视图的大气和采样设置缓冲。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**bevy​_​pbr::atmosphere::extract​_​**<br/>**atmosphere**<br/>为三维相机选择并提取最近的大气。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**bevy​_​pbr::atmosphere::resources::**<br/>**prepare​_​atmosphere​_​uniforms**<br/>把提取的大气几何转换为 GPU Uniform 组<br/>件。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**bevy​_​pbr::atmosphere::resources::**<br/>**prepare​_​atmosphere​_​transforms**<br/>按相机位置构造大气局部坐标变换。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**bevy​_​render::uniform::prepare​_​**<br/>**uniform​_​components#lt;bevy​_​pbr::**<br/>**atmosphere::resources::**<br/>**GpuAtmosphere#gt;**<br/>来自crate:bevy​_​render ↗：将组件值批量<br/>上传为动态着色器参数。" }
+  class n5 node_system
+  class n5 external_node
+  n0 e0@--> n1
+  class e0 edge_read
+  n2 e1@-->|"移除"| n0
+  class e1 edge_write
+  n3 e2@-->|"插入"| n0
+  class e2 edge_write
+  n0 e3@--> n4
+  class e3 edge_read
+  n0 e4@--> n5
+  class e4 edge_read
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e4@{ curve: basis }

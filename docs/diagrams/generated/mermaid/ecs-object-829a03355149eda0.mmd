@@ -1,0 +1,178 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: bevy_asset::Assets#lt;image::Image#gt; · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_observer fill:#F4F1F9,stroke:#7B4DB2,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: cyl, label: "**bevy​_​asset::Assets#lt;image::Image#gt;**<br/>按资产身份存储对象并暂存变化消息。" }
+  class n0 node_resource
+  n1@{ shape: rounded, label: "**bevy​_​ui::widget::image::update​_​**<br/>**image​_​content​_​size​_​system**<br/>来自crate:bevy​_​ui ↗：按图像或图集区域<br/>更新 UI 的固有尺寸测量。" }
+  class n1 node_system
+  class n1 external_node
+  n2@{ shape: rounded, label: "**bevy​_​ui::widget::inline​_​image::**<br/>**update​_​inline​_​image​_​boxes**<br/>来自crate:bevy​_​ui ↗：把内联图像尺寸同<br/>步到文本排版盒。" }
+  class n2 node_system
+  class n2 external_node
+  n3@{ shape: rounded, label: "**bevy​_​light::atmosphere::extract​_​**<br/>**chromatic​_​phase​_​textures**<br/>来自crate:bevy​_​light ↗：将已加载色度<br/>相函数纹理转换为散射曲线。" }
+  class n3 node_system
+  class n3 external_node
+  n4@{ shape: hex, label: "**bevy​_​pbr::atmosphere::environment::**<br/>**on​_​insert​_​atmosphere​_​environment​_​**<br/>**map​_​light**<br/>来自crate:bevy​_​pbr ↗：为大气环境光补<br/>齐贴图生成组件。" }
+  class n4 node_observer
+  class n4 external_node
+  n5@{ shape: rounded, label: "**bevy​_​ui::widget::text::text​_​system**<br/>来自crate:bevy​_​ui ↗：重排变化的 UI 文<br/>本并更新字形图集。" }
+  class n5 node_system
+  class n5 external_node
+  n6@{ shape: rounded, label: "**bevy​_​render::camera::camera​_​system**<br/>来自crate:bevy​_​render ↗：响应目标尺寸<br/>变化并更新相机投影。" }
+  class n6 node_system
+  class n6 external_node
+  n7@{ shape: rounded, label: "**bevy​_​asset::assets::Assets#lt;bevy​_​**<br/>**image::image::Image#gt;::track​_​assets**<br/>同步资产存活状态并处理句柄释放。" }
+  class n7 node_system
+  n8@{ shape: rounded, label: "**bevy​_​sprite::calculate​_​bounds​_​2d**<br/>来自crate:bevy​_​sprite ↗：为二维网格和<br/>精灵计算局部包围盒。" }
+  class n8 node_system
+  class n8 external_node
+  n9@{ shape: rounded, label: "**bevy​_​egui::update​_​egui​_​textures​_​**<br/>**system**<br/>来自crate:bevy​_​egui ↗：应用 Egui 托<br/>管纹理的图像增量。" }
+  class n9 node_system
+  class n9 external_node
+  n10@{ shape: rounded, label: "**bevy​_​render::camera::camera​_​system**<br/>来自crate:bevy​_​render ↗：响应目标尺寸<br/>变化并更新相机投影。" }
+  class n10 node_system
+  class n10 external_node
+  n11@{ shape: rounded, label: "**bevy​_​egui::free​_​egui​_​textures​_​system**<br/>来自crate:bevy​_​egui ↗：回收 Egui 已<br/>释放或失效的纹理引用。" }
+  class n11 node_system
+  class n11 external_node
+  n12@{ shape: rounded, label: "**bevy​_​ui::widget::viewport::update​_​**<br/>**viewport​_​render​_​target​_​size**<br/>来自crate:bevy​_​ui ↗：按 UI 视口节点尺<br/>寸调整相机图像目标。" }
+  class n12 node_system
+  class n12 external_node
+  n13@{ shape: hex, label: "**bevy​_​pbr::atmosphere::environment::**<br/>**on​_​insert​_​atmosphere​_​environment​_​**<br/>**map​_​light**<br/>来自crate:bevy​_​pbr ↗：为大气环境光补<br/>齐贴图生成组件。" }
+  class n13 node_observer
+  class n13 external_node
+  n14@{ shape: rounded, label: "**bevy​_​asset::assets::Assets#lt;bevy​_​**<br/>**image::image::Image#gt;::asset​_​events​_​**<br/>**condition**<br/>判断是否有待发布的资产变化。" }
+  class n14 node_system
+  n15@{ shape: rounded, label: "**bevy​_​ui::widget::text​_​input​_​layout::**<br/>**update​_​editable​_​text​_​layout**<br/>来自crate:bevy​_​ui ↗：刷新可编辑文本的<br/>字形布局和编辑反馈。" }
+  class n15 node_system
+  class n15 external_node
+  n16@{ shape: rounded, label: "**bevy​_​winit::cursor::update​_​cursors**<br/>来自crate:bevy​_​winit ↗：准备原生或自<br/>定义光标并保留资产重试。" }
+  class n16 node_system
+  class n16 external_node
+  n17@{ shape: rounded, label: "**bevy​_​sprite::text2d::update​_​text2d​_​**<br/>**layout**<br/>来自crate:bevy​_​sprite ↗：重新排版变化<br/>的二维文字并准备字形。" }
+  class n17 node_system
+  class n17 external_node
+  n18@{ shape: rounded, label: "**bevy​_​asset::assets::Assets#lt;bevy​_​**<br/>**image::image::Image#gt;::asset​_​events**<br/>发布累计的资产变化消息。" }
+  class n18 node_system
+  n19@{ shape: rounded, label: "**bevy​_​render::render​_​asset::extract​_​**<br/>**render​_​asset#lt;bevy​_​render::texture::**<br/>**gpu​_​image::GpuImage#gt;**<br/>来自crate:bevy​_​render ↗：按资产变化和<br/>设备恢复请求提取渲染资产。" }
+  class n19 node_system
+  class n19 external_node
+  n20@{ shape: rounded, label: "**bevy​_​pbr::light​_​probe::generate::**<br/>**generate​_​environment​_​map​_​light**<br/>来自crate:bevy​_​pbr ↗：为环境光生成分<br/>配漫反射和镜面目标图像。" }
+  class n20 node_system
+  class n20 external_node
+  n21@{ shape: rounded, label: "**bevy​_​sprite::picking​_​backend::**<br/>**sprite​_​picking**<br/>来自crate:bevy​_​sprite ↗：按精灵图像和<br/>拾取配置计算指针命中。" }
+  class n21 node_system
+  class n21 external_node
+  n22@{ shape: hex, label: "**bevy​_​pbr::atmosphere::environment::**<br/>**on​_​insert​_​atmosphere​_​environment​_​**<br/>**map​_​light**<br/>来自crate:bevy​_​pbr ↗：为大气环境光补<br/>齐贴图生成组件。" }
+  class n22 node_observer
+  class n22 external_node
+  n23@{ shape: rounded, label: "**bevy​_​sprite​_​render::tilemap​_​chunk::**<br/>**update​_​tilemap​_​chunk​_​indices**<br/>来自crate:bevy​_​sprite​_​render ↗：将变<br/>化的瓦片块索引打包写入材质图像。" }
+  class n23 node_system
+  class n23 external_node
+  n0 e0@--> n1
+  class e0 edge_read
+  n0 e1@--> n2
+  class e1 edge_read
+  n0 e2@--> n3
+  class e2 edge_read
+  n4 e3@-->|"可变访问"| n0
+  class e3 edge_write
+  n5 e4@-->|"可变访问"| n0
+  class e4 edge_write
+  n0 e5@--> n6
+  class e5 edge_read
+  n7 e6@-->|"可变访问"| n0
+  class e6 edge_write
+  n0 e7@--> n8
+  class e7 edge_read
+  n9 e8@-->|"可变访问"| n0
+  class e8 edge_write
+  n0 e9@--> n10
+  class e9 edge_read
+  n11 e10@-->|"可变访问"| n0
+  class e10 edge_write
+  n12 e11@-->|"可变访问"| n0
+  class e11 edge_write
+  n13 e12@-->|"可变访问"| n0
+  class e12 edge_write
+  n0 e13@--> n14
+  class e13 edge_read
+  n15 e14@-->|"可变访问"| n0
+  class e14 edge_write
+  n0 e15@--> n16
+  class e15 edge_read
+  n17 e16@-->|"可变访问"| n0
+  class e16 edge_write
+  n18 e17@-->|"可变访问"| n0
+  class e17 edge_write
+  n19 e18@-->|"可变访问"| n0
+  class e18 edge_write
+  n20 e19@-->|"可变访问"| n0
+  class e19 edge_write
+  n0 e20@--> n21
+  class e20 edge_read
+  n22 e21@-->|"可变访问"| n0
+  class e21 edge_write
+  n23 e22@-->|"可变访问"| n0
+  class e22 edge_write
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e17@{ curve: basis }
+  e18@{ curve: basis }
+  e19@{ curve: basis }
+  e20@{ curve: basis }
+  e21@{ curve: basis }
+  e22@{ curve: basis }

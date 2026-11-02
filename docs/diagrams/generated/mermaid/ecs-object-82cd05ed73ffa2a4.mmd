@@ -1,0 +1,126 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: bevy_ui_render::extract_viewport_nodes · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_plugin fill:#F1F3F6,stroke:#4A6389,stroke-width:2.2px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**bevy​_​ui​_​render::extract​_​viewport​_​**<br/>**nodes**<br/>把视口节点所引用相机的输出图像嵌入 UI。" }
+  class n0 node_system
+  n1@{ shape: rounded, label: "**bevy​_​ui::UiGlobalTransform**<br/>来自crate:bevy​_​ui ↗：保存 UI 节点的绝<br/>对二维变换。" }
+  class n1 node_component
+  class n1 external_node
+  n2@{ shape: fr-rect, label: "**bevy​_​ui​_​render::UiRenderPlugin**<br/>提取并准备界面绘制数据。" }
+  class n2 node_plugin
+  n3@{ shape: rounded, label: "**bevy​_​camera::visibility::**<br/>**InheritedVisibility**<br/>来自crate:bevy​_​camera ↗：保存从实体层<br/>级计算出的可见性。" }
+  class n3 node_component
+  class n3 external_node
+  n4@{ shape: lin-rect, label: "**ExtractViewportNodes**<br/>组织各类界面绘制数据提取。" }
+  class n4 node_system_set
+  n5@{ shape: rounded, label: "**bevy​_​ui::ComputedNode**<br/>来自crate:bevy​_​ui ↗：保存 UI 布局计算<br/>后的物理尺寸。" }
+  class n5 node_component
+  class n5 external_node
+  n6@{ shape: rounded, label: "**bevy​_​ui::ComputedStackIndex**<br/>来自crate:bevy​_​ui ↗：保存节点计算后的<br/>绘制堆叠位置。" }
+  class n6 node_component
+  class n6 external_node
+  n7@{ shape: cyl, label: "**ExtractedUiNodes**<br/>保存提取后的 UI 节点及本帧变化集合。" }
+  class n7 node_resource
+  n8@{ shape: rounded, label: "**bevy​_​ui::CalculatedClip**<br/>来自crate:bevy​_​ui ↗：缓存节点从祖先继<br/>承的裁剪结果。" }
+  class n8 node_component
+  class n8 external_node
+  n9@{ shape: rounded, label: "**bevy​_​camera::Camera**<br/>来自crate:bevy​_​camera ↗：配置相机视<br/>口、输出目标和渲染顺序。" }
+  class n9 node_component
+  class n9 external_node
+  n10@{ shape: rounded, label: "**bevy​_​ui::widget::ViewportNode**<br/>来自crate:bevy​_​ui ↗：把相机渲染目标嵌<br/>入 UI 节点。" }
+  class n10 node_component
+  class n10 external_node
+  n11@{ shape: rounded, label: "**bevy​_​extract::SubEntity#lt;bevy​_​**<br/>**render::RenderApp#gt;**<br/>来自crate:bevy​_​extract ↗：记录主实体<br/>对应的子世界实体。" }
+  class n11 node_component
+  class n11 external_node
+  n12@{ shape: rounded, label: "**bevy​_​camera::RenderTarget**<br/>来自crate:bevy​_​camera ↗：指定相机输出<br/>的窗口、图像或纹理。" }
+  class n12 node_component
+  class n12 external_node
+  n13@{ shape: rounded, label: "**bevy​_​ui::ComputedUiTargetCamera**<br/>来自crate:bevy​_​ui ↗：缓存 UI 节点实际<br/>采用的相机。" }
+  class n13 node_component
+  class n13 external_node
+  n14@{ shape: cyl, label: "**extract​_​plugin::MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
+  class n14 node_resource
+  class n14 external_node
+  n1 e0@--> n0
+  class e0 edge_read
+  n2 e1@-->|"调用"| n0
+  class e1 edge_registration
+  n3 e2@--> n0
+  class e2 edge_read
+  n4 e3@-->|"集合成员"| n0
+  class e3 edge_set_membership
+  n5 e4@--> n0
+  class e4 edge_read
+  n6 e5@--> n0
+  class e5 edge_read
+  n0 e6@-->|"可变访问"| n7
+  class e6 edge_write
+  n8 e7@--> n0
+  class e7 edge_read
+  n9 e8@--> n0
+  class e8 edge_read
+  n10 e9@--> n0
+  class e9 edge_read
+  n11 e10@--> n0
+  class e10 edge_read
+  n12 e11@--> n0
+  class e11 edge_read
+  n13 e12@--> n0
+  class e12 edge_read
+  n14 e13@--> n0
+  class e13 edge_read
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }

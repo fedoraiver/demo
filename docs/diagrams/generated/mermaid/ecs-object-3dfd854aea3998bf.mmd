@@ -1,0 +1,118 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: bevy_light::cascade::build_directional_light_cascades · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_plugin fill:#F1F3F6,stroke:#4A6389,stroke-width:2.2px,color:#1F3340
+  classDef edge_order stroke:#334155,stroke-width:2px
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**bevy​_​light::cascade::build​_​**<br/>**directional​_​light​_​cascades**<br/>为投射阴影的方向光构建逐相机级联。" }
+  class n0 node_system
+  n1@{ shape: cyl, label: "**directional​_​light::**<br/>**DirectionalLightShadowMap**<br/>配置方向光与聚光灯阴影贴图分辨率。" }
+  class n1 node_resource
+  n2@{ shape: rounded, label: "**bevy​_​camera::Projection**<br/>来自crate:bevy​_​camera ↗：定义相机从视<br/>图到裁剪空间的投影。" }
+  class n2 node_component
+  class n2 external_node
+  n3@{ shape: lin-rect, label: "**UpdateDirectionalLightCascades**<br/>组织灯光聚簇与可见性准备。" }
+  class n3 node_system_set
+  n4@{ shape: lin-rect, label: "**Propagate**<br/>来自crate:bevy​_​transform ↗：组织实体<br/>层级变换传播。" }
+  class n4 node_system_set
+  class n4 external_node
+  n5@{ shape: rounded, label: "**bevy​_​light::directional​_​light::**<br/>**validate​_​shadow​_​map​_​size**<br/>将方向光阴影贴图尺寸纠正为二的幂。" }
+  class n5 node_system
+  n6@{ shape: rounded, label: "**bevy​_​camera::Camera**<br/>来自crate:bevy​_​camera ↗：配置相机视<br/>口、输出目标和渲染顺序。" }
+  class n6 node_component
+  class n6 external_node
+  n7@{ shape: rounded, label: "**components::global​_​transform::**<br/>**GlobalTransform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>合并祖先变换后的世界空间仿射变换" }
+  class n7 node_component
+  class n7 external_node
+  n8@{ shape: rounded, label: "**cascade::CascadeShadowConfig**<br/>配置方向光阴影级联的距离与重叠。" }
+  class n8 node_component
+  n9@{ shape: lin-rect, label: "**CameraUpdateSystems**<br/>来自crate:bevy​_​camera ↗：统一更新相机<br/>目标、视口与投影计算结果。" }
+  class n9 node_system_set
+  class n9 external_node
+  n10@{ shape: rounded, label: "**cascade::Cascades**<br/>按视图保存方向光的阴影级联。" }
+  class n10 node_component
+  n11@{ shape: lin-rect, label: "**TransformGizmoRenderStep**<br/>来自crate:bevy​_​app ↗：准备变换操纵器<br/>的网格和显示变换。" }
+  class n11 node_system_set
+  class n11 external_node
+  n12@{ shape: fr-rect, label: "**LightPlugin**<br/>维护光源可见性与空间聚簇。" }
+  class n12 node_plugin
+  n13@{ shape: rounded, label: "**directional​_​light::DirectionalLight**<br/>配置平行方向光的颜色、照度和阴影。" }
+  class n13 node_component
+  n1 e0@--> n0
+  class e0 edge_read
+  n2 e1@--> n0
+  class e1 edge_read
+  n3 e2@-->|"集合成员"| n0
+  class e2 edge_set_membership
+  n4 e3@-->|"先于"| n0
+  class e3 edge_order
+  n5 e4@-->|"先于"| n0
+  class e4 edge_order
+  n6 e5@--> n0
+  class e5 edge_read
+  n7 e6@--> n0
+  class e6 edge_read
+  n8 e7@--> n0
+  class e7 edge_read
+  n9 e8@-->|"先于"| n0
+  class e8 edge_order
+  n0 e9@-->|"可变访问"| n10
+  class e9 edge_write
+  n0 e10@-->|"先于"| n11
+  class e10 edge_order
+  n12 e11@-->|"调用"| n0
+  class e11 edge_registration
+  n13 e12@--> n0
+  class e12 edge_read
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }

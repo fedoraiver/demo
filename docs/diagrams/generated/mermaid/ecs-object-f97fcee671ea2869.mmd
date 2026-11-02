@@ -1,0 +1,109 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: bevy_text::editing::apply_text_edits · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef node_event fill:#F9F3EE,stroke:#B66B2D,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_plugin fill:#F1F3F6,stroke:#4A6389,stroke-width:2.2px,color:#1F3340
+  classDef edge_order stroke:#334155,stroke-width:2px
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_emit stroke:#B66B2D,stroke-width:1.8px
+  classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  subgraph layout_card_n0[" "]
+  n0@{ shape: rounded, label: "**bevy​_​text::editing::apply​_​text​_​edits**<br/>应用可编辑文字排队的编辑操作。" }
+  class n0 node_system
+  end
+  style layout_card_n0 fill:none,stroke:none
+  n1@{ shape: cyl, label: "**Clipboard**<br/>来自crate:bevy​_​clipboard ↗：提供剪贴<br/>板文本读写接口" }
+  class n1 node_resource
+  class n1 external_node
+  n2@{ shape: rounded, label: "**bevy​_​sprite::text2d::update​_​text2d​_​**<br/>**layout**<br/>来自crate:bevy​_​sprite ↗：重新排版变化<br/>的二维文字并准备字形。" }
+  class n2 node_system
+  class n2 external_node
+  n3@{ shape: rounded, label: "**editing::EditableTextFilter**<br/>保存逐字符过滤规则" }
+  class n3 node_component
+  n4@{ shape: rounded, label: "**bevy​_​text::font::load​_​font​_​assets​_​**<br/>**into​_​font​_​collection**<br/>把字体资产注册到排版字体数据库。" }
+  class n4 node_system
+  n5@{ shape: fr-rect, label: "**TextPlugin**<br/>提供文本排版与渲染基础。" }
+  class n5 node_plugin
+  n6@{ shape: lin-rect, label: "**EditableTextSystems**<br/>统一应用可编辑文字的待处理操作。" }
+  class n6 node_system_set
+  n7@{ shape: rounded, label: "**editing::EditableTextGeneration**<br/>保存 Parley 排版代数" }
+  class n7 node_component
+  n8@{ shape: rounded, label: "**editing::EditableText**<br/>持有 Parley 编辑器、文本、光标及待应用<br/>编辑操作" }
+  class n8 node_component
+  n9@{ shape: stadium, label: "**editing::TextEditChange**<br/>通知可编辑文本已应用待处理编辑。" }
+  class n9 node_event
+  n10@{ shape: cyl, label: "**bevy​_​text::FontCx**<br/>维护字体数据库、家族解析与字体缓存" }
+  class n10 node_resource
+  n11@{ shape: cyl, label: "**bevy​_​text::LayoutCx**<br/>持有 Parley 文字布局上下文" }
+  class n11 node_resource
+  n0 e0@-->|"可变访问"| n1
+  class e0 edge_write
+  n0 e1@-->|"先于"| n2
+  class e1 edge_order
+  n3 e2@--> n0
+  class e2 edge_read
+  n4 e3@-->|"先于"| n0
+  class e3 edge_order
+  n5 e4@-->|"调用"| n0
+  class e4 edge_registration
+  n6 e5@-->|"集合成员"| n0
+  class e5 edge_set_membership
+  n7 e6@--> n0
+  class e6 edge_read
+  n0 e7@-->|"可变访问"| n8
+  class e7 edge_write
+  n0 e8@-->|"触发事件"| n9
+  class e8 edge_emit
+  n0 e9@-->|"可变访问"| n10
+  class e9 edge_write
+  n0 e10@-->|"可变访问"| n11
+  class e10 edge_write
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }

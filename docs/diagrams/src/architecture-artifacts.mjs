@@ -5,6 +5,7 @@ import assert from 'node:assert/strict';
 import { pathsForRepository, artifactRelativePath } from './paths.mjs';
 import { viewerModel, compilerCallGraphFile } from './rustc-model.mjs';
 import { hashFile } from './stream-files.mjs';
+import { projectInfrastructureFeatures } from './architecture-infrastructure.mjs';
 
 const sha256 = value => crypto.createHash('sha256').update(value).digest('hex');
 const encoded = value => JSON.stringify(value);
@@ -24,12 +25,14 @@ export function obsoleteExternalReferences(previous, current) {
 }
 
 /** 产物清单使用生成目录相对路径；浏览器 URL 相对 pages 中的入口。 */
-export function writeExternalArchitecture({ paths, data, writeArtifact, copyArtifact, compilerModelDirectory }) {
+export function writeExternalArchitecture({ paths, data, writeArtifact, copyArtifact, compilerModelDirectory, objectRelationRuntime }) {
+  assert.deepEqual(data.infrastructureFeatures, projectInfrastructureFeatures(data.registry), 'Architecture infrastructure menu projection mismatch');
   const put = (filename, text) => {
     writeArtifact(filename, text);
     return { path: filename, sha256: sha256(text), bytes: Buffer.byteLength(text) };
   };
   const model = put('data/model.json', encoded(data.model));
+  const relationRuntime = objectRelationRuntime === undefined ? null : put('runtime/object-relations.mjs', objectRelationRuntime);
   let callGraph;
   if (data.model.callGraph?.schemaVersion === 2) {
     if (!copyArtifact) throw new Error('Missing compiler call graph artifact copier');
@@ -55,14 +58,16 @@ export function writeExternalArchitecture({ paths, data, writeArtifact, copyArti
     }
     entries.push(entry);
     const descriptor = Object.fromEntries(descriptorFields.filter(key => view[key] !== undefined).map(key => [key, view[key]]));
+    if (view.aspect === 'object') descriptor.relationCount = view.links.length;
     if (view.schedulePluginGroups) descriptor.schedulePluginGroups = view.schedulePluginGroups.map(({ id, systemCount }) => ({ id, systemCount }));
-    descriptor.resources = Object.fromEntries(['data', 'svg'].filter(kind => entry[kind]).map(kind => [kind, { url: urlFor(entry[kind]), sha256: entry[kind].sha256, bytes: entry[kind].bytes }]));
+    descriptor.resources = Object.fromEntries(['data', 'svg', 'mermaid'].filter(kind => entry[kind]).map(kind => [kind, { url: urlFor(entry[kind]), sha256: entry[kind].sha256, bytes: entry[kind].bytes }]));
     descriptors.push(descriptor);
   }
-  const buildId = sha256(encoded({ model, ...(callGraph ? { callGraph } : {}), entries, guides, registry: sha256(encoded(data.registry)) }));
+  const buildId = sha256(encoded({ model, ...(callGraph ? { callGraph } : {}), ...(relationRuntime ? { objectRelationRuntime: relationRuntime } : {}), entries, guides, registry: sha256(encoded(data.registry)) }));
   const runtime = put('data/runtime.json', encoded({ ...data, schemaVersion: 6, buildId,
+    ...(relationRuntime ? { objectRelationRuntime: { url: urlFor(relationRuntime), sha256: relationRuntime.sha256, bytes: relationRuntime.bytes } } : {}),
     model: { features: data.model.features, entities: data.model.objects ? viewerModel(data.model).entities : data.model.entities }, views: descriptors, guideSamples: guideUrls(guides) }));
-  const manifest = put('data/manifest.json', encoded({ schemaVersion: 1, buildId, model, ...(callGraph ? { callGraph } : {}), runtime, views: entries, guides }));
+  const manifest = put('data/manifest.json', encoded({ schemaVersion: 1, buildId, model, ...(callGraph ? { callGraph } : {}), ...(relationRuntime ? { objectRelationRuntime: relationRuntime } : {}), runtime, views: entries, guides }));
   return { schemaVersion: 6, buildId, runtimeUrl: urlFor(runtime), runtimeSha256: runtime.sha256,
     manifestUrl: urlFor(manifest), manifestSha256: manifest.sha256 };
 }
@@ -100,6 +105,12 @@ export function readArchitectureData(repository) {
   if (manifest.schemaVersion !== 1 || manifest.buildId !== bootstrap.buildId) throw new Error('Architecture manifest version mismatch');
   assert.deepEqual(referenceFromUrl(bootstrap.runtimeUrl, bootstrap.runtimeSha256), { path: manifest.runtime.path, sha256: manifest.runtime.sha256 });
   const runtime = JSON.parse(read(manifest.runtime)), model = JSON.parse(read(manifest.model));
+  if (manifest.objectRelationRuntime) {
+    const reference = manifest.objectRelationRuntime;
+    assert.deepEqual(runtime.objectRelationRuntime, { url: urlFor(reference), sha256: reference.sha256, bytes: reference.bytes }, 'Architecture object relation runtime mismatch');
+    read(reference);
+  } else if (runtime.objectRelationRuntime) throw new Error('Unexpected object relation runtime resource');
+  assert.deepEqual(runtime.infrastructureFeatures, projectInfrastructureFeatures(runtime.registry), 'Architecture infrastructure menu projection mismatch');
   if (model.callGraph?.schemaVersion === 2) {
     const filename = compilerCallGraphFile(model, path.dirname(path.resolve(paths.generatedDirectory, manifest.model.path)));
     assert.deepEqual({ path: manifest.callGraph?.path, sha256: manifest.callGraph?.sha256 },
@@ -116,8 +127,9 @@ export function readArchitectureData(repository) {
     const metadata = JSON.parse(read(entry.data)), descriptor = descriptors.get(entry.id);
     if (metadata.id !== entry.id || !descriptor) throw new Error('Architecture view identity mismatch');
     const expected = Object.fromEntries(descriptorFields.filter(key => metadata[key] !== undefined).map(key => [key, metadata[key]]));
+    if (metadata.aspect === 'object') expected.relationCount = metadata.links.length;
     if (metadata.schedulePluginGroups) expected.schedulePluginGroups = metadata.schedulePluginGroups.map(({ id, systemCount }) => ({ id, systemCount }));
-    expected.resources = Object.fromEntries(['data', 'svg'].filter(kind => entry[kind]).map(kind => [kind, { url: urlFor(entry[kind]), sha256: entry[kind].sha256, bytes: entry[kind].bytes }]));
+    expected.resources = Object.fromEntries(['data', 'svg', 'mermaid'].filter(kind => entry[kind]).map(kind => [kind, { url: urlFor(entry[kind]), sha256: entry[kind].sha256, bytes: entry[kind].bytes }]));
     assert.deepEqual(descriptor, expected, 'Architecture descriptor mismatch: ' + entry.id);
     if (['svg', 'dot', 'mermaid'].some(kind => typeof metadata[kind] === 'string')) throw new Error('Embedded graph text remains in view data: ' + entry.id);
     return { ...metadata, svg: entry.svg ? read(entry.svg) : null,
@@ -133,5 +145,6 @@ export function readArchitectureData(repository) {
   }
   const result = { ...runtime, schemaVersion: 5, model, views, guideSamples: guides(manifest.guides, runtime.guideSamples) };
   delete result.buildId;
+  delete result.objectRelationRuntime;
   return result;
 }

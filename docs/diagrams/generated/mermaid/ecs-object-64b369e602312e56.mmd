@@ -1,0 +1,85 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#object-64b369e602312e56-e3{marker-start:url(#object-64b369e602312e56_flowchart-v2-pointStart)!important}\n#object-64b369e602312e56_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: bevy_render::view::DebandDither · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**bevy​_​render::view::DebandDither**<br/>控制颜色输出的去色带抖动。" }
+  class n0 node_component
+  n1@{ shape: rounded, label: "**bevy​_​core​_​pipeline::tonemapping::**<br/>**prepare​_​view​_​tonemapping​_​pipelines**<br/>来自crate:bevy​_​core​_​pipeline ↗：按视<br/>图实际颜色分级需求专用化色调映射。" }
+  class n1 node_system
+  class n1 external_node
+  n2@{ shape: rounded, label: "**bevy​_​pbr::render::mesh::check​_​views​_​**<br/>**need​_​specialization**<br/>来自crate:bevy​_​pbr ↗：汇总视图渲染特<br/>性并检测管线配置变化。" }
+  class n2 node_system
+  class n2 external_node
+  n3@{ shape: rounded, label: "**bevy​_​core​_​pipeline::tonemapping::**<br/>**check​_​tonemapping​_​none**<br/>来自crate:bevy​_​core​_​pipeline ↗：警告<br/>关闭色调映射后仍配置无效效果的相机。" }
+  class n3 node_system
+  class n3 external_node
+  n4@{ shape: rounded, label: "**bevy​_​extract::extract​_​component::**<br/>**extract​_​components#lt;bevy​_​render::**<br/>**view::DebandDither, bevy​_​render::**<br/>**RenderApp, ()#gt;**<br/>来自crate:bevy​_​extract ↗：批量同步或<br/>移除子世界的目标组件。" }
+  class n4 node_system
+  class n4 external_node
+  n5@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::mesh::**<br/>**check​_​views​_​need​_​specialization**<br/>来自crate:bevy​_​sprite​_​render ↗：检测<br/>二维视图管线配置变化并标记重建。" }
+  class n5 node_system
+  class n5 external_node
+  n6@{ shape: rounded, label: "**bevy​_​sprite​_​render::render::queue​_​**<br/>**sprites**<br/>来自crate:bevy​_​sprite​_​render ↗：按视<br/>图可见性将精灵加入透明二维阶段。" }
+  class n6 node_system
+  class n6 external_node
+  n0 e0@--> n1
+  class e0 edge_read
+  n0 e1@--> n2
+  class e1 edge_read
+  n0 e2@--> n3
+  class e2 edge_read
+  n4 e3@--- n0
+  class e3 edge_read
+  n0 e4@--> n5
+  class e4 edge_read
+  n0 e5@--> n6
+  class e5 edge_read
+  n0 e6@-->|"存在性约束"| n3
+  class e6 edge_reference
+  n4 e7@-->|"移除"| n0
+  class e7 edge_write
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }

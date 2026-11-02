@@ -1,0 +1,175 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: bevy_picking::Pickable · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_entity fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  subgraph layout_card_n0[" "]
+  n0@{ shape: rounded, label: "**bevy​_​picking::Pickable**<br/>配置实体是否可被拾取及是否阻挡深度更低的<br/>命中目标" }
+  class n0 node_component
+  end
+  style layout_card_n0 fill:none,stroke:none
+  n1@{ shape: rounded, label: "**bevy​_​sprite::picking​_​backend::**<br/>**sprite​_​picking**<br/>来自crate:bevy​_​sprite ↗：按精灵图像和<br/>拾取配置计算指针命中。" }
+  class n1 node_system
+  class n1 external_node
+  n2@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：在填充末端指示当前音量位置。" }
+  class n2 node_entity
+  class n2 external_node
+  n3@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：在填充末端指示当前音量位置。" }
+  class n3 node_entity
+  class n3 external_node
+  n4@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：以填充长度显示对应音量。" }
+  class n4 node_entity
+  class n4 external_node
+  n5@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：为设置正文提供垂直滚动条轨<br/>道。" }
+  class n5 node_entity
+  class n5 external_node
+  n6@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示滚动位置并提供拖动滑块。" }
+  class n6 node_entity
+  class n6 external_node
+  n7@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：为设置正文提供垂直滚动条轨<br/>道。" }
+  class n7 node_entity
+  class n7 external_node
+  n8@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：为设置正文提供垂直滚动条轨<br/>道。" }
+  class n8 node_entity
+  class n8 external_node
+  n9@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制音量滑条的背景轨道。" }
+  class n9 node_entity
+  class n9 external_node
+  n10@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示滚动位置并提供拖动滑块。" }
+  class n10 node_entity
+  class n10 external_node
+  n11@{ shape: rounded, label: "**bevy​_​picking::hover::generate​_​**<br/>**hovermap**<br/>汇总拾取命中并应用指针捕获。" }
+  class n11 node_system
+  n12@{ shape: rounded, label: "**demo::ui::scroll::sync​_​settings​_​**<br/>**scrollbars**<br/>来自ui ↗：同步滚动条显隐、拾取范围与高<br/>亮。" }
+  class n12 node_system
+  class n12 external_node
+  n13@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示滚动位置并提供拖动滑块。" }
+  class n13 node_entity
+  class n13 external_node
+  n14@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：以填充长度显示对应音量。" }
+  class n14 node_entity
+  class n14 external_node
+  n15@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制音量滑条的背景轨道。" }
+  class n15 node_entity
+  class n15 external_node
+  n16@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示滚动位置并提供拖动滑块。" }
+  class n16 node_entity
+  class n16 external_node
+  n17@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：为设置正文提供垂直滚动条轨<br/>道。" }
+  class n17 node_entity
+  class n17 external_node
+  n18@{ shape: rounded, label: "**bevy​_​ui::picking​_​backend::ui​_​picking**<br/>来自crate:bevy​_​ui ↗：按 UI 堆叠与相机<br/>视口计算指针命中。" }
+  class n18 node_system
+  class n18 external_node
+  n19@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：在填充末端指示当前音量位置。" }
+  class n19 node_entity
+  class n19 external_node
+  n20@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制音量滑条的背景轨道。" }
+  class n20 node_entity
+  class n20 external_node
+  n21@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：以填充长度显示对应音量。" }
+  class n21 node_entity
+  class n21 external_node
+  n0 e0@--> n1
+  class e0 edge_read
+  n2 e1@-->|"可能包含"| n0
+  class e1 edge_reference
+  n3 e2@-->|"可能包含"| n0
+  class e2 edge_reference
+  n4 e3@-->|"可能包含"| n0
+  class e3 edge_reference
+  n5 e4@-->|"可能包含"| n0
+  class e4 edge_reference
+  n6 e5@-->|"可能包含"| n0
+  class e5 edge_reference
+  n7 e6@-->|"可能包含"| n0
+  class e6 edge_reference
+  n8 e7@-->|"可能包含"| n0
+  class e7 edge_reference
+  n9 e8@-->|"可能包含"| n0
+  class e8 edge_reference
+  n10 e9@-->|"可能包含"| n0
+  class e9 edge_reference
+  n0 e10@--> n11
+  class e10 edge_read
+  n12 e11@-->|"赋值"| n0
+  class e11 edge_write
+  n13 e12@-->|"可能包含"| n0
+  class e12 edge_reference
+  n12 e13@-->|"可变访问"| n0
+  class e13 edge_write
+  n14 e14@-->|"可能包含"| n0
+  class e14 edge_reference
+  n15 e15@-->|"可能包含"| n0
+  class e15 edge_reference
+  n16 e16@-->|"可能包含"| n0
+  class e16 edge_reference
+  n17 e17@-->|"可能包含"| n0
+  class e17 edge_reference
+  n0 e18@--> n18
+  class e18 edge_read
+  n19 e19@-->|"可能包含"| n0
+  class e19 edge_reference
+  n20 e20@-->|"可能包含"| n0
+  class e20 edge_reference
+  n21 e21@-->|"可能包含"| n0
+  class e21 edge_reference
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: bumpX }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e17@{ curve: basis }
+  e18@{ curve: basis }
+  e19@{ curve: basis }
+  e20@{ curve: basis }
+  e21@{ curve: basis }

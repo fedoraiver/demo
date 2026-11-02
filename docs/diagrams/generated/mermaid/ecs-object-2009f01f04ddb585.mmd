@@ -1,0 +1,194 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: bevy_ecs::message::Messages#lt;bevy_ecs::lifecycle::RemovedComponentEntity#gt; · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;bevy​_​**<br/>**ecs::lifecycle::**<br/>**RemovedComponentEntity#gt;**<br/>保存最近两次轮换期间产生的指定类型消息" }
+  class n0 node_resource
+  n1@{ shape: rounded, label: "**bevy​_​app::main​_​schedule::Main::run​_​**<br/>**main**<br/>来自crate:bevy​_​app ↗：按主调度顺序驱<br/>动应用更新。" }
+  class n1 node_system
+  class n1 external_node
+  n2@{ shape: rounded, label: "**bevy​_​render::run​_​render​_​schedule**<br/>来自crate:bevy​_​render ↗：按<br/>RenderScheduleOrder 中维护的阶段标签<br/>顺序，依次尝试运行渲染子应用的各个调度。" }
+  class n2 node_system
+  class n2 external_node
+  n3@{ shape: rounded, label: "**bevy​_​asset::server::handle​_​internal​_​**<br/>**asset​_​events**<br/>来自crate:bevy​_​asset ↗：处理资产加<br/>载、依赖就绪及失败通知。" }
+  class n3 node_system
+  class n3 external_node
+  n4@{ shape: rounded, label: "**bevy​_​scene::spawn::spawn​_​queued**<br/>来自crate:bevy​_​scene ↗：应用已就绪的<br/>场景补丁并推进排队装配。" }
+  class n4 node_system
+  class n4 external_node
+  n5@{ shape: rounded, label: "**bevy​_​render::render​_​asset::extract​_​**<br/>**render​_​asset#lt;bevy​_​render::mesh::**<br/>**RenderMesh#gt;**<br/>来自crate:bevy​_​render ↗：按资产变化和<br/>设备恢复请求提取渲染资产。" }
+  class n5 node_system
+  class n5 external_node
+  n6@{ shape: rounded, label: "**bevy​_​render::erased​_​render​_​asset::**<br/>**extract​_​erased​_​render​_​asset#lt;bevy​_​**<br/>**sprite​_​render::mesh2d::material::**<br/>**MeshMaterial2d#lt;bevy​_​sprite​_​render::**<br/>**sprite​_​mesh::sprite​_​mesh​_​material::**<br/>**SpriteMeshMaterial#gt;#gt;**<br/>来自crate:bevy​_​render ↗：提取变化及设<br/>备恢复后失效的擦除渲染资产。" }
+  class n6 node_system
+  class n6 external_node
+  n7@{ shape: rounded, label: "**bevy​_​world​_​serialization::world​_​**<br/>**asset​_​spawner::world​_​instance​_​**<br/>**spawner​_​system**<br/>来自crate:bevy​_​world​_​serialization<br/>↗：推进世界资产实例的生成、销毁及更新。" }
+  class n7 node_system
+  class n7 external_node
+  n8@{ shape: rounded, label: "**bevy​_​render::render​_​asset::extract​_​**<br/>**render​_​asset#lt;bevy​_​render::storage::**<br/>**GpuShaderBuffer#gt;**<br/>来自crate:bevy​_​render ↗：按资产变化和<br/>设备恢复请求提取渲染资产。" }
+  class n8 node_system
+  class n8 external_node
+  n9@{ shape: rounded, label: "**bevy​_​extract::sync​_​world::despawn​_​**<br/>**temporary​_​entities#lt;bevy​_​render::**<br/>**RenderApp#gt;**<br/>来自crate:bevy​_​extract ↗：按实体索引<br/>逆序清理临时同步实体。" }
+  class n9 node_system
+  class n9 external_node
+  n10@{ shape: rounded, label: "**bevy​_​core​_​pipeline::schedule::**<br/>**camera​_​driver**<br/>来自crate:bevy​_​core​_​pipeline ↗：为辅<br/>助视图和活动相机运行专属渲染调度。" }
+  class n10 node_system
+  class n10 external_node
+  n11@{ shape: rounded, label: "**bevy​_​render::render​_​asset::extract​_​**<br/>**render​_​asset#lt;bevy​_​pbr::medium::**<br/>**GpuScatteringMedium#gt;**<br/>来自crate:bevy​_​render ↗：按资产变化和<br/>设备恢复请求提取渲染资产。" }
+  class n11 node_system
+  class n11 external_node
+  n12@{ shape: rounded, label: "**bevy​_​render::erased​_​render​_​asset::**<br/>**extract​_​erased​_​render​_​asset#lt;bevy​_​**<br/>**sprite​_​render::mesh2d::material::**<br/>**MeshMaterial2d#lt;bevy​_​sprite​_​render::**<br/>**mesh2d::color​_​material::**<br/>**ColorMaterial#gt;#gt;**<br/>来自crate:bevy​_​render ↗：提取变化及设<br/>备恢复后失效的擦除渲染资产。" }
+  class n12 node_system
+  class n12 external_node
+  n13@{ shape: rounded, label: "**bevy​_​app::main​_​schedule::FixedMain::**<br/>**run​_​fixed​_​main**<br/>来自crate:bevy​_​app ↗：运行一个固定时<br/>间步的调度阶段。" }
+  class n13 node_system
+  class n13 external_node
+  n14@{ shape: rounded, label: "**bevy​_​egui::render::render​_​pass::**<br/>**prepare​_​egui​_​pass**<br/>来自crate:bevy​_​egui ↗：在渲染世界更新<br/>延期的 Egui 绘制回调。" }
+  class n14 node_system
+  class n14 external_node
+  n15@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::**<br/>**material::specialize​_​material2d​_​**<br/>**meshes**<br/>来自crate:bevy​_​sprite​_​render ↗：为可<br/>见二维网格重建失效的材质专用化。" }
+  class n15 node_system
+  class n15 external_node
+  n16@{ shape: rounded, label: "**bevy​_​ecs::message::update::message​_​**<br/>**update​_​system**<br/>轮换世界中已注册的消息缓冲。" }
+  class n16 node_system
+  n17@{ shape: rounded, label: "**bevy​_​render::erased​_​render​_​asset::**<br/>**extract​_​erased​_​render​_​asset#lt;bevy​_​**<br/>**pbr::mesh​_​material::**<br/>**MeshMaterial3d#lt;bevy​_​pbr::extended​_​**<br/>**material::ExtendedMaterial#lt;bevy​_​**<br/>**pbr::pbr​_​material::**<br/>**StandardMaterial, bevy​_​pbr::decal::**<br/>**forward::ForwardDecalMaterialExt#gt;#gt;#gt;**<br/>来自crate:bevy​_​render ↗：提取变化及设<br/>备恢复后失效的擦除渲染资产。" }
+  class n17 node_system
+  class n17 external_node
+  n18@{ shape: rounded, label: "**bevy​_​render::erased​_​render​_​asset::**<br/>**extract​_​erased​_​render​_​asset#lt;bevy​_​**<br/>**pbr::mesh​_​material::**<br/>**MeshMaterial3d#lt;bevy​_​pbr::pbr​_​**<br/>**material::StandardMaterial#gt;#gt;**<br/>来自crate:bevy​_​render ↗：提取变化及设<br/>备恢复后失效的擦除渲染资产。" }
+  class n18 node_system
+  class n18 external_node
+  n19@{ shape: rounded, label: "**bevy​_​egui::render::render​_​pass::**<br/>**prepare​_​egui​_​pass**<br/>来自crate:bevy​_​egui ↗：在渲染世界更新<br/>延期的 Egui 绘制回调。" }
+  class n19 node_system
+  class n19 external_node
+  n20@{ shape: rounded, label: "**bevy​_​ecs::message::update::message​_​**<br/>**update​_​system**<br/>轮换世界中已注册的消息缓冲。" }
+  class n20 node_system
+  n21@{ shape: rounded, label: "**bevy​_​render::render​_​asset::extract​_​**<br/>**render​_​asset#lt;bevy​_​gizmos​_​render::**<br/>**GpuLineGizmo#gt;**<br/>来自crate:bevy​_​render ↗：按资产变化和<br/>设备恢复请求提取渲染资产。" }
+  class n21 node_system
+  class n21 external_node
+  n22@{ shape: rounded, label: "**bevy​_​core​_​pipeline::schedule::**<br/>**handle​_​uncovered​_​swap​_​chains**<br/>来自crate:bevy​_​core​_​pipeline ↗：清除<br/>本帧没有相机覆盖的窗口交换链。" }
+  class n22 node_system
+  class n22 external_node
+  n23@{ shape: rounded, label: "**bevy​_​extract::extract​_​plugin::apply​_​**<br/>**extract​_​commands**<br/>来自crate:bevy​_​extract ↗：应用提取阶<br/>段累计的子世界命令。" }
+  class n23 node_system
+  class n23 external_node
+  n24@{ shape: rounded, label: "**bevy​_​render::erased​_​render​_​asset::**<br/>**extract​_​erased​_​render​_​asset#lt;bevy​_​**<br/>**sprite​_​render::mesh2d::material::**<br/>**MeshMaterial2d#lt;bevy​_​sprite​_​render::**<br/>**tilemap​_​chunk::tilemap​_​chunk​_​**<br/>**material::TilemapChunkMaterial#gt;#gt;**<br/>来自crate:bevy​_​render ↗：提取变化及设<br/>备恢复后失效的擦除渲染资产。" }
+  class n24 node_system
+  class n24 external_node
+  n25@{ shape: rounded, label: "**bevy​_​render::render​_​asset::extract​_​**<br/>**render​_​asset#lt;bevy​_​render::texture::**<br/>**gpu​_​image::GpuImage#gt;**<br/>来自crate:bevy​_​render ↗：按资产变化和<br/>设备恢复请求提取渲染资产。" }
+  class n25 node_system
+  class n25 external_node
+  n26@{ shape: rounded, label: "**bevy​_​ecs::message::update::message​_​**<br/>**update​_​system**<br/>轮换世界中已注册的消息缓冲。" }
+  class n26 node_system
+  n1 e0@-->|"赋值"| n0
+  class e0 edge_write
+  n2 e1@-->|"赋值"| n0
+  class e1 edge_write
+  n3 e2@-->|"赋值"| n0
+  class e2 edge_write
+  n4 e3@-->|"赋值"| n0
+  class e3 edge_write
+  n5 e4@-->|"赋值"| n0
+  class e4 edge_write
+  n6 e5@-->|"赋值"| n0
+  class e5 edge_write
+  n7 e6@-->|"赋值"| n0
+  class e6 edge_write
+  n8 e7@-->|"赋值"| n0
+  class e7 edge_write
+  n9 e8@-->|"赋值"| n0
+  class e8 edge_write
+  n10 e9@-->|"赋值"| n0
+  class e9 edge_write
+  n11 e10@-->|"赋值"| n0
+  class e10 edge_write
+  n12 e11@-->|"赋值"| n0
+  class e11 edge_write
+  n13 e12@-->|"赋值"| n0
+  class e12 edge_write
+  n14 e13@-->|"赋值"| n0
+  class e13 edge_write
+  n15 e14@-->|"赋值"| n0
+  class e14 edge_write
+  n16 e15@-->|"赋值"| n0
+  class e15 edge_write
+  n17 e16@-->|"赋值"| n0
+  class e16 edge_write
+  n18 e17@-->|"赋值"| n0
+  class e17 edge_write
+  n19 e18@-->|"赋值"| n0
+  class e18 edge_write
+  n20 e19@-->|"赋值"| n0
+  class e19 edge_write
+  n21 e20@-->|"赋值"| n0
+  class e20 edge_write
+  n22 e21@-->|"赋值"| n0
+  class e21 edge_write
+  n23 e22@-->|"赋值"| n0
+  class e22 edge_write
+  n24 e23@-->|"赋值"| n0
+  class e23 edge_write
+  n25 e24@-->|"赋值"| n0
+  class e24 edge_write
+  n26 e25@-->|"赋值"| n0
+  class e25 edge_write
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e17@{ curve: basis }
+  e18@{ curve: basis }
+  e19@{ curve: basis }
+  e20@{ curve: basis }
+  e21@{ curve: basis }
+  e22@{ curve: basis }
+  e23@{ curve: basis }
+  e24@{ curve: basis }
+  e25@{ curve: basis }

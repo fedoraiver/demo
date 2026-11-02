@@ -1,0 +1,367 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: bevy_pbr::render::mesh::extract_meshes_for_gpu_building · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef node_local fill:#F8F5F1,stroke:#AA8752,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**bevy​_​pbr::render::mesh::extract​_​**<br/>**meshes​_​for​_​gpu​_​building**<br/>增量提取变化或需重试网格到线程队列。" }
+  class n0 node_system
+  n1@{ shape: notch-rect, label: "**Local · removed​_​meshes​_​query.0.0.1**<br/>跟踪 Mesh3d 移除记录的读取进度。" }
+  class n1 node_local
+  n2@{ shape: rounded, label: "**batching::NoAutomaticBatching**<br/>来自crate:bevy​_​render ↗：禁止网格实体<br/>参与自动合批。" }
+  class n2 node_component
+  class n2 external_node
+  n3@{ shape: notch-rect, label: "**Local · removed​_​meshes​_​**<br/>**query.0.0.0.0.0**<br/>保存 Mesh3d 移除参数的组件 ID。" }
+  class n3 node_local
+  n4@{ shape: rounded, label: "**bevy​_​camera::visibility::**<br/>**ViewVisibility**<br/>来自crate:bevy​_​camera ↗：记录实体是否<br/>应被提取用于渲染。" }
+  class n4 node_component
+  class n4 external_node
+  n5@{ shape: notch-rect, label: "**Local · arg4.9.0.0.0.0.0**<br/>保存 NoCpuCulling 移除参数的组件 ID。" }
+  class n5 node_local
+  n6@{ shape: notch-rect, label: "**Local · arg4.11.0.0.1**<br/>跟踪 SkinnedMesh 移除记录的读取进度。" }
+  class n6 node_local
+  n7@{ shape: notch-rect, label: "**Local · arg4.6.0.0.0.0.0**<br/>保存 TransmittedShadowReceiver 移除参<br/>数的组件 ID。" }
+  class n7 node_local
+  n8@{ shape: notch-rect, label: "**Local · arg4.6.0.0.1**<br/>跟踪 TransmittedShadowReceiver 移除记<br/>录的读取进度。" }
+  class n8 node_local
+  n9@{ shape: rounded, label: "**NotShadowCaster**<br/>来自crate:bevy​_​light ↗：禁止三维网格<br/>投射阴影。" }
+  class n9 node_component
+  class n9 external_node
+  n10@{ shape: notch-rect, label: "**Local · potential​_​reextraction​_​set**<br/>为 GPU 网格重提取候选建立有序实体索引。" }
+  class n10 node_local
+  n11@{ shape: notch-rect, label: "**Local · arg4.4.0.0.0.0.0**<br/>保存 NoFrustumCulling 移除参数的组件<br/>ID。" }
+  class n11 node_local
+  n12@{ shape: rounded, label: "**visibility::range::VisibilityRange**<br/>来自crate:bevy​_​camera ↗：按相机距离控<br/>制网格的细节层级。" }
+  class n12 node_component
+  class n12 external_node
+  n13@{ shape: cyl, label: "**render::mesh::**<br/>**MeshesToReextractNextFrame**<br/>记录因材质未准备而需要再次提取的网格。" }
+  class n13 node_resource
+  n14@{ shape: notch-rect, label: "**Local · arg4.3.0.0.0.0.0**<br/>保存 MeshTag 移除参数的组件 ID。" }
+  class n14 node_local
+  n15@{ shape: notch-rect, label: "**Local · arg4.7.0.0.0.0.0**<br/>保存 NotShadowCaster 移除参数的组件<br/>ID。" }
+  class n15 node_local
+  n16@{ shape: rounded, label: "**bevy​_​mesh::Mesh3d**<br/>来自crate:bevy​_​mesh ↗：为三维可绘制实<br/>体指定网格资产。" }
+  class n16 node_component
+  class n16 external_node
+  n17@{ shape: notch-rect, label: "**Local · arg4.5.0.0.0.0.0**<br/>保存 NotShadowReceiver 移除参数的组<br/>件 ID。" }
+  class n17 node_local
+  n18@{ shape: notch-rect, label: "**Local · arg4.2.0.0.1**<br/>跟踪 Aabb 移除记录的读取进度。" }
+  class n18 node_local
+  n19@{ shape: rounded, label: "**lightmap::Lightmap**<br/>为网格应用烘焙的间接漫反射光照。" }
+  class n19 node_component
+  n20@{ shape: rounded, label: "**bevy​_​camera::primitives::Aabb**<br/>来自crate:bevy​_​camera ↗：以局部轴对齐<br/>包围盒支持可见性裁剪。" }
+  class n20 node_component
+  class n20 external_node
+  n21@{ shape: notch-rect, label: "**Local · arg4.1.0.0.0.0.0**<br/>保存 Lightmap 移除参数的组件 ID。" }
+  class n21 node_local
+  n22@{ shape: rounded, label: "**bevy​_​camera::visibility::**<br/>**NoFrustumCulling**<br/>来自crate:bevy​_​camera ↗：使实体退出内<br/>置视锥裁剪。" }
+  class n22 node_component
+  class n22 external_node
+  n23@{ shape: rounded, label: "**bevy​_​mesh::skinning::SkinnedMesh**<br/>来自crate:bevy​_​mesh ↗：关联蒙皮网格的<br/>关节与逆绑定姿态。" }
+  class n23 node_component
+  class n23 external_node
+  n24@{ shape: rounded, label: "**components::MeshTag**<br/>来自crate:bevy​_​mesh ↗：向着色器提供网<br/>格实例的数据索引。" }
+  class n24 node_component
+  class n24 external_node
+  n25@{ shape: notch-rect, label: "**Local · arg4.4.0.0.1**<br/>跟踪 NoFrustumCulling 移除记录的读取进<br/>度。" }
+  class n25 node_local
+  n26@{ shape: notch-rect, label: "**Local · arg4.10.0.0.0.0.0**<br/>保存 VisibilityRange 移除参数的组件<br/>ID。" }
+  class n26 node_local
+  n27@{ shape: notch-rect, label: "**Local · arg4.12.0.0.0.0.0**<br/>保存 RenderLayers 移除参数的组件 ID。" }
+  class n27 node_local
+  n28@{ shape: cyl, label: "**render::mesh::**<br/>**RenderMeshInstanceGpuQueues**<br/>暂存各线程提取的 GPU 网格实例。" }
+  class n28 node_resource
+  n29@{ shape: rounded, label: "**TransmittedShadowReceiver**<br/>来自crate:bevy​_​light ↗：让 PBR 网格<br/>的漫透射背面接收阴影。" }
+  class n29 node_component
+  class n29 external_node
+  n30@{ shape: rounded, label: "**prepass::PreviousGlobalTransform**<br/>保存网格上一帧的世界变换。" }
+  class n30 node_component
+  n31@{ shape: rounded, label: "**components::global​_​transform::**<br/>**GlobalTransform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>合并祖先变换后的世界空间仿射变换" }
+  class n31 node_component
+  class n31 external_node
+  n32@{ shape: rounded, label: "**bevy​_​render::view::NoIndirectDrawing**<br/>来自crate:bevy​_​render ↗：关闭相机的间<br/>接绘制模式。" }
+  class n32 node_component
+  class n32 external_node
+  n33@{ shape: notch-rect, label: "**Local · arg4.11.0.0.0.0.0**<br/>保存 SkinnedMesh 移除参数的组件 ID。" }
+  class n33 node_local
+  n34@{ shape: notch-rect, label: "**Local · arg4.8.0.0.1**<br/>跟踪 NoAutomaticBatching 移除记录的读<br/>取进度。" }
+  class n34 node_local
+  n35@{ shape: lin-rect, label: "**MeshExtractionSystems**<br/>向渲染世界提取三维网格的实例数据。" }
+  class n35 node_system_set
+  n36@{ shape: notch-rect, label: "**Local · arg4.12.0.0.1**<br/>跟踪 RenderLayers 移除记录的读取进度。" }
+  class n36 node_local
+  n37@{ shape: notch-rect, label: "**Local · arg4.8.0.0.0.0.0**<br/>保存 NoAutomaticBatching 移除参数的组<br/>件 ID。" }
+  class n37 node_local
+  n38@{ shape: notch-rect, label: "**Local · arg4.3.0.0.1**<br/>跟踪 MeshTag 移除记录的读取进度。" }
+  class n38 node_local
+  n39@{ shape: notch-rect, label: "**Local · arg4.0.0.0.0.0.0**<br/>保存 PreviousGlobalTransform 移除参数<br/>的组件 ID。" }
+  class n39 node_local
+  n40@{ shape: cyl, label: "**view::visibility::range::**<br/>**RenderVisibilityRanges**<br/>来自crate:bevy​_​render ↗：保存渲染侧距<br/>离范围及去重后的 GPU 数据。" }
+  class n40 node_resource
+  class n40 external_node
+  n41@{ shape: notch-rect, label: "**Local · arg4.5.0.0.1**<br/>跟踪 NotShadowReceiver 移除记录的读取<br/>进度。" }
+  class n41 node_local
+  n42@{ shape: rounded, label: "**bevy​_​camera::visibility::**<br/>**RenderLayers**<br/>来自crate:bevy​_​camera ↗：限定相机与实<br/>体可相交的渲染层。" }
+  class n42 node_component
+  class n42 external_node
+  n43@{ shape: notch-rect, label: "**Local · arg4.2.0.0.0.0.0**<br/>保存 Aabb 移除参数的组件 ID。" }
+  class n43 node_local
+  n44@{ shape: cyl, label: "**extract​_​plugin::MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
+  class n44 node_resource
+  class n44 external_node
+  n45@{ shape: notch-rect, label: "**Local · reextract​_​entities**<br/>收集变化查询未覆盖但仍需重提取的 GPU 网<br/>格。" }
+  class n45 node_local
+  n46@{ shape: notch-rect, label: "**Local · potential​_​reextraction​_​**<br/>**bitfield**<br/>用原子位集标记 GPU 网格候选是否已被提<br/>取。" }
+  class n46 node_local
+  n47@{ shape: rounded, label: "**NotShadowReceiver**<br/>来自crate:bevy​_​light ↗：禁止三维网格<br/>接收阴影。" }
+  class n47 node_component
+  class n47 external_node
+  n48@{ shape: notch-rect, label: "**Local · arg4.0.0.0.1**<br/>跟踪 PreviousGlobalTransform 移除记录<br/>的读取进度。" }
+  class n48 node_local
+  n49@{ shape: rounded, label: "**bevy​_​camera::Camera**<br/>来自crate:bevy​_​camera ↗：配置相机视<br/>口、输出目标和渲染顺序。" }
+  class n49 node_component
+  class n49 external_node
+  n50@{ shape: rounded, label: "**visibility::NoCpuCulling**<br/>来自crate:bevy​_​camera ↗：退出内置的<br/>CPU 视锥裁剪。" }
+  class n50 node_component
+  class n50 external_node
+  n51@{ shape: notch-rect, label: "**Local · arg4.1.0.0.1**<br/>跟踪 Lightmap 移除记录的读取进度。" }
+  class n51 node_local
+  n52@{ shape: cyl, label: "**render::mesh::RenderMeshInstances**<br/>保存 CPU 或 GPU 构建所需的网格实例。" }
+  class n52 node_resource
+  n53@{ shape: notch-rect, label: "**Local · arg4.9.0.0.1**<br/>跟踪 NoCpuCulling 移除记录的读取进度。" }
+  class n53 node_local
+  n54@{ shape: notch-rect, label: "**Local · arg4.7.0.0.1**<br/>跟踪 NotShadowCaster 移除记录的读取进<br/>度。" }
+  class n54 node_local
+  n55@{ shape: notch-rect, label: "**Local · arg4.10.0.0.1**<br/>跟踪 VisibilityRange 移除记录的读取进<br/>度。" }
+  class n55 node_local
+  n0 e0@-->|"可变访问"| n1
+  class e0 edge_write
+  n2 e1@-->|"存在性约束"| n0
+  class e1 edge_reference
+  n0 e2@-->|"可变访问"| n3
+  class e2 edge_write
+  n4 e3@--> n0
+  class e3 edge_read
+  n0 e4@-->|"可变访问"| n5
+  class e4 edge_write
+  n0 e5@-->|"可变访问"| n6
+  class e5 edge_write
+  n0 e6@-->|"可变访问"| n7
+  class e6 edge_write
+  n0 e7@-->|"可变访问"| n8
+  class e7 edge_write
+  n9 e8@-->|"存在性约束"| n0
+  class e8 edge_reference
+  n0 e9@-->|"可变访问"| n10
+  class e9 edge_write
+  n0 e10@-->|"可变访问"| n11
+  class e10 edge_write
+  n12 e11@-->|"存在性约束"| n0
+  class e11 edge_reference
+  n0 e12@-->|"可变访问"| n13
+  class e12 edge_write
+  n0 e13@-->|"可变访问"| n14
+  class e13 edge_write
+  n0 e14@-->|"可变访问"| n15
+  class e14 edge_write
+  n16 e15@--> n0
+  class e15 edge_read
+  n0 e16@-->|"可变访问"| n17
+  class e16 edge_write
+  n0 e17@-->|"可变访问"| n18
+  class e17 edge_write
+  n19 e18@-->|"存在性约束"| n0
+  class e18 edge_reference
+  n20 e19@-->|"存在性约束"| n0
+  class e19 edge_reference
+  n0 e20@-->|"可变访问"| n21
+  class e20 edge_write
+  n22 e21@-->|"存在性约束"| n0
+  class e21 edge_reference
+  n23 e22@-->|"存在性约束"| n0
+  class e22 edge_reference
+  n24 e23@--> n0
+  class e23 edge_read
+  n0 e24@-->|"可变访问"| n25
+  class e24 edge_write
+  n0 e25@-->|"可变访问"| n26
+  class e25 edge_write
+  n16 e26@-->|"存在性约束"| n0
+  class e26 edge_reference
+  n0 e27@-->|"可变访问"| n27
+  class e27 edge_write
+  n0 e28@-->|"可变访问"| n28
+  class e28 edge_write
+  n29 e29@-->|"存在性约束"| n0
+  class e29 edge_reference
+  n30 e30@-->|"存在性约束"| n0
+  class e30 edge_reference
+  n31 e31@-->|"存在性约束"| n0
+  class e31 edge_reference
+  n32 e32@-->|"存在性约束"| n0
+  class e32 edge_reference
+  n0 e33@-->|"可变访问"| n33
+  class e33 edge_write
+  n0 e34@-->|"可变访问"| n34
+  class e34 edge_write
+  n20 e35@--> n0
+  class e35 edge_read
+  n19 e36@--> n0
+  class e36 edge_read
+  n24 e37@-->|"存在性约束"| n0
+  class e37 edge_reference
+  n35 e38@-->|"集合成员"| n0
+  class e38 edge_set_membership
+  n0 e39@-->|"可变访问"| n36
+  class e39 edge_write
+  n0 e40@-->|"可变访问"| n37
+  class e40 edge_write
+  n0 e41@-->|"可变访问"| n38
+  class e41 edge_write
+  n0 e42@-->|"可变访问"| n39
+  class e42 edge_write
+  n40 e43@--> n0
+  class e43 edge_read
+  n4 e44@-->|"存在性约束"| n0
+  class e44 edge_reference
+  n30 e45@--> n0
+  class e45 edge_read
+  n0 e46@-->|"可变访问"| n41
+  class e46 edge_write
+  n42 e47@--> n0
+  class e47 edge_read
+  n0 e48@-->|"可变访问"| n43
+  class e48 edge_write
+  n44 e49@--> n0
+  class e49 edge_read
+  n31 e50@--> n0
+  class e50 edge_read
+  n0 e51@-->|"可变访问"| n45
+  class e51 edge_write
+  n0 e52@-->|"可变访问"| n46
+  class e52 edge_write
+  n47 e53@-->|"存在性约束"| n0
+  class e53 edge_reference
+  n0 e54@-->|"可变访问"| n48
+  class e54 edge_write
+  n49 e55@-->|"存在性约束"| n0
+  class e55 edge_reference
+  n50 e56@-->|"存在性约束"| n0
+  class e56 edge_reference
+  n0 e57@-->|"可变访问"| n51
+  class e57 edge_write
+  n42 e58@-->|"存在性约束"| n0
+  class e58 edge_reference
+  n0 e59@-->|"可变访问"| n52
+  class e59 edge_write
+  n12 e60@--> n0
+  class e60 edge_read
+  n0 e61@-->|"可变访问"| n53
+  class e61 edge_write
+  n0 e62@-->|"可变访问"| n54
+  class e62 edge_write
+  n0 e63@-->|"可变访问"| n55
+  class e63 edge_write
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e17@{ curve: basis }
+  e18@{ curve: basis }
+  e19@{ curve: basis }
+  e20@{ curve: basis }
+  e21@{ curve: basis }
+  e22@{ curve: basis }
+  e23@{ curve: basis }
+  e24@{ curve: basis }
+  e25@{ curve: basis }
+  e26@{ curve: basis }
+  e27@{ curve: basis }
+  e28@{ curve: basis }
+  e29@{ curve: basis }
+  e30@{ curve: basis }
+  e31@{ curve: basis }
+  e32@{ curve: bumpX }
+  e33@{ curve: basis }
+  e34@{ curve: basis }
+  e35@{ curve: basis }
+  e36@{ curve: basis }
+  e37@{ curve: basis }
+  e38@{ curve: basis }
+  e39@{ curve: basis }
+  e40@{ curve: basis }
+  e41@{ curve: basis }
+  e42@{ curve: basis }
+  e43@{ curve: basis }
+  e44@{ curve: basis }
+  e45@{ curve: basis }
+  e46@{ curve: basis }
+  e47@{ curve: basis }
+  e48@{ curve: basis }
+  e49@{ curve: basis }
+  e50@{ curve: basis }
+  e51@{ curve: basis }
+  e52@{ curve: basis }
+  e53@{ curve: basis }
+  e54@{ curve: basis }
+  e55@{ curve: basis }
+  e56@{ curve: basis }
+  e57@{ curve: basis }
+  e58@{ curve: basis }
+  e59@{ curve: basis }
+  e60@{ curve: basis }
+  e61@{ curve: basis }
+  e62@{ curve: basis }
+  e63@{ curve: basis }
