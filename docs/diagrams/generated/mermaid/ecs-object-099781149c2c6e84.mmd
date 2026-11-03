@@ -1,0 +1,133 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: demo::ui::pages::rebuild_page · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_entity fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef node_local fill:#F8F5F1,stroke:#AA8752,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_plugin fill:#F1F3F6,stroke:#4A6389,stroke-width:2.2px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**rebuild​_​page**<br/>只在页面结构或视口变化时重建；数值、提示<br/>与焦点变化保留现有滚动控件。" }
+  class n0 node_system
+  n1@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>承载暂停页的内容与页脚。" }
+  class n1 node_entity
+  n2@{ shape: rounded, label: "**PrimaryWindow**<br/>来自crate:bevy​_​window ↗：标识唯一的主<br/>窗口" }
+  class n2 node_component
+  class n2 external_node
+  n3@{ shape: notch-rect, label: "**Local · previous​_​layout**<br/>识别需要重建菜单树的布局变化。" }
+  class n3 node_local
+  n4@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>承载控制设置页的内容与页脚。" }
+  class n4 node_entity
+  n5@{ shape: fr-rect, label: "**GameUiPlugin**<br/>组装菜单功能，不安装窗口或重复初始化会话<br/>日志。" }
+  class n5 node_plugin
+  n6@{ shape: rounded, label: "**Window**<br/>来自crate:bevy​_​window ↗：保存窗口的呈<br/>现模式、位置、分辨率、标题、全屏及平台行<br/>为配置" }
+  class n6 node_component
+  class n6 external_node
+  n7@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>承载辅助功能设置页的内容与页脚。" }
+  class n7 node_entity
+  n8@{ shape: cyl, label: "**MenuState**<br/>页面数据与返回来源；焦点单独保存，避免导<br/>航时重建整个页面。" }
+  class n8 node_resource
+  n9@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>承载帮助页的内容与页脚。" }
+  class n9 node_entity
+  n10@{ shape: cyl, label: "**UiTheme**<br/>字体只加载一次；页面 BSN 直接引用句柄，<br/>不启动异步场景任务。" }
+  class n10 node_resource
+  n11@{ shape: lin-rect, label: "**Build**<br/>请求在 PreUpdate 消费后，Update 依次生<br/>成 BSN 页面并更新视觉焦点。" }
+  class n11 node_system_set
+  n12@{ shape: cyl, label: "**SettingsDraft**<br/>来自settings ↗：菜单独立编辑的草稿；音<br/>量可以临时预览，只有应用成功才替换已保存<br/>设置。" }
+  class n12 node_resource
+  class n12 external_node
+  n13@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>承载图形设置页的内容与页脚。" }
+  class n13 node_entity
+  n14@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>承载主菜单的内容与页脚。" }
+  class n14 node_entity
+  n15@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>承载音频设置页的内容与页脚。" }
+  class n15 node_entity
+  n16@{ shape: rounded, label: "**MenuRoot**<br/>页面根实体；页面更换时连同视觉子树一起销<br/>毁。" }
+  class n16 node_component
+  n0 e0@-->|"创建模板"| n1
+  class e0 edge_write
+  n2 e1@-->|"存在性约束"| n0
+  class e1 edge_reference
+  n0 e2@-->|"可变访问"| n3
+  class e2 edge_write
+  n0 e3@-->|"创建模板"| n4
+  class e3 edge_write
+  n5 e4@-->|"调用"| n0
+  class e4 edge_registration
+  n6 e5@--> n0
+  class e5 edge_read
+  n0 e6@-->|"创建模板"| n7
+  class e6 edge_write
+  n8 e7@--> n0
+  class e7 edge_read
+  n0 e8@-->|"创建模板"| n9
+  class e8 edge_write
+  n10 e9@--> n0
+  class e9 edge_read
+  n11 e10@-->|"集合成员"| n0
+  class e10 edge_set_membership
+  n12 e11@--> n0
+  class e11 edge_read
+  n0 e12@-->|"创建模板"| n13
+  class e12 edge_write
+  n0 e13@-->|"创建模板"| n14
+  class e13 edge_write
+  n0 e14@-->|"创建模板"| n15
+  class e14 edge_write
+  n16 e15@-->|"存在性约束"| n0
+  class e15 edge_reference
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }

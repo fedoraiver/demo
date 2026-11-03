@@ -1,0 +1,230 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: Propagate · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef edge_order stroke:#334155,stroke-width:2px
+  classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: lin-rect, label: "**Propagate**<br/>组织实体层级变换传播。" }
+  class n0 node_system_set
+  n1@{ shape: rounded, label: "**update​_​frusta**<br/>来自crate:bevy​_​camera ↗：根据相机投影<br/>和世界变换更新视锥。" }
+  class n1 node_system
+  class n1 external_node
+  n2@{ shape: rounded, label: "**draw​_​all​_​aabbs**<br/>来自crate:bevy​_​gizmos ↗：绘制未单独标<br/>记实体的可见 AABB 调试线框。" }
+  class n2 node_system
+  class n2 external_node
+  n3@{ shape: rounded, label: "**update​_​spot​_​light​_​bounding​_​spheres**<br/>来自crate:bevy​_​light ↗：按聚光灯位置<br/>和范围更新剔除包围球。" }
+  class n3 node_system
+  class n3 external_node
+  n4@{ shape: rounded, label: "**advance​_​transitions**<br/>来自crate:bevy​_​animation ↗：推进动画<br/>过渡并归一化混合权重。" }
+  class n4 node_system
+  class n4 external_node
+  n5@{ shape: rounded, label: "**update​_​spot​_​light​_​frusta**<br/>来自crate:bevy​_​light ↗：更新可见聚光<br/>灯的阴影视锥。" }
+  class n5 node_system
+  class n5 external_node
+  n6@{ shape: rounded, label: "**mark​_​dirty​_​trees**<br/>沿祖先链标记需要重算变换的子树。" }
+  class n6 node_system
+  n7@{ shape: rounded, label: "**thread​_​animation​_​graphs**<br/>来自crate:bevy​_​animation ↗：维护动画<br/>图的快速求值结构。" }
+  class n7 node_system
+  class n7 external_node
+  n8@{ shape: rounded, label: "**update​_​gizmo​_​meshes**<br/>来自crate:bevy​_​gizmos​_​render ↗：将变<br/>换操作器对齐焦点并更新模式与高亮。" }
+  class n8 node_system
+  class n8 external_node
+  n9@{ shape: rounded, label: "**advance​_​animations**<br/>来自crate:bevy​_​animation ↗：推进动画<br/>播放器中活动动画的播放时间。" }
+  class n9 node_system
+  class n9 external_node
+  n10@{ shape: rounded, label: "**update​_​directional​_​light​_​frusta**<br/>来自crate:bevy​_​light ↗：从方向光级联<br/>投影更新阴影视锥。" }
+  class n10 node_system
+  class n10 external_node
+  n11@{ shape: rounded, label: "**propagate​_​transforms​_​for**<br/>按指定查询过滤器即时计算世界变换。" }
+  class n11 node_system
+  n12@{ shape: rounded, label: "**build​_​directional​_​light​_​cascades**<br/>来自crate:bevy​_​light ↗：为投射阴影的<br/>方向光构建逐相机级联。" }
+  class n12 node_system
+  class n12 external_node
+  n13@{ shape: rounded, label: "**update​_​point​_​light​_​frusta**<br/>来自crate:bevy​_​light ↗：更新可见点光<br/>的六面阴影视锥。" }
+  class n13 node_system
+  class n13 external_node
+  n14@{ shape: rounded, label: "**expire​_​completed​_​transitions**<br/>来自crate:bevy​_​animation ↗：结束已完<br/>全淡出的动画过渡。" }
+  class n14 node_system
+  class n14 external_node
+  n15@{ shape: rounded, label: "**draw​_​aabbs**<br/>来自crate:bevy​_​gizmos ↗：为显式标记的<br/>可见实体绘制 AABB。" }
+  class n15 node_system
+  class n15 external_node
+  n16@{ shape: rounded, label: "**assign​_​objects​_​to​_​clusters**<br/>来自crate:bevy​_​light ↗：将灯光、探针<br/>及贴花分配到视图分簇。" }
+  class n16 node_system
+  class n16 external_node
+  n17@{ shape: rounded, label: "**update​_​point​_​light​_​bounding​_​spheres**<br/>来自crate:bevy​_​light ↗：按点光位置和<br/>范围更新剔除包围球。" }
+  class n17 node_system
+  class n17 external_node
+  n18@{ shape: rounded, label: "**draw​_​skinned​_​mesh​_​bounds**<br/>来自crate:bevy​_​gizmos ↗：绘制带独立显<br/>示标记的动态蒙皮包围区域。" }
+  class n18 node_system
+  class n18 external_node
+  n19@{ shape: rounded, label: "**propagate​_​parent​_​transforms**<br/>沿父子层级并行合成世界变换。" }
+  class n19 node_system
+  n20@{ shape: rounded, label: "**check​_​dir​_​light​_​mesh​_​visibility**<br/>来自crate:bevy​_​light ↗：计算方向光各<br/>相机级联可见的投影网格。" }
+  class n20 node_system
+  class n20 external_node
+  n21@{ shape: rounded, label: "**check​_​point​_​light​_​mesh​_​visibility**<br/>来自crate:bevy​_​light ↗：计算点光与聚<br/>光灯阴影可见的网格。" }
+  class n21 node_system
+  class n21 external_node
+  n22@{ shape: rounded, label: "**animate​_​targets**<br/>来自crate:bevy​_​animation ↗：评估动画<br/>图并把结果应用到动画目标。" }
+  class n22 node_system
+  class n22 external_node
+  n23@{ shape: rounded, label: "**draw​_​lights**<br/>来自crate:bevy​_​light ↗：为显式标记的<br/>各类光源绘制调试轮廓。" }
+  class n23 node_system
+  class n23 external_node
+  n24@{ shape: rounded, label: "**sync​_​simple​_​transforms**<br/>同步没有父子层级的独立实体世界变换。" }
+  class n24 node_system
+  n25@{ shape: rounded, label: "**draw​_​all​_​skinned​_​mesh​_​bounds**<br/>来自crate:bevy​_​gizmos ↗：绘制未单独标<br/>记的动态蒙皮网格包围区域。" }
+  class n25 node_system
+  class n25 external_node
+  n26@{ shape: rounded, label: "**draw​_​all​_​lights**<br/>来自crate:bevy​_​light ↗：按配置颜色模<br/>式绘制全部灯光调试图形。" }
+  class n26 node_system
+  class n26 external_node
+  n27@{ shape: lin-rect, label: "**CalculateBounds**<br/>来自crate:bevy​_​camera ↗：组织相机与实<br/>体可见性更新。" }
+  class n27 node_system_set
+  class n27 external_node
+  n28@{ shape: rounded, label: "**trigger​_​untargeted​_​animation​_​events**<br/>来自crate:bevy​_​animation ↗：派发动画<br/>片段的根目标事件。" }
+  class n28 node_system
+  class n28 external_node
+  n29@{ shape: lin-rect, label: "**UpdateFrusta**<br/>来自crate:bevy​_​camera ↗：组织相机与实<br/>体可见性更新。" }
+  class n29 node_system_set
+  class n29 external_node
+  n30@{ shape: rounded, label: "**compensate​_​courier​_​sole​_​penetration**<br/>来自character​_​animation ↗：方向混合<br/>可能把弯腿插值成更直的腿；逐帧按真实鞋底<br/>边界修正最终视觉高度。" }
+  class n30 node_system
+  class n30 external_node
+  n31@{ shape: lin-rect, label: "**VisibilityPropagate**<br/>来自crate:bevy​_​camera ↗：组织相机与实<br/>体可见性更新。" }
+  class n31 node_system_set
+  class n31 external_node
+  n0 e0@-->|"先于"| n1
+  class e0 edge_order
+  n0 e1@-->|"先于"| n2
+  class e1 edge_order
+  n0 e2@-->|"先于"| n3
+  class e2 edge_order
+  n4 e3@-->|"先于"| n0
+  class e3 edge_order
+  n0 e4@-->|"先于"| n5
+  class e4 edge_order
+  n0 e5@-->|"集合成员"| n6
+  class e5 edge_set_membership
+  n7 e6@-->|"先于"| n0
+  class e6 edge_order
+  n0 e7@-->|"先于"| n8
+  class e7 edge_order
+  n9 e8@-->|"先于"| n0
+  class e8 edge_order
+  n0 e9@-->|"先于"| n10
+  class e9 edge_order
+  n0 e10@-->|"先于"| n11
+  class e10 edge_order
+  n0 e11@-->|"先于"| n12
+  class e11 edge_order
+  n0 e12@-->|"先于"| n13
+  class e12 edge_order
+  n14 e13@-->|"先于"| n0
+  class e13 edge_order
+  n0 e14@-->|"先于"| n15
+  class e14 edge_order
+  n0 e15@-->|"先于"| n16
+  class e15 edge_order
+  n0 e16@-->|"先于"| n17
+  class e16 edge_order
+  n0 e17@-->|"先于"| n18
+  class e17 edge_order
+  n0 e18@-->|"集合成员"| n19
+  class e18 edge_set_membership
+  n0 e19@-->|"先于"| n20
+  class e19 edge_order
+  n0 e20@-->|"先于"| n21
+  class e20 edge_order
+  n22 e21@-->|"先于"| n0
+  class e21 edge_order
+  n0 e22@-->|"先于"| n23
+  class e22 edge_order
+  n0 e23@-->|"集合成员"| n24
+  class e23 edge_set_membership
+  n0 e24@-->|"先于"| n25
+  class e24 edge_order
+  n0 e25@-->|"先于"| n26
+  class e25 edge_order
+  n0 e26@-->|"先于"| n27
+  class e26 edge_order
+  n28 e27@-->|"先于"| n0
+  class e27 edge_order
+  n0 e28@-->|"先于"| n29
+  class e28 edge_order
+  n30 e29@-->|"先于"| n0
+  class e29 edge_order
+  n0 e30@-->|"先于"| n31
+  class e30 edge_order
+  n4 layout_input_0@~~~ n7
+  n7 layout_input_1@~~~ n9
+  n9 layout_input_2@~~~ n14
+  n14 layout_input_3@~~~ n22
+  n22 layout_input_4@~~~ n28
+  n28 layout_input_5@~~~ n30
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e17@{ curve: basis }
+  e18@{ curve: basis }
+  e19@{ curve: basis }
+  e20@{ curve: basis }
+  e21@{ curve: basis }
+  e22@{ curve: basis }
+  e23@{ curve: basis }
+  e24@{ curve: basis }
+  e25@{ curve: basis }
+  e26@{ curve: basis }
+  e27@{ curve: basis }
+  e28@{ curve: basis }
+  e29@{ curve: basis }
+  e30@{ curve: basis }

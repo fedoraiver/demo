@@ -1,0 +1,196 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#object-f87b11f6e6ed583c-e8{marker-start:url(#object-f87b11f6e6ed583c_flowchart-v2-pointStart)!important}\n#object-f87b11f6e6ed583c-e15{marker-start:url(#object-f87b11f6e6ed583c_flowchart-v2-pointStart)!important}\n#object-f87b11f6e6ed583c-e17{marker-start:url(#object-f87b11f6e6ed583c_flowchart-v2-pointStart)!important}\n#object-f87b11f6e6ed583c_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: collision::collider::collider_hierarchy::ColliderOf · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_observer fill:#F4F1F9,stroke:#7B4DB2,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**ColliderOf**<br/>指定碰撞体附着的刚体。" }
+  class n0 node_component
+  n1@{ shape: hex, label: "**add​_​to​_​tree​_​on**<br/>将可用碰撞体加入空间树。" }
+  class n1 node_observer
+  n2@{ shape: hex, label: "**on​_​collider​_​body​_​changed**<br/>随层级变化更新碰撞体刚体归属。" }
+  class n2 node_observer
+  n3@{ shape: hex, label: "**on​_​collider​_​body​_​changed**<br/>随层级变化更新碰撞体刚体归属。" }
+  class n3 node_observer
+  n4@{ shape: hex, label: "**prepare​_​holder​_​despawn**<br/>来自item​_​interaction ↗：Despawn 观察<br/>先排队停用代理，再让 Avian 的刚体卸载<br/>与 linked​_​spawn 清理运行。" }
+  class n4 node_observer
+  class n4 external_node
+  n5@{ shape: hex, label: "**on​_​body​_​removed**<br/>清理已移除刚体的碰撞体归属。" }
+  class n5 node_observer
+  n6@{ shape: rounded, label: "**sync​_​character​_​facing**<br/>来自first​_​person ↗：在固定模拟前及逐<br/>帧持握目标同步前设置水平朝向，站立、横移<br/>和后退时也跟随视角。" }
+  class n6 node_system
+  class n6 external_node
+  n7@{ shape: hex, label: "**add​_​to​_​tree​_​on**<br/>将可用碰撞体加入空间树。" }
+  class n7 node_observer
+  n8@{ shape: hex, label: "**build::{closure#35;1}**<br/>清除同实体碰撞体的失效归属。" }
+  class n8 node_observer
+  n9@{ shape: hex, label: "**prepare​_​holder​_​despawn**<br/>来自item​_​interaction ↗：Despawn 观察<br/>先排队停用代理，再让 Avian 的刚体卸载<br/>与 linked​_​spawn 清理运行。" }
+  class n9 node_observer
+  class n9 external_node
+  n10@{ shape: hex, label: "**add​_​to​_​tree​_​on**<br/>将可用碰撞体加入空间树。" }
+  class n10 node_observer
+  n11@{ shape: hex, label: "**build::{closure#35;1}**<br/>清除同实体碰撞体的失效归属。" }
+  class n11 node_observer
+  n12@{ shape: rounded, label: "**update​_​body​_​size​_​metrics**<br/>重算刚体的 CCD 厚度和最大扫掠半径。" }
+  class n12 node_system
+  n13@{ shape: hex, label: "**build::{closure#35;5}**<br/>在碰撞体成为传感器后请求质量重算。" }
+  class n13 node_observer
+  n14@{ shape: hex, label: "**on​_​body​_​removed**<br/>清理已移除刚体的碰撞体归属。" }
+  class n14 node_observer
+  n15@{ shape: hex, label: "**prepare​_​holder​_​despawn**<br/>来自item​_​interaction ↗：Despawn 观察<br/>先排队停用代理，再让 Avian 的刚体卸载<br/>与 linked​_​spawn 清理运行。" }
+  class n15 node_observer
+  class n15 external_node
+  n16@{ shape: rounded, label: "**cleanup​_​orphaned​_​colliders**<br/>来自item​_​interaction ↗：业务箱本身被<br/>销毁后清理代理，防止人物带着不可见的附属<br/>碰撞继续运动。" }
+  class n16 node_system
+  class n16 external_node
+  n17@{ shape: hex, label: "**build::{closure#35;0}**<br/>为新增碰撞体建立刚体归属。" }
+  class n17 node_observer
+  n18@{ shape: rounded, label: "**update​_​narrow​_​phase**<br/>更新窄相接触并输出碰撞变化消息。" }
+  class n18 node_system
+  n19@{ shape: rounded, label: "**align​_​attachments**<br/>来自item​_​interaction ↗：有限的小步对<br/>齐不会积分箱体力；受阻保留安全姿态，持续<br/>受阻则解除持握。" }
+  class n19 node_system
+  class n19 external_node
+  n20@{ shape: rounded, label: "**queue​_​mass​_​recomputation​_​on​_​**<br/>**collider​_​mass​_​change**<br/>在附属碰撞体质量输入变化时请求刚体重算。" }
+  class n20 node_system
+  n21@{ shape: hex, label: "**on​_​collider​_​body​_​changed**<br/>随层级变化更新碰撞体刚体归属。" }
+  class n21 node_observer
+  n22@{ shape: hex, label: "**build::{closure#35;0}**<br/>为新增碰撞体建立刚体归属。" }
+  class n22 node_observer
+  n23@{ shape: rounded, label: "**finish​_​attachments**<br/>来自item​_​interaction ↗：持握期间只保<br/>留人物的 Dynamic，碰到箱子即对同一刚体<br/>求解，内部形状自动互不碰撞。" }
+  class n23 node_system
+  class n23 external_node
+  n24@{ shape: rounded, label: "**update​_​child​_​collider​_​position**<br/>由所属刚体位姿更新附属碰撞体的世界位姿。" }
+  class n24 node_system
+  n25@{ shape: rounded, label: "**sync​_​character​_​facing**<br/>来自first​_​person ↗：在固定模拟前及逐<br/>帧持握目标同步前设置水平朝向，站立、横移<br/>和后退时也跟随视角。" }
+  class n25 node_system
+  class n25 external_node
+  n26@{ shape: hex, label: "**on​_​body​_​removed**<br/>清理已移除刚体的碰撞体归属。" }
+  class n26 node_observer
+  n27@{ shape: rounded, label: "**queue​_​mass​_​recomputation​_​on​_​mass​_​**<br/>**change**<br/>在刚体质量输入变化时请求重算。" }
+  class n27 node_system
+  n0 e0@--> n1
+  class e0 edge_read
+  n2 e1@-->|"插入"| n0
+  class e1 edge_write
+  n3 e2@-->|"插入"| n0
+  class e2 edge_write
+  n4 e3@-->|"移除"| n0
+  class e3 edge_write
+  n5 e4@-->|"移除"| n0
+  class e4 edge_write
+  n0 e5@--> n6
+  class e5 edge_read
+  n0 e6@--> n7
+  class e6 edge_read
+  n8 e7@-->|"移除"| n0
+  class e7 edge_write
+  n9 e8@--- n0
+  class e8 edge_read
+  n0 e9@--> n10
+  class e9 edge_read
+  n9 e10@-->|"移除"| n0
+  class e10 edge_write
+  n11 e11@-->|"移除"| n0
+  class e11 edge_write
+  n0 e12@--> n12
+  class e12 edge_read
+  n0 e13@--> n13
+  class e13 edge_read
+  n14 e14@-->|"移除"| n0
+  class e14 edge_write
+  n15 e15@--- n0
+  class e15 edge_read
+  n16 e16@-->|"移除"| n0
+  class e16 edge_write
+  n4 e17@--- n0
+  class e17 edge_read
+  n17 e18@-->|"插入"| n0
+  class e18 edge_write
+  n0 e19@--> n18
+  class e19 edge_read
+  n0 e20@--> n19
+  class e20 edge_read
+  n0 e21@--> n20
+  class e21 edge_read
+  n21 e22@-->|"插入"| n0
+  class e22 edge_write
+  n22 e23@-->|"插入"| n0
+  class e23 edge_write
+  n23 e24@-->|"插入"| n0
+  class e24 edge_write
+  n0 e25@--> n24
+  class e25 edge_read
+  n0 e26@--> n25
+  class e26 edge_read
+  n26 e27@-->|"移除"| n0
+  class e27 edge_write
+  n0 e28@-->|"存在性约束"| n27
+  class e28 edge_reference
+  n15 e29@-->|"移除"| n0
+  class e29 edge_write
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e17@{ curve: basis }
+  e18@{ curve: basis }
+  e19@{ curve: basis }
+  e20@{ curve: basis }
+  e21@{ curve: basis }
+  e22@{ curve: basis }
+  e23@{ curve: basis }
+  e24@{ curve: basis }
+  e25@{ curve: basis }
+  e26@{ curve: basis }
+  e27@{ curve: basis }
+  e28@{ curve: basis }
+  e29@{ curve: basis }

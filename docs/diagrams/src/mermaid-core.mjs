@@ -2,7 +2,7 @@ import { DOMParser, XMLSerializer } from '@xmldom/xmldom';
 import { VIEWER_BACKGROUND } from './viewer-theme.mjs';
 import { measureMermaidNodes } from './svg-shape-geometry.mjs';
 import { NODE_STYLES, EDGE_STYLES } from './architecture-style.mjs';
-import { DATA_GROUP_LABELS, entityComponentColumns } from './architecture-renderer.mjs';
+import { DATA_GROUP_LABELS, entityComponentColumns } from './architecture-renderer-core.mjs';
 import { inspectViewRoutes, ROUTING_STYLE } from './architecture-routing.mjs';
 import { checkMermaidGeometry } from './diagram-geometry.mjs';
 
@@ -106,6 +106,11 @@ export function normalizeMermaidSvg(view, source, registry, { clusterLabelBounds
     const element = edgeElements.get(link.mermaidId);
     if (!element) throw new Error(`Mermaid semantic edge missing: ${view.id}/${link.id}`);
     const schedule = view.scheduleLinks.includes(link);
+    for (const label of all.filter(item => item.getAttribute('data-mermaid-native-id') === link.mermaidId && hasClass(item, 'label') && item.textContent.trim())) {
+      const wrapper = hasClass(label.parentNode, 'edgeLabel') ? label.parentNode : label;
+      wrapper.setAttribute('class', `${wrapper.getAttribute('class')} edge-label`);
+      wrapper.setAttribute(schedule ? 'data-schedule-link-id' : 'data-link-id', link.id);
+    }
     element.setAttribute('class', `${element.getAttribute('class')} edge ${schedule ? 'schedule-edge' : link.kind}`);
     element.setAttribute(schedule ? 'data-schedule-link-id' : 'data-link-id', link.id);
     element.setAttribute(schedule ? 'data-schedule-connect' : 'data-connect', `${link.displayFrom ?? link.from}|${link.displayTo ?? link.to}`);
@@ -183,7 +188,7 @@ export function normalizeMermaidSvg(view, source, registry, { clusterLabelBounds
   svg.setAttribute('style', 'background-color:' + VIEWER_BACKGROUND);
   svg.setAttribute('data-diagram-engine', 'mermaid');
   const style = document.createElementNS(svg.namespaceURI, 'style');
-  style.textContent = '[data-id],[data-entity-owner],.edge{cursor:pointer}[data-id]:focus{outline:none}[data-id]:focus-visible:not(.selected):not(.entity-container),.entity-container:focus-visible:not(.selected)>[data-shape-part]{outline:2px solid #2563EB;outline-offset:4px}.node.dim:not(.entity-container),[data-entity-header].dim{opacity:.22}.entity-container.dim>[data-shape-part]{opacity:.22}.edge.dim{opacity:.16}.edge.focused{stroke-width:calc(var(--edge-width) + 1.2px)!important}';
+  style.textContent = '[data-id],[data-entity-owner],.edge,.edge-label{cursor:pointer}[data-id]:focus{outline:none}[data-id]:focus-visible:not(.selected):not(.entity-container),.entity-container:focus-visible:not(.selected)>[data-shape-part]{outline:2px solid #2563EB;outline-offset:4px}.node.dim:not(.entity-container),[data-entity-header].dim{opacity:.22}.entity-container.dim>[data-shape-part]{opacity:.22}.edge.dim,.edge-label.dim{opacity:.16}.edge.focused{stroke-width:calc(var(--edge-width) + 1.2px)!important}';
   svg.appendChild(style);
   return { ...view, nodes, scheduleGroups, entityGroups, sections, bounds: { x: bounds[0], y: bounds[1], width: bounds[2], height: bounds[3] }, width: bounds[2], height: bounds[3], svg: new XMLSerializer().serializeToString(svg) };
 }
@@ -234,7 +239,10 @@ export function routedMermaid(view, { curves = new Map(), spacing = 0, spans = n
   }
   if (cardContainers) {
     let selected = null;
-    if (cardContainers === 'related') {
+    if (Array.isArray(cardContainers)) {
+      selected = new Set(cardContainers);
+      for (const id of selected) if (!view.nodes.some(node => node.mermaidId === id)) throw new Error(`Missing native card container: ${view.id}/${id}`);
+    } else if (cardContainers === 'related') {
       const members = new Set((view.entityGroups || []).flatMap(group => group.components));
       const linked = new Set(view.links.flatMap(link => [link.displayFrom ?? link.from, link.displayTo ?? link.to]));
       selected = new Set(view.nodes.filter(node => members.has(node.id) ? linked.has(node.id) : ['system', 'observer'].includes(node.visualType)).map(node => node.mermaidId));
@@ -287,22 +295,28 @@ function entityHeaderContext(view) {
   return { ...view, layoutLinks: [...view.layoutLinks, ...added], mermaid: view.mermaid + added.map(link => `  ${link.from} ${link.mermaidId}@~~~ ${link.to}\n`).join('') };
 }
 
-function objectInputContext(view) {
+function objectNeighborContext(view, side = 'input') {
   const center = view.centerNodeId || view.objectId, byId = new Map(view.nodes.map(node => [node.id, node.mermaidId]));
-  const inputs = [...new Set(view.links.filter(link => (link.displayTo ?? link.to) === center)
-    .map(link => byId.get(link.displayFrom ?? link.from)).filter(Boolean))];
-  if (inputs.length < 2) return view;
+  const neighbors = [...new Set(view.links.filter(link => side === 'input' ? (link.displayTo ?? link.to) === center
+    : !link.nativeReverse && (link.displayFrom ?? link.from) === center && (link.displayTo ?? link.to) !== center)
+    .map(link => byId.get(side === 'input' ? link.displayFrom ?? link.from : link.displayTo ?? link.to)).filter(Boolean))];
+  if (neighbors.length < 2) return view;
   const pairs = new Set(view.layoutLinks.map(link => `${link.from}|${link.to}`)), added = [];
-  for (let index = 1; index < inputs.length; index++) {
-    const from = inputs[index - 1], to = inputs[index];
-    if (!pairs.has(`${from}|${to}`)) added.push({ mermaidId: `layout_input_${view.layoutLinks.length + added.length}`, from, to });
+  for (let index = 1; index < neighbors.length; index++) {
+    const from = neighbors[index - 1], to = neighbors[index];
+    if (!pairs.has(`${from}|${to}`)) added.push({ mermaidId: `layout_${side}_${view.layoutLinks.length + added.length}`, from, to });
   }
   if (!added.length) return view;
-  // 原生输入列的排版链避免多入边中心被压成近共线斜线；不可见链不表示系统执行顺序。
+  // 同侧邻居的原生排版链打破多分支近共线退化；反向呈现的双向访问不加入输出链，不可见链不表示执行顺序。
   return { ...view, layoutLinks: [...view.layoutLinks, ...added], mermaid: view.mermaid + added.map(link => `  ${link.from} ${link.mermaidId}@~~~ ${link.to}\n`).join('') };
 }
 
-export async function compileRoutedView(view, registry, compileNative, { onAttempt = () => {}, onFailure = () => {} } = {}) {
+// Node 可注入异步线程检查；浏览器继续等待同一组同步算法，原生回退顺序不变。
+export async function compileRoutedView(view, registry, compileNative, { onAttempt = () => {}, onFailure = () => {}, checks = {
+  labels: nativeLabelMismatches,
+  routes: inspectViewRoutes,
+  geometry: candidate => checkMermaidGeometry(candidate.svg, candidate),
+} } = {}) {
   const configuration = JSON.parse(/^---\r?\n([\s\S]*?)\r?\n---/.exec(view.mermaid)[1]).config;
   const dagre = (configuration.layout ?? 'dagre') === 'dagre';
   const invalidRoute = edge => edge.collisions.length || edge.arrowIssues.length || (edge.axis ? edge.curved : !edge.curved);
@@ -321,29 +335,31 @@ export async function compileRoutedView(view, registry, compileNative, { onAttem
   // 多实体的组件图需要在容器内边距与列间距共同变化后重新布线；每个候选仍走完整几何检查。
   if (dagre && ['component', 'object'].includes(view.aspect)) profiles.splice(2, 0,
     ...[16, 32, 64].flatMap(spacing => [0, 2, 4, 8].map(span => ({ spacing, span, cardContainers: true }))));
+  // 默认与通用容器优先；仅包围系统卡的原生间距可解除资源边的近共线退化。
+  if (dagre && view.aspect === 'object') profiles.splice(2, 0, { spacing: 0, span: 0, cardContainers: 'related' });
   // 复合节点可能遮住 Dagre 的原生曲线；最后尝试同一网络的另一声明顺序，不改变任何关系或排版链。
   if (dagre && view.aspect === 'data') profiles.push({ spacing: 0, span: 0, reverseRelationEdges: true });
-  let final, inspection, layoutError, inputContext, wrappingWidth, contextualLabelProfiles = false, entityWrapperCandidates = false, componentCurveProfiles = false;
+  let final, inspection, layoutError, inputContext, outputContext, wrappingWidth, contextualLabelProfiles = false, entityWrapperCandidates = false, componentCurveProfiles = false, endpointClearanceAdded = false;
   const labelVariants = new Set();
-  for (const [attempt, { spacing, span, labelEdges, labelSpan, reverseRelationEdges, cardContainers, headerContext, entityContainers, entityOrder, padding, incomingContext }] of profiles.entries()) {
+  for (const [attempt, { spacing, span, labelEdges, labelSpan, reverseRelationEdges, cardContainers, headerContext, entityContainers, entityOrder, padding, incomingContext, outgoingContext }] of profiles.entries()) {
     try {
       const spans = new Map(span ? [...view.links, ...view.scheduleLinks].map(edge => [edge.mermaidId, span]) : []);
       for (const id of labelEdges ?? []) spans.set(id, labelSpan);
-      const base = incomingContext ? inputContext : headerContext ? context : view;
+      const base = outgoingContext ? outputContext : incomingContext ? inputContext : headerContext ? context : view;
       const route = curves => ({ ...base, mermaid: routedMermaid(base, { spacing, spans, curves, reverseRelationEdges, cardContainers, entityContainers, entityOrder, padding, wrappingWidth }) });
       const candidate = route();
       let probe = await compileNative(candidate, registry);
-      if (wrappingWidth === undefined && (configuration.flowchart.wrappingWidth ?? 280) < 1000 && nativeLabelMismatches(probe).length) {
+      if (wrappingWidth === undefined && (configuration.flowchart.wrappingWidth ?? 280) < 1000 && (await checks.labels(probe)).length) {
         // Mermaid 的 SVG 自动折行可能拆开 HTML 实体；保留输入显式换行，只重编实际损坏的图。
         wrappingWidth = 1000;
         probe = await compileNative(route(), registry);
       }
       final = probe;
-      const probeInspection = inspectViewRoutes(probe);
+      const probeInspection = await checks.routes(probe);
       const curves = new Map(probeInspection.edges.filter(edge => !edge.axis).map(edge => [edge.mermaidId, ROUTING_STYLE.curve]));
       final = dagre && curves.size
         ? await compileNative(route(curves), registry) : probe;
-      inspection = inspectViewRoutes(final);
+      inspection = await checks.routes(final);
       if (dagre) for (const curve of ROUTING_STYLE.curveFallbacks) {
         const unresolved = inspection.edges.filter(edge => !edge.axis && invalidRoute(edge));
         if (!unresolved.length) break;
@@ -351,7 +367,7 @@ export async function compileRoutedView(view, registry, compileNative, { onAttem
         for (const edge of unresolved) trialCurves.set(edge.mermaidId, curve);
         const trial = await compileNative(route(trialCurves), registry);
         let trialInspection;
-        try { trialInspection = inspectViewRoutes(trial); }
+        try { trialInspection = await checks.routes(trial); }
         catch (error) { if (error.message === 'Native Mermaid arrow has no terminal tangent') continue; throw error; }
         const accepted = unresolved.filter(edge => {
           const candidate = trialInspection.edges.find(item => item.id === edge.id);
@@ -360,13 +376,13 @@ export async function compileRoutedView(view, registry, compileNative, { onAttem
         if (!accepted.length) continue;
         for (const edge of accepted) curves.set(edge.mermaidId, curve);
         final = accepted.length === unresolved.length ? trial : await compileNative(route(curves), registry);
-        inspection = inspectViewRoutes(final);
+        inspection = await checks.routes(final);
       }
       const axisOverrides = inspection.edges.filter(edge => edge.axis && curves.has(edge.mermaidId));
       if (axisOverrides.length) {
         for (const edge of axisOverrides) curves.delete(edge.mermaidId);
         final = await compileNative(route(curves), registry);
-        inspection = inspectViewRoutes(final);
+        inspection = await checks.routes(final);
       }
       const invalid = inspection.edges.filter(invalidRoute);
       // 单条近共线关系可能被 Dagre 压直。只延长该关系的原生 rank span，避免同时拉长包含边穿过左栏。
@@ -374,7 +390,9 @@ export async function compileRoutedView(view, registry, compileNative, { onAttem
         const straight = invalid.filter(edge => !edge.axis && !edge.curved && !edge.collisions.length && !edge.arrowIssues.length).map(edge => edge.mermaidId);
         if (straight.length) {
           componentCurveProfiles = true;
-          profiles.splice(attempt + 1, 0, ...Array.from({ length: 8 }, (_, index) => ({ spacing, span, cardContainers, labelEdges: straight, labelSpan: index + 1 })));
+          const nextContainers = profiles[attempt + 1]?.cardContainers;
+          const afterSelective = nextContainers === 'related' || Array.isArray(nextContainers) ? 1 : 0;
+          profiles.splice(attempt + 1 + afterSelective, 0, ...Array.from({ length: 8 }, (_, index) => ({ spacing, span, cardContainers, labelEdges: straight, labelSpan: index + 1 })));
         }
       }
       let wrapperProfiles = 0;
@@ -434,9 +452,9 @@ export async function compileRoutedView(view, registry, compileNative, { onAttem
       }
       layoutError = null;
       try {
-        const incomplete = nativeLabelMismatches(final);
+        const incomplete = await checks.labels(final);
         if (incomplete.length) throw new Error(`Incomplete native Mermaid label: ${incomplete.join(', ')}`);
-        checkMermaidGeometry(final.svg, final);
+        await checks.geometry(final);
         for (const group of final.entityGroups.filter(group => group.expanded !== false)) {
           if (!group.headerBounds?.width || !group.headerBounds?.height) throw new Error(`Missing native Entity title bounds: ${group.id}`);
           const columns = entityComponentColumns(group.components).map(column => column.map(id => final.nodes.find(node => node.id === id).position));
@@ -447,11 +465,31 @@ export async function compileRoutedView(view, registry, compileNative, { onAttem
           const lefts = columns.map(column => Math.min(...column.map(box => box.x)));
           if (lefts.some((left, index) => index && left <= lefts[index - 1] + .05)) throw new Error(`Entity component column order mismatch: ${group.id}`);
         }
-      } catch (error) { layoutError = error.message; }
+      } catch (error) {
+        if (checks.isFatalError?.(error)) throw error;
+        layoutError = error.message;
+      }
       if (dagre && view.aspect === 'object' && !inputContext && !layoutError && invalid.length
         && invalid.every(edge => !edge.axis && !edge.curved && !edge.collisions.length && !edge.arrowIssues.length)) {
-        inputContext = objectInputContext(view);
+        inputContext = objectNeighborContext(view);
         if (inputContext !== view) profiles.splice(attempt + 1, 0, { spacing: 0, span: 0, incomingContext: true });
+      }
+      if (dagre && view.aspect === 'object' && !endpointClearanceAdded && !layoutError && invalid.length
+        && invalid.every(edge => !edge.axis && !edge.curved && !edge.collisions.length && !edge.arrowIssues.length)) {
+        const link = view.links.find(link => invalid.some(edge => edge.id === link.id));
+        if (link) {
+          const nodes = new Map(view.nodes.map(node => [node.id, node.mermaidId]));
+          const endpoints = [...new Set([link.displayFrom ?? link.from, link.displayTo ?? link.to].map(id => nodes.get(id)).filter(Boolean))];
+          // 每图只加一对精确端点候选；不改事实，避免对称间距使曲线再次近共线。
+          endpointClearanceAdded = true;
+          profiles.splice(attempt + 1, 0, ...endpoints.map(id => ({ ...profiles[attempt], cardContainers: [id] })));
+        }
+      }
+      if (dagre && view.aspect === 'object' && !outputContext && !layoutError && invalid.length
+        && invalid.every(edge => !edge.axis && !edge.curved && !edge.collisions.length && !edge.arrowIssues.length)
+        && view.links.some(link => !link.nativeReverse && (link.displayFrom ?? link.from) === (view.centerNodeId || view.objectId) && invalid.some(edge => edge.id === link.id))) {
+        outputContext = objectNeighborContext(view, 'output');
+        if (outputContext !== view) profiles.splice(attempt + 1, 0, { spacing: 0, span: 0, outgoingContext: true });
       }
       // 透明复合容器可能使原生源端裁切停在外框；缩小原生内边距后重新编译并完整复核，不修补路径。
       if (dagre && padding === undefined && !layoutError && invalid.length && invalid.every(edge => !edge.collisions.length

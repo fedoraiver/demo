@@ -1,0 +1,166 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: bevy_transform::systems::mark_dirty_trees · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef node_local fill:#F8F5F1,stroke:#AA8752,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_plugin fill:#F1F3F6,stroke:#4A6389,stroke-width:2.2px,color:#1F3340
+  classDef edge_order stroke:#334155,stroke-width:2px
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**mark​_​dirty​_​trees**<br/>沿祖先链标记需要重算变换的子树。" }
+  class n0 node_system
+  n1@{ shape: rounded, label: "**GlobalTransform**<br/>保存实体合并祖先变换后的世界空间仿射变换" }
+  class n1 node_component
+  n2@{ shape: rounded, label: "**ChildOf**<br/>来自crate:bevy​_​ecs ↗：保存当前实体的<br/>父实体身份" }
+  class n2 node_component
+  class n2 external_node
+  n3@{ shape: fr-rect, label: "**TransformPlugin**<br/>更新并传播实体变换。" }
+  class n3 node_plugin
+  n4@{ shape: notch-rect, label: "**Local · traversal​_​channels**<br/>分发变换树祖先遍历的起始节点。" }
+  class n4 node_local
+  n5@{ shape: notch-rect, label: "**Local · orphaned.0.1**<br/>跟踪 ChildOf 移除记录的读取进度。" }
+  class n5 node_local
+  n6@{ shape: cyl, label: "**StaticTransformOptimizations**<br/>控制变换传播是否追踪并跳过静态子树" }
+  class n6 node_resource
+  n7@{ shape: rounded, label: "**propagate​_​parent​_​transforms**<br/>沿父子层级并行合成世界变换。" }
+  class n7 node_system
+  n8@{ shape: rounded, label: "**Transform**<br/>保存实体相对父实体的平移、旋转和缩放" }
+  class n8 node_component
+  n9@{ shape: fr-rect, label: "**PhysicsTransformPlugin**<br/>来自crate:avian3d ↗：同步物理姿态与实<br/>体变换。" }
+  class n9 node_plugin
+  class n9 external_node
+  n10@{ shape: notch-rect, label: "**Local · arg7**<br/>传递需要标记变换树变化的实体批次。" }
+  class n10 node_local
+  n11@{ shape: notch-rect, label: "**Local · consumer​_​channels**<br/>传递变换树脏标记的待写入实体。" }
+  class n11 node_local
+  n12@{ shape: notch-rect, label: "**Local · local​_​bitset**<br/>复用变换树遍历的线程位图。" }
+  class n12 node_local
+  n13@{ shape: notch-rect, label: "**Local · arg5**<br/>用共享原子位集去重变换树祖先遍历。" }
+  class n13 node_local
+  n14@{ shape: rounded, label: "**TransformTreeChanged**<br/>以变化检测标记存在变换变化的层级分支" }
+  class n14 node_component
+  n15@{ shape: notch-rect, label: "**Local · arg6**<br/>为变换树祖先遍历复用线程位图。" }
+  class n15 node_local
+  n16@{ shape: notch-rect, label: "**Local · arg1.0.1**<br/>跟踪 ChildOf 移除记录的读取进度。" }
+  class n16 node_local
+  n17@{ shape: notch-rect, label: "**Local · orphaned.0.0.0.0**<br/>保存 ChildOf 移除参数的组件 ID。" }
+  class n17 node_local
+  n18@{ shape: notch-rect, label: "**Local · arg8**<br/>向并行变换树遍历任务分发变化实体。" }
+  class n18 node_local
+  n19@{ shape: notch-rect, label: "**Local · shared​_​bitset**<br/>用共享原子位图去重祖先遍历。" }
+  class n19 node_local
+  n20@{ shape: notch-rect, label: "**Local · arg1.0.0.0.0**<br/>保存 ChildOf 移除参数的组件 ID。" }
+  class n20 node_local
+  n21@{ shape: lin-rect, label: "**Propagate**<br/>组织实体层级变换传播。" }
+  class n21 node_system_set
+  n1 e0@--> n0
+  class e0 edge_read
+  n2 e1@-->|"存在性约束"| n0
+  class e1 edge_reference
+  n1 e2@-->|"存在性约束"| n0
+  class e2 edge_reference
+  n3 e3@-->|"调用"| n0
+  class e3 edge_registration
+  n0 e4@-->|"可变访问"| n4
+  class e4 edge_write
+  n0 e5@-->|"可变访问"| n5
+  class e5 edge_write
+  n6 e6@--> n0
+  class e6 edge_read
+  n0 e7@-->|"先于"| n7
+  class e7 edge_order
+  n8 e8@-->|"存在性约束"| n0
+  class e8 edge_reference
+  n9 e9@-->|"调用"| n0
+  class e9 edge_registration
+  n0 e10@-->|"可变访问"| n10
+  class e10 edge_write
+  n0 e11@-->|"可变访问"| n11
+  class e11 edge_write
+  n0 e12@-->|"可变访问"| n12
+  class e12 edge_write
+  n0 e13@-->|"可变访问"| n13
+  class e13 edge_write
+  n0 e14@-->|"可变访问"| n14
+  class e14 edge_write
+  n0 e15@-->|"可变访问"| n15
+  class e15 edge_write
+  n0 e16@-->|"可变访问"| n16
+  class e16 edge_write
+  n0 e17@-->|"可变访问"| n17
+  class e17 edge_write
+  n0 e18@-->|"可变访问"| n18
+  class e18 edge_write
+  n0 e19@-->|"可变访问"| n19
+  class e19 edge_write
+  n8 e20@--> n0
+  class e20 edge_read
+  n2 e21@--> n0
+  class e21 edge_read
+  n0 e22@-->|"可变访问"| n20
+  class e22 edge_write
+  n21 e23@-->|"集合成员"| n0
+  class e23 edge_set_membership
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e17@{ curve: basis }
+  e18@{ curve: basis }
+  e19@{ curve: basis }
+  e20@{ curve: basis }
+  e21@{ curve: basis }
+  e22@{ curve: basis }
+  e23@{ curve: basis }

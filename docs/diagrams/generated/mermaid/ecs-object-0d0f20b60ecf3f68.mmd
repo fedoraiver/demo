@@ -1,0 +1,55 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: demo::character::lifecycle::clear_character_intents · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_plugin fill:#F1F3F6,stroke:#4A6389,stroke-width:2.2px,color:#1F3340
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**clear​_​character​_​intents**<br/>在固定循环前丢弃旧移动轴和一次性请求，恢<br/>复后由当前设备输入重新建立意图。" }
+  class n0 node_system
+  n1@{ shape: rounded, label: "**CharacterIntent**<br/>来自控制者的玩法意图；输入状态跨帧保留，<br/>供固定步模拟读取。" }
+  class n1 node_component
+  n2@{ shape: fr-rect, label: "**CharacterPlugin**<br/>注册角色运动与反射元数据，不加载窗口、场<br/>景或其他项目插件。" }
+  class n2 node_plugin
+  n0 e0@-->|"赋值"| n1
+  class e0 edge_write
+  n0 e1@-->|"可变访问"| n1
+  class e1 edge_write
+  n2 e2@-->|"调用"| n0
+  class e2 edge_registration
+  e0@{ curve: basis }
+  e1@{ curve: basis }

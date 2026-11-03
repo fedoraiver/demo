@@ -1,0 +1,62 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#object-794fbe44747d5f0a-e0{marker-start:url(#object-794fbe44747d5f0a_flowchart-v2-pointStart)!important}\n#object-794fbe44747d5f0a-e2{marker-start:url(#object-794fbe44747d5f0a_flowchart-v2-pointStart)!important}\n#object-794fbe44747d5f0a-e4{marker-start:url(#object-794fbe44747d5f0a_flowchart-v2-pointStart)!important}\n#object-794fbe44747d5f0a_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: bevy_extract::extract_resource::extract_resource#lt;bevy_pbr::material::DefaultOpaqueRendererMethod, bevy_render::RenderApp, ()#gt; · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**extract​_​resource**<br/>把存在的主世界资源转换到子世界。" }
+  class n0 node_system
+  n1@{ shape: cyl, label: "**DefaultOpaqueRendererMethod**<br/>来自crate:bevy​_​pbr ↗：指定不透明材质<br/>的默认渲染方式。" }
+  class n1 node_resource
+  class n1 external_node
+  n2@{ shape: cyl, label: "**MainWorld**<br/>在提取阶段临时提供主模拟世界。" }
+  class n2 node_resource
+  n1 e0@---|"赋值"| n0
+  class e0 edge_write
+  n1 e1@--> n0
+  class e1 edge_read
+  n1 e2@---|"可变访问"| n0
+  class e2 edge_write
+  n2 e3@--> n0
+  class e3 edge_read
+  n1 e4@---|"插入"| n0
+  class e4 edge_write
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }

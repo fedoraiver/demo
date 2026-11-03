@@ -1,0 +1,114 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: config::GizmoConfigStore · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: cyl, label: "**GizmoConfigStore**<br/>按配置组保存调试图元绘制设置。" }
+  class n0 node_resource
+  n1@{ shape: rounded, label: "**build::{{closure}}**<br/>判断是否绘制全部包围盒。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**draw​_​skinned​_​mesh​_​bounds**<br/>绘制带独立显示标记的动态蒙皮包围区域。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**draw​_​lights**<br/>来自crate:bevy​_​light ↗：为显式标记的<br/>各类光源绘制调试轮廓。" }
+  class n3 node_system
+  class n3 external_node
+  n4@{ shape: rounded, label: "**build::{{closure}}**<br/>判断是否绘制全部相机视锥。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**build::{{closure}}**<br/>判断是否绘制全部蒙皮网格边界。" }
+  class n5 node_system
+  n6@{ shape: rounded, label: "**draw​_​frustum​_​gizmos**<br/>绘制带标记实体的视锥调试图形。" }
+  class n6 node_system
+  n7@{ shape: rounded, label: "**extract​_​gizmo​_​data**<br/>来自crate:bevy​_​gizmos​_​render ↗：把启<br/>用的即时 Gizmo 数据提取为渲染实体。" }
+  class n7 node_system
+  class n7 external_node
+  n8@{ shape: rounded, label: "**draw​_​all​_​aabbs**<br/>绘制未单独标记实体的可见 AABB 调试线<br/>框。" }
+  class n8 node_system
+  n9@{ shape: rounded, label: "**flush​_​global​_​gizmos**<br/>将全局 Gizmo 缓冲转交本轮绘制。" }
+  class n9 node_system
+  n10@{ shape: rounded, label: "**draw​_​all​_​frustum​_​gizmos**<br/>绘制未单独标记实体的视锥调试图形。" }
+  class n10 node_system
+  n11@{ shape: rounded, label: "**draw​_​all​_​skinned​_​mesh​_​bounds**<br/>绘制未单独标记的动态蒙皮网格包围区域。" }
+  class n11 node_system
+  n12@{ shape: rounded, label: "**build::{{closure}}**<br/>来自crate:bevy​_​light ↗：判断是否绘制<br/>全部光源调试形状。" }
+  class n12 node_system
+  class n12 external_node
+  n13@{ shape: rounded, label: "**draw​_​all​_​lights**<br/>来自crate:bevy​_​light ↗：按配置颜色模<br/>式绘制全部灯光调试图形。" }
+  class n13 node_system
+  class n13 external_node
+  n14@{ shape: rounded, label: "**draw​_​aabbs**<br/>为显式标记的可见实体绘制 AABB。" }
+  class n14 node_system
+  n0 e0@--> n1
+  class e0 edge_read
+  n0 e1@--> n2
+  class e1 edge_read
+  n0 e2@--> n3
+  class e2 edge_read
+  n0 e3@--> n4
+  class e3 edge_read
+  n0 e4@--> n5
+  class e4 edge_read
+  n0 e5@--> n6
+  class e5 edge_read
+  n0 e6@--> n7
+  class e6 edge_read
+  n0 e7@--> n8
+  class e7 edge_read
+  n0 e8@--> n9
+  class e8 edge_read
+  n0 e9@--> n10
+  class e9 edge_read
+  n0 e10@--> n11
+  class e10 edge_read
+  n0 e11@--> n12
+  class e11 edge_read
+  n0 e12@--> n13
+  class e12 edge_read
+  n0 e13@--> n14
+  class e13 edge_read
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }

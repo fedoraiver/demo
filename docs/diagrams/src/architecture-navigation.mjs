@@ -22,7 +22,7 @@ export function resolveArchitectureSelection(search, features, schedules = []) {
     const names = [...new Set(params.getAll(parameter).filter(Boolean))];
     if (names.length) filters[key] = names;
   }
-  return { schedule, node, ...filters, ...(scheduleNode ? { scheduleNode } : {}), ...(object ? { object } : {}), ...(legacyFeature ? { legacyFeature } : {}), ...(legacyAspect ? { legacyAspect } : {}) };
+  return { schedule, node, ...filters, ...(scheduleNode ? { scheduleNode } : {}), ...(object ? { object, ...(params.get('objectRelation')?.trim() ? { objectRelation: params.get('objectRelation').trim() } : {}), ...(params.get('objectMode') === 'all' ? { objectMode: 'all' } : {}) } : {}), ...(legacyFeature ? { legacyFeature } : {}), ...(legacyAspect ? { legacyAspect } : {}) };
 }
 
 /** 只更新架构导航参数，保留工作区、其他参数与片段，不触发实际页面导航。 */
@@ -30,6 +30,8 @@ export function architectureUrl(selection, href, features, schedules = []) {
   const params = new URLSearchParams();
   if (selection.schedule) params.set('schedule', selection.schedule);
   if (selection.node) params.set('node', selection.node);
+  if (selection.objectRelation) params.set('objectRelation', selection.objectRelation);
+  if (selection.objectMode === 'all') params.set('objectMode', 'all');
   if (selection.scheduleNode) params.set('scheduleNode', selection.scheduleNode);
   if (selection.object || selection.component) params.set('object', selection.object || selection.component);
   if (selection.feature || selection.legacyFeature) params.set('feature', selection.feature || selection.legacyFeature);
@@ -39,7 +41,7 @@ export function architectureUrl(selection, href, features, schedules = []) {
   }
   const normalized = resolveArchitectureSelection(params, features, schedules);
   const url = new URL(href);
-  for (const key of ['schedule', 'object', 'node', 'scheduleNode', 'scheduleInclude', 'scheduleExclude']) {
+  for (const key of ['schedule', 'object', 'node', 'scheduleNode', 'scheduleInclude', 'scheduleExclude', 'objectRelation', 'objectMode']) {
     if (normalized[key]) url.searchParams.set(key, normalized[key]);
     else url.searchParams.delete(key);
   }

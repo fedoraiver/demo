@@ -1,0 +1,207 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#object-013899bfb612e296-e0{marker-start:url(#object-013899bfb612e296_flowchart-v2-pointStart)!important}\n#object-013899bfb612e296-e2{marker-start:url(#object-013899bfb612e296_flowchart-v2-pointStart)!important}\n#object-013899bfb612e296-e21{marker-start:url(#object-013899bfb612e296_flowchart-v2-pointStart)!important}\n#object-013899bfb612e296-e27{marker-start:url(#object-013899bfb612e296_flowchart-v2-pointStart)!important}\n#object-013899bfb612e296-e29{marker-start:url(#object-013899bfb612e296_flowchart-v2-pointStart)!important}\n#object-013899bfb612e296_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: demo::item_interaction::interaction::handle_interaction · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_entity fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef node_local fill:#F8F5F1,stroke:#AA8752,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_plugin fill:#F1F3F6,stroke:#4A6389,stroke-width:2.2px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**handle​_​interaction**<br/>拾取建立物理持握关系；释放只解除控制，保<br/>留刚体姿态、线速度和角速度。" }
+  class n0 node_system
+  n1@{ shape: rounded, label: "**ColliderDisabled**<br/>来自crate:avian3d ↗：暂停碰撞体检测和<br/>空间查询。" }
+  class n1 node_component
+  class n1 external_node
+  n2@{ shape: rounded, label: "**Character**<br/>来自character ↗：具有移动和跳跃能力的<br/>角色。" }
+  class n2 node_component
+  class n2 external_node
+  n3@{ shape: rounded, label: "**RigidBody**<br/>来自crate:avian3d ↗：选择动态、静态或<br/>运动学刚体行为。" }
+  class n3 node_component
+  class n3 external_node
+  n4@{ shape: rounded, label: "**HeldBy**<br/>物体的持有者；只由交互系统插入或移除。" }
+  class n4 node_component
+  n5@{ shape: rounded, label: "**NoTranslationEasing**<br/>来自crate:bevy​_​transform​_​<br/>interpolation ↗：显式禁止当前实体的平<br/>移插值和外推" }
+  class n5 node_component
+  class n5 external_node
+  n6@{ shape: cyl, label: "**PrototypeConfig**<br/>来自settings ↗：原型的运动、平地和持箱<br/>参数。" }
+  class n6 node_resource
+  class n6 external_node
+  n7@{ shape: cyl, label: "**ColliderTrees**<br/>来自crate:avian3d ↗：按运动类别组织碰<br/>撞体加速树。" }
+  class n7 node_resource
+  class n7 external_node
+  n8@{ shape: rounded, label: "**LinearVelocity**<br/>来自crate:avian3d ↗：保存刚体的世界线<br/>速度。" }
+  class n8 node_component
+  class n8 external_node
+  n9@{ shape: rounded, label: "**HoldingItems**<br/>Bevy 根据 HeldBy 自动维护的反向索引，<br/>业务代码只读取。" }
+  class n9 node_component
+  n10@{ shape: rounded, label: "**Collider**<br/>来自crate:avian3d ↗：保存 Parry 碰撞<br/>后端的几何形状。" }
+  class n10 node_component
+  class n10 external_node
+  n11@{ shape: rounded, label: "**NoRotationEasing**<br/>来自crate:bevy​_​transform​_​<br/>interpolation ↗：显式禁止当前实体的旋<br/>转插值和外推" }
+  class n11 node_component
+  class n11 external_node
+  n12@{ shape: lin-rect, label: "**Interaction**<br/>来自game​_​flow ↗：固定模拟阶段；结构变<br/>更在依赖阶段之间提交。" }
+  class n12 node_system_set
+  class n12 external_node
+  n13@{ shape: rounded, label: "**Position**<br/>来自crate:avian3d ↗：保存刚体或碰撞体<br/>的世界位置。" }
+  class n13 node_component
+  class n13 external_node
+  n14@{ shape: rounded, label: "**Transform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>相对父实体的平移、旋转和缩放" }
+  class n14 node_component
+  class n14 external_node
+  n15@{ shape: rounded, label: "**AngularVelocity**<br/>来自crate:avian3d ↗：保存刚体的世界角<br/>速度。" }
+  class n15 node_component
+  class n15 external_node
+  n16@{ shape: fr-rect, label: "**ItemInteractionPlugin**<br/>注册交互、持握生命周期、物理与呈现同步及<br/>物品反馈；物理插件由调用方显式安装。" }
+  class n16 node_plugin
+  n17@{ shape: notch-rect, label: "**Local · reserved**<br/>防止同批延迟拿取重复占用物品。" }
+  class n17 node_local
+  n18@{ shape: rounded, label: "**gameplay​_​running**<br/>来自game​_​flow ↗：独立功能测试没有应用<br/>状态；真实游戏只在 Running 推进玩法。" }
+  class n18 node_system
+  class n18 external_node
+  n19@{ shape: rounded, label: "**begin​_​attachment · 创建模板**<br/>为本次持握预留独立碰撞代理。" }
+  class n19 node_entity
+  n20@{ shape: rounded, label: "**Rotation**<br/>来自crate:avian3d ↗：保存刚体或碰撞体<br/>的世界旋转。" }
+  class n20 node_component
+  class n20 external_node
+  n21@{ shape: rounded, label: "**HeldAttachment**<br/>实际碰撞形状相对组合刚体的姿态；箱实体不<br/>成为人物的 ChildOf，避免异常销毁时连带<br/>消失。" }
+  class n21 node_component
+  n22@{ shape: rounded, label: "**Pickable**<br/>允许被拾取的能力标签。" }
+  class n22 node_component
+  n23@{ shape: rounded, label: "**HeldTarget**<br/>手前的目标姿态；对齐期间与真实局部挂接姿<br/>态分离，完成后由共享刚体保持相对位置。" }
+  class n23 node_component
+  n24@{ shape: rounded, label: "**ColliderAabb**<br/>来自crate:avian3d ↗：保存碰撞体的世界<br/>轴对齐包围盒。" }
+  class n24 node_component
+  class n24 external_node
+  n25@{ shape: rounded, label: "**CharacterIntent**<br/>来自character ↗：来自控制者的玩法意<br/>图；输入状态跨帧保留，供固定步模拟读取。" }
+  class n25 node_component
+  class n25 external_node
+  n1 e0@---|"插入"| n0
+  class e0 edge_write
+  n2 e1@-->|"存在性约束"| n0
+  class e1 edge_reference
+  n3 e2@---|"移除"| n0
+  class e2 edge_write
+  n4 e3@-->|"存在性约束"| n0
+  class e3 edge_reference
+  n5 e4@-->|"存在性约束"| n0
+  class e4 edge_reference
+  n6 e5@--> n0
+  class e5 edge_read
+  n7 e6@--> n0
+  class e6 edge_read
+  n8 e7@--> n0
+  class e7 edge_read
+  n1 e8@-->|"存在性约束"| n0
+  class e8 edge_reference
+  n9 e9@--> n0
+  class e9 edge_read
+  n10 e10@--> n0
+  class e10 edge_read
+  n11 e11@-->|"存在性约束"| n0
+  class e11 edge_reference
+  n12 e12@-->|"集合成员"| n0
+  class e12 edge_set_membership
+  n13 e13@--> n0
+  class e13 edge_read
+  n14 e14@--> n0
+  class e14 edge_read
+  n15 e15@--> n0
+  class e15 edge_read
+  n16 e16@-->|"调用"| n0
+  class e16 edge_registration
+  n3 e17@--> n0
+  class e17 edge_read
+  n0 e18@-->|"可变访问"| n17
+  class e18 edge_write
+  n18 e19@-->|"运行条件"| n0
+  class e19 edge_reference
+  n0 e20@-->|"创建模板"| n19
+  class e20 edge_write
+  n11 e21@---|"插入"| n0
+  class e21 edge_write
+  n20 e22@--> n0
+  class e22 edge_read
+  n0 e23@-->|"插入"| n21
+  class e23 edge_write
+  n22 e24@-->|"存在性约束"| n0
+  class e24 edge_reference
+  n0 e25@-->|"插入"| n23
+  class e25 edge_write
+  n24 e26@--> n0
+  class e26 edge_read
+  n5 e27@---|"插入"| n0
+  class e27 edge_write
+  n0 e28@-->|"可变访问"| n25
+  class e28 edge_write
+  n4 e29@---|"插入"| n0
+  class e29 edge_write
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e17@{ curve: basis }
+  e18@{ curve: basis }
+  e19@{ curve: basis }
+  e20@{ curve: basis }
+  e21@{ curve: basis }
+  e22@{ curve: basis }
+  e23@{ curve: bumpX }
+  e24@{ curve: basis }
+  e25@{ curve: basis }
+  e26@{ curve: basis }
+  e27@{ curve: basis }
+  e28@{ curve: basis }
+  e29@{ curve: basis }

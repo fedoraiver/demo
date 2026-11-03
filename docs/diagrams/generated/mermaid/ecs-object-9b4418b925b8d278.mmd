@@ -1,0 +1,90 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#object-9b4418b925b8d278-e5{marker-start:url(#object-9b4418b925b8d278_flowchart-v2-pointStart)!important}\n#object-9b4418b925b8d278_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: demo::item_interaction::lifecycle::resume_carry_easing · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_plugin fill:#F1F3F6,stroke:#4A6389,stroke-width:2.2px,color:#1F3340
+  classDef edge_order stroke:#334155,stroke-width:2px
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**resume​_​carry​_​easing**<br/>下一固定步在旧端点清除后恢复自由箱插值，<br/>保留原本由其他模块设置的暂停项。" }
+  class n0 node_system
+  n1@{ shape: fr-rect, label: "**ItemInteractionPlugin**<br/>注册交互、持握生命周期、物理与呈现同步及<br/>物品反馈；物理插件由调用方显式安装。" }
+  class n1 node_plugin
+  n2@{ shape: rounded, label: "**gameplay​_​running**<br/>来自game​_​flow ↗：独立功能测试没有应用<br/>状态；真实游戏只在 Running 推进玩法。" }
+  class n2 node_system
+  class n2 external_node
+  n3@{ shape: lin-rect, label: "**UpdateStart**<br/>来自crate:bevy​_​transform​_​<br/>interpolation ↗：组织变换缓动端点与帧<br/>间应用。" }
+  class n3 node_system_set
+  class n3 external_node
+  n4@{ shape: rounded, label: "**NoTranslationEasing**<br/>来自crate:bevy​_​transform​_​<br/>interpolation ↗：显式禁止当前实体的平<br/>移插值和外推" }
+  class n4 node_component
+  class n4 external_node
+  n5@{ shape: rounded, label: "**ResumeCarryEasing**<br/>释放后先丢弃手持期间的插值端点，再恢复调<br/>用前未暂停的插值通道。" }
+  class n5 node_component
+  n6@{ shape: lin-rect, label: "**Reset**<br/>来自crate:bevy​_​transform​_​<br/>interpolation ↗：组织变换缓动端点与帧<br/>间应用。" }
+  class n6 node_system_set
+  class n6 external_node
+  n7@{ shape: rounded, label: "**NoRotationEasing**<br/>来自crate:bevy​_​transform​_​<br/>interpolation ↗：显式禁止当前实体的旋<br/>转插值和外推" }
+  class n7 node_component
+  class n7 external_node
+  n1 e0@-->|"调用"| n0
+  class e0 edge_registration
+  n2 e1@-->|"运行条件"| n0
+  class e1 edge_reference
+  n0 e2@-->|"先于"| n3
+  class e2 edge_order
+  n0 e3@-->|"移除"| n4
+  class e3 edge_write
+  n5 e4@--> n0
+  class e4 edge_read
+  n5 e5@---|"移除"| n0
+  class e5 edge_write
+  n6 e6@-->|"先于"| n0
+  class e6 edge_order
+  n0 e7@-->|"移除"| n7
+  class e7 edge_write
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: bumpX }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }

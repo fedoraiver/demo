@@ -7,12 +7,18 @@ scripts/audio_pipeline.py -text
 # 真实调度 DOT 保留原始字节与上游行尾空白，按普通文本展示差异。
 docs/diagrams/generated/dot/*.dot -text diff whitespace=cr-at-eol,-blank-at-eol
 docs/diagrams/generated/dot/debugdump-manifest.json -diff
+# 原生调度回归夹具保留导出字节及空白行上的缩进。
+docs/diagrams/tests/fixtures/native-postupdate.dot -text diff whitespace=cr-at-eol,-blank-at-eol
+docs/diagrams/tests/fixtures/native-render.dot -text diff whitespace=cr-at-eol,-blank-at-eol
 # 生成图与源码快照参与哈希或精确内容校验，检出时保留原始换行。
 docs/diagrams/generated/svg/**/*.svg -text -diff whitespace=cr-at-eol
 docs/diagrams/generated/mermaid/*.mmd -text whitespace=cr-at-eol
 docs/diagrams/generated/pages/*.html -text -diff whitespace=cr-at-eol
 docs/diagrams/generated/data/**/*.json -text -diff
 docs/diagrams/generated/data/*.json -text -diff
+docs/diagrams/generated/data/*.ndjson -text -diff
+# 分发运行库参与完整性校验，保留原始字节及第三方模板字符串中的行尾空白。
+docs/diagrams/generated/runtime/*.mjs -text -diff whitespace=cr-at-eol,-blank-at-eol
 # 旧路径也跳过生成产物的逐行差异，避免历史统计重新比较大文件。
 docs/diagrams/ecs-*.svg -diff
 docs/diagrams/ecs-*.html -diff
@@ -20,3 +26,4 @@ docs/diagrams/ecs-data.json -diff
 docs/diagrams/debugdump-manifest.json -diff
 # 分发运行库的完整许可证保留来源格式。
 docs/diagrams/licenses/SCHEDULE-RUNTIME-LICENSES.txt -text -whitespace
+docs/diagrams/generated/data/model.calls.ndjson filter=lfs diff=lfs merge=lfs -text

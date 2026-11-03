@@ -7,9 +7,16 @@ use std::{
     time::{SystemTime, UNIX_EPOCH},
 };
 
+use analysis_contract::runtime::{
+    RuntimeAccess, RuntimeCondition, RuntimeEdge, RuntimeSchedule, RuntimeSet, RuntimeSnapshot,
+    RuntimeSystem,
+};
 use bevy::{
     app::{PluginsState, SubApps},
-    ecs::schedule::Schedules,
+    ecs::{
+        query::ComponentAccessKind,
+        schedule::{NodeId, Schedules},
+    },
     extract::MainWorld,
     prelude::*,
 };
@@ -64,14 +71,20 @@ fn write_schedules(app: &mut App, output: &Path, source_root: &Path) -> DumpResu
         Err(error) => return Err(error.into()),
     }
     let source_fingerprint = source_fingerprint(source_root)?;
-    let mut entries = dump_world("main", app.world_mut(), output)?;
+    let mut snapshots = Vec::new();
+    let mut entries = dump_world("main", app.world_mut(), output, &mut snapshots)?;
     let SubApps { main, sub_apps } = app.sub_apps_mut();
     let mut sub_apps = sub_apps.iter_mut().collect::<Vec<_>>();
     sub_apps.sort_by_key(|(label, _)| format!("{label:?}"));
     for (label, sub_app) in sub_apps {
         let app_name = format!("{label:?}");
         let mut context = MainWorldGuard::new(main.world_mut(), sub_app.world_mut(), &app_name)?;
-        entries.extend(dump_world(&app_name, context.world_mut(), output)?);
+        entries.extend(dump_world(
+            &app_name,
+            context.world_mut(),
+            output,
+            &mut snapshots,
+        )?);
     }
     let count = entries.len();
     let manifest = Manifest {
@@ -84,6 +97,22 @@ fn write_schedules(app: &mut App, output: &Path, source_root: &Path) -> DumpResu
         source_fingerprint,
         schedules: entries,
     };
+    let runtime = RuntimeSnapshot {
+        schema_version: 1,
+        source_fingerprint: manifest.source_fingerprint.clone(),
+        target: manifest.target.to_owned(),
+        features: manifest
+            .features
+            .iter()
+            .map(|value| (*value).to_owned())
+            .collect(),
+        schedules: snapshots,
+    };
+    // DOT、结构化注册和清单属于同一装配快照；最后发布清单才表示导出成功。
+    fs::write(
+        output.join("runtime.json"),
+        serde_json::to_vec_pretty(&runtime)?,
+    )?;
     fs::write(&manifest_path, serde_json::to_vec_pretty(&manifest)?)?;
     info!(target: "demo::inspector", directory = %output.display(), schedules = count,
         "Schedule export completed");
@@ -133,7 +162,12 @@ impl Drop for MainWorldGuard<'_> {
     }
 }
 
-fn dump_world(app_name: &str, world: &mut World, output: &Path) -> DumpResult<Vec<ScheduleEntry>> {
+fn dump_world(
+    app_name: &str,
+    world: &mut World,
+    output: &Path,
+    snapshots: &mut Vec<RuntimeSchedule>,
+) -> DumpResult<Vec<ScheduleEntry>> {
     if !world.contains_resource::<Schedules>() {
         info!(target: "demo::inspector", app = app_name, reason = "no_schedules_resource",
             "Sub-app has no schedules to export");
@@ -145,6 +179,7 @@ fn dump_world(app_name: &str, world: &mut World, output: &Path) -> DumpResult<Ve
         registered.sort_by_key(|(label, _)| format!("{label:?}"));
         let mut entries = Vec::with_capacity(registered.len());
         for (label, schedule) in registered {
+            let label_type = format!("{:?}", (label as &dyn std::any::Any).type_id());
             let label = format!("{label:?}");
             // 使用上游同样的图初始化路径，但显式传播构建失败，避免发布残缺图。
             schedule.graph_mut().initialize(world);
@@ -159,6 +194,114 @@ fn dump_world(app_name: &str, world: &mut World, output: &Path) -> DumpResult<Ve
             let id = schedule_id(app_name, &label);
             let filename = format!("schedule-{id}.dot");
             fs::write(output.join(&filename), dot.as_bytes())?;
+            let graph = schedule.graph();
+            let systems = graph
+                .systems
+                .iter()
+                .map(|(key, system, conditions)| {
+                    let node = NodeId::System(key);
+                    let access = graph
+                        .systems
+                        .get(key)
+                        .expect("Registered system must exist")
+                        .access();
+                    let access_set = access.to_filtered_access_set();
+                    let accesses = access_set
+                        .combined_access()
+                        .try_iter_access()
+                        .map(|items| {
+                            items
+                                .map(|item| {
+                                    let (component, mode) = match item {
+                                        ComponentAccessKind::Shared(component) => {
+                                            (component, "read")
+                                        }
+                                        ComponentAccessKind::Exclusive(component) => {
+                                            (component, "mutable_access")
+                                        }
+                                        ComponentAccessKind::Archetypal(component) => {
+                                            (component, "filter")
+                                        }
+                                    };
+                                    let info = world.components().get_info(component).expect(
+                                        "System access must reference a registered component",
+                                    );
+                                    RuntimeAccess {
+                                        type_id: info.type_id().map(|id| format!("{id:?}")),
+                                        name: info.name().to_string(),
+                                        mode: mode.to_owned(),
+                                    }
+                                })
+                                .collect()
+                        })
+                        .unwrap_or_default();
+                    RuntimeSystem {
+                        key: format!("{node:?}"),
+                        graph_name: format!("node_{node:?}"),
+                        name: system.name().to_string(),
+                        type_id: format!("{:?}", system.system_type()),
+                        conditions: conditions
+                            .iter()
+                            .map(|condition| RuntimeCondition {
+                                name: condition.name().to_string(),
+                                type_id: format!("{:?}", condition.system_type()),
+                            })
+                            .collect(),
+                        accesses,
+                        access_scope: if access.is_exclusive() {
+                            "exclusive"
+                        } else if access_set.combined_access().try_iter_access().is_err() {
+                            "unbounded"
+                        } else {
+                            "finite"
+                        }
+                        .to_owned(),
+                    }
+                })
+                .collect();
+            let sets = graph
+                .system_sets
+                .iter()
+                .map(|(key, set, conditions)| {
+                    let node = NodeId::Set(key);
+                    RuntimeSet {
+                        key: format!("{node:?}"),
+                        graph_name: format!("clusternode_{node:?}"),
+                        label: format!("{set:?}"),
+                        type_id: format!("{:?}", (set as &dyn std::any::Any).type_id()),
+                        system_type: set.system_type().map(|id| format!("{id:?}")),
+                        anonymous: set.is_anonymous(),
+                        conditions: conditions
+                            .iter()
+                            .map(|condition| RuntimeCondition {
+                                name: condition.name().to_string(),
+                                type_id: format!("{:?}", condition.system_type()),
+                            })
+                            .collect(),
+                    }
+                })
+                .collect();
+            let edges = |graph: &bevy::ecs::schedule::graph::DiGraph<NodeId>| {
+                graph
+                    .all_edges()
+                    .map(|(from, to)| RuntimeEdge {
+                        from: format!("{from:?}"),
+                        to: format!("{to:?}"),
+                    })
+                    .collect()
+            };
+            snapshots.push(RuntimeSchedule {
+                id: id.clone(),
+                app: app_name.to_owned(),
+                label: label.clone(),
+                type_id: label_type,
+                dot_filename: filename.clone(),
+                dot_sha256: sha256(dot.as_bytes()),
+                systems,
+                sets,
+                hierarchy: edges(graph.hierarchy().graph()),
+                dependencies: edges(graph.dependency().graph()),
+            });
             info!(target: "demo::inspector", app = app_name, schedule = label,
                 systems = system_count, filename, "Schedule exported");
             entries.push(ScheduleEntry {

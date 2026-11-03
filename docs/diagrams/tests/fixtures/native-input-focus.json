@@ -1,0 +1,1131 @@
+{
+  "view": {
+    "id": "object-e1e783d1538daec5",
+    "feature": "crate:bevy_input_focus",
+    "aspect": "object",
+    "label": "InputFocus · 对象关系",
+    "summary": "当前对象及全部直接关联对象。",
+    "objectId": "type-94bc6f9a58a58b2ce826cdba",
+    "centerNodeId": "type-94bc6f9a58a58b2ce826cdba"
+  },
+  "graph": {
+    "centerNodeId": "type-94bc6f9a58a58b2ce826cdba",
+    "nodes": [
+      {
+        "id": "type-94bc6f9a58a58b2ce826cdba",
+        "role": "internal",
+        "group": "当前对象"
+      },
+      {
+        "id": "observer-6b9ba09afdf35f5fb1b91946",
+        "role": "external",
+        "group": "直接关联对象"
+      },
+      {
+        "id": "observer-bd0ed0645284dbc20a38447a",
+        "role": "internal",
+        "group": "直接关联对象"
+      },
+      {
+        "id": "registration-6bb66939419f53af52b9e0f3",
+        "role": "internal",
+        "group": "直接关联对象"
+      },
+      {
+        "id": "observer-e8a66b60b6ff9a324bc69da5",
+        "role": "internal",
+        "group": "直接关联对象"
+      },
+      {
+        "id": "observer-a8a9f5d0c3aacaa2192cef32",
+        "role": "external",
+        "group": "直接关联对象"
+      },
+      {
+        "id": "observer-1b5b2ad4f4c8812289fb8637",
+        "role": "external",
+        "group": "直接关联对象"
+      },
+      {
+        "id": "observer-f11be76aaff6a85fd072b3d9",
+        "role": "internal",
+        "group": "直接关联对象"
+      },
+      {
+        "id": "registration-3dd1450f7a26b4f66a149ee0",
+        "role": "external",
+        "group": "直接关联对象"
+      },
+      {
+        "id": "registration-69faeec725138afc9601a7b8",
+        "role": "external",
+        "group": "直接关联对象"
+      },
+      {
+        "id": "registration-8579b3afe325374567a06f7d",
+        "role": "internal",
+        "group": "直接关联对象"
+      },
+      {
+        "id": "observer-e6296e3a2f3e5e32ab25bc12",
+        "role": "internal",
+        "group": "直接关联对象"
+      },
+      {
+        "id": "observer-75cfba95249139932d756a59",
+        "role": "internal",
+        "group": "直接关联对象"
+      },
+      {
+        "id": "observer-5e2fbe890179a49e8fb4171b",
+        "role": "internal",
+        "group": "直接关联对象"
+      },
+      {
+        "id": "observer-04d24bd97241858a84fe067d",
+        "role": "external",
+        "group": "直接关联对象"
+      },
+      {
+        "id": "registration-6b7b53a454df840f1854e235",
+        "role": "external",
+        "group": "直接关联对象"
+      },
+      {
+        "id": "observer-10ec9c5abf1f562398781e7c",
+        "role": "external",
+        "group": "直接关联对象"
+      },
+      {
+        "id": "observer-e5a13de4d6763de0641315fd",
+        "role": "internal",
+        "group": "直接关联对象"
+      },
+      {
+        "id": "observer-1dae56bfa08a6fc320ab2dd6",
+        "role": "external",
+        "group": "直接关联对象"
+      },
+      {
+        "id": "observer-660ab927bb53e9a3ca8fc79e",
+        "role": "external",
+        "group": "直接关联对象"
+      },
+      {
+        "id": "observer-7fe06cf77af8d627ee9fbc8a",
+        "role": "external",
+        "group": "直接关联对象"
+      },
+      {
+        "id": "registration-92277d4450ddcadd6b8fe529",
+        "role": "external",
+        "group": "直接关联对象"
+      },
+      {
+        "id": "registration-4cd66c5b7709fd8251e54bdd",
+        "role": "external",
+        "group": "直接关联对象"
+      },
+      {
+        "id": "registration-9d8c192a91829f39c80e84ae",
+        "role": "internal",
+        "group": "直接关联对象"
+      },
+      {
+        "id": "registration-59be2a7de2d93752af666d53",
+        "role": "internal",
+        "group": "直接关联对象"
+      },
+      {
+        "id": "observer-7529cd583d520d72248d1446",
+        "role": "internal",
+        "group": "直接关联对象"
+      },
+      {
+        "id": "registration-a00060b36c606c7534cbb598",
+        "role": "internal",
+        "group": "直接关联对象"
+      },
+      {
+        "id": "observer-c7e4d0f0f50b8310f413e744",
+        "role": "external",
+        "group": "直接关联对象"
+      },
+      {
+        "id": "observer-a85f1c3cb7eb1c996ac3262a",
+        "role": "external",
+        "group": "直接关联对象"
+      },
+      {
+        "id": "observer-52a55ca81dd0ad2899a10cf3",
+        "role": "internal",
+        "group": "直接关联对象"
+      },
+      {
+        "id": "registration-118268e34675f00632670709",
+        "role": "external",
+        "group": "直接关联对象"
+      },
+      {
+        "id": "observer-395994b792e56404741fb173",
+        "role": "external",
+        "group": "直接关联对象"
+      },
+      {
+        "id": "registration-77741813a675066dea0bf0dd",
+        "role": "external",
+        "group": "直接关联对象"
+      },
+      {
+        "id": "observer-c7bf64ecd337ea67f47eb5ae",
+        "role": "internal",
+        "group": "直接关联对象"
+      },
+      {
+        "id": "registration-206196ef835d58f5aad4b19a",
+        "role": "external",
+        "group": "直接关联对象"
+      },
+      {
+        "id": "registration-90bd69957815e7505ccd31bc",
+        "role": "external",
+        "group": "直接关联对象"
+      },
+      {
+        "id": "registration-499fe2d3b6741bca3e9ae29c",
+        "role": "external",
+        "group": "直接关联对象"
+      },
+      {
+        "id": "observer-4f0bd94d05018cbbab42aee0",
+        "role": "external",
+        "group": "直接关联对象"
+      }
+    ],
+    "links": [
+      {
+        "id": "relation-0070415303a418260151ab61",
+        "from": "observer-6b9ba09afdf35f5fb1b91946",
+        "to": "type-94bc6f9a58a58b2ce826cdba",
+        "kind": "write",
+        "label": "赋值",
+        "evidence": "body"
+      },
+      {
+        "id": "relation-027621409aa1b6aa146e0ba6",
+        "from": "observer-bd0ed0645284dbc20a38447a",
+        "to": "type-94bc6f9a58a58b2ce826cdba",
+        "kind": "write",
+        "label": "赋值",
+        "evidence": "body"
+      },
+      {
+        "id": "relation-061a0169e699e3366606710c",
+        "from": "registration-6bb66939419f53af52b9e0f3",
+        "to": "type-94bc6f9a58a58b2ce826cdba",
+        "kind": "write",
+        "label": "可变访问",
+        "evidence": "parameter",
+        "parameter": "focus",
+        "scope": "current"
+      },
+      {
+        "id": "relation-11d12ead3ad99b5245b92493",
+        "from": "observer-e8a66b60b6ff9a324bc69da5",
+        "to": "type-94bc6f9a58a58b2ce826cdba",
+        "kind": "write",
+        "label": "可变访问",
+        "evidence": "parameter",
+        "parameter": "focus",
+        "scope": "current"
+      },
+      {
+        "id": "relation-134d16778309f8ac6f463158",
+        "from": "observer-a8a9f5d0c3aacaa2192cef32",
+        "to": "type-94bc6f9a58a58b2ce826cdba",
+        "kind": "write",
+        "label": "可变访问",
+        "evidence": "parameter",
+        "parameter": "focus.0",
+        "scope": "current"
+      },
+      {
+        "id": "relation-14eea69ecb5c6cef478c8b60",
+        "from": "observer-1b5b2ad4f4c8812289fb8637",
+        "to": "type-94bc6f9a58a58b2ce826cdba",
+        "kind": "write",
+        "label": "可变访问",
+        "evidence": "parameter",
+        "parameter": "input_focus",
+        "scope": "current"
+      },
+      {
+        "id": "relation-16e51a87cf6a7c30d2dc6464",
+        "from": "observer-f11be76aaff6a85fd072b3d9",
+        "to": "type-94bc6f9a58a58b2ce826cdba",
+        "kind": "write",
+        "label": "赋值",
+        "evidence": "body"
+      },
+      {
+        "id": "relation-19f63be804a86d92efac5a72",
+        "from": "observer-f11be76aaff6a85fd072b3d9",
+        "to": "type-94bc6f9a58a58b2ce826cdba",
+        "kind": "write",
+        "label": "可变访问",
+        "evidence": "parameter",
+        "parameter": "focus",
+        "scope": "current"
+      },
+      {
+        "id": "relation-1ec6472fc96da3e23c450278",
+        "from": "observer-1b5b2ad4f4c8812289fb8637",
+        "to": "type-94bc6f9a58a58b2ce826cdba",
+        "kind": "write",
+        "label": "赋值",
+        "evidence": "body"
+      },
+      {
+        "id": "relation-206acff3d74c6ddd4e425cf5",
+        "from": "type-94bc6f9a58a58b2ce826cdba",
+        "to": "registration-3dd1450f7a26b4f66a149ee0",
+        "kind": "read",
+        "label": "读取",
+        "evidence": "parameter",
+        "parameter": "focus",
+        "scope": "current"
+      },
+      {
+        "id": "relation-2851020f7efc47cda5df0321",
+        "from": "type-94bc6f9a58a58b2ce826cdba",
+        "to": "registration-69faeec725138afc9601a7b8",
+        "kind": "read",
+        "label": "读取",
+        "evidence": "parameter",
+        "parameter": "input_focus",
+        "scope": "current"
+      },
+      {
+        "id": "relation-295478e4272e9679837969df",
+        "from": "registration-8579b3afe325374567a06f7d",
+        "to": "type-94bc6f9a58a58b2ce826cdba",
+        "kind": "write",
+        "label": "赋值",
+        "evidence": "body"
+      },
+      {
+        "id": "relation-2a19eb30cdd9ca30b490fa9a",
+        "from": "observer-e6296e3a2f3e5e32ab25bc12",
+        "to": "type-94bc6f9a58a58b2ce826cdba",
+        "kind": "write",
+        "label": "可变访问",
+        "evidence": "parameter",
+        "parameter": "focus",
+        "scope": "current"
+      },
+      {
+        "id": "relation-2b20f1797cee11a9a655a7e2",
+        "from": "observer-75cfba95249139932d756a59",
+        "to": "type-94bc6f9a58a58b2ce826cdba",
+        "kind": "write",
+        "label": "赋值",
+        "evidence": "body"
+      },
+      {
+        "id": "relation-2f2816b48516dd5197e871e7",
+        "from": "observer-5e2fbe890179a49e8fb4171b",
+        "to": "type-94bc6f9a58a58b2ce826cdba",
+        "kind": "write",
+        "label": "可变访问",
+        "evidence": "parameter",
+        "parameter": "focus",
+        "scope": "current"
+      },
+      {
+        "id": "relation-301eda9cda3a12db6d3e4e48",
+        "from": "registration-8579b3afe325374567a06f7d",
+        "to": "type-94bc6f9a58a58b2ce826cdba",
+        "kind": "write",
+        "label": "可变访问",
+        "evidence": "parameter",
+        "parameter": "focus",
+        "scope": "current"
+      },
+      {
+        "id": "relation-315c641b1f318e0d743d18a0",
+        "from": "observer-04d24bd97241858a84fe067d",
+        "to": "type-94bc6f9a58a58b2ce826cdba",
+        "kind": "write",
+        "label": "赋值",
+        "evidence": "body"
+      },
+      {
+        "id": "relation-3185e316ebde56171da3cb94",
+        "from": "type-94bc6f9a58a58b2ce826cdba",
+        "to": "registration-6b7b53a454df840f1854e235",
+        "kind": "read",
+        "label": "读取",
+        "evidence": "parameter",
+        "parameter": "input_focus",
+        "scope": "current"
+      },
+      {
+        "id": "relation-32dcc732f6a14d2bc47f01fe",
+        "from": "observer-10ec9c5abf1f562398781e7c",
+        "to": "type-94bc6f9a58a58b2ce826cdba",
+        "kind": "write",
+        "label": "赋值",
+        "evidence": "body"
+      },
+      {
+        "id": "relation-362ae9e07146d96b0a545bed",
+        "from": "observer-10ec9c5abf1f562398781e7c",
+        "to": "type-94bc6f9a58a58b2ce826cdba",
+        "kind": "write",
+        "label": "可变访问",
+        "evidence": "parameter",
+        "parameter": "focus",
+        "scope": "current"
+      },
+      {
+        "id": "relation-3bb516b2127a065686d057fd",
+        "from": "observer-e5a13de4d6763de0641315fd",
+        "to": "type-94bc6f9a58a58b2ce826cdba",
+        "kind": "write",
+        "label": "可变访问",
+        "evidence": "parameter",
+        "parameter": "focus",
+        "scope": "current"
+      },
+      {
+        "id": "relation-3debf2787abcc2f6bc219d8a",
+        "from": "observer-1dae56bfa08a6fc320ab2dd6",
+        "to": "type-94bc6f9a58a58b2ce826cdba",
+        "kind": "write",
+        "label": "赋值",
+        "evidence": "body"
+      },
+      {
+        "id": "relation-463929f2298fa6d47f0eabb0",
+        "from": "observer-660ab927bb53e9a3ca8fc79e",
+        "to": "type-94bc6f9a58a58b2ce826cdba",
+        "kind": "write",
+        "label": "赋值",
+        "evidence": "body"
+      },
+      {
+        "id": "relation-51287532a538de7ee854010d",
+        "from": "observer-7fe06cf77af8d627ee9fbc8a",
+        "to": "type-94bc6f9a58a58b2ce826cdba",
+        "kind": "write",
+        "label": "赋值",
+        "evidence": "body"
+      },
+      {
+        "id": "relation-5387485e0dcc67b4011f8ddc",
+        "from": "registration-92277d4450ddcadd6b8fe529",
+        "to": "type-94bc6f9a58a58b2ce826cdba",
+        "kind": "write",
+        "label": "赋值",
+        "evidence": "body"
+      },
+      {
+        "id": "relation-5b17d7ebe6f7e48af6f28206",
+        "from": "registration-92277d4450ddcadd6b8fe529",
+        "to": "type-94bc6f9a58a58b2ce826cdba",
+        "kind": "write",
+        "label": "可变访问",
+        "evidence": "parameter",
+        "parameter": "focus",
+        "scope": "current"
+      },
+      {
+        "id": "relation-5e47fd7ba717b90f0ac2e06d",
+        "from": "type-94bc6f9a58a58b2ce826cdba",
+        "to": "registration-4cd66c5b7709fd8251e54bdd",
+        "kind": "read",
+        "label": "读取",
+        "evidence": "parameter",
+        "parameter": "input_focus.0.0",
+        "scope": "main"
+      },
+      {
+        "id": "relation-63bdc33a68724dc727fa63f6",
+        "from": "observer-660ab927bb53e9a3ca8fc79e",
+        "to": "type-94bc6f9a58a58b2ce826cdba",
+        "kind": "write",
+        "label": "可变访问",
+        "evidence": "parameter",
+        "parameter": "focus",
+        "scope": "current"
+      },
+      {
+        "id": "relation-66389de9409464fb84abcbdc",
+        "from": "registration-9d8c192a91829f39c80e84ae",
+        "to": "type-94bc6f9a58a58b2ce826cdba",
+        "kind": "write",
+        "label": "可变访问",
+        "evidence": "parameter",
+        "parameter": "focus",
+        "scope": "current"
+      },
+      {
+        "id": "relation-67f28e6a149c493d90093722",
+        "from": "observer-a8a9f5d0c3aacaa2192cef32",
+        "to": "type-94bc6f9a58a58b2ce826cdba",
+        "kind": "write",
+        "label": "赋值",
+        "evidence": "body"
+      },
+      {
+        "id": "relation-6a5b04954dc5aa3f07dcc5fc",
+        "from": "registration-59be2a7de2d93752af666d53",
+        "to": "type-94bc6f9a58a58b2ce826cdba",
+        "kind": "write",
+        "label": "赋值",
+        "evidence": "body"
+      },
+      {
+        "id": "relation-6d5e7a52d16a3c62432d6af6",
+        "from": "observer-7529cd583d520d72248d1446",
+        "to": "type-94bc6f9a58a58b2ce826cdba",
+        "kind": "write",
+        "label": "可变访问",
+        "evidence": "parameter",
+        "parameter": "focus",
+        "scope": "current"
+      },
+      {
+        "id": "relation-76700a360bd17b63dd7f54f8",
+        "from": "registration-a00060b36c606c7534cbb598",
+        "to": "type-94bc6f9a58a58b2ce826cdba",
+        "kind": "write",
+        "label": "可变访问",
+        "evidence": "parameter",
+        "parameter": "focus",
+        "scope": "current"
+      },
+      {
+        "id": "relation-76a1295765a3d57840dee232",
+        "from": "observer-e6296e3a2f3e5e32ab25bc12",
+        "to": "type-94bc6f9a58a58b2ce826cdba",
+        "kind": "write",
+        "label": "赋值",
+        "evidence": "body"
+      },
+      {
+        "id": "relation-76d19f363d4e201ceac3138b",
+        "from": "observer-c7e4d0f0f50b8310f413e744",
+        "to": "type-94bc6f9a58a58b2ce826cdba",
+        "kind": "write",
+        "label": "可变访问",
+        "evidence": "parameter",
+        "parameter": "focus.0",
+        "scope": "current"
+      },
+      {
+        "id": "relation-7ad343bcf5085e812e2b8768",
+        "from": "observer-a85f1c3cb7eb1c996ac3262a",
+        "to": "type-94bc6f9a58a58b2ce826cdba",
+        "kind": "write",
+        "label": "赋值",
+        "evidence": "body"
+      },
+      {
+        "id": "relation-88635e2eba218f32b1ef3e89",
+        "from": "observer-52a55ca81dd0ad2899a10cf3",
+        "to": "type-94bc6f9a58a58b2ce826cdba",
+        "kind": "write",
+        "label": "可变访问",
+        "evidence": "parameter",
+        "parameter": "focus",
+        "scope": "current"
+      },
+      {
+        "id": "relation-8a51fe553b10b333fcef9a1f",
+        "from": "type-94bc6f9a58a58b2ce826cdba",
+        "to": "registration-118268e34675f00632670709",
+        "kind": "read",
+        "label": "读取",
+        "evidence": "parameter",
+        "parameter": "focus.0",
+        "scope": "current"
+      },
+      {
+        "id": "relation-8bf23e4eef36ef36efc457e8",
+        "from": "observer-bd0ed0645284dbc20a38447a",
+        "to": "type-94bc6f9a58a58b2ce826cdba",
+        "kind": "write",
+        "label": "可变访问",
+        "evidence": "parameter",
+        "parameter": "focus",
+        "scope": "current"
+      },
+      {
+        "id": "relation-8dabc47216e279c648835566",
+        "from": "observer-a85f1c3cb7eb1c996ac3262a",
+        "to": "type-94bc6f9a58a58b2ce826cdba",
+        "kind": "write",
+        "label": "可变访问",
+        "evidence": "parameter",
+        "parameter": "input_focus",
+        "scope": "current"
+      },
+      {
+        "id": "relation-8e7348a66cf59d3d94a08f3d",
+        "from": "observer-75cfba95249139932d756a59",
+        "to": "type-94bc6f9a58a58b2ce826cdba",
+        "kind": "write",
+        "label": "可变访问",
+        "evidence": "parameter",
+        "parameter": "focus",
+        "scope": "current"
+      },
+      {
+        "id": "relation-931f01ca08b8bac08ed0d668",
+        "from": "observer-e5a13de4d6763de0641315fd",
+        "to": "type-94bc6f9a58a58b2ce826cdba",
+        "kind": "write",
+        "label": "赋值",
+        "evidence": "body"
+      },
+      {
+        "id": "relation-988065572875527c82e159a5",
+        "from": "observer-395994b792e56404741fb173",
+        "to": "type-94bc6f9a58a58b2ce826cdba",
+        "kind": "write",
+        "label": "赋值",
+        "evidence": "body"
+      },
+      {
+        "id": "relation-9fa0ccf179fff5269f2cc555",
+        "from": "type-94bc6f9a58a58b2ce826cdba",
+        "to": "registration-77741813a675066dea0bf0dd",
+        "kind": "read",
+        "label": "读取",
+        "evidence": "parameter",
+        "parameter": "focus.0",
+        "scope": "current"
+      },
+      {
+        "id": "relation-ab1f0e72b5c1189b590c0e81",
+        "from": "observer-52a55ca81dd0ad2899a10cf3",
+        "to": "type-94bc6f9a58a58b2ce826cdba",
+        "kind": "write",
+        "label": "赋值",
+        "evidence": "body"
+      },
+      {
+        "id": "relation-ab9f4a1e0da3e5e2c860f668",
+        "from": "observer-7529cd583d520d72248d1446",
+        "to": "type-94bc6f9a58a58b2ce826cdba",
+        "kind": "write",
+        "label": "赋值",
+        "evidence": "body"
+      },
+      {
+        "id": "relation-acc218a7742a1ef9b1e0b253",
+        "from": "registration-9d8c192a91829f39c80e84ae",
+        "to": "type-94bc6f9a58a58b2ce826cdba",
+        "kind": "write",
+        "label": "赋值",
+        "evidence": "body"
+      },
+      {
+        "id": "relation-ae24e2cd8e609d1f01b65c9a",
+        "from": "observer-c7bf64ecd337ea67f47eb5ae",
+        "to": "type-94bc6f9a58a58b2ce826cdba",
+        "kind": "write",
+        "label": "赋值",
+        "evidence": "body"
+      },
+      {
+        "id": "relation-b7693e22d59dedf2b9c4787d",
+        "from": "observer-e8a66b60b6ff9a324bc69da5",
+        "to": "type-94bc6f9a58a58b2ce826cdba",
+        "kind": "write",
+        "label": "赋值",
+        "evidence": "body"
+      },
+      {
+        "id": "relation-b776732fbc2b957639005058",
+        "from": "observer-c7bf64ecd337ea67f47eb5ae",
+        "to": "type-94bc6f9a58a58b2ce826cdba",
+        "kind": "write",
+        "label": "可变访问",
+        "evidence": "parameter",
+        "parameter": "focus",
+        "scope": "current"
+      },
+      {
+        "id": "relation-c3fc5f92946b83e50d99de8f",
+        "from": "type-94bc6f9a58a58b2ce826cdba",
+        "to": "registration-206196ef835d58f5aad4b19a",
+        "kind": "read",
+        "label": "读取",
+        "evidence": "parameter",
+        "parameter": "input_focus.0",
+        "scope": "current"
+      },
+      {
+        "id": "relation-c89c72d368700a133b9895d5",
+        "from": "registration-59be2a7de2d93752af666d53",
+        "to": "type-94bc6f9a58a58b2ce826cdba",
+        "kind": "write",
+        "label": "可变访问",
+        "evidence": "parameter",
+        "parameter": "input_focus",
+        "scope": "current"
+      },
+      {
+        "id": "relation-d08a3cf73b5b1df9a0c86fcb",
+        "from": "observer-c7e4d0f0f50b8310f413e744",
+        "to": "type-94bc6f9a58a58b2ce826cdba",
+        "kind": "write",
+        "label": "赋值",
+        "evidence": "body"
+      },
+      {
+        "id": "relation-d32c6e3f6d72c0cb1ccd904e",
+        "from": "type-94bc6f9a58a58b2ce826cdba",
+        "to": "registration-90bd69957815e7505ccd31bc",
+        "kind": "read",
+        "label": "读取",
+        "evidence": "parameter",
+        "parameter": "input_focus",
+        "scope": "current"
+      },
+      {
+        "id": "relation-d90f07dda8b0a96cfc3d283b",
+        "from": "registration-6bb66939419f53af52b9e0f3",
+        "to": "type-94bc6f9a58a58b2ce826cdba",
+        "kind": "write",
+        "label": "赋值",
+        "evidence": "body"
+      },
+      {
+        "id": "relation-d9f3d3c82b23f72d7f894999",
+        "from": "type-94bc6f9a58a58b2ce826cdba",
+        "to": "registration-499fe2d3b6741bca3e9ae29c",
+        "kind": "read",
+        "label": "读取",
+        "evidence": "parameter",
+        "parameter": "input_focus",
+        "scope": "current"
+      },
+      {
+        "id": "relation-e171785eb560ce7b1c22c3a3",
+        "from": "observer-4f0bd94d05018cbbab42aee0",
+        "to": "type-94bc6f9a58a58b2ce826cdba",
+        "kind": "write",
+        "label": "赋值",
+        "evidence": "body"
+      },
+      {
+        "id": "relation-e5482986011c622a81d62462",
+        "from": "observer-4f0bd94d05018cbbab42aee0",
+        "to": "type-94bc6f9a58a58b2ce826cdba",
+        "kind": "write",
+        "label": "可变访问",
+        "evidence": "parameter",
+        "parameter": "focus",
+        "scope": "current"
+      },
+      {
+        "id": "relation-e69a315150b86b5b2232e969",
+        "from": "observer-395994b792e56404741fb173",
+        "to": "type-94bc6f9a58a58b2ce826cdba",
+        "kind": "write",
+        "label": "可变访问",
+        "evidence": "parameter",
+        "parameter": "focus",
+        "scope": "current"
+      },
+      {
+        "id": "relation-f0da92a8b52ad47b0eac7f15",
+        "from": "observer-7fe06cf77af8d627ee9fbc8a",
+        "to": "type-94bc6f9a58a58b2ce826cdba",
+        "kind": "write",
+        "label": "可变访问",
+        "evidence": "parameter",
+        "parameter": "input_focus",
+        "scope": "current"
+      },
+      {
+        "id": "relation-f35cbba6c06ab8958074d925",
+        "from": "registration-a00060b36c606c7534cbb598",
+        "to": "type-94bc6f9a58a58b2ce826cdba",
+        "kind": "write",
+        "label": "赋值",
+        "evidence": "body"
+      },
+      {
+        "id": "relation-f6cb56578b53b7e27a57abe0",
+        "from": "observer-6b9ba09afdf35f5fb1b91946",
+        "to": "type-94bc6f9a58a58b2ce826cdba",
+        "kind": "write",
+        "label": "可变访问",
+        "evidence": "parameter",
+        "parameter": "focus",
+        "scope": "current"
+      },
+      {
+        "id": "relation-f96a22d5b4880e4bdc13f2f3",
+        "from": "observer-5e2fbe890179a49e8fb4171b",
+        "to": "type-94bc6f9a58a58b2ce826cdba",
+        "kind": "write",
+        "label": "赋值",
+        "evidence": "body"
+      },
+      {
+        "id": "relation-fe77e8d9b8c6336b84ad787e",
+        "from": "observer-1dae56bfa08a6fc320ab2dd6",
+        "to": "type-94bc6f9a58a58b2ce826cdba",
+        "kind": "write",
+        "label": "可变访问",
+        "evidence": "parameter",
+        "parameter": "focus",
+        "scope": "current"
+      },
+      {
+        "id": "relation-ffa2ed52ab0a976001c95fe9",
+        "from": "observer-04d24bd97241858a84fe067d",
+        "to": "type-94bc6f9a58a58b2ce826cdba",
+        "kind": "write",
+        "label": "可变访问",
+        "evidence": "parameter",
+        "parameter": "focus.0",
+        "scope": "current"
+      }
+    ]
+  },
+  "registry": {
+    "type-94bc6f9a58a58b2ce826cdba": {
+      "id": "type-94bc6f9a58a58b2ce826cdba",
+      "kind": "Resource",
+      "name": "InputFocus",
+      "description": "保存当前输入焦点实体、待派发的焦点变化及原焦点，驱动焦点获得和失去事件。",
+      "display_summary": "保存当前输入焦点实体、待派发的焦点变化及原焦点",
+      "feature": "crate:bevy_input_focus"
+    },
+    "observer-6b9ba09afdf35f5fb1b91946": {
+      "id": "observer-6b9ba09afdf35f5fb1b91946",
+      "kind": "Observer",
+      "name": "bevy_ui_widgets::menu::menu_on_key_event",
+      "description": "处理菜单项确认激活、弹出菜单关闭、方向键与首尾导航，并根据请求维护菜单焦点。",
+      "display_summary": "处理菜单键盘导航、激活与关闭。",
+      "feature": "crate:bevy_ui_widgets"
+    },
+    "observer-bd0ed0645284dbc20a38447a": {
+      "id": "observer-bd0ed0645284dbc20a38447a",
+      "kind": "Observer",
+      "name": "bevy_input_focus::tab_navigation::acquire_focus_tab_index",
+      "description": "在焦点请求到达带 TabIndex 的实体时，将输入焦点设置为该导航目标。",
+      "display_summary": "让带导航索引的实体获得输入焦点。",
+      "feature": "crate:bevy_input_focus"
+    },
+    "registration-6bb66939419f53af52b9e0f3": {
+      "id": "registration-6bb66939419f53af52b9e0f3",
+      "kind": "System",
+      "name": "bevy_input_focus::gained_and_lost::process_recorded_focus_changes",
+      "description": "逐项消费 InputFocus 的焦点变化记录，只有实体确实变化时才向旧目标触发 FocusLost、向新目标触发 FocusGained；同步内部原焦点快照但不再次修改对外当前焦点。",
+      "display_summary": "按记录顺序派发焦点获得和失去事件。",
+      "feature": "crate:bevy_input_focus"
+    },
+    "observer-e8a66b60b6ff9a324bc69da5": {
+      "id": "observer-e8a66b60b6ff9a324bc69da5",
+      "kind": "Observer",
+      "name": "bevy_input_focus::tab_navigation::acquire_focus_tab_index",
+      "description": "在焦点请求到达带 TabIndex 的实体时，将输入焦点设置为该导航目标。",
+      "display_summary": "让带导航索引的实体获得输入焦点。",
+      "feature": "crate:bevy_input_focus"
+    },
+    "observer-a8a9f5d0c3aacaa2192cef32": {
+      "id": "observer-a8a9f5d0c3aacaa2192cef32",
+      "kind": "Observer",
+      "name": "bevy_ui_widgets::checkbox::checkbox_on_pointer_down",
+      "description": "在复选框指针按下时设置输入焦点并隐藏焦点环；可用时记录按压，按配置立即提出勾选变化。",
+      "display_summary": "处理复选框按压、焦点与即时勾选请求。",
+      "feature": "crate:bevy_ui_widgets"
+    },
+    "observer-1b5b2ad4f4c8812289fb8637": {
+      "id": "observer-1b5b2ad4f4c8812289fb8637",
+      "kind": "Observer",
+      "name": "bevy_ui_widgets::text_input::on_focused_keyboard_input",
+      "description": "把聚焦文本框的文字输入、编辑快捷键和光标选择操作转为编辑队列，遵守读写模式与禁用状态；输入法组合期间保留键盘输入，Escape 收起选择并清除焦点后继续传播。",
+      "display_summary": "将聚焦文本框按键转为编辑操作。",
+      "feature": "crate:bevy_ui_widgets"
+    },
+    "observer-f11be76aaff6a85fd072b3d9": {
+      "id": "observer-f11be76aaff6a85fd072b3d9",
+      "kind": "Observer",
+      "name": "bevy_input_focus::tab_navigation::acquire_focus_tab_index",
+      "description": "在焦点请求到达带 TabIndex 的实体时，将输入焦点设置为该导航目标。",
+      "display_summary": "让带导航索引的实体获得输入焦点。",
+      "feature": "crate:bevy_input_focus"
+    },
+    "registration-3dd1450f7a26b4f66a149ee0": {
+      "id": "registration-3dd1450f7a26b4f66a149ee0",
+      "kind": "System",
+      "name": "bevy_ui_widgets::menu::menu_on_lose_focus",
+      "description": "对已打开或正在打开的菜单，检查焦点是否为自身或后代；焦点移出或消失时把状态改为 Closed，并触发该菜单的 CloseAll 事件。",
+      "display_summary": "关闭不再持有内部焦点的菜单。",
+      "feature": "crate:bevy_ui_widgets"
+    },
+    "registration-69faeec725138afc9601a7b8": {
+      "id": "registration-69faeec725138afc9601a7b8",
+      "kind": "System",
+      "name": "bevy_ui_widgets::text_input::text_input_autoscroll_system",
+      "description": "从焦点目标的主按钮拖动状态取得指针位置，转换到文字局部坐标，按越界距离、视口大小及帧时间计算滚动，限制在文字布局范围并同步拖动选择；组合输入法文本时不执行。",
+      "display_summary": "在拖选越出文字视口时自动滚动。",
+      "feature": "crate:bevy_ui_widgets"
+    },
+    "registration-8579b3afe325374567a06f7d": {
+      "id": "registration-8579b3afe325374567a06f7d",
+      "kind": "System",
+      "name": "bevy_input_focus::dispatch_focused_input<bevy_input::gamepad::GamepadButtonChangedEvent>",
+      "description": "把输入消息派发到有效焦点实体并允许沿层级冒泡；没有有效焦点时改向主窗口派发。",
+      "display_summary": "向有效焦点或主窗口派发输入。",
+      "feature": "crate:bevy_input_focus"
+    },
+    "observer-e6296e3a2f3e5e32ab25bc12": {
+      "id": "observer-e6296e3a2f3e5e32ab25bc12",
+      "kind": "Observer",
+      "name": "bevy_input_focus::tab_navigation::handle_tab_navigation",
+      "description": "响应 Tab 和 Shift+Tab，在可聚焦实体及导航组之间移动输入焦点。",
+      "display_summary": "处理正向和反向键盘焦点遍历。",
+      "feature": "crate:bevy_input_focus"
+    },
+    "observer-75cfba95249139932d756a59": {
+      "id": "observer-75cfba95249139932d756a59",
+      "kind": "Observer",
+      "name": "bevy_input_focus::on_window_acquire_focus_clear",
+      "description": "在获取焦点请求冒泡到窗口且未遇到可聚焦目标时，清除当前输入焦点。",
+      "display_summary": "在请求未命中焦点目标时清除焦点。",
+      "feature": "crate:bevy_input_focus"
+    },
+    "observer-5e2fbe890179a49e8fb4171b": {
+      "id": "observer-5e2fbe890179a49e8fb4171b",
+      "kind": "Observer",
+      "name": "bevy_input_focus::on_window_acquire_focus_clear",
+      "description": "在获取焦点请求冒泡到窗口且未遇到可聚焦目标时，清除当前输入焦点。",
+      "display_summary": "在请求未命中焦点目标时清除焦点。",
+      "feature": "crate:bevy_input_focus"
+    },
+    "observer-04d24bd97241858a84fe067d": {
+      "id": "observer-04d24bd97241858a84fe067d",
+      "kind": "Observer",
+      "name": "bevy_ui_widgets::checkbox::checkbox_on_pointer_down",
+      "description": "在复选框指针按下时设置输入焦点并隐藏焦点环；可用时记录按压，按配置立即提出勾选变化。",
+      "display_summary": "处理复选框按压、焦点与即时勾选请求。",
+      "feature": "crate:bevy_ui_widgets"
+    },
+    "registration-6b7b53a454df840f1854e235": {
+      "id": "registration-6b7b53a454df840f1854e235",
+      "kind": "System",
+      "name": "bevy_ui_widgets::text_input::update_ime_position",
+      "description": "读取聚焦且可编辑目标的 Parley 光标或预编辑矩形，将其底边位置结合内容盒、文字滚动偏移、UI 变换及缩放换算为窗口坐标，更新主窗口 ime_position。",
+      "display_summary": "把输入法候选窗口放到当前文字光标下方。",
+      "feature": "crate:bevy_ui_widgets"
+    },
+    "observer-10ec9c5abf1f562398781e7c": {
+      "id": "observer-10ec9c5abf1f562398781e7c",
+      "kind": "Observer",
+      "name": "bevy_ui_widgets::tabs::tab_on_key_input",
+      "description": "按标签栏方向处理方向键、Home 与 End，在可用标签间移动并显示键盘焦点；自动激活模式同时请求切换选择，Enter 或空格可显式激活当前标签。",
+      "display_summary": "用键盘导航并激活标签页。",
+      "feature": "crate:bevy_ui_widgets"
+    },
+    "observer-e5a13de4d6763de0641315fd": {
+      "id": "observer-e5a13de4d6763de0641315fd",
+      "kind": "Observer",
+      "name": "bevy_input_focus::on_window_acquire_focus_clear",
+      "description": "在获取焦点请求冒泡到窗口且未遇到可聚焦目标时，清除当前输入焦点。",
+      "display_summary": "在请求未命中焦点目标时清除焦点。",
+      "feature": "crate:bevy_input_focus"
+    },
+    "observer-1dae56bfa08a6fc320ab2dd6": {
+      "id": "observer-1dae56bfa08a6fc320ab2dd6",
+      "kind": "Observer",
+      "name": "bevy_ui_widgets::menu::menu_on_key_event",
+      "description": "处理菜单项确认激活、弹出菜单关闭、方向键与首尾导航，并根据请求维护菜单焦点。",
+      "display_summary": "处理菜单键盘导航、激活与关闭。",
+      "feature": "crate:bevy_ui_widgets"
+    },
+    "observer-660ab927bb53e9a3ca8fc79e": {
+      "id": "observer-660ab927bb53e9a3ca8fc79e",
+      "kind": "Observer",
+      "name": "bevy_ui_widgets::tabs::tab_on_key_input",
+      "description": "按标签栏方向处理方向键、Home 与 End，在可用标签间移动并显示键盘焦点；自动激活模式同时请求切换选择，Enter 或空格可显式激活当前标签。",
+      "display_summary": "用键盘导航并激活标签页。",
+      "feature": "crate:bevy_ui_widgets"
+    },
+    "observer-7fe06cf77af8d627ee9fbc8a": {
+      "id": "observer-7fe06cf77af8d627ee9fbc8a",
+      "kind": "Observer",
+      "name": "bevy_ui_widgets::text_input::on_focused_keyboard_input",
+      "description": "把聚焦文本框的文字输入、编辑快捷键和光标选择操作转为编辑队列，遵守读写模式与禁用状态；输入法组合期间保留键盘输入，Escape 收起选择并清除焦点后继续传播。",
+      "display_summary": "将聚焦文本框按键转为编辑操作。",
+      "feature": "crate:bevy_ui_widgets"
+    },
+    "registration-92277d4450ddcadd6b8fe529": {
+      "id": "registration-92277d4450ddcadd6b8fe529",
+      "kind": "System",
+      "name": "bevy_ui_widgets::menu::menu_acquire_focus",
+      "description": "查找处于 Opening 的菜单，按记录的导航方向初始化第一个或最后一个可聚焦目标；成功后切换到 Open 并设置导航焦点，没有可聚焦菜单项时记录警告。",
+      "display_summary": "在菜单打开时为菜单项取得焦点。",
+      "feature": "crate:bevy_ui_widgets"
+    },
+    "registration-4cd66c5b7709fd8251e54bdd": {
+      "id": "registration-4cd66c5b7709fd8251e54bdd",
+      "kind": "System",
+      "name": "bevy_ui_render::text::extract_text_cursor",
+      "description": "对变化的可见文字，按焦点及读写模式选择选区颜色，调整相邻行交接处的选区圆角，并依据光标可见状态生成光标矩形；静态文字不生成选区或光标，保留编辑滚动和裁剪。",
+      "display_summary": "提取文字光标和带圆角的选区背景。",
+      "feature": "crate:bevy_ui_render"
+    },
+    "registration-9d8c192a91829f39c80e84ae": {
+      "id": "registration-9d8c192a91829f39c80e84ae",
+      "kind": "System",
+      "name": "bevy_input_focus::dispatch_focused_input<bevy_input::mouse::MouseWheel>",
+      "description": "把输入消息派发到有效焦点实体并允许沿层级冒泡；没有有效焦点时改向主窗口派发。",
+      "display_summary": "向有效焦点或主窗口派发输入。",
+      "feature": "crate:bevy_input_focus"
+    },
+    "registration-59be2a7de2d93752af666d53": {
+      "id": "registration-59be2a7de2d93752af666d53",
+      "kind": "System",
+      "name": "bevy_input_focus::set_initial_focus",
+      "description": "当前 InputFocus 为空时，把可用的主窗口设为初始导航焦点；已有焦点时保持原目标。",
+      "display_summary": "在没有焦点目标时使用主窗口。",
+      "feature": "crate:bevy_input_focus"
+    },
+    "observer-7529cd583d520d72248d1446": {
+      "id": "observer-7529cd583d520d72248d1446",
+      "kind": "Observer",
+      "name": "bevy_input_focus::tab_navigation::acquire_focus_tab_index",
+      "description": "在焦点请求到达带 TabIndex 的实体时，将输入焦点设置为该导航目标。",
+      "display_summary": "让带导航索引的实体获得输入焦点。",
+      "feature": "crate:bevy_input_focus"
+    },
+    "registration-a00060b36c606c7534cbb598": {
+      "id": "registration-a00060b36c606c7534cbb598",
+      "kind": "System",
+      "name": "bevy_input_focus::dispatch_focused_input<bevy_input::keyboard::KeyboardInput>",
+      "description": "把输入消息派发到有效焦点实体并允许沿层级冒泡；没有有效焦点时改向主窗口派发。",
+      "display_summary": "向有效焦点或主窗口派发输入。",
+      "feature": "crate:bevy_input_focus"
+    },
+    "observer-c7e4d0f0f50b8310f413e744": {
+      "id": "observer-c7e4d0f0f50b8310f413e744",
+      "kind": "Observer",
+      "name": "bevy_ui_widgets::checkbox::checkbox_on_pointer_down",
+      "description": "在复选框指针按下时设置输入焦点并隐藏焦点环；可用时记录按压，按配置立即提出勾选变化。",
+      "display_summary": "处理复选框按压、焦点与即时勾选请求。",
+      "feature": "crate:bevy_ui_widgets"
+    },
+    "observer-a85f1c3cb7eb1c996ac3262a": {
+      "id": "observer-a85f1c3cb7eb1c996ac3262a",
+      "kind": "Observer",
+      "name": "bevy_ui_widgets::text_input::on_focused_keyboard_input",
+      "description": "把聚焦文本框的文字输入、编辑快捷键和光标选择操作转为编辑队列，遵守读写模式与禁用状态；输入法组合期间保留键盘输入，Escape 收起选择并清除焦点后继续传播。",
+      "display_summary": "将聚焦文本框按键转为编辑操作。",
+      "feature": "crate:bevy_ui_widgets"
+    },
+    "observer-52a55ca81dd0ad2899a10cf3": {
+      "id": "observer-52a55ca81dd0ad2899a10cf3",
+      "kind": "Observer",
+      "name": "bevy_input_focus::tab_navigation::acquire_focus_tab_index",
+      "description": "在焦点请求到达带 TabIndex 的实体时，将输入焦点设置为该导航目标。",
+      "display_summary": "让带导航索引的实体获得输入焦点。",
+      "feature": "crate:bevy_input_focus"
+    },
+    "registration-118268e34675f00632670709": {
+      "id": "registration-118268e34675f00632670709",
+      "kind": "System",
+      "name": "bevy_winit::accessibility::update_accessibility_nodes",
+      "description": "主窗口和 AccessKit 适配器可用时，依据输入焦点及变化的 AccessibilityNode 更新可访问性树；焦点指向尚未存在的实体时暂缓，只有已激活适配器才提交更新。",
+      "display_summary": "把变化的可访问性节点同步给原生适配器。",
+      "feature": "crate:bevy_winit"
+    },
+    "observer-395994b792e56404741fb173": {
+      "id": "observer-395994b792e56404741fb173",
+      "kind": "Observer",
+      "name": "bevy_ui_widgets::menu::menu_on_key_event",
+      "description": "处理菜单项确认激活、弹出菜单关闭、方向键与首尾导航，并根据请求维护菜单焦点。",
+      "display_summary": "处理菜单键盘导航、激活与关闭。",
+      "feature": "crate:bevy_ui_widgets"
+    },
+    "registration-77741813a675066dea0bf0dd": {
+      "id": "registration-77741813a675066dea0bf0dd",
+      "kind": "System",
+      "name": "bevy_ui_widgets::tabs::update_tablist_derived_state",
+      "description": "验证 SelectedTab 必须指向启用的直接子标签，再同步 Selected 标记；按当前焦点、有效选择和第一个可用项的优先级选择唯一 TabIndex(0)，其余标签为 -1，实现标签栏的游走焦点导航。",
+      "display_summary": "从标签选择和焦点派生每个标签的状态。",
+      "feature": "crate:bevy_ui_widgets"
+    },
+    "observer-c7bf64ecd337ea67f47eb5ae": {
+      "id": "observer-c7bf64ecd337ea67f47eb5ae",
+      "kind": "Observer",
+      "name": "bevy_input_focus::tab_navigation::handle_tab_navigation",
+      "description": "响应 Tab 和 Shift+Tab，在可聚焦实体及导航组之间移动输入焦点。",
+      "display_summary": "处理正向和反向键盘焦点遍历。",
+      "feature": "crate:bevy_input_focus"
+    },
+    "registration-206196ef835d58f5aad4b19a": {
+      "id": "registration-206196ef835d58f5aad4b19a",
+      "kind": "System",
+      "name": "bevy_ui::widget::text_input_layout::update_editable_text_layout",
+      "description": "布局代数或字体提示变化时重建 TextLayoutInfo 的字形、行几何、选区和输入法预编辑下划线，并把所需字形加入图集；同时依据焦点和实时时钟更新光标闪烁，必要时显露光标并限制文本视口滚动范围。",
+      "display_summary": "刷新可编辑文本的字形布局和编辑反馈。",
+      "feature": "crate:bevy_ui"
+    },
+    "registration-90bd69957815e7505ccd31bc": {
+      "id": "registration-90bd69957815e7505ccd31bc",
+      "kind": "System",
+      "name": "bevy_ui_widgets::text_input::on_ime_input",
+      "description": "为可编辑且未禁用的聚焦 EditableText 排入预编辑文本、光标范围或提交操作，启停 IME 时清理残留组合；无有效编辑目标时仍读尽消息，避免焦点切换后重放旧输入。实际编辑随后统一应用。",
+      "display_summary": "把输入法组合和提交转换为文字编辑操作。",
+      "feature": "crate:bevy_ui_widgets"
+    },
+    "registration-499fe2d3b6741bca3e9ae29c": {
+      "id": "registration-499fe2d3b6741bca3e9ae29c",
+      "kind": "System",
+      "name": "bevy_ui_widgets::text_input::listen_for_ime_input_when_text_input_focused",
+      "description": "检查当前焦点是否是允许编辑的 EditableText，据此设置主窗口 ime_enabled；文本模式改为只读或静态时排入清除输入法预编辑操作。",
+      "display_summary": "按可编辑焦点控制主窗口输入法。",
+      "feature": "crate:bevy_ui_widgets"
+    },
+    "observer-4f0bd94d05018cbbab42aee0": {
+      "id": "observer-4f0bd94d05018cbbab42aee0",
+      "kind": "Observer",
+      "name": "bevy_ui_widgets::tabs::tab_on_key_input",
+      "description": "按标签栏方向处理方向键、Home 与 End，在可用标签间移动并显示键盘焦点；自动激活模式同时请求切换选择，Enter 或空格可显式激活当前标签。",
+      "display_summary": "用键盘导航并激活标签页。",
+      "feature": "crate:bevy_ui_widgets"
+    }
+  },
+  "features": [
+    {
+      "id": "crate:bevy_input_focus",
+      "label": "crate:bevy_input_focus"
+    },
+    {
+      "id": "crate:bevy_ui",
+      "label": "crate:bevy_ui"
+    },
+    {
+      "id": "crate:bevy_ui_render",
+      "label": "crate:bevy_ui_render"
+    },
+    {
+      "id": "crate:bevy_ui_widgets",
+      "label": "crate:bevy_ui_widgets"
+    },
+    {
+      "id": "crate:bevy_winit",
+      "label": "crate:bevy_winit"
+    }
+  ],
+  "targetEdgeId": "relation-8a51fe553b10b333fcef9a1f"
+}

@@ -1,0 +1,163 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#object-3147ccda8aaa4501-e23{marker-start:url(#object-3147ccda8aaa4501_flowchart-v2-pointStart)!important}\n#object-3147ccda8aaa4501_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: action::value::ActionValue · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_observer fill:#F4F1F9,stroke:#7B4DB2,stroke-width:1.6px,color:#1F3340
+  classDef node_entity fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**ActionValue**<br/>以布尔、一维、二维或三维轴的形式保存类型<br/>擦除的动作值" }
+  class n0 node_component
+  n1@{ shape: rounded, label: "**spawn​_​keyboard​_​controller · 创建模板**<br/>来自first​_​person ↗：承载单次拿取或放<br/>下的交互动作。" }
+  class n1 node_entity
+  class n1 external_node
+  n2@{ shape: rounded, label: "**spawn​_​menu​_​controller · 创建模板**<br/>来自ui ↗：承载“上一个菜单项”菜单动<br/>作。" }
+  class n2 node_entity
+  class n2 external_node
+  n3@{ shape: hex, label: "**reset​_​action**<br/>重置离开上下文的输入动作状态。" }
+  class n3 node_observer
+  n4@{ shape: hex, label: "**reset​_​action**<br/>重置离开上下文的输入动作状态。" }
+  class n4 node_observer
+  n5@{ shape: rounded, label: "**(Local#lt;'​_​, Vec#lt;Binding#gt;#gt;,**<br/>**ContextTime#lt;'​_​#gt;, InputReader#lt;'​_​, '​_​**<br/>**#gt;, Res#lt;'​_​,**<br/>**ContextInstances#lt;PreUpdate#gt;#gt;,**<br/>**Query#lt;'​_​, '​_​, FilteredEntityMut#lt;'​_​,**<br/>**'​_​#gt;#gt;, Query#lt;'​_​, '​_​, (Entity, #amp;Name,**<br/>**#amp;ActionSettings, Option#lt;#amp;Bindings#gt;,**<br/>**Option#lt;#amp;ModifierFns#gt;,**<br/>**Option#lt;#amp;ConditionFns#gt;, #amp;mut**<br/>**ActionMock),**<br/>**Without#lt;ExternallyMocked#gt;#gt;, Query#lt;'​_​**<br/>**, '​_​, (#amp;mut ActionValue, #amp;mut**<br/>**TriggerState, #amp;mut ActionEvents,**<br/>**#amp;mut ActionTime)#gt;, Query#lt;'​_​, '​_​,**<br/>**(Entity, #amp;Binding, #amp;mut**<br/>**FirstActivation,**<br/>**Option#lt;#amp;ModifierFns#gt;,**<br/>**Option#lt;#amp;ConditionFns#gt;),**<br/>**Without#lt;ActionSettings#gt;#gt;, Query#lt;'​_​,**<br/>**'​_​, FilteredEntityMut#lt;'​_​, '​_​#gt;#gt;)**<br/>求值上下文输入并更新动作状态。" }
+  class n5 node_system
+  n6@{ shape: hex, label: "**reset​_​action**<br/>重置离开上下文的输入动作状态。" }
+  class n6 node_observer
+  n7@{ shape: rounded, label: "**spawn​_​menu​_​controller · 创建模板**<br/>来自ui ↗：承载“减小当前设置值”菜单动<br/>作。" }
+  class n7 node_entity
+  class n7 external_node
+  n8@{ shape: rounded, label: "**spawn​_​keyboard​_​controller · 创建模板**<br/>来自first​_​person ↗：承载第一人称鼠标<br/>转向动作。" }
+  class n8 node_entity
+  class n8 external_node
+  n9@{ shape: hex, label: "**reset​_​action**<br/>重置离开上下文的输入动作状态。" }
+  class n9 node_observer
+  n10@{ shape: rounded, label: "**spawn​_​menu​_​controller · 创建模板**<br/>来自ui ↗：承载“下一个菜单项”菜单动<br/>作。" }
+  class n10 node_entity
+  class n10 external_node
+  n11@{ shape: rounded, label: "**(Commands#lt;'​_​, '​_​#gt;, Res#lt;'​_​,**<br/>**ContextInstances#lt;PreUpdate#gt;#gt;,**<br/>**Query#lt;'​_​, '​_​, FilteredEntityRef#lt;'​_​,**<br/>**'​_​#gt;, Without#lt;ActionFns#gt;#gt;, Query#lt;'​_​,**<br/>**'​_​, EntityRef#lt;'​_​#gt;,**<br/>**(With#lt;ActionFns#gt;,**<br/>**Without#lt;ContextInstances#lt;PreUpdate#gt;#gt;**<br/>**)#gt;)**<br/>根据求值结果触发输入动作通知。" }
+  class n11 node_system
+  n12@{ shape: rounded, label: "**(Res#lt;'​_​,**<br/>**ContextInstances#lt;PreUpdate#gt;#gt;,**<br/>**Query#lt;'​_​, '​_​, FilteredEntityRef#lt;'​_​,**<br/>**'​_​#gt;, Without#lt;ActionFns#gt;#gt;, Query#lt;'​_​,**<br/>**'​_​, EntityMut#lt;'​_​#gt;,**<br/>**(With#lt;ActionFns#gt;,**<br/>**Without#lt;ContextInstances#lt;PreUpdate#gt;#gt;**<br/>**)#gt;)**<br/>把求值结果写入类型化输入动作。" }
+  class n12 node_system
+  n13@{ shape: rounded, label: "**spawn​_​menu​_​controller · 创建模板**<br/>来自ui ↗：承载“增大当前设置值”菜单动<br/>作。" }
+  class n13 node_entity
+  class n13 external_node
+  n14@{ shape: rounded, label: "**spawn​_​menu​_​controller · 创建模板**<br/>来自ui ↗：承载“返回、暂停或恢复”菜单<br/>动作。" }
+  class n14 node_entity
+  class n14 external_node
+  n15@{ shape: rounded, label: "**spawn​_​keyboard​_​controller · 创建模板**<br/>来自first​_​person ↗：合成角色二维移动<br/>动作。" }
+  class n15 node_entity
+  class n15 external_node
+  n16@{ shape: hex, label: "**reset​_​action**<br/>重置离开上下文的输入动作状态。" }
+  class n16 node_observer
+  n17@{ shape: rounded, label: "**spawn​_​menu​_​controller · 创建模板**<br/>来自ui ↗：承载“确认当前菜单项”菜单动<br/>作。" }
+  class n17 node_entity
+  class n17 external_node
+  n18@{ shape: rounded, label: "**spawn​_​keyboard​_​controller · 创建模板**<br/>来自first​_​person ↗：把一次有效按下转<br/>换为跳跃动作。" }
+  class n18 node_entity
+  class n18 external_node
+  n1 e0@-->|"可能包含"| n0
+  class e0 edge_reference
+  n2 e1@-->|"可能包含"| n0
+  class e1 edge_reference
+  n3 e2@-->|"赋值"| n0
+  class e2 edge_write
+  n4 e3@-->|"赋值"| n0
+  class e3 edge_write
+  n5 e4@-->|"可变访问"| n0
+  class e4 edge_write
+  n6 e5@-->|"可变访问"| n0
+  class e5 edge_write
+  n7 e6@-->|"可能包含"| n0
+  class e6 edge_reference
+  n8 e7@-->|"可能包含"| n0
+  class e7 edge_reference
+  n9 e8@-->|"赋值"| n0
+  class e8 edge_write
+  n5 e9@-->|"赋值"| n0
+  class e9 edge_write
+  n4 e10@-->|"可变访问"| n0
+  class e10 edge_write
+  n10 e11@-->|"可能包含"| n0
+  class e11 edge_reference
+  n0 e12@--> n11
+  class e12 edge_read
+  n9 e13@-->|"可变访问"| n0
+  class e13 edge_write
+  n0 e14@--> n12
+  class e14 edge_read
+  n13 e15@-->|"可能包含"| n0
+  class e15 edge_reference
+  n14 e16@-->|"可能包含"| n0
+  class e16 edge_reference
+  n15 e17@-->|"可能包含"| n0
+  class e17 edge_reference
+  n16 e18@-->|"可变访问"| n0
+  class e18 edge_write
+  n17 e19@-->|"可能包含"| n0
+  class e19 edge_reference
+  n16 e20@-->|"赋值"| n0
+  class e20 edge_write
+  n18 e21@-->|"可能包含"| n0
+  class e21 edge_reference
+  n3 e22@-->|"可变访问"| n0
+  class e22 edge_write
+  n5 e23@--- n0
+  class e23 edge_read
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e17@{ curve: basis }
+  e18@{ curve: basis }
+  e19@{ curve: basis }
+  e20@{ curve: basis }
+  e21@{ curve: basis }
+  e22@{ curve: basis }
+  e23@{ curve: basis }

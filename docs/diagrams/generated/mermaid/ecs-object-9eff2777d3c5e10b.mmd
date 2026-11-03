@@ -1,0 +1,173 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: demo::ui::volume::sample_slider_pointer · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef node_local fill:#F8F5F1,stroke:#AA8752,stroke-width:1.6px,color:#1F3340
+  classDef node_message fill:#EDF4F6,stroke:#247B91,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_plugin fill:#F1F3F6,stroke:#4A6389,stroke-width:2.2px,color:#1F3340
+  classDef edge_order stroke:#334155,stroke-width:2px
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_publish stroke:#247B91,stroke-width:1.8px,stroke-dasharray:10 4 2 4
+  classDef edge_consume stroke:#247B91,stroke-width:1.8px,stroke-dasharray:2 4
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**sample​_​slider​_​pointer**<br/>Enhanced Input 负责菜单语义动作，但无<br/>法表示 UI 命中后的局部绝对横坐标。" }
+  class n0 node_system
+  n1@{ shape: lean-r, label: "**UiRequest**<br/>输入系统只产生请求，集中处理系统修改状态<br/>或保存设置。" }
+  class n1 node_message
+  n2@{ shape: cyl, label: "**MenuInputSource**<br/>输入来源单独决定焦点是否可见；鼠标离开后<br/>仍保留序号供后续导航使用。" }
+  class n2 node_resource
+  n3@{ shape: rounded, label: "**VolumeSlider**<br/>滑条仍是普通菜单按钮，左右导航共用字段，<br/>鼠标数值由局部坐标决定。" }
+  class n3 node_component
+  n4@{ shape: lean-r, label: "**PointerPress**<br/>来自crate:bevy​_​picking ↗：通知目标上<br/>的指针按钮按下及连按次数。" }
+  class n4 node_message
+  class n4 external_node
+  n5@{ shape: rounded, label: "**ChildOf**<br/>来自crate:bevy​_​ecs ↗：保存当前实体的<br/>父实体身份" }
+  class n5 node_component
+  class n5 external_node
+  n6@{ shape: cyl, label: "**ButtonInput#lt;MouseButton#gt;**<br/>来自crate:bevy​_​input ↗：保存指定按钮<br/>类型当前按下、本帧刚按下和刚释放的集合" }
+  class n6 node_resource
+  class n6 external_node
+  n7@{ shape: cyl, label: "**MenuFocus**<br/>当前可操作按钮的序号，由键盘导航和鼠标悬<br/>停共同维护。" }
+  class n7 node_resource
+  n8@{ shape: fr-rect, label: "**GameUiPlugin**<br/>组装菜单功能，不安装窗口或重复初始化会话<br/>日志。" }
+  class n8 node_plugin
+  n9@{ shape: cyl, label: "**Messages#lt;UiRequest#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  class n9 node_resource
+  class n9 external_node
+  n10@{ shape: lin-rect, label: "**Build**<br/>请求在 PreUpdate 消费后，Update 依次生<br/>成 BSN 页面并更新视觉焦点。" }
+  class n10 node_system_set
+  n11@{ shape: cyl, label: "**Messages#lt;PointerPress#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  class n11 node_resource
+  class n11 external_node
+  n12@{ shape: rounded, label: "**PrimaryWindow**<br/>来自crate:bevy​_​window ↗：标识唯一的主<br/>窗口" }
+  class n12 node_component
+  class n12 external_node
+  n13@{ shape: rounded, label: "**MenuButton**<br/>菜单实体保存动作与导航序号，系统不依赖显<br/>示文字或实体名称。" }
+  class n13 node_component
+  n14@{ shape: rounded, label: "**UiGlobalTransform**<br/>来自crate:bevy​_​ui ↗：保存 UI 节点的绝<br/>对二维变换。" }
+  class n14 node_component
+  class n14 external_node
+  n15@{ shape: rounded, label: "**Window**<br/>来自crate:bevy​_​window ↗：保存窗口的呈<br/>现模式、位置、分辨率、标题、全屏及平台行<br/>为配置" }
+  class n15 node_component
+  class n15 external_node
+  n16@{ shape: lin-rect, label: "**Style**<br/>请求在 PreUpdate 消费后，Update 依次生<br/>成 BSN 页面并更新视觉焦点。" }
+  class n16 node_system_set
+  n17@{ shape: notch-rect, label: "**Local · drag**<br/>保持滑条拖动捕获并去重音量请求。" }
+  class n17 node_local
+  n18@{ shape: rounded, label: "**ComputedNode**<br/>来自crate:bevy​_​ui ↗：保存 UI 布局计算<br/>后的物理尺寸。" }
+  class n18 node_component
+  class n18 external_node
+  n19@{ shape: lin-rect, label: "**Pointer**<br/>请求在 PreUpdate 消费后，Update 依次生<br/>成 BSN 页面并更新视觉焦点。" }
+  class n19 node_system_set
+  n20@{ shape: cyl, label: "**MenuState**<br/>页面数据与返回来源；焦点单独保存，避免导<br/>航时重建整个页面。" }
+  class n20 node_resource
+  n0 e0@-->|"消息"| n1
+  class e0 edge_publish
+  n0 e1@-->|"赋值"| n2
+  class e1 edge_write
+  n0 e2@-->|"可变访问"| n2
+  class e2 edge_write
+  n3 e3@--> n0
+  class e3 edge_read
+  n4 e4@--> n0
+  class e4 edge_consume
+  n5 e5@--> n0
+  class e5 edge_read
+  n6 e6@--> n0
+  class e6 edge_read
+  n0 e7@-->|"赋值"| n7
+  class e7 edge_write
+  n8 e8@-->|"调用"| n0
+  class e8 edge_registration
+  n0 e9@-->|"赋值"| n9
+  class e9 edge_write
+  n0 e10@-->|"可变访问"| n9
+  class e10 edge_write
+  n10 e11@-->|"先于"| n0
+  class e11 edge_order
+  n0 e12@-->|"可变访问"| n1
+  class e12 edge_publish
+  n11 e13@--> n0
+  class e13 edge_read
+  n0 e14@-->|"可变访问"| n7
+  class e14 edge_write
+  n12 e15@-->|"存在性约束"| n0
+  class e15 edge_reference
+  n13 e16@--> n0
+  class e16 edge_read
+  n14 e17@--> n0
+  class e17 edge_read
+  n15 e18@--> n0
+  class e18 edge_read
+  n0 e19@-->|"先于"| n16
+  class e19 edge_order
+  n0 e20@-->|"可变访问"| n17
+  class e20 edge_write
+  n18 e21@--> n0
+  class e21 edge_read
+  n19 e22@-->|"先于"| n0
+  class e22 edge_order
+  n20 e23@--> n0
+  class e23 edge_read
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: bumpX }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e17@{ curve: basis }
+  e18@{ curve: basis }
+  e19@{ curve: basis }
+  e20@{ curve: basis }
+  e21@{ curve: basis }
+  e22@{ curve: basis }
+  e23@{ curve: basis }

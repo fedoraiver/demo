@@ -1,0 +1,194 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: ui::MenuFocus · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_observer fill:#F4F1F9,stroke:#7B4DB2,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef external_node stroke-dasharray:6 4
+  subgraph layout_card_n0[" "]
+  n0@{ shape: cyl, label: "**MenuFocus**<br/>当前可操作按钮的序号，由键盘导航和鼠标悬<br/>停共同维护。" }
+  class n0 node_resource
+  end
+  style layout_card_n0 fill:none,stroke:none
+  n1@{ shape: hex, label: "**next**<br/>循环选择下一个可操作菜单按钮。" }
+  class n1 node_observer
+  n2@{ shape: rounded, label: "**scroll​_​focused​_​button**<br/>短窗口中键盘仍能访问所有按钮；新页面先等<br/>布局完成，再滚到焦点所在区域。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**update​_​description**<br/>更新当前聚焦设置的说明标题与正文。" }
+  class n3 node_system
+  n4@{ shape: hex, label: "**confirm**<br/>执行当前聚焦按钮的菜单动作。" }
+  class n4 node_observer
+  n5@{ shape: hex, label: "**right**<br/>向右调整当前聚焦的真实设置字段。" }
+  class n5 node_observer
+  n6@{ shape: rounded, label: "**pointer​_​interaction**<br/>Bevy 原生 UI 已完成按钮命中；这里只读取<br/>缓冲的按下事件，不另读 MouseButton。" }
+  class n6 node_system
+  n7@{ shape: hex, label: "**previous**<br/>循环选择上一个可操作菜单按钮。" }
+  class n7 node_observer
+  n8@{ shape: rounded, label: "**show​_​pause​_​menu**<br/>打开暂停菜单并重置焦点。" }
+  class n8 node_system
+  n9@{ shape: hex, label: "**previous**<br/>循环选择上一个可操作菜单按钮。" }
+  class n9 node_observer
+  n10@{ shape: rounded, label: "**sample​_​slider​_​pointer**<br/>Enhanced Input 负责菜单语义动作，但无<br/>法表示 UI 命中后的局部绝对横坐标。" }
+  class n10 node_system
+  n11@{ shape: rounded, label: "**style​_​buttons**<br/>按当前输入来源更新按钮背景与焦点边框。" }
+  class n11 node_system
+  n12@{ shape: hex, label: "**confirm**<br/>执行当前聚焦按钮的菜单动作。" }
+  class n12 node_observer
+  n13@{ shape: rounded, label: "**show​_​main​_​menu**<br/>打开主菜单并重置页面、返回来源与焦点。" }
+  class n13 node_system
+  n14@{ shape: hex, label: "**left**<br/>向左调整当前聚焦的真实设置字段。" }
+  class n14 node_observer
+  n15@{ shape: hex, label: "**next**<br/>循环选择下一个可操作菜单按钮。" }
+  class n15 node_observer
+  n16@{ shape: hex, label: "**right**<br/>向右调整当前聚焦的真实设置字段。" }
+  class n16 node_observer
+  n17@{ shape: hex, label: "**previous**<br/>循环选择上一个可操作菜单按钮。" }
+  class n17 node_observer
+  n18@{ shape: hex, label: "**confirm**<br/>执行当前聚焦按钮的菜单动作。" }
+  class n18 node_observer
+  n19@{ shape: hex, label: "**next**<br/>循环选择下一个可操作菜单按钮。" }
+  class n19 node_observer
+  n20@{ shape: hex, label: "**left**<br/>向左调整当前聚焦的真实设置字段。" }
+  class n20 node_observer
+  n21@{ shape: hex, label: "**left**<br/>向左调整当前聚焦的真实设置字段。" }
+  class n21 node_observer
+  n22@{ shape: rounded, label: "**handle​_​requests**<br/>每帧只消费一项语义请求，避免鼠标与确认键<br/>同时激活，或旧页面动作穿过页面切换。" }
+  class n22 node_system
+  n23@{ shape: hex, label: "**right**<br/>向右调整当前聚焦的真实设置字段。" }
+  class n23 node_observer
+  n1 e0@-->|"可变访问"| n0
+  class e0 edge_write
+  n0 e1@--> n2
+  class e1 edge_read
+  n0 e2@--> n3
+  class e2 edge_read
+  n0 e3@--> n4
+  class e3 edge_read
+  n1 e4@-->|"赋值"| n0
+  class e4 edge_write
+  n0 e5@--> n5
+  class e5 edge_read
+  n6 e6@-->|"赋值"| n0
+  class e6 edge_write
+  n7 e7@-->|"可变访问"| n0
+  class e7 edge_write
+  n6 e8@-->|"可变访问"| n0
+  class e8 edge_write
+  n8 e9@-->|"赋值"| n0
+  class e9 edge_write
+  n9 e10@-->|"赋值"| n0
+  class e10 edge_write
+  n10 e11@-->|"赋值"| n0
+  class e11 edge_write
+  n0 e12@--> n11
+  class e12 edge_read
+  n0 e13@--> n12
+  class e13 edge_read
+  n13 e14@-->|"可变访问"| n0
+  class e14 edge_write
+  n0 e15@--> n14
+  class e15 edge_read
+  n15 e16@-->|"可变访问"| n0
+  class e16 edge_write
+  n10 e17@-->|"可变访问"| n0
+  class e17 edge_write
+  n8 e18@-->|"可变访问"| n0
+  class e18 edge_write
+  n0 e19@--> n16
+  class e19 edge_read
+  n17 e20@-->|"赋值"| n0
+  class e20 edge_write
+  n7 e21@-->|"赋值"| n0
+  class e21 edge_write
+  n15 e22@-->|"赋值"| n0
+  class e22 edge_write
+  n0 e23@--> n18
+  class e23 edge_read
+  n19 e24@-->|"赋值"| n0
+  class e24 edge_write
+  n19 e25@-->|"可变访问"| n0
+  class e25 edge_write
+  n0 e26@--> n20
+  class e26 edge_read
+  n0 e27@--> n21
+  class e27 edge_read
+  n22 e28@-->|"赋值"| n0
+  class e28 edge_write
+  n17 e29@-->|"可变访问"| n0
+  class e29 edge_write
+  n9 e30@-->|"可变访问"| n0
+  class e30 edge_write
+  n22 e31@-->|"可变访问"| n0
+  class e31 edge_write
+  n13 e32@-->|"赋值"| n0
+  class e32 edge_write
+  n0 e33@--> n23
+  class e33 edge_read
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e17@{ curve: basis }
+  e18@{ curve: basis }
+  e19@{ curve: basis }
+  e20@{ curve: basis }
+  e21@{ curve: basis }
+  e22@{ curve: basis }
+  e23@{ curve: basis }
+  e24@{ curve: basis }
+  e25@{ curve: basis }
+  e26@{ curve: basis }
+  e27@{ curve: basis }
+  e28@{ curve: basis }
+  e29@{ curve: basis }
+  e30@{ curve: basis }
+  e31@{ curve: basis }
+  e32@{ curve: basis }
+  e33@{ curve: basis }

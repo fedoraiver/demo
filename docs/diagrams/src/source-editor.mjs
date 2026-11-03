@@ -1,5 +1,5 @@
-// 两个离线页面共用源码入口；项目目录由浏览器配置，本机 Cargo 依赖根可由生成器写入 HTML。
-// 维护代码与架构 JSON 只记录包身份和相对路径，不写入个人绝对目录。
+// 两个离线页面共用源码入口；项目目录由浏览器配置，本机 Cargo 依赖根由生成数据提供。
+// 维护代码不硬编码个人目录；包身份、相对路径和依赖根来自编译器记录。
 import { viewerThemeStyle } from './viewer-theme.mjs';
 
 /** 将 Windows、UNC 或 POSIX 绝对目录规范化为正斜杠路径。 */
@@ -7,7 +7,13 @@ export function normalizeWorkspaceRoot(value) {
   if (typeof value !== 'string' || !value.trim() || /[\u0000-\u001f\u007f]/.test(value)) {
     throw new Error('Invalid workspace root');
   }
-  const root = value.trim().replaceAll('\\', '/');
+  let root = value.trim().replaceAll('\\', '/');
+  // rustc / Cargo 在 Windows 上可返回扩展路径；只接受已知的盘符和 UNC 形式。
+  if (root.startsWith('//?/')) {
+    if (/^\/\/\?\/[A-Za-z]:\//.test(root)) root = root.slice(4);
+    else if (/^\/\/\?\/UNC\//i.test(root)) root = '//' + root.slice(8);
+    else throw new Error('Unsupported workspace device namespace');
+  }
   let prefix;
   let parts;
   if (/^[A-Za-z]:\//.test(root)) {
@@ -83,21 +89,23 @@ function validatedSource(source) {
       || typeof value.version !== 'string' || !/^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(?:-[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*)?(?:\+[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*)?$/.test(value.version)) {
       throw new Error('Invalid dependency identity');
     }
-    dependency = { name: value.name, version: value.version, root: normalizeWorkspaceRoot(value.root) };
+    // 包身份和相对位置不依赖本机目录；目录不可用时仍须允许显示、复制定位。
+    dependency = { name: value.name, version: value.version, root: value.root };
   }
   return { path: relative, line, column, ...(dependency ? { dependency } : {}) };
 }
 
 function sourceLocation(root, source) {
   const relative = validatedSource(source);
-  const base = relative.dependency?.root || root;
+  const base = relative.dependency ? normalizeWorkspaceRoot(relative.dependency.root) : root;
   const path = base ? normalizeWorkspaceRoot(base).replace(/\/$/, '') + '/' + relative.path : relative.path;
   return { path, line: relative.line, column: relative.column };
 }
 
 /** 创建 VS Code 文件协议；路径各段编码，行列始终显式保留。 */
 export function vscodeUri(root, source) {
-  const normalized = normalizeWorkspaceRoot(validatedSource(source).dependency?.root || root);
+  const relative = validatedSource(source);
+  const normalized = normalizeWorkspaceRoot(relative.dependency ? relative.dependency.root : root);
   const location = sourceLocation(normalized, source);
   const encoded = location.path.split('/').map((part, index) =>
     index === 0 && /^[A-Z]:$/.test(part) ? part : encodeURIComponent(part)).join('/');
@@ -213,6 +221,8 @@ function createSourceEditor({ document, pageUrl, getPageUrl, getStorage, navigat
     feedback.dataset.sourceCopyFeedback = '';
     feedback.setAttribute('role', 'status');
     feedback.setAttribute('aria-live', 'polite');
+    const unavailable = document.createElement('span');
+    unavailable.dataset.sourceUnavailable = '';
     button.addEventListener('click', async () => {
       clearCopyFeedback(controls);
       const version = controls.version, value = field.value;
@@ -235,9 +245,9 @@ function createSourceEditor({ document, pageUrl, getPageUrl, getStorage, navigat
         feedback.textContent = '浏览器无法自动复制；定位文本已选中，请手动复制。';
       }
     });
-    container.append(field, button, feedback);
+    container.append(field, button, feedback, unavailable);
     anchor.insertAdjacentElement('afterend', container);
-    controls = { container, field, button, feedback, version: 0, timer: null };
+    controls = { container, field, button, feedback, unavailable, version: 0, timer: null };
     locations.set(anchor, controls);
     return controls;
   }
@@ -248,15 +258,33 @@ function createSourceEditor({ document, pageUrl, getPageUrl, getStorage, navigat
       const controls = locations.get(anchor);
       if (!source || anchor.hidden || anchor.closest('[hidden]')) {
         anchor.removeAttribute('href');
+        anchor.dataset.workspaceState = 'unavailable';
+        anchor.setAttribute('aria-disabled', 'true');
+        anchor.title = '源码路径、包身份或行列无效，无法打开。';
         if (controls) { clearCopyFeedback(controls); controls.container.hidden = true; controls.field.value = ''; }
         continue;
       }
       const current = locationControls(anchor);
       current.container.hidden = false;
-      const position = sourceLocation(root, source);
+      let position = source, unavailable = '';
+      try { position = sourceLocation(root, source); }
+      catch {
+        unavailable = source.dependency.root === undefined || source.dependency.root === null || source.dependency.root === ''
+          ? '依赖源码根目录缺失，无法在 VS Code 中打开；仍可复制相对定位。'
+          : '依赖源码根目录无效，无法在 VS Code 中打开；仍可复制相对定位。';
+      }
       const value = position.path + ':' + position.line + ':' + position.column;
-      if (current.field.value !== value) clearCopyFeedback(current);
+      if (current.field.value !== value || current.unavailable.textContent !== unavailable) clearCopyFeedback(current);
       current.field.value = value;
+      current.unavailable.textContent = unavailable;
+      if (unavailable) {
+        anchor.removeAttribute('href');
+        anchor.dataset.workspaceState = 'unavailable';
+        anchor.setAttribute('aria-disabled', 'true');
+        anchor.title = unavailable;
+        continue;
+      }
+      anchor.removeAttribute('aria-disabled');
       const ready = source.dependency || root;
       anchor.href = ready ? vscodeUri(root, source) : '#workspace-config';
       anchor.dataset.workspaceState = ready ? 'ready' : 'unconfigured';
@@ -286,7 +314,8 @@ function createSourceEditor({ document, pageUrl, getPageUrl, getStorage, navigat
     let source;
     try { source = sourceFor(anchor); } catch { event.preventDefault(); return; }
     if (!source.dependency && !root) { event.preventDefault(); openConfiguration(); return; }
-    anchor.href = vscodeUri(root, source);
+    try { anchor.href = vscodeUri(root, source); }
+    catch { event.preventDefault(); refreshLinks(); }
   });
   document.querySelector('[data-workspace-form]')?.addEventListener('submit', event => {
     event.preventDefault();
@@ -302,7 +331,7 @@ function createSourceEditor({ document, pageUrl, getPageUrl, getStorage, navigat
 /** 返回共享样式、配置框与脚本；依赖绝对根由生成数据提供，代码中不硬编码个人路径。 */
 export function sourceEditorAssets() {
   const style = `${viewerThemeStyle}
-.source-editor-location{display:flex;flex-wrap:wrap;gap:6px;align-items:center;max-width:100%;margin:8px 0 12px}.source-editor-location[hidden]{display:none}.source-editor-location input{flex:1 1 120px;min-width:0;width:auto;padding:7px 8px;color:var(--ui-text);font:12px/1.4 Consolas,monospace}.source-editor-location button{flex-shrink:0;font-size:12px;color:var(--ui-accent);background:var(--ui-active)}.source-editor-location button:hover{background:#DBEAFE}[data-source-copy-feedback]{flex:0 0 100%;font-size:12px;color:#9A462A}[data-source-copy-feedback]:empty{display:none}
+.source-editor-location{display:flex;flex-wrap:wrap;gap:6px;align-items:center;max-width:100%;margin:8px 0 12px}.source-editor-location[hidden]{display:none}.source-editor-location input{flex:1 1 120px;min-width:0;width:auto;padding:7px 8px;color:var(--ui-text);font:12px/1.4 Consolas,monospace}.source-editor-location button{flex-shrink:0;font-size:12px;color:var(--ui-accent);background:var(--ui-active)}.source-editor-location button:hover{background:#DBEAFE}[data-source-copy-feedback],[data-source-unavailable]{flex:0 0 100%;font-size:12px;color:#9A462A}[data-source-copy-feedback]:empty,[data-source-unavailable]:empty{display:none}[data-vscode-path][aria-disabled="true"]{color:var(--ui-muted);cursor:default}[data-vscode-path][aria-disabled="true"]:hover{background:var(--ui-bg)}
 [data-workspace-dialog]{width:min(560px,calc(100vw - 32px));max-height:calc(100vh - 32px);overflow:auto;border:1px solid var(--ui-border);border-radius:12px;padding:24px;color:var(--ui-text);background:var(--ui-surface);box-shadow:0 18px 60px #0F172A1F;font:14px/1.6 'Segoe UI','Microsoft YaHei',sans-serif}[data-workspace-dialog]::backdrop{background:#0F172A38}[data-workspace-dialog] h2{margin:0 0 20px;font-size:20px;line-height:1.4}[data-workspace-dialog] p{margin:12px 0;color:var(--ui-muted)}[data-workspace-dialog] label{display:block;font-size:13px;font-weight:600}[data-workspace-root]{display:block;width:100%;margin-top:8px;padding:10px 12px;font:14px/1.5 Consolas,monospace}[data-workspace-error]{min-height:1.6em;color:#B42318!important}.source-editor-buttons{display:flex;gap:8px;flex-wrap:wrap;margin-top:20px}[data-workspace-dialog] button{padding:7px 12px}[data-workspace-dialog] button[type="submit"]{background:var(--ui-accent);color:#fff}[data-workspace-dialog] button[type="submit"]:hover{background:#1D4ED8}[data-workspace-config]{color:var(--ui-muted)}
 `;
   const markup = `<dialog id="workspace-config" data-workspace-dialog aria-labelledby="workspace-config-title">

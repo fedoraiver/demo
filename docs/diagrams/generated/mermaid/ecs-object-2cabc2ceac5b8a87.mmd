@@ -1,0 +1,91 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: bevy_gilrs::rumble::play_gilrs_rumble · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef node_message fill:#EDF4F6,stroke:#247B91,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_plugin fill:#F1F3F6,stroke:#4A6389,stroke-width:2.2px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_consume stroke:#247B91,stroke-width:1.8px,stroke-dasharray:2 4
+  classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**play​_​gilrs​_​rumble**<br/>执行手柄振动请求并清除过期效果。" }
+  class n0 node_system
+  n1@{ shape: cyl, label: "**RunningRumbleEffects**<br/>按手柄保存正在运行的振动效果" }
+  class n1 node_resource
+  n2@{ shape: cyl, label: "**Messages#lt;GamepadRumbleRequest#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  class n2 node_resource
+  class n2 external_node
+  n3@{ shape: lin-rect, label: "**RumbleSystems**<br/>维护手柄振动效果的生命周期。" }
+  class n3 node_system_set
+  n4@{ shape: cyl, label: "**Time#lt;Real#gt;**<br/>来自crate:bevy​_​time ↗：保存时钟上下<br/>文、帧间隔及累计时间" }
+  class n4 node_resource
+  class n4 external_node
+  n5@{ shape: fr-rect, label: "**GilrsPlugin**<br/>接入平台手柄设备与输入。" }
+  class n5 node_plugin
+  n6@{ shape: lean-r, label: "**GamepadRumbleRequest**<br/>来自crate:bevy​_​input ↗：请求控制指定<br/>手柄震动。" }
+  class n6 node_message
+  class n6 external_node
+  n7@{ shape: cyl, label: "**GilrsGamepads**<br/>维护已连接 gilrs 手柄编号与 Bevy 手柄<br/>实体的双向映射" }
+  class n7 node_resource
+  n8@{ shape: cyl, label: "**Gilrs**<br/>持有 gilrs 手柄后端实例" }
+  class n8 node_resource
+  n0 e0@-->|"可变访问"| n1
+  class e0 edge_write
+  n2 e1@--> n0
+  class e1 edge_read
+  n3 e2@-->|"集合成员"| n0
+  class e2 edge_set_membership
+  n4 e3@--> n0
+  class e3 edge_read
+  n5 e4@-->|"调用"| n0
+  class e4 edge_registration
+  n6 e5@--> n0
+  class e5 edge_consume
+  n7 e6@--> n0
+  class e6 edge_read
+  n0 e7@-->|"可变访问"| n8
+  class e7 edge_write
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }

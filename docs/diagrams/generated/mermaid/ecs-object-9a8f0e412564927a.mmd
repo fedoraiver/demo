@@ -1,0 +1,410 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#object-9a8f0e412564927a-e18{marker-start:url(#object-9a8f0e412564927a_flowchart-v2-pointStart)!important}\n#object-9a8f0e412564927a_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: hover::Hovered · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_entity fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**Hovered**<br/>记录实体当前是否被任一指针悬停。" }
+  class n0 node_component
+  n1@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供恢复默认设置操作。" }
+  class n1 node_entity
+  class n1 external_node
+  n2@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供帧率上限的右侧调整入口。" }
+  class n2 node_entity
+  class n2 external_node
+  n3@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供应用设置草稿操作。" }
+  class n3 node_entity
+  class n3 external_node
+  n4@{ shape: rounded, label: "**sync​_​settings​_​scrollbars**<br/>来自ui ↗：同步滚动条显隐、拾取范围与高<br/>亮。" }
+  class n4 node_system
+  class n4 external_node
+  n5@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供音频设置分类入口。" }
+  class n5 node_entity
+  class n5 external_node
+  n6@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供辅助功能设置分类入口。" }
+  class n6 node_entity
+  class n6 external_node
+  n7@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供反转视角纵轴的左侧调整入<br/>口。" }
+  class n7 node_entity
+  class n7 external_node
+  n8@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：按按钮方向步进调整对应音量。" }
+  class n8 node_entity
+  class n8 external_node
+  n9@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供控制设置分类入口。" }
+  class n9 node_entity
+  class n9 external_node
+  n10@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供应用设置草稿操作。" }
+  class n10 node_entity
+  class n10 external_node
+  n11@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供控制设置分类入口。" }
+  class n11 node_entity
+  class n11 external_node
+  n12@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：按按钮方向步进调整对应音量。" }
+  class n12 node_entity
+  class n12 external_node
+  n13@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供打开设置操作。" }
+  class n13 node_entity
+  class n13 external_node
+  n14@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：按按钮方向步进调整对应音量。" }
+  class n14 node_entity
+  class n14 external_node
+  n15@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供音量的指针与导航调整入<br/>口。" }
+  class n15 node_entity
+  class n15 external_node
+  n16@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供应用设置草稿操作。" }
+  class n16 node_entity
+  class n16 external_node
+  n17@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供打开帮助操作。" }
+  class n17 node_entity
+  class n17 external_node
+  n18@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供辅助功能设置分类入口。" }
+  class n18 node_entity
+  class n18 external_node
+  n19@{ shape: rounded, label: "**update​_​is​_​hovered**<br/>把鼠标悬停传播到实体祖先。" }
+  class n19 node_system
+  n20@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供退出应用操作。" }
+  class n20 node_entity
+  class n20 external_node
+  n21@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供恢复默认设置操作。" }
+  class n21 node_entity
+  class n21 external_node
+  n22@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供应用设置草稿操作。" }
+  class n22 node_entity
+  class n22 external_node
+  n23@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供图形设置分类入口。" }
+  class n23 node_entity
+  class n23 external_node
+  n24@{ shape: rounded, label: "**pointer​_​interaction**<br/>来自ui ↗：Bevy 原生 UI 已完成按钮命<br/>中；这里只读取缓冲的按下事件，不另读<br/>MouseButton。" }
+  class n24 node_system
+  class n24 external_node
+  n25@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供音量的指针与导航调整入<br/>口。" }
+  class n25 node_entity
+  class n25 external_node
+  n26@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供控制设置分类入口。" }
+  class n26 node_entity
+  class n26 external_node
+  n27@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供控制设置分类入口。" }
+  class n27 node_entity
+  class n27 external_node
+  n28@{ shape: rounded, label: "**style​_​buttons**<br/>来自ui ↗：按当前输入来源更新按钮背景与<br/>焦点边框。" }
+  class n28 node_system
+  class n28 external_node
+  n29@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示滚动位置并提供拖动滑块。" }
+  class n29 node_entity
+  class n29 external_node
+  n30@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供打开帮助操作。" }
+  class n30 node_entity
+  class n30 external_node
+  n31@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供恢复默认设置操作。" }
+  class n31 node_entity
+  class n31 external_node
+  n32@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供辅助功能设置分类入口。" }
+  class n32 node_entity
+  class n32 external_node
+  n33@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供鼠标灵敏度的右侧调整入<br/>口。" }
+  class n33 node_entity
+  class n33 external_node
+  n34@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：按按钮方向步进调整对应音量。" }
+  class n34 node_entity
+  class n34 external_node
+  n35@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供帮助页返回操作。" }
+  class n35 node_entity
+  class n35 external_node
+  n36@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供打开设置操作。" }
+  class n36 node_entity
+  class n36 external_node
+  n37@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：按按钮方向步进调整对应音量。" }
+  class n37 node_entity
+  class n37 external_node
+  n38@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供图形设置分类入口。" }
+  class n38 node_entity
+  class n38 external_node
+  n39@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供音频设置分类入口。" }
+  class n39 node_entity
+  class n39 external_node
+  n40@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供音量的指针与导航调整入<br/>口。" }
+  class n40 node_entity
+  class n40 external_node
+  n41@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供返回来源页面操作。" }
+  class n41 node_entity
+  class n41 external_node
+  n42@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供返回来源页面操作。" }
+  class n42 node_entity
+  class n42 external_node
+  n43@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供鼠标灵敏度的左侧调整入<br/>口。" }
+  class n43 node_entity
+  class n43 external_node
+  n44@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供反转视角纵轴的右侧调整入<br/>口。" }
+  class n44 node_entity
+  class n44 external_node
+  n45@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供返回来源页面操作。" }
+  class n45 node_entity
+  class n45 external_node
+  n46@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供辅助功能设置分类入口。" }
+  class n46 node_entity
+  class n46 external_node
+  n47@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供图形设置分类入口。" }
+  class n47 node_entity
+  class n47 external_node
+  n48@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供图形设置分类入口。" }
+  class n48 node_entity
+  class n48 external_node
+  n49@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供音效试听操作。" }
+  class n49 node_entity
+  class n49 external_node
+  n50@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供恢复默认设置操作。" }
+  class n50 node_entity
+  class n50 external_node
+  n51@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示滚动位置并提供拖动滑块。" }
+  class n51 node_entity
+  class n51 external_node
+  n52@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供音频设置分类入口。" }
+  class n52 node_entity
+  class n52 external_node
+  n53@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供开始游戏操作。" }
+  class n53 node_entity
+  class n53 external_node
+  n54@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供帧率上限的左侧调整入口。" }
+  class n54 node_entity
+  class n54 external_node
+  n55@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供返回主菜单操作。" }
+  class n55 node_entity
+  class n55 external_node
+  n56@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供返回来源页面操作。" }
+  class n56 node_entity
+  class n56 external_node
+  n57@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示滚动位置并提供拖动滑块。" }
+  class n57 node_entity
+  class n57 external_node
+  n58@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供恢复游戏操作。" }
+  class n58 node_entity
+  class n58 external_node
+  n59@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示滚动位置并提供拖动滑块。" }
+  class n59 node_entity
+  class n59 external_node
+  n60@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供音频设置分类入口。" }
+  class n60 node_entity
+  class n60 external_node
+  n61@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：按按钮方向步进调整对应音量。" }
+  class n61 node_entity
+  class n61 external_node
+  n1 e0@-->|"可能包含"| n0
+  class e0 edge_reference
+  n2 e1@-->|"可能包含"| n0
+  class e1 edge_reference
+  n3 e2@-->|"可能包含"| n0
+  class e2 edge_reference
+  n0 e3@--> n4
+  class e3 edge_read
+  n5 e4@-->|"可能包含"| n0
+  class e4 edge_reference
+  n6 e5@-->|"可能包含"| n0
+  class e5 edge_reference
+  n7 e6@-->|"可能包含"| n0
+  class e6 edge_reference
+  n8 e7@-->|"可能包含"| n0
+  class e7 edge_reference
+  n9 e8@-->|"可能包含"| n0
+  class e8 edge_reference
+  n10 e9@-->|"可能包含"| n0
+  class e9 edge_reference
+  n11 e10@-->|"可能包含"| n0
+  class e10 edge_reference
+  n12 e11@-->|"可能包含"| n0
+  class e11 edge_reference
+  n13 e12@-->|"可能包含"| n0
+  class e12 edge_reference
+  n14 e13@-->|"可能包含"| n0
+  class e13 edge_reference
+  n15 e14@-->|"可能包含"| n0
+  class e14 edge_reference
+  n16 e15@-->|"可能包含"| n0
+  class e15 edge_reference
+  n17 e16@-->|"可能包含"| n0
+  class e16 edge_reference
+  n18 e17@-->|"可能包含"| n0
+  class e17 edge_reference
+  n19 e18@--- n0
+  class e18 edge_read
+  n20 e19@-->|"可能包含"| n0
+  class e19 edge_reference
+  n19 e20@-->|"插入"| n0
+  class e20 edge_write
+  n21 e21@-->|"可能包含"| n0
+  class e21 edge_reference
+  n22 e22@-->|"可能包含"| n0
+  class e22 edge_reference
+  n23 e23@-->|"可能包含"| n0
+  class e23 edge_reference
+  n0 e24@--> n24
+  class e24 edge_read
+  n25 e25@-->|"可能包含"| n0
+  class e25 edge_reference
+  n26 e26@-->|"可能包含"| n0
+  class e26 edge_reference
+  n27 e27@-->|"可能包含"| n0
+  class e27 edge_reference
+  n0 e28@--> n28
+  class e28 edge_read
+  n29 e29@-->|"可能包含"| n0
+  class e29 edge_reference
+  n30 e30@-->|"可能包含"| n0
+  class e30 edge_reference
+  n31 e31@-->|"可能包含"| n0
+  class e31 edge_reference
+  n32 e32@-->|"可能包含"| n0
+  class e32 edge_reference
+  n33 e33@-->|"可能包含"| n0
+  class e33 edge_reference
+  n34 e34@-->|"可能包含"| n0
+  class e34 edge_reference
+  n35 e35@-->|"可能包含"| n0
+  class e35 edge_reference
+  n36 e36@-->|"可能包含"| n0
+  class e36 edge_reference
+  n37 e37@-->|"可能包含"| n0
+  class e37 edge_reference
+  n38 e38@-->|"可能包含"| n0
+  class e38 edge_reference
+  n39 e39@-->|"可能包含"| n0
+  class e39 edge_reference
+  n40 e40@-->|"可能包含"| n0
+  class e40 edge_reference
+  n41 e41@-->|"可能包含"| n0
+  class e41 edge_reference
+  n42 e42@-->|"可能包含"| n0
+  class e42 edge_reference
+  n43 e43@-->|"可能包含"| n0
+  class e43 edge_reference
+  n44 e44@-->|"可能包含"| n0
+  class e44 edge_reference
+  n45 e45@-->|"可能包含"| n0
+  class e45 edge_reference
+  n46 e46@-->|"可能包含"| n0
+  class e46 edge_reference
+  n47 e47@-->|"可能包含"| n0
+  class e47 edge_reference
+  n48 e48@-->|"可能包含"| n0
+  class e48 edge_reference
+  n49 e49@-->|"可能包含"| n0
+  class e49 edge_reference
+  n50 e50@-->|"可能包含"| n0
+  class e50 edge_reference
+  n51 e51@-->|"可能包含"| n0
+  class e51 edge_reference
+  n52 e52@-->|"可能包含"| n0
+  class e52 edge_reference
+  n53 e53@-->|"可能包含"| n0
+  class e53 edge_reference
+  n54 e54@-->|"可能包含"| n0
+  class e54 edge_reference
+  n55 e55@-->|"可能包含"| n0
+  class e55 edge_reference
+  n56 e56@-->|"可能包含"| n0
+  class e56 edge_reference
+  n57 e57@-->|"可能包含"| n0
+  class e57 edge_reference
+  n58 e58@-->|"可能包含"| n0
+  class e58 edge_reference
+  n59 e59@-->|"可能包含"| n0
+  class e59 edge_reference
+  n60 e60@-->|"可能包含"| n0
+  class e60 edge_reference
+  n61 e61@-->|"可能包含"| n0
+  class e61 edge_reference
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e17@{ curve: basis }
+  e18@{ curve: basis }
+  e19@{ curve: basis }
+  e20@{ curve: basis }
+  e21@{ curve: basis }
+  e22@{ curve: basis }
+  e23@{ curve: basis }
+  e25@{ curve: basis }
+  e26@{ curve: basis }
+  e27@{ curve: basis }
+  e28@{ curve: basis }
+  e29@{ curve: basis }
+  e30@{ curve: basis }
+  e31@{ curve: basis }
+  e33@{ curve: basis }
+  e34@{ curve: basis }
+  e35@{ curve: basis }
+  e36@{ curve: basis }
+  e37@{ curve: basis }
+  e38@{ curve: basis }
+  e39@{ curve: basis }
+  e40@{ curve: basis }
+  e41@{ curve: basis }
+  e42@{ curve: basis }
+  e43@{ curve: basis }
+  e44@{ curve: basis }
+  e45@{ curve: basis }
+  e46@{ curve: basis }
+  e47@{ curve: basis }
+  e48@{ curve: basis }
+  e49@{ curve: basis }
+  e50@{ curve: basis }
+  e51@{ curve: basis }
+  e52@{ curve: basis }
+  e53@{ curve: basis }
+  e54@{ curve: basis }
+  e55@{ curve: basis }
+  e56@{ curve: basis }
+  e57@{ curve: basis }
+  e58@{ curve: basis }
+  e59@{ curve: basis }
+  e60@{ curve: basis }
+  e61@{ curve: basis }

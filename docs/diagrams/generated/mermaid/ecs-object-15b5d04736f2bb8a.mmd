@@ -1,0 +1,291 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#object-15b5d04736f2bb8a-e21{marker-start:url(#object-15b5d04736f2bb8a_flowchart-v2-pointStart)!important}\n#object-15b5d04736f2bb8a_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: bevy_render::view::ViewTarget · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**ViewTarget**<br/>管理视图主颜色纹理及最终输出附件。" }
+  class n0 node_component
+  n1@{ shape: rounded, label: "**screen​_​space​_​reflections**<br/>来自crate:bevy​_​pbr ↗：采样场景颜色、<br/>深度与蓝噪声绘制屏幕空间反射。" }
+  class n1 node_system
+  class n1 external_node
+  n2@{ shape: rounded, label: "**ui​_​pass**<br/>来自crate:bevy​_​ui​_​render ↗：把透明<br/>UI 绘制项渲染到关联视图。" }
+  class n2 node_system
+  class n2 external_node
+  n3@{ shape: rounded, label: "**tonemapping**<br/>来自crate:bevy​_​core​_​pipeline ↗：为启<br/>用的 HDR 视图执行色调映射。" }
+  class n3 node_system
+  class n3 external_node
+  n4@{ shape: rounded, label: "**cleanup​_​view​_​targets​_​for​_​resize**<br/>在窗口尺寸或呈现模式变化时撤销旧视图目<br/>标。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**volumetric​_​fog**<br/>来自crate:bevy​_​pbr ↗：结合深度与光照<br/>逐个绘制视图中的雾体。" }
+  class n5 node_system
+  class n5 external_node
+  n6@{ shape: rounded, label: "**main​_​transparent​_​pass​_​2d**<br/>来自crate:bevy​_​core​_​pipeline ↗：使用<br/>已有深度绘制二维透明阶段。" }
+  class n6 node_system
+  class n6 external_node
+  n7@{ shape: rounded, label: "**prepare​_​msaa​_​writeback​_​pipelines**<br/>来自crate:bevy​_​post​_​process ↗：为需<br/>要保留已有颜色的多采样相机准备回写管线。" }
+  class n7 node_system
+  class n7 external_node
+  n8@{ shape: rounded, label: "**tonemapping**<br/>来自crate:bevy​_​core​_​pipeline ↗：为启<br/>用的 HDR 视图执行色调映射。" }
+  class n8 node_system
+  class n8 external_node
+  n9@{ shape: rounded, label: "**deferred​_​lighting**<br/>来自crate:bevy​_​pbr ↗：绑定网格视图、<br/>延迟光照管线及通道深度标识参数，在延迟光<br/>照深度附件约束下执行全屏光照计算，将结果<br/>写入视图颜色。" }
+  class n9 node_system
+  class n9 external_node
+  n10@{ shape: rounded, label: "**cas**<br/>来自crate:bevy​_​anti​_​alias ↗：对视图<br/>颜色执行 CAS 锐化后处理。" }
+  class n10 node_system
+  class n10 external_node
+  n11@{ shape: rounded, label: "**bloom**<br/>来自crate:bevy​_​post​_​process ↗：通过<br/>降采样和上采样合成 HDR 光晕。" }
+  class n11 node_system
+  class n11 external_node
+  n12@{ shape: rounded, label: "**msaa​_​writeback**<br/>来自crate:bevy​_​post​_​process ↗：将后<br/>处理颜色回写多采样目标。" }
+  class n12 node_system
+  class n12 external_node
+  n13@{ shape: rounded, label: "**cas**<br/>来自crate:bevy​_​anti​_​alias ↗：对视图<br/>颜色执行 CAS 锐化后处理。" }
+  class n13 node_system
+  class n13 external_node
+  n14@{ shape: rounded, label: "**ui​_​pass**<br/>来自crate:bevy​_​ui​_​render ↗：把透明<br/>UI 绘制项渲染到关联视图。" }
+  class n14 node_system
+  class n14 external_node
+  n15@{ shape: rounded, label: "**smaa**<br/>来自crate:bevy​_​anti​_​alias ↗：通过三<br/>个阶段完成 SMAA 抗锯齿。" }
+  class n15 node_system
+  class n15 external_node
+  n16@{ shape: rounded, label: "**temporal​_​anti​_​alias**<br/>来自crate:bevy​_​anti​_​alias ↗：混合当<br/>前颜色与历史帧并更新 TAA 历史目标。" }
+  class n16 node_system
+  class n16 external_node
+  n17@{ shape: rounded, label: "**copy​_​deferred​_​lighting​_​id**<br/>来自crate:bevy​_​core​_​pipeline ↗：把延<br/>迟光照通道标识复制到深度目标。" }
+  class n17 node_system
+  class n17 external_node
+  n18@{ shape: rounded, label: "**fxaa**<br/>来自crate:bevy​_​anti​_​alias ↗：对启用<br/>的相机视图执行 FXAA 抗锯齿。" }
+  class n18 node_system
+  class n18 external_node
+  n19@{ shape: rounded, label: "**render​_​sky**<br/>来自crate:bevy​_​pbr ↗：绑定大气查找表<br/>及视图、光照参数，按相机视口和可选分辨率<br/>覆盖设置绘制全屏天空，将结果写入视图颜色<br/>附件。" }
+  class n19 node_system
+  class n19 external_node
+  n20@{ shape: rounded, label: "**main​_​transmissive​_​pass​_​3d**<br/>来自crate:bevy​_​pbr ↗：分层复制场景颜<br/>色并绘制三维透射物体。" }
+  class n20 node_system
+  class n20 external_node
+  n21@{ shape: rounded, label: "**main​_​opaque​_​pass​_​2d**<br/>来自crate:bevy​_​core​_​pipeline ↗：绘制<br/>二维不透明和 AlphaMask 阶段。" }
+  class n21 node_system
+  class n21 external_node
+  n22@{ shape: rounded, label: "**upscaling**<br/>来自crate:bevy​_​core​_​pipeline ↗：将主<br/>颜色纹理缩放写入最终输出附件。" }
+  class n22 node_system
+  class n22 external_node
+  n23@{ shape: rounded, label: "**fxaa**<br/>来自crate:bevy​_​anti​_​alias ↗：对启用<br/>的相机视图执行 FXAA 抗锯齿。" }
+  class n23 node_system
+  class n23 external_node
+  n24@{ shape: rounded, label: "**prepare​_​auxiliary​_​depth​_​of​_​field​_​**<br/>**textures**<br/>来自crate:bevy​_​post​_​process ↗：为<br/>Bokeh 景深分配第二颜色输出。" }
+  class n24 node_system
+  class n24 external_node
+  n25@{ shape: rounded, label: "**smaa**<br/>来自crate:bevy​_​anti​_​alias ↗：通过三<br/>个阶段完成 SMAA 抗锯齿。" }
+  class n25 node_system
+  class n25 external_node
+  n26@{ shape: rounded, label: "**render​_​system**<br/>运行渲染图调度并完成回读和窗口呈现。" }
+  class n26 node_system
+  n27@{ shape: rounded, label: "**post​_​processing**<br/>来自crate:bevy​_​post​_​process ↗：组合<br/>执行色差、暗角和镜头畸变。" }
+  class n27 node_system
+  class n27 external_node
+  n28@{ shape: rounded, label: "**prepare​_​view​_​targets**<br/>为视图维护主颜色双缓冲及可选多采样目标。" }
+  class n28 node_system
+  n29@{ shape: rounded, label: "**upscaling**<br/>来自crate:bevy​_​core​_​pipeline ↗：将主<br/>颜色纹理缩放写入最终输出附件。" }
+  class n29 node_system
+  class n29 external_node
+  n30@{ shape: rounded, label: "**motion​_​blur**<br/>来自crate:bevy​_​post​_​process ↗：读取<br/>当前视图颜色、预通道运动矢量和深度，按快<br/>门角度及采样数执行运动模糊；采样关闭、所<br/>需纹理或管线不可用时跳过。" }
+  class n30 node_system
+  class n30 external_node
+  n31@{ shape: rounded, label: "**main​_​opaque​_​pass​_​3d**<br/>来自crate:bevy​_​core​_​pipeline ↗：绘制<br/>三维不透明、AlphaMask 与天空盒。" }
+  class n31 node_system
+  class n31 external_node
+  n32@{ shape: rounded, label: "**bloom**<br/>来自crate:bevy​_​post​_​process ↗：通过<br/>降采样和上采样合成 HDR 光晕。" }
+  class n32 node_system
+  class n32 external_node
+  n33@{ shape: rounded, label: "**prepare​_​view​_​tonemapping​_​pipelines**<br/>来自crate:bevy​_​core​_​pipeline ↗：按视<br/>图实际颜色分级需求专用化色调映射。" }
+  class n33 node_system
+  class n33 external_node
+  n34@{ shape: rounded, label: "**egui​_​pass**<br/>来自crate:bevy​_​egui ↗：把准备好的<br/>Egui 绘制项渲染到视图目标。" }
+  class n34 node_system
+  class n34 external_node
+  n35@{ shape: rounded, label: "**egui​_​pass**<br/>来自crate:bevy​_​egui ↗：把准备好的<br/>Egui 绘制项渲染到视图目标。" }
+  class n35 node_system
+  class n35 external_node
+  n36@{ shape: rounded, label: "**main​_​transparent​_​pass​_​3d**<br/>来自crate:bevy​_​core​_​pipeline ↗：绘制<br/>三维透明物体并保护 OIT 链表状态。" }
+  class n36 node_system
+  class n36 external_node
+  n37@{ shape: rounded, label: "**oit​_​resolve**<br/>来自crate:bevy​_​core​_​pipeline ↗：解析<br/>透明片元并重置 OIT 链表状态。" }
+  class n37 node_system
+  class n37 external_node
+  n38@{ shape: rounded, label: "**msaa​_​writeback**<br/>来自crate:bevy​_​post​_​process ↗：将后<br/>处理颜色回写多采样目标。" }
+  class n38 node_system
+  class n38 external_node
+  n39@{ shape: rounded, label: "**post​_​processing**<br/>来自crate:bevy​_​post​_​process ↗：组合<br/>执行色差、暗角和镜头畸变。" }
+  class n39 node_system
+  class n39 external_node
+  n40@{ shape: rounded, label: "**depth​_​of​_​field**<br/>来自crate:bevy​_​post​_​process ↗：以两<br/>阶段全屏通道执行景深模糊。" }
+  class n40 node_system
+  class n40 external_node
+  n41@{ shape: rounded, label: "**prepare​_​view​_​upscaling​_​pipelines**<br/>来自crate:bevy​_​core​_​pipeline ↗：按相<br/>机合成方式准备输出缩放管线。" }
+  class n41 node_system
+  class n41 external_node
+  n0 e0@--> n1
+  class e0 edge_read
+  n0 e1@--> n2
+  class e1 edge_read
+  n0 e2@--> n3
+  class e2 edge_read
+  n4 e3@-->|"移除"| n0
+  class e3 edge_write
+  n0 e4@--> n5
+  class e4 edge_read
+  n0 e5@--> n6
+  class e5 edge_read
+  n0 e6@--> n7
+  class e6 edge_read
+  n0 e7@--> n8
+  class e7 edge_read
+  n0 e8@--> n9
+  class e8 edge_read
+  n0 e9@--> n10
+  class e9 edge_read
+  n0 e10@--> n11
+  class e10 edge_read
+  n0 e11@--> n12
+  class e11 edge_read
+  n0 e12@--> n13
+  class e12 edge_read
+  n0 e13@--> n14
+  class e13 edge_read
+  n0 e14@--> n15
+  class e14 edge_read
+  n0 e15@--> n16
+  class e15 edge_read
+  n0 e16@--> n17
+  class e16 edge_read
+  n0 e17@--> n18
+  class e17 edge_read
+  n0 e18@--> n19
+  class e18 edge_read
+  n0 e19@--> n20
+  class e19 edge_read
+  n0 e20@--> n21
+  class e20 edge_read
+  n4 e21@---|"存在性约束"| n0
+  class e21 edge_reference
+  n0 e22@--> n22
+  class e22 edge_read
+  n0 e23@--> n23
+  class e23 edge_read
+  n0 e24@--> n24
+  class e24 edge_read
+  n0 e25@--> n25
+  class e25 edge_read
+  n0 e26@--> n26
+  class e26 edge_read
+  n0 e27@--> n27
+  class e27 edge_read
+  n28 e28@-->|"移除"| n0
+  class e28 edge_write
+  n28 e29@-->|"插入"| n0
+  class e29 edge_write
+  n0 e30@--> n29
+  class e30 edge_read
+  n0 e31@--> n30
+  class e31 edge_read
+  n0 e32@--> n31
+  class e32 edge_read
+  n0 e33@--> n32
+  class e33 edge_read
+  n0 e34@-->|"存在性约束"| n33
+  class e34 edge_reference
+  n0 e35@--> n34
+  class e35 edge_read
+  n0 e36@--> n35
+  class e36 edge_read
+  n0 e37@--> n36
+  class e37 edge_read
+  n0 e38@--> n37
+  class e38 edge_read
+  n0 e39@--> n38
+  class e39 edge_read
+  n0 e40@--> n39
+  class e40 edge_read
+  n0 e41@--> n40
+  class e41 edge_read
+  n0 e42@--> n41
+  class e42 edge_read
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e17@{ curve: basis }
+  e18@{ curve: basis }
+  e19@{ curve: basis }
+  e21@{ curve: bumpX }
+  e22@{ curve: basis }
+  e23@{ curve: basis }
+  e24@{ curve: basis }
+  e25@{ curve: basis }
+  e26@{ curve: basis }
+  e27@{ curve: basis }
+  e28@{ curve: bumpX }
+  e29@{ curve: basis }
+  e30@{ curve: basis }
+  e31@{ curve: basis }
+  e32@{ curve: basis }
+  e33@{ curve: basis }
+  e34@{ curve: basis }
+  e35@{ curve: basis }
+  e36@{ curve: basis }
+  e37@{ curve: basis }
+  e38@{ curve: basis }
+  e39@{ curve: basis }
+  e40@{ curve: basis }
+  e41@{ curve: basis }
+  e42@{ curve: basis }

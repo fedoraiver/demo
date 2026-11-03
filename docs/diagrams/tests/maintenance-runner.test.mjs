@@ -42,15 +42,15 @@ function dumpFixture({ workspace, put }) {
 test('plan is read-only without npm dependencies; validates real DOT content and Rust fingerprints', async t => {
   const f = fixture(t); dumpFixture(f);
   const before = fileSnapshot(f.workspace, ['.']);
-  const plan = await planMaintenance({ workspace: f.workspace });
+  const plan = await planMaintenance({ workspace: f.workspace, debugdumpDirectory: 'docs/diagrams/generated/dot' });
   assert.equal(plan.dependencies.valid, false);
   assert.equal(plan.debugdump.valid, true);
-  assert.equal(plan.debugdump.context.status, 'unknown');
-  assert.equal(plan.stages.find(stage => stage.id === 'export').action, 'export');
+  assert.deepEqual(plan.stages.map(stage => stage.id), ['dependencies', 'extract', 'model', 'preflight', 'build', 'check', 'test']);
+  assert.equal(plan.stages.find(stage => stage.id === 'extract').action, 'extract');
   assert.deepEqual(fileSnapshot(f.workspace, ['.']), before);
   assert.equal(fs.existsSync(path.join(f.workspace, 'tmp')), false);
   f.put('src/main.rs', 'fn main() { let _changed = 1; }');
-  const stale = await planMaintenance({ workspace: f.workspace });
+  const stale = await planMaintenance({ workspace: f.workspace, debugdumpDirectory: 'docs/diagrams/generated/dot' });
   assert.equal(stale.debugdump.valid, false);
   assert.match(stale.debugdump.reason, /fingerprint is stale/);
 });
@@ -161,6 +161,23 @@ test('new untracked input modules change the plan content fingerprint', async t 
   f.put(`${maintenanceScripts}/new untracked.mjs`, 'export const added=2;');
   const skillChange = await planMaintenance({ workspace: f.workspace });
   assert.notEqual(digest(next.inputs), digest(skillChange.inputs));
+  f.put('tools/rustc-analysis/driver/src/new.rs', 'pub fn compiler_change() {}');
+  const compilerChange = await planMaintenance({ workspace: f.workspace });
+  assert.notEqual(digest(skillChange.inputs), digest(compilerChange.inputs));
+});
+
+test('missing purposes pause the model stage and resume only after annotations are supplied', async t => {
+  const f = fixture(t), model = { schemaVersion: 1, compiler: 'pinned', configuration: {}, inputs: { sourceFingerprint: sourceFingerprint(f.workspace) },
+    objects: [], relations: [], features: [], sourceFiles: [], annotationsRequired: [{ key: 'fixture::system', kind: 'System' }], scheduleInteractions: { schemaVersion: 1, views: [] } };
+  const script = `const fs=require('fs');const missing=!fs.existsSync('annotations.json');const model=${JSON.stringify(model)};if(!missing)model.annotationsRequired=[];fs.mkdirSync('tmp/ecs-architecture/compiler',{recursive:true});fs.writeFileSync('tmp/ecs-architecture/compiler/model.json',JSON.stringify(model));process.exit(missing?3:0);`;
+  const stages = [{ id: 'model', inputs: ['input.txt', 'annotations.json'], outputs: ['tmp/ecs-architecture/compiler/model.json'], command: { command: process.execPath, args: ['-e', script] } }, pipeline()[1]];
+  const pending = await runMaintenance({ workspace: f.workspace, pipeline: stages });
+  assert.equal(pending.status, 'needs-descriptions'); assert.equal(pending.stages.length, 1);
+  assert.equal(pending.stages[0].exitCode, 3); assert.equal(pending.annotationsRequired.pending, 1);
+  f.put('annotations.json', '{"fixture::system":{"description":"维护当前状态。"}}');
+  const resumed = await runMaintenance({ workspace: f.workspace, resume: pending.runId, pipeline: stages });
+  assert.equal(resumed.status, 'passed');
+  assert.deepEqual(resumed.stages.map(stage => [stage.id, stage.attempt]), [['model', 1], ['model', 2], ['verify', 1]]);
 });
 
 test('Skill helper content invalidates downstream reuse while installed dependencies remain reusable', async t => {
@@ -175,7 +192,7 @@ test('Skill helper content invalidates downstream reuse while installed dependen
   assert.equal(context.schemaVersion, 2);
   assert.deepEqual(Object.keys(context.inputs), ['files', 'environment', 'invocation']);
   const originalSidecar = fs.readFileSync(path.join(directory, 'maintenance-export-context.json'));
-  assert.equal((await planMaintenance({ workspace: f.workspace })).stages.find(stage => stage.id === 'export').action, 'reuse');
+  assert.equal((await planMaintenance({ workspace: f.workspace })).stages.find(stage => stage.id === 'extract').action, 'extract');
   const names = relevantInputNames(f.workspace), before = fileSnapshot(f.workspace, names);
   assert.ok(names.includes(maintenanceScripts));
   assert.equal(before[helper], digest('export const helper = "before";'));
@@ -189,8 +206,7 @@ test('Skill helper content invalidates downstream reuse while installed dependen
   f.put(helper, 'export const helper = "after";');
   assert.notEqual(digest(fileSnapshot(f.workspace, names)), digest(before));
   const plan = await planMaintenance({ workspace: f.workspace });
-  assert.equal(plan.debugdump.context.status, 'valid');
-  assert.equal(plan.stages.find(stage => stage.id === 'export').action, 'reuse');
+  assert.equal(plan.stages.find(stage => stage.id === 'extract').action, 'extract');
   assert.deepEqual(fs.readFileSync(path.join(directory, 'maintenance-export-context.json')), originalSidecar);
   const status = await maintenanceStatus({ workspace: f.workspace });
   assert.equal(status.status, 'stale');
@@ -289,12 +305,15 @@ test('new invocation reuses verified checkpoints in a distinct run with sourceRu
 
 test('actual child emitting CLI style pretty JSON records the entire preflight document', async t => {
   const f = fixture(t);
-  f.put('pretty-preflight.mjs', "console.log(JSON.stringify({counts:{objects:1},modelSummary:{objects:{id:{kind:'System',name:'test'}},relationships:{}},dependencyInputs:[]},null,2));");
+  f.put('pretty-preflight.mjs', "console.log(JSON.stringify({counts:{objects:1},modelSummary:{objects:{id:{kind:'System',name:'test'}},relationships:{},analysisGaps:[{unit:'fixture#hash',owner:'unit',kind:'mir-budget',reason:'MIR analysis budget reached',sourceEntries:[]}]},dependencyInputs:[]},null,2));");
   const state = await runMaintenance({ workspace: f.workspace, pipeline: [{ id: 'preflight', inputs: ['pretty-preflight.mjs'], outputs: [], dependencyInputs: true,
     command: { command: process.execPath, args: [path.join(f.workspace, 'pretty-preflight.mjs')] } }] });
   assert.equal(state.status, 'passed');
   assert.equal(state.preflightModel.objects.id.name, 'test');
   assert.match(fs.readFileSync(state.stages[0].stdout, 'utf8'), /\n  "counts"/);
+  const report = await maintenanceReport({ workspace: f.workspace, runId: state.runId, format: 'markdown' });
+  assert.match(report, /分析边界：1 项/); assert.match(report, /mir-budget 1/); assert.match(report, /MIR analysis budget reached/);
+  assert.equal(state.preflightModel.analysisGaps[0].owner, 'unit');
 });
 
 test('export context binds selectors, config contents, actual toolchain bytes and DOT provenance', async t => {

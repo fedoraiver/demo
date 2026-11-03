@@ -1,0 +1,226 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#object-d9faf214fe12bc4a-e13{marker-start:url(#object-d9faf214fe12bc4a_flowchart-v2-pointStart)!important}\n#object-d9faf214fe12bc4a-e30{marker-start:url(#object-d9faf214fe12bc4a_flowchart-v2-pointStart)!important}\n#object-d9faf214fe12bc4a-e31{marker-start:url(#object-d9faf214fe12bc4a_flowchart-v2-pointStart)!important}\n#object-d9faf214fe12bc4a_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: components::Camera3d · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_entity fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**Camera3d**<br/>启用三维相机主渲染流程。" }
+  class n0 node_component
+  n1@{ shape: rounded, label: "**extract​_​camera​_​previous​_​view​_​data**<br/>来自crate:bevy​_​pbr ↗：把活动三维相机<br/>的前帧视图数据提取到渲染侧。" }
+  class n1 node_system
+  class n1 external_node
+  n2@{ shape: rounded, label: "**configure​_​camera​_​depth​_​usages**<br/>来自crate:bevy​_​core​_​pipeline ↗：允<br/>许 OIT 相机采样自己的深度纹理。" }
+  class n2 node_system
+  class n2 external_node
+  n3@{ shape: rounded, label: "**prepare​_​view​_​depth​_​textures​_​for​_​**<br/>**volumetric​_​fog**<br/>来自crate:bevy​_​pbr ↗：允许体积雾着色<br/>器读取三维相机深度纹理。" }
+  class n3 node_system
+  class n3 external_node
+  n4@{ shape: rounded, label: "**prepare​_​view​_​depth​_​texture​_​usages​_​**<br/>**for​_​motion​_​blur**<br/>来自crate:bevy​_​post​_​process ↗：让运<br/>动模糊相机的深度纹理可被采样。" }
+  class n4 node_system
+  class n4 external_node
+  n5@{ shape: rounded, label: "**prepare​_​atmosphere​_​transforms**<br/>来自crate:bevy​_​pbr ↗：按相机位置构造<br/>大气局部坐标变换。" }
+  class n5 node_system
+  class n5 external_node
+  n6@{ shape: rounded, label: "**configure​_​depth​_​of​_​field​_​view​_​**<br/>**targets**<br/>来自crate:bevy​_​post​_​process ↗：允许<br/>景深相机采样自己的深度纹理。" }
+  class n6 node_system
+  class n6 external_node
+  n7@{ shape: rounded, label: "**extract​_​transmissive​_​camera​_​phases**<br/>来自crate:bevy​_​pbr ↗：为活动三维相机<br/>准备本帧透射阶段并清理失效视图。" }
+  class n7 node_system
+  class n7 external_node
+  n8@{ shape: rounded, label: "**configure​_​occlusion​_​culling​_​view​_​**<br/>**targets**<br/>来自crate:bevy​_​core​_​pipeline ↗：让遮<br/>挡剔除相机的深度纹理可被采样。" }
+  class n8 node_system
+  class n8 external_node
+  n9@{ shape: rounded, label: "**prepare​_​previous​_​view​_​uniforms**<br/>来自crate:bevy​_​pbr ↗：重建前帧抖动矩<br/>阵并上传视图历史参数。" }
+  class n9 node_system
+  class n9 external_node
+  n10@{ shape: rounded, label: "**gather​_​light​_​probes**<br/>来自crate:bevy​_​pbr ↗：按相机可见集合<br/>和距离分配已就绪光照探针。" }
+  class n10 node_system
+  class n10 external_node
+  n11@{ shape: rounded, label: "**prepare​_​taa​_​jitter**<br/>来自crate:bevy​_​anti​_​alias ↗：为 TAA<br/>相机逐帧设置 Halton 投影抖动。" }
+  class n11 node_system
+  class n11 external_node
+  n12@{ shape: rounded, label: "**update​_​previous​_​view​_​data**<br/>来自crate:bevy​_​pbr ↗：记录三维及阴影<br/>视图未抖动的变换矩阵。" }
+  class n12 node_system
+  class n12 external_node
+  n13@{ shape: rounded, label: "**configure​_​camera​_​depth​_​usages**<br/>来自crate:bevy​_​pbr ↗：允许大气相机的<br/>深度纹理被着色器采样。" }
+  class n13 node_system
+  class n13 external_node
+  n14@{ shape: rounded, label: "**extract​_​components**<br/>来自crate:bevy​_​extract ↗：批量同步或<br/>移除子世界的目标组件。" }
+  class n14 node_system
+  class n14 external_node
+  n15@{ shape: rounded, label: "**gather​_​light​_​probes**<br/>来自crate:bevy​_​pbr ↗：按相机可见集合<br/>和距离分配已就绪光照探针。" }
+  class n15 node_system
+  class n15 external_node
+  n16@{ shape: rounded, label: "**spawn​_​lighting · 创建模板**<br/>来自scene​_​assembly ↗：创建可复用为玩<br/>家镜头的加载相机。" }
+  class n16 node_entity
+  class n16 external_node
+  n17@{ shape: rounded, label: "**prepare​_​core​_​3d​_​depth​_​textures**<br/>来自crate:bevy​_​core​_​pipeline ↗：按共<br/>享目标准备三维深度纹理与清除方式。" }
+  class n17 node_system
+  class n17 external_node
+  n18@{ shape: rounded, label: "**update​_​mesh​_​previous​_​global​_​**<br/>**transforms**<br/>来自crate:bevy​_​pbr ↗：为下帧保存网格<br/>的当前世界变换。" }
+  class n18 node_system
+  class n18 external_node
+  n19@{ shape: rounded, label: "**extract​_​core​_​3d​_​camera​_​phases**<br/>来自crate:bevy​_​core​_​pipeline ↗：为活<br/>动三维相机准备主渲染阶段。" }
+  class n19 node_system
+  class n19 external_node
+  n20@{ shape: rounded, label: "**extract​_​ssao​_​settings**<br/>来自crate:bevy​_​pbr ↗：向渲染相机提取<br/>屏幕空间环境光遮蔽配置。" }
+  class n20 node_system
+  class n20 external_node
+  n21@{ shape: rounded, label: "**extract​_​atmosphere**<br/>来自crate:bevy​_​pbr ↗：为三维相机选择<br/>并提取最近的大气。" }
+  class n21 node_system
+  class n21 external_node
+  n22@{ shape: rounded, label: "**extract​_​ui​_​camera​_​view**<br/>来自crate:bevy​_​ui​_​render ↗：为活动二<br/>维或三维相机维护独立 UI 视图。" }
+  class n22 node_system
+  class n22 external_node
+  n23@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：提供主菜单展示与界面的三维相<br/>机。" }
+  class n23 node_entity
+  class n23 external_node
+  n24@{ shape: rounded, label: "**prepare​_​atmosphere​_​bind​_​groups**<br/>来自crate:bevy​_​pbr ↗：为大气查找表计<br/>算和天空绘制绑定视图资源。" }
+  class n24 node_system
+  class n24 external_node
+  n25@{ shape: rounded, label: "**prepare​_​lights**<br/>来自crate:bevy​_​pbr ↗：准备视图光照参<br/>数、阴影视图和阴影贴图。" }
+  class n25 node_system
+  class n25 external_node
+  n26@{ shape: rounded, label: "**extract​_​camera​_​prepass​_​phase**<br/>来自crate:bevy​_​core​_​pipeline ↗：同步<br/>三维相机的预通道标记与渲染阶段。" }
+  class n26 node_system
+  class n26 external_node
+  n0 e0@-->|"存在性约束"| n1
+  class e0 edge_reference
+  n2 e1@-->|"可变访问"| n0
+  class e1 edge_write
+  n3 e2@-->|"赋值"| n0
+  class e2 edge_write
+  n4 e3@-->|"赋值"| n0
+  class e3 edge_write
+  n0 e4@-->|"存在性约束"| n5
+  class e4 edge_reference
+  n6 e5@-->|"赋值"| n0
+  class e5 edge_write
+  n0 e6@-->|"存在性约束"| n7
+  class e6 edge_reference
+  n8 e7@-->|"赋值"| n0
+  class e7 edge_write
+  n0 e8@-->|"存在性约束"| n9
+  class e8 edge_reference
+  n0 e9@-->|"存在性约束"| n10
+  class e9 edge_reference
+  n0 e10@-->|"存在性约束"| n11
+  class e10 edge_reference
+  n0 e11@-->|"存在性约束"| n12
+  class e11 edge_reference
+  n13 e12@-->|"赋值"| n0
+  class e12 edge_write
+  n14 e13@--- n0
+  class e13 edge_read
+  n0 e14@-->|"存在性约束"| n15
+  class e14 edge_reference
+  n16 e15@-->|"可能包含"| n0
+  class e15 edge_reference
+  n0 e16@--> n17
+  class e16 edge_read
+  n0 e17@-->|"存在性约束"| n18
+  class e17 edge_reference
+  n13 e18@-->|"可变访问"| n0
+  class e18 edge_write
+  n0 e19@-->|"存在性约束"| n19
+  class e19 edge_reference
+  n0 e20@-->|"存在性约束"| n20
+  class e20 edge_reference
+  n0 e21@-->|"存在性约束"| n21
+  class e21 edge_reference
+  n2 e22@-->|"赋值"| n0
+  class e22 edge_write
+  n0 e23@-->|"存在性约束"| n22
+  class e23 edge_reference
+  n6 e24@-->|"可变访问"| n0
+  class e24 edge_write
+  n23 e25@-->|"可能包含"| n0
+  class e25 edge_reference
+  n14 e26@-->|"移除"| n0
+  class e26 edge_write
+  n0 e27@-->|"存在性约束"| n24
+  class e27 edge_reference
+  n0 e28@-->|"存在性约束"| n25
+  class e28 edge_reference
+  n4 e29@-->|"可变访问"| n0
+  class e29 edge_write
+  n13 e30@---|"存在性约束"| n0
+  class e30 edge_reference
+  n2 e31@---|"存在性约束"| n0
+  class e31 edge_reference
+  n0 e32@-->|"存在性约束"| n26
+  class e32 edge_reference
+  n8 e33@-->|"可变访问"| n0
+  class e33 edge_write
+  n3 e34@-->|"可变访问"| n0
+  class e34 edge_write
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e17@{ curve: basis }
+  e18@{ curve: basis }
+  e19@{ curve: basis }
+  e20@{ curve: basis }
+  e21@{ curve: basis }
+  e22@{ curve: basis }
+  e23@{ curve: basis }
+  e24@{ curve: basis }
+  e25@{ curve: basis }
+  e26@{ curve: basis }
+  e27@{ curve: basis }
+  e28@{ curve: basis }
+  e29@{ curve: basis }
+  e30@{ curve: basis }
+  e31@{ curve: basis }
+  e32@{ curve: basis }
+  e33@{ curve: basis }
+  e34@{ curve: basis }

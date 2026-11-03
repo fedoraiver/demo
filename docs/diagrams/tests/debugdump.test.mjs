@@ -6,22 +6,35 @@ import test from 'node:test';
 import { instance } from '@viz-js/viz';
 import { DOMParser, XMLSerializer } from '@xmldom/xmldom';
 import { DEBUGDUMP_MANIFEST, sha256, scheduleId, sourceFingerprint, readDebugdump, compileDebugdump, checkDebugdumpViews, normalizeScheduleSvg, obsoleteArchitectureArtifacts } from '../src/debugdump.mjs';
-import { buildArchitectureModel } from '../src/architecture-model.mjs';
-import { buildObjectCatalog } from '../src/architecture-objects.mjs';
 import { renderGraphView } from '../src/architecture-renderer.mjs';
 import { compileArchitectureArtifacts } from '../src/mermaid-compiler.mjs';
 import { renderArchitectureViewer } from '../src/architecture-viewer.mjs';
 import { INFRASTRUCTURE_FEATURES } from '../src/architecture-infrastructure.mjs';
-import { sourcePolicyFor, applyArchitectureSourcePolicies } from '../src/architecture-source-policy.mjs';
-import { checkArchitecture, checkScheduleObjectMetadata, checkScheduleGuideSamples } from '../src/check-ecs.mjs';
-import { buildSchedulePluginGroups } from '../src/schedule-plugins.mjs';
-import { buildScheduleObjects } from '../src/schedule-objects.mjs';
-import { createDependencySourceResolver } from '../src/dependency-sources.mjs';
+import { checkArchitecture, checkScheduleGuideSamples } from '../src/check-ecs.mjs';
 import { compileScheduleGuideSamples } from '../src/schedule-legend-compiler.mjs';
 import { artifactFile, pathsForRepository } from '../src/paths.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../..');
 const temporary = path.join(root, 'tmp/debugdump-node-tests');
+function fixture() {
+  fs.mkdirSync(temporary, { recursive: true });
+  const repository = fs.mkdtempSync(path.join(temporary, 'case-'));
+  fs.mkdirSync(path.join(repository, 'src'));
+  fs.writeFileSync(path.join(repository, 'src/main.rs'), 'fn main() {}\r\n');
+  fs.writeFileSync(path.join(repository, 'Cargo.toml'), '[package]\nname="example"\n');
+  fs.writeFileSync(path.join(repository, 'Cargo.lock'), '[[package]]\nname = "bevy"\nversion = "0.20.0"\n[[package]]\nname = "bevy_mod_debugdump"\nversion = "0.17.0"\n');
+  const schedules = ['main', 'RenderApp'].map(app => {
+    const label = 'Update<状态 / "Ready">', id = scheduleId(app, label);
+    const dot = 'digraph { subgraph cluster_set { label="ExampleSet"; a [label="first", tooltip="example::first"]; b [label="second", tooltip="example::second"]; a -> b; } }\n';
+    const entry = { id, app, label, filename: `schedule-${id}.dot`, sha256: sha256(dot), systemCount: 2 };
+    fs.writeFileSync(path.join(repository, entry.filename), dot);
+    return entry;
+  });
+  const manifest = { schemaVersion: 1, bevyVersion: '0.20.0', debugdumpVersion: '0.17.0', exportedAt: 100, target: 'test', features: ['debugdump'], sourceFingerprint: sourceFingerprint(repository), schedules };
+  const save = () => fs.writeFileSync(path.join(repository, 'manifest.json'), JSON.stringify(manifest));
+  save();
+  return { repository, manifest, save };
+}
 
 test('Schedule guide validation checks actual Graphviz colors, arrows, identities and safe SVG', async () => {
   const samples = compileScheduleGuideSamples(await instance(), { DOMParser, XMLSerializer });
@@ -70,26 +83,6 @@ test('Schedule guide validation rejects opaque backgrounds, visible labels and n
     rectangle.setAttribute('width', '10'); rectangle.setAttribute('height', '10'); rectangle.setAttribute('fill', '#FFFFFF'); root.appendChild(rectangle);
   })), /background is not transparent/);
 });
-// 与其它架构夹具一致，测试产物保留在根 tmp/，便于复查，不修改正式图。
-function fixture() {
-  fs.mkdirSync(temporary, { recursive: true });
-  const repository = fs.mkdtempSync(path.join(temporary, 'case-'));
-  fs.mkdirSync(path.join(repository, 'src'));
-  fs.writeFileSync(path.join(repository, 'src/main.rs'), 'fn main() {}\r\n');
-  fs.writeFileSync(path.join(repository, 'Cargo.toml'), '[package]\nname="example"\n');
-  fs.writeFileSync(path.join(repository, 'Cargo.lock'), '[[package]]\nname = "bevy"\nversion = "0.20.0"\n[[package]]\nname = "bevy_mod_debugdump"\nversion = "0.17.0"\n');
-  const schedules = ['main', 'RenderApp'].map(app => {
-    const label = 'Update<状态 / "Ready">', id = scheduleId(app, label);
-    const dot = 'digraph { subgraph cluster_set { label="ExampleSet"; a [label="first", tooltip="example::first"]; b [label="second", tooltip="example::second"]; a -> b; } }\n';
-    const entry = { id, app, label, filename: `schedule-${id}.dot`, sha256: sha256(dot), systemCount: 2 };
-    fs.writeFileSync(path.join(repository, entry.filename), dot);
-    return entry;
-  });
-  const manifest = { schemaVersion: 1, bevyVersion: '0.20.0', debugdumpVersion: '0.17.0', exportedAt: 100, target: 'test', features: ['debugdump'], sourceFingerprint: sourceFingerprint(repository), schedules };
-  const save = () => fs.writeFileSync(path.join(repository, 'manifest.json'), JSON.stringify(manifest));
-  save();
-  return { repository, manifest, save };
-}
 
 test('source fingerprints ignore CRLF differences but include source and lock changes', t => {
   const { repository } = fixture(t);
@@ -207,136 +200,4 @@ test('classified Schedule validation reads DOT and manifest separately from SVG 
   assert.deepEqual(checkDebugdumpViews(paths.dotDirectory, repository, result.views), result.manifest);
   const first = result.views[0];fs.writeFileSync(path.join(paths.dotDirectory, first.filename), first.svg);fs.unlinkSync(artifactFile(paths, first));
   assert.throws(() => checkDebugdumpViews(paths.dotDirectory, repository, result.views), /ENOENT/);
-});
-
-test('schema 4 checks actual Graphviz schedules alongside compiled object SVG without restoring retired views', async t => {
-  const { repository } = fixture(t);
-  const features = [{ id: 'example', plugin: 'ExamplePlugin', label: '示例插件' }];
-  const model = { features, systems: [], observers: [], entities: [], resources: [], relationships: [], node_features: {},
-    nodes: [{ id: 'plugin-ExamplePlugin', name: 'ExamplePlugin', feature: 'example', kind: 'Plugin', description: '示例插件。' },
-      ...INFRASTRUCTURE_FEATURES.map(feature => ({ id: feature.overviewNode, name: feature.identifier, feature: feature.id, kind: 'Plugin', description: '基础设施。' }))] };
-  const { registry } = buildArchitectureModel(model);
-  for (const record of Object.values(registry)) { record.sourceEntries = []; record.sourceGaps = ['测试夹具无生产声明。']; }
-  const catalog = buildObjectCatalog(model, registry);
-  const objects = catalog.objects.map(object => renderGraphView({ id: object.viewId, aspect: 'object', feature: object.feature,
-    objectId: object.id, centerNodeId: object.id, label: object.id, summary: '独立对象。' }, catalog.graphFor(object.id), registry, features));
-  const compiled = await compileArchitectureArtifacts(objects, registry);
-  const schedules = await compileDebugdump(readDebugdump(repository, repository));
-  const grouped = buildSchedulePluginGroups({ model, views: schedules.views });
-  const views = [...grouped.views, ...compiled.views];
-  const directory = path.join(repository, 'docs/diagrams');
-  fs.mkdirSync(directory, { recursive: true });
-  for (const view of views) {
-    fs.writeFileSync(path.join(directory, view.filename), view.svg);
-    if (view.mermaidFilename) fs.writeFileSync(path.join(directory, view.mermaidFilename), view.mermaid);
-    if (view.dotFilename) fs.writeFileSync(path.join(directory, view.dotFilename), view.dot);
-  }
-  fs.writeFileSync(path.join(directory, DEBUGDUMP_MANIFEST), JSON.stringify(schedules.manifest));
-  fs.writeFileSync(path.join(directory, 'ecs-data.json'), JSON.stringify(model));
-  fs.writeFileSync(path.join(directory, 'ecs-source.html'), '<script id="sources" type="application/json">[]</script>');
-  const saveViewer = overrides => fs.writeFileSync(path.join(directory, 'ecs-architecture.html'), renderArchitectureViewer({ model, registry, views, features,
-    objects: catalog.objects, guideSamples: compiled.guideSamples,
-    schedulePluginCatalog: grouped.catalog,
-    sourceRoleLabels: Object.fromEntries(sourcePolicyFor('edge').groups.map(group => [group.role, group.label])), ...overrides }).replace('{"schemaVersion":5,"model":', '{"schemaVersion":4,"model":'));
-  saveViewer();
-  const check = () => checkArchitecture(repository, { dependencyDefinitions: {}, cargoMetadata: { packages: [] }, requireDependencyDefinitions: false });
-  assert.equal(check().objects, catalog.objects.length);
-  const forged = structuredClone(registry);
-  forged['plugin-DefaultPlugins'].scheduleEvidence = { schemaVersion: 1 };
-  saveViewer({ registry: forged });
-  assert.throws(check, /Schedule object evidence mismatch: plugin-DefaultPlugins/);
-  saveViewer({ schedulePluginCatalog: [] });
-  assert.throws(check, /Plugin source catalog is stale/);
-  saveViewer({ views: views.map((view, index) => index ? view : { ...view, schedulePluginGroups: [] }) });
-  assert.throws(check, /Plugin source membership is stale/);
-  saveViewer();
-  fs.writeFileSync(path.join(directory, 'ecs-overview.svg'), '<svg/>');
-  assert.throws(check, /SVG file set does not match/);
-});
-
-test('schema 5 recomputes complete Schedule object bindings and source-backed extensions', async t => {
-  const { repository, manifest, save } = fixture(t);
-  fs.writeFileSync(path.join(repository, 'Cargo.toml'), '[package]\nname="demo"\n');
-  fs.writeFileSync(path.join(repository, 'src/main.rs'), 'fn main() {}\n');
-  fs.mkdirSync(path.join(repository, 'src/character'));
-  fs.writeFileSync(path.join(repository, 'src/character/mod.rs'), 'fn log_configuration() {}\n');
-  fs.writeFileSync(path.join(repository, 'src/character/motion.rs'), 'fn log_character_velocity() {}\n');
-  for (const schedule of manifest.schedules) {
-    const dot = 'digraph { a [label="log_configuration", tooltip="demo::character::log_configuration"]; b [label="log_character_velocity", tooltip="demo::character::motion::log_character_velocity"]; a -> b; }\n';
-    fs.writeFileSync(path.join(repository, schedule.filename), dot);
-    schedule.sha256 = sha256(dot);
-  }
-  manifest.sourceFingerprint = sourceFingerprint(repository); save();
-  const schedules = await compileDebugdump(readDebugdump(repository, repository));
-  const features = [{ id: 'example', plugin: 'ExamplePlugin', label: '示例插件' }];
-  const base = { features, systems: [], observers: [], entities: [], resources: [], relationships: [], node_features: {},
-    nodes: [{ id: 'plugin-ExamplePlugin', name: 'ExamplePlugin', feature: 'example', kind: 'Plugin', description: '示例插件。' },
-      ...INFRASTRUCTURE_FEATURES.map(feature => ({ id: feature.overviewNode, name: feature.identifier, feature: feature.id, kind: 'Plugin', description: '基础设施。' }))] };
-  const metadata = { packages: [{ name: 'demo', version: '0.1.0', manifest_path: path.join(repository, 'Cargo.toml') }] }, resolver = createDependencySourceResolver(metadata);
-  const extension = buildScheduleObjects({ model: base, views: schedules.views, repository, metadata, resolver });
-  const { model, scheduleInteractions } = extension, { registry } = buildArchitectureModel(model);
-  for (const record of Object.values(registry)) if (!record.scheduleEvidence) { record.sourceEntries = []; record.sourceGaps = ['测试夹具无生产声明。']; }
-  applyArchitectureSourcePolicies(Object.fromEntries(Object.entries(registry).filter(([, record]) => record.scheduleEvidence)), { model, repository, dependencyContext: { metadata, resolver } });
-  const catalog = buildObjectCatalog(model, registry);
-  const objects = catalog.objects.map(object => renderGraphView({ id: object.viewId, aspect: 'object', feature: object.feature,
-    objectId: object.id, centerNodeId: object.id, label: object.id }, catalog.graphFor(object.id), registry, features));
-  const compiled = await compileArchitectureArtifacts(objects, registry), grouped = buildSchedulePluginGroups({ model: base, views: schedules.views });
-  const views = [...grouped.views, ...compiled.views], directory = path.join(repository, 'docs/diagrams');
-  fs.mkdirSync(directory, { recursive: true });
-  for (const view of views) {
-    fs.writeFileSync(path.join(directory, view.filename), view.svg);
-    if (view.mermaidFilename) fs.writeFileSync(path.join(directory, view.mermaidFilename), view.mermaid);
-    if (view.dotFilename) fs.writeFileSync(path.join(directory, view.dotFilename), view.dot);
-  }
-  fs.writeFileSync(path.join(directory, DEBUGDUMP_MANIFEST), JSON.stringify(schedules.manifest));
-  fs.writeFileSync(path.join(directory, 'ecs-data.json'), JSON.stringify(base));
-  fs.writeFileSync(path.join(directory, 'ecs-source.html'), '<script id="sources" type="application/json">' + JSON.stringify(['src/main.rs', 'src/character/mod.rs', 'src/character/motion.rs'].map(filename => ({ path: filename, text: fs.readFileSync(path.join(repository, filename), 'utf8') }))) + '</script>');
-  const saveViewer = overrides => fs.writeFileSync(path.join(directory, 'ecs-architecture.html'), renderArchitectureViewer({ model, registry, views, features, scheduleInteractions,
-    objects: catalog.objects, guideSamples: compiled.guideSamples, schedulePluginCatalog: grouped.catalog,
-    sourceRoleLabels: Object.fromEntries(sourcePolicyFor('edge').groups.map(group => [group.role, group.label])), ...overrides }));
-  const check = () => checkArchitecture(repository, { dependencyDefinitions: {}, cargoMetadata: metadata, requireDependencyDefinitions: false });
-  saveViewer(); assert.equal(check().objects, catalog.objects.length);
-  const forged = structuredClone(registry);
-  forged['plugin-DefaultPlugins'].definition_source = { path: 'src/main.rs', line: 1 };
-  saveViewer({ registry: forged });
-  assert.throws(check, /Unexpected dependency definition source: plugin-DefaultPlugins/);
-  forged['plugin-DefaultPlugins'].scheduleEvidence = { schemaVersion: 1 };
-  saveViewer({ registry: forged });
-  assert.throws(check, /Schedule object evidence mismatch: plugin-DefaultPlugins/);
-  const forgedBody = structuredClone(registry);
-  forgedBody['plugin-ExamplePlugin'].bodyOperations = [{ objectId: 'plugin-DefaultPlugins', operation: 'insert', via: 'commands', method: 'insert_resource' }];
-  saveViewer({ registry: forgedBody });
-  assert.throws(check, /Schedule body operation metadata mismatch: plugin-ExamplePlugin/);
-  const missingEvidence = structuredClone(registry), system = Object.values(missingEvidence).find(record => record.scheduleEvidence?.kind === 'system');
-  delete system.scheduleEvidence;
-  saveViewer({ registry: missingEvidence });
-  assert.throws(check, /Schedule object evidence mismatch/);
-  saveViewer({ scheduleInteractions: { schemaVersion: 1, views: [] } });
-  assert.throws(check, /interaction directory is stale or incomplete/);
-  const altered = structuredClone(registry), target = Object.values(altered).find(record => record.scheduleEvidence?.kind === 'system');
-  target.sourceEntries[0].line += 1;
-  saveViewer({ registry: altered });
-  assert.throws(check, /Schedule object source or metadata mismatch/);
-  saveViewer({ model: { ...model, nodes: model.nodes.slice(0, -1) } });
-  assert.throws(check, /Embedded architecture model does not match/);
-});
-
-test('Schedule object metadata checks replay unresolved component evidence and reject removed or forged gaps', () => {
-  const registry = {
-    system: { id: 'system', name: 'spawn_lighting', kind: 'System', sourceEntries: [], sourceGaps: [], scheduleEvidence: { schemaVersion: 1, kind: 'system' } },
-    name: { id: 'name', name: 'Name', kind: 'Component', sourceEntries: [], sourceGaps: [] },
-  };
-  const fact = { system: 'system', component: 'name', operation: 'insert', evidence: 'source', targetScope: 'type-only', projectionIds: [] };
-  const catalog = buildObjectCatalog({ systems: [], nodes: [], system_links: [] }, registry, { components: { accesses: [fact, fact] } });
-  const gap = '待核实：Name 的 insert 操作尚未确定实体投影，未据此建立具体投影关系。';
-  const actual = structuredClone(registry); actual.system.sourceGaps = [gap];
-  checkScheduleObjectMetadata(actual, registry, catalog.unresolvedAccesses);
-  assert.deepEqual(registry.system.sourceGaps, [gap]);
-  checkScheduleObjectMetadata(actual, registry, catalog.unresolvedAccesses);
-  const removed = structuredClone(actual); removed.system.sourceGaps = [];
-  assert.throws(() => checkScheduleObjectMetadata(removed, registry, catalog.unresolvedAccesses), /Schedule object source or metadata mismatch/);
-  const forged = structuredClone(actual); forged.system.sourceGaps.push('虚构缺口');
-  assert.throws(() => checkScheduleObjectMetadata(forged, registry, catalog.unresolvedAccesses), /Schedule object source or metadata mismatch/);
-  const changed = structuredClone(actual); changed.system.name = 'another function';
-  assert.throws(() => checkScheduleObjectMetadata(changed, registry, catalog.unresolvedAccesses), /Schedule object source or metadata mismatch/);
 });

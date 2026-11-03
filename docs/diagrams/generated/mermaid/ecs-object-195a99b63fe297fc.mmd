@@ -1,0 +1,57 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: EguiManagedTextures · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: cyl, label: "**EguiManagedTextures**<br/>保存 Egui 分配并绘制的纹理及其 Bevy 图<br/>像句柄" }
+  class n0 node_resource
+  n1@{ shape: rounded, label: "**free​_​egui​_​textures​_​system**<br/>回收 Egui 已释放或失效的纹理引用。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**extract​_​resource**<br/>来自crate:bevy​_​extract ↗：把存在的主<br/>世界资源转换到子世界。" }
+  class n2 node_system
+  class n2 external_node
+  n3@{ shape: rounded, label: "**update​_​egui​_​textures​_​system**<br/>应用 Egui 托管纹理的图像增量。" }
+  class n3 node_system
+  n1 e0@-->|"可变访问"| n0
+  class e0 edge_write
+  n0 e1@--> n2
+  class e1 edge_read
+  n3 e2@-->|"可变访问"| n0
+  class e2 edge_write
+  e0@{ curve: basis }
+  e2@{ curve: basis }
