@@ -49,11 +49,11 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​egui::input::write​_​non​_​window​_​**<br/>**touch​_​messages​_​system**<br/>向聚焦的非窗口 Egui 界面传递触摸。" }
+  n0@{ shape: rounded, label: "**write​_​non​_​window​_​touch​_​messages​_​**<br/>**system**<br/>向聚焦的非窗口 Egui 界面传递触摸。" }
   class n0 node_system
-  n1@{ shape: fr-rect, label: "**bevy​_​egui::input​_​system​_​is​_​**<br/>**enabled#lt;#lt;bevy​_​egui::EguiPlugin as**<br/>**bevy​_​app::plugin::Plugin#gt;::build::**<br/>**{{closure}}#gt;::{{closure}}**<br/>按 Egui 全局配置判断输入处理是否启<br/>用。；判断是否处理非窗口触摸消息。" }
+  n1@{ shape: fr-rect, label: "**input​_​system​_​is​_​enabled::{{closure}}**<br/>按 Egui 全局配置判断输入处理是否启<br/>用。；判断是否处理非窗口触摸消息。" }
   class n1 node_system_group
-  n2@{ shape: cyl, label: "**input::ModifierKeysState**<br/>缓存 Shift、Control、Alt 和平台主修饰<br/>键的按下状态" }
+  n2@{ shape: cyl, label: "**ModifierKeysState**<br/>缓存 Shift、Control、Alt 和平台主修饰<br/>键的按下状态" }
   class n2 node_resource
   n3@{ shape: lin-rect, label: "**ReadBevyMessages**<br/>组织 Egui 输入读取与事件写入。" }
   class n3 node_system_set
@@ -61,36 +61,36 @@ flowchart LR
   class n4 node_component
   n5@{ shape: rounded, label: "**EguiContextSettings**<br/>保存单个 Egui 上下文的运行、输入、指针<br/>捕获、光标和 IME 集成选项" }
   class n5 node_component
-  n6@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;input::**<br/>**EguiInputEvent#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n6@{ shape: cyl, label: "**Messages#lt;EguiInputEvent#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n6 node_resource
   class n6 external_node
   n7@{ shape: lin-rect, label: "**ProcessInput**<br/>组织 Egui 上下文与输入准备。" }
   class n7 node_system_set
-  n8@{ shape: rounded, label: "**input::EguiContextPointerTouchId**<br/>保存当前驱动 Egui 指针的活动触摸编号" }
+  n8@{ shape: rounded, label: "**EguiContextPointerTouchId**<br/>保存当前驱动 Egui 指针的活动触摸编号" }
   class n8 node_component
-  n9@{ shape: lean-r, label: "**touch::TouchInput**<br/>来自crate:bevy​_​input ↗：传递触点位置<br/>与触摸阶段。" }
+  n9@{ shape: lean-r, label: "**TouchInput**<br/>来自crate:bevy​_​input ↗：传递触点位置<br/>与触摸阶段。" }
   class n9 node_message
   class n9 external_node
   n10@{ shape: rounded, label: "**EguiOutput**<br/>保存上一轮 Egui 的平台输出和像素点比例" }
   class n10 node_component
-  n11@{ shape: rounded, label: "**bevy​_​egui::input::write​_​egui​_​input​_​**<br/>**system**<br/>把界面输入和文件拖放写入 Egui 输入批<br/>次。" }
+  n11@{ shape: rounded, label: "**write​_​egui​_​input​_​system**<br/>把界面输入和文件拖放写入 Egui 输入批<br/>次。" }
   class n11 node_system
-  n12@{ shape: rounded, label: "**bevy​_​egui::input::write​_​window​_​**<br/>**touch​_​messages​_​system**<br/>把窗口触摸转换为 Egui 指针和触摸事件。" }
+  n12@{ shape: rounded, label: "**write​_​window​_​touch​_​messages​_​system**<br/>把窗口触摸转换为 Egui 指针和触摸事件。" }
   class n12 node_system
-  n13@{ shape: cyl, label: "**input::FocusedNonWindowEguiContext**<br/>保存当前获得键盘焦点的非窗口 Egui 上下<br/>文实体" }
+  n13@{ shape: cyl, label: "**FocusedNonWindowEguiContext**<br/>保存当前获得键盘焦点的非窗口 Egui 上下<br/>文实体" }
   class n13 node_resource
-  n14@{ shape: lean-r, label: "**input::EguiInputEvent**<br/>传递供 Egui 消费的输入事件。" }
+  n14@{ shape: lean-r, label: "**EguiInputEvent**<br/>传递供 Egui 消费的输入事件。" }
   class n14 node_message
-  n15@{ shape: rounded, label: "**bevy​_​egui::input::write​_​pointer​_​**<br/>**moved​_​and​_​button​_​messages​_​system**<br/>按原生事件顺序转换 Egui 指针输入。" }
+  n15@{ shape: rounded, label: "**write​_​pointer​_​moved​_​and​_​button​_​**<br/>**messages​_​system**<br/>按原生事件顺序转换 Egui 指针输入。" }
   class n15 node_system
-  n16@{ shape: rounded, label: "**bevy​_​egui::input::absorb​_​bevy​_​input​_​**<br/>**system**<br/>在 Egui 使用输入时吸收对应 Bevy 输入。" }
+  n16@{ shape: rounded, label: "**absorb​_​bevy​_​input​_​system**<br/>在 Egui 使用输入时吸收对应 Bevy 输入。" }
   class n16 node_system
-  n17@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;touch::**<br/>**TouchInput#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n17@{ shape: cyl, label: "**Messages#lt;TouchInput#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n17 node_resource
   class n17 external_node
   n18@{ shape: fr-rect, label: "**EguiPlugin**<br/>装配 Egui 输入、上下文与渲染。" }
   class n18 node_plugin
-  n19@{ shape: rounded, label: "**input::EguiContextPointerPosition**<br/>缓存当前 Egui 指针坐标" }
+  n19@{ shape: rounded, label: "**EguiContextPointerPosition**<br/>缓存当前 Egui 指针坐标" }
   class n19 node_component
   n1 e0@-->|"运行条件"| n0
   class e0 edge_reference

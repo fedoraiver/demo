@@ -39,26 +39,14 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  subgraph layout_card_n0[" "]
-  n0@{ shape: rounded, label: "**dynamics::joints::prismatic::**<br/>**PrismaticJoint**<br/>将相对运动限制在滑动轴上。" }
+  n0@{ shape: rounded, label: "**PrismaticJoint**<br/>将相对运动限制在滑动轴上。" }
   class n0 node_component
-  end
-  style layout_card_n0 fill:none,stroke:none
-  subgraph layout_card_n1[" "]
-  n1@{ shape: rounded, label: "**avian3d::dynamics::solver::plugin::**<br/>**joint​_​damping#lt;avian3d::dynamics::**<br/>**joints::prismatic::PrismaticJoint#gt;**<br/>衰减关节两端刚体的相对速度。" }
+  n1@{ shape: rounded, label: "**joint​_​damping**<br/>衰减关节两端刚体的相对速度。" }
   class n1 node_system
-  end
-  style layout_card_n1 fill:none,stroke:none
-  subgraph layout_card_n2[" "]
-  n2@{ shape: rounded, label: "**avian3d::dynamics::joints::joint​_​**<br/>**graph::plugin::on​_​change​_​joint​_​**<br/>**entities#lt;avian3d::dynamics::joints::**<br/>**prismatic::PrismaticJoint#gt;**<br/>在关节换端后重接刚体连接图。" }
+  n2@{ shape: rounded, label: "**on​_​change​_​joint​_​entities**<br/>在关节换端后重接刚体连接图。" }
   class n2 node_system
-  end
-  style layout_card_n2 fill:none,stroke:none
-  subgraph layout_card_n3[" "]
-  n3@{ shape: rounded, label: "**avian3d::dynamics::joints::**<br/>**prismatic::update​_​local​_​frames**<br/>将滑动关节参考框架换算到局部空间。" }
+  n3@{ shape: rounded, label: "**update​_​local​_​frames**<br/>将滑动关节参考框架换算到局部空间。" }
   class n3 node_system
-  end
-  style layout_card_n3 fill:none,stroke:none
   n0 e0@--> n1
   class e0 edge_read
   n0 e1@-->|"存在性约束"| n2
@@ -72,7 +60,7 @@ flowchart LR
   n3 e5@---|"存在性约束"| n0
   class e5 edge_reference
   e0@{ curve: basis }
-  e1@{ curve: basis }
+  e1@{ curve: bumpX }
   e2@{ curve: basis }
   e3@{ curve: basis }
   e4@{ curve: basis }

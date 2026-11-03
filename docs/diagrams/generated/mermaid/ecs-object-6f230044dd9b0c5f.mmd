@@ -39,7 +39,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: notch-rect, label: "**Local · live​_​entities**<br/>记录本帧仍活动的二维相机渲染阶段。" }
   class n0 node_local
-  n1@{ shape: rounded, label: "**bevy​_​core​_​pipeline::core​_​2d::**<br/>**extract​_​core​_​2d​_​camera​_​phases**<br/>为活动二维相机准备渲染阶段并清理失效视<br/>图。" }
+  n1@{ shape: rounded, label: "**extract​_​core​_​2d​_​camera​_​phases**<br/>为活动二维相机准备渲染阶段并清理失效视<br/>图。" }
   class n1 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

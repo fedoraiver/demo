@@ -42,24 +42,24 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: hex, label: "**bevy​_​ui​_​widgets::menu::menu​_​item​_​on​_​**<br/>**pointer​_​click**<br/>激活点击菜单项并请求关闭菜单。" }
+  n0@{ shape: hex, label: "**menu​_​item​_​on​_​pointer​_​click**<br/>激活点击菜单项并请求关闭菜单。" }
   class n0 node_observer
-  n1@{ shape: stadium, label: "**menu::MenuEvent**<br/>通过菜单层级传递开关和焦点操作。" }
+  n1@{ shape: stadium, label: "**MenuEvent**<br/>通过菜单层级传递开关和焦点操作。" }
   class n1 node_event
-  n2@{ shape: rounded, label: "**bevy​_​ui::InteractionDisabled**<br/>来自crate:bevy​_​ui ↗：标记禁止交互的<br/>UI 控件。" }
+  n2@{ shape: rounded, label: "**InteractionDisabled**<br/>来自crate:bevy​_​ui ↗：标记禁止交互的<br/>UI 控件。" }
   class n2 node_component
   class n2 external_node
   n3@{ shape: stadium, label: "**Activate**<br/>通知按钮或菜单项被激活。" }
   class n3 node_event
-  n4@{ shape: rounded, label: "**bevy​_​ui::Pressed**<br/>来自crate:bevy​_​ui ↗：标记按钮或控件当<br/>前处于按住状态。" }
+  n4@{ shape: rounded, label: "**Pressed**<br/>来自crate:bevy​_​ui ↗：标记按钮或控件当<br/>前处于按住状态。" }
   class n4 node_component
   class n4 external_node
-  n5@{ shape: stadium, label: "**events::PointerClick**<br/>来自crate:bevy​_​picking ↗：通知同一目<br/>标的成对按压和释放点击。" }
+  n5@{ shape: stadium, label: "**PointerClick**<br/>来自crate:bevy​_​picking ↗：通知同一目<br/>标的成对按压和释放点击。" }
   class n5 node_event
   class n5 external_node
-  n6@{ shape: rounded, label: "**menu::MenuItem**<br/>标识可交互的菜单项。" }
+  n6@{ shape: rounded, label: "**MenuItem**<br/>标识可交互的菜单项。" }
   class n6 node_component
-  n7@{ shape: fr-rect, label: "**menu::MenuPlugin**<br/>处理菜单焦点与菜单项交互。" }
+  n7@{ shape: fr-rect, label: "**MenuPlugin**<br/>处理菜单焦点与菜单项交互。" }
   class n7 node_plugin
   n0 e0@-->|"触发事件"| n1
   class e0 edge_emit

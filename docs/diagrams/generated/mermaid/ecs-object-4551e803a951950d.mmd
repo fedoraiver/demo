@@ -38,23 +38,23 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​picking::pointer::**<br/>**PointerLocation**<br/>保存指针当前目标及该目标上的位置" }
+  n0@{ shape: rounded, label: "**PointerLocation**<br/>保存指针当前目标及该目标上的位置" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​ui::widget::viewport::viewport​_​**<br/>**picking**<br/>来自crate:bevy​_​ui ↗：把外部指针转换并<br/>转发到 UI 内嵌视口。" }
+  n1@{ shape: rounded, label: "**viewport​_​picking**<br/>来自crate:bevy​_​ui ↗：把外部指针转换并<br/>转发到 UI 内嵌视口。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​picking::window::update​_​window​_​**<br/>**hits**<br/>把所在窗口作为拾取的最底层命中。" }
+  n2@{ shape: rounded, label: "**update​_​window​_​hits**<br/>把所在窗口作为拾取的最底层命中。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​picking::events::pointer​_​events**<br/>根据悬停与按钮状态派发指针交互事件。" }
+  n3@{ shape: rounded, label: "**pointer​_​events**<br/>根据悬停与按钮状态派发指针交互事件。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**bevy​_​picking::pointer::**<br/>**PointerInput::receive**<br/>按输入消息更新拾取指针状态。" }
+  n4@{ shape: rounded, label: "**receive**<br/>按输入消息更新拾取指针状态。" }
   class n4 node_system
-  n5@{ shape: rounded, label: "**bevy​_​ui::picking​_​backend::ui​_​picking**<br/>来自crate:bevy​_​ui ↗：按 UI 堆叠与相机<br/>视口计算指针命中。" }
+  n5@{ shape: rounded, label: "**ui​_​picking**<br/>来自crate:bevy​_​ui ↗：按 UI 堆叠与相机<br/>视口计算指针命中。" }
   class n5 node_system
   class n5 external_node
-  n6@{ shape: rounded, label: "**bevy​_​picking::backend::ray::RayMap::**<br/>**repopulate**<br/>重建指针与相机组合的拾取射线。" }
+  n6@{ shape: rounded, label: "**repopulate**<br/>重建指针与相机组合的拾取射线。" }
   class n6 node_system
-  n7@{ shape: rounded, label: "**bevy​_​sprite::picking​_​backend::**<br/>**sprite​_​picking**<br/>来自crate:bevy​_​sprite ↗：按精灵图像和<br/>拾取配置计算指针命中。" }
+  n7@{ shape: rounded, label: "**sprite​_​picking**<br/>来自crate:bevy​_​sprite ↗：按精灵图像和<br/>拾取配置计算指针命中。" }
   class n7 node_system
   class n7 external_node
   n1 e0@-->|"赋值"| n0

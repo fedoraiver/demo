@@ -43,36 +43,36 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​core​_​pipeline::skybox::prepare​_​**<br/>**skybox​_​bind​_​groups**<br/>为有效天空盒图像建立视图绑定组。" }
+  n0@{ shape: rounded, label: "**prepare​_​skybox​_​bind​_​groups**<br/>为有效天空盒图像建立视图绑定组。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**bevy​_​render::render​_​asset::**<br/>**RenderAssets#lt;bevy​_​render::texture::**<br/>**GpuImage#gt;**<br/>来自crate:bevy​_​render ↗：按源资产身份<br/>保存 GPU 渲染表示。" }
+  n1@{ shape: cyl, label: "**RenderAssets#lt;GpuImage#gt;**<br/>来自crate:bevy​_​render ↗：按源资产身份<br/>保存 GPU 渲染表示。" }
   class n1 node_resource
   class n1 external_node
-  n2@{ shape: rounded, label: "**skybox::SkyboxBindGroup**<br/>绑定天空盒纹理与视图参数。" }
+  n2@{ shape: rounded, label: "**SkyboxBindGroup**<br/>绑定天空盒纹理与视图参数。" }
   class n2 node_component
   n3@{ shape: lin-rect, label: "**PrepareBindGroups**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
   class n3 node_system_set
   class n3 external_node
-  n4@{ shape: cyl, label: "**bevy​_​render::renderer::RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
+  n4@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
   class n4 node_resource
   class n4 external_node
-  n5@{ shape: cyl, label: "**bevy​_​render::render​_​resource::**<br/>**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
+  n5@{ shape: cyl, label: "**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
   class n5 node_resource
   class n5 external_node
-  n6@{ shape: rounded, label: "**probe::Skybox**<br/>来自crate:bevy​_​light ↗：为三维相机绘<br/>制立方体纹理天空盒。" }
+  n6@{ shape: rounded, label: "**Skybox**<br/>来自crate:bevy​_​light ↗：为三维相机绘<br/>制立方体纹理天空盒。" }
   class n6 node_component
   class n6 external_node
-  n7@{ shape: cyl, label: "**skybox::SkyboxPipeline**<br/>提供天空盒绘制的资源布局和着色器。" }
+  n7@{ shape: cyl, label: "**SkyboxPipeline**<br/>提供天空盒绘制的资源布局和着色器。" }
   class n7 node_resource
-  n8@{ shape: fr-rect, label: "**skybox::SkyboxPlugin**<br/>准备天空盒的渲染数据与管线。" }
+  n8@{ shape: fr-rect, label: "**SkyboxPlugin**<br/>准备天空盒的渲染数据与管线。" }
   class n8 node_plugin
-  n9@{ shape: rounded, label: "**bevy​_​render::extract​_​component::**<br/>**DynamicUniformIndex#lt;skybox::**<br/>**SkyboxUniforms#gt;**<br/>来自crate:bevy​_​render ↗：定位组件参数<br/>在共享 Uniform 缓冲中的位置。" }
+  n9@{ shape: rounded, label: "**DynamicUniformIndex#lt;SkyboxUniforms#gt;**<br/>来自crate:bevy​_​render ↗：定位组件参数<br/>在共享 Uniform 缓冲中的位置。" }
   class n9 node_component
   class n9 external_node
-  n10@{ shape: cyl, label: "**bevy​_​render::extract​_​component::**<br/>**ComponentUniforms#lt;skybox::**<br/>**SkyboxUniforms#gt;**<br/>来自crate:bevy​_​render ↗：汇集同类组件<br/>的动态 Uniform 数据。" }
+  n10@{ shape: cyl, label: "**ComponentUniforms#lt;SkyboxUniforms#gt;**<br/>来自crate:bevy​_​render ↗：汇集同类组件<br/>的动态 Uniform 数据。" }
   class n10 node_resource
   class n10 external_node
-  n11@{ shape: cyl, label: "**bevy​_​render::view::ViewUniforms**<br/>来自crate:bevy​_​render ↗：汇集全部视图<br/>的动态 Uniform 数据。" }
+  n11@{ shape: cyl, label: "**ViewUniforms**<br/>来自crate:bevy​_​render ↗：汇集全部视图<br/>的动态 Uniform 数据。" }
   class n11 node_resource
   class n11 external_node
   n1 e0@--> n0

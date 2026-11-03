@@ -38,11 +38,11 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**ssao::SsaoBindGroups**<br/>为视图保存 SSAO 各计算阶段的绑定组。" }
+  n0@{ shape: rounded, label: "**SsaoBindGroups**<br/>为视图保存 SSAO 各计算阶段的绑定组。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​pbr::ssao::ssao**<br/>依次计算深度预处理、环境遮蔽和空间去噪。" }
+  n1@{ shape: rounded, label: "**ssao**<br/>依次计算深度预处理、环境遮蔽和空间去噪。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​pbr::ssao::prepare​_​ssao​_​bind​_​**<br/>**groups**<br/>准备深度预处理、遮蔽与空间降噪的资源绑<br/>定。" }
+  n2@{ shape: rounded, label: "**prepare​_​ssao​_​bind​_​groups**<br/>准备深度预处理、遮蔽与空间降噪的资源绑<br/>定。" }
   class n2 node_system
   n0 e0@--> n1
   class e0 edge_read

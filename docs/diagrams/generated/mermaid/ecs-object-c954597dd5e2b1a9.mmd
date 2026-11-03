@@ -44,38 +44,38 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​core​_​pipeline::core​_​3d::**<br/>**prepare​_​core​_​3d​_​depth​_​textures**<br/>按共享目标准备三维深度纹理与清除方式。" }
+  n0@{ shape: rounded, label: "**prepare​_​core​_​3d​_​depth​_​textures**<br/>按共享目标准备三维深度纹理与清除方式。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**bevy​_​render::view::**<br/>**ViewDepthStencilTexture**<br/>来自crate:bevy​_​render ↗：提供视图绘制<br/>的深度模板附件。" }
+  n1@{ shape: rounded, label: "**ViewDepthStencilTexture**<br/>来自crate:bevy​_​render ↗：提供视图绘制<br/>的深度模板附件。" }
   class n1 node_component
   class n1 external_node
   n2@{ shape: lin-rect, label: "**PrepareResources**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
   class n2 node_system_set
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​core​_​pipeline::prepass::**<br/>**DepthPrepass**<br/>为三维相机生成独立的深度纹理。" }
+  n3@{ shape: rounded, label: "**DepthPrepass**<br/>为三维相机生成独立的深度纹理。" }
   class n3 node_component
-  n4@{ shape: rounded, label: "**bevy​_​pbr::volumetric​_​fog::render::**<br/>**prepare​_​view​_​depth​_​textures​_​for​_​**<br/>**volumetric​_​fog**<br/>来自crate:bevy​_​pbr ↗：允许体积雾着色<br/>器读取三维相机深度纹理。" }
+  n4@{ shape: rounded, label: "**prepare​_​view​_​depth​_​textures​_​for​_​**<br/>**volumetric​_​fog**<br/>来自crate:bevy​_​pbr ↗：允许体积雾着色<br/>器读取三维相机深度纹理。" }
   class n4 node_system
   class n4 external_node
-  n5@{ shape: rounded, label: "**components::Camera3d**<br/>来自crate:bevy​_​camera ↗：启用三维相机<br/>主渲染流程。" }
+  n5@{ shape: rounded, label: "**Camera3d**<br/>来自crate:bevy​_​camera ↗：启用三维相机<br/>主渲染流程。" }
   class n5 node_component
   class n5 external_node
-  n6@{ shape: rounded, label: "**bevy​_​render::camera::ExtractedCamera**<br/>来自crate:bevy​_​render ↗：保存渲染世界<br/>相机的目标和绘制配置。" }
+  n6@{ shape: rounded, label: "**ExtractedCamera**<br/>来自crate:bevy​_​render ↗：保存渲染世界<br/>相机的目标和绘制配置。" }
   class n6 node_component
   class n6 external_node
-  n7@{ shape: rounded, label: "**bevy​_​render::view::Msaa**<br/>来自crate:bevy​_​render ↗：选择视图的多<br/>重采样抗锯齿样本数。" }
+  n7@{ shape: rounded, label: "**Msaa**<br/>来自crate:bevy​_​render ↗：选择视图的多<br/>重采样抗锯齿样本数。" }
   class n7 node_component
   class n7 external_node
-  n8@{ shape: rounded, label: "**bevy​_​core​_​pipeline::mip​_​generation::**<br/>**experimental::depth::prepare​_​**<br/>**downsample​_​depth​_​view​_​bind​_​groups**<br/>将主视图或阴影深度绑定到降采样管线。" }
+  n8@{ shape: rounded, label: "**prepare​_​downsample​_​depth​_​view​_​bind​_​**<br/>**groups**<br/>将主视图或阴影深度绑定到降采样管线。" }
   class n8 node_system
-  n9@{ shape: fr-rect, label: "**core​_​3d::Core3dPlugin**<br/>建立三维相机的渲染流程。" }
+  n9@{ shape: fr-rect, label: "**Core3dPlugin**<br/>建立三维相机的渲染流程。" }
   class n9 node_plugin
-  n10@{ shape: cyl, label: "**bevy​_​render::renderer::RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
+  n10@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
   class n10 node_resource
   class n10 external_node
-  n11@{ shape: rounded, label: "**bevy​_​core​_​pipeline::mip​_​generation::**<br/>**experimental::depth::prepare​_​view​_​**<br/>**depth​_​pyramids**<br/>为遮挡剔除视图维护深度金字塔。" }
+  n11@{ shape: rounded, label: "**prepare​_​view​_​depth​_​pyramids**<br/>为遮挡剔除视图维护深度金字塔。" }
   class n11 node_system
-  n12@{ shape: cyl, label: "**bevy​_​render::texture::TextureCache**<br/>来自crate:bevy​_​render ↗：复用渲染中反<br/>复创建的临时纹理。" }
+  n12@{ shape: cyl, label: "**TextureCache**<br/>来自crate:bevy​_​render ↗：复用渲染中反<br/>复创建的临时纹理。" }
   class n12 node_resource
   class n12 external_node
   n0 e0@-->|"插入"| n1

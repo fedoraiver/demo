@@ -40,14 +40,14 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​render::globals::extract​_​frame​_​**<br/>**count**<br/>将主世界帧计数同步到渲染世界。" }
+  n0@{ shape: rounded, label: "**extract​_​frame​_​count**<br/>将主世界帧计数同步到渲染世界。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**extract​_​plugin::MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
+  n1@{ shape: cyl, label: "**MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
   class n1 node_resource
   class n1 external_node
-  n2@{ shape: fr-rect, label: "**globals::GlobalsPlugin**<br/>更新着色器全局时间与帧数。" }
+  n2@{ shape: fr-rect, label: "**GlobalsPlugin**<br/>更新着色器全局时间与帧数。" }
   class n2 node_plugin
-  n3@{ shape: cyl, label: "**frame​_​count::FrameCount**<br/>来自crate:bevy​_​diagnostic ↗：记录应<br/>用启动以来的帧计数" }
+  n3@{ shape: cyl, label: "**FrameCount**<br/>来自crate:bevy​_​diagnostic ↗：记录应<br/>用启动以来的帧计数" }
   class n3 node_resource
   class n3 external_node
   n1 e0@--> n0

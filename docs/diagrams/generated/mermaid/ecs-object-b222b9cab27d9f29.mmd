@@ -38,24 +38,24 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**bevy​_​ecs::message::**<br/>**Messages#lt;keyboard::KeyboardInput#gt;**<br/>保存最近两次轮换期间产生的指定类型消息" }
+  n0@{ shape: cyl, label: "**Messages#lt;KeyboardInput#gt;**<br/>保存最近两次轮换期间产生的指定类型消息" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​egui::input::write​_​keyboard​_​**<br/>**input​_​messages​_​system**<br/>来自crate:bevy​_​egui ↗：把键盘文本与按<br/>键转换为 Egui 输入。" }
+  n1@{ shape: rounded, label: "**write​_​keyboard​_​input​_​messages​_​system**<br/>来自crate:bevy​_​egui ↗：把键盘文本与按<br/>键转换为 Egui 输入。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​input::keyboard::keyboard​_​**<br/>**input​_​system**<br/>来自crate:bevy​_​input ↗：把键盘事件汇<br/>总为物理和逻辑按键状态。" }
+  n2@{ shape: rounded, label: "**keyboard​_​input​_​system**<br/>来自crate:bevy​_​input ↗：把键盘事件汇<br/>总为物理和逻辑按键状态。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​egui::input::write​_​modifiers​_​**<br/>**keys​_​state​_​system**<br/>来自crate:bevy​_​egui ↗：更新 Egui 修<br/>饰键并清除失焦残留。" }
+  n3@{ shape: rounded, label: "**write​_​modifiers​_​keys​_​state​_​system**<br/>来自crate:bevy​_​egui ↗：更新 Egui 修<br/>饰键并清除失焦残留。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**bevy​_​input​_​focus::dispatch​_​focused​_​**<br/>**input#lt;bevy​_​input::keyboard::**<br/>**KeyboardInput#gt;**<br/>来自crate:bevy​_​input​_​focus ↗：向有效<br/>焦点或主窗口派发输入。" }
+  n4@{ shape: rounded, label: "**dispatch​_​focused​_​input**<br/>来自crate:bevy​_​input​_​focus ↗：向有效<br/>焦点或主窗口派发输入。" }
   class n4 node_system
   class n4 external_node
-  n5@{ shape: rounded, label: "**bevy​_​winit::system::check​_​keyboard​_​**<br/>**focus​_​lost**<br/>来自crate:bevy​_​winit ↗：处理跨窗口键<br/>盘焦点丢失并补发释放。" }
+  n5@{ shape: rounded, label: "**check​_​keyboard​_​focus​_​lost**<br/>来自crate:bevy​_​winit ↗：处理跨窗口键<br/>盘焦点丢失并补发释放。" }
   class n5 node_system
   class n5 external_node
-  n6@{ shape: rounded, label: "**bevy​_​egui::input::absorb​_​bevy​_​input​_​**<br/>**system**<br/>来自crate:bevy​_​egui ↗：在 Egui 使用<br/>输入时吸收对应 Bevy 输入。" }
+  n6@{ shape: rounded, label: "**absorb​_​bevy​_​input​_​system**<br/>来自crate:bevy​_​egui ↗：在 Egui 使用<br/>输入时吸收对应 Bevy 输入。" }
   class n6 node_system
   class n6 external_node
   n0 e0@--> n1

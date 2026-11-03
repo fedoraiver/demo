@@ -43,32 +43,32 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**avian3d::physics​_​transform::**<br/>**position​_​to​_​transform**<br/>把物理世界位姿转换为显示用局部变换。" }
+  n0@{ shape: rounded, label: "**position​_​to​_​transform**<br/>把物理世界位姿转换为显示用局部变换。" }
   class n0 node_system
   n1@{ shape: lin-rect, label: "**PositionToTransform**<br/>组织实体变换与物理姿态同步。" }
   class n1 node_system_set
-  n2@{ shape: rounded, label: "**bevy​_​ecs::hierarchy::Children**<br/>来自crate:bevy​_​ecs ↗：保存以<br/>ChildOf 指向当前父实体的子实体集合" }
+  n2@{ shape: rounded, label: "**Children**<br/>来自crate:bevy​_​ecs ↗：保存以<br/>ChildOf 指向当前父实体的子实体集合" }
   class n2 node_component
   class n2 external_node
-  n3@{ shape: rounded, label: "**#lt;avian3d::physics​_​transform::**<br/>**PhysicsTransformPlugin as bevy​_​app::**<br/>**plugin::Plugin#gt;::build::{{closure}}**<br/>判断是否把物理姿态写回实体变换。" }
+  n3@{ shape: rounded, label: "**build::{{closure}}**<br/>判断是否把物理姿态写回实体变换。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**bevy​_​ecs::hierarchy::ChildOf**<br/>来自crate:bevy​_​ecs ↗：保存当前实体的<br/>父实体身份" }
+  n4@{ shape: rounded, label: "**ChildOf**<br/>来自crate:bevy​_​ecs ↗：保存当前实体的<br/>父实体身份" }
   class n4 node_component
   class n4 external_node
-  n5@{ shape: rounded, label: "**physics​_​transform::transform::**<br/>**Rotation**<br/>保存刚体或碰撞体的世界旋转。" }
+  n5@{ shape: rounded, label: "**Rotation**<br/>保存刚体或碰撞体的世界旋转。" }
   class n5 node_component
-  n6@{ shape: rounded, label: "**physics​_​transform::**<br/>**ApplyPosToTransform**<br/>请求将物理姿态同步到实体变换。" }
+  n6@{ shape: rounded, label: "**ApplyPosToTransform**<br/>请求将物理姿态同步到实体变换。" }
   class n6 node_component
-  n7@{ shape: rounded, label: "**physics​_​transform::transform::**<br/>**Position**<br/>保存刚体或碰撞体的世界位置。" }
+  n7@{ shape: rounded, label: "**Position**<br/>保存刚体或碰撞体的世界位置。" }
   class n7 node_component
-  n8@{ shape: fr-rect, label: "**physics​_​transform::**<br/>**PhysicsTransformPlugin**<br/>同步物理姿态与实体变换。" }
+  n8@{ shape: fr-rect, label: "**PhysicsTransformPlugin**<br/>同步物理姿态与实体变换。" }
   class n8 node_plugin
-  n9@{ shape: rounded, label: "**dynamics::rigid​_​body::RigidBody**<br/>选择动态、静态或运动学刚体行为。" }
+  n9@{ shape: rounded, label: "**RigidBody**<br/>选择动态、静态或运动学刚体行为。" }
   class n9 node_component
-  n10@{ shape: rounded, label: "**components::transform::Transform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>相对父实体的平移、旋转和缩放" }
+  n10@{ shape: rounded, label: "**Transform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>相对父实体的平移、旋转和缩放" }
   class n10 node_component
   class n10 external_node
-  n11@{ shape: rounded, label: "**components::global​_​transform::**<br/>**GlobalTransform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>合并祖先变换后的世界空间仿射变换" }
+  n11@{ shape: rounded, label: "**GlobalTransform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>合并祖先变换后的世界空间仿射变换" }
   class n11 node_component
   class n11 external_node
   n1 e0@-->|"集合成员"| n0

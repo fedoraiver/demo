@@ -38,30 +38,30 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**bevy​_​asset::Assets#lt;AnimationClip#gt;**<br/>按资产身份存储对象并暂存变化消息。" }
+  n0@{ shape: cyl, label: "**Assets#lt;AnimationClip#gt;**<br/>按资产身份存储对象并暂存变化消息。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​asset::assets::Assets#lt;bevy​_​**<br/>**animation::AnimationClip#gt;::track​_​**<br/>**assets**<br/>同步资产存活状态并处理句柄释放。" }
+  n1@{ shape: rounded, label: "**track​_​assets**<br/>同步资产存活状态并处理句柄释放。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​animation::advance​_​animations**<br/>来自crate:bevy​_​animation ↗：推进动画<br/>播放器中活动动画的播放时间。" }
+  n2@{ shape: rounded, label: "**advance​_​animations**<br/>来自crate:bevy​_​animation ↗：推进动画<br/>播放器中活动动画的播放时间。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​asset::assets::Assets#lt;bevy​_​**<br/>**animation::AnimationClip#gt;::asset​_​**<br/>**events​_​condition**<br/>判断是否有待发布的资产变化。" }
+  n3@{ shape: rounded, label: "**asset​_​events​_​condition**<br/>判断是否有待发布的资产变化。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**demo::ui::backdrop::play​_​courier​_​**<br/>**animation**<br/>来自ui ↗：仅遍历已展开的展示角色子树，<br/>命名资产尚未就绪时保留 pending 供下一帧<br/>重试。" }
+  n4@{ shape: rounded, label: "**play​_​courier​_​animation**<br/>来自ui ↗：仅遍历已展开的展示角色子树，<br/>命名资产尚未就绪时保留 pending 供下一帧<br/>重试。" }
   class n4 node_system
   class n4 external_node
-  n5@{ shape: rounded, label: "**bevy​_​animation::animate​_​targets**<br/>来自crate:bevy​_​animation ↗：评估动画<br/>图并把结果应用到动画目标。" }
+  n5@{ shape: rounded, label: "**animate​_​targets**<br/>来自crate:bevy​_​animation ↗：评估动画<br/>图并把结果应用到动画目标。" }
   class n5 node_system
   class n5 external_node
-  n6@{ shape: rounded, label: "**bevy​_​animation::trigger​_​untargeted​_​**<br/>**animation​_​events**<br/>来自crate:bevy​_​animation ↗：派发动画<br/>片段的根目标事件。" }
+  n6@{ shape: rounded, label: "**trigger​_​untargeted​_​animation​_​events**<br/>来自crate:bevy​_​animation ↗：派发动画<br/>片段的根目标事件。" }
   class n6 node_system
   class n6 external_node
-  n7@{ shape: rounded, label: "**bevy​_​animation::graph::thread​_​**<br/>**animation​_​graphs**<br/>来自crate:bevy​_​animation ↗：维护动画<br/>图的快速求值结构。" }
+  n7@{ shape: rounded, label: "**thread​_​animation​_​graphs**<br/>来自crate:bevy​_​animation ↗：维护动画<br/>图的快速求值结构。" }
   class n7 node_system
   class n7 external_node
-  n8@{ shape: rounded, label: "**bevy​_​asset::assets::Assets#lt;bevy​_​**<br/>**animation::AnimationClip#gt;::asset​_​**<br/>**events**<br/>发布累计的资产变化消息。" }
+  n8@{ shape: rounded, label: "**asset​_​events**<br/>发布累计的资产变化消息。" }
   class n8 node_system
-  n9@{ shape: rounded, label: "**demo::character​_​animation::binding::**<br/>**initialize​_​ready​_​couriers**<br/>来自character​_​animation ↗：场景就绪<br/>后只遍历该视觉根的子树，避免把 NPC 或其<br/>他模型的播放器接到主角上。" }
+  n9@{ shape: rounded, label: "**initialize​_​ready​_​couriers**<br/>来自character​_​animation ↗：场景就绪<br/>后只遍历该视觉根的子树，避免把 NPC 或其<br/>他模型的播放器接到主角上。" }
   class n9 node_system
   class n9 external_node
   n1 e0@-->|"可变访问"| n0

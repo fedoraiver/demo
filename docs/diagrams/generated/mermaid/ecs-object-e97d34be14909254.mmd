@@ -38,22 +38,22 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**bevy​_​render::render​_​phase::**<br/>**ViewBinnedRenderPhases#lt;core​_​2d::**<br/>**AlphaMask2d#gt;**<br/>汇集各视图按分桶组织的绘制指令。" }
+  n0@{ shape: cyl, label: "**ViewBinnedRenderPhases#lt;AlphaMask2d#gt;**<br/>汇集各视图按分桶组织的绘制指令。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​core​_​pipeline::core​_​2d::**<br/>**extract​_​core​_​2d​_​camera​_​phases**<br/>来自crate:bevy​_​core​_​pipeline ↗：为活<br/>动二维相机准备渲染阶段并清理失效视图。" }
+  n1@{ shape: rounded, label: "**extract​_​core​_​2d​_​camera​_​phases**<br/>来自crate:bevy​_​core​_​pipeline ↗：为活<br/>动二维相机准备渲染阶段并清理失效视图。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​render::batching::no​_​gpu​_​**<br/>**preprocessing::batch​_​and​_​prepare​_​**<br/>**binned​_​render​_​phase#lt;bevy​_​core​_​**<br/>**pipeline::core​_​2d::AlphaMask2d,**<br/>**bevy​_​sprite​_​render::mesh2d::mesh::**<br/>**Mesh2dPipeline#gt;**<br/>在 CPU 路径上准备分桶阶段的绘制批次。" }
+  n2@{ shape: rounded, label: "**batch​_​and​_​prepare​_​binned​_​render​_​**<br/>**phase**<br/>在 CPU 路径上准备分桶阶段的绘制批次。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::**<br/>**material::queue​_​material2d​_​meshes**<br/>来自crate:bevy​_​sprite​_​render ↗：按透<br/>明模式更新二维网格渲染批次。" }
+  n3@{ shape: rounded, label: "**queue​_​material2d​_​meshes**<br/>来自crate:bevy​_​sprite​_​render ↗：按透<br/>明模式更新二维网格渲染批次。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**bevy​_​render::batching::sort​_​binned​_​**<br/>**render​_​phase#lt;bevy​_​core​_​pipeline::**<br/>**core​_​2d::AlphaMask2d#gt;**<br/>按分桶键对各视图阶段的多绘制、可批处理、<br/>不可批处理网格及非网格项分别排序，使后续<br/>批次准备使用确定的键顺序。" }
+  n4@{ shape: rounded, label: "**sort​_​binned​_​render​_​phase**<br/>按分桶键对各视图阶段的多绘制、可批处理、<br/>不可批处理网格及非网格项分别排序，使后续<br/>批次准备使用确定的键顺序。" }
   class n4 node_system
-  n5@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::**<br/>**material::specialize​_​material2d​_​**<br/>**meshes**<br/>来自crate:bevy​_​sprite​_​render ↗：为可<br/>见二维网格重建失效的材质专用化。" }
+  n5@{ shape: rounded, label: "**specialize​_​material2d​_​meshes**<br/>来自crate:bevy​_​sprite​_​render ↗：为可<br/>见二维网格重建失效的材质专用化。" }
   class n5 node_system
   class n5 external_node
-  n6@{ shape: rounded, label: "**bevy​_​core​_​pipeline::core​_​2d::main​_​**<br/>**opaque​_​pass​_​2d​_​node::main​_​opaque​_​**<br/>**pass​_​2d**<br/>来自crate:bevy​_​core​_​pipeline ↗：绘制<br/>二维不透明和 AlphaMask 阶段。" }
+  n6@{ shape: rounded, label: "**main​_​opaque​_​pass​_​2d**<br/>来自crate:bevy​_​core​_​pipeline ↗：绘制<br/>二维不透明和 AlphaMask 阶段。" }
   class n6 node_system
   class n6 external_node
   n1 e0@-->|"可变访问"| n0

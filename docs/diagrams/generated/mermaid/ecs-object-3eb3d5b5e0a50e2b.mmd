@@ -37,9 +37,9 @@ flowchart LR
   classDef node_plugin fill:#F1F3F6,stroke:#4A6389,stroke-width:2.2px,color:#1F3340
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​picking::input::spawn​_​mouse​_​**<br/>**pointer**<br/>创建携带 PointerId::Mouse 的默认鼠标指<br/>针实体，让后续输入接收与拾取流程能够关联<br/>鼠标状态。" }
+  n0@{ shape: rounded, label: "**spawn​_​mouse​_​pointer**<br/>创建携带 PointerId::Mouse 的默认鼠标指<br/>针实体，让后续输入接收与拾取流程能够关联<br/>鼠标状态。" }
   class n0 node_system
-  n1@{ shape: fr-rect, label: "**input::PointerInputPlugin**<br/>转换鼠标和触摸的拾取输入。" }
+  n1@{ shape: fr-rect, label: "**PointerInputPlugin**<br/>转换鼠标和触摸的拾取输入。" }
   class n1 node_plugin
   n1 e0@-->|"调用"| n0
   class e0 edge_registration

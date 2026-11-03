@@ -44,29 +44,29 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​anti​_​alias::fxaa::prepare​_​fxaa​_​**<br/>**pipelines**<br/>按相机边缘阈值与目标格式准备 FXAA 管<br/>线。" }
+  n0@{ shape: rounded, label: "**prepare​_​fxaa​_​pipelines**<br/>按相机边缘阈值与目标格式准备 FXAA 管<br/>线。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**bevy​_​render::camera::ExtractedCamera**<br/>来自crate:bevy​_​render ↗：保存渲染世界<br/>相机的目标和绘制配置。" }
+  n1@{ shape: rounded, label: "**ExtractedCamera**<br/>来自crate:bevy​_​render ↗：保存渲染世界<br/>相机的目标和绘制配置。" }
   class n1 node_component
   class n1 external_node
-  n2@{ shape: rounded, label: "**fxaa::Fxaa**<br/>配置相机的快速近似抗锯齿。" }
+  n2@{ shape: rounded, label: "**Fxaa**<br/>配置相机的快速近似抗锯齿。" }
   class n2 node_component
-  n3@{ shape: fr-rect, label: "**fxaa::FxaaPlugin**<br/>提供快速近似抗锯齿。" }
+  n3@{ shape: fr-rect, label: "**FxaaPlugin**<br/>提供快速近似抗锯齿。" }
   class n3 node_plugin
   n4@{ shape: lin-rect, label: "**Prepare**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
   class n4 node_system_set
   class n4 external_node
-  n5@{ shape: rounded, label: "**fxaa::CameraFxaaPipeline**<br/>保存相机的 FXAA 管线标识。" }
+  n5@{ shape: rounded, label: "**CameraFxaaPipeline**<br/>保存相机的 FXAA 管线标识。" }
   class n5 node_component
-  n6@{ shape: rounded, label: "**bevy​_​render::view::ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
+  n6@{ shape: rounded, label: "**ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
   class n6 node_component
   class n6 external_node
-  n7@{ shape: cyl, label: "**fxaa::FxaaPipeline**<br/>提供 FXAA 的着色器和纹理绑定布局。" }
+  n7@{ shape: cyl, label: "**FxaaPipeline**<br/>提供 FXAA 的着色器和纹理绑定布局。" }
   class n7 node_resource
-  n8@{ shape: cyl, label: "**bevy​_​render::render​_​resource::**<br/>**SpecializedRenderPipelines#lt;fxaa::**<br/>**FxaaPipeline#gt;**<br/>来自crate:bevy​_​render ↗：按配置键缓存<br/>渲染管线变体。" }
+  n8@{ shape: cyl, label: "**SpecializedRenderPipelines#lt;FxaaPipel**<br/>**ine#gt;**<br/>来自crate:bevy​_​render ↗：按配置键缓存<br/>渲染管线变体。" }
   class n8 node_resource
   class n8 external_node
-  n9@{ shape: cyl, label: "**bevy​_​render::render​_​resource::**<br/>**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
+  n9@{ shape: cyl, label: "**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
   class n9 node_resource
   class n9 external_node
   n1 e0@-->|"存在性约束"| n0

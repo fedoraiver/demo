@@ -1,5 +1,6 @@
 // 结构化模型只保存原始 DOT 的有效属性与成员关系；主题和筛选均作用于副本。
 import { SCHEDULE_THEME } from './schedule-theme.mjs';
+import { architectureDisplayName, shortArchitecturePaths } from './architecture-labels.mjs';
 
 export const SCHEDULE_MODEL_VERSION = 1;
 const requireCondition = (condition, message) => { if (!condition) throw new Error(message); };
@@ -180,21 +181,32 @@ function scheduleLabelLines(node) {
 export const scheduleLabelLongestLine = node => Math.max(...scheduleLabelLines(node).map(line => line.length));
 
 function clusterLabel(group, theme) {
-  const label = { name: group.name, attributes: { label: group.attributes.label || '' } };
+  const label = presentationLabel({ ...group, attributes: { ...group.attributes, label: group.attributes.label || '' } }, 'SystemSet');
   const padding = Math.ceil(theme.clusterLabelMargin + scheduleLabelLongestLine(label) * theme.fontSize * theme.fontMetricMarginPerCharacter);
   const escaped = scheduleLabelLines(label).map(line => line.replace(/[&<>"]/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[char])).join('<BR/>');
   // cluster.margin 不撑宽由标题决定的最小边界；透明侧单元格只在布局前增加水平余量，原模型文字不变。
   return { html: '<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0" CELLPADDING="0" BGCOLOR="' + theme.systemSet.fill + '"><TR><TD WIDTH="' + padding + '"></TD><TD CELLPADDING="' + theme.clusterLabelPadding + '">' + escaped + '</TD><TD WIDTH="' + padding + '"></TD></TR></TABLE>' };
 }
 
+function presentationLabel(node, kind) {
+  if (node.attributes.label === '') return node;
+  const original = scheduleLabelLines(node);
+  const lines = kind === 'System' && node.attributes.tooltip ? [node.attributes.tooltip, ...original.slice(1)] : original;
+  const label = lines.map((line, index) => (index ? shortArchitecturePaths(line) : architectureDisplayName(line, { kind })).replace(/\\/g, '\\\\')).join('\n');
+  return { ...node, attributes: { ...node.attributes, label } };
+}
+
 export function scheduleGraphInput(model, theme = null) {
   const { nodes, groups, parents } = validateScheduleGraph(model);
   const common = theme ? { fontname: theme.fontFamily, fontsize: String(theme.fontSize), fontcolor: theme.textColor } : {};
-  const nodeInput = node => ({ name: node.name, attributes: { ...node.attributes, ...(!theme || invisible(node) ? {} : {
-    ...common, shape: 'box', style: 'rounded,filled', fillcolor: theme.system.fill, color: theme.system.stroke, penwidth: String(theme.system.width),
-    // Viz 的共享字体回退到 Times 度量；布局前预留保守字宽，避免输出字体替换后文字越框。
-    margin: (theme.nodeMargin + scheduleLabelLongestLine(node) * theme.fontSize * theme.fontMetricMarginPerCharacter) / 72 + ',0.055556',
-  }) } });
+  const nodeInput = node => {
+    const presented = !theme || invisible(node) ? node : presentationLabel(node, scheduleNodeKind(node) === 'system' ? 'System' : 'SystemSet');
+    return { name: node.name, attributes: { ...presented.attributes, ...(!theme || invisible(node) ? {} : {
+      ...common, shape: 'box', style: 'rounded,filled', fillcolor: theme.system.fill, color: theme.system.stroke, penwidth: String(theme.system.width),
+      // Viz 的共享字体回退到 Times 度量；布局前预留保守字宽，避免输出字体替换后文字越框。
+      margin: (theme.nodeMargin + scheduleLabelLongestLine(presented) * theme.fontSize * theme.fontMetricMarginPerCharacter) / 72 + ',0.055556',
+    }) } };
+  };
   const subgraphInput = group => ({
     name: group.name, graphAttributes: { ...group.attributes, ...(!theme ? {} : {
       ...common, style: 'rounded,filled', fillcolor: theme.systemSet.fill, color: theme.systemSet.stroke, penwidth: String(theme.systemSet.width),

@@ -38,13 +38,13 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**gizmos::GizmoStorage#lt;config::**<br/>**DefaultGizmoConfigGroup, bevy​_​time::**<br/>**Fixed#gt;**<br/>按配置组和清理上下文存储调试图元。" }
+  n0@{ shape: cyl, label: "**GizmoStorage#lt;DefaultGizmoConfigGroup**<br/>**, Fixed#gt;**<br/>按配置组和清理上下文存储调试图元。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​gizmos::propagate​_​gizmos#lt;bevy​_​**<br/>**gizmos::config::**<br/>**DefaultGizmoConfigGroup, bevy​_​time::**<br/>**fixed::Fixed#gt;**<br/>汇入指定上下文保留的 Gizmo 图元。" }
+  n1@{ shape: rounded, label: "**propagate​_​gizmos**<br/>汇入指定上下文保留的 Gizmo 图元。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​gizmos::collect​_​requested​_​**<br/>**gizmos#lt;bevy​_​gizmos::config::**<br/>**DefaultGizmoConfigGroup, bevy​_​time::**<br/>**fixed::Fixed#gt;**<br/>把即时 Gizmo 请求转存到指定清理上下文。" }
+  n2@{ shape: rounded, label: "**collect​_​requested​_​gizmos**<br/>把即时 Gizmo 请求转存到指定清理上下文。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​gizmos::clear​_​gizmo​_​**<br/>**context#lt;bevy​_​gizmos::config::**<br/>**DefaultGizmoConfigGroup, bevy​_​time::**<br/>**fixed::Fixed#gt;**<br/>清空指定 Gizmo 配置组及清理上下文的存<br/>储，丢弃该上下文上一轮保存的线段和颜色数<br/>据。" }
+  n3@{ shape: rounded, label: "**clear​_​gizmo​_​context**<br/>清空指定 Gizmo 配置组及清理上下文的存<br/>储，丢弃该上下文上一轮保存的线段和颜色数<br/>据。" }
   class n3 node_system
   n0 e0@--> n1
   class e0 edge_read

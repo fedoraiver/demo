@@ -41,31 +41,61 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​egui::render::systems::prepare​_​**<br/>**egui​_​render​_​target​_​data​_​system**<br/>准备 Egui 顶点索引和裁剪绘制命令。" }
+  subgraph layout_card_n0[" "]
+  n0@{ shape: rounded, label: "**prepare​_​egui​_​render​_​target​_​data​_​**<br/>**system**<br/>准备 Egui 顶点索引和裁剪绘制命令。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**render::EguiViewTarget**<br/>在 Egui 渲染视图上保存对应的主目标视图<br/>实体" }
+  end
+  style layout_card_n0 fill:none,stroke:none
+  subgraph layout_card_n1[" "]
+  n1@{ shape: rounded, label: "**EguiViewTarget**<br/>在 Egui 渲染视图上保存对应的主目标视图<br/>实体" }
   class n1 node_component
-  n2@{ shape: cyl, label: "**render::systems::EguiRenderData**<br/>按主世界视图缓存 Egui 几何与绘制状态。" }
+  end
+  style layout_card_n1 fill:none,stroke:none
+  subgraph layout_card_n2[" "]
+  n2@{ shape: cyl, label: "**EguiRenderData**<br/>按主世界视图缓存 Egui 几何与绘制状态。" }
   class n2 node_resource
+  end
+  style layout_card_n2 fill:none,stroke:none
+  subgraph layout_card_n3[" "]
   n3@{ shape: lin-rect, label: "**Prepare**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
   class n3 node_system_set
   class n3 external_node
-  n4@{ shape: rounded, label: "**bevy​_​render::view::ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
+  end
+  style layout_card_n3 fill:none,stroke:none
+  subgraph layout_card_n4[" "]
+  n4@{ shape: rounded, label: "**ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
   class n4 node_component
   class n4 external_node
-  n5@{ shape: rounded, label: "**bevy​_​render::camera::ExtractedCamera**<br/>来自crate:bevy​_​render ↗：保存渲染世界<br/>相机的目标和绘制配置。" }
+  end
+  style layout_card_n4 fill:none,stroke:none
+  subgraph layout_card_n5[" "]
+  n5@{ shape: rounded, label: "**ExtractedCamera**<br/>来自crate:bevy​_​render ↗：保存渲染世界<br/>相机的目标和绘制配置。" }
   class n5 node_component
   class n5 external_node
-  n6@{ shape: cyl, label: "**bevy​_​render::renderer::RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
+  end
+  style layout_card_n5 fill:none,stroke:none
+  subgraph layout_card_n6[" "]
+  n6@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
   class n6 node_resource
   class n6 external_node
+  end
+  style layout_card_n6 fill:none,stroke:none
+  subgraph layout_card_n7[" "]
   n7@{ shape: rounded, label: "**EguiPixelsPerPoint**<br/>在渲染世界保存 Egui 当前每逻辑点对应的<br/>物理像素数" }
   class n7 node_component
-  n8@{ shape: cyl, label: "**bevy​_​render::renderer::RenderQueue**<br/>来自crate:bevy​_​render ↗：将资源写入和<br/>命令异步提交给 GPU。" }
+  end
+  style layout_card_n7 fill:none,stroke:none
+  subgraph layout_card_n8[" "]
+  n8@{ shape: cyl, label: "**RenderQueue**<br/>来自crate:bevy​_​render ↗：将资源写入和<br/>命令异步提交给 GPU。" }
   class n8 node_resource
   class n8 external_node
+  end
+  style layout_card_n8 fill:none,stroke:none
+  subgraph layout_card_n9[" "]
   n9@{ shape: rounded, label: "**EguiRenderOutput**<br/>保存 Egui 绘制图元和纹理增量" }
   class n9 node_component
+  end
+  style layout_card_n9 fill:none,stroke:none
   n1 e0@--> n0
   class e0 edge_read
   n0 e1@-->|"可变访问"| n2

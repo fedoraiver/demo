@@ -38,45 +38,45 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**bevy::bevy​_​ecs::message::**<br/>**Messages#lt;bevy::bevy​_​state::state::**<br/>**StateTransitionEvent#lt;game​_​flow::**<br/>**AppState#gt;#gt;**<br/>保存最近两次轮换期间产生的指定类型消息" }
+  n0@{ shape: cyl, label: "**Messages#lt;StateTransitionEvent#lt;AppSta**<br/>**te#gt;#gt;**<br/>保存最近两次轮换期间产生的指定类型消息" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**demo::ui::lifecycle::hide​_​menu**<br/>来自ui ↗：隐藏菜单并清除提示。" }
+  n1@{ shape: rounded, label: "**hide​_​menu**<br/>来自ui ↗：隐藏菜单并清除提示。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**demo::ui::lifecycle::show​_​pause​_​menu**<br/>来自ui ↗：打开暂停菜单并重置焦点。" }
+  n2@{ shape: rounded, label: "**show​_​pause​_​menu**<br/>来自ui ↗：打开暂停菜单并重置焦点。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​state::state​_​scoped::enable​_​**<br/>**entities​_​when​_​state#lt;demo::game​_​**<br/>**flow::AppState#gt;**<br/>来自crate:bevy​_​state ↗：按状态转换谓<br/>词重新启用实体子树。" }
+  n3@{ shape: rounded, label: "**enable​_​entities​_​when​_​state**<br/>来自crate:bevy​_​state ↗：按状态转换谓<br/>词重新启用实体子树。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**demo::ui::lifecycle::show​_​main​_​menu**<br/>来自ui ↗：打开主菜单并重置页面、返回来<br/>源与焦点。" }
+  n4@{ shape: rounded, label: "**show​_​main​_​menu**<br/>来自ui ↗：打开主菜单并重置页面、返回来<br/>源与焦点。" }
   class n4 node_system
   class n4 external_node
-  n5@{ shape: rounded, label: "**bevy​_​state::state​_​scoped::disable​_​**<br/>**entities​_​on​_​enter​_​state#lt;demo::game​_​**<br/>**flow::AppState#gt;**<br/>来自crate:bevy​_​state ↗：进入指定状态<br/>时禁用实体子树。" }
+  n5@{ shape: rounded, label: "**disable​_​entities​_​on​_​enter​_​state**<br/>来自crate:bevy​_​state ↗：进入指定状态<br/>时禁用实体子树。" }
   class n5 node_system
   class n5 external_node
-  n6@{ shape: rounded, label: "**bevy​_​state::state​_​scoped::despawn​_​**<br/>**entities​_​when​_​state#lt;demo::game​_​**<br/>**flow::AppState#gt;**<br/>来自crate:bevy​_​state ↗：按状态转换谓<br/>词销毁匹配实体。" }
+  n6@{ shape: rounded, label: "**despawn​_​entities​_​when​_​state**<br/>来自crate:bevy​_​state ↗：按状态转换谓<br/>词销毁匹配实体。" }
   class n6 node_system
   class n6 external_node
-  n7@{ shape: rounded, label: "**bevy​_​state::state​_​scoped::disable​_​**<br/>**entities​_​when​_​state#lt;demo::game​_​**<br/>**flow::AppState#gt;**<br/>来自crate:bevy​_​state ↗：按状态转换谓<br/>词禁用实体子树。" }
+  n7@{ shape: rounded, label: "**disable​_​entities​_​when​_​state**<br/>来自crate:bevy​_​state ↗：按状态转换谓<br/>词禁用实体子树。" }
   class n7 node_system
   class n7 external_node
-  n8@{ shape: rounded, label: "**bevy​_​state::state​_​scoped::disable​_​**<br/>**entities​_​on​_​exit​_​state#lt;demo::game​_​**<br/>**flow::AppState#gt;**<br/>来自crate:bevy​_​state ↗：离开指定状态<br/>时禁用实体子树。" }
+  n8@{ shape: rounded, label: "**disable​_​entities​_​on​_​exit​_​state**<br/>来自crate:bevy​_​state ↗：离开指定状态<br/>时禁用实体子树。" }
   class n8 node_system
   class n8 external_node
-  n9@{ shape: rounded, label: "**bevy​_​state::state​_​scoped::enable​_​**<br/>**entities​_​on​_​exit​_​state#lt;demo::game​_​**<br/>**flow::AppState#gt;**<br/>来自crate:bevy​_​state ↗：离开指定状态<br/>时重新启用实体子树。" }
+  n9@{ shape: rounded, label: "**enable​_​entities​_​on​_​exit​_​state**<br/>来自crate:bevy​_​state ↗：离开指定状态<br/>时重新启用实体子树。" }
   class n9 node_system
   class n9 external_node
-  n10@{ shape: rounded, label: "**bevy​_​state::state​_​scoped::enable​_​**<br/>**entities​_​on​_​enter​_​state#lt;demo::game​_​**<br/>**flow::AppState#gt;**<br/>来自crate:bevy​_​state ↗：进入指定状态<br/>时重新启用实体子树。" }
+  n10@{ shape: rounded, label: "**enable​_​entities​_​on​_​enter​_​state**<br/>来自crate:bevy​_​state ↗：进入指定状态<br/>时重新启用实体子树。" }
   class n10 node_system
   class n10 external_node
-  n11@{ shape: rounded, label: "**bevy​_​state::state::freely​_​mutable​_​**<br/>**state::apply​_​state​_​transition#lt;demo::**<br/>**game​_​flow::AppState#gt;**<br/>来自crate:bevy​_​state ↗：提交待处理状<br/>态并发布转换消息。" }
+  n11@{ shape: rounded, label: "**apply​_​state​_​transition**<br/>来自crate:bevy​_​state ↗：提交待处理状<br/>态并发布转换消息。" }
   class n11 node_system
   class n11 external_node
-  n12@{ shape: rounded, label: "**bevy​_​state::state​_​scoped::despawn​_​**<br/>**entities​_​on​_​enter​_​state#lt;demo::game​_​**<br/>**flow::AppState#gt;**<br/>来自crate:bevy​_​state ↗：进入指定状态<br/>时销毁匹配实体。" }
+  n12@{ shape: rounded, label: "**despawn​_​entities​_​on​_​enter​_​state**<br/>来自crate:bevy​_​state ↗：进入指定状态<br/>时销毁匹配实体。" }
   class n12 node_system
   class n12 external_node
-  n13@{ shape: rounded, label: "**bevy​_​state::state​_​scoped::despawn​_​**<br/>**entities​_​on​_​exit​_​state#lt;demo::game​_​**<br/>**flow::AppState#gt;**<br/>来自crate:bevy​_​state ↗：离开指定状态<br/>时销毁匹配实体。" }
+  n13@{ shape: rounded, label: "**despawn​_​entities​_​on​_​exit​_​state**<br/>来自crate:bevy​_​state ↗：离开指定状态<br/>时销毁匹配实体。" }
   class n13 node_system
   class n13 external_node
   n0 e0@--> n1

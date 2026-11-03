@@ -44,21 +44,42 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​render::camera::sort​_​cameras**<br/>为同一输出目标排序相机并分配合成次序。" }
+  subgraph layout_card_n0[" "]
+  n0@{ shape: rounded, label: "**sort​_​cameras**<br/>为同一输出目标排序相机并分配合成次序。" }
   class n0 node_system
-  n1@{ shape: fr-rect, label: "**camera::CameraPlugin**<br/>维护相机渲染状态与排序。" }
+  end
+  style layout_card_n0 fill:none,stroke:none
+  subgraph layout_card_n1[" "]
+  n1@{ shape: fr-rect, label: "**CameraPlugin**<br/>维护相机渲染状态与排序。" }
   class n1 node_plugin
-  n2@{ shape: rounded, label: "**bevy​_​render::camera::ExtractedCamera**<br/>保存渲染世界相机的目标和绘制配置。" }
+  end
+  style layout_card_n1 fill:none,stroke:none
+  subgraph layout_card_n2[" "]
+  n2@{ shape: rounded, label: "**ExtractedCamera**<br/>保存渲染世界相机的目标和绘制配置。" }
   class n2 node_component
+  end
+  style layout_card_n2 fill:none,stroke:none
+  subgraph layout_card_n3[" "]
   n3@{ shape: lin-rect, label: "**CreateViews**<br/>组织渲染数据准备与绘制排队。" }
   class n3 node_system_set
-  n4@{ shape: rounded, label: "**bevy​_​pbr::render::light::prepare​_​**<br/>**lights**<br/>来自crate:bevy​_​pbr ↗：准备视图光照参<br/>数、阴影视图和阴影贴图。" }
+  end
+  style layout_card_n3 fill:none,stroke:none
+  subgraph layout_card_n4[" "]
+  n4@{ shape: rounded, label: "**prepare​_​lights**<br/>来自crate:bevy​_​pbr ↗：准备视图光照参<br/>数、阴影视图和阴影贴图。" }
   class n4 node_system
   class n4 external_node
+  end
+  style layout_card_n4 fill:none,stroke:none
+  subgraph layout_card_n5[" "]
   n5@{ shape: lin-rect, label: "**ResolveCompositingSpaces**<br/>写入各视图解析后的合成颜色空间。" }
   class n5 node_system_set
-  n6@{ shape: cyl, label: "**bevy​_​render::camera::SortedCameras**<br/>按相机绘制顺序保存排序结果。" }
+  end
+  style layout_card_n5 fill:none,stroke:none
+  subgraph layout_card_n6[" "]
+  n6@{ shape: cyl, label: "**SortedCameras**<br/>按相机绘制顺序保存排序结果。" }
   class n6 node_resource
+  end
+  style layout_card_n6 fill:none,stroke:none
   n1 e0@-->|"调用"| n0
   class e0 edge_registration
   n2 e1@---|"赋值"| n0
@@ -76,7 +97,7 @@ flowchart LR
   n0 e7@-->|"可变访问"| n6
   class e7 edge_write
   e0@{ curve: basis }
-  e1@{ curve: bumpX }
+  e1@{ curve: basis }
   e2@{ curve: basis }
   e3@{ curve: basis }
   e4@{ curve: basis }

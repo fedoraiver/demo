@@ -37,9 +37,9 @@ flowchart LR
   classDef node_event fill:#F9F3EE,stroke:#B66B2D,stroke-width:1.6px,color:#1F3340
   classDef edge_emit stroke:#B66B2D,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: stadium, label: "**collision::collider::constructor::**<br/>**ColliderConstructorReady**<br/>通知单实体碰撞体已成功构造。" }
+  n0@{ shape: stadium, label: "**ColliderConstructorReady**<br/>通知单实体碰撞体已成功构造。" }
   class n0 node_event
-  n1@{ shape: rounded, label: "**avian3d::collision::collider::**<br/>**backend::init​_​collider​_​constructors**<br/>把就绪的碰撞构造配置变成实际形状。" }
+  n1@{ shape: rounded, label: "**init​_​collider​_​constructors**<br/>把就绪的碰撞构造配置变成实际形状。" }
   class n1 node_system
   n1 e0@-->|"触发事件"| n0
   class e0 edge_emit

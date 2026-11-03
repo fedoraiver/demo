@@ -37,13 +37,13 @@ flowchart LR
   classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**dynamics::joints::**<br/>**JointCollisionDisabled**<br/>禁用关节两端刚体之间的碰撞。" }
+  n0@{ shape: rounded, label: "**JointCollisionDisabled**<br/>禁用关节两端刚体之间的碰撞。" }
   class n0 node_component
-  n1@{ shape: hex, label: "**avian3d::dynamics::joints::joint​_​**<br/>**graph::plugin::add​_​joint​_​to​_​graph**<br/>加入关节连接并发布连接图变化。" }
+  n1@{ shape: hex, label: "**add​_​joint​_​to​_​graph**<br/>加入关节连接并发布连接图变化。" }
   class n1 node_observer
-  n2@{ shape: hex, label: "**avian3d::dynamics::joints::joint​_​**<br/>**graph::plugin::add​_​joint​_​to​_​graph**<br/>加入关节连接并发布连接图变化。" }
+  n2@{ shape: hex, label: "**add​_​joint​_​to​_​graph**<br/>加入关节连接并发布连接图变化。" }
   class n2 node_observer
-  n3@{ shape: hex, label: "**avian3d::dynamics::joints::joint​_​**<br/>**graph::plugin::add​_​joint​_​to​_​graph**<br/>加入关节连接并发布连接图变化。" }
+  n3@{ shape: hex, label: "**add​_​joint​_​to​_​graph**<br/>加入关节连接并发布连接图变化。" }
   class n3 node_observer
   n0 e0@-->|"存在性约束"| n1
   class e0 edge_reference

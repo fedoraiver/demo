@@ -37,9 +37,9 @@ flowchart LR
   classDef node_plugin fill:#F1F3F6,stroke:#4A6389,stroke-width:2.2px,color:#1F3340
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​app::task​_​pool​_​plugin::tick​_​**<br/>**global​_​task​_​pools**<br/>在主线程轮询全局任务池。" }
+  n0@{ shape: rounded, label: "**tick​_​global​_​task​_​pools**<br/>在主线程轮询全局任务池。" }
   class n0 node_system
-  n1@{ shape: fr-rect, label: "**task​_​pool​_​plugin::TaskPoolPlugin**<br/>初始化计算与 I/O 任务池。" }
+  n1@{ shape: fr-rect, label: "**TaskPoolPlugin**<br/>初始化计算与 I/O 任务池。" }
   class n1 node_plugin
   n1 e0@-->|"调用"| n0
   class e0 edge_registration

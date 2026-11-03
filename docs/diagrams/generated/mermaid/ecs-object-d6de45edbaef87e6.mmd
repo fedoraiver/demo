@@ -45,16 +45,16 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​window::system::exit​_​on​_​all​_​**<br/>**closed**<br/>窗口查询为空时写入 AppExit::Success，<br/>通知应用正常退出；仍有窗口时不发送退出消<br/>息。" }
+  n0@{ shape: rounded, label: "**exit​_​on​_​all​_​closed**<br/>窗口查询为空时写入 AppExit::Success，<br/>通知应用正常退出；仍有窗口时不发送退出消<br/>息。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;app::**<br/>**AppExit#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n1@{ shape: cyl, label: "**Messages#lt;AppExit#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n1 node_resource
   class n1 external_node
   n2@{ shape: lin-rect, label: "**ExitSystems**<br/>按窗口关闭策略请求应用退出。" }
   class n2 node_system_set
-  n3@{ shape: rounded, label: "**window::Window**<br/>保存窗口的呈现模式、位置、分辨率、标题、<br/>全屏及平台行为配置" }
+  n3@{ shape: rounded, label: "**Window**<br/>保存窗口的呈现模式、位置、分辨率、标题、<br/>全屏及平台行为配置" }
   class n3 node_component
-  n4@{ shape: lean-r, label: "**app::AppExit**<br/>来自crate:bevy​_​app ↗：请求应用结束并<br/>携带退出结果。" }
+  n4@{ shape: lean-r, label: "**AppExit**<br/>来自crate:bevy​_​app ↗：请求应用结束并<br/>携带退出结果。" }
   class n4 node_message
   class n4 external_node
   n5@{ shape: fr-rect, label: "**WindowPlugin**<br/>建立窗口管理接口与消息。" }

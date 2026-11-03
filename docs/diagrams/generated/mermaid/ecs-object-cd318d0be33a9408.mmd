@@ -38,31 +38,31 @@ flowchart LR
   classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**item​_​interaction::components::**<br/>**Pickable**<br/>允许被拾取的能力标签。" }
+  n0@{ shape: rounded, label: "**Pickable**<br/>允许被拾取的能力标签。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**demo::item​_​interaction::pose::sync​_​**<br/>**held​_​physics**<br/>同步组合体内箱子的真实世界姿态和速度，不<br/>依赖人物是否具有视觉 Children。" }
+  n1@{ shape: rounded, label: "**sync​_​held​_​physics**<br/>同步组合体内箱子的真实世界姿态和速度，不<br/>依赖人物是否具有视觉 Children。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**demo::item​_​interaction::attachment::**<br/>**finish​_​attachments**<br/>持握期间只保留人物的 Dynamic，碰到箱子<br/>即对同一刚体求解，内部形状自动互不碰撞。" }
+  n2@{ shape: rounded, label: "**finish​_​attachments**<br/>持握期间只保留人物的 Dynamic，碰到箱子<br/>即对同一刚体求解，内部形状自动互不碰撞。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**demo::item​_​interaction::pose::sync​_​**<br/>**held​_​presentation**<br/>帧末跟随同一份已呈现人物姿态，零固定步时<br/>也不在箱体上叠加第二份插值。" }
+  n3@{ shape: rounded, label: "**sync​_​held​_​presentation**<br/>帧末跟随同一份已呈现人物姿态，零固定步时<br/>也不在箱体上叠加第二份插值。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**demo::item​_​interaction::pose::sync​_​**<br/>**held​_​presentation**<br/>帧末跟随同一份已呈现人物姿态，零固定步时<br/>也不在箱体上叠加第二份插值。" }
+  n4@{ shape: rounded, label: "**sync​_​held​_​presentation**<br/>帧末跟随同一份已呈现人物姿态，零固定步时<br/>也不在箱体上叠加第二份插值。" }
   class n4 node_system
-  n5@{ shape: rounded, label: "**demo::item​_​interaction::attachment::**<br/>**align​_​attachments**<br/>有限的小步对齐不会积分箱体力；受阻保留安<br/>全姿态，持续受阻则解除持握。" }
+  n5@{ shape: rounded, label: "**align​_​attachments**<br/>有限的小步对齐不会积分箱体力；受阻保留安<br/>全姿态，持续受阻则解除持握。" }
   class n5 node_system
-  n6@{ shape: rounded, label: "**demo::item​_​interaction::lifecycle::**<br/>**cleanup​_​orphaned​_​colliders**<br/>业务箱本身被销毁后清理代理，防止人物带着<br/>不可见的附属碰撞继续运动。" }
+  n6@{ shape: rounded, label: "**cleanup​_​orphaned​_​colliders**<br/>业务箱本身被销毁后清理代理，防止人物带着<br/>不可见的附属碰撞继续运动。" }
   class n6 node_system
-  n7@{ shape: rounded, label: "**demo::bounds​_​recovery::recovery::**<br/>**recover​_​from​_​water**<br/>来自bounds​_​recovery ↗：恢复实体自身的<br/>出生姿态；角色落水只释放手中物品，物品落<br/>水时再独立恢复。" }
+  n7@{ shape: rounded, label: "**recover​_​from​_​water**<br/>来自bounds​_​recovery ↗：恢复实体自身的<br/>出生姿态；角色落水只释放手中物品，物品落<br/>水时再独立恢复。" }
   class n7 node_system
   class n7 external_node
-  n8@{ shape: rounded, label: "**demo::item​_​interaction::pose::sync​_​**<br/>**held​_​physics**<br/>同步组合体内箱子的真实世界姿态和速度，不<br/>依赖人物是否具有视觉 Children。" }
+  n8@{ shape: rounded, label: "**sync​_​held​_​physics**<br/>同步组合体内箱子的真实世界姿态和速度，不<br/>依赖人物是否具有视觉 Children。" }
   class n8 node_system
-  n9@{ shape: rounded, label: "**demo::item​_​interaction::**<br/>**interaction::handle​_​interaction**<br/>拾取建立物理持握关系；释放只解除控制，保<br/>留刚体姿态、线速度和角速度。" }
+  n9@{ shape: rounded, label: "**handle​_​interaction**<br/>拾取建立物理持握关系；释放只解除控制，保<br/>留刚体姿态、线速度和角速度。" }
   class n9 node_system
   n10@{ shape: rounded, label: "**spawn​_​actors · 创建模板**<br/>来自scene​_​assembly ↗：创建具有交互与<br/>物理身份的可搬运物品。" }
   class n10 node_entity
   class n10 external_node
-  n11@{ shape: rounded, label: "**demo::item​_​interaction::pose::sync​_​**<br/>**held​_​physics**<br/>同步组合体内箱子的真实世界姿态和速度，不<br/>依赖人物是否具有视觉 Children。" }
+  n11@{ shape: rounded, label: "**sync​_​held​_​physics**<br/>同步组合体内箱子的真实世界姿态和速度，不<br/>依赖人物是否具有视觉 Children。" }
   class n11 node_system
   n0 e0@-->|"存在性约束"| n1
   class e0 edge_reference

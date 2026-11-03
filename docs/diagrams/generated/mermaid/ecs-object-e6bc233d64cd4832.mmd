@@ -40,25 +40,25 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: lin-rect, label: "**AnonymousSet(1)**<br/>保存一组系统的共同配置。" }
   class n0 node_system_set
-  n1@{ shape: rounded, label: "**demo::item​_​interaction::attachment::**<br/>**finish​_​attachments**<br/>来自item​_​interaction ↗：持握期间只保<br/>留人物的 Dynamic，碰到箱子即对同一刚体<br/>求解，内部形状自动互不碰撞。" }
+  n1@{ shape: rounded, label: "**finish​_​attachments**<br/>来自item​_​interaction ↗：持握期间只保<br/>留人物的 Dynamic，碰到箱子即对同一刚体<br/>求解，内部形状自动互不碰撞。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**demo::item​_​interaction::lifecycle::**<br/>**release​_​orphaned​_​items**<br/>来自item​_​interaction ↗：关系被外部解<br/>除或人物销毁时，独立箱实体仍能恢复自由刚<br/>体，不产生残留附属碰撞。" }
+  n2@{ shape: rounded, label: "**release​_​orphaned​_​items**<br/>来自item​_​interaction ↗：关系被外部解<br/>除或人物销毁时，独立箱实体仍能恢复自由刚<br/>体，不产生残留附属碰撞。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**demo::item​_​interaction::attachment::**<br/>**align​_​attachments**<br/>来自item​_​interaction ↗：有限的小步对<br/>齐不会积分箱体力；受阻保留安全姿态，持续<br/>受阻则解除持握。" }
+  n3@{ shape: rounded, label: "**align​_​attachments**<br/>来自item​_​interaction ↗：有限的小步对<br/>齐不会积分箱体力；受阻保留安全姿态，持续<br/>受阻则解除持握。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**demo::item​_​interaction::pose::sync​_​**<br/>**held​_​physics**<br/>来自item​_​interaction ↗：同步组合体内<br/>箱子的真实世界姿态和速度，不依赖人物是否<br/>具有视觉 Children。" }
+  n4@{ shape: rounded, label: "**sync​_​held​_​physics**<br/>来自item​_​interaction ↗：同步组合体内<br/>箱子的真实世界姿态和速度，不依赖人物是否<br/>具有视觉 Children。" }
   class n4 node_system
   class n4 external_node
-  n5@{ shape: rounded, label: "**demo::game​_​flow::gameplay​_​running**<br/>来自game​_​flow ↗：独立功能测试没有应用<br/>状态；真实游戏只在 Running 推进玩法。" }
+  n5@{ shape: rounded, label: "**gameplay​_​running**<br/>来自game​_​flow ↗：独立功能测试没有应用<br/>状态；真实游戏只在 Running 推进玩法。" }
   class n5 node_system
   class n5 external_node
-  n6@{ shape: rounded, label: "**demo::item​_​interaction::lifecycle::**<br/>**cleanup​_​orphaned​_​colliders**<br/>来自item​_​interaction ↗：业务箱本身被<br/>销毁后清理代理，防止人物带着不可见的附属<br/>碰撞继续运动。" }
+  n6@{ shape: rounded, label: "**cleanup​_​orphaned​_​colliders**<br/>来自item​_​interaction ↗：业务箱本身被<br/>销毁后清理代理，防止人物带着不可见的附属<br/>碰撞继续运动。" }
   class n6 node_system
   class n6 external_node
-  n7@{ shape: rounded, label: "**demo::item​_​interaction::lifecycle::**<br/>**restore​_​empty​_​holder​_​mass**<br/>来自item​_​interaction ↗：箱实体被销毁<br/>时关系钩子会清空反向索引，人物仍存活则归<br/>还其原质量。" }
+  n7@{ shape: rounded, label: "**restore​_​empty​_​holder​_​mass**<br/>来自item​_​interaction ↗：箱实体被销毁<br/>时关系钩子会清空反向索引，人物仍存活则归<br/>还其原质量。" }
   class n7 node_system
   class n7 external_node
   n0 e0@-->|"集合成员"| n1

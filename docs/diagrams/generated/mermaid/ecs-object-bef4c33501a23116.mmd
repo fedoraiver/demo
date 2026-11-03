@@ -38,11 +38,11 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**input::EguiWantsInput**<br/>汇总 Egui 是否正在使用指针、需要键盘输<br/>入或打开弹出层" }
+  n0@{ shape: cyl, label: "**EguiWantsInput**<br/>汇总 Egui 是否正在使用指针、需要键盘输<br/>入或打开弹出层" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​egui::input::write​_​egui​_​wants​_​**<br/>**input​_​system**<br/>汇总所有 Egui 上下文的输入占用。" }
+  n1@{ shape: rounded, label: "**write​_​egui​_​wants​_​input​_​system**<br/>汇总所有 Egui 上下文的输入占用。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​egui::input::absorb​_​bevy​_​input​_​**<br/>**system**<br/>在 Egui 使用输入时吸收对应 Bevy 输入。" }
+  n2@{ shape: rounded, label: "**absorb​_​bevy​_​input​_​system**<br/>在 Egui 使用输入时吸收对应 Bevy 输入。" }
   class n2 node_system
   n1 e0@-->|"赋值"| n0
   class e0 edge_write

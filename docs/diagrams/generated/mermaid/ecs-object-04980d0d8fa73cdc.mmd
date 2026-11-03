@@ -45,30 +45,30 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​ui​_​render::ui​_​texture​_​slice​_​**<br/>**pipeline::extract​_​ui​_​texture​_​slices**<br/>增量提取九宫格或平铺 UI 图像切片。" }
+  n0@{ shape: rounded, label: "**extract​_​ui​_​texture​_​slices**<br/>增量提取九宫格或平铺 UI 图像切片。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**bevy​_​ui::CalculatedClip**<br/>来自crate:bevy​_​ui ↗：缓存节点从祖先继<br/>承的裁剪结果。" }
+  n1@{ shape: rounded, label: "**CalculatedClip**<br/>来自crate:bevy​_​ui ↗：缓存节点从祖先继<br/>承的裁剪结果。" }
   class n1 node_component
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​ui::ComputedNode**<br/>来自crate:bevy​_​ui ↗：保存 UI 布局计算<br/>后的物理尺寸。" }
+  n2@{ shape: rounded, label: "**ComputedNode**<br/>来自crate:bevy​_​ui ↗：保存 UI 布局计算<br/>后的物理尺寸。" }
   class n2 node_component
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​ui::ComputedUiTargetCamera**<br/>来自crate:bevy​_​ui ↗：缓存 UI 节点实际<br/>采用的相机。" }
+  n3@{ shape: rounded, label: "**ComputedUiTargetCamera**<br/>来自crate:bevy​_​ui ↗：缓存 UI 节点实际<br/>采用的相机。" }
   class n3 node_component
   class n3 external_node
   n4@{ shape: notch-rect, label: "**Local · arg6.3.0.0.0.0.0**<br/>保存 InheritedVisibility 移除参数的组<br/>件 ID。" }
   class n4 node_local
-  n5@{ shape: fr-rect, label: "**ui​_​texture​_​slice​_​pipeline::**<br/>**UiTextureSlicerPlugin**<br/>提取并绘制界面纹理切片。" }
+  n5@{ shape: fr-rect, label: "**UiTextureSlicerPlugin**<br/>提取并绘制界面纹理切片。" }
   class n5 node_plugin
-  n6@{ shape: cyl, label: "**extract​_​plugin::MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
+  n6@{ shape: cyl, label: "**MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
   class n6 node_resource
   class n6 external_node
-  n7@{ shape: rounded, label: "**bevy​_​ui::ComputedStackIndex**<br/>来自crate:bevy​_​ui ↗：保存节点计算后的<br/>绘制堆叠位置。" }
+  n7@{ shape: rounded, label: "**ComputedStackIndex**<br/>来自crate:bevy​_​ui ↗：保存节点计算后的<br/>绘制堆叠位置。" }
   class n7 node_component
   class n7 external_node
   n8@{ shape: notch-rect, label: "**Local · arg6.6.0.0.1**<br/>跟踪 ImageNode 移除记录的读取进度。" }
   class n8 node_local
-  n9@{ shape: rounded, label: "**bevy​_​extract::SubEntity#lt;bevy​_​**<br/>**render::RenderApp#gt;**<br/>来自crate:bevy​_​extract ↗：记录主实体<br/>对应的子世界实体。" }
+  n9@{ shape: rounded, label: "**SubEntity#lt;RenderApp#gt;**<br/>来自crate:bevy​_​extract ↗：记录主实体<br/>对应的子世界实体。" }
   class n9 node_component
   class n9 external_node
   n10@{ shape: notch-rect, label: "**Local · nodes​_​processed​_​this​_​frame**<br/>去重本轮已重建的 UI 纹理切片节点。" }
@@ -77,10 +77,10 @@ flowchart LR
   class n11 node_local
   n12@{ shape: notch-rect, label: "**Local · arg6.1.0.0.0.0.0**<br/>保存 ComputedStackIndex 移除参数的组<br/>件 ID。" }
   class n12 node_local
-  n13@{ shape: rounded, label: "**bevy​_​ui::widget::ImageNode**<br/>来自crate:bevy​_​ui ↗：描述 UI 图像及其<br/>绘制参数。" }
+  n13@{ shape: rounded, label: "**ImageNode**<br/>来自crate:bevy​_​ui ↗：描述 UI 图像及其<br/>绘制参数。" }
   class n13 node_component
   class n13 external_node
-  n14@{ shape: cyl, label: "**bevy​_​asset::Assets#lt;texture​_​atlas::**<br/>**TextureAtlasLayout#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
+  n14@{ shape: cyl, label: "**Assets#lt;TextureAtlasLayout#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
   class n14 node_resource
   class n14 external_node
   n15@{ shape: notch-rect, label: "**Local · arg6.0.0.0.1**<br/>跟踪 ComputedNode 移除记录的读取进度。" }
@@ -91,19 +91,19 @@ flowchart LR
   class n17 node_system_set
   n18@{ shape: notch-rect, label: "**Local · arg6.0.0.0.0.0.0**<br/>保存 ComputedNode 移除参数的组件 ID。" }
   class n18 node_local
-  n19@{ shape: rounded, label: "**bevy​_​ui::UiGlobalTransform**<br/>来自crate:bevy​_​ui ↗：保存 UI 节点的绝<br/>对二维变换。" }
+  n19@{ shape: rounded, label: "**UiGlobalTransform**<br/>来自crate:bevy​_​ui ↗：保存 UI 节点的绝<br/>对二维变换。" }
   class n19 node_component
   class n19 external_node
   n20@{ shape: notch-rect, label: "**Local · arg6.4.0.0.1**<br/>跟踪 CalculatedClip 移除记录的读取进<br/>度。" }
   class n20 node_local
   n21@{ shape: notch-rect, label: "**Local · arg6.5.0.0.1**<br/>跟踪 ComputedUiTargetCamera 移除记录<br/>的读取进度。" }
   class n21 node_local
-  n22@{ shape: rounded, label: "**bevy​_​camera::visibility::**<br/>**InheritedVisibility**<br/>来自crate:bevy​_​camera ↗：保存从实体层<br/>级计算出的可见性。" }
+  n22@{ shape: rounded, label: "**InheritedVisibility**<br/>来自crate:bevy​_​camera ↗：保存从实体层<br/>级计算出的可见性。" }
   class n22 node_component
   class n22 external_node
   n23@{ shape: notch-rect, label: "**Local · arg6.3.0.0.1**<br/>跟踪 InheritedVisibility 移除记录的读<br/>取进度。" }
   class n23 node_local
-  n24@{ shape: cyl, label: "**ui​_​texture​_​slice​_​pipeline::**<br/>**ExtractedUiTextureSlices**<br/>按节点保存提取后的 UI 纹理切片。" }
+  n24@{ shape: cyl, label: "**ExtractedUiTextureSlices**<br/>按节点保存提取后的 UI 纹理切片。" }
   class n24 node_resource
   n25@{ shape: notch-rect, label: "**Local · arg6.1.0.0.1**<br/>跟踪 ComputedStackIndex 移除记录的读<br/>取进度。" }
   class n25 node_local
@@ -113,7 +113,7 @@ flowchart LR
   class n27 node_local
   n28@{ shape: notch-rect, label: "**Local · arg6.5.0.0.0.0.0**<br/>保存 ComputedUiTargetCamera 移除参数<br/>的组件 ID。" }
   class n28 node_local
-  n29@{ shape: rounded, label: "**bevy​_​ui::widget::ImageNodeSize**<br/>来自crate:bevy​_​ui ↗：缓存 UI 图像纹理<br/>的像素尺寸。" }
+  n29@{ shape: rounded, label: "**ImageNodeSize**<br/>来自crate:bevy​_​ui ↗：缓存 UI 图像纹理<br/>的像素尺寸。" }
   class n29 node_component
   class n29 external_node
   n1 e0@-->|"存在性约束"| n0

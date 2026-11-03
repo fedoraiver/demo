@@ -39,39 +39,39 @@ flowchart LR
   classDef edge_publish stroke:#247B91,stroke-width:1.8px,stroke-dasharray:10 4 2 4
   classDef edge_consume stroke:#247B91,stroke-width:1.8px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: lean-r, label: "**audio::messages::SoundRequest**<br/>业务实体只用于日志和节流，不持有其组件引<br/>用，实体销毁后消息仍可被消费。" }
+  n0@{ shape: lean-r, label: "**SoundRequest**<br/>业务实体只用于日志和节流，不持有其组件引<br/>用，实体销毁后消息仍可被消费。" }
   class n0 node_message
-  n1@{ shape: rounded, label: "**demo::item​_​interaction::audio​_​**<br/>**events::warn​_​hold​_​strain**<br/>来自item​_​interaction ↗：持续偏离实际<br/>握点时提示一次，误差恢复后允许下一次告<br/>警。" }
+  n1@{ shape: rounded, label: "**warn​_​hold​_​strain**<br/>来自item​_​interaction ↗：持续偏离实际<br/>握点时提示一次，误差恢复后允许下一次告<br/>警。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: hex, label: "**demo::ui::navigation::next**<br/>来自ui ↗：循环选择下一个可操作菜单按<br/>钮。" }
+  n2@{ shape: hex, label: "**next**<br/>来自ui ↗：循环选择下一个可操作菜单按<br/>钮。" }
   class n2 node_observer
   class n2 external_node
-  n3@{ shape: hex, label: "**demo::ui::navigation::next**<br/>来自ui ↗：循环选择下一个可操作菜单按<br/>钮。" }
+  n3@{ shape: hex, label: "**next**<br/>来自ui ↗：循环选择下一个可操作菜单按<br/>钮。" }
   class n3 node_observer
   class n3 external_node
-  n4@{ shape: hex, label: "**demo::ui::navigation::next**<br/>来自ui ↗：循环选择下一个可操作菜单按<br/>钮。" }
+  n4@{ shape: hex, label: "**next**<br/>来自ui ↗：循环选择下一个可操作菜单按<br/>钮。" }
   class n4 node_observer
   class n4 external_node
-  n5@{ shape: rounded, label: "**demo::item​_​interaction::audio​_​**<br/>**events::emit​_​parcel​_​land**<br/>来自item​_​interaction ↗：识别自由物品<br/>落地并发出声音请求。" }
+  n5@{ shape: rounded, label: "**emit​_​parcel​_​land**<br/>来自item​_​interaction ↗：识别自由物品<br/>落地并发出声音请求。" }
   class n5 node_system
   class n5 external_node
-  n6@{ shape: hex, label: "**demo::ui::navigation::previous**<br/>来自ui ↗：循环选择上一个可操作菜单按<br/>钮。" }
+  n6@{ shape: hex, label: "**previous**<br/>来自ui ↗：循环选择上一个可操作菜单按<br/>钮。" }
   class n6 node_observer
   class n6 external_node
-  n7@{ shape: hex, label: "**demo::ui::navigation::previous**<br/>来自ui ↗：循环选择上一个可操作菜单按<br/>钮。" }
+  n7@{ shape: hex, label: "**previous**<br/>来自ui ↗：循环选择上一个可操作菜单按<br/>钮。" }
   class n7 node_observer
   class n7 external_node
-  n8@{ shape: rounded, label: "**demo::ui::requests::handle​_​requests**<br/>来自ui ↗：每帧只消费一项语义请求，避免<br/>鼠标与确认键同时激活，或旧页面动作穿过页<br/>面切换。" }
+  n8@{ shape: rounded, label: "**handle​_​requests**<br/>来自ui ↗：每帧只消费一项语义请求，避免<br/>鼠标与确认键同时激活，或旧页面动作穿过页<br/>面切换。" }
   class n8 node_system
   class n8 external_node
-  n9@{ shape: hex, label: "**demo::ui::navigation::previous**<br/>来自ui ↗：循环选择上一个可操作菜单按<br/>钮。" }
+  n9@{ shape: hex, label: "**previous**<br/>来自ui ↗：循环选择上一个可操作菜单按<br/>钮。" }
   class n9 node_observer
   class n9 external_node
-  n10@{ shape: rounded, label: "**demo::ui::pointer::pointer​_​**<br/>**interaction**<br/>来自ui ↗：Bevy 原生 UI 已完成按钮命<br/>中；这里只读取缓冲的按下事件，不另读<br/>MouseButton。" }
+  n10@{ shape: rounded, label: "**pointer​_​interaction**<br/>来自ui ↗：Bevy 原生 UI 已完成按钮命<br/>中；这里只读取缓冲的按下事件，不另读<br/>MouseButton。" }
   class n10 node_system
   class n10 external_node
-  n11@{ shape: rounded, label: "**demo::audio::playback::play​_​requests**<br/>按有效音量与播放策略处理短音请求。" }
+  n11@{ shape: rounded, label: "**play​_​requests**<br/>按有效音量与播放策略处理短音请求。" }
   class n11 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_publish

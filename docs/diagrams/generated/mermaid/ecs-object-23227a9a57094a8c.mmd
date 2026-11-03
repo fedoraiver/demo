@@ -43,20 +43,20 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​app::propagate::propagate​_​**<br/>**output#lt;bevy​_​ui::ui​_​node::**<br/>**ComputedUiTargetCamera, ()#gt;**<br/>把继承结果写入或移出实体实际组件。" }
+  n0@{ shape: rounded, label: "**propagate​_​output**<br/>把继承结果写入或移出实体实际组件。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**bevy​_​app::propagate::propagate​_​**<br/>**inherited#lt;bevy​_​ui::ui​_​node::**<br/>**ComputedUiTargetCamera, (), bevy​_​**<br/>**ecs::hierarchy::ChildOf#gt;**<br/>沿关系层级传播变化的继承组件值。" }
+  n1@{ shape: rounded, label: "**propagate​_​inherited**<br/>沿关系层级传播变化的继承组件值。" }
   class n1 node_system
-  n2@{ shape: lin-rect, label: "**PropagateSet { ​_​p: PhantomData#lt;fn()**<br/>**-#gt; bevy​_​ui::ui​_​node::**<br/>**ComputedUiTargetCamera#gt; }**<br/>沿关系层级传播指定组件值。" }
+  n2@{ shape: lin-rect, label: "**PropagateSet { ​_​p: PhantomData#lt;fn()**<br/>**-#gt; ComputedUiTargetCamera#gt; }**<br/>沿关系层级传播指定组件值。" }
   class n2 node_system_set
   n3@{ shape: notch-rect, label: "**Local · arg2.0.1**<br/>跟踪 Inherited#lt;C#gt; 移除记录的读取进度。" }
   class n3 node_local
-  n4@{ shape: rounded, label: "**bevy​_​app::PropagateOver#lt;ui​_​node::**<br/>**ComputedUiTargetCamera#gt;**<br/>阻止传播结果组件添加到当前实体" }
+  n4@{ shape: rounded, label: "**PropagateOver#lt;ComputedUiTargetCamera**<br/>**#gt;**<br/>阻止传播结果组件添加到当前实体" }
   class n4 node_component
-  n5@{ shape: rounded, label: "**bevy​_​ui::ComputedUiTargetCamera**<br/>来自crate:bevy​_​ui ↗：缓存 UI 节点实际<br/>采用的相机。" }
+  n5@{ shape: rounded, label: "**ComputedUiTargetCamera**<br/>来自crate:bevy​_​ui ↗：缓存 UI 节点实际<br/>采用的相机。" }
   class n5 node_component
   class n5 external_node
-  n6@{ shape: rounded, label: "**bevy​_​app::Inherited#lt;ui​_​node::**<br/>**ComputedUiTargetCamera#gt;**<br/>保存层级传播算法继承到当前节点的中间组件<br/>值" }
+  n6@{ shape: rounded, label: "**Inherited#lt;ComputedUiTargetCamera#gt;**<br/>保存层级传播算法继承到当前节点的中间组件<br/>值" }
   class n6 node_component
   n7@{ shape: notch-rect, label: "**Local · arg2.0.0.0.0**<br/>保存 Inherited#lt;C#gt; 移除参数的组件 ID。" }
   class n7 node_local

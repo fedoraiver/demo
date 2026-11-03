@@ -38,14 +38,14 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**atmosphere::resources::**<br/>**RenderSkyBindGroupLayouts**<br/>描述天空绘制的普通与多采样接口。" }
+  n0@{ shape: cyl, label: "**RenderSkyBindGroupLayouts**<br/>描述天空绘制的普通与多采样接口。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​render::init​_​gpu​_​resource#lt;bevy​_​**<br/>**pbr::atmosphere::resources::**<br/>**RenderSkyBindGroupLayouts#gt;**<br/>来自crate:bevy​_​render ↗：构造并插入渲<br/>染所需资源。" }
+  n1@{ shape: rounded, label: "**init​_​gpu​_​resource**<br/>来自crate:bevy​_​render ↗：构造并插入渲<br/>染所需资源。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​pbr::atmosphere::resources::**<br/>**queue​_​render​_​sky​_​pipelines**<br/>按多重采样和混合能力选择天空管线。" }
+  n2@{ shape: rounded, label: "**queue​_​render​_​sky​_​pipelines**<br/>按多重采样和混合能力选择天空管线。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​pbr::atmosphere::resources::**<br/>**prepare​_​atmosphere​_​bind​_​groups**<br/>为大气查找表计算和天空绘制绑定视图资源。" }
+  n3@{ shape: rounded, label: "**prepare​_​atmosphere​_​bind​_​groups**<br/>为大气查找表计算和天空绘制绑定视图资源。" }
   class n3 node_system
   n1 e0@-->|"插入"| n0
   class e0 edge_write

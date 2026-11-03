@@ -46,36 +46,36 @@ flowchart LR
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
   subgraph layout_card_n0[" "]
-  n0@{ shape: hex, label: "**bevy​_​ui​_​widgets::menu::menu​_​on​_​key​_​**<br/>**event**<br/>处理菜单键盘导航、激活与关闭。" }
+  n0@{ shape: hex, label: "**menu​_​on​_​key​_​event**<br/>处理菜单键盘导航、激活与关闭。" }
   class n0 node_observer
   end
   style layout_card_n0 fill:none,stroke:none
   subgraph layout_card_n1[" "]
-  n1@{ shape: stadium, label: "**FocusedInput#lt;bevy​_​input::keyboard::**<br/>**KeyboardInput#gt;**<br/>来自crate:bevy​_​input​_​focus ↗：把输入<br/>消息路由到焦点实体并向窗口冒泡。" }
+  n1@{ shape: stadium, label: "**FocusedInput#lt;KeyboardInput#gt;**<br/>来自crate:bevy​_​input​_​focus ↗：把输入<br/>消息路由到焦点实体并向窗口冒泡。" }
   class n1 node_event
   class n1 external_node
   end
   style layout_card_n1 fill:none,stroke:none
   subgraph layout_card_n2[" "]
-  n2@{ shape: rounded, label: "**tab​_​navigation::TabGroup**<br/>来自crate:bevy​_​input​_​focus ↗：把实体<br/>子树标记为可参与 Tab 导航的组" }
+  n2@{ shape: rounded, label: "**TabGroup**<br/>来自crate:bevy​_​input​_​focus ↗：把实体<br/>子树标记为可参与 Tab 导航的组" }
   class n2 node_component
   class n2 external_node
   end
   style layout_card_n2 fill:none,stroke:none
   subgraph layout_card_n3[" "]
-  n3@{ shape: rounded, label: "**bevy​_​ui::InteractionDisabled**<br/>来自crate:bevy​_​ui ↗：标记禁止交互的<br/>UI 控件。" }
+  n3@{ shape: rounded, label: "**InteractionDisabled**<br/>来自crate:bevy​_​ui ↗：标记禁止交互的<br/>UI 控件。" }
   class n3 node_component
   class n3 external_node
   end
   style layout_card_n3 fill:none,stroke:none
   subgraph layout_card_n4[" "]
-  n4@{ shape: rounded, label: "**bevy​_​ecs::hierarchy::ChildOf**<br/>来自crate:bevy​_​ecs ↗：保存当前实体的<br/>父实体身份" }
+  n4@{ shape: rounded, label: "**ChildOf**<br/>来自crate:bevy​_​ecs ↗：保存当前实体的<br/>父实体身份" }
   class n4 node_component
   class n4 external_node
   end
   style layout_card_n4 fill:none,stroke:none
   subgraph layout_card_n5[" "]
-  n5@{ shape: rounded, label: "**bevy​_​camera::visibility::**<br/>**InheritedVisibility**<br/>来自crate:bevy​_​camera ↗：保存从实体层<br/>级计算出的可见性。" }
+  n5@{ shape: rounded, label: "**InheritedVisibility**<br/>来自crate:bevy​_​camera ↗：保存从实体层<br/>级计算出的可见性。" }
   class n5 node_component
   class n5 external_node
   end
@@ -86,17 +86,17 @@ flowchart LR
   end
   style layout_card_n6 fill:none,stroke:none
   subgraph layout_card_n7[" "]
-  n7@{ shape: fr-rect, label: "**menu::MenuPlugin**<br/>处理菜单焦点与菜单项交互。" }
+  n7@{ shape: fr-rect, label: "**MenuPlugin**<br/>处理菜单焦点与菜单项交互。" }
   class n7 node_plugin
   end
   style layout_card_n7 fill:none,stroke:none
   subgraph layout_card_n8[" "]
-  n8@{ shape: rounded, label: "**menu::MenuItem**<br/>标识可交互的菜单项。" }
+  n8@{ shape: rounded, label: "**MenuItem**<br/>标识可交互的菜单项。" }
   class n8 node_component
   end
   style layout_card_n8 fill:none,stroke:none
   subgraph layout_card_n9[" "]
-  n9@{ shape: rounded, label: "**menu::MenuPopup**<br/>定义弹出菜单的布局方向及模态焦点范围" }
+  n9@{ shape: rounded, label: "**MenuPopup**<br/>定义弹出菜单的布局方向及模态焦点范围" }
   class n9 node_component
   end
   style layout_card_n9 fill:none,stroke:none
@@ -107,18 +107,18 @@ flowchart LR
   end
   style layout_card_n10 fill:none,stroke:none
   subgraph layout_card_n11[" "]
-  n11@{ shape: rounded, label: "**tab​_​navigation::TabIndex**<br/>来自crate:bevy​_​input​_​focus ↗：声明实<br/>体参与 Tab 导航及其排序值" }
+  n11@{ shape: rounded, label: "**TabIndex**<br/>来自crate:bevy​_​input​_​focus ↗：声明实<br/>体参与 Tab 导航及其排序值" }
   class n11 node_component
   class n11 external_node
   end
   style layout_card_n11 fill:none,stroke:none
   subgraph layout_card_n12[" "]
-  n12@{ shape: stadium, label: "**menu::MenuEvent**<br/>通过菜单层级传递开关和焦点操作。" }
+  n12@{ shape: stadium, label: "**MenuEvent**<br/>通过菜单层级传递开关和焦点操作。" }
   class n12 node_event
   end
   style layout_card_n12 fill:none,stroke:none
   subgraph layout_card_n13[" "]
-  n13@{ shape: rounded, label: "**bevy​_​ecs::hierarchy::Children**<br/>来自crate:bevy​_​ecs ↗：保存以<br/>ChildOf 指向当前父实体的子实体集合" }
+  n13@{ shape: rounded, label: "**Children**<br/>来自crate:bevy​_​ecs ↗：保存以<br/>ChildOf 指向当前父实体的子实体集合" }
   class n13 node_component
   class n13 external_node
   end

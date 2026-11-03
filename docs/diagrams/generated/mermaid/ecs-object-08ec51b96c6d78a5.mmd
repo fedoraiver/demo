@@ -45,25 +45,25 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​winit::cursor::update​_​cursors**<br/>准备原生或自定义光标并保留资产重试。" }
+  n0@{ shape: rounded, label: "**update​_​cursors**<br/>准备原生或自定义光标并保留资产重试。" }
   class n0 node_system
-  n1@{ shape: fr-rect, label: "**cursor::WinitCursorPlugin**<br/>为原生窗口提供自定义光标。" }
+  n1@{ shape: fr-rect, label: "**WinitCursorPlugin**<br/>为原生窗口提供自定义光标。" }
   class n1 node_plugin
-  n2@{ shape: rounded, label: "**cursor::PendingCursor**<br/>把待应用的窗口光标传递给winit事件循环。" }
+  n2@{ shape: rounded, label: "**PendingCursor**<br/>把待应用的窗口光标传递给winit事件循环。" }
   class n2 node_component
-  n3@{ shape: rounded, label: "**window::Window**<br/>来自crate:bevy​_​window ↗：保存窗口的呈<br/>现模式、位置、分辨率、标题、全屏及平台行<br/>为配置" }
+  n3@{ shape: rounded, label: "**Window**<br/>来自crate:bevy​_​window ↗：保存窗口的呈<br/>现模式、位置、分辨率、标题、全屏及平台行<br/>为配置" }
   class n3 node_component
   class n3 external_node
-  n4@{ shape: rounded, label: "**cursor::CursorIcon**<br/>来自crate:bevy​_​window ↗：保存窗口光标<br/>的系统图标或自定义图像配置" }
+  n4@{ shape: rounded, label: "**CursorIcon**<br/>来自crate:bevy​_​window ↗：保存窗口光标<br/>的系统图标或自定义图像配置" }
   class n4 node_component
   class n4 external_node
-  n5@{ shape: cyl, label: "**bevy​_​asset::Assets#lt;image::Image#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
+  n5@{ shape: cyl, label: "**Assets#lt;Image#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
   class n5 node_resource
   class n5 external_node
-  n6@{ shape: cyl, label: "**bevy​_​asset::Assets#lt;texture​_​atlas::**<br/>**TextureAtlasLayout#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
+  n6@{ shape: cyl, label: "**Assets#lt;TextureAtlasLayout#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
   class n6 node_resource
   class n6 external_node
-  n7@{ shape: cyl, label: "**cursor::custom​_​cursor::**<br/>**WinitCustomCursorCache**<br/>缓存已创建的自定义原生光标" }
+  n7@{ shape: cyl, label: "**WinitCustomCursorCache**<br/>缓存已创建的自定义原生光标" }
   class n7 node_resource
   n8@{ shape: notch-rect, label: "**Local · queue**<br/>保留等待自定义光标图像加载的窗口。" }
   class n8 node_local

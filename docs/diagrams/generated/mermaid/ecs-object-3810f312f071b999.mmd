@@ -37,11 +37,11 @@ flowchart LR
   classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**gpu​_​readback::GpuReadbackBufferPool**<br/>按缓冲尺寸复用 GPU 回读暂存空间。" }
+  n0@{ shape: cyl, label: "**GpuReadbackBufferPool**<br/>按缓冲尺寸复用 GPU 回读暂存空间。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​render::gpu​_​readback::prepare​_​**<br/>**buffers**<br/>读取 GPU 回读请求，为纹理或存储缓冲的指<br/>定区段从缓冲池取得暂存空间并创建异步完成<br/>通道；越界缓冲区段会报错。" }
+  n1@{ shape: rounded, label: "**prepare​_​buffers**<br/>读取 GPU 回读请求，为纹理或存储缓冲的指<br/>定区段从缓冲池取得暂存空间并创建异步完成<br/>通道；越界缓冲区段会报错。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​render::gpu​_​readback::sync​_​**<br/>**readbacks**<br/>派发 GPU 回读结果并归还暂存缓冲。" }
+  n2@{ shape: rounded, label: "**sync​_​readbacks**<br/>派发 GPU 回读结果并归还暂存缓冲。" }
   class n2 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

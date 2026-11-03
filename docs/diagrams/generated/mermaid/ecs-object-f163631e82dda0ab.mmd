@@ -39,31 +39,31 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**render::light::ShadowView**<br/>描述阴影绘制的深度附件与通道名称。" }
+  n0@{ shape: rounded, label: "**ShadowView**<br/>描述阴影绘制的深度附件与通道名称。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​pbr::render::light::prepare​_​**<br/>**lights**<br/>准备视图光照参数、阴影视图和阴影贴图。" }
+  n1@{ shape: rounded, label: "**prepare​_​lights**<br/>准备视图光照参数、阴影视图和阴影贴图。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​pbr::prepass::prepare​_​previous​_​**<br/>**view​_​uniforms**<br/>重建前帧抖动矩阵并上传视图历史参数。" }
+  n2@{ shape: rounded, label: "**prepare​_​previous​_​view​_​uniforms**<br/>重建前帧抖动矩阵并上传视图历史参数。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​pbr::render::light::per​_​view​_​**<br/>**shadow​_​pass#lt;true#gt;**<br/>绘制相机相关的平行光级联阴影。" }
+  n3@{ shape: rounded, label: "**per​_​view​_​shadow​_​pass**<br/>绘制相机相关的平行光级联阴影。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**bevy​_​pbr::render::gpu​_​preprocess::**<br/>**main​_​build​_​indirect​_​parameters**<br/>为主不透明及透明通道构建间接绘制参数。" }
+  n4@{ shape: rounded, label: "**main​_​build​_​indirect​_​parameters**<br/>为主不透明及透明通道构建间接绘制参数。" }
   class n4 node_system
-  n5@{ shape: rounded, label: "**bevy​_​ecs::schedule::condition::**<br/>**common​_​conditions::any​_​match​_​**<br/>**filter#lt;(bevy​_​ecs::query::filter::**<br/>**With#lt;bevy​_​pbr::render::gpu​_​**<br/>**preprocess::PreprocessBindGroups#gt;,**<br/>**bevy​_​ecs::query::filter::**<br/>**Without#lt;bevy​_​pbr::render::gpu​_​**<br/>**preprocess::SkipGpuPreprocess#gt;,**<br/>**bevy​_​ecs::query::filter::**<br/>**Without#lt;bevy​_​render::view::**<br/>**NoIndirectDrawing#gt;, bevy​_​ecs::**<br/>**query::filter::Or#lt;(bevy​_​ecs::query::**<br/>**filter::Or#lt;(bevy​_​ecs::query::**<br/>**filter::With#lt;bevy​_​core​_​pipeline::**<br/>**prepass::DepthPrepass#gt;, bevy​_​ecs::**<br/>**query::filter::With#lt;bevy​_​core​_​**<br/>**pipeline::prepass::NormalPrepass#gt;,**<br/>**bevy​_​ecs::query::filter::With#lt;bevy​_​**<br/>**core​_​pipeline::prepass::**<br/>**MotionVectorPrepass#gt;, bevy​_​ecs::**<br/>**query::filter::With#lt;bevy​_​core​_​**<br/>**pipeline::prepass::**<br/>**DeferredPrepass#gt;)#gt;, bevy​_​ecs::**<br/>**query::filter::With#lt;bevy​_​pbr::**<br/>**render::light::ShadowView#gt;)#gt;)#gt;**<br/>来自crate:bevy​_​ecs ↗：判断是否存在符<br/>合过滤条件的实体。" }
+  n5@{ shape: rounded, label: "**any​_​match​_​filter**<br/>来自crate:bevy​_​ecs ↗：判断是否存在符<br/>合过滤条件的实体。" }
   class n5 node_system
   class n5 external_node
-  n6@{ shape: rounded, label: "**bevy​_​pbr::prepass::update​_​previous​_​**<br/>**view​_​data**<br/>记录三维及阴影视图未抖动的变换矩阵。" }
+  n6@{ shape: rounded, label: "**update​_​previous​_​view​_​data**<br/>记录三维及阴影视图未抖动的变换矩阵。" }
   class n6 node_system
-  n7@{ shape: rounded, label: "**bevy​_​ecs::schedule::condition::**<br/>**common​_​conditions::any​_​match​_​**<br/>**filter#lt;(bevy​_​ecs::query::filter::**<br/>**With#lt;bevy​_​pbr::render::gpu​_​**<br/>**preprocess::PreprocessBindGroups#gt;,**<br/>**bevy​_​ecs::query::filter::**<br/>**Without#lt;bevy​_​pbr::render::gpu​_​**<br/>**preprocess::SkipGpuPreprocess#gt;,**<br/>**bevy​_​ecs::query::filter::**<br/>**Without#lt;bevy​_​render::view::**<br/>**NoIndirectDrawing#gt;, bevy​_​ecs::**<br/>**query::filter::Or#lt;(bevy​_​ecs::query::**<br/>**filter::Or#lt;(bevy​_​ecs::query::**<br/>**filter::With#lt;bevy​_​core​_​pipeline::**<br/>**prepass::DepthPrepass#gt;, bevy​_​ecs::**<br/>**query::filter::With#lt;bevy​_​core​_​**<br/>**pipeline::prepass::NormalPrepass#gt;,**<br/>**bevy​_​ecs::query::filter::With#lt;bevy​_​**<br/>**core​_​pipeline::prepass::**<br/>**MotionVectorPrepass#gt;, bevy​_​ecs::**<br/>**query::filter::With#lt;bevy​_​core​_​**<br/>**pipeline::prepass::**<br/>**DeferredPrepass#gt;)#gt;, bevy​_​ecs::**<br/>**query::filter::With#lt;bevy​_​pbr::**<br/>**render::light::ShadowView#gt;)#gt;, bevy​_​**<br/>**ecs::query::filter::With#lt;bevy​_​**<br/>**render::occlusion​_​culling::**<br/>**OcclusionCulling#gt;)#gt;**<br/>来自crate:bevy​_​ecs ↗：判断是否存在符<br/>合过滤条件的实体。" }
+  n7@{ shape: rounded, label: "**any​_​match​_​filter**<br/>来自crate:bevy​_​ecs ↗：判断是否存在符<br/>合过滤条件的实体。" }
   class n7 node_system
   class n7 external_node
-  n8@{ shape: rounded, label: "**bevy​_​pbr::prepass::update​_​mesh​_​**<br/>**previous​_​global​_​transforms**<br/>为下帧保存网格的当前世界变换。" }
+  n8@{ shape: rounded, label: "**update​_​mesh​_​previous​_​global​_​**<br/>**transforms**<br/>为下帧保存网格的当前世界变换。" }
   class n8 node_system
-  n9@{ shape: rounded, label: "**bevy​_​pbr::render::light::shared​_​**<br/>**shadow​_​pass#lt;false#gt;**<br/>绘制跨相机共享的点光或聚光阴影。" }
+  n9@{ shape: rounded, label: "**shared​_​shadow​_​pass**<br/>绘制跨相机共享的点光或聚光阴影。" }
   class n9 node_system
-  n10@{ shape: rounded, label: "**bevy​_​pbr::render::light::shared​_​**<br/>**shadow​_​pass#lt;true#gt;**<br/>绘制跨相机共享的点光或聚光阴影。" }
+  n10@{ shape: rounded, label: "**shared​_​shadow​_​pass**<br/>绘制跨相机共享的点光或聚光阴影。" }
   class n10 node_system
-  n11@{ shape: rounded, label: "**bevy​_​pbr::render::light::per​_​view​_​**<br/>**shadow​_​pass#lt;false#gt;**<br/>绘制相机相关的平行光级联阴影。" }
+  n11@{ shape: rounded, label: "**per​_​view​_​shadow​_​pass**<br/>绘制相机相关的平行光级联阴影。" }
   class n11 node_system
   n1 e0@--- n0
   class e0 edge_read

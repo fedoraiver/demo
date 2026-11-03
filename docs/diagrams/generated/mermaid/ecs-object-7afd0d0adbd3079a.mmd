@@ -38,16 +38,16 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**batching::gpu​_​preprocessing::**<br/>**IndirectParametersBuildJobs**<br/>按对齐要求存储间接绘制参数构建任务。" }
+  n0@{ shape: cyl, label: "**IndirectParametersBuildJobs**<br/>按对齐要求存储间接绘制参数构建任务。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​render::batching::gpu​_​**<br/>**preprocessing::prepare​_​indirect​_​**<br/>**parameters​_​build​_​jobs**<br/>按视图阶段的批范围登记间接参数构建任务。" }
+  n1@{ shape: rounded, label: "**prepare​_​indirect​_​parameters​_​build​_​**<br/>**jobs**<br/>按视图阶段的批范围登记间接参数构建任务。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​render::batching::gpu​_​**<br/>**preprocessing::write​_​indirect​_​**<br/>**parameters​_​build​_​jobs**<br/>上传间接参数构建任务的动态参数缓冲。" }
+  n2@{ shape: rounded, label: "**write​_​indirect​_​parameters​_​build​_​jobs**<br/>上传间接参数构建任务的动态参数缓冲。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​pbr::render::gpu​_​preprocess::**<br/>**prepare​_​preprocess​_​bind​_​groups**<br/>来自crate:bevy​_​pbr ↗：绑定各视图网格<br/>预处理和间接参数构建资源。" }
+  n3@{ shape: rounded, label: "**prepare​_​preprocess​_​bind​_​groups**<br/>来自crate:bevy​_​pbr ↗：绑定各视图网格<br/>预处理和间接参数构建资源。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**bevy​_​render::init​_​gpu​_​resource#lt;bevy​_​**<br/>**render::batching::gpu​_​**<br/>**preprocessing::**<br/>**IndirectParametersBuildJobs#gt;**<br/>构造并插入渲染所需资源。" }
+  n4@{ shape: rounded, label: "**init​_​gpu​_​resource**<br/>构造并插入渲染所需资源。" }
   class n4 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

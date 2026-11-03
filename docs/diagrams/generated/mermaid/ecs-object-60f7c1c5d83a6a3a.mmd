@@ -39,7 +39,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: notch-rect, label: "**Local · shared​_​bitset**<br/>用共享原子位图去重祖先遍历。" }
   class n0 node_local
-  n1@{ shape: rounded, label: "**bevy​_​transform::systems::mark​_​dirty​_​**<br/>**trees**<br/>沿祖先链标记需要重算变换的子树。" }
+  n1@{ shape: rounded, label: "**mark​_​dirty​_​trees**<br/>沿祖先链标记需要重算变换的子树。" }
   class n1 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

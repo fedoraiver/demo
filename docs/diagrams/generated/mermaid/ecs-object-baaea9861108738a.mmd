@@ -38,25 +38,25 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**material​_​bind​_​groups::**<br/>**RenderMaterialBindings**<br/>按无类型材质身份查找绑定位置。" }
+  n0@{ shape: cyl, label: "**RenderMaterialBindings**<br/>按无类型材质身份查找绑定位置。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​render::erased​_​render​_​asset::**<br/>**prepare​_​erased​_​assets#lt;bevy​_​sprite​_​**<br/>**render::mesh2d::material::**<br/>**MeshMaterial2d#lt;bevy​_​sprite​_​render::**<br/>**sprite​_​mesh::sprite​_​mesh​_​material::**<br/>**SpriteMeshMaterial#gt;#gt;**<br/>在上传预算内准备擦除资产并管理重试卸载。" }
+  n1@{ shape: rounded, label: "**prepare​_​erased​_​assets**<br/>在上传预算内准备擦除资产并管理重试卸载。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::mesh::**<br/>**extract​_​2d​_​meshes**<br/>来自crate:bevy​_​sprite​_​render ↗：增量<br/>同步二维网格变换和渲染实例信息。" }
+  n2@{ shape: rounded, label: "**extract​_​2d​_​meshes**<br/>来自crate:bevy​_​sprite​_​render ↗：增量<br/>同步二维网格变换和渲染实例信息。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​render::init​_​gpu​_​resource#lt;bevy​_​**<br/>**render::material​_​bind​_​groups::**<br/>**RenderMaterialBindings#gt;**<br/>构造并插入渲染所需资源。" }
+  n3@{ shape: rounded, label: "**init​_​gpu​_​resource**<br/>构造并插入渲染所需资源。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**bevy​_​render::erased​_​render​_​asset::**<br/>**prepare​_​erased​_​assets#lt;bevy​_​pbr::**<br/>**mesh​_​material::MeshMaterial3d#lt;bevy​_​**<br/>**pbr::extended​_​material::**<br/>**ExtendedMaterial#lt;bevy​_​pbr::pbr​_​**<br/>**material::StandardMaterial, bevy​_​**<br/>**pbr::decal::forward::**<br/>**ForwardDecalMaterialExt#gt;#gt;#gt;**<br/>在上传预算内准备擦除资产并管理重试卸载。" }
+  n4@{ shape: rounded, label: "**prepare​_​erased​_​assets**<br/>在上传预算内准备擦除资产并管理重试卸载。" }
   class n4 node_system
-  n5@{ shape: rounded, label: "**bevy​_​pbr::render::mesh::collect​_​**<br/>**meshes​_​for​_​gpu​_​building**<br/>来自crate:bevy​_​pbr ↗：把线程提取队列<br/>整理为 GPU 网格实例和输入缓冲。" }
+  n5@{ shape: rounded, label: "**collect​_​meshes​_​for​_​gpu​_​building**<br/>来自crate:bevy​_​pbr ↗：把线程提取队列<br/>整理为 GPU 网格实例和输入缓冲。" }
   class n5 node_system
   class n5 external_node
-  n6@{ shape: rounded, label: "**bevy​_​render::erased​_​render​_​asset::**<br/>**prepare​_​erased​_​assets#lt;bevy​_​sprite​_​**<br/>**render::mesh2d::material::**<br/>**MeshMaterial2d#lt;bevy​_​sprite​_​render::**<br/>**tilemap​_​chunk::tilemap​_​chunk​_​**<br/>**material::TilemapChunkMaterial#gt;#gt;**<br/>在上传预算内准备擦除资产并管理重试卸载。" }
+  n6@{ shape: rounded, label: "**prepare​_​erased​_​assets**<br/>在上传预算内准备擦除资产并管理重试卸载。" }
   class n6 node_system
-  n7@{ shape: rounded, label: "**bevy​_​render::erased​_​render​_​asset::**<br/>**prepare​_​erased​_​assets#lt;bevy​_​sprite​_​**<br/>**render::mesh2d::material::**<br/>**MeshMaterial2d#lt;bevy​_​sprite​_​render::**<br/>**mesh2d::color​_​material::**<br/>**ColorMaterial#gt;#gt;**<br/>在上传预算内准备擦除资产并管理重试卸载。" }
+  n7@{ shape: rounded, label: "**prepare​_​erased​_​assets**<br/>在上传预算内准备擦除资产并管理重试卸载。" }
   class n7 node_system
-  n8@{ shape: rounded, label: "**bevy​_​render::erased​_​render​_​asset::**<br/>**prepare​_​erased​_​assets#lt;bevy​_​pbr::**<br/>**mesh​_​material::MeshMaterial3d#lt;bevy​_​**<br/>**pbr::pbr​_​material::**<br/>**StandardMaterial#gt;#gt;**<br/>在上传预算内准备擦除资产并管理重试卸载。" }
+  n8@{ shape: rounded, label: "**prepare​_​erased​_​assets**<br/>在上传预算内准备擦除资产并管理重试卸载。" }
   class n8 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

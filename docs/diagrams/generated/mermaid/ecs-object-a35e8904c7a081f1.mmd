@@ -45,55 +45,55 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​render::view::prepare​_​view​_​**<br/>**targets**<br/>为视图维护主颜色双缓冲及可选多采样目标。" }
+  n0@{ shape: rounded, label: "**prepare​_​view​_​targets**<br/>为视图维护主颜色双缓冲及可选多采样目标。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**bevy​_​render::view::window::prepare​_​**<br/>**windows**<br/>为有相机输出或需要首次呈现的窗口取得交换<br/>链纹理，保留可复用的未呈现帧，并处理尺<br/>寸、模式变化及表面获取错误。" }
+  n1@{ shape: rounded, label: "**prepare​_​windows**<br/>为有相机输出或需要首次呈现的窗口取得交换<br/>链纹理，保留可复用的未呈现帧，并处理尺<br/>寸、模式变化及表面获取错误。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​render::view::prepare​_​view​_​**<br/>**attachments**<br/>按相机输出目标准备可共享的颜色附件。" }
+  n2@{ shape: rounded, label: "**prepare​_​view​_​attachments**<br/>按相机输出目标准备可共享的颜色附件。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​post​_​process::dof::configure​_​**<br/>**depth​_​of​_​field​_​view​_​targets**<br/>来自crate:bevy​_​post​_​process ↗：允许<br/>景深相机采样自己的深度纹理。" }
+  n3@{ shape: rounded, label: "**configure​_​depth​_​of​_​field​_​view​_​**<br/>**targets**<br/>来自crate:bevy​_​post​_​process ↗：允许<br/>景深相机采样自己的深度纹理。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**camera::CameraMainTextureUsages**<br/>来自crate:bevy​_​camera ↗：配置相机主颜<br/>色纹理的使用标志。" }
+  n4@{ shape: rounded, label: "**CameraMainTextureUsages**<br/>来自crate:bevy​_​camera ↗：配置相机主颜<br/>色纹理的使用标志。" }
   class n4 node_component
   class n4 external_node
-  n5@{ shape: rounded, label: "**bevy​_​post​_​process::dof::prepare​_​**<br/>**auxiliary​_​depth​_​of​_​field​_​textures**<br/>来自crate:bevy​_​post​_​process ↗：为<br/>Bokeh 景深分配第二颜色输出。" }
+  n5@{ shape: rounded, label: "**prepare​_​auxiliary​_​depth​_​of​_​field​_​**<br/>**textures**<br/>来自crate:bevy​_​post​_​process ↗：为<br/>Bokeh 景深分配第二颜色输出。" }
   class n5 node_system
   class n5 external_node
-  n6@{ shape: rounded, label: "**bevy​_​render::view::**<br/>**ResolvedCompositingSpace**<br/>记录本帧相机堆栈实际采用的合成空间。" }
+  n6@{ shape: rounded, label: "**ResolvedCompositingSpace**<br/>记录本帧相机堆栈实际采用的合成空间。" }
   class n6 node_component
-  n7@{ shape: cyl, label: "**view::ViewTargetAttachments**<br/>按输出目标保存本帧颜色附件。" }
+  n7@{ shape: cyl, label: "**ViewTargetAttachments**<br/>按输出目标保存本帧颜色附件。" }
   class n7 node_resource
-  n8@{ shape: rounded, label: "**bevy​_​core​_​pipeline::core​_​3d::**<br/>**configure​_​occlusion​_​culling​_​view​_​**<br/>**targets**<br/>来自crate:bevy​_​core​_​pipeline ↗：让遮<br/>挡剔除相机的深度纹理可被采样。" }
+  n8@{ shape: rounded, label: "**configure​_​occlusion​_​culling​_​view​_​**<br/>**targets**<br/>来自crate:bevy​_​core​_​pipeline ↗：让遮<br/>挡剔除相机的深度纹理可被采样。" }
   class n8 node_system
   class n8 external_node
   n9@{ shape: notch-rect, label: "**Local · main​_​texture​_​atomics**<br/>跨帧共享主颜色双缓冲的当前侧索引。" }
   class n9 node_local
-  n10@{ shape: rounded, label: "**bevy​_​post​_​process::motion​_​blur::**<br/>**prepare​_​view​_​depth​_​texture​_​usages​_​**<br/>**for​_​motion​_​blur**<br/>来自crate:bevy​_​post​_​process ↗：让运<br/>动模糊相机的深度纹理可被采样。" }
+  n10@{ shape: rounded, label: "**prepare​_​view​_​depth​_​texture​_​usages​_​**<br/>**for​_​motion​_​blur**<br/>来自crate:bevy​_​post​_​process ↗：让运<br/>动模糊相机的深度纹理可被采样。" }
   class n10 node_system
   class n10 external_node
-  n11@{ shape: cyl, label: "**clear​_​color::ClearColor**<br/>来自crate:bevy​_​camera ↗：提供相机默认<br/>的清屏颜色。" }
+  n11@{ shape: cyl, label: "**ClearColor**<br/>来自crate:bevy​_​camera ↗：提供相机默认<br/>的清屏颜色。" }
   class n11 node_resource
   class n11 external_node
-  n12@{ shape: rounded, label: "**bevy​_​render::camera::ExtractedCamera**<br/>保存渲染世界相机的目标和绘制配置。" }
+  n12@{ shape: rounded, label: "**ExtractedCamera**<br/>保存渲染世界相机的目标和绘制配置。" }
   class n12 node_component
-  n13@{ shape: rounded, label: "**bevy​_​render::view::ExtractedView**<br/>描述渲染视图的身份、投影与空间状态。" }
+  n13@{ shape: rounded, label: "**ExtractedView**<br/>描述渲染视图的身份、投影与空间状态。" }
   class n13 node_component
-  n14@{ shape: rounded, label: "**bevy​_​render::view::ViewTarget**<br/>管理视图主颜色纹理及最终输出附件。" }
+  n14@{ shape: rounded, label: "**ViewTarget**<br/>管理视图主颜色纹理及最终输出附件。" }
   class n14 node_component
-  n15@{ shape: fr-rect, label: "**view::ViewPlugin**<br/>准备视图渲染目标与统一数据。" }
+  n15@{ shape: fr-rect, label: "**ViewPlugin**<br/>准备视图渲染目标与统一数据。" }
   class n15 node_plugin
-  n16@{ shape: rounded, label: "**bevy​_​render::view::Msaa**<br/>选择视图的多重采样抗锯齿样本数。" }
+  n16@{ shape: rounded, label: "**Msaa**<br/>选择视图的多重采样抗锯齿样本数。" }
   class n16 node_component
-  n17@{ shape: cyl, label: "**bevy​_​render::renderer::RenderDevice**<br/>创建渲染和计算所需的 GPU 资源。" }
+  n17@{ shape: cyl, label: "**RenderDevice**<br/>创建渲染和计算所需的 GPU 资源。" }
   class n17 node_resource
-  n18@{ shape: cyl, label: "**bevy​_​render::texture::TextureCache**<br/>复用渲染中反复创建的临时纹理。" }
+  n18@{ shape: cyl, label: "**TextureCache**<br/>复用渲染中反复创建的临时纹理。" }
   class n18 node_resource
   n19@{ shape: lin-rect, label: "**PrepareViews**<br/>组织渲染数据准备与绘制排队。" }
   class n19 node_system_set
-  n20@{ shape: rounded, label: "**bevy​_​render::render​_​asset::prepare​_​**<br/>**assets#lt;bevy​_​render::texture::gpu​_​**<br/>**image::GpuImage#gt;**<br/>在上传预算内准备资产并保留重试项。" }
+  n20@{ shape: rounded, label: "**prepare​_​assets**<br/>在上传预算内准备资产并保留重试项。" }
   class n20 node_system
-  n21@{ shape: rounded, label: "**bevy​_​render::view::window::**<br/>**screenshot::prepare​_​screenshots**<br/>为有效截图目标准备捕获资源和输出附件。" }
+  n21@{ shape: rounded, label: "**prepare​_​screenshots**<br/>为有效截图目标准备捕获资源和输出附件。" }
   class n21 node_system
   n1 e0@-->|"先于"| n0
   class e0 edge_order

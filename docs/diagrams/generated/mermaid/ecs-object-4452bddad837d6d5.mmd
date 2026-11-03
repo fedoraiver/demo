@@ -38,13 +38,13 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**material::**<br/>**EntitiesNeedingSpecialization#lt;extend**<br/>**ed​_​material::ExtendedMaterial#lt;pbr​_​**<br/>**material::StandardMaterial, decal::**<br/>**forward::ForwardDecalMaterialExt#gt;#gt;**<br/>暂存需要更新或移除专用管线的实体。" }
+  n0@{ shape: cyl, label: "**EntitiesNeedingSpecialization#lt;Extend**<br/>**edMaterial#lt;StandardMaterial,**<br/>**ForwardDecalMaterialExt#gt;#gt;**<br/>暂存需要更新或移除专用管线的实体。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​pbr::material::check​_​entities​_​**<br/>**needing​_​specialization#lt;bevy​_​pbr::**<br/>**extended​_​material::**<br/>**ExtendedMaterial#lt;bevy​_​pbr::pbr​_​**<br/>**material::StandardMaterial, bevy​_​**<br/>**pbr::decal::forward::**<br/>**ForwardDecalMaterialExt#gt;#gt;**<br/>收集几何或材质变化及移除的三维网格。" }
+  n1@{ shape: rounded, label: "**check​_​entities​_​needing​_​**<br/>**specialization**<br/>收集几何或材质变化及移除的三维网格。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​pbr::material::extract​_​**<br/>**entities​_​needs​_​specialization#lt;bevy​_​**<br/>**pbr::extended​_​material::**<br/>**ExtendedMaterial#lt;bevy​_​pbr::pbr​_​**<br/>**material::StandardMaterial, bevy​_​**<br/>**pbr::decal::forward::**<br/>**ForwardDecalMaterialExt#gt;#gt;**<br/>把主世界待刷新材质管线的实体身份提取到渲<br/>染侧。" }
+  n2@{ shape: rounded, label: "**extract​_​entities​_​needs​_​**<br/>**specialization**<br/>把主世界待刷新材质管线的实体身份提取到渲<br/>染侧。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​pbr::material::extract​_​**<br/>**entities​_​that​_​need​_​specializations​_​**<br/>**removed#lt;bevy​_​pbr::extended​_​**<br/>**material::ExtendedMaterial#lt;bevy​_​**<br/>**pbr::pbr​_​material::**<br/>**StandardMaterial, bevy​_​pbr::decal::**<br/>**forward::ForwardDecalMaterialExt#gt;#gt;**<br/>提取需要移除材质管线专用化的实体。" }
+  n3@{ shape: rounded, label: "**extract​_​entities​_​that​_​need​_​**<br/>**specializations​_​removed**<br/>提取需要移除材质管线专用化的实体。" }
   class n3 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

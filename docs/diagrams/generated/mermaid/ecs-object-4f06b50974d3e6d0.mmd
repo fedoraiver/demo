@@ -39,121 +39,121 @@ flowchart LR
   classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**character::components::Character**<br/>具有移动和跳跃能力的角色。" }
+  n0@{ shape: rounded, label: "**Character**<br/>具有移动和跳跃能力的角色。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**demo::item​_​interaction::pose::sync​_​**<br/>**held​_​physics**<br/>来自item​_​interaction ↗：同步组合体内<br/>箱子的真实世界姿态和速度，不依赖人物是否<br/>具有视觉 Children。" }
+  n1@{ shape: rounded, label: "**sync​_​held​_​physics**<br/>来自item​_​interaction ↗：同步组合体内<br/>箱子的真实世界姿态和速度，不依赖人物是否<br/>具有视觉 Children。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**demo::item​_​interaction::pose::sync​_​**<br/>**held​_​presentation**<br/>来自item​_​interaction ↗：帧末跟随同一<br/>份已呈现人物姿态，零固定步时也不在箱体上<br/>叠加第二份插值。" }
+  n2@{ shape: rounded, label: "**sync​_​held​_​presentation**<br/>来自item​_​interaction ↗：帧末跟随同一<br/>份已呈现人物姿态，零固定步时也不在箱体上<br/>叠加第二份插值。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**demo::item​_​interaction::audio​_​**<br/>**events::warn​_​hold​_​strain**<br/>来自item​_​interaction ↗：持续偏离实际<br/>握点时提示一次，误差恢复后允许下一次告<br/>警。" }
+  n3@{ shape: rounded, label: "**warn​_​hold​_​strain**<br/>来自item​_​interaction ↗：持续偏离实际<br/>握点时提示一次，误差恢复后允许下一次告<br/>警。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**demo::item​_​interaction::**<br/>**interaction::handle​_​interaction**<br/>来自item​_​interaction ↗：拾取建立物理<br/>持握关系；释放只解除控制，保留刚体姿态、<br/>线速度和角速度。" }
+  n4@{ shape: rounded, label: "**handle​_​interaction**<br/>来自item​_​interaction ↗：拾取建立物理<br/>持握关系；释放只解除控制，保留刚体姿态、<br/>线速度和角速度。" }
   class n4 node_system
   class n4 external_node
-  n5@{ shape: rounded, label: "**demo::item​_​interaction::pose::sync​_​**<br/>**held​_​physics**<br/>来自item​_​interaction ↗：同步组合体内<br/>箱子的真实世界姿态和速度，不依赖人物是否<br/>具有视觉 Children。" }
+  n5@{ shape: rounded, label: "**sync​_​held​_​physics**<br/>来自item​_​interaction ↗：同步组合体内<br/>箱子的真实世界姿态和速度，不依赖人物是否<br/>具有视觉 Children。" }
   class n5 node_system
   class n5 external_node
-  n6@{ shape: hex, label: "**demo::first​_​person::actions::**<br/>**request​_​jump**<br/>来自first​_​person ↗：一次性请求保留到<br/>固定步消费，即使本渲染帧没有固定步也不会<br/>丢失。" }
+  n6@{ shape: hex, label: "**request​_​jump**<br/>来自first​_​person ↗：一次性请求保留到<br/>固定步消费，即使本渲染帧没有固定步也不会<br/>丢失。" }
   class n6 node_observer
   class n6 external_node
-  n7@{ shape: rounded, label: "**demo::item​_​interaction::attachment::**<br/>**align​_​attachments**<br/>来自item​_​interaction ↗：有限的小步对<br/>齐不会积分箱体力；受阻保留安全姿态，持续<br/>受阻则解除持握。" }
+  n7@{ shape: rounded, label: "**align​_​attachments**<br/>来自item​_​interaction ↗：有限的小步对<br/>齐不会积分箱体力；受阻保留安全姿态，持续<br/>受阻则解除持握。" }
   class n7 node_system
   class n7 external_node
-  n8@{ shape: rounded, label: "**demo::item​_​interaction::lifecycle::**<br/>**release​_​orphaned​_​items**<br/>来自item​_​interaction ↗：关系被外部解<br/>除或人物销毁时，独立箱实体仍能恢复自由刚<br/>体，不产生残留附属碰撞。" }
+  n8@{ shape: rounded, label: "**release​_​orphaned​_​items**<br/>来自item​_​interaction ↗：关系被外部解<br/>除或人物销毁时，独立箱实体仍能恢复自由刚<br/>体，不产生残留附属碰撞。" }
   class n8 node_system
   class n8 external_node
-  n9@{ shape: hex, label: "**demo::first​_​person::actions::record​_​**<br/>**movement**<br/>来自first​_​person ↗：按事件所属的上下<br/>文查找角色，避免把一个玩家的动作写给其他<br/>角色。" }
+  n9@{ shape: hex, label: "**record​_​movement**<br/>来自first​_​person ↗：按事件所属的上下<br/>文查找角色，避免把一个玩家的动作写给其他<br/>角色。" }
   class n9 node_observer
   class n9 external_node
-  n10@{ shape: hex, label: "**demo::first​_​person::actions::clear​_​**<br/>**completed​_​movement**<br/>来自first​_​person ↗：清除已结束动作的<br/>角色移动方向。" }
+  n10@{ shape: hex, label: "**clear​_​completed​_​movement**<br/>来自first​_​person ↗：清除已结束动作的<br/>角色移动方向。" }
   class n10 node_observer
   class n10 external_node
-  n11@{ shape: rounded, label: "**demo::first​_​person::camera::sync​_​**<br/>**character​_​visibility**<br/>来自first​_​person ↗：第一人称只隐藏自<br/>身视觉子树，保留业务根与独立木箱。" }
+  n11@{ shape: rounded, label: "**sync​_​character​_​visibility**<br/>来自first​_​person ↗：第一人称只隐藏自<br/>身视觉子树，保留业务根与独立木箱。" }
   class n11 node_system
   class n11 external_node
-  n12@{ shape: rounded, label: "**demo::item​_​interaction::attachment::**<br/>**finish​_​attachments**<br/>来自item​_​interaction ↗：持握期间只保<br/>留人物的 Dynamic，碰到箱子即对同一刚体<br/>求解，内部形状自动互不碰撞。" }
+  n12@{ shape: rounded, label: "**finish​_​attachments**<br/>来自item​_​interaction ↗：持握期间只保<br/>留人物的 Dynamic，碰到箱子即对同一刚体<br/>求解，内部形状自动互不碰撞。" }
   class n12 node_system
   class n12 external_node
-  n13@{ shape: rounded, label: "**demo::item​_​interaction::pose::sync​_​**<br/>**held​_​presentation**<br/>来自item​_​interaction ↗：帧末跟随同一<br/>份已呈现人物姿态，零固定步时也不在箱体上<br/>叠加第二份插值。" }
+  n13@{ shape: rounded, label: "**sync​_​held​_​presentation**<br/>来自item​_​interaction ↗：帧末跟随同一<br/>份已呈现人物姿态，零固定步时也不在箱体上<br/>叠加第二份插值。" }
   class n13 node_system
   class n13 external_node
-  n14@{ shape: hex, label: "**demo::first​_​person::actions::**<br/>**request​_​interaction**<br/>来自first​_​person ↗：记录目标角色的单<br/>次交互请求。" }
+  n14@{ shape: hex, label: "**request​_​interaction**<br/>来自first​_​person ↗：记录目标角色的单<br/>次交互请求。" }
   class n14 node_observer
   class n14 external_node
-  n15@{ shape: rounded, label: "**demo::character::motion::update​_​**<br/>**grounded**<br/>脚底附近的小球向下探测支撑面；墙面法线和<br/>上升中的角色不能算接地。" }
+  n15@{ shape: rounded, label: "**update​_​grounded**<br/>脚底附近的小球向下探测支撑面；墙面法线和<br/>上升中的角色不能算接地。" }
   class n15 node_system
-  n16@{ shape: hex, label: "**demo::first​_​person::actions::clear​_​**<br/>**cancelled​_​movement**<br/>来自first​_​person ↗：清除已取消动作的<br/>角色移动方向。" }
+  n16@{ shape: hex, label: "**clear​_​cancelled​_​movement**<br/>来自first​_​person ↗：清除已取消动作的<br/>角色移动方向。" }
   class n16 node_observer
   class n16 external_node
-  n17@{ shape: rounded, label: "**demo::item​_​interaction::lifecycle::**<br/>**restore​_​empty​_​holder​_​mass**<br/>来自item​_​interaction ↗：箱实体被销毁<br/>时关系钩子会清空反向索引，人物仍存活则归<br/>还其原质量。" }
+  n17@{ shape: rounded, label: "**restore​_​empty​_​holder​_​mass**<br/>来自item​_​interaction ↗：箱实体被销毁<br/>时关系钩子会清空反向索引，人物仍存活则归<br/>还其原质量。" }
   class n17 node_system
   class n17 external_node
-  n18@{ shape: rounded, label: "**demo::character​_​animation::state::**<br/>**sync​_​courier​_​animation**<br/>来自character​_​animation ↗：Update 位<br/>于固定模拟与呈现同步之后；零固定步帧也使<br/>用本帧朝向和已有真实速度。" }
+  n18@{ shape: rounded, label: "**sync​_​courier​_​animation**<br/>来自character​_​animation ↗：Update 位<br/>于固定模拟与呈现同步之后；零固定步帧也使<br/>用本帧朝向和已有真实速度。" }
   class n18 node_system
   class n18 external_node
-  n19@{ shape: hex, label: "**demo::first​_​person::actions::**<br/>**request​_​jump**<br/>来自first​_​person ↗：一次性请求保留到<br/>固定步消费，即使本渲染帧没有固定步也不会<br/>丢失。" }
+  n19@{ shape: hex, label: "**request​_​jump**<br/>来自first​_​person ↗：一次性请求保留到<br/>固定步消费，即使本渲染帧没有固定步也不会<br/>丢失。" }
   class n19 node_observer
   class n19 external_node
-  n20@{ shape: rounded, label: "**demo::character::motion::log​_​**<br/>**character​_​velocity**<br/>采样物理解算后的实际速度，便于检查加速<br/>度、刹车和碰撞反馈。" }
+  n20@{ shape: rounded, label: "**log​_​character​_​velocity**<br/>采样物理解算后的实际速度，便于检查加速<br/>度、刹车和碰撞反馈。" }
   class n20 node_system
-  n21@{ shape: rounded, label: "**demo::bounds​_​recovery::recovery::**<br/>**recover​_​from​_​water**<br/>来自bounds​_​recovery ↗：恢复实体自身的<br/>出生姿态；角色落水只释放手中物品，物品落<br/>水时再独立恢复。" }
+  n21@{ shape: rounded, label: "**recover​_​from​_​water**<br/>来自bounds​_​recovery ↗：恢复实体自身的<br/>出生姿态；角色落水只释放手中物品，物品落<br/>水时再独立恢复。" }
   class n21 node_system
   class n21 external_node
-  n22@{ shape: rounded, label: "**demo::character::motion::jump​_​**<br/>**characters**<br/>跳跃只消费一次，通过冲量改变速度；重力和<br/>位置积分全部交给 Avian。" }
+  n22@{ shape: rounded, label: "**jump​_​characters**<br/>跳跃只消费一次，通过冲量改变速度；重力和<br/>位置积分全部交给 Avian。" }
   class n22 node_system
-  n23@{ shape: rounded, label: "**demo::character::motion::update​_​**<br/>**grounded**<br/>脚底附近的小球向下探测支撑面；墙面法线和<br/>上升中的角色不能算接地。" }
+  n23@{ shape: rounded, label: "**update​_​grounded**<br/>脚底附近的小球向下探测支撑面；墙面法线和<br/>上升中的角色不能算接地。" }
   class n23 node_system
-  n24@{ shape: rounded, label: "**demo::first​_​person::camera::follow​_​**<br/>**first​_​person​_​camera**<br/>来自first​_​person ↗：镜头使用本帧插值<br/>后的人物位置与观察角度；互斥过滤避免<br/>Transform 查询读写冲突。" }
+  n24@{ shape: rounded, label: "**follow​_​first​_​person​_​camera**<br/>来自first​_​person ↗：镜头使用本帧插值<br/>后的人物位置与观察角度；互斥过滤避免<br/>Transform 查询读写冲突。" }
   class n24 node_system
   class n24 external_node
-  n25@{ shape: hex, label: "**demo::first​_​person::actions::**<br/>**request​_​jump**<br/>来自first​_​person ↗：一次性请求保留到<br/>固定步消费，即使本渲染帧没有固定步也不会<br/>丢失。" }
+  n25@{ shape: hex, label: "**request​_​jump**<br/>来自first​_​person ↗：一次性请求保留到<br/>固定步消费，即使本渲染帧没有固定步也不会<br/>丢失。" }
   class n25 node_observer
   class n25 external_node
   n26@{ shape: rounded, label: "**spawn​_​actors · 创建模板**<br/>来自scene​_​assembly ↗：创建海岛中的可<br/>控制快递员根实体。" }
   class n26 node_entity
   class n26 external_node
-  n27@{ shape: hex, label: "**demo::first​_​person::actions::clear​_​**<br/>**cancelled​_​movement**<br/>来自first​_​person ↗：清除已取消动作的<br/>角色移动方向。" }
+  n27@{ shape: hex, label: "**clear​_​cancelled​_​movement**<br/>来自first​_​person ↗：清除已取消动作的<br/>角色移动方向。" }
   class n27 node_observer
   class n27 external_node
-  n28@{ shape: hex, label: "**demo::first​_​person::actions::clear​_​**<br/>**completed​_​movement**<br/>来自first​_​person ↗：清除已结束动作的<br/>角色移动方向。" }
+  n28@{ shape: hex, label: "**clear​_​completed​_​movement**<br/>来自first​_​person ↗：清除已结束动作的<br/>角色移动方向。" }
   class n28 node_observer
   class n28 external_node
-  n29@{ shape: rounded, label: "**demo::first​_​person::facing::sync​_​**<br/>**character​_​facing**<br/>来自first​_​person ↗：在固定模拟前及逐<br/>帧持握目标同步前设置水平朝向，站立、横移<br/>和后退时也跟随视角。" }
+  n29@{ shape: rounded, label: "**sync​_​character​_​facing**<br/>来自first​_​person ↗：在固定模拟前及逐<br/>帧持握目标同步前设置水平朝向，站立、横移<br/>和后退时也跟随视角。" }
   class n29 node_system
   class n29 external_node
-  n30@{ shape: hex, label: "**demo::first​_​person::actions::record​_​**<br/>**movement**<br/>来自first​_​person ↗：按事件所属的上下<br/>文查找角色，避免把一个玩家的动作写给其他<br/>角色。" }
+  n30@{ shape: hex, label: "**record​_​movement**<br/>来自first​_​person ↗：按事件所属的上下<br/>文查找角色，避免把一个玩家的动作写给其他<br/>角色。" }
   class n30 node_observer
   class n30 external_node
-  n31@{ shape: hex, label: "**demo::first​_​person::actions::clear​_​**<br/>**cancelled​_​movement**<br/>来自first​_​person ↗：清除已取消动作的<br/>角色移动方向。" }
+  n31@{ shape: hex, label: "**clear​_​cancelled​_​movement**<br/>来自first​_​person ↗：清除已取消动作的<br/>角色移动方向。" }
   class n31 node_observer
   class n31 external_node
-  n32@{ shape: rounded, label: "**demo::first​_​person::capture::sync​_​**<br/>**mouse​_​capture**<br/>来自first​_​person ↗：在输入转发前确定<br/>归属；切换前约定其他按键已松开，检查器没<br/>有进行中的交互。" }
+  n32@{ shape: rounded, label: "**sync​_​mouse​_​capture**<br/>来自first​_​person ↗：在输入转发前确定<br/>归属；切换前约定其他按键已松开，检查器没<br/>有进行中的交互。" }
   class n32 node_system
   class n32 external_node
-  n33@{ shape: hex, label: "**demo::first​_​person::actions::**<br/>**request​_​interaction**<br/>来自first​_​person ↗：记录目标角色的单<br/>次交互请求。" }
+  n33@{ shape: hex, label: "**request​_​interaction**<br/>来自first​_​person ↗：记录目标角色的单<br/>次交互请求。" }
   class n33 node_observer
   class n33 external_node
-  n34@{ shape: rounded, label: "**demo::first​_​person::facing::sync​_​**<br/>**character​_​facing**<br/>来自first​_​person ↗：在固定模拟前及逐<br/>帧持握目标同步前设置水平朝向，站立、横移<br/>和后退时也跟随视角。" }
+  n34@{ shape: rounded, label: "**sync​_​character​_​facing**<br/>来自first​_​person ↗：在固定模拟前及逐<br/>帧持握目标同步前设置水平朝向，站立、横移<br/>和后退时也跟随视角。" }
   class n34 node_system
   class n34 external_node
-  n35@{ shape: rounded, label: "**demo::item​_​interaction::pose::sync​_​**<br/>**held​_​physics**<br/>来自item​_​interaction ↗：同步组合体内<br/>箱子的真实世界姿态和速度，不依赖人物是否<br/>具有视觉 Children。" }
+  n35@{ shape: rounded, label: "**sync​_​held​_​physics**<br/>来自item​_​interaction ↗：同步组合体内<br/>箱子的真实世界姿态和速度，不依赖人物是否<br/>具有视觉 Children。" }
   class n35 node_system
   class n35 external_node
-  n36@{ shape: rounded, label: "**demo::character::motion::move​_​**<br/>**characters**<br/>用有上限的加速度趋近目标水平速度，保留碰<br/>撞和外部冲量造成的实际运动。" }
+  n36@{ shape: rounded, label: "**move​_​characters**<br/>用有上限的加速度趋近目标水平速度，保留碰<br/>撞和外部冲量造成的实际运动。" }
   class n36 node_system
-  n37@{ shape: rounded, label: "**demo::character​_​animation::binding::**<br/>**initialize​_​ready​_​couriers**<br/>来自character​_​animation ↗：场景就绪<br/>后只遍历该视觉根的子树，避免把 NPC 或其<br/>他模型的播放器接到主角上。" }
+  n37@{ shape: rounded, label: "**initialize​_​ready​_​couriers**<br/>来自character​_​animation ↗：场景就绪<br/>后只遍历该视觉根的子树，避免把 NPC 或其<br/>他模型的播放器接到主角上。" }
   class n37 node_system
   class n37 external_node
-  n38@{ shape: hex, label: "**demo::first​_​person::actions::record​_​**<br/>**movement**<br/>来自first​_​person ↗：按事件所属的上下<br/>文查找角色，避免把一个玩家的动作写给其他<br/>角色。" }
+  n38@{ shape: hex, label: "**record​_​movement**<br/>来自first​_​person ↗：按事件所属的上下<br/>文查找角色，避免把一个玩家的动作写给其他<br/>角色。" }
   class n38 node_observer
   class n38 external_node
-  n39@{ shape: hex, label: "**demo::first​_​person::actions::clear​_​**<br/>**completed​_​movement**<br/>来自first​_​person ↗：清除已结束动作的<br/>角色移动方向。" }
+  n39@{ shape: hex, label: "**clear​_​completed​_​movement**<br/>来自first​_​person ↗：清除已结束动作的<br/>角色移动方向。" }
   class n39 node_observer
   class n39 external_node
-  n40@{ shape: hex, label: "**demo::first​_​person::actions::**<br/>**request​_​interaction**<br/>来自first​_​person ↗：记录目标角色的单<br/>次交互请求。" }
+  n40@{ shape: hex, label: "**request​_​interaction**<br/>来自first​_​person ↗：记录目标角色的单<br/>次交互请求。" }
   class n40 node_observer
   class n40 external_node
   n0 e0@-->|"存在性约束"| n1

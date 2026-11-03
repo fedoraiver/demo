@@ -44,74 +44,38 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  subgraph layout_card_n0[" "]
-  n0@{ shape: rounded, label: "**bevy​_​winit::accessibility::update​_​**<br/>**accessibility​_​nodes**<br/>把变化的可访问性节点同步给原生适配器。" }
+  n0@{ shape: rounded, label: "**update​_​accessibility​_​nodes**<br/>把变化的可访问性节点同步给原生适配器。" }
   class n0 node_system
-  end
-  style layout_card_n0 fill:none,stroke:none
-  subgraph layout_card_n1[" "]
-  n1@{ shape: fr-rect, label: "**accessibility::AccessKitPlugin**<br/>连接窗口平台的无障碍接口。" }
+  n1@{ shape: fr-rect, label: "**AccessKitPlugin**<br/>连接窗口平台的无障碍接口。" }
   class n1 node_plugin
-  end
-  style layout_card_n1 fill:none,stroke:none
-  subgraph layout_card_n2[" "]
-  n2@{ shape: rounded, label: "**bevy​_​winit::accessibility::should​_​**<br/>**update​_​accessibility​_​nodes**<br/>判断是否需要更新无障碍节点。" }
+  n2@{ shape: rounded, label: "**should​_​update​_​accessibility​_​nodes**<br/>判断是否需要更新无障碍节点。" }
   class n2 node_system
-  end
-  style layout_card_n2 fill:none,stroke:none
-  subgraph layout_card_n3[" "]
   n3@{ shape: rounded, label: "**AccessibilityNode**<br/>来自crate:bevy​_​a11y ↗：把实体转换为<br/>AccessKit 可访问性节点" }
   class n3 node_component
   class n3 external_node
-  end
-  style layout_card_n3 fill:none,stroke:none
-  subgraph layout_card_n4[" "]
   n4@{ shape: lin-rect, label: "**FocusChangeEvents**<br/>来自crate:bevy​_​input​_​focus ↗：组织焦<br/>点输入派发与变化通知。" }
   class n4 node_system_set
   class n4 external_node
-  end
-  style layout_card_n4 fill:none,stroke:none
-  subgraph layout_card_n5[" "]
-  n5@{ shape: rounded, label: "**bevy​_​winit::accessibility::window​_​**<br/>**closed**<br/>清理关闭窗口的无障碍后端状态。" }
+  n5@{ shape: rounded, label: "**window​_​closed**<br/>清理关闭窗口的无障碍后端状态。" }
   class n5 node_system
-  end
-  style layout_card_n5 fill:none,stroke:none
-  subgraph layout_card_n6[" "]
   n6@{ shape: cyl, label: "**InputFocus**<br/>来自crate:bevy​_​input​_​focus ↗：保存当<br/>前输入焦点实体、待派发的焦点变化及原焦点" }
   class n6 node_resource
   class n6 external_node
-  end
-  style layout_card_n6 fill:none,stroke:none
-  subgraph layout_card_n7[" "]
-  n7@{ shape: rounded, label: "**bevy​_​ecs::hierarchy::Children**<br/>来自crate:bevy​_​ecs ↗：保存以<br/>ChildOf 指向当前父实体的子实体集合" }
+  n7@{ shape: rounded, label: "**Children**<br/>来自crate:bevy​_​ecs ↗：保存以<br/>ChildOf 指向当前父实体的子实体集合" }
   class n7 node_component
   class n7 external_node
-  end
-  style layout_card_n7 fill:none,stroke:none
-  subgraph layout_card_n8[" "]
-  n8@{ shape: rounded, label: "**bevy​_​ecs::hierarchy::ChildOf**<br/>来自crate:bevy​_​ecs ↗：保存当前实体的<br/>父实体身份" }
+  n8@{ shape: rounded, label: "**ChildOf**<br/>来自crate:bevy​_​ecs ↗：保存当前实体的<br/>父实体身份" }
   class n8 node_component
   class n8 external_node
-  end
-  style layout_card_n8 fill:none,stroke:none
-  subgraph layout_card_n9[" "]
   n9@{ shape: lin-rect, label: "**Update**<br/>来自crate:bevy​_​a11y ↗：组织无障碍信息<br/>更新。" }
   class n9 node_system_set
   class n9 external_node
-  end
-  style layout_card_n9 fill:none,stroke:none
-  subgraph layout_card_n10[" "]
-  n10@{ shape: rounded, label: "**window::PrimaryWindow**<br/>来自crate:bevy​_​window ↗：标识唯一的主<br/>窗口" }
+  n10@{ shape: rounded, label: "**PrimaryWindow**<br/>来自crate:bevy​_​window ↗：标识唯一的主<br/>窗口" }
   class n10 node_component
   class n10 external_node
-  end
-  style layout_card_n10 fill:none,stroke:none
-  subgraph layout_card_n11[" "]
-  n11@{ shape: rounded, label: "**window::Window**<br/>来自crate:bevy​_​window ↗：保存窗口的呈<br/>现模式、位置、分辨率、标题、全屏及平台行<br/>为配置" }
+  n11@{ shape: rounded, label: "**Window**<br/>来自crate:bevy​_​window ↗：保存窗口的呈<br/>现模式、位置、分辨率、标题、全屏及平台行<br/>为配置" }
   class n11 node_component
   class n11 external_node
-  end
-  style layout_card_n11 fill:none,stroke:none
   n1 e0@-->|"调用"| n0
   class e0 edge_registration
   n2 e1@-->|"运行条件"| n0

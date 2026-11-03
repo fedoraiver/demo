@@ -37,11 +37,11 @@ flowchart LR
   classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**render::systems::EguiRenderData**<br/>按主世界视图缓存 Egui 几何与绘制状态。" }
+  n0@{ shape: rounded, label: "**EguiRenderData**<br/>按主世界视图缓存 Egui 几何与绘制状态。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​egui::render::render​_​pass::**<br/>**prepare​_​egui​_​pass**<br/>在渲染世界更新延期的 Egui 绘制回调。" }
+  n1@{ shape: rounded, label: "**prepare​_​egui​_​pass**<br/>在渲染世界更新延期的 Egui 绘制回调。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​egui::render::render​_​pass::**<br/>**prepare​_​egui​_​pass**<br/>在渲染世界更新延期的 Egui 绘制回调。" }
+  n2@{ shape: rounded, label: "**prepare​_​egui​_​pass**<br/>在渲染世界更新延期的 Egui 绘制回调。" }
   class n2 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

@@ -44,21 +44,21 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​gilrs::rumble::play​_​gilrs​_​**<br/>**rumble**<br/>执行手柄振动请求并清除过期效果。" }
+  n0@{ shape: rounded, label: "**play​_​gilrs​_​rumble**<br/>执行手柄振动请求并清除过期效果。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**rumble::RunningRumbleEffects**<br/>按手柄保存正在运行的振动效果" }
+  n1@{ shape: cyl, label: "**RunningRumbleEffects**<br/>按手柄保存正在运行的振动效果" }
   class n1 node_resource
-  n2@{ shape: cyl, label: "**bevy​_​ecs::message::**<br/>**Messages#lt;gamepad::**<br/>**GamepadRumbleRequest#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n2@{ shape: cyl, label: "**Messages#lt;GamepadRumbleRequest#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n2 node_resource
   class n2 external_node
   n3@{ shape: lin-rect, label: "**RumbleSystems**<br/>维护手柄振动效果的生命周期。" }
   class n3 node_system_set
-  n4@{ shape: cyl, label: "**bevy​_​time::Time#lt;bevy​_​time::Real#gt;**<br/>来自crate:bevy​_​time ↗：保存时钟上下<br/>文、帧间隔及累计时间" }
+  n4@{ shape: cyl, label: "**Time#lt;Real#gt;**<br/>来自crate:bevy​_​time ↗：保存时钟上下<br/>文、帧间隔及累计时间" }
   class n4 node_resource
   class n4 external_node
   n5@{ shape: fr-rect, label: "**GilrsPlugin**<br/>接入平台手柄设备与输入。" }
   class n5 node_plugin
-  n6@{ shape: lean-r, label: "**gamepad::GamepadRumbleRequest**<br/>来自crate:bevy​_​input ↗：请求控制指定<br/>手柄震动。" }
+  n6@{ shape: lean-r, label: "**GamepadRumbleRequest**<br/>来自crate:bevy​_​input ↗：请求控制指定<br/>手柄震动。" }
   class n6 node_message
   class n6 external_node
   n7@{ shape: cyl, label: "**GilrsGamepads**<br/>维护已连接 gilrs 手柄编号与 Bevy 手柄<br/>实体的双向映射" }

@@ -37,9 +37,9 @@ flowchart LR
   classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;bevy​_​**<br/>**a11y::ActionRequest#gt;**<br/>保存最近两次轮换期间产生的指定类型消息" }
+  n0@{ shape: cyl, label: "**Messages#lt;ActionRequest#gt;**<br/>保存最近两次轮换期间产生的指定类型消息" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​winit::accessibility::poll​_​**<br/>**receivers**<br/>来自crate:bevy​_​winit ↗：将原生无障碍<br/>动作请求转为应用消息。" }
+  n1@{ shape: rounded, label: "**poll​_​receivers**<br/>来自crate:bevy​_​winit ↗：将原生无障碍<br/>动作请求转为应用消息。" }
   class n1 node_system
   class n1 external_node
   n1 e0@-->|"可变访问"| n0

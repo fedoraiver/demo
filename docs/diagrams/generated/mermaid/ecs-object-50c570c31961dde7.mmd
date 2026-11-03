@@ -38,11 +38,11 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**material​_​bind​_​groups::**<br/>**FallbackBindlessResources**<br/>填充绑定数组中未使用的资源槽位。" }
+  n0@{ shape: cyl, label: "**FallbackBindlessResources**<br/>填充绑定数组中未使用的资源槽位。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​render::material​_​bind​_​groups::**<br/>**prepare​_​material​_​bind​_​groups**<br/>重建本帧变化材质所需的 GPU 绑定组。" }
+  n1@{ shape: rounded, label: "**prepare​_​material​_​bind​_​groups**<br/>重建本帧变化材质所需的 GPU 绑定组。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​render::material​_​bind​_​groups::**<br/>**init​_​fallback​_​resources**<br/>创建材质绑定的采样器及缓冲回退资源。" }
+  n2@{ shape: rounded, label: "**init​_​fallback​_​resources**<br/>创建材质绑定的采样器及缓冲回退资源。" }
   class n2 node_system
   n0 e0@--> n1
   class e0 edge_read

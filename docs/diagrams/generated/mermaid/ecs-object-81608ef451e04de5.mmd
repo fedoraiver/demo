@@ -36,9 +36,9 @@ flowchart LR
   classDef node_message fill:#EDF4F6,stroke:#247B91,stroke-width:1.6px,color:#1F3340
   classDef edge_consume stroke:#247B91,stroke-width:1.8px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: lean-r, label: "**gamepad::GamepadRumbleRequest**<br/>请求控制指定手柄震动。" }
+  n0@{ shape: lean-r, label: "**GamepadRumbleRequest**<br/>请求控制指定手柄震动。" }
   class n0 node_message
-  n1@{ shape: rounded, label: "**bevy​_​gilrs::rumble::play​_​gilrs​_​**<br/>**rumble**<br/>来自crate:bevy​_​gilrs ↗：执行手柄振动<br/>请求并清除过期效果。" }
+  n1@{ shape: rounded, label: "**play​_​gilrs​_​rumble**<br/>来自crate:bevy​_​gilrs ↗：执行手柄振动<br/>请求并清除过期效果。" }
   class n1 node_system
   class n1 external_node
   n0 e0@--> n1

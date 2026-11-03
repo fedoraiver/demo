@@ -36,11 +36,11 @@ flowchart LR
   classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**mesh::allocator::**<br/>**MeshAllocatorSettings**<br/>调整网格缓冲分配策略与额外使用标志。" }
+  n0@{ shape: cyl, label: "**MeshAllocatorSettings**<br/>调整网格缓冲分配策略与额外使用标志。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​render::mesh::allocator::**<br/>**allocate​_​and​_​free​_​meshes**<br/>为新增变化网格分配 GPU 存储并释放旧分<br/>配。" }
+  n1@{ shape: rounded, label: "**allocate​_​and​_​free​_​meshes**<br/>为新增变化网格分配 GPU 存储并释放旧分<br/>配。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​render::init​_​gpu​_​resource#lt;bevy​_​**<br/>**render::mesh::allocator::**<br/>**MeshAllocator#gt;**<br/>构造并插入渲染所需资源。" }
+  n2@{ shape: rounded, label: "**init​_​gpu​_​resource**<br/>构造并插入渲染所需资源。" }
   class n2 node_system
   n0 e0@--> n1
   class e0 edge_read

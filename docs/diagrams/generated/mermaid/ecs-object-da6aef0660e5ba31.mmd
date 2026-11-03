@@ -40,7 +40,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**UiBatch**<br/>记录 UI 绘制批次的索引范围和图像。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​ui​_​render::clear​_​batches**<br/>在渲染清理阶段从所有 UI 批次实体移除<br/>UiBatch，供下一帧重新生成批次，不销毁这<br/>些实体本身。" }
+  n1@{ shape: rounded, label: "**clear​_​batches**<br/>在渲染清理阶段从所有 UI 批次实体移除<br/>UiBatch，供下一帧重新生成批次，不销毁这<br/>些实体本身。" }
   class n1 node_system
   n1 e0@---|"存在性约束"| n0
   class e0 edge_reference

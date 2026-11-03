@@ -39,7 +39,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: notch-rect, label: "**Local · removed​_​contexts.0.0.0.0**<br/>保存 EguiContext 移除参数的组件 ID。" }
   class n0 node_local
-  n1@{ shape: rounded, label: "**bevy​_​egui::input::**<br/>**WindowToEguiContextMap::on​_​egui​_​**<br/>**context​_​removed​_​system**<br/>移除失效的 Egui 上下文映射。" }
+  n1@{ shape: rounded, label: "**on​_​egui​_​context​_​removed​_​system**<br/>移除失效的 Egui 上下文映射。" }
   class n1 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

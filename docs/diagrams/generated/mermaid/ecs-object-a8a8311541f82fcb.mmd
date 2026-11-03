@@ -40,25 +40,25 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: lin-rect, label: "**PrepareResourcesWritePhaseBuffers**<br/>组织渲染数据准备与绘制排队。" }
   class n0 node_system_set
-  n1@{ shape: rounded, label: "**bevy​_​render::batching::gpu​_​**<br/>**preprocessing::write​_​binned​_​**<br/>**instance​_​buffers#lt;bevy​_​core​_​**<br/>**pipeline::prepass::**<br/>**AlphaMask3dPrepass, bevy​_​pbr::**<br/>**render::mesh::MeshPipeline#gt;**<br/>上传多重绘制分桶并生成 GPU 解包任务。" }
+  n1@{ shape: rounded, label: "**write​_​binned​_​instance​_​buffers**<br/>上传多重绘制分桶并生成 GPU 解包任务。" }
   class n1 node_system
   n2@{ shape: lin-rect, label: "**Prepare**<br/>组织渲染数据准备与绘制排队。" }
   class n2 node_system_set
-  n3@{ shape: rounded, label: "**bevy​_​render::batching::gpu​_​**<br/>**preprocessing::write​_​binned​_​**<br/>**instance​_​buffers#lt;bevy​_​core​_​**<br/>**pipeline::deferred::**<br/>**AlphaMask3dDeferred, bevy​_​pbr::**<br/>**render::mesh::MeshPipeline#gt;**<br/>上传多重绘制分桶并生成 GPU 解包任务。" }
+  n3@{ shape: rounded, label: "**write​_​binned​_​instance​_​buffers**<br/>上传多重绘制分桶并生成 GPU 解包任务。" }
   class n3 node_system
   n4@{ shape: lin-rect, label: "**PrepareResourcesCollectPhaseBuffers**<br/>组织渲染数据准备与绘制排队。" }
   class n4 node_system_set
-  n5@{ shape: rounded, label: "**bevy​_​render::batching::gpu​_​**<br/>**preprocessing::write​_​binned​_​**<br/>**instance​_​buffers#lt;bevy​_​core​_​**<br/>**pipeline::prepass::Opaque3dPrepass,**<br/>**bevy​_​pbr::render::mesh::**<br/>**MeshPipeline#gt;**<br/>上传多重绘制分桶并生成 GPU 解包任务。" }
+  n5@{ shape: rounded, label: "**write​_​binned​_​instance​_​buffers**<br/>上传多重绘制分桶并生成 GPU 解包任务。" }
   class n5 node_system
-  n6@{ shape: rounded, label: "**bevy​_​render::batching::gpu​_​**<br/>**preprocessing::write​_​binned​_​**<br/>**instance​_​buffers#lt;bevy​_​core​_​**<br/>**pipeline::core​_​3d::AlphaMask3d,**<br/>**bevy​_​pbr::render::mesh::**<br/>**MeshPipeline#gt;**<br/>上传多重绘制分桶并生成 GPU 解包任务。" }
+  n6@{ shape: rounded, label: "**write​_​binned​_​instance​_​buffers**<br/>上传多重绘制分桶并生成 GPU 解包任务。" }
   class n6 node_system
-  n7@{ shape: rounded, label: "**bevy​_​render::batching::gpu​_​**<br/>**preprocessing::write​_​binned​_​**<br/>**instance​_​buffers#lt;bevy​_​core​_​**<br/>**pipeline::deferred::**<br/>**Opaque3dDeferred, bevy​_​pbr::render::**<br/>**mesh::MeshPipeline#gt;**<br/>上传多重绘制分桶并生成 GPU 解包任务。" }
+  n7@{ shape: rounded, label: "**write​_​binned​_​instance​_​buffers**<br/>上传多重绘制分桶并生成 GPU 解包任务。" }
   class n7 node_system
-  n8@{ shape: rounded, label: "**bevy​_​render::batching::gpu​_​**<br/>**preprocessing::write​_​binned​_​**<br/>**instance​_​buffers#lt;bevy​_​pbr::render::**<br/>**light::Shadow, bevy​_​pbr::render::**<br/>**mesh::MeshPipeline#gt;**<br/>上传多重绘制分桶并生成 GPU 解包任务。" }
+  n8@{ shape: rounded, label: "**write​_​binned​_​instance​_​buffers**<br/>上传多重绘制分桶并生成 GPU 解包任务。" }
   class n8 node_system
   n9@{ shape: lin-rect, label: "**PrepareResourcesBatchPhases**<br/>组织渲染数据准备与绘制排队。" }
   class n9 node_system_set
-  n10@{ shape: rounded, label: "**bevy​_​render::batching::gpu​_​**<br/>**preprocessing::write​_​binned​_​**<br/>**instance​_​buffers#lt;bevy​_​core​_​**<br/>**pipeline::core​_​3d::Opaque3d, bevy​_​**<br/>**pbr::render::mesh::MeshPipeline#gt;**<br/>上传多重绘制分桶并生成 GPU 解包任务。" }
+  n10@{ shape: rounded, label: "**write​_​binned​_​instance​_​buffers**<br/>上传多重绘制分桶并生成 GPU 解包任务。" }
   class n10 node_system
   n0 e0@-->|"集合成员"| n1
   class e0 edge_set_membership

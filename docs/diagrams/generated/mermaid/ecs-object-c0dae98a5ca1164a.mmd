@@ -40,18 +40,18 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​core​_​pipeline::prepass::**<br/>**background​_​motion​_​vectors::cleanup​_​**<br/>**background​_​motion​_​vectors**<br/>移除不再需要的背景运动矢量渲染状态。" }
+  n0@{ shape: rounded, label: "**cleanup​_​background​_​motion​_​vectors**<br/>移除不再需要的背景运动矢量渲染状态。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**bevy​_​core​_​pipeline::prepass::**<br/>**MotionVectorPrepass**<br/>为相机输出屏幕空间运动矢量。" }
+  n1@{ shape: rounded, label: "**MotionVectorPrepass**<br/>为相机输出屏幕空间运动矢量。" }
   class n1 node_component
-  n2@{ shape: rounded, label: "**prepass::background​_​motion​_​vectors::**<br/>**BackgroundMotionVectorsPipelineId**<br/>保存相机背景运动矢量管线的标识。" }
+  n2@{ shape: rounded, label: "**BackgroundMotionVectorsPipelineId**<br/>保存相机背景运动矢量管线的标识。" }
   class n2 node_component
   n3@{ shape: lin-rect, label: "**Prepare**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
   class n3 node_system_set
   class n3 external_node
-  n4@{ shape: rounded, label: "**prepass::background​_​motion​_​vectors::**<br/>**NoBackgroundMotionVectors**<br/>禁用相机自动生成的背景运动矢量。" }
+  n4@{ shape: rounded, label: "**NoBackgroundMotionVectors**<br/>禁用相机自动生成的背景运动矢量。" }
   class n4 node_component
-  n5@{ shape: rounded, label: "**prepass::background​_​motion​_​vectors::**<br/>**BackgroundMotionVectorsBindGroup**<br/>绑定计算背景运动矢量所需的前后帧视图参<br/>数。" }
+  n5@{ shape: rounded, label: "**BackgroundMotionVectorsBindGroup**<br/>绑定计算背景运动矢量所需的前后帧视图参<br/>数。" }
   class n5 node_component
   n1 e0@-->|"存在性约束"| n0
   class e0 edge_reference

@@ -38,12 +38,12 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;mouse::**<br/>**MouseButtonInput#gt;**<br/>保存最近两次轮换期间产生的指定类型消息" }
+  n0@{ shape: cyl, label: "**Messages#lt;MouseButtonInput#gt;**<br/>保存最近两次轮换期间产生的指定类型消息" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​egui::input::absorb​_​bevy​_​input​_​**<br/>**system**<br/>来自crate:bevy​_​egui ↗：在 Egui 使用<br/>输入时吸收对应 Bevy 输入。" }
+  n1@{ shape: rounded, label: "**absorb​_​bevy​_​input​_​system**<br/>来自crate:bevy​_​egui ↗：在 Egui 使用<br/>输入时吸收对应 Bevy 输入。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​input::mouse::mouse​_​button​_​**<br/>**input​_​system**<br/>来自crate:bevy​_​input ↗：把鼠标按钮事<br/>件汇总为按钮状态。" }
+  n2@{ shape: rounded, label: "**mouse​_​button​_​input​_​system**<br/>来自crate:bevy​_​input ↗：把鼠标按钮事<br/>件汇总为按钮状态。" }
   class n2 node_system
   class n2 external_node
   n1 e0@-->|"赋值"| n0

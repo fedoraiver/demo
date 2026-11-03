@@ -39,7 +39,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: notch-rect, label: "**Local · mesh​_​instances​_​queued​_​this​_​**<br/>**iteration​_​scratch​_​space**<br/>去重二维网格本轮需要重新排队的实例。" }
   class n0 node_local
-  n1@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::**<br/>**material::queue​_​material2d​_​meshes**<br/>按透明模式更新二维网格渲染批次。" }
+  n1@{ shape: rounded, label: "**queue​_​material2d​_​meshes**<br/>按透明模式更新二维网格渲染批次。" }
   class n1 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

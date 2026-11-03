@@ -43,27 +43,27 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: hex, label: "**bevy​_​ui​_​widgets::list::listbox​_​**<br/>**focus​_​gained**<br/>在列表获焦时初始化活动行。" }
+  n0@{ shape: hex, label: "**listbox​_​focus​_​gained**<br/>在列表获焦时初始化活动行。" }
   class n0 node_observer
-  n1@{ shape: fr-rect, label: "**list::ListBoxPlugin**<br/>处理列表焦点、导航与选行请求。" }
+  n1@{ shape: fr-rect, label: "**ListBoxPlugin**<br/>处理列表焦点、导航与选行请求。" }
   class n1 node_plugin
-  n2@{ shape: stadium, label: "**gained​_​and​_​lost::FocusGained**<br/>来自crate:bevy​_​input​_​focus ↗：通知实<br/>体及祖先已获得输入焦点。" }
+  n2@{ shape: stadium, label: "**FocusGained**<br/>来自crate:bevy​_​input​_​focus ↗：通知实<br/>体及祖先已获得输入焦点。" }
   class n2 node_event
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​ecs::hierarchy::Children**<br/>来自crate:bevy​_​ecs ↗：保存以<br/>ChildOf 指向当前父实体的子实体集合" }
+  n3@{ shape: rounded, label: "**Children**<br/>来自crate:bevy​_​ecs ↗：保存以<br/>ChildOf 指向当前父实体的子实体集合" }
   class n3 node_component
   class n3 external_node
-  n4@{ shape: rounded, label: "**bevy​_​ui::Selected**<br/>来自crate:bevy​_​ui ↗：记录控件的<br/>ARIA 选中状态。" }
+  n4@{ shape: rounded, label: "**Selected**<br/>来自crate:bevy​_​ui ↗：记录控件的<br/>ARIA 选中状态。" }
   class n4 node_component
   class n4 external_node
-  n5@{ shape: rounded, label: "**list::ActiveDescendant**<br/>记录列表键盘导航的活动行。" }
+  n5@{ shape: rounded, label: "**ActiveDescendant**<br/>记录列表键盘导航的活动行。" }
   class n5 node_component
-  n6@{ shape: rounded, label: "**list::ListItem**<br/>标识列表中的可选行。" }
+  n6@{ shape: rounded, label: "**ListItem**<br/>标识列表中的可选行。" }
   class n6 node_component
-  n7@{ shape: rounded, label: "**bevy​_​ui::InteractionDisabled**<br/>来自crate:bevy​_​ui ↗：标记禁止交互的<br/>UI 控件。" }
+  n7@{ shape: rounded, label: "**InteractionDisabled**<br/>来自crate:bevy​_​ui ↗：标记禁止交互的<br/>UI 控件。" }
   class n7 node_component
   class n7 external_node
-  n8@{ shape: rounded, label: "**list::ListBox**<br/>组织列表项的导航与选择。" }
+  n8@{ shape: rounded, label: "**ListBox**<br/>组织列表项的导航与选择。" }
   class n8 node_component
   n1 e0@-->|"调用"| n0
   class e0 edge_registration

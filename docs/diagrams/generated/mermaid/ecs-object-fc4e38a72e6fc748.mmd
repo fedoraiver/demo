@@ -41,7 +41,7 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
   subgraph layout_card_n0[" "]
-  n0@{ shape: rounded, label: "**bevy​_​ui::ComputedUiTargetCamera**<br/>缓存 UI 节点实际采用的相机。" }
+  n0@{ shape: rounded, label: "**ComputedUiTargetCamera**<br/>缓存 UI 节点实际采用的相机。" }
   class n0 node_component
   end
   style layout_card_n0 fill:none,stroke:none
@@ -748,7 +748,7 @@ flowchart LR
   end
   style layout_card_n117 fill:none,stroke:none
   subgraph layout_card_n118[" "]
-  n118@{ shape: rounded, label: "**bevy​_​ui​_​render::extract​_​uinode​_​**<br/>**borders**<br/>来自crate:bevy​_​ui​_​render ↗：提取 UI<br/>各边颜色边框与外轮廓。" }
+  n118@{ shape: rounded, label: "**extract​_​uinode​_​borders**<br/>来自crate:bevy​_​ui​_​render ↗：提取 UI<br/>各边颜色边框与外轮廓。" }
   class n118 node_system
   class n118 external_node
   end
@@ -874,7 +874,7 @@ flowchart LR
   end
   style layout_card_n138 fill:none,stroke:none
   subgraph layout_card_n139[" "]
-  n139@{ shape: rounded, label: "**bevy​_​ui​_​render::ui​_​texture​_​slice​_​**<br/>**pipeline::extract​_​ui​_​texture​_​slices**<br/>来自crate:bevy​_​ui​_​render ↗：增量提取<br/>九宫格或平铺 UI 图像切片。" }
+  n139@{ shape: rounded, label: "**extract​_​ui​_​texture​_​slices**<br/>来自crate:bevy​_​ui​_​render ↗：增量提取<br/>九宫格或平铺 UI 图像切片。" }
   class n139 node_system
   class n139 external_node
   end
@@ -898,7 +898,7 @@ flowchart LR
   end
   style layout_card_n142 fill:none,stroke:none
   subgraph layout_card_n143[" "]
-  n143@{ shape: rounded, label: "**bevy​_​ui​_​render::extract​_​uinode​_​**<br/>**changes**<br/>来自crate:bevy​_​ui​_​render ↗：使变化或<br/>移除的 UI 数据失效并清理旧渲染实体。" }
+  n143@{ shape: rounded, label: "**extract​_​uinode​_​changes**<br/>来自crate:bevy​_​ui​_​render ↗：使变化或<br/>移除的 UI 数据失效并清理旧渲染实体。" }
   class n143 node_system
   class n143 external_node
   end
@@ -928,7 +928,7 @@ flowchart LR
   end
   style layout_card_n147 fill:none,stroke:none
   subgraph layout_card_n148[" "]
-  n148@{ shape: rounded, label: "**bevy​_​ui​_​render::gradient::extract​_​**<br/>**gradients**<br/>来自crate:bevy​_​ui​_​render ↗：提取可<br/>见 UI 渐变并替换失效渲染项。" }
+  n148@{ shape: rounded, label: "**extract​_​gradients**<br/>来自crate:bevy​_​ui​_​render ↗：提取可<br/>见 UI 渐变并替换失效渲染项。" }
   class n148 node_system
   class n148 external_node
   end
@@ -1282,7 +1282,7 @@ flowchart LR
   end
   style layout_card_n206 fill:none,stroke:none
   subgraph layout_card_n207[" "]
-  n207@{ shape: rounded, label: "**bevy​_​ui​_​render::extract​_​text​_​shadows**<br/>来自crate:bevy​_​ui​_​render ↗：提取 UI<br/>文字及装饰线的偏移阴影。" }
+  n207@{ shape: rounded, label: "**extract​_​text​_​shadows**<br/>来自crate:bevy​_​ui​_​render ↗：提取 UI<br/>文字及装饰线的偏移阴影。" }
   class n207 node_system
   class n207 external_node
   end
@@ -1336,7 +1336,7 @@ flowchart LR
   end
   style layout_card_n215 fill:none,stroke:none
   subgraph layout_card_n216[" "]
-  n216@{ shape: rounded, label: "**bevy​_​ui​_​render::debug​_​overlay::**<br/>**extract​_​debug​_​overlay**<br/>来自crate:bevy​_​ui​_​render ↗：为变化<br/>的 UI 节点提取调试轮廓。" }
+  n216@{ shape: rounded, label: "**extract​_​debug​_​overlay**<br/>来自crate:bevy​_​ui​_​render ↗：为变化<br/>的 UI 节点提取调试轮廓。" }
   class n216 node_system
   class n216 external_node
   end
@@ -1408,13 +1408,13 @@ flowchart LR
   end
   style layout_card_n227 fill:none,stroke:none
   subgraph layout_card_n228[" "]
-  n228@{ shape: rounded, label: "**bevy​_​ui​_​render::extract​_​text​_​**<br/>**sections**<br/>来自crate:bevy​_​ui​_​render ↗：按图集提<br/>取 UI 字形并处理选中文字颜色。" }
+  n228@{ shape: rounded, label: "**extract​_​text​_​sections**<br/>来自crate:bevy​_​ui​_​render ↗：按图集提<br/>取 UI 字形并处理选中文字颜色。" }
   class n228 node_system
   class n228 external_node
   end
   style layout_card_n228 fill:none,stroke:none
   subgraph layout_card_n229[" "]
-  n229@{ shape: rounded, label: "**bevy​_​ui::picking​_​backend::ui​_​picking**<br/>按 UI 堆叠与相机视口计算指针命中。" }
+  n229@{ shape: rounded, label: "**ui​_​picking**<br/>按 UI 堆叠与相机视口计算指针命中。" }
   class n229 node_system
   end
   style layout_card_n229 fill:none,stroke:none
@@ -1941,7 +1941,7 @@ flowchart LR
   end
   style layout_card_n316 fill:none,stroke:none
   subgraph layout_card_n317[" "]
-  n317@{ shape: rounded, label: "**bevy​_​ui::focus::ui​_​focus​_​system**<br/>按鼠标和触摸更新旧式 UI 交互状态。" }
+  n317@{ shape: rounded, label: "**ui​_​focus​_​system**<br/>按鼠标和触摸更新旧式 UI 交互状态。" }
   class n317 node_system
   end
   style layout_card_n317 fill:none,stroke:none
@@ -2276,7 +2276,7 @@ flowchart LR
   end
   style layout_card_n372 fill:none,stroke:none
   subgraph layout_card_n373[" "]
-  n373@{ shape: rounded, label: "**bevy​_​ui​_​render::box​_​shadow::extract​_​**<br/>**shadows**<br/>来自crate:bevy​_​ui​_​render ↗：提取可<br/>见 UI 阴影并替换失效渲染项。" }
+  n373@{ shape: rounded, label: "**extract​_​shadows**<br/>来自crate:bevy​_​ui​_​render ↗：提取可<br/>见 UI 阴影并替换失效渲染项。" }
   class n373 node_system
   class n373 external_node
   end
@@ -2336,7 +2336,7 @@ flowchart LR
   end
   style layout_card_n382 fill:none,stroke:none
   subgraph layout_card_n383[" "]
-  n383@{ shape: rounded, label: "**bevy​_​app::propagate::propagate​_​**<br/>**output#lt;bevy​_​ui::ui​_​node::**<br/>**ComputedUiTargetCamera, ()#gt;**<br/>来自crate:bevy​_​app ↗：把继承结果写入<br/>或移出实体实际组件。" }
+  n383@{ shape: rounded, label: "**propagate​_​output**<br/>来自crate:bevy​_​app ↗：把继承结果写入<br/>或移出实体实际组件。" }
   class n383 node_system
   class n383 external_node
   end
@@ -2558,7 +2558,7 @@ flowchart LR
   end
   style layout_card_n419 fill:none,stroke:none
   subgraph layout_card_n420[" "]
-  n420@{ shape: rounded, label: "**bevy​_​ui​_​render::text::extract​_​**<br/>**preedit​_​underlines**<br/>来自crate:bevy​_​ui​_​render ↗：把输入法<br/>预编辑下划线提取为 UI 矩形。" }
+  n420@{ shape: rounded, label: "**extract​_​preedit​_​underlines**<br/>来自crate:bevy​_​ui​_​render ↗：把输入法<br/>预编辑下划线提取为 UI 矩形。" }
   class n420 node_system
   class n420 external_node
   end
@@ -2600,7 +2600,7 @@ flowchart LR
   end
   style layout_card_n426 fill:none,stroke:none
   subgraph layout_card_n427[" "]
-  n427@{ shape: rounded, label: "**bevy​_​ui​_​render::extract​_​inline​_​**<br/>**images**<br/>来自crate:bevy​_​ui​_​render ↗：把文字行<br/>内图像提取为 UI 绘制项。" }
+  n427@{ shape: rounded, label: "**extract​_​inline​_​images**<br/>来自crate:bevy​_​ui​_​render ↗：把文字行<br/>内图像提取为 UI 绘制项。" }
   class n427 node_system
   class n427 external_node
   end
@@ -2900,7 +2900,7 @@ flowchart LR
   end
   style layout_card_n476 fill:none,stroke:none
   subgraph layout_card_n477[" "]
-  n477@{ shape: rounded, label: "**bevy​_​ui​_​render::extract​_​viewport​_​**<br/>**nodes**<br/>来自crate:bevy​_​ui​_​render ↗：把视口节<br/>点所引用相机的输出图像嵌入 UI。" }
+  n477@{ shape: rounded, label: "**extract​_​viewport​_​nodes**<br/>来自crate:bevy​_​ui​_​render ↗：把视口节<br/>点所引用相机的输出图像嵌入 UI。" }
   class n477 node_system
   class n477 external_node
   end
@@ -3008,7 +3008,7 @@ flowchart LR
   end
   style layout_card_n494 fill:none,stroke:none
   subgraph layout_card_n495[" "]
-  n495@{ shape: rounded, label: "**bevy​_​ui​_​render::extract​_​uinode​_​**<br/>**background​_​colors**<br/>来自crate:bevy​_​ui​_​render ↗：提取 UI<br/>节点背景与外侧填充色。" }
+  n495@{ shape: rounded, label: "**extract​_​uinode​_​background​_​colors**<br/>来自crate:bevy​_​ui​_​render ↗：提取 UI<br/>节点背景与外侧填充色。" }
   class n495 node_system
   class n495 external_node
   end
@@ -3368,7 +3368,7 @@ flowchart LR
   end
   style layout_card_n554 fill:none,stroke:none
   subgraph layout_card_n555[" "]
-  n555@{ shape: rounded, label: "**bevy​_​ui​_​render::extract​_​uinode​_​**<br/>**images**<br/>来自crate:bevy​_​ui​_​render ↗：按节点视<br/>觉盒与图集区域提取普通 UI 图像。" }
+  n555@{ shape: rounded, label: "**extract​_​uinode​_​images**<br/>来自crate:bevy​_​ui​_​render ↗：按节点视<br/>觉盒与图集区域提取普通 UI 图像。" }
   class n555 node_system
   class n555 external_node
   end
@@ -3410,7 +3410,7 @@ flowchart LR
   end
   style layout_card_n561 fill:none,stroke:none
   subgraph layout_card_n562[" "]
-  n562@{ shape: rounded, label: "**bevy​_​ui​_​render::extract​_​text​_​**<br/>**decorations**<br/>来自crate:bevy​_​ui​_​render ↗：提取 UI<br/>文字背景、删除线和下划线。" }
+  n562@{ shape: rounded, label: "**extract​_​text​_​decorations**<br/>来自crate:bevy​_​ui​_​render ↗：提取 UI<br/>文字背景、删除线和下划线。" }
   class n562 node_system
   class n562 external_node
   end
@@ -3806,7 +3806,7 @@ flowchart LR
   end
   style layout_card_n627 fill:none,stroke:none
   subgraph layout_card_n628[" "]
-  n628@{ shape: rounded, label: "**bevy​_​ui​_​render::text::extract​_​text​_​**<br/>**cursor**<br/>来自crate:bevy​_​ui​_​render ↗：提取文字<br/>光标和带圆角的选区背景。" }
+  n628@{ shape: rounded, label: "**extract​_​text​_​cursor**<br/>来自crate:bevy​_​ui​_​render ↗：提取文字<br/>光标和带圆角的选区背景。" }
   class n628 node_system
   class n628 external_node
   end

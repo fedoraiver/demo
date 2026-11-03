@@ -36,9 +36,9 @@ flowchart LR
   classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**picking​_​backend::UiPickingSettings**<br/>配置 UI 拾取的显式标记要求。" }
+  n0@{ shape: cyl, label: "**UiPickingSettings**<br/>配置 UI 拾取的显式标记要求。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​ui::picking​_​backend::ui​_​picking**<br/>按 UI 堆叠与相机视口计算指针命中。" }
+  n1@{ shape: rounded, label: "**ui​_​picking**<br/>按 UI 堆叠与相机视口计算指针命中。" }
   class n1 node_system
   n0 e0@--> n1
   class e0 edge_read

@@ -37,11 +37,11 @@ flowchart LR
   classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**menu::MenuFocusState**<br/>保存菜单弹出层的打开、获得焦点和关闭状态" }
+  n0@{ shape: rounded, label: "**MenuFocusState**<br/>保存菜单弹出层的打开、获得焦点和关闭状态" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​ui​_​widgets::menu::menu​_​on​_​lose​_​**<br/>**focus**<br/>关闭不再持有内部焦点的菜单。" }
+  n1@{ shape: rounded, label: "**menu​_​on​_​lose​_​focus**<br/>关闭不再持有内部焦点的菜单。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​ui​_​widgets::menu::menu​_​acquire​_​**<br/>**focus**<br/>在菜单打开时为菜单项取得焦点。" }
+  n2@{ shape: rounded, label: "**menu​_​acquire​_​focus**<br/>在菜单打开时为菜单项取得焦点。" }
   class n2 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

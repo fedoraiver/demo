@@ -40,29 +40,29 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: lin-rect, label: "**Reset**<br/>组织变换缓动端点与帧间应用。" }
   class n0 node_system_set
-  n1@{ shape: rounded, label: "**bevy​_​transform​_​interpolation::reset​_​**<br/>**rotation​_​easing**<br/>清除旧旋转平滑的起点和终点。" }
+  n1@{ shape: rounded, label: "**reset​_​rotation​_​easing**<br/>清除旧旋转平滑的起点和终点。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​transform​_​interpolation::**<br/>**extrapolation::reset​_​rotation​_​**<br/>**extrapolation**<br/>在固定步开始前还原真实旋转。" }
+  n2@{ shape: rounded, label: "**reset​_​rotation​_​extrapolation**<br/>在固定步开始前还原真实旋转。" }
   class n2 node_system
   n3@{ shape: lin-rect, label: "**UpdateStart**<br/>组织变换缓动端点与帧间应用。" }
   class n3 node_system_set
-  n4@{ shape: rounded, label: "**bevy​_​transform​_​interpolation::reset​_​**<br/>**translation​_​easing**<br/>清除旧位置平滑的起点和终点。" }
+  n4@{ shape: rounded, label: "**reset​_​translation​_​easing**<br/>清除旧位置平滑的起点和终点。" }
   class n4 node_system
-  n5@{ shape: rounded, label: "**bevy​_​transform​_​interpolation::**<br/>**interpolation::complete​_​scale​_​easing**<br/>在新一轮插值前完成上一段缩放。" }
+  n5@{ shape: rounded, label: "**complete​_​scale​_​easing**<br/>在新一轮插值前完成上一段缩放。" }
   class n5 node_system
-  n6@{ shape: rounded, label: "**bevy​_​transform​_​interpolation::reset​_​**<br/>**scale​_​easing**<br/>清除旧缩放平滑的起点和终点。" }
+  n6@{ shape: rounded, label: "**reset​_​scale​_​easing**<br/>清除旧缩放平滑的起点和终点。" }
   class n6 node_system
-  n7@{ shape: rounded, label: "**demo::bounds​_​recovery::recovery::**<br/>**resume​_​interpolation**<br/>来自bounds​_​recovery ↗：下一固定步从恢<br/>复后的位置重新采样插值，只移除本模块临时<br/>添加的暂停项。" }
+  n7@{ shape: rounded, label: "**resume​_​interpolation**<br/>来自bounds​_​recovery ↗：下一固定步从恢<br/>复后的位置重新采样插值，只移除本模块临时<br/>添加的暂停项。" }
   class n7 node_system
   class n7 external_node
-  n8@{ shape: rounded, label: "**demo::item​_​interaction::lifecycle::**<br/>**resume​_​carry​_​easing**<br/>来自item​_​interaction ↗：下一固定步在<br/>旧端点清除后恢复自由箱插值，保留原本由其<br/>他模块设置的暂停项。" }
+  n8@{ shape: rounded, label: "**resume​_​carry​_​easing**<br/>来自item​_​interaction ↗：下一固定步在<br/>旧端点清除后恢复自由箱插值，保留原本由其<br/>他模块设置的暂停项。" }
   class n8 node_system
   class n8 external_node
-  n9@{ shape: rounded, label: "**bevy​_​transform​_​interpolation::**<br/>**extrapolation::reset​_​translation​_​**<br/>**extrapolation**<br/>在固定步开始前还原真实位置。" }
+  n9@{ shape: rounded, label: "**reset​_​translation​_​extrapolation**<br/>在固定步开始前还原真实位置。" }
   class n9 node_system
-  n10@{ shape: rounded, label: "**bevy​_​transform​_​interpolation::**<br/>**interpolation::complete​_​translation​_​**<br/>**easing**<br/>在新一轮插值前完成上一段平移。" }
+  n10@{ shape: rounded, label: "**complete​_​translation​_​easing**<br/>在新一轮插值前完成上一段平移。" }
   class n10 node_system
-  n11@{ shape: rounded, label: "**bevy​_​transform​_​interpolation::**<br/>**interpolation::complete​_​rotation​_​**<br/>**easing**<br/>在新一轮插值前完成上一段旋转。" }
+  n11@{ shape: rounded, label: "**complete​_​rotation​_​easing**<br/>在新一轮插值前完成上一段旋转。" }
   class n11 node_system
   n0 e0@-->|"集合成员"| n1
   class e0 edge_set_membership
@@ -94,6 +94,6 @@ flowchart LR
   e5@{ curve: basis }
   e6@{ curve: basis }
   e7@{ curve: basis }
-  e8@{ curve: bumpX }
+  e8@{ curve: basis }
   e9@{ curve: basis }
   e10@{ curve: basis }

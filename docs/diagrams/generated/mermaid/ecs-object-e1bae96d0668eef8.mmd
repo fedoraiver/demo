@@ -37,9 +37,9 @@ flowchart LR
   classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**interpolation::**<br/>**TransformInterpolation**<br/>为实体启用平移、旋转和缩放插值。" }
+  n0@{ shape: rounded, label: "**TransformInterpolation**<br/>为实体启用平移、旋转和缩放插值。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**demo::scene​_​assembly::actors::spawn​_​**<br/>**actors**<br/>来自scene​_​assembly ↗：为就绪海岛创建<br/>玩法实体并复用加载相机。" }
+  n1@{ shape: rounded, label: "**spawn​_​actors**<br/>来自scene​_​assembly ↗：为就绪海岛创建<br/>玩法实体并复用加载相机。" }
   class n1 node_system
   class n1 external_node
   n1 e0@-->|"插入"| n0

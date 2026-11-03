@@ -43,27 +43,27 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: hex, label: "**bevy​_​ui​_​widgets::scrollarea::on​_​**<br/>**scroll​_​into​_​view**<br/>调整滚动区域以显示指定节点。" }
+  n0@{ shape: hex, label: "**on​_​scroll​_​into​_​view**<br/>调整滚动区域以显示指定节点。" }
   class n0 node_observer
-  n1@{ shape: rounded, label: "**bevy​_​ui::ScrollPosition**<br/>来自crate:bevy​_​ui ↗：指定 UI 内容的逻<br/>辑像素滚动位置。" }
+  n1@{ shape: rounded, label: "**ScrollPosition**<br/>来自crate:bevy​_​ui ↗：指定 UI 内容的逻<br/>辑像素滚动位置。" }
   class n1 node_component
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​ui::ComputedNode**<br/>来自crate:bevy​_​ui ↗：保存 UI 布局计算<br/>后的物理尺寸。" }
+  n2@{ shape: rounded, label: "**ComputedNode**<br/>来自crate:bevy​_​ui ↗：保存 UI 布局计算<br/>后的物理尺寸。" }
   class n2 node_component
   class n2 external_node
-  n3@{ shape: fr-rect, label: "**scrollarea::ScrollAreaPlugin**<br/>处理滚动区域输入与目标定位请求。" }
+  n3@{ shape: fr-rect, label: "**ScrollAreaPlugin**<br/>处理滚动区域输入与目标定位请求。" }
   class n3 node_plugin
-  n4@{ shape: rounded, label: "**bevy​_​ui::Node**<br/>来自crate:bevy​_​ui ↗：声明 UI 节点的布<br/>局规则。" }
+  n4@{ shape: rounded, label: "**Node**<br/>来自crate:bevy​_​ui ↗：声明 UI 节点的布<br/>局规则。" }
   class n4 node_component
   class n4 external_node
-  n5@{ shape: rounded, label: "**bevy​_​ui::UiGlobalTransform**<br/>来自crate:bevy​_​ui ↗：保存 UI 节点的绝<br/>对二维变换。" }
+  n5@{ shape: rounded, label: "**UiGlobalTransform**<br/>来自crate:bevy​_​ui ↗：保存 UI 节点的绝<br/>对二维变换。" }
   class n5 node_component
   class n5 external_node
-  n6@{ shape: stadium, label: "**scrollbar::ScrollIntoView**<br/>请求把目标项目滚动到可见范围。" }
+  n6@{ shape: stadium, label: "**ScrollIntoView**<br/>请求把目标项目滚动到可见范围。" }
   class n6 node_event
-  n7@{ shape: rounded, label: "**scrollarea::ScrollArea**<br/>启用界面区域的滚轮滚动。" }
+  n7@{ shape: rounded, label: "**ScrollArea**<br/>启用界面区域的滚轮滚动。" }
   class n7 node_component
-  n8@{ shape: rounded, label: "**bevy​_​ecs::hierarchy::ChildOf**<br/>来自crate:bevy​_​ecs ↗：保存当前实体的<br/>父实体身份" }
+  n8@{ shape: rounded, label: "**ChildOf**<br/>来自crate:bevy​_​ecs ↗：保存当前实体的<br/>父实体身份" }
   class n8 node_component
   class n8 external_node
   n0 e0@-->|"赋值"| n1

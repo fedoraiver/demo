@@ -38,14 +38,14 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**mesh::morph::**<br/>**RenderMorphTargetAllocator**<br/>按设备能力存放网格形变位移数据。" }
+  n0@{ shape: cyl, label: "**RenderMorphTargetAllocator**<br/>按设备能力存放网格形变位移数据。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​render::init​_​gpu​_​resource#lt;bevy​_​**<br/>**render::mesh::morph::**<br/>**RenderMorphTargetAllocator#gt;**<br/>构造并插入渲染所需资源。" }
+  n1@{ shape: rounded, label: "**init​_​gpu​_​resource**<br/>构造并插入渲染所需资源。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​pbr::render::mesh::prepare​_​**<br/>**mesh​_​bind​_​groups**<br/>来自crate:bevy​_​pbr ↗：按预处理路径准<br/>备网格、蒙皮和形变资源绑定。" }
+  n2@{ shape: rounded, label: "**prepare​_​mesh​_​bind​_​groups**<br/>来自crate:bevy​_​pbr ↗：按预处理路径准<br/>备网格、蒙皮和形变资源绑定。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​render::render​_​asset::prepare​_​**<br/>**assets#lt;bevy​_​render::mesh::**<br/>**RenderMesh#gt;**<br/>在上传预算内准备资产并保留重试项。" }
+  n3@{ shape: rounded, label: "**prepare​_​assets**<br/>在上传预算内准备资产并保留重试项。" }
   class n3 node_system
   n1 e0@-->|"插入"| n0
   class e0 edge_write

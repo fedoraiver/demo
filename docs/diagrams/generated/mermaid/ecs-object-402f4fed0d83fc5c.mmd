@@ -43,12 +43,12 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​egui::input::**<br/>**WindowToEguiContextMap::on​_​egui​_​**<br/>**context​_​removed​_​system**<br/>移除失效的 Egui 上下文映射。" }
+  n0@{ shape: rounded, label: "**on​_​egui​_​context​_​removed​_​system**<br/>移除失效的 Egui 上下文映射。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**bevy​_​ecs::apply​_​deferred**<br/>来自crate:bevy​_​ecs ↗：标识由执行器刷<br/>新延迟命令的同步点。" }
+  n1@{ shape: rounded, label: "**apply​_​deferred**<br/>来自crate:bevy​_​ecs ↗：标识由执行器刷<br/>新延迟命令的同步点。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: cyl, label: "**input::WindowToEguiContextMap**<br/>维护窗口实体与 Egui 上下文实体的双向索<br/>引" }
+  n2@{ shape: cyl, label: "**WindowToEguiContextMap**<br/>维护窗口实体与 Egui 上下文实体的双向索<br/>引" }
   class n2 node_resource
   n3@{ shape: lin-rect, label: "**InitContexts**<br/>组织 Egui 上下文与输入准备。" }
   class n3 node_system_set
@@ -56,11 +56,8 @@ flowchart LR
   class n4 node_local
   n5@{ shape: notch-rect, label: "**Local · removed​_​contexts.0.1**<br/>跟踪 EguiContext 移除记录的读取进度。" }
   class n5 node_local
-  subgraph layout_card_n6[" "]
-  n6@{ shape: rounded, label: "**bevy​_​egui::input::**<br/>**WindowToEguiContextMap::on​_​egui​_​**<br/>**context​_​added​_​system**<br/>登记新建 Egui 上下文的窗口映射。" }
+  n6@{ shape: rounded, label: "**on​_​egui​_​context​_​added​_​system**<br/>登记新建 Egui 上下文的窗口映射。" }
   class n6 node_system
-  end
-  style layout_card_n6 fill:none,stroke:none
   n7@{ shape: fr-rect, label: "**EguiPlugin**<br/>装配 Egui 输入、上下文与渲染。" }
   class n7 node_plugin
   n0 e0@-->|"先于"| n1
@@ -82,4 +79,5 @@ flowchart LR
   e2@{ curve: basis }
   e3@{ curve: basis }
   e4@{ curve: basis }
+  e5@{ curve: bumpX }
   e6@{ curve: basis }

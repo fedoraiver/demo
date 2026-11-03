@@ -39,35 +39,35 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: stadium, label: "**ValueChange#lt;f32#gt;**<br/>传递控件提出的新值。" }
   class n0 node_event
-  n1@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**key​_​input**<br/>用键盘步进或跳转滑条数值。" }
+  n1@{ shape: hex, label: "**slider​_​on​_​key​_​input**<br/>用键盘步进或跳转滑条数值。" }
   class n1 node_observer
-  n2@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**drag​_​end**<br/>提交滑条拖动结果并释放指针。" }
+  n2@{ shape: hex, label: "**slider​_​on​_​drag​_​end**<br/>提交滑条拖动结果并释放指针。" }
   class n2 node_observer
-  n3@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**pointer​_​down**<br/>按轨道点击策略发起滑条调整。" }
+  n3@{ shape: hex, label: "**slider​_​on​_​pointer​_​down**<br/>按轨道点击策略发起滑条调整。" }
   class n3 node_observer
-  n4@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**drag**<br/>拖动滑条时发布连续值变化。" }
+  n4@{ shape: hex, label: "**slider​_​on​_​drag**<br/>拖动滑条时发布连续值变化。" }
   class n4 node_observer
-  n5@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**drag​_​end**<br/>提交滑条拖动结果并释放指针。" }
+  n5@{ shape: hex, label: "**slider​_​on​_​drag​_​end**<br/>提交滑条拖动结果并释放指针。" }
   class n5 node_observer
-  n6@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**key​_​input**<br/>用键盘步进或跳转滑条数值。" }
+  n6@{ shape: hex, label: "**slider​_​on​_​key​_​input**<br/>用键盘步进或跳转滑条数值。" }
   class n6 node_observer
-  n7@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**set​_​value**<br/>将滑条设值请求转为最终值变化。" }
+  n7@{ shape: hex, label: "**slider​_​on​_​set​_​value**<br/>将滑条设值请求转为最终值变化。" }
   class n7 node_observer
-  n8@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**pointer​_​down**<br/>按轨道点击策略发起滑条调整。" }
+  n8@{ shape: hex, label: "**slider​_​on​_​pointer​_​down**<br/>按轨道点击策略发起滑条调整。" }
   class n8 node_observer
-  n9@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**key​_​input**<br/>用键盘步进或跳转滑条数值。" }
+  n9@{ shape: hex, label: "**slider​_​on​_​key​_​input**<br/>用键盘步进或跳转滑条数值。" }
   class n9 node_observer
-  n10@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**drag**<br/>拖动滑条时发布连续值变化。" }
+  n10@{ shape: hex, label: "**slider​_​on​_​drag**<br/>拖动滑条时发布连续值变化。" }
   class n10 node_observer
-  n11@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**drag​_​end**<br/>提交滑条拖动结果并释放指针。" }
+  n11@{ shape: hex, label: "**slider​_​on​_​drag​_​end**<br/>提交滑条拖动结果并释放指针。" }
   class n11 node_observer
-  n12@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**drag**<br/>拖动滑条时发布连续值变化。" }
+  n12@{ shape: hex, label: "**slider​_​on​_​drag**<br/>拖动滑条时发布连续值变化。" }
   class n12 node_observer
-  n13@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**set​_​value**<br/>将滑条设值请求转为最终值变化。" }
+  n13@{ shape: hex, label: "**slider​_​on​_​set​_​value**<br/>将滑条设值请求转为最终值变化。" }
   class n13 node_observer
-  n14@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**pointer​_​down**<br/>按轨道点击策略发起滑条调整。" }
+  n14@{ shape: hex, label: "**slider​_​on​_​pointer​_​down**<br/>按轨道点击策略发起滑条调整。" }
   class n14 node_observer
-  n15@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**set​_​value**<br/>将滑条设值请求转为最终值变化。" }
+  n15@{ shape: hex, label: "**slider​_​on​_​set​_​value**<br/>将滑条设值请求转为最终值变化。" }
   class n15 node_observer
   n1 e0@-->|"触发事件"| n0
   class e0 edge_emit

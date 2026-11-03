@@ -40,11 +40,11 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​asset::assets::Assets#lt;bevy​_​**<br/>**scene::scene​_​patch::**<br/>**SceneListPatch#gt;::track​_​assets**<br/>同步资产存活状态并处理句柄释放。" }
+  n0@{ shape: rounded, label: "**track​_​assets**<br/>同步资产存活状态并处理句柄释放。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**bevy​_​asset::AssetServer**<br/>加载资产并追踪加载状态。" }
+  n1@{ shape: cyl, label: "**AssetServer**<br/>加载资产并追踪加载状态。" }
   class n1 node_resource
-  n2@{ shape: cyl, label: "**bevy​_​asset::Assets#lt;scene​_​patch::**<br/>**SceneListPatch#gt;**<br/>按资产身份存储对象并暂存变化消息。" }
+  n2@{ shape: cyl, label: "**Assets#lt;SceneListPatch#gt;**<br/>按资产身份存储对象并暂存变化消息。" }
   class n2 node_resource
   n3@{ shape: lin-rect, label: "**AssetTrackingSystems**<br/>追踪资产句柄生命周期并处理待释放资产。" }
   class n3 node_system_set

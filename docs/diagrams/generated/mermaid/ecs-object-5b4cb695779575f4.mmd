@@ -43,27 +43,27 @@ flowchart LR
   classDef edge_publish stroke:#247B91,stroke-width:1.8px,stroke-dasharray:10 4 2 4
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​render::render​_​asset::extract​_​**<br/>**render​_​asset#lt;bevy​_​gizmos​_​render::**<br/>**GpuLineGizmo#gt;**<br/>按资产变化和设备恢复请求提取渲染资产。" }
+  n0@{ shape: rounded, label: "**extract​_​render​_​asset**<br/>按资产变化和设备恢复请求提取渲染资产。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**bevy​_​render::render​_​asset::**<br/>**ExtractedAssets#lt;GpuLineGizmo#gt;**<br/>暂存本帧渲染资产的提取与增删记录。" }
+  n1@{ shape: cyl, label: "**ExtractedAssets#lt;GpuLineGizmo#gt;**<br/>暂存本帧渲染资产的提取与增删记录。" }
   class n1 node_resource
   n2@{ shape: notch-rect, label: "**Local · arg3**<br/>去重本轮待提取的渲染资产。" }
   class n2 node_local
-  n3@{ shape: rounded, label: "**bevy​_​render::render​_​asset::**<br/>**CachedExtractRenderAssetSystemState#lt;**<br/>**GpuLineGizmo#gt;**<br/>缓存渲染资产提取的参数状态。" }
+  n3@{ shape: rounded, label: "**CachedExtractRenderAssetSystemState#lt;**<br/>**GpuLineGizmo#gt;**<br/>缓存渲染资产提取的参数状态。" }
   class n3 node_component
-  n4@{ shape: cyl, label: "**bevy​_​render::render​_​asset::**<br/>**CachedExtractRenderAssetSystemState#lt;**<br/>**GpuLineGizmo#gt;**<br/>缓存渲染资产提取的参数状态。" }
+  n4@{ shape: cyl, label: "**CachedExtractRenderAssetSystemState#lt;**<br/>**GpuLineGizmo#gt;**<br/>缓存渲染资产提取的参数状态。" }
   class n4 node_resource
-  n5@{ shape: cyl, label: "**bevy​_​render::render​_​asset::**<br/>**RenderAssetsToReExtract#lt;GpuLineGizmo**<br/>**#gt;**<br/>记录设备恢复后需重建的渲染资产。" }
+  n5@{ shape: cyl, label: "**RenderAssetsToReExtract#lt;GpuLineGizmo**<br/>**#gt;**<br/>记录设备恢复后需重建的渲染资产。" }
   class n5 node_resource
-  n6@{ shape: lean-r, label: "**bevy​_​ecs::lifecycle::**<br/>**RemovedComponentEntity**<br/>来自crate:bevy​_​ecs ↗：记录发生组件移<br/>除的实体。" }
+  n6@{ shape: lean-r, label: "**RemovedComponentEntity**<br/>来自crate:bevy​_​ecs ↗：记录发生组件移<br/>除的实体。" }
   class n6 node_message
   class n6 external_node
   n7@{ shape: lin-rect, label: "**AssetExtractionSystems**<br/>提取各 RenderAsset 类型的资产变化。" }
   class n7 node_system_set
-  n8@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;bevy​_​**<br/>**ecs::lifecycle::**<br/>**RemovedComponentEntity#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n8@{ shape: cyl, label: "**Messages#lt;RemovedComponentEntity#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n8 node_resource
   class n8 external_node
-  n9@{ shape: cyl, label: "**extract​_​plugin::MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
+  n9@{ shape: cyl, label: "**MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
   class n9 node_resource
   class n9 external_node
   n0 e0@-->|"可变访问"| n1

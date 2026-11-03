@@ -38,15 +38,15 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**bevy::bevy​_​ecs::message::**<br/>**Messages#lt;collision::collision​_​**<br/>**events::CollisionStart#gt;**<br/>保存最近两次轮换期间产生的指定类型消息" }
+  n0@{ shape: cyl, label: "**Messages#lt;CollisionStart#gt;**<br/>保存最近两次轮换期间产生的指定类型消息" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**avian3d::collision::narrow​_​phase::**<br/>**update​_​narrow​_​phase#lt;avian3d::**<br/>**collision::collider::parry::**<br/>**Collider, ()#gt;**<br/>来自crate:avian3d ↗：更新窄相接触并输<br/>出碰撞变化消息。" }
+  n1@{ shape: rounded, label: "**update​_​narrow​_​phase**<br/>来自crate:avian3d ↗：更新窄相接触并输<br/>出碰撞变化消息。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**avian3d::collision::narrow​_​phase::**<br/>**trigger​_​collision​_​events**<br/>来自crate:avian3d ↗：把碰撞开始和结束<br/>消息触发为实体事件。" }
+  n2@{ shape: rounded, label: "**trigger​_​collision​_​events**<br/>来自crate:avian3d ↗：把碰撞开始和结束<br/>消息触发为实体事件。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**demo::physics::collision::log​_​**<br/>**collisions**<br/>来自physics ↗：接触开始和结束属于离散<br/>变化，通过现有文件日志设施记录碰撞双方。" }
+  n3@{ shape: rounded, label: "**log​_​collisions**<br/>来自physics ↗：接触开始和结束属于离散<br/>变化，通过现有文件日志设施记录碰撞双方。" }
   class n3 node_system
   class n3 external_node
   n1 e0@-->|"可变访问"| n0

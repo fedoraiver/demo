@@ -38,15 +38,15 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**prepass::background​_​motion​_​vectors::**<br/>**BackgroundMotionVectorsBindGroup**<br/>绑定计算背景运动矢量所需的前后帧视图参<br/>数。" }
+  n0@{ shape: rounded, label: "**BackgroundMotionVectorsBindGroup**<br/>绑定计算背景运动矢量所需的前后帧视图参<br/>数。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​core​_​pipeline::prepass::**<br/>**background​_​motion​_​vectors::prepare​_​**<br/>**background​_​motion​_​vectors​_​bind​_​**<br/>**groups**<br/>为背景运动矢量绑定前后两帧视图参数。" }
+  n1@{ shape: rounded, label: "**prepare​_​background​_​motion​_​vectors​_​**<br/>**bind​_​groups**<br/>为背景运动矢量绑定前后两帧视图参数。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​core​_​pipeline::prepass::node::**<br/>**early​_​prepass**<br/>绘制早期不透明与 AlphaMask 预通道。" }
+  n2@{ shape: rounded, label: "**early​_​prepass**<br/>绘制早期不透明与 AlphaMask 预通道。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​core​_​pipeline::prepass::node::**<br/>**late​_​prepass**<br/>为遮挡剔除绘制晚期预通道。" }
+  n3@{ shape: rounded, label: "**late​_​prepass**<br/>为遮挡剔除绘制晚期预通道。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**bevy​_​core​_​pipeline::prepass::**<br/>**background​_​motion​_​vectors::cleanup​_​**<br/>**background​_​motion​_​vectors**<br/>移除不再需要的背景运动矢量渲染状态。" }
+  n4@{ shape: rounded, label: "**cleanup​_​background​_​motion​_​vectors**<br/>移除不再需要的背景运动矢量渲染状态。" }
   class n4 node_system
   n1 e0@-->|"插入"| n0
   class e0 edge_write

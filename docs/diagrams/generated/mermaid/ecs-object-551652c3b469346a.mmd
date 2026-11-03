@@ -42,37 +42,37 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​render::batching::gpu​_​**<br/>**preprocessing::batch​_​and​_​prepare​_​**<br/>**binned​_​render​_​phase#lt;bevy​_​core​_​**<br/>**pipeline::core​_​3d::AlphaMask3d,**<br/>**bevy​_​pbr::render::mesh::**<br/>**MeshPipeline#gt;**<br/>为分桶渲染阶段建立 GPU 预处理批次。" }
+  n0@{ shape: rounded, label: "**batch​_​and​_​prepare​_​binned​_​render​_​**<br/>**phase**<br/>为分桶渲染阶段建立 GPU 预处理批次。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**render::morph::MorphIndices**<br/>来自crate:bevy​_​pbr ↗：关联形变网格与<br/>当前及上一帧权重位置。" }
+  n1@{ shape: cyl, label: "**MorphIndices**<br/>来自crate:bevy​_​pbr ↗：关联形变网格与<br/>当前及上一帧权重位置。" }
   class n1 node_resource
   class n1 external_node
   n2@{ shape: lin-rect, label: "**PrepareResourcesBatchPhases**<br/>组织渲染数据准备与绘制排队。" }
   class n2 node_system_set
-  n3@{ shape: cyl, label: "**lightmap::RenderLightmaps**<br/>来自crate:bevy​_​pbr ↗：管理渲染侧光照<br/>贴图的槽位和纹理。" }
+  n3@{ shape: cyl, label: "**RenderLightmaps**<br/>来自crate:bevy​_​pbr ↗：管理渲染侧光照<br/>贴图的槽位和纹理。" }
   class n3 node_resource
   class n3 external_node
-  n4@{ shape: rounded, label: "**bevy​_​ecs::schedule::condition::**<br/>**common​_​conditions::resource​_​**<br/>**exists#lt;bevy​_​render::batching::gpu​_​**<br/>**preprocessing::**<br/>**BatchedInstanceBuffers#lt;bevy​_​pbr::**<br/>**render::mesh::MeshUniform, bevy​_​**<br/>**pbr::render::mesh::**<br/>**MeshInputUniform#gt;#gt;**<br/>来自crate:bevy​_​ecs ↗：判断指定资源是<br/>否存在。" }
+  n4@{ shape: rounded, label: "**resource​_​exists**<br/>来自crate:bevy​_​ecs ↗：判断指定资源是<br/>否存在。" }
   class n4 node_system
   class n4 external_node
-  n5@{ shape: cyl, label: "**render::skin::SkinUniforms**<br/>来自crate:bevy​_​pbr ↗：以双缓冲保存蒙<br/>皮前后帧关节矩阵。" }
+  n5@{ shape: cyl, label: "**SkinUniforms**<br/>来自crate:bevy​_​pbr ↗：以双缓冲保存蒙<br/>皮前后帧关节矩阵。" }
   class n5 node_resource
   class n5 external_node
-  n6@{ shape: cyl, label: "**bevy​_​render::batching::gpu​_​**<br/>**preprocessing::**<br/>**PhaseIndirectParametersBuffers#lt;bevy​_​**<br/>**core​_​pipeline::core​_​3d::AlphaMask3d#gt;**<br/>为单个绘制阶段保存间接绘制参数。" }
+  n6@{ shape: cyl, label: "**PhaseIndirectParametersBuffers#lt;Alpha**<br/>**Mask3d#gt;**<br/>为单个绘制阶段保存间接绘制参数。" }
   class n6 node_resource
-  n7@{ shape: rounded, label: "**bevy​_​render::view::NoIndirectDrawing**<br/>关闭相机的间接绘制模式。" }
+  n7@{ shape: rounded, label: "**NoIndirectDrawing**<br/>关闭相机的间接绘制模式。" }
   class n7 node_component
-  n8@{ shape: cyl, label: "**bevy​_​render::render​_​phase::**<br/>**ViewBinnedRenderPhases#lt;core​_​3d::**<br/>**AlphaMask3d#gt;**<br/>汇集各视图按分桶组织的绘制指令。" }
+  n8@{ shape: cyl, label: "**ViewBinnedRenderPhases#lt;AlphaMask3d#gt;**<br/>汇集各视图按分桶组织的绘制指令。" }
   class n8 node_resource
-  n9@{ shape: rounded, label: "**bevy​_​render::occlusion​_​culling::**<br/>**OcclusionCulling**<br/>启用视图的 GPU 遮挡裁剪。" }
+  n9@{ shape: rounded, label: "**OcclusionCulling**<br/>启用视图的 GPU 遮挡裁剪。" }
   class n9 node_component
-  n10@{ shape: rounded, label: "**bevy​_​render::view::ExtractedView**<br/>描述渲染视图的身份、投影与空间状态。" }
+  n10@{ shape: rounded, label: "**ExtractedView**<br/>描述渲染视图的身份、投影与空间状态。" }
   class n10 node_component
-  n11@{ shape: cyl, label: "**bevy​_​render::batching::gpu​_​**<br/>**preprocessing::**<br/>**PhaseBatchedInstanceBuffers#lt;bevy​_​**<br/>**core​_​pipeline::core​_​3d::**<br/>**AlphaMask3d, render::mesh::**<br/>**MeshUniform#gt;**<br/>为单个绘制阶段保存 GPU 批次实例缓冲。" }
+  n11@{ shape: cyl, label: "**PhaseBatchedInstanceBuffers#lt;AlphaMas**<br/>**k3d, MeshUniform#gt;**<br/>为单个绘制阶段保存 GPU 批次实例缓冲。" }
   class n11 node_resource
-  n12@{ shape: cyl, label: "**mesh::allocator::MeshAllocator**<br/>分配并管理网格顶点和索引 GPU 缓冲。" }
+  n12@{ shape: cyl, label: "**MeshAllocator**<br/>分配并管理网格顶点和索引 GPU 缓冲。" }
   class n12 node_resource
-  n13@{ shape: cyl, label: "**render::mesh::RenderMeshInstances**<br/>来自crate:bevy​_​pbr ↗：保存 CPU 或<br/>GPU 构建所需的网格实例。" }
+  n13@{ shape: cyl, label: "**RenderMeshInstances**<br/>来自crate:bevy​_​pbr ↗：保存 CPU 或<br/>GPU 构建所需的网格实例。" }
   class n13 node_resource
   class n13 external_node
   n1 e0@--> n0
@@ -109,7 +109,6 @@ flowchart LR
   e3@{ curve: basis }
   e4@{ curve: basis }
   e5@{ curve: basis }
-  e7@{ curve: bumpX }
   e8@{ curve: basis }
   e9@{ curve: basis }
   e10@{ curve: basis }

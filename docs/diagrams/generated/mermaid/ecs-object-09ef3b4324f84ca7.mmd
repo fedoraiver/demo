@@ -44,26 +44,29 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​render::view::window::prepare​_​**<br/>**windows**<br/>为有相机输出或需要首次呈现的窗口取得交换<br/>链纹理，保留可复用的未呈现帧，并处理尺<br/>寸、模式变化及表面获取错误。" }
+  subgraph layout_card_n0[" "]
+  n0@{ shape: rounded, label: "**prepare​_​windows**<br/>为有相机输出或需要首次呈现的窗口取得交换<br/>链纹理，保留可复用的未呈现帧，并处理尺<br/>寸、模式变化及表面获取错误。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**bevy​_​render::view::prepare​_​view​_​**<br/>**targets**<br/>为视图维护主颜色双缓冲及可选多采样目标。" }
+  end
+  style layout_card_n0 fill:none,stroke:none
+  n1@{ shape: rounded, label: "**prepare​_​view​_​targets**<br/>为视图维护主颜色双缓冲及可选多采样目标。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​render::view::prepare​_​view​_​**<br/>**attachments**<br/>按相机输出目标准备可共享的颜色附件。" }
+  n2@{ shape: rounded, label: "**prepare​_​view​_​attachments**<br/>按相机输出目标准备可共享的颜色附件。" }
   class n2 node_system
-  n3@{ shape: cyl, label: "**bevy​_​render::renderer::RenderDevice**<br/>创建渲染和计算所需的 GPU 资源。" }
+  n3@{ shape: cyl, label: "**RenderDevice**<br/>创建渲染和计算所需的 GPU 资源。" }
   class n3 node_resource
-  n4@{ shape: rounded, label: "**view::window::SurfaceData**<br/>保存窗口 GPU 表面及其呈现配置。" }
+  n4@{ shape: rounded, label: "**SurfaceData**<br/>保存窗口 GPU 表面及其呈现配置。" }
   class n4 node_component
-  n5@{ shape: rounded, label: "**bevy​_​render::view::window::create​_​**<br/>**surfaces**<br/>创建并配置提取窗口的 GPU 表面。" }
+  n5@{ shape: rounded, label: "**create​_​surfaces**<br/>创建并配置提取窗口的 GPU 表面。" }
   class n5 node_system
-  n6@{ shape: rounded, label: "**sync​_​world::MainEntity**<br/>来自crate:bevy​_​extract ↗：在子世界中<br/>关联原始主世界实体。" }
+  n6@{ shape: rounded, label: "**MainEntity**<br/>来自crate:bevy​_​extract ↗：在子世界中<br/>关联原始主世界实体。" }
   class n6 node_component
   class n6 external_node
-  n7@{ shape: rounded, label: "**bevy​_​render::view::ExtractedWindow**<br/>保存渲染侧窗口尺寸、呈现模式和交换链状<br/>态。" }
+  n7@{ shape: rounded, label: "**ExtractedWindow**<br/>保存渲染侧窗口尺寸、呈现模式和交换链状<br/>态。" }
   class n7 node_component
-  n8@{ shape: cyl, label: "**bevy​_​render::camera::SortedCameras**<br/>按相机绘制顺序保存排序结果。" }
+  n8@{ shape: cyl, label: "**SortedCameras**<br/>按相机绘制顺序保存排序结果。" }
   class n8 node_resource
-  n9@{ shape: fr-rect, label: "**view::window::WindowRenderPlugin**<br/>同步窗口并准备渲染表面。" }
+  n9@{ shape: fr-rect, label: "**WindowRenderPlugin**<br/>同步窗口并准备渲染表面。" }
   class n9 node_plugin
   n10@{ shape: lin-rect, label: "**PrepareViews**<br/>组织渲染数据准备与绘制排队。" }
   class n10 node_system_set
@@ -90,6 +93,7 @@ flowchart LR
   n10 e10@-->|"集合成员"| n0
   class e10 edge_set_membership
   e0@{ curve: basis }
+  e1@{ curve: basis }
   e2@{ curve: basis }
   e3@{ curve: basis }
   e4@{ curve: basis }

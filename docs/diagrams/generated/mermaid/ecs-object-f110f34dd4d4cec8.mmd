@@ -44,28 +44,28 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: hex, label: "**bevy​_​ui​_​widgets::text​_​input::on​_​**<br/>**focused​_​keyboard​_​input**<br/>将聚焦文本框按键转为编辑操作。" }
+  n0@{ shape: hex, label: "**on​_​focused​_​keyboard​_​input**<br/>将聚焦文本框按键转为编辑操作。" }
   class n0 node_observer
-  n1@{ shape: fr-rect, label: "**bevy​_​ui​_​widgets::TextInputPlugin**<br/>处理文本编辑、选择与输入法接入。" }
+  n1@{ shape: fr-rect, label: "**TextInputPlugin**<br/>处理文本编辑、选择与输入法接入。" }
   class n1 node_plugin
-  n2@{ shape: rounded, label: "**bevy​_​ui::InteractionDisabled**<br/>来自crate:bevy​_​ui ↗：标记禁止交互的<br/>UI 控件。" }
+  n2@{ shape: rounded, label: "**InteractionDisabled**<br/>来自crate:bevy​_​ui ↗：标记禁止交互的<br/>UI 控件。" }
   class n2 node_component
   class n2 external_node
-  n3@{ shape: cyl, label: "**button​_​input::ButtonInput#lt;keyboard::**<br/>**Key#gt;**<br/>来自crate:bevy​_​input ↗：保存指定按钮<br/>类型当前按下、本帧刚按下和刚释放的集合" }
+  n3@{ shape: cyl, label: "**ButtonInput#lt;Key#gt;**<br/>来自crate:bevy​_​input ↗：保存指定按钮<br/>类型当前按下、本帧刚按下和刚释放的集合" }
   class n3 node_resource
   class n3 external_node
   n4@{ shape: cyl, label: "**InputFocus**<br/>来自crate:bevy​_​input​_​focus ↗：保存当<br/>前输入焦点实体、待派发的焦点变化及原焦点" }
   class n4 node_resource
   class n4 external_node
-  n5@{ shape: rounded, label: "**editing::TextReadWriteMode**<br/>来自crate:bevy​_​text ↗：控制文字输入的<br/>编辑模式" }
+  n5@{ shape: rounded, label: "**TextReadWriteMode**<br/>来自crate:bevy​_​text ↗：控制文字输入的<br/>编辑模式" }
   class n5 node_component
   class n5 external_node
-  n6@{ shape: rounded, label: "**editing::EditableText**<br/>来自crate:bevy​_​text ↗：持有 Parley<br/>编辑器、文本、光标及待应用编辑操作" }
+  n6@{ shape: rounded, label: "**EditableText**<br/>来自crate:bevy​_​text ↗：持有 Parley<br/>编辑器、文本、光标及待应用编辑操作" }
   class n6 node_component
   class n6 external_node
-  n7@{ shape: rounded, label: "**text​_​input::TextInput**<br/>标识可编辑文本控件" }
+  n7@{ shape: rounded, label: "**TextInput**<br/>标识可编辑文本控件" }
   class n7 node_component
-  n8@{ shape: stadium, label: "**FocusedInput#lt;bevy​_​input::keyboard::**<br/>**KeyboardInput#gt;**<br/>来自crate:bevy​_​input​_​focus ↗：把输入<br/>消息路由到焦点实体并向窗口冒泡。" }
+  n8@{ shape: stadium, label: "**FocusedInput#lt;KeyboardInput#gt;**<br/>来自crate:bevy​_​input​_​focus ↗：把输入<br/>消息路由到焦点实体并向窗口冒泡。" }
   class n8 node_event
   class n8 external_node
   n1 e0@-->|"调用"| n0

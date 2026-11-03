@@ -37,9 +37,9 @@ flowchart LR
   classDef node_event fill:#F9F3EE,stroke:#B66B2D,stroke-width:1.6px,color:#1F3340
   classDef edge_emit stroke:#B66B2D,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: stadium, label: "**view::window::screenshot::**<br/>**ScreenshotCaptured**<br/>向截图请求实体通知图像已捕获完成。" }
+  n0@{ shape: stadium, label: "**ScreenshotCaptured**<br/>向截图请求实体通知图像已捕获完成。" }
   class n0 node_event
-  n1@{ shape: rounded, label: "**bevy​_​render::view::window::**<br/>**screenshot::trigger​_​screenshots**<br/>标记已完成截图并触发携带图像的事件。" }
+  n1@{ shape: rounded, label: "**trigger​_​screenshots**<br/>标记已完成截图并触发携带图像的事件。" }
   class n1 node_system
   n1 e0@-->|"触发事件"| n0
   class e0 edge_emit

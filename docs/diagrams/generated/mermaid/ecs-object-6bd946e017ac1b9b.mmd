@@ -40,13 +40,13 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​pbr::deferred::insert​_​deferred​_​**<br/>**lighting​_​pass​_​id​_​component**<br/>为延迟预通道视图补齐光照通道标识。" }
+  n0@{ shape: rounded, label: "**insert​_​deferred​_​lighting​_​pass​_​id​_​**<br/>**component**<br/>为延迟预通道视图补齐光照通道标识。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**deferred::PbrDeferredLightingDepthId**<br/>限定延迟光照通道处理的材质集合。" }
+  n1@{ shape: rounded, label: "**PbrDeferredLightingDepthId**<br/>限定延迟光照通道处理的材质集合。" }
   class n1 node_component
-  n2@{ shape: fr-rect, label: "**deferred::DeferredPbrLightingPlugin**<br/>提供延迟物理材质光照。" }
+  n2@{ shape: fr-rect, label: "**DeferredPbrLightingPlugin**<br/>提供延迟物理材质光照。" }
   class n2 node_plugin
-  n3@{ shape: rounded, label: "**prepass::DeferredPrepass**<br/>来自crate:bevy​_​core​_​pipeline ↗：为三<br/>维相机启用延迟材质 G-buffer 预通道。" }
+  n3@{ shape: rounded, label: "**DeferredPrepass**<br/>来自crate:bevy​_​core​_​pipeline ↗：为三<br/>维相机启用延迟材质 G-buffer 预通道。" }
   class n3 node_component
   class n3 external_node
   n1 e0@-->|"存在性约束"| n0

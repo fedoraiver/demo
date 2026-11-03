@@ -46,28 +46,28 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**demo::character::motion::log​_​**<br/>**character​_​velocity**<br/>采样物理解算后的实际速度，便于检查加速<br/>度、刹车和碰撞反馈。" }
+  n0@{ shape: rounded, label: "**log​_​character​_​velocity**<br/>采样物理解算后的实际速度，便于检查加速<br/>度、刹车和碰撞反馈。" }
   class n0 node_system
   n1@{ shape: lin-rect, label: "**Writeback**<br/>来自crate:avian3d ↗：划分物理准备、模<br/>拟与回写边界。" }
   class n1 node_system_set
   class n1 external_node
-  n2@{ shape: fr-rect, label: "**character::CharacterPlugin**<br/>注册角色运动与反射元数据，不加载窗口、场<br/>景或其他项目插件。" }
+  n2@{ shape: fr-rect, label: "**CharacterPlugin**<br/>注册角色运动与反射元数据，不加载窗口、场<br/>景或其他项目插件。" }
   class n2 node_plugin
   n3@{ shape: notch-rect, label: "**Local · next​_​log​_​time**<br/>限制角色物理采样日志的输出频率。" }
   class n3 node_local
-  n4@{ shape: cyl, label: "**time::Time#lt;fixed::Fixed#gt;**<br/>来自crate:bevy​_​time ↗：保存时钟上下<br/>文、帧间隔及累计时间" }
+  n4@{ shape: cyl, label: "**Time#lt;Fixed#gt;**<br/>来自crate:bevy​_​time ↗：保存时钟上下<br/>文、帧间隔及累计时间" }
   class n4 node_resource
   class n4 external_node
   n5@{ shape: lin-rect, label: "**AnonymousSet(1)**<br/>来自crate:bevy​_​ecs ↗：保存一组系统的<br/>共同配置。" }
   class n5 node_system_set
   class n5 external_node
-  n6@{ shape: rounded, label: "**character::components::Character**<br/>具有移动和跳跃能力的角色。" }
+  n6@{ shape: rounded, label: "**Character**<br/>具有移动和跳跃能力的角色。" }
   class n6 node_component
-  n7@{ shape: rounded, label: "**demo::character::motion::update​_​**<br/>**grounded**<br/>脚底附近的小球向下探测支撑面；墙面法线和<br/>上升中的角色不能算接地。" }
+  n7@{ shape: rounded, label: "**update​_​grounded**<br/>脚底附近的小球向下探测支撑面；墙面法线和<br/>上升中的角色不能算接地。" }
   class n7 node_system
-  n8@{ shape: rounded, label: "**character::components::**<br/>**CharacterMotion**<br/>接地状态由物理查询派生；实际速度直接读<br/>取 Avian 的 LinearVelocity。" }
+  n8@{ shape: rounded, label: "**CharacterMotion**<br/>接地状态由物理查询派生；实际速度直接读<br/>取 Avian 的 LinearVelocity。" }
   class n8 node_component
-  n9@{ shape: rounded, label: "**dynamics::rigid​_​body::LinearVelocity**<br/>来自crate:avian3d ↗：保存刚体的世界线<br/>速度。" }
+  n9@{ shape: rounded, label: "**LinearVelocity**<br/>来自crate:avian3d ↗：保存刚体的世界线<br/>速度。" }
   class n9 node_component
   class n9 external_node
   n1 e0@-->|"先于"| n0

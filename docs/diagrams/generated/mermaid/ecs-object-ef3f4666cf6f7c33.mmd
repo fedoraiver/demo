@@ -38,17 +38,17 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**render​_​resource::texture::**<br/>**DefaultImageSampler**<br/>保存渲染器初始化时建立的默认图像采样器。" }
+  n0@{ shape: cyl, label: "**DefaultImageSampler**<br/>保存渲染器初始化时建立的默认图像采样器。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​render::init​_​gpu​_​resource#lt;bevy​_​**<br/>**render::texture::fallback​_​image::**<br/>**FallbackImageZero#gt;**<br/>构造并插入渲染所需资源。" }
+  n1@{ shape: rounded, label: "**init​_​gpu​_​resource**<br/>构造并插入渲染所需资源。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​render::render​_​asset::prepare​_​**<br/>**assets#lt;bevy​_​render::texture::gpu​_​**<br/>**image::GpuImage#gt;**<br/>在上传预算内准备资产并保留重试项。" }
+  n2@{ shape: rounded, label: "**prepare​_​assets**<br/>在上传预算内准备资产并保留重试项。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​render::init​_​gpu​_​resource#lt;bevy​_​**<br/>**render::texture::fallback​_​image::**<br/>**FallbackImage#gt;**<br/>构造并插入渲染所需资源。" }
+  n3@{ shape: rounded, label: "**init​_​gpu​_​resource**<br/>构造并插入渲染所需资源。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**bevy​_​render::init​_​gpu​_​resource#lt;bevy​_​**<br/>**render::render​_​resource::texture::**<br/>**DefaultImageSampler#gt;**<br/>构造并插入渲染所需资源。" }
+  n4@{ shape: rounded, label: "**init​_​gpu​_​resource**<br/>构造并插入渲染所需资源。" }
   class n4 node_system
-  n5@{ shape: rounded, label: "**bevy​_​render::init​_​gpu​_​resource#lt;bevy​_​**<br/>**render::texture::fallback​_​image::**<br/>**FallbackImageCubemap#gt;**<br/>构造并插入渲染所需资源。" }
+  n5@{ shape: rounded, label: "**init​_​gpu​_​resource**<br/>构造并插入渲染所需资源。" }
   class n5 node_system
   n0 e0@--> n1
   class e0 edge_read

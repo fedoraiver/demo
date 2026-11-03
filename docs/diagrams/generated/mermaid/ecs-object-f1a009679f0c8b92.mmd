@@ -39,9 +39,9 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: lin-rect, label: "**ImageNodeAssetChangedSystems**<br/>将底层图像和图集资产变化反馈给 UI 节<br/>点。" }
   class n0 node_system_set
-  n1@{ shape: rounded, label: "**bevy​_​ui​_​render::image::update​_​**<br/>**texture​_​atlas​_​layout​_​components**<br/>同步 UI 图像所引用的图集布局组件。" }
+  n1@{ shape: rounded, label: "**update​_​texture​_​atlas​_​layout​_​**<br/>**components**<br/>同步 UI 图像所引用的图集布局组件。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​ui​_​render::image::mark​_​images​_​**<br/>**as​_​changed​_​if​_​their​_​assets​_​changed**<br/>使图像或图集资产变化触发 UI 图像更新。" }
+  n2@{ shape: rounded, label: "**mark​_​images​_​as​_​changed​_​if​_​their​_​**<br/>**assets​_​changed**<br/>使图像或图集资产变化触发 UI 图像更新。" }
   class n2 node_system
   n0 e0@-->|"集合成员"| n1
   class e0 edge_set_membership

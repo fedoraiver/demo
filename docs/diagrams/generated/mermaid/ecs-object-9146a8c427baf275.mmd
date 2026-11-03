@@ -43,40 +43,40 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​pbr::transmission::texture::**<br/>**prepare​_​core​_​3d​_​transmission​_​**<br/>**textures**<br/>为需要多步透射的视图准备场景颜色拷贝纹<br/>理。" }
+  n0@{ shape: rounded, label: "**prepare​_​core​_​3d​_​transmission​_​**<br/>**textures**<br/>为需要多步透射的视图准备场景颜色拷贝纹<br/>理。" }
   class n0 node_system
-  n1@{ shape: fr-rect, label: "**transmission::**<br/>**ScreenSpaceTransmissionPlugin**<br/>提供相机屏幕空间透射。" }
+  n1@{ shape: fr-rect, label: "**ScreenSpaceTransmissionPlugin**<br/>提供相机屏幕空间透射。" }
   class n1 node_plugin
   n2@{ shape: lin-rect, label: "**PrepareResources**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
   class n2 node_system_set
   class n2 external_node
-  n3@{ shape: cyl, label: "**bevy​_​render::texture::TextureCache**<br/>来自crate:bevy​_​render ↗：复用渲染中反<br/>复创建的临时纹理。" }
+  n3@{ shape: cyl, label: "**TextureCache**<br/>来自crate:bevy​_​render ↗：复用渲染中反<br/>复创建的临时纹理。" }
   class n3 node_resource
   class n3 external_node
-  n4@{ shape: cyl, label: "**bevy​_​render::render​_​phase::**<br/>**ViewSortedRenderPhases#lt;transmission:**<br/>**:phase::Transmissive3d#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图需<br/>要排序的绘制指令。" }
+  n4@{ shape: cyl, label: "**ViewSortedRenderPhases#lt;Transmissive3**<br/>**d#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图需<br/>要排序的绘制指令。" }
   class n4 node_resource
   class n4 external_node
-  n5@{ shape: cyl, label: "**bevy​_​render::render​_​phase::**<br/>**ViewSortedRenderPhases#lt;bevy​_​core​_​**<br/>**pipeline::core​_​3d::Transparent3d#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图需<br/>要排序的绘制指令。" }
+  n5@{ shape: cyl, label: "**ViewSortedRenderPhases#lt;Transparent3d**<br/>**#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图需<br/>要排序的绘制指令。" }
   class n5 node_resource
   class n5 external_node
-  n6@{ shape: cyl, label: "**bevy​_​render::renderer::RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
+  n6@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
   class n6 node_resource
   class n6 external_node
-  n7@{ shape: rounded, label: "**bevy​_​render::view::ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
+  n7@{ shape: rounded, label: "**ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
   class n7 node_component
   class n7 external_node
-  n8@{ shape: rounded, label: "**transmission::**<br/>**ScreenSpaceTransmission**<br/>配置屏幕空间透射的层数与质量。" }
+  n8@{ shape: rounded, label: "**ScreenSpaceTransmission**<br/>配置屏幕空间透射的层数与质量。" }
   class n8 node_component
-  n9@{ shape: cyl, label: "**bevy​_​render::render​_​phase::**<br/>**ViewBinnedRenderPhases#lt;core​_​3d::**<br/>**AlphaMask3d#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图按<br/>分桶组织的绘制指令。" }
+  n9@{ shape: cyl, label: "**ViewBinnedRenderPhases#lt;AlphaMask3d#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图按<br/>分桶组织的绘制指令。" }
   class n9 node_resource
   class n9 external_node
-  n10@{ shape: cyl, label: "**bevy​_​render::render​_​phase::**<br/>**ViewBinnedRenderPhases#lt;core​_​3d::**<br/>**Opaque3d#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图按<br/>分桶组织的绘制指令。" }
+  n10@{ shape: cyl, label: "**ViewBinnedRenderPhases#lt;Opaque3d#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图按<br/>分桶组织的绘制指令。" }
   class n10 node_resource
   class n10 external_node
-  n11@{ shape: rounded, label: "**bevy​_​render::camera::ExtractedCamera**<br/>来自crate:bevy​_​render ↗：保存渲染世界<br/>相机的目标和绘制配置。" }
+  n11@{ shape: rounded, label: "**ExtractedCamera**<br/>来自crate:bevy​_​render ↗：保存渲染世界<br/>相机的目标和绘制配置。" }
   class n11 node_component
   class n11 external_node
-  n12@{ shape: rounded, label: "**transmission::texture::**<br/>**ViewTransmissionTexture**<br/>保存透射通道读取的视图颜色纹理。" }
+  n12@{ shape: rounded, label: "**ViewTransmissionTexture**<br/>保存透射通道读取的视图颜色纹理。" }
   class n12 node_component
   n1 e0@-->|"调用"| n0
   class e0 edge_registration

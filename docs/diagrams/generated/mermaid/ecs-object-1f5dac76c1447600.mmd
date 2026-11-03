@@ -39,7 +39,7 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​ui::TextNodeFlags**<br/>追踪 UI 文本测量与重排状态。" }
+  n0@{ shape: rounded, label: "**TextNodeFlags**<br/>追踪 UI 文本测量与重排状态。" }
   class n0 node_component
   n1@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示开始游戏按钮的标题。" }
   class n1 node_entity
@@ -53,7 +53,7 @@ flowchart LR
   n4@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：说明多人游戏尚未开放。" }
   class n4 node_entity
   class n4 external_node
-  n5@{ shape: rounded, label: "**bevy​_​ui::widget::text::measure​_​text​_​**<br/>**system**<br/>在文本变化后更新内容测量并安排文字重排。" }
+  n5@{ shape: rounded, label: "**measure​_​text​_​system**<br/>在文本变化后更新内容测量并安排文字重排。" }
   class n5 node_system
   n6@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示操作设置按钮的标题。" }
   class n6 node_entity
@@ -364,7 +364,7 @@ flowchart LR
   n108@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示岛屿配送主题的品牌标语。" }
   class n108 node_entity
   class n108 external_node
-  n109@{ shape: rounded, label: "**bevy​_​ui::widget::text::text​_​system**<br/>重排变化的 UI 文本并更新字形图集。" }
+  n109@{ shape: rounded, label: "**text​_​system**<br/>重排变化的 UI 文本并更新字形图集。" }
   class n109 node_system
   n110@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示移动与跳跃卡片标题。" }
   class n110 node_entity

@@ -38,15 +38,15 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**bevy​_​ui::UiStack**<br/>保存按相机分区的 UI 绘制顺序。" }
+  n0@{ shape: cyl, label: "**UiStack**<br/>保存按相机分区的 UI 绘制顺序。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​ui::picking​_​backend::ui​_​picking**<br/>按 UI 堆叠与相机视口计算指针命中。" }
+  n1@{ shape: rounded, label: "**ui​_​picking**<br/>按 UI 堆叠与相机视口计算指针命中。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​ui::focus::ui​_​focus​_​system**<br/>按鼠标和触摸更新旧式 UI 交互状态。" }
+  n2@{ shape: rounded, label: "**ui​_​focus​_​system**<br/>按鼠标和触摸更新旧式 UI 交互状态。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​ui::stack::ui​_​stack​_​system**<br/>重建稳定的 UI 绘制和命中顺序。" }
+  n3@{ shape: rounded, label: "**ui​_​stack​_​system**<br/>重建稳定的 UI 绘制和命中顺序。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**bevy​_​ui​_​render::debug​_​overlay::**<br/>**extract​_​debug​_​overlay**<br/>来自crate:bevy​_​ui​_​render ↗：为变化<br/>的 UI 节点提取调试轮廓。" }
+  n4@{ shape: rounded, label: "**extract​_​debug​_​overlay**<br/>来自crate:bevy​_​ui​_​render ↗：为变化<br/>的 UI 节点提取调试轮廓。" }
   class n4 node_system
   class n4 external_node
   n0 e0@--> n1

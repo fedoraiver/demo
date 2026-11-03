@@ -38,33 +38,33 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;input::**<br/>**EguiInputEvent#gt;**<br/>保存最近两次轮换期间产生的指定类型消息" }
+  n0@{ shape: cyl, label: "**Messages#lt;EguiInputEvent#gt;**<br/>保存最近两次轮换期间产生的指定类型消息" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​egui::input::write​_​pinch​_​**<br/>**gesture​_​messages​_​system**<br/>来自crate:bevy​_​egui ↗：把捏合手势转换<br/>为 Egui 缩放。" }
+  n1@{ shape: rounded, label: "**write​_​pinch​_​gesture​_​messages​_​system**<br/>来自crate:bevy​_​egui ↗：把捏合手势转换<br/>为 Egui 缩放。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​egui::input::write​_​pointer​_​**<br/>**moved​_​and​_​button​_​messages​_​system**<br/>来自crate:bevy​_​egui ↗：按原生事件顺序<br/>转换 Egui 指针输入。" }
+  n2@{ shape: rounded, label: "**write​_​pointer​_​moved​_​and​_​button​_​**<br/>**messages​_​system**<br/>来自crate:bevy​_​egui ↗：按原生事件顺序<br/>转换 Egui 指针输入。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​egui::input::write​_​ime​_​**<br/>**messages​_​system**<br/>来自crate:bevy​_​egui ↗：向聚焦的<br/>Egui 上下文传递输入法文本。" }
+  n3@{ shape: rounded, label: "**write​_​ime​_​messages​_​system**<br/>来自crate:bevy​_​egui ↗：向聚焦的<br/>Egui 上下文传递输入法文本。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**bevy​_​egui::input::write​_​mouse​_​wheel​_​**<br/>**messages​_​system**<br/>来自crate:bevy​_​egui ↗：向悬停 Egui<br/>上下文传递滚轮输入。" }
+  n4@{ shape: rounded, label: "**write​_​mouse​_​wheel​_​messages​_​system**<br/>来自crate:bevy​_​egui ↗：向悬停 Egui<br/>上下文传递滚轮输入。" }
   class n4 node_system
   class n4 external_node
-  n5@{ shape: rounded, label: "**bevy​_​egui::input::write​_​non​_​window​_​**<br/>**touch​_​messages​_​system**<br/>来自crate:bevy​_​egui ↗：向聚焦的非窗<br/>口 Egui 界面传递触摸。" }
+  n5@{ shape: rounded, label: "**write​_​non​_​window​_​touch​_​messages​_​**<br/>**system**<br/>来自crate:bevy​_​egui ↗：向聚焦的非窗<br/>口 Egui 界面传递触摸。" }
   class n5 node_system
   class n5 external_node
-  n6@{ shape: rounded, label: "**bevy​_​egui::input::write​_​window​_​**<br/>**touch​_​messages​_​system**<br/>来自crate:bevy​_​egui ↗：把窗口触摸转换<br/>为 Egui 指针和触摸事件。" }
+  n6@{ shape: rounded, label: "**write​_​window​_​touch​_​messages​_​system**<br/>来自crate:bevy​_​egui ↗：把窗口触摸转换<br/>为 Egui 指针和触摸事件。" }
   class n6 node_system
   class n6 external_node
-  n7@{ shape: rounded, label: "**bevy​_​egui::input::write​_​egui​_​input​_​**<br/>**system**<br/>来自crate:bevy​_​egui ↗：把界面输入和文<br/>件拖放写入 Egui 输入批次。" }
+  n7@{ shape: rounded, label: "**write​_​egui​_​input​_​system**<br/>来自crate:bevy​_​egui ↗：把界面输入和文<br/>件拖放写入 Egui 输入批次。" }
   class n7 node_system
   class n7 external_node
-  n8@{ shape: rounded, label: "**bevy​_​egui::input::write​_​non​_​window​_​**<br/>**pointer​_​moved​_​messages​_​system**<br/>来自crate:bevy​_​egui ↗：刷新非窗口<br/>Egui 界面的指针位置。" }
+  n8@{ shape: rounded, label: "**write​_​non​_​window​_​pointer​_​moved​_​**<br/>**messages​_​system**<br/>来自crate:bevy​_​egui ↗：刷新非窗口<br/>Egui 界面的指针位置。" }
   class n8 node_system
   class n8 external_node
-  n9@{ shape: rounded, label: "**bevy​_​egui::input::write​_​keyboard​_​**<br/>**input​_​messages​_​system**<br/>来自crate:bevy​_​egui ↗：把键盘文本与按<br/>键转换为 Egui 输入。" }
+  n9@{ shape: rounded, label: "**write​_​keyboard​_​input​_​messages​_​system**<br/>来自crate:bevy​_​egui ↗：把键盘文本与按<br/>键转换为 Egui 输入。" }
   class n9 node_system
   class n9 external_node
   n1 e0@-->|"赋值"| n0

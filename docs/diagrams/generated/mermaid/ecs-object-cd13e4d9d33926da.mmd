@@ -41,11 +41,11 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​render::texture::texture​_​**<br/>**cache::update​_​texture​_​cache​_​system**<br/>淘汰纹理缓存中长期未使用的纹理。" }
+  n0@{ shape: rounded, label: "**update​_​texture​_​cache​_​system**<br/>淘汰纹理缓存中长期未使用的纹理。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**bevy​_​render::texture::TextureCache**<br/>复用渲染中反复创建的临时纹理。" }
+  n1@{ shape: cyl, label: "**TextureCache**<br/>复用渲染中反复创建的临时纹理。" }
   class n1 node_resource
-  n2@{ shape: fr-rect, label: "**texture::TexturePlugin**<br/>准备 GPU 图像、纹理缓存与采样器。" }
+  n2@{ shape: fr-rect, label: "**TexturePlugin**<br/>准备 GPU 图像、纹理缓存与采样器。" }
   class n2 node_plugin
   n3@{ shape: lin-rect, label: "**Cleanup**<br/>组织渲染数据准备与绘制排队。" }
   class n3 node_system_set

@@ -40,22 +40,22 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: lin-rect, label: "**QueueMeshes**<br/>组织渲染数据准备与绘制排队。" }
   class n0 node_system_set
-  n1@{ shape: rounded, label: "**bevy​_​render::render​_​asset::prepare​_​**<br/>**assets#lt;bevy​_​render::mesh::**<br/>**RenderMesh#gt;**<br/>在上传预算内准备资产并保留重试项。" }
+  n1@{ shape: rounded, label: "**prepare​_​assets**<br/>在上传预算内准备资产并保留重试项。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​pbr::prepass::queue​_​prepass​_​**<br/>**material​_​meshes**<br/>来自crate:bevy​_​pbr ↗：把有效材质网格<br/>分入预通道或延迟几何阶段。" }
+  n2@{ shape: rounded, label: "**queue​_​prepass​_​material​_​meshes**<br/>来自crate:bevy​_​pbr ↗：把有效材质网格<br/>分入预通道或延迟几何阶段。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​pbr::material::queue​_​material​_​**<br/>**meshes**<br/>来自crate:bevy​_​pbr ↗：按材质模式把可<br/>见网格加入相应绘制阶段。" }
+  n3@{ shape: rounded, label: "**queue​_​material​_​meshes**<br/>来自crate:bevy​_​pbr ↗：按材质模式把可<br/>见网格加入相应绘制阶段。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**bevy​_​pbr::render::light::queue​_​**<br/>**shadows**<br/>来自crate:bevy​_​pbr ↗：按材质与光源资<br/>格更新阴影绘制分桶。" }
+  n4@{ shape: rounded, label: "**queue​_​shadows**<br/>来自crate:bevy​_​pbr ↗：按材质与光源资<br/>格更新阴影绘制分桶。" }
   class n4 node_system
   class n4 external_node
   n5@{ shape: lin-rect, label: "**QueueSweep**<br/>组织渲染数据准备与绘制排队。" }
   class n5 node_system_set
   n6@{ shape: lin-rect, label: "**Queue**<br/>组织渲染数据准备与绘制排队。" }
   class n6 node_system_set
-  n7@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::**<br/>**material::queue​_​material2d​_​meshes**<br/>来自crate:bevy​_​sprite​_​render ↗：按透<br/>明模式更新二维网格渲染批次。" }
+  n7@{ shape: rounded, label: "**queue​_​material2d​_​meshes**<br/>来自crate:bevy​_​sprite​_​render ↗：按透<br/>明模式更新二维网格渲染批次。" }
   class n7 node_system
   class n7 external_node
   n1 e0@-->|"先于"| n0

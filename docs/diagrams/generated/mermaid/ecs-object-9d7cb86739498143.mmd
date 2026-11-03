@@ -37,11 +37,11 @@ flowchart LR
   classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**render​_​asset::**<br/>**RenderAssetsToReExtract#lt;mesh::**<br/>**RenderMesh#gt;**<br/>记录设备恢复后需重建的渲染资产。" }
+  n0@{ shape: cyl, label: "**RenderAssetsToReExtract#lt;RenderMesh#gt;**<br/>记录设备恢复后需重建的渲染资产。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​render::render​_​asset::collect​_​**<br/>**render​_​assets​_​to​_​reextract#lt;bevy​_​**<br/>**render::mesh::RenderMesh#gt;**<br/>排空渲染资产并登记设备恢复后的重新提取。" }
+  n1@{ shape: rounded, label: "**collect​_​render​_​assets​_​to​_​reextract**<br/>排空渲染资产并登记设备恢复后的重新提取。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​render::render​_​asset::extract​_​**<br/>**render​_​asset#lt;bevy​_​render::mesh::**<br/>**RenderMesh#gt;**<br/>按资产变化和设备恢复请求提取渲染资产。" }
+  n2@{ shape: rounded, label: "**extract​_​render​_​asset**<br/>按资产变化和设备恢复请求提取渲染资产。" }
   class n2 node_system
   n1 e0@-->|"插入"| n0
   class e0 edge_write

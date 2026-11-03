@@ -42,23 +42,23 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​pbr::prepass::extract​_​camera​_​**<br/>**previous​_​view​_​data**<br/>把活动三维相机的前帧视图数据提取到渲染<br/>侧。" }
+  n0@{ shape: rounded, label: "**extract​_​camera​_​previous​_​view​_​data**<br/>把活动三维相机的前帧视图数据提取到渲染<br/>侧。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**components::Camera3d**<br/>来自crate:bevy​_​camera ↗：启用三维相机<br/>主渲染流程。" }
+  n1@{ shape: rounded, label: "**Camera3d**<br/>来自crate:bevy​_​camera ↗：启用三维相机<br/>主渲染流程。" }
   class n1 node_component
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​camera::Camera**<br/>来自crate:bevy​_​camera ↗：配置相机视<br/>口、输出目标和渲染顺序。" }
+  n2@{ shape: rounded, label: "**Camera**<br/>来自crate:bevy​_​camera ↗：配置相机视<br/>口、输出目标和渲染顺序。" }
   class n2 node_component
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​extract::SubEntity#lt;bevy​_​**<br/>**render::RenderApp#gt;**<br/>来自crate:bevy​_​extract ↗：记录主实体<br/>对应的子世界实体。" }
+  n3@{ shape: rounded, label: "**SubEntity#lt;RenderApp#gt;**<br/>来自crate:bevy​_​extract ↗：记录主实体<br/>对应的子世界实体。" }
   class n3 node_component
   class n3 external_node
-  n4@{ shape: rounded, label: "**prepass::PreviousViewData**<br/>来自crate:bevy​_​core​_​pipeline ↗：保存<br/>上一帧的相机视图与投影矩阵。" }
+  n4@{ shape: rounded, label: "**PreviousViewData**<br/>来自crate:bevy​_​core​_​pipeline ↗：保存<br/>上一帧的相机视图与投影矩阵。" }
   class n4 node_component
   class n4 external_node
-  n5@{ shape: fr-rect, label: "**prepass::PrepassPlugin**<br/>安装材质预通道处理。" }
+  n5@{ shape: fr-rect, label: "**PrepassPlugin**<br/>安装材质预通道处理。" }
   class n5 node_plugin
-  n6@{ shape: cyl, label: "**extract​_​plugin::MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
+  n6@{ shape: cyl, label: "**MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
   class n6 node_resource
   class n6 external_node
   n1 e0@-->|"存在性约束"| n0

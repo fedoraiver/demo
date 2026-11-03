@@ -40,17 +40,17 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: lin-rect, label: "**Damping**<br/>组织约束子步的求解与松弛。" }
   class n0 node_system_set
-  n1@{ shape: rounded, label: "**avian3d::dynamics::solver::plugin::**<br/>**joint​_​damping#lt;avian3d::dynamics::**<br/>**joints::spherical::SphericalJoint#gt;**<br/>衰减关节两端刚体的相对速度。" }
+  n1@{ shape: rounded, label: "**joint​_​damping**<br/>衰减关节两端刚体的相对速度。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**avian3d::dynamics::solver::plugin::**<br/>**joint​_​damping#lt;avian3d::dynamics::**<br/>**joints::distance::DistanceJoint#gt;**<br/>衰减关节两端刚体的相对速度。" }
+  n2@{ shape: rounded, label: "**joint​_​damping**<br/>衰减关节两端刚体的相对速度。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**avian3d::dynamics::solver::plugin::**<br/>**joint​_​damping#lt;avian3d::dynamics::**<br/>**joints::fixed::FixedJoint#gt;**<br/>衰减关节两端刚体的相对速度。" }
+  n3@{ shape: rounded, label: "**joint​_​damping**<br/>衰减关节两端刚体的相对速度。" }
   class n3 node_system
   n4@{ shape: lin-rect, label: "**Relax**<br/>组织约束子步的求解与松弛。" }
   class n4 node_system_set
-  n5@{ shape: rounded, label: "**avian3d::dynamics::solver::plugin::**<br/>**joint​_​damping#lt;avian3d::dynamics::**<br/>**joints::revolute::RevoluteJoint#gt;**<br/>衰减关节两端刚体的相对速度。" }
+  n5@{ shape: rounded, label: "**joint​_​damping**<br/>衰减关节两端刚体的相对速度。" }
   class n5 node_system
-  n6@{ shape: rounded, label: "**avian3d::dynamics::solver::plugin::**<br/>**joint​_​damping#lt;avian3d::dynamics::**<br/>**joints::prismatic::PrismaticJoint#gt;**<br/>衰减关节两端刚体的相对速度。" }
+  n6@{ shape: rounded, label: "**joint​_​damping**<br/>衰减关节两端刚体的相对速度。" }
   class n6 node_system
   n0 e0@-->|"集合成员"| n1
   class e0 edge_set_membership

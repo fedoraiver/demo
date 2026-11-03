@@ -40,11 +40,11 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: lin-rect, label: "**Playback**<br/>跨功能只约束混音与播放阶段，具体资源和实<br/>例处理顺序留在音频内部。" }
   class n0 node_system_set
-  n1@{ shape: rounded, label: "**demo::audio::playback::play​_​requests**<br/>按有效音量与播放策略处理短音请求。" }
+  n1@{ shape: rounded, label: "**play​_​requests**<br/>按有效音量与播放策略处理短音请求。" }
   class n1 node_system
   n2@{ shape: lin-rect, label: "**Mix**<br/>跨功能只约束混音与播放阶段，具体资源和实<br/>例处理顺序留在音频内部。" }
   class n2 node_system_set
-  n3@{ shape: rounded, label: "**demo::audio::playback::stop​_​on​_​exit**<br/>停止音频通道并记录退出。" }
+  n3@{ shape: rounded, label: "**stop​_​on​_​exit**<br/>停止音频通道并记录退出。" }
   class n3 node_system
   n0 e0@-->|"集合成员"| n1
   class e0 edge_set_membership

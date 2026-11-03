@@ -42,19 +42,19 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: hex, label: "**bevy​_​ui​_​widgets::menu::menubutton​_​**<br/>**on​_​key​_​event**<br/>通过方向键请求打开菜单。" }
+  n0@{ shape: hex, label: "**menubutton​_​on​_​key​_​event**<br/>通过方向键请求打开菜单。" }
   class n0 node_observer
-  n1@{ shape: stadium, label: "**menu::MenuEvent**<br/>通过菜单层级传递开关和焦点操作。" }
+  n1@{ shape: stadium, label: "**MenuEvent**<br/>通过菜单层级传递开关和焦点操作。" }
   class n1 node_event
-  n2@{ shape: stadium, label: "**FocusedInput#lt;bevy​_​input::keyboard::**<br/>**KeyboardInput#gt;**<br/>来自crate:bevy​_​input​_​focus ↗：把输入<br/>消息路由到焦点实体并向窗口冒泡。" }
+  n2@{ shape: stadium, label: "**FocusedInput#lt;KeyboardInput#gt;**<br/>来自crate:bevy​_​input​_​focus ↗：把输入<br/>消息路由到焦点实体并向窗口冒泡。" }
   class n2 node_event
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​ui::InteractionDisabled**<br/>来自crate:bevy​_​ui ↗：标记禁止交互的<br/>UI 控件。" }
+  n3@{ shape: rounded, label: "**InteractionDisabled**<br/>来自crate:bevy​_​ui ↗：标记禁止交互的<br/>UI 控件。" }
   class n3 node_component
   class n3 external_node
-  n4@{ shape: rounded, label: "**menu::MenuButton**<br/>为按钮添加菜单打开行为。" }
+  n4@{ shape: rounded, label: "**MenuButton**<br/>为按钮添加菜单打开行为。" }
   class n4 node_component
-  n5@{ shape: fr-rect, label: "**menu::MenuPlugin**<br/>处理菜单焦点与菜单项交互。" }
+  n5@{ shape: fr-rect, label: "**MenuPlugin**<br/>处理菜单焦点与菜单项交互。" }
   class n5 node_plugin
   n0 e0@-->|"触发事件"| n1
   class e0 edge_emit

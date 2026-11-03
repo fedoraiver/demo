@@ -43,16 +43,16 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​pbr::render::mesh::extract​_​**<br/>**meshes​_​for​_​gpu​_​building**<br/>增量提取变化或需重试网格到线程队列。" }
+  n0@{ shape: rounded, label: "**extract​_​meshes​_​for​_​gpu​_​building**<br/>增量提取变化或需重试网格到线程队列。" }
   class n0 node_system
   n1@{ shape: notch-rect, label: "**Local · removed​_​meshes​_​query.0.0.1**<br/>跟踪 Mesh3d 移除记录的读取进度。" }
   class n1 node_local
-  n2@{ shape: rounded, label: "**batching::NoAutomaticBatching**<br/>来自crate:bevy​_​render ↗：禁止网格实体<br/>参与自动合批。" }
+  n2@{ shape: rounded, label: "**NoAutomaticBatching**<br/>来自crate:bevy​_​render ↗：禁止网格实体<br/>参与自动合批。" }
   class n2 node_component
   class n2 external_node
   n3@{ shape: notch-rect, label: "**Local · removed​_​meshes​_​**<br/>**query.0.0.0.0.0**<br/>保存 Mesh3d 移除参数的组件 ID。" }
   class n3 node_local
-  n4@{ shape: rounded, label: "**bevy​_​camera::visibility::**<br/>**ViewVisibility**<br/>来自crate:bevy​_​camera ↗：记录实体是否<br/>应被提取用于渲染。" }
+  n4@{ shape: rounded, label: "**ViewVisibility**<br/>来自crate:bevy​_​camera ↗：记录实体是否<br/>应被提取用于渲染。" }
   class n4 node_component
   class n4 external_node
   n5@{ shape: notch-rect, label: "**Local · arg4.9.0.0.0.0.0**<br/>保存 NoCpuCulling 移除参数的组件 ID。" }
@@ -70,36 +70,36 @@ flowchart LR
   class n10 node_local
   n11@{ shape: notch-rect, label: "**Local · arg4.4.0.0.0.0.0**<br/>保存 NoFrustumCulling 移除参数的组件<br/>ID。" }
   class n11 node_local
-  n12@{ shape: rounded, label: "**visibility::range::VisibilityRange**<br/>来自crate:bevy​_​camera ↗：按相机距离控<br/>制网格的细节层级。" }
+  n12@{ shape: rounded, label: "**VisibilityRange**<br/>来自crate:bevy​_​camera ↗：按相机距离控<br/>制网格的细节层级。" }
   class n12 node_component
   class n12 external_node
-  n13@{ shape: cyl, label: "**render::mesh::**<br/>**MeshesToReextractNextFrame**<br/>记录因材质未准备而需要再次提取的网格。" }
+  n13@{ shape: cyl, label: "**MeshesToReextractNextFrame**<br/>记录因材质未准备而需要再次提取的网格。" }
   class n13 node_resource
   n14@{ shape: notch-rect, label: "**Local · arg4.3.0.0.0.0.0**<br/>保存 MeshTag 移除参数的组件 ID。" }
   class n14 node_local
   n15@{ shape: notch-rect, label: "**Local · arg4.7.0.0.0.0.0**<br/>保存 NotShadowCaster 移除参数的组件<br/>ID。" }
   class n15 node_local
-  n16@{ shape: rounded, label: "**bevy​_​mesh::Mesh3d**<br/>来自crate:bevy​_​mesh ↗：为三维可绘制实<br/>体指定网格资产。" }
+  n16@{ shape: rounded, label: "**Mesh3d**<br/>来自crate:bevy​_​mesh ↗：为三维可绘制实<br/>体指定网格资产。" }
   class n16 node_component
   class n16 external_node
   n17@{ shape: notch-rect, label: "**Local · arg4.5.0.0.0.0.0**<br/>保存 NotShadowReceiver 移除参数的组<br/>件 ID。" }
   class n17 node_local
   n18@{ shape: notch-rect, label: "**Local · arg4.2.0.0.1**<br/>跟踪 Aabb 移除记录的读取进度。" }
   class n18 node_local
-  n19@{ shape: rounded, label: "**lightmap::Lightmap**<br/>为网格应用烘焙的间接漫反射光照。" }
+  n19@{ shape: rounded, label: "**Lightmap**<br/>为网格应用烘焙的间接漫反射光照。" }
   class n19 node_component
-  n20@{ shape: rounded, label: "**bevy​_​camera::primitives::Aabb**<br/>来自crate:bevy​_​camera ↗：以局部轴对齐<br/>包围盒支持可见性裁剪。" }
+  n20@{ shape: rounded, label: "**Aabb**<br/>来自crate:bevy​_​camera ↗：以局部轴对齐<br/>包围盒支持可见性裁剪。" }
   class n20 node_component
   class n20 external_node
   n21@{ shape: notch-rect, label: "**Local · arg4.1.0.0.0.0.0**<br/>保存 Lightmap 移除参数的组件 ID。" }
   class n21 node_local
-  n22@{ shape: rounded, label: "**bevy​_​camera::visibility::**<br/>**NoFrustumCulling**<br/>来自crate:bevy​_​camera ↗：使实体退出内<br/>置视锥裁剪。" }
+  n22@{ shape: rounded, label: "**NoFrustumCulling**<br/>来自crate:bevy​_​camera ↗：使实体退出内<br/>置视锥裁剪。" }
   class n22 node_component
   class n22 external_node
-  n23@{ shape: rounded, label: "**bevy​_​mesh::skinning::SkinnedMesh**<br/>来自crate:bevy​_​mesh ↗：关联蒙皮网格的<br/>关节与逆绑定姿态。" }
+  n23@{ shape: rounded, label: "**SkinnedMesh**<br/>来自crate:bevy​_​mesh ↗：关联蒙皮网格的<br/>关节与逆绑定姿态。" }
   class n23 node_component
   class n23 external_node
-  n24@{ shape: rounded, label: "**components::MeshTag**<br/>来自crate:bevy​_​mesh ↗：向着色器提供网<br/>格实例的数据索引。" }
+  n24@{ shape: rounded, label: "**MeshTag**<br/>来自crate:bevy​_​mesh ↗：向着色器提供网<br/>格实例的数据索引。" }
   class n24 node_component
   class n24 external_node
   n25@{ shape: notch-rect, label: "**Local · arg4.4.0.0.1**<br/>跟踪 NoFrustumCulling 移除记录的读取进<br/>度。" }
@@ -108,19 +108,22 @@ flowchart LR
   class n26 node_local
   n27@{ shape: notch-rect, label: "**Local · arg4.12.0.0.0.0.0**<br/>保存 RenderLayers 移除参数的组件 ID。" }
   class n27 node_local
-  n28@{ shape: cyl, label: "**render::mesh::**<br/>**RenderMeshInstanceGpuQueues**<br/>暂存各线程提取的 GPU 网格实例。" }
+  n28@{ shape: cyl, label: "**RenderMeshInstanceGpuQueues**<br/>暂存各线程提取的 GPU 网格实例。" }
   class n28 node_resource
   n29@{ shape: rounded, label: "**TransmittedShadowReceiver**<br/>来自crate:bevy​_​light ↗：让 PBR 网格<br/>的漫透射背面接收阴影。" }
   class n29 node_component
   class n29 external_node
-  n30@{ shape: rounded, label: "**prepass::PreviousGlobalTransform**<br/>保存网格上一帧的世界变换。" }
+  n30@{ shape: rounded, label: "**PreviousGlobalTransform**<br/>保存网格上一帧的世界变换。" }
   class n30 node_component
-  n31@{ shape: rounded, label: "**components::global​_​transform::**<br/>**GlobalTransform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>合并祖先变换后的世界空间仿射变换" }
+  n31@{ shape: rounded, label: "**GlobalTransform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>合并祖先变换后的世界空间仿射变换" }
   class n31 node_component
   class n31 external_node
-  n32@{ shape: rounded, label: "**bevy​_​render::view::NoIndirectDrawing**<br/>来自crate:bevy​_​render ↗：关闭相机的间<br/>接绘制模式。" }
+  subgraph layout_card_n32[" "]
+  n32@{ shape: rounded, label: "**NoIndirectDrawing**<br/>来自crate:bevy​_​render ↗：关闭相机的间<br/>接绘制模式。" }
   class n32 node_component
   class n32 external_node
+  end
+  style layout_card_n32 fill:none,stroke:none
   n33@{ shape: notch-rect, label: "**Local · arg4.11.0.0.0.0.0**<br/>保存 SkinnedMesh 移除参数的组件 ID。" }
   class n33 node_local
   n34@{ shape: notch-rect, label: "**Local · arg4.8.0.0.1**<br/>跟踪 NoAutomaticBatching 移除记录的读<br/>取进度。" }
@@ -135,17 +138,17 @@ flowchart LR
   class n38 node_local
   n39@{ shape: notch-rect, label: "**Local · arg4.0.0.0.0.0.0**<br/>保存 PreviousGlobalTransform 移除参数<br/>的组件 ID。" }
   class n39 node_local
-  n40@{ shape: cyl, label: "**view::visibility::range::**<br/>**RenderVisibilityRanges**<br/>来自crate:bevy​_​render ↗：保存渲染侧距<br/>离范围及去重后的 GPU 数据。" }
+  n40@{ shape: cyl, label: "**RenderVisibilityRanges**<br/>来自crate:bevy​_​render ↗：保存渲染侧距<br/>离范围及去重后的 GPU 数据。" }
   class n40 node_resource
   class n40 external_node
   n41@{ shape: notch-rect, label: "**Local · arg4.5.0.0.1**<br/>跟踪 NotShadowReceiver 移除记录的读取<br/>进度。" }
   class n41 node_local
-  n42@{ shape: rounded, label: "**bevy​_​camera::visibility::**<br/>**RenderLayers**<br/>来自crate:bevy​_​camera ↗：限定相机与实<br/>体可相交的渲染层。" }
+  n42@{ shape: rounded, label: "**RenderLayers**<br/>来自crate:bevy​_​camera ↗：限定相机与实<br/>体可相交的渲染层。" }
   class n42 node_component
   class n42 external_node
   n43@{ shape: notch-rect, label: "**Local · arg4.2.0.0.0.0.0**<br/>保存 Aabb 移除参数的组件 ID。" }
   class n43 node_local
-  n44@{ shape: cyl, label: "**extract​_​plugin::MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
+  n44@{ shape: cyl, label: "**MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
   class n44 node_resource
   class n44 external_node
   n45@{ shape: notch-rect, label: "**Local · reextract​_​entities**<br/>收集变化查询未覆盖但仍需重提取的 GPU 网<br/>格。" }
@@ -157,15 +160,15 @@ flowchart LR
   class n47 external_node
   n48@{ shape: notch-rect, label: "**Local · arg4.0.0.0.1**<br/>跟踪 PreviousGlobalTransform 移除记录<br/>的读取进度。" }
   class n48 node_local
-  n49@{ shape: rounded, label: "**bevy​_​camera::Camera**<br/>来自crate:bevy​_​camera ↗：配置相机视<br/>口、输出目标和渲染顺序。" }
+  n49@{ shape: rounded, label: "**Camera**<br/>来自crate:bevy​_​camera ↗：配置相机视<br/>口、输出目标和渲染顺序。" }
   class n49 node_component
   class n49 external_node
-  n50@{ shape: rounded, label: "**visibility::NoCpuCulling**<br/>来自crate:bevy​_​camera ↗：退出内置的<br/>CPU 视锥裁剪。" }
+  n50@{ shape: rounded, label: "**NoCpuCulling**<br/>来自crate:bevy​_​camera ↗：退出内置的<br/>CPU 视锥裁剪。" }
   class n50 node_component
   class n50 external_node
   n51@{ shape: notch-rect, label: "**Local · arg4.1.0.0.1**<br/>跟踪 Lightmap 移除记录的读取进度。" }
   class n51 node_local
-  n52@{ shape: cyl, label: "**render::mesh::RenderMeshInstances**<br/>保存 CPU 或 GPU 构建所需的网格实例。" }
+  n52@{ shape: cyl, label: "**RenderMeshInstances**<br/>保存 CPU 或 GPU 构建所需的网格实例。" }
   class n52 node_resource
   n53@{ shape: notch-rect, label: "**Local · arg4.9.0.0.1**<br/>跟踪 NoCpuCulling 移除记录的读取进度。" }
   class n53 node_local
@@ -333,7 +336,7 @@ flowchart LR
   e29@{ curve: basis }
   e30@{ curve: basis }
   e31@{ curve: basis }
-  e32@{ curve: bumpX }
+  e32@{ curve: basis }
   e33@{ curve: basis }
   e34@{ curve: basis }
   e35@{ curve: basis }

@@ -41,111 +41,111 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
   subgraph layout_card_n0[" "]
-  n0@{ shape: rounded, label: "**collision::collider::collider​_​**<br/>**transform::ColliderTransform**<br/>缓存碰撞体相对于刚体的变换。" }
+  n0@{ shape: rounded, label: "**ColliderTransform**<br/>缓存碰撞体相对于刚体的变换。" }
   class n0 node_component
   end
   style layout_card_n0 fill:none,stroke:none
   subgraph layout_card_n1[" "]
-  n1@{ shape: rounded, label: "**demo::item​_​interaction::pose::sync​_​**<br/>**held​_​physics**<br/>来自item​_​interaction ↗：同步组合体内<br/>箱子的真实世界姿态和速度，不依赖人物是否<br/>具有视觉 Children。" }
+  n1@{ shape: rounded, label: "**sync​_​held​_​physics**<br/>来自item​_​interaction ↗：同步组合体内<br/>箱子的真实世界姿态和速度，不依赖人物是否<br/>具有视觉 Children。" }
   class n1 node_system
   class n1 external_node
   end
   style layout_card_n1 fill:none,stroke:none
   subgraph layout_card_n2[" "]
-  n2@{ shape: hex, label: "**avian3d::dynamics::rigid​_​body::mass​_​**<br/>**properties::{impl#35;3}::build::**<br/>**{closure#35;1}**<br/>随碰撞体集合变化重算刚体质量。" }
+  n2@{ shape: hex, label: "**build::{closure#35;1}**<br/>随碰撞体集合变化重算刚体质量。" }
   class n2 node_observer
   end
   style layout_card_n2 fill:none,stroke:none
   subgraph layout_card_n3[" "]
-  n3@{ shape: hex, label: "**avian3d::dynamics::rigid​_​body::mass​_​**<br/>**properties::{impl#35;3}::build::**<br/>**{closure#35;0}**<br/>初始化新刚体的质量属性。" }
+  n3@{ shape: hex, label: "**build::{closure#35;0}**<br/>初始化新刚体的质量属性。" }
   class n3 node_observer
   end
   style layout_card_n3 fill:none,stroke:none
   subgraph layout_card_n4[" "]
-  n4@{ shape: rounded, label: "**avian3d::collision::narrow​_​phase::**<br/>**update​_​narrow​_​phase#lt;avian3d::**<br/>**collision::collider::parry::**<br/>**Collider, ()#gt;**<br/>更新窄相接触并输出碰撞变化消息。" }
+  n4@{ shape: rounded, label: "**update​_​narrow​_​phase**<br/>更新窄相接触并输出碰撞变化消息。" }
   class n4 node_system
   end
   style layout_card_n4 fill:none,stroke:none
   subgraph layout_card_n5[" "]
-  n5@{ shape: rounded, label: "**demo::item​_​interaction::pose::sync​_​**<br/>**held​_​physics**<br/>来自item​_​interaction ↗：同步组合体内<br/>箱子的真实世界姿态和速度，不依赖人物是否<br/>具有视觉 Children。" }
+  n5@{ shape: rounded, label: "**sync​_​held​_​physics**<br/>来自item​_​interaction ↗：同步组合体内<br/>箱子的真实世界姿态和速度，不依赖人物是否<br/>具有视觉 Children。" }
   class n5 node_system
   class n5 external_node
   end
   style layout_card_n5 fill:none,stroke:none
   subgraph layout_card_n6[" "]
-  n6@{ shape: hex, label: "**avian3d::dynamics::rigid​_​body::mass​_​**<br/>**properties::{impl#35;3}::build::**<br/>**{closure#35;0}**<br/>初始化新刚体的质量属性。" }
+  n6@{ shape: hex, label: "**build::{closure#35;0}**<br/>初始化新刚体的质量属性。" }
   class n6 node_observer
   end
   style layout_card_n6 fill:none,stroke:none
   subgraph layout_card_n7[" "]
-  n7@{ shape: rounded, label: "**avian3d::dynamics::rigid​_​body::mass​_​**<br/>**properties::update​_​mass​_​properties**<br/>重算已标记实体的质量属性并清除标记。" }
+  n7@{ shape: rounded, label: "**update​_​mass​_​properties**<br/>重算已标记实体的质量属性并清除标记。" }
   class n7 node_system
   end
   style layout_card_n7 fill:none,stroke:none
   subgraph layout_card_n8[" "]
-  n8@{ shape: hex, label: "**avian3d::dynamics::rigid​_​body::mass​_​**<br/>**properties::{impl#35;3}::build::**<br/>**{closure#35;1}**<br/>随碰撞体集合变化重算刚体质量。" }
+  n8@{ shape: hex, label: "**build::{closure#35;1}**<br/>随碰撞体集合变化重算刚体质量。" }
   class n8 node_observer
   end
   style layout_card_n8 fill:none,stroke:none
   subgraph layout_card_n9[" "]
-  n9@{ shape: hex, label: "**avian3d::dynamics::rigid​_​body::mass​_​**<br/>**properties::{impl#35;3}::build::**<br/>**{closure#35;0}**<br/>初始化新刚体的质量属性。" }
+  n9@{ shape: hex, label: "**build::{closure#35;0}**<br/>初始化新刚体的质量属性。" }
   class n9 node_observer
   end
   style layout_card_n9 fill:none,stroke:none
   subgraph layout_card_n10[" "]
-  n10@{ shape: rounded, label: "**avian3d::dynamics::rigid​_​body::mass​_​**<br/>**properties::queue​_​mass​_​**<br/>**recomputation​_​on​_​collider​_​mass​_​**<br/>**change**<br/>在附属碰撞体质量输入变化时请求刚体重算。" }
+  n10@{ shape: rounded, label: "**queue​_​mass​_​recomputation​_​on​_​**<br/>**collider​_​mass​_​change**<br/>在附属碰撞体质量输入变化时请求刚体重算。" }
   class n10 node_system
   end
   style layout_card_n10 fill:none,stroke:none
   subgraph layout_card_n11[" "]
-  n11@{ shape: rounded, label: "**demo::item​_​interaction::attachment::**<br/>**finish​_​attachments**<br/>来自item​_​interaction ↗：持握期间只保<br/>留人物的 Dynamic，碰到箱子即对同一刚体<br/>求解，内部形状自动互不碰撞。" }
+  n11@{ shape: rounded, label: "**finish​_​attachments**<br/>来自item​_​interaction ↗：持握期间只保<br/>留人物的 Dynamic，碰到箱子即对同一刚体<br/>求解，内部形状自动互不碰撞。" }
   class n11 node_system
   class n11 external_node
   end
   style layout_card_n11 fill:none,stroke:none
   subgraph layout_card_n12[" "]
-  n12@{ shape: hex, label: "**avian3d::collision::collider::**<br/>**collider​_​hierarchy::plugin::on​_​body​_​**<br/>**removed**<br/>清理已移除刚体的碰撞体归属。" }
+  n12@{ shape: hex, label: "**on​_​body​_​removed**<br/>清理已移除刚体的碰撞体归属。" }
   class n12 node_observer
   end
   style layout_card_n12 fill:none,stroke:none
   subgraph layout_card_n13[" "]
-  n13@{ shape: rounded, label: "**avian3d::collision::collider::**<br/>**backend::update​_​collider​_​**<br/>**scale#lt;avian3d::collision::collider::**<br/>**parry::Collider#gt;**<br/>把根节点和附属碰撞体的缩放传给形状。" }
+  n13@{ shape: rounded, label: "**update​_​collider​_​scale**<br/>把根节点和附属碰撞体的缩放传给形状。" }
   class n13 node_system
   end
   style layout_card_n13 fill:none,stroke:none
   subgraph layout_card_n14[" "]
-  n14@{ shape: hex, label: "**avian3d::dynamics::rigid​_​body::mass​_​**<br/>**properties::{impl#35;3}::build::**<br/>**{closure#35;1}**<br/>随碰撞体集合变化重算刚体质量。" }
+  n14@{ shape: hex, label: "**build::{closure#35;1}**<br/>随碰撞体集合变化重算刚体质量。" }
   class n14 node_observer
   end
   style layout_card_n14 fill:none,stroke:none
   subgraph layout_card_n15[" "]
-  n15@{ shape: rounded, label: "**avian3d::collision::collider::**<br/>**collider​_​transform::plugin::**<br/>**propagate​_​collider​_​transforms**<br/>沿实体层级计算碰撞体相对刚体的变换。" }
+  n15@{ shape: rounded, label: "**propagate​_​collider​_​transforms**<br/>沿实体层级计算碰撞体相对刚体的变换。" }
   class n15 node_system
   end
   style layout_card_n15 fill:none,stroke:none
   subgraph layout_card_n16[" "]
-  n16@{ shape: rounded, label: "**avian3d::collision::collider::**<br/>**collider​_​transform::plugin::update​_​**<br/>**child​_​collider​_​position**<br/>由所属刚体位姿更新附属碰撞体的世界位姿。" }
+  n16@{ shape: rounded, label: "**update​_​child​_​collider​_​position**<br/>由所属刚体位姿更新附属碰撞体的世界位姿。" }
   class n16 node_system
   end
   style layout_card_n16 fill:none,stroke:none
   subgraph layout_card_n17[" "]
-  n17@{ shape: rounded, label: "**demo::item​_​interaction::pose::sync​_​**<br/>**held​_​physics**<br/>来自item​_​interaction ↗：同步组合体内<br/>箱子的真实世界姿态和速度，不依赖人物是否<br/>具有视觉 Children。" }
+  n17@{ shape: rounded, label: "**sync​_​held​_​physics**<br/>来自item​_​interaction ↗：同步组合体内<br/>箱子的真实世界姿态和速度，不依赖人物是否<br/>具有视觉 Children。" }
   class n17 node_system
   class n17 external_node
   end
   style layout_card_n17 fill:none,stroke:none
   subgraph layout_card_n18[" "]
-  n18@{ shape: hex, label: "**avian3d::collision::collider::**<br/>**collider​_​hierarchy::plugin::on​_​body​_​**<br/>**removed**<br/>清理已移除刚体的碰撞体归属。" }
+  n18@{ shape: hex, label: "**on​_​body​_​removed**<br/>清理已移除刚体的碰撞体归属。" }
   class n18 node_observer
   end
   style layout_card_n18 fill:none,stroke:none
   subgraph layout_card_n19[" "]
-  n19@{ shape: hex, label: "**avian3d::collision::collider::**<br/>**collider​_​hierarchy::plugin::on​_​body​_​**<br/>**removed**<br/>清理已移除刚体的碰撞体归属。" }
+  n19@{ shape: hex, label: "**on​_​body​_​removed**<br/>清理已移除刚体的碰撞体归属。" }
   class n19 node_observer
   end
   style layout_card_n19 fill:none,stroke:none
   subgraph layout_card_n20[" "]
-  n20@{ shape: rounded, label: "**avian3d::dynamics::rigid​_​body::body​_​**<br/>**size​_​metrics::update​_​body​_​size​_​**<br/>**metrics#lt;avian3d::collision::**<br/>**collider::parry::Collider#gt;**<br/>重算刚体的 CCD 厚度和最大扫掠半径。" }
+  n20@{ shape: rounded, label: "**update​_​body​_​size​_​metrics**<br/>重算刚体的 CCD 厚度和最大扫掠半径。" }
   class n20 node_system
   end
   style layout_card_n20 fill:none,stroke:none

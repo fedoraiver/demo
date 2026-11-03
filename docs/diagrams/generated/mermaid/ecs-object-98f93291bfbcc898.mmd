@@ -39,15 +39,15 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**upscaling::ViewUpscalingPipeline**<br/>记录视图颜色输出所用的缩放管线。" }
+  n0@{ shape: rounded, label: "**ViewUpscalingPipeline**<br/>记录视图颜色输出所用的缩放管线。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​core​_​pipeline::upscaling::**<br/>**clear​_​view​_​upscaling​_​pipelines**<br/>清除视图缩放管线以便设备恢复后重建。" }
+  n1@{ shape: rounded, label: "**clear​_​view​_​upscaling​_​pipelines**<br/>清除视图缩放管线以便设备恢复后重建。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​core​_​pipeline::upscaling::**<br/>**prepare​_​view​_​upscaling​_​pipelines**<br/>按相机合成方式准备输出缩放管线。" }
+  n2@{ shape: rounded, label: "**prepare​_​view​_​upscaling​_​pipelines**<br/>按相机合成方式准备输出缩放管线。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​core​_​pipeline::upscaling::**<br/>**node::upscaling**<br/>将主颜色纹理缩放写入最终输出附件。" }
+  n3@{ shape: rounded, label: "**upscaling**<br/>将主颜色纹理缩放写入最终输出附件。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**bevy​_​core​_​pipeline::upscaling::**<br/>**node::upscaling**<br/>将主颜色纹理缩放写入最终输出附件。" }
+  n4@{ shape: rounded, label: "**upscaling**<br/>将主颜色纹理缩放写入最终输出附件。" }
   class n4 node_system
   n1 e0@---|"存在性约束"| n0
   class e0 edge_reference
@@ -62,7 +62,7 @@ flowchart LR
   n2 e5@--- n0
   class e5 edge_read
   e0@{ curve: basis }
-  e1@{ curve: basis }
+  e1@{ curve: bumpX }
   e2@{ curve: bumpX }
   e3@{ curve: basis }
   e4@{ curve: basis }

@@ -38,11 +38,11 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**pipeline​_​2d::LineJointGizmoPipeline**<br/>提供二维调试线接头的渲染管线资源。" }
+  n0@{ shape: cyl, label: "**LineJointGizmoPipeline**<br/>提供二维调试线接头的渲染管线资源。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​gizmos​_​render::pipeline​_​2d::**<br/>**init​_​line​_​gizmo​_​pipelines**<br/>建立二维 Gizmo 线段和接头管线。" }
+  n1@{ shape: rounded, label: "**init​_​line​_​gizmo​_​pipelines**<br/>建立二维 Gizmo 线段和接头管线。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​gizmos​_​render::pipeline​_​2d::**<br/>**queue​_​line​_​and​_​joint​_​gizmos​_​2d**<br/>将二维 Gizmo 线段与接头加入透明阶段。" }
+  n2@{ shape: rounded, label: "**queue​_​line​_​and​_​joint​_​gizmos​_​2d**<br/>将二维 Gizmo 线段与接头加入透明阶段。" }
   class n2 node_system
   n1 e0@-->|"插入"| n0
   class e0 edge_write

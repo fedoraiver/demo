@@ -46,12 +46,12 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**demo::first​_​person::capture::sync​_​**<br/>**mouse​_​capture**<br/>在输入转发前确定归属；切换前约定其他按键<br/>已松开，检查器没有进行中的交互。" }
+  n0@{ shape: rounded, label: "**sync​_​mouse​_​capture**<br/>在输入转发前确定归属；切换前约定其他按键<br/>已松开，检查器没有进行中的交互。" }
   class n0 node_system
   n1@{ shape: lin-rect, label: "**Prepare**<br/>来自crate:bevy​_​enhanced​_​input ↗：组<br/>织动作求值、值应用与事件触发。" }
   class n1 node_system_set
   class n1 external_node
-  n2@{ shape: rounded, label: "**window::CursorOptions**<br/>来自crate:bevy​_​window ↗：保存窗口光标<br/>的可见、捕获和命中测试等选项" }
+  n2@{ shape: rounded, label: "**CursorOptions**<br/>来自crate:bevy​_​window ↗：保存窗口光标<br/>的可见、捕获和命中测试等选项" }
   class n2 node_component
   class n2 external_node
   n3@{ shape: lin-rect, label: "**ProcessInput**<br/>来自crate:bevy​_​egui ↗：组织 Egui 上<br/>下文与输入准备。" }
@@ -60,47 +60,47 @@ flowchart LR
   n4@{ shape: rounded, label: "**EguiInput**<br/>来自crate:bevy​_​egui ↗：保存送入当前<br/>Egui 上下文的 RawInput" }
   class n4 node_component
   class n4 external_node
-  n5@{ shape: rounded, label: "**first​_​person::actions::**<br/>**GameplayContext**<br/>控制者的步行输入上下文；角色实体不直接持<br/>有设备绑定。" }
+  n5@{ shape: rounded, label: "**GameplayContext**<br/>控制者的步行输入上下文；角色实体不直接持<br/>有设备绑定。" }
   class n5 node_component
   n6@{ shape: lin-rect, label: "**InitContexts**<br/>来自crate:bevy​_​egui ↗：组织 Egui 上<br/>下文与输入准备。" }
   class n6 node_system_set
   class n6 external_node
-  n7@{ shape: rounded, label: "**first​_​person::ControlsCamera**<br/>控制者当前关联的第一人称相机。" }
+  n7@{ shape: rounded, label: "**ControlsCamera**<br/>控制者当前关联的第一人称相机。" }
   class n7 node_component
-  n8@{ shape: rounded, label: "**window::Window**<br/>来自crate:bevy​_​window ↗：保存窗口的呈<br/>现模式、位置、分辨率、标题、全屏及平台行<br/>为配置" }
+  n8@{ shape: rounded, label: "**Window**<br/>来自crate:bevy​_​window ↗：保存窗口的呈<br/>现模式、位置、分辨率、标题、全屏及平台行<br/>为配置" }
   class n8 node_component
   class n8 external_node
-  n9@{ shape: rounded, label: "**bevy​_​enhanced​_​input::context::**<br/>**ContextActivity#lt;first​_​person::**<br/>**actions::GameplayContext#gt;**<br/>来自crate:bevy​_​enhanced​_​input ↗：控<br/>制保留绑定的输入上下文启停。" }
+  n9@{ shape: rounded, label: "**ContextActivity#lt;GameplayContext#gt;**<br/>来自crate:bevy​_​enhanced​_​input ↗：控<br/>制保留绑定的输入上下文启停。" }
   class n9 node_component
   class n9 external_node
-  n10@{ shape: cyl, label: "**bevy::bevy​_​state::state::State#lt;game​_​**<br/>**flow::AppState#gt;**<br/>来自crate:bevy​_​state ↗：保存某个状态<br/>类型当前生效的值" }
+  n10@{ shape: cyl, label: "**State#lt;AppState#gt;**<br/>来自crate:bevy​_​state ↗：保存某个状态<br/>类型当前生效的值" }
   class n10 node_resource
   class n10 external_node
-  n11@{ shape: cyl, label: "**button​_​input::ButtonInput#lt;keyboard::**<br/>**KeyCode#gt;**<br/>来自crate:bevy​_​input ↗：保存指定按钮<br/>类型当前按下、本帧刚按下和刚释放的集合" }
+  n11@{ shape: cyl, label: "**ButtonInput#lt;KeyCode#gt;**<br/>来自crate:bevy​_​input ↗：保存指定按钮<br/>类型当前按下、本帧刚按下和刚释放的集合" }
   class n11 node_resource
   class n11 external_node
   n12@{ shape: lin-rect, label: "**InputSystems**<br/>来自crate:bevy​_​input ↗：把原始设备消<br/>息汇总为本帧输入状态。" }
   class n12 node_system_set
   class n12 external_node
-  n13@{ shape: fr-rect, label: "**first​_​person::FirstPersonPlugin**<br/>注册第一人称动作、捕获、朝向与镜头，不安<br/>装输入基础设施或物理插件。" }
+  n13@{ shape: fr-rect, label: "**FirstPersonPlugin**<br/>注册第一人称动作、捕获、朝向与镜头，不安<br/>装输入基础设施或物理插件。" }
   class n13 node_plugin
-  n14@{ shape: rounded, label: "**first​_​person::ControlsCharacter**<br/>控制者当前关联的角色，设备和角色状态分别<br/>保存。" }
+  n14@{ shape: rounded, label: "**ControlsCharacter**<br/>控制者当前关联的角色，设备和角色状态分别<br/>保存。" }
   class n14 node_component
-  n15@{ shape: rounded, label: "**first​_​person::MouseLookState**<br/>每个相机的捕获状态；恢复捕获的第一帧跳过<br/>自由光标位移。" }
+  n15@{ shape: rounded, label: "**MouseLookState**<br/>每个相机的捕获状态；恢复捕获的第一帧跳过<br/>自由光标位移。" }
   class n15 node_component
-  n16@{ shape: lean-r, label: "**event::WindowFocused**<br/>来自crate:bevy​_​window ↗：通知窗口焦点<br/>变化。" }
+  n16@{ shape: lean-r, label: "**WindowFocused**<br/>来自crate:bevy​_​window ↗：通知窗口焦点<br/>变化。" }
   class n16 node_message
   class n16 external_node
-  n17@{ shape: rounded, label: "**character::components::Character**<br/>来自character ↗：具有移动和跳跃能力的<br/>角色。" }
+  n17@{ shape: rounded, label: "**Character**<br/>来自character ↗：具有移动和跳跃能力的<br/>角色。" }
   class n17 node_component
   class n17 external_node
-  n18@{ shape: rounded, label: "**window::PrimaryWindow**<br/>来自crate:bevy​_​window ↗：标识唯一的主<br/>窗口" }
+  n18@{ shape: rounded, label: "**PrimaryWindow**<br/>来自crate:bevy​_​window ↗：标识唯一的主<br/>窗口" }
   class n18 node_component
   class n18 external_node
-  n19@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;event::**<br/>**WindowFocused#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n19@{ shape: cyl, label: "**Messages#lt;WindowFocused#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n19 node_resource
   class n19 external_node
-  n20@{ shape: rounded, label: "**first​_​person::FirstPersonCamera**<br/>观察角度的唯一来源；有向转角保留到下一次<br/>安全朝向同步。" }
+  n20@{ shape: rounded, label: "**FirstPersonCamera**<br/>观察角度的唯一来源；有向转角保留到下一次<br/>安全朝向同步。" }
   class n20 node_component
   n21@{ shape: rounded, label: "**PrimaryEguiContext**<br/>来自crate:bevy​_​egui ↗：标记运行<br/>主Egui调度的上下文。" }
   class n21 node_component

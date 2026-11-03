@@ -39,15 +39,15 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**mesh2d::material::**<br/>**MeshMaterial2d#lt;sprite​_​mesh::sprite​_​**<br/>**mesh​_​material::SpriteMeshMaterial#gt;**<br/>为二维网格指定材质资产。" }
+  n0@{ shape: rounded, label: "**MeshMaterial2d#lt;SpriteMeshMaterial#gt;**<br/>为二维网格指定材质资产。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::**<br/>**material::check​_​entities​_​needing​_​**<br/>**specialization#lt;bevy​_​sprite​_​render::**<br/>**sprite​_​mesh::sprite​_​mesh​_​material::**<br/>**SpriteMeshMaterial#gt;**<br/>收集二维网格材质需重建或移除专用化的实<br/>体。" }
+  n1@{ shape: rounded, label: "**check​_​entities​_​needing​_​**<br/>**specialization**<br/>收集二维网格材质需重建或移除专用化的实<br/>体。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::**<br/>**material::extract​_​mesh​_​materials​_​**<br/>**2d#lt;bevy​_​sprite​_​render::sprite​_​mesh::**<br/>**sprite​_​mesh​_​material::**<br/>**SpriteMeshMaterial#gt;**<br/>同步可见二维网格使用的材质资产身份。" }
+  n2@{ shape: rounded, label: "**extract​_​mesh​_​materials​_​2d**<br/>同步可见二维网格使用的材质资产身份。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::**<br/>**material::mark​_​2d​_​meshes​_​as​_​changed​_​**<br/>**if​_​their​_​materials​_​changed#lt;bevy​_​**<br/>**sprite​_​render::sprite​_​mesh::sprite​_​**<br/>**mesh​_​material::SpriteMeshMaterial#gt;**<br/>让材质变化触发二维网格重新提取。" }
+  n3@{ shape: rounded, label: "**mark​_​2d​_​meshes​_​as​_​changed​_​if​_​their​_​**<br/>**materials​_​changed**<br/>让材质变化触发二维网格重新提取。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**bevy​_​sprite​_​render::sprite​_​mesh::**<br/>**add​_​material**<br/>按精灵与锚点复用或创建默认网格材质。" }
+  n4@{ shape: rounded, label: "**add​_​material**<br/>按精灵与锚点复用或创建默认网格材质。" }
   class n4 node_system
   n0 e0@-->|"存在性约束"| n1
   class e0 edge_reference

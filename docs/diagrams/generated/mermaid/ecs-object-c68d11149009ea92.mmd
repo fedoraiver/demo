@@ -39,7 +39,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: notch-rect, label: "**Local · thread​_​queues**<br/>按线程和可见性类别收集相机可见实体。" }
   class n0 node_local
-  n1@{ shape: rounded, label: "**bevy​_​camera::visibility::check​_​**<br/>**visibility​_​cpu​_​culling**<br/>按层、距离和视锥收集各相机可见实体。" }
+  n1@{ shape: rounded, label: "**check​_​visibility​_​cpu​_​culling**<br/>按层、距离和视锥收集各相机可见实体。" }
   class n1 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

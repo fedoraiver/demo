@@ -36,19 +36,19 @@ flowchart LR
   classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**collision::hooks::**<br/>**ActiveCollisionHooks**<br/>选择实体启用的碰撞处理钩子。" }
+  n0@{ shape: rounded, label: "**ActiveCollisionHooks**<br/>选择实体启用的碰撞处理钩子。" }
   class n0 node_component
-  n1@{ shape: hex, label: "**avian3d::collider​_​tree::update::add​_​**<br/>**to​_​tree​_​on**<br/>将可用碰撞体加入空间树。" }
+  n1@{ shape: hex, label: "**add​_​to​_​tree​_​on**<br/>将可用碰撞体加入空间树。" }
   class n1 node_observer
-  n2@{ shape: hex, label: "**avian3d::collider​_​tree::update::**<br/>**{impl#35;1}::build::{closure#35;2}**<br/>按刚体类型迁移碰撞体空间树。" }
+  n2@{ shape: hex, label: "**build::{closure#35;2}**<br/>按刚体类型迁移碰撞体空间树。" }
   class n2 node_observer
-  n3@{ shape: hex, label: "**avian3d::collider​_​tree::update::add​_​**<br/>**to​_​tree​_​on**<br/>将可用碰撞体加入空间树。" }
+  n3@{ shape: hex, label: "**add​_​to​_​tree​_​on**<br/>将可用碰撞体加入空间树。" }
   class n3 node_observer
-  n4@{ shape: hex, label: "**avian3d::collider​_​tree::update::add​_​**<br/>**to​_​tree​_​on**<br/>将可用碰撞体加入空间树。" }
+  n4@{ shape: hex, label: "**add​_​to​_​tree​_​on**<br/>将可用碰撞体加入空间树。" }
   class n4 node_observer
-  n5@{ shape: hex, label: "**avian3d::collider​_​tree::update::**<br/>**{impl#35;1}::build::{closure#35;6}**<br/>同步碰撞代理的自定义过滤标志。" }
+  n5@{ shape: hex, label: "**build::{closure#35;6}**<br/>同步碰撞代理的自定义过滤标志。" }
   class n5 node_observer
-  n6@{ shape: hex, label: "**avian3d::collider​_​tree::update::**<br/>**{impl#35;1}::build::{closure#35;1}**<br/>把失去刚体归属的碰撞体迁到独立树。" }
+  n6@{ shape: hex, label: "**build::{closure#35;1}**<br/>把失去刚体归属的碰撞体迁到独立树。" }
   class n6 node_observer
   n0 e0@--> n1
   class e0 edge_read

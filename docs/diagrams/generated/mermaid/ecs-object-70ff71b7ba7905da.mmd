@@ -38,14 +38,14 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**cluster::gpu::**<br/>**ClusteringAllocationPipeline**<br/>描述聚簇列表分配计算的着色接口。" }
+  n0@{ shape: cyl, label: "**ClusteringAllocationPipeline**<br/>描述聚簇列表分配计算的着色接口。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​render::init​_​gpu​_​resource#lt;bevy​_​**<br/>**pbr::cluster::gpu::**<br/>**ClusteringAllocationPipeline#gt;**<br/>来自crate:bevy​_​render ↗：构造并插入渲<br/>染所需资源。" }
+  n1@{ shape: rounded, label: "**init​_​gpu​_​resource**<br/>来自crate:bevy​_​render ↗：构造并插入渲<br/>染所需资源。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​pbr::cluster::gpu::prepare​_​**<br/>**clustering​_​pipelines**<br/>为视图取得 GPU 聚簇五阶段的管线标识。" }
+  n2@{ shape: rounded, label: "**prepare​_​clustering​_​pipelines**<br/>为视图取得 GPU 聚簇五阶段的管线标识。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​pbr::cluster::gpu::prepare​_​**<br/>**clustering​_​bind​_​groups**<br/>为视图的聚簇计算与光栅阶段绑定工作缓冲。" }
+  n3@{ shape: rounded, label: "**prepare​_​clustering​_​bind​_​groups**<br/>为视图的聚簇计算与光栅阶段绑定工作缓冲。" }
   class n3 node_system
   n1 e0@-->|"插入"| n0
   class e0 edge_write

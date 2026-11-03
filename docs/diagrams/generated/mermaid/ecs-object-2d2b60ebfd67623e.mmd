@@ -38,13 +38,13 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**dof::**<br/>**DepthOfFieldGlobalBindGroupLayout**<br/>定义景深共享参数布局与颜色采样器。" }
+  n0@{ shape: cyl, label: "**DepthOfFieldGlobalBindGroupLayout**<br/>定义景深共享参数布局与颜色采样器。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​post​_​process::dof::init​_​dof​_​**<br/>**global​_​bind​_​group​_​layout**<br/>建立景深共享参数布局和线性采样器。" }
+  n1@{ shape: rounded, label: "**init​_​dof​_​global​_​bind​_​group​_​layout**<br/>建立景深共享参数布局和线性采样器。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​post​_​process::dof::prepare​_​**<br/>**depth​_​of​_​field​_​global​_​bind​_​group**<br/>把景深参数与采样器绑定为共享 GPU 输入。" }
+  n2@{ shape: rounded, label: "**prepare​_​depth​_​of​_​field​_​global​_​bind​_​**<br/>**group**<br/>把景深参数与采样器绑定为共享 GPU 输入。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​post​_​process::dof::prepare​_​**<br/>**depth​_​of​_​field​_​pipelines**<br/>按景深模式和视图格式准备两阶段管线。" }
+  n3@{ shape: rounded, label: "**prepare​_​depth​_​of​_​field​_​pipelines**<br/>按景深模式和视图格式准备两阶段管线。" }
   class n3 node_system
   n1 e0@-->|"插入"| n0
   class e0 edge_write

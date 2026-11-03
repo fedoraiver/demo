@@ -37,13 +37,13 @@ flowchart LR
   classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**spatial​_​query::diagnostics::**<br/>**SpatialQueryDiagnostics**<br/>记录射线与形状查询耗时。" }
+  n0@{ shape: cyl, label: "**SpatialQueryDiagnostics**<br/>记录射线与形状查询耗时。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**#lt;avian3d::spatial​_​query::**<br/>**diagnostics::**<br/>**SpatialQueryDiagnostics as avian3d::**<br/>**diagnostics::PhysicsDiagnostics#gt;::**<br/>**reset**<br/>重置物理诊断测量。" }
+  n1@{ shape: rounded, label: "**reset**<br/>重置物理诊断测量。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**avian3d::spatial​_​query::shapecast**<br/>执行已启用的形状扫掠并更新命中列表。" }
+  n2@{ shape: rounded, label: "**shapecast**<br/>执行已启用的形状扫掠并更新命中列表。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**avian3d::spatial​_​query::raycast**<br/>执行已启用的射线查询并更新命中列表。" }
+  n3@{ shape: rounded, label: "**raycast**<br/>执行已启用的射线查询并更新命中列表。" }
   class n3 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

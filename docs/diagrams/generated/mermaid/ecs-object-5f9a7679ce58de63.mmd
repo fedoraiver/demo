@@ -40,11 +40,11 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​gizmos::propagate​_​gizmos#lt;bevy​_​**<br/>**gizmos::config::**<br/>**DefaultGizmoConfigGroup, bevy​_​time::**<br/>**fixed::Fixed#gt;**<br/>汇入指定上下文保留的 Gizmo 图元。" }
+  n0@{ shape: rounded, label: "**propagate​_​gizmos**<br/>汇入指定上下文保留的 Gizmo 图元。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**gizmos::GizmoStorage#lt;config::**<br/>**DefaultGizmoConfigGroup, bevy​_​time::**<br/>**Fixed#gt;**<br/>按配置组和清理上下文存储调试图元。" }
+  n1@{ shape: cyl, label: "**GizmoStorage#lt;DefaultGizmoConfigGroup**<br/>**, Fixed#gt;**<br/>按配置组和清理上下文存储调试图元。" }
   class n1 node_resource
-  n2@{ shape: cyl, label: "**gizmos::GizmoStorage#lt;config::**<br/>**DefaultGizmoConfigGroup, ()#gt;**<br/>按配置组和清理上下文存储调试图元。" }
+  n2@{ shape: cyl, label: "**GizmoStorage#lt;DefaultGizmoConfigGroup**<br/>**, ()#gt;**<br/>按配置组和清理上下文存储调试图元。" }
   class n2 node_resource
   n3@{ shape: lin-rect, label: "**GizmoMeshSystems**<br/>把调试绘制存储转换为渲染网格。" }
   class n3 node_system_set

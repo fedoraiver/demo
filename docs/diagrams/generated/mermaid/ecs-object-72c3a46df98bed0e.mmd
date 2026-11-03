@@ -39,112 +39,112 @@ flowchart LR
   classDef edge_emit stroke:#B66B2D,stroke-width:1.8px
   classDef edge_observe stroke:#B66B2D,stroke-width:1.8px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: stadium, label: "**FocusedInput#lt;bevy​_​input::keyboard::**<br/>**KeyboardInput#gt;**<br/>把输入消息路由到焦点实体并向窗口冒泡。" }
+  n0@{ shape: stadium, label: "**FocusedInput#lt;KeyboardInput#gt;**<br/>把输入消息路由到焦点实体并向窗口冒泡。" }
   class n0 node_event
-  n1@{ shape: hex, label: "**bevy​_​ui​_​widgets::menu::menu​_​on​_​key​_​**<br/>**event**<br/>来自crate:bevy​_​ui​_​widgets ↗：处理菜<br/>单键盘导航、激活与关闭。" }
+  n1@{ shape: hex, label: "**menu​_​on​_​key​_​event**<br/>来自crate:bevy​_​ui​_​widgets ↗：处理菜<br/>单键盘导航、激活与关闭。" }
   class n1 node_observer
   class n1 external_node
-  n2@{ shape: hex, label: "**bevy​_​ui​_​widgets::radio::radio​_​**<br/>**button​_​on​_​key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过确<br/>认键请求选中单选按钮。" }
+  n2@{ shape: hex, label: "**radio​_​button​_​on​_​key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过确<br/>认键请求选中单选按钮。" }
   class n2 node_observer
   class n2 external_node
-  n3@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：用键盘<br/>步进或跳转滑条数值。" }
+  n3@{ shape: hex, label: "**slider​_​on​_​key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：用键盘<br/>步进或跳转滑条数值。" }
   class n3 node_observer
   class n3 external_node
-  n4@{ shape: hex, label: "**bevy​_​ui​_​widgets::button::button​_​on​_​**<br/>**key​_​event**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过确<br/>认键激活焦点按钮。" }
+  n4@{ shape: hex, label: "**button​_​on​_​key​_​event**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过确<br/>认键激活焦点按钮。" }
   class n4 node_observer
   class n4 external_node
-  n5@{ shape: hex, label: "**bevy​_​ui​_​widgets::tabs::tab​_​on​_​key​_​**<br/>**input**<br/>来自crate:bevy​_​ui​_​widgets ↗：用键盘<br/>导航并激活标签页。" }
+  n5@{ shape: hex, label: "**tab​_​on​_​key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：用键盘<br/>导航并激活标签页。" }
   class n5 node_observer
   class n5 external_node
-  n6@{ shape: hex, label: "**bevy​_​ui​_​widgets::checkbox::checkbox​_​**<br/>**on​_​key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过确<br/>认键请求切换复选框勾选。" }
+  n6@{ shape: hex, label: "**checkbox​_​on​_​key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过确<br/>认键请求切换复选框勾选。" }
   class n6 node_observer
   class n6 external_node
-  n7@{ shape: hex, label: "**bevy​_​ui​_​widgets::checkbox::checkbox​_​**<br/>**on​_​key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过确<br/>认键请求切换复选框勾选。" }
+  n7@{ shape: hex, label: "**checkbox​_​on​_​key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过确<br/>认键请求切换复选框勾选。" }
   class n7 node_observer
   class n7 external_node
-  n8@{ shape: hex, label: "**bevy​_​ui​_​widgets::text​_​input::on​_​**<br/>**focused​_​keyboard​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：将聚焦<br/>文本框按键转为编辑操作。" }
+  n8@{ shape: hex, label: "**on​_​focused​_​keyboard​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：将聚焦<br/>文本框按键转为编辑操作。" }
   class n8 node_observer
   class n8 external_node
-  n9@{ shape: hex, label: "**bevy​_​ui​_​widgets::text​_​input::on​_​**<br/>**focused​_​keyboard​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：将聚焦<br/>文本框按键转为编辑操作。" }
+  n9@{ shape: hex, label: "**on​_​focused​_​keyboard​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：将聚焦<br/>文本框按键转为编辑操作。" }
   class n9 node_observer
   class n9 external_node
-  n10@{ shape: hex, label: "**bevy​_​ui​_​widgets::modal::modal​_​**<br/>**dialog​_​barrier​_​on​_​keypress**<br/>来自crate:bevy​_​ui​_​widgets ↗：把模态<br/>遮罩的 Esc 输入转为关闭请求。" }
+  n10@{ shape: hex, label: "**modal​_​dialog​_​barrier​_​on​_​keypress**<br/>来自crate:bevy​_​ui​_​widgets ↗：把模态<br/>遮罩的 Esc 输入转为关闭请求。" }
   class n10 node_observer
   class n10 external_node
-  n11@{ shape: hex, label: "**bevy​_​ui​_​widgets::button::button​_​on​_​**<br/>**key​_​event**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过确<br/>认键激活焦点按钮。" }
+  n11@{ shape: hex, label: "**button​_​on​_​key​_​event**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过确<br/>认键激活焦点按钮。" }
   class n11 node_observer
   class n11 external_node
-  n12@{ shape: hex, label: "**bevy​_​ui​_​widgets::tabs::tab​_​on​_​key​_​**<br/>**input**<br/>来自crate:bevy​_​ui​_​widgets ↗：用键盘<br/>导航并激活标签页。" }
+  n12@{ shape: hex, label: "**tab​_​on​_​key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：用键盘<br/>导航并激活标签页。" }
   class n12 node_observer
   class n12 external_node
-  n13@{ shape: hex, label: "**bevy​_​ui​_​widgets::modal::modal​_​**<br/>**dialog​_​barrier​_​on​_​keypress**<br/>来自crate:bevy​_​ui​_​widgets ↗：把模态<br/>遮罩的 Esc 输入转为关闭请求。" }
+  n13@{ shape: hex, label: "**modal​_​dialog​_​barrier​_​on​_​keypress**<br/>来自crate:bevy​_​ui​_​widgets ↗：把模态<br/>遮罩的 Esc 输入转为关闭请求。" }
   class n13 node_observer
   class n13 external_node
-  n14@{ shape: hex, label: "**bevy​_​input​_​focus::tab​_​navigation::**<br/>**handle​_​tab​_​navigation**<br/>处理正向和反向键盘焦点遍历。" }
+  n14@{ shape: hex, label: "**handle​_​tab​_​navigation**<br/>处理正向和反向键盘焦点遍历。" }
   class n14 node_observer
-  n15@{ shape: hex, label: "**bevy​_​ui​_​widgets::list::listbox​_​on​_​**<br/>**key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：处理列<br/>表键盘导航与行确认。" }
+  n15@{ shape: hex, label: "**listbox​_​on​_​key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：处理列<br/>表键盘导航与行确认。" }
   class n15 node_observer
   class n15 external_node
-  n16@{ shape: hex, label: "**bevy​_​ui​_​widgets::list::listbox​_​on​_​**<br/>**key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：处理列<br/>表键盘导航与行确认。" }
+  n16@{ shape: hex, label: "**listbox​_​on​_​key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：处理列<br/>表键盘导航与行确认。" }
   class n16 node_observer
   class n16 external_node
-  n17@{ shape: rounded, label: "**bevy​_​input​_​focus::dispatch​_​focused​_​**<br/>**input#lt;bevy​_​input::keyboard::**<br/>**KeyboardInput#gt;**<br/>向有效焦点或主窗口派发输入。" }
+  n17@{ shape: rounded, label: "**dispatch​_​focused​_​input**<br/>向有效焦点或主窗口派发输入。" }
   class n17 node_system
-  n18@{ shape: hex, label: "**bevy​_​ui​_​widgets::menu::menubutton​_​**<br/>**on​_​key​_​event**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过方<br/>向键请求打开菜单。" }
+  n18@{ shape: hex, label: "**menubutton​_​on​_​key​_​event**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过方<br/>向键请求打开菜单。" }
   class n18 node_observer
   class n18 external_node
-  n19@{ shape: hex, label: "**bevy​_​ui​_​widgets::modal::modal​_​**<br/>**dialog​_​barrier​_​on​_​keypress**<br/>来自crate:bevy​_​ui​_​widgets ↗：把模态<br/>遮罩的 Esc 输入转为关闭请求。" }
+  n19@{ shape: hex, label: "**modal​_​dialog​_​barrier​_​on​_​keypress**<br/>来自crate:bevy​_​ui​_​widgets ↗：把模态<br/>遮罩的 Esc 输入转为关闭请求。" }
   class n19 node_observer
   class n19 external_node
-  n20@{ shape: hex, label: "**bevy​_​ui​_​widgets::menu::menubutton​_​**<br/>**on​_​key​_​event**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过方<br/>向键请求打开菜单。" }
+  n20@{ shape: hex, label: "**menubutton​_​on​_​key​_​event**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过方<br/>向键请求打开菜单。" }
   class n20 node_observer
   class n20 external_node
-  n21@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：用键盘<br/>步进或跳转滑条数值。" }
+  n21@{ shape: hex, label: "**slider​_​on​_​key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：用键盘<br/>步进或跳转滑条数值。" }
   class n21 node_observer
   class n21 external_node
-  n22@{ shape: hex, label: "**bevy​_​ui​_​widgets::checkbox::checkbox​_​**<br/>**on​_​key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过确<br/>认键请求切换复选框勾选。" }
+  n22@{ shape: hex, label: "**checkbox​_​on​_​key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过确<br/>认键请求切换复选框勾选。" }
   class n22 node_observer
   class n22 external_node
-  n23@{ shape: hex, label: "**bevy​_​ui​_​widgets::menu::menu​_​on​_​key​_​**<br/>**event**<br/>来自crate:bevy​_​ui​_​widgets ↗：处理菜<br/>单键盘导航、激活与关闭。" }
+  n23@{ shape: hex, label: "**menu​_​on​_​key​_​event**<br/>来自crate:bevy​_​ui​_​widgets ↗：处理菜<br/>单键盘导航、激活与关闭。" }
   class n23 node_observer
   class n23 external_node
-  n24@{ shape: hex, label: "**bevy​_​ui​_​widgets::button::button​_​on​_​**<br/>**key​_​event**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过确<br/>认键激活焦点按钮。" }
+  n24@{ shape: hex, label: "**button​_​on​_​key​_​event**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过确<br/>认键激活焦点按钮。" }
   class n24 node_observer
   class n24 external_node
-  n25@{ shape: hex, label: "**bevy​_​ui​_​widgets::list::listbox​_​on​_​**<br/>**key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：处理列<br/>表键盘导航与行确认。" }
+  n25@{ shape: hex, label: "**listbox​_​on​_​key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：处理列<br/>表键盘导航与行确认。" }
   class n25 node_observer
   class n25 external_node
-  n26@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：用键盘<br/>步进或跳转滑条数值。" }
+  n26@{ shape: hex, label: "**slider​_​on​_​key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：用键盘<br/>步进或跳转滑条数值。" }
   class n26 node_observer
   class n26 external_node
-  n27@{ shape: hex, label: "**bevy​_​ui​_​widgets::radio::radio​_​group​_​**<br/>**on​_​key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过键<br/>盘请求更改单选组选项。" }
+  n27@{ shape: hex, label: "**radio​_​group​_​on​_​key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过键<br/>盘请求更改单选组选项。" }
   class n27 node_observer
   class n27 external_node
-  n28@{ shape: hex, label: "**bevy​_​ui​_​widgets::radio::radio​_​group​_​**<br/>**on​_​key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过键<br/>盘请求更改单选组选项。" }
+  n28@{ shape: hex, label: "**radio​_​group​_​on​_​key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过键<br/>盘请求更改单选组选项。" }
   class n28 node_observer
   class n28 external_node
-  n29@{ shape: hex, label: "**bevy​_​ui​_​widgets::menu::menubutton​_​**<br/>**on​_​key​_​event**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过方<br/>向键请求打开菜单。" }
+  n29@{ shape: hex, label: "**menubutton​_​on​_​key​_​event**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过方<br/>向键请求打开菜单。" }
   class n29 node_observer
   class n29 external_node
-  n30@{ shape: hex, label: "**bevy​_​ui​_​widgets::menu::menu​_​on​_​key​_​**<br/>**event**<br/>来自crate:bevy​_​ui​_​widgets ↗：处理菜<br/>单键盘导航、激活与关闭。" }
+  n30@{ shape: hex, label: "**menu​_​on​_​key​_​event**<br/>来自crate:bevy​_​ui​_​widgets ↗：处理菜<br/>单键盘导航、激活与关闭。" }
   class n30 node_observer
   class n30 external_node
-  n31@{ shape: hex, label: "**bevy​_​ui​_​widgets::radio::radio​_​group​_​**<br/>**on​_​key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过键<br/>盘请求更改单选组选项。" }
+  n31@{ shape: hex, label: "**radio​_​group​_​on​_​key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过键<br/>盘请求更改单选组选项。" }
   class n31 node_observer
   class n31 external_node
-  n32@{ shape: hex, label: "**bevy​_​ui​_​widgets::tabs::tab​_​on​_​key​_​**<br/>**input**<br/>来自crate:bevy​_​ui​_​widgets ↗：用键盘<br/>导航并激活标签页。" }
+  n32@{ shape: hex, label: "**tab​_​on​_​key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：用键盘<br/>导航并激活标签页。" }
   class n32 node_observer
   class n32 external_node
-  n33@{ shape: hex, label: "**bevy​_​ui​_​widgets::radio::radio​_​**<br/>**button​_​on​_​key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过确<br/>认键请求选中单选按钮。" }
+  n33@{ shape: hex, label: "**radio​_​button​_​on​_​key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过确<br/>认键请求选中单选按钮。" }
   class n33 node_observer
   class n33 external_node
-  n34@{ shape: hex, label: "**bevy​_​ui​_​widgets::radio::radio​_​**<br/>**button​_​on​_​key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过确<br/>认键请求选中单选按钮。" }
+  n34@{ shape: hex, label: "**radio​_​button​_​on​_​key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过确<br/>认键请求选中单选按钮。" }
   class n34 node_observer
   class n34 external_node
-  n35@{ shape: hex, label: "**bevy​_​ui​_​widgets::text​_​input::on​_​**<br/>**focused​_​keyboard​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：将聚焦<br/>文本框按键转为编辑操作。" }
+  n35@{ shape: hex, label: "**on​_​focused​_​keyboard​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：将聚焦<br/>文本框按键转为编辑操作。" }
   class n35 node_observer
   class n35 external_node
-  n36@{ shape: hex, label: "**bevy​_​input​_​focus::tab​_​navigation::**<br/>**handle​_​tab​_​navigation**<br/>处理正向和反向键盘焦点遍历。" }
+  n36@{ shape: hex, label: "**handle​_​tab​_​navigation**<br/>处理正向和反向键盘焦点遍历。" }
   class n36 node_observer
   n0 e0@-->|"接收事件"| n1
   class e0 edge_observe

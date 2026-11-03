@@ -38,21 +38,21 @@ flowchart LR
   classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**dynamics::rigid​_​body::mass​_​**<br/>**properties::components::**<br/>**NoAutoCenterOfMass**<br/>阻止后代贡献总质心。" }
+  n0@{ shape: rounded, label: "**NoAutoCenterOfMass**<br/>阻止后代贡献总质心。" }
   class n0 node_component
-  n1@{ shape: hex, label: "**avian3d::dynamics::rigid​_​body::mass​_​**<br/>**properties::{impl#35;3}::build::**<br/>**{closure#35;0}**<br/>初始化新刚体的质量属性。" }
+  n1@{ shape: hex, label: "**build::{closure#35;0}**<br/>初始化新刚体的质量属性。" }
   class n1 node_observer
-  n2@{ shape: hex, label: "**avian3d::dynamics::rigid​_​body::mass​_​**<br/>**properties::{impl#35;3}::build::**<br/>**{closure#35;0}**<br/>初始化新刚体的质量属性。" }
+  n2@{ shape: hex, label: "**build::{closure#35;0}**<br/>初始化新刚体的质量属性。" }
   class n2 node_observer
-  n3@{ shape: hex, label: "**avian3d::dynamics::rigid​_​body::mass​_​**<br/>**properties::{impl#35;3}::build::**<br/>**{closure#35;1}**<br/>随碰撞体集合变化重算刚体质量。" }
+  n3@{ shape: hex, label: "**build::{closure#35;1}**<br/>随碰撞体集合变化重算刚体质量。" }
   class n3 node_observer
-  n4@{ shape: hex, label: "**avian3d::dynamics::rigid​_​body::mass​_​**<br/>**properties::{impl#35;3}::build::**<br/>**{closure#35;0}**<br/>初始化新刚体的质量属性。" }
+  n4@{ shape: hex, label: "**build::{closure#35;0}**<br/>初始化新刚体的质量属性。" }
   class n4 node_observer
-  n5@{ shape: hex, label: "**avian3d::dynamics::rigid​_​body::mass​_​**<br/>**properties::{impl#35;3}::build::**<br/>**{closure#35;1}**<br/>随碰撞体集合变化重算刚体质量。" }
+  n5@{ shape: hex, label: "**build::{closure#35;1}**<br/>随碰撞体集合变化重算刚体质量。" }
   class n5 node_observer
-  n6@{ shape: rounded, label: "**avian3d::dynamics::rigid​_​body::mass​_​**<br/>**properties::update​_​mass​_​properties**<br/>重算已标记实体的质量属性并清除标记。" }
+  n6@{ shape: rounded, label: "**update​_​mass​_​properties**<br/>重算已标记实体的质量属性并清除标记。" }
   class n6 node_system
-  n7@{ shape: hex, label: "**avian3d::dynamics::rigid​_​body::mass​_​**<br/>**properties::{impl#35;3}::build::**<br/>**{closure#35;1}**<br/>随碰撞体集合变化重算刚体质量。" }
+  n7@{ shape: hex, label: "**build::{closure#35;1}**<br/>随碰撞体集合变化重算刚体质量。" }
   class n7 node_observer
   n0 e0@-->|"存在性约束"| n1
   class e0 edge_reference

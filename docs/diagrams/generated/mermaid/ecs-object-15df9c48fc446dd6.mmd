@@ -36,9 +36,9 @@ flowchart LR
   classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**bevy​_​ecs::message::**<br/>**Messages#lt;gamepad::**<br/>**GamepadRumbleRequest#gt;**<br/>保存最近两次轮换期间产生的指定类型消息" }
+  n0@{ shape: cyl, label: "**Messages#lt;GamepadRumbleRequest#gt;**<br/>保存最近两次轮换期间产生的指定类型消息" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​gilrs::rumble::play​_​gilrs​_​**<br/>**rumble**<br/>来自crate:bevy​_​gilrs ↗：执行手柄振动<br/>请求并清除过期效果。" }
+  n1@{ shape: rounded, label: "**play​_​gilrs​_​rumble**<br/>来自crate:bevy​_​gilrs ↗：执行手柄振动<br/>请求并清除过期效果。" }
   class n1 node_system
   class n1 external_node
   n0 e0@--> n1

@@ -42,19 +42,19 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​pbr::render::morph::write​_​**<br/>**morph​_​buffers**<br/>上传当前形变权重及可选描述符缓冲。" }
+  n0@{ shape: rounded, label: "**write​_​morph​_​buffers**<br/>上传当前形变权重及可选描述符缓冲。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**bevy​_​render::renderer::RenderQueue**<br/>来自crate:bevy​_​render ↗：将资源写入和<br/>命令异步提交给 GPU。" }
+  n1@{ shape: cyl, label: "**RenderQueue**<br/>来自crate:bevy​_​render ↗：将资源写入和<br/>命令异步提交给 GPU。" }
   class n1 node_resource
   class n1 external_node
   n2@{ shape: lin-rect, label: "**PrepareResourcesFlush**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
   class n2 node_system_set
   class n2 external_node
-  n3@{ shape: fr-rect, label: "**render::mesh::MeshRenderPlugin**<br/>建立三维网格绘制支持。" }
+  n3@{ shape: fr-rect, label: "**MeshRenderPlugin**<br/>建立三维网格绘制支持。" }
   class n3 node_plugin
-  n4@{ shape: cyl, label: "**render::morph::MorphUniforms**<br/>以双缓冲保存网格前后帧形变权重。" }
+  n4@{ shape: cyl, label: "**MorphUniforms**<br/>以双缓冲保存网格前后帧形变权重。" }
   class n4 node_resource
-  n5@{ shape: cyl, label: "**bevy​_​render::renderer::RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
+  n5@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
   class n5 node_resource
   class n5 external_node
   n1 e0@--> n0

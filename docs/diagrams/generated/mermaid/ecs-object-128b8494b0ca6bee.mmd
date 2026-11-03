@@ -39,7 +39,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: notch-rect, label: "**Local · has​_​run**<br/>确保深度下采样管线初始化只尝试一次。" }
   class n0 node_local
-  n1@{ shape: rounded, label: "**bevy​_​core​_​pipeline::mip​_​generation::**<br/>**experimental::depth::create​_​**<br/>**downsample​_​depth​_​pipelines**<br/>在支持 GPU 剔除时一次性建立深度降采样管<br/>线。" }
+  n1@{ shape: rounded, label: "**create​_​downsample​_​depth​_​pipelines**<br/>在支持 GPU 剔除时一次性建立深度降采样管<br/>线。" }
   class n1 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

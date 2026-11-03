@@ -44,38 +44,38 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​ui​_​widgets::scrollbar::update​_​**<br/>**scrollbar​_​thumb**<br/>按内容比例与滚动位置更新滚动条滑块。" }
+  n0@{ shape: rounded, label: "**update​_​scrollbar​_​thumb**<br/>按内容比例与滚动位置更新滚动条滑块。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**bevy​_​ui::ComputedNode**<br/>来自crate:bevy​_​ui ↗：保存 UI 布局计算<br/>后的物理尺寸。" }
+  n1@{ shape: rounded, label: "**ComputedNode**<br/>来自crate:bevy​_​ui ↗：保存 UI 布局计算<br/>后的物理尺寸。" }
   class n1 node_component
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​ui::UiGlobalTransform**<br/>来自crate:bevy​_​ui ↗：保存 UI 节点的绝<br/>对二维变换。" }
+  n2@{ shape: rounded, label: "**UiGlobalTransform**<br/>来自crate:bevy​_​ui ↗：保存 UI 节点的绝<br/>对二维变换。" }
   class n2 node_component
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​ui​_​widgets::popover::position​_​**<br/>**popover**<br/>定位弹出层并同步后代的 UI 变换。" }
+  n3@{ shape: rounded, label: "**position​_​popover**<br/>定位弹出层并同步后代的 UI 变换。" }
   class n3 node_system
   n4@{ shape: lin-rect, label: "**Layout**<br/>来自crate:bevy​_​ui ↗：组织界面交互、布<br/>局与堆叠更新。" }
   class n4 node_system_set
   class n4 external_node
-  n5@{ shape: rounded, label: "**bevy​_​ui::UiTransform**<br/>来自crate:bevy​_​ui ↗：配置 UI 节点的相<br/>对二维变换。" }
+  n5@{ shape: rounded, label: "**UiTransform**<br/>来自crate:bevy​_​ui ↗：配置 UI 节点的相<br/>对二维变换。" }
   class n5 node_component
   class n5 external_node
-  n6@{ shape: rounded, label: "**bevy​_​ui::layout::ui​_​layout​_​system**<br/>来自crate:bevy​_​ui ↗：求解 UI 布局并回<br/>写节点尺寸和二维变换。" }
+  n6@{ shape: rounded, label: "**ui​_​layout​_​system**<br/>来自crate:bevy​_​ui ↗：求解 UI 布局并回<br/>写节点尺寸和二维变换。" }
   class n6 node_system
   class n6 external_node
-  n7@{ shape: rounded, label: "**scrollbar::ScrollbarThumb**<br/>标识滚动条可拖动滑块。" }
+  n7@{ shape: rounded, label: "**ScrollbarThumb**<br/>标识滚动条可拖动滑块。" }
   class n7 node_component
-  n8@{ shape: rounded, label: "**scrollbar::Scrollbar**<br/>指定滚动条目标、方向和最小滑块长度。" }
+  n8@{ shape: rounded, label: "**Scrollbar**<br/>指定滚动条目标、方向和最小滑块长度。" }
   class n8 node_component
-  n9@{ shape: fr-rect, label: "**scrollbar::ScrollbarPlugin**<br/>处理滚动条拖动并更新滑块。" }
+  n9@{ shape: fr-rect, label: "**ScrollbarPlugin**<br/>处理滚动条拖动并更新滑块。" }
   class n9 node_plugin
-  n10@{ shape: rounded, label: "**bevy​_​ecs::hierarchy::Children**<br/>来自crate:bevy​_​ecs ↗：保存以<br/>ChildOf 指向当前父实体的子实体集合" }
+  n10@{ shape: rounded, label: "**Children**<br/>来自crate:bevy​_​ecs ↗：保存以<br/>ChildOf 指向当前父实体的子实体集合" }
   class n10 node_component
   class n10 external_node
-  n11@{ shape: rounded, label: "**bevy​_​ui::ComputedUiRenderTargetInfo**<br/>来自crate:bevy​_​ui ↗：缓存 UI 目标的尺<br/>寸与缩放。" }
+  n11@{ shape: rounded, label: "**ComputedUiRenderTargetInfo**<br/>来自crate:bevy​_​ui ↗：缓存 UI 目标的尺<br/>寸与缩放。" }
   class n11 node_component
   class n11 external_node
-  n12@{ shape: rounded, label: "**bevy​_​ui::ScrollPosition**<br/>来自crate:bevy​_​ui ↗：指定 UI 内容的逻<br/>辑像素滚动位置。" }
+  n12@{ shape: rounded, label: "**ScrollPosition**<br/>来自crate:bevy​_​ui ↗：指定 UI 内容的逻<br/>辑像素滚动位置。" }
   class n12 node_component
   class n12 external_node
   n1 e0@---|"赋值"| n0

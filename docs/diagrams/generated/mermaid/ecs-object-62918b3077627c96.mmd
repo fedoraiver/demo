@@ -37,11 +37,11 @@ flowchart LR
   classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: lin-rect, label: "**ApplyStateTransition(PhantomData#lt;dem**<br/>**o::game​_​flow::AppState#gt;)**<br/>应用待处理状态及其依赖子状态转换。" }
+  n0@{ shape: lin-rect, label: "**ApplyStateTransition(PhantomData#lt;App**<br/>**State#gt;)**<br/>应用待处理状态及其依赖子状态转换。" }
   class n0 node_system_set
   n1@{ shape: lin-rect, label: "**DependentTransitions**<br/>组织状态转换及进入退出调度。" }
   class n1 node_system_set
-  n2@{ shape: rounded, label: "**bevy​_​state::state::freely​_​mutable​_​**<br/>**state::apply​_​state​_​transition#lt;demo::**<br/>**game​_​flow::AppState#gt;**<br/>提交待处理状态并发布转换消息。" }
+  n2@{ shape: rounded, label: "**apply​_​state​_​transition**<br/>提交待处理状态并发布转换消息。" }
   class n2 node_system
   n1 e0@-->|"集合成员"| n0
   class e0 edge_set_membership

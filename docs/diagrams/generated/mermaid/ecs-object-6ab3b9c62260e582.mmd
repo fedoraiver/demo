@@ -42,17 +42,17 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​render::view::visibility::**<br/>**range::write​_​render​_​visibility​_​**<br/>**ranges**<br/>按设备绑定要求上传可见距离范围表。" }
+  n0@{ shape: rounded, label: "**write​_​render​_​visibility​_​ranges**<br/>按设备绑定要求上传可见距离范围表。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**view::visibility::range::**<br/>**RenderVisibilityRanges**<br/>保存渲染侧距离范围及去重后的 GPU 数据。" }
+  n1@{ shape: cyl, label: "**RenderVisibilityRanges**<br/>保存渲染侧距离范围及去重后的 GPU 数据。" }
   class n1 node_resource
-  n2@{ shape: cyl, label: "**bevy​_​render::renderer::RenderDevice**<br/>创建渲染和计算所需的 GPU 资源。" }
+  n2@{ shape: cyl, label: "**RenderDevice**<br/>创建渲染和计算所需的 GPU 资源。" }
   class n2 node_resource
   n3@{ shape: lin-rect, label: "**PrepareResourcesFlush**<br/>组织渲染数据准备与绘制排队。" }
   class n3 node_system_set
-  n4@{ shape: cyl, label: "**bevy​_​render::renderer::RenderQueue**<br/>将资源写入和命令异步提交给 GPU。" }
+  n4@{ shape: cyl, label: "**RenderQueue**<br/>将资源写入和命令异步提交给 GPU。" }
   class n4 node_resource
-  n5@{ shape: fr-rect, label: "**view::visibility::range::**<br/>**RenderVisibilityRangePlugin**<br/>准备渲染使用的距离可见范围。" }
+  n5@{ shape: fr-rect, label: "**RenderVisibilityRangePlugin**<br/>准备渲染使用的距离可见范围。" }
   class n5 node_plugin
   n0 e0@-->|"可变访问"| n1
   class e0 edge_write

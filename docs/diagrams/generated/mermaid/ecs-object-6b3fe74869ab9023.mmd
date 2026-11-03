@@ -46,23 +46,23 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​input::gamepad::gamepad​_​**<br/>**connection​_​system**<br/>按连接消息添加或移除手柄组件。" }
+  n0@{ shape: rounded, label: "**gamepad​_​connection​_​system**<br/>按连接消息添加或移除手柄组件。" }
   class n0 node_system
   n1@{ shape: fr-rect, label: "**InputPlugin**<br/>汇集设备输入并维护输入状态。" }
   class n1 node_plugin
-  n2@{ shape: cyl, label: "**bevy​_​ecs::message::**<br/>**Messages#lt;gamepad::**<br/>**GamepadConnectionEvent#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n2@{ shape: cyl, label: "**Messages#lt;GamepadConnectionEvent#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n2 node_resource
   class n2 external_node
   n3@{ shape: lin-rect, label: "**InputSystems**<br/>把原始设备消息汇总为本帧输入状态。" }
   class n3 node_system_set
-  n4@{ shape: rounded, label: "**bevy​_​ecs::name::Name**<br/>来自crate:bevy​_​ecs ↗：保存供调试和界<br/>面展示的实体名称及缓存哈希" }
+  n4@{ shape: rounded, label: "**Name**<br/>来自crate:bevy​_​ecs ↗：保存供调试和界<br/>面展示的实体名称及缓存哈希" }
   class n4 node_component
   class n4 external_node
-  n5@{ shape: lean-r, label: "**gamepad::GamepadConnectionEvent**<br/>通知手柄连接或断开。" }
+  n5@{ shape: lean-r, label: "**GamepadConnectionEvent**<br/>通知手柄连接或断开。" }
   class n5 node_message
-  n6@{ shape: rounded, label: "**bevy​_​input::gamepad::gamepad​_​event​_​**<br/>**processing​_​system**<br/>过滤原始手柄数值并更新设备状态。" }
+  n6@{ shape: rounded, label: "**gamepad​_​event​_​processing​_​system**<br/>过滤原始手柄数值并更新设备状态。" }
   class n6 node_system
-  n7@{ shape: rounded, label: "**gamepad::Gamepad**<br/>保存一个手柄的数字按钮状态、模拟轴值及厂<br/>商产品信息" }
+  n7@{ shape: rounded, label: "**Gamepad**<br/>保存一个手柄的数字按钮状态、模拟轴值及厂<br/>商产品信息" }
   class n7 node_component
   n1 e0@-->|"调用"| n0
   class e0 edge_registration

@@ -49,46 +49,46 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​egui::input::write​_​keyboard​_​**<br/>**input​_​messages​_​system**<br/>把键盘文本与按键转换为 Egui 输入。" }
+  n0@{ shape: rounded, label: "**write​_​keyboard​_​input​_​messages​_​system**<br/>把键盘文本与按键转换为 Egui 输入。" }
   class n0 node_system
   n1@{ shape: rounded, label: "**EguiContext**<br/>包装一个 egui::Context" }
   class n1 node_component
   n2@{ shape: cyl, label: "**EguiClipboard**<br/>为 Egui 提供剪贴板集成" }
   class n2 node_resource
-  n3@{ shape: cyl, label: "**bevy​_​ecs::message::**<br/>**Messages#lt;keyboard::KeyboardInput#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n3@{ shape: cyl, label: "**Messages#lt;KeyboardInput#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n3 node_resource
   class n3 external_node
-  n4@{ shape: cyl, label: "**input::HoveredNonWindowEguiContext**<br/>保存指针当前悬停的非窗口 Egui 上下文实<br/>体" }
+  n4@{ shape: cyl, label: "**HoveredNonWindowEguiContext**<br/>保存指针当前悬停的非窗口 Egui 上下文实<br/>体" }
   class n4 node_resource
-  n5@{ shape: rounded, label: "**bevy​_​egui::input::write​_​pointer​_​**<br/>**moved​_​and​_​button​_​messages​_​system**<br/>按原生事件顺序转换 Egui 指针输入。" }
+  n5@{ shape: rounded, label: "**write​_​pointer​_​moved​_​and​_​button​_​**<br/>**messages​_​system**<br/>按原生事件顺序转换 Egui 指针输入。" }
   class n5 node_system
-  n6@{ shape: lean-r, label: "**keyboard::KeyboardInput**<br/>来自crate:bevy​_​input ↗：传递窗口键盘<br/>输入。" }
+  n6@{ shape: lean-r, label: "**KeyboardInput**<br/>来自crate:bevy​_​input ↗：传递窗口键盘<br/>输入。" }
   class n6 node_message
   class n6 external_node
   n7@{ shape: lin-rect, label: "**ReadBevyMessages**<br/>组织 Egui 输入读取与事件写入。" }
   class n7 node_system_set
-  n8@{ shape: cyl, label: "**input::WindowToEguiContextMap**<br/>维护窗口实体与 Egui 上下文实体的双向索<br/>引" }
+  n8@{ shape: cyl, label: "**WindowToEguiContextMap**<br/>维护窗口实体与 Egui 上下文实体的双向索<br/>引" }
   class n8 node_resource
   n9@{ shape: lin-rect, label: "**ProcessInput**<br/>组织 Egui 上下文与输入准备。" }
   class n9 node_system_set
-  n10@{ shape: rounded, label: "**bevy​_​egui::input::write​_​egui​_​input​_​**<br/>**system**<br/>把界面输入和文件拖放写入 Egui 输入批<br/>次。" }
+  n10@{ shape: rounded, label: "**write​_​egui​_​input​_​system**<br/>把界面输入和文件拖放写入 Egui 输入批<br/>次。" }
   class n10 node_system
-  n11@{ shape: rounded, label: "**bevy​_​egui::input::write​_​window​_​**<br/>**touch​_​messages​_​system**<br/>把窗口触摸转换为 Egui 指针和触摸事件。" }
+  n11@{ shape: rounded, label: "**write​_​window​_​touch​_​messages​_​system**<br/>把窗口触摸转换为 Egui 指针和触摸事件。" }
   class n11 node_system
-  n12@{ shape: cyl, label: "**input::FocusedNonWindowEguiContext**<br/>保存当前获得键盘焦点的非窗口 Egui 上下<br/>文实体" }
+  n12@{ shape: cyl, label: "**FocusedNonWindowEguiContext**<br/>保存当前获得键盘焦点的非窗口 Egui 上下<br/>文实体" }
   class n12 node_resource
   n13@{ shape: fr-rect, label: "**EguiPlugin**<br/>装配 Egui 输入、上下文与渲染。" }
   class n13 node_plugin
-  n14@{ shape: lean-r, label: "**input::EguiInputEvent**<br/>传递供 Egui 消费的输入事件。" }
+  n14@{ shape: lean-r, label: "**EguiInputEvent**<br/>传递供 Egui 消费的输入事件。" }
   class n14 node_message
-  n15@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;input::**<br/>**EguiInputEvent#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n15@{ shape: cyl, label: "**Messages#lt;EguiInputEvent#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n15 node_resource
   class n15 external_node
-  n16@{ shape: cyl, label: "**input::ModifierKeysState**<br/>缓存 Shift、Control、Alt 和平台主修饰<br/>键的按下状态" }
+  n16@{ shape: cyl, label: "**ModifierKeysState**<br/>缓存 Shift、Control、Alt 和平台主修饰<br/>键的按下状态" }
   class n16 node_resource
-  n17@{ shape: fr-rect, label: "**bevy​_​egui::input​_​system​_​is​_​**<br/>**enabled#lt;#lt;bevy​_​egui::EguiPlugin as**<br/>**bevy​_​app::plugin::Plugin#gt;::build::**<br/>**{{closure}}#gt;::{{closure}}**<br/>按 Egui 全局配置判断输入处理是否启<br/>用。；判断是否向 Egui 转换键盘输入。" }
+  n17@{ shape: fr-rect, label: "**input​_​system​_​is​_​enabled::{{closure}}**<br/>按 Egui 全局配置判断输入处理是否启<br/>用。；判断是否向 Egui 转换键盘输入。" }
   class n17 node_system_group
-  n18@{ shape: rounded, label: "**bevy​_​egui::input::absorb​_​bevy​_​input​_​**<br/>**system**<br/>在 Egui 使用输入时吸收对应 Bevy 输入。" }
+  n18@{ shape: rounded, label: "**absorb​_​bevy​_​input​_​system**<br/>在 Egui 使用输入时吸收对应 Bevy 输入。" }
   class n18 node_system
   n19@{ shape: rounded, label: "**EguiContextSettings**<br/>保存单个 Egui 上下文的运行、输入、指针<br/>捕获、光标和 IME 集成选项" }
   class n19 node_component

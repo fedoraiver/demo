@@ -43,36 +43,36 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​render::view::prepare​_​view​_​**<br/>**uniforms**<br/>生成视图投影、抖动、裁剪及 LOD 的 GPU<br/>参数。" }
+  n0@{ shape: rounded, label: "**prepare​_​view​_​uniforms**<br/>生成视图投影、抖动、裁剪及 LOD 的 GPU<br/>参数。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**camera::MainPassResolutionOverride**<br/>来自crate:bevy​_​camera ↗：覆盖三维主通<br/>道的渲染分辨率。" }
+  n1@{ shape: rounded, label: "**MainPassResolutionOverride**<br/>来自crate:bevy​_​camera ↗：覆盖三维主通<br/>道的渲染分辨率。" }
   class n1 node_component
   class n1 external_node
-  n2@{ shape: cyl, label: "**bevy​_​render::renderer::RenderQueue**<br/>将资源写入和命令异步提交给 GPU。" }
+  n2@{ shape: cyl, label: "**RenderQueue**<br/>将资源写入和命令异步提交给 GPU。" }
   class n2 node_resource
-  n3@{ shape: cyl, label: "**view::RenderShadowLodOrigin**<br/>保存渲染侧点光与聚光阴影的 LOD 原点。" }
+  n3@{ shape: cyl, label: "**RenderShadowLodOrigin**<br/>保存渲染侧点光与聚光阴影的 LOD 原点。" }
   class n3 node_resource
-  n4@{ shape: cyl, label: "**bevy​_​render::renderer::RenderDevice**<br/>创建渲染和计算所需的 GPU 资源。" }
+  n4@{ shape: cyl, label: "**RenderDevice**<br/>创建渲染和计算所需的 GPU 资源。" }
   class n4 node_resource
-  n5@{ shape: cyl, label: "**bevy​_​render::view::ViewUniforms**<br/>汇集全部视图的动态 Uniform 数据。" }
+  n5@{ shape: cyl, label: "**ViewUniforms**<br/>汇集全部视图的动态 Uniform 数据。" }
   class n5 node_resource
-  n6@{ shape: rounded, label: "**bevy​_​render::camera::TemporalJitter**<br/>为透视相机视锥提供亚像素抖动。" }
+  n6@{ shape: rounded, label: "**TemporalJitter**<br/>为透视相机视锥提供亚像素抖动。" }
   class n6 node_component
-  n7@{ shape: rounded, label: "**bevy​_​render::view::ViewUniformOffset**<br/>定位当前视图在共享 Uniform 缓冲中的参<br/>数。" }
+  n7@{ shape: rounded, label: "**ViewUniformOffset**<br/>定位当前视图在共享 Uniform 缓冲中的参<br/>数。" }
   class n7 node_component
-  n8@{ shape: rounded, label: "**bevy​_​render::view::ExtractedView**<br/>描述渲染视图的身份、投影与空间状态。" }
+  n8@{ shape: rounded, label: "**ExtractedView**<br/>描述渲染视图的身份、投影与空间状态。" }
   class n8 node_component
-  n9@{ shape: rounded, label: "**bevy​_​render::camera::MipBias**<br/>调整相机采样材质纹理时的 mip 偏置。" }
+  n9@{ shape: rounded, label: "**MipBias**<br/>调整相机采样材质纹理时的 mip 偏置。" }
   class n9 node_component
-  n10@{ shape: rounded, label: "**bevy​_​camera::primitives::Frustum**<br/>来自crate:bevy​_​camera ↗：描述相机可见<br/>空间并参与视锥裁剪。" }
+  n10@{ shape: rounded, label: "**Frustum**<br/>来自crate:bevy​_​camera ↗：描述相机可见<br/>空间并参与视锥裁剪。" }
   class n10 node_component
   class n10 external_node
-  n11@{ shape: cyl, label: "**frame​_​count::FrameCount**<br/>来自crate:bevy​_​diagnostic ↗：记录应<br/>用启动以来的帧计数" }
+  n11@{ shape: cyl, label: "**FrameCount**<br/>来自crate:bevy​_​diagnostic ↗：记录应<br/>用启动以来的帧计数" }
   class n11 node_resource
   class n11 external_node
-  n12@{ shape: rounded, label: "**bevy​_​render::camera::ExtractedCamera**<br/>保存渲染世界相机的目标和绘制配置。" }
+  n12@{ shape: rounded, label: "**ExtractedCamera**<br/>保存渲染世界相机的目标和绘制配置。" }
   class n12 node_component
-  n13@{ shape: fr-rect, label: "**view::ViewPlugin**<br/>准备视图渲染目标与统一数据。" }
+  n13@{ shape: fr-rect, label: "**ViewPlugin**<br/>准备视图渲染目标与统一数据。" }
   class n13 node_plugin
   n14@{ shape: lin-rect, label: "**PrepareResources**<br/>组织渲染数据准备与绘制排队。" }
   class n14 node_system_set

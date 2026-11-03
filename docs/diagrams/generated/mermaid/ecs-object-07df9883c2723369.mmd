@@ -43,17 +43,17 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​camera::visibility::check​_​**<br/>**visibility​_​gpu​_​culling**<br/>同步退出 CPU 裁剪对象的层级可见状态。" }
+  n0@{ shape: rounded, label: "**check​_​visibility​_​gpu​_​culling**<br/>同步退出 CPU 裁剪对象的层级可见状态。" }
   class n0 node_system
-  n1@{ shape: fr-rect, label: "**visibility::VisibilityPlugin**<br/>维护包围盒、层级可见性与视锥检查。" }
+  n1@{ shape: fr-rect, label: "**VisibilityPlugin**<br/>维护包围盒、层级可见性与视锥检查。" }
   class n1 node_plugin
-  n2@{ shape: rounded, label: "**visibility::NoCpuCulling**<br/>退出内置的 CPU 视锥裁剪。" }
+  n2@{ shape: rounded, label: "**NoCpuCulling**<br/>退出内置的 CPU 视锥裁剪。" }
   class n2 node_component
   n3@{ shape: lin-rect, label: "**CheckVisibility**<br/>组织相机与实体可见性更新。" }
   class n3 node_system_set
-  n4@{ shape: rounded, label: "**bevy​_​camera::visibility::**<br/>**InheritedVisibility**<br/>保存从实体层级计算出的可见性。" }
+  n4@{ shape: rounded, label: "**InheritedVisibility**<br/>保存从实体层级计算出的可见性。" }
   class n4 node_component
-  n5@{ shape: rounded, label: "**bevy​_​camera::visibility::**<br/>**ViewVisibility**<br/>记录实体是否应被提取用于渲染。" }
+  n5@{ shape: rounded, label: "**ViewVisibility**<br/>记录实体是否应被提取用于渲染。" }
   class n5 node_component
   n1 e0@-->|"调用"| n0
   class e0 edge_registration

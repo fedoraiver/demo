@@ -37,14 +37,14 @@ flowchart LR
   classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**bevy​_​render::render​_​resource::**<br/>**SpecializedRenderPipelines#lt;blit::**<br/>**BlitPipeline#gt;**<br/>按配置键缓存渲染管线变体。" }
+  n0@{ shape: cyl, label: "**SpecializedRenderPipelines#lt;BlitPipel**<br/>**ine#gt;**<br/>按配置键缓存渲染管线变体。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​render::init​_​gpu​_​resource#lt;bevy​_​**<br/>**render::render​_​resource::pipeline​_​**<br/>**specializer::**<br/>**SpecializedRenderPipelines#lt;bevy​_​**<br/>**core​_​pipeline::blit::BlitPipeline#gt;#gt;**<br/>构造并插入渲染所需资源。" }
+  n1@{ shape: rounded, label: "**init​_​gpu​_​resource**<br/>构造并插入渲染所需资源。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​core​_​pipeline::upscaling::**<br/>**prepare​_​view​_​upscaling​_​pipelines**<br/>来自crate:bevy​_​core​_​pipeline ↗：按相<br/>机合成方式准备输出缩放管线。" }
+  n2@{ shape: rounded, label: "**prepare​_​view​_​upscaling​_​pipelines**<br/>来自crate:bevy​_​core​_​pipeline ↗：按相<br/>机合成方式准备输出缩放管线。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​post​_​process::msaa​_​writeback::**<br/>**prepare​_​msaa​_​writeback​_​pipelines**<br/>来自crate:bevy​_​post​_​process ↗：为需<br/>要保留已有颜色的多采样相机准备回写管线。" }
+  n3@{ shape: rounded, label: "**prepare​_​msaa​_​writeback​_​pipelines**<br/>来自crate:bevy​_​post​_​process ↗：为需<br/>要保留已有颜色的多采样相机准备回写管线。" }
   class n3 node_system
   class n3 external_node
   n1 e0@-->|"插入"| n0

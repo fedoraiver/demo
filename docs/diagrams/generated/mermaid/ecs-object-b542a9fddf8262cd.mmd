@@ -39,7 +39,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: notch-rect, label: "**Local · has​_​received​_​time**<br/>区分渲染时钟尚未开始与后续漏帧。" }
   class n0 node_local
-  n1@{ shape: rounded, label: "**bevy​_​time::time​_​system**<br/>按时间更新策略推进真实与虚拟时钟。" }
+  n1@{ shape: rounded, label: "**time​_​system**<br/>按时间更新策略推进真实与虚拟时钟。" }
   class n1 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

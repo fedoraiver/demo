@@ -44,23 +44,23 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**drag​_​start**<br/>记录滑条拖动起点并捕获指针。" }
+  n0@{ shape: hex, label: "**slider​_​on​_​drag​_​start**<br/>记录滑条拖动起点并捕获指针。" }
   class n0 node_observer
-  n1@{ shape: rounded, label: "**slider::SliderValue**<br/>记录滑块当前数值。" }
+  n1@{ shape: rounded, label: "**SliderValue**<br/>记录滑块当前数值。" }
   class n1 node_component
-  n2@{ shape: fr-rect, label: "**slider::SliderPlugin**<br/>处理滑块交互、数值与范围变化。" }
+  n2@{ shape: fr-rect, label: "**SliderPlugin**<br/>处理滑块交互、数值与范围变化。" }
   class n2 node_plugin
-  n3@{ shape: stadium, label: "**events::PointerDragStart**<br/>来自crate:bevy​_​picking ↗：通知按下后<br/>移动开始拖拽目标。" }
+  n3@{ shape: stadium, label: "**PointerDragStart**<br/>来自crate:bevy​_​picking ↗：通知按下后<br/>移动开始拖拽目标。" }
   class n3 node_event
   class n3 external_node
-  n4@{ shape: rounded, label: "**slider::SliderDragState**<br/>记录滑块指针拖动状态。" }
+  n4@{ shape: rounded, label: "**SliderDragState**<br/>记录滑块指针拖动状态。" }
   class n4 node_component
-  n5@{ shape: rounded, label: "**slider::Slider**<br/>组织滑块的连续数值调节行为。" }
+  n5@{ shape: rounded, label: "**Slider**<br/>组织滑块的连续数值调节行为。" }
   class n5 node_component
-  n6@{ shape: rounded, label: "**bevy​_​ui::InteractionDisabled**<br/>来自crate:bevy​_​ui ↗：标记禁止交互的<br/>UI 控件。" }
+  n6@{ shape: rounded, label: "**InteractionDisabled**<br/>来自crate:bevy​_​ui ↗：标记禁止交互的<br/>UI 控件。" }
   class n6 node_component
   class n6 external_node
-  n7@{ shape: cyl, label: "**hover::PointerCaptureMap**<br/>来自crate:bevy​_​picking ↗：保存指针捕<br/>获目标" }
+  n7@{ shape: cyl, label: "**PointerCaptureMap**<br/>来自crate:bevy​_​picking ↗：保存指针捕<br/>获目标" }
   class n7 node_resource
   class n7 external_node
   n1 e0@--> n0
@@ -85,4 +85,4 @@ flowchart LR
   e4@{ curve: basis }
   e5@{ curve: basis }
   e6@{ curve: basis }
-  e7@{ curve: basis }
+  e7@{ curve: bumpX }

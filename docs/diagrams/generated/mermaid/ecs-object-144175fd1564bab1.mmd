@@ -38,13 +38,13 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**deferred::DeferredLightingLayout**<br/>描述延迟光照绘制的着色与绑定接口。" }
+  n0@{ shape: cyl, label: "**DeferredLightingLayout**<br/>描述延迟光照绘制的着色与绑定接口。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​pbr::deferred::init​_​deferred​_​**<br/>**lighting​_​layout**<br/>初始化延迟光照的深度标识绑定与着色器。" }
+  n1@{ shape: rounded, label: "**init​_​deferred​_​lighting​_​layout**<br/>初始化延迟光照的深度标识绑定与着色器。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​pbr::deferred::deferred​_​**<br/>**lighting**<br/>绑定网格视图、延迟光照管线及通道深度标识<br/>参数，在延迟光照深度附件约束下执行全屏光<br/>照计算，将结果写入视图颜色。" }
+  n2@{ shape: rounded, label: "**deferred​_​lighting**<br/>绑定网格视图、延迟光照管线及通道深度标识<br/>参数，在延迟光照深度附件约束下执行全屏光<br/>照计算，将结果写入视图颜色。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​pbr::deferred::prepare​_​**<br/>**deferred​_​lighting​_​pipelines**<br/>为有效延迟视图选择与前向一致的光照管线。" }
+  n3@{ shape: rounded, label: "**prepare​_​deferred​_​lighting​_​pipelines**<br/>为有效延迟视图选择与前向一致的光照管线。" }
   class n3 node_system
   n1 e0@-->|"插入"| n0
   class e0 edge_write

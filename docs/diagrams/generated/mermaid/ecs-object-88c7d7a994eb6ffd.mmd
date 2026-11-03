@@ -44,35 +44,35 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::**<br/>**material::queue​_​material2d​_​meshes**<br/>按透明模式更新二维网格渲染批次。" }
+  n0@{ shape: rounded, label: "**queue​_​material2d​_​meshes**<br/>按透明模式更新二维网格渲染批次。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**bevy​_​render::render​_​phase::**<br/>**ViewSortedRenderPhases#lt;bevy​_​core​_​**<br/>**pipeline::core​_​2d::Transparent2d#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图需<br/>要排序的绘制指令。" }
+  n1@{ shape: cyl, label: "**ViewSortedRenderPhases#lt;Transparent2d**<br/>**#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图需<br/>要排序的绘制指令。" }
   class n1 node_resource
   class n1 external_node
-  n2@{ shape: cyl, label: "**mesh2d::material::**<br/>**RenderMaterial2dInstances**<br/>映射可渲染主世界实体到二维材质资产。" }
+  n2@{ shape: cyl, label: "**RenderMaterial2dInstances**<br/>映射可渲染主世界实体到二维材质资产。" }
   class n2 node_resource
-  n3@{ shape: rounded, label: "**bevy​_​render::view::ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
+  n3@{ shape: rounded, label: "**ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
   class n3 node_component
   class n3 external_node
-  n4@{ shape: cyl, label: "**bevy​_​render::render​_​phase::**<br/>**ViewBinnedRenderPhases#lt;core​_​2d::**<br/>**Opaque2d#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图按<br/>分桶组织的绘制指令。" }
+  n4@{ shape: cyl, label: "**ViewBinnedRenderPhases#lt;Opaque2d#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图按<br/>分桶组织的绘制指令。" }
   class n4 node_resource
   class n4 external_node
-  n5@{ shape: cyl, label: "**mesh2d::material::**<br/>**SpecializedMaterial2dPipelineCache**<br/>按视图缓存二维材质专用管线。" }
+  n5@{ shape: cyl, label: "**SpecializedMaterial2dPipelineCache**<br/>按视图缓存二维材质专用管线。" }
   class n5 node_resource
-  n6@{ shape: cyl, label: "**mesh2d::material::**<br/>**PendingMeshMaterial2dQueues**<br/>保留等待材质加载的二维网格绘制任务。" }
+  n6@{ shape: cyl, label: "**PendingMeshMaterial2dQueues**<br/>保留等待材质加载的二维网格绘制任务。" }
   class n6 node_resource
-  n7@{ shape: cyl, label: "**bevy​_​render::render​_​phase::**<br/>**ViewBinnedRenderPhases#lt;core​_​2d::**<br/>**AlphaMask2d#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图按<br/>分桶组织的绘制指令。" }
+  n7@{ shape: cyl, label: "**ViewBinnedRenderPhases#lt;AlphaMask2d#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图按<br/>分桶组织的绘制指令。" }
   class n7 node_resource
   class n7 external_node
-  n8@{ shape: rounded, label: "**view::visibility::**<br/>**RenderVisibleEntities**<br/>来自crate:bevy​_​render ↗：按类别保存视<br/>图的可见实体及变化列表。" }
+  n8@{ shape: rounded, label: "**RenderVisibleEntities**<br/>来自crate:bevy​_​render ↗：按类别保存视<br/>图的可见实体及变化列表。" }
   class n8 node_component
   class n8 external_node
-  n9@{ shape: cyl, label: "**camera::DirtySpecializations**<br/>来自crate:bevy​_​render ↗：记录需刷新或<br/>移除管线专用化的对象与视图。" }
+  n9@{ shape: cyl, label: "**DirtySpecializations**<br/>来自crate:bevy​_​render ↗：记录需刷新或<br/>移除管线专用化的对象与视图。" }
   class n9 node_resource
   class n9 external_node
-  n10@{ shape: cyl, label: "**mesh2d::mesh::RenderMesh2dInstances**<br/>按主世界实体保存提取后的二维网格实例。" }
+  n10@{ shape: cyl, label: "**RenderMesh2dInstances**<br/>按主世界实体保存提取后的二维网格实例。" }
   class n10 node_resource
-  n11@{ shape: cyl, label: "**bevy​_​render::erased​_​render​_​asset::**<br/>**ErasedRenderAssets#lt;mesh2d::**<br/>**material::PreparedMaterial2d#gt;**<br/>来自crate:bevy​_​render ↗：存储源资产对<br/>应的类型擦除 GPU 表示。" }
+  n11@{ shape: cyl, label: "**ErasedRenderAssets#lt;PreparedMaterial2**<br/>**d#gt;**<br/>来自crate:bevy​_​render ↗：存储源资产对<br/>应的类型擦除 GPU 表示。" }
   class n11 node_resource
   class n11 external_node
   n12@{ shape: notch-rect, label: "**Local · mesh​_​instances​_​queued​_​this​_​**<br/>**iteration​_​scratch​_​space**<br/>去重二维网格本轮需要重新排队的实例。" }
@@ -80,10 +80,10 @@ flowchart LR
   n13@{ shape: lin-rect, label: "**QueueMeshes**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
   class n13 node_system_set
   class n13 external_node
-  n14@{ shape: cyl, label: "**render​_​asset::RenderAssets#lt;mesh::**<br/>**RenderMesh#gt;**<br/>来自crate:bevy​_​render ↗：按源资产身份<br/>保存 GPU 渲染表示。" }
+  n14@{ shape: cyl, label: "**RenderAssets#lt;RenderMesh#gt;**<br/>来自crate:bevy​_​render ↗：按源资产身份<br/>保存 GPU 渲染表示。" }
   class n14 node_resource
   class n14 external_node
-  n15@{ shape: fr-rect, label: "**mesh2d::material::Materials2dPlugin**<br/>建立二维材质共享渲染基础。" }
+  n15@{ shape: fr-rect, label: "**Materials2dPlugin**<br/>建立二维材质共享渲染基础。" }
   class n15 node_plugin
   n0 e0@-->|"可变访问"| n1
   class e0 edge_write

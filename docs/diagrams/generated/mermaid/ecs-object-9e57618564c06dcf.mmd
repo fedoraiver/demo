@@ -41,28 +41,28 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​pbr::prepass::init​_​prepass​_​**<br/>**pipeline**<br/>初始化带运动矢量及普通预通道的资源布局。" }
+  n0@{ shape: rounded, label: "**init​_​prepass​_​pipeline**<br/>初始化带运动矢量及普通预通道的资源布局。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**bevy​_​pbr::prepass::init​_​prepass​_​**<br/>**view​_​bind​_​group**<br/>建立预通道的空绑定组及待准备状态。" }
+  n1@{ shape: rounded, label: "**init​_​prepass​_​view​_​bind​_​group**<br/>建立预通道的空绑定组及待准备状态。" }
   class n1 node_system
-  n2@{ shape: cyl, label: "**prepass::PrepassPipeline**<br/>描述深度等预通道的网格渲染接口。" }
+  n2@{ shape: cyl, label: "**PrepassPipeline**<br/>描述深度等预通道的网格渲染接口。" }
   class n2 node_resource
-  n3@{ shape: cyl, label: "**material::MaterialPipeline**<br/>提供指定材质类型的网格渲染管线数据。" }
+  n3@{ shape: cyl, label: "**MaterialPipeline**<br/>提供指定材质类型的网格渲染管线数据。" }
   class n3 node_resource
-  n4@{ shape: rounded, label: "**bevy​_​pbr::material::init​_​material​_​**<br/>**pipeline**<br/>初始化与网格管线共享接口的材质管线资源。" }
+  n4@{ shape: rounded, label: "**init​_​material​_​pipeline**<br/>初始化与网格管线共享接口的材质管线资源。" }
   class n4 node_system
-  n5@{ shape: cyl, label: "**bevy​_​render::renderer::RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
+  n5@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
   class n5 node_resource
   class n5 external_node
-  n6@{ shape: cyl, label: "**bevy​_​pbr::MeshPipeline**<br/>提供三维网格管线的着色与资源布局。" }
+  n6@{ shape: cyl, label: "**MeshPipeline**<br/>提供三维网格管线的着色与资源布局。" }
   class n6 node_resource
-  n7@{ shape: cyl, label: "**bevy​_​render::renderer::RenderAdapter**<br/>来自crate:bevy​_​render ↗：标识渲染使用<br/>的物理 GPU 适配器。" }
+  n7@{ shape: cyl, label: "**RenderAdapter**<br/>来自crate:bevy​_​render ↗：标识渲染使用<br/>的物理 GPU 适配器。" }
   class n7 node_resource
   class n7 external_node
-  n8@{ shape: cyl, label: "**bevy​_​asset::AssetServer**<br/>来自crate:bevy​_​asset ↗：加载资产并追<br/>踪加载状态。" }
+  n8@{ shape: cyl, label: "**AssetServer**<br/>来自crate:bevy​_​asset ↗：加载资产并追<br/>踪加载状态。" }
   class n8 node_resource
   class n8 external_node
-  n9@{ shape: fr-rect, label: "**prepass::PrepassPipelinePlugin**<br/>建立材质预通道管线基础。" }
+  n9@{ shape: fr-rect, label: "**PrepassPipelinePlugin**<br/>建立材质预通道管线基础。" }
   class n9 node_plugin
   n0 e0@-->|"先于"| n1
   class e0 edge_order

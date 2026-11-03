@@ -41,7 +41,7 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​app::propagate::update​_​removed​_​**<br/>**limit#lt;bevy​_​ui::ui​_​node::**<br/>**ComputedUiRenderTargetInfo, (),**<br/>**bevy​_​ecs::hierarchy::ChildOf#gt;**<br/>在传播限制移除后重新标记继承链。" }
+  n0@{ shape: rounded, label: "**update​_​removed​_​limit**<br/>在传播限制移除后重新标记继承链。" }
   class n0 node_system
   n1@{ shape: notch-rect, label: "**Local · arg1.0.1**<br/>跟踪 PropagateOver#lt;C#gt; 移除记录的读取进<br/>度。" }
   class n1 node_local
@@ -49,13 +49,13 @@ flowchart LR
   class n2 node_local
   n3@{ shape: notch-rect, label: "**Local · arg2.0.0.0.0**<br/>保存 PropagateStop#lt;C#gt; 移除参数的组件<br/>ID。" }
   class n3 node_local
-  n4@{ shape: rounded, label: "**bevy​_​app::propagate::update​_​**<br/>**source#lt;bevy​_​ui::ui​_​node::**<br/>**ComputedUiRenderTargetInfo, (),**<br/>**bevy​_​ecs::hierarchy::ChildOf#gt;**<br/>同步传播源并恢复移除来源后的继承状态。" }
+  n4@{ shape: rounded, label: "**update​_​source**<br/>同步传播源并恢复移除来源后的继承状态。" }
   class n4 node_system
-  n5@{ shape: lin-rect, label: "**PropagateSet { ​_​p: PhantomData#lt;fn()**<br/>**-#gt; bevy​_​ui::ui​_​node::**<br/>**ComputedUiRenderTargetInfo#gt; }**<br/>沿关系层级传播指定组件值。" }
+  n5@{ shape: lin-rect, label: "**PropagateSet { ​_​p: PhantomData#lt;fn()**<br/>**-#gt; ComputedUiRenderTargetInfo#gt; }**<br/>沿关系层级传播指定组件值。" }
   class n5 node_system_set
-  n6@{ shape: rounded, label: "**bevy​_​app::propagate::propagate​_​**<br/>**inherited#lt;bevy​_​ui::ui​_​node::**<br/>**ComputedUiRenderTargetInfo, (),**<br/>**bevy​_​ecs::hierarchy::ChildOf#gt;**<br/>沿关系层级传播变化的继承组件值。" }
+  n6@{ shape: rounded, label: "**propagate​_​inherited**<br/>沿关系层级传播变化的继承组件值。" }
   class n6 node_system
-  n7@{ shape: rounded, label: "**bevy​_​app::Inherited#lt;ui​_​node::**<br/>**ComputedUiRenderTargetInfo#gt;**<br/>保存层级传播算法继承到当前节点的中间组件<br/>值" }
+  n7@{ shape: rounded, label: "**Inherited#lt;ComputedUiRenderTargetInfo**<br/>**#gt;**<br/>保存层级传播算法继承到当前节点的中间组件<br/>值" }
   class n7 node_component
   n8@{ shape: notch-rect, label: "**Local · arg1.0.0.0.0**<br/>保存 PropagateOver#lt;C#gt; 移除参数的组件<br/>ID。" }
   class n8 node_local

@@ -39,7 +39,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: notch-rect, label: "**Local · text​_​reader.0.0**<br/>复用按钮无障碍标签的文本遍历空间。" }
   class n0 node_local
-  n1@{ shape: rounded, label: "**bevy​_​ui::accessibility::button​_​**<br/>**changed**<br/>为按钮生成或更新无障碍角色与文本标签。" }
+  n1@{ shape: rounded, label: "**button​_​changed**<br/>为按钮生成或更新无障碍角色与文本标签。" }
   class n1 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

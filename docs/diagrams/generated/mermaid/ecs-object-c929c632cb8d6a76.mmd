@@ -45,37 +45,37 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​core​_​pipeline::mip​_​generation::**<br/>**experimental::depth::prepare​_​**<br/>**downsample​_​depth​_​view​_​bind​_​groups**<br/>将主视图或阴影深度绑定到降采样管线。" }
+  n0@{ shape: rounded, label: "**prepare​_​downsample​_​depth​_​view​_​bind​_​**<br/>**groups**<br/>将主视图或阴影深度绑定到降采样管线。" }
   class n0 node_system
-  n1@{ shape: fr-rect, label: "**mip​_​generation::MipGenerationPlugin**<br/>在 GPU 上生成纹理 mip 层级。" }
+  n1@{ shape: fr-rect, label: "**MipGenerationPlugin**<br/>在 GPU 上生成纹理 mip 层级。" }
   class n1 node_plugin
-  n2@{ shape: cyl, label: "**bevy​_​render::render​_​resource::**<br/>**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
+  n2@{ shape: cyl, label: "**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
   class n2 node_resource
   class n2 external_node
-  n3@{ shape: cyl, label: "**bevy​_​render::renderer::RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
+  n3@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
   class n3 node_resource
   class n3 external_node
-  n4@{ shape: rounded, label: "**bevy​_​render::view::**<br/>**ViewDepthStencilTexture**<br/>来自crate:bevy​_​render ↗：提供视图绘制<br/>的深度模板附件。" }
+  n4@{ shape: rounded, label: "**ViewDepthStencilTexture**<br/>来自crate:bevy​_​render ↗：提供视图绘制<br/>的深度模板附件。" }
   class n4 node_component
   class n4 external_node
-  n5@{ shape: cyl, label: "**mip​_​generation::experimental::**<br/>**depth::DownsampleDepthPipelines**<br/>保存深度金字塔两阶段的下采样管线。" }
+  n5@{ shape: cyl, label: "**DownsampleDepthPipelines**<br/>保存深度金字塔两阶段的下采样管线。" }
   class n5 node_resource
-  n6@{ shape: rounded, label: "**bevy​_​render::occlusion​_​culling::**<br/>**OcclusionCullingSubview**<br/>来自crate:bevy​_​render ↗：为非相机视图<br/>保存遮挡裁剪深度资源。" }
+  n6@{ shape: rounded, label: "**OcclusionCullingSubview**<br/>来自crate:bevy​_​render ↗：为非相机视图<br/>保存遮挡裁剪深度资源。" }
   class n6 node_component
   class n6 external_node
-  n7@{ shape: rounded, label: "**bevy​_​core​_​pipeline::mip​_​generation::**<br/>**experimental::depth::prepare​_​view​_​**<br/>**depth​_​pyramids**<br/>为遮挡剔除视图维护深度金字塔。" }
+  n7@{ shape: rounded, label: "**prepare​_​view​_​depth​_​pyramids**<br/>为遮挡剔除视图维护深度金字塔。" }
   class n7 node_system
   n8@{ shape: lin-rect, label: "**AnonymousSet(0)**<br/>来自crate:bevy​_​ecs ↗：保存一组系统的<br/>共同配置。" }
   class n8 node_system_set
   class n8 external_node
-  n9@{ shape: rounded, label: "**bevy​_​core​_​pipeline::core​_​3d::**<br/>**prepare​_​core​_​3d​_​depth​_​textures**<br/>按共享目标准备三维深度纹理与清除方式。" }
+  n9@{ shape: rounded, label: "**prepare​_​core​_​3d​_​depth​_​textures**<br/>按共享目标准备三维深度纹理与清除方式。" }
   class n9 node_system
-  n10@{ shape: rounded, label: "**mip​_​generation::experimental::**<br/>**depth::ViewDownsampleDepthBindGroup**<br/>绑定视图深度和深度金字塔。" }
+  n10@{ shape: rounded, label: "**ViewDownsampleDepthBindGroup**<br/>绑定视图深度和深度金字塔。" }
   class n10 node_component
   n11@{ shape: lin-rect, label: "**PrepareResources**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
   class n11 node_system_set
   class n11 external_node
-  n12@{ shape: rounded, label: "**mip​_​generation::experimental::**<br/>**depth::ViewDepthPyramid**<br/>保存视图用于遮挡剔除的层次深度。" }
+  n12@{ shape: rounded, label: "**ViewDepthPyramid**<br/>保存视图用于遮挡剔除的层次深度。" }
   class n12 node_component
   n1 e0@-->|"调用"| n0
   class e0 edge_registration
@@ -114,7 +114,7 @@ flowchart LR
   e6@{ curve: basis }
   e7@{ curve: basis }
   e8@{ curve: basis }
-  e9@{ curve: bumpX }
+  e9@{ curve: basis }
   e10@{ curve: basis }
   e12@{ curve: basis }
   e13@{ curve: basis }

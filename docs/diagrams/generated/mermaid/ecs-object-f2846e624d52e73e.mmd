@@ -37,95 +37,95 @@ flowchart LR
   classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**bevy​_​ui::UiScale**<br/>统一缩放 UI 的固定尺寸值。" }
+  n0@{ shape: cyl, label: "**UiScale**<br/>统一缩放 UI 的固定尺寸值。" }
   class n0 node_resource
-  n1@{ shape: hex, label: "**bevy​_​ui​_​widgets::text​_​input::on​_​**<br/>**pointer​_​drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：随指针<br/>拖动扩展文本选择。" }
+  n1@{ shape: hex, label: "**on​_​pointer​_​drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：随指针<br/>拖动扩展文本选择。" }
   class n1 node_observer
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​ui::update::propagate​_​ui​_​**<br/>**target​_​cameras**<br/>为 UI 根配置目标相机和视口信息传播源。" }
+  n2@{ shape: rounded, label: "**propagate​_​ui​_​target​_​cameras**<br/>为 UI 根配置目标相机和视口信息传播源。" }
   class n2 node_system
-  n3@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**drag​_​end**<br/>来自crate:bevy​_​ui​_​widgets ↗：提交滑<br/>条拖动结果并释放指针。" }
+  n3@{ shape: hex, label: "**slider​_​on​_​drag​_​end**<br/>来自crate:bevy​_​ui​_​widgets ↗：提交滑<br/>条拖动结果并释放指针。" }
   class n3 node_observer
   class n3 external_node
-  n4@{ shape: hex, label: "**bevy​_​ui​_​widgets::scrollbar::**<br/>**scrollbar​_​on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：点击滚<br/>动条轨道时翻动一页。" }
+  n4@{ shape: hex, label: "**scrollbar​_​on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：点击滚<br/>动条轨道时翻动一页。" }
   class n4 node_observer
   class n4 external_node
-  n5@{ shape: hex, label: "**bevy​_​ui​_​widgets::scrollbar::**<br/>**scrollbar​_​on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：点击滚<br/>动条轨道时翻动一页。" }
+  n5@{ shape: hex, label: "**scrollbar​_​on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：点击滚<br/>动条轨道时翻动一页。" }
   class n5 node_observer
   class n5 external_node
-  n6@{ shape: hex, label: "**bevy​_​ui​_​widgets::scrollbar::**<br/>**scrollbar​_​on​_​drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：随滑块<br/>拖动更新目标滚动位置。" }
+  n6@{ shape: hex, label: "**scrollbar​_​on​_​drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：随滑块<br/>拖动更新目标滚动位置。" }
   class n6 node_observer
   class n6 external_node
-  n7@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：按轨道<br/>点击策略发起滑条调整。" }
+  n7@{ shape: hex, label: "**slider​_​on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：按轨道<br/>点击策略发起滑条调整。" }
   class n7 node_observer
   class n7 external_node
-  n8@{ shape: hex, label: "**bevy​_​ui​_​widgets::dialog::dialog​_​drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：按累计<br/>拖动距离移动对话框。" }
+  n8@{ shape: hex, label: "**dialog​_​drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：按累计<br/>拖动距离移动对话框。" }
   class n8 node_observer
   class n8 external_node
-  n9@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**drag​_​end**<br/>来自crate:bevy​_​ui​_​widgets ↗：提交滑<br/>条拖动结果并释放指针。" }
+  n9@{ shape: hex, label: "**slider​_​on​_​drag​_​end**<br/>来自crate:bevy​_​ui​_​widgets ↗：提交滑<br/>条拖动结果并释放指针。" }
   class n9 node_observer
   class n9 external_node
-  n10@{ shape: rounded, label: "**bevy​_​ui​_​widgets::text​_​input::text​_​**<br/>**input​_​autoscroll​_​system**<br/>来自crate:bevy​_​ui​_​widgets ↗：在拖选<br/>越出文字视口时自动滚动。" }
+  n10@{ shape: rounded, label: "**text​_​input​_​autoscroll​_​system**<br/>来自crate:bevy​_​ui​_​widgets ↗：在拖选<br/>越出文字视口时自动滚动。" }
   class n10 node_system
   class n10 external_node
-  n11@{ shape: hex, label: "**bevy​_​ui​_​widgets::text​_​input::on​_​**<br/>**pointer​_​press**<br/>来自crate:bevy​_​ui​_​widgets ↗：将文本<br/>点击转为光标与选择操作。" }
+  n11@{ shape: hex, label: "**on​_​pointer​_​press**<br/>来自crate:bevy​_​ui​_​widgets ↗：将文本<br/>点击转为光标与选择操作。" }
   class n11 node_observer
   class n11 external_node
-  n12@{ shape: hex, label: "**bevy​_​ui​_​widgets::scrollbar::**<br/>**scrollbar​_​on​_​drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：随滑块<br/>拖动更新目标滚动位置。" }
+  n12@{ shape: hex, label: "**scrollbar​_​on​_​drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：随滑块<br/>拖动更新目标滚动位置。" }
   class n12 node_observer
   class n12 external_node
-  n13@{ shape: hex, label: "**bevy​_​ui​_​widgets::text​_​input::on​_​**<br/>**pointer​_​press**<br/>来自crate:bevy​_​ui​_​widgets ↗：将文本<br/>点击转为光标与选择操作。" }
+  n13@{ shape: hex, label: "**on​_​pointer​_​press**<br/>来自crate:bevy​_​ui​_​widgets ↗：将文本<br/>点击转为光标与选择操作。" }
   class n13 node_observer
   class n13 external_node
-  n14@{ shape: hex, label: "**bevy​_​ui​_​widgets::dialog::dialog​_​**<br/>**drag​_​start**<br/>来自crate:bevy​_​ui​_​widgets ↗：记录对<br/>话框拖动开始位置。" }
+  n14@{ shape: hex, label: "**dialog​_​drag​_​start**<br/>来自crate:bevy​_​ui​_​widgets ↗：记录对<br/>话框拖动开始位置。" }
   class n14 node_observer
   class n14 external_node
-  n15@{ shape: hex, label: "**bevy​_​ui​_​widgets::text​_​input::on​_​**<br/>**pointer​_​press**<br/>来自crate:bevy​_​ui​_​widgets ↗：将文本<br/>点击转为光标与选择操作。" }
+  n15@{ shape: hex, label: "**on​_​pointer​_​press**<br/>来自crate:bevy​_​ui​_​widgets ↗：将文本<br/>点击转为光标与选择操作。" }
   class n15 node_observer
   class n15 external_node
-  n16@{ shape: hex, label: "**bevy​_​ui​_​widgets::dialog::dialog​_​**<br/>**drag​_​start**<br/>来自crate:bevy​_​ui​_​widgets ↗：记录对<br/>话框拖动开始位置。" }
+  n16@{ shape: hex, label: "**dialog​_​drag​_​start**<br/>来自crate:bevy​_​ui​_​widgets ↗：记录对<br/>话框拖动开始位置。" }
   class n16 node_observer
   class n16 external_node
-  n17@{ shape: hex, label: "**bevy​_​ui​_​widgets::scrollbar::**<br/>**scrollbar​_​on​_​drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：随滑块<br/>拖动更新目标滚动位置。" }
+  n17@{ shape: hex, label: "**scrollbar​_​on​_​drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：随滑块<br/>拖动更新目标滚动位置。" }
   class n17 node_observer
   class n17 external_node
-  n18@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：按轨道<br/>点击策略发起滑条调整。" }
+  n18@{ shape: hex, label: "**slider​_​on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：按轨道<br/>点击策略发起滑条调整。" }
   class n18 node_observer
   class n18 external_node
-  n19@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**drag​_​end**<br/>来自crate:bevy​_​ui​_​widgets ↗：提交滑<br/>条拖动结果并释放指针。" }
+  n19@{ shape: hex, label: "**slider​_​on​_​drag​_​end**<br/>来自crate:bevy​_​ui​_​widgets ↗：提交滑<br/>条拖动结果并释放指针。" }
   class n19 node_observer
   class n19 external_node
-  n20@{ shape: hex, label: "**bevy​_​ui​_​widgets::text​_​input::on​_​**<br/>**pointer​_​drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：随指针<br/>拖动扩展文本选择。" }
+  n20@{ shape: hex, label: "**on​_​pointer​_​drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：随指针<br/>拖动扩展文本选择。" }
   class n20 node_observer
   class n20 external_node
-  n21@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：拖动滑<br/>条时发布连续值变化。" }
+  n21@{ shape: hex, label: "**slider​_​on​_​drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：拖动滑<br/>条时发布连续值变化。" }
   class n21 node_observer
   class n21 external_node
-  n22@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：拖动滑<br/>条时发布连续值变化。" }
+  n22@{ shape: hex, label: "**slider​_​on​_​drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：拖动滑<br/>条时发布连续值变化。" }
   class n22 node_observer
   class n22 external_node
-  n23@{ shape: hex, label: "**bevy​_​ui​_​widgets::dialog::dialog​_​drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：按累计<br/>拖动距离移动对话框。" }
+  n23@{ shape: hex, label: "**dialog​_​drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：按累计<br/>拖动距离移动对话框。" }
   class n23 node_observer
   class n23 external_node
-  n24@{ shape: hex, label: "**bevy​_​ui​_​widgets::dialog::dialog​_​**<br/>**drag​_​start**<br/>来自crate:bevy​_​ui​_​widgets ↗：记录对<br/>话框拖动开始位置。" }
+  n24@{ shape: hex, label: "**dialog​_​drag​_​start**<br/>来自crate:bevy​_​ui​_​widgets ↗：记录对<br/>话框拖动开始位置。" }
   class n24 node_observer
   class n24 external_node
-  n25@{ shape: hex, label: "**bevy​_​ui​_​widgets::text​_​input::on​_​**<br/>**pointer​_​drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：随指针<br/>拖动扩展文本选择。" }
+  n25@{ shape: hex, label: "**on​_​pointer​_​drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：随指针<br/>拖动扩展文本选择。" }
   class n25 node_observer
   class n25 external_node
-  n26@{ shape: hex, label: "**bevy​_​ui​_​widgets::scrollbar::**<br/>**scrollbar​_​on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：点击滚<br/>动条轨道时翻动一页。" }
+  n26@{ shape: hex, label: "**scrollbar​_​on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：点击滚<br/>动条轨道时翻动一页。" }
   class n26 node_observer
   class n26 external_node
-  n27@{ shape: rounded, label: "**bevy​_​ui​_​widgets::text​_​input::update​_​**<br/>**ime​_​position**<br/>来自crate:bevy​_​ui​_​widgets ↗：把输入<br/>法候选窗口放到当前文字光标下方。" }
+  n27@{ shape: rounded, label: "**update​_​ime​_​position**<br/>来自crate:bevy​_​ui​_​widgets ↗：把输入<br/>法候选窗口放到当前文字光标下方。" }
   class n27 node_system
   class n27 external_node
-  n28@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：按轨道<br/>点击策略发起滑条调整。" }
+  n28@{ shape: hex, label: "**slider​_​on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：按轨道<br/>点击策略发起滑条调整。" }
   class n28 node_observer
   class n28 external_node
-  n29@{ shape: hex, label: "**bevy​_​ui​_​widgets::dialog::dialog​_​drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：按累计<br/>拖动距离移动对话框。" }
+  n29@{ shape: hex, label: "**dialog​_​drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：按累计<br/>拖动距离移动对话框。" }
   class n29 node_observer
   class n29 external_node
-  n30@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：拖动滑<br/>条时发布连续值变化。" }
+  n30@{ shape: hex, label: "**slider​_​on​_​drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：拖动滑<br/>条时发布连续值变化。" }
   class n30 node_observer
   class n30 external_node
   n0 e0@--> n1

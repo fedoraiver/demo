@@ -40,14 +40,14 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::mesh::**<br/>**init​_​batched​_​instance​_​buffer**<br/>依据设备限制建立二维网格实例批缓冲。" }
+  n0@{ shape: rounded, label: "**init​_​batched​_​instance​_​buffer**<br/>依据设备限制建立二维网格实例批缓冲。" }
   class n0 node_system
-  n1@{ shape: fr-rect, label: "**mesh2d::mesh::Mesh2dRenderPlugin**<br/>准备二维网格实例和批处理管线。" }
+  n1@{ shape: fr-rect, label: "**Mesh2dRenderPlugin**<br/>准备二维网格实例和批处理管线。" }
   class n1 node_plugin
-  n2@{ shape: cyl, label: "**bevy​_​render::renderer::RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
+  n2@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
   class n2 node_resource
   class n2 external_node
-  n3@{ shape: cyl, label: "**bevy​_​render::batching::no​_​gpu​_​**<br/>**preprocessing::**<br/>**BatchedInstanceBuffer#lt;mesh2d::mesh::**<br/>**Mesh2dUniform#gt;**<br/>来自crate:bevy​_​render ↗：保存 CPU 准<br/>备路径的批次绘制数据。" }
+  n3@{ shape: cyl, label: "**BatchedInstanceBuffer#lt;Mesh2dUniform#gt;**<br/>来自crate:bevy​_​render ↗：保存 CPU 准<br/>备路径的批次绘制数据。" }
   class n3 node_resource
   class n3 external_node
   n1 e0@-->|"调用"| n0

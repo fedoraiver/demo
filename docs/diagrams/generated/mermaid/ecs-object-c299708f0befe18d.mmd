@@ -39,7 +39,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: notch-rect, label: "**Local · visibility​_​classes**<br/>汇总当前视图已有和新提取的可见性类别。" }
   class n0 node_local
-  n1@{ shape: rounded, label: "**bevy​_​render::view::visibility::**<br/>**collect​_​visible​_​cpu​_​culled​_​entities**<br/>汇总相机与阴影子视图的 CPU 剔除可见实<br/>体。" }
+  n1@{ shape: rounded, label: "**collect​_​visible​_​cpu​_​culled​_​entities**<br/>汇总相机与阴影子视图的 CPU 剔除可见实<br/>体。" }
   class n1 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

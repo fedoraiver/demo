@@ -36,11 +36,11 @@ flowchart LR
   classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**volumetric​_​fog::FogAssets**<br/>提供体积雾绘制所需的平面和立方体网格。" }
+  n0@{ shape: cyl, label: "**FogAssets**<br/>提供体积雾绘制所需的平面和立方体网格。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​pbr::volumetric​_​fog::render::**<br/>**prepare​_​volumetric​_​fog​_​pipelines**<br/>为体积雾视图准备有密度纹理和无密度纹理两<br/>类管线。" }
+  n1@{ shape: rounded, label: "**prepare​_​volumetric​_​fog​_​pipelines**<br/>为体积雾视图准备有密度纹理和无密度纹理两<br/>类管线。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​pbr::volumetric​_​fog::render::**<br/>**volumetric​_​fog**<br/>结合深度与光照逐个绘制视图中的雾体。" }
+  n2@{ shape: rounded, label: "**volumetric​_​fog**<br/>结合深度与光照逐个绘制视图中的雾体。" }
   class n2 node_system
   n0 e0@--> n1
   class e0 edge_read

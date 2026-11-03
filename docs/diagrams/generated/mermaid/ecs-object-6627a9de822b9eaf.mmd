@@ -39,7 +39,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: notch-rect, label: "**Local · removed​_​mesh​_​material​_​3d​_​**<br/>**components.0.0.0.0**<br/>保存 MeshMaterial3d#lt;M#gt; 移除参数的组<br/>件 ID。" }
   class n0 node_local
-  n1@{ shape: rounded, label: "**bevy​_​pbr::material::check​_​entities​_​**<br/>**needing​_​specialization#lt;bevy​_​pbr::**<br/>**extended​_​material::**<br/>**ExtendedMaterial#lt;bevy​_​pbr::pbr​_​**<br/>**material::StandardMaterial, bevy​_​**<br/>**pbr::decal::forward::**<br/>**ForwardDecalMaterialExt#gt;#gt;**<br/>收集几何或材质变化及移除的三维网格。" }
+  n1@{ shape: rounded, label: "**check​_​entities​_​needing​_​**<br/>**specialization**<br/>收集几何或材质变化及移除的三维网格。" }
   class n1 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

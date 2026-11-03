@@ -38,9 +38,9 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**scene​_​assembly::ActorsSpawned**<br/>业务角色已生成，防止重复。" }
+  n0@{ shape: rounded, label: "**ActorsSpawned**<br/>业务角色已生成，防止重复。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**demo::scene​_​assembly::actors::spawn​_​**<br/>**actors**<br/>为就绪海岛创建玩法实体并复用加载相机。" }
+  n1@{ shape: rounded, label: "**spawn​_​actors**<br/>为就绪海岛创建玩法实体并复用加载相机。" }
   class n1 node_system
   n1 e0@-->|"插入"| n0
   class e0 edge_write

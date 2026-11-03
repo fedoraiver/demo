@@ -37,9 +37,9 @@ flowchart LR
   classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**mesh2d::mesh::Mesh2dBindGroup**<br/>按网格存储分块保存二维网格绑定组。" }
+  n0@{ shape: cyl, label: "**Mesh2dBindGroup**<br/>按网格存储分块保存二维网格绑定组。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::mesh::**<br/>**prepare​_​mesh2d​_​bind​_​group**<br/>按网格元数据分配块建立二维网格绑定组。" }
+  n1@{ shape: rounded, label: "**prepare​_​mesh2d​_​bind​_​group**<br/>按网格元数据分配块建立二维网格绑定组。" }
   class n1 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

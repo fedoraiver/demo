@@ -38,20 +38,20 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**render::light::LightMeta**<br/>汇集各视图的 GPU 光照 Uniform 数据。" }
+  n0@{ shape: cyl, label: "**LightMeta**<br/>汇集各视图的 GPU 光照 Uniform 数据。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​pbr::atmosphere::environment::**<br/>**prepare​_​atmosphere​_​probe​_​bind​_​groups**<br/>为大气环境探针绑定光照、查找表和输出纹<br/>理。" }
+  n1@{ shape: rounded, label: "**prepare​_​atmosphere​_​probe​_​bind​_​groups**<br/>为大气环境探针绑定光照、查找表和输出纹<br/>理。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​pbr::render::light::prepare​_​**<br/>**lights**<br/>准备视图光照参数、阴影视图和阴影贴图。" }
+  n2@{ shape: rounded, label: "**prepare​_​lights**<br/>准备视图光照参数、阴影视图和阴影贴图。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​render::init​_​gpu​_​resource#lt;bevy​_​**<br/>**pbr::render::light::LightMeta#gt;**<br/>来自crate:bevy​_​render ↗：构造并插入渲<br/>染所需资源。" }
+  n3@{ shape: rounded, label: "**init​_​gpu​_​resource**<br/>来自crate:bevy​_​render ↗：构造并插入渲<br/>染所需资源。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**bevy​_​pbr::render::mesh​_​view​_​**<br/>**bindings::prepare​_​mesh​_​view​_​bind​_​**<br/>**groups**<br/>为视图绑定光照、阴影及各可选渲染效果资<br/>源。" }
+  n4@{ shape: rounded, label: "**prepare​_​mesh​_​view​_​bind​_​groups**<br/>为视图绑定光照、阴影及各可选渲染效果资<br/>源。" }
   class n4 node_system
-  n5@{ shape: rounded, label: "**bevy​_​pbr::atmosphere::resources::**<br/>**prepare​_​atmosphere​_​bind​_​groups**<br/>为大气查找表计算和天空绘制绑定视图资源。" }
+  n5@{ shape: rounded, label: "**prepare​_​atmosphere​_​bind​_​groups**<br/>为大气查找表计算和天空绘制绑定视图资源。" }
   class n5 node_system
-  n6@{ shape: rounded, label: "**bevy​_​pbr::cluster::gpu::prepare​_​**<br/>**clustering​_​bind​_​groups**<br/>为视图的聚簇计算与光栅阶段绑定工作缓冲。" }
+  n6@{ shape: rounded, label: "**prepare​_​clustering​_​bind​_​groups**<br/>为视图的聚簇计算与光栅阶段绑定工作缓冲。" }
   class n6 node_system
   n0 e0@--> n1
   class e0 edge_read

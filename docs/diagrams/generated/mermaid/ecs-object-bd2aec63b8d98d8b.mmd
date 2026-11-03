@@ -39,7 +39,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: notch-rect, label: "**Local · cache**<br/>缓存色调映射绑定组及上次选择的映射方式。" }
   class n0 node_local
-  n1@{ shape: rounded, label: "**bevy​_​core​_​pipeline::tonemapping::**<br/>**node::tonemapping**<br/>为启用的 HDR 视图执行色调映射。" }
+  n1@{ shape: rounded, label: "**tonemapping**<br/>为启用的 HDR 视图执行色调映射。" }
   class n1 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

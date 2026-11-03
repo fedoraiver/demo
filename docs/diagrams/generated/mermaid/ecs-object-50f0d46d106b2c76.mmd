@@ -39,11 +39,11 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**demo::scene​_​assembly::loading::**<br/>**spawn​_​lighting**<br/>创建会话灯光和可复用的加载相机。" }
+  n0@{ shape: rounded, label: "**spawn​_​lighting**<br/>创建会话灯光和可复用的加载相机。" }
   class n0 node_system
   n1@{ shape: rounded, label: "**spawn​_​lighting · 创建模板**<br/>创建可复用为玩家镜头的加载相机。" }
   class n1 node_entity
-  n2@{ shape: fr-rect, label: "**scene​_​assembly::SceneAssemblyPlugin**<br/>加载当前场景资源并装配地图、碰撞与业务实<br/>体。" }
+  n2@{ shape: fr-rect, label: "**SceneAssemblyPlugin**<br/>加载当前场景资源并装配地图、碰撞与业务实<br/>体。" }
   class n2 node_plugin
   n3@{ shape: rounded, label: "**spawn​_​lighting · 创建模板**<br/>为玩法海岛创建会话日光。" }
   class n3 node_entity

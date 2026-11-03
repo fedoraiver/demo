@@ -41,16 +41,16 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**demo::settings::frame​_​pacing::apply​_​**<br/>**frame​_​rate​_​limit**<br/>只同步更新策略；计时与等待由 Winit 执<br/>行，Local 仅保存已应用值以去重和记录变<br/>更。" }
+  n0@{ shape: rounded, label: "**apply​_​frame​_​rate​_​limit**<br/>只同步更新策略；计时与等待由 Winit 执<br/>行，Local 仅保存已应用值以去重和记录变<br/>更。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**settings::config::GameSettings**<br/>全局玩家设置；非零类型保证帧率上限始终能<br/>够转换为等待间隔。" }
+  n1@{ shape: cyl, label: "**GameSettings**<br/>全局玩家设置；非零类型保证帧率上限始终能<br/>够转换为等待间隔。" }
   class n1 node_resource
-  n2@{ shape: cyl, label: "**winit​_​config::WinitSettings**<br/>来自crate:bevy​_​winit ↗：配置窗口事件<br/>循环的更新策略。" }
+  n2@{ shape: cyl, label: "**WinitSettings**<br/>来自crate:bevy​_​winit ↗：配置窗口事件<br/>循环的更新策略。" }
   class n2 node_resource
   class n2 external_node
   n3@{ shape: notch-rect, label: "**Local · applied​_​max​_​fps**<br/>记住已应用的帧率上限。" }
   class n3 node_local
-  n4@{ shape: fr-rect, label: "**settings::SettingsPlugin**<br/>注册设置资源、原型参数反射与渲染限帧，不<br/>覆盖调用方已提供的配置或固定时间步。" }
+  n4@{ shape: fr-rect, label: "**SettingsPlugin**<br/>注册设置资源、原型参数反射与渲染限帧，不<br/>覆盖调用方已提供的配置或固定时间步。" }
   class n4 node_plugin
   n1 e0@--> n0
   class e0 edge_read

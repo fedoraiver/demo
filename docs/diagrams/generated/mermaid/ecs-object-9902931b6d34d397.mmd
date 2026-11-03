@@ -38,32 +38,32 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**bevy​_​render::erased​_​render​_​asset::**<br/>**ErasedRenderAssets#lt;material::**<br/>**PreparedMaterial#gt;**<br/>存储源资产对应的类型擦除 GPU 表示。" }
+  n0@{ shape: cyl, label: "**ErasedRenderAssets#lt;PreparedMaterial#gt;**<br/>存储源资产对应的类型擦除 GPU 表示。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​pbr::prepass::specialize​_​**<br/>**prepass​_​material​_​meshes**<br/>来自crate:bevy​_​pbr ↗：按深度、材质和<br/>运动特性生成预通道专用管线。" }
+  n1@{ shape: rounded, label: "**specialize​_​prepass​_​material​_​meshes**<br/>来自crate:bevy​_​pbr ↗：按深度、材质和<br/>运动特性生成预通道专用管线。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​pbr::render::light::specialize​_​**<br/>**shadows**<br/>来自crate:bevy​_​pbr ↗：按阴影视图、网<br/>格及材质变化重新选择专用阴影渲染管线，清<br/>理失效缓存，并整理需要补齐或重新排队的阴<br/>影网格任务。" }
+  n2@{ shape: rounded, label: "**specialize​_​shadows**<br/>来自crate:bevy​_​pbr ↗：按阴影视图、网<br/>格及材质变化重新选择专用阴影渲染管线，清<br/>理失效缓存，并整理需要补齐或重新排队的阴<br/>影网格任务。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​pbr::prepass::queue​_​prepass​_​**<br/>**material​_​meshes**<br/>来自crate:bevy​_​pbr ↗：把有效材质网格<br/>分入预通道或延迟几何阶段。" }
+  n3@{ shape: rounded, label: "**queue​_​prepass​_​material​_​meshes**<br/>来自crate:bevy​_​pbr ↗：把有效材质网格<br/>分入预通道或延迟几何阶段。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**bevy​_​render::erased​_​render​_​asset::**<br/>**collect​_​erased​_​render​_​assets​_​to​_​**<br/>**reextract#lt;bevy​_​pbr::mesh​_​material::**<br/>**MeshMaterial3d#lt;bevy​_​pbr::pbr​_​**<br/>**material::StandardMaterial#gt;#gt;**<br/>按源材质类型排空擦除资产并请求重新提取。" }
+  n4@{ shape: rounded, label: "**collect​_​erased​_​render​_​assets​_​to​_​**<br/>**reextract**<br/>按源材质类型排空擦除资产并请求重新提取。" }
   class n4 node_system
-  n5@{ shape: rounded, label: "**bevy​_​pbr::render::light::queue​_​**<br/>**shadows**<br/>来自crate:bevy​_​pbr ↗：按材质与光源资<br/>格更新阴影绘制分桶。" }
+  n5@{ shape: rounded, label: "**queue​_​shadows**<br/>来自crate:bevy​_​pbr ↗：按材质与光源资<br/>格更新阴影绘制分桶。" }
   class n5 node_system
   class n5 external_node
-  n6@{ shape: rounded, label: "**bevy​_​render::erased​_​render​_​asset::**<br/>**prepare​_​erased​_​assets#lt;bevy​_​pbr::**<br/>**mesh​_​material::MeshMaterial3d#lt;bevy​_​**<br/>**pbr::extended​_​material::**<br/>**ExtendedMaterial#lt;bevy​_​pbr::pbr​_​**<br/>**material::StandardMaterial, bevy​_​**<br/>**pbr::decal::forward::**<br/>**ForwardDecalMaterialExt#gt;#gt;#gt;**<br/>在上传预算内准备擦除资产并管理重试卸载。" }
+  n6@{ shape: rounded, label: "**prepare​_​erased​_​assets**<br/>在上传预算内准备擦除资产并管理重试卸载。" }
   class n6 node_system
-  n7@{ shape: rounded, label: "**bevy​_​pbr::material::queue​_​material​_​**<br/>**meshes**<br/>来自crate:bevy​_​pbr ↗：按材质模式把可<br/>见网格加入相应绘制阶段。" }
+  n7@{ shape: rounded, label: "**queue​_​material​_​meshes**<br/>来自crate:bevy​_​pbr ↗：按材质模式把可<br/>见网格加入相应绘制阶段。" }
   class n7 node_system
   class n7 external_node
-  n8@{ shape: rounded, label: "**bevy​_​render::erased​_​render​_​asset::**<br/>**collect​_​erased​_​render​_​assets​_​to​_​**<br/>**reextract#lt;bevy​_​pbr::mesh​_​material::**<br/>**MeshMaterial3d#lt;bevy​_​pbr::extended​_​**<br/>**material::ExtendedMaterial#lt;bevy​_​**<br/>**pbr::pbr​_​material::**<br/>**StandardMaterial, bevy​_​pbr::decal::**<br/>**forward::ForwardDecalMaterialExt#gt;#gt;#gt;**<br/>按源材质类型排空擦除资产并请求重新提取。" }
+  n8@{ shape: rounded, label: "**collect​_​erased​_​render​_​assets​_​to​_​**<br/>**reextract**<br/>按源材质类型排空擦除资产并请求重新提取。" }
   class n8 node_system
-  n9@{ shape: rounded, label: "**bevy​_​render::erased​_​render​_​asset::**<br/>**prepare​_​erased​_​assets#lt;bevy​_​pbr::**<br/>**mesh​_​material::MeshMaterial3d#lt;bevy​_​**<br/>**pbr::pbr​_​material::**<br/>**StandardMaterial#gt;#gt;**<br/>在上传预算内准备擦除资产并管理重试卸载。" }
+  n9@{ shape: rounded, label: "**prepare​_​erased​_​assets**<br/>在上传预算内准备擦除资产并管理重试卸载。" }
   class n9 node_system
-  n10@{ shape: rounded, label: "**bevy​_​pbr::material::specialize​_​**<br/>**material​_​meshes**<br/>来自crate:bevy​_​pbr ↗：为变化的可见网<br/>格生成并缓存材质专用管线。" }
+  n10@{ shape: rounded, label: "**specialize​_​material​_​meshes**<br/>来自crate:bevy​_​pbr ↗：为变化的可见网<br/>格生成并缓存材质专用管线。" }
   class n10 node_system
   class n10 external_node
   n0 e0@--> n1

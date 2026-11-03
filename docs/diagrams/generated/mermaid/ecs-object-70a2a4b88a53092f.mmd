@@ -38,11 +38,11 @@ flowchart LR
   classDef edge_order stroke:#334155,stroke-width:2px
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​pbr::atmosphere::environment::**<br/>**init​_​atmosphere​_​probe​_​layout**<br/>定义大气环境探针的计算资源接口。" }
+  n0@{ shape: rounded, label: "**init​_​atmosphere​_​probe​_​layout**<br/>定义大气环境探针的计算资源接口。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**atmosphere::environment::**<br/>**AtmosphereProbeLayouts**<br/>描述大气环境贴图计算的资源布局。" }
+  n1@{ shape: cyl, label: "**AtmosphereProbeLayouts**<br/>描述大气环境贴图计算的资源布局。" }
   class n1 node_resource
-  n2@{ shape: rounded, label: "**bevy​_​pbr::atmosphere::environment::**<br/>**init​_​atmosphere​_​probe​_​pipeline**<br/>排队创建大气环境贴图生成计算管线。" }
+  n2@{ shape: rounded, label: "**init​_​atmosphere​_​probe​_​pipeline**<br/>排队创建大气环境贴图生成计算管线。" }
   class n2 node_system
   n0 e0@-->|"插入"| n1
   class e0 edge_write

@@ -38,15 +38,15 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**material::**<br/>**DefaultOpaqueRendererMethod**<br/>指定不透明材质的默认渲染方式。" }
+  n0@{ shape: cyl, label: "**DefaultOpaqueRendererMethod**<br/>指定不透明材质的默认渲染方式。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​extract::extract​_​resource::**<br/>**extract​_​resource#lt;bevy​_​pbr::**<br/>**material::**<br/>**DefaultOpaqueRendererMethod, bevy​_​**<br/>**render::RenderApp, ()#gt;**<br/>来自crate:bevy​_​extract ↗：把存在的主<br/>世界资源转换到子世界。" }
+  n1@{ shape: rounded, label: "**extract​_​resource**<br/>来自crate:bevy​_​extract ↗：把存在的主<br/>世界资源转换到子世界。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​render::erased​_​render​_​asset::**<br/>**prepare​_​erased​_​assets#lt;bevy​_​pbr::**<br/>**mesh​_​material::MeshMaterial3d#lt;bevy​_​**<br/>**pbr::pbr​_​material::**<br/>**StandardMaterial#gt;#gt;**<br/>来自crate:bevy​_​render ↗：在上传预算内<br/>准备擦除资产并管理重试卸载。" }
+  n2@{ shape: rounded, label: "**prepare​_​erased​_​assets**<br/>来自crate:bevy​_​render ↗：在上传预算内<br/>准备擦除资产并管理重试卸载。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​render::erased​_​render​_​asset::**<br/>**prepare​_​erased​_​assets#lt;bevy​_​pbr::**<br/>**mesh​_​material::MeshMaterial3d#lt;bevy​_​**<br/>**pbr::extended​_​material::**<br/>**ExtendedMaterial#lt;bevy​_​pbr::pbr​_​**<br/>**material::StandardMaterial, bevy​_​**<br/>**pbr::decal::forward::**<br/>**ForwardDecalMaterialExt#gt;#gt;#gt;**<br/>来自crate:bevy​_​render ↗：在上传预算内<br/>准备擦除资产并管理重试卸载。" }
+  n3@{ shape: rounded, label: "**prepare​_​erased​_​assets**<br/>来自crate:bevy​_​render ↗：在上传预算内<br/>准备擦除资产并管理重试卸载。" }
   class n3 node_system
   class n3 external_node
   n1 e0@-->|"赋值"| n0

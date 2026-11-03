@@ -39,37 +39,37 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**collider​_​tree::proxy​_​key::**<br/>**ColliderTreeProxyKey**<br/>定位特定碰撞体树中的代理。" }
+  n0@{ shape: rounded, label: "**ColliderTreeProxyKey**<br/>定位特定碰撞体树中的代理。" }
   class n0 node_component
-  n1@{ shape: hex, label: "**avian3d::collider​_​tree::update::add​_​**<br/>**to​_​tree​_​on**<br/>将可用碰撞体加入空间树。" }
+  n1@{ shape: hex, label: "**add​_​to​_​tree​_​on**<br/>将可用碰撞体加入空间树。" }
   class n1 node_observer
-  n2@{ shape: hex, label: "**avian3d::collider​_​tree::update::**<br/>**{impl#35;1}::build::{closure#35;6}**<br/>同步碰撞代理的自定义过滤标志。" }
+  n2@{ shape: hex, label: "**build::{closure#35;6}**<br/>同步碰撞代理的自定义过滤标志。" }
   class n2 node_observer
-  n3@{ shape: hex, label: "**avian3d::collider​_​tree::update::**<br/>**remove​_​from​_​tree​_​on**<br/>从空间树移除碰撞体代理。" }
+  n3@{ shape: hex, label: "**remove​_​from​_​tree​_​on**<br/>从空间树移除碰撞体代理。" }
   class n3 node_observer
-  n4@{ shape: hex, label: "**avian3d::collider​_​tree::update::**<br/>**remove​_​from​_​tree​_​on**<br/>从空间树移除碰撞体代理。" }
+  n4@{ shape: hex, label: "**remove​_​from​_​tree​_​on**<br/>从空间树移除碰撞体代理。" }
   class n4 node_observer
-  n5@{ shape: hex, label: "**avian3d::collider​_​tree::update::**<br/>**remove​_​from​_​tree​_​on**<br/>从空间树移除碰撞体代理。" }
+  n5@{ shape: hex, label: "**remove​_​from​_​tree​_​on**<br/>从空间树移除碰撞体代理。" }
   class n5 node_observer
-  n6@{ shape: hex, label: "**avian3d::collider​_​tree::update::**<br/>**{impl#35;1}::build::{closure#35;1}**<br/>把失去刚体归属的碰撞体迁到独立树。" }
+  n6@{ shape: hex, label: "**build::{closure#35;1}**<br/>把失去刚体归属的碰撞体迁到独立树。" }
   class n6 node_observer
-  n7@{ shape: hex, label: "**avian3d::collider​_​tree::update::**<br/>**{impl#35;1}::build::{closure#35;5}**<br/>同步碰撞代理的碰撞层配置。" }
+  n7@{ shape: hex, label: "**build::{closure#35;5}**<br/>同步碰撞代理的碰撞层配置。" }
   class n7 node_observer
-  n8@{ shape: rounded, label: "**avian3d::collider​_​tree::update::**<br/>**update​_​moved​_​collider​_​**<br/>**aabbs#lt;avian3d::collision::collider::**<br/>**parry::Collider#gt;**<br/>重算物理步后被手动改变的碰撞边界。" }
+  n8@{ shape: rounded, label: "**update​_​moved​_​collider​_​aabbs**<br/>重算物理步后被手动改变的碰撞边界。" }
   class n8 node_system
-  n9@{ shape: hex, label: "**avian3d::collider​_​tree::update::add​_​**<br/>**to​_​tree​_​on**<br/>将可用碰撞体加入空间树。" }
+  n9@{ shape: hex, label: "**add​_​to​_​tree​_​on**<br/>将可用碰撞体加入空间树。" }
   class n9 node_observer
-  n10@{ shape: hex, label: "**avian3d::collider​_​tree::update::add​_​**<br/>**to​_​tree​_​on**<br/>将可用碰撞体加入空间树。" }
+  n10@{ shape: hex, label: "**add​_​to​_​tree​_​on**<br/>将可用碰撞体加入空间树。" }
   class n10 node_observer
-  n11@{ shape: hex, label: "**avian3d::collider​_​tree::update::**<br/>**{impl#35;1}::build::{closure#35;4}**<br/>清除碰撞代理的传感器标志。" }
+  n11@{ shape: hex, label: "**build::{closure#35;4}**<br/>清除碰撞代理的传感器标志。" }
   class n11 node_observer
-  n12@{ shape: hex, label: "**avian3d::collider​_​tree::update::**<br/>**{impl#35;1}::build::{closure#35;2}**<br/>按刚体类型迁移碰撞体空间树。" }
+  n12@{ shape: hex, label: "**build::{closure#35;2}**<br/>按刚体类型迁移碰撞体空间树。" }
   class n12 node_observer
-  n13@{ shape: hex, label: "**avian3d::collider​_​tree::update::**<br/>**{impl#35;1}::build::{closure#35;3}**<br/>同步碰撞代理的传感器启用标志。" }
+  n13@{ shape: hex, label: "**build::{closure#35;3}**<br/>同步碰撞代理的传感器启用标志。" }
   class n13 node_observer
-  n14@{ shape: rounded, label: "**avian3d::collider​_​tree::update::**<br/>**update​_​solver​_​body​_​aabbs#lt;avian3d::**<br/>**collision::collider::parry::**<br/>**Collider#gt;**<br/>按物理结果更新活跃刚体的碰撞边界。" }
+  n14@{ shape: rounded, label: "**update​_​solver​_​body​_​aabbs**<br/>按物理结果更新活跃刚体的碰撞边界。" }
   class n14 node_system
-  n15@{ shape: hex, label: "**avian3d::collider​_​tree::update::**<br/>**{impl#35;1}::build::{closure#35;7}**<br/>同步碰撞代理的刚体禁用标志。" }
+  n15@{ shape: hex, label: "**build::{closure#35;7}**<br/>同步碰撞代理的刚体禁用标志。" }
   class n15 node_observer
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write
@@ -112,7 +112,7 @@ flowchart LR
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
-  e3@{ curve: bumpX }
+  e3@{ curve: basis }
   e4@{ curve: basis }
   e5@{ curve: basis }
   e6@{ curve: basis }
@@ -122,6 +122,7 @@ flowchart LR
   e10@{ curve: basis }
   e11@{ curve: basis }
   e12@{ curve: basis }
+  e13@{ curve: bumpX }
   e14@{ curve: basis }
   e15@{ curve: basis }
   e16@{ curve: basis }

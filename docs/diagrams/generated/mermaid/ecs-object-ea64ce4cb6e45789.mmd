@@ -36,9 +36,9 @@ flowchart LR
   classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**atmosphere::AtmosphereSettings**<br/>配置大气查找表尺寸和积分采样。" }
+  n0@{ shape: rounded, label: "**AtmosphereSettings**<br/>配置大气查找表尺寸和积分采样。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​pbr::atmosphere::extract​_​**<br/>**atmosphere**<br/>为三维相机选择并提取最近的大气。" }
+  n1@{ shape: rounded, label: "**extract​_​atmosphere**<br/>为三维相机选择并提取最近的大气。" }
   class n1 node_system
   n0 e0@--> n1
   class e0 edge_read

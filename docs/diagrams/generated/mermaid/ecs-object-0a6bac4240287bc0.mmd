@@ -38,13 +38,13 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**pipeline::UiPipeline**<br/>提供普通 UI 节点的视图与图像布局。" }
+  n0@{ shape: cyl, label: "**UiPipeline**<br/>提供普通 UI 节点的视图与图像布局。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​ui​_​render::pipeline::init​_​ui​_​**<br/>**pipeline**<br/>建立 UI 图形的视图、图像和采样器布局。" }
+  n1@{ shape: rounded, label: "**init​_​ui​_​pipeline**<br/>建立 UI 图形的视图、图像和采样器布局。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​ui​_​render::queue​_​uinodes**<br/>按目标相机和堆叠顺序排队 UI 节点。" }
+  n2@{ shape: rounded, label: "**queue​_​uinodes**<br/>按目标相机和堆叠顺序排队 UI 节点。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​ui​_​render::prepare​_​uinodes**<br/>生成裁剪后的 UI 几何并合并图像批次。" }
+  n3@{ shape: rounded, label: "**prepare​_​uinodes**<br/>生成裁剪后的 UI 几何并合并图像批次。" }
   class n3 node_system
   n1 e0@-->|"插入"| n0
   class e0 edge_write

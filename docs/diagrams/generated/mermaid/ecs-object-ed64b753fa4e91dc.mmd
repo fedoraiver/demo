@@ -40,34 +40,37 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: lin-rect, label: "**Update**<br/>组织无障碍信息更新。" }
   class n0 node_system_set
-  n1@{ shape: rounded, label: "**bevy​_​ui​_​render::image::mark​_​images​_​**<br/>**as​_​changed​_​if​_​their​_​assets​_​changed**<br/>来自crate:bevy​_​ui​_​render ↗：使图像或<br/>图集资产变化触发 UI 图像更新。" }
+  n1@{ shape: rounded, label: "**mark​_​images​_​as​_​changed​_​if​_​their​_​**<br/>**assets​_​changed**<br/>来自crate:bevy​_​ui​_​render ↗：使图像或<br/>图集资产变化触发 UI 图像更新。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​ui​_​widgets::text​_​input::update​_​**<br/>**ime​_​position**<br/>来自crate:bevy​_​ui​_​widgets ↗：把输入<br/>法候选窗口放到当前文字光标下方。" }
+  n2@{ shape: rounded, label: "**update​_​ime​_​position**<br/>来自crate:bevy​_​ui​_​widgets ↗：把输入<br/>法候选窗口放到当前文字光标下方。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​winit::accessibility::window​_​**<br/>**closed**<br/>来自crate:bevy​_​winit ↗：清理关闭窗口<br/>的无障碍后端状态。" }
+  n3@{ shape: rounded, label: "**window​_​closed**<br/>来自crate:bevy​_​winit ↗：清理关闭窗口<br/>的无障碍后端状态。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**bevy​_​ui::accessibility::sync​_​bounds​_​**<br/>**and​_​transforms**<br/>来自crate:bevy​_​ui ↗：把 UI 几何同步到<br/>无障碍树。" }
+  n4@{ shape: rounded, label: "**sync​_​bounds​_​and​_​transforms**<br/>来自crate:bevy​_​ui ↗：把 UI 几何同步到<br/>无障碍树。" }
   class n4 node_system
   class n4 external_node
-  n5@{ shape: rounded, label: "**bevy​_​ui::accessibility::button​_​**<br/>**changed**<br/>来自crate:bevy​_​ui ↗：为按钮生成或更新<br/>无障碍角色与文本标签。" }
+  subgraph layout_card_n5[" "]
+  n5@{ shape: rounded, label: "**button​_​changed**<br/>来自crate:bevy​_​ui ↗：为按钮生成或更新<br/>无障碍角色与文本标签。" }
   class n5 node_system
   class n5 external_node
-  n6@{ shape: rounded, label: "**bevy​_​ui::accessibility::label​_​**<br/>**changed**<br/>来自crate:bevy​_​ui ↗：把标签子树文字写<br/>入无障碍节点。" }
+  end
+  style layout_card_n5 fill:none,stroke:none
+  n6@{ shape: rounded, label: "**label​_​changed**<br/>来自crate:bevy​_​ui ↗：把标签子树文字写<br/>入无障碍节点。" }
   class n6 node_system
   class n6 external_node
-  n7@{ shape: rounded, label: "**bevy​_​ui​_​render::image::update​_​**<br/>**texture​_​atlas​_​layout​_​components**<br/>来自crate:bevy​_​ui​_​render ↗：同步 UI<br/>图像所引用的图集布局组件。" }
+  n7@{ shape: rounded, label: "**update​_​texture​_​atlas​_​layout​_​**<br/>**components**<br/>来自crate:bevy​_​ui​_​render ↗：同步 UI<br/>图像所引用的图集布局组件。" }
   class n7 node_system
   class n7 external_node
-  n8@{ shape: rounded, label: "**bevy​_​winit::accessibility::poll​_​**<br/>**receivers**<br/>来自crate:bevy​_​winit ↗：将原生无障碍<br/>动作请求转为应用消息。" }
+  n8@{ shape: rounded, label: "**poll​_​receivers**<br/>来自crate:bevy​_​winit ↗：将原生无障碍<br/>动作请求转为应用消息。" }
   class n8 node_system
   class n8 external_node
-  n9@{ shape: rounded, label: "**bevy​_​ui::accessibility::image​_​**<br/>**changed**<br/>来自crate:bevy​_​ui ↗：为非按钮图像生成<br/>或更新无障碍标签。" }
+  n9@{ shape: rounded, label: "**image​_​changed**<br/>来自crate:bevy​_​ui ↗：为非按钮图像生成<br/>或更新无障碍标签。" }
   class n9 node_system
   class n9 external_node
-  n10@{ shape: rounded, label: "**bevy​_​winit::accessibility::update​_​**<br/>**accessibility​_​nodes**<br/>来自crate:bevy​_​winit ↗：把变化的可访<br/>问性节点同步给原生适配器。" }
+  n10@{ shape: rounded, label: "**update​_​accessibility​_​nodes**<br/>来自crate:bevy​_​winit ↗：把变化的可访<br/>问性节点同步给原生适配器。" }
   class n10 node_system
   class n10 external_node
   n0 e0@-->|"先于"| n1
@@ -82,7 +85,7 @@ flowchart LR
   class e4 edge_order
   n6 e5@-->|"先于"| n0
   class e5 edge_order
-  n0 e6@-->|"先于"| n7
+  n0 e6@--->|"先于"| n7
   class e6 edge_order
   n0 e7@-->|"集合成员"| n8
   class e7 edge_set_membership
@@ -95,6 +98,7 @@ flowchart LR
   e2@{ curve: basis }
   e3@{ curve: basis }
   e5@{ curve: basis }
+  e6@{ curve: basis }
   e7@{ curve: basis }
   e8@{ curve: basis }
   e9@{ curve: basis }

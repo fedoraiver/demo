@@ -44,24 +44,24 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​ui::widget::viewport::update​_​**<br/>**viewport​_​render​_​target​_​size**<br/>按 UI 视口节点尺寸调整相机图像目标。" }
+  n0@{ shape: rounded, label: "**update​_​viewport​_​render​_​target​_​size**<br/>按 UI 视口节点尺寸调整相机图像目标。" }
   class n0 node_system
   n1@{ shape: lin-rect, label: "**AmbiguousWithUpdateText2dLayout**<br/>声明图像类 UI 更新可与二维文字布局无<br/>序。" }
   class n1 node_system_set
-  n2@{ shape: rounded, label: "**bevy​_​ui::widget::ViewportNode**<br/>把相机渲染目标嵌入 UI 节点。" }
+  n2@{ shape: rounded, label: "**ViewportNode**<br/>把相机渲染目标嵌入 UI 节点。" }
   class n2 node_component
   n3@{ shape: lin-rect, label: "**PostLayout**<br/>组织界面交互、布局与堆叠更新。" }
   class n3 node_system_set
   n4@{ shape: lin-rect, label: "**AmbiguousWithText**<br/>声明图像类 UI 更新可与 UI 文字系统无<br/>序。" }
   class n4 node_system_set
-  n5@{ shape: fr-rect, label: "**bevy​_​ui::UiPlugin**<br/>建立界面布局与内容更新基础。" }
+  n5@{ shape: fr-rect, label: "**UiPlugin**<br/>建立界面布局与内容更新基础。" }
   class n5 node_plugin
-  n6@{ shape: cyl, label: "**bevy​_​asset::Assets#lt;image::Image#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
+  n6@{ shape: cyl, label: "**Assets#lt;Image#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
   class n6 node_resource
   class n6 external_node
-  n7@{ shape: rounded, label: "**bevy​_​ui::ComputedNode**<br/>保存 UI 布局计算后的物理尺寸。" }
+  n7@{ shape: rounded, label: "**ComputedNode**<br/>保存 UI 布局计算后的物理尺寸。" }
   class n7 node_component
-  n8@{ shape: rounded, label: "**bevy​_​camera::RenderTarget**<br/>来自crate:bevy​_​camera ↗：指定相机输出<br/>的窗口、图像或纹理。" }
+  n8@{ shape: rounded, label: "**RenderTarget**<br/>来自crate:bevy​_​camera ↗：指定相机输出<br/>的窗口、图像或纹理。" }
   class n8 node_component
   class n8 external_node
   n1 e0@-->|"集合成员"| n0

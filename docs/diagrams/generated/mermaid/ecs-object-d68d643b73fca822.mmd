@@ -46,18 +46,18 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​window::system::close​_​when​_​**<br/>**requested**<br/>分两轮标记关闭请求并销毁窗口实体。" }
+  n0@{ shape: rounded, label: "**close​_​when​_​requested**<br/>分两轮标记关闭请求并销毁窗口实体。" }
   class n0 node_system
   n1@{ shape: fr-rect, label: "**WindowPlugin**<br/>建立窗口管理接口与消息。" }
   class n1 node_plugin
-  n2@{ shape: lean-r, label: "**event::WindowCloseRequested**<br/>传递窗口关闭请求。" }
+  n2@{ shape: lean-r, label: "**WindowCloseRequested**<br/>传递窗口关闭请求。" }
   class n2 node_message
-  n3@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;event::**<br/>**WindowCloseRequested#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n3@{ shape: cyl, label: "**Messages#lt;WindowCloseRequested#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n3 node_resource
   class n3 external_node
   n4@{ shape: lin-rect, label: "**ExitSystems**<br/>按窗口关闭策略请求应用退出。" }
   class n4 node_system_set
-  n5@{ shape: rounded, label: "**window::ClosingWindow**<br/>标记窗口已收到关闭请求并正在关闭" }
+  n5@{ shape: rounded, label: "**ClosingWindow**<br/>标记窗口已收到关闭请求并正在关闭" }
   class n5 node_component
   n1 e0@-->|"调用"| n0
   class e0 edge_registration

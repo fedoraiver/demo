@@ -39,7 +39,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: notch-rect, label: "**Local · view​_​light​_​probe​_​info**<br/>为单个视图暂存已就绪并按距离排序的光照探<br/>针。" }
   class n0 node_local
-  n1@{ shape: rounded, label: "**bevy​_​pbr::light​_​probe::gather​_​light​_​**<br/>**probes#lt;bevy​_​light::probe::**<br/>**EnvironmentMapLight#gt;**<br/>按相机可见集合和距离分配已就绪光照探针。" }
+  n1@{ shape: rounded, label: "**gather​_​light​_​probes**<br/>按相机可见集合和距离分配已就绪光照探针。" }
   class n1 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

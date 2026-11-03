@@ -40,98 +40,98 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**editing::EditableText**<br/>持有 Parley 编辑器、文本、光标及待应用<br/>编辑操作" }
+  n0@{ shape: rounded, label: "**EditableText**<br/>持有 Parley 编辑器、文本、光标及待应用<br/>编辑操作" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​ui​_​widgets::text​_​input::update​_​**<br/>**ime​_​position**<br/>来自crate:bevy​_​ui​_​widgets ↗：把输入<br/>法候选窗口放到当前文字光标下方。" }
+  n1@{ shape: rounded, label: "**update​_​ime​_​position**<br/>来自crate:bevy​_​ui​_​widgets ↗：把输入<br/>法候选窗口放到当前文字光标下方。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​ui​_​widgets::text​_​input::listen​_​**<br/>**for​_​ime​_​input​_​when​_​text​_​input​_​**<br/>**focused**<br/>来自crate:bevy​_​ui​_​widgets ↗：按可编<br/>辑焦点控制主窗口输入法。" }
+  n2@{ shape: rounded, label: "**listen​_​for​_​ime​_​input​_​when​_​text​_​**<br/>**input​_​focused**<br/>来自crate:bevy​_​ui​_​widgets ↗：按可编<br/>辑焦点控制主窗口输入法。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​ui​_​render::extract​_​uinode​_​**<br/>**changes**<br/>来自crate:bevy​_​ui​_​render ↗：使变化或<br/>移除的 UI 数据失效并清理旧渲染实体。" }
+  n3@{ shape: rounded, label: "**extract​_​uinode​_​changes**<br/>来自crate:bevy​_​ui​_​render ↗：使变化或<br/>移除的 UI 数据失效并清理旧渲染实体。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**bevy​_​ui​_​render::extract​_​text​_​**<br/>**sections**<br/>来自crate:bevy​_​ui​_​render ↗：按图集提<br/>取 UI 字形并处理选中文字颜色。" }
+  n4@{ shape: rounded, label: "**extract​_​text​_​sections**<br/>来自crate:bevy​_​ui​_​render ↗：按图集提<br/>取 UI 字形并处理选中文字颜色。" }
   class n4 node_system
   class n4 external_node
-  n5@{ shape: hex, label: "**bevy​_​ui​_​widgets::text​_​input::on​_​**<br/>**focus​_​lost**<br/>来自crate:bevy​_​ui​_​widgets ↗：失焦时<br/>清理输入法组合和选择。" }
+  n5@{ shape: hex, label: "**on​_​focus​_​lost**<br/>来自crate:bevy​_​ui​_​widgets ↗：失焦时<br/>清理输入法组合和选择。" }
   class n5 node_observer
   class n5 external_node
-  n6@{ shape: hex, label: "**bevy​_​ui​_​widgets::text​_​input::on​_​**<br/>**focus​_​select​_​all**<br/>来自crate:bevy​_​ui​_​widgets ↗：按聚焦<br/>来源安排文本全选。" }
+  n6@{ shape: hex, label: "**on​_​focus​_​select​_​all**<br/>来自crate:bevy​_​ui​_​widgets ↗：按聚焦<br/>来源安排文本全选。" }
   class n6 node_observer
   class n6 external_node
-  n7@{ shape: hex, label: "**bevy​_​ui​_​widgets::text​_​input::on​_​**<br/>**focused​_​keyboard​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：将聚焦<br/>文本框按键转为编辑操作。" }
+  n7@{ shape: hex, label: "**on​_​focused​_​keyboard​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：将聚焦<br/>文本框按键转为编辑操作。" }
   class n7 node_observer
   class n7 external_node
-  n8@{ shape: rounded, label: "**bevy​_​ui​_​render::text::extract​_​text​_​**<br/>**cursor**<br/>来自crate:bevy​_​ui​_​render ↗：提取文字<br/>光标和带圆角的选区背景。" }
+  n8@{ shape: rounded, label: "**extract​_​text​_​cursor**<br/>来自crate:bevy​_​ui​_​render ↗：提取文字<br/>光标和带圆角的选区背景。" }
   class n8 node_system
   class n8 external_node
-  n9@{ shape: hex, label: "**bevy​_​ui​_​widgets::text​_​input::on​_​**<br/>**focus​_​select​_​all**<br/>来自crate:bevy​_​ui​_​widgets ↗：按聚焦<br/>来源安排文本全选。" }
+  n9@{ shape: hex, label: "**on​_​focus​_​select​_​all**<br/>来自crate:bevy​_​ui​_​widgets ↗：按聚焦<br/>来源安排文本全选。" }
   class n9 node_observer
   class n9 external_node
-  n10@{ shape: hex, label: "**bevy​_​ui​_​widgets::text​_​input::on​_​**<br/>**pointer​_​drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：随指针<br/>拖动扩展文本选择。" }
+  n10@{ shape: hex, label: "**on​_​pointer​_​drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：随指针<br/>拖动扩展文本选择。" }
   class n10 node_observer
   class n10 external_node
-  n11@{ shape: hex, label: "**bevy​_​ui​_​widgets::text​_​input::on​_​**<br/>**focused​_​keyboard​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：将聚焦<br/>文本框按键转为编辑操作。" }
+  n11@{ shape: hex, label: "**on​_​focused​_​keyboard​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：将聚焦<br/>文本框按键转为编辑操作。" }
   class n11 node_observer
   class n11 external_node
-  n12@{ shape: rounded, label: "**bevy​_​ui::widget::text​_​input​_​layout::**<br/>**update​_​editable​_​text​_​layout**<br/>来自crate:bevy​_​ui ↗：刷新可编辑文本的<br/>字形布局和编辑反馈。" }
+  n12@{ shape: rounded, label: "**update​_​editable​_​text​_​layout**<br/>来自crate:bevy​_​ui ↗：刷新可编辑文本的<br/>字形布局和编辑反馈。" }
   class n12 node_system
   class n12 external_node
-  n13@{ shape: rounded, label: "**bevy​_​ui::widget::text​_​input​_​layout::**<br/>**sync​_​editable​_​text​_​viewports**<br/>来自crate:bevy​_​ui ↗：在文本编辑前同步<br/>可编辑区域的视口。" }
+  n13@{ shape: rounded, label: "**sync​_​editable​_​text​_​viewports**<br/>来自crate:bevy​_​ui ↗：在文本编辑前同步<br/>可编辑区域的视口。" }
   class n13 node_system
   class n13 external_node
-  n14@{ shape: hex, label: "**bevy​_​ui​_​widgets::text​_​input::on​_​**<br/>**pointer​_​drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：随指针<br/>拖动扩展文本选择。" }
+  n14@{ shape: hex, label: "**on​_​pointer​_​drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：随指针<br/>拖动扩展文本选择。" }
   class n14 node_observer
   class n14 external_node
-  n15@{ shape: hex, label: "**bevy​_​ui​_​widgets::text​_​input::on​_​**<br/>**pointer​_​drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：随指针<br/>拖动扩展文本选择。" }
+  n15@{ shape: hex, label: "**on​_​pointer​_​drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：随指针<br/>拖动扩展文本选择。" }
   class n15 node_observer
   class n15 external_node
-  n16@{ shape: hex, label: "**bevy​_​ui​_​widgets::text​_​input::on​_​**<br/>**focus​_​select​_​all**<br/>来自crate:bevy​_​ui​_​widgets ↗：按聚焦<br/>来源安排文本全选。" }
+  n16@{ shape: hex, label: "**on​_​focus​_​select​_​all**<br/>来自crate:bevy​_​ui​_​widgets ↗：按聚焦<br/>来源安排文本全选。" }
   class n16 node_observer
   class n16 external_node
-  n17@{ shape: hex, label: "**bevy​_​ui​_​widgets::text​_​input::on​_​**<br/>**focused​_​keyboard​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：将聚焦<br/>文本框按键转为编辑操作。" }
+  n17@{ shape: hex, label: "**on​_​focused​_​keyboard​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：将聚焦<br/>文本框按键转为编辑操作。" }
   class n17 node_observer
   class n17 external_node
-  n18@{ shape: hex, label: "**bevy​_​ui​_​widgets::text​_​input::on​_​**<br/>**focus​_​lost**<br/>来自crate:bevy​_​ui​_​widgets ↗：失焦时<br/>清理输入法组合和选择。" }
+  n18@{ shape: hex, label: "**on​_​focus​_​lost**<br/>来自crate:bevy​_​ui​_​widgets ↗：失焦时<br/>清理输入法组合和选择。" }
   class n18 node_observer
   class n18 external_node
-  n19@{ shape: rounded, label: "**bevy​_​ui​_​widgets::text​_​input::on​_​ime​_​**<br/>**input**<br/>来自crate:bevy​_​ui​_​widgets ↗：把输入<br/>法组合和提交转换为文字编辑操作。" }
+  n19@{ shape: rounded, label: "**on​_​ime​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：把输入<br/>法组合和提交转换为文字编辑操作。" }
   class n19 node_system
   class n19 external_node
-  n20@{ shape: rounded, label: "**bevy​_​ui​_​render::extract​_​text​_​**<br/>**decorations**<br/>来自crate:bevy​_​ui​_​render ↗：提取 UI<br/>文字背景、删除线和下划线。" }
+  n20@{ shape: rounded, label: "**extract​_​text​_​decorations**<br/>来自crate:bevy​_​ui​_​render ↗：提取 UI<br/>文字背景、删除线和下划线。" }
   class n20 node_system
   class n20 external_node
-  n21@{ shape: rounded, label: "**bevy​_​ui​_​render::extract​_​text​_​shadows**<br/>来自crate:bevy​_​ui​_​render ↗：提取 UI<br/>文字及装饰线的偏移阴影。" }
+  n21@{ shape: rounded, label: "**extract​_​text​_​shadows**<br/>来自crate:bevy​_​ui​_​render ↗：提取 UI<br/>文字及装饰线的偏移阴影。" }
   class n21 node_system
   class n21 external_node
-  n22@{ shape: hex, label: "**bevy​_​ui​_​widgets::text​_​input::on​_​**<br/>**pointer​_​press**<br/>来自crate:bevy​_​ui​_​widgets ↗：将文本<br/>点击转为光标与选择操作。" }
+  n22@{ shape: hex, label: "**on​_​pointer​_​press**<br/>来自crate:bevy​_​ui​_​widgets ↗：将文本<br/>点击转为光标与选择操作。" }
   class n22 node_observer
   class n22 external_node
-  n23@{ shape: rounded, label: "**bevy​_​ui​_​widgets::text​_​input::apply​_​**<br/>**queued​_​select​_​all**<br/>来自crate:bevy​_​ui​_​widgets ↗：在指针<br/>释放时应用延后的文本全选。" }
+  n23@{ shape: rounded, label: "**apply​_​queued​_​select​_​all**<br/>来自crate:bevy​_​ui​_​widgets ↗：在指针<br/>释放时应用延后的文本全选。" }
   class n23 node_system
   class n23 external_node
-  n24@{ shape: rounded, label: "**bevy​_​ui::widget::text​_​input​_​layout::**<br/>**update​_​editable​_​text​_​content​_​size**<br/>来自crate:bevy​_​ui ↗：按可见字符宽度和<br/>行数设置输入框固有尺寸。" }
+  n24@{ shape: rounded, label: "**update​_​editable​_​text​_​content​_​size**<br/>来自crate:bevy​_​ui ↗：按可见字符宽度和<br/>行数设置输入框固有尺寸。" }
   class n24 node_system
   class n24 external_node
-  n25@{ shape: rounded, label: "**bevy​_​text::editing::apply​_​text​_​edits**<br/>应用可编辑文字排队的编辑操作。" }
+  n25@{ shape: rounded, label: "**apply​_​text​_​edits**<br/>应用可编辑文字排队的编辑操作。" }
   class n25 node_system
-  n26@{ shape: hex, label: "**bevy​_​ui​_​widgets::text​_​input::on​_​**<br/>**pointer​_​press**<br/>来自crate:bevy​_​ui​_​widgets ↗：将文本<br/>点击转为光标与选择操作。" }
+  n26@{ shape: hex, label: "**on​_​pointer​_​press**<br/>来自crate:bevy​_​ui​_​widgets ↗：将文本<br/>点击转为光标与选择操作。" }
   class n26 node_observer
   class n26 external_node
-  n27@{ shape: rounded, label: "**bevy​_​ui​_​render::text::extract​_​**<br/>**preedit​_​underlines**<br/>来自crate:bevy​_​ui​_​render ↗：把输入法<br/>预编辑下划线提取为 UI 矩形。" }
+  n27@{ shape: rounded, label: "**extract​_​preedit​_​underlines**<br/>来自crate:bevy​_​ui​_​render ↗：把输入法<br/>预编辑下划线提取为 UI 矩形。" }
   class n27 node_system
   class n27 external_node
-  n28@{ shape: hex, label: "**bevy​_​ui​_​widgets::text​_​input::on​_​**<br/>**pointer​_​press**<br/>来自crate:bevy​_​ui​_​widgets ↗：将文本<br/>点击转为光标与选择操作。" }
+  n28@{ shape: hex, label: "**on​_​pointer​_​press**<br/>来自crate:bevy​_​ui​_​widgets ↗：将文本<br/>点击转为光标与选择操作。" }
   class n28 node_observer
   class n28 external_node
-  n29@{ shape: rounded, label: "**bevy​_​ui​_​widgets::text​_​input::text​_​**<br/>**input​_​autoscroll​_​system**<br/>来自crate:bevy​_​ui​_​widgets ↗：在拖选<br/>越出文字视口时自动滚动。" }
+  n29@{ shape: rounded, label: "**text​_​input​_​autoscroll​_​system**<br/>来自crate:bevy​_​ui​_​widgets ↗：在拖选<br/>越出文字视口时自动滚动。" }
   class n29 node_system
   class n29 external_node
-  n30@{ shape: rounded, label: "**bevy​_​ui::widget::text​_​input​_​layout::**<br/>**update​_​editable​_​text​_​styles**<br/>来自crate:bevy​_​ui ↗：把字体和排版配置<br/>同步到可编辑文本引擎。" }
+  n30@{ shape: rounded, label: "**update​_​editable​_​text​_​styles**<br/>来自crate:bevy​_​ui ↗：把字体和排版配置<br/>同步到可编辑文本引擎。" }
   class n30 node_system
   class n30 external_node
-  n31@{ shape: hex, label: "**bevy​_​ui​_​widgets::text​_​input::on​_​**<br/>**focus​_​lost**<br/>来自crate:bevy​_​ui​_​widgets ↗：失焦时<br/>清理输入法组合和选择。" }
+  n31@{ shape: hex, label: "**on​_​focus​_​lost**<br/>来自crate:bevy​_​ui​_​widgets ↗：失焦时<br/>清理输入法组合和选择。" }
   class n31 node_observer
   class n31 external_node
   n0 e0@--> n1

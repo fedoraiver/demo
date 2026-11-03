@@ -43,17 +43,17 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​render::mesh::prepare​_​mesh​_​**<br/>**metadata​_​fallback​_​buffer**<br/>取得回退网格所在的元数据 GPU 缓冲。" }
+  n0@{ shape: rounded, label: "**prepare​_​mesh​_​metadata​_​fallback​_​**<br/>**buffer**<br/>取得回退网格所在的元数据 GPU 缓冲。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**mesh::MeshMetadataFallbackMesh**<br/>标识生成缺省网格元数据缓冲的网格。" }
+  n1@{ shape: cyl, label: "**MeshMetadataFallbackMesh**<br/>标识生成缺省网格元数据缓冲的网格。" }
   class n1 node_resource
-  n2@{ shape: cyl, label: "**mesh::MeshMetadataFallbackBuffer**<br/>为无元数据网格提供可绑定的缺省缓冲。" }
+  n2@{ shape: cyl, label: "**MeshMetadataFallbackBuffer**<br/>为无元数据网格提供可绑定的缺省缓冲。" }
   class n2 node_resource
-  n3@{ shape: fr-rect, label: "**mesh::MeshRenderAssetPlugin**<br/>提取并准备 GPU 网格资产。" }
+  n3@{ shape: fr-rect, label: "**MeshRenderAssetPlugin**<br/>提取并准备 GPU 网格资产。" }
   class n3 node_plugin
-  n4@{ shape: rounded, label: "**bevy​_​render::render​_​asset::prepare​_​**<br/>**assets#lt;bevy​_​render::mesh::**<br/>**RenderMesh#gt;**<br/>在上传预算内准备资产并保留重试项。" }
+  n4@{ shape: rounded, label: "**prepare​_​assets**<br/>在上传预算内准备资产并保留重试项。" }
   class n4 node_system
-  n5@{ shape: cyl, label: "**mesh::allocator::MeshAllocator**<br/>分配并管理网格顶点和索引 GPU 缓冲。" }
+  n5@{ shape: cyl, label: "**MeshAllocator**<br/>分配并管理网格顶点和索引 GPU 缓冲。" }
   class n5 node_resource
   n6@{ shape: lin-rect, label: "**PrepareAssets**<br/>组织渲染数据准备与绘制排队。" }
   class n6 node_system_set

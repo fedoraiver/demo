@@ -37,13 +37,13 @@ flowchart LR
   classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**mesh2d::material::**<br/>**PendingMeshMaterial2dQueues**<br/>保留等待材质加载的二维网格绘制任务。" }
+  n0@{ shape: cyl, label: "**PendingMeshMaterial2dQueues**<br/>保留等待材质加载的二维网格绘制任务。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::**<br/>**material::specialize​_​material2d​_​**<br/>**meshes**<br/>为可见二维网格重建失效的材质专用化。" }
+  n1@{ shape: rounded, label: "**specialize​_​material2d​_​meshes**<br/>为可见二维网格重建失效的材质专用化。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::**<br/>**material::queue​_​material2d​_​meshes**<br/>按透明模式更新二维网格渲染批次。" }
+  n2@{ shape: rounded, label: "**queue​_​material2d​_​meshes**<br/>按透明模式更新二维网格渲染批次。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::**<br/>**material::prepare​_​pending​_​mesh​_​**<br/>**material2d​_​queues**<br/>轮换二维材质待就绪队列并清理失效视图。" }
+  n3@{ shape: rounded, label: "**prepare​_​pending​_​mesh​_​material2d​_​**<br/>**queues**<br/>轮换二维材质待就绪队列并清理失效视图。" }
   class n3 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

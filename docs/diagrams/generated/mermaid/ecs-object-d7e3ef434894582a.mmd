@@ -40,12 +40,12 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: lin-rect, label: "**AnonymousSet(0)**<br/>保存一组系统的共同配置。" }
   class n0 node_system_set
-  n1@{ shape: rounded, label: "**bevy​_​ecs::apply​_​deferred**<br/>标识由执行器刷新延迟命令的同步点。" }
+  n1@{ shape: rounded, label: "**apply​_​deferred**<br/>标识由执行器刷新延迟命令的同步点。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**#lt;bevy​_​egui::EguiPlugin as bevy​_​app::**<br/>**plugin::Plugin#gt;::build::{{closure}}**<br/>来自crate:bevy​_​egui ↗：判断启动时是否<br/>自动创建主 Egui 上下文。" }
+  n2@{ shape: rounded, label: "**build::{{closure}}**<br/>来自crate:bevy​_​egui ↗：判断启动时是否<br/>自动创建主 Egui 上下文。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​egui::setup​_​primary​_​egui​_​**<br/>**context​_​system**<br/>来自crate:bevy​_​egui ↗：为首个合适相机<br/>建立主 Egui 上下文。" }
+  n3@{ shape: rounded, label: "**setup​_​primary​_​egui​_​context​_​system**<br/>来自crate:bevy​_​egui ↗：为首个合适相机<br/>建立主 Egui 上下文。" }
   class n3 node_system
   class n3 external_node
   n0 e0@-->|"集合成员"| n1

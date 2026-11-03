@@ -38,11 +38,11 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**view::window::screenshot::**<br/>**RenderScreenshotsPrepared**<br/>保存本帧已准备好的截图渲染资源。" }
+  n0@{ shape: cyl, label: "**RenderScreenshotsPrepared**<br/>保存本帧已准备好的截图渲染资源。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​render::renderer::render​_​system**<br/>运行渲染图调度并完成回读和窗口呈现。" }
+  n1@{ shape: rounded, label: "**render​_​system**<br/>运行渲染图调度并完成回读和窗口呈现。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​render::view::window::**<br/>**screenshot::prepare​_​screenshots**<br/>为有效截图目标准备捕获资源和输出附件。" }
+  n2@{ shape: rounded, label: "**prepare​_​screenshots**<br/>为有效截图目标准备捕获资源和输出附件。" }
   class n2 node_system
   n0 e0@--> n1
   class e0 edge_read

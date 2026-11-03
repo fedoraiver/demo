@@ -42,20 +42,20 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​asset::assets::Assets#lt;bevy​_​**<br/>**pbr::extended​_​material::**<br/>**ExtendedMaterial#lt;bevy​_​pbr::pbr​_​**<br/>**material::StandardMaterial, bevy​_​**<br/>**pbr::decal::forward::**<br/>**ForwardDecalMaterialExt#gt;#gt;::asset​_​**<br/>**events**<br/>发布累计的资产变化消息。" }
+  n0@{ shape: rounded, label: "**asset​_​events**<br/>发布累计的资产变化消息。" }
   class n0 node_system
   n1@{ shape: lin-rect, label: "**AssetEventSystems**<br/>发布资产容器积累的变更消息。" }
   class n1 node_system_set
-  n2@{ shape: rounded, label: "**bevy​_​asset::assets::Assets#lt;bevy​_​**<br/>**pbr::extended​_​material::**<br/>**ExtendedMaterial#lt;bevy​_​pbr::pbr​_​**<br/>**material::StandardMaterial, bevy​_​**<br/>**pbr::decal::forward::**<br/>**ForwardDecalMaterialExt#gt;#gt;::asset​_​**<br/>**events​_​condition**<br/>判断是否有待发布的资产变化。" }
+  n2@{ shape: rounded, label: "**asset​_​events​_​condition**<br/>判断是否有待发布的资产变化。" }
   class n2 node_system
-  n3@{ shape: lean-r, label: "**bevy​_​asset::AssetEvent#lt;extended​_​**<br/>**material::ExtendedMaterial#lt;pbr​_​**<br/>**material::StandardMaterial, decal::**<br/>**forward::ForwardDecalMaterialExt#gt;#gt;**<br/>通知指定资产及依赖发生变化。" }
+  n3@{ shape: lean-r, label: "**AssetEvent#lt;ExtendedMaterial#lt;Standard**<br/>**Material, ForwardDecalMaterialExt#gt;#gt;**<br/>通知指定资产及依赖发生变化。" }
   class n3 node_message
-  n4@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;bevy​_​**<br/>**asset::AssetEvent#lt;extended​_​**<br/>**material::ExtendedMaterial#lt;pbr​_​**<br/>**material::StandardMaterial, decal::**<br/>**forward::ForwardDecalMaterialExt#gt;#gt;#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n4@{ shape: cyl, label: "**Messages#lt;AssetEvent#lt;ExtendedMaterial**<br/>**#lt;StandardMaterial,**<br/>**ForwardDecalMaterialExt#gt;#gt;#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n4 node_resource
   class n4 external_node
-  n5@{ shape: cyl, label: "**bevy​_​asset::Assets#lt;extended​_​**<br/>**material::ExtendedMaterial#lt;pbr​_​**<br/>**material::StandardMaterial, decal::**<br/>**forward::ForwardDecalMaterialExt#gt;#gt;**<br/>按资产身份存储对象并暂存变化消息。" }
+  n5@{ shape: cyl, label: "**Assets#lt;ExtendedMaterial#lt;StandardMate**<br/>**rial, ForwardDecalMaterialExt#gt;#gt;**<br/>按资产身份存储对象并暂存变化消息。" }
   class n5 node_resource
-  n6@{ shape: cyl, label: "**bevy​_​asset::asset​_​changed::**<br/>**AssetChanges#lt;extended​_​material::**<br/>**ExtendedMaterial#lt;pbr​_​material::**<br/>**StandardMaterial, decal::forward::**<br/>**ForwardDecalMaterialExt#gt;#gt;**<br/>记录资产最近变化的系统刻度。" }
+  n6@{ shape: cyl, label: "**AssetChanges#lt;ExtendedMaterial#lt;Standa**<br/>**rdMaterial,**<br/>**ForwardDecalMaterialExt#gt;#gt;**<br/>记录资产最近变化的系统刻度。" }
   class n6 node_resource
   n1 e0@-->|"集合成员"| n0
   class e0 edge_set_membership

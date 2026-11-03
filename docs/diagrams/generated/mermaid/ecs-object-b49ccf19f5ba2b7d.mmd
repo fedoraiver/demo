@@ -43,18 +43,18 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​egui::update​_​ui​_​screen​_​rect**<br/>把相机视口换算为 Egui 逻辑屏幕区域。" }
+  n0@{ shape: rounded, label: "**update​_​ui​_​screen​_​rect**<br/>把相机视口换算为 Egui 逻辑屏幕区域。" }
   class n0 node_system
   n1@{ shape: lin-rect, label: "**InitContexts**<br/>组织 Egui 上下文与输入准备。" }
   class n1 node_system_set
   n2@{ shape: rounded, label: "**EguiOutput**<br/>保存上一轮 Egui 的平台输出和像素点比例" }
   class n2 node_component
-  n3@{ shape: rounded, label: "**bevy​_​camera::Camera**<br/>来自crate:bevy​_​camera ↗：配置相机视<br/>口、输出目标和渲染顺序。" }
+  n3@{ shape: rounded, label: "**Camera**<br/>来自crate:bevy​_​camera ↗：配置相机视<br/>口、输出目标和渲染顺序。" }
   class n3 node_component
   class n3 external_node
   n4@{ shape: rounded, label: "**EguiInput**<br/>保存送入当前 Egui 上下文的 RawInput" }
   class n4 node_component
-  n5@{ shape: rounded, label: "**bevy​_​ecs::apply​_​deferred**<br/>来自crate:bevy​_​ecs ↗：标识由执行器刷<br/>新延迟命令的同步点。" }
+  n5@{ shape: rounded, label: "**apply​_​deferred**<br/>来自crate:bevy​_​ecs ↗：标识由执行器刷<br/>新延迟命令的同步点。" }
   class n5 node_system
   class n5 external_node
   n6@{ shape: rounded, label: "**EguiContext**<br/>包装一个 egui::Context" }

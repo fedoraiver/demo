@@ -40,11 +40,11 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**UiAntiAlias**<br/>控制相机中的 UI 几何抗锯齿。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​ui​_​render::extract​_​ui​_​camera​_​**<br/>**view**<br/>为活动二维或三维相机维护独立 UI 视图。" }
+  n1@{ shape: rounded, label: "**extract​_​ui​_​camera​_​view**<br/>为活动二维或三维相机维护独立 UI 视图。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​ui​_​render::gradient::queue​_​**<br/>**gradient**<br/>按目标视图与堆叠顺序排队 UI 渐变。" }
+  n2@{ shape: rounded, label: "**queue​_​gradient**<br/>按目标视图与堆叠顺序排队 UI 渐变。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​ui​_​render::queue​_​uinodes**<br/>按目标相机和堆叠顺序排队 UI 节点。" }
+  n3@{ shape: rounded, label: "**queue​_​uinodes**<br/>按目标相机和堆叠顺序排队 UI 节点。" }
   class n3 node_system
   n1 e0@-->|"移除"| n0
   class e0 edge_write

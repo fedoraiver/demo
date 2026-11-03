@@ -38,31 +38,31 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**list::ActiveDescendant**<br/>记录列表键盘导航的活动行。" }
+  n0@{ shape: rounded, label: "**ActiveDescendant**<br/>记录列表键盘导航的活动行。" }
   class n0 node_component
-  n1@{ shape: hex, label: "**bevy​_​ui​_​widgets::list::listbox​_​on​_​**<br/>**key​_​input**<br/>处理列表键盘导航与行确认。" }
+  n1@{ shape: hex, label: "**listbox​_​on​_​key​_​input**<br/>处理列表键盘导航与行确认。" }
   class n1 node_observer
-  n2@{ shape: hex, label: "**bevy​_​ui​_​widgets::list::listbox​_​on​_​**<br/>**key​_​input**<br/>处理列表键盘导航与行确认。" }
+  n2@{ shape: hex, label: "**listbox​_​on​_​key​_​input**<br/>处理列表键盘导航与行确认。" }
   class n2 node_observer
-  n3@{ shape: hex, label: "**bevy​_​ui​_​widgets::list::listbox​_​**<br/>**focus​_​lost**<br/>清除失焦列表的键盘活动行。" }
+  n3@{ shape: hex, label: "**listbox​_​focus​_​lost**<br/>清除失焦列表的键盘活动行。" }
   class n3 node_observer
-  n4@{ shape: hex, label: "**bevy​_​ui​_​widgets::list::listbox​_​on​_​**<br/>**row​_​click**<br/>将列表行点击转为选择或重选请求。" }
+  n4@{ shape: hex, label: "**listbox​_​on​_​row​_​click**<br/>将列表行点击转为选择或重选请求。" }
   class n4 node_observer
-  n5@{ shape: hex, label: "**bevy​_​ui​_​widgets::list::listbox​_​on​_​**<br/>**key​_​input**<br/>处理列表键盘导航与行确认。" }
+  n5@{ shape: hex, label: "**listbox​_​on​_​key​_​input**<br/>处理列表键盘导航与行确认。" }
   class n5 node_observer
-  n6@{ shape: hex, label: "**bevy​_​ui​_​widgets::list::listbox​_​**<br/>**focus​_​gained**<br/>在列表获焦时初始化活动行。" }
+  n6@{ shape: hex, label: "**listbox​_​focus​_​gained**<br/>在列表获焦时初始化活动行。" }
   class n6 node_observer
-  n7@{ shape: hex, label: "**bevy​_​ui​_​widgets::list::listbox​_​**<br/>**focus​_​lost**<br/>清除失焦列表的键盘活动行。" }
+  n7@{ shape: hex, label: "**listbox​_​focus​_​lost**<br/>清除失焦列表的键盘活动行。" }
   class n7 node_observer
-  n8@{ shape: hex, label: "**bevy​_​ui​_​widgets::list::listbox​_​on​_​**<br/>**row​_​click**<br/>将列表行点击转为选择或重选请求。" }
+  n8@{ shape: hex, label: "**listbox​_​on​_​row​_​click**<br/>将列表行点击转为选择或重选请求。" }
   class n8 node_observer
-  n9@{ shape: hex, label: "**bevy​_​ui​_​widgets::list::listbox​_​**<br/>**focus​_​gained**<br/>在列表获焦时初始化活动行。" }
+  n9@{ shape: hex, label: "**listbox​_​focus​_​gained**<br/>在列表获焦时初始化活动行。" }
   class n9 node_observer
-  n10@{ shape: hex, label: "**bevy​_​ui​_​widgets::list::listbox​_​on​_​**<br/>**row​_​click**<br/>将列表行点击转为选择或重选请求。" }
+  n10@{ shape: hex, label: "**listbox​_​on​_​row​_​click**<br/>将列表行点击转为选择或重选请求。" }
   class n10 node_observer
-  n11@{ shape: hex, label: "**bevy​_​ui​_​widgets::list::listbox​_​**<br/>**focus​_​gained**<br/>在列表获焦时初始化活动行。" }
+  n11@{ shape: hex, label: "**listbox​_​focus​_​gained**<br/>在列表获焦时初始化活动行。" }
   class n11 node_observer
-  n12@{ shape: hex, label: "**bevy​_​ui​_​widgets::list::listbox​_​**<br/>**focus​_​lost**<br/>清除失焦列表的键盘活动行。" }
+  n12@{ shape: hex, label: "**listbox​_​focus​_​lost**<br/>清除失焦列表的键盘活动行。" }
   class n12 node_observer
   n1 e0@-->|"插入"| n0
   class e0 edge_write

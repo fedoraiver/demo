@@ -39,9 +39,9 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: lin-rect, label: "**Cleanup**<br/>组织渲染数据准备与绘制排队。" }
   class n0 node_system_set
-  n1@{ shape: rounded, label: "**bevy​_​render::camera::expire​_​**<br/>**specializations​_​for​_​views**<br/>移除已失效视图的材质专用化脏标记。" }
+  n1@{ shape: rounded, label: "**expire​_​specializations​_​for​_​views**<br/>移除已失效视图的材质专用化脏标记。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​render::camera::expire​_​**<br/>**wireframe​_​specializations​_​for​_​views**<br/>移除已失效视图的线框专用化脏标记。" }
+  n2@{ shape: rounded, label: "**expire​_​wireframe​_​specializations​_​**<br/>**for​_​views**<br/>移除已失效视图的线框专用化脏标记。" }
   class n2 node_system
   n0 e0@-->|"集合成员"| n1
   class e0 edge_set_membership

@@ -37,43 +37,43 @@ flowchart LR
   classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**menu::MenuItem**<br/>标识可交互的菜单项。" }
+  n0@{ shape: rounded, label: "**MenuItem**<br/>标识可交互的菜单项。" }
   class n0 node_component
-  n1@{ shape: hex, label: "**bevy​_​ui​_​widgets::menu::menu​_​on​_​key​_​**<br/>**event**<br/>处理菜单键盘导航、激活与关闭。" }
+  n1@{ shape: hex, label: "**menu​_​on​_​key​_​event**<br/>处理菜单键盘导航、激活与关闭。" }
   class n1 node_observer
-  n2@{ shape: hex, label: "**bevy​_​ui​_​widgets::menu::menu​_​item​_​on​_​**<br/>**pointer​_​cancel**<br/>取消菜单项的指针按压状态。" }
+  n2@{ shape: hex, label: "**menu​_​item​_​on​_​pointer​_​cancel**<br/>取消菜单项的指针按压状态。" }
   class n2 node_observer
-  n3@{ shape: hex, label: "**bevy​_​ui​_​widgets::menu::menu​_​item​_​on​_​**<br/>**pointer​_​click**<br/>激活点击菜单项并请求关闭菜单。" }
+  n3@{ shape: hex, label: "**menu​_​item​_​on​_​pointer​_​click**<br/>激活点击菜单项并请求关闭菜单。" }
   class n3 node_observer
-  n4@{ shape: hex, label: "**bevy​_​ui​_​widgets::menu::menu​_​item​_​on​_​**<br/>**pointer​_​up**<br/>在指针释放时清除菜单项按压。" }
+  n4@{ shape: hex, label: "**menu​_​item​_​on​_​pointer​_​up**<br/>在指针释放时清除菜单项按压。" }
   class n4 node_observer
-  n5@{ shape: hex, label: "**bevy​_​ui​_​widgets::menu::menu​_​item​_​on​_​**<br/>**pointer​_​up**<br/>在指针释放时清除菜单项按压。" }
+  n5@{ shape: hex, label: "**menu​_​item​_​on​_​pointer​_​up**<br/>在指针释放时清除菜单项按压。" }
   class n5 node_observer
-  n6@{ shape: hex, label: "**bevy​_​ui​_​widgets::menu::menu​_​item​_​on​_​**<br/>**pointer​_​click**<br/>激活点击菜单项并请求关闭菜单。" }
+  n6@{ shape: hex, label: "**menu​_​item​_​on​_​pointer​_​click**<br/>激活点击菜单项并请求关闭菜单。" }
   class n6 node_observer
-  n7@{ shape: hex, label: "**bevy​_​ui​_​widgets::menu::menu​_​item​_​on​_​**<br/>**pointer​_​cancel**<br/>取消菜单项的指针按压状态。" }
+  n7@{ shape: hex, label: "**menu​_​item​_​on​_​pointer​_​cancel**<br/>取消菜单项的指针按压状态。" }
   class n7 node_observer
-  n8@{ shape: hex, label: "**bevy​_​ui​_​widgets::menu::menu​_​item​_​on​_​**<br/>**pointer​_​drag​_​end**<br/>在拖动结束时清除菜单项按压。" }
+  n8@{ shape: hex, label: "**menu​_​item​_​on​_​pointer​_​drag​_​end**<br/>在拖动结束时清除菜单项按压。" }
   class n8 node_observer
-  n9@{ shape: hex, label: "**bevy​_​ui​_​widgets::menu::menu​_​item​_​on​_​**<br/>**pointer​_​drag​_​end**<br/>在拖动结束时清除菜单项按压。" }
+  n9@{ shape: hex, label: "**menu​_​item​_​on​_​pointer​_​drag​_​end**<br/>在拖动结束时清除菜单项按压。" }
   class n9 node_observer
-  n10@{ shape: hex, label: "**bevy​_​ui​_​widgets::menu::menu​_​on​_​key​_​**<br/>**event**<br/>处理菜单键盘导航、激活与关闭。" }
+  n10@{ shape: hex, label: "**menu​_​on​_​key​_​event**<br/>处理菜单键盘导航、激活与关闭。" }
   class n10 node_observer
-  n11@{ shape: hex, label: "**bevy​_​ui​_​widgets::menu::menu​_​item​_​on​_​**<br/>**pointer​_​cancel**<br/>取消菜单项的指针按压状态。" }
+  n11@{ shape: hex, label: "**menu​_​item​_​on​_​pointer​_​cancel**<br/>取消菜单项的指针按压状态。" }
   class n11 node_observer
-  n12@{ shape: hex, label: "**bevy​_​ui​_​widgets::menu::menu​_​item​_​on​_​**<br/>**pointer​_​down**<br/>记录菜单项的指针按压。" }
+  n12@{ shape: hex, label: "**menu​_​item​_​on​_​pointer​_​down**<br/>记录菜单项的指针按压。" }
   class n12 node_observer
-  n13@{ shape: hex, label: "**bevy​_​ui​_​widgets::menu::menu​_​item​_​on​_​**<br/>**pointer​_​up**<br/>在指针释放时清除菜单项按压。" }
+  n13@{ shape: hex, label: "**menu​_​item​_​on​_​pointer​_​up**<br/>在指针释放时清除菜单项按压。" }
   class n13 node_observer
-  n14@{ shape: hex, label: "**bevy​_​ui​_​widgets::menu::menu​_​item​_​on​_​**<br/>**pointer​_​down**<br/>记录菜单项的指针按压。" }
+  n14@{ shape: hex, label: "**menu​_​item​_​on​_​pointer​_​down**<br/>记录菜单项的指针按压。" }
   class n14 node_observer
-  n15@{ shape: hex, label: "**bevy​_​ui​_​widgets::menu::menu​_​item​_​on​_​**<br/>**pointer​_​down**<br/>记录菜单项的指针按压。" }
+  n15@{ shape: hex, label: "**menu​_​item​_​on​_​pointer​_​down**<br/>记录菜单项的指针按压。" }
   class n15 node_observer
-  n16@{ shape: hex, label: "**bevy​_​ui​_​widgets::menu::menu​_​on​_​key​_​**<br/>**event**<br/>处理菜单键盘导航、激活与关闭。" }
+  n16@{ shape: hex, label: "**menu​_​on​_​key​_​event**<br/>处理菜单键盘导航、激活与关闭。" }
   class n16 node_observer
-  n17@{ shape: hex, label: "**bevy​_​ui​_​widgets::menu::menu​_​item​_​on​_​**<br/>**pointer​_​click**<br/>激活点击菜单项并请求关闭菜单。" }
+  n17@{ shape: hex, label: "**menu​_​item​_​on​_​pointer​_​click**<br/>激活点击菜单项并请求关闭菜单。" }
   class n17 node_observer
-  n18@{ shape: hex, label: "**bevy​_​ui​_​widgets::menu::menu​_​item​_​on​_​**<br/>**pointer​_​drag​_​end**<br/>在拖动结束时清除菜单项按压。" }
+  n18@{ shape: hex, label: "**menu​_​item​_​on​_​pointer​_​drag​_​end**<br/>在拖动结束时清除菜单项按压。" }
   class n18 node_observer
   n0 e0@-->|"存在性约束"| n1
   class e0 edge_reference

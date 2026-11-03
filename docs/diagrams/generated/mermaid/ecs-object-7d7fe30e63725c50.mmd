@@ -39,11 +39,11 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​render::batching::sort​_​binned​_​**<br/>**render​_​phase#lt;bevy​_​core​_​pipeline::**<br/>**deferred::AlphaMask3dDeferred#gt;**<br/>按分桶键对各视图阶段的多绘制、可批处理、<br/>不可批处理网格及非网格项分别排序，使后续<br/>批次准备使用确定的键顺序。" }
+  n0@{ shape: rounded, label: "**sort​_​binned​_​render​_​phase**<br/>按分桶键对各视图阶段的多绘制、可批处理、<br/>不可批处理网格及非网格项分别排序，使后续<br/>批次准备使用确定的键顺序。" }
   class n0 node_system
   n1@{ shape: lin-rect, label: "**PhaseSort**<br/>组织渲染数据准备与绘制排队。" }
   class n1 node_system_set
-  n2@{ shape: cyl, label: "**bevy​_​render::render​_​phase::**<br/>**ViewBinnedRenderPhases#lt;deferred::**<br/>**AlphaMask3dDeferred#gt;**<br/>汇集各视图按分桶组织的绘制指令。" }
+  n2@{ shape: cyl, label: "**ViewBinnedRenderPhases#lt;AlphaMask3dDe**<br/>**ferred#gt;**<br/>汇集各视图按分桶组织的绘制指令。" }
   class n2 node_resource
   n1 e0@-->|"集合成员"| n0
   class e0 edge_set_membership

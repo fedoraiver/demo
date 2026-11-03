@@ -43,10 +43,10 @@ flowchart LR
   n1@{ shape: lin-rect, label: "**ExitSystems**<br/>来自crate:bevy​_​window ↗：按窗口关闭策<br/>略请求应用退出。" }
   class n1 node_system_set
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​winit::system::despawn​_​windows**<br/>来自crate:bevy​_​winit ↗：处理原生窗口<br/>关闭并延后一轮释放包装器。" }
+  n2@{ shape: rounded, label: "**despawn​_​windows**<br/>来自crate:bevy​_​winit ↗：处理原生窗口<br/>关闭并延后一轮释放包装器。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​time::delayed​_​commands::**<br/>**silence​_​delayed​_​command​_​queues​_​on​_​**<br/>**exit**<br/>来自crate:bevy​_​time ↗：在退出时关闭未<br/>执行延迟队列的丢弃警告。" }
+  n3@{ shape: rounded, label: "**silence​_​delayed​_​command​_​queues​_​on​_​**<br/>**exit**<br/>来自crate:bevy​_​time ↗：在退出时关闭未<br/>执行延迟队列的丢弃警告。" }
   class n3 node_system
   class n3 external_node
   n1 e0@-->|"先于"| n0

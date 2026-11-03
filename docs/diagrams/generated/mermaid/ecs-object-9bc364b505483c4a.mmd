@@ -38,213 +38,213 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**bevy​_​asset::AssetServer**<br/>加载资产并追踪加载状态。" }
+  n0@{ shape: cyl, label: "**AssetServer**<br/>加载资产并追踪加载状态。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​render::init​_​gpu​_​resource#lt;bevy​_​**<br/>**pbr::cluster::gpu::**<br/>**ClusteringZSlicingPipeline#gt;**<br/>来自crate:bevy​_​render ↗：构造并插入渲<br/>染所需资源。" }
+  n1@{ shape: rounded, label: "**init​_​gpu​_​resource**<br/>来自crate:bevy​_​render ↗：构造并插入渲<br/>染所需资源。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​core​_​pipeline::blit::init​_​blit​_​**<br/>**pipeline**<br/>来自crate:bevy​_​core​_​pipeline ↗：建立<br/>全屏颜色复制与缩放的 Blit 资源。" }
+  n2@{ shape: rounded, label: "**init​_​blit​_​pipeline**<br/>来自crate:bevy​_​core​_​pipeline ↗：建立<br/>全屏颜色复制与缩放的 Blit 资源。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​asset::assets::Assets#lt;bevy​_​**<br/>**gizmos::GizmoAsset#gt;::track​_​assets**<br/>同步资产存活状态并处理句柄释放。" }
+  n3@{ shape: rounded, label: "**track​_​assets**<br/>同步资产存活状态并处理句柄释放。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**bevy​_​render::init​_​gpu​_​resource#lt;bevy​_​**<br/>**pbr::atmosphere::resources::**<br/>**AtmosphereLutPipelines#gt;**<br/>来自crate:bevy​_​render ↗：构造并插入渲<br/>染所需资源。" }
+  n4@{ shape: rounded, label: "**init​_​gpu​_​resource**<br/>来自crate:bevy​_​render ↗：构造并插入渲<br/>染所需资源。" }
   class n4 node_system
   class n4 external_node
-  n5@{ shape: rounded, label: "**bevy​_​core​_​pipeline::skybox::init​_​**<br/>**skybox​_​pipeline**<br/>来自crate:bevy​_​core​_​pipeline ↗：加载<br/>天空盒着色器并建立管线资源。" }
+  n5@{ shape: rounded, label: "**init​_​skybox​_​pipeline**<br/>来自crate:bevy​_​core​_​pipeline ↗：加载<br/>天空盒着色器并建立管线资源。" }
   class n5 node_system
   class n5 external_node
-  n6@{ shape: rounded, label: "**bevy​_​asset::assets::Assets#lt;bevy​_​**<br/>**text::font::Font#gt;::track​_​assets**<br/>同步资产存活状态并处理句柄释放。" }
+  n6@{ shape: rounded, label: "**track​_​assets**<br/>同步资产存活状态并处理句柄释放。" }
   class n6 node_system
-  n7@{ shape: rounded, label: "**bevy​_​post​_​process::bloom::**<br/>**downsampling​_​pipeline::init​_​bloom​_​**<br/>**downsampling​_​pipeline**<br/>来自crate:bevy​_​post​_​process ↗：建立<br/>Bloom 降采样的纹理与参数管线。" }
+  n7@{ shape: rounded, label: "**init​_​bloom​_​downsampling​_​pipeline**<br/>来自crate:bevy​_​post​_​process ↗：建立<br/>Bloom 降采样的纹理与参数管线。" }
   class n7 node_system
   class n7 external_node
-  n8@{ shape: rounded, label: "**bevy​_​render::view::window::**<br/>**screenshot::init​_​screenshot​_​to​_​**<br/>**screen​_​pipeline**<br/>来自crate:bevy​_​render ↗：建立把截图纹<br/>理复制到屏幕的管线资源。" }
+  n8@{ shape: rounded, label: "**init​_​screenshot​_​to​_​screen​_​pipeline**<br/>来自crate:bevy​_​render ↗：建立把截图纹<br/>理复制到屏幕的管线资源。" }
   class n8 node_system
   class n8 external_node
-  n9@{ shape: rounded, label: "**bevy​_​asset::assets::Assets#lt;bevy​_​**<br/>**world​_​serialization::world​_​asset::**<br/>**WorldAsset#gt;::track​_​assets**<br/>同步资产存活状态并处理句柄释放。" }
+  n9@{ shape: rounded, label: "**track​_​assets**<br/>同步资产存活状态并处理句柄释放。" }
   class n9 node_system
-  n10@{ shape: rounded, label: "**bevy​_​pbr::volumetric​_​fog::render::**<br/>**init​_​volumetric​_​fog​_​pipeline**<br/>来自crate:bevy​_​pbr ↗：初始化体积雾管<br/>线的视图布局与着色器。" }
+  n10@{ shape: rounded, label: "**init​_​volumetric​_​fog​_​pipeline**<br/>来自crate:bevy​_​pbr ↗：初始化体积雾管<br/>线的视图布局与着色器。" }
   class n10 node_system
   class n10 external_node
-  n11@{ shape: rounded, label: "**bevy​_​asset::assets::Assets#lt;bevy​_​**<br/>**gltf::material::GltfMaterial#gt;::**<br/>**track​_​assets**<br/>同步资产存活状态并处理句柄释放。" }
+  n11@{ shape: rounded, label: "**track​_​assets**<br/>同步资产存活状态并处理句柄释放。" }
   class n11 node_system
-  n12@{ shape: rounded, label: "**bevy​_​asset::assets::Assets#lt;bevy​_​**<br/>**world​_​serialization::dynamic​_​world::**<br/>**DynamicWorld#gt;::track​_​assets**<br/>同步资产存活状态并处理句柄释放。" }
+  n12@{ shape: rounded, label: "**track​_​assets**<br/>同步资产存活状态并处理句柄释放。" }
   class n12 node_system
-  n13@{ shape: rounded, label: "**demo::ui::backdrop::spawn​_​backdrop**<br/>来自ui ↗：装配主菜单海岛展示舞台、相机<br/>与日光。" }
+  n13@{ shape: rounded, label: "**spawn​_​backdrop**<br/>来自ui ↗：装配主菜单海岛展示舞台、相机<br/>与日光。" }
   class n13 node_system
   class n13 external_node
-  n14@{ shape: rounded, label: "**bevy​_​ui​_​render::gradient::init​_​**<br/>**gradient​_​pipeline**<br/>来自crate:bevy​_​ui​_​render ↗：建立 UI<br/>渐变的视图布局和着色器资源。" }
+  n14@{ shape: rounded, label: "**init​_​gradient​_​pipeline**<br/>来自crate:bevy​_​ui​_​render ↗：建立 UI<br/>渐变的视图布局和着色器资源。" }
   class n14 node_system
   class n14 external_node
-  n15@{ shape: rounded, label: "**bevy​_​asset::server::handle​_​internal​_​**<br/>**asset​_​events**<br/>处理资产加载、依赖就绪及失败通知。" }
+  n15@{ shape: rounded, label: "**handle​_​internal​_​asset​_​events**<br/>处理资产加载、依赖就绪及失败通知。" }
   class n15 node_system
-  n16@{ shape: rounded, label: "**bevy​_​pbr::light​_​probe::generate::**<br/>**initialize​_​generated​_​environment​_​**<br/>**map​_​resources**<br/>来自crate:bevy​_​pbr ↗：初始化环境图降<br/>采样、复制和卷积的 GPU 接口。" }
+  n16@{ shape: rounded, label: "**initialize​_​generated​_​environment​_​**<br/>**map​_​resources**<br/>来自crate:bevy​_​pbr ↗：初始化环境图降<br/>采样、复制和卷积的 GPU 接口。" }
   class n16 node_system
   class n16 external_node
-  n17@{ shape: rounded, label: "**bevy​_​sprite​_​render::render::init​_​**<br/>**sprite​_​pipeline**<br/>来自crate:bevy​_​sprite​_​render ↗：建立<br/>精灵视图和图像材质管线资源。" }
+  n17@{ shape: rounded, label: "**init​_​sprite​_​pipeline**<br/>来自crate:bevy​_​sprite​_​render ↗：建立<br/>精灵视图和图像材质管线资源。" }
   class n17 node_system
   class n17 external_node
-  n18@{ shape: rounded, label: "**bevy​_​asset::assets::Assets#lt;bevy​_​**<br/>**kira​_​audio::source::AudioSource#gt;::**<br/>**track​_​assets**<br/>同步资产存活状态并处理句柄释放。" }
+  n18@{ shape: rounded, label: "**track​_​assets**<br/>同步资产存活状态并处理句柄释放。" }
   class n18 node_system
-  n19@{ shape: rounded, label: "**bevy​_​gizmos​_​render::pipeline​_​2d::**<br/>**init​_​line​_​gizmo​_​pipelines**<br/>来自crate:bevy​_​gizmos​_​render ↗：建立<br/>二维 Gizmo 线段和接头管线。" }
+  n19@{ shape: rounded, label: "**init​_​line​_​gizmo​_​pipelines**<br/>来自crate:bevy​_​gizmos​_​render ↗：建立<br/>二维 Gizmo 线段和接头管线。" }
   class n19 node_system
   class n19 external_node
-  n20@{ shape: rounded, label: "**bevy​_​core​_​pipeline::oit::resolve::**<br/>**queue​_​oit​_​resolve​_​pipeline**<br/>来自crate:bevy​_​core​_​pipeline ↗：按<br/>OIT 相机设置缓存透明解析管线。" }
+  n20@{ shape: rounded, label: "**queue​_​oit​_​resolve​_​pipeline**<br/>来自crate:bevy​_​core​_​pipeline ↗：按<br/>OIT 相机设置缓存透明解析管线。" }
   class n20 node_system
   class n20 external_node
-  n21@{ shape: rounded, label: "**bevy​_​asset::assets::Assets#lt;bevy​_​**<br/>**asset::assets::LoadedUntypedAsset#gt;::**<br/>**track​_​assets**<br/>同步资产存活状态并处理句柄释放。" }
+  n21@{ shape: rounded, label: "**track​_​assets**<br/>同步资产存活状态并处理句柄释放。" }
   class n21 node_system
-  n22@{ shape: rounded, label: "**bevy​_​asset::assets::Assets#lt;()#gt;::**<br/>**track​_​assets**<br/>同步资产存活状态并处理句柄释放。" }
+  n22@{ shape: rounded, label: "**track​_​assets**<br/>同步资产存活状态并处理句柄释放。" }
   class n22 node_system
-  n23@{ shape: rounded, label: "**bevy​_​asset::assets::Assets#lt;bevy​_​**<br/>**scene::scene​_​patch::**<br/>**SceneListPatch#gt;::track​_​assets**<br/>同步资产存活状态并处理句柄释放。" }
+  n23@{ shape: rounded, label: "**track​_​assets**<br/>同步资产存活状态并处理句柄释放。" }
   class n23 node_system
-  n24@{ shape: rounded, label: "**bevy​_​pbr::ssr::init​_​screen​_​space​_​**<br/>**reflections​_​pipeline**<br/>来自crate:bevy​_​pbr ↗：初始化屏幕空间<br/>反射的全屏渲染管线资源。" }
+  n24@{ shape: rounded, label: "**init​_​screen​_​space​_​reflections​_​**<br/>**pipeline**<br/>来自crate:bevy​_​pbr ↗：初始化屏幕空间<br/>反射的全屏渲染管线资源。" }
   class n24 node_system
   class n24 external_node
-  n25@{ shape: rounded, label: "**bevy​_​asset::assets::Assets#lt;bevy​_​**<br/>**render::storage::ShaderBuffer#gt;::**<br/>**track​_​assets**<br/>同步资产存活状态并处理句柄释放。" }
+  n25@{ shape: rounded, label: "**track​_​assets**<br/>同步资产存活状态并处理句柄释放。" }
   class n25 node_system
-  n26@{ shape: rounded, label: "**bevy​_​ui​_​render::pipeline::init​_​ui​_​**<br/>**pipeline**<br/>来自crate:bevy​_​ui​_​render ↗：建立 UI<br/>图形的视图、图像和采样器布局。" }
+  n26@{ shape: rounded, label: "**init​_​ui​_​pipeline**<br/>来自crate:bevy​_​ui​_​render ↗：建立 UI<br/>图形的视图、图像和采样器布局。" }
   class n26 node_system
   class n26 external_node
-  n27@{ shape: rounded, label: "**bevy​_​core​_​pipeline::deferred::copy​_​**<br/>**lighting​_​id::init​_​copy​_​deferred​_​**<br/>**lighting​_​id​_​pipeline**<br/>来自crate:bevy​_​core​_​pipeline ↗：建立<br/>延迟光照标识到深度的复制管线。" }
+  n27@{ shape: rounded, label: "**init​_​copy​_​deferred​_​lighting​_​id​_​**<br/>**pipeline**<br/>来自crate:bevy​_​core​_​pipeline ↗：建立<br/>延迟光照标识到深度的复制管线。" }
   class n27 node_system
   class n27 external_node
-  n28@{ shape: rounded, label: "**bevy​_​post​_​process::bloom::**<br/>**upsampling​_​pipeline::init​_​bloom​_​**<br/>**upscaling​_​pipeline**<br/>来自crate:bevy​_​post​_​process ↗：建立<br/>Bloom 升采样的纹理和参数布局。" }
+  n28@{ shape: rounded, label: "**init​_​bloom​_​upscaling​_​pipeline**<br/>来自crate:bevy​_​post​_​process ↗：建立<br/>Bloom 升采样的纹理和参数布局。" }
   class n28 node_system
   class n28 external_node
-  n29@{ shape: rounded, label: "**bevy​_​asset::assets::Assets#lt;bevy​_​**<br/>**sprite​_​render::sprite​_​mesh::sprite​_​**<br/>**mesh​_​material::SpriteMeshMaterial#gt;::**<br/>**track​_​assets**<br/>同步资产存活状态并处理句柄释放。" }
+  n29@{ shape: rounded, label: "**track​_​assets**<br/>同步资产存活状态并处理句柄释放。" }
   class n29 node_system
-  n30@{ shape: rounded, label: "**bevy​_​gizmos​_​render::pipeline​_​3d::**<br/>**init​_​line​_​gizmo​_​pipelines**<br/>来自crate:bevy​_​gizmos​_​render ↗：建立<br/>三维 Gizmo 线条深度管线和接头资源。" }
+  n30@{ shape: rounded, label: "**init​_​line​_​gizmo​_​pipelines**<br/>来自crate:bevy​_​gizmos​_​render ↗：建立<br/>三维 Gizmo 线条深度管线和接头资源。" }
   class n30 node_system
   class n30 external_node
-  n31@{ shape: rounded, label: "**bevy​_​core​_​pipeline::tonemapping::**<br/>**init​_​tonemapping​_​pipeline**<br/>来自crate:bevy​_​core​_​pipeline ↗：建立<br/>色调映射的颜色、视图与 LUT 输入布局。" }
+  n31@{ shape: rounded, label: "**init​_​tonemapping​_​pipeline**<br/>来自crate:bevy​_​core​_​pipeline ↗：建立<br/>色调映射的颜色、视图与 LUT 输入布局。" }
   class n31 node_system
   class n31 external_node
-  n32@{ shape: rounded, label: "**bevy​_​ui​_​render::box​_​shadow::init​_​**<br/>**box​_​shadow​_​pipeline**<br/>来自crate:bevy​_​ui​_​render ↗：建立 UI<br/>盒阴影的视图布局和着色器资源。" }
+  n32@{ shape: rounded, label: "**init​_​box​_​shadow​_​pipeline**<br/>来自crate:bevy​_​ui​_​render ↗：建立 UI<br/>盒阴影的视图布局和着色器资源。" }
   class n32 node_system
   class n32 external_node
-  n33@{ shape: rounded, label: "**bevy​_​asset::server::publish​_​asset​_​**<br/>**server​_​diagnostics**<br/>发布资产加载任务的启动计数。" }
+  n33@{ shape: rounded, label: "**publish​_​asset​_​server​_​diagnostics**<br/>发布资产加载任务的启动计数。" }
   class n33 node_system
-  n34@{ shape: rounded, label: "**bevy​_​post​_​process::motion​_​blur::**<br/>**pipeline::init​_​motion​_​blur​_​pipeline**<br/>来自crate:bevy​_​post​_​process ↗：加载<br/>运动模糊着色器并构造管线资源。" }
+  n34@{ shape: rounded, label: "**init​_​motion​_​blur​_​pipeline**<br/>来自crate:bevy​_​post​_​process ↗：加载<br/>运动模糊着色器并构造管线资源。" }
   class n34 node_system
   class n34 external_node
-  n35@{ shape: rounded, label: "**demo::audio::playback::preload​_​**<br/>**sounds**<br/>来自audio ↗：预加载界面与音效短音并保<br/>存播放策略。" }
+  n35@{ shape: rounded, label: "**preload​_​sounds**<br/>来自audio ↗：预加载界面与音效短音并保<br/>存播放策略。" }
   class n35 node_system
   class n35 external_node
-  n36@{ shape: rounded, label: "**bevy​_​asset::assets::Assets#lt;bevy​_​**<br/>**animation::AnimationClip#gt;::track​_​**<br/>**assets**<br/>同步资产存活状态并处理句柄释放。" }
+  n36@{ shape: rounded, label: "**track​_​assets**<br/>同步资产存活状态并处理句柄释放。" }
   class n36 node_system
-  n37@{ shape: rounded, label: "**bevy​_​asset::assets::Assets#lt;bevy​_​**<br/>**sprite​_​render::tilemap​_​chunk::**<br/>**tilemap​_​chunk​_​material::**<br/>**TilemapChunkMaterial#gt;::track​_​assets**<br/>同步资产存活状态并处理句柄释放。" }
+  n37@{ shape: rounded, label: "**track​_​assets**<br/>同步资产存活状态并处理句柄释放。" }
   class n37 node_system
-  n38@{ shape: rounded, label: "**bevy​_​asset::assets::Assets#lt;bevy​_​**<br/>**image::image::Image#gt;::track​_​assets**<br/>同步资产存活状态并处理句柄释放。" }
+  n38@{ shape: rounded, label: "**track​_​assets**<br/>同步资产存活状态并处理句柄释放。" }
   class n38 node_system
-  n39@{ shape: rounded, label: "**bevy​_​pbr::deferred::init​_​deferred​_​**<br/>**lighting​_​layout**<br/>来自crate:bevy​_​pbr ↗：初始化延迟光照<br/>的深度标识绑定与着色器。" }
+  n39@{ shape: rounded, label: "**init​_​deferred​_​lighting​_​layout**<br/>来自crate:bevy​_​pbr ↗：初始化延迟光照<br/>的深度标识绑定与着色器。" }
   class n39 node_system
   class n39 external_node
-  n40@{ shape: rounded, label: "**bevy​_​scene::spawn::resolve​_​scene​_​**<br/>**patches**<br/>来自crate:bevy​_​scene ↗：解析已完成依<br/>赖加载的场景补丁。" }
+  n40@{ shape: rounded, label: "**resolve​_​scene​_​patches**<br/>来自crate:bevy​_​scene ↗：解析已完成依<br/>赖加载的场景补丁。" }
   class n40 node_system
   class n40 external_node
-  n41@{ shape: rounded, label: "**bevy​_​asset::assets::Assets#lt;bevy​_​**<br/>**animation::graph::AnimationGraph#gt;::**<br/>**track​_​assets**<br/>同步资产存活状态并处理句柄释放。" }
+  n41@{ shape: rounded, label: "**track​_​assets**<br/>同步资产存活状态并处理句柄释放。" }
   class n41 node_system
-  n42@{ shape: rounded, label: "**bevy​_​asset::assets::Assets#lt;bevy​_​**<br/>**kira​_​audio::instance::**<br/>**AudioInstance#gt;::track​_​assets**<br/>同步资产存活状态并处理句柄释放。" }
+  n42@{ shape: rounded, label: "**track​_​assets**<br/>同步资产存活状态并处理句柄释放。" }
   class n42 node_system
-  n43@{ shape: rounded, label: "**bevy​_​asset::assets::Assets#lt;bevy​_​**<br/>**sprite​_​render::mesh2d::color​_​**<br/>**material::ColorMaterial#gt;::track​_​**<br/>**assets**<br/>同步资产存活状态并处理句柄释放。" }
+  n43@{ shape: rounded, label: "**track​_​assets**<br/>同步资产存活状态并处理句柄释放。" }
   class n43 node_system
-  n44@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::mesh::**<br/>**init​_​mesh​_​2d​_​pipeline**<br/>来自crate:bevy​_​sprite​_​render ↗：建立<br/>二维网格的视图、实例及元数据输入布局。" }
+  n44@{ shape: rounded, label: "**init​_​mesh​_​2d​_​pipeline**<br/>来自crate:bevy​_​sprite​_​render ↗：建立<br/>二维网格的视图、实例及元数据输入布局。" }
   class n44 node_system
   class n44 external_node
-  n45@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::mesh::**<br/>**load​_​mesh2d​_​bindings**<br/>来自crate:bevy​_​sprite​_​render ↗：按运<br/>行设备能力加载二维网格绑定着色器。" }
+  n45@{ shape: rounded, label: "**load​_​mesh2d​_​bindings**<br/>来自crate:bevy​_​sprite​_​render ↗：按运<br/>行设备能力加载二维网格绑定着色器。" }
   class n45 node_system
   class n45 external_node
-  n46@{ shape: rounded, label: "**bevy​_​asset::assets::Assets#lt;bevy​_​**<br/>**asset::folder::LoadedFolder#gt;::track​_​**<br/>**assets**<br/>同步资产存活状态并处理句柄释放。" }
+  n46@{ shape: rounded, label: "**track​_​assets**<br/>同步资产存活状态并处理句柄释放。" }
   class n46 node_system
-  n47@{ shape: rounded, label: "**bevy​_​asset::assets::Assets#lt;bevy​_​**<br/>**pbr::extended​_​material::**<br/>**ExtendedMaterial#lt;bevy​_​pbr::pbr​_​**<br/>**material::StandardMaterial, bevy​_​**<br/>**pbr::decal::forward::**<br/>**ForwardDecalMaterialExt#gt;#gt;::track​_​**<br/>**assets**<br/>同步资产存活状态并处理句柄释放。" }
+  n47@{ shape: rounded, label: "**track​_​assets**<br/>同步资产存活状态并处理句柄释放。" }
   class n47 node_system
-  n48@{ shape: rounded, label: "**bevy​_​render::init​_​gpu​_​resource#lt;bevy​_​**<br/>**pbr::ssao::SsaoPipelines#gt;**<br/>来自crate:bevy​_​render ↗：构造并插入渲<br/>染所需资源。" }
+  n48@{ shape: rounded, label: "**init​_​gpu​_​resource**<br/>来自crate:bevy​_​render ↗：构造并插入渲<br/>染所需资源。" }
   class n48 node_system
   class n48 external_node
-  n49@{ shape: rounded, label: "**bevy​_​asset::assets::Assets#lt;bevy​_​**<br/>**light::atmosphere::**<br/>**ScatteringMedium#gt;::track​_​assets**<br/>同步资产存活状态并处理句柄释放。" }
+  n49@{ shape: rounded, label: "**track​_​assets**<br/>同步资产存活状态并处理句柄释放。" }
   class n49 node_system
-  n50@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::**<br/>**material::initialize​_​material2d​_​**<br/>**shaders#lt;bevy​_​sprite​_​render::tilemap​_​**<br/>**chunk::tilemap​_​chunk​_​material::**<br/>**TilemapChunkMaterial#gt;**<br/>来自crate:bevy​_​sprite​_​render ↗：解析<br/>二维材质的自定义顶点与片元着色器。" }
+  n50@{ shape: rounded, label: "**initialize​_​material2d​_​shaders**<br/>来自crate:bevy​_​sprite​_​render ↗：解析<br/>二维材质的自定义顶点与片元着色器。" }
   class n50 node_system
   class n50 external_node
-  n51@{ shape: rounded, label: "**bevy​_​asset::assets::Assets#lt;bevy​_​**<br/>**scene::scene​_​patch::ScenePatch#gt;::**<br/>**track​_​assets**<br/>同步资产存活状态并处理句柄释放。" }
+  n51@{ shape: rounded, label: "**track​_​assets**<br/>同步资产存活状态并处理句柄释放。" }
   class n51 node_system
-  n52@{ shape: rounded, label: "**bevy​_​asset::assets::Assets#lt;bevy​_​**<br/>**gltf::assets::GltfSkin#gt;::track​_​**<br/>**assets**<br/>同步资产存活状态并处理句柄释放。" }
+  n52@{ shape: rounded, label: "**track​_​assets**<br/>同步资产存活状态并处理句柄释放。" }
   class n52 node_system
-  n53@{ shape: rounded, label: "**bevy​_​render::render​_​resource::**<br/>**sparse​_​buffer​_​vec::init​_​sparse​_​**<br/>**buffer​_​update​_​pipelines**<br/>来自crate:bevy​_​render ↗：按设备存储绑<br/>定能力建立稀疏更新计算资源。" }
+  n53@{ shape: rounded, label: "**init​_​sparse​_​buffer​_​update​_​pipelines**<br/>来自crate:bevy​_​render ↗：按设备存储绑<br/>定能力建立稀疏更新计算资源。" }
   class n53 node_system
   class n53 external_node
-  n54@{ shape: rounded, label: "**bevy​_​pbr::render::mesh::init​_​mesh​_​**<br/>**pipeline**<br/>来自crate:bevy​_​pbr ↗：初始化三维网格<br/>着色器及设备缓冲策略。" }
+  n54@{ shape: rounded, label: "**init​_​mesh​_​pipeline**<br/>来自crate:bevy​_​pbr ↗：初始化三维网格<br/>着色器及设备缓冲策略。" }
   class n54 node_system
   class n54 external_node
-  n55@{ shape: rounded, label: "**bevy​_​render::init​_​gpu​_​resource#lt;bevy​_​**<br/>**pbr::render::gpu​_​preprocess::**<br/>**PreprocessPipelines#gt;**<br/>来自crate:bevy​_​render ↗：构造并插入渲<br/>染所需资源。" }
+  n55@{ shape: rounded, label: "**init​_​gpu​_​resource**<br/>来自crate:bevy​_​render ↗：构造并插入渲<br/>染所需资源。" }
   class n55 node_system
   class n55 external_node
-  n56@{ shape: rounded, label: "**bevy​_​asset::assets::Assets#lt;bevy​_​**<br/>**shader::shader::Shader#gt;::track​_​**<br/>**assets**<br/>同步资产存活状态并处理句柄释放。" }
+  n56@{ shape: rounded, label: "**track​_​assets**<br/>同步资产存活状态并处理句柄释放。" }
   class n56 node_system
-  n57@{ shape: rounded, label: "**bevy​_​asset::assets::Assets#lt;bevy​_​**<br/>**gltf::assets::Gltf#gt;::track​_​assets**<br/>同步资产存活状态并处理句柄释放。" }
+  n57@{ shape: rounded, label: "**track​_​assets**<br/>同步资产存活状态并处理句柄释放。" }
   class n57 node_system
-  n58@{ shape: rounded, label: "**bevy​_​asset::assets::Assets#lt;bevy​_​**<br/>**gltf::assets::GltfPrimitive#gt;::track​_​**<br/>**assets**<br/>同步资产存活状态并处理句柄释放。" }
+  n58@{ shape: rounded, label: "**track​_​assets**<br/>同步资产存活状态并处理句柄释放。" }
   class n58 node_system
-  n59@{ shape: rounded, label: "**bevy​_​asset::assets::Assets#lt;bevy​_​**<br/>**gltf::assets::GltfMesh#gt;::track​_​**<br/>**assets**<br/>同步资产存活状态并处理句柄释放。" }
+  n59@{ shape: rounded, label: "**track​_​assets**<br/>同步资产存活状态并处理句柄释放。" }
   class n59 node_system
-  n60@{ shape: rounded, label: "**bevy​_​anti​_​alias::contrast​_​adaptive​_​**<br/>**sharpening::init​_​cas​_​pipeline**<br/>来自crate:bevy​_​anti​_​alias ↗：建立<br/>CAS 锐化的纹理、参数布局和管线变体资<br/>源。" }
+  n60@{ shape: rounded, label: "**init​_​cas​_​pipeline**<br/>来自crate:bevy​_​anti​_​alias ↗：建立<br/>CAS 锐化的纹理、参数布局和管线变体资<br/>源。" }
   class n60 node_system
   class n60 external_node
-  n61@{ shape: rounded, label: "**bevy​_​render::init​_​gpu​_​resource#lt;bevy​_​**<br/>**pbr::cluster::gpu::**<br/>**ClusteringAllocationPipeline#gt;**<br/>来自crate:bevy​_​render ↗：构造并插入渲<br/>染所需资源。" }
+  n61@{ shape: rounded, label: "**init​_​gpu​_​resource**<br/>来自crate:bevy​_​render ↗：构造并插入渲<br/>染所需资源。" }
   class n61 node_system
   class n61 external_node
-  n62@{ shape: rounded, label: "**bevy​_​render::init​_​gpu​_​resource#lt;bevy​_​**<br/>**pbr::atmosphere::resources::**<br/>**RenderSkyBindGroupLayouts#gt;**<br/>来自crate:bevy​_​render ↗：构造并插入渲<br/>染所需资源。" }
+  n62@{ shape: rounded, label: "**init​_​gpu​_​resource**<br/>来自crate:bevy​_​render ↗：构造并插入渲<br/>染所需资源。" }
   class n62 node_system
   class n62 external_node
-  n63@{ shape: rounded, label: "**bevy​_​anti​_​alias::smaa::init​_​smaa​_​**<br/>**pipelines**<br/>来自crate:bevy​_​anti​_​alias ↗：建立<br/>SMAA 三个阶段的布局和着色器资源。" }
+  n63@{ shape: rounded, label: "**init​_​smaa​_​pipelines**<br/>来自crate:bevy​_​anti​_​alias ↗：建立<br/>SMAA 三个阶段的布局和着色器资源。" }
   class n63 node_system
   class n63 external_node
-  n64@{ shape: rounded, label: "**bevy​_​anti​_​alias::taa::init​_​taa​_​**<br/>**pipeline**<br/>来自crate:bevy​_​anti​_​alias ↗：建立<br/>TAA 的当前帧、历史帧和预通道输入布局。" }
+  n64@{ shape: rounded, label: "**init​_​taa​_​pipeline**<br/>来自crate:bevy​_​anti​_​alias ↗：建立<br/>TAA 的当前帧、历史帧和预通道输入布局。" }
   class n64 node_system
   class n64 external_node
-  n65@{ shape: rounded, label: "**bevy​_​pbr::prepass::init​_​prepass​_​**<br/>**pipeline**<br/>来自crate:bevy​_​pbr ↗：初始化带运动矢<br/>量及普通预通道的资源布局。" }
+  n65@{ shape: rounded, label: "**init​_​prepass​_​pipeline**<br/>来自crate:bevy​_​pbr ↗：初始化带运动矢<br/>量及普通预通道的资源布局。" }
   class n65 node_system
   class n65 external_node
-  n66@{ shape: rounded, label: "**bevy​_​post​_​process::dof::prepare​_​**<br/>**depth​_​of​_​field​_​pipelines**<br/>来自crate:bevy​_​post​_​process ↗：按景<br/>深模式和视图格式准备两阶段管线。" }
+  n66@{ shape: rounded, label: "**prepare​_​depth​_​of​_​field​_​pipelines**<br/>来自crate:bevy​_​post​_​process ↗：按景<br/>深模式和视图格式准备两阶段管线。" }
   class n66 node_system
   class n66 external_node
-  n67@{ shape: rounded, label: "**bevy​_​asset::assets::Assets#lt;bevy​_​**<br/>**gltf::assets::GltfNode#gt;::track​_​**<br/>**assets**<br/>同步资产存活状态并处理句柄释放。" }
+  n67@{ shape: rounded, label: "**track​_​assets**<br/>同步资产存活状态并处理句柄释放。" }
   class n67 node_system
-  n68@{ shape: rounded, label: "**bevy​_​anti​_​alias::fxaa::init​_​fxaa​_​**<br/>**pipeline**<br/>来自crate:bevy​_​anti​_​alias ↗：建立<br/>FXAA 的纹理采样布局和着色器资源。" }
+  n68@{ shape: rounded, label: "**init​_​fxaa​_​pipeline**<br/>来自crate:bevy​_​anti​_​alias ↗：建立<br/>FXAA 的纹理采样布局和着色器资源。" }
   class n68 node_system
   class n68 external_node
-  n69@{ shape: rounded, label: "**bevy​_​post​_​process::effect​_​stack::**<br/>**init​_​post​_​processing​_​pipeline**<br/>来自crate:bevy​_​post​_​process ↗：建立<br/>色差、暗角和镜头畸变的共用后处理资源。" }
+  n69@{ shape: rounded, label: "**init​_​post​_​processing​_​pipeline**<br/>来自crate:bevy​_​post​_​process ↗：建立<br/>色差、暗角和镜头畸变的共用后处理资源。" }
   class n69 node_system
   class n69 external_node
-  n70@{ shape: rounded, label: "**demo::scene​_​assembly::assets::poll​_​**<br/>**art​_​assets**<br/>来自scene​_​assembly ↗：连同子资产检查<br/>失败；只记录状态切换，避免每帧刷写相同错<br/>误。" }
+  n70@{ shape: rounded, label: "**poll​_​art​_​assets**<br/>来自scene​_​assembly ↗：连同子资产检查<br/>失败；只记录状态切换，避免每帧刷写相同错<br/>误。" }
   class n70 node_system
   class n70 external_node
-  n71@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::**<br/>**material::initialize​_​material2d​_​**<br/>**shaders#lt;bevy​_​sprite​_​render::sprite​_​**<br/>**mesh::sprite​_​mesh​_​material::**<br/>**SpriteMeshMaterial#gt;**<br/>来自crate:bevy​_​sprite​_​render ↗：解析<br/>二维材质的自定义顶点与片元着色器。" }
+  n71@{ shape: rounded, label: "**initialize​_​material2d​_​shaders**<br/>来自crate:bevy​_​sprite​_​render ↗：解析<br/>二维材质的自定义顶点与片元着色器。" }
   class n71 node_system
   class n71 external_node
-  n72@{ shape: rounded, label: "**bevy​_​asset::assets::Assets#lt;bevy​_​**<br/>**mesh::skinning::**<br/>**SkinnedMeshInverseBindposes#gt;::track​_​**<br/>**assets**<br/>同步资产存活状态并处理句柄释放。" }
+  n72@{ shape: rounded, label: "**track​_​assets**<br/>同步资产存活状态并处理句柄释放。" }
   class n72 node_system
-  n73@{ shape: rounded, label: "**bevy​_​asset::assets::Assets#lt;bevy​_​**<br/>**image::texture​_​atlas::**<br/>**TextureAtlasLayout#gt;::track​_​assets**<br/>同步资产存活状态并处理句柄释放。" }
+  n73@{ shape: rounded, label: "**track​_​assets**<br/>同步资产存活状态并处理句柄释放。" }
   class n73 node_system
-  n74@{ shape: rounded, label: "**bevy​_​asset::assets::Assets#lt;bevy​_​**<br/>**mesh::mesh::Mesh#gt;::track​_​assets**<br/>同步资产存活状态并处理句柄释放。" }
+  n74@{ shape: rounded, label: "**track​_​assets**<br/>同步资产存活状态并处理句柄释放。" }
   class n74 node_system
-  n75@{ shape: rounded, label: "**bevy​_​pbr::atmosphere::environment::**<br/>**init​_​atmosphere​_​probe​_​pipeline**<br/>来自crate:bevy​_​pbr ↗：排队创建大气环<br/>境贴图生成计算管线。" }
+  n75@{ shape: rounded, label: "**init​_​atmosphere​_​probe​_​pipeline**<br/>来自crate:bevy​_​pbr ↗：排队创建大气环<br/>境贴图生成计算管线。" }
   class n75 node_system
   class n75 external_node
-  n76@{ shape: rounded, label: "**bevy​_​render::init​_​gpu​_​resource#lt;bevy​_​**<br/>**pbr::cluster::gpu::**<br/>**ClusteringRasterPipeline#gt;**<br/>来自crate:bevy​_​render ↗：构造并插入渲<br/>染所需资源。" }
+  n76@{ shape: rounded, label: "**init​_​gpu​_​resource**<br/>来自crate:bevy​_​render ↗：构造并插入渲<br/>染所需资源。" }
   class n76 node_system
   class n76 external_node
-  n77@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::**<br/>**material::initialize​_​material2d​_​**<br/>**shaders#lt;bevy​_​sprite​_​render::mesh2d::**<br/>**color​_​material::ColorMaterial#gt;**<br/>来自crate:bevy​_​sprite​_​render ↗：解析<br/>二维材质的自定义顶点与片元着色器。" }
+  n77@{ shape: rounded, label: "**initialize​_​material2d​_​shaders**<br/>来自crate:bevy​_​sprite​_​render ↗：解析<br/>二维材质的自定义顶点与片元着色器。" }
   class n77 node_system
   class n77 external_node
-  n78@{ shape: rounded, label: "**bevy​_​ui​_​render::ui​_​texture​_​slice​_​**<br/>**pipeline::init​_​ui​_​texture​_​slice​_​**<br/>**pipeline**<br/>来自crate:bevy​_​ui​_​render ↗：建立 UI<br/>图像切片的视图和纹理管线资源。" }
+  n78@{ shape: rounded, label: "**init​_​ui​_​texture​_​slice​_​pipeline**<br/>来自crate:bevy​_​ui​_​render ↗：建立 UI<br/>图像切片的视图和纹理管线资源。" }
   class n78 node_system
   class n78 external_node
-  n79@{ shape: rounded, label: "**bevy​_​asset::assets::Assets#lt;bevy​_​**<br/>**pbr::pbr​_​material::**<br/>**StandardMaterial#gt;::track​_​assets**<br/>同步资产存活状态并处理句柄释放。" }
+  n79@{ shape: rounded, label: "**track​_​assets**<br/>同步资产存活状态并处理句柄释放。" }
   class n79 node_system
-  n80@{ shape: rounded, label: "**bevy​_​core​_​pipeline::prepass::**<br/>**background​_​motion​_​vectors::init​_​**<br/>**background​_​motion​_​vectors​_​pipeline**<br/>来自crate:bevy​_​core​_​pipeline ↗：建立<br/>背景运动矢量的全屏管线资源。" }
+  n80@{ shape: rounded, label: "**init​_​background​_​motion​_​vectors​_​**<br/>**pipeline**<br/>来自crate:bevy​_​core​_​pipeline ↗：建立<br/>背景运动矢量的全屏管线资源。" }
   class n80 node_system
   class n80 external_node
   n0 e0@--> n1

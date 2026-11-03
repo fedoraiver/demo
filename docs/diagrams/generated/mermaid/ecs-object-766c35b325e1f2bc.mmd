@@ -44,29 +44,29 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**demo::item​_​interaction::lifecycle::**<br/>**restore​_​empty​_​holder​_​mass**<br/>箱实体被销毁时关系钩子会清空反向索引，人<br/>物仍存活则归还其原质量。" }
+  n0@{ shape: rounded, label: "**restore​_​empty​_​holder​_​mass**<br/>箱实体被销毁时关系钩子会清空反向索引，人<br/>物仍存活则归还其原质量。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**item​_​interaction::components::**<br/>**CarryBaseMass**<br/>独立箱根不属于人物的 Children，显式保存<br/>原质量供挂接和解除时恢复。" }
+  n1@{ shape: rounded, label: "**CarryBaseMass**<br/>独立箱根不属于人物的 Children，显式保存<br/>原质量供挂接和解除时恢复。" }
   class n1 node_component
   n2@{ shape: lin-rect, label: "**Attachment**<br/>来自game​_​flow ↗：固定模拟阶段；结构变<br/>更在依赖阶段之间提交。" }
   class n2 node_system_set
   class n2 external_node
-  n3@{ shape: rounded, label: "**demo::item​_​interaction::attachment::**<br/>**finish​_​attachments**<br/>持握期间只保留人物的 Dynamic，碰到箱子<br/>即对同一刚体求解，内部形状自动互不碰撞。" }
+  n3@{ shape: rounded, label: "**finish​_​attachments**<br/>持握期间只保留人物的 Dynamic，碰到箱子<br/>即对同一刚体求解，内部形状自动互不碰撞。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**dynamics::rigid​_​body::mass​_​**<br/>**properties::components::Mass**<br/>来自crate:avian3d ↗：指定实体自身的质<br/>量输入。" }
+  n4@{ shape: rounded, label: "**Mass**<br/>来自crate:avian3d ↗：指定实体自身的质<br/>量输入。" }
   class n4 node_component
   class n4 external_node
-  n5@{ shape: rounded, label: "**character::components::Character**<br/>来自character ↗：具有移动和跳跃能力的<br/>角色。" }
+  n5@{ shape: rounded, label: "**Character**<br/>来自character ↗：具有移动和跳跃能力的<br/>角色。" }
   class n5 node_component
   class n5 external_node
-  n6@{ shape: rounded, label: "**demo::item​_​interaction::lifecycle::**<br/>**cleanup​_​orphaned​_​colliders**<br/>业务箱本身被销毁后清理代理，防止人物带着<br/>不可见的附属碰撞继续运动。" }
+  n6@{ shape: rounded, label: "**cleanup​_​orphaned​_​colliders**<br/>业务箱本身被销毁后清理代理，防止人物带着<br/>不可见的附属碰撞继续运动。" }
   class n6 node_system
   n7@{ shape: lin-rect, label: "**AnonymousSet(1)**<br/>来自crate:bevy​_​ecs ↗：保存一组系统的<br/>共同配置。" }
   class n7 node_system_set
   class n7 external_node
-  n8@{ shape: fr-rect, label: "**item​_​interaction::**<br/>**ItemInteractionPlugin**<br/>注册交互、持握生命周期、物理与呈现同步及<br/>物品反馈；物理插件由调用方显式安装。" }
+  n8@{ shape: fr-rect, label: "**ItemInteractionPlugin**<br/>注册交互、持握生命周期、物理与呈现同步及<br/>物品反馈；物理插件由调用方显式安装。" }
   class n8 node_plugin
-  n9@{ shape: rounded, label: "**item​_​interaction::components::**<br/>**HoldingItems**<br/>Bevy 根据 HeldBy 自动维护的反向索引，<br/>业务代码只读取。" }
+  n9@{ shape: rounded, label: "**HoldingItems**<br/>Bevy 根据 HeldBy 自动维护的反向索引，<br/>业务代码只读取。" }
   class n9 node_component
   n1 e0@--> n0
   class e0 edge_read

@@ -41,15 +41,15 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​render::batching::gpu​_​**<br/>**preprocessing::clear​_​batched​_​gpu​_​**<br/>**instance​_​buffers#lt;bevy​_​pbr::render::**<br/>**mesh::MeshPipeline#gt;**<br/>在提取写入实例数据之前清空本帧 GPU 批处<br/>理实例缓冲的内容和索引，保留既有缓冲分配<br/>以便复用。" }
+  n0@{ shape: rounded, label: "**clear​_​batched​_​gpu​_​instance​_​buffers**<br/>在提取写入实例数据之前清空本帧 GPU 批处<br/>理实例缓冲的内容和索引，保留既有缓冲分配<br/>以便复用。" }
   class n0 node_system
   n1@{ shape: lin-rect, label: "**MeshExtractionSystems**<br/>来自crate:bevy​_​pbr ↗：向渲染世界提取<br/>三维网格的实例数据。" }
   class n1 node_system_set
   class n1 external_node
-  n2@{ shape: fr-rect, label: "**render::mesh::MeshRenderPlugin**<br/>来自crate:bevy​_​pbr ↗：建立三维网格绘<br/>制支持。" }
+  n2@{ shape: fr-rect, label: "**MeshRenderPlugin**<br/>来自crate:bevy​_​pbr ↗：建立三维网格绘<br/>制支持。" }
   class n2 node_plugin
   class n2 external_node
-  n3@{ shape: cyl, label: "**bevy​_​render::batching::gpu​_​**<br/>**preprocessing::**<br/>**BatchedInstanceBuffers#lt;render::**<br/>**mesh::MeshUniform, render::mesh::**<br/>**MeshInputUniform#gt;**<br/>保存批次绘制的 GPU 输入与实例缓冲。" }
+  n3@{ shape: cyl, label: "**BatchedInstanceBuffers#lt;MeshUniform,**<br/>**MeshInputUniform#gt;**<br/>保存批次绘制的 GPU 输入与实例缓冲。" }
   class n3 node_resource
   n0 e0@-->|"先于"| n1
   class e0 edge_order

@@ -44,32 +44,32 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**avian3d::dynamics::integrator::pre​_​**<br/>**process​_​velocity​_​increments**<br/>把加速度、重力和轴锁转成子步速度增量。" }
+  n0@{ shape: rounded, label: "**pre​_​process​_​velocity​_​increments**<br/>把加速度、重力和轴锁转成子步速度增量。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**dynamics::rigid​_​body::GravityScale**<br/>缩放单个刚体受到的重力。" }
+  n1@{ shape: rounded, label: "**GravityScale**<br/>缩放单个刚体受到的重力。" }
   class n1 node_component
   n2@{ shape: lin-rect, label: "**UpdateVelocityIncrements**<br/>组织速度与位置积分阶段。" }
   class n2 node_system_set
-  n3@{ shape: cyl, label: "**bevy::bevy​_​time::Time#lt;schedule::**<br/>**time::Substeps#gt;**<br/>来自crate:bevy​_​time ↗：保存时钟上下<br/>文、帧间隔及累计时间" }
+  n3@{ shape: cyl, label: "**Time#lt;Substeps#gt;**<br/>来自crate:bevy​_​time ↗：保存时钟上下<br/>文、帧间隔及累计时间" }
   class n3 node_resource
   class n3 external_node
-  n4@{ shape: rounded, label: "**dynamics::rigid​_​body::RigidBody**<br/>选择动态、静态或运动学刚体行为。" }
+  n4@{ shape: rounded, label: "**RigidBody**<br/>选择动态、静态或运动学刚体行为。" }
   class n4 node_component
-  n5@{ shape: cyl, label: "**dynamics::solver::diagnostics::**<br/>**SolverDiagnostics**<br/>记录物理求解各阶段耗时。" }
+  n5@{ shape: cyl, label: "**SolverDiagnostics**<br/>记录物理求解各阶段耗时。" }
   class n5 node_resource
-  n6@{ shape: rounded, label: "**dynamics::rigid​_​body::LinearDamping**<br/>随物理步衰减刚体线速度。" }
+  n6@{ shape: rounded, label: "**LinearDamping**<br/>随物理步衰减刚体线速度。" }
   class n6 node_component
-  n7@{ shape: rounded, label: "**dynamics::integrator::**<br/>**VelocityIntegrationData**<br/>缓存子步速度增量和阻尼系数。" }
+  n7@{ shape: rounded, label: "**VelocityIntegrationData**<br/>缓存子步速度增量和阻尼系数。" }
   class n7 node_component
-  n8@{ shape: rounded, label: "**dynamics::rigid​_​body::locked​_​axes::**<br/>**LockedAxes**<br/>锁定刚体的平移或旋转轴。" }
+  n8@{ shape: rounded, label: "**LockedAxes**<br/>锁定刚体的平移或旋转轴。" }
   class n8 node_component
   n9@{ shape: lin-rect, label: "**ApplyConstantForces**<br/>组织外力应用与累积量清理。" }
   class n9 node_system_set
-  n10@{ shape: fr-rect, label: "**dynamics::integrator::**<br/>**IntegratorPlugin**<br/>积分运动并预测刚体姿态。" }
+  n10@{ shape: fr-rect, label: "**IntegratorPlugin**<br/>积分运动并预测刚体姿态。" }
   class n10 node_plugin
-  n11@{ shape: rounded, label: "**dynamics::rigid​_​body::AngularDamping**<br/>随物理步衰减刚体角速度。" }
+  n11@{ shape: rounded, label: "**AngularDamping**<br/>随物理步衰减刚体角速度。" }
   class n11 node_component
-  n12@{ shape: cyl, label: "**dynamics::integrator::Gravity**<br/>设置作用于动态刚体的全局重力。" }
+  n12@{ shape: cyl, label: "**Gravity**<br/>设置作用于动态刚体的全局重力。" }
   class n12 node_resource
   n1 e0@--> n0
   class e0 edge_read
@@ -107,6 +107,6 @@ flowchart LR
   e7@{ curve: basis }
   e8@{ curve: basis }
   e9@{ curve: basis }
-  e10@{ curve: basis }
+  e10@{ curve: bumpX }
   e11@{ curve: basis }
   e12@{ curve: basis }

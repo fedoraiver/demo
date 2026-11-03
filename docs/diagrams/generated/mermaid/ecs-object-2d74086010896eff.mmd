@@ -38,11 +38,11 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**cluster::gpu::**<br/>**ViewClusteringBindGroups**<br/>保存视图各 GPU 聚簇通道的绑定组。" }
+  n0@{ shape: rounded, label: "**ViewClusteringBindGroups**<br/>保存视图各 GPU 聚簇通道的绑定组。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​pbr::cluster::gpu::cluster​_​on​_​**<br/>**gpu**<br/>执行深度切片、计数、分配和填充的 GPU 聚<br/>簇。" }
+  n1@{ shape: rounded, label: "**cluster​_​on​_​gpu**<br/>执行深度切片、计数、分配和填充的 GPU 聚<br/>簇。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​pbr::cluster::gpu::prepare​_​**<br/>**clustering​_​bind​_​groups**<br/>为视图的聚簇计算与光栅阶段绑定工作缓冲。" }
+  n2@{ shape: rounded, label: "**prepare​_​clustering​_​bind​_​groups**<br/>为视图的聚簇计算与光栅阶段绑定工作缓冲。" }
   class n2 node_system
   n0 e0@--> n1
   class e0 edge_read

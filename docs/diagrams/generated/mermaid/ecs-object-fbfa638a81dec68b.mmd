@@ -38,12 +38,12 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​ecs::schedule::condition::**<br/>**common​_​conditions::resource​_​**<br/>**exists#lt;bevy​_​render::batching::gpu​_​**<br/>**preprocessing::**<br/>**BatchedInstanceBuffers#lt;bevy​_​pbr::**<br/>**render::mesh::MeshUniform, bevy​_​**<br/>**pbr::render::mesh::**<br/>**MeshInputUniform#gt;#gt;**<br/>判断指定资源是否存在。" }
+  n0@{ shape: rounded, label: "**resource​_​exists**<br/>判断指定资源是否存在。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**bevy​_​render::batching::gpu​_​**<br/>**preprocessing::**<br/>**BatchedInstanceBuffers#lt;render::**<br/>**mesh::MeshUniform, render::mesh::**<br/>**MeshInputUniform#gt;**<br/>来自crate:bevy​_​render ↗：保存批次绘制<br/>的 GPU 输入与实例缓冲。" }
+  n1@{ shape: cyl, label: "**BatchedInstanceBuffers#lt;MeshUniform,**<br/>**MeshInputUniform#gt;**<br/>来自crate:bevy​_​render ↗：保存批次绘制<br/>的 GPU 输入与实例缓冲。" }
   class n1 node_resource
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​render::batching::gpu​_​**<br/>**preprocessing::batch​_​and​_​prepare​_​**<br/>**binned​_​render​_​phase#lt;bevy​_​core​_​**<br/>**pipeline::prepass::**<br/>**AlphaMask3dPrepass, bevy​_​pbr::**<br/>**render::mesh::MeshPipeline#gt;**<br/>来自crate:bevy​_​render ↗：为分桶渲染阶<br/>段建立 GPU 预处理批次。" }
+  n2@{ shape: rounded, label: "**batch​_​and​_​prepare​_​binned​_​render​_​**<br/>**phase**<br/>来自crate:bevy​_​render ↗：为分桶渲染阶<br/>段建立 GPU 预处理批次。" }
   class n2 node_system
   class n2 external_node
   n1 e0@--> n0

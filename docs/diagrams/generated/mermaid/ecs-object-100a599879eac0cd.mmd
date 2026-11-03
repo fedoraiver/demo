@@ -45,69 +45,69 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​core​_​pipeline::tonemapping::**<br/>**node::tonemapping**<br/>为启用的 HDR 视图执行色调映射。" }
+  n0@{ shape: rounded, label: "**tonemapping**<br/>为启用的 HDR 视图执行色调映射。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**bevy​_​render::diagnostic::**<br/>**DiagnosticsRecorder**<br/>来自crate:bevy​_​render ↗：记录渲染诊断<br/>区间与 GPU 查询索引的对应。" }
+  n1@{ shape: cyl, label: "**DiagnosticsRecorder**<br/>来自crate:bevy​_​render ↗：记录渲染诊断<br/>区间与 GPU 查询索引的对应。" }
   class n1 node_resource
   class n1 external_node
-  n2@{ shape: cyl, label: "**bevy​_​render::renderer::RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
+  n2@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
   class n2 node_resource
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​render::view::ViewTarget**<br/>来自crate:bevy​_​render ↗：管理视图主颜<br/>色纹理及最终输出附件。" }
+  n3@{ shape: rounded, label: "**ViewTarget**<br/>来自crate:bevy​_​render ↗：管理视图主颜<br/>色纹理及最终输出附件。" }
   class n3 node_component
   class n3 external_node
-  n4@{ shape: cyl, label: "**tonemapping::TonemappingPipeline**<br/>提供 HDR 色调映射的全屏管线资源。" }
+  n4@{ shape: cyl, label: "**TonemappingPipeline**<br/>提供 HDR 色调映射的全屏管线资源。" }
   class n4 node_resource
-  n5@{ shape: rounded, label: "**bevy​_​render::camera::ExtractedCamera**<br/>来自crate:bevy​_​render ↗：保存渲染世界<br/>相机的目标和绘制配置。" }
+  n5@{ shape: rounded, label: "**ExtractedCamera**<br/>来自crate:bevy​_​render ↗：保存渲染世界<br/>相机的目标和绘制配置。" }
   class n5 node_component
   class n5 external_node
-  n6@{ shape: rounded, label: "**bevy​_​post​_​process::dof::depth​_​of​_​**<br/>**field**<br/>来自crate:bevy​_​post​_​process ↗：以两<br/>阶段全屏通道执行景深模糊。" }
+  n6@{ shape: rounded, label: "**depth​_​of​_​field**<br/>来自crate:bevy​_​post​_​process ↗：以两<br/>阶段全屏通道执行景深模糊。" }
   class n6 node_system
   class n6 external_node
-  n7@{ shape: fr-rect, label: "**core​_​3d::Core3dPlugin**<br/>建立三维相机的渲染流程。" }
+  n7@{ shape: fr-rect, label: "**Core3dPlugin**<br/>建立三维相机的渲染流程。" }
   class n7 node_plugin
-  n8@{ shape: rounded, label: "**bevy​_​anti​_​alias::smaa::smaa**<br/>来自crate:bevy​_​anti​_​alias ↗：通过三<br/>个阶段完成 SMAA 抗锯齿。" }
+  n8@{ shape: rounded, label: "**smaa**<br/>来自crate:bevy​_​anti​_​alias ↗：通过三<br/>个阶段完成 SMAA 抗锯齿。" }
   class n8 node_system
   class n8 external_node
-  n9@{ shape: cyl, label: "**bevy​_​render::renderer::CurrentView**<br/>来自crate:bevy​_​render ↗：指定当前正在<br/>渲染的视图实体。" }
+  n9@{ shape: cyl, label: "**CurrentView**<br/>来自crate:bevy​_​render ↗：指定当前正在<br/>渲染的视图实体。" }
   class n9 node_resource
   class n9 external_node
-  n10@{ shape: rounded, label: "**bevy​_​render::view::Tonemapping**<br/>来自crate:bevy​_​render ↗：选择 HDR 颜<br/>色到显示颜色的映射方式。" }
+  n10@{ shape: rounded, label: "**Tonemapping**<br/>来自crate:bevy​_​render ↗：选择 HDR 颜<br/>色到显示颜色的映射方式。" }
   class n10 node_component
   class n10 external_node
-  n11@{ shape: cyl, label: "**bevy​_​render::render​_​resource::**<br/>**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
+  n11@{ shape: cyl, label: "**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
   class n11 node_resource
   class n11 external_node
-  n12@{ shape: cyl, label: "**tonemapping::TonemappingLuts**<br/>提供色调映射使用的三维查找表。" }
+  n12@{ shape: cyl, label: "**TonemappingLuts**<br/>提供色调映射使用的三维查找表。" }
   class n12 node_resource
-  n13@{ shape: cyl, label: "**bevy​_​render::texture::FallbackImage**<br/>来自crate:bevy​_​render ↗：为未指定图像<br/>的绑定提供不透明白纹理。" }
+  n13@{ shape: cyl, label: "**FallbackImage**<br/>来自crate:bevy​_​render ↗：为未指定图像<br/>的绑定提供不透明白纹理。" }
   class n13 node_resource
   class n13 external_node
   n14@{ shape: notch-rect, label: "**Local · cache**<br/>缓存色调映射绑定组及上次选择的映射方式。" }
   class n14 node_local
-  n15@{ shape: rounded, label: "**bevy​_​render::view::ViewUniformOffset**<br/>来自crate:bevy​_​render ↗：定位当前视图<br/>在共享 Uniform 缓冲中的参数。" }
+  n15@{ shape: rounded, label: "**ViewUniformOffset**<br/>来自crate:bevy​_​render ↗：定位当前视图<br/>在共享 Uniform 缓冲中的参数。" }
   class n15 node_component
   class n15 external_node
-  n16@{ shape: rounded, label: "**bevy​_​anti​_​alias::fxaa::node::fxaa**<br/>来自crate:bevy​_​anti​_​alias ↗：对启用<br/>的相机视图执行 FXAA 抗锯齿。" }
+  n16@{ shape: rounded, label: "**fxaa**<br/>来自crate:bevy​_​anti​_​alias ↗：对启用<br/>的相机视图执行 FXAA 抗锯齿。" }
   class n16 node_system
   class n16 external_node
-  n17@{ shape: cyl, label: "**bevy​_​render::render​_​asset::**<br/>**RenderAssets#lt;bevy​_​render::texture::**<br/>**GpuImage#gt;**<br/>来自crate:bevy​_​render ↗：按源资产身份<br/>保存 GPU 渲染表示。" }
+  n17@{ shape: cyl, label: "**RenderAssets#lt;GpuImage#gt;**<br/>来自crate:bevy​_​render ↗：按源资产身份<br/>保存 GPU 渲染表示。" }
   class n17 node_resource
   class n17 external_node
   n18@{ shape: lin-rect, label: "**PostProcess**<br/>划分三维相机绘制与后处理阶段。" }
   class n18 node_system_set
-  n19@{ shape: cyl, label: "**bevy​_​render::view::ViewUniforms**<br/>来自crate:bevy​_​render ↗：汇集全部视图<br/>的动态 Uniform 数据。" }
+  n19@{ shape: cyl, label: "**ViewUniforms**<br/>来自crate:bevy​_​render ↗：汇集全部视图<br/>的动态 Uniform 数据。" }
   class n19 node_resource
   class n19 external_node
-  n20@{ shape: rounded, label: "**tonemapping::ViewTonemappingPipeline**<br/>记录当前视图的色调映射管线。" }
+  n20@{ shape: rounded, label: "**ViewTonemappingPipeline**<br/>记录当前视图的色调映射管线。" }
   class n20 node_component
-  n21@{ shape: rounded, label: "**bevy​_​post​_​process::bloom::bloom**<br/>来自crate:bevy​_​post​_​process ↗：通过<br/>降采样和上采样合成 HDR 光晕。" }
+  n21@{ shape: rounded, label: "**bloom**<br/>来自crate:bevy​_​post​_​process ↗：通过<br/>降采样和上采样合成 HDR 光晕。" }
   class n21 node_system
   class n21 external_node
-  n22@{ shape: rounded, label: "**bevy​_​post​_​process::effect​_​stack::**<br/>**post​_​processing**<br/>来自crate:bevy​_​post​_​process ↗：组合<br/>执行色差、暗角和镜头畸变。" }
+  n22@{ shape: rounded, label: "**post​_​processing**<br/>来自crate:bevy​_​post​_​process ↗：组合<br/>执行色差、暗角和镜头畸变。" }
   class n22 node_system
   class n22 external_node
-  n23@{ shape: fr-rect, label: "**core​_​2d::Core2dPlugin**<br/>建立二维相机的渲染流程。" }
+  n23@{ shape: fr-rect, label: "**Core2dPlugin**<br/>建立二维相机的渲染流程。" }
   class n23 node_plugin
   n1 e0@--> n0
   class e0 edge_read

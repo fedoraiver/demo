@@ -37,82 +37,82 @@ flowchart LR
   classDef node_message fill:#EDF4F6,stroke:#247B91,stroke-width:1.6px,color:#1F3340
   classDef edge_publish stroke:#247B91,stroke-width:1.8px,stroke-dasharray:10 4 2 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: lean-r, label: "**bevy​_​ecs::lifecycle::**<br/>**RemovedComponentEntity**<br/>记录发生组件移除的实体。" }
+  n0@{ shape: lean-r, label: "**RemovedComponentEntity**<br/>记录发生组件移除的实体。" }
   class n0 node_message
-  n1@{ shape: rounded, label: "**bevy​_​app::main​_​schedule::Main::run​_​**<br/>**main**<br/>来自crate:bevy​_​app ↗：按主调度顺序驱<br/>动应用更新。" }
+  n1@{ shape: rounded, label: "**run​_​main**<br/>来自crate:bevy​_​app ↗：按主调度顺序驱<br/>动应用更新。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​render::run​_​render​_​schedule**<br/>来自crate:bevy​_​render ↗：按<br/>RenderScheduleOrder 中维护的阶段标签<br/>顺序，依次尝试运行渲染子应用的各个调度。" }
+  n2@{ shape: rounded, label: "**run​_​render​_​schedule**<br/>来自crate:bevy​_​render ↗：按<br/>RenderScheduleOrder 中维护的阶段标签<br/>顺序，依次尝试运行渲染子应用的各个调度。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​extract::extract​_​plugin::apply​_​**<br/>**extract​_​commands**<br/>来自crate:bevy​_​extract ↗：应用提取阶<br/>段累计的子世界命令。" }
+  n3@{ shape: rounded, label: "**apply​_​extract​_​commands**<br/>来自crate:bevy​_​extract ↗：应用提取阶<br/>段累计的子世界命令。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**bevy​_​core​_​pipeline::schedule::**<br/>**camera​_​driver**<br/>来自crate:bevy​_​core​_​pipeline ↗：为辅<br/>助视图和活动相机运行专属渲染调度。" }
+  n4@{ shape: rounded, label: "**camera​_​driver**<br/>来自crate:bevy​_​core​_​pipeline ↗：为辅<br/>助视图和活动相机运行专属渲染调度。" }
   class n4 node_system
   class n4 external_node
-  n5@{ shape: rounded, label: "**bevy​_​render::render​_​asset::extract​_​**<br/>**render​_​asset#lt;bevy​_​render::mesh::**<br/>**RenderMesh#gt;**<br/>来自crate:bevy​_​render ↗：按资产变化和<br/>设备恢复请求提取渲染资产。" }
+  n5@{ shape: rounded, label: "**extract​_​render​_​asset**<br/>来自crate:bevy​_​render ↗：按资产变化和<br/>设备恢复请求提取渲染资产。" }
   class n5 node_system
   class n5 external_node
-  n6@{ shape: rounded, label: "**bevy​_​render::erased​_​render​_​asset::**<br/>**extract​_​erased​_​render​_​asset#lt;bevy​_​**<br/>**pbr::mesh​_​material::**<br/>**MeshMaterial3d#lt;bevy​_​pbr::pbr​_​**<br/>**material::StandardMaterial#gt;#gt;**<br/>来自crate:bevy​_​render ↗：提取变化及设<br/>备恢复后失效的擦除渲染资产。" }
+  n6@{ shape: rounded, label: "**extract​_​erased​_​render​_​asset**<br/>来自crate:bevy​_​render ↗：提取变化及设<br/>备恢复后失效的擦除渲染资产。" }
   class n6 node_system
   class n6 external_node
-  n7@{ shape: rounded, label: "**bevy​_​world​_​serialization::world​_​**<br/>**asset​_​spawner::world​_​instance​_​**<br/>**spawner​_​system**<br/>来自crate:bevy​_​world​_​serialization<br/>↗：推进世界资产实例的生成、销毁及更新。" }
+  n7@{ shape: rounded, label: "**world​_​instance​_​spawner​_​system**<br/>来自crate:bevy​_​world​_​serialization<br/>↗：推进世界资产实例的生成、销毁及更新。" }
   class n7 node_system
   class n7 external_node
-  n8@{ shape: rounded, label: "**bevy​_​egui::render::render​_​pass::**<br/>**prepare​_​egui​_​pass**<br/>来自crate:bevy​_​egui ↗：在渲染世界更新<br/>延期的 Egui 绘制回调。" }
+  n8@{ shape: rounded, label: "**prepare​_​egui​_​pass**<br/>来自crate:bevy​_​egui ↗：在渲染世界更新<br/>延期的 Egui 绘制回调。" }
   class n8 node_system
   class n8 external_node
-  n9@{ shape: rounded, label: "**bevy​_​app::main​_​schedule::FixedMain::**<br/>**run​_​fixed​_​main**<br/>来自crate:bevy​_​app ↗：运行一个固定时<br/>间步的调度阶段。" }
+  n9@{ shape: rounded, label: "**run​_​fixed​_​main**<br/>来自crate:bevy​_​app ↗：运行一个固定时<br/>间步的调度阶段。" }
   class n9 node_system
   class n9 external_node
-  n10@{ shape: rounded, label: "**bevy​_​render::erased​_​render​_​asset::**<br/>**extract​_​erased​_​render​_​asset#lt;bevy​_​**<br/>**sprite​_​render::mesh2d::material::**<br/>**MeshMaterial2d#lt;bevy​_​sprite​_​render::**<br/>**sprite​_​mesh::sprite​_​mesh​_​material::**<br/>**SpriteMeshMaterial#gt;#gt;**<br/>来自crate:bevy​_​render ↗：提取变化及设<br/>备恢复后失效的擦除渲染资产。" }
+  n10@{ shape: rounded, label: "**extract​_​erased​_​render​_​asset**<br/>来自crate:bevy​_​render ↗：提取变化及设<br/>备恢复后失效的擦除渲染资产。" }
   class n10 node_system
   class n10 external_node
-  n11@{ shape: rounded, label: "**bevy​_​render::render​_​asset::extract​_​**<br/>**render​_​asset#lt;bevy​_​render::storage::**<br/>**GpuShaderBuffer#gt;**<br/>来自crate:bevy​_​render ↗：按资产变化和<br/>设备恢复请求提取渲染资产。" }
+  n11@{ shape: rounded, label: "**extract​_​render​_​asset**<br/>来自crate:bevy​_​render ↗：按资产变化和<br/>设备恢复请求提取渲染资产。" }
   class n11 node_system
   class n11 external_node
-  n12@{ shape: rounded, label: "**bevy​_​ecs::message::update::message​_​**<br/>**update​_​system**<br/>轮换世界中已注册的消息缓冲。" }
+  n12@{ shape: rounded, label: "**message​_​update​_​system**<br/>轮换世界中已注册的消息缓冲。" }
   class n12 node_system
-  n13@{ shape: rounded, label: "**bevy​_​extract::sync​_​world::despawn​_​**<br/>**temporary​_​entities#lt;bevy​_​render::**<br/>**RenderApp#gt;**<br/>来自crate:bevy​_​extract ↗：按实体索引<br/>逆序清理临时同步实体。" }
+  n13@{ shape: rounded, label: "**despawn​_​temporary​_​entities**<br/>来自crate:bevy​_​extract ↗：按实体索引<br/>逆序清理临时同步实体。" }
   class n13 node_system
   class n13 external_node
-  n14@{ shape: rounded, label: "**bevy​_​asset::server::handle​_​internal​_​**<br/>**asset​_​events**<br/>来自crate:bevy​_​asset ↗：处理资产加<br/>载、依赖就绪及失败通知。" }
+  n14@{ shape: rounded, label: "**handle​_​internal​_​asset​_​events**<br/>来自crate:bevy​_​asset ↗：处理资产加<br/>载、依赖就绪及失败通知。" }
   class n14 node_system
   class n14 external_node
-  n15@{ shape: rounded, label: "**bevy​_​render::render​_​asset::extract​_​**<br/>**render​_​asset#lt;bevy​_​gizmos​_​render::**<br/>**GpuLineGizmo#gt;**<br/>来自crate:bevy​_​render ↗：按资产变化和<br/>设备恢复请求提取渲染资产。" }
+  n15@{ shape: rounded, label: "**extract​_​render​_​asset**<br/>来自crate:bevy​_​render ↗：按资产变化和<br/>设备恢复请求提取渲染资产。" }
   class n15 node_system
   class n15 external_node
-  n16@{ shape: rounded, label: "**bevy​_​render::render​_​asset::extract​_​**<br/>**render​_​asset#lt;bevy​_​render::texture::**<br/>**gpu​_​image::GpuImage#gt;**<br/>来自crate:bevy​_​render ↗：按资产变化和<br/>设备恢复请求提取渲染资产。" }
+  n16@{ shape: rounded, label: "**extract​_​render​_​asset**<br/>来自crate:bevy​_​render ↗：按资产变化和<br/>设备恢复请求提取渲染资产。" }
   class n16 node_system
   class n16 external_node
-  n17@{ shape: rounded, label: "**bevy​_​scene::spawn::spawn​_​queued**<br/>来自crate:bevy​_​scene ↗：应用已就绪的<br/>场景补丁并推进排队装配。" }
+  n17@{ shape: rounded, label: "**spawn​_​queued**<br/>来自crate:bevy​_​scene ↗：应用已就绪的<br/>场景补丁并推进排队装配。" }
   class n17 node_system
   class n17 external_node
-  n18@{ shape: rounded, label: "**bevy​_​render::erased​_​render​_​asset::**<br/>**extract​_​erased​_​render​_​asset#lt;bevy​_​**<br/>**sprite​_​render::mesh2d::material::**<br/>**MeshMaterial2d#lt;bevy​_​sprite​_​render::**<br/>**mesh2d::color​_​material::**<br/>**ColorMaterial#gt;#gt;**<br/>来自crate:bevy​_​render ↗：提取变化及设<br/>备恢复后失效的擦除渲染资产。" }
+  n18@{ shape: rounded, label: "**extract​_​erased​_​render​_​asset**<br/>来自crate:bevy​_​render ↗：提取变化及设<br/>备恢复后失效的擦除渲染资产。" }
   class n18 node_system
   class n18 external_node
-  n19@{ shape: rounded, label: "**bevy​_​render::render​_​asset::extract​_​**<br/>**render​_​asset#lt;bevy​_​pbr::medium::**<br/>**GpuScatteringMedium#gt;**<br/>来自crate:bevy​_​render ↗：按资产变化和<br/>设备恢复请求提取渲染资产。" }
+  n19@{ shape: rounded, label: "**extract​_​render​_​asset**<br/>来自crate:bevy​_​render ↗：按资产变化和<br/>设备恢复请求提取渲染资产。" }
   class n19 node_system
   class n19 external_node
-  n20@{ shape: rounded, label: "**bevy​_​render::erased​_​render​_​asset::**<br/>**extract​_​erased​_​render​_​asset#lt;bevy​_​**<br/>**pbr::mesh​_​material::**<br/>**MeshMaterial3d#lt;bevy​_​pbr::extended​_​**<br/>**material::ExtendedMaterial#lt;bevy​_​**<br/>**pbr::pbr​_​material::**<br/>**StandardMaterial, bevy​_​pbr::decal::**<br/>**forward::ForwardDecalMaterialExt#gt;#gt;#gt;**<br/>来自crate:bevy​_​render ↗：提取变化及设<br/>备恢复后失效的擦除渲染资产。" }
+  n20@{ shape: rounded, label: "**extract​_​erased​_​render​_​asset**<br/>来自crate:bevy​_​render ↗：提取变化及设<br/>备恢复后失效的擦除渲染资产。" }
   class n20 node_system
   class n20 external_node
-  n21@{ shape: rounded, label: "**bevy​_​render::erased​_​render​_​asset::**<br/>**extract​_​erased​_​render​_​asset#lt;bevy​_​**<br/>**sprite​_​render::mesh2d::material::**<br/>**MeshMaterial2d#lt;bevy​_​sprite​_​render::**<br/>**tilemap​_​chunk::tilemap​_​chunk​_​**<br/>**material::TilemapChunkMaterial#gt;#gt;**<br/>来自crate:bevy​_​render ↗：提取变化及设<br/>备恢复后失效的擦除渲染资产。" }
+  n21@{ shape: rounded, label: "**extract​_​erased​_​render​_​asset**<br/>来自crate:bevy​_​render ↗：提取变化及设<br/>备恢复后失效的擦除渲染资产。" }
   class n21 node_system
   class n21 external_node
-  n22@{ shape: rounded, label: "**bevy​_​ecs::message::update::message​_​**<br/>**update​_​system**<br/>轮换世界中已注册的消息缓冲。" }
+  n22@{ shape: rounded, label: "**message​_​update​_​system**<br/>轮换世界中已注册的消息缓冲。" }
   class n22 node_system
-  n23@{ shape: rounded, label: "**bevy​_​egui::render::render​_​pass::**<br/>**prepare​_​egui​_​pass**<br/>来自crate:bevy​_​egui ↗：在渲染世界更新<br/>延期的 Egui 绘制回调。" }
+  n23@{ shape: rounded, label: "**prepare​_​egui​_​pass**<br/>来自crate:bevy​_​egui ↗：在渲染世界更新<br/>延期的 Egui 绘制回调。" }
   class n23 node_system
   class n23 external_node
-  n24@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::**<br/>**material::specialize​_​material2d​_​**<br/>**meshes**<br/>来自crate:bevy​_​sprite​_​render ↗：为可<br/>见二维网格重建失效的材质专用化。" }
+  n24@{ shape: rounded, label: "**specialize​_​material2d​_​meshes**<br/>来自crate:bevy​_​sprite​_​render ↗：为可<br/>见二维网格重建失效的材质专用化。" }
   class n24 node_system
   class n24 external_node
-  n25@{ shape: rounded, label: "**bevy​_​core​_​pipeline::schedule::**<br/>**handle​_​uncovered​_​swap​_​chains**<br/>来自crate:bevy​_​core​_​pipeline ↗：清除<br/>本帧没有相机覆盖的窗口交换链。" }
+  n25@{ shape: rounded, label: "**handle​_​uncovered​_​swap​_​chains**<br/>来自crate:bevy​_​core​_​pipeline ↗：清除<br/>本帧没有相机覆盖的窗口交换链。" }
   class n25 node_system
   class n25 external_node
-  n26@{ shape: rounded, label: "**bevy​_​ecs::message::update::message​_​**<br/>**update​_​system**<br/>轮换世界中已注册的消息缓冲。" }
+  n26@{ shape: rounded, label: "**message​_​update​_​system**<br/>轮换世界中已注册的消息缓冲。" }
   class n26 node_system
   n1 e0@-->|"消息"| n0
   class e0 edge_publish

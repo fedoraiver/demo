@@ -36,9 +36,9 @@ flowchart LR
   classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**dynamics::rigid​_​body::MaxLinearSpeed**<br/>限制刚体的最大线速度。" }
+  n0@{ shape: rounded, label: "**MaxLinearSpeed**<br/>限制刚体的最大线速度。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**avian3d::dynamics::integrator::**<br/>**clamp​_​velocities**<br/>按线速度和角速度上限约束求解器刚体。" }
+  n1@{ shape: rounded, label: "**clamp​_​velocities**<br/>按线速度和角速度上限约束求解器刚体。" }
   class n1 node_system
   n0 e0@--> n1
   class e0 edge_read

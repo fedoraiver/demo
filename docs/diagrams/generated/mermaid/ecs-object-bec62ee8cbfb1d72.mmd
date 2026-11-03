@@ -46,55 +46,55 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​egui::input::write​_​egui​_​input​_​**<br/>**system**<br/>把界面输入和文件拖放写入 Egui 输入批<br/>次。" }
+  n0@{ shape: rounded, label: "**write​_​egui​_​input​_​system**<br/>把界面输入和文件拖放写入 Egui 输入批<br/>次。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**input::WindowToEguiContextMap**<br/>维护窗口实体与 Egui 上下文实体的双向索<br/>引" }
+  n1@{ shape: cyl, label: "**WindowToEguiContextMap**<br/>维护窗口实体与 Egui 上下文实体的双向索<br/>引" }
   class n1 node_resource
-  n2@{ shape: rounded, label: "**bevy​_​camera::Camera**<br/>来自crate:bevy​_​camera ↗：配置相机视<br/>口、输出目标和渲染顺序。" }
+  n2@{ shape: rounded, label: "**Camera**<br/>来自crate:bevy​_​camera ↗：配置相机视<br/>口、输出目标和渲染顺序。" }
   class n2 node_component
   class n2 external_node
-  n3@{ shape: cyl, label: "**bevy​_​time::Time#lt;bevy​_​time::Real#gt;**<br/>来自crate:bevy​_​time ↗：保存时钟上下<br/>文、帧间隔及累计时间" }
+  n3@{ shape: cyl, label: "**Time#lt;Real#gt;**<br/>来自crate:bevy​_​time ↗：保存时钟上下<br/>文、帧间隔及累计时间" }
   class n3 node_resource
   class n3 external_node
   n4@{ shape: lin-rect, label: "**ProcessInput**<br/>组织 Egui 上下文与输入准备。" }
   class n4 node_system_set
-  n5@{ shape: cyl, label: "**input::FocusedNonWindowEguiContext**<br/>保存当前获得键盘焦点的非窗口 Egui 上下<br/>文实体" }
+  n5@{ shape: cyl, label: "**FocusedNonWindowEguiContext**<br/>保存当前获得键盘焦点的非窗口 Egui 上下<br/>文实体" }
   class n5 node_resource
   n6@{ shape: rounded, label: "**EguiContext**<br/>包装一个 egui::Context" }
   class n6 node_component
-  n7@{ shape: rounded, label: "**bevy​_​egui::input::write​_​non​_​window​_​**<br/>**touch​_​messages​_​system**<br/>向聚焦的非窗口 Egui 界面传递触摸。" }
+  n7@{ shape: rounded, label: "**write​_​non​_​window​_​touch​_​messages​_​**<br/>**system**<br/>向聚焦的非窗口 Egui 界面传递触摸。" }
   class n7 node_system
-  n8@{ shape: rounded, label: "**bevy​_​egui::input::write​_​ime​_​**<br/>**messages​_​system**<br/>向聚焦的 Egui 上下文传递输入法文本。" }
+  n8@{ shape: rounded, label: "**write​_​ime​_​messages​_​system**<br/>向聚焦的 Egui 上下文传递输入法文本。" }
   class n8 node_system
-  n9@{ shape: rounded, label: "**bevy​_​egui::input::write​_​keyboard​_​**<br/>**input​_​messages​_​system**<br/>把键盘文本与按键转换为 Egui 输入。" }
+  n9@{ shape: rounded, label: "**write​_​keyboard​_​input​_​messages​_​system**<br/>把键盘文本与按键转换为 Egui 输入。" }
   class n9 node_system
   n10@{ shape: fr-rect, label: "**EguiPlugin**<br/>装配 Egui 输入、上下文与渲染。" }
   class n10 node_plugin
   n11@{ shape: lin-rect, label: "**WriteEguiEvents**<br/>组织 Egui 输入读取与事件写入。" }
   class n11 node_system_set
-  n12@{ shape: rounded, label: "**bevy​_​egui::input::write​_​pinch​_​**<br/>**gesture​_​messages​_​system**<br/>把捏合手势转换为 Egui 缩放。" }
+  n12@{ shape: rounded, label: "**write​_​pinch​_​gesture​_​messages​_​system**<br/>把捏合手势转换为 Egui 缩放。" }
   class n12 node_system
   n13@{ shape: rounded, label: "**EguiInput**<br/>保存送入当前 Egui 上下文的 RawInput" }
   class n13 node_component
-  n14@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;input::**<br/>**EguiInputEvent#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n14@{ shape: cyl, label: "**Messages#lt;EguiInputEvent#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n14 node_resource
   class n14 external_node
-  n15@{ shape: rounded, label: "**bevy​_​egui::input::write​_​file​_​dnd​_​**<br/>**messages​_​system**<br/>把文件拖放路由到对应 Egui 上下文。" }
+  n15@{ shape: rounded, label: "**write​_​file​_​dnd​_​messages​_​system**<br/>把文件拖放路由到对应 Egui 上下文。" }
   class n15 node_system
-  n16@{ shape: rounded, label: "**bevy​_​egui::input::write​_​non​_​window​_​**<br/>**pointer​_​moved​_​messages​_​system**<br/>刷新非窗口 Egui 界面的指针位置。" }
+  n16@{ shape: rounded, label: "**write​_​non​_​window​_​pointer​_​moved​_​**<br/>**messages​_​system**<br/>刷新非窗口 Egui 界面的指针位置。" }
   class n16 node_system
-  n17@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;input::**<br/>**EguiFileDragAndDropMessage#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n17@{ shape: cyl, label: "**Messages#lt;EguiFileDragAndDropMessage#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n17 node_resource
   class n17 external_node
-  n18@{ shape: lean-r, label: "**input::EguiInputEvent**<br/>传递供 Egui 消费的输入事件。" }
+  n18@{ shape: lean-r, label: "**EguiInputEvent**<br/>传递供 Egui 消费的输入事件。" }
   class n18 node_message
-  n19@{ shape: rounded, label: "**bevy​_​egui::input::write​_​mouse​_​wheel​_​**<br/>**messages​_​system**<br/>向悬停 Egui 上下文传递滚轮输入。" }
+  n19@{ shape: rounded, label: "**write​_​mouse​_​wheel​_​messages​_​system**<br/>向悬停 Egui 上下文传递滚轮输入。" }
   class n19 node_system
-  n20@{ shape: cyl, label: "**input::ModifierKeysState**<br/>缓存 Shift、Control、Alt 和平台主修饰<br/>键的按下状态" }
+  n20@{ shape: cyl, label: "**ModifierKeysState**<br/>缓存 Shift、Control、Alt 和平台主修饰<br/>键的按下状态" }
   class n20 node_resource
-  n21@{ shape: lean-r, label: "**input::EguiFileDragAndDropMessage**<br/>传递 Egui 接收的文件拖放消息。" }
+  n21@{ shape: lean-r, label: "**EguiFileDragAndDropMessage**<br/>传递 Egui 接收的文件拖放消息。" }
   class n21 node_message
-  n22@{ shape: rounded, label: "**window::Window**<br/>来自crate:bevy​_​window ↗：保存窗口的呈<br/>现模式、位置、分辨率、标题、全屏及平台行<br/>为配置" }
+  n22@{ shape: rounded, label: "**Window**<br/>来自crate:bevy​_​window ↗：保存窗口的呈<br/>现模式、位置、分辨率、标题、全屏及平台行<br/>为配置" }
   class n22 node_component
   class n22 external_node
   n1 e0@--> n0

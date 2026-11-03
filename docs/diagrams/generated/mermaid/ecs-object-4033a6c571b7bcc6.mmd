@@ -44,24 +44,24 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​camera::visibility::update​_​**<br/>**frusta**<br/>根据相机投影和世界变换更新视锥。" }
+  n0@{ shape: rounded, label: "**update​_​frusta**<br/>根据相机投影和世界变换更新视锥。" }
   class n0 node_system
   n1@{ shape: lin-rect, label: "**Propagate**<br/>来自crate:bevy​_​transform ↗：组织实体<br/>层级变换传播。" }
   class n1 node_system_set
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​camera::Projection**<br/>定义相机从视图到裁剪空间的投影。" }
+  n2@{ shape: rounded, label: "**Projection**<br/>定义相机从视图到裁剪空间的投影。" }
   class n2 node_component
-  n3@{ shape: rounded, label: "**components::global​_​transform::**<br/>**GlobalTransform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>合并祖先变换后的世界空间仿射变换" }
+  n3@{ shape: rounded, label: "**GlobalTransform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>合并祖先变换后的世界空间仿射变换" }
   class n3 node_component
   class n3 external_node
-  n4@{ shape: fr-rect, label: "**projection::CameraProjectionPlugin**<br/>维护相机投影数据。" }
+  n4@{ shape: fr-rect, label: "**CameraProjectionPlugin**<br/>维护相机投影数据。" }
   class n4 node_plugin
   n5@{ shape: lin-rect, label: "**UpdateFrusta**<br/>组织相机与实体可见性更新。" }
   class n5 node_system_set
-  n6@{ shape: rounded, label: "**bevy​_​render::camera::camera​_​system**<br/>来自crate:bevy​_​render ↗：响应目标尺寸<br/>变化并更新相机投影。" }
+  n6@{ shape: rounded, label: "**camera​_​system**<br/>来自crate:bevy​_​render ↗：响应目标尺寸<br/>变化并更新相机投影。" }
   class n6 node_system
   class n6 external_node
-  n7@{ shape: rounded, label: "**bevy​_​camera::primitives::Frustum**<br/>描述相机可见空间并参与视锥裁剪。" }
+  n7@{ shape: rounded, label: "**Frustum**<br/>描述相机可见空间并参与视锥裁剪。" }
   class n7 node_component
   n1 e0@-->|"先于"| n0
   class e0 edge_order

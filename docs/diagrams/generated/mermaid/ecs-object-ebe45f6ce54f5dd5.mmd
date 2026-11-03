@@ -38,15 +38,15 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**audio::mix::AudioMix**<br/>两条业务通道共用的有效混音源；离开设置页<br/>便回到最近成功应用的配置。" }
+  n0@{ shape: cyl, label: "**AudioMix**<br/>两条业务通道共用的有效混音源；离开设置页<br/>便回到最近成功应用的配置。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**demo::audio::mix::sync​_​voice​_​volumes**<br/>将有效混音与素材音量同步到播放实例。" }
+  n1@{ shape: rounded, label: "**sync​_​voice​_​volumes**<br/>将有效混音与素材音量同步到播放实例。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**demo::audio::playback::play​_​requests**<br/>按有效音量与播放策略处理短音请求。" }
+  n2@{ shape: rounded, label: "**play​_​requests**<br/>按有效音量与播放策略处理短音请求。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**demo::audio::mix::sync​_​voice​_​volumes**<br/>将有效混音与素材音量同步到播放实例。" }
+  n3@{ shape: rounded, label: "**sync​_​voice​_​volumes**<br/>将有效混音与素材音量同步到播放实例。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**demo::audio::mix::sync​_​audio​_​mix**<br/>合成设置预览或正式配置的有效音量。" }
+  n4@{ shape: rounded, label: "**sync​_​audio​_​mix**<br/>合成设置预览或正式配置的有效音量。" }
   class n4 node_system
   n0 e0@--> n1
   class e0 edge_read

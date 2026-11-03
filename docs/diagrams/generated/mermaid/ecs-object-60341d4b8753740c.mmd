@@ -37,9 +37,9 @@ flowchart LR
   classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
   classDef edge_order stroke:#334155,stroke-width:2px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: lin-rect, label: "**SystemTypeSet:bevy​_​ecs::schedule::**<br/>**executor::ApplyDeferred**<br/>保留未注册系统类型的依赖端点。" }
+  n0@{ shape: lin-rect, label: "**SystemTypeSet:ApplyDeferred**<br/>保留未注册系统类型的依赖端点。" }
   class n0 node_system_set
-  n1@{ shape: rounded, label: "**bevy​_​render::view::window::**<br/>**screenshot::clear​_​screenshots**<br/>来自crate:bevy​_​render ↗：通过延迟命令<br/>销毁已带 Captured 标记的截图实体，清理<br/>已经完成捕获的请求。" }
+  n1@{ shape: rounded, label: "**clear​_​screenshots**<br/>来自crate:bevy​_​render ↗：通过延迟命令<br/>销毁已带 Captured 标记的截图实体，清理<br/>已经完成捕获的请求。" }
   class n1 node_system
   class n1 external_node
   n1 e0@-->|"先于"| n0

@@ -39,7 +39,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: notch-rect, label: "**Local · removed.0.0.1**<br/>跟踪 RawHandleWrapper 移除记录的读取进<br/>度。" }
   class n0 node_local
-  n1@{ shape: rounded, label: "**bevy​_​render::view::window::extract​_​**<br/>**windows**<br/>向渲染世界同步窗口配置与原生句柄。" }
+  n1@{ shape: rounded, label: "**extract​_​windows**<br/>向渲染世界同步窗口配置与原生句柄。" }
   class n1 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

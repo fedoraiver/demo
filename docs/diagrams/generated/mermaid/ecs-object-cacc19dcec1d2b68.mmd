@@ -44,26 +44,26 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​anti​_​alias::smaa::prepare​_​smaa​_​**<br/>**uniforms**<br/>上传各 SMAA 视图的尺寸及倒数参数。" }
+  n0@{ shape: rounded, label: "**prepare​_​smaa​_​uniforms**<br/>上传各 SMAA 视图的尺寸及倒数参数。" }
   class n0 node_system
   n1@{ shape: lin-rect, label: "**PrepareResources**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
   class n1 node_system_set
   class n1 external_node
-  n2@{ shape: cyl, label: "**bevy​_​render::renderer::RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
+  n2@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
   class n2 node_resource
   class n2 external_node
-  n3@{ shape: cyl, label: "**smaa::SmaaInfoUniformBuffer**<br/>保存全部视图的 SMAA GPU 参数。" }
+  n3@{ shape: cyl, label: "**SmaaInfoUniformBuffer**<br/>保存全部视图的 SMAA GPU 参数。" }
   class n3 node_resource
-  n4@{ shape: cyl, label: "**bevy​_​render::renderer::RenderQueue**<br/>来自crate:bevy​_​render ↗：将资源写入和<br/>命令异步提交给 GPU。" }
+  n4@{ shape: cyl, label: "**RenderQueue**<br/>来自crate:bevy​_​render ↗：将资源写入和<br/>命令异步提交给 GPU。" }
   class n4 node_resource
   class n4 external_node
-  n5@{ shape: rounded, label: "**smaa::Smaa**<br/>为视图选择 SMAA 质量预设。" }
+  n5@{ shape: rounded, label: "**Smaa**<br/>为视图选择 SMAA 质量预设。" }
   class n5 node_component
-  n6@{ shape: fr-rect, label: "**smaa::SmaaPlugin**<br/>提供亚像素形态抗锯齿。" }
+  n6@{ shape: fr-rect, label: "**SmaaPlugin**<br/>提供亚像素形态抗锯齿。" }
   class n6 node_plugin
-  n7@{ shape: rounded, label: "**smaa::SmaaInfoUniformOffset**<br/>定位视图在 SMAA 参数缓冲中的位置。" }
+  n7@{ shape: rounded, label: "**SmaaInfoUniformOffset**<br/>定位视图在 SMAA 参数缓冲中的位置。" }
   class n7 node_component
-  n8@{ shape: rounded, label: "**bevy​_​render::view::ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
+  n8@{ shape: rounded, label: "**ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
   class n8 node_component
   class n8 external_node
   n1 e0@-->|"集合成员"| n0

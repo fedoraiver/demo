@@ -42,26 +42,26 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​ui​_​render::render​_​pass::ui​_​pass**<br/>把透明 UI 绘制项渲染到关联视图。" }
+  n0@{ shape: rounded, label: "**ui​_​pass**<br/>把透明 UI 绘制项渲染到关联视图。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**bevy​_​render::view::ViewTarget**<br/>来自crate:bevy​_​render ↗：管理视图主颜<br/>色纹理及最终输出附件。" }
+  n1@{ shape: rounded, label: "**ViewTarget**<br/>来自crate:bevy​_​render ↗：管理视图主颜<br/>色纹理及最终输出附件。" }
   class n1 node_component
   class n1 external_node
-  n2@{ shape: fr-rect, label: "**bevy​_​ui​_​render::UiRenderPlugin**<br/>提取并准备界面绘制数据。" }
+  n2@{ shape: fr-rect, label: "**UiRenderPlugin**<br/>提取并准备界面绘制数据。" }
   class n2 node_plugin
-  n3@{ shape: rounded, label: "**bevy​_​render::camera::ExtractedCamera**<br/>来自crate:bevy​_​render ↗：保存渲染世界<br/>相机的目标和绘制配置。" }
+  n3@{ shape: rounded, label: "**ExtractedCamera**<br/>来自crate:bevy​_​render ↗：保存渲染世界<br/>相机的目标和绘制配置。" }
   class n3 node_component
   class n3 external_node
-  n4@{ shape: cyl, label: "**bevy​_​render::renderer::RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
+  n4@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
   class n4 node_resource
   class n4 external_node
-  n5@{ shape: cyl, label: "**bevy​_​render::render​_​phase::**<br/>**ViewSortedRenderPhases#lt;render​_​pass::**<br/>**TransparentUi#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图需<br/>要排序的绘制指令。" }
+  n5@{ shape: cyl, label: "**ViewSortedRenderPhases#lt;TransparentUi**<br/>**#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图需<br/>要排序的绘制指令。" }
   class n5 node_resource
   class n5 external_node
-  n6@{ shape: cyl, label: "**bevy​_​render::diagnostic::**<br/>**DiagnosticsRecorder**<br/>来自crate:bevy​_​render ↗：记录渲染诊断<br/>区间与 GPU 查询索引的对应。" }
+  n6@{ shape: cyl, label: "**DiagnosticsRecorder**<br/>来自crate:bevy​_​render ↗：记录渲染诊断<br/>区间与 GPU 查询索引的对应。" }
   class n6 node_resource
   class n6 external_node
-  n7@{ shape: rounded, label: "**bevy​_​core​_​pipeline::upscaling::**<br/>**node::upscaling**<br/>来自crate:bevy​_​core​_​pipeline ↗：将主<br/>颜色纹理缩放写入最终输出附件。" }
+  n7@{ shape: rounded, label: "**upscaling**<br/>来自crate:bevy​_​core​_​pipeline ↗：将主<br/>颜色纹理缩放写入最终输出附件。" }
   class n7 node_system
   class n7 external_node
   n8@{ shape: lin-rect, label: "**PostProcess**<br/>来自crate:bevy​_​core​_​pipeline ↗：划分<br/>二维相机绘制与后处理阶段。" }
@@ -69,7 +69,7 @@ flowchart LR
   class n8 external_node
   n9@{ shape: rounded, label: "**UiCameraView**<br/>从主渲染目标视图定位对应的 UI 视图。" }
   class n9 node_component
-  n10@{ shape: rounded, label: "**bevy​_​render::view::ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
+  n10@{ shape: rounded, label: "**ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
   class n10 node_component
   class n10 external_node
   n11@{ shape: rounded, label: "**UiViewTarget**<br/>从 UI 视图定位对应的主渲染目标视图。" }

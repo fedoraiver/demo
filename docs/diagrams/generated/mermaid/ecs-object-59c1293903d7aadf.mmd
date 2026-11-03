@@ -38,11 +38,11 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**atmosphere::resources::**<br/>**AtmosphereLutPipelines**<br/>保存四类大气查找表的计算管线。" }
+  n0@{ shape: cyl, label: "**AtmosphereLutPipelines**<br/>保存四类大气查找表的计算管线。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​pbr::atmosphere::node::**<br/>**atmosphere​_​luts**<br/>根据当前大气、视图和光照参数调度计算管<br/>线，生成透射、多重散射、天空视图及空气透<br/>视查找表，供天空和大气渲染使用。" }
+  n1@{ shape: rounded, label: "**atmosphere​_​luts**<br/>根据当前大气、视图和光照参数调度计算管<br/>线，生成透射、多重散射、天空视图及空气透<br/>视查找表，供天空和大气渲染使用。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​render::init​_​gpu​_​resource#lt;bevy​_​**<br/>**pbr::atmosphere::resources::**<br/>**AtmosphereLutPipelines#gt;**<br/>来自crate:bevy​_​render ↗：构造并插入渲<br/>染所需资源。" }
+  n2@{ shape: rounded, label: "**init​_​gpu​_​resource**<br/>来自crate:bevy​_​render ↗：构造并插入渲<br/>染所需资源。" }
   class n2 node_system
   class n2 external_node
   n0 e0@--> n1

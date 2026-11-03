@@ -43,7 +43,7 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::**<br/>**material::check​_​entities​_​needing​_​**<br/>**specialization#lt;bevy​_​sprite​_​render::**<br/>**mesh2d::color​_​material::**<br/>**ColorMaterial#gt;**<br/>收集二维网格材质需重建或移除专用化的实<br/>体。" }
+  n0@{ shape: rounded, label: "**check​_​entities​_​needing​_​**<br/>**specialization**<br/>收集二维网格材质需重建或移除专用化的实<br/>体。" }
   class n0 node_system
   n1@{ shape: notch-rect, label: "**Local · removed​_​mesh​_​material​_​2d​_​**<br/>**components.0.0.0.0**<br/>保存 MeshMaterial2d#lt;M#gt; 移除参数的组<br/>件 ID。" }
   class n1 node_local
@@ -51,21 +51,21 @@ flowchart LR
   class n2 node_local
   n3@{ shape: notch-rect, label: "**Local · removed​_​mesh​_​material​_​2d​_​**<br/>**components.0.1**<br/>跟踪 MeshMaterial2d#lt;M#gt; 移除记录的读取<br/>进度。" }
   class n3 node_local
-  n4@{ shape: rounded, label: "**mesh2d::material::**<br/>**MeshMaterial2d#lt;mesh2d::color​_​**<br/>**material::ColorMaterial#gt;**<br/>为二维网格指定材质资产。" }
+  n4@{ shape: rounded, label: "**MeshMaterial2d#lt;ColorMaterial#gt;**<br/>为二维网格指定材质资产。" }
   class n4 node_component
-  n5@{ shape: cyl, label: "**bevy​_​asset::asset​_​changed::**<br/>**AssetChanges#lt;mesh2d::color​_​**<br/>**material::ColorMaterial#gt;**<br/>来自crate:bevy​_​asset ↗：记录资产最近<br/>变化的系统刻度。" }
+  n5@{ shape: cyl, label: "**AssetChanges#lt;ColorMaterial#gt;**<br/>来自crate:bevy​_​asset ↗：记录资产最近<br/>变化的系统刻度。" }
   class n5 node_resource
   class n5 external_node
-  n6@{ shape: rounded, label: "**components::Mesh2d**<br/>来自crate:bevy​_​mesh ↗：为二维可绘制实<br/>体指定网格资产。" }
+  n6@{ shape: rounded, label: "**Mesh2d**<br/>来自crate:bevy​_​mesh ↗：为二维可绘制实<br/>体指定网格资产。" }
   class n6 node_component
   class n6 external_node
-  n7@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::**<br/>**material::mark​_​2d​_​meshes​_​as​_​changed​_​**<br/>**if​_​their​_​materials​_​changed#lt;bevy​_​**<br/>**sprite​_​render::mesh2d::color​_​**<br/>**material::ColorMaterial#gt;**<br/>让材质变化触发二维网格重新提取。" }
+  n7@{ shape: rounded, label: "**mark​_​2d​_​meshes​_​as​_​changed​_​if​_​their​_​**<br/>**materials​_​changed**<br/>让材质变化触发二维网格重新提取。" }
   class n7 node_system
   n8@{ shape: notch-rect, label: "**Local · removed​_​mesh​_​2d​_​**<br/>**components.0.0.0.0**<br/>保存 Mesh2d 移除参数的组件 ID。" }
   class n8 node_local
-  n9@{ shape: cyl, label: "**mesh2d::material::**<br/>**EntitiesNeedingSpecialization#lt;mesh2d**<br/>**::color​_​material::ColorMaterial#gt;**<br/>暂存需要更新或移除专用管线的二维实体。" }
+  n9@{ shape: cyl, label: "**EntitiesNeedingSpecialization#lt;ColorM**<br/>**aterial#gt;**<br/>暂存需要更新或移除专用管线的二维实体。" }
   class n9 node_resource
-  n10@{ shape: cyl, label: "**bevy​_​asset::asset​_​changed::**<br/>**AssetChanges#lt;mesh::Mesh#gt;**<br/>来自crate:bevy​_​asset ↗：记录资产最近<br/>变化的系统刻度。" }
+  n10@{ shape: cyl, label: "**AssetChanges#lt;Mesh#gt;**<br/>来自crate:bevy​_​asset ↗：记录资产最近<br/>变化的系统刻度。" }
   class n10 node_resource
   class n10 external_node
   n11@{ shape: notch-rect, label: "**Local · removed​_​mesh​_​2d​_​**<br/>**components.0.1**<br/>跟踪 Mesh2d 移除记录的读取进度。" }

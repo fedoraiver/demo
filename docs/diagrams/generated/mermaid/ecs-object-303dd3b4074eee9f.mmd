@@ -36,9 +36,9 @@ flowchart LR
   classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**ui​_​node::UiTargetCamera**<br/>为 UI 根指定渲染目标相机。" }
+  n0@{ shape: rounded, label: "**UiTargetCamera**<br/>为 UI 根指定渲染目标相机。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​ui::update::propagate​_​ui​_​**<br/>**target​_​cameras**<br/>为 UI 根配置目标相机和视口信息传播源。" }
+  n1@{ shape: rounded, label: "**propagate​_​ui​_​target​_​cameras**<br/>为 UI 根配置目标相机和视口信息传播源。" }
   class n1 node_system
   n0 e0@--> n1
   class e0 edge_read

@@ -37,9 +37,9 @@ flowchart LR
   classDef node_message fill:#EDF4F6,stroke:#247B91,stroke-width:1.6px,color:#1F3340
   classDef edge_publish stroke:#247B91,stroke-width:1.8px,stroke-dasharray:10 4 2 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: lean-r, label: "**bevy​_​asset::AssetEvent#lt;world​_​asset::**<br/>**WorldAsset#gt;**<br/>通知指定资产及依赖发生变化。" }
+  n0@{ shape: lean-r, label: "**AssetEvent#lt;WorldAsset#gt;**<br/>通知指定资产及依赖发生变化。" }
   class n0 node_message
-  n1@{ shape: rounded, label: "**bevy​_​asset::assets::Assets#lt;bevy​_​**<br/>**world​_​serialization::world​_​asset::**<br/>**WorldAsset#gt;::asset​_​events**<br/>发布累计的资产变化消息。" }
+  n1@{ shape: rounded, label: "**asset​_​events**<br/>发布累计的资产变化消息。" }
   class n1 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_publish

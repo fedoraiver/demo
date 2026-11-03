@@ -38,42 +38,42 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**render​_​asset::RenderAssets#lt;mesh::**<br/>**RenderMesh#gt;**<br/>按源资产身份保存 GPU 渲染表示。" }
+  n0@{ shape: cyl, label: "**RenderAssets#lt;RenderMesh#gt;**<br/>按源资产身份保存 GPU 渲染表示。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​render::render​_​asset::prepare​_​**<br/>**assets#lt;bevy​_​render::mesh::**<br/>**RenderMesh#gt;**<br/>在上传预算内准备资产并保留重试项。" }
+  n1@{ shape: rounded, label: "**prepare​_​assets**<br/>在上传预算内准备资产并保留重试项。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::**<br/>**material::specialize​_​material2d​_​**<br/>**meshes**<br/>来自crate:bevy​_​sprite​_​render ↗：为可<br/>见二维网格重建失效的材质专用化。" }
+  n2@{ shape: rounded, label: "**specialize​_​material2d​_​meshes**<br/>来自crate:bevy​_​sprite​_​render ↗：为可<br/>见二维网格重建失效的材质专用化。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​render::render​_​asset::collect​_​**<br/>**render​_​assets​_​to​_​reextract#lt;bevy​_​**<br/>**render::mesh::RenderMesh#gt;**<br/>排空渲染资产并登记设备恢复后的重新提取。" }
+  n3@{ shape: rounded, label: "**collect​_​render​_​assets​_​to​_​reextract**<br/>排空渲染资产并登记设备恢复后的重新提取。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**bevy​_​pbr::prepass::specialize​_​**<br/>**prepass​_​material​_​meshes**<br/>来自crate:bevy​_​pbr ↗：按深度、材质和<br/>运动特性生成预通道专用管线。" }
+  n4@{ shape: rounded, label: "**specialize​_​prepass​_​material​_​meshes**<br/>来自crate:bevy​_​pbr ↗：按深度、材质和<br/>运动特性生成预通道专用管线。" }
   class n4 node_system
   class n4 external_node
-  n5@{ shape: rounded, label: "**bevy​_​pbr::render::morph::prepare​_​**<br/>**morph​_​descriptors**<br/>来自crate:bevy​_​pbr ↗：稳定分配形变描<br/>述符索引并回收失效项。" }
+  n5@{ shape: rounded, label: "**prepare​_​morph​_​descriptors**<br/>来自crate:bevy​_​pbr ↗：稳定分配形变描<br/>述符索引并回收失效项。" }
   class n5 node_system
   class n5 external_node
-  n6@{ shape: rounded, label: "**bevy​_​pbr::material::queue​_​material​_​**<br/>**meshes**<br/>来自crate:bevy​_​pbr ↗：按材质模式把可<br/>见网格加入相应绘制阶段。" }
+  n6@{ shape: rounded, label: "**queue​_​material​_​meshes**<br/>来自crate:bevy​_​pbr ↗：按材质模式把可<br/>见网格加入相应绘制阶段。" }
   class n6 node_system
   class n6 external_node
-  n7@{ shape: rounded, label: "**bevy​_​render::render​_​asset::extract​_​**<br/>**render​_​asset#lt;bevy​_​render::mesh::**<br/>**RenderMesh#gt;**<br/>按资产变化和设备恢复请求提取渲染资产。" }
+  n7@{ shape: rounded, label: "**extract​_​render​_​asset**<br/>按资产变化和设备恢复请求提取渲染资产。" }
   class n7 node_system
-  n8@{ shape: rounded, label: "**bevy​_​pbr::volumetric​_​fog::render::**<br/>**prepare​_​volumetric​_​fog​_​pipelines**<br/>来自crate:bevy​_​pbr ↗：为体积雾视图准<br/>备有密度纹理和无密度纹理两类管线。" }
+  n8@{ shape: rounded, label: "**prepare​_​volumetric​_​fog​_​pipelines**<br/>来自crate:bevy​_​pbr ↗：为体积雾视图准<br/>备有密度纹理和无密度纹理两类管线。" }
   class n8 node_system
   class n8 external_node
-  n9@{ shape: rounded, label: "**bevy​_​pbr::render::light::specialize​_​**<br/>**shadows**<br/>来自crate:bevy​_​pbr ↗：按阴影视图、网<br/>格及材质变化重新选择专用阴影渲染管线，清<br/>理失效缓存，并整理需要补齐或重新排队的阴<br/>影网格任务。" }
+  n9@{ shape: rounded, label: "**specialize​_​shadows**<br/>来自crate:bevy​_​pbr ↗：按阴影视图、网<br/>格及材质变化重新选择专用阴影渲染管线，清<br/>理失效缓存，并整理需要补齐或重新排队的阴<br/>影网格任务。" }
   class n9 node_system
   class n9 external_node
-  n10@{ shape: rounded, label: "**bevy​_​pbr::material::specialize​_​**<br/>**material​_​meshes**<br/>来自crate:bevy​_​pbr ↗：为变化的可见网<br/>格生成并缓存材质专用管线。" }
+  n10@{ shape: rounded, label: "**specialize​_​material​_​meshes**<br/>来自crate:bevy​_​pbr ↗：为变化的可见网<br/>格生成并缓存材质专用管线。" }
   class n10 node_system
   class n10 external_node
-  n11@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::**<br/>**material::queue​_​material2d​_​meshes**<br/>来自crate:bevy​_​sprite​_​render ↗：按透<br/>明模式更新二维网格渲染批次。" }
+  n11@{ shape: rounded, label: "**queue​_​material2d​_​meshes**<br/>来自crate:bevy​_​sprite​_​render ↗：按透<br/>明模式更新二维网格渲染批次。" }
   class n11 node_system
   class n11 external_node
-  n12@{ shape: rounded, label: "**bevy​_​pbr::volumetric​_​fog::render::**<br/>**volumetric​_​fog**<br/>来自crate:bevy​_​pbr ↗：结合深度与光照<br/>逐个绘制视图中的雾体。" }
+  n12@{ shape: rounded, label: "**volumetric​_​fog**<br/>来自crate:bevy​_​pbr ↗：结合深度与光照<br/>逐个绘制视图中的雾体。" }
   class n12 node_system
   class n12 external_node
-  n13@{ shape: rounded, label: "**bevy​_​pbr::render::mesh::prepare​_​**<br/>**mesh​_​bind​_​groups**<br/>来自crate:bevy​_​pbr ↗：按预处理路径准<br/>备网格、蒙皮和形变资源绑定。" }
+  n13@{ shape: rounded, label: "**prepare​_​mesh​_​bind​_​groups**<br/>来自crate:bevy​_​pbr ↗：按预处理路径准<br/>备网格、蒙皮和形变资源绑定。" }
   class n13 node_system
   class n13 external_node
   n1 e0@-->|"可变访问"| n0

@@ -44,30 +44,27 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  subgraph layout_card_n0[" "]
-  n0@{ shape: rounded, label: "**bevy​_​pbr::render::light::check​_​**<br/>**views​_​lights​_​need​_​specialization**<br/>检测阴影视图投影类型并标记管线待刷新。" }
+  n0@{ shape: rounded, label: "**check​_​views​_​lights​_​need​_​**<br/>**specialization**<br/>检测阴影视图投影类型并标记管线待刷新。" }
   class n0 node_system
-  end
-  style layout_card_n0 fill:none,stroke:none
-  n1@{ shape: rounded, label: "**bevy​_​render::view::ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
+  n1@{ shape: rounded, label: "**ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
   class n1 node_component
   class n1 external_node
-  n2@{ shape: rounded, label: "**render::light::LightEntity**<br/>标识阴影视图对应的光源面或级联。" }
+  n2@{ shape: rounded, label: "**LightEntity**<br/>标识阴影视图对应的光源面或级联。" }
   class n2 node_component
-  n3@{ shape: rounded, label: "**bevy​_​pbr::render::light::specialize​_​**<br/>**shadows**<br/>按阴影视图、网格及材质变化重新选择专用阴<br/>影渲染管线，清理失效缓存，并整理需要补齐<br/>或重新排队的阴影网格任务。" }
+  n3@{ shape: rounded, label: "**specialize​_​shadows**<br/>按阴影视图、网格及材质变化重新选择专用阴<br/>影渲染管线，清理失效缓存，并整理需要补齐<br/>或重新排队的阴影网格任务。" }
   class n3 node_system
-  n4@{ shape: cyl, label: "**bevy​_​render::render​_​phase::**<br/>**ViewBinnedRenderPhases#lt;render::**<br/>**light::Shadow#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图按<br/>分桶组织的绘制指令。" }
+  n4@{ shape: cyl, label: "**ViewBinnedRenderPhases#lt;Shadow#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图按<br/>分桶组织的绘制指令。" }
   class n4 node_resource
   class n4 external_node
-  n5@{ shape: cyl, label: "**camera::DirtySpecializations**<br/>来自crate:bevy​_​render ↗：记录需刷新或<br/>移除管线专用化的对象与视图。" }
+  n5@{ shape: cyl, label: "**DirtySpecializations**<br/>来自crate:bevy​_​render ↗：记录需刷新或<br/>移除管线专用化的对象与视图。" }
   class n5 node_resource
   class n5 external_node
-  n6@{ shape: cyl, label: "**render::light::LightKeyCache**<br/>缓存阴影光源视图的管线配置键。" }
+  n6@{ shape: cyl, label: "**LightKeyCache**<br/>缓存阴影光源视图的管线配置键。" }
   class n6 node_resource
   n7@{ shape: lin-rect, label: "**Specialize**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
   class n7 node_system_set
   class n7 external_node
-  n8@{ shape: fr-rect, label: "**material::MaterialsPlugin**<br/>组织材质实例、管线及绘制队列。" }
+  n8@{ shape: fr-rect, label: "**MaterialsPlugin**<br/>组织材质实例、管线及绘制队列。" }
   class n8 node_plugin
   n1 e0@--> n0
   class e0 edge_read

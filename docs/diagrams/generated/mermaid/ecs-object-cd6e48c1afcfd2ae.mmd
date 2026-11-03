@@ -40,21 +40,21 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: lin-rect, label: "**BeforeFixedMainLoop**<br/>划分固定更新循环的前后边界。" }
   class n0 node_system_set
-  n1@{ shape: rounded, label: "**bevy​_​gizmos::start​_​gizmo​_​**<br/>**context#lt;bevy​_​gizmos::skinned​_​mesh​_​**<br/>**bounds::**<br/>**SkinnedMeshBoundsGizmoConfigGroup,**<br/>**bevy​_​time::fixed::Fixed#gt;**<br/>来自crate:bevy​_​gizmos ↗：暂存父级<br/>Gizmo 缓冲并开始新上下文。" }
+  n1@{ shape: rounded, label: "**start​_​gizmo​_​context**<br/>来自crate:bevy​_​gizmos ↗：暂存父级<br/>Gizmo 缓冲并开始新上下文。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​gizmos::start​_​gizmo​_​**<br/>**context#lt;bevy​_​light::gizmos::**<br/>**LightGizmoConfigGroup, bevy​_​time::**<br/>**fixed::Fixed#gt;**<br/>来自crate:bevy​_​gizmos ↗：暂存父级<br/>Gizmo 缓冲并开始新上下文。" }
+  n2@{ shape: rounded, label: "**start​_​gizmo​_​context**<br/>来自crate:bevy​_​gizmos ↗：暂存父级<br/>Gizmo 缓冲并开始新上下文。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​gizmos::start​_​gizmo​_​**<br/>**context#lt;bevy​_​gizmos::aabb::**<br/>**AabbGizmoConfigGroup, bevy​_​time::**<br/>**fixed::Fixed#gt;**<br/>来自crate:bevy​_​gizmos ↗：暂存父级<br/>Gizmo 缓冲并开始新上下文。" }
+  n3@{ shape: rounded, label: "**start​_​gizmo​_​context**<br/>来自crate:bevy​_​gizmos ↗：暂存父级<br/>Gizmo 缓冲并开始新上下文。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**bevy​_​gizmos::start​_​gizmo​_​**<br/>**context#lt;bevy​_​gizmos::config::**<br/>**DefaultGizmoConfigGroup, bevy​_​time::**<br/>**fixed::Fixed#gt;**<br/>来自crate:bevy​_​gizmos ↗：暂存父级<br/>Gizmo 缓冲并开始新上下文。" }
+  n4@{ shape: rounded, label: "**start​_​gizmo​_​context**<br/>来自crate:bevy​_​gizmos ↗：暂存父级<br/>Gizmo 缓冲并开始新上下文。" }
   class n4 node_system
   class n4 external_node
   n5@{ shape: lin-rect, label: "**FixedMainLoop**<br/>划分固定更新循环的前后边界。" }
   class n5 node_system_set
-  n6@{ shape: rounded, label: "**bevy​_​gizmos::start​_​gizmo​_​**<br/>**context#lt;bevy​_​gizmos::frustum::**<br/>**FrustumGizmoConfigGroup, bevy​_​time::**<br/>**fixed::Fixed#gt;**<br/>来自crate:bevy​_​gizmos ↗：暂存父级<br/>Gizmo 缓冲并开始新上下文。" }
+  n6@{ shape: rounded, label: "**start​_​gizmo​_​context**<br/>来自crate:bevy​_​gizmos ↗：暂存父级<br/>Gizmo 缓冲并开始新上下文。" }
   class n6 node_system
   class n6 external_node
   n0 e0@-->|"集合成员"| n1

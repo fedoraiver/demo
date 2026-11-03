@@ -36,9 +36,9 @@ flowchart LR
   classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**material::MaterialShaders#lt;pbr​_​**<br/>**material::StandardMaterial#gt;**<br/>缓存材质已解析的着色器句柄。" }
+  n0@{ shape: cyl, label: "**MaterialShaders#lt;StandardMaterial#gt;**<br/>缓存材质已解析的着色器句柄。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​render::erased​_​render​_​asset::**<br/>**prepare​_​erased​_​assets#lt;bevy​_​pbr::**<br/>**mesh​_​material::MeshMaterial3d#lt;bevy​_​**<br/>**pbr::pbr​_​material::**<br/>**StandardMaterial#gt;#gt;**<br/>来自crate:bevy​_​render ↗：在上传预算内<br/>准备擦除资产并管理重试卸载。" }
+  n1@{ shape: rounded, label: "**prepare​_​erased​_​assets**<br/>来自crate:bevy​_​render ↗：在上传预算内<br/>准备擦除资产并管理重试卸载。" }
   class n1 node_system
   class n1 external_node
   n0 e0@--> n1

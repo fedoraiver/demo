@@ -38,15 +38,15 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**atmosphere::resources::**<br/>**AtmosphereTransforms**<br/>存储按视图索引的大气变换参数。" }
+  n0@{ shape: cyl, label: "**AtmosphereTransforms**<br/>存储按视图索引的大气变换参数。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​pbr::atmosphere::resources::**<br/>**prepare​_​atmosphere​_​transforms**<br/>按相机位置构造大气局部坐标变换。" }
+  n1@{ shape: rounded, label: "**prepare​_​atmosphere​_​transforms**<br/>按相机位置构造大气局部坐标变换。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​pbr::atmosphere::environment::**<br/>**prepare​_​atmosphere​_​probe​_​bind​_​groups**<br/>为大气环境探针绑定光照、查找表和输出纹<br/>理。" }
+  n2@{ shape: rounded, label: "**prepare​_​atmosphere​_​probe​_​bind​_​groups**<br/>为大气环境探针绑定光照、查找表和输出纹<br/>理。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​pbr::atmosphere::resources::**<br/>**prepare​_​atmosphere​_​bind​_​groups**<br/>为大气查找表计算和天空绘制绑定视图资源。" }
+  n3@{ shape: rounded, label: "**prepare​_​atmosphere​_​bind​_​groups**<br/>为大气查找表计算和天空绘制绑定视图资源。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**bevy​_​render::init​_​gpu​_​resource#lt;bevy​_​**<br/>**pbr::atmosphere::resources::**<br/>**AtmosphereTransforms#gt;**<br/>来自crate:bevy​_​render ↗：构造并插入渲<br/>染所需资源。" }
+  n4@{ shape: rounded, label: "**init​_​gpu​_​resource**<br/>来自crate:bevy​_​render ↗：构造并插入渲<br/>染所需资源。" }
   class n4 node_system
   class n4 external_node
   n1 e0@-->|"可变访问"| n0

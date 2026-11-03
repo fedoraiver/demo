@@ -44,28 +44,28 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​post​_​process::effect​_​stack::**<br/>**prepare​_​post​_​processing​_​uniforms**<br/>收集并上传逐视图色差、暗角和畸变参数。" }
+  n0@{ shape: rounded, label: "**prepare​_​post​_​processing​_​uniforms**<br/>收集并上传逐视图色差、暗角和畸变参数。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**effect​_​stack::**<br/>**PostProcessingUniformBuffers**<br/>集中保存内置后处理效果的 GPU 参数。" }
+  n1@{ shape: cyl, label: "**PostProcessingUniformBuffers**<br/>集中保存内置后处理效果的 GPU 参数。" }
   class n1 node_resource
   n2@{ shape: lin-rect, label: "**Prepare**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
   class n2 node_system_set
   class n2 external_node
-  n3@{ shape: fr-rect, label: "**effect​_​stack::EffectStackPlugin**<br/>组合色差、镜头畸变与暗角效果。" }
+  n3@{ shape: fr-rect, label: "**EffectStackPlugin**<br/>组合色差、镜头畸变与暗角效果。" }
   class n3 node_plugin
-  n4@{ shape: cyl, label: "**bevy​_​render::renderer::RenderQueue**<br/>来自crate:bevy​_​render ↗：将资源写入和<br/>命令异步提交给 GPU。" }
+  n4@{ shape: cyl, label: "**RenderQueue**<br/>来自crate:bevy​_​render ↗：将资源写入和<br/>命令异步提交给 GPU。" }
   class n4 node_resource
   class n4 external_node
-  n5@{ shape: cyl, label: "**bevy​_​render::renderer::RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
+  n5@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
   class n5 node_resource
   class n5 external_node
-  n6@{ shape: rounded, label: "**effect​_​stack::vignette::Vignette**<br/>配置画面边缘渐暗的暗角效果。" }
+  n6@{ shape: rounded, label: "**Vignette**<br/>配置画面边缘渐暗的暗角效果。" }
   class n6 node_component
-  n7@{ shape: rounded, label: "**effect​_​stack::**<br/>**PostProcessingUniformBufferOffsets**<br/>定位相机各后处理效果的参数缓冲位置。" }
+  n7@{ shape: rounded, label: "**PostProcessingUniformBufferOffsets**<br/>定位相机各后处理效果的参数缓冲位置。" }
   class n7 node_component
-  n8@{ shape: rounded, label: "**effect​_​stack::lens​_​distortion::**<br/>**LensDistortion**<br/>配置桶形或枕形镜头畸变。" }
+  n8@{ shape: rounded, label: "**LensDistortion**<br/>配置桶形或枕形镜头畸变。" }
   class n8 node_component
-  n9@{ shape: rounded, label: "**effect​_​stack::chromatic​_​aberration::**<br/>**ChromaticAberration**<br/>配置镜头色差产生的彩色边缘。" }
+  n9@{ shape: rounded, label: "**ChromaticAberration**<br/>配置镜头色差产生的彩色边缘。" }
   class n9 node_component
   n0 e0@-->|"可变访问"| n1
   class e0 edge_write

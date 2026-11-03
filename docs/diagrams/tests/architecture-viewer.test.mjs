@@ -97,6 +97,41 @@ function assertCardDetails(page,id){
   assert.equal(details.querySelector('[data-access]'),null);assert.equal(details.querySelector('.schedule-registration'),null);assert.equal(details.querySelector('.badge'),null);
 }
 
+test('object card focus keeps only incident edges clear and preserves full details and navigation',()=>{
+  const page=viewer('?object=item.Shared&workspace=E:/work#anchor');
+  const diagram=page.get('diagram'),node=id=>diagram.querySelector('[data-id="'+id+'"]'),edge=id=>diagram.querySelector('[data-link-id="'+id+'"]');
+  page.app.select('system-fixed');
+  assert.equal(node('system-fixed').classList.contains('selected'),true);
+  assert.equal(node('item.Shared').classList.contains('dim'),false);
+  for(const id of ['entity-item','system-update'])assert.equal(node(id).classList.contains('dim'),true,id);
+  assert.equal(edge('write').classList.contains('focused'),true);
+  for(const id of ['contains','read-update'])assert.equal(edge(id).classList.contains('dim'),true,id);
+  assert.equal(page.get('details').querySelector('h2').textContent,page.data.registry['system-fixed'].name);
+  assert.equal(page.location.searchParams.get('workspace'),'E:/work');assert.equal(page.location.hash,'#anchor');
+  page.app.select('item.Shared');
+  assert.equal(diagram.querySelectorAll('.edge.dim').length,0);
+  assert.equal(diagram.querySelectorAll('.node.dim').length,0);
+  page.app.select(null);
+  assert.equal(diagram.querySelectorAll('.focused').length,0);
+  assert.equal(diagram.querySelectorAll('.selected').length,0);
+  assert.equal(page.location.searchParams.has('node'),false);
+});
+
+test('source groups hide redundant role labels while retaining specific source labels',()=>{
+  const page=viewer('?object=item.Shared',{edit:data=>{
+    data.registry['item.Shared'].sourceEntries=[
+      {role:'definition',label:'定义位置',path:'src/item.rs',line:30},
+      {role:'definition',label:'宏展开定义',path:'src/item.rs',line:35},
+    ];
+  }});
+  page.app.select('item.Shared');
+  const details=page.get('details');
+  assert.deepEqual(details.querySelectorAll('.source-group-label').map(item=>item.textContent),['定义位置']);
+  assert.deepEqual(details.querySelectorAll('.source-entry-label').map(item=>item.textContent),['宏展开定义']);
+  assert.deepEqual(details.querySelectorAll('[data-vscode-line]').map(item=>item.dataset.vscodeLine),['30','35']);
+  assert.equal(page.data.registry['item.Shared'].sourceEntries.length,2);
+});
+
 test('external views defer deep-link selection until metadata arrives without hydrating the descriptor index',async()=>{
   const loader=controlledViews(),page=viewer('?object=item.Shared&node=system-fixed&workspace=E:/work',{...loader});
   assert.equal(page.app.view,undefined);assert.equal(page.canvas.getAttribute('aria-busy'),'true');
@@ -801,6 +836,7 @@ test('edge details and native labels preserve exact endpoint and operation sourc
     view.svg=view.svg.replace('</svg>',view.links.map(link=>'<g class="edgeLabel"><g data-mermaid-native-id="'+link.mermaidId+'"><text>'+link.label+'</text></g></g>').join('')+'</svg>');
   }});
   const label=page.get('diagram').querySelector('[data-link-label-id="write"]');assert.equal(label.getAttribute('data-connect'),'system-fixed|item.Shared');
+  assert.equal(label.classList.contains('edge-label'),true);assert.equal(label.classList.contains('edge'),false);
   mouseClick(page,label.querySelector('text'));assert.deepEqual(page.get('details').querySelectorAll('[data-open]').map(button=>button.dataset.open),['system-fixed','item.Shared']);assert.equal(page.get('details').querySelector('[data-vscode-line]').dataset.vscodeLine,'80');
   for(const key of ['Enter',' ']){label.dispatch('keydown',{key});assert.equal(page.get('details').querySelector('.badge').textContent,EDGE_STYLES.write.label)}
   page.click(page.get('details').querySelector('[data-open="system-fixed"]'));assert.equal(page.app.view.id,'object:system-fixed');

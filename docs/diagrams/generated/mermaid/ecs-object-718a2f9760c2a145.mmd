@@ -39,7 +39,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: notch-rect, label: "**Local · applied​_​max​_​fps**<br/>记住已应用的帧率上限。" }
   class n0 node_local
-  n1@{ shape: rounded, label: "**demo::settings::frame​_​pacing::apply​_​**<br/>**frame​_​rate​_​limit**<br/>只同步更新策略；计时与等待由 Winit 执<br/>行，Local 仅保存已应用值以去重和记录变<br/>更。" }
+  n1@{ shape: rounded, label: "**apply​_​frame​_​rate​_​limit**<br/>只同步更新策略；计时与等待由 Winit 执<br/>行，Local 仅保存已应用值以去重和记录变<br/>更。" }
   class n1 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

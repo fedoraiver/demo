@@ -40,7 +40,7 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​camera::visibility::Visibility**<br/>声明实体可见意图及层级继承方式。" }
+  n0@{ shape: rounded, label: "**Visibility**<br/>声明实体可见意图及层级继承方式。" }
   class n0 node_component
   n1@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：组织随视口滚动的设置正文控<br/>件。" }
   class n1 node_entity
@@ -237,7 +237,7 @@ flowchart LR
   n65@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示固定品牌页脚与菜单操作提<br/>示。" }
   class n65 node_entity
   class n65 external_node
-  n66@{ shape: rounded, label: "**demo::ui::scroll::sync​_​settings​_​**<br/>**scrollbars**<br/>来自ui ↗：同步滚动条显隐、拾取范围与高<br/>亮。" }
+  n66@{ shape: rounded, label: "**sync​_​settings​_​scrollbars**<br/>来自ui ↗：同步滚动条显隐、拾取范围与高<br/>亮。" }
   class n66 node_system
   class n66 external_node
   n67@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示 Arrows 键帽文字。" }
@@ -273,13 +273,13 @@ flowchart LR
   n77@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列设置滚动视口与轨道。" }
   class n77 node_entity
   class n77 external_node
-  n78@{ shape: rounded, label: "**demo::first​_​person::camera::sync​_​**<br/>**character​_​visibility**<br/>来自first​_​person ↗：第一人称只隐藏自<br/>身视觉子树，保留业务根与独立木箱。" }
+  n78@{ shape: rounded, label: "**sync​_​character​_​visibility**<br/>来自first​_​person ↗：第一人称只隐藏自<br/>身视觉子树，保留业务根与独立木箱。" }
   class n78 node_system
   class n78 external_node
   n79@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示 Arrows 的导航提示。" }
   class n79 node_entity
   class n79 external_node
-  n80@{ shape: rounded, label: "**bevy​_​camera::visibility::visibility​_​**<br/>**propagate​_​system**<br/>沿父子层级传播可见意图的变化。" }
+  n80@{ shape: rounded, label: "**visibility​_​propagate​_​system**<br/>沿父子层级传播可见意图的变化。" }
   class n80 node_system
   n81@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示辅助功能设置按钮的图标符<br/>号。" }
   class n81 node_entity
@@ -704,7 +704,7 @@ flowchart LR
   n221@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供音量的指针与导航调整入<br/>口。" }
   class n221 node_entity
   class n221 external_node
-  n222@{ shape: rounded, label: "**bevy​_​gizmos​_​render::transform​_​gizmo​_​**<br/>**render::update​_​gizmo​_​meshes**<br/>来自crate:bevy​_​gizmos​_​render ↗：将变<br/>换操作器对齐焦点并更新模式与高亮。" }
+  n222@{ shape: rounded, label: "**update​_​gizmo​_​meshes**<br/>来自crate:bevy​_​gizmos​_​render ↗：将变<br/>换操作器对齐焦点并更新模式与高亮。" }
   class n222 node_system
   class n222 external_node
   n223@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示图形设置按钮的标题。" }

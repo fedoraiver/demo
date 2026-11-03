@@ -39,11 +39,11 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​ecs::schedule::condition::**<br/>**common​_​conditions::resource​_​**<br/>**exists#lt;bevy​_​core​_​pipeline::mip​_​**<br/>**generation::experimental::depth::**<br/>**DownsampleDepthPipelines#gt;**<br/>判断指定资源是否存在。" }
+  n0@{ shape: rounded, label: "**resource​_​exists**<br/>判断指定资源是否存在。" }
   class n0 node_system
   n1@{ shape: lin-rect, label: "**AnonymousSet(0)**<br/>保存一组系统的共同配置。" }
   class n1 node_system_set
-  n2@{ shape: cyl, label: "**mip​_​generation::experimental::**<br/>**depth::DownsampleDepthPipelines**<br/>来自crate:bevy​_​core​_​pipeline ↗：保存<br/>深度金字塔两阶段的下采样管线。" }
+  n2@{ shape: cyl, label: "**DownsampleDepthPipelines**<br/>来自crate:bevy​_​core​_​pipeline ↗：保存<br/>深度金字塔两阶段的下采样管线。" }
   class n2 node_resource
   class n2 external_node
   n0 e0@-->|"运行条件"| n1

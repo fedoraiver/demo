@@ -38,12 +38,12 @@ flowchart LR
   classDef edge_order stroke:#334155,stroke-width:2px
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​render::init​_​gpu​_​resource#lt;bevy​_​**<br/>**render::render​_​resource::pipeline​_​**<br/>**specializer::**<br/>**SpecializedComputePipelines#lt;bevy​_​**<br/>**core​_​pipeline::mip​_​generation::**<br/>**DownsamplePipeline#gt;#gt;**<br/>构造并插入渲染所需资源。" }
+  n0@{ shape: rounded, label: "**init​_​gpu​_​resource**<br/>构造并插入渲染所需资源。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**bevy​_​pbr::light​_​probe::generate::**<br/>**initialize​_​generated​_​environment​_​**<br/>**map​_​resources**<br/>来自crate:bevy​_​pbr ↗：初始化环境图降<br/>采样、复制和卷积的 GPU 接口。" }
+  n1@{ shape: rounded, label: "**initialize​_​generated​_​environment​_​**<br/>**map​_​resources**<br/>来自crate:bevy​_​pbr ↗：初始化环境图降<br/>采样、复制和卷积的 GPU 接口。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: cyl, label: "**bevy​_​render::render​_​resource::**<br/>**SpecializedComputePipelines#lt;mip​_​**<br/>**generation::DownsamplePipeline#gt;**<br/>按配置键缓存计算管线变体。" }
+  n2@{ shape: cyl, label: "**SpecializedComputePipelines#lt;Downsamp**<br/>**lePipeline#gt;**<br/>按配置键缓存计算管线变体。" }
   class n2 node_resource
   n0 e0@-->|"先于"| n1
   class e0 edge_order

@@ -37,17 +37,17 @@ flowchart LR
   classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**bevy​_​gizmos::gizmos::**<br/>**GizmoStorage#lt;gizmos::**<br/>**LightGizmoConfigGroup, ()#gt;**<br/>按配置组和清理上下文存储调试图元。" }
+  n0@{ shape: cyl, label: "**GizmoStorage#lt;LightGizmoConfigGroup,**<br/>**()#gt;**<br/>按配置组和清理上下文存储调试图元。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​gizmos::update​_​gizmo​_​**<br/>**meshes#lt;bevy​_​light::gizmos::**<br/>**LightGizmoConfigGroup#gt;**<br/>把配置组即时线条缓冲转交 Gizmo 资产。" }
+  n1@{ shape: rounded, label: "**update​_​gizmo​_​meshes**<br/>把配置组即时线条缓冲转交 Gizmo 资产。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​gizmos::end​_​gizmo​_​context#lt;bevy​_​**<br/>**light::gizmos::**<br/>**LightGizmoConfigGroup, bevy​_​time::**<br/>**fixed::Fixed#gt;**<br/>清空当前默认 Gizmo 存储，再与上下文交换<br/>缓冲互换，恢复先前保存的父上下文，供后续<br/>图元网格生成使用。" }
+  n2@{ shape: rounded, label: "**end​_​gizmo​_​context**<br/>清空当前默认 Gizmo 存储，再与上下文交换<br/>缓冲互换，恢复先前保存的父上下文，供后续<br/>图元网格生成使用。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​gizmos::propagate​_​gizmos#lt;bevy​_​**<br/>**light::gizmos::**<br/>**LightGizmoConfigGroup, bevy​_​time::**<br/>**fixed::Fixed#gt;**<br/>汇入指定上下文保留的 Gizmo 图元。" }
+  n3@{ shape: rounded, label: "**propagate​_​gizmos**<br/>汇入指定上下文保留的 Gizmo 图元。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**bevy​_​gizmos::start​_​gizmo​_​**<br/>**context#lt;bevy​_​light::gizmos::**<br/>**LightGizmoConfigGroup, bevy​_​time::**<br/>**fixed::Fixed#gt;**<br/>暂存父级 Gizmo 缓冲并开始新上下文。" }
+  n4@{ shape: rounded, label: "**start​_​gizmo​_​context**<br/>暂存父级 Gizmo 缓冲并开始新上下文。" }
   class n4 node_system
-  n5@{ shape: rounded, label: "**bevy​_​gizmos::collect​_​requested​_​**<br/>**gizmos#lt;bevy​_​light::gizmos::**<br/>**LightGizmoConfigGroup, bevy​_​time::**<br/>**fixed::Fixed#gt;**<br/>把即时 Gizmo 请求转存到指定清理上下文。" }
+  n5@{ shape: rounded, label: "**collect​_​requested​_​gizmos**<br/>把即时 Gizmo 请求转存到指定清理上下文。" }
   class n5 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

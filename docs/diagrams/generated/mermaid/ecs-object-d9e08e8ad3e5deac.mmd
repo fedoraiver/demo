@@ -39,7 +39,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**NonlinearRotationEasing**<br/>标识当前实体使用非线性旋转平滑" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​transform​_​interpolation::ease​_​**<br/>**rotation​_​slerp**<br/>按固定步剩余比例球面插值显示旋转。" }
+  n1@{ shape: rounded, label: "**ease​_​rotation​_​slerp**<br/>按固定步剩余比例球面插值显示旋转。" }
   class n1 node_system
   n0 e0@-->|"存在性约束"| n1
   class e0 edge_reference

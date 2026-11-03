@@ -39,12 +39,12 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**cascade::CascadeShadowConfig**<br/>配置方向光阴影级联的距离与重叠。" }
+  n0@{ shape: rounded, label: "**CascadeShadowConfig**<br/>配置方向光阴影级联的距离与重叠。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​pbr::render::light::extract​_​**<br/>**lights**<br/>来自crate:bevy​_​pbr ↗：提取各类可见光<br/>源及阴影渲染状态。" }
+  n1@{ shape: rounded, label: "**extract​_​lights**<br/>来自crate:bevy​_​pbr ↗：提取各类可见光<br/>源及阴影渲染状态。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​light::cascade::build​_​**<br/>**directional​_​light​_​cascades**<br/>为投射阴影的方向光构建逐相机级联。" }
+  n2@{ shape: rounded, label: "**build​_​directional​_​light​_​cascades**<br/>为投射阴影的方向光构建逐相机级联。" }
   class n2 node_system
   n3@{ shape: rounded, label: "**spawn​_​lighting · 创建模板**<br/>来自scene​_​assembly ↗：为玩法海岛创建<br/>会话日光。" }
   class n3 node_entity
@@ -65,5 +65,5 @@ flowchart LR
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
-  e3@{ curve: bumpX }
+  e3@{ curve: basis }
   e4@{ curve: basis }

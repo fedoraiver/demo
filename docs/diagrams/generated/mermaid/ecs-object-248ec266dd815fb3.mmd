@@ -45,9 +45,9 @@ flowchart LR
   classDef edge_consume stroke:#247B91,stroke-width:1.8px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​mesh::components::mark​_​2d​_​**<br/>**meshes​_​as​_​changed​_​if​_​their​_​assets​_​**<br/>**changed**<br/>资产内容变化时标记对应二维网格已变更。" }
+  n0@{ shape: rounded, label: "**mark​_​2d​_​meshes​_​as​_​changed​_​if​_​their​_​**<br/>**assets​_​changed**<br/>资产内容变化时标记对应二维网格已变更。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**bevy​_​sprite::calculate​_​bounds​_​2d**<br/>来自crate:bevy​_​sprite ↗：为二维网格和<br/>精灵计算局部包围盒。" }
+  n1@{ shape: rounded, label: "**calculate​_​bounds​_​2d**<br/>来自crate:bevy​_​sprite ↗：为二维网格和<br/>精灵计算局部包围盒。" }
   class n1 node_system
   class n1 external_node
   n2@{ shape: lin-rect, label: "**AssetEventSystems**<br/>来自crate:bevy​_​asset ↗：发布资产容器<br/>积累的变更消息。" }
@@ -55,18 +55,18 @@ flowchart LR
   class n2 external_node
   n3@{ shape: fr-rect, label: "**MeshPlugin**<br/>注册网格资产类型。" }
   class n3 node_plugin
-  n4@{ shape: rounded, label: "**bevy​_​sprite​_​render::sprite​_​mesh::**<br/>**add​_​mesh**<br/>来自crate:bevy​_​sprite​_​render ↗：为新<br/>增精灵安装共享单位矩形网格。" }
+  n4@{ shape: rounded, label: "**add​_​mesh**<br/>来自crate:bevy​_​sprite​_​render ↗：为新<br/>增精灵安装共享单位矩形网格。" }
   class n4 node_system
   class n4 external_node
-  n5@{ shape: rounded, label: "**components::Mesh2d**<br/>为二维可绘制实体指定网格资产。" }
+  n5@{ shape: rounded, label: "**Mesh2d**<br/>为二维可绘制实体指定网格资产。" }
   class n5 node_component
-  n6@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;bevy​_​**<br/>**asset::AssetEvent#lt;mesh::Mesh#gt;#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n6@{ shape: cyl, label: "**Messages#lt;AssetEvent#lt;Mesh#gt;#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n6 node_resource
   class n6 external_node
-  n7@{ shape: rounded, label: "**bevy​_​sprite​_​render::sprite​_​mesh::**<br/>**add​_​material**<br/>来自crate:bevy​_​sprite​_​render ↗：按精<br/>灵与锚点复用或创建默认网格材质。" }
+  n7@{ shape: rounded, label: "**add​_​material**<br/>来自crate:bevy​_​sprite​_​render ↗：按精<br/>灵与锚点复用或创建默认网格材质。" }
   class n7 node_system
   class n7 external_node
-  n8@{ shape: lean-r, label: "**bevy​_​asset::AssetEvent#lt;bevy​_​mesh::**<br/>**Mesh#gt;**<br/>来自crate:bevy​_​asset ↗：通知指定资产<br/>及依赖发生变化。" }
+  n8@{ shape: lean-r, label: "**AssetEvent#lt;Mesh#gt;**<br/>来自crate:bevy​_​asset ↗：通知指定资产<br/>及依赖发生变化。" }
   class n8 node_message
   class n8 external_node
   n0 e0@-->|"先于"| n1

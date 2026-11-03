@@ -39,22 +39,22 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​render::camera::TemporalJitter**<br/>为透视相机视锥提供亚像素抖动。" }
+  n0@{ shape: rounded, label: "**TemporalJitter**<br/>为透视相机视锥提供亚像素抖动。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​anti​_​alias::taa::prepare​_​taa​_​**<br/>**jitter**<br/>来自crate:bevy​_​anti​_​alias ↗：为 TAA<br/>相机逐帧设置 Halton 投影抖动。" }
+  n1@{ shape: rounded, label: "**prepare​_​taa​_​jitter**<br/>来自crate:bevy​_​anti​_​alias ↗：为 TAA<br/>相机逐帧设置 Halton 投影抖动。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​pbr::ssao::prepare​_​ssao​_​**<br/>**pipelines**<br/>来自crate:bevy​_​pbr ↗：按遮蔽质量和时<br/>间抖动配置选择计算管线。" }
+  n2@{ shape: rounded, label: "**prepare​_​ssao​_​pipelines**<br/>来自crate:bevy​_​pbr ↗：按遮蔽质量和时<br/>间抖动配置选择计算管线。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​render::camera::extract​_​cameras**<br/>把活动相机及可见实体提取到渲染世界。" }
+  n3@{ shape: rounded, label: "**extract​_​cameras**<br/>把活动相机及可见实体提取到渲染世界。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**bevy​_​render::view::prepare​_​view​_​**<br/>**uniforms**<br/>生成视图投影、抖动、裁剪及 LOD 的 GPU<br/>参数。" }
+  n4@{ shape: rounded, label: "**prepare​_​view​_​uniforms**<br/>生成视图投影、抖动、裁剪及 LOD 的 GPU<br/>参数。" }
   class n4 node_system
-  n5@{ shape: rounded, label: "**bevy​_​pbr::prepass::prepare​_​previous​_​**<br/>**view​_​uniforms**<br/>来自crate:bevy​_​pbr ↗：重建前帧抖动矩<br/>阵并上传视图历史参数。" }
+  n5@{ shape: rounded, label: "**prepare​_​previous​_​view​_​uniforms**<br/>来自crate:bevy​_​pbr ↗：重建前帧抖动矩<br/>阵并上传视图历史参数。" }
   class n5 node_system
   class n5 external_node
-  n6@{ shape: rounded, label: "**bevy​_​pbr::render::mesh::check​_​views​_​**<br/>**need​_​specialization**<br/>来自crate:bevy​_​pbr ↗：汇总视图渲染特<br/>性并检测管线配置变化。" }
+  n6@{ shape: rounded, label: "**check​_​views​_​need​_​specialization**<br/>来自crate:bevy​_​pbr ↗：汇总视图渲染特<br/>性并检测管线配置变化。" }
   class n6 node_system
   class n6 external_node
   n1 e0@---|"存在性约束"| n0

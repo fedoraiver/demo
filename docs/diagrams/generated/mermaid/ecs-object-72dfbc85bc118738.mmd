@@ -38,32 +38,35 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**bevy​_​render::render​_​phase::**<br/>**ViewBinnedRenderPhases#lt;core​_​3d::**<br/>**Opaque3d#gt;**<br/>汇集各视图按分桶组织的绘制指令。" }
+  n0@{ shape: cyl, label: "**ViewBinnedRenderPhases#lt;Opaque3d#gt;**<br/>汇集各视图按分桶组织的绘制指令。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​render::batching::gpu​_​**<br/>**preprocessing::write​_​binned​_​**<br/>**instance​_​buffers#lt;bevy​_​core​_​**<br/>**pipeline::core​_​3d::Opaque3d, bevy​_​**<br/>**pbr::render::mesh::MeshPipeline#gt;**<br/>上传多重绘制分桶并生成 GPU 解包任务。" }
+  n1@{ shape: rounded, label: "**write​_​binned​_​instance​_​buffers**<br/>上传多重绘制分桶并生成 GPU 解包任务。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​core​_​pipeline::core​_​3d::**<br/>**extract​_​core​_​3d​_​camera​_​phases**<br/>来自crate:bevy​_​core​_​pipeline ↗：为活<br/>动三维相机准备主渲染阶段。" }
+  n2@{ shape: rounded, label: "**extract​_​core​_​3d​_​camera​_​phases**<br/>来自crate:bevy​_​core​_​pipeline ↗：为活<br/>动三维相机准备主渲染阶段。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​core​_​pipeline::core​_​3d::main​_​**<br/>**opaque​_​pass​_​3d​_​node::main​_​opaque​_​**<br/>**pass​_​3d**<br/>来自crate:bevy​_​core​_​pipeline ↗：绘制<br/>三维不透明、AlphaMask 与天空盒。" }
+  n3@{ shape: rounded, label: "**main​_​opaque​_​pass​_​3d**<br/>来自crate:bevy​_​core​_​pipeline ↗：绘制<br/>三维不透明、AlphaMask 与天空盒。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**bevy​_​render::init​_​gpu​_​resource#lt;bevy​_​**<br/>**render::render​_​phase::**<br/>**ViewBinnedRenderPhases#lt;bevy​_​core​_​**<br/>**pipeline::core​_​3d::Opaque3d#gt;#gt;**<br/>构造并插入渲染所需资源。" }
+  n4@{ shape: rounded, label: "**init​_​gpu​_​resource**<br/>构造并插入渲染所需资源。" }
   class n4 node_system
-  n5@{ shape: rounded, label: "**bevy​_​pbr::material::specialize​_​**<br/>**material​_​meshes**<br/>来自crate:bevy​_​pbr ↗：为变化的可见网<br/>格生成并缓存材质专用管线。" }
+  subgraph layout_card_n5[" "]
+  n5@{ shape: rounded, label: "**specialize​_​material​_​meshes**<br/>来自crate:bevy​_​pbr ↗：为变化的可见网<br/>格生成并缓存材质专用管线。" }
   class n5 node_system
   class n5 external_node
-  n6@{ shape: rounded, label: "**bevy​_​render::batching::no​_​gpu​_​**<br/>**preprocessing::batch​_​and​_​prepare​_​**<br/>**binned​_​render​_​phase#lt;bevy​_​core​_​**<br/>**pipeline::core​_​3d::Opaque3d, bevy​_​**<br/>**pbr::render::mesh::MeshPipeline#gt;**<br/>在 CPU 路径上准备分桶阶段的绘制批次。" }
+  end
+  style layout_card_n5 fill:none,stroke:none
+  n6@{ shape: rounded, label: "**batch​_​and​_​prepare​_​binned​_​render​_​**<br/>**phase**<br/>在 CPU 路径上准备分桶阶段的绘制批次。" }
   class n6 node_system
-  n7@{ shape: rounded, label: "**bevy​_​pbr::transmission::texture::**<br/>**prepare​_​core​_​3d​_​transmission​_​**<br/>**textures**<br/>来自crate:bevy​_​pbr ↗：为需要多步透射<br/>的视图准备场景颜色拷贝纹理。" }
+  n7@{ shape: rounded, label: "**prepare​_​core​_​3d​_​transmission​_​**<br/>**textures**<br/>来自crate:bevy​_​pbr ↗：为需要多步透射<br/>的视图准备场景颜色拷贝纹理。" }
   class n7 node_system
   class n7 external_node
-  n8@{ shape: rounded, label: "**bevy​_​render::batching::gpu​_​**<br/>**preprocessing::batch​_​and​_​prepare​_​**<br/>**binned​_​render​_​phase#lt;bevy​_​core​_​**<br/>**pipeline::core​_​3d::Opaque3d, bevy​_​**<br/>**pbr::render::mesh::MeshPipeline#gt;**<br/>为分桶渲染阶段建立 GPU 预处理批次。" }
+  n8@{ shape: rounded, label: "**batch​_​and​_​prepare​_​binned​_​render​_​**<br/>**phase**<br/>为分桶渲染阶段建立 GPU 预处理批次。" }
   class n8 node_system
-  n9@{ shape: rounded, label: "**bevy​_​pbr::material::queue​_​material​_​**<br/>**meshes**<br/>来自crate:bevy​_​pbr ↗：按材质模式把可<br/>见网格加入相应绘制阶段。" }
+  n9@{ shape: rounded, label: "**queue​_​material​_​meshes**<br/>来自crate:bevy​_​pbr ↗：按材质模式把可<br/>见网格加入相应绘制阶段。" }
   class n9 node_system
   class n9 external_node
-  n10@{ shape: rounded, label: "**bevy​_​render::batching::sort​_​binned​_​**<br/>**render​_​phase#lt;bevy​_​core​_​pipeline::**<br/>**core​_​3d::Opaque3d#gt;**<br/>按分桶键对各视图阶段的多绘制、可批处理、<br/>不可批处理网格及非网格项分别排序，使后续<br/>批次准备使用确定的键顺序。" }
+  n10@{ shape: rounded, label: "**sort​_​binned​_​render​_​phase**<br/>按分桶键对各视图阶段的多绘制、可批处理、<br/>不可批处理网格及非网格项分别排序，使后续<br/>批次准备使用确定的键顺序。" }
   class n10 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write
@@ -87,8 +90,9 @@ flowchart LR
   class e9 edge_write
   e0@{ curve: basis }
   e1@{ curve: basis }
-  e2@{ curve: basis }
+  e2@{ curve: bumpX }
   e3@{ curve: basis }
+  e4@{ curve: basis }
   e6@{ curve: basis }
   e7@{ curve: basis }
   e8@{ curve: basis }

@@ -38,37 +38,34 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  subgraph layout_card_n0[" "]
-  n0@{ shape: cyl, label: "**bevy​_​render::render​_​phase::**<br/>**ViewSortedRenderPhases#lt;bevy​_​core​_​**<br/>**pipeline::core​_​2d::Transparent2d#gt;**<br/>汇集各视图需要排序的绘制指令。" }
+  n0@{ shape: cyl, label: "**ViewSortedRenderPhases#lt;Transparent2d**<br/>**#gt;**<br/>汇集各视图需要排序的绘制指令。" }
   class n0 node_resource
-  end
-  style layout_card_n0 fill:none,stroke:none
-  n1@{ shape: rounded, label: "**bevy​_​render::batching::no​_​gpu​_​**<br/>**preprocessing::batch​_​and​_​prepare​_​**<br/>**sorted​_​render​_​phase#lt;bevy​_​core​_​**<br/>**pipeline::core​_​2d::Transparent2d,**<br/>**bevy​_​sprite​_​render::mesh2d::mesh::**<br/>**Mesh2dPipeline#gt;**<br/>按绘制顺序在 CPU 路径上合并兼容批次。" }
+  n1@{ shape: rounded, label: "**batch​_​and​_​prepare​_​sorted​_​render​_​**<br/>**phase**<br/>按绘制顺序在 CPU 路径上合并兼容批次。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::**<br/>**material::queue​_​material2d​_​meshes**<br/>来自crate:bevy​_​sprite​_​render ↗：按透<br/>明模式更新二维网格渲染批次。" }
+  n2@{ shape: rounded, label: "**queue​_​material2d​_​meshes**<br/>来自crate:bevy​_​sprite​_​render ↗：按透<br/>明模式更新二维网格渲染批次。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​sprite​_​render::render::prepare​_​**<br/>**sprite​_​image​_​bind​_​groups**<br/>来自crate:bevy​_​sprite​_​render ↗：合并<br/>连续同图像精灵并上传实例与索引数据。" }
+  n3@{ shape: rounded, label: "**prepare​_​sprite​_​image​_​bind​_​groups**<br/>来自crate:bevy​_​sprite​_​render ↗：合并<br/>连续同图像精灵并上传实例与索引数据。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**bevy​_​sprite​_​render::render::queue​_​**<br/>**sprites**<br/>来自crate:bevy​_​sprite​_​render ↗：按视<br/>图可见性将精灵加入透明二维阶段。" }
+  n4@{ shape: rounded, label: "**queue​_​sprites**<br/>来自crate:bevy​_​sprite​_​render ↗：按视<br/>图可见性将精灵加入透明二维阶段。" }
   class n4 node_system
   class n4 external_node
-  n5@{ shape: rounded, label: "**bevy​_​core​_​pipeline::core​_​2d::**<br/>**prepare​_​core​_​2d​_​depth​_​textures**<br/>来自crate:bevy​_​core​_​pipeline ↗：为有<br/>效二维视图准备共享目标深度纹理。" }
+  n5@{ shape: rounded, label: "**prepare​_​core​_​2d​_​depth​_​textures**<br/>来自crate:bevy​_​core​_​pipeline ↗：为有<br/>效二维视图准备共享目标深度纹理。" }
   class n5 node_system
   class n5 external_node
-  n6@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::**<br/>**material::specialize​_​material2d​_​**<br/>**meshes**<br/>来自crate:bevy​_​sprite​_​render ↗：为可<br/>见二维网格重建失效的材质专用化。" }
+  n6@{ shape: rounded, label: "**specialize​_​material2d​_​meshes**<br/>来自crate:bevy​_​sprite​_​render ↗：为可<br/>见二维网格重建失效的材质专用化。" }
   class n6 node_system
   class n6 external_node
-  n7@{ shape: rounded, label: "**bevy​_​core​_​pipeline::core​_​2d::**<br/>**extract​_​core​_​2d​_​camera​_​phases**<br/>来自crate:bevy​_​core​_​pipeline ↗：为活<br/>动二维相机准备渲染阶段并清理失效视图。" }
+  n7@{ shape: rounded, label: "**extract​_​core​_​2d​_​camera​_​phases**<br/>来自crate:bevy​_​core​_​pipeline ↗：为活<br/>动二维相机准备渲染阶段并清理失效视图。" }
   class n7 node_system
   class n7 external_node
-  n8@{ shape: rounded, label: "**bevy​_​render::render​_​phase::sort​_​**<br/>**phase​_​system#lt;bevy​_​core​_​pipeline::**<br/>**core​_​2d::Transparent2d#gt;**<br/>按各视图重新计算并排序阶段绘制项。" }
+  n8@{ shape: rounded, label: "**sort​_​phase​_​system**<br/>按各视图重新计算并排序阶段绘制项。" }
   class n8 node_system
-  n9@{ shape: rounded, label: "**bevy​_​gizmos​_​render::pipeline​_​2d::**<br/>**queue​_​line​_​and​_​joint​_​gizmos​_​2d**<br/>来自crate:bevy​_​gizmos​_​render ↗：将二<br/>维 Gizmo 线段与接头加入透明阶段。" }
+  n9@{ shape: rounded, label: "**queue​_​line​_​and​_​joint​_​gizmos​_​2d**<br/>来自crate:bevy​_​gizmos​_​render ↗：将二<br/>维 Gizmo 线段与接头加入透明阶段。" }
   class n9 node_system
   class n9 external_node
-  n10@{ shape: rounded, label: "**bevy​_​core​_​pipeline::core​_​2d::main​_​**<br/>**transparent​_​pass​_​2d​_​node::main​_​**<br/>**transparent​_​pass​_​2d**<br/>来自crate:bevy​_​core​_​pipeline ↗：使用<br/>已有深度绘制二维透明阶段。" }
+  n10@{ shape: rounded, label: "**main​_​transparent​_​pass​_​2d**<br/>来自crate:bevy​_​core​_​pipeline ↗：使用<br/>已有深度绘制二维透明阶段。" }
   class n10 node_system
   class n10 external_node
   n1 e0@-->|"可变访问"| n0
@@ -95,7 +92,6 @@ flowchart LR
   e1@{ curve: basis }
   e2@{ curve: basis }
   e4@{ curve: basis }
-  e5@{ curve: bumpX }
   e6@{ curve: basis }
   e7@{ curve: basis }
   e8@{ curve: basis }

@@ -39,40 +39,79 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​camera::primitives::Aabb**<br/>以局部轴对齐包围盒支持可见性裁剪。" }
+  subgraph layout_card_n0[" "]
+  n0@{ shape: rounded, label: "**Aabb**<br/>以局部轴对齐包围盒支持可见性裁剪。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​sprite::calculate​_​bounds​_​2d**<br/>来自crate:bevy​_​sprite ↗：为二维网格和<br/>精灵计算局部包围盒。" }
+  end
+  style layout_card_n0 fill:none,stroke:none
+  subgraph layout_card_n1[" "]
+  n1@{ shape: rounded, label: "**calculate​_​bounds​_​2d**<br/>来自crate:bevy​_​sprite ↗：为二维网格和<br/>精灵计算局部包围盒。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​light::check​_​dir​_​light​_​mesh​_​**<br/>**visibility**<br/>来自crate:bevy​_​light ↗：计算方向光各<br/>相机级联可见的投影网格。" }
+  end
+  style layout_card_n1 fill:none,stroke:none
+  subgraph layout_card_n2[" "]
+  n2@{ shape: rounded, label: "**check​_​dir​_​light​_​mesh​_​visibility**<br/>来自crate:bevy​_​light ↗：计算方向光各<br/>相机级联可见的投影网格。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​light::cluster::add​_​light​_​**<br/>**probe​_​and​_​decal​_​aabbs**<br/>来自crate:bevy​_​light ↗：为光照探针和<br/>聚簇贴花补齐包围盒。" }
+  end
+  style layout_card_n2 fill:none,stroke:none
+  subgraph layout_card_n3[" "]
+  n3@{ shape: rounded, label: "**add​_​light​_​probe​_​and​_​decal​_​aabbs**<br/>来自crate:bevy​_​light ↗：为光照探针和<br/>聚簇贴花补齐包围盒。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**bevy​_​sprite::text2d::calculate​_​**<br/>**bounds​_​text2d**<br/>来自crate:bevy​_​sprite ↗：按文字布局与<br/>锚点更新二维文字包围盒。" }
+  end
+  style layout_card_n3 fill:none,stroke:none
+  subgraph layout_card_n4[" "]
+  n4@{ shape: rounded, label: "**calculate​_​bounds​_​text2d**<br/>来自crate:bevy​_​sprite ↗：按文字布局与<br/>锚点更新二维文字包围盒。" }
   class n4 node_system
   class n4 external_node
-  n5@{ shape: rounded, label: "**bevy​_​camera::visibility::update​_​**<br/>**skinned​_​mesh​_​bounds**<br/>依据当前关节姿态更新动态蒙皮包围盒。" }
+  end
+  style layout_card_n4 fill:none,stroke:none
+  subgraph layout_card_n5[" "]
+  n5@{ shape: rounded, label: "**update​_​skinned​_​mesh​_​bounds**<br/>依据当前关节姿态更新动态蒙皮包围盒。" }
   class n5 node_system
-  n6@{ shape: rounded, label: "**bevy​_​camera::visibility::range::**<br/>**check​_​visibility​_​ranges**<br/>按视图距离计算实体可见范围位掩码。" }
+  end
+  style layout_card_n5 fill:none,stroke:none
+  subgraph layout_card_n6[" "]
+  n6@{ shape: rounded, label: "**check​_​visibility​_​ranges**<br/>按视图距离计算实体可见范围位掩码。" }
   class n6 node_system
-  n7@{ shape: rounded, label: "**bevy​_​camera::visibility::calculate​_​**<br/>**bounds**<br/>为允许自动计算的三维网格维护包围盒。" }
+  end
+  style layout_card_n6 fill:none,stroke:none
+  subgraph layout_card_n7[" "]
+  n7@{ shape: rounded, label: "**calculate​_​bounds**<br/>为允许自动计算的三维网格维护包围盒。" }
   class n7 node_system
-  n8@{ shape: rounded, label: "**bevy​_​pbr::render::mesh::extract​_​**<br/>**meshes​_​for​_​gpu​_​building**<br/>来自crate:bevy​_​pbr ↗：增量提取变化或<br/>需重试网格到线程队列。" }
+  end
+  style layout_card_n7 fill:none,stroke:none
+  subgraph layout_card_n8[" "]
+  n8@{ shape: rounded, label: "**extract​_​meshes​_​for​_​gpu​_​building**<br/>来自crate:bevy​_​pbr ↗：增量提取变化或<br/>需重试网格到线程队列。" }
   class n8 node_system
   class n8 external_node
-  n9@{ shape: rounded, label: "**bevy​_​gizmos::aabb::draw​_​aabbs**<br/>来自crate:bevy​_​gizmos ↗：为显式标记的<br/>可见实体绘制 AABB。" }
+  end
+  style layout_card_n8 fill:none,stroke:none
+  subgraph layout_card_n9[" "]
+  n9@{ shape: rounded, label: "**draw​_​aabbs**<br/>来自crate:bevy​_​gizmos ↗：为显式标记的<br/>可见实体绘制 AABB。" }
   class n9 node_system
   class n9 external_node
-  n10@{ shape: rounded, label: "**bevy​_​gizmos::aabb::draw​_​all​_​aabbs**<br/>来自crate:bevy​_​gizmos ↗：绘制未单独标<br/>记实体的可见 AABB 调试线框。" }
+  end
+  style layout_card_n9 fill:none,stroke:none
+  subgraph layout_card_n10[" "]
+  n10@{ shape: rounded, label: "**draw​_​all​_​aabbs**<br/>来自crate:bevy​_​gizmos ↗：绘制未单独标<br/>记实体的可见 AABB 调试线框。" }
   class n10 node_system
   class n10 external_node
-  n11@{ shape: rounded, label: "**bevy​_​camera::visibility::check​_​**<br/>**visibility​_​cpu​_​culling**<br/>按层、距离和视锥收集各相机可见实体。" }
+  end
+  style layout_card_n10 fill:none,stroke:none
+  subgraph layout_card_n11[" "]
+  n11@{ shape: rounded, label: "**check​_​visibility​_​cpu​_​culling**<br/>按层、距离和视锥收集各相机可见实体。" }
   class n11 node_system
-  n12@{ shape: rounded, label: "**bevy​_​light::check​_​point​_​light​_​mesh​_​**<br/>**visibility**<br/>来自crate:bevy​_​light ↗：计算点光与聚<br/>光灯阴影可见的网格。" }
+  end
+  style layout_card_n11 fill:none,stroke:none
+  subgraph layout_card_n12[" "]
+  n12@{ shape: rounded, label: "**check​_​point​_​light​_​mesh​_​visibility**<br/>来自crate:bevy​_​light ↗：计算点光与聚<br/>光灯阴影可见的网格。" }
   class n12 node_system
   class n12 external_node
+  end
+  style layout_card_n12 fill:none,stroke:none
   n1 e0@-->|"赋值"| n0
   class e0 edge_write
   n0 e1@--> n2
@@ -126,7 +165,7 @@ flowchart LR
   e4@{ curve: basis }
   e5@{ curve: basis }
   e6@{ curve: basis }
-  e7@{ curve: bumpX }
+  e7@{ curve: basis }
   e8@{ curve: basis }
   e9@{ curve: basis }
   e10@{ curve: basis }

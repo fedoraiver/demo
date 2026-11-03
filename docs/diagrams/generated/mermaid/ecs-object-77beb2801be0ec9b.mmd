@@ -37,11 +37,11 @@ flowchart LR
   classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​pbr::render::mesh::mark​_​all​_​**<br/>**meshes​_​for​_​reextraction**<br/>清空网格实例并把全部实体标为待重新提取。" }
+  n0@{ shape: rounded, label: "**mark​_​all​_​meshes​_​for​_​reextraction**<br/>清空网格实例并把全部实体标为待重新提取。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**render::mesh::**<br/>**MeshesToReextractNextFrame**<br/>记录因材质未准备而需要再次提取的网格。" }
+  n1@{ shape: cyl, label: "**MeshesToReextractNextFrame**<br/>记录因材质未准备而需要再次提取的网格。" }
   class n1 node_resource
-  n2@{ shape: cyl, label: "**render::mesh::RenderMeshInstances**<br/>保存 CPU 或 GPU 构建所需的网格实例。" }
+  n2@{ shape: cyl, label: "**RenderMeshInstances**<br/>保存 CPU 或 GPU 构建所需的网格实例。" }
   class n2 node_resource
   n0 e0@-->|"可变访问"| n1
   class e0 edge_write

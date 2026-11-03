@@ -43,21 +43,21 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​post​_​process::dof::prepare​_​**<br/>**depth​_​of​_​field​_​view​_​bind​_​group​_​**<br/>**layouts**<br/>为景深视图创建单输入与 Bokeh 双输入布<br/>局。" }
+  n0@{ shape: rounded, label: "**prepare​_​depth​_​of​_​field​_​view​_​bind​_​**<br/>**group​_​layouts**<br/>为景深视图创建单输入与 Bokeh 双输入布<br/>局。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**bevy​_​post​_​process::dof::prepare​_​**<br/>**depth​_​of​_​field​_​pipelines**<br/>按景深模式和视图格式准备两阶段管线。" }
+  n1@{ shape: rounded, label: "**prepare​_​depth​_​of​_​field​_​pipelines**<br/>按景深模式和视图格式准备两阶段管线。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​render::view::Msaa**<br/>来自crate:bevy​_​render ↗：选择视图的多<br/>重采样抗锯齿样本数。" }
+  n2@{ shape: rounded, label: "**Msaa**<br/>来自crate:bevy​_​render ↗：选择视图的多<br/>重采样抗锯齿样本数。" }
   class n2 node_component
   class n2 external_node
-  n3@{ shape: rounded, label: "**dof::DepthOfField**<br/>配置相机焦点及离焦模糊。" }
+  n3@{ shape: rounded, label: "**DepthOfField**<br/>配置相机焦点及离焦模糊。" }
   class n3 node_component
   n4@{ shape: lin-rect, label: "**Prepare**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
   class n4 node_system_set
   class n4 external_node
-  n5@{ shape: rounded, label: "**dof::**<br/>**ViewDepthOfFieldBindGroupLayouts**<br/>定义当前视图景深的单输入与双输入布局。" }
+  n5@{ shape: rounded, label: "**ViewDepthOfFieldBindGroupLayouts**<br/>定义当前视图景深的单输入与双输入布局。" }
   class n5 node_component
-  n6@{ shape: fr-rect, label: "**dof::DepthOfFieldPlugin**<br/>提供相机景深后处理。" }
+  n6@{ shape: fr-rect, label: "**DepthOfFieldPlugin**<br/>提供相机景深后处理。" }
   class n6 node_plugin
   n0 e0@-->|"先于"| n1
   class e0 edge_order

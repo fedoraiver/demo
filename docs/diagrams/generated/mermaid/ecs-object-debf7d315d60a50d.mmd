@@ -38,16 +38,16 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**bevy​_​sprite​_​render::**<br/>**SpriteAssetEvents**<br/>传递影响精灵纹理的图像资产变化。" }
+  n0@{ shape: cyl, label: "**SpriteAssetEvents**<br/>传递影响精灵纹理的图像资产变化。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​sprite​_​render::render::extract​_​**<br/>**sprite​_​events**<br/>把主世界图像资产事件复制给精灵渲染。" }
+  n1@{ shape: rounded, label: "**extract​_​sprite​_​events**<br/>把主世界图像资产事件复制给精灵渲染。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​ui​_​render::prepare​_​uinodes**<br/>来自crate:bevy​_​ui​_​render ↗：生成裁剪<br/>后的 UI 几何并合并图像批次。" }
+  n2@{ shape: rounded, label: "**prepare​_​uinodes**<br/>来自crate:bevy​_​ui​_​render ↗：生成裁剪<br/>后的 UI 几何并合并图像批次。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​sprite​_​render::render::prepare​_​**<br/>**sprite​_​image​_​bind​_​groups**<br/>合并连续同图像精灵并上传实例与索引数据。" }
+  n3@{ shape: rounded, label: "**prepare​_​sprite​_​image​_​bind​_​groups**<br/>合并连续同图像精灵并上传实例与索引数据。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**bevy​_​ui​_​render::ui​_​texture​_​slice​_​**<br/>**pipeline::prepare​_​ui​_​slices**<br/>来自crate:bevy​_​ui​_​render ↗：为 UI 切<br/>片生成裁剪几何并合并图像批次。" }
+  n4@{ shape: rounded, label: "**prepare​_​ui​_​slices**<br/>来自crate:bevy​_​ui​_​render ↗：为 UI 切<br/>片生成裁剪几何并合并图像批次。" }
   class n4 node_system
   class n4 external_node
   n1 e0@-->|"可变访问"| n0

@@ -45,36 +45,36 @@ flowchart LR
   classDef edge_consume stroke:#247B91,stroke-width:1.8px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​winit::system::check​_​keyboard​_​**<br/>**focus​_​lost**<br/>处理跨窗口键盘焦点丢失并补发释放。" }
+  n0@{ shape: rounded, label: "**check​_​keyboard​_​focus​_​lost**<br/>处理跨窗口键盘焦点丢失并补发释放。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;event::**<br/>**WindowFocused#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n1@{ shape: cyl, label: "**Messages#lt;WindowFocused#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n1 node_resource
   class n1 external_node
-  n2@{ shape: lean-r, label: "**keyboard::KeyboardInput**<br/>来自crate:bevy​_​input ↗：传递窗口键盘<br/>输入。" }
+  n2@{ shape: lean-r, label: "**KeyboardInput**<br/>来自crate:bevy​_​input ↗：传递窗口键盘<br/>输入。" }
   class n2 node_message
   class n2 external_node
-  n3@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;event::**<br/>**WindowEvent#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n3@{ shape: cyl, label: "**Messages#lt;WindowEvent#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n3 node_resource
   class n3 external_node
-  n4@{ shape: lean-r, label: "**keyboard::KeyboardFocusLost**<br/>来自crate:bevy​_​input ↗：请求清除失焦<br/>后的缓存按键状态。" }
+  n4@{ shape: lean-r, label: "**KeyboardFocusLost**<br/>来自crate:bevy​_​input ↗：请求清除失焦<br/>后的缓存按键状态。" }
   class n4 node_message
   class n4 external_node
   n5@{ shape: fr-rect, label: "**WinitPlugin**<br/>接入原生窗口、输入事件与事件循环。" }
   class n5 node_plugin
-  n6@{ shape: cyl, label: "**bevy​_​ecs::message::**<br/>**Messages#lt;keyboard::KeyboardInput#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n6@{ shape: cyl, label: "**Messages#lt;KeyboardInput#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n6 node_resource
   class n6 external_node
-  n7@{ shape: rounded, label: "**system::WinitWindowPressedKeys**<br/>逐窗口保存当前按下的键" }
+  n7@{ shape: rounded, label: "**WinitWindowPressedKeys**<br/>逐窗口保存当前按下的键" }
   class n7 node_component
-  n8@{ shape: cyl, label: "**bevy​_​ecs::message::**<br/>**Messages#lt;keyboard::**<br/>**KeyboardFocusLost#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n8@{ shape: cyl, label: "**Messages#lt;KeyboardFocusLost#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n8 node_resource
   class n8 external_node
-  n9@{ shape: lean-r, label: "**event::WindowEvent**<br/>来自crate:bevy​_​window ↗：按顺序汇集窗<br/>口与输入消息。" }
+  n9@{ shape: lean-r, label: "**WindowEvent**<br/>来自crate:bevy​_​window ↗：按顺序汇集窗<br/>口与输入消息。" }
   class n9 node_message
   class n9 external_node
-  n10@{ shape: rounded, label: "**bevy​_​winit::system::despawn​_​windows**<br/>处理原生窗口关闭并延后一轮释放包装器。" }
+  n10@{ shape: rounded, label: "**despawn​_​windows**<br/>处理原生窗口关闭并延后一轮释放包装器。" }
   class n10 node_system
-  n11@{ shape: lean-r, label: "**event::WindowFocused**<br/>来自crate:bevy​_​window ↗：通知窗口焦点<br/>变化。" }
+  n11@{ shape: lean-r, label: "**WindowFocused**<br/>来自crate:bevy​_​window ↗：通知窗口焦点<br/>变化。" }
   class n11 node_message
   class n11 external_node
   n1 e0@--> n0

@@ -41,17 +41,17 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**ScaleEasingState**<br/>保存固定步缩放插值的起点与终点" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​transform​_​interpolation::reset​_​**<br/>**easing​_​states​_​on​_​transform​_​change**<br/>在外部直接改变变换时取消失效的平滑区间。" }
+  n1@{ shape: rounded, label: "**reset​_​easing​_​states​_​on​_​transform​_​**<br/>**change**<br/>在外部直接改变变换时取消失效的平滑区间。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​transform​_​interpolation::**<br/>**interpolation::update​_​scale​_​**<br/>**interpolation​_​start**<br/>把当前缩放记录为插值起点。" }
+  n2@{ shape: rounded, label: "**update​_​scale​_​interpolation​_​start**<br/>把当前缩放记录为插值起点。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​transform​_​interpolation::**<br/>**interpolation::complete​_​scale​_​easing**<br/>在新一轮插值前完成上一段缩放。" }
+  n3@{ shape: rounded, label: "**complete​_​scale​_​easing**<br/>在新一轮插值前完成上一段缩放。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**bevy​_​transform​_​interpolation::ease​_​**<br/>**scale​_​lerp**<br/>按固定步剩余比例线性插值显示缩放。" }
+  n4@{ shape: rounded, label: "**ease​_​scale​_​lerp**<br/>按固定步剩余比例线性插值显示缩放。" }
   class n4 node_system
-  n5@{ shape: rounded, label: "**bevy​_​transform​_​interpolation::reset​_​**<br/>**scale​_​easing**<br/>清除旧缩放平滑的起点和终点。" }
+  n5@{ shape: rounded, label: "**reset​_​scale​_​easing**<br/>清除旧缩放平滑的起点和终点。" }
   class n5 node_system
-  n6@{ shape: rounded, label: "**bevy​_​transform​_​interpolation::**<br/>**interpolation::update​_​scale​_​**<br/>**interpolation​_​end**<br/>把当前缩放记录为插值终点。" }
+  n6@{ shape: rounded, label: "**update​_​scale​_​interpolation​_​end**<br/>把当前缩放记录为插值终点。" }
   class n6 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

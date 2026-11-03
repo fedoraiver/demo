@@ -46,42 +46,39 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  subgraph layout_card_n0[" "]
-  n0@{ shape: rounded, label: "**bevy​_​core​_​pipeline::schedule::**<br/>**handle​_​uncovered​_​swap​_​chains**<br/>清除本帧没有相机覆盖的窗口交换链。" }
+  n0@{ shape: rounded, label: "**handle​_​uncovered​_​swap​_​chains**<br/>清除本帧没有相机覆盖的窗口交换链。" }
   class n0 node_system
-  end
-  style layout_card_n0 fill:none,stroke:none
-  n1@{ shape: fr-rect, label: "**bevy​_​core​_​pipeline::**<br/>**CorePipelinePlugin**<br/>装配核心渲染管线与相机驱动。" }
+  n1@{ shape: fr-rect, label: "**CorePipelinePlugin**<br/>装配核心渲染管线与相机驱动。" }
   class n1 node_plugin
-  n2@{ shape: rounded, label: "**sync​_​world::MainEntity**<br/>来自crate:bevy​_​extract ↗：在子世界中<br/>关联原始主世界实体。" }
+  n2@{ shape: rounded, label: "**MainEntity**<br/>来自crate:bevy​_​extract ↗：在子世界中<br/>关联原始主世界实体。" }
   class n2 node_component
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​render::view::ExtractedWindow**<br/>来自crate:bevy​_​render ↗：保存渲染侧窗<br/>口尺寸、呈现模式和交换链状态。" }
+  n3@{ shape: rounded, label: "**ExtractedWindow**<br/>来自crate:bevy​_​render ↗：保存渲染侧窗<br/>口尺寸、呈现模式和交换链状态。" }
   class n3 node_component
   class n3 external_node
-  n4@{ shape: cyl, label: "**bevy​_​ecs::entity​_​disabling::**<br/>**DefaultQueryFilters**<br/>来自crate:bevy​_​ecs ↗：保存默认禁用实<br/>体查询过滤规则。" }
+  n4@{ shape: cyl, label: "**DefaultQueryFilters**<br/>来自crate:bevy​_​ecs ↗：保存默认禁用实<br/>体查询过滤规则。" }
   class n4 node_resource
   class n4 external_node
-  n5@{ shape: cyl, label: "**schedule::CameraWindows**<br/>记录相机输出所覆盖的窗口集合。" }
+  n5@{ shape: cyl, label: "**CameraWindows**<br/>记录相机输出所覆盖的窗口集合。" }
   class n5 node_resource
-  n6@{ shape: cyl, label: "**bevy​_​render::renderer::RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
+  n6@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
   class n6 node_resource
   class n6 external_node
-  n7@{ shape: cyl, label: "**bevy​_​render::renderer::RenderQueue**<br/>来自crate:bevy​_​render ↗：将资源写入和<br/>命令异步提交给 GPU。" }
+  n7@{ shape: cyl, label: "**RenderQueue**<br/>来自crate:bevy​_​render ↗：将资源写入和<br/>命令异步提交给 GPU。" }
   class n7 node_resource
   class n7 external_node
   n8@{ shape: lin-rect, label: "**Submit**<br/>来自crate:bevy​_​render ↗：组织绘制执<br/>行、提交与收尾。" }
   class n8 node_system_set
   class n8 external_node
-  n9@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;bevy​_​**<br/>**ecs::lifecycle::**<br/>**RemovedComponentEntity#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n9@{ shape: cyl, label: "**Messages#lt;RemovedComponentEntity#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n9 node_resource
   class n9 external_node
-  n10@{ shape: cyl, label: "**clear​_​color::ClearColor**<br/>来自crate:bevy​_​camera ↗：提供相机默认<br/>的清屏颜色。" }
+  n10@{ shape: cyl, label: "**ClearColor**<br/>来自crate:bevy​_​camera ↗：提供相机默认<br/>的清屏颜色。" }
   class n10 node_resource
   class n10 external_node
-  n11@{ shape: rounded, label: "**bevy​_​core​_​pipeline::schedule::**<br/>**submit​_​pending​_​command​_​buffers**<br/>将排队完成的渲染命令缓冲提交到 GPU。" }
+  n11@{ shape: rounded, label: "**submit​_​pending​_​command​_​buffers**<br/>将排队完成的渲染命令缓冲提交到 GPU。" }
   class n11 node_system
-  n12@{ shape: lean-r, label: "**bevy​_​ecs::lifecycle::**<br/>**RemovedComponentEntity**<br/>来自crate:bevy​_​ecs ↗：记录发生组件移<br/>除的实体。" }
+  n12@{ shape: lean-r, label: "**RemovedComponentEntity**<br/>来自crate:bevy​_​ecs ↗：记录发生组件移<br/>除的实体。" }
   class n12 node_message
   class n12 external_node
   n1 e0@-->|"调用"| n0

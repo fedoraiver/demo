@@ -38,31 +38,31 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​core​_​pipeline::prepass::**<br/>**ViewPrepassTextures**<br/>汇集视图已启用的预通道输出纹理。" }
+  n0@{ shape: rounded, label: "**ViewPrepassTextures**<br/>汇集视图已启用的预通道输出纹理。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​core​_​pipeline::prepass::node::**<br/>**late​_​prepass**<br/>为遮挡剔除绘制晚期预通道。" }
+  n1@{ shape: rounded, label: "**late​_​prepass**<br/>为遮挡剔除绘制晚期预通道。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​core​_​pipeline::core​_​3d::**<br/>**prepare​_​prepass​_​textures**<br/>按三维预通道配置分配各类输出纹理。" }
+  n2@{ shape: rounded, label: "**prepare​_​prepass​_​textures**<br/>按三维预通道配置分配各类输出纹理。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​core​_​pipeline::deferred::copy​_​**<br/>**lighting​_​id::copy​_​deferred​_​lighting​_​**<br/>**id**<br/>把延迟光照通道标识复制到深度目标。" }
+  n3@{ shape: rounded, label: "**copy​_​deferred​_​lighting​_​id**<br/>把延迟光照通道标识复制到深度目标。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**bevy​_​anti​_​alias::taa::temporal​_​anti​_​**<br/>**alias**<br/>来自crate:bevy​_​anti​_​alias ↗：混合当<br/>前颜色与历史帧并更新 TAA 历史目标。" }
+  n4@{ shape: rounded, label: "**temporal​_​anti​_​alias**<br/>来自crate:bevy​_​anti​_​alias ↗：混合当<br/>前颜色与历史帧并更新 TAA 历史目标。" }
   class n4 node_system
   class n4 external_node
-  n5@{ shape: rounded, label: "**bevy​_​post​_​process::motion​_​blur::**<br/>**motion​_​blur**<br/>来自crate:bevy​_​post​_​process ↗：读取<br/>当前视图颜色、预通道运动矢量和深度，按快<br/>门角度及采样数执行运动模糊；采样关闭、所<br/>需纹理或管线不可用时跳过。" }
+  n5@{ shape: rounded, label: "**motion​_​blur**<br/>来自crate:bevy​_​post​_​process ↗：读取<br/>当前视图颜色、预通道运动矢量和深度，按快<br/>门角度及采样数执行运动模糊；采样关闭、所<br/>需纹理或管线不可用时跳过。" }
   class n5 node_system
   class n5 external_node
-  n6@{ shape: rounded, label: "**bevy​_​core​_​pipeline::prepass::node::**<br/>**early​_​prepass**<br/>绘制早期不透明与 AlphaMask 预通道。" }
+  n6@{ shape: rounded, label: "**early​_​prepass**<br/>绘制早期不透明与 AlphaMask 预通道。" }
   class n6 node_system
-  n7@{ shape: rounded, label: "**bevy​_​pbr::ssao::prepare​_​ssao​_​bind​_​**<br/>**groups**<br/>来自crate:bevy​_​pbr ↗：准备深度预处<br/>理、遮蔽与空间降噪的资源绑定。" }
+  n7@{ shape: rounded, label: "**prepare​_​ssao​_​bind​_​groups**<br/>来自crate:bevy​_​pbr ↗：准备深度预处<br/>理、遮蔽与空间降噪的资源绑定。" }
   class n7 node_system
   class n7 external_node
-  n8@{ shape: rounded, label: "**bevy​_​pbr::render::mesh​_​view​_​**<br/>**bindings::prepare​_​mesh​_​view​_​bind​_​**<br/>**groups**<br/>来自crate:bevy​_​pbr ↗：为视图绑定光<br/>照、阴影及各可选渲染效果资源。" }
+  n8@{ shape: rounded, label: "**prepare​_​mesh​_​view​_​bind​_​groups**<br/>来自crate:bevy​_​pbr ↗：为视图绑定光<br/>照、阴影及各可选渲染效果资源。" }
   class n8 node_system
   class n8 external_node
-  n9@{ shape: rounded, label: "**bevy​_​core​_​pipeline::deferred::node::**<br/>**late​_​deferred​_​prepass**<br/>为遮挡剔除执行晚期延迟预通道。" }
+  n9@{ shape: rounded, label: "**late​_​deferred​_​prepass**<br/>为遮挡剔除执行晚期延迟预通道。" }
   class n9 node_system
-  n10@{ shape: rounded, label: "**bevy​_​core​_​pipeline::deferred::node::**<br/>**early​_​deferred​_​prepass**<br/>执行早期延迟预通道并保存深度结果。" }
+  n10@{ shape: rounded, label: "**early​_​deferred​_​prepass**<br/>执行早期延迟预通道并保存深度结果。" }
   class n10 node_system
   n0 e0@--> n1
   class e0 edge_read

@@ -44,45 +44,45 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::mesh::**<br/>**prepare​_​mesh2d​_​view​_​bind​_​groups**<br/>为二维相机绑定视图、全局参数与色调<br/>LUT。" }
+  n0@{ shape: rounded, label: "**prepare​_​mesh2d​_​view​_​bind​_​groups**<br/>为二维相机绑定视图、全局参数与色调<br/>LUT。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**bevy​_​render::render​_​asset::**<br/>**RenderAssets#lt;bevy​_​render::texture::**<br/>**GpuImage#gt;**<br/>来自crate:bevy​_​render ↗：按源资产身份<br/>保存 GPU 渲染表示。" }
+  n1@{ shape: cyl, label: "**RenderAssets#lt;GpuImage#gt;**<br/>来自crate:bevy​_​render ↗：按源资产身份<br/>保存 GPU 渲染表示。" }
   class n1 node_resource
   class n1 external_node
-  n2@{ shape: cyl, label: "**tonemapping::TonemappingLuts**<br/>来自crate:bevy​_​core​_​pipeline ↗：提供<br/>色调映射使用的三维查找表。" }
+  n2@{ shape: cyl, label: "**TonemappingLuts**<br/>来自crate:bevy​_​core​_​pipeline ↗：提供<br/>色调映射使用的三维查找表。" }
   class n2 node_resource
   class n2 external_node
-  n3@{ shape: cyl, label: "**bevy​_​render::renderer::RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
+  n3@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
   class n3 node_resource
   class n3 external_node
-  n4@{ shape: cyl, label: "**bevy​_​render::view::ViewUniforms**<br/>来自crate:bevy​_​render ↗：汇集全部视图<br/>的动态 Uniform 数据。" }
+  n4@{ shape: cyl, label: "**ViewUniforms**<br/>来自crate:bevy​_​render ↗：汇集全部视图<br/>的动态 Uniform 数据。" }
   class n4 node_resource
   class n4 external_node
-  n5@{ shape: cyl, label: "**bevy​_​sprite​_​render::Mesh2dPipeline**<br/>提供二维网格的视图与实例资源布局。" }
+  n5@{ shape: cyl, label: "**Mesh2dPipeline**<br/>提供二维网格的视图与实例资源布局。" }
   class n5 node_resource
-  n6@{ shape: rounded, label: "**mesh2d::mesh::Mesh2dViewBindGroup**<br/>为二维网格绑定视图、全局参数与色调<br/>LUT。" }
+  n6@{ shape: rounded, label: "**Mesh2dViewBindGroup**<br/>为二维网格绑定视图、全局参数与色调<br/>LUT。" }
   class n6 node_component
   n7@{ shape: lin-rect, label: "**PrepareBindGroups**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
   class n7 node_system_set
   class n7 external_node
-  n8@{ shape: cyl, label: "**bevy​_​render::render​_​resource::**<br/>**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
+  n8@{ shape: cyl, label: "**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
   class n8 node_resource
   class n8 external_node
-  n9@{ shape: fr-rect, label: "**mesh2d::mesh::Mesh2dRenderPlugin**<br/>准备二维网格实例和批处理管线。" }
+  n9@{ shape: fr-rect, label: "**Mesh2dRenderPlugin**<br/>准备二维网格实例和批处理管线。" }
   class n9 node_plugin
-  n10@{ shape: cyl, label: "**bevy​_​render::globals::GlobalsBuffer**<br/>来自crate:bevy​_​render ↗：向着色器提供<br/>全局时间等 Uniform 数据。" }
+  n10@{ shape: cyl, label: "**GlobalsBuffer**<br/>来自crate:bevy​_​render ↗：向着色器提供<br/>全局时间等 Uniform 数据。" }
   class n10 node_resource
   class n10 external_node
-  n11@{ shape: rounded, label: "**bevy​_​render::view::ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
+  n11@{ shape: rounded, label: "**ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
   class n11 node_component
   class n11 external_node
-  n12@{ shape: rounded, label: "**bevy​_​render::view::Tonemapping**<br/>来自crate:bevy​_​render ↗：选择 HDR 颜<br/>色到显示颜色的映射方式。" }
+  n12@{ shape: rounded, label: "**Tonemapping**<br/>来自crate:bevy​_​render ↗：选择 HDR 颜<br/>色到显示颜色的映射方式。" }
   class n12 node_component
   class n12 external_node
-  n13@{ shape: cyl, label: "**bevy​_​render::texture::FallbackImage**<br/>来自crate:bevy​_​render ↗：为未指定图像<br/>的绑定提供不透明白纹理。" }
+  n13@{ shape: cyl, label: "**FallbackImage**<br/>来自crate:bevy​_​render ↗：为未指定图像<br/>的绑定提供不透明白纹理。" }
   class n13 node_resource
   class n13 external_node
-  n14@{ shape: rounded, label: "**components::Camera2d**<br/>来自crate:bevy​_​camera ↗：标记使用二维<br/>渲染流程的相机。" }
+  n14@{ shape: rounded, label: "**Camera2d**<br/>来自crate:bevy​_​camera ↗：标记使用二维<br/>渲染流程的相机。" }
   class n14 node_component
   class n14 external_node
   n1 e0@--> n0

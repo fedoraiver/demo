@@ -42,19 +42,19 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**avian3d::interpolation::update​_​**<br/>**previous​_​velocity**<br/>更新平滑显示所需的历史速度快照。" }
+  n0@{ shape: rounded, label: "**update​_​previous​_​velocity**<br/>更新平滑显示所需的历史速度快照。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**interpolation::**<br/>**PreviousLinearVelocity**<br/>保存上一帧的线速度快照。" }
+  n1@{ shape: rounded, label: "**PreviousLinearVelocity**<br/>保存上一帧的线速度快照。" }
   class n1 node_component
-  n2@{ shape: rounded, label: "**interpolation::**<br/>**PreviousAngularVelocity**<br/>保存上一帧的角速度快照。" }
+  n2@{ shape: rounded, label: "**PreviousAngularVelocity**<br/>保存上一帧的角速度快照。" }
   class n2 node_component
   n3@{ shape: lin-rect, label: "**First**<br/>组织一次物理模拟步的主要阶段。" }
   class n3 node_system_set
-  n4@{ shape: rounded, label: "**dynamics::rigid​_​body::**<br/>**AngularVelocity**<br/>保存刚体的世界角速度。" }
+  n4@{ shape: rounded, label: "**AngularVelocity**<br/>保存刚体的世界角速度。" }
   class n4 node_component
-  n5@{ shape: rounded, label: "**dynamics::rigid​_​body::LinearVelocity**<br/>保存刚体的世界线速度。" }
+  n5@{ shape: rounded, label: "**LinearVelocity**<br/>保存刚体的世界线速度。" }
   class n5 node_component
-  n6@{ shape: fr-rect, label: "**interpolation::**<br/>**PhysicsInterpolationPlugin**<br/>平滑固定物理步之间的显示变换。" }
+  n6@{ shape: fr-rect, label: "**PhysicsInterpolationPlugin**<br/>平滑固定物理步之间的显示变换。" }
   class n6 node_plugin
   n0 e0@-->|"可变访问"| n1
   class e0 edge_write

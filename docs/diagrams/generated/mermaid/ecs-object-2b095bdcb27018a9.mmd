@@ -44,16 +44,16 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​extract::sync​_​world::despawn​_​**<br/>**temporary​_​entities#lt;bevy​_​render::**<br/>**RenderApp#gt;**<br/>按实体索引逆序清理临时同步实体。" }
+  n0@{ shape: rounded, label: "**despawn​_​temporary​_​entities**<br/>按实体索引逆序清理临时同步实体。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;bevy​_​**<br/>**ecs::lifecycle::**<br/>**RemovedComponentEntity#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n1@{ shape: cyl, label: "**Messages#lt;RemovedComponentEntity#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n1 node_resource
   class n1 external_node
   n2@{ shape: notch-rect, label: "**Local · arg2**<br/>复用临时实体逆序清理列表。" }
   class n2 node_local
-  n3@{ shape: rounded, label: "**bevy​_​extract::TemporaryEntity#lt;bevy​_​**<br/>**render::RenderApp#gt;**<br/>标记子世界中帧末清理的临时实体。" }
+  n3@{ shape: rounded, label: "**TemporaryEntity#lt;RenderApp#gt;**<br/>标记子世界中帧末清理的临时实体。" }
   class n3 node_component
-  n4@{ shape: lean-r, label: "**bevy​_​ecs::lifecycle::**<br/>**RemovedComponentEntity**<br/>来自crate:bevy​_​ecs ↗：记录发生组件移<br/>除的实体。" }
+  n4@{ shape: lean-r, label: "**RemovedComponentEntity**<br/>来自crate:bevy​_​ecs ↗：记录发生组件移<br/>除的实体。" }
   class n4 node_message
   class n4 external_node
   n5@{ shape: lin-rect, label: "**PostCleanup**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }

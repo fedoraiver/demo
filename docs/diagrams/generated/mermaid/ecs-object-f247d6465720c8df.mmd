@@ -40,20 +40,23 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: lin-rect, label: "**MarkNewlyHiddenEntitiesInvisible**<br/>组织相机与实体可见性更新。" }
   class n0 node_system_set
-  n1@{ shape: rounded, label: "**bevy​_​gizmos::aabb::draw​_​aabbs**<br/>来自crate:bevy​_​gizmos ↗：为显式标记的<br/>可见实体绘制 AABB。" }
+  n1@{ shape: rounded, label: "**draw​_​aabbs**<br/>来自crate:bevy​_​gizmos ↗：为显式标记的<br/>可见实体绘制 AABB。" }
   class n1 node_system
   class n1 external_node
   n2@{ shape: lin-rect, label: "**CheckVisibility**<br/>组织相机与实体可见性更新。" }
   class n2 node_system_set
-  n3@{ shape: rounded, label: "**bevy​_​light::check​_​dir​_​light​_​mesh​_​**<br/>**visibility**<br/>来自crate:bevy​_​light ↗：计算方向光各<br/>相机级联可见的投影网格。" }
+  n3@{ shape: rounded, label: "**check​_​dir​_​light​_​mesh​_​visibility**<br/>来自crate:bevy​_​light ↗：计算方向光各<br/>相机级联可见的投影网格。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**bevy​_​light::check​_​point​_​light​_​mesh​_​**<br/>**visibility**<br/>来自crate:bevy​_​light ↗：计算点光与聚<br/>光灯阴影可见的网格。" }
+  n4@{ shape: rounded, label: "**check​_​point​_​light​_​mesh​_​visibility**<br/>来自crate:bevy​_​light ↗：计算点光与聚<br/>光灯阴影可见的网格。" }
   class n4 node_system
   class n4 external_node
-  n5@{ shape: rounded, label: "**bevy​_​camera::visibility::mark​_​newly​_​**<br/>**hidden​_​entities​_​invisible**<br/>提交本帧已不再可见的对象状态。" }
+  subgraph layout_card_n5[" "]
+  n5@{ shape: rounded, label: "**mark​_​newly​_​hidden​_​entities​_​invisible**<br/>提交本帧已不再可见的对象状态。" }
   class n5 node_system
-  n6@{ shape: rounded, label: "**bevy​_​gizmos::aabb::draw​_​all​_​aabbs**<br/>来自crate:bevy​_​gizmos ↗：绘制未单独标<br/>记实体的可见 AABB 调试线框。" }
+  end
+  style layout_card_n5 fill:none,stroke:none
+  n6@{ shape: rounded, label: "**draw​_​all​_​aabbs**<br/>来自crate:bevy​_​gizmos ↗：绘制未单独标<br/>记实体的可见 AABB 调试线框。" }
   class n6 node_system
   class n6 external_node
   n0 e0@-->|"先于"| n1
@@ -68,8 +71,8 @@ flowchart LR
   class e4 edge_set_membership
   n0 e5@-->|"先于"| n6
   class e5 edge_order
-  e0@{ curve: basis }
   e1@{ curve: basis }
+  e2@{ curve: basis }
   e3@{ curve: basis }
-  e4@{ curve: bumpX }
+  e4@{ curve: basis }
   e5@{ curve: basis }

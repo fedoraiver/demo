@@ -40,21 +40,21 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​core​_​pipeline::oit::resolve::**<br/>**prepare​_​oit​_​resolve​_​bind​_​group**<br/>为 OIT 解析阶段绑定视图和片元链表。" }
+  n0@{ shape: rounded, label: "**prepare​_​oit​_​resolve​_​bind​_​group**<br/>为 OIT 解析阶段绑定视图和片元链表。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**oit::OitBuffers**<br/>保存顺序无关透明的片元链表与参数。" }
+  n1@{ shape: cyl, label: "**OitBuffers**<br/>保存顺序无关透明的片元链表与参数。" }
   class n1 node_resource
-  n2@{ shape: cyl, label: "**bevy​_​render::render​_​resource::**<br/>**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
+  n2@{ shape: cyl, label: "**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
   class n2 node_resource
   class n2 external_node
-  n3@{ shape: cyl, label: "**oit::resolve::OitResolvePipeline**<br/>定义透明解析的视图与深度资源布局。" }
+  n3@{ shape: cyl, label: "**OitResolvePipeline**<br/>定义透明解析的视图与深度资源布局。" }
   class n3 node_resource
-  n4@{ shape: cyl, label: "**oit::resolve::OitResolveBindGroup**<br/>绑定透明片元解析所需的共享缓冲。" }
+  n4@{ shape: cyl, label: "**OitResolveBindGroup**<br/>绑定透明片元解析所需的共享缓冲。" }
   class n4 node_resource
-  n5@{ shape: cyl, label: "**bevy​_​render::renderer::RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
+  n5@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
   class n5 node_resource
   class n5 external_node
-  n6@{ shape: cyl, label: "**bevy​_​render::view::ViewUniforms**<br/>来自crate:bevy​_​render ↗：汇集全部视图<br/>的动态 Uniform 数据。" }
+  n6@{ shape: cyl, label: "**ViewUniforms**<br/>来自crate:bevy​_​render ↗：汇集全部视图<br/>的动态 Uniform 数据。" }
   class n6 node_resource
   class n6 external_node
   n7@{ shape: lin-rect, label: "**PrepareBindGroups**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }

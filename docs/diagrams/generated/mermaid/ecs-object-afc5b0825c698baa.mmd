@@ -46,28 +46,28 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​ui​_​render::gradient::extract​_​**<br/>**gradients**<br/>提取可见 UI 渐变并替换失效渲染项。" }
+  n0@{ shape: rounded, label: "**extract​_​gradients**<br/>提取可见 UI 渐变并替换失效渲染项。" }
   class n0 node_system
   n1@{ shape: lin-rect, label: "**ExtractGradient**<br/>组织各类界面绘制数据提取。" }
   class n1 node_system_set
-  n2@{ shape: rounded, label: "**bevy​_​ui::ComputedUiRenderTargetInfo**<br/>来自crate:bevy​_​ui ↗：缓存 UI 目标的尺<br/>寸与缩放。" }
+  n2@{ shape: rounded, label: "**ComputedUiRenderTargetInfo**<br/>来自crate:bevy​_​ui ↗：缓存 UI 目标的尺<br/>寸与缩放。" }
   class n2 node_component
   class n2 external_node
   n3@{ shape: notch-rect, label: "**Local · arg4.5.0.0.0.0.0**<br/>保存 InheritedVisibility 移除参数的组<br/>件 ID。" }
   class n3 node_local
-  n4@{ shape: rounded, label: "**bevy​_​camera::visibility::**<br/>**InheritedVisibility**<br/>来自crate:bevy​_​camera ↗：保存从实体层<br/>级计算出的可见性。" }
+  n4@{ shape: rounded, label: "**InheritedVisibility**<br/>来自crate:bevy​_​camera ↗：保存从实体层<br/>级计算出的可见性。" }
   class n4 node_component
   class n4 external_node
-  n5@{ shape: rounded, label: "**bevy​_​extract::SubEntity#lt;bevy​_​**<br/>**render::RenderApp#gt;**<br/>来自crate:bevy​_​extract ↗：记录主实体<br/>对应的子世界实体。" }
+  n5@{ shape: rounded, label: "**SubEntity#lt;RenderApp#gt;**<br/>来自crate:bevy​_​extract ↗：记录主实体<br/>对应的子世界实体。" }
   class n5 node_component
   class n5 external_node
-  n6@{ shape: rounded, label: "**bevy​_​ui::BorderGradient**<br/>来自crate:bevy​_​ui ↗：为 UI 节点边框配<br/>置渐变。" }
+  n6@{ shape: rounded, label: "**BorderGradient**<br/>来自crate:bevy​_​ui ↗：为 UI 节点边框配<br/>置渐变。" }
   class n6 node_component
   class n6 external_node
-  n7@{ shape: rounded, label: "**bevy​_​ui::CalculatedClip**<br/>来自crate:bevy​_​ui ↗：缓存节点从祖先继<br/>承的裁剪结果。" }
+  n7@{ shape: rounded, label: "**CalculatedClip**<br/>来自crate:bevy​_​ui ↗：缓存节点从祖先继<br/>承的裁剪结果。" }
   class n7 node_component
   class n7 external_node
-  n8@{ shape: rounded, label: "**bevy​_​ui::ComputedUiTargetCamera**<br/>来自crate:bevy​_​ui ↗：缓存 UI 节点实际<br/>采用的相机。" }
+  n8@{ shape: rounded, label: "**ComputedUiTargetCamera**<br/>来自crate:bevy​_​ui ↗：缓存 UI 节点实际<br/>采用的相机。" }
   class n8 node_component
   class n8 external_node
   n9@{ shape: notch-rect, label: "**Local · arg4.1.0.0.0.0.0**<br/>保存 ComputedStackIndex 移除参数的组<br/>件 ID。" }
@@ -80,16 +80,16 @@ flowchart LR
   class n12 node_local
   n13@{ shape: notch-rect, label: "**Local · arg4.8.0.0.1**<br/>跟踪 BorderGradient 移除记录的读取进<br/>度。" }
   class n13 node_local
-  n14@{ shape: rounded, label: "**bevy​_​ui::UiGlobalTransform**<br/>来自crate:bevy​_​ui ↗：保存 UI 节点的绝<br/>对二维变换。" }
+  n14@{ shape: rounded, label: "**UiGlobalTransform**<br/>来自crate:bevy​_​ui ↗：保存 UI 节点的绝<br/>对二维变换。" }
   class n14 node_component
   class n14 external_node
-  n15@{ shape: rounded, label: "**bevy​_​ui::BackgroundGradient**<br/>来自crate:bevy​_​ui ↗：为 UI 节点背景配<br/>置渐变。" }
+  n15@{ shape: rounded, label: "**BackgroundGradient**<br/>来自crate:bevy​_​ui ↗：为 UI 节点背景配<br/>置渐变。" }
   class n15 node_component
   class n15 external_node
-  n16@{ shape: rounded, label: "**bevy​_​ui::ComputedNode**<br/>来自crate:bevy​_​ui ↗：保存 UI 布局计算<br/>后的物理尺寸。" }
+  n16@{ shape: rounded, label: "**ComputedNode**<br/>来自crate:bevy​_​ui ↗：保存 UI 布局计算<br/>后的物理尺寸。" }
   class n16 node_component
   class n16 external_node
-  n17@{ shape: cyl, label: "**extract​_​plugin::MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
+  n17@{ shape: cyl, label: "**MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
   class n17 node_resource
   class n17 external_node
   n18@{ shape: notch-rect, label: "**Local · arg4.4.0.0.0.0.0**<br/>保存 UiGlobalTransform 移除参数的组<br/>件 ID。" }
@@ -108,10 +108,10 @@ flowchart LR
   class n24 node_local
   n25@{ shape: notch-rect, label: "**Local · arg4.6.0.0.1**<br/>跟踪 CalculatedClip 移除记录的读取进<br/>度。" }
   class n25 node_local
-  n26@{ shape: rounded, label: "**bevy​_​ui::ComputedStackIndex**<br/>来自crate:bevy​_​ui ↗：保存节点计算后的<br/>绘制堆叠位置。" }
+  n26@{ shape: rounded, label: "**ComputedStackIndex**<br/>来自crate:bevy​_​ui ↗：保存节点计算后的<br/>绘制堆叠位置。" }
   class n26 node_component
   class n26 external_node
-  n27@{ shape: cyl, label: "**gradient::ExtractedGradients**<br/>保存已提取的 UI 背景与边框渐变。" }
+  n27@{ shape: cyl, label: "**ExtractedGradients**<br/>保存已提取的 UI 背景与边框渐变。" }
   class n27 node_resource
   n28@{ shape: notch-rect, label: "**Local · arg4.2.0.0.0.0.0**<br/>保存 ComputedUiTargetCamera 移除参数<br/>的组件 ID。" }
   class n28 node_local
@@ -119,13 +119,13 @@ flowchart LR
   class n29 node_local
   n30@{ shape: notch-rect, label: "**Local · arg4.0.0.0.1**<br/>跟踪 ComputedNode 移除记录的读取进度。" }
   class n30 node_local
-  n31@{ shape: fr-rect, label: "**gradient::GradientPlugin**<br/>提取并绘制界面渐变。" }
+  n31@{ shape: fr-rect, label: "**GradientPlugin**<br/>提取并绘制界面渐变。" }
   class n31 node_plugin
   n32@{ shape: notch-rect, label: "**Local · nodes​_​processed​_​this​_​frame**<br/>去重本轮已重建的 UI 渐变节点。" }
   class n32 node_local
   n33@{ shape: notch-rect, label: "**Local · arg4.7.0.0.1**<br/>跟踪 BackgroundGradient 移除记录的读<br/>取进度。" }
   class n33 node_local
-  n34@{ shape: rounded, label: "**bevy​_​ui​_​render::extract​_​uinode​_​**<br/>**background​_​colors**<br/>提取 UI 节点背景与外侧填充色。" }
+  n34@{ shape: rounded, label: "**extract​_​uinode​_​background​_​colors**<br/>提取 UI 节点背景与外侧填充色。" }
   class n34 node_system
   n1 e0@-->|"集合成员"| n0
   class e0 edge_set_membership

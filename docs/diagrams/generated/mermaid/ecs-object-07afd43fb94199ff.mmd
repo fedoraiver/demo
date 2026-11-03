@@ -38,21 +38,21 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**render::light::LightEntity**<br/>标识阴影视图对应的光源面或级联。" }
+  n0@{ shape: rounded, label: "**LightEntity**<br/>标识阴影视图对应的光源面或级联。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​pbr::render::light::queue​_​**<br/>**shadows**<br/>按材质与光源资格更新阴影绘制分桶。" }
+  n1@{ shape: rounded, label: "**queue​_​shadows**<br/>按材质与光源资格更新阴影绘制分桶。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​pbr::render::light::check​_​**<br/>**views​_​lights​_​need​_​specialization**<br/>检测阴影视图投影类型并标记管线待刷新。" }
+  n2@{ shape: rounded, label: "**check​_​views​_​lights​_​need​_​**<br/>**specialization**<br/>检测阴影视图投影类型并标记管线待刷新。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​pbr::render::gpu​_​preprocess::**<br/>**early​_​gpu​_​preprocess**<br/>为当前视图及阴影级联执行早期网格转换与裁<br/>剪。" }
+  n3@{ shape: rounded, label: "**early​_​gpu​_​preprocess**<br/>为当前视图及阴影级联执行早期网格转换与裁<br/>剪。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**bevy​_​pbr::render::light::specialize​_​**<br/>**shadows**<br/>按阴影视图、网格及材质变化重新选择专用阴<br/>影渲染管线，清理失效缓存，并整理需要补齐<br/>或重新排队的阴影网格任务。" }
+  n4@{ shape: rounded, label: "**specialize​_​shadows**<br/>按阴影视图、网格及材质变化重新选择专用阴<br/>影渲染管线，清理失效缓存，并整理需要补齐<br/>或重新排队的阴影网格任务。" }
   class n4 node_system
-  n5@{ shape: rounded, label: "**bevy​_​pbr::render::gpu​_​preprocess::**<br/>**allocate​_​uniforms**<br/>在 GPU 上为可见批次分配网格参数存储。" }
+  n5@{ shape: rounded, label: "**allocate​_​uniforms**<br/>在 GPU 上为可见批次分配网格参数存储。" }
   class n5 node_system
-  n6@{ shape: rounded, label: "**bevy​_​pbr::render::gpu​_​preprocess::**<br/>**unpack​_​bins**<br/>解包 GPU 分桶数据并生成网格预处理任务。" }
+  n6@{ shape: rounded, label: "**unpack​_​bins**<br/>解包 GPU 分桶数据并生成网格预处理任务。" }
   class n6 node_system
-  n7@{ shape: rounded, label: "**bevy​_​pbr::render::light::prepare​_​**<br/>**lights**<br/>准备视图光照参数、阴影视图和阴影贴图。" }
+  n7@{ shape: rounded, label: "**prepare​_​lights**<br/>准备视图光照参数、阴影视图和阴影贴图。" }
   class n7 node_system
   n0 e0@--> n1
   class e0 edge_read

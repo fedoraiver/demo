@@ -38,14 +38,14 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**deferred::copy​_​lighting​_​id::**<br/>**DeferredLightingIdDepthTexture**<br/>保存延迟光照通道使用的标识深度纹理。" }
+  n0@{ shape: rounded, label: "**DeferredLightingIdDepthTexture**<br/>保存延迟光照通道使用的标识深度纹理。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​core​_​pipeline::deferred::copy​_​**<br/>**lighting​_​id::copy​_​deferred​_​lighting​_​**<br/>**id**<br/>把延迟光照通道标识复制到深度目标。" }
+  n1@{ shape: rounded, label: "**copy​_​deferred​_​lighting​_​id**<br/>把延迟光照通道标识复制到深度目标。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​pbr::deferred::deferred​_​**<br/>**lighting**<br/>来自crate:bevy​_​pbr ↗：绑定网格视图、<br/>延迟光照管线及通道深度标识参数，在延迟光<br/>照深度附件约束下执行全屏光照计算，将结果<br/>写入视图颜色。" }
+  n2@{ shape: rounded, label: "**deferred​_​lighting**<br/>来自crate:bevy​_​pbr ↗：绑定网格视图、<br/>延迟光照管线及通道深度标识参数，在延迟光<br/>照深度附件约束下执行全屏光照计算，将结果<br/>写入视图颜色。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​core​_​pipeline::deferred::copy​_​**<br/>**lighting​_​id::prepare​_​deferred​_​**<br/>**lighting​_​id​_​textures**<br/>为延迟预通道相机分配光照标识深度纹理。" }
+  n3@{ shape: rounded, label: "**prepare​_​deferred​_​lighting​_​id​_​**<br/>**textures**<br/>为延迟预通道相机分配光照标识深度纹理。" }
   class n3 node_system
   n0 e0@--> n1
   class e0 edge_read

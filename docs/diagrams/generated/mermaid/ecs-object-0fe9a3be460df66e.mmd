@@ -40,16 +40,16 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​pbr::lightmap::init​_​render​_​**<br/>**lightmaps**<br/>初始化光照贴图槽位和设备绑定数组能力。" }
+  n0@{ shape: rounded, label: "**init​_​render​_​lightmaps**<br/>初始化光照贴图槽位和设备绑定数组能力。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**lightmap::RenderLightmaps**<br/>管理渲染侧光照贴图的槽位和纹理。" }
+  n1@{ shape: cyl, label: "**RenderLightmaps**<br/>管理渲染侧光照贴图的槽位和纹理。" }
   class n1 node_resource
-  n2@{ shape: cyl, label: "**bevy​_​render::renderer::RenderAdapter**<br/>来自crate:bevy​_​render ↗：标识渲染使用<br/>的物理 GPU 适配器。" }
+  n2@{ shape: cyl, label: "**RenderAdapter**<br/>来自crate:bevy​_​render ↗：标识渲染使用<br/>的物理 GPU 适配器。" }
   class n2 node_resource
   class n2 external_node
-  n3@{ shape: fr-rect, label: "**lightmap::LightmapPlugin**<br/>接入表面烘焙光照贴图。" }
+  n3@{ shape: fr-rect, label: "**LightmapPlugin**<br/>接入表面烘焙光照贴图。" }
   class n3 node_plugin
-  n4@{ shape: cyl, label: "**bevy​_​render::renderer::RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
+  n4@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
   class n4 node_resource
   class n4 external_node
   n0 e0@-->|"插入"| n1

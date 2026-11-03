@@ -46,33 +46,33 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**demo::ui::pages::rebuild​_​page**<br/>只在页面结构或视口变化时重建；数值、提示<br/>与焦点变化保留现有滚动控件。" }
+  n0@{ shape: rounded, label: "**rebuild​_​page**<br/>只在页面结构或视口变化时重建；数值、提示<br/>与焦点变化保留现有滚动控件。" }
   class n0 node_system
   n1@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>承载暂停页的内容与页脚。" }
   class n1 node_entity
-  n2@{ shape: rounded, label: "**window::PrimaryWindow**<br/>来自crate:bevy​_​window ↗：标识唯一的主<br/>窗口" }
+  n2@{ shape: rounded, label: "**PrimaryWindow**<br/>来自crate:bevy​_​window ↗：标识唯一的主<br/>窗口" }
   class n2 node_component
   class n2 external_node
   n3@{ shape: notch-rect, label: "**Local · previous​_​layout**<br/>识别需要重建菜单树的布局变化。" }
   class n3 node_local
   n4@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>承载控制设置页的内容与页脚。" }
   class n4 node_entity
-  n5@{ shape: fr-rect, label: "**ui::GameUiPlugin**<br/>组装菜单功能，不安装窗口或重复初始化会话<br/>日志。" }
+  n5@{ shape: fr-rect, label: "**GameUiPlugin**<br/>组装菜单功能，不安装窗口或重复初始化会话<br/>日志。" }
   class n5 node_plugin
-  n6@{ shape: rounded, label: "**window::Window**<br/>来自crate:bevy​_​window ↗：保存窗口的呈<br/>现模式、位置、分辨率、标题、全屏及平台行<br/>为配置" }
+  n6@{ shape: rounded, label: "**Window**<br/>来自crate:bevy​_​window ↗：保存窗口的呈<br/>现模式、位置、分辨率、标题、全屏及平台行<br/>为配置" }
   class n6 node_component
   class n6 external_node
   n7@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>承载辅助功能设置页的内容与页脚。" }
   class n7 node_entity
-  n8@{ shape: cyl, label: "**ui::MenuState**<br/>页面数据与返回来源；焦点单独保存，避免导<br/>航时重建整个页面。" }
+  n8@{ shape: cyl, label: "**MenuState**<br/>页面数据与返回来源；焦点单独保存，避免导<br/>航时重建整个页面。" }
   class n8 node_resource
   n9@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>承载帮助页的内容与页脚。" }
   class n9 node_entity
-  n10@{ shape: cyl, label: "**ui::theme::UiTheme**<br/>字体只加载一次；页面 BSN 直接引用句柄，<br/>不启动异步场景任务。" }
+  n10@{ shape: cyl, label: "**UiTheme**<br/>字体只加载一次；页面 BSN 直接引用句柄，<br/>不启动异步场景任务。" }
   class n10 node_resource
   n11@{ shape: lin-rect, label: "**Build**<br/>请求在 PreUpdate 消费后，Update 依次生<br/>成 BSN 页面并更新视觉焦点。" }
   class n11 node_system_set
-  n12@{ shape: cyl, label: "**settings::draft::SettingsDraft**<br/>来自settings ↗：菜单独立编辑的草稿；音<br/>量可以临时预览，只有应用成功才替换已保存<br/>设置。" }
+  n12@{ shape: cyl, label: "**SettingsDraft**<br/>来自settings ↗：菜单独立编辑的草稿；音<br/>量可以临时预览，只有应用成功才替换已保存<br/>设置。" }
   class n12 node_resource
   class n12 external_node
   n13@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>承载图形设置页的内容与页脚。" }
@@ -81,7 +81,7 @@ flowchart LR
   class n14 node_entity
   n15@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>承载音频设置页的内容与页脚。" }
   class n15 node_entity
-  n16@{ shape: rounded, label: "**ui::MenuRoot**<br/>页面根实体；页面更换时连同视觉子树一起销<br/>毁。" }
+  n16@{ shape: rounded, label: "**MenuRoot**<br/>页面根实体；页面更换时连同视觉子树一起销<br/>毁。" }
   class n16 node_component
   n0 e0@-->|"创建模板"| n1
   class e0 edge_write

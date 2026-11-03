@@ -41,29 +41,29 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**dynamics::rigid​_​body::mass​_​**<br/>**properties::components::collider::**<br/>**ColliderMassProperties**<br/>缓存由碰撞形状计算的质量属性。" }
+  n0@{ shape: rounded, label: "**ColliderMassProperties**<br/>缓存由碰撞形状计算的质量属性。" }
   class n0 node_component
-  n1@{ shape: hex, label: "**avian3d::dynamics::rigid​_​body::mass​_​**<br/>**properties::{impl#35;3}::build::**<br/>**{closure#35;0}**<br/>初始化新刚体的质量属性。" }
+  n1@{ shape: hex, label: "**build::{closure#35;0}**<br/>初始化新刚体的质量属性。" }
   class n1 node_observer
-  n2@{ shape: hex, label: "**avian3d::collision::collider::**<br/>**backend::{impl#35;2}::build::**<br/>**{closure#35;6}**<br/>恢复非传感器碰撞体的质量属性。" }
+  n2@{ shape: hex, label: "**build::{closure#35;6}**<br/>恢复非传感器碰撞体的质量属性。" }
   class n2 node_observer
-  n3@{ shape: hex, label: "**avian3d::dynamics::rigid​_​body::mass​_​**<br/>**properties::{impl#35;3}::build::**<br/>**{closure#35;1}**<br/>随碰撞体集合变化重算刚体质量。" }
+  n3@{ shape: hex, label: "**build::{closure#35;1}**<br/>随碰撞体集合变化重算刚体质量。" }
   class n3 node_observer
-  n4@{ shape: hex, label: "**avian3d::dynamics::rigid​_​body::mass​_​**<br/>**properties::{impl#35;3}::build::**<br/>**{closure#35;0}**<br/>初始化新刚体的质量属性。" }
+  n4@{ shape: hex, label: "**build::{closure#35;0}**<br/>初始化新刚体的质量属性。" }
   class n4 node_observer
-  n5@{ shape: hex, label: "**avian3d::dynamics::rigid​_​body::mass​_​**<br/>**properties::{impl#35;3}::build::**<br/>**{closure#35;1}**<br/>随碰撞体集合变化重算刚体质量。" }
+  n5@{ shape: hex, label: "**build::{closure#35;1}**<br/>随碰撞体集合变化重算刚体质量。" }
   class n5 node_observer
-  n6@{ shape: rounded, label: "**avian3d::dynamics::rigid​_​body::mass​_​**<br/>**properties::queue​_​mass​_​**<br/>**recomputation​_​on​_​collider​_​mass​_​**<br/>**change**<br/>在附属碰撞体质量输入变化时请求刚体重算。" }
+  n6@{ shape: rounded, label: "**queue​_​mass​_​recomputation​_​on​_​**<br/>**collider​_​mass​_​change**<br/>在附属碰撞体质量输入变化时请求刚体重算。" }
   class n6 node_system
-  n7@{ shape: hex, label: "**avian3d::dynamics::rigid​_​body::mass​_​**<br/>**properties::{impl#35;3}::build::**<br/>**{closure#35;0}**<br/>初始化新刚体的质量属性。" }
+  n7@{ shape: hex, label: "**build::{closure#35;0}**<br/>初始化新刚体的质量属性。" }
   class n7 node_observer
-  n8@{ shape: rounded, label: "**avian3d::collision::collider::**<br/>**backend::update​_​collider​_​mass​_​**<br/>**properties#lt;avian3d::collision::**<br/>**collider::parry::Collider#gt;**<br/>按变化的形状和密度重算碰撞体质量。" }
+  n8@{ shape: rounded, label: "**update​_​collider​_​mass​_​properties**<br/>按变化的形状和密度重算碰撞体质量。" }
   class n8 node_system
-  n9@{ shape: hex, label: "**avian3d::dynamics::rigid​_​body::mass​_​**<br/>**properties::{impl#35;3}::build::**<br/>**{closure#35;1}**<br/>随碰撞体集合变化重算刚体质量。" }
+  n9@{ shape: hex, label: "**build::{closure#35;1}**<br/>随碰撞体集合变化重算刚体质量。" }
   class n9 node_observer
-  n10@{ shape: rounded, label: "**avian3d::dynamics::rigid​_​body::mass​_​**<br/>**properties::update​_​mass​_​properties**<br/>重算已标记实体的质量属性并清除标记。" }
+  n10@{ shape: rounded, label: "**update​_​mass​_​properties**<br/>重算已标记实体的质量属性并清除标记。" }
   class n10 node_system
-  n11@{ shape: hex, label: "**avian3d::collision::collider::**<br/>**backend::{impl#35;2}::build::**<br/>**{closure#35;5}**<br/>在碰撞体成为传感器后请求质量重算。" }
+  n11@{ shape: hex, label: "**build::{closure#35;5}**<br/>在碰撞体成为传感器后请求质量重算。" }
   class n11 node_observer
   n12@{ shape: rounded, label: "**prepare​_​island · 创建模板**<br/>来自scene​_​assembly ↗：为地图展示<br/>NPC 添加静态碰撞子体。" }
   class n12 node_entity

@@ -44,56 +44,110 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​ui​_​render::extract​_​text​_​shadows**<br/>提取 UI 文字及装饰线的偏移阴影。" }
+  subgraph layout_card_n0[" "]
+  n0@{ shape: rounded, label: "**extract​_​text​_​shadows**<br/>提取 UI 文字及装饰线的偏移阴影。" }
   class n0 node_system
-  n1@{ shape: fr-rect, label: "**bevy​_​ui​_​render::UiRenderPlugin**<br/>提取并准备界面绘制数据。" }
+  end
+  style layout_card_n0 fill:none,stroke:none
+  subgraph layout_card_n1[" "]
+  n1@{ shape: fr-rect, label: "**UiRenderPlugin**<br/>提取并准备界面绘制数据。" }
   class n1 node_plugin
-  n2@{ shape: rounded, label: "**bevy​_​text::TextLayoutInfo**<br/>来自crate:bevy​_​text ↗：保存文字块完成<br/>排版后的缩放、字形位置、文字运行几何及尺<br/>寸" }
+  end
+  style layout_card_n1 fill:none,stroke:none
+  subgraph layout_card_n2[" "]
+  n2@{ shape: rounded, label: "**TextLayoutInfo**<br/>来自crate:bevy​_​text ↗：保存文字块完成<br/>排版后的缩放、字形位置、文字运行几何及尺<br/>寸" }
   class n2 node_component
   class n2 external_node
+  end
+  style layout_card_n2 fill:none,stroke:none
+  subgraph layout_card_n3[" "]
   n3@{ shape: cyl, label: "**ExtractedUiNodes**<br/>保存提取后的 UI 节点及本帧变化集合。" }
   class n3 node_resource
-  n4@{ shape: rounded, label: "**text::Strikethrough**<br/>来自crate:bevy​_​text ↗：标记文字实体需<br/>要绘制删除线" }
+  end
+  style layout_card_n3 fill:none,stroke:none
+  subgraph layout_card_n4[" "]
+  n4@{ shape: rounded, label: "**Strikethrough**<br/>来自crate:bevy​_​text ↗：标记文字实体需<br/>要绘制删除线" }
   class n4 node_component
   class n4 external_node
-  n5@{ shape: rounded, label: "**bevy​_​ui::ComputedStackIndex**<br/>来自crate:bevy​_​ui ↗：保存节点计算后的<br/>绘制堆叠位置。" }
+  end
+  style layout_card_n4 fill:none,stroke:none
+  subgraph layout_card_n5[" "]
+  n5@{ shape: rounded, label: "**ComputedStackIndex**<br/>来自crate:bevy​_​ui ↗：保存节点计算后的<br/>绘制堆叠位置。" }
   class n5 node_component
   class n5 external_node
-  n6@{ shape: rounded, label: "**bevy​_​ui::ComputedUiTargetCamera**<br/>来自crate:bevy​_​ui ↗：缓存 UI 节点实际<br/>采用的相机。" }
+  end
+  style layout_card_n5 fill:none,stroke:none
+  subgraph layout_card_n6[" "]
+  n6@{ shape: rounded, label: "**ComputedUiTargetCamera**<br/>来自crate:bevy​_​ui ↗：缓存 UI 节点实际<br/>采用的相机。" }
   class n6 node_component
   class n6 external_node
-  n7@{ shape: rounded, label: "**bevy​_​ui::UiGlobalTransform**<br/>来自crate:bevy​_​ui ↗：保存 UI 节点的绝<br/>对二维变换。" }
+  end
+  style layout_card_n6 fill:none,stroke:none
+  subgraph layout_card_n7[" "]
+  n7@{ shape: rounded, label: "**UiGlobalTransform**<br/>来自crate:bevy​_​ui ↗：保存 UI 节点的绝<br/>对二维变换。" }
   class n7 node_component
   class n7 external_node
-  n8@{ shape: rounded, label: "**bevy​_​extract::SubEntity#lt;bevy​_​**<br/>**render::RenderApp#gt;**<br/>来自crate:bevy​_​extract ↗：记录主实体<br/>对应的子世界实体。" }
+  end
+  style layout_card_n7 fill:none,stroke:none
+  subgraph layout_card_n8[" "]
+  n8@{ shape: rounded, label: "**SubEntity#lt;RenderApp#gt;**<br/>来自crate:bevy​_​extract ↗：记录主实体<br/>对应的子世界实体。" }
   class n8 node_component
   class n8 external_node
-  n9@{ shape: rounded, label: "**bevy​_​ui::ComputedNode**<br/>来自crate:bevy​_​ui ↗：保存 UI 布局计算<br/>后的物理尺寸。" }
+  end
+  style layout_card_n8 fill:none,stroke:none
+  subgraph layout_card_n9[" "]
+  n9@{ shape: rounded, label: "**ComputedNode**<br/>来自crate:bevy​_​ui ↗：保存 UI 布局计算<br/>后的物理尺寸。" }
   class n9 node_component
   class n9 external_node
-  n10@{ shape: rounded, label: "**bevy​_​camera::visibility::**<br/>**InheritedVisibility**<br/>来自crate:bevy​_​camera ↗：保存从实体层<br/>级计算出的可见性。" }
+  end
+  style layout_card_n9 fill:none,stroke:none
+  subgraph layout_card_n10[" "]
+  n10@{ shape: rounded, label: "**InheritedVisibility**<br/>来自crate:bevy​_​camera ↗：保存从实体层<br/>级计算出的可见性。" }
   class n10 node_component
   class n10 external_node
-  n11@{ shape: rounded, label: "**bevy​_​ui::widget::TextShadow**<br/>来自crate:bevy​_​ui ↗：为 UI 文本绘制偏<br/>移阴影。" }
+  end
+  style layout_card_n10 fill:none,stroke:none
+  subgraph layout_card_n11[" "]
+  n11@{ shape: rounded, label: "**TextShadow**<br/>来自crate:bevy​_​ui ↗：为 UI 文本绘制偏<br/>移阴影。" }
   class n11 node_component
   class n11 external_node
-  n12@{ shape: rounded, label: "**bevy​_​ui::CalculatedClip**<br/>来自crate:bevy​_​ui ↗：缓存节点从祖先继<br/>承的裁剪结果。" }
+  end
+  style layout_card_n11 fill:none,stroke:none
+  subgraph layout_card_n12[" "]
+  n12@{ shape: rounded, label: "**CalculatedClip**<br/>来自crate:bevy​_​ui ↗：缓存节点从祖先继<br/>承的裁剪结果。" }
   class n12 node_component
   class n12 external_node
-  n13@{ shape: rounded, label: "**editing::EditableText**<br/>来自crate:bevy​_​text ↗：持有 Parley<br/>编辑器、文本、光标及待应用编辑操作" }
+  end
+  style layout_card_n12 fill:none,stroke:none
+  subgraph layout_card_n13[" "]
+  n13@{ shape: rounded, label: "**EditableText**<br/>来自crate:bevy​_​text ↗：持有 Parley<br/>编辑器、文本、光标及待应用编辑操作" }
   class n13 node_component
   class n13 external_node
-  n14@{ shape: cyl, label: "**extract​_​plugin::MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
+  end
+  style layout_card_n13 fill:none,stroke:none
+  subgraph layout_card_n14[" "]
+  n14@{ shape: cyl, label: "**MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
   class n14 node_resource
   class n14 external_node
+  end
+  style layout_card_n14 fill:none,stroke:none
+  subgraph layout_card_n15[" "]
   n15@{ shape: lin-rect, label: "**ExtractTextShadows**<br/>组织各类界面绘制数据提取。" }
   class n15 node_system_set
-  n16@{ shape: rounded, label: "**text::Underline**<br/>来自crate:bevy​_​text ↗：标记文字实体需<br/>要绘制下划线" }
+  end
+  style layout_card_n15 fill:none,stroke:none
+  subgraph layout_card_n16[" "]
+  n16@{ shape: rounded, label: "**Underline**<br/>来自crate:bevy​_​text ↗：标记文字实体需<br/>要绘制下划线" }
   class n16 node_component
   class n16 external_node
-  n17@{ shape: rounded, label: "**bevy​_​text::ComputedTextBlock**<br/>来自crate:bevy​_​text ↗：缓存文字块的<br/>Parley 布局、文本实体树和重绘标记" }
+  end
+  style layout_card_n16 fill:none,stroke:none
+  subgraph layout_card_n17[" "]
+  n17@{ shape: rounded, label: "**ComputedTextBlock**<br/>来自crate:bevy​_​text ↗：缓存文字块的<br/>Parley 布局、文本实体树和重绘标记" }
   class n17 node_component
   class n17 external_node
+  end
+  style layout_card_n17 fill:none,stroke:none
   n1 e0@-->|"调用"| n0
   class e0 edge_registration
   n2 e1@--> n0

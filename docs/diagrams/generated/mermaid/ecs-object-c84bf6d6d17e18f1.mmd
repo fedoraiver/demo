@@ -38,30 +38,30 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**bevy​_​asset::asset​_​changed::**<br/>**AssetChanges#lt;mesh::Mesh#gt;**<br/>记录资产最近变化的系统刻度。" }
+  n0@{ shape: cyl, label: "**AssetChanges#lt;Mesh#gt;**<br/>记录资产最近变化的系统刻度。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::**<br/>**material::check​_​entities​_​needing​_​**<br/>**specialization#lt;bevy​_​sprite​_​render::**<br/>**tilemap​_​chunk::tilemap​_​chunk​_​**<br/>**material::TilemapChunkMaterial#gt;**<br/>来自crate:bevy​_​sprite​_​render ↗：收集<br/>二维网格材质需重建或移除专用化的实体。" }
+  n1@{ shape: rounded, label: "**check​_​entities​_​needing​_​**<br/>**specialization**<br/>来自crate:bevy​_​sprite​_​render ↗：收集<br/>二维网格材质需重建或移除专用化的实体。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​pbr::material::check​_​entities​_​**<br/>**needing​_​specialization#lt;bevy​_​pbr::**<br/>**extended​_​material::**<br/>**ExtendedMaterial#lt;bevy​_​pbr::pbr​_​**<br/>**material::StandardMaterial, bevy​_​**<br/>**pbr::decal::forward::**<br/>**ForwardDecalMaterialExt#gt;#gt;**<br/>来自crate:bevy​_​pbr ↗：收集几何或材质<br/>变化及移除的三维网格。" }
+  n2@{ shape: rounded, label: "**check​_​entities​_​needing​_​**<br/>**specialization**<br/>来自crate:bevy​_​pbr ↗：收集几何或材质<br/>变化及移除的三维网格。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::**<br/>**material::check​_​entities​_​needing​_​**<br/>**specialization#lt;bevy​_​sprite​_​render::**<br/>**sprite​_​mesh::sprite​_​mesh​_​material::**<br/>**SpriteMeshMaterial#gt;**<br/>来自crate:bevy​_​sprite​_​render ↗：收集<br/>二维网格材质需重建或移除专用化的实体。" }
+  n3@{ shape: rounded, label: "**check​_​entities​_​needing​_​**<br/>**specialization**<br/>来自crate:bevy​_​sprite​_​render ↗：收集<br/>二维网格材质需重建或移除专用化的实体。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**bevy​_​pbr::material::check​_​entities​_​**<br/>**needing​_​specialization#lt;bevy​_​pbr::**<br/>**pbr​_​material::StandardMaterial#gt;**<br/>来自crate:bevy​_​pbr ↗：收集几何或材质<br/>变化及移除的三维网格。" }
+  n4@{ shape: rounded, label: "**check​_​entities​_​needing​_​**<br/>**specialization**<br/>来自crate:bevy​_​pbr ↗：收集几何或材质<br/>变化及移除的三维网格。" }
   class n4 node_system
   class n4 external_node
-  n5@{ shape: rounded, label: "**bevy​_​sprite::calculate​_​bounds​_​2d**<br/>来自crate:bevy​_​sprite ↗：为二维网格和<br/>精灵计算局部包围盒。" }
+  n5@{ shape: rounded, label: "**calculate​_​bounds​_​2d**<br/>来自crate:bevy​_​sprite ↗：为二维网格和<br/>精灵计算局部包围盒。" }
   class n5 node_system
   class n5 external_node
-  n6@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::**<br/>**material::check​_​entities​_​needing​_​**<br/>**specialization#lt;bevy​_​sprite​_​render::**<br/>**mesh2d::color​_​material::**<br/>**ColorMaterial#gt;**<br/>来自crate:bevy​_​sprite​_​render ↗：收集<br/>二维网格材质需重建或移除专用化的实体。" }
+  n6@{ shape: rounded, label: "**check​_​entities​_​needing​_​**<br/>**specialization**<br/>来自crate:bevy​_​sprite​_​render ↗：收集<br/>二维网格材质需重建或移除专用化的实体。" }
   class n6 node_system
   class n6 external_node
-  n7@{ shape: rounded, label: "**bevy​_​camera::visibility::calculate​_​**<br/>**bounds**<br/>来自crate:bevy​_​camera ↗：为允许自动计<br/>算的三维网格维护包围盒。" }
+  n7@{ shape: rounded, label: "**calculate​_​bounds**<br/>来自crate:bevy​_​camera ↗：为允许自动计<br/>算的三维网格维护包围盒。" }
   class n7 node_system
   class n7 external_node
-  n8@{ shape: rounded, label: "**bevy​_​asset::assets::Assets#lt;bevy​_​**<br/>**mesh::mesh::Mesh#gt;::asset​_​events**<br/>发布累计的资产变化消息。" }
+  n8@{ shape: rounded, label: "**asset​_​events**<br/>发布累计的资产变化消息。" }
   class n8 node_system
   n0 e0@--> n1
   class e0 edge_read

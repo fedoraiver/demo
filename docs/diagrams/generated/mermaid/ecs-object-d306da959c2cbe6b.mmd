@@ -38,14 +38,14 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**render::fog::ViewFogUniformOffset**<br/>定位当前视图在雾参数缓冲中的位置。" }
+  n0@{ shape: rounded, label: "**ViewFogUniformOffset**<br/>定位当前视图在雾参数缓冲中的位置。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​pbr::render::fog::prepare​_​fog**<br/>转换并上传各视图的距离雾参数。" }
+  n1@{ shape: rounded, label: "**prepare​_​fog**<br/>转换并上传各视图的距离雾参数。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​extract::extract​_​component::**<br/>**extract​_​components#lt;bevy​_​pbr::fog::**<br/>**DistanceFog, bevy​_​render::**<br/>**RenderApp, ()#gt;**<br/>来自crate:bevy​_​extract ↗：批量同步或<br/>移除子世界的目标组件。" }
+  n2@{ shape: rounded, label: "**extract​_​components**<br/>来自crate:bevy​_​extract ↗：批量同步或<br/>移除子世界的目标组件。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​pbr::render::mesh​_​view​_​**<br/>**bindings::prepare​_​mesh​_​view​_​bind​_​**<br/>**groups**<br/>为视图绑定光照、阴影及各可选渲染效果资<br/>源。" }
+  n3@{ shape: rounded, label: "**prepare​_​mesh​_​view​_​bind​_​groups**<br/>为视图绑定光照、阴影及各可选渲染效果资<br/>源。" }
   class n3 node_system
   n1 e0@-->|"插入"| n0
   class e0 edge_write

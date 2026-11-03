@@ -38,11 +38,11 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**interpolation::**<br/>**PreviousLinearVelocity**<br/>保存上一帧的线速度快照。" }
+  n0@{ shape: rounded, label: "**PreviousLinearVelocity**<br/>保存上一帧的线速度快照。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**avian3d::interpolation::update​_​**<br/>**previous​_​velocity**<br/>更新平滑显示所需的历史速度快照。" }
+  n1@{ shape: rounded, label: "**update​_​previous​_​velocity**<br/>更新平滑显示所需的历史速度快照。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​transform​_​interpolation::**<br/>**hermite::ease​_​translation​_​**<br/>**hermite#lt;avian3d::interpolation::**<br/>**LinVelSource#gt;**<br/>来自crate:bevy​_​transform​_​<br/>interpolation ↗：用两端线速度做<br/>Hermite 位置平滑。" }
+  n2@{ shape: rounded, label: "**ease​_​translation​_​hermite**<br/>来自crate:bevy​_​transform​_​<br/>interpolation ↗：用两端线速度做<br/>Hermite 位置平滑。" }
   class n2 node_system
   class n2 external_node
   n1 e0@-->|"可变访问"| n0

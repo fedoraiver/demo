@@ -39,16 +39,16 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​ui::widget::ViewportNode**<br/>把相机渲染目标嵌入 UI 节点。" }
+  n0@{ shape: rounded, label: "**ViewportNode**<br/>把相机渲染目标嵌入 UI 节点。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​ui::widget::viewport::viewport​_​**<br/>**picking**<br/>把外部指针转换并转发到 UI 内嵌视口。" }
+  n1@{ shape: rounded, label: "**viewport​_​picking**<br/>把外部指针转换并转发到 UI 内嵌视口。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​ui::widget::viewport::update​_​**<br/>**viewport​_​render​_​target​_​size**<br/>按 UI 视口节点尺寸调整相机图像目标。" }
+  n2@{ shape: rounded, label: "**update​_​viewport​_​render​_​target​_​size**<br/>按 UI 视口节点尺寸调整相机图像目标。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​ui​_​render::extract​_​uinode​_​**<br/>**changes**<br/>来自crate:bevy​_​ui​_​render ↗：使变化或<br/>移除的 UI 数据失效并清理旧渲染实体。" }
+  n3@{ shape: rounded, label: "**extract​_​uinode​_​changes**<br/>来自crate:bevy​_​ui​_​render ↗：使变化或<br/>移除的 UI 数据失效并清理旧渲染实体。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**bevy​_​ui​_​render::extract​_​viewport​_​**<br/>**nodes**<br/>来自crate:bevy​_​ui​_​render ↗：把视口节<br/>点所引用相机的输出图像嵌入 UI。" }
+  n4@{ shape: rounded, label: "**extract​_​viewport​_​nodes**<br/>来自crate:bevy​_​ui​_​render ↗：把视口节<br/>点所引用相机的输出图像嵌入 UI。" }
   class n4 node_system
   class n4 external_node
   n1 e0@-->|"赋值"| n0

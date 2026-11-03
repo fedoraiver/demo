@@ -39,31 +39,31 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**collider​_​tree::update::MovedProxies**<br/>收集需要重检碰撞对的移动代理。" }
+  n0@{ shape: cyl, label: "**MovedProxies**<br/>收集需要重检碰撞对的移动代理。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**avian3d::collider​_​tree::update::**<br/>**update​_​moved​_​collider​_​**<br/>**aabbs#lt;avian3d::collision::collider::**<br/>**parry::Collider#gt;**<br/>重算物理步后被手动改变的碰撞边界。" }
+  n1@{ shape: rounded, label: "**update​_​moved​_​collider​_​aabbs**<br/>重算物理步后被手动改变的碰撞边界。" }
   class n1 node_system
-  n2@{ shape: hex, label: "**avian3d::collider​_​tree::update::**<br/>**{impl#35;1}::build::{closure#35;1}**<br/>把失去刚体归属的碰撞体迁到独立树。" }
+  n2@{ shape: hex, label: "**build::{closure#35;1}**<br/>把失去刚体归属的碰撞体迁到独立树。" }
   class n2 node_observer
-  n3@{ shape: hex, label: "**avian3d::collider​_​tree::update::**<br/>**remove​_​from​_​tree​_​on**<br/>从空间树移除碰撞体代理。" }
+  n3@{ shape: hex, label: "**remove​_​from​_​tree​_​on**<br/>从空间树移除碰撞体代理。" }
   class n3 node_observer
-  n4@{ shape: hex, label: "**avian3d::collider​_​tree::update::**<br/>**remove​_​from​_​tree​_​on**<br/>从空间树移除碰撞体代理。" }
+  n4@{ shape: hex, label: "**remove​_​from​_​tree​_​on**<br/>从空间树移除碰撞体代理。" }
   class n4 node_observer
-  n5@{ shape: hex, label: "**avian3d::collider​_​tree::update::add​_​**<br/>**to​_​tree​_​on**<br/>将可用碰撞体加入空间树。" }
+  n5@{ shape: hex, label: "**add​_​to​_​tree​_​on**<br/>将可用碰撞体加入空间树。" }
   class n5 node_observer
-  n6@{ shape: hex, label: "**avian3d::collider​_​tree::update::**<br/>**{impl#35;1}::build::{closure#35;2}**<br/>按刚体类型迁移碰撞体空间树。" }
+  n6@{ shape: hex, label: "**build::{closure#35;2}**<br/>按刚体类型迁移碰撞体空间树。" }
   class n6 node_observer
-  n7@{ shape: rounded, label: "**avian3d::collider​_​tree::update::**<br/>**update​_​solver​_​body​_​aabbs#lt;avian3d::**<br/>**collision::collider::parry::**<br/>**Collider#gt;**<br/>按物理结果更新活跃刚体的碰撞边界。" }
+  n7@{ shape: rounded, label: "**update​_​solver​_​body​_​aabbs**<br/>按物理结果更新活跃刚体的碰撞边界。" }
   class n7 node_system
-  n8@{ shape: hex, label: "**avian3d::collider​_​tree::update::**<br/>**remove​_​from​_​tree​_​on**<br/>从空间树移除碰撞体代理。" }
+  n8@{ shape: hex, label: "**remove​_​from​_​tree​_​on**<br/>从空间树移除碰撞体代理。" }
   class n8 node_observer
-  n9@{ shape: rounded, label: "**avian3d::collision::broad​_​phase::**<br/>**bvh​_​broad​_​phase::collect​_​collision​_​**<br/>**pairs#lt;()#gt;**<br/>为移动碰撞代理收集广相候选接触。" }
+  n9@{ shape: rounded, label: "**collect​_​collision​_​pairs**<br/>为移动碰撞代理收集广相候选接触。" }
   class n9 node_system
-  n10@{ shape: hex, label: "**avian3d::collider​_​tree::update::add​_​**<br/>**to​_​tree​_​on**<br/>将可用碰撞体加入空间树。" }
+  n10@{ shape: hex, label: "**add​_​to​_​tree​_​on**<br/>将可用碰撞体加入空间树。" }
   class n10 node_observer
-  n11@{ shape: hex, label: "**avian3d::collider​_​tree::update::add​_​**<br/>**to​_​tree​_​on**<br/>将可用碰撞体加入空间树。" }
+  n11@{ shape: hex, label: "**add​_​to​_​tree​_​on**<br/>将可用碰撞体加入空间树。" }
   class n11 node_observer
-  n12@{ shape: rounded, label: "**avian3d::collider​_​tree::update::**<br/>**clear​_​moved​_​proxies**<br/>清空本轮广相使用的移动代理目录。" }
+  n12@{ shape: rounded, label: "**clear​_​moved​_​proxies**<br/>清空本轮广相使用的移动代理目录。" }
   class n12 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

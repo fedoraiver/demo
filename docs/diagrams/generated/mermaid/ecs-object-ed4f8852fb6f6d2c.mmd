@@ -37,9 +37,9 @@ flowchart LR
   classDef node_plugin fill:#F1F3F6,stroke:#4A6389,stroke-width:2.2px,color:#1F3340
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**demo::inspector::log​_​world​_​inspector**<br/>启用记录表示插件已装配，不依赖场景实体或<br/>当前面板可见性。" }
+  n0@{ shape: rounded, label: "**log​_​world​_​inspector**<br/>启用记录表示插件已装配，不依赖场景实体或<br/>当前面板可见性。" }
   class n0 node_system
-  n1@{ shape: fr-rect, label: "**inspector::InspectorPlugin**<br/>注册检查器及其启动日志；面板只在游戏运行<br/>时显示。" }
+  n1@{ shape: fr-rect, label: "**InspectorPlugin**<br/>注册检查器及其启动日志；面板只在游戏运行<br/>时显示。" }
   class n1 node_plugin
   n1 e0@-->|"调用"| n0
   class e0 edge_registration

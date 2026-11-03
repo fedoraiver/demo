@@ -36,9 +36,9 @@ flowchart LR
   classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**channel::dynamic::**<br/>**DynamicAudioChannels**<br/>按运行时字符串维护动态音频通道" }
+  n0@{ shape: cyl, label: "**DynamicAudioChannels**<br/>按运行时字符串维护动态音频通道" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​kira​_​audio::audio​_​output::play​_​**<br/>**dynamic​_​channels**<br/>执行按名称创建的动态音频通道命令。" }
+  n1@{ shape: rounded, label: "**play​_​dynamic​_​channels**<br/>执行按名称创建的动态音频通道命令。" }
   class n1 node_system
   n0 e0@--> n1
   class e0 edge_read

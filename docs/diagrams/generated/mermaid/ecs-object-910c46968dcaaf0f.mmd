@@ -39,18 +39,18 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**smaa::Smaa**<br/>为视图选择 SMAA 质量预设。" }
+  n0@{ shape: rounded, label: "**Smaa**<br/>为视图选择 SMAA 质量预设。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​extract::extract​_​component::**<br/>**extract​_​components#lt;bevy​_​anti​_​alias::**<br/>**smaa::Smaa, bevy​_​render::RenderApp,**<br/>**()#gt;**<br/>来自crate:bevy​_​extract ↗：批量同步或<br/>移除子世界的目标组件。" }
+  n1@{ shape: rounded, label: "**extract​_​components**<br/>来自crate:bevy​_​extract ↗：批量同步或<br/>移除子世界的目标组件。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​anti​_​alias::smaa::prepare​_​smaa​_​**<br/>**pipelines**<br/>按质量预设准备视图的三条 SMAA 管线。" }
+  n2@{ shape: rounded, label: "**prepare​_​smaa​_​pipelines**<br/>按质量预设准备视图的三条 SMAA 管线。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​anti​_​alias::smaa::prepare​_​smaa​_​**<br/>**uniforms**<br/>上传各 SMAA 视图的尺寸及倒数参数。" }
+  n3@{ shape: rounded, label: "**prepare​_​smaa​_​uniforms**<br/>上传各 SMAA 视图的尺寸及倒数参数。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**bevy​_​anti​_​alias::smaa::prepare​_​smaa​_​**<br/>**textures**<br/>为 SMAA 分配边缘、模板和混合权重纹理。" }
+  n4@{ shape: rounded, label: "**prepare​_​smaa​_​textures**<br/>为 SMAA 分配边缘、模板和混合权重纹理。" }
   class n4 node_system
-  n5@{ shape: rounded, label: "**bevy​_​anti​_​alias::smaa::prepare​_​smaa​_​**<br/>**bind​_​groups**<br/>为视图绑定 SMAA 中间纹理与查找表。" }
+  n5@{ shape: rounded, label: "**prepare​_​smaa​_​bind​_​groups**<br/>为视图绑定 SMAA 中间纹理与查找表。" }
   class n5 node_system
   n1 e0@--- n0
   class e0 edge_read

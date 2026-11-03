@@ -38,20 +38,20 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**time::Time#lt;virt::Virtual#gt;**<br/>保存时钟上下文、帧间隔及累计时间" }
+  n0@{ shape: cyl, label: "**Time#lt;Virtual#gt;**<br/>保存时钟上下文、帧间隔及累计时间" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**demo::game​_​flow::pause​_​simulation**<br/>来自game​_​flow ↗：冻结游戏与物理时钟并<br/>清零当前增量。" }
+  n1@{ shape: rounded, label: "**pause​_​simulation**<br/>来自game​_​flow ↗：冻结游戏与物理时钟并<br/>清零当前增量。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​time::time​_​system**<br/>按时间更新策略推进真实与虚拟时钟。" }
+  n2@{ shape: rounded, label: "**time​_​system**<br/>按时间更新策略推进真实与虚拟时钟。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**demo::game​_​flow::enter​_​main​_​menu**<br/>来自game​_​flow ↗：保留主菜单展示时间并<br/>冻结物理模拟。" }
+  n3@{ shape: rounded, label: "**enter​_​main​_​menu**<br/>来自game​_​flow ↗：保留主菜单展示时间并<br/>冻结物理模拟。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**demo::game​_​flow::resume​_​simulation**<br/>来自game​_​flow ↗：恢复游戏与物理时钟。" }
+  n4@{ shape: rounded, label: "**resume​_​simulation**<br/>来自game​_​flow ↗：恢复游戏与物理时钟。" }
   class n4 node_system
   class n4 external_node
-  n5@{ shape: rounded, label: "**bevy​_​time::fixed::run​_​fixed​_​main​_​**<br/>**schedule**<br/>按累计时间推进固定主调度。" }
+  n5@{ shape: rounded, label: "**run​_​fixed​_​main​_​schedule**<br/>按累计时间推进固定主调度。" }
   class n5 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

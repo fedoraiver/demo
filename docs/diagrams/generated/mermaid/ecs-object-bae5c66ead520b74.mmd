@@ -41,11 +41,8 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  subgraph layout_card_n0[" "]
-  n0@{ shape: rounded, label: "**bevy​_​ui::UiTransform**<br/>配置 UI 节点的相对二维变换。" }
+  n0@{ shape: rounded, label: "**UiTransform**<br/>配置 UI 节点的相对二维变换。" }
   class n0 node_component
-  end
-  style layout_card_n0 fill:none,stroke:none
   n1@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：说明镜头晃动尚未开放。" }
   class n1 node_entity
   class n1 external_node
@@ -283,10 +280,10 @@ flowchart LR
   n79@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列音频设置字段与提示。" }
   class n79 node_entity
   class n79 external_node
-  n80@{ shape: hex, label: "**bevy​_​ui​_​widgets::dialog::dialog​_​drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：按累计<br/>拖动距离移动对话框。" }
+  n80@{ shape: hex, label: "**dialog​_​drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：按累计<br/>拖动距离移动对话框。" }
   class n80 node_observer
   class n80 external_node
-  n81@{ shape: rounded, label: "**bevy​_​ui::layout::ui​_​layout​_​system**<br/>求解 UI 布局并回写节点尺寸和二维变换。" }
+  n81@{ shape: rounded, label: "**ui​_​layout​_​system**<br/>求解 UI 布局并回写节点尺寸和二维变换。" }
   class n81 node_system
   n82@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：标明设置页面的返回入口。" }
   class n82 node_entity
@@ -327,7 +324,7 @@ flowchart LR
   n94@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供反转视角纵轴的左侧调整入<br/>口。" }
   class n94 node_entity
   class n94 external_node
-  n95@{ shape: hex, label: "**bevy​_​ui​_​widgets::dialog::dialog​_​**<br/>**drag​_​start**<br/>来自crate:bevy​_​ui​_​widgets ↗：记录对<br/>话框拖动开始位置。" }
+  n95@{ shape: hex, label: "**dialog​_​drag​_​start**<br/>来自crate:bevy​_​ui​_​widgets ↗：记录对<br/>话框拖动开始位置。" }
   class n95 node_observer
   class n95 external_node
   n96@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：居中承载对应音量的数值文字。" }
@@ -630,7 +627,7 @@ flowchart LR
   n195@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制第 02 组帮助编号徽章。" }
   class n195 node_entity
   class n195 external_node
-  n196@{ shape: rounded, label: "**bevy​_​ui​_​widgets::scrollbar::update​_​**<br/>**scrollbar​_​thumb**<br/>来自crate:bevy​_​ui​_​widgets ↗：按内容<br/>比例与滚动位置更新滚动条滑块。" }
+  n196@{ shape: rounded, label: "**update​_​scrollbar​_​thumb**<br/>来自crate:bevy​_​ui​_​widgets ↗：按内容<br/>比例与滚动位置更新滚动条滑块。" }
   class n196 node_system
   class n196 external_node
   n197@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列品牌、菜单操作和会话状<br/>态。" }
@@ -777,7 +774,7 @@ flowchart LR
   n244@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示确认操作名称。" }
   class n244 node_entity
   class n244 external_node
-  n245@{ shape: hex, label: "**bevy​_​ui​_​widgets::dialog::dialog​_​drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：按累计<br/>拖动距离移动对话框。" }
+  n245@{ shape: hex, label: "**dialog​_​drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：按累计<br/>拖动距离移动对话框。" }
   class n245 node_observer
   class n245 external_node
   n246@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制 Mouse 操作键帽。" }
@@ -873,7 +870,7 @@ flowchart LR
   n276@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制纸箱标志的正面记号。" }
   class n276 node_entity
   class n276 external_node
-  n277@{ shape: hex, label: "**bevy​_​ui​_​widgets::dialog::dialog​_​drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：按累计<br/>拖动距离移动对话框。" }
+  n277@{ shape: hex, label: "**dialog​_​drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：按累计<br/>拖动距离移动对话框。" }
   class n277 node_observer
   class n277 external_node
   n278@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示操作设置按钮的图标符号。" }
@@ -954,7 +951,7 @@ flowchart LR
   n303@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：展示镜头与暂停帮助卡片。" }
   class n303 node_entity
   class n303 external_node
-  n304@{ shape: hex, label: "**bevy​_​ui​_​widgets::dialog::dialog​_​**<br/>**drag​_​start**<br/>来自crate:bevy​_​ui​_​widgets ↗：记录对<br/>话框拖动开始位置。" }
+  n304@{ shape: hex, label: "**dialog​_​drag​_​start**<br/>来自crate:bevy​_​ui​_​widgets ↗：记录对<br/>话框拖动开始位置。" }
   class n304 node_observer
   class n304 external_node
   n305@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示配送品牌与轻拿轻放标语。" }
@@ -987,7 +984,7 @@ flowchart LR
   n314@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：展示当前设置的用途说明。" }
   class n314 node_entity
   class n314 external_node
-  n315@{ shape: hex, label: "**bevy​_​ui​_​widgets::dialog::dialog​_​**<br/>**drag​_​start**<br/>来自crate:bevy​_​ui​_​widgets ↗：记录对<br/>话框拖动开始位置。" }
+  n315@{ shape: hex, label: "**dialog​_​drag​_​start**<br/>来自crate:bevy​_​ui​_​widgets ↗：记录对<br/>话框拖动开始位置。" }
   class n315 node_observer
   class n315 external_node
   n316@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制纸箱标志的正面记号。" }
@@ -1488,7 +1485,7 @@ flowchart LR
   n481@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示岛屿配送主题的品牌标语。" }
   class n481 node_entity
   class n481 external_node
-  n482@{ shape: rounded, label: "**bevy​_​ui​_​widgets::popover::position​_​**<br/>**popover**<br/>来自crate:bevy​_​ui​_​widgets ↗：定位弹<br/>出层并同步后代的 UI 变换。" }
+  n482@{ shape: rounded, label: "**position​_​popover**<br/>来自crate:bevy​_​ui​_​widgets ↗：定位弹<br/>出层并同步后代的 UI 变换。" }
   class n482 node_system
   class n482 external_node
   n483@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：展示分辨率设置占位。" }
@@ -3198,11 +3195,11 @@ flowchart LR
   e2@{ curve: basis }
   e3@{ curve: basis }
   e4@{ curve: basis }
-  e5@{ curve: basis }
-  e6@{ curve: basis }
+  e5@{ curve: bumpY }
+  e6@{ curve: bumpY }
   e7@{ curve: basis }
   e8@{ curve: basis }
-  e9@{ curve: basis }
+  e9@{ curve: bumpY }
   e10@{ curve: basis }
   e11@{ curve: basis }
   e12@{ curve: basis }
@@ -3214,7 +3211,7 @@ flowchart LR
   e18@{ curve: basis }
   e19@{ curve: basis }
   e20@{ curve: basis }
-  e21@{ curve: basis }
+  e21@{ curve: bumpY }
   e22@{ curve: basis }
   e23@{ curve: basis }
   e24@{ curve: basis }
@@ -3231,7 +3228,7 @@ flowchart LR
   e35@{ curve: basis }
   e36@{ curve: basis }
   e37@{ curve: basis }
-  e38@{ curve: basis }
+  e38@{ curve: bumpY }
   e39@{ curve: basis }
   e40@{ curve: basis }
   e41@{ curve: basis }
@@ -3250,7 +3247,7 @@ flowchart LR
   e54@{ curve: basis }
   e55@{ curve: basis }
   e56@{ curve: basis }
-  e57@{ curve: basis }
+  e57@{ curve: bumpY }
   e58@{ curve: basis }
   e59@{ curve: basis }
   e60@{ curve: basis }
@@ -3296,12 +3293,12 @@ flowchart LR
   e100@{ curve: basis }
   e101@{ curve: basis }
   e102@{ curve: basis }
-  e103@{ curve: basis }
+  e103@{ curve: bumpY }
   e104@{ curve: basis }
   e105@{ curve: basis }
   e106@{ curve: basis }
   e107@{ curve: basis }
-  e108@{ curve: basis }
+  e108@{ curve: bumpY }
   e109@{ curve: basis }
   e110@{ curve: basis }
   e111@{ curve: basis }
@@ -3347,9 +3344,9 @@ flowchart LR
   e151@{ curve: basis }
   e152@{ curve: basis }
   e153@{ curve: basis }
-  e154@{ curve: basis }
+  e154@{ curve: bumpY }
   e155@{ curve: basis }
-  e156@{ curve: basis }
+  e156@{ curve: bumpY }
   e157@{ curve: basis }
   e158@{ curve: basis }
   e159@{ curve: basis }
@@ -3357,7 +3354,7 @@ flowchart LR
   e161@{ curve: basis }
   e162@{ curve: basis }
   e163@{ curve: basis }
-  e164@{ curve: basis }
+  e164@{ curve: bumpY }
   e165@{ curve: basis }
   e166@{ curve: basis }
   e167@{ curve: basis }
@@ -3388,19 +3385,18 @@ flowchart LR
   e192@{ curve: basis }
   e193@{ curve: basis }
   e194@{ curve: basis }
-  e195@{ curve: basis }
   e196@{ curve: basis }
   e197@{ curve: basis }
   e198@{ curve: basis }
   e199@{ curve: basis }
   e200@{ curve: basis }
-  e201@{ curve: basis }
+  e201@{ curve: bumpY }
   e202@{ curve: basis }
   e203@{ curve: basis }
   e204@{ curve: basis }
   e205@{ curve: basis }
   e206@{ curve: basis }
-  e207@{ curve: basis }
+  e207@{ curve: bumpY }
   e208@{ curve: basis }
   e209@{ curve: basis }
   e210@{ curve: basis }
@@ -3423,7 +3419,7 @@ flowchart LR
   e227@{ curve: basis }
   e228@{ curve: basis }
   e229@{ curve: basis }
-  e230@{ curve: basis }
+  e230@{ curve: bumpY }
   e231@{ curve: basis }
   e232@{ curve: basis }
   e233@{ curve: basis }
@@ -3578,7 +3574,7 @@ flowchart LR
   e383@{ curve: basis }
   e384@{ curve: basis }
   e385@{ curve: basis }
-  e386@{ curve: basis }
+  e386@{ curve: bumpY }
   e387@{ curve: basis }
   e388@{ curve: basis }
   e389@{ curve: basis }
@@ -3644,7 +3640,7 @@ flowchart LR
   e449@{ curve: basis }
   e450@{ curve: basis }
   e451@{ curve: basis }
-  e452@{ curve: basis }
+  e452@{ curve: bumpY }
   e453@{ curve: basis }
   e454@{ curve: basis }
   e455@{ curve: basis }
@@ -3676,7 +3672,7 @@ flowchart LR
   e481@{ curve: basis }
   e482@{ curve: basis }
   e483@{ curve: basis }
-  e484@{ curve: basis }
+  e484@{ curve: bumpY }
   e485@{ curve: basis }
   e486@{ curve: basis }
   e487@{ curve: basis }
@@ -3713,7 +3709,7 @@ flowchart LR
   e518@{ curve: basis }
   e519@{ curve: basis }
   e520@{ curve: basis }
-  e521@{ curve: basis }
+  e521@{ curve: bumpY }
   e522@{ curve: basis }
   e523@{ curve: basis }
   e524@{ curve: basis }
@@ -3730,7 +3726,7 @@ flowchart LR
   e535@{ curve: basis }
   e536@{ curve: basis }
   e537@{ curve: basis }
-  e538@{ curve: basis }
+  e538@{ curve: bumpY }
   e539@{ curve: basis }
   e540@{ curve: basis }
   e541@{ curve: basis }
@@ -3772,7 +3768,7 @@ flowchart LR
   e577@{ curve: basis }
   e578@{ curve: basis }
   e579@{ curve: basis }
-  e580@{ curve: basis }
+  e580@{ curve: bumpY }
   e581@{ curve: basis }
   e582@{ curve: basis }
   e583@{ curve: basis }
@@ -3783,7 +3779,7 @@ flowchart LR
   e588@{ curve: basis }
   e589@{ curve: basis }
   e590@{ curve: basis }
-  e591@{ curve: basis }
+  e591@{ curve: bumpY }
   e592@{ curve: basis }
   e593@{ curve: basis }
   e594@{ curve: basis }
@@ -3808,7 +3804,7 @@ flowchart LR
   e613@{ curve: basis }
   e614@{ curve: basis }
   e615@{ curve: basis }
-  e616@{ curve: basis }
+  e616@{ curve: bumpY }
   e617@{ curve: basis }
   e618@{ curve: basis }
   e619@{ curve: basis }
@@ -3822,5 +3818,5 @@ flowchart LR
   e627@{ curve: basis }
   e628@{ curve: basis }
   e629@{ curve: basis }
-  e630@{ curve: basis }
+  e630@{ curve: bumpY }
   e631@{ curve: basis }

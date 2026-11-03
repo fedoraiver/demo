@@ -38,20 +38,20 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**dynamics::rigid​_​body::locked​_​axes::**<br/>**LockedAxes**<br/>锁定刚体的平移或旋转轴。" }
+  n0@{ shape: rounded, label: "**LockedAxes**<br/>锁定刚体的平移或旋转轴。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**demo::character::motion::move​_​**<br/>**characters**<br/>来自character ↗：用有上限的加速度趋近<br/>目标水平速度，保留碰撞和外部冲量造成的实<br/>际运动。" }
+  n1@{ shape: rounded, label: "**move​_​characters**<br/>来自character ↗：用有上限的加速度趋近<br/>目标水平速度，保留碰撞和外部冲量造成的实<br/>际运动。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**avian3d::dynamics::solver::solver​_​**<br/>**body::plugin::prepare​_​solver​_​bodies**<br/>把 ECS 刚体状态准备成子步求解数据。" }
+  n2@{ shape: rounded, label: "**prepare​_​solver​_​bodies**<br/>把 ECS 刚体状态准备成子步求解数据。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**demo::scene​_​assembly::actors::spawn​_​**<br/>**actors**<br/>来自scene​_​assembly ↗：为就绪海岛创建<br/>玩法实体并复用加载相机。" }
+  n3@{ shape: rounded, label: "**spawn​_​actors**<br/>来自scene​_​assembly ↗：为就绪海岛创建<br/>玩法实体并复用加载相机。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**demo::character::motion::jump​_​**<br/>**characters**<br/>来自character ↗：跳跃只消费一次，通过<br/>冲量改变速度；重力和位置积分全部交给<br/>Avian。" }
+  n4@{ shape: rounded, label: "**jump​_​characters**<br/>来自character ↗：跳跃只消费一次，通过<br/>冲量改变速度；重力和位置积分全部交给<br/>Avian。" }
   class n4 node_system
   class n4 external_node
-  n5@{ shape: rounded, label: "**avian3d::dynamics::integrator::pre​_​**<br/>**process​_​velocity​_​increments**<br/>把加速度、重力和轴锁转成子步速度增量。" }
+  n5@{ shape: rounded, label: "**pre​_​process​_​velocity​_​increments**<br/>把加速度、重力和轴锁转成子步速度增量。" }
   class n5 node_system
   n0 e0@--> n1
   class e0 edge_read

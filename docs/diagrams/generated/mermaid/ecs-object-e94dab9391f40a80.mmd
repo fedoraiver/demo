@@ -36,57 +36,57 @@ flowchart LR
   classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**sync​_​world::MainEntity**<br/>在子世界中关联原始主世界实体。" }
+  n0@{ shape: rounded, label: "**MainEntity**<br/>在子世界中关联原始主世界实体。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​render::view::prepare​_​view​_​**<br/>**attachments**<br/>来自crate:bevy​_​render ↗：按相机输出目<br/>标准备可共享的颜色附件。" }
+  n1@{ shape: rounded, label: "**prepare​_​view​_​attachments**<br/>来自crate:bevy​_​render ↗：按相机输出目<br/>标准备可共享的颜色附件。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​egui::render::systems::queue​_​**<br/>**pipelines​_​system**<br/>来自crate:bevy​_​egui ↗：按目标格式选<br/>择 Egui 渲染管线。" }
+  n2@{ shape: rounded, label: "**queue​_​pipelines​_​system**<br/>来自crate:bevy​_​egui ↗：按目标格式选<br/>择 Egui 渲染管线。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::**<br/>**material::specialize​_​material2d​_​**<br/>**meshes**<br/>来自crate:bevy​_​sprite​_​render ↗：为可<br/>见二维网格重建失效的材质专用化。" }
+  n3@{ shape: rounded, label: "**specialize​_​material2d​_​meshes**<br/>来自crate:bevy​_​sprite​_​render ↗：为可<br/>见二维网格重建失效的材质专用化。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**bevy​_​render::view::cleanup​_​view​_​**<br/>**targets​_​for​_​resize**<br/>来自crate:bevy​_​render ↗：在窗口尺寸或<br/>呈现模式变化时撤销旧视图目标。" }
+  n4@{ shape: rounded, label: "**cleanup​_​view​_​targets​_​for​_​resize**<br/>来自crate:bevy​_​render ↗：在窗口尺寸或<br/>呈现模式变化时撤销旧视图目标。" }
   class n4 node_system
   class n4 external_node
-  n5@{ shape: rounded, label: "**bevy​_​core​_​pipeline::schedule::**<br/>**handle​_​uncovered​_​swap​_​chains**<br/>来自crate:bevy​_​core​_​pipeline ↗：清除<br/>本帧没有相机覆盖的窗口交换链。" }
+  n5@{ shape: rounded, label: "**handle​_​uncovered​_​swap​_​chains**<br/>来自crate:bevy​_​core​_​pipeline ↗：清除<br/>本帧没有相机覆盖的窗口交换链。" }
   class n5 node_system
   class n5 external_node
-  n6@{ shape: rounded, label: "**bevy​_​pbr::cluster::gpu::cluster​_​on​_​**<br/>**gpu**<br/>来自crate:bevy​_​pbr ↗：执行深度切片、<br/>计数、分配和填充的 GPU 聚簇。" }
+  n6@{ shape: rounded, label: "**cluster​_​on​_​gpu**<br/>来自crate:bevy​_​pbr ↗：执行深度切片、<br/>计数、分配和填充的 GPU 聚簇。" }
   class n6 node_system
   class n6 external_node
-  n7@{ shape: rounded, label: "**bevy​_​render::view::window::prepare​_​**<br/>**windows**<br/>来自crate:bevy​_​render ↗：为有相机输出<br/>或需要首次呈现的窗口取得交换链纹理，保留<br/>可复用的未呈现帧，并处理尺寸、模式变化及<br/>表面获取错误。" }
+  n7@{ shape: rounded, label: "**prepare​_​windows**<br/>来自crate:bevy​_​render ↗：为有相机输出<br/>或需要首次呈现的窗口取得交换链纹理，保留<br/>可复用的未呈现帧，并处理尺寸、模式变化及<br/>表面获取错误。" }
   class n7 node_system
   class n7 external_node
-  n8@{ shape: rounded, label: "**bevy​_​render::camera::extract​_​cameras**<br/>来自crate:bevy​_​render ↗：把活动相机及<br/>可见实体提取到渲染世界。" }
+  n8@{ shape: rounded, label: "**extract​_​cameras**<br/>来自crate:bevy​_​render ↗：把活动相机及<br/>可见实体提取到渲染世界。" }
   class n8 node_system
   class n8 external_node
-  n9@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::mesh::**<br/>**check​_​views​_​need​_​specialization**<br/>来自crate:bevy​_​sprite​_​render ↗：检测<br/>二维视图管线配置变化并标记重建。" }
+  n9@{ shape: rounded, label: "**check​_​views​_​need​_​specialization**<br/>来自crate:bevy​_​sprite​_​render ↗：检测<br/>二维视图管线配置变化并标记重建。" }
   class n9 node_system
   class n9 external_node
-  n10@{ shape: rounded, label: "**bevy​_​core​_​pipeline::schedule::**<br/>**camera​_​driver**<br/>来自crate:bevy​_​core​_​pipeline ↗：为辅<br/>助视图和活动相机运行专属渲染调度。" }
+  n10@{ shape: rounded, label: "**camera​_​driver**<br/>来自crate:bevy​_​core​_​pipeline ↗：为辅<br/>助视图和活动相机运行专属渲染调度。" }
   class n10 node_system
   class n10 external_node
-  n11@{ shape: rounded, label: "**bevy​_​gizmos​_​render::pipeline​_​3d::**<br/>**queue​_​line​_​joint​_​gizmos​_​3d**<br/>来自crate:bevy​_​gizmos​_​render ↗：将三<br/>维 Gizmo 折线接头加入透明阶段。" }
+  n11@{ shape: rounded, label: "**queue​_​line​_​joint​_​gizmos​_​3d**<br/>来自crate:bevy​_​gizmos​_​render ↗：将三<br/>维 Gizmo 折线接头加入透明阶段。" }
   class n11 node_system
   class n11 external_node
-  n12@{ shape: rounded, label: "**bevy​_​pbr::render::light::prepare​_​**<br/>**lights**<br/>来自crate:bevy​_​pbr ↗：准备视图光照参<br/>数、阴影视图和阴影贴图。" }
+  n12@{ shape: rounded, label: "**prepare​_​lights**<br/>来自crate:bevy​_​pbr ↗：准备视图光照参<br/>数、阴影视图和阴影贴图。" }
   class n12 node_system
   class n12 external_node
-  n13@{ shape: rounded, label: "**bevy​_​render::gpu​_​readback::prepare​_​**<br/>**buffers**<br/>来自crate:bevy​_​render ↗：读取 GPU 回<br/>读请求，为纹理或存储缓冲的指定区段从缓冲<br/>池取得暂存空间并创建异步完成通道；越界缓<br/>冲区段会报错。" }
+  n13@{ shape: rounded, label: "**prepare​_​buffers**<br/>来自crate:bevy​_​render ↗：读取 GPU 回<br/>读请求，为纹理或存储缓冲的指定区段从缓冲<br/>池取得暂存空间并创建异步完成通道；越界缓<br/>冲区段会报错。" }
   class n13 node_system
   class n13 external_node
-  n14@{ shape: rounded, label: "**bevy​_​render::renderer::render​_​system**<br/>来自crate:bevy​_​render ↗：运行渲染图调<br/>度并完成回读和窗口呈现。" }
+  n14@{ shape: rounded, label: "**render​_​system**<br/>来自crate:bevy​_​render ↗：运行渲染图调<br/>度并完成回读和窗口呈现。" }
   class n14 node_system
   class n14 external_node
-  n15@{ shape: rounded, label: "**bevy​_​pbr::cluster::gpu::prepare​_​**<br/>**clusters​_​for​_​gpu​_​clustering**<br/>来自crate:bevy​_​pbr ↗：按视图规模和回<br/>读容量分配 GPU 聚簇缓冲。" }
+  n15@{ shape: rounded, label: "**prepare​_​clusters​_​for​_​gpu​_​clustering**<br/>来自crate:bevy​_​pbr ↗：按视图规模和回<br/>读容量分配 GPU 聚簇缓冲。" }
   class n15 node_system
   class n15 external_node
-  n16@{ shape: rounded, label: "**bevy​_​render::view::window::**<br/>**screenshot::prepare​_​screenshots**<br/>来自crate:bevy​_​render ↗：为有效截图目<br/>标准备捕获资源和输出附件。" }
+  n16@{ shape: rounded, label: "**prepare​_​screenshots**<br/>来自crate:bevy​_​render ↗：为有效截图目<br/>标准备捕获资源和输出附件。" }
   class n16 node_system
   class n16 external_node
-  n17@{ shape: rounded, label: "**bevy​_​egui::render::systems::queue​_​**<br/>**pipelines​_​system**<br/>来自crate:bevy​_​egui ↗：按目标格式选<br/>择 Egui 渲染管线。" }
+  n17@{ shape: rounded, label: "**queue​_​pipelines​_​system**<br/>来自crate:bevy​_​egui ↗：按目标格式选<br/>择 Egui 渲染管线。" }
   class n17 node_system
   class n17 external_node
   n0 e0@--> n1

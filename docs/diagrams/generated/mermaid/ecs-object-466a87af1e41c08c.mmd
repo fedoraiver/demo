@@ -42,27 +42,27 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​pbr::atmosphere::resources::**<br/>**prepare​_​atmosphere​_​transforms**<br/>按相机位置构造大气局部坐标变换。" }
+  n0@{ shape: rounded, label: "**prepare​_​atmosphere​_​transforms**<br/>按相机位置构造大气局部坐标变换。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**atmosphere::resources::**<br/>**AtmosphereTransformsOffset**<br/>定位当前视图的大气变换参数。" }
+  n1@{ shape: rounded, label: "**AtmosphereTransformsOffset**<br/>定位当前视图的大气变换参数。" }
   class n1 node_component
-  n2@{ shape: rounded, label: "**components::Camera3d**<br/>来自crate:bevy​_​camera ↗：启用三维相机<br/>主渲染流程。" }
+  n2@{ shape: rounded, label: "**Camera3d**<br/>来自crate:bevy​_​camera ↗：启用三维相机<br/>主渲染流程。" }
   class n2 node_component
   class n2 external_node
-  n3@{ shape: cyl, label: "**bevy​_​render::renderer::RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
+  n3@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
   class n3 node_resource
   class n3 external_node
-  n4@{ shape: rounded, label: "**atmosphere::ExtractedAtmosphere**<br/>保存尚未转为 GPU 参数的大气数据。" }
+  n4@{ shape: rounded, label: "**ExtractedAtmosphere**<br/>保存尚未转为 GPU 参数的大气数据。" }
   class n4 node_component
-  n5@{ shape: rounded, label: "**bevy​_​render::view::ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
+  n5@{ shape: rounded, label: "**ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
   class n5 node_component
   class n5 external_node
-  n6@{ shape: cyl, label: "**atmosphere::resources::**<br/>**AtmosphereTransforms**<br/>存储按视图索引的大气变换参数。" }
+  n6@{ shape: cyl, label: "**AtmosphereTransforms**<br/>存储按视图索引的大气变换参数。" }
   class n6 node_resource
-  n7@{ shape: cyl, label: "**bevy​_​render::renderer::RenderQueue**<br/>来自crate:bevy​_​render ↗：将资源写入和<br/>命令异步提交给 GPU。" }
+  n7@{ shape: cyl, label: "**RenderQueue**<br/>来自crate:bevy​_​render ↗：将资源写入和<br/>命令异步提交给 GPU。" }
   class n7 node_resource
   class n7 external_node
-  n8@{ shape: rounded, label: "**atmosphere::resources::GpuAtmosphere**<br/>以 Uniform 格式描述大气几何与地面。" }
+  n8@{ shape: rounded, label: "**GpuAtmosphere**<br/>以 Uniform 格式描述大气几何与地面。" }
   class n8 node_component
   n9@{ shape: lin-rect, label: "**PrepareResources**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
   class n9 node_system_set

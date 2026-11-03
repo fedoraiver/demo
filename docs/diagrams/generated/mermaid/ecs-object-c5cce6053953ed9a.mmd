@@ -42,16 +42,16 @@ flowchart LR
   class n0 node_system_set
   n1@{ shape: lin-rect, label: "**PrepareMeshes**<br/>组织渲染数据准备与绘制排队。" }
   class n1 node_system_set
-  n2@{ shape: rounded, label: "**bevy​_​render::camera::sort​_​cameras**<br/>为同一输出目标排序相机并分配合成次序。" }
+  n2@{ shape: rounded, label: "**sort​_​cameras**<br/>为同一输出目标排序相机并分配合成次序。" }
   class n2 node_system
   n3@{ shape: lin-rect, label: "**ResolveCompositingSpaces**<br/>写入各视图解析后的合成颜色空间。" }
   class n3 node_system_set
   n4@{ shape: lin-rect, label: "**Specialize**<br/>组织渲染数据准备与绘制排队。" }
   class n4 node_system_set
-  n5@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::mesh::**<br/>**check​_​views​_​need​_​specialization**<br/>来自crate:bevy​_​sprite​_​render ↗：检测<br/>二维视图管线配置变化并标记重建。" }
+  n5@{ shape: rounded, label: "**check​_​views​_​need​_​specialization**<br/>来自crate:bevy​_​sprite​_​render ↗：检测<br/>二维视图管线配置变化并标记重建。" }
   class n5 node_system
   class n5 external_node
-  n6@{ shape: rounded, label: "**bevy​_​pbr::render::light::prepare​_​**<br/>**lights**<br/>来自crate:bevy​_​pbr ↗：准备视图光照参<br/>数、阴影视图和阴影贴图。" }
+  n6@{ shape: rounded, label: "**prepare​_​lights**<br/>来自crate:bevy​_​pbr ↗：准备视图光照参<br/>数、阴影视图和阴影贴图。" }
   class n6 node_system
   class n6 external_node
   n1 e0@-->|"先于"| n0

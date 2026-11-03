@@ -36,9 +36,9 @@ flowchart LR
   classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**skybox::SkyboxUniforms**<br/>向天空盒着色器传递亮度和变换。" }
+  n0@{ shape: rounded, label: "**SkyboxUniforms**<br/>向天空盒着色器传递亮度和变换。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​render::uniform::prepare​_​**<br/>**uniform​_​components#lt;bevy​_​core​_​**<br/>**pipeline::skybox::SkyboxUniforms#gt;**<br/>来自crate:bevy​_​render ↗：将组件值批量<br/>上传为动态着色器参数。" }
+  n1@{ shape: rounded, label: "**prepare​_​uniform​_​components**<br/>来自crate:bevy​_​render ↗：将组件值批量<br/>上传为动态着色器参数。" }
   class n1 node_system
   class n1 external_node
   n0 e0@--> n1

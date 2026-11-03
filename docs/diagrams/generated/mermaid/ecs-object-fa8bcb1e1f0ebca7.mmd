@@ -38,13 +38,13 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**render​_​asset::ExtractedAssets#lt;mesh::**<br/>**RenderMesh#gt;**<br/>暂存本帧渲染资产的提取与增删记录。" }
+  n0@{ shape: cyl, label: "**ExtractedAssets#lt;RenderMesh#gt;**<br/>暂存本帧渲染资产的提取与增删记录。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​render::render​_​asset::prepare​_​**<br/>**assets#lt;bevy​_​render::mesh::**<br/>**RenderMesh#gt;**<br/>在上传预算内准备资产并保留重试项。" }
+  n1@{ shape: rounded, label: "**prepare​_​assets**<br/>在上传预算内准备资产并保留重试项。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​render::mesh::allocator::**<br/>**allocate​_​and​_​free​_​meshes**<br/>为新增变化网格分配 GPU 存储并释放旧分<br/>配。" }
+  n2@{ shape: rounded, label: "**allocate​_​and​_​free​_​meshes**<br/>为新增变化网格分配 GPU 存储并释放旧分<br/>配。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​render::render​_​asset::extract​_​**<br/>**render​_​asset#lt;bevy​_​render::mesh::**<br/>**RenderMesh#gt;**<br/>按资产变化和设备恢复请求提取渲染资产。" }
+  n3@{ shape: rounded, label: "**extract​_​render​_​asset**<br/>按资产变化和设备恢复请求提取渲染资产。" }
   class n3 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

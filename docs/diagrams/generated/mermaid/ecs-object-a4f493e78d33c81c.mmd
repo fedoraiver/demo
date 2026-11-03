@@ -40,21 +40,12 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  subgraph layout_card_n0[" "]
-  n0@{ shape: rounded, label: "**bevy​_​core​_​pipeline::upscaling::**<br/>**clear​_​view​_​upscaling​_​pipelines**<br/>清除视图缩放管线以便设备恢复后重建。" }
+  n0@{ shape: rounded, label: "**clear​_​view​_​upscaling​_​pipelines**<br/>清除视图缩放管线以便设备恢复后重建。" }
   class n0 node_system
-  end
-  style layout_card_n0 fill:none,stroke:none
-  subgraph layout_card_n1[" "]
-  n1@{ shape: rounded, label: "**upscaling::ViewUpscalingPipeline**<br/>记录视图颜色输出所用的缩放管线。" }
+  n1@{ shape: rounded, label: "**ViewUpscalingPipeline**<br/>记录视图颜色输出所用的缩放管线。" }
   class n1 node_component
-  end
-  style layout_card_n1 fill:none,stroke:none
-  subgraph layout_card_n2[" "]
-  n2@{ shape: fr-rect, label: "**upscaling::UpscalingPlugin**<br/>准备视图输出放大与合成管线。" }
+  n2@{ shape: fr-rect, label: "**UpscalingPlugin**<br/>准备视图输出放大与合成管线。" }
   class n2 node_plugin
-  end
-  style layout_card_n2 fill:none,stroke:none
   n1 e0@-->|"存在性约束"| n0
   class e0 edge_reference
   n1 e1@---|"移除"| n0

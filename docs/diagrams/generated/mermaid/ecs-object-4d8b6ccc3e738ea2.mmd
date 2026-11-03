@@ -40,16 +40,16 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: lin-rect, label: "**AnonymousSet(0)**<br/>保存一组系统的共同配置。" }
   class n0 node_system_set
-  n1@{ shape: rounded, label: "**demo::character::motion::move​_​**<br/>**characters**<br/>来自character ↗：用有上限的加速度趋近<br/>目标水平速度，保留碰撞和外部冲量造成的实<br/>际运动。" }
+  n1@{ shape: rounded, label: "**move​_​characters**<br/>来自character ↗：用有上限的加速度趋近<br/>目标水平速度，保留碰撞和外部冲量造成的实<br/>际运动。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**demo::character::motion::update​_​**<br/>**grounded**<br/>来自character ↗：脚底附近的小球向下探<br/>测支撑面；墙面法线和上升中的角色不能算接<br/>地。" }
+  n2@{ shape: rounded, label: "**update​_​grounded**<br/>来自character ↗：脚底附近的小球向下探<br/>测支撑面；墙面法线和上升中的角色不能算接<br/>地。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**demo::game​_​flow::gameplay​_​running**<br/>来自game​_​flow ↗：独立功能测试没有应用<br/>状态；真实游戏只在 Running 推进玩法。" }
+  n3@{ shape: rounded, label: "**gameplay​_​running**<br/>来自game​_​flow ↗：独立功能测试没有应用<br/>状态；真实游戏只在 Running 推进玩法。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**demo::character::motion::jump​_​**<br/>**characters**<br/>来自character ↗：跳跃只消费一次，通过<br/>冲量改变速度；重力和位置积分全部交给<br/>Avian。" }
+  n4@{ shape: rounded, label: "**jump​_​characters**<br/>来自character ↗：跳跃只消费一次，通过<br/>冲量改变速度；重力和位置积分全部交给<br/>Avian。" }
   class n4 node_system
   class n4 external_node
   n0 e0@-->|"集合成员"| n1

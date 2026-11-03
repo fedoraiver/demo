@@ -44,31 +44,31 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​anti​_​alias::taa::prepare​_​taa​_​**<br/>**history​_​textures**<br/>按帧奇偶为 TAA 轮换读写历史纹理。" }
+  n0@{ shape: rounded, label: "**prepare​_​taa​_​history​_​textures**<br/>按帧奇偶为 TAA 轮换读写历史纹理。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**bevy​_​render::renderer::RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
+  n1@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
   class n1 node_resource
   class n1 external_node
-  n2@{ shape: fr-rect, label: "**taa::TemporalAntiAliasPlugin**<br/>提供时域抗锯齿。" }
+  n2@{ shape: fr-rect, label: "**TemporalAntiAliasPlugin**<br/>提供时域抗锯齿。" }
   class n2 node_plugin
-  n3@{ shape: cyl, label: "**frame​_​count::FrameCount**<br/>来自crate:bevy​_​diagnostic ↗：记录应<br/>用启动以来的帧计数" }
+  n3@{ shape: cyl, label: "**FrameCount**<br/>来自crate:bevy​_​diagnostic ↗：记录应<br/>用启动以来的帧计数" }
   class n3 node_resource
   class n3 external_node
   n4@{ shape: lin-rect, label: "**PrepareResources**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
   class n4 node_system_set
   class n4 external_node
-  n5@{ shape: rounded, label: "**bevy​_​render::camera::ExtractedCamera**<br/>来自crate:bevy​_​render ↗：保存渲染世界<br/>相机的目标和绘制配置。" }
+  n5@{ shape: rounded, label: "**ExtractedCamera**<br/>来自crate:bevy​_​render ↗：保存渲染世界<br/>相机的目标和绘制配置。" }
   class n5 node_component
   class n5 external_node
-  n6@{ shape: cyl, label: "**bevy​_​render::texture::TextureCache**<br/>来自crate:bevy​_​render ↗：复用渲染中反<br/>复创建的临时纹理。" }
+  n6@{ shape: cyl, label: "**TextureCache**<br/>来自crate:bevy​_​render ↗：复用渲染中反<br/>复创建的临时纹理。" }
   class n6 node_resource
   class n6 external_node
-  n7@{ shape: rounded, label: "**taa::TemporalAntiAliasing**<br/>启用相机的历史帧混合抗锯齿。" }
+  n7@{ shape: rounded, label: "**TemporalAntiAliasing**<br/>启用相机的历史帧混合抗锯齿。" }
   class n7 node_component
-  n8@{ shape: rounded, label: "**bevy​_​render::view::ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
+  n8@{ shape: rounded, label: "**ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
   class n8 node_component
   class n8 external_node
-  n9@{ shape: rounded, label: "**taa::**<br/>**TemporalAntiAliasHistoryTextures**<br/>保存 TAA 读写交替的历史纹理。" }
+  n9@{ shape: rounded, label: "**TemporalAntiAliasHistoryTextures**<br/>保存 TAA 读写交替的历史纹理。" }
   class n9 node_component
   n1 e0@--> n0
   class e0 edge_read

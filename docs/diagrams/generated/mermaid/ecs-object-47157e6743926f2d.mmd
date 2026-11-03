@@ -39,18 +39,18 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**mip​_​generation::experimental::**<br/>**depth::ViewDepthPyramid**<br/>保存视图用于遮挡剔除的层次深度。" }
+  n0@{ shape: rounded, label: "**ViewDepthPyramid**<br/>保存视图用于遮挡剔除的层次深度。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​core​_​pipeline::mip​_​generation::**<br/>**experimental::depth::prepare​_​view​_​**<br/>**depth​_​pyramids**<br/>为遮挡剔除视图维护深度金字塔。" }
+  n1@{ shape: rounded, label: "**prepare​_​view​_​depth​_​pyramids**<br/>为遮挡剔除视图维护深度金字塔。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​core​_​pipeline::mip​_​generation::**<br/>**experimental::depth::early​_​**<br/>**downsample​_​depth**<br/>生成供本帧晚期遮挡测试使用的深度金字塔。" }
+  n2@{ shape: rounded, label: "**early​_​downsample​_​depth**<br/>生成供本帧晚期遮挡测试使用的深度金字塔。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​pbr::render::gpu​_​preprocess::**<br/>**prepare​_​preprocess​_​bind​_​groups**<br/>来自crate:bevy​_​pbr ↗：绑定各视图网格<br/>预处理和间接参数构建资源。" }
+  n3@{ shape: rounded, label: "**prepare​_​preprocess​_​bind​_​groups**<br/>来自crate:bevy​_​pbr ↗：绑定各视图网格<br/>预处理和间接参数构建资源。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**bevy​_​core​_​pipeline::mip​_​generation::**<br/>**experimental::depth::late​_​**<br/>**downsample​_​depth**<br/>更新供下一帧早期遮挡测试使用的深度金字<br/>塔。" }
+  n4@{ shape: rounded, label: "**late​_​downsample​_​depth**<br/>更新供下一帧早期遮挡测试使用的深度金字<br/>塔。" }
   class n4 node_system
-  n5@{ shape: rounded, label: "**bevy​_​core​_​pipeline::mip​_​generation::**<br/>**experimental::depth::prepare​_​**<br/>**downsample​_​depth​_​view​_​bind​_​groups**<br/>将主视图或阴影深度绑定到降采样管线。" }
+  n5@{ shape: rounded, label: "**prepare​_​downsample​_​depth​_​view​_​bind​_​**<br/>**groups**<br/>将主视图或阴影深度绑定到降采样管线。" }
   class n5 node_system
   n1 e0@---|"存在性约束"| n0
   class e0 edge_reference

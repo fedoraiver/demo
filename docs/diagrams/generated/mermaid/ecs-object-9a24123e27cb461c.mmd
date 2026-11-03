@@ -38,12 +38,12 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**ambient​_​light::GlobalAmbientLight**<br/>配置场景默认的均匀环境光。" }
+  n0@{ shape: cyl, label: "**GlobalAmbientLight**<br/>配置场景默认的均匀环境光。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​pbr::render::light::extract​_​**<br/>**ambient​_​light​_​resource**<br/>来自crate:bevy​_​pbr ↗：在源存在时同步<br/>全局环境光资源。" }
+  n1@{ shape: rounded, label: "**extract​_​ambient​_​light​_​resource**<br/>来自crate:bevy​_​pbr ↗：在源存在时同步<br/>全局环境光资源。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​pbr::render::light::prepare​_​**<br/>**lights**<br/>来自crate:bevy​_​pbr ↗：准备视图光照参<br/>数、阴影视图和阴影贴图。" }
+  n2@{ shape: rounded, label: "**prepare​_​lights**<br/>来自crate:bevy​_​pbr ↗：准备视图光照参<br/>数、阴影视图和阴影贴图。" }
   class n2 node_system
   class n2 external_node
   n1 e0@-->|"可变访问"| n0

@@ -38,11 +38,11 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​extract::extract​_​resource::**<br/>**extract​_​resource#lt;bevy​_​camera::clear​_​**<br/>**color::ClearColor, bevy​_​render::**<br/>**RenderApp, ()#gt;**<br/>把存在的主世界资源转换到子世界。" }
+  n0@{ shape: rounded, label: "**extract​_​resource**<br/>把存在的主世界资源转换到子世界。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**extract​_​plugin::MainWorld**<br/>在提取阶段临时提供主模拟世界。" }
+  n1@{ shape: cyl, label: "**MainWorld**<br/>在提取阶段临时提供主模拟世界。" }
   class n1 node_resource
-  n2@{ shape: cyl, label: "**clear​_​color::ClearColor**<br/>来自crate:bevy​_​camera ↗：提供相机默认<br/>的清屏颜色。" }
+  n2@{ shape: cyl, label: "**ClearColor**<br/>来自crate:bevy​_​camera ↗：提供相机默认<br/>的清屏颜色。" }
   class n2 node_resource
   class n2 external_node
   n1 e0@--> n0

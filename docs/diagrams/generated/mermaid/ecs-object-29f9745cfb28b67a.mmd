@@ -45,62 +45,62 @@ flowchart LR
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
   subgraph layout_card_n0[" "]
-  n0@{ shape: rounded, label: "**avian3d::dynamics::rigid​_​body::mass​_​**<br/>**properties::update​_​mass​_​properties**<br/>重算已标记实体的质量属性并清除标记。" }
+  n0@{ shape: rounded, label: "**update​_​mass​_​properties**<br/>重算已标记实体的质量属性并清除标记。" }
   class n0 node_system
   end
   style layout_card_n0 fill:none,stroke:none
   subgraph layout_card_n1[" "]
-  n1@{ shape: rounded, label: "**dynamics::rigid​_​body::mass​_​**<br/>**properties::components::computed::**<br/>**ComputedMass**<br/>保存汇总后的刚体总质量。" }
+  n1@{ shape: rounded, label: "**ComputedMass**<br/>保存汇总后的刚体总质量。" }
   class n1 node_component
   end
   style layout_card_n1 fill:none,stroke:none
   subgraph layout_card_n2[" "]
-  n2@{ shape: rounded, label: "**collision::collider::collider​_​**<br/>**transform::ColliderTransform**<br/>缓存碰撞体相对于刚体的变换。" }
+  n2@{ shape: rounded, label: "**ColliderTransform**<br/>缓存碰撞体相对于刚体的变换。" }
   class n2 node_component
   end
   style layout_card_n2 fill:none,stroke:none
   subgraph layout_card_n3[" "]
-  n3@{ shape: rounded, label: "**dynamics::rigid​_​body::mass​_​**<br/>**properties::components::**<br/>**RecomputeMassProperties**<br/>请求重新计算刚体质量属性。" }
+  n3@{ shape: rounded, label: "**RecomputeMassProperties**<br/>请求重新计算刚体质量属性。" }
   class n3 node_component
   end
   style layout_card_n3 fill:none,stroke:none
   subgraph layout_card_n4[" "]
-  n4@{ shape: rounded, label: "**dynamics::rigid​_​body::mass​_​**<br/>**properties::components::CenterOfMass**<br/>指定实体自身的局部质心。" }
+  n4@{ shape: rounded, label: "**CenterOfMass**<br/>指定实体自身的局部质心。" }
   class n4 node_component
   end
   style layout_card_n4 fill:none,stroke:none
   subgraph layout_card_n5[" "]
-  n5@{ shape: rounded, label: "**dynamics::rigid​_​body::mass​_​**<br/>**properties::components::NoAutoMass**<br/>阻止后代贡献总质量。" }
+  n5@{ shape: rounded, label: "**NoAutoMass**<br/>阻止后代贡献总质量。" }
   class n5 node_component
   end
   style layout_card_n5 fill:none,stroke:none
   subgraph layout_card_n6[" "]
-  n6@{ shape: rounded, label: "**collision::collider::Sensor**<br/>将碰撞体设为不阻挡运动的触发器。" }
+  n6@{ shape: rounded, label: "**Sensor**<br/>将碰撞体设为不阻挡运动的触发器。" }
   class n6 node_component
   end
   style layout_card_n6 fill:none,stroke:none
   subgraph layout_card_n7[" "]
-  n7@{ shape: rounded, label: "**dynamics::rigid​_​body::mass​_​**<br/>**properties::components::computed::**<br/>**ComputedAngularInertia**<br/>保存汇总后的刚体局部角惯量。" }
+  n7@{ shape: rounded, label: "**ComputedAngularInertia**<br/>保存汇总后的刚体局部角惯量。" }
   class n7 node_component
   end
   style layout_card_n7 fill:none,stroke:none
   subgraph layout_card_n8[" "]
-  n8@{ shape: rounded, label: "**dynamics::rigid​_​body::mass​_​**<br/>**properties::components::**<br/>**NoAutoAngularInertia**<br/>阻止后代贡献总角惯量。" }
+  n8@{ shape: rounded, label: "**NoAutoAngularInertia**<br/>阻止后代贡献总角惯量。" }
   class n8 node_component
   end
   style layout_card_n8 fill:none,stroke:none
   subgraph layout_card_n9[" "]
-  n9@{ shape: rounded, label: "**dynamics::rigid​_​body::mass​_​**<br/>**properties::components::computed::**<br/>**ComputedCenterOfMass**<br/>保存汇总后的刚体局部质心。" }
+  n9@{ shape: rounded, label: "**ComputedCenterOfMass**<br/>保存汇总后的刚体局部质心。" }
   class n9 node_component
   end
   style layout_card_n9 fill:none,stroke:none
   subgraph layout_card_n10[" "]
-  n10@{ shape: rounded, label: "**avian3d::dynamics::rigid​_​body::mass​_​**<br/>**properties::warn​_​invalid​_​mass**<br/>报告动态刚体无效的总质量或总惯量。" }
+  n10@{ shape: rounded, label: "**warn​_​invalid​_​mass**<br/>报告动态刚体无效的总质量或总惯量。" }
   class n10 node_system
   end
   style layout_card_n10 fill:none,stroke:none
   subgraph layout_card_n11[" "]
-  n11@{ shape: rounded, label: "**dynamics::rigid​_​body::mass​_​**<br/>**properties::components::Mass**<br/>指定实体自身的质量输入。" }
+  n11@{ shape: rounded, label: "**Mass**<br/>指定实体自身的质量输入。" }
   class n11 node_component
   end
   style layout_card_n11 fill:none,stroke:none
@@ -110,27 +110,27 @@ flowchart LR
   end
   style layout_card_n12 fill:none,stroke:none
   subgraph layout_card_n13[" "]
-  n13@{ shape: rounded, label: "**dynamics::rigid​_​body::mass​_​**<br/>**properties::components::**<br/>**NoAutoCenterOfMass**<br/>阻止后代贡献总质心。" }
+  n13@{ shape: rounded, label: "**NoAutoCenterOfMass**<br/>阻止后代贡献总质心。" }
   class n13 node_component
   end
   style layout_card_n13 fill:none,stroke:none
   subgraph layout_card_n14[" "]
-  n14@{ shape: rounded, label: "**dynamics::rigid​_​body::mass​_​**<br/>**properties::components::collider::**<br/>**ColliderMassProperties**<br/>缓存由碰撞形状计算的质量属性。" }
+  n14@{ shape: rounded, label: "**ColliderMassProperties**<br/>缓存由碰撞形状计算的质量属性。" }
   class n14 node_component
   end
   style layout_card_n14 fill:none,stroke:none
   subgraph layout_card_n15[" "]
-  n15@{ shape: rounded, label: "**dynamics::rigid​_​body::mass​_​**<br/>**properties::components::**<br/>**AngularInertia**<br/>指定实体自身的局部角惯量。" }
+  n15@{ shape: rounded, label: "**AngularInertia**<br/>指定实体自身的局部角惯量。" }
   class n15 node_component
   end
   style layout_card_n15 fill:none,stroke:none
   subgraph layout_card_n16[" "]
-  n16@{ shape: fr-rect, label: "**dynamics::rigid​_​body::mass​_​**<br/>**properties::MassPropertyPlugin**<br/>更新刚体质量、惯量和质心。" }
+  n16@{ shape: fr-rect, label: "**MassPropertyPlugin**<br/>更新刚体质量、惯量和质心。" }
   class n16 node_plugin
   end
   style layout_card_n16 fill:none,stroke:none
   subgraph layout_card_n17[" "]
-  n17@{ shape: rounded, label: "**bevy​_​ecs::hierarchy::Children**<br/>来自crate:bevy​_​ecs ↗：保存以<br/>ChildOf 指向当前父实体的子实体集合" }
+  n17@{ shape: rounded, label: "**Children**<br/>来自crate:bevy​_​ecs ↗：保存以<br/>ChildOf 指向当前父实体的子实体集合" }
   class n17 node_component
   class n17 external_node
   end

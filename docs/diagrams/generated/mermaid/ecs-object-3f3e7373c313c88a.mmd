@@ -36,12 +36,12 @@ flowchart LR
   classDef node_message fill:#EDF4F6,stroke:#247B91,stroke-width:1.6px,color:#1F3340
   classDef edge_consume stroke:#247B91,stroke-width:1.8px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: lean-r, label: "**event::WindowCreated**<br/>通知新窗口创建完成。" }
+  n0@{ shape: lean-r, label: "**WindowCreated**<br/>通知新窗口创建完成。" }
   class n0 node_message
-  n1@{ shape: rounded, label: "**bevy​_​render::camera::camera​_​system**<br/>来自crate:bevy​_​render ↗：响应目标尺寸<br/>变化并更新相机投影。" }
+  n1@{ shape: rounded, label: "**camera​_​system**<br/>来自crate:bevy​_​render ↗：响应目标尺寸<br/>变化并更新相机投影。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​render::camera::camera​_​system**<br/>来自crate:bevy​_​render ↗：响应目标尺寸<br/>变化并更新相机投影。" }
+  n2@{ shape: rounded, label: "**camera​_​system**<br/>来自crate:bevy​_​render ↗：响应目标尺寸<br/>变化并更新相机投影。" }
   class n2 node_system
   class n2 external_node
   n0 e0@--> n1

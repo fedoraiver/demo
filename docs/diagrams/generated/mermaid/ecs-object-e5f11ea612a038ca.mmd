@@ -40,7 +40,7 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**text::EmSize**<br/>保存当前 UI 节点用于解析 Em 单位的实际<br/>字体大小" }
+  n0@{ shape: rounded, label: "**EmSize**<br/>保存当前 UI 节点用于解析 Em 单位的实际<br/>字体大小" }
   class n0 node_component
   n1@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：描绘 Enter 菜单键帽。" }
   class n1 node_entity
@@ -495,7 +495,7 @@ flowchart LR
   n151@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制辅助功能设置按钮的入口箭<br/>头。" }
   class n151 node_entity
   class n151 external_node
-  n152@{ shape: rounded, label: "**bevy​_​ui::layout::sync​_​font​_​size​_​to​_​**<br/>**em​_​size**<br/>来自crate:bevy​_​ui ↗：把文本字号解析为<br/>节点的 EmSize。" }
+  n152@{ shape: rounded, label: "**sync​_​font​_​size​_​to​_​em​_​size**<br/>来自crate:bevy​_​ui ↗：把文本字号解析为<br/>节点的 EmSize。" }
   class n152 node_system
   class n152 external_node
   n153@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示当前设置的说明正文。" }
@@ -831,7 +831,7 @@ flowchart LR
   n263@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示帧率上限的右侧调整符号。" }
   class n263 node_entity
   class n263 external_node
-  n264@{ shape: rounded, label: "**bevy​_​ui::layout::ui​_​layout​_​system**<br/>来自crate:bevy​_​ui ↗：求解 UI 布局并回<br/>写节点尺寸和二维变换。" }
+  n264@{ shape: rounded, label: "**ui​_​layout​_​system**<br/>来自crate:bevy​_​ui ↗：求解 UI 布局并回<br/>写节点尺寸和二维变换。" }
   class n264 node_system
   class n264 external_node
   n265@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示 ISLAND 品牌主标题。" }

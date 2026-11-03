@@ -44,32 +44,32 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​animation::advance​_​animations**<br/>推进动画播放器中活动动画的播放时间。" }
+  n0@{ shape: rounded, label: "**advance​_​animations**<br/>推进动画播放器中活动动画的播放时间。" }
   class n0 node_system
   n1@{ shape: rounded, label: "**AnimationPlayer**<br/>保存当前激活动画及其播放控制状态" }
   class n1 node_component
-  n2@{ shape: fr-rect, label: "**bevy​_​animation::AnimationPlugin**<br/>安装动画播放与更新支持。" }
+  n2@{ shape: fr-rect, label: "**AnimationPlugin**<br/>安装动画播放与更新支持。" }
   class n2 node_plugin
   n3@{ shape: lin-rect, label: "**Propagate**<br/>来自crate:bevy​_​transform ↗：组织实体<br/>层级变换传播。" }
   class n3 node_system_set
   class n3 external_node
-  n4@{ shape: rounded, label: "**graph::AnimationGraphHandle**<br/>选择播放器使用的动画图资产。" }
+  n4@{ shape: rounded, label: "**AnimationGraphHandle**<br/>选择播放器使用的动画图资产。" }
   class n4 node_component
-  n5@{ shape: cyl, label: "**time::Time**<br/>来自crate:bevy​_​time ↗：保存时钟上下<br/>文、帧间隔及累计时间" }
+  n5@{ shape: cyl, label: "**Time**<br/>来自crate:bevy​_​time ↗：保存时钟上下<br/>文、帧间隔及累计时间" }
   class n5 node_resource
   class n5 external_node
-  n6@{ shape: cyl, label: "**bevy​_​asset::Assets#lt;AnimationClip#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
+  n6@{ shape: cyl, label: "**Assets#lt;AnimationClip#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
   class n6 node_resource
   class n6 external_node
-  n7@{ shape: cyl, label: "**bevy​_​asset::Assets#lt;graph::**<br/>**AnimationGraph#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
+  n7@{ shape: cyl, label: "**Assets#lt;AnimationGraph#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
   class n7 node_resource
   class n7 external_node
-  n8@{ shape: rounded, label: "**bevy​_​animation::transition::advance​_​**<br/>**transitions**<br/>推进动画过渡并归一化混合权重。" }
+  n8@{ shape: rounded, label: "**advance​_​transitions**<br/>推进动画过渡并归一化混合权重。" }
   class n8 node_system
   n9@{ shape: lin-rect, label: "**AnimationSystems**<br/>来自crate:bevy​_​app ↗：更新动画图、播<br/>放时间和目标姿态。" }
   class n9 node_system_set
   class n9 external_node
-  n10@{ shape: rounded, label: "**bevy​_​animation::animate​_​targets**<br/>评估动画图并把结果应用到动画目标。" }
+  n10@{ shape: rounded, label: "**animate​_​targets**<br/>评估动画图并把结果应用到动画目标。" }
   class n10 node_system
   n0 e0@-->|"可变访问"| n1
   class e0 edge_write

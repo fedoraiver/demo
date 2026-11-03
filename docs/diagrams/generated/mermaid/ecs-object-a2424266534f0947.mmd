@@ -43,26 +43,26 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​post​_​process::bloom::**<br/>**upsampling​_​pipeline::prepare​_​**<br/>**upsampling​_​pipeline**<br/>为 Bloom 中间合成和最终目标准备升采样管<br/>线。" }
+  n0@{ shape: rounded, label: "**prepare​_​upsampling​_​pipeline**<br/>为 Bloom 中间合成和最终目标准备升采样管<br/>线。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**bloom::upsampling​_​pipeline::**<br/>**UpsamplingPipelineIds**<br/>记录 Bloom 主上采样及最终合成管线。" }
+  n1@{ shape: rounded, label: "**UpsamplingPipelineIds**<br/>记录 Bloom 主上采样及最终合成管线。" }
   class n1 node_component
-  n2@{ shape: rounded, label: "**bloom::settings::Bloom**<br/>为 HDR 相机配置亮部扩散光晕。" }
+  n2@{ shape: rounded, label: "**Bloom**<br/>为 HDR 相机配置亮部扩散光晕。" }
   class n2 node_component
-  n3@{ shape: cyl, label: "**bloom::upsampling​_​pipeline::**<br/>**BloomUpsamplingPipeline**<br/>提供 Bloom 逐级上采样与合成管线。" }
+  n3@{ shape: cyl, label: "**BloomUpsamplingPipeline**<br/>提供 Bloom 逐级上采样与合成管线。" }
   class n3 node_resource
-  n4@{ shape: rounded, label: "**bevy​_​render::view::ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
+  n4@{ shape: rounded, label: "**ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
   class n4 node_component
   class n4 external_node
   n5@{ shape: lin-rect, label: "**Prepare**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
   class n5 node_system_set
   class n5 external_node
-  n6@{ shape: fr-rect, label: "**bloom::BloomPlugin**<br/>准备并合成画面辉光。" }
+  n6@{ shape: fr-rect, label: "**BloomPlugin**<br/>准备并合成画面辉光。" }
   class n6 node_plugin
-  n7@{ shape: cyl, label: "**bevy​_​render::render​_​resource::**<br/>**SpecializedRenderPipelines#lt;bloom::**<br/>**upsampling​_​pipeline::**<br/>**BloomUpsamplingPipeline#gt;**<br/>来自crate:bevy​_​render ↗：按配置键缓存<br/>渲染管线变体。" }
+  n7@{ shape: cyl, label: "**SpecializedRenderPipelines#lt;BloomUpsa**<br/>**mplingPipeline#gt;**<br/>来自crate:bevy​_​render ↗：按配置键缓存<br/>渲染管线变体。" }
   class n7 node_resource
   class n7 external_node
-  n8@{ shape: cyl, label: "**bevy​_​render::render​_​resource::**<br/>**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
+  n8@{ shape: cyl, label: "**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
   class n8 node_resource
   class n8 external_node
   n0 e0@-->|"插入"| n1

@@ -37,13 +37,13 @@ flowchart LR
   classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​render::render​_​asset::collect​_​**<br/>**render​_​assets​_​to​_​reextract#lt;bevy​_​**<br/>**render::storage::GpuShaderBuffer#gt;**<br/>排空渲染资产并登记设备恢复后的重新提取。" }
+  n0@{ shape: rounded, label: "**collect​_​render​_​assets​_​to​_​reextract**<br/>排空渲染资产并登记设备恢复后的重新提取。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**render​_​asset::**<br/>**PrepareNextFrameAssets#lt;storage::**<br/>**GpuShaderBuffer#gt;**<br/>保留下一帧待准备的渲染源资产。" }
+  n1@{ shape: cyl, label: "**PrepareNextFrameAssets#lt;GpuShaderBuff**<br/>**er#gt;**<br/>保留下一帧待准备的渲染源资产。" }
   class n1 node_resource
-  n2@{ shape: cyl, label: "**render​_​asset::**<br/>**RenderAssetsToReExtract#lt;storage::**<br/>**GpuShaderBuffer#gt;**<br/>记录设备恢复后需重建的渲染资产。" }
+  n2@{ shape: cyl, label: "**RenderAssetsToReExtract#lt;GpuShaderBuf**<br/>**fer#gt;**<br/>记录设备恢复后需重建的渲染资产。" }
   class n2 node_resource
-  n3@{ shape: cyl, label: "**bevy​_​render::render​_​asset::**<br/>**RenderAssets#lt;bevy​_​render::storage::**<br/>**GpuShaderBuffer#gt;**<br/>按源资产身份保存 GPU 渲染表示。" }
+  n3@{ shape: cyl, label: "**RenderAssets#lt;GpuShaderBuffer#gt;**<br/>按源资产身份保存 GPU 渲染表示。" }
   class n3 node_resource
   n0 e0@-->|"可变访问"| n1
   class e0 edge_write

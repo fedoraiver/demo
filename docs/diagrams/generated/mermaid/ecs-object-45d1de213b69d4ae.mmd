@@ -42,22 +42,22 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**avian3d::dynamics::solver::plugin::**<br/>**joint​_​damping#lt;avian3d::dynamics::**<br/>**joints::prismatic::PrismaticJoint#gt;**<br/>衰减关节两端刚体的相对速度。" }
+  n0@{ shape: rounded, label: "**joint​_​damping**<br/>衰减关节两端刚体的相对速度。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**dynamics::joints::prismatic::**<br/>**PrismaticJoint**<br/>将相对运动限制在滑动轴上。" }
+  n1@{ shape: rounded, label: "**PrismaticJoint**<br/>将相对运动限制在滑动轴上。" }
   class n1 node_component
-  n2@{ shape: rounded, label: "**avian3d::dynamics::solver::plugin::**<br/>**joint​_​damping#lt;avian3d::dynamics::**<br/>**joints::spherical::SphericalJoint#gt;**<br/>衰减关节两端刚体的相对速度。" }
+  n2@{ shape: rounded, label: "**joint​_​damping**<br/>衰减关节两端刚体的相对速度。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**dynamics::solver::solver​_​body::**<br/>**SolverBodyIndex**<br/>定位实体对应的求解器刚体。" }
+  n3@{ shape: rounded, label: "**SolverBodyIndex**<br/>定位实体对应的求解器刚体。" }
   class n3 node_component
-  n4@{ shape: rounded, label: "**dynamics::joints::JointDamping**<br/>衰减关节两端的相对速度。" }
+  n4@{ shape: rounded, label: "**JointDamping**<br/>衰减关节两端的相对速度。" }
   class n4 node_component
-  n5@{ shape: cyl, label: "**time::Time**<br/>来自crate:bevy​_​time ↗：保存时钟上下<br/>文、帧间隔及累计时间" }
+  n5@{ shape: cyl, label: "**Time**<br/>来自crate:bevy​_​time ↗：保存时钟上下<br/>文、帧间隔及累计时间" }
   class n5 node_resource
   class n5 external_node
-  n6@{ shape: rounded, label: "**avian3d::dynamics::solver::plugin::**<br/>**joint​_​damping#lt;avian3d::dynamics::**<br/>**joints::distance::DistanceJoint#gt;**<br/>衰减关节两端刚体的相对速度。" }
+  n6@{ shape: rounded, label: "**joint​_​damping**<br/>衰减关节两端刚体的相对速度。" }
   class n6 node_system
-  n7@{ shape: cyl, label: "**dynamics::solver::solver​_​body::**<br/>**SolverBodies**<br/>连续存储活跃刚体的求解状态。" }
+  n7@{ shape: cyl, label: "**SolverBodies**<br/>连续存储活跃刚体的求解状态。" }
   class n7 node_resource
   n8@{ shape: lin-rect, label: "**Damping**<br/>组织约束子步的求解与松弛。" }
   class n8 node_system_set

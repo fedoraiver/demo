@@ -40,15 +40,15 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: lin-rect, label: "**UpdateLightFrusta**<br/>组织灯光聚簇与可见性准备。" }
   class n0 node_system_set
-  n1@{ shape: rounded, label: "**bevy​_​light::check​_​point​_​light​_​mesh​_​**<br/>**visibility**<br/>计算点光与聚光灯阴影可见的网格。" }
+  n1@{ shape: rounded, label: "**check​_​point​_​light​_​mesh​_​visibility**<br/>计算点光与聚光灯阴影可见的网格。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​light::check​_​dir​_​light​_​mesh​_​**<br/>**visibility**<br/>计算方向光各相机级联可见的投影网格。" }
+  n2@{ shape: rounded, label: "**check​_​dir​_​light​_​mesh​_​visibility**<br/>计算方向光各相机级联可见的投影网格。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​light::directional​_​light::**<br/>**update​_​directional​_​light​_​frusta**<br/>从方向光级联投影更新阴影视锥。" }
+  n3@{ shape: rounded, label: "**update​_​directional​_​light​_​frusta**<br/>从方向光级联投影更新阴影视锥。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**bevy​_​light::point​_​light::update​_​**<br/>**point​_​light​_​frusta**<br/>更新可见点光的六面阴影视锥。" }
+  n4@{ shape: rounded, label: "**update​_​point​_​light​_​frusta**<br/>更新可见点光的六面阴影视锥。" }
   class n4 node_system
-  n5@{ shape: rounded, label: "**bevy​_​light::spot​_​light::update​_​spot​_​**<br/>**light​_​frusta**<br/>更新可见聚光灯的阴影视锥。" }
+  n5@{ shape: rounded, label: "**update​_​spot​_​light​_​frusta**<br/>更新可见聚光灯的阴影视锥。" }
   class n5 node_system
   n0 e0@-->|"先于"| n1
   class e0 edge_order

@@ -40,23 +40,23 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: lin-rect, label: "**CalculateBounds**<br/>组织相机与实体可见性更新。" }
   class n0 node_system_set
-  n1@{ shape: rounded, label: "**bevy​_​camera::visibility::update​_​**<br/>**skinned​_​mesh​_​bounds**<br/>依据当前关节姿态更新动态蒙皮包围盒。" }
+  n1@{ shape: rounded, label: "**update​_​skinned​_​mesh​_​bounds**<br/>依据当前关节姿态更新动态蒙皮包围盒。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​light::check​_​point​_​light​_​mesh​_​**<br/>**visibility**<br/>来自crate:bevy​_​light ↗：计算点光与聚<br/>光灯阴影可见的网格。" }
+  n2@{ shape: rounded, label: "**check​_​point​_​light​_​mesh​_​visibility**<br/>来自crate:bevy​_​light ↗：计算点光与聚<br/>光灯阴影可见的网格。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​sprite::calculate​_​bounds​_​2d**<br/>来自crate:bevy​_​sprite ↗：为二维网格和<br/>精灵计算局部包围盒。" }
+  n3@{ shape: rounded, label: "**calculate​_​bounds​_​2d**<br/>来自crate:bevy​_​sprite ↗：为二维网格和<br/>精灵计算局部包围盒。" }
   class n3 node_system
   class n3 external_node
   n4@{ shape: lin-rect, label: "**CheckVisibility**<br/>组织相机与实体可见性更新。" }
   class n4 node_system_set
-  n5@{ shape: rounded, label: "**bevy​_​light::check​_​dir​_​light​_​mesh​_​**<br/>**visibility**<br/>来自crate:bevy​_​light ↗：计算方向光各<br/>相机级联可见的投影网格。" }
+  n5@{ shape: rounded, label: "**check​_​dir​_​light​_​mesh​_​visibility**<br/>来自crate:bevy​_​light ↗：计算方向光各<br/>相机级联可见的投影网格。" }
   class n5 node_system
   class n5 external_node
-  n6@{ shape: rounded, label: "**bevy​_​sprite::text2d::calculate​_​**<br/>**bounds​_​text2d**<br/>来自crate:bevy​_​sprite ↗：按文字布局与<br/>锚点更新二维文字包围盒。" }
+  n6@{ shape: rounded, label: "**calculate​_​bounds​_​text2d**<br/>来自crate:bevy​_​sprite ↗：按文字布局与<br/>锚点更新二维文字包围盒。" }
   class n6 node_system
   class n6 external_node
-  n7@{ shape: rounded, label: "**bevy​_​camera::visibility::calculate​_​**<br/>**bounds**<br/>为允许自动计算的三维网格维护包围盒。" }
+  n7@{ shape: rounded, label: "**calculate​_​bounds**<br/>为允许自动计算的三维网格维护包围盒。" }
   class n7 node_system
   n8@{ shape: lin-rect, label: "**Propagate**<br/>来自crate:bevy​_​transform ↗：组织实体<br/>层级变换传播。" }
   class n8 node_system_set

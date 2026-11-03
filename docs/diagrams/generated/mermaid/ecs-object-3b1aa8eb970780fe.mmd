@@ -41,26 +41,26 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​gizmos​_​render::pipeline​_​2d::**<br/>**init​_​line​_​gizmo​_​pipelines**<br/>建立二维 Gizmo 线段和接头管线。" }
+  n0@{ shape: rounded, label: "**init​_​line​_​gizmo​_​pipelines**<br/>建立二维 Gizmo 线段和接头管线。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**bevy​_​asset::AssetServer**<br/>来自crate:bevy​_​asset ↗：加载资产并追<br/>踪加载状态。" }
+  n1@{ shape: cyl, label: "**AssetServer**<br/>来自crate:bevy​_​asset ↗：加载资产并追<br/>踪加载状态。" }
   class n1 node_resource
   class n1 external_node
-  n2@{ shape: cyl, label: "**pipeline​_​2d::LineJointGizmoPipeline**<br/>提供二维调试线接头的渲染管线资源。" }
+  n2@{ shape: cyl, label: "**LineJointGizmoPipeline**<br/>提供二维调试线接头的渲染管线资源。" }
   class n2 node_resource
   n3@{ shape: cyl, label: "**LineGizmoUniformBindgroupLayout**<br/>定义调试线 GPU 参数的绑定布局。" }
   class n3 node_resource
-  n4@{ shape: rounded, label: "**bevy​_​gizmos​_​render::init​_​line​_​gizmo​_​**<br/>**uniform​_​bind​_​group​_​layout**<br/>建立 Gizmo 线条动态参数的 GPU 布局。" }
+  n4@{ shape: rounded, label: "**init​_​line​_​gizmo​_​uniform​_​bind​_​group​_​**<br/>**layout**<br/>建立 Gizmo 线条动态参数的 GPU 布局。" }
   class n4 node_system
-  n5@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::mesh::**<br/>**init​_​mesh​_​2d​_​pipeline**<br/>来自crate:bevy​_​sprite​_​render ↗：建立<br/>二维网格的视图、实例及元数据输入布局。" }
+  n5@{ shape: rounded, label: "**init​_​mesh​_​2d​_​pipeline**<br/>来自crate:bevy​_​sprite​_​render ↗：建立<br/>二维网格的视图、实例及元数据输入布局。" }
   class n5 node_system
   class n5 external_node
-  n6@{ shape: cyl, label: "**pipeline​_​2d::LineGizmoPipeline**<br/>提供二维调试线段的渲染管线资源。" }
+  n6@{ shape: cyl, label: "**LineGizmoPipeline**<br/>提供二维调试线段的渲染管线资源。" }
   class n6 node_resource
-  n7@{ shape: cyl, label: "**bevy​_​sprite​_​render::Mesh2dPipeline**<br/>来自crate:bevy​_​sprite​_​render ↗：提供<br/>二维网格的视图与实例资源布局。" }
+  n7@{ shape: cyl, label: "**Mesh2dPipeline**<br/>来自crate:bevy​_​sprite​_​render ↗：提供<br/>二维网格的视图与实例资源布局。" }
   class n7 node_resource
   class n7 external_node
-  n8@{ shape: fr-rect, label: "**pipeline​_​2d::LineGizmo2dPlugin**<br/>准备二维调试线条和接头绘制。" }
+  n8@{ shape: fr-rect, label: "**LineGizmo2dPlugin**<br/>准备二维调试线条和接头绘制。" }
   class n8 node_plugin
   n1 e0@--> n0
   class e0 edge_read

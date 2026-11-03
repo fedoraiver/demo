@@ -38,13 +38,13 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**effect​_​stack::**<br/>**PostProcessingPipelineId**<br/>保存相机内置后处理组合的管线标识。" }
+  n0@{ shape: rounded, label: "**PostProcessingPipelineId**<br/>保存相机内置后处理组合的管线标识。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​post​_​process::effect​_​stack::**<br/>**post​_​processing**<br/>组合执行色差、暗角和镜头畸变。" }
+  n1@{ shape: rounded, label: "**post​_​processing**<br/>组合执行色差、暗角和镜头畸变。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​post​_​process::effect​_​stack::**<br/>**prepare​_​post​_​processing​_​pipelines**<br/>按视图颜色格式准备内置后处理管线。" }
+  n2@{ shape: rounded, label: "**prepare​_​post​_​processing​_​pipelines**<br/>按视图颜色格式准备内置后处理管线。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​post​_​process::effect​_​stack::**<br/>**post​_​processing**<br/>组合执行色差、暗角和镜头畸变。" }
+  n3@{ shape: rounded, label: "**post​_​processing**<br/>组合执行色差、暗角和镜头畸变。" }
   class n3 node_system
   n0 e0@--> n1
   class e0 edge_read

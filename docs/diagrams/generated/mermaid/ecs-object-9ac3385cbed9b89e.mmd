@@ -40,17 +40,17 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**scene​_​assembly::IslandReady**<br/>保存就绪海岛的玩家与物品装配位置。" }
+  n0@{ shape: rounded, label: "**IslandReady**<br/>保存就绪海岛的玩家与物品装配位置。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**demo::scene​_​assembly::actors::spawn​_​**<br/>**actors**<br/>为就绪海岛创建玩法实体并复用加载相机。" }
+  n1@{ shape: rounded, label: "**spawn​_​actors**<br/>为就绪海岛创建玩法实体并复用加载相机。" }
   class n1 node_system
-  n2@{ shape: hex, label: "**demo::scene​_​assembly::loading::mark​_​**<br/>**island​_​ready**<br/>标记地图实例以进入碰撞准备。" }
+  n2@{ shape: hex, label: "**mark​_​island​_​ready**<br/>标记地图实例以进入碰撞准备。" }
   class n2 node_observer
-  n3@{ shape: hex, label: "**demo::scene​_​assembly::loading::mark​_​**<br/>**island​_​ready**<br/>标记地图实例以进入碰撞准备。" }
+  n3@{ shape: hex, label: "**mark​_​island​_​ready**<br/>标记地图实例以进入碰撞准备。" }
   class n3 node_observer
-  n4@{ shape: hex, label: "**demo::scene​_​assembly::loading::mark​_​**<br/>**island​_​ready**<br/>标记地图实例以进入碰撞准备。" }
+  n4@{ shape: hex, label: "**mark​_​island​_​ready**<br/>标记地图实例以进入碰撞准备。" }
   class n4 node_observer
-  n5@{ shape: rounded, label: "**demo::scene​_​assembly::loading::**<br/>**prepare​_​island**<br/>在资源 CPU 几何可用时构建碰撞；全部成功<br/>后才提交，失败时不创建动态玩家。" }
+  n5@{ shape: rounded, label: "**prepare​_​island**<br/>在资源 CPU 几何可用时构建碰撞；全部成功<br/>后才提交，失败时不创建动态玩家。" }
   class n5 node_system
   n0 e0@--> n1
   class e0 edge_read

@@ -40,21 +40,21 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: lin-rect, label: "**FocusChangeEvents**<br/>组织焦点输入派发与变化通知。" }
   class n0 node_system_set
-  n1@{ shape: rounded, label: "**bevy​_​winit::accessibility::update​_​**<br/>**accessibility​_​nodes**<br/>来自crate:bevy​_​winit ↗：把变化的可访<br/>问性节点同步给原生适配器。" }
+  n1@{ shape: rounded, label: "**update​_​accessibility​_​nodes**<br/>来自crate:bevy​_​winit ↗：把变化的可访<br/>问性节点同步给原生适配器。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​ui::widget::text​_​input​_​layout::**<br/>**update​_​editable​_​text​_​layout**<br/>来自crate:bevy​_​ui ↗：刷新可编辑文本的<br/>字形布局和编辑反馈。" }
+  n2@{ shape: rounded, label: "**update​_​editable​_​text​_​layout**<br/>来自crate:bevy​_​ui ↗：刷新可编辑文本的<br/>字形布局和编辑反馈。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​ui​_​widgets::menu::menu​_​acquire​_​**<br/>**focus**<br/>来自crate:bevy​_​ui​_​widgets ↗：在菜单<br/>打开时为菜单项取得焦点。" }
+  n3@{ shape: rounded, label: "**menu​_​acquire​_​focus**<br/>来自crate:bevy​_​ui​_​widgets ↗：在菜单<br/>打开时为菜单项取得焦点。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**bevy​_​input​_​focus::gained​_​and​_​lost::**<br/>**process​_​recorded​_​focus​_​changes**<br/>按记录顺序派发焦点获得和失去事件。" }
+  n4@{ shape: rounded, label: "**process​_​recorded​_​focus​_​changes**<br/>按记录顺序派发焦点获得和失去事件。" }
   class n4 node_system
-  n5@{ shape: rounded, label: "**bevy​_​ui​_​widgets::menu::menu​_​on​_​lose​_​**<br/>**focus**<br/>来自crate:bevy​_​ui​_​widgets ↗：关闭不<br/>再持有内部焦点的菜单。" }
+  n5@{ shape: rounded, label: "**menu​_​on​_​lose​_​focus**<br/>来自crate:bevy​_​ui​_​widgets ↗：关闭不<br/>再持有内部焦点的菜单。" }
   class n5 node_system
   class n5 external_node
-  n6@{ shape: rounded, label: "**bevy​_​ui​_​widgets::tabs::update​_​**<br/>**tablist​_​derived​_​state**<br/>来自crate:bevy​_​ui​_​widgets ↗：从标签<br/>选择和焦点派生每个标签的状态。" }
+  n6@{ shape: rounded, label: "**update​_​tablist​_​derived​_​state**<br/>来自crate:bevy​_​ui​_​widgets ↗：从标签<br/>选择和焦点派生每个标签的状态。" }
   class n6 node_system
   class n6 external_node
   n0 e0@-->|"先于"| n1

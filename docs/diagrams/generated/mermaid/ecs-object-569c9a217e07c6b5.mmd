@@ -39,14 +39,14 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**deferred::PbrDeferredLightingDepthId**<br/>限定延迟光照通道处理的材质集合。" }
+  n0@{ shape: rounded, label: "**PbrDeferredLightingDepthId**<br/>限定延迟光照通道处理的材质集合。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​extract::extract​_​component::**<br/>**extract​_​components#lt;bevy​_​pbr::**<br/>**deferred::**<br/>**PbrDeferredLightingDepthId, bevy​_​**<br/>**render::RenderApp, ()#gt;**<br/>来自crate:bevy​_​extract ↗：批量同步或<br/>移除子世界的目标组件。" }
+  n1@{ shape: rounded, label: "**extract​_​components**<br/>来自crate:bevy​_​extract ↗：批量同步或<br/>移除子世界的目标组件。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​pbr::deferred::insert​_​deferred​_​**<br/>**lighting​_​pass​_​id​_​component**<br/>为延迟预通道视图补齐光照通道标识。" }
+  n2@{ shape: rounded, label: "**insert​_​deferred​_​lighting​_​pass​_​id​_​**<br/>**component**<br/>为延迟预通道视图补齐光照通道标识。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​render::uniform::prepare​_​**<br/>**uniform​_​components#lt;bevy​_​pbr::**<br/>**deferred::**<br/>**PbrDeferredLightingDepthId#gt;**<br/>来自crate:bevy​_​render ↗：将组件值批量<br/>上传为动态着色器参数。" }
+  n3@{ shape: rounded, label: "**prepare​_​uniform​_​components**<br/>来自crate:bevy​_​render ↗：将组件值批量<br/>上传为动态着色器参数。" }
   class n3 node_system
   class n3 external_node
   n1 e0@--- n0
@@ -60,6 +60,6 @@ flowchart LR
   n2 e4@-->|"插入"| n0
   class e4 edge_write
   e0@{ curve: basis }
-  e1@{ curve: basis }
-  e2@{ curve: basis }
+  e1@{ curve: bumpX }
+  e2@{ curve: bumpX }
   e4@{ curve: basis }

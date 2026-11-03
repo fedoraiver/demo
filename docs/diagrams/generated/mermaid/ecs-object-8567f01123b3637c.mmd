@@ -46,9 +46,9 @@ flowchart LR
   class n2 node_system_set
   n3@{ shape: lin-rect, label: "**Sleeping**<br/>组织一次物理模拟步的主要阶段。" }
   class n3 node_system_set
-  n4@{ shape: rounded, label: "**avian3d::collider​_​tree::update::**<br/>**update​_​solver​_​body​_​aabbs#lt;avian3d::**<br/>**collision::collider::parry::**<br/>**Collider#gt;**<br/>按物理结果更新活跃刚体的碰撞边界。" }
+  n4@{ shape: rounded, label: "**update​_​solver​_​body​_​aabbs**<br/>按物理结果更新活跃刚体的碰撞边界。" }
   class n4 node_system
-  n5@{ shape: rounded, label: "**avian3d::collider​_​tree::update::**<br/>**clear​_​moved​_​proxies**<br/>清空本轮广相使用的移动代理目录。" }
+  n5@{ shape: rounded, label: "**clear​_​moved​_​proxies**<br/>清空本轮广相使用的移动代理目录。" }
   class n5 node_system
   n0 e0@-->|"先于"| n1
   class e0 edge_order

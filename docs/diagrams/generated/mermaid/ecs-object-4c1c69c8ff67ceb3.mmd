@@ -38,11 +38,11 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**EguiPixelsPerPoint**<br/>在渲染世界保存 Egui 当前每逻辑点对应的<br/>物理像素数" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​egui::render::systems::prepare​_​**<br/>**egui​_​transforms​_​system**<br/>上传 Egui 屏幕变换缓冲。" }
+  n1@{ shape: rounded, label: "**prepare​_​egui​_​transforms​_​system**<br/>上传 Egui 屏幕变换缓冲。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​egui::render::systems::prepare​_​**<br/>**egui​_​render​_​target​_​data​_​system**<br/>准备 Egui 顶点索引和裁剪绘制命令。" }
+  n2@{ shape: rounded, label: "**prepare​_​egui​_​render​_​target​_​data​_​**<br/>**system**<br/>准备 Egui 顶点索引和裁剪绘制命令。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​egui::render::systems::prepare​_​**<br/>**egui​_​transforms​_​system**<br/>上传 Egui 屏幕变换缓冲。" }
+  n3@{ shape: rounded, label: "**prepare​_​egui​_​transforms​_​system**<br/>上传 Egui 屏幕变换缓冲。" }
   class n3 node_system
   n0 e0@--> n1
   class e0 edge_read

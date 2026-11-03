@@ -42,44 +42,44 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​pbr::cluster::gpu::prepare​_​**<br/>**clustering​_​bind​_​groups**<br/>为视图的聚簇计算与光栅阶段绑定工作缓冲。" }
+  n0@{ shape: rounded, label: "**prepare​_​clustering​_​bind​_​groups**<br/>为视图的聚簇计算与光栅阶段绑定工作缓冲。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**cluster::gpu::**<br/>**ViewGpuClusteringBuffers**<br/>保存单个视图的 GPU 聚簇工作缓冲。" }
+  n1@{ shape: rounded, label: "**ViewGpuClusteringBuffers**<br/>保存单个视图的 GPU 聚簇工作缓冲。" }
   class n1 node_component
-  n2@{ shape: cyl, label: "**cluster::gpu::**<br/>**ClusteringZSlicingPipeline**<br/>描述聚簇深度切片计算的着色接口。" }
+  n2@{ shape: cyl, label: "**ClusteringZSlicingPipeline**<br/>描述聚簇深度切片计算的着色接口。" }
   class n2 node_resource
-  n3@{ shape: cyl, label: "**cluster::GlobalClusterableObjectMeta**<br/>维护跨视图的聚簇光源缓冲与对象索引。" }
+  n3@{ shape: cyl, label: "**GlobalClusterableObjectMeta**<br/>维护跨视图的聚簇光源缓冲与对象索引。" }
   class n3 node_resource
-  n4@{ shape: rounded, label: "**cluster::gpu::**<br/>**ViewClusteringBindGroups**<br/>保存视图各 GPU 聚簇通道的绑定组。" }
+  n4@{ shape: rounded, label: "**ViewClusteringBindGroups**<br/>保存视图各 GPU 聚簇通道的绑定组。" }
   class n4 node_component
   n5@{ shape: lin-rect, label: "**PrepareBindGroups**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
   class n5 node_system_set
   class n5 external_node
-  n6@{ shape: cyl, label: "**decal::clustered::DecalsBuffer**<br/>保存准备上传的聚簇贴花 GPU 数据。" }
+  n6@{ shape: cyl, label: "**DecalsBuffer**<br/>保存准备上传的聚簇贴花 GPU 数据。" }
   class n6 node_resource
-  n7@{ shape: cyl, label: "**cluster::gpu::**<br/>**ClusteringRasterPipeline**<br/>描述聚簇光栅化的计数和填充接口。" }
+  n7@{ shape: cyl, label: "**ClusteringRasterPipeline**<br/>描述聚簇光栅化的计数和填充接口。" }
   class n7 node_resource
-  n8@{ shape: cyl, label: "**bevy​_​render::render​_​resource::**<br/>**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
+  n8@{ shape: cyl, label: "**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
   class n8 node_resource
   class n8 external_node
-  n9@{ shape: rounded, label: "**cluster::ViewClusterBindings**<br/>提供视图聚簇索引和偏移的绑定数据。" }
+  n9@{ shape: rounded, label: "**ViewClusterBindings**<br/>提供视图聚簇索引和偏移的绑定数据。" }
   class n9 node_component
-  n10@{ shape: cyl, label: "**cluster::gpu::**<br/>**ClusteringAllocationPipeline**<br/>描述聚簇列表分配计算的着色接口。" }
+  n10@{ shape: cyl, label: "**ClusteringAllocationPipeline**<br/>描述聚簇列表分配计算的着色接口。" }
   class n10 node_resource
-  n11@{ shape: cyl, label: "**bevy​_​render::view::ViewUniforms**<br/>来自crate:bevy​_​render ↗：汇集全部视图<br/>的动态 Uniform 数据。" }
+  n11@{ shape: cyl, label: "**ViewUniforms**<br/>来自crate:bevy​_​render ↗：汇集全部视图<br/>的动态 Uniform 数据。" }
   class n11 node_resource
   class n11 external_node
-  n12@{ shape: cyl, label: "**bevy​_​render::renderer::RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
+  n12@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
   class n12 node_resource
   class n12 external_node
-  n13@{ shape: cyl, label: "**light​_​probe::LightProbesBuffer**<br/>向 GPU 提供场景光照探针数据。" }
+  n13@{ shape: cyl, label: "**LightProbesBuffer**<br/>向 GPU 提供场景光照探针数据。" }
   class n13 node_resource
-  n14@{ shape: cyl, label: "**render::light::LightMeta**<br/>汇集各视图的 GPU 光照 Uniform 数据。" }
+  n14@{ shape: cyl, label: "**LightMeta**<br/>汇集各视图的 GPU 光照 Uniform 数据。" }
   class n14 node_resource
-  n15@{ shape: rounded, label: "**bevy​_​render::view::ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
+  n15@{ shape: rounded, label: "**ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
   class n15 node_component
   class n15 external_node
-  n16@{ shape: rounded, label: "**bevy​_​pbr::cluster::gpu​_​clustering​_​**<br/>**is​_​enabled**<br/>判断常规更新是否使用 GPU 聚簇。" }
+  n16@{ shape: rounded, label: "**gpu​_​clustering​_​is​_​enabled**<br/>判断常规更新是否使用 GPU 聚簇。" }
   class n16 node_system
   n1 e0@--> n0
   class e0 edge_read

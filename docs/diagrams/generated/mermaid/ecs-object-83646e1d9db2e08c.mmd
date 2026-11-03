@@ -36,9 +36,9 @@ flowchart LR
   classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​animation::AnimatedBy**<br/>把动画目标连接到驱动它的<br/>AnimationPlayer 实体" }
+  n0@{ shape: rounded, label: "**AnimatedBy**<br/>把动画目标连接到驱动它的<br/>AnimationPlayer 实体" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​animation::animate​_​targets**<br/>评估动画图并把结果应用到动画目标。" }
+  n1@{ shape: rounded, label: "**animate​_​targets**<br/>评估动画图并把结果应用到动画目标。" }
   class n1 node_system
   n0 e0@--> n1
   class e0 edge_read

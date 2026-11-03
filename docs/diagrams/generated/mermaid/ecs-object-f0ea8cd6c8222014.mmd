@@ -40,14 +40,14 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​render::view::window::**<br/>**screenshot::init​_​screenshot​_​to​_​**<br/>**screen​_​pipeline**<br/>建立把截图纹理复制到屏幕的管线资源。" }
+  n0@{ shape: rounded, label: "**init​_​screenshot​_​to​_​screen​_​pipeline**<br/>建立把截图纹理复制到屏幕的管线资源。" }
   class n0 node_system
-  n1@{ shape: fr-rect, label: "**view::window::screenshot::**<br/>**ScreenshotPlugin**<br/>处理截图请求与图像回传。" }
+  n1@{ shape: fr-rect, label: "**ScreenshotPlugin**<br/>处理截图请求与图像回传。" }
   class n1 node_plugin
-  n2@{ shape: cyl, label: "**bevy​_​asset::AssetServer**<br/>来自crate:bevy​_​asset ↗：加载资产并追<br/>踪加载状态。" }
+  n2@{ shape: cyl, label: "**AssetServer**<br/>来自crate:bevy​_​asset ↗：加载资产并追<br/>踪加载状态。" }
   class n2 node_resource
   class n2 external_node
-  n3@{ shape: cyl, label: "**view::window::screenshot::**<br/>**ScreenshotToScreenPipeline**<br/>提供截图结果回写屏幕的着色接口。" }
+  n3@{ shape: cyl, label: "**ScreenshotToScreenPipeline**<br/>提供截图结果回写屏幕的着色接口。" }
   class n3 node_resource
   n1 e0@-->|"调用"| n0
   class e0 edge_registration

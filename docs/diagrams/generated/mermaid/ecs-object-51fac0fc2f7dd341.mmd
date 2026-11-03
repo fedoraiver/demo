@@ -38,11 +38,11 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**light​_​probe::generate::**<br/>**IntermediateTextures**<br/>缓存环境贴图生成过程的中间纹理。" }
+  n0@{ shape: rounded, label: "**IntermediateTextures**<br/>缓存环境贴图生成过程的中间纹理。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​pbr::light​_​probe::generate::**<br/>**prepare​_​generated​_​environment​_​map​_​**<br/>**intermediate​_​textures**<br/>按源立方图尺寸分配完整 mip 链中间纹理。" }
+  n1@{ shape: rounded, label: "**prepare​_​generated​_​environment​_​map​_​**<br/>**intermediate​_​textures**<br/>按源立方图尺寸分配完整 mip 链中间纹理。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​pbr::light​_​probe::generate::**<br/>**prepare​_​generated​_​environment​_​map​_​**<br/>**bind​_​groups**<br/>为环境图各 mip 的降采样和卷积建立绑定。" }
+  n2@{ shape: rounded, label: "**prepare​_​generated​_​environment​_​map​_​**<br/>**bind​_​groups**<br/>为环境图各 mip 的降采样和卷积建立绑定。" }
   class n2 node_system
   n1 e0@-->|"插入"| n0
   class e0 edge_write

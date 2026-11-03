@@ -39,7 +39,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: lin-rect, label: "**CameraUpdateSystems**<br/>统一更新相机目标、视口与投影计算结果。" }
   class n0 node_system_set
-  n1@{ shape: rounded, label: "**bevy​_​render::camera::camera​_​system**<br/>来自crate:bevy​_​render ↗：响应目标尺寸<br/>变化并更新相机投影。" }
+  n1@{ shape: rounded, label: "**camera​_​system**<br/>来自crate:bevy​_​render ↗：响应目标尺寸<br/>变化并更新相机投影。" }
   class n1 node_system
   class n1 external_node
   n0 e0@-->|"集合成员"| n1

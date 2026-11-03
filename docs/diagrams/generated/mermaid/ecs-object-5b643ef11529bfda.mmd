@@ -38,11 +38,11 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**#lt;bevy​_​light::gizmos::**<br/>**LightGizmoPlugin as bevy​_​app::**<br/>**plugin::Plugin#gt;::build::{{closure}}**<br/>判断是否绘制全部光源调试形状。" }
+  n0@{ shape: rounded, label: "**build::{{closure}}**<br/>判断是否绘制全部光源调试形状。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**bevy​_​light::gizmos::draw​_​all​_​lights**<br/>按配置颜色模式绘制全部灯光调试图形。" }
+  n1@{ shape: rounded, label: "**draw​_​all​_​lights**<br/>按配置颜色模式绘制全部灯光调试图形。" }
   class n1 node_system
-  n2@{ shape: cyl, label: "**config::GizmoConfigStore**<br/>来自crate:bevy​_​gizmos ↗：按配置组保存<br/>调试图元绘制设置。" }
+  n2@{ shape: cyl, label: "**GizmoConfigStore**<br/>来自crate:bevy​_​gizmos ↗：按配置组保存<br/>调试图元绘制设置。" }
   class n2 node_resource
   class n2 external_node
   n0 e0@-->|"运行条件"| n1

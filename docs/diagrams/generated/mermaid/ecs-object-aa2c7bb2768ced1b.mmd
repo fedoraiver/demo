@@ -40,39 +40,39 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**scrollbar::ScrollbarThumb**<br/>标识滚动条可拖动滑块。" }
+  n0@{ shape: rounded, label: "**ScrollbarThumb**<br/>标识滚动条可拖动滑块。" }
   class n0 node_component
-  n1@{ shape: hex, label: "**bevy​_​ui​_​widgets::scrollbar::**<br/>**scrollbar​_​on​_​pointer​_​down**<br/>点击滚动条轨道时翻动一页。" }
+  n1@{ shape: hex, label: "**scrollbar​_​on​_​pointer​_​down**<br/>点击滚动条轨道时翻动一页。" }
   class n1 node_observer
-  n2@{ shape: hex, label: "**bevy​_​ui​_​widgets::scrollbar::**<br/>**scrollbar​_​on​_​drag​_​start**<br/>记录滚动条拖动的起始位置。" }
+  n2@{ shape: hex, label: "**scrollbar​_​on​_​drag​_​start**<br/>记录滚动条拖动的起始位置。" }
   class n2 node_observer
-  n3@{ shape: hex, label: "**bevy​_​ui​_​widgets::scrollbar::**<br/>**scrollbar​_​on​_​drag​_​start**<br/>记录滚动条拖动的起始位置。" }
+  n3@{ shape: hex, label: "**scrollbar​_​on​_​drag​_​start**<br/>记录滚动条拖动的起始位置。" }
   class n3 node_observer
-  n4@{ shape: hex, label: "**bevy​_​ui​_​widgets::scrollbar::**<br/>**scrollbar​_​on​_​drag​_​cancel**<br/>取消滚动条滑块的拖动状态。" }
+  n4@{ shape: hex, label: "**scrollbar​_​on​_​drag​_​cancel**<br/>取消滚动条滑块的拖动状态。" }
   class n4 node_observer
-  n5@{ shape: hex, label: "**bevy​_​ui​_​widgets::scrollbar::**<br/>**scrollbar​_​on​_​drag**<br/>随滑块拖动更新目标滚动位置。" }
+  n5@{ shape: hex, label: "**scrollbar​_​on​_​drag**<br/>随滑块拖动更新目标滚动位置。" }
   class n5 node_observer
   n6@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示滚动位置并提供拖动滑块。" }
   class n6 node_entity
   class n6 external_node
-  n7@{ shape: hex, label: "**bevy​_​ui​_​widgets::scrollbar::**<br/>**scrollbar​_​on​_​drag​_​start**<br/>记录滚动条拖动的起始位置。" }
+  n7@{ shape: hex, label: "**scrollbar​_​on​_​drag​_​start**<br/>记录滚动条拖动的起始位置。" }
   class n7 node_observer
   n8@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示滚动位置并提供拖动滑块。" }
   class n8 node_entity
   class n8 external_node
-  n9@{ shape: hex, label: "**bevy​_​ui​_​widgets::scrollbar::**<br/>**scrollbar​_​on​_​drag​_​cancel**<br/>取消滚动条滑块的拖动状态。" }
+  n9@{ shape: hex, label: "**scrollbar​_​on​_​drag​_​cancel**<br/>取消滚动条滑块的拖动状态。" }
   class n9 node_observer
-  n10@{ shape: hex, label: "**bevy​_​ui​_​widgets::scrollbar::**<br/>**scrollbar​_​on​_​drag**<br/>随滑块拖动更新目标滚动位置。" }
+  n10@{ shape: hex, label: "**scrollbar​_​on​_​drag**<br/>随滑块拖动更新目标滚动位置。" }
   class n10 node_observer
-  n11@{ shape: hex, label: "**bevy​_​ui​_​widgets::scrollbar::**<br/>**scrollbar​_​on​_​drag​_​end**<br/>结束滚动条滑块拖动。" }
+  n11@{ shape: hex, label: "**scrollbar​_​on​_​drag​_​end**<br/>结束滚动条滑块拖动。" }
   class n11 node_observer
-  n12@{ shape: hex, label: "**bevy​_​ui​_​widgets::scrollbar::**<br/>**scrollbar​_​on​_​drag**<br/>随滑块拖动更新目标滚动位置。" }
+  n12@{ shape: hex, label: "**scrollbar​_​on​_​drag**<br/>随滑块拖动更新目标滚动位置。" }
   class n12 node_observer
-  n13@{ shape: hex, label: "**bevy​_​ui​_​widgets::scrollbar::**<br/>**scrollbar​_​on​_​pointer​_​down**<br/>点击滚动条轨道时翻动一页。" }
+  n13@{ shape: hex, label: "**scrollbar​_​on​_​pointer​_​down**<br/>点击滚动条轨道时翻动一页。" }
   class n13 node_observer
-  n14@{ shape: hex, label: "**bevy​_​ui​_​widgets::scrollbar::**<br/>**scrollbar​_​on​_​drag​_​end**<br/>结束滚动条滑块拖动。" }
+  n14@{ shape: hex, label: "**scrollbar​_​on​_​drag​_​end**<br/>结束滚动条滑块拖动。" }
   class n14 node_observer
-  n15@{ shape: hex, label: "**bevy​_​ui​_​widgets::scrollbar::**<br/>**scrollbar​_​on​_​pointer​_​down**<br/>点击滚动条轨道时翻动一页。" }
+  n15@{ shape: hex, label: "**scrollbar​_​on​_​pointer​_​down**<br/>点击滚动条轨道时翻动一页。" }
   class n15 node_observer
   n16@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示滚动位置并提供拖动滑块。" }
   class n16 node_entity
@@ -80,11 +80,11 @@ flowchart LR
   n17@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示滚动位置并提供拖动滑块。" }
   class n17 node_entity
   class n17 external_node
-  n18@{ shape: rounded, label: "**bevy​_​ui​_​widgets::scrollbar::update​_​**<br/>**scrollbar​_​thumb**<br/>按内容比例与滚动位置更新滚动条滑块。" }
+  n18@{ shape: rounded, label: "**update​_​scrollbar​_​thumb**<br/>按内容比例与滚动位置更新滚动条滑块。" }
   class n18 node_system
-  n19@{ shape: hex, label: "**bevy​_​ui​_​widgets::scrollbar::**<br/>**scrollbar​_​on​_​drag​_​cancel**<br/>取消滚动条滑块的拖动状态。" }
+  n19@{ shape: hex, label: "**scrollbar​_​on​_​drag​_​cancel**<br/>取消滚动条滑块的拖动状态。" }
   class n19 node_observer
-  n20@{ shape: hex, label: "**bevy​_​ui​_​widgets::scrollbar::**<br/>**scrollbar​_​on​_​drag​_​end**<br/>结束滚动条滑块拖动。" }
+  n20@{ shape: hex, label: "**scrollbar​_​on​_​drag​_​end**<br/>结束滚动条滑块拖动。" }
   class n20 node_observer
   n0 e0@-->|"存在性约束"| n1
   class e0 edge_reference

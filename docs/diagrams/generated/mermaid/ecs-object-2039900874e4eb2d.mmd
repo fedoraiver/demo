@@ -36,15 +36,15 @@ flowchart LR
   classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**probe::AtmosphereEnvironmentMapLight**<br/>启用大气生成的环境光照。" }
+  n0@{ shape: rounded, label: "**AtmosphereEnvironmentMapLight**<br/>启用大气生成的环境光照。" }
   class n0 node_component
-  n1@{ shape: hex, label: "**bevy​_​pbr::atmosphere::environment::**<br/>**on​_​insert​_​atmosphere​_​environment​_​**<br/>**map​_​light**<br/>来自crate:bevy​_​pbr ↗：为大气环境光补<br/>齐贴图生成组件。" }
+  n1@{ shape: hex, label: "**on​_​insert​_​atmosphere​_​environment​_​**<br/>**map​_​light**<br/>来自crate:bevy​_​pbr ↗：为大气环境光补<br/>齐贴图生成组件。" }
   class n1 node_observer
   class n1 external_node
-  n2@{ shape: hex, label: "**bevy​_​pbr::atmosphere::environment::**<br/>**on​_​insert​_​atmosphere​_​environment​_​**<br/>**map​_​light**<br/>来自crate:bevy​_​pbr ↗：为大气环境光补<br/>齐贴图生成组件。" }
+  n2@{ shape: hex, label: "**on​_​insert​_​atmosphere​_​environment​_​**<br/>**map​_​light**<br/>来自crate:bevy​_​pbr ↗：为大气环境光补<br/>齐贴图生成组件。" }
   class n2 node_observer
   class n2 external_node
-  n3@{ shape: hex, label: "**bevy​_​pbr::atmosphere::environment::**<br/>**on​_​insert​_​atmosphere​_​environment​_​**<br/>**map​_​light**<br/>来自crate:bevy​_​pbr ↗：为大气环境光补<br/>齐贴图生成组件。" }
+  n3@{ shape: hex, label: "**on​_​insert​_​atmosphere​_​environment​_​**<br/>**map​_​light**<br/>来自crate:bevy​_​pbr ↗：为大气环境光补<br/>齐贴图生成组件。" }
   class n3 node_observer
   class n3 external_node
   n0 e0@--> n1

@@ -38,7 +38,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: cyl, label: "**AccessibilityRequested**<br/>记录辅助技术的信息请求状态。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​winit::accessibility::should​_​**<br/>**update​_​accessibility​_​nodes**<br/>来自crate:bevy​_​winit ↗：判断是否需要<br/>更新无障碍节点。" }
+  n1@{ shape: rounded, label: "**should​_​update​_​accessibility​_​nodes**<br/>来自crate:bevy​_​winit ↗：判断是否需要<br/>更新无障碍节点。" }
   class n1 node_system
   class n1 external_node
   n0 e0@--> n1

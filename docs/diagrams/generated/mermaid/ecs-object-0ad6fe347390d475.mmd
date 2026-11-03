@@ -39,7 +39,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: notch-rect, label: "**Local · state**<br/>记住物品支撑与落地声音的报告状态。" }
   class n0 node_local
-  n1@{ shape: rounded, label: "**demo::item​_​interaction::audio​_​**<br/>**events::emit​_​parcel​_​land**<br/>识别自由物品落地并发出声音请求。" }
+  n1@{ shape: rounded, label: "**emit​_​parcel​_​land**<br/>识别自由物品落地并发出声音请求。" }
   class n1 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

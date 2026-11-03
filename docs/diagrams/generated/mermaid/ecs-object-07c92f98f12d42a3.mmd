@@ -38,26 +38,26 @@ flowchart LR
   classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**hover::PointerCaptureMap**<br/>保存指针捕获目标" }
+  n0@{ shape: cyl, label: "**PointerCaptureMap**<br/>保存指针捕获目标" }
   class n0 node_resource
-  n1@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**drag​_​end**<br/>来自crate:bevy​_​ui​_​widgets ↗：提交滑<br/>条拖动结果并释放指针。" }
+  n1@{ shape: hex, label: "**slider​_​on​_​drag​_​end**<br/>来自crate:bevy​_​ui​_​widgets ↗：提交滑<br/>条拖动结果并释放指针。" }
   class n1 node_observer
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​picking::hover::generate​_​**<br/>**hovermap**<br/>汇总拾取命中并应用指针捕获。" }
+  n2@{ shape: rounded, label: "**generate​_​hovermap**<br/>汇总拾取命中并应用指针捕获。" }
   class n2 node_system
-  n3@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**drag​_​start**<br/>来自crate:bevy​_​ui​_​widgets ↗：记录滑<br/>条拖动起点并捕获指针。" }
+  n3@{ shape: hex, label: "**slider​_​on​_​drag​_​start**<br/>来自crate:bevy​_​ui​_​widgets ↗：记录滑<br/>条拖动起点并捕获指针。" }
   class n3 node_observer
   class n3 external_node
-  n4@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**drag​_​end**<br/>来自crate:bevy​_​ui​_​widgets ↗：提交滑<br/>条拖动结果并释放指针。" }
+  n4@{ shape: hex, label: "**slider​_​on​_​drag​_​end**<br/>来自crate:bevy​_​ui​_​widgets ↗：提交滑<br/>条拖动结果并释放指针。" }
   class n4 node_observer
   class n4 external_node
-  n5@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**drag​_​end**<br/>来自crate:bevy​_​ui​_​widgets ↗：提交滑<br/>条拖动结果并释放指针。" }
+  n5@{ shape: hex, label: "**slider​_​on​_​drag​_​end**<br/>来自crate:bevy​_​ui​_​widgets ↗：提交滑<br/>条拖动结果并释放指针。" }
   class n5 node_observer
   class n5 external_node
-  n6@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**drag​_​start**<br/>来自crate:bevy​_​ui​_​widgets ↗：记录滑<br/>条拖动起点并捕获指针。" }
+  n6@{ shape: hex, label: "**slider​_​on​_​drag​_​start**<br/>来自crate:bevy​_​ui​_​widgets ↗：记录滑<br/>条拖动起点并捕获指针。" }
   class n6 node_observer
   class n6 external_node
-  n7@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**drag​_​start**<br/>来自crate:bevy​_​ui​_​widgets ↗：记录滑<br/>条拖动起点并捕获指针。" }
+  n7@{ shape: hex, label: "**slider​_​on​_​drag​_​start**<br/>来自crate:bevy​_​ui​_​widgets ↗：记录滑<br/>条拖动起点并捕获指针。" }
   class n7 node_observer
   class n7 external_node
   n1 e0@-->|"可变访问"| n0

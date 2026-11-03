@@ -42,12 +42,12 @@ flowchart LR
   class n0 node_system_set
   n1@{ shape: lin-rect, label: "**CreateViews**<br/>组织渲染数据准备与绘制排队。" }
   class n1 node_system_set
-  n2@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::mesh::**<br/>**check​_​views​_​need​_​specialization**<br/>来自crate:bevy​_​sprite​_​render ↗：检测<br/>二维视图管线配置变化并标记重建。" }
+  n2@{ shape: rounded, label: "**check​_​views​_​need​_​specialization**<br/>来自crate:bevy​_​sprite​_​render ↗：检测<br/>二维视图管线配置变化并标记重建。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​render::view::composition::**<br/>**resolve​_​composition​_​spaces**<br/>协调共享纹理相机的合成色彩空间。" }
+  n3@{ shape: rounded, label: "**resolve​_​composition​_​spaces**<br/>协调共享纹理相机的合成色彩空间。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**bevy​_​render::camera::sort​_​cameras**<br/>为同一输出目标排序相机并分配合成次序。" }
+  n4@{ shape: rounded, label: "**sort​_​cameras**<br/>为同一输出目标排序相机并分配合成次序。" }
   class n4 node_system
   n1 e0@-->|"集合成员"| n0
   class e0 edge_set_membership

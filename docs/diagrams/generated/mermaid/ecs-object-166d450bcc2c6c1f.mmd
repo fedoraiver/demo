@@ -44,66 +44,30 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  subgraph layout_card_n0[" "]
-  n0@{ shape: rounded, label: "**avian3d::spatial​_​query::shapecast**<br/>执行已启用的形状扫掠并更新命中列表。" }
+  n0@{ shape: rounded, label: "**shapecast**<br/>执行已启用的形状扫掠并更新命中列表。" }
   class n0 node_system
-  end
-  style layout_card_n0 fill:none,stroke:none
-  subgraph layout_card_n1[" "]
-  n1@{ shape: rounded, label: "**collision::collider::parry::Collider**<br/>保存 Parry 碰撞后端的几何形状。" }
+  n1@{ shape: rounded, label: "**Collider**<br/>保存 Parry 碰撞后端的几何形状。" }
   class n1 node_component
-  end
-  style layout_card_n1 fill:none,stroke:none
-  subgraph layout_card_n2[" "]
-  n2@{ shape: rounded, label: "**spatial​_​query::shape​_​caster::**<br/>**ShapeHits**<br/>保存 ShapeCaster 最近生成的命中。" }
+  n2@{ shape: rounded, label: "**ShapeHits**<br/>保存 ShapeCaster 最近生成的命中。" }
   class n2 node_component
-  end
-  style layout_card_n2 fill:none,stroke:none
-  subgraph layout_card_n3[" "]
-  n3@{ shape: cyl, label: "**spatial​_​query::diagnostics::**<br/>**SpatialQueryDiagnostics**<br/>记录射线与形状查询耗时。" }
+  n3@{ shape: cyl, label: "**SpatialQueryDiagnostics**<br/>记录射线与形状查询耗时。" }
   class n3 node_resource
-  end
-  style layout_card_n3 fill:none,stroke:none
-  subgraph layout_card_n4[" "]
-  n4@{ shape: rounded, label: "**physics​_​transform::transform::**<br/>**Position**<br/>保存刚体或碰撞体的世界位置。" }
+  n4@{ shape: rounded, label: "**Position**<br/>保存刚体或碰撞体的世界位置。" }
   class n4 node_component
-  end
-  style layout_card_n4 fill:none,stroke:none
-  subgraph layout_card_n5[" "]
   n5@{ shape: lin-rect, label: "**SpatialQuerySystems**<br/>刷新空间投射器并执行射线和形状查询。" }
   class n5 node_system_set
-  end
-  style layout_card_n5 fill:none,stroke:none
-  subgraph layout_card_n6[" "]
-  n6@{ shape: rounded, label: "**physics​_​transform::transform::**<br/>**Rotation**<br/>保存刚体或碰撞体的世界旋转。" }
+  n6@{ shape: rounded, label: "**Rotation**<br/>保存刚体或碰撞体的世界旋转。" }
   class n6 node_component
-  end
-  style layout_card_n6 fill:none,stroke:none
-  subgraph layout_card_n7[" "]
-  n7@{ shape: rounded, label: "**spatial​_​query::shape​_​caster::**<br/>**ShapeCaster**<br/>声明实体的形状投射查询。" }
+  n7@{ shape: rounded, label: "**ShapeCaster**<br/>声明实体的形状投射查询。" }
   class n7 node_component
-  end
-  style layout_card_n7 fill:none,stroke:none
-  subgraph layout_card_n8[" "]
-  n8@{ shape: rounded, label: "**collision::collider::ColliderAabb**<br/>保存碰撞体的世界轴对齐包围盒。" }
+  n8@{ shape: rounded, label: "**ColliderAabb**<br/>保存碰撞体的世界轴对齐包围盒。" }
   class n8 node_component
-  end
-  style layout_card_n8 fill:none,stroke:none
-  subgraph layout_card_n9[" "]
-  n9@{ shape: rounded, label: "**avian3d::spatial​_​query::raycast**<br/>执行已启用的射线查询并更新命中列表。" }
+  n9@{ shape: rounded, label: "**raycast**<br/>执行已启用的射线查询并更新命中列表。" }
   class n9 node_system
-  end
-  style layout_card_n9 fill:none,stroke:none
-  subgraph layout_card_n10[" "]
-  n10@{ shape: cyl, label: "**collider​_​tree::ColliderTrees**<br/>按运动类别组织碰撞体加速树。" }
+  n10@{ shape: cyl, label: "**ColliderTrees**<br/>按运动类别组织碰撞体加速树。" }
   class n10 node_resource
-  end
-  style layout_card_n10 fill:none,stroke:none
-  subgraph layout_card_n11[" "]
-  n11@{ shape: fr-rect, label: "**spatial​_​query::SpatialQueryPlugin**<br/>执行组件声明的射线和形状查询。" }
+  n11@{ shape: fr-rect, label: "**SpatialQueryPlugin**<br/>执行组件声明的射线和形状查询。" }
   class n11 node_plugin
-  end
-  style layout_card_n11 fill:none,stroke:none
   n1 e0@--> n0
   class e0 edge_read
   n0 e1@-->|"可变访问"| n2

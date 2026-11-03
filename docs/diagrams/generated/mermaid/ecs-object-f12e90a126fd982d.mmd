@@ -39,11 +39,8 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  subgraph layout_card_n0[" "]
-  n0@{ shape: rounded, label: "**bevy​_​text::FontHinting**<br/>选择字形光栅化时是否启用字体 hinting" }
+  n0@{ shape: rounded, label: "**FontHinting**<br/>选择字形光栅化时是否启用字体 hinting" }
   class n0 node_component
-  end
-  style layout_card_n0 fill:none,stroke:none
   n1@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单品牌的公司名称。" }
   class n1 node_entity
   class n1 external_node
@@ -116,7 +113,7 @@ flowchart LR
   n24@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示帧率上限的右侧调整符号。" }
   class n24 node_entity
   class n24 external_node
-  n25@{ shape: rounded, label: "**bevy​_​ui::widget::text::text​_​system**<br/>来自crate:bevy​_​ui ↗：重排变化的 UI 文<br/>本并更新字形图集。" }
+  n25@{ shape: rounded, label: "**text​_​system**<br/>来自crate:bevy​_​ui ↗：重排变化的 UI 文<br/>本并更新字形图集。" }
   class n25 node_system
   class n25 external_node
   n26@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示帮助卡片编号 03。" }
@@ -173,7 +170,7 @@ flowchart LR
   n43@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制玩法帮助按钮的入口箭头。" }
   class n43 node_entity
   class n43 external_node
-  n44@{ shape: rounded, label: "**bevy​_​ui::widget::text​_​input​_​layout::**<br/>**update​_​editable​_​text​_​layout**<br/>来自crate:bevy​_​ui ↗：刷新可编辑文本的<br/>字形布局和编辑反馈。" }
+  n44@{ shape: rounded, label: "**update​_​editable​_​text​_​layout**<br/>来自crate:bevy​_​ui ↗：刷新可编辑文本的<br/>字形布局和编辑反馈。" }
   class n44 node_system
   class n44 external_node
   n45@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示辅助功能后续扩展提示。" }
@@ -470,7 +467,7 @@ flowchart LR
   n142@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示返回操作名称。" }
   class n142 node_entity
   class n142 external_node
-  n143@{ shape: rounded, label: "**bevy​_​sprite::text2d::update​_​text2d​_​**<br/>**layout**<br/>来自crate:bevy​_​sprite ↗：重新排版变化<br/>的二维文字并准备字形。" }
+  n143@{ shape: rounded, label: "**update​_​text2d​_​layout**<br/>来自crate:bevy​_​sprite ↗：重新排版变化<br/>的二维文字并准备字形。" }
   class n143 node_system
   class n143 external_node
   n144@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示待实现的垂直同步项目名<br/>称。" }
@@ -943,7 +940,7 @@ flowchart LR
   class e41 edge_reference
   n43 e42@-->|"可能包含"| n0
   class e42 edge_reference
-  n0 e43@---> n44
+  n0 e43@--> n44
   class e43 edge_read
   n45 e44@-->|"可能包含"| n0
   class e44 edge_reference
@@ -1402,7 +1399,7 @@ flowchart LR
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
-  e3@{ curve: basis }
+  e3@{ curve: bumpY }
   e4@{ curve: basis }
   e5@{ curve: basis }
   e6@{ curve: basis }
@@ -1431,7 +1428,7 @@ flowchart LR
   e29@{ curve: basis }
   e30@{ curve: basis }
   e31@{ curve: basis }
-  e32@{ curve: basis }
+  e32@{ curve: bumpY }
   e33@{ curve: basis }
   e34@{ curve: basis }
   e35@{ curve: basis }
@@ -1442,7 +1439,6 @@ flowchart LR
   e40@{ curve: basis }
   e41@{ curve: basis }
   e42@{ curve: basis }
-  e43@{ curve: basis }
   e44@{ curve: basis }
   e45@{ curve: basis }
   e46@{ curve: basis }
@@ -1541,7 +1537,7 @@ flowchart LR
   e139@{ curve: basis }
   e140@{ curve: basis }
   e141@{ curve: basis }
-  e142@{ curve: bumpX }
+  e142@{ curve: basis }
   e143@{ curve: basis }
   e144@{ curve: basis }
   e145@{ curve: basis }
@@ -1622,7 +1618,7 @@ flowchart LR
   e220@{ curve: basis }
   e221@{ curve: basis }
   e222@{ curve: basis }
-  e223@{ curve: basis }
+  e223@{ curve: bumpY }
   e224@{ curve: basis }
   e225@{ curve: basis }
   e226@{ curve: basis }

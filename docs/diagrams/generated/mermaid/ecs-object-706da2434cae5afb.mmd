@@ -44,19 +44,19 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::**<br/>**material::prepare​_​pending​_​mesh​_​**<br/>**material2d​_​queues**<br/>轮换二维材质待就绪队列并清理失效视图。" }
+  n0@{ shape: rounded, label: "**prepare​_​pending​_​mesh​_​material2d​_​**<br/>**queues**<br/>轮换二维材质待就绪队列并清理失效视图。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::**<br/>**material::specialize​_​material2d​_​**<br/>**meshes**<br/>为可见二维网格重建失效的材质专用化。" }
+  n1@{ shape: rounded, label: "**specialize​_​material2d​_​meshes**<br/>为可见二维网格重建失效的材质专用化。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​render::view::ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
+  n2@{ shape: rounded, label: "**ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
   class n2 node_component
   class n2 external_node
-  n3@{ shape: fr-rect, label: "**mesh2d::mesh::Mesh2dRenderPlugin**<br/>准备二维网格实例和批处理管线。" }
+  n3@{ shape: fr-rect, label: "**Mesh2dRenderPlugin**<br/>准备二维网格实例和批处理管线。" }
   class n3 node_plugin
   n4@{ shape: lin-rect, label: "**Specialize**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
   class n4 node_system_set
   class n4 external_node
-  n5@{ shape: cyl, label: "**mesh2d::material::**<br/>**PendingMeshMaterial2dQueues**<br/>保留等待材质加载的二维网格绘制任务。" }
+  n5@{ shape: cyl, label: "**PendingMeshMaterial2dQueues**<br/>保留等待材质加载的二维网格绘制任务。" }
   class n5 node_resource
   n0 e0@-->|"先于"| n1
   class e0 edge_order

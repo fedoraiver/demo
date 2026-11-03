@@ -42,11 +42,11 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​ui::widget::text​_​input​_​layout::**<br/>**sync​_​editable​_​text​_​viewports**<br/>在文本编辑前同步可编辑区域的视口。" }
+  n0@{ shape: rounded, label: "**sync​_​editable​_​text​_​viewports**<br/>在文本编辑前同步可编辑区域的视口。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**bevy​_​ui::ComputedNode**<br/>保存 UI 布局计算后的物理尺寸。" }
+  n1@{ shape: rounded, label: "**ComputedNode**<br/>保存 UI 布局计算后的物理尺寸。" }
   class n1 node_component
-  n2@{ shape: rounded, label: "**editing::EditableText**<br/>来自crate:bevy​_​text ↗：持有 Parley<br/>编辑器、文本、光标及待应用编辑操作" }
+  n2@{ shape: rounded, label: "**EditableText**<br/>来自crate:bevy​_​text ↗：持有 Parley<br/>编辑器、文本、光标及待应用编辑操作" }
   class n2 node_component
   class n2 external_node
   n3@{ shape: lin-rect, label: "**EditableTextSystems**<br/>来自crate:bevy​_​text ↗：统一应用可编辑<br/>文字的待处理操作。" }
@@ -54,10 +54,10 @@ flowchart LR
   class n3 external_node
   n4@{ shape: lin-rect, label: "**Layout**<br/>组织界面交互、布局与堆叠更新。" }
   class n4 node_system_set
-  n5@{ shape: rounded, label: "**bevy​_​ui​_​widgets::text​_​input::text​_​**<br/>**input​_​autoscroll​_​system**<br/>来自crate:bevy​_​ui​_​widgets ↗：在拖选<br/>越出文字视口时自动滚动。" }
+  n5@{ shape: rounded, label: "**text​_​input​_​autoscroll​_​system**<br/>来自crate:bevy​_​ui​_​widgets ↗：在拖选<br/>越出文字视口时自动滚动。" }
   class n5 node_system
   class n5 external_node
-  n6@{ shape: fr-rect, label: "**bevy​_​ui::UiPlugin**<br/>建立界面布局与内容更新基础。" }
+  n6@{ shape: fr-rect, label: "**UiPlugin**<br/>建立界面布局与内容更新基础。" }
   class n6 node_plugin
   n1 e0@--> n0
   class e0 edge_read

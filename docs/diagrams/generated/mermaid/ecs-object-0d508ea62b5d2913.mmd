@@ -38,14 +38,14 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**render::fog::FogMeta**<br/>汇集各视图可上传的雾 Uniform 数据。" }
+  n0@{ shape: cyl, label: "**FogMeta**<br/>汇集各视图可上传的雾 Uniform 数据。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​pbr::render::mesh​_​view​_​**<br/>**bindings::prepare​_​mesh​_​view​_​bind​_​**<br/>**groups**<br/>为视图绑定光照、阴影及各可选渲染效果资<br/>源。" }
+  n1@{ shape: rounded, label: "**prepare​_​mesh​_​view​_​bind​_​groups**<br/>为视图绑定光照、阴影及各可选渲染效果资<br/>源。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​render::init​_​gpu​_​resource#lt;bevy​_​**<br/>**pbr::render::fog::FogMeta#gt;**<br/>来自crate:bevy​_​render ↗：构造并插入渲<br/>染所需资源。" }
+  n2@{ shape: rounded, label: "**init​_​gpu​_​resource**<br/>来自crate:bevy​_​render ↗：构造并插入渲<br/>染所需资源。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​pbr::render::fog::prepare​_​fog**<br/>转换并上传各视图的距离雾参数。" }
+  n3@{ shape: rounded, label: "**prepare​_​fog**<br/>转换并上传各视图的距离雾参数。" }
   class n3 node_system
   n0 e0@--> n1
   class e0 edge_read

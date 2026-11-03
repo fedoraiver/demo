@@ -38,12 +38,12 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**demo::game​_​flow::gameplay​_​running**<br/>独立功能测试没有应用状态；真实游戏只在<br/>Running 推进玩法。" }
+  n0@{ shape: rounded, label: "**gameplay​_​running**<br/>独立功能测试没有应用状态；真实游戏只在<br/>Running 推进玩法。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**bevy::bevy​_​state::state::State#lt;game​_​**<br/>**flow::AppState#gt;**<br/>来自crate:bevy​_​state ↗：保存某个状态<br/>类型当前生效的值" }
+  n1@{ shape: cyl, label: "**State#lt;AppState#gt;**<br/>来自crate:bevy​_​state ↗：保存某个状态<br/>类型当前生效的值" }
   class n1 node_resource
   class n1 external_node
-  n2@{ shape: rounded, label: "**demo::character​_​animation::**<br/>**grounding::compensate​_​courier​_​sole​_​**<br/>**penetration**<br/>来自character​_​animation ↗：方向混合<br/>可能把弯腿插值成更直的腿；逐帧按真实鞋底<br/>边界修正最终视觉高度。" }
+  n2@{ shape: rounded, label: "**compensate​_​courier​_​sole​_​penetration**<br/>来自character​_​animation ↗：方向混合<br/>可能把弯腿插值成更直的腿；逐帧按真实鞋底<br/>边界修正最终视觉高度。" }
   class n2 node_system
   class n2 external_node
   n1 e0@--> n0

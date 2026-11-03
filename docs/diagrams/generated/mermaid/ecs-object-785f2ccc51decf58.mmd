@@ -39,7 +39,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: notch-rect, label: "**Local · previous​_​len**<br/>按上次 UI 阴影项数量预留输出空间。" }
   class n0 node_local
-  n1@{ shape: rounded, label: "**bevy​_​ui​_​render::box​_​shadow::prepare​_​**<br/>**shadows**<br/>生成并上传 UI 阴影的裁剪几何。" }
+  n1@{ shape: rounded, label: "**prepare​_​shadows**<br/>生成并上传 UI 阴影的裁剪几何。" }
   class n1 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

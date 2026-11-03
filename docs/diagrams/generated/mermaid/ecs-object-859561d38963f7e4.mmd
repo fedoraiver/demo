@@ -40,7 +40,7 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**components::transform::**<br/>**TransformTreeChanged**<br/>以变化检测标记存在变换变化的层级分支" }
+  n0@{ shape: rounded, label: "**TransformTreeChanged**<br/>以变化检测标记存在变换变化的层级分支" }
   class n0 node_component
   n1@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：在菜单岸边布置弯曲棕榈树。" }
   class n1 node_entity
@@ -48,7 +48,7 @@ flowchart LR
   n2@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：在菜单舞台展示木箱。" }
   class n2 node_entity
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​transform::systems::parallel::**<br/>**propagate​_​parent​_​transforms**<br/>沿父子层级并行合成世界变换。" }
+  n3@{ shape: rounded, label: "**propagate​_​parent​_​transforms**<br/>沿父子层级并行合成世界变换。" }
   class n3 node_system
   n4@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：为菜单展示舞台提供带阴影的日<br/>光。" }
   class n4 node_entity
@@ -77,7 +77,7 @@ flowchart LR
   n12@{ shape: rounded, label: "**spawn​_​lighting · 创建模板**<br/>来自scene​_​assembly ↗：为玩法海岛创建<br/>会话日光。" }
   class n12 node_entity
   class n12 external_node
-  n13@{ shape: rounded, label: "**bevy​_​transform::systems::parallel::**<br/>**propagate​_​parent​_​transforms**<br/>沿父子层级并行合成世界变换。" }
+  n13@{ shape: rounded, label: "**propagate​_​parent​_​transforms**<br/>沿父子层级并行合成世界变换。" }
   class n13 node_system
   n14@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：组织主菜单独立展示舞台。" }
   class n14 node_entity
@@ -85,9 +85,9 @@ flowchart LR
   n15@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：显示菜单舞台的海岛地形。" }
   class n15 node_entity
   class n15 external_node
-  n16@{ shape: rounded, label: "**bevy​_​transform::systems::mark​_​dirty​_​**<br/>**trees**<br/>沿祖先链标记需要重算变换的子树。" }
+  n16@{ shape: rounded, label: "**mark​_​dirty​_​trees**<br/>沿祖先链标记需要重算变换的子树。" }
   class n16 node_system
-  n17@{ shape: rounded, label: "**bevy​_​transform::systems::mark​_​dirty​_​**<br/>**trees**<br/>沿祖先链标记需要重算变换的子树。" }
+  n17@{ shape: rounded, label: "**mark​_​dirty​_​trees**<br/>沿祖先链标记需要重算变换的子树。" }
   class n17 node_system
   n18@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：在菜单舞台铺设野草地块。" }
   class n18 node_entity
@@ -110,9 +110,9 @@ flowchart LR
   n24@{ shape: rounded, label: "**spawn​_​actors · 创建模板**<br/>来自scene​_​assembly ↗：挂接可搬运物品<br/>的美术子场景。" }
   class n24 node_entity
   class n24 external_node
-  n25@{ shape: rounded, label: "**bevy​_​transform::systems::mark​_​dirty​_​**<br/>**trees**<br/>沿祖先链标记需要重算变换的子树。" }
+  n25@{ shape: rounded, label: "**mark​_​dirty​_​trees**<br/>沿祖先链标记需要重算变换的子树。" }
   class n25 node_system
-  n26@{ shape: rounded, label: "**bevy​_​transform::systems::parallel::**<br/>**propagate​_​parent​_​transforms**<br/>沿父子层级并行合成世界变换。" }
+  n26@{ shape: rounded, label: "**propagate​_​parent​_​transforms**<br/>沿父子层级并行合成世界变换。" }
   class n26 node_system
   n27@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：显示菜单海岛周围的海水。" }
   class n27 node_entity

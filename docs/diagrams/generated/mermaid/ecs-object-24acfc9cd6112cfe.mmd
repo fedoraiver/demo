@@ -44,37 +44,73 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​pbr::volumetric​_​fog::render::**<br/>**prepare​_​volumetric​_​fog​_​uniforms**<br/>把各视图和雾体积组合转换为体积雾<br/>Uniform。" }
+  subgraph layout_card_n0[" "]
+  n0@{ shape: rounded, label: "**prepare​_​volumetric​_​fog​_​uniforms**<br/>把各视图和雾体积组合转换为体积雾<br/>Uniform。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**bevy​_​render::renderer::RenderQueue**<br/>来自crate:bevy​_​render ↗：将资源写入和<br/>命令异步提交给 GPU。" }
+  end
+  style layout_card_n0 fill:none,stroke:none
+  subgraph layout_card_n1[" "]
+  n1@{ shape: cyl, label: "**RenderQueue**<br/>来自crate:bevy​_​render ↗：将资源写入和<br/>命令异步提交给 GPU。" }
   class n1 node_resource
   class n1 external_node
-  n2@{ shape: rounded, label: "**volumetric::VolumetricFog**<br/>来自crate:bevy​_​light ↗：为三维相机启<br/>用体积雾和光束渲染。" }
+  end
+  style layout_card_n1 fill:none,stroke:none
+  subgraph layout_card_n2[" "]
+  n2@{ shape: rounded, label: "**VolumetricFog**<br/>来自crate:bevy​_​light ↗：为三维相机启<br/>用体积雾和光束渲染。" }
   class n2 node_component
   class n2 external_node
+  end
+  style layout_card_n2 fill:none,stroke:none
+  subgraph layout_card_n3[" "]
   n3@{ shape: lin-rect, label: "**Prepare**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
   class n3 node_system_set
   class n3 external_node
-  n4@{ shape: cyl, label: "**volumetric​_​fog::render::**<br/>**VolumetricFogUniformBuffer**<br/>向 GPU 提供体积雾的视图参数。" }
+  end
+  style layout_card_n3 fill:none,stroke:none
+  subgraph layout_card_n4[" "]
+  n4@{ shape: cyl, label: "**VolumetricFogUniformBuffer**<br/>向 GPU 提供体积雾的视图参数。" }
   class n4 node_resource
-  n5@{ shape: cyl, label: "**bevy​_​render::renderer::RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
+  end
+  style layout_card_n4 fill:none,stroke:none
+  subgraph layout_card_n5[" "]
+  n5@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
   class n5 node_resource
   class n5 external_node
-  n6@{ shape: rounded, label: "**volumetric​_​fog::render::**<br/>**ViewVolumetricFog**<br/>保存视图中各雾体的参数位置与绘制状态。" }
+  end
+  style layout_card_n5 fill:none,stroke:none
+  subgraph layout_card_n6[" "]
+  n6@{ shape: rounded, label: "**ViewVolumetricFog**<br/>保存视图中各雾体的参数位置与绘制状态。" }
   class n6 node_component
-  n7@{ shape: rounded, label: "**volumetric::FogVolume**<br/>来自crate:bevy​_​light ↗：定义可变换的<br/>体积雾区域及介质参数。" }
+  end
+  style layout_card_n6 fill:none,stroke:none
+  subgraph layout_card_n7[" "]
+  n7@{ shape: rounded, label: "**FogVolume**<br/>来自crate:bevy​_​light ↗：定义可变换的<br/>体积雾区域及介质参数。" }
   class n7 node_component
   class n7 external_node
-  n8@{ shape: fr-rect, label: "**volumetric​_​fog::VolumetricFogPlugin**<br/>提供场景体积雾渲染。" }
+  end
+  style layout_card_n7 fill:none,stroke:none
+  subgraph layout_card_n8[" "]
+  n8@{ shape: fr-rect, label: "**VolumetricFogPlugin**<br/>提供场景体积雾渲染。" }
   class n8 node_plugin
-  n9@{ shape: rounded, label: "**components::global​_​transform::**<br/>**GlobalTransform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>合并祖先变换后的世界空间仿射变换" }
+  end
+  style layout_card_n8 fill:none,stroke:none
+  subgraph layout_card_n9[" "]
+  n9@{ shape: rounded, label: "**GlobalTransform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>合并祖先变换后的世界空间仿射变换" }
   class n9 node_component
   class n9 external_node
-  n10@{ shape: rounded, label: "**bevy​_​render::view::ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
+  end
+  style layout_card_n9 fill:none,stroke:none
+  subgraph layout_card_n10[" "]
+  n10@{ shape: rounded, label: "**ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
   class n10 node_component
   class n10 external_node
+  end
+  style layout_card_n10 fill:none,stroke:none
+  subgraph layout_card_n11[" "]
   n11@{ shape: notch-rect, label: "**Local · local​_​from​_​world​_​matrices**<br/>为各雾体预计算世界到局部空间的逆变换。" }
   class n11 node_local
+  end
+  style layout_card_n11 fill:none,stroke:none
   n1 e0@--> n0
   class e0 edge_read
   n2 e1@--> n0

@@ -38,49 +38,49 @@ flowchart LR
   classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**dynamics::rigid​_​body::**<br/>**RigidBodyDisabled**<br/>暂停刚体求解和附着关节。" }
+  n0@{ shape: rounded, label: "**RigidBodyDisabled**<br/>暂停刚体求解和附着关节。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**avian3d::dynamics::solver::plugin::**<br/>**prepare​_​contact​_​constraints**<br/>从有效接触流形生成本轮求解约束。" }
+  n1@{ shape: rounded, label: "**prepare​_​contact​_​constraints**<br/>从有效接触流形生成本轮求解约束。" }
   class n1 node_system
-  n2@{ shape: hex, label: "**avian3d::dynamics::solver::solver​_​**<br/>**body::plugin::{impl#35;0}::build::**<br/>**{closure#35;1}**<br/>在实体启用时恢复刚体求解缓存。" }
+  n2@{ shape: hex, label: "**build::{closure#35;1}**<br/>在实体启用时恢复刚体求解缓存。" }
   class n2 node_observer
-  n3@{ shape: hex, label: "**avian3d::dynamics::solver::solver​_​**<br/>**body::plugin::{impl#35;0}::build::**<br/>**{closure#35;1}**<br/>在实体启用时恢复刚体求解缓存。" }
+  n3@{ shape: hex, label: "**build::{closure#35;1}**<br/>在实体启用时恢复刚体求解缓存。" }
   class n3 node_observer
-  n4@{ shape: hex, label: "**avian3d::collider​_​tree::update::add​_​**<br/>**to​_​tree​_​on**<br/>将可用碰撞体加入空间树。" }
+  n4@{ shape: hex, label: "**add​_​to​_​tree​_​on**<br/>将可用碰撞体加入空间树。" }
   class n4 node_observer
-  n5@{ shape: hex, label: "**avian3d::dynamics::solver::solver​_​**<br/>**body::plugin::on​_​insert​_​rigid​_​body**<br/>按刚体类型更新求解器体缓存。" }
+  n5@{ shape: hex, label: "**on​_​insert​_​rigid​_​body**<br/>按刚体类型更新求解器体缓存。" }
   class n5 node_observer
-  n6@{ shape: hex, label: "**avian3d::dynamics::solver::solver​_​**<br/>**body::plugin::{impl#35;0}::build::**<br/>**{closure#35;2}**<br/>在刚体唤醒时恢复求解器体。" }
+  n6@{ shape: hex, label: "**build::{closure#35;2}**<br/>在刚体唤醒时恢复求解器体。" }
   class n6 node_observer
-  n7@{ shape: hex, label: "**avian3d::dynamics::solver::islands::**<br/>**{impl#35;0}::build::{closure#35;1}**<br/>在实体启用时恢复刚体物理岛节点。" }
+  n7@{ shape: hex, label: "**build::{closure#35;1}**<br/>在实体启用时恢复刚体物理岛节点。" }
   class n7 node_observer
-  n8@{ shape: hex, label: "**avian3d::dynamics::solver::solver​_​**<br/>**body::plugin::on​_​insert​_​rigid​_​body**<br/>按刚体类型更新求解器体缓存。" }
+  n8@{ shape: hex, label: "**on​_​insert​_​rigid​_​body**<br/>按刚体类型更新求解器体缓存。" }
   class n8 node_observer
-  n9@{ shape: hex, label: "**avian3d::dynamics::solver::islands::**<br/>**{impl#35;0}::build::{closure#35;1}**<br/>在实体启用时恢复刚体物理岛节点。" }
+  n9@{ shape: hex, label: "**build::{closure#35;1}**<br/>在实体启用时恢复刚体物理岛节点。" }
   class n9 node_observer
-  n10@{ shape: hex, label: "**avian3d::collider​_​tree::update::add​_​**<br/>**to​_​tree​_​on**<br/>将可用碰撞体加入空间树。" }
+  n10@{ shape: hex, label: "**add​_​to​_​tree​_​on**<br/>将可用碰撞体加入空间树。" }
   class n10 node_observer
-  n11@{ shape: hex, label: "**avian3d::collider​_​tree::update::**<br/>**{impl#35;1}::build::{closure#35;2}**<br/>按刚体类型迁移碰撞体空间树。" }
+  n11@{ shape: hex, label: "**build::{closure#35;2}**<br/>按刚体类型迁移碰撞体空间树。" }
   class n11 node_observer
-  n12@{ shape: rounded, label: "**avian3d::dynamics::integrator::**<br/>**integrate​_​velocities**<br/>为活跃动态刚体积分速度与阻尼。" }
+  n12@{ shape: rounded, label: "**integrate​_​velocities**<br/>为活跃动态刚体积分速度与阻尼。" }
   class n12 node_system
-  n13@{ shape: hex, label: "**avian3d::dynamics::solver::solver​_​**<br/>**body::plugin::{impl#35;0}::build::**<br/>**{closure#35;1}**<br/>在实体启用时恢复刚体求解缓存。" }
+  n13@{ shape: hex, label: "**build::{closure#35;1}**<br/>在实体启用时恢复刚体求解缓存。" }
   class n13 node_observer
-  n14@{ shape: hex, label: "**avian3d::dynamics::solver::solver​_​**<br/>**body::plugin::{impl#35;0}::build::**<br/>**{closure#35;2}**<br/>在刚体唤醒时恢复求解器体。" }
+  n14@{ shape: hex, label: "**build::{closure#35;2}**<br/>在刚体唤醒时恢复求解器体。" }
   class n14 node_observer
-  n15@{ shape: hex, label: "**avian3d::dynamics::solver::solver​_​**<br/>**body::plugin::on​_​insert​_​rigid​_​body**<br/>按刚体类型更新求解器体缓存。" }
+  n15@{ shape: hex, label: "**on​_​insert​_​rigid​_​body**<br/>按刚体类型更新求解器体缓存。" }
   class n15 node_observer
-  n16@{ shape: rounded, label: "**avian3d::dynamics::solver::islands::**<br/>**sleeping::wake​_​islands​_​with​_​**<br/>**sleeping​_​disabled**<br/>让禁止休眠或已禁用的刚体所属岛保持清醒。" }
+  n16@{ shape: rounded, label: "**wake​_​islands​_​with​_​sleeping​_​disabled**<br/>让禁止休眠或已禁用的刚体所属岛保持清醒。" }
   class n16 node_system
-  n17@{ shape: hex, label: "**avian3d::dynamics::solver::solver​_​**<br/>**body::plugin::{impl#35;0}::build::**<br/>**{closure#35;2}**<br/>在刚体唤醒时恢复求解器体。" }
+  n17@{ shape: hex, label: "**build::{closure#35;2}**<br/>在刚体唤醒时恢复求解器体。" }
   class n17 node_observer
-  n18@{ shape: hex, label: "**avian3d::dynamics::solver::islands::**<br/>**{impl#35;0}::build::{closure#35;1}**<br/>在实体启用时恢复刚体物理岛节点。" }
+  n18@{ shape: hex, label: "**build::{closure#35;1}**<br/>在实体启用时恢复刚体物理岛节点。" }
   class n18 node_observer
-  n19@{ shape: rounded, label: "**avian3d::collision::narrow​_​phase::**<br/>**update​_​narrow​_​phase#lt;avian3d::**<br/>**collision::collider::parry::**<br/>**Collider, ()#gt;**<br/>更新窄相接触并输出碰撞变化消息。" }
+  n19@{ shape: rounded, label: "**update​_​narrow​_​phase**<br/>更新窄相接触并输出碰撞变化消息。" }
   class n19 node_system
-  n20@{ shape: hex, label: "**avian3d::collider​_​tree::update::**<br/>**{impl#35;1}::build::{closure#35;7}**<br/>同步碰撞代理的刚体禁用标志。" }
+  n20@{ shape: hex, label: "**build::{closure#35;7}**<br/>同步碰撞代理的刚体禁用标志。" }
   class n20 node_observer
-  n21@{ shape: hex, label: "**avian3d::collider​_​tree::update::add​_​**<br/>**to​_​tree​_​on**<br/>将可用碰撞体加入空间树。" }
+  n21@{ shape: hex, label: "**add​_​to​_​tree​_​on**<br/>将可用碰撞体加入空间树。" }
   class n21 node_observer
   n0 e0@-->|"存在性约束"| n1
   class e0 edge_reference

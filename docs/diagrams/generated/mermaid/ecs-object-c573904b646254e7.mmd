@@ -39,63 +39,63 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​render::view::**<br/>**ViewDepthStencilTexture**<br/>提供视图绘制的深度模板附件。" }
+  n0@{ shape: rounded, label: "**ViewDepthStencilTexture**<br/>提供视图绘制的深度模板附件。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​core​_​pipeline::prepass::node::**<br/>**late​_​prepass**<br/>来自crate:bevy​_​core​_​pipeline ↗：为遮<br/>挡剔除绘制晚期预通道。" }
+  n1@{ shape: rounded, label: "**late​_​prepass**<br/>来自crate:bevy​_​core​_​pipeline ↗：为遮<br/>挡剔除绘制晚期预通道。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​post​_​process::motion​_​blur::**<br/>**motion​_​blur**<br/>来自crate:bevy​_​post​_​process ↗：读取<br/>当前视图颜色、预通道运动矢量和深度，按快<br/>门角度及采样数执行运动模糊；采样关闭、所<br/>需纹理或管线不可用时跳过。" }
+  n2@{ shape: rounded, label: "**motion​_​blur**<br/>来自crate:bevy​_​post​_​process ↗：读取<br/>当前视图颜色、预通道运动矢量和深度，按快<br/>门角度及采样数执行运动模糊；采样关闭、所<br/>需纹理或管线不可用时跳过。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​core​_​pipeline::mip​_​generation::**<br/>**experimental::depth::prepare​_​**<br/>**downsample​_​depth​_​view​_​bind​_​groups**<br/>来自crate:bevy​_​core​_​pipeline ↗：将主<br/>视图或阴影深度绑定到降采样管线。" }
+  n3@{ shape: rounded, label: "**prepare​_​downsample​_​depth​_​view​_​bind​_​**<br/>**groups**<br/>来自crate:bevy​_​core​_​pipeline ↗：将主<br/>视图或阴影深度绑定到降采样管线。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**bevy​_​pbr::atmosphere::resources::**<br/>**prepare​_​atmosphere​_​bind​_​groups**<br/>来自crate:bevy​_​pbr ↗：为大气查找表计<br/>算和天空绘制绑定视图资源。" }
+  n4@{ shape: rounded, label: "**prepare​_​atmosphere​_​bind​_​groups**<br/>来自crate:bevy​_​pbr ↗：为大气查找表计<br/>算和天空绘制绑定视图资源。" }
   class n4 node_system
   class n4 external_node
-  n5@{ shape: rounded, label: "**bevy​_​core​_​pipeline::core​_​3d::**<br/>**prepare​_​core​_​3d​_​depth​_​textures**<br/>来自crate:bevy​_​core​_​pipeline ↗：按共<br/>享目标准备三维深度纹理与清除方式。" }
+  n5@{ shape: rounded, label: "**prepare​_​core​_​3d​_​depth​_​textures**<br/>来自crate:bevy​_​core​_​pipeline ↗：按共<br/>享目标准备三维深度纹理与清除方式。" }
   class n5 node_system
   class n5 external_node
-  n6@{ shape: rounded, label: "**bevy​_​core​_​pipeline::core​_​3d::main​_​**<br/>**transparent​_​pass​_​3d​_​node::main​_​**<br/>**transparent​_​pass​_​3d**<br/>来自crate:bevy​_​core​_​pipeline ↗：绘制<br/>三维透明物体并保护 OIT 链表状态。" }
+  n6@{ shape: rounded, label: "**main​_​transparent​_​pass​_​3d**<br/>来自crate:bevy​_​core​_​pipeline ↗：绘制<br/>三维透明物体并保护 OIT 链表状态。" }
   class n6 node_system
   class n6 external_node
-  n7@{ shape: rounded, label: "**bevy​_​core​_​pipeline::mip​_​generation::**<br/>**experimental::depth::late​_​**<br/>**downsample​_​depth**<br/>来自crate:bevy​_​core​_​pipeline ↗：更新<br/>供下一帧早期遮挡测试使用的深度金字塔。" }
+  n7@{ shape: rounded, label: "**late​_​downsample​_​depth**<br/>来自crate:bevy​_​core​_​pipeline ↗：更新<br/>供下一帧早期遮挡测试使用的深度金字塔。" }
   class n7 node_system
   class n7 external_node
-  n8@{ shape: rounded, label: "**bevy​_​core​_​pipeline::deferred::node::**<br/>**late​_​deferred​_​prepass**<br/>来自crate:bevy​_​core​_​pipeline ↗：为遮<br/>挡剔除执行晚期延迟预通道。" }
+  n8@{ shape: rounded, label: "**late​_​deferred​_​prepass**<br/>来自crate:bevy​_​core​_​pipeline ↗：为遮<br/>挡剔除执行晚期延迟预通道。" }
   class n8 node_system
   class n8 external_node
-  n9@{ shape: rounded, label: "**bevy​_​core​_​pipeline::core​_​3d::main​_​**<br/>**opaque​_​pass​_​3d​_​node::main​_​opaque​_​**<br/>**pass​_​3d**<br/>来自crate:bevy​_​core​_​pipeline ↗：绘制<br/>三维不透明、AlphaMask 与天空盒。" }
+  n9@{ shape: rounded, label: "**main​_​opaque​_​pass​_​3d**<br/>来自crate:bevy​_​core​_​pipeline ↗：绘制<br/>三维不透明、AlphaMask 与天空盒。" }
   class n9 node_system
   class n9 external_node
-  n10@{ shape: rounded, label: "**bevy​_​pbr::volumetric​_​fog::render::**<br/>**volumetric​_​fog**<br/>来自crate:bevy​_​pbr ↗：结合深度与光照<br/>逐个绘制视图中的雾体。" }
+  n10@{ shape: rounded, label: "**volumetric​_​fog**<br/>来自crate:bevy​_​pbr ↗：结合深度与光照<br/>逐个绘制视图中的雾体。" }
   class n10 node_system
   class n10 external_node
-  n11@{ shape: rounded, label: "**bevy​_​pbr::transmission::node::main​_​**<br/>**transmissive​_​pass​_​3d**<br/>来自crate:bevy​_​pbr ↗：分层复制场景颜<br/>色并绘制三维透射物体。" }
+  n11@{ shape: rounded, label: "**main​_​transmissive​_​pass​_​3d**<br/>来自crate:bevy​_​pbr ↗：分层复制场景颜<br/>色并绘制三维透射物体。" }
   class n11 node_system
   class n11 external_node
-  n12@{ shape: rounded, label: "**bevy​_​post​_​process::dof::depth​_​of​_​**<br/>**field**<br/>来自crate:bevy​_​post​_​process ↗：以两<br/>阶段全屏通道执行景深模糊。" }
+  n12@{ shape: rounded, label: "**depth​_​of​_​field**<br/>来自crate:bevy​_​post​_​process ↗：以两<br/>阶段全屏通道执行景深模糊。" }
   class n12 node_system
   class n12 external_node
-  n13@{ shape: rounded, label: "**bevy​_​core​_​pipeline::core​_​2d::main​_​**<br/>**opaque​_​pass​_​2d​_​node::main​_​opaque​_​**<br/>**pass​_​2d**<br/>来自crate:bevy​_​core​_​pipeline ↗：绘制<br/>二维不透明和 AlphaMask 阶段。" }
+  n13@{ shape: rounded, label: "**main​_​opaque​_​pass​_​2d**<br/>来自crate:bevy​_​core​_​pipeline ↗：绘制<br/>二维不透明和 AlphaMask 阶段。" }
   class n13 node_system
   class n13 external_node
-  n14@{ shape: rounded, label: "**bevy​_​core​_​pipeline::prepass::node::**<br/>**early​_​prepass**<br/>来自crate:bevy​_​core​_​pipeline ↗：绘制<br/>早期不透明与 AlphaMask 预通道。" }
+  n14@{ shape: rounded, label: "**early​_​prepass**<br/>来自crate:bevy​_​core​_​pipeline ↗：绘制<br/>早期不透明与 AlphaMask 预通道。" }
   class n14 node_system
   class n14 external_node
-  n15@{ shape: rounded, label: "**bevy​_​core​_​pipeline::oit::resolve::**<br/>**node::oit​_​resolve**<br/>来自crate:bevy​_​core​_​pipeline ↗：解析<br/>透明片元并重置 OIT 链表状态。" }
+  n15@{ shape: rounded, label: "**oit​_​resolve**<br/>来自crate:bevy​_​core​_​pipeline ↗：解析<br/>透明片元并重置 OIT 链表状态。" }
   class n15 node_system
   class n15 external_node
-  n16@{ shape: rounded, label: "**bevy​_​core​_​pipeline::mip​_​generation::**<br/>**experimental::depth::early​_​**<br/>**downsample​_​depth**<br/>来自crate:bevy​_​core​_​pipeline ↗：生成<br/>供本帧晚期遮挡测试使用的深度金字塔。" }
+  n16@{ shape: rounded, label: "**early​_​downsample​_​depth**<br/>来自crate:bevy​_​core​_​pipeline ↗：生成<br/>供本帧晚期遮挡测试使用的深度金字塔。" }
   class n16 node_system
   class n16 external_node
-  n17@{ shape: rounded, label: "**bevy​_​core​_​pipeline::deferred::node::**<br/>**early​_​deferred​_​prepass**<br/>来自crate:bevy​_​core​_​pipeline ↗：执行<br/>早期延迟预通道并保存深度结果。" }
+  n17@{ shape: rounded, label: "**early​_​deferred​_​prepass**<br/>来自crate:bevy​_​core​_​pipeline ↗：执行<br/>早期延迟预通道并保存深度结果。" }
   class n17 node_system
   class n17 external_node
-  n18@{ shape: rounded, label: "**bevy​_​core​_​pipeline::core​_​2d::main​_​**<br/>**transparent​_​pass​_​2d​_​node::main​_​**<br/>**transparent​_​pass​_​2d**<br/>来自crate:bevy​_​core​_​pipeline ↗：使用<br/>已有深度绘制二维透明阶段。" }
+  n18@{ shape: rounded, label: "**main​_​transparent​_​pass​_​2d**<br/>来自crate:bevy​_​core​_​pipeline ↗：使用<br/>已有深度绘制二维透明阶段。" }
   class n18 node_system
   class n18 external_node
-  n19@{ shape: rounded, label: "**bevy​_​core​_​pipeline::core​_​2d::**<br/>**prepare​_​core​_​2d​_​depth​_​textures**<br/>来自crate:bevy​_​core​_​pipeline ↗：为有<br/>效二维视图准备共享目标深度纹理。" }
+  n19@{ shape: rounded, label: "**prepare​_​core​_​2d​_​depth​_​textures**<br/>来自crate:bevy​_​core​_​pipeline ↗：为有<br/>效二维视图准备共享目标深度纹理。" }
   class n19 node_system
   class n19 external_node
   n0 e0@--> n1

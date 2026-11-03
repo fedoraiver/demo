@@ -44,19 +44,19 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**avian3d::dynamics::solver::solver​_​**<br/>**body::plugin::update​_​solver​_​body​_​**<br/>**angular​_​inertia**<br/>按当前朝向刷新求解器的有效逆惯量。" }
+  n0@{ shape: rounded, label: "**update​_​solver​_​body​_​angular​_​inertia**<br/>按当前朝向刷新求解器的有效逆惯量。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**dynamics::solver::solver​_​body::**<br/>**SolverBodyIndex**<br/>定位实体对应的求解器刚体。" }
+  n1@{ shape: rounded, label: "**SolverBodyIndex**<br/>定位实体对应的求解器刚体。" }
   class n1 node_component
-  n2@{ shape: rounded, label: "**physics​_​transform::transform::**<br/>**Rotation**<br/>保存刚体或碰撞体的世界旋转。" }
+  n2@{ shape: rounded, label: "**Rotation**<br/>保存刚体或碰撞体的世界旋转。" }
   class n2 node_component
-  n3@{ shape: rounded, label: "**avian3d::dynamics::integrator::**<br/>**integrate​_​positions**<br/>按子步速度积分刚体位姿增量。" }
+  n3@{ shape: rounded, label: "**integrate​_​positions**<br/>按子步速度积分刚体位姿增量。" }
   class n3 node_system
-  n4@{ shape: cyl, label: "**dynamics::solver::solver​_​body::**<br/>**SolverBodies**<br/>连续存储活跃刚体的求解状态。" }
+  n4@{ shape: cyl, label: "**SolverBodies**<br/>连续存储活跃刚体的求解状态。" }
   class n4 node_resource
-  n5@{ shape: rounded, label: "**dynamics::rigid​_​body::mass​_​**<br/>**properties::components::computed::**<br/>**ComputedAngularInertia**<br/>保存汇总后的刚体局部角惯量。" }
+  n5@{ shape: rounded, label: "**ComputedAngularInertia**<br/>保存汇总后的刚体局部角惯量。" }
   class n5 node_component
-  n6@{ shape: fr-rect, label: "**dynamics::solver::solver​_​body::**<br/>**plugin::SolverBodyPlugin**<br/>维护约束求解使用的刚体缓存。" }
+  n6@{ shape: fr-rect, label: "**SolverBodyPlugin**<br/>维护约束求解使用的刚体缓存。" }
   class n6 node_plugin
   n7@{ shape: lin-rect, label: "**Position**<br/>组织速度与位置积分阶段。" }
   class n7 node_system_set

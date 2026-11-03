@@ -40,47 +40,47 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​camera::primitives::Frustum**<br/>描述相机可见空间并参与视锥裁剪。" }
+  n0@{ shape: rounded, label: "**Frustum**<br/>描述相机可见空间并参与视锥裁剪。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​pbr::render::light::prepare​_​**<br/>**lights**<br/>来自crate:bevy​_​pbr ↗：准备视图光照参<br/>数、阴影视图和阴影贴图。" }
+  n1@{ shape: rounded, label: "**prepare​_​lights**<br/>来自crate:bevy​_​pbr ↗：准备视图光照参<br/>数、阴影视图和阴影贴图。" }
   class n1 node_system
   class n1 external_node
   n2@{ shape: rounded, label: "**spawn​_​lighting · 创建模板**<br/>来自scene​_​assembly ↗：创建可复用为玩<br/>家镜头的加载相机。" }
   class n2 node_entity
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​light::check​_​point​_​light​_​mesh​_​**<br/>**visibility**<br/>来自crate:bevy​_​light ↗：计算点光与聚<br/>光灯阴影可见的网格。" }
+  n3@{ shape: rounded, label: "**check​_​point​_​light​_​mesh​_​visibility**<br/>来自crate:bevy​_​light ↗：计算点光与聚<br/>光灯阴影可见的网格。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**bevy​_​render::camera::extract​_​cameras**<br/>来自crate:bevy​_​render ↗：把活动相机及<br/>可见实体提取到渲染世界。" }
+  n4@{ shape: rounded, label: "**extract​_​cameras**<br/>来自crate:bevy​_​render ↗：把活动相机及<br/>可见实体提取到渲染世界。" }
   class n4 node_system
   class n4 external_node
-  n5@{ shape: rounded, label: "**bevy​_​pbr::render::light::extract​_​**<br/>**lights**<br/>来自crate:bevy​_​pbr ↗：提取各类可见光<br/>源及阴影渲染状态。" }
+  n5@{ shape: rounded, label: "**extract​_​lights**<br/>来自crate:bevy​_​pbr ↗：提取各类可见光<br/>源及阴影渲染状态。" }
   class n5 node_system
   class n5 external_node
-  n6@{ shape: rounded, label: "**bevy​_​light::point​_​light::update​_​**<br/>**point​_​light​_​frusta**<br/>来自crate:bevy​_​light ↗：更新可见点光<br/>的六面阴影视锥。" }
+  n6@{ shape: rounded, label: "**update​_​point​_​light​_​frusta**<br/>来自crate:bevy​_​light ↗：更新可见点光<br/>的六面阴影视锥。" }
   class n6 node_system
   class n6 external_node
-  n7@{ shape: rounded, label: "**bevy​_​gizmos::frustum::draw​_​all​_​**<br/>**frustum​_​gizmos**<br/>来自crate:bevy​_​gizmos ↗：绘制未单独标<br/>记实体的视锥调试图形。" }
+  n7@{ shape: rounded, label: "**draw​_​all​_​frustum​_​gizmos**<br/>来自crate:bevy​_​gizmos ↗：绘制未单独标<br/>记实体的视锥调试图形。" }
   class n7 node_system
   class n7 external_node
-  n8@{ shape: rounded, label: "**bevy​_​light::spot​_​light::update​_​spot​_​**<br/>**light​_​frusta**<br/>来自crate:bevy​_​light ↗：更新可见聚光<br/>灯的阴影视锥。" }
+  n8@{ shape: rounded, label: "**update​_​spot​_​light​_​frusta**<br/>来自crate:bevy​_​light ↗：更新可见聚光<br/>灯的阴影视锥。" }
   class n8 node_system
   class n8 external_node
-  n9@{ shape: rounded, label: "**bevy​_​gizmos::frustum::draw​_​frustum​_​**<br/>**gizmos**<br/>来自crate:bevy​_​gizmos ↗：绘制带标记实<br/>体的视锥调试图形。" }
+  n9@{ shape: rounded, label: "**draw​_​frustum​_​gizmos**<br/>来自crate:bevy​_​gizmos ↗：绘制带标记实<br/>体的视锥调试图形。" }
   class n9 node_system
   class n9 external_node
   n10@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：提供主菜单展示与界面的三维相<br/>机。" }
   class n10 node_entity
   class n10 external_node
-  n11@{ shape: rounded, label: "**bevy​_​render::view::prepare​_​view​_​**<br/>**uniforms**<br/>来自crate:bevy​_​render ↗：生成视图投<br/>影、抖动、裁剪及 LOD 的 GPU 参数。" }
+  n11@{ shape: rounded, label: "**prepare​_​view​_​uniforms**<br/>来自crate:bevy​_​render ↗：生成视图投<br/>影、抖动、裁剪及 LOD 的 GPU 参数。" }
   class n11 node_system
   class n11 external_node
-  n12@{ shape: rounded, label: "**bevy​_​light::cluster::assign::assign​_​**<br/>**objects​_​to​_​clusters**<br/>来自crate:bevy​_​light ↗：将灯光、探针<br/>及贴花分配到视图分簇。" }
+  n12@{ shape: rounded, label: "**assign​_​objects​_​to​_​clusters**<br/>来自crate:bevy​_​light ↗：将灯光、探针<br/>及贴花分配到视图分簇。" }
   class n12 node_system
   class n12 external_node
-  n13@{ shape: rounded, label: "**bevy​_​camera::visibility::update​_​**<br/>**frusta**<br/>根据相机投影和世界变换更新视锥。" }
+  n13@{ shape: rounded, label: "**update​_​frusta**<br/>根据相机投影和世界变换更新视锥。" }
   class n13 node_system
-  n14@{ shape: rounded, label: "**bevy​_​camera::visibility::check​_​**<br/>**visibility​_​cpu​_​culling**<br/>按层、距离和视锥收集各相机可见实体。" }
+  n14@{ shape: rounded, label: "**check​_​visibility​_​cpu​_​culling**<br/>按层、距离和视锥收集各相机可见实体。" }
   class n14 node_system
   n1 e0@---|"存在性约束"| n0
   class e0 edge_reference

@@ -44,33 +44,33 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**avian3d::dynamics::solver::solver​_​**<br/>**body::plugin::prepare​_​solver​_​bodies**<br/>把 ECS 刚体状态准备成子步求解数据。" }
+  n0@{ shape: rounded, label: "**prepare​_​solver​_​bodies**<br/>把 ECS 刚体状态准备成子步求解数据。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**dynamics::solver::solver​_​body::**<br/>**SolverBodyIndex**<br/>定位实体对应的求解器刚体。" }
+  n1@{ shape: rounded, label: "**SolverBodyIndex**<br/>定位实体对应的求解器刚体。" }
   class n1 node_component
-  n2@{ shape: rounded, label: "**dynamics::rigid​_​body::mass​_​**<br/>**properties::components::computed::**<br/>**ComputedMass**<br/>保存汇总后的刚体总质量。" }
+  n2@{ shape: rounded, label: "**ComputedMass**<br/>保存汇总后的刚体总质量。" }
   class n2 node_component
-  n3@{ shape: rounded, label: "**dynamics::rigid​_​body::LinearVelocity**<br/>保存刚体的世界线速度。" }
+  n3@{ shape: rounded, label: "**LinearVelocity**<br/>保存刚体的世界线速度。" }
   class n3 node_component
-  n4@{ shape: rounded, label: "**dynamics::rigid​_​body::RigidBody**<br/>选择动态、静态或运动学刚体行为。" }
+  n4@{ shape: rounded, label: "**RigidBody**<br/>选择动态、静态或运动学刚体行为。" }
   class n4 node_component
-  n5@{ shape: fr-rect, label: "**dynamics::solver::solver​_​body::**<br/>**plugin::SolverBodyPlugin**<br/>维护约束求解使用的刚体缓存。" }
+  n5@{ shape: fr-rect, label: "**SolverBodyPlugin**<br/>维护约束求解使用的刚体缓存。" }
   class n5 node_plugin
-  n6@{ shape: rounded, label: "**dynamics::rigid​_​body::Dominance**<br/>指定动态刚体交互的支配等级。" }
+  n6@{ shape: rounded, label: "**Dominance**<br/>指定动态刚体交互的支配等级。" }
   class n6 node_component
-  n7@{ shape: rounded, label: "**dynamics::integrator::**<br/>**CustomPositionIntegration**<br/>将位姿积分交给自定义逻辑。" }
+  n7@{ shape: rounded, label: "**CustomPositionIntegration**<br/>将位姿积分交给自定义逻辑。" }
   class n7 node_component
-  n8@{ shape: rounded, label: "**dynamics::rigid​_​body::locked​_​axes::**<br/>**LockedAxes**<br/>锁定刚体的平移或旋转轴。" }
+  n8@{ shape: rounded, label: "**LockedAxes**<br/>锁定刚体的平移或旋转轴。" }
   class n8 node_component
-  n9@{ shape: cyl, label: "**dynamics::solver::solver​_​body::**<br/>**SolverBodies**<br/>连续存储活跃刚体的求解状态。" }
+  n9@{ shape: cyl, label: "**SolverBodies**<br/>连续存储活跃刚体的求解状态。" }
   class n9 node_resource
   n10@{ shape: lin-rect, label: "**PrepareSolverBodies**<br/>组织约束求解的准备、子步与回写。" }
   class n10 node_system_set
-  n11@{ shape: rounded, label: "**dynamics::rigid​_​body::mass​_​**<br/>**properties::components::computed::**<br/>**ComputedAngularInertia**<br/>保存汇总后的刚体局部角惯量。" }
+  n11@{ shape: rounded, label: "**ComputedAngularInertia**<br/>保存汇总后的刚体局部角惯量。" }
   class n11 node_component
-  n12@{ shape: rounded, label: "**physics​_​transform::transform::**<br/>**Rotation**<br/>保存刚体或碰撞体的世界旋转。" }
+  n12@{ shape: rounded, label: "**Rotation**<br/>保存刚体或碰撞体的世界旋转。" }
   class n12 node_component
-  n13@{ shape: rounded, label: "**dynamics::rigid​_​body::**<br/>**AngularVelocity**<br/>保存刚体的世界角速度。" }
+  n13@{ shape: rounded, label: "**AngularVelocity**<br/>保存刚体的世界角速度。" }
   class n13 node_component
   n1 e0@--> n0
   class e0 edge_read

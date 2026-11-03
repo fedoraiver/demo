@@ -38,16 +38,16 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**smaa::ViewSmaaPipelines**<br/>记录当前视图三个 SMAA 管线的标识。" }
+  n0@{ shape: rounded, label: "**ViewSmaaPipelines**<br/>记录当前视图三个 SMAA 管线的标识。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​anti​_​alias::smaa::smaa**<br/>通过三个阶段完成 SMAA 抗锯齿。" }
+  n1@{ shape: rounded, label: "**smaa**<br/>通过三个阶段完成 SMAA 抗锯齿。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​anti​_​alias::smaa::prepare​_​smaa​_​**<br/>**pipelines**<br/>按质量预设准备视图的三条 SMAA 管线。" }
+  n2@{ shape: rounded, label: "**prepare​_​smaa​_​pipelines**<br/>按质量预设准备视图的三条 SMAA 管线。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​extract::extract​_​component::**<br/>**extract​_​components#lt;bevy​_​anti​_​alias::**<br/>**smaa::Smaa, bevy​_​render::RenderApp,**<br/>**()#gt;**<br/>来自crate:bevy​_​extract ↗：批量同步或<br/>移除子世界的目标组件。" }
+  n3@{ shape: rounded, label: "**extract​_​components**<br/>来自crate:bevy​_​extract ↗：批量同步或<br/>移除子世界的目标组件。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**bevy​_​anti​_​alias::smaa::smaa**<br/>通过三个阶段完成 SMAA 抗锯齿。" }
+  n4@{ shape: rounded, label: "**smaa**<br/>通过三个阶段完成 SMAA 抗锯齿。" }
   class n4 node_system
   n0 e0@--> n1
   class e0 edge_read

@@ -44,52 +44,52 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**demo::ui::scroll::sync​_​settings​_​**<br/>**scrollbars**<br/>同步滚动条显隐、拾取范围与高亮。" }
+  n0@{ shape: rounded, label: "**sync​_​settings​_​scrollbars**<br/>同步滚动条显隐、拾取范围与高亮。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**bevy​_​ecs::hierarchy::Children**<br/>来自crate:bevy​_​ecs ↗：保存以<br/>ChildOf 指向当前父实体的子实体集合" }
+  n1@{ shape: rounded, label: "**Children**<br/>来自crate:bevy​_​ecs ↗：保存以<br/>ChildOf 指向当前父实体的子实体集合" }
   class n1 node_component
   class n1 external_node
-  n2@{ shape: rounded, label: "**hover::Hovered**<br/>来自crate:bevy​_​picking ↗：记录实体当<br/>前是否被任一指针悬停。" }
+  n2@{ shape: rounded, label: "**Hovered**<br/>来自crate:bevy​_​picking ↗：记录实体当<br/>前是否被任一指针悬停。" }
   class n2 node_component
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​camera::visibility::Visibility**<br/>来自crate:bevy​_​camera ↗：声明实体可见<br/>意图及层级继承方式。" }
+  n3@{ shape: rounded, label: "**Visibility**<br/>来自crate:bevy​_​camera ↗：声明实体可见<br/>意图及层级继承方式。" }
   class n3 node_component
   class n3 external_node
-  n4@{ shape: rounded, label: "**bevy​_​ui::BackgroundColor**<br/>来自crate:bevy​_​ui ↗：设置 UI 节点背景<br/>填充色。" }
+  n4@{ shape: rounded, label: "**BackgroundColor**<br/>来自crate:bevy​_​ui ↗：设置 UI 节点背景<br/>填充色。" }
   class n4 node_component
   class n4 external_node
-  n5@{ shape: fr-rect, label: "**ui::GameUiPlugin**<br/>组装菜单功能，不安装窗口或重复初始化会话<br/>日志。" }
+  n5@{ shape: fr-rect, label: "**GameUiPlugin**<br/>组装菜单功能，不安装窗口或重复初始化会话<br/>日志。" }
   class n5 node_plugin
-  n6@{ shape: cyl, label: "**ui::MenuInputSource**<br/>输入来源单独决定焦点是否可见；鼠标离开后<br/>仍保留序号供后续导航使用。" }
+  n6@{ shape: cyl, label: "**MenuInputSource**<br/>输入来源单独决定焦点是否可见；鼠标离开后<br/>仍保留序号供后续导航使用。" }
   class n6 node_resource
-  n7@{ shape: rounded, label: "**bevy​_​ui::ComputedNode**<br/>来自crate:bevy​_​ui ↗：保存 UI 布局计算<br/>后的物理尺寸。" }
+  n7@{ shape: rounded, label: "**ComputedNode**<br/>来自crate:bevy​_​ui ↗：保存 UI 布局计算<br/>后的物理尺寸。" }
   class n7 node_component
   class n7 external_node
-  n8@{ shape: rounded, label: "**scrollbar::Scrollbar**<br/>来自crate:bevy​_​ui​_​widgets ↗：指定滚<br/>动条目标、方向和最小滑块长度。" }
+  n8@{ shape: rounded, label: "**Scrollbar**<br/>来自crate:bevy​_​ui​_​widgets ↗：指定滚<br/>动条目标、方向和最小滑块长度。" }
   class n8 node_component
   class n8 external_node
-  n9@{ shape: rounded, label: "**bevy​_​ui::ScrollPosition**<br/>来自crate:bevy​_​ui ↗：指定 UI 内容的逻<br/>辑像素滚动位置。" }
+  n9@{ shape: rounded, label: "**ScrollPosition**<br/>来自crate:bevy​_​ui ↗：指定 UI 内容的逻<br/>辑像素滚动位置。" }
   class n9 node_component
   class n9 external_node
   n10@{ shape: lin-rect, label: "**VisibilityPropagate**<br/>来自crate:bevy​_​camera ↗：组织相机与实<br/>体可见性更新。" }
   class n10 node_system_set
   class n10 external_node
-  n11@{ shape: rounded, label: "**bevy​_​picking::Pickable**<br/>来自crate:bevy​_​picking ↗：配置实体是<br/>否可被拾取及是否阻挡深度更低的命中目标" }
+  n11@{ shape: rounded, label: "**Pickable**<br/>来自crate:bevy​_​picking ↗：配置实体是<br/>否可被拾取及是否阻挡深度更低的命中目标" }
   class n11 node_component
   class n11 external_node
-  n12@{ shape: rounded, label: "**scrollbar::ScrollbarDragState**<br/>来自crate:bevy​_​ui​_​widgets ↗：记录滚<br/>动条滑块拖动状态。" }
+  n12@{ shape: rounded, label: "**ScrollbarDragState**<br/>来自crate:bevy​_​ui​_​widgets ↗：记录滚<br/>动条滑块拖动状态。" }
   class n12 node_component
   class n12 external_node
-  n13@{ shape: rounded, label: "**ui::scroll::SettingsScrollbar**<br/>轨道和滚动区域为同一 BSN 容器的子实体，<br/>绑定系统只为设置控件建立原生 target。" }
+  n13@{ shape: rounded, label: "**SettingsScrollbar**<br/>轨道和滚动区域为同一 BSN 容器的子实体，<br/>绑定系统只为设置控件建立原生 target。" }
   class n13 node_component
-  n14@{ shape: cyl, label: "**ui::MenuState**<br/>页面数据与返回来源；焦点单独保存，避免导<br/>航时重建整个页面。" }
+  n14@{ shape: cyl, label: "**MenuState**<br/>页面数据与返回来源；焦点单独保存，避免导<br/>航时重建整个页面。" }
   class n14 node_resource
-  n15@{ shape: rounded, label: "**ui::scroll::MenuScroll**<br/>可滚动区域的标记；用于键盘导航时把当前按<br/>钮滚入视野。" }
+  n15@{ shape: rounded, label: "**MenuScroll**<br/>可滚动区域的标记；用于键盘导航时把当前按<br/>钮滚入视野。" }
   class n15 node_component
   n16@{ shape: lin-rect, label: "**Layout**<br/>来自crate:bevy​_​ui ↗：组织界面交互、布<br/>局与堆叠更新。" }
   class n16 node_system_set
   class n16 external_node
-  n17@{ shape: rounded, label: "**ui::scroll::SettingsScrollbarThumb**<br/>滑块无按钮动作或导航序号，拖拽生命周期<br/>由 Bevy 原生 ScrollbarPlugin 管理。" }
+  n17@{ shape: rounded, label: "**SettingsScrollbarThumb**<br/>滑块无按钮动作或导航序号，拖拽生命周期<br/>由 Bevy 原生 ScrollbarPlugin 管理。" }
   class n17 node_component
   n1 e0@--> n0
   class e0 edge_read

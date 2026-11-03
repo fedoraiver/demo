@@ -38,11 +38,11 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**cluster::ExtractedClusterableObjects**<br/>保存渲染侧已提取的可聚簇对象。" }
+  n0@{ shape: rounded, label: "**ExtractedClusterableObjects**<br/>保存渲染侧已提取的可聚簇对象。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​pbr::cluster::extract​_​clusters​_​**<br/>**for​_​cpu​_​clustering**<br/>把 CPU 聚簇结果转换为渲染侧对象列表。" }
+  n1@{ shape: rounded, label: "**extract​_​clusters​_​for​_​cpu​_​clustering**<br/>把 CPU 聚簇结果转换为渲染侧对象列表。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​pbr::cluster::prepare​_​clusters​_​**<br/>**for​_​cpu​_​clustering**<br/>把 CPU 聚簇列表转换并上传为 GPU 索引缓<br/>冲。" }
+  n2@{ shape: rounded, label: "**prepare​_​clusters​_​for​_​cpu​_​clustering**<br/>把 CPU 聚簇列表转换并上传为 GPU 索引缓<br/>冲。" }
   class n2 node_system
   n1 e0@-->|"移除"| n0
   class e0 edge_write

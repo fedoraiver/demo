@@ -38,11 +38,11 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**ssao::SsaoPipelineId**<br/>标识当前视图使用的 SSAO 计算管线。" }
+  n0@{ shape: rounded, label: "**SsaoPipelineId**<br/>标识当前视图使用的 SSAO 计算管线。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​pbr::ssao::ssao**<br/>依次计算深度预处理、环境遮蔽和空间去噪。" }
+  n1@{ shape: rounded, label: "**ssao**<br/>依次计算深度预处理、环境遮蔽和空间去噪。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​pbr::ssao::prepare​_​ssao​_​**<br/>**pipelines**<br/>按遮蔽质量和时间抖动配置选择计算管线。" }
+  n2@{ shape: rounded, label: "**prepare​_​ssao​_​pipelines**<br/>按遮蔽质量和时间抖动配置选择计算管线。" }
   class n2 node_system
   n0 e0@--> n1
   class e0 edge_read

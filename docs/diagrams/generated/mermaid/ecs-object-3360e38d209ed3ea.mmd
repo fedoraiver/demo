@@ -43,44 +43,44 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**demo::item​_​interaction::pose::sync​_​**<br/>**held​_​physics**<br/>同步组合体内箱子的真实世界姿态和速度，不<br/>依赖人物是否具有视觉 Children。" }
+  n0@{ shape: rounded, label: "**sync​_​held​_​physics**<br/>同步组合体内箱子的真实世界姿态和速度，不<br/>依赖人物是否具有视觉 Children。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**dynamics::rigid​_​body::LinearVelocity**<br/>来自crate:avian3d ↗：保存刚体的世界线<br/>速度。" }
+  n1@{ shape: rounded, label: "**LinearVelocity**<br/>来自crate:avian3d ↗：保存刚体的世界线<br/>速度。" }
   class n1 node_component
   class n1 external_node
-  n2@{ shape: rounded, label: "**item​_​interaction::components::HeldBy**<br/>物体的持有者；只由交互系统插入或移除。" }
+  n2@{ shape: rounded, label: "**HeldBy**<br/>物体的持有者；只由交互系统插入或移除。" }
   class n2 node_component
-  n3@{ shape: rounded, label: "**character::components::Character**<br/>来自character ↗：具有移动和跳跃能力的<br/>角色。" }
+  n3@{ shape: rounded, label: "**Character**<br/>来自character ↗：具有移动和跳跃能力的<br/>角色。" }
   class n3 node_component
   class n3 external_node
-  n4@{ shape: rounded, label: "**physics​_​transform::transform::**<br/>**Position**<br/>来自crate:avian3d ↗：保存刚体或碰撞体<br/>的世界位置。" }
+  n4@{ shape: rounded, label: "**Position**<br/>来自crate:avian3d ↗：保存刚体或碰撞体<br/>的世界位置。" }
   class n4 node_component
   class n4 external_node
-  n5@{ shape: rounded, label: "**dynamics::rigid​_​body::**<br/>**AngularVelocity**<br/>来自crate:avian3d ↗：保存刚体的世界角<br/>速度。" }
+  n5@{ shape: rounded, label: "**AngularVelocity**<br/>来自crate:avian3d ↗：保存刚体的世界角<br/>速度。" }
   class n5 node_component
   class n5 external_node
-  n6@{ shape: rounded, label: "**item​_​interaction::components::**<br/>**HeldAttachment**<br/>实际碰撞形状相对组合刚体的姿态；箱实体不<br/>成为人物的 ChildOf，避免异常销毁时连带<br/>消失。" }
+  n6@{ shape: rounded, label: "**HeldAttachment**<br/>实际碰撞形状相对组合刚体的姿态；箱实体不<br/>成为人物的 ChildOf，避免异常销毁时连带<br/>消失。" }
   class n6 node_component
-  n7@{ shape: fr-rect, label: "**item​_​interaction::**<br/>**ItemInteractionPlugin**<br/>注册交互、持握生命周期、物理与呈现同步及<br/>物品反馈；物理插件由调用方显式安装。" }
+  n7@{ shape: fr-rect, label: "**ItemInteractionPlugin**<br/>注册交互、持握生命周期、物理与呈现同步及<br/>物品反馈；物理插件由调用方显式安装。" }
   class n7 node_plugin
-  n8@{ shape: rounded, label: "**components::transform::Transform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>相对父实体的平移、旋转和缩放" }
+  n8@{ shape: rounded, label: "**Transform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>相对父实体的平移、旋转和缩放" }
   class n8 node_component
   class n8 external_node
-  n9@{ shape: rounded, label: "**physics​_​transform::transform::**<br/>**Rotation**<br/>来自crate:avian3d ↗：保存刚体或碰撞体<br/>的世界旋转。" }
+  n9@{ shape: rounded, label: "**Rotation**<br/>来自crate:avian3d ↗：保存刚体或碰撞体<br/>的世界旋转。" }
   class n9 node_component
   class n9 external_node
-  n10@{ shape: rounded, label: "**demo::game​_​flow::gameplay​_​running**<br/>来自game​_​flow ↗：独立功能测试没有应用<br/>状态；真实游戏只在 Running 推进玩法。" }
+  n10@{ shape: rounded, label: "**gameplay​_​running**<br/>来自game​_​flow ↗：独立功能测试没有应用<br/>状态；真实游戏只在 Running 推进玩法。" }
   class n10 node_system
   class n10 external_node
-  n11@{ shape: rounded, label: "**item​_​interaction::components::**<br/>**Pickable**<br/>允许被拾取的能力标签。" }
+  n11@{ shape: rounded, label: "**Pickable**<br/>允许被拾取的能力标签。" }
   class n11 node_component
-  n12@{ shape: rounded, label: "**dynamics::rigid​_​body::mass​_​**<br/>**properties::components::computed::**<br/>**ComputedCenterOfMass**<br/>来自crate:avian3d ↗：保存汇总后的刚体<br/>局部质心。" }
+  n12@{ shape: rounded, label: "**ComputedCenterOfMass**<br/>来自crate:avian3d ↗：保存汇总后的刚体<br/>局部质心。" }
   class n12 node_component
   class n12 external_node
-  n13@{ shape: rounded, label: "**collision::collider::collider​_​**<br/>**transform::ColliderTransform**<br/>来自crate:avian3d ↗：缓存碰撞体相对于<br/>刚体的变换。" }
+  n13@{ shape: rounded, label: "**ColliderTransform**<br/>来自crate:avian3d ↗：缓存碰撞体相对于<br/>刚体的变换。" }
   class n13 node_component
   class n13 external_node
-  n14@{ shape: rounded, label: "**item​_​interaction::components::**<br/>**HeldCollider**<br/>无视觉碰撞代理对应的快递身份；代理随组合<br/>体清理，业务箱根始终独立。" }
+  n14@{ shape: rounded, label: "**HeldCollider**<br/>无视觉碰撞代理对应的快递身份；代理随组合<br/>体清理，业务箱根始终独立。" }
   class n14 node_component
   n15@{ shape: lin-rect, label: "**HeldPhysics**<br/>来自game​_​flow ↗：固定循环后的呈现阶<br/>段，零固定步的帧也执行同一顺序。" }
   class n15 node_system_set

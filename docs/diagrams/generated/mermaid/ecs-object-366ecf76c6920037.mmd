@@ -42,9 +42,9 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​animation::transition::expire​_​**<br/>**completed​_​transitions**<br/>结束已完全淡出的动画过渡。" }
+  n0@{ shape: rounded, label: "**expire​_​completed​_​transitions**<br/>结束已完全淡出的动画过渡。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**bevy​_​animation::trigger​_​untargeted​_​**<br/>**animation​_​events**<br/>派发动画片段的根目标事件。" }
+  n1@{ shape: rounded, label: "**trigger​_​untargeted​_​animation​_​events**<br/>派发动画片段的根目标事件。" }
   class n1 node_system
   n2@{ shape: rounded, label: "**AnimationPlayer**<br/>保存当前激活动画及其播放控制状态" }
   class n2 node_component
@@ -57,9 +57,9 @@ flowchart LR
   n4@{ shape: lin-rect, label: "**Propagate**<br/>来自crate:bevy​_​transform ↗：组织实体<br/>层级变换传播。" }
   class n4 node_system_set
   class n4 external_node
-  n5@{ shape: fr-rect, label: "**bevy​_​animation::AnimationPlugin**<br/>安装动画播放与更新支持。" }
+  n5@{ shape: fr-rect, label: "**AnimationPlugin**<br/>安装动画播放与更新支持。" }
   class n5 node_plugin
-  n6@{ shape: rounded, label: "**transition::AnimationTransitions**<br/>管理动画混合权重的淡出过程" }
+  n6@{ shape: rounded, label: "**AnimationTransitions**<br/>管理动画混合权重的淡出过程" }
   class n6 node_component
   n1 e0@-->|"先于"| n0
   class e0 edge_order
@@ -67,7 +67,7 @@ flowchart LR
   class e1 edge_write
   n3 e2@-->|"集合成员"| n0
   class e2 edge_set_membership
-  n0 e3@-->|"先于"| n4
+  n0 e3@--->|"先于"| n4
   class e3 edge_order
   n5 e4@-->|"调用"| n0
   class e4 edge_registration
@@ -75,6 +75,6 @@ flowchart LR
   class e5 edge_write
   e0@{ curve: basis }
   e1@{ curve: basis }
-  e3@{ curve: bumpX }
+  e3@{ curve: basis }
   e4@{ curve: basis }
-  e5@{ curve: basis }
+  e5@{ curve: bumpX }

@@ -38,82 +38,82 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**render::mesh::RenderMeshInstances**<br/>保存 CPU 或 GPU 构建所需的网格实例。" }
+  n0@{ shape: cyl, label: "**RenderMeshInstances**<br/>保存 CPU 或 GPU 构建所需的网格实例。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​render::batching::gpu​_​**<br/>**preprocessing::batch​_​and​_​prepare​_​**<br/>**binned​_​render​_​phase#lt;bevy​_​core​_​**<br/>**pipeline::prepass::**<br/>**AlphaMask3dPrepass, bevy​_​pbr::**<br/>**render::mesh::MeshPipeline#gt;**<br/>来自crate:bevy​_​render ↗：为分桶渲染阶<br/>段建立 GPU 预处理批次。" }
+  n1@{ shape: rounded, label: "**batch​_​and​_​prepare​_​binned​_​render​_​**<br/>**phase**<br/>来自crate:bevy​_​render ↗：为分桶渲染阶<br/>段建立 GPU 预处理批次。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​render::batching::gpu​_​**<br/>**preprocessing::batch​_​and​_​prepare​_​**<br/>**binned​_​render​_​phase#lt;bevy​_​core​_​**<br/>**pipeline::core​_​3d::Opaque3d, bevy​_​**<br/>**pbr::render::mesh::MeshPipeline#gt;**<br/>来自crate:bevy​_​render ↗：为分桶渲染阶<br/>段建立 GPU 预处理批次。" }
+  n2@{ shape: rounded, label: "**batch​_​and​_​prepare​_​binned​_​render​_​**<br/>**phase**<br/>来自crate:bevy​_​render ↗：为分桶渲染阶<br/>段建立 GPU 预处理批次。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​pbr::render::mesh::set​_​mesh​_​**<br/>**motion​_​vector​_​flags**<br/>在提取完成后标记网格可用的前帧蒙皮和形<br/>变。" }
+  n3@{ shape: rounded, label: "**set​_​mesh​_​motion​_​vector​_​flags**<br/>在提取完成后标记网格可用的前帧蒙皮和形<br/>变。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**bevy​_​render::batching::no​_​gpu​_​**<br/>**preprocessing::batch​_​and​_​prepare​_​**<br/>**binned​_​render​_​phase#lt;bevy​_​pbr::**<br/>**render::light::Shadow, bevy​_​pbr::**<br/>**render::mesh::MeshPipeline#gt;**<br/>来自crate:bevy​_​render ↗：在 CPU 路径<br/>上准备分桶阶段的绘制批次。" }
+  n4@{ shape: rounded, label: "**batch​_​and​_​prepare​_​binned​_​render​_​**<br/>**phase**<br/>来自crate:bevy​_​render ↗：在 CPU 路径<br/>上准备分桶阶段的绘制批次。" }
   class n4 node_system
   class n4 external_node
-  n5@{ shape: rounded, label: "**bevy​_​pbr::material::queue​_​material​_​**<br/>**meshes**<br/>按材质模式把可见网格加入相应绘制阶段。" }
+  n5@{ shape: rounded, label: "**queue​_​material​_​meshes**<br/>按材质模式把可见网格加入相应绘制阶段。" }
   class n5 node_system
-  n6@{ shape: rounded, label: "**bevy​_​render::batching::gpu​_​**<br/>**preprocessing::batch​_​and​_​prepare​_​**<br/>**binned​_​render​_​phase#lt;bevy​_​core​_​**<br/>**pipeline::deferred::**<br/>**Opaque3dDeferred, bevy​_​pbr::render::**<br/>**mesh::MeshPipeline#gt;**<br/>来自crate:bevy​_​render ↗：为分桶渲染阶<br/>段建立 GPU 预处理批次。" }
+  n6@{ shape: rounded, label: "**batch​_​and​_​prepare​_​binned​_​render​_​**<br/>**phase**<br/>来自crate:bevy​_​render ↗：为分桶渲染阶<br/>段建立 GPU 预处理批次。" }
   class n6 node_system
   class n6 external_node
-  n7@{ shape: rounded, label: "**bevy​_​render::batching::no​_​gpu​_​**<br/>**preprocessing::batch​_​and​_​prepare​_​**<br/>**binned​_​render​_​phase#lt;bevy​_​core​_​**<br/>**pipeline::core​_​3d::Opaque3d, bevy​_​**<br/>**pbr::render::mesh::MeshPipeline#gt;**<br/>来自crate:bevy​_​render ↗：在 CPU 路径<br/>上准备分桶阶段的绘制批次。" }
+  n7@{ shape: rounded, label: "**batch​_​and​_​prepare​_​binned​_​render​_​**<br/>**phase**<br/>来自crate:bevy​_​render ↗：在 CPU 路径<br/>上准备分桶阶段的绘制批次。" }
   class n7 node_system
   class n7 external_node
-  n8@{ shape: rounded, label: "**bevy​_​pbr::prepass::queue​_​prepass​_​**<br/>**material​_​meshes**<br/>把有效材质网格分入预通道或延迟几何阶段。" }
+  n8@{ shape: rounded, label: "**queue​_​prepass​_​material​_​meshes**<br/>把有效材质网格分入预通道或延迟几何阶段。" }
   class n8 node_system
-  n9@{ shape: rounded, label: "**bevy​_​render::batching::no​_​gpu​_​**<br/>**preprocessing::batch​_​and​_​prepare​_​**<br/>**sorted​_​render​_​phase#lt;bevy​_​pbr::**<br/>**transmission::phase::**<br/>**Transmissive3d, bevy​_​pbr::render::**<br/>**mesh::MeshPipeline#gt;**<br/>来自crate:bevy​_​render ↗：按绘制顺序<br/>在 CPU 路径上合并兼容批次。" }
+  n9@{ shape: rounded, label: "**batch​_​and​_​prepare​_​sorted​_​render​_​**<br/>**phase**<br/>来自crate:bevy​_​render ↗：按绘制顺序<br/>在 CPU 路径上合并兼容批次。" }
   class n9 node_system
   class n9 external_node
-  n10@{ shape: rounded, label: "**bevy​_​render::batching::no​_​gpu​_​**<br/>**preprocessing::batch​_​and​_​prepare​_​**<br/>**binned​_​render​_​phase#lt;bevy​_​core​_​**<br/>**pipeline::prepass::**<br/>**AlphaMask3dPrepass, bevy​_​pbr::**<br/>**render::mesh::MeshPipeline#gt;**<br/>来自crate:bevy​_​render ↗：在 CPU 路径<br/>上准备分桶阶段的绘制批次。" }
+  n10@{ shape: rounded, label: "**batch​_​and​_​prepare​_​binned​_​render​_​**<br/>**phase**<br/>来自crate:bevy​_​render ↗：在 CPU 路径<br/>上准备分桶阶段的绘制批次。" }
   class n10 node_system
   class n10 external_node
-  n11@{ shape: rounded, label: "**bevy​_​pbr::render::morph::prepare​_​**<br/>**morph​_​descriptors**<br/>稳定分配形变描述符索引并回收失效项。" }
+  n11@{ shape: rounded, label: "**prepare​_​morph​_​descriptors**<br/>稳定分配形变描述符索引并回收失效项。" }
   class n11 node_system
-  n12@{ shape: rounded, label: "**bevy​_​render::batching::gpu​_​**<br/>**preprocessing::batch​_​and​_​prepare​_​**<br/>**binned​_​render​_​phase#lt;bevy​_​core​_​**<br/>**pipeline::prepass::Opaque3dPrepass,**<br/>**bevy​_​pbr::render::mesh::**<br/>**MeshPipeline#gt;**<br/>来自crate:bevy​_​render ↗：为分桶渲染阶<br/>段建立 GPU 预处理批次。" }
+  n12@{ shape: rounded, label: "**batch​_​and​_​prepare​_​binned​_​render​_​**<br/>**phase**<br/>来自crate:bevy​_​render ↗：为分桶渲染阶<br/>段建立 GPU 预处理批次。" }
   class n12 node_system
   class n12 external_node
-  n13@{ shape: rounded, label: "**bevy​_​pbr::render::light::specialize​_​**<br/>**shadows**<br/>按阴影视图、网格及材质变化重新选择专用阴<br/>影渲染管线，清理失效缓存，并整理需要补齐<br/>或重新排队的阴影网格任务。" }
+  n13@{ shape: rounded, label: "**specialize​_​shadows**<br/>按阴影视图、网格及材质变化重新选择专用阴<br/>影渲染管线，清理失效缓存，并整理需要补齐<br/>或重新排队的阴影网格任务。" }
   class n13 node_system
-  n14@{ shape: rounded, label: "**bevy​_​render::batching::no​_​gpu​_​**<br/>**preprocessing::batch​_​and​_​prepare​_​**<br/>**sorted​_​render​_​phase#lt;bevy​_​core​_​**<br/>**pipeline::core​_​3d::Transparent3d,**<br/>**bevy​_​pbr::render::mesh::**<br/>**MeshPipeline#gt;**<br/>来自crate:bevy​_​render ↗：按绘制顺序<br/>在 CPU 路径上合并兼容批次。" }
+  n14@{ shape: rounded, label: "**batch​_​and​_​prepare​_​sorted​_​render​_​**<br/>**phase**<br/>来自crate:bevy​_​render ↗：按绘制顺序<br/>在 CPU 路径上合并兼容批次。" }
   class n14 node_system
   class n14 external_node
-  n15@{ shape: rounded, label: "**bevy​_​pbr::render::light::queue​_​**<br/>**shadows**<br/>按材质与光源资格更新阴影绘制分桶。" }
+  n15@{ shape: rounded, label: "**queue​_​shadows**<br/>按材质与光源资格更新阴影绘制分桶。" }
   class n15 node_system
-  n16@{ shape: rounded, label: "**bevy​_​render::batching::no​_​gpu​_​**<br/>**preprocessing::batch​_​and​_​prepare​_​**<br/>**binned​_​render​_​phase#lt;bevy​_​core​_​**<br/>**pipeline::core​_​3d::AlphaMask3d,**<br/>**bevy​_​pbr::render::mesh::**<br/>**MeshPipeline#gt;**<br/>来自crate:bevy​_​render ↗：在 CPU 路径<br/>上准备分桶阶段的绘制批次。" }
+  n16@{ shape: rounded, label: "**batch​_​and​_​prepare​_​binned​_​render​_​**<br/>**phase**<br/>来自crate:bevy​_​render ↗：在 CPU 路径<br/>上准备分桶阶段的绘制批次。" }
   class n16 node_system
   class n16 external_node
-  n17@{ shape: rounded, label: "**bevy​_​render::batching::gpu​_​**<br/>**preprocessing::batch​_​and​_​prepare​_​**<br/>**sorted​_​render​_​phase#lt;bevy​_​pbr::**<br/>**transmission::phase::**<br/>**Transmissive3d, bevy​_​pbr::render::**<br/>**mesh::MeshPipeline#gt;**<br/>来自crate:bevy​_​render ↗：按已有绘制顺<br/>序合并 GPU 预处理阶段批次。" }
+  n17@{ shape: rounded, label: "**batch​_​and​_​prepare​_​sorted​_​render​_​**<br/>**phase**<br/>来自crate:bevy​_​render ↗：按已有绘制顺<br/>序合并 GPU 预处理阶段批次。" }
   class n17 node_system
   class n17 external_node
-  n18@{ shape: rounded, label: "**bevy​_​pbr::render::mesh::mark​_​all​_​**<br/>**meshes​_​for​_​reextraction**<br/>清空网格实例并把全部实体标为待重新提取。" }
+  n18@{ shape: rounded, label: "**mark​_​all​_​meshes​_​for​_​reextraction**<br/>清空网格实例并把全部实体标为待重新提取。" }
   class n18 node_system
-  n19@{ shape: rounded, label: "**bevy​_​pbr::material::specialize​_​**<br/>**material​_​meshes**<br/>为变化的可见网格生成并缓存材质专用管线。" }
+  n19@{ shape: rounded, label: "**specialize​_​material​_​meshes**<br/>为变化的可见网格生成并缓存材质专用管线。" }
   class n19 node_system
-  n20@{ shape: rounded, label: "**bevy​_​pbr::render::mesh::collect​_​**<br/>**meshes​_​for​_​gpu​_​building**<br/>把线程提取队列整理为 GPU 网格实例和输入<br/>缓冲。" }
+  n20@{ shape: rounded, label: "**collect​_​meshes​_​for​_​gpu​_​building**<br/>把线程提取队列整理为 GPU 网格实例和输入<br/>缓冲。" }
   class n20 node_system
-  n21@{ shape: rounded, label: "**bevy​_​render::batching::gpu​_​**<br/>**preprocessing::batch​_​and​_​prepare​_​**<br/>**sorted​_​render​_​phase#lt;bevy​_​core​_​**<br/>**pipeline::core​_​3d::Transparent3d,**<br/>**bevy​_​pbr::render::mesh::**<br/>**MeshPipeline#gt;**<br/>来自crate:bevy​_​render ↗：按已有绘制顺<br/>序合并 GPU 预处理阶段批次。" }
+  n21@{ shape: rounded, label: "**batch​_​and​_​prepare​_​sorted​_​render​_​**<br/>**phase**<br/>来自crate:bevy​_​render ↗：按已有绘制顺<br/>序合并 GPU 预处理阶段批次。" }
   class n21 node_system
   class n21 external_node
-  n22@{ shape: rounded, label: "**bevy​_​render::batching::no​_​gpu​_​**<br/>**preprocessing::batch​_​and​_​prepare​_​**<br/>**binned​_​render​_​phase#lt;bevy​_​core​_​**<br/>**pipeline::deferred::**<br/>**AlphaMask3dDeferred, bevy​_​pbr::**<br/>**render::mesh::MeshPipeline#gt;**<br/>来自crate:bevy​_​render ↗：在 CPU 路径<br/>上准备分桶阶段的绘制批次。" }
+  n22@{ shape: rounded, label: "**batch​_​and​_​prepare​_​binned​_​render​_​**<br/>**phase**<br/>来自crate:bevy​_​render ↗：在 CPU 路径<br/>上准备分桶阶段的绘制批次。" }
   class n22 node_system
   class n22 external_node
-  n23@{ shape: rounded, label: "**bevy​_​pbr::render::mesh::extract​_​**<br/>**meshes​_​for​_​gpu​_​building**<br/>增量提取变化或需重试网格到线程队列。" }
+  n23@{ shape: rounded, label: "**extract​_​meshes​_​for​_​gpu​_​building**<br/>增量提取变化或需重试网格到线程队列。" }
   class n23 node_system
-  n24@{ shape: rounded, label: "**bevy​_​render::batching::gpu​_​**<br/>**preprocessing::batch​_​and​_​prepare​_​**<br/>**binned​_​render​_​phase#lt;bevy​_​core​_​**<br/>**pipeline::deferred::**<br/>**AlphaMask3dDeferred, bevy​_​pbr::**<br/>**render::mesh::MeshPipeline#gt;**<br/>来自crate:bevy​_​render ↗：为分桶渲染阶<br/>段建立 GPU 预处理批次。" }
+  n24@{ shape: rounded, label: "**batch​_​and​_​prepare​_​binned​_​render​_​**<br/>**phase**<br/>来自crate:bevy​_​render ↗：为分桶渲染阶<br/>段建立 GPU 预处理批次。" }
   class n24 node_system
   class n24 external_node
-  n25@{ shape: rounded, label: "**bevy​_​render::batching::gpu​_​**<br/>**preprocessing::batch​_​and​_​prepare​_​**<br/>**binned​_​render​_​phase#lt;bevy​_​core​_​**<br/>**pipeline::core​_​3d::AlphaMask3d,**<br/>**bevy​_​pbr::render::mesh::**<br/>**MeshPipeline#gt;**<br/>来自crate:bevy​_​render ↗：为分桶渲染阶<br/>段建立 GPU 预处理批次。" }
+  n25@{ shape: rounded, label: "**batch​_​and​_​prepare​_​binned​_​render​_​**<br/>**phase**<br/>来自crate:bevy​_​render ↗：为分桶渲染阶<br/>段建立 GPU 预处理批次。" }
   class n25 node_system
   class n25 external_node
-  n26@{ shape: rounded, label: "**bevy​_​render::batching::gpu​_​**<br/>**preprocessing::batch​_​and​_​prepare​_​**<br/>**binned​_​render​_​phase#lt;bevy​_​pbr::**<br/>**render::light::Shadow, bevy​_​pbr::**<br/>**render::mesh::MeshPipeline#gt;**<br/>来自crate:bevy​_​render ↗：为分桶渲染阶<br/>段建立 GPU 预处理批次。" }
+  n26@{ shape: rounded, label: "**batch​_​and​_​prepare​_​binned​_​render​_​**<br/>**phase**<br/>来自crate:bevy​_​render ↗：为分桶渲染阶<br/>段建立 GPU 预处理批次。" }
   class n26 node_system
   class n26 external_node
-  n27@{ shape: rounded, label: "**bevy​_​render::batching::no​_​gpu​_​**<br/>**preprocessing::batch​_​and​_​prepare​_​**<br/>**binned​_​render​_​phase#lt;bevy​_​core​_​**<br/>**pipeline::deferred::**<br/>**Opaque3dDeferred, bevy​_​pbr::render::**<br/>**mesh::MeshPipeline#gt;**<br/>来自crate:bevy​_​render ↗：在 CPU 路径<br/>上准备分桶阶段的绘制批次。" }
+  n27@{ shape: rounded, label: "**batch​_​and​_​prepare​_​binned​_​render​_​**<br/>**phase**<br/>来自crate:bevy​_​render ↗：在 CPU 路径<br/>上准备分桶阶段的绘制批次。" }
   class n27 node_system
   class n27 external_node
-  n28@{ shape: rounded, label: "**bevy​_​pbr::prepass::specialize​_​**<br/>**prepass​_​material​_​meshes**<br/>按深度、材质和运动特性生成预通道专用管<br/>线。" }
+  n28@{ shape: rounded, label: "**specialize​_​prepass​_​material​_​meshes**<br/>按深度、材质和运动特性生成预通道专用管<br/>线。" }
   class n28 node_system
-  n29@{ shape: rounded, label: "**bevy​_​render::batching::no​_​gpu​_​**<br/>**preprocessing::batch​_​and​_​prepare​_​**<br/>**binned​_​render​_​phase#lt;bevy​_​core​_​**<br/>**pipeline::prepass::Opaque3dPrepass,**<br/>**bevy​_​pbr::render::mesh::**<br/>**MeshPipeline#gt;**<br/>来自crate:bevy​_​render ↗：在 CPU 路径<br/>上准备分桶阶段的绘制批次。" }
+  n29@{ shape: rounded, label: "**batch​_​and​_​prepare​_​binned​_​render​_​**<br/>**phase**<br/>来自crate:bevy​_​render ↗：在 CPU 路径<br/>上准备分桶阶段的绘制批次。" }
   class n29 node_system
   class n29 external_node
   n0 e0@--> n1

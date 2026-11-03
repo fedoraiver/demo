@@ -42,18 +42,18 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​render::batching::no​_​gpu​_​**<br/>**preprocessing::batch​_​and​_​prepare​_​**<br/>**binned​_​render​_​phase#lt;bevy​_​core​_​**<br/>**pipeline::core​_​2d::AlphaMask2d,**<br/>**bevy​_​sprite​_​render::mesh2d::mesh::**<br/>**Mesh2dPipeline#gt;**<br/>在 CPU 路径上准备分桶阶段的绘制批次。" }
+  n0@{ shape: rounded, label: "**batch​_​and​_​prepare​_​binned​_​render​_​**<br/>**phase**<br/>在 CPU 路径上准备分桶阶段的绘制批次。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**mesh::allocator::MeshAllocator**<br/>分配并管理网格顶点和索引 GPU 缓冲。" }
+  n1@{ shape: cyl, label: "**MeshAllocator**<br/>分配并管理网格顶点和索引 GPU 缓冲。" }
   class n1 node_resource
-  n2@{ shape: fr-rect, label: "**mesh2d::mesh::Mesh2dRenderPlugin**<br/>来自crate:bevy​_​sprite​_​render ↗：准备<br/>二维网格实例和批处理管线。" }
+  n2@{ shape: fr-rect, label: "**Mesh2dRenderPlugin**<br/>来自crate:bevy​_​sprite​_​render ↗：准备<br/>二维网格实例和批处理管线。" }
   class n2 node_plugin
   class n2 external_node
-  n3@{ shape: cyl, label: "**bevy​_​render::render​_​phase::**<br/>**ViewBinnedRenderPhases#lt;core​_​2d::**<br/>**AlphaMask2d#gt;**<br/>汇集各视图按分桶组织的绘制指令。" }
+  n3@{ shape: cyl, label: "**ViewBinnedRenderPhases#lt;AlphaMask2d#gt;**<br/>汇集各视图按分桶组织的绘制指令。" }
   class n3 node_resource
-  n4@{ shape: cyl, label: "**bevy​_​render::batching::no​_​gpu​_​**<br/>**preprocessing::**<br/>**BatchedInstanceBuffer#lt;mesh2d::mesh::**<br/>**Mesh2dUniform#gt;**<br/>保存 CPU 准备路径的批次绘制数据。" }
+  n4@{ shape: cyl, label: "**BatchedInstanceBuffer#lt;Mesh2dUniform#gt;**<br/>保存 CPU 准备路径的批次绘制数据。" }
   class n4 node_resource
-  n5@{ shape: cyl, label: "**mesh2d::mesh::RenderMesh2dInstances**<br/>来自crate:bevy​_​sprite​_​render ↗：按主<br/>世界实体保存提取后的二维网格实例。" }
+  n5@{ shape: cyl, label: "**RenderMesh2dInstances**<br/>来自crate:bevy​_​sprite​_​render ↗：按主<br/>世界实体保存提取后的二维网格实例。" }
   class n5 node_resource
   class n5 external_node
   n6@{ shape: lin-rect, label: "**PrepareResources**<br/>组织渲染数据准备与绘制排队。" }

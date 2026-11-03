@@ -43,17 +43,17 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​transform​_​interpolation::**<br/>**interpolation::complete​_​translation​_​**<br/>**easing**<br/>在新一轮插值前完成上一段平移。" }
+  n0@{ shape: rounded, label: "**complete​_​translation​_​easing**<br/>在新一轮插值前完成上一段平移。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**bevy​_​transform​_​interpolation::**<br/>**interpolation::complete​_​rotation​_​**<br/>**easing**<br/>在新一轮插值前完成上一段旋转。" }
+  n1@{ shape: rounded, label: "**complete​_​rotation​_​easing**<br/>在新一轮插值前完成上一段旋转。" }
   class n1 node_system
   n2@{ shape: rounded, label: "**TranslationEasingState**<br/>保存固定步平移插值的起点与终点" }
   class n2 node_component
-  n3@{ shape: fr-rect, label: "**interpolation::**<br/>**TransformInterpolationPlugin**<br/>插值固定步之间的显示变换。" }
+  n3@{ shape: fr-rect, label: "**TransformInterpolationPlugin**<br/>插值固定步之间的显示变换。" }
   class n3 node_plugin
-  n4@{ shape: rounded, label: "**interpolation::**<br/>**TranslationInterpolation**<br/>启用平移插值" }
+  n4@{ shape: rounded, label: "**TranslationInterpolation**<br/>启用平移插值" }
   class n4 node_component
-  n5@{ shape: rounded, label: "**components::transform::Transform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>相对父实体的平移、旋转和缩放" }
+  n5@{ shape: rounded, label: "**Transform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>相对父实体的平移、旋转和缩放" }
   class n5 node_component
   class n5 external_node
   n6@{ shape: rounded, label: "**NoTranslationEasing**<br/>显式禁止当前实体的平移插值和外推" }

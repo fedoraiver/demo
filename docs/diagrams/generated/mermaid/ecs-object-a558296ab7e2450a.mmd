@@ -38,15 +38,15 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**raw​_​handle::RawHandleWrapper**<br/>持有原始窗口及显示服务器句柄" }
+  n0@{ shape: rounded, label: "**RawHandleWrapper**<br/>持有原始窗口及显示服务器句柄" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​render::view::window::extract​_​**<br/>**windows**<br/>来自crate:bevy​_​render ↗：向渲染世界同<br/>步窗口配置与原生句柄。" }
+  n1@{ shape: rounded, label: "**extract​_​windows**<br/>来自crate:bevy​_​render ↗：向渲染世界同<br/>步窗口配置与原生句柄。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​render::view::window::create​_​**<br/>**surfaces**<br/>来自crate:bevy​_​render ↗：创建并配置提<br/>取窗口的 GPU 表面。" }
+  n2@{ shape: rounded, label: "**create​_​surfaces**<br/>来自crate:bevy​_​render ↗：创建并配置提<br/>取窗口的 GPU 表面。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**demo::window​_​policy::install​_​native​_​**<br/>**policy**<br/>来自window​_​policy ↗：安装并维护原生窗<br/>口比例与尺寸策略。" }
+  n3@{ shape: rounded, label: "**install​_​native​_​policy**<br/>来自window​_​policy ↗：安装并维护原生窗<br/>口比例与尺寸策略。" }
   class n3 node_system
   class n3 external_node
   n1 e0@-->|"移除"| n0

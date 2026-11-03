@@ -37,12 +37,12 @@ flowchart LR
   classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**bevy​_​render::render​_​resource::**<br/>**SpecializedMeshPipelines#lt;mesh2d::**<br/>**material::**<br/>**Material2dPipelineSpecializer#gt;**<br/>按网格顶点布局与专用化键缓存管线变体。" }
+  n0@{ shape: cyl, label: "**SpecializedMeshPipelines#lt;Material2dP**<br/>**ipelineSpecializer#gt;**<br/>按网格顶点布局与专用化键缓存管线变体。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::**<br/>**material::specialize​_​material2d​_​**<br/>**meshes**<br/>来自crate:bevy​_​sprite​_​render ↗：为可<br/>见二维网格重建失效的材质专用化。" }
+  n1@{ shape: rounded, label: "**specialize​_​material2d​_​meshes**<br/>来自crate:bevy​_​sprite​_​render ↗：为可<br/>见二维网格重建失效的材质专用化。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​render::init​_​gpu​_​resource#lt;bevy​_​**<br/>**render::render​_​resource::pipeline​_​**<br/>**specializer::**<br/>**SpecializedMeshPipelines#lt;bevy​_​**<br/>**sprite​_​render::mesh2d::material::**<br/>**Material2dPipelineSpecializer#gt;#gt;**<br/>构造并插入渲染所需资源。" }
+  n2@{ shape: rounded, label: "**init​_​gpu​_​resource**<br/>构造并插入渲染所需资源。" }
   class n2 node_system
   n1 e0@-->|"移除"| n0
   class e0 edge_write

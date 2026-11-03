@@ -38,14 +38,14 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​core​_​pipeline::prepass::**<br/>**background​_​motion​_​vectors::init​_​**<br/>**background​_​motion​_​vectors​_​pipeline**<br/>建立背景运动矢量的全屏管线资源。" }
+  n0@{ shape: rounded, label: "**init​_​background​_​motion​_​vectors​_​**<br/>**pipeline**<br/>建立背景运动矢量的全屏管线资源。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**bevy​_​core​_​pipeline::FullscreenShader**<br/>提供覆盖整个屏幕的顶点着色器。" }
+  n1@{ shape: cyl, label: "**FullscreenShader**<br/>提供覆盖整个屏幕的顶点着色器。" }
   class n1 node_resource
-  n2@{ shape: cyl, label: "**bevy​_​asset::AssetServer**<br/>来自crate:bevy​_​asset ↗：加载资产并追<br/>踪加载状态。" }
+  n2@{ shape: cyl, label: "**AssetServer**<br/>来自crate:bevy​_​asset ↗：加载资产并追<br/>踪加载状态。" }
   class n2 node_resource
   class n2 external_node
-  n3@{ shape: cyl, label: "**prepass::background​_​motion​_​vectors::**<br/>**BackgroundMotionVectorsPipeline**<br/>提供背景像素运动矢量的全屏管线。" }
+  n3@{ shape: cyl, label: "**BackgroundMotionVectorsPipeline**<br/>提供背景像素运动矢量的全屏管线。" }
   class n3 node_resource
   n1 e0@--> n0
   class e0 edge_read

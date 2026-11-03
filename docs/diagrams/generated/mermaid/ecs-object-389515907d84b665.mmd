@@ -42,17 +42,17 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​core​_​pipeline::oit::configure​_​**<br/>**camera​_​depth​_​usages**<br/>允许 OIT 相机采样自己的深度纹理。" }
+  n0@{ shape: rounded, label: "**configure​_​camera​_​depth​_​usages**<br/>允许 OIT 相机采样自己的深度纹理。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**oit::**<br/>**OrderIndependentTransparencySettings**<br/>配置透明片元排序容量和混合阈值。" }
+  n1@{ shape: rounded, label: "**OrderIndependentTransparencySettings**<br/>配置透明片元排序容量和混合阈值。" }
   class n1 node_component
-  n2@{ shape: rounded, label: "**components::Camera3d**<br/>来自crate:bevy​_​camera ↗：启用三维相机<br/>主渲染流程。" }
+  n2@{ shape: rounded, label: "**Camera3d**<br/>来自crate:bevy​_​camera ↗：启用三维相机<br/>主渲染流程。" }
   class n2 node_component
   class n2 external_node
   n3@{ shape: lin-rect, label: "**PrepareViews**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
   class n3 node_system_set
   class n3 external_node
-  n4@{ shape: fr-rect, label: "**oit::**<br/>**OrderIndependentTransparencyPlugin**<br/>提供顺序无关透明渲染。" }
+  n4@{ shape: fr-rect, label: "**OrderIndependentTransparencyPlugin**<br/>提供顺序无关透明渲染。" }
   class n4 node_plugin
   n1 e0@-->|"存在性约束"| n0
   class e0 edge_reference

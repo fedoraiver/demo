@@ -39,7 +39,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: notch-rect, label: "**Local · is​_​first​_​run**<br/>记录物理调度是否处于首次调用。" }
   class n0 node_local
-  n1@{ shape: rounded, label: "**avian3d::schedule::run​_​physics​_​**<br/>**schedule**<br/>使用物理时钟推进 PhysicsSchedule 并恢<br/>复原时钟。" }
+  n1@{ shape: rounded, label: "**run​_​physics​_​schedule**<br/>使用物理时钟推进 PhysicsSchedule 并恢<br/>复原时钟。" }
   class n1 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

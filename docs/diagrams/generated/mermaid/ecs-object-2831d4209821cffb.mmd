@@ -40,17 +40,17 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​post​_​process::bloom::**<br/>**upsampling​_​pipeline::init​_​bloom​_​**<br/>**upscaling​_​pipeline**<br/>建立 Bloom 升采样的纹理和参数布局。" }
+  n0@{ shape: rounded, label: "**init​_​bloom​_​upscaling​_​pipeline**<br/>建立 Bloom 升采样的纹理和参数布局。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**bevy​_​asset::AssetServer**<br/>来自crate:bevy​_​asset ↗：加载资产并追<br/>踪加载状态。" }
+  n1@{ shape: cyl, label: "**AssetServer**<br/>来自crate:bevy​_​asset ↗：加载资产并追<br/>踪加载状态。" }
   class n1 node_resource
   class n1 external_node
-  n2@{ shape: cyl, label: "**bevy​_​core​_​pipeline::FullscreenShader**<br/>来自crate:bevy​_​core​_​pipeline ↗：提供<br/>覆盖整个屏幕的顶点着色器。" }
+  n2@{ shape: cyl, label: "**FullscreenShader**<br/>来自crate:bevy​_​core​_​pipeline ↗：提供<br/>覆盖整个屏幕的顶点着色器。" }
   class n2 node_resource
   class n2 external_node
-  n3@{ shape: fr-rect, label: "**bloom::BloomPlugin**<br/>准备并合成画面辉光。" }
+  n3@{ shape: fr-rect, label: "**BloomPlugin**<br/>准备并合成画面辉光。" }
   class n3 node_plugin
-  n4@{ shape: cyl, label: "**bloom::upsampling​_​pipeline::**<br/>**BloomUpsamplingPipeline**<br/>提供 Bloom 逐级上采样与合成管线。" }
+  n4@{ shape: cyl, label: "**BloomUpsamplingPipeline**<br/>提供 Bloom 逐级上采样与合成管线。" }
   class n4 node_resource
   n1 e0@--> n0
   class e0 edge_read

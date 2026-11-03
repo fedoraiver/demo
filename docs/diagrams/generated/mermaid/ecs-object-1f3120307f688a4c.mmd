@@ -39,29 +39,29 @@ flowchart LR
   classDef edge_publish stroke:#247B91,stroke-width:1.8px,stroke-dasharray:10 4 2 4
   classDef edge_consume stroke:#247B91,stroke-width:1.8px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: lean-r, label: "**dynamics::joints::joint​_​graph::**<br/>**plugin::JointGraphChange**<br/>向求解器传递关节连接图变化。" }
+  n0@{ shape: lean-r, label: "**JointGraphChange**<br/>向求解器传递关节连接图变化。" }
   class n0 node_message
-  n1@{ shape: rounded, label: "**avian3d::dynamics::joints::joint​_​**<br/>**graph::plugin::on​_​change​_​joint​_​**<br/>**entities#lt;avian3d::dynamics::joints::**<br/>**prismatic::PrismaticJoint#gt;**<br/>在关节换端后重接刚体连接图。" }
+  n1@{ shape: rounded, label: "**on​_​change​_​joint​_​entities**<br/>在关节换端后重接刚体连接图。" }
   class n1 node_system
-  n2@{ shape: hex, label: "**avian3d::dynamics::joints::joint​_​**<br/>**graph::plugin::add​_​joint​_​to​_​graph**<br/>加入关节连接并发布连接图变化。" }
+  n2@{ shape: hex, label: "**add​_​joint​_​to​_​graph**<br/>加入关节连接并发布连接图变化。" }
   class n2 node_observer
-  n3@{ shape: hex, label: "**avian3d::dynamics::joints::joint​_​**<br/>**graph::plugin::remove​_​joint​_​from​_​**<br/>**graph**<br/>移除关节连接并发布连接图变化。" }
+  n3@{ shape: hex, label: "**remove​_​joint​_​from​_​graph**<br/>移除关节连接并发布连接图变化。" }
   class n3 node_observer
-  n4@{ shape: rounded, label: "**avian3d::dynamics::joints::joint​_​**<br/>**graph::plugin::on​_​change​_​joint​_​**<br/>**entities#lt;avian3d::dynamics::joints::**<br/>**fixed::FixedJoint#gt;**<br/>在关节换端后重接刚体连接图。" }
+  n4@{ shape: rounded, label: "**on​_​change​_​joint​_​entities**<br/>在关节换端后重接刚体连接图。" }
   class n4 node_system
-  n5@{ shape: hex, label: "**avian3d::dynamics::joints::joint​_​**<br/>**graph::plugin::add​_​joint​_​to​_​graph**<br/>加入关节连接并发布连接图变化。" }
+  n5@{ shape: hex, label: "**add​_​joint​_​to​_​graph**<br/>加入关节连接并发布连接图变化。" }
   class n5 node_observer
-  n6@{ shape: rounded, label: "**avian3d::dynamics::solver::plugin::**<br/>**apply​_​joint​_​graph​_​changes**<br/>把关节连接变化同步到模拟岛。" }
+  n6@{ shape: rounded, label: "**apply​_​joint​_​graph​_​changes**<br/>把关节连接变化同步到模拟岛。" }
   class n6 node_system
-  n7@{ shape: hex, label: "**avian3d::dynamics::joints::joint​_​**<br/>**graph::plugin::remove​_​joint​_​from​_​**<br/>**graph**<br/>移除关节连接并发布连接图变化。" }
+  n7@{ shape: hex, label: "**remove​_​joint​_​from​_​graph**<br/>移除关节连接并发布连接图变化。" }
   class n7 node_observer
-  n8@{ shape: hex, label: "**avian3d::dynamics::joints::joint​_​**<br/>**graph::plugin::add​_​joint​_​to​_​graph**<br/>加入关节连接并发布连接图变化。" }
+  n8@{ shape: hex, label: "**add​_​joint​_​to​_​graph**<br/>加入关节连接并发布连接图变化。" }
   class n8 node_observer
-  n9@{ shape: rounded, label: "**avian3d::dynamics::joints::joint​_​**<br/>**graph::plugin::on​_​change​_​joint​_​**<br/>**entities#lt;avian3d::dynamics::joints::**<br/>**spherical::SphericalJoint#gt;**<br/>在关节换端后重接刚体连接图。" }
+  n9@{ shape: rounded, label: "**on​_​change​_​joint​_​entities**<br/>在关节换端后重接刚体连接图。" }
   class n9 node_system
-  n10@{ shape: rounded, label: "**avian3d::dynamics::joints::joint​_​**<br/>**graph::plugin::on​_​change​_​joint​_​**<br/>**entities#lt;avian3d::dynamics::joints::**<br/>**distance::DistanceJoint#gt;**<br/>在关节换端后重接刚体连接图。" }
+  n10@{ shape: rounded, label: "**on​_​change​_​joint​_​entities**<br/>在关节换端后重接刚体连接图。" }
   class n10 node_system
-  n11@{ shape: rounded, label: "**avian3d::dynamics::joints::joint​_​**<br/>**graph::plugin::on​_​change​_​joint​_​**<br/>**entities#lt;avian3d::dynamics::joints::**<br/>**revolute::RevoluteJoint#gt;**<br/>在关节换端后重接刚体连接图。" }
+  n11@{ shape: rounded, label: "**on​_​change​_​joint​_​entities**<br/>在关节换端后重接刚体连接图。" }
   class n11 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_publish

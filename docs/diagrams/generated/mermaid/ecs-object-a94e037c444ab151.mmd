@@ -44,7 +44,7 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​light::spot​_​light::update​_​spot​_​**<br/>**light​_​bounding​_​spheres**<br/>按聚光灯位置和范围更新剔除包围球。" }
+  n0@{ shape: rounded, label: "**update​_​spot​_​light​_​bounding​_​spheres**<br/>按聚光灯位置和范围更新剔除包围球。" }
   class n0 node_system
   n1@{ shape: lin-rect, label: "**Propagate**<br/>来自crate:bevy​_​transform ↗：组织实体<br/>层级变换传播。" }
   class n1 node_system_set
@@ -52,16 +52,16 @@ flowchart LR
   n2@{ shape: lin-rect, label: "**UpdateFrusta**<br/>来自crate:bevy​_​camera ↗：组织相机与实<br/>体可见性更新。" }
   class n2 node_system_set
   class n2 external_node
-  n3@{ shape: rounded, label: "**spot​_​light::SpotLight**<br/>配置沿指定方向照射的聚光灯。" }
+  n3@{ shape: rounded, label: "**SpotLight**<br/>配置沿指定方向照射的聚光灯。" }
   class n3 node_component
   n4@{ shape: lin-rect, label: "**UpdateBounds**<br/>组织灯光聚簇与可见性准备。" }
   class n4 node_system_set
   n5@{ shape: fr-rect, label: "**LightPlugin**<br/>维护光源可见性与空间聚簇。" }
   class n5 node_plugin
-  n6@{ shape: rounded, label: "**primitives::Sphere**<br/>来自crate:bevy​_​camera ↗：以球形包围体<br/>参与视锥裁剪。" }
+  n6@{ shape: rounded, label: "**Sphere**<br/>来自crate:bevy​_​camera ↗：以球形包围体<br/>参与视锥裁剪。" }
   class n6 node_component
   class n6 external_node
-  n7@{ shape: rounded, label: "**components::global​_​transform::**<br/>**GlobalTransform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>合并祖先变换后的世界空间仿射变换" }
+  n7@{ shape: rounded, label: "**GlobalTransform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>合并祖先变换后的世界空间仿射变换" }
   class n7 node_component
   class n7 external_node
   n1 e0@-->|"先于"| n0

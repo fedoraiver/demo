@@ -39,7 +39,7 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**components::WorldAssetRoot**<br/>持有 WorldAsset 句柄" }
+  n0@{ shape: rounded, label: "**WorldAssetRoot**<br/>持有 WorldAsset 句柄" }
   class n0 node_component
   n1@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：在菜单舞台展示物流站模型。" }
   class n1 node_entity
@@ -65,7 +65,7 @@ flowchart LR
   n8@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：显示菜单舞台的海岛地形。" }
   class n8 node_entity
   class n8 external_node
-  n9@{ shape: rounded, label: "**bevy​_​world​_​serialization::world​_​**<br/>**asset​_​spawner::world​_​instance​_​**<br/>**spawner**<br/>根据世界资产根组件排队生成或替换实例。" }
+  n9@{ shape: rounded, label: "**world​_​instance​_​spawner**<br/>根据世界资产根组件排队生成或替换实例。" }
   class n9 node_system
   n10@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：在菜单舞台展示木箱。" }
   class n10 node_entity

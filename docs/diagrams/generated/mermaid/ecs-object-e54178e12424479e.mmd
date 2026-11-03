@@ -40,9 +40,9 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**BoxShadowSamples**<br/>配置相机 UI 阴影的采样次数。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​ui​_​render::box​_​shadow::queue​_​**<br/>**shadows**<br/>为提取的 UI 阴影选择匹配目标格式和阴影<br/>采样数的管线，按节点堆叠顺序及阴影层偏移<br/>加入透明 UI 绘制阶段。" }
+  n1@{ shape: rounded, label: "**queue​_​shadows**<br/>为提取的 UI 阴影选择匹配目标格式和阴影<br/>采样数的管线，按节点堆叠顺序及阴影层偏移<br/>加入透明 UI 绘制阶段。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​ui​_​render::extract​_​ui​_​camera​_​**<br/>**view**<br/>为活动二维或三维相机维护独立 UI 视图。" }
+  n2@{ shape: rounded, label: "**extract​_​ui​_​camera​_​view**<br/>为活动二维或三维相机维护独立 UI 视图。" }
   class n2 node_system
   n0 e0@--> n1
   class e0 edge_read

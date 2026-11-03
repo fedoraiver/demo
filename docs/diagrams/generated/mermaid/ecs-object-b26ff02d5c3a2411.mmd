@@ -40,13 +40,13 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: cyl, label: "**LineGizmoUniformBindgroupLayout**<br/>定义调试线 GPU 参数的绑定布局。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​gizmos​_​render::init​_​line​_​gizmo​_​**<br/>**uniform​_​bind​_​group​_​layout**<br/>建立 Gizmo 线条动态参数的 GPU 布局。" }
+  n1@{ shape: rounded, label: "**init​_​line​_​gizmo​_​uniform​_​bind​_​group​_​**<br/>**layout**<br/>建立 Gizmo 线条动态参数的 GPU 布局。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​gizmos​_​render::pipeline​_​3d::**<br/>**init​_​line​_​gizmo​_​pipelines**<br/>建立三维 Gizmo 线条深度管线和接头资源。" }
+  n2@{ shape: rounded, label: "**init​_​line​_​gizmo​_​pipelines**<br/>建立三维 Gizmo 线条深度管线和接头资源。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​gizmos​_​render::pipeline​_​2d::**<br/>**init​_​line​_​gizmo​_​pipelines**<br/>建立二维 Gizmo 线段和接头管线。" }
+  n3@{ shape: rounded, label: "**init​_​line​_​gizmo​_​pipelines**<br/>建立二维 Gizmo 线段和接头管线。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**bevy​_​gizmos​_​render::prepare​_​line​_​**<br/>**gizmo​_​bind​_​group**<br/>为 Gizmo 绘制绑定已上传的线条参数。" }
+  n4@{ shape: rounded, label: "**prepare​_​line​_​gizmo​_​bind​_​group**<br/>为 Gizmo 绘制绑定已上传的线条参数。" }
   class n4 node_system
   n1 e0@-->|"插入"| n0
   class e0 edge_write

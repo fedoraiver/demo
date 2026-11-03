@@ -37,9 +37,9 @@ flowchart LR
   classDef node_event fill:#F9F3EE,stroke:#B66B2D,stroke-width:1.6px,color:#1F3340
   classDef edge_emit stroke:#B66B2D,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: stadium, label: "**editing::TextEditChange**<br/>通知可编辑文本已应用待处理编辑。" }
+  n0@{ shape: stadium, label: "**TextEditChange**<br/>通知可编辑文本已应用待处理编辑。" }
   class n0 node_event
-  n1@{ shape: rounded, label: "**bevy​_​text::editing::apply​_​text​_​edits**<br/>应用可编辑文字排队的编辑操作。" }
+  n1@{ shape: rounded, label: "**apply​_​text​_​edits**<br/>应用可编辑文字排队的编辑操作。" }
   class n1 node_system
   n1 e0@-->|"触发事件"| n0
   class e0 edge_emit

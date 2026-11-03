@@ -39,21 +39,21 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**tabs::SelectedTab**<br/>保存标签列表当前选中的直接子标签实体" }
+  n0@{ shape: rounded, label: "**SelectedTab**<br/>保存标签列表当前选中的直接子标签实体" }
   class n0 node_component
-  n1@{ shape: hex, label: "**bevy​_​ui​_​widgets::tabs::tablist​_​on​_​**<br/>**click**<br/>点击可用标签时请求切换选择。" }
+  n1@{ shape: hex, label: "**tablist​_​on​_​click**<br/>点击可用标签时请求切换选择。" }
   class n1 node_observer
-  n2@{ shape: hex, label: "**bevy​_​ui​_​widgets::tabs::tab​_​on​_​key​_​**<br/>**input**<br/>用键盘导航并激活标签页。" }
+  n2@{ shape: hex, label: "**tab​_​on​_​key​_​input**<br/>用键盘导航并激活标签页。" }
   class n2 node_observer
-  n3@{ shape: hex, label: "**bevy​_​ui​_​widgets::tabs::tablist​_​on​_​**<br/>**click**<br/>点击可用标签时请求切换选择。" }
+  n3@{ shape: hex, label: "**tablist​_​on​_​click**<br/>点击可用标签时请求切换选择。" }
   class n3 node_observer
-  n4@{ shape: hex, label: "**bevy​_​ui​_​widgets::tabs::tab​_​on​_​key​_​**<br/>**input**<br/>用键盘导航并激活标签页。" }
+  n4@{ shape: hex, label: "**tab​_​on​_​key​_​input**<br/>用键盘导航并激活标签页。" }
   class n4 node_observer
-  n5@{ shape: hex, label: "**bevy​_​ui​_​widgets::tabs::tablist​_​on​_​**<br/>**click**<br/>点击可用标签时请求切换选择。" }
+  n5@{ shape: hex, label: "**tablist​_​on​_​click**<br/>点击可用标签时请求切换选择。" }
   class n5 node_observer
-  n6@{ shape: hex, label: "**bevy​_​ui​_​widgets::tabs::tab​_​on​_​key​_​**<br/>**input**<br/>用键盘导航并激活标签页。" }
+  n6@{ shape: hex, label: "**tab​_​on​_​key​_​input**<br/>用键盘导航并激活标签页。" }
   class n6 node_observer
-  n7@{ shape: rounded, label: "**bevy​_​ui​_​widgets::tabs::update​_​**<br/>**tablist​_​derived​_​state**<br/>从标签选择和焦点派生每个标签的状态。" }
+  n7@{ shape: rounded, label: "**update​_​tablist​_​derived​_​state**<br/>从标签选择和焦点派生每个标签的状态。" }
   class n7 node_system
   n0 e0@--> n1
   class e0 edge_read

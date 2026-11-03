@@ -40,16 +40,16 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: lin-rect, label: "**WorldInstanceSpawn**<br/>划分世界实例与场景生成阶段。" }
   class n0 node_system_set
-  n1@{ shape: rounded, label: "**bevy​_​scene::spawn::spawn​_​queued**<br/>来自crate:bevy​_​scene ↗：应用已就绪的<br/>场景补丁并推进排队装配。" }
+  n1@{ shape: rounded, label: "**spawn​_​queued**<br/>来自crate:bevy​_​scene ↗：应用已就绪的<br/>场景补丁并推进排队装配。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​scene::spawn::resolve​_​scene​_​**<br/>**patches**<br/>来自crate:bevy​_​scene ↗：解析已完成依<br/>赖加载的场景补丁。" }
+  n2@{ shape: rounded, label: "**resolve​_​scene​_​patches**<br/>来自crate:bevy​_​scene ↗：解析已完成依<br/>赖加载的场景补丁。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​world​_​serialization::world​_​**<br/>**asset​_​spawner::world​_​instance​_​**<br/>**spawner**<br/>来自crate:bevy​_​world​_​serialization<br/>↗：根据世界资产根组件排队生成或替换实<br/>例。" }
+  n3@{ shape: rounded, label: "**world​_​instance​_​spawner**<br/>来自crate:bevy​_​world​_​serialization<br/>↗：根据世界资产根组件排队生成或替换实<br/>例。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**bevy​_​world​_​serialization::world​_​**<br/>**asset​_​spawner::world​_​instance​_​**<br/>**spawner​_​system**<br/>来自crate:bevy​_​world​_​serialization<br/>↗：推进世界资产实例的生成、销毁及更新。" }
+  n4@{ shape: rounded, label: "**world​_​instance​_​spawner​_​system**<br/>来自crate:bevy​_​world​_​serialization<br/>↗：推进世界资产实例的生成、销毁及更新。" }
   class n4 node_system
   class n4 external_node
   n0 e0@-->|"先于"| n1

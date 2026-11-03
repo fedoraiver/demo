@@ -38,12 +38,12 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::**<br/>**material::add​_​material2d​_​bind​_​group​_​**<br/>**allocator#lt;bevy​_​sprite​_​render::**<br/>**sprite​_​mesh::sprite​_​mesh​_​material::**<br/>**SpriteMeshMaterial#gt;**<br/>为二维材质类型注册 GPU 绑定组分配器。" }
+  n0@{ shape: rounded, label: "**add​_​material2d​_​bind​_​group​_​allocator**<br/>为二维材质类型注册 GPU 绑定组分配器。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**material​_​bind​_​groups::**<br/>**MaterialBindGroupAllocators**<br/>来自crate:bevy​_​render ↗：为材质分配绑<br/>定组并追踪引用资源。" }
+  n1@{ shape: cyl, label: "**MaterialBindGroupAllocators**<br/>来自crate:bevy​_​render ↗：为材质分配绑<br/>定组并追踪引用资源。" }
   class n1 node_resource
   class n1 external_node
-  n2@{ shape: cyl, label: "**bevy​_​render::renderer::RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
+  n2@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
   class n2 node_resource
   class n2 external_node
   n0 e0@-->|"可变访问"| n1

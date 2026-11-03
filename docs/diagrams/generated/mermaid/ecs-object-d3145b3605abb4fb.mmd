@@ -37,11 +37,11 @@ flowchart LR
   classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**bevy​_​render::erased​_​render​_​asset::**<br/>**PrepareNextFrameAssets#lt;mesh2d::**<br/>**material::MeshMaterial2d#lt;tilemap​_​**<br/>**chunk::tilemap​_​chunk​_​material::**<br/>**TilemapChunkMaterial#gt;#gt;**<br/>保留下一帧需要继续准备的资产。" }
+  n0@{ shape: cyl, label: "**PrepareNextFrameAssets#lt;MeshMaterial2**<br/>**d#lt;TilemapChunkMaterial#gt;#gt;**<br/>保留下一帧需要继续准备的资产。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​render::erased​_​render​_​asset::**<br/>**collect​_​erased​_​render​_​assets​_​to​_​**<br/>**reextract#lt;bevy​_​sprite​_​render::**<br/>**mesh2d::material::**<br/>**MeshMaterial2d#lt;bevy​_​sprite​_​render::**<br/>**tilemap​_​chunk::tilemap​_​chunk​_​**<br/>**material::TilemapChunkMaterial#gt;#gt;**<br/>按源材质类型排空擦除资产并请求重新提取。" }
+  n1@{ shape: rounded, label: "**collect​_​erased​_​render​_​assets​_​to​_​**<br/>**reextract**<br/>按源材质类型排空擦除资产并请求重新提取。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​render::erased​_​render​_​asset::**<br/>**prepare​_​erased​_​assets#lt;bevy​_​sprite​_​**<br/>**render::mesh2d::material::**<br/>**MeshMaterial2d#lt;bevy​_​sprite​_​render::**<br/>**tilemap​_​chunk::tilemap​_​chunk​_​**<br/>**material::TilemapChunkMaterial#gt;#gt;**<br/>在上传预算内准备擦除资产并管理重试卸载。" }
+  n2@{ shape: rounded, label: "**prepare​_​erased​_​assets**<br/>在上传预算内准备擦除资产并管理重试卸载。" }
   class n2 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

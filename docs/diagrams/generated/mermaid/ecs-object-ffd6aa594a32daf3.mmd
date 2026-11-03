@@ -38,11 +38,11 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**widget::button::DeprecatedButton**<br/>标识旧版界面按钮。" }
+  n0@{ shape: rounded, label: "**DeprecatedButton**<br/>标识旧版界面按钮。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​ui::accessibility::image​_​**<br/>**changed**<br/>为非按钮图像生成或更新无障碍标签。" }
+  n1@{ shape: rounded, label: "**image​_​changed**<br/>为非按钮图像生成或更新无障碍标签。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​ui::accessibility::button​_​**<br/>**changed**<br/>为按钮生成或更新无障碍角色与文本标签。" }
+  n2@{ shape: rounded, label: "**button​_​changed**<br/>为按钮生成或更新无障碍角色与文本标签。" }
   class n2 node_system
   n0 e0@-->|"存在性约束"| n1
   class e0 edge_reference

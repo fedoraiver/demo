@@ -41,17 +41,17 @@ flowchart LR
   classDef edge_observe stroke:#B66B2D,stroke-width:1.8px,stroke-dasharray:2 4
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: hex, label: "**avian3d::collider​_​tree::update::**<br/>**remove​_​from​_​tree​_​on**<br/>从空间树移除碰撞体代理。" }
+  n0@{ shape: hex, label: "**remove​_​from​_​tree​_​on**<br/>从空间树移除碰撞体代理。" }
   class n0 node_observer
-  n1@{ shape: rounded, label: "**collision::collider::**<br/>**ColliderDisabled**<br/>暂停碰撞体检测和空间查询。" }
+  n1@{ shape: rounded, label: "**ColliderDisabled**<br/>暂停碰撞体检测和空间查询。" }
   class n1 node_component
-  n2@{ shape: cyl, label: "**collider​_​tree::ColliderTrees**<br/>按运动类别组织碰撞体加速树。" }
+  n2@{ shape: cyl, label: "**ColliderTrees**<br/>按运动类别组织碰撞体加速树。" }
   class n2 node_resource
-  n3@{ shape: rounded, label: "**collider​_​tree::proxy​_​key::**<br/>**ColliderTreeProxyKey**<br/>定位特定碰撞体树中的代理。" }
+  n3@{ shape: rounded, label: "**ColliderTreeProxyKey**<br/>定位特定碰撞体树中的代理。" }
   class n3 node_component
-  n4@{ shape: cyl, label: "**collider​_​tree::update::MovedProxies**<br/>收集需要重检碰撞对的移动代理。" }
+  n4@{ shape: cyl, label: "**MovedProxies**<br/>收集需要重检碰撞对的移动代理。" }
   class n4 node_resource
-  n5@{ shape: stadium, label: "**bevy​_​ecs::lifecycle::AddEvent**<br/>来自crate:bevy​_​ecs ↗：通知组件首次加<br/>入实体。" }
+  n5@{ shape: stadium, label: "**AddEvent**<br/>来自crate:bevy​_​ecs ↗：通知组件首次加<br/>入实体。" }
   class n5 node_event
   class n5 external_node
   n1 e0@-->|"存在性约束"| n0

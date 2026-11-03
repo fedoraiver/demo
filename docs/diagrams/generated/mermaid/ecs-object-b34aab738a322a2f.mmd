@@ -43,38 +43,38 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**demo::item​_​interaction::lifecycle::**<br/>**release​_​orphaned​_​items**<br/>关系被外部解除或人物销毁时，独立箱实体仍<br/>能恢复自由刚体，不产生残留附属碰撞。" }
+  n0@{ shape: rounded, label: "**release​_​orphaned​_​items**<br/>关系被外部解除或人物销毁时，独立箱实体仍<br/>能恢复自由刚体，不产生残留附属碰撞。" }
   class n0 node_system
   n1@{ shape: lin-rect, label: "**Attachment**<br/>来自game​_​flow ↗：固定模拟阶段；结构变<br/>更在依赖阶段之间提交。" }
   class n1 node_system_set
   class n1 external_node
-  n2@{ shape: rounded, label: "**dynamics::rigid​_​body::LinearVelocity**<br/>来自crate:avian3d ↗：保存刚体的世界线<br/>速度。" }
+  n2@{ shape: rounded, label: "**LinearVelocity**<br/>来自crate:avian3d ↗：保存刚体的世界线<br/>速度。" }
   class n2 node_component
   class n2 external_node
   n3@{ shape: lin-rect, label: "**AnonymousSet(1)**<br/>来自crate:bevy​_​ecs ↗：保存一组系统的<br/>共同配置。" }
   class n3 node_system_set
   class n3 external_node
-  n4@{ shape: rounded, label: "**character::components::Character**<br/>来自character ↗：具有移动和跳跃能力的<br/>角色。" }
+  n4@{ shape: rounded, label: "**Character**<br/>来自character ↗：具有移动和跳跃能力的<br/>角色。" }
   class n4 node_component
   class n4 external_node
-  n5@{ shape: rounded, label: "**components::transform::Transform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>相对父实体的平移、旋转和缩放" }
+  n5@{ shape: rounded, label: "**Transform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>相对父实体的平移、旋转和缩放" }
   class n5 node_component
   class n5 external_node
-  n6@{ shape: rounded, label: "**dynamics::rigid​_​body::**<br/>**AngularVelocity**<br/>来自crate:avian3d ↗：保存刚体的世界角<br/>速度。" }
+  n6@{ shape: rounded, label: "**AngularVelocity**<br/>来自crate:avian3d ↗：保存刚体的世界角<br/>速度。" }
   class n6 node_component
   class n6 external_node
-  n7@{ shape: fr-rect, label: "**item​_​interaction::**<br/>**ItemInteractionPlugin**<br/>注册交互、持握生命周期、物理与呈现同步及<br/>物品反馈；物理插件由调用方显式安装。" }
+  n7@{ shape: fr-rect, label: "**ItemInteractionPlugin**<br/>注册交互、持握生命周期、物理与呈现同步及<br/>物品反馈；物理插件由调用方显式安装。" }
   class n7 node_plugin
-  n8@{ shape: rounded, label: "**item​_​interaction::components::**<br/>**HeldTarget**<br/>手前的目标姿态；对齐期间与真实局部挂接姿<br/>态分离，完成后由共享刚体保持相对位置。" }
+  n8@{ shape: rounded, label: "**HeldTarget**<br/>手前的目标姿态；对齐期间与真实局部挂接姿<br/>态分离，完成后由共享刚体保持相对位置。" }
   class n8 node_component
-  n9@{ shape: rounded, label: "**physics​_​transform::transform::**<br/>**Rotation**<br/>来自crate:avian3d ↗：保存刚体或碰撞体<br/>的世界旋转。" }
+  n9@{ shape: rounded, label: "**Rotation**<br/>来自crate:avian3d ↗：保存刚体或碰撞体<br/>的世界旋转。" }
   class n9 node_component
   class n9 external_node
-  n10@{ shape: rounded, label: "**demo::item​_​interaction::lifecycle::**<br/>**cleanup​_​orphaned​_​colliders**<br/>业务箱本身被销毁后清理代理，防止人物带着<br/>不可见的附属碰撞继续运动。" }
+  n10@{ shape: rounded, label: "**cleanup​_​orphaned​_​colliders**<br/>业务箱本身被销毁后清理代理，防止人物带着<br/>不可见的附属碰撞继续运动。" }
   class n10 node_system
-  n11@{ shape: rounded, label: "**item​_​interaction::components::HeldBy**<br/>物体的持有者；只由交互系统插入或移除。" }
+  n11@{ shape: rounded, label: "**HeldBy**<br/>物体的持有者；只由交互系统插入或移除。" }
   class n11 node_component
-  n12@{ shape: rounded, label: "**physics​_​transform::transform::**<br/>**Position**<br/>来自crate:avian3d ↗：保存刚体或碰撞体<br/>的世界位置。" }
+  n12@{ shape: rounded, label: "**Position**<br/>来自crate:avian3d ↗：保存刚体或碰撞体<br/>的世界位置。" }
   class n12 node_component
   class n12 external_node
   n1 e0@-->|"集合成员"| n0

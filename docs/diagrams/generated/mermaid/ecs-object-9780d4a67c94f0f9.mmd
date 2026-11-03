@@ -38,12 +38,12 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;bevy​_​**<br/>**asset::AssetEvent#lt;world​_​asset::**<br/>**WorldAsset#gt;#gt;**<br/>保存最近两次轮换期间产生的指定类型消息" }
+  n0@{ shape: cyl, label: "**Messages#lt;AssetEvent#lt;WorldAsset#gt;#gt;**<br/>保存最近两次轮换期间产生的指定类型消息" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​world​_​serialization::world​_​**<br/>**asset​_​spawner::world​_​instance​_​**<br/>**spawner​_​system**<br/>来自crate:bevy​_​world​_​serialization<br/>↗：推进世界资产实例的生成、销毁及更新。" }
+  n1@{ shape: rounded, label: "**world​_​instance​_​spawner​_​system**<br/>来自crate:bevy​_​world​_​serialization<br/>↗：推进世界资产实例的生成、销毁及更新。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​asset::assets::Assets#lt;bevy​_​**<br/>**world​_​serialization::world​_​asset::**<br/>**WorldAsset#gt;::asset​_​events**<br/>来自crate:bevy​_​asset ↗：发布累计的资<br/>产变化消息。" }
+  n2@{ shape: rounded, label: "**asset​_​events**<br/>来自crate:bevy​_​asset ↗：发布累计的资<br/>产变化消息。" }
   class n2 node_system
   class n2 external_node
   n0 e0@--> n1

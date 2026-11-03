@@ -37,11 +37,11 @@ flowchart LR
   classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**gizmos::GizmoStorage#lt;skinned​_​mesh​_​**<br/>**bounds::**<br/>**SkinnedMeshBoundsGizmoConfigGroup,**<br/>**gizmos::Swap#lt;bevy​_​time::Fixed#gt;#gt;**<br/>按配置组和清理上下文存储调试图元。" }
+  n0@{ shape: cyl, label: "**GizmoStorage#lt;SkinnedMeshBoundsGizmoC**<br/>**onfigGroup, Swap#lt;Fixed#gt;#gt;**<br/>按配置组和清理上下文存储调试图元。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​gizmos::start​_​gizmo​_​**<br/>**context#lt;bevy​_​gizmos::skinned​_​mesh​_​**<br/>**bounds::**<br/>**SkinnedMeshBoundsGizmoConfigGroup,**<br/>**bevy​_​time::fixed::Fixed#gt;**<br/>暂存父级 Gizmo 缓冲并开始新上下文。" }
+  n1@{ shape: rounded, label: "**start​_​gizmo​_​context**<br/>暂存父级 Gizmo 缓冲并开始新上下文。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​gizmos::end​_​gizmo​_​context#lt;bevy​_​**<br/>**gizmos::skinned​_​mesh​_​bounds::**<br/>**SkinnedMeshBoundsGizmoConfigGroup,**<br/>**bevy​_​time::fixed::Fixed#gt;**<br/>清空当前默认 Gizmo 存储，再与上下文交换<br/>缓冲互换，恢复先前保存的父上下文，供后续<br/>图元网格生成使用。" }
+  n2@{ shape: rounded, label: "**end​_​gizmo​_​context**<br/>清空当前默认 Gizmo 存储，再与上下文交换<br/>缓冲互换，恢复先前保存的父上下文，供后续<br/>图元网格生成使用。" }
   class n2 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

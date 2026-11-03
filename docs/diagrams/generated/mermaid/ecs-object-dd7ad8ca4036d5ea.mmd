@@ -38,9 +38,9 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**view::window::screenshot::Capturing**<br/>标记截图请求正在异步捕获。" }
+  n0@{ shape: rounded, label: "**Capturing**<br/>标记截图请求正在异步捕获。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​render::view::window::**<br/>**screenshot::extract​_​screenshots**<br/>收集并去重本帧尚未捕获的截图请求。" }
+  n1@{ shape: rounded, label: "**extract​_​screenshots**<br/>收集并去重本帧尚未捕获的截图请求。" }
   class n1 node_system
   n1 e0@---|"存在性约束"| n0
   class e0 edge_reference

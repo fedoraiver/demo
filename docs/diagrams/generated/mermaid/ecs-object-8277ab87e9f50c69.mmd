@@ -45,27 +45,27 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​camera::visibility::calculate​_​**<br/>**bounds**<br/>为允许自动计算的三维网格维护包围盒。" }
+  n0@{ shape: rounded, label: "**calculate​_​bounds**<br/>为允许自动计算的三维网格维护包围盒。" }
   class n0 node_system
-  n1@{ shape: fr-rect, label: "**visibility::VisibilityPlugin**<br/>维护包围盒、层级可见性与视锥检查。" }
+  n1@{ shape: fr-rect, label: "**VisibilityPlugin**<br/>维护包围盒、层级可见性与视锥检查。" }
   class n1 node_plugin
-  n2@{ shape: rounded, label: "**bevy​_​camera::visibility::update​_​**<br/>**skinned​_​mesh​_​bounds**<br/>依据当前关节姿态更新动态蒙皮包围盒。" }
+  n2@{ shape: rounded, label: "**update​_​skinned​_​mesh​_​bounds**<br/>依据当前关节姿态更新动态蒙皮包围盒。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​camera::primitives::Aabb**<br/>以局部轴对齐包围盒支持可见性裁剪。" }
+  n3@{ shape: rounded, label: "**Aabb**<br/>以局部轴对齐包围盒支持可见性裁剪。" }
   class n3 node_component
-  n4@{ shape: rounded, label: "**bevy​_​mesh::Mesh3d**<br/>来自crate:bevy​_​mesh ↗：为三维可绘制实<br/>体指定网格资产。" }
+  n4@{ shape: rounded, label: "**Mesh3d**<br/>来自crate:bevy​_​mesh ↗：为三维可绘制实<br/>体指定网格资产。" }
   class n4 node_component
   class n4 external_node
-  n5@{ shape: rounded, label: "**bevy​_​camera::visibility::NoAutoAabb**<br/>禁止自动计算实体的轴对齐包围盒。" }
+  n5@{ shape: rounded, label: "**NoAutoAabb**<br/>禁止自动计算实体的轴对齐包围盒。" }
   class n5 node_component
-  n6@{ shape: cyl, label: "**bevy​_​asset::Assets#lt;bevy​_​mesh::Mesh#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
+  n6@{ shape: cyl, label: "**Assets#lt;Mesh#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
   class n6 node_resource
   class n6 external_node
-  n7@{ shape: rounded, label: "**bevy​_​camera::visibility::**<br/>**NoFrustumCulling**<br/>使实体退出内置视锥裁剪。" }
+  n7@{ shape: rounded, label: "**NoFrustumCulling**<br/>使实体退出内置视锥裁剪。" }
   class n7 node_component
   n8@{ shape: lin-rect, label: "**CalculateBounds**<br/>组织相机与实体可见性更新。" }
   class n8 node_system_set
-  n9@{ shape: cyl, label: "**bevy​_​asset::asset​_​changed::**<br/>**AssetChanges#lt;mesh::Mesh#gt;**<br/>来自crate:bevy​_​asset ↗：记录资产最近<br/>变化的系统刻度。" }
+  n9@{ shape: cyl, label: "**AssetChanges#lt;Mesh#gt;**<br/>来自crate:bevy​_​asset ↗：记录资产最近<br/>变化的系统刻度。" }
   class n9 node_resource
   class n9 external_node
   n1 e0@-->|"调用"| n0

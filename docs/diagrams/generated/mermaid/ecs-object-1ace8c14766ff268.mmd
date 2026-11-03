@@ -37,11 +37,11 @@ flowchart LR
   classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**schedule::CameraWindows**<br/>记录相机输出所覆盖的窗口集合。" }
+  n0@{ shape: cyl, label: "**CameraWindows**<br/>记录相机输出所覆盖的窗口集合。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​core​_​pipeline::schedule::**<br/>**camera​_​driver**<br/>为辅助视图和活动相机运行专属渲染调度。" }
+  n1@{ shape: rounded, label: "**camera​_​driver**<br/>为辅助视图和活动相机运行专属渲染调度。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​core​_​pipeline::schedule::**<br/>**handle​_​uncovered​_​swap​_​chains**<br/>清除本帧没有相机覆盖的窗口交换链。" }
+  n2@{ shape: rounded, label: "**handle​_​uncovered​_​swap​_​chains**<br/>清除本帧没有相机覆盖的窗口交换链。" }
   class n2 node_system
   n1 e0@-->|"插入"| n0
   class e0 edge_write

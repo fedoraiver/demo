@@ -38,13 +38,13 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**character​_​animation::state::**<br/>**CourierAnimation**<br/>只保存视觉混合与步相位；速度、朝向、接地<br/>及持有状态仍由业务组件提供。" }
+  n0@{ shape: rounded, label: "**CourierAnimation**<br/>只保存视觉混合与步相位；速度、朝向、接地<br/>及持有状态仍由业务组件提供。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**demo::character​_​animation::state::**<br/>**sync​_​courier​_​animation**<br/>Update 位于固定模拟与呈现同步之后；零固<br/>定步帧也使用本帧朝向和已有真实速度。" }
+  n1@{ shape: rounded, label: "**sync​_​courier​_​animation**<br/>Update 位于固定模拟与呈现同步之后；零固<br/>定步帧也使用本帧朝向和已有真实速度。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**demo::character​_​animation::**<br/>**grounding::compensate​_​courier​_​sole​_​**<br/>**penetration**<br/>方向混合可能把弯腿插值成更直的腿；逐帧按<br/>真实鞋底边界修正最终视觉高度。" }
+  n2@{ shape: rounded, label: "**compensate​_​courier​_​sole​_​penetration**<br/>方向混合可能把弯腿插值成更直的腿；逐帧按<br/>真实鞋底边界修正最终视觉高度。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**demo::character​_​animation::binding::**<br/>**initialize​_​ready​_​couriers**<br/>场景就绪后只遍历该视觉根的子树，避免把<br/>NPC 或其他模型的播放器接到主角上。" }
+  n3@{ shape: rounded, label: "**initialize​_​ready​_​couriers**<br/>场景就绪后只遍历该视觉根的子树，避免把<br/>NPC 或其他模型的播放器接到主角上。" }
   class n3 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

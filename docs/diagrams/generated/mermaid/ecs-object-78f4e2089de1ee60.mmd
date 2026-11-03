@@ -36,9 +36,9 @@ flowchart LR
   classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**settings::config::SettingsFile**<br/>设置文件的保存位置；测试可覆盖该资源而不<br/>触及玩家的真实配置。" }
+  n0@{ shape: cyl, label: "**SettingsFile**<br/>设置文件的保存位置；测试可覆盖该资源而不<br/>触及玩家的真实配置。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**demo::ui::requests::handle​_​requests**<br/>来自ui ↗：每帧只消费一项语义请求，避免<br/>鼠标与确认键同时激活，或旧页面动作穿过页<br/>面切换。" }
+  n1@{ shape: rounded, label: "**handle​_​requests**<br/>来自ui ↗：每帧只消费一项语义请求，避免<br/>鼠标与确认键同时激活，或旧页面动作穿过页<br/>面切换。" }
   class n1 node_system
   class n1 external_node
   n0 e0@--> n1

@@ -38,15 +38,15 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**primitives::Sphere**<br/>以球形包围体参与视锥裁剪。" }
+  n0@{ shape: rounded, label: "**Sphere**<br/>以球形包围体参与视锥裁剪。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​light::point​_​light::update​_​**<br/>**point​_​light​_​bounding​_​spheres**<br/>来自crate:bevy​_​light ↗：按点光位置和<br/>范围更新剔除包围球。" }
+  n1@{ shape: rounded, label: "**update​_​point​_​light​_​bounding​_​spheres**<br/>来自crate:bevy​_​light ↗：按点光位置和<br/>范围更新剔除包围球。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​light::spot​_​light::update​_​spot​_​**<br/>**light​_​bounding​_​spheres**<br/>来自crate:bevy​_​light ↗：按聚光灯位置<br/>和范围更新剔除包围球。" }
+  n2@{ shape: rounded, label: "**update​_​spot​_​light​_​bounding​_​spheres**<br/>来自crate:bevy​_​light ↗：按聚光灯位置<br/>和范围更新剔除包围球。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​camera::visibility::check​_​**<br/>**visibility​_​cpu​_​culling**<br/>按层、距离和视锥收集各相机可见实体。" }
+  n3@{ shape: rounded, label: "**check​_​visibility​_​cpu​_​culling**<br/>按层、距离和视锥收集各相机可见实体。" }
   class n3 node_system
   n1 e0@-->|"插入"| n0
   class e0 edge_write

@@ -40,11 +40,11 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: cyl, label: "**GilrsGamepads**<br/>维护已连接 gilrs 手柄编号与 Bevy 手柄<br/>实体的双向映射" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​gilrs::gilrs​_​system::gilrs​_​**<br/>**event​_​system**<br/>把 gilrs 原始手柄事件转换为 Bevy 消<br/>息。" }
+  n1@{ shape: rounded, label: "**gilrs​_​event​_​system**<br/>把 gilrs 原始手柄事件转换为 Bevy 消<br/>息。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​gilrs::gilrs​_​system::gilrs​_​**<br/>**event​_​startup​_​system**<br/>登记启动时已经连接的手柄。" }
+  n2@{ shape: rounded, label: "**gilrs​_​event​_​startup​_​system**<br/>登记启动时已经连接的手柄。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​gilrs::rumble::play​_​gilrs​_​**<br/>**rumble**<br/>执行手柄振动请求并清除过期效果。" }
+  n3@{ shape: rounded, label: "**play​_​gilrs​_​rumble**<br/>执行手柄振动请求并清除过期效果。" }
   class n3 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

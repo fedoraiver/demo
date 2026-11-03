@@ -38,22 +38,22 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**texture::manual​_​texture​_​view::**<br/>**ManualTextureViews**<br/>注册供相机输出的手动管理纹理视图。" }
+  n0@{ shape: cyl, label: "**ManualTextureViews**<br/>注册供相机输出的手动管理纹理视图。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​render::camera::camera​_​system**<br/>响应目标尺寸变化并更新相机投影。" }
+  n1@{ shape: rounded, label: "**camera​_​system**<br/>响应目标尺寸变化并更新相机投影。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​render::camera::extract​_​cameras**<br/>把活动相机及可见实体提取到渲染世界。" }
+  n2@{ shape: rounded, label: "**extract​_​cameras**<br/>把活动相机及可见实体提取到渲染世界。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​render::view::prepare​_​view​_​**<br/>**attachments**<br/>按相机输出目标准备可共享的颜色附件。" }
+  n3@{ shape: rounded, label: "**prepare​_​view​_​attachments**<br/>按相机输出目标准备可共享的颜色附件。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**bevy​_​extract::extract​_​resource::**<br/>**extract​_​resource#lt;bevy​_​render::**<br/>**texture::manual​_​texture​_​view::**<br/>**ManualTextureViews, bevy​_​render::**<br/>**RenderApp, ()#gt;**<br/>来自crate:bevy​_​extract ↗：把存在的主<br/>世界资源转换到子世界。" }
+  n4@{ shape: rounded, label: "**extract​_​resource**<br/>来自crate:bevy​_​extract ↗：把存在的主<br/>世界资源转换到子世界。" }
   class n4 node_system
   class n4 external_node
-  n5@{ shape: rounded, label: "**bevy​_​render::camera::camera​_​system**<br/>响应目标尺寸变化并更新相机投影。" }
+  n5@{ shape: rounded, label: "**camera​_​system**<br/>响应目标尺寸变化并更新相机投影。" }
   class n5 node_system
-  n6@{ shape: rounded, label: "**bevy​_​render::view::window::**<br/>**screenshot::prepare​_​screenshots**<br/>为有效截图目标准备捕获资源和输出附件。" }
+  n6@{ shape: rounded, label: "**prepare​_​screenshots**<br/>为有效截图目标准备捕获资源和输出附件。" }
   class n6 node_system
-  n7@{ shape: rounded, label: "**bevy​_​render::renderer::render​_​system**<br/>运行渲染图调度并完成回读和窗口呈现。" }
+  n7@{ shape: rounded, label: "**render​_​system**<br/>运行渲染图调度并完成回读和窗口呈现。" }
   class n7 node_system
   n0 e0@--> n1
   class e0 edge_read

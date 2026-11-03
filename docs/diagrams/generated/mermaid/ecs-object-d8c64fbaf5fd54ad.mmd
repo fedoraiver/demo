@@ -40,22 +40,19 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: lin-rect, label: "**UpdateStart**<br/>组织变换缓动端点与帧间应用。" }
   class n0 node_system_set
-  n1@{ shape: rounded, label: "**bevy​_​transform​_​interpolation::**<br/>**interpolation::update​_​translation​_​**<br/>**interpolation​_​start**<br/>把当前位置记录为插值起点。" }
+  n1@{ shape: rounded, label: "**update​_​translation​_​interpolation​_​**<br/>**start**<br/>把当前位置记录为插值起点。" }
   class n1 node_system
   n2@{ shape: lin-rect, label: "**Reset**<br/>组织变换缓动端点与帧间应用。" }
   class n2 node_system_set
-  n3@{ shape: rounded, label: "**bevy​_​transform​_​interpolation::**<br/>**interpolation::update​_​scale​_​**<br/>**interpolation​_​start**<br/>把当前缩放记录为插值起点。" }
+  n3@{ shape: rounded, label: "**update​_​scale​_​interpolation​_​start**<br/>把当前缩放记录为插值起点。" }
   class n3 node_system
-  subgraph layout_card_n4[" "]
-  n4@{ shape: rounded, label: "**demo::bounds​_​recovery::recovery::**<br/>**resume​_​interpolation**<br/>来自bounds​_​recovery ↗：下一固定步从恢<br/>复后的位置重新采样插值，只移除本模块临时<br/>添加的暂停项。" }
+  n4@{ shape: rounded, label: "**resume​_​interpolation**<br/>来自bounds​_​recovery ↗：下一固定步从恢<br/>复后的位置重新采样插值，只移除本模块临时<br/>添加的暂停项。" }
   class n4 node_system
   class n4 external_node
-  end
-  style layout_card_n4 fill:none,stroke:none
-  n5@{ shape: rounded, label: "**demo::item​_​interaction::lifecycle::**<br/>**resume​_​carry​_​easing**<br/>来自item​_​interaction ↗：下一固定步在<br/>旧端点清除后恢复自由箱插值，保留原本由其<br/>他模块设置的暂停项。" }
+  n5@{ shape: rounded, label: "**resume​_​carry​_​easing**<br/>来自item​_​interaction ↗：下一固定步在<br/>旧端点清除后恢复自由箱插值，保留原本由其<br/>他模块设置的暂停项。" }
   class n5 node_system
   class n5 external_node
-  n6@{ shape: rounded, label: "**bevy​_​transform​_​interpolation::**<br/>**interpolation::update​_​rotation​_​**<br/>**interpolation​_​start**<br/>把当前旋转记录为插值起点。" }
+  n6@{ shape: rounded, label: "**update​_​rotation​_​interpolation​_​start**<br/>把当前旋转记录为插值起点。" }
   class n6 node_system
   n0 e0@-->|"集合成员"| n1
   class e0 edge_set_membership

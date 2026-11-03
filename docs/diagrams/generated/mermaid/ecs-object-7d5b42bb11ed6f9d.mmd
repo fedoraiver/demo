@@ -38,13 +38,13 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**render::gpu​_​preprocess::**<br/>**BinUnpackingBindGroups**<br/>按视图和绘制阶段绑定分桶解包资源。" }
+  n0@{ shape: cyl, label: "**BinUnpackingBindGroups**<br/>按视图和绘制阶段绑定分桶解包资源。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​pbr::render::gpu​_​preprocess::**<br/>**unpack​_​bins**<br/>解包 GPU 分桶数据并生成网格预处理任务。" }
+  n1@{ shape: rounded, label: "**unpack​_​bins**<br/>解包 GPU 分桶数据并生成网格预处理任务。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​pbr::render::gpu​_​preprocess::**<br/>**prepare​_​preprocess​_​bind​_​groups**<br/>绑定各视图网格预处理和间接参数构建资源。" }
+  n2@{ shape: rounded, label: "**prepare​_​preprocess​_​bind​_​groups**<br/>绑定各视图网格预处理和间接参数构建资源。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​render::init​_​gpu​_​resource#lt;bevy​_​**<br/>**pbr::render::gpu​_​preprocess::**<br/>**BinUnpackingBindGroups#gt;**<br/>来自crate:bevy​_​render ↗：构造并插入渲<br/>染所需资源。" }
+  n3@{ shape: rounded, label: "**init​_​gpu​_​resource**<br/>来自crate:bevy​_​render ↗：构造并插入渲<br/>染所需资源。" }
   class n3 node_system
   class n3 external_node
   n0 e0@--> n1

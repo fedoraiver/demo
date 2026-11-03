@@ -36,9 +36,9 @@ flowchart LR
   classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​render::camera::**<br/>**CameraRenderGraph**<br/>指定相机运行的渲染调度。" }
+  n0@{ shape: rounded, label: "**CameraRenderGraph**<br/>指定相机运行的渲染调度。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​render::camera::extract​_​cameras**<br/>把活动相机及可见实体提取到渲染世界。" }
+  n1@{ shape: rounded, label: "**extract​_​cameras**<br/>把活动相机及可见实体提取到渲染世界。" }
   class n1 node_system
   n0 e0@--> n1
   class e0 edge_read

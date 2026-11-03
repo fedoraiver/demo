@@ -40,27 +40,27 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: stadium, label: "**AcquireFocus**<br/>沿层级请求可聚焦实体获得焦点。" }
   class n0 node_event
-  n1@{ shape: hex, label: "**bevy​_​input​_​focus::tab​_​navigation::**<br/>**acquire​_​focus​_​tab​_​index**<br/>让带导航索引的实体获得输入焦点。" }
+  n1@{ shape: hex, label: "**acquire​_​focus​_​tab​_​index**<br/>让带导航索引的实体获得输入焦点。" }
   class n1 node_observer
-  n2@{ shape: hex, label: "**bevy​_​input​_​focus::on​_​window​_​acquire​_​**<br/>**focus​_​clear**<br/>在请求未命中焦点目标时清除焦点。" }
+  n2@{ shape: hex, label: "**on​_​window​_​acquire​_​focus​_​clear**<br/>在请求未命中焦点目标时清除焦点。" }
   class n2 node_observer
-  n3@{ shape: hex, label: "**bevy​_​input​_​focus::tab​_​navigation::**<br/>**acquire​_​focus​_​tab​_​index**<br/>让带导航索引的实体获得输入焦点。" }
+  n3@{ shape: hex, label: "**acquire​_​focus​_​tab​_​index**<br/>让带导航索引的实体获得输入焦点。" }
   class n3 node_observer
-  n4@{ shape: hex, label: "**bevy​_​input​_​focus::tab​_​navigation::**<br/>**acquire​_​focus​_​tab​_​index**<br/>让带导航索引的实体获得输入焦点。" }
+  n4@{ shape: hex, label: "**acquire​_​focus​_​tab​_​index**<br/>让带导航索引的实体获得输入焦点。" }
   class n4 node_observer
-  n5@{ shape: hex, label: "**bevy​_​input​_​focus::pointer​_​focus::**<br/>**click​_​to​_​focus**<br/>根据指针按下请求获取输入焦点。" }
+  n5@{ shape: hex, label: "**click​_​to​_​focus**<br/>根据指针按下请求获取输入焦点。" }
   class n5 node_observer
-  n6@{ shape: hex, label: "**bevy​_​input​_​focus::pointer​_​focus::**<br/>**click​_​to​_​focus**<br/>根据指针按下请求获取输入焦点。" }
+  n6@{ shape: hex, label: "**click​_​to​_​focus**<br/>根据指针按下请求获取输入焦点。" }
   class n6 node_observer
-  n7@{ shape: hex, label: "**bevy​_​input​_​focus::on​_​window​_​acquire​_​**<br/>**focus​_​clear**<br/>在请求未命中焦点目标时清除焦点。" }
+  n7@{ shape: hex, label: "**on​_​window​_​acquire​_​focus​_​clear**<br/>在请求未命中焦点目标时清除焦点。" }
   class n7 node_observer
-  n8@{ shape: hex, label: "**bevy​_​input​_​focus::on​_​window​_​acquire​_​**<br/>**focus​_​clear**<br/>在请求未命中焦点目标时清除焦点。" }
+  n8@{ shape: hex, label: "**on​_​window​_​acquire​_​focus​_​clear**<br/>在请求未命中焦点目标时清除焦点。" }
   class n8 node_observer
-  n9@{ shape: hex, label: "**bevy​_​input​_​focus::tab​_​navigation::**<br/>**acquire​_​focus​_​tab​_​index**<br/>让带导航索引的实体获得输入焦点。" }
+  n9@{ shape: hex, label: "**acquire​_​focus​_​tab​_​index**<br/>让带导航索引的实体获得输入焦点。" }
   class n9 node_observer
-  n10@{ shape: hex, label: "**bevy​_​input​_​focus::tab​_​navigation::**<br/>**acquire​_​focus​_​tab​_​index**<br/>让带导航索引的实体获得输入焦点。" }
+  n10@{ shape: hex, label: "**acquire​_​focus​_​tab​_​index**<br/>让带导航索引的实体获得输入焦点。" }
   class n10 node_observer
-  n11@{ shape: hex, label: "**bevy​_​input​_​focus::pointer​_​focus::**<br/>**click​_​to​_​focus**<br/>根据指针按下请求获取输入焦点。" }
+  n11@{ shape: hex, label: "**click​_​to​_​focus**<br/>根据指针按下请求获取输入焦点。" }
   class n11 node_observer
   n0 e0@-->|"接收事件"| n1
   class e0 edge_observe

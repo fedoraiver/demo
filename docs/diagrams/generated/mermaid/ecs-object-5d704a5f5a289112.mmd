@@ -43,12 +43,12 @@ flowchart LR
   n1@{ shape: lin-rect, label: "**OnAppExitSystems**<br/>来自crate:bevy​_​app ↗：在退出消息发出<br/>后执行应用收尾。" }
   class n1 node_system_set
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​winit::system::despawn​_​windows**<br/>来自crate:bevy​_​winit ↗：处理原生窗口<br/>关闭并延后一轮释放包装器。" }
+  n2@{ shape: rounded, label: "**despawn​_​windows**<br/>来自crate:bevy​_​winit ↗：处理原生窗口<br/>关闭并延后一轮释放包装器。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​window::system::exit​_​on​_​all​_​**<br/>**closed**<br/>窗口查询为空时写入 AppExit::Success，<br/>通知应用正常退出；仍有窗口时不发送退出消<br/>息。" }
+  n3@{ shape: rounded, label: "**exit​_​on​_​all​_​closed**<br/>窗口查询为空时写入 AppExit::Success，<br/>通知应用正常退出；仍有窗口时不发送退出消<br/>息。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**bevy​_​window::system::close​_​when​_​**<br/>**requested**<br/>分两轮标记关闭请求并销毁窗口实体。" }
+  n4@{ shape: rounded, label: "**close​_​when​_​requested**<br/>分两轮标记关闭请求并销毁窗口实体。" }
   class n4 node_system
   n0 e0@-->|"先于"| n1
   class e0 edge_order

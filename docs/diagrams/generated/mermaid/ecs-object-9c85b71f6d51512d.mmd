@@ -40,418 +40,214 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
   subgraph layout_card_n0[" "]
-  n0@{ shape: rounded, label: "**bevy​_​ui::Pressed**<br/>标记按钮或控件当前处于按住状态。" }
+  n0@{ shape: rounded, label: "**Pressed**<br/>标记按钮或控件当前处于按住状态。" }
   class n0 node_component
   end
   style layout_card_n0 fill:none,stroke:none
-  subgraph layout_card_n1[" "]
-  n1@{ shape: hex, label: "**bevy​_​ui​_​widgets::radio::radio​_​**<br/>**button​_​on​_​pointer​_​up**<br/>来自crate:bevy​_​ui​_​widgets ↗：在指针<br/>释放时清除单选按钮按压。" }
+  n1@{ shape: hex, label: "**radio​_​button​_​on​_​pointer​_​up**<br/>来自crate:bevy​_​ui​_​widgets ↗：在指针<br/>释放时清除单选按钮按压。" }
   class n1 node_observer
   class n1 external_node
-  end
-  style layout_card_n1 fill:none,stroke:none
-  subgraph layout_card_n2[" "]
-  n2@{ shape: hex, label: "**bevy​_​ui​_​widgets::checkbox::checkbox​_​**<br/>**on​_​pointer​_​up**<br/>来自crate:bevy​_​ui​_​widgets ↗：在指针<br/>释放时清除复选框按压。" }
+  n2@{ shape: hex, label: "**checkbox​_​on​_​pointer​_​up**<br/>来自crate:bevy​_​ui​_​widgets ↗：在指针<br/>释放时清除复选框按压。" }
   class n2 node_observer
   class n2 external_node
-  end
-  style layout_card_n2 fill:none,stroke:none
-  subgraph layout_card_n3[" "]
-  n3@{ shape: hex, label: "**bevy​_​ui​_​widgets::radio::radio​_​**<br/>**button​_​on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：记录单<br/>选按钮按压并按配置请求选中。" }
+  n3@{ shape: hex, label: "**radio​_​button​_​on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：记录单<br/>选按钮按压并按配置请求选中。" }
   class n3 node_observer
   class n3 external_node
-  end
-  style layout_card_n3 fill:none,stroke:none
-  subgraph layout_card_n4[" "]
-  n4@{ shape: hex, label: "**bevy​_​ui​_​widgets::radio::radio​_​**<br/>**button​_​on​_​pointer​_​cancel**<br/>来自crate:bevy​_​ui​_​widgets ↗：取消单<br/>选按钮的指针按压状态。" }
+  n4@{ shape: hex, label: "**radio​_​button​_​on​_​pointer​_​cancel**<br/>来自crate:bevy​_​ui​_​widgets ↗：取消单<br/>选按钮的指针按压状态。" }
   class n4 node_observer
   class n4 external_node
-  end
-  style layout_card_n4 fill:none,stroke:none
-  subgraph layout_card_n5[" "]
-  n5@{ shape: rounded, label: "**demo::ui::style::style​_​buttons**<br/>来自ui ↗：按当前输入来源更新按钮背景与<br/>焦点边框。" }
+  n5@{ shape: rounded, label: "**style​_​buttons**<br/>来自ui ↗：按当前输入来源更新按钮背景与<br/>焦点边框。" }
   class n5 node_system
   class n5 external_node
-  end
-  style layout_card_n5 fill:none,stroke:none
-  subgraph layout_card_n6[" "]
-  n6@{ shape: hex, label: "**bevy​_​ui​_​widgets::checkbox::checkbox​_​**<br/>**on​_​pointer​_​up**<br/>来自crate:bevy​_​ui​_​widgets ↗：在指针<br/>释放时清除复选框按压。" }
+  n6@{ shape: hex, label: "**checkbox​_​on​_​pointer​_​up**<br/>来自crate:bevy​_​ui​_​widgets ↗：在指针<br/>释放时清除复选框按压。" }
   class n6 node_observer
   class n6 external_node
-  end
-  style layout_card_n6 fill:none,stroke:none
-  subgraph layout_card_n7[" "]
-  n7@{ shape: hex, label: "**bevy​_​ui​_​widgets::menu::menu​_​item​_​on​_​**<br/>**pointer​_​up**<br/>来自crate:bevy​_​ui​_​widgets ↗：在指针<br/>释放时清除菜单项按压。" }
+  n7@{ shape: hex, label: "**menu​_​item​_​on​_​pointer​_​up**<br/>来自crate:bevy​_​ui​_​widgets ↗：在指针<br/>释放时清除菜单项按压。" }
   class n7 node_observer
   class n7 external_node
-  end
-  style layout_card_n7 fill:none,stroke:none
-  subgraph layout_card_n8[" "]
-  n8@{ shape: hex, label: "**bevy​_​ui​_​widgets::button::button​_​on​_​**<br/>**pointer​_​drag​_​end**<br/>来自crate:bevy​_​ui​_​widgets ↗：在拖动<br/>结束时清除按钮按压。" }
+  n8@{ shape: hex, label: "**button​_​on​_​pointer​_​drag​_​end**<br/>来自crate:bevy​_​ui​_​widgets ↗：在拖动<br/>结束时清除按钮按压。" }
   class n8 node_observer
   class n8 external_node
-  end
-  style layout_card_n8 fill:none,stroke:none
-  subgraph layout_card_n9[" "]
-  n9@{ shape: hex, label: "**bevy​_​ui​_​widgets::checkbox::checkbox​_​**<br/>**on​_​pointer​_​drag​_​end**<br/>来自crate:bevy​_​ui​_​widgets ↗：在拖动<br/>结束时清除复选框按压。" }
+  n9@{ shape: hex, label: "**checkbox​_​on​_​pointer​_​drag​_​end**<br/>来自crate:bevy​_​ui​_​widgets ↗：在拖动<br/>结束时清除复选框按压。" }
   class n9 node_observer
   class n9 external_node
-  end
-  style layout_card_n9 fill:none,stroke:none
-  subgraph layout_card_n10[" "]
-  n10@{ shape: hex, label: "**bevy​_​ui​_​widgets::button::button​_​on​_​**<br/>**pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：记录按<br/>钮按压并按配置立即激活。" }
+  n10@{ shape: hex, label: "**button​_​on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：记录按<br/>钮按压并按配置立即激活。" }
   class n10 node_observer
   class n10 external_node
-  end
-  style layout_card_n10 fill:none,stroke:none
-  subgraph layout_card_n11[" "]
-  n11@{ shape: hex, label: "**bevy​_​ui​_​widgets::menu::menu​_​item​_​on​_​**<br/>**pointer​_​cancel**<br/>来自crate:bevy​_​ui​_​widgets ↗：取消菜<br/>单项的指针按压状态。" }
+  n11@{ shape: hex, label: "**menu​_​item​_​on​_​pointer​_​cancel**<br/>来自crate:bevy​_​ui​_​widgets ↗：取消菜<br/>单项的指针按压状态。" }
   class n11 node_observer
   class n11 external_node
-  end
-  style layout_card_n11 fill:none,stroke:none
-  subgraph layout_card_n12[" "]
-  n12@{ shape: hex, label: "**bevy​_​ui​_​widgets::menu::menu​_​item​_​on​_​**<br/>**pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：记录菜<br/>单项的指针按压。" }
+  n12@{ shape: hex, label: "**menu​_​item​_​on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：记录菜<br/>单项的指针按压。" }
   class n12 node_observer
   class n12 external_node
-  end
-  style layout_card_n12 fill:none,stroke:none
-  subgraph layout_card_n13[" "]
-  n13@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**pointer​_​cancel**<br/>来自crate:bevy​_​ui​_​widgets ↗：取消滑<br/>条的按下状态。" }
+  n13@{ shape: hex, label: "**slider​_​on​_​pointer​_​cancel**<br/>来自crate:bevy​_​ui​_​widgets ↗：取消滑<br/>条的按下状态。" }
   class n13 node_observer
   class n13 external_node
-  end
-  style layout_card_n13 fill:none,stroke:none
-  subgraph layout_card_n14[" "]
-  n14@{ shape: hex, label: "**bevy​_​ui​_​widgets::button::button​_​on​_​**<br/>**pointer​_​click**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过有<br/>效指针点击激活按钮。" }
+  n14@{ shape: hex, label: "**button​_​on​_​pointer​_​click**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过有<br/>效指针点击激活按钮。" }
   class n14 node_observer
   class n14 external_node
-  end
-  style layout_card_n14 fill:none,stroke:none
-  subgraph layout_card_n15[" "]
-  n15@{ shape: rounded, label: "**demo::ui::pointer::clear​_​cancelled​_​**<br/>**primary​_​presses**<br/>来自ui ↗：Bevy 先从 HoverMap 排除取消<br/>的指针，随后可能无法为它发出<br/>PointerCancel。" }
+  n15@{ shape: rounded, label: "**clear​_​cancelled​_​primary​_​presses**<br/>来自ui ↗：Bevy 先从 HoverMap 排除取消<br/>的指针，随后可能无法为它发出<br/>PointerCancel。" }
   class n15 node_system
   class n15 external_node
-  end
-  style layout_card_n15 fill:none,stroke:none
-  subgraph layout_card_n16[" "]
-  n16@{ shape: hex, label: "**bevy​_​ui​_​widgets::radio::radio​_​**<br/>**button​_​on​_​pointer​_​up**<br/>来自crate:bevy​_​ui​_​widgets ↗：在指针<br/>释放时清除单选按钮按压。" }
+  n16@{ shape: hex, label: "**radio​_​button​_​on​_​pointer​_​up**<br/>来自crate:bevy​_​ui​_​widgets ↗：在指针<br/>释放时清除单选按钮按压。" }
   class n16 node_observer
   class n16 external_node
-  end
-  style layout_card_n16 fill:none,stroke:none
-  subgraph layout_card_n17[" "]
-  n17@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**pointer​_​cancel**<br/>来自crate:bevy​_​ui​_​widgets ↗：取消滑<br/>条的按下状态。" }
+  n17@{ shape: hex, label: "**slider​_​on​_​pointer​_​cancel**<br/>来自crate:bevy​_​ui​_​widgets ↗：取消滑<br/>条的按下状态。" }
   class n17 node_observer
   class n17 external_node
-  end
-  style layout_card_n17 fill:none,stroke:none
-  subgraph layout_card_n18[" "]
-  n18@{ shape: hex, label: "**bevy​_​ui​_​widgets::menu::menu​_​item​_​on​_​**<br/>**pointer​_​drag​_​end**<br/>来自crate:bevy​_​ui​_​widgets ↗：在拖动<br/>结束时清除菜单项按压。" }
+  n18@{ shape: hex, label: "**menu​_​item​_​on​_​pointer​_​drag​_​end**<br/>来自crate:bevy​_​ui​_​widgets ↗：在拖动<br/>结束时清除菜单项按压。" }
   class n18 node_observer
   class n18 external_node
-  end
-  style layout_card_n18 fill:none,stroke:none
-  subgraph layout_card_n19[" "]
-  n19@{ shape: hex, label: "**bevy​_​ui​_​widgets::radio::radio​_​**<br/>**button​_​on​_​pointer​_​up**<br/>来自crate:bevy​_​ui​_​widgets ↗：在指针<br/>释放时清除单选按钮按压。" }
+  n19@{ shape: hex, label: "**radio​_​button​_​on​_​pointer​_​up**<br/>来自crate:bevy​_​ui​_​widgets ↗：在指针<br/>释放时清除单选按钮按压。" }
   class n19 node_observer
   class n19 external_node
-  end
-  style layout_card_n19 fill:none,stroke:none
-  subgraph layout_card_n20[" "]
-  n20@{ shape: hex, label: "**bevy​_​ui​_​widgets::checkbox::checkbox​_​**<br/>**on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：处理复<br/>选框按压、焦点与即时勾选请求。" }
+  n20@{ shape: hex, label: "**checkbox​_​on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：处理复<br/>选框按压、焦点与即时勾选请求。" }
   class n20 node_observer
   class n20 external_node
-  end
-  style layout_card_n20 fill:none,stroke:none
-  subgraph layout_card_n21[" "]
-  n21@{ shape: hex, label: "**bevy​_​ui​_​widgets::checkbox::checkbox​_​**<br/>**on​_​pointer​_​up**<br/>来自crate:bevy​_​ui​_​widgets ↗：在指针<br/>释放时清除复选框按压。" }
+  n21@{ shape: hex, label: "**checkbox​_​on​_​pointer​_​up**<br/>来自crate:bevy​_​ui​_​widgets ↗：在指针<br/>释放时清除复选框按压。" }
   class n21 node_observer
   class n21 external_node
-  end
-  style layout_card_n21 fill:none,stroke:none
-  subgraph layout_card_n22[" "]
-  n22@{ shape: hex, label: "**bevy​_​ui​_​widgets::checkbox::checkbox​_​**<br/>**on​_​pointer​_​drag​_​end**<br/>来自crate:bevy​_​ui​_​widgets ↗：在拖动<br/>结束时清除复选框按压。" }
+  n22@{ shape: hex, label: "**checkbox​_​on​_​pointer​_​drag​_​end**<br/>来自crate:bevy​_​ui​_​widgets ↗：在拖动<br/>结束时清除复选框按压。" }
   class n22 node_observer
   class n22 external_node
-  end
-  style layout_card_n22 fill:none,stroke:none
-  subgraph layout_card_n23[" "]
-  n23@{ shape: hex, label: "**bevy​_​ui​_​widgets::button::button​_​on​_​**<br/>**pointer​_​drag​_​end**<br/>来自crate:bevy​_​ui​_​widgets ↗：在拖动<br/>结束时清除按钮按压。" }
+  n23@{ shape: hex, label: "**button​_​on​_​pointer​_​drag​_​end**<br/>来自crate:bevy​_​ui​_​widgets ↗：在拖动<br/>结束时清除按钮按压。" }
   class n23 node_observer
   class n23 external_node
-  end
-  style layout_card_n23 fill:none,stroke:none
-  subgraph layout_card_n24[" "]
-  n24@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：按轨道<br/>点击策略发起滑条调整。" }
+  n24@{ shape: hex, label: "**slider​_​on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：按轨道<br/>点击策略发起滑条调整。" }
   class n24 node_observer
   class n24 external_node
-  end
-  style layout_card_n24 fill:none,stroke:none
-  subgraph layout_card_n25[" "]
-  n25@{ shape: hex, label: "**bevy​_​ui​_​widgets::menu::menu​_​item​_​on​_​**<br/>**pointer​_​click**<br/>来自crate:bevy​_​ui​_​widgets ↗：激活点<br/>击菜单项并请求关闭菜单。" }
+  n25@{ shape: hex, label: "**menu​_​item​_​on​_​pointer​_​click**<br/>来自crate:bevy​_​ui​_​widgets ↗：激活点<br/>击菜单项并请求关闭菜单。" }
   class n25 node_observer
   class n25 external_node
-  end
-  style layout_card_n25 fill:none,stroke:none
-  subgraph layout_card_n26[" "]
-  n26@{ shape: hex, label: "**bevy​_​ui​_​widgets::checkbox::checkbox​_​**<br/>**on​_​pointer​_​cancel**<br/>来自crate:bevy​_​ui​_​widgets ↗：取消复<br/>选框的指针按压状态。" }
+  n26@{ shape: hex, label: "**checkbox​_​on​_​pointer​_​cancel**<br/>来自crate:bevy​_​ui​_​widgets ↗：取消复<br/>选框的指针按压状态。" }
   class n26 node_observer
   class n26 external_node
-  end
-  style layout_card_n26 fill:none,stroke:none
-  subgraph layout_card_n27[" "]
-  n27@{ shape: hex, label: "**bevy​_​ui​_​widgets::menu::menu​_​item​_​on​_​**<br/>**pointer​_​cancel**<br/>来自crate:bevy​_​ui​_​widgets ↗：取消菜<br/>单项的指针按压状态。" }
+  n27@{ shape: hex, label: "**menu​_​item​_​on​_​pointer​_​cancel**<br/>来自crate:bevy​_​ui​_​widgets ↗：取消菜<br/>单项的指针按压状态。" }
   class n27 node_observer
   class n27 external_node
-  end
-  style layout_card_n27 fill:none,stroke:none
-  subgraph layout_card_n28[" "]
-  n28@{ shape: hex, label: "**bevy​_​ui​_​widgets::menu::menu​_​item​_​on​_​**<br/>**pointer​_​cancel**<br/>来自crate:bevy​_​ui​_​widgets ↗：取消菜<br/>单项的指针按压状态。" }
+  n28@{ shape: hex, label: "**menu​_​item​_​on​_​pointer​_​cancel**<br/>来自crate:bevy​_​ui​_​widgets ↗：取消菜<br/>单项的指针按压状态。" }
   class n28 node_observer
   class n28 external_node
-  end
-  style layout_card_n28 fill:none,stroke:none
-  subgraph layout_card_n29[" "]
-  n29@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：按轨道<br/>点击策略发起滑条调整。" }
+  n29@{ shape: hex, label: "**slider​_​on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：按轨道<br/>点击策略发起滑条调整。" }
   class n29 node_observer
   class n29 external_node
-  end
-  style layout_card_n29 fill:none,stroke:none
-  subgraph layout_card_n30[" "]
-  n30@{ shape: hex, label: "**bevy​_​ui​_​widgets::button::button​_​on​_​**<br/>**pointer​_​cancel**<br/>来自crate:bevy​_​ui​_​widgets ↗：取消按<br/>钮的指针按压状态。" }
+  n30@{ shape: hex, label: "**button​_​on​_​pointer​_​cancel**<br/>来自crate:bevy​_​ui​_​widgets ↗：取消按<br/>钮的指针按压状态。" }
   class n30 node_observer
   class n30 external_node
-  end
-  style layout_card_n30 fill:none,stroke:none
-  subgraph layout_card_n31[" "]
-  n31@{ shape: hex, label: "**bevy​_​ui​_​widgets::button::button​_​on​_​**<br/>**pointer​_​up**<br/>来自crate:bevy​_​ui​_​widgets ↗：在指针<br/>释放时清除按钮按压。" }
+  n31@{ shape: hex, label: "**button​_​on​_​pointer​_​up**<br/>来自crate:bevy​_​ui​_​widgets ↗：在指针<br/>释放时清除按钮按压。" }
   class n31 node_observer
   class n31 external_node
-  end
-  style layout_card_n31 fill:none,stroke:none
-  subgraph layout_card_n32[" "]
-  n32@{ shape: hex, label: "**bevy​_​ui​_​widgets::menu::menu​_​item​_​on​_​**<br/>**pointer​_​drag​_​end**<br/>来自crate:bevy​_​ui​_​widgets ↗：在拖动<br/>结束时清除菜单项按压。" }
+  n32@{ shape: hex, label: "**menu​_​item​_​on​_​pointer​_​drag​_​end**<br/>来自crate:bevy​_​ui​_​widgets ↗：在拖动<br/>结束时清除菜单项按压。" }
   class n32 node_observer
   class n32 external_node
-  end
-  style layout_card_n32 fill:none,stroke:none
-  subgraph layout_card_n33[" "]
-  n33@{ shape: hex, label: "**bevy​_​ui​_​widgets::button::button​_​on​_​**<br/>**pointer​_​up**<br/>来自crate:bevy​_​ui​_​widgets ↗：在指针<br/>释放时清除按钮按压。" }
+  n33@{ shape: hex, label: "**button​_​on​_​pointer​_​up**<br/>来自crate:bevy​_​ui​_​widgets ↗：在指针<br/>释放时清除按钮按压。" }
   class n33 node_observer
   class n33 external_node
-  end
-  style layout_card_n33 fill:none,stroke:none
-  subgraph layout_card_n34[" "]
-  n34@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**pointer​_​cancel**<br/>来自crate:bevy​_​ui​_​widgets ↗：取消滑<br/>条的按下状态。" }
+  n34@{ shape: hex, label: "**slider​_​on​_​pointer​_​cancel**<br/>来自crate:bevy​_​ui​_​widgets ↗：取消滑<br/>条的按下状态。" }
   class n34 node_observer
   class n34 external_node
-  end
-  style layout_card_n34 fill:none,stroke:none
-  subgraph layout_card_n35[" "]
-  n35@{ shape: hex, label: "**bevy​_​ui​_​widgets::button::button​_​on​_​**<br/>**pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：记录按<br/>钮按压并按配置立即激活。" }
+  n35@{ shape: hex, label: "**button​_​on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：记录按<br/>钮按压并按配置立即激活。" }
   class n35 node_observer
   class n35 external_node
-  end
-  style layout_card_n35 fill:none,stroke:none
-  subgraph layout_card_n36[" "]
-  n36@{ shape: hex, label: "**bevy​_​ui​_​widgets::checkbox::checkbox​_​**<br/>**on​_​pointer​_​cancel**<br/>来自crate:bevy​_​ui​_​widgets ↗：取消复<br/>选框的指针按压状态。" }
+  n36@{ shape: hex, label: "**checkbox​_​on​_​pointer​_​cancel**<br/>来自crate:bevy​_​ui​_​widgets ↗：取消复<br/>选框的指针按压状态。" }
   class n36 node_observer
   class n36 external_node
-  end
-  style layout_card_n36 fill:none,stroke:none
-  subgraph layout_card_n37[" "]
-  n37@{ shape: hex, label: "**bevy​_​ui​_​widgets::radio::radio​_​**<br/>**button​_​on​_​pointer​_​drag​_​end**<br/>来自crate:bevy​_​ui​_​widgets ↗：在拖动<br/>结束时清除单选按钮按压。" }
+  n37@{ shape: hex, label: "**radio​_​button​_​on​_​pointer​_​drag​_​end**<br/>来自crate:bevy​_​ui​_​widgets ↗：在拖动<br/>结束时清除单选按钮按压。" }
   class n37 node_observer
   class n37 external_node
-  end
-  style layout_card_n37 fill:none,stroke:none
-  subgraph layout_card_n38[" "]
-  n38@{ shape: hex, label: "**bevy​_​ui​_​widgets::menu::menu​_​item​_​on​_​**<br/>**pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：记录菜<br/>单项的指针按压。" }
+  n38@{ shape: hex, label: "**menu​_​item​_​on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：记录菜<br/>单项的指针按压。" }
   class n38 node_observer
   class n38 external_node
-  end
-  style layout_card_n38 fill:none,stroke:none
-  subgraph layout_card_n39[" "]
-  n39@{ shape: hex, label: "**bevy​_​ui​_​widgets::button::button​_​on​_​**<br/>**pointer​_​cancel**<br/>来自crate:bevy​_​ui​_​widgets ↗：取消按<br/>钮的指针按压状态。" }
+  n39@{ shape: hex, label: "**button​_​on​_​pointer​_​cancel**<br/>来自crate:bevy​_​ui​_​widgets ↗：取消按<br/>钮的指针按压状态。" }
   class n39 node_observer
   class n39 external_node
-  end
-  style layout_card_n39 fill:none,stroke:none
-  subgraph layout_card_n40[" "]
-  n40@{ shape: hex, label: "**bevy​_​ui​_​widgets::button::button​_​on​_​**<br/>**pointer​_​drag​_​end**<br/>来自crate:bevy​_​ui​_​widgets ↗：在拖动<br/>结束时清除按钮按压。" }
+  n40@{ shape: hex, label: "**button​_​on​_​pointer​_​drag​_​end**<br/>来自crate:bevy​_​ui​_​widgets ↗：在拖动<br/>结束时清除按钮按压。" }
   class n40 node_observer
   class n40 external_node
-  end
-  style layout_card_n40 fill:none,stroke:none
-  subgraph layout_card_n41[" "]
-  n41@{ shape: hex, label: "**bevy​_​ui​_​widgets::checkbox::checkbox​_​**<br/>**on​_​pointer​_​cancel**<br/>来自crate:bevy​_​ui​_​widgets ↗：取消复<br/>选框的指针按压状态。" }
+  n41@{ shape: hex, label: "**checkbox​_​on​_​pointer​_​cancel**<br/>来自crate:bevy​_​ui​_​widgets ↗：取消复<br/>选框的指针按压状态。" }
   class n41 node_observer
   class n41 external_node
-  end
-  style layout_card_n41 fill:none,stroke:none
-  subgraph layout_card_n42[" "]
-  n42@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**pointer​_​up**<br/>来自crate:bevy​_​ui​_​widgets ↗：释放滑<br/>条的按下状态。" }
+  n42@{ shape: hex, label: "**slider​_​on​_​pointer​_​up**<br/>来自crate:bevy​_​ui​_​widgets ↗：释放滑<br/>条的按下状态。" }
   class n42 node_observer
   class n42 external_node
-  end
-  style layout_card_n42 fill:none,stroke:none
-  subgraph layout_card_n43[" "]
-  n43@{ shape: hex, label: "**bevy​_​ui​_​widgets::button::button​_​on​_​**<br/>**pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：记录按<br/>钮按压并按配置立即激活。" }
+  n43@{ shape: hex, label: "**button​_​on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：记录按<br/>钮按压并按配置立即激活。" }
   class n43 node_observer
   class n43 external_node
-  end
-  style layout_card_n43 fill:none,stroke:none
-  subgraph layout_card_n44[" "]
-  n44@{ shape: hex, label: "**bevy​_​ui​_​widgets::radio::radio​_​**<br/>**button​_​on​_​pointer​_​drag​_​end**<br/>来自crate:bevy​_​ui​_​widgets ↗：在拖动<br/>结束时清除单选按钮按压。" }
+  n44@{ shape: hex, label: "**radio​_​button​_​on​_​pointer​_​drag​_​end**<br/>来自crate:bevy​_​ui​_​widgets ↗：在拖动<br/>结束时清除单选按钮按压。" }
   class n44 node_observer
   class n44 external_node
-  end
-  style layout_card_n44 fill:none,stroke:none
-  subgraph layout_card_n45[" "]
-  n45@{ shape: hex, label: "**bevy​_​ui​_​widgets::radio::radio​_​**<br/>**button​_​on​_​pointer​_​drag​_​end**<br/>来自crate:bevy​_​ui​_​widgets ↗：在拖动<br/>结束时清除单选按钮按压。" }
+  n45@{ shape: hex, label: "**radio​_​button​_​on​_​pointer​_​drag​_​end**<br/>来自crate:bevy​_​ui​_​widgets ↗：在拖动<br/>结束时清除单选按钮按压。" }
   class n45 node_observer
   class n45 external_node
-  end
-  style layout_card_n45 fill:none,stroke:none
-  subgraph layout_card_n46[" "]
-  n46@{ shape: hex, label: "**bevy​_​ui​_​widgets::menu::menu​_​item​_​on​_​**<br/>**pointer​_​up**<br/>来自crate:bevy​_​ui​_​widgets ↗：在指针<br/>释放时清除菜单项按压。" }
+  n46@{ shape: hex, label: "**menu​_​item​_​on​_​pointer​_​up**<br/>来自crate:bevy​_​ui​_​widgets ↗：在指针<br/>释放时清除菜单项按压。" }
   class n46 node_observer
   class n46 external_node
-  end
-  style layout_card_n46 fill:none,stroke:none
-  subgraph layout_card_n47[" "]
-  n47@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**drag​_​end**<br/>来自crate:bevy​_​ui​_​widgets ↗：提交滑<br/>条拖动结果并释放指针。" }
+  n47@{ shape: hex, label: "**slider​_​on​_​drag​_​end**<br/>来自crate:bevy​_​ui​_​widgets ↗：提交滑<br/>条拖动结果并释放指针。" }
   class n47 node_observer
   class n47 external_node
-  end
-  style layout_card_n47 fill:none,stroke:none
-  subgraph layout_card_n48[" "]
-  n48@{ shape: hex, label: "**bevy​_​ui​_​widgets::radio::radio​_​**<br/>**button​_​on​_​pointer​_​cancel**<br/>来自crate:bevy​_​ui​_​widgets ↗：取消单<br/>选按钮的指针按压状态。" }
+  n48@{ shape: hex, label: "**radio​_​button​_​on​_​pointer​_​cancel**<br/>来自crate:bevy​_​ui​_​widgets ↗：取消单<br/>选按钮的指针按压状态。" }
   class n48 node_observer
   class n48 external_node
-  end
-  style layout_card_n48 fill:none,stroke:none
-  subgraph layout_card_n49[" "]
-  n49@{ shape: hex, label: "**bevy​_​ui​_​widgets::button::button​_​on​_​**<br/>**pointer​_​cancel**<br/>来自crate:bevy​_​ui​_​widgets ↗：取消按<br/>钮的指针按压状态。" }
+  n49@{ shape: hex, label: "**button​_​on​_​pointer​_​cancel**<br/>来自crate:bevy​_​ui​_​widgets ↗：取消按<br/>钮的指针按压状态。" }
   class n49 node_observer
   class n49 external_node
-  end
-  style layout_card_n49 fill:none,stroke:none
-  subgraph layout_card_n50[" "]
-  n50@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**drag​_​end**<br/>来自crate:bevy​_​ui​_​widgets ↗：提交滑<br/>条拖动结果并释放指针。" }
+  n50@{ shape: hex, label: "**slider​_​on​_​drag​_​end**<br/>来自crate:bevy​_​ui​_​widgets ↗：提交滑<br/>条拖动结果并释放指针。" }
   class n50 node_observer
   class n50 external_node
-  end
-  style layout_card_n50 fill:none,stroke:none
-  subgraph layout_card_n51[" "]
-  n51@{ shape: hex, label: "**bevy​_​ui​_​widgets::menu::menu​_​item​_​on​_​**<br/>**pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：记录菜<br/>单项的指针按压。" }
+  n51@{ shape: hex, label: "**menu​_​item​_​on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：记录菜<br/>单项的指针按压。" }
   class n51 node_observer
   class n51 external_node
-  end
-  style layout_card_n51 fill:none,stroke:none
-  subgraph layout_card_n52[" "]
-  n52@{ shape: hex, label: "**bevy​_​ui​_​widgets::checkbox::checkbox​_​**<br/>**on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：处理复<br/>选框按压、焦点与即时勾选请求。" }
+  n52@{ shape: hex, label: "**checkbox​_​on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：处理复<br/>选框按压、焦点与即时勾选请求。" }
   class n52 node_observer
   class n52 external_node
-  end
-  style layout_card_n52 fill:none,stroke:none
-  subgraph layout_card_n53[" "]
-  n53@{ shape: hex, label: "**bevy​_​ui​_​widgets::menu::menu​_​item​_​on​_​**<br/>**pointer​_​up**<br/>来自crate:bevy​_​ui​_​widgets ↗：在指针<br/>释放时清除菜单项按压。" }
+  n53@{ shape: hex, label: "**menu​_​item​_​on​_​pointer​_​up**<br/>来自crate:bevy​_​ui​_​widgets ↗：在指针<br/>释放时清除菜单项按压。" }
   class n53 node_observer
   class n53 external_node
-  end
-  style layout_card_n53 fill:none,stroke:none
-  subgraph layout_card_n54[" "]
-  n54@{ shape: hex, label: "**bevy​_​ui​_​widgets::button::button​_​on​_​**<br/>**pointer​_​click**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过有<br/>效指针点击激活按钮。" }
+  n54@{ shape: hex, label: "**button​_​on​_​pointer​_​click**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过有<br/>效指针点击激活按钮。" }
   class n54 node_observer
   class n54 external_node
-  end
-  style layout_card_n54 fill:none,stroke:none
-  subgraph layout_card_n55[" "]
-  n55@{ shape: hex, label: "**bevy​_​ui​_​widgets::menu::menu​_​item​_​on​_​**<br/>**pointer​_​drag​_​end**<br/>来自crate:bevy​_​ui​_​widgets ↗：在拖动<br/>结束时清除菜单项按压。" }
+  n55@{ shape: hex, label: "**menu​_​item​_​on​_​pointer​_​drag​_​end**<br/>来自crate:bevy​_​ui​_​widgets ↗：在拖动<br/>结束时清除菜单项按压。" }
   class n55 node_observer
   class n55 external_node
-  end
-  style layout_card_n55 fill:none,stroke:none
-  subgraph layout_card_n56[" "]
-  n56@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：按轨道<br/>点击策略发起滑条调整。" }
+  n56@{ shape: hex, label: "**slider​_​on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：按轨道<br/>点击策略发起滑条调整。" }
   class n56 node_observer
   class n56 external_node
-  end
-  style layout_card_n56 fill:none,stroke:none
-  subgraph layout_card_n57[" "]
-  n57@{ shape: hex, label: "**bevy​_​ui​_​widgets::menu::menu​_​item​_​on​_​**<br/>**pointer​_​click**<br/>来自crate:bevy​_​ui​_​widgets ↗：激活点<br/>击菜单项并请求关闭菜单。" }
+  n57@{ shape: hex, label: "**menu​_​item​_​on​_​pointer​_​click**<br/>来自crate:bevy​_​ui​_​widgets ↗：激活点<br/>击菜单项并请求关闭菜单。" }
   class n57 node_observer
   class n57 external_node
-  end
-  style layout_card_n57 fill:none,stroke:none
-  subgraph layout_card_n58[" "]
-  n58@{ shape: hex, label: "**bevy​_​ui​_​widgets::button::button​_​on​_​**<br/>**pointer​_​up**<br/>来自crate:bevy​_​ui​_​widgets ↗：在指针<br/>释放时清除按钮按压。" }
+  n58@{ shape: hex, label: "**button​_​on​_​pointer​_​up**<br/>来自crate:bevy​_​ui​_​widgets ↗：在指针<br/>释放时清除按钮按压。" }
   class n58 node_observer
   class n58 external_node
-  end
-  style layout_card_n58 fill:none,stroke:none
-  subgraph layout_card_n59[" "]
-  n59@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**pointer​_​up**<br/>来自crate:bevy​_​ui​_​widgets ↗：释放滑<br/>条的按下状态。" }
+  n59@{ shape: hex, label: "**slider​_​on​_​pointer​_​up**<br/>来自crate:bevy​_​ui​_​widgets ↗：释放滑<br/>条的按下状态。" }
   class n59 node_observer
   class n59 external_node
-  end
-  style layout_card_n59 fill:none,stroke:none
-  subgraph layout_card_n60[" "]
-  n60@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**pointer​_​up**<br/>来自crate:bevy​_​ui​_​widgets ↗：释放滑<br/>条的按下状态。" }
+  n60@{ shape: hex, label: "**slider​_​on​_​pointer​_​up**<br/>来自crate:bevy​_​ui​_​widgets ↗：释放滑<br/>条的按下状态。" }
   class n60 node_observer
   class n60 external_node
-  end
-  style layout_card_n60 fill:none,stroke:none
-  subgraph layout_card_n61[" "]
-  n61@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**drag​_​end**<br/>来自crate:bevy​_​ui​_​widgets ↗：提交滑<br/>条拖动结果并释放指针。" }
+  n61@{ shape: hex, label: "**slider​_​on​_​drag​_​end**<br/>来自crate:bevy​_​ui​_​widgets ↗：提交滑<br/>条拖动结果并释放指针。" }
   class n61 node_observer
   class n61 external_node
-  end
-  style layout_card_n61 fill:none,stroke:none
-  subgraph layout_card_n62[" "]
-  n62@{ shape: hex, label: "**bevy​_​ui​_​widgets::radio::radio​_​**<br/>**button​_​on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：记录单<br/>选按钮按压并按配置请求选中。" }
+  n62@{ shape: hex, label: "**radio​_​button​_​on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：记录单<br/>选按钮按压并按配置请求选中。" }
   class n62 node_observer
   class n62 external_node
-  end
-  style layout_card_n62 fill:none,stroke:none
-  subgraph layout_card_n63[" "]
-  n63@{ shape: hex, label: "**bevy​_​ui​_​widgets::radio::radio​_​**<br/>**button​_​on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：记录单<br/>选按钮按压并按配置请求选中。" }
+  n63@{ shape: hex, label: "**radio​_​button​_​on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：记录单<br/>选按钮按压并按配置请求选中。" }
   class n63 node_observer
   class n63 external_node
-  end
-  style layout_card_n63 fill:none,stroke:none
-  subgraph layout_card_n64[" "]
-  n64@{ shape: hex, label: "**bevy​_​ui​_​widgets::radio::radio​_​**<br/>**button​_​on​_​pointer​_​cancel**<br/>来自crate:bevy​_​ui​_​widgets ↗：取消单<br/>选按钮的指针按压状态。" }
+  n64@{ shape: hex, label: "**radio​_​button​_​on​_​pointer​_​cancel**<br/>来自crate:bevy​_​ui​_​widgets ↗：取消单<br/>选按钮的指针按压状态。" }
   class n64 node_observer
   class n64 external_node
-  end
-  style layout_card_n64 fill:none,stroke:none
-  subgraph layout_card_n65[" "]
-  n65@{ shape: hex, label: "**bevy​_​ui​_​widgets::menu::menu​_​item​_​on​_​**<br/>**pointer​_​click**<br/>来自crate:bevy​_​ui​_​widgets ↗：激活点<br/>击菜单项并请求关闭菜单。" }
+  n65@{ shape: hex, label: "**menu​_​item​_​on​_​pointer​_​click**<br/>来自crate:bevy​_​ui​_​widgets ↗：激活点<br/>击菜单项并请求关闭菜单。" }
   class n65 node_observer
   class n65 external_node
-  end
-  style layout_card_n65 fill:none,stroke:none
-  subgraph layout_card_n66[" "]
-  n66@{ shape: hex, label: "**bevy​_​ui​_​widgets::checkbox::checkbox​_​**<br/>**on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：处理复<br/>选框按压、焦点与即时勾选请求。" }
+  n66@{ shape: hex, label: "**checkbox​_​on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：处理复<br/>选框按压、焦点与即时勾选请求。" }
   class n66 node_observer
   class n66 external_node
-  end
-  style layout_card_n66 fill:none,stroke:none
-  subgraph layout_card_n67[" "]
-  n67@{ shape: hex, label: "**bevy​_​ui​_​widgets::checkbox::checkbox​_​**<br/>**on​_​pointer​_​drag​_​end**<br/>来自crate:bevy​_​ui​_​widgets ↗：在拖动<br/>结束时清除复选框按压。" }
+  n67@{ shape: hex, label: "**checkbox​_​on​_​pointer​_​drag​_​end**<br/>来自crate:bevy​_​ui​_​widgets ↗：在拖动<br/>结束时清除复选框按压。" }
   class n67 node_observer
   class n67 external_node
-  end
-  style layout_card_n67 fill:none,stroke:none
-  subgraph layout_card_n68[" "]
-  n68@{ shape: hex, label: "**bevy​_​ui​_​widgets::button::button​_​on​_​**<br/>**pointer​_​click**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过有<br/>效指针点击激活按钮。" }
+  n68@{ shape: hex, label: "**button​_​on​_​pointer​_​click**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过有<br/>效指针点击激活按钮。" }
   class n68 node_observer
   class n68 external_node
-  end
-  style layout_card_n68 fill:none,stroke:none
   n1 e0@---|"存在性约束"| n0
   class e0 edge_reference
   n2 e1@-->|"移除"| n0
@@ -769,6 +565,7 @@ flowchart LR
   e70@{ curve: basis }
   e71@{ curve: basis }
   e72@{ curve: basis }
+  e73@{ curve: basis }
   e74@{ curve: basis }
   e75@{ curve: basis }
   e76@{ curve: basis }

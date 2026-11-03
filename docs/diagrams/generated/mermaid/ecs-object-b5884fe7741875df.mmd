@@ -38,12 +38,12 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**morph::MeshMorphWeights**<br/>为单个网格提供或引用形变权重。" }
+  n0@{ shape: rounded, label: "**MeshMorphWeights**<br/>为单个网格提供或引用形变权重。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​pbr::render::morph::no​_​**<br/>**automatic​_​morph​_​batching**<br/>来自crate:bevy​_​pbr ↗：在 Uniform 限<br/>制路径上禁止形变网格自动合批。" }
+  n1@{ shape: rounded, label: "**no​_​automatic​_​morph​_​batching**<br/>来自crate:bevy​_​pbr ↗：在 Uniform 限<br/>制路径上禁止形变网格自动合批。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​pbr::render::morph::extract​_​**<br/>**morphs**<br/>来自crate:bevy​_​pbr ↗：提取可见网格的<br/>当前与历史形变权重。" }
+  n2@{ shape: rounded, label: "**extract​_​morphs**<br/>来自crate:bevy​_​pbr ↗：提取可见网格的<br/>当前与历史形变权重。" }
   class n2 node_system
   class n2 external_node
   n0 e0@-->|"存在性约束"| n1

@@ -46,40 +46,40 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​render::view::window::extract​_​**<br/>**windows**<br/>向渲染世界同步窗口配置与原生句柄。" }
+  n0@{ shape: rounded, label: "**extract​_​windows**<br/>向渲染世界同步窗口配置与原生句柄。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**window::Window**<br/>来自crate:bevy​_​window ↗：保存窗口的呈<br/>现模式、位置、分辨率、标题、全屏及平台行<br/>为配置" }
+  n1@{ shape: rounded, label: "**Window**<br/>来自crate:bevy​_​window ↗：保存窗口的呈<br/>现模式、位置、分辨率、标题、全屏及平台行<br/>为配置" }
   class n1 node_component
   class n1 external_node
-  n2@{ shape: lean-r, label: "**event::WindowClosing**<br/>来自crate:bevy​_​window ↗：通知窗口正在<br/>关闭。" }
+  n2@{ shape: lean-r, label: "**WindowClosing**<br/>来自crate:bevy​_​window ↗：通知窗口正在<br/>关闭。" }
   class n2 node_message
   class n2 external_node
-  n3@{ shape: rounded, label: "**raw​_​handle::RawHandleWrapper**<br/>来自crate:bevy​_​window ↗：持有原始窗口<br/>及显示服务器句柄" }
+  n3@{ shape: rounded, label: "**RawHandleWrapper**<br/>来自crate:bevy​_​window ↗：持有原始窗口<br/>及显示服务器句柄" }
   class n3 node_component
   class n3 external_node
-  n4@{ shape: rounded, label: "**bevy​_​render::camera::extract​_​cameras**<br/>把活动相机及可见实体提取到渲染世界。" }
+  n4@{ shape: rounded, label: "**extract​_​cameras**<br/>把活动相机及可见实体提取到渲染世界。" }
   class n4 node_system
-  n5@{ shape: cyl, label: "**extract​_​plugin::MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
+  n5@{ shape: cyl, label: "**MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
   class n5 node_resource
   class n5 external_node
-  n6@{ shape: rounded, label: "**window::PrimaryWindow**<br/>来自crate:bevy​_​window ↗：标识唯一的主<br/>窗口" }
+  n6@{ shape: rounded, label: "**PrimaryWindow**<br/>来自crate:bevy​_​window ↗：标识唯一的主<br/>窗口" }
   class n6 node_component
   class n6 external_node
   n7@{ shape: notch-rect, label: "**Local · removed.0.0.0.0.0**<br/>保存 RawHandleWrapper 移除参数的组件<br/>ID。" }
   class n7 node_local
-  n8@{ shape: rounded, label: "**view::window::SurfaceData**<br/>保存窗口 GPU 表面及其呈现配置。" }
+  n8@{ shape: rounded, label: "**SurfaceData**<br/>保存窗口 GPU 表面及其呈现配置。" }
   class n8 node_component
   n9@{ shape: notch-rect, label: "**Local · removed​_​primary.0.0.0.0.0**<br/>保存 PrimaryWindow 移除参数的组件 ID。" }
   class n9 node_local
   n10@{ shape: notch-rect, label: "**Local · removed​_​primary.0.0.1**<br/>跟踪 PrimaryWindow 移除记录的读取进<br/>度。" }
   class n10 node_local
-  n11@{ shape: rounded, label: "**bevy​_​render::view::ExtractedWindow**<br/>保存渲染侧窗口尺寸、呈现模式和交换链状<br/>态。" }
+  n11@{ shape: rounded, label: "**ExtractedWindow**<br/>保存渲染侧窗口尺寸、呈现模式和交换链状<br/>态。" }
   class n11 node_component
-  n12@{ shape: fr-rect, label: "**view::window::WindowRenderPlugin**<br/>同步窗口并准备渲染表面。" }
+  n12@{ shape: fr-rect, label: "**WindowRenderPlugin**<br/>同步窗口并准备渲染表面。" }
   class n12 node_plugin
   n13@{ shape: notch-rect, label: "**Local · removed.0.0.1**<br/>跟踪 RawHandleWrapper 移除记录的读取进<br/>度。" }
   class n13 node_local
-  n14@{ shape: rounded, label: "**bevy​_​extract::SubEntity#lt;bevy​_​**<br/>**render::RenderApp#gt;**<br/>来自crate:bevy​_​extract ↗：记录主实体<br/>对应的子世界实体。" }
+  n14@{ shape: rounded, label: "**SubEntity#lt;RenderApp#gt;**<br/>来自crate:bevy​_​extract ↗：记录主实体<br/>对应的子世界实体。" }
   class n14 node_component
   class n14 external_node
   n1 e0@--> n0

@@ -37,27 +37,27 @@ flowchart LR
   classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**dynamics::integrator::**<br/>**VelocityIntegrationData**<br/>缓存子步速度增量和阻尼系数。" }
+  n0@{ shape: rounded, label: "**VelocityIntegrationData**<br/>缓存子步速度增量和阻尼系数。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**avian3d::dynamics::rigid​_​body::**<br/>**forces::plugin::apply​_​constant​_​**<br/>**forces**<br/>按总质量把恒力换成待积分线加速度。" }
+  n1@{ shape: rounded, label: "**apply​_​constant​_​forces**<br/>按总质量把恒力换成待积分线加速度。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**avian3d::dynamics::integrator::**<br/>**integrate​_​velocities**<br/>为活跃动态刚体积分速度与阻尼。" }
+  n2@{ shape: rounded, label: "**integrate​_​velocities**<br/>为活跃动态刚体积分速度与阻尼。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**demo::character::motion::move​_​**<br/>**characters**<br/>来自character ↗：用有上限的加速度趋近<br/>目标水平速度，保留碰撞和外部冲量造成的实<br/>际运动。" }
+  n3@{ shape: rounded, label: "**move​_​characters**<br/>来自character ↗：用有上限的加速度趋近<br/>目标水平速度，保留碰撞和外部冲量造成的实<br/>际运动。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**avian3d::dynamics::rigid​_​body::**<br/>**forces::plugin::apply​_​constant​_​**<br/>**linear​_​acceleration**<br/>把恒定世界线加速度加入待积分增量。" }
+  n4@{ shape: rounded, label: "**apply​_​constant​_​linear​_​acceleration**<br/>把恒定世界线加速度加入待积分增量。" }
   class n4 node_system
-  n5@{ shape: rounded, label: "**avian3d::dynamics::rigid​_​body::**<br/>**forces::plugin::apply​_​constant​_​**<br/>**torques**<br/>按求解器有效惯量换算世界恒定扭矩。" }
+  n5@{ shape: rounded, label: "**apply​_​constant​_​torques**<br/>按求解器有效惯量换算世界恒定扭矩。" }
   class n5 node_system
-  n6@{ shape: rounded, label: "**demo::character::motion::jump​_​**<br/>**characters**<br/>来自character ↗：跳跃只消费一次，通过<br/>冲量改变速度；重力和位置积分全部交给<br/>Avian。" }
+  n6@{ shape: rounded, label: "**jump​_​characters**<br/>来自character ↗：跳跃只消费一次，通过<br/>冲量改变速度；重力和位置积分全部交给<br/>Avian。" }
   class n6 node_system
   class n6 external_node
-  n7@{ shape: rounded, label: "**avian3d::dynamics::integrator::**<br/>**clear​_​velocity​_​increments**<br/>在子步循环后清零速度积分增量。" }
+  n7@{ shape: rounded, label: "**clear​_​velocity​_​increments**<br/>在子步循环后清零速度积分增量。" }
   class n7 node_system
-  n8@{ shape: rounded, label: "**avian3d::dynamics::integrator::pre​_​**<br/>**process​_​velocity​_​increments**<br/>把加速度、重力和轴锁转成子步速度增量。" }
+  n8@{ shape: rounded, label: "**pre​_​process​_​velocity​_​increments**<br/>把加速度、重力和轴锁转成子步速度增量。" }
   class n8 node_system
-  n9@{ shape: rounded, label: "**avian3d::dynamics::rigid​_​body::**<br/>**forces::plugin::apply​_​constant​_​**<br/>**angular​_​acceleration**<br/>把恒定世界角加速度加入待积分增量。" }
+  n9@{ shape: rounded, label: "**apply​_​constant​_​angular​_​acceleration**<br/>把恒定世界角加速度加入待积分增量。" }
   class n9 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

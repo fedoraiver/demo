@@ -40,11 +40,11 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​light::directional​_​light::**<br/>**validate​_​shadow​_​map​_​size**<br/>将方向光阴影贴图尺寸纠正为二的幂。" }
+  n0@{ shape: rounded, label: "**validate​_​shadow​_​map​_​size**<br/>将方向光阴影贴图尺寸纠正为二的幂。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**directional​_​light::**<br/>**DirectionalLightShadowMap**<br/>配置方向光与聚光灯阴影贴图分辨率。" }
+  n1@{ shape: cyl, label: "**DirectionalLightShadowMap**<br/>配置方向光与聚光灯阴影贴图分辨率。" }
   class n1 node_resource
-  n2@{ shape: rounded, label: "**bevy​_​light::cascade::build​_​**<br/>**directional​_​light​_​cascades**<br/>为投射阴影的方向光构建逐相机级联。" }
+  n2@{ shape: rounded, label: "**build​_​directional​_​light​_​cascades**<br/>为投射阴影的方向光构建逐相机级联。" }
   class n2 node_system
   n3@{ shape: fr-rect, label: "**LightPlugin**<br/>维护光源可见性与空间聚簇。" }
   class n3 node_plugin

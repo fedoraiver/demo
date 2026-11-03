@@ -39,7 +39,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: notch-rect, label: "**Local · live​_​entities**<br/>记录本帧仍活动的透射相机阶段。" }
   class n0 node_local
-  n1@{ shape: rounded, label: "**bevy​_​pbr::transmission::phase::**<br/>**extract​_​transmissive​_​camera​_​phases**<br/>为活动三维相机准备本帧透射阶段并清理失效<br/>视图。" }
+  n1@{ shape: rounded, label: "**extract​_​transmissive​_​camera​_​phases**<br/>为活动三维相机准备本帧透射阶段并清理失效<br/>视图。" }
   class n1 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

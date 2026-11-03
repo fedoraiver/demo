@@ -38,76 +38,76 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**camera::DirtySpecializations**<br/>记录需刷新或移除管线专用化的对象与视图。" }
+  n0@{ shape: cyl, label: "**DirtySpecializations**<br/>记录需刷新或移除管线专用化的对象与视图。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​render::camera::expire​_​**<br/>**specializations​_​for​_​views**<br/>移除已失效视图的材质专用化脏标记。" }
+  n1@{ shape: rounded, label: "**expire​_​specializations​_​for​_​views**<br/>移除已失效视图的材质专用化脏标记。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​pbr::render::light::queue​_​**<br/>**shadows**<br/>来自crate:bevy​_​pbr ↗：按材质与光源资<br/>格更新阴影绘制分桶。" }
+  n2@{ shape: rounded, label: "**queue​_​shadows**<br/>来自crate:bevy​_​pbr ↗：按材质与光源资<br/>格更新阴影绘制分桶。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​pbr::material::specialize​_​**<br/>**material​_​meshes**<br/>来自crate:bevy​_​pbr ↗：为变化的可见网<br/>格生成并缓存材质专用管线。" }
+  n3@{ shape: rounded, label: "**specialize​_​material​_​meshes**<br/>来自crate:bevy​_​pbr ↗：为变化的可见网<br/>格生成并缓存材质专用管线。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**bevy​_​pbr::prepass::check​_​prepass​_​**<br/>**views​_​need​_​specialization**<br/>来自crate:bevy​_​pbr ↗：检测采样和预通<br/>道配置变化并标记视图待刷新。" }
+  n4@{ shape: rounded, label: "**check​_​prepass​_​views​_​need​_​**<br/>**specialization**<br/>来自crate:bevy​_​pbr ↗：检测采样和预通<br/>道配置变化并标记视图待刷新。" }
   class n4 node_system
   class n4 external_node
-  n5@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::**<br/>**material::extract​_​entities​_​needs​_​**<br/>**specialization#lt;bevy​_​sprite​_​render::**<br/>**sprite​_​mesh::sprite​_​mesh​_​material::**<br/>**SpriteMeshMaterial#gt;**<br/>来自crate:bevy​_​sprite​_​render ↗：把二<br/>维材质变化实体标为渲染专用化脏项。" }
+  n5@{ shape: rounded, label: "**extract​_​entities​_​needs​_​**<br/>**specialization**<br/>来自crate:bevy​_​sprite​_​render ↗：把二<br/>维材质变化实体标为渲染专用化脏项。" }
   class n5 node_system
   class n5 external_node
-  n6@{ shape: rounded, label: "**bevy​_​pbr::material::extract​_​**<br/>**entities​_​needs​_​specialization#lt;bevy​_​**<br/>**pbr::pbr​_​material::StandardMaterial#gt;**<br/>来自crate:bevy​_​pbr ↗：把主世界待刷新<br/>材质管线的实体身份提取到渲染侧。" }
+  n6@{ shape: rounded, label: "**extract​_​entities​_​needs​_​**<br/>**specialization**<br/>来自crate:bevy​_​pbr ↗：把主世界待刷新<br/>材质管线的实体身份提取到渲染侧。" }
   class n6 node_system
   class n6 external_node
-  n7@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::mesh::**<br/>**check​_​views​_​need​_​specialization**<br/>来自crate:bevy​_​sprite​_​render ↗：检测<br/>二维视图管线配置变化并标记重建。" }
+  n7@{ shape: rounded, label: "**check​_​views​_​need​_​specialization**<br/>来自crate:bevy​_​sprite​_​render ↗：检测<br/>二维视图管线配置变化并标记重建。" }
   class n7 node_system
   class n7 external_node
-  n8@{ shape: rounded, label: "**bevy​_​pbr::prepass::specialize​_​**<br/>**prepass​_​material​_​meshes**<br/>来自crate:bevy​_​pbr ↗：按深度、材质和<br/>运动特性生成预通道专用管线。" }
+  n8@{ shape: rounded, label: "**specialize​_​prepass​_​material​_​meshes**<br/>来自crate:bevy​_​pbr ↗：按深度、材质和<br/>运动特性生成预通道专用管线。" }
   class n8 node_system
   class n8 external_node
-  n9@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::**<br/>**material::queue​_​material2d​_​meshes**<br/>来自crate:bevy​_​sprite​_​render ↗：按透<br/>明模式更新二维网格渲染批次。" }
+  n9@{ shape: rounded, label: "**queue​_​material2d​_​meshes**<br/>来自crate:bevy​_​sprite​_​render ↗：按透<br/>明模式更新二维网格渲染批次。" }
   class n9 node_system
   class n9 external_node
-  n10@{ shape: rounded, label: "**bevy​_​pbr::render::mesh::check​_​views​_​**<br/>**need​_​specialization**<br/>来自crate:bevy​_​pbr ↗：汇总视图渲染特<br/>性并检测管线配置变化。" }
+  n10@{ shape: rounded, label: "**check​_​views​_​need​_​specialization**<br/>来自crate:bevy​_​pbr ↗：汇总视图渲染特<br/>性并检测管线配置变化。" }
   class n10 node_system
   class n10 external_node
-  n11@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::**<br/>**material::extract​_​entities​_​that​_​**<br/>**need​_​specializations​_​removed#lt;bevy​_​**<br/>**sprite​_​render::tilemap​_​chunk::**<br/>**tilemap​_​chunk​_​material::**<br/>**TilemapChunkMaterial#gt;**<br/>来自crate:bevy​_​sprite​_​render ↗：把二<br/>维材质移除实体登记到专用化清理表。" }
+  n11@{ shape: rounded, label: "**extract​_​entities​_​that​_​need​_​**<br/>**specializations​_​removed**<br/>来自crate:bevy​_​sprite​_​render ↗：把二<br/>维材质移除实体登记到专用化清理表。" }
   class n11 node_system
   class n11 external_node
-  n12@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::**<br/>**material::extract​_​entities​_​that​_​**<br/>**need​_​specializations​_​removed#lt;bevy​_​**<br/>**sprite​_​render::mesh2d::color​_​**<br/>**material::ColorMaterial#gt;**<br/>来自crate:bevy​_​sprite​_​render ↗：把二<br/>维材质移除实体登记到专用化清理表。" }
+  n12@{ shape: rounded, label: "**extract​_​entities​_​that​_​need​_​**<br/>**specializations​_​removed**<br/>来自crate:bevy​_​sprite​_​render ↗：把二<br/>维材质移除实体登记到专用化清理表。" }
   class n12 node_system
   class n12 external_node
-  n13@{ shape: rounded, label: "**bevy​_​pbr::material::queue​_​material​_​**<br/>**meshes**<br/>来自crate:bevy​_​pbr ↗：按材质模式把可<br/>见网格加入相应绘制阶段。" }
+  n13@{ shape: rounded, label: "**queue​_​material​_​meshes**<br/>来自crate:bevy​_​pbr ↗：按材质模式把可<br/>见网格加入相应绘制阶段。" }
   class n13 node_system
   class n13 external_node
-  n14@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::**<br/>**material::extract​_​entities​_​needs​_​**<br/>**specialization#lt;bevy​_​sprite​_​render::**<br/>**tilemap​_​chunk::tilemap​_​chunk​_​**<br/>**material::TilemapChunkMaterial#gt;**<br/>来自crate:bevy​_​sprite​_​render ↗：把二<br/>维材质变化实体标为渲染专用化脏项。" }
+  n14@{ shape: rounded, label: "**extract​_​entities​_​needs​_​**<br/>**specialization**<br/>来自crate:bevy​_​sprite​_​render ↗：把二<br/>维材质变化实体标为渲染专用化脏项。" }
   class n14 node_system
   class n14 external_node
-  n15@{ shape: rounded, label: "**bevy​_​pbr::render::light::check​_​**<br/>**views​_​lights​_​need​_​specialization**<br/>来自crate:bevy​_​pbr ↗：检测阴影视图投<br/>影类型并标记管线待刷新。" }
+  n15@{ shape: rounded, label: "**check​_​views​_​lights​_​need​_​**<br/>**specialization**<br/>来自crate:bevy​_​pbr ↗：检测阴影视图投<br/>影类型并标记管线待刷新。" }
   class n15 node_system
   class n15 external_node
-  n16@{ shape: rounded, label: "**bevy​_​render::camera::clear​_​dirty​_​**<br/>**specializations**<br/>清空新帧材质专用化的变化记录。" }
+  n16@{ shape: rounded, label: "**clear​_​dirty​_​specializations**<br/>清空新帧材质专用化的变化记录。" }
   class n16 node_system
-  n17@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::**<br/>**material::specialize​_​material2d​_​**<br/>**meshes**<br/>来自crate:bevy​_​sprite​_​render ↗：为可<br/>见二维网格重建失效的材质专用化。" }
+  n17@{ shape: rounded, label: "**specialize​_​material2d​_​meshes**<br/>来自crate:bevy​_​sprite​_​render ↗：为可<br/>见二维网格重建失效的材质专用化。" }
   class n17 node_system
   class n17 external_node
-  n18@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::**<br/>**material::extract​_​entities​_​needs​_​**<br/>**specialization#lt;bevy​_​sprite​_​render::**<br/>**mesh2d::color​_​material::**<br/>**ColorMaterial#gt;**<br/>来自crate:bevy​_​sprite​_​render ↗：把二<br/>维材质变化实体标为渲染专用化脏项。" }
+  n18@{ shape: rounded, label: "**extract​_​entities​_​needs​_​**<br/>**specialization**<br/>来自crate:bevy​_​sprite​_​render ↗：把二<br/>维材质变化实体标为渲染专用化脏项。" }
   class n18 node_system
   class n18 external_node
-  n19@{ shape: rounded, label: "**bevy​_​pbr::material::extract​_​**<br/>**entities​_​that​_​need​_​specializations​_​**<br/>**removed#lt;bevy​_​pbr::extended​_​**<br/>**material::ExtendedMaterial#lt;bevy​_​**<br/>**pbr::pbr​_​material::**<br/>**StandardMaterial, bevy​_​pbr::decal::**<br/>**forward::ForwardDecalMaterialExt#gt;#gt;**<br/>来自crate:bevy​_​pbr ↗：提取需要移除材<br/>质管线专用化的实体。" }
+  n19@{ shape: rounded, label: "**extract​_​entities​_​that​_​need​_​**<br/>**specializations​_​removed**<br/>来自crate:bevy​_​pbr ↗：提取需要移除材<br/>质管线专用化的实体。" }
   class n19 node_system
   class n19 external_node
-  n20@{ shape: rounded, label: "**bevy​_​pbr::material::extract​_​**<br/>**entities​_​that​_​need​_​specializations​_​**<br/>**removed#lt;bevy​_​pbr::pbr​_​material::**<br/>**StandardMaterial#gt;**<br/>来自crate:bevy​_​pbr ↗：提取需要移除材<br/>质管线专用化的实体。" }
+  n20@{ shape: rounded, label: "**extract​_​entities​_​that​_​need​_​**<br/>**specializations​_​removed**<br/>来自crate:bevy​_​pbr ↗：提取需要移除材<br/>质管线专用化的实体。" }
   class n20 node_system
   class n20 external_node
-  n21@{ shape: rounded, label: "**bevy​_​pbr::material::extract​_​**<br/>**entities​_​needs​_​specialization#lt;bevy​_​**<br/>**pbr::extended​_​material::**<br/>**ExtendedMaterial#lt;bevy​_​pbr::pbr​_​**<br/>**material::StandardMaterial, bevy​_​**<br/>**pbr::decal::forward::**<br/>**ForwardDecalMaterialExt#gt;#gt;**<br/>来自crate:bevy​_​pbr ↗：把主世界待刷新<br/>材质管线的实体身份提取到渲染侧。" }
+  n21@{ shape: rounded, label: "**extract​_​entities​_​needs​_​**<br/>**specialization**<br/>来自crate:bevy​_​pbr ↗：把主世界待刷新<br/>材质管线的实体身份提取到渲染侧。" }
   class n21 node_system
   class n21 external_node
-  n22@{ shape: rounded, label: "**bevy​_​pbr::render::light::specialize​_​**<br/>**shadows**<br/>来自crate:bevy​_​pbr ↗：按阴影视图、网<br/>格及材质变化重新选择专用阴影渲染管线，清<br/>理失效缓存，并整理需要补齐或重新排队的阴<br/>影网格任务。" }
+  n22@{ shape: rounded, label: "**specialize​_​shadows**<br/>来自crate:bevy​_​pbr ↗：按阴影视图、网<br/>格及材质变化重新选择专用阴影渲染管线，清<br/>理失效缓存，并整理需要补齐或重新排队的阴<br/>影网格任务。" }
   class n22 node_system
   class n22 external_node
-  n23@{ shape: rounded, label: "**bevy​_​pbr::prepass::queue​_​prepass​_​**<br/>**material​_​meshes**<br/>来自crate:bevy​_​pbr ↗：把有效材质网格<br/>分入预通道或延迟几何阶段。" }
+  n23@{ shape: rounded, label: "**queue​_​prepass​_​material​_​meshes**<br/>来自crate:bevy​_​pbr ↗：把有效材质网格<br/>分入预通道或延迟几何阶段。" }
   class n23 node_system
   class n23 external_node
-  n24@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::**<br/>**material::extract​_​entities​_​that​_​**<br/>**need​_​specializations​_​removed#lt;bevy​_​**<br/>**sprite​_​render::sprite​_​mesh::sprite​_​**<br/>**mesh​_​material::SpriteMeshMaterial#gt;**<br/>来自crate:bevy​_​sprite​_​render ↗：把二<br/>维材质移除实体登记到专用化清理表。" }
+  n24@{ shape: rounded, label: "**extract​_​entities​_​that​_​need​_​**<br/>**specializations​_​removed**<br/>来自crate:bevy​_​sprite​_​render ↗：把二<br/>维材质移除实体登记到专用化清理表。" }
   class n24 node_system
   class n24 external_node
   n1 e0@-->|"可变访问"| n0

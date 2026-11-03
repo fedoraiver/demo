@@ -42,21 +42,21 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::**<br/>**material::extract​_​mesh​_​materials​_​**<br/>**2d#lt;bevy​_​sprite​_​render::sprite​_​mesh::**<br/>**sprite​_​mesh​_​material::**<br/>**SpriteMeshMaterial#gt;**<br/>同步可见二维网格使用的材质资产身份。" }
+  n0@{ shape: rounded, label: "**extract​_​mesh​_​materials​_​2d**<br/>同步可见二维网格使用的材质资产身份。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**mesh2d::material::**<br/>**RenderMaterial2dInstances**<br/>映射可渲染主世界实体到二维材质资产。" }
+  n1@{ shape: cyl, label: "**RenderMaterial2dInstances**<br/>映射可渲染主世界实体到二维材质资产。" }
   class n1 node_resource
-  n2@{ shape: rounded, label: "**mesh2d::material::**<br/>**MeshMaterial2d#lt;sprite​_​mesh::sprite​_​**<br/>**mesh​_​material::SpriteMeshMaterial#gt;**<br/>为二维网格指定材质资产。" }
+  n2@{ shape: rounded, label: "**MeshMaterial2d#lt;SpriteMeshMaterial#gt;**<br/>为二维网格指定材质资产。" }
   class n2 node_component
-  n3@{ shape: cyl, label: "**extract​_​plugin::MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
+  n3@{ shape: cyl, label: "**MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
   class n3 node_resource
   class n3 external_node
-  n4@{ shape: rounded, label: "**bevy​_​camera::visibility::**<br/>**ViewVisibility**<br/>来自crate:bevy​_​camera ↗：记录实体是否<br/>应被提取用于渲染。" }
+  n4@{ shape: rounded, label: "**ViewVisibility**<br/>来自crate:bevy​_​camera ↗：记录实体是否<br/>应被提取用于渲染。" }
   class n4 node_component
   class n4 external_node
   n5@{ shape: notch-rect, label: "**Local · removed​_​materials​_​**<br/>**query.0.0.0.0.0**<br/>保存 MeshMaterial2d#lt;M#gt; 移除参数的组<br/>件 ID。" }
   class n5 node_local
-  n6@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::mesh::**<br/>**extract​_​2d​_​meshes**<br/>增量同步二维网格变换和渲染实例信息。" }
+  n6@{ shape: rounded, label: "**extract​_​2d​_​meshes**<br/>增量同步二维网格变换和渲染实例信息。" }
   class n6 node_system
   n7@{ shape: notch-rect, label: "**Local · removed​_​materials​_​**<br/>**query.0.0.1**<br/>跟踪 MeshMaterial2d#lt;M#gt; 移除记录的读取<br/>进度。" }
   class n7 node_local
@@ -81,9 +81,9 @@ flowchart LR
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
-  e3@{ curve: bumpX }
+  e3@{ curve: basis }
   e4@{ curve: basis }
   e5@{ curve: basis }
   e6@{ curve: basis }
   e7@{ curve: basis }
-  e8@{ curve: basis }
+  e8@{ curve: bumpX }

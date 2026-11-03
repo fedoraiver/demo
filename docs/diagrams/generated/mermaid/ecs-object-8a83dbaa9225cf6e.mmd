@@ -40,9 +40,9 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: cyl, label: "**LastEasingTick**<br/>记录最近一次变换平滑的系统刻度。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​transform​_​interpolation::**<br/>**update​_​last​_​easing​_​tick**<br/>记录平滑系统完成后的变化检测边界。" }
+  n1@{ shape: rounded, label: "**update​_​last​_​easing​_​tick**<br/>记录平滑系统完成后的变化检测边界。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​transform​_​interpolation::reset​_​**<br/>**easing​_​states​_​on​_​transform​_​change**<br/>在外部直接改变变换时取消失效的平滑区间。" }
+  n2@{ shape: rounded, label: "**reset​_​easing​_​states​_​on​_​transform​_​**<br/>**change**<br/>在外部直接改变变换时取消失效的平滑区间。" }
   class n2 node_system
   n1 e0@-->|"赋值"| n0
   class e0 edge_write

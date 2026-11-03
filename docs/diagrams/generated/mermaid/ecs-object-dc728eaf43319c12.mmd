@@ -38,13 +38,13 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**atmosphere::resources::**<br/>**RenderSkyPipelineId**<br/>定位当前天空绘制的缓存管线。" }
+  n0@{ shape: rounded, label: "**RenderSkyPipelineId**<br/>定位当前天空绘制的缓存管线。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​pbr::atmosphere::extract​_​**<br/>**atmosphere**<br/>为三维相机选择并提取最近的大气。" }
+  n1@{ shape: rounded, label: "**extract​_​atmosphere**<br/>为三维相机选择并提取最近的大气。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​pbr::atmosphere::node::render​_​**<br/>**sky**<br/>绑定大气查找表及视图、光照参数，按相机视<br/>口和可选分辨率覆盖设置绘制全屏天空，将结<br/>果写入视图颜色附件。" }
+  n2@{ shape: rounded, label: "**render​_​sky**<br/>绑定大气查找表及视图、光照参数，按相机视<br/>口和可选分辨率覆盖设置绘制全屏天空，将结<br/>果写入视图颜色附件。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​pbr::atmosphere::resources::**<br/>**queue​_​render​_​sky​_​pipelines**<br/>按多重采样和混合能力选择天空管线。" }
+  n3@{ shape: rounded, label: "**queue​_​render​_​sky​_​pipelines**<br/>按多重采样和混合能力选择天空管线。" }
   class n3 node_system
   n1 e0@-->|"移除"| n0
   class e0 edge_write

@@ -40,15 +40,15 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**avian3d::dynamics::solver::plugin::**<br/>**warm​_​start**<br/>用历史接触冲量初始化本轮约束求解。" }
+  n0@{ shape: rounded, label: "**warm​_​start**<br/>用历史接触冲量初始化本轮约束求解。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**dynamics::solver::plugin::**<br/>**SolverConfig**<br/>配置接触与关节约束求解参数。" }
+  n1@{ shape: cyl, label: "**SolverConfig**<br/>配置接触与关节约束求解参数。" }
   class n1 node_resource
-  n2@{ shape: cyl, label: "**dynamics::solver::solver​_​body::**<br/>**SolverBodies**<br/>连续存储活跃刚体的求解状态。" }
+  n2@{ shape: cyl, label: "**SolverBodies**<br/>连续存储活跃刚体的求解状态。" }
   class n2 node_resource
-  n3@{ shape: cyl, label: "**dynamics::solver::diagnostics::**<br/>**SolverDiagnostics**<br/>记录物理求解各阶段耗时。" }
+  n3@{ shape: cyl, label: "**SolverDiagnostics**<br/>记录物理求解各阶段耗时。" }
   class n3 node_resource
-  n4@{ shape: cyl, label: "**dynamics::solver::constraint​_​graph::**<br/>**ConstraintGraph**<br/>为并行接触求解维护约束着色图。" }
+  n4@{ shape: cyl, label: "**ConstraintGraph**<br/>为并行接触求解维护约束着色图。" }
   class n4 node_resource
   n5@{ shape: lin-rect, label: "**WarmStart**<br/>组织约束子步的求解与松弛。" }
   class n5 node_system_set

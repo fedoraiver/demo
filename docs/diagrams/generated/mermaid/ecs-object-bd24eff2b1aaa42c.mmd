@@ -43,19 +43,19 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​render::material​_​bind​_​groups::**<br/>**write​_​material​_​bind​_​group​_​buffers**<br/>上传材质分配器管理的无绑定缓冲内容。" }
+  n0@{ shape: rounded, label: "**write​_​material​_​bind​_​group​_​buffers**<br/>上传材质分配器管理的无绑定缓冲内容。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**bevy​_​render::material​_​bind​_​groups::**<br/>**prepare​_​material​_​bind​_​groups**<br/>重建本帧变化材质所需的 GPU 绑定组。" }
+  n1@{ shape: rounded, label: "**prepare​_​material​_​bind​_​groups**<br/>重建本帧变化材质所需的 GPU 绑定组。" }
   class n1 node_system
-  n2@{ shape: cyl, label: "**bevy​_​render::renderer::RenderQueue**<br/>将资源写入和命令异步提交给 GPU。" }
+  n2@{ shape: cyl, label: "**RenderQueue**<br/>将资源写入和命令异步提交给 GPU。" }
   class n2 node_resource
-  n3@{ shape: cyl, label: "**bevy​_​render::renderer::RenderDevice**<br/>创建渲染和计算所需的 GPU 资源。" }
+  n3@{ shape: cyl, label: "**RenderDevice**<br/>创建渲染和计算所需的 GPU 资源。" }
   class n3 node_resource
   n4@{ shape: lin-rect, label: "**PrepareBindGroups**<br/>组织渲染数据准备与绘制排队。" }
   class n4 node_system_set
-  n5@{ shape: cyl, label: "**material​_​bind​_​groups::**<br/>**MaterialBindGroupAllocators**<br/>为材质分配绑定组并追踪引用资源。" }
+  n5@{ shape: cyl, label: "**MaterialBindGroupAllocators**<br/>为材质分配绑定组并追踪引用资源。" }
   class n5 node_resource
-  n6@{ shape: fr-rect, label: "**material​_​bind​_​groups::**<br/>**MaterialBindGroupPlugin**<br/>分配并打包材质绑定组。" }
+  n6@{ shape: fr-rect, label: "**MaterialBindGroupPlugin**<br/>分配并打包材质绑定组。" }
   class n6 node_plugin
   n1 e0@-->|"先于"| n0
   class e0 edge_order

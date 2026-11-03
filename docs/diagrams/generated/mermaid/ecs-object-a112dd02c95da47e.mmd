@@ -38,11 +38,11 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**deferred::copy​_​lighting​_​id::**<br/>**CopyDeferredLightingIdPipeline**<br/>把延迟光照标识复制为深度附件。" }
+  n0@{ shape: cyl, label: "**CopyDeferredLightingIdPipeline**<br/>把延迟光照标识复制为深度附件。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​core​_​pipeline::deferred::copy​_​**<br/>**lighting​_​id::copy​_​deferred​_​lighting​_​**<br/>**id**<br/>把延迟光照通道标识复制到深度目标。" }
+  n1@{ shape: rounded, label: "**copy​_​deferred​_​lighting​_​id**<br/>把延迟光照通道标识复制到深度目标。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​core​_​pipeline::deferred::copy​_​**<br/>**lighting​_​id::init​_​copy​_​deferred​_​**<br/>**lighting​_​id​_​pipeline**<br/>建立延迟光照标识到深度的复制管线。" }
+  n2@{ shape: rounded, label: "**init​_​copy​_​deferred​_​lighting​_​id​_​**<br/>**pipeline**<br/>建立延迟光照标识到深度的复制管线。" }
   class n2 node_system
   n0 e0@--> n1
   class e0 edge_read

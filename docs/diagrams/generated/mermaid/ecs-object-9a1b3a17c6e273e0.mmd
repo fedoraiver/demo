@@ -42,13 +42,13 @@ flowchart LR
   class n0 node_system_set
   n1@{ shape: lin-rect, label: "**Velocity**<br/>组织速度与位置积分阶段。" }
   class n1 node_system_set
-  n2@{ shape: rounded, label: "**avian3d::dynamics::integrator::**<br/>**integrate​_​positions**<br/>按子步速度积分刚体位姿增量。" }
+  n2@{ shape: rounded, label: "**integrate​_​positions**<br/>按子步速度积分刚体位姿增量。" }
   class n2 node_system
   n3@{ shape: lin-rect, label: "**SolveConstraints**<br/>组织约束子步的求解与松弛。" }
   class n3 node_system_set
   n4@{ shape: lin-rect, label: "**Relax**<br/>组织约束子步的求解与松弛。" }
   class n4 node_system_set
-  n5@{ shape: rounded, label: "**avian3d::dynamics::solver::solver​_​**<br/>**body::plugin::update​_​solver​_​body​_​**<br/>**angular​_​inertia**<br/>按当前朝向刷新求解器的有效逆惯量。" }
+  n5@{ shape: rounded, label: "**update​_​solver​_​body​_​angular​_​inertia**<br/>按当前朝向刷新求解器的有效逆惯量。" }
   class n5 node_system
   n1 e0@-->|"先于"| n0
   class e0 edge_order

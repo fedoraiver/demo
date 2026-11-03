@@ -39,11 +39,11 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​gizmos::clear​_​gizmo​_​**<br/>**context#lt;bevy​_​gizmos::aabb::**<br/>**AabbGizmoConfigGroup, bevy​_​time::**<br/>**fixed::Fixed#gt;**<br/>清空指定 Gizmo 配置组及清理上下文的存<br/>储，丢弃该上下文上一轮保存的线段和颜色数<br/>据。" }
+  n0@{ shape: rounded, label: "**clear​_​gizmo​_​context**<br/>清空指定 Gizmo 配置组及清理上下文的存<br/>储，丢弃该上下文上一轮保存的线段和颜色数<br/>据。" }
   class n0 node_system
-  n1@{ shape: fr-rect, label: "**aabb::AabbGizmoPlugin**<br/>绘制包围盒调试形状。" }
+  n1@{ shape: fr-rect, label: "**AabbGizmoPlugin**<br/>绘制包围盒调试形状。" }
   class n1 node_plugin
-  n2@{ shape: cyl, label: "**gizmos::GizmoStorage#lt;aabb::**<br/>**AabbGizmoConfigGroup, bevy​_​time::**<br/>**Fixed#gt;**<br/>按配置组和清理上下文存储调试图元。" }
+  n2@{ shape: cyl, label: "**GizmoStorage#lt;AabbGizmoConfigGroup,**<br/>**Fixed#gt;**<br/>按配置组和清理上下文存储调试图元。" }
   class n2 node_resource
   n1 e0@-->|"调用"| n0
   class e0 edge_registration

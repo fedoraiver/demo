@@ -41,19 +41,19 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​pbr::render::mesh​_​view​_​**<br/>**bindings::init​_​mesh​_​pipeline​_​view​_​**<br/>**layouts**<br/>按设备能力汇集网格视图资源布局参数。" }
+  n0@{ shape: rounded, label: "**init​_​mesh​_​pipeline​_​view​_​layouts**<br/>按设备能力汇集网格视图资源布局参数。" }
   class n0 node_system
   n1@{ shape: lin-rect, label: "**MeshPipelineSystems**<br/>先初始化网格视图布局，再初始化三维网格管<br/>线。" }
   class n1 node_system_set
-  n2@{ shape: cyl, label: "**bevy​_​render::renderer::RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
+  n2@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
   class n2 node_resource
   class n2 external_node
-  n3@{ shape: cyl, label: "**bevy​_​render::renderer::RenderAdapter**<br/>来自crate:bevy​_​render ↗：标识渲染使用<br/>的物理 GPU 适配器。" }
+  n3@{ shape: cyl, label: "**RenderAdapter**<br/>来自crate:bevy​_​render ↗：标识渲染使用<br/>的物理 GPU 适配器。" }
   class n3 node_resource
   class n3 external_node
-  n4@{ shape: rounded, label: "**bevy​_​pbr::render::mesh::init​_​mesh​_​**<br/>**pipeline**<br/>初始化三维网格着色器及设备缓冲策略。" }
+  n4@{ shape: rounded, label: "**init​_​mesh​_​pipeline**<br/>初始化三维网格着色器及设备缓冲策略。" }
   class n4 node_system
-  n5@{ shape: cyl, label: "**bevy​_​pbr::MeshPipelineViewLayouts**<br/>按网格管线配置提供视图绑定布局。" }
+  n5@{ shape: cyl, label: "**MeshPipelineViewLayouts**<br/>按网格管线配置提供视图绑定布局。" }
   class n5 node_resource
   n1 e0@-->|"集合成员"| n0
   class e0 edge_set_membership

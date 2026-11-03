@@ -39,11 +39,11 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​diagnostic::frame​_​count::**<br/>**update​_​frame​_​count**<br/>递增应用帧计数。" }
+  n0@{ shape: rounded, label: "**update​_​frame​_​count**<br/>递增应用帧计数。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**frame​_​count::FrameCount**<br/>记录应用启动以来的帧计数" }
+  n1@{ shape: cyl, label: "**FrameCount**<br/>记录应用启动以来的帧计数" }
   class n1 node_resource
-  n2@{ shape: fr-rect, label: "**frame​_​count::FrameCountPlugin**<br/>维护应用累计帧数。" }
+  n2@{ shape: fr-rect, label: "**FrameCountPlugin**<br/>维护应用累计帧数。" }
   class n2 node_plugin
   n0 e0@-->|"赋值"| n1
   class e0 edge_write

@@ -40,27 +40,27 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: lin-rect, label: "**Content**<br/>组织界面交互、布局与堆叠更新。" }
   class n0 node_system_set
-  n1@{ shape: rounded, label: "**bevy​_​ui​_​render::image::mark​_​images​_​**<br/>**as​_​changed​_​if​_​their​_​assets​_​changed**<br/>来自crate:bevy​_​ui​_​render ↗：使图像或<br/>图集资产变化触发 UI 图像更新。" }
+  n1@{ shape: rounded, label: "**mark​_​images​_​as​_​changed​_​if​_​their​_​**<br/>**assets​_​changed**<br/>来自crate:bevy​_​ui​_​render ↗：使图像或<br/>图集资产变化触发 UI 图像更新。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​ui::widget::text​_​input​_​layout::**<br/>**update​_​editable​_​text​_​styles**<br/>把字体和排版配置同步到可编辑文本引擎。" }
+  n2@{ shape: rounded, label: "**update​_​editable​_​text​_​styles**<br/>把字体和排版配置同步到可编辑文本引擎。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​ui::widget::text::measure​_​text​_​**<br/>**system**<br/>在文本变化后更新内容测量并安排文字重排。" }
+  n3@{ shape: rounded, label: "**measure​_​text​_​system**<br/>在文本变化后更新内容测量并安排文字重排。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**bevy​_​ui::layout::sync​_​font​_​size​_​to​_​**<br/>**em​_​size**<br/>把文本字号解析为节点的 EmSize。" }
+  n4@{ shape: rounded, label: "**sync​_​font​_​size​_​to​_​em​_​size**<br/>把文本字号解析为节点的 EmSize。" }
   class n4 node_system
-  n5@{ shape: rounded, label: "**bevy​_​ui::widget::image::update​_​**<br/>**image​_​content​_​size​_​system**<br/>按图像或图集区域更新 UI 的固有尺寸测<br/>量。" }
+  n5@{ shape: rounded, label: "**update​_​image​_​content​_​size​_​system**<br/>按图像或图集区域更新 UI 的固有尺寸测<br/>量。" }
   class n5 node_system
-  n6@{ shape: rounded, label: "**bevy​_​ui::widget::inline​_​image::**<br/>**update​_​inline​_​image​_​boxes**<br/>把内联图像尺寸同步到文本排版盒。" }
+  n6@{ shape: rounded, label: "**update​_​inline​_​image​_​boxes**<br/>把内联图像尺寸同步到文本排版盒。" }
   class n6 node_system
-  n7@{ shape: rounded, label: "**bevy​_​ui​_​render::image::update​_​**<br/>**texture​_​atlas​_​layout​_​components**<br/>来自crate:bevy​_​ui​_​render ↗：同步 UI<br/>图像所引用的图集布局组件。" }
+  n7@{ shape: rounded, label: "**update​_​texture​_​atlas​_​layout​_​**<br/>**components**<br/>来自crate:bevy​_​ui​_​render ↗：同步 UI<br/>图像所引用的图集布局组件。" }
   class n7 node_system
   class n7 external_node
   n8@{ shape: lin-rect, label: "**Layout**<br/>组织界面交互、布局与堆叠更新。" }
   class n8 node_system_set
   n9@{ shape: lin-rect, label: "**Propagate**<br/>组织界面交互、布局与堆叠更新。" }
   class n9 node_system_set
-  n10@{ shape: rounded, label: "**bevy​_​ui::widget::text​_​input​_​layout::**<br/>**update​_​editable​_​text​_​content​_​size**<br/>按可见字符宽度和行数设置输入框固有尺寸。" }
+  n10@{ shape: rounded, label: "**update​_​editable​_​text​_​content​_​size**<br/>按可见字符宽度和行数设置输入框固有尺寸。" }
   class n10 node_system
   n0 e0@-->|"先于"| n1
   class e0 edge_order

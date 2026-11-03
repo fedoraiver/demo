@@ -44,14 +44,14 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​transform​_​interpolation::ease​_​**<br/>**scale​_​lerp**<br/>按固定步剩余比例线性插值显示缩放。" }
+  n0@{ shape: rounded, label: "**ease​_​scale​_​lerp**<br/>按固定步剩余比例线性插值显示缩放。" }
   class n0 node_system
   n1@{ shape: rounded, label: "**NoScaleEasing**<br/>显式禁止当前实体的缩放插值和外推" }
   class n1 node_component
-  n2@{ shape: cyl, label: "**time::Time#lt;fixed::Fixed#gt;**<br/>来自crate:bevy​_​time ↗：保存时钟上下<br/>文、帧间隔及累计时间" }
+  n2@{ shape: cyl, label: "**Time#lt;Fixed#gt;**<br/>来自crate:bevy​_​time ↗：保存时钟上下<br/>文、帧间隔及累计时间" }
   class n2 node_resource
   class n2 external_node
-  n3@{ shape: rounded, label: "**components::transform::Transform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>相对父实体的平移、旋转和缩放" }
+  n3@{ shape: rounded, label: "**Transform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>相对父实体的平移、旋转和缩放" }
   class n3 node_component
   class n3 external_node
   n4@{ shape: fr-rect, label: "**TransformEasingPlugin**<br/>在变换端点之间应用显示缓动。" }

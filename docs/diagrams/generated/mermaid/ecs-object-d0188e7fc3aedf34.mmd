@@ -39,69 +39,69 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**collider​_​tree::ColliderTrees**<br/>按运动类别组织碰撞体加速树。" }
+  n0@{ shape: cyl, label: "**ColliderTrees**<br/>按运动类别组织碰撞体加速树。" }
   class n0 node_resource
-  n1@{ shape: hex, label: "**avian3d::collider​_​tree::update::add​_​**<br/>**to​_​tree​_​on**<br/>将可用碰撞体加入空间树。" }
+  n1@{ shape: hex, label: "**add​_​to​_​tree​_​on**<br/>将可用碰撞体加入空间树。" }
   class n1 node_observer
-  n2@{ shape: hex, label: "**avian3d::collider​_​tree::update::**<br/>**{impl#35;1}::build::{closure#35;7}**<br/>同步碰撞代理的刚体禁用标志。" }
+  n2@{ shape: hex, label: "**build::{closure#35;7}**<br/>同步碰撞代理的刚体禁用标志。" }
   class n2 node_observer
-  n3@{ shape: hex, label: "**avian3d::collider​_​tree::update::add​_​**<br/>**to​_​tree​_​on**<br/>将可用碰撞体加入空间树。" }
+  n3@{ shape: hex, label: "**add​_​to​_​tree​_​on**<br/>将可用碰撞体加入空间树。" }
   class n3 node_observer
-  n4@{ shape: rounded, label: "**avian3d::collider​_​tree::update::**<br/>**update​_​solver​_​body​_​aabbs#lt;avian3d::**<br/>**collision::collider::parry::**<br/>**Collider#gt;**<br/>按物理结果更新活跃刚体的碰撞边界。" }
+  n4@{ shape: rounded, label: "**update​_​solver​_​body​_​aabbs**<br/>按物理结果更新活跃刚体的碰撞边界。" }
   class n4 node_system
-  n5@{ shape: hex, label: "**avian3d::collider​_​tree::update::**<br/>**remove​_​from​_​tree​_​on**<br/>从空间树移除碰撞体代理。" }
+  n5@{ shape: hex, label: "**remove​_​from​_​tree​_​on**<br/>从空间树移除碰撞体代理。" }
   class n5 node_observer
-  n6@{ shape: hex, label: "**avian3d::collider​_​tree::update::**<br/>**{impl#35;1}::build::{closure#35;5}**<br/>同步碰撞代理的碰撞层配置。" }
+  n6@{ shape: hex, label: "**build::{closure#35;5}**<br/>同步碰撞代理的碰撞层配置。" }
   class n6 node_observer
-  n7@{ shape: hex, label: "**avian3d::collider​_​tree::update::**<br/>**{impl#35;1}::build::{closure#35;6}**<br/>同步碰撞代理的自定义过滤标志。" }
+  n7@{ shape: hex, label: "**build::{closure#35;6}**<br/>同步碰撞代理的自定义过滤标志。" }
   class n7 node_observer
-  n8@{ shape: rounded, label: "**avian3d::collider​_​tree::**<br/>**optimization::optimize​_​trees**<br/>维护动态与运动学碰撞体树的查询性能。" }
+  n8@{ shape: rounded, label: "**optimize​_​trees**<br/>维护动态与运动学碰撞体树的查询性能。" }
   class n8 node_system
-  n9@{ shape: rounded, label: "**avian3d::collider​_​tree::update::**<br/>**clear​_​moved​_​proxies**<br/>清空本轮广相使用的移动代理目录。" }
+  n9@{ shape: rounded, label: "**clear​_​moved​_​proxies**<br/>清空本轮广相使用的移动代理目录。" }
   class n9 node_system
-  n10@{ shape: rounded, label: "**demo::item​_​interaction::**<br/>**interaction::handle​_​interaction**<br/>来自item​_​interaction ↗：拾取建立物理<br/>持握关系；释放只解除控制，保留刚体姿态、<br/>线速度和角速度。" }
+  n10@{ shape: rounded, label: "**handle​_​interaction**<br/>来自item​_​interaction ↗：拾取建立物理<br/>持握关系；释放只解除控制，保留刚体姿态、<br/>线速度和角速度。" }
   class n10 node_system
   class n10 external_node
-  n11@{ shape: rounded, label: "**demo::character::motion::update​_​**<br/>**grounded**<br/>来自character ↗：脚底附近的小球向下探<br/>测支撑面；墙面法线和上升中的角色不能算接<br/>地。" }
+  n11@{ shape: rounded, label: "**update​_​grounded**<br/>来自character ↗：脚底附近的小球向下探<br/>测支撑面；墙面法线和上升中的角色不能算接<br/>地。" }
   class n11 node_system
   class n11 external_node
-  n12@{ shape: rounded, label: "**demo::first​_​person::facing::sync​_​**<br/>**character​_​facing**<br/>来自first​_​person ↗：在固定模拟前及逐<br/>帧持握目标同步前设置水平朝向，站立、横移<br/>和后退时也跟随视角。" }
+  n12@{ shape: rounded, label: "**sync​_​character​_​facing**<br/>来自first​_​person ↗：在固定模拟前及逐<br/>帧持握目标同步前设置水平朝向，站立、横移<br/>和后退时也跟随视角。" }
   class n12 node_system
   class n12 external_node
-  n13@{ shape: rounded, label: "**avian3d::collider​_​tree::update::**<br/>**update​_​moved​_​collider​_​**<br/>**aabbs#lt;avian3d::collision::collider::**<br/>**parry::Collider#gt;**<br/>重算物理步后被手动改变的碰撞边界。" }
+  n13@{ shape: rounded, label: "**update​_​moved​_​collider​_​aabbs**<br/>重算物理步后被手动改变的碰撞边界。" }
   class n13 node_system
-  n14@{ shape: hex, label: "**avian3d::collider​_​tree::update::**<br/>**{impl#35;1}::build::{closure#35;1}**<br/>把失去刚体归属的碰撞体迁到独立树。" }
+  n14@{ shape: hex, label: "**build::{closure#35;1}**<br/>把失去刚体归属的碰撞体迁到独立树。" }
   class n14 node_observer
-  n15@{ shape: hex, label: "**avian3d::collider​_​tree::update::**<br/>**remove​_​from​_​tree​_​on**<br/>从空间树移除碰撞体代理。" }
+  n15@{ shape: hex, label: "**remove​_​from​_​tree​_​on**<br/>从空间树移除碰撞体代理。" }
   class n15 node_observer
-  n16@{ shape: rounded, label: "**demo::item​_​interaction::attachment::**<br/>**align​_​attachments**<br/>来自item​_​interaction ↗：有限的小步对<br/>齐不会积分箱体力；受阻保留安全姿态，持续<br/>受阻则解除持握。" }
+  n16@{ shape: rounded, label: "**align​_​attachments**<br/>来自item​_​interaction ↗：有限的小步对<br/>齐不会积分箱体力；受阻保留安全姿态，持续<br/>受阻则解除持握。" }
   class n16 node_system
   class n16 external_node
-  n17@{ shape: rounded, label: "**demo::first​_​person::facing::sync​_​**<br/>**character​_​facing**<br/>来自first​_​person ↗：在固定模拟前及逐<br/>帧持握目标同步前设置水平朝向，站立、横移<br/>和后退时也跟随视角。" }
+  n17@{ shape: rounded, label: "**sync​_​character​_​facing**<br/>来自first​_​person ↗：在固定模拟前及逐<br/>帧持握目标同步前设置水平朝向，站立、横移<br/>和后退时也跟随视角。" }
   class n17 node_system
   class n17 external_node
-  n18@{ shape: rounded, label: "**avian3d::collider​_​tree::**<br/>**optimization::finish​_​optimize​_​trees**<br/>合并完成的碰撞体树优化结果。" }
+  n18@{ shape: rounded, label: "**finish​_​optimize​_​trees**<br/>合并完成的碰撞体树优化结果。" }
   class n18 node_system
-  n19@{ shape: rounded, label: "**avian3d::collision::broad​_​phase::**<br/>**bvh​_​broad​_​phase::collect​_​collision​_​**<br/>**pairs#lt;()#gt;**<br/>为移动碰撞代理收集广相候选接触。" }
+  n19@{ shape: rounded, label: "**collect​_​collision​_​pairs**<br/>为移动碰撞代理收集广相候选接触。" }
   class n19 node_system
-  n20@{ shape: hex, label: "**avian3d::collider​_​tree::update::**<br/>**remove​_​from​_​tree​_​on**<br/>从空间树移除碰撞体代理。" }
+  n20@{ shape: hex, label: "**remove​_​from​_​tree​_​on**<br/>从空间树移除碰撞体代理。" }
   class n20 node_observer
-  n21@{ shape: hex, label: "**avian3d::collider​_​tree::update::**<br/>**{impl#35;1}::build::{closure#35;2}**<br/>按刚体类型迁移碰撞体空间树。" }
+  n21@{ shape: hex, label: "**build::{closure#35;2}**<br/>按刚体类型迁移碰撞体空间树。" }
   class n21 node_observer
-  n22@{ shape: rounded, label: "**avian3d::spatial​_​query::shapecast**<br/>执行已启用的形状扫掠并更新命中列表。" }
+  n22@{ shape: rounded, label: "**shapecast**<br/>执行已启用的形状扫掠并更新命中列表。" }
   class n22 node_system
-  n23@{ shape: rounded, label: "**avian3d::dynamics::ccd::solve​_​**<br/>**continuous**<br/>通过连续扫掠限制快速刚体穿透。" }
+  n23@{ shape: rounded, label: "**solve​_​continuous**<br/>通过连续扫掠限制快速刚体穿透。" }
   class n23 node_system
-  n24@{ shape: hex, label: "**avian3d::collider​_​tree::update::add​_​**<br/>**to​_​tree​_​on**<br/>将可用碰撞体加入空间树。" }
+  n24@{ shape: hex, label: "**add​_​to​_​tree​_​on**<br/>将可用碰撞体加入空间树。" }
   class n24 node_observer
-  n25@{ shape: rounded, label: "**avian3d::spatial​_​query::raycast**<br/>执行已启用的射线查询并更新命中列表。" }
+  n25@{ shape: rounded, label: "**raycast**<br/>执行已启用的射线查询并更新命中列表。" }
   class n25 node_system
-  n26@{ shape: rounded, label: "**demo::character::motion::update​_​**<br/>**grounded**<br/>来自character ↗：脚底附近的小球向下探<br/>测支撑面；墙面法线和上升中的角色不能算接<br/>地。" }
+  n26@{ shape: rounded, label: "**update​_​grounded**<br/>来自character ↗：脚底附近的小球向下探<br/>测支撑面；墙面法线和上升中的角色不能算接<br/>地。" }
   class n26 node_system
   class n26 external_node
-  n27@{ shape: hex, label: "**avian3d::collider​_​tree::update::**<br/>**{impl#35;1}::build::{closure#35;3}**<br/>同步碰撞代理的传感器启用标志。" }
+  n27@{ shape: hex, label: "**build::{closure#35;3}**<br/>同步碰撞代理的传感器启用标志。" }
   class n27 node_observer
-  n28@{ shape: hex, label: "**avian3d::collider​_​tree::update::**<br/>**{impl#35;1}::build::{closure#35;4}**<br/>清除碰撞代理的传感器标志。" }
+  n28@{ shape: hex, label: "**build::{closure#35;4}**<br/>清除碰撞代理的传感器标志。" }
   class n28 node_observer
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

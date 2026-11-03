@@ -39,17 +39,17 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​render::init​_​gpu​_​resource#lt;bevy​_​**<br/>**core​_​pipeline::mip​_​generation::**<br/>**DownsamplePipeline#gt;**<br/>构造并插入渲染所需资源。" }
+  n0@{ shape: rounded, label: "**init​_​gpu​_​resource**<br/>构造并插入渲染所需资源。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**bevy​_​render::renderer::RenderDevice**<br/>创建渲染和计算所需的 GPU 资源。" }
+  n1@{ shape: cyl, label: "**RenderDevice**<br/>创建渲染和计算所需的 GPU 资源。" }
   class n1 node_resource
-  n2@{ shape: rounded, label: "**bevy​_​pbr::light​_​probe::generate::**<br/>**initialize​_​generated​_​environment​_​**<br/>**map​_​resources**<br/>来自crate:bevy​_​pbr ↗：初始化环境图降<br/>采样、复制和卷积的 GPU 接口。" }
+  n2@{ shape: rounded, label: "**initialize​_​generated​_​environment​_​**<br/>**map​_​resources**<br/>来自crate:bevy​_​pbr ↗：初始化环境图降<br/>采样、复制和卷积的 GPU 接口。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: cyl, label: "**mip​_​generation::DownsampleShaders**<br/>来自crate:bevy​_​core​_​pipeline ↗：保存<br/>颜色和深度下采样着色器。" }
+  n3@{ shape: cyl, label: "**DownsampleShaders**<br/>来自crate:bevy​_​core​_​pipeline ↗：保存<br/>颜色和深度下采样着色器。" }
   class n3 node_resource
   class n3 external_node
-  n4@{ shape: cyl, label: "**mip​_​generation::DownsamplePipeline**<br/>来自crate:bevy​_​core​_​pipeline ↗：生成<br/>颜色纹理的下采样计算管线。" }
+  n4@{ shape: cyl, label: "**DownsamplePipeline**<br/>来自crate:bevy​_​core​_​pipeline ↗：生成<br/>颜色纹理的下采样计算管线。" }
   class n4 node_resource
   class n4 external_node
   n1 e0@--> n0

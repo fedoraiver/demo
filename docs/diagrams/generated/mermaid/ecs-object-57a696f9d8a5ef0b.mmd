@@ -36,12 +36,12 @@ flowchart LR
   classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**camera::Exposure**<br/>用曝光值控制相机接收的光能。" }
+  n0@{ shape: rounded, label: "**Exposure**<br/>用曝光值控制相机接收的光能。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​render::camera::extract​_​cameras**<br/>来自crate:bevy​_​render ↗：把活动相机及<br/>可见实体提取到渲染世界。" }
+  n1@{ shape: rounded, label: "**extract​_​cameras**<br/>来自crate:bevy​_​render ↗：把活动相机及<br/>可见实体提取到渲染世界。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​core​_​pipeline::skybox::extract​_​**<br/>**skybox**<br/>来自crate:bevy​_​core​_​pipeline ↗：提取<br/>天空盒并计算曝光及旋转参数。" }
+  n2@{ shape: rounded, label: "**extract​_​skybox**<br/>来自crate:bevy​_​core​_​pipeline ↗：提取<br/>天空盒并计算曝光及旋转参数。" }
   class n2 node_system
   class n2 external_node
   n0 e0@--> n1

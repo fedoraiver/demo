@@ -37,12 +37,12 @@ flowchart LR
   classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**bevy​_​render::render​_​resource::**<br/>**SpecializedComputePipelines#lt;ssao::**<br/>**SsaoPipelines#gt;**<br/>按配置键缓存计算管线变体。" }
+  n0@{ shape: cyl, label: "**SpecializedComputePipelines#lt;SsaoPipe**<br/>**lines#gt;**<br/>按配置键缓存计算管线变体。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​pbr::ssao::prepare​_​ssao​_​**<br/>**pipelines**<br/>来自crate:bevy​_​pbr ↗：按遮蔽质量和时<br/>间抖动配置选择计算管线。" }
+  n1@{ shape: rounded, label: "**prepare​_​ssao​_​pipelines**<br/>来自crate:bevy​_​pbr ↗：按遮蔽质量和时<br/>间抖动配置选择计算管线。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​render::init​_​gpu​_​resource#lt;bevy​_​**<br/>**render::render​_​resource::pipeline​_​**<br/>**specializer::**<br/>**SpecializedComputePipelines#lt;bevy​_​**<br/>**pbr::ssao::SsaoPipelines#gt;#gt;**<br/>构造并插入渲染所需资源。" }
+  n2@{ shape: rounded, label: "**init​_​gpu​_​resource**<br/>构造并插入渲染所需资源。" }
   class n2 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

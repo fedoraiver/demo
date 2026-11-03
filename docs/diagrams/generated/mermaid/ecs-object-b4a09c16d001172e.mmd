@@ -40,9 +40,9 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: lin-rect, label: "**MenuFocusSystem**<br/>为新打开的菜单取得首个内部焦点。" }
   class n0 node_system_set
-  n1@{ shape: rounded, label: "**bevy​_​ui​_​widgets::tabs::update​_​**<br/>**tablist​_​derived​_​state**<br/>从标签选择和焦点派生每个标签的状态。" }
+  n1@{ shape: rounded, label: "**update​_​tablist​_​derived​_​state**<br/>从标签选择和焦点派生每个标签的状态。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​ui​_​widgets::menu::menu​_​acquire​_​**<br/>**focus**<br/>在菜单打开时为菜单项取得焦点。" }
+  n2@{ shape: rounded, label: "**menu​_​acquire​_​focus**<br/>在菜单打开时为菜单项取得焦点。" }
   class n2 node_system
   n0 e0@-->|"先于"| n1
   class e0 edge_order

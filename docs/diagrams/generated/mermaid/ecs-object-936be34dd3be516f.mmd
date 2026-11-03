@@ -47,34 +47,34 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​render::run​_​render​_​schedule**<br/>按 RenderScheduleOrder 中维护的阶段标<br/>签顺序，依次尝试运行渲染子应用的各个调<br/>度。" }
+  n0@{ shape: rounded, label: "**run​_​render​_​schedule**<br/>按 RenderScheduleOrder 中维护的阶段标<br/>签顺序，依次尝试运行渲染子应用的各个调<br/>度。" }
   class n0 node_system
-  n1@{ shape: lean-r, label: "**bevy​_​ecs::lifecycle::**<br/>**RemovedComponentEntity**<br/>来自crate:bevy​_​ecs ↗：记录发生组件移<br/>除的实体。" }
+  n1@{ shape: lean-r, label: "**RemovedComponentEntity**<br/>来自crate:bevy​_​ecs ↗：记录发生组件移<br/>除的实体。" }
   class n1 node_message
   class n1 external_node
-  n2@{ shape: cyl, label: "**bevy​_​ecs::schedule::Schedules**<br/>来自crate:bevy​_​ecs ↗：按标签保存可运<br/>行的调度实例。" }
+  n2@{ shape: cyl, label: "**Schedules**<br/>来自crate:bevy​_​ecs ↗：按标签保存可运<br/>行的调度实例。" }
   class n2 node_resource
   class n2 external_node
   n3@{ shape: cyl, label: "**RenderScheduleOrder**<br/>记录渲染调度的执行顺序。" }
   class n3 node_resource
-  n4@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;bevy​_​**<br/>**ecs::lifecycle::**<br/>**RemovedComponentEntity#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n4@{ shape: cyl, label: "**Messages#lt;RemovedComponentEntity#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n4 node_resource
   class n4 external_node
-  n5@{ shape: fr-rect, label: "**bevy​_​render::RenderPlugin**<br/>建立渲染子应用与 GPU 后端。" }
+  n5@{ shape: fr-rect, label: "**RenderPlugin**<br/>建立渲染子应用与 GPU 后端。" }
   class n5 node_plugin
-  n6@{ shape: rounded, label: "**bevy​_​render::renderer​_​is​_​ready**<br/>判断渲染器是否已经就绪。" }
+  n6@{ shape: rounded, label: "**renderer​_​is​_​ready**<br/>判断渲染器是否已经就绪。" }
   class n6 node_system
   n7@{ shape: rounded, label: "**RenderScheduleOrder**<br/>记录渲染调度的执行顺序。" }
   class n7 node_component
-  n8@{ shape: rounded, label: "**bevy​_​render::send​_​time**<br/>通过渲染到主应用的时间通道发送当前时刻，<br/>无论本帧是否实际绘制；通道断开时忽略，通<br/>道意外仍满时报告执行顺序错误。" }
+  n8@{ shape: rounded, label: "**send​_​time**<br/>通过渲染到主应用的时间通道发送当前时刻，<br/>无论本帧是否实际绘制；通道断开时忽略，通<br/>道意外仍满时报告执行顺序错误。" }
   class n8 node_system
-  n9@{ shape: stadium, label: "**bevy​_​ecs::change​_​detection::**<br/>**CheckChangeTicks**<br/>来自crate:bevy​_​ecs ↗：请求维护变化检<br/>测 tick 范围。" }
+  n9@{ shape: stadium, label: "**CheckChangeTicks**<br/>来自crate:bevy​_​ecs ↗：请求维护变化检<br/>测 tick 范围。" }
   class n9 node_event
   class n9 external_node
-  n10@{ shape: rounded, label: "**bevy​_​ecs::schedule::Schedules**<br/>来自crate:bevy​_​ecs ↗：按标签保存可运<br/>行的调度实例。" }
+  n10@{ shape: rounded, label: "**Schedules**<br/>来自crate:bevy​_​ecs ↗：按标签保存可运<br/>行的调度实例。" }
   class n10 node_component
   class n10 external_node
-  n11@{ shape: cyl, label: "**bevy​_​ecs::error::**<br/>**FallbackErrorHandler**<br/>来自crate:bevy​_​ecs ↗：处理未被接管的<br/>错误与 panic。" }
+  n11@{ shape: cyl, label: "**FallbackErrorHandler**<br/>来自crate:bevy​_​ecs ↗：处理未被接管的<br/>错误与 panic。" }
   class n11 node_resource
   class n11 external_node
   n0 e0@-->|"消息"| n1

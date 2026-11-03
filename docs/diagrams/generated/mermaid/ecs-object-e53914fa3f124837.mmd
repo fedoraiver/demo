@@ -39,13 +39,13 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​gizmos::collect​_​requested​_​**<br/>**gizmos#lt;bevy​_​gizmos::skinned​_​mesh​_​**<br/>**bounds::**<br/>**SkinnedMeshBoundsGizmoConfigGroup,**<br/>**bevy​_​time::fixed::Fixed#gt;**<br/>把即时 Gizmo 请求转存到指定清理上下文。" }
+  n0@{ shape: rounded, label: "**collect​_​requested​_​gizmos**<br/>把即时 Gizmo 请求转存到指定清理上下文。" }
   class n0 node_system
-  n1@{ shape: fr-rect, label: "**skinned​_​mesh​_​bounds::**<br/>**SkinnedMeshBoundsGizmoPlugin**<br/>绘制动态蒙皮网格包围盒。" }
+  n1@{ shape: fr-rect, label: "**SkinnedMeshBoundsGizmoPlugin**<br/>绘制动态蒙皮网格包围盒。" }
   class n1 node_plugin
-  n2@{ shape: cyl, label: "**gizmos::GizmoStorage#lt;skinned​_​mesh​_​**<br/>**bounds::**<br/>**SkinnedMeshBoundsGizmoConfigGroup,**<br/>**bevy​_​time::Fixed#gt;**<br/>按配置组和清理上下文存储调试图元。" }
+  n2@{ shape: cyl, label: "**GizmoStorage#lt;SkinnedMeshBoundsGizmoC**<br/>**onfigGroup, Fixed#gt;**<br/>按配置组和清理上下文存储调试图元。" }
   class n2 node_resource
-  n3@{ shape: cyl, label: "**gizmos::GizmoStorage#lt;skinned​_​mesh​_​**<br/>**bounds::**<br/>**SkinnedMeshBoundsGizmoConfigGroup,**<br/>**()#gt;**<br/>按配置组和清理上下文存储调试图元。" }
+  n3@{ shape: cyl, label: "**GizmoStorage#lt;SkinnedMeshBoundsGizmoC**<br/>**onfigGroup, ()#gt;**<br/>按配置组和清理上下文存储调试图元。" }
   class n3 node_resource
   n1 e0@-->|"调用"| n0
   class e0 edge_registration

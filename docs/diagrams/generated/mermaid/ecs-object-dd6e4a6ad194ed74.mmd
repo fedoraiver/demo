@@ -39,9 +39,9 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: cyl, label: "**ImageNodeBindGroups**<br/>按图像资产缓存 UI 图像纹理绑定。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​ui​_​render::prepare​_​uinodes**<br/>生成裁剪后的 UI 几何并合并图像批次。" }
+  n1@{ shape: rounded, label: "**prepare​_​uinodes**<br/>生成裁剪后的 UI 几何并合并图像批次。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​render::init​_​gpu​_​resource#lt;bevy​_​**<br/>**ui​_​render::ImageNodeBindGroups#gt;**<br/>来自crate:bevy​_​render ↗：构造并插入渲<br/>染所需资源。" }
+  n2@{ shape: rounded, label: "**init​_​gpu​_​resource**<br/>来自crate:bevy​_​render ↗：构造并插入渲<br/>染所需资源。" }
   class n2 node_system
   class n2 external_node
   n1 e0@-->|"可变访问"| n0

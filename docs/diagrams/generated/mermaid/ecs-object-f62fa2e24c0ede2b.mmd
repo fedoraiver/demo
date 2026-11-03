@@ -39,7 +39,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: notch-rect, label: "**Local · previous​_​hover**<br/>避免同一菜单按钮重复发出悬停音。" }
   class n0 node_local
-  n1@{ shape: rounded, label: "**demo::ui::pointer::pointer​_​**<br/>**interaction**<br/>Bevy 原生 UI 已完成按钮命中；这里只读取<br/>缓冲的按下事件，不另读 MouseButton。" }
+  n1@{ shape: rounded, label: "**pointer​_​interaction**<br/>Bevy 原生 UI 已完成按钮命中；这里只读取<br/>缓冲的按下事件，不另读 MouseButton。" }
   class n1 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

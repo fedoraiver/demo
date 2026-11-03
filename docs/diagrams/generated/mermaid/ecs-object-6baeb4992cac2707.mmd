@@ -38,11 +38,11 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**dynamics::rigid​_​body::GravityScale**<br/>缩放单个刚体受到的重力。" }
+  n0@{ shape: rounded, label: "**GravityScale**<br/>缩放单个刚体受到的重力。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**avian3d::dynamics::integrator::pre​_​**<br/>**process​_​velocity​_​increments**<br/>把加速度、重力和轴锁转成子步速度增量。" }
+  n1@{ shape: rounded, label: "**pre​_​process​_​velocity​_​increments**<br/>把加速度、重力和轴锁转成子步速度增量。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**avian3d::dynamics::solver::islands::**<br/>**sleeping::wake​_​on​_​changed**<br/>因外部位姿、速度或受力变化标记物理岛唤<br/>醒。" }
+  n2@{ shape: rounded, label: "**wake​_​on​_​changed**<br/>因外部位姿、速度或受力变化标记物理岛唤<br/>醒。" }
   class n2 node_system
   n0 e0@--> n1
   class e0 edge_read

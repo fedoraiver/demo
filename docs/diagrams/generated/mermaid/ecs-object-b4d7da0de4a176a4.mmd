@@ -44,38 +44,38 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**drag**<br/>拖动滑条时发布连续值变化。" }
+  n0@{ shape: hex, label: "**slider​_​on​_​drag**<br/>拖动滑条时发布连续值变化。" }
   class n0 node_observer
-  n1@{ shape: rounded, label: "**bevy​_​ui::UiGlobalTransform**<br/>来自crate:bevy​_​ui ↗：保存 UI 节点的绝<br/>对二维变换。" }
+  n1@{ shape: rounded, label: "**UiGlobalTransform**<br/>来自crate:bevy​_​ui ↗：保存 UI 节点的绝<br/>对二维变换。" }
   class n1 node_component
   class n1 external_node
-  n2@{ shape: rounded, label: "**slider::SliderDragState**<br/>记录滑块指针拖动状态。" }
+  n2@{ shape: rounded, label: "**SliderDragState**<br/>记录滑块指针拖动状态。" }
   class n2 node_component
-  n3@{ shape: stadium, label: "**events::PointerDrag**<br/>来自crate:bevy​_​picking ↗：通知正在拖<br/>拽的目标及累计和本次位移。" }
+  n3@{ shape: stadium, label: "**PointerDrag**<br/>来自crate:bevy​_​picking ↗：通知正在拖<br/>拽的目标及累计和本次位移。" }
   class n3 node_event
   class n3 external_node
-  n4@{ shape: rounded, label: "**slider::SliderRange**<br/>限定滑块数值允许范围。" }
+  n4@{ shape: rounded, label: "**SliderRange**<br/>限定滑块数值允许范围。" }
   class n4 node_component
-  n5@{ shape: rounded, label: "**slider::Slider**<br/>组织滑块的连续数值调节行为。" }
+  n5@{ shape: rounded, label: "**Slider**<br/>组织滑块的连续数值调节行为。" }
   class n5 node_component
   n6@{ shape: stadium, label: "**ValueChange#lt;f32#gt;**<br/>传递控件提出的新值。" }
   class n6 node_event
-  n7@{ shape: rounded, label: "**slider::SliderPrecision**<br/>控制拖动数值的舍入精度。" }
+  n7@{ shape: rounded, label: "**SliderPrecision**<br/>控制拖动数值的舍入精度。" }
   class n7 node_component
-  n8@{ shape: cyl, label: "**bevy​_​ui::UiScale**<br/>来自crate:bevy​_​ui ↗：统一缩放 UI 的固<br/>定尺寸值。" }
+  n8@{ shape: cyl, label: "**UiScale**<br/>来自crate:bevy​_​ui ↗：统一缩放 UI 的固<br/>定尺寸值。" }
   class n8 node_resource
   class n8 external_node
-  n9@{ shape: rounded, label: "**bevy​_​ui::InteractionDisabled**<br/>来自crate:bevy​_​ui ↗：标记禁止交互的<br/>UI 控件。" }
+  n9@{ shape: rounded, label: "**InteractionDisabled**<br/>来自crate:bevy​_​ui ↗：标记禁止交互的<br/>UI 控件。" }
   class n9 node_component
   class n9 external_node
-  n10@{ shape: fr-rect, label: "**slider::SliderPlugin**<br/>处理滑块交互、数值与范围变化。" }
+  n10@{ shape: fr-rect, label: "**SliderPlugin**<br/>处理滑块交互、数值与范围变化。" }
   class n10 node_plugin
-  n11@{ shape: rounded, label: "**slider::SliderThumb**<br/>标识滑块的手柄后代元素。" }
+  n11@{ shape: rounded, label: "**SliderThumb**<br/>标识滑块的手柄后代元素。" }
   class n11 node_component
-  n12@{ shape: rounded, label: "**bevy​_​ecs::hierarchy::Children**<br/>来自crate:bevy​_​ecs ↗：保存以<br/>ChildOf 指向当前父实体的子实体集合" }
+  n12@{ shape: rounded, label: "**Children**<br/>来自crate:bevy​_​ecs ↗：保存以<br/>ChildOf 指向当前父实体的子实体集合" }
   class n12 node_component
   class n12 external_node
-  n13@{ shape: rounded, label: "**bevy​_​ui::ComputedNode**<br/>来自crate:bevy​_​ui ↗：保存 UI 布局计算<br/>后的物理尺寸。" }
+  n13@{ shape: rounded, label: "**ComputedNode**<br/>来自crate:bevy​_​ui ↗：保存 UI 布局计算<br/>后的物理尺寸。" }
   class n13 node_component
   class n13 external_node
   n1 e0@--> n0

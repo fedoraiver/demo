@@ -41,14 +41,14 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​core​_​pipeline::mip​_​generation::**<br/>**reset​_​mip​_​generation​_​jobs**<br/>清空上一帧登记的 mip 生成任务。" }
+  n0@{ shape: rounded, label: "**reset​_​mip​_​generation​_​jobs**<br/>清空上一帧登记的 mip 生成任务。" }
   class n0 node_system
   n1@{ shape: lin-rect, label: "**Cleanup**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
   class n1 node_system_set
   class n1 external_node
-  n2@{ shape: cyl, label: "**mip​_​generation::MipGenerationJobs**<br/>记录渲染世界中待生成 mipmap 的图像。" }
+  n2@{ shape: cyl, label: "**MipGenerationJobs**<br/>记录渲染世界中待生成 mipmap 的图像。" }
   class n2 node_resource
-  n3@{ shape: fr-rect, label: "**mip​_​generation::MipGenerationPlugin**<br/>在 GPU 上生成纹理 mip 层级。" }
+  n3@{ shape: fr-rect, label: "**MipGenerationPlugin**<br/>在 GPU 上生成纹理 mip 层级。" }
   class n3 node_plugin
   n1 e0@-->|"集合成员"| n0
   class e0 edge_set_membership

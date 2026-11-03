@@ -39,7 +39,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: notch-rect, label: "**Local · reader.0.10**<br/>为待重置绑定检查保留手柄选择。" }
   class n0 node_local
-  n1@{ shape: rounded, label: "**bevy​_​enhanced​_​input::context::input​_​**<br/>**reader::update​_​pending**<br/>更新输入读取器中等待重置的绑定。" }
+  n1@{ shape: rounded, label: "**update​_​pending**<br/>更新输入读取器中等待重置的绑定。" }
   class n1 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

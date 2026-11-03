@@ -38,9 +38,9 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**item​_​interaction::components::**<br/>**ResumeCarryEasing**<br/>释放后先丢弃手持期间的插值端点，再恢复调<br/>用前未暂停的插值通道。" }
+  n0@{ shape: rounded, label: "**ResumeCarryEasing**<br/>释放后先丢弃手持期间的插值端点，再恢复调<br/>用前未暂停的插值通道。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**demo::item​_​interaction::lifecycle::**<br/>**resume​_​carry​_​easing**<br/>下一固定步在旧端点清除后恢复自由箱插值，<br/>保留原本由其他模块设置的暂停项。" }
+  n1@{ shape: rounded, label: "**resume​_​carry​_​easing**<br/>下一固定步在旧端点清除后恢复自由箱插值，<br/>保留原本由其他模块设置的暂停项。" }
   class n1 node_system
   n1 e0@--- n0
   class e0 edge_read

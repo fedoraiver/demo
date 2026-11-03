@@ -40,24 +40,24 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​core​_​pipeline::tonemapping::**<br/>**check​_​tonemapping​_​none**<br/>警告关闭色调映射后仍配置无效效果的相机。" }
+  n0@{ shape: rounded, label: "**check​_​tonemapping​_​none**<br/>警告关闭色调映射后仍配置无效效果的相机。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**bevy​_​ecs::name::Name**<br/>来自crate:bevy​_​ecs ↗：保存供调试和界<br/>面展示的实体名称及缓存哈希" }
+  n1@{ shape: rounded, label: "**Name**<br/>来自crate:bevy​_​ecs ↗：保存供调试和界<br/>面展示的实体名称及缓存哈希" }
   class n1 node_component
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​render::view::Tonemapping**<br/>来自crate:bevy​_​render ↗：选择 HDR 颜<br/>色到显示颜色的映射方式。" }
+  n2@{ shape: rounded, label: "**Tonemapping**<br/>来自crate:bevy​_​render ↗：选择 HDR 颜<br/>色到显示颜色的映射方式。" }
   class n2 node_component
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​camera::Camera**<br/>来自crate:bevy​_​camera ↗：配置相机视<br/>口、输出目标和渲染顺序。" }
+  n3@{ shape: rounded, label: "**Camera**<br/>来自crate:bevy​_​camera ↗：配置相机视<br/>口、输出目标和渲染顺序。" }
   class n3 node_component
   class n3 external_node
-  n4@{ shape: rounded, label: "**bevy​_​render::view::DebandDither**<br/>来自crate:bevy​_​render ↗：控制颜色输出<br/>的去色带抖动。" }
+  n4@{ shape: rounded, label: "**DebandDither**<br/>来自crate:bevy​_​render ↗：控制颜色输出<br/>的去色带抖动。" }
   class n4 node_component
   class n4 external_node
-  n5@{ shape: rounded, label: "**bevy​_​render::view::ColorGrading**<br/>来自crate:bevy​_​render ↗：配置整幅图像<br/>及明暗分区的电影式调色。" }
+  n5@{ shape: rounded, label: "**ColorGrading**<br/>来自crate:bevy​_​render ↗：配置整幅图像<br/>及明暗分区的电影式调色。" }
   class n5 node_component
   class n5 external_node
-  n6@{ shape: fr-rect, label: "**tonemapping::TonemappingPlugin**<br/>准备相机色调映射与查找表。" }
+  n6@{ shape: fr-rect, label: "**TonemappingPlugin**<br/>准备相机色调映射与查找表。" }
   class n6 node_plugin
   n1 e0@--> n0
   class e0 edge_read

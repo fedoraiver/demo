@@ -36,9 +36,9 @@ flowchart LR
   classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**ui::theme::UiTheme**<br/>字体只加载一次；页面 BSN 直接引用句柄，<br/>不启动异步场景任务。" }
+  n0@{ shape: cyl, label: "**UiTheme**<br/>字体只加载一次；页面 BSN 直接引用句柄，<br/>不启动异步场景任务。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**demo::ui::pages::rebuild​_​page**<br/>只在页面结构或视口变化时重建；数值、提示<br/>与焦点变化保留现有滚动控件。" }
+  n1@{ shape: rounded, label: "**rebuild​_​page**<br/>只在页面结构或视口变化时重建；数值、提示<br/>与焦点变化保留现有滚动控件。" }
   class n1 node_system
   n0 e0@--> n1
   class e0 edge_read

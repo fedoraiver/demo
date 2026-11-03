@@ -39,11 +39,11 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**#lt;avian3d::dynamics::solver::**<br/>**diagnostics::SolverDiagnostics as**<br/>**avian3d::diagnostics::**<br/>**PhysicsDiagnostics#gt;::reset**<br/>重置物理诊断测量。" }
+  n0@{ shape: rounded, label: "**reset**<br/>重置物理诊断测量。" }
   class n0 node_system
   n1@{ shape: lin-rect, label: "**Reset**<br/>划分物理诊断重置与写入。" }
   class n1 node_system_set
-  n2@{ shape: cyl, label: "**dynamics::solver::diagnostics::**<br/>**SolverDiagnostics**<br/>记录物理求解各阶段耗时。" }
+  n2@{ shape: cyl, label: "**SolverDiagnostics**<br/>记录物理求解各阶段耗时。" }
   class n2 node_resource
   n1 e0@-->|"集合成员"| n0
   class e0 edge_set_membership

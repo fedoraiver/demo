@@ -42,28 +42,28 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​light::gizmos::draw​_​lights**<br/>为显式标记的各类光源绘制调试轮廓。" }
+  n0@{ shape: rounded, label: "**draw​_​lights**<br/>为显式标记的各类光源绘制调试轮廓。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**rect​_​light::RectLight**<br/>配置朝局部负 Z 发光的矩形区域光。" }
+  n1@{ shape: rounded, label: "**RectLight**<br/>配置朝局部负 Z 发光的矩形区域光。" }
   class n1 node_component
-  n2@{ shape: cyl, label: "**config::GizmoConfigStore**<br/>来自crate:bevy​_​gizmos ↗：按配置组保存<br/>调试图元绘制设置。" }
+  n2@{ shape: cyl, label: "**GizmoConfigStore**<br/>来自crate:bevy​_​gizmos ↗：按配置组保存<br/>调试图元绘制设置。" }
   class n2 node_resource
   class n2 external_node
-  n3@{ shape: rounded, label: "**point​_​light::PointLight**<br/>配置向四周发光的点光源。" }
+  n3@{ shape: rounded, label: "**PointLight**<br/>配置向四周发光的点光源。" }
   class n3 node_component
-  n4@{ shape: rounded, label: "**components::global​_​transform::**<br/>**GlobalTransform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>合并祖先变换后的世界空间仿射变换" }
+  n4@{ shape: rounded, label: "**GlobalTransform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>合并祖先变换后的世界空间仿射变换" }
   class n4 node_component
   class n4 external_node
   n5@{ shape: lin-rect, label: "**Propagate**<br/>来自crate:bevy​_​transform ↗：组织实体<br/>层级变换传播。" }
   class n5 node_system_set
   class n5 external_node
-  n6@{ shape: rounded, label: "**gizmos::ShowLightGizmo**<br/>显示实体光源的调试轮廓。" }
+  n6@{ shape: rounded, label: "**ShowLightGizmo**<br/>显示实体光源的调试轮廓。" }
   class n6 node_component
-  n7@{ shape: fr-rect, label: "**gizmos::LightGizmoPlugin**<br/>绘制各类光源的调试形状。" }
+  n7@{ shape: fr-rect, label: "**LightGizmoPlugin**<br/>绘制各类光源的调试形状。" }
   class n7 node_plugin
-  n8@{ shape: rounded, label: "**spot​_​light::SpotLight**<br/>配置沿指定方向照射的聚光灯。" }
+  n8@{ shape: rounded, label: "**SpotLight**<br/>配置沿指定方向照射的聚光灯。" }
   class n8 node_component
-  n9@{ shape: rounded, label: "**directional​_​light::DirectionalLight**<br/>配置平行方向光的颜色、照度和阴影。" }
+  n9@{ shape: rounded, label: "**DirectionalLight**<br/>配置平行方向光的颜色、照度和阴影。" }
   class n9 node_component
   n1 e0@--> n0
   class e0 edge_read

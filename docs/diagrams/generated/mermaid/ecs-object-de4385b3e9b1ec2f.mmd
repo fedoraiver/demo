@@ -44,33 +44,33 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: hex, label: "**bevy​_​ui​_​widgets::scrollbar::**<br/>**scrollbar​_​on​_​pointer​_​down**<br/>点击滚动条轨道时翻动一页。" }
+  n0@{ shape: hex, label: "**scrollbar​_​on​_​pointer​_​down**<br/>点击滚动条轨道时翻动一页。" }
   class n0 node_observer
-  n1@{ shape: fr-rect, label: "**scrollbar::ScrollbarPlugin**<br/>处理滚动条拖动并更新滑块。" }
+  n1@{ shape: fr-rect, label: "**ScrollbarPlugin**<br/>处理滚动条拖动并更新滑块。" }
   class n1 node_plugin
-  n2@{ shape: rounded, label: "**scrollbar::ScrollbarThumb**<br/>标识滚动条可拖动滑块。" }
+  n2@{ shape: rounded, label: "**ScrollbarThumb**<br/>标识滚动条可拖动滑块。" }
   class n2 node_component
-  n3@{ shape: rounded, label: "**scrollbar::Scrollbar**<br/>指定滚动条目标、方向和最小滑块长度。" }
+  n3@{ shape: rounded, label: "**Scrollbar**<br/>指定滚动条目标、方向和最小滑块长度。" }
   class n3 node_component
-  n4@{ shape: rounded, label: "**bevy​_​ui::UiGlobalTransform**<br/>来自crate:bevy​_​ui ↗：保存 UI 节点的绝<br/>对二维变换。" }
+  n4@{ shape: rounded, label: "**UiGlobalTransform**<br/>来自crate:bevy​_​ui ↗：保存 UI 节点的绝<br/>对二维变换。" }
   class n4 node_component
   class n4 external_node
-  n5@{ shape: rounded, label: "**bevy​_​ui::ComputedNode**<br/>来自crate:bevy​_​ui ↗：保存 UI 布局计算<br/>后的物理尺寸。" }
+  n5@{ shape: rounded, label: "**ComputedNode**<br/>来自crate:bevy​_​ui ↗：保存 UI 布局计算<br/>后的物理尺寸。" }
   class n5 node_component
   class n5 external_node
-  n6@{ shape: rounded, label: "**bevy​_​ui::ScrollPosition**<br/>来自crate:bevy​_​ui ↗：指定 UI 内容的逻<br/>辑像素滚动位置。" }
+  n6@{ shape: rounded, label: "**ScrollPosition**<br/>来自crate:bevy​_​ui ↗：指定 UI 内容的逻<br/>辑像素滚动位置。" }
   class n6 node_component
   class n6 external_node
-  n7@{ shape: rounded, label: "**bevy​_​ui::ComputedUiRenderTargetInfo**<br/>来自crate:bevy​_​ui ↗：缓存 UI 目标的尺<br/>寸与缩放。" }
+  n7@{ shape: rounded, label: "**ComputedUiRenderTargetInfo**<br/>来自crate:bevy​_​ui ↗：缓存 UI 目标的尺<br/>寸与缩放。" }
   class n7 node_component
   class n7 external_node
-  n8@{ shape: stadium, label: "**bevy​_​picking::events::PointerPress**<br/>来自crate:bevy​_​picking ↗：通知目标上<br/>的指针按钮按下及连按次数。" }
+  n8@{ shape: stadium, label: "**PointerPress**<br/>来自crate:bevy​_​picking ↗：通知目标上<br/>的指针按钮按下及连按次数。" }
   class n8 node_event
   class n8 external_node
-  n9@{ shape: rounded, label: "**bevy​_​ecs::hierarchy::ChildOf**<br/>来自crate:bevy​_​ecs ↗：保存当前实体的<br/>父实体身份" }
+  n9@{ shape: rounded, label: "**ChildOf**<br/>来自crate:bevy​_​ecs ↗：保存当前实体的<br/>父实体身份" }
   class n9 node_component
   class n9 external_node
-  n10@{ shape: cyl, label: "**bevy​_​ui::UiScale**<br/>来自crate:bevy​_​ui ↗：统一缩放 UI 的固<br/>定尺寸值。" }
+  n10@{ shape: cyl, label: "**UiScale**<br/>来自crate:bevy​_​ui ↗：统一缩放 UI 的固<br/>定尺寸值。" }
   class n10 node_resource
   class n10 external_node
   n1 e0@-->|"调用"| n0

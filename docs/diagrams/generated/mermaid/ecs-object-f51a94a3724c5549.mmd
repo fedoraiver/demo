@@ -39,13 +39,13 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**ui::volume::VolumeValue**<br/>数字与填充各自保存设置键，草稿更新不需要<br/>重建实体树。" }
+  n0@{ shape: rounded, label: "**VolumeValue**<br/>数字与填充各自保存设置键，草稿更新不需要<br/>重建实体树。" }
   class n0 node_component
   n1@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>显示并刷新音量数值或静音提示。" }
   class n1 node_entity
   n2@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>显示并刷新音量数值或静音提示。" }
   class n2 node_entity
-  n3@{ shape: rounded, label: "**demo::ui::volume::update​_​volume​_​**<br/>**visuals**<br/>草稿由请求系统在 PreUpdate 修改，随后<br/>同帧更新已有数字和轨道填充。" }
+  n3@{ shape: rounded, label: "**update​_​volume​_​visuals**<br/>草稿由请求系统在 PreUpdate 修改，随后<br/>同帧更新已有数字和轨道填充。" }
   class n3 node_system
   n4@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>显示并刷新音量数值或静音提示。" }
   class n4 node_entity

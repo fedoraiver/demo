@@ -41,13 +41,13 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​render::batching::gpu​_​**<br/>**preprocessing::clear​_​indirect​_​**<br/>**parameters​_​buffers**<br/>清空各渲染阶段上一轮间接绘制参数。" }
+  n0@{ shape: rounded, label: "**clear​_​indirect​_​parameters​_​buffers**<br/>清空各渲染阶段上一轮间接绘制参数。" }
   class n0 node_system
   n1@{ shape: lin-rect, label: "**PrepareViews**<br/>组织渲染数据准备与绘制排队。" }
   class n1 node_system_set
-  n2@{ shape: cyl, label: "**batching::gpu​_​preprocessing::**<br/>**IndirectParametersBuffers**<br/>保存间接绘制命令与裁剪计数缓冲。" }
+  n2@{ shape: cyl, label: "**IndirectParametersBuffers**<br/>保存间接绘制命令与裁剪计数缓冲。" }
   class n2 node_resource
-  n3@{ shape: fr-rect, label: "**batching::gpu​_​preprocessing::**<br/>**BatchingPlugin**<br/>维护间接绘制参数和构建任务。" }
+  n3@{ shape: fr-rect, label: "**BatchingPlugin**<br/>维护间接绘制参数和构建任务。" }
   class n3 node_plugin
   n1 e0@-->|"集合成员"| n0
   class e0 edge_set_membership

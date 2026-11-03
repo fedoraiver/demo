@@ -44,24 +44,24 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​sprite::text2d::calculate​_​**<br/>**bounds​_​text2d**<br/>按文字布局与锚点更新二维文字包围盒。" }
+  n0@{ shape: rounded, label: "**calculate​_​bounds​_​text2d**<br/>按文字布局与锚点更新二维文字包围盒。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**bevy​_​camera::primitives::Aabb**<br/>来自crate:bevy​_​camera ↗：以局部轴对齐<br/>包围盒支持可见性裁剪。" }
+  n1@{ shape: rounded, label: "**Aabb**<br/>来自crate:bevy​_​camera ↗：以局部轴对齐<br/>包围盒支持可见性裁剪。" }
   class n1 node_component
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​text::TextLayoutInfo**<br/>来自crate:bevy​_​text ↗：保存文字块完成<br/>排版后的缩放、字形位置、文字运行几何及尺<br/>寸" }
+  n2@{ shape: rounded, label: "**TextLayoutInfo**<br/>来自crate:bevy​_​text ↗：保存文字块完成<br/>排版后的缩放、字形位置、文字运行几何及尺<br/>寸" }
   class n2 node_component
   class n2 external_node
-  n3@{ shape: rounded, label: "**sprite::Anchor**<br/>保存二维可渲染实体相对自身尺寸的归一化锚<br/>点偏移" }
+  n3@{ shape: rounded, label: "**Anchor**<br/>保存二维可渲染实体相对自身尺寸的归一化锚<br/>点偏移" }
   class n3 node_component
-  n4@{ shape: rounded, label: "**bevy​_​camera::visibility::**<br/>**NoFrustumCulling**<br/>来自crate:bevy​_​camera ↗：使实体退出内<br/>置视锥裁剪。" }
+  n4@{ shape: rounded, label: "**NoFrustumCulling**<br/>来自crate:bevy​_​camera ↗：使实体退出内<br/>置视锥裁剪。" }
   class n4 node_component
   class n4 external_node
-  n5@{ shape: rounded, label: "**bevy​_​sprite::text2d::update​_​text2d​_​**<br/>**layout**<br/>重新排版变化的二维文字并准备字形。" }
+  n5@{ shape: rounded, label: "**update​_​text2d​_​layout**<br/>重新排版变化的二维文字并准备字形。" }
   class n5 node_system
   n6@{ shape: fr-rect, label: "**SpritePlugin**<br/>建立二维精灵基础支持。" }
   class n6 node_plugin
-  n7@{ shape: rounded, label: "**bevy​_​text::TextBounds**<br/>来自crate:bevy​_​text ↗：保存文字逻辑像<br/>素宽高上限" }
+  n7@{ shape: rounded, label: "**TextBounds**<br/>来自crate:bevy​_​text ↗：保存文字逻辑像<br/>素宽高上限" }
   class n7 node_component
   class n7 external_node
   n8@{ shape: lin-rect, label: "**CalculateBounds**<br/>来自crate:bevy​_​camera ↗：组织相机与实<br/>体可见性更新。" }

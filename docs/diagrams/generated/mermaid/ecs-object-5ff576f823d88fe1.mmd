@@ -38,33 +38,33 @@ flowchart LR
   classDef node_event fill:#F9F3EE,stroke:#B66B2D,stroke-width:1.6px,color:#1F3340
   classDef edge_emit stroke:#B66B2D,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: stadium, label: "**menu::MenuEvent**<br/>通过菜单层级传递开关和焦点操作。" }
+  n0@{ shape: stadium, label: "**MenuEvent**<br/>通过菜单层级传递开关和焦点操作。" }
   class n0 node_event
-  n1@{ shape: hex, label: "**bevy​_​ui​_​widgets::menu::menu​_​on​_​key​_​**<br/>**event**<br/>处理菜单键盘导航、激活与关闭。" }
+  n1@{ shape: hex, label: "**menu​_​on​_​key​_​event**<br/>处理菜单键盘导航、激活与关闭。" }
   class n1 node_observer
-  n2@{ shape: hex, label: "**bevy​_​ui​_​widgets::menu::menu​_​item​_​on​_​**<br/>**pointer​_​click**<br/>激活点击菜单项并请求关闭菜单。" }
+  n2@{ shape: hex, label: "**menu​_​item​_​on​_​pointer​_​click**<br/>激活点击菜单项并请求关闭菜单。" }
   class n2 node_observer
-  n3@{ shape: hex, label: "**bevy​_​ui​_​widgets::menu::menubutton​_​**<br/>**on​_​key​_​event**<br/>通过方向键请求打开菜单。" }
+  n3@{ shape: hex, label: "**menubutton​_​on​_​key​_​event**<br/>通过方向键请求打开菜单。" }
   class n3 node_observer
-  n4@{ shape: hex, label: "**bevy​_​ui​_​widgets::menu::menu​_​item​_​on​_​**<br/>**pointer​_​click**<br/>激活点击菜单项并请求关闭菜单。" }
+  n4@{ shape: hex, label: "**menu​_​item​_​on​_​pointer​_​click**<br/>激活点击菜单项并请求关闭菜单。" }
   class n4 node_observer
-  n5@{ shape: hex, label: "**bevy​_​ui​_​widgets::menu::menubutton​_​**<br/>**on​_​activate**<br/>把菜单按钮激活转为菜单切换请求。" }
+  n5@{ shape: hex, label: "**menubutton​_​on​_​activate**<br/>把菜单按钮激活转为菜单切换请求。" }
   class n5 node_observer
-  n6@{ shape: hex, label: "**bevy​_​ui​_​widgets::menu::menu​_​on​_​key​_​**<br/>**event**<br/>处理菜单键盘导航、激活与关闭。" }
+  n6@{ shape: hex, label: "**menu​_​on​_​key​_​event**<br/>处理菜单键盘导航、激活与关闭。" }
   class n6 node_observer
-  n7@{ shape: hex, label: "**bevy​_​ui​_​widgets::menu::menubutton​_​**<br/>**on​_​activate**<br/>把菜单按钮激活转为菜单切换请求。" }
+  n7@{ shape: hex, label: "**menubutton​_​on​_​activate**<br/>把菜单按钮激活转为菜单切换请求。" }
   class n7 node_observer
-  n8@{ shape: rounded, label: "**bevy​_​ui​_​widgets::menu::menu​_​on​_​lose​_​**<br/>**focus**<br/>关闭不再持有内部焦点的菜单。" }
+  n8@{ shape: rounded, label: "**menu​_​on​_​lose​_​focus**<br/>关闭不再持有内部焦点的菜单。" }
   class n8 node_system
-  n9@{ shape: hex, label: "**bevy​_​ui​_​widgets::menu::menubutton​_​**<br/>**on​_​key​_​event**<br/>通过方向键请求打开菜单。" }
+  n9@{ shape: hex, label: "**menubutton​_​on​_​key​_​event**<br/>通过方向键请求打开菜单。" }
   class n9 node_observer
-  n10@{ shape: hex, label: "**bevy​_​ui​_​widgets::menu::menubutton​_​**<br/>**on​_​key​_​event**<br/>通过方向键请求打开菜单。" }
+  n10@{ shape: hex, label: "**menubutton​_​on​_​key​_​event**<br/>通过方向键请求打开菜单。" }
   class n10 node_observer
-  n11@{ shape: hex, label: "**bevy​_​ui​_​widgets::menu::menu​_​item​_​on​_​**<br/>**pointer​_​click**<br/>激活点击菜单项并请求关闭菜单。" }
+  n11@{ shape: hex, label: "**menu​_​item​_​on​_​pointer​_​click**<br/>激活点击菜单项并请求关闭菜单。" }
   class n11 node_observer
-  n12@{ shape: hex, label: "**bevy​_​ui​_​widgets::menu::menubutton​_​**<br/>**on​_​activate**<br/>把菜单按钮激活转为菜单切换请求。" }
+  n12@{ shape: hex, label: "**menubutton​_​on​_​activate**<br/>把菜单按钮激活转为菜单切换请求。" }
   class n12 node_observer
-  n13@{ shape: hex, label: "**bevy​_​ui​_​widgets::menu::menu​_​on​_​key​_​**<br/>**event**<br/>处理菜单键盘导航、激活与关闭。" }
+  n13@{ shape: hex, label: "**menu​_​on​_​key​_​event**<br/>处理菜单键盘导航、激活与关闭。" }
   class n13 node_observer
   n1 e0@-->|"触发事件"| n0
   class e0 edge_emit

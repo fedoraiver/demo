@@ -38,17 +38,32 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**oit::resolve::OitResolvePipelineId**<br/>记录视图的透明解析管线标识。" }
+  subgraph layout_card_n0[" "]
+  n0@{ shape: rounded, label: "**OitResolvePipelineId**<br/>记录视图的透明解析管线标识。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​core​_​pipeline::core​_​3d::main​_​**<br/>**transparent​_​pass​_​3d​_​node::main​_​**<br/>**transparent​_​pass​_​3d**<br/>绘制三维透明物体并保护 OIT 链表状态。" }
+  end
+  style layout_card_n0 fill:none,stroke:none
+  subgraph layout_card_n1[" "]
+  n1@{ shape: rounded, label: "**main​_​transparent​_​pass​_​3d**<br/>绘制三维透明物体并保护 OIT 链表状态。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​core​_​pipeline::oit::resolve::**<br/>**queue​_​oit​_​resolve​_​pipeline**<br/>按 OIT 相机设置缓存透明解析管线。" }
+  end
+  style layout_card_n1 fill:none,stroke:none
+  subgraph layout_card_n2[" "]
+  n2@{ shape: rounded, label: "**queue​_​oit​_​resolve​_​pipeline**<br/>按 OIT 相机设置缓存透明解析管线。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​extract::extract​_​component::**<br/>**extract​_​components#lt;bevy​_​core​_​**<br/>**pipeline::oit::**<br/>**OrderIndependentTransparencySettings**<br/>**, bevy​_​render::RenderApp, ()#gt;**<br/>来自crate:bevy​_​extract ↗：批量同步或<br/>移除子世界的目标组件。" }
+  end
+  style layout_card_n2 fill:none,stroke:none
+  subgraph layout_card_n3[" "]
+  n3@{ shape: rounded, label: "**extract​_​components**<br/>来自crate:bevy​_​extract ↗：批量同步或<br/>移除子世界的目标组件。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**bevy​_​core​_​pipeline::oit::resolve::**<br/>**node::oit​_​resolve**<br/>解析透明片元并重置 OIT 链表状态。" }
+  end
+  style layout_card_n3 fill:none,stroke:none
+  subgraph layout_card_n4[" "]
+  n4@{ shape: rounded, label: "**oit​_​resolve**<br/>解析透明片元并重置 OIT 链表状态。" }
   class n4 node_system
+  end
+  style layout_card_n4 fill:none,stroke:none
   n0 e0@--> n1
   class e0 edge_read
   n2 e1@-->|"插入"| n0

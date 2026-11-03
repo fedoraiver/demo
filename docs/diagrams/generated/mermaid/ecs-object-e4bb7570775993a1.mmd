@@ -40,20 +40,20 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​anti​_​alias::taa::init​_​taa​_​**<br/>**pipeline**<br/>建立 TAA 的当前帧、历史帧和预通道输入布<br/>局。" }
+  n0@{ shape: rounded, label: "**init​_​taa​_​pipeline**<br/>建立 TAA 的当前帧、历史帧和预通道输入布<br/>局。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**bevy​_​render::renderer::RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
+  n1@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
   class n1 node_resource
   class n1 external_node
-  n2@{ shape: fr-rect, label: "**taa::TemporalAntiAliasPlugin**<br/>提供时域抗锯齿。" }
+  n2@{ shape: fr-rect, label: "**TemporalAntiAliasPlugin**<br/>提供时域抗锯齿。" }
   class n2 node_plugin
-  n3@{ shape: cyl, label: "**bevy​_​asset::AssetServer**<br/>来自crate:bevy​_​asset ↗：加载资产并追<br/>踪加载状态。" }
+  n3@{ shape: cyl, label: "**AssetServer**<br/>来自crate:bevy​_​asset ↗：加载资产并追<br/>踪加载状态。" }
   class n3 node_resource
   class n3 external_node
-  n4@{ shape: cyl, label: "**bevy​_​core​_​pipeline::FullscreenShader**<br/>来自crate:bevy​_​core​_​pipeline ↗：提供<br/>覆盖整个屏幕的顶点着色器。" }
+  n4@{ shape: cyl, label: "**FullscreenShader**<br/>来自crate:bevy​_​core​_​pipeline ↗：提供<br/>覆盖整个屏幕的顶点着色器。" }
   class n4 node_resource
   class n4 external_node
-  n5@{ shape: cyl, label: "**taa::TaaPipeline**<br/>提供时域抗锯齿的采样与管线资源。" }
+  n5@{ shape: cyl, label: "**TaaPipeline**<br/>提供时域抗锯齿的采样与管线资源。" }
   class n5 node_resource
   n1 e0@--> n0
   class e0 edge_read

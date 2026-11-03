@@ -40,27 +40,27 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**dynamics::rigid​_​body::sleeping::**<br/>**SleepTimer**<br/>累计刚体持续低速的时间。" }
+  n0@{ shape: rounded, label: "**SleepTimer**<br/>累计刚体持续低速的时间。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**avian3d::dynamics::solver::islands::**<br/>**sleeping::wake​_​on​_​changed**<br/>因外部位姿、速度或受力变化标记物理岛唤<br/>醒。" }
+  n1@{ shape: rounded, label: "**wake​_​on​_​changed**<br/>因外部位姿、速度或受力变化标记物理岛唤<br/>醒。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**avian3d::dynamics::solver::islands::**<br/>**sleeping::update​_​sleeping​_​states**<br/>按刚体静止时间判断物理岛的休眠资格。" }
+  n2@{ shape: rounded, label: "**update​_​sleeping​_​states**<br/>按刚体静止时间判断物理岛的休眠资格。" }
   class n2 node_system
-  n3@{ shape: hex, label: "**avian3d::dynamics::solver::islands::**<br/>**sleeping::wake​_​on​_​enable​_​rigid​_​body**<br/>重置启用刚体的休眠状态并请求唤醒。" }
+  n3@{ shape: hex, label: "**wake​_​on​_​enable​_​rigid​_​body**<br/>重置启用刚体的休眠状态并请求唤醒。" }
   class n3 node_observer
-  n4@{ shape: rounded, label: "**demo::character::motion::move​_​**<br/>**characters**<br/>来自character ↗：用有上限的加速度趋近<br/>目标水平速度，保留碰撞和外部冲量造成的实<br/>际运动。" }
+  n4@{ shape: rounded, label: "**move​_​characters**<br/>来自character ↗：用有上限的加速度趋近<br/>目标水平速度，保留碰撞和外部冲量造成的实<br/>际运动。" }
   class n4 node_system
   class n4 external_node
-  n5@{ shape: rounded, label: "**demo::physics::wake​_​changed​_​bodies**<br/>来自physics ↗：Avian 的自动唤醒在求解<br/>之后；外部冲量和施力应在本步准备求解器之<br/>前生效。" }
+  n5@{ shape: rounded, label: "**wake​_​changed​_​bodies**<br/>来自physics ↗：Avian 的自动唤醒在求解<br/>之后；外部冲量和施力应在本步准备求解器之<br/>前生效。" }
   class n5 node_system
   class n5 external_node
-  n6@{ shape: rounded, label: "**avian3d::dynamics::solver::islands::**<br/>**sleeping::wake​_​islands​_​with​_​**<br/>**sleeping​_​disabled**<br/>让禁止休眠或已禁用的刚体所属岛保持清醒。" }
+  n6@{ shape: rounded, label: "**wake​_​islands​_​with​_​sleeping​_​disabled**<br/>让禁止休眠或已禁用的刚体所属岛保持清醒。" }
   class n6 node_system
-  n7@{ shape: hex, label: "**avian3d::dynamics::solver::islands::**<br/>**sleeping::wake​_​on​_​enable​_​rigid​_​body**<br/>重置启用刚体的休眠状态并请求唤醒。" }
+  n7@{ shape: hex, label: "**wake​_​on​_​enable​_​rigid​_​body**<br/>重置启用刚体的休眠状态并请求唤醒。" }
   class n7 node_observer
-  n8@{ shape: hex, label: "**avian3d::dynamics::solver::islands::**<br/>**sleeping::wake​_​on​_​enable​_​rigid​_​body**<br/>重置启用刚体的休眠状态并请求唤醒。" }
+  n8@{ shape: hex, label: "**wake​_​on​_​enable​_​rigid​_​body**<br/>重置启用刚体的休眠状态并请求唤醒。" }
   class n8 node_observer
-  n9@{ shape: rounded, label: "**demo::character::motion::jump​_​**<br/>**characters**<br/>来自character ↗：跳跃只消费一次，通过<br/>冲量改变速度；重力和位置积分全部交给<br/>Avian。" }
+  n9@{ shape: rounded, label: "**jump​_​characters**<br/>来自character ↗：跳跃只消费一次，通过<br/>冲量改变速度；重力和位置积分全部交给<br/>Avian。" }
   class n9 node_system
   class n9 external_node
   n0 e0@-->|"存在性约束"| n1

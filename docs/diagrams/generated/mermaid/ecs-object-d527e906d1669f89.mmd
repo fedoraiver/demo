@@ -39,20 +39,20 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**transmission::**<br/>**ScreenSpaceTransmission**<br/>配置屏幕空间透射的层数与质量。" }
+  n0@{ shape: rounded, label: "**ScreenSpaceTransmission**<br/>配置屏幕空间透射的层数与质量。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​pbr::material::queue​_​material​_​**<br/>**meshes**<br/>按材质模式把可见网格加入相应绘制阶段。" }
+  n1@{ shape: rounded, label: "**queue​_​material​_​meshes**<br/>按材质模式把可见网格加入相应绘制阶段。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​pbr::transmission::node::main​_​**<br/>**transmissive​_​pass​_​3d**<br/>分层复制场景颜色并绘制三维透射物体。" }
+  n2@{ shape: rounded, label: "**main​_​transmissive​_​pass​_​3d**<br/>分层复制场景颜色并绘制三维透射物体。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​pbr::transmission::texture::**<br/>**prepare​_​core​_​3d​_​transmission​_​**<br/>**textures**<br/>为需要多步透射的视图准备场景颜色拷贝纹<br/>理。" }
+  n3@{ shape: rounded, label: "**prepare​_​core​_​3d​_​transmission​_​**<br/>**textures**<br/>为需要多步透射的视图准备场景颜色拷贝纹<br/>理。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**bevy​_​extract::extract​_​component::**<br/>**extract​_​components#lt;bevy​_​pbr::**<br/>**transmission::**<br/>**ScreenSpaceTransmission, bevy​_​**<br/>**render::RenderApp, ()#gt;**<br/>来自crate:bevy​_​extract ↗：批量同步或<br/>移除子世界的目标组件。" }
+  n4@{ shape: rounded, label: "**extract​_​components**<br/>来自crate:bevy​_​extract ↗：批量同步或<br/>移除子世界的目标组件。" }
   class n4 node_system
   class n4 external_node
-  n5@{ shape: rounded, label: "**bevy​_​pbr::render::mesh::check​_​views​_​**<br/>**need​_​specialization**<br/>汇总视图渲染特性并检测管线配置变化。" }
+  n5@{ shape: rounded, label: "**check​_​views​_​need​_​specialization**<br/>汇总视图渲染特性并检测管线配置变化。" }
   class n5 node_system
-  n6@{ shape: rounded, label: "**bevy​_​pbr::render::mesh​_​view​_​**<br/>**bindings::prepare​_​mesh​_​view​_​bind​_​**<br/>**groups**<br/>为视图绑定光照、阴影及各可选渲染效果资<br/>源。" }
+  n6@{ shape: rounded, label: "**prepare​_​mesh​_​view​_​bind​_​groups**<br/>为视图绑定光照、阴影及各可选渲染效果资<br/>源。" }
   class n6 node_system
   n0 e0@-->|"存在性约束"| n1
   class e0 edge_reference

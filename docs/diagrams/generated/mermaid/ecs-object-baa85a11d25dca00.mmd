@@ -39,7 +39,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: notch-rect, label: "**Local · seen​_​targets**<br/>去重本帧指向相同渲染目标的截图请求。" }
   class n0 node_local
-  n1@{ shape: rounded, label: "**bevy​_​render::view::window::**<br/>**screenshot::extract​_​screenshots**<br/>收集并去重本帧尚未捕获的截图请求。" }
+  n1@{ shape: rounded, label: "**extract​_​screenshots**<br/>收集并去重本帧尚未捕获的截图请求。" }
   class n1 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

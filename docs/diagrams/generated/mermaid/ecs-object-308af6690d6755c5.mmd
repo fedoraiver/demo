@@ -38,15 +38,15 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**dynamics::integrator::Gravity**<br/>设置作用于动态刚体的全局重力。" }
+  n0@{ shape: cyl, label: "**Gravity**<br/>设置作用于动态刚体的全局重力。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​ecs::schedule::condition::**<br/>**common​_​conditions::resource​_​**<br/>**changed#lt;avian3d::dynamics::**<br/>**integrator::Gravity#gt;**<br/>来自crate:bevy​_​ecs ↗：判断资源是否被<br/>标记为变化。" }
+  n1@{ shape: rounded, label: "**resource​_​changed**<br/>来自crate:bevy​_​ecs ↗：判断资源是否被<br/>标记为变化。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**demo::physics::sync​_​gravity**<br/>来自physics ↗：检查器修改重力参数后，<br/>在本固定步求解前更新唯一的重力资源。" }
+  n2@{ shape: rounded, label: "**sync​_​gravity**<br/>来自physics ↗：检查器修改重力参数后，<br/>在本固定步求解前更新唯一的重力资源。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**avian3d::dynamics::integrator::pre​_​**<br/>**process​_​velocity​_​increments**<br/>把加速度、重力和轴锁转成子步速度增量。" }
+  n3@{ shape: rounded, label: "**pre​_​process​_​velocity​_​increments**<br/>把加速度、重力和轴锁转成子步速度增量。" }
   class n3 node_system
   n0 e0@--> n1
   class e0 edge_read

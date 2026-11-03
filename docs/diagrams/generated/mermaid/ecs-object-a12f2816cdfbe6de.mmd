@@ -38,11 +38,11 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**mesh2d::mesh::ViewKeyCache**<br/>缓存各主世界视图的二维网格管线键。" }
+  n0@{ shape: cyl, label: "**ViewKeyCache**<br/>缓存各主世界视图的二维网格管线键。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::**<br/>**material::specialize​_​material2d​_​**<br/>**meshes**<br/>为可见二维网格重建失效的材质专用化。" }
+  n1@{ shape: rounded, label: "**specialize​_​material2d​_​meshes**<br/>为可见二维网格重建失效的材质专用化。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::mesh::**<br/>**check​_​views​_​need​_​specialization**<br/>检测二维视图管线配置变化并标记重建。" }
+  n2@{ shape: rounded, label: "**check​_​views​_​need​_​specialization**<br/>检测二维视图管线配置变化并标记重建。" }
   class n2 node_system
   n0 e0@--> n1
   class e0 edge_read

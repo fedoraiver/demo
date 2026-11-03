@@ -44,16 +44,16 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: hex, label: "**bevy​_​input​_​focus::pointer​_​focus::**<br/>**click​_​to​_​focus**<br/>根据指针按下请求获取输入焦点。" }
+  n0@{ shape: hex, label: "**click​_​to​_​focus**<br/>根据指针按下请求获取输入焦点。" }
   class n0 node_observer
-  n1@{ shape: fr-rect, label: "**pointer​_​focus::PointerFocusPlugin**<br/>根据指针点击调整输入焦点。" }
+  n1@{ shape: fr-rect, label: "**PointerFocusPlugin**<br/>根据指针点击调整输入焦点。" }
   class n1 node_plugin
   n2@{ shape: stadium, label: "**AcquireFocus**<br/>沿层级请求可聚焦实体获得焦点。" }
   class n2 node_event
-  n3@{ shape: stadium, label: "**bevy​_​picking::events::PointerPress**<br/>来自crate:bevy​_​picking ↗：通知目标上<br/>的指针按钮按下及连按次数。" }
+  n3@{ shape: stadium, label: "**PointerPress**<br/>来自crate:bevy​_​picking ↗：通知目标上<br/>的指针按钮按下及连按次数。" }
   class n3 node_event
   class n3 external_node
-  n4@{ shape: rounded, label: "**window::PrimaryWindow**<br/>来自crate:bevy​_​window ↗：标识唯一的主<br/>窗口" }
+  n4@{ shape: rounded, label: "**PrimaryWindow**<br/>来自crate:bevy​_​window ↗：标识唯一的主<br/>窗口" }
   class n4 node_component
   class n4 external_node
   n5@{ shape: cyl, label: "**InputFocusVisible**<br/>控制界面输入焦点提示是否可见。" }

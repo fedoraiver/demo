@@ -39,7 +39,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: notch-rect, label: "**Local · cubemap​_​visible​_​entities​_​**<br/>**queue**<br/>按线程收集点光源六个阴影面的可见网格。" }
   class n0 node_local
-  n1@{ shape: rounded, label: "**bevy​_​light::check​_​point​_​light​_​mesh​_​**<br/>**visibility**<br/>计算点光与聚光灯阴影可见的网格。" }
+  n1@{ shape: rounded, label: "**check​_​point​_​light​_​mesh​_​visibility**<br/>计算点光与聚光灯阴影可见的网格。" }
   class n1 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

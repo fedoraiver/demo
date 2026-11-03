@@ -41,31 +41,31 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​pbr::volumetric​_​fog::render::**<br/>**extract​_​volumetric​_​fog**<br/>从主世界提取体积雾、雾体积及体积光配置。" }
+  n0@{ shape: rounded, label: "**extract​_​volumetric​_​fog**<br/>从主世界提取体积雾、雾体积及体积光配置。" }
   class n0 node_system
-  n1@{ shape: fr-rect, label: "**volumetric​_​fog::VolumetricFogPlugin**<br/>提供场景体积雾渲染。" }
+  n1@{ shape: fr-rect, label: "**VolumetricFogPlugin**<br/>提供场景体积雾渲染。" }
   class n1 node_plugin
-  n2@{ shape: rounded, label: "**volumetric::FogVolume**<br/>来自crate:bevy​_​light ↗：定义可变换的<br/>体积雾区域及介质参数。" }
+  n2@{ shape: rounded, label: "**FogVolume**<br/>来自crate:bevy​_​light ↗：定义可变换的<br/>体积雾区域及介质参数。" }
   class n2 node_component
   class n2 external_node
-  n3@{ shape: rounded, label: "**volumetric::VolumetricLight**<br/>来自crate:bevy​_​light ↗：让带阴影的方<br/>向光参与体积雾照明。" }
+  n3@{ shape: rounded, label: "**VolumetricLight**<br/>来自crate:bevy​_​light ↗：让带阴影的方<br/>向光参与体积雾照明。" }
   class n3 node_component
   class n3 external_node
-  n4@{ shape: rounded, label: "**volumetric::VolumetricFog**<br/>来自crate:bevy​_​light ↗：为三维相机启<br/>用体积雾和光束渲染。" }
+  n4@{ shape: rounded, label: "**VolumetricFog**<br/>来自crate:bevy​_​light ↗：为三维相机启<br/>用体积雾和光束渲染。" }
   class n4 node_component
   class n4 external_node
-  n5@{ shape: rounded, label: "**volumetric​_​fog::render::**<br/>**ViewVolumetricFog**<br/>保存视图中各雾体的参数位置与绘制状态。" }
+  n5@{ shape: rounded, label: "**ViewVolumetricFog**<br/>保存视图中各雾体的参数位置与绘制状态。" }
   class n5 node_component
-  n6@{ shape: rounded, label: "**components::global​_​transform::**<br/>**GlobalTransform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>合并祖先变换后的世界空间仿射变换" }
+  n6@{ shape: rounded, label: "**GlobalTransform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>合并祖先变换后的世界空间仿射变换" }
   class n6 node_component
   class n6 external_node
-  n7@{ shape: cyl, label: "**extract​_​plugin::MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
+  n7@{ shape: cyl, label: "**MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
   class n7 node_resource
   class n7 external_node
-  n8@{ shape: rounded, label: "**bevy​_​extract::SubEntity#lt;bevy​_​**<br/>**render::RenderApp#gt;**<br/>来自crate:bevy​_​extract ↗：记录主实体<br/>对应的子世界实体。" }
+  n8@{ shape: rounded, label: "**SubEntity#lt;RenderApp#gt;**<br/>来自crate:bevy​_​extract ↗：记录主实体<br/>对应的子世界实体。" }
   class n8 node_component
   class n8 external_node
-  n9@{ shape: rounded, label: "**volumetric​_​fog::render::**<br/>**ViewVolumetricFogPipelines**<br/>保存有无密度纹理两种体积雾管线。" }
+  n9@{ shape: rounded, label: "**ViewVolumetricFogPipelines**<br/>保存有无密度纹理两种体积雾管线。" }
   class n9 node_component
   n1 e0@-->|"调用"| n0
   class e0 edge_registration

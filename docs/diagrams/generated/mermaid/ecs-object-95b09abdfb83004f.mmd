@@ -41,19 +41,19 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​extract::extract​_​component::**<br/>**extract​_​components#lt;bevy​_​post​_​**<br/>**process::effect​_​stack::vignette::**<br/>**Vignette, bevy​_​render::RenderApp,**<br/>**()#gt;**<br/>批量同步或移除子世界的目标组件。" }
+  n0@{ shape: rounded, label: "**extract​_​components**<br/>批量同步或移除子世界的目标组件。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**bevy​_​extract::SubEntity#lt;bevy​_​**<br/>**render::RenderApp#gt;**<br/>记录主实体对应的子世界实体。" }
+  n1@{ shape: rounded, label: "**SubEntity#lt;RenderApp#gt;**<br/>记录主实体对应的子世界实体。" }
   class n1 node_component
-  n2@{ shape: rounded, label: "**effect​_​stack::vignette::Vignette**<br/>来自crate:bevy​_​post​_​process ↗：配置<br/>画面边缘渐暗的暗角效果。" }
+  n2@{ shape: rounded, label: "**Vignette**<br/>来自crate:bevy​_​post​_​process ↗：配置<br/>画面边缘渐暗的暗角效果。" }
   class n2 node_component
   class n2 external_node
   n3@{ shape: notch-rect, label: "**Local · arg1**<br/>按上次组件提取数量预留输出容量。" }
   class n3 node_local
-  n4@{ shape: rounded, label: "**bevy​_​camera::Camera**<br/>来自crate:bevy​_​camera ↗：配置相机视<br/>口、输出目标和渲染顺序。" }
+  n4@{ shape: rounded, label: "**Camera**<br/>来自crate:bevy​_​camera ↗：配置相机视<br/>口、输出目标和渲染顺序。" }
   class n4 node_component
   class n4 external_node
-  n5@{ shape: cyl, label: "**extract​_​plugin::MainWorld**<br/>在提取阶段临时提供主模拟世界。" }
+  n5@{ shape: cyl, label: "**MainWorld**<br/>在提取阶段临时提供主模拟世界。" }
   class n5 node_resource
   n1 e0@--> n0
   class e0 edge_read

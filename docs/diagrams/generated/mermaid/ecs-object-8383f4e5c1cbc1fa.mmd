@@ -38,11 +38,11 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**pointer::PointerPressState**<br/>记录指针主键、次键及中键的按下状态" }
+  n0@{ shape: rounded, label: "**PointerPressState**<br/>记录指针主键、次键及中键的按下状态" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​picking::hover::update​_​**<br/>**interactions**<br/>合并多个指针对目标实体的交互状态。" }
+  n1@{ shape: rounded, label: "**update​_​interactions**<br/>合并多个指针对目标实体的交互状态。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​picking::pointer::**<br/>**PointerInput::receive**<br/>按输入消息更新拾取指针状态。" }
+  n2@{ shape: rounded, label: "**receive**<br/>按输入消息更新拾取指针状态。" }
   class n2 node_system
   n0 e0@--> n1
   class e0 edge_read

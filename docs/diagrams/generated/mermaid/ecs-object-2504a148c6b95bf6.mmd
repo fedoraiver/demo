@@ -38,14 +38,14 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**bevy​_​render::extract​_​component::**<br/>**ComponentUniforms#lt;motion​_​blur::**<br/>**MotionBlurUniform#gt;**<br/>汇集同类组件的动态 Uniform 数据。" }
+  n0@{ shape: cyl, label: "**ComponentUniforms#lt;MotionBlurUniform#gt;**<br/>汇集同类组件的动态 Uniform 数据。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​post​_​process::motion​_​blur::**<br/>**motion​_​blur**<br/>来自crate:bevy​_​post​_​process ↗：读取<br/>当前视图颜色、预通道运动矢量和深度，按快<br/>门角度及采样数执行运动模糊；采样关闭、所<br/>需纹理或管线不可用时跳过。" }
+  n1@{ shape: rounded, label: "**motion​_​blur**<br/>来自crate:bevy​_​post​_​process ↗：读取<br/>当前视图颜色、预通道运动矢量和深度，按快<br/>门角度及采样数执行运动模糊；采样关闭、所<br/>需纹理或管线不可用时跳过。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​render::init​_​gpu​_​resource#lt;bevy​_​**<br/>**render::uniform::**<br/>**ComponentUniforms#lt;bevy​_​post​_​**<br/>**process::motion​_​blur::**<br/>**MotionBlurUniform#gt;#gt;**<br/>构造并插入渲染所需资源。" }
+  n2@{ shape: rounded, label: "**init​_​gpu​_​resource**<br/>构造并插入渲染所需资源。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​render::uniform::prepare​_​**<br/>**uniform​_​components#lt;bevy​_​post​_​**<br/>**process::motion​_​blur::**<br/>**MotionBlurUniform#gt;**<br/>将组件值批量上传为动态着色器参数。" }
+  n3@{ shape: rounded, label: "**prepare​_​uniform​_​components**<br/>将组件值批量上传为动态着色器参数。" }
   class n3 node_system
   n0 e0@--> n1
   class e0 edge_read

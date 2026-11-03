@@ -40,19 +40,19 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: lin-rect, label: "**CameraUpdateSystems**<br/>统一更新相机目标、视口与投影计算结果。" }
   class n0 node_system_set
-  n1@{ shape: rounded, label: "**bevy​_​render::camera::camera​_​system**<br/>来自crate:bevy​_​render ↗：响应目标尺寸<br/>变化并更新相机投影。" }
+  n1@{ shape: rounded, label: "**camera​_​system**<br/>来自crate:bevy​_​render ↗：响应目标尺寸<br/>变化并更新相机投影。" }
   class n1 node_system
   class n1 external_node
   n2@{ shape: lin-rect, label: "**Prepare**<br/>来自crate:bevy​_​ui ↗：组织界面交互、布<br/>局与堆叠更新。" }
   class n2 node_system_set
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​light::cluster::assign::assign​_​**<br/>**objects​_​to​_​clusters**<br/>来自crate:bevy​_​light ↗：将灯光、探针<br/>及贴花分配到视图分簇。" }
+  n3@{ shape: rounded, label: "**assign​_​objects​_​to​_​clusters**<br/>来自crate:bevy​_​light ↗：将灯光、探针<br/>及贴花分配到视图分簇。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**bevy​_​light::cascade::build​_​**<br/>**directional​_​light​_​cascades**<br/>来自crate:bevy​_​light ↗：为投射阴影的<br/>方向光构建逐相机级联。" }
+  n4@{ shape: rounded, label: "**build​_​directional​_​light​_​cascades**<br/>来自crate:bevy​_​light ↗：为投射阴影的<br/>方向光构建逐相机级联。" }
   class n4 node_system
   class n4 external_node
-  n5@{ shape: rounded, label: "**bevy​_​sprite::text2d::update​_​text2d​_​**<br/>**layout**<br/>来自crate:bevy​_​sprite ↗：重新排版变化<br/>的二维文字并准备字形。" }
+  n5@{ shape: rounded, label: "**update​_​text2d​_​layout**<br/>来自crate:bevy​_​sprite ↗：重新排版变化<br/>的二维文字并准备字形。" }
   class n5 node_system
   class n5 external_node
   n0 e0@-->|"集合成员"| n1

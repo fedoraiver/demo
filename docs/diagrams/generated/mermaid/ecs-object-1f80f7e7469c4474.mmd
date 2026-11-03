@@ -39,7 +39,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**prepare​_​island · 创建模板**<br/>为地图展示 NPC 添加静态碰撞子体。" }
   class n0 node_entity
-  n1@{ shape: rounded, label: "**demo::scene​_​assembly::loading::**<br/>**prepare​_​island**<br/>在资源 CPU 几何可用时构建碰撞；全部成功<br/>后才提交，失败时不创建动态玩家。" }
+  n1@{ shape: rounded, label: "**prepare​_​island**<br/>在资源 CPU 几何可用时构建碰撞；全部成功<br/>后才提交，失败时不创建动态玩家。" }
   class n1 node_system
   n1 e0@-->|"创建模板"| n0
   class e0 edge_write

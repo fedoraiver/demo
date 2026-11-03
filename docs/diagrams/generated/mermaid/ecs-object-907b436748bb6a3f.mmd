@@ -42,41 +42,41 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**avian3d::collider​_​tree::update::**<br/>**update​_​moved​_​collider​_​**<br/>**aabbs#lt;avian3d::collision::collider::**<br/>**parry::Collider#gt;**<br/>重算物理步后被手动改变的碰撞边界。" }
+  n0@{ shape: rounded, label: "**update​_​moved​_​collider​_​aabbs**<br/>重算物理步后被手动改变的碰撞边界。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**collision::collider::ColliderAabb**<br/>保存碰撞体的世界轴对齐包围盒。" }
+  n1@{ shape: rounded, label: "**ColliderAabb**<br/>保存碰撞体的世界轴对齐包围盒。" }
   class n1 node_component
-  n2@{ shape: rounded, label: "**physics​_​transform::transform::**<br/>**Position**<br/>保存刚体或碰撞体的世界位置。" }
+  n2@{ shape: rounded, label: "**Position**<br/>保存刚体或碰撞体的世界位置。" }
   class n2 node_component
-  n3@{ shape: cyl, label: "**collider​_​tree::update::MovedProxies**<br/>收集需要重检碰撞对的移动代理。" }
+  n3@{ shape: cyl, label: "**MovedProxies**<br/>收集需要重检碰撞对的移动代理。" }
   class n3 node_resource
-  n4@{ shape: rounded, label: "**collision::collider::EnlargedAabb**<br/>保存用于树更新的扩大包围盒。" }
+  n4@{ shape: rounded, label: "**EnlargedAabb**<br/>保存用于树更新的扩大包围盒。" }
   class n4 node_component
-  n5@{ shape: rounded, label: "**collision::collider::**<br/>**ColliderAabbMargin**<br/>控制碰撞体树包围盒的扩大余量。" }
+  n5@{ shape: rounded, label: "**ColliderAabbMargin**<br/>控制碰撞体树包围盒的扩大余量。" }
   class n5 node_component
-  n6@{ shape: rounded, label: "**collision::collider::**<br/>**ColliderDisabled**<br/>暂停碰撞体检测和空间查询。" }
+  n6@{ shape: rounded, label: "**ColliderDisabled**<br/>暂停碰撞体检测和空间查询。" }
   class n6 node_component
-  n7@{ shape: cyl, label: "**collision::narrow​_​phase::**<br/>**NarrowPhaseConfig**<br/>配置窄相的接触容差。" }
+  n7@{ shape: cyl, label: "**NarrowPhaseConfig**<br/>配置窄相的接触容差。" }
   class n7 node_resource
-  n8@{ shape: cyl, label: "**collider​_​tree::update::**<br/>**EnlargedProxies**<br/>标记需要扩大边界的碰撞代理。" }
+  n8@{ shape: cyl, label: "**EnlargedProxies**<br/>标记需要扩大边界的碰撞代理。" }
   class n8 node_resource
-  n9@{ shape: rounded, label: "**collision::collider::parry::Collider**<br/>保存 Parry 碰撞后端的几何形状。" }
+  n9@{ shape: rounded, label: "**Collider**<br/>保存 Parry 碰撞后端的几何形状。" }
   class n9 node_component
-  n10@{ shape: rounded, label: "**collision::collider::CollisionMargin**<br/>为碰撞形状添加接触外皮。" }
+  n10@{ shape: rounded, label: "**CollisionMargin**<br/>为碰撞形状添加接触外皮。" }
   class n10 node_component
   n11@{ shape: lin-rect, label: "**UpdateAabbs**<br/>划分碰撞体树更新与优化阶段。" }
   class n11 node_system_set
-  n12@{ shape: cyl, label: "**collider​_​tree::ColliderTrees**<br/>按运动类别组织碰撞体加速树。" }
+  n12@{ shape: cyl, label: "**ColliderTrees**<br/>按运动类别组织碰撞体加速树。" }
   class n12 node_resource
-  n13@{ shape: rounded, label: "**physics​_​transform::transform::**<br/>**Rotation**<br/>保存刚体或碰撞体的世界旋转。" }
+  n13@{ shape: rounded, label: "**Rotation**<br/>保存刚体或碰撞体的世界旋转。" }
   class n13 node_component
-  n14@{ shape: rounded, label: "**collider​_​tree::proxy​_​key::**<br/>**ColliderTreeProxyKey**<br/>定位特定碰撞体树中的代理。" }
+  n14@{ shape: rounded, label: "**ColliderTreeProxyKey**<br/>定位特定碰撞体树中的代理。" }
   class n14 node_component
-  n15@{ shape: cyl, label: "**schedule::LastPhysicsTick**<br/>记录上一轮物理调度结束的变化刻度。" }
+  n15@{ shape: cyl, label: "**LastPhysicsTick**<br/>记录上一轮物理调度结束的变化刻度。" }
   class n15 node_resource
-  n16@{ shape: cyl, label: "**collider​_​tree::diagnostics::**<br/>**ColliderTreeDiagnostics**<br/>记录碰撞体树维护耗时。" }
+  n16@{ shape: cyl, label: "**ColliderTreeDiagnostics**<br/>记录碰撞体树维护耗时。" }
   class n16 node_resource
-  n17@{ shape: cyl, label: "**dynamics::solver::plugin::**<br/>**PhysicsLengthUnit**<br/>设置物理世界的长度尺度。" }
+  n17@{ shape: cyl, label: "**PhysicsLengthUnit**<br/>设置物理世界的长度尺度。" }
   class n17 node_resource
   n0 e0@-->|"可变访问"| n1
   class e0 edge_write

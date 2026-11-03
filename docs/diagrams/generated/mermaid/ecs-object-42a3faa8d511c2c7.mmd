@@ -38,13 +38,13 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**mesh2d::material::**<br/>**EntitiesNeedingSpecialization#lt;mesh2d**<br/>**::color​_​material::ColorMaterial#gt;**<br/>暂存需要更新或移除专用管线的二维实体。" }
+  n0@{ shape: cyl, label: "**EntitiesNeedingSpecialization#lt;ColorM**<br/>**aterial#gt;**<br/>暂存需要更新或移除专用管线的二维实体。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::**<br/>**material::extract​_​entities​_​needs​_​**<br/>**specialization#lt;bevy​_​sprite​_​render::**<br/>**mesh2d::color​_​material::**<br/>**ColorMaterial#gt;**<br/>把二维材质变化实体标为渲染专用化脏项。" }
+  n1@{ shape: rounded, label: "**extract​_​entities​_​needs​_​**<br/>**specialization**<br/>把二维材质变化实体标为渲染专用化脏项。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::**<br/>**material::check​_​entities​_​needing​_​**<br/>**specialization#lt;bevy​_​sprite​_​render::**<br/>**mesh2d::color​_​material::**<br/>**ColorMaterial#gt;**<br/>收集二维网格材质需重建或移除专用化的实<br/>体。" }
+  n2@{ shape: rounded, label: "**check​_​entities​_​needing​_​**<br/>**specialization**<br/>收集二维网格材质需重建或移除专用化的实<br/>体。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::**<br/>**material::extract​_​entities​_​that​_​**<br/>**need​_​specializations​_​removed#lt;bevy​_​**<br/>**sprite​_​render::mesh2d::color​_​**<br/>**material::ColorMaterial#gt;**<br/>把二维材质移除实体登记到专用化清理表。" }
+  n3@{ shape: rounded, label: "**extract​_​entities​_​that​_​need​_​**<br/>**specializations​_​removed**<br/>把二维材质移除实体登记到专用化清理表。" }
   class n3 node_system
   n0 e0@--> n1
   class e0 edge_read

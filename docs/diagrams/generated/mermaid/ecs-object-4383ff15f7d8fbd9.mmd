@@ -43,23 +43,23 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**avian3d::dynamics::rigid​_​body::mass​_​**<br/>**properties::warn​_​invalid​_​mass**<br/>报告动态刚体无效的总质量或总惯量。" }
+  n0@{ shape: rounded, label: "**warn​_​invalid​_​mass**<br/>报告动态刚体无效的总质量或总惯量。" }
   class n0 node_system
   n1@{ shape: lin-rect, label: "**UpdateComputedMassProperties**<br/>组织质量属性重算与写回。" }
   class n1 node_system_set
-  n2@{ shape: rounded, label: "**dynamics::rigid​_​body::mass​_​**<br/>**properties::components::computed::**<br/>**ComputedAngularInertia**<br/>保存汇总后的刚体局部角惯量。" }
+  n2@{ shape: rounded, label: "**ComputedAngularInertia**<br/>保存汇总后的刚体局部角惯量。" }
   class n2 node_component
-  n3@{ shape: rounded, label: "**dynamics::rigid​_​body::mass​_​**<br/>**properties::components::computed::**<br/>**ComputedMass**<br/>保存汇总后的刚体总质量。" }
+  n3@{ shape: rounded, label: "**ComputedMass**<br/>保存汇总后的刚体总质量。" }
   class n3 node_component
-  n4@{ shape: rounded, label: "**dynamics::rigid​_​body::RigidBody**<br/>选择动态、静态或运动学刚体行为。" }
+  n4@{ shape: rounded, label: "**RigidBody**<br/>选择动态、静态或运动学刚体行为。" }
   class n4 node_component
-  n5@{ shape: rounded, label: "**avian3d::dynamics::rigid​_​body::mass​_​**<br/>**properties::update​_​mass​_​properties**<br/>重算已标记实体的质量属性并清除标记。" }
+  n5@{ shape: rounded, label: "**update​_​mass​_​properties**<br/>重算已标记实体的质量属性并清除标记。" }
   class n5 node_system
-  n6@{ shape: rounded, label: "**collision::collider::constructor::**<br/>**ColliderConstructorHierarchy**<br/>批量配置层级中的碰撞体构造。" }
+  n6@{ shape: rounded, label: "**ColliderConstructorHierarchy**<br/>批量配置层级中的碰撞体构造。" }
   class n6 node_component
-  n7@{ shape: fr-rect, label: "**dynamics::rigid​_​body::mass​_​**<br/>**properties::MassPropertyPlugin**<br/>更新刚体质量、惯量和质心。" }
+  n7@{ shape: fr-rect, label: "**MassPropertyPlugin**<br/>更新刚体质量、惯量和质心。" }
   class n7 node_plugin
-  n8@{ shape: rounded, label: "**collision::collider::constructor::**<br/>**ColliderConstructor**<br/>描述待构建的碰撞体形状。" }
+  n8@{ shape: rounded, label: "**ColliderConstructor**<br/>描述待构建的碰撞体形状。" }
   class n8 node_component
   n1 e0@-->|"集合成员"| n0
   class e0 edge_set_membership

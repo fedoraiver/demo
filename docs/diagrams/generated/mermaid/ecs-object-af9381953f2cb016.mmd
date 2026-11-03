@@ -38,21 +38,21 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**input::ModifierKeysState**<br/>缓存 Shift、Control、Alt 和平台主修饰<br/>键的按下状态" }
+  n0@{ shape: cyl, label: "**ModifierKeysState**<br/>缓存 Shift、Control、Alt 和平台主修饰<br/>键的按下状态" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​egui::input::write​_​modifiers​_​**<br/>**keys​_​state​_​system**<br/>更新 Egui 修饰键并清除失焦残留。" }
+  n1@{ shape: rounded, label: "**write​_​modifiers​_​keys​_​state​_​system**<br/>更新 Egui 修饰键并清除失焦残留。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​egui::input::write​_​non​_​window​_​**<br/>**touch​_​messages​_​system**<br/>向聚焦的非窗口 Egui 界面传递触摸。" }
+  n2@{ shape: rounded, label: "**write​_​non​_​window​_​touch​_​messages​_​**<br/>**system**<br/>向聚焦的非窗口 Egui 界面传递触摸。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​egui::input::write​_​mouse​_​wheel​_​**<br/>**messages​_​system**<br/>向悬停 Egui 上下文传递滚轮输入。" }
+  n3@{ shape: rounded, label: "**write​_​mouse​_​wheel​_​messages​_​system**<br/>向悬停 Egui 上下文传递滚轮输入。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**bevy​_​egui::input::write​_​pointer​_​**<br/>**moved​_​and​_​button​_​messages​_​system**<br/>按原生事件顺序转换 Egui 指针输入。" }
+  n4@{ shape: rounded, label: "**write​_​pointer​_​moved​_​and​_​button​_​**<br/>**messages​_​system**<br/>按原生事件顺序转换 Egui 指针输入。" }
   class n4 node_system
-  n5@{ shape: rounded, label: "**bevy​_​egui::input::write​_​keyboard​_​**<br/>**input​_​messages​_​system**<br/>把键盘文本与按键转换为 Egui 输入。" }
+  n5@{ shape: rounded, label: "**write​_​keyboard​_​input​_​messages​_​system**<br/>把键盘文本与按键转换为 Egui 输入。" }
   class n5 node_system
-  n6@{ shape: rounded, label: "**bevy​_​egui::input::write​_​window​_​**<br/>**touch​_​messages​_​system**<br/>把窗口触摸转换为 Egui 指针和触摸事件。" }
+  n6@{ shape: rounded, label: "**write​_​window​_​touch​_​messages​_​system**<br/>把窗口触摸转换为 Egui 指针和触摸事件。" }
   class n6 node_system
-  n7@{ shape: rounded, label: "**bevy​_​egui::input::write​_​egui​_​input​_​**<br/>**system**<br/>把界面输入和文件拖放写入 Egui 输入批<br/>次。" }
+  n7@{ shape: rounded, label: "**write​_​egui​_​input​_​system**<br/>把界面输入和文件拖放写入 Egui 输入批<br/>次。" }
   class n7 node_system
   n1 e0@-->|"赋值"| n0
   class e0 edge_write

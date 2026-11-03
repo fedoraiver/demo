@@ -43,24 +43,24 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​post​_​process::bloom::**<br/>**downsampling​_​pipeline::prepare​_​**<br/>**downsampling​_​pipeline**<br/>按预过滤和缩放设置准备 Bloom 降采样变<br/>体。" }
+  n0@{ shape: rounded, label: "**prepare​_​downsampling​_​pipeline**<br/>按预过滤和缩放设置准备 Bloom 降采样变<br/>体。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**bevy​_​render::render​_​resource::**<br/>**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
+  n1@{ shape: cyl, label: "**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
   class n1 node_resource
   class n1 external_node
-  n2@{ shape: cyl, label: "**bevy​_​render::render​_​resource::**<br/>**SpecializedRenderPipelines#lt;bloom::**<br/>**downsampling​_​pipeline::**<br/>**BloomDownsamplingPipeline#gt;**<br/>来自crate:bevy​_​render ↗：按配置键缓存<br/>渲染管线变体。" }
+  n2@{ shape: cyl, label: "**SpecializedRenderPipelines#lt;BloomDown**<br/>**samplingPipeline#gt;**<br/>来自crate:bevy​_​render ↗：按配置键缓存<br/>渲染管线变体。" }
   class n2 node_resource
   class n2 external_node
   n3@{ shape: lin-rect, label: "**Prepare**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
   class n3 node_system_set
   class n3 external_node
-  n4@{ shape: rounded, label: "**bloom::settings::Bloom**<br/>为 HDR 相机配置亮部扩散光晕。" }
+  n4@{ shape: rounded, label: "**Bloom**<br/>为 HDR 相机配置亮部扩散光晕。" }
   class n4 node_component
-  n5@{ shape: fr-rect, label: "**bloom::BloomPlugin**<br/>准备并合成画面辉光。" }
+  n5@{ shape: fr-rect, label: "**BloomPlugin**<br/>准备并合成画面辉光。" }
   class n5 node_plugin
-  n6@{ shape: rounded, label: "**bloom::downsampling​_​pipeline::**<br/>**BloomDownsamplingPipelineIds**<br/>记录 Bloom 首级和后续降采样管线。" }
+  n6@{ shape: rounded, label: "**BloomDownsamplingPipelineIds**<br/>记录 Bloom 首级和后续降采样管线。" }
   class n6 node_component
-  n7@{ shape: cyl, label: "**bloom::downsampling​_​pipeline::**<br/>**BloomDownsamplingPipeline**<br/>提供 Bloom 降采样的着色器和资源布局。" }
+  n7@{ shape: cyl, label: "**BloomDownsamplingPipeline**<br/>提供 Bloom 降采样的着色器和资源布局。" }
   class n7 node_resource
   n1 e0@--> n0
   class e0 edge_read

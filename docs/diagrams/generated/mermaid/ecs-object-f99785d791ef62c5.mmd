@@ -36,26 +36,26 @@ flowchart LR
   classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​picking::pointer::PointerId**<br/>以鼠标、触摸编号或自定义 UUID 提供稳定<br/>指针身份" }
+  n0@{ shape: rounded, label: "**PointerId**<br/>以鼠标、触摸编号或自定义 UUID 提供稳定<br/>指针身份" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​picking::hover::generate​_​**<br/>**hovermap**<br/>汇总拾取命中并应用指针捕获。" }
+  n1@{ shape: rounded, label: "**generate​_​hovermap**<br/>汇总拾取命中并应用指针捕获。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​sprite::picking​_​backend::**<br/>**sprite​_​picking**<br/>来自crate:bevy​_​sprite ↗：按精灵图像和<br/>拾取配置计算指针命中。" }
+  n2@{ shape: rounded, label: "**sprite​_​picking**<br/>来自crate:bevy​_​sprite ↗：按精灵图像和<br/>拾取配置计算指针命中。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​ui::picking​_​backend::ui​_​picking**<br/>来自crate:bevy​_​ui ↗：按 UI 堆叠与相机<br/>视口计算指针命中。" }
+  n3@{ shape: rounded, label: "**ui​_​picking**<br/>来自crate:bevy​_​ui ↗：按 UI 堆叠与相机<br/>视口计算指针命中。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**bevy​_​ui::widget::viewport::viewport​_​**<br/>**picking**<br/>来自crate:bevy​_​ui ↗：把外部指针转换并<br/>转发到 UI 内嵌视口。" }
+  n4@{ shape: rounded, label: "**viewport​_​picking**<br/>来自crate:bevy​_​ui ↗：把外部指针转换并<br/>转发到 UI 内嵌视口。" }
   class n4 node_system
   class n4 external_node
-  n5@{ shape: rounded, label: "**bevy​_​picking::pointer::**<br/>**PointerInput::receive**<br/>按输入消息更新拾取指针状态。" }
+  n5@{ shape: rounded, label: "**receive**<br/>按输入消息更新拾取指针状态。" }
   class n5 node_system
-  n6@{ shape: rounded, label: "**bevy​_​picking::hover::update​_​**<br/>**interactions**<br/>合并多个指针对目标实体的交互状态。" }
+  n6@{ shape: rounded, label: "**update​_​interactions**<br/>合并多个指针对目标实体的交互状态。" }
   class n6 node_system
-  n7@{ shape: rounded, label: "**bevy​_​picking::backend::ray::RayMap::**<br/>**repopulate**<br/>重建指针与相机组合的拾取射线。" }
+  n7@{ shape: rounded, label: "**repopulate**<br/>重建指针与相机组合的拾取射线。" }
   class n7 node_system
-  n8@{ shape: rounded, label: "**bevy​_​picking::input::deactivate​_​**<br/>**touch​_​pointers**<br/>销毁已经结束或取消的触摸指针。" }
+  n8@{ shape: rounded, label: "**deactivate​_​touch​_​pointers**<br/>销毁已经结束或取消的触摸指针。" }
   class n8 node_system
   n0 e0@--> n1
   class e0 edge_read

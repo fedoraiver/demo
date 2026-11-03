@@ -19,7 +19,7 @@
       "htmlLabels": false,
       "nodeSpacing": 16,
       "rankSpacing": 48,
-      "padding": 4,
+      "padding": 16,
       "wrappingWidth": 280,
       "minNodeWidth": 180,
       "useMaxWidth": false,
@@ -38,93 +38,93 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​ui::Checked**<br/>记录控件当前勾选状态。" }
+  n0@{ shape: rounded, label: "**Checked**<br/>记录控件当前勾选状态。" }
   class n0 node_component
-  n1@{ shape: hex, label: "**bevy​_​ui::interaction​_​states::on​_​add​_​**<br/>**checkable**<br/>初始化可勾选控件的无障碍状态。" }
+  n1@{ shape: hex, label: "**on​_​add​_​checkable**<br/>初始化可勾选控件的无障碍状态。" }
   class n1 node_observer
-  n2@{ shape: hex, label: "**bevy​_​ui​_​widgets::checkbox::checkbox​_​**<br/>**on​_​set​_​checked**<br/>来自crate:bevy​_​ui​_​widgets ↗：将复选<br/>框设值请求转为勾选变化。" }
+  n2@{ shape: hex, label: "**checkbox​_​on​_​set​_​checked**<br/>来自crate:bevy​_​ui​_​widgets ↗：将复选<br/>框设值请求转为勾选变化。" }
   class n2 node_observer
   class n2 external_node
-  n3@{ shape: hex, label: "**bevy​_​ui​_​widgets::checkbox::checkbox​_​**<br/>**on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：处理复<br/>选框按压、焦点与即时勾选请求。" }
+  n3@{ shape: hex, label: "**checkbox​_​on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：处理复<br/>选框按压、焦点与即时勾选请求。" }
   class n3 node_observer
   class n3 external_node
-  n4@{ shape: hex, label: "**bevy​_​ui​_​widgets::checkbox::checkbox​_​**<br/>**on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：处理复<br/>选框按压、焦点与即时勾选请求。" }
+  n4@{ shape: hex, label: "**checkbox​_​on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：处理复<br/>选框按压、焦点与即时勾选请求。" }
   class n4 node_observer
   class n4 external_node
-  n5@{ shape: hex, label: "**bevy​_​ui​_​widgets::checkbox::checkbox​_​**<br/>**on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：处理复<br/>选框按压、焦点与即时勾选请求。" }
+  n5@{ shape: hex, label: "**checkbox​_​on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：处理复<br/>选框按压、焦点与即时勾选请求。" }
   class n5 node_observer
   class n5 external_node
-  n6@{ shape: hex, label: "**bevy​_​ui​_​widgets::checkbox::checkbox​_​**<br/>**on​_​toggle​_​checked**<br/>来自crate:bevy​_​ui​_​widgets ↗：将复选<br/>框切换请求转为勾选变化。" }
+  n6@{ shape: hex, label: "**checkbox​_​on​_​toggle​_​checked**<br/>来自crate:bevy​_​ui​_​widgets ↗：将复选<br/>框切换请求转为勾选变化。" }
   class n6 node_observer
   class n6 external_node
-  n7@{ shape: hex, label: "**bevy​_​ui::interaction​_​states::on​_​add​_​**<br/>**checkable**<br/>初始化可勾选控件的无障碍状态。" }
+  n7@{ shape: hex, label: "**on​_​add​_​checkable**<br/>初始化可勾选控件的无障碍状态。" }
   class n7 node_observer
-  n8@{ shape: hex, label: "**bevy​_​ui​_​widgets::checkbox::checkbox​_​**<br/>**on​_​pointer​_​click**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过点<br/>击请求切换复选框勾选。" }
+  n8@{ shape: hex, label: "**checkbox​_​on​_​pointer​_​click**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过点<br/>击请求切换复选框勾选。" }
   class n8 node_observer
   class n8 external_node
-  n9@{ shape: hex, label: "**bevy​_​ui​_​widgets::radio::radio​_​**<br/>**button​_​on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：记录单<br/>选按钮按压并按配置请求选中。" }
+  n9@{ shape: hex, label: "**radio​_​button​_​on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：记录单<br/>选按钮按压并按配置请求选中。" }
   class n9 node_observer
   class n9 external_node
-  n10@{ shape: hex, label: "**bevy​_​ui​_​widgets::radio::radio​_​**<br/>**button​_​on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：记录单<br/>选按钮按压并按配置请求选中。" }
+  n10@{ shape: hex, label: "**radio​_​button​_​on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：记录单<br/>选按钮按压并按配置请求选中。" }
   class n10 node_observer
   class n10 external_node
-  n11@{ shape: hex, label: "**bevy​_​ui​_​widgets::checkbox::checkbox​_​**<br/>**on​_​pointer​_​click**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过点<br/>击请求切换复选框勾选。" }
+  n11@{ shape: hex, label: "**checkbox​_​on​_​pointer​_​click**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过点<br/>击请求切换复选框勾选。" }
   class n11 node_observer
   class n11 external_node
-  n12@{ shape: hex, label: "**bevy​_​ui​_​widgets::radio::radio​_​**<br/>**button​_​on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：记录单<br/>选按钮按压并按配置请求选中。" }
+  n12@{ shape: hex, label: "**radio​_​button​_​on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：记录单<br/>选按钮按压并按配置请求选中。" }
   class n12 node_observer
   class n12 external_node
-  n13@{ shape: hex, label: "**bevy​_​ui​_​widgets::radio::radio​_​**<br/>**button​_​on​_​key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过确<br/>认键请求选中单选按钮。" }
+  n13@{ shape: hex, label: "**radio​_​button​_​on​_​key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过确<br/>认键请求选中单选按钮。" }
   class n13 node_observer
   class n13 external_node
-  n14@{ shape: hex, label: "**bevy​_​ui::interaction​_​states::on​_​add​_​**<br/>**checkable**<br/>初始化可勾选控件的无障碍状态。" }
+  n14@{ shape: hex, label: "**on​_​add​_​checkable**<br/>初始化可勾选控件的无障碍状态。" }
   class n14 node_observer
-  n15@{ shape: hex, label: "**bevy​_​ui​_​widgets::checkbox::checkbox​_​**<br/>**on​_​key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过确<br/>认键请求切换复选框勾选。" }
+  n15@{ shape: hex, label: "**checkbox​_​on​_​key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过确<br/>认键请求切换复选框勾选。" }
   class n15 node_observer
   class n15 external_node
-  n16@{ shape: hex, label: "**bevy​_​ui​_​widgets::checkbox::checkbox​_​**<br/>**on​_​key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过确<br/>认键请求切换复选框勾选。" }
+  n16@{ shape: hex, label: "**checkbox​_​on​_​key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过确<br/>认键请求切换复选框勾选。" }
   class n16 node_observer
   class n16 external_node
-  n17@{ shape: hex, label: "**bevy​_​ui​_​widgets::checkbox::checkbox​_​**<br/>**on​_​key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过确<br/>认键请求切换复选框勾选。" }
+  n17@{ shape: hex, label: "**checkbox​_​on​_​key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过确<br/>认键请求切换复选框勾选。" }
   class n17 node_observer
   class n17 external_node
-  n18@{ shape: hex, label: "**bevy​_​ui​_​widgets::radio::radio​_​**<br/>**button​_​on​_​click**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过点<br/>击请求选中单选按钮。" }
+  n18@{ shape: hex, label: "**radio​_​button​_​on​_​click**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过点<br/>击请求选中单选按钮。" }
   class n18 node_observer
   class n18 external_node
-  n19@{ shape: hex, label: "**bevy​_​ui​_​widgets::radio::radio​_​group​_​**<br/>**on​_​key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过键<br/>盘请求更改单选组选项。" }
+  n19@{ shape: hex, label: "**radio​_​group​_​on​_​key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过键<br/>盘请求更改单选组选项。" }
   class n19 node_observer
   class n19 external_node
-  n20@{ shape: hex, label: "**bevy​_​ui​_​widgets::radio::radio​_​**<br/>**button​_​on​_​click**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过点<br/>击请求选中单选按钮。" }
+  n20@{ shape: hex, label: "**radio​_​button​_​on​_​click**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过点<br/>击请求选中单选按钮。" }
   class n20 node_observer
   class n20 external_node
-  n21@{ shape: hex, label: "**bevy​_​ui​_​widgets::radio::radio​_​**<br/>**button​_​on​_​click**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过点<br/>击请求选中单选按钮。" }
+  n21@{ shape: hex, label: "**radio​_​button​_​on​_​click**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过点<br/>击请求选中单选按钮。" }
   class n21 node_observer
   class n21 external_node
-  n22@{ shape: hex, label: "**bevy​_​ui​_​widgets::checkbox::checkbox​_​**<br/>**on​_​set​_​checked**<br/>来自crate:bevy​_​ui​_​widgets ↗：将复选<br/>框设值请求转为勾选变化。" }
+  n22@{ shape: hex, label: "**checkbox​_​on​_​set​_​checked**<br/>来自crate:bevy​_​ui​_​widgets ↗：将复选<br/>框设值请求转为勾选变化。" }
   class n22 node_observer
   class n22 external_node
-  n23@{ shape: hex, label: "**bevy​_​ui​_​widgets::checkbox::checkbox​_​**<br/>**on​_​toggle​_​checked**<br/>来自crate:bevy​_​ui​_​widgets ↗：将复选<br/>框切换请求转为勾选变化。" }
+  n23@{ shape: hex, label: "**checkbox​_​on​_​toggle​_​checked**<br/>来自crate:bevy​_​ui​_​widgets ↗：将复选<br/>框切换请求转为勾选变化。" }
   class n23 node_observer
   class n23 external_node
-  n24@{ shape: hex, label: "**bevy​_​ui​_​widgets::checkbox::checkbox​_​**<br/>**on​_​toggle​_​checked**<br/>来自crate:bevy​_​ui​_​widgets ↗：将复选<br/>框切换请求转为勾选变化。" }
+  n24@{ shape: hex, label: "**checkbox​_​on​_​toggle​_​checked**<br/>来自crate:bevy​_​ui​_​widgets ↗：将复选<br/>框切换请求转为勾选变化。" }
   class n24 node_observer
   class n24 external_node
-  n25@{ shape: hex, label: "**bevy​_​ui​_​widgets::radio::radio​_​**<br/>**button​_​on​_​key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过确<br/>认键请求选中单选按钮。" }
+  n25@{ shape: hex, label: "**radio​_​button​_​on​_​key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过确<br/>认键请求选中单选按钮。" }
   class n25 node_observer
   class n25 external_node
-  n26@{ shape: hex, label: "**bevy​_​ui​_​widgets::radio::radio​_​group​_​**<br/>**on​_​key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过键<br/>盘请求更改单选组选项。" }
+  n26@{ shape: hex, label: "**radio​_​group​_​on​_​key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过键<br/>盘请求更改单选组选项。" }
   class n26 node_observer
   class n26 external_node
-  n27@{ shape: hex, label: "**bevy​_​ui​_​widgets::checkbox::checkbox​_​**<br/>**on​_​set​_​checked**<br/>来自crate:bevy​_​ui​_​widgets ↗：将复选<br/>框设值请求转为勾选变化。" }
+  n27@{ shape: hex, label: "**checkbox​_​on​_​set​_​checked**<br/>来自crate:bevy​_​ui​_​widgets ↗：将复选<br/>框设值请求转为勾选变化。" }
   class n27 node_observer
   class n27 external_node
-  n28@{ shape: hex, label: "**bevy​_​ui​_​widgets::radio::radio​_​**<br/>**button​_​on​_​key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过确<br/>认键请求选中单选按钮。" }
+  n28@{ shape: hex, label: "**radio​_​button​_​on​_​key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过确<br/>认键请求选中单选按钮。" }
   class n28 node_observer
   class n28 external_node
-  n29@{ shape: hex, label: "**bevy​_​ui​_​widgets::radio::radio​_​group​_​**<br/>**on​_​key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过键<br/>盘请求更改单选组选项。" }
+  n29@{ shape: hex, label: "**radio​_​group​_​on​_​key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过键<br/>盘请求更改单选组选项。" }
   class n29 node_observer
   class n29 external_node
-  n30@{ shape: hex, label: "**bevy​_​ui​_​widgets::checkbox::checkbox​_​**<br/>**on​_​pointer​_​click**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过点<br/>击请求切换复选框勾选。" }
+  n30@{ shape: hex, label: "**checkbox​_​on​_​pointer​_​click**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过点<br/>击请求切换复选框勾选。" }
   class n30 node_observer
   class n30 external_node
   n0 e0@--> n1

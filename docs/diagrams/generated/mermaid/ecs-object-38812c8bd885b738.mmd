@@ -38,12 +38,12 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**dynamics::rigid​_​body::AngularDamping**<br/>随物理步衰减刚体角速度。" }
+  n0@{ shape: rounded, label: "**AngularDamping**<br/>随物理步衰减刚体角速度。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**demo::scene​_​assembly::actors::spawn​_​**<br/>**actors**<br/>来自scene​_​assembly ↗：为就绪海岛创建<br/>玩法实体并复用加载相机。" }
+  n1@{ shape: rounded, label: "**spawn​_​actors**<br/>来自scene​_​assembly ↗：为就绪海岛创建<br/>玩法实体并复用加载相机。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**avian3d::dynamics::integrator::pre​_​**<br/>**process​_​velocity​_​increments**<br/>把加速度、重力和轴锁转成子步速度增量。" }
+  n2@{ shape: rounded, label: "**pre​_​process​_​velocity​_​increments**<br/>把加速度、重力和轴锁转成子步速度增量。" }
   class n2 node_system
   n1 e0@-->|"插入"| n0
   class e0 edge_write

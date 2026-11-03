@@ -38,12 +38,12 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**volumetric::FogVolume**<br/>定义可变换的体积雾区域及介质参数。" }
+  n0@{ shape: rounded, label: "**FogVolume**<br/>定义可变换的体积雾区域及介质参数。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​pbr::volumetric​_​fog::render::**<br/>**extract​_​volumetric​_​fog**<br/>来自crate:bevy​_​pbr ↗：从主世界提取体<br/>积雾、雾体积及体积光配置。" }
+  n1@{ shape: rounded, label: "**extract​_​volumetric​_​fog**<br/>来自crate:bevy​_​pbr ↗：从主世界提取体<br/>积雾、雾体积及体积光配置。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​pbr::volumetric​_​fog::render::**<br/>**prepare​_​volumetric​_​fog​_​uniforms**<br/>来自crate:bevy​_​pbr ↗：把各视图和雾体<br/>积组合转换为体积雾 Uniform。" }
+  n2@{ shape: rounded, label: "**prepare​_​volumetric​_​fog​_​uniforms**<br/>来自crate:bevy​_​pbr ↗：把各视图和雾体<br/>积组合转换为体积雾 Uniform。" }
   class n2 node_system
   class n2 external_node
   n1 e0@-->|"移除"| n0

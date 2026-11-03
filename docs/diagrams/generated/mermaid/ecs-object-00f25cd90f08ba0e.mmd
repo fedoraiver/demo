@@ -37,14 +37,14 @@ flowchart LR
   classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**transition::AnimationTransitions**<br/>管理动画混合权重的淡出过程" }
+  n0@{ shape: rounded, label: "**AnimationTransitions**<br/>管理动画混合权重的淡出过程" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​animation::transition::advance​_​**<br/>**transitions**<br/>推进动画过渡并归一化混合权重。" }
+  n1@{ shape: rounded, label: "**advance​_​transitions**<br/>推进动画过渡并归一化混合权重。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**demo::character​_​animation::binding::**<br/>**initialize​_​ready​_​couriers**<br/>来自character​_​animation ↗：场景就绪<br/>后只遍历该视觉根的子树，避免把 NPC 或其<br/>他模型的播放器接到主角上。" }
+  n2@{ shape: rounded, label: "**initialize​_​ready​_​couriers**<br/>来自character​_​animation ↗：场景就绪<br/>后只遍历该视觉根的子树，避免把 NPC 或其<br/>他模型的播放器接到主角上。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​animation::transition::expire​_​**<br/>**completed​_​transitions**<br/>结束已完全淡出的动画过渡。" }
+  n3@{ shape: rounded, label: "**expire​_​completed​_​transitions**<br/>结束已完全淡出的动画过渡。" }
   class n3 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

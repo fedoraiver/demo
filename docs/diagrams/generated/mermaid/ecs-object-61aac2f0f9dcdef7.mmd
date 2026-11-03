@@ -45,31 +45,31 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​camera::visibility::update​_​**<br/>**skinned​_​mesh​_​bounds**<br/>依据当前关节姿态更新动态蒙皮包围盒。" }
+  n0@{ shape: rounded, label: "**update​_​skinned​_​mesh​_​bounds**<br/>依据当前关节姿态更新动态蒙皮包围盒。" }
   class n0 node_system
   n1@{ shape: lin-rect, label: "**CalculateBounds**<br/>组织相机与实体可见性更新。" }
   class n1 node_system_set
-  n2@{ shape: rounded, label: "**bevy​_​camera::primitives::Aabb**<br/>以局部轴对齐包围盒支持可见性裁剪。" }
+  n2@{ shape: rounded, label: "**Aabb**<br/>以局部轴对齐包围盒支持可见性裁剪。" }
   class n2 node_component
-  n3@{ shape: rounded, label: "**bevy​_​camera::visibility::calculate​_​**<br/>**bounds**<br/>为允许自动计算的三维网格维护包围盒。" }
+  n3@{ shape: rounded, label: "**calculate​_​bounds**<br/>为允许自动计算的三维网格维护包围盒。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**bevy​_​mesh::skinning::SkinnedMesh**<br/>来自crate:bevy​_​mesh ↗：关联蒙皮网格的<br/>关节与逆绑定姿态。" }
+  n4@{ shape: rounded, label: "**SkinnedMesh**<br/>来自crate:bevy​_​mesh ↗：关联蒙皮网格的<br/>关节与逆绑定姿态。" }
   class n4 node_component
   class n4 external_node
-  n5@{ shape: cyl, label: "**bevy​_​asset::Assets#lt;bevy​_​mesh::**<br/>**skinning::**<br/>**SkinnedMeshInverseBindposes#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
+  n5@{ shape: cyl, label: "**Assets#lt;SkinnedMeshInverseBindposes#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
   class n5 node_resource
   class n5 external_node
-  n6@{ shape: rounded, label: "**bevy​_​camera::visibility::**<br/>**DynamicSkinnedMeshBounds**<br/>启用随骨骼姿态更新的网格包围盒。" }
+  n6@{ shape: rounded, label: "**DynamicSkinnedMeshBounds**<br/>启用随骨骼姿态更新的网格包围盒。" }
   class n6 node_component
-  n7@{ shape: fr-rect, label: "**visibility::VisibilityPlugin**<br/>维护包围盒、层级可见性与视锥检查。" }
+  n7@{ shape: fr-rect, label: "**VisibilityPlugin**<br/>维护包围盒、层级可见性与视锥检查。" }
   class n7 node_plugin
-  n8@{ shape: rounded, label: "**bevy​_​mesh::Mesh3d**<br/>来自crate:bevy​_​mesh ↗：为三维可绘制实<br/>体指定网格资产。" }
+  n8@{ shape: rounded, label: "**Mesh3d**<br/>来自crate:bevy​_​mesh ↗：为三维可绘制实<br/>体指定网格资产。" }
   class n8 node_component
   class n8 external_node
-  n9@{ shape: cyl, label: "**bevy​_​asset::Assets#lt;bevy​_​mesh::Mesh#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
+  n9@{ shape: cyl, label: "**Assets#lt;Mesh#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
   class n9 node_resource
   class n9 external_node
-  n10@{ shape: rounded, label: "**components::global​_​transform::**<br/>**GlobalTransform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>合并祖先变换后的世界空间仿射变换" }
+  n10@{ shape: rounded, label: "**GlobalTransform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>合并祖先变换后的世界空间仿射变换" }
   class n10 node_component
   class n10 external_node
   n1 e0@-->|"集合成员"| n0

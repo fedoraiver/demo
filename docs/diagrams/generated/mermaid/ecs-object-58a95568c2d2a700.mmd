@@ -38,13 +38,13 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**dof::AuxiliaryDepthOfFieldTexture**<br/>提供六边形散景模糊的第二渲染目标。" }
+  n0@{ shape: rounded, label: "**AuxiliaryDepthOfFieldTexture**<br/>提供六边形散景模糊的第二渲染目标。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​post​_​process::dof::depth​_​of​_​**<br/>**field**<br/>以两阶段全屏通道执行景深模糊。" }
+  n1@{ shape: rounded, label: "**depth​_​of​_​field**<br/>以两阶段全屏通道执行景深模糊。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​post​_​process::dof::extract​_​**<br/>**depth​_​of​_​field​_​settings**<br/>把透视相机景深设置转换为 GPU 参数。" }
+  n2@{ shape: rounded, label: "**extract​_​depth​_​of​_​field​_​settings**<br/>把透视相机景深设置转换为 GPU 参数。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​post​_​process::dof::prepare​_​**<br/>**auxiliary​_​depth​_​of​_​field​_​textures**<br/>为 Bokeh 景深分配第二颜色输出。" }
+  n3@{ shape: rounded, label: "**prepare​_​auxiliary​_​depth​_​of​_​field​_​**<br/>**textures**<br/>为 Bokeh 景深分配第二颜色输出。" }
   class n3 node_system
   n0 e0@--> n1
   class e0 edge_read

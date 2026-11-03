@@ -38,13 +38,13 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**ssr::ScreenSpaceReflectionsPipeline**<br/>描述屏幕空间反射绘制的着色接口。" }
+  n0@{ shape: cyl, label: "**ScreenSpaceReflectionsPipeline**<br/>描述屏幕空间反射绘制的着色接口。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​pbr::ssr::screen​_​space​_​**<br/>**reflections**<br/>采样场景颜色、深度与蓝噪声绘制屏幕空间反<br/>射。" }
+  n1@{ shape: rounded, label: "**screen​_​space​_​reflections**<br/>采样场景颜色、深度与蓝噪声绘制屏幕空间反<br/>射。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​pbr::ssr::prepare​_​ssr​_​pipelines**<br/>为具备反射及深度、延迟预通道的视图选择管<br/>线。" }
+  n2@{ shape: rounded, label: "**prepare​_​ssr​_​pipelines**<br/>为具备反射及深度、延迟预通道的视图选择管<br/>线。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​pbr::ssr::init​_​screen​_​space​_​**<br/>**reflections​_​pipeline**<br/>初始化屏幕空间反射的全屏渲染管线资源。" }
+  n3@{ shape: rounded, label: "**init​_​screen​_​space​_​reflections​_​**<br/>**pipeline**<br/>初始化屏幕空间反射的全屏渲染管线资源。" }
   class n3 node_system
   n0 e0@--> n1
   class e0 edge_read

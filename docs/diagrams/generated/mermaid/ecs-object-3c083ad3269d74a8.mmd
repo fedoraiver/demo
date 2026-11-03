@@ -38,84 +38,84 @@ flowchart LR
   classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**entity​_​disabling::Disabled**<br/>标记被禁用的实体" }
+  n0@{ shape: rounded, label: "**Disabled**<br/>标记被禁用的实体" }
   class n0 node_component
-  n1@{ shape: hex, label: "**avian3d::dynamics::solver::islands::**<br/>**{impl#35;0}::build::{closure#35;1}**<br/>来自crate:avian3d ↗：在实体启用时恢复<br/>刚体物理岛节点。" }
+  n1@{ shape: hex, label: "**build::{closure#35;1}**<br/>来自crate:avian3d ↗：在实体启用时恢复<br/>刚体物理岛节点。" }
   class n1 node_observer
   class n1 external_node
-  n2@{ shape: rounded, label: "**avian3d::dynamics::solver::islands::**<br/>**split​_​island**<br/>来自crate:avian3d ↗：根据接触与关节连<br/>接重新拆分物理岛。" }
+  n2@{ shape: rounded, label: "**split​_​island**<br/>来自crate:avian3d ↗：根据接触与关节连<br/>接重新拆分物理岛。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: hex, label: "**avian3d::dynamics::solver::islands::**<br/>**sleeping::wake​_​on​_​enable​_​rigid​_​body**<br/>来自crate:avian3d ↗：重置启用刚体的休<br/>眠状态并请求唤醒。" }
+  n3@{ shape: hex, label: "**wake​_​on​_​enable​_​rigid​_​body**<br/>来自crate:avian3d ↗：重置启用刚体的休<br/>眠状态并请求唤醒。" }
   class n3 node_observer
   class n3 external_node
-  n4@{ shape: rounded, label: "**bevy​_​egui::render::extract​_​egui​_​**<br/>**camera​_​view​_​system**<br/>来自crate:bevy​_​egui ↗：为活动相机提取<br/>独立 Egui 渲染视图。" }
+  n4@{ shape: rounded, label: "**extract​_​egui​_​camera​_​view​_​system**<br/>来自crate:bevy​_​egui ↗：为活动相机提取<br/>独立 Egui 渲染视图。" }
   class n4 node_system
   class n4 external_node
-  n5@{ shape: hex, label: "**avian3d::dynamics::solver::islands::**<br/>**{impl#35;0}::build::{closure#35;3}**<br/>来自crate:avian3d ↗：移除被禁用刚体的<br/>物理岛节点。" }
+  n5@{ shape: hex, label: "**build::{closure#35;3}**<br/>来自crate:avian3d ↗：移除被禁用刚体的<br/>物理岛节点。" }
   class n5 node_observer
   class n5 external_node
-  n6@{ shape: hex, label: "**avian3d::dynamics::solver::solver​_​**<br/>**body::plugin::{impl#35;0}::build::**<br/>**{closure#35;1}**<br/>来自crate:avian3d ↗：在实体启用时恢复<br/>刚体求解缓存。" }
+  n6@{ shape: hex, label: "**build::{closure#35;1}**<br/>来自crate:avian3d ↗：在实体启用时恢复<br/>刚体求解缓存。" }
   class n6 node_observer
   class n6 external_node
-  n7@{ shape: hex, label: "**avian3d::dynamics::solver::islands::**<br/>**{impl#35;0}::build::{closure#35;1}**<br/>来自crate:avian3d ↗：在实体启用时恢复<br/>刚体物理岛节点。" }
+  n7@{ shape: hex, label: "**build::{closure#35;1}**<br/>来自crate:avian3d ↗：在实体启用时恢复<br/>刚体物理岛节点。" }
   class n7 node_observer
   class n7 external_node
-  n8@{ shape: rounded, label: "**avian3d::dynamics::solver::islands::**<br/>**sleeping::wake​_​islands​_​with​_​**<br/>**sleeping​_​disabled**<br/>来自crate:avian3d ↗：让禁止休眠或已禁<br/>用的刚体所属岛保持清醒。" }
+  n8@{ shape: rounded, label: "**wake​_​islands​_​with​_​sleeping​_​disabled**<br/>来自crate:avian3d ↗：让禁止休眠或已禁<br/>用的刚体所属岛保持清醒。" }
   class n8 node_system
   class n8 external_node
-  n9@{ shape: hex, label: "**avian3d::dynamics::solver::islands::**<br/>**{impl#35;0}::build::{closure#35;3}**<br/>来自crate:avian3d ↗：移除被禁用刚体的<br/>物理岛节点。" }
+  n9@{ shape: hex, label: "**build::{closure#35;3}**<br/>来自crate:avian3d ↗：移除被禁用刚体的<br/>物理岛节点。" }
   class n9 node_observer
   class n9 external_node
-  n10@{ shape: hex, label: "**avian3d::dynamics::solver::islands::**<br/>**{impl#35;0}::build::{closure#35;3}**<br/>来自crate:avian3d ↗：移除被禁用刚体的<br/>物理岛节点。" }
+  n10@{ shape: hex, label: "**build::{closure#35;3}**<br/>来自crate:avian3d ↗：移除被禁用刚体的<br/>物理岛节点。" }
   class n10 node_observer
   class n10 external_node
-  n11@{ shape: rounded, label: "**avian3d::dynamics::solver::plugin::**<br/>**apply​_​joint​_​graph​_​changes**<br/>来自crate:avian3d ↗：把关节连接变化同<br/>步到模拟岛。" }
+  n11@{ shape: rounded, label: "**apply​_​joint​_​graph​_​changes**<br/>来自crate:avian3d ↗：把关节连接变化同<br/>步到模拟岛。" }
   class n11 node_system
   class n11 external_node
-  n12@{ shape: rounded, label: "**bevy​_​state::state​_​scoped::disable​_​**<br/>**entities​_​on​_​enter​_​state#lt;demo::game​_​**<br/>**flow::AppState#gt;**<br/>来自crate:bevy​_​state ↗：进入指定状态<br/>时禁用实体子树。" }
+  n12@{ shape: rounded, label: "**disable​_​entities​_​on​_​enter​_​state**<br/>来自crate:bevy​_​state ↗：进入指定状态<br/>时禁用实体子树。" }
   class n12 node_system
   class n12 external_node
-  n13@{ shape: hex, label: "**avian3d::dynamics::solver::islands::**<br/>**sleeping::wake​_​on​_​enable​_​rigid​_​body**<br/>来自crate:avian3d ↗：重置启用刚体的休<br/>眠状态并请求唤醒。" }
+  n13@{ shape: hex, label: "**wake​_​on​_​enable​_​rigid​_​body**<br/>来自crate:avian3d ↗：重置启用刚体的休<br/>眠状态并请求唤醒。" }
   class n13 node_observer
   class n13 external_node
-  n14@{ shape: hex, label: "**avian3d::dynamics::solver::islands::**<br/>**{impl#35;0}::build::{closure#35;1}**<br/>来自crate:avian3d ↗：在实体启用时恢复<br/>刚体物理岛节点。" }
+  n14@{ shape: hex, label: "**build::{closure#35;1}**<br/>来自crate:avian3d ↗：在实体启用时恢复<br/>刚体物理岛节点。" }
   class n14 node_observer
   class n14 external_node
-  n15@{ shape: rounded, label: "**bevy​_​state::state​_​scoped::disable​_​**<br/>**entities​_​when​_​state#lt;demo::game​_​**<br/>**flow::AppState#gt;**<br/>来自crate:bevy​_​state ↗：按状态转换谓<br/>词禁用实体子树。" }
+  n15@{ shape: rounded, label: "**disable​_​entities​_​when​_​state**<br/>来自crate:bevy​_​state ↗：按状态转换谓<br/>词禁用实体子树。" }
   class n15 node_system
   class n15 external_node
-  n16@{ shape: rounded, label: "**bevy​_​state::state​_​scoped::enable​_​**<br/>**entities​_​when​_​state#lt;demo::game​_​**<br/>**flow::AppState#gt;**<br/>来自crate:bevy​_​state ↗：按状态转换谓<br/>词重新启用实体子树。" }
+  n16@{ shape: rounded, label: "**enable​_​entities​_​when​_​state**<br/>来自crate:bevy​_​state ↗：按状态转换谓<br/>词重新启用实体子树。" }
   class n16 node_system
   class n16 external_node
-  n17@{ shape: rounded, label: "**bevy​_​state::state​_​scoped::enable​_​**<br/>**entities​_​on​_​exit​_​state#lt;demo::game​_​**<br/>**flow::AppState#gt;**<br/>来自crate:bevy​_​state ↗：离开指定状态<br/>时重新启用实体子树。" }
+  n17@{ shape: rounded, label: "**enable​_​entities​_​on​_​exit​_​state**<br/>来自crate:bevy​_​state ↗：离开指定状态<br/>时重新启用实体子树。" }
   class n17 node_system
   class n17 external_node
-  n18@{ shape: rounded, label: "**bevy​_​state::state​_​scoped::enable​_​**<br/>**entities​_​on​_​enter​_​state#lt;demo::game​_​**<br/>**flow::AppState#gt;**<br/>来自crate:bevy​_​state ↗：进入指定状态<br/>时重新启用实体子树。" }
+  n18@{ shape: rounded, label: "**enable​_​entities​_​on​_​enter​_​state**<br/>来自crate:bevy​_​state ↗：进入指定状态<br/>时重新启用实体子树。" }
   class n18 node_system
   class n18 external_node
-  n19@{ shape: hex, label: "**avian3d::dynamics::solver::islands::**<br/>**sleeping::wake​_​on​_​enable​_​rigid​_​body**<br/>来自crate:avian3d ↗：重置启用刚体的休<br/>眠状态并请求唤醒。" }
+  n19@{ shape: hex, label: "**wake​_​on​_​enable​_​rigid​_​body**<br/>来自crate:avian3d ↗：重置启用刚体的休<br/>眠状态并请求唤醒。" }
   class n19 node_observer
   class n19 external_node
-  n20@{ shape: hex, label: "**avian3d::dynamics::solver::solver​_​**<br/>**body::plugin::{impl#35;0}::build::**<br/>**{closure#35;1}**<br/>来自crate:avian3d ↗：在实体启用时恢复<br/>刚体求解缓存。" }
+  n20@{ shape: hex, label: "**build::{closure#35;1}**<br/>来自crate:avian3d ↗：在实体启用时恢复<br/>刚体求解缓存。" }
   class n20 node_observer
   class n20 external_node
-  n21@{ shape: rounded, label: "**bevy​_​state::state​_​scoped::despawn​_​**<br/>**entities​_​when​_​state#lt;demo::game​_​**<br/>**flow::AppState#gt;**<br/>来自crate:bevy​_​state ↗：按状态转换谓<br/>词销毁匹配实体。" }
+  n21@{ shape: rounded, label: "**despawn​_​entities​_​when​_​state**<br/>来自crate:bevy​_​state ↗：按状态转换谓<br/>词销毁匹配实体。" }
   class n21 node_system
   class n21 external_node
-  n22@{ shape: rounded, label: "**bevy​_​state::state​_​scoped::disable​_​**<br/>**entities​_​on​_​exit​_​state#lt;demo::game​_​**<br/>**flow::AppState#gt;**<br/>来自crate:bevy​_​state ↗：离开指定状态<br/>时禁用实体子树。" }
+  n22@{ shape: rounded, label: "**disable​_​entities​_​on​_​exit​_​state**<br/>来自crate:bevy​_​state ↗：离开指定状态<br/>时禁用实体子树。" }
   class n22 node_system
   class n22 external_node
-  n23@{ shape: hex, label: "**avian3d::dynamics::solver::solver​_​**<br/>**body::plugin::{impl#35;0}::build::**<br/>**{closure#35;1}**<br/>来自crate:avian3d ↗：在实体启用时恢复<br/>刚体求解缓存。" }
+  n23@{ shape: hex, label: "**build::{closure#35;1}**<br/>来自crate:avian3d ↗：在实体启用时恢复<br/>刚体求解缓存。" }
   class n23 node_observer
   class n23 external_node
-  n24@{ shape: rounded, label: "**avian3d::dynamics::solver::plugin::**<br/>**apply​_​contact​_​status​_​changes**<br/>来自crate:avian3d ↗：把接触增删同步到<br/>约束图和物理岛。" }
+  n24@{ shape: rounded, label: "**apply​_​contact​_​status​_​changes**<br/>来自crate:avian3d ↗：把接触增删同步到<br/>约束图和物理岛。" }
   class n24 node_system
   class n24 external_node
-  n25@{ shape: hex, label: "**avian3d::dynamics::joints::joint​_​**<br/>**graph::plugin::add​_​joint​_​to​_​graph**<br/>来自crate:avian3d ↗：加入关节连接并发<br/>布连接图变化。" }
+  n25@{ shape: hex, label: "**add​_​joint​_​to​_​graph**<br/>来自crate:avian3d ↗：加入关节连接并发<br/>布连接图变化。" }
   class n25 node_observer
   class n25 external_node
-  n26@{ shape: rounded, label: "**avian3d::dynamics::solver::plugin::**<br/>**apply​_​contact​_​status​_​changes**<br/>来自crate:avian3d ↗：把接触增删同步到<br/>约束图和物理岛。" }
+  n26@{ shape: rounded, label: "**apply​_​contact​_​status​_​changes**<br/>来自crate:avian3d ↗：把接触增删同步到<br/>约束图和物理岛。" }
   class n26 node_system
   class n26 external_node
   n0 e0@-->|"存在性约束"| n1

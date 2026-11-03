@@ -39,39 +39,39 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**prepass::DeferredPrepass**<br/>为三维相机启用延迟材质 G-buffer 预通<br/>道。" }
+  n0@{ shape: rounded, label: "**DeferredPrepass**<br/>为三维相机启用延迟材质 G-buffer 预通<br/>道。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​core​_​pipeline::deferred::copy​_​**<br/>**lighting​_​id::prepare​_​deferred​_​**<br/>**lighting​_​id​_​textures**<br/>为延迟预通道相机分配光照标识深度纹理。" }
+  n1@{ shape: rounded, label: "**prepare​_​deferred​_​lighting​_​id​_​**<br/>**textures**<br/>为延迟预通道相机分配光照标识深度纹理。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​pbr::ssr::prepare​_​ssr​_​pipelines**<br/>来自crate:bevy​_​pbr ↗：为具备反射及深<br/>度、延迟预通道的视图选择管线。" }
+  n2@{ shape: rounded, label: "**prepare​_​ssr​_​pipelines**<br/>来自crate:bevy​_​pbr ↗：为具备反射及深<br/>度、延迟预通道的视图选择管线。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​pbr::render::mesh::check​_​views​_​**<br/>**need​_​specialization**<br/>来自crate:bevy​_​pbr ↗：汇总视图渲染特<br/>性并检测管线配置变化。" }
+  n3@{ shape: rounded, label: "**check​_​views​_​need​_​specialization**<br/>来自crate:bevy​_​pbr ↗：汇总视图渲染特<br/>性并检测管线配置变化。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**bevy​_​core​_​pipeline::prepass::node::**<br/>**late​_​prepass**<br/>为遮挡剔除绘制晚期预通道。" }
+  n4@{ shape: rounded, label: "**late​_​prepass**<br/>为遮挡剔除绘制晚期预通道。" }
   class n4 node_system
-  n5@{ shape: rounded, label: "**bevy​_​ecs::schedule::condition::**<br/>**common​_​conditions::any​_​match​_​**<br/>**filter#lt;(bevy​_​ecs::query::filter::**<br/>**With#lt;bevy​_​pbr::render::gpu​_​**<br/>**preprocess::PreprocessBindGroups#gt;,**<br/>**bevy​_​ecs::query::filter::**<br/>**Without#lt;bevy​_​pbr::render::gpu​_​**<br/>**preprocess::SkipGpuPreprocess#gt;,**<br/>**bevy​_​ecs::query::filter::**<br/>**Without#lt;bevy​_​render::view::**<br/>**NoIndirectDrawing#gt;, bevy​_​ecs::**<br/>**query::filter::Or#lt;(bevy​_​ecs::query::**<br/>**filter::Or#lt;(bevy​_​ecs::query::**<br/>**filter::With#lt;bevy​_​core​_​pipeline::**<br/>**prepass::DepthPrepass#gt;, bevy​_​ecs::**<br/>**query::filter::With#lt;bevy​_​core​_​**<br/>**pipeline::prepass::NormalPrepass#gt;,**<br/>**bevy​_​ecs::query::filter::With#lt;bevy​_​**<br/>**core​_​pipeline::prepass::**<br/>**MotionVectorPrepass#gt;, bevy​_​ecs::**<br/>**query::filter::With#lt;bevy​_​core​_​**<br/>**pipeline::prepass::**<br/>**DeferredPrepass#gt;)#gt;, bevy​_​ecs::**<br/>**query::filter::With#lt;bevy​_​pbr::**<br/>**render::light::ShadowView#gt;)#gt;, bevy​_​**<br/>**ecs::query::filter::With#lt;bevy​_​**<br/>**render::occlusion​_​culling::**<br/>**OcclusionCulling#gt;)#gt;**<br/>来自crate:bevy​_​ecs ↗：判断是否存在符<br/>合过滤条件的实体。" }
+  n5@{ shape: rounded, label: "**any​_​match​_​filter**<br/>来自crate:bevy​_​ecs ↗：判断是否存在符<br/>合过滤条件的实体。" }
   class n5 node_system
   class n5 external_node
-  n6@{ shape: rounded, label: "**bevy​_​core​_​pipeline::core​_​3d::check​_​**<br/>**msaa**<br/>关闭延迟预通道相机不兼容的 MSAA。" }
+  n6@{ shape: rounded, label: "**check​_​msaa**<br/>关闭延迟预通道相机不兼容的 MSAA。" }
   class n6 node_system
-  n7@{ shape: rounded, label: "**bevy​_​core​_​pipeline::core​_​3d::**<br/>**extract​_​camera​_​prepass​_​phase**<br/>同步三维相机的预通道标记与渲染阶段。" }
+  n7@{ shape: rounded, label: "**extract​_​camera​_​prepass​_​phase**<br/>同步三维相机的预通道标记与渲染阶段。" }
   class n7 node_system
-  n8@{ shape: rounded, label: "**bevy​_​pbr::prepass::specialize​_​**<br/>**prepass​_​material​_​meshes**<br/>来自crate:bevy​_​pbr ↗：按深度、材质和<br/>运动特性生成预通道专用管线。" }
+  n8@{ shape: rounded, label: "**specialize​_​prepass​_​material​_​meshes**<br/>来自crate:bevy​_​pbr ↗：按深度、材质和<br/>运动特性生成预通道专用管线。" }
   class n8 node_system
   class n8 external_node
-  n9@{ shape: rounded, label: "**bevy​_​pbr::deferred::prepare​_​**<br/>**deferred​_​lighting​_​pipelines**<br/>来自crate:bevy​_​pbr ↗：为有效延迟视图<br/>选择与前向一致的光照管线。" }
+  n9@{ shape: rounded, label: "**prepare​_​deferred​_​lighting​_​pipelines**<br/>来自crate:bevy​_​pbr ↗：为有效延迟视图<br/>选择与前向一致的光照管线。" }
   class n9 node_system
   class n9 external_node
-  n10@{ shape: rounded, label: "**bevy​_​core​_​pipeline::core​_​3d::**<br/>**prepare​_​prepass​_​textures**<br/>按三维预通道配置分配各类输出纹理。" }
+  n10@{ shape: rounded, label: "**prepare​_​prepass​_​textures**<br/>按三维预通道配置分配各类输出纹理。" }
   class n10 node_system
-  n11@{ shape: rounded, label: "**bevy​_​core​_​pipeline::prepass::node::**<br/>**early​_​prepass**<br/>绘制早期不透明与 AlphaMask 预通道。" }
+  n11@{ shape: rounded, label: "**early​_​prepass**<br/>绘制早期不透明与 AlphaMask 预通道。" }
   class n11 node_system
-  n12@{ shape: rounded, label: "**bevy​_​ecs::schedule::condition::**<br/>**common​_​conditions::any​_​match​_​**<br/>**filter#lt;(bevy​_​ecs::query::filter::**<br/>**With#lt;bevy​_​pbr::render::gpu​_​**<br/>**preprocess::PreprocessBindGroups#gt;,**<br/>**bevy​_​ecs::query::filter::**<br/>**Without#lt;bevy​_​pbr::render::gpu​_​**<br/>**preprocess::SkipGpuPreprocess#gt;,**<br/>**bevy​_​ecs::query::filter::**<br/>**Without#lt;bevy​_​render::view::**<br/>**NoIndirectDrawing#gt;, bevy​_​ecs::**<br/>**query::filter::Or#lt;(bevy​_​ecs::query::**<br/>**filter::Or#lt;(bevy​_​ecs::query::**<br/>**filter::With#lt;bevy​_​core​_​pipeline::**<br/>**prepass::DepthPrepass#gt;, bevy​_​ecs::**<br/>**query::filter::With#lt;bevy​_​core​_​**<br/>**pipeline::prepass::NormalPrepass#gt;,**<br/>**bevy​_​ecs::query::filter::With#lt;bevy​_​**<br/>**core​_​pipeline::prepass::**<br/>**MotionVectorPrepass#gt;, bevy​_​ecs::**<br/>**query::filter::With#lt;bevy​_​core​_​**<br/>**pipeline::prepass::**<br/>**DeferredPrepass#gt;)#gt;, bevy​_​ecs::**<br/>**query::filter::With#lt;bevy​_​pbr::**<br/>**render::light::ShadowView#gt;)#gt;)#gt;**<br/>来自crate:bevy​_​ecs ↗：判断是否存在符<br/>合过滤条件的实体。" }
+  n12@{ shape: rounded, label: "**any​_​match​_​filter**<br/>来自crate:bevy​_​ecs ↗：判断是否存在符<br/>合过滤条件的实体。" }
   class n12 node_system
   class n12 external_node
-  n13@{ shape: rounded, label: "**bevy​_​pbr::deferred::insert​_​deferred​_​**<br/>**lighting​_​pass​_​id​_​component**<br/>来自crate:bevy​_​pbr ↗：为延迟预通道视<br/>图补齐光照通道标识。" }
+  n13@{ shape: rounded, label: "**insert​_​deferred​_​lighting​_​pass​_​id​_​**<br/>**component**<br/>来自crate:bevy​_​pbr ↗：为延迟预通道视<br/>图补齐光照通道标识。" }
   class n13 node_system
   class n13 external_node
   n0 e0@-->|"存在性约束"| n1

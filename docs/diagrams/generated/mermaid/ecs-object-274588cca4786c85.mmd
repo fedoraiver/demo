@@ -48,17 +48,17 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​winit::system::despawn​_​windows**<br/>处理原生窗口关闭并延后一轮释放包装器。" }
+  n0@{ shape: rounded, label: "**despawn​_​windows**<br/>处理原生窗口关闭并延后一轮释放包装器。" }
   class n0 node_system
-  n1@{ shape: lean-r, label: "**app::AppExit**<br/>来自crate:bevy​_​app ↗：请求应用结束并<br/>携带退出结果。" }
+  n1@{ shape: lean-r, label: "**AppExit**<br/>来自crate:bevy​_​app ↗：请求应用结束并<br/>携带退出结果。" }
   class n1 node_message
   class n1 external_node
-  n2@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;event::**<br/>**WindowClosed#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n2@{ shape: cyl, label: "**Messages#lt;WindowClosed#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n2 node_resource
   class n2 external_node
   n3@{ shape: notch-rect, label: "**Local · closed.0.1**<br/>跟踪 Window 移除记录的读取进度。" }
   class n3 node_local
-  n4@{ shape: lean-r, label: "**event::WindowClosed**<br/>来自crate:bevy​_​window ↗：通知窗口已经<br/>关闭。" }
+  n4@{ shape: lean-r, label: "**WindowClosed**<br/>来自crate:bevy​_​window ↗：通知窗口已经<br/>关闭。" }
   class n4 node_message
   class n4 external_node
   n5@{ shape: notch-rect, label: "**Local · windows​_​to​_​drop**<br/>把原生窗口包装器保留到下次主线程调用释<br/>放。" }
@@ -66,28 +66,28 @@ flowchart LR
   n6@{ shape: lin-rect, label: "**OnAppExitSystems**<br/>来自crate:bevy​_​app ↗：在退出消息发出<br/>后执行应用收尾。" }
   class n6 node_system_set
   class n6 external_node
-  n7@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;event::**<br/>**WindowClosing#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n7@{ shape: cyl, label: "**Messages#lt;WindowClosing#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n7 node_resource
   class n7 external_node
   n8@{ shape: lin-rect, label: "**ExitSystems**<br/>来自crate:bevy​_​window ↗：按窗口关闭策<br/>略请求应用退出。" }
   class n8 node_system_set
   class n8 external_node
-  n9@{ shape: rounded, label: "**window::Window**<br/>来自crate:bevy​_​window ↗：保存窗口的呈<br/>现模式、位置、分辨率、标题、全屏及平台行<br/>为配置" }
+  n9@{ shape: rounded, label: "**Window**<br/>来自crate:bevy​_​window ↗：保存窗口的呈<br/>现模式、位置、分辨率、标题、全屏及平台行<br/>为配置" }
   class n9 node_component
   class n9 external_node
-  n10@{ shape: rounded, label: "**bevy​_​winit::system::check​_​keyboard​_​**<br/>**focus​_​lost**<br/>处理跨窗口键盘焦点丢失并补发释放。" }
+  n10@{ shape: rounded, label: "**check​_​keyboard​_​focus​_​lost**<br/>处理跨窗口键盘焦点丢失并补发释放。" }
   class n10 node_system
-  n11@{ shape: rounded, label: "**bevy​_​winit::system::changed​_​cursor​_​**<br/>**options**<br/>把光标配置变化同步到原生窗口。" }
+  n11@{ shape: rounded, label: "**changed​_​cursor​_​options**<br/>把光标配置变化同步到原生窗口。" }
   class n11 node_system
-  n12@{ shape: rounded, label: "**window::ClosingWindow**<br/>来自crate:bevy​_​window ↗：标记窗口已收<br/>到关闭请求并正在关闭" }
+  n12@{ shape: rounded, label: "**ClosingWindow**<br/>来自crate:bevy​_​window ↗：标记窗口已收<br/>到关闭请求并正在关闭" }
   class n12 node_component
   class n12 external_node
   n13@{ shape: notch-rect, label: "**Local · closed.0.0.0.0**<br/>保存 Window 移除参数的组件 ID。" }
   class n13 node_local
-  n14@{ shape: lean-r, label: "**event::WindowClosing**<br/>来自crate:bevy​_​window ↗：通知窗口正在<br/>关闭。" }
+  n14@{ shape: lean-r, label: "**WindowClosing**<br/>来自crate:bevy​_​window ↗：通知窗口正在<br/>关闭。" }
   class n14 node_message
   class n14 external_node
-  n15@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;app::**<br/>**AppExit#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n15@{ shape: cyl, label: "**Messages#lt;AppExit#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n15 node_resource
   class n15 external_node
   n16@{ shape: fr-rect, label: "**WinitPlugin**<br/>接入原生窗口、输入事件与事件循环。" }

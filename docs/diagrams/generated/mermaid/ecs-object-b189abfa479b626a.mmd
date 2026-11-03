@@ -39,7 +39,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: notch-rect, label: "**Local · wake​_​buffer**<br/>收集本轮应从休眠中唤醒的物理岛。" }
   class n0 node_local
-  n1@{ shape: rounded, label: "**avian3d::dynamics::solver::islands::**<br/>**sleeping::sleep​_​islands**<br/>按物理岛活动状态提交休眠与唤醒。" }
+  n1@{ shape: rounded, label: "**sleep​_​islands**<br/>按物理岛活动状态提交休眠与唤醒。" }
   class n1 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

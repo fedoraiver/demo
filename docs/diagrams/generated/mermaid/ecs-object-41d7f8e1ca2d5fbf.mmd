@@ -41,20 +41,20 @@ flowchart LR
   classDef edge_publish stroke:#247B91,stroke-width:1.8px,stroke-dasharray:10 4 2 4
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​state::state::freely​_​mutable​_​**<br/>**state::apply​_​state​_​transition#lt;demo::**<br/>**game​_​flow::AppState#gt;**<br/>提交待处理状态并发布转换消息。" }
+  n0@{ shape: rounded, label: "**apply​_​state​_​transition**<br/>提交待处理状态并发布转换消息。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**bevy::bevy​_​state::state::State#lt;game​_​**<br/>**flow::AppState#gt;**<br/>保存某个状态类型当前生效的值" }
+  n1@{ shape: cyl, label: "**State#lt;AppState#gt;**<br/>保存某个状态类型当前生效的值" }
   class n1 node_resource
-  n2@{ shape: lean-r, label: "**bevy::bevy​_​state::state::**<br/>**StateTransitionEvent#lt;game​_​flow::**<br/>**AppState#gt;**<br/>通知状态离开和进入的变化。" }
+  n2@{ shape: lean-r, label: "**StateTransitionEvent#lt;AppState#gt;**<br/>通知状态离开和进入的变化。" }
   class n2 node_message
-  n3@{ shape: cyl, label: "**bevy::bevy​_​state::state::**<br/>**PreviousState#lt;game​_​flow::AppState#gt;**<br/>保存最近一次转换前的状态值" }
+  n3@{ shape: cyl, label: "**PreviousState#lt;AppState#gt;**<br/>保存最近一次转换前的状态值" }
   class n3 node_resource
-  n4@{ shape: lin-rect, label: "**ApplyStateTransition(PhantomData#lt;dem**<br/>**o::game​_​flow::AppState#gt;)**<br/>应用待处理状态及其依赖子状态转换。" }
+  n4@{ shape: lin-rect, label: "**ApplyStateTransition(PhantomData#lt;App**<br/>**State#gt;)**<br/>应用待处理状态及其依赖子状态转换。" }
   class n4 node_system_set
-  n5@{ shape: cyl, label: "**bevy::bevy​_​ecs::message::**<br/>**Messages#lt;bevy::bevy​_​state::state::**<br/>**StateTransitionEvent#lt;game​_​flow::**<br/>**AppState#gt;#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n5@{ shape: cyl, label: "**Messages#lt;StateTransitionEvent#lt;AppSta**<br/>**te#gt;#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n5 node_resource
   class n5 external_node
-  n6@{ shape: cyl, label: "**bevy::bevy​_​state::state::**<br/>**NextState#lt;game​_​flow::AppState#gt;**<br/>保存待处理的状态切换请求" }
+  n6@{ shape: cyl, label: "**NextState#lt;AppState#gt;**<br/>保存待处理的状态切换请求" }
   class n6 node_resource
   n0 e0@-->|"插入"| n1
   class e0 edge_write
@@ -86,7 +86,7 @@ flowchart LR
   e1@{ curve: basis }
   e2@{ curve: basis }
   e3@{ curve: basis }
-  e4@{ curve: bumpX }
+  e4@{ curve: basis }
   e5@{ curve: basis }
   e6@{ curve: basis }
   e8@{ curve: basis }

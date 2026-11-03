@@ -42,15 +42,15 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​camera::visibility::reset​_​view​_​**<br/>**visibility**<br/>为本帧可见性检查保留上帧状态。" }
+  n0@{ shape: rounded, label: "**reset​_​view​_​visibility**<br/>为本帧可见性检查保留上帧状态。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**bevy​_​camera::visibility::**<br/>**ViewVisibility**<br/>记录实体是否应被提取用于渲染。" }
+  n1@{ shape: rounded, label: "**ViewVisibility**<br/>记录实体是否应被提取用于渲染。" }
   class n1 node_component
   n2@{ shape: lin-rect, label: "**VisibilityPropagate**<br/>组织相机与实体可见性更新。" }
   class n2 node_system_set
-  n3@{ shape: rounded, label: "**visibility::NoCpuCulling**<br/>退出内置的 CPU 视锥裁剪。" }
+  n3@{ shape: rounded, label: "**NoCpuCulling**<br/>退出内置的 CPU 视锥裁剪。" }
   class n3 node_component
-  n4@{ shape: fr-rect, label: "**visibility::VisibilityPlugin**<br/>维护包围盒、层级可见性与视锥检查。" }
+  n4@{ shape: fr-rect, label: "**VisibilityPlugin**<br/>维护包围盒、层级可见性与视锥检查。" }
   class n4 node_plugin
   n0 e0@-->|"可变访问"| n1
   class e0 edge_write

@@ -38,21 +38,21 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**bevy::bevy​_​time::Time#lt;schedule::**<br/>**time::Substeps#gt;**<br/>保存时钟上下文、帧间隔及累计时间" }
+  n0@{ shape: cyl, label: "**Time#lt;Substeps#gt;**<br/>保存时钟上下文、帧间隔及累计时间" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**avian3d::dynamics::integrator::pre​_​**<br/>**process​_​velocity​_​increments**<br/>来自crate:avian3d ↗：把加速度、重力和<br/>轴锁转成子步速度增量。" }
+  n1@{ shape: rounded, label: "**pre​_​process​_​velocity​_​increments**<br/>来自crate:avian3d ↗：把加速度、重力和<br/>轴锁转成子步速度增量。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**avian3d::dynamics::rigid​_​body::**<br/>**forces::plugin::apply​_​local​_​**<br/>**acceleration**<br/>来自crate:avian3d ↗：在子步中把局部加<br/>速度作用到世界速度。" }
+  n2@{ shape: rounded, label: "**apply​_​local​_​acceleration**<br/>来自crate:avian3d ↗：在子步中把局部加<br/>速度作用到世界速度。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**avian3d::dynamics::solver::plugin::**<br/>**update​_​contact​_​softness**<br/>来自crate:avian3d ↗：按时间步和配置更<br/>新接触柔度系数。" }
+  n3@{ shape: rounded, label: "**update​_​contact​_​softness**<br/>来自crate:avian3d ↗：按时间步和配置更<br/>新接触柔度系数。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**avian3d::dynamics::solver::**<br/>**schedule::run​_​substep​_​schedule**<br/>来自crate:avian3d ↗：按子步数划分物理<br/>时间并运行子步调度。" }
+  n4@{ shape: rounded, label: "**run​_​substep​_​schedule**<br/>来自crate:avian3d ↗：按子步数划分物理<br/>时间并运行子步调度。" }
   class n4 node_system
   class n4 external_node
-  n5@{ shape: rounded, label: "**avian3d::schedule::run​_​physics​_​**<br/>**schedule**<br/>来自crate:avian3d ↗：使用物理时钟推<br/>进 PhysicsSchedule 并恢复原时钟。" }
+  n5@{ shape: rounded, label: "**run​_​physics​_​schedule**<br/>来自crate:avian3d ↗：使用物理时钟推<br/>进 PhysicsSchedule 并恢复原时钟。" }
   class n5 node_system
   class n5 external_node
   n0 e0@--> n1

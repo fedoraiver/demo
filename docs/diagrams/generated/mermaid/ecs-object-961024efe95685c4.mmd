@@ -39,24 +39,24 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**first​_​person::MouseLookState**<br/>每个相机的捕获状态；恢复捕获的第一帧跳过<br/>自由光标位移。" }
+  n0@{ shape: rounded, label: "**MouseLookState**<br/>每个相机的捕获状态；恢复捕获的第一帧跳过<br/>自由光标位移。" }
   class n0 node_component
-  n1@{ shape: hex, label: "**demo::first​_​person::camera::on​_​**<br/>**camera​_​look**<br/>Fire 已携带本帧汇总位移，直接更新角度；<br/>有向水平转角留给下一次碰撞检查消费。" }
+  n1@{ shape: hex, label: "**on​_​camera​_​look**<br/>Fire 已携带本帧汇总位移，直接更新角度；<br/>有向水平转角留给下一次碰撞检查消费。" }
   class n1 node_observer
-  n2@{ shape: rounded, label: "**demo::first​_​person::suspend​_​controls**<br/>停用玩法输入并释放光标。" }
+  n2@{ shape: rounded, label: "**suspend​_​controls**<br/>停用玩法输入并释放光标。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**demo::first​_​person::suspend​_​controls**<br/>停用玩法输入并释放光标。" }
+  n3@{ shape: rounded, label: "**suspend​_​controls**<br/>停用玩法输入并释放光标。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**demo::first​_​person::resume​_​capture**<br/>重置光标捕获并丢弃自由光标阶段位移。" }
+  n4@{ shape: rounded, label: "**resume​_​capture**<br/>重置光标捕获并丢弃自由光标阶段位移。" }
   class n4 node_system
-  n5@{ shape: hex, label: "**demo::first​_​person::camera::on​_​**<br/>**camera​_​look**<br/>Fire 已携带本帧汇总位移，直接更新角度；<br/>有向水平转角留给下一次碰撞检查消费。" }
+  n5@{ shape: hex, label: "**on​_​camera​_​look**<br/>Fire 已携带本帧汇总位移，直接更新角度；<br/>有向水平转角留给下一次碰撞检查消费。" }
   class n5 node_observer
-  n6@{ shape: rounded, label: "**demo::first​_​person::capture::sync​_​**<br/>**mouse​_​capture**<br/>在输入转发前确定归属；切换前约定其他按键<br/>已松开，检查器没有进行中的交互。" }
+  n6@{ shape: rounded, label: "**sync​_​mouse​_​capture**<br/>在输入转发前确定归属；切换前约定其他按键<br/>已松开，检查器没有进行中的交互。" }
   class n6 node_system
-  n7@{ shape: rounded, label: "**demo::scene​_​assembly::actors::spawn​_​**<br/>**actors**<br/>来自scene​_​assembly ↗：为就绪海岛创建<br/>玩法实体并复用加载相机。" }
+  n7@{ shape: rounded, label: "**spawn​_​actors**<br/>来自scene​_​assembly ↗：为就绪海岛创建<br/>玩法实体并复用加载相机。" }
   class n7 node_system
   class n7 external_node
-  n8@{ shape: hex, label: "**demo::first​_​person::camera::on​_​**<br/>**camera​_​look**<br/>Fire 已携带本帧汇总位移，直接更新角度；<br/>有向水平转角留给下一次碰撞检查消费。" }
+  n8@{ shape: hex, label: "**on​_​camera​_​look**<br/>Fire 已携带本帧汇总位移，直接更新角度；<br/>有向水平转角留给下一次碰撞检查消费。" }
   class n8 node_observer
   n0 e0@--> n1
   class e0 edge_read

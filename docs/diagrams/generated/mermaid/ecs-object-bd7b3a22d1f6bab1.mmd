@@ -38,11 +38,11 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**deferred::DeferredLightingPipeline**<br/>保存视图选用的延迟光照管线。" }
+  n0@{ shape: rounded, label: "**DeferredLightingPipeline**<br/>保存视图选用的延迟光照管线。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​pbr::deferred::deferred​_​**<br/>**lighting**<br/>绑定网格视图、延迟光照管线及通道深度标识<br/>参数，在延迟光照深度附件约束下执行全屏光<br/>照计算，将结果写入视图颜色。" }
+  n1@{ shape: rounded, label: "**deferred​_​lighting**<br/>绑定网格视图、延迟光照管线及通道深度标识<br/>参数，在延迟光照深度附件约束下执行全屏光<br/>照计算，将结果写入视图颜色。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​pbr::deferred::prepare​_​**<br/>**deferred​_​lighting​_​pipelines**<br/>为有效延迟视图选择与前向一致的光照管线。" }
+  n2@{ shape: rounded, label: "**prepare​_​deferred​_​lighting​_​pipelines**<br/>为有效延迟视图选择与前向一致的光照管线。" }
   class n2 node_system
   n0 e0@--> n1
   class e0 edge_read

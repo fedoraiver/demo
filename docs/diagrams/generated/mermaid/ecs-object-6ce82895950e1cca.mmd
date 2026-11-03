@@ -36,30 +36,30 @@ flowchart LR
   classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**bevy​_​ecs::entity​_​disabling::**<br/>**DefaultQueryFilters**<br/>保存默认禁用实体查询过滤规则。" }
+  n0@{ shape: cyl, label: "**DefaultQueryFilters**<br/>保存默认禁用实体查询过滤规则。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​pbr::cluster::gpu::extract​_​**<br/>**clusters​_​for​_​gpu​_​clustering**<br/>来自crate:bevy​_​pbr ↗：提取视图聚簇配<br/>置并回传上帧 GPU 统计。" }
+  n1@{ shape: rounded, label: "**extract​_​clusters​_​for​_​gpu​_​clustering**<br/>来自crate:bevy​_​pbr ↗：提取视图聚簇配<br/>置并回传上帧 GPU 统计。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​egui::run​_​egui​_​context​_​pass​_​**<br/>**loop​_​system**<br/>来自crate:bevy​_​egui ↗：运行每个自动<br/>Egui 上下文的专属调度。" }
+  n2@{ shape: rounded, label: "**run​_​egui​_​context​_​pass​_​loop​_​system**<br/>来自crate:bevy​_​egui ↗：运行每个自动<br/>Egui 上下文的专属调度。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​core​_​pipeline::schedule::**<br/>**handle​_​uncovered​_​swap​_​chains**<br/>来自crate:bevy​_​core​_​pipeline ↗：清除<br/>本帧没有相机覆盖的窗口交换链。" }
+  n3@{ shape: rounded, label: "**handle​_​uncovered​_​swap​_​chains**<br/>来自crate:bevy​_​core​_​pipeline ↗：清除<br/>本帧没有相机覆盖的窗口交换链。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**bevy​_​render::view::window::**<br/>**screenshot::extract​_​screenshots**<br/>来自crate:bevy​_​render ↗：收集并去重本<br/>帧尚未捕获的截图请求。" }
+  n4@{ shape: rounded, label: "**extract​_​screenshots**<br/>来自crate:bevy​_​render ↗：收集并去重本<br/>帧尚未捕获的截图请求。" }
   class n4 node_system
   class n4 external_node
-  n5@{ shape: rounded, label: "**bevy​_​core​_​pipeline::schedule::**<br/>**camera​_​driver**<br/>来自crate:bevy​_​core​_​pipeline ↗：为辅<br/>助视图和活动相机运行专属渲染调度。" }
+  n5@{ shape: rounded, label: "**camera​_​driver**<br/>来自crate:bevy​_​core​_​pipeline ↗：为辅<br/>助视图和活动相机运行专属渲染调度。" }
   class n5 node_system
   class n5 external_node
-  n6@{ shape: rounded, label: "**bevy​_​inspector​_​egui::quick::world​_​**<br/>**inspector​_​ui**<br/>来自crate:bevy​_​inspector​_​egui ↗：在<br/>主 Egui 上下文展示可编辑的 World 检视<br/>器。" }
+  n6@{ shape: rounded, label: "**world​_​inspector​_​ui**<br/>来自crate:bevy​_​inspector​_​egui ↗：在<br/>主 Egui 上下文展示可编辑的 World 检视<br/>器。" }
   class n6 node_system
   class n6 external_node
-  n7@{ shape: rounded, label: "**bevy​_​anti​_​alias::taa::extract​_​taa​_​**<br/>**settings**<br/>来自crate:bevy​_​anti​_​alias ↗：提取有<br/>效相机的 TAA 设置并消费历史重置信号。" }
+  n7@{ shape: rounded, label: "**extract​_​taa​_​settings**<br/>来自crate:bevy​_​anti​_​alias ↗：提取有<br/>效相机的 TAA 设置并消费历史重置信号。" }
   class n7 node_system
   class n7 external_node
-  n8@{ shape: rounded, label: "**bevy​_​egui::render::extract​_​egui​_​**<br/>**camera​_​view​_​system**<br/>来自crate:bevy​_​egui ↗：为活动相机提取<br/>独立 Egui 渲染视图。" }
+  n8@{ shape: rounded, label: "**extract​_​egui​_​camera​_​view​_​system**<br/>来自crate:bevy​_​egui ↗：为活动相机提取<br/>独立 Egui 渲染视图。" }
   class n8 node_system
   class n8 external_node
   n0 e0@--> n1

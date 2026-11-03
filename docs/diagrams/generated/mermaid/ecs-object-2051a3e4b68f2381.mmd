@@ -46,7 +46,7 @@ flowchart LR
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
   subgraph layout_card_n0[" "]
-  n0@{ shape: hex, label: "**bevy​_​ui​_​widgets::list::listbox​_​on​_​**<br/>**key​_​input**<br/>处理列表键盘导航与行确认。" }
+  n0@{ shape: hex, label: "**listbox​_​on​_​key​_​input**<br/>处理列表键盘导航与行确认。" }
   class n0 node_observer
   end
   style layout_card_n0 fill:none,stroke:none
@@ -57,61 +57,61 @@ flowchart LR
   end
   style layout_card_n1 fill:none,stroke:none
   subgraph layout_card_n2[" "]
-  n2@{ shape: rounded, label: "**list::ActiveDescendant**<br/>记录列表键盘导航的活动行。" }
+  n2@{ shape: rounded, label: "**ActiveDescendant**<br/>记录列表键盘导航的活动行。" }
   class n2 node_component
   end
   style layout_card_n2 fill:none,stroke:none
   subgraph layout_card_n3[" "]
-  n3@{ shape: stadium, label: "**scrollbar::ScrollIntoView**<br/>请求把目标项目滚动到可见范围。" }
+  n3@{ shape: stadium, label: "**ScrollIntoView**<br/>请求把目标项目滚动到可见范围。" }
   class n3 node_event
   end
   style layout_card_n3 fill:none,stroke:none
   subgraph layout_card_n4[" "]
-  n4@{ shape: stadium, label: "**FocusedInput#lt;bevy​_​input::keyboard::**<br/>**KeyboardInput#gt;**<br/>来自crate:bevy​_​input​_​focus ↗：把输入<br/>消息路由到焦点实体并向窗口冒泡。" }
+  n4@{ shape: stadium, label: "**FocusedInput#lt;KeyboardInput#gt;**<br/>来自crate:bevy​_​input​_​focus ↗：把输入<br/>消息路由到焦点实体并向窗口冒泡。" }
   class n4 node_event
   class n4 external_node
   end
   style layout_card_n4 fill:none,stroke:none
   subgraph layout_card_n5[" "]
-  n5@{ shape: stadium, label: "**list::ReselectListRow**<br/>通知再次确认当前已选列表行。" }
+  n5@{ shape: stadium, label: "**ReselectListRow**<br/>通知再次确认当前已选列表行。" }
   class n5 node_event
   end
   style layout_card_n5 fill:none,stroke:none
   subgraph layout_card_n6[" "]
-  n6@{ shape: rounded, label: "**list::ListBox**<br/>组织列表项的导航与选择。" }
+  n6@{ shape: rounded, label: "**ListBox**<br/>组织列表项的导航与选择。" }
   class n6 node_component
   end
   style layout_card_n6 fill:none,stroke:none
   subgraph layout_card_n7[" "]
-  n7@{ shape: rounded, label: "**bevy​_​ecs::hierarchy::Children**<br/>来自crate:bevy​_​ecs ↗：保存以<br/>ChildOf 指向当前父实体的子实体集合" }
+  n7@{ shape: rounded, label: "**Children**<br/>来自crate:bevy​_​ecs ↗：保存以<br/>ChildOf 指向当前父实体的子实体集合" }
   class n7 node_component
   class n7 external_node
   end
   style layout_card_n7 fill:none,stroke:none
   subgraph layout_card_n8[" "]
-  n8@{ shape: rounded, label: "**bevy​_​ui::Selected**<br/>来自crate:bevy​_​ui ↗：记录控件的<br/>ARIA 选中状态。" }
+  n8@{ shape: rounded, label: "**Selected**<br/>来自crate:bevy​_​ui ↗：记录控件的<br/>ARIA 选中状态。" }
   class n8 node_component
   class n8 external_node
   end
   style layout_card_n8 fill:none,stroke:none
   subgraph layout_card_n9[" "]
-  n9@{ shape: rounded, label: "**bevy​_​ui::InteractionDisabled**<br/>来自crate:bevy​_​ui ↗：标记禁止交互的<br/>UI 控件。" }
+  n9@{ shape: rounded, label: "**InteractionDisabled**<br/>来自crate:bevy​_​ui ↗：标记禁止交互的<br/>UI 控件。" }
   class n9 node_component
   class n9 external_node
   end
   style layout_card_n9 fill:none,stroke:none
   subgraph layout_card_n10[" "]
-  n10@{ shape: rounded, label: "**list::ListItem**<br/>标识列表中的可选行。" }
+  n10@{ shape: rounded, label: "**ListItem**<br/>标识列表中的可选行。" }
   class n10 node_component
   end
   style layout_card_n10 fill:none,stroke:none
   subgraph layout_card_n11[" "]
-  n11@{ shape: stadium, label: "**ValueChange#lt;bevy​_​ecs::entity::**<br/>**Entity#gt;**<br/>传递控件提出的新值。" }
+  n11@{ shape: stadium, label: "**ValueChange#lt;Entity#gt;**<br/>传递控件提出的新值。" }
   class n11 node_event
   end
   style layout_card_n11 fill:none,stroke:none
   subgraph layout_card_n12[" "]
-  n12@{ shape: fr-rect, label: "**list::ListBoxPlugin**<br/>处理列表焦点、导航与选行请求。" }
+  n12@{ shape: fr-rect, label: "**ListBoxPlugin**<br/>处理列表焦点、导航与选行请求。" }
   class n12 node_plugin
   end
   style layout_card_n12 fill:none,stroke:none

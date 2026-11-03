@@ -36,9 +36,9 @@ flowchart LR
   classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**ssr::ScreenSpaceReflections**<br/>配置相机屏幕空间反射。" }
+  n0@{ shape: rounded, label: "**ScreenSpaceReflections**<br/>配置相机屏幕空间反射。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​extract::extract​_​component::**<br/>**extract​_​components#lt;bevy​_​pbr::ssr::**<br/>**ScreenSpaceReflections, bevy​_​**<br/>**render::RenderApp, ()#gt;**<br/>来自crate:bevy​_​extract ↗：批量同步或<br/>移除子世界的目标组件。" }
+  n1@{ shape: rounded, label: "**extract​_​components**<br/>来自crate:bevy​_​extract ↗：批量同步或<br/>移除子世界的目标组件。" }
   class n1 node_system
   class n1 external_node
   n0 e0@--> n1

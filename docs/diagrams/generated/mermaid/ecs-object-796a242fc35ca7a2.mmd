@@ -42,12 +42,12 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​egui::render::systems::queue​_​**<br/>**bind​_​groups​_​system**<br/>建立 Egui 纹理与采样器绑定。" }
+  n0@{ shape: rounded, label: "**queue​_​bind​_​groups​_​system**<br/>建立 Egui 纹理与采样器绑定。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**bevy​_​render::renderer::RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
+  n1@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
   class n1 node_resource
   class n1 external_node
-  n2@{ shape: cyl, label: "**render::EguiPipeline**<br/>描述 Egui 渲染管线的变换与纹理绑定布局" }
+  n2@{ shape: cyl, label: "**EguiPipeline**<br/>描述 Egui 渲染管线的变换与纹理绑定布局" }
   class n2 node_resource
   n3@{ shape: fr-rect, label: "**EguiPlugin**<br/>装配 Egui 输入、上下文与渲染。" }
   class n3 node_plugin
@@ -56,14 +56,14 @@ flowchart LR
   class n4 external_node
   n5@{ shape: cyl, label: "**EguiUserTextures**<br/>登记由用户提供给 Egui 的 Bevy 图像纹理" }
   class n5 node_resource
-  n6@{ shape: cyl, label: "**render::systems::**<br/>**EguiTextureBindGroups**<br/>索引Egui纹理绑定组及数组偏移。" }
+  n6@{ shape: cyl, label: "**EguiTextureBindGroups**<br/>索引Egui纹理绑定组及数组偏移。" }
   class n6 node_resource
-  n7@{ shape: cyl, label: "**bevy​_​render::render​_​asset::**<br/>**RenderAssets#lt;bevy​_​render::texture::**<br/>**GpuImage#gt;**<br/>来自crate:bevy​_​render ↗：按源资产身份<br/>保存 GPU 渲染表示。" }
+  n7@{ shape: cyl, label: "**RenderAssets#lt;GpuImage#gt;**<br/>来自crate:bevy​_​render ↗：按源资产身份<br/>保存 GPU 渲染表示。" }
   class n7 node_resource
   class n7 external_node
-  n8@{ shape: cyl, label: "**render::systems::**<br/>**ExtractedEguiManagedTextures**<br/>在渲染世界保存从 EguiManagedTextures<br/>提取的纹理句柄表" }
+  n8@{ shape: cyl, label: "**ExtractedEguiManagedTextures**<br/>在渲染世界保存从 EguiManagedTextures<br/>提取的纹理句柄表" }
   class n8 node_resource
-  n9@{ shape: cyl, label: "**bevy​_​render::render​_​resource::**<br/>**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
+  n9@{ shape: cyl, label: "**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
   class n9 node_resource
   class n9 external_node
   n1 e0@--> n0

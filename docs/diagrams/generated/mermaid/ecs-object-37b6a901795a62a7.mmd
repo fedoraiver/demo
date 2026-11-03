@@ -41,18 +41,18 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​render::uniform::prepare​_​**<br/>**uniform​_​components#lt;bevy​_​gizmos​_​**<br/>**render::LineGizmoUniform#gt;**<br/>将组件值批量上传为动态着色器参数。" }
+  n0@{ shape: rounded, label: "**prepare​_​uniform​_​components**<br/>将组件值批量上传为动态着色器参数。" }
   class n0 node_system
   n1@{ shape: rounded, label: "**LineGizmoUniform**<br/>来自crate:bevy​_​gizmos​_​render ↗：上传<br/>调试线的变换、宽度和样式参数。" }
   class n1 node_component
   class n1 external_node
-  n2@{ shape: cyl, label: "**bevy​_​render::renderer::RenderQueue**<br/>将资源写入和命令异步提交给 GPU。" }
+  n2@{ shape: cyl, label: "**RenderQueue**<br/>将资源写入和命令异步提交给 GPU。" }
   class n2 node_resource
-  n3@{ shape: cyl, label: "**bevy​_​render::renderer::RenderDevice**<br/>创建渲染和计算所需的 GPU 资源。" }
+  n3@{ shape: cyl, label: "**RenderDevice**<br/>创建渲染和计算所需的 GPU 资源。" }
   class n3 node_resource
   n4@{ shape: lin-rect, label: "**PrepareResources**<br/>组织渲染数据准备与绘制排队。" }
   class n4 node_system_set
-  n5@{ shape: cyl, label: "**bevy​_​render::extract​_​component::**<br/>**ComponentUniforms#lt;LineGizmoUniform#gt;**<br/>汇集同类组件的动态 Uniform 数据。" }
+  n5@{ shape: cyl, label: "**ComponentUniforms#lt;LineGizmoUniform#gt;**<br/>汇集同类组件的动态 Uniform 数据。" }
   class n5 node_resource
   n1 e0@--> n0
   class e0 edge_read

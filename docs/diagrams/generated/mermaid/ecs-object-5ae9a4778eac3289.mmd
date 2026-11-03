@@ -42,18 +42,18 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​render::batching::no​_​gpu​_​**<br/>**preprocessing::write​_​batched​_​**<br/>**instance​_​buffer#lt;bevy​_​sprite​_​render::**<br/>**mesh2d::mesh::Mesh2dPipeline#gt;**<br/>上传 CPU 已合批的实例参数缓冲。" }
+  n0@{ shape: rounded, label: "**write​_​batched​_​instance​_​buffer**<br/>上传 CPU 已合批的实例参数缓冲。" }
   class n0 node_system
   n1@{ shape: lin-rect, label: "**PrepareResourcesFlush**<br/>组织渲染数据准备与绘制排队。" }
   class n1 node_system_set
-  n2@{ shape: fr-rect, label: "**mesh2d::mesh::Mesh2dRenderPlugin**<br/>来自crate:bevy​_​sprite​_​render ↗：准备<br/>二维网格实例和批处理管线。" }
+  n2@{ shape: fr-rect, label: "**Mesh2dRenderPlugin**<br/>来自crate:bevy​_​sprite​_​render ↗：准备<br/>二维网格实例和批处理管线。" }
   class n2 node_plugin
   class n2 external_node
-  n3@{ shape: cyl, label: "**bevy​_​render::renderer::RenderDevice**<br/>创建渲染和计算所需的 GPU 资源。" }
+  n3@{ shape: cyl, label: "**RenderDevice**<br/>创建渲染和计算所需的 GPU 资源。" }
   class n3 node_resource
-  n4@{ shape: cyl, label: "**bevy​_​render::renderer::RenderQueue**<br/>将资源写入和命令异步提交给 GPU。" }
+  n4@{ shape: cyl, label: "**RenderQueue**<br/>将资源写入和命令异步提交给 GPU。" }
   class n4 node_resource
-  n5@{ shape: cyl, label: "**bevy​_​render::batching::no​_​gpu​_​**<br/>**preprocessing::**<br/>**BatchedInstanceBuffer#lt;mesh2d::mesh::**<br/>**Mesh2dUniform#gt;**<br/>保存 CPU 准备路径的批次绘制数据。" }
+  n5@{ shape: cyl, label: "**BatchedInstanceBuffer#lt;Mesh2dUniform#gt;**<br/>保存 CPU 准备路径的批次绘制数据。" }
   class n5 node_resource
   n1 e0@-->|"集合成员"| n0
   class e0 edge_set_membership

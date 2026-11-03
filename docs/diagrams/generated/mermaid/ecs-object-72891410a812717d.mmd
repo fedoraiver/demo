@@ -39,7 +39,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: notch-rect, label: "**Local · previous**<br/>避免对同一聚焦按钮重复调整滚动。" }
   class n0 node_local
-  n1@{ shape: rounded, label: "**demo::ui::scroll::scroll​_​focused​_​**<br/>**button**<br/>短窗口中键盘仍能访问所有按钮；新页面先等<br/>布局完成，再滚到焦点所在区域。" }
+  n1@{ shape: rounded, label: "**scroll​_​focused​_​button**<br/>短窗口中键盘仍能访问所有按钮；新页面先等<br/>布局完成，再滚到焦点所在区域。" }
   class n1 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

@@ -40,11 +40,8 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  subgraph layout_card_n0[" "]
-  n0@{ shape: rounded, label: "**hover::Hovered**<br/>记录实体当前是否被任一指针悬停。" }
+  n0@{ shape: rounded, label: "**Hovered**<br/>记录实体当前是否被任一指针悬停。" }
   class n0 node_component
-  end
-  style layout_card_n0 fill:none,stroke:none
   n1@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供恢复默认设置操作。" }
   class n1 node_entity
   class n1 external_node
@@ -54,7 +51,7 @@ flowchart LR
   n3@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供应用设置草稿操作。" }
   class n3 node_entity
   class n3 external_node
-  n4@{ shape: rounded, label: "**demo::ui::scroll::sync​_​settings​_​**<br/>**scrollbars**<br/>来自ui ↗：同步滚动条显隐、拾取范围与高<br/>亮。" }
+  n4@{ shape: rounded, label: "**sync​_​settings​_​scrollbars**<br/>来自ui ↗：同步滚动条显隐、拾取范围与高<br/>亮。" }
   class n4 node_system
   class n4 external_node
   n5@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供音频设置分类入口。" }
@@ -99,7 +96,7 @@ flowchart LR
   n18@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供辅助功能设置分类入口。" }
   class n18 node_entity
   class n18 external_node
-  n19@{ shape: rounded, label: "**bevy​_​picking::hover::update​_​is​_​**<br/>**hovered**<br/>把鼠标悬停传播到实体祖先。" }
+  n19@{ shape: rounded, label: "**update​_​is​_​hovered**<br/>把鼠标悬停传播到实体祖先。" }
   class n19 node_system
   n20@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供退出应用操作。" }
   class n20 node_entity
@@ -113,7 +110,7 @@ flowchart LR
   n23@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供图形设置分类入口。" }
   class n23 node_entity
   class n23 external_node
-  n24@{ shape: rounded, label: "**demo::ui::pointer::pointer​_​**<br/>**interaction**<br/>来自ui ↗：Bevy 原生 UI 已完成按钮命<br/>中；这里只读取缓冲的按下事件，不另读<br/>MouseButton。" }
+  n24@{ shape: rounded, label: "**pointer​_​interaction**<br/>来自ui ↗：Bevy 原生 UI 已完成按钮命<br/>中；这里只读取缓冲的按下事件，不另读<br/>MouseButton。" }
   class n24 node_system
   class n24 external_node
   n25@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供音量的指针与导航调整入<br/>口。" }
@@ -125,7 +122,7 @@ flowchart LR
   n27@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供控制设置分类入口。" }
   class n27 node_entity
   class n27 external_node
-  n28@{ shape: rounded, label: "**demo::ui::style::style​_​buttons**<br/>来自ui ↗：按当前输入来源更新按钮背景与<br/>焦点边框。" }
+  n28@{ shape: rounded, label: "**style​_​buttons**<br/>来自ui ↗：按当前输入来源更新按钮背景与<br/>焦点边框。" }
   class n28 node_system
   class n28 external_node
   n29@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示滚动位置并提供拖动滑块。" }
@@ -375,7 +372,6 @@ flowchart LR
   e21@{ curve: basis }
   e22@{ curve: basis }
   e23@{ curve: basis }
-  e24@{ curve: basis }
   e25@{ curve: basis }
   e26@{ curve: basis }
   e27@{ curve: basis }

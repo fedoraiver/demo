@@ -49,7 +49,7 @@ flowchart LR
   n2@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供控制设置分类入口。" }
   class n2 node_entity
   class n2 external_node
-  n3@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**insert​_​value**<br/>来自crate:bevy​_​ui​_​widgets ↗：同步滑<br/>条的无障碍当前值。" }
+  n3@{ shape: hex, label: "**slider​_​on​_​insert​_​value**<br/>来自crate:bevy​_​ui​_​widgets ↗：同步滑<br/>条的无障碍当前值。" }
   class n3 node_observer
   class n3 external_node
   n4@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供恢复默认设置操作。" }
@@ -64,16 +64,16 @@ flowchart LR
   n7@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供控制设置分类入口。" }
   class n7 node_entity
   class n7 external_node
-  n8@{ shape: hex, label: "**bevy​_​ui::interaction​_​states::on​_​**<br/>**remove​_​disabled**<br/>来自crate:bevy​_​ui ↗：向无障碍节点同步<br/>解除禁用。" }
+  n8@{ shape: hex, label: "**on​_​remove​_​disabled**<br/>来自crate:bevy​_​ui ↗：向无障碍节点同步<br/>解除禁用。" }
   class n8 node_observer
   class n8 external_node
   n9@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供音频设置分类入口。" }
   class n9 node_entity
   class n9 external_node
-  n10@{ shape: hex, label: "**bevy​_​ui::interaction​_​states::on​_​**<br/>**remove​_​checkable**<br/>来自crate:bevy​_​ui ↗：清除已不可勾选控<br/>件的无障碍属性。" }
+  n10@{ shape: hex, label: "**on​_​remove​_​checkable**<br/>来自crate:bevy​_​ui ↗：清除已不可勾选控<br/>件的无障碍属性。" }
   class n10 node_observer
   class n10 external_node
-  n11@{ shape: hex, label: "**bevy​_​ui::interaction​_​states::on​_​add​_​**<br/>**selectable**<br/>来自crate:bevy​_​ui ↗：初始化可选择控件<br/>的无障碍状态。" }
+  n11@{ shape: hex, label: "**on​_​add​_​selectable**<br/>来自crate:bevy​_​ui ↗：初始化可选择控件<br/>的无障碍状态。" }
   class n11 node_observer
   class n11 external_node
   n12@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供反转视角纵轴的左侧调整入<br/>口。" }
@@ -94,10 +94,10 @@ flowchart LR
   n17@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：按按钮方向步进调整对应音量。" }
   class n17 node_entity
   class n17 external_node
-  n18@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**insert​_​range**<br/>来自crate:bevy​_​ui​_​widgets ↗：同步滑<br/>条的无障碍数值范围。" }
+  n18@{ shape: hex, label: "**slider​_​on​_​insert​_​range**<br/>来自crate:bevy​_​ui​_​widgets ↗：同步滑<br/>条的无障碍数值范围。" }
   class n18 node_observer
   class n18 external_node
-  n19@{ shape: rounded, label: "**bevy​_​winit::accessibility::update​_​**<br/>**accessibility​_​nodes**<br/>来自crate:bevy​_​winit ↗：把变化的可访<br/>问性节点同步给原生适配器。" }
+  n19@{ shape: rounded, label: "**update​_​accessibility​_​nodes**<br/>来自crate:bevy​_​winit ↗：把变化的可访<br/>问性节点同步给原生适配器。" }
   class n19 node_system
   class n19 external_node
   n20@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供开始游戏操作。" }
@@ -115,37 +115,37 @@ flowchart LR
   n24@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供退出应用操作。" }
   class n24 node_entity
   class n24 external_node
-  n25@{ shape: hex, label: "**bevy​_​ui::interaction​_​states::on​_​**<br/>**remove​_​checkable**<br/>来自crate:bevy​_​ui ↗：清除已不可勾选控<br/>件的无障碍属性。" }
+  n25@{ shape: hex, label: "**on​_​remove​_​checkable**<br/>来自crate:bevy​_​ui ↗：清除已不可勾选控<br/>件的无障碍属性。" }
   class n25 node_observer
   class n25 external_node
-  n26@{ shape: hex, label: "**bevy​_​ui::interaction​_​states::on​_​add​_​**<br/>**checked**<br/>来自crate:bevy​_​ui ↗：同步无障碍节点的<br/>已勾选状态。" }
+  n26@{ shape: hex, label: "**on​_​add​_​checked**<br/>来自crate:bevy​_​ui ↗：同步无障碍节点的<br/>已勾选状态。" }
   class n26 node_observer
   class n26 external_node
-  n27@{ shape: hex, label: "**bevy​_​ui::interaction​_​states::on​_​**<br/>**remove​_​checkable**<br/>来自crate:bevy​_​ui ↗：清除已不可勾选控<br/>件的无障碍属性。" }
+  n27@{ shape: hex, label: "**on​_​remove​_​checkable**<br/>来自crate:bevy​_​ui ↗：清除已不可勾选控<br/>件的无障碍属性。" }
   class n27 node_observer
   class n27 external_node
-  n28@{ shape: hex, label: "**bevy​_​ui::interaction​_​states::on​_​**<br/>**remove​_​selectable**<br/>来自crate:bevy​_​ui ↗：清除已不可选择控<br/>件的无障碍属性。" }
+  n28@{ shape: hex, label: "**on​_​remove​_​selectable**<br/>来自crate:bevy​_​ui ↗：清除已不可选择控<br/>件的无障碍属性。" }
   class n28 node_observer
   class n28 external_node
   n29@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供音量的指针与导航调整入<br/>口。" }
   class n29 node_entity
   class n29 external_node
-  n30@{ shape: hex, label: "**bevy​_​ui::interaction​_​states::on​_​add​_​**<br/>**checked**<br/>来自crate:bevy​_​ui ↗：同步无障碍节点的<br/>已勾选状态。" }
+  n30@{ shape: hex, label: "**on​_​add​_​checked**<br/>来自crate:bevy​_​ui ↗：同步无障碍节点的<br/>已勾选状态。" }
   class n30 node_observer
   class n30 external_node
-  n31@{ shape: rounded, label: "**bevy​_​ui::accessibility::label​_​**<br/>**changed**<br/>来自crate:bevy​_​ui ↗：把标签子树文字写<br/>入无障碍节点。" }
+  n31@{ shape: rounded, label: "**label​_​changed**<br/>来自crate:bevy​_​ui ↗：把标签子树文字写<br/>入无障碍节点。" }
   class n31 node_system
   class n31 external_node
   n32@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供图形设置分类入口。" }
   class n32 node_entity
   class n32 external_node
-  n33@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**insert​_​value**<br/>来自crate:bevy​_​ui​_​widgets ↗：同步滑<br/>条的无障碍当前值。" }
+  n33@{ shape: hex, label: "**slider​_​on​_​insert​_​value**<br/>来自crate:bevy​_​ui​_​widgets ↗：同步滑<br/>条的无障碍当前值。" }
   class n33 node_observer
   class n33 external_node
   n34@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供控制设置分类入口。" }
   class n34 node_entity
   class n34 external_node
-  n35@{ shape: hex, label: "**bevy​_​ui::interaction​_​states::on​_​add​_​**<br/>**checkable**<br/>来自crate:bevy​_​ui ↗：初始化可勾选控件<br/>的无障碍状态。" }
+  n35@{ shape: hex, label: "**on​_​add​_​checkable**<br/>来自crate:bevy​_​ui ↗：初始化可勾选控件<br/>的无障碍状态。" }
   class n35 node_observer
   class n35 external_node
   n36@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供音效试听操作。" }
@@ -154,34 +154,34 @@ flowchart LR
   n37@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供恢复游戏操作。" }
   class n37 node_entity
   class n37 external_node
-  n38@{ shape: hex, label: "**bevy​_​ui::interaction​_​states::on​_​add​_​**<br/>**selectable**<br/>来自crate:bevy​_​ui ↗：初始化可选择控件<br/>的无障碍状态。" }
+  n38@{ shape: hex, label: "**on​_​add​_​selectable**<br/>来自crate:bevy​_​ui ↗：初始化可选择控件<br/>的无障碍状态。" }
   class n38 node_observer
   class n38 external_node
   n39@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供恢复默认设置操作。" }
   class n39 node_entity
   class n39 external_node
-  n40@{ shape: hex, label: "**bevy​_​ui::interaction​_​states::on​_​**<br/>**remove​_​selected**<br/>来自crate:bevy​_​ui ↗：同步无障碍节点的<br/>未选中状态。" }
+  n40@{ shape: hex, label: "**on​_​remove​_​selected**<br/>来自crate:bevy​_​ui ↗：同步无障碍节点的<br/>未选中状态。" }
   class n40 node_observer
   class n40 external_node
-  n41@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**insert**<br/>来自crate:bevy​_​ui​_​widgets ↗：同步滑<br/>条的无障碍方向。" }
+  n41@{ shape: hex, label: "**slider​_​on​_​insert**<br/>来自crate:bevy​_​ui​_​widgets ↗：同步滑<br/>条的无障碍方向。" }
   class n41 node_observer
   class n41 external_node
-  n42@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**insert**<br/>来自crate:bevy​_​ui​_​widgets ↗：同步滑<br/>条的无障碍方向。" }
+  n42@{ shape: hex, label: "**slider​_​on​_​insert**<br/>来自crate:bevy​_​ui​_​widgets ↗：同步滑<br/>条的无障碍方向。" }
   class n42 node_observer
   class n42 external_node
-  n43@{ shape: rounded, label: "**bevy​_​ui::accessibility::sync​_​bounds​_​**<br/>**and​_​transforms**<br/>来自crate:bevy​_​ui ↗：把 UI 几何同步到<br/>无障碍树。" }
+  n43@{ shape: rounded, label: "**sync​_​bounds​_​and​_​transforms**<br/>来自crate:bevy​_​ui ↗：把 UI 几何同步到<br/>无障碍树。" }
   class n43 node_system
   class n43 external_node
-  n44@{ shape: hex, label: "**bevy​_​ui::interaction​_​states::on​_​add​_​**<br/>**checkable**<br/>来自crate:bevy​_​ui ↗：初始化可勾选控件<br/>的无障碍状态。" }
+  n44@{ shape: hex, label: "**on​_​add​_​checkable**<br/>来自crate:bevy​_​ui ↗：初始化可勾选控件<br/>的无障碍状态。" }
   class n44 node_observer
   class n44 external_node
-  n45@{ shape: hex, label: "**bevy​_​ui::interaction​_​states::on​_​add​_​**<br/>**checked**<br/>来自crate:bevy​_​ui ↗：同步无障碍节点的<br/>已勾选状态。" }
+  n45@{ shape: hex, label: "**on​_​add​_​checked**<br/>来自crate:bevy​_​ui ↗：同步无障碍节点的<br/>已勾选状态。" }
   class n45 node_observer
   class n45 external_node
-  n46@{ shape: hex, label: "**bevy​_​ui::interaction​_​states::on​_​**<br/>**remove​_​checked**<br/>来自crate:bevy​_​ui ↗：同步无障碍节点的<br/>未勾选状态。" }
+  n46@{ shape: hex, label: "**on​_​remove​_​checked**<br/>来自crate:bevy​_​ui ↗：同步无障碍节点的<br/>未勾选状态。" }
   class n46 node_observer
   class n46 external_node
-  n47@{ shape: hex, label: "**bevy​_​ui::interaction​_​states::on​_​**<br/>**remove​_​selectable**<br/>来自crate:bevy​_​ui ↗：清除已不可选择控<br/>件的无障碍属性。" }
+  n47@{ shape: hex, label: "**on​_​remove​_​selectable**<br/>来自crate:bevy​_​ui ↗：清除已不可选择控<br/>件的无障碍属性。" }
   class n47 node_observer
   class n47 external_node
   n48@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供图形设置分类入口。" }
@@ -199,19 +199,19 @@ flowchart LR
   n52@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：按按钮方向步进调整对应音量。" }
   class n52 node_entity
   class n52 external_node
-  n53@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**insert​_​range**<br/>来自crate:bevy​_​ui​_​widgets ↗：同步滑<br/>条的无障碍数值范围。" }
+  n53@{ shape: hex, label: "**slider​_​on​_​insert​_​range**<br/>来自crate:bevy​_​ui​_​widgets ↗：同步滑<br/>条的无障碍数值范围。" }
   class n53 node_observer
   class n53 external_node
   n54@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供鼠标灵敏度的右侧调整入<br/>口。" }
   class n54 node_entity
   class n54 external_node
-  n55@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**insert​_​range**<br/>来自crate:bevy​_​ui​_​widgets ↗：同步滑<br/>条的无障碍数值范围。" }
+  n55@{ shape: hex, label: "**slider​_​on​_​insert​_​range**<br/>来自crate:bevy​_​ui​_​widgets ↗：同步滑<br/>条的无障碍数值范围。" }
   class n55 node_observer
   class n55 external_node
-  n56@{ shape: hex, label: "**bevy​_​ui::interaction​_​states::on​_​**<br/>**remove​_​selected**<br/>来自crate:bevy​_​ui ↗：同步无障碍节点的<br/>未选中状态。" }
+  n56@{ shape: hex, label: "**on​_​remove​_​selected**<br/>来自crate:bevy​_​ui ↗：同步无障碍节点的<br/>未选中状态。" }
   class n56 node_observer
   class n56 external_node
-  n57@{ shape: rounded, label: "**bevy​_​ui::accessibility::button​_​**<br/>**changed**<br/>来自crate:bevy​_​ui ↗：为按钮生成或更新<br/>无障碍角色与文本标签。" }
+  n57@{ shape: rounded, label: "**button​_​changed**<br/>来自crate:bevy​_​ui ↗：为按钮生成或更新<br/>无障碍角色与文本标签。" }
   class n57 node_system
   class n57 external_node
   n58@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供音频设置分类入口。" }
@@ -223,37 +223,37 @@ flowchart LR
   n60@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供控制设置分类入口。" }
   class n60 node_entity
   class n60 external_node
-  n61@{ shape: hex, label: "**bevy​_​ui::interaction​_​states::on​_​**<br/>**remove​_​disabled**<br/>来自crate:bevy​_​ui ↗：向无障碍节点同步<br/>解除禁用。" }
+  n61@{ shape: hex, label: "**on​_​remove​_​disabled**<br/>来自crate:bevy​_​ui ↗：向无障碍节点同步<br/>解除禁用。" }
   class n61 node_observer
   class n61 external_node
-  n62@{ shape: hex, label: "**bevy​_​ui::interaction​_​states::on​_​**<br/>**remove​_​selected**<br/>来自crate:bevy​_​ui ↗：同步无障碍节点的<br/>未选中状态。" }
+  n62@{ shape: hex, label: "**on​_​remove​_​selected**<br/>来自crate:bevy​_​ui ↗：同步无障碍节点的<br/>未选中状态。" }
   class n62 node_observer
   class n62 external_node
   n63@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：按按钮方向步进调整对应音量。" }
   class n63 node_entity
   class n63 external_node
-  n64@{ shape: hex, label: "**bevy​_​ui::interaction​_​states::on​_​add​_​**<br/>**disabled**<br/>来自crate:bevy​_​ui ↗：向无障碍节点同步<br/>禁用状态。" }
+  n64@{ shape: hex, label: "**on​_​add​_​disabled**<br/>来自crate:bevy​_​ui ↗：向无障碍节点同步<br/>禁用状态。" }
   class n64 node_observer
   class n64 external_node
-  n65@{ shape: hex, label: "**bevy​_​ui::interaction​_​states::on​_​add​_​**<br/>**checkable**<br/>来自crate:bevy​_​ui ↗：初始化可勾选控件<br/>的无障碍状态。" }
+  n65@{ shape: hex, label: "**on​_​add​_​checkable**<br/>来自crate:bevy​_​ui ↗：初始化可勾选控件<br/>的无障碍状态。" }
   class n65 node_observer
   class n65 external_node
-  n66@{ shape: rounded, label: "**bevy​_​ui::accessibility::image​_​**<br/>**changed**<br/>来自crate:bevy​_​ui ↗：为非按钮图像生成<br/>或更新无障碍标签。" }
+  n66@{ shape: rounded, label: "**image​_​changed**<br/>来自crate:bevy​_​ui ↗：为非按钮图像生成<br/>或更新无障碍标签。" }
   class n66 node_system
   class n66 external_node
-  n67@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**insert​_​step**<br/>来自crate:bevy​_​ui​_​widgets ↗：同步滑<br/>条的无障碍步长。" }
+  n67@{ shape: hex, label: "**slider​_​on​_​insert​_​step**<br/>来自crate:bevy​_​ui​_​widgets ↗：同步滑<br/>条的无障碍步长。" }
   class n67 node_observer
   class n67 external_node
   n68@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：按按钮方向步进调整对应音量。" }
   class n68 node_entity
   class n68 external_node
-  n69@{ shape: hex, label: "**bevy​_​ui::interaction​_​states::on​_​**<br/>**remove​_​checked**<br/>来自crate:bevy​_​ui ↗：同步无障碍节点的<br/>未勾选状态。" }
+  n69@{ shape: hex, label: "**on​_​remove​_​checked**<br/>来自crate:bevy​_​ui ↗：同步无障碍节点的<br/>未勾选状态。" }
   class n69 node_observer
   class n69 external_node
   n70@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供返回主菜单操作。" }
   class n70 node_entity
   class n70 external_node
-  n71@{ shape: hex, label: "**bevy​_​ui::interaction​_​states::on​_​add​_​**<br/>**selected**<br/>来自crate:bevy​_​ui ↗：同步无障碍节点的<br/>已选中状态。" }
+  n71@{ shape: hex, label: "**on​_​add​_​selected**<br/>来自crate:bevy​_​ui ↗：同步无障碍节点的<br/>已选中状态。" }
   class n71 node_observer
   class n71 external_node
   n72@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供帧率上限的左侧调整入口。" }
@@ -274,7 +274,7 @@ flowchart LR
   n77@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供返回来源页面操作。" }
   class n77 node_entity
   class n77 external_node
-  n78@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**insert​_​step**<br/>来自crate:bevy​_​ui​_​widgets ↗：同步滑<br/>条的无障碍步长。" }
+  n78@{ shape: hex, label: "**slider​_​on​_​insert​_​step**<br/>来自crate:bevy​_​ui​_​widgets ↗：同步滑<br/>条的无障碍步长。" }
   class n78 node_observer
   class n78 external_node
   n79@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供打开帮助操作。" }
@@ -283,10 +283,10 @@ flowchart LR
   n80@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供恢复默认设置操作。" }
   class n80 node_entity
   class n80 external_node
-  n81@{ shape: hex, label: "**bevy​_​ui::interaction​_​states::on​_​**<br/>**remove​_​selectable**<br/>来自crate:bevy​_​ui ↗：清除已不可选择控<br/>件的无障碍属性。" }
+  n81@{ shape: hex, label: "**on​_​remove​_​selectable**<br/>来自crate:bevy​_​ui ↗：清除已不可选择控<br/>件的无障碍属性。" }
   class n81 node_observer
   class n81 external_node
-  n82@{ shape: hex, label: "**bevy​_​ui::interaction​_​states::on​_​add​_​**<br/>**disabled**<br/>来自crate:bevy​_​ui ↗：向无障碍节点同步<br/>禁用状态。" }
+  n82@{ shape: hex, label: "**on​_​add​_​disabled**<br/>来自crate:bevy​_​ui ↗：向无障碍节点同步<br/>禁用状态。" }
   class n82 node_observer
   class n82 external_node
   n83@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供返回来源页面操作。" }
@@ -295,7 +295,7 @@ flowchart LR
   n84@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：按按钮方向步进调整对应音量。" }
   class n84 node_entity
   class n84 external_node
-  n85@{ shape: hex, label: "**bevy​_​ui::interaction​_​states::on​_​**<br/>**remove​_​checked**<br/>来自crate:bevy​_​ui ↗：同步无障碍节点的<br/>未勾选状态。" }
+  n85@{ shape: hex, label: "**on​_​remove​_​checked**<br/>来自crate:bevy​_​ui ↗：同步无障碍节点的<br/>未勾选状态。" }
   class n85 node_observer
   class n85 external_node
   n86@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供反转视角纵轴的右侧调整入<br/>口。" }
@@ -304,34 +304,34 @@ flowchart LR
   n87@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供返回来源页面操作。" }
   class n87 node_entity
   class n87 external_node
-  n88@{ shape: hex, label: "**bevy​_​ui::interaction​_​states::on​_​add​_​**<br/>**selected**<br/>来自crate:bevy​_​ui ↗：同步无障碍节点的<br/>已选中状态。" }
+  n88@{ shape: hex, label: "**on​_​add​_​selected**<br/>来自crate:bevy​_​ui ↗：同步无障碍节点的<br/>已选中状态。" }
   class n88 node_observer
   class n88 external_node
-  n89@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**insert​_​step**<br/>来自crate:bevy​_​ui​_​widgets ↗：同步滑<br/>条的无障碍步长。" }
+  n89@{ shape: hex, label: "**slider​_​on​_​insert​_​step**<br/>来自crate:bevy​_​ui​_​widgets ↗：同步滑<br/>条的无障碍步长。" }
   class n89 node_observer
   class n89 external_node
   n90@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供辅助功能设置分类入口。" }
   class n90 node_entity
   class n90 external_node
-  n91@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**insert**<br/>来自crate:bevy​_​ui​_​widgets ↗：同步滑<br/>条的无障碍方向。" }
+  n91@{ shape: hex, label: "**slider​_​on​_​insert**<br/>来自crate:bevy​_​ui​_​widgets ↗：同步滑<br/>条的无障碍方向。" }
   class n91 node_observer
   class n91 external_node
   n92@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供应用设置草稿操作。" }
   class n92 node_entity
   class n92 external_node
-  n93@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**insert​_​value**<br/>来自crate:bevy​_​ui​_​widgets ↗：同步滑<br/>条的无障碍当前值。" }
+  n93@{ shape: hex, label: "**slider​_​on​_​insert​_​value**<br/>来自crate:bevy​_​ui​_​widgets ↗：同步滑<br/>条的无障碍当前值。" }
   class n93 node_observer
   class n93 external_node
-  n94@{ shape: hex, label: "**bevy​_​ui::interaction​_​states::on​_​add​_​**<br/>**selectable**<br/>来自crate:bevy​_​ui ↗：初始化可选择控件<br/>的无障碍状态。" }
+  n94@{ shape: hex, label: "**on​_​add​_​selectable**<br/>来自crate:bevy​_​ui ↗：初始化可选择控件<br/>的无障碍状态。" }
   class n94 node_observer
   class n94 external_node
   n95@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供打开设置操作。" }
   class n95 node_entity
   class n95 external_node
-  n96@{ shape: hex, label: "**bevy​_​ui::interaction​_​states::on​_​add​_​**<br/>**selected**<br/>来自crate:bevy​_​ui ↗：同步无障碍节点的<br/>已选中状态。" }
+  n96@{ shape: hex, label: "**on​_​add​_​selected**<br/>来自crate:bevy​_​ui ↗：同步无障碍节点的<br/>已选中状态。" }
   class n96 node_observer
   class n96 external_node
-  n97@{ shape: hex, label: "**bevy​_​ui::interaction​_​states::on​_​add​_​**<br/>**disabled**<br/>来自crate:bevy​_​ui ↗：向无障碍节点同步<br/>禁用状态。" }
+  n97@{ shape: hex, label: "**on​_​add​_​disabled**<br/>来自crate:bevy​_​ui ↗：向无障碍节点同步<br/>禁用状态。" }
   class n97 node_observer
   class n97 external_node
   n98@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供打开帮助操作。" }
@@ -340,7 +340,7 @@ flowchart LR
   n99@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供帮助页返回操作。" }
   class n99 node_entity
   class n99 external_node
-  n100@{ shape: hex, label: "**bevy​_​ui::interaction​_​states::on​_​**<br/>**remove​_​disabled**<br/>来自crate:bevy​_​ui ↗：向无障碍节点同步<br/>解除禁用。" }
+  n100@{ shape: hex, label: "**on​_​remove​_​disabled**<br/>来自crate:bevy​_​ui ↗：向无障碍节点同步<br/>解除禁用。" }
   class n100 node_observer
   class n100 external_node
   n1 e0@-->|"可能包含"| n0

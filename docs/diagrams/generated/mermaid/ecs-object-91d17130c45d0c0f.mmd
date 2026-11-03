@@ -38,15 +38,15 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**render::SpritePipeline**<br/>提供精灵视图、材质布局及着色器。" }
+  n0@{ shape: cyl, label: "**SpritePipeline**<br/>提供精灵视图、材质布局及着色器。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​sprite​_​render::render::init​_​**<br/>**sprite​_​pipeline**<br/>建立精灵视图和图像材质管线资源。" }
+  n1@{ shape: rounded, label: "**init​_​sprite​_​pipeline**<br/>建立精灵视图和图像材质管线资源。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​sprite​_​render::render::prepare​_​**<br/>**sprite​_​view​_​bind​_​groups**<br/>为精灵视图绑定参数和色调映射 LUT。" }
+  n2@{ shape: rounded, label: "**prepare​_​sprite​_​view​_​bind​_​groups**<br/>为精灵视图绑定参数和色调映射 LUT。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​sprite​_​render::render::prepare​_​**<br/>**sprite​_​image​_​bind​_​groups**<br/>合并连续同图像精灵并上传实例与索引数据。" }
+  n3@{ shape: rounded, label: "**prepare​_​sprite​_​image​_​bind​_​groups**<br/>合并连续同图像精灵并上传实例与索引数据。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**bevy​_​sprite​_​render::render::queue​_​**<br/>**sprites**<br/>按视图可见性将精灵加入透明二维阶段。" }
+  n4@{ shape: rounded, label: "**queue​_​sprites**<br/>按视图可见性将精灵加入透明二维阶段。" }
   class n4 node_system
   n1 e0@-->|"插入"| n0
   class e0 edge_write

@@ -39,7 +39,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: notch-rect, label: "**Local · arg1**<br/>保存消息缓冲轮换的上次变化刻度。" }
   class n0 node_local
-  n1@{ shape: rounded, label: "**bevy​_​ecs::message::update::message​_​**<br/>**update​_​system**<br/>轮换世界中已注册的消息缓冲。" }
+  n1@{ shape: rounded, label: "**message​_​update​_​system**<br/>轮换世界中已注册的消息缓冲。" }
   class n1 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

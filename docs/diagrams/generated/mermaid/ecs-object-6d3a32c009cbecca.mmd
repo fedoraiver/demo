@@ -39,50 +39,50 @@ flowchart LR
   classDef edge_order stroke:#334155,stroke-width:2px
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​pbr::atmosphere::node::render​_​**<br/>**sky**<br/>绑定大气查找表及视图、光照参数，按相机视<br/>口和可选分辨率覆盖设置绘制全屏天空，将结<br/>果写入视图颜色附件。" }
+  n0@{ shape: rounded, label: "**render​_​sky**<br/>绑定大气查找表及视图、光照参数，按相机视<br/>口和可选分辨率覆盖设置绘制全屏天空，将结<br/>果写入视图颜色附件。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**camera::MainPassResolutionOverride**<br/>来自crate:bevy​_​camera ↗：覆盖三维主通<br/>道的渲染分辨率。" }
+  n1@{ shape: rounded, label: "**MainPassResolutionOverride**<br/>来自crate:bevy​_​camera ↗：覆盖三维主通<br/>道的渲染分辨率。" }
   class n1 node_component
   class n1 external_node
-  n2@{ shape: cyl, label: "**bevy​_​render::diagnostic::**<br/>**DiagnosticsRecorder**<br/>来自crate:bevy​_​render ↗：记录渲染诊断<br/>区间与 GPU 查询索引的对应。" }
+  n2@{ shape: cyl, label: "**DiagnosticsRecorder**<br/>来自crate:bevy​_​render ↗：记录渲染诊断<br/>区间与 GPU 查询索引的对应。" }
   class n2 node_resource
   class n2 external_node
-  n3@{ shape: rounded, label: "**atmosphere::resources::**<br/>**AtmosphereBindGroups**<br/>保存大气查找表及天空绘制的绑定组。" }
+  n3@{ shape: rounded, label: "**AtmosphereBindGroups**<br/>保存大气查找表及天空绘制的绑定组。" }
   class n3 node_component
-  n4@{ shape: rounded, label: "**bevy​_​render::extract​_​component::**<br/>**DynamicUniformIndex#lt;atmosphere::**<br/>**resources::GpuAtmosphere#gt;**<br/>来自crate:bevy​_​render ↗：定位组件参数<br/>在共享 Uniform 缓冲中的位置。" }
+  n4@{ shape: rounded, label: "**DynamicUniformIndex#lt;GpuAtmosphere#gt;**<br/>来自crate:bevy​_​render ↗：定位组件参数<br/>在共享 Uniform 缓冲中的位置。" }
   class n4 node_component
   class n4 external_node
-  n5@{ shape: rounded, label: "**bevy​_​render::view::ViewTarget**<br/>来自crate:bevy​_​render ↗：管理视图主颜<br/>色纹理及最终输出附件。" }
+  n5@{ shape: rounded, label: "**ViewTarget**<br/>来自crate:bevy​_​render ↗：管理视图主颜<br/>色纹理及最终输出附件。" }
   class n5 node_component
   class n5 external_node
-  n6@{ shape: rounded, label: "**bevy​_​render::extract​_​component::**<br/>**DynamicUniformIndex#lt;atmosphere::**<br/>**GpuAtmosphereSettings#gt;**<br/>来自crate:bevy​_​render ↗：定位组件参数<br/>在共享 Uniform 缓冲中的位置。" }
+  n6@{ shape: rounded, label: "**DynamicUniformIndex#lt;GpuAtmosphereSet**<br/>**tings#gt;**<br/>来自crate:bevy​_​render ↗：定位组件参数<br/>在共享 Uniform 缓冲中的位置。" }
   class n6 node_component
   class n6 external_node
-  n7@{ shape: rounded, label: "**bevy​_​core​_​pipeline::core​_​3d::main​_​**<br/>**opaque​_​pass​_​3d​_​node::main​_​opaque​_​**<br/>**pass​_​3d**<br/>来自crate:bevy​_​core​_​pipeline ↗：绘制<br/>三维不透明、AlphaMask 与天空盒。" }
+  n7@{ shape: rounded, label: "**main​_​opaque​_​pass​_​3d**<br/>来自crate:bevy​_​core​_​pipeline ↗：绘制<br/>三维不透明、AlphaMask 与天空盒。" }
   class n7 node_system
   class n7 external_node
-  n8@{ shape: rounded, label: "**atmosphere::resources::**<br/>**RenderSkyPipelineId**<br/>定位当前天空绘制的缓存管线。" }
+  n8@{ shape: rounded, label: "**RenderSkyPipelineId**<br/>定位当前天空绘制的缓存管线。" }
   class n8 node_component
-  n9@{ shape: rounded, label: "**bevy​_​core​_​pipeline::core​_​3d::main​_​**<br/>**transparent​_​pass​_​3d​_​node::main​_​**<br/>**transparent​_​pass​_​3d**<br/>来自crate:bevy​_​core​_​pipeline ↗：绘制<br/>三维透明物体并保护 OIT 链表状态。" }
+  n9@{ shape: rounded, label: "**main​_​transparent​_​pass​_​3d**<br/>来自crate:bevy​_​core​_​pipeline ↗：绘制<br/>三维透明物体并保护 OIT 链表状态。" }
   class n9 node_system
   class n9 external_node
-  n10@{ shape: rounded, label: "**render::light::**<br/>**ViewLightsUniformOffset**<br/>定位视图在光照 Uniform 缓冲中的参数。" }
+  n10@{ shape: rounded, label: "**ViewLightsUniformOffset**<br/>定位视图在光照 Uniform 缓冲中的参数。" }
   class n10 node_component
-  n11@{ shape: cyl, label: "**bevy​_​render::renderer::RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
+  n11@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
   class n11 node_resource
   class n11 external_node
-  n12@{ shape: cyl, label: "**bevy​_​render::render​_​resource::**<br/>**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
+  n12@{ shape: cyl, label: "**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
   class n12 node_resource
   class n12 external_node
-  n13@{ shape: cyl, label: "**bevy​_​render::renderer::CurrentView**<br/>来自crate:bevy​_​render ↗：指定当前正在<br/>渲染的视图实体。" }
+  n13@{ shape: cyl, label: "**CurrentView**<br/>来自crate:bevy​_​render ↗：指定当前正在<br/>渲染的视图实体。" }
   class n13 node_resource
   class n13 external_node
-  n14@{ shape: rounded, label: "**bevy​_​render::camera::ExtractedCamera**<br/>来自crate:bevy​_​render ↗：保存渲染世界<br/>相机的目标和绘制配置。" }
+  n14@{ shape: rounded, label: "**ExtractedCamera**<br/>来自crate:bevy​_​render ↗：保存渲染世界<br/>相机的目标和绘制配置。" }
   class n14 node_component
   class n14 external_node
-  n15@{ shape: rounded, label: "**atmosphere::resources::**<br/>**AtmosphereTransformsOffset**<br/>定位当前视图的大气变换参数。" }
+  n15@{ shape: rounded, label: "**AtmosphereTransformsOffset**<br/>定位当前视图的大气变换参数。" }
   class n15 node_component
-  n16@{ shape: rounded, label: "**bevy​_​render::view::ViewUniformOffset**<br/>来自crate:bevy​_​render ↗：定位当前视图<br/>在共享 Uniform 缓冲中的参数。" }
+  n16@{ shape: rounded, label: "**ViewUniformOffset**<br/>来自crate:bevy​_​render ↗：定位当前视图<br/>在共享 Uniform 缓冲中的参数。" }
   class n16 node_component
   class n16 external_node
   n1 e0@--> n0

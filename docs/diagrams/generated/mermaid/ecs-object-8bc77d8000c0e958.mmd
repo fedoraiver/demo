@@ -38,17 +38,17 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**render::EguiCameraView**<br/>在主渲染目标视图上保存对应的 Egui 渲染<br/>视图实体" }
+  n0@{ shape: rounded, label: "**EguiCameraView**<br/>在主渲染目标视图上保存对应的 Egui 渲染<br/>视图实体" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​egui::render::extract​_​egui​_​**<br/>**camera​_​view​_​system**<br/>为活动相机提取独立 Egui 渲染视图。" }
+  n1@{ shape: rounded, label: "**extract​_​egui​_​camera​_​view​_​system**<br/>为活动相机提取独立 Egui 渲染视图。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​egui::render::render​_​pass::**<br/>**egui​_​pass**<br/>把准备好的 Egui 绘制项渲染到视图目标。" }
+  n2@{ shape: rounded, label: "**egui​_​pass**<br/>把准备好的 Egui 绘制项渲染到视图目标。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​egui::render::systems::prepare​_​**<br/>**egui​_​transforms​_​system**<br/>上传 Egui 屏幕变换缓冲。" }
+  n3@{ shape: rounded, label: "**prepare​_​egui​_​transforms​_​system**<br/>上传 Egui 屏幕变换缓冲。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**bevy​_​egui::render::render​_​pass::**<br/>**egui​_​pass**<br/>把准备好的 Egui 绘制项渲染到视图目标。" }
+  n4@{ shape: rounded, label: "**egui​_​pass**<br/>把准备好的 Egui 绘制项渲染到视图目标。" }
   class n4 node_system
-  n5@{ shape: rounded, label: "**bevy​_​egui::render::systems::prepare​_​**<br/>**egui​_​transforms​_​system**<br/>上传 Egui 屏幕变换缓冲。" }
+  n5@{ shape: rounded, label: "**prepare​_​egui​_​transforms​_​system**<br/>上传 Egui 屏幕变换缓冲。" }
   class n5 node_system
   n1 e0@-->|"移除"| n0
   class e0 edge_write

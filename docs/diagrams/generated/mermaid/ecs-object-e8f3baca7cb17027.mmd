@@ -46,50 +46,53 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​camera::visibility::check​_​**<br/>**visibility​_​cpu​_​culling**<br/>按层、距离和视锥收集各相机可见实体。" }
+  subgraph layout_card_n0[" "]
+  n0@{ shape: rounded, label: "**check​_​visibility​_​cpu​_​culling**<br/>按层、距离和视锥收集各相机可见实体。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**bevy​_​camera::visibility::range::**<br/>**check​_​visibility​_​ranges**<br/>按视图距离计算实体可见范围位掩码。" }
+  end
+  style layout_card_n0 fill:none,stroke:none
+  n1@{ shape: rounded, label: "**check​_​visibility​_​ranges**<br/>按视图距离计算实体可见范围位掩码。" }
   class n1 node_system
-  n2@{ shape: fr-rect, label: "**visibility::VisibilityPlugin**<br/>维护包围盒、层级可见性与视锥检查。" }
+  n2@{ shape: fr-rect, label: "**VisibilityPlugin**<br/>维护包围盒、层级可见性与视锥检查。" }
   class n2 node_plugin
-  n3@{ shape: rounded, label: "**bevy​_​camera::Camera**<br/>配置相机视口、输出目标和渲染顺序。" }
+  n3@{ shape: rounded, label: "**Camera**<br/>配置相机视口、输出目标和渲染顺序。" }
   class n3 node_component
-  n4@{ shape: cyl, label: "**visibility::range::**<br/>**VisibleEntityRanges**<br/>记录各实体是否处于视图距离范围。" }
+  n4@{ shape: cyl, label: "**VisibleEntityRanges**<br/>记录各实体是否处于视图距离范围。" }
   class n4 node_resource
-  n5@{ shape: rounded, label: "**bevy​_​camera::visibility::**<br/>**VisibleEntities**<br/>按类别保存当前视图可见的实体。" }
+  n5@{ shape: rounded, label: "**VisibleEntities**<br/>按类别保存当前视图可见的实体。" }
   class n5 node_component
   n6@{ shape: lin-rect, label: "**CheckVisibility**<br/>组织相机与实体可见性更新。" }
   class n6 node_system_set
-  n7@{ shape: rounded, label: "**bevy​_​camera::visibility::**<br/>**ViewVisibility**<br/>记录实体是否应被提取用于渲染。" }
+  n7@{ shape: rounded, label: "**ViewVisibility**<br/>记录实体是否应被提取用于渲染。" }
   class n7 node_component
-  n8@{ shape: rounded, label: "**visibility::range::VisibilityRange**<br/>按相机距离控制网格的细节层级。" }
+  n8@{ shape: rounded, label: "**VisibilityRange**<br/>按相机距离控制网格的细节层级。" }
   class n8 node_component
   n9@{ shape: notch-rect, label: "**Local · thread​_​queues**<br/>按线程和可见性类别收集相机可见实体。" }
   class n9 node_local
-  n10@{ shape: rounded, label: "**bevy​_​camera::primitives::Aabb**<br/>以局部轴对齐包围盒支持可见性裁剪。" }
+  n10@{ shape: rounded, label: "**Aabb**<br/>以局部轴对齐包围盒支持可见性裁剪。" }
   class n10 node_component
-  n11@{ shape: rounded, label: "**components::global​_​transform::**<br/>**GlobalTransform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>合并祖先变换后的世界空间仿射变换" }
+  n11@{ shape: rounded, label: "**GlobalTransform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>合并祖先变换后的世界空间仿射变换" }
   class n11 node_component
   class n11 external_node
-  n12@{ shape: rounded, label: "**bevy​_​camera::visibility::**<br/>**NoFrustumCulling**<br/>使实体退出内置视锥裁剪。" }
+  n12@{ shape: rounded, label: "**NoFrustumCulling**<br/>使实体退出内置视锥裁剪。" }
   class n12 node_component
-  n13@{ shape: rounded, label: "**visibility::NoCpuCulling**<br/>退出内置的 CPU 视锥裁剪。" }
+  n13@{ shape: rounded, label: "**NoCpuCulling**<br/>退出内置的 CPU 视锥裁剪。" }
   class n13 node_component
-  n14@{ shape: rounded, label: "**bevy​_​transform::systems::propagate​_​**<br/>**transforms​_​for#lt;bevy​_​ecs::query::**<br/>**filter::Or#lt;(bevy​_​ecs::query::**<br/>**filter::With#lt;bevy​_​gizmos::transform​_​**<br/>**gizmo::TransformGizmoRoot#gt;, bevy​_​**<br/>**ecs::query::filter::With#lt;bevy​_​**<br/>**gizmos​_​render::transform​_​gizmo​_​**<br/>**render::GizmoOverlayCamera#gt;, bevy​_​**<br/>**ecs::query::filter::With#lt;bevy​_​**<br/>**gizmos::transform​_​gizmo::**<br/>**TransformGizmoMeshMarker#gt;)#gt;#gt;**<br/>来自crate:bevy​_​transform ↗：按指定查<br/>询过滤器即时计算世界变换。" }
+  n14@{ shape: rounded, label: "**propagate​_​transforms​_​for**<br/>来自crate:bevy​_​transform ↗：按指定查<br/>询过滤器即时计算世界变换。" }
   class n14 node_system
   class n14 external_node
-  n15@{ shape: rounded, label: "**bevy​_​camera::visibility::**<br/>**InheritedVisibility**<br/>保存从实体层级计算出的可见性。" }
+  n15@{ shape: rounded, label: "**InheritedVisibility**<br/>保存从实体层级计算出的可见性。" }
   class n15 node_component
-  n16@{ shape: rounded, label: "**bevy​_​gizmos​_​render::transform​_​gizmo​_​**<br/>**render::update​_​gizmo​_​meshes**<br/>来自crate:bevy​_​gizmos​_​render ↗：将变<br/>换操作器对齐焦点并更新模式与高亮。" }
+  n16@{ shape: rounded, label: "**update​_​gizmo​_​meshes**<br/>来自crate:bevy​_​gizmos​_​render ↗：将变<br/>换操作器对齐焦点并更新模式与高亮。" }
   class n16 node_system
   class n16 external_node
-  n17@{ shape: rounded, label: "**bevy​_​camera::visibility::**<br/>**RenderLayers**<br/>限定相机与实体可相交的渲染层。" }
+  n17@{ shape: rounded, label: "**RenderLayers**<br/>限定相机与实体可相交的渲染层。" }
   class n17 node_component
-  n18@{ shape: rounded, label: "**primitives::Sphere**<br/>以球形包围体参与视锥裁剪。" }
+  n18@{ shape: rounded, label: "**Sphere**<br/>以球形包围体参与视锥裁剪。" }
   class n18 node_component
-  n19@{ shape: rounded, label: "**bevy​_​camera::visibility::**<br/>**VisibilityClass**<br/>区分可见实体集合中的渲染类别。" }
+  n19@{ shape: rounded, label: "**VisibilityClass**<br/>区分可见实体集合中的渲染类别。" }
   class n19 node_component
-  n20@{ shape: rounded, label: "**bevy​_​camera::primitives::Frustum**<br/>描述相机可见空间并参与视锥裁剪。" }
+  n20@{ shape: rounded, label: "**Frustum**<br/>描述相机可见空间并参与视锥裁剪。" }
   class n20 node_component
   n1 e0@-->|"先于"| n0
   class e0 edge_order

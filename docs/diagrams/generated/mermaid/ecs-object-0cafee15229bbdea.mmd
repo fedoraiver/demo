@@ -45,35 +45,35 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: hex, label: "**bevy​_​ui​_​widgets::tabs::tab​_​on​_​key​_​**<br/>**input**<br/>用键盘导航并激活标签页。" }
+  n0@{ shape: hex, label: "**tab​_​on​_​key​_​input**<br/>用键盘导航并激活标签页。" }
   class n0 node_observer
   n1@{ shape: cyl, label: "**InputFocusVisible**<br/>来自crate:bevy​_​input​_​focus ↗：控制界<br/>面输入焦点提示是否可见。" }
   class n1 node_resource
   class n1 external_node
-  n2@{ shape: stadium, label: "**FocusedInput#lt;bevy​_​input::keyboard::**<br/>**KeyboardInput#gt;**<br/>来自crate:bevy​_​input​_​focus ↗：把输入<br/>消息路由到焦点实体并向窗口冒泡。" }
+  n2@{ shape: stadium, label: "**FocusedInput#lt;KeyboardInput#gt;**<br/>来自crate:bevy​_​input​_​focus ↗：把输入<br/>消息路由到焦点实体并向窗口冒泡。" }
   class n2 node_event
   class n2 external_node
-  n3@{ shape: rounded, label: "**tabs::SelectedTab**<br/>保存标签列表当前选中的直接子标签实体" }
+  n3@{ shape: rounded, label: "**SelectedTab**<br/>保存标签列表当前选中的直接子标签实体" }
   class n3 node_component
-  n4@{ shape: rounded, label: "**tabs::Tab**<br/>标识可聚焦的标签标题" }
+  n4@{ shape: rounded, label: "**Tab**<br/>标识可聚焦的标签标题" }
   class n4 node_component
-  n5@{ shape: rounded, label: "**bevy​_​ecs::hierarchy::Children**<br/>来自crate:bevy​_​ecs ↗：保存以<br/>ChildOf 指向当前父实体的子实体集合" }
+  n5@{ shape: rounded, label: "**Children**<br/>来自crate:bevy​_​ecs ↗：保存以<br/>ChildOf 指向当前父实体的子实体集合" }
   class n5 node_component
   class n5 external_node
-  n6@{ shape: rounded, label: "**tabs::TabList**<br/>定义标签栏的导航轴及自动激活策略" }
+  n6@{ shape: rounded, label: "**TabList**<br/>定义标签栏的导航轴及自动激活策略" }
   class n6 node_component
-  n7@{ shape: stadium, label: "**ValueChange#lt;std::option::**<br/>**Option#lt;bevy​_​ecs::entity::Entity#gt;#gt;**<br/>传递控件提出的新值。" }
+  n7@{ shape: stadium, label: "**ValueChange#lt;Option#lt;Entity#gt;#gt;**<br/>传递控件提出的新值。" }
   class n7 node_event
   n8@{ shape: cyl, label: "**InputFocus**<br/>来自crate:bevy​_​input​_​focus ↗：保存当<br/>前输入焦点实体、待派发的焦点变化及原焦点" }
   class n8 node_resource
   class n8 external_node
-  n9@{ shape: rounded, label: "**bevy​_​ui::InteractionDisabled**<br/>来自crate:bevy​_​ui ↗：标记禁止交互的<br/>UI 控件。" }
+  n9@{ shape: rounded, label: "**InteractionDisabled**<br/>来自crate:bevy​_​ui ↗：标记禁止交互的<br/>UI 控件。" }
   class n9 node_component
   class n9 external_node
-  n10@{ shape: rounded, label: "**bevy​_​ecs::hierarchy::ChildOf**<br/>来自crate:bevy​_​ecs ↗：保存当前实体的<br/>父实体身份" }
+  n10@{ shape: rounded, label: "**ChildOf**<br/>来自crate:bevy​_​ecs ↗：保存当前实体的<br/>父实体身份" }
   class n10 node_component
   class n10 external_node
-  n11@{ shape: fr-rect, label: "**tabs::TabPlugin**<br/>处理标签页选择并更新派生状态。" }
+  n11@{ shape: fr-rect, label: "**TabPlugin**<br/>处理标签页选择并更新派生状态。" }
   class n11 node_plugin
   n0 e0@-->|"赋值"| n1
   class e0 edge_write

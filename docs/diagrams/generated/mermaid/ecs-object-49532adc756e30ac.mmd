@@ -40,19 +40,19 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​anti​_​alias::contrast​_​adaptive​_​**<br/>**sharpening::init​_​cas​_​pipeline**<br/>建立 CAS 锐化的纹理、参数布局和管线变体<br/>资源。" }
+  n0@{ shape: rounded, label: "**init​_​cas​_​pipeline**<br/>建立 CAS 锐化的纹理、参数布局和管线变体<br/>资源。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**contrast​_​adaptive​_​sharpening::**<br/>**CasPipeline**<br/>保存对比度自适应锐化的管线资源。" }
+  n1@{ shape: cyl, label: "**CasPipeline**<br/>保存对比度自适应锐化的管线资源。" }
   class n1 node_resource
-  n2@{ shape: fr-rect, label: "**contrast​_​adaptive​_​sharpening::**<br/>**CasPlugin**<br/>提供对比度自适应锐化。" }
+  n2@{ shape: fr-rect, label: "**CasPlugin**<br/>提供对比度自适应锐化。" }
   class n2 node_plugin
-  n3@{ shape: cyl, label: "**bevy​_​render::renderer::RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
+  n3@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
   class n3 node_resource
   class n3 external_node
-  n4@{ shape: cyl, label: "**bevy​_​asset::AssetServer**<br/>来自crate:bevy​_​asset ↗：加载资产并追<br/>踪加载状态。" }
+  n4@{ shape: cyl, label: "**AssetServer**<br/>来自crate:bevy​_​asset ↗：加载资产并追<br/>踪加载状态。" }
   class n4 node_resource
   class n4 external_node
-  n5@{ shape: cyl, label: "**bevy​_​core​_​pipeline::FullscreenShader**<br/>来自crate:bevy​_​core​_​pipeline ↗：提供<br/>覆盖整个屏幕的顶点着色器。" }
+  n5@{ shape: cyl, label: "**FullscreenShader**<br/>来自crate:bevy​_​core​_​pipeline ↗：提供<br/>覆盖整个屏幕的顶点着色器。" }
   class n5 node_resource
   class n5 external_node
   n0 e0@-->|"插入"| n1

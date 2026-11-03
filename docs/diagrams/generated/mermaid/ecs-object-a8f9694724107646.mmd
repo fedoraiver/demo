@@ -43,20 +43,20 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​kira​_​audio::audio​_​output::play​_​**<br/>**dynamic​_​channels**<br/>执行按名称创建的动态音频通道命令。" }
+  n0@{ shape: rounded, label: "**play​_​dynamic​_​channels**<br/>执行按名称创建的动态音频通道命令。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**bevy​_​asset::Assets#lt;instance::**<br/>**AudioInstance#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
+  n1@{ shape: cyl, label: "**Assets#lt;AudioInstance#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
   class n1 node_resource
   class n1 external_node
-  n2@{ shape: tag-rect, label: "**audio​_​output::AudioOutput**<br/>持有 Kira 音频管理器及实例、通道、轨道<br/>状态" }
+  n2@{ shape: tag-rect, label: "**AudioOutput**<br/>持有 Kira 音频管理器及实例、通道、轨道<br/>状态" }
   class n2 node_non_send
   n3@{ shape: lin-rect, label: "**PlayDynamicChannels**<br/>组织音频实例清理与通道播放。" }
   class n3 node_system_set
-  n4@{ shape: cyl, label: "**channel::dynamic::**<br/>**DynamicAudioChannels**<br/>按运行时字符串维护动态音频通道" }
+  n4@{ shape: cyl, label: "**DynamicAudioChannels**<br/>按运行时字符串维护动态音频通道" }
   class n4 node_resource
   n5@{ shape: fr-rect, label: "**AudioPlugin**<br/>接入 Kira 音频播放后端。" }
   class n5 node_plugin
-  n6@{ shape: cyl, label: "**bevy​_​asset::Assets#lt;source::**<br/>**AudioSource#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
+  n6@{ shape: cyl, label: "**Assets#lt;AudioSource#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
   class n6 node_resource
   class n6 external_node
   n0 e0@-->|"可变访问"| n1

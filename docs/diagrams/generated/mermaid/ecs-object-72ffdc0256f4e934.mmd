@@ -38,18 +38,18 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**render​_​resource::sparse​_​buffer​_​vec::**<br/>**SparseBufferUpdateJobs**<br/>暂存待执行的稀疏缓冲更新任务。" }
+  n0@{ shape: cyl, label: "**SparseBufferUpdateJobs**<br/>暂存待执行的稀疏缓冲更新任务。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​pbr::render::gpu​_​preprocess::**<br/>**write​_​mesh​_​culling​_​data​_​buffer**<br/>来自crate:bevy​_​pbr ↗：上传网格裁剪数<br/>据并准备稀疏填充任务。" }
+  n1@{ shape: rounded, label: "**write​_​mesh​_​culling​_​data​_​buffer**<br/>来自crate:bevy​_​pbr ↗：上传网格裁剪数<br/>据并准备稀疏填充任务。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​render::batching::gpu​_​**<br/>**preprocessing::write​_​batched​_​**<br/>**instance​_​buffers#lt;bevy​_​pbr::render::**<br/>**mesh::MeshPipeline#gt;**<br/>上传实例输入、预处理任务并准备稀疏更新。" }
+  n2@{ shape: rounded, label: "**write​_​batched​_​instance​_​buffers**<br/>上传实例输入、预处理任务并准备稀疏更新。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​render::render​_​resource::**<br/>**sparse​_​buffer​_​vec::update​_​sparse​_​**<br/>**buffers**<br/>用计算通道把变化元素写入稀疏 GPU 缓冲。" }
+  n3@{ shape: rounded, label: "**update​_​sparse​_​buffers**<br/>用计算通道把变化元素写入稀疏 GPU 缓冲。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**bevy​_​render::render​_​resource::**<br/>**sparse​_​buffer​_​vec::clear​_​sparse​_​**<br/>**buffer​_​jobs**<br/>清空新帧的稀疏缓冲更新任务。" }
+  n4@{ shape: rounded, label: "**clear​_​sparse​_​buffer​_​jobs**<br/>清空新帧的稀疏缓冲更新任务。" }
   class n4 node_system
-  n5@{ shape: rounded, label: "**bevy​_​render::init​_​gpu​_​resource#lt;bevy​_​**<br/>**render::render​_​resource::sparse​_​**<br/>**buffer​_​vec::SparseBufferUpdateJobs#gt;**<br/>构造并插入渲染所需资源。" }
+  n5@{ shape: rounded, label: "**init​_​gpu​_​resource**<br/>构造并插入渲染所需资源。" }
   class n5 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

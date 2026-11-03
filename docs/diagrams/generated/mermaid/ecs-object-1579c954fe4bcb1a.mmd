@@ -37,31 +37,31 @@ flowchart LR
   classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**modal::ModalDialog**<br/>启用对话框模态行为。" }
+  n0@{ shape: rounded, label: "**ModalDialog**<br/>启用对话框模态行为。" }
   class n0 node_component
-  n1@{ shape: hex, label: "**bevy​_​ui​_​widgets::modal::modal​_​**<br/>**dialog​_​barrier​_​on​_​click**<br/>把模态遮罩按压转为关闭请求。" }
+  n1@{ shape: hex, label: "**modal​_​dialog​_​barrier​_​on​_​click**<br/>把模态遮罩按压转为关闭请求。" }
   class n1 node_observer
-  n2@{ shape: hex, label: "**bevy​_​ui​_​widgets::dialog::deregister​_​**<br/>**dialog**<br/>清理已销毁对话框的栈登记。" }
+  n2@{ shape: hex, label: "**deregister​_​dialog**<br/>清理已销毁对话框的栈登记。" }
   class n2 node_observer
-  n3@{ shape: hex, label: "**bevy​_​ui​_​widgets::dialog::bring​_​to​_​**<br/>**front**<br/>将被操作的浮动对话框提到前方。" }
+  n3@{ shape: hex, label: "**bring​_​to​_​front**<br/>将被操作的浮动对话框提到前方。" }
   class n3 node_observer
-  n4@{ shape: hex, label: "**bevy​_​ui​_​widgets::dialog::register​_​**<br/>**dialog**<br/>登记新建浮动对话框的层级。" }
+  n4@{ shape: hex, label: "**register​_​dialog**<br/>登记新建浮动对话框的层级。" }
   class n4 node_observer
-  n5@{ shape: hex, label: "**bevy​_​ui​_​widgets::dialog::register​_​**<br/>**dialog**<br/>登记新建浮动对话框的层级。" }
+  n5@{ shape: hex, label: "**register​_​dialog**<br/>登记新建浮动对话框的层级。" }
   class n5 node_observer
-  n6@{ shape: hex, label: "**bevy​_​ui​_​widgets::dialog::bring​_​to​_​**<br/>**front**<br/>将被操作的浮动对话框提到前方。" }
+  n6@{ shape: hex, label: "**bring​_​to​_​front**<br/>将被操作的浮动对话框提到前方。" }
   class n6 node_observer
-  n7@{ shape: hex, label: "**bevy​_​ui​_​widgets::dialog::bring​_​to​_​**<br/>**front**<br/>将被操作的浮动对话框提到前方。" }
+  n7@{ shape: hex, label: "**bring​_​to​_​front**<br/>将被操作的浮动对话框提到前方。" }
   class n7 node_observer
-  n8@{ shape: hex, label: "**bevy​_​ui​_​widgets::modal::modal​_​**<br/>**dialog​_​barrier​_​on​_​click**<br/>把模态遮罩按压转为关闭请求。" }
+  n8@{ shape: hex, label: "**modal​_​dialog​_​barrier​_​on​_​click**<br/>把模态遮罩按压转为关闭请求。" }
   class n8 node_observer
-  n9@{ shape: hex, label: "**bevy​_​ui​_​widgets::dialog::deregister​_​**<br/>**dialog**<br/>清理已销毁对话框的栈登记。" }
+  n9@{ shape: hex, label: "**deregister​_​dialog**<br/>清理已销毁对话框的栈登记。" }
   class n9 node_observer
-  n10@{ shape: hex, label: "**bevy​_​ui​_​widgets::dialog::register​_​**<br/>**dialog**<br/>登记新建浮动对话框的层级。" }
+  n10@{ shape: hex, label: "**register​_​dialog**<br/>登记新建浮动对话框的层级。" }
   class n10 node_observer
-  n11@{ shape: hex, label: "**bevy​_​ui​_​widgets::dialog::deregister​_​**<br/>**dialog**<br/>清理已销毁对话框的栈登记。" }
+  n11@{ shape: hex, label: "**deregister​_​dialog**<br/>清理已销毁对话框的栈登记。" }
   class n11 node_observer
-  n12@{ shape: hex, label: "**bevy​_​ui​_​widgets::modal::modal​_​**<br/>**dialog​_​barrier​_​on​_​click**<br/>把模态遮罩按压转为关闭请求。" }
+  n12@{ shape: hex, label: "**modal​_​dialog​_​barrier​_​on​_​click**<br/>把模态遮罩按压转为关闭请求。" }
   class n12 node_observer
   n0 e0@-->|"存在性约束"| n1
   class e0 edge_reference

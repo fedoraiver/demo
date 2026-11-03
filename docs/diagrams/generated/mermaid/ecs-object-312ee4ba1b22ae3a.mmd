@@ -37,9 +37,9 @@ flowchart LR
   classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**pointer::PointerInteraction**<br/>保存当前指针命中的实体及 HitData" }
+  n0@{ shape: rounded, label: "**PointerInteraction**<br/>保存当前指针命中的实体及 HitData" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​picking::hover::update​_​**<br/>**interactions**<br/>合并多个指针对目标实体的交互状态。" }
+  n1@{ shape: rounded, label: "**update​_​interactions**<br/>合并多个指针对目标实体的交互状态。" }
   class n1 node_system
   n1 e0@-->|"赋值"| n0
   class e0 edge_write

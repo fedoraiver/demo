@@ -42,20 +42,20 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: hex, label: "**bevy​_​ui​_​widgets::radio::radio​_​**<br/>**button​_​on​_​pointer​_​up**<br/>在指针释放时清除单选按钮按压。" }
+  n0@{ shape: hex, label: "**radio​_​button​_​on​_​pointer​_​up**<br/>在指针释放时清除单选按钮按压。" }
   class n0 node_observer
-  n1@{ shape: rounded, label: "**bevy​_​ui::Pressed**<br/>来自crate:bevy​_​ui ↗：标记按钮或控件当<br/>前处于按住状态。" }
+  n1@{ shape: rounded, label: "**Pressed**<br/>来自crate:bevy​_​ui ↗：标记按钮或控件当<br/>前处于按住状态。" }
   class n1 node_component
   class n1 external_node
-  n2@{ shape: fr-rect, label: "**radio::RadioGroupPlugin**<br/>处理单选组的导航与选择交互。" }
+  n2@{ shape: fr-rect, label: "**RadioGroupPlugin**<br/>处理单选组的导航与选择交互。" }
   class n2 node_plugin
-  n3@{ shape: rounded, label: "**bevy​_​ui::InteractionDisabled**<br/>来自crate:bevy​_​ui ↗：标记禁止交互的<br/>UI 控件。" }
+  n3@{ shape: rounded, label: "**InteractionDisabled**<br/>来自crate:bevy​_​ui ↗：标记禁止交互的<br/>UI 控件。" }
   class n3 node_component
   class n3 external_node
-  n4@{ shape: stadium, label: "**events::PointerRelease**<br/>来自crate:bevy​_​picking ↗：通知目标上<br/>的指针按钮释放。" }
+  n4@{ shape: stadium, label: "**PointerRelease**<br/>来自crate:bevy​_​picking ↗：通知目标上<br/>的指针按钮释放。" }
   class n4 node_event
   class n4 external_node
-  n5@{ shape: rounded, label: "**radio::RadioButton**<br/>标识参与互斥选择的单选按钮。" }
+  n5@{ shape: rounded, label: "**RadioButton**<br/>标识参与互斥选择的单选按钮。" }
   class n5 node_component
   n1 e0@-->|"存在性约束"| n0
   class e0 edge_reference

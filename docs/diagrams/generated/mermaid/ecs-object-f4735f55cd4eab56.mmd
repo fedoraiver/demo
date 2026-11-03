@@ -39,14 +39,14 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​gizmos::start​_​gizmo​_​**<br/>**context#lt;bevy​_​light::gizmos::**<br/>**LightGizmoConfigGroup, bevy​_​time::**<br/>**fixed::Fixed#gt;**<br/>暂存父级 Gizmo 缓冲并开始新上下文。" }
+  n0@{ shape: rounded, label: "**start​_​gizmo​_​context**<br/>暂存父级 Gizmo 缓冲并开始新上下文。" }
   class n0 node_system
   n1@{ shape: lin-rect, label: "**BeforeFixedMainLoop**<br/>来自crate:bevy​_​app ↗：划分固定更新循<br/>环的前后边界。" }
   class n1 node_system_set
   class n1 external_node
-  n2@{ shape: cyl, label: "**bevy​_​gizmos::gizmos::**<br/>**GizmoStorage#lt;gizmos::**<br/>**LightGizmoConfigGroup, bevy​_​gizmos::**<br/>**gizmos::Swap#lt;bevy​_​time::fixed::**<br/>**Fixed#gt;#gt;**<br/>按配置组和清理上下文存储调试图元。" }
+  n2@{ shape: cyl, label: "**GizmoStorage#lt;LightGizmoConfigGroup,**<br/>**Swap#lt;Fixed#gt;#gt;**<br/>按配置组和清理上下文存储调试图元。" }
   class n2 node_resource
-  n3@{ shape: cyl, label: "**bevy​_​gizmos::gizmos::**<br/>**GizmoStorage#lt;gizmos::**<br/>**LightGizmoConfigGroup, ()#gt;**<br/>按配置组和清理上下文存储调试图元。" }
+  n3@{ shape: cyl, label: "**GizmoStorage#lt;LightGizmoConfigGroup,**<br/>**()#gt;**<br/>按配置组和清理上下文存储调试图元。" }
   class n3 node_resource
   n1 e0@-->|"集合成员"| n0
   class e0 edge_set_membership

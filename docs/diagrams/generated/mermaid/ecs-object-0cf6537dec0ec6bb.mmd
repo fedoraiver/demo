@@ -39,7 +39,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: notch-rect, label: "**Local · arg9.3.0.0.0.0.0**<br/>保存 Outline 移除参数的组件 ID。" }
   class n0 node_local
-  n1@{ shape: rounded, label: "**bevy​_​ui​_​render::extract​_​uinode​_​**<br/>**changes**<br/>使变化或移除的 UI 数据失效并清理旧渲染<br/>实体。" }
+  n1@{ shape: rounded, label: "**extract​_​uinode​_​changes**<br/>使变化或移除的 UI 数据失效并清理旧渲染<br/>实体。" }
   class n1 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

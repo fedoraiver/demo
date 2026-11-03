@@ -37,19 +37,19 @@ flowchart LR
   classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**menu::MenuButton**<br/>为按钮添加菜单打开行为。" }
+  n0@{ shape: rounded, label: "**MenuButton**<br/>为按钮添加菜单打开行为。" }
   class n0 node_component
-  n1@{ shape: hex, label: "**bevy​_​ui​_​widgets::menu::menubutton​_​**<br/>**on​_​activate**<br/>把菜单按钮激活转为菜单切换请求。" }
+  n1@{ shape: hex, label: "**menubutton​_​on​_​activate**<br/>把菜单按钮激活转为菜单切换请求。" }
   class n1 node_observer
-  n2@{ shape: hex, label: "**bevy​_​ui​_​widgets::menu::menubutton​_​**<br/>**on​_​key​_​event**<br/>通过方向键请求打开菜单。" }
+  n2@{ shape: hex, label: "**menubutton​_​on​_​key​_​event**<br/>通过方向键请求打开菜单。" }
   class n2 node_observer
-  n3@{ shape: hex, label: "**bevy​_​ui​_​widgets::menu::menubutton​_​**<br/>**on​_​activate**<br/>把菜单按钮激活转为菜单切换请求。" }
+  n3@{ shape: hex, label: "**menubutton​_​on​_​activate**<br/>把菜单按钮激活转为菜单切换请求。" }
   class n3 node_observer
-  n4@{ shape: hex, label: "**bevy​_​ui​_​widgets::menu::menubutton​_​**<br/>**on​_​key​_​event**<br/>通过方向键请求打开菜单。" }
+  n4@{ shape: hex, label: "**menubutton​_​on​_​key​_​event**<br/>通过方向键请求打开菜单。" }
   class n4 node_observer
-  n5@{ shape: hex, label: "**bevy​_​ui​_​widgets::menu::menubutton​_​**<br/>**on​_​activate**<br/>把菜单按钮激活转为菜单切换请求。" }
+  n5@{ shape: hex, label: "**menubutton​_​on​_​activate**<br/>把菜单按钮激活转为菜单切换请求。" }
   class n5 node_observer
-  n6@{ shape: hex, label: "**bevy​_​ui​_​widgets::menu::menubutton​_​**<br/>**on​_​key​_​event**<br/>通过方向键请求打开菜单。" }
+  n6@{ shape: hex, label: "**menubutton​_​on​_​key​_​event**<br/>通过方向键请求打开菜单。" }
   class n6 node_observer
   n0 e0@-->|"存在性约束"| n1
   class e0 edge_reference

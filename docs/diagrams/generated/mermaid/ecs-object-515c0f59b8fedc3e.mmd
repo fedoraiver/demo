@@ -38,11 +38,11 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**dof::DepthOfFieldUniform**<br/>向 GPU 传递焦距和弥散圈计算参数。" }
+  n0@{ shape: rounded, label: "**DepthOfFieldUniform**<br/>向 GPU 传递焦距和弥散圈计算参数。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​post​_​process::dof::extract​_​**<br/>**depth​_​of​_​field​_​settings**<br/>把透视相机景深设置转换为 GPU 参数。" }
+  n1@{ shape: rounded, label: "**extract​_​depth​_​of​_​field​_​settings**<br/>把透视相机景深设置转换为 GPU 参数。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​render::uniform::prepare​_​**<br/>**uniform​_​components#lt;bevy​_​post​_​**<br/>**process::dof::DepthOfFieldUniform#gt;**<br/>来自crate:bevy​_​render ↗：将组件值批量<br/>上传为动态着色器参数。" }
+  n2@{ shape: rounded, label: "**prepare​_​uniform​_​components**<br/>来自crate:bevy​_​render ↗：将组件值批量<br/>上传为动态着色器参数。" }
   class n2 node_system
   class n2 external_node
   n1 e0@-->|"插入"| n0

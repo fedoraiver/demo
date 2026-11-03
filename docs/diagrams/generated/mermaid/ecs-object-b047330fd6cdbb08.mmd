@@ -38,17 +38,17 @@ flowchart LR
   classDef edge_publish stroke:#247B91,stroke-width:1.8px,stroke-dasharray:10 4 2 4
   classDef edge_consume stroke:#247B91,stroke-width:1.8px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: lean-r, label: "**bevy​_​asset::AssetEvent#lt;bevy​_​mesh::**<br/>**Mesh#gt;**<br/>通知指定资产及依赖发生变化。" }
+  n0@{ shape: lean-r, label: "**AssetEvent#lt;Mesh#gt;**<br/>通知指定资产及依赖发生变化。" }
   class n0 node_message
-  n1@{ shape: rounded, label: "**bevy​_​asset::assets::Assets#lt;bevy​_​**<br/>**mesh::mesh::Mesh#gt;::asset​_​events**<br/>发布累计的资产变化消息。" }
+  n1@{ shape: rounded, label: "**asset​_​events**<br/>发布累计的资产变化消息。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​render::render​_​asset::extract​_​**<br/>**render​_​asset#lt;bevy​_​render::mesh::**<br/>**RenderMesh#gt;**<br/>来自crate:bevy​_​render ↗：按资产变化和<br/>设备恢复请求提取渲染资产。" }
+  n2@{ shape: rounded, label: "**extract​_​render​_​asset**<br/>来自crate:bevy​_​render ↗：按资产变化和<br/>设备恢复请求提取渲染资产。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​mesh::components::mark​_​3d​_​**<br/>**meshes​_​as​_​changed​_​if​_​their​_​assets​_​**<br/>**changed**<br/>来自crate:bevy​_​mesh ↗：资产内容变化时<br/>标记对应三维网格已变更。" }
+  n3@{ shape: rounded, label: "**mark​_​3d​_​meshes​_​as​_​changed​_​if​_​their​_​**<br/>**assets​_​changed**<br/>来自crate:bevy​_​mesh ↗：资产内容变化时<br/>标记对应三维网格已变更。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**bevy​_​mesh::components::mark​_​2d​_​**<br/>**meshes​_​as​_​changed​_​if​_​their​_​assets​_​**<br/>**changed**<br/>来自crate:bevy​_​mesh ↗：资产内容变化时<br/>标记对应二维网格已变更。" }
+  n4@{ shape: rounded, label: "**mark​_​2d​_​meshes​_​as​_​changed​_​if​_​their​_​**<br/>**assets​_​changed**<br/>来自crate:bevy​_​mesh ↗：资产内容变化时<br/>标记对应二维网格已变更。" }
   class n4 node_system
   class n4 external_node
   n1 e0@-->|"消息"| n0

@@ -38,12 +38,12 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**!bevy​_​ecs::schedule::condition::**<br/>**common​_​conditions::resource​_​**<br/>**exists#lt;bevy​_​state::state::**<br/>**resources::State#lt;demo::game​_​flow::**<br/>**AppState#gt;#gt;**<br/>判断指定资源是否存在。" }
+  n0@{ shape: rounded, label: "**resource​_​exists**<br/>判断指定资源是否存在。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**bevy::bevy​_​state::state::State#lt;game​_​**<br/>**flow::AppState#gt;**<br/>来自crate:bevy​_​state ↗：保存某个状态<br/>类型当前生效的值" }
+  n1@{ shape: cyl, label: "**State#lt;AppState#gt;**<br/>来自crate:bevy​_​state ↗：保存某个状态<br/>类型当前生效的值" }
   class n1 node_resource
   class n1 external_node
-  n2@{ shape: rounded, label: "**demo::scene​_​assembly::loading::**<br/>**spawn​_​lighting**<br/>来自scene​_​assembly ↗：创建会话灯光和<br/>可复用的加载相机。" }
+  n2@{ shape: rounded, label: "**spawn​_​lighting**<br/>来自scene​_​assembly ↗：创建会话灯光和<br/>可复用的加载相机。" }
   class n2 node_system
   class n2 external_node
   n1 e0@--> n0

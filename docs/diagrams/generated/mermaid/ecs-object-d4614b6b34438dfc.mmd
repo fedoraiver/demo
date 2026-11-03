@@ -42,20 +42,20 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: hex, label: "**bevy​_​ui​_​widgets::button::button​_​on​_​**<br/>**pointer​_​cancel**<br/>取消按钮的指针按压状态。" }
+  n0@{ shape: hex, label: "**button​_​on​_​pointer​_​cancel**<br/>取消按钮的指针按压状态。" }
   class n0 node_observer
-  n1@{ shape: stadium, label: "**events::PointerCancel**<br/>来自crate:bevy​_​picking ↗：通知指针取<br/>消并丢弃当前交互状态。" }
+  n1@{ shape: stadium, label: "**PointerCancel**<br/>来自crate:bevy​_​picking ↗：通知指针取<br/>消并丢弃当前交互状态。" }
   class n1 node_event
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​ui::Pressed**<br/>来自crate:bevy​_​ui ↗：标记按钮或控件当<br/>前处于按住状态。" }
+  n2@{ shape: rounded, label: "**Pressed**<br/>来自crate:bevy​_​ui ↗：标记按钮或控件当<br/>前处于按住状态。" }
   class n2 node_component
   class n2 external_node
-  n3@{ shape: rounded, label: "**button::Button**<br/>维护按钮按压并发出激活通知。" }
+  n3@{ shape: rounded, label: "**Button**<br/>维护按钮按压并发出激活通知。" }
   class n3 node_component
-  n4@{ shape: rounded, label: "**bevy​_​ui::InteractionDisabled**<br/>来自crate:bevy​_​ui ↗：标记禁止交互的<br/>UI 控件。" }
+  n4@{ shape: rounded, label: "**InteractionDisabled**<br/>来自crate:bevy​_​ui ↗：标记禁止交互的<br/>UI 控件。" }
   class n4 node_component
   class n4 external_node
-  n5@{ shape: fr-rect, label: "**button::ButtonPlugin**<br/>处理按钮按压与激活交互。" }
+  n5@{ shape: fr-rect, label: "**ButtonPlugin**<br/>处理按钮按压与激活交互。" }
   class n5 node_plugin
   n1 e0@-->|"接收事件"| n0
   class e0 edge_observe

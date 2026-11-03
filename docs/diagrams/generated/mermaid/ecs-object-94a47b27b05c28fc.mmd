@@ -38,11 +38,11 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: cyl, label: "**Bluenoise**<br/>提供时空蓝噪声纹理。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​pbr::light​_​probe::generate::**<br/>**prepare​_​generated​_​environment​_​map​_​**<br/>**bind​_​groups**<br/>为环境图各 mip 的降采样和卷积建立绑定。" }
+  n1@{ shape: rounded, label: "**prepare​_​generated​_​environment​_​map​_​**<br/>**bind​_​groups**<br/>为环境图各 mip 的降采样和卷积建立绑定。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​pbr::ssr::screen​_​space​_​**<br/>**reflections**<br/>采样场景颜色、深度与蓝噪声绘制屏幕空间反<br/>射。" }
+  n2@{ shape: rounded, label: "**screen​_​space​_​reflections**<br/>采样场景颜色、深度与蓝噪声绘制屏幕空间反<br/>射。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​pbr::render::mesh​_​view​_​**<br/>**bindings::prepare​_​mesh​_​view​_​bind​_​**<br/>**groups**<br/>为视图绑定光照、阴影及各可选渲染效果资<br/>源。" }
+  n3@{ shape: rounded, label: "**prepare​_​mesh​_​view​_​bind​_​groups**<br/>为视图绑定光照、阴影及各可选渲染效果资<br/>源。" }
   class n3 node_system
   n0 e0@--> n1
   class e0 edge_read

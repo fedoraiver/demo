@@ -37,13 +37,13 @@ flowchart LR
   classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**material::PendingMeshMaterialQueues**<br/>保留因材质未加载而无法入队的网格。" }
+  n0@{ shape: cyl, label: "**PendingMeshMaterialQueues**<br/>保留因材质未加载而无法入队的网格。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​pbr::material::queue​_​material​_​**<br/>**meshes**<br/>按材质模式把可见网格加入相应绘制阶段。" }
+  n1@{ shape: rounded, label: "**queue​_​material​_​meshes**<br/>按材质模式把可见网格加入相应绘制阶段。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​pbr::material::specialize​_​**<br/>**material​_​meshes**<br/>为变化的可见网格生成并缓存材质专用管线。" }
+  n2@{ shape: rounded, label: "**specialize​_​material​_​meshes**<br/>为变化的可见网格生成并缓存材质专用管线。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​render::init​_​gpu​_​resource#lt;bevy​_​**<br/>**pbr::material::**<br/>**PendingMeshMaterialQueues#gt;**<br/>来自crate:bevy​_​render ↗：构造并插入渲<br/>染所需资源。" }
+  n3@{ shape: rounded, label: "**init​_​gpu​_​resource**<br/>来自crate:bevy​_​render ↗：构造并插入渲<br/>染所需资源。" }
   class n3 node_system
   class n3 external_node
   n1 e0@-->|"可变访问"| n0

@@ -44,43 +44,43 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​pbr::light​_​probe::gather​_​light​_​**<br/>**probes#lt;bevy​_​light::probe::**<br/>**EnvironmentMapLight#gt;**<br/>按相机可见集合和距离分配已就绪光照探针。" }
+  n0@{ shape: rounded, label: "**gather​_​light​_​probes**<br/>按相机可见集合和距离分配已就绪光照探针。" }
   class n0 node_system
-  n1@{ shape: fr-rect, label: "**light​_​probe::LightProbePlugin**<br/>提供光照探针与环境贴图光照。" }
+  n1@{ shape: fr-rect, label: "**LightProbePlugin**<br/>提供光照探针与环境贴图光照。" }
   class n1 node_plugin
-  n2@{ shape: rounded, label: "**light​_​probe::**<br/>**RenderViewLightProbes#lt;bevy​_​light::**<br/>**EnvironmentMapLight#gt;**<br/>维护视图光照探针及纹理绑定索引。" }
+  n2@{ shape: rounded, label: "**RenderViewLightProbes#lt;EnvironmentMap**<br/>**Light#gt;**<br/>维护视图光照探针及纹理绑定索引。" }
   class n2 node_component
-  n3@{ shape: rounded, label: "**components::global​_​transform::**<br/>**GlobalTransform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>合并祖先变换后的世界空间仿射变换" }
+  n3@{ shape: rounded, label: "**GlobalTransform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>合并祖先变换后的世界空间仿射变换" }
   class n3 node_component
   class n3 external_node
-  n4@{ shape: rounded, label: "**probe::ParallaxCorrection**<br/>来自crate:bevy​_​light ↗：配置反射探针<br/>的视差校正边界。" }
+  n4@{ shape: rounded, label: "**ParallaxCorrection**<br/>来自crate:bevy​_​light ↗：配置反射探针<br/>的视差校正边界。" }
   class n4 node_component
   class n4 external_node
-  n5@{ shape: rounded, label: "**components::Camera3d**<br/>来自crate:bevy​_​camera ↗：启用三维相机<br/>主渲染流程。" }
+  n5@{ shape: rounded, label: "**Camera3d**<br/>来自crate:bevy​_​camera ↗：启用三维相机<br/>主渲染流程。" }
   class n5 node_component
   class n5 external_node
-  n6@{ shape: rounded, label: "**bevy​_​camera::visibility::**<br/>**VisibleEntities**<br/>来自crate:bevy​_​camera ↗：按类别保存当<br/>前视图可见的实体。" }
+  n6@{ shape: rounded, label: "**VisibleEntities**<br/>来自crate:bevy​_​camera ↗：按类别保存当<br/>前视图可见的实体。" }
   class n6 node_component
   class n6 external_node
-  n7@{ shape: rounded, label: "**bevy​_​extract::SubEntity#lt;bevy​_​**<br/>**render::RenderApp#gt;**<br/>来自crate:bevy​_​extract ↗：记录主实体<br/>对应的子世界实体。" }
+  n7@{ shape: rounded, label: "**SubEntity#lt;RenderApp#gt;**<br/>来自crate:bevy​_​extract ↗：记录主实体<br/>对应的子世界实体。" }
   class n7 node_component
   class n7 external_node
   n8@{ shape: notch-rect, label: "**Local · view​_​light​_​probe​_​info**<br/>为单个视图暂存已就绪并按距离排序的光照探<br/>针。" }
   class n8 node_local
-  n9@{ shape: cyl, label: "**extract​_​plugin::MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
+  n9@{ shape: cyl, label: "**MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
   class n9 node_resource
   class n9 external_node
-  n10@{ shape: cyl, label: "**bevy​_​render::render​_​asset::**<br/>**RenderAssets#lt;bevy​_​render::texture::**<br/>**GpuImage#gt;**<br/>来自crate:bevy​_​render ↗：按源资产身份<br/>保存 GPU 渲染表示。" }
+  n10@{ shape: cyl, label: "**RenderAssets#lt;GpuImage#gt;**<br/>来自crate:bevy​_​render ↗：按源资产身份<br/>保存 GPU 渲染表示。" }
   class n10 node_resource
   class n10 external_node
-  n11@{ shape: rounded, label: "**bevy​_​pbr::cluster::extract​_​clusters​_​**<br/>**for​_​cpu​_​clustering**<br/>把 CPU 聚簇结果转换为渲染侧对象列表。" }
+  n11@{ shape: rounded, label: "**extract​_​clusters​_​for​_​cpu​_​clustering**<br/>把 CPU 聚簇结果转换为渲染侧对象列表。" }
   class n11 node_system
-  n12@{ shape: rounded, label: "**bevy​_​pbr::cluster::gpu::extract​_​**<br/>**clusters​_​for​_​gpu​_​clustering**<br/>提取视图聚簇配置并回传上帧 GPU 统计。" }
+  n12@{ shape: rounded, label: "**extract​_​clusters​_​for​_​gpu​_​clustering**<br/>提取视图聚簇配置并回传上帧 GPU 统计。" }
   class n12 node_system
-  n13@{ shape: rounded, label: "**probe::EnvironmentMapLight**<br/>来自crate:bevy​_​light ↗：用漫反射与镜<br/>面反射立方体贴图提供环境光。" }
+  n13@{ shape: rounded, label: "**EnvironmentMapLight**<br/>来自crate:bevy​_​light ↗：用漫反射与镜<br/>面反射立方体贴图提供环境光。" }
   class n13 node_component
   class n13 external_node
-  n14@{ shape: rounded, label: "**probe::LightProbe**<br/>来自crate:bevy​_​light ↗：定义局部间接<br/>光照的长方体影响区域。" }
+  n14@{ shape: rounded, label: "**LightProbe**<br/>来自crate:bevy​_​light ↗：定义局部间接<br/>光照的长方体影响区域。" }
   class n14 node_component
   class n14 external_node
   n1 e0@-->|"调用"| n0

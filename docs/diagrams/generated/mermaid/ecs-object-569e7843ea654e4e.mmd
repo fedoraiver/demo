@@ -37,25 +37,25 @@ flowchart LR
   classDef node_event fill:#F9F3EE,stroke:#B66B2D,stroke-width:1.6px,color:#1F3340
   classDef edge_emit stroke:#B66B2D,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: stadium, label: "**list::ReselectListRow**<br/>通知再次确认当前已选列表行。" }
+  n0@{ shape: stadium, label: "**ReselectListRow**<br/>通知再次确认当前已选列表行。" }
   class n0 node_event
-  n1@{ shape: hex, label: "**bevy​_​ui​_​widgets::list::listbox​_​on​_​**<br/>**row​_​click**<br/>将列表行点击转为选择或重选请求。" }
+  n1@{ shape: hex, label: "**listbox​_​on​_​row​_​click**<br/>将列表行点击转为选择或重选请求。" }
   class n1 node_observer
-  n2@{ shape: hex, label: "**bevy​_​ui​_​widgets::list::listbox​_​on​_​**<br/>**set​_​selected**<br/>处理列表程序化选行与重选。" }
+  n2@{ shape: hex, label: "**listbox​_​on​_​set​_​selected**<br/>处理列表程序化选行与重选。" }
   class n2 node_observer
-  n3@{ shape: hex, label: "**bevy​_​ui​_​widgets::list::listbox​_​on​_​**<br/>**set​_​selected**<br/>处理列表程序化选行与重选。" }
+  n3@{ shape: hex, label: "**listbox​_​on​_​set​_​selected**<br/>处理列表程序化选行与重选。" }
   class n3 node_observer
-  n4@{ shape: hex, label: "**bevy​_​ui​_​widgets::list::listbox​_​on​_​**<br/>**key​_​input**<br/>处理列表键盘导航与行确认。" }
+  n4@{ shape: hex, label: "**listbox​_​on​_​key​_​input**<br/>处理列表键盘导航与行确认。" }
   class n4 node_observer
-  n5@{ shape: hex, label: "**bevy​_​ui​_​widgets::list::listbox​_​on​_​**<br/>**key​_​input**<br/>处理列表键盘导航与行确认。" }
+  n5@{ shape: hex, label: "**listbox​_​on​_​key​_​input**<br/>处理列表键盘导航与行确认。" }
   class n5 node_observer
-  n6@{ shape: hex, label: "**bevy​_​ui​_​widgets::list::listbox​_​on​_​**<br/>**row​_​click**<br/>将列表行点击转为选择或重选请求。" }
+  n6@{ shape: hex, label: "**listbox​_​on​_​row​_​click**<br/>将列表行点击转为选择或重选请求。" }
   class n6 node_observer
-  n7@{ shape: hex, label: "**bevy​_​ui​_​widgets::list::listbox​_​on​_​**<br/>**row​_​click**<br/>将列表行点击转为选择或重选请求。" }
+  n7@{ shape: hex, label: "**listbox​_​on​_​row​_​click**<br/>将列表行点击转为选择或重选请求。" }
   class n7 node_observer
-  n8@{ shape: hex, label: "**bevy​_​ui​_​widgets::list::listbox​_​on​_​**<br/>**set​_​selected**<br/>处理列表程序化选行与重选。" }
+  n8@{ shape: hex, label: "**listbox​_​on​_​set​_​selected**<br/>处理列表程序化选行与重选。" }
   class n8 node_observer
-  n9@{ shape: hex, label: "**bevy​_​ui​_​widgets::list::listbox​_​on​_​**<br/>**key​_​input**<br/>处理列表键盘导航与行确认。" }
+  n9@{ shape: hex, label: "**listbox​_​on​_​key​_​input**<br/>处理列表键盘导航与行确认。" }
   class n9 node_observer
   n1 e0@-->|"触发事件"| n0
   class e0 edge_emit

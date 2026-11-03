@@ -41,19 +41,19 @@ flowchart LR
   classDef edge_observe stroke:#B66B2D,stroke-width:1.8px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: hex, label: "**bevy​_​pbr::atmosphere::environment::**<br/>**on​_​remove​_​atmosphere​_​environment​_​**<br/>**map​_​light**<br/>清理已关闭的大气环境光组件。" }
+  n0@{ shape: hex, label: "**on​_​remove​_​atmosphere​_​environment​_​**<br/>**map​_​light**<br/>清理已关闭的大气环境光组件。" }
   class n0 node_observer
-  n1@{ shape: rounded, label: "**probe::EnvironmentMapLight**<br/>来自crate:bevy​_​light ↗：用漫反射与镜<br/>面反射立方体贴图提供环境光。" }
+  n1@{ shape: rounded, label: "**EnvironmentMapLight**<br/>来自crate:bevy​_​light ↗：用漫反射与镜<br/>面反射立方体贴图提供环境光。" }
   class n1 node_component
   class n1 external_node
-  n2@{ shape: rounded, label: "**probe::GeneratedEnvironmentMapLight**<br/>来自crate:bevy​_​light ↗：在运行时过滤<br/>源立方体贴图生成环境光。" }
+  n2@{ shape: rounded, label: "**GeneratedEnvironmentMapLight**<br/>来自crate:bevy​_​light ↗：在运行时过滤<br/>源立方体贴图生成环境光。" }
   class n2 node_component
   class n2 external_node
-  n3@{ shape: rounded, label: "**atmosphere::environment::**<br/>**AtmosphereEnvironmentMap**<br/>保存由大气渲染更新的环境贴图。" }
+  n3@{ shape: rounded, label: "**AtmosphereEnvironmentMap**<br/>保存由大气渲染更新的环境贴图。" }
   class n3 node_component
-  n4@{ shape: fr-rect, label: "**atmosphere::AtmospherePlugin**<br/>准备大气散射与环境光渲染数据。" }
+  n4@{ shape: fr-rect, label: "**AtmospherePlugin**<br/>准备大气散射与环境光渲染数据。" }
   class n4 node_plugin
-  n5@{ shape: stadium, label: "**bevy​_​ecs::lifecycle::RemoveEvent**<br/>来自crate:bevy​_​ecs ↗：在组件移除前发<br/>出通知。" }
+  n5@{ shape: stadium, label: "**RemoveEvent**<br/>来自crate:bevy​_​ecs ↗：在组件移除前发<br/>出通知。" }
   class n5 node_event
   class n5 external_node
   n0 e0@-->|"移除"| n1

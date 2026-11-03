@@ -38,9 +38,9 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**ui::backdrop::**<br/>**CourierAnimationPending**<br/>子场景就绪后继续等待父 GLB 与命名片段，<br/>避免异步加载顺序漏掉展示动画。" }
+  n0@{ shape: rounded, label: "**CourierAnimationPending**<br/>子场景就绪后继续等待父 GLB 与命名片段，<br/>避免异步加载顺序漏掉展示动画。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**demo::ui::backdrop::play​_​courier​_​**<br/>**animation**<br/>仅遍历已展开的展示角色子树，命名资产尚未<br/>就绪时保留 pending 供下一帧重试。" }
+  n1@{ shape: rounded, label: "**play​_​courier​_​animation**<br/>仅遍历已展开的展示角色子树，命名资产尚未<br/>就绪时保留 pending 供下一帧重试。" }
   class n1 node_system
   n1 e0@---|"存在性约束"| n0
   class e0 edge_reference

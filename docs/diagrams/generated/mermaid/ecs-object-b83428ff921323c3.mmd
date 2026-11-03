@@ -40,90 +40,90 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: lin-rect, label: "**Propagate**<br/>组织实体层级变换传播。" }
   class n0 node_system_set
-  n1@{ shape: rounded, label: "**bevy​_​camera::visibility::update​_​**<br/>**frusta**<br/>来自crate:bevy​_​camera ↗：根据相机投影<br/>和世界变换更新视锥。" }
+  n1@{ shape: rounded, label: "**update​_​frusta**<br/>来自crate:bevy​_​camera ↗：根据相机投影<br/>和世界变换更新视锥。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​gizmos::aabb::draw​_​all​_​aabbs**<br/>来自crate:bevy​_​gizmos ↗：绘制未单独标<br/>记实体的可见 AABB 调试线框。" }
+  n2@{ shape: rounded, label: "**draw​_​all​_​aabbs**<br/>来自crate:bevy​_​gizmos ↗：绘制未单独标<br/>记实体的可见 AABB 调试线框。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​light::spot​_​light::update​_​spot​_​**<br/>**light​_​bounding​_​spheres**<br/>来自crate:bevy​_​light ↗：按聚光灯位置<br/>和范围更新剔除包围球。" }
+  n3@{ shape: rounded, label: "**update​_​spot​_​light​_​bounding​_​spheres**<br/>来自crate:bevy​_​light ↗：按聚光灯位置<br/>和范围更新剔除包围球。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**bevy​_​animation::transition::advance​_​**<br/>**transitions**<br/>来自crate:bevy​_​animation ↗：推进动画<br/>过渡并归一化混合权重。" }
+  n4@{ shape: rounded, label: "**advance​_​transitions**<br/>来自crate:bevy​_​animation ↗：推进动画<br/>过渡并归一化混合权重。" }
   class n4 node_system
   class n4 external_node
-  n5@{ shape: rounded, label: "**bevy​_​light::spot​_​light::update​_​spot​_​**<br/>**light​_​frusta**<br/>来自crate:bevy​_​light ↗：更新可见聚光<br/>灯的阴影视锥。" }
+  n5@{ shape: rounded, label: "**update​_​spot​_​light​_​frusta**<br/>来自crate:bevy​_​light ↗：更新可见聚光<br/>灯的阴影视锥。" }
   class n5 node_system
   class n5 external_node
-  n6@{ shape: rounded, label: "**bevy​_​transform::systems::mark​_​dirty​_​**<br/>**trees**<br/>沿祖先链标记需要重算变换的子树。" }
+  n6@{ shape: rounded, label: "**mark​_​dirty​_​trees**<br/>沿祖先链标记需要重算变换的子树。" }
   class n6 node_system
-  n7@{ shape: rounded, label: "**bevy​_​animation::graph::thread​_​**<br/>**animation​_​graphs**<br/>来自crate:bevy​_​animation ↗：维护动画<br/>图的快速求值结构。" }
+  n7@{ shape: rounded, label: "**thread​_​animation​_​graphs**<br/>来自crate:bevy​_​animation ↗：维护动画<br/>图的快速求值结构。" }
   class n7 node_system
   class n7 external_node
-  n8@{ shape: rounded, label: "**bevy​_​gizmos​_​render::transform​_​gizmo​_​**<br/>**render::update​_​gizmo​_​meshes**<br/>来自crate:bevy​_​gizmos​_​render ↗：将变<br/>换操作器对齐焦点并更新模式与高亮。" }
+  n8@{ shape: rounded, label: "**update​_​gizmo​_​meshes**<br/>来自crate:bevy​_​gizmos​_​render ↗：将变<br/>换操作器对齐焦点并更新模式与高亮。" }
   class n8 node_system
   class n8 external_node
-  n9@{ shape: rounded, label: "**bevy​_​animation::advance​_​animations**<br/>来自crate:bevy​_​animation ↗：推进动画<br/>播放器中活动动画的播放时间。" }
+  n9@{ shape: rounded, label: "**advance​_​animations**<br/>来自crate:bevy​_​animation ↗：推进动画<br/>播放器中活动动画的播放时间。" }
   class n9 node_system
   class n9 external_node
-  n10@{ shape: rounded, label: "**bevy​_​light::directional​_​light::**<br/>**update​_​directional​_​light​_​frusta**<br/>来自crate:bevy​_​light ↗：从方向光级联<br/>投影更新阴影视锥。" }
+  n10@{ shape: rounded, label: "**update​_​directional​_​light​_​frusta**<br/>来自crate:bevy​_​light ↗：从方向光级联<br/>投影更新阴影视锥。" }
   class n10 node_system
   class n10 external_node
-  n11@{ shape: rounded, label: "**bevy​_​transform::systems::propagate​_​**<br/>**transforms​_​for#lt;bevy​_​ecs::query::**<br/>**filter::Or#lt;(bevy​_​ecs::query::**<br/>**filter::With#lt;bevy​_​gizmos::transform​_​**<br/>**gizmo::TransformGizmoRoot#gt;, bevy​_​**<br/>**ecs::query::filter::With#lt;bevy​_​**<br/>**gizmos​_​render::transform​_​gizmo​_​**<br/>**render::GizmoOverlayCamera#gt;, bevy​_​**<br/>**ecs::query::filter::With#lt;bevy​_​**<br/>**gizmos::transform​_​gizmo::**<br/>**TransformGizmoMeshMarker#gt;)#gt;#gt;**<br/>按指定查询过滤器即时计算世界变换。" }
+  n11@{ shape: rounded, label: "**propagate​_​transforms​_​for**<br/>按指定查询过滤器即时计算世界变换。" }
   class n11 node_system
-  n12@{ shape: rounded, label: "**bevy​_​light::cascade::build​_​**<br/>**directional​_​light​_​cascades**<br/>来自crate:bevy​_​light ↗：为投射阴影的<br/>方向光构建逐相机级联。" }
+  n12@{ shape: rounded, label: "**build​_​directional​_​light​_​cascades**<br/>来自crate:bevy​_​light ↗：为投射阴影的<br/>方向光构建逐相机级联。" }
   class n12 node_system
   class n12 external_node
-  n13@{ shape: rounded, label: "**bevy​_​light::point​_​light::update​_​**<br/>**point​_​light​_​frusta**<br/>来自crate:bevy​_​light ↗：更新可见点光<br/>的六面阴影视锥。" }
+  n13@{ shape: rounded, label: "**update​_​point​_​light​_​frusta**<br/>来自crate:bevy​_​light ↗：更新可见点光<br/>的六面阴影视锥。" }
   class n13 node_system
   class n13 external_node
-  n14@{ shape: rounded, label: "**bevy​_​animation::transition::expire​_​**<br/>**completed​_​transitions**<br/>来自crate:bevy​_​animation ↗：结束已完<br/>全淡出的动画过渡。" }
+  n14@{ shape: rounded, label: "**expire​_​completed​_​transitions**<br/>来自crate:bevy​_​animation ↗：结束已完<br/>全淡出的动画过渡。" }
   class n14 node_system
   class n14 external_node
-  n15@{ shape: rounded, label: "**bevy​_​gizmos::aabb::draw​_​aabbs**<br/>来自crate:bevy​_​gizmos ↗：为显式标记的<br/>可见实体绘制 AABB。" }
+  n15@{ shape: rounded, label: "**draw​_​aabbs**<br/>来自crate:bevy​_​gizmos ↗：为显式标记的<br/>可见实体绘制 AABB。" }
   class n15 node_system
   class n15 external_node
-  n16@{ shape: rounded, label: "**bevy​_​light::cluster::assign::assign​_​**<br/>**objects​_​to​_​clusters**<br/>来自crate:bevy​_​light ↗：将灯光、探针<br/>及贴花分配到视图分簇。" }
+  n16@{ shape: rounded, label: "**assign​_​objects​_​to​_​clusters**<br/>来自crate:bevy​_​light ↗：将灯光、探针<br/>及贴花分配到视图分簇。" }
   class n16 node_system
   class n16 external_node
-  n17@{ shape: rounded, label: "**bevy​_​light::point​_​light::update​_​**<br/>**point​_​light​_​bounding​_​spheres**<br/>来自crate:bevy​_​light ↗：按点光位置和<br/>范围更新剔除包围球。" }
+  n17@{ shape: rounded, label: "**update​_​point​_​light​_​bounding​_​spheres**<br/>来自crate:bevy​_​light ↗：按点光位置和<br/>范围更新剔除包围球。" }
   class n17 node_system
   class n17 external_node
-  n18@{ shape: rounded, label: "**bevy​_​gizmos::skinned​_​mesh​_​bounds::**<br/>**draw​_​skinned​_​mesh​_​bounds**<br/>来自crate:bevy​_​gizmos ↗：绘制带独立显<br/>示标记的动态蒙皮包围区域。" }
+  n18@{ shape: rounded, label: "**draw​_​skinned​_​mesh​_​bounds**<br/>来自crate:bevy​_​gizmos ↗：绘制带独立显<br/>示标记的动态蒙皮包围区域。" }
   class n18 node_system
   class n18 external_node
-  n19@{ shape: rounded, label: "**bevy​_​transform::systems::parallel::**<br/>**propagate​_​parent​_​transforms**<br/>沿父子层级并行合成世界变换。" }
+  n19@{ shape: rounded, label: "**propagate​_​parent​_​transforms**<br/>沿父子层级并行合成世界变换。" }
   class n19 node_system
-  n20@{ shape: rounded, label: "**bevy​_​light::check​_​dir​_​light​_​mesh​_​**<br/>**visibility**<br/>来自crate:bevy​_​light ↗：计算方向光各<br/>相机级联可见的投影网格。" }
+  n20@{ shape: rounded, label: "**check​_​dir​_​light​_​mesh​_​visibility**<br/>来自crate:bevy​_​light ↗：计算方向光各<br/>相机级联可见的投影网格。" }
   class n20 node_system
   class n20 external_node
-  n21@{ shape: rounded, label: "**bevy​_​light::check​_​point​_​light​_​mesh​_​**<br/>**visibility**<br/>来自crate:bevy​_​light ↗：计算点光与聚<br/>光灯阴影可见的网格。" }
+  n21@{ shape: rounded, label: "**check​_​point​_​light​_​mesh​_​visibility**<br/>来自crate:bevy​_​light ↗：计算点光与聚<br/>光灯阴影可见的网格。" }
   class n21 node_system
   class n21 external_node
-  n22@{ shape: rounded, label: "**bevy​_​animation::animate​_​targets**<br/>来自crate:bevy​_​animation ↗：评估动画<br/>图并把结果应用到动画目标。" }
+  n22@{ shape: rounded, label: "**animate​_​targets**<br/>来自crate:bevy​_​animation ↗：评估动画<br/>图并把结果应用到动画目标。" }
   class n22 node_system
   class n22 external_node
-  n23@{ shape: rounded, label: "**bevy​_​light::gizmos::draw​_​lights**<br/>来自crate:bevy​_​light ↗：为显式标记的<br/>各类光源绘制调试轮廓。" }
+  n23@{ shape: rounded, label: "**draw​_​lights**<br/>来自crate:bevy​_​light ↗：为显式标记的<br/>各类光源绘制调试轮廓。" }
   class n23 node_system
   class n23 external_node
-  n24@{ shape: rounded, label: "**bevy​_​transform::systems::sync​_​**<br/>**simple​_​transforms**<br/>同步没有父子层级的独立实体世界变换。" }
+  n24@{ shape: rounded, label: "**sync​_​simple​_​transforms**<br/>同步没有父子层级的独立实体世界变换。" }
   class n24 node_system
-  n25@{ shape: rounded, label: "**bevy​_​gizmos::skinned​_​mesh​_​bounds::**<br/>**draw​_​all​_​skinned​_​mesh​_​bounds**<br/>来自crate:bevy​_​gizmos ↗：绘制未单独标<br/>记的动态蒙皮网格包围区域。" }
+  n25@{ shape: rounded, label: "**draw​_​all​_​skinned​_​mesh​_​bounds**<br/>来自crate:bevy​_​gizmos ↗：绘制未单独标<br/>记的动态蒙皮网格包围区域。" }
   class n25 node_system
   class n25 external_node
-  n26@{ shape: rounded, label: "**bevy​_​light::gizmos::draw​_​all​_​lights**<br/>来自crate:bevy​_​light ↗：按配置颜色模<br/>式绘制全部灯光调试图形。" }
+  n26@{ shape: rounded, label: "**draw​_​all​_​lights**<br/>来自crate:bevy​_​light ↗：按配置颜色模<br/>式绘制全部灯光调试图形。" }
   class n26 node_system
   class n26 external_node
   n27@{ shape: lin-rect, label: "**CalculateBounds**<br/>来自crate:bevy​_​camera ↗：组织相机与实<br/>体可见性更新。" }
   class n27 node_system_set
   class n27 external_node
-  n28@{ shape: rounded, label: "**bevy​_​animation::trigger​_​untargeted​_​**<br/>**animation​_​events**<br/>来自crate:bevy​_​animation ↗：派发动画<br/>片段的根目标事件。" }
+  n28@{ shape: rounded, label: "**trigger​_​untargeted​_​animation​_​events**<br/>来自crate:bevy​_​animation ↗：派发动画<br/>片段的根目标事件。" }
   class n28 node_system
   class n28 external_node
   n29@{ shape: lin-rect, label: "**UpdateFrusta**<br/>来自crate:bevy​_​camera ↗：组织相机与实<br/>体可见性更新。" }
   class n29 node_system_set
   class n29 external_node
-  n30@{ shape: rounded, label: "**demo::character​_​animation::**<br/>**grounding::compensate​_​courier​_​sole​_​**<br/>**penetration**<br/>来自character​_​animation ↗：方向混合<br/>可能把弯腿插值成更直的腿；逐帧按真实鞋底<br/>边界修正最终视觉高度。" }
+  n30@{ shape: rounded, label: "**compensate​_​courier​_​sole​_​penetration**<br/>来自character​_​animation ↗：方向混合<br/>可能把弯腿插值成更直的腿；逐帧按真实鞋底<br/>边界修正最终视觉高度。" }
   class n30 node_system
   class n30 external_node
   n31@{ shape: lin-rect, label: "**VisibilityPropagate**<br/>来自crate:bevy​_​camera ↗：组织相机与实<br/>体可见性更新。" }
@@ -191,6 +191,12 @@ flowchart LR
   class e29 edge_order
   n0 e30@-->|"先于"| n31
   class e30 edge_order
+  n4 layout_input_0@~~~ n7
+  n7 layout_input_1@~~~ n9
+  n9 layout_input_2@~~~ n14
+  n14 layout_input_3@~~~ n22
+  n22 layout_input_4@~~~ n28
+  n28 layout_input_5@~~~ n30
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
@@ -204,7 +210,7 @@ flowchart LR
   e10@{ curve: basis }
   e11@{ curve: basis }
   e12@{ curve: basis }
-  e13@{ curve: bumpX }
+  e13@{ curve: basis }
   e14@{ curve: basis }
   e15@{ curve: basis }
   e16@{ curve: basis }

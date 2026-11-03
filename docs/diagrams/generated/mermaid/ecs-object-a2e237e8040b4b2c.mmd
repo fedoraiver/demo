@@ -40,7 +40,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: lin-rect, label: "**Interaction**<br/>固定模拟阶段；结构变更在依赖阶段之间提<br/>交。" }
   class n0 node_system_set
-  n1@{ shape: rounded, label: "**demo::item​_​interaction::**<br/>**interaction::handle​_​interaction**<br/>来自item​_​interaction ↗：拾取建立物理<br/>持握关系；释放只解除控制，保留刚体姿态、<br/>线速度和角速度。" }
+  n1@{ shape: rounded, label: "**handle​_​interaction**<br/>来自item​_​interaction ↗：拾取建立物理<br/>持握关系；释放只解除控制，保留刚体姿态、<br/>线速度和角速度。" }
   class n1 node_system
   class n1 external_node
   n2@{ shape: lin-rect, label: "**Target**<br/>固定模拟阶段；结构变更在依赖阶段之间提<br/>交。" }

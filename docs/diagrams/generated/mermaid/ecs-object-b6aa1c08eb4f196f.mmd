@@ -41,12 +41,12 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
   subgraph layout_card_n0[" "]
-  n0@{ shape: rounded, label: "**bevy​_​camera::visibility::**<br/>**ViewVisibility**<br/>记录实体是否应被提取用于渲染。" }
+  n0@{ shape: rounded, label: "**ViewVisibility**<br/>记录实体是否应被提取用于渲染。" }
   class n0 node_component
   end
   style layout_card_n0 fill:none,stroke:none
   subgraph layout_card_n1[" "]
-  n1@{ shape: rounded, label: "**bevy​_​pbr::decal::clustered::extract​_​**<br/>**decals**<br/>来自crate:bevy​_​pbr ↗：从主世界提取可<br/>见聚簇贴花及点光、聚光和平行光的光照纹<br/>理，重建渲染贴花缓冲，并记录真正参与聚簇<br/>计算的贴花数量。" }
+  n1@{ shape: rounded, label: "**extract​_​decals**<br/>来自crate:bevy​_​pbr ↗：从主世界提取可<br/>见聚簇贴花及点光、聚光和平行光的光照纹<br/>理，重建渲染贴花缓冲，并记录真正参与聚簇<br/>计算的贴花数量。" }
   class n1 node_system
   class n1 external_node
   end
@@ -298,7 +298,7 @@ flowchart LR
   end
   style layout_card_n42 fill:none,stroke:none
   subgraph layout_card_n43[" "]
-  n43@{ shape: rounded, label: "**bevy​_​pbr::render::mesh::extract​_​**<br/>**meshes​_​for​_​gpu​_​building**<br/>来自crate:bevy​_​pbr ↗：增量提取变化或<br/>需重试网格到线程队列。" }
+  n43@{ shape: rounded, label: "**extract​_​meshes​_​for​_​gpu​_​building**<br/>来自crate:bevy​_​pbr ↗：增量提取变化或<br/>需重试网格到线程队列。" }
   class n43 node_system
   class n43 external_node
   end
@@ -340,7 +340,7 @@ flowchart LR
   end
   style layout_card_n49 fill:none,stroke:none
   subgraph layout_card_n50[" "]
-  n50@{ shape: rounded, label: "**bevy​_​pbr::render::light::extract​_​**<br/>**lights**<br/>来自crate:bevy​_​pbr ↗：提取各类可见光<br/>源及阴影渲染状态。" }
+  n50@{ shape: rounded, label: "**extract​_​lights**<br/>来自crate:bevy​_​pbr ↗：提取各类可见光<br/>源及阴影渲染状态。" }
   class n50 node_system
   class n50 external_node
   end
@@ -358,7 +358,7 @@ flowchart LR
   end
   style layout_card_n52 fill:none,stroke:none
   subgraph layout_card_n53[" "]
-  n53@{ shape: rounded, label: "**bevy​_​camera::visibility::reset​_​view​_​**<br/>**visibility**<br/>为本帧可见性检查保留上帧状态。" }
+  n53@{ shape: rounded, label: "**reset​_​view​_​visibility**<br/>为本帧可见性检查保留上帧状态。" }
   class n53 node_system
   end
   style layout_card_n53 fill:none,stroke:none
@@ -417,7 +417,7 @@ flowchart LR
   end
   style layout_card_n62 fill:none,stroke:none
   subgraph layout_card_n63[" "]
-  n63@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::**<br/>**material::extract​_​mesh​_​materials​_​**<br/>**2d#lt;bevy​_​sprite​_​render::tilemap​_​**<br/>**chunk::tilemap​_​chunk​_​material::**<br/>**TilemapChunkMaterial#gt;**<br/>来自crate:bevy​_​sprite​_​render ↗：同步<br/>可见二维网格使用的材质资产身份。" }
+  n63@{ shape: rounded, label: "**extract​_​mesh​_​materials​_​2d**<br/>来自crate:bevy​_​sprite​_​render ↗：同步<br/>可见二维网格使用的材质资产身份。" }
   class n63 node_system
   class n63 external_node
   end
@@ -627,7 +627,7 @@ flowchart LR
   end
   style layout_card_n97 fill:none,stroke:none
   subgraph layout_card_n98[" "]
-  n98@{ shape: rounded, label: "**bevy​_​pbr::material::extract​_​mesh​_​**<br/>**materials#lt;bevy​_​pbr::pbr​_​material::**<br/>**StandardMaterial#gt;**<br/>来自crate:bevy​_​pbr ↗：根据可见性和材<br/>质变化更新渲染实例映射。" }
+  n98@{ shape: rounded, label: "**extract​_​mesh​_​materials**<br/>来自crate:bevy​_​pbr ↗：根据可见性和材<br/>质变化更新渲染实例映射。" }
   class n98 node_system
   class n98 external_node
   end
@@ -1023,7 +1023,7 @@ flowchart LR
   end
   style layout_card_n163 fill:none,stroke:none
   subgraph layout_card_n164[" "]
-  n164@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::**<br/>**material::extract​_​mesh​_​materials​_​**<br/>**2d#lt;bevy​_​sprite​_​render::mesh2d::**<br/>**color​_​material::ColorMaterial#gt;**<br/>来自crate:bevy​_​sprite​_​render ↗：同步<br/>可见二维网格使用的材质资产身份。" }
+  n164@{ shape: rounded, label: "**extract​_​mesh​_​materials​_​2d**<br/>来自crate:bevy​_​sprite​_​render ↗：同步<br/>可见二维网格使用的材质资产身份。" }
   class n164 node_system
   class n164 external_node
   end
@@ -1281,7 +1281,7 @@ flowchart LR
   end
   style layout_card_n206 fill:none,stroke:none
   subgraph layout_card_n207[" "]
-  n207@{ shape: rounded, label: "**bevy​_​gizmos::aabb::draw​_​aabbs**<br/>来自crate:bevy​_​gizmos ↗：为显式标记的<br/>可见实体绘制 AABB。" }
+  n207@{ shape: rounded, label: "**draw​_​aabbs**<br/>来自crate:bevy​_​gizmos ↗：为显式标记的<br/>可见实体绘制 AABB。" }
   class n207 node_system
   class n207 external_node
   end
@@ -1353,7 +1353,7 @@ flowchart LR
   end
   style layout_card_n218 fill:none,stroke:none
   subgraph layout_card_n219[" "]
-  n219@{ shape: rounded, label: "**bevy​_​gizmos::aabb::draw​_​all​_​aabbs**<br/>来自crate:bevy​_​gizmos ↗：绘制未单独标<br/>记实体的可见 AABB 调试线框。" }
+  n219@{ shape: rounded, label: "**draw​_​all​_​aabbs**<br/>来自crate:bevy​_​gizmos ↗：绘制未单独标<br/>记实体的可见 AABB 调试线框。" }
   class n219 node_system
   class n219 external_node
   end
@@ -1449,7 +1449,7 @@ flowchart LR
   end
   style layout_card_n234 fill:none,stroke:none
   subgraph layout_card_n235[" "]
-  n235@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::mesh::**<br/>**extract​_​2d​_​meshes**<br/>来自crate:bevy​_​sprite​_​render ↗：增量<br/>同步二维网格变换和渲染实例信息。" }
+  n235@{ shape: rounded, label: "**extract​_​2d​_​meshes**<br/>来自crate:bevy​_​sprite​_​render ↗：增量<br/>同步二维网格变换和渲染实例信息。" }
   class n235 node_system
   class n235 external_node
   end
@@ -1503,7 +1503,7 @@ flowchart LR
   end
   style layout_card_n243 fill:none,stroke:none
   subgraph layout_card_n244[" "]
-  n244@{ shape: rounded, label: "**bevy​_​pbr::render::skin::extract​_​**<br/>**skins**<br/>来自crate:bevy​_​pbr ↗：按蒙皮可见性和<br/>资产变化分配或回收骨骼缓冲区域，提取关节<br/>全局变换与逆绑定姿势到暂存数据，并清理移<br/>除的蒙皮记录。" }
+  n244@{ shape: rounded, label: "**extract​_​skins**<br/>来自crate:bevy​_​pbr ↗：按蒙皮可见性和<br/>资产变化分配或回收骨骼缓冲区域，提取关节<br/>全局变换与逆绑定姿势到暂存数据，并清理移<br/>除的蒙皮记录。" }
   class n244 node_system
   class n244 external_node
   end
@@ -1749,7 +1749,7 @@ flowchart LR
   end
   style layout_card_n284 fill:none,stroke:none
   subgraph layout_card_n285[" "]
-  n285@{ shape: rounded, label: "**bevy​_​pbr::material::extract​_​mesh​_​**<br/>**materials#lt;bevy​_​pbr::extended​_​**<br/>**material::ExtendedMaterial#lt;bevy​_​**<br/>**pbr::pbr​_​material::**<br/>**StandardMaterial, bevy​_​pbr::decal::**<br/>**forward::ForwardDecalMaterialExt#gt;#gt;**<br/>来自crate:bevy​_​pbr ↗：根据可见性和材<br/>质变化更新渲染实例映射。" }
+  n285@{ shape: rounded, label: "**extract​_​mesh​_​materials**<br/>来自crate:bevy​_​pbr ↗：根据可见性和材<br/>质变化更新渲染实例映射。" }
   class n285 node_system
   class n285 external_node
   end
@@ -1863,7 +1863,7 @@ flowchart LR
   end
   style layout_card_n303 fill:none,stroke:none
   subgraph layout_card_n304[" "]
-  n304@{ shape: rounded, label: "**bevy​_​camera::visibility::mark​_​newly​_​**<br/>**hidden​_​entities​_​invisible**<br/>提交本帧已不再可见的对象状态。" }
+  n304@{ shape: rounded, label: "**mark​_​newly​_​hidden​_​entities​_​invisible**<br/>提交本帧已不再可见的对象状态。" }
   class n304 node_system
   end
   style layout_card_n304 fill:none,stroke:none
@@ -1880,7 +1880,7 @@ flowchart LR
   end
   style layout_card_n306 fill:none,stroke:none
   subgraph layout_card_n307[" "]
-  n307@{ shape: rounded, label: "**bevy​_​light::spot​_​light::update​_​spot​_​**<br/>**light​_​frusta**<br/>来自crate:bevy​_​light ↗：更新可见聚光<br/>灯的阴影视锥。" }
+  n307@{ shape: rounded, label: "**update​_​spot​_​light​_​frusta**<br/>来自crate:bevy​_​light ↗：更新可见聚光<br/>灯的阴影视锥。" }
   class n307 node_system
   class n307 external_node
   end
@@ -2006,7 +2006,7 @@ flowchart LR
   end
   style layout_card_n327 fill:none,stroke:none
   subgraph layout_card_n328[" "]
-  n328@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::**<br/>**material::extract​_​mesh​_​materials​_​**<br/>**2d#lt;bevy​_​sprite​_​render::sprite​_​mesh::**<br/>**sprite​_​mesh​_​material::**<br/>**SpriteMeshMaterial#gt;**<br/>来自crate:bevy​_​sprite​_​render ↗：同步<br/>可见二维网格使用的材质资产身份。" }
+  n328@{ shape: rounded, label: "**extract​_​mesh​_​materials​_​2d**<br/>来自crate:bevy​_​sprite​_​render ↗：同步<br/>可见二维网格使用的材质资产身份。" }
   class n328 node_system
   class n328 external_node
   end
@@ -2192,7 +2192,7 @@ flowchart LR
   end
   style layout_card_n358 fill:none,stroke:none
   subgraph layout_card_n359[" "]
-  n359@{ shape: rounded, label: "**bevy​_​camera::visibility::check​_​**<br/>**visibility​_​cpu​_​culling**<br/>按层、距离和视锥收集各相机可见实体。" }
+  n359@{ shape: rounded, label: "**check​_​visibility​_​cpu​_​culling**<br/>按层、距离和视锥收集各相机可见实体。" }
   class n359 node_system
   end
   style layout_card_n359 fill:none,stroke:none
@@ -2311,7 +2311,7 @@ flowchart LR
   end
   style layout_card_n378 fill:none,stroke:none
   subgraph layout_card_n379[" "]
-  n379@{ shape: rounded, label: "**bevy​_​pbr::render::morph::extract​_​**<br/>**morphs**<br/>来自crate:bevy​_​pbr ↗：提取可见网格的<br/>当前与历史形变权重。" }
+  n379@{ shape: rounded, label: "**extract​_​morphs**<br/>来自crate:bevy​_​pbr ↗：提取可见网格的<br/>当前与历史形变权重。" }
   class n379 node_system
   class n379 external_node
   end
@@ -2329,7 +2329,7 @@ flowchart LR
   end
   style layout_card_n381 fill:none,stroke:none
   subgraph layout_card_n382[" "]
-  n382@{ shape: rounded, label: "**bevy​_​sprite​_​render::text2d::extract​_​**<br/>**text2d​_​sprite**<br/>来自crate:bevy​_​sprite​_​render ↗：把可<br/>见二维文字及装饰提取为精灵切片。" }
+  n382@{ shape: rounded, label: "**extract​_​text2d​_​sprite**<br/>来自crate:bevy​_​sprite​_​render ↗：把可<br/>见二维文字及装饰提取为精灵切片。" }
   class n382 node_system
   class n382 external_node
   end
@@ -2371,7 +2371,7 @@ flowchart LR
   end
   style layout_card_n388 fill:none,stroke:none
   subgraph layout_card_n389[" "]
-  n389@{ shape: rounded, label: "**bevy​_​pbr::lightmap::extract​_​**<br/>**lightmaps**<br/>来自crate:bevy​_​pbr ↗：维护可见光照贴<br/>图的渲染槽位与纹理。" }
+  n389@{ shape: rounded, label: "**extract​_​lightmaps**<br/>来自crate:bevy​_​pbr ↗：维护可见光照贴<br/>图的渲染槽位与纹理。" }
   class n389 node_system
   class n389 external_node
   end
@@ -2413,7 +2413,7 @@ flowchart LR
   end
   style layout_card_n395 fill:none,stroke:none
   subgraph layout_card_n396[" "]
-  n396@{ shape: rounded, label: "**bevy​_​light::check​_​dir​_​light​_​mesh​_​**<br/>**visibility**<br/>来自crate:bevy​_​light ↗：计算方向光各<br/>相机级联可见的投影网格。" }
+  n396@{ shape: rounded, label: "**check​_​dir​_​light​_​mesh​_​visibility**<br/>来自crate:bevy​_​light ↗：计算方向光各<br/>相机级联可见的投影网格。" }
   class n396 node_system
   class n396 external_node
   end
@@ -2665,7 +2665,7 @@ flowchart LR
   end
   style layout_card_n437 fill:none,stroke:none
   subgraph layout_card_n438[" "]
-  n438@{ shape: rounded, label: "**bevy​_​light::check​_​point​_​light​_​mesh​_​**<br/>**visibility**<br/>来自crate:bevy​_​light ↗：计算点光与聚<br/>光灯阴影可见的网格。" }
+  n438@{ shape: rounded, label: "**check​_​point​_​light​_​mesh​_​visibility**<br/>来自crate:bevy​_​light ↗：计算点光与聚<br/>光灯阴影可见的网格。" }
   class n438 node_system
   class n438 external_node
   end
@@ -2995,7 +2995,7 @@ flowchart LR
   end
   style layout_card_n492 fill:none,stroke:none
   subgraph layout_card_n493[" "]
-  n493@{ shape: rounded, label: "**bevy​_​light::cluster::assign::assign​_​**<br/>**objects​_​to​_​clusters**<br/>来自crate:bevy​_​light ↗：将灯光、探针<br/>及贴花分配到视图分簇。" }
+  n493@{ shape: rounded, label: "**assign​_​objects​_​to​_​clusters**<br/>来自crate:bevy​_​light ↗：将灯光、探针<br/>及贴花分配到视图分簇。" }
   class n493 node_system
   class n493 external_node
   end
@@ -3079,7 +3079,7 @@ flowchart LR
   end
   style layout_card_n506 fill:none,stroke:none
   subgraph layout_card_n507[" "]
-  n507@{ shape: rounded, label: "**bevy​_​camera::visibility::check​_​**<br/>**visibility​_​gpu​_​culling**<br/>同步退出 CPU 裁剪对象的层级可见状态。" }
+  n507@{ shape: rounded, label: "**check​_​visibility​_​gpu​_​culling**<br/>同步退出 CPU 裁剪对象的层级可见状态。" }
   class n507 node_system
   end
   style layout_card_n507 fill:none,stroke:none
@@ -3228,7 +3228,7 @@ flowchart LR
   end
   style layout_card_n531 fill:none,stroke:none
   subgraph layout_card_n532[" "]
-  n532@{ shape: rounded, label: "**bevy​_​sprite::picking​_​backend::**<br/>**sprite​_​picking**<br/>来自crate:bevy​_​sprite ↗：按精灵图像和<br/>拾取配置计算指针命中。" }
+  n532@{ shape: rounded, label: "**sprite​_​picking**<br/>来自crate:bevy​_​sprite ↗：按精灵图像和<br/>拾取配置计算指针命中。" }
   class n532 node_system
   class n532 external_node
   end
@@ -3270,7 +3270,7 @@ flowchart LR
   end
   style layout_card_n538 fill:none,stroke:none
   subgraph layout_card_n539[" "]
-  n539@{ shape: rounded, label: "**bevy​_​light::point​_​light::update​_​**<br/>**point​_​light​_​frusta**<br/>来自crate:bevy​_​light ↗：更新可见点光<br/>的六面阴影视锥。" }
+  n539@{ shape: rounded, label: "**update​_​point​_​light​_​frusta**<br/>来自crate:bevy​_​light ↗：更新可见点光<br/>的六面阴影视锥。" }
   class n539 node_system
   class n539 external_node
   end
@@ -3390,7 +3390,7 @@ flowchart LR
   end
   style layout_card_n558 fill:none,stroke:none
   subgraph layout_card_n559[" "]
-  n559@{ shape: rounded, label: "**bevy​_​light::directional​_​light::**<br/>**update​_​directional​_​light​_​frusta**<br/>来自crate:bevy​_​light ↗：从方向光级联<br/>投影更新阴影视锥。" }
+  n559@{ shape: rounded, label: "**update​_​directional​_​light​_​frusta**<br/>来自crate:bevy​_​light ↗：从方向光级联<br/>投影更新阴影视锥。" }
   class n559 node_system
   class n559 external_node
   end

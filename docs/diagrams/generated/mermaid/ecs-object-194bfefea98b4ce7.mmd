@@ -38,15 +38,15 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**fxaa::FxaaPipeline**<br/>提供 FXAA 的着色器和纹理绑定布局。" }
+  n0@{ shape: cyl, label: "**FxaaPipeline**<br/>提供 FXAA 的着色器和纹理绑定布局。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​anti​_​alias::fxaa::node::fxaa**<br/>对启用的相机视图执行 FXAA 抗锯齿。" }
+  n1@{ shape: rounded, label: "**fxaa**<br/>对启用的相机视图执行 FXAA 抗锯齿。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​anti​_​alias::fxaa::init​_​fxaa​_​**<br/>**pipeline**<br/>建立 FXAA 的纹理采样布局和着色器资源。" }
+  n2@{ shape: rounded, label: "**init​_​fxaa​_​pipeline**<br/>建立 FXAA 的纹理采样布局和着色器资源。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​anti​_​alias::fxaa::node::fxaa**<br/>对启用的相机视图执行 FXAA 抗锯齿。" }
+  n3@{ shape: rounded, label: "**fxaa**<br/>对启用的相机视图执行 FXAA 抗锯齿。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**bevy​_​anti​_​alias::fxaa::prepare​_​fxaa​_​**<br/>**pipelines**<br/>按相机边缘阈值与目标格式准备 FXAA 管<br/>线。" }
+  n4@{ shape: rounded, label: "**prepare​_​fxaa​_​pipelines**<br/>按相机边缘阈值与目标格式准备 FXAA 管<br/>线。" }
   class n4 node_system
   n0 e0@--> n1
   class e0 edge_read

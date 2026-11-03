@@ -37,9 +37,9 @@ flowchart LR
   classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**bevy​_​render::erased​_​render​_​asset::**<br/>**CachedExtractErasedRenderAssetSystem**<br/>**State#lt;mesh2d::material::**<br/>**MeshMaterial2d#lt;mesh2d::color​_​**<br/>**material::ColorMaterial#gt;#gt;**<br/>缓存类型擦除资产提取的参数状态。" }
+  n0@{ shape: cyl, label: "**CachedExtractErasedRenderAssetSystem**<br/>**State#lt;MeshMaterial2d#lt;ColorMaterial#gt;#gt;**<br/>缓存类型擦除资产提取的参数状态。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​render::erased​_​render​_​asset::**<br/>**extract​_​erased​_​render​_​asset#lt;bevy​_​**<br/>**sprite​_​render::mesh2d::material::**<br/>**MeshMaterial2d#lt;bevy​_​sprite​_​render::**<br/>**mesh2d::color​_​material::**<br/>**ColorMaterial#gt;#gt;**<br/>提取变化及设备恢复后失效的擦除渲染资产。" }
+  n1@{ shape: rounded, label: "**extract​_​erased​_​render​_​asset**<br/>提取变化及设备恢复后失效的擦除渲染资产。" }
   class n1 node_system
   n1 e0@-->|"移除"| n0
   class e0 edge_write

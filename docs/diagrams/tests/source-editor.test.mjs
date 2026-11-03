@@ -10,13 +10,19 @@ test('normalizes Windows, UNC and POSIX absolute workspace roots without dependi
   assert.equal(normalizeWorkspaceRoot('D:/'), 'D:/');
   assert.equal(normalizeWorkspaceRoot('\\\\server\\中文 共享\\demo\\'), '//server/中文 共享/demo');
   assert.equal(normalizeWorkspaceRoot('//server/share'), '//server/share');
+  assert.equal(normalizeWorkspaceRoot('\\\\?\\c:\\Users\\example\\.cargo\\registry\\src\\bevy_asset-0.20.0'), 'C:/Users/example/.cargo/registry/src/bevy_asset-0.20.0');
+  assert.equal(normalizeWorkspaceRoot('//?/C:/Cargo 中文 #%/bevy_asset-0.20.0'), 'C:/Cargo 中文 #%/bevy_asset-0.20.0');
+  assert.equal(normalizeWorkspaceRoot('\\\\?\\UNC\\server\\中文 共享 #%\\cargo'), '//server/中文 共享 #%/cargo');
+  assert.equal(normalizeWorkspaceRoot('//?/unc/server/share/cargo'), '//server/share/cargo');
   assert.equal(normalizeWorkspaceRoot('/home/user/project/'), '/home/user/project');
   assert.equal(normalizeWorkspaceRoot('/'), '/');
 });
 
 test('rejects ambiguous, relative and malformed workspace roots', () => {
   for (const root of ['', null, 'demo', 'D:demo', 'file:///D:/demo', '//server', '//server:port/share',
-    '//server/../demo', '/../../demo', 'D:/../demo', 'D:/de\nmo', '/home/\ud800']) {
+    '//server/../demo', '/../../demo', 'D:/../demo', 'D:/de\nmo', '/home/\ud800',
+    '//?/GLOBALROOT/Device/HarddiskVolume1', '//./C:/demo', '//?/Volume{123}/demo', '//?/C:demo',
+    '//?/UNC/server', '//?/UNC/server/../demo', '//?/C:/../demo', '//?/UNC/server/share/../demo']) {
     assert.throws(() => normalizeWorkspaceRoot(root), /workspace|Workspace/);
   }
 });
@@ -263,8 +269,59 @@ test('dependency editor links and copy locations work on HTTP without configurin
   assert.deepEqual(copied, Array(3).fill(dependency.root + '/src/中文 #%.rs:8:1'));
   const invalid = browserFixture('https://example.test/docs/diagrams/ecs-source.html', { dependency: { name: 'avian3d', version: '0.7.0' } });
   assert.equal(invalid.editorLink.href, null);
-  assert.equal(invalid.field(), undefined);
+  assert.equal(invalid.field().value, 'src/中文 #%.rs:8:1');
+  assert.match(invalid.container.querySelector('[data-source-unavailable]').textContent, /依赖源码根目录缺失/);
   assert.equal((await invalid.document.dispatch('click', invalid.editorLink)).defaultPrevented, true);
+});
+
+test('unavailable dependency roots preserve copyable coordinates and never use the configured project root', async () => {
+  for (const root of [undefined, '', 'relative', '//?/GLOBALROOT/Device/HarddiskVolume1', 'C:/../outside']) {
+    const copied = [];
+    const dependency = { name: 'bevy_asset', version: '0.20.0', ...(root === undefined ? {} : { root }) };
+    const page = browserFixture('https://example.test/docs/diagrams/ecs-architecture.html?workspace=D%3A%2Fdemo',
+      { dependency, clipboard: { writeText: async value => copied.push(value) } });
+    assert.equal(page.editorLink.href, null);
+    assert.equal(page.editorLink.getAttribute('aria-disabled'), 'true');
+    assert.equal(page.editorLink.dataset.workspaceState, 'unavailable');
+    assert.equal(page.field().value, 'src/中文 #%.rs:8:1');
+    const reason = page.container.querySelector('[data-source-unavailable]');
+    assert.match(reason.textContent, /依赖源码根目录(?:缺失|无效)/);
+    assert.equal(page.editorLink.title, reason.textContent);
+    await page.copy().dispatch('click');
+    assert.deepEqual(copied, ['src/中文 #%.rs:8:1']);
+    assert.equal(page.copy().textContent, '已复制');
+    assert.equal((await page.document.dispatch('click', page.editorLink)).defaultPrevented, true);
+    assert.notEqual(page.dialog.open, true);
+    page.editor.configure('E:/other');
+    assert.equal(page.editorLink.href, null);
+    assert.equal(page.field().value, 'src/中文 #%.rs:8:1');
+    page.editorLink.dataset.vscodeDependencyRoot = '//?/C:/Cargo 中文 #%/bevy_asset-0.20.0';
+    page.editor.refreshLinks();
+    assert.equal(page.editorLink.getAttribute('aria-disabled'), null);
+    assert.equal(page.editorLink.dataset.workspaceState, 'ready');
+    assert.equal(reason.textContent, '');
+    assert.equal(page.copy().textContent, '复制定位');
+    assert.equal(page.field().value, 'C:/Cargo 中文 #%/bevy_asset-0.20.0/src/中文 #%.rs:8:1');
+    assert.equal(page.editorLink.href, 'vscode://file/C:/Cargo%20%E4%B8%AD%E6%96%87%20%23%25/bevy_asset-0.20.0/src/%E4%B8%AD%E6%96%87%20%23%25.rs:8:1');
+  }
+});
+
+test('extended Windows dependency roots encode safe URIs without invoking navigation during refresh or configuration', async () => {
+  for (const [root, expected] of [
+    ['\\\\?\\C:\\Cargo 中文 #%\\bevy_asset-0.20.0', 'vscode://file/C:/Cargo%20%E4%B8%AD%E6%96%87%20%23%25'],
+    ['\\\\?\\UNC\\server\\share\\Cargo 中文 #%\\bevy_asset-0.20.0', 'vscode://file//server/share/Cargo%20%E4%B8%AD%E6%96%87%20%23%25'],
+  ]) {
+    const page = browserFixture('https://example.test/docs/diagrams/ecs-architecture.html',
+      { dependency: { name: 'bevy_asset', version: '0.20.0', root } });
+    const before = page.location.href;
+    page.editor.refreshLinks();
+    assert.equal(page.location.href, before);
+    page.editor.configure('D:/project');
+    assert.equal(new URL(page.location.href).protocol, 'https:');
+    assert.equal(new URL(page.location.href).searchParams.get('workspace'), 'D:/project');
+    assert.equal(page.editorLink.href, expected + '/bevy_asset-0.20.0/src/%E4%B8%AD%E6%96%87%20%23%25.rs:8:1');
+    assert.equal((await page.document.dispatch('click', page.editorLink)).defaultPrevented, false);
+  }
 });
 
 test('dependency copy feedback follows only the latest request and current dependency location', async () => {

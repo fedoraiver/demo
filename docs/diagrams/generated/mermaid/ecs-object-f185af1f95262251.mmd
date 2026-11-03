@@ -38,14 +38,14 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**atmosphere::environment::**<br/>**AtmosphereProbeBindGroups**<br/>绑定大气环境贴图计算所需的资源。" }
+  n0@{ shape: rounded, label: "**AtmosphereProbeBindGroups**<br/>绑定大气环境贴图计算所需的资源。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​extract::extract​_​component::**<br/>**extract​_​components#lt;bevy​_​pbr::**<br/>**atmosphere::environment::**<br/>**AtmosphereEnvironmentMap, bevy​_​**<br/>**render::RenderApp, ()#gt;**<br/>来自crate:bevy​_​extract ↗：批量同步或<br/>移除子世界的目标组件。" }
+  n1@{ shape: rounded, label: "**extract​_​components**<br/>来自crate:bevy​_​extract ↗：批量同步或<br/>移除子世界的目标组件。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​pbr::atmosphere::environment::**<br/>**prepare​_​atmosphere​_​probe​_​bind​_​groups**<br/>为大气环境探针绑定光照、查找表和输出纹<br/>理。" }
+  n2@{ shape: rounded, label: "**prepare​_​atmosphere​_​probe​_​bind​_​groups**<br/>为大气环境探针绑定光照、查找表和输出纹<br/>理。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​pbr::atmosphere::environment::**<br/>**atmosphere​_​environment**<br/>使用当前视图的大气和光照参数，为每个大气<br/>环境贴图的六个立方体面调度计算着色器，更<br/>新环境光源纹理。" }
+  n3@{ shape: rounded, label: "**atmosphere​_​environment**<br/>使用当前视图的大气和光照参数，为每个大气<br/>环境贴图的六个立方体面调度计算着色器，更<br/>新环境光源纹理。" }
   class n3 node_system
   n1 e0@-->|"移除"| n0
   class e0 edge_write

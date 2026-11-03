@@ -42,16 +42,16 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: hex, label: "**demo::ui::pointer::primary​_​press**<br/>记录菜单按钮主键按压的指针身份。" }
+  n0@{ shape: hex, label: "**primary​_​press**<br/>记录菜单按钮主键按压的指针身份。" }
   class n0 node_observer
-  n1@{ shape: rounded, label: "**ui::pointer::PrimaryPress**<br/>原生 Button 对任意指针键维护 Pressed；<br/>菜单单独保留主键来源以筛选动作和样式。" }
+  n1@{ shape: rounded, label: "**PrimaryPress**<br/>原生 Button 对任意指针键维护 Pressed；<br/>菜单单独保留主键来源以筛选动作和样式。" }
   class n1 node_component
-  n2@{ shape: fr-rect, label: "**ui::GameUiPlugin**<br/>组装菜单功能，不安装窗口或重复初始化会话<br/>日志。" }
+  n2@{ shape: fr-rect, label: "**GameUiPlugin**<br/>组装菜单功能，不安装窗口或重复初始化会话<br/>日志。" }
   class n2 node_plugin
-  n3@{ shape: stadium, label: "**bevy​_​picking::events::PointerPress**<br/>来自crate:bevy​_​picking ↗：通知目标上<br/>的指针按钮按下及连按次数。" }
+  n3@{ shape: stadium, label: "**PointerPress**<br/>来自crate:bevy​_​picking ↗：通知目标上<br/>的指针按钮按下及连按次数。" }
   class n3 node_event
   class n3 external_node
-  n4@{ shape: rounded, label: "**ui::MenuButton**<br/>菜单实体保存动作与导航序号，系统不依赖显<br/>示文字或实体名称。" }
+  n4@{ shape: rounded, label: "**MenuButton**<br/>菜单实体保存动作与导航序号，系统不依赖显<br/>示文字或实体名称。" }
   class n4 node_component
   n0 e0@-->|"插入"| n1
   class e0 edge_write

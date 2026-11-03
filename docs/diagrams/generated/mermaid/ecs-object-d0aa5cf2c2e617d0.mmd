@@ -41,17 +41,17 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​render::uniform::prepare​_​**<br/>**uniform​_​components#lt;bevy​_​post​_​**<br/>**process::motion​_​blur::**<br/>**MotionBlurUniform#gt;**<br/>将组件值批量上传为动态着色器参数。" }
+  n0@{ shape: rounded, label: "**prepare​_​uniform​_​components**<br/>将组件值批量上传为动态着色器参数。" }
   class n0 node_system
   n1@{ shape: lin-rect, label: "**PrepareResources**<br/>组织渲染数据准备与绘制排队。" }
   class n1 node_system_set
-  n2@{ shape: cyl, label: "**bevy​_​render::renderer::RenderQueue**<br/>将资源写入和命令异步提交给 GPU。" }
+  n2@{ shape: cyl, label: "**RenderQueue**<br/>将资源写入和命令异步提交给 GPU。" }
   class n2 node_resource
-  n3@{ shape: cyl, label: "**bevy​_​render::extract​_​component::**<br/>**ComponentUniforms#lt;motion​_​blur::**<br/>**MotionBlurUniform#gt;**<br/>汇集同类组件的动态 Uniform 数据。" }
+  n3@{ shape: cyl, label: "**ComponentUniforms#lt;MotionBlurUniform#gt;**<br/>汇集同类组件的动态 Uniform 数据。" }
   class n3 node_resource
-  n4@{ shape: cyl, label: "**bevy​_​render::renderer::RenderDevice**<br/>创建渲染和计算所需的 GPU 资源。" }
+  n4@{ shape: cyl, label: "**RenderDevice**<br/>创建渲染和计算所需的 GPU 资源。" }
   class n4 node_resource
-  n5@{ shape: rounded, label: "**motion​_​blur::MotionBlurUniform**<br/>来自crate:bevy​_​post​_​process ↗：向运<br/>动模糊着色器传递快门角度和采样数。" }
+  n5@{ shape: rounded, label: "**MotionBlurUniform**<br/>来自crate:bevy​_​post​_​process ↗：向运<br/>动模糊着色器传递快门角度和采样数。" }
   class n5 node_component
   class n5 external_node
   n1 e0@-->|"集合成员"| n0

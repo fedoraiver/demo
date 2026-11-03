@@ -40,17 +40,17 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: lin-rect, label: "**ExitSchedules**<br/>组织状态转换及进入退出调度。" }
   class n0 node_system_set
-  n1@{ shape: rounded, label: "**bevy​_​state::state​_​scoped::enable​_​**<br/>**entities​_​on​_​exit​_​state#lt;demo::game​_​**<br/>**flow::AppState#gt;**<br/>离开指定状态时重新启用实体子树。" }
+  n1@{ shape: rounded, label: "**enable​_​entities​_​on​_​exit​_​state**<br/>离开指定状态时重新启用实体子树。" }
   class n1 node_system
   n2@{ shape: lin-rect, label: "**TransitionSchedules**<br/>组织状态转换及进入退出调度。" }
   class n2 node_system_set
-  n3@{ shape: lin-rect, label: "**ExitSchedules(PhantomData#lt;demo::**<br/>**game​_​flow::AppState#gt;)**<br/>执行旧状态的退出调度和退出生命周期。" }
+  n3@{ shape: lin-rect, label: "**ExitSchedules(PhantomData#lt;AppState#gt;)**<br/>执行旧状态的退出调度和退出生命周期。" }
   class n3 node_system_set
-  n4@{ shape: rounded, label: "**bevy​_​state::state​_​scoped::disable​_​**<br/>**entities​_​on​_​exit​_​state#lt;demo::game​_​**<br/>**flow::AppState#gt;**<br/>离开指定状态时禁用实体子树。" }
+  n4@{ shape: rounded, label: "**disable​_​entities​_​on​_​exit​_​state**<br/>离开指定状态时禁用实体子树。" }
   class n4 node_system
   n5@{ shape: lin-rect, label: "**DependentTransitions**<br/>组织状态转换及进入退出调度。" }
   class n5 node_system_set
-  n6@{ shape: rounded, label: "**bevy​_​state::state​_​scoped::despawn​_​**<br/>**entities​_​on​_​exit​_​state#lt;demo::game​_​**<br/>**flow::AppState#gt;**<br/>离开指定状态时销毁匹配实体。" }
+  n6@{ shape: rounded, label: "**despawn​_​entities​_​on​_​exit​_​state**<br/>离开指定状态时销毁匹配实体。" }
   class n6 node_system
   n0 e0@-->|"集合成员"| n1
   class e0 edge_set_membership

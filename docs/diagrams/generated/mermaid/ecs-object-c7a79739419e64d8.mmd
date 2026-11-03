@@ -37,9 +37,9 @@ flowchart LR
   classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**render​_​asset::**<br/>**CachedExtractRenderAssetSystemState#lt;**<br/>**mesh::RenderMesh#gt;**<br/>缓存渲染资产提取的参数状态。" }
+  n0@{ shape: rounded, label: "**CachedExtractRenderAssetSystemState#lt;**<br/>**RenderMesh#gt;**<br/>缓存渲染资产提取的参数状态。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​render::render​_​asset::extract​_​**<br/>**render​_​asset#lt;bevy​_​render::mesh::**<br/>**RenderMesh#gt;**<br/>按资产变化和设备恢复请求提取渲染资产。" }
+  n1@{ shape: rounded, label: "**extract​_​render​_​asset**<br/>按资产变化和设备恢复请求提取渲染资产。" }
   class n1 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

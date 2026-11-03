@@ -39,27 +39,27 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**bevy::bevy​_​ecs::message::**<br/>**Messages#lt;dynamics::joints::joint​_​**<br/>**graph::plugin::JointGraphChange#gt;**<br/>保存最近两次轮换期间产生的指定类型消息" }
+  n0@{ shape: cyl, label: "**Messages#lt;JointGraphChange#gt;**<br/>保存最近两次轮换期间产生的指定类型消息" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**avian3d::dynamics::joints::joint​_​**<br/>**graph::plugin::on​_​change​_​joint​_​**<br/>**entities#lt;avian3d::dynamics::joints::**<br/>**fixed::FixedJoint#gt;**<br/>来自crate:avian3d ↗：在关节换端后重接<br/>刚体连接图。" }
+  n1@{ shape: rounded, label: "**on​_​change​_​joint​_​entities**<br/>来自crate:avian3d ↗：在关节换端后重接<br/>刚体连接图。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**avian3d::dynamics::joints::joint​_​**<br/>**graph::plugin::on​_​change​_​joint​_​**<br/>**entities#lt;avian3d::dynamics::joints::**<br/>**distance::DistanceJoint#gt;**<br/>来自crate:avian3d ↗：在关节换端后重接<br/>刚体连接图。" }
+  n2@{ shape: rounded, label: "**on​_​change​_​joint​_​entities**<br/>来自crate:avian3d ↗：在关节换端后重接<br/>刚体连接图。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**avian3d::dynamics::joints::joint​_​**<br/>**graph::plugin::on​_​change​_​joint​_​**<br/>**entities#lt;avian3d::dynamics::joints::**<br/>**prismatic::PrismaticJoint#gt;**<br/>来自crate:avian3d ↗：在关节换端后重接<br/>刚体连接图。" }
+  n3@{ shape: rounded, label: "**on​_​change​_​joint​_​entities**<br/>来自crate:avian3d ↗：在关节换端后重接<br/>刚体连接图。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: hex, label: "**avian3d::dynamics::joints::joint​_​**<br/>**graph::plugin::remove​_​joint​_​from​_​**<br/>**graph**<br/>来自crate:avian3d ↗：移除关节连接并发<br/>布连接图变化。" }
+  n4@{ shape: hex, label: "**remove​_​joint​_​from​_​graph**<br/>来自crate:avian3d ↗：移除关节连接并发<br/>布连接图变化。" }
   class n4 node_observer
   class n4 external_node
-  n5@{ shape: rounded, label: "**avian3d::dynamics::joints::joint​_​**<br/>**graph::plugin::on​_​change​_​joint​_​**<br/>**entities#lt;avian3d::dynamics::joints::**<br/>**revolute::RevoluteJoint#gt;**<br/>来自crate:avian3d ↗：在关节换端后重接<br/>刚体连接图。" }
+  n5@{ shape: rounded, label: "**on​_​change​_​joint​_​entities**<br/>来自crate:avian3d ↗：在关节换端后重接<br/>刚体连接图。" }
   class n5 node_system
   class n5 external_node
-  n6@{ shape: rounded, label: "**avian3d::dynamics::solver::plugin::**<br/>**apply​_​joint​_​graph​_​changes**<br/>来自crate:avian3d ↗：把关节连接变化同<br/>步到模拟岛。" }
+  n6@{ shape: rounded, label: "**apply​_​joint​_​graph​_​changes**<br/>来自crate:avian3d ↗：把关节连接变化同<br/>步到模拟岛。" }
   class n6 node_system
   class n6 external_node
-  n7@{ shape: rounded, label: "**avian3d::dynamics::joints::joint​_​**<br/>**graph::plugin::on​_​change​_​joint​_​**<br/>**entities#lt;avian3d::dynamics::joints::**<br/>**spherical::SphericalJoint#gt;**<br/>来自crate:avian3d ↗：在关节换端后重接<br/>刚体连接图。" }
+  n7@{ shape: rounded, label: "**on​_​change​_​joint​_​entities**<br/>来自crate:avian3d ↗：在关节换端后重接<br/>刚体连接图。" }
   class n7 node_system
   class n7 external_node
   n1 e0@-->|"可变访问"| n0

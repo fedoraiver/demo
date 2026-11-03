@@ -36,19 +36,19 @@ flowchart LR
   classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**render::EguiPipeline**<br/>描述 Egui 渲染管线的变换与纹理绑定布局" }
+  n0@{ shape: cyl, label: "**EguiPipeline**<br/>描述 Egui 渲染管线的变换与纹理绑定布局" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​egui::render::systems::queue​_​**<br/>**bind​_​groups​_​system**<br/>建立 Egui 纹理与采样器绑定。" }
+  n1@{ shape: rounded, label: "**queue​_​bind​_​groups​_​system**<br/>建立 Egui 纹理与采样器绑定。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​egui::render::systems::queue​_​**<br/>**bind​_​groups​_​system**<br/>建立 Egui 纹理与采样器绑定。" }
+  n2@{ shape: rounded, label: "**queue​_​bind​_​groups​_​system**<br/>建立 Egui 纹理与采样器绑定。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​egui::render::systems::queue​_​**<br/>**pipelines​_​system**<br/>按目标格式选择 Egui 渲染管线。" }
+  n3@{ shape: rounded, label: "**queue​_​pipelines​_​system**<br/>按目标格式选择 Egui 渲染管线。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**bevy​_​egui::render::systems::queue​_​**<br/>**pipelines​_​system**<br/>按目标格式选择 Egui 渲染管线。" }
+  n4@{ shape: rounded, label: "**queue​_​pipelines​_​system**<br/>按目标格式选择 Egui 渲染管线。" }
   class n4 node_system
-  n5@{ shape: rounded, label: "**bevy​_​egui::render::systems::prepare​_​**<br/>**egui​_​transforms​_​system**<br/>上传 Egui 屏幕变换缓冲。" }
+  n5@{ shape: rounded, label: "**prepare​_​egui​_​transforms​_​system**<br/>上传 Egui 屏幕变换缓冲。" }
   class n5 node_system
-  n6@{ shape: rounded, label: "**bevy​_​egui::render::systems::prepare​_​**<br/>**egui​_​transforms​_​system**<br/>上传 Egui 屏幕变换缓冲。" }
+  n6@{ shape: rounded, label: "**prepare​_​egui​_​transforms​_​system**<br/>上传 Egui 屏幕变换缓冲。" }
   class n6 node_system
   n0 e0@--> n1
   class e0 edge_read

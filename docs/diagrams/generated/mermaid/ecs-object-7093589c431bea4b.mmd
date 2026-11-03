@@ -39,7 +39,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: notch-rect, label: "**Local · work​_​items**<br/>暂存待专用化的材质预通道工作项。" }
   class n0 node_local
-  n1@{ shape: rounded, label: "**bevy​_​pbr::prepass::specialize​_​**<br/>**prepass​_​material​_​meshes**<br/>按深度、材质和运动特性生成预通道专用管<br/>线。" }
+  n1@{ shape: rounded, label: "**specialize​_​prepass​_​material​_​meshes**<br/>按深度、材质和运动特性生成预通道专用管<br/>线。" }
   class n1 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

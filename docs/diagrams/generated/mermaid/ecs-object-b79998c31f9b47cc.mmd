@@ -42,7 +42,7 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
   subgraph layout_card_n0[" "]
-  n0@{ shape: rounded, label: "**bevy​_​ui::Node**<br/>声明 UI 节点的布局规则。" }
+  n0@{ shape: rounded, label: "**Node**<br/>声明 UI 节点的布局规则。" }
   class n0 node_component
   end
   style layout_card_n0 fill:none,stroke:none
@@ -149,7 +149,7 @@ flowchart LR
   end
   style layout_card_n17 fill:none,stroke:none
   subgraph layout_card_n18[" "]
-  n18@{ shape: rounded, label: "**bevy​_​ui​_​render::extract​_​uinode​_​**<br/>**borders**<br/>来自crate:bevy​_​ui​_​render ↗：提取 UI<br/>各边颜色边框与外轮廓。" }
+  n18@{ shape: rounded, label: "**extract​_​uinode​_​borders**<br/>来自crate:bevy​_​ui​_​render ↗：提取 UI<br/>各边颜色边框与外轮廓。" }
   class n18 node_system
   class n18 external_node
   end
@@ -425,7 +425,7 @@ flowchart LR
   end
   style layout_card_n63 fill:none,stroke:none
   subgraph layout_card_n64[" "]
-  n64@{ shape: rounded, label: "**bevy​_​ui::layout::ui​_​layout​_​system**<br/>求解 UI 布局并回写节点尺寸和二维变换。" }
+  n64@{ shape: rounded, label: "**ui​_​layout​_​system**<br/>求解 UI 布局并回写节点尺寸和二维变换。" }
   class n64 node_system
   end
   style layout_card_n64 fill:none,stroke:none
@@ -496,7 +496,7 @@ flowchart LR
   end
   style layout_card_n75 fill:none,stroke:none
   subgraph layout_card_n76[" "]
-  n76@{ shape: hex, label: "**bevy​_​ui​_​widgets::scrollarea::**<br/>**scrollarea​_​on​_​scroll**<br/>来自crate:bevy​_​ui​_​widgets ↗：将指针<br/>滚动应用于滚动区域。" }
+  n76@{ shape: hex, label: "**scrollarea​_​on​_​scroll**<br/>来自crate:bevy​_​ui​_​widgets ↗：将指针<br/>滚动应用于滚动区域。" }
   class n76 node_observer
   class n76 external_node
   end
@@ -526,7 +526,7 @@ flowchart LR
   end
   style layout_card_n80 fill:none,stroke:none
   subgraph layout_card_n81[" "]
-  n81@{ shape: rounded, label: "**bevy​_​ui​_​widgets::popover::position​_​**<br/>**popover**<br/>来自crate:bevy​_​ui​_​widgets ↗：定位弹<br/>出层并同步后代的 UI 变换。" }
+  n81@{ shape: rounded, label: "**position​_​popover**<br/>来自crate:bevy​_​ui​_​widgets ↗：定位弹<br/>出层并同步后代的 UI 变换。" }
   class n81 node_system
   class n81 external_node
   end
@@ -1054,7 +1054,7 @@ flowchart LR
   end
   style layout_card_n168 fill:none,stroke:none
   subgraph layout_card_n169[" "]
-  n169@{ shape: rounded, label: "**bevy​_​ui::widget::text::measure​_​text​_​**<br/>**system**<br/>在文本变化后更新内容测量并安排文字重排。" }
+  n169@{ shape: rounded, label: "**measure​_​text​_​system**<br/>在文本变化后更新内容测量并安排文字重排。" }
   class n169 node_system
   end
   style layout_card_n169 fill:none,stroke:none
@@ -1485,7 +1485,7 @@ flowchart LR
   end
   style layout_card_n240 fill:none,stroke:none
   subgraph layout_card_n241[" "]
-  n241@{ shape: rounded, label: "**bevy​_​ui::accessibility::image​_​**<br/>**changed**<br/>为非按钮图像生成或更新无障碍标签。" }
+  n241@{ shape: rounded, label: "**image​_​changed**<br/>为非按钮图像生成或更新无障碍标签。" }
   class n241 node_system
   end
   style layout_card_n241 fill:none,stroke:none
@@ -1496,7 +1496,7 @@ flowchart LR
   end
   style layout_card_n242 fill:none,stroke:none
   subgraph layout_card_n243[" "]
-  n243@{ shape: rounded, label: "**demo::ui::volume::update​_​volume​_​**<br/>**visuals**<br/>来自ui ↗：草稿由请求系统在 PreUpdate<br/>修改，随后同帧更新已有数字和轨道填充。" }
+  n243@{ shape: rounded, label: "**update​_​volume​_​visuals**<br/>来自ui ↗：草稿由请求系统在 PreUpdate<br/>修改，随后同帧更新已有数字和轨道填充。" }
   class n243 node_system
   class n243 external_node
   end
@@ -1850,7 +1850,7 @@ flowchart LR
   end
   style layout_card_n301 fill:none,stroke:none
   subgraph layout_card_n302[" "]
-  n302@{ shape: rounded, label: "**bevy​_​ui::widget::image::update​_​**<br/>**image​_​content​_​size​_​system**<br/>按图像或图集区域更新 UI 的固有尺寸测<br/>量。" }
+  n302@{ shape: rounded, label: "**update​_​image​_​content​_​size​_​system**<br/>按图像或图集区域更新 UI 的固有尺寸测<br/>量。" }
   class n302 node_system
   end
   style layout_card_n302 fill:none,stroke:none
@@ -2203,7 +2203,7 @@ flowchart LR
   end
   style layout_card_n360 fill:none,stroke:none
   subgraph layout_card_n361[" "]
-  n361@{ shape: rounded, label: "**bevy​_​ui::update::propagate​_​ui​_​**<br/>**target​_​cameras**<br/>为 UI 根配置目标相机和视口信息传播源。" }
+  n361@{ shape: rounded, label: "**propagate​_​ui​_​target​_​cameras**<br/>为 UI 根配置目标相机和视口信息传播源。" }
   class n361 node_system
   end
   style layout_card_n361 fill:none,stroke:none
@@ -2406,7 +2406,7 @@ flowchart LR
   end
   style layout_card_n394 fill:none,stroke:none
   subgraph layout_card_n395[" "]
-  n395@{ shape: hex, label: "**bevy​_​ui​_​widgets::scrollarea::on​_​**<br/>**scroll​_​into​_​view**<br/>来自crate:bevy​_​ui​_​widgets ↗：调整滚<br/>动区域以显示指定节点。" }
+  n395@{ shape: hex, label: "**on​_​scroll​_​into​_​view**<br/>来自crate:bevy​_​ui​_​widgets ↗：调整滚<br/>动区域以显示指定节点。" }
   class n395 node_observer
   class n395 external_node
   end
@@ -2478,7 +2478,7 @@ flowchart LR
   end
   style layout_card_n406 fill:none,stroke:none
   subgraph layout_card_n407[" "]
-  n407@{ shape: rounded, label: "**bevy​_​ui::layout::sync​_​font​_​size​_​to​_​**<br/>**em​_​size**<br/>把文本字号解析为节点的 EmSize。" }
+  n407@{ shape: rounded, label: "**sync​_​font​_​size​_​to​_​em​_​size**<br/>把文本字号解析为节点的 EmSize。" }
   class n407 node_system
   end
   style layout_card_n407 fill:none,stroke:none
@@ -2489,7 +2489,7 @@ flowchart LR
   end
   style layout_card_n408 fill:none,stroke:none
   subgraph layout_card_n409[" "]
-  n409@{ shape: hex, label: "**bevy​_​ui​_​widgets::scrollarea::on​_​**<br/>**scroll​_​into​_​view**<br/>来自crate:bevy​_​ui​_​widgets ↗：调整滚<br/>动区域以显示指定节点。" }
+  n409@{ shape: hex, label: "**on​_​scroll​_​into​_​view**<br/>来自crate:bevy​_​ui​_​widgets ↗：调整滚<br/>动区域以显示指定节点。" }
   class n409 node_observer
   class n409 external_node
   end
@@ -2795,7 +2795,7 @@ flowchart LR
   end
   style layout_card_n459 fill:none,stroke:none
   subgraph layout_card_n460[" "]
-  n460@{ shape: rounded, label: "**bevy​_​ui::layout::clipping::update​_​**<br/>**clipping​_​system**<br/>从 UI 根递归更新继承裁剪范围。" }
+  n460@{ shape: rounded, label: "**update​_​clipping​_​system**<br/>从 UI 根递归更新继承裁剪范围。" }
   class n460 node_system
   end
   style layout_card_n460 fill:none,stroke:none
@@ -2884,7 +2884,7 @@ flowchart LR
   end
   style layout_card_n474 fill:none,stroke:none
   subgraph layout_card_n475[" "]
-  n475@{ shape: hex, label: "**bevy​_​ui​_​widgets::scrollarea::**<br/>**scrollarea​_​on​_​scroll**<br/>来自crate:bevy​_​ui​_​widgets ↗：将指针<br/>滚动应用于滚动区域。" }
+  n475@{ shape: hex, label: "**scrollarea​_​on​_​scroll**<br/>来自crate:bevy​_​ui​_​widgets ↗：将指针<br/>滚动应用于滚动区域。" }
   class n475 node_observer
   class n475 external_node
   end
@@ -3286,7 +3286,7 @@ flowchart LR
   end
   style layout_card_n541 fill:none,stroke:none
   subgraph layout_card_n542[" "]
-  n542@{ shape: rounded, label: "**bevy​_​ui::stack::ui​_​stack​_​system**<br/>重建稳定的 UI 绘制和命中顺序。" }
+  n542@{ shape: rounded, label: "**ui​_​stack​_​system**<br/>重建稳定的 UI 绘制和命中顺序。" }
   class n542 node_system
   end
   style layout_card_n542 fill:none,stroke:none
@@ -3615,7 +3615,7 @@ flowchart LR
   end
   style layout_card_n596 fill:none,stroke:none
   subgraph layout_card_n597[" "]
-  n597@{ shape: hex, label: "**bevy​_​ui​_​widgets::scrollarea::on​_​**<br/>**scroll​_​into​_​view**<br/>来自crate:bevy​_​ui​_​widgets ↗：调整滚<br/>动区域以显示指定节点。" }
+  n597@{ shape: hex, label: "**on​_​scroll​_​into​_​view**<br/>来自crate:bevy​_​ui​_​widgets ↗：调整滚<br/>动区域以显示指定节点。" }
   class n597 node_observer
   class n597 external_node
   end
@@ -3633,7 +3633,7 @@ flowchart LR
   end
   style layout_card_n599 fill:none,stroke:none
   subgraph layout_card_n600[" "]
-  n600@{ shape: hex, label: "**bevy​_​ui​_​widgets::scrollarea::**<br/>**scrollarea​_​on​_​scroll**<br/>来自crate:bevy​_​ui​_​widgets ↗：将指针<br/>滚动应用于滚动区域。" }
+  n600@{ shape: hex, label: "**scrollarea​_​on​_​scroll**<br/>来自crate:bevy​_​ui​_​widgets ↗：将指针<br/>滚动应用于滚动区域。" }
   class n600 node_observer
   class n600 external_node
   end
@@ -3795,7 +3795,7 @@ flowchart LR
   end
   style layout_card_n626 fill:none,stroke:none
   subgraph layout_card_n627[" "]
-  n627@{ shape: rounded, label: "**bevy​_​ui::accessibility::button​_​**<br/>**changed**<br/>为按钮生成或更新无障碍角色与文本标签。" }
+  n627@{ shape: rounded, label: "**button​_​changed**<br/>为按钮生成或更新无障碍角色与文本标签。" }
   class n627 node_system
   end
   style layout_card_n627 fill:none,stroke:none

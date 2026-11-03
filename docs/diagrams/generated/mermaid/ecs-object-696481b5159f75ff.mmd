@@ -37,15 +37,15 @@ flowchart LR
   classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**dynamics::solver::islands::**<br/>**sleeping::AwakeIslandBitVec**<br/>记录哪些物理岛必须保持唤醒。" }
+  n0@{ shape: cyl, label: "**AwakeIslandBitVec**<br/>记录哪些物理岛必须保持唤醒。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**avian3d::dynamics::solver::islands::**<br/>**sleeping::update​_​sleeping​_​states**<br/>按刚体静止时间判断物理岛的休眠资格。" }
+  n1@{ shape: rounded, label: "**update​_​sleeping​_​states**<br/>按刚体静止时间判断物理岛的休眠资格。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**avian3d::dynamics::solver::islands::**<br/>**sleeping::sleep​_​islands**<br/>按物理岛活动状态提交休眠与唤醒。" }
+  n2@{ shape: rounded, label: "**sleep​_​islands**<br/>按物理岛活动状态提交休眠与唤醒。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**avian3d::dynamics::solver::islands::**<br/>**sleeping::wake​_​on​_​changed**<br/>因外部位姿、速度或受力变化标记物理岛唤<br/>醒。" }
+  n3@{ shape: rounded, label: "**wake​_​on​_​changed**<br/>因外部位姿、速度或受力变化标记物理岛唤<br/>醒。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**avian3d::dynamics::solver::islands::**<br/>**sleeping::wake​_​islands​_​with​_​**<br/>**sleeping​_​disabled**<br/>让禁止休眠或已禁用的刚体所属岛保持清醒。" }
+  n4@{ shape: rounded, label: "**wake​_​islands​_​with​_​sleeping​_​disabled**<br/>让禁止休眠或已禁用的刚体所属岛保持清醒。" }
   class n4 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

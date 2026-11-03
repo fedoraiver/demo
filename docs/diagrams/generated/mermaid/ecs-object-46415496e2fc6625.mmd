@@ -38,11 +38,11 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**skybox::SkyboxBindGroup**<br/>绑定天空盒纹理与视图参数。" }
+  n0@{ shape: rounded, label: "**SkyboxBindGroup**<br/>绑定天空盒纹理与视图参数。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​core​_​pipeline::skybox::prepare​_​**<br/>**skybox​_​bind​_​groups**<br/>为有效天空盒图像建立视图绑定组。" }
+  n1@{ shape: rounded, label: "**prepare​_​skybox​_​bind​_​groups**<br/>为有效天空盒图像建立视图绑定组。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​core​_​pipeline::core​_​3d::main​_​**<br/>**opaque​_​pass​_​3d​_​node::main​_​opaque​_​**<br/>**pass​_​3d**<br/>绘制三维不透明、AlphaMask 与天空盒。" }
+  n2@{ shape: rounded, label: "**main​_​opaque​_​pass​_​3d**<br/>绘制三维不透明、AlphaMask 与天空盒。" }
   class n2 node_system
   n1 e0@-->|"插入"| n0
   class e0 edge_write

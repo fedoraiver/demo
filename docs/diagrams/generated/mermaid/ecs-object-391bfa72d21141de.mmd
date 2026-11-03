@@ -39,15 +39,15 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​extract::extract​_​resource::**<br/>**extract​_​resource#lt;bevy​_​render::**<br/>**texture::manual​_​texture​_​view::**<br/>**ManualTextureViews, bevy​_​render::**<br/>**RenderApp, ()#gt;**<br/>把存在的主世界资源转换到子世界。" }
+  n0@{ shape: rounded, label: "**extract​_​resource**<br/>把存在的主世界资源转换到子世界。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**bevy​_​render::camera::extract​_​cameras**<br/>来自crate:bevy​_​render ↗：把活动相机及<br/>可见实体提取到渲染世界。" }
+  n1@{ shape: rounded, label: "**extract​_​cameras**<br/>来自crate:bevy​_​render ↗：把活动相机及<br/>可见实体提取到渲染世界。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: cyl, label: "**texture::manual​_​texture​_​view::**<br/>**ManualTextureViews**<br/>来自crate:bevy​_​render ↗：注册供相机输<br/>出的手动管理纹理视图。" }
+  n2@{ shape: cyl, label: "**ManualTextureViews**<br/>来自crate:bevy​_​render ↗：注册供相机输<br/>出的手动管理纹理视图。" }
   class n2 node_resource
   class n2 external_node
-  n3@{ shape: cyl, label: "**extract​_​plugin::MainWorld**<br/>在提取阶段临时提供主模拟世界。" }
+  n3@{ shape: cyl, label: "**MainWorld**<br/>在提取阶段临时提供主模拟世界。" }
   class n3 node_resource
   n0 e0@-->|"先于"| n1
   class e0 edge_order

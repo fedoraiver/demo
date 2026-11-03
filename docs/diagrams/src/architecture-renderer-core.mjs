@@ -1,6 +1,7 @@
 // Mermaid 定义、业务身份和图例共用视觉语义；不手工重画编译后的图形。
 import { NODE_STYLES, EDGE_STYLES, EXTERNAL_REFERENCE_STYLE, ARCHITECTURE_TEXT_STYLE, visualTypeOf, edgeSemanticOf, displayLabelOf, scheduleLinksFor, mermaidStyleDefinitions } from './architecture-style.mjs';
 import { INFRASTRUCTURE_FEATURES } from './architecture-infrastructure.mjs';
+import { architectureDisplayName } from './architecture-labels.mjs';
 
 import { VIEWER_BACKGROUND } from './viewer-theme.mjs';
 
@@ -135,7 +136,7 @@ const escape = value => mermaidEntities(value).replace(/[_*]/g, character => cha
 const length = value => [...String(value)].reduce((sum, character) => sum + (character.charCodeAt(0) > 255 ? 1.8 : 1), 0);
 function wrap(value, limit = 36) {
   const lines = []; let line = '';
-  // 保留完整名称，优先在标识符和自然语言边界换行。
+  // 保留完整显示标题，优先在标识符和自然语言边界换行。
   const tokens = String(value ?? '').replace(/\s+/g, ' ').trim().split(/(?<=_|::|\/|\s)|(?=[\u3400-\u9fff])/u);
   for (const token of tokens) {
     if (line && length(line + token) > limit) { lines.push(line.trim()); line = ''; }
@@ -169,7 +170,8 @@ function definition(view, graph, registry, features, scheduleGroups = [], buildO
     const data = { ...registry[node.id], ...(view.aspect === 'component' && node.id === (view.componentNodeId || graph.componentNodeId) ? view.componentDetails : {}) }, visualType = visualTypeOf(data);
     if (data.display_summary !== undefined && (typeof data.display_summary !== 'string' || !data.display_summary.trim())) throw new Error(`架构节点用途简介必须是非空文本：${node.id}`);
     const feature = node.role === 'plugin' && features.find(item => item.overviewNode === node.id);
-    const name = feature ? `${feature.label} · ${data.name}` : data.name || node.id;
+    const shortName = architectureDisplayName(data.name || node.id, { kind: data.kind });
+    const name = feature ? `${feature.label} · ${shortName}` : shortName;
     const description = node.role === 'plugin' ? feature?.description || data.description : data.description;
     const summary = String(data.display_summary ?? description ?? '').replace(/\s+/g, ' ').trim();
     if (!summary) throw new Error(`架构节点缺少用途简介：${node.id}`);

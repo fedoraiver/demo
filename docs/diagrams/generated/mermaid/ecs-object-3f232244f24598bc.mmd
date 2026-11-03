@@ -42,16 +42,16 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: hex, label: "**bevy​_​ui​_​widgets::scrollbar::**<br/>**scrollbar​_​on​_​drag​_​cancel**<br/>取消滚动条滑块的拖动状态。" }
+  n0@{ shape: hex, label: "**scrollbar​_​on​_​drag​_​cancel**<br/>取消滚动条滑块的拖动状态。" }
   class n0 node_observer
-  n1@{ shape: rounded, label: "**scrollbar::ScrollbarDragState**<br/>记录滚动条滑块拖动状态。" }
+  n1@{ shape: rounded, label: "**ScrollbarDragState**<br/>记录滚动条滑块拖动状态。" }
   class n1 node_component
-  n2@{ shape: rounded, label: "**scrollbar::ScrollbarThumb**<br/>标识滚动条可拖动滑块。" }
+  n2@{ shape: rounded, label: "**ScrollbarThumb**<br/>标识滚动条可拖动滑块。" }
   class n2 node_component
-  n3@{ shape: stadium, label: "**events::PointerCancel**<br/>来自crate:bevy​_​picking ↗：通知指针取<br/>消并丢弃当前交互状态。" }
+  n3@{ shape: stadium, label: "**PointerCancel**<br/>来自crate:bevy​_​picking ↗：通知指针取<br/>消并丢弃当前交互状态。" }
   class n3 node_event
   class n3 external_node
-  n4@{ shape: fr-rect, label: "**scrollbar::ScrollbarPlugin**<br/>处理滚动条拖动并更新滑块。" }
+  n4@{ shape: fr-rect, label: "**ScrollbarPlugin**<br/>处理滚动条拖动并更新滑块。" }
   class n4 node_plugin
   n0 e0@-->|"赋值"| n1
   class e0 edge_write

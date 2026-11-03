@@ -37,15 +37,15 @@ flowchart LR
   classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**scene​_​patch::ScenePatchInstance**<br/>等待场景就绪后应用场景补丁。" }
+  n0@{ shape: rounded, label: "**ScenePatchInstance**<br/>等待场景就绪后应用场景补丁。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​scene::spawn::spawn​_​queued**<br/>应用已就绪的场景补丁并推进排队装配。" }
+  n1@{ shape: rounded, label: "**spawn​_​queued**<br/>应用已就绪的场景补丁并推进排队装配。" }
   class n1 node_system
-  n2@{ shape: hex, label: "**bevy​_​scene::spawn::on​_​add​_​scene​_​**<br/>**patch​_​instance**<br/>排队处理新加入的场景补丁实例。" }
+  n2@{ shape: hex, label: "**on​_​add​_​scene​_​patch​_​instance**<br/>排队处理新加入的场景补丁实例。" }
   class n2 node_observer
-  n3@{ shape: hex, label: "**bevy​_​scene::spawn::on​_​add​_​scene​_​**<br/>**patch​_​instance**<br/>排队处理新加入的场景补丁实例。" }
+  n3@{ shape: hex, label: "**on​_​add​_​scene​_​patch​_​instance**<br/>排队处理新加入的场景补丁实例。" }
   class n3 node_observer
-  n4@{ shape: hex, label: "**bevy​_​scene::spawn::on​_​add​_​scene​_​**<br/>**patch​_​instance**<br/>排队处理新加入的场景补丁实例。" }
+  n4@{ shape: hex, label: "**on​_​add​_​scene​_​patch​_​instance**<br/>排队处理新加入的场景补丁实例。" }
   class n4 node_observer
   n0 e0@--> n1
   class e0 edge_read

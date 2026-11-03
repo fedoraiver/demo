@@ -44,25 +44,25 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: hex, label: "**bevy​_​ui​_​widgets::dialog::dialog​_​**<br/>**drag​_​start**<br/>记录对话框拖动开始位置。" }
+  n0@{ shape: hex, label: "**dialog​_​drag​_​start**<br/>记录对话框拖动开始位置。" }
   class n0 node_observer
-  n1@{ shape: rounded, label: "**dialog::DialogDragState**<br/>保存对话框拖动起始位置。" }
+  n1@{ shape: rounded, label: "**DialogDragState**<br/>保存对话框拖动起始位置。" }
   class n1 node_component
-  n2@{ shape: rounded, label: "**bevy​_​ecs::hierarchy::ChildOf**<br/>来自crate:bevy​_​ecs ↗：保存当前实体的<br/>父实体身份" }
+  n2@{ shape: rounded, label: "**ChildOf**<br/>来自crate:bevy​_​ecs ↗：保存当前实体的<br/>父实体身份" }
   class n2 node_component
   class n2 external_node
-  n3@{ shape: rounded, label: "**dialog::Dialog**<br/>标识浮动或模态对话框。" }
+  n3@{ shape: rounded, label: "**Dialog**<br/>标识浮动或模态对话框。" }
   class n3 node_component
-  n4@{ shape: stadium, label: "**events::PointerDragStart**<br/>来自crate:bevy​_​picking ↗：通知按下后<br/>移动开始拖拽目标。" }
+  n4@{ shape: stadium, label: "**PointerDragStart**<br/>来自crate:bevy​_​picking ↗：通知按下后<br/>移动开始拖拽目标。" }
   class n4 node_event
   class n4 external_node
-  n5@{ shape: rounded, label: "**bevy​_​ui::UiTransform**<br/>来自crate:bevy​_​ui ↗：配置 UI 节点的相<br/>对二维变换。" }
+  n5@{ shape: rounded, label: "**UiTransform**<br/>来自crate:bevy​_​ui ↗：配置 UI 节点的相<br/>对二维变换。" }
   class n5 node_component
   class n5 external_node
-  n6@{ shape: cyl, label: "**bevy​_​ui::UiScale**<br/>来自crate:bevy​_​ui ↗：统一缩放 UI 的固<br/>定尺寸值。" }
+  n6@{ shape: cyl, label: "**UiScale**<br/>来自crate:bevy​_​ui ↗：统一缩放 UI 的固<br/>定尺寸值。" }
   class n6 node_resource
   class n6 external_node
-  n7@{ shape: fr-rect, label: "**dialog::DialogPlugin**<br/>管理对话框层次与拖动。" }
+  n7@{ shape: fr-rect, label: "**DialogPlugin**<br/>管理对话框层次与拖动。" }
   class n7 node_plugin
   n0 e0@-->|"赋值"| n1
   class e0 edge_write

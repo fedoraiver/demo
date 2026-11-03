@@ -41,303 +41,303 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​ecs::hierarchy::ChildOf**<br/>保存当前实体的父实体身份" }
+  n0@{ shape: rounded, label: "**ChildOf**<br/>保存当前实体的父实体身份" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​ui​_​render::extract​_​uinode​_​**<br/>**changes**<br/>来自crate:bevy​_​ui​_​render ↗：使变化或<br/>移除的 UI 数据失效并清理旧渲染实体。" }
+  n1@{ shape: rounded, label: "**extract​_​uinode​_​changes**<br/>来自crate:bevy​_​ui​_​render ↗：使变化或<br/>移除的 UI 数据失效并清理旧渲染实体。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: hex, label: "**bevy​_​ui​_​widgets::dialog::bring​_​to​_​**<br/>**front**<br/>来自crate:bevy​_​ui​_​widgets ↗：将被操<br/>作的浮动对话框提到前方。" }
+  n2@{ shape: hex, label: "**bring​_​to​_​front**<br/>来自crate:bevy​_​ui​_​widgets ↗：将被操<br/>作的浮动对话框提到前方。" }
   class n2 node_observer
   class n2 external_node
-  n3@{ shape: rounded, label: "**avian3d::spatial​_​query::update​_​ray​_​**<br/>**caster​_​positions**<br/>来自crate:avian3d ↗：把射线发射器的局<br/>部原点和方向换到世界空间。" }
+  n3@{ shape: rounded, label: "**update​_​ray​_​caster​_​positions**<br/>来自crate:avian3d ↗：把射线发射器的局<br/>部原点和方向换到世界空间。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: hex, label: "**bevy​_​ui​_​widgets::tabs::tablist​_​on​_​**<br/>**click**<br/>来自crate:bevy​_​ui​_​widgets ↗：点击可<br/>用标签时请求切换选择。" }
+  n4@{ shape: hex, label: "**tablist​_​on​_​click**<br/>来自crate:bevy​_​ui​_​widgets ↗：点击可<br/>用标签时请求切换选择。" }
   class n4 node_observer
   class n4 external_node
-  n5@{ shape: hex, label: "**bevy​_​ui​_​widgets::radio::radio​_​**<br/>**button​_​on​_​key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过确<br/>认键请求选中单选按钮。" }
+  n5@{ shape: hex, label: "**radio​_​button​_​on​_​key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过确<br/>认键请求选中单选按钮。" }
   class n5 node_observer
   class n5 external_node
-  n6@{ shape: hex, label: "**avian3d::collision::collider::**<br/>**collider​_​hierarchy::plugin::**<br/>**{impl#35;0}::build::{closure#35;0}**<br/>来自crate:avian3d ↗：为新增碰撞体建立<br/>刚体归属。" }
+  n6@{ shape: hex, label: "**build::{closure#35;0}**<br/>来自crate:avian3d ↗：为新增碰撞体建立<br/>刚体归属。" }
   class n6 node_observer
   class n6 external_node
-  n7@{ shape: hex, label: "**bevy​_​ui​_​widgets::dialog::dialog​_​drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：按累计<br/>拖动距离移动对话框。" }
+  n7@{ shape: hex, label: "**dialog​_​drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：按累计<br/>拖动距离移动对话框。" }
   class n7 node_observer
   class n7 external_node
-  n8@{ shape: rounded, label: "**bevy​_​transform::systems::mark​_​dirty​_​**<br/>**trees**<br/>来自crate:bevy​_​transform ↗：沿祖先链<br/>标记需要重算变换的子树。" }
+  n8@{ shape: rounded, label: "**mark​_​dirty​_​trees**<br/>来自crate:bevy​_​transform ↗：沿祖先链<br/>标记需要重算变换的子树。" }
   class n8 node_system
   class n8 external_node
-  n9@{ shape: rounded, label: "**bevy​_​transform::systems::propagate​_​**<br/>**transforms​_​for#lt;bevy​_​ecs::query::**<br/>**filter::Or#lt;(bevy​_​ecs::query::**<br/>**filter::With#lt;bevy​_​gizmos::transform​_​**<br/>**gizmo::TransformGizmoRoot#gt;, bevy​_​**<br/>**ecs::query::filter::With#lt;bevy​_​**<br/>**gizmos​_​render::transform​_​gizmo​_​**<br/>**render::GizmoOverlayCamera#gt;, bevy​_​**<br/>**ecs::query::filter::With#lt;bevy​_​**<br/>**gizmos::transform​_​gizmo::**<br/>**TransformGizmoMeshMarker#gt;)#gt;#gt;**<br/>来自crate:bevy​_​transform ↗：按指定查<br/>询过滤器即时计算世界变换。" }
+  n9@{ shape: rounded, label: "**propagate​_​transforms​_​for**<br/>来自crate:bevy​_​transform ↗：按指定查<br/>询过滤器即时计算世界变换。" }
   class n9 node_system
   class n9 external_node
-  n10@{ shape: hex, label: "**bevy​_​ui​_​widgets::scrollbar::**<br/>**scrollbar​_​on​_​drag​_​start**<br/>来自crate:bevy​_​ui​_​widgets ↗：记录滚<br/>动条拖动的起始位置。" }
+  n10@{ shape: hex, label: "**scrollbar​_​on​_​drag​_​start**<br/>来自crate:bevy​_​ui​_​widgets ↗：记录滚<br/>动条拖动的起始位置。" }
   class n10 node_observer
   class n10 external_node
-  n11@{ shape: rounded, label: "**bevy​_​transform::systems::sync​_​**<br/>**simple​_​transforms**<br/>来自crate:bevy​_​transform ↗：同步没有<br/>父子层级的独立实体世界变换。" }
+  n11@{ shape: rounded, label: "**sync​_​simple​_​transforms**<br/>来自crate:bevy​_​transform ↗：同步没有<br/>父子层级的独立实体世界变换。" }
   class n11 node_system
   class n11 external_node
-  n12@{ shape: hex, label: "**bevy​_​ui​_​widgets::menu::menu​_​on​_​key​_​**<br/>**event**<br/>来自crate:bevy​_​ui​_​widgets ↗：处理菜<br/>单键盘导航、激活与关闭。" }
+  n12@{ shape: hex, label: "**menu​_​on​_​key​_​event**<br/>来自crate:bevy​_​ui​_​widgets ↗：处理菜<br/>单键盘导航、激活与关闭。" }
   class n12 node_observer
   class n12 external_node
-  n13@{ shape: rounded, label: "**demo::ui::volume::sample​_​slider​_​**<br/>**pointer**<br/>来自ui ↗：Enhanced Input 负责菜单语义<br/>动作，但无法表示 UI 命中后的局部绝对横<br/>坐标。" }
+  n13@{ shape: rounded, label: "**sample​_​slider​_​pointer**<br/>来自ui ↗：Enhanced Input 负责菜单语义<br/>动作，但无法表示 UI 命中后的局部绝对横<br/>坐标。" }
   class n13 node_system
   class n13 external_node
   n14@{ shape: rounded, label: "**prepare​_​island · 创建模板**<br/>来自scene​_​assembly ↗：为地图展示<br/>NPC 添加静态碰撞子体。" }
   class n14 node_entity
   class n14 external_node
-  n15@{ shape: hex, label: "**bevy​_​ui​_​widgets::scrollbar::**<br/>**scrollbar​_​on​_​drag​_​start**<br/>来自crate:bevy​_​ui​_​widgets ↗：记录滚<br/>动条拖动的起始位置。" }
+  n15@{ shape: hex, label: "**scrollbar​_​on​_​drag​_​start**<br/>来自crate:bevy​_​ui​_​widgets ↗：记录滚<br/>动条拖动的起始位置。" }
   class n15 node_observer
   class n15 external_node
-  n16@{ shape: rounded, label: "**demo::ui::pointer::pointer​_​**<br/>**interaction**<br/>来自ui ↗：Bevy 原生 UI 已完成按钮命<br/>中；这里只读取缓冲的按下事件，不另读<br/>MouseButton。" }
+  n16@{ shape: rounded, label: "**pointer​_​interaction**<br/>来自ui ↗：Bevy 原生 UI 已完成按钮命<br/>中；这里只读取缓冲的按下事件，不另读<br/>MouseButton。" }
   class n16 node_system
   class n16 external_node
-  n17@{ shape: hex, label: "**bevy​_​ui​_​widgets::menu::menu​_​on​_​key​_​**<br/>**event**<br/>来自crate:bevy​_​ui​_​widgets ↗：处理菜<br/>单键盘导航、激活与关闭。" }
+  n17@{ shape: hex, label: "**menu​_​on​_​key​_​event**<br/>来自crate:bevy​_​ui​_​widgets ↗：处理菜<br/>单键盘导航、激活与关闭。" }
   class n17 node_observer
   class n17 external_node
-  n18@{ shape: rounded, label: "**bevy​_​ui::layout::clipping::update​_​**<br/>**clipping​_​system**<br/>来自crate:bevy​_​ui ↗：从 UI 根递归更新<br/>继承裁剪范围。" }
+  n18@{ shape: rounded, label: "**update​_​clipping​_​system**<br/>来自crate:bevy​_​ui ↗：从 UI 根递归更新<br/>继承裁剪范围。" }
   class n18 node_system
   class n18 external_node
-  n19@{ shape: rounded, label: "**bevy​_​transform::systems::mark​_​dirty​_​**<br/>**trees**<br/>来自crate:bevy​_​transform ↗：沿祖先链<br/>标记需要重算变换的子树。" }
+  n19@{ shape: rounded, label: "**mark​_​dirty​_​trees**<br/>来自crate:bevy​_​transform ↗：沿祖先链<br/>标记需要重算变换的子树。" }
   class n19 node_system
   class n19 external_node
-  n20@{ shape: hex, label: "**bevy​_​ui​_​widgets::radio::radio​_​**<br/>**button​_​on​_​key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过确<br/>认键请求选中单选按钮。" }
+  n20@{ shape: hex, label: "**radio​_​button​_​on​_​key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过确<br/>认键请求选中单选按钮。" }
   class n20 node_observer
   class n20 external_node
-  n21@{ shape: hex, label: "**bevy​_​ui​_​widgets::tabs::tablist​_​on​_​**<br/>**click**<br/>来自crate:bevy​_​ui​_​widgets ↗：点击可<br/>用标签时请求切换选择。" }
+  n21@{ shape: hex, label: "**tablist​_​on​_​click**<br/>来自crate:bevy​_​ui​_​widgets ↗：点击可<br/>用标签时请求切换选择。" }
   class n21 node_observer
   class n21 external_node
-  n22@{ shape: rounded, label: "**avian3d::spatial​_​query::update​_​**<br/>**shape​_​caster​_​positions**<br/>来自crate:avian3d ↗：把形状扫掠的原<br/>点、方向和形状朝向换到世界空间。" }
+  n22@{ shape: rounded, label: "**update​_​shape​_​caster​_​positions**<br/>来自crate:avian3d ↗：把形状扫掠的原<br/>点、方向和形状朝向换到世界空间。" }
   class n22 node_system
   class n22 external_node
-  n23@{ shape: rounded, label: "**bevy​_​ui::stack::ui​_​stack​_​system**<br/>来自crate:bevy​_​ui ↗：重建稳定的 UI 绘<br/>制和命中顺序。" }
+  n23@{ shape: rounded, label: "**ui​_​stack​_​system**<br/>来自crate:bevy​_​ui ↗：重建稳定的 UI 绘<br/>制和命中顺序。" }
   class n23 node_system
   class n23 external_node
-  n24@{ shape: hex, label: "**bevy​_​ui​_​widgets::radio::radio​_​**<br/>**button​_​on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：记录单<br/>选按钮按压并按配置请求选中。" }
+  n24@{ shape: hex, label: "**radio​_​button​_​on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：记录单<br/>选按钮按压并按配置请求选中。" }
   class n24 node_observer
   class n24 external_node
-  n25@{ shape: hex, label: "**avian3d::ancestor​_​marker::{impl#35;1}::**<br/>**build::{closure#35;1}**<br/>来自crate:avian3d ↗：清理不再需要的祖<br/>先标记。" }
+  n25@{ shape: hex, label: "**build::{closure#35;1}**<br/>来自crate:avian3d ↗：清理不再需要的祖<br/>先标记。" }
   class n25 node_observer
   class n25 external_node
-  n26@{ shape: rounded, label: "**bevy​_​picking::hover::update​_​is​_​**<br/>**hovered**<br/>来自crate:bevy​_​picking ↗：把鼠标悬停<br/>传播到实体祖先。" }
+  n26@{ shape: rounded, label: "**update​_​is​_​hovered**<br/>来自crate:bevy​_​picking ↗：把鼠标悬停<br/>传播到实体祖先。" }
   class n26 node_system
   class n26 external_node
-  n27@{ shape: hex, label: "**bevy​_​ui​_​widgets::scrollarea::on​_​**<br/>**scroll​_​into​_​view**<br/>来自crate:bevy​_​ui​_​widgets ↗：调整滚<br/>动区域以显示指定节点。" }
+  n27@{ shape: hex, label: "**on​_​scroll​_​into​_​view**<br/>来自crate:bevy​_​ui​_​widgets ↗：调整滚<br/>动区域以显示指定节点。" }
   class n27 node_observer
   class n27 external_node
-  n28@{ shape: hex, label: "**bevy​_​ui​_​widgets::tabs::tablist​_​on​_​**<br/>**click**<br/>来自crate:bevy​_​ui​_​widgets ↗：点击可<br/>用标签时请求切换选择。" }
+  n28@{ shape: hex, label: "**tablist​_​on​_​click**<br/>来自crate:bevy​_​ui​_​widgets ↗：点击可<br/>用标签时请求切换选择。" }
   class n28 node_observer
   class n28 external_node
-  n29@{ shape: rounded, label: "**bevy​_​picking::events::pointer​_​events**<br/>来自crate:bevy​_​picking ↗：根据悬停与<br/>按钮状态派发指针交互事件。" }
+  n29@{ shape: rounded, label: "**pointer​_​events**<br/>来自crate:bevy​_​picking ↗：根据悬停与<br/>按钮状态派发指针交互事件。" }
   class n29 node_system
   class n29 external_node
-  n30@{ shape: rounded, label: "**avian3d::collision::collider::**<br/>**collider​_​transform::plugin::**<br/>**propagate​_​collider​_​transforms**<br/>来自crate:avian3d ↗：沿实体层级计算碰<br/>撞体相对刚体的变换。" }
+  n30@{ shape: rounded, label: "**propagate​_​collider​_​transforms**<br/>来自crate:avian3d ↗：沿实体层级计算碰<br/>撞体相对刚体的变换。" }
   class n30 node_system
   class n30 external_node
-  n31@{ shape: hex, label: "**avian3d::collision::collider::**<br/>**collider​_​hierarchy::plugin::on​_​**<br/>**collider​_​body​_​changed**<br/>来自crate:avian3d ↗：随层级变化更新碰<br/>撞体刚体归属。" }
+  n31@{ shape: hex, label: "**on​_​collider​_​body​_​changed**<br/>来自crate:avian3d ↗：随层级变化更新碰<br/>撞体刚体归属。" }
   class n31 node_observer
   class n31 external_node
-  n32@{ shape: rounded, label: "**bevy​_​ui::accessibility::button​_​**<br/>**changed**<br/>来自crate:bevy​_​ui ↗：为按钮生成或更新<br/>无障碍角色与文本标签。" }
+  n32@{ shape: rounded, label: "**button​_​changed**<br/>来自crate:bevy​_​ui ↗：为按钮生成或更新<br/>无障碍角色与文本标签。" }
   class n32 node_system
   class n32 external_node
-  n33@{ shape: hex, label: "**bevy​_​ui​_​widgets::dialog::dialog​_​**<br/>**drag​_​start**<br/>来自crate:bevy​_​ui​_​widgets ↗：记录对<br/>话框拖动开始位置。" }
+  n33@{ shape: hex, label: "**dialog​_​drag​_​start**<br/>来自crate:bevy​_​ui​_​widgets ↗：记录对<br/>话框拖动开始位置。" }
   class n33 node_observer
   class n33 external_node
   n34@{ shape: rounded, label: "**prepare​_​island · 创建模板**<br/>来自scene​_​assembly ↗：为海岛导入几何<br/>创建静态碰撞子体。" }
   class n34 node_entity
   class n34 external_node
-  n35@{ shape: rounded, label: "**bevy​_​transform::systems::mark​_​dirty​_​**<br/>**trees**<br/>来自crate:bevy​_​transform ↗：沿祖先链<br/>标记需要重算变换的子树。" }
+  n35@{ shape: rounded, label: "**mark​_​dirty​_​trees**<br/>来自crate:bevy​_​transform ↗：沿祖先链<br/>标记需要重算变换的子树。" }
   class n35 node_system
   class n35 external_node
-  n36@{ shape: hex, label: "**bevy​_​ui​_​widgets::dialog::bring​_​to​_​**<br/>**front**<br/>来自crate:bevy​_​ui​_​widgets ↗：将被操<br/>作的浮动对话框提到前方。" }
+  n36@{ shape: hex, label: "**bring​_​to​_​front**<br/>来自crate:bevy​_​ui​_​widgets ↗：将被操<br/>作的浮动对话框提到前方。" }
   class n36 node_observer
   class n36 external_node
-  n37@{ shape: rounded, label: "**bevy​_​ui​_​widgets::popover::position​_​**<br/>**popover**<br/>来自crate:bevy​_​ui​_​widgets ↗：定位弹<br/>出层并同步后代的 UI 变换。" }
+  n37@{ shape: rounded, label: "**position​_​popover**<br/>来自crate:bevy​_​ui​_​widgets ↗：定位弹<br/>出层并同步后代的 UI 变换。" }
   class n37 node_system
   class n37 external_node
-  n38@{ shape: rounded, label: "**bevy​_​app::hierarchy::check​_​parent​_​**<br/>**has​_​component#lt;bevy​_​camera::**<br/>**visibility::InheritedVisibility#gt;**<br/>来自crate:bevy​_​app ↗：报告仍不满足组<br/>件层级要求的父子关系。" }
+  n38@{ shape: rounded, label: "**check​_​parent​_​has​_​component**<br/>来自crate:bevy​_​app ↗：报告仍不满足组<br/>件层级要求的父子关系。" }
   class n38 node_system
   class n38 external_node
-  n39@{ shape: rounded, label: "**avian3d::physics​_​transform::**<br/>**position​_​to​_​transform**<br/>来自crate:avian3d ↗：把物理世界位姿转<br/>换为显示用局部变换。" }
+  n39@{ shape: rounded, label: "**position​_​to​_​transform**<br/>来自crate:avian3d ↗：把物理世界位姿转<br/>换为显示用局部变换。" }
   class n39 node_system
   class n39 external_node
-  n40@{ shape: rounded, label: "**demo::first​_​person::camera::sync​_​**<br/>**character​_​visibility**<br/>来自first​_​person ↗：第一人称只隐藏自<br/>身视觉子树，保留业务根与独立木箱。" }
+  n40@{ shape: rounded, label: "**sync​_​character​_​visibility**<br/>来自first​_​person ↗：第一人称只隐藏自<br/>身视觉子树，保留业务根与独立木箱。" }
   class n40 node_system
   class n40 external_node
-  n41@{ shape: rounded, label: "**bevy​_​ui::accessibility::sync​_​bounds​_​**<br/>**and​_​transforms**<br/>来自crate:bevy​_​ui ↗：把 UI 几何同步到<br/>无障碍树。" }
+  n41@{ shape: rounded, label: "**sync​_​bounds​_​and​_​transforms**<br/>来自crate:bevy​_​ui ↗：把 UI 几何同步到<br/>无障碍树。" }
   class n41 node_system
   class n41 external_node
-  n42@{ shape: hex, label: "**bevy​_​ui​_​widgets::radio::radio​_​**<br/>**button​_​on​_​key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过确<br/>认键请求选中单选按钮。" }
+  n42@{ shape: hex, label: "**radio​_​button​_​on​_​key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过确<br/>认键请求选中单选按钮。" }
   class n42 node_observer
   class n42 external_node
-  n43@{ shape: rounded, label: "**bevy​_​world​_​serialization::world​_​**<br/>**asset​_​spawner::world​_​instance​_​**<br/>**spawner​_​system**<br/>来自crate:bevy​_​world​_​serialization<br/>↗：推进世界资产实例的生成、销毁及更新。" }
+  n43@{ shape: rounded, label: "**world​_​instance​_​spawner​_​system**<br/>来自crate:bevy​_​world​_​serialization<br/>↗：推进世界资产实例的生成、销毁及更新。" }
   class n43 node_system
   class n43 external_node
-  n44@{ shape: rounded, label: "**bevy​_​text::text::detect​_​text​_​needs​_​**<br/>**rerender**<br/>来自crate:bevy​_​text ↗：把文字段和层级<br/>变化标为需要重绘。" }
+  n44@{ shape: rounded, label: "**detect​_​text​_​needs​_​rerender**<br/>来自crate:bevy​_​text ↗：把文字段和层级<br/>变化标为需要重绘。" }
   class n44 node_system
   class n44 external_node
-  n45@{ shape: hex, label: "**bevy​_​ui​_​widgets::scrollbar::**<br/>**scrollbar​_​on​_​drag​_​start**<br/>来自crate:bevy​_​ui​_​widgets ↗：记录滚<br/>动条拖动的起始位置。" }
+  n45@{ shape: hex, label: "**scrollbar​_​on​_​drag​_​start**<br/>来自crate:bevy​_​ui​_​widgets ↗：记录滚<br/>动条拖动的起始位置。" }
   class n45 node_observer
   class n45 external_node
-  n46@{ shape: rounded, label: "**bevy​_​camera::visibility::visibility​_​**<br/>**propagate​_​system**<br/>来自crate:bevy​_​camera ↗：沿父子层级传<br/>播可见意图的变化。" }
+  n46@{ shape: rounded, label: "**visibility​_​propagate​_​system**<br/>来自crate:bevy​_​camera ↗：沿父子层级传<br/>播可见意图的变化。" }
   class n46 node_system
   class n46 external_node
-  n47@{ shape: hex, label: "**bevy​_​ui​_​widgets::scrollbar::**<br/>**scrollbar​_​on​_​drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：随滑块<br/>拖动更新目标滚动位置。" }
+  n47@{ shape: hex, label: "**scrollbar​_​on​_​drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：随滑块<br/>拖动更新目标滚动位置。" }
   class n47 node_observer
   class n47 external_node
-  n48@{ shape: hex, label: "**bevy​_​ui​_​widgets::scrollarea::on​_​**<br/>**scroll​_​into​_​view**<br/>来自crate:bevy​_​ui​_​widgets ↗：调整滚<br/>动区域以显示指定节点。" }
+  n48@{ shape: hex, label: "**on​_​scroll​_​into​_​view**<br/>来自crate:bevy​_​ui​_​widgets ↗：调整滚<br/>动区域以显示指定节点。" }
   class n48 node_observer
   class n48 external_node
-  n49@{ shape: hex, label: "**bevy​_​input​_​focus::tab​_​navigation::**<br/>**handle​_​tab​_​navigation**<br/>来自crate:bevy​_​input​_​focus ↗：处理正<br/>向和反向键盘焦点遍历。" }
+  n49@{ shape: hex, label: "**handle​_​tab​_​navigation**<br/>来自crate:bevy​_​input​_​focus ↗：处理正<br/>向和反向键盘焦点遍历。" }
   class n49 node_observer
   class n49 external_node
-  n50@{ shape: hex, label: "**avian3d::collision::collider::**<br/>**collider​_​hierarchy::plugin::**<br/>**{impl#35;0}::build::{closure#35;0}**<br/>来自crate:avian3d ↗：为新增碰撞体建立<br/>刚体归属。" }
+  n50@{ shape: hex, label: "**build::{closure#35;0}**<br/>来自crate:avian3d ↗：为新增碰撞体建立<br/>刚体归属。" }
   class n50 node_observer
   class n50 external_node
-  n51@{ shape: hex, label: "**bevy​_​ui​_​widgets::dialog::dialog​_​drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：按累计<br/>拖动距离移动对话框。" }
+  n51@{ shape: hex, label: "**dialog​_​drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：按累计<br/>拖动距离移动对话框。" }
   class n51 node_observer
   class n51 external_node
-  n52@{ shape: hex, label: "**avian3d::collision::collider::**<br/>**collider​_​hierarchy::plugin::on​_​**<br/>**collider​_​body​_​changed**<br/>来自crate:avian3d ↗：随层级变化更新碰<br/>撞体刚体归属。" }
+  n52@{ shape: hex, label: "**on​_​collider​_​body​_​changed**<br/>来自crate:avian3d ↗：随层级变化更新碰<br/>撞体刚体归属。" }
   class n52 node_observer
   class n52 external_node
-  n53@{ shape: hex, label: "**bevy​_​ui​_​widgets::list::listbox​_​on​_​**<br/>**row​_​click**<br/>来自crate:bevy​_​ui​_​widgets ↗：将列表<br/>行点击转为选择或重选请求。" }
+  n53@{ shape: hex, label: "**listbox​_​on​_​row​_​click**<br/>来自crate:bevy​_​ui​_​widgets ↗：将列表<br/>行点击转为选择或重选请求。" }
   class n53 node_observer
   class n53 external_node
-  n54@{ shape: hex, label: "**bevy​_​ui​_​widgets::dialog::bring​_​to​_​**<br/>**front**<br/>来自crate:bevy​_​ui​_​widgets ↗：将被操<br/>作的浮动对话框提到前方。" }
+  n54@{ shape: hex, label: "**bring​_​to​_​front**<br/>来自crate:bevy​_​ui​_​widgets ↗：将被操<br/>作的浮动对话框提到前方。" }
   class n54 node_observer
   class n54 external_node
-  n55@{ shape: hex, label: "**bevy​_​ui​_​widgets::radio::radio​_​**<br/>**button​_​on​_​click**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过点<br/>击请求选中单选按钮。" }
+  n55@{ shape: hex, label: "**radio​_​button​_​on​_​click**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过点<br/>击请求选中单选按钮。" }
   class n55 node_observer
   class n55 external_node
-  n56@{ shape: rounded, label: "**avian3d::collision::collider::**<br/>**backend::update​_​collider​_​**<br/>**scale#lt;avian3d::collision::collider::**<br/>**parry::Collider#gt;**<br/>来自crate:avian3d ↗：把根节点和附属碰<br/>撞体的缩放传给形状。" }
+  n56@{ shape: rounded, label: "**update​_​collider​_​scale**<br/>来自crate:avian3d ↗：把根节点和附属碰<br/>撞体的缩放传给形状。" }
   class n56 node_system
   class n56 external_node
-  n57@{ shape: rounded, label: "**bevy​_​ui::layout::ui​_​layout​_​system**<br/>来自crate:bevy​_​ui ↗：求解 UI 布局并回<br/>写节点尺寸和二维变换。" }
+  n57@{ shape: rounded, label: "**ui​_​layout​_​system**<br/>来自crate:bevy​_​ui ↗：求解 UI 布局并回<br/>写节点尺寸和二维变换。" }
   class n57 node_system
   class n57 external_node
-  n58@{ shape: hex, label: "**bevy​_​ui​_​widgets::scrollbar::**<br/>**scrollbar​_​on​_​drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：随滑块<br/>拖动更新目标滚动位置。" }
+  n58@{ shape: hex, label: "**scrollbar​_​on​_​drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：随滑块<br/>拖动更新目标滚动位置。" }
   class n58 node_observer
   class n58 external_node
-  n59@{ shape: hex, label: "**avian3d::ancestor​_​marker::{impl#35;1}::**<br/>**build::{closure#35;0}**<br/>来自crate:avian3d ↗：为目标组件的祖先<br/>补充标记。" }
+  n59@{ shape: hex, label: "**build::{closure#35;0}**<br/>来自crate:avian3d ↗：为目标组件的祖先<br/>补充标记。" }
   class n59 node_observer
   class n59 external_node
-  n60@{ shape: hex, label: "**bevy​_​ui​_​widgets::scrollbar::**<br/>**scrollbar​_​on​_​drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：随滑块<br/>拖动更新目标滚动位置。" }
+  n60@{ shape: hex, label: "**scrollbar​_​on​_​drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：随滑块<br/>拖动更新目标滚动位置。" }
   class n60 node_observer
   class n60 external_node
-  n61@{ shape: rounded, label: "**bevy​_​transform::systems::parallel::**<br/>**propagate​_​parent​_​transforms**<br/>来自crate:bevy​_​transform ↗：沿父子层<br/>级并行合成世界变换。" }
+  n61@{ shape: rounded, label: "**propagate​_​parent​_​transforms**<br/>来自crate:bevy​_​transform ↗：沿父子层<br/>级并行合成世界变换。" }
   class n61 node_system
   class n61 external_node
-  n62@{ shape: rounded, label: "**bevy​_​ui::update::propagate​_​ui​_​**<br/>**target​_​cameras**<br/>来自crate:bevy​_​ui ↗：为 UI 根配置目标<br/>相机和视口信息传播源。" }
+  n62@{ shape: rounded, label: "**propagate​_​ui​_​target​_​cameras**<br/>来自crate:bevy​_​ui ↗：为 UI 根配置目标<br/>相机和视口信息传播源。" }
   class n62 node_system
   class n62 external_node
-  n63@{ shape: hex, label: "**bevy​_​ui​_​widgets::radio::radio​_​**<br/>**button​_​on​_​click**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过点<br/>击请求选中单选按钮。" }
+  n63@{ shape: hex, label: "**radio​_​button​_​on​_​click**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过点<br/>击请求选中单选按钮。" }
   class n63 node_observer
   class n63 external_node
-  n64@{ shape: rounded, label: "**bevy​_​ui​_​widgets::menu::menu​_​acquire​_​**<br/>**focus**<br/>来自crate:bevy​_​ui​_​widgets ↗：在菜单<br/>打开时为菜单项取得焦点。" }
+  n64@{ shape: rounded, label: "**menu​_​acquire​_​focus**<br/>来自crate:bevy​_​ui​_​widgets ↗：在菜单<br/>打开时为菜单项取得焦点。" }
   class n64 node_system
   class n64 external_node
-  n65@{ shape: rounded, label: "**bevy​_​transform::systems::parallel::**<br/>**propagate​_​parent​_​transforms**<br/>来自crate:bevy​_​transform ↗：沿父子层<br/>级并行合成世界变换。" }
+  n65@{ shape: rounded, label: "**propagate​_​parent​_​transforms**<br/>来自crate:bevy​_​transform ↗：沿父子层<br/>级并行合成世界变换。" }
   class n65 node_system
   class n65 external_node
-  n66@{ shape: hex, label: "**bevy​_​ui​_​widgets::dialog::dialog​_​**<br/>**drag​_​start**<br/>来自crate:bevy​_​ui​_​widgets ↗：记录对<br/>话框拖动开始位置。" }
+  n66@{ shape: hex, label: "**dialog​_​drag​_​start**<br/>来自crate:bevy​_​ui​_​widgets ↗：记录对<br/>话框拖动开始位置。" }
   class n66 node_observer
   class n66 external_node
-  n67@{ shape: rounded, label: "**bevy​_​ui::accessibility::image​_​**<br/>**changed**<br/>来自crate:bevy​_​ui ↗：为非按钮图像生成<br/>或更新无障碍标签。" }
+  n67@{ shape: rounded, label: "**image​_​changed**<br/>来自crate:bevy​_​ui ↗：为非按钮图像生成<br/>或更新无障碍标签。" }
   class n67 node_system
   class n67 external_node
-  n68@{ shape: rounded, label: "**demo::ui::scroll::bind​_​settings​_​**<br/>**scrollbars**<br/>来自ui ↗：将设置滚动条绑定到对应内容视<br/>口。" }
+  n68@{ shape: rounded, label: "**bind​_​settings​_​scrollbars**<br/>来自ui ↗：将设置滚动条绑定到对应内容视<br/>口。" }
   class n68 node_system
   class n68 external_node
-  n69@{ shape: hex, label: "**bevy​_​input​_​focus::tab​_​navigation::**<br/>**handle​_​tab​_​navigation**<br/>来自crate:bevy​_​input​_​focus ↗：处理正<br/>向和反向键盘焦点遍历。" }
+  n69@{ shape: hex, label: "**handle​_​tab​_​navigation**<br/>来自crate:bevy​_​input​_​focus ↗：处理正<br/>向和反向键盘焦点遍历。" }
   class n69 node_observer
   class n69 external_node
-  n70@{ shape: hex, label: "**bevy​_​ui​_​widgets::tabs::tab​_​on​_​key​_​**<br/>**input**<br/>来自crate:bevy​_​ui​_​widgets ↗：用键盘<br/>导航并激活标签页。" }
+  n70@{ shape: hex, label: "**tab​_​on​_​key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：用键盘<br/>导航并激活标签页。" }
   class n70 node_observer
   class n70 external_node
-  n71@{ shape: rounded, label: "**demo::ui::scroll::scroll​_​focused​_​**<br/>**button**<br/>来自ui ↗：短窗口中键盘仍能访问所有按<br/>钮；新页面先等布局完成，再滚到焦点所在区<br/>域。" }
+  n71@{ shape: rounded, label: "**scroll​_​focused​_​button**<br/>来自ui ↗：短窗口中键盘仍能访问所有按<br/>钮；新页面先等布局完成，再滚到焦点所在区<br/>域。" }
   class n71 node_system
   class n71 external_node
-  n72@{ shape: hex, label: "**bevy​_​ui​_​widgets::radio::radio​_​**<br/>**button​_​on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：记录单<br/>选按钮按压并按配置请求选中。" }
+  n72@{ shape: hex, label: "**radio​_​button​_​on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：记录单<br/>选按钮按压并按配置请求选中。" }
   class n72 node_observer
   class n72 external_node
-  n73@{ shape: rounded, label: "**bevy​_​transform::systems::sync​_​**<br/>**simple​_​transforms**<br/>来自crate:bevy​_​transform ↗：同步没有<br/>父子层级的独立实体世界变换。" }
+  n73@{ shape: rounded, label: "**sync​_​simple​_​transforms**<br/>来自crate:bevy​_​transform ↗：同步没有<br/>父子层级的独立实体世界变换。" }
   class n73 node_system
   class n73 external_node
-  n74@{ shape: rounded, label: "**bevy​_​winit::accessibility::update​_​**<br/>**accessibility​_​nodes**<br/>来自crate:bevy​_​winit ↗：把变化的可访<br/>问性节点同步给原生适配器。" }
+  n74@{ shape: rounded, label: "**update​_​accessibility​_​nodes**<br/>来自crate:bevy​_​winit ↗：把变化的可访<br/>问性节点同步给原生适配器。" }
   class n74 node_system
   class n74 external_node
-  n75@{ shape: rounded, label: "**bevy​_​ui​_​widgets::menu::menu​_​on​_​lose​_​**<br/>**focus**<br/>来自crate:bevy​_​ui​_​widgets ↗：关闭不<br/>再持有内部焦点的菜单。" }
+  n75@{ shape: rounded, label: "**menu​_​on​_​lose​_​focus**<br/>来自crate:bevy​_​ui​_​widgets ↗：关闭不<br/>再持有内部焦点的菜单。" }
   class n75 node_system
   class n75 external_node
-  n76@{ shape: rounded, label: "**bevy​_​gizmos​_​render::transform​_​gizmo​_​**<br/>**render::spawn​_​gizmo​_​meshes**<br/>来自crate:bevy​_​gizmos​_​render ↗：创建<br/>变换操作器各轴网格、材质和覆盖相机。" }
+  n76@{ shape: rounded, label: "**spawn​_​gizmo​_​meshes**<br/>来自crate:bevy​_​gizmos​_​render ↗：创建<br/>变换操作器各轴网格、材质和覆盖相机。" }
   class n76 node_system
   class n76 external_node
-  n77@{ shape: rounded, label: "**demo::character​_​animation::**<br/>**grounding::compensate​_​courier​_​sole​_​**<br/>**penetration**<br/>来自character​_​animation ↗：方向混合<br/>可能把弯腿插值成更直的腿；逐帧按真实鞋底<br/>边界修正最终视觉高度。" }
+  n77@{ shape: rounded, label: "**compensate​_​courier​_​sole​_​penetration**<br/>来自character​_​animation ↗：方向混合<br/>可能把弯腿插值成更直的腿；逐帧按真实鞋底<br/>边界修正最终视觉高度。" }
   class n77 node_system
   class n77 external_node
-  n78@{ shape: hex, label: "**bevy​_​ui​_​widgets::dialog::dialog​_​drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：按累计<br/>拖动距离移动对话框。" }
+  n78@{ shape: hex, label: "**dialog​_​drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：按累计<br/>拖动距离移动对话框。" }
   class n78 node_observer
   class n78 external_node
-  n79@{ shape: hex, label: "**bevy​_​ui​_​widgets::menu::menu​_​on​_​key​_​**<br/>**event**<br/>来自crate:bevy​_​ui​_​widgets ↗：处理菜<br/>单键盘导航、激活与关闭。" }
+  n79@{ shape: hex, label: "**menu​_​on​_​key​_​event**<br/>来自crate:bevy​_​ui​_​widgets ↗：处理菜<br/>单键盘导航、激活与关闭。" }
   class n79 node_observer
   class n79 external_node
-  n80@{ shape: hex, label: "**bevy​_​ui​_​widgets::radio::radio​_​**<br/>**button​_​on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：记录单<br/>选按钮按压并按配置请求选中。" }
+  n80@{ shape: hex, label: "**radio​_​button​_​on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：记录单<br/>选按钮按压并按配置请求选中。" }
   class n80 node_observer
   class n80 external_node
-  n81@{ shape: rounded, label: "**bevy​_​app::propagate::update​_​**<br/>**source#lt;bevy​_​ui::ui​_​node::**<br/>**ComputedUiRenderTargetInfo, (),**<br/>**bevy​_​ecs::hierarchy::ChildOf#gt;**<br/>来自crate:bevy​_​app ↗：同步传播源并恢<br/>复移除来源后的继承状态。" }
+  n81@{ shape: rounded, label: "**update​_​source**<br/>来自crate:bevy​_​app ↗：同步传播源并恢<br/>复移除来源后的继承状态。" }
   class n81 node_system
   class n81 external_node
-  n82@{ shape: rounded, label: "**bevy​_​transform::systems::sync​_​**<br/>**simple​_​transforms**<br/>来自crate:bevy​_​transform ↗：同步没有<br/>父子层级的独立实体世界变换。" }
+  n82@{ shape: rounded, label: "**sync​_​simple​_​transforms**<br/>来自crate:bevy​_​transform ↗：同步没有<br/>父子层级的独立实体世界变换。" }
   class n82 node_system
   class n82 external_node
-  n83@{ shape: hex, label: "**bevy​_​ui​_​widgets::scrollbar::**<br/>**scrollbar​_​on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：点击滚<br/>动条轨道时翻动一页。" }
+  n83@{ shape: hex, label: "**scrollbar​_​on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：点击滚<br/>动条轨道时翻动一页。" }
   class n83 node_observer
   class n83 external_node
-  n84@{ shape: hex, label: "**bevy​_​ui​_​widgets::scrollbar::**<br/>**scrollbar​_​on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：点击滚<br/>动条轨道时翻动一页。" }
+  n84@{ shape: hex, label: "**scrollbar​_​on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：点击滚<br/>动条轨道时翻动一页。" }
   class n84 node_observer
   class n84 external_node
-  n85@{ shape: hex, label: "**bevy​_​ui​_​widgets::list::listbox​_​on​_​**<br/>**row​_​click**<br/>来自crate:bevy​_​ui​_​widgets ↗：将列表<br/>行点击转为选择或重选请求。" }
+  n85@{ shape: hex, label: "**listbox​_​on​_​row​_​click**<br/>来自crate:bevy​_​ui​_​widgets ↗：将列表<br/>行点击转为选择或重选请求。" }
   class n85 node_observer
   class n85 external_node
-  n86@{ shape: hex, label: "**avian3d::collision::collider::**<br/>**collider​_​hierarchy::plugin::on​_​**<br/>**collider​_​body​_​changed**<br/>来自crate:avian3d ↗：随层级变化更新碰<br/>撞体刚体归属。" }
+  n86@{ shape: hex, label: "**on​_​collider​_​body​_​changed**<br/>来自crate:avian3d ↗：随层级变化更新碰<br/>撞体刚体归属。" }
   class n86 node_observer
   class n86 external_node
-  n87@{ shape: hex, label: "**bevy​_​ui​_​widgets::list::listbox​_​on​_​**<br/>**row​_​click**<br/>来自crate:bevy​_​ui​_​widgets ↗：将列表<br/>行点击转为选择或重选请求。" }
+  n87@{ shape: hex, label: "**listbox​_​on​_​row​_​click**<br/>来自crate:bevy​_​ui​_​widgets ↗：将列表<br/>行点击转为选择或重选请求。" }
   class n87 node_observer
   class n87 external_node
-  n88@{ shape: hex, label: "**bevy​_​ui​_​widgets::radio::radio​_​**<br/>**button​_​on​_​click**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过点<br/>击请求选中单选按钮。" }
+  n88@{ shape: hex, label: "**radio​_​button​_​on​_​click**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过点<br/>击请求选中单选按钮。" }
   class n88 node_observer
   class n88 external_node
-  n89@{ shape: hex, label: "**bevy​_​ui​_​widgets::scrollarea::on​_​**<br/>**scroll​_​into​_​view**<br/>来自crate:bevy​_​ui​_​widgets ↗：调整滚<br/>动区域以显示指定节点。" }
+  n89@{ shape: hex, label: "**on​_​scroll​_​into​_​view**<br/>来自crate:bevy​_​ui​_​widgets ↗：调整滚<br/>动区域以显示指定节点。" }
   class n89 node_observer
   class n89 external_node
-  n90@{ shape: rounded, label: "**bevy​_​app::hierarchy::check​_​parent​_​**<br/>**has​_​component#lt;bevy​_​transform::**<br/>**components::global​_​transform::**<br/>**GlobalTransform#gt;**<br/>来自crate:bevy​_​app ↗：报告仍不满足组<br/>件层级要求的父子关系。" }
+  n90@{ shape: rounded, label: "**check​_​parent​_​has​_​component**<br/>来自crate:bevy​_​app ↗：报告仍不满足组<br/>件层级要求的父子关系。" }
   class n90 node_system
   class n90 external_node
-  n91@{ shape: rounded, label: "**bevy​_​app::propagate::update​_​**<br/>**source#lt;bevy​_​ui::ui​_​node::**<br/>**ComputedUiTargetCamera, (), bevy​_​**<br/>**ecs::hierarchy::ChildOf#gt;**<br/>来自crate:bevy​_​app ↗：同步传播源并恢<br/>复移除来源后的继承状态。" }
+  n91@{ shape: rounded, label: "**update​_​source**<br/>来自crate:bevy​_​app ↗：同步传播源并恢<br/>复移除来源后的继承状态。" }
   class n91 node_system
   class n91 external_node
-  n92@{ shape: rounded, label: "**bevy​_​transform::systems::parallel::**<br/>**propagate​_​parent​_​transforms**<br/>来自crate:bevy​_​transform ↗：沿父子层<br/>级并行合成世界变换。" }
+  n92@{ shape: rounded, label: "**propagate​_​parent​_​transforms**<br/>来自crate:bevy​_​transform ↗：沿父子层<br/>级并行合成世界变换。" }
   class n92 node_system
   class n92 external_node
-  n93@{ shape: hex, label: "**bevy​_​ui​_​widgets::tabs::tab​_​on​_​key​_​**<br/>**input**<br/>来自crate:bevy​_​ui​_​widgets ↗：用键盘<br/>导航并激活标签页。" }
+  n93@{ shape: hex, label: "**tab​_​on​_​key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：用键盘<br/>导航并激活标签页。" }
   class n93 node_observer
   class n93 external_node
-  n94@{ shape: hex, label: "**avian3d::collision::collider::**<br/>**collider​_​hierarchy::plugin::**<br/>**{impl#35;0}::build::{closure#35;0}**<br/>来自crate:avian3d ↗：为新增碰撞体建立<br/>刚体归属。" }
+  n94@{ shape: hex, label: "**build::{closure#35;0}**<br/>来自crate:avian3d ↗：为新增碰撞体建立<br/>刚体归属。" }
   class n94 node_observer
   class n94 external_node
-  n95@{ shape: hex, label: "**bevy​_​ui​_​widgets::dialog::dialog​_​**<br/>**drag​_​start**<br/>来自crate:bevy​_​ui​_​widgets ↗：记录对<br/>话框拖动开始位置。" }
+  n95@{ shape: hex, label: "**dialog​_​drag​_​start**<br/>来自crate:bevy​_​ui​_​widgets ↗：记录对<br/>话框拖动开始位置。" }
   class n95 node_observer
   class n95 external_node
-  n96@{ shape: rounded, label: "**demo::character​_​animation::binding::**<br/>**initialize​_​ready​_​couriers**<br/>来自character​_​animation ↗：场景就绪<br/>后只遍历该视觉根的子树，避免把 NPC 或其<br/>他模型的播放器接到主角上。" }
+  n96@{ shape: rounded, label: "**initialize​_​ready​_​couriers**<br/>来自character​_​animation ↗：场景就绪<br/>后只遍历该视觉根的子树，避免把 NPC 或其<br/>他模型的播放器接到主角上。" }
   class n96 node_system
   class n96 external_node
-  n97@{ shape: hex, label: "**bevy​_​app::hierarchy::validate​_​**<br/>**parent​_​has​_​component**<br/>来自crate:bevy​_​app ↗：检查父实体是否<br/>满足组件层级要求。" }
+  n97@{ shape: hex, label: "**validate​_​parent​_​has​_​component**<br/>来自crate:bevy​_​app ↗：检查父实体是否<br/>满足组件层级要求。" }
   class n97 node_observer
   class n97 external_node
-  n98@{ shape: hex, label: "**bevy​_​ui​_​widgets::scrollbar::**<br/>**scrollbar​_​on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：点击滚<br/>动条轨道时翻动一页。" }
+  n98@{ shape: hex, label: "**scrollbar​_​on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：点击滚<br/>动条轨道时翻动一页。" }
   class n98 node_observer
   class n98 external_node
-  n99@{ shape: hex, label: "**bevy​_​ui​_​widgets::tabs::tab​_​on​_​key​_​**<br/>**input**<br/>来自crate:bevy​_​ui​_​widgets ↗：用键盘<br/>导航并激活标签页。" }
+  n99@{ shape: hex, label: "**tab​_​on​_​key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：用键盘<br/>导航并激活标签页。" }
   class n99 node_observer
   class n99 external_node
   n0 e0@--> n1

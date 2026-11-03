@@ -39,14 +39,14 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: cyl, label: "**EventLoopProxyWrapper**<br/>包装 Winit 事件循环代理" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​egui::input::**<br/>**WindowToEguiContextMap::on​_​egui​_​**<br/>**context​_​added​_​system**<br/>来自crate:bevy​_​egui ↗：登记新建<br/>Egui 上下文的窗口映射。" }
+  n1@{ shape: rounded, label: "**on​_​egui​_​context​_​added​_​system**<br/>来自crate:bevy​_​egui ↗：登记新建<br/>Egui 上下文的窗口映射。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: hex, label: "**bevy​_​winit::{impl#35;0}::build::**<br/>**{closure#35;2}**<br/>通知原生事件循环有新窗口。" }
+  n2@{ shape: hex, label: "**build::{closure#35;2}**<br/>通知原生事件循环有新窗口。" }
   class n2 node_observer
-  n3@{ shape: hex, label: "**bevy​_​winit::{impl#35;0}::build::**<br/>**{closure#35;2}**<br/>通知原生事件循环有新窗口。" }
+  n3@{ shape: hex, label: "**build::{closure#35;2}**<br/>通知原生事件循环有新窗口。" }
   class n3 node_observer
-  n4@{ shape: hex, label: "**bevy​_​winit::{impl#35;0}::build::**<br/>**{closure#35;2}**<br/>通知原生事件循环有新窗口。" }
+  n4@{ shape: hex, label: "**build::{closure#35;2}**<br/>通知原生事件循环有新窗口。" }
   class n4 node_observer
   n0 e0@--> n1
   class e0 edge_read

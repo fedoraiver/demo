@@ -41,44 +41,44 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​render::render​_​asset::prepare​_​**<br/>**assets#lt;bevy​_​render::mesh::**<br/>**RenderMesh#gt;**<br/>在上传预算内准备资产并保留重试项。" }
+  n0@{ shape: rounded, label: "**prepare​_​assets**<br/>在上传预算内准备资产并保留重试项。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**render​_​asset::**<br/>**PrepareNextFrameAssets#lt;mesh::**<br/>**RenderMesh#gt;**<br/>保留下一帧待准备的渲染源资产。" }
+  n1@{ shape: cyl, label: "**PrepareNextFrameAssets#lt;RenderMesh#gt;**<br/>保留下一帧待准备的渲染源资产。" }
   class n1 node_resource
-  n2@{ shape: cyl, label: "**render​_​asset::RenderAssets#lt;mesh::**<br/>**RenderMesh#gt;**<br/>按源资产身份保存 GPU 渲染表示。" }
+  n2@{ shape: cyl, label: "**RenderAssets#lt;RenderMesh#gt;**<br/>按源资产身份保存 GPU 渲染表示。" }
   class n2 node_resource
   n3@{ shape: lin-rect, label: "**QueueMeshes**<br/>组织渲染数据准备与绘制排队。" }
   class n3 node_system_set
-  n4@{ shape: cyl, label: "**render​_​asset::ExtractedAssets#lt;mesh::**<br/>**RenderMesh#gt;**<br/>暂存本帧渲染资产的提取与增删记录。" }
+  n4@{ shape: cyl, label: "**ExtractedAssets#lt;RenderMesh#gt;**<br/>暂存本帧渲染资产的提取与增删记录。" }
   class n4 node_resource
-  n5@{ shape: cyl, label: "**bevy​_​render::renderer::RenderQueue**<br/>将资源写入和命令异步提交给 GPU。" }
+  n5@{ shape: cyl, label: "**RenderQueue**<br/>将资源写入和命令异步提交给 GPU。" }
   class n5 node_resource
-  n6@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::**<br/>**material::specialize​_​material2d​_​**<br/>**meshes**<br/>来自crate:bevy​_​sprite​_​render ↗：为可<br/>见二维网格重建失效的材质专用化。" }
+  n6@{ shape: rounded, label: "**specialize​_​material2d​_​meshes**<br/>来自crate:bevy​_​sprite​_​render ↗：为可<br/>见二维网格重建失效的材质专用化。" }
   class n6 node_system
   class n6 external_node
-  n7@{ shape: cyl, label: "**vertex::MeshVertexBufferLayouts**<br/>来自crate:bevy​_​mesh ↗：共享网格顶点缓<br/>冲布局。" }
+  n7@{ shape: cyl, label: "**MeshVertexBufferLayouts**<br/>来自crate:bevy​_​mesh ↗：共享网格顶点缓<br/>冲布局。" }
   class n7 node_resource
   class n7 external_node
-  n8@{ shape: rounded, label: "**bevy​_​render::mesh::allocator::**<br/>**allocate​_​and​_​free​_​meshes**<br/>为新增变化网格分配 GPU 存储并释放旧分<br/>配。" }
+  n8@{ shape: rounded, label: "**allocate​_​and​_​free​_​meshes**<br/>为新增变化网格分配 GPU 存储并释放旧分<br/>配。" }
   class n8 node_system
-  n9@{ shape: cyl, label: "**bevy​_​render::render​_​asset::**<br/>**RenderAssetBytesPerFrameLimiter**<br/>统计并限制本帧渲染资产传输字节数。" }
+  n9@{ shape: cyl, label: "**RenderAssetBytesPerFrameLimiter**<br/>统计并限制本帧渲染资产传输字节数。" }
   class n9 node_resource
   n10@{ shape: lin-rect, label: "**QueueSweep**<br/>组织渲染数据准备与绘制排队。" }
   class n10 node_system_set
-  n11@{ shape: rounded, label: "**bevy​_​render::mesh::prepare​_​mesh​_​**<br/>**metadata​_​fallback​_​buffer**<br/>取得回退网格所在的元数据 GPU 缓冲。" }
+  n11@{ shape: rounded, label: "**prepare​_​mesh​_​metadata​_​fallback​_​**<br/>**buffer**<br/>取得回退网格所在的元数据 GPU 缓冲。" }
   class n11 node_system
-  n12@{ shape: cyl, label: "**bevy​_​render::renderer::RenderDevice**<br/>创建渲染和计算所需的 GPU 资源。" }
+  n12@{ shape: cyl, label: "**RenderDevice**<br/>创建渲染和计算所需的 GPU 资源。" }
   class n12 node_resource
-  n13@{ shape: rounded, label: "**bevy​_​pbr::prepass::specialize​_​**<br/>**prepass​_​material​_​meshes**<br/>来自crate:bevy​_​pbr ↗：按深度、材质和<br/>运动特性生成预通道专用管线。" }
+  n13@{ shape: rounded, label: "**specialize​_​prepass​_​material​_​meshes**<br/>来自crate:bevy​_​pbr ↗：按深度、材质和<br/>运动特性生成预通道专用管线。" }
   class n13 node_system
   class n13 external_node
-  n14@{ shape: cyl, label: "**mesh::morph::**<br/>**RenderMorphTargetAllocator**<br/>按设备能力存放网格形变位移数据。" }
+  n14@{ shape: cyl, label: "**RenderMorphTargetAllocator**<br/>按设备能力存放网格形变位移数据。" }
   class n14 node_resource
   n15@{ shape: lin-rect, label: "**PrepareAssets**<br/>组织渲染数据准备与绘制排队。" }
   class n15 node_system_set
-  n16@{ shape: rounded, label: "**bevy​_​render::render​_​asset::prepare​_​**<br/>**assets#lt;bevy​_​render::texture::gpu​_​**<br/>**image::GpuImage#gt;**<br/>在上传预算内准备资产并保留重试项。" }
+  n16@{ shape: rounded, label: "**prepare​_​assets**<br/>在上传预算内准备资产并保留重试项。" }
   class n16 node_system
-  n17@{ shape: rounded, label: "**bevy​_​pbr::material::specialize​_​**<br/>**material​_​meshes**<br/>来自crate:bevy​_​pbr ↗：为变化的可见网<br/>格生成并缓存材质专用管线。" }
+  n17@{ shape: rounded, label: "**specialize​_​material​_​meshes**<br/>来自crate:bevy​_​pbr ↗：为变化的可见网<br/>格生成并缓存材质专用管线。" }
   class n17 node_system
   class n17 external_node
   n0 e0@-->|"可变访问"| n1

@@ -38,27 +38,27 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**bevy​_​render::render​_​asset::**<br/>**RenderAssets#lt;bevy​_​render::storage::**<br/>**GpuShaderBuffer#gt;**<br/>按源资产身份保存 GPU 渲染表示。" }
+  n0@{ shape: cyl, label: "**RenderAssets#lt;GpuShaderBuffer#gt;**<br/>按源资产身份保存 GPU 渲染表示。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​render::erased​_​render​_​asset::**<br/>**prepare​_​erased​_​assets#lt;bevy​_​pbr::**<br/>**mesh​_​material::MeshMaterial3d#lt;bevy​_​**<br/>**pbr::pbr​_​material::**<br/>**StandardMaterial#gt;#gt;**<br/>在上传预算内准备擦除资产并管理重试卸载。" }
+  n1@{ shape: rounded, label: "**prepare​_​erased​_​assets**<br/>在上传预算内准备擦除资产并管理重试卸载。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​render::render​_​asset::extract​_​**<br/>**render​_​asset#lt;bevy​_​render::storage::**<br/>**GpuShaderBuffer#gt;**<br/>按资产变化和设备恢复请求提取渲染资产。" }
+  n2@{ shape: rounded, label: "**extract​_​render​_​asset**<br/>按资产变化和设备恢复请求提取渲染资产。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​render::gpu​_​readback::prepare​_​**<br/>**buffers**<br/>读取 GPU 回读请求，为纹理或存储缓冲的指<br/>定区段从缓冲池取得暂存空间并创建异步完成<br/>通道；越界缓冲区段会报错。" }
+  n3@{ shape: rounded, label: "**prepare​_​buffers**<br/>读取 GPU 回读请求，为纹理或存储缓冲的指<br/>定区段从缓冲池取得暂存空间并创建异步完成<br/>通道；越界缓冲区段会报错。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**bevy​_​render::erased​_​render​_​asset::**<br/>**prepare​_​erased​_​assets#lt;bevy​_​sprite​_​**<br/>**render::mesh2d::material::**<br/>**MeshMaterial2d#lt;bevy​_​sprite​_​render::**<br/>**mesh2d::color​_​material::**<br/>**ColorMaterial#gt;#gt;**<br/>在上传预算内准备擦除资产并管理重试卸载。" }
+  n4@{ shape: rounded, label: "**prepare​_​erased​_​assets**<br/>在上传预算内准备擦除资产并管理重试卸载。" }
   class n4 node_system
-  n5@{ shape: rounded, label: "**bevy​_​render::erased​_​render​_​asset::**<br/>**prepare​_​erased​_​assets#lt;bevy​_​sprite​_​**<br/>**render::mesh2d::material::**<br/>**MeshMaterial2d#lt;bevy​_​sprite​_​render::**<br/>**sprite​_​mesh::sprite​_​mesh​_​material::**<br/>**SpriteMeshMaterial#gt;#gt;**<br/>在上传预算内准备擦除资产并管理重试卸载。" }
+  n5@{ shape: rounded, label: "**prepare​_​erased​_​assets**<br/>在上传预算内准备擦除资产并管理重试卸载。" }
   class n5 node_system
-  n6@{ shape: rounded, label: "**bevy​_​render::erased​_​render​_​asset::**<br/>**prepare​_​erased​_​assets#lt;bevy​_​sprite​_​**<br/>**render::mesh2d::material::**<br/>**MeshMaterial2d#lt;bevy​_​sprite​_​render::**<br/>**tilemap​_​chunk::tilemap​_​chunk​_​**<br/>**material::TilemapChunkMaterial#gt;#gt;**<br/>在上传预算内准备擦除资产并管理重试卸载。" }
+  n6@{ shape: rounded, label: "**prepare​_​erased​_​assets**<br/>在上传预算内准备擦除资产并管理重试卸载。" }
   class n6 node_system
-  n7@{ shape: rounded, label: "**bevy​_​render::erased​_​render​_​asset::**<br/>**prepare​_​erased​_​assets#lt;bevy​_​pbr::**<br/>**mesh​_​material::MeshMaterial3d#lt;bevy​_​**<br/>**pbr::extended​_​material::**<br/>**ExtendedMaterial#lt;bevy​_​pbr::pbr​_​**<br/>**material::StandardMaterial, bevy​_​**<br/>**pbr::decal::forward::**<br/>**ForwardDecalMaterialExt#gt;#gt;#gt;**<br/>在上传预算内准备擦除资产并管理重试卸载。" }
+  n7@{ shape: rounded, label: "**prepare​_​erased​_​assets**<br/>在上传预算内准备擦除资产并管理重试卸载。" }
   class n7 node_system
-  n8@{ shape: rounded, label: "**bevy​_​render::render​_​asset::prepare​_​**<br/>**assets#lt;bevy​_​render::storage::**<br/>**GpuShaderBuffer#gt;**<br/>在上传预算内准备资产并保留重试项。" }
+  n8@{ shape: rounded, label: "**prepare​_​assets**<br/>在上传预算内准备资产并保留重试项。" }
   class n8 node_system
-  n9@{ shape: rounded, label: "**bevy​_​render::material​_​bind​_​groups::**<br/>**prepare​_​material​_​bind​_​groups**<br/>重建本帧变化材质所需的 GPU 绑定组。" }
+  n9@{ shape: rounded, label: "**prepare​_​material​_​bind​_​groups**<br/>重建本帧变化材质所需的 GPU 绑定组。" }
   class n9 node_system
-  n10@{ shape: rounded, label: "**bevy​_​render::render​_​asset::collect​_​**<br/>**render​_​assets​_​to​_​reextract#lt;bevy​_​**<br/>**render::storage::GpuShaderBuffer#gt;**<br/>排空渲染资产并登记设备恢复后的重新提取。" }
+  n10@{ shape: rounded, label: "**collect​_​render​_​assets​_​to​_​reextract**<br/>排空渲染资产并登记设备恢复后的重新提取。" }
   class n10 node_system
   n0 e0@--> n1
   class e0 edge_read

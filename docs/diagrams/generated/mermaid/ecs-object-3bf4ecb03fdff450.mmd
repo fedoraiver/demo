@@ -39,10 +39,10 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: lin-rect, label: "**Queue**<br/>组织渲染数据准备与绘制排队。" }
   class n0 node_system_set
-  n1@{ shape: rounded, label: "**bevy​_​egui::render::systems::queue​_​**<br/>**pipelines​_​system**<br/>来自crate:bevy​_​egui ↗：按目标格式选<br/>择 Egui 渲染管线。" }
+  n1@{ shape: rounded, label: "**queue​_​pipelines​_​system**<br/>来自crate:bevy​_​egui ↗：按目标格式选<br/>择 Egui 渲染管线。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​egui::render::systems::queue​_​**<br/>**bind​_​groups​_​system**<br/>来自crate:bevy​_​egui ↗：建立 Egui 纹<br/>理与采样器绑定。" }
+  n2@{ shape: rounded, label: "**queue​_​bind​_​groups​_​system**<br/>来自crate:bevy​_​egui ↗：建立 Egui 纹<br/>理与采样器绑定。" }
   class n2 node_system
   class n2 external_node
   n0 e0@-->|"集合成员"| n1

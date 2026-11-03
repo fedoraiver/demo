@@ -40,15 +40,15 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​pbr::light​_​probe::generate::**<br/>**generate​_​environment​_​map​_​light**<br/>为环境光生成分配漫反射和镜面目标图像。" }
+  n0@{ shape: rounded, label: "**generate​_​environment​_​map​_​light**<br/>为环境光生成分配漫反射和镜面目标图像。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**probe::GeneratedEnvironmentMapLight**<br/>来自crate:bevy​_​light ↗：在运行时过滤<br/>源立方体贴图生成环境光。" }
+  n1@{ shape: rounded, label: "**GeneratedEnvironmentMapLight**<br/>来自crate:bevy​_​light ↗：在运行时过滤<br/>源立方体贴图生成环境光。" }
   class n1 node_component
   class n1 external_node
-  n2@{ shape: rounded, label: "**probe::EnvironmentMapLight**<br/>来自crate:bevy​_​light ↗：用漫反射与镜<br/>面反射立方体贴图提供环境光。" }
+  n2@{ shape: rounded, label: "**EnvironmentMapLight**<br/>来自crate:bevy​_​light ↗：用漫反射与镜<br/>面反射立方体贴图提供环境光。" }
   class n2 node_component
   class n2 external_node
-  n3@{ shape: cyl, label: "**bevy​_​asset::Assets#lt;image::Image#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
+  n3@{ shape: cyl, label: "**Assets#lt;Image#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
   class n3 node_resource
   class n3 external_node
   n1 e0@--> n0

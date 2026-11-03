@@ -38,15 +38,15 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bloom::BloomTexture**<br/>保存 Bloom 逐级缩小的中间纹理。" }
+  n0@{ shape: rounded, label: "**BloomTexture**<br/>保存 Bloom 逐级缩小的中间纹理。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​post​_​process::bloom::prepare​_​**<br/>**bloom​_​bind​_​groups**<br/>为 Bloom 各 mip 层准备降采样与升采样绑<br/>定。" }
+  n1@{ shape: rounded, label: "**prepare​_​bloom​_​bind​_​groups**<br/>为 Bloom 各 mip 层准备降采样与升采样绑<br/>定。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​post​_​process::bloom::bloom**<br/>通过降采样和上采样合成 HDR 光晕。" }
+  n2@{ shape: rounded, label: "**bloom**<br/>通过降采样和上采样合成 HDR 光晕。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​post​_​process::bloom::prepare​_​**<br/>**bloom​_​textures**<br/>按视口比例分配 Bloom 多级纹理。" }
+  n3@{ shape: rounded, label: "**prepare​_​bloom​_​textures**<br/>按视口比例分配 Bloom 多级纹理。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**bevy​_​post​_​process::bloom::bloom**<br/>通过降采样和上采样合成 HDR 光晕。" }
+  n4@{ shape: rounded, label: "**bloom**<br/>通过降采样和上采样合成 HDR 光晕。" }
   class n4 node_system
   n0 e0@--> n1
   class e0 edge_read

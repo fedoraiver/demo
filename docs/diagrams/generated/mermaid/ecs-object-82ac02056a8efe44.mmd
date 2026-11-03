@@ -40,12 +40,12 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: lin-rect, label: "**FrustumGizmoSystems**<br/>收集并绘制相机视锥调试线。" }
   class n0 node_system_set
-  n1@{ shape: rounded, label: "**bevy​_​light::spot​_​light::update​_​spot​_​**<br/>**light​_​frusta**<br/>来自crate:bevy​_​light ↗：更新可见聚光<br/>灯的阴影视锥。" }
+  n1@{ shape: rounded, label: "**update​_​spot​_​light​_​frusta**<br/>来自crate:bevy​_​light ↗：更新可见聚光<br/>灯的阴影视锥。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​gizmos::frustum::draw​_​all​_​**<br/>**frustum​_​gizmos**<br/>绘制未单独标记实体的视锥调试图形。" }
+  n2@{ shape: rounded, label: "**draw​_​all​_​frustum​_​gizmos**<br/>绘制未单独标记实体的视锥调试图形。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​gizmos::frustum::draw​_​frustum​_​**<br/>**gizmos**<br/>绘制带标记实体的视锥调试图形。" }
+  n3@{ shape: rounded, label: "**draw​_​frustum​_​gizmos**<br/>绘制带标记实体的视锥调试图形。" }
   class n3 node_system
   n1 e0@-->|"先于"| n0
   class e0 edge_order

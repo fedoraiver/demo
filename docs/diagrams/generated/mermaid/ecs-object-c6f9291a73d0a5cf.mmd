@@ -36,9 +36,9 @@ flowchart LR
   classDef node_message fill:#EDF4F6,stroke:#247B91,stroke-width:1.6px,color:#1F3340
   classDef edge_consume stroke:#247B91,stroke-width:1.8px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: lean-r, label: "**event::WindowCloseRequested**<br/>传递窗口关闭请求。" }
+  n0@{ shape: lean-r, label: "**WindowCloseRequested**<br/>传递窗口关闭请求。" }
   class n0 node_message
-  n1@{ shape: rounded, label: "**bevy​_​window::system::close​_​when​_​**<br/>**requested**<br/>分两轮标记关闭请求并销毁窗口实体。" }
+  n1@{ shape: rounded, label: "**close​_​when​_​requested**<br/>分两轮标记关闭请求并销毁窗口实体。" }
   class n1 node_system
   n0 e0@--> n1
   class e0 edge_consume

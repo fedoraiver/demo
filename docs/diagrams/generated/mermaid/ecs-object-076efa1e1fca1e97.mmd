@@ -41,15 +41,15 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::**<br/>**material::init​_​material​_​2d​_​pipeline**<br/>以二维网格基础管线建立材质管线资源。" }
+  n0@{ shape: rounded, label: "**init​_​material​_​2d​_​pipeline**<br/>以二维网格基础管线建立材质管线资源。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**mesh2d::material::Material2dPipeline**<br/>提供二维材质专用化使用的基础网格管线。" }
+  n1@{ shape: cyl, label: "**Material2dPipeline**<br/>提供二维材质专用化使用的基础网格管线。" }
   class n1 node_resource
-  n2@{ shape: fr-rect, label: "**mesh2d::material::Materials2dPlugin**<br/>建立二维材质共享渲染基础。" }
+  n2@{ shape: fr-rect, label: "**Materials2dPlugin**<br/>建立二维材质共享渲染基础。" }
   class n2 node_plugin
-  n3@{ shape: cyl, label: "**bevy​_​sprite​_​render::Mesh2dPipeline**<br/>提供二维网格的视图与实例资源布局。" }
+  n3@{ shape: cyl, label: "**Mesh2dPipeline**<br/>提供二维网格的视图与实例资源布局。" }
   class n3 node_resource
-  n4@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::mesh::**<br/>**init​_​mesh​_​2d​_​pipeline**<br/>建立二维网格的视图、实例及元数据输入布<br/>局。" }
+  n4@{ shape: rounded, label: "**init​_​mesh​_​2d​_​pipeline**<br/>建立二维网格的视图、实例及元数据输入布<br/>局。" }
   class n4 node_system
   n0 e0@-->|"插入"| n1
   class e0 edge_write

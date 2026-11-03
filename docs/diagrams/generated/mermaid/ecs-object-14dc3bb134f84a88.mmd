@@ -39,7 +39,7 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**ui::widgets::SettingDescription**<br/>说明文本属于按钮实体，焦点变化时只更新右<br/>侧说明，不重建页面。" }
+  n0@{ shape: rounded, label: "**SettingDescription**<br/>说明文本属于按钮实体，焦点变化时只更新右<br/>侧说明，不重建页面。" }
   class n0 node_component
   n1@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>提供音量的指针与导航调整入口。" }
   class n1 node_entity
@@ -47,7 +47,7 @@ flowchart LR
   class n2 node_entity
   n3@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>按按钮方向步进调整对应音量。" }
   class n3 node_entity
-  n4@{ shape: rounded, label: "**demo::ui::style::update​_​description**<br/>更新当前聚焦设置的说明标题与正文。" }
+  n4@{ shape: rounded, label: "**update​_​description**<br/>更新当前聚焦设置的说明标题与正文。" }
   class n4 node_system
   n5@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>按按钮方向步进调整对应音量。" }
   class n5 node_entity

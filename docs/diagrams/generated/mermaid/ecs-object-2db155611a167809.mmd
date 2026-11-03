@@ -46,45 +46,45 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​anti​_​alias::contrast​_​adaptive​_​**<br/>**sharpening::node::cas**<br/>对视图颜色执行 CAS 锐化后处理。" }
+  n0@{ shape: rounded, label: "**cas**<br/>对视图颜色执行 CAS 锐化后处理。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**bevy​_​render::view::ViewTarget**<br/>来自crate:bevy​_​render ↗：管理视图主颜<br/>色纹理及最终输出附件。" }
+  n1@{ shape: rounded, label: "**ViewTarget**<br/>来自crate:bevy​_​render ↗：管理视图主颜<br/>色纹理及最终输出附件。" }
   class n1 node_component
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​anti​_​alias::fxaa::node::fxaa**<br/>对启用的相机视图执行 FXAA 抗锯齿。" }
+  n2@{ shape: rounded, label: "**fxaa**<br/>对启用的相机视图执行 FXAA 抗锯齿。" }
   class n2 node_system
-  n3@{ shape: fr-rect, label: "**contrast​_​adaptive​_​sharpening::**<br/>**CasPlugin**<br/>提供对比度自适应锐化。" }
+  n3@{ shape: fr-rect, label: "**CasPlugin**<br/>提供对比度自适应锐化。" }
   class n3 node_plugin
-  n4@{ shape: cyl, label: "**bevy​_​render::diagnostic::**<br/>**DiagnosticsRecorder**<br/>来自crate:bevy​_​render ↗：记录渲染诊断<br/>区间与 GPU 查询索引的对应。" }
+  n4@{ shape: cyl, label: "**DiagnosticsRecorder**<br/>来自crate:bevy​_​render ↗：记录渲染诊断<br/>区间与 GPU 查询索引的对应。" }
   class n4 node_resource
   class n4 external_node
-  n5@{ shape: rounded, label: "**bevy​_​render::extract​_​component::**<br/>**DynamicUniformIndex#lt;contrast​_​**<br/>**adaptive​_​sharpening::CasUniform#gt;**<br/>来自crate:bevy​_​render ↗：定位组件参数<br/>在共享 Uniform 缓冲中的位置。" }
+  n5@{ shape: rounded, label: "**DynamicUniformIndex#lt;CasUniform#gt;**<br/>来自crate:bevy​_​render ↗：定位组件参数<br/>在共享 Uniform 缓冲中的位置。" }
   class n5 node_component
   class n5 external_node
-  n6@{ shape: rounded, label: "**bevy​_​render::view::ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
+  n6@{ shape: rounded, label: "**ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
   class n6 node_component
   class n6 external_node
-  n7@{ shape: cyl, label: "**bevy​_​render::renderer::RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
+  n7@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
   class n7 node_resource
   class n7 external_node
   n8@{ shape: notch-rect, label: "**Local · cached​_​bind​_​group**<br/>按参数缓冲和颜色纹理复用 CAS 绑定组。" }
   class n8 node_local
-  n9@{ shape: cyl, label: "**bevy​_​render::extract​_​component::**<br/>**ComponentUniforms#lt;contrast​_​adaptive​_​**<br/>**sharpening::CasUniform#gt;**<br/>来自crate:bevy​_​render ↗：汇集同类组件<br/>的动态 Uniform 数据。" }
+  n9@{ shape: cyl, label: "**ComponentUniforms#lt;CasUniform#gt;**<br/>来自crate:bevy​_​render ↗：汇集同类组件<br/>的动态 Uniform 数据。" }
   class n9 node_resource
   class n9 external_node
-  n10@{ shape: rounded, label: "**bevy​_​anti​_​alias::smaa::smaa**<br/>通过三个阶段完成 SMAA 抗锯齿。" }
+  n10@{ shape: rounded, label: "**smaa**<br/>通过三个阶段完成 SMAA 抗锯齿。" }
   class n10 node_system
-  n11@{ shape: cyl, label: "**bevy​_​render::renderer::CurrentView**<br/>来自crate:bevy​_​render ↗：指定当前正在<br/>渲染的视图实体。" }
+  n11@{ shape: cyl, label: "**CurrentView**<br/>来自crate:bevy​_​render ↗：指定当前正在<br/>渲染的视图实体。" }
   class n11 node_resource
   class n11 external_node
   n12@{ shape: lin-rect, label: "**PostProcess**<br/>来自crate:bevy​_​core​_​pipeline ↗：划分<br/>三维相机绘制与后处理阶段。" }
   class n12 node_system_set
   class n12 external_node
-  n13@{ shape: cyl, label: "**contrast​_​adaptive​_​sharpening::**<br/>**CasPipeline**<br/>保存对比度自适应锐化的管线资源。" }
+  n13@{ shape: cyl, label: "**CasPipeline**<br/>保存对比度自适应锐化的管线资源。" }
   class n13 node_resource
-  n14@{ shape: rounded, label: "**contrast​_​adaptive​_​sharpening::**<br/>**ViewCasPipeline**<br/>保存当前视图的锐化管线标识。" }
+  n14@{ shape: rounded, label: "**ViewCasPipeline**<br/>保存当前视图的锐化管线标识。" }
   class n14 node_component
-  n15@{ shape: cyl, label: "**bevy​_​render::render​_​resource::**<br/>**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
+  n15@{ shape: cyl, label: "**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
   class n15 node_resource
   class n15 external_node
   n1 e0@--> n0

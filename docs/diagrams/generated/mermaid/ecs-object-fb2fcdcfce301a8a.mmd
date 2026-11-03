@@ -39,7 +39,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**begin​_​attachment · 创建模板**<br/>为本次持握预留独立碰撞代理。" }
   class n0 node_entity
-  n1@{ shape: rounded, label: "**demo::item​_​interaction::**<br/>**interaction::handle​_​interaction**<br/>拾取建立物理持握关系；释放只解除控制，保<br/>留刚体姿态、线速度和角速度。" }
+  n1@{ shape: rounded, label: "**handle​_​interaction**<br/>拾取建立物理持握关系；释放只解除控制，保<br/>留刚体姿态、线速度和角速度。" }
   class n1 node_system
   n1 e0@-->|"创建模板"| n0
   class e0 edge_write

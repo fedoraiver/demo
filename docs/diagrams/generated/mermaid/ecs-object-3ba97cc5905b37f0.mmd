@@ -36,9 +36,9 @@ flowchart LR
   classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**render​_​resource::texture::**<br/>**DefaultImageSamplerDescriptor**<br/>保存可供设备恢复的默认采样配置。" }
+  n0@{ shape: cyl, label: "**DefaultImageSamplerDescriptor**<br/>保存可供设备恢复的默认采样配置。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​render::init​_​gpu​_​resource#lt;bevy​_​**<br/>**render::render​_​resource::texture::**<br/>**DefaultImageSampler#gt;**<br/>构造并插入渲染所需资源。" }
+  n1@{ shape: rounded, label: "**init​_​gpu​_​resource**<br/>构造并插入渲染所需资源。" }
   class n1 node_system
   n0 e0@--> n1
   class e0 edge_read

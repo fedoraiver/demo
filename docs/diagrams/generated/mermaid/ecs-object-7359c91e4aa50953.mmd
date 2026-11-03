@@ -38,11 +38,11 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**atmosphere::resources::**<br/>**AtmosphereBuffer**<br/>缓存大气着色数据的 GPU 存储缓冲。" }
+  n0@{ shape: rounded, label: "**AtmosphereBuffer**<br/>缓存大气着色数据的 GPU 存储缓冲。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​pbr::atmosphere::resources::**<br/>**prepare​_​atmosphere​_​buffers**<br/>上传各视图的大气和采样设置缓冲。" }
+  n1@{ shape: rounded, label: "**prepare​_​atmosphere​_​buffers**<br/>上传各视图的大气和采样设置缓冲。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​pbr::render::mesh​_​view​_​**<br/>**bindings::prepare​_​mesh​_​view​_​bind​_​**<br/>**groups**<br/>为视图绑定光照、阴影及各可选渲染效果资<br/>源。" }
+  n2@{ shape: rounded, label: "**prepare​_​mesh​_​view​_​bind​_​groups**<br/>为视图绑定光照、阴影及各可选渲染效果资<br/>源。" }
   class n2 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

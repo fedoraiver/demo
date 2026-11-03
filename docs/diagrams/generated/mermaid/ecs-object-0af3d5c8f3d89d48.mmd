@@ -37,12 +37,12 @@ flowchart LR
   classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​extract::**<br/>**SyncToSubWorld#lt;RenderApp#gt;**<br/>请求将实体同步到子世界。" }
+  n0@{ shape: rounded, label: "**SyncToSubWorld#lt;RenderApp#gt;**<br/>请求将实体同步到子世界。" }
   class n0 node_component
-  n1@{ shape: hex, label: "**bevy​_​render::view::window::**<br/>**{impl#35;0}::build::{closure#35;0}**<br/>来自crate:bevy​_​render ↗：标记新窗口同<br/>步到渲染世界。" }
+  n1@{ shape: hex, label: "**build::{closure#35;0}**<br/>来自crate:bevy​_​render ↗：标记新窗口同<br/>步到渲染世界。" }
   class n1 node_observer
   class n1 external_node
-  n2@{ shape: hex, label: "**bevy​_​render::view::window::**<br/>**{impl#35;0}::build::{closure#35;0}**<br/>来自crate:bevy​_​render ↗：标记新窗口同<br/>步到渲染世界。" }
+  n2@{ shape: hex, label: "**build::{closure#35;0}**<br/>来自crate:bevy​_​render ↗：标记新窗口同<br/>步到渲染世界。" }
   class n2 node_observer
   class n2 external_node
   n1 e0@-->|"插入"| n0

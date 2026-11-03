@@ -38,13 +38,13 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​render::view::window::need​_​**<br/>**surface​_​configuration**<br/>判断窗口渲染表面是否需要重配。" }
+  n0@{ shape: rounded, label: "**need​_​surface​_​configuration**<br/>判断窗口渲染表面是否需要重配。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**bevy​_​render::view::window::create​_​**<br/>**surfaces**<br/>创建并配置提取窗口的 GPU 表面。" }
+  n1@{ shape: rounded, label: "**create​_​surfaces**<br/>创建并配置提取窗口的 GPU 表面。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​render::view::ExtractedWindow**<br/>保存渲染侧窗口尺寸、呈现模式和交换链状<br/>态。" }
+  n2@{ shape: rounded, label: "**ExtractedWindow**<br/>保存渲染侧窗口尺寸、呈现模式和交换链状<br/>态。" }
   class n2 node_component
-  n3@{ shape: rounded, label: "**view::window::SurfaceData**<br/>保存窗口 GPU 表面及其呈现配置。" }
+  n3@{ shape: rounded, label: "**SurfaceData**<br/>保存窗口 GPU 表面及其呈现配置。" }
   class n3 node_component
   n0 e0@-->|"运行条件"| n1
   class e0 edge_reference

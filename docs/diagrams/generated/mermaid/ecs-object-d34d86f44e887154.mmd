@@ -38,9 +38,9 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**tilemap​_​chunk::TilemapChunkTileData**<br/>保存瓦片块内各格的图集索引或空格状态。" }
+  n0@{ shape: rounded, label: "**TilemapChunkTileData**<br/>保存瓦片块内各格的图集索引或空格状态。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​sprite​_​render::tilemap​_​chunk::**<br/>**update​_​tilemap​_​chunk​_​indices**<br/>将变化的瓦片块索引打包写入材质图像。" }
+  n1@{ shape: rounded, label: "**update​_​tilemap​_​chunk​_​indices**<br/>将变化的瓦片块索引打包写入材质图像。" }
   class n1 node_system
   n0 e0@-->|"存在性约束"| n1
   class e0 edge_reference

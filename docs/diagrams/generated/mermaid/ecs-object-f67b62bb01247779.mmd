@@ -45,42 +45,42 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​sprite::calculate​_​bounds​_​2d**<br/>为二维网格和精灵计算局部包围盒。" }
+  n0@{ shape: rounded, label: "**calculate​_​bounds​_​2d**<br/>为二维网格和精灵计算局部包围盒。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**bevy​_​mesh::components::mark​_​2d​_​**<br/>**meshes​_​as​_​changed​_​if​_​their​_​assets​_​**<br/>**changed**<br/>来自crate:bevy​_​mesh ↗：资产内容变化时<br/>标记对应二维网格已变更。" }
+  n1@{ shape: rounded, label: "**mark​_​2d​_​meshes​_​as​_​changed​_​if​_​their​_​**<br/>**assets​_​changed**<br/>来自crate:bevy​_​mesh ↗：资产内容变化时<br/>标记对应二维网格已变更。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​camera::primitives::Aabb**<br/>来自crate:bevy​_​camera ↗：以局部轴对齐<br/>包围盒支持可见性裁剪。" }
+  n2@{ shape: rounded, label: "**Aabb**<br/>来自crate:bevy​_​camera ↗：以局部轴对齐<br/>包围盒支持可见性裁剪。" }
   class n2 node_component
   class n2 external_node
-  n3@{ shape: cyl, label: "**bevy​_​asset::Assets#lt;texture​_​atlas::**<br/>**TextureAtlasLayout#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
+  n3@{ shape: cyl, label: "**Assets#lt;TextureAtlasLayout#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
   class n3 node_resource
   class n3 external_node
   n4@{ shape: lin-rect, label: "**CalculateBounds**<br/>来自crate:bevy​_​camera ↗：组织相机与实<br/>体可见性更新。" }
   class n4 node_system_set
   class n4 external_node
-  n5@{ shape: rounded, label: "**sprite::Anchor**<br/>保存二维可渲染实体相对自身尺寸的归一化锚<br/>点偏移" }
+  n5@{ shape: rounded, label: "**Anchor**<br/>保存二维可渲染实体相对自身尺寸的归一化锚<br/>点偏移" }
   class n5 node_component
-  n6@{ shape: rounded, label: "**components::Mesh2d**<br/>来自crate:bevy​_​mesh ↗：为二维可绘制实<br/>体指定网格资产。" }
+  n6@{ shape: rounded, label: "**Mesh2d**<br/>来自crate:bevy​_​mesh ↗：为二维可绘制实<br/>体指定网格资产。" }
   class n6 node_component
   class n6 external_node
-  n7@{ shape: cyl, label: "**bevy​_​asset::Assets#lt;image::Image#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
+  n7@{ shape: cyl, label: "**Assets#lt;Image#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
   class n7 node_resource
   class n7 external_node
-  n8@{ shape: rounded, label: "**sprite::Sprite**<br/>描述二维精灵的图像、图集、颜色、翻转、尺<br/>寸和裁剪区域" }
+  n8@{ shape: rounded, label: "**Sprite**<br/>描述二维精灵的图像、图集、颜色、翻转、尺<br/>寸和裁剪区域" }
   class n8 node_component
   n9@{ shape: fr-rect, label: "**SpritePlugin**<br/>建立二维精灵基础支持。" }
   class n9 node_plugin
-  n10@{ shape: rounded, label: "**bevy​_​camera::visibility::NoAutoAabb**<br/>来自crate:bevy​_​camera ↗：禁止自动计算<br/>实体的轴对齐包围盒。" }
+  n10@{ shape: rounded, label: "**NoAutoAabb**<br/>来自crate:bevy​_​camera ↗：禁止自动计算<br/>实体的轴对齐包围盒。" }
   class n10 node_component
   class n10 external_node
-  n11@{ shape: cyl, label: "**bevy​_​asset::asset​_​changed::**<br/>**AssetChanges#lt;mesh::Mesh#gt;**<br/>来自crate:bevy​_​asset ↗：记录资产最近<br/>变化的系统刻度。" }
+  n11@{ shape: cyl, label: "**AssetChanges#lt;Mesh#gt;**<br/>来自crate:bevy​_​asset ↗：记录资产最近<br/>变化的系统刻度。" }
   class n11 node_resource
   class n11 external_node
-  n12@{ shape: rounded, label: "**bevy​_​camera::visibility::**<br/>**NoFrustumCulling**<br/>来自crate:bevy​_​camera ↗：使实体退出内<br/>置视锥裁剪。" }
+  n12@{ shape: rounded, label: "**NoFrustumCulling**<br/>来自crate:bevy​_​camera ↗：使实体退出内<br/>置视锥裁剪。" }
   class n12 node_component
   class n12 external_node
-  n13@{ shape: cyl, label: "**bevy​_​asset::Assets#lt;bevy​_​mesh::Mesh#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
+  n13@{ shape: cyl, label: "**Assets#lt;Mesh#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
   class n13 node_resource
   class n13 external_node
   n1 e0@-->|"先于"| n0

@@ -43,25 +43,25 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​render::view::composition::**<br/>**resolve​_​composition​_​spaces**<br/>协调共享纹理相机的合成色彩空间。" }
+  n0@{ shape: rounded, label: "**resolve​_​composition​_​spaces**<br/>协调共享纹理相机的合成色彩空间。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**camera::CameraMainTextureUsages**<br/>来自crate:bevy​_​camera ↗：配置相机主颜<br/>色纹理的使用标志。" }
+  n1@{ shape: rounded, label: "**CameraMainTextureUsages**<br/>来自crate:bevy​_​camera ↗：配置相机主颜<br/>色纹理的使用标志。" }
   class n1 node_component
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​render::view::Msaa**<br/>选择视图的多重采样抗锯齿样本数。" }
+  n2@{ shape: rounded, label: "**Msaa**<br/>选择视图的多重采样抗锯齿样本数。" }
   class n2 node_component
-  n3@{ shape: rounded, label: "**bevy​_​render::view::**<br/>**ResolvedCompositingSpace**<br/>记录本帧相机堆栈实际采用的合成空间。" }
+  n3@{ shape: rounded, label: "**ResolvedCompositingSpace**<br/>记录本帧相机堆栈实际采用的合成空间。" }
   class n3 node_component
-  n4@{ shape: rounded, label: "**components::Camera2d**<br/>来自crate:bevy​_​camera ↗：标记使用二维<br/>渲染流程的相机。" }
+  n4@{ shape: rounded, label: "**Camera2d**<br/>来自crate:bevy​_​camera ↗：标记使用二维<br/>渲染流程的相机。" }
   class n4 node_component
   class n4 external_node
-  n5@{ shape: rounded, label: "**bevy​_​render::camera::ExtractedCamera**<br/>保存渲染世界相机的目标和绘制配置。" }
+  n5@{ shape: rounded, label: "**ExtractedCamera**<br/>保存渲染世界相机的目标和绘制配置。" }
   class n5 node_component
-  n6@{ shape: fr-rect, label: "**view::ViewPlugin**<br/>准备视图渲染目标与统一数据。" }
+  n6@{ shape: fr-rect, label: "**ViewPlugin**<br/>准备视图渲染目标与统一数据。" }
   class n6 node_plugin
   n7@{ shape: lin-rect, label: "**ResolveCompositingSpaces**<br/>写入各视图解析后的合成颜色空间。" }
   class n7 node_system_set
-  n8@{ shape: rounded, label: "**bevy​_​render::view::ExtractedView**<br/>描述渲染视图的身份、投影与空间状态。" }
+  n8@{ shape: rounded, label: "**ExtractedView**<br/>描述渲染视图的身份、投影与空间状态。" }
   class n8 node_component
   n1 e0@--> n0
   class e0 edge_read

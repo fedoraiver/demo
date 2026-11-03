@@ -37,14 +37,14 @@ flowchart LR
   classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**bevy​_​render::renderer::**<br/>**PendingCommandBuffers**<br/>暂存等待提交到渲染队列的命令缓冲和编码<br/>器。" }
+  n0@{ shape: cyl, label: "**PendingCommandBuffers**<br/>暂存等待提交到渲染队列的命令缓冲和编码<br/>器。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​core​_​pipeline::schedule::**<br/>**submit​_​pending​_​command​_​buffers**<br/>来自crate:bevy​_​core​_​pipeline ↗：将排<br/>队完成的渲染命令缓冲提交到 GPU。" }
+  n1@{ shape: rounded, label: "**submit​_​pending​_​command​_​buffers**<br/>来自crate:bevy​_​core​_​pipeline ↗：将排<br/>队完成的渲染命令缓冲提交到 GPU。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​render::init​_​gpu​_​resource#lt;bevy​_​**<br/>**render::renderer::render​_​context::**<br/>**PendingCommandBuffers#gt;**<br/>构造并插入渲染所需资源。" }
+  n2@{ shape: rounded, label: "**init​_​gpu​_​resource**<br/>构造并插入渲染所需资源。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​core​_​pipeline::schedule::**<br/>**camera​_​driver**<br/>来自crate:bevy​_​core​_​pipeline ↗：为辅<br/>助视图和活动相机运行专属渲染调度。" }
+  n3@{ shape: rounded, label: "**camera​_​driver**<br/>来自crate:bevy​_​core​_​pipeline ↗：为辅<br/>助视图和活动相机运行专属渲染调度。" }
   class n3 node_system
   class n3 external_node
   n1 e0@-->|"可变访问"| n0

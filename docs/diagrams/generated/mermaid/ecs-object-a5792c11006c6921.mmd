@@ -41,29 +41,29 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​render::batching::no​_​gpu​_​**<br/>**preprocessing::batch​_​and​_​prepare​_​**<br/>**binned​_​render​_​phase#lt;bevy​_​core​_​**<br/>**pipeline::deferred::**<br/>**Opaque3dDeferred, bevy​_​pbr::render::**<br/>**mesh::MeshPipeline#gt;**<br/>在 CPU 路径上准备分桶阶段的绘制批次。" }
+  n0@{ shape: rounded, label: "**batch​_​and​_​prepare​_​binned​_​render​_​**<br/>**phase**<br/>在 CPU 路径上准备分桶阶段的绘制批次。" }
   class n0 node_system
   n1@{ shape: lin-rect, label: "**PrepareResourcesBatchPhases**<br/>组织渲染数据准备与绘制排队。" }
   class n1 node_system_set
-  n2@{ shape: cyl, label: "**lightmap::RenderLightmaps**<br/>来自crate:bevy​_​pbr ↗：管理渲染侧光照<br/>贴图的槽位和纹理。" }
+  n2@{ shape: cyl, label: "**RenderLightmaps**<br/>来自crate:bevy​_​pbr ↗：管理渲染侧光照<br/>贴图的槽位和纹理。" }
   class n2 node_resource
   class n2 external_node
-  n3@{ shape: cyl, label: "**mesh::allocator::MeshAllocator**<br/>分配并管理网格顶点和索引 GPU 缓冲。" }
+  n3@{ shape: cyl, label: "**MeshAllocator**<br/>分配并管理网格顶点和索引 GPU 缓冲。" }
   class n3 node_resource
-  n4@{ shape: cyl, label: "**bevy​_​render::render​_​phase::**<br/>**ViewBinnedRenderPhases#lt;deferred::**<br/>**Opaque3dDeferred#gt;**<br/>汇集各视图按分桶组织的绘制指令。" }
+  n4@{ shape: cyl, label: "**ViewBinnedRenderPhases#lt;Opaque3dDefer**<br/>**red#gt;**<br/>汇集各视图按分桶组织的绘制指令。" }
   class n4 node_resource
-  n5@{ shape: rounded, label: "**bevy​_​ecs::schedule::condition::**<br/>**common​_​conditions::resource​_​**<br/>**exists#lt;bevy​_​render::batching::no​_​**<br/>**gpu​_​preprocessing::**<br/>**BatchedInstanceBuffer#lt;bevy​_​pbr::**<br/>**render::mesh::MeshUniform#gt;#gt;**<br/>来自crate:bevy​_​ecs ↗：判断指定资源是<br/>否存在。" }
+  n5@{ shape: rounded, label: "**resource​_​exists**<br/>来自crate:bevy​_​ecs ↗：判断指定资源是<br/>否存在。" }
   class n5 node_system
   class n5 external_node
-  n6@{ shape: cyl, label: "**render::skin::SkinUniforms**<br/>来自crate:bevy​_​pbr ↗：以双缓冲保存蒙<br/>皮前后帧关节矩阵。" }
+  n6@{ shape: cyl, label: "**SkinUniforms**<br/>来自crate:bevy​_​pbr ↗：以双缓冲保存蒙<br/>皮前后帧关节矩阵。" }
   class n6 node_resource
   class n6 external_node
-  n7@{ shape: cyl, label: "**bevy​_​render::batching::no​_​gpu​_​**<br/>**preprocessing::**<br/>**BatchedInstanceBuffer#lt;render::mesh::**<br/>**MeshUniform#gt;**<br/>保存 CPU 准备路径的批次绘制数据。" }
+  n7@{ shape: cyl, label: "**BatchedInstanceBuffer#lt;MeshUniform#gt;**<br/>保存 CPU 准备路径的批次绘制数据。" }
   class n7 node_resource
-  n8@{ shape: cyl, label: "**render::morph::MorphIndices**<br/>来自crate:bevy​_​pbr ↗：关联形变网格与<br/>当前及上一帧权重位置。" }
+  n8@{ shape: cyl, label: "**MorphIndices**<br/>来自crate:bevy​_​pbr ↗：关联形变网格与<br/>当前及上一帧权重位置。" }
   class n8 node_resource
   class n8 external_node
-  n9@{ shape: cyl, label: "**render::mesh::RenderMeshInstances**<br/>来自crate:bevy​_​pbr ↗：保存 CPU 或<br/>GPU 构建所需的网格实例。" }
+  n9@{ shape: cyl, label: "**RenderMeshInstances**<br/>来自crate:bevy​_​pbr ↗：保存 CPU 或<br/>GPU 构建所需的网格实例。" }
   class n9 node_resource
   class n9 external_node
   n1 e0@-->|"集合成员"| n0

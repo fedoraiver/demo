@@ -42,29 +42,29 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​core​_​pipeline::prepass::**<br/>**background​_​motion​_​vectors::prepare​_​**<br/>**background​_​motion​_​vectors​_​bind​_​**<br/>**groups**<br/>为背景运动矢量绑定前后两帧视图参数。" }
+  n0@{ shape: rounded, label: "**prepare​_​background​_​motion​_​vectors​_​**<br/>**bind​_​groups**<br/>为背景运动矢量绑定前后两帧视图参数。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**bevy​_​render::renderer::RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
+  n1@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
   class n1 node_resource
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​core​_​pipeline::prepass::**<br/>**MotionVectorPrepass**<br/>为相机输出屏幕空间运动矢量。" }
+  n2@{ shape: rounded, label: "**MotionVectorPrepass**<br/>为相机输出屏幕空间运动矢量。" }
   class n2 node_component
-  n3@{ shape: rounded, label: "**prepass::background​_​motion​_​vectors::**<br/>**BackgroundMotionVectorsBindGroup**<br/>绑定计算背景运动矢量所需的前后帧视图参<br/>数。" }
+  n3@{ shape: rounded, label: "**BackgroundMotionVectorsBindGroup**<br/>绑定计算背景运动矢量所需的前后帧视图参<br/>数。" }
   class n3 node_component
-  n4@{ shape: cyl, label: "**prepass::PreviousViewUniforms**<br/>集中上传各视图上一帧的相机矩阵。" }
+  n4@{ shape: cyl, label: "**PreviousViewUniforms**<br/>集中上传各视图上一帧的相机矩阵。" }
   class n4 node_resource
-  n5@{ shape: cyl, label: "**bevy​_​render::view::ViewUniforms**<br/>来自crate:bevy​_​render ↗：汇集全部视图<br/>的动态 Uniform 数据。" }
+  n5@{ shape: cyl, label: "**ViewUniforms**<br/>来自crate:bevy​_​render ↗：汇集全部视图<br/>的动态 Uniform 数据。" }
   class n5 node_resource
   class n5 external_node
-  n6@{ shape: cyl, label: "**bevy​_​render::render​_​resource::**<br/>**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
+  n6@{ shape: cyl, label: "**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
   class n6 node_resource
   class n6 external_node
-  n7@{ shape: cyl, label: "**prepass::background​_​motion​_​vectors::**<br/>**BackgroundMotionVectorsPipeline**<br/>提供背景像素运动矢量的全屏管线。" }
+  n7@{ shape: cyl, label: "**BackgroundMotionVectorsPipeline**<br/>提供背景像素运动矢量的全屏管线。" }
   class n7 node_resource
   n8@{ shape: lin-rect, label: "**PrepareBindGroups**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
   class n8 node_system_set
   class n8 external_node
-  n9@{ shape: rounded, label: "**prepass::background​_​motion​_​vectors::**<br/>**NoBackgroundMotionVectors**<br/>禁用相机自动生成的背景运动矢量。" }
+  n9@{ shape: rounded, label: "**NoBackgroundMotionVectors**<br/>禁用相机自动生成的背景运动矢量。" }
   class n9 node_component
   n1 e0@--> n0
   class e0 edge_read

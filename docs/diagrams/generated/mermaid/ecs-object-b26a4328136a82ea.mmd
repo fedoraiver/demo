@@ -41,13 +41,13 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**avian3d::schedule::update​_​last​_​**<br/>**physics​_​tick**<br/>记录本次物理阶段结束的 ECS 变化刻度。" }
+  n0@{ shape: rounded, label: "**update​_​last​_​physics​_​tick**<br/>记录本次物理阶段结束的 ECS 变化刻度。" }
   class n0 node_system
   n1@{ shape: lin-rect, label: "**Last**<br/>组织一次物理模拟步的主要阶段。" }
   class n1 node_system_set
-  n2@{ shape: cyl, label: "**schedule::LastPhysicsTick**<br/>记录上一轮物理调度结束的变化刻度。" }
+  n2@{ shape: cyl, label: "**LastPhysicsTick**<br/>记录上一轮物理调度结束的变化刻度。" }
   class n2 node_resource
-  n3@{ shape: fr-rect, label: "**schedule::PhysicsSchedulePlugin**<br/>建立物理调度与时间资源。" }
+  n3@{ shape: fr-rect, label: "**PhysicsSchedulePlugin**<br/>建立物理调度与时间资源。" }
   class n3 node_plugin
   n1 e0@-->|"先于"| n0
   class e0 edge_order

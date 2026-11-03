@@ -38,15 +38,15 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**atmosphere::resources::**<br/>**AtmosphereBindGroups**<br/>保存大气查找表及天空绘制的绑定组。" }
+  n0@{ shape: rounded, label: "**AtmosphereBindGroups**<br/>保存大气查找表及天空绘制的绑定组。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​pbr::atmosphere::node::render​_​**<br/>**sky**<br/>绑定大气查找表及视图、光照参数，按相机视<br/>口和可选分辨率覆盖设置绘制全屏天空，将结<br/>果写入视图颜色附件。" }
+  n1@{ shape: rounded, label: "**render​_​sky**<br/>绑定大气查找表及视图、光照参数，按相机视<br/>口和可选分辨率覆盖设置绘制全屏天空，将结<br/>果写入视图颜色附件。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​pbr::atmosphere::node::**<br/>**atmosphere​_​luts**<br/>根据当前大气、视图和光照参数调度计算管<br/>线，生成透射、多重散射、天空视图及空气透<br/>视查找表，供天空和大气渲染使用。" }
+  n2@{ shape: rounded, label: "**atmosphere​_​luts**<br/>根据当前大气、视图和光照参数调度计算管<br/>线，生成透射、多重散射、天空视图及空气透<br/>视查找表，供天空和大气渲染使用。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​pbr::atmosphere::resources::**<br/>**prepare​_​atmosphere​_​bind​_​groups**<br/>为大气查找表计算和天空绘制绑定视图资源。" }
+  n3@{ shape: rounded, label: "**prepare​_​atmosphere​_​bind​_​groups**<br/>为大气查找表计算和天空绘制绑定视图资源。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**bevy​_​pbr::atmosphere::extract​_​**<br/>**atmosphere**<br/>为三维相机选择并提取最近的大气。" }
+  n4@{ shape: rounded, label: "**extract​_​atmosphere**<br/>为三维相机选择并提取最近的大气。" }
   class n4 node_system
   n0 e0@--> n1
   class e0 edge_read

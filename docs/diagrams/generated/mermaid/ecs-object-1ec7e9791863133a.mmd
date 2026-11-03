@@ -39,7 +39,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: notch-rect, label: "**Local · arg2.0.0.0.0**<br/>保存 Propagate#lt;C#gt; 移除参数的组件 ID。" }
   class n0 node_local
-  n1@{ shape: rounded, label: "**bevy​_​app::propagate::update​_​**<br/>**source#lt;bevy​_​ui::ui​_​node::**<br/>**ComputedUiTargetCamera, (), bevy​_​**<br/>**ecs::hierarchy::ChildOf#gt;**<br/>同步传播源并恢复移除来源后的继承状态。" }
+  n1@{ shape: rounded, label: "**update​_​source**<br/>同步传播源并恢复移除来源后的继承状态。" }
   class n1 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

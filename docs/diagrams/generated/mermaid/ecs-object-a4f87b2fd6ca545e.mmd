@@ -38,17 +38,17 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**view::ViewTargetAttachments**<br/>按输出目标保存本帧颜色附件。" }
+  n0@{ shape: cyl, label: "**ViewTargetAttachments**<br/>按输出目标保存本帧颜色附件。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​render::view::prepare​_​view​_​**<br/>**attachments**<br/>按相机输出目标准备可共享的颜色附件。" }
+  n1@{ shape: rounded, label: "**prepare​_​view​_​attachments**<br/>按相机输出目标准备可共享的颜色附件。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​render::view::prepare​_​view​_​**<br/>**targets**<br/>为视图维护主颜色双缓冲及可选多采样目标。" }
+  n2@{ shape: rounded, label: "**prepare​_​view​_​targets**<br/>为视图维护主颜色双缓冲及可选多采样目标。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​render::view::window::**<br/>**screenshot::prepare​_​screenshots**<br/>为有效截图目标准备捕获资源和输出附件。" }
+  n3@{ shape: rounded, label: "**prepare​_​screenshots**<br/>为有效截图目标准备捕获资源和输出附件。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**bevy​_​render::init​_​gpu​_​resource#lt;bevy​_​**<br/>**render::view::ViewTargetAttachments#gt;**<br/>构造并插入渲染所需资源。" }
+  n4@{ shape: rounded, label: "**init​_​gpu​_​resource**<br/>构造并插入渲染所需资源。" }
   class n4 node_system
-  n5@{ shape: rounded, label: "**bevy​_​render::view::clear​_​view​_​**<br/>**attachments**<br/>清空上一帧的视图输出附件表。" }
+  n5@{ shape: rounded, label: "**clear​_​view​_​attachments**<br/>清空上一帧的视图输出附件表。" }
   class n5 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

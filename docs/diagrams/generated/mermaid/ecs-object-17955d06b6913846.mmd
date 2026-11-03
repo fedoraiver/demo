@@ -38,22 +38,22 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**tonemapping::TonemappingLuts**<br/>提供色调映射使用的三维查找表。" }
+  n0@{ shape: cyl, label: "**TonemappingLuts**<br/>提供色调映射使用的三维查找表。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​extract::extract​_​resource::**<br/>**extract​_​resource#lt;bevy​_​core​_​**<br/>**pipeline::tonemapping::**<br/>**TonemappingLuts, bevy​_​render::**<br/>**RenderApp, ()#gt;**<br/>来自crate:bevy​_​extract ↗：把存在的主<br/>世界资源转换到子世界。" }
+  n1@{ shape: rounded, label: "**extract​_​resource**<br/>来自crate:bevy​_​extract ↗：把存在的主<br/>世界资源转换到子世界。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::mesh::**<br/>**prepare​_​mesh2d​_​view​_​bind​_​groups**<br/>来自crate:bevy​_​sprite​_​render ↗：为二<br/>维相机绑定视图、全局参数与色调 LUT。" }
+  n2@{ shape: rounded, label: "**prepare​_​mesh2d​_​view​_​bind​_​groups**<br/>来自crate:bevy​_​sprite​_​render ↗：为二<br/>维相机绑定视图、全局参数与色调 LUT。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​sprite​_​render::render::prepare​_​**<br/>**sprite​_​view​_​bind​_​groups**<br/>来自crate:bevy​_​sprite​_​render ↗：为精<br/>灵视图绑定参数和色调映射 LUT。" }
+  n3@{ shape: rounded, label: "**prepare​_​sprite​_​view​_​bind​_​groups**<br/>来自crate:bevy​_​sprite​_​render ↗：为精<br/>灵视图绑定参数和色调映射 LUT。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**bevy​_​core​_​pipeline::tonemapping::**<br/>**node::tonemapping**<br/>为启用的 HDR 视图执行色调映射。" }
+  n4@{ shape: rounded, label: "**tonemapping**<br/>为启用的 HDR 视图执行色调映射。" }
   class n4 node_system
-  n5@{ shape: rounded, label: "**bevy​_​core​_​pipeline::tonemapping::**<br/>**node::tonemapping**<br/>为启用的 HDR 视图执行色调映射。" }
+  n5@{ shape: rounded, label: "**tonemapping**<br/>为启用的 HDR 视图执行色调映射。" }
   class n5 node_system
-  n6@{ shape: rounded, label: "**bevy​_​pbr::render::mesh​_​view​_​**<br/>**bindings::prepare​_​mesh​_​view​_​bind​_​**<br/>**groups**<br/>来自crate:bevy​_​pbr ↗：为视图绑定光<br/>照、阴影及各可选渲染效果资源。" }
+  n6@{ shape: rounded, label: "**prepare​_​mesh​_​view​_​bind​_​groups**<br/>来自crate:bevy​_​pbr ↗：为视图绑定光<br/>照、阴影及各可选渲染效果资源。" }
   class n6 node_system
   class n6 external_node
   n1 e0@-->|"可变访问"| n0

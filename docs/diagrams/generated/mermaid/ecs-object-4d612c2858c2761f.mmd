@@ -39,7 +39,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: notch-rect, label: "**Local · arg4.11.0.0.1**<br/>跟踪 SkinnedMesh 移除记录的读取进度。" }
   class n0 node_local
-  n1@{ shape: rounded, label: "**bevy​_​pbr::render::mesh::extract​_​**<br/>**meshes​_​for​_​gpu​_​building**<br/>增量提取变化或需重试网格到线程队列。" }
+  n1@{ shape: rounded, label: "**extract​_​meshes​_​for​_​gpu​_​building**<br/>增量提取变化或需重试网格到线程队列。" }
   class n1 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

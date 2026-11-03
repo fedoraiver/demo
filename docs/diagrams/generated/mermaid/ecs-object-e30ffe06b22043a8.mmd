@@ -45,24 +45,24 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​winit::accessibility::window​_​**<br/>**closed**<br/>清理关闭窗口的无障碍后端状态。" }
+  n0@{ shape: rounded, label: "**window​_​closed**<br/>清理关闭窗口的无障碍后端状态。" }
   class n0 node_system
   n1@{ shape: lin-rect, label: "**Update**<br/>来自crate:bevy​_​a11y ↗：组织无障碍信息<br/>更新。" }
   class n1 node_system_set
   class n1 external_node
-  n2@{ shape: lean-r, label: "**event::WindowClosed**<br/>来自crate:bevy​_​window ↗：通知窗口已经<br/>关闭。" }
+  n2@{ shape: lean-r, label: "**WindowClosed**<br/>来自crate:bevy​_​window ↗：通知窗口已经<br/>关闭。" }
   class n2 node_message
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​winit::accessibility::poll​_​**<br/>**receivers**<br/>将原生无障碍动作请求转为应用消息。" }
+  n3@{ shape: rounded, label: "**poll​_​receivers**<br/>将原生无障碍动作请求转为应用消息。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**bevy​_​winit::accessibility::update​_​**<br/>**accessibility​_​nodes**<br/>把变化的可访问性节点同步给原生适配器。" }
+  n4@{ shape: rounded, label: "**update​_​accessibility​_​nodes**<br/>把变化的可访问性节点同步给原生适配器。" }
   class n4 node_system
-  n5@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;event::**<br/>**WindowClosed#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n5@{ shape: cyl, label: "**Messages#lt;WindowClosed#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n5 node_resource
   class n5 external_node
-  n6@{ shape: fr-rect, label: "**accessibility::AccessKitPlugin**<br/>连接窗口平台的无障碍接口。" }
+  n6@{ shape: fr-rect, label: "**AccessKitPlugin**<br/>连接窗口平台的无障碍接口。" }
   class n6 node_plugin
-  n7@{ shape: cyl, label: "**accessibility::**<br/>**WinitActionRequestHandlers**<br/>把窗口实体映射到 AccessKit 动作请求处<br/>理入口" }
+  n7@{ shape: cyl, label: "**WinitActionRequestHandlers**<br/>把窗口实体映射到 AccessKit 动作请求处<br/>理入口" }
   class n7 node_resource
   n1 e0@-->|"集合成员"| n0
   class e0 edge_set_membership

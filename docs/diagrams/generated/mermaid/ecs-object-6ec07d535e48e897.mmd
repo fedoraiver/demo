@@ -46,15 +46,15 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​transform::systems::mark​_​dirty​_​**<br/>**trees**<br/>沿祖先链标记需要重算变换的子树。" }
+  n0@{ shape: rounded, label: "**mark​_​dirty​_​trees**<br/>沿祖先链标记需要重算变换的子树。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**components::transform::Transform**<br/>保存实体相对父实体的平移、旋转和缩放" }
+  n1@{ shape: rounded, label: "**Transform**<br/>保存实体相对父实体的平移、旋转和缩放" }
   class n1 node_component
   n2@{ shape: notch-rect, label: "**Local · arg1.0.1**<br/>跟踪 ChildOf 移除记录的读取进度。" }
   class n2 node_local
   n3@{ shape: notch-rect, label: "**Local · arg6**<br/>为变换树祖先遍历复用线程位图。" }
   class n3 node_local
-  n4@{ shape: rounded, label: "**bevy​_​ecs::hierarchy::ChildOf**<br/>来自crate:bevy​_​ecs ↗：保存当前实体的<br/>父实体身份" }
+  n4@{ shape: rounded, label: "**ChildOf**<br/>来自crate:bevy​_​ecs ↗：保存当前实体的<br/>父实体身份" }
   class n4 node_component
   class n4 external_node
   n5@{ shape: notch-rect, label: "**Local · traversal​_​channels**<br/>分发变换树祖先遍历的起始节点。" }
@@ -64,25 +64,25 @@ flowchart LR
   class n6 external_node
   n7@{ shape: notch-rect, label: "**Local · arg8**<br/>向并行变换树遍历任务分发变化实体。" }
   class n7 node_local
-  n8@{ shape: rounded, label: "**bevy​_​transform::systems::parallel::**<br/>**propagate​_​parent​_​transforms**<br/>沿父子层级并行合成世界变换。" }
+  n8@{ shape: rounded, label: "**propagate​_​parent​_​transforms**<br/>沿父子层级并行合成世界变换。" }
   class n8 node_system
-  n9@{ shape: fr-rect, label: "**physics​_​transform::**<br/>**PhysicsTransformPlugin**<br/>来自crate:avian3d ↗：同步物理姿态与实<br/>体变换。" }
+  n9@{ shape: fr-rect, label: "**PhysicsTransformPlugin**<br/>来自crate:avian3d ↗：同步物理姿态与实<br/>体变换。" }
   class n9 node_plugin
   class n9 external_node
   n10@{ shape: notch-rect, label: "**Local · shared​_​bitset**<br/>用共享原子位图去重祖先遍历。" }
   class n10 node_local
   n11@{ shape: notch-rect, label: "**Local · arg5**<br/>用共享原子位集去重变换树祖先遍历。" }
   class n11 node_local
-  n12@{ shape: rounded, label: "**components::global​_​transform::**<br/>**GlobalTransform**<br/>保存实体合并祖先变换后的世界空间仿射变换" }
+  n12@{ shape: rounded, label: "**GlobalTransform**<br/>保存实体合并祖先变换后的世界空间仿射变换" }
   class n12 node_component
-  n13@{ shape: rounded, label: "**components::transform::**<br/>**TransformTreeChanged**<br/>以变化检测标记存在变换变化的层级分支" }
+  n13@{ shape: rounded, label: "**TransformTreeChanged**<br/>以变化检测标记存在变换变化的层级分支" }
   class n13 node_component
   n14@{ shape: lin-rect, label: "**AnonymousSet(0)**<br/>来自crate:bevy​_​ecs ↗：保存一组系统的<br/>共同配置。" }
   class n14 node_system_set
   class n14 external_node
   n15@{ shape: notch-rect, label: "**Local · consumer​_​channels**<br/>传递变换树脏标记的待写入实体。" }
   class n15 node_local
-  n16@{ shape: fr-rect, label: "**plugins::TransformPlugin**<br/>更新并传播实体变换。" }
+  n16@{ shape: fr-rect, label: "**TransformPlugin**<br/>更新并传播实体变换。" }
   class n16 node_plugin
   n17@{ shape: notch-rect, label: "**Local · orphaned.0.0.0.0**<br/>保存 ChildOf 移除参数的组件 ID。" }
   class n17 node_local
@@ -90,7 +90,7 @@ flowchart LR
   class n18 node_local
   n19@{ shape: notch-rect, label: "**Local · local​_​bitset**<br/>复用变换树遍历的线程位图。" }
   class n19 node_local
-  n20@{ shape: cyl, label: "**systems::**<br/>**StaticTransformOptimizations**<br/>控制变换传播是否追踪并跳过静态子树" }
+  n20@{ shape: cyl, label: "**StaticTransformOptimizations**<br/>控制变换传播是否追踪并跳过静态子树" }
   class n20 node_resource
   n21@{ shape: notch-rect, label: "**Local · arg7**<br/>传递需要标记变换树变化的实体批次。" }
   class n21 node_local

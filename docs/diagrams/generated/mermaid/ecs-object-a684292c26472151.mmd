@@ -42,7 +42,7 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
   subgraph layout_card_n0[" "]
-  n0@{ shape: rounded, label: "**bevy​_​ui::ComputedUiRenderTargetInfo**<br/>缓存 UI 目标的尺寸与缩放。" }
+  n0@{ shape: rounded, label: "**ComputedUiRenderTargetInfo**<br/>缓存 UI 目标的尺寸与缩放。" }
   class n0 node_component
   end
   style layout_card_n0 fill:none,stroke:none
@@ -83,7 +83,7 @@ flowchart LR
   end
   style layout_card_n6 fill:none,stroke:none
   subgraph layout_card_n7[" "]
-  n7@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：按轨道<br/>点击策略发起滑条调整。" }
+  n7@{ shape: hex, label: "**slider​_​on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：按轨道<br/>点击策略发起滑条调整。" }
   class n7 node_observer
   class n7 external_node
   end
@@ -191,7 +191,7 @@ flowchart LR
   end
   style layout_card_n24 fill:none,stroke:none
   subgraph layout_card_n25[" "]
-  n25@{ shape: rounded, label: "**bevy​_​ui​_​render::gradient::extract​_​**<br/>**gradients**<br/>来自crate:bevy​_​ui​_​render ↗：提取可<br/>见 UI 渐变并替换失效渲染项。" }
+  n25@{ shape: rounded, label: "**extract​_​gradients**<br/>来自crate:bevy​_​ui​_​render ↗：提取可<br/>见 UI 渐变并替换失效渲染项。" }
   class n25 node_system
   class n25 external_node
   end
@@ -263,7 +263,7 @@ flowchart LR
   end
   style layout_card_n36 fill:none,stroke:none
   subgraph layout_card_n37[" "]
-  n37@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：按轨道<br/>点击策略发起滑条调整。" }
+  n37@{ shape: hex, label: "**slider​_​on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：按轨道<br/>点击策略发起滑条调整。" }
   class n37 node_observer
   class n37 external_node
   end
@@ -281,7 +281,7 @@ flowchart LR
   end
   style layout_card_n39 fill:none,stroke:none
   subgraph layout_card_n40[" "]
-  n40@{ shape: rounded, label: "**bevy​_​ui::layout::ui​_​layout​_​system**<br/>求解 UI 布局并回写节点尺寸和二维变换。" }
+  n40@{ shape: rounded, label: "**ui​_​layout​_​system**<br/>求解 UI 布局并回写节点尺寸和二维变换。" }
   class n40 node_system
   end
   style layout_card_n40 fill:none,stroke:none
@@ -364,13 +364,13 @@ flowchart LR
   end
   style layout_card_n53 fill:none,stroke:none
   subgraph layout_card_n54[" "]
-  n54@{ shape: rounded, label: "**bevy​_​app::propagate::propagate​_​**<br/>**output#lt;bevy​_​ui::ui​_​node::**<br/>**ComputedUiRenderTargetInfo, ()#gt;**<br/>来自crate:bevy​_​app ↗：把继承结果写入<br/>或移出实体实际组件。" }
+  n54@{ shape: rounded, label: "**propagate​_​output**<br/>来自crate:bevy​_​app ↗：把继承结果写入<br/>或移出实体实际组件。" }
   class n54 node_system
   class n54 external_node
   end
   style layout_card_n54 fill:none,stroke:none
   subgraph layout_card_n55[" "]
-  n55@{ shape: hex, label: "**bevy​_​ui​_​widgets::text​_​input::on​_​**<br/>**pointer​_​press**<br/>来自crate:bevy​_​ui​_​widgets ↗：将文本<br/>点击转为光标与选择操作。" }
+  n55@{ shape: hex, label: "**on​_​pointer​_​press**<br/>来自crate:bevy​_​ui​_​widgets ↗：将文本<br/>点击转为光标与选择操作。" }
   class n55 node_observer
   class n55 external_node
   end
@@ -418,7 +418,7 @@ flowchart LR
   end
   style layout_card_n62 fill:none,stroke:none
   subgraph layout_card_n63[" "]
-  n63@{ shape: rounded, label: "**bevy​_​ui::widget::text​_​input​_​layout::**<br/>**update​_​editable​_​text​_​layout**<br/>刷新可编辑文本的字形布局和编辑反馈。" }
+  n63@{ shape: rounded, label: "**update​_​editable​_​text​_​layout**<br/>刷新可编辑文本的字形布局和编辑反馈。" }
   class n63 node_system
   end
   style layout_card_n63 fill:none,stroke:none
@@ -429,7 +429,7 @@ flowchart LR
   end
   style layout_card_n64 fill:none,stroke:none
   subgraph layout_card_n65[" "]
-  n65@{ shape: rounded, label: "**bevy​_​ui​_​render::box​_​shadow::extract​_​**<br/>**shadows**<br/>来自crate:bevy​_​ui​_​render ↗：提取可<br/>见 UI 阴影并替换失效渲染项。" }
+  n65@{ shape: rounded, label: "**extract​_​shadows**<br/>来自crate:bevy​_​ui​_​render ↗：提取可<br/>见 UI 阴影并替换失效渲染项。" }
   class n65 node_system
   class n65 external_node
   end
@@ -447,7 +447,7 @@ flowchart LR
   end
   style layout_card_n67 fill:none,stroke:none
   subgraph layout_card_n68[" "]
-  n68@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：按轨道<br/>点击策略发起滑条调整。" }
+  n68@{ shape: hex, label: "**slider​_​on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：按轨道<br/>点击策略发起滑条调整。" }
   class n68 node_observer
   class n68 external_node
   end
@@ -705,7 +705,7 @@ flowchart LR
   end
   style layout_card_n110 fill:none,stroke:none
   subgraph layout_card_n111[" "]
-  n111@{ shape: hex, label: "**bevy​_​ui​_​widgets::scrollbar::**<br/>**scrollbar​_​on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：点击滚<br/>动条轨道时翻动一页。" }
+  n111@{ shape: hex, label: "**scrollbar​_​on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：点击滚<br/>动条轨道时翻动一页。" }
   class n111 node_observer
   class n111 external_node
   end
@@ -867,7 +867,7 @@ flowchart LR
   end
   style layout_card_n137 fill:none,stroke:none
   subgraph layout_card_n138[" "]
-  n138@{ shape: rounded, label: "**bevy​_​ui::widget::text​_​input​_​layout::**<br/>**update​_​editable​_​text​_​styles**<br/>把字体和排版配置同步到可编辑文本引擎。" }
+  n138@{ shape: rounded, label: "**update​_​editable​_​text​_​styles**<br/>把字体和排版配置同步到可编辑文本引擎。" }
   class n138 node_system
   end
   style layout_card_n138 fill:none,stroke:none
@@ -980,7 +980,7 @@ flowchart LR
   end
   style layout_card_n156 fill:none,stroke:none
   subgraph layout_card_n157[" "]
-  n157@{ shape: rounded, label: "**bevy​_​ui::widget::text​_​input​_​layout::**<br/>**update​_​editable​_​text​_​content​_​size**<br/>按可见字符宽度和行数设置输入框固有尺寸。" }
+  n157@{ shape: rounded, label: "**update​_​editable​_​text​_​content​_​size**<br/>按可见字符宽度和行数设置输入框固有尺寸。" }
   class n157 node_system
   end
   style layout_card_n157 fill:none,stroke:none
@@ -1201,7 +1201,7 @@ flowchart LR
   end
   style layout_card_n193 fill:none,stroke:none
   subgraph layout_card_n194[" "]
-  n194@{ shape: hex, label: "**bevy​_​ui​_​widgets::text​_​input::on​_​**<br/>**pointer​_​drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：随指针<br/>拖动扩展文本选择。" }
+  n194@{ shape: hex, label: "**on​_​pointer​_​drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：随指针<br/>拖动扩展文本选择。" }
   class n194 node_observer
   class n194 external_node
   end
@@ -1231,7 +1231,7 @@ flowchart LR
   end
   style layout_card_n198 fill:none,stroke:none
   subgraph layout_card_n199[" "]
-  n199@{ shape: hex, label: "**bevy​_​ui​_​widgets::text​_​input::on​_​**<br/>**pointer​_​press**<br/>来自crate:bevy​_​ui​_​widgets ↗：将文本<br/>点击转为光标与选择操作。" }
+  n199@{ shape: hex, label: "**on​_​pointer​_​press**<br/>来自crate:bevy​_​ui​_​widgets ↗：将文本<br/>点击转为光标与选择操作。" }
   class n199 node_observer
   class n199 external_node
   end
@@ -1747,7 +1747,7 @@ flowchart LR
   end
   style layout_card_n284 fill:none,stroke:none
   subgraph layout_card_n285[" "]
-  n285@{ shape: rounded, label: "**bevy​_​ui::widget::image::update​_​**<br/>**image​_​content​_​size​_​system**<br/>按图像或图集区域更新 UI 的固有尺寸测<br/>量。" }
+  n285@{ shape: rounded, label: "**update​_​image​_​content​_​size​_​system**<br/>按图像或图集区域更新 UI 的固有尺寸测<br/>量。" }
   class n285 node_system
   end
   style layout_card_n285 fill:none,stroke:none
@@ -1872,7 +1872,7 @@ flowchart LR
   end
   style layout_card_n305 fill:none,stroke:none
   subgraph layout_card_n306[" "]
-  n306@{ shape: hex, label: "**bevy​_​ui​_​widgets::scrollbar::**<br/>**scrollbar​_​on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：点击滚<br/>动条轨道时翻动一页。" }
+  n306@{ shape: hex, label: "**scrollbar​_​on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：点击滚<br/>动条轨道时翻动一页。" }
   class n306 node_observer
   class n306 external_node
   end
@@ -1926,7 +1926,7 @@ flowchart LR
   end
   style layout_card_n314 fill:none,stroke:none
   subgraph layout_card_n315[" "]
-  n315@{ shape: rounded, label: "**bevy​_​ui​_​widgets::text​_​input::text​_​**<br/>**input​_​autoscroll​_​system**<br/>来自crate:bevy​_​ui​_​widgets ↗：在拖选<br/>越出文字视口时自动滚动。" }
+  n315@{ shape: rounded, label: "**text​_​input​_​autoscroll​_​system**<br/>来自crate:bevy​_​ui​_​widgets ↗：在拖选<br/>越出文字视口时自动滚动。" }
   class n315 node_system
   class n315 external_node
   end
@@ -2112,7 +2112,7 @@ flowchart LR
   end
   style layout_card_n345 fill:none,stroke:none
   subgraph layout_card_n346[" "]
-  n346@{ shape: hex, label: "**bevy​_​ui​_​widgets::text​_​input::on​_​**<br/>**pointer​_​drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：随指针<br/>拖动扩展文本选择。" }
+  n346@{ shape: hex, label: "**on​_​pointer​_​drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：随指针<br/>拖动扩展文本选择。" }
   class n346 node_observer
   class n346 external_node
   end
@@ -2172,7 +2172,7 @@ flowchart LR
   end
   style layout_card_n355 fill:none,stroke:none
   subgraph layout_card_n356[" "]
-  n356@{ shape: rounded, label: "**bevy​_​ui​_​widgets::popover::position​_​**<br/>**popover**<br/>来自crate:bevy​_​ui​_​widgets ↗：定位弹<br/>出层并同步后代的 UI 变换。" }
+  n356@{ shape: rounded, label: "**position​_​popover**<br/>来自crate:bevy​_​ui​_​widgets ↗：定位弹<br/>出层并同步后代的 UI 变换。" }
   class n356 node_system
   class n356 external_node
   end
@@ -2922,7 +2922,7 @@ flowchart LR
   end
   style layout_card_n480 fill:none,stroke:none
   subgraph layout_card_n481[" "]
-  n481@{ shape: rounded, label: "**bevy​_​ui​_​widgets::text​_​input::update​_​**<br/>**ime​_​position**<br/>来自crate:bevy​_​ui​_​widgets ↗：把输入<br/>法候选窗口放到当前文字光标下方。" }
+  n481@{ shape: rounded, label: "**update​_​ime​_​position**<br/>来自crate:bevy​_​ui​_​widgets ↗：把输入<br/>法候选窗口放到当前文字光标下方。" }
   class n481 node_system
   class n481 external_node
   end
@@ -3204,7 +3204,7 @@ flowchart LR
   end
   style layout_card_n527 fill:none,stroke:none
   subgraph layout_card_n528[" "]
-  n528@{ shape: rounded, label: "**bevy​_​ui​_​widgets::scrollbar::update​_​**<br/>**scrollbar​_​thumb**<br/>来自crate:bevy​_​ui​_​widgets ↗：按内容<br/>比例与滚动位置更新滚动条滑块。" }
+  n528@{ shape: rounded, label: "**update​_​scrollbar​_​thumb**<br/>来自crate:bevy​_​ui​_​widgets ↗：按内容<br/>比例与滚动位置更新滚动条滑块。" }
   class n528 node_system
   class n528 external_node
   end
@@ -3282,7 +3282,7 @@ flowchart LR
   end
   style layout_card_n540 fill:none,stroke:none
   subgraph layout_card_n541[" "]
-  n541@{ shape: hex, label: "**bevy​_​ui​_​widgets::text​_​input::on​_​**<br/>**pointer​_​drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：随指针<br/>拖动扩展文本选择。" }
+  n541@{ shape: hex, label: "**on​_​pointer​_​drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：随指针<br/>拖动扩展文本选择。" }
   class n541 node_observer
   class n541 external_node
   end
@@ -3360,7 +3360,7 @@ flowchart LR
   end
   style layout_card_n553 fill:none,stroke:none
   subgraph layout_card_n554[" "]
-  n554@{ shape: hex, label: "**bevy​_​ui​_​widgets::scrollbar::**<br/>**scrollbar​_​on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：点击滚<br/>动条轨道时翻动一页。" }
+  n554@{ shape: hex, label: "**scrollbar​_​on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：点击滚<br/>动条轨道时翻动一页。" }
   class n554 node_observer
   class n554 external_node
   end
@@ -3450,7 +3450,7 @@ flowchart LR
   end
   style layout_card_n568 fill:none,stroke:none
   subgraph layout_card_n569[" "]
-  n569@{ shape: rounded, label: "**bevy​_​ui::widget::text::measure​_​text​_​**<br/>**system**<br/>在文本变化后更新内容测量并安排文字重排。" }
+  n569@{ shape: rounded, label: "**measure​_​text​_​system**<br/>在文本变化后更新内容测量并安排文字重排。" }
   class n569 node_system
   end
   style layout_card_n569 fill:none,stroke:none
@@ -3731,7 +3731,7 @@ flowchart LR
   end
   style layout_card_n615 fill:none,stroke:none
   subgraph layout_card_n616[" "]
-  n616@{ shape: hex, label: "**bevy​_​ui​_​widgets::text​_​input::on​_​**<br/>**pointer​_​press**<br/>来自crate:bevy​_​ui​_​widgets ↗：将文本<br/>点击转为光标与选择操作。" }
+  n616@{ shape: hex, label: "**on​_​pointer​_​press**<br/>来自crate:bevy​_​ui​_​widgets ↗：将文本<br/>点击转为光标与选择操作。" }
   class n616 node_observer
   class n616 external_node
   end
@@ -3749,7 +3749,7 @@ flowchart LR
   end
   style layout_card_n618 fill:none,stroke:none
   subgraph layout_card_n619[" "]
-  n619@{ shape: rounded, label: "**bevy​_​ui::layout::sync​_​font​_​size​_​to​_​**<br/>**em​_​size**<br/>把文本字号解析为节点的 EmSize。" }
+  n619@{ shape: rounded, label: "**sync​_​font​_​size​_​to​_​em​_​size**<br/>把文本字号解析为节点的 EmSize。" }
   class n619 node_system
   end
   style layout_card_n619 fill:none,stroke:none

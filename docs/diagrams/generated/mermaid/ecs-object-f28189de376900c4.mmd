@@ -45,53 +45,53 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​pbr::render::light::specialize​_​**<br/>**shadows**<br/>按阴影视图、网格及材质变化重新选择专用阴<br/>影渲染管线，清理失效缓存，并整理需要补齐<br/>或重新排队的阴影网格任务。" }
+  n0@{ shape: rounded, label: "**specialize​_​shadows**<br/>按阴影视图、网格及材质变化重新选择专用阴<br/>影渲染管线，清理失效缓存，并整理需要补齐<br/>或重新排队的阴影网格任务。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**render::light::**<br/>**SpecializedShadowMaterialPipelineCac**<br/>**he**<br/>按光源视图缓存材质阴影专用管线。" }
+  n1@{ shape: cyl, label: "**SpecializedShadowMaterialPipelineCac**<br/>**he**<br/>按光源视图缓存材质阴影专用管线。" }
   class n1 node_resource
-  n2@{ shape: rounded, label: "**bevy​_​render::view::ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
+  n2@{ shape: rounded, label: "**ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
   class n2 node_component
   class n2 external_node
-  n3@{ shape: cyl, label: "**bevy​_​render::erased​_​render​_​asset::**<br/>**ErasedRenderAssets#lt;material::**<br/>**PreparedMaterial#gt;**<br/>来自crate:bevy​_​render ↗：存储源资产对<br/>应的类型擦除 GPU 表示。" }
+  n3@{ shape: cyl, label: "**ErasedRenderAssets#lt;PreparedMaterial#gt;**<br/>来自crate:bevy​_​render ↗：存储源资产对<br/>应的类型擦除 GPU 表示。" }
   class n3 node_resource
   class n3 external_node
-  n4@{ shape: cyl, label: "**lightmap::RenderLightmaps**<br/>管理渲染侧光照贴图的槽位和纹理。" }
+  n4@{ shape: cyl, label: "**RenderLightmaps**<br/>管理渲染侧光照贴图的槽位和纹理。" }
   class n4 node_resource
   n5@{ shape: notch-rect, label: "**Local · work​_​items**<br/>暂存阴影材质管线的专用化工作项。" }
   class n5 node_local
-  n6@{ shape: cyl, label: "**render::mesh::RenderMeshInstances**<br/>保存 CPU 或 GPU 构建所需的网格实例。" }
+  n6@{ shape: cyl, label: "**RenderMeshInstances**<br/>保存 CPU 或 GPU 构建所需的网格实例。" }
   class n6 node_resource
-  n7@{ shape: rounded, label: "**render::light::LightEntity**<br/>标识阴影视图对应的光源面或级联。" }
+  n7@{ shape: rounded, label: "**LightEntity**<br/>标识阴影视图对应的光源面或级联。" }
   class n7 node_component
-  n8@{ shape: rounded, label: "**bevy​_​pbr::render::light::check​_​**<br/>**views​_​lights​_​need​_​specialization**<br/>检测阴影视图投影类型并标记管线待刷新。" }
+  n8@{ shape: rounded, label: "**check​_​views​_​lights​_​need​_​**<br/>**specialization**<br/>检测阴影视图投影类型并标记管线待刷新。" }
   class n8 node_system
-  n9@{ shape: cyl, label: "**prepass::PrepassPipeline**<br/>描述深度等预通道的网格渲染接口。" }
+  n9@{ shape: cyl, label: "**PrepassPipeline**<br/>描述深度等预通道的网格渲染接口。" }
   class n9 node_resource
-  n10@{ shape: rounded, label: "**bevy​_​pbr::render::light::prepare​_​**<br/>**lights**<br/>准备视图光照参数、阴影视图和阴影贴图。" }
+  n10@{ shape: rounded, label: "**prepare​_​lights**<br/>准备视图光照参数、阴影视图和阴影贴图。" }
   class n10 node_system
-  n11@{ shape: cyl, label: "**render::light::PendingShadowQueues**<br/>暂存因材质未就绪而无法排队的阴影网格。" }
+  n11@{ shape: cyl, label: "**PendingShadowQueues**<br/>暂存因材质未就绪而无法排队的阴影网格。" }
   class n11 node_resource
-  n12@{ shape: cyl, label: "**render​_​asset::RenderAssets#lt;mesh::**<br/>**RenderMesh#gt;**<br/>来自crate:bevy​_​render ↗：按源资产身份<br/>保存 GPU 渲染表示。" }
+  n12@{ shape: cyl, label: "**RenderAssets#lt;RenderMesh#gt;**<br/>来自crate:bevy​_​render ↗：按源资产身份<br/>保存 GPU 渲染表示。" }
   class n12 node_resource
   class n12 external_node
-  n13@{ shape: cyl, label: "**render::light::LightKeyCache**<br/>缓存阴影光源视图的管线配置键。" }
+  n13@{ shape: cyl, label: "**LightKeyCache**<br/>缓存阴影光源视图的管线配置键。" }
   class n13 node_resource
   n14@{ shape: lin-rect, label: "**Specialize**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
   class n14 node_system_set
   class n14 external_node
-  n15@{ shape: cyl, label: "**camera::DirtySpecializations**<br/>来自crate:bevy​_​render ↗：记录需刷新或<br/>移除管线专用化的对象与视图。" }
+  n15@{ shape: cyl, label: "**DirtySpecializations**<br/>来自crate:bevy​_​render ↗：记录需刷新或<br/>移除管线专用化的对象与视图。" }
   class n15 node_resource
   class n15 external_node
-  n16@{ shape: rounded, label: "**view::visibility::**<br/>**RenderShadowMapVisibleEntities**<br/>来自crate:bevy​_​render ↗：保存每个阴影<br/>子视图最终收集的可见实体。" }
+  n16@{ shape: rounded, label: "**RenderShadowMapVisibleEntities**<br/>来自crate:bevy​_​render ↗：保存每个阴影<br/>子视图最终收集的可见实体。" }
   class n16 node_component
   class n16 external_node
   n17@{ shape: notch-rect, label: "**Local · all​_​shadow​_​views**<br/>记录本轮存在的材质阴影视图。" }
   class n17 node_local
-  n18@{ shape: fr-rect, label: "**material::MaterialsPlugin**<br/>组织材质实例、管线及绘制队列。" }
+  n18@{ shape: fr-rect, label: "**MaterialsPlugin**<br/>组织材质实例、管线及绘制队列。" }
   class n18 node_plugin
-  n19@{ shape: cyl, label: "**material::RenderMaterialInstances**<br/>保存提取后的实体材质实例。" }
+  n19@{ shape: cyl, label: "**RenderMaterialInstances**<br/>保存提取后的实体材质实例。" }
   class n19 node_resource
-  n20@{ shape: cyl, label: "**bevy​_​render::render​_​phase::**<br/>**ViewBinnedRenderPhases#lt;render::**<br/>**light::Shadow#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图按<br/>分桶组织的绘制指令。" }
+  n20@{ shape: cyl, label: "**ViewBinnedRenderPhases#lt;Shadow#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图按<br/>分桶组织的绘制指令。" }
   class n20 node_resource
   class n20 external_node
   n0 e0@-->|"可变访问"| n1

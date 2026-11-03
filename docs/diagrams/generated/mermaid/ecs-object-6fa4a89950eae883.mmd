@@ -43,34 +43,34 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​pbr::render::light::shared​_​**<br/>**shadow​_​pass#lt;true#gt;**<br/>绘制跨相机共享的点光或聚光阴影。" }
+  n0@{ shape: rounded, label: "**shared​_​shadow​_​pass**<br/>绘制跨相机共享的点光或聚光阴影。" }
   class n0 node_system
   n1@{ shape: lin-rect, label: "**MainPass**<br/>来自crate:bevy​_​core​_​pipeline ↗：划分<br/>三维相机绘制与后处理阶段。" }
   class n1 node_system_set
   class n1 external_node
-  n2@{ shape: cyl, label: "**bevy​_​render::render​_​phase::**<br/>**ViewBinnedRenderPhases#lt;render::**<br/>**light::Shadow#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图按<br/>分桶组织的绘制指令。" }
+  n2@{ shape: cyl, label: "**ViewBinnedRenderPhases#lt;Shadow#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图按<br/>分桶组织的绘制指令。" }
   class n2 node_resource
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​render::view::ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
+  n3@{ shape: rounded, label: "**ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
   class n3 node_component
   class n3 external_node
-  n4@{ shape: cyl, label: "**bevy​_​render::renderer::RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
+  n4@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
   class n4 node_resource
   class n4 external_node
-  n5@{ shape: rounded, label: "**bevy​_​pbr::render::gpu​_​preprocess::**<br/>**main​_​build​_​indirect​_​parameters**<br/>为主不透明及透明通道构建间接绘制参数。" }
+  n5@{ shape: rounded, label: "**main​_​build​_​indirect​_​parameters**<br/>为主不透明及透明通道构建间接绘制参数。" }
   class n5 node_system
-  n6@{ shape: rounded, label: "**bevy​_​pbr::render::light::shared​_​**<br/>**shadow​_​pass#lt;false#gt;**<br/>绘制跨相机共享的点光或聚光阴影。" }
+  n6@{ shape: rounded, label: "**shared​_​shadow​_​pass**<br/>绘制跨相机共享的点光或聚光阴影。" }
   class n6 node_system
-  n7@{ shape: fr-rect, label: "**bevy​_​pbr::PbrPlugin**<br/>装配物理材质与三维光照渲染。" }
+  n7@{ shape: fr-rect, label: "**PbrPlugin**<br/>装配物理材质与三维光照渲染。" }
   class n7 node_plugin
-  n8@{ shape: rounded, label: "**bevy​_​pbr::render::gpu​_​preprocess::**<br/>**late​_​prepass​_​build​_​indirect​_​**<br/>**parameters**<br/>为本帧新显露对象构建后期预通道间接参数。" }
+  n8@{ shape: rounded, label: "**late​_​prepass​_​build​_​indirect​_​**<br/>**parameters**<br/>为本帧新显露对象构建后期预通道间接参数。" }
   class n8 node_system
-  n9@{ shape: rounded, label: "**bevy​_​render::occlusion​_​culling::**<br/>**OcclusionCulling**<br/>来自crate:bevy​_​render ↗：启用视图的<br/>GPU 遮挡裁剪。" }
+  n9@{ shape: rounded, label: "**OcclusionCulling**<br/>来自crate:bevy​_​render ↗：启用视图的<br/>GPU 遮挡裁剪。" }
   class n9 node_component
   class n9 external_node
-  n10@{ shape: rounded, label: "**render::light::ShadowView**<br/>描述阴影绘制的深度附件与通道名称。" }
+  n10@{ shape: rounded, label: "**ShadowView**<br/>描述阴影绘制的深度附件与通道名称。" }
   class n10 node_component
-  n11@{ shape: cyl, label: "**bevy​_​render::diagnostic::**<br/>**DiagnosticsRecorder**<br/>来自crate:bevy​_​render ↗：记录渲染诊断<br/>区间与 GPU 查询索引的对应。" }
+  n11@{ shape: cyl, label: "**DiagnosticsRecorder**<br/>来自crate:bevy​_​render ↗：记录渲染诊断<br/>区间与 GPU 查询索引的对应。" }
   class n11 node_resource
   class n11 external_node
   n0 e0@-->|"先于"| n1

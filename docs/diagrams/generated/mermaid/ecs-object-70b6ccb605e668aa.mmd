@@ -39,11 +39,11 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**schedule::RootNonCameraView**<br/>为非相机关联的根视图保存渲染调度入口。" }
+  n0@{ shape: rounded, label: "**RootNonCameraView**<br/>为非相机关联的根视图保存渲染调度入口。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​core​_​pipeline::schedule::**<br/>**camera​_​driver**<br/>为辅助视图和活动相机运行专属渲染调度。" }
+  n1@{ shape: rounded, label: "**camera​_​driver**<br/>为辅助视图和活动相机运行专属渲染调度。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​pbr::render::light::prepare​_​**<br/>**lights**<br/>来自crate:bevy​_​pbr ↗：准备视图光照参<br/>数、阴影视图和阴影贴图。" }
+  n2@{ shape: rounded, label: "**prepare​_​lights**<br/>来自crate:bevy​_​pbr ↗：准备视图光照参<br/>数、阴影视图和阴影贴图。" }
   class n2 node_system
   class n2 external_node
   n0 e0@-->|"存在性约束"| n1

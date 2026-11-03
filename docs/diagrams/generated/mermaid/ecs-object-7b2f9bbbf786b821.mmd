@@ -36,13 +36,13 @@ flowchart LR
   classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**scene​_​assembly::assets::ArtAssets**<br/>强句柄覆盖海岛、主角和动态道具的生命周<br/>期，NPC 与环境由组合地图提供。" }
+  n0@{ shape: cyl, label: "**ArtAssets**<br/>强句柄覆盖海岛、主角和动态道具的生命周<br/>期，NPC 与环境由组合地图提供。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**demo::scene​_​assembly::assets::poll​_​**<br/>**art​_​assets**<br/>连同子资产检查失败；只记录状态切换，避免<br/>每帧刷写相同错误。" }
+  n1@{ shape: rounded, label: "**poll​_​art​_​assets**<br/>连同子资产检查失败；只记录状态切换，避免<br/>每帧刷写相同错误。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**demo::scene​_​assembly::actors::spawn​_​**<br/>**actors**<br/>为就绪海岛创建玩法实体并复用加载相机。" }
+  n2@{ shape: rounded, label: "**spawn​_​actors**<br/>为就绪海岛创建玩法实体并复用加载相机。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**demo::scene​_​assembly::loading::**<br/>**begin​_​island**<br/>请求创建已加载海岛的运行实例。" }
+  n3@{ shape: rounded, label: "**begin​_​island**<br/>请求创建已加载海岛的运行实例。" }
   class n3 node_system
   n0 e0@--> n1
   class e0 edge_read

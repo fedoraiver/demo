@@ -38,15 +38,15 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**dynamics::rigid​_​body::physics​_​**<br/>**material::Restitution**<br/>配置碰撞后的弹跳恢复程度。" }
+  n0@{ shape: rounded, label: "**Restitution**<br/>配置碰撞后的弹跳恢复程度。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**demo::scene​_​assembly::actors::spawn​_​**<br/>**actors**<br/>来自scene​_​assembly ↗：为就绪海岛创建<br/>玩法实体并复用加载相机。" }
+  n1@{ shape: rounded, label: "**spawn​_​actors**<br/>来自scene​_​assembly ↗：为就绪海岛创建<br/>玩法实体并复用加载相机。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**demo::item​_​interaction::attachment::**<br/>**finish​_​attachments**<br/>来自item​_​interaction ↗：持握期间只保<br/>留人物的 Dynamic，碰到箱子即对同一刚体<br/>求解，内部形状自动互不碰撞。" }
+  n2@{ shape: rounded, label: "**finish​_​attachments**<br/>来自item​_​interaction ↗：持握期间只保<br/>留人物的 Dynamic，碰到箱子即对同一刚体<br/>求解，内部形状自动互不碰撞。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**avian3d::collision::narrow​_​phase::**<br/>**update​_​narrow​_​phase#lt;avian3d::**<br/>**collision::collider::parry::**<br/>**Collider, ()#gt;**<br/>更新窄相接触并输出碰撞变化消息。" }
+  n3@{ shape: rounded, label: "**update​_​narrow​_​phase**<br/>更新窄相接触并输出碰撞变化消息。" }
   class n3 node_system
   n1 e0@-->|"插入"| n0
   class e0 edge_write

@@ -40,36 +40,36 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**tab​_​navigation::TabIndex**<br/>声明实体参与 Tab 导航及其排序值" }
+  n0@{ shape: rounded, label: "**TabIndex**<br/>声明实体参与 Tab 导航及其排序值" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​ui​_​widgets::tabs::update​_​**<br/>**tablist​_​derived​_​state**<br/>来自crate:bevy​_​ui​_​widgets ↗：从标签<br/>选择和焦点派生每个标签的状态。" }
+  n1@{ shape: rounded, label: "**update​_​tablist​_​derived​_​state**<br/>来自crate:bevy​_​ui​_​widgets ↗：从标签<br/>选择和焦点派生每个标签的状态。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: hex, label: "**bevy​_​input​_​focus::tab​_​navigation::**<br/>**acquire​_​focus​_​tab​_​index**<br/>让带导航索引的实体获得输入焦点。" }
+  n2@{ shape: hex, label: "**acquire​_​focus​_​tab​_​index**<br/>让带导航索引的实体获得输入焦点。" }
   class n2 node_observer
-  n3@{ shape: hex, label: "**bevy​_​input​_​focus::tab​_​navigation::**<br/>**acquire​_​focus​_​tab​_​index**<br/>让带导航索引的实体获得输入焦点。" }
+  n3@{ shape: hex, label: "**acquire​_​focus​_​tab​_​index**<br/>让带导航索引的实体获得输入焦点。" }
   class n3 node_observer
-  n4@{ shape: hex, label: "**bevy​_​input​_​focus::tab​_​navigation::**<br/>**handle​_​tab​_​navigation**<br/>处理正向和反向键盘焦点遍历。" }
+  n4@{ shape: hex, label: "**handle​_​tab​_​navigation**<br/>处理正向和反向键盘焦点遍历。" }
   class n4 node_observer
-  n5@{ shape: hex, label: "**bevy​_​ui​_​widgets::menu::menu​_​on​_​key​_​**<br/>**event**<br/>来自crate:bevy​_​ui​_​widgets ↗：处理菜<br/>单键盘导航、激活与关闭。" }
+  n5@{ shape: hex, label: "**menu​_​on​_​key​_​event**<br/>来自crate:bevy​_​ui​_​widgets ↗：处理菜<br/>单键盘导航、激活与关闭。" }
   class n5 node_observer
   class n5 external_node
-  n6@{ shape: hex, label: "**bevy​_​ui​_​widgets::menu::menu​_​on​_​key​_​**<br/>**event**<br/>来自crate:bevy​_​ui​_​widgets ↗：处理菜<br/>单键盘导航、激活与关闭。" }
+  n6@{ shape: hex, label: "**menu​_​on​_​key​_​event**<br/>来自crate:bevy​_​ui​_​widgets ↗：处理菜<br/>单键盘导航、激活与关闭。" }
   class n6 node_observer
   class n6 external_node
-  n7@{ shape: rounded, label: "**bevy​_​ui​_​widgets::menu::menu​_​acquire​_​**<br/>**focus**<br/>来自crate:bevy​_​ui​_​widgets ↗：在菜单<br/>打开时为菜单项取得焦点。" }
+  n7@{ shape: rounded, label: "**menu​_​acquire​_​focus**<br/>来自crate:bevy​_​ui​_​widgets ↗：在菜单<br/>打开时为菜单项取得焦点。" }
   class n7 node_system
   class n7 external_node
-  n8@{ shape: hex, label: "**bevy​_​ui​_​widgets::menu::menu​_​on​_​key​_​**<br/>**event**<br/>来自crate:bevy​_​ui​_​widgets ↗：处理菜<br/>单键盘导航、激活与关闭。" }
+  n8@{ shape: hex, label: "**menu​_​on​_​key​_​event**<br/>来自crate:bevy​_​ui​_​widgets ↗：处理菜<br/>单键盘导航、激活与关闭。" }
   class n8 node_observer
   class n8 external_node
-  n9@{ shape: hex, label: "**bevy​_​input​_​focus::tab​_​navigation::**<br/>**acquire​_​focus​_​tab​_​index**<br/>让带导航索引的实体获得输入焦点。" }
+  n9@{ shape: hex, label: "**acquire​_​focus​_​tab​_​index**<br/>让带导航索引的实体获得输入焦点。" }
   class n9 node_observer
-  n10@{ shape: hex, label: "**bevy​_​input​_​focus::tab​_​navigation::**<br/>**acquire​_​focus​_​tab​_​index**<br/>让带导航索引的实体获得输入焦点。" }
+  n10@{ shape: hex, label: "**acquire​_​focus​_​tab​_​index**<br/>让带导航索引的实体获得输入焦点。" }
   class n10 node_observer
-  n11@{ shape: hex, label: "**bevy​_​input​_​focus::tab​_​navigation::**<br/>**handle​_​tab​_​navigation**<br/>处理正向和反向键盘焦点遍历。" }
+  n11@{ shape: hex, label: "**handle​_​tab​_​navigation**<br/>处理正向和反向键盘焦点遍历。" }
   class n11 node_observer
-  n12@{ shape: hex, label: "**bevy​_​input​_​focus::tab​_​navigation::**<br/>**acquire​_​focus​_​tab​_​index**<br/>让带导航索引的实体获得输入焦点。" }
+  n12@{ shape: hex, label: "**acquire​_​focus​_​tab​_​index**<br/>让带导航索引的实体获得输入焦点。" }
   class n12 node_observer
   n1 e0@--- n0
   class e0 edge_read

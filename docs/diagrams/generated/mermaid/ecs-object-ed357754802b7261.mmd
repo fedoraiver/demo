@@ -37,9 +37,9 @@ flowchart LR
   classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**layout::ui​_​surface::UiSurface**<br/>维护 ECS UI 与布局树之间的映射。" }
+  n0@{ shape: cyl, label: "**UiSurface**<br/>维护 ECS UI 与布局树之间的映射。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​ui::layout::ui​_​layout​_​system**<br/>求解 UI 布局并回写节点尺寸和二维变换。" }
+  n1@{ shape: rounded, label: "**ui​_​layout​_​system**<br/>求解 UI 布局并回写节点尺寸和二维变换。" }
   class n1 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

@@ -40,13 +40,13 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​post​_​process::dof::init​_​dof​_​**<br/>**global​_​bind​_​group​_​layout**<br/>建立景深共享参数布局和线性采样器。" }
+  n0@{ shape: rounded, label: "**init​_​dof​_​global​_​bind​_​group​_​layout**<br/>建立景深共享参数布局和线性采样器。" }
   class n0 node_system
-  n1@{ shape: fr-rect, label: "**dof::DepthOfFieldPlugin**<br/>提供相机景深后处理。" }
+  n1@{ shape: fr-rect, label: "**DepthOfFieldPlugin**<br/>提供相机景深后处理。" }
   class n1 node_plugin
-  n2@{ shape: cyl, label: "**dof::**<br/>**DepthOfFieldGlobalBindGroupLayout**<br/>定义景深共享参数布局与颜色采样器。" }
+  n2@{ shape: cyl, label: "**DepthOfFieldGlobalBindGroupLayout**<br/>定义景深共享参数布局与颜色采样器。" }
   class n2 node_resource
-  n3@{ shape: cyl, label: "**bevy​_​render::renderer::RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
+  n3@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
   class n3 node_resource
   class n3 external_node
   n1 e0@-->|"调用"| n0

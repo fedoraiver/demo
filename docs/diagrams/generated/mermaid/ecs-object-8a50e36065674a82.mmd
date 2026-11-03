@@ -38,14 +38,14 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**bevy​_​picking::backend::prelude::**<br/>**RayMap**<br/>按指针和相机组合保存拾取射线" }
+  n0@{ shape: cyl, label: "**RayMap**<br/>按指针和相机组合保存拾取射线" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​picking::backend::ray::RayMap::**<br/>**repopulate**<br/>重建指针与相机组合的拾取射线。" }
+  n1@{ shape: rounded, label: "**repopulate**<br/>重建指针与相机组合的拾取射线。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​sprite::picking​_​backend::**<br/>**sprite​_​picking**<br/>来自crate:bevy​_​sprite ↗：按精灵图像和<br/>拾取配置计算指针命中。" }
+  n2@{ shape: rounded, label: "**sprite​_​picking**<br/>来自crate:bevy​_​sprite ↗：按精灵图像和<br/>拾取配置计算指针命中。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​picking::window::update​_​window​_​**<br/>**hits**<br/>把所在窗口作为拾取的最底层命中。" }
+  n3@{ shape: rounded, label: "**update​_​window​_​hits**<br/>把所在窗口作为拾取的最底层命中。" }
   class n3 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

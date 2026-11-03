@@ -44,33 +44,33 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: hex, label: "**bevy​_​ui​_​widgets::dialog::dialog​_​drag**<br/>按累计拖动距离移动对话框。" }
+  n0@{ shape: hex, label: "**dialog​_​drag**<br/>按累计拖动距离移动对话框。" }
   class n0 node_observer
-  n1@{ shape: rounded, label: "**window::Window**<br/>来自crate:bevy​_​window ↗：保存窗口的呈<br/>现模式、位置、分辨率、标题、全屏及平台行<br/>为配置" }
+  n1@{ shape: rounded, label: "**Window**<br/>来自crate:bevy​_​window ↗：保存窗口的呈<br/>现模式、位置、分辨率、标题、全屏及平台行<br/>为配置" }
   class n1 node_component
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​ecs::hierarchy::ChildOf**<br/>来自crate:bevy​_​ecs ↗：保存当前实体的<br/>父实体身份" }
+  n2@{ shape: rounded, label: "**ChildOf**<br/>来自crate:bevy​_​ecs ↗：保存当前实体的<br/>父实体身份" }
   class n2 node_component
   class n2 external_node
-  n3@{ shape: rounded, label: "**dialog::DialogDragState**<br/>保存对话框拖动起始位置。" }
+  n3@{ shape: rounded, label: "**DialogDragState**<br/>保存对话框拖动起始位置。" }
   class n3 node_component
-  n4@{ shape: rounded, label: "**dialog::Dialog**<br/>标识浮动或模态对话框。" }
+  n4@{ shape: rounded, label: "**Dialog**<br/>标识浮动或模态对话框。" }
   class n4 node_component
-  n5@{ shape: rounded, label: "**bevy​_​ui::UiTransform**<br/>来自crate:bevy​_​ui ↗：配置 UI 节点的相<br/>对二维变换。" }
+  n5@{ shape: rounded, label: "**UiTransform**<br/>来自crate:bevy​_​ui ↗：配置 UI 节点的相<br/>对二维变换。" }
   class n5 node_component
   class n5 external_node
-  n6@{ shape: cyl, label: "**bevy​_​ui::UiScale**<br/>来自crate:bevy​_​ui ↗：统一缩放 UI 的固<br/>定尺寸值。" }
+  n6@{ shape: cyl, label: "**UiScale**<br/>来自crate:bevy​_​ui ↗：统一缩放 UI 的固<br/>定尺寸值。" }
   class n6 node_resource
   class n6 external_node
-  n7@{ shape: rounded, label: "**window::PrimaryWindow**<br/>来自crate:bevy​_​window ↗：标识唯一的主<br/>窗口" }
+  n7@{ shape: rounded, label: "**PrimaryWindow**<br/>来自crate:bevy​_​window ↗：标识唯一的主<br/>窗口" }
   class n7 node_component
   class n7 external_node
-  n8@{ shape: stadium, label: "**events::PointerDrag**<br/>来自crate:bevy​_​picking ↗：通知正在拖<br/>拽的目标及累计和本次位移。" }
+  n8@{ shape: stadium, label: "**PointerDrag**<br/>来自crate:bevy​_​picking ↗：通知正在拖<br/>拽的目标及累计和本次位移。" }
   class n8 node_event
   class n8 external_node
-  n9@{ shape: rounded, label: "**dialog::DialogDragHandle**<br/>标识对话框拖动区域。" }
+  n9@{ shape: rounded, label: "**DialogDragHandle**<br/>标识对话框拖动区域。" }
   class n9 node_component
-  n10@{ shape: fr-rect, label: "**dialog::DialogPlugin**<br/>管理对话框层次与拖动。" }
+  n10@{ shape: fr-rect, label: "**DialogPlugin**<br/>管理对话框层次与拖动。" }
   class n10 node_plugin
   n1 e0@--> n0
   class e0 edge_read

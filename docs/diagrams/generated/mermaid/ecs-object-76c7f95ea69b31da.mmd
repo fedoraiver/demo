@@ -43,35 +43,35 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​gizmos::skinned​_​mesh​_​bounds::**<br/>**draw​_​all​_​skinned​_​mesh​_​bounds**<br/>绘制未单独标记的动态蒙皮网格包围区域。" }
+  n0@{ shape: rounded, label: "**draw​_​all​_​skinned​_​mesh​_​bounds**<br/>绘制未单独标记的动态蒙皮网格包围区域。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**bevy​_​asset::Assets#lt;bevy​_​mesh::Mesh#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
+  n1@{ shape: cyl, label: "**Assets#lt;Mesh#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
   class n1 node_resource
   class n1 external_node
-  n2@{ shape: rounded, label: "**#lt;bevy​_​gizmos::skinned​_​mesh​_​bounds::**<br/>**SkinnedMeshBoundsGizmoPlugin as**<br/>**bevy​_​app::plugin::Plugin#gt;::build::**<br/>**{{closure}}**<br/>判断是否绘制全部蒙皮网格边界。" }
+  n2@{ shape: rounded, label: "**build::{{closure}}**<br/>判断是否绘制全部蒙皮网格边界。" }
   class n2 node_system
-  n3@{ shape: fr-rect, label: "**skinned​_​mesh​_​bounds::**<br/>**SkinnedMeshBoundsGizmoPlugin**<br/>绘制动态蒙皮网格包围盒。" }
+  n3@{ shape: fr-rect, label: "**SkinnedMeshBoundsGizmoPlugin**<br/>绘制动态蒙皮网格包围盒。" }
   class n3 node_plugin
-  n4@{ shape: rounded, label: "**bevy​_​mesh::Mesh3d**<br/>来自crate:bevy​_​mesh ↗：为三维可绘制实<br/>体指定网格资产。" }
+  n4@{ shape: rounded, label: "**Mesh3d**<br/>来自crate:bevy​_​mesh ↗：为三维可绘制实<br/>体指定网格资产。" }
   class n4 node_component
   class n4 external_node
-  n5@{ shape: rounded, label: "**skinned​_​mesh​_​bounds::**<br/>**ShowSkinnedMeshBoundsGizmo**<br/>显示蒙皮网格的动态包围范围。" }
+  n5@{ shape: rounded, label: "**ShowSkinnedMeshBoundsGizmo**<br/>显示蒙皮网格的动态包围范围。" }
   class n5 node_component
-  n6@{ shape: rounded, label: "**bevy​_​mesh::skinning::SkinnedMesh**<br/>来自crate:bevy​_​mesh ↗：关联蒙皮网格的<br/>关节与逆绑定姿态。" }
+  n6@{ shape: rounded, label: "**SkinnedMesh**<br/>来自crate:bevy​_​mesh ↗：关联蒙皮网格的<br/>关节与逆绑定姿态。" }
   class n6 node_component
   class n6 external_node
-  n7@{ shape: cyl, label: "**bevy​_​asset::Assets#lt;bevy​_​mesh::**<br/>**skinning::**<br/>**SkinnedMeshInverseBindposes#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
+  n7@{ shape: cyl, label: "**Assets#lt;SkinnedMeshInverseBindposes#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
   class n7 node_resource
   class n7 external_node
-  n8@{ shape: rounded, label: "**components::global​_​transform::**<br/>**GlobalTransform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>合并祖先变换后的世界空间仿射变换" }
+  n8@{ shape: rounded, label: "**GlobalTransform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>合并祖先变换后的世界空间仿射变换" }
   class n8 node_component
   class n8 external_node
-  n9@{ shape: cyl, label: "**config::GizmoConfigStore**<br/>按配置组保存调试图元绘制设置。" }
+  n9@{ shape: cyl, label: "**GizmoConfigStore**<br/>按配置组保存调试图元绘制设置。" }
   class n9 node_resource
   n10@{ shape: lin-rect, label: "**Propagate**<br/>来自crate:bevy​_​transform ↗：组织实体<br/>层级变换传播。" }
   class n10 node_system_set
   class n10 external_node
-  n11@{ shape: rounded, label: "**bevy​_​camera::visibility::**<br/>**DynamicSkinnedMeshBounds**<br/>来自crate:bevy​_​camera ↗：启用随骨骼姿<br/>态更新的网格包围盒。" }
+  n11@{ shape: rounded, label: "**DynamicSkinnedMeshBounds**<br/>来自crate:bevy​_​camera ↗：启用随骨骼姿<br/>态更新的网格包围盒。" }
   class n11 node_component
   class n11 external_node
   n1 e0@--> n0

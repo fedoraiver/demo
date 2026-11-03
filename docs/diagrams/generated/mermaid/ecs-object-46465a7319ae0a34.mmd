@@ -42,13 +42,13 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​egui::input::read​_​egui​_​zoom​_​**<br/>**factor​_​system**<br/>记录 Egui 当前界面缩放因子。" }
+  n0@{ shape: rounded, label: "**read​_​egui​_​zoom​_​factor​_​system**<br/>记录 Egui 当前界面缩放因子。" }
   class n0 node_system
   n1@{ shape: rounded, label: "**EguiZoomFactor**<br/>在主世界保存 Egui 上下文的缩放因子" }
   class n1 node_component
-  n2@{ shape: rounded, label: "**bevy​_​egui::input::write​_​window​_​**<br/>**touch​_​messages​_​system**<br/>把窗口触摸转换为 Egui 指针和触摸事件。" }
+  n2@{ shape: rounded, label: "**write​_​window​_​touch​_​messages​_​system**<br/>把窗口触摸转换为 Egui 指针和触摸事件。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​egui::input::write​_​pointer​_​**<br/>**moved​_​and​_​button​_​messages​_​system**<br/>按原生事件顺序转换 Egui 指针输入。" }
+  n3@{ shape: rounded, label: "**write​_​pointer​_​moved​_​and​_​button​_​**<br/>**messages​_​system**<br/>按原生事件顺序转换 Egui 指针输入。" }
   class n3 node_system
   n4@{ shape: fr-rect, label: "**EguiPlugin**<br/>装配 Egui 输入、上下文与渲染。" }
   class n4 node_plugin

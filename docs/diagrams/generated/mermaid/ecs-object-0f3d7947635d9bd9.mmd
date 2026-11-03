@@ -43,36 +43,36 @@ flowchart LR
   classDef edge_publish stroke:#247B91,stroke-width:1.8px,stroke-dasharray:10 4 2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​gilrs::gilrs​_​system::gilrs​_​**<br/>**event​_​system**<br/>把 gilrs 原始手柄事件转换为 Bevy 消<br/>息。" }
+  n0@{ shape: rounded, label: "**gilrs​_​event​_​system**<br/>把 gilrs 原始手柄事件转换为 Bevy 消<br/>息。" }
   class n0 node_system
-  n1@{ shape: lean-r, label: "**gamepad::**<br/>**RawGamepadButtonChangedEvent**<br/>来自crate:bevy​_​input ↗：传递未过滤的<br/>手柄按钮值变化。" }
+  n1@{ shape: lean-r, label: "**RawGamepadButtonChangedEvent**<br/>来自crate:bevy​_​input ↗：传递未过滤的<br/>手柄按钮值变化。" }
   class n1 node_message
   class n1 external_node
-  n2@{ shape: lean-r, label: "**gamepad::RawGamepadEvent**<br/>来自crate:bevy​_​input ↗：按原始顺序汇<br/>集手柄输入。" }
+  n2@{ shape: lean-r, label: "**RawGamepadEvent**<br/>来自crate:bevy​_​input ↗：按原始顺序汇<br/>集手柄输入。" }
   class n2 node_message
   class n2 external_node
-  n3@{ shape: cyl, label: "**bevy​_​ecs::message::**<br/>**Messages#lt;gamepad::RawGamepadEvent#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n3@{ shape: cyl, label: "**Messages#lt;RawGamepadEvent#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n3 node_resource
   class n3 external_node
   n4@{ shape: cyl, label: "**GilrsGamepads**<br/>维护已连接 gilrs 手柄编号与 Bevy 手柄<br/>实体的双向映射" }
   class n4 node_resource
-  n5@{ shape: lean-r, label: "**gamepad::RawGamepadAxisChangedEvent**<br/>来自crate:bevy​_​input ↗：传递未过滤的<br/>手柄轴变化。" }
+  n5@{ shape: lean-r, label: "**RawGamepadAxisChangedEvent**<br/>来自crate:bevy​_​input ↗：传递未过滤的<br/>手柄轴变化。" }
   class n5 node_message
   class n5 external_node
-  n6@{ shape: lean-r, label: "**gamepad::GamepadConnectionEvent**<br/>来自crate:bevy​_​input ↗：通知手柄连接<br/>或断开。" }
+  n6@{ shape: lean-r, label: "**GamepadConnectionEvent**<br/>来自crate:bevy​_​input ↗：通知手柄连接<br/>或断开。" }
   class n6 node_message
   class n6 external_node
-  n7@{ shape: cyl, label: "**bevy​_​ecs::message::**<br/>**Messages#lt;gamepad::**<br/>**RawGamepadButtonChangedEvent#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n7@{ shape: cyl, label: "**Messages#lt;RawGamepadButtonChangedEven**<br/>**t#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n7 node_resource
   class n7 external_node
   n8@{ shape: cyl, label: "**Gilrs**<br/>持有 gilrs 手柄后端实例" }
   class n8 node_resource
   n9@{ shape: fr-rect, label: "**GilrsPlugin**<br/>接入平台手柄设备与输入。" }
   class n9 node_plugin
-  n10@{ shape: cyl, label: "**bevy​_​ecs::message::**<br/>**Messages#lt;gamepad::**<br/>**RawGamepadAxisChangedEvent#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n10@{ shape: cyl, label: "**Messages#lt;RawGamepadAxisChangedEvent#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n10 node_resource
   class n10 external_node
-  n11@{ shape: cyl, label: "**bevy​_​ecs::message::**<br/>**Messages#lt;gamepad::**<br/>**GamepadConnectionEvent#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n11@{ shape: cyl, label: "**Messages#lt;GamepadConnectionEvent#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n11 node_resource
   class n11 external_node
   n12@{ shape: lin-rect, label: "**InputSystems**<br/>来自crate:bevy​_​input ↗：把原始设备消<br/>息汇总为本帧输入状态。" }

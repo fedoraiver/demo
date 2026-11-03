@@ -37,13 +37,13 @@ flowchart LR
   classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**bevy​_​render::batching::gpu​_​**<br/>**preprocessing::**<br/>**PhaseBatchedInstanceBuffers#lt;bevy​_​**<br/>**core​_​pipeline::deferred::**<br/>**AlphaMask3dDeferred, render::mesh::**<br/>**MeshUniform#gt;**<br/>为单个绘制阶段保存 GPU 批次实例缓冲。" }
+  n0@{ shape: cyl, label: "**PhaseBatchedInstanceBuffers#lt;AlphaMas**<br/>**k3dDeferred, MeshUniform#gt;**<br/>为单个绘制阶段保存 GPU 批次实例缓冲。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​render::batching::gpu​_​**<br/>**preprocessing::collect​_​buffers​_​for​_​**<br/>**phase#lt;bevy​_​core​_​pipeline::deferred::**<br/>**AlphaMask3dDeferred, bevy​_​pbr::**<br/>**render::mesh::MeshPipeline#gt;**<br/>把并行准备的逐阶段缓冲汇入全局表。" }
+  n1@{ shape: rounded, label: "**collect​_​buffers​_​for​_​phase**<br/>把并行准备的逐阶段缓冲汇入全局表。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​render::batching::gpu​_​**<br/>**preprocessing::batch​_​and​_​prepare​_​**<br/>**binned​_​render​_​phase#lt;bevy​_​core​_​**<br/>**pipeline::deferred::**<br/>**AlphaMask3dDeferred, bevy​_​pbr::**<br/>**render::mesh::MeshPipeline#gt;**<br/>为分桶渲染阶段建立 GPU 预处理批次。" }
+  n2@{ shape: rounded, label: "**batch​_​and​_​prepare​_​binned​_​render​_​**<br/>**phase**<br/>为分桶渲染阶段建立 GPU 预处理批次。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​render::init​_​gpu​_​resource#lt;bevy​_​**<br/>**render::batching::gpu​_​**<br/>**preprocessing::**<br/>**PhaseBatchedInstanceBuffers#lt;bevy​_​**<br/>**core​_​pipeline::deferred::**<br/>**AlphaMask3dDeferred, bevy​_​pbr::**<br/>**render::mesh::MeshUniform#gt;#gt;**<br/>构造并插入渲染所需资源。" }
+  n3@{ shape: rounded, label: "**init​_​gpu​_​resource**<br/>构造并插入渲染所需资源。" }
   class n3 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

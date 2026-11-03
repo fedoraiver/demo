@@ -40,19 +40,19 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**UiCameraView**<br/>从主渲染目标视图定位对应的 UI 视图。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​ui​_​render::render​_​pass::ui​_​pass**<br/>把透明 UI 绘制项渲染到关联视图。" }
+  n1@{ shape: rounded, label: "**ui​_​pass**<br/>把透明 UI 绘制项渲染到关联视图。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​ui​_​render::extract​_​ui​_​camera​_​**<br/>**view**<br/>为活动二维或三维相机维护独立 UI 视图。" }
+  n2@{ shape: rounded, label: "**extract​_​ui​_​camera​_​view**<br/>为活动二维或三维相机维护独立 UI 视图。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​ui​_​render::box​_​shadow::queue​_​**<br/>**shadows**<br/>为提取的 UI 阴影选择匹配目标格式和阴影<br/>采样数的管线，按节点堆叠顺序及阴影层偏移<br/>加入透明 UI 绘制阶段。" }
+  n3@{ shape: rounded, label: "**queue​_​shadows**<br/>为提取的 UI 阴影选择匹配目标格式和阴影<br/>采样数的管线，按节点堆叠顺序及阴影层偏移<br/>加入透明 UI 绘制阶段。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**bevy​_​ui​_​render::queue​_​uinodes**<br/>按目标相机和堆叠顺序排队 UI 节点。" }
+  n4@{ shape: rounded, label: "**queue​_​uinodes**<br/>按目标相机和堆叠顺序排队 UI 节点。" }
   class n4 node_system
-  n5@{ shape: rounded, label: "**bevy​_​ui​_​render::ui​_​texture​_​slice​_​**<br/>**pipeline::queue​_​ui​_​slices**<br/>将 UI 图像切片排入对应相机透明阶段。" }
+  n5@{ shape: rounded, label: "**queue​_​ui​_​slices**<br/>将 UI 图像切片排入对应相机透明阶段。" }
   class n5 node_system
-  n6@{ shape: rounded, label: "**bevy​_​ui​_​render::render​_​pass::ui​_​pass**<br/>把透明 UI 绘制项渲染到关联视图。" }
+  n6@{ shape: rounded, label: "**ui​_​pass**<br/>把透明 UI 绘制项渲染到关联视图。" }
   class n6 node_system
-  n7@{ shape: rounded, label: "**bevy​_​ui​_​render::gradient::queue​_​**<br/>**gradient**<br/>按目标视图与堆叠顺序排队 UI 渐变。" }
+  n7@{ shape: rounded, label: "**queue​_​gradient**<br/>按目标视图与堆叠顺序排队 UI 渐变。" }
   class n7 node_system
   n0 e0@--> n1
   class e0 edge_read

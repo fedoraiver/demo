@@ -40,19 +40,19 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​core​_​pipeline::deferred::copy​_​**<br/>**lighting​_​id::init​_​copy​_​deferred​_​**<br/>**lighting​_​id​_​pipeline**<br/>建立延迟光照标识到深度的复制管线。" }
+  n0@{ shape: rounded, label: "**init​_​copy​_​deferred​_​lighting​_​id​_​**<br/>**pipeline**<br/>建立延迟光照标识到深度的复制管线。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**bevy​_​asset::AssetServer**<br/>来自crate:bevy​_​asset ↗：加载资产并追<br/>踪加载状态。" }
+  n1@{ shape: cyl, label: "**AssetServer**<br/>来自crate:bevy​_​asset ↗：加载资产并追<br/>踪加载状态。" }
   class n1 node_resource
   class n1 external_node
-  n2@{ shape: fr-rect, label: "**deferred::copy​_​lighting​_​id::**<br/>**CopyDeferredLightingIdPlugin**<br/>准备延迟光照标识的复制资源。" }
+  n2@{ shape: fr-rect, label: "**CopyDeferredLightingIdPlugin**<br/>准备延迟光照标识的复制资源。" }
   class n2 node_plugin
-  n3@{ shape: cyl, label: "**bevy​_​render::render​_​resource::**<br/>**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
+  n3@{ shape: cyl, label: "**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
   class n3 node_resource
   class n3 external_node
-  n4@{ shape: cyl, label: "**bevy​_​core​_​pipeline::FullscreenShader**<br/>提供覆盖整个屏幕的顶点着色器。" }
+  n4@{ shape: cyl, label: "**FullscreenShader**<br/>提供覆盖整个屏幕的顶点着色器。" }
   class n4 node_resource
-  n5@{ shape: cyl, label: "**deferred::copy​_​lighting​_​id::**<br/>**CopyDeferredLightingIdPipeline**<br/>把延迟光照标识复制为深度附件。" }
+  n5@{ shape: cyl, label: "**CopyDeferredLightingIdPipeline**<br/>把延迟光照标识复制为深度附件。" }
   class n5 node_resource
   n1 e0@--> n0
   class e0 edge_read

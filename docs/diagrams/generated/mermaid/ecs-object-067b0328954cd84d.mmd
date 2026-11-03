@@ -37,12 +37,12 @@ flowchart LR
   classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​camera::visibility::NoAutoAabb**<br/>禁止自动计算实体的轴对齐包围盒。" }
+  n0@{ shape: rounded, label: "**NoAutoAabb**<br/>禁止自动计算实体的轴对齐包围盒。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​sprite::calculate​_​bounds​_​2d**<br/>来自crate:bevy​_​sprite ↗：为二维网格和<br/>精灵计算局部包围盒。" }
+  n1@{ shape: rounded, label: "**calculate​_​bounds​_​2d**<br/>来自crate:bevy​_​sprite ↗：为二维网格和<br/>精灵计算局部包围盒。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​camera::visibility::calculate​_​**<br/>**bounds**<br/>为允许自动计算的三维网格维护包围盒。" }
+  n2@{ shape: rounded, label: "**calculate​_​bounds**<br/>为允许自动计算的三维网格维护包围盒。" }
   class n2 node_system
   n0 e0@-->|"存在性约束"| n1
   class e0 edge_reference

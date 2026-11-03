@@ -39,24 +39,24 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​render::view::DebandDither**<br/>控制颜色输出的去色带抖动。" }
+  n0@{ shape: rounded, label: "**DebandDither**<br/>控制颜色输出的去色带抖动。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​core​_​pipeline::tonemapping::**<br/>**prepare​_​view​_​tonemapping​_​pipelines**<br/>来自crate:bevy​_​core​_​pipeline ↗：按视<br/>图实际颜色分级需求专用化色调映射。" }
+  n1@{ shape: rounded, label: "**prepare​_​view​_​tonemapping​_​pipelines**<br/>来自crate:bevy​_​core​_​pipeline ↗：按视<br/>图实际颜色分级需求专用化色调映射。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​pbr::render::mesh::check​_​views​_​**<br/>**need​_​specialization**<br/>来自crate:bevy​_​pbr ↗：汇总视图渲染特<br/>性并检测管线配置变化。" }
+  n2@{ shape: rounded, label: "**check​_​views​_​need​_​specialization**<br/>来自crate:bevy​_​pbr ↗：汇总视图渲染特<br/>性并检测管线配置变化。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​core​_​pipeline::tonemapping::**<br/>**check​_​tonemapping​_​none**<br/>来自crate:bevy​_​core​_​pipeline ↗：警告<br/>关闭色调映射后仍配置无效效果的相机。" }
+  n3@{ shape: rounded, label: "**check​_​tonemapping​_​none**<br/>来自crate:bevy​_​core​_​pipeline ↗：警告<br/>关闭色调映射后仍配置无效效果的相机。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**bevy​_​extract::extract​_​component::**<br/>**extract​_​components#lt;bevy​_​render::**<br/>**view::DebandDither, bevy​_​render::**<br/>**RenderApp, ()#gt;**<br/>来自crate:bevy​_​extract ↗：批量同步或<br/>移除子世界的目标组件。" }
+  n4@{ shape: rounded, label: "**extract​_​components**<br/>来自crate:bevy​_​extract ↗：批量同步或<br/>移除子世界的目标组件。" }
   class n4 node_system
   class n4 external_node
-  n5@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::mesh::**<br/>**check​_​views​_​need​_​specialization**<br/>来自crate:bevy​_​sprite​_​render ↗：检测<br/>二维视图管线配置变化并标记重建。" }
+  n5@{ shape: rounded, label: "**check​_​views​_​need​_​specialization**<br/>来自crate:bevy​_​sprite​_​render ↗：检测<br/>二维视图管线配置变化并标记重建。" }
   class n5 node_system
   class n5 external_node
-  n6@{ shape: rounded, label: "**bevy​_​sprite​_​render::render::queue​_​**<br/>**sprites**<br/>来自crate:bevy​_​sprite​_​render ↗：按视<br/>图可见性将精灵加入透明二维阶段。" }
+  n6@{ shape: rounded, label: "**queue​_​sprites**<br/>来自crate:bevy​_​sprite​_​render ↗：按视<br/>图可见性将精灵加入透明二维阶段。" }
   class n6 node_system
   class n6 external_node
   n0 e0@--> n1

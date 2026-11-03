@@ -39,7 +39,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: notch-rect, label: "**Local · previous​_​len**<br/>根据上次聚簇贴花提取数量预留批量容量。" }
   class n0 node_local
-  n1@{ shape: rounded, label: "**bevy​_​pbr::decal::clustered::extract​_​**<br/>**clustered​_​decal**<br/>批量复制主世界的聚簇贴花组件。" }
+  n1@{ shape: rounded, label: "**extract​_​clustered​_​decal**<br/>批量复制主世界的聚簇贴花组件。" }
   class n1 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

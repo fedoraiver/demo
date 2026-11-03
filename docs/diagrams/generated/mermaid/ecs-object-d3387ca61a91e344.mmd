@@ -38,11 +38,11 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**view::RenderShadowLodOrigin**<br/>保存渲染侧点光与聚光阴影的 LOD 原点。" }
+  n0@{ shape: cyl, label: "**RenderShadowLodOrigin**<br/>保存渲染侧点光与聚光阴影的 LOD 原点。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​render::view::prepare​_​view​_​**<br/>**uniforms**<br/>生成视图投影、抖动、裁剪及 LOD 的 GPU<br/>参数。" }
+  n1@{ shape: rounded, label: "**prepare​_​view​_​uniforms**<br/>生成视图投影、抖动、裁剪及 LOD 的 GPU<br/>参数。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​pbr::render::light::extract​_​**<br/>**shadow​_​lod​_​origin**<br/>来自crate:bevy​_​pbr ↗：解析点光与聚光<br/>阴影 LOD 的距离参考位置。" }
+  n2@{ shape: rounded, label: "**extract​_​shadow​_​lod​_​origin**<br/>来自crate:bevy​_​pbr ↗：解析点光与聚光<br/>阴影 LOD 的距离参考位置。" }
   class n2 node_system
   class n2 external_node
   n0 e0@--> n1

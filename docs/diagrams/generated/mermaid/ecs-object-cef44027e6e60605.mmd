@@ -37,11 +37,11 @@ flowchart LR
   classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**collider​_​tree::optimization::**<br/>**OptimizationTasks**<br/>追踪后台碰撞体树优化任务。" }
+  n0@{ shape: cyl, label: "**OptimizationTasks**<br/>追踪后台碰撞体树优化任务。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**avian3d::collider​_​tree::**<br/>**optimization::optimize​_​trees**<br/>维护动态与运动学碰撞体树的查询性能。" }
+  n1@{ shape: rounded, label: "**optimize​_​trees**<br/>维护动态与运动学碰撞体树的查询性能。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**avian3d::collider​_​tree::**<br/>**optimization::finish​_​optimize​_​trees**<br/>合并完成的碰撞体树优化结果。" }
+  n2@{ shape: rounded, label: "**finish​_​optimize​_​trees**<br/>合并完成的碰撞体树优化结果。" }
   class n2 node_system
   n1 e0@-->|"赋值"| n0
   class e0 edge_write

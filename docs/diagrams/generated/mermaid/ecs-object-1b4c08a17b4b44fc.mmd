@@ -37,9 +37,9 @@ flowchart LR
   classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;bevy​_​**<br/>**asset::AssetEvent#lt;assets::**<br/>**GltfPrimitive#gt;#gt;**<br/>保存最近两次轮换期间产生的指定类型消息" }
+  n0@{ shape: cyl, label: "**Messages#lt;AssetEvent#lt;GltfPrimitive#gt;#gt;**<br/>保存最近两次轮换期间产生的指定类型消息" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​asset::assets::Assets#lt;bevy​_​**<br/>**gltf::assets::GltfPrimitive#gt;::asset​_​**<br/>**events**<br/>来自crate:bevy​_​asset ↗：发布累计的资<br/>产变化消息。" }
+  n1@{ shape: rounded, label: "**asset​_​events**<br/>来自crate:bevy​_​asset ↗：发布累计的资<br/>产变化消息。" }
   class n1 node_system
   class n1 external_node
   n1 e0@-->|"赋值"| n0

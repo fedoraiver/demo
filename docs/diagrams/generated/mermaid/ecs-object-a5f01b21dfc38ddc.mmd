@@ -37,11 +37,11 @@ flowchart LR
   classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**dynamics::rigid​_​body::sleeping::**<br/>**SleepingDisabled**<br/>禁止刚体进入休眠。" }
+  n0@{ shape: rounded, label: "**SleepingDisabled**<br/>禁止刚体进入休眠。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**avian3d::dynamics::solver::islands::**<br/>**sleeping::wake​_​islands​_​with​_​**<br/>**sleeping​_​disabled**<br/>让禁止休眠或已禁用的刚体所属岛保持清醒。" }
+  n1@{ shape: rounded, label: "**wake​_​islands​_​with​_​sleeping​_​disabled**<br/>让禁止休眠或已禁用的刚体所属岛保持清醒。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**avian3d::dynamics::solver::islands::**<br/>**sleeping::update​_​sleeping​_​states**<br/>按刚体静止时间判断物理岛的休眠资格。" }
+  n2@{ shape: rounded, label: "**update​_​sleeping​_​states**<br/>按刚体静止时间判断物理岛的休眠资格。" }
   class n2 node_system
   n0 e0@-->|"存在性约束"| n1
   class e0 edge_reference

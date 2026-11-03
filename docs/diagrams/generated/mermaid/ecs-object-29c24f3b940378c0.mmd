@@ -36,9 +36,9 @@ flowchart LR
   classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**retained::Gizmo**<br/>让实体持续绘制指定的调试图元资产。" }
+  n0@{ shape: rounded, label: "**Gizmo**<br/>让实体持续绘制指定的调试图元资产。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​gizmos​_​render::retained::**<br/>**extract​_​linegizmos**<br/>来自crate:bevy​_​gizmos​_​render ↗：从保<br/>留式 Gizmo 实体提取线条渲染数据。" }
+  n1@{ shape: rounded, label: "**extract​_​linegizmos**<br/>来自crate:bevy​_​gizmos​_​render ↗：从保<br/>留式 Gizmo 实体提取线条渲染数据。" }
   class n1 node_system
   class n1 external_node
   n0 e0@--> n1

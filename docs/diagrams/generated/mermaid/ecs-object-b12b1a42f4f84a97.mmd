@@ -38,11 +38,11 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**dynamics::rigid​_​body::forces::**<br/>**ConstantLinearAcceleration**<br/>持续施加世界空间线性加速度。" }
+  n0@{ shape: rounded, label: "**ConstantLinearAcceleration**<br/>持续施加世界空间线性加速度。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**avian3d::dynamics::solver::islands::**<br/>**sleeping::wake​_​on​_​changed**<br/>因外部位姿、速度或受力变化标记物理岛唤<br/>醒。" }
+  n1@{ shape: rounded, label: "**wake​_​on​_​changed**<br/>因外部位姿、速度或受力变化标记物理岛唤<br/>醒。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**avian3d::dynamics::rigid​_​body::**<br/>**forces::plugin::apply​_​constant​_​**<br/>**linear​_​acceleration**<br/>把恒定世界线加速度加入待积分增量。" }
+  n2@{ shape: rounded, label: "**apply​_​constant​_​linear​_​acceleration**<br/>把恒定世界线加速度加入待积分增量。" }
   class n2 node_system
   n0 e0@--> n1
   class e0 edge_read

@@ -42,20 +42,20 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​transform​_​interpolation::**<br/>**extrapolation::update​_​translation​_​**<br/>**extrapolation​_​states#lt;avian3d::**<br/>**interpolation::LinVelSource#gt;**<br/>依据当前线速度预测下一个位置端点。" }
+  n0@{ shape: rounded, label: "**update​_​translation​_​extrapolation​_​**<br/>**states**<br/>依据当前线速度预测下一个位置端点。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**components::transform::Transform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>相对父实体的平移、旋转和缩放" }
+  n1@{ shape: rounded, label: "**Transform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>相对父实体的平移、旋转和缩放" }
   class n1 node_component
   class n1 external_node
-  n2@{ shape: cyl, label: "**time::Time**<br/>来自crate:bevy​_​time ↗：保存时钟上下<br/>文、帧间隔及累计时间" }
+  n2@{ shape: cyl, label: "**Time**<br/>来自crate:bevy​_​time ↗：保存时钟上下<br/>文、帧间隔及累计时间" }
   class n2 node_resource
   class n2 external_node
   n3@{ shape: rounded, label: "**TranslationEasingState**<br/>保存固定步平移插值的起点与终点" }
   class n3 node_component
-  n4@{ shape: rounded, label: "**dynamics::rigid​_​body::LinearVelocity**<br/>来自crate:avian3d ↗：保存刚体的世界线<br/>速度。" }
+  n4@{ shape: rounded, label: "**LinearVelocity**<br/>来自crate:avian3d ↗：保存刚体的世界线<br/>速度。" }
   class n4 node_component
   class n4 external_node
-  n5@{ shape: rounded, label: "**extrapolation::**<br/>**TranslationExtrapolation**<br/>启用平移外推" }
+  n5@{ shape: rounded, label: "**TranslationExtrapolation**<br/>启用平移外推" }
   class n5 node_component
   n6@{ shape: rounded, label: "**NoTranslationEasing**<br/>显式禁止当前实体的平移插值和外推" }
   class n6 node_component

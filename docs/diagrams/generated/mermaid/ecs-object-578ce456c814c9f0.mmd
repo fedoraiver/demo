@@ -38,14 +38,14 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**prepass::**<br/>**SpecializedPrepassMaterialPipelineCa**<br/>**che**<br/>按视图缓存材质预通道的专用管线。" }
+  n0@{ shape: cyl, label: "**SpecializedPrepassMaterialPipelineCa**<br/>**che**<br/>按视图缓存材质预通道的专用管线。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​pbr::prepass::queue​_​prepass​_​**<br/>**material​_​meshes**<br/>把有效材质网格分入预通道或延迟几何阶段。" }
+  n1@{ shape: rounded, label: "**queue​_​prepass​_​material​_​meshes**<br/>把有效材质网格分入预通道或延迟几何阶段。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​render::init​_​gpu​_​resource#lt;bevy​_​**<br/>**pbr::prepass::**<br/>**SpecializedPrepassMaterialPipelineCa**<br/>**che#gt;**<br/>来自crate:bevy​_​render ↗：构造并插入渲<br/>染所需资源。" }
+  n2@{ shape: rounded, label: "**init​_​gpu​_​resource**<br/>来自crate:bevy​_​render ↗：构造并插入渲<br/>染所需资源。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​pbr::prepass::specialize​_​**<br/>**prepass​_​material​_​meshes**<br/>按深度、材质和运动特性生成预通道专用管<br/>线。" }
+  n3@{ shape: rounded, label: "**specialize​_​prepass​_​material​_​meshes**<br/>按深度、材质和运动特性生成预通道专用管<br/>线。" }
   class n3 node_system
   n0 e0@--> n1
   class e0 edge_read

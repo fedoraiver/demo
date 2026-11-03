@@ -38,19 +38,19 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**render::gpu​_​preprocess::**<br/>**BuildIndirectParametersBindGroups**<br/>绑定间接绘制计数重置和参数构建资源。" }
+  n0@{ shape: cyl, label: "**BuildIndirectParametersBindGroups**<br/>绑定间接绘制计数重置和参数构建资源。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​pbr::render::light::per​_​view​_​**<br/>**shadow​_​pass#lt;false#gt;**<br/>绘制相机相关的平行光级联阴影。" }
+  n1@{ shape: rounded, label: "**per​_​view​_​shadow​_​pass**<br/>绘制相机相关的平行光级联阴影。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​pbr::render::gpu​_​preprocess::**<br/>**early​_​prepass​_​build​_​indirect​_​**<br/>**parameters**<br/>构建早期预通道使用的多重间接绘制参数。" }
+  n2@{ shape: rounded, label: "**early​_​prepass​_​build​_​indirect​_​**<br/>**parameters**<br/>构建早期预通道使用的多重间接绘制参数。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​pbr::render::gpu​_​preprocess::**<br/>**prepare​_​preprocess​_​bind​_​groups**<br/>绑定各视图网格预处理和间接参数构建资源。" }
+  n3@{ shape: rounded, label: "**prepare​_​preprocess​_​bind​_​groups**<br/>绑定各视图网格预处理和间接参数构建资源。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**bevy​_​pbr::render::gpu​_​preprocess::**<br/>**main​_​build​_​indirect​_​parameters**<br/>为主不透明及透明通道构建间接绘制参数。" }
+  n4@{ shape: rounded, label: "**main​_​build​_​indirect​_​parameters**<br/>为主不透明及透明通道构建间接绘制参数。" }
   class n4 node_system
-  n5@{ shape: rounded, label: "**bevy​_​pbr::render::light::per​_​view​_​**<br/>**shadow​_​pass#lt;true#gt;**<br/>绘制相机相关的平行光级联阴影。" }
+  n5@{ shape: rounded, label: "**per​_​view​_​shadow​_​pass**<br/>绘制相机相关的平行光级联阴影。" }
   class n5 node_system
-  n6@{ shape: rounded, label: "**bevy​_​pbr::render::gpu​_​preprocess::**<br/>**late​_​prepass​_​build​_​indirect​_​**<br/>**parameters**<br/>为本帧新显露对象构建后期预通道间接参数。" }
+  n6@{ shape: rounded, label: "**late​_​prepass​_​build​_​indirect​_​**<br/>**parameters**<br/>为本帧新显露对象构建后期预通道间接参数。" }
   class n6 node_system
   n0 e0@--> n1
   class e0 edge_read

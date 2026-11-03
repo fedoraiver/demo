@@ -40,16 +40,16 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: lin-rect, label: "**AnonymousSet(0)**<br/>保存一组系统的共同配置。" }
   class n0 node_system_set
-  n1@{ shape: rounded, label: "**#lt;avian3d::physics​_​transform::**<br/>**PhysicsTransformPlugin as bevy​_​app::**<br/>**plugin::Plugin#gt;::build::{{closure}}**<br/>来自crate:avian3d ↗：判断是否执行物理<br/>前变换传播。" }
+  n1@{ shape: rounded, label: "**build::{{closure}}**<br/>来自crate:avian3d ↗：判断是否执行物理<br/>前变换传播。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​transform::systems::mark​_​dirty​_​**<br/>**trees**<br/>来自crate:bevy​_​transform ↗：沿祖先链<br/>标记需要重算变换的子树。" }
+  n2@{ shape: rounded, label: "**mark​_​dirty​_​trees**<br/>来自crate:bevy​_​transform ↗：沿祖先链<br/>标记需要重算变换的子树。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​transform::systems::sync​_​**<br/>**simple​_​transforms**<br/>来自crate:bevy​_​transform ↗：同步没有<br/>父子层级的独立实体世界变换。" }
+  n3@{ shape: rounded, label: "**sync​_​simple​_​transforms**<br/>来自crate:bevy​_​transform ↗：同步没有<br/>父子层级的独立实体世界变换。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**bevy​_​transform::systems::parallel::**<br/>**propagate​_​parent​_​transforms**<br/>来自crate:bevy​_​transform ↗：沿父子层<br/>级并行合成世界变换。" }
+  n4@{ shape: rounded, label: "**propagate​_​parent​_​transforms**<br/>来自crate:bevy​_​transform ↗：沿父子层<br/>级并行合成世界变换。" }
   class n4 node_system
   class n4 external_node
   n1 e0@-->|"运行条件"| n0

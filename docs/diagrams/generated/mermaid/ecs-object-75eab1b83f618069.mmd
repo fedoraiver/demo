@@ -43,26 +43,26 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​anti​_​alias::taa::prepare​_​taa​_​**<br/>**pipelines**<br/>准备 TAA 当前状态及下一帧恢复用管线。" }
+  n0@{ shape: rounded, label: "**prepare​_​taa​_​pipelines**<br/>准备 TAA 当前状态及下一帧恢复用管线。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**bevy​_​render::view::ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
+  n1@{ shape: rounded, label: "**ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
   class n1 node_component
   class n1 external_node
-  n2@{ shape: fr-rect, label: "**taa::TemporalAntiAliasPlugin**<br/>提供时域抗锯齿。" }
+  n2@{ shape: fr-rect, label: "**TemporalAntiAliasPlugin**<br/>提供时域抗锯齿。" }
   class n2 node_plugin
-  n3@{ shape: rounded, label: "**bevy​_​render::camera::ExtractedCamera**<br/>来自crate:bevy​_​render ↗：保存渲染世界<br/>相机的目标和绘制配置。" }
+  n3@{ shape: rounded, label: "**ExtractedCamera**<br/>来自crate:bevy​_​render ↗：保存渲染世界<br/>相机的目标和绘制配置。" }
   class n3 node_component
   class n3 external_node
   n4@{ shape: lin-rect, label: "**Prepare**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
   class n4 node_system_set
   class n4 external_node
-  n5@{ shape: cyl, label: "**taa::TaaPipeline**<br/>提供时域抗锯齿的采样与管线资源。" }
+  n5@{ shape: cyl, label: "**TaaPipeline**<br/>提供时域抗锯齿的采样与管线资源。" }
   class n5 node_resource
-  n6@{ shape: rounded, label: "**taa::TemporalAntiAliasPipelineId**<br/>保存视图的时域抗锯齿管线标识。" }
+  n6@{ shape: rounded, label: "**TemporalAntiAliasPipelineId**<br/>保存视图的时域抗锯齿管线标识。" }
   class n6 node_component
-  n7@{ shape: rounded, label: "**taa::TemporalAntiAliasing**<br/>启用相机的历史帧混合抗锯齿。" }
+  n7@{ shape: rounded, label: "**TemporalAntiAliasing**<br/>启用相机的历史帧混合抗锯齿。" }
   class n7 node_component
-  n8@{ shape: cyl, label: "**bevy​_​render::render​_​resource::**<br/>**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
+  n8@{ shape: cyl, label: "**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
   class n8 node_resource
   class n8 external_node
   n1 e0@--> n0

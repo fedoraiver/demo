@@ -38,11 +38,11 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​render::init​_​gpu​_​resource#lt;bevy​_​**<br/>**render::mesh::morph::**<br/>**RenderMorphTargetAllocator#gt;**<br/>构造并插入渲染所需资源。" }
+  n0@{ shape: rounded, label: "**init​_​gpu​_​resource**<br/>构造并插入渲染所需资源。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**mesh::morph::**<br/>**RenderMorphTargetAllocator**<br/>按设备能力存放网格形变位移数据。" }
+  n1@{ shape: cyl, label: "**RenderMorphTargetAllocator**<br/>按设备能力存放网格形变位移数据。" }
   class n1 node_resource
-  n2@{ shape: cyl, label: "**bevy​_​render::renderer::RenderDevice**<br/>创建渲染和计算所需的 GPU 资源。" }
+  n2@{ shape: cyl, label: "**RenderDevice**<br/>创建渲染和计算所需的 GPU 资源。" }
   class n2 node_resource
   n0 e0@-->|"插入"| n1
   class e0 edge_write

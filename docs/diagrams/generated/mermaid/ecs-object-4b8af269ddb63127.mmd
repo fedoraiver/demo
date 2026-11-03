@@ -41,13 +41,13 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​render::storage::clear​_​changed​_​**<br/>**shader​_​buffers**<br/>清空新帧着色器缓冲的变化记录。" }
+  n0@{ shape: rounded, label: "**clear​_​changed​_​shader​_​buffers**<br/>清空新帧着色器缓冲的变化记录。" }
   class n0 node_system
-  n1@{ shape: fr-rect, label: "**storage::StoragePlugin**<br/>管理并上传着色器缓冲资产。" }
+  n1@{ shape: fr-rect, label: "**StoragePlugin**<br/>管理并上传着色器缓冲资产。" }
   class n1 node_plugin
   n2@{ shape: lin-rect, label: "**Cleanup**<br/>组织渲染数据准备与绘制排队。" }
   class n2 node_system_set
-  n3@{ shape: cyl, label: "**storage::RenderChangedShaderBuffers**<br/>记录底层 GPU 缓冲身份已变化的着色器缓<br/>冲。" }
+  n3@{ shape: cyl, label: "**RenderChangedShaderBuffers**<br/>记录底层 GPU 缓冲身份已变化的着色器缓<br/>冲。" }
   class n3 node_resource
   n1 e0@-->|"调用"| n0
   class e0 edge_registration

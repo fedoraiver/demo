@@ -39,7 +39,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: notch-rect, label: "**Local · arg1**<br/>按上次组件提取数量预留输出容量。" }
   class n0 node_local
-  n1@{ shape: rounded, label: "**bevy​_​extract::extract​_​component::**<br/>**extract​_​components#lt;bevy​_​render::**<br/>**view::DebandDither, bevy​_​render::**<br/>**RenderApp, ()#gt;**<br/>批量同步或移除子世界的目标组件。" }
+  n1@{ shape: rounded, label: "**extract​_​components**<br/>批量同步或移除子世界的目标组件。" }
   class n1 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

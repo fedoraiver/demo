@@ -38,44 +38,83 @@ flowchart LR
   classDef node_system_group fill:#F2F5F7,stroke:#607C96,stroke-width:1.6px,color:#1F3340
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​ecs::schedule::Schedules**<br/>按标签保存可运行的调度实例。" }
+  subgraph layout_card_n0[" "]
+  n0@{ shape: rounded, label: "**Schedules**<br/>按标签保存可运行的调度实例。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​app::main​_​schedule::FixedMain::**<br/>**run​_​fixed​_​main**<br/>来自crate:bevy​_​app ↗：运行一个固定时<br/>间步的调度阶段。" }
+  end
+  style layout_card_n0 fill:none,stroke:none
+  subgraph layout_card_n1[" "]
+  n1@{ shape: rounded, label: "**run​_​fixed​_​main**<br/>来自crate:bevy​_​app ↗：运行一个固定时<br/>间步的调度阶段。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​time::fixed::run​_​fixed​_​main​_​**<br/>**schedule**<br/>来自crate:bevy​_​time ↗：按累计时间推进<br/>固定主调度。" }
+  end
+  style layout_card_n1 fill:none,stroke:none
+  subgraph layout_card_n2[" "]
+  n2@{ shape: rounded, label: "**run​_​fixed​_​main​_​schedule**<br/>来自crate:bevy​_​time ↗：按累计时间推进<br/>固定主调度。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​extract::extract​_​plugin::apply​_​**<br/>**extract​_​commands**<br/>来自crate:bevy​_​extract ↗：应用提取阶<br/>段累计的子世界命令。" }
+  end
+  style layout_card_n2 fill:none,stroke:none
+  subgraph layout_card_n3[" "]
+  n3@{ shape: rounded, label: "**apply​_​extract​_​commands**<br/>来自crate:bevy​_​extract ↗：应用提取阶<br/>段累计的子世界命令。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: fr-rect, label: "**Pipe(bevy​_​state::state::**<br/>**transitions::last​_​transition#lt;demo::**<br/>**game​_​flow::AppState#gt;, bevy​_​state::**<br/>**state::transitions::run​_​enter#lt;demo::**<br/>**game​_​flow::AppState#gt;)**<br/>来自crate:bevy​_​state ↗：从当前消息批<br/>次取得最后一次状态转换。；执行新状态的进<br/>入调度。" }
+  end
+  style layout_card_n3 fill:none,stroke:none
+  subgraph layout_card_n4[" "]
+  n4@{ shape: fr-rect, label: "**Pipe(last​_​transition#lt;AppState#gt;, run​_​**<br/>**enter#lt;AppState#gt;)**<br/>来自crate:bevy​_​state ↗：从当前消息批<br/>次取得最后一次状态转换。；执行新状态的进<br/>入调度。" }
   class n4 node_system_group
   class n4 external_node
-  n5@{ shape: fr-rect, label: "**Pipe(bevy​_​state::state::**<br/>**transitions::last​_​transition#lt;demo::**<br/>**game​_​flow::AppState#gt;, bevy​_​state::**<br/>**state::transitions::run​_​exit#lt;demo::**<br/>**game​_​flow::AppState#gt;)**<br/>来自crate:bevy​_​state ↗：从当前消息批<br/>次取得最后一次状态转换。；执行旧状态的退<br/>出调度。" }
+  end
+  style layout_card_n4 fill:none,stroke:none
+  subgraph layout_card_n5[" "]
+  n5@{ shape: fr-rect, label: "**Pipe(last​_​transition#lt;AppState#gt;, run​_​**<br/>**exit#lt;AppState#gt;)**<br/>来自crate:bevy​_​state ↗：从当前消息批<br/>次取得最后一次状态转换。；执行旧状态的退<br/>出调度。" }
   class n5 node_system_group
   class n5 external_node
-  n6@{ shape: rounded, label: "**avian3d::dynamics::solver::**<br/>**schedule::run​_​substep​_​schedule**<br/>来自crate:avian3d ↗：按子步数划分物理<br/>时间并运行子步调度。" }
+  end
+  style layout_card_n5 fill:none,stroke:none
+  subgraph layout_card_n6[" "]
+  n6@{ shape: rounded, label: "**run​_​substep​_​schedule**<br/>来自crate:avian3d ↗：按子步数划分物理<br/>时间并运行子步调度。" }
   class n6 node_system
   class n6 external_node
-  n7@{ shape: rounded, label: "**bevy​_​render::renderer::render​_​system**<br/>来自crate:bevy​_​render ↗：运行渲染图调<br/>度并完成回读和窗口呈现。" }
+  end
+  style layout_card_n6 fill:none,stroke:none
+  subgraph layout_card_n7[" "]
+  n7@{ shape: rounded, label: "**render​_​system**<br/>来自crate:bevy​_​render ↗：运行渲染图调<br/>度并完成回读和窗口呈现。" }
   class n7 node_system
   class n7 external_node
-  n8@{ shape: fr-rect, label: "**Pipe(bevy​_​state::state::**<br/>**transitions::last​_​transition#lt;demo::**<br/>**game​_​flow::AppState#gt;, bevy​_​state::**<br/>**state::transitions::run​_​**<br/>**transition#lt;demo::game​_​flow::**<br/>**AppState#gt;)**<br/>来自crate:bevy​_​state ↗：执行特定旧状<br/>态到新状态的转换调度。；从当前消息批次取<br/>得最后一次状态转换。" }
+  end
+  style layout_card_n7 fill:none,stroke:none
+  subgraph layout_card_n8[" "]
+  n8@{ shape: fr-rect, label: "**Pipe(last​_​transition#lt;AppState#gt;, run​_​**<br/>**transition#lt;AppState#gt;)**<br/>来自crate:bevy​_​state ↗：执行特定旧状<br/>态到新状态的转换调度。；从当前消息批次取<br/>得最后一次状态转换。" }
   class n8 node_system_group
   class n8 external_node
-  n9@{ shape: rounded, label: "**bevy​_​core​_​pipeline::schedule::**<br/>**camera​_​driver**<br/>来自crate:bevy​_​core​_​pipeline ↗：为辅<br/>助视图和活动相机运行专属渲染调度。" }
+  end
+  style layout_card_n8 fill:none,stroke:none
+  subgraph layout_card_n9[" "]
+  n9@{ shape: rounded, label: "**camera​_​driver**<br/>来自crate:bevy​_​core​_​pipeline ↗：为辅<br/>助视图和活动相机运行专属渲染调度。" }
   class n9 node_system
   class n9 external_node
-  n10@{ shape: rounded, label: "**avian3d::schedule::run​_​physics​_​**<br/>**schedule**<br/>来自crate:avian3d ↗：使用物理时钟推<br/>进 PhysicsSchedule 并恢复原时钟。" }
+  end
+  style layout_card_n9 fill:none,stroke:none
+  subgraph layout_card_n10[" "]
+  n10@{ shape: rounded, label: "**run​_​physics​_​schedule**<br/>来自crate:avian3d ↗：使用物理时钟推<br/>进 PhysicsSchedule 并恢复原时钟。" }
   class n10 node_system
   class n10 external_node
-  n11@{ shape: rounded, label: "**bevy​_​app::main​_​schedule::Main::run​_​**<br/>**main**<br/>来自crate:bevy​_​app ↗：按主调度顺序驱<br/>动应用更新。" }
+  end
+  style layout_card_n10 fill:none,stroke:none
+  subgraph layout_card_n11[" "]
+  n11@{ shape: rounded, label: "**run​_​main**<br/>来自crate:bevy​_​app ↗：按主调度顺序驱<br/>动应用更新。" }
   class n11 node_system
   class n11 external_node
-  n12@{ shape: rounded, label: "**bevy​_​render::run​_​render​_​schedule**<br/>来自crate:bevy​_​render ↗：按<br/>RenderScheduleOrder 中维护的阶段标签<br/>顺序，依次尝试运行渲染子应用的各个调度。" }
+  end
+  style layout_card_n11 fill:none,stroke:none
+  subgraph layout_card_n12[" "]
+  n12@{ shape: rounded, label: "**run​_​render​_​schedule**<br/>来自crate:bevy​_​render ↗：按<br/>RenderScheduleOrder 中维护的阶段标签<br/>顺序，依次尝试运行渲染子应用的各个调度。" }
   class n12 node_system
   class n12 external_node
+  end
+  style layout_card_n12 fill:none,stroke:none
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write
   n2 e1@-->|"可变访问"| n0

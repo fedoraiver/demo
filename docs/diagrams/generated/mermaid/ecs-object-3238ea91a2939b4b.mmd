@@ -42,30 +42,30 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::mesh::**<br/>**prepare​_​mesh2d​_​bind​_​group**<br/>按网格元数据分配块建立二维网格绑定组。" }
+  n0@{ shape: rounded, label: "**prepare​_​mesh2d​_​bind​_​group**<br/>按网格元数据分配块建立二维网格绑定组。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**mesh::MeshMetadataFallbackBuffer**<br/>来自crate:bevy​_​render ↗：为无元数据网<br/>格提供可绑定的缺省缓冲。" }
+  n1@{ shape: cyl, label: "**MeshMetadataFallbackBuffer**<br/>来自crate:bevy​_​render ↗：为无元数据网<br/>格提供可绑定的缺省缓冲。" }
   class n1 node_resource
   class n1 external_node
   n2@{ shape: lin-rect, label: "**PrepareBindGroups**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
   class n2 node_system_set
   class n2 external_node
-  n3@{ shape: cyl, label: "**bevy​_​render::render​_​resource::**<br/>**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
+  n3@{ shape: cyl, label: "**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
   class n3 node_resource
   class n3 external_node
-  n4@{ shape: fr-rect, label: "**mesh2d::mesh::Mesh2dRenderPlugin**<br/>准备二维网格实例和批处理管线。" }
+  n4@{ shape: fr-rect, label: "**Mesh2dRenderPlugin**<br/>准备二维网格实例和批处理管线。" }
   class n4 node_plugin
-  n5@{ shape: cyl, label: "**bevy​_​sprite​_​render::Mesh2dPipeline**<br/>提供二维网格的视图与实例资源布局。" }
+  n5@{ shape: cyl, label: "**Mesh2dPipeline**<br/>提供二维网格的视图与实例资源布局。" }
   class n5 node_resource
-  n6@{ shape: cyl, label: "**mesh::allocator::MeshAllocator**<br/>来自crate:bevy​_​render ↗：分配并管理网<br/>格顶点和索引 GPU 缓冲。" }
+  n6@{ shape: cyl, label: "**MeshAllocator**<br/>来自crate:bevy​_​render ↗：分配并管理网<br/>格顶点和索引 GPU 缓冲。" }
   class n6 node_resource
   class n6 external_node
-  n7@{ shape: cyl, label: "**bevy​_​render::batching::no​_​gpu​_​**<br/>**preprocessing::**<br/>**BatchedInstanceBuffer#lt;mesh2d::mesh::**<br/>**Mesh2dUniform#gt;**<br/>来自crate:bevy​_​render ↗：保存 CPU 准<br/>备路径的批次绘制数据。" }
+  n7@{ shape: cyl, label: "**BatchedInstanceBuffer#lt;Mesh2dUniform#gt;**<br/>来自crate:bevy​_​render ↗：保存 CPU 准<br/>备路径的批次绘制数据。" }
   class n7 node_resource
   class n7 external_node
-  n8@{ shape: cyl, label: "**mesh2d::mesh::Mesh2dBindGroup**<br/>按网格存储分块保存二维网格绑定组。" }
+  n8@{ shape: cyl, label: "**Mesh2dBindGroup**<br/>按网格存储分块保存二维网格绑定组。" }
   class n8 node_resource
-  n9@{ shape: cyl, label: "**bevy​_​render::renderer::RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
+  n9@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
   class n9 node_resource
   class n9 external_node
   n1 e0@--> n0

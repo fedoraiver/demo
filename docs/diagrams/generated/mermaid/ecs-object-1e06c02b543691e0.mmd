@@ -36,12 +36,12 @@ flowchart LR
   classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**transform​_​gizmo::**<br/>**TransformGizmoSettings**<br/>配置变换操纵器的模式、尺寸和吸附。" }
+  n0@{ shape: cyl, label: "**TransformGizmoSettings**<br/>配置变换操纵器的模式、尺寸和吸附。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​ecs::schedule::condition::**<br/>**common​_​conditions::resource​_​**<br/>**exists#lt;bevy​_​gizmos::transform​_​**<br/>**gizmo::TransformGizmoSettings#gt;**<br/>来自crate:bevy​_​ecs ↗：判断指定资源是<br/>否存在。" }
+  n1@{ shape: rounded, label: "**resource​_​exists**<br/>来自crate:bevy​_​ecs ↗：判断指定资源是<br/>否存在。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​gizmos​_​render::transform​_​gizmo​_​**<br/>**render::update​_​gizmo​_​meshes**<br/>来自crate:bevy​_​gizmos​_​render ↗：将变<br/>换操作器对齐焦点并更新模式与高亮。" }
+  n2@{ shape: rounded, label: "**update​_​gizmo​_​meshes**<br/>来自crate:bevy​_​gizmos​_​render ↗：将变<br/>换操作器对齐焦点并更新模式与高亮。" }
   class n2 node_system
   class n2 external_node
   n0 e0@--> n1

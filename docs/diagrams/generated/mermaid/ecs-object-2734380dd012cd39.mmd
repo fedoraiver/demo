@@ -41,17 +41,17 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**avian3d::schedule::assert​_​**<br/>**components​_​finite**<br/>在调试构建检查物理位置和速度是否有限。" }
+  n0@{ shape: rounded, label: "**assert​_​components​_​finite**<br/>在调试构建检查物理位置和速度是否有限。" }
   class n0 node_system
   n1@{ shape: lin-rect, label: "**First**<br/>划分物理准备、模拟与回写边界。" }
   class n1 node_system_set
-  n2@{ shape: fr-rect, label: "**schedule::PhysicsSchedulePlugin**<br/>建立物理调度与时间资源。" }
+  n2@{ shape: fr-rect, label: "**PhysicsSchedulePlugin**<br/>建立物理调度与时间资源。" }
   class n2 node_plugin
-  n3@{ shape: rounded, label: "**dynamics::rigid​_​body::LinearVelocity**<br/>保存刚体的世界线速度。" }
+  n3@{ shape: rounded, label: "**LinearVelocity**<br/>保存刚体的世界线速度。" }
   class n3 node_component
-  n4@{ shape: rounded, label: "**dynamics::rigid​_​body::**<br/>**AngularVelocity**<br/>保存刚体的世界角速度。" }
+  n4@{ shape: rounded, label: "**AngularVelocity**<br/>保存刚体的世界角速度。" }
   class n4 node_component
-  n5@{ shape: rounded, label: "**physics​_​transform::transform::**<br/>**Position**<br/>保存刚体或碰撞体的世界位置。" }
+  n5@{ shape: rounded, label: "**Position**<br/>保存刚体或碰撞体的世界位置。" }
   class n5 node_component
   n1 e0@-->|"集合成员"| n0
   class e0 edge_set_membership

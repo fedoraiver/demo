@@ -40,16 +40,16 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: lin-rect, label: "**AnonymousSet(0)**<br/>保存一组系统的共同配置。" }
   class n0 node_system_set
-  n1@{ shape: rounded, label: "**demo::first​_​person::facing::sync​_​**<br/>**character​_​facing**<br/>来自first​_​person ↗：在固定模拟前及逐<br/>帧持握目标同步前设置水平朝向，站立、横移<br/>和后退时也跟随视角。" }
+  n1@{ shape: rounded, label: "**sync​_​character​_​facing**<br/>来自first​_​person ↗：在固定模拟前及逐<br/>帧持握目标同步前设置水平朝向，站立、横移<br/>和后退时也跟随视角。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**demo::first​_​person::camera::sync​_​**<br/>**character​_​visibility**<br/>来自first​_​person ↗：第一人称只隐藏自<br/>身视觉子树，保留业务根与独立木箱。" }
+  n2@{ shape: rounded, label: "**sync​_​character​_​visibility**<br/>来自first​_​person ↗：第一人称只隐藏自<br/>身视觉子树，保留业务根与独立木箱。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**demo::game​_​flow::gameplay​_​running**<br/>来自game​_​flow ↗：独立功能测试没有应用<br/>状态；真实游戏只在 Running 推进玩法。" }
+  n3@{ shape: rounded, label: "**gameplay​_​running**<br/>来自game​_​flow ↗：独立功能测试没有应用<br/>状态；真实游戏只在 Running 推进玩法。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**demo::first​_​person::camera::follow​_​**<br/>**first​_​person​_​camera**<br/>来自first​_​person ↗：镜头使用本帧插值<br/>后的人物位置与观察角度；互斥过滤避免<br/>Transform 查询读写冲突。" }
+  n4@{ shape: rounded, label: "**follow​_​first​_​person​_​camera**<br/>来自first​_​person ↗：镜头使用本帧插值<br/>后的人物位置与观察角度；互斥过滤避免<br/>Transform 查询读写冲突。" }
   class n4 node_system
   class n4 external_node
   n0 e0@-->|"集合成员"| n1

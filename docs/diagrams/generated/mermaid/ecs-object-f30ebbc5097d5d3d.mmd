@@ -39,9 +39,9 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: fr-rect, label: "**bevy​_​egui::input​_​system​_​is​_​**<br/>**enabled#lt;#lt;bevy​_​egui::EguiPlugin as**<br/>**bevy​_​app::plugin::Plugin#gt;::build::**<br/>**{{closure}}#gt;::{{closure}}**<br/>按 Egui 全局配置判断输入处理是否启<br/>用。；判断是否处理非窗口指针移动。" }
+  n0@{ shape: fr-rect, label: "**input​_​system​_​is​_​enabled::{{closure}}**<br/>按 Egui 全局配置判断输入处理是否启<br/>用。；判断是否处理非窗口指针移动。" }
   class n0 node_system_group
-  n1@{ shape: rounded, label: "**bevy​_​egui::input::write​_​non​_​window​_​**<br/>**pointer​_​moved​_​messages​_​system**<br/>刷新非窗口 Egui 界面的指针位置。" }
+  n1@{ shape: rounded, label: "**write​_​non​_​window​_​pointer​_​moved​_​**<br/>**messages​_​system**<br/>刷新非窗口 Egui 界面的指针位置。" }
   class n1 node_system
   n2@{ shape: cyl, label: "**EguiGlobalSettings**<br/>配置 Egui 上下文创建和全局输入集成。" }
   class n2 node_resource

@@ -39,11 +39,11 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**ui::scroll::SettingsScrollbar**<br/>轨道和滚动区域为同一 BSN 容器的子实体，<br/>绑定系统只为设置控件建立原生 target。" }
+  n0@{ shape: rounded, label: "**SettingsScrollbar**<br/>轨道和滚动区域为同一 BSN 容器的子实体，<br/>绑定系统只为设置控件建立原生 target。" }
   class n0 node_component
   n1@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>为设置正文提供垂直滚动条轨道。" }
   class n1 node_entity
-  n2@{ shape: rounded, label: "**demo::ui::scroll::sync​_​settings​_​**<br/>**scrollbars**<br/>同步滚动条显隐、拾取范围与高亮。" }
+  n2@{ shape: rounded, label: "**sync​_​settings​_​scrollbars**<br/>同步滚动条显隐、拾取范围与高亮。" }
   class n2 node_system
   n3@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>为设置正文提供垂直滚动条轨道。" }
   class n3 node_entity
@@ -51,7 +51,7 @@ flowchart LR
   class n4 node_entity
   n5@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>为设置正文提供垂直滚动条轨道。" }
   class n5 node_entity
-  n6@{ shape: rounded, label: "**demo::ui::scroll::bind​_​settings​_​**<br/>**scrollbars**<br/>将设置滚动条绑定到对应内容视口。" }
+  n6@{ shape: rounded, label: "**bind​_​settings​_​scrollbars**<br/>将设置滚动条绑定到对应内容视口。" }
   class n6 node_system
   n1 e0@-->|"可能包含"| n0
   class e0 edge_reference

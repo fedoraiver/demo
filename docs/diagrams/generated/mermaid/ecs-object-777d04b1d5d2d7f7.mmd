@@ -44,17 +44,17 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​picking::hover::update​_​is​_​**<br/>**directly​_​hovered**<br/>更新鼠标直接悬停的实体标记。" }
+  n0@{ shape: rounded, label: "**update​_​is​_​directly​_​hovered**<br/>更新鼠标直接悬停的实体标记。" }
   class n0 node_system
   n1@{ shape: lin-rect, label: "**Hover**<br/>组织指针拾取和悬停处理阶段。" }
   class n1 node_system_set
-  n2@{ shape: rounded, label: "**hover::DirectlyHovered**<br/>标记实体是否被指针直接悬停" }
+  n2@{ shape: rounded, label: "**DirectlyHovered**<br/>标记实体是否被指针直接悬停" }
   class n2 node_component
-  n3@{ shape: cyl, label: "**hover::HoverMap**<br/>保存各指针当前可交互的悬停目标。" }
+  n3@{ shape: cyl, label: "**HoverMap**<br/>保存各指针当前可交互的悬停目标。" }
   class n3 node_resource
-  n4@{ shape: rounded, label: "**bevy​_​picking::hover::update​_​**<br/>**interactions**<br/>合并多个指针对目标实体的交互状态。" }
+  n4@{ shape: rounded, label: "**update​_​interactions**<br/>合并多个指针对目标实体的交互状态。" }
   class n4 node_system
-  n5@{ shape: rounded, label: "**bevy​_​picking::events::pointer​_​events**<br/>根据悬停与按钮状态派发指针交互事件。" }
+  n5@{ shape: rounded, label: "**pointer​_​events**<br/>根据悬停与按钮状态派发指针交互事件。" }
   class n5 node_system
   n6@{ shape: fr-rect, label: "**InteractionPlugin**<br/>生成并冒泡指针交互事件。" }
   class n6 node_plugin

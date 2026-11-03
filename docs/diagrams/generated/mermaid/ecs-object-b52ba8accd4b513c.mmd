@@ -38,13 +38,13 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**atmosphere::environment::**<br/>**AtmosphereProbeLayouts**<br/>描述大气环境贴图计算的资源布局。" }
+  n0@{ shape: cyl, label: "**AtmosphereProbeLayouts**<br/>描述大气环境贴图计算的资源布局。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​pbr::atmosphere::environment::**<br/>**init​_​atmosphere​_​probe​_​layout**<br/>定义大气环境探针的计算资源接口。" }
+  n1@{ shape: rounded, label: "**init​_​atmosphere​_​probe​_​layout**<br/>定义大气环境探针的计算资源接口。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​pbr::atmosphere::environment::**<br/>**init​_​atmosphere​_​probe​_​pipeline**<br/>排队创建大气环境贴图生成计算管线。" }
+  n2@{ shape: rounded, label: "**init​_​atmosphere​_​probe​_​pipeline**<br/>排队创建大气环境贴图生成计算管线。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​pbr::atmosphere::environment::**<br/>**prepare​_​atmosphere​_​probe​_​bind​_​groups**<br/>为大气环境探针绑定光照、查找表和输出纹<br/>理。" }
+  n3@{ shape: rounded, label: "**prepare​_​atmosphere​_​probe​_​bind​_​groups**<br/>为大气环境探针绑定光照、查找表和输出纹<br/>理。" }
   class n3 node_system
   n1 e0@-->|"插入"| n0
   class e0 edge_write

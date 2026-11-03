@@ -42,13 +42,13 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​render::gpu​_​readback::cleanup​_​**<br/>**readback​_​once**<br/>移除一次性 GPU 回读请求及其标记。" }
+  n0@{ shape: rounded, label: "**cleanup​_​readback​_​once**<br/>移除一次性 GPU 回读请求及其标记。" }
   class n0 node_system
-  n1@{ shape: fr-rect, label: "**gpu​_​readback::GpuReadbackPlugin**<br/>将 GPU 缓冲与纹理回读到 CPU。" }
+  n1@{ shape: fr-rect, label: "**GpuReadbackPlugin**<br/>将 GPU 缓冲与纹理回读到 CPU。" }
   class n1 node_plugin
-  n2@{ shape: rounded, label: "**gpu​_​readback::ReadbackOnce**<br/>将 GPU 回读请求限定为一次。" }
+  n2@{ shape: rounded, label: "**ReadbackOnce**<br/>将 GPU 回读请求限定为一次。" }
   class n2 node_component
-  n3@{ shape: rounded, label: "**gpu​_​readback::Readback**<br/>请求异步读取 GPU 纹理或缓冲内容。" }
+  n3@{ shape: rounded, label: "**Readback**<br/>请求异步读取 GPU 纹理或缓冲内容。" }
   class n3 node_component
   n4@{ shape: lin-rect, label: "**MessageUpdateSystems**<br/>来自crate:bevy​_​ecs ↗：统一轮换已登记<br/>的消息缓冲。" }
   class n4 node_system_set

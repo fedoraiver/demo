@@ -37,9 +37,9 @@ flowchart LR
   classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​render::init​_​gpu​_​resource#lt;bevy​_​**<br/>**render::batching::gpu​_​**<br/>**preprocessing::**<br/>**BatchedInstanceBuffers#lt;bevy​_​pbr::**<br/>**render::mesh::MeshUniform, bevy​_​**<br/>**pbr::render::mesh::**<br/>**MeshInputUniform#gt;#gt;**<br/>构造并插入渲染所需资源。" }
+  n0@{ shape: rounded, label: "**init​_​gpu​_​resource**<br/>构造并插入渲染所需资源。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**bevy​_​render::batching::gpu​_​**<br/>**preprocessing::**<br/>**BatchedInstanceBuffers#lt;render::**<br/>**mesh::MeshUniform, render::mesh::**<br/>**MeshInputUniform#gt;**<br/>保存批次绘制的 GPU 输入与实例缓冲。" }
+  n1@{ shape: cyl, label: "**BatchedInstanceBuffers#lt;MeshUniform,**<br/>**MeshInputUniform#gt;**<br/>保存批次绘制的 GPU 输入与实例缓冲。" }
   class n1 node_resource
   n0 e0@-->|"插入"| n1
   class e0 edge_write

@@ -38,22 +38,22 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**cluster::ClusteredDecal**<br/>在立方体范围内向表面投射材质贴花。" }
+  n0@{ shape: rounded, label: "**ClusteredDecal**<br/>在立方体范围内向表面投射材质贴花。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​light::cluster::assign::assign​_​**<br/>**objects​_​to​_​clusters**<br/>将灯光、探针及贴花分配到视图分簇。" }
+  n1@{ shape: rounded, label: "**assign​_​objects​_​to​_​clusters**<br/>将灯光、探针及贴花分配到视图分簇。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​light::cluster::add​_​light​_​**<br/>**probe​_​and​_​decal​_​aabbs**<br/>为光照探针和聚簇贴花补齐包围盒。" }
+  n2@{ shape: rounded, label: "**add​_​light​_​probe​_​and​_​decal​_​aabbs**<br/>为光照探针和聚簇贴花补齐包围盒。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​pbr::cluster::extract​_​clusters​_​**<br/>**for​_​cpu​_​clustering**<br/>来自crate:bevy​_​pbr ↗：把 CPU 聚簇结<br/>果转换为渲染侧对象列表。" }
+  n3@{ shape: rounded, label: "**extract​_​clusters​_​for​_​cpu​_​clustering**<br/>来自crate:bevy​_​pbr ↗：把 CPU 聚簇结<br/>果转换为渲染侧对象列表。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**bevy​_​pbr::decal::clustered::extract​_​**<br/>**clustered​_​decal**<br/>来自crate:bevy​_​pbr ↗：批量复制主世界<br/>的聚簇贴花组件。" }
+  n4@{ shape: rounded, label: "**extract​_​clustered​_​decal**<br/>来自crate:bevy​_​pbr ↗：批量复制主世界<br/>的聚簇贴花组件。" }
   class n4 node_system
   class n4 external_node
-  n5@{ shape: rounded, label: "**bevy​_​pbr::decal::clustered::extract​_​**<br/>**decals**<br/>来自crate:bevy​_​pbr ↗：从主世界提取可<br/>见聚簇贴花及点光、聚光和平行光的光照纹<br/>理，重建渲染贴花缓冲，并记录真正参与聚簇<br/>计算的贴花数量。" }
+  n5@{ shape: rounded, label: "**extract​_​decals**<br/>来自crate:bevy​_​pbr ↗：从主世界提取可<br/>见聚簇贴花及点光、聚光和平行光的光照纹<br/>理，重建渲染贴花缓冲，并记录真正参与聚簇<br/>计算的贴花数量。" }
   class n5 node_system
   class n5 external_node
-  n6@{ shape: rounded, label: "**bevy​_​pbr::decal::clustered::prepare​_​**<br/>**decals**<br/>来自crate:bevy​_​pbr ↗：将已提取贴花的<br/>索引登记到全局聚簇元数据。" }
+  n6@{ shape: rounded, label: "**prepare​_​decals**<br/>来自crate:bevy​_​pbr ↗：将已提取贴花的<br/>索引登记到全局聚簇元数据。" }
   class n6 node_system
   class n6 external_node
   n0 e0@-->|"存在性约束"| n1

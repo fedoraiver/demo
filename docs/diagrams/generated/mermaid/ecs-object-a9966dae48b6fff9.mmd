@@ -38,30 +38,30 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**spot​_​light::SpotLight**<br/>配置沿指定方向照射的聚光灯。" }
+  n0@{ shape: rounded, label: "**SpotLight**<br/>配置沿指定方向照射的聚光灯。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​light::cluster::assign::assign​_​**<br/>**objects​_​to​_​clusters**<br/>将灯光、探针及贴花分配到视图分簇。" }
+  n1@{ shape: rounded, label: "**assign​_​objects​_​to​_​clusters**<br/>将灯光、探针及贴花分配到视图分簇。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​light::spot​_​light::update​_​spot​_​**<br/>**light​_​frusta**<br/>更新可见聚光灯的阴影视锥。" }
+  n2@{ shape: rounded, label: "**update​_​spot​_​light​_​frusta**<br/>更新可见聚光灯的阴影视锥。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​pbr::render::light::extract​_​**<br/>**shadow​_​lod​_​origin**<br/>来自crate:bevy​_​pbr ↗：解析点光与聚光<br/>阴影 LOD 的距离参考位置。" }
+  n3@{ shape: rounded, label: "**extract​_​shadow​_​lod​_​origin**<br/>来自crate:bevy​_​pbr ↗：解析点光与聚光<br/>阴影 LOD 的距离参考位置。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**bevy​_​light::check​_​point​_​light​_​mesh​_​**<br/>**visibility**<br/>计算点光与聚光灯阴影可见的网格。" }
+  n4@{ shape: rounded, label: "**check​_​point​_​light​_​mesh​_​visibility**<br/>计算点光与聚光灯阴影可见的网格。" }
   class n4 node_system
-  n5@{ shape: rounded, label: "**bevy​_​light::spot​_​light::update​_​spot​_​**<br/>**light​_​bounding​_​spheres**<br/>按聚光灯位置和范围更新剔除包围球。" }
+  n5@{ shape: rounded, label: "**update​_​spot​_​light​_​bounding​_​spheres**<br/>按聚光灯位置和范围更新剔除包围球。" }
   class n5 node_system
-  n6@{ shape: rounded, label: "**bevy​_​pbr::render::light::extract​_​**<br/>**lights**<br/>来自crate:bevy​_​pbr ↗：提取各类可见光<br/>源及阴影渲染状态。" }
+  n6@{ shape: rounded, label: "**extract​_​lights**<br/>来自crate:bevy​_​pbr ↗：提取各类可见光<br/>源及阴影渲染状态。" }
   class n6 node_system
   class n6 external_node
-  n7@{ shape: rounded, label: "**bevy​_​light::check​_​dir​_​light​_​mesh​_​**<br/>**visibility**<br/>计算方向光各相机级联可见的投影网格。" }
+  n7@{ shape: rounded, label: "**check​_​dir​_​light​_​mesh​_​visibility**<br/>计算方向光各相机级联可见的投影网格。" }
   class n7 node_system
-  n8@{ shape: rounded, label: "**bevy​_​light::gizmos::draw​_​all​_​lights**<br/>按配置颜色模式绘制全部灯光调试图形。" }
+  n8@{ shape: rounded, label: "**draw​_​all​_​lights**<br/>按配置颜色模式绘制全部灯光调试图形。" }
   class n8 node_system
-  n9@{ shape: rounded, label: "**bevy​_​pbr::cluster::extract​_​clusters​_​**<br/>**for​_​cpu​_​clustering**<br/>来自crate:bevy​_​pbr ↗：把 CPU 聚簇结<br/>果转换为渲染侧对象列表。" }
+  n9@{ shape: rounded, label: "**extract​_​clusters​_​for​_​cpu​_​clustering**<br/>来自crate:bevy​_​pbr ↗：把 CPU 聚簇结<br/>果转换为渲染侧对象列表。" }
   class n9 node_system
   class n9 external_node
-  n10@{ shape: rounded, label: "**bevy​_​light::gizmos::draw​_​lights**<br/>为显式标记的各类光源绘制调试轮廓。" }
+  n10@{ shape: rounded, label: "**draw​_​lights**<br/>为显式标记的各类光源绘制调试轮廓。" }
   class n10 node_system
   n0 e0@--> n1
   class e0 edge_read

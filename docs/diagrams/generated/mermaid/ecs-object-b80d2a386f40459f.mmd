@@ -49,111 +49,111 @@ flowchart LR
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
   subgraph layout_card_n0[" "]
-  n0@{ shape: rounded, label: "**bevy​_​core​_​pipeline::schedule::**<br/>**camera​_​driver**<br/>为辅助视图和活动相机运行专属渲染调度。" }
+  n0@{ shape: rounded, label: "**camera​_​driver**<br/>为辅助视图和活动相机运行专属渲染调度。" }
   class n0 node_system
   end
   style layout_card_n0 fill:none,stroke:none
   subgraph layout_card_n1[" "]
-  n1@{ shape: cyl, label: "**bevy​_​ecs::error::**<br/>**FallbackErrorHandler**<br/>来自crate:bevy​_​ecs ↗：处理未被接管的<br/>错误与 panic。" }
+  n1@{ shape: cyl, label: "**FallbackErrorHandler**<br/>来自crate:bevy​_​ecs ↗：处理未被接管的<br/>错误与 panic。" }
   class n1 node_resource
   class n1 external_node
   end
   style layout_card_n1 fill:none,stroke:none
   subgraph layout_card_n2[" "]
-  n2@{ shape: lean-r, label: "**bevy​_​ecs::lifecycle::**<br/>**RemovedComponentEntity**<br/>来自crate:bevy​_​ecs ↗：记录发生组件移<br/>除的实体。" }
+  n2@{ shape: lean-r, label: "**RemovedComponentEntity**<br/>来自crate:bevy​_​ecs ↗：记录发生组件移<br/>除的实体。" }
   class n2 node_message
   class n2 external_node
   end
   style layout_card_n2 fill:none,stroke:none
   subgraph layout_card_n3[" "]
-  n3@{ shape: rounded, label: "**schedule::RootNonCameraView**<br/>为非相机关联的根视图保存渲染调度入口。" }
+  n3@{ shape: rounded, label: "**RootNonCameraView**<br/>为非相机关联的根视图保存渲染调度入口。" }
   class n3 node_component
   end
   style layout_card_n3 fill:none,stroke:none
   subgraph layout_card_n4[" "]
-  n4@{ shape: cyl, label: "**bevy​_​render::renderer::CurrentView**<br/>来自crate:bevy​_​render ↗：指定当前正在<br/>渲染的视图实体。" }
+  n4@{ shape: cyl, label: "**CurrentView**<br/>来自crate:bevy​_​render ↗：指定当前正在<br/>渲染的视图实体。" }
   class n4 node_resource
   class n4 external_node
   end
   style layout_card_n4 fill:none,stroke:none
   subgraph layout_card_n5[" "]
-  n5@{ shape: cyl, label: "**schedule::CameraWindows**<br/>记录相机输出所覆盖的窗口集合。" }
+  n5@{ shape: cyl, label: "**CameraWindows**<br/>记录相机输出所覆盖的窗口集合。" }
   class n5 node_resource
   end
   style layout_card_n5 fill:none,stroke:none
   subgraph layout_card_n6[" "]
-  n6@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;bevy​_​**<br/>**ecs::lifecycle::**<br/>**RemovedComponentEntity#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n6@{ shape: cyl, label: "**Messages#lt;RemovedComponentEntity#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n6 node_resource
   class n6 external_node
   end
   style layout_card_n6 fill:none,stroke:none
   subgraph layout_card_n7[" "]
-  n7@{ shape: cyl, label: "**bevy​_​render::renderer::RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
+  n7@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
   class n7 node_resource
   class n7 external_node
   end
   style layout_card_n7 fill:none,stroke:none
   subgraph layout_card_n8[" "]
-  n8@{ shape: cyl, label: "**bevy​_​render::camera::SortedCameras**<br/>来自crate:bevy​_​render ↗：按相机绘制顺<br/>序保存排序结果。" }
+  n8@{ shape: cyl, label: "**SortedCameras**<br/>来自crate:bevy​_​render ↗：按相机绘制顺<br/>序保存排序结果。" }
   class n8 node_resource
   class n8 external_node
   end
   style layout_card_n8 fill:none,stroke:none
   subgraph layout_card_n9[" "]
-  n9@{ shape: cyl, label: "**bevy​_​render::renderer::**<br/>**PendingCommandBuffers**<br/>来自crate:bevy​_​render ↗：暂存等待提交<br/>到渲染队列的命令缓冲和编码器。" }
+  n9@{ shape: cyl, label: "**PendingCommandBuffers**<br/>来自crate:bevy​_​render ↗：暂存等待提交<br/>到渲染队列的命令缓冲和编码器。" }
   class n9 node_resource
   class n9 external_node
   end
   style layout_card_n9 fill:none,stroke:none
   subgraph layout_card_n10[" "]
-  n10@{ shape: cyl, label: "**bevy​_​ecs::schedule::Schedules**<br/>来自crate:bevy​_​ecs ↗：按标签保存可运<br/>行的调度实例。" }
+  n10@{ shape: cyl, label: "**Schedules**<br/>来自crate:bevy​_​ecs ↗：按标签保存可运<br/>行的调度实例。" }
   class n10 node_resource
   class n10 external_node
   end
   style layout_card_n10 fill:none,stroke:none
   subgraph layout_card_n11[" "]
-  n11@{ shape: rounded, label: "**bevy​_​render::view::ExtractedWindow**<br/>来自crate:bevy​_​render ↗：保存渲染侧窗<br/>口尺寸、呈现模式和交换链状态。" }
+  n11@{ shape: rounded, label: "**ExtractedWindow**<br/>来自crate:bevy​_​render ↗：保存渲染侧窗<br/>口尺寸、呈现模式和交换链状态。" }
   class n11 node_component
   class n11 external_node
   end
   style layout_card_n11 fill:none,stroke:none
   subgraph layout_card_n12[" "]
-  n12@{ shape: cyl, label: "**bevy​_​ecs::entity​_​disabling::**<br/>**DefaultQueryFilters**<br/>来自crate:bevy​_​ecs ↗：保存默认禁用实<br/>体查询过滤规则。" }
+  n12@{ shape: cyl, label: "**DefaultQueryFilters**<br/>来自crate:bevy​_​ecs ↗：保存默认禁用实<br/>体查询过滤规则。" }
   class n12 node_resource
   class n12 external_node
   end
   style layout_card_n12 fill:none,stroke:none
   subgraph layout_card_n13[" "]
-  n13@{ shape: stadium, label: "**bevy​_​ecs::change​_​detection::**<br/>**CheckChangeTicks**<br/>来自crate:bevy​_​ecs ↗：请求维护变化检<br/>测 tick 范围。" }
+  n13@{ shape: stadium, label: "**CheckChangeTicks**<br/>来自crate:bevy​_​ecs ↗：请求维护变化检<br/>测 tick 范围。" }
   class n13 node_event
   class n13 external_node
   end
   style layout_card_n13 fill:none,stroke:none
   subgraph layout_card_n14[" "]
-  n14@{ shape: fr-rect, label: "**bevy​_​core​_​pipeline::**<br/>**CorePipelinePlugin**<br/>装配核心渲染管线与相机驱动。" }
+  n14@{ shape: fr-rect, label: "**CorePipelinePlugin**<br/>装配核心渲染管线与相机驱动。" }
   class n14 node_plugin
   end
   style layout_card_n14 fill:none,stroke:none
   subgraph layout_card_n15[" "]
-  n15@{ shape: rounded, label: "**sync​_​world::MainEntity**<br/>来自crate:bevy​_​extract ↗：在子世界中<br/>关联原始主世界实体。" }
+  n15@{ shape: rounded, label: "**MainEntity**<br/>来自crate:bevy​_​extract ↗：在子世界中<br/>关联原始主世界实体。" }
   class n15 node_component
   class n15 external_node
   end
   style layout_card_n15 fill:none,stroke:none
   subgraph layout_card_n16[" "]
-  n16@{ shape: rounded, label: "**bevy​_​render::camera::ExtractedCamera**<br/>来自crate:bevy​_​render ↗：保存渲染世界<br/>相机的目标和绘制配置。" }
+  n16@{ shape: rounded, label: "**ExtractedCamera**<br/>来自crate:bevy​_​render ↗：保存渲染世界<br/>相机的目标和绘制配置。" }
   class n16 node_component
   class n16 external_node
   end
   style layout_card_n16 fill:none,stroke:none
   subgraph layout_card_n17[" "]
-  n17@{ shape: rounded, label: "**bevy​_​ecs::schedule::Schedules**<br/>来自crate:bevy​_​ecs ↗：按标签保存可运<br/>行的调度实例。" }
+  n17@{ shape: rounded, label: "**Schedules**<br/>来自crate:bevy​_​ecs ↗：按标签保存可运<br/>行的调度实例。" }
   class n17 node_component
   class n17 external_node
   end
   style layout_card_n17 fill:none,stroke:none
   subgraph layout_card_n18[" "]
-  n18@{ shape: cyl, label: "**bevy​_​render::diagnostic::**<br/>**DiagnosticsRecorder**<br/>来自crate:bevy​_​render ↗：记录渲染诊断<br/>区间与 GPU 查询索引的对应。" }
+  n18@{ shape: cyl, label: "**DiagnosticsRecorder**<br/>来自crate:bevy​_​render ↗：记录渲染诊断<br/>区间与 GPU 查询索引的对应。" }
   class n18 node_resource
   class n18 external_node
   end

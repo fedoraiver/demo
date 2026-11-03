@@ -38,24 +38,24 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;bevy​_​**<br/>**asset::AssetEvent#lt;image::Image#gt;#gt;**<br/>保存最近两次轮换期间产生的指定类型消息" }
+  n0@{ shape: cyl, label: "**Messages#lt;AssetEvent#lt;Image#gt;#gt;**<br/>保存最近两次轮换期间产生的指定类型消息" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​asset::assets::Assets#lt;bevy​_​**<br/>**image::image::Image#gt;::asset​_​events**<br/>来自crate:bevy​_​asset ↗：发布累计的资<br/>产变化消息。" }
+  n1@{ shape: rounded, label: "**asset​_​events**<br/>来自crate:bevy​_​asset ↗：发布累计的资<br/>产变化消息。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​light::atmosphere::extract​_​**<br/>**chromatic​_​phase​_​textures**<br/>来自crate:bevy​_​light ↗：将已加载色度<br/>相函数纹理转换为散射曲线。" }
+  n2@{ shape: rounded, label: "**extract​_​chromatic​_​phase​_​textures**<br/>来自crate:bevy​_​light ↗：将已加载色度<br/>相函数纹理转换为散射曲线。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​render::camera::camera​_​system**<br/>来自crate:bevy​_​render ↗：响应目标尺寸<br/>变化并更新相机投影。" }
+  n3@{ shape: rounded, label: "**camera​_​system**<br/>来自crate:bevy​_​render ↗：响应目标尺寸<br/>变化并更新相机投影。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**bevy​_​render::render​_​asset::extract​_​**<br/>**render​_​asset#lt;bevy​_​render::texture::**<br/>**gpu​_​image::GpuImage#gt;**<br/>来自crate:bevy​_​render ↗：按资产变化和<br/>设备恢复请求提取渲染资产。" }
+  n4@{ shape: rounded, label: "**extract​_​render​_​asset**<br/>来自crate:bevy​_​render ↗：按资产变化和<br/>设备恢复请求提取渲染资产。" }
   class n4 node_system
   class n4 external_node
-  n5@{ shape: rounded, label: "**bevy​_​render::camera::camera​_​system**<br/>来自crate:bevy​_​render ↗：响应目标尺寸<br/>变化并更新相机投影。" }
+  n5@{ shape: rounded, label: "**camera​_​system**<br/>来自crate:bevy​_​render ↗：响应目标尺寸<br/>变化并更新相机投影。" }
   class n5 node_system
   class n5 external_node
-  n6@{ shape: rounded, label: "**bevy​_​egui::free​_​egui​_​textures​_​system**<br/>来自crate:bevy​_​egui ↗：回收 Egui 已<br/>释放或失效的纹理引用。" }
+  n6@{ shape: rounded, label: "**free​_​egui​_​textures​_​system**<br/>来自crate:bevy​_​egui ↗：回收 Egui 已<br/>释放或失效的纹理引用。" }
   class n6 node_system
   class n6 external_node
   n1 e0@-->|"可变访问"| n0

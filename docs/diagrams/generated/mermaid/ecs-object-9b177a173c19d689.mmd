@@ -46,30 +46,33 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​camera::visibility::range::**<br/>**check​_​visibility​_​ranges**<br/>按视图距离计算实体可见范围位掩码。" }
+  n0@{ shape: rounded, label: "**check​_​visibility​_​ranges**<br/>按视图距离计算实体可见范围位掩码。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**bevy​_​camera::visibility::check​_​**<br/>**visibility​_​cpu​_​culling**<br/>按层、距离和视锥收集各相机可见实体。" }
+  n1@{ shape: rounded, label: "**check​_​visibility​_​cpu​_​culling**<br/>按层、距离和视锥收集各相机可见实体。" }
   class n1 node_system
-  n2@{ shape: cyl, label: "**visibility::range::**<br/>**VisibleEntityRanges**<br/>记录各实体是否处于视图距离范围。" }
+  subgraph layout_card_n2[" "]
+  n2@{ shape: cyl, label: "**VisibleEntityRanges**<br/>记录各实体是否处于视图距离范围。" }
   class n2 node_resource
-  n3@{ shape: rounded, label: "**visibility::range::VisibilityRange**<br/>按相机距离控制网格的细节层级。" }
+  end
+  style layout_card_n2 fill:none,stroke:none
+  n3@{ shape: rounded, label: "**VisibilityRange**<br/>按相机距离控制网格的细节层级。" }
   class n3 node_component
-  n4@{ shape: rounded, label: "**bevy​_​camera::primitives::Aabb**<br/>以局部轴对齐包围盒支持可见性裁剪。" }
+  n4@{ shape: rounded, label: "**Aabb**<br/>以局部轴对齐包围盒支持可见性裁剪。" }
   class n4 node_component
   n5@{ shape: lin-rect, label: "**CheckVisibility**<br/>组织相机与实体可见性更新。" }
   class n5 node_system_set
-  n6@{ shape: rounded, label: "**bevy​_​camera::Camera**<br/>配置相机视口、输出目标和渲染顺序。" }
+  n6@{ shape: rounded, label: "**Camera**<br/>配置相机视口、输出目标和渲染顺序。" }
   class n6 node_component
   n7@{ shape: notch-rect, label: "**Local · par​_​local**<br/>暂存并行计算得到的实体距离可见位掩码。" }
   class n7 node_local
-  n8@{ shape: fr-rect, label: "**visibility::range::**<br/>**VisibilityRangePlugin**<br/>维护基于相机距离的可见范围。" }
+  n8@{ shape: fr-rect, label: "**VisibilityRangePlugin**<br/>维护基于相机距离的可见范围。" }
   class n8 node_plugin
-  n9@{ shape: rounded, label: "**components::global​_​transform::**<br/>**GlobalTransform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>合并祖先变换后的世界空间仿射变换" }
+  n9@{ shape: rounded, label: "**GlobalTransform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>合并祖先变换后的世界空间仿射变换" }
   class n9 node_component
   class n9 external_node
-  n10@{ shape: rounded, label: "**visibility::NoCpuCulling**<br/>退出内置的 CPU 视锥裁剪。" }
+  n10@{ shape: rounded, label: "**NoCpuCulling**<br/>退出内置的 CPU 视锥裁剪。" }
   class n10 node_component
-  n11@{ shape: rounded, label: "**camera::ShadowLodOrigin**<br/>指定点光与聚光阴影的距离参考点。" }
+  n11@{ shape: rounded, label: "**ShadowLodOrigin**<br/>指定点光与聚光阴影的距离参考点。" }
   class n11 node_component
   n0 e0@-->|"先于"| n1
   class e0 edge_order
@@ -94,7 +97,7 @@ flowchart LR
   n11 e10@-->|"存在性约束"| n0
   class e10 edge_reference
   e0@{ curve: basis }
-  e1@{ curve: bumpX }
+  e1@{ curve: basis }
   e2@{ curve: basis }
   e3@{ curve: basis }
   e4@{ curve: basis }

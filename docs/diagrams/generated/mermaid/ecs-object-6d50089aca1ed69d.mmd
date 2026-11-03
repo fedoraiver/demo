@@ -43,35 +43,35 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​core​_​pipeline::core​_​3d::**<br/>**extract​_​core​_​3d​_​camera​_​phases**<br/>为活动三维相机准备主渲染阶段。" }
+  n0@{ shape: rounded, label: "**extract​_​core​_​3d​_​camera​_​phases**<br/>为活动三维相机准备主渲染阶段。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**bevy​_​render::render​_​phase::**<br/>**ViewSortedRenderPhases#lt;bevy​_​core​_​**<br/>**pipeline::core​_​3d::Transparent3d#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图需<br/>要排序的绘制指令。" }
+  n1@{ shape: cyl, label: "**ViewSortedRenderPhases#lt;Transparent3d**<br/>**#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图需<br/>要排序的绘制指令。" }
   class n1 node_resource
   class n1 external_node
   n2@{ shape: notch-rect, label: "**Local · live​_​entities**<br/>记录本帧仍活动的三维相机主渲染阶段。" }
   class n2 node_local
-  n3@{ shape: cyl, label: "**extract​_​plugin::MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
+  n3@{ shape: cyl, label: "**MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
   class n3 node_resource
   class n3 external_node
-  n4@{ shape: cyl, label: "**bevy​_​render::render​_​phase::**<br/>**ViewBinnedRenderPhases#lt;core​_​3d::**<br/>**AlphaMask3d#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图按<br/>分桶组织的绘制指令。" }
+  n4@{ shape: cyl, label: "**ViewBinnedRenderPhases#lt;AlphaMask3d#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图按<br/>分桶组织的绘制指令。" }
   class n4 node_resource
   class n4 external_node
-  n5@{ shape: rounded, label: "**bevy​_​render::view::NoIndirectDrawing**<br/>来自crate:bevy​_​render ↗：关闭相机的间<br/>接绘制模式。" }
+  n5@{ shape: rounded, label: "**NoIndirectDrawing**<br/>来自crate:bevy​_​render ↗：关闭相机的间<br/>接绘制模式。" }
   class n5 node_component
   class n5 external_node
-  n6@{ shape: cyl, label: "**bevy​_​render::render​_​phase::**<br/>**ViewBinnedRenderPhases#lt;core​_​3d::**<br/>**Opaque3d#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图按<br/>分桶组织的绘制指令。" }
+  n6@{ shape: cyl, label: "**ViewBinnedRenderPhases#lt;Opaque3d#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图按<br/>分桶组织的绘制指令。" }
   class n6 node_resource
   class n6 external_node
-  n7@{ shape: rounded, label: "**components::Camera3d**<br/>来自crate:bevy​_​camera ↗：启用三维相机<br/>主渲染流程。" }
+  n7@{ shape: rounded, label: "**Camera3d**<br/>来自crate:bevy​_​camera ↗：启用三维相机<br/>主渲染流程。" }
   class n7 node_component
   class n7 external_node
-  n8@{ shape: cyl, label: "**bevy​_​render::batching::gpu​_​**<br/>**preprocessing::**<br/>**GpuPreprocessingSupport**<br/>来自crate:bevy​_​render ↗：记录设备可采<br/>用的 GPU 预处理级别。" }
+  n8@{ shape: cyl, label: "**GpuPreprocessingSupport**<br/>来自crate:bevy​_​render ↗：记录设备可采<br/>用的 GPU 预处理级别。" }
   class n8 node_resource
   class n8 external_node
-  n9@{ shape: rounded, label: "**bevy​_​camera::Camera**<br/>来自crate:bevy​_​camera ↗：配置相机视<br/>口、输出目标和渲染顺序。" }
+  n9@{ shape: rounded, label: "**Camera**<br/>来自crate:bevy​_​camera ↗：配置相机视<br/>口、输出目标和渲染顺序。" }
   class n9 node_component
   class n9 external_node
-  n10@{ shape: fr-rect, label: "**core​_​3d::Core3dPlugin**<br/>建立三维相机的渲染流程。" }
+  n10@{ shape: fr-rect, label: "**Core3dPlugin**<br/>建立三维相机的渲染流程。" }
   class n10 node_plugin
   n0 e0@-->|"可变访问"| n1
   class e0 edge_write

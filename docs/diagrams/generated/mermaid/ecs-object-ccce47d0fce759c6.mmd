@@ -44,32 +44,32 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​pbr::deferred::prepare​_​**<br/>**deferred​_​lighting​_​pipelines**<br/>为有效延迟视图选择与前向一致的光照管线。" }
+  n0@{ shape: rounded, label: "**prepare​_​deferred​_​lighting​_​pipelines**<br/>为有效延迟视图选择与前向一致的光照管线。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**deferred::SkipDeferredLighting**<br/>让指定视图跳过内置延迟光照通道。" }
+  n1@{ shape: rounded, label: "**SkipDeferredLighting**<br/>让指定视图跳过内置延迟光照通道。" }
   class n1 node_component
-  n2@{ shape: rounded, label: "**deferred::DeferredLightingPipeline**<br/>保存视图选用的延迟光照管线。" }
+  n2@{ shape: rounded, label: "**DeferredLightingPipeline**<br/>保存视图选用的延迟光照管线。" }
   class n2 node_component
-  n3@{ shape: cyl, label: "**bevy​_​pbr::ViewKeyCache**<br/>缓存各视图预启用特性的网格管线键。" }
+  n3@{ shape: cyl, label: "**ViewKeyCache**<br/>缓存各视图预启用特性的网格管线键。" }
   class n3 node_resource
-  n4@{ shape: cyl, label: "**bevy​_​render::render​_​resource::**<br/>**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
+  n4@{ shape: cyl, label: "**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
   class n4 node_resource
   class n4 external_node
-  n5@{ shape: rounded, label: "**prepass::DeferredPrepass**<br/>来自crate:bevy​_​core​_​pipeline ↗：为三<br/>维相机启用延迟材质 G-buffer 预通道。" }
+  n5@{ shape: rounded, label: "**DeferredPrepass**<br/>来自crate:bevy​_​core​_​pipeline ↗：为三<br/>维相机启用延迟材质 G-buffer 预通道。" }
   class n5 node_component
   class n5 external_node
-  n6@{ shape: cyl, label: "**deferred::DeferredLightingLayout**<br/>描述延迟光照绘制的着色与绑定接口。" }
+  n6@{ shape: cyl, label: "**DeferredLightingLayout**<br/>描述延迟光照绘制的着色与绑定接口。" }
   class n6 node_resource
-  n7@{ shape: rounded, label: "**bevy​_​render::camera::ExtractedCamera**<br/>来自crate:bevy​_​render ↗：保存渲染世界<br/>相机的目标和绘制配置。" }
+  n7@{ shape: rounded, label: "**ExtractedCamera**<br/>来自crate:bevy​_​render ↗：保存渲染世界<br/>相机的目标和绘制配置。" }
   class n7 node_component
   class n7 external_node
-  n8@{ shape: cyl, label: "**bevy​_​render::render​_​resource::**<br/>**SpecializedRenderPipelines#lt;deferred:**<br/>**:DeferredLightingLayout#gt;**<br/>来自crate:bevy​_​render ↗：按配置键缓存<br/>渲染管线变体。" }
+  n8@{ shape: cyl, label: "**SpecializedRenderPipelines#lt;DeferredL**<br/>**ightingLayout#gt;**<br/>来自crate:bevy​_​render ↗：按配置键缓存<br/>渲染管线变体。" }
   class n8 node_resource
   class n8 external_node
-  n9@{ shape: rounded, label: "**bevy​_​render::view::ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
+  n9@{ shape: rounded, label: "**ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
   class n9 node_component
   class n9 external_node
-  n10@{ shape: fr-rect, label: "**deferred::DeferredPbrLightingPlugin**<br/>提供延迟物理材质光照。" }
+  n10@{ shape: fr-rect, label: "**DeferredPbrLightingPlugin**<br/>提供延迟物理材质光照。" }
   class n10 node_plugin
   n11@{ shape: lin-rect, label: "**Prepare**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
   class n11 node_system_set

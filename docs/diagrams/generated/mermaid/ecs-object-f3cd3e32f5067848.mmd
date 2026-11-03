@@ -36,12 +36,12 @@ flowchart LR
   classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**atmosphere::resources::**<br/>**AtmosphereBindGroupLayouts**<br/>描述四类大气查找表的资源布局。" }
+  n0@{ shape: cyl, label: "**AtmosphereBindGroupLayouts**<br/>描述四类大气查找表的资源布局。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​render::init​_​gpu​_​resource#lt;bevy​_​**<br/>**pbr::atmosphere::resources::**<br/>**AtmosphereLutPipelines#gt;**<br/>来自crate:bevy​_​render ↗：构造并插入渲<br/>染所需资源。" }
+  n1@{ shape: rounded, label: "**init​_​gpu​_​resource**<br/>来自crate:bevy​_​render ↗：构造并插入渲<br/>染所需资源。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​pbr::atmosphere::resources::**<br/>**prepare​_​atmosphere​_​bind​_​groups**<br/>为大气查找表计算和天空绘制绑定视图资源。" }
+  n2@{ shape: rounded, label: "**prepare​_​atmosphere​_​bind​_​groups**<br/>为大气查找表计算和天空绘制绑定视图资源。" }
   class n2 node_system
   n0 e0@--> n1
   class e0 edge_read

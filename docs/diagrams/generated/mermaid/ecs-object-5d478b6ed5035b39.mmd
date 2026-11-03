@@ -39,34 +39,34 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**view::visibility::**<br/>**RenderVisibleEntities**<br/>按类别保存视图的可见实体及变化列表。" }
+  n0@{ shape: rounded, label: "**RenderVisibleEntities**<br/>按类别保存视图的可见实体及变化列表。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::**<br/>**material::specialize​_​material2d​_​**<br/>**meshes**<br/>来自crate:bevy​_​sprite​_​render ↗：为可<br/>见二维网格重建失效的材质专用化。" }
+  n1@{ shape: rounded, label: "**specialize​_​material2d​_​meshes**<br/>来自crate:bevy​_​sprite​_​render ↗：为可<br/>见二维网格重建失效的材质专用化。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​sprite​_​render::render::queue​_​**<br/>**sprites**<br/>来自crate:bevy​_​sprite​_​render ↗：按视<br/>图可见性将精灵加入透明二维阶段。" }
+  n2@{ shape: rounded, label: "**queue​_​sprites**<br/>来自crate:bevy​_​sprite​_​render ↗：按视<br/>图可见性将精灵加入透明二维阶段。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​render::camera::extract​_​cameras**<br/>把活动相机及可见实体提取到渲染世界。" }
+  n3@{ shape: rounded, label: "**extract​_​cameras**<br/>把活动相机及可见实体提取到渲染世界。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**bevy​_​pbr::render::mesh::collect​_​gpu​_​**<br/>**culled​_​meshes**<br/>来自crate:bevy​_​pbr ↗：按渲染层把<br/>GPU 裁剪对象分配到各视图列表。" }
+  n4@{ shape: rounded, label: "**collect​_​gpu​_​culled​_​meshes**<br/>来自crate:bevy​_​pbr ↗：按渲染层把<br/>GPU 裁剪对象分配到各视图列表。" }
   class n4 node_system
   class n4 external_node
-  n5@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::**<br/>**material::queue​_​material2d​_​meshes**<br/>来自crate:bevy​_​sprite​_​render ↗：按透<br/>明模式更新二维网格渲染批次。" }
+  n5@{ shape: rounded, label: "**queue​_​material2d​_​meshes**<br/>来自crate:bevy​_​sprite​_​render ↗：按透<br/>明模式更新二维网格渲染批次。" }
   class n5 node_system
   class n5 external_node
-  n6@{ shape: rounded, label: "**bevy​_​pbr::prepass::queue​_​prepass​_​**<br/>**material​_​meshes**<br/>来自crate:bevy​_​pbr ↗：把有效材质网格<br/>分入预通道或延迟几何阶段。" }
+  n6@{ shape: rounded, label: "**queue​_​prepass​_​material​_​meshes**<br/>来自crate:bevy​_​pbr ↗：把有效材质网格<br/>分入预通道或延迟几何阶段。" }
   class n6 node_system
   class n6 external_node
-  n7@{ shape: rounded, label: "**bevy​_​pbr::prepass::specialize​_​**<br/>**prepass​_​material​_​meshes**<br/>来自crate:bevy​_​pbr ↗：按深度、材质和<br/>运动特性生成预通道专用管线。" }
+  n7@{ shape: rounded, label: "**specialize​_​prepass​_​material​_​meshes**<br/>来自crate:bevy​_​pbr ↗：按深度、材质和<br/>运动特性生成预通道专用管线。" }
   class n7 node_system
   class n7 external_node
-  n8@{ shape: rounded, label: "**bevy​_​render::view::visibility::**<br/>**collect​_​visible​_​cpu​_​culled​_​entities**<br/>汇总相机与阴影子视图的 CPU 剔除可见实<br/>体。" }
+  n8@{ shape: rounded, label: "**collect​_​visible​_​cpu​_​culled​_​entities**<br/>汇总相机与阴影子视图的 CPU 剔除可见实<br/>体。" }
   class n8 node_system
-  n9@{ shape: rounded, label: "**bevy​_​pbr::material::queue​_​material​_​**<br/>**meshes**<br/>来自crate:bevy​_​pbr ↗：按材质模式把可<br/>见网格加入相应绘制阶段。" }
+  n9@{ shape: rounded, label: "**queue​_​material​_​meshes**<br/>来自crate:bevy​_​pbr ↗：按材质模式把可<br/>见网格加入相应绘制阶段。" }
   class n9 node_system
   class n9 external_node
-  n10@{ shape: rounded, label: "**bevy​_​pbr::material::specialize​_​**<br/>**material​_​meshes**<br/>来自crate:bevy​_​pbr ↗：为变化的可见网<br/>格生成并缓存材质专用管线。" }
+  n10@{ shape: rounded, label: "**specialize​_​material​_​meshes**<br/>来自crate:bevy​_​pbr ↗：为变化的可见网<br/>格生成并缓存材质专用管线。" }
   class n10 node_system
   class n10 external_node
   n0 e0@--> n1

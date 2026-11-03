@@ -45,30 +45,30 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​anti​_​alias::contrast​_​adaptive​_​**<br/>**sharpening::prepare​_​cas​_​pipelines**<br/>按去噪与目标格式准备视图锐化管线。" }
+  n0@{ shape: rounded, label: "**prepare​_​cas​_​pipelines**<br/>按去噪与目标格式准备视图锐化管线。" }
   class n0 node_system
   n1@{ shape: lin-rect, label: "**Prepare**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
   class n1 node_system_set
   class n1 external_node
-  n2@{ shape: cyl, label: "**bevy​_​render::render​_​resource::**<br/>**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
+  n2@{ shape: cyl, label: "**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
   class n2 node_resource
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​render::view::ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
+  n3@{ shape: rounded, label: "**ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
   class n3 node_component
   class n3 external_node
-  n4@{ shape: rounded, label: "**contrast​_​adaptive​_​sharpening::**<br/>**CasUniform**<br/>向锐化着色器传递相机锐度参数。" }
+  n4@{ shape: rounded, label: "**CasUniform**<br/>向锐化着色器传递相机锐度参数。" }
   class n4 node_component
-  n5@{ shape: rounded, label: "**contrast​_​adaptive​_​sharpening::**<br/>**ViewCasPipeline**<br/>保存当前视图的锐化管线标识。" }
+  n5@{ shape: rounded, label: "**ViewCasPipeline**<br/>保存当前视图的锐化管线标识。" }
   class n5 node_component
   n6@{ shape: notch-rect, label: "**Local · removals.0.0.0.0**<br/>保存 CasUniform 移除参数的组件 ID。" }
   class n6 node_local
   n7@{ shape: notch-rect, label: "**Local · removals.0.1**<br/>跟踪 CasUniform 移除记录的读取进度。" }
   class n7 node_local
-  n8@{ shape: fr-rect, label: "**contrast​_​adaptive​_​sharpening::**<br/>**CasPlugin**<br/>提供对比度自适应锐化。" }
+  n8@{ shape: fr-rect, label: "**CasPlugin**<br/>提供对比度自适应锐化。" }
   class n8 node_plugin
-  n9@{ shape: cyl, label: "**contrast​_​adaptive​_​sharpening::**<br/>**CasPipeline**<br/>保存对比度自适应锐化的管线资源。" }
+  n9@{ shape: cyl, label: "**CasPipeline**<br/>保存对比度自适应锐化的管线资源。" }
   class n9 node_resource
-  n10@{ shape: rounded, label: "**contrast​_​adaptive​_​sharpening::**<br/>**DenoiseCas**<br/>保存 CAS 锐化管线的去噪开关。" }
+  n10@{ shape: rounded, label: "**DenoiseCas**<br/>保存 CAS 锐化管线的去噪开关。" }
   class n10 node_component
   n1 e0@-->|"集合成员"| n0
   class e0 edge_set_membership

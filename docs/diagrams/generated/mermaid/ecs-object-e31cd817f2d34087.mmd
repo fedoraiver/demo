@@ -39,7 +39,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: notch-rect, label: "**Local · hovered​_​entity​_​ancestors**<br/>缓存当前与前轮指针悬停祖先集合。" }
   class n0 node_local
-  n1@{ shape: rounded, label: "**bevy​_​picking::events::pointer​_​events**<br/>根据悬停与按钮状态派发指针交互事件。" }
+  n1@{ shape: rounded, label: "**pointer​_​events**<br/>根据悬停与按钮状态派发指针交互事件。" }
   class n1 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

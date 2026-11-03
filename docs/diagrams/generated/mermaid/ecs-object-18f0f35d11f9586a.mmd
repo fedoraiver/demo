@@ -40,25 +40,25 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: lin-rect, label: "**VisibilityPropagate**<br/>组织相机与实体可见性更新。" }
   class n0 node_system_set
-  n1@{ shape: rounded, label: "**bevy​_​camera::visibility::visibility​_​**<br/>**propagate​_​system**<br/>沿父子层级传播可见意图的变化。" }
+  n1@{ shape: rounded, label: "**visibility​_​propagate​_​system**<br/>沿父子层级传播可见意图的变化。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​camera::visibility::reset​_​view​_​**<br/>**visibility**<br/>为本帧可见性检查保留上帧状态。" }
+  n2@{ shape: rounded, label: "**reset​_​view​_​visibility**<br/>为本帧可见性检查保留上帧状态。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​ui​_​widgets::menu::menu​_​acquire​_​**<br/>**focus**<br/>来自crate:bevy​_​ui​_​widgets ↗：在菜单<br/>打开时为菜单项取得焦点。" }
+  n3@{ shape: rounded, label: "**menu​_​acquire​_​focus**<br/>来自crate:bevy​_​ui​_​widgets ↗：在菜单<br/>打开时为菜单项取得焦点。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**bevy​_​gizmos​_​render::transform​_​gizmo​_​**<br/>**render::update​_​gizmo​_​meshes**<br/>来自crate:bevy​_​gizmos​_​render ↗：将变<br/>换操作器对齐焦点并更新模式与高亮。" }
+  n4@{ shape: rounded, label: "**update​_​gizmo​_​meshes**<br/>来自crate:bevy​_​gizmos​_​render ↗：将变<br/>换操作器对齐焦点并更新模式与高亮。" }
   class n4 node_system
   class n4 external_node
-  n5@{ shape: rounded, label: "**demo::ui::scroll::sync​_​settings​_​**<br/>**scrollbars**<br/>来自ui ↗：同步滚动条显隐、拾取范围与高<br/>亮。" }
+  n5@{ shape: rounded, label: "**sync​_​settings​_​scrollbars**<br/>来自ui ↗：同步滚动条显隐、拾取范围与高<br/>亮。" }
   class n5 node_system
   class n5 external_node
-  n6@{ shape: rounded, label: "**bevy​_​ui​_​widgets::menu::menu​_​on​_​lose​_​**<br/>**focus**<br/>来自crate:bevy​_​ui​_​widgets ↗：关闭不<br/>再持有内部焦点的菜单。" }
+  n6@{ shape: rounded, label: "**menu​_​on​_​lose​_​focus**<br/>来自crate:bevy​_​ui​_​widgets ↗：关闭不<br/>再持有内部焦点的菜单。" }
   class n6 node_system
   class n6 external_node
   n7@{ shape: lin-rect, label: "**CheckVisibility**<br/>组织相机与实体可见性更新。" }
   class n7 node_system_set
-  n8@{ shape: rounded, label: "**bevy​_​transform::systems::propagate​_​**<br/>**transforms​_​for#lt;bevy​_​ecs::query::**<br/>**filter::Or#lt;(bevy​_​ecs::query::**<br/>**filter::With#lt;bevy​_​gizmos::transform​_​**<br/>**gizmo::TransformGizmoRoot#gt;, bevy​_​**<br/>**ecs::query::filter::With#lt;bevy​_​**<br/>**gizmos​_​render::transform​_​gizmo​_​**<br/>**render::GizmoOverlayCamera#gt;, bevy​_​**<br/>**ecs::query::filter::With#lt;bevy​_​**<br/>**gizmos::transform​_​gizmo::**<br/>**TransformGizmoMeshMarker#gt;)#gt;#gt;**<br/>来自crate:bevy​_​transform ↗：按指定查<br/>询过滤器即时计算世界变换。" }
+  n8@{ shape: rounded, label: "**propagate​_​transforms​_​for**<br/>来自crate:bevy​_​transform ↗：按指定查<br/>询过滤器即时计算世界变换。" }
   class n8 node_system
   class n8 external_node
   n9@{ shape: lin-rect, label: "**Propagate**<br/>来自crate:bevy​_​transform ↗：组织实体<br/>层级变换传播。" }

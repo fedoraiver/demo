@@ -38,13 +38,13 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**mesh​_​material::**<br/>**MeshMaterial3d#lt;extended​_​material::**<br/>**ExtendedMaterial#lt;pbr​_​material::**<br/>**StandardMaterial, decal::forward::**<br/>**ForwardDecalMaterialExt#gt;#gt;**<br/>为三维网格指定材质资产。" }
+  n0@{ shape: rounded, label: "**MeshMaterial3d#lt;ExtendedMaterial#lt;Stan**<br/>**dardMaterial,**<br/>**ForwardDecalMaterialExt#gt;#gt;**<br/>为三维网格指定材质资产。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​pbr::material::extract​_​mesh​_​**<br/>**materials#lt;bevy​_​pbr::extended​_​**<br/>**material::ExtendedMaterial#lt;bevy​_​**<br/>**pbr::pbr​_​material::**<br/>**StandardMaterial, bevy​_​pbr::decal::**<br/>**forward::ForwardDecalMaterialExt#gt;#gt;**<br/>根据可见性和材质变化更新渲染实例映射。" }
+  n1@{ shape: rounded, label: "**extract​_​mesh​_​materials**<br/>根据可见性和材质变化更新渲染实例映射。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​pbr::material::mark​_​meshes​_​as​_​**<br/>**changed​_​if​_​their​_​materials​_​**<br/>**changed#lt;bevy​_​pbr::extended​_​**<br/>**material::ExtendedMaterial#lt;bevy​_​**<br/>**pbr::pbr​_​material::**<br/>**StandardMaterial, bevy​_​pbr::decal::**<br/>**forward::ForwardDecalMaterialExt#gt;#gt;**<br/>材质组件或资产变化时请求网格重新提取。" }
+  n2@{ shape: rounded, label: "**mark​_​meshes​_​as​_​changed​_​if​_​their​_​**<br/>**materials​_​changed**<br/>材质组件或资产变化时请求网格重新提取。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​pbr::material::check​_​entities​_​**<br/>**needing​_​specialization#lt;bevy​_​pbr::**<br/>**extended​_​material::**<br/>**ExtendedMaterial#lt;bevy​_​pbr::pbr​_​**<br/>**material::StandardMaterial, bevy​_​**<br/>**pbr::decal::forward::**<br/>**ForwardDecalMaterialExt#gt;#gt;**<br/>收集几何或材质变化及移除的三维网格。" }
+  n3@{ shape: rounded, label: "**check​_​entities​_​needing​_​**<br/>**specialization**<br/>收集几何或材质变化及移除的三维网格。" }
   class n3 node_system
   n0 e0@--> n1
   class e0 edge_read

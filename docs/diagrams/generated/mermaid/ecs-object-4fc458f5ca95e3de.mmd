@@ -40,16 +40,16 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: lin-rect, label: "**Dispatch**<br/>组织焦点输入派发与变化通知。" }
   class n0 node_system_set
-  n1@{ shape: rounded, label: "**bevy​_​ui​_​widgets::text​_​input::on​_​ime​_​**<br/>**input**<br/>来自crate:bevy​_​ui​_​widgets ↗：把输入<br/>法组合和提交转换为文字编辑操作。" }
+  n1@{ shape: rounded, label: "**on​_​ime​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：把输入<br/>法组合和提交转换为文字编辑操作。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​input​_​focus::dispatch​_​focused​_​**<br/>**input#lt;bevy​_​input::keyboard::**<br/>**KeyboardInput#gt;**<br/>向有效焦点或主窗口派发输入。" }
+  n2@{ shape: rounded, label: "**dispatch​_​focused​_​input**<br/>向有效焦点或主窗口派发输入。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​input​_​focus::dispatch​_​focused​_​**<br/>**input#lt;bevy​_​input::mouse::MouseWheel#gt;**<br/>向有效焦点或主窗口派发输入。" }
+  n3@{ shape: rounded, label: "**dispatch​_​focused​_​input**<br/>向有效焦点或主窗口派发输入。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**bevy​_​input​_​focus::dispatch​_​focused​_​**<br/>**input#lt;bevy​_​input::gamepad::**<br/>**GamepadButtonChangedEvent#gt;**<br/>向有效焦点或主窗口派发输入。" }
+  n4@{ shape: rounded, label: "**dispatch​_​focused​_​input**<br/>向有效焦点或主窗口派发输入。" }
   class n4 node_system
-  n5@{ shape: rounded, label: "**bevy​_​ui​_​widgets::text​_​input::listen​_​**<br/>**for​_​ime​_​input​_​when​_​text​_​input​_​**<br/>**focused**<br/>来自crate:bevy​_​ui​_​widgets ↗：按可编<br/>辑焦点控制主窗口输入法。" }
+  n5@{ shape: rounded, label: "**listen​_​for​_​ime​_​input​_​when​_​text​_​**<br/>**input​_​focused**<br/>来自crate:bevy​_​ui​_​widgets ↗：按可编<br/>辑焦点控制主窗口输入法。" }
   class n5 node_system
   class n5 external_node
   n0 e0@-->|"先于"| n1

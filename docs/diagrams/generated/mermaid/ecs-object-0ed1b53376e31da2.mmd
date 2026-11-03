@@ -40,15 +40,15 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​pbr::render::light::extract​_​**<br/>**ambient​_​light​_​resource**<br/>在源存在时同步全局环境光资源。" }
+  n0@{ shape: rounded, label: "**extract​_​ambient​_​light​_​resource**<br/>在源存在时同步全局环境光资源。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**ambient​_​light::GlobalAmbientLight**<br/>来自crate:bevy​_​light ↗：配置场景默认<br/>的均匀环境光。" }
+  n1@{ shape: cyl, label: "**GlobalAmbientLight**<br/>来自crate:bevy​_​light ↗：配置场景默认<br/>的均匀环境光。" }
   class n1 node_resource
   class n1 external_node
-  n2@{ shape: cyl, label: "**extract​_​plugin::MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
+  n2@{ shape: cyl, label: "**MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
   class n2 node_resource
   class n2 external_node
-  n3@{ shape: fr-rect, label: "**bevy​_​pbr::PbrPlugin**<br/>装配物理材质与三维光照渲染。" }
+  n3@{ shape: fr-rect, label: "**PbrPlugin**<br/>装配物理材质与三维光照渲染。" }
   class n3 node_plugin
   n1 e0@---|"可变访问"| n0
   class e0 edge_write

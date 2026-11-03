@@ -45,9 +45,9 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​egui::input::process​_​ime​_​system**<br/>同步 Egui 编辑区域的原生输入法状态。" }
+  n0@{ shape: rounded, label: "**process​_​ime​_​system**<br/>同步 Egui 编辑区域的原生输入法状态。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**input::EguiContextImeState**<br/>保存各 Egui 上下文是否允许输入法以及活<br/>动编辑区域矩形" }
+  n1@{ shape: rounded, label: "**EguiContextImeState**<br/>保存各 Egui 上下文是否允许输入法以及活<br/>动编辑区域矩形" }
   class n1 node_component
   n2@{ shape: rounded, label: "**EguiOutput**<br/>保存上一轮 Egui 的平台输出和像素点比例" }
   class n2 node_component
@@ -55,17 +55,17 @@ flowchart LR
   class n3 node_plugin
   n4@{ shape: rounded, label: "**EguiContext**<br/>包装一个 egui::Context" }
   class n4 node_component
-  n5@{ shape: cyl, label: "**input::WindowToEguiContextMap**<br/>维护窗口实体与 Egui 上下文实体的双向索<br/>引" }
+  n5@{ shape: cyl, label: "**WindowToEguiContextMap**<br/>维护窗口实体与 Egui 上下文实体的双向索<br/>引" }
   class n5 node_resource
   n6@{ shape: lin-rect, label: "**ProcessOutput**<br/>组织 Egui 轮次结束与输出处理。" }
   class n6 node_system_set
-  n7@{ shape: rounded, label: "**bevy​_​egui::output::process​_​output​_​**<br/>**system**<br/>拆分 Egui 绘制输出并执行平台命令。" }
+  n7@{ shape: rounded, label: "**process​_​output​_​system**<br/>拆分 Egui 绘制输出并执行平台命令。" }
   class n7 node_system
   n8@{ shape: rounded, label: "**EguiZoomFactor**<br/>在主世界保存 Egui 上下文的缩放因子" }
   class n8 node_component
   n9@{ shape: rounded, label: "**EguiContextSettings**<br/>保存单个 Egui 上下文的运行、输入、指针<br/>捕获、光标和 IME 集成选项" }
   class n9 node_component
-  n10@{ shape: rounded, label: "**#lt;bevy​_​egui::EguiPlugin as bevy​_​app::**<br/>**plugin::Plugin#gt;::build::{{closure}}**<br/>判断是否处理 Egui 输入法输出。" }
+  n10@{ shape: rounded, label: "**build::{{closure}}**<br/>判断是否处理 Egui 输入法输出。" }
   class n10 node_system
   n0 e0@-->|"可变访问"| n1
   class e0 edge_write

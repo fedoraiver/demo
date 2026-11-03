@@ -45,41 +45,41 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**avian3d::dynamics::solver::islands::**<br/>**sleeping::update​_​sleeping​_​states**<br/>按刚体静止时间判断物理岛的休眠资格。" }
+  n0@{ shape: rounded, label: "**update​_​sleeping​_​states**<br/>按刚体静止时间判断物理岛的休眠资格。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**dynamics::solver::islands::**<br/>**sleeping::AwakeIslandBitVec**<br/>记录哪些物理岛必须保持唤醒。" }
+  n1@{ shape: cyl, label: "**AwakeIslandBitVec**<br/>记录哪些物理岛必须保持唤醒。" }
   class n1 node_resource
-  n2@{ shape: rounded, label: "**dynamics::rigid​_​body::sleeping::**<br/>**SleepTimer**<br/>累计刚体持续低速的时间。" }
+  n2@{ shape: rounded, label: "**SleepTimer**<br/>累计刚体持续低速的时间。" }
   class n2 node_component
-  n3@{ shape: rounded, label: "**dynamics::rigid​_​body::sleeping::**<br/>**SleepThreshold**<br/>设置允许休眠的线速度和角速度。" }
+  n3@{ shape: rounded, label: "**SleepThreshold**<br/>设置允许休眠的线速度和角速度。" }
   class n3 node_component
-  n4@{ shape: cyl, label: "**dynamics::solver::plugin::**<br/>**PhysicsLengthUnit**<br/>设置物理世界的长度尺度。" }
+  n4@{ shape: cyl, label: "**PhysicsLengthUnit**<br/>设置物理世界的长度尺度。" }
   class n4 node_resource
   n5@{ shape: lin-rect, label: "**AnonymousSet(0)**<br/>来自crate:bevy​_​ecs ↗：保存一组系统的<br/>共同配置。" }
   class n5 node_system_set
   class n5 external_node
   n6@{ shape: lin-rect, label: "**Sleeping**<br/>组织一次物理模拟步的主要阶段。" }
   class n6 node_system_set
-  n7@{ shape: rounded, label: "**dynamics::solver::islands::**<br/>**BodyIslandNode**<br/>记录刚体在物理岛中的连接位置。" }
+  n7@{ shape: rounded, label: "**BodyIslandNode**<br/>记录刚体在物理岛中的连接位置。" }
   class n7 node_component
-  n8@{ shape: rounded, label: "**avian3d::dynamics::solver::islands::**<br/>**sleeping::wake​_​islands​_​with​_​**<br/>**sleeping​_​disabled**<br/>让禁止休眠或已禁用的刚体所属岛保持清醒。" }
+  n8@{ shape: rounded, label: "**wake​_​islands​_​with​_​sleeping​_​disabled**<br/>让禁止休眠或已禁用的刚体所属岛保持清醒。" }
   class n8 node_system
-  n9@{ shape: cyl, label: "**dynamics::solver::islands::**<br/>**PhysicsIslands**<br/>管理模拟岛及接触和关节连接。" }
+  n9@{ shape: cyl, label: "**PhysicsIslands**<br/>管理模拟岛及接触和关节连接。" }
   class n9 node_resource
-  n10@{ shape: rounded, label: "**dynamics::rigid​_​body::sleeping::**<br/>**Sleeping**<br/>标记暂不参与模拟的休眠刚体。" }
+  n10@{ shape: rounded, label: "**Sleeping**<br/>标记暂不参与模拟的休眠刚体。" }
   class n10 node_component
-  n11@{ shape: cyl, label: "**dynamics::rigid​_​body::sleeping::**<br/>**TimeToSleep**<br/>设置刚体进入休眠前的等待时间。" }
+  n11@{ shape: cyl, label: "**TimeToSleep**<br/>设置刚体进入休眠前的等待时间。" }
   class n11 node_resource
-  n12@{ shape: rounded, label: "**dynamics::solver::solver​_​body::**<br/>**SolverBodyIndex**<br/>定位实体对应的求解器刚体。" }
+  n12@{ shape: rounded, label: "**SolverBodyIndex**<br/>定位实体对应的求解器刚体。" }
   class n12 node_component
-  n13@{ shape: cyl, label: "**dynamics::solver::solver​_​body::**<br/>**SolverBodies**<br/>连续存储活跃刚体的求解状态。" }
+  n13@{ shape: cyl, label: "**SolverBodies**<br/>连续存储活跃刚体的求解状态。" }
   class n13 node_resource
-  n14@{ shape: cyl, label: "**time::Time**<br/>来自crate:bevy​_​time ↗：保存时钟上下<br/>文、帧间隔及累计时间" }
+  n14@{ shape: cyl, label: "**Time**<br/>来自crate:bevy​_​time ↗：保存时钟上下<br/>文、帧间隔及累计时间" }
   class n14 node_resource
   class n14 external_node
-  n15@{ shape: fr-rect, label: "**dynamics::solver::islands::**<br/>**sleeping::IslandSleepingPlugin**<br/>管理物理岛休眠与唤醒。" }
+  n15@{ shape: fr-rect, label: "**IslandSleepingPlugin**<br/>管理物理岛休眠与唤醒。" }
   class n15 node_plugin
-  n16@{ shape: rounded, label: "**dynamics::rigid​_​body::sleeping::**<br/>**SleepingDisabled**<br/>禁止刚体进入休眠。" }
+  n16@{ shape: rounded, label: "**SleepingDisabled**<br/>禁止刚体进入休眠。" }
   class n16 node_component
   n0 e0@-->|"可变访问"| n1
   class e0 edge_write

@@ -40,15 +40,15 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​render::render​_​asset::extract​_​**<br/>**render​_​asset​_​bytes​_​per​_​frame**<br/>同步主世界设定的每帧渲染资产上传上限。" }
+  n0@{ shape: rounded, label: "**extract​_​render​_​asset​_​bytes​_​per​_​frame**<br/>同步主世界设定的每帧渲染资产上传上限。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**bevy​_​render::render​_​asset::**<br/>**RenderAssetBytesPerFrameLimiter**<br/>统计并限制本帧渲染资产传输字节数。" }
+  n1@{ shape: cyl, label: "**RenderAssetBytesPerFrameLimiter**<br/>统计并限制本帧渲染资产传输字节数。" }
   class n1 node_resource
-  n2@{ shape: cyl, label: "**render​_​asset::**<br/>**RenderAssetBytesPerFrame**<br/>配置每帧 CPU 到 GPU 的资产传输预算。" }
+  n2@{ shape: cyl, label: "**RenderAssetBytesPerFrame**<br/>配置每帧 CPU 到 GPU 的资产传输预算。" }
   class n2 node_resource
-  n3@{ shape: fr-rect, label: "**bevy​_​render::RenderPlugin**<br/>建立渲染子应用与 GPU 后端。" }
+  n3@{ shape: fr-rect, label: "**RenderPlugin**<br/>建立渲染子应用与 GPU 后端。" }
   class n3 node_plugin
-  n4@{ shape: cyl, label: "**extract​_​plugin::MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
+  n4@{ shape: cyl, label: "**MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
   class n4 node_resource
   class n4 external_node
   n0 e0@-->|"赋值"| n1

@@ -41,22 +41,22 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**avian3d::collision::collider::**<br/>**collider​_​transform::plugin::update​_​**<br/>**child​_​collider​_​position**<br/>由所属刚体位姿更新附属碰撞体的世界位姿。" }
+  n0@{ shape: rounded, label: "**update​_​child​_​collider​_​position**<br/>由所属刚体位姿更新附属碰撞体的世界位姿。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**bevy​_​ecs::hierarchy::Children**<br/>来自crate:bevy​_​ecs ↗：保存以<br/>ChildOf 指向当前父实体的子实体集合" }
+  n1@{ shape: rounded, label: "**Children**<br/>来自crate:bevy​_​ecs ↗：保存以<br/>ChildOf 指向当前父实体的子实体集合" }
   class n1 node_component
   class n1 external_node
-  n2@{ shape: rounded, label: "**physics​_​transform::transform::**<br/>**Rotation**<br/>保存刚体或碰撞体的世界旋转。" }
+  n2@{ shape: rounded, label: "**Rotation**<br/>保存刚体或碰撞体的世界旋转。" }
   class n2 node_component
-  n3@{ shape: rounded, label: "**dynamics::rigid​_​body::RigidBody**<br/>选择动态、静态或运动学刚体行为。" }
+  n3@{ shape: rounded, label: "**RigidBody**<br/>选择动态、静态或运动学刚体行为。" }
   class n3 node_component
   n4@{ shape: lin-rect, label: "**First**<br/>组织一次物理模拟步的主要阶段。" }
   class n4 node_system_set
-  n5@{ shape: rounded, label: "**physics​_​transform::transform::**<br/>**Position**<br/>保存刚体或碰撞体的世界位置。" }
+  n5@{ shape: rounded, label: "**Position**<br/>保存刚体或碰撞体的世界位置。" }
   class n5 node_component
-  n6@{ shape: rounded, label: "**collision::collider::collider​_​**<br/>**transform::ColliderTransform**<br/>缓存碰撞体相对于刚体的变换。" }
+  n6@{ shape: rounded, label: "**ColliderTransform**<br/>缓存碰撞体相对于刚体的变换。" }
   class n6 node_component
-  n7@{ shape: rounded, label: "**collision::collider::collider​_​**<br/>**hierarchy::ColliderOf**<br/>指定碰撞体附着的刚体。" }
+  n7@{ shape: rounded, label: "**ColliderOf**<br/>指定碰撞体附着的刚体。" }
   class n7 node_component
   n1 e0@-->|"存在性约束"| n0
   class e0 edge_reference

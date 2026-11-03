@@ -37,28 +37,28 @@ flowchart LR
   classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**bevy​_​text::FontCx**<br/>维护字体数据库、家族解析与字体缓存" }
+  n0@{ shape: cyl, label: "**FontCx**<br/>维护字体数据库、家族解析与字体缓存" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​text::font::load​_​font​_​assets​_​**<br/>**into​_​font​_​collection**<br/>把字体资产注册到排版字体数据库。" }
+  n1@{ shape: rounded, label: "**load​_​font​_​assets​_​into​_​font​_​**<br/>**collection**<br/>把字体资产注册到排版字体数据库。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​ui::widget::text​_​input​_​layout::**<br/>**update​_​editable​_​text​_​content​_​size**<br/>来自crate:bevy​_​ui ↗：按可见字符宽度和<br/>行数设置输入框固有尺寸。" }
+  n2@{ shape: rounded, label: "**update​_​editable​_​text​_​content​_​size**<br/>来自crate:bevy​_​ui ↗：按可见字符宽度和<br/>行数设置输入框固有尺寸。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​ui::widget::text::measure​_​text​_​**<br/>**system**<br/>来自crate:bevy​_​ui ↗：在文本变化后更新<br/>内容测量并安排文字重排。" }
+  n3@{ shape: rounded, label: "**measure​_​text​_​system**<br/>来自crate:bevy​_​ui ↗：在文本变化后更新<br/>内容测量并安排文字重排。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**bevy​_​ui::layout::ui​_​layout​_​system**<br/>来自crate:bevy​_​ui ↗：求解 UI 布局并回<br/>写节点尺寸和二维变换。" }
+  n4@{ shape: rounded, label: "**ui​_​layout​_​system**<br/>来自crate:bevy​_​ui ↗：求解 UI 布局并回<br/>写节点尺寸和二维变换。" }
   class n4 node_system
   class n4 external_node
-  n5@{ shape: rounded, label: "**bevy​_​ui::widget::text​_​input​_​layout::**<br/>**update​_​editable​_​text​_​layout**<br/>来自crate:bevy​_​ui ↗：刷新可编辑文本的<br/>字形布局和编辑反馈。" }
+  n5@{ shape: rounded, label: "**update​_​editable​_​text​_​layout**<br/>来自crate:bevy​_​ui ↗：刷新可编辑文本的<br/>字形布局和编辑反馈。" }
   class n5 node_system
   class n5 external_node
-  n6@{ shape: rounded, label: "**bevy​_​sprite::text2d::update​_​text2d​_​**<br/>**layout**<br/>来自crate:bevy​_​sprite ↗：重新排版变化<br/>的二维文字并准备字形。" }
+  n6@{ shape: rounded, label: "**update​_​text2d​_​layout**<br/>来自crate:bevy​_​sprite ↗：重新排版变化<br/>的二维文字并准备字形。" }
   class n6 node_system
   class n6 external_node
-  n7@{ shape: rounded, label: "**bevy​_​text::pipeline::trim​_​source​_​**<br/>**cache**<br/>裁减排版字体来源缓存。" }
+  n7@{ shape: rounded, label: "**trim​_​source​_​cache**<br/>裁减排版字体来源缓存。" }
   class n7 node_system
-  n8@{ shape: rounded, label: "**bevy​_​text::editing::apply​_​text​_​edits**<br/>应用可编辑文字排队的编辑操作。" }
+  n8@{ shape: rounded, label: "**apply​_​text​_​edits**<br/>应用可编辑文字排队的编辑操作。" }
   class n8 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

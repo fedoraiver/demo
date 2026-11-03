@@ -43,19 +43,19 @@ flowchart LR
   classDef edge_observe stroke:#B66B2D,stroke-width:1.8px,stroke-dasharray:2 4
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: hex, label: "**avian3d::dynamics::joints::joint​_​**<br/>**graph::plugin::add​_​joint​_​to​_​graph**<br/>加入关节连接并发布连接图变化。" }
+  n0@{ shape: hex, label: "**add​_​joint​_​to​_​graph**<br/>加入关节连接并发布连接图变化。" }
   class n0 node_observer
-  n1@{ shape: rounded, label: "**dynamics::joints::**<br/>**JointCollisionDisabled**<br/>禁用关节两端刚体之间的碰撞。" }
+  n1@{ shape: rounded, label: "**JointCollisionDisabled**<br/>禁用关节两端刚体之间的碰撞。" }
   class n1 node_component
-  n2@{ shape: rounded, label: "**dynamics::joints::JointDisabled**<br/>暂停关节对刚体的约束。" }
+  n2@{ shape: rounded, label: "**JointDisabled**<br/>暂停关节对刚体的约束。" }
   class n2 node_component
-  n3@{ shape: cyl, label: "**dynamics::joints::joint​_​graph::**<br/>**JointGraph**<br/>保存刚体之间的关节连接图。" }
+  n3@{ shape: cyl, label: "**JointGraph**<br/>保存刚体之间的关节连接图。" }
   class n3 node_resource
-  n4@{ shape: lean-r, label: "**dynamics::joints::joint​_​graph::**<br/>**plugin::JointGraphChange**<br/>向求解器传递关节连接图变化。" }
+  n4@{ shape: lean-r, label: "**JointGraphChange**<br/>向求解器传递关节连接图变化。" }
   class n4 node_message
-  n5@{ shape: rounded, label: "**dynamics::joints::joint​_​graph::**<br/>**plugin::JointComponentId**<br/>记录实体上的关节组件标识。" }
+  n5@{ shape: rounded, label: "**JointComponentId**<br/>记录实体上的关节组件标识。" }
   class n5 node_component
-  n6@{ shape: stadium, label: "**bevy​_​ecs::lifecycle::AddEvent**<br/>来自crate:bevy​_​ecs ↗：通知组件首次加<br/>入实体。" }
+  n6@{ shape: stadium, label: "**AddEvent**<br/>来自crate:bevy​_​ecs ↗：通知组件首次加<br/>入实体。" }
   class n6 node_event
   class n6 external_node
   n1 e0@-->|"存在性约束"| n0

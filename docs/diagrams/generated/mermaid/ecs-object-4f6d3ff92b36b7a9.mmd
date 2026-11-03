@@ -38,15 +38,15 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**bevy​_​pbr::MeshPipelineViewLayouts**<br/>按网格管线配置提供视图绑定布局。" }
+  n0@{ shape: cyl, label: "**MeshPipelineViewLayouts**<br/>按网格管线配置提供视图绑定布局。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​pbr::ssr::init​_​screen​_​space​_​**<br/>**reflections​_​pipeline**<br/>初始化屏幕空间反射的全屏渲染管线资源。" }
+  n1@{ shape: rounded, label: "**init​_​screen​_​space​_​reflections​_​**<br/>**pipeline**<br/>初始化屏幕空间反射的全屏渲染管线资源。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​pbr::volumetric​_​fog::render::**<br/>**init​_​volumetric​_​fog​_​pipeline**<br/>初始化体积雾管线的视图布局与着色器。" }
+  n2@{ shape: rounded, label: "**init​_​volumetric​_​fog​_​pipeline**<br/>初始化体积雾管线的视图布局与着色器。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​pbr::render::mesh::init​_​mesh​_​**<br/>**pipeline**<br/>初始化三维网格着色器及设备缓冲策略。" }
+  n3@{ shape: rounded, label: "**init​_​mesh​_​pipeline**<br/>初始化三维网格着色器及设备缓冲策略。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**bevy​_​pbr::render::mesh​_​view​_​**<br/>**bindings::init​_​mesh​_​pipeline​_​view​_​**<br/>**layouts**<br/>按设备能力汇集网格视图资源布局参数。" }
+  n4@{ shape: rounded, label: "**init​_​mesh​_​pipeline​_​view​_​layouts**<br/>按设备能力汇集网格视图资源布局参数。" }
   class n4 node_system
   n0 e0@--> n1
   class e0 edge_read

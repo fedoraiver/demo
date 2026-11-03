@@ -42,41 +42,41 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​anti​_​alias::taa::temporal​_​anti​_​**<br/>**alias**<br/>混合当前颜色与历史帧并更新 TAA 历史目<br/>标。" }
+  n0@{ shape: rounded, label: "**temporal​_​anti​_​alias**<br/>混合当前颜色与历史帧并更新 TAA 历史目<br/>标。" }
   class n0 node_system
-  n1@{ shape: fr-rect, label: "**taa::TemporalAntiAliasPlugin**<br/>提供时域抗锯齿。" }
+  n1@{ shape: fr-rect, label: "**TemporalAntiAliasPlugin**<br/>提供时域抗锯齿。" }
   class n1 node_plugin
-  n2@{ shape: rounded, label: "**taa::**<br/>**TemporalAntiAliasHistoryTextures**<br/>保存 TAA 读写交替的历史纹理。" }
+  n2@{ shape: rounded, label: "**TemporalAntiAliasHistoryTextures**<br/>保存 TAA 读写交替的历史纹理。" }
   class n2 node_component
   n3@{ shape: lin-rect, label: "**EarlyPostProcess**<br/>来自crate:bevy​_​core​_​pipeline ↗：划分<br/>三维相机绘制与后处理阶段。" }
   class n3 node_system_set
   class n3 external_node
-  n4@{ shape: rounded, label: "**bevy​_​core​_​pipeline::prepass::**<br/>**ViewPrepassTextures**<br/>来自crate:bevy​_​core​_​pipeline ↗：汇集<br/>视图已启用的预通道输出纹理。" }
+  n4@{ shape: rounded, label: "**ViewPrepassTextures**<br/>来自crate:bevy​_​core​_​pipeline ↗：汇集<br/>视图已启用的预通道输出纹理。" }
   class n4 node_component
   class n4 external_node
-  n5@{ shape: rounded, label: "**bevy​_​render::view::ViewTarget**<br/>来自crate:bevy​_​render ↗：管理视图主颜<br/>色纹理及最终输出附件。" }
+  n5@{ shape: rounded, label: "**ViewTarget**<br/>来自crate:bevy​_​render ↗：管理视图主颜<br/>色纹理及最终输出附件。" }
   class n5 node_component
   class n5 external_node
-  n6@{ shape: rounded, label: "**taa::TemporalAntiAliasPipelineId**<br/>保存视图的时域抗锯齿管线标识。" }
+  n6@{ shape: rounded, label: "**TemporalAntiAliasPipelineId**<br/>保存视图的时域抗锯齿管线标识。" }
   class n6 node_component
-  n7@{ shape: cyl, label: "**bevy​_​render::render​_​resource::**<br/>**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
+  n7@{ shape: cyl, label: "**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
   class n7 node_resource
   class n7 external_node
-  n8@{ shape: rounded, label: "**bevy​_​render::view::Msaa**<br/>来自crate:bevy​_​render ↗：选择视图的多<br/>重采样抗锯齿样本数。" }
+  n8@{ shape: rounded, label: "**Msaa**<br/>来自crate:bevy​_​render ↗：选择视图的多<br/>重采样抗锯齿样本数。" }
   class n8 node_component
   class n8 external_node
-  n9@{ shape: cyl, label: "**bevy​_​render::diagnostic::**<br/>**DiagnosticsRecorder**<br/>来自crate:bevy​_​render ↗：记录渲染诊断<br/>区间与 GPU 查询索引的对应。" }
+  n9@{ shape: cyl, label: "**DiagnosticsRecorder**<br/>来自crate:bevy​_​render ↗：记录渲染诊断<br/>区间与 GPU 查询索引的对应。" }
   class n9 node_resource
   class n9 external_node
-  n10@{ shape: cyl, label: "**bevy​_​render::renderer::CurrentView**<br/>来自crate:bevy​_​render ↗：指定当前正在<br/>渲染的视图实体。" }
+  n10@{ shape: cyl, label: "**CurrentView**<br/>来自crate:bevy​_​render ↗：指定当前正在<br/>渲染的视图实体。" }
   class n10 node_resource
   class n10 external_node
-  n11@{ shape: cyl, label: "**taa::TaaPipeline**<br/>提供时域抗锯齿的采样与管线资源。" }
+  n11@{ shape: cyl, label: "**TaaPipeline**<br/>提供时域抗锯齿的采样与管线资源。" }
   class n11 node_resource
-  n12@{ shape: rounded, label: "**bevy​_​render::camera::ExtractedCamera**<br/>来自crate:bevy​_​render ↗：保存渲染世界<br/>相机的目标和绘制配置。" }
+  n12@{ shape: rounded, label: "**ExtractedCamera**<br/>来自crate:bevy​_​render ↗：保存渲染世界<br/>相机的目标和绘制配置。" }
   class n12 node_component
   class n12 external_node
-  n13@{ shape: cyl, label: "**bevy​_​render::renderer::RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
+  n13@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
   class n13 node_resource
   class n13 external_node
   n1 e0@-->|"调用"| n0

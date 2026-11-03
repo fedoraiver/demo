@@ -42,25 +42,25 @@ flowchart LR
   class n0 node_system_set
   n1@{ shape: lin-rect, label: "**Prepare**<br/>组织渲染数据准备与绘制排队。" }
   class n1 node_system_set
-  n2@{ shape: rounded, label: "**bevy​_​pbr::render::mesh::collect​_​**<br/>**meshes​_​for​_​gpu​_​building**<br/>来自crate:bevy​_​pbr ↗：把线程提取队列<br/>整理为 GPU 网格实例和输入缓冲。" }
+  n2@{ shape: rounded, label: "**collect​_​meshes​_​for​_​gpu​_​building**<br/>来自crate:bevy​_​pbr ↗：把线程提取队列<br/>整理为 GPU 网格实例和输入缓冲。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​pbr::render::morph::prepare​_​**<br/>**morph​_​descriptors**<br/>来自crate:bevy​_​pbr ↗：稳定分配形变描<br/>述符索引并回收失效项。" }
+  n3@{ shape: rounded, label: "**prepare​_​morph​_​descriptors**<br/>来自crate:bevy​_​pbr ↗：稳定分配形变描<br/>述符索引并回收失效项。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**bevy​_​pbr::render::mesh::set​_​mesh​_​**<br/>**motion​_​vector​_​flags**<br/>来自crate:bevy​_​pbr ↗：在提取完成后标<br/>记网格可用的前帧蒙皮和形变。" }
+  n4@{ shape: rounded, label: "**set​_​mesh​_​motion​_​vector​_​flags**<br/>来自crate:bevy​_​pbr ↗：在提取完成后标<br/>记网格可用的前帧蒙皮和形变。" }
   class n4 node_system
   class n4 external_node
   n5@{ shape: lin-rect, label: "**CreateViews**<br/>组织渲染数据准备与绘制排队。" }
   class n5 node_system_set
   n6@{ shape: lin-rect, label: "**ExtractCommands**<br/>组织渲染数据准备与绘制排队。" }
   class n6 node_system_set
-  n7@{ shape: rounded, label: "**bevy​_​pbr::prepass::specialize​_​**<br/>**prepass​_​material​_​meshes**<br/>来自crate:bevy​_​pbr ↗：按深度、材质和<br/>运动特性生成预通道专用管线。" }
+  n7@{ shape: rounded, label: "**specialize​_​prepass​_​material​_​meshes**<br/>来自crate:bevy​_​pbr ↗：按深度、材质和<br/>运动特性生成预通道专用管线。" }
   class n7 node_system
   class n7 external_node
   n8@{ shape: lin-rect, label: "**PrepareAssets**<br/>组织渲染数据准备与绘制排队。" }
   class n8 node_system_set
-  n9@{ shape: rounded, label: "**bevy​_​pbr::render::mesh::collect​_​gpu​_​**<br/>**culled​_​meshes**<br/>来自crate:bevy​_​pbr ↗：按渲染层把<br/>GPU 裁剪对象分配到各视图列表。" }
+  n9@{ shape: rounded, label: "**collect​_​gpu​_​culled​_​meshes**<br/>来自crate:bevy​_​pbr ↗：按渲染层把<br/>GPU 裁剪对象分配到各视图列表。" }
   class n9 node_system
   class n9 external_node
   n0 e0@-->|"先于"| n1

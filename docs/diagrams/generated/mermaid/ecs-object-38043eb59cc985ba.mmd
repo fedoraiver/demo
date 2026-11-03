@@ -39,11 +39,11 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​gizmos::update​_​gizmo​_​**<br/>**meshes#lt;bevy​_​light::gizmos::**<br/>**LightGizmoConfigGroup#gt;**<br/>把配置组即时线条缓冲转交 Gizmo 资产。" }
+  n0@{ shape: rounded, label: "**update​_​gizmo​_​meshes**<br/>把配置组即时线条缓冲转交 Gizmo 资产。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**bevy​_​gizmos::gizmos::**<br/>**GizmoStorage#lt;gizmos::**<br/>**LightGizmoConfigGroup, ()#gt;**<br/>按配置组和清理上下文存储调试图元。" }
+  n1@{ shape: cyl, label: "**GizmoStorage#lt;LightGizmoConfigGroup,**<br/>**()#gt;**<br/>按配置组和清理上下文存储调试图元。" }
   class n1 node_resource
-  n2@{ shape: cyl, label: "**bevy​_​asset::Assets#lt;GizmoAsset#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
+  n2@{ shape: cyl, label: "**Assets#lt;GizmoAsset#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
   class n2 node_resource
   class n2 external_node
   n3@{ shape: lin-rect, label: "**GizmoMeshSystems**<br/>把调试绘制存储转换为渲染网格。" }

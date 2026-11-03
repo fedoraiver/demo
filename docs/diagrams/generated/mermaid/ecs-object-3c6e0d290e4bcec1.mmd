@@ -39,7 +39,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: notch-rect, label: "**Local · last​_​cursor​_​icon**<br/>按 Egui 上下文记住上次输出的光标样式。" }
   class n0 node_local
-  n1@{ shape: rounded, label: "**bevy​_​egui::output::process​_​output​_​**<br/>**system**<br/>拆分 Egui 绘制输出并执行平台命令。" }
+  n1@{ shape: rounded, label: "**process​_​output​_​system**<br/>拆分 Egui 绘制输出并执行平台命令。" }
   class n1 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

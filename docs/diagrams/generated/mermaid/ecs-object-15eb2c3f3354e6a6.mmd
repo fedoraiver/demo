@@ -41,35 +41,35 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​pbr::light​_​probe::generate::**<br/>**prepare​_​generated​_​environment​_​map​_​**<br/>**bind​_​groups**<br/>为环境图各 mip 的降采样和卷积建立绑定。" }
+  n0@{ shape: rounded, label: "**prepare​_​generated​_​environment​_​map​_​**<br/>**bind​_​groups**<br/>为环境图各 mip 的降采样和卷积建立绑定。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**light​_​probe::generate::**<br/>**GeneratorSamplers**<br/>为环境贴图生成提供线性采样器。" }
+  n1@{ shape: cyl, label: "**GeneratorSamplers**<br/>为环境贴图生成提供线性采样器。" }
   class n1 node_resource
   n2@{ shape: cyl, label: "**Bluenoise**<br/>提供时空蓝噪声纹理。" }
   class n2 node_resource
-  n3@{ shape: cyl, label: "**bevy​_​render::render​_​resource::**<br/>**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
+  n3@{ shape: cyl, label: "**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
   class n3 node_resource
   class n3 external_node
   n4@{ shape: lin-rect, label: "**PrepareBindGroups**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
   class n4 node_system_set
   class n4 external_node
-  n5@{ shape: cyl, label: "**bevy​_​render::renderer::RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
+  n5@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
   class n5 node_resource
   class n5 external_node
-  n6@{ shape: cyl, label: "**light​_​probe::generate::**<br/>**GeneratorBindGroupLayouts**<br/>描述环境贴图生成各计算阶段的接口。" }
+  n6@{ shape: cyl, label: "**GeneratorBindGroupLayouts**<br/>描述环境贴图生成各计算阶段的接口。" }
   class n6 node_resource
-  n7@{ shape: rounded, label: "**light​_​probe::generate::**<br/>**IntermediateTextures**<br/>缓存环境贴图生成过程的中间纹理。" }
+  n7@{ shape: rounded, label: "**IntermediateTextures**<br/>缓存环境贴图生成过程的中间纹理。" }
   class n7 node_component
-  n8@{ shape: cyl, label: "**bevy​_​render::render​_​asset::**<br/>**RenderAssets#lt;bevy​_​render::texture::**<br/>**GpuImage#gt;**<br/>来自crate:bevy​_​render ↗：按源资产身份<br/>保存 GPU 渲染表示。" }
+  n8@{ shape: cyl, label: "**RenderAssets#lt;GpuImage#gt;**<br/>来自crate:bevy​_​render ↗：按源资产身份<br/>保存 GPU 渲染表示。" }
   class n8 node_resource
   class n8 external_node
-  n9@{ shape: rounded, label: "**light​_​probe::generate::**<br/>**GeneratorBindGroups**<br/>保存环境贴图生成所需的纹理绑定。" }
+  n9@{ shape: rounded, label: "**GeneratorBindGroups**<br/>保存环境贴图生成所需的纹理绑定。" }
   class n9 node_component
-  n10@{ shape: cyl, label: "**light​_​probe::generate::**<br/>**DownsamplingConfig**<br/>按设备能力选择环境贴图降采样策略。" }
+  n10@{ shape: cyl, label: "**DownsamplingConfig**<br/>按设备能力选择环境贴图降采样策略。" }
   class n10 node_resource
-  n11@{ shape: rounded, label: "**light​_​probe::generate::**<br/>**RenderEnvironmentMap**<br/>保存渲染侧环境光纹理及方向设置。" }
+  n11@{ shape: rounded, label: "**RenderEnvironmentMap**<br/>保存渲染侧环境光纹理及方向设置。" }
   class n11 node_component
-  n12@{ shape: cyl, label: "**bevy​_​render::renderer::RenderQueue**<br/>来自crate:bevy​_​render ↗：将资源写入和<br/>命令异步提交给 GPU。" }
+  n12@{ shape: cyl, label: "**RenderQueue**<br/>来自crate:bevy​_​render ↗：将资源写入和<br/>命令异步提交给 GPU。" }
   class n12 node_resource
   class n12 external_node
   n1 e0@--> n0

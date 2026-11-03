@@ -39,7 +39,7 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​text::TextColor**<br/>保存当前文字段的前景色" }
+  n0@{ shape: rounded, label: "**TextColor**<br/>保存当前文字段的前景色" }
   class n0 node_component
   n1@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示导航操作名称。" }
   class n1 node_entity
@@ -107,7 +107,7 @@ flowchart LR
   n22@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示轻拿轻放装饰文字。" }
   class n22 node_entity
   class n22 external_node
-  n23@{ shape: rounded, label: "**bevy​_​sprite​_​render::text2d::extract​_​**<br/>**text2d​_​sprite**<br/>来自crate:bevy​_​sprite​_​render ↗：把可<br/>见二维文字及装饰提取为精灵切片。" }
+  n23@{ shape: rounded, label: "**extract​_​text2d​_​sprite**<br/>来自crate:bevy​_​sprite​_​render ↗：把可<br/>见二维文字及装饰提取为精灵切片。" }
   class n23 node_system
   class n23 external_node
   n24@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示鼠标灵敏度的左侧调整符<br/>号。" }
@@ -131,7 +131,7 @@ flowchart LR
   n30@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示操作设置按钮的标题。" }
   class n30 node_entity
   class n30 external_node
-  n31@{ shape: rounded, label: "**bevy​_​ui::accessibility::button​_​**<br/>**changed**<br/>来自crate:bevy​_​ui ↗：为按钮生成或更新<br/>无障碍角色与文本标签。" }
+  n31@{ shape: rounded, label: "**button​_​changed**<br/>来自crate:bevy​_​ui ↗：为按钮生成或更新<br/>无障碍角色与文本标签。" }
   class n31 node_system
   class n31 external_node
   n32@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示 Esc 键帽文字。" }
@@ -236,7 +236,7 @@ flowchart LR
   n65@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制设置按钮的入口箭头。" }
   class n65 node_entity
   class n65 external_node
-  n66@{ shape: rounded, label: "**bevy​_​ui​_​render::extract​_​text​_​**<br/>**decorations**<br/>来自crate:bevy​_​ui​_​render ↗：提取 UI<br/>文字背景、删除线和下划线。" }
+  n66@{ shape: rounded, label: "**extract​_​text​_​decorations**<br/>来自crate:bevy​_​ui​_​render ↗：提取 UI<br/>文字背景、删除线和下划线。" }
   class n66 node_system
   class n66 external_node
   n67@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示图形设置按钮的标题。" }
@@ -491,7 +491,7 @@ flowchart LR
   n150@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：标明恢复默认设置的操作。" }
   class n150 node_entity
   class n150 external_node
-  n151@{ shape: rounded, label: "**bevy​_​ui​_​render::text::extract​_​**<br/>**preedit​_​underlines**<br/>来自crate:bevy​_​ui​_​render ↗：把输入法<br/>预编辑下划线提取为 UI 矩形。" }
+  n151@{ shape: rounded, label: "**extract​_​preedit​_​underlines**<br/>来自crate:bevy​_​ui​_​render ↗：把输入法<br/>预编辑下划线提取为 UI 矩形。" }
   class n151 node_system
   class n151 external_node
   n152@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示当前设置的说明正文。" }
@@ -566,7 +566,7 @@ flowchart LR
   n175@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制设置按钮的入口箭头。" }
   class n175 node_entity
   class n175 external_node
-  n176@{ shape: rounded, label: "**bevy​_​ui​_​render::extract​_​text​_​**<br/>**sections**<br/>来自crate:bevy​_​ui​_​render ↗：按图集提<br/>取 UI 字形并处理选中文字颜色。" }
+  n176@{ shape: rounded, label: "**extract​_​text​_​sections**<br/>来自crate:bevy​_​ui​_​render ↗：按图集提<br/>取 UI 字形并处理选中文字颜色。" }
   class n176 node_system
   class n176 external_node
   n177@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制图形设置按钮的入口箭头。" }
@@ -713,10 +713,10 @@ flowchart LR
   n224@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示确认操作名称。" }
   class n224 node_entity
   class n224 external_node
-  n225@{ shape: rounded, label: "**bevy​_​ui::accessibility::label​_​**<br/>**changed**<br/>来自crate:bevy​_​ui ↗：把标签子树文字写<br/>入无障碍节点。" }
+  n225@{ shape: rounded, label: "**label​_​changed**<br/>来自crate:bevy​_​ui ↗：把标签子树文字写<br/>入无障碍节点。" }
   class n225 node_system
   class n225 external_node
-  n226@{ shape: rounded, label: "**bevy​_​ui::accessibility::image​_​**<br/>**changed**<br/>来自crate:bevy​_​ui ↗：为非按钮图像生成<br/>或更新无障碍标签。" }
+  n226@{ shape: rounded, label: "**image​_​changed**<br/>来自crate:bevy​_​ui ↗：为非按钮图像生成<br/>或更新无障碍标签。" }
   class n226 node_system
   class n226 external_node
   n227@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示 Enter 键帽文字。" }
@@ -770,7 +770,7 @@ flowchart LR
   n243@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示音频设置按钮的标题。" }
   class n243 node_entity
   class n243 external_node
-  n244@{ shape: rounded, label: "**bevy​_​sprite::text2d::update​_​text2d​_​**<br/>**layout**<br/>来自crate:bevy​_​sprite ↗：重新排版变化<br/>的二维文字并准备字形。" }
+  n244@{ shape: rounded, label: "**update​_​text2d​_​layout**<br/>来自crate:bevy​_​sprite ↗：重新排版变化<br/>的二维文字并准备字形。" }
   class n244 node_system
   class n244 external_node
   n245@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示反转视角纵轴的左侧调整符<br/>号。" }
@@ -833,10 +833,10 @@ flowchart LR
   n264@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示 Enter 键帽文字。" }
   class n264 node_entity
   class n264 external_node
-  n265@{ shape: rounded, label: "**bevy​_​ui::widget::text::measure​_​text​_​**<br/>**system**<br/>来自crate:bevy​_​ui ↗：在文本变化后更新<br/>内容测量并安排文字重排。" }
+  n265@{ shape: rounded, label: "**measure​_​text​_​system**<br/>来自crate:bevy​_​ui ↗：在文本变化后更新<br/>内容测量并安排文字重排。" }
   class n265 node_system
   class n265 external_node
-  n266@{ shape: rounded, label: "**bevy​_​ui​_​render::extract​_​uinode​_​**<br/>**changes**<br/>来自crate:bevy​_​ui​_​render ↗：使变化或<br/>移除的 UI 数据失效并清理旧渲染实体。" }
+  n266@{ shape: rounded, label: "**extract​_​uinode​_​changes**<br/>来自crate:bevy​_​ui​_​render ↗：使变化或<br/>移除的 UI 数据失效并清理旧渲染实体。" }
   class n266 node_system
   class n266 external_node
   n267@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制恢复游戏按钮的入口箭头。" }

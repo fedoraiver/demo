@@ -40,46 +40,46 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
   subgraph layout_card_n0[" "]
-  n0@{ shape: cyl, label: "**collision::contact​_​types::contact​_​**<br/>**graph::ContactGraph**<br/>维护碰撞体接触对及其碰撞数据。" }
+  n0@{ shape: cyl, label: "**ContactGraph**<br/>维护碰撞体接触对及其碰撞数据。" }
   class n0 node_resource
   end
   style layout_card_n0 fill:none,stroke:none
-  n1@{ shape: rounded, label: "**avian3d::dynamics::solver::plugin::**<br/>**store​_​contact​_​impulses**<br/>保存已求得的接触冲量供下一轮热启动。" }
+  n1@{ shape: rounded, label: "**store​_​contact​_​impulses**<br/>保存已求得的接触冲量供下一轮热启动。" }
   class n1 node_system
-  n2@{ shape: hex, label: "**avian3d::collision::narrow​_​phase::**<br/>**remove​_​body​_​on**<br/>清理已移除刚体的接触图记录。" }
+  n2@{ shape: hex, label: "**remove​_​body​_​on**<br/>清理已移除刚体的接触图记录。" }
   class n2 node_observer
-  n3@{ shape: hex, label: "**avian3d::collision::narrow​_​phase::**<br/>**on​_​body​_​remove​_​rigid​_​body​_​disabled**<br/>清除刚体重新启用时的旧接触。" }
+  n3@{ shape: hex, label: "**on​_​body​_​remove​_​rigid​_​body​_​disabled**<br/>清除刚体重新启用时的旧接触。" }
   class n3 node_observer
-  n4@{ shape: hex, label: "**avian3d::collision::narrow​_​phase::**<br/>**on​_​remove​_​sensor**<br/>清除传感器转回普通碰撞体的旧接触。" }
+  n4@{ shape: hex, label: "**on​_​remove​_​sensor**<br/>清除传感器转回普通碰撞体的旧接触。" }
   class n4 node_observer
-  n5@{ shape: hex, label: "**avian3d::collision::narrow​_​phase::**<br/>**remove​_​collider​_​on**<br/>清理碰撞体接触与对端碰撞记录。" }
+  n5@{ shape: hex, label: "**remove​_​collider​_​on**<br/>清理碰撞体接触与对端碰撞记录。" }
   class n5 node_observer
-  n6@{ shape: hex, label: "**avian3d::dynamics::joints::joint​_​**<br/>**graph::plugin::on​_​disable​_​joint​_​**<br/>**collision**<br/>清理关节两端被禁止的碰撞接触。" }
+  n6@{ shape: hex, label: "**on​_​disable​_​joint​_​collision**<br/>清理关节两端被禁止的碰撞接触。" }
   class n6 node_observer
-  n7@{ shape: hex, label: "**avian3d::collision::narrow​_​phase::**<br/>**on​_​add​_​sensor**<br/>清除转为传感器前的旧接触。" }
+  n7@{ shape: hex, label: "**on​_​add​_​sensor**<br/>清除转为传感器前的旧接触。" }
   class n7 node_observer
-  n8@{ shape: rounded, label: "**avian3d::dynamics::solver::plugin::**<br/>**apply​_​contact​_​status​_​changes**<br/>把接触增删同步到约束图和物理岛。" }
+  n8@{ shape: rounded, label: "**apply​_​contact​_​status​_​changes**<br/>把接触增删同步到约束图和物理岛。" }
   class n8 node_system
-  n9@{ shape: rounded, label: "**avian3d::collision::broad​_​phase::**<br/>**bvh​_​broad​_​phase::collect​_​collision​_​**<br/>**pairs#lt;()#gt;**<br/>为移动碰撞代理收集广相候选接触。" }
+  n9@{ shape: rounded, label: "**collect​_​collision​_​pairs**<br/>为移动碰撞代理收集广相候选接触。" }
   class n9 node_system
-  n10@{ shape: rounded, label: "**demo::item​_​interaction::audio​_​**<br/>**events::emit​_​parcel​_​land**<br/>来自item​_​interaction ↗：识别自由物品<br/>落地并发出声音请求。" }
+  n10@{ shape: rounded, label: "**emit​_​parcel​_​land**<br/>来自item​_​interaction ↗：识别自由物品<br/>落地并发出声音请求。" }
   class n10 node_system
   class n10 external_node
-  n11@{ shape: hex, label: "**avian3d::collision::narrow​_​phase::**<br/>**remove​_​body​_​on**<br/>清理已移除刚体的接触图记录。" }
+  n11@{ shape: hex, label: "**remove​_​body​_​on**<br/>清理已移除刚体的接触图记录。" }
   class n11 node_observer
-  n12@{ shape: rounded, label: "**avian3d::dynamics::ccd::solve​_​**<br/>**continuous**<br/>通过连续扫掠限制快速刚体穿透。" }
+  n12@{ shape: rounded, label: "**solve​_​continuous**<br/>通过连续扫掠限制快速刚体穿透。" }
   class n12 node_system
-  n13@{ shape: rounded, label: "**avian3d::dynamics::solver::plugin::**<br/>**prepare​_​contact​_​constraints**<br/>从有效接触流形生成本轮求解约束。" }
+  n13@{ shape: rounded, label: "**prepare​_​contact​_​constraints**<br/>从有效接触流形生成本轮求解约束。" }
   class n13 node_system
-  n14@{ shape: hex, label: "**avian3d::collision::narrow​_​phase::**<br/>**remove​_​collider​_​on**<br/>清理碰撞体接触与对端碰撞记录。" }
+  n14@{ shape: hex, label: "**remove​_​collider​_​on**<br/>清理碰撞体接触与对端碰撞记录。" }
   class n14 node_observer
-  n15@{ shape: rounded, label: "**avian3d::dynamics::solver::plugin::**<br/>**apply​_​contact​_​status​_​changes**<br/>把接触增删同步到约束图和物理岛。" }
+  n15@{ shape: rounded, label: "**apply​_​contact​_​status​_​changes**<br/>把接触增删同步到约束图和物理岛。" }
   class n15 node_system
-  n16@{ shape: rounded, label: "**avian3d::collision::narrow​_​phase::**<br/>**update​_​narrow​_​phase#lt;avian3d::**<br/>**collision::collider::parry::**<br/>**Collider, ()#gt;**<br/>更新窄相接触并输出碰撞变化消息。" }
+  n16@{ shape: rounded, label: "**update​_​narrow​_​phase**<br/>更新窄相接触并输出碰撞变化消息。" }
   class n16 node_system
-  n17@{ shape: rounded, label: "**avian3d::dynamics::solver::islands::**<br/>**split​_​island**<br/>根据接触与关节连接重新拆分物理岛。" }
+  n17@{ shape: rounded, label: "**split​_​island**<br/>根据接触与关节连接重新拆分物理岛。" }
   class n17 node_system
-  n18@{ shape: hex, label: "**avian3d::collision::narrow​_​phase::**<br/>**on​_​disable​_​body**<br/>清理被禁用刚体的接触。" }
+  n18@{ shape: hex, label: "**on​_​disable​_​body**<br/>清理被禁用刚体的接触。" }
   class n18 node_observer
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

@@ -36,9 +36,9 @@ flowchart LR
   classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**cluster::ClusterConfig**<br/>选择视图的聚簇划分策略。" }
+  n0@{ shape: rounded, label: "**ClusterConfig**<br/>选择视图的聚簇划分策略。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​light::cluster::assign::assign​_​**<br/>**objects​_​to​_​clusters**<br/>将灯光、探针及贴花分配到视图分簇。" }
+  n1@{ shape: rounded, label: "**assign​_​objects​_​to​_​clusters**<br/>将灯光、探针及贴花分配到视图分簇。" }
   class n1 node_system
   n0 e0@--> n1
   class e0 edge_read

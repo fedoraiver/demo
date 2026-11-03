@@ -43,17 +43,17 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​post​_​process::dof::configure​_​**<br/>**depth​_​of​_​field​_​view​_​targets**<br/>允许景深相机采样自己的深度纹理。" }
+  n0@{ shape: rounded, label: "**configure​_​depth​_​of​_​field​_​view​_​**<br/>**targets**<br/>允许景深相机采样自己的深度纹理。" }
   class n0 node_system
-  n1@{ shape: fr-rect, label: "**dof::DepthOfFieldPlugin**<br/>提供相机景深后处理。" }
+  n1@{ shape: fr-rect, label: "**DepthOfFieldPlugin**<br/>提供相机景深后处理。" }
   class n1 node_plugin
-  n2@{ shape: rounded, label: "**components::Camera3d**<br/>来自crate:bevy​_​camera ↗：启用三维相机<br/>主渲染流程。" }
+  n2@{ shape: rounded, label: "**Camera3d**<br/>来自crate:bevy​_​camera ↗：启用三维相机<br/>主渲染流程。" }
   class n2 node_component
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​render::view::prepare​_​view​_​**<br/>**targets**<br/>来自crate:bevy​_​render ↗：为视图维护主<br/>颜色双缓冲及可选多采样目标。" }
+  n3@{ shape: rounded, label: "**prepare​_​view​_​targets**<br/>来自crate:bevy​_​render ↗：为视图维护主<br/>颜色双缓冲及可选多采样目标。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**dof::DepthOfField**<br/>配置相机焦点及离焦模糊。" }
+  n4@{ shape: rounded, label: "**DepthOfField**<br/>配置相机焦点及离焦模糊。" }
   class n4 node_component
   n5@{ shape: lin-rect, label: "**PrepareViews**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
   class n5 node_system_set

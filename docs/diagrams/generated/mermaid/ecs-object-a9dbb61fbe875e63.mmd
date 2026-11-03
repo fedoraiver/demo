@@ -42,27 +42,27 @@ flowchart LR
   class n0 node_system_set
   n1@{ shape: lin-rect, label: "**PrepareBindGroups**<br/>组织渲染数据准备与绘制排队。" }
   class n1 node_system_set
-  n2@{ shape: rounded, label: "**bevy​_​render::batching::no​_​gpu​_​**<br/>**preprocessing::write​_​batched​_​**<br/>**instance​_​buffer#lt;bevy​_​sprite​_​render::**<br/>**mesh2d::mesh::Mesh2dPipeline#gt;**<br/>上传 CPU 已合批的实例参数缓冲。" }
+  n2@{ shape: rounded, label: "**write​_​batched​_​instance​_​buffer**<br/>上传 CPU 已合批的实例参数缓冲。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​render::batching::gpu​_​**<br/>**preprocessing::write​_​indirect​_​**<br/>**parameters​_​buffers**<br/>并行准备间接绘制参数和上传批集合元数据。" }
+  n3@{ shape: rounded, label: "**write​_​indirect​_​parameters​_​buffers**<br/>并行准备间接绘制参数和上传批集合元数据。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**bevy​_​render::batching::gpu​_​**<br/>**preprocessing::write​_​indirect​_​**<br/>**parameters​_​build​_​jobs**<br/>上传间接参数构建任务的动态参数缓冲。" }
+  n4@{ shape: rounded, label: "**write​_​indirect​_​parameters​_​build​_​jobs**<br/>上传间接参数构建任务的动态参数缓冲。" }
   class n4 node_system
-  n5@{ shape: rounded, label: "**bevy​_​render::view::visibility::**<br/>**range::write​_​render​_​visibility​_​**<br/>**ranges**<br/>按设备绑定要求上传可见距离范围表。" }
+  n5@{ shape: rounded, label: "**write​_​render​_​visibility​_​ranges**<br/>按设备绑定要求上传可见距离范围表。" }
   class n5 node_system
-  n6@{ shape: rounded, label: "**bevy​_​pbr::render::morph::write​_​**<br/>**morph​_​buffers**<br/>来自crate:bevy​_​pbr ↗：上传当前形变权<br/>重及可选描述符缓冲。" }
+  n6@{ shape: rounded, label: "**write​_​morph​_​buffers**<br/>来自crate:bevy​_​pbr ↗：上传当前形变权<br/>重及可选描述符缓冲。" }
   class n6 node_system
   class n6 external_node
-  n7@{ shape: rounded, label: "**bevy​_​pbr::render::gpu​_​preprocess::**<br/>**write​_​mesh​_​culling​_​data​_​buffer**<br/>来自crate:bevy​_​pbr ↗：上传网格裁剪数<br/>据并准备稀疏填充任务。" }
+  n7@{ shape: rounded, label: "**write​_​mesh​_​culling​_​data​_​buffer**<br/>来自crate:bevy​_​pbr ↗：上传网格裁剪数<br/>据并准备稀疏填充任务。" }
   class n7 node_system
   class n7 external_node
-  n8@{ shape: rounded, label: "**bevy​_​render::batching::gpu​_​**<br/>**preprocessing::write​_​batched​_​**<br/>**instance​_​buffers#lt;bevy​_​pbr::render::**<br/>**mesh::MeshPipeline#gt;**<br/>上传实例输入、预处理任务并准备稀疏更新。" }
+  n8@{ shape: rounded, label: "**write​_​batched​_​instance​_​buffers**<br/>上传实例输入、预处理任务并准备稀疏更新。" }
   class n8 node_system
   n9@{ shape: lin-rect, label: "**PrepareResourcesCollectPhaseBuffers**<br/>组织渲染数据准备与绘制排队。" }
   class n9 node_system_set
   n10@{ shape: lin-rect, label: "**Prepare**<br/>组织渲染数据准备与绘制排队。" }
   class n10 node_system_set
-  n11@{ shape: rounded, label: "**bevy​_​render::batching::gpu​_​**<br/>**preprocessing::prepare​_​indirect​_​**<br/>**parameters​_​build​_​jobs**<br/>按视图阶段的批范围登记间接参数构建任务。" }
+  n11@{ shape: rounded, label: "**prepare​_​indirect​_​parameters​_​build​_​**<br/>**jobs**<br/>按视图阶段的批范围登记间接参数构建任务。" }
   class n11 node_system
   n0 e0@-->|"先于"| n1
   class e0 edge_order

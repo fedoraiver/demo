@@ -43,24 +43,24 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​app::propagate::update​_​**<br/>**source#lt;bevy​_​ui::ui​_​node::**<br/>**ComputedUiTargetCamera, (), bevy​_​**<br/>**ecs::hierarchy::ChildOf#gt;**<br/>同步传播源并恢复移除来源后的继承状态。" }
+  n0@{ shape: rounded, label: "**update​_​source**<br/>同步传播源并恢复移除来源后的继承状态。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**bevy​_​app::Inherited#lt;ui​_​node::**<br/>**ComputedUiTargetCamera#gt;**<br/>保存层级传播算法继承到当前节点的中间组件<br/>值" }
+  n1@{ shape: rounded, label: "**Inherited#lt;ComputedUiTargetCamera#gt;**<br/>保存层级传播算法继承到当前节点的中间组件<br/>值" }
   class n1 node_component
-  n2@{ shape: rounded, label: "**bevy​_​app::Propagate#lt;ui​_​node::**<br/>**ComputedUiTargetCamera#gt;**<br/>从当前实体向直接及间接关系目标传播内部组<br/>件值" }
+  n2@{ shape: rounded, label: "**Propagate#lt;ComputedUiTargetCamera#gt;**<br/>从当前实体向直接及间接关系目标传播内部组<br/>件值" }
   class n2 node_component
-  n3@{ shape: rounded, label: "**bevy​_​app::PropagateStop#lt;ui​_​node::**<br/>**ComputedUiTargetCamera#gt;**<br/>在当前实体截断该组件的层级传播" }
+  n3@{ shape: rounded, label: "**PropagateStop#lt;ComputedUiTargetCamera**<br/>**#gt;**<br/>在当前实体截断该组件的层级传播" }
   class n3 node_component
   n4@{ shape: notch-rect, label: "**Local · arg2.0.0.0.0**<br/>保存 Propagate#lt;C#gt; 移除参数的组件 ID。" }
   class n4 node_local
   n5@{ shape: notch-rect, label: "**Local · arg2.0.1**<br/>跟踪 Propagate#lt;C#gt; 移除记录的读取进度。" }
   class n5 node_local
-  n6@{ shape: lin-rect, label: "**PropagateSet { ​_​p: PhantomData#lt;fn()**<br/>**-#gt; bevy​_​ui::ui​_​node::**<br/>**ComputedUiTargetCamera#gt; }**<br/>沿关系层级传播指定组件值。" }
+  n6@{ shape: lin-rect, label: "**PropagateSet { ​_​p: PhantomData#lt;fn()**<br/>**-#gt; ComputedUiTargetCamera#gt; }**<br/>沿关系层级传播指定组件值。" }
   class n6 node_system_set
-  n7@{ shape: rounded, label: "**bevy​_​ecs::hierarchy::ChildOf**<br/>来自crate:bevy​_​ecs ↗：保存当前实体的<br/>父实体身份" }
+  n7@{ shape: rounded, label: "**ChildOf**<br/>来自crate:bevy​_​ecs ↗：保存当前实体的<br/>父实体身份" }
   class n7 node_component
   class n7 external_node
-  n8@{ shape: rounded, label: "**bevy​_​app::propagate::update​_​removed​_​**<br/>**limit#lt;bevy​_​ui::ui​_​node::**<br/>**ComputedUiTargetCamera, (), bevy​_​**<br/>**ecs::hierarchy::ChildOf#gt;**<br/>在传播限制移除后重新标记继承链。" }
+  n8@{ shape: rounded, label: "**update​_​removed​_​limit**<br/>在传播限制移除后重新标记继承链。" }
   class n8 node_system
   n1 e0@---|"插入"| n0
   class e0 edge_write

@@ -39,11 +39,11 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: lin-rect, label: "**Propagate**<br/>组织实体层级变换传播。" }
   class n0 node_system_set
-  n1@{ shape: rounded, label: "**bevy​_​transform::systems::sync​_​**<br/>**simple​_​transforms**<br/>同步没有父子层级的独立实体世界变换。" }
+  n1@{ shape: rounded, label: "**sync​_​simple​_​transforms**<br/>同步没有父子层级的独立实体世界变换。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​transform::systems::parallel::**<br/>**propagate​_​parent​_​transforms**<br/>沿父子层级并行合成世界变换。" }
+  n2@{ shape: rounded, label: "**propagate​_​parent​_​transforms**<br/>沿父子层级并行合成世界变换。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​transform::systems::mark​_​dirty​_​**<br/>**trees**<br/>沿祖先链标记需要重算变换的子树。" }
+  n3@{ shape: rounded, label: "**mark​_​dirty​_​trees**<br/>沿祖先链标记需要重算变换的子树。" }
   class n3 node_system
   n0 e0@-->|"集合成员"| n1
   class e0 edge_set_membership

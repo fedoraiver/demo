@@ -38,7 +38,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: cyl, label: "**TimeUpdateStrategy**<br/>配置时间更新来源" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​time::time​_​system**<br/>按时间更新策略推进真实与虚拟时钟。" }
+  n1@{ shape: rounded, label: "**time​_​system**<br/>按时间更新策略推进真实与虚拟时钟。" }
   class n1 node_system
   n0 e0@--> n1
   class e0 edge_read

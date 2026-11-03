@@ -42,21 +42,21 @@ flowchart LR
   class n0 node_system_set
   n1@{ shape: lin-rect, label: "**Cleanup**<br/>组织渲染数据准备与绘制排队。" }
   class n1 node_system_set
-  n2@{ shape: rounded, label: "**bevy​_​render::batching::no​_​gpu​_​**<br/>**preprocessing::clear​_​batched​_​cpu​_​**<br/>**instance​_​buffers#lt;bevy​_​pbr::render::**<br/>**mesh::MeshPipeline#gt;**<br/>在 CPU 批处理使用实例缓冲之前清空其本帧<br/>内容；资源尚未创建时直接跳过。" }
+  n2@{ shape: rounded, label: "**clear​_​batched​_​cpu​_​instance​_​buffers**<br/>在 CPU 批处理使用实例缓冲之前清空其本帧<br/>内容；资源尚未创建时直接跳过。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​pbr::light​_​probe::generate::**<br/>**downsampling​_​system**<br/>来自crate:bevy​_​pbr ↗：把环境立方体贴<br/>图的基础 mip 复制到生成目标，再分阶段运<br/>行降采样计算，构造环境光卷积所需的多级纹<br/>理。" }
+  n3@{ shape: rounded, label: "**downsampling​_​system**<br/>来自crate:bevy​_​pbr ↗：把环境立方体贴<br/>图的基础 mip 复制到生成目标，再分阶段运<br/>行降采样计算，构造环境光卷积所需的多级纹<br/>理。" }
   class n3 node_system
   class n3 external_node
   n4@{ shape: lin-rect, label: "**Prepare**<br/>组织渲染数据准备与绘制排队。" }
   class n4 node_system_set
-  n5@{ shape: rounded, label: "**bevy​_​render::renderer::render​_​system**<br/>运行渲染图调度并完成回读和窗口呈现。" }
+  n5@{ shape: rounded, label: "**render​_​system**<br/>运行渲染图调度并完成回读和窗口呈现。" }
   class n5 node_system
-  n6@{ shape: rounded, label: "**bevy​_​render::render​_​resource::**<br/>**pipeline​_​cache::PipelineCache::**<br/>**process​_​pipeline​_​queue​_​system**<br/>处理等待准备的 GPU 管线队列。" }
+  n6@{ shape: rounded, label: "**process​_​pipeline​_​queue​_​system**<br/>处理等待准备的 GPU 管线队列。" }
   class n6 node_system
-  n7@{ shape: rounded, label: "**bevy​_​pbr::light​_​probe::generate::**<br/>**filtering​_​system**<br/>来自crate:bevy​_​pbr ↗：对环境贴图执行<br/>镜面辐射卷积和漫反射辐照卷积，按不同粗糙<br/>度生成镜面 mip，并计算六个面的漫反射环<br/>境纹理。" }
+  n7@{ shape: rounded, label: "**filtering​_​system**<br/>来自crate:bevy​_​pbr ↗：对环境贴图执行<br/>镜面辐射卷积和漫反射辐照卷积，按不同粗糙<br/>度生成镜面 mip，并计算六个面的漫反射环<br/>境纹理。" }
   class n7 node_system
   class n7 external_node
-  n8@{ shape: rounded, label: "**bevy​_​render::batching::no​_​gpu​_​**<br/>**preprocessing::clear​_​batched​_​cpu​_​**<br/>**instance​_​buffers#lt;bevy​_​sprite​_​**<br/>**render::mesh2d::mesh::**<br/>**Mesh2dPipeline#gt;**<br/>在 CPU 批处理使用实例缓冲之前清空其本帧<br/>内容；资源尚未创建时直接跳过。" }
+  n8@{ shape: rounded, label: "**clear​_​batched​_​cpu​_​instance​_​buffers**<br/>在 CPU 批处理使用实例缓冲之前清空其本帧<br/>内容；资源尚未创建时直接跳过。" }
   class n8 node_system
   n0 e0@-->|"先于"| n1
   class e0 edge_order

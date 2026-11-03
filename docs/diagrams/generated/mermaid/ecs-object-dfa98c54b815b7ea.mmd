@@ -36,9 +36,9 @@ flowchart LR
   classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**collider​_​tree::optimization::**<br/>**ColliderTreeOptimization**<br/>配置碰撞体树的优化方式。" }
+  n0@{ shape: cyl, label: "**ColliderTreeOptimization**<br/>配置碰撞体树的优化方式。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**avian3d::collider​_​tree::**<br/>**optimization::optimize​_​trees**<br/>维护动态与运动学碰撞体树的查询性能。" }
+  n1@{ shape: rounded, label: "**optimize​_​trees**<br/>维护动态与运动学碰撞体树的查询性能。" }
   class n1 node_system
   n0 e0@--> n1
   class e0 edge_read

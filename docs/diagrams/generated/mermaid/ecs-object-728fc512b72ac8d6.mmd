@@ -38,12 +38,12 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​ecs::schedule::condition::**<br/>**common​_​conditions::resource​_​**<br/>**changed#lt;avian3d::dynamics::**<br/>**integrator::Gravity#gt;**<br/>判断资源是否被标记为变化。" }
+  n0@{ shape: rounded, label: "**resource​_​changed**<br/>判断资源是否被标记为变化。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**dynamics::integrator::Gravity**<br/>来自crate:avian3d ↗：设置作用于动态刚<br/>体的全局重力。" }
+  n1@{ shape: cyl, label: "**Gravity**<br/>来自crate:avian3d ↗：设置作用于动态刚<br/>体的全局重力。" }
   class n1 node_resource
   class n1 external_node
-  n2@{ shape: rounded, label: "**avian3d::dynamics::solver::islands::**<br/>**sleeping::wake​_​all​_​islands**<br/>来自crate:avian3d ↗：批量请求唤醒当前<br/>全部休眠物理岛。" }
+  n2@{ shape: rounded, label: "**wake​_​all​_​islands**<br/>来自crate:avian3d ↗：批量请求唤醒当前<br/>全部休眠物理岛。" }
   class n2 node_system
   class n2 external_node
   n1 e0@--> n0

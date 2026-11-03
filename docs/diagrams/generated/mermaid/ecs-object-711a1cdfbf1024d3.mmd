@@ -38,18 +38,18 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**schedule::LastPhysicsTick**<br/>记录上一轮物理调度结束的变化刻度。" }
+  n0@{ shape: cyl, label: "**LastPhysicsTick**<br/>记录上一轮物理调度结束的变化刻度。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**demo::physics::wake​_​changed​_​bodies**<br/>来自physics ↗：Avian 的自动唤醒在求解<br/>之后；外部冲量和施力应在本步准备求解器之<br/>前生效。" }
+  n1@{ shape: rounded, label: "**wake​_​changed​_​bodies**<br/>来自physics ↗：Avian 的自动唤醒在求解<br/>之后；外部冲量和施力应在本步准备求解器之<br/>前生效。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**avian3d::physics​_​transform::**<br/>**transform​_​to​_​position**<br/>把用户改变的世界变换同步到物理位姿。" }
+  n2@{ shape: rounded, label: "**transform​_​to​_​position**<br/>把用户改变的世界变换同步到物理位姿。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**avian3d::collider​_​tree::update::**<br/>**update​_​moved​_​collider​_​**<br/>**aabbs#lt;avian3d::collision::collider::**<br/>**parry::Collider#gt;**<br/>重算物理步后被手动改变的碰撞边界。" }
+  n3@{ shape: rounded, label: "**update​_​moved​_​collider​_​aabbs**<br/>重算物理步后被手动改变的碰撞边界。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**avian3d::schedule::update​_​last​_​**<br/>**physics​_​tick**<br/>记录本次物理阶段结束的 ECS 变化刻度。" }
+  n4@{ shape: rounded, label: "**update​_​last​_​physics​_​tick**<br/>记录本次物理阶段结束的 ECS 变化刻度。" }
   class n4 node_system
-  n5@{ shape: rounded, label: "**avian3d::dynamics::solver::islands::**<br/>**sleeping::wake​_​on​_​changed**<br/>因外部位姿、速度或受力变化标记物理岛唤<br/>醒。" }
+  n5@{ shape: rounded, label: "**wake​_​on​_​changed**<br/>因外部位姿、速度或受力变化标记物理岛唤<br/>醒。" }
   class n5 node_system
   n0 e0@--> n1
   class e0 edge_read

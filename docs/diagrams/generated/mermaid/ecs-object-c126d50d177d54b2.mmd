@@ -48,49 +48,49 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**demo::ui::requests::handle​_​requests**<br/>每帧只消费一项语义请求，避免鼠标与确认键<br/>同时激活，或旧页面动作穿过页面切换。" }
+  n0@{ shape: rounded, label: "**handle​_​requests**<br/>每帧只消费一项语义请求，避免鼠标与确认键<br/>同时激活，或旧页面动作穿过页面切换。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**settings::config::SettingsFile**<br/>来自settings ↗：设置文件的保存位置；测<br/>试可覆盖该资源而不触及玩家的真实配置。" }
+  n1@{ shape: cyl, label: "**SettingsFile**<br/>来自settings ↗：设置文件的保存位置；测<br/>试可覆盖该资源而不触及玩家的真实配置。" }
   class n1 node_resource
   class n1 external_node
-  n2@{ shape: cyl, label: "**settings::config::GameSettings**<br/>来自settings ↗：全局玩家设置；非零类型<br/>保证帧率上限始终能够转换为等待间隔。" }
+  n2@{ shape: cyl, label: "**GameSettings**<br/>来自settings ↗：全局玩家设置；非零类型<br/>保证帧率上限始终能够转换为等待间隔。" }
   class n2 node_resource
   class n2 external_node
-  n3@{ shape: cyl, label: "**bevy::bevy​_​ecs::message::**<br/>**Messages#lt;audio::messages::**<br/>**SoundRequest#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n3@{ shape: cyl, label: "**Messages#lt;SoundRequest#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n3 node_resource
   class n3 external_node
-  n4@{ shape: cyl, label: "**settings::draft::SettingsDraft**<br/>来自settings ↗：菜单独立编辑的草稿；音<br/>量可以临时预览，只有应用成功才替换已保存<br/>设置。" }
+  n4@{ shape: cyl, label: "**SettingsDraft**<br/>来自settings ↗：菜单独立编辑的草稿；音<br/>量可以临时预览，只有应用成功才替换已保存<br/>设置。" }
   class n4 node_resource
   class n4 external_node
-  n5@{ shape: fr-rect, label: "**ui::GameUiPlugin**<br/>组装菜单功能，不安装窗口或重复初始化会话<br/>日志。" }
+  n5@{ shape: fr-rect, label: "**GameUiPlugin**<br/>组装菜单功能，不安装窗口或重复初始化会话<br/>日志。" }
   class n5 node_plugin
-  n6@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;app::**<br/>**AppExit#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n6@{ shape: cyl, label: "**Messages#lt;AppExit#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n6 node_resource
   class n6 external_node
   n7@{ shape: notch-rect, label: "**Local · volume​_​edit**<br/>保留音量编辑的初值直至手势结束。" }
   class n7 node_local
-  n8@{ shape: cyl, label: "**ui::MenuState**<br/>页面数据与返回来源；焦点单独保存，避免导<br/>航时重建整个页面。" }
+  n8@{ shape: cyl, label: "**MenuState**<br/>页面数据与返回来源；焦点单独保存，避免导<br/>航时重建整个页面。" }
   class n8 node_resource
-  n9@{ shape: cyl, label: "**bevy::bevy​_​state::state::**<br/>**NextState#lt;game​_​flow::AppState#gt;**<br/>来自crate:bevy​_​state ↗：保存待处理的<br/>状态切换请求" }
+  n9@{ shape: cyl, label: "**NextState#lt;AppState#gt;**<br/>来自crate:bevy​_​state ↗：保存待处理的<br/>状态切换请求" }
   class n9 node_resource
   class n9 external_node
-  n10@{ shape: lean-r, label: "**audio::messages::SoundRequest**<br/>来自audio ↗：业务实体只用于日志和节<br/>流，不持有其组件引用，实体销毁后消息仍可<br/>被消费。" }
+  n10@{ shape: lean-r, label: "**SoundRequest**<br/>来自audio ↗：业务实体只用于日志和节<br/>流，不持有其组件引用，实体销毁后消息仍可<br/>被消费。" }
   class n10 node_message
   class n10 external_node
-  n11@{ shape: lean-r, label: "**app::AppExit**<br/>来自crate:bevy​_​app ↗：请求应用结束并<br/>携带退出结果。" }
+  n11@{ shape: lean-r, label: "**AppExit**<br/>来自crate:bevy​_​app ↗：请求应用结束并<br/>携带退出结果。" }
   class n11 node_message
   class n11 external_node
-  n12@{ shape: cyl, label: "**ui::MenuFocus**<br/>当前可操作按钮的序号，由键盘导航和鼠标悬<br/>停共同维护。" }
+  n12@{ shape: cyl, label: "**MenuFocus**<br/>当前可操作按钮的序号，由键盘导航和鼠标悬<br/>停共同维护。" }
   class n12 node_resource
-  n13@{ shape: lean-r, label: "**ui::UiRequest**<br/>输入系统只产生请求，集中处理系统修改状态<br/>或保存设置。" }
+  n13@{ shape: lean-r, label: "**UiRequest**<br/>输入系统只产生请求，集中处理系统修改状态<br/>或保存设置。" }
   class n13 node_message
-  n14@{ shape: cyl, label: "**bevy::bevy​_​ecs::message::**<br/>**Messages#lt;ui::UiRequest#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n14@{ shape: cyl, label: "**Messages#lt;UiRequest#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n14 node_resource
   class n14 external_node
   n15@{ shape: lin-rect, label: "**Trigger**<br/>来自crate:bevy​_​enhanced​_​input ↗：组<br/>织动作求值、值应用与事件触发。" }
   class n15 node_system_set
   class n15 external_node
-  n16@{ shape: rounded, label: "**ui::navigation::MenuContext**<br/>组织菜单键盘与手柄输入上下文。" }
+  n16@{ shape: rounded, label: "**MenuContext**<br/>组织菜单键盘与手柄输入上下文。" }
   class n16 node_component
   n1 e0@--> n0
   class e0 edge_read

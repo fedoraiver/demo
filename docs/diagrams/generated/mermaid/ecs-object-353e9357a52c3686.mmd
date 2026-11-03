@@ -45,22 +45,22 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​world​_​serialization::world​_​**<br/>**asset​_​spawner::world​_​instance​_​**<br/>**spawner**<br/>根据世界资产根组件排队生成或替换实例。" }
+  n0@{ shape: rounded, label: "**world​_​instance​_​spawner**<br/>根据世界资产根组件排队生成或替换实例。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**bevy​_​world​_​serialization::world​_​**<br/>**asset​_​spawner::world​_​instance​_​**<br/>**spawner​_​system**<br/>推进世界资产实例的生成、销毁及更新。" }
+  n1@{ shape: rounded, label: "**world​_​instance​_​spawner​_​system**<br/>推进世界资产实例的生成、销毁及更新。" }
   class n1 node_system
-  n2@{ shape: cyl, label: "**world​_​asset​_​spawner::**<br/>**WorldInstanceSpawner**<br/>管理世界资产的同步及排队生成、销毁和热更<br/>新" }
+  n2@{ shape: cyl, label: "**WorldInstanceSpawner**<br/>管理世界资产的同步及排队生成、销毁和热更<br/>新" }
   class n2 node_resource
-  n3@{ shape: rounded, label: "**world​_​asset​_​spawner::WorldInstance**<br/>保存已生成世界资产的实例身份" }
+  n3@{ shape: rounded, label: "**WorldInstance**<br/>保存已生成世界资产的实例身份" }
   class n3 node_component
   n4@{ shape: fr-rect, label: "**WorldSerializationPlugin**<br/>提供世界数据序列化支持。" }
   class n4 node_plugin
-  n5@{ shape: rounded, label: "**components::DynamicWorldRoot**<br/>持有动态世界资产句柄" }
+  n5@{ shape: rounded, label: "**DynamicWorldRoot**<br/>持有动态世界资产句柄" }
   class n5 node_component
   n6@{ shape: lin-rect, label: "**WorldInstanceSpawn**<br/>来自crate:bevy​_​app ↗：划分世界实例与<br/>场景生成阶段。" }
   class n6 node_system_set
   class n6 external_node
-  n7@{ shape: rounded, label: "**components::WorldAssetRoot**<br/>持有 WorldAsset 句柄" }
+  n7@{ shape: rounded, label: "**WorldAssetRoot**<br/>持有 WorldAsset 句柄" }
   class n7 node_component
   n0 e0@-->|"先于"| n1
   class e0 edge_order
@@ -93,5 +93,5 @@ flowchart LR
   e6@{ curve: basis }
   e7@{ curve: basis }
   e8@{ curve: basis }
-  e9@{ curve: bumpX }
+  e9@{ curve: basis }
   e10@{ curve: basis }

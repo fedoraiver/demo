@@ -38,12 +38,12 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​render::view::ColorGrading**<br/>配置整幅图像及明暗分区的电影式调色。" }
+  n0@{ shape: rounded, label: "**ColorGrading**<br/>配置整幅图像及明暗分区的电影式调色。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​core​_​pipeline::tonemapping::**<br/>**check​_​tonemapping​_​none**<br/>来自crate:bevy​_​core​_​pipeline ↗：警告<br/>关闭色调映射后仍配置无效效果的相机。" }
+  n1@{ shape: rounded, label: "**check​_​tonemapping​_​none**<br/>来自crate:bevy​_​core​_​pipeline ↗：警告<br/>关闭色调映射后仍配置无效效果的相机。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​render::camera::extract​_​cameras**<br/>把活动相机及可见实体提取到渲染世界。" }
+  n2@{ shape: rounded, label: "**extract​_​cameras**<br/>把活动相机及可见实体提取到渲染世界。" }
   class n2 node_system
   n0 e0@--> n1
   class e0 edge_read

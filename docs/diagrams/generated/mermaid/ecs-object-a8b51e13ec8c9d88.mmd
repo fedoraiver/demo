@@ -38,61 +38,61 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**slider::Slider**<br/>组织滑块的连续数值调节行为。" }
+  n0@{ shape: rounded, label: "**Slider**<br/>组织滑块的连续数值调节行为。" }
   class n0 node_component
-  n1@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**drag​_​end**<br/>提交滑条拖动结果并释放指针。" }
+  n1@{ shape: hex, label: "**slider​_​on​_​drag​_​end**<br/>提交滑条拖动结果并释放指针。" }
   class n1 node_observer
-  n2@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**pointer​_​cancel**<br/>取消滑条的按下状态。" }
+  n2@{ shape: hex, label: "**slider​_​on​_​pointer​_​cancel**<br/>取消滑条的按下状态。" }
   class n2 node_observer
-  n3@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**drag​_​end**<br/>提交滑条拖动结果并释放指针。" }
+  n3@{ shape: hex, label: "**slider​_​on​_​drag​_​end**<br/>提交滑条拖动结果并释放指针。" }
   class n3 node_observer
-  n4@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**pointer​_​up**<br/>释放滑条的按下状态。" }
+  n4@{ shape: hex, label: "**slider​_​on​_​pointer​_​up**<br/>释放滑条的按下状态。" }
   class n4 node_observer
-  n5@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**set​_​value**<br/>将滑条设值请求转为最终值变化。" }
+  n5@{ shape: hex, label: "**slider​_​on​_​set​_​value**<br/>将滑条设值请求转为最终值变化。" }
   class n5 node_observer
-  n6@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**pointer​_​down**<br/>按轨道点击策略发起滑条调整。" }
+  n6@{ shape: hex, label: "**slider​_​on​_​pointer​_​down**<br/>按轨道点击策略发起滑条调整。" }
   class n6 node_observer
-  n7@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**key​_​input**<br/>用键盘步进或跳转滑条数值。" }
+  n7@{ shape: hex, label: "**slider​_​on​_​key​_​input**<br/>用键盘步进或跳转滑条数值。" }
   class n7 node_observer
-  n8@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**drag​_​start**<br/>记录滑条拖动起点并捕获指针。" }
+  n8@{ shape: hex, label: "**slider​_​on​_​drag​_​start**<br/>记录滑条拖动起点并捕获指针。" }
   class n8 node_observer
-  n9@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**key​_​input**<br/>用键盘步进或跳转滑条数值。" }
+  n9@{ shape: hex, label: "**slider​_​on​_​key​_​input**<br/>用键盘步进或跳转滑条数值。" }
   class n9 node_observer
-  n10@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**insert**<br/>同步滑条的无障碍方向。" }
+  n10@{ shape: hex, label: "**slider​_​on​_​insert**<br/>同步滑条的无障碍方向。" }
   class n10 node_observer
-  n11@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**key​_​input**<br/>用键盘步进或跳转滑条数值。" }
+  n11@{ shape: hex, label: "**slider​_​on​_​key​_​input**<br/>用键盘步进或跳转滑条数值。" }
   class n11 node_observer
-  n12@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**drag**<br/>拖动滑条时发布连续值变化。" }
+  n12@{ shape: hex, label: "**slider​_​on​_​drag**<br/>拖动滑条时发布连续值变化。" }
   class n12 node_observer
-  n13@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**drag**<br/>拖动滑条时发布连续值变化。" }
+  n13@{ shape: hex, label: "**slider​_​on​_​drag**<br/>拖动滑条时发布连续值变化。" }
   class n13 node_observer
-  n14@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**drag​_​end**<br/>提交滑条拖动结果并释放指针。" }
+  n14@{ shape: hex, label: "**slider​_​on​_​drag​_​end**<br/>提交滑条拖动结果并释放指针。" }
   class n14 node_observer
-  n15@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**drag​_​start**<br/>记录滑条拖动起点并捕获指针。" }
+  n15@{ shape: hex, label: "**slider​_​on​_​drag​_​start**<br/>记录滑条拖动起点并捕获指针。" }
   class n15 node_observer
-  n16@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**drag**<br/>拖动滑条时发布连续值变化。" }
+  n16@{ shape: hex, label: "**slider​_​on​_​drag**<br/>拖动滑条时发布连续值变化。" }
   class n16 node_observer
-  n17@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**drag​_​start**<br/>记录滑条拖动起点并捕获指针。" }
+  n17@{ shape: hex, label: "**slider​_​on​_​drag​_​start**<br/>记录滑条拖动起点并捕获指针。" }
   class n17 node_observer
-  n18@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**pointer​_​up**<br/>释放滑条的按下状态。" }
+  n18@{ shape: hex, label: "**slider​_​on​_​pointer​_​up**<br/>释放滑条的按下状态。" }
   class n18 node_observer
-  n19@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**pointer​_​up**<br/>释放滑条的按下状态。" }
+  n19@{ shape: hex, label: "**slider​_​on​_​pointer​_​up**<br/>释放滑条的按下状态。" }
   class n19 node_observer
-  n20@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**set​_​value**<br/>将滑条设值请求转为最终值变化。" }
+  n20@{ shape: hex, label: "**slider​_​on​_​set​_​value**<br/>将滑条设值请求转为最终值变化。" }
   class n20 node_observer
-  n21@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**set​_​value**<br/>将滑条设值请求转为最终值变化。" }
+  n21@{ shape: hex, label: "**slider​_​on​_​set​_​value**<br/>将滑条设值请求转为最终值变化。" }
   class n21 node_observer
-  n22@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**pointer​_​down**<br/>按轨道点击策略发起滑条调整。" }
+  n22@{ shape: hex, label: "**slider​_​on​_​pointer​_​down**<br/>按轨道点击策略发起滑条调整。" }
   class n22 node_observer
-  n23@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**insert**<br/>同步滑条的无障碍方向。" }
+  n23@{ shape: hex, label: "**slider​_​on​_​insert**<br/>同步滑条的无障碍方向。" }
   class n23 node_observer
-  n24@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**pointer​_​cancel**<br/>取消滑条的按下状态。" }
+  n24@{ shape: hex, label: "**slider​_​on​_​pointer​_​cancel**<br/>取消滑条的按下状态。" }
   class n24 node_observer
-  n25@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**pointer​_​down**<br/>按轨道点击策略发起滑条调整。" }
+  n25@{ shape: hex, label: "**slider​_​on​_​pointer​_​down**<br/>按轨道点击策略发起滑条调整。" }
   class n25 node_observer
-  n26@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**pointer​_​cancel**<br/>取消滑条的按下状态。" }
+  n26@{ shape: hex, label: "**slider​_​on​_​pointer​_​cancel**<br/>取消滑条的按下状态。" }
   class n26 node_observer
-  n27@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**insert**<br/>同步滑条的无障碍方向。" }
+  n27@{ shape: hex, label: "**slider​_​on​_​insert**<br/>同步滑条的无障碍方向。" }
   class n27 node_observer
   n0 e0@-->|"存在性约束"| n1
   class e0 edge_reference

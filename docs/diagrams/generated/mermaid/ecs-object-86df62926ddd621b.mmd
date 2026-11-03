@@ -37,11 +37,11 @@ flowchart LR
   classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​render::init​_​gpu​_​resource#lt;bevy​_​**<br/>**core​_​pipeline::mip​_​generation::**<br/>**MipGenerationResources#gt;**<br/>构造并插入渲染所需资源。" }
+  n0@{ shape: rounded, label: "**init​_​gpu​_​resource**<br/>构造并插入渲染所需资源。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**bevy​_​render::renderer::RenderDevice**<br/>创建渲染和计算所需的 GPU 资源。" }
+  n1@{ shape: cyl, label: "**RenderDevice**<br/>创建渲染和计算所需的 GPU 资源。" }
   class n1 node_resource
-  n2@{ shape: cyl, label: "**mip​_​generation::**<br/>**MipGenerationResources**<br/>来自crate:bevy​_​core​_​pipeline ↗：提<br/>供 mipmap 下采样共享的 GPU 采样资源。" }
+  n2@{ shape: cyl, label: "**MipGenerationResources**<br/>来自crate:bevy​_​core​_​pipeline ↗：提<br/>供 mipmap 下采样共享的 GPU 采样资源。" }
   class n2 node_resource
   class n2 external_node
   n0 e0@-->|"可变访问"| n1

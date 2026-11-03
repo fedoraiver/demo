@@ -39,7 +39,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: notch-rect, label: "**Local · cluster​_​aabb​_​spheres**<br/>按需缓存聚簇包围盒的包围球。" }
   class n0 node_local
-  n1@{ shape: rounded, label: "**bevy​_​light::cluster::assign::assign​_​**<br/>**objects​_​to​_​clusters**<br/>将灯光、探针及贴花分配到视图分簇。" }
+  n1@{ shape: rounded, label: "**assign​_​objects​_​to​_​clusters**<br/>将灯光、探针及贴花分配到视图分簇。" }
   class n1 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

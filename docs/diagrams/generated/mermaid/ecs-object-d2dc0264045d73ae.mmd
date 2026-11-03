@@ -38,11 +38,11 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**dof::DepthOfFieldGlobalBindGroup**<br/>保存跨视图共享的景深着色器资源绑定。" }
+  n0@{ shape: cyl, label: "**DepthOfFieldGlobalBindGroup**<br/>保存跨视图共享的景深着色器资源绑定。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​post​_​process::dof::prepare​_​**<br/>**depth​_​of​_​field​_​global​_​bind​_​group**<br/>把景深参数与采样器绑定为共享 GPU 输入。" }
+  n1@{ shape: rounded, label: "**prepare​_​depth​_​of​_​field​_​global​_​bind​_​**<br/>**group**<br/>把景深参数与采样器绑定为共享 GPU 输入。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​post​_​process::dof::depth​_​of​_​**<br/>**field**<br/>以两阶段全屏通道执行景深模糊。" }
+  n2@{ shape: rounded, label: "**depth​_​of​_​field**<br/>以两阶段全屏通道执行景深模糊。" }
   class n2 node_system
   n1 e0@-->|"赋值"| n0
   class e0 edge_write

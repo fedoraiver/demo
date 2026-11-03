@@ -37,15 +37,15 @@ flowchart LR
   classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**camera::ShadowLodOrigin**<br/>指定点光与聚光阴影的距离参考点。" }
+  n0@{ shape: rounded, label: "**ShadowLodOrigin**<br/>指定点光与聚光阴影的距离参考点。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​light::check​_​point​_​light​_​mesh​_​**<br/>**visibility**<br/>来自crate:bevy​_​light ↗：计算点光与聚<br/>光灯阴影可见的网格。" }
+  n1@{ shape: rounded, label: "**check​_​point​_​light​_​mesh​_​visibility**<br/>来自crate:bevy​_​light ↗：计算点光与聚<br/>光灯阴影可见的网格。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​pbr::render::light::extract​_​**<br/>**shadow​_​lod​_​origin**<br/>来自crate:bevy​_​pbr ↗：解析点光与聚光<br/>阴影 LOD 的距离参考位置。" }
+  n2@{ shape: rounded, label: "**extract​_​shadow​_​lod​_​origin**<br/>来自crate:bevy​_​pbr ↗：解析点光与聚光<br/>阴影 LOD 的距离参考位置。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​camera::visibility::range::**<br/>**check​_​visibility​_​ranges**<br/>按视图距离计算实体可见范围位掩码。" }
+  n3@{ shape: rounded, label: "**check​_​visibility​_​ranges**<br/>按视图距离计算实体可见范围位掩码。" }
   class n3 node_system
   n0 e0@-->|"存在性约束"| n1
   class e0 edge_reference

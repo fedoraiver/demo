@@ -36,9 +36,9 @@ flowchart LR
   classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**view::window::screenshot::Screenshot**<br/>提交异步截图请求。" }
+  n0@{ shape: rounded, label: "**Screenshot**<br/>提交异步截图请求。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​render::view::window::**<br/>**screenshot::extract​_​screenshots**<br/>收集并去重本帧尚未捕获的截图请求。" }
+  n1@{ shape: rounded, label: "**extract​_​screenshots**<br/>收集并去重本帧尚未捕获的截图请求。" }
   class n1 node_system
   n0 e0@--> n1
   class e0 edge_read

@@ -40,24 +40,24 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**AnimationPlayer**<br/>保存当前激活动画及其播放控制状态" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​animation::advance​_​animations**<br/>推进动画播放器中活动动画的播放时间。" }
+  n1@{ shape: rounded, label: "**advance​_​animations**<br/>推进动画播放器中活动动画的播放时间。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**demo::character​_​animation::state::**<br/>**sync​_​courier​_​animation**<br/>来自character​_​animation ↗：Update 位<br/>于固定模拟与呈现同步之后；零固定步帧也使<br/>用本帧朝向和已有真实速度。" }
+  n2@{ shape: rounded, label: "**sync​_​courier​_​animation**<br/>来自character​_​animation ↗：Update 位<br/>于固定模拟与呈现同步之后；零固定步帧也使<br/>用本帧朝向和已有真实速度。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​animation::animate​_​targets**<br/>评估动画图并把结果应用到动画目标。" }
+  n3@{ shape: rounded, label: "**animate​_​targets**<br/>评估动画图并把结果应用到动画目标。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**bevy​_​animation::transition::expire​_​**<br/>**completed​_​transitions**<br/>结束已完全淡出的动画过渡。" }
+  n4@{ shape: rounded, label: "**expire​_​completed​_​transitions**<br/>结束已完全淡出的动画过渡。" }
   class n4 node_system
-  n5@{ shape: rounded, label: "**demo::character​_​animation::binding::**<br/>**initialize​_​ready​_​couriers**<br/>来自character​_​animation ↗：场景就绪<br/>后只遍历该视觉根的子树，避免把 NPC 或其<br/>他模型的播放器接到主角上。" }
+  n5@{ shape: rounded, label: "**initialize​_​ready​_​couriers**<br/>来自character​_​animation ↗：场景就绪<br/>后只遍历该视觉根的子树，避免把 NPC 或其<br/>他模型的播放器接到主角上。" }
   class n5 node_system
   class n5 external_node
-  n6@{ shape: rounded, label: "**demo::ui::backdrop::play​_​courier​_​**<br/>**animation**<br/>来自ui ↗：仅遍历已展开的展示角色子树，<br/>命名资产尚未就绪时保留 pending 供下一帧<br/>重试。" }
+  n6@{ shape: rounded, label: "**play​_​courier​_​animation**<br/>来自ui ↗：仅遍历已展开的展示角色子树，<br/>命名资产尚未就绪时保留 pending 供下一帧<br/>重试。" }
   class n6 node_system
   class n6 external_node
-  n7@{ shape: rounded, label: "**bevy​_​animation::transition::advance​_​**<br/>**transitions**<br/>推进动画过渡并归一化混合权重。" }
+  n7@{ shape: rounded, label: "**advance​_​transitions**<br/>推进动画过渡并归一化混合权重。" }
   class n7 node_system
-  n8@{ shape: rounded, label: "**bevy​_​animation::trigger​_​untargeted​_​**<br/>**animation​_​events**<br/>派发动画片段的根目标事件。" }
+  n8@{ shape: rounded, label: "**trigger​_​untargeted​_​animation​_​events**<br/>派发动画片段的根目标事件。" }
   class n8 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

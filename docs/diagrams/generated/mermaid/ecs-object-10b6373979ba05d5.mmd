@@ -20,7 +20,7 @@
       "nodeSpacing": 16,
       "rankSpacing": 48,
       "padding": 16,
-      "wrappingWidth": 280,
+      "wrappingWidth": 1000,
       "minNodeWidth": 180,
       "useMaxWidth": false,
       "curve": "linear"
@@ -42,20 +42,20 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​asset::assets::Assets#lt;bevy​_​**<br/>**animation::graph::AnimationGraph#gt;::**<br/>**asset​_​events**<br/>发布累计的资产变化消息。" }
+  n0@{ shape: rounded, label: "**asset​_​events**<br/>发布累计的资产变化消息。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;bevy​_​**<br/>**asset::AssetEvent#lt;graph::**<br/>**AnimationGraph#gt;#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n1@{ shape: cyl, label: "**Messages#lt;AssetEvent#lt;AnimationGraph#gt;#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n1 node_resource
   class n1 external_node
-  n2@{ shape: lean-r, label: "**bevy​_​asset::AssetEvent#lt;graph::**<br/>**AnimationGraph#gt;**<br/>通知指定资产及依赖发生变化。" }
+  n2@{ shape: lean-r, label: "**AssetEvent#lt;AnimationGraph#gt;**<br/>通知指定资产及依赖发生变化。" }
   class n2 node_message
   n3@{ shape: lin-rect, label: "**AssetEventSystems**<br/>发布资产容器积累的变更消息。" }
   class n3 node_system_set
-  n4@{ shape: rounded, label: "**bevy​_​asset::assets::Assets#lt;bevy​_​**<br/>**animation::graph::AnimationGraph#gt;::**<br/>**asset​_​events​_​condition**<br/>判断是否有待发布的资产变化。" }
+  n4@{ shape: rounded, label: "**asset​_​events​_​condition**<br/>判断是否有待发布的资产变化。" }
   class n4 node_system
-  n5@{ shape: cyl, label: "**bevy​_​asset::asset​_​changed::**<br/>**AssetChanges#lt;graph::AnimationGraph#gt;**<br/>记录资产最近变化的系统刻度。" }
+  n5@{ shape: cyl, label: "**AssetChanges#lt;AnimationGraph#gt;**<br/>记录资产最近变化的系统刻度。" }
   class n5 node_resource
-  n6@{ shape: cyl, label: "**bevy​_​asset::Assets#lt;graph::**<br/>**AnimationGraph#gt;**<br/>按资产身份存储对象并暂存变化消息。" }
+  n6@{ shape: cyl, label: "**Assets#lt;AnimationGraph#gt;**<br/>按资产身份存储对象并暂存变化消息。" }
   class n6 node_resource
   n0 e0@-->|"赋值"| n1
   class e0 edge_write

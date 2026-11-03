@@ -39,11 +39,11 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​render::batching::gpu​_​**<br/>**preprocessing::clear​_​scene​_​**<br/>**unpacking​_​buffers**<br/>清空新帧场景解包的两类元数据。" }
+  n0@{ shape: rounded, label: "**clear​_​scene​_​unpacking​_​buffers**<br/>清空新帧场景解包的两类元数据。" }
   class n0 node_system
   n1@{ shape: lin-rect, label: "**PrepareResources**<br/>组织渲染数据准备与绘制排队。" }
   class n1 node_system_set
-  n2@{ shape: cyl, label: "**batching::gpu​_​preprocessing::**<br/>**SceneUnpackingBuffers**<br/>汇集分桶解包与 Uniform 分配的工作缓冲。" }
+  n2@{ shape: cyl, label: "**SceneUnpackingBuffers**<br/>汇集分桶解包与 Uniform 分配的工作缓冲。" }
   class n2 node_resource
   n1 e0@-->|"集合成员"| n0
   class e0 edge_set_membership

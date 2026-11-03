@@ -40,19 +40,19 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**avian3d::collision::broad​_​phase::**<br/>**bvh​_​broad​_​phase::collect​_​collision​_​**<br/>**pairs#lt;()#gt;**<br/>为移动碰撞代理收集广相候选接触。" }
+  n0@{ shape: rounded, label: "**collect​_​collision​_​pairs**<br/>为移动碰撞代理收集广相候选接触。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**dynamics::joints::joint​_​graph::**<br/>**JointGraph**<br/>保存刚体之间的关节连接图。" }
+  n1@{ shape: cyl, label: "**JointGraph**<br/>保存刚体之间的关节连接图。" }
   class n1 node_resource
-  n2@{ shape: cyl, label: "**collider​_​tree::update::MovedProxies**<br/>收集需要重检碰撞对的移动代理。" }
+  n2@{ shape: cyl, label: "**MovedProxies**<br/>收集需要重检碰撞对的移动代理。" }
   class n2 node_resource
-  n3@{ shape: cyl, label: "**collision::diagnostics::**<br/>**CollisionDiagnostics**<br/>汇总碰撞检测耗时与接触数量。" }
+  n3@{ shape: cyl, label: "**CollisionDiagnostics**<br/>汇总碰撞检测耗时与接触数量。" }
   class n3 node_resource
-  n4@{ shape: cyl, label: "**collision::contact​_​types::contact​_​**<br/>**graph::ContactGraph**<br/>维护碰撞体接触对及其碰撞数据。" }
+  n4@{ shape: cyl, label: "**ContactGraph**<br/>维护碰撞体接触对及其碰撞数据。" }
   class n4 node_resource
   n5@{ shape: lin-rect, label: "**CollectCollisions**<br/>组织宽阶段碰撞候选收集。" }
   class n5 node_system_set
-  n6@{ shape: cyl, label: "**collider​_​tree::ColliderTrees**<br/>按运动类别组织碰撞体加速树。" }
+  n6@{ shape: cyl, label: "**ColliderTrees**<br/>按运动类别组织碰撞体加速树。" }
   class n6 node_resource
   n1 e0@--> n0
   class e0 edge_read

@@ -38,41 +38,41 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**bevy​_​render::render​_​phase::**<br/>**ViewSortedRenderPhases#lt;render​_​pass::**<br/>**TransparentUi#gt;**<br/>汇集各视图需要排序的绘制指令。" }
+  n0@{ shape: cyl, label: "**ViewSortedRenderPhases#lt;TransparentUi**<br/>**#gt;**<br/>汇集各视图需要排序的绘制指令。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​ui​_​render::ui​_​texture​_​slice​_​**<br/>**pipeline::prepare​_​ui​_​slices**<br/>来自crate:bevy​_​ui​_​render ↗：为 UI 切<br/>片生成裁剪几何并合并图像批次。" }
+  n1@{ shape: rounded, label: "**prepare​_​ui​_​slices**<br/>来自crate:bevy​_​ui​_​render ↗：为 UI 切<br/>片生成裁剪几何并合并图像批次。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​ui​_​render::ui​_​texture​_​slice​_​**<br/>**pipeline::queue​_​ui​_​slices**<br/>来自crate:bevy​_​ui​_​render ↗：将 UI 图<br/>像切片排入对应相机透明阶段。" }
+  n2@{ shape: rounded, label: "**queue​_​ui​_​slices**<br/>来自crate:bevy​_​ui​_​render ↗：将 UI 图<br/>像切片排入对应相机透明阶段。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​ui​_​render::gradient::queue​_​**<br/>**gradient**<br/>来自crate:bevy​_​ui​_​render ↗：按目标视<br/>图与堆叠顺序排队 UI 渐变。" }
+  n3@{ shape: rounded, label: "**queue​_​gradient**<br/>来自crate:bevy​_​ui​_​render ↗：按目标视<br/>图与堆叠顺序排队 UI 渐变。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**bevy​_​ui​_​render::prepare​_​uinodes**<br/>来自crate:bevy​_​ui​_​render ↗：生成裁剪<br/>后的 UI 几何并合并图像批次。" }
+  n4@{ shape: rounded, label: "**prepare​_​uinodes**<br/>来自crate:bevy​_​ui​_​render ↗：生成裁剪<br/>后的 UI 几何并合并图像批次。" }
   class n4 node_system
   class n4 external_node
-  n5@{ shape: rounded, label: "**bevy​_​ui​_​render::render​_​pass::ui​_​pass**<br/>来自crate:bevy​_​ui​_​render ↗：把透明<br/>UI 绘制项渲染到关联视图。" }
+  n5@{ shape: rounded, label: "**ui​_​pass**<br/>来自crate:bevy​_​ui​_​render ↗：把透明<br/>UI 绘制项渲染到关联视图。" }
   class n5 node_system
   class n5 external_node
-  n6@{ shape: rounded, label: "**bevy​_​ui​_​render::box​_​shadow::queue​_​**<br/>**shadows**<br/>来自crate:bevy​_​ui​_​render ↗：为提取<br/>的 UI 阴影选择匹配目标格式和阴影采样数<br/>的管线，按节点堆叠顺序及阴影层偏移加入透<br/>明 UI 绘制阶段。" }
+  n6@{ shape: rounded, label: "**queue​_​shadows**<br/>来自crate:bevy​_​ui​_​render ↗：为提取<br/>的 UI 阴影选择匹配目标格式和阴影采样数<br/>的管线，按节点堆叠顺序及阴影层偏移加入透<br/>明 UI 绘制阶段。" }
   class n6 node_system
   class n6 external_node
-  n7@{ shape: rounded, label: "**bevy​_​ui​_​render::render​_​pass::ui​_​pass**<br/>来自crate:bevy​_​ui​_​render ↗：把透明<br/>UI 绘制项渲染到关联视图。" }
+  n7@{ shape: rounded, label: "**ui​_​pass**<br/>来自crate:bevy​_​ui​_​render ↗：把透明<br/>UI 绘制项渲染到关联视图。" }
   class n7 node_system
   class n7 external_node
-  n8@{ shape: rounded, label: "**bevy​_​ui​_​render::queue​_​uinodes**<br/>来自crate:bevy​_​ui​_​render ↗：按目标相<br/>机和堆叠顺序排队 UI 节点。" }
+  n8@{ shape: rounded, label: "**queue​_​uinodes**<br/>来自crate:bevy​_​ui​_​render ↗：按目标相<br/>机和堆叠顺序排队 UI 节点。" }
   class n8 node_system
   class n8 external_node
-  n9@{ shape: rounded, label: "**bevy​_​render::render​_​phase::sort​_​**<br/>**phase​_​system#lt;bevy​_​ui​_​render::render​_​**<br/>**pass::TransparentUi#gt;**<br/>按各视图重新计算并排序阶段绘制项。" }
+  n9@{ shape: rounded, label: "**sort​_​phase​_​system**<br/>按各视图重新计算并排序阶段绘制项。" }
   class n9 node_system
-  n10@{ shape: rounded, label: "**bevy​_​ui​_​render::extract​_​ui​_​camera​_​**<br/>**view**<br/>来自crate:bevy​_​ui​_​render ↗：为活动二<br/>维或三维相机维护独立 UI 视图。" }
+  n10@{ shape: rounded, label: "**extract​_​ui​_​camera​_​view**<br/>来自crate:bevy​_​ui​_​render ↗：为活动二<br/>维或三维相机维护独立 UI 视图。" }
   class n10 node_system
   class n10 external_node
-  n11@{ shape: rounded, label: "**bevy​_​ui​_​render::gradient::prepare​_​**<br/>**gradient**<br/>来自crate:bevy​_​ui​_​render ↗：将已排队<br/>的线性、径向和锥形渐变转换为 GPU 顶点、<br/>索引与颜色停靠点数据，建立渐变绘制批次并<br/>上传相关缓冲。" }
+  n11@{ shape: rounded, label: "**prepare​_​gradient**<br/>来自crate:bevy​_​ui​_​render ↗：将已排队<br/>的线性、径向和锥形渐变转换为 GPU 顶点、<br/>索引与颜色停靠点数据，建立渐变绘制批次并<br/>上传相关缓冲。" }
   class n11 node_system
   class n11 external_node
-  n12@{ shape: rounded, label: "**bevy​_​ui​_​render::box​_​shadow::prepare​_​**<br/>**shadows**<br/>来自crate:bevy​_​ui​_​render ↗：生成并上<br/>传 UI 阴影的裁剪几何。" }
+  n12@{ shape: rounded, label: "**prepare​_​shadows**<br/>来自crate:bevy​_​ui​_​render ↗：生成并上<br/>传 UI 阴影的裁剪几何。" }
   class n12 node_system
   class n12 external_node
   n1 e0@-->|"可变访问"| n0

@@ -38,12 +38,12 @@ flowchart LR
   classDef edge_publish stroke:#247B91,stroke-width:1.8px,stroke-dasharray:10 4 2 4
   classDef edge_consume stroke:#247B91,stroke-width:1.8px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: lean-r, label: "**event::WindowClosing**<br/>通知窗口正在关闭。" }
+  n0@{ shape: lean-r, label: "**WindowClosing**<br/>通知窗口正在关闭。" }
   class n0 node_message
-  n1@{ shape: rounded, label: "**bevy​_​render::view::window::extract​_​**<br/>**windows**<br/>来自crate:bevy​_​render ↗：向渲染世界同<br/>步窗口配置与原生句柄。" }
+  n1@{ shape: rounded, label: "**extract​_​windows**<br/>来自crate:bevy​_​render ↗：向渲染世界同<br/>步窗口配置与原生句柄。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​winit::system::despawn​_​windows**<br/>来自crate:bevy​_​winit ↗：处理原生窗口<br/>关闭并延后一轮释放包装器。" }
+  n2@{ shape: rounded, label: "**despawn​_​windows**<br/>来自crate:bevy​_​winit ↗：处理原生窗口<br/>关闭并延后一轮释放包装器。" }
   class n2 node_system
   class n2 external_node
   n0 e0@--> n1

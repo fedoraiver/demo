@@ -38,16 +38,16 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**render::mesh::MeshCullingDataBuffer**<br/>为 GPU 网格裁剪保存包围盒数据。" }
+  n0@{ shape: cyl, label: "**MeshCullingDataBuffer**<br/>为 GPU 网格裁剪保存包围盒数据。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​render::init​_​gpu​_​resource#lt;bevy​_​**<br/>**pbr::render::mesh::**<br/>**MeshCullingDataBuffer#gt;**<br/>来自crate:bevy​_​render ↗：构造并插入渲<br/>染所需资源。" }
+  n1@{ shape: rounded, label: "**init​_​gpu​_​resource**<br/>来自crate:bevy​_​render ↗：构造并插入渲<br/>染所需资源。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​pbr::render::gpu​_​preprocess::**<br/>**write​_​mesh​_​culling​_​data​_​buffer**<br/>上传网格裁剪数据并准备稀疏填充任务。" }
+  n2@{ shape: rounded, label: "**write​_​mesh​_​culling​_​data​_​buffer**<br/>上传网格裁剪数据并准备稀疏填充任务。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​pbr::render::gpu​_​preprocess::**<br/>**prepare​_​preprocess​_​bind​_​groups**<br/>绑定各视图网格预处理和间接参数构建资源。" }
+  n3@{ shape: rounded, label: "**prepare​_​preprocess​_​bind​_​groups**<br/>绑定各视图网格预处理和间接参数构建资源。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**bevy​_​pbr::render::mesh::collect​_​**<br/>**meshes​_​for​_​gpu​_​building**<br/>把线程提取队列整理为 GPU 网格实例和输入<br/>缓冲。" }
+  n4@{ shape: rounded, label: "**collect​_​meshes​_​for​_​gpu​_​building**<br/>把线程提取队列整理为 GPU 网格实例和输入<br/>缓冲。" }
   class n4 node_system
   n1 e0@-->|"插入"| n0
   class e0 edge_write

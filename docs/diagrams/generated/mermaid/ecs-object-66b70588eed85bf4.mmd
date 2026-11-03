@@ -37,11 +37,11 @@ flowchart LR
   classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**prepass::PrepassViewBindGroup**<br/>保存预通道视图的资源绑定。" }
+  n0@{ shape: cyl, label: "**PrepassViewBindGroup**<br/>保存预通道视图的资源绑定。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​pbr::prepass::prepare​_​prepass​_​**<br/>**view​_​bind​_​group**<br/>绑定预通道的视图、全局和前帧缓冲。" }
+  n1@{ shape: rounded, label: "**prepare​_​prepass​_​view​_​bind​_​group**<br/>绑定预通道的视图、全局和前帧缓冲。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​pbr::prepass::init​_​prepass​_​**<br/>**view​_​bind​_​group**<br/>建立预通道的空绑定组及待准备状态。" }
+  n2@{ shape: rounded, label: "**init​_​prepass​_​view​_​bind​_​group**<br/>建立预通道的空绑定组及待准备状态。" }
   class n2 node_system
   n1 e0@-->|"赋值"| n0
   class e0 edge_write

@@ -41,47 +41,47 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​post​_​process::effect​_​stack::**<br/>**post​_​processing**<br/>组合执行色差、暗角和镜头畸变。" }
+  n0@{ shape: rounded, label: "**post​_​processing**<br/>组合执行色差、暗角和镜头畸变。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**effect​_​stack::lens​_​distortion::**<br/>**LensDistortion**<br/>配置桶形或枕形镜头畸变。" }
+  n1@{ shape: rounded, label: "**LensDistortion**<br/>配置桶形或枕形镜头畸变。" }
   class n1 node_component
-  n2@{ shape: fr-rect, label: "**effect​_​stack::EffectStackPlugin**<br/>组合色差、镜头畸变与暗角效果。" }
+  n2@{ shape: fr-rect, label: "**EffectStackPlugin**<br/>组合色差、镜头畸变与暗角效果。" }
   class n2 node_plugin
-  n3@{ shape: cyl, label: "**effect​_​stack::**<br/>**PostProcessingUniformBuffers**<br/>集中保存内置后处理效果的 GPU 参数。" }
+  n3@{ shape: cyl, label: "**PostProcessingUniformBuffers**<br/>集中保存内置后处理效果的 GPU 参数。" }
   class n3 node_resource
-  n4@{ shape: cyl, label: "**bevy​_​render::render​_​asset::**<br/>**RenderAssets#lt;bevy​_​render::texture::**<br/>**GpuImage#gt;**<br/>来自crate:bevy​_​render ↗：按源资产身份<br/>保存 GPU 渲染表示。" }
+  n4@{ shape: cyl, label: "**RenderAssets#lt;GpuImage#gt;**<br/>来自crate:bevy​_​render ↗：按源资产身份<br/>保存 GPU 渲染表示。" }
   class n4 node_resource
   class n4 external_node
-  n5@{ shape: rounded, label: "**effect​_​stack::vignette::Vignette**<br/>配置画面边缘渐暗的暗角效果。" }
+  n5@{ shape: rounded, label: "**Vignette**<br/>配置画面边缘渐暗的暗角效果。" }
   class n5 node_component
-  n6@{ shape: rounded, label: "**effect​_​stack::**<br/>**PostProcessingPipelineId**<br/>保存相机内置后处理组合的管线标识。" }
+  n6@{ shape: rounded, label: "**PostProcessingPipelineId**<br/>保存相机内置后处理组合的管线标识。" }
   class n6 node_component
-  n7@{ shape: cyl, label: "**bevy​_​render::renderer::CurrentView**<br/>来自crate:bevy​_​render ↗：指定当前正在<br/>渲染的视图实体。" }
+  n7@{ shape: cyl, label: "**CurrentView**<br/>来自crate:bevy​_​render ↗：指定当前正在<br/>渲染的视图实体。" }
   class n7 node_resource
   class n7 external_node
-  n8@{ shape: cyl, label: "**bevy​_​render::renderer::RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
+  n8@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
   class n8 node_resource
   class n8 external_node
-  n9@{ shape: cyl, label: "**effect​_​stack::PostProcessingPipeline**<br/>提供色差、暗角和镜头畸变的共享管线。" }
+  n9@{ shape: cyl, label: "**PostProcessingPipeline**<br/>提供色差、暗角和镜头畸变的共享管线。" }
   class n9 node_resource
-  n10@{ shape: cyl, label: "**effect​_​stack::chromatic​_​aberration::**<br/>**DefaultChromaticAberrationLut**<br/>提供镜头色差默认的红绿蓝查找纹理。" }
+  n10@{ shape: cyl, label: "**DefaultChromaticAberrationLut**<br/>提供镜头色差默认的红绿蓝查找纹理。" }
   class n10 node_resource
-  n11@{ shape: rounded, label: "**bevy​_​post​_​process::dof::depth​_​of​_​**<br/>**field**<br/>以两阶段全屏通道执行景深模糊。" }
+  n11@{ shape: rounded, label: "**depth​_​of​_​field**<br/>以两阶段全屏通道执行景深模糊。" }
   class n11 node_system
-  n12@{ shape: cyl, label: "**bevy​_​render::render​_​resource::**<br/>**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
+  n12@{ shape: cyl, label: "**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
   class n12 node_resource
   class n12 external_node
-  n13@{ shape: rounded, label: "**bevy​_​render::view::ViewTarget**<br/>来自crate:bevy​_​render ↗：管理视图主颜<br/>色纹理及最终输出附件。" }
+  n13@{ shape: rounded, label: "**ViewTarget**<br/>来自crate:bevy​_​render ↗：管理视图主颜<br/>色纹理及最终输出附件。" }
   class n13 node_component
   class n13 external_node
-  n14@{ shape: rounded, label: "**effect​_​stack::chromatic​_​aberration::**<br/>**ChromaticAberration**<br/>配置镜头色差产生的彩色边缘。" }
+  n14@{ shape: rounded, label: "**ChromaticAberration**<br/>配置镜头色差产生的彩色边缘。" }
   class n14 node_component
-  n15@{ shape: rounded, label: "**bevy​_​core​_​pipeline::tonemapping::**<br/>**node::tonemapping**<br/>来自crate:bevy​_​core​_​pipeline ↗：为启<br/>用的 HDR 视图执行色调映射。" }
+  n15@{ shape: rounded, label: "**tonemapping**<br/>来自crate:bevy​_​core​_​pipeline ↗：为启<br/>用的 HDR 视图执行色调映射。" }
   class n15 node_system
   class n15 external_node
-  n16@{ shape: rounded, label: "**effect​_​stack::**<br/>**PostProcessingUniformBufferOffsets**<br/>定位相机各后处理效果的参数缓冲位置。" }
+  n16@{ shape: rounded, label: "**PostProcessingUniformBufferOffsets**<br/>定位相机各后处理效果的参数缓冲位置。" }
   class n16 node_component
-  n17@{ shape: cyl, label: "**bevy​_​render::diagnostic::**<br/>**DiagnosticsRecorder**<br/>来自crate:bevy​_​render ↗：记录渲染诊断<br/>区间与 GPU 查询索引的对应。" }
+  n17@{ shape: cyl, label: "**DiagnosticsRecorder**<br/>来自crate:bevy​_​render ↗：记录渲染诊断<br/>区间与 GPU 查询索引的对应。" }
   class n17 node_resource
   class n17 external_node
   n1 e0@--> n0

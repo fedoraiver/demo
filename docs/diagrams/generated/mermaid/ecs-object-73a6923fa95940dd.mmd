@@ -45,28 +45,28 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​pbr::lightmap::extract​_​**<br/>**lightmaps**<br/>维护可见光照贴图的渲染槽位与纹理。" }
+  n0@{ shape: rounded, label: "**extract​_​lightmaps**<br/>维护可见光照贴图的渲染槽位与纹理。" }
   class n0 node_system
   n1@{ shape: notch-rect, label: "**Local · removed​_​lightmaps​_​**<br/>**query.0.0.0.0.0**<br/>保存 Lightmap 移除参数的组件 ID。" }
   class n1 node_local
-  n2@{ shape: cyl, label: "**extract​_​plugin::MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
+  n2@{ shape: cyl, label: "**MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
   class n2 node_resource
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​camera::visibility::**<br/>**ViewVisibility**<br/>来自crate:bevy​_​camera ↗：记录实体是否<br/>应被提取用于渲染。" }
+  n3@{ shape: rounded, label: "**ViewVisibility**<br/>来自crate:bevy​_​camera ↗：记录实体是否<br/>应被提取用于渲染。" }
   class n3 node_component
   class n3 external_node
-  n4@{ shape: cyl, label: "**lightmap::RenderLightmaps**<br/>管理渲染侧光照贴图的槽位和纹理。" }
+  n4@{ shape: cyl, label: "**RenderLightmaps**<br/>管理渲染侧光照贴图的槽位和纹理。" }
   class n4 node_resource
-  n5@{ shape: cyl, label: "**bevy​_​render::render​_​asset::**<br/>**RenderAssets#lt;bevy​_​render::texture::**<br/>**GpuImage#gt;**<br/>来自crate:bevy​_​render ↗：按源资产身份<br/>保存 GPU 渲染表示。" }
+  n5@{ shape: cyl, label: "**RenderAssets#lt;GpuImage#gt;**<br/>来自crate:bevy​_​render ↗：按源资产身份<br/>保存 GPU 渲染表示。" }
   class n5 node_resource
   class n5 external_node
-  n6@{ shape: fr-rect, label: "**lightmap::LightmapPlugin**<br/>接入表面烘焙光照贴图。" }
+  n6@{ shape: fr-rect, label: "**LightmapPlugin**<br/>接入表面烘焙光照贴图。" }
   class n6 node_plugin
-  n7@{ shape: rounded, label: "**lightmap::Lightmap**<br/>为网格应用烘焙的间接漫反射光照。" }
+  n7@{ shape: rounded, label: "**Lightmap**<br/>为网格应用烘焙的间接漫反射光照。" }
   class n7 node_component
   n8@{ shape: lin-rect, label: "**MeshExtractionSystems**<br/>向渲染世界提取三维网格的实例数据。" }
   class n8 node_system_set
-  n9@{ shape: cyl, label: "**bevy​_​render::texture::FallbackImage**<br/>来自crate:bevy​_​render ↗：为未指定图像<br/>的绑定提供不透明白纹理。" }
+  n9@{ shape: cyl, label: "**FallbackImage**<br/>来自crate:bevy​_​render ↗：为未指定图像<br/>的绑定提供不透明白纹理。" }
   class n9 node_resource
   class n9 external_node
   n10@{ shape: notch-rect, label: "**Local · removed​_​lightmaps​_​**<br/>**query.0.0.1**<br/>跟踪 Lightmap 移除记录的读取进度。" }

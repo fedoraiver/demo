@@ -39,7 +39,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: cyl, label: "**RenderScheduleOrder**<br/>记录渲染调度的执行顺序。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​render::run​_​render​_​schedule**<br/>按 RenderScheduleOrder 中维护的阶段标<br/>签顺序，依次尝试运行渲染子应用的各个调<br/>度。" }
+  n1@{ shape: rounded, label: "**run​_​render​_​schedule**<br/>按 RenderScheduleOrder 中维护的阶段标<br/>签顺序，依次尝试运行渲染子应用的各个调<br/>度。" }
   class n1 node_system
   n1 e0@-->|"移除"| n0
   class e0 edge_write

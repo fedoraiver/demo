@@ -42,25 +42,25 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​render::globals::prepare​_​**<br/>**globals​_​buffer**<br/>更新并上传着色器全局时间与帧号。" }
+  n0@{ shape: rounded, label: "**prepare​_​globals​_​buffer**<br/>更新并上传着色器全局时间与帧号。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**frame​_​count::FrameCount**<br/>来自crate:bevy​_​diagnostic ↗：记录应<br/>用启动以来的帧计数" }
+  n1@{ shape: cyl, label: "**FrameCount**<br/>来自crate:bevy​_​diagnostic ↗：记录应<br/>用启动以来的帧计数" }
   class n1 node_resource
   class n1 external_node
-  n2@{ shape: cyl, label: "**time::Time**<br/>来自crate:bevy​_​time ↗：保存时钟上下<br/>文、帧间隔及累计时间" }
+  n2@{ shape: cyl, label: "**Time**<br/>来自crate:bevy​_​time ↗：保存时钟上下<br/>文、帧间隔及累计时间" }
   class n2 node_resource
   class n2 external_node
-  n3@{ shape: cyl, label: "**bevy​_​render::renderer::RenderQueue**<br/>将资源写入和命令异步提交给 GPU。" }
+  n3@{ shape: cyl, label: "**RenderQueue**<br/>将资源写入和命令异步提交给 GPU。" }
   class n3 node_resource
-  n4@{ shape: cyl, label: "**bevy​_​render::globals::GlobalsBuffer**<br/>向着色器提供全局时间等 Uniform 数据。" }
+  n4@{ shape: cyl, label: "**GlobalsBuffer**<br/>向着色器提供全局时间等 Uniform 数据。" }
   class n4 node_resource
   n5@{ shape: lin-rect, label: "**PrepareResources**<br/>组织渲染数据准备与绘制排队。" }
   class n5 node_system_set
-  n6@{ shape: fr-rect, label: "**globals::GlobalsPlugin**<br/>更新着色器全局时间与帧数。" }
+  n6@{ shape: fr-rect, label: "**GlobalsPlugin**<br/>更新着色器全局时间与帧数。" }
   class n6 node_plugin
-  n7@{ shape: cyl, label: "**bevy​_​render::renderer::RenderDevice**<br/>创建渲染和计算所需的 GPU 资源。" }
+  n7@{ shape: cyl, label: "**RenderDevice**<br/>创建渲染和计算所需的 GPU 资源。" }
   class n7 node_resource
-  n8@{ shape: cyl, label: "**bevy​_​render::globals::GlobalsUniform**<br/>向着色器提供全局时间与帧数。" }
+  n8@{ shape: cyl, label: "**GlobalsUniform**<br/>向着色器提供全局时间与帧数。" }
   class n8 node_resource
   n1 e0@--> n0
   class e0 edge_read

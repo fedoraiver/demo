@@ -39,7 +39,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: notch-rect, label: "**Local · loaded​_​fonts**<br/>记录已载入文字排版字体集合的字体资产。" }
   class n0 node_local
-  n1@{ shape: rounded, label: "**bevy​_​text::font::load​_​font​_​assets​_​**<br/>**into​_​font​_​collection**<br/>把字体资产注册到排版字体数据库。" }
+  n1@{ shape: rounded, label: "**load​_​font​_​assets​_​into​_​font​_​**<br/>**collection**<br/>把字体资产注册到排版字体数据库。" }
   class n1 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

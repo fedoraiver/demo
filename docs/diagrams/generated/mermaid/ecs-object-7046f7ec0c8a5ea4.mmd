@@ -40,11 +40,8 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  subgraph layout_card_n0[" "]
-  n0@{ shape: rounded, label: "**ui::MenuButton**<br/>菜单实体保存动作与导航序号，系统不依赖显<br/>示文字或实体名称。" }
+  n0@{ shape: rounded, label: "**MenuButton**<br/>菜单实体保存动作与导航序号，系统不依赖显<br/>示文字或实体名称。" }
   class n0 node_component
-  end
-  style layout_card_n0 fill:none,stroke:none
   n1@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>提供帮助页返回操作。" }
   class n1 node_entity
   n2@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>提供控制设置分类入口。" }
@@ -53,43 +50,43 @@ flowchart LR
   class n3 node_entity
   n4@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>提供控制设置分类入口。" }
   class n4 node_entity
-  n5@{ shape: hex, label: "**demo::ui::pointer::clear​_​primary​_​**<br/>**press**<br/>原生 Button 在释放、拖动结束或取消时移<br/>除 Pressed；同一生命周期清理主键来源。" }
+  n5@{ shape: hex, label: "**clear​_​primary​_​press**<br/>原生 Button 在释放、拖动结束或取消时移<br/>除 Pressed；同一生命周期清理主键来源。" }
   class n5 node_observer
-  n6@{ shape: rounded, label: "**demo::ui::style::update​_​description**<br/>更新当前聚焦设置的说明标题与正文。" }
+  n6@{ shape: rounded, label: "**update​_​description**<br/>更新当前聚焦设置的说明标题与正文。" }
   class n6 node_system
   n7@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>提供恢复默认设置操作。" }
   class n7 node_entity
   n8@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>提供控制设置分类入口。" }
   class n8 node_entity
-  n9@{ shape: hex, label: "**demo::ui::pointer::primary​_​press**<br/>记录菜单按钮主键按压的指针身份。" }
+  n9@{ shape: hex, label: "**primary​_​press**<br/>记录菜单按钮主键按压的指针身份。" }
   class n9 node_observer
   n10@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>提供打开设置操作。" }
   class n10 node_entity
-  n11@{ shape: hex, label: "**demo::ui::pointer::primary​_​press**<br/>记录菜单按钮主键按压的指针身份。" }
+  n11@{ shape: hex, label: "**primary​_​press**<br/>记录菜单按钮主键按压的指针身份。" }
   class n11 node_observer
   n12@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>提供反转视角纵轴的右侧调整入口。" }
   class n12 node_entity
-  n13@{ shape: hex, label: "**demo::ui::navigation::previous**<br/>循环选择上一个可操作菜单按钮。" }
+  n13@{ shape: hex, label: "**previous**<br/>循环选择上一个可操作菜单按钮。" }
   class n13 node_observer
-  n14@{ shape: hex, label: "**demo::ui::pointer::clear​_​primary​_​**<br/>**press**<br/>原生 Button 在释放、拖动结束或取消时移<br/>除 Pressed；同一生命周期清理主键来源。" }
+  n14@{ shape: hex, label: "**clear​_​primary​_​press**<br/>原生 Button 在释放、拖动结束或取消时移<br/>除 Pressed；同一生命周期清理主键来源。" }
   class n14 node_observer
   n15@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>提供帧率上限的左侧调整入口。" }
   class n15 node_entity
   n16@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>提供返回来源页面操作。" }
   class n16 node_entity
-  n17@{ shape: hex, label: "**demo::ui::navigation::left**<br/>向左调整当前聚焦的真实设置字段。" }
+  n17@{ shape: hex, label: "**left**<br/>向左调整当前聚焦的真实设置字段。" }
   class n17 node_observer
   n18@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>提供音频设置分类入口。" }
   class n18 node_entity
-  n19@{ shape: hex, label: "**demo::ui::navigation::right**<br/>向右调整当前聚焦的真实设置字段。" }
+  n19@{ shape: hex, label: "**right**<br/>向右调整当前聚焦的真实设置字段。" }
   class n19 node_observer
-  n20@{ shape: hex, label: "**demo::ui::navigation::confirm**<br/>执行当前聚焦按钮的菜单动作。" }
+  n20@{ shape: hex, label: "**confirm**<br/>执行当前聚焦按钮的菜单动作。" }
   class n20 node_observer
   n21@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>提供图形设置分类入口。" }
   class n21 node_entity
   n22@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>提供应用设置草稿操作。" }
   class n22 node_entity
-  n23@{ shape: rounded, label: "**demo::ui::style::style​_​buttons**<br/>按当前输入来源更新按钮背景与焦点边框。" }
+  n23@{ shape: rounded, label: "**style​_​buttons**<br/>按当前输入来源更新按钮背景与焦点边框。" }
   class n23 node_system
   n24@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>提供打开帮助操作。" }
   class n24 node_entity
@@ -101,9 +98,9 @@ flowchart LR
   class n27 node_entity
   n28@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>按按钮方向步进调整对应音量。" }
   class n28 node_entity
-  n29@{ shape: hex, label: "**demo::ui::navigation::right**<br/>向右调整当前聚焦的真实设置字段。" }
+  n29@{ shape: hex, label: "**right**<br/>向右调整当前聚焦的真实设置字段。" }
   class n29 node_observer
-  n30@{ shape: hex, label: "**demo::ui::pointer::primary​_​press**<br/>记录菜单按钮主键按压的指针身份。" }
+  n30@{ shape: hex, label: "**primary​_​press**<br/>记录菜单按钮主键按压的指针身份。" }
   class n30 node_observer
   n31@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>提供音量的指针与导航调整入口。" }
   class n31 node_entity
@@ -121,21 +118,21 @@ flowchart LR
   class n37 node_entity
   n38@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>提供辅助功能设置分类入口。" }
   class n38 node_entity
-  n39@{ shape: hex, label: "**demo::ui::navigation::previous**<br/>循环选择上一个可操作菜单按钮。" }
+  n39@{ shape: hex, label: "**previous**<br/>循环选择上一个可操作菜单按钮。" }
   class n39 node_observer
   n40@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>提供图形设置分类入口。" }
   class n40 node_entity
-  n41@{ shape: hex, label: "**demo::ui::pointer::clear​_​primary​_​**<br/>**press**<br/>原生 Button 在释放、拖动结束或取消时移<br/>除 Pressed；同一生命周期清理主键来源。" }
+  n41@{ shape: hex, label: "**clear​_​primary​_​press**<br/>原生 Button 在释放、拖动结束或取消时移<br/>除 Pressed；同一生命周期清理主键来源。" }
   class n41 node_observer
   n42@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>提供鼠标灵敏度的左侧调整入口。" }
   class n42 node_entity
-  n43@{ shape: rounded, label: "**demo::ui::volume::sample​_​slider​_​**<br/>**pointer**<br/>Enhanced Input 负责菜单语义动作，但无<br/>法表示 UI 命中后的局部绝对横坐标。" }
+  n43@{ shape: rounded, label: "**sample​_​slider​_​pointer**<br/>Enhanced Input 负责菜单语义动作，但无<br/>法表示 UI 命中后的局部绝对横坐标。" }
   class n43 node_system
   n44@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>提供恢复默认设置操作。" }
   class n44 node_entity
-  n45@{ shape: hex, label: "**demo::ui::navigation::confirm**<br/>执行当前聚焦按钮的菜单动作。" }
+  n45@{ shape: hex, label: "**confirm**<br/>执行当前聚焦按钮的菜单动作。" }
   class n45 node_observer
-  n46@{ shape: hex, label: "**demo::ui::navigation::previous**<br/>循环选择上一个可操作菜单按钮。" }
+  n46@{ shape: hex, label: "**previous**<br/>循环选择上一个可操作菜单按钮。" }
   class n46 node_observer
   n47@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>提供返回主菜单操作。" }
   class n47 node_entity
@@ -149,9 +146,9 @@ flowchart LR
   class n51 node_entity
   n52@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>按按钮方向步进调整对应音量。" }
   class n52 node_entity
-  n53@{ shape: hex, label: "**demo::ui::navigation::confirm**<br/>执行当前聚焦按钮的菜单动作。" }
+  n53@{ shape: hex, label: "**confirm**<br/>执行当前聚焦按钮的菜单动作。" }
   class n53 node_observer
-  n54@{ shape: hex, label: "**demo::ui::navigation::right**<br/>向右调整当前聚焦的真实设置字段。" }
+  n54@{ shape: hex, label: "**right**<br/>向右调整当前聚焦的真实设置字段。" }
   class n54 node_observer
   n55@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>按按钮方向步进调整对应音量。" }
   class n55 node_entity
@@ -163,7 +160,7 @@ flowchart LR
   class n58 node_entity
   n59@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>提供鼠标灵敏度的右侧调整入口。" }
   class n59 node_entity
-  n60@{ shape: hex, label: "**demo::ui::navigation::left**<br/>向左调整当前聚焦的真实设置字段。" }
+  n60@{ shape: hex, label: "**left**<br/>向左调整当前聚焦的真实设置字段。" }
   class n60 node_observer
   n61@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>提供应用设置草稿操作。" }
   class n61 node_entity
@@ -171,19 +168,19 @@ flowchart LR
   class n62 node_entity
   n63@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>提供返回来源页面操作。" }
   class n63 node_entity
-  n64@{ shape: rounded, label: "**demo::ui::pointer::pointer​_​**<br/>**interaction**<br/>Bevy 原生 UI 已完成按钮命中；这里只读取<br/>缓冲的按下事件，不另读 MouseButton。" }
+  n64@{ shape: rounded, label: "**pointer​_​interaction**<br/>Bevy 原生 UI 已完成按钮命中；这里只读取<br/>缓冲的按下事件，不另读 MouseButton。" }
   class n64 node_system
-  n65@{ shape: hex, label: "**demo::ui::navigation::left**<br/>向左调整当前聚焦的真实设置字段。" }
+  n65@{ shape: hex, label: "**left**<br/>向左调整当前聚焦的真实设置字段。" }
   class n65 node_observer
   n66@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>提供开始游戏操作。" }
   class n66 node_entity
-  n67@{ shape: rounded, label: "**demo::ui::scroll::scroll​_​focused​_​**<br/>**button**<br/>短窗口中键盘仍能访问所有按钮；新页面先等<br/>布局完成，再滚到焦点所在区域。" }
+  n67@{ shape: rounded, label: "**scroll​_​focused​_​button**<br/>短窗口中键盘仍能访问所有按钮；新页面先等<br/>布局完成，再滚到焦点所在区域。" }
   class n67 node_system
   n68@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>提供辅助功能设置分类入口。" }
   class n68 node_entity
-  n69@{ shape: hex, label: "**demo::ui::navigation::next**<br/>循环选择下一个可操作菜单按钮。" }
+  n69@{ shape: hex, label: "**next**<br/>循环选择下一个可操作菜单按钮。" }
   class n69 node_observer
-  n70@{ shape: hex, label: "**demo::ui::navigation::next**<br/>循环选择下一个可操作菜单按钮。" }
+  n70@{ shape: hex, label: "**next**<br/>循环选择下一个可操作菜单按钮。" }
   class n70 node_observer
   n71@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>提供应用设置草稿操作。" }
   class n71 node_entity
@@ -195,7 +192,7 @@ flowchart LR
   class n74 node_entity
   n75@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>提供控制设置分类入口。" }
   class n75 node_entity
-  n76@{ shape: hex, label: "**demo::ui::navigation::next**<br/>循环选择下一个可操作菜单按钮。" }
+  n76@{ shape: hex, label: "**next**<br/>循环选择下一个可操作菜单按钮。" }
   class n76 node_observer
   n77@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>提供图形设置分类入口。" }
   class n77 node_entity
@@ -400,7 +397,7 @@ flowchart LR
   e36@{ curve: basis }
   e37@{ curve: basis }
   e38@{ curve: basis }
-  e40@{ curve: basis }
+  e40@{ curve: bumpX }
   e41@{ curve: basis }
   e42@{ curve: basis }
   e43@{ curve: basis }

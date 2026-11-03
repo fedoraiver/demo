@@ -38,24 +38,21 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**graph::AnimationGraphHandle**<br/>选择播放器使用的动画图资产。" }
+  n0@{ shape: rounded, label: "**AnimationGraphHandle**<br/>选择播放器使用的动画图资产。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​animation::animate​_​targets**<br/>评估动画图并把结果应用到动画目标。" }
+  n1@{ shape: rounded, label: "**animate​_​targets**<br/>评估动画图并把结果应用到动画目标。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**demo::ui::backdrop::play​_​courier​_​**<br/>**animation**<br/>来自ui ↗：仅遍历已展开的展示角色子树，<br/>命名资产尚未就绪时保留 pending 供下一帧<br/>重试。" }
+  n2@{ shape: rounded, label: "**play​_​courier​_​animation**<br/>来自ui ↗：仅遍历已展开的展示角色子树，<br/>命名资产尚未就绪时保留 pending 供下一帧<br/>重试。" }
   class n2 node_system
   class n2 external_node
-  subgraph layout_card_n3[" "]
-  n3@{ shape: rounded, label: "**bevy​_​animation::advance​_​animations**<br/>推进动画播放器中活动动画的播放时间。" }
+  n3@{ shape: rounded, label: "**advance​_​animations**<br/>推进动画播放器中活动动画的播放时间。" }
   class n3 node_system
-  end
-  style layout_card_n3 fill:none,stroke:none
-  n4@{ shape: rounded, label: "**demo::character​_​animation::state::**<br/>**sync​_​courier​_​animation**<br/>来自character​_​animation ↗：Update 位<br/>于固定模拟与呈现同步之后；零固定步帧也使<br/>用本帧朝向和已有真实速度。" }
+  n4@{ shape: rounded, label: "**sync​_​courier​_​animation**<br/>来自character​_​animation ↗：Update 位<br/>于固定模拟与呈现同步之后；零固定步帧也使<br/>用本帧朝向和已有真实速度。" }
   class n4 node_system
   class n4 external_node
-  n5@{ shape: rounded, label: "**bevy​_​animation::trigger​_​untargeted​_​**<br/>**animation​_​events**<br/>派发动画片段的根目标事件。" }
+  n5@{ shape: rounded, label: "**trigger​_​untargeted​_​animation​_​events**<br/>派发动画片段的根目标事件。" }
   class n5 node_system
-  n6@{ shape: rounded, label: "**demo::character​_​animation::binding::**<br/>**initialize​_​ready​_​couriers**<br/>来自character​_​animation ↗：场景就绪<br/>后只遍历该视觉根的子树，避免把 NPC 或其<br/>他模型的播放器接到主角上。" }
+  n6@{ shape: rounded, label: "**initialize​_​ready​_​couriers**<br/>来自character​_​animation ↗：场景就绪<br/>后只遍历该视觉根的子树，避免把 NPC 或其<br/>他模型的播放器接到主角上。" }
   class n6 node_system
   class n6 external_node
   n0 e0@--> n1
@@ -70,9 +67,7 @@ flowchart LR
   class e4 edge_read
   n6 e5@-->|"插入"| n0
   class e5 edge_write
-  e0@{ curve: bumpX }
+  e0@{ curve: basis }
   e1@{ curve: basis }
-  e2@{ curve: basis }
-  e3@{ curve: bumpX }
   e4@{ curve: basis }
   e5@{ curve: basis }

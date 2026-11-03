@@ -43,34 +43,34 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​egui::render::systems::prepare​_​**<br/>**egui​_​transforms​_​system**<br/>上传 Egui 屏幕变换缓冲。" }
+  n0@{ shape: rounded, label: "**prepare​_​egui​_​transforms​_​system**<br/>上传 Egui 屏幕变换缓冲。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**bevy​_​render::renderer::RenderQueue**<br/>来自crate:bevy​_​render ↗：将资源写入和<br/>命令异步提交给 GPU。" }
+  n1@{ shape: cyl, label: "**RenderQueue**<br/>来自crate:bevy​_​render ↗：将资源写入和<br/>命令异步提交给 GPU。" }
   class n1 node_resource
   class n1 external_node
-  n2@{ shape: cyl, label: "**render::systems::EguiTransforms**<br/>保存 Egui 变换的动态统一缓冲、主世界实<br/>体到缓冲偏移的映射及对应绑定组" }
+  n2@{ shape: cyl, label: "**EguiTransforms**<br/>保存 Egui 变换的动态统一缓冲、主世界实<br/>体到缓冲偏移的映射及对应绑定组" }
   class n2 node_resource
-  n3@{ shape: rounded, label: "**bevy​_​render::camera::ExtractedCamera**<br/>来自crate:bevy​_​render ↗：保存渲染世界<br/>相机的目标和绘制配置。" }
+  n3@{ shape: rounded, label: "**ExtractedCamera**<br/>来自crate:bevy​_​render ↗：保存渲染世界<br/>相机的目标和绘制配置。" }
   class n3 node_component
   class n3 external_node
   n4@{ shape: lin-rect, label: "**Prepare**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
   class n4 node_system_set
   class n4 external_node
-  n5@{ shape: rounded, label: "**render::EguiCameraView**<br/>在主渲染目标视图上保存对应的 Egui 渲染<br/>视图实体" }
+  n5@{ shape: rounded, label: "**EguiCameraView**<br/>在主渲染目标视图上保存对应的 Egui 渲染<br/>视图实体" }
   class n5 node_component
-  n6@{ shape: cyl, label: "**bevy​_​render::render​_​resource::**<br/>**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
+  n6@{ shape: cyl, label: "**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
   class n6 node_resource
   class n6 external_node
-  n7@{ shape: rounded, label: "**bevy​_​render::view::ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
+  n7@{ shape: rounded, label: "**ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
   class n7 node_component
   class n7 external_node
   n8@{ shape: rounded, label: "**EguiPixelsPerPoint**<br/>在渲染世界保存 Egui 当前每逻辑点对应的<br/>物理像素数" }
   class n8 node_component
-  n9@{ shape: cyl, label: "**render::EguiPipeline**<br/>描述 Egui 渲染管线的变换与纹理绑定布局" }
+  n9@{ shape: cyl, label: "**EguiPipeline**<br/>描述 Egui 渲染管线的变换与纹理绑定布局" }
   class n9 node_resource
   n10@{ shape: fr-rect, label: "**EguiPlugin**<br/>装配 Egui 输入、上下文与渲染。" }
   class n10 node_plugin
-  n11@{ shape: cyl, label: "**bevy​_​render::renderer::RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
+  n11@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
   class n11 node_resource
   class n11 external_node
   n1 e0@--> n0

@@ -43,21 +43,21 @@ flowchart LR
   classDef edge_publish stroke:#247B91,stroke-width:1.8px,stroke-dasharray:10 4 2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​egui::render::render​_​pass::**<br/>**prepare​_​egui​_​pass**<br/>在渲染世界更新延期的 Egui 绘制回调。" }
+  n0@{ shape: rounded, label: "**prepare​_​egui​_​pass**<br/>在渲染世界更新延期的 Egui 绘制回调。" }
   class n0 node_system
   n1@{ shape: fr-rect, label: "**EguiPlugin**<br/>装配 Egui 输入、上下文与渲染。" }
   class n1 node_plugin
-  n2@{ shape: lean-r, label: "**bevy​_​ecs::lifecycle::**<br/>**RemovedComponentEntity**<br/>来自crate:bevy​_​ecs ↗：记录发生组件移<br/>除的实体。" }
+  n2@{ shape: lean-r, label: "**RemovedComponentEntity**<br/>来自crate:bevy​_​ecs ↗：记录发生组件移<br/>除的实体。" }
   class n2 node_message
   class n2 external_node
-  n3@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;bevy​_​**<br/>**ecs::lifecycle::**<br/>**RemovedComponentEntity#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n3@{ shape: cyl, label: "**Messages#lt;RemovedComponentEntity#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n3 node_resource
   class n3 external_node
-  n4@{ shape: rounded, label: "**render::systems::EguiRenderData**<br/>按主世界视图缓存 Egui 几何与绘制状态。" }
+  n4@{ shape: rounded, label: "**EguiRenderData**<br/>按主世界视图缓存 Egui 几何与绘制状态。" }
   class n4 node_component
-  n5@{ shape: cyl, label: "**render::systems::EguiRenderData**<br/>按主世界视图缓存 Egui 几何与绘制状态。" }
+  n5@{ shape: cyl, label: "**EguiRenderData**<br/>按主世界视图缓存 Egui 几何与绘制状态。" }
   class n5 node_resource
-  n6@{ shape: rounded, label: "**bevy​_​egui::render::render​_​pass::**<br/>**egui​_​pass**<br/>把准备好的 Egui 绘制项渲染到视图目标。" }
+  n6@{ shape: rounded, label: "**egui​_​pass**<br/>把准备好的 Egui 绘制项渲染到视图目标。" }
   class n6 node_system
   n1 e0@-->|"调用"| n0
   class e0 edge_registration

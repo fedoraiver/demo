@@ -37,9 +37,9 @@ flowchart LR
   classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​render::init​_​gpu​_​resource#lt;bevy​_​**<br/>**pbr::render::light::**<br/>**SpecializedShadowMaterialPipelineCac**<br/>**he#gt;**<br/>构造并插入渲染所需资源。" }
+  n0@{ shape: rounded, label: "**init​_​gpu​_​resource**<br/>构造并插入渲染所需资源。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**render::light::**<br/>**SpecializedShadowMaterialPipelineCac**<br/>**he**<br/>来自crate:bevy​_​pbr ↗：按光源视图缓存<br/>材质阴影专用管线。" }
+  n1@{ shape: cyl, label: "**SpecializedShadowMaterialPipelineCac**<br/>**he**<br/>来自crate:bevy​_​pbr ↗：按光源视图缓存<br/>材质阴影专用管线。" }
   class n1 node_resource
   class n1 external_node
   n0 e0@-->|"插入"| n1

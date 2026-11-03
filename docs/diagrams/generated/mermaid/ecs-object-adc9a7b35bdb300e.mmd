@@ -42,21 +42,21 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​pbr::ssao::prepare​_​ssao​_​**<br/>**pipelines**<br/>按遮蔽质量和时间抖动配置选择计算管线。" }
+  n0@{ shape: rounded, label: "**prepare​_​ssao​_​pipelines**<br/>按遮蔽质量和时间抖动配置选择计算管线。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**ssao::SsaoPipelines**<br/>汇集 SSAO 管线、纹理接口和采样器。" }
+  n1@{ shape: cyl, label: "**SsaoPipelines**<br/>汇集 SSAO 管线、纹理接口和采样器。" }
   class n1 node_resource
-  n2@{ shape: cyl, label: "**bevy​_​render::render​_​resource::**<br/>**SpecializedComputePipelines#lt;ssao::**<br/>**SsaoPipelines#gt;**<br/>来自crate:bevy​_​render ↗：按配置键缓存<br/>计算管线变体。" }
+  n2@{ shape: cyl, label: "**SpecializedComputePipelines#lt;SsaoPipe**<br/>**lines#gt;**<br/>来自crate:bevy​_​render ↗：按配置键缓存<br/>计算管线变体。" }
   class n2 node_resource
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​render::camera::TemporalJitter**<br/>来自crate:bevy​_​render ↗：为透视相机视<br/>锥提供亚像素抖动。" }
+  n3@{ shape: rounded, label: "**TemporalJitter**<br/>来自crate:bevy​_​render ↗：为透视相机视<br/>锥提供亚像素抖动。" }
   class n3 node_component
   class n3 external_node
-  n4@{ shape: rounded, label: "**ssao::ScreenSpaceAmbientOcclusion**<br/>配置三维相机的屏幕空间环境光遮蔽。" }
+  n4@{ shape: rounded, label: "**ScreenSpaceAmbientOcclusion**<br/>配置三维相机的屏幕空间环境光遮蔽。" }
   class n4 node_component
-  n5@{ shape: rounded, label: "**ssao::SsaoPipelineId**<br/>标识当前视图使用的 SSAO 计算管线。" }
+  n5@{ shape: rounded, label: "**SsaoPipelineId**<br/>标识当前视图使用的 SSAO 计算管线。" }
   class n5 node_component
-  n6@{ shape: cyl, label: "**bevy​_​render::render​_​resource::**<br/>**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
+  n6@{ shape: cyl, label: "**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
   class n6 node_resource
   class n6 external_node
   n7@{ shape: lin-rect, label: "**Prepare**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }

@@ -41,16 +41,16 @@ flowchart LR
   classDef edge_publish stroke:#247B91,stroke-width:1.8px,stroke-dasharray:10 4 2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​gilrs::gilrs​_​system::gilrs​_​**<br/>**event​_​startup​_​system**<br/>登记启动时已经连接的手柄。" }
+  n0@{ shape: rounded, label: "**gilrs​_​event​_​startup​_​system**<br/>登记启动时已经连接的手柄。" }
   class n0 node_system
-  n1@{ shape: lean-r, label: "**gamepad::GamepadConnectionEvent**<br/>来自crate:bevy​_​input ↗：通知手柄连接<br/>或断开。" }
+  n1@{ shape: lean-r, label: "**GamepadConnectionEvent**<br/>来自crate:bevy​_​input ↗：通知手柄连接<br/>或断开。" }
   class n1 node_message
   class n1 external_node
   n2@{ shape: cyl, label: "**Gilrs**<br/>持有 gilrs 手柄后端实例" }
   class n2 node_resource
   n3@{ shape: fr-rect, label: "**GilrsPlugin**<br/>接入平台手柄设备与输入。" }
   class n3 node_plugin
-  n4@{ shape: cyl, label: "**bevy​_​ecs::message::**<br/>**Messages#lt;gamepad::**<br/>**GamepadConnectionEvent#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n4@{ shape: cyl, label: "**Messages#lt;GamepadConnectionEvent#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n4 node_resource
   class n4 external_node
   n5@{ shape: cyl, label: "**GilrsGamepads**<br/>维护已连接 gilrs 手柄编号与 Bevy 手柄<br/>实体的双向映射" }

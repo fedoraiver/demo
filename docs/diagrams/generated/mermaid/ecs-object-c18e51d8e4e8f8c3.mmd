@@ -40,9 +40,9 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: lin-rect, label: "**UpdateDirectionalLightCascades**<br/>组织灯光聚簇与可见性准备。" }
   class n0 node_system_set
-  n1@{ shape: rounded, label: "**bevy​_​light::cascade::build​_​**<br/>**directional​_​light​_​cascades**<br/>为投射阴影的方向光构建逐相机级联。" }
+  n1@{ shape: rounded, label: "**build​_​directional​_​light​_​cascades**<br/>为投射阴影的方向光构建逐相机级联。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​light::directional​_​light::**<br/>**update​_​directional​_​light​_​frusta**<br/>从方向光级联投影更新阴影视锥。" }
+  n2@{ shape: rounded, label: "**update​_​directional​_​light​_​frusta**<br/>从方向光级联投影更新阴影视锥。" }
   class n2 node_system
   n0 e0@-->|"集合成员"| n1
   class e0 edge_set_membership

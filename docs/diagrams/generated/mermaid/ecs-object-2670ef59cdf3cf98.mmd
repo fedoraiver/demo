@@ -44,191 +44,95 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  subgraph layout_card_n0[" "]
-  n0@{ shape: rounded, label: "**bevy​_​pbr::render::light::extract​_​**<br/>**lights**<br/>提取各类可见光源及阴影渲染状态。" }
+  n0@{ shape: rounded, label: "**extract​_​lights**<br/>提取各类可见光源及阴影渲染状态。" }
   class n0 node_system
-  end
-  style layout_card_n0 fill:none,stroke:none
-  subgraph layout_card_n1[" "]
-  n1@{ shape: rounded, label: "**render::light::ExtractedPointLight**<br/>保存渲染侧点光或聚光的光照参数。" }
+  n1@{ shape: rounded, label: "**ExtractedPointLight**<br/>保存渲染侧点光或聚光的光照参数。" }
   class n1 node_component
-  end
-  style layout_card_n1 fill:none,stroke:none
-  subgraph layout_card_n2[" "]
-  n2@{ shape: rounded, label: "**visibility::CubemapVisibleEntities**<br/>来自crate:bevy​_​camera ↗：记录立方体阴<br/>影六面的可见网格。" }
+  n2@{ shape: rounded, label: "**CubemapVisibleEntities**<br/>来自crate:bevy​_​camera ↗：记录立方体阴<br/>影六面的可见网格。" }
   class n2 node_component
   class n2 external_node
-  end
-  style layout_card_n2 fill:none,stroke:none
-  subgraph layout_card_n3[" "]
-  n3@{ shape: rounded, label: "**rect​_​light::RectLight**<br/>来自crate:bevy​_​light ↗：配置朝局部负<br/>Z 发光的矩形区域光。" }
+  n3@{ shape: rounded, label: "**RectLight**<br/>来自crate:bevy​_​light ↗：配置朝局部负<br/>Z 发光的矩形区域光。" }
   class n3 node_component
   class n3 external_node
-  end
-  style layout_card_n3 fill:none,stroke:none
-  subgraph layout_card_n4[" "]
-  n4@{ shape: rounded, label: "**bevy​_​camera::visibility::**<br/>**RenderLayers**<br/>来自crate:bevy​_​camera ↗：限定相机与实<br/>体可相交的渲染层。" }
+  n4@{ shape: rounded, label: "**RenderLayers**<br/>来自crate:bevy​_​camera ↗：限定相机与实<br/>体可相交的渲染层。" }
   class n4 node_component
   class n4 external_node
-  end
-  style layout_card_n4 fill:none,stroke:none
-  subgraph layout_card_n5[" "]
-  n5@{ shape: rounded, label: "**visibility::VisibleMeshEntities**<br/>来自crate:bevy​_​camera ↗：保存光源视图<br/>可见的三维网格。" }
+  n5@{ shape: rounded, label: "**VisibleMeshEntities**<br/>来自crate:bevy​_​camera ↗：保存光源视图<br/>可见的三维网格。" }
   class n5 node_component
   class n5 external_node
-  end
-  style layout_card_n5 fill:none,stroke:none
-  subgraph layout_card_n6[" "]
-  n6@{ shape: rounded, label: "**bevy​_​camera::visibility::**<br/>**ViewVisibility**<br/>来自crate:bevy​_​camera ↗：记录实体是否<br/>应被提取用于渲染。" }
+  n6@{ shape: rounded, label: "**ViewVisibility**<br/>来自crate:bevy​_​camera ↗：记录实体是否<br/>应被提取用于渲染。" }
   class n6 node_component
   class n6 external_node
-  end
-  style layout_card_n6 fill:none,stroke:none
-  subgraph layout_card_n7[" "]
-  n7@{ shape: notch-rect, label: "**sync​_​world::MainEntity**<br/>来自crate:bevy​_​extract ↗：在子世界中<br/>关联原始主世界实体。" }
+  n7@{ shape: notch-rect, label: "**MainEntity**<br/>来自crate:bevy​_​extract ↗：在子世界中<br/>关联原始主世界实体。" }
   class n7 node_query_data
   class n7 external_node
-  end
-  style layout_card_n7 fill:none,stroke:none
-  subgraph layout_card_n8[" "]
-  n8@{ shape: rounded, label: "**render::light::ExtractedRectLight**<br/>保存渲染侧矩形光源的尺寸与光照。" }
+  n8@{ shape: rounded, label: "**ExtractedRectLight**<br/>保存渲染侧矩形光源的尺寸与光照。" }
   class n8 node_component
-  end
-  style layout_card_n8 fill:none,stroke:none
-  subgraph layout_card_n9[" "]
-  n9@{ shape: rounded, label: "**bevy​_​camera::primitives::Frustum**<br/>来自crate:bevy​_​camera ↗：描述相机可见<br/>空间并参与视锥裁剪。" }
+  n9@{ shape: rounded, label: "**Frustum**<br/>来自crate:bevy​_​camera ↗：描述相机可见<br/>空间并参与视锥裁剪。" }
   class n9 node_component
   class n9 external_node
-  end
-  style layout_card_n9 fill:none,stroke:none
-  subgraph layout_card_n10[" "]
-  n10@{ shape: rounded, label: "**view::visibility::**<br/>**RenderShadowMapVisibleEntities**<br/>来自crate:bevy​_​render ↗：保存每个阴影<br/>子视图最终收集的可见实体。" }
+  n10@{ shape: rounded, label: "**RenderShadowMapVisibleEntities**<br/>来自crate:bevy​_​render ↗：保存每个阴影<br/>子视图最终收集的可见实体。" }
   class n10 node_component
   class n10 external_node
-  end
-  style layout_card_n10 fill:none,stroke:none
-  subgraph layout_card_n11[" "]
-  n11@{ shape: rounded, label: "**point​_​light::PointLight**<br/>来自crate:bevy​_​light ↗：配置向四周发<br/>光的点光源。" }
+  n11@{ shape: rounded, label: "**PointLight**<br/>来自crate:bevy​_​light ↗：配置向四周发<br/>光的点光源。" }
   class n11 node_component
   class n11 external_node
-  end
-  style layout_card_n11 fill:none,stroke:none
-  subgraph layout_card_n12[" "]
-  n12@{ shape: rounded, label: "**directional​_​light::SunDisk**<br/>来自crate:bevy​_​light ↗：配置天空中太<br/>阳圆盘的角尺寸与亮度。" }
+  n12@{ shape: rounded, label: "**SunDisk**<br/>来自crate:bevy​_​light ↗：配置天空中太<br/>阳圆盘的角尺寸与亮度。" }
   class n12 node_component
   class n12 external_node
-  end
-  style layout_card_n12 fill:none,stroke:none
-  subgraph layout_card_n13[" "]
-  n13@{ shape: rounded, label: "**cascade::Cascades**<br/>来自crate:bevy​_​light ↗：按视图保存方<br/>向光的阴影级联。" }
+  n13@{ shape: rounded, label: "**Cascades**<br/>来自crate:bevy​_​light ↗：按视图保存方<br/>向光的阴影级联。" }
   class n13 node_component
   class n13 external_node
-  end
-  style layout_card_n13 fill:none,stroke:none
-  subgraph layout_card_n14[" "]
-  n14@{ shape: rounded, label: "**cascade::CascadeShadowConfig**<br/>来自crate:bevy​_​light ↗：配置方向光阴<br/>影级联的距离与重叠。" }
+  n14@{ shape: rounded, label: "**CascadeShadowConfig**<br/>来自crate:bevy​_​light ↗：配置方向光阴<br/>影级联的距离与重叠。" }
   class n14 node_component
   class n14 external_node
-  end
-  style layout_card_n14 fill:none,stroke:none
-  subgraph layout_card_n15[" "]
-  n15@{ shape: rounded, label: "**visibility::CascadesVisibleEntities**<br/>来自crate:bevy​_​camera ↗：记录每个视图<br/>及级联的可见网格。" }
+  n15@{ shape: rounded, label: "**CascadesVisibleEntities**<br/>来自crate:bevy​_​camera ↗：记录每个视图<br/>及级联的可见网格。" }
   class n15 node_component
   class n15 external_node
-  end
-  style layout_card_n15 fill:none,stroke:none
-  subgraph layout_card_n16[" "]
-  n16@{ shape: rounded, label: "**bevy​_​render::occlusion​_​culling::**<br/>**OcclusionCulling**<br/>来自crate:bevy​_​render ↗：启用视图的<br/>GPU 遮挡裁剪。" }
+  n16@{ shape: rounded, label: "**OcclusionCulling**<br/>来自crate:bevy​_​render ↗：启用视图的<br/>GPU 遮挡裁剪。" }
   class n16 node_component
   class n16 external_node
-  end
-  style layout_card_n16 fill:none,stroke:none
-  subgraph layout_card_n17[" "]
-  n17@{ shape: rounded, label: "**primitives::CubemapFrusta**<br/>来自crate:bevy​_​camera ↗：保存立方体阴<br/>影六面的视锥。" }
+  n17@{ shape: rounded, label: "**CubemapFrusta**<br/>来自crate:bevy​_​camera ↗：保存立方体阴<br/>影六面的视锥。" }
   class n17 node_component
   class n17 external_node
-  end
-  style layout_card_n17 fill:none,stroke:none
-  subgraph layout_card_n18[" "]
-  n18@{ shape: cyl, label: "**point​_​light::PointLightShadowMap**<br/>来自crate:bevy​_​light ↗：配置点光源立<br/>方体阴影贴图分辨率。" }
+  n18@{ shape: cyl, label: "**PointLightShadowMap**<br/>来自crate:bevy​_​light ↗：配置点光源立<br/>方体阴影贴图分辨率。" }
   class n18 node_resource
   class n18 external_node
-  end
-  style layout_card_n18 fill:none,stroke:none
-  subgraph layout_card_n19[" "]
-  n19@{ shape: rounded, label: "**components::global​_​transform::**<br/>**GlobalTransform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>合并祖先变换后的世界空间仿射变换" }
+  n19@{ shape: rounded, label: "**GlobalTransform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>合并祖先变换后的世界空间仿射变换" }
   class n19 node_component
   class n19 external_node
-  end
-  style layout_card_n19 fill:none,stroke:none
-  subgraph layout_card_n20[" "]
-  n20@{ shape: rounded, label: "**volumetric::VolumetricLight**<br/>来自crate:bevy​_​light ↗：让带阴影的方<br/>向光参与体积雾照明。" }
+  n20@{ shape: rounded, label: "**VolumetricLight**<br/>来自crate:bevy​_​light ↗：让带阴影的方<br/>向光参与体积雾照明。" }
   class n20 node_component
   class n20 external_node
-  end
-  style layout_card_n20 fill:none,stroke:none
-  subgraph layout_card_n21[" "]
-  n21@{ shape: rounded, label: "**spot​_​light::SpotLight**<br/>来自crate:bevy​_​light ↗：配置沿指定方<br/>向照射的聚光灯。" }
+  n21@{ shape: rounded, label: "**SpotLight**<br/>来自crate:bevy​_​light ↗：配置沿指定方<br/>向照射的聚光灯。" }
   class n21 node_component
   class n21 external_node
-  end
-  style layout_card_n21 fill:none,stroke:none
-  subgraph layout_card_n22[" "]
-  n22@{ shape: cyl, label: "**extract​_​plugin::MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
+  n22@{ shape: cyl, label: "**MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
   class n22 node_resource
   class n22 external_node
-  end
-  style layout_card_n22 fill:none,stroke:none
-  subgraph layout_card_n23[" "]
-  n23@{ shape: rounded, label: "**directional​_​light::DirectionalLight**<br/>来自crate:bevy​_​light ↗：配置平行方向<br/>光的颜色、照度和阴影。" }
+  n23@{ shape: rounded, label: "**DirectionalLight**<br/>来自crate:bevy​_​light ↗：配置平行方向<br/>光的颜色、照度和阴影。" }
   class n23 node_component
   class n23 external_node
-  end
-  style layout_card_n23 fill:none,stroke:none
-  subgraph layout_card_n24[" "]
-  n24@{ shape: rounded, label: "**view::visibility::**<br/>**RenderExtractedShadowMapVisibleEntit**<br/>**ies**<br/>来自crate:bevy​_​render ↗：暂存各阴影子<br/>视图经 CPU 判定可见的实体。" }
+  n24@{ shape: rounded, label: "**RenderExtractedShadowMapVisibleEntit**<br/>**ies**<br/>来自crate:bevy​_​render ↗：暂存各阴影子<br/>视图经 CPU 判定可见的实体。" }
   class n24 node_component
   class n24 external_node
-  end
-  style layout_card_n24 fill:none,stroke:none
-  subgraph layout_card_n25[" "]
-  n25@{ shape: rounded, label: "**render::light::**<br/>**ExtractedDirectionalLight**<br/>保存渲染侧平行光和级联阴影设置。" }
+  n25@{ shape: rounded, label: "**ExtractedDirectionalLight**<br/>保存渲染侧平行光和级联阴影设置。" }
   class n25 node_component
-  end
-  style layout_card_n25 fill:none,stroke:none
-  subgraph layout_card_n26[" "]
-  n26@{ shape: rounded, label: "**primitives::CascadesFrusta**<br/>来自crate:bevy​_​camera ↗：保存各视图的<br/>级联阴影视锥。" }
+  n26@{ shape: rounded, label: "**CascadesFrusta**<br/>来自crate:bevy​_​camera ↗：保存各视图的<br/>级联阴影视锥。" }
   class n26 node_component
   class n26 external_node
-  end
-  style layout_card_n26 fill:none,stroke:none
-  subgraph layout_card_n27[" "]
   n27@{ shape: notch-rect, label: "**Local · all​_​lights​_​found**<br/>记录本轮成功提取的渲染光源实体。" }
   class n27 node_local
-  end
-  style layout_card_n27 fill:none,stroke:none
-  subgraph layout_card_n28[" "]
-  n28@{ shape: rounded, label: "**bevy​_​extract::SubEntity#lt;bevy​_​**<br/>**render::RenderApp#gt;**<br/>来自crate:bevy​_​extract ↗：记录主实体<br/>对应的子世界实体。" }
+  n28@{ shape: rounded, label: "**SubEntity#lt;RenderApp#gt;**<br/>来自crate:bevy​_​extract ↗：记录主实体<br/>对应的子世界实体。" }
   class n28 node_component
   class n28 external_node
-  end
-  style layout_card_n28 fill:none,stroke:none
-  subgraph layout_card_n29[" "]
-  n29@{ shape: cyl, label: "**directional​_​light::**<br/>**DirectionalLightShadowMap**<br/>来自crate:bevy​_​light ↗：配置方向光与<br/>聚光灯阴影贴图分辨率。" }
+  n29@{ shape: cyl, label: "**DirectionalLightShadowMap**<br/>来自crate:bevy​_​light ↗：配置方向光与<br/>聚光灯阴影贴图分辨率。" }
   class n29 node_resource
   class n29 external_node
-  end
-  style layout_card_n29 fill:none,stroke:none
-  subgraph layout_card_n30[" "]
   n30@{ shape: notch-rect, label: "**Local · rect​_​light​_​missing​_​luts​_​**<br/>**warning​_​emitted**<br/>避免区域光缺少 LUT 功能的警告重复输出。" }
   class n30 node_local
-  end
-  style layout_card_n30 fill:none,stroke:none
-  subgraph layout_card_n31[" "]
-  n31@{ shape: fr-rect, label: "**bevy​_​pbr::PbrPlugin**<br/>装配物理材质与三维光照渲染。" }
+  n31@{ shape: fr-rect, label: "**PbrPlugin**<br/>装配物理材质与三维光照渲染。" }
   class n31 node_plugin
-  end
-  style layout_card_n31 fill:none,stroke:none
   n0 e0@-->|"插入"| n1
   class e0 edge_write
   n2 e1@-->|"存在性约束"| n0
@@ -382,7 +286,7 @@ flowchart LR
   e26@{ curve: basis }
   e27@{ curve: basis }
   e28@{ curve: basis }
-  e29@{ curve: basis }
+  e29@{ curve: bumpX }
   e30@{ curve: basis }
   e31@{ curve: basis }
   e32@{ curve: basis }

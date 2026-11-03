@@ -38,11 +38,11 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**dynamics::solver::plugin::**<br/>**ContactSoftnessCoefficients**<br/>缓存动态与非动态接触的柔度系数。" }
+  n0@{ shape: cyl, label: "**ContactSoftnessCoefficients**<br/>缓存动态与非动态接触的柔度系数。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**avian3d::dynamics::solver::plugin::**<br/>**update​_​contact​_​softness**<br/>按时间步和配置更新接触柔度系数。" }
+  n1@{ shape: rounded, label: "**update​_​contact​_​softness**<br/>按时间步和配置更新接触柔度系数。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**avian3d::dynamics::solver::plugin::**<br/>**prepare​_​contact​_​constraints**<br/>从有效接触流形生成本轮求解约束。" }
+  n2@{ shape: rounded, label: "**prepare​_​contact​_​constraints**<br/>从有效接触流形生成本轮求解约束。" }
   class n2 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

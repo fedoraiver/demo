@@ -36,47 +36,47 @@ flowchart LR
   classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**bevy​_​core​_​pipeline::FullscreenShader**<br/>提供覆盖整个屏幕的顶点着色器。" }
+  n0@{ shape: cyl, label: "**FullscreenShader**<br/>提供覆盖整个屏幕的顶点着色器。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​post​_​process::bloom::**<br/>**downsampling​_​pipeline::init​_​bloom​_​**<br/>**downsampling​_​pipeline**<br/>来自crate:bevy​_​post​_​process ↗：建立<br/>Bloom 降采样的纹理与参数管线。" }
+  n1@{ shape: rounded, label: "**init​_​bloom​_​downsampling​_​pipeline**<br/>来自crate:bevy​_​post​_​process ↗：建立<br/>Bloom 降采样的纹理与参数管线。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​post​_​process::motion​_​blur::**<br/>**pipeline::init​_​motion​_​blur​_​pipeline**<br/>来自crate:bevy​_​post​_​process ↗：加载<br/>运动模糊着色器并构造管线资源。" }
+  n2@{ shape: rounded, label: "**init​_​motion​_​blur​_​pipeline**<br/>来自crate:bevy​_​post​_​process ↗：加载<br/>运动模糊着色器并构造管线资源。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​pbr::ssr::init​_​screen​_​space​_​**<br/>**reflections​_​pipeline**<br/>来自crate:bevy​_​pbr ↗：初始化屏幕空间<br/>反射的全屏渲染管线资源。" }
+  n3@{ shape: rounded, label: "**init​_​screen​_​space​_​reflections​_​**<br/>**pipeline**<br/>来自crate:bevy​_​pbr ↗：初始化屏幕空间<br/>反射的全屏渲染管线资源。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**bevy​_​post​_​process::dof::prepare​_​**<br/>**depth​_​of​_​field​_​pipelines**<br/>来自crate:bevy​_​post​_​process ↗：按景<br/>深模式和视图格式准备两阶段管线。" }
+  n4@{ shape: rounded, label: "**prepare​_​depth​_​of​_​field​_​pipelines**<br/>来自crate:bevy​_​post​_​process ↗：按景<br/>深模式和视图格式准备两阶段管线。" }
   class n4 node_system
   class n4 external_node
-  n5@{ shape: rounded, label: "**bevy​_​core​_​pipeline::prepass::**<br/>**background​_​motion​_​vectors::init​_​**<br/>**background​_​motion​_​vectors​_​pipeline**<br/>建立背景运动矢量的全屏管线资源。" }
+  n5@{ shape: rounded, label: "**init​_​background​_​motion​_​vectors​_​**<br/>**pipeline**<br/>建立背景运动矢量的全屏管线资源。" }
   class n5 node_system
-  n6@{ shape: rounded, label: "**bevy​_​core​_​pipeline::tonemapping::**<br/>**init​_​tonemapping​_​pipeline**<br/>建立色调映射的颜色、视图与 LUT 输入布<br/>局。" }
+  n6@{ shape: rounded, label: "**init​_​tonemapping​_​pipeline**<br/>建立色调映射的颜色、视图与 LUT 输入布<br/>局。" }
   class n6 node_system
-  n7@{ shape: rounded, label: "**bevy​_​render::init​_​gpu​_​resource#lt;bevy​_​**<br/>**pbr::atmosphere::resources::**<br/>**RenderSkyBindGroupLayouts#gt;**<br/>来自crate:bevy​_​render ↗：构造并插入渲<br/>染所需资源。" }
+  n7@{ shape: rounded, label: "**init​_​gpu​_​resource**<br/>来自crate:bevy​_​render ↗：构造并插入渲<br/>染所需资源。" }
   class n7 node_system
   class n7 external_node
-  n8@{ shape: rounded, label: "**bevy​_​post​_​process::bloom::**<br/>**upsampling​_​pipeline::init​_​bloom​_​**<br/>**upscaling​_​pipeline**<br/>来自crate:bevy​_​post​_​process ↗：建立<br/>Bloom 升采样的纹理和参数布局。" }
+  n8@{ shape: rounded, label: "**init​_​bloom​_​upscaling​_​pipeline**<br/>来自crate:bevy​_​post​_​process ↗：建立<br/>Bloom 升采样的纹理和参数布局。" }
   class n8 node_system
   class n8 external_node
-  n9@{ shape: rounded, label: "**bevy​_​anti​_​alias::contrast​_​adaptive​_​**<br/>**sharpening::init​_​cas​_​pipeline**<br/>来自crate:bevy​_​anti​_​alias ↗：建立<br/>CAS 锐化的纹理、参数布局和管线变体资<br/>源。" }
+  n9@{ shape: rounded, label: "**init​_​cas​_​pipeline**<br/>来自crate:bevy​_​anti​_​alias ↗：建立<br/>CAS 锐化的纹理、参数布局和管线变体资<br/>源。" }
   class n9 node_system
   class n9 external_node
-  n10@{ shape: rounded, label: "**bevy​_​anti​_​alias::fxaa::init​_​fxaa​_​**<br/>**pipeline**<br/>来自crate:bevy​_​anti​_​alias ↗：建立<br/>FXAA 的纹理采样布局和着色器资源。" }
+  n10@{ shape: rounded, label: "**init​_​fxaa​_​pipeline**<br/>来自crate:bevy​_​anti​_​alias ↗：建立<br/>FXAA 的纹理采样布局和着色器资源。" }
   class n10 node_system
   class n10 external_node
-  n11@{ shape: rounded, label: "**bevy​_​anti​_​alias::taa::init​_​taa​_​**<br/>**pipeline**<br/>来自crate:bevy​_​anti​_​alias ↗：建立<br/>TAA 的当前帧、历史帧和预通道输入布局。" }
+  n11@{ shape: rounded, label: "**init​_​taa​_​pipeline**<br/>来自crate:bevy​_​anti​_​alias ↗：建立<br/>TAA 的当前帧、历史帧和预通道输入布局。" }
   class n11 node_system
   class n11 external_node
-  n12@{ shape: rounded, label: "**bevy​_​core​_​pipeline::oit::resolve::**<br/>**queue​_​oit​_​resolve​_​pipeline**<br/>按 OIT 相机设置缓存透明解析管线。" }
+  n12@{ shape: rounded, label: "**queue​_​oit​_​resolve​_​pipeline**<br/>按 OIT 相机设置缓存透明解析管线。" }
   class n12 node_system
-  n13@{ shape: rounded, label: "**bevy​_​core​_​pipeline::blit::init​_​blit​_​**<br/>**pipeline**<br/>建立全屏颜色复制与缩放的 Blit 资源。" }
+  n13@{ shape: rounded, label: "**init​_​blit​_​pipeline**<br/>建立全屏颜色复制与缩放的 Blit 资源。" }
   class n13 node_system
-  n14@{ shape: rounded, label: "**bevy​_​post​_​process::effect​_​stack::**<br/>**init​_​post​_​processing​_​pipeline**<br/>来自crate:bevy​_​post​_​process ↗：建立<br/>色差、暗角和镜头畸变的共用后处理资源。" }
+  n14@{ shape: rounded, label: "**init​_​post​_​processing​_​pipeline**<br/>来自crate:bevy​_​post​_​process ↗：建立<br/>色差、暗角和镜头畸变的共用后处理资源。" }
   class n14 node_system
   class n14 external_node
-  n15@{ shape: rounded, label: "**bevy​_​core​_​pipeline::deferred::copy​_​**<br/>**lighting​_​id::init​_​copy​_​deferred​_​**<br/>**lighting​_​id​_​pipeline**<br/>建立延迟光照标识到深度的复制管线。" }
+  n15@{ shape: rounded, label: "**init​_​copy​_​deferred​_​lighting​_​id​_​**<br/>**pipeline**<br/>建立延迟光照标识到深度的复制管线。" }
   class n15 node_system
   n0 e0@--> n1
   class e0 edge_read

@@ -38,15 +38,12 @@ flowchart LR
   classDef edge_order stroke:#334155,stroke-width:2px
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
-  subgraph layout_card_n0[" "]
   n0@{ shape: lin-rect, label: "**Camera**<br/>固定循环后的呈现阶段，零固定步的帧也执行<br/>同一顺序。" }
   class n0 node_system_set
-  end
-  style layout_card_n0 fill:none,stroke:none
   n1@{ shape: lin-rect, label: "**Ease**<br/>来自crate:bevy​_​transform​_​<br/>interpolation ↗：组织变换缓动端点与帧<br/>间应用。" }
   class n1 node_system_set
   class n1 external_node
-  n2@{ shape: rounded, label: "**demo::first​_​person::camera::follow​_​**<br/>**first​_​person​_​camera**<br/>来自first​_​person ↗：镜头使用本帧插值<br/>后的人物位置与观察角度；互斥过滤避免<br/>Transform 查询读写冲突。" }
+  n2@{ shape: rounded, label: "**follow​_​first​_​person​_​camera**<br/>来自first​_​person ↗：镜头使用本帧插值<br/>后的人物位置与观察角度；互斥过滤避免<br/>Transform 查询读写冲突。" }
   class n2 node_system
   class n2 external_node
   n3@{ shape: lin-rect, label: "**HeldPresentation**<br/>固定循环后的呈现阶段，零固定步的帧也执行<br/>同一顺序。" }

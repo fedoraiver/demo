@@ -41,28 +41,28 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​post​_​process::dof::extract​_​**<br/>**depth​_​of​_​field​_​settings**<br/>把透视相机景深设置转换为 GPU 参数。" }
+  n0@{ shape: rounded, label: "**extract​_​depth​_​of​_​field​_​settings**<br/>把透视相机景深设置转换为 GPU 参数。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**dof::DepthOfField**<br/>配置相机焦点及离焦模糊。" }
+  n1@{ shape: rounded, label: "**DepthOfField**<br/>配置相机焦点及离焦模糊。" }
   class n1 node_component
-  n2@{ shape: rounded, label: "**bevy​_​camera::Projection**<br/>来自crate:bevy​_​camera ↗：定义相机从视<br/>图到裁剪空间的投影。" }
+  n2@{ shape: rounded, label: "**Projection**<br/>来自crate:bevy​_​camera ↗：定义相机从视<br/>图到裁剪空间的投影。" }
   class n2 node_component
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​extract::SubEntity#lt;bevy​_​**<br/>**render::RenderApp#gt;**<br/>来自crate:bevy​_​extract ↗：记录主实体<br/>对应的子世界实体。" }
+  n3@{ shape: rounded, label: "**SubEntity#lt;RenderApp#gt;**<br/>来自crate:bevy​_​extract ↗：记录主实体<br/>对应的子世界实体。" }
   class n3 node_component
   class n3 external_node
-  n4@{ shape: rounded, label: "**dof::DepthOfFieldUniform**<br/>向 GPU 传递焦距和弥散圈计算参数。" }
+  n4@{ shape: rounded, label: "**DepthOfFieldUniform**<br/>向 GPU 传递焦距和弥散圈计算参数。" }
   class n4 node_component
-  n5@{ shape: cyl, label: "**extract​_​plugin::MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
+  n5@{ shape: cyl, label: "**MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
   class n5 node_resource
   class n5 external_node
-  n6@{ shape: rounded, label: "**dof::**<br/>**ViewDepthOfFieldBindGroupLayouts**<br/>定义当前视图景深的单输入与双输入布局。" }
+  n6@{ shape: rounded, label: "**ViewDepthOfFieldBindGroupLayouts**<br/>定义当前视图景深的单输入与双输入布局。" }
   class n6 node_component
-  n7@{ shape: rounded, label: "**dof::DepthOfFieldPipelines**<br/>记录视图所选景深模式的两阶段管线。" }
+  n7@{ shape: rounded, label: "**DepthOfFieldPipelines**<br/>记录视图所选景深模式的两阶段管线。" }
   class n7 node_component
-  n8@{ shape: rounded, label: "**dof::AuxiliaryDepthOfFieldTexture**<br/>提供六边形散景模糊的第二渲染目标。" }
+  n8@{ shape: rounded, label: "**AuxiliaryDepthOfFieldTexture**<br/>提供六边形散景模糊的第二渲染目标。" }
   class n8 node_component
-  n9@{ shape: fr-rect, label: "**dof::DepthOfFieldPlugin**<br/>提供相机景深后处理。" }
+  n9@{ shape: fr-rect, label: "**DepthOfFieldPlugin**<br/>提供相机景深后处理。" }
   class n9 node_plugin
   n1 e0@--> n0
   class e0 edge_read

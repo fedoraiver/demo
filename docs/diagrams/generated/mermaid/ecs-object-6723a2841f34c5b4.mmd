@@ -45,59 +45,59 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​pbr::material::queue​_​material​_​**<br/>**meshes**<br/>按材质模式把可见网格加入相应绘制阶段。" }
+  n0@{ shape: rounded, label: "**queue​_​material​_​meshes**<br/>按材质模式把可见网格加入相应绘制阶段。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**transmission::**<br/>**ScreenSpaceTransmission**<br/>配置屏幕空间透射的层数与质量。" }
+  n1@{ shape: rounded, label: "**ScreenSpaceTransmission**<br/>配置屏幕空间透射的层数与质量。" }
   class n1 node_component
-  n2@{ shape: cyl, label: "**bevy​_​render::batching::gpu​_​**<br/>**preprocessing::**<br/>**GpuPreprocessingSupport**<br/>来自crate:bevy​_​render ↗：记录设备可采<br/>用的 GPU 预处理级别。" }
+  n2@{ shape: cyl, label: "**GpuPreprocessingSupport**<br/>来自crate:bevy​_​render ↗：记录设备可采<br/>用的 GPU 预处理级别。" }
   class n2 node_resource
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​render::view::ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
+  n3@{ shape: rounded, label: "**ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
   class n3 node_component
   class n3 external_node
-  n4@{ shape: cyl, label: "**render::mesh::RenderMeshInstances**<br/>保存 CPU 或 GPU 构建所需的网格实例。" }
+  n4@{ shape: cyl, label: "**RenderMeshInstances**<br/>保存 CPU 或 GPU 构建所需的网格实例。" }
   class n4 node_resource
   n5@{ shape: notch-rect, label: "**Local · mesh​_​instances​_​queued​_​this​_​**<br/>**iteration​_​scratch​_​space**<br/>去重三维材质本轮需要重新排队的网格。" }
   class n5 node_local
   n6@{ shape: lin-rect, label: "**QueueMeshes**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
   class n6 node_system_set
   class n6 external_node
-  n7@{ shape: cyl, label: "**bevy​_​render::batching::gpu​_​**<br/>**preprocessing::**<br/>**BatchedInstanceBuffers#lt;render::**<br/>**mesh::MeshUniform, render::mesh::**<br/>**MeshInputUniform#gt;**<br/>来自crate:bevy​_​render ↗：保存批次绘制<br/>的 GPU 输入与实例缓冲。" }
+  n7@{ shape: cyl, label: "**BatchedInstanceBuffers#lt;MeshUniform,**<br/>**MeshInputUniform#gt;**<br/>来自crate:bevy​_​render ↗：保存批次绘制<br/>的 GPU 输入与实例缓冲。" }
   class n7 node_resource
   class n7 external_node
-  n8@{ shape: cyl, label: "**render​_​asset::RenderAssets#lt;mesh::**<br/>**RenderMesh#gt;**<br/>来自crate:bevy​_​render ↗：按源资产身份<br/>保存 GPU 渲染表示。" }
+  n8@{ shape: cyl, label: "**RenderAssets#lt;RenderMesh#gt;**<br/>来自crate:bevy​_​render ↗：按源资产身份<br/>保存 GPU 渲染表示。" }
   class n8 node_resource
   class n8 external_node
-  n9@{ shape: cyl, label: "**material::PendingMeshMaterialQueues**<br/>保留因材质未加载而无法入队的网格。" }
+  n9@{ shape: cyl, label: "**PendingMeshMaterialQueues**<br/>保留因材质未加载而无法入队的网格。" }
   class n9 node_resource
-  n10@{ shape: fr-rect, label: "**material::MaterialsPlugin**<br/>组织材质实例、管线及绘制队列。" }
+  n10@{ shape: fr-rect, label: "**MaterialsPlugin**<br/>组织材质实例、管线及绘制队列。" }
   class n10 node_plugin
-  n11@{ shape: cyl, label: "**material::**<br/>**SpecializedMaterialPipelineCache**<br/>按视图缓存材质专用渲染管线。" }
+  n11@{ shape: cyl, label: "**SpecializedMaterialPipelineCache**<br/>按视图缓存材质专用渲染管线。" }
   class n11 node_resource
-  n12@{ shape: cyl, label: "**camera::DirtySpecializations**<br/>来自crate:bevy​_​render ↗：记录需刷新或<br/>移除管线专用化的对象与视图。" }
+  n12@{ shape: cyl, label: "**DirtySpecializations**<br/>来自crate:bevy​_​render ↗：记录需刷新或<br/>移除管线专用化的对象与视图。" }
   class n12 node_resource
   class n12 external_node
-  n13@{ shape: cyl, label: "**bevy​_​render::render​_​phase::**<br/>**ViewSortedRenderPhases#lt;bevy​_​core​_​**<br/>**pipeline::core​_​3d::Transparent3d#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图需<br/>要排序的绘制指令。" }
+  n13@{ shape: cyl, label: "**ViewSortedRenderPhases#lt;Transparent3d**<br/>**#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图需<br/>要排序的绘制指令。" }
   class n13 node_resource
   class n13 external_node
-  n14@{ shape: cyl, label: "**material::RenderMaterialInstances**<br/>保存提取后的实体材质实例。" }
+  n14@{ shape: cyl, label: "**RenderMaterialInstances**<br/>保存提取后的实体材质实例。" }
   class n14 node_resource
-  n15@{ shape: rounded, label: "**view::visibility::**<br/>**RenderVisibleEntities**<br/>来自crate:bevy​_​render ↗：按类别保存视<br/>图的可见实体及变化列表。" }
+  n15@{ shape: rounded, label: "**RenderVisibleEntities**<br/>来自crate:bevy​_​render ↗：按类别保存视<br/>图的可见实体及变化列表。" }
   class n15 node_component
   class n15 external_node
-  n16@{ shape: cyl, label: "**bevy​_​render::render​_​phase::**<br/>**ViewBinnedRenderPhases#lt;core​_​3d::**<br/>**Opaque3d#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图按<br/>分桶组织的绘制指令。" }
+  n16@{ shape: cyl, label: "**ViewBinnedRenderPhases#lt;Opaque3d#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图按<br/>分桶组织的绘制指令。" }
   class n16 node_resource
   class n16 external_node
-  n17@{ shape: cyl, label: "**bevy​_​render::erased​_​render​_​asset::**<br/>**ErasedRenderAssets#lt;material::**<br/>**PreparedMaterial#gt;**<br/>来自crate:bevy​_​render ↗：存储源资产对<br/>应的类型擦除 GPU 表示。" }
+  n17@{ shape: cyl, label: "**ErasedRenderAssets#lt;PreparedMaterial#gt;**<br/>来自crate:bevy​_​render ↗：存储源资产对<br/>应的类型擦除 GPU 表示。" }
   class n17 node_resource
   class n17 external_node
-  n18@{ shape: cyl, label: "**bevy​_​render::render​_​phase::**<br/>**ViewSortedRenderPhases#lt;transmission:**<br/>**:phase::Transmissive3d#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图需<br/>要排序的绘制指令。" }
+  n18@{ shape: cyl, label: "**ViewSortedRenderPhases#lt;Transmissive3**<br/>**d#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图需<br/>要排序的绘制指令。" }
   class n18 node_resource
   class n18 external_node
-  n19@{ shape: cyl, label: "**mesh::allocator::MeshAllocator**<br/>来自crate:bevy​_​render ↗：分配并管理网<br/>格顶点和索引 GPU 缓冲。" }
+  n19@{ shape: cyl, label: "**MeshAllocator**<br/>来自crate:bevy​_​render ↗：分配并管理网<br/>格顶点和索引 GPU 缓冲。" }
   class n19 node_resource
   class n19 external_node
-  n20@{ shape: cyl, label: "**bevy​_​render::render​_​phase::**<br/>**ViewBinnedRenderPhases#lt;core​_​3d::**<br/>**AlphaMask3d#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图按<br/>分桶组织的绘制指令。" }
+  n20@{ shape: cyl, label: "**ViewBinnedRenderPhases#lt;AlphaMask3d#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图按<br/>分桶组织的绘制指令。" }
   class n20 node_resource
   class n20 external_node
   n1 e0@-->|"存在性约束"| n0

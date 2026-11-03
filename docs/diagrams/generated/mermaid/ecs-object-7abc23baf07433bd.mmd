@@ -43,41 +43,41 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​pbr::ssr::screen​_​space​_​**<br/>**reflections**<br/>采样场景颜色、深度与蓝噪声绘制屏幕空间反<br/>射。" }
+  n0@{ shape: rounded, label: "**screen​_​space​_​reflections**<br/>采样场景颜色、深度与蓝噪声绘制屏幕空间反<br/>射。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**bevy​_​render::view::ViewTarget**<br/>来自crate:bevy​_​render ↗：管理视图主颜<br/>色纹理及最终输出附件。" }
+  n1@{ shape: rounded, label: "**ViewTarget**<br/>来自crate:bevy​_​render ↗：管理视图主颜<br/>色纹理及最终输出附件。" }
   class n1 node_component
   class n1 external_node
-  n2@{ shape: fr-rect, label: "**ssr::ScreenSpaceReflectionsPlugin**<br/>提供延迟相机的屏幕空间反射。" }
+  n2@{ shape: fr-rect, label: "**ScreenSpaceReflectionsPlugin**<br/>提供延迟相机的屏幕空间反射。" }
   class n2 node_plugin
-  n3@{ shape: cyl, label: "**bevy​_​render::render​_​asset::**<br/>**RenderAssets#lt;bevy​_​render::texture::**<br/>**GpuImage#gt;**<br/>来自crate:bevy​_​render ↗：按源资产身份<br/>保存 GPU 渲染表示。" }
+  n3@{ shape: cyl, label: "**RenderAssets#lt;GpuImage#gt;**<br/>来自crate:bevy​_​render ↗：按源资产身份<br/>保存 GPU 渲染表示。" }
   class n3 node_resource
   class n3 external_node
-  n4@{ shape: cyl, label: "**bevy​_​render::renderer::CurrentView**<br/>来自crate:bevy​_​render ↗：指定当前正在<br/>渲染的视图实体。" }
+  n4@{ shape: cyl, label: "**CurrentView**<br/>来自crate:bevy​_​render ↗：指定当前正在<br/>渲染的视图实体。" }
   class n4 node_resource
   class n4 external_node
-  n5@{ shape: rounded, label: "**bevy​_​core​_​pipeline::core​_​3d::main​_​**<br/>**opaque​_​pass​_​3d​_​node::main​_​opaque​_​**<br/>**pass​_​3d**<br/>来自crate:bevy​_​core​_​pipeline ↗：绘制<br/>三维不透明、AlphaMask 与天空盒。" }
+  n5@{ shape: rounded, label: "**main​_​opaque​_​pass​_​3d**<br/>来自crate:bevy​_​core​_​pipeline ↗：绘制<br/>三维不透明、AlphaMask 与天空盒。" }
   class n5 node_system
   class n5 external_node
-  n6@{ shape: cyl, label: "**bevy​_​render::diagnostic::**<br/>**DiagnosticsRecorder**<br/>来自crate:bevy​_​render ↗：记录渲染诊断<br/>区间与 GPU 查询索引的对应。" }
+  n6@{ shape: cyl, label: "**DiagnosticsRecorder**<br/>来自crate:bevy​_​render ↗：记录渲染诊断<br/>区间与 GPU 查询索引的对应。" }
   class n6 node_resource
   class n6 external_node
-  n7@{ shape: rounded, label: "**bevy​_​pbr::deferred::deferred​_​**<br/>**lighting**<br/>绑定网格视图、延迟光照管线及通道深度标识<br/>参数，在延迟光照深度附件约束下执行全屏光<br/>照计算，将结果写入视图颜色。" }
+  n7@{ shape: rounded, label: "**deferred​_​lighting**<br/>绑定网格视图、延迟光照管线及通道深度标识<br/>参数，在延迟光照深度附件约束下执行全屏光<br/>照计算，将结果写入视图颜色。" }
   class n7 node_system
-  n8@{ shape: cyl, label: "**bevy​_​render::renderer::RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
+  n8@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
   class n8 node_resource
   class n8 external_node
-  n9@{ shape: cyl, label: "**bevy​_​render::render​_​resource::**<br/>**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
+  n9@{ shape: cyl, label: "**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
   class n9 node_resource
   class n9 external_node
-  n10@{ shape: rounded, label: "**render::mesh​_​view​_​bindings::**<br/>**MeshViewBindGroup**<br/>保存网格视图的主要及数组资源绑定。" }
+  n10@{ shape: rounded, label: "**MeshViewBindGroup**<br/>保存网格视图的主要及数组资源绑定。" }
   class n10 node_component
-  n11@{ shape: cyl, label: "**ssr::ScreenSpaceReflectionsPipeline**<br/>描述屏幕空间反射绘制的着色接口。" }
+  n11@{ shape: cyl, label: "**ScreenSpaceReflectionsPipeline**<br/>描述屏幕空间反射绘制的着色接口。" }
   class n11 node_resource
   n12@{ shape: lin-rect, label: "**MainPass**<br/>来自crate:bevy​_​core​_​pipeline ↗：划分<br/>三维相机绘制与后处理阶段。" }
   class n12 node_system_set
   class n12 external_node
-  n13@{ shape: rounded, label: "**ssr::**<br/>**ScreenSpaceReflectionsPipelineId**<br/>标识视图需要的屏幕空间反射管线。" }
+  n13@{ shape: rounded, label: "**ScreenSpaceReflectionsPipelineId**<br/>标识视图需要的屏幕空间反射管线。" }
   class n13 node_component
   n14@{ shape: cyl, label: "**Bluenoise**<br/>提供时空蓝噪声纹理。" }
   class n14 node_resource

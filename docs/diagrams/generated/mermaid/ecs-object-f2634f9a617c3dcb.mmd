@@ -42,19 +42,19 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**avian3d::collider​_​tree::**<br/>**optimization::optimize​_​trees**<br/>维护动态与运动学碰撞体树的查询性能。" }
+  n0@{ shape: rounded, label: "**optimize​_​trees**<br/>维护动态与运动学碰撞体树的查询性能。" }
   class n0 node_system
-  n1@{ shape: fr-rect, label: "**collider​_​tree::optimization::**<br/>**ColliderTreeOptimizationPlugin**<br/>优化动态碰撞体树。" }
+  n1@{ shape: fr-rect, label: "**ColliderTreeOptimizationPlugin**<br/>优化动态碰撞体树。" }
   class n1 node_plugin
-  n2@{ shape: cyl, label: "**collider​_​tree::ColliderTrees**<br/>按运动类别组织碰撞体加速树。" }
+  n2@{ shape: cyl, label: "**ColliderTrees**<br/>按运动类别组织碰撞体加速树。" }
   class n2 node_resource
-  n3@{ shape: cyl, label: "**collider​_​tree::optimization::**<br/>**OptimizationTasks**<br/>追踪后台碰撞体树优化任务。" }
+  n3@{ shape: cyl, label: "**OptimizationTasks**<br/>追踪后台碰撞体树优化任务。" }
   class n3 node_resource
-  n4@{ shape: cyl, label: "**collider​_​tree::diagnostics::**<br/>**ColliderTreeDiagnostics**<br/>记录碰撞体树维护耗时。" }
+  n4@{ shape: cyl, label: "**ColliderTreeDiagnostics**<br/>记录碰撞体树维护耗时。" }
   class n4 node_resource
   n5@{ shape: lin-rect, label: "**BeginOptimize**<br/>划分碰撞体树更新与优化阶段。" }
   class n5 node_system_set
-  n6@{ shape: cyl, label: "**collider​_​tree::optimization::**<br/>**ColliderTreeOptimization**<br/>配置碰撞体树的优化方式。" }
+  n6@{ shape: cyl, label: "**ColliderTreeOptimization**<br/>配置碰撞体树的优化方式。" }
   class n6 node_resource
   n1 e0@-->|"调用"| n0
   class e0 edge_registration
@@ -76,7 +76,7 @@ flowchart LR
   e1@{ curve: basis }
   e2@{ curve: basis }
   e3@{ curve: basis }
-  e4@{ curve: bumpX }
+  e4@{ curve: basis }
   e5@{ curve: basis }
   e6@{ curve: basis }
   e7@{ curve: basis }

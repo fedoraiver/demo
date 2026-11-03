@@ -38,24 +38,27 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;app::**<br/>**AppExit#gt;**<br/>保存最近两次轮换期间产生的指定类型消息" }
+  n0@{ shape: cyl, label: "**Messages#lt;AppExit#gt;**<br/>保存最近两次轮换期间产生的指定类型消息" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**#lt;bevy​_​time::TimePlugin as bevy​_​app::**<br/>**plugin::Plugin#gt;::build::{{closure}}**<br/>来自crate:bevy​_​time ↗：判断是否进入退<br/>出队列收尾处理。" }
+  n1@{ shape: rounded, label: "**build::{{closure}}**<br/>来自crate:bevy​_​time ↗：判断是否进入退<br/>出队列收尾处理。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​window::system::exit​_​on​_​all​_​**<br/>**closed**<br/>来自crate:bevy​_​window ↗：窗口查询为空<br/>时写入 AppExit::Success，通知应用正常<br/>退出；仍有窗口时不发送退出消息。" }
+  n2@{ shape: rounded, label: "**exit​_​on​_​all​_​closed**<br/>来自crate:bevy​_​window ↗：窗口查询为空<br/>时写入 AppExit::Success，通知应用正常<br/>退出；仍有窗口时不发送退出消息。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​app::terminal​_​ctrl​_​c​_​handler::**<br/>**TerminalCtrlCHandlerPlugin::exit​_​on​_​**<br/>**flag**<br/>来自crate:bevy​_​app ↗：把终端退出标志<br/>转为应用退出消息。" }
+  n3@{ shape: rounded, label: "**exit​_​on​_​flag**<br/>来自crate:bevy​_​app ↗：把终端退出标志<br/>转为应用退出消息。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**demo::ui::requests::handle​_​requests**<br/>来自ui ↗：每帧只消费一项语义请求，避免<br/>鼠标与确认键同时激活，或旧页面动作穿过页<br/>面切换。" }
+  n4@{ shape: rounded, label: "**handle​_​requests**<br/>来自ui ↗：每帧只消费一项语义请求，避免<br/>鼠标与确认键同时激活，或旧页面动作穿过页<br/>面切换。" }
   class n4 node_system
   class n4 external_node
-  n5@{ shape: rounded, label: "**demo::audio::playback::stop​_​on​_​exit**<br/>来自audio ↗：停止音频通道并记录退出。" }
+  subgraph layout_card_n5[" "]
+  n5@{ shape: rounded, label: "**stop​_​on​_​exit**<br/>来自audio ↗：停止音频通道并记录退出。" }
   class n5 node_system
   class n5 external_node
-  n6@{ shape: rounded, label: "**bevy​_​winit::system::despawn​_​windows**<br/>来自crate:bevy​_​winit ↗：处理原生窗口<br/>关闭并延后一轮释放包装器。" }
+  end
+  style layout_card_n5 fill:none,stroke:none
+  n6@{ shape: rounded, label: "**despawn​_​windows**<br/>来自crate:bevy​_​winit ↗：处理原生窗口<br/>关闭并延后一轮释放包装器。" }
   class n6 node_system
   class n6 external_node
   n0 e0@--> n1

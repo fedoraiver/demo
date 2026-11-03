@@ -38,19 +38,19 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**cluster::ExtractedClusterConfig**<br/>保存视图聚簇的深度范围与网格划分。" }
+  n0@{ shape: rounded, label: "**ExtractedClusterConfig**<br/>保存视图聚簇的深度范围与网格划分。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​pbr::cluster::gpu::cluster​_​on​_​**<br/>**gpu**<br/>执行深度切片、计数、分配和填充的 GPU 聚<br/>簇。" }
+  n1@{ shape: rounded, label: "**cluster​_​on​_​gpu**<br/>执行深度切片、计数、分配和填充的 GPU 聚<br/>簇。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​pbr::cluster::gpu::prepare​_​**<br/>**clusters​_​for​_​gpu​_​clustering**<br/>按视图规模和回读容量分配 GPU 聚簇缓冲。" }
+  n2@{ shape: rounded, label: "**prepare​_​clusters​_​for​_​gpu​_​clustering**<br/>按视图规模和回读容量分配 GPU 聚簇缓冲。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​pbr::render::light::prepare​_​**<br/>**lights**<br/>准备视图光照参数、阴影视图和阴影贴图。" }
+  n3@{ shape: rounded, label: "**prepare​_​lights**<br/>准备视图光照参数、阴影视图和阴影贴图。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**bevy​_​pbr::cluster::extract​_​clusters​_​**<br/>**for​_​cpu​_​clustering**<br/>把 CPU 聚簇结果转换为渲染侧对象列表。" }
+  n4@{ shape: rounded, label: "**extract​_​clusters​_​for​_​cpu​_​clustering**<br/>把 CPU 聚簇结果转换为渲染侧对象列表。" }
   class n4 node_system
-  n5@{ shape: rounded, label: "**bevy​_​pbr::cluster::gpu::extract​_​**<br/>**clusters​_​for​_​gpu​_​clustering**<br/>提取视图聚簇配置并回传上帧 GPU 统计。" }
+  n5@{ shape: rounded, label: "**extract​_​clusters​_​for​_​gpu​_​clustering**<br/>提取视图聚簇配置并回传上帧 GPU 统计。" }
   class n5 node_system
-  n6@{ shape: rounded, label: "**bevy​_​pbr::cluster::gpu::prepare​_​**<br/>**cluster​_​dummy​_​textures**<br/>为聚簇光栅通道准备视口占位纹理。" }
+  n6@{ shape: rounded, label: "**prepare​_​cluster​_​dummy​_​textures**<br/>为聚簇光栅通道准备视口占位纹理。" }
   class n6 node_system
   n0 e0@--> n1
   class e0 edge_read

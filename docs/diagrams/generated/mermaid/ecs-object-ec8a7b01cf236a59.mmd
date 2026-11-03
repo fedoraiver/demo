@@ -40,12 +40,12 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: lin-rect, label: "**Input**<br/>组织指针拾取和悬停处理阶段。" }
   class n0 node_system_set
-  n1@{ shape: rounded, label: "**bevy​_​picking::input::mouse​_​pick​_​**<br/>**events**<br/>把窗口鼠标事件转换为拾取指针动作。" }
+  n1@{ shape: rounded, label: "**mouse​_​pick​_​events**<br/>把窗口鼠标事件转换为拾取指针动作。" }
   class n1 node_system
   n2@{ shape: lin-rect, label: "**MessageUpdateSystems**<br/>来自crate:bevy​_​ecs ↗：统一轮换已登记<br/>的消息缓冲。" }
   class n2 node_system_set
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​picking::input::touch​_​pick​_​**<br/>**events**<br/>把触摸阶段转换为独立拾取指针。" }
+  n3@{ shape: rounded, label: "**touch​_​pick​_​events**<br/>把触摸阶段转换为独立拾取指针。" }
   class n3 node_system
   n4@{ shape: lin-rect, label: "**PostInput**<br/>组织指针拾取和悬停处理阶段。" }
   class n4 node_system_set

@@ -38,12 +38,12 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**demo::game​_​flow::gameplay​_​running**<br/>独立功能测试没有应用状态；真实游戏只在<br/>Running 推进玩法。" }
+  n0@{ shape: rounded, label: "**gameplay​_​running**<br/>独立功能测试没有应用状态；真实游戏只在<br/>Running 推进玩法。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**demo::item​_​interaction::lifecycle::**<br/>**resume​_​carry​_​easing**<br/>来自item​_​interaction ↗：下一固定步在<br/>旧端点清除后恢复自由箱插值，保留原本由其<br/>他模块设置的暂停项。" }
+  n1@{ shape: rounded, label: "**resume​_​carry​_​easing**<br/>来自item​_​interaction ↗：下一固定步在<br/>旧端点清除后恢复自由箱插值，保留原本由其<br/>他模块设置的暂停项。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: cyl, label: "**bevy::bevy​_​state::state::State#lt;game​_​**<br/>**flow::AppState#gt;**<br/>来自crate:bevy​_​state ↗：保存某个状态<br/>类型当前生效的值" }
+  n2@{ shape: cyl, label: "**State#lt;AppState#gt;**<br/>来自crate:bevy​_​state ↗：保存某个状态<br/>类型当前生效的值" }
   class n2 node_resource
   class n2 external_node
   n0 e0@-->|"运行条件"| n1

@@ -38,11 +38,11 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**mip​_​generation::experimental::**<br/>**depth::DepthPyramidDummyTexture**<br/>提供未启用深度金字塔时的占位绑定纹理。" }
+  n0@{ shape: cyl, label: "**DepthPyramidDummyTexture**<br/>提供未启用深度金字塔时的占位绑定纹理。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​core​_​pipeline::mip​_​generation::**<br/>**experimental::depth::prepare​_​view​_​**<br/>**depth​_​pyramids**<br/>为遮挡剔除视图维护深度金字塔。" }
+  n1@{ shape: rounded, label: "**prepare​_​view​_​depth​_​pyramids**<br/>为遮挡剔除视图维护深度金字塔。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​core​_​pipeline::mip​_​generation::**<br/>**experimental::depth::init​_​depth​_​**<br/>**pyramid​_​dummy​_​texture**<br/>创建深度金字塔的占位纹理资源。" }
+  n2@{ shape: rounded, label: "**init​_​depth​_​pyramid​_​dummy​_​texture**<br/>创建深度金字塔的占位纹理资源。" }
   class n2 node_system
   n0 e0@--> n1
   class e0 edge_read

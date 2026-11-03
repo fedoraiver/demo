@@ -45,32 +45,32 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​sprite​_​render::sprite​_​mesh::**<br/>**add​_​mesh**<br/>为新增精灵安装共享单位矩形网格。" }
+  n0@{ shape: rounded, label: "**add​_​mesh**<br/>为新增精灵安装共享单位矩形网格。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**sprite::Sprite**<br/>来自crate:bevy​_​sprite ↗：描述二维精灵<br/>的图像、图集、颜色、翻转、尺寸和裁剪区域" }
+  n1@{ shape: rounded, label: "**Sprite**<br/>来自crate:bevy​_​sprite ↗：描述二维精灵<br/>的图像、图集、颜色、翻转、尺寸和裁剪区域" }
   class n1 node_component
   class n1 external_node
   n2@{ shape: lin-rect, label: "**AssetEventSystems**<br/>来自crate:bevy​_​asset ↗：发布资产容器<br/>积累的变更消息。" }
   class n2 node_system_set
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​mesh::components::mark​_​2d​_​**<br/>**meshes​_​as​_​changed​_​if​_​their​_​assets​_​**<br/>**changed**<br/>来自crate:bevy​_​mesh ↗：资产内容变化时<br/>标记对应二维网格已变更。" }
+  n3@{ shape: rounded, label: "**mark​_​2d​_​meshes​_​as​_​changed​_​if​_​their​_​**<br/>**assets​_​changed**<br/>来自crate:bevy​_​mesh ↗：资产内容变化时<br/>标记对应二维网格已变更。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: cyl, label: "**bevy​_​asset::Assets#lt;bevy​_​mesh::Mesh#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
+  n4@{ shape: cyl, label: "**Assets#lt;Mesh#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
   class n4 node_resource
   class n4 external_node
-  n5@{ shape: fr-rect, label: "**sprite​_​mesh::SpriteMeshPlugin**<br/>通过二维网格材质渲染精灵。" }
+  n5@{ shape: fr-rect, label: "**SpriteMeshPlugin**<br/>通过二维网格材质渲染精灵。" }
   class n5 node_plugin
-  n6@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::**<br/>**material::mark​_​2d​_​meshes​_​as​_​changed​_​**<br/>**if​_​their​_​materials​_​changed#lt;bevy​_​**<br/>**sprite​_​render::sprite​_​mesh::sprite​_​**<br/>**mesh​_​material::SpriteMeshMaterial#gt;**<br/>让材质变化触发二维网格重新提取。" }
+  n6@{ shape: rounded, label: "**mark​_​2d​_​meshes​_​as​_​changed​_​if​_​their​_​**<br/>**materials​_​changed**<br/>让材质变化触发二维网格重新提取。" }
   class n6 node_system
-  n7@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::**<br/>**material::check​_​entities​_​needing​_​**<br/>**specialization#lt;bevy​_​sprite​_​render::**<br/>**sprite​_​mesh::sprite​_​mesh​_​material::**<br/>**SpriteMeshMaterial#gt;**<br/>收集二维网格材质需重建或移除专用化的实<br/>体。" }
+  n7@{ shape: rounded, label: "**check​_​entities​_​needing​_​**<br/>**specialization**<br/>收集二维网格材质需重建或移除专用化的实<br/>体。" }
   class n7 node_system
   n8@{ shape: notch-rect, label: "**Local · quad**<br/>复用所有默认精灵共用的单位四边形网格。" }
   class n8 node_local
-  n9@{ shape: rounded, label: "**components::Mesh2d**<br/>来自crate:bevy​_​mesh ↗：为二维可绘制实<br/>体指定网格资产。" }
+  n9@{ shape: rounded, label: "**Mesh2d**<br/>来自crate:bevy​_​mesh ↗：为二维可绘制实<br/>体指定网格资产。" }
   class n9 node_component
   class n9 external_node
-  n10@{ shape: rounded, label: "**bevy​_​sprite​_​render::sprite​_​mesh::**<br/>**add​_​material**<br/>按精灵与锚点复用或创建默认网格材质。" }
+  n10@{ shape: rounded, label: "**add​_​material**<br/>按精灵与锚点复用或创建默认网格材质。" }
   class n10 node_system
   n1 e0@--> n0
   class e0 edge_read

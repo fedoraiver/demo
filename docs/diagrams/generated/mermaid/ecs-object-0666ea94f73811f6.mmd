@@ -37,9 +37,9 @@ flowchart LR
   classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**render::mesh::MeshBindGroups**<br/>按预处理方式保存已加载网格的绑定组。" }
+  n0@{ shape: cyl, label: "**MeshBindGroups**<br/>按预处理方式保存已加载网格的绑定组。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​pbr::render::mesh::prepare​_​**<br/>**mesh​_​bind​_​groups**<br/>按预处理路径准备网格、蒙皮和形变资源绑<br/>定。" }
+  n1@{ shape: rounded, label: "**prepare​_​mesh​_​bind​_​groups**<br/>按预处理路径准备网格、蒙皮和形变资源绑<br/>定。" }
   class n1 node_system
   n1 e0@-->|"插入"| n0
   class e0 edge_write

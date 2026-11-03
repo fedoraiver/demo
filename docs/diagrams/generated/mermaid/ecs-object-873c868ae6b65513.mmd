@@ -41,21 +41,21 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: lin-rect, label: "**Hover**<br/>组织指针拾取和悬停处理阶段。" }
   class n0 node_system_set
-  n1@{ shape: rounded, label: "**bevy​_​picking::hover::update​_​is​_​**<br/>**directly​_​hovered**<br/>更新鼠标直接悬停的实体标记。" }
+  n1@{ shape: rounded, label: "**update​_​is​_​directly​_​hovered**<br/>更新鼠标直接悬停的实体标记。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​picking::hover::update​_​is​_​**<br/>**hovered**<br/>把鼠标悬停传播到实体祖先。" }
+  n2@{ shape: rounded, label: "**update​_​is​_​hovered**<br/>把鼠标悬停传播到实体祖先。" }
   class n2 node_system
   n3@{ shape: lin-rect, label: "**PostHover**<br/>组织指针拾取和悬停处理阶段。" }
   class n3 node_system_set
   n4@{ shape: lin-rect, label: "**Backend**<br/>组织指针拾取和悬停处理阶段。" }
   class n4 node_system_set
-  n5@{ shape: rounded, label: "**bevy​_​picking::hover::update​_​**<br/>**interactions**<br/>合并多个指针对目标实体的交互状态。" }
+  n5@{ shape: rounded, label: "**update​_​interactions**<br/>合并多个指针对目标实体的交互状态。" }
   class n5 node_system
-  n6@{ shape: rounded, label: "**bevy​_​picking::hover::generate​_​**<br/>**hovermap**<br/>汇总拾取命中并应用指针捕获。" }
+  n6@{ shape: rounded, label: "**generate​_​hovermap**<br/>汇总拾取命中并应用指针捕获。" }
   class n6 node_system
-  n7@{ shape: rounded, label: "**bevy​_​picking::events::pointer​_​events**<br/>根据悬停与按钮状态派发指针交互事件。" }
+  n7@{ shape: rounded, label: "**pointer​_​events**<br/>根据悬停与按钮状态派发指针交互事件。" }
   class n7 node_system
-  n8@{ shape: rounded, label: "**bevy​_​picking::PickingSettings::**<br/>**hover​_​should​_​run**<br/>判断是否更新拾取悬停交互状态。" }
+  n8@{ shape: rounded, label: "**hover​_​should​_​run**<br/>判断是否更新拾取悬停交互状态。" }
   class n8 node_system
   n0 e0@-->|"集合成员"| n1
   class e0 edge_set_membership

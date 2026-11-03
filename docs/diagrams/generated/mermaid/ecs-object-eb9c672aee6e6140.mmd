@@ -43,29 +43,29 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​ui::layout::clipping::update​_​**<br/>**clipping​_​system**<br/>从 UI 根递归更新继承裁剪范围。" }
+  n0@{ shape: rounded, label: "**update​_​clipping​_​system**<br/>从 UI 根递归更新继承裁剪范围。" }
   class n0 node_system
   n1@{ shape: lin-rect, label: "**PostLayout**<br/>组织界面交互、布局与堆叠更新。" }
   class n1 node_system_set
-  n2@{ shape: rounded, label: "**ui​_​node::OverrideClip**<br/>忽略祖先施加的 UI 裁剪。" }
+  n2@{ shape: rounded, label: "**OverrideClip**<br/>忽略祖先施加的 UI 裁剪。" }
   class n2 node_component
-  n3@{ shape: rounded, label: "**bevy​_​ui::ComputedNode**<br/>保存 UI 布局计算后的物理尺寸。" }
+  n3@{ shape: rounded, label: "**ComputedNode**<br/>保存 UI 布局计算后的物理尺寸。" }
   class n3 node_component
-  n4@{ shape: rounded, label: "**bevy​_​ecs::hierarchy::ChildOf**<br/>来自crate:bevy​_​ecs ↗：保存当前实体的<br/>父实体身份" }
+  n4@{ shape: rounded, label: "**ChildOf**<br/>来自crate:bevy​_​ecs ↗：保存当前实体的<br/>父实体身份" }
   class n4 node_component
   class n4 external_node
-  n5@{ shape: rounded, label: "**bevy​_​ui::CalculatedClip**<br/>缓存节点从祖先继承的裁剪结果。" }
+  n5@{ shape: rounded, label: "**CalculatedClip**<br/>缓存节点从祖先继承的裁剪结果。" }
   class n5 node_component
-  n6@{ shape: rounded, label: "**ui​_​node::FixedNode**<br/>将子 UI 节点按视口根节点布局。" }
+  n6@{ shape: rounded, label: "**FixedNode**<br/>将子 UI 节点按视口根节点布局。" }
   class n6 node_component
-  n7@{ shape: fr-rect, label: "**bevy​_​ui::UiPlugin**<br/>建立界面布局与内容更新基础。" }
+  n7@{ shape: fr-rect, label: "**UiPlugin**<br/>建立界面布局与内容更新基础。" }
   class n7 node_plugin
-  n8@{ shape: rounded, label: "**bevy​_​ecs::hierarchy::Children**<br/>来自crate:bevy​_​ecs ↗：保存以<br/>ChildOf 指向当前父实体的子实体集合" }
+  n8@{ shape: rounded, label: "**Children**<br/>来自crate:bevy​_​ecs ↗：保存以<br/>ChildOf 指向当前父实体的子实体集合" }
   class n8 node_component
   class n8 external_node
-  n9@{ shape: rounded, label: "**bevy​_​ui::UiGlobalTransform**<br/>保存 UI 节点的绝对二维变换。" }
+  n9@{ shape: rounded, label: "**UiGlobalTransform**<br/>保存 UI 节点的绝对二维变换。" }
   class n9 node_component
-  n10@{ shape: rounded, label: "**bevy​_​ui::Node**<br/>声明 UI 节点的布局规则。" }
+  n10@{ shape: rounded, label: "**Node**<br/>声明 UI 节点的布局规则。" }
   class n10 node_component
   n1 e0@-->|"集合成员"| n0
   class e0 edge_set_membership

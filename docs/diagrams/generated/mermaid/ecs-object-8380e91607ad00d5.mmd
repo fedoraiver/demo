@@ -38,15 +38,15 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**tonemapping::TonemappingPipeline**<br/>提供 HDR 色调映射的全屏管线资源。" }
+  n0@{ shape: cyl, label: "**TonemappingPipeline**<br/>提供 HDR 色调映射的全屏管线资源。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​core​_​pipeline::tonemapping::**<br/>**node::tonemapping**<br/>为启用的 HDR 视图执行色调映射。" }
+  n1@{ shape: rounded, label: "**tonemapping**<br/>为启用的 HDR 视图执行色调映射。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​core​_​pipeline::tonemapping::**<br/>**prepare​_​view​_​tonemapping​_​pipelines**<br/>按视图实际颜色分级需求专用化色调映射。" }
+  n2@{ shape: rounded, label: "**prepare​_​view​_​tonemapping​_​pipelines**<br/>按视图实际颜色分级需求专用化色调映射。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​core​_​pipeline::tonemapping::**<br/>**init​_​tonemapping​_​pipeline**<br/>建立色调映射的颜色、视图与 LUT 输入布<br/>局。" }
+  n3@{ shape: rounded, label: "**init​_​tonemapping​_​pipeline**<br/>建立色调映射的颜色、视图与 LUT 输入布<br/>局。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**bevy​_​core​_​pipeline::tonemapping::**<br/>**node::tonemapping**<br/>为启用的 HDR 视图执行色调映射。" }
+  n4@{ shape: rounded, label: "**tonemapping**<br/>为启用的 HDR 视图执行色调映射。" }
   class n4 node_system
   n0 e0@--> n1
   class e0 edge_read

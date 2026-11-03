@@ -40,19 +40,19 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​post​_​process::motion​_​blur::**<br/>**pipeline::init​_​motion​_​blur​_​pipeline**<br/>加载运动模糊着色器并构造管线资源。" }
+  n0@{ shape: rounded, label: "**init​_​motion​_​blur​_​pipeline**<br/>加载运动模糊着色器并构造管线资源。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**motion​_​blur::pipeline::**<br/>**MotionBlurPipeline**<br/>提供运动模糊的采样器、布局和着色器。" }
+  n1@{ shape: cyl, label: "**MotionBlurPipeline**<br/>提供运动模糊的采样器、布局和着色器。" }
   class n1 node_resource
-  n2@{ shape: cyl, label: "**bevy​_​core​_​pipeline::FullscreenShader**<br/>来自crate:bevy​_​core​_​pipeline ↗：提供<br/>覆盖整个屏幕的顶点着色器。" }
+  n2@{ shape: cyl, label: "**FullscreenShader**<br/>来自crate:bevy​_​core​_​pipeline ↗：提供<br/>覆盖整个屏幕的顶点着色器。" }
   class n2 node_resource
   class n2 external_node
-  n3@{ shape: cyl, label: "**bevy​_​asset::AssetServer**<br/>来自crate:bevy​_​asset ↗：加载资产并追<br/>踪加载状态。" }
+  n3@{ shape: cyl, label: "**AssetServer**<br/>来自crate:bevy​_​asset ↗：加载资产并追<br/>踪加载状态。" }
   class n3 node_resource
   class n3 external_node
-  n4@{ shape: fr-rect, label: "**motion​_​blur::MotionBlurPlugin**<br/>提供逐物体运动模糊。" }
+  n4@{ shape: fr-rect, label: "**MotionBlurPlugin**<br/>提供逐物体运动模糊。" }
   class n4 node_plugin
-  n5@{ shape: cyl, label: "**bevy​_​render::renderer::RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
+  n5@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
   class n5 node_resource
   class n5 external_node
   n0 e0@-->|"插入"| n1

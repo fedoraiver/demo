@@ -39,26 +39,26 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**button​_​input::ButtonInput#lt;keyboard::**<br/>**KeyCode#gt;**<br/>保存指定按钮类型当前按下、本帧刚按下和刚<br/>释放的集合" }
+  n0@{ shape: cyl, label: "**ButtonInput#lt;KeyCode#gt;**<br/>保存指定按钮类型当前按下、本帧刚按下和刚<br/>释放的集合" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​egui::input::absorb​_​bevy​_​input​_​**<br/>**system**<br/>来自crate:bevy​_​egui ↗：在 Egui 使用<br/>输入时吸收对应 Bevy 输入。" }
+  n1@{ shape: rounded, label: "**absorb​_​bevy​_​input​_​system**<br/>来自crate:bevy​_​egui ↗：在 Egui 使用<br/>输入时吸收对应 Bevy 输入。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**(bevy​_​ecs::system::system​_​param::**<br/>**Local#lt;'​_​, alloc::vec::Vec#lt;bevy​_​**<br/>**enhanced​_​input::binding::Binding#gt;#gt;,**<br/>**bevy​_​enhanced​_​input::context::time::**<br/>**ContextTime#lt;'​_​#gt;, bevy​_​enhanced​_​**<br/>**input::context::input​_​reader::**<br/>**InputReader#lt;'​_​, '​_​#gt;, bevy​_​ecs::**<br/>**change​_​detection::params::Res#lt;'​_​,**<br/>**bevy​_​enhanced​_​input::context::**<br/>**instance::ContextInstances#lt;bevy​_​**<br/>**app::main​_​schedule::PreUpdate#gt;#gt;,**<br/>**bevy​_​ecs::system::query::Query#lt;'​_​,**<br/>**'​_​, bevy​_​ecs::world::entity​_​access::**<br/>**filtered::FilteredEntityMut#lt;'​_​, '​_​**<br/>**#gt;#gt;, bevy​_​ecs::system::query::**<br/>**Query#lt;'​_​, '​_​, (bevy​_​ecs::entity::**<br/>**Entity, #amp;bevy​_​ecs::name::Name,**<br/>**#amp;bevy​_​enhanced​_​input::action::**<br/>**ActionSettings, core::option::**<br/>**Option#lt;#amp;bevy​_​enhanced​_​input::**<br/>**binding::relationship::Bindings#gt;,**<br/>**core::option::Option#lt;#amp;bevy​_​enhanced​_​**<br/>**input::modifier::fns::ModifierFns#gt;,**<br/>**core::option::Option#lt;#amp;bevy​_​enhanced​_​**<br/>**input::condition::fns::**<br/>**ConditionFns#gt;, #amp;mut bevy​_​enhanced​_​**<br/>**input::action::mock::ActionMock),**<br/>**bevy​_​ecs::query::filter::**<br/>**Without#lt;bevy​_​enhanced​_​input::**<br/>**context::ExternallyMocked#gt;#gt;, bevy​_​**<br/>**ecs::system::query::Query#lt;'​_​, '​_​,**<br/>**(#amp;mut bevy​_​enhanced​_​input::action::**<br/>**value::ActionValue, #amp;mut bevy​_​**<br/>**enhanced​_​input::action::**<br/>**TriggerState, #amp;mut bevy​_​enhanced​_​**<br/>**input::action::events::**<br/>**ActionEvents, #amp;mut bevy​_​enhanced​_​**<br/>**input::action::ActionTime)#gt;, bevy​_​**<br/>**ecs::system::query::Query#lt;'​_​, '​_​,**<br/>**(bevy​_​ecs::entity::Entity, #amp;bevy​_​**<br/>**enhanced​_​input::binding::Binding,**<br/>**#amp;mut bevy​_​enhanced​_​input::binding::**<br/>**FirstActivation, core::option::**<br/>**Option#lt;#amp;bevy​_​enhanced​_​input::**<br/>**modifier::fns::ModifierFns#gt;, core::**<br/>**option::Option#lt;#amp;bevy​_​enhanced​_​**<br/>**input::condition::fns::**<br/>**ConditionFns#gt;), bevy​_​ecs::query::**<br/>**filter::Without#lt;bevy​_​enhanced​_​**<br/>**input::action::ActionSettings#gt;#gt;,**<br/>**bevy​_​ecs::system::query::Query#lt;'​_​,**<br/>**'​_​, bevy​_​ecs::world::entity​_​access::**<br/>**filtered::FilteredEntityMut#lt;'​_​, '​_​**<br/>**#gt;#gt;)**<br/>来自crate:bevy​_​enhanced​_​input ↗：求<br/>值上下文输入并更新动作状态。" }
+  n2@{ shape: rounded, label: "**(Local#lt;'​_​, Vec#lt;Binding#gt;#gt;,**<br/>**ContextTime#lt;'​_​#gt;, InputReader#lt;'​_​, '​_​**<br/>**#gt;, Res#lt;'​_​,**<br/>**ContextInstances#lt;PreUpdate#gt;#gt;,**<br/>**Query#lt;'​_​, '​_​, FilteredEntityMut#lt;'​_​,**<br/>**'​_​#gt;#gt;, Query#lt;'​_​, '​_​, (Entity, #amp;Name,**<br/>**#amp;ActionSettings, Option#lt;#amp;Bindings#gt;,**<br/>**Option#lt;#amp;ModifierFns#gt;,**<br/>**Option#lt;#amp;ConditionFns#gt;, #amp;mut**<br/>**ActionMock),**<br/>**Without#lt;ExternallyMocked#gt;#gt;, Query#lt;'​_​**<br/>**, '​_​, (#amp;mut ActionValue, #amp;mut**<br/>**TriggerState, #amp;mut ActionEvents,**<br/>**#amp;mut ActionTime)#gt;, Query#lt;'​_​, '​_​,**<br/>**(Entity, #amp;Binding, #amp;mut**<br/>**FirstActivation,**<br/>**Option#lt;#amp;ModifierFns#gt;,**<br/>**Option#lt;#amp;ConditionFns#gt;),**<br/>**Without#lt;ActionSettings#gt;#gt;, Query#lt;'​_​,**<br/>**'​_​, FilteredEntityMut#lt;'​_​, '​_​#gt;#gt;)**<br/>来自crate:bevy​_​enhanced​_​input ↗：求<br/>值上下文输入并更新动作状态。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**demo::first​_​person::capture::sync​_​**<br/>**mouse​_​capture**<br/>来自first​_​person ↗：在输入转发前确定<br/>归属；切换前约定其他按键已松开，检查器没<br/>有进行中的交互。" }
+  n3@{ shape: rounded, label: "**sync​_​mouse​_​capture**<br/>来自first​_​person ↗：在输入转发前确定<br/>归属；切换前约定其他按键已松开，检查器没<br/>有进行中的交互。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**bevy​_​input::keyboard::keyboard​_​**<br/>**input​_​system**<br/>把键盘事件汇总为物理和逻辑按键状态。" }
+  n4@{ shape: rounded, label: "**keyboard​_​input​_​system**<br/>把键盘事件汇总为物理和逻辑按键状态。" }
   class n4 node_system
-  n5@{ shape: rounded, label: "**bevy​_​enhanced​_​input::context::input​_​**<br/>**reader::update​_​pending**<br/>来自crate:bevy​_​enhanced​_​input ↗：更<br/>新输入读取器中等待重置的绑定。" }
+  n5@{ shape: rounded, label: "**update​_​pending**<br/>来自crate:bevy​_​enhanced​_​input ↗：更<br/>新输入读取器中等待重置的绑定。" }
   class n5 node_system
   class n5 external_node
-  n6@{ shape: hex, label: "**bevy​_​input​_​focus::tab​_​navigation::**<br/>**handle​_​tab​_​navigation**<br/>来自crate:bevy​_​input​_​focus ↗：处理正<br/>向和反向键盘焦点遍历。" }
+  n6@{ shape: hex, label: "**handle​_​tab​_​navigation**<br/>来自crate:bevy​_​input​_​focus ↗：处理正<br/>向和反向键盘焦点遍历。" }
   class n6 node_observer
   class n6 external_node
-  n7@{ shape: hex, label: "**bevy​_​input​_​focus::tab​_​navigation::**<br/>**handle​_​tab​_​navigation**<br/>来自crate:bevy​_​input​_​focus ↗：处理正<br/>向和反向键盘焦点遍历。" }
+  n7@{ shape: hex, label: "**handle​_​tab​_​navigation**<br/>来自crate:bevy​_​input​_​focus ↗：处理正<br/>向和反向键盘焦点遍历。" }
   class n7 node_observer
   class n7 external_node
   n1 e0@-->|"可变访问"| n0

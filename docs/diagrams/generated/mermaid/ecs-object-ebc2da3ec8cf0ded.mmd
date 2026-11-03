@@ -43,14 +43,14 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: hex, label: "**bevy​_​ui::interaction​_​states::on​_​add​_​**<br/>**selectable**<br/>初始化可选择控件的无障碍状态。" }
+  n0@{ shape: hex, label: "**on​_​add​_​selectable**<br/>初始化可选择控件的无障碍状态。" }
   class n0 node_observer
-  n1@{ shape: rounded, label: "**bevy​_​ui::Selected**<br/>记录控件的 ARIA 选中状态。" }
+  n1@{ shape: rounded, label: "**Selected**<br/>记录控件的 ARIA 选中状态。" }
   class n1 node_component
-  n2@{ shape: stadium, label: "**bevy​_​ecs::lifecycle::AddEvent**<br/>来自crate:bevy​_​ecs ↗：通知组件首次加<br/>入实体。" }
+  n2@{ shape: stadium, label: "**AddEvent**<br/>来自crate:bevy​_​ecs ↗：通知组件首次加<br/>入实体。" }
   class n2 node_event
   class n2 external_node
-  n3@{ shape: fr-rect, label: "**bevy​_​ui::UiPlugin**<br/>建立界面布局与内容更新基础。" }
+  n3@{ shape: fr-rect, label: "**UiPlugin**<br/>建立界面布局与内容更新基础。" }
   class n3 node_plugin
   n4@{ shape: rounded, label: "**AccessibilityNode**<br/>来自crate:bevy​_​a11y ↗：把实体转换为<br/>AccessKit 可访问性节点" }
   class n4 node_component

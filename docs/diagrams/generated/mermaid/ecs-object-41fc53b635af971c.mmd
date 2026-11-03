@@ -47,7 +47,7 @@ flowchart LR
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
   subgraph layout_card_n0[" "]
-  n0@{ shape: rounded, label: "**bevy​_​ui​_​render::extract​_​ui​_​camera​_​**<br/>**view**<br/>为活动二维或三维相机维护独立 UI 视图。" }
+  n0@{ shape: rounded, label: "**extract​_​ui​_​camera​_​view**<br/>为活动二维或三维相机维护独立 UI 视图。" }
   class n0 node_system
   end
   style layout_card_n0 fill:none,stroke:none
@@ -57,7 +57,7 @@ flowchart LR
   end
   style layout_card_n1 fill:none,stroke:none
   subgraph layout_card_n2[" "]
-  n2@{ shape: cyl, label: "**bevy​_​render::camera::**<br/>**CameraMainPassTextureFormats**<br/>来自crate:bevy​_​render ↗：按相机渲染实<br/>体记录主通道颜色格式。" }
+  n2@{ shape: cyl, label: "**CameraMainPassTextureFormats**<br/>来自crate:bevy​_​render ↗：按相机渲染实<br/>体记录主通道颜色格式。" }
   class n2 node_resource
   class n2 external_node
   end
@@ -68,18 +68,18 @@ flowchart LR
   end
   style layout_card_n3 fill:none,stroke:none
   subgraph layout_card_n4[" "]
-  n4@{ shape: rounded, label: "**components::Camera2d**<br/>来自crate:bevy​_​camera ↗：标记使用二维<br/>渲染流程的相机。" }
+  n4@{ shape: rounded, label: "**Camera2d**<br/>来自crate:bevy​_​camera ↗：标记使用二维<br/>渲染流程的相机。" }
   class n4 node_component
   class n4 external_node
   end
   style layout_card_n4 fill:none,stroke:none
   subgraph layout_card_n5[" "]
-  n5@{ shape: fr-rect, label: "**bevy​_​ui​_​render::UiRenderPlugin**<br/>提取并准备界面绘制数据。" }
+  n5@{ shape: fr-rect, label: "**UiRenderPlugin**<br/>提取并准备界面绘制数据。" }
   class n5 node_plugin
   end
   style layout_card_n5 fill:none,stroke:none
   subgraph layout_card_n6[" "]
-  n6@{ shape: cyl, label: "**extract​_​plugin::MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
+  n6@{ shape: cyl, label: "**MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
   class n6 node_resource
   class n6 external_node
   end
@@ -90,7 +90,7 @@ flowchart LR
   end
   style layout_card_n7 fill:none,stroke:none
   subgraph layout_card_n8[" "]
-  n8@{ shape: rounded, label: "**bevy​_​render::camera::extract​_​cameras**<br/>来自crate:bevy​_​render ↗：把活动相机及<br/>可见实体提取到渲染世界。" }
+  n8@{ shape: rounded, label: "**extract​_​cameras**<br/>来自crate:bevy​_​render ↗：把活动相机及<br/>可见实体提取到渲染世界。" }
   class n8 node_system
   class n8 external_node
   end
@@ -121,13 +121,13 @@ flowchart LR
   end
   style layout_card_n13 fill:none,stroke:none
   subgraph layout_card_n14[" "]
-  n14@{ shape: rounded, label: "**bevy​_​render::view::ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
+  n14@{ shape: rounded, label: "**ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
   class n14 node_component
   class n14 external_node
   end
   style layout_card_n14 fill:none,stroke:none
   subgraph layout_card_n15[" "]
-  n15@{ shape: rounded, label: "**bevy​_​extract::SubEntity#lt;bevy​_​**<br/>**render::RenderApp#gt;**<br/>来自crate:bevy​_​extract ↗：记录主实体<br/>对应的子世界实体。" }
+  n15@{ shape: rounded, label: "**SubEntity#lt;RenderApp#gt;**<br/>来自crate:bevy​_​extract ↗：记录主实体<br/>对应的子世界实体。" }
   class n15 node_component
   class n15 external_node
   end
@@ -138,7 +138,7 @@ flowchart LR
   end
   style layout_card_n16 fill:none,stroke:none
   subgraph layout_card_n17[" "]
-  n17@{ shape: cyl, label: "**bevy​_​render::render​_​phase::**<br/>**ViewSortedRenderPhases#lt;render​_​pass::**<br/>**TransparentUi#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图需<br/>要排序的绘制指令。" }
+  n17@{ shape: cyl, label: "**ViewSortedRenderPhases#lt;TransparentUi**<br/>**#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图需<br/>要排序的绘制指令。" }
   class n17 node_resource
   class n17 external_node
   end
@@ -149,13 +149,13 @@ flowchart LR
   end
   style layout_card_n18 fill:none,stroke:none
   subgraph layout_card_n19[" "]
-  n19@{ shape: rounded, label: "**components::Camera3d**<br/>来自crate:bevy​_​camera ↗：启用三维相机<br/>主渲染流程。" }
+  n19@{ shape: rounded, label: "**Camera3d**<br/>来自crate:bevy​_​camera ↗：启用三维相机<br/>主渲染流程。" }
   class n19 node_component
   class n19 external_node
   end
   style layout_card_n19 fill:none,stroke:none
   subgraph layout_card_n20[" "]
-  n20@{ shape: rounded, label: "**bevy​_​camera::Camera**<br/>来自crate:bevy​_​camera ↗：配置相机视<br/>口、输出目标和渲染顺序。" }
+  n20@{ shape: rounded, label: "**Camera**<br/>来自crate:bevy​_​camera ↗：配置相机视<br/>口、输出目标和渲染顺序。" }
   class n20 node_component
   class n20 external_node
   end

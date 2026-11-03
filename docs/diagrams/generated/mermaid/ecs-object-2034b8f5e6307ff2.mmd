@@ -43,21 +43,21 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**avian3d::dynamics::rigid​_​body::**<br/>**forces::plugin::apply​_​constant​_​**<br/>**local​_​forces**<br/>按总质量把局部恒力转成局部线加速度。" }
+  n0@{ shape: rounded, label: "**apply​_​constant​_​local​_​forces**<br/>按总质量把局部恒力转成局部线加速度。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**dynamics::rigid​_​body::forces::**<br/>**AccumulatedLocalAcceleration**<br/>累积物理步前的局部加速度。" }
+  n1@{ shape: rounded, label: "**AccumulatedLocalAcceleration**<br/>累积物理步前的局部加速度。" }
   class n1 node_component
   n2@{ shape: lin-rect, label: "**ApplyConstantForces**<br/>组织外力应用与累积量清理。" }
   class n2 node_system_set
-  n3@{ shape: rounded, label: "**avian3d::dynamics::rigid​_​body::**<br/>**forces::plugin::apply​_​constant​_​**<br/>**local​_​torques**<br/>按局部惯量把恒定局部扭矩转成角加速度。" }
+  n3@{ shape: rounded, label: "**apply​_​constant​_​local​_​torques**<br/>按局部惯量把恒定局部扭矩转成角加速度。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**dynamics::rigid​_​body::forces::**<br/>**ConstantLocalForce**<br/>持续施加随刚体转动的局部力。" }
+  n4@{ shape: rounded, label: "**ConstantLocalForce**<br/>持续施加随刚体转动的局部力。" }
   class n4 node_component
-  n5@{ shape: rounded, label: "**dynamics::rigid​_​body::mass​_​**<br/>**properties::components::computed::**<br/>**ComputedMass**<br/>保存汇总后的刚体总质量。" }
+  n5@{ shape: rounded, label: "**ComputedMass**<br/>保存汇总后的刚体总质量。" }
   class n5 node_component
-  n6@{ shape: rounded, label: "**avian3d::dynamics::rigid​_​body::**<br/>**forces::plugin::apply​_​constant​_​**<br/>**angular​_​acceleration**<br/>把恒定世界角加速度加入待积分增量。" }
+  n6@{ shape: rounded, label: "**apply​_​constant​_​angular​_​acceleration**<br/>把恒定世界角加速度加入待积分增量。" }
   class n6 node_system
-  n7@{ shape: fr-rect, label: "**dynamics::rigid​_​body::forces::**<br/>**plugin::ForcePlugin**<br/>管理并施加刚体外力和力矩。" }
+  n7@{ shape: fr-rect, label: "**ForcePlugin**<br/>管理并施加刚体外力和力矩。" }
   class n7 node_plugin
   n0 e0@-->|"可变访问"| n1
   class e0 edge_write

@@ -43,30 +43,30 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​render::view::window::create​_​**<br/>**surfaces**<br/>创建并配置提取窗口的 GPU 表面。" }
+  n0@{ shape: rounded, label: "**create​_​surfaces**<br/>创建并配置提取窗口的 GPU 表面。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**renderer::RenderInstance**<br/>提供 GPU 初始化与表面创建入口。" }
+  n1@{ shape: cyl, label: "**RenderInstance**<br/>提供 GPU 初始化与表面创建入口。" }
   class n1 node_resource
-  n2@{ shape: rounded, label: "**view::window::SurfaceData**<br/>保存窗口 GPU 表面及其呈现配置。" }
+  n2@{ shape: rounded, label: "**SurfaceData**<br/>保存窗口 GPU 表面及其呈现配置。" }
   class n2 node_component
-  n3@{ shape: rounded, label: "**bevy​_​render::view::window::need​_​**<br/>**surface​_​configuration**<br/>判断窗口渲染表面是否需要重配。" }
+  n3@{ shape: rounded, label: "**need​_​surface​_​configuration**<br/>判断窗口渲染表面是否需要重配。" }
   class n3 node_system
-  n4@{ shape: fr-rect, label: "**view::window::WindowRenderPlugin**<br/>同步窗口并准备渲染表面。" }
+  n4@{ shape: fr-rect, label: "**WindowRenderPlugin**<br/>同步窗口并准备渲染表面。" }
   class n4 node_plugin
-  n5@{ shape: rounded, label: "**raw​_​handle::RawHandleWrapper**<br/>来自crate:bevy​_​window ↗：持有原始窗口<br/>及显示服务器句柄" }
+  n5@{ shape: rounded, label: "**RawHandleWrapper**<br/>来自crate:bevy​_​window ↗：持有原始窗口<br/>及显示服务器句柄" }
   class n5 node_component
   class n5 external_node
-  n6@{ shape: rounded, label: "**bevy​_​render::view::window::prepare​_​**<br/>**windows**<br/>为有相机输出或需要首次呈现的窗口取得交换<br/>链纹理，保留可复用的未呈现帧，并处理尺<br/>寸、模式变化及表面获取错误。" }
+  n6@{ shape: rounded, label: "**prepare​_​windows**<br/>为有相机输出或需要首次呈现的窗口取得交换<br/>链纹理，保留可复用的未呈现帧，并处理尺<br/>寸、模式变化及表面获取错误。" }
   class n6 node_system
-  n7@{ shape: rounded, label: "**bevy​_​render::view::cleanup​_​view​_​**<br/>**targets​_​for​_​resize**<br/>在窗口尺寸或呈现模式变化时撤销旧视图目<br/>标。" }
+  n7@{ shape: rounded, label: "**cleanup​_​view​_​targets​_​for​_​resize**<br/>在窗口尺寸或呈现模式变化时撤销旧视图目<br/>标。" }
   class n7 node_system
-  n8@{ shape: cyl, label: "**bevy​_​render::renderer::RenderDevice**<br/>创建渲染和计算所需的 GPU 资源。" }
+  n8@{ shape: cyl, label: "**RenderDevice**<br/>创建渲染和计算所需的 GPU 资源。" }
   class n8 node_resource
-  n9@{ shape: rounded, label: "**bevy​_​render::view::ExtractedWindow**<br/>保存渲染侧窗口尺寸、呈现模式和交换链状<br/>态。" }
+  n9@{ shape: rounded, label: "**ExtractedWindow**<br/>保存渲染侧窗口尺寸、呈现模式和交换链状<br/>态。" }
   class n9 node_component
-  n10@{ shape: rounded, label: "**bevy​_​render::view::clear​_​view​_​**<br/>**attachments**<br/>清空上一帧的视图输出附件表。" }
+  n10@{ shape: rounded, label: "**clear​_​view​_​attachments**<br/>清空上一帧的视图输出附件表。" }
   class n10 node_system
-  n11@{ shape: cyl, label: "**bevy​_​render::renderer::RenderAdapter**<br/>标识渲染使用的物理 GPU 适配器。" }
+  n11@{ shape: cyl, label: "**RenderAdapter**<br/>标识渲染使用的物理 GPU 适配器。" }
   class n11 node_resource
   n1 e0@--> n0
   class e0 edge_read

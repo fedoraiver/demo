@@ -37,9 +37,9 @@ flowchart LR
   classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**bevy​_​extract::extract​_​instances::**<br/>**ExtractedInstances#lt;light​_​probe::**<br/>**environment​_​map::EnvironmentMapIds,**<br/>**bevy​_​render::RenderApp#gt;**<br/>按主实体身份保存子世界提取实例。" }
+  n0@{ shape: cyl, label: "**ExtractedInstances#lt;EnvironmentMapIds**<br/>**, RenderApp#gt;**<br/>按主实体身份保存子世界提取实例。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​extract::extract​_​instances::**<br/>**extract​_​all#lt;bevy​_​pbr::light​_​probe::**<br/>**environment​_​map::EnvironmentMapIds,**<br/>**bevy​_​render::RenderApp#gt;**<br/>重新提取并索引主世界的实例数据。" }
+  n1@{ shape: rounded, label: "**extract​_​all**<br/>重新提取并索引主世界的实例数据。" }
   class n1 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

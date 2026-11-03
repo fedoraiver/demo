@@ -45,12 +45,12 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​ui​_​widgets::menu::menu​_​acquire​_​**<br/>**focus**<br/>在菜单打开时为菜单项取得焦点。" }
+  n0@{ shape: rounded, label: "**menu​_​acquire​_​focus**<br/>在菜单打开时为菜单项取得焦点。" }
   class n0 node_system
   n1@{ shape: lin-rect, label: "**VisibilityPropagate**<br/>来自crate:bevy​_​camera ↗：组织相机与实<br/>体可见性更新。" }
   class n1 node_system_set
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​camera::visibility::**<br/>**InheritedVisibility**<br/>来自crate:bevy​_​camera ↗：保存从实体层<br/>级计算出的可见性。" }
+  n2@{ shape: rounded, label: "**InheritedVisibility**<br/>来自crate:bevy​_​camera ↗：保存从实体层<br/>级计算出的可见性。" }
   class n2 node_component
   class n2 external_node
   n3@{ shape: lin-rect, label: "**FocusChangeEvents**<br/>来自crate:bevy​_​input​_​focus ↗：组织焦<br/>点输入派发与变化通知。" }
@@ -62,29 +62,29 @@ flowchart LR
   n5@{ shape: cyl, label: "**InputFocus**<br/>来自crate:bevy​_​input​_​focus ↗：保存当<br/>前输入焦点实体、待派发的焦点变化及原焦点" }
   class n5 node_resource
   class n5 external_node
-  n6@{ shape: fr-rect, label: "**menu::MenuPlugin**<br/>处理菜单焦点与菜单项交互。" }
+  n6@{ shape: fr-rect, label: "**MenuPlugin**<br/>处理菜单焦点与菜单项交互。" }
   class n6 node_plugin
-  n7@{ shape: rounded, label: "**bevy​_​ecs::hierarchy::Children**<br/>来自crate:bevy​_​ecs ↗：保存以<br/>ChildOf 指向当前父实体的子实体集合" }
+  n7@{ shape: rounded, label: "**Children**<br/>来自crate:bevy​_​ecs ↗：保存以<br/>ChildOf 指向当前父实体的子实体集合" }
   class n7 node_component
   class n7 external_node
-  n8@{ shape: rounded, label: "**menu::MenuFocusState**<br/>保存菜单弹出层的打开、获得焦点和关闭状态" }
+  n8@{ shape: rounded, label: "**MenuFocusState**<br/>保存菜单弹出层的打开、获得焦点和关闭状态" }
   class n8 node_component
-  n9@{ shape: rounded, label: "**tab​_​navigation::TabIndex**<br/>来自crate:bevy​_​input​_​focus ↗：声明实<br/>体参与 Tab 导航及其排序值" }
+  n9@{ shape: rounded, label: "**TabIndex**<br/>来自crate:bevy​_​input​_​focus ↗：声明实<br/>体参与 Tab 导航及其排序值" }
   class n9 node_component
   class n9 external_node
-  n10@{ shape: rounded, label: "**tab​_​navigation::TabGroup**<br/>来自crate:bevy​_​input​_​focus ↗：把实体<br/>子树标记为可参与 Tab 导航的组" }
+  n10@{ shape: rounded, label: "**TabGroup**<br/>来自crate:bevy​_​input​_​focus ↗：把实体<br/>子树标记为可参与 Tab 导航的组" }
   class n10 node_component
   class n10 external_node
-  n11@{ shape: rounded, label: "**bevy​_​ecs::hierarchy::ChildOf**<br/>来自crate:bevy​_​ecs ↗：保存当前实体的<br/>父实体身份" }
+  n11@{ shape: rounded, label: "**ChildOf**<br/>来自crate:bevy​_​ecs ↗：保存当前实体的<br/>父实体身份" }
   class n11 node_component
   class n11 external_node
-  n12@{ shape: rounded, label: "**bevy​_​ui​_​widgets::text​_​input::text​_​**<br/>**input​_​autoscroll​_​system**<br/>在拖选越出文字视口时自动滚动。" }
+  n12@{ shape: rounded, label: "**text​_​input​_​autoscroll​_​system**<br/>在拖选越出文字视口时自动滚动。" }
   class n12 node_system
   n13@{ shape: lin-rect, label: "**MenuFocusSystem**<br/>为新打开的菜单取得首个内部焦点。" }
   class n13 node_system_set
-  n14@{ shape: rounded, label: "**bevy​_​ui​_​widgets::menu::menu​_​on​_​lose​_​**<br/>**focus**<br/>关闭不再持有内部焦点的菜单。" }
+  n14@{ shape: rounded, label: "**menu​_​on​_​lose​_​focus**<br/>关闭不再持有内部焦点的菜单。" }
   class n14 node_system
-  n15@{ shape: rounded, label: "**menu::MenuPopup**<br/>定义弹出菜单的布局方向及模态焦点范围" }
+  n15@{ shape: rounded, label: "**MenuPopup**<br/>定义弹出菜单的布局方向及模态焦点范围" }
   class n15 node_component
   n1 e0@-->|"先于"| n0
   class e0 edge_order
@@ -130,7 +130,7 @@ flowchart LR
   e5@{ curve: basis }
   e6@{ curve: basis }
   e7@{ curve: basis }
-  e8@{ curve: basis }
+  e8@{ curve: bumpX }
   e9@{ curve: basis }
   e10@{ curve: basis }
   e11@{ curve: basis }

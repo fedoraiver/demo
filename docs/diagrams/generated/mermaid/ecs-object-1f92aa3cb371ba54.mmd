@@ -43,20 +43,20 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: hex, label: "**avian3d::dynamics::solver::islands::**<br/>**{impl#35;0}::build::{closure#35;1}**<br/>在实体启用时恢复刚体物理岛节点。" }
+  n0@{ shape: hex, label: "**build::{closure#35;1}**<br/>在实体启用时恢复刚体物理岛节点。" }
   class n0 node_observer
-  n1@{ shape: rounded, label: "**dynamics::solver::islands::**<br/>**BodyIslandNode**<br/>记录刚体在物理岛中的连接位置。" }
+  n1@{ shape: rounded, label: "**BodyIslandNode**<br/>记录刚体在物理岛中的连接位置。" }
   class n1 node_component
-  n2@{ shape: rounded, label: "**entity​_​disabling::Disabled**<br/>来自crate:bevy​_​ecs ↗：标记被禁用的实<br/>体" }
+  n2@{ shape: rounded, label: "**Disabled**<br/>来自crate:bevy​_​ecs ↗：标记被禁用的实<br/>体" }
   class n2 node_component
   class n2 external_node
-  n3@{ shape: fr-rect, label: "**dynamics::solver::islands::**<br/>**IslandPlugin**<br/>维护用于约束求解的物理岛。" }
+  n3@{ shape: fr-rect, label: "**IslandPlugin**<br/>维护用于约束求解的物理岛。" }
   class n3 node_plugin
-  n4@{ shape: rounded, label: "**dynamics::rigid​_​body::RigidBody**<br/>选择动态、静态或运动学刚体行为。" }
+  n4@{ shape: rounded, label: "**RigidBody**<br/>选择动态、静态或运动学刚体行为。" }
   class n4 node_component
-  n5@{ shape: rounded, label: "**dynamics::rigid​_​body::**<br/>**RigidBodyDisabled**<br/>暂停刚体求解和附着关节。" }
+  n5@{ shape: rounded, label: "**RigidBodyDisabled**<br/>暂停刚体求解和附着关节。" }
   class n5 node_component
-  n6@{ shape: stadium, label: "**bevy​_​ecs::lifecycle::DiscardEvent**<br/>来自crate:bevy​_​ecs ↗：在组件旧值丢弃<br/>前发出通知。" }
+  n6@{ shape: stadium, label: "**DiscardEvent**<br/>来自crate:bevy​_​ecs ↗：在组件旧值丢弃<br/>前发出通知。" }
   class n6 node_event
   class n6 external_node
   n0 e0@-->|"插入"| n1

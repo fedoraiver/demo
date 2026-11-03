@@ -19,7 +19,7 @@
       "htmlLabels": false,
       "nodeSpacing": 16,
       "rankSpacing": 48,
-      "padding": 4,
+      "padding": 16,
       "wrappingWidth": 280,
       "minNodeWidth": 180,
       "useMaxWidth": false,
@@ -39,14 +39,14 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**contact​_​shadows::ContactShadows**<br/>配置相机的屏幕空间接触阴影。" }
+  n0@{ shape: rounded, label: "**ContactShadows**<br/>配置相机的屏幕空间接触阴影。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​pbr::contact​_​shadows::prepare​_​**<br/>**contact​_​shadows​_​settings**<br/>上传各视图接触阴影设置并记录动态偏移。" }
+  n1@{ shape: rounded, label: "**prepare​_​contact​_​shadows​_​settings**<br/>上传各视图接触阴影设置并记录动态偏移。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​extract::extract​_​component::**<br/>**extract​_​components#lt;bevy​_​pbr::**<br/>**contact​_​shadows::ContactShadows,**<br/>**bevy​_​render::RenderApp, ()#gt;**<br/>来自crate:bevy​_​extract ↗：批量同步或<br/>移除子世界的目标组件。" }
+  n2@{ shape: rounded, label: "**extract​_​components**<br/>来自crate:bevy​_​extract ↗：批量同步或<br/>移除子世界的目标组件。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​pbr::render::mesh::check​_​views​_​**<br/>**need​_​specialization**<br/>汇总视图渲染特性并检测管线配置变化。" }
+  n3@{ shape: rounded, label: "**check​_​views​_​need​_​specialization**<br/>汇总视图渲染特性并检测管线配置变化。" }
   class n3 node_system
   n0 e0@--> n1
   class e0 edge_read

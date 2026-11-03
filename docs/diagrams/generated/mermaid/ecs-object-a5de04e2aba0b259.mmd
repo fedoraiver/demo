@@ -38,7 +38,7 @@ flowchart LR
   classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**ui::MenuRoot**<br/>页面根实体；页面更换时连同视觉子树一起销<br/>毁。" }
+  n0@{ shape: rounded, label: "**MenuRoot**<br/>页面根实体；页面更换时连同视觉子树一起销<br/>毁。" }
   class n0 node_component
   n1@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>承载音频设置页的内容与页脚。" }
   class n1 node_entity
@@ -52,7 +52,7 @@ flowchart LR
   class n5 node_entity
   n6@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>承载图形设置页的内容与页脚。" }
   class n6 node_entity
-  n7@{ shape: rounded, label: "**demo::ui::pages::rebuild​_​page**<br/>只在页面结构或视口变化时重建；数值、提示<br/>与焦点变化保留现有滚动控件。" }
+  n7@{ shape: rounded, label: "**rebuild​_​page**<br/>只在页面结构或视口变化时重建；数值、提示<br/>与焦点变化保留现有滚动控件。" }
   class n7 node_system
   n8@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>承载暂停页的内容与页脚。" }
   class n8 node_entity

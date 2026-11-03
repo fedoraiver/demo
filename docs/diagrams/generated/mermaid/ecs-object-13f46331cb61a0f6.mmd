@@ -42,21 +42,21 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​gizmos​_​render::retained::**<br/>**extract​_​linegizmos**<br/>从保留式 Gizmo 实体提取线条渲染数据。" }
+  n0@{ shape: rounded, label: "**extract​_​linegizmos**<br/>从保留式 Gizmo 实体提取线条渲染数据。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**bevy​_​camera::visibility::**<br/>**RenderLayers**<br/>来自crate:bevy​_​camera ↗：限定相机与实<br/>体可相交的渲染层。" }
+  n1@{ shape: rounded, label: "**RenderLayers**<br/>来自crate:bevy​_​camera ↗：限定相机与实<br/>体可相交的渲染层。" }
   class n1 node_component
   class n1 external_node
-  n2@{ shape: rounded, label: "**retained::Gizmo**<br/>来自crate:bevy​_​gizmos ↗：让实体持续绘<br/>制指定的调试图元资产。" }
+  n2@{ shape: rounded, label: "**Gizmo**<br/>来自crate:bevy​_​gizmos ↗：让实体持续绘<br/>制指定的调试图元资产。" }
   class n2 node_component
   class n2 external_node
-  n3@{ shape: cyl, label: "**extract​_​plugin::MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
+  n3@{ shape: cyl, label: "**MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
   class n3 node_resource
   class n3 external_node
-  n4@{ shape: rounded, label: "**components::global​_​transform::**<br/>**GlobalTransform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>合并祖先变换后的世界空间仿射变换" }
+  n4@{ shape: rounded, label: "**GlobalTransform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>合并祖先变换后的世界空间仿射变换" }
   class n4 node_component
   class n4 external_node
-  n5@{ shape: fr-rect, label: "**bevy​_​gizmos​_​render::**<br/>**GizmoRenderPlugin**<br/>将即时调试形状接入渲染。" }
+  n5@{ shape: fr-rect, label: "**GizmoRenderPlugin**<br/>将即时调试形状接入渲染。" }
   class n5 node_plugin
   n6@{ shape: notch-rect, label: "**Local · previous​_​len**<br/>根据上次保留式调试线数量预留提取容量。" }
   class n6 node_local

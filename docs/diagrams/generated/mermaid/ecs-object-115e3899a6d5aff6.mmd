@@ -39,7 +39,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: lin-rect, label: "**PlayDynamicChannels**<br/>组织音频实例清理与通道播放。" }
   class n0 node_system_set
-  n1@{ shape: rounded, label: "**bevy​_​kira​_​audio::audio​_​output::play​_​**<br/>**dynamic​_​channels**<br/>执行按名称创建的动态音频通道命令。" }
+  n1@{ shape: rounded, label: "**play​_​dynamic​_​channels**<br/>执行按名称创建的动态音频通道命令。" }
   class n1 node_system
   n0 e0@-->|"集合成员"| n1
   class e0 edge_set_membership

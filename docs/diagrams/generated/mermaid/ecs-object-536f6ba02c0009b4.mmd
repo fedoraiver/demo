@@ -36,25 +36,25 @@ flowchart LR
   classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**batching::gpu​_​preprocessing::**<br/>**IndirectParametersBuffersSettings**<br/>控制间接绘制参数是否允许复制回读。" }
+  n0@{ shape: cyl, label: "**IndirectParametersBuffersSettings**<br/>控制间接绘制参数是否允许复制回读。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​render::batching::gpu​_​**<br/>**preprocessing::collect​_​buffers​_​for​_​**<br/>**phase#lt;bevy​_​core​_​pipeline::core​_​3d::**<br/>**Opaque3d, bevy​_​pbr::render::mesh::**<br/>**MeshPipeline#gt;**<br/>把并行准备的逐阶段缓冲汇入全局表。" }
+  n1@{ shape: rounded, label: "**collect​_​buffers​_​for​_​phase**<br/>把并行准备的逐阶段缓冲汇入全局表。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​render::batching::gpu​_​**<br/>**preprocessing::collect​_​buffers​_​for​_​**<br/>**phase#lt;bevy​_​pbr::render::light::**<br/>**Shadow, bevy​_​pbr::render::mesh::**<br/>**MeshPipeline#gt;**<br/>把并行准备的逐阶段缓冲汇入全局表。" }
+  n2@{ shape: rounded, label: "**collect​_​buffers​_​for​_​phase**<br/>把并行准备的逐阶段缓冲汇入全局表。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​render::batching::gpu​_​**<br/>**preprocessing::collect​_​buffers​_​for​_​**<br/>**phase#lt;bevy​_​core​_​pipeline::deferred::**<br/>**AlphaMask3dDeferred, bevy​_​pbr::**<br/>**render::mesh::MeshPipeline#gt;**<br/>把并行准备的逐阶段缓冲汇入全局表。" }
+  n3@{ shape: rounded, label: "**collect​_​buffers​_​for​_​phase**<br/>把并行准备的逐阶段缓冲汇入全局表。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**bevy​_​render::batching::gpu​_​**<br/>**preprocessing::collect​_​buffers​_​for​_​**<br/>**phase#lt;bevy​_​core​_​pipeline::deferred::**<br/>**Opaque3dDeferred, bevy​_​pbr::render::**<br/>**mesh::MeshPipeline#gt;**<br/>把并行准备的逐阶段缓冲汇入全局表。" }
+  n4@{ shape: rounded, label: "**collect​_​buffers​_​for​_​phase**<br/>把并行准备的逐阶段缓冲汇入全局表。" }
   class n4 node_system
-  n5@{ shape: rounded, label: "**bevy​_​render::batching::gpu​_​**<br/>**preprocessing::collect​_​buffers​_​for​_​**<br/>**phase#lt;bevy​_​core​_​pipeline::core​_​3d::**<br/>**AlphaMask3d, bevy​_​pbr::render::**<br/>**mesh::MeshPipeline#gt;**<br/>把并行准备的逐阶段缓冲汇入全局表。" }
+  n5@{ shape: rounded, label: "**collect​_​buffers​_​for​_​phase**<br/>把并行准备的逐阶段缓冲汇入全局表。" }
   class n5 node_system
-  n6@{ shape: rounded, label: "**bevy​_​render::batching::gpu​_​**<br/>**preprocessing::collect​_​buffers​_​for​_​**<br/>**phase#lt;bevy​_​core​_​pipeline::core​_​3d::**<br/>**Transparent3d, bevy​_​pbr::render::**<br/>**mesh::MeshPipeline#gt;**<br/>把并行准备的逐阶段缓冲汇入全局表。" }
+  n6@{ shape: rounded, label: "**collect​_​buffers​_​for​_​phase**<br/>把并行准备的逐阶段缓冲汇入全局表。" }
   class n6 node_system
-  n7@{ shape: rounded, label: "**bevy​_​render::batching::gpu​_​**<br/>**preprocessing::collect​_​buffers​_​for​_​**<br/>**phase#lt;bevy​_​pbr::transmission::**<br/>**phase::Transmissive3d, bevy​_​pbr::**<br/>**render::mesh::MeshPipeline#gt;**<br/>把并行准备的逐阶段缓冲汇入全局表。" }
+  n7@{ shape: rounded, label: "**collect​_​buffers​_​for​_​phase**<br/>把并行准备的逐阶段缓冲汇入全局表。" }
   class n7 node_system
-  n8@{ shape: rounded, label: "**bevy​_​render::batching::gpu​_​**<br/>**preprocessing::collect​_​buffers​_​for​_​**<br/>**phase#lt;bevy​_​core​_​pipeline::prepass::**<br/>**AlphaMask3dPrepass, bevy​_​pbr::**<br/>**render::mesh::MeshPipeline#gt;**<br/>把并行准备的逐阶段缓冲汇入全局表。" }
+  n8@{ shape: rounded, label: "**collect​_​buffers​_​for​_​phase**<br/>把并行准备的逐阶段缓冲汇入全局表。" }
   class n8 node_system
-  n9@{ shape: rounded, label: "**bevy​_​render::batching::gpu​_​**<br/>**preprocessing::collect​_​buffers​_​for​_​**<br/>**phase#lt;bevy​_​core​_​pipeline::prepass::**<br/>**Opaque3dPrepass, bevy​_​pbr::render::**<br/>**mesh::MeshPipeline#gt;**<br/>把并行准备的逐阶段缓冲汇入全局表。" }
+  n9@{ shape: rounded, label: "**collect​_​buffers​_​for​_​phase**<br/>把并行准备的逐阶段缓冲汇入全局表。" }
   class n9 node_system
   n0 e0@--> n1
   class e0 edge_read

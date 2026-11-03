@@ -37,9 +37,9 @@ flowchart LR
   classDef node_message fill:#EDF4F6,stroke:#247B91,stroke-width:1.6px,color:#1F3340
   classDef edge_publish stroke:#247B91,stroke-width:1.8px,stroke-dasharray:10 4 2 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: lean-r, label: "**gamepad::**<br/>**RawGamepadButtonChangedEvent**<br/>传递未过滤的手柄按钮值变化。" }
+  n0@{ shape: lean-r, label: "**RawGamepadButtonChangedEvent**<br/>传递未过滤的手柄按钮值变化。" }
   class n0 node_message
-  n1@{ shape: rounded, label: "**bevy​_​gilrs::gilrs​_​system::gilrs​_​**<br/>**event​_​system**<br/>来自crate:bevy​_​gilrs ↗：把 gilrs 原<br/>始手柄事件转换为 Bevy 消息。" }
+  n1@{ shape: rounded, label: "**gilrs​_​event​_​system**<br/>来自crate:bevy​_​gilrs ↗：把 gilrs 原<br/>始手柄事件转换为 Bevy 消息。" }
   class n1 node_system
   class n1 external_node
   n1 e0@-->|"消息"| n0

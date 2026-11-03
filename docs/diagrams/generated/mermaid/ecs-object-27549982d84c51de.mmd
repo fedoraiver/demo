@@ -42,48 +42,48 @@ flowchart LR
   class n0 node_system_set
   n1@{ shape: lin-rect, label: "**EarlyPostProcess**<br/>划分三维相机绘制与后处理阶段。" }
   class n1 node_system_set
-  n2@{ shape: rounded, label: "**bevy​_​pbr::transmission::node::main​_​**<br/>**transmissive​_​pass​_​3d**<br/>来自crate:bevy​_​pbr ↗：分层复制场景颜<br/>色并绘制三维透射物体。" }
+  n2@{ shape: rounded, label: "**main​_​transmissive​_​pass​_​3d**<br/>来自crate:bevy​_​pbr ↗：分层复制场景颜<br/>色并绘制三维透射物体。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​pbr::render::gpu​_​preprocess::**<br/>**main​_​build​_​indirect​_​parameters**<br/>来自crate:bevy​_​pbr ↗：为主不透明及透<br/>明通道构建间接绘制参数。" }
+  n3@{ shape: rounded, label: "**main​_​build​_​indirect​_​parameters**<br/>来自crate:bevy​_​pbr ↗：为主不透明及透<br/>明通道构建间接绘制参数。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**bevy​_​pbr::render::light::shared​_​**<br/>**shadow​_​pass#lt;true#gt;**<br/>来自crate:bevy​_​pbr ↗：绘制跨相机共享<br/>的点光或聚光阴影。" }
+  n4@{ shape: rounded, label: "**shared​_​shadow​_​pass**<br/>来自crate:bevy​_​pbr ↗：绘制跨相机共享<br/>的点光或聚光阴影。" }
   class n4 node_system
   class n4 external_node
-  n5@{ shape: rounded, label: "**bevy​_​pbr::render::light::per​_​view​_​**<br/>**shadow​_​pass#lt;true#gt;**<br/>来自crate:bevy​_​pbr ↗：绘制相机相关的<br/>平行光级联阴影。" }
+  n5@{ shape: rounded, label: "**per​_​view​_​shadow​_​pass**<br/>来自crate:bevy​_​pbr ↗：绘制相机相关的<br/>平行光级联阴影。" }
   class n5 node_system
   class n5 external_node
-  n6@{ shape: rounded, label: "**bevy​_​pbr::atmosphere::environment::**<br/>**atmosphere​_​environment**<br/>来自crate:bevy​_​pbr ↗：使用当前视图的<br/>大气和光照参数，为每个大气环境贴图的六个<br/>立方体面调度计算着色器，更新环境光源纹<br/>理。" }
+  n6@{ shape: rounded, label: "**atmosphere​_​environment**<br/>来自crate:bevy​_​pbr ↗：使用当前视图的<br/>大气和光照参数，为每个大气环境贴图的六个<br/>立方体面调度计算着色器，更新环境光源纹<br/>理。" }
   class n6 node_system
   class n6 external_node
-  n7@{ shape: rounded, label: "**bevy​_​pbr::ssao::ssao**<br/>来自crate:bevy​_​pbr ↗：依次计算深度预<br/>处理、环境遮蔽和空间去噪。" }
+  n7@{ shape: rounded, label: "**ssao**<br/>来自crate:bevy​_​pbr ↗：依次计算深度预<br/>处理、环境遮蔽和空间去噪。" }
   class n7 node_system
   class n7 external_node
-  n8@{ shape: rounded, label: "**bevy​_​post​_​process::msaa​_​writeback::**<br/>**msaa​_​writeback**<br/>来自crate:bevy​_​post​_​process ↗：将后<br/>处理颜色回写多采样目标。" }
+  n8@{ shape: rounded, label: "**msaa​_​writeback**<br/>来自crate:bevy​_​post​_​process ↗：将后<br/>处理颜色回写多采样目标。" }
   class n8 node_system
   class n8 external_node
-  n9@{ shape: rounded, label: "**bevy​_​core​_​pipeline::core​_​3d::main​_​**<br/>**transparent​_​pass​_​3d​_​node::main​_​**<br/>**transparent​_​pass​_​3d**<br/>绘制三维透明物体并保护 OIT 链表状态。" }
+  n9@{ shape: rounded, label: "**main​_​transparent​_​pass​_​3d**<br/>绘制三维透明物体并保护 OIT 链表状态。" }
   class n9 node_system
-  n10@{ shape: rounded, label: "**bevy​_​pbr::atmosphere::node::**<br/>**atmosphere​_​luts**<br/>来自crate:bevy​_​pbr ↗：根据当前大气、<br/>视图和光照参数调度计算管线，生成透射、多<br/>重散射、天空视图及空气透视查找表，供天空<br/>和大气渲染使用。" }
+  n10@{ shape: rounded, label: "**atmosphere​_​luts**<br/>来自crate:bevy​_​pbr ↗：根据当前大气、<br/>视图和光照参数调度计算管线，生成透射、多<br/>重散射、天空视图及空气透视查找表，供天空<br/>和大气渲染使用。" }
   class n10 node_system
   class n10 external_node
-  n11@{ shape: rounded, label: "**bevy​_​pbr::volumetric​_​fog::render::**<br/>**volumetric​_​fog**<br/>来自crate:bevy​_​pbr ↗：结合深度与光照<br/>逐个绘制视图中的雾体。" }
+  n11@{ shape: rounded, label: "**volumetric​_​fog**<br/>来自crate:bevy​_​pbr ↗：结合深度与光照<br/>逐个绘制视图中的雾体。" }
   class n11 node_system
   class n11 external_node
-  n12@{ shape: rounded, label: "**bevy​_​pbr::deferred::deferred​_​**<br/>**lighting**<br/>来自crate:bevy​_​pbr ↗：绑定网格视图、<br/>延迟光照管线及通道深度标识参数，在延迟光<br/>照深度附件约束下执行全屏光照计算，将结果<br/>写入视图颜色。" }
+  n12@{ shape: rounded, label: "**deferred​_​lighting**<br/>来自crate:bevy​_​pbr ↗：绑定网格视图、<br/>延迟光照管线及通道深度标识参数，在延迟光<br/>照深度附件约束下执行全屏光照计算，将结果<br/>写入视图颜色。" }
   class n12 node_system
   class n12 external_node
-  n13@{ shape: rounded, label: "**bevy​_​core​_​pipeline::core​_​3d::main​_​**<br/>**opaque​_​pass​_​3d​_​node::main​_​opaque​_​**<br/>**pass​_​3d**<br/>绘制三维不透明、AlphaMask 与天空盒。" }
+  n13@{ shape: rounded, label: "**main​_​opaque​_​pass​_​3d**<br/>绘制三维不透明、AlphaMask 与天空盒。" }
   class n13 node_system
-  n14@{ shape: rounded, label: "**bevy​_​pbr::ssr::screen​_​space​_​**<br/>**reflections**<br/>来自crate:bevy​_​pbr ↗：采样场景颜色、<br/>深度与蓝噪声绘制屏幕空间反射。" }
+  n14@{ shape: rounded, label: "**screen​_​space​_​reflections**<br/>来自crate:bevy​_​pbr ↗：采样场景颜色、<br/>深度与蓝噪声绘制屏幕空间反射。" }
   class n14 node_system
   class n14 external_node
   n15@{ shape: lin-rect, label: "**Prepass**<br/>划分三维相机绘制与后处理阶段。" }
   class n15 node_system_set
-  n16@{ shape: rounded, label: "**bevy​_​core​_​pipeline::oit::resolve::**<br/>**node::oit​_​resolve**<br/>解析透明片元并重置 OIT 链表状态。" }
+  n16@{ shape: rounded, label: "**oit​_​resolve**<br/>解析透明片元并重置 OIT 链表状态。" }
   class n16 node_system
-  n17@{ shape: rounded, label: "**bevy​_​core​_​pipeline::deferred::copy​_​**<br/>**lighting​_​id::copy​_​deferred​_​lighting​_​**<br/>**id**<br/>把延迟光照通道标识复制到深度目标。" }
+  n17@{ shape: rounded, label: "**copy​_​deferred​_​lighting​_​id**<br/>把延迟光照通道标识复制到深度目标。" }
   class n17 node_system
   n0 e0@-->|"先于"| n1
   class e0 edge_order

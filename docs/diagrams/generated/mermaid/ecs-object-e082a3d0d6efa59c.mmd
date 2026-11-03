@@ -38,14 +38,14 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**volumetric​_​fog::render::**<br/>**VolumetricFogUniformBuffer**<br/>向 GPU 提供体积雾的视图参数。" }
+  n0@{ shape: cyl, label: "**VolumetricFogUniformBuffer**<br/>向 GPU 提供体积雾的视图参数。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​render::init​_​gpu​_​resource#lt;bevy​_​**<br/>**pbr::volumetric​_​fog::render::**<br/>**VolumetricFogUniformBuffer#gt;**<br/>来自crate:bevy​_​render ↗：构造并插入渲<br/>染所需资源。" }
+  n1@{ shape: rounded, label: "**init​_​gpu​_​resource**<br/>来自crate:bevy​_​render ↗：构造并插入渲<br/>染所需资源。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​pbr::volumetric​_​fog::render::**<br/>**prepare​_​volumetric​_​fog​_​uniforms**<br/>把各视图和雾体积组合转换为体积雾<br/>Uniform。" }
+  n2@{ shape: rounded, label: "**prepare​_​volumetric​_​fog​_​uniforms**<br/>把各视图和雾体积组合转换为体积雾<br/>Uniform。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​pbr::volumetric​_​fog::render::**<br/>**volumetric​_​fog**<br/>结合深度与光照逐个绘制视图中的雾体。" }
+  n3@{ shape: rounded, label: "**volumetric​_​fog**<br/>结合深度与光照逐个绘制视图中的雾体。" }
   class n3 node_system
   n1 e0@-->|"插入"| n0
   class e0 edge_write

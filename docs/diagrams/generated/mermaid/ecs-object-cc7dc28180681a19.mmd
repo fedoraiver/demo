@@ -44,45 +44,45 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​core​_​pipeline::upscaling::**<br/>**node::upscaling**<br/>将主颜色纹理缩放写入最终输出附件。" }
+  n0@{ shape: rounded, label: "**upscaling**<br/>将主颜色纹理缩放写入最终输出附件。" }
   class n0 node_system
-  n1@{ shape: fr-rect, label: "**core​_​3d::Core3dPlugin**<br/>建立三维相机的渲染流程。" }
+  n1@{ shape: fr-rect, label: "**Core3dPlugin**<br/>建立三维相机的渲染流程。" }
   class n1 node_plugin
-  n2@{ shape: rounded, label: "**bevy​_​egui::render::render​_​pass::**<br/>**egui​_​pass**<br/>来自crate:bevy​_​egui ↗：把准备好的<br/>Egui 绘制项渲染到视图目标。" }
+  n2@{ shape: rounded, label: "**egui​_​pass**<br/>来自crate:bevy​_​egui ↗：把准备好的<br/>Egui 绘制项渲染到视图目标。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​ui​_​render::render​_​pass::ui​_​pass**<br/>来自crate:bevy​_​ui​_​render ↗：把透明<br/>UI 绘制项渲染到关联视图。" }
+  n3@{ shape: rounded, label: "**ui​_​pass**<br/>来自crate:bevy​_​ui​_​render ↗：把透明<br/>UI 绘制项渲染到关联视图。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: cyl, label: "**bevy​_​render::renderer::CurrentView**<br/>来自crate:bevy​_​render ↗：指定当前正在<br/>渲染的视图实体。" }
+  n4@{ shape: cyl, label: "**CurrentView**<br/>来自crate:bevy​_​render ↗：指定当前正在<br/>渲染的视图实体。" }
   class n4 node_resource
   class n4 external_node
-  n5@{ shape: cyl, label: "**bevy​_​render::diagnostic::**<br/>**DiagnosticsRecorder**<br/>来自crate:bevy​_​render ↗：记录渲染诊断<br/>区间与 GPU 查询索引的对应。" }
+  n5@{ shape: cyl, label: "**DiagnosticsRecorder**<br/>来自crate:bevy​_​render ↗：记录渲染诊断<br/>区间与 GPU 查询索引的对应。" }
   class n5 node_resource
   class n5 external_node
-  n6@{ shape: cyl, label: "**clear​_​color::ClearColor**<br/>来自crate:bevy​_​camera ↗：提供相机默认<br/>的清屏颜色。" }
+  n6@{ shape: cyl, label: "**ClearColor**<br/>来自crate:bevy​_​camera ↗：提供相机默认<br/>的清屏颜色。" }
   class n6 node_resource
   class n6 external_node
   n7@{ shape: lin-rect, label: "**PostProcess**<br/>划分三维相机绘制与后处理阶段。" }
   class n7 node_system_set
-  n8@{ shape: cyl, label: "**bevy​_​render::renderer::RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
+  n8@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
   class n8 node_resource
   class n8 external_node
-  n9@{ shape: fr-rect, label: "**core​_​2d::Core2dPlugin**<br/>建立二维相机的渲染流程。" }
+  n9@{ shape: fr-rect, label: "**Core2dPlugin**<br/>建立二维相机的渲染流程。" }
   class n9 node_plugin
-  n10@{ shape: rounded, label: "**bevy​_​render::camera::ExtractedCamera**<br/>来自crate:bevy​_​render ↗：保存渲染世界<br/>相机的目标和绘制配置。" }
+  n10@{ shape: rounded, label: "**ExtractedCamera**<br/>来自crate:bevy​_​render ↗：保存渲染世界<br/>相机的目标和绘制配置。" }
   class n10 node_component
   class n10 external_node
-  n11@{ shape: cyl, label: "**blit::BlitPipeline**<br/>提供全屏纹理复制与缩放管线。" }
+  n11@{ shape: cyl, label: "**BlitPipeline**<br/>提供全屏纹理复制与缩放管线。" }
   class n11 node_resource
-  n12@{ shape: rounded, label: "**bevy​_​render::view::ViewTarget**<br/>来自crate:bevy​_​render ↗：管理视图主颜<br/>色纹理及最终输出附件。" }
+  n12@{ shape: rounded, label: "**ViewTarget**<br/>来自crate:bevy​_​render ↗：管理视图主颜<br/>色纹理及最终输出附件。" }
   class n12 node_component
   class n12 external_node
-  n13@{ shape: rounded, label: "**upscaling::ViewUpscalingPipeline**<br/>记录视图颜色输出所用的缩放管线。" }
+  n13@{ shape: rounded, label: "**ViewUpscalingPipeline**<br/>记录视图颜色输出所用的缩放管线。" }
   class n13 node_component
   n14@{ shape: notch-rect, label: "**Local · cache**<br/>按主颜色纹理复用最终缩放输出绑定组。" }
   class n14 node_local
-  n15@{ shape: cyl, label: "**bevy​_​render::render​_​resource::**<br/>**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
+  n15@{ shape: cyl, label: "**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
   class n15 node_resource
   class n15 external_node
   n1 e0@-->|"调用"| n0

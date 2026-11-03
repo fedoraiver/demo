@@ -38,16 +38,16 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**bevy​_​asset::Assets#lt;bevy​_​shader::**<br/>**Shader#gt;**<br/>按资产身份存储对象并暂存变化消息。" }
+  n0@{ shape: cyl, label: "**Assets#lt;Shader#gt;**<br/>按资产身份存储对象并暂存变化消息。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​asset::assets::Assets#lt;bevy​_​**<br/>**shader::shader::Shader#gt;::asset​_​**<br/>**events**<br/>发布累计的资产变化消息。" }
+  n1@{ shape: rounded, label: "**asset​_​events**<br/>发布累计的资产变化消息。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​render::render​_​resource::**<br/>**pipeline​_​cache::PipelineCache::**<br/>**extract​_​shaders**<br/>来自crate:bevy​_​render ↗：向渲染管线缓<br/>存同步着色器变化。" }
+  n2@{ shape: rounded, label: "**extract​_​shaders**<br/>来自crate:bevy​_​render ↗：向渲染管线缓<br/>存同步着色器变化。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​asset::assets::Assets#lt;bevy​_​**<br/>**shader::shader::Shader#gt;::asset​_​**<br/>**events​_​condition**<br/>判断是否有待发布的资产变化。" }
+  n3@{ shape: rounded, label: "**asset​_​events​_​condition**<br/>判断是否有待发布的资产变化。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**bevy​_​asset::assets::Assets#lt;bevy​_​**<br/>**shader::shader::Shader#gt;::track​_​**<br/>**assets**<br/>同步资产存活状态并处理句柄释放。" }
+  n4@{ shape: rounded, label: "**track​_​assets**<br/>同步资产存活状态并处理句柄释放。" }
   class n4 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

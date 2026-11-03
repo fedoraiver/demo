@@ -37,9 +37,9 @@ flowchart LR
   classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**view::window::screenshot::Captured**<br/>标记截图已完成且请求实体可以清理。" }
+  n0@{ shape: rounded, label: "**Captured**<br/>标记截图已完成且请求实体可以清理。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​render::view::window::**<br/>**screenshot::trigger​_​screenshots**<br/>标记已完成截图并触发携带图像的事件。" }
+  n1@{ shape: rounded, label: "**trigger​_​screenshots**<br/>标记已完成截图并触发携带图像的事件。" }
   class n1 node_system
   n1 e0@-->|"插入"| n0
   class e0 edge_write

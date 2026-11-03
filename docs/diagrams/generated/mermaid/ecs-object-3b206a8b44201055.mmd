@@ -37,9 +37,9 @@ flowchart LR
   classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**winit​_​config::WinitSettings**<br/>配置窗口事件循环的更新策略。" }
+  n0@{ shape: cyl, label: "**WinitSettings**<br/>配置窗口事件循环的更新策略。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**demo::settings::frame​_​pacing::apply​_​**<br/>**frame​_​rate​_​limit**<br/>来自settings ↗：只同步更新策略；计时与<br/>等待由 Winit 执行，Local 仅保存已应用<br/>值以去重和记录变更。" }
+  n1@{ shape: rounded, label: "**apply​_​frame​_​rate​_​limit**<br/>来自settings ↗：只同步更新策略；计时与<br/>等待由 Winit 执行，Local 仅保存已应用<br/>值以去重和记录变更。" }
   class n1 node_system
   class n1 external_node
   n1 e0@-->|"可变访问"| n0

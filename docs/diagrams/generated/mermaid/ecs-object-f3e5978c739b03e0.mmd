@@ -44,28 +44,28 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​post​_​process::dof::prepare​_​**<br/>**auxiliary​_​depth​_​of​_​field​_​textures**<br/>为 Bokeh 景深分配第二颜色输出。" }
+  n0@{ shape: rounded, label: "**prepare​_​auxiliary​_​depth​_​of​_​field​_​**<br/>**textures**<br/>为 Bokeh 景深分配第二颜色输出。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**bevy​_​render::view::prepare​_​view​_​**<br/>**targets**<br/>来自crate:bevy​_​render ↗：为视图维护主<br/>颜色双缓冲及可选多采样目标。" }
+  n1@{ shape: rounded, label: "**prepare​_​view​_​targets**<br/>来自crate:bevy​_​render ↗：为视图维护主<br/>颜色双缓冲及可选多采样目标。" }
   class n1 node_system
   class n1 external_node
   n2@{ shape: lin-rect, label: "**PrepareViews**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
   class n2 node_system_set
   class n2 external_node
-  n3@{ shape: cyl, label: "**bevy​_​render::renderer::RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
+  n3@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
   class n3 node_resource
   class n3 external_node
-  n4@{ shape: rounded, label: "**bevy​_​render::view::ViewTarget**<br/>来自crate:bevy​_​render ↗：管理视图主颜<br/>色纹理及最终输出附件。" }
+  n4@{ shape: rounded, label: "**ViewTarget**<br/>来自crate:bevy​_​render ↗：管理视图主颜<br/>色纹理及最终输出附件。" }
   class n4 node_component
   class n4 external_node
-  n5@{ shape: rounded, label: "**dof::DepthOfField**<br/>配置相机焦点及离焦模糊。" }
+  n5@{ shape: rounded, label: "**DepthOfField**<br/>配置相机焦点及离焦模糊。" }
   class n5 node_component
-  n6@{ shape: cyl, label: "**bevy​_​render::texture::TextureCache**<br/>来自crate:bevy​_​render ↗：复用渲染中反<br/>复创建的临时纹理。" }
+  n6@{ shape: cyl, label: "**TextureCache**<br/>来自crate:bevy​_​render ↗：复用渲染中反<br/>复创建的临时纹理。" }
   class n6 node_resource
   class n6 external_node
-  n7@{ shape: rounded, label: "**dof::AuxiliaryDepthOfFieldTexture**<br/>提供六边形散景模糊的第二渲染目标。" }
+  n7@{ shape: rounded, label: "**AuxiliaryDepthOfFieldTexture**<br/>提供六边形散景模糊的第二渲染目标。" }
   class n7 node_component
-  n8@{ shape: fr-rect, label: "**dof::DepthOfFieldPlugin**<br/>提供相机景深后处理。" }
+  n8@{ shape: fr-rect, label: "**DepthOfFieldPlugin**<br/>提供相机景深后处理。" }
   class n8 node_plugin
   n1 e0@-->|"先于"| n0
   class e0 edge_order

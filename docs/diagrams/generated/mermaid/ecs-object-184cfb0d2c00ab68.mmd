@@ -45,32 +45,32 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​ui​_​render::extract​_​uinode​_​**<br/>**changes**<br/>使变化或移除的 UI 数据失效并清理旧渲染<br/>实体。" }
+  n0@{ shape: rounded, label: "**extract​_​uinode​_​changes**<br/>使变化或移除的 UI 数据失效并清理旧渲染<br/>实体。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**bevy​_​ui::CalculatedClip**<br/>来自crate:bevy​_​ui ↗：缓存节点从祖先继<br/>承的裁剪结果。" }
+  n1@{ shape: rounded, label: "**CalculatedClip**<br/>来自crate:bevy​_​ui ↗：缓存节点从祖先继<br/>承的裁剪结果。" }
   class n1 node_component
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​ecs::hierarchy::ChildOf**<br/>来自crate:bevy​_​ecs ↗：保存当前实体的<br/>父实体身份" }
+  n2@{ shape: rounded, label: "**ChildOf**<br/>来自crate:bevy​_​ecs ↗：保存当前实体的<br/>父实体身份" }
   class n2 node_component
   class n2 external_node
-  n3@{ shape: fr-rect, label: "**bevy​_​ui​_​render::UiRenderPlugin**<br/>提取并准备界面绘制数据。" }
+  n3@{ shape: fr-rect, label: "**UiRenderPlugin**<br/>提取并准备界面绘制数据。" }
   class n3 node_plugin
   n4@{ shape: notch-rect, label: "**Local · arg11.0.0.0.0.0.0**<br/>保存 StrikethroughColor 移除参数的组<br/>件 ID。" }
   class n4 node_local
-  n5@{ shape: rounded, label: "**editing::EditableText**<br/>来自crate:bevy​_​text ↗：持有 Parley<br/>编辑器、文本、光标及待应用编辑操作" }
+  n5@{ shape: rounded, label: "**EditableText**<br/>来自crate:bevy​_​text ↗：持有 Parley<br/>编辑器、文本、光标及待应用编辑操作" }
   class n5 node_component
   class n5 external_node
   n6@{ shape: notch-rect, label: "**Local · arg11.0.0.0.1**<br/>跟踪 StrikethroughColor 移除记录的读<br/>取进度。" }
   class n6 node_local
-  n7@{ shape: rounded, label: "**cursor::TextCursorStyle**<br/>来自crate:bevy​_​text ↗：配置可编辑文字<br/>的光标、选中背景及选中文字颜色等外观" }
+  n7@{ shape: rounded, label: "**TextCursorStyle**<br/>来自crate:bevy​_​text ↗：配置可编辑文字<br/>的光标、选中背景及选中文字颜色等外观" }
   class n7 node_component
   class n7 external_node
-  n8@{ shape: rounded, label: "**bevy​_​ui::widget::TextShadow**<br/>来自crate:bevy​_​ui ↗：为 UI 文本绘制偏<br/>移阴影。" }
+  n8@{ shape: rounded, label: "**TextShadow**<br/>来自crate:bevy​_​ui ↗：为 UI 文本绘制偏<br/>移阴影。" }
   class n8 node_component
   class n8 external_node
   n9@{ shape: notch-rect, label: "**Local · arg10.3.0.0.0.0.0**<br/>保存 BorderGradient 移除参数的组件<br/>ID。" }
   class n9 node_local
-  n10@{ shape: rounded, label: "**bevy​_​ui::widget::ImageNode**<br/>来自crate:bevy​_​ui ↗：描述 UI 图像及其<br/>绘制参数。" }
+  n10@{ shape: rounded, label: "**ImageNode**<br/>来自crate:bevy​_​ui ↗：描述 UI 图像及其<br/>绘制参数。" }
   class n10 node_component
   class n10 external_node
   n11@{ shape: notch-rect, label: "**Local · arg8.0.0.0.1**<br/>跟踪 ComputedNode 移除记录的读取进度。" }
@@ -89,7 +89,7 @@ flowchart LR
   class n17 node_local
   n18@{ shape: notch-rect, label: "**Local · arg8.5.0.0.0.0.0**<br/>保存 ComputedUiTargetCamera 移除参数<br/>的组件 ID。" }
   class n18 node_local
-  n19@{ shape: rounded, label: "**text::StrikethroughColor**<br/>来自crate:bevy​_​text ↗：覆盖文字删除线<br/>颜色" }
+  n19@{ shape: rounded, label: "**StrikethroughColor**<br/>来自crate:bevy​_​text ↗：覆盖文字删除线<br/>颜色" }
   class n19 node_component
   class n19 external_node
   n20@{ shape: notch-rect, label: "**Local · arg8.5.0.0.1**<br/>跟踪 ComputedUiTargetCamera 移除记录<br/>的读取进度。" }
@@ -100,10 +100,10 @@ flowchart LR
   class n22 node_local
   n23@{ shape: notch-rect, label: "**Local · arg10.3.0.0.1**<br/>跟踪 BorderGradient 移除记录的读取进<br/>度。" }
   class n23 node_local
-  n24@{ shape: rounded, label: "**bevy​_​ui::ComputedUiTargetCamera**<br/>来自crate:bevy​_​ui ↗：缓存 UI 节点实际<br/>采用的相机。" }
+  n24@{ shape: rounded, label: "**ComputedUiTargetCamera**<br/>来自crate:bevy​_​ui ↗：缓存 UI 节点实际<br/>采用的相机。" }
   class n24 node_component
   class n24 external_node
-  n25@{ shape: rounded, label: "**debug​_​overlay::UiDebugOptions**<br/>为单个 UI 节点覆盖布局调试显示。" }
+  n25@{ shape: rounded, label: "**UiDebugOptions**<br/>为单个 UI 节点覆盖布局调试显示。" }
   class n25 node_component
   n26@{ shape: notch-rect, label: "**Local · arg9.6.0.0.0.0.0**<br/>保存 TextColor 移除参数的组件 ID。" }
   class n26 node_local
@@ -113,51 +113,51 @@ flowchart LR
   class n28 node_local
   n29@{ shape: notch-rect, label: "**Local · arg8.1.0.0.0.0.0**<br/>保存 ComputedStackIndex 移除参数的组<br/>件 ID。" }
   class n29 node_local
-  n30@{ shape: rounded, label: "**bevy​_​ui::widget::Text**<br/>来自crate:bevy​_​ui ↗：保存 UI 文本根的<br/>第一段内容。" }
+  n30@{ shape: rounded, label: "**Text**<br/>来自crate:bevy​_​ui ↗：保存 UI 文本根的<br/>第一段内容。" }
   class n30 node_component
   class n30 external_node
   n31@{ shape: notch-rect, label: "**Local · arg11.1.0.0.0.0.0**<br/>保存 UnderlineColor 移除参数的组件<br/>ID。" }
   class n31 node_local
   n32@{ shape: notch-rect, label: "**Local · arg9.3.0.0.0.0.0**<br/>保存 Outline 移除参数的组件 ID。" }
   class n32 node_local
-  n33@{ shape: rounded, label: "**bevy​_​ui::BorderGradient**<br/>来自crate:bevy​_​ui ↗：为 UI 节点边框配<br/>置渐变。" }
+  n33@{ shape: rounded, label: "**BorderGradient**<br/>来自crate:bevy​_​ui ↗：为 UI 节点边框配<br/>置渐变。" }
   class n33 node_component
   class n33 external_node
-  n34@{ shape: rounded, label: "**bevy​_​ui::widget::InlineImage**<br/>来自crate:bevy​_​ui ↗：在文本流中插入图<br/>像。" }
+  n34@{ shape: rounded, label: "**InlineImage**<br/>来自crate:bevy​_​ui ↗：在文本流中插入图<br/>像。" }
   class n34 node_component
   class n34 external_node
-  n35@{ shape: rounded, label: "**bevy​_​ui::ComputedNode**<br/>来自crate:bevy​_​ui ↗：保存 UI 布局计算<br/>后的物理尺寸。" }
+  n35@{ shape: rounded, label: "**ComputedNode**<br/>来自crate:bevy​_​ui ↗：保存 UI 布局计算<br/>后的物理尺寸。" }
   class n35 node_component
   class n35 external_node
   n36@{ shape: notch-rect, label: "**Local · arg8.0.0.0.0.0.0**<br/>保存 ComputedNode 移除参数的组件 ID。" }
   class n36 node_local
   n37@{ shape: notch-rect, label: "**Local · arg9.7.0.0.0.0.0**<br/>保存 TextLayoutInfo 移除参数的组件<br/>ID。" }
   class n37 node_local
-  n38@{ shape: rounded, label: "**bevy​_​ui::BorderColor**<br/>来自crate:bevy​_​ui ↗：分别设置 UI 四边<br/>的边框颜色。" }
+  n38@{ shape: rounded, label: "**BorderColor**<br/>来自crate:bevy​_​ui ↗：分别设置 UI 四边<br/>的边框颜色。" }
   class n38 node_component
   class n38 external_node
   n39@{ shape: notch-rect, label: "**Local · arg9.3.0.0.1**<br/>跟踪 Outline 移除记录的读取进度。" }
   class n39 node_local
-  n40@{ shape: rounded, label: "**bevy​_​ui::OuterColor**<br/>来自crate:bevy​_​ui ↗：填充圆角边框外侧<br/>产生的区域。" }
+  n40@{ shape: rounded, label: "**OuterColor**<br/>来自crate:bevy​_​ui ↗：填充圆角边框外侧<br/>产生的区域。" }
   class n40 node_component
   class n40 external_node
   n41@{ shape: notch-rect, label: "**Local · arg9.4.0.0.0.0.0**<br/>保存 ViewportNode 移除参数的组件 ID。" }
   class n41 node_local
-  n42@{ shape: rounded, label: "**bevy​_​ui::Outline**<br/>来自crate:bevy​_​ui ↗：绘制不占布局空间<br/>的外轮廓。" }
+  n42@{ shape: rounded, label: "**Outline**<br/>来自crate:bevy​_​ui ↗：绘制不占布局空间<br/>的外轮廓。" }
   class n42 node_component
   class n42 external_node
   n43@{ shape: notch-rect, label: "**Local · arg10.4.0.0.1**<br/>跟踪 BoxShadow 移除记录的读取进度。" }
   class n43 node_local
   n44@{ shape: notch-rect, label: "**Local · arg10.1.0.0.1**<br/>跟踪 TextShadow 移除记录的读取进度。" }
   class n44 node_local
-  n45@{ shape: rounded, label: "**bevy​_​text::TextLayoutInfo**<br/>来自crate:bevy​_​text ↗：保存文字块完成<br/>排版后的缩放、字形位置、文字运行几何及尺<br/>寸" }
+  n45@{ shape: rounded, label: "**TextLayoutInfo**<br/>来自crate:bevy​_​text ↗：保存文字块完成<br/>排版后的缩放、字形位置、文字运行几何及尺<br/>寸" }
   class n45 node_component
   class n45 external_node
   n46@{ shape: notch-rect, label: "**Local · arg9.6.0.0.1**<br/>跟踪 TextColor 移除记录的读取进度。" }
   class n46 node_local
   n47@{ shape: notch-rect, label: "**Local · arg10.0.0.0.1**<br/>跟踪 TextCursorStyle 移除记录的读取进<br/>度。" }
   class n47 node_local
-  n48@{ shape: rounded, label: "**bevy​_​ui::widget::ViewportNode**<br/>来自crate:bevy​_​ui ↗：把相机渲染目标嵌<br/>入 UI 节点。" }
+  n48@{ shape: rounded, label: "**ViewportNode**<br/>来自crate:bevy​_​ui ↗：把相机渲染目标嵌<br/>入 UI 节点。" }
   class n48 node_component
   class n48 external_node
   n49@{ shape: notch-rect, label: "**Local · arg10.6.0.0.0.0.0**<br/>保存 Underline 移除参数的组件 ID。" }
@@ -174,12 +174,12 @@ flowchart LR
   class n54 node_local
   n55@{ shape: notch-rect, label: "**Local · arg10.2.0.0.0.0.0**<br/>保存 BackgroundGradient 移除参数的组<br/>件 ID。" }
   class n55 node_local
-  n56@{ shape: rounded, label: "**text::TextBackgroundColor**<br/>来自crate:bevy​_​text ↗：保存当前文字段<br/>的背景色" }
+  n56@{ shape: rounded, label: "**TextBackgroundColor**<br/>来自crate:bevy​_​text ↗：保存当前文字段<br/>的背景色" }
   class n56 node_component
   class n56 external_node
   n57@{ shape: notch-rect, label: "**Local · arg9.5.0.0.0.0.0**<br/>保存 ComputedTextBlock 移除参数的组<br/>件 ID。" }
   class n57 node_local
-  n58@{ shape: rounded, label: "**bevy​_​ui::widget::ImageNodeSize**<br/>来自crate:bevy​_​ui ↗：缓存 UI 图像纹理<br/>的像素尺寸。" }
+  n58@{ shape: rounded, label: "**ImageNodeSize**<br/>来自crate:bevy​_​ui ↗：缓存 UI 图像纹理<br/>的像素尺寸。" }
   class n58 node_component
   class n58 external_node
   n59@{ shape: notch-rect, label: "**Local · arg11.1.0.0.1**<br/>跟踪 UnderlineColor 移除记录的读取进<br/>度。" }
@@ -188,23 +188,23 @@ flowchart LR
   class n60 node_local
   n61@{ shape: notch-rect, label: "**Local · arg9.2.0.0.0.0.0**<br/>保存 BorderColor 移除参数的组件 ID。" }
   class n61 node_local
-  n62@{ shape: cyl, label: "**extract​_​plugin::MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
+  n62@{ shape: cyl, label: "**MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
   class n62 node_resource
   class n62 external_node
-  n63@{ shape: rounded, label: "**text::Strikethrough**<br/>来自crate:bevy​_​text ↗：标记文字实体需<br/>要绘制删除线" }
+  n63@{ shape: rounded, label: "**Strikethrough**<br/>来自crate:bevy​_​text ↗：标记文字实体需<br/>要绘制删除线" }
   class n63 node_component
   class n63 external_node
   n64@{ shape: notch-rect, label: "**Local · arg8.4.0.0.0.0.0**<br/>保存 CalculatedClip 移除参数的组件<br/>ID。" }
   class n64 node_local
-  n65@{ shape: rounded, label: "**bevy​_​text::TextSpan**<br/>来自crate:bevy​_​text ↗：保存附加到<br/>Text 或 Text2d 根文字块的子文本段内容" }
+  n65@{ shape: rounded, label: "**TextSpan**<br/>来自crate:bevy​_​text ↗：保存附加到<br/>Text 或 Text2d 根文字块的子文本段内容" }
   class n65 node_component
   class n65 external_node
-  n66@{ shape: rounded, label: "**bevy​_​text::ComputedTextBlock**<br/>来自crate:bevy​_​text ↗：缓存文字块的<br/>Parley 布局、文本实体树和重绘标记" }
+  n66@{ shape: rounded, label: "**ComputedTextBlock**<br/>来自crate:bevy​_​text ↗：缓存文字块的<br/>Parley 布局、文本实体树和重绘标记" }
   class n66 node_component
   class n66 external_node
   n67@{ shape: notch-rect, label: "**Local · arg8.1.0.0.1**<br/>跟踪 ComputedStackIndex 移除记录的读<br/>取进度。" }
   class n67 node_local
-  n68@{ shape: rounded, label: "**bevy​_​camera::visibility::**<br/>**InheritedVisibility**<br/>来自crate:bevy​_​camera ↗：保存从实体层<br/>级计算出的可见性。" }
+  n68@{ shape: rounded, label: "**InheritedVisibility**<br/>来自crate:bevy​_​camera ↗：保存从实体层<br/>级计算出的可见性。" }
   class n68 node_component
   class n68 external_node
   n69@{ shape: notch-rect, label: "**Local · arg9.0.0.0.0.0.0**<br/>保存 ImageNode 移除参数的组件 ID。" }
@@ -213,13 +213,13 @@ flowchart LR
   class n70 node_local
   n71@{ shape: cyl, label: "**ExtractedUiNodes**<br/>保存提取后的 UI 节点及本帧变化集合。" }
   class n71 node_resource
-  n72@{ shape: rounded, label: "**bevy​_​ui::BackgroundColor**<br/>来自crate:bevy​_​ui ↗：设置 UI 节点背景<br/>填充色。" }
+  n72@{ shape: rounded, label: "**BackgroundColor**<br/>来自crate:bevy​_​ui ↗：设置 UI 节点背景<br/>填充色。" }
   class n72 node_component
   class n72 external_node
-  n73@{ shape: rounded, label: "**bevy​_​ui::BoxShadow**<br/>来自crate:bevy​_​ui ↗：配置节点的多层阴<br/>影。" }
+  n73@{ shape: rounded, label: "**BoxShadow**<br/>来自crate:bevy​_​ui ↗：配置节点的多层阴<br/>影。" }
   class n73 node_component
   class n73 external_node
-  n74@{ shape: rounded, label: "**bevy​_​ui::BackgroundGradient**<br/>来自crate:bevy​_​ui ↗：为 UI 节点背景配<br/>置渐变。" }
+  n74@{ shape: rounded, label: "**BackgroundGradient**<br/>来自crate:bevy​_​ui ↗：为 UI 节点背景配<br/>置渐变。" }
   class n74 node_component
   class n74 external_node
   n75@{ shape: notch-rect, label: "**Local · removed​_​debug​_​options​_​**<br/>**query.0.0.1**<br/>跟踪 UiDebugOptions 移除记录的读取进<br/>度。" }
@@ -234,34 +234,34 @@ flowchart LR
   class n79 node_local
   n80@{ shape: notch-rect, label: "**Local · arg10.6.0.0.1**<br/>跟踪 Underline 移除记录的读取进度。" }
   class n80 node_local
-  n81@{ shape: rounded, label: "**bevy​_​text::InlineBox**<br/>来自crate:bevy​_​text ↗：描述与文字同行<br/>排版的盒子尺寸和流内、流外行为" }
+  n81@{ shape: rounded, label: "**InlineBox**<br/>来自crate:bevy​_​text ↗：描述与文字同行<br/>排版的盒子尺寸和流内、流外行为" }
   class n81 node_component
   class n81 external_node
-  n82@{ shape: rounded, label: "**bevy​_​ui::ComputedStackIndex**<br/>来自crate:bevy​_​ui ↗：保存节点计算后的<br/>绘制堆叠位置。" }
+  n82@{ shape: rounded, label: "**ComputedStackIndex**<br/>来自crate:bevy​_​ui ↗：保存节点计算后的<br/>绘制堆叠位置。" }
   class n82 node_component
   class n82 external_node
   n83@{ shape: notch-rect, label: "**Local · arg10.2.0.0.1**<br/>跟踪 BackgroundGradient 移除记录的读<br/>取进度。" }
   class n83 node_local
-  n84@{ shape: rounded, label: "**bevy​_​ui::UiGlobalTransform**<br/>来自crate:bevy​_​ui ↗：保存 UI 节点的绝<br/>对二维变换。" }
+  n84@{ shape: rounded, label: "**UiGlobalTransform**<br/>来自crate:bevy​_​ui ↗：保存 UI 节点的绝<br/>对二维变换。" }
   class n84 node_component
   class n84 external_node
   n85@{ shape: notch-rect, label: "**Local · arg10.7.0.0.1**<br/>跟踪 Strikethrough 移除记录的读取进<br/>度。" }
   class n85 node_local
   n86@{ shape: notch-rect, label: "**Local · arg9.2.0.0.1**<br/>跟踪 BorderColor 移除记录的读取进度。" }
   class n86 node_local
-  n87@{ shape: rounded, label: "**text::UnderlineColor**<br/>来自crate:bevy​_​text ↗：覆盖文字下划线<br/>颜色" }
+  n87@{ shape: rounded, label: "**UnderlineColor**<br/>来自crate:bevy​_​text ↗：覆盖文字下划线<br/>颜色" }
   class n87 node_component
   class n87 external_node
-  n88@{ shape: rounded, label: "**bevy​_​text::TextColor**<br/>来自crate:bevy​_​text ↗：保存当前文字段<br/>的前景色" }
+  n88@{ shape: rounded, label: "**TextColor**<br/>来自crate:bevy​_​text ↗：保存当前文字段<br/>的前景色" }
   class n88 node_component
   class n88 external_node
-  n89@{ shape: cyl, label: "**debug​_​overlay::GlobalUiDebugOptions**<br/>配置全局 UI 布局调试轮廓。" }
+  n89@{ shape: cyl, label: "**GlobalUiDebugOptions**<br/>配置全局 UI 布局调试轮廓。" }
   class n89 node_resource
   n90@{ shape: notch-rect, label: "**Local · arg8.3.0.0.1**<br/>跟踪 InheritedVisibility 移除记录的读<br/>取进度。" }
   class n90 node_local
   n91@{ shape: notch-rect, label: "**Local · arg9.4.0.0.1**<br/>跟踪 ViewportNode 移除记录的读取进度。" }
   class n91 node_local
-  n92@{ shape: rounded, label: "**text::Underline**<br/>来自crate:bevy​_​text ↗：标记文字实体需<br/>要绘制下划线" }
+  n92@{ shape: rounded, label: "**Underline**<br/>来自crate:bevy​_​text ↗：标记文字实体需<br/>要绘制下划线" }
   class n92 node_component
   class n92 external_node
   n93@{ shape: notch-rect, label: "**Local · arg8.4.0.0.1**<br/>跟踪 CalculatedClip 移除记录的读取进<br/>度。" }
@@ -507,7 +507,7 @@ flowchart LR
   e44@{ curve: basis }
   e45@{ curve: basis }
   e46@{ curve: basis }
-  e47@{ curve: bumpX }
+  e47@{ curve: basis }
   e48@{ curve: basis }
   e49@{ curve: basis }
   e50@{ curve: basis }

@@ -42,20 +42,20 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​asset::assets::Assets#lt;bevy​_​**<br/>**scene::scene​_​patch::**<br/>**SceneListPatch#gt;::asset​_​events**<br/>发布累计的资产变化消息。" }
+  n0@{ shape: rounded, label: "**asset​_​events**<br/>发布累计的资产变化消息。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;bevy​_​**<br/>**asset::AssetEvent#lt;scene​_​patch::**<br/>**SceneListPatch#gt;#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n1@{ shape: cyl, label: "**Messages#lt;AssetEvent#lt;SceneListPatch#gt;#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n1 node_resource
   class n1 external_node
-  n2@{ shape: cyl, label: "**bevy​_​asset::asset​_​changed::**<br/>**AssetChanges#lt;scene​_​patch::**<br/>**SceneListPatch#gt;**<br/>记录资产最近变化的系统刻度。" }
+  n2@{ shape: cyl, label: "**AssetChanges#lt;SceneListPatch#gt;**<br/>记录资产最近变化的系统刻度。" }
   class n2 node_resource
-  n3@{ shape: rounded, label: "**bevy​_​asset::assets::Assets#lt;bevy​_​**<br/>**scene::scene​_​patch::**<br/>**SceneListPatch#gt;::asset​_​events​_​**<br/>**condition**<br/>判断是否有待发布的资产变化。" }
+  n3@{ shape: rounded, label: "**asset​_​events​_​condition**<br/>判断是否有待发布的资产变化。" }
   class n3 node_system
   n4@{ shape: lin-rect, label: "**AssetEventSystems**<br/>发布资产容器积累的变更消息。" }
   class n4 node_system_set
-  n5@{ shape: lean-r, label: "**bevy​_​asset::AssetEvent#lt;scene​_​patch::**<br/>**SceneListPatch#gt;**<br/>通知指定资产及依赖发生变化。" }
+  n5@{ shape: lean-r, label: "**AssetEvent#lt;SceneListPatch#gt;**<br/>通知指定资产及依赖发生变化。" }
   class n5 node_message
-  n6@{ shape: cyl, label: "**bevy​_​asset::Assets#lt;scene​_​patch::**<br/>**SceneListPatch#gt;**<br/>按资产身份存储对象并暂存变化消息。" }
+  n6@{ shape: cyl, label: "**Assets#lt;SceneListPatch#gt;**<br/>按资产身份存储对象并暂存变化消息。" }
   class n6 node_resource
   n0 e0@-->|"可变访问"| n1
   class e0 edge_write

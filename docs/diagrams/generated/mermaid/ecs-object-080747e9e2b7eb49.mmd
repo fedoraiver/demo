@@ -45,30 +45,30 @@ flowchart LR
   classDef edge_emit stroke:#B66B2D,stroke-width:1.8px
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​app::main​_​schedule::FixedMain::**<br/>**run​_​fixed​_​main**<br/>运行一个固定时间步的调度阶段。" }
+  n0@{ shape: rounded, label: "**run​_​fixed​_​main**<br/>运行一个固定时间步的调度阶段。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**bevy​_​ecs::schedule::Schedules**<br/>来自crate:bevy​_​ecs ↗：按标签保存可运<br/>行的调度实例。" }
+  n1@{ shape: rounded, label: "**Schedules**<br/>来自crate:bevy​_​ecs ↗：按标签保存可运<br/>行的调度实例。" }
   class n1 node_component
   class n1 external_node
-  n2@{ shape: lean-r, label: "**bevy​_​ecs::lifecycle::**<br/>**RemovedComponentEntity**<br/>来自crate:bevy​_​ecs ↗：记录发生组件移<br/>除的实体。" }
+  n2@{ shape: lean-r, label: "**RemovedComponentEntity**<br/>来自crate:bevy​_​ecs ↗：记录发生组件移<br/>除的实体。" }
   class n2 node_message
   class n2 external_node
-  n3@{ shape: cyl, label: "**bevy​_​ecs::schedule::Schedules**<br/>来自crate:bevy​_​ecs ↗：按标签保存可运<br/>行的调度实例。" }
+  n3@{ shape: cyl, label: "**Schedules**<br/>来自crate:bevy​_​ecs ↗：按标签保存可运<br/>行的调度实例。" }
   class n3 node_resource
   class n3 external_node
-  n4@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;bevy​_​**<br/>**ecs::lifecycle::**<br/>**RemovedComponentEntity#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n4@{ shape: cyl, label: "**Messages#lt;RemovedComponentEntity#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n4 node_resource
   class n4 external_node
-  n5@{ shape: fr-rect, label: "**main​_​schedule::MainSchedulePlugin**<br/>建立应用主调度与执行阶段。" }
+  n5@{ shape: fr-rect, label: "**MainSchedulePlugin**<br/>建立应用主调度与执行阶段。" }
   class n5 node_plugin
-  n6@{ shape: rounded, label: "**main​_​schedule::**<br/>**FixedMainScheduleOrder**<br/>规定每次固定步内各子调度的顺序。" }
+  n6@{ shape: rounded, label: "**FixedMainScheduleOrder**<br/>规定每次固定步内各子调度的顺序。" }
   class n6 node_component
-  n7@{ shape: cyl, label: "**main​_​schedule::**<br/>**FixedMainScheduleOrder**<br/>规定每次固定步内各子调度的顺序。" }
+  n7@{ shape: cyl, label: "**FixedMainScheduleOrder**<br/>规定每次固定步内各子调度的顺序。" }
   class n7 node_resource
-  n8@{ shape: stadium, label: "**bevy​_​ecs::change​_​detection::**<br/>**CheckChangeTicks**<br/>来自crate:bevy​_​ecs ↗：请求维护变化检<br/>测 tick 范围。" }
+  n8@{ shape: stadium, label: "**CheckChangeTicks**<br/>来自crate:bevy​_​ecs ↗：请求维护变化检<br/>测 tick 范围。" }
   class n8 node_event
   class n8 external_node
-  n9@{ shape: cyl, label: "**bevy​_​ecs::error::**<br/>**FallbackErrorHandler**<br/>来自crate:bevy​_​ecs ↗：处理未被接管的<br/>错误与 panic。" }
+  n9@{ shape: cyl, label: "**FallbackErrorHandler**<br/>来自crate:bevy​_​ecs ↗：处理未被接管的<br/>错误与 panic。" }
   class n9 node_resource
   class n9 external_node
   n0 e0@-->|"可变访问"| n1

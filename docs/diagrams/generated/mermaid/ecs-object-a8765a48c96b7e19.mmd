@@ -43,14 +43,14 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::**<br/>**material::check​_​entities​_​needing​_​**<br/>**specialization#lt;bevy​_​sprite​_​render::**<br/>**tilemap​_​chunk::tilemap​_​chunk​_​**<br/>**material::TilemapChunkMaterial#gt;**<br/>收集二维网格材质需重建或移除专用化的实<br/>体。" }
+  n0@{ shape: rounded, label: "**check​_​entities​_​needing​_​**<br/>**specialization**<br/>收集二维网格材质需重建或移除专用化的实<br/>体。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**bevy​_​asset::asset​_​changed::**<br/>**AssetChanges#lt;mesh::Mesh#gt;**<br/>来自crate:bevy​_​asset ↗：记录资产最近<br/>变化的系统刻度。" }
+  n1@{ shape: cyl, label: "**AssetChanges#lt;Mesh#gt;**<br/>来自crate:bevy​_​asset ↗：记录资产最近<br/>变化的系统刻度。" }
   class n1 node_resource
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::**<br/>**material::mark​_​2d​_​meshes​_​as​_​changed​_​**<br/>**if​_​their​_​materials​_​changed#lt;bevy​_​**<br/>**sprite​_​render::tilemap​_​chunk::**<br/>**tilemap​_​chunk​_​material::**<br/>**TilemapChunkMaterial#gt;**<br/>让材质变化触发二维网格重新提取。" }
+  n2@{ shape: rounded, label: "**mark​_​2d​_​meshes​_​as​_​changed​_​if​_​their​_​**<br/>**materials​_​changed**<br/>让材质变化触发二维网格重新提取。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**mesh2d::material::**<br/>**MeshMaterial2d#lt;tilemap​_​chunk::**<br/>**tilemap​_​chunk​_​material::**<br/>**TilemapChunkMaterial#gt;**<br/>为二维网格指定材质资产。" }
+  n3@{ shape: rounded, label: "**MeshMaterial2d#lt;TilemapChunkMaterial#gt;**<br/>为二维网格指定材质资产。" }
   class n3 node_component
   n4@{ shape: notch-rect, label: "**Local · removed​_​mesh​_​2d​_​**<br/>**components.0.0.0.0**<br/>保存 Mesh2d 移除参数的组件 ID。" }
   class n4 node_local
@@ -58,7 +58,7 @@ flowchart LR
   class n5 node_local
   n6@{ shape: notch-rect, label: "**Local · removed​_​mesh​_​material​_​2d​_​**<br/>**components.0.0.0.0**<br/>保存 MeshMaterial2d#lt;M#gt; 移除参数的组<br/>件 ID。" }
   class n6 node_local
-  n7@{ shape: cyl, label: "**bevy​_​asset::asset​_​changed::**<br/>**AssetChanges#lt;tilemap​_​chunk::tilemap​_​**<br/>**chunk​_​material::**<br/>**TilemapChunkMaterial#gt;**<br/>来自crate:bevy​_​asset ↗：记录资产最近<br/>变化的系统刻度。" }
+  n7@{ shape: cyl, label: "**AssetChanges#lt;TilemapChunkMaterial#gt;**<br/>来自crate:bevy​_​asset ↗：记录资产最近<br/>变化的系统刻度。" }
   class n7 node_resource
   class n7 external_node
   n8@{ shape: notch-rect, label: "**Local · par​_​local**<br/>并行收集二维材质管线需要更新的实体。" }
@@ -68,10 +68,10 @@ flowchart LR
   n10@{ shape: lin-rect, label: "**AssetEventSystems**<br/>来自crate:bevy​_​asset ↗：发布资产容器<br/>积累的变更消息。" }
   class n10 node_system_set
   class n10 external_node
-  n11@{ shape: rounded, label: "**components::Mesh2d**<br/>来自crate:bevy​_​mesh ↗：为二维可绘制实<br/>体指定网格资产。" }
+  n11@{ shape: rounded, label: "**Mesh2d**<br/>来自crate:bevy​_​mesh ↗：为二维可绘制实<br/>体指定网格资产。" }
   class n11 node_component
   class n11 external_node
-  n12@{ shape: cyl, label: "**mesh2d::material::**<br/>**EntitiesNeedingSpecialization#lt;tilema**<br/>**p​_​chunk::tilemap​_​chunk​_​material::**<br/>**TilemapChunkMaterial#gt;**<br/>暂存需要更新或移除专用管线的二维实体。" }
+  n12@{ shape: cyl, label: "**EntitiesNeedingSpecialization#lt;Tilema**<br/>**pChunkMaterial#gt;**<br/>暂存需要更新或移除专用管线的二维实体。" }
   class n12 node_resource
   n1 e0@--> n0
   class e0 edge_read
@@ -109,7 +109,7 @@ flowchart LR
   e5@{ curve: basis }
   e6@{ curve: basis }
   e7@{ curve: basis }
-  e8@{ curve: bumpX }
+  e8@{ curve: basis }
   e9@{ curve: basis }
   e10@{ curve: basis }
   e11@{ curve: basis }

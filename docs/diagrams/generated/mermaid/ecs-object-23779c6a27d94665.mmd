@@ -40,15 +40,15 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: lin-rect, label: "**MeshExtractionSystems**<br/>向渲染世界提取三维网格的实例数据。" }
   class n0 node_system_set
-  n1@{ shape: rounded, label: "**bevy​_​render::batching::gpu​_​**<br/>**preprocessing::clear​_​batched​_​gpu​_​**<br/>**instance​_​buffers#lt;bevy​_​pbr::render::**<br/>**mesh::MeshPipeline#gt;**<br/>来自crate:bevy​_​render ↗：在提取写入实<br/>例数据之前清空本帧 GPU 批处理实例缓冲的<br/>内容和索引，保留既有缓冲分配以便复用。" }
+  n1@{ shape: rounded, label: "**clear​_​batched​_​gpu​_​instance​_​buffers**<br/>来自crate:bevy​_​render ↗：在提取写入实<br/>例数据之前清空本帧 GPU 批处理实例缓冲的<br/>内容和索引，保留既有缓冲分配以便复用。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​pbr::render::mesh::extract​_​**<br/>**meshes​_​for​_​gpu​_​building**<br/>增量提取变化或需重试网格到线程队列。" }
+  n2@{ shape: rounded, label: "**extract​_​meshes​_​for​_​gpu​_​building**<br/>增量提取变化或需重试网格到线程队列。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​render::view::visibility::**<br/>**range::extract​_​visibility​_​ranges**<br/>来自crate:bevy​_​render ↗：在可见距离变<br/>化后重建渲染侧范围表。" }
+  n3@{ shape: rounded, label: "**extract​_​visibility​_​ranges**<br/>来自crate:bevy​_​render ↗：在可见距离变<br/>化后重建渲染侧范围表。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**bevy​_​pbr::lightmap::extract​_​**<br/>**lightmaps**<br/>维护可见光照贴图的渲染槽位与纹理。" }
+  n4@{ shape: rounded, label: "**extract​_​lightmaps**<br/>维护可见光照贴图的渲染槽位与纹理。" }
   class n4 node_system
   n1 e0@-->|"先于"| n0
   class e0 edge_order

@@ -38,15 +38,15 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**mesh2d::material::**<br/>**MeshMaterial2d#lt;tilemap​_​chunk::**<br/>**tilemap​_​chunk​_​material::**<br/>**TilemapChunkMaterial#gt;**<br/>为二维网格指定材质资产。" }
+  n0@{ shape: rounded, label: "**MeshMaterial2d#lt;TilemapChunkMaterial#gt;**<br/>为二维网格指定材质资产。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​sprite​_​render::tilemap​_​chunk::**<br/>**update​_​tilemap​_​chunk​_​indices**<br/>将变化的瓦片块索引打包写入材质图像。" }
+  n1@{ shape: rounded, label: "**update​_​tilemap​_​chunk​_​indices**<br/>将变化的瓦片块索引打包写入材质图像。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::**<br/>**material::check​_​entities​_​needing​_​**<br/>**specialization#lt;bevy​_​sprite​_​render::**<br/>**tilemap​_​chunk::tilemap​_​chunk​_​**<br/>**material::TilemapChunkMaterial#gt;**<br/>收集二维网格材质需重建或移除专用化的实<br/>体。" }
+  n2@{ shape: rounded, label: "**check​_​entities​_​needing​_​**<br/>**specialization**<br/>收集二维网格材质需重建或移除专用化的实<br/>体。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::**<br/>**material::mark​_​2d​_​meshes​_​as​_​changed​_​**<br/>**if​_​their​_​materials​_​changed#lt;bevy​_​**<br/>**sprite​_​render::tilemap​_​chunk::**<br/>**tilemap​_​chunk​_​material::**<br/>**TilemapChunkMaterial#gt;**<br/>让材质变化触发二维网格重新提取。" }
+  n3@{ shape: rounded, label: "**mark​_​2d​_​meshes​_​as​_​changed​_​if​_​their​_​**<br/>**materials​_​changed**<br/>让材质变化触发二维网格重新提取。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::**<br/>**material::extract​_​mesh​_​materials​_​**<br/>**2d#lt;bevy​_​sprite​_​render::tilemap​_​**<br/>**chunk::tilemap​_​chunk​_​material::**<br/>**TilemapChunkMaterial#gt;**<br/>同步可见二维网格使用的材质资产身份。" }
+  n4@{ shape: rounded, label: "**extract​_​mesh​_​materials​_​2d**<br/>同步可见二维网格使用的材质资产身份。" }
   class n4 node_system
   n0 e0@--> n1
   class e0 edge_read
@@ -66,6 +66,6 @@ flowchart LR
   e1@{ curve: basis }
   e2@{ curve: basis }
   e3@{ curve: basis }
-  e4@{ curve: basis }
+  e4@{ curve: bumpX }
   e5@{ curve: basis }
   e6@{ curve: basis }

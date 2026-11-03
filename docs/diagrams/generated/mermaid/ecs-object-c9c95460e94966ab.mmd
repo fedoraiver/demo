@@ -43,35 +43,35 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​ui​_​render::box​_​shadow::prepare​_​**<br/>**shadows**<br/>生成并上传 UI 阴影的裁剪几何。" }
+  n0@{ shape: rounded, label: "**prepare​_​shadows**<br/>生成并上传 UI 阴影的裁剪几何。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**bevy​_​render::renderer::RenderQueue**<br/>来自crate:bevy​_​render ↗：将资源写入和<br/>命令异步提交给 GPU。" }
+  n1@{ shape: cyl, label: "**RenderQueue**<br/>来自crate:bevy​_​render ↗：将资源写入和<br/>命令异步提交给 GPU。" }
   class n1 node_resource
   class n1 external_node
-  n2@{ shape: cyl, label: "**bevy​_​render::view::ViewUniforms**<br/>来自crate:bevy​_​render ↗：汇集全部视图<br/>的动态 Uniform 数据。" }
+  n2@{ shape: cyl, label: "**ViewUniforms**<br/>来自crate:bevy​_​render ↗：汇集全部视图<br/>的动态 Uniform 数据。" }
   class n2 node_resource
   class n2 external_node
-  n3@{ shape: cyl, label: "**bevy​_​render::renderer::RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
+  n3@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
   class n3 node_resource
   class n3 external_node
-  n4@{ shape: cyl, label: "**box​_​shadow::BoxShadowMeta**<br/>保存 UI 阴影的 GPU 几何与视图绑定。" }
+  n4@{ shape: cyl, label: "**BoxShadowMeta**<br/>保存 UI 阴影的 GPU 几何与视图绑定。" }
   class n4 node_resource
-  n5@{ shape: cyl, label: "**bevy​_​render::render​_​resource::**<br/>**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
+  n5@{ shape: cyl, label: "**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
   class n5 node_resource
   class n5 external_node
-  n6@{ shape: cyl, label: "**box​_​shadow::BoxShadowPipeline**<br/>提供 UI 方框阴影的视图布局和着色器。" }
+  n6@{ shape: cyl, label: "**BoxShadowPipeline**<br/>提供 UI 方框阴影的视图布局和着色器。" }
   class n6 node_resource
   n7@{ shape: lin-rect, label: "**PrepareBindGroups**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
   class n7 node_system_set
   class n7 external_node
-  n8@{ shape: cyl, label: "**bevy​_​render::render​_​phase::**<br/>**ViewSortedRenderPhases#lt;render​_​pass::**<br/>**TransparentUi#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图需<br/>要排序的绘制指令。" }
+  n8@{ shape: cyl, label: "**ViewSortedRenderPhases#lt;TransparentUi**<br/>**#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图需<br/>要排序的绘制指令。" }
   class n8 node_resource
   class n8 external_node
-  n9@{ shape: cyl, label: "**box​_​shadow::ExtractedBoxShadows**<br/>按主世界节点保存已提取的 UI 阴影。" }
+  n9@{ shape: cyl, label: "**ExtractedBoxShadows**<br/>按主世界节点保存已提取的 UI 阴影。" }
   class n9 node_resource
   n10@{ shape: notch-rect, label: "**Local · previous​_​len**<br/>按上次 UI 阴影项数量预留输出空间。" }
   class n10 node_local
-  n11@{ shape: fr-rect, label: "**box​_​shadow::BoxShadowPlugin**<br/>绘制界面矩形阴影。" }
+  n11@{ shape: fr-rect, label: "**BoxShadowPlugin**<br/>绘制界面矩形阴影。" }
   class n11 node_plugin
   n1 e0@--> n0
   class e0 edge_read

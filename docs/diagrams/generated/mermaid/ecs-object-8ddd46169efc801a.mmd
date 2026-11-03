@@ -19,7 +19,7 @@
       "htmlLabels": false,
       "nodeSpacing": 16,
       "rankSpacing": 48,
-      "padding": 4,
+      "padding": 16,
       "wrappingWidth": 280,
       "minNodeWidth": 180,
       "useMaxWidth": false,
@@ -39,16 +39,16 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​render::render​_​resource::**<br/>**sparse​_​buffer​_​vec::init​_​sparse​_​**<br/>**buffer​_​update​_​pipelines**<br/>按设备存储绑定能力建立稀疏更新计算资源。" }
+  n0@{ shape: rounded, label: "**init​_​sparse​_​buffer​_​update​_​pipelines**<br/>按设备存储绑定能力建立稀疏更新计算资源。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**render​_​resource::sparse​_​buffer​_​vec::**<br/>**SparseBufferUpdatePipelines**<br/>提供稀疏缓冲散射写入的计算接口。" }
+  n1@{ shape: cyl, label: "**SparseBufferUpdatePipelines**<br/>提供稀疏缓冲散射写入的计算接口。" }
   class n1 node_resource
-  n2@{ shape: cyl, label: "**bevy​_​asset::AssetServer**<br/>来自crate:bevy​_​asset ↗：加载资产并追<br/>踪加载状态。" }
+  n2@{ shape: cyl, label: "**AssetServer**<br/>来自crate:bevy​_​asset ↗：加载资产并追<br/>踪加载状态。" }
   class n2 node_resource
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​render::render​_​resource::**<br/>**sparse​_​buffer​_​vec::init​_​sparse​_​**<br/>**buffer​_​update​_​bind​_​groups**<br/>准备稀疏更新管线标识与弱键绑定缓存。" }
+  n3@{ shape: rounded, label: "**init​_​sparse​_​buffer​_​update​_​bind​_​**<br/>**groups**<br/>准备稀疏更新管线标识与弱键绑定缓存。" }
   class n3 node_system
-  n4@{ shape: cyl, label: "**bevy​_​render::renderer::RenderDevice**<br/>创建渲染和计算所需的 GPU 资源。" }
+  n4@{ shape: cyl, label: "**RenderDevice**<br/>创建渲染和计算所需的 GPU 资源。" }
   class n4 node_resource
   n0 e0@-->|"插入"| n1
   class e0 edge_write

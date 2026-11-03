@@ -38,14 +38,14 @@ flowchart LR
   classDef edge_order stroke:#334155,stroke-width:2px
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​ecs::apply​_​deferred**<br/>标识由执行器刷新延迟命令的同步点。" }
+  n0@{ shape: rounded, label: "**apply​_​deferred**<br/>标识由执行器刷新延迟命令的同步点。" }
   class n0 node_system
   n1@{ shape: lin-rect, label: "**InitContexts**<br/>来自crate:bevy​_​egui ↗：组织主 Egui<br/>上下文启动初始化。" }
   class n1 node_system_set
   class n1 external_node
   n2@{ shape: lin-rect, label: "**AnonymousSet(0)**<br/>保存一组系统的共同配置。" }
   class n2 node_system_set
-  n3@{ shape: rounded, label: "**bevy​_​egui::update​_​ui​_​screen​_​rect**<br/>来自crate:bevy​_​egui ↗：把相机视口换算<br/>为 Egui 逻辑屏幕区域。" }
+  n3@{ shape: rounded, label: "**update​_​ui​_​screen​_​rect**<br/>来自crate:bevy​_​egui ↗：把相机视口换算<br/>为 Egui 逻辑屏幕区域。" }
   class n3 node_system
   class n3 external_node
   n1 e0@-->|"集合成员"| n0

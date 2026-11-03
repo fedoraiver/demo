@@ -40,7 +40,7 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​ecs::name::Name**<br/>保存供调试和界面展示的实体名称及缓存哈希" }
+  n0@{ shape: rounded, label: "**Name**<br/>保存供调试和界面展示的实体名称及缓存哈希" }
   class n0 node_component
   n1@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供音频设置分类入口。" }
   class n1 node_entity
@@ -69,7 +69,7 @@ flowchart LR
   n9@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：标明反转视角纵轴设置行。" }
   class n9 node_entity
   class n9 external_node
-  n10@{ shape: rounded, label: "**(bevy​_​ecs::system::system​_​param::**<br/>**Local#lt;'​_​, alloc::vec::Vec#lt;bevy​_​**<br/>**enhanced​_​input::binding::Binding#gt;#gt;,**<br/>**bevy​_​enhanced​_​input::context::time::**<br/>**ContextTime#lt;'​_​#gt;, bevy​_​enhanced​_​**<br/>**input::context::input​_​reader::**<br/>**InputReader#lt;'​_​, '​_​#gt;, bevy​_​ecs::**<br/>**change​_​detection::params::Res#lt;'​_​,**<br/>**bevy​_​enhanced​_​input::context::**<br/>**instance::ContextInstances#lt;bevy​_​**<br/>**app::main​_​schedule::PreUpdate#gt;#gt;,**<br/>**bevy​_​ecs::system::query::Query#lt;'​_​,**<br/>**'​_​, bevy​_​ecs::world::entity​_​access::**<br/>**filtered::FilteredEntityMut#lt;'​_​, '​_​**<br/>**#gt;#gt;, bevy​_​ecs::system::query::**<br/>**Query#lt;'​_​, '​_​, (bevy​_​ecs::entity::**<br/>**Entity, #amp;bevy​_​ecs::name::Name,**<br/>**#amp;bevy​_​enhanced​_​input::action::**<br/>**ActionSettings, core::option::**<br/>**Option#lt;#amp;bevy​_​enhanced​_​input::**<br/>**binding::relationship::Bindings#gt;,**<br/>**core::option::Option#lt;#amp;bevy​_​enhanced​_​**<br/>**input::modifier::fns::ModifierFns#gt;,**<br/>**core::option::Option#lt;#amp;bevy​_​enhanced​_​**<br/>**input::condition::fns::**<br/>**ConditionFns#gt;, #amp;mut bevy​_​enhanced​_​**<br/>**input::action::mock::ActionMock),**<br/>**bevy​_​ecs::query::filter::**<br/>**Without#lt;bevy​_​enhanced​_​input::**<br/>**context::ExternallyMocked#gt;#gt;, bevy​_​**<br/>**ecs::system::query::Query#lt;'​_​, '​_​,**<br/>**(#amp;mut bevy​_​enhanced​_​input::action::**<br/>**value::ActionValue, #amp;mut bevy​_​**<br/>**enhanced​_​input::action::**<br/>**TriggerState, #amp;mut bevy​_​enhanced​_​**<br/>**input::action::events::**<br/>**ActionEvents, #amp;mut bevy​_​enhanced​_​**<br/>**input::action::ActionTime)#gt;, bevy​_​**<br/>**ecs::system::query::Query#lt;'​_​, '​_​,**<br/>**(bevy​_​ecs::entity::Entity, #amp;bevy​_​**<br/>**enhanced​_​input::binding::Binding,**<br/>**#amp;mut bevy​_​enhanced​_​input::binding::**<br/>**FirstActivation, core::option::**<br/>**Option#lt;#amp;bevy​_​enhanced​_​input::**<br/>**modifier::fns::ModifierFns#gt;, core::**<br/>**option::Option#lt;#amp;bevy​_​enhanced​_​**<br/>**input::condition::fns::**<br/>**ConditionFns#gt;), bevy​_​ecs::query::**<br/>**filter::Without#lt;bevy​_​enhanced​_​**<br/>**input::action::ActionSettings#gt;#gt;,**<br/>**bevy​_​ecs::system::query::Query#lt;'​_​,**<br/>**'​_​, bevy​_​ecs::world::entity​_​access::**<br/>**filtered::FilteredEntityMut#lt;'​_​, '​_​**<br/>**#gt;#gt;)**<br/>来自crate:bevy​_​enhanced​_​input ↗：求<br/>值上下文输入并更新动作状态。" }
+  n10@{ shape: rounded, label: "**(Local#lt;'​_​, Vec#lt;Binding#gt;#gt;,**<br/>**ContextTime#lt;'​_​#gt;, InputReader#lt;'​_​, '​_​**<br/>**#gt;, Res#lt;'​_​,**<br/>**ContextInstances#lt;PreUpdate#gt;#gt;,**<br/>**Query#lt;'​_​, '​_​, FilteredEntityMut#lt;'​_​,**<br/>**'​_​#gt;#gt;, Query#lt;'​_​, '​_​, (Entity, #amp;Name,**<br/>**#amp;ActionSettings, Option#lt;#amp;Bindings#gt;,**<br/>**Option#lt;#amp;ModifierFns#gt;,**<br/>**Option#lt;#amp;ConditionFns#gt;, #amp;mut**<br/>**ActionMock),**<br/>**Without#lt;ExternallyMocked#gt;#gt;, Query#lt;'​_​**<br/>**, '​_​, (#amp;mut ActionValue, #amp;mut**<br/>**TriggerState, #amp;mut ActionEvents,**<br/>**#amp;mut ActionTime)#gt;, Query#lt;'​_​, '​_​,**<br/>**(Entity, #amp;Binding, #amp;mut**<br/>**FirstActivation,**<br/>**Option#lt;#amp;ModifierFns#gt;,**<br/>**Option#lt;#amp;ConditionFns#gt;),**<br/>**Without#lt;ActionSettings#gt;#gt;, Query#lt;'​_​,**<br/>**'​_​, FilteredEntityMut#lt;'​_​, '​_​#gt;#gt;)**<br/>来自crate:bevy​_​enhanced​_​input ↗：求<br/>值上下文输入并更新动作状态。" }
   class n10 node_system
   class n10 external_node
   n11@{ shape: rounded, label: "**begin​_​attachment · 创建模板**<br/>来自item​_​interaction ↗：为本次持握预<br/>留独立碰撞代理。" }
@@ -132,7 +132,7 @@ flowchart LR
   n30@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示确认操作名称。" }
   class n30 node_entity
   class n30 external_node
-  n31@{ shape: rounded, label: "**bevy​_​core​_​pipeline::tonemapping::**<br/>**check​_​tonemapping​_​none**<br/>来自crate:bevy​_​core​_​pipeline ↗：警告<br/>关闭色调映射后仍配置无效效果的相机。" }
+  n31@{ shape: rounded, label: "**check​_​tonemapping​_​none**<br/>来自crate:bevy​_​core​_​pipeline ↗：警告<br/>关闭色调映射后仍配置无效效果的相机。" }
   class n31 node_system
   class n31 external_node
   n32@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供图形设置分类入口。" }
@@ -450,7 +450,7 @@ flowchart LR
   n136@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制 WASD 操作键帽。" }
   class n136 node_entity
   class n136 external_node
-  n137@{ shape: rounded, label: "**avian3d::collision::collider::**<br/>**backend::init​_​collider​_​constructor​_​**<br/>**hierarchies**<br/>来自crate:avian3d ↗：按层级构造配置为<br/>后代生成碰撞体。" }
+  n137@{ shape: rounded, label: "**init​_​collider​_​constructor​_​**<br/>**hierarchies**<br/>来自crate:avian3d ↗：按层级构造配置为<br/>后代生成碰撞体。" }
   class n137 node_system
   class n137 external_node
   n138@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：显示菜单快递员手中的包裹。" }
@@ -798,7 +798,7 @@ flowchart LR
   n252@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供反转视角纵轴的左侧调整入<br/>口。" }
   class n252 node_entity
   class n252 external_node
-  n253@{ shape: rounded, label: "**bevy​_​animation::animate​_​targets**<br/>来自crate:bevy​_​animation ↗：评估动画<br/>图并把结果应用到动画目标。" }
+  n253@{ shape: rounded, label: "**animate​_​targets**<br/>来自crate:bevy​_​animation ↗：评估动画<br/>图并把结果应用到动画目标。" }
   class n253 node_system
   class n253 external_node
   n254@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：组织图形设置分类内容。" }
@@ -849,7 +849,7 @@ flowchart LR
   n269@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：容纳操作设置按钮的图标。" }
   class n269 node_entity
   class n269 external_node
-  n270@{ shape: rounded, label: "**avian3d::collision::collider::**<br/>**backend::init​_​collider​_​constructors**<br/>来自crate:avian3d ↗：把就绪的碰撞构造<br/>配置变成实际形状。" }
+  n270@{ shape: rounded, label: "**init​_​collider​_​constructors**<br/>来自crate:avian3d ↗：把就绪的碰撞构造<br/>配置变成实际形状。" }
   class n270 node_system
   class n270 external_node
   n271@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示草稿保存提示与处理结果。" }
@@ -972,7 +972,7 @@ flowchart LR
   n310@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示轻拿轻放装饰文字。" }
   class n310 node_entity
   class n310 external_node
-  n311@{ shape: rounded, label: "**demo::scene​_​assembly::actors::spawn​_​**<br/>**actors**<br/>来自scene​_​assembly ↗：为就绪海岛创建<br/>玩法实体并复用加载相机。" }
+  n311@{ shape: rounded, label: "**spawn​_​actors**<br/>来自scene​_​assembly ↗：为就绪海岛创建<br/>玩法实体并复用加载相机。" }
   class n311 node_system
   class n311 external_node
   n312@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：承托多人游戏的待开放标记。" }
@@ -1041,7 +1041,7 @@ flowchart LR
   n333@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：展示当前设置的用途说明。" }
   class n333 node_entity
   class n333 external_node
-  n334@{ shape: rounded, label: "**bevy​_​app::hierarchy::check​_​parent​_​**<br/>**has​_​component#lt;bevy​_​camera::**<br/>**visibility::InheritedVisibility#gt;**<br/>来自crate:bevy​_​app ↗：报告仍不满足组<br/>件层级要求的父子关系。" }
+  n334@{ shape: rounded, label: "**check​_​parent​_​has​_​component**<br/>来自crate:bevy​_​app ↗：报告仍不满足组<br/>件层级要求的父子关系。" }
   class n334 node_system
   class n334 external_node
   n335@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示拾取操作说明。" }
@@ -1089,7 +1089,7 @@ flowchart LR
   n349@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示返回操作名称。" }
   class n349 node_entity
   class n349 external_node
-  n350@{ shape: rounded, label: "**bevy​_​input::gamepad::gamepad​_​**<br/>**connection​_​system**<br/>来自crate:bevy​_​input ↗：按连接消息添<br/>加或移除手柄组件。" }
+  n350@{ shape: rounded, label: "**gamepad​_​connection​_​system**<br/>来自crate:bevy​_​input ↗：按连接消息添<br/>加或移除手柄组件。" }
   class n350 node_system
   class n350 external_node
   n351@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：描绘 Esc 菜单键帽。" }
@@ -1176,7 +1176,7 @@ flowchart LR
   n378@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示操作设置按钮的图标符号。" }
   class n378 node_entity
   class n378 external_node
-  n379@{ shape: rounded, label: "**bevy​_​app::hierarchy::check​_​parent​_​**<br/>**has​_​component#lt;bevy​_​transform::**<br/>**components::global​_​transform::**<br/>**GlobalTransform#gt;**<br/>来自crate:bevy​_​app ↗：报告仍不满足组<br/>件层级要求的父子关系。" }
+  n379@{ shape: rounded, label: "**check​_​parent​_​has​_​component**<br/>来自crate:bevy​_​app ↗：报告仍不满足组<br/>件层级要求的父子关系。" }
   class n379 node_system
   class n379 external_node
   n380@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制音频设置按钮的入口箭头。" }
@@ -1485,7 +1485,7 @@ flowchart LR
   n481@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示镜头与暂停卡片标题。" }
   class n481 node_entity
   class n481 external_node
-  n482@{ shape: rounded, label: "**demo::scene​_​assembly::loading::**<br/>**prepare​_​island**<br/>来自scene​_​assembly ↗：在资源 CPU 几<br/>何可用时构建碰撞；全部成功后才提交，失败<br/>时不创建动态玩家。" }
+  n482@{ shape: rounded, label: "**prepare​_​island**<br/>来自scene​_​assembly ↗：在资源 CPU 几<br/>何可用时构建碰撞；全部成功后才提交，失败<br/>时不创建动态玩家。" }
   class n482 node_system
   class n482 external_node
   n483@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示滚动位置并提供拖动滑块。" }
@@ -1617,7 +1617,7 @@ flowchart LR
   n525@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：固定设置页底部操作。" }
   class n525 node_entity
   class n525 external_node
-  n526@{ shape: rounded, label: "**demo::character​_​animation::binding::**<br/>**initialize​_​ready​_​couriers**<br/>来自character​_​animation ↗：场景就绪<br/>后只遍历该视觉根的子树，避免把 NPC 或其<br/>他模型的播放器接到主角上。" }
+  n526@{ shape: rounded, label: "**initialize​_​ready​_​couriers**<br/>来自character​_​animation ↗：场景就绪<br/>后只遍历该视觉根的子树，避免把 NPC 或其<br/>他模型的播放器接到主角上。" }
   class n526 node_system
   class n526 external_node
   n527@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示岛屿配送品牌标志。" }
@@ -2034,7 +2034,7 @@ flowchart LR
   n664@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单品牌的公司名称。" }
   class n664 node_entity
   class n664 external_node
-  n665@{ shape: rounded, label: "**demo::first​_​person::facing::sync​_​**<br/>**character​_​facing**<br/>来自first​_​person ↗：在固定模拟前及逐<br/>帧持握目标同步前设置水平朝向，站立、横移<br/>和后退时也跟随视角。" }
+  n665@{ shape: rounded, label: "**sync​_​character​_​facing**<br/>来自first​_​person ↗：在固定模拟前及逐<br/>帧持握目标同步前设置水平朝向，站立、横移<br/>和后退时也跟随视角。" }
   class n665 node_system
   class n665 external_node
   n666@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制设置标题金色装饰线。" }
@@ -2079,7 +2079,7 @@ flowchart LR
   n679@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制玩法帮助按钮的入口箭头。" }
   class n679 node_entity
   class n679 external_node
-  n680@{ shape: rounded, label: "**demo::first​_​person::facing::sync​_​**<br/>**character​_​facing**<br/>来自first​_​person ↗：在固定模拟前及逐<br/>帧持握目标同步前设置水平朝向，站立、横移<br/>和后退时也跟随视角。" }
+  n680@{ shape: rounded, label: "**sync​_​character​_​facing**<br/>来自first​_​person ↗：在固定模拟前及逐<br/>帧持握目标同步前设置水平朝向，站立、横移<br/>和后退时也跟随视角。" }
   class n680 node_system
   class n680 external_node
   n681@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：展示当前设置的用途说明。" }

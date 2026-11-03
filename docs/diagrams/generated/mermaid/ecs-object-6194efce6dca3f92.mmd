@@ -48,49 +48,49 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​world​_​serialization::world​_​**<br/>**asset​_​spawner::world​_​instance​_​**<br/>**spawner​_​system**<br/>推进世界资产实例的生成、销毁及更新。" }
+  n0@{ shape: rounded, label: "**world​_​instance​_​spawner​_​system**<br/>推进世界资产实例的生成、销毁及更新。" }
   class n0 node_system
   n1@{ shape: fr-rect, label: "**WorldSerializationPlugin**<br/>提供世界数据序列化支持。" }
   class n1 node_plugin
-  n2@{ shape: rounded, label: "**bevy​_​world​_​serialization::world​_​**<br/>**asset​_​spawner::world​_​instance​_​**<br/>**spawner**<br/>根据世界资产根组件排队生成或替换实例。" }
+  n2@{ shape: rounded, label: "**world​_​instance​_​spawner**<br/>根据世界资产根组件排队生成或替换实例。" }
   class n2 node_system
-  n3@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;bevy​_​**<br/>**asset::AssetEvent#lt;world​_​asset::**<br/>**WorldAsset#gt;#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n3@{ shape: cyl, label: "**Messages#lt;AssetEvent#lt;WorldAsset#gt;#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n3 node_resource
   class n3 external_node
-  n4@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;bevy​_​**<br/>**ecs::lifecycle::**<br/>**RemovedComponentEntity#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n4@{ shape: cyl, label: "**Messages#lt;RemovedComponentEntity#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n4 node_resource
   class n4 external_node
-  n5@{ shape: lean-r, label: "**bevy​_​ecs::lifecycle::**<br/>**RemovedComponentEntity**<br/>来自crate:bevy​_​ecs ↗：记录发生组件移<br/>除的实体。" }
+  n5@{ shape: lean-r, label: "**RemovedComponentEntity**<br/>来自crate:bevy​_​ecs ↗：记录发生组件移<br/>除的实体。" }
   class n5 node_message
   class n5 external_node
-  n6@{ shape: rounded, label: "**world​_​asset​_​spawner::**<br/>**WorldInstanceSpawner**<br/>管理世界资产的同步及排队生成、销毁和热更<br/>新" }
+  n6@{ shape: rounded, label: "**WorldInstanceSpawner**<br/>管理世界资产的同步及排队生成、销毁和热更<br/>新" }
   class n6 node_component
-  n7@{ shape: cyl, label: "**bevy​_​asset::Assets#lt;dynamic​_​world::**<br/>**DynamicWorld#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
+  n7@{ shape: cyl, label: "**Assets#lt;DynamicWorld#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
   class n7 node_resource
   class n7 external_node
-  n8@{ shape: rounded, label: "**bevy​_​ecs::hierarchy::ChildOf**<br/>来自crate:bevy​_​ecs ↗：保存当前实体的<br/>父实体身份" }
+  n8@{ shape: rounded, label: "**ChildOf**<br/>来自crate:bevy​_​ecs ↗：保存当前实体的<br/>父实体身份" }
   class n8 node_component
   class n8 external_node
-  n9@{ shape: rounded, label: "**bevy​_​asset::Assets#lt;dynamic​_​world::**<br/>**DynamicWorld#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
+  n9@{ shape: rounded, label: "**Assets#lt;DynamicWorld#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
   class n9 node_component
   class n9 external_node
-  n10@{ shape: cyl, label: "**world​_​asset​_​spawner::**<br/>**WorldInstanceSpawner**<br/>管理世界资产的同步及排队生成、销毁和热更<br/>新" }
+  n10@{ shape: cyl, label: "**WorldInstanceSpawner**<br/>管理世界资产的同步及排队生成、销毁和热更<br/>新" }
   class n10 node_resource
-  n11@{ shape: cyl, label: "**bevy​_​asset::Assets#lt;world​_​asset::**<br/>**WorldAsset#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
+  n11@{ shape: cyl, label: "**Assets#lt;WorldAsset#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
   class n11 node_resource
   class n11 external_node
-  n12@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;bevy​_​**<br/>**asset::AssetEvent#lt;dynamic​_​world::**<br/>**DynamicWorld#gt;#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n12@{ shape: cyl, label: "**Messages#lt;AssetEvent#lt;DynamicWorld#gt;#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n12 node_resource
   class n12 external_node
-  n13@{ shape: rounded, label: "**bevy​_​asset::Assets#lt;world​_​asset::**<br/>**WorldAsset#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
+  n13@{ shape: rounded, label: "**Assets#lt;WorldAsset#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
   class n13 node_component
   class n13 external_node
-  n14@{ shape: stadium, label: "**world​_​asset​_​spawner::**<br/>**WorldInstanceReady**<br/>通知世界实例已经可用。" }
+  n14@{ shape: stadium, label: "**WorldInstanceReady**<br/>通知世界实例已经可用。" }
   class n14 node_event
   n15@{ shape: lin-rect, label: "**WorldInstanceSpawn**<br/>来自crate:bevy​_​app ↗：划分世界实例与<br/>场景生成阶段。" }
   class n15 node_system_set
   class n15 external_node
-  n16@{ shape: cyl, label: "**bevy​_​ecs::reflect::AppTypeRegistry**<br/>来自crate:bevy​_​ecs ↗：保存应用共享反<br/>射类型注册表。" }
+  n16@{ shape: cyl, label: "**AppTypeRegistry**<br/>来自crate:bevy​_​ecs ↗：保存应用共享反<br/>射类型注册表。" }
   class n16 node_resource
   class n16 external_node
   n1 e0@-->|"调用"| n0

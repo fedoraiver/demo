@@ -39,30 +39,30 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**dialog::DialogStack**<br/>按从底到顶的顺序保存已打开浮动对话框" }
+  n0@{ shape: cyl, label: "**DialogStack**<br/>按从底到顶的顺序保存已打开浮动对话框" }
   class n0 node_resource
-  n1@{ shape: hex, label: "**bevy​_​ui​_​widgets::dialog::deregister​_​**<br/>**dialog**<br/>清理已销毁对话框的栈登记。" }
+  n1@{ shape: hex, label: "**deregister​_​dialog**<br/>清理已销毁对话框的栈登记。" }
   class n1 node_observer
-  n2@{ shape: hex, label: "**bevy​_​ui​_​widgets::dialog::register​_​**<br/>**dialog**<br/>登记新建浮动对话框的层级。" }
+  n2@{ shape: hex, label: "**register​_​dialog**<br/>登记新建浮动对话框的层级。" }
   class n2 node_observer
-  n3@{ shape: rounded, label: "**bevy​_​ui​_​widgets::dialog::sync​_​**<br/>**dialog​_​z**<br/>按对话框栈顺序设置全局层级。" }
+  n3@{ shape: rounded, label: "**sync​_​dialog​_​z**<br/>按对话框栈顺序设置全局层级。" }
   class n3 node_system
-  n4@{ shape: hex, label: "**bevy​_​ui​_​widgets::dialog::deregister​_​**<br/>**dialog**<br/>清理已销毁对话框的栈登记。" }
+  n4@{ shape: hex, label: "**deregister​_​dialog**<br/>清理已销毁对话框的栈登记。" }
   class n4 node_observer
-  n5@{ shape: rounded, label: "**bevy​_​ecs::schedule::condition::**<br/>**common​_​conditions::resource​_​**<br/>**changed#lt;bevy​_​ui​_​widgets::dialog::**<br/>**DialogStack#gt;**<br/>来自crate:bevy​_​ecs ↗：判断资源是否被<br/>标记为变化。" }
+  n5@{ shape: rounded, label: "**resource​_​changed**<br/>来自crate:bevy​_​ecs ↗：判断资源是否被<br/>标记为变化。" }
   class n5 node_system
   class n5 external_node
-  n6@{ shape: hex, label: "**bevy​_​ui​_​widgets::dialog::deregister​_​**<br/>**dialog**<br/>清理已销毁对话框的栈登记。" }
+  n6@{ shape: hex, label: "**deregister​_​dialog**<br/>清理已销毁对话框的栈登记。" }
   class n6 node_observer
-  n7@{ shape: hex, label: "**bevy​_​ui​_​widgets::dialog::bring​_​to​_​**<br/>**front**<br/>将被操作的浮动对话框提到前方。" }
+  n7@{ shape: hex, label: "**bring​_​to​_​front**<br/>将被操作的浮动对话框提到前方。" }
   class n7 node_observer
-  n8@{ shape: hex, label: "**bevy​_​ui​_​widgets::dialog::register​_​**<br/>**dialog**<br/>登记新建浮动对话框的层级。" }
+  n8@{ shape: hex, label: "**register​_​dialog**<br/>登记新建浮动对话框的层级。" }
   class n8 node_observer
-  n9@{ shape: hex, label: "**bevy​_​ui​_​widgets::dialog::bring​_​to​_​**<br/>**front**<br/>将被操作的浮动对话框提到前方。" }
+  n9@{ shape: hex, label: "**bring​_​to​_​front**<br/>将被操作的浮动对话框提到前方。" }
   class n9 node_observer
-  n10@{ shape: hex, label: "**bevy​_​ui​_​widgets::dialog::register​_​**<br/>**dialog**<br/>登记新建浮动对话框的层级。" }
+  n10@{ shape: hex, label: "**register​_​dialog**<br/>登记新建浮动对话框的层级。" }
   class n10 node_observer
-  n11@{ shape: hex, label: "**bevy​_​ui​_​widgets::dialog::bring​_​to​_​**<br/>**front**<br/>将被操作的浮动对话框提到前方。" }
+  n11@{ shape: hex, label: "**bring​_​to​_​front**<br/>将被操作的浮动对话框提到前方。" }
   class n11 node_observer
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

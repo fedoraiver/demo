@@ -39,9 +39,9 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bounds​_​recovery::SpawnPoint**<br/>业务根实体的出生姿态；角色与物品分别保存<br/>自己的恢复位置。" }
+  n0@{ shape: rounded, label: "**SpawnPoint**<br/>业务根实体的出生姿态；角色与物品分别保存<br/>自己的恢复位置。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**demo::bounds​_​recovery::recovery::**<br/>**recover​_​from​_​water**<br/>恢复实体自身的出生姿态；角色落水只释放手<br/>中物品，物品落水时再独立恢复。" }
+  n1@{ shape: rounded, label: "**recover​_​from​_​water**<br/>恢复实体自身的出生姿态；角色落水只释放手<br/>中物品，物品落水时再独立恢复。" }
   class n1 node_system
   n2@{ shape: rounded, label: "**spawn​_​actors · 创建模板**<br/>来自scene​_​assembly ↗：创建海岛中的可<br/>控制快递员根实体。" }
   class n2 node_entity

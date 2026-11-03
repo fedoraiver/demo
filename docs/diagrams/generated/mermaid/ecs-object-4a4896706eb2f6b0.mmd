@@ -40,25 +40,25 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: lin-rect, label: "**PostProcess**<br/>划分二维相机绘制与后处理阶段。" }
   class n0 node_system_set
-  n1@{ shape: rounded, label: "**bevy​_​post​_​process::bloom::bloom**<br/>来自crate:bevy​_​post​_​process ↗：通过<br/>降采样和上采样合成 HDR 光晕。" }
+  n1@{ shape: rounded, label: "**bloom**<br/>来自crate:bevy​_​post​_​process ↗：通过<br/>降采样和上采样合成 HDR 光晕。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​core​_​pipeline::tonemapping::**<br/>**node::tonemapping**<br/>为启用的 HDR 视图执行色调映射。" }
+  n2@{ shape: rounded, label: "**tonemapping**<br/>为启用的 HDR 视图执行色调映射。" }
   class n2 node_system
   n3@{ shape: lin-rect, label: "**EarlyPostProcess**<br/>划分二维相机绘制与后处理阶段。" }
   class n3 node_system_set
-  n4@{ shape: rounded, label: "**bevy​_​core​_​pipeline::upscaling::**<br/>**node::upscaling**<br/>将主颜色纹理缩放写入最终输出附件。" }
+  n4@{ shape: rounded, label: "**upscaling**<br/>将主颜色纹理缩放写入最终输出附件。" }
   class n4 node_system
-  n5@{ shape: rounded, label: "**bevy​_​anti​_​alias::smaa::smaa**<br/>来自crate:bevy​_​anti​_​alias ↗：通过三<br/>个阶段完成 SMAA 抗锯齿。" }
+  n5@{ shape: rounded, label: "**smaa**<br/>来自crate:bevy​_​anti​_​alias ↗：通过三<br/>个阶段完成 SMAA 抗锯齿。" }
   class n5 node_system
   class n5 external_node
-  n6@{ shape: rounded, label: "**bevy​_​anti​_​alias::contrast​_​adaptive​_​**<br/>**sharpening::node::cas**<br/>来自crate:bevy​_​anti​_​alias ↗：对视图<br/>颜色执行 CAS 锐化后处理。" }
+  n6@{ shape: rounded, label: "**cas**<br/>来自crate:bevy​_​anti​_​alias ↗：对视图<br/>颜色执行 CAS 锐化后处理。" }
   class n6 node_system
   class n6 external_node
-  n7@{ shape: rounded, label: "**bevy​_​ui​_​render::render​_​pass::ui​_​pass**<br/>来自crate:bevy​_​ui​_​render ↗：把透明<br/>UI 绘制项渲染到关联视图。" }
+  n7@{ shape: rounded, label: "**ui​_​pass**<br/>来自crate:bevy​_​ui​_​render ↗：把透明<br/>UI 绘制项渲染到关联视图。" }
   class n7 node_system
   class n7 external_node
-  n8@{ shape: rounded, label: "**bevy​_​anti​_​alias::fxaa::node::fxaa**<br/>来自crate:bevy​_​anti​_​alias ↗：对启用<br/>的相机视图执行 FXAA 抗锯齿。" }
+  n8@{ shape: rounded, label: "**fxaa**<br/>来自crate:bevy​_​anti​_​alias ↗：对启用<br/>的相机视图执行 FXAA 抗锯齿。" }
   class n8 node_system
   class n8 external_node
   n0 e0@-->|"集合成员"| n1

@@ -37,11 +37,11 @@ flowchart LR
   classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**spawn::WaitingScenes**<br/>保存等待场景资产加载的实体与场景列表生成<br/>请求" }
+  n0@{ shape: cyl, label: "**WaitingScenes**<br/>保存等待场景资产加载的实体与场景列表生成<br/>请求" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​scene::spawn::spawn​_​queued**<br/>应用已就绪的场景补丁并推进排队装配。" }
+  n1@{ shape: rounded, label: "**spawn​_​queued**<br/>应用已就绪的场景补丁并推进排队装配。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​scene::spawn::resolve​_​scene​_​**<br/>**patches**<br/>解析已完成依赖加载的场景补丁。" }
+  n2@{ shape: rounded, label: "**resolve​_​scene​_​patches**<br/>解析已完成依赖加载的场景补丁。" }
   class n2 node_system
   n1 e0@-->|"移除"| n0
   class e0 edge_write

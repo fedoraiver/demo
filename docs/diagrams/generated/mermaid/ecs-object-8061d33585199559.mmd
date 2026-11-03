@@ -42,39 +42,39 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​pbr::atmosphere::extract​_​**<br/>**atmosphere**<br/>为三维相机选择并提取最近的大气。" }
+  n0@{ shape: rounded, label: "**extract​_​atmosphere**<br/>为三维相机选择并提取最近的大气。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**atmosphere::resources::**<br/>**AtmosphereTransformsOffset**<br/>定位当前视图的大气变换参数。" }
+  n1@{ shape: rounded, label: "**AtmosphereTransformsOffset**<br/>定位当前视图的大气变换参数。" }
   class n1 node_component
-  n2@{ shape: rounded, label: "**atmosphere::resources::**<br/>**AtmosphereTextures**<br/>保存大气渲染的四类缓存查找纹理。" }
+  n2@{ shape: rounded, label: "**AtmosphereTextures**<br/>保存大气渲染的四类缓存查找纹理。" }
   class n2 node_component
-  n3@{ shape: rounded, label: "**atmosphere::resources::**<br/>**RenderSkyPipelineId**<br/>定位当前天空绘制的缓存管线。" }
+  n3@{ shape: rounded, label: "**RenderSkyPipelineId**<br/>定位当前天空绘制的缓存管线。" }
   class n3 node_component
-  n4@{ shape: rounded, label: "**bevy​_​extract::SubEntity#lt;bevy​_​**<br/>**render::RenderApp#gt;**<br/>来自crate:bevy​_​extract ↗：记录主实体<br/>对应的子世界实体。" }
+  n4@{ shape: rounded, label: "**SubEntity#lt;RenderApp#gt;**<br/>来自crate:bevy​_​extract ↗：记录主实体<br/>对应的子世界实体。" }
   class n4 node_component
   class n4 external_node
-  n5@{ shape: rounded, label: "**atmosphere::GpuAtmosphereSettings**<br/>向 GPU 提供大气采样和查找表设置。" }
+  n5@{ shape: rounded, label: "**GpuAtmosphereSettings**<br/>向 GPU 提供大气采样和查找表设置。" }
   class n5 node_component
-  n6@{ shape: rounded, label: "**components::global​_​transform::**<br/>**GlobalTransform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>合并祖先变换后的世界空间仿射变换" }
+  n6@{ shape: rounded, label: "**GlobalTransform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>合并祖先变换后的世界空间仿射变换" }
   class n6 node_component
   class n6 external_node
-  n7@{ shape: cyl, label: "**extract​_​plugin::MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
+  n7@{ shape: cyl, label: "**MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
   class n7 node_resource
   class n7 external_node
-  n8@{ shape: rounded, label: "**atmosphere::ExtractedAtmosphere**<br/>保存尚未转为 GPU 参数的大气数据。" }
+  n8@{ shape: rounded, label: "**ExtractedAtmosphere**<br/>保存尚未转为 GPU 参数的大气数据。" }
   class n8 node_component
-  n9@{ shape: rounded, label: "**atmosphere::resources::GpuAtmosphere**<br/>以 Uniform 格式描述大气几何与地面。" }
+  n9@{ shape: rounded, label: "**GpuAtmosphere**<br/>以 Uniform 格式描述大气几何与地面。" }
   class n9 node_component
-  n10@{ shape: rounded, label: "**atmosphere::resources::**<br/>**AtmosphereBindGroups**<br/>保存大气查找表及天空绘制的绑定组。" }
+  n10@{ shape: rounded, label: "**AtmosphereBindGroups**<br/>保存大气查找表及天空绘制的绑定组。" }
   class n10 node_component
-  n11@{ shape: fr-rect, label: "**atmosphere::AtmospherePlugin**<br/>准备大气散射与环境光渲染数据。" }
+  n11@{ shape: fr-rect, label: "**AtmospherePlugin**<br/>准备大气散射与环境光渲染数据。" }
   class n11 node_plugin
-  n12@{ shape: rounded, label: "**components::Camera3d**<br/>来自crate:bevy​_​camera ↗：启用三维相机<br/>主渲染流程。" }
+  n12@{ shape: rounded, label: "**Camera3d**<br/>来自crate:bevy​_​camera ↗：启用三维相机<br/>主渲染流程。" }
   class n12 node_component
   class n12 external_node
-  n13@{ shape: rounded, label: "**atmosphere::AtmosphereSettings**<br/>配置大气查找表尺寸和积分采样。" }
+  n13@{ shape: rounded, label: "**AtmosphereSettings**<br/>配置大气查找表尺寸和积分采样。" }
   class n13 node_component
-  n14@{ shape: rounded, label: "**atmosphere::Atmosphere**<br/>来自crate:bevy​_​light ↗：描述行星半<br/>径、地表反照率与大气介质。" }
+  n14@{ shape: rounded, label: "**Atmosphere**<br/>来自crate:bevy​_​light ↗：描述行星半<br/>径、地表反照率与大气介质。" }
   class n14 node_component
   class n14 external_node
   n0 e0@-->|"移除"| n1
@@ -116,7 +116,7 @@ flowchart LR
   e4@{ curve: basis }
   e5@{ curve: basis }
   e6@{ curve: basis }
-  e7@{ curve: basis }
+  e7@{ curve: bumpX }
   e8@{ curve: basis }
   e9@{ curve: basis }
   e11@{ curve: basis }

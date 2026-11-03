@@ -37,9 +37,9 @@ flowchart LR
   classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**dynamics::integrator::**<br/>**CustomPositionIntegration**<br/>将位姿积分交给自定义逻辑。" }
+  n0@{ shape: rounded, label: "**CustomPositionIntegration**<br/>将位姿积分交给自定义逻辑。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**avian3d::dynamics::solver::solver​_​**<br/>**body::plugin::prepare​_​solver​_​bodies**<br/>把 ECS 刚体状态准备成子步求解数据。" }
+  n1@{ shape: rounded, label: "**prepare​_​solver​_​bodies**<br/>把 ECS 刚体状态准备成子步求解数据。" }
   class n1 node_system
   n0 e0@-->|"存在性约束"| n1
   class e0 edge_reference

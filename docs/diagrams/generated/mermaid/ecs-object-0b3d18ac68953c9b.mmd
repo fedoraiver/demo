@@ -39,41 +39,41 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: cyl, label: "**EguiGlobalSettings**<br/>配置 Egui 上下文创建和全局输入集成。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​egui::output::process​_​output​_​**<br/>**system**<br/>拆分 Egui 绘制输出并执行平台命令。" }
+  n1@{ shape: rounded, label: "**process​_​output​_​system**<br/>拆分 Egui 绘制输出并执行平台命令。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**#lt;bevy​_​egui::EguiPlugin as bevy​_​app::**<br/>**plugin::Plugin#gt;::build::{{closure}}**<br/>判断启动时是否自动创建主 Egui 上下文。" }
+  n2@{ shape: rounded, label: "**build::{{closure}}**<br/>判断启动时是否自动创建主 Egui 上下文。" }
   class n2 node_system
-  n3@{ shape: fr-rect, label: "**bevy​_​egui::input​_​system​_​is​_​**<br/>**enabled#lt;#lt;bevy​_​egui::EguiPlugin as**<br/>**bevy​_​app::plugin::Plugin#gt;::build::**<br/>**{{closure}}#gt;::{{closure}}**<br/>按 Egui 全局配置判断输入处理是否启<br/>用。；判断是否处理非窗口指针移动。" }
+  n3@{ shape: fr-rect, label: "**input​_​system​_​is​_​enabled::{{closure}}**<br/>按 Egui 全局配置判断输入处理是否启<br/>用。；判断是否处理非窗口指针移动。" }
   class n3 node_system_group
-  n4@{ shape: rounded, label: "**#lt;bevy​_​egui::EguiPlugin as bevy​_​app::**<br/>**plugin::Plugin#gt;::build::{{closure}}**<br/>判断是否处理 Egui 输入法输出。" }
+  n4@{ shape: rounded, label: "**build::{{closure}}**<br/>判断是否处理 Egui 输入法输出。" }
   class n4 node_system
-  n5@{ shape: rounded, label: "**#lt;bevy​_​egui::EguiPlugin as bevy​_​app::**<br/>**plugin::Plugin#gt;::build::{{closure}}**<br/>判断是否由 Egui 吸收底层输入。" }
+  n5@{ shape: rounded, label: "**build::{{closure}}**<br/>判断是否由 Egui 吸收底层输入。" }
   class n5 node_system
-  n6@{ shape: fr-rect, label: "**bevy​_​egui::input​_​system​_​is​_​**<br/>**enabled#lt;#lt;bevy​_​egui::EguiPlugin as**<br/>**bevy​_​app::plugin::Plugin#gt;::build::**<br/>**{{closure}}#gt;::{{closure}}**<br/>按 Egui 全局配置判断输入处理是否启<br/>用。；判断是否处理窗口指针移动或按钮。" }
+  n6@{ shape: fr-rect, label: "**input​_​system​_​is​_​enabled::{{closure}}**<br/>按 Egui 全局配置判断输入处理是否启<br/>用。；判断是否处理窗口指针移动或按钮。" }
   class n6 node_system_group
-  n7@{ shape: fr-rect, label: "**bevy​_​egui::input​_​system​_​is​_​**<br/>**enabled#lt;#lt;bevy​_​egui::EguiPlugin as**<br/>**bevy​_​app::plugin::Plugin#gt;::build::**<br/>**{{closure}}#gt;::{{closure}}**<br/>按 Egui 全局配置判断输入处理是否启<br/>用。；判断是否向 Egui 转换键盘输入。" }
+  n7@{ shape: fr-rect, label: "**input​_​system​_​is​_​enabled::{{closure}}**<br/>按 Egui 全局配置判断输入处理是否启<br/>用。；判断是否向 Egui 转换键盘输入。" }
   class n7 node_system_group
-  n8@{ shape: fr-rect, label: "**bevy​_​egui::input​_​system​_​is​_​**<br/>**enabled#lt;#lt;bevy​_​egui::EguiPlugin as**<br/>**bevy​_​app::plugin::Plugin#gt;::build::**<br/>**{{closure}}#gt;::{{closure}}**<br/>判断是否转换 Egui 捏合缩放输入。；按<br/>Egui 全局配置判断输入处理是否启用。" }
+  n8@{ shape: fr-rect, label: "**input​_​system​_​is​_​enabled::{{closure}}**<br/>判断是否转换 Egui 捏合缩放输入。；按<br/>Egui 全局配置判断输入处理是否启用。" }
   class n8 node_system_group
-  n9@{ shape: fr-rect, label: "**bevy​_​egui::input​_​system​_​is​_​**<br/>**enabled#lt;#lt;bevy​_​egui::EguiPlugin as**<br/>**bevy​_​app::plugin::Plugin#gt;::build::**<br/>**{{closure}}#gt;::{{closure}}**<br/>判断是否向 Egui 转换滚轮消息。；按<br/>Egui 全局配置判断输入处理是否启用。" }
+  n9@{ shape: fr-rect, label: "**input​_​system​_​is​_​enabled::{{closure}}**<br/>判断是否向 Egui 转换滚轮消息。；按<br/>Egui 全局配置判断输入处理是否启用。" }
   class n9 node_system_group
-  n10@{ shape: fr-rect, label: "**bevy​_​egui::input​_​system​_​is​_​**<br/>**enabled#lt;#lt;bevy​_​egui::EguiPlugin as**<br/>**bevy​_​app::plugin::Plugin#gt;::build::**<br/>**{{closure}}#gt;::{{closure}}**<br/>按 Egui 全局配置判断输入处理是否启<br/>用。；判断是否写入 Egui 修饰键状态。" }
+  n10@{ shape: fr-rect, label: "**input​_​system​_​is​_​enabled::{{closure}}**<br/>按 Egui 全局配置判断输入处理是否启<br/>用。；判断是否写入 Egui 修饰键状态。" }
   class n10 node_system_group
-  n11@{ shape: fr-rect, label: "**bevy​_​egui::input​_​system​_​is​_​**<br/>**enabled#lt;#lt;bevy​_​egui::EguiPlugin as**<br/>**bevy​_​app::plugin::Plugin#gt;::build::**<br/>**{{closure}}#gt;::{{closure}}**<br/>按 Egui 全局配置判断输入处理是否启<br/>用。；判断是否处理非窗口触摸消息。" }
+  n11@{ shape: fr-rect, label: "**input​_​system​_​is​_​enabled::{{closure}}**<br/>按 Egui 全局配置判断输入处理是否启<br/>用。；判断是否处理非窗口触摸消息。" }
   class n11 node_system_group
-  n12@{ shape: fr-rect, label: "**bevy​_​egui::input​_​system​_​is​_​**<br/>**enabled#lt;#lt;bevy​_​egui::EguiPlugin as**<br/>**bevy​_​app::plugin::Plugin#gt;::build::**<br/>**{{closure}}#gt;::{{closure}}**<br/>按 Egui 全局配置判断输入处理是否启<br/>用。；判断是否转换窗口触摸消息。" }
+  n12@{ shape: fr-rect, label: "**input​_​system​_​is​_​enabled::{{closure}}**<br/>按 Egui 全局配置判断输入处理是否启<br/>用。；判断是否转换窗口触摸消息。" }
   class n12 node_system_group
-  n13@{ shape: rounded, label: "**bevy​_​egui::input::write​_​window​_​**<br/>**touch​_​messages​_​system**<br/>把窗口触摸转换为 Egui 指针和触摸事件。" }
+  n13@{ shape: rounded, label: "**write​_​window​_​touch​_​messages​_​system**<br/>把窗口触摸转换为 Egui 指针和触摸事件。" }
   class n13 node_system
-  n14@{ shape: rounded, label: "**#lt;bevy​_​egui::EguiPlugin as bevy​_​app::**<br/>**plugin::Plugin#gt;::build::{{closure}}**<br/>判断是否读取 Egui 输入法输入。" }
+  n14@{ shape: rounded, label: "**build::{{closure}}**<br/>判断是否读取 Egui 输入法输入。" }
   class n14 node_system
-  n15@{ shape: fr-rect, label: "**bevy​_​egui::input​_​system​_​is​_​**<br/>**enabled#lt;#lt;bevy​_​egui::EguiPlugin as**<br/>**bevy​_​app::plugin::Plugin#gt;::build::**<br/>**{{closure}}#gt;::{{closure}}**<br/>判断是否向 Egui 转换输入法消息。；按<br/>Egui 全局配置判断输入处理是否启用。" }
+  n15@{ shape: fr-rect, label: "**input​_​system​_​is​_​enabled::{{closure}}**<br/>判断是否向 Egui 转换输入法消息。；按<br/>Egui 全局配置判断输入处理是否启用。" }
   class n15 node_system_group
-  n16@{ shape: rounded, label: "**#lt;bevy​_​egui::EguiPlugin as bevy​_​app::**<br/>**plugin::Plugin#gt;::build::{{closure}}**<br/>判断更新时是否自动创建主 Egui 上下文。" }
+  n16@{ shape: rounded, label: "**build::{{closure}}**<br/>判断更新时是否自动创建主 Egui 上下文。" }
   class n16 node_system
-  n17@{ shape: rounded, label: "**bevy​_​egui::input::write​_​pointer​_​**<br/>**moved​_​and​_​button​_​messages​_​system**<br/>按原生事件顺序转换 Egui 指针输入。" }
+  n17@{ shape: rounded, label: "**write​_​pointer​_​moved​_​and​_​button​_​**<br/>**messages​_​system**<br/>按原生事件顺序转换 Egui 指针输入。" }
   class n17 node_system
-  n18@{ shape: fr-rect, label: "**bevy​_​egui::input​_​system​_​is​_​**<br/>**enabled#lt;#lt;bevy​_​egui::EguiPlugin as**<br/>**bevy​_​app::plugin::Plugin#gt;::build::**<br/>**{{closure}}#gt;::{{closure}}**<br/>判断是否向 Egui 转换文件拖放。；按<br/>Egui 全局配置判断输入处理是否启用。" }
+  n18@{ shape: fr-rect, label: "**input​_​system​_​is​_​enabled::{{closure}}**<br/>判断是否向 Egui 转换文件拖放。；按<br/>Egui 全局配置判断输入处理是否启用。" }
   class n18 node_system_group
   n0 e0@--> n1
   class e0 edge_read

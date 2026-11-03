@@ -43,68 +43,68 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
   subgraph layout_card_n0[" "]
-  n0@{ shape: hex, label: "**avian3d::collider​_​tree::update::add​_​**<br/>**to​_​tree​_​on**<br/>将可用碰撞体加入空间树。" }
+  n0@{ shape: hex, label: "**add​_​to​_​tree​_​on**<br/>将可用碰撞体加入空间树。" }
   class n0 node_observer
   end
   style layout_card_n0 fill:none,stroke:none
   subgraph layout_card_n1[" "]
-  n1@{ shape: rounded, label: "**collider​_​tree::proxy​_​key::**<br/>**ColliderTreeProxyKey**<br/>定位特定碰撞体树中的代理。" }
+  n1@{ shape: rounded, label: "**ColliderTreeProxyKey**<br/>定位特定碰撞体树中的代理。" }
   class n1 node_component
   end
   style layout_card_n1 fill:none,stroke:none
   subgraph layout_card_n2[" "]
-  n2@{ shape: rounded, label: "**dynamics::rigid​_​body::RigidBody**<br/>选择动态、静态或运动学刚体行为。" }
+  n2@{ shape: rounded, label: "**RigidBody**<br/>选择动态、静态或运动学刚体行为。" }
   class n2 node_component
   end
   style layout_card_n2 fill:none,stroke:none
   subgraph layout_card_n3[" "]
-  n3@{ shape: rounded, label: "**collision::collider::collider​_​**<br/>**hierarchy::ColliderOf**<br/>指定碰撞体附着的刚体。" }
+  n3@{ shape: rounded, label: "**ColliderOf**<br/>指定碰撞体附着的刚体。" }
   class n3 node_component
   end
   style layout_card_n3 fill:none,stroke:none
   subgraph layout_card_n4[" "]
-  n4@{ shape: rounded, label: "**collision::collider::layers::**<br/>**CollisionLayers**<br/>声明碰撞体所属层和可交互层。" }
+  n4@{ shape: rounded, label: "**CollisionLayers**<br/>声明碰撞体所属层和可交互层。" }
   class n4 node_component
   end
   style layout_card_n4 fill:none,stroke:none
   subgraph layout_card_n5[" "]
-  n5@{ shape: cyl, label: "**collider​_​tree::update::MovedProxies**<br/>收集需要重检碰撞对的移动代理。" }
+  n5@{ shape: cyl, label: "**MovedProxies**<br/>收集需要重检碰撞对的移动代理。" }
   class n5 node_resource
   end
   style layout_card_n5 fill:none,stroke:none
   subgraph layout_card_n6[" "]
-  n6@{ shape: stadium, label: "**bevy​_​ecs::lifecycle::DiscardEvent**<br/>来自crate:bevy​_​ecs ↗：在组件旧值丢弃<br/>前发出通知。" }
+  n6@{ shape: stadium, label: "**DiscardEvent**<br/>来自crate:bevy​_​ecs ↗：在组件旧值丢弃<br/>前发出通知。" }
   class n6 node_event
   class n6 external_node
   end
   style layout_card_n6 fill:none,stroke:none
   subgraph layout_card_n7[" "]
-  n7@{ shape: rounded, label: "**collision::hooks::**<br/>**ActiveCollisionHooks**<br/>选择实体启用的碰撞处理钩子。" }
+  n7@{ shape: rounded, label: "**ActiveCollisionHooks**<br/>选择实体启用的碰撞处理钩子。" }
   class n7 node_component
   end
   style layout_card_n7 fill:none,stroke:none
   subgraph layout_card_n8[" "]
-  n8@{ shape: rounded, label: "**collision::collider::Sensor**<br/>将碰撞体设为不阻挡运动的触发器。" }
+  n8@{ shape: rounded, label: "**Sensor**<br/>将碰撞体设为不阻挡运动的触发器。" }
   class n8 node_component
   end
   style layout_card_n8 fill:none,stroke:none
   subgraph layout_card_n9[" "]
-  n9@{ shape: rounded, label: "**collision::collider::EnlargedAabb**<br/>保存用于树更新的扩大包围盒。" }
+  n9@{ shape: rounded, label: "**EnlargedAabb**<br/>保存用于树更新的扩大包围盒。" }
   class n9 node_component
   end
   style layout_card_n9 fill:none,stroke:none
   subgraph layout_card_n10[" "]
-  n10@{ shape: rounded, label: "**collision::collision​_​events::**<br/>**CollisionEventsEnabled**<br/>为此碰撞体开启接触开始与结束事件。" }
+  n10@{ shape: rounded, label: "**CollisionEventsEnabled**<br/>为此碰撞体开启接触开始与结束事件。" }
   class n10 node_component
   end
   style layout_card_n10 fill:none,stroke:none
   subgraph layout_card_n11[" "]
-  n11@{ shape: cyl, label: "**collider​_​tree::ColliderTrees**<br/>按运动类别组织碰撞体加速树。" }
+  n11@{ shape: cyl, label: "**ColliderTrees**<br/>按运动类别组织碰撞体加速树。" }
   class n11 node_resource
   end
   style layout_card_n11 fill:none,stroke:none
   subgraph layout_card_n12[" "]
-  n12@{ shape: rounded, label: "**dynamics::rigid​_​body::**<br/>**RigidBodyDisabled**<br/>暂停刚体求解和附着关节。" }
+  n12@{ shape: rounded, label: "**RigidBodyDisabled**<br/>暂停刚体求解和附着关节。" }
   class n12 node_component
   end
   style layout_card_n12 fill:none,stroke:none

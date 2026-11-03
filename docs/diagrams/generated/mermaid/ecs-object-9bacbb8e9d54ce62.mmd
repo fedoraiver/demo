@@ -40,57 +40,57 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​render::erased​_​render​_​asset::**<br/>**prepare​_​erased​_​assets#lt;bevy​_​pbr::**<br/>**mesh​_​material::MeshMaterial3d#lt;bevy​_​**<br/>**pbr::pbr​_​material::**<br/>**StandardMaterial#gt;#gt;**<br/>在上传预算内准备擦除资产并管理重试卸载。" }
+  n0@{ shape: rounded, label: "**prepare​_​erased​_​assets**<br/>在上传预算内准备擦除资产并管理重试卸载。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**bevy​_​render::render​_​phase::**<br/>**DrawFunctions#lt;core​_​3d::Opaque3d#gt;**<br/>注册并查询指定绘制项的绘制函数。" }
+  n1@{ shape: cyl, label: "**DrawFunctions#lt;Opaque3d#gt;**<br/>注册并查询指定绘制项的绘制函数。" }
   class n1 node_resource
-  n2@{ shape: cyl, label: "**bevy​_​render::render​_​asset::**<br/>**RenderAssets#lt;bevy​_​render::storage::**<br/>**GpuShaderBuffer#gt;**<br/>按源资产身份保存 GPU 渲染表示。" }
+  n2@{ shape: cyl, label: "**RenderAssets#lt;GpuShaderBuffer#gt;**<br/>按源资产身份保存 GPU 渲染表示。" }
   class n2 node_resource
-  n3@{ shape: cyl, label: "**bevy​_​render::texture::FallbackImage**<br/>为未指定图像的绑定提供不透明白纹理。" }
+  n3@{ shape: cyl, label: "**FallbackImage**<br/>为未指定图像的绑定提供不透明白纹理。" }
   class n3 node_resource
-  n4@{ shape: cyl, label: "**bevy​_​render::render​_​phase::**<br/>**DrawFunctions#lt;bevy​_​core​_​pipeline::**<br/>**core​_​3d::Transparent3d#gt;**<br/>注册并查询指定绘制项的绘制函数。" }
+  n4@{ shape: cyl, label: "**DrawFunctions#lt;Transparent3d#gt;**<br/>注册并查询指定绘制项的绘制函数。" }
   class n4 node_resource
-  n5@{ shape: cyl, label: "**bevy​_​render::render​_​phase::**<br/>**DrawFunctions#lt;render::light::Shadow#gt;**<br/>注册并查询指定绘制项的绘制函数。" }
+  n5@{ shape: cyl, label: "**DrawFunctions#lt;Shadow#gt;**<br/>注册并查询指定绘制项的绘制函数。" }
   class n5 node_resource
-  n6@{ shape: cyl, label: "**bevy​_​render::render​_​phase::**<br/>**DrawFunctions#lt;core​_​3d::AlphaMask3d#gt;**<br/>注册并查询指定绘制项的绘制函数。" }
+  n6@{ shape: cyl, label: "**DrawFunctions#lt;AlphaMask3d#gt;**<br/>注册并查询指定绘制项的绘制函数。" }
   class n6 node_resource
-  n7@{ shape: cyl, label: "**material::MaterialShaders#lt;pbr​_​**<br/>**material::StandardMaterial#gt;**<br/>来自crate:bevy​_​pbr ↗：缓存材质已解析<br/>的着色器句柄。" }
+  n7@{ shape: cyl, label: "**MaterialShaders#lt;StandardMaterial#gt;**<br/>来自crate:bevy​_​pbr ↗：缓存材质已解析<br/>的着色器句柄。" }
   class n7 node_resource
   class n7 external_node
-  n8@{ shape: cyl, label: "**bevy​_​render::erased​_​render​_​asset::**<br/>**PrepareNextFrameAssets#lt;mesh​_​**<br/>**material::MeshMaterial3d#lt;pbr​_​**<br/>**material::StandardMaterial#gt;#gt;**<br/>保留下一帧需要继续准备的资产。" }
+  n8@{ shape: cyl, label: "**PrepareNextFrameAssets#lt;MeshMaterial3**<br/>**d#lt;StandardMaterial#gt;#gt;**<br/>保留下一帧需要继续准备的资产。" }
   class n8 node_resource
-  n9@{ shape: cyl, label: "**bevy​_​render::render​_​resource::**<br/>**PipelineCache**<br/>缓存 GPU 渲染、计算管线与待创建队列。" }
+  n9@{ shape: cyl, label: "**PipelineCache**<br/>缓存 GPU 渲染、计算管线与待创建队列。" }
   class n9 node_resource
-  n10@{ shape: cyl, label: "**material::**<br/>**DefaultOpaqueRendererMethod**<br/>来自crate:bevy​_​pbr ↗：指定不透明材质<br/>的默认渲染方式。" }
+  n10@{ shape: cyl, label: "**DefaultOpaqueRendererMethod**<br/>来自crate:bevy​_​pbr ↗：指定不透明材质<br/>的默认渲染方式。" }
   class n10 node_resource
   class n10 external_node
-  n11@{ shape: cyl, label: "**bevy​_​render::material​_​bind​_​groups::**<br/>**FallbackBuffer**<br/>为无效着色器缓冲句柄提供占位缓冲。" }
+  n11@{ shape: cyl, label: "**FallbackBuffer**<br/>为无效着色器缓冲句柄提供占位缓冲。" }
   class n11 node_resource
-  n12@{ shape: cyl, label: "**bevy​_​render::render​_​asset::**<br/>**RenderAssets#lt;bevy​_​render::texture::**<br/>**GpuImage#gt;**<br/>按源资产身份保存 GPU 渲染表示。" }
+  n12@{ shape: cyl, label: "**RenderAssets#lt;GpuImage#gt;**<br/>按源资产身份保存 GPU 渲染表示。" }
   class n12 node_resource
-  n13@{ shape: cyl, label: "**bevy​_​render::render​_​asset::**<br/>**RenderAssetBytesPerFrameLimiter**<br/>统计并限制本帧渲染资产传输字节数。" }
+  n13@{ shape: cyl, label: "**RenderAssetBytesPerFrameLimiter**<br/>统计并限制本帧渲染资产传输字节数。" }
   class n13 node_resource
-  n14@{ shape: cyl, label: "**bevy​_​render::erased​_​render​_​asset::**<br/>**ExtractedAssets#lt;mesh​_​material::**<br/>**MeshMaterial3d#lt;pbr​_​material::**<br/>**StandardMaterial#gt;#gt;**<br/>暂存本帧类型擦除资产的提取与增删记录。" }
+  n14@{ shape: cyl, label: "**ExtractedAssets#lt;MeshMaterial3d#lt;Stand**<br/>**ardMaterial#gt;#gt;**<br/>暂存本帧类型擦除资产的提取与增删记录。" }
   class n14 node_resource
-  n15@{ shape: cyl, label: "**bevy​_​render::renderer::RenderDevice**<br/>创建渲染和计算所需的 GPU 资源。" }
+  n15@{ shape: cyl, label: "**RenderDevice**<br/>创建渲染和计算所需的 GPU 资源。" }
   class n15 node_resource
   n16@{ shape: lin-rect, label: "**PrepareAssets**<br/>组织渲染数据准备与绘制排队。" }
   class n16 node_system_set
-  n17@{ shape: cyl, label: "**material​_​bind​_​groups::**<br/>**RenderMaterialBindings**<br/>按无类型材质身份查找绑定位置。" }
+  n17@{ shape: cyl, label: "**RenderMaterialBindings**<br/>按无类型材质身份查找绑定位置。" }
   class n17 node_resource
-  n18@{ shape: cyl, label: "**bevy​_​render::render​_​phase::**<br/>**DrawFunctions#lt;deferred::**<br/>**AlphaMask3dDeferred#gt;**<br/>注册并查询指定绘制项的绘制函数。" }
+  n18@{ shape: cyl, label: "**DrawFunctions#lt;AlphaMask3dDeferred#gt;**<br/>注册并查询指定绘制项的绘制函数。" }
   class n18 node_resource
-  n19@{ shape: cyl, label: "**bevy​_​render::render​_​phase::**<br/>**DrawFunctions#lt;prepass::**<br/>**AlphaMask3dPrepass#gt;**<br/>注册并查询指定绘制项的绘制函数。" }
+  n19@{ shape: cyl, label: "**DrawFunctions#lt;AlphaMask3dPrepass#gt;**<br/>注册并查询指定绘制项的绘制函数。" }
   class n19 node_resource
-  n20@{ shape: cyl, label: "**bevy​_​render::render​_​phase::**<br/>**DrawFunctions#lt;deferred::**<br/>**Opaque3dDeferred#gt;**<br/>注册并查询指定绘制项的绘制函数。" }
+  n20@{ shape: cyl, label: "**DrawFunctions#lt;Opaque3dDeferred#gt;**<br/>注册并查询指定绘制项的绘制函数。" }
   class n20 node_resource
-  n21@{ shape: cyl, label: "**bevy​_​render::render​_​phase::**<br/>**DrawFunctions#lt;prepass::**<br/>**Opaque3dPrepass#gt;**<br/>注册并查询指定绘制项的绘制函数。" }
+  n21@{ shape: cyl, label: "**DrawFunctions#lt;Opaque3dPrepass#gt;**<br/>注册并查询指定绘制项的绘制函数。" }
   class n21 node_resource
-  n22@{ shape: cyl, label: "**bevy​_​render::render​_​phase::**<br/>**DrawFunctions#lt;transmission::phase::**<br/>**Transmissive3d#gt;**<br/>注册并查询指定绘制项的绘制函数。" }
+  n22@{ shape: cyl, label: "**DrawFunctions#lt;Transmissive3d#gt;**<br/>注册并查询指定绘制项的绘制函数。" }
   class n22 node_resource
-  n23@{ shape: cyl, label: "**material​_​bind​_​groups::**<br/>**MaterialBindGroupAllocators**<br/>为材质分配绑定组并追踪引用资源。" }
+  n23@{ shape: cyl, label: "**MaterialBindGroupAllocators**<br/>为材质分配绑定组并追踪引用资源。" }
   class n23 node_resource
-  n24@{ shape: cyl, label: "**bevy​_​render::erased​_​render​_​asset::**<br/>**ErasedRenderAssets#lt;material::**<br/>**PreparedMaterial#gt;**<br/>存储源资产对应的类型擦除 GPU 表示。" }
+  n24@{ shape: cyl, label: "**ErasedRenderAssets#lt;PreparedMaterial#gt;**<br/>存储源资产对应的类型擦除 GPU 表示。" }
   class n24 node_resource
   n1 e0@--> n0
   class e0 edge_read
@@ -155,7 +155,7 @@ flowchart LR
   e13@{ curve: basis }
   e14@{ curve: basis }
   e15@{ curve: basis }
-  e16@{ curve: basis }
+  e16@{ curve: bumpX }
   e17@{ curve: basis }
   e18@{ curve: basis }
   e19@{ curve: basis }

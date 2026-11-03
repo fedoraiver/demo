@@ -44,18 +44,18 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**avian3d::dynamics::joints::joint​_​**<br/>**graph::plugin::on​_​change​_​joint​_​**<br/>**entities#lt;avian3d::dynamics::joints::**<br/>**revolute::RevoluteJoint#gt;**<br/>在关节换端后重接刚体连接图。" }
+  n0@{ shape: rounded, label: "**on​_​change​_​joint​_​entities**<br/>在关节换端后重接刚体连接图。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**bevy::bevy​_​ecs::message::**<br/>**Messages#lt;dynamics::joints::joint​_​**<br/>**graph::plugin::JointGraphChange#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n1@{ shape: cyl, label: "**Messages#lt;JointGraphChange#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n1 node_resource
   class n1 external_node
   n2@{ shape: lin-rect, label: "**First**<br/>组织一次物理模拟步的主要阶段。" }
   class n2 node_system_set
-  n3@{ shape: rounded, label: "**dynamics::joints::revolute::**<br/>**RevoluteJoint**<br/>将相对旋转限制在枢轴周围。" }
+  n3@{ shape: rounded, label: "**RevoluteJoint**<br/>将相对旋转限制在枢轴周围。" }
   class n3 node_component
-  n4@{ shape: lean-r, label: "**dynamics::joints::joint​_​graph::**<br/>**plugin::JointGraphChange**<br/>向求解器传递关节连接图变化。" }
+  n4@{ shape: lean-r, label: "**JointGraphChange**<br/>向求解器传递关节连接图变化。" }
   class n4 node_message
-  n5@{ shape: cyl, label: "**dynamics::joints::joint​_​graph::**<br/>**JointGraph**<br/>保存刚体之间的关节连接图。" }
+  n5@{ shape: cyl, label: "**JointGraph**<br/>保存刚体之间的关节连接图。" }
   class n5 node_resource
   n0 e0@-->|"赋值"| n1
   class e0 edge_write

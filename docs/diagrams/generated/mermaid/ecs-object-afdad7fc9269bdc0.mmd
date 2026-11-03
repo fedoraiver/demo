@@ -40,7 +40,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: lin-rect, label: "**Facing**<br/>固定循环后的呈现阶段，零固定步的帧也执行<br/>同一顺序。" }
   class n0 node_system_set
-  n1@{ shape: rounded, label: "**demo::first​_​person::facing::sync​_​**<br/>**character​_​facing**<br/>来自first​_​person ↗：在固定模拟前及逐<br/>帧持握目标同步前设置水平朝向，站立、横移<br/>和后退时也跟随视角。" }
+  n1@{ shape: rounded, label: "**sync​_​character​_​facing**<br/>来自first​_​person ↗：在固定模拟前及逐<br/>帧持握目标同步前设置水平朝向，站立、横移<br/>和后退时也跟随视角。" }
   class n1 node_system
   class n1 external_node
   n2@{ shape: lin-rect, label: "**UpdateEasingTick**<br/>来自crate:bevy​_​transform​_​<br/>interpolation ↗：组织变换缓动端点与帧<br/>间应用。" }

@@ -42,20 +42,20 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​pbr::render::light::extract​_​**<br/>**shadow​_​filtering​_​method**<br/>批量同步实体的阴影过滤方式。" }
+  n0@{ shape: rounded, label: "**extract​_​shadow​_​filtering​_​method**<br/>批量同步实体的阴影过滤方式。" }
   class n0 node_system
   n1@{ shape: notch-rect, label: "**Local · previous​_​len**<br/>根据上次阴影滤波配置数量预留提取容量。" }
   class n1 node_local
-  n2@{ shape: cyl, label: "**extract​_​plugin::MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
+  n2@{ shape: cyl, label: "**MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
   class n2 node_resource
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​extract::SubEntity#lt;bevy​_​**<br/>**render::RenderApp#gt;**<br/>来自crate:bevy​_​extract ↗：记录主实体<br/>对应的子世界实体。" }
+  n3@{ shape: rounded, label: "**SubEntity#lt;RenderApp#gt;**<br/>来自crate:bevy​_​extract ↗：记录主实体<br/>对应的子世界实体。" }
   class n3 node_component
   class n3 external_node
   n4@{ shape: rounded, label: "**ShadowFilteringMethod**<br/>来自crate:bevy​_​light ↗：选择相机阴影<br/>边缘的滤波方式。" }
   class n4 node_component
   class n4 external_node
-  n5@{ shape: fr-rect, label: "**bevy​_​pbr::PbrPlugin**<br/>装配物理材质与三维光照渲染。" }
+  n5@{ shape: fr-rect, label: "**PbrPlugin**<br/>装配物理材质与三维光照渲染。" }
   class n5 node_plugin
   n0 e0@-->|"可变访问"| n1
   class e0 edge_write

@@ -39,32 +39,32 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​text::InlineBox**<br/>描述与文字同行排版的盒子尺寸和流内、流外<br/>行为" }
+  n0@{ shape: rounded, label: "**InlineBox**<br/>描述与文字同行排版的盒子尺寸和流内、流外<br/>行为" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​ui::accessibility::image​_​**<br/>**changed**<br/>来自crate:bevy​_​ui ↗：为非按钮图像生成<br/>或更新无障碍标签。" }
+  n1@{ shape: rounded, label: "**image​_​changed**<br/>来自crate:bevy​_​ui ↗：为非按钮图像生成<br/>或更新无障碍标签。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​ui::widget::text::measure​_​text​_​**<br/>**system**<br/>来自crate:bevy​_​ui ↗：在文本变化后更新<br/>内容测量并安排文字重排。" }
+  n2@{ shape: rounded, label: "**measure​_​text​_​system**<br/>来自crate:bevy​_​ui ↗：在文本变化后更新<br/>内容测量并安排文字重排。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​text::text::detect​_​text​_​needs​_​**<br/>**rerender**<br/>把文字段和层级变化标为需要重绘。" }
+  n3@{ shape: rounded, label: "**detect​_​text​_​needs​_​rerender**<br/>把文字段和层级变化标为需要重绘。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**bevy​_​ui::widget::inline​_​image::**<br/>**update​_​inline​_​image​_​boxes**<br/>来自crate:bevy​_​ui ↗：把内联图像尺寸同<br/>步到文本排版盒。" }
+  n4@{ shape: rounded, label: "**update​_​inline​_​image​_​boxes**<br/>来自crate:bevy​_​ui ↗：把内联图像尺寸同<br/>步到文本排版盒。" }
   class n4 node_system
   class n4 external_node
-  n5@{ shape: rounded, label: "**bevy​_​sprite::text2d::update​_​text2d​_​**<br/>**layout**<br/>来自crate:bevy​_​sprite ↗：重新排版变化<br/>的二维文字并准备字形。" }
+  n5@{ shape: rounded, label: "**update​_​text2d​_​layout**<br/>来自crate:bevy​_​sprite ↗：重新排版变化<br/>的二维文字并准备字形。" }
   class n5 node_system
   class n5 external_node
-  n6@{ shape: rounded, label: "**bevy​_​ui::accessibility::label​_​**<br/>**changed**<br/>来自crate:bevy​_​ui ↗：把标签子树文字写<br/>入无障碍节点。" }
+  n6@{ shape: rounded, label: "**label​_​changed**<br/>来自crate:bevy​_​ui ↗：把标签子树文字写<br/>入无障碍节点。" }
   class n6 node_system
   class n6 external_node
-  n7@{ shape: rounded, label: "**bevy​_​ui::accessibility::button​_​**<br/>**changed**<br/>来自crate:bevy​_​ui ↗：为按钮生成或更新<br/>无障碍角色与文本标签。" }
+  n7@{ shape: rounded, label: "**button​_​changed**<br/>来自crate:bevy​_​ui ↗：为按钮生成或更新<br/>无障碍角色与文本标签。" }
   class n7 node_system
   class n7 external_node
-  n8@{ shape: rounded, label: "**bevy​_​ui​_​render::extract​_​uinode​_​**<br/>**changes**<br/>来自crate:bevy​_​ui​_​render ↗：使变化或<br/>移除的 UI 数据失效并清理旧渲染实体。" }
+  n8@{ shape: rounded, label: "**extract​_​uinode​_​changes**<br/>来自crate:bevy​_​ui​_​render ↗：使变化或<br/>移除的 UI 数据失效并清理旧渲染实体。" }
   class n8 node_system
   class n8 external_node
-  n9@{ shape: rounded, label: "**bevy​_​ui​_​render::extract​_​inline​_​**<br/>**images**<br/>来自crate:bevy​_​ui​_​render ↗：把文字行<br/>内图像提取为 UI 绘制项。" }
+  n9@{ shape: rounded, label: "**extract​_​inline​_​images**<br/>来自crate:bevy​_​ui​_​render ↗：把文字行<br/>内图像提取为 UI 绘制项。" }
   class n9 node_system
   class n9 external_node
   n0 e0@--> n1

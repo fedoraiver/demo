@@ -45,39 +45,39 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​ui::update::propagate​_​ui​_​**<br/>**target​_​cameras**<br/>为 UI 根配置目标相机和视口信息传播源。" }
+  n0@{ shape: rounded, label: "**propagate​_​ui​_​target​_​cameras**<br/>为 UI 根配置目标相机和视口信息传播源。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**bevy​_​ui::UiScale**<br/>统一缩放 UI 的固定尺寸值。" }
+  n1@{ shape: cyl, label: "**UiScale**<br/>统一缩放 UI 的固定尺寸值。" }
   class n1 node_resource
-  n2@{ shape: rounded, label: "**bevy​_​app::Propagate#lt;ui​_​node::**<br/>**ComputedUiRenderTargetInfo#gt;**<br/>来自crate:bevy​_​app ↗：从当前实体向直<br/>接及间接关系目标传播内部组件值" }
+  n2@{ shape: rounded, label: "**Propagate#lt;ComputedUiRenderTargetInfo**<br/>**#gt;**<br/>来自crate:bevy​_​app ↗：从当前实体向直<br/>接及间接关系目标传播内部组件值" }
   class n2 node_component
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​camera::RenderTarget**<br/>来自crate:bevy​_​camera ↗：指定相机输出<br/>的窗口、图像或纹理。" }
+  n3@{ shape: rounded, label: "**RenderTarget**<br/>来自crate:bevy​_​camera ↗：指定相机输出<br/>的窗口、图像或纹理。" }
   class n3 node_component
   class n3 external_node
-  n4@{ shape: rounded, label: "**bevy​_​app::Propagate#lt;ui​_​node::**<br/>**ComputedUiTargetCamera#gt;**<br/>来自crate:bevy​_​app ↗：从当前实体向直<br/>接及间接关系目标传播内部组件值" }
+  n4@{ shape: rounded, label: "**Propagate#lt;ComputedUiTargetCamera#gt;**<br/>来自crate:bevy​_​app ↗：从当前实体向直<br/>接及间接关系目标传播内部组件值" }
   class n4 node_component
   class n4 external_node
-  n5@{ shape: rounded, label: "**ui​_​node::UiTargetCamera**<br/>为 UI 根指定渲染目标相机。" }
+  n5@{ shape: rounded, label: "**UiTargetCamera**<br/>为 UI 根指定渲染目标相机。" }
   class n5 node_component
-  n6@{ shape: rounded, label: "**window::PrimaryWindow**<br/>来自crate:bevy​_​window ↗：标识唯一的主<br/>窗口" }
+  n6@{ shape: rounded, label: "**PrimaryWindow**<br/>来自crate:bevy​_​window ↗：标识唯一的主<br/>窗口" }
   class n6 node_component
   class n6 external_node
-  n7@{ shape: fr-rect, label: "**bevy​_​ui::UiPlugin**<br/>建立界面布局与内容更新基础。" }
+  n7@{ shape: fr-rect, label: "**UiPlugin**<br/>建立界面布局与内容更新基础。" }
   class n7 node_plugin
   n8@{ shape: lin-rect, label: "**Prepare**<br/>组织界面交互、布局与堆叠更新。" }
   class n8 node_system_set
-  n9@{ shape: rounded, label: "**bevy​_​ecs::hierarchy::Children**<br/>来自crate:bevy​_​ecs ↗：保存以<br/>ChildOf 指向当前父实体的子实体集合" }
+  n9@{ shape: rounded, label: "**Children**<br/>来自crate:bevy​_​ecs ↗：保存以<br/>ChildOf 指向当前父实体的子实体集合" }
   class n9 node_component
   class n9 external_node
-  n10@{ shape: rounded, label: "**bevy​_​camera::Camera**<br/>来自crate:bevy​_​camera ↗：配置相机视<br/>口、输出目标和渲染顺序。" }
+  n10@{ shape: rounded, label: "**Camera**<br/>来自crate:bevy​_​camera ↗：配置相机视<br/>口、输出目标和渲染顺序。" }
   class n10 node_component
   class n10 external_node
-  n11@{ shape: rounded, label: "**bevy​_​ui::Node**<br/>声明 UI 节点的布局规则。" }
+  n11@{ shape: rounded, label: "**Node**<br/>声明 UI 节点的布局规则。" }
   class n11 node_component
-  n12@{ shape: rounded, label: "**ui​_​node::IsDefaultUiCamera**<br/>优先选择一台默认 UI 相机。" }
+  n12@{ shape: rounded, label: "**IsDefaultUiCamera**<br/>优先选择一台默认 UI 相机。" }
   class n12 node_component
-  n13@{ shape: rounded, label: "**bevy​_​ecs::hierarchy::ChildOf**<br/>来自crate:bevy​_​ecs ↗：保存当前实体的<br/>父实体身份" }
+  n13@{ shape: rounded, label: "**ChildOf**<br/>来自crate:bevy​_​ecs ↗：保存当前实体的<br/>父实体身份" }
   class n13 node_component
   class n13 external_node
   n14@{ shape: lin-rect, label: "**TransformGizmoRenderStep**<br/>来自crate:bevy​_​app ↗：准备变换操纵器<br/>的网格和显示变换。" }

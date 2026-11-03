@@ -38,13 +38,13 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**ssr::**<br/>**ScreenSpaceReflectionsPipelineId**<br/>标识视图需要的屏幕空间反射管线。" }
+  n0@{ shape: rounded, label: "**ScreenSpaceReflectionsPipelineId**<br/>标识视图需要的屏幕空间反射管线。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​pbr::ssr::prepare​_​ssr​_​pipelines**<br/>为具备反射及深度、延迟预通道的视图选择管<br/>线。" }
+  n1@{ shape: rounded, label: "**prepare​_​ssr​_​pipelines**<br/>为具备反射及深度、延迟预通道的视图选择管<br/>线。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​pbr::ssr::screen​_​space​_​**<br/>**reflections**<br/>采样场景颜色、深度与蓝噪声绘制屏幕空间反<br/>射。" }
+  n2@{ shape: rounded, label: "**screen​_​space​_​reflections**<br/>采样场景颜色、深度与蓝噪声绘制屏幕空间反<br/>射。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​extract::extract​_​component::**<br/>**extract​_​components#lt;bevy​_​pbr::ssr::**<br/>**ScreenSpaceReflections, bevy​_​**<br/>**render::RenderApp, ()#gt;**<br/>来自crate:bevy​_​extract ↗：批量同步或<br/>移除子世界的目标组件。" }
+  n3@{ shape: rounded, label: "**extract​_​components**<br/>来自crate:bevy​_​extract ↗：批量同步或<br/>移除子世界的目标组件。" }
   class n3 node_system
   class n3 external_node
   n1 e0@-->|"插入"| n0

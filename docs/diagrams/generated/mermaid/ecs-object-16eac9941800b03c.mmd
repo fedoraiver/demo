@@ -38,13 +38,13 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**ui​_​texture​_​slice​_​pipeline::**<br/>**UiTextureSlicePipeline**<br/>提供 UI 纹理切片的资源布局和着色器。" }
+  n0@{ shape: cyl, label: "**UiTextureSlicePipeline**<br/>提供 UI 纹理切片的资源布局和着色器。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​ui​_​render::ui​_​texture​_​slice​_​**<br/>**pipeline::init​_​ui​_​texture​_​slice​_​**<br/>**pipeline**<br/>建立 UI 图像切片的视图和纹理管线资源。" }
+  n1@{ shape: rounded, label: "**init​_​ui​_​texture​_​slice​_​pipeline**<br/>建立 UI 图像切片的视图和纹理管线资源。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​ui​_​render::ui​_​texture​_​slice​_​**<br/>**pipeline::prepare​_​ui​_​slices**<br/>为 UI 切片生成裁剪几何并合并图像批次。" }
+  n2@{ shape: rounded, label: "**prepare​_​ui​_​slices**<br/>为 UI 切片生成裁剪几何并合并图像批次。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​ui​_​render::ui​_​texture​_​slice​_​**<br/>**pipeline::queue​_​ui​_​slices**<br/>将 UI 图像切片排入对应相机透明阶段。" }
+  n3@{ shape: rounded, label: "**queue​_​ui​_​slices**<br/>将 UI 图像切片排入对应相机透明阶段。" }
   class n3 node_system
   n1 e0@-->|"插入"| n0
   class e0 edge_write

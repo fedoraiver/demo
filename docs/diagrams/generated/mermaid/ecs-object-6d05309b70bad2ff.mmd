@@ -45,39 +45,39 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​winit::system::changed​_​windows**<br/>把窗口组件变化同步到 winit 后端。" }
+  n0@{ shape: rounded, label: "**changed​_​windows**<br/>把窗口组件变化同步到 winit 后端。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;event::**<br/>**WindowEvent#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n1@{ shape: cyl, label: "**Messages#lt;WindowEvent#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n1 node_resource
   class n1 external_node
-  n2@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;event::**<br/>**WindowScaleFactorChanged#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n2@{ shape: cyl, label: "**Messages#lt;WindowScaleFactorChanged#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n2 node_resource
   class n2 external_node
-  n3@{ shape: lean-r, label: "**event::WindowResized**<br/>来自crate:bevy​_​window ↗：通知窗口逻辑<br/>尺寸变化。" }
+  n3@{ shape: lean-r, label: "**WindowResized**<br/>来自crate:bevy​_​window ↗：通知窗口逻辑<br/>尺寸变化。" }
   class n3 node_message
   class n3 external_node
-  n4@{ shape: rounded, label: "**window::OnMonitor**<br/>来自crate:bevy​_​window ↗：保存窗口当前<br/>所在显示器的关系目标" }
+  n4@{ shape: rounded, label: "**OnMonitor**<br/>来自crate:bevy​_​window ↗：保存窗口当前<br/>所在显示器的关系目标" }
   class n4 node_component
   class n4 external_node
-  n5@{ shape: lean-r, label: "**event::WindowScaleFactorChanged**<br/>来自crate:bevy​_​window ↗：通知窗口显示<br/>缩放比例变化。" }
+  n5@{ shape: lean-r, label: "**WindowScaleFactorChanged**<br/>来自crate:bevy​_​window ↗：通知窗口显示<br/>缩放比例变化。" }
   class n5 node_message
   class n5 external_node
-  n6@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;event::**<br/>**WindowResized#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n6@{ shape: cyl, label: "**Messages#lt;WindowResized#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n6 node_resource
   class n6 external_node
-  n7@{ shape: cyl, label: "**winit​_​monitors::WinitMonitors**<br/>保存 Winit 显示器句柄与对应 Bevy 实体<br/>的映射" }
+  n7@{ shape: cyl, label: "**WinitMonitors**<br/>保存 Winit 显示器句柄与对应 Bevy 实体<br/>的映射" }
   class n7 node_resource
   n8@{ shape: fr-rect, label: "**WinitPlugin**<br/>接入原生窗口、输入事件与事件循环。" }
   class n8 node_plugin
-  n9@{ shape: rounded, label: "**bevy​_​winit::system::changed​_​cursor​_​**<br/>**options**<br/>把光标配置变化同步到原生窗口。" }
+  n9@{ shape: rounded, label: "**changed​_​cursor​_​options**<br/>把光标配置变化同步到原生窗口。" }
   class n9 node_system
-  n10@{ shape: lean-r, label: "**event::WindowEvent**<br/>来自crate:bevy​_​window ↗：按顺序汇集窗<br/>口与输入消息。" }
+  n10@{ shape: lean-r, label: "**WindowEvent**<br/>来自crate:bevy​_​window ↗：按顺序汇集窗<br/>口与输入消息。" }
   class n10 node_message
   class n10 external_node
-  n11@{ shape: rounded, label: "**window::Window**<br/>来自crate:bevy​_​window ↗：保存窗口的呈<br/>现模式、位置、分辨率、标题、全屏及平台行<br/>为配置" }
+  n11@{ shape: rounded, label: "**Window**<br/>来自crate:bevy​_​window ↗：保存窗口的呈<br/>现模式、位置、分辨率、标题、全屏及平台行<br/>为配置" }
   class n11 node_component
   class n11 external_node
-  n12@{ shape: rounded, label: "**system::CachedWindow**<br/>缓存上次同步到原生窗口的 Window 状态" }
+  n12@{ shape: rounded, label: "**CachedWindow**<br/>缓存上次同步到原生窗口的 Window 状态" }
   class n12 node_component
   n0 e0@-->|"可变访问"| n1
   class e0 edge_write

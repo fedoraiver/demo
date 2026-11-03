@@ -39,11 +39,11 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**demo::first​_​person::resume​_​capture**<br/>重置光标捕获并丢弃自由光标阶段位移。" }
+  n0@{ shape: rounded, label: "**resume​_​capture**<br/>重置光标捕获并丢弃自由光标阶段位移。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**first​_​person::MouseLookState**<br/>每个相机的捕获状态；恢复捕获的第一帧跳过<br/>自由光标位移。" }
+  n1@{ shape: rounded, label: "**MouseLookState**<br/>每个相机的捕获状态；恢复捕获的第一帧跳过<br/>自由光标位移。" }
   class n1 node_component
-  n2@{ shape: fr-rect, label: "**first​_​person::FirstPersonPlugin**<br/>注册第一人称动作、捕获、朝向与镜头，不安<br/>装输入基础设施或物理插件。" }
+  n2@{ shape: fr-rect, label: "**FirstPersonPlugin**<br/>注册第一人称动作、捕获、朝向与镜头，不安<br/>装输入基础设施或物理插件。" }
   class n2 node_plugin
   n0 e0@-->|"可变访问"| n1
   class e0 edge_write

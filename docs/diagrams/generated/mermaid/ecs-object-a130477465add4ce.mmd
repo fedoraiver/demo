@@ -38,38 +38,38 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**bevy​_​render::texture::FallbackImage**<br/>为未指定图像的绑定提供不透明白纹理。" }
+  n0@{ shape: cyl, label: "**FallbackImage**<br/>为未指定图像的绑定提供不透明白纹理。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​pbr::render::mesh​_​view​_​**<br/>**bindings::prepare​_​mesh​_​view​_​bind​_​**<br/>**groups**<br/>来自crate:bevy​_​pbr ↗：为视图绑定光<br/>照、阴影及各可选渲染效果资源。" }
+  n1@{ shape: rounded, label: "**prepare​_​mesh​_​view​_​bind​_​groups**<br/>来自crate:bevy​_​pbr ↗：为视图绑定光<br/>照、阴影及各可选渲染效果资源。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​render::erased​_​render​_​asset::**<br/>**prepare​_​erased​_​assets#lt;bevy​_​sprite​_​**<br/>**render::mesh2d::material::**<br/>**MeshMaterial2d#lt;bevy​_​sprite​_​render::**<br/>**mesh2d::color​_​material::**<br/>**ColorMaterial#gt;#gt;**<br/>在上传预算内准备擦除资产并管理重试卸载。" }
+  n2@{ shape: rounded, label: "**prepare​_​erased​_​assets**<br/>在上传预算内准备擦除资产并管理重试卸载。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​render::erased​_​render​_​asset::**<br/>**prepare​_​erased​_​assets#lt;bevy​_​pbr::**<br/>**mesh​_​material::MeshMaterial3d#lt;bevy​_​**<br/>**pbr::pbr​_​material::**<br/>**StandardMaterial#gt;#gt;**<br/>在上传预算内准备擦除资产并管理重试卸载。" }
+  n3@{ shape: rounded, label: "**prepare​_​erased​_​assets**<br/>在上传预算内准备擦除资产并管理重试卸载。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**bevy​_​render::erased​_​render​_​asset::**<br/>**prepare​_​erased​_​assets#lt;bevy​_​sprite​_​**<br/>**render::mesh2d::material::**<br/>**MeshMaterial2d#lt;bevy​_​sprite​_​render::**<br/>**tilemap​_​chunk::tilemap​_​chunk​_​**<br/>**material::TilemapChunkMaterial#gt;#gt;**<br/>在上传预算内准备擦除资产并管理重试卸载。" }
+  n4@{ shape: rounded, label: "**prepare​_​erased​_​assets**<br/>在上传预算内准备擦除资产并管理重试卸载。" }
   class n4 node_system
-  n5@{ shape: rounded, label: "**bevy​_​render::erased​_​render​_​asset::**<br/>**prepare​_​erased​_​assets#lt;bevy​_​pbr::**<br/>**mesh​_​material::MeshMaterial3d#lt;bevy​_​**<br/>**pbr::extended​_​material::**<br/>**ExtendedMaterial#lt;bevy​_​pbr::pbr​_​**<br/>**material::StandardMaterial, bevy​_​**<br/>**pbr::decal::forward::**<br/>**ForwardDecalMaterialExt#gt;#gt;#gt;**<br/>在上传预算内准备擦除资产并管理重试卸载。" }
+  n5@{ shape: rounded, label: "**prepare​_​erased​_​assets**<br/>在上传预算内准备擦除资产并管理重试卸载。" }
   class n5 node_system
-  n6@{ shape: rounded, label: "**bevy​_​sprite​_​render::render::prepare​_​**<br/>**sprite​_​view​_​bind​_​groups**<br/>来自crate:bevy​_​sprite​_​render ↗：为精<br/>灵视图绑定参数和色调映射 LUT。" }
+  n6@{ shape: rounded, label: "**prepare​_​sprite​_​view​_​bind​_​groups**<br/>来自crate:bevy​_​sprite​_​render ↗：为精<br/>灵视图绑定参数和色调映射 LUT。" }
   class n6 node_system
   class n6 external_node
-  n7@{ shape: rounded, label: "**bevy​_​core​_​pipeline::tonemapping::**<br/>**node::tonemapping**<br/>来自crate:bevy​_​core​_​pipeline ↗：为启<br/>用的 HDR 视图执行色调映射。" }
+  n7@{ shape: rounded, label: "**tonemapping**<br/>来自crate:bevy​_​core​_​pipeline ↗：为启<br/>用的 HDR 视图执行色调映射。" }
   class n7 node_system
   class n7 external_node
-  n8@{ shape: rounded, label: "**bevy​_​render::material​_​bind​_​groups::**<br/>**prepare​_​material​_​bind​_​groups**<br/>重建本帧变化材质所需的 GPU 绑定组。" }
+  n8@{ shape: rounded, label: "**prepare​_​material​_​bind​_​groups**<br/>重建本帧变化材质所需的 GPU 绑定组。" }
   class n8 node_system
-  n9@{ shape: rounded, label: "**bevy​_​core​_​pipeline::tonemapping::**<br/>**node::tonemapping**<br/>来自crate:bevy​_​core​_​pipeline ↗：为启<br/>用的 HDR 视图执行色调映射。" }
+  n9@{ shape: rounded, label: "**tonemapping**<br/>来自crate:bevy​_​core​_​pipeline ↗：为启<br/>用的 HDR 视图执行色调映射。" }
   class n9 node_system
   class n9 external_node
-  n10@{ shape: rounded, label: "**bevy​_​render::init​_​gpu​_​resource#lt;bevy​_​**<br/>**render::texture::fallback​_​image::**<br/>**FallbackImage#gt;**<br/>构造并插入渲染所需资源。" }
+  n10@{ shape: rounded, label: "**init​_​gpu​_​resource**<br/>构造并插入渲染所需资源。" }
   class n10 node_system
-  n11@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::mesh::**<br/>**prepare​_​mesh2d​_​view​_​bind​_​groups**<br/>来自crate:bevy​_​sprite​_​render ↗：为二<br/>维相机绑定视图、全局参数与色调 LUT。" }
+  n11@{ shape: rounded, label: "**prepare​_​mesh2d​_​view​_​bind​_​groups**<br/>来自crate:bevy​_​sprite​_​render ↗：为二<br/>维相机绑定视图、全局参数与色调 LUT。" }
   class n11 node_system
   class n11 external_node
-  n12@{ shape: rounded, label: "**bevy​_​render::erased​_​render​_​asset::**<br/>**prepare​_​erased​_​assets#lt;bevy​_​sprite​_​**<br/>**render::mesh2d::material::**<br/>**MeshMaterial2d#lt;bevy​_​sprite​_​render::**<br/>**sprite​_​mesh::sprite​_​mesh​_​material::**<br/>**SpriteMeshMaterial#gt;#gt;**<br/>在上传预算内准备擦除资产并管理重试卸载。" }
+  n12@{ shape: rounded, label: "**prepare​_​erased​_​assets**<br/>在上传预算内准备擦除资产并管理重试卸载。" }
   class n12 node_system
-  n13@{ shape: rounded, label: "**bevy​_​pbr::lightmap::extract​_​**<br/>**lightmaps**<br/>来自crate:bevy​_​pbr ↗：维护可见光照贴<br/>图的渲染槽位与纹理。" }
+  n13@{ shape: rounded, label: "**extract​_​lightmaps**<br/>来自crate:bevy​_​pbr ↗：维护可见光照贴<br/>图的渲染槽位与纹理。" }
   class n13 node_system
   class n13 external_node
   n0 e0@--> n1

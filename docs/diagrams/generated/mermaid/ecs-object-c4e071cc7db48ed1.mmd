@@ -41,22 +41,22 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​pbr::prepass::update​_​previous​_​**<br/>**view​_​data**<br/>记录三维及阴影视图未抖动的变换矩阵。" }
+  n0@{ shape: rounded, label: "**update​_​previous​_​view​_​data**<br/>记录三维及阴影视图未抖动的变换矩阵。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**prepass::PreviousViewData**<br/>来自crate:bevy​_​core​_​pipeline ↗：保存<br/>上一帧的相机视图与投影矩阵。" }
+  n1@{ shape: rounded, label: "**PreviousViewData**<br/>来自crate:bevy​_​core​_​pipeline ↗：保存<br/>上一帧的相机视图与投影矩阵。" }
   class n1 node_component
   class n1 external_node
-  n2@{ shape: fr-rect, label: "**prepass::PrepassPlugin**<br/>安装材质预通道处理。" }
+  n2@{ shape: fr-rect, label: "**PrepassPlugin**<br/>安装材质预通道处理。" }
   class n2 node_plugin
-  n3@{ shape: rounded, label: "**components::Camera3d**<br/>来自crate:bevy​_​camera ↗：启用三维相机<br/>主渲染流程。" }
+  n3@{ shape: rounded, label: "**Camera3d**<br/>来自crate:bevy​_​camera ↗：启用三维相机<br/>主渲染流程。" }
   class n3 node_component
   class n3 external_node
-  n4@{ shape: rounded, label: "**bevy​_​camera::Camera**<br/>来自crate:bevy​_​camera ↗：配置相机视<br/>口、输出目标和渲染顺序。" }
+  n4@{ shape: rounded, label: "**Camera**<br/>来自crate:bevy​_​camera ↗：配置相机视<br/>口、输出目标和渲染顺序。" }
   class n4 node_component
   class n4 external_node
-  n5@{ shape: rounded, label: "**render::light::ShadowView**<br/>描述阴影绘制的深度附件与通道名称。" }
+  n5@{ shape: rounded, label: "**ShadowView**<br/>描述阴影绘制的深度附件与通道名称。" }
   class n5 node_component
-  n6@{ shape: rounded, label: "**components::global​_​transform::**<br/>**GlobalTransform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>合并祖先变换后的世界空间仿射变换" }
+  n6@{ shape: rounded, label: "**GlobalTransform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>合并祖先变换后的世界空间仿射变换" }
   class n6 node_component
   class n6 external_node
   n0 e0@-->|"插入"| n1

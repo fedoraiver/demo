@@ -37,9 +37,9 @@ flowchart LR
   classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
   classDef edge_order stroke:#334155,stroke-width:2px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: lin-rect, label: "**SystemTypeSet:bevy​_​pbr::light​_​**<br/>**probe::generate::generate​_​**<br/>**environment​_​map​_​light**<br/>保留未注册系统类型的依赖端点。" }
+  n0@{ shape: lin-rect, label: "**SystemTypeSet:generate​_​environment​_​**<br/>**map​_​light**<br/>保留未注册系统类型的依赖端点。" }
   class n0 node_system_set
-  n1@{ shape: rounded, label: "**bevy​_​pbr::light​_​probe::generate::**<br/>**extract​_​generated​_​environment​_​map​_​**<br/>**entities**<br/>来自crate:bevy​_​pbr ↗：提取环境图生成<br/>所需的三张 GPU 图像。" }
+  n1@{ shape: rounded, label: "**extract​_​generated​_​environment​_​map​_​**<br/>**entities**<br/>来自crate:bevy​_​pbr ↗：提取环境图生成<br/>所需的三张 GPU 图像。" }
   class n1 node_system
   class n1 external_node
   n0 e0@-->|"先于"| n1

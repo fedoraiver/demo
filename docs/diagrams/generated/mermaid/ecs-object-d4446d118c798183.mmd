@@ -44,9 +44,9 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​light::directional​_​light::**<br/>**update​_​directional​_​light​_​frusta**<br/>从方向光级联投影更新阴影视锥。" }
+  n0@{ shape: rounded, label: "**update​_​directional​_​light​_​frusta**<br/>从方向光级联投影更新阴影视锥。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**primitives::CascadesFrusta**<br/>来自crate:bevy​_​camera ↗：保存各视图的<br/>级联阴影视锥。" }
+  n1@{ shape: rounded, label: "**CascadesFrusta**<br/>来自crate:bevy​_​camera ↗：保存各视图的<br/>级联阴影视锥。" }
   class n1 node_component
   class n1 external_node
   n2@{ shape: lin-rect, label: "**Propagate**<br/>来自crate:bevy​_​transform ↗：组织实体<br/>层级变换传播。" }
@@ -56,16 +56,16 @@ flowchart LR
   class n3 node_system_set
   n4@{ shape: fr-rect, label: "**LightPlugin**<br/>维护光源可见性与空间聚簇。" }
   class n4 node_plugin
-  n5@{ shape: rounded, label: "**bevy​_​camera::Camera**<br/>来自crate:bevy​_​camera ↗：配置相机视<br/>口、输出目标和渲染顺序。" }
+  n5@{ shape: rounded, label: "**Camera**<br/>来自crate:bevy​_​camera ↗：配置相机视<br/>口、输出目标和渲染顺序。" }
   class n5 node_component
   class n5 external_node
-  n6@{ shape: rounded, label: "**directional​_​light::DirectionalLight**<br/>配置平行方向光的颜色、照度和阴影。" }
+  n6@{ shape: rounded, label: "**DirectionalLight**<br/>配置平行方向光的颜色、照度和阴影。" }
   class n6 node_component
   n7@{ shape: lin-rect, label: "**UpdateDirectionalLightCascades**<br/>组织灯光聚簇与可见性准备。" }
   class n7 node_system_set
-  n8@{ shape: rounded, label: "**cascade::Cascades**<br/>按视图保存方向光的阴影级联。" }
+  n8@{ shape: rounded, label: "**Cascades**<br/>按视图保存方向光的阴影级联。" }
   class n8 node_component
-  n9@{ shape: rounded, label: "**bevy​_​camera::visibility::**<br/>**ViewVisibility**<br/>来自crate:bevy​_​camera ↗：记录实体是否<br/>应被提取用于渲染。" }
+  n9@{ shape: rounded, label: "**ViewVisibility**<br/>来自crate:bevy​_​camera ↗：记录实体是否<br/>应被提取用于渲染。" }
   class n9 node_component
   class n9 external_node
   n10@{ shape: lin-rect, label: "**CheckVisibility**<br/>来自crate:bevy​_​camera ↗：组织相机与实<br/>体可见性更新。" }

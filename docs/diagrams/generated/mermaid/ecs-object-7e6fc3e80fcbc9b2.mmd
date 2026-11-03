@@ -37,13 +37,13 @@ flowchart LR
   classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**render::mesh::**<br/>**MeshesToReextractNextFrame**<br/>记录因材质未准备而需要再次提取的网格。" }
+  n0@{ shape: cyl, label: "**MeshesToReextractNextFrame**<br/>记录因材质未准备而需要再次提取的网格。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​pbr::render::mesh::extract​_​**<br/>**meshes​_​for​_​gpu​_​building**<br/>增量提取变化或需重试网格到线程队列。" }
+  n1@{ shape: rounded, label: "**extract​_​meshes​_​for​_​gpu​_​building**<br/>增量提取变化或需重试网格到线程队列。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​pbr::render::mesh::collect​_​**<br/>**meshes​_​for​_​gpu​_​building**<br/>把线程提取队列整理为 GPU 网格实例和输入<br/>缓冲。" }
+  n2@{ shape: rounded, label: "**collect​_​meshes​_​for​_​gpu​_​building**<br/>把线程提取队列整理为 GPU 网格实例和输入<br/>缓冲。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​pbr::render::mesh::mark​_​all​_​**<br/>**meshes​_​for​_​reextraction**<br/>清空网格实例并把全部实体标为待重新提取。" }
+  n3@{ shape: rounded, label: "**mark​_​all​_​meshes​_​for​_​reextraction**<br/>清空网格实例并把全部实体标为待重新提取。" }
   class n3 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

@@ -43,21 +43,21 @@ flowchart LR
   n1@{ shape: lin-rect, label: "**EditableTextSystems**<br/>来自crate:bevy​_​text ↗：统一应用可编辑<br/>文字的待处理操作。" }
   class n1 node_system_set
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​ui::layout::ui​_​layout​_​system**<br/>求解 UI 布局并回写节点尺寸和二维变换。" }
+  n2@{ shape: rounded, label: "**ui​_​layout​_​system**<br/>求解 UI 布局并回写节点尺寸和二维变换。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​ui​_​widgets::scrollbar::update​_​**<br/>**scrollbar​_​thumb**<br/>来自crate:bevy​_​ui​_​widgets ↗：按内容<br/>比例与滚动位置更新滚动条滑块。" }
+  n3@{ shape: rounded, label: "**update​_​scrollbar​_​thumb**<br/>来自crate:bevy​_​ui​_​widgets ↗：按内容<br/>比例与滚动位置更新滚动条滑块。" }
   class n3 node_system
   class n3 external_node
   n4@{ shape: lin-rect, label: "**PostLayout**<br/>组织界面交互、布局与堆叠更新。" }
   class n4 node_system_set
   n5@{ shape: lin-rect, label: "**Content**<br/>组织界面交互、布局与堆叠更新。" }
   class n5 node_system_set
-  n6@{ shape: rounded, label: "**bevy​_​ui::widget::text​_​input​_​layout::**<br/>**sync​_​editable​_​text​_​viewports**<br/>在文本编辑前同步可编辑区域的视口。" }
+  n6@{ shape: rounded, label: "**sync​_​editable​_​text​_​viewports**<br/>在文本编辑前同步可编辑区域的视口。" }
   class n6 node_system
-  n7@{ shape: rounded, label: "**bevy​_​ui​_​widgets::popover::position​_​**<br/>**popover**<br/>来自crate:bevy​_​ui​_​widgets ↗：定位弹<br/>出层并同步后代的 UI 变换。" }
+  n7@{ shape: rounded, label: "**position​_​popover**<br/>来自crate:bevy​_​ui​_​widgets ↗：定位弹<br/>出层并同步后代的 UI 变换。" }
   class n7 node_system
   class n7 external_node
-  n8@{ shape: rounded, label: "**demo::ui::scroll::sync​_​settings​_​**<br/>**scrollbars**<br/>来自ui ↗：同步滚动条显隐、拾取范围与高<br/>亮。" }
+  n8@{ shape: rounded, label: "**sync​_​settings​_​scrollbars**<br/>来自ui ↗：同步滚动条显隐、拾取范围与高<br/>亮。" }
   class n8 node_system
   class n8 external_node
   n0 e0@-->|"先于"| n1

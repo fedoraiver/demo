@@ -38,11 +38,11 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**cluster::gpu::**<br/>**ViewClusteringDummyTexture**<br/>为聚簇光栅化提供可设置视口的附件。" }
+  n0@{ shape: rounded, label: "**ViewClusteringDummyTexture**<br/>为聚簇光栅化提供可设置视口的附件。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​pbr::cluster::gpu::prepare​_​**<br/>**cluster​_​dummy​_​textures**<br/>为聚簇光栅通道准备视口占位纹理。" }
+  n1@{ shape: rounded, label: "**prepare​_​cluster​_​dummy​_​textures**<br/>为聚簇光栅通道准备视口占位纹理。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​pbr::cluster::gpu::cluster​_​on​_​**<br/>**gpu**<br/>执行深度切片、计数、分配和填充的 GPU 聚<br/>簇。" }
+  n2@{ shape: rounded, label: "**cluster​_​on​_​gpu**<br/>执行深度切片、计数、分配和填充的 GPU 聚<br/>簇。" }
   class n2 node_system
   n1 e0@-->|"插入"| n0
   class e0 edge_write

@@ -37,42 +37,42 @@ flowchart LR
   classDef node_event fill:#F9F3EE,stroke:#B66B2D,stroke-width:1.6px,color:#1F3340
   classDef edge_observe stroke:#B66B2D,stroke-width:1.8px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: stadium, label: "**events::PointerDrag**<br/>通知正在拖拽的目标及累计和本次位移。" }
+  n0@{ shape: stadium, label: "**PointerDrag**<br/>通知正在拖拽的目标及累计和本次位移。" }
   class n0 node_event
-  n1@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：拖动滑<br/>条时发布连续值变化。" }
+  n1@{ shape: hex, label: "**slider​_​on​_​drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：拖动滑<br/>条时发布连续值变化。" }
   class n1 node_observer
   class n1 external_node
-  n2@{ shape: hex, label: "**bevy​_​ui​_​widgets::dialog::dialog​_​drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：按累计<br/>拖动距离移动对话框。" }
+  n2@{ shape: hex, label: "**dialog​_​drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：按累计<br/>拖动距离移动对话框。" }
   class n2 node_observer
   class n2 external_node
-  n3@{ shape: hex, label: "**bevy​_​ui​_​widgets::text​_​input::on​_​**<br/>**pointer​_​drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：随指针<br/>拖动扩展文本选择。" }
+  n3@{ shape: hex, label: "**on​_​pointer​_​drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：随指针<br/>拖动扩展文本选择。" }
   class n3 node_observer
   class n3 external_node
-  n4@{ shape: hex, label: "**bevy​_​ui​_​widgets::scrollbar::**<br/>**scrollbar​_​on​_​drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：随滑块<br/>拖动更新目标滚动位置。" }
+  n4@{ shape: hex, label: "**scrollbar​_​on​_​drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：随滑块<br/>拖动更新目标滚动位置。" }
   class n4 node_observer
   class n4 external_node
-  n5@{ shape: hex, label: "**bevy​_​ui​_​widgets::text​_​input::on​_​**<br/>**pointer​_​drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：随指针<br/>拖动扩展文本选择。" }
+  n5@{ shape: hex, label: "**on​_​pointer​_​drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：随指针<br/>拖动扩展文本选择。" }
   class n5 node_observer
   class n5 external_node
-  n6@{ shape: hex, label: "**bevy​_​ui​_​widgets::scrollbar::**<br/>**scrollbar​_​on​_​drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：随滑块<br/>拖动更新目标滚动位置。" }
+  n6@{ shape: hex, label: "**scrollbar​_​on​_​drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：随滑块<br/>拖动更新目标滚动位置。" }
   class n6 node_observer
   class n6 external_node
-  n7@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：拖动滑<br/>条时发布连续值变化。" }
+  n7@{ shape: hex, label: "**slider​_​on​_​drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：拖动滑<br/>条时发布连续值变化。" }
   class n7 node_observer
   class n7 external_node
-  n8@{ shape: hex, label: "**bevy​_​ui​_​widgets::dialog::dialog​_​drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：按累计<br/>拖动距离移动对话框。" }
+  n8@{ shape: hex, label: "**dialog​_​drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：按累计<br/>拖动距离移动对话框。" }
   class n8 node_observer
   class n8 external_node
-  n9@{ shape: hex, label: "**bevy​_​ui​_​widgets::dialog::dialog​_​drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：按累计<br/>拖动距离移动对话框。" }
+  n9@{ shape: hex, label: "**dialog​_​drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：按累计<br/>拖动距离移动对话框。" }
   class n9 node_observer
   class n9 external_node
-  n10@{ shape: hex, label: "**bevy​_​ui​_​widgets::text​_​input::on​_​**<br/>**pointer​_​drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：随指针<br/>拖动扩展文本选择。" }
+  n10@{ shape: hex, label: "**on​_​pointer​_​drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：随指针<br/>拖动扩展文本选择。" }
   class n10 node_observer
   class n10 external_node
-  n11@{ shape: hex, label: "**bevy​_​ui​_​widgets::scrollbar::**<br/>**scrollbar​_​on​_​drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：随滑块<br/>拖动更新目标滚动位置。" }
+  n11@{ shape: hex, label: "**scrollbar​_​on​_​drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：随滑块<br/>拖动更新目标滚动位置。" }
   class n11 node_observer
   class n11 external_node
-  n12@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：拖动滑<br/>条时发布连续值变化。" }
+  n12@{ shape: hex, label: "**slider​_​on​_​drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：拖动滑<br/>条时发布连续值变化。" }
   class n12 node_observer
   class n12 external_node
   n0 e0@-->|"接收事件"| n1

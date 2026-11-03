@@ -37,43 +37,43 @@ flowchart LR
   classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**button::ActivateOnPress**<br/>让按钮在指针按下时激活。" }
+  n0@{ shape: rounded, label: "**ActivateOnPress**<br/>让按钮在指针按下时激活。" }
   class n0 node_component
-  n1@{ shape: hex, label: "**bevy​_​ui​_​widgets::radio::radio​_​**<br/>**button​_​on​_​click**<br/>通过点击请求选中单选按钮。" }
+  n1@{ shape: hex, label: "**radio​_​button​_​on​_​click**<br/>通过点击请求选中单选按钮。" }
   class n1 node_observer
-  n2@{ shape: hex, label: "**bevy​_​ui​_​widgets::button::button​_​on​_​**<br/>**pointer​_​click**<br/>通过有效指针点击激活按钮。" }
+  n2@{ shape: hex, label: "**button​_​on​_​pointer​_​click**<br/>通过有效指针点击激活按钮。" }
   class n2 node_observer
-  n3@{ shape: hex, label: "**bevy​_​ui​_​widgets::radio::radio​_​**<br/>**button​_​on​_​pointer​_​down**<br/>记录单选按钮按压并按配置请求选中。" }
+  n3@{ shape: hex, label: "**radio​_​button​_​on​_​pointer​_​down**<br/>记录单选按钮按压并按配置请求选中。" }
   class n3 node_observer
-  n4@{ shape: hex, label: "**bevy​_​ui​_​widgets::checkbox::checkbox​_​**<br/>**on​_​pointer​_​click**<br/>通过点击请求切换复选框勾选。" }
+  n4@{ shape: hex, label: "**checkbox​_​on​_​pointer​_​click**<br/>通过点击请求切换复选框勾选。" }
   class n4 node_observer
-  n5@{ shape: hex, label: "**bevy​_​ui​_​widgets::checkbox::checkbox​_​**<br/>**on​_​pointer​_​click**<br/>通过点击请求切换复选框勾选。" }
+  n5@{ shape: hex, label: "**checkbox​_​on​_​pointer​_​click**<br/>通过点击请求切换复选框勾选。" }
   class n5 node_observer
-  n6@{ shape: hex, label: "**bevy​_​ui​_​widgets::radio::radio​_​**<br/>**button​_​on​_​pointer​_​down**<br/>记录单选按钮按压并按配置请求选中。" }
+  n6@{ shape: hex, label: "**radio​_​button​_​on​_​pointer​_​down**<br/>记录单选按钮按压并按配置请求选中。" }
   class n6 node_observer
-  n7@{ shape: hex, label: "**bevy​_​ui​_​widgets::radio::radio​_​**<br/>**button​_​on​_​click**<br/>通过点击请求选中单选按钮。" }
+  n7@{ shape: hex, label: "**radio​_​button​_​on​_​click**<br/>通过点击请求选中单选按钮。" }
   class n7 node_observer
-  n8@{ shape: hex, label: "**bevy​_​ui​_​widgets::button::button​_​on​_​**<br/>**pointer​_​down**<br/>记录按钮按压并按配置立即激活。" }
+  n8@{ shape: hex, label: "**button​_​on​_​pointer​_​down**<br/>记录按钮按压并按配置立即激活。" }
   class n8 node_observer
-  n9@{ shape: hex, label: "**bevy​_​ui​_​widgets::checkbox::checkbox​_​**<br/>**on​_​pointer​_​down**<br/>处理复选框按压、焦点与即时勾选请求。" }
+  n9@{ shape: hex, label: "**checkbox​_​on​_​pointer​_​down**<br/>处理复选框按压、焦点与即时勾选请求。" }
   class n9 node_observer
-  n10@{ shape: hex, label: "**bevy​_​ui​_​widgets::radio::radio​_​**<br/>**button​_​on​_​pointer​_​down**<br/>记录单选按钮按压并按配置请求选中。" }
+  n10@{ shape: hex, label: "**radio​_​button​_​on​_​pointer​_​down**<br/>记录单选按钮按压并按配置请求选中。" }
   class n10 node_observer
-  n11@{ shape: hex, label: "**bevy​_​ui​_​widgets::checkbox::checkbox​_​**<br/>**on​_​pointer​_​down**<br/>处理复选框按压、焦点与即时勾选请求。" }
+  n11@{ shape: hex, label: "**checkbox​_​on​_​pointer​_​down**<br/>处理复选框按压、焦点与即时勾选请求。" }
   class n11 node_observer
-  n12@{ shape: hex, label: "**bevy​_​ui​_​widgets::checkbox::checkbox​_​**<br/>**on​_​pointer​_​down**<br/>处理复选框按压、焦点与即时勾选请求。" }
+  n12@{ shape: hex, label: "**checkbox​_​on​_​pointer​_​down**<br/>处理复选框按压、焦点与即时勾选请求。" }
   class n12 node_observer
-  n13@{ shape: hex, label: "**bevy​_​ui​_​widgets::button::button​_​on​_​**<br/>**pointer​_​down**<br/>记录按钮按压并按配置立即激活。" }
+  n13@{ shape: hex, label: "**button​_​on​_​pointer​_​down**<br/>记录按钮按压并按配置立即激活。" }
   class n13 node_observer
-  n14@{ shape: hex, label: "**bevy​_​ui​_​widgets::checkbox::checkbox​_​**<br/>**on​_​pointer​_​click**<br/>通过点击请求切换复选框勾选。" }
+  n14@{ shape: hex, label: "**checkbox​_​on​_​pointer​_​click**<br/>通过点击请求切换复选框勾选。" }
   class n14 node_observer
-  n15@{ shape: hex, label: "**bevy​_​ui​_​widgets::button::button​_​on​_​**<br/>**pointer​_​down**<br/>记录按钮按压并按配置立即激活。" }
+  n15@{ shape: hex, label: "**button​_​on​_​pointer​_​down**<br/>记录按钮按压并按配置立即激活。" }
   class n15 node_observer
-  n16@{ shape: hex, label: "**bevy​_​ui​_​widgets::button::button​_​on​_​**<br/>**pointer​_​click**<br/>通过有效指针点击激活按钮。" }
+  n16@{ shape: hex, label: "**button​_​on​_​pointer​_​click**<br/>通过有效指针点击激活按钮。" }
   class n16 node_observer
-  n17@{ shape: hex, label: "**bevy​_​ui​_​widgets::button::button​_​on​_​**<br/>**pointer​_​click**<br/>通过有效指针点击激活按钮。" }
+  n17@{ shape: hex, label: "**button​_​on​_​pointer​_​click**<br/>通过有效指针点击激活按钮。" }
   class n17 node_observer
-  n18@{ shape: hex, label: "**bevy​_​ui​_​widgets::radio::radio​_​**<br/>**button​_​on​_​click**<br/>通过点击请求选中单选按钮。" }
+  n18@{ shape: hex, label: "**radio​_​button​_​on​_​click**<br/>通过点击请求选中单选按钮。" }
   class n18 node_observer
   n0 e0@-->|"存在性约束"| n1
   class e0 edge_reference

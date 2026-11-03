@@ -36,12 +36,12 @@ flowchart LR
   classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​render::extract​_​component::**<br/>**DynamicUniformIndex#lt;contrast​_​**<br/>**adaptive​_​sharpening::CasUniform#gt;**<br/>定位组件参数在共享 Uniform 缓冲中的位<br/>置。" }
+  n0@{ shape: rounded, label: "**DynamicUniformIndex#lt;CasUniform#gt;**<br/>定位组件参数在共享 Uniform 缓冲中的位<br/>置。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​anti​_​alias::contrast​_​adaptive​_​**<br/>**sharpening::node::cas**<br/>来自crate:bevy​_​anti​_​alias ↗：对视图<br/>颜色执行 CAS 锐化后处理。" }
+  n1@{ shape: rounded, label: "**cas**<br/>来自crate:bevy​_​anti​_​alias ↗：对视图<br/>颜色执行 CAS 锐化后处理。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​anti​_​alias::contrast​_​adaptive​_​**<br/>**sharpening::node::cas**<br/>来自crate:bevy​_​anti​_​alias ↗：对视图<br/>颜色执行 CAS 锐化后处理。" }
+  n2@{ shape: rounded, label: "**cas**<br/>来自crate:bevy​_​anti​_​alias ↗：对视图<br/>颜色执行 CAS 锐化后处理。" }
   class n2 node_system
   class n2 external_node
   n0 e0@--> n1

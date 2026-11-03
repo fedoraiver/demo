@@ -38,11 +38,11 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**medium::ScatteringMediumSampler**<br/>为散射介质查找表提供双线性采样。" }
+  n0@{ shape: cyl, label: "**ScatteringMediumSampler**<br/>为散射介质查找表提供双线性采样。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​pbr::medium::init​_​scattering​_​**<br/>**medium​_​sampler**<br/>初始化散射介质查找表的线性采样器。" }
+  n1@{ shape: rounded, label: "**init​_​scattering​_​medium​_​sampler**<br/>初始化散射介质查找表的线性采样器。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​pbr::atmosphere::resources::**<br/>**prepare​_​atmosphere​_​bind​_​groups**<br/>为大气查找表计算和天空绘制绑定视图资源。" }
+  n2@{ shape: rounded, label: "**prepare​_​atmosphere​_​bind​_​groups**<br/>为大气查找表计算和天空绘制绑定视图资源。" }
   class n2 node_system
   n1 e0@-->|"插入"| n0
   class e0 edge_write

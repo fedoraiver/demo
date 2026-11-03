@@ -40,13 +40,13 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: lin-rect, label: "**MaterialExtractionSystems**<br/>按材质类型提取三维网格材质实例。" }
   class n0 node_system_set
-  n1@{ shape: rounded, label: "**bevy​_​pbr::material::early​_​sweep​_​**<br/>**material​_​instances#lt;bevy​_​pbr::pbr​_​**<br/>**material::StandardMaterial#gt;**<br/>按材质移除消息清扫未被本帧替换的实例。" }
+  n1@{ shape: rounded, label: "**early​_​sweep​_​material​_​instances**<br/>按材质移除消息清扫未被本帧替换的实例。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​pbr::material::extract​_​mesh​_​**<br/>**materials#lt;bevy​_​pbr::extended​_​**<br/>**material::ExtendedMaterial#lt;bevy​_​**<br/>**pbr::pbr​_​material::**<br/>**StandardMaterial, bevy​_​pbr::decal::**<br/>**forward::ForwardDecalMaterialExt#gt;#gt;**<br/>根据可见性和材质变化更新渲染实例映射。" }
+  n2@{ shape: rounded, label: "**extract​_​mesh​_​materials**<br/>根据可见性和材质变化更新渲染实例映射。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​pbr::material::early​_​sweep​_​**<br/>**material​_​instances#lt;bevy​_​pbr::**<br/>**extended​_​material::**<br/>**ExtendedMaterial#lt;bevy​_​pbr::pbr​_​**<br/>**material::StandardMaterial, bevy​_​**<br/>**pbr::decal::forward::**<br/>**ForwardDecalMaterialExt#gt;#gt;**<br/>按材质移除消息清扫未被本帧替换的实例。" }
+  n3@{ shape: rounded, label: "**early​_​sweep​_​material​_​instances**<br/>按材质移除消息清扫未被本帧替换的实例。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**bevy​_​pbr::material::extract​_​mesh​_​**<br/>**materials#lt;bevy​_​pbr::pbr​_​material::**<br/>**StandardMaterial#gt;**<br/>根据可见性和材质变化更新渲染实例映射。" }
+  n4@{ shape: rounded, label: "**extract​_​mesh​_​materials**<br/>根据可见性和材质变化更新渲染实例映射。" }
   class n4 node_system
   n0 e0@-->|"先于"| n1
   class e0 edge_order

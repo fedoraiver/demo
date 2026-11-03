@@ -37,9 +37,9 @@ flowchart LR
   classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**system::CachedWindow**<br/>缓存上次同步到原生窗口的 Window 状态" }
+  n0@{ shape: rounded, label: "**CachedWindow**<br/>缓存上次同步到原生窗口的 Window 状态" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​winit::system::changed​_​windows**<br/>把窗口组件变化同步到 winit 后端。" }
+  n1@{ shape: rounded, label: "**changed​_​windows**<br/>把窗口组件变化同步到 winit 后端。" }
   class n1 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

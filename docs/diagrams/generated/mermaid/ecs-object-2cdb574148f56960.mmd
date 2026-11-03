@@ -44,24 +44,48 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**demo::ui::style::update​_​settings​_​**<br/>**text**<br/>原位更新设置草稿数值与保存提示。" }
+  subgraph layout_card_n0[" "]
+  n0@{ shape: rounded, label: "**update​_​settings​_​text**<br/>原位更新设置草稿数值与保存提示。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**bevy​_​ui::widget::Text**<br/>来自crate:bevy​_​ui ↗：保存 UI 文本根的<br/>第一段内容。" }
+  end
+  style layout_card_n0 fill:none,stroke:none
+  subgraph layout_card_n1[" "]
+  n1@{ shape: rounded, label: "**Text**<br/>来自crate:bevy​_​ui ↗：保存 UI 文本根的<br/>第一段内容。" }
   class n1 node_component
   class n1 external_node
+  end
+  style layout_card_n1 fill:none,stroke:none
+  subgraph layout_card_n2[" "]
   n2@{ shape: lin-rect, label: "**Style**<br/>请求在 PreUpdate 消费后，Update 依次生<br/>成 BSN 页面并更新视觉焦点。" }
   class n2 node_system_set
-  n3@{ shape: rounded, label: "**ui::widgets::SettingValue**<br/>数值文字只保存对应字段；草稿变化时原位更<br/>新 Text，不销毁滚动区域和焦点实体。" }
+  end
+  style layout_card_n2 fill:none,stroke:none
+  subgraph layout_card_n3[" "]
+  n3@{ shape: rounded, label: "**SettingValue**<br/>数值文字只保存对应字段；草稿变化时原位更<br/>新 Text，不销毁滚动区域和焦点实体。" }
   class n3 node_component
-  n4@{ shape: rounded, label: "**ui::pages::SettingsStatus**<br/>保存结果和草稿提示原位更新，不改变滚动区<br/>域或按钮的实体身份。" }
+  end
+  style layout_card_n3 fill:none,stroke:none
+  subgraph layout_card_n4[" "]
+  n4@{ shape: rounded, label: "**SettingsStatus**<br/>保存结果和草稿提示原位更新，不改变滚动区<br/>域或按钮的实体身份。" }
   class n4 node_component
-  n5@{ shape: cyl, label: "**settings::draft::SettingsDraft**<br/>来自settings ↗：菜单独立编辑的草稿；音<br/>量可以临时预览，只有应用成功才替换已保存<br/>设置。" }
+  end
+  style layout_card_n4 fill:none,stroke:none
+  subgraph layout_card_n5[" "]
+  n5@{ shape: cyl, label: "**SettingsDraft**<br/>来自settings ↗：菜单独立编辑的草稿；音<br/>量可以临时预览，只有应用成功才替换已保存<br/>设置。" }
   class n5 node_resource
   class n5 external_node
-  n6@{ shape: fr-rect, label: "**ui::GameUiPlugin**<br/>组装菜单功能，不安装窗口或重复初始化会话<br/>日志。" }
+  end
+  style layout_card_n5 fill:none,stroke:none
+  subgraph layout_card_n6[" "]
+  n6@{ shape: fr-rect, label: "**GameUiPlugin**<br/>组装菜单功能，不安装窗口或重复初始化会话<br/>日志。" }
   class n6 node_plugin
-  n7@{ shape: cyl, label: "**ui::MenuState**<br/>页面数据与返回来源；焦点单独保存，避免导<br/>航时重建整个页面。" }
+  end
+  style layout_card_n6 fill:none,stroke:none
+  subgraph layout_card_n7[" "]
+  n7@{ shape: cyl, label: "**MenuState**<br/>页面数据与返回来源；焦点单独保存，避免导<br/>航时重建整个页面。" }
   class n7 node_resource
+  end
+  style layout_card_n7 fill:none,stroke:none
   n0 e0@-->|"可变访问"| n1
   class e0 edge_write
   n0 e1@-->|"赋值"| n1

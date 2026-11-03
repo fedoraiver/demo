@@ -42,18 +42,18 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​pbr::deferred::init​_​deferred​_​**<br/>**lighting​_​layout**<br/>初始化延迟光照的深度标识绑定与着色器。" }
+  n0@{ shape: rounded, label: "**init​_​deferred​_​lighting​_​layout**<br/>初始化延迟光照的深度标识绑定与着色器。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**bevy​_​asset::AssetServer**<br/>来自crate:bevy​_​asset ↗：加载资产并追<br/>踪加载状态。" }
+  n1@{ shape: cyl, label: "**AssetServer**<br/>来自crate:bevy​_​asset ↗：加载资产并追<br/>踪加载状态。" }
   class n1 node_resource
   class n1 external_node
-  n2@{ shape: fr-rect, label: "**deferred::DeferredPbrLightingPlugin**<br/>提供延迟物理材质光照。" }
+  n2@{ shape: fr-rect, label: "**DeferredPbrLightingPlugin**<br/>提供延迟物理材质光照。" }
   class n2 node_plugin
-  n3@{ shape: cyl, label: "**deferred::DeferredLightingLayout**<br/>描述延迟光照绘制的着色与绑定接口。" }
+  n3@{ shape: cyl, label: "**DeferredLightingLayout**<br/>描述延迟光照绘制的着色与绑定接口。" }
   class n3 node_resource
   n4@{ shape: lin-rect, label: "**MeshPipelineSystems**<br/>先初始化网格视图布局，再初始化三维网格管<br/>线。" }
   class n4 node_system_set
-  n5@{ shape: cyl, label: "**bevy​_​pbr::MeshPipeline**<br/>提供三维网格管线的着色与资源布局。" }
+  n5@{ shape: cyl, label: "**MeshPipeline**<br/>提供三维网格管线的着色与资源布局。" }
   class n5 node_resource
   n1 e0@--> n0
   class e0 edge_read

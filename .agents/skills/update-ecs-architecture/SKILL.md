@@ -22,7 +22,7 @@ description: 更新、核对或修复本项目的 ECS 架构图，包括 rustc �
 2. 取得事实：涉及 Schedule 时读取[调度快照与筛选模型](references/schedules.md)；涉及对象身份、类型、关系、源码或用途时读取[对象模型与源码](references/object-model.md)。取得同次构建的编译器事实与真实运行时快照；语义模型须同时保留 `model.json` 与其完整 `model.calls.ndjson`，校验全部调用边、哈希和边数。不用名称、正则或大模型补猜结构事实。
 3. 补全中文用途：模型返回待补说明时，读取 `pending-descriptions.json` 中的确切声明、冻结源码和必要 helper，由大模型在 `catalog/annotations.json` 补写中文用途与短说明，再恢复模型阶段。不得修改提取事实来消除说明缺项。
 4. 生成与交互：涉及对象投影、Mermaid 几何、样式或图例时读取[绘图规则](references/rendering.md)；涉及详情、搜索、筛选、选择、历史、焦点或资源加载时读取[查看器规则](references/viewer.md)。
-5. 验收与交付：读取[视觉证据与验收](references/visual-validation.md)，冻结输入、复用有效证据并记录完成范围和缺项。实际 SVG 逐图目测及用户限定的抽样目测必须委派子代理，主代理统筹并复核证据。
+5. 验收与交付：读取[视觉证据与验收](references/visual-validation.md)，按默认范围完成自动检查并记录缺项。仅在用户明确要求 SVG 视觉验证时冻结视觉输入、复用有效证据并委派观察；实际逐图或抽样目测由子代理执行，主代理统筹并复核证据。
 
 ## 关键边界
 

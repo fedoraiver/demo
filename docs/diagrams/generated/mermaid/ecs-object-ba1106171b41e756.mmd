@@ -41,14 +41,14 @@ flowchart LR
   classDef edge_consume stroke:#247B91,stroke-width:1.8px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**demo::ui::backdrop::log​_​asset​_​**<br/>**failures**<br/>记录菜单模型与界面资源加载失败。" }
+  n0@{ shape: rounded, label: "**log​_​asset​_​failures**<br/>记录菜单模型与界面资源加载失败。" }
   class n0 node_system
-  n1@{ shape: fr-rect, label: "**ui::GameUiPlugin**<br/>组装菜单功能，不安装窗口或重复初始化会话<br/>日志。" }
+  n1@{ shape: fr-rect, label: "**GameUiPlugin**<br/>组装菜单功能，不安装窗口或重复初始化会话<br/>日志。" }
   class n1 node_plugin
-  n2@{ shape: lean-r, label: "**event::UntypedAssetLoadFailedEvent**<br/>来自crate:bevy​_​asset ↗：传递跨资产类<br/>型的加载失败。" }
+  n2@{ shape: lean-r, label: "**UntypedAssetLoadFailedEvent**<br/>来自crate:bevy​_​asset ↗：传递跨资产类<br/>型的加载失败。" }
   class n2 node_message
   class n2 external_node
-  n3@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;event::**<br/>**UntypedAssetLoadFailedEvent#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n3@{ shape: cyl, label: "**Messages#lt;UntypedAssetLoadFailedEvent**<br/>**#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n3 node_resource
   class n3 external_node
   n1 e0@-->|"调用"| n0

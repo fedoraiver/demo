@@ -36,12 +36,12 @@ flowchart LR
   classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;event::**<br/>**Ime#gt;**<br/>保存最近两次轮换期间产生的指定类型消息" }
+  n0@{ shape: cyl, label: "**Messages#lt;Ime#gt;**<br/>保存最近两次轮换期间产生的指定类型消息" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​egui::input::write​_​ime​_​**<br/>**messages​_​system**<br/>来自crate:bevy​_​egui ↗：向聚焦的<br/>Egui 上下文传递输入法文本。" }
+  n1@{ shape: rounded, label: "**write​_​ime​_​messages​_​system**<br/>来自crate:bevy​_​egui ↗：向聚焦的<br/>Egui 上下文传递输入法文本。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​ui​_​widgets::text​_​input::on​_​ime​_​**<br/>**input**<br/>来自crate:bevy​_​ui​_​widgets ↗：把输入<br/>法组合和提交转换为文字编辑操作。" }
+  n2@{ shape: rounded, label: "**on​_​ime​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：把输入<br/>法组合和提交转换为文字编辑操作。" }
   class n2 node_system
   class n2 external_node
   n0 e0@--> n1

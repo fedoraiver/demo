@@ -39,13 +39,13 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**render::light::**<br/>**PointAndSpotLightViewEntities**<br/>追踪点光和聚光对应的阴影视图。" }
+  n0@{ shape: rounded, label: "**PointAndSpotLightViewEntities**<br/>追踪点光和聚光对应的阴影视图。" }
   class n0 node_component
-  n1@{ shape: hex, label: "**bevy​_​pbr::render::light::remove​_​**<br/>**point​_​and​_​spot​_​light​_​view​_​entities**<br/>清理点光和聚光的渲染视图实体。" }
+  n1@{ shape: hex, label: "**remove​_​point​_​and​_​spot​_​light​_​view​_​**<br/>**entities**<br/>清理点光和聚光的渲染视图实体。" }
   class n1 node_observer
-  n2@{ shape: hex, label: "**bevy​_​pbr::render::light::remove​_​**<br/>**point​_​and​_​spot​_​light​_​view​_​entities**<br/>清理点光和聚光的渲染视图实体。" }
+  n2@{ shape: hex, label: "**remove​_​point​_​and​_​spot​_​light​_​view​_​**<br/>**entities**<br/>清理点光和聚光的渲染视图实体。" }
   class n2 node_observer
-  n3@{ shape: rounded, label: "**bevy​_​pbr::render::light::prepare​_​**<br/>**lights**<br/>准备视图光照参数、阴影视图和阴影贴图。" }
+  n3@{ shape: rounded, label: "**prepare​_​lights**<br/>准备视图光照参数、阴影视图和阴影贴图。" }
   class n3 node_system
   n0 e0@--> n1
   class e0 edge_read

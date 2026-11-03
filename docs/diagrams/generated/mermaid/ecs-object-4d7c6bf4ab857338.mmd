@@ -38,13 +38,13 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**bevy​_​render::extract​_​component::**<br/>**ComponentUniforms#lt;skybox::**<br/>**SkyboxUniforms#gt;**<br/>汇集同类组件的动态 Uniform 数据。" }
+  n0@{ shape: cyl, label: "**ComponentUniforms#lt;SkyboxUniforms#gt;**<br/>汇集同类组件的动态 Uniform 数据。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​render::uniform::prepare​_​**<br/>**uniform​_​components#lt;bevy​_​core​_​**<br/>**pipeline::skybox::SkyboxUniforms#gt;**<br/>将组件值批量上传为动态着色器参数。" }
+  n1@{ shape: rounded, label: "**prepare​_​uniform​_​components**<br/>将组件值批量上传为动态着色器参数。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​render::init​_​gpu​_​resource#lt;bevy​_​**<br/>**render::uniform::**<br/>**ComponentUniforms#lt;bevy​_​core​_​**<br/>**pipeline::skybox::SkyboxUniforms#gt;#gt;**<br/>构造并插入渲染所需资源。" }
+  n2@{ shape: rounded, label: "**init​_​gpu​_​resource**<br/>构造并插入渲染所需资源。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​core​_​pipeline::skybox::prepare​_​**<br/>**skybox​_​bind​_​groups**<br/>来自crate:bevy​_​core​_​pipeline ↗：为有<br/>效天空盒图像建立视图绑定组。" }
+  n3@{ shape: rounded, label: "**prepare​_​skybox​_​bind​_​groups**<br/>来自crate:bevy​_​core​_​pipeline ↗：为有<br/>效天空盒图像建立视图绑定组。" }
   class n3 node_system
   class n3 external_node
   n1 e0@-->|"可变访问"| n0

@@ -39,7 +39,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: notch-rect, label: "**Local · needs​_​extracting**<br/>去重收集本轮需要提取的渲染资产标识。" }
   class n0 node_local
-  n1@{ shape: rounded, label: "**bevy​_​render::render​_​asset::extract​_​**<br/>**render​_​asset#lt;bevy​_​render::mesh::**<br/>**RenderMesh#gt;**<br/>按资产变化和设备恢复请求提取渲染资产。" }
+  n1@{ shape: rounded, label: "**extract​_​render​_​asset**<br/>按资产变化和设备恢复请求提取渲染资产。" }
   class n1 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

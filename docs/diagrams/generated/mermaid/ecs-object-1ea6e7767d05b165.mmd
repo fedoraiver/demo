@@ -43,38 +43,38 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: hex, label: "**avian3d::dynamics::rigid​_​body::mass​_​**<br/>**properties::{impl#35;3}::build::**<br/>**{closure#35;0}**<br/>初始化新刚体的质量属性。" }
+  n0@{ shape: hex, label: "**build::{closure#35;0}**<br/>初始化新刚体的质量属性。" }
   class n0 node_observer
-  n1@{ shape: rounded, label: "**dynamics::rigid​_​body::mass​_​**<br/>**properties::components::collider::**<br/>**ColliderMassProperties**<br/>缓存由碰撞形状计算的质量属性。" }
+  n1@{ shape: rounded, label: "**ColliderMassProperties**<br/>缓存由碰撞形状计算的质量属性。" }
   class n1 node_component
-  n2@{ shape: rounded, label: "**dynamics::rigid​_​body::mass​_​**<br/>**properties::components::CenterOfMass**<br/>指定实体自身的局部质心。" }
+  n2@{ shape: rounded, label: "**CenterOfMass**<br/>指定实体自身的局部质心。" }
   class n2 node_component
-  n3@{ shape: rounded, label: "**collision::collider::collider​_​**<br/>**transform::ColliderTransform**<br/>缓存碰撞体相对于刚体的变换。" }
+  n3@{ shape: rounded, label: "**ColliderTransform**<br/>缓存碰撞体相对于刚体的变换。" }
   class n3 node_component
-  n4@{ shape: rounded, label: "**dynamics::rigid​_​body::mass​_​**<br/>**properties::components::computed::**<br/>**ComputedCenterOfMass**<br/>保存汇总后的刚体局部质心。" }
+  n4@{ shape: rounded, label: "**ComputedCenterOfMass**<br/>保存汇总后的刚体局部质心。" }
   class n4 node_component
-  n5@{ shape: rounded, label: "**dynamics::rigid​_​body::mass​_​**<br/>**properties::components::NoAutoMass**<br/>阻止后代贡献总质量。" }
+  n5@{ shape: rounded, label: "**NoAutoMass**<br/>阻止后代贡献总质量。" }
   class n5 node_component
-  n6@{ shape: rounded, label: "**dynamics::rigid​_​body::mass​_​**<br/>**properties::components::Mass**<br/>指定实体自身的质量输入。" }
+  n6@{ shape: rounded, label: "**Mass**<br/>指定实体自身的质量输入。" }
   class n6 node_component
-  n7@{ shape: rounded, label: "**dynamics::rigid​_​body::mass​_​**<br/>**properties::components::**<br/>**NoAutoCenterOfMass**<br/>阻止后代贡献总质心。" }
+  n7@{ shape: rounded, label: "**NoAutoCenterOfMass**<br/>阻止后代贡献总质心。" }
   class n7 node_component
-  n8@{ shape: rounded, label: "**dynamics::rigid​_​body::mass​_​**<br/>**properties::components::computed::**<br/>**ComputedAngularInertia**<br/>保存汇总后的刚体局部角惯量。" }
+  n8@{ shape: rounded, label: "**ComputedAngularInertia**<br/>保存汇总后的刚体局部角惯量。" }
   class n8 node_component
-  n9@{ shape: rounded, label: "**dynamics::rigid​_​body::mass​_​**<br/>**properties::components::**<br/>**AngularInertia**<br/>指定实体自身的局部角惯量。" }
+  n9@{ shape: rounded, label: "**AngularInertia**<br/>指定实体自身的局部角惯量。" }
   class n9 node_component
-  n10@{ shape: rounded, label: "**dynamics::rigid​_​body::mass​_​**<br/>**properties::components::computed::**<br/>**ComputedMass**<br/>保存汇总后的刚体总质量。" }
+  n10@{ shape: rounded, label: "**ComputedMass**<br/>保存汇总后的刚体总质量。" }
   class n10 node_component
-  n11@{ shape: fr-rect, label: "**dynamics::rigid​_​body::mass​_​**<br/>**properties::MassPropertyPlugin**<br/>更新刚体质量、惯量和质心。" }
+  n11@{ shape: fr-rect, label: "**MassPropertyPlugin**<br/>更新刚体质量、惯量和质心。" }
   class n11 node_plugin
-  n12@{ shape: rounded, label: "**bevy​_​ecs::hierarchy::Children**<br/>来自crate:bevy​_​ecs ↗：保存以<br/>ChildOf 指向当前父实体的子实体集合" }
+  n12@{ shape: rounded, label: "**Children**<br/>来自crate:bevy​_​ecs ↗：保存以<br/>ChildOf 指向当前父实体的子实体集合" }
   class n12 node_component
   class n12 external_node
-  n13@{ shape: rounded, label: "**dynamics::rigid​_​body::mass​_​**<br/>**properties::components::**<br/>**NoAutoAngularInertia**<br/>阻止后代贡献总角惯量。" }
+  n13@{ shape: rounded, label: "**NoAutoAngularInertia**<br/>阻止后代贡献总角惯量。" }
   class n13 node_component
-  n14@{ shape: rounded, label: "**collision::collider::Sensor**<br/>将碰撞体设为不阻挡运动的触发器。" }
+  n14@{ shape: rounded, label: "**Sensor**<br/>将碰撞体设为不阻挡运动的触发器。" }
   class n14 node_component
-  n15@{ shape: stadium, label: "**bevy​_​ecs::lifecycle::AddEvent**<br/>来自crate:bevy​_​ecs ↗：通知组件首次加<br/>入实体。" }
+  n15@{ shape: stadium, label: "**AddEvent**<br/>来自crate:bevy​_​ecs ↗：通知组件首次加<br/>入实体。" }
   class n15 node_event
   class n15 external_node
   n1 e0@--> n0

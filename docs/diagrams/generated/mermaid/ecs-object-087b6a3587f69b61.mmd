@@ -43,16 +43,16 @@ flowchart LR
   classDef edge_observe stroke:#B66B2D,stroke-width:1.8px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: hex, label: "**bevy​_​enhanced​_​input::context::**<br/>**register**<br/>按优先级登记输入上下文实例。" }
+  n0@{ shape: hex, label: "**register**<br/>按优先级登记输入上下文实例。" }
   class n0 node_observer
-  n1@{ shape: rounded, label: "**bevy​_​enhanced​_​input::context::**<br/>**ContextPriority#lt;first​_​person::**<br/>**actions::GameplayContext#gt;**<br/>控制输入上下文的求值优先级。" }
+  n1@{ shape: rounded, label: "**ContextPriority#lt;GameplayContext#gt;**<br/>控制输入上下文的求值优先级。" }
   class n1 node_component
-  n2@{ shape: stadium, label: "**bevy​_​ecs::lifecycle::InsertEvent**<br/>来自crate:bevy​_​ecs ↗：通知组件值插入<br/>实体。" }
+  n2@{ shape: stadium, label: "**InsertEvent**<br/>来自crate:bevy​_​ecs ↗：通知组件值插入<br/>实体。" }
   class n2 node_event
   class n2 external_node
-  n3@{ shape: cyl, label: "**bevy​_​enhanced​_​input::context::**<br/>**instance::ContextInstances#lt;bevy::**<br/>**bevy​_​app::PreUpdate#gt;**<br/>保存某一 Schedule 的上下文实例及其优先<br/>顺序" }
+  n3@{ shape: cyl, label: "**ContextInstances#lt;PreUpdate#gt;**<br/>保存某一 Schedule 的上下文实例及其优先<br/>顺序" }
   class n3 node_resource
-  n4@{ shape: fr-rect, label: "**first​_​person::FirstPersonPlugin**<br/>来自first​_​person ↗：注册第一人称动<br/>作、捕获、朝向与镜头，不安装输入基础设施<br/>或物理插件。" }
+  n4@{ shape: fr-rect, label: "**FirstPersonPlugin**<br/>来自first​_​person ↗：注册第一人称动<br/>作、捕获、朝向与镜头，不安装输入基础设施<br/>或物理插件。" }
   class n4 node_plugin
   class n4 external_node
   n1 e0@--> n0

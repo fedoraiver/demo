@@ -40,14 +40,14 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: lin-rect, label: "**PlayTypedChannels**<br/>组织音频实例清理与通道播放。" }
   class n0 node_system_set
-  n1@{ shape: rounded, label: "**bevy​_​kira​_​audio::audio​_​output::play​_​**<br/>**audio​_​channel#lt;demo::audio::UiTrack#gt;**<br/>执行指定类型音频通道的命令队列。" }
+  n1@{ shape: rounded, label: "**play​_​audio​_​channel**<br/>执行指定类型音频通道的命令队列。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**demo::audio::mix::sync​_​voice​_​volumes**<br/>来自audio ↗：将有效混音与素材音量同步<br/>到播放实例。" }
+  n2@{ shape: rounded, label: "**sync​_​voice​_​volumes**<br/>来自audio ↗：将有效混音与素材音量同步<br/>到播放实例。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​kira​_​audio::audio​_​output::play​_​**<br/>**audio​_​channel#lt;demo::audio::SfxTrack#gt;**<br/>执行指定类型音频通道的命令队列。" }
+  n3@{ shape: rounded, label: "**play​_​audio​_​channel**<br/>执行指定类型音频通道的命令队列。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**bevy​_​kira​_​audio::audio​_​output::play​_​**<br/>**audio​_​channel#lt;bevy​_​kira​_​audio::**<br/>**MainTrack#gt;**<br/>执行指定类型音频通道的命令队列。" }
+  n4@{ shape: rounded, label: "**play​_​audio​_​channel**<br/>执行指定类型音频通道的命令队列。" }
   class n4 node_system
   n0 e0@-->|"集合成员"| n1
   class e0 edge_set_membership

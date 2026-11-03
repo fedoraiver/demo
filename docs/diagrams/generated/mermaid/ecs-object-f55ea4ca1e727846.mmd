@@ -41,34 +41,67 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​egui::render::extract​_​egui​_​**<br/>**camera​_​view​_​system**<br/>为活动相机提取独立 Egui 渲染视图。" }
+  subgraph layout_card_n0[" "]
+  n0@{ shape: rounded, label: "**extract​_​egui​_​camera​_​view​_​system**<br/>为活动相机提取独立 Egui 渲染视图。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**entity​_​disabling::Disabled**<br/>来自crate:bevy​_​ecs ↗：标记被禁用的实<br/>体" }
+  end
+  style layout_card_n0 fill:none,stroke:none
+  subgraph layout_card_n1[" "]
+  n1@{ shape: rounded, label: "**Disabled**<br/>来自crate:bevy​_​ecs ↗：标记被禁用的实<br/>体" }
   class n1 node_component
   class n1 external_node
-  n2@{ shape: rounded, label: "**render::EguiCameraView**<br/>在主渲染目标视图上保存对应的 Egui 渲染<br/>视图实体" }
+  end
+  style layout_card_n1 fill:none,stroke:none
+  subgraph layout_card_n2[" "]
+  n2@{ shape: rounded, label: "**EguiCameraView**<br/>在主渲染目标视图上保存对应的 Egui 渲染<br/>视图实体" }
   class n2 node_component
-  n3@{ shape: cyl, label: "**extract​_​plugin::MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
+  end
+  style layout_card_n2 fill:none,stroke:none
+  subgraph layout_card_n3[" "]
+  n3@{ shape: cyl, label: "**MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
   class n3 node_resource
   class n3 external_node
+  end
+  style layout_card_n3 fill:none,stroke:none
+  subgraph layout_card_n4[" "]
   n4@{ shape: notch-rect, label: "**Local · live​_​entities**<br/>记录本轮成功提取的 Egui 相机视图身份。" }
   class n4 node_local
-  n5@{ shape: rounded, label: "**bevy​_​camera::Camera**<br/>来自crate:bevy​_​camera ↗：配置相机视<br/>口、输出目标和渲染顺序。" }
+  end
+  style layout_card_n4 fill:none,stroke:none
+  subgraph layout_card_n5[" "]
+  n5@{ shape: rounded, label: "**Camera**<br/>来自crate:bevy​_​camera ↗：配置相机视<br/>口、输出目标和渲染顺序。" }
   class n5 node_component
   class n5 external_node
-  n6@{ shape: rounded, label: "**bevy​_​extract::SubEntity#lt;bevy​_​**<br/>**render::RenderApp#gt;**<br/>来自crate:bevy​_​extract ↗：记录主实体<br/>对应的子世界实体。" }
+  end
+  style layout_card_n5 fill:none,stroke:none
+  subgraph layout_card_n6[" "]
+  n6@{ shape: rounded, label: "**SubEntity#lt;RenderApp#gt;**<br/>来自crate:bevy​_​extract ↗：记录主实体<br/>对应的子世界实体。" }
   class n6 node_component
   class n6 external_node
+  end
+  style layout_card_n6 fill:none,stroke:none
+  subgraph layout_card_n7[" "]
   n7@{ shape: rounded, label: "**EguiRenderOutput**<br/>保存 Egui 绘制图元和纹理增量" }
   class n7 node_component
-  n8@{ shape: rounded, label: "**components::Hdr**<br/>来自crate:bevy​_​camera ↗：使相机使用高<br/>动态范围中间纹理。" }
+  end
+  style layout_card_n7 fill:none,stroke:none
+  subgraph layout_card_n8[" "]
+  n8@{ shape: rounded, label: "**Hdr**<br/>来自crate:bevy​_​camera ↗：使相机使用高<br/>动态范围中间纹理。" }
   class n8 node_component
   class n8 external_node
+  end
+  style layout_card_n8 fill:none,stroke:none
+  subgraph layout_card_n9[" "]
   n9@{ shape: rounded, label: "**EguiOutput**<br/>保存上一轮 Egui 的平台输出和像素点比例" }
   class n9 node_component
-  n10@{ shape: cyl, label: "**bevy​_​ecs::entity​_​disabling::**<br/>**DefaultQueryFilters**<br/>来自crate:bevy​_​ecs ↗：保存默认禁用实<br/>体查询过滤规则。" }
+  end
+  style layout_card_n9 fill:none,stroke:none
+  subgraph layout_card_n10[" "]
+  n10@{ shape: cyl, label: "**DefaultQueryFilters**<br/>来自crate:bevy​_​ecs ↗：保存默认禁用实<br/>体查询过滤规则。" }
   class n10 node_resource
   class n10 external_node
+  end
+  style layout_card_n10 fill:none,stroke:none
   n1 e0@-->|"存在性约束"| n0
   class e0 edge_reference
   n0 e1@-->|"移除"| n2
@@ -93,7 +126,6 @@ flowchart LR
   class e10 edge_read
   e0@{ curve: basis }
   e1@{ curve: basis }
-  e2@{ curve: basis }
   e3@{ curve: basis }
   e4@{ curve: basis }
   e5@{ curve: basis }

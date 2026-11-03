@@ -39,19 +39,19 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​render::render​_​resource::**<br/>**sparse​_​buffer​_​vec::update​_​sparse​_​**<br/>**buffers**<br/>用计算通道把变化元素写入稀疏 GPU 缓冲。" }
+  n0@{ shape: rounded, label: "**update​_​sparse​_​buffers**<br/>用计算通道把变化元素写入稀疏 GPU 缓冲。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**bevy​_​render::render​_​resource::**<br/>**PipelineCache**<br/>缓存 GPU 渲染、计算管线与待创建队列。" }
+  n1@{ shape: cyl, label: "**PipelineCache**<br/>缓存 GPU 渲染、计算管线与待创建队列。" }
   class n1 node_resource
-  n2@{ shape: cyl, label: "**render​_​resource::sparse​_​buffer​_​vec::**<br/>**SparseBufferUpdateJobs**<br/>暂存待执行的稀疏缓冲更新任务。" }
+  n2@{ shape: cyl, label: "**SparseBufferUpdateJobs**<br/>暂存待执行的稀疏缓冲更新任务。" }
   class n2 node_resource
   n3@{ shape: lin-rect, label: "**Begin**<br/>组织绘制执行、提交与收尾。" }
   class n3 node_system_set
-  n4@{ shape: cyl, label: "**bevy​_​render::diagnostic::**<br/>**DiagnosticsRecorder**<br/>记录渲染诊断区间与 GPU 查询索引的对应。" }
+  n4@{ shape: cyl, label: "**DiagnosticsRecorder**<br/>记录渲染诊断区间与 GPU 查询索引的对应。" }
   class n4 node_resource
-  n5@{ shape: cyl, label: "**bevy​_​render::renderer::RenderDevice**<br/>创建渲染和计算所需的 GPU 资源。" }
+  n5@{ shape: cyl, label: "**RenderDevice**<br/>创建渲染和计算所需的 GPU 资源。" }
   class n5 node_resource
-  n6@{ shape: cyl, label: "**render​_​resource::sparse​_​buffer​_​vec::**<br/>**SparseBufferUpdateBindGroups**<br/>追踪各稀疏缓冲更新的资源绑定。" }
+  n6@{ shape: cyl, label: "**SparseBufferUpdateBindGroups**<br/>追踪各稀疏缓冲更新的资源绑定。" }
   class n6 node_resource
   n1 e0@--> n0
   class e0 edge_read

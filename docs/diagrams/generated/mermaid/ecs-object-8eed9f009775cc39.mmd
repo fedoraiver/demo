@@ -38,18 +38,18 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**render::morph::MorphUniforms**<br/>以双缓冲保存网格前后帧形变权重。" }
+  n0@{ shape: cyl, label: "**MorphUniforms**<br/>以双缓冲保存网格前后帧形变权重。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​pbr::render::morph::prepare​_​**<br/>**morph​_​descriptors**<br/>稳定分配形变描述符索引并回收失效项。" }
+  n1@{ shape: rounded, label: "**prepare​_​morph​_​descriptors**<br/>稳定分配形变描述符索引并回收失效项。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​pbr::render::mesh::prepare​_​**<br/>**mesh​_​bind​_​groups**<br/>按预处理路径准备网格、蒙皮和形变资源绑<br/>定。" }
+  n2@{ shape: rounded, label: "**prepare​_​mesh​_​bind​_​groups**<br/>按预处理路径准备网格、蒙皮和形变资源绑<br/>定。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​render::init​_​gpu​_​resource#lt;bevy​_​**<br/>**pbr::render::morph::MorphUniforms#gt;**<br/>来自crate:bevy​_​render ↗：构造并插入渲<br/>染所需资源。" }
+  n3@{ shape: rounded, label: "**init​_​gpu​_​resource**<br/>来自crate:bevy​_​render ↗：构造并插入渲<br/>染所需资源。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**bevy​_​pbr::render::morph::extract​_​**<br/>**morphs**<br/>提取可见网格的当前与历史形变权重。" }
+  n4@{ shape: rounded, label: "**extract​_​morphs**<br/>提取可见网格的当前与历史形变权重。" }
   class n4 node_system
-  n5@{ shape: rounded, label: "**bevy​_​pbr::render::morph::write​_​**<br/>**morph​_​buffers**<br/>上传当前形变权重及可选描述符缓冲。" }
+  n5@{ shape: rounded, label: "**write​_​morph​_​buffers**<br/>上传当前形变权重及可选描述符缓冲。" }
   class n5 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

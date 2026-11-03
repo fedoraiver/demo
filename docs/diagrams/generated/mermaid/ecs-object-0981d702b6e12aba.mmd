@@ -38,32 +38,29 @@ flowchart LR
   classDef edge_order stroke:#334155,stroke-width:2px
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
-  subgraph layout_card_n0[" "]
   n0@{ shape: lin-rect, label: "**GizmoMeshSystems**<br/>把调试绘制存储转换为渲染网格。" }
   class n0 node_system_set
-  end
-  style layout_card_n0 fill:none,stroke:none
-  n1@{ shape: rounded, label: "**bevy​_​gizmos::propagate​_​gizmos#lt;bevy​_​**<br/>**gizmos::skinned​_​mesh​_​bounds::**<br/>**SkinnedMeshBoundsGizmoConfigGroup,**<br/>**bevy​_​time::fixed::Fixed#gt;**<br/>汇入指定上下文保留的 Gizmo 图元。" }
+  n1@{ shape: rounded, label: "**propagate​_​gizmos**<br/>汇入指定上下文保留的 Gizmo 图元。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​gizmos::propagate​_​gizmos#lt;bevy​_​**<br/>**light::gizmos::**<br/>**LightGizmoConfigGroup, bevy​_​time::**<br/>**fixed::Fixed#gt;**<br/>汇入指定上下文保留的 Gizmo 图元。" }
+  n2@{ shape: rounded, label: "**propagate​_​gizmos**<br/>汇入指定上下文保留的 Gizmo 图元。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​gizmos::update​_​gizmo​_​**<br/>**meshes#lt;bevy​_​gizmos::config::**<br/>**DefaultGizmoConfigGroup#gt;**<br/>把配置组即时线条缓冲转交 Gizmo 资产。" }
+  n3@{ shape: rounded, label: "**update​_​gizmo​_​meshes**<br/>把配置组即时线条缓冲转交 Gizmo 资产。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**bevy​_​gizmos::update​_​gizmo​_​**<br/>**meshes#lt;bevy​_​gizmos::skinned​_​mesh​_​**<br/>**bounds::**<br/>**SkinnedMeshBoundsGizmoConfigGroup#gt;**<br/>把配置组即时线条缓冲转交 Gizmo 资产。" }
+  n4@{ shape: rounded, label: "**update​_​gizmo​_​meshes**<br/>把配置组即时线条缓冲转交 Gizmo 资产。" }
   class n4 node_system
-  n5@{ shape: rounded, label: "**bevy​_​gizmos::propagate​_​gizmos#lt;bevy​_​**<br/>**gizmos::aabb::AabbGizmoConfigGroup,**<br/>**bevy​_​time::fixed::Fixed#gt;**<br/>汇入指定上下文保留的 Gizmo 图元。" }
+  n5@{ shape: rounded, label: "**propagate​_​gizmos**<br/>汇入指定上下文保留的 Gizmo 图元。" }
   class n5 node_system
-  n6@{ shape: rounded, label: "**bevy​_​gizmos::global::flush​_​global​_​**<br/>**gizmos**<br/>将全局 Gizmo 缓冲转交本轮绘制。" }
+  n6@{ shape: rounded, label: "**flush​_​global​_​gizmos**<br/>将全局 Gizmo 缓冲转交本轮绘制。" }
   class n6 node_system
-  n7@{ shape: rounded, label: "**bevy​_​gizmos::propagate​_​gizmos#lt;bevy​_​**<br/>**gizmos::frustum::**<br/>**FrustumGizmoConfigGroup, bevy​_​time::**<br/>**fixed::Fixed#gt;**<br/>汇入指定上下文保留的 Gizmo 图元。" }
+  n7@{ shape: rounded, label: "**propagate​_​gizmos**<br/>汇入指定上下文保留的 Gizmo 图元。" }
   class n7 node_system
-  n8@{ shape: rounded, label: "**bevy​_​gizmos::update​_​gizmo​_​**<br/>**meshes#lt;bevy​_​light::gizmos::**<br/>**LightGizmoConfigGroup#gt;**<br/>把配置组即时线条缓冲转交 Gizmo 资产。" }
+  n8@{ shape: rounded, label: "**update​_​gizmo​_​meshes**<br/>把配置组即时线条缓冲转交 Gizmo 资产。" }
   class n8 node_system
-  n9@{ shape: rounded, label: "**bevy​_​gizmos::update​_​gizmo​_​**<br/>**meshes#lt;bevy​_​gizmos::frustum::**<br/>**FrustumGizmoConfigGroup#gt;**<br/>把配置组即时线条缓冲转交 Gizmo 资产。" }
+  n9@{ shape: rounded, label: "**update​_​gizmo​_​meshes**<br/>把配置组即时线条缓冲转交 Gizmo 资产。" }
   class n9 node_system
-  n10@{ shape: rounded, label: "**bevy​_​gizmos::propagate​_​gizmos#lt;bevy​_​**<br/>**gizmos::config::**<br/>**DefaultGizmoConfigGroup, bevy​_​time::**<br/>**fixed::Fixed#gt;**<br/>汇入指定上下文保留的 Gizmo 图元。" }
+  n10@{ shape: rounded, label: "**propagate​_​gizmos**<br/>汇入指定上下文保留的 Gizmo 图元。" }
   class n10 node_system
-  n11@{ shape: rounded, label: "**bevy​_​gizmos::update​_​gizmo​_​**<br/>**meshes#lt;bevy​_​gizmos::aabb::**<br/>**AabbGizmoConfigGroup#gt;**<br/>把配置组即时线条缓冲转交 Gizmo 资产。" }
+  n11@{ shape: rounded, label: "**update​_​gizmo​_​meshes**<br/>把配置组即时线条缓冲转交 Gizmo 资产。" }
   class n11 node_system
   n1 e0@-->|"先于"| n0
   class e0 edge_order
@@ -79,7 +76,7 @@ flowchart LR
   class e5 edge_order
   n7 e6@-->|"先于"| n0
   class e6 edge_order
-  n0 e7@--->|"集合成员"| n8
+  n0 e7@-->|"集合成员"| n8
   class e7 edge_set_membership
   n0 e8@-->|"集合成员"| n9
   class e8 edge_set_membership
@@ -94,7 +91,6 @@ flowchart LR
   e4@{ curve: basis }
   e5@{ curve: basis }
   e6@{ curve: basis }
-  e7@{ curve: basis }
   e8@{ curve: basis }
   e9@{ curve: basis }
   e10@{ curve: basis }

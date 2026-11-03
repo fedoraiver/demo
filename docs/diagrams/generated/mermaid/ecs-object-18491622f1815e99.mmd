@@ -49,126 +49,126 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​picking::events::pointer​_​events**<br/>根据悬停与按钮状态派发指针交互事件。" }
+  n0@{ shape: rounded, label: "**pointer​_​events**<br/>根据悬停与按钮状态派发指针交互事件。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;events::**<br/>**PointerRelease#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n1@{ shape: cyl, label: "**Messages#lt;PointerRelease#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n1 node_resource
   class n1 external_node
-  n2@{ shape: lean-r, label: "**events::PointerDragEnd**<br/>通知拖拽按钮释放及最终累计位移。" }
+  n2@{ shape: lean-r, label: "**PointerDragEnd**<br/>通知拖拽按钮释放及最终累计位移。" }
   class n2 node_message
-  n3@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;events::**<br/>**PointerScroll#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n3@{ shape: cyl, label: "**Messages#lt;PointerScroll#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n3 node_resource
   class n3 external_node
   n4@{ shape: notch-rect, label: "**Local · sent​_​enter**<br/>去重本轮指针进入事件的接收实体。" }
   class n4 node_local
-  n5@{ shape: cyl, label: "**hover::PreviousHoverMap**<br/>保留上一轮指针悬停目标。" }
+  n5@{ shape: cyl, label: "**PreviousHoverMap**<br/>保留上一轮指针悬停目标。" }
   class n5 node_resource
-  n6@{ shape: lean-r, label: "**events::PointerDragOver**<br/>通知拖拽对象正悬停于接收目标。" }
+  n6@{ shape: lean-r, label: "**PointerDragOver**<br/>通知拖拽对象正悬停于接收目标。" }
   class n6 node_message
-  n7@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;events::**<br/>**PointerMove#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n7@{ shape: cyl, label: "**Messages#lt;PointerMove#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n7 node_resource
   class n7 external_node
-  n8@{ shape: lean-r, label: "**events::PointerCancel**<br/>通知指针取消并丢弃当前交互状态。" }
+  n8@{ shape: lean-r, label: "**PointerCancel**<br/>通知指针取消并丢弃当前交互状态。" }
   class n8 node_message
-  n9@{ shape: cyl, label: "**pointer::PointerMap**<br/>索引稳定指针编号对应的指针实体。" }
+  n9@{ shape: cyl, label: "**PointerMap**<br/>索引稳定指针编号对应的指针实体。" }
   class n9 node_resource
-  n10@{ shape: lean-r, label: "**events::PointerScroll**<br/>通知目标上的横向和纵向滚动输入。" }
+  n10@{ shape: lean-r, label: "**PointerScroll**<br/>通知目标上的横向和纵向滚动输入。" }
   class n10 node_message
-  n11@{ shape: lean-r, label: "**events::PointerMove**<br/>通知目标上的指针移动及屏幕位移。" }
+  n11@{ shape: lean-r, label: "**PointerMove**<br/>通知目标上的指针移动及屏幕位移。" }
   class n11 node_message
-  n12@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;events::**<br/>**PointerOut#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n12@{ shape: cyl, label: "**Messages#lt;PointerOut#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n12 node_resource
   class n12 external_node
-  n13@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;events::**<br/>**PointerDragEnter#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n13@{ shape: cyl, label: "**Messages#lt;PointerDragEnter#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n13 node_resource
   class n13 external_node
-  n14@{ shape: lean-r, label: "**events::PointerDragLeave**<br/>通知拖拽对象离开接收目标。" }
+  n14@{ shape: lean-r, label: "**PointerDragLeave**<br/>通知拖拽对象离开接收目标。" }
   class n14 node_message
-  n15@{ shape: lean-r, label: "**events::PointerDragDrop**<br/>通知被拖拽实体释放到接收目标。" }
+  n15@{ shape: lean-r, label: "**PointerDragDrop**<br/>通知被拖拽实体释放到接收目标。" }
   class n15 node_message
-  n16@{ shape: lean-r, label: "**events::PointerClick**<br/>通知同一目标的成对按压和释放点击。" }
+  n16@{ shape: lean-r, label: "**PointerClick**<br/>通知同一目标的成对按压和释放点击。" }
   class n16 node_message
-  n17@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;events::**<br/>**PointerClick#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n17@{ shape: cyl, label: "**Messages#lt;PointerClick#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n17 node_resource
   class n17 external_node
-  n18@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;events::**<br/>**PointerDragStart#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n18@{ shape: cyl, label: "**Messages#lt;PointerDragStart#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n18 node_resource
   class n18 external_node
-  n19@{ shape: lean-r, label: "**events::PointerRelease**<br/>通知目标上的指针按钮释放。" }
+  n19@{ shape: lean-r, label: "**PointerRelease**<br/>通知目标上的指针按钮释放。" }
   class n19 node_message
-  n20@{ shape: lean-r, label: "**events::PointerDragEnter**<br/>通知携带拖拽对象的指针进入接收目标。" }
+  n20@{ shape: lean-r, label: "**PointerDragEnter**<br/>通知携带拖拽对象的指针进入接收目标。" }
   class n20 node_message
-  n21@{ shape: rounded, label: "**bevy​_​ecs::hierarchy::ChildOf**<br/>来自crate:bevy​_​ecs ↗：保存当前实体的<br/>父实体身份" }
+  n21@{ shape: rounded, label: "**ChildOf**<br/>来自crate:bevy​_​ecs ↗：保存当前实体的<br/>父实体身份" }
   class n21 node_component
   class n21 external_node
-  n22@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;events::**<br/>**PointerOver#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n22@{ shape: cyl, label: "**Messages#lt;PointerOver#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n22 node_resource
   class n22 external_node
-  n23@{ shape: lean-r, label: "**events::PointerLeave**<br/>通知指针离开目标或其独有祖先范围。" }
+  n23@{ shape: lean-r, label: "**PointerLeave**<br/>通知指针离开目标或其独有祖先范围。" }
   class n23 node_message
   n24@{ shape: cyl, label: "**PickingSettings**<br/>配置指针拾取流程行为。" }
   class n24 node_resource
-  n25@{ shape: lean-r, label: "**events::PointerOut**<br/>通知指针离开目标并向全部祖先传播。" }
+  n25@{ shape: lean-r, label: "**PointerOut**<br/>通知指针离开目标并向全部祖先传播。" }
   class n25 node_message
-  n26@{ shape: lean-r, label: "**events::PointerDrag**<br/>通知正在拖拽的目标及累计和本次位移。" }
+  n26@{ shape: lean-r, label: "**PointerDrag**<br/>通知正在拖拽的目标及累计和本次位移。" }
   class n26 node_message
-  n27@{ shape: lean-r, label: "**bevy​_​picking::events::PointerPress**<br/>通知目标上的指针按钮按下及连按次数。" }
+  n27@{ shape: lean-r, label: "**PointerPress**<br/>通知目标上的指针按钮按下及连按次数。" }
   class n27 node_message
-  n28@{ shape: cyl, label: "**bevy​_​ecs::message::**<br/>**Messages#lt;pointer::PointerInput#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n28@{ shape: cyl, label: "**Messages#lt;PointerInput#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n28 node_resource
   class n28 external_node
-  n29@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;events::**<br/>**PointerDragDrop#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n29@{ shape: cyl, label: "**Messages#lt;PointerDragDrop#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n29 node_resource
   class n29 external_node
-  n30@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;events::**<br/>**PointerDragLeave#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n30@{ shape: cyl, label: "**Messages#lt;PointerDragLeave#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n30 node_resource
   class n30 external_node
-  n31@{ shape: lean-r, label: "**events::PointerEnter**<br/>通知指针进入目标或其独有祖先范围。" }
+  n31@{ shape: lean-r, label: "**PointerEnter**<br/>通知指针进入目标或其独有祖先范围。" }
   class n31 node_message
-  n32@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;events::**<br/>**PointerLeave#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n32@{ shape: cyl, label: "**Messages#lt;PointerLeave#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n32 node_resource
   class n32 external_node
-  n33@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;events::**<br/>**PointerPress#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n33@{ shape: cyl, label: "**Messages#lt;PointerPress#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n33 node_resource
   class n33 external_node
-  n34@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;events::**<br/>**PointerDragOver#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n34@{ shape: cyl, label: "**Messages#lt;PointerDragOver#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n34 node_resource
   class n34 external_node
   n35@{ shape: fr-rect, label: "**InteractionPlugin**<br/>生成并冒泡指针交互事件。" }
   class n35 node_plugin
-  n36@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;events::**<br/>**PointerDrag#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n36@{ shape: cyl, label: "**Messages#lt;PointerDrag#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n36 node_resource
   class n36 external_node
-  n37@{ shape: lean-r, label: "**events::PointerOver**<br/>通知指针进入目标并向全部祖先传播。" }
+  n37@{ shape: lean-r, label: "**PointerOver**<br/>通知指针进入目标并向全部祖先传播。" }
   class n37 node_message
-  n38@{ shape: cyl, label: "**hover::HoverMap**<br/>保存各指针当前可交互的悬停目标。" }
+  n38@{ shape: cyl, label: "**HoverMap**<br/>保存各指针当前可交互的悬停目标。" }
   class n38 node_resource
-  n39@{ shape: rounded, label: "**bevy​_​picking::pointer::**<br/>**PointerLocation**<br/>保存指针当前目标及该目标上的位置" }
+  n39@{ shape: rounded, label: "**PointerLocation**<br/>保存指针当前目标及该目标上的位置" }
   class n39 node_component
   n40@{ shape: notch-rect, label: "**Local · hovered​_​entity​_​ancestors**<br/>缓存当前与前轮指针悬停祖先集合。" }
   class n40 node_local
-  n41@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;events::**<br/>**PointerCancel#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n41@{ shape: cyl, label: "**Messages#lt;PointerCancel#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n41 node_resource
   class n41 external_node
-  n42@{ shape: lean-r, label: "**events::PointerDragStart**<br/>通知按下后移动开始拖拽目标。" }
+  n42@{ shape: lean-r, label: "**PointerDragStart**<br/>通知按下后移动开始拖拽目标。" }
   class n42 node_message
   n43@{ shape: lin-rect, label: "**Hover**<br/>组织指针拾取和悬停处理阶段。" }
   class n43 node_system_set
-  n44@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;events::**<br/>**PointerDragEnd#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n44@{ shape: cyl, label: "**Messages#lt;PointerDragEnd#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n44 node_resource
   class n44 external_node
-  n45@{ shape: cyl, label: "**events::PointerState**<br/>保存各指针按钮的按下和拖动状态。" }
+  n45@{ shape: cyl, label: "**PointerState**<br/>保存各指针按钮的按下和拖动状态。" }
   class n45 node_resource
-  n46@{ shape: rounded, label: "**bevy​_​picking::hover::update​_​is​_​**<br/>**hovered**<br/>把鼠标悬停传播到实体祖先。" }
+  n46@{ shape: rounded, label: "**update​_​is​_​hovered**<br/>把鼠标悬停传播到实体祖先。" }
   class n46 node_system
-  n47@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;events::**<br/>**PointerEnter#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n47@{ shape: cyl, label: "**Messages#lt;PointerEnter#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n47 node_resource
   class n47 external_node
   n48@{ shape: notch-rect, label: "**Local · sent​_​leave**<br/>去重本轮指针离开事件的接收实体。" }
   class n48 node_local
-  n49@{ shape: lean-r, label: "**pointer::PointerInput**<br/>传递拾取指针输入动作。" }
+  n49@{ shape: lean-r, label: "**PointerInput**<br/>传递拾取指针输入动作。" }
   class n49 node_message
-  n50@{ shape: rounded, label: "**bevy​_​picking::hover::update​_​is​_​**<br/>**directly​_​hovered**<br/>更新鼠标直接悬停的实体标记。" }
+  n50@{ shape: rounded, label: "**update​_​is​_​directly​_​hovered**<br/>更新鼠标直接悬停的实体标记。" }
   class n50 node_system
   n0 e0@-->|"可变访问"| n1
   class e0 edge_write
@@ -397,7 +397,7 @@ flowchart LR
   e22@{ curve: basis }
   e23@{ curve: basis }
   e24@{ curve: basis }
-  e25@{ curve: bumpX }
+  e25@{ curve: basis }
   e26@{ curve: basis }
   e27@{ curve: basis }
   e28@{ curve: basis }
@@ -418,7 +418,7 @@ flowchart LR
   e43@{ curve: basis }
   e44@{ curve: basis }
   e45@{ curve: basis }
-  e46@{ curve: bumpX }
+  e46@{ curve: basis }
   e47@{ curve: basis }
   e48@{ curve: basis }
   e49@{ curve: basis }

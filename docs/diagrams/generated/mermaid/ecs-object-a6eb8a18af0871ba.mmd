@@ -43,7 +43,7 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: hex, label: "**bevy​_​input​_​focus::on​_​window​_​acquire​_​**<br/>**focus​_​clear**<br/>在请求未命中焦点目标时清除焦点。" }
+  n0@{ shape: hex, label: "**on​_​window​_​acquire​_​focus​_​clear**<br/>在请求未命中焦点目标时清除焦点。" }
   class n0 node_observer
   n1@{ shape: cyl, label: "**InputFocus**<br/>保存当前输入焦点实体、待派发的焦点变化及<br/>原焦点" }
   class n1 node_resource
@@ -51,7 +51,7 @@ flowchart LR
   class n2 node_event
   n3@{ shape: fr-rect, label: "**InputFocusPlugin**<br/>建立并初始化界面输入焦点。" }
   class n3 node_plugin
-  n4@{ shape: rounded, label: "**window::Window**<br/>来自crate:bevy​_​window ↗：保存窗口的呈<br/>现模式、位置、分辨率、标题、全屏及平台行<br/>为配置" }
+  n4@{ shape: rounded, label: "**Window**<br/>来自crate:bevy​_​window ↗：保存窗口的呈<br/>现模式、位置、分辨率、标题、全屏及平台行<br/>为配置" }
   class n4 node_component
   class n4 external_node
   n0 e0@-->|"可变访问"| n1

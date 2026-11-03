@@ -42,25 +42,28 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::**<br/>**material::mark​_​2d​_​meshes​_​as​_​changed​_​**<br/>**if​_​their​_​materials​_​changed#lt;bevy​_​**<br/>**sprite​_​render::sprite​_​mesh::sprite​_​**<br/>**mesh​_​material::SpriteMeshMaterial#gt;**<br/>让材质变化触发二维网格重新提取。" }
+  subgraph layout_card_n0[" "]
+  n0@{ shape: rounded, label: "**mark​_​2d​_​meshes​_​as​_​changed​_​if​_​their​_​**<br/>**materials​_​changed**<br/>让材质变化触发二维网格重新提取。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**components::Mesh2d**<br/>来自crate:bevy​_​mesh ↗：为二维可绘制实<br/>体指定网格资产。" }
+  end
+  style layout_card_n0 fill:none,stroke:none
+  n1@{ shape: rounded, label: "**Mesh2d**<br/>来自crate:bevy​_​mesh ↗：为二维可绘制实<br/>体指定网格资产。" }
   class n1 node_component
   class n1 external_node
-  n2@{ shape: rounded, label: "**mesh2d::material::**<br/>**MeshMaterial2d#lt;sprite​_​mesh::sprite​_​**<br/>**mesh​_​material::SpriteMeshMaterial#gt;**<br/>为二维网格指定材质资产。" }
+  n2@{ shape: rounded, label: "**MeshMaterial2d#lt;SpriteMeshMaterial#gt;**<br/>为二维网格指定材质资产。" }
   class n2 node_component
   n3@{ shape: notch-rect, label: "**Local · removed​_​materials​_​query.0.1**<br/>跟踪 MeshMaterial2d#lt;M#gt; 移除记录的读取<br/>进度。" }
   class n3 node_local
-  n4@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::**<br/>**material::check​_​entities​_​needing​_​**<br/>**specialization#lt;bevy​_​sprite​_​render::**<br/>**sprite​_​mesh::sprite​_​mesh​_​material::**<br/>**SpriteMeshMaterial#gt;**<br/>收集二维网格材质需重建或移除专用化的实<br/>体。" }
+  n4@{ shape: rounded, label: "**check​_​entities​_​needing​_​**<br/>**specialization**<br/>收集二维网格材质需重建或移除专用化的实<br/>体。" }
   class n4 node_system
-  n5@{ shape: rounded, label: "**bevy​_​sprite​_​render::sprite​_​mesh::**<br/>**add​_​mesh**<br/>为新增精灵安装共享单位矩形网格。" }
+  n5@{ shape: rounded, label: "**add​_​mesh**<br/>为新增精灵安装共享单位矩形网格。" }
   class n5 node_system
   n6@{ shape: notch-rect, label: "**Local · removed​_​materials​_​**<br/>**query.0.0.0.0**<br/>保存 MeshMaterial2d#lt;M#gt; 移除参数的组<br/>件 ID。" }
   class n6 node_local
-  n7@{ shape: cyl, label: "**bevy​_​asset::asset​_​changed::**<br/>**AssetChanges#lt;sprite​_​mesh::sprite​_​**<br/>**mesh​_​material::SpriteMeshMaterial#gt;**<br/>来自crate:bevy​_​asset ↗：记录资产最近<br/>变化的系统刻度。" }
+  n7@{ shape: cyl, label: "**AssetChanges#lt;SpriteMeshMaterial#gt;**<br/>来自crate:bevy​_​asset ↗：记录资产最近<br/>变化的系统刻度。" }
   class n7 node_resource
   class n7 external_node
-  n8@{ shape: rounded, label: "**bevy​_​sprite​_​render::sprite​_​mesh::**<br/>**add​_​material**<br/>按精灵与锚点复用或创建默认网格材质。" }
+  n8@{ shape: rounded, label: "**add​_​material**<br/>按精灵与锚点复用或创建默认网格材质。" }
   class n8 node_system
   n0 e0@-->|"可变访问"| n1
   class e0 edge_write
@@ -83,6 +86,7 @@ flowchart LR
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
+  e3@{ curve: basis }
   e4@{ curve: basis }
   e6@{ curve: basis }
   e7@{ curve: basis }

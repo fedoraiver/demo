@@ -38,14 +38,14 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**events::PointerState**<br/>保存各指针按钮的按下和拖动状态。" }
+  n0@{ shape: cyl, label: "**PointerState**<br/>保存各指针按钮的按下和拖动状态。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​ui::widget::viewport::viewport​_​**<br/>**picking**<br/>来自crate:bevy​_​ui ↗：把外部指针转换并<br/>转发到 UI 内嵌视口。" }
+  n1@{ shape: rounded, label: "**viewport​_​picking**<br/>来自crate:bevy​_​ui ↗：把外部指针转换并<br/>转发到 UI 内嵌视口。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​picking::events::pointer​_​events**<br/>根据悬停与按钮状态派发指针交互事件。" }
+  n2@{ shape: rounded, label: "**pointer​_​events**<br/>根据悬停与按钮状态派发指针交互事件。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​ui​_​widgets::text​_​input::text​_​**<br/>**input​_​autoscroll​_​system**<br/>来自crate:bevy​_​ui​_​widgets ↗：在拖选<br/>越出文字视口时自动滚动。" }
+  n3@{ shape: rounded, label: "**text​_​input​_​autoscroll​_​system**<br/>来自crate:bevy​_​ui​_​widgets ↗：在拖选<br/>越出文字视口时自动滚动。" }
   class n3 node_system
   class n3 external_node
   n0 e0@--> n1

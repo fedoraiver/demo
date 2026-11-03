@@ -43,25 +43,25 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**avian3d::collision::collider::**<br/>**backend::update​_​collider​_​**<br/>**scale#lt;avian3d::collision::collider::**<br/>**parry::Collider#gt;**<br/>把根节点和附属碰撞体的缩放传给形状。" }
+  n0@{ shape: rounded, label: "**update​_​collider​_​scale**<br/>把根节点和附属碰撞体的缩放传给形状。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**collision::collider::parry::Collider**<br/>保存 Parry 碰撞后端的几何形状。" }
+  n1@{ shape: rounded, label: "**Collider**<br/>保存 Parry 碰撞后端的几何形状。" }
   class n1 node_component
-  n2@{ shape: rounded, label: "**components::transform::Transform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>相对父实体的平移、旋转和缩放" }
+  n2@{ shape: rounded, label: "**Transform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>相对父实体的平移、旋转和缩放" }
   class n2 node_component
   class n2 external_node
-  n3@{ shape: rounded, label: "**avian3d::collision::collider::**<br/>**backend::update​_​collider​_​mass​_​**<br/>**properties#lt;avian3d::collision::**<br/>**collider::parry::Collider#gt;**<br/>按变化的形状和密度重算碰撞体质量。" }
+  n3@{ shape: rounded, label: "**update​_​collider​_​mass​_​properties**<br/>按变化的形状和密度重算碰撞体质量。" }
   class n3 node_system
   n4@{ shape: lin-rect, label: "**Prepare**<br/>划分物理准备、模拟与回写边界。" }
   class n4 node_system_set
   n5@{ shape: lin-rect, label: "**TransformToPosition**<br/>组织实体变换与物理姿态同步。" }
   class n5 node_system_set
-  n6@{ shape: rounded, label: "**collision::collider::collider​_​**<br/>**transform::ColliderTransform**<br/>缓存碰撞体相对于刚体的变换。" }
+  n6@{ shape: rounded, label: "**ColliderTransform**<br/>缓存碰撞体相对于刚体的变换。" }
   class n6 node_component
-  n7@{ shape: rounded, label: "**bevy​_​ecs::hierarchy::ChildOf**<br/>来自crate:bevy​_​ecs ↗：保存当前实体的<br/>父实体身份" }
+  n7@{ shape: rounded, label: "**ChildOf**<br/>来自crate:bevy​_​ecs ↗：保存当前实体的<br/>父实体身份" }
   class n7 node_component
   class n7 external_node
-  n8@{ shape: cyl, label: "**physics​_​transform::**<br/>**PhysicsTransformConfig**<br/>配置物理位姿与显示变换的同步。" }
+  n8@{ shape: cyl, label: "**PhysicsTransformConfig**<br/>配置物理位姿与显示变换的同步。" }
   class n8 node_resource
   n1 e0@---|"赋值"| n0
   class e0 edge_write

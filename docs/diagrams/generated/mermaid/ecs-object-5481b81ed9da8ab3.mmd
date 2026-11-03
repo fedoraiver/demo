@@ -42,20 +42,20 @@ flowchart LR
   classDef edge_observe stroke:#B66B2D,stroke-width:1.8px,stroke-dasharray:2 4
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: hex, label: "**avian3d::collider​_​tree::update::**<br/>**{impl#35;1}::build::{closure#35;7}**<br/>同步碰撞代理的刚体禁用标志。" }
+  n0@{ shape: hex, label: "**build::{closure#35;7}**<br/>同步碰撞代理的刚体禁用标志。" }
   class n0 node_observer
-  n1@{ shape: cyl, label: "**collider​_​tree::ColliderTrees**<br/>按运动类别组织碰撞体加速树。" }
+  n1@{ shape: cyl, label: "**ColliderTrees**<br/>按运动类别组织碰撞体加速树。" }
   class n1 node_resource
-  n2@{ shape: rounded, label: "**collision::collider::**<br/>**ColliderDisabled**<br/>暂停碰撞体检测和空间查询。" }
+  n2@{ shape: rounded, label: "**ColliderDisabled**<br/>暂停碰撞体检测和空间查询。" }
   class n2 node_component
-  n3@{ shape: stadium, label: "**bevy​_​ecs::lifecycle::DiscardEvent**<br/>来自crate:bevy​_​ecs ↗：在组件旧值丢弃<br/>前发出通知。" }
+  n3@{ shape: stadium, label: "**DiscardEvent**<br/>来自crate:bevy​_​ecs ↗：在组件旧值丢弃<br/>前发出通知。" }
   class n3 node_event
   class n3 external_node
-  n4@{ shape: rounded, label: "**collision::collider::collider​_​**<br/>**hierarchy::RigidBodyColliders**<br/>维护刚体附着的碰撞体集合。" }
+  n4@{ shape: rounded, label: "**RigidBodyColliders**<br/>维护刚体附着的碰撞体集合。" }
   class n4 node_component
-  n5@{ shape: rounded, label: "**dynamics::rigid​_​body::**<br/>**RigidBodyDisabled**<br/>暂停刚体求解和附着关节。" }
+  n5@{ shape: rounded, label: "**RigidBodyDisabled**<br/>暂停刚体求解和附着关节。" }
   class n5 node_component
-  n6@{ shape: rounded, label: "**collider​_​tree::proxy​_​key::**<br/>**ColliderTreeProxyKey**<br/>定位特定碰撞体树中的代理。" }
+  n6@{ shape: rounded, label: "**ColliderTreeProxyKey**<br/>定位特定碰撞体树中的代理。" }
   class n6 node_component
   n0 e0@-->|"可变访问"| n1
   class e0 edge_write

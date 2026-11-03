@@ -40,8 +40,11 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**action::ActionSettings**<br/>配置输入动作的值累积、首次激活重置及输入<br/>吞取消费策略" }
+  subgraph layout_card_n0[" "]
+  n0@{ shape: rounded, label: "**ActionSettings**<br/>配置输入动作的值累积、首次激活重置及输入<br/>吞取消费策略" }
   class n0 node_component
+  end
+  style layout_card_n0 fill:none,stroke:none
   n1@{ shape: rounded, label: "**spawn​_​menu​_​controller · 创建模板**<br/>来自ui ↗：承载“下一个菜单项”菜单动<br/>作。" }
   class n1 node_entity
   class n1 external_node
@@ -60,29 +63,29 @@ flowchart LR
   n6@{ shape: rounded, label: "**spawn​_​menu​_​controller · 创建模板**<br/>来自ui ↗：承载“减小当前设置值”菜单动<br/>作。" }
   class n6 node_entity
   class n6 external_node
-  n7@{ shape: rounded, label: "**(bevy​_​ecs::system::system​_​param::**<br/>**Local#lt;'​_​, alloc::vec::Vec#lt;bevy​_​**<br/>**enhanced​_​input::binding::Binding#gt;#gt;,**<br/>**bevy​_​enhanced​_​input::context::time::**<br/>**ContextTime#lt;'​_​#gt;, bevy​_​enhanced​_​**<br/>**input::context::input​_​reader::**<br/>**InputReader#lt;'​_​, '​_​#gt;, bevy​_​ecs::**<br/>**change​_​detection::params::Res#lt;'​_​,**<br/>**bevy​_​enhanced​_​input::context::**<br/>**instance::ContextInstances#lt;bevy​_​**<br/>**app::main​_​schedule::PreUpdate#gt;#gt;,**<br/>**bevy​_​ecs::system::query::Query#lt;'​_​,**<br/>**'​_​, bevy​_​ecs::world::entity​_​access::**<br/>**filtered::FilteredEntityMut#lt;'​_​, '​_​**<br/>**#gt;#gt;, bevy​_​ecs::system::query::**<br/>**Query#lt;'​_​, '​_​, (bevy​_​ecs::entity::**<br/>**Entity, #amp;bevy​_​ecs::name::Name,**<br/>**#amp;bevy​_​enhanced​_​input::action::**<br/>**ActionSettings, core::option::**<br/>**Option#lt;#amp;bevy​_​enhanced​_​input::**<br/>**binding::relationship::Bindings#gt;,**<br/>**core::option::Option#lt;#amp;bevy​_​enhanced​_​**<br/>**input::modifier::fns::ModifierFns#gt;,**<br/>**core::option::Option#lt;#amp;bevy​_​enhanced​_​**<br/>**input::condition::fns::**<br/>**ConditionFns#gt;, #amp;mut bevy​_​enhanced​_​**<br/>**input::action::mock::ActionMock),**<br/>**bevy​_​ecs::query::filter::**<br/>**Without#lt;bevy​_​enhanced​_​input::**<br/>**context::ExternallyMocked#gt;#gt;, bevy​_​**<br/>**ecs::system::query::Query#lt;'​_​, '​_​,**<br/>**(#amp;mut bevy​_​enhanced​_​input::action::**<br/>**value::ActionValue, #amp;mut bevy​_​**<br/>**enhanced​_​input::action::**<br/>**TriggerState, #amp;mut bevy​_​enhanced​_​**<br/>**input::action::events::**<br/>**ActionEvents, #amp;mut bevy​_​enhanced​_​**<br/>**input::action::ActionTime)#gt;, bevy​_​**<br/>**ecs::system::query::Query#lt;'​_​, '​_​,**<br/>**(bevy​_​ecs::entity::Entity, #amp;bevy​_​**<br/>**enhanced​_​input::binding::Binding,**<br/>**#amp;mut bevy​_​enhanced​_​input::binding::**<br/>**FirstActivation, core::option::**<br/>**Option#lt;#amp;bevy​_​enhanced​_​input::**<br/>**modifier::fns::ModifierFns#gt;, core::**<br/>**option::Option#lt;#amp;bevy​_​enhanced​_​**<br/>**input::condition::fns::**<br/>**ConditionFns#gt;), bevy​_​ecs::query::**<br/>**filter::Without#lt;bevy​_​enhanced​_​**<br/>**input::action::ActionSettings#gt;#gt;,**<br/>**bevy​_​ecs::system::query::Query#lt;'​_​,**<br/>**'​_​, bevy​_​ecs::world::entity​_​access::**<br/>**filtered::FilteredEntityMut#lt;'​_​, '​_​**<br/>**#gt;#gt;)**<br/>求值上下文输入并更新动作状态。" }
+  n7@{ shape: rounded, label: "**(Local#lt;'​_​, Vec#lt;Binding#gt;#gt;,**<br/>**ContextTime#lt;'​_​#gt;, InputReader#lt;'​_​, '​_​**<br/>**#gt;, Res#lt;'​_​,**<br/>**ContextInstances#lt;PreUpdate#gt;#gt;,**<br/>**Query#lt;'​_​, '​_​, FilteredEntityMut#lt;'​_​,**<br/>**'​_​#gt;#gt;, Query#lt;'​_​, '​_​, (Entity, #amp;Name,**<br/>**#amp;ActionSettings, Option#lt;#amp;Bindings#gt;,**<br/>**Option#lt;#amp;ModifierFns#gt;,**<br/>**Option#lt;#amp;ConditionFns#gt;, #amp;mut**<br/>**ActionMock),**<br/>**Without#lt;ExternallyMocked#gt;#gt;, Query#lt;'​_​**<br/>**, '​_​, (#amp;mut ActionValue, #amp;mut**<br/>**TriggerState, #amp;mut ActionEvents,**<br/>**#amp;mut ActionTime)#gt;, Query#lt;'​_​, '​_​,**<br/>**(Entity, #amp;Binding, #amp;mut**<br/>**FirstActivation,**<br/>**Option#lt;#amp;ModifierFns#gt;,**<br/>**Option#lt;#amp;ConditionFns#gt;),**<br/>**Without#lt;ActionSettings#gt;#gt;, Query#lt;'​_​,**<br/>**'​_​, FilteredEntityMut#lt;'​_​, '​_​#gt;#gt;)**<br/>求值上下文输入并更新动作状态。" }
   class n7 node_system
-  n8@{ shape: hex, label: "**bevy​_​enhanced​_​input::context::**<br/>**deactivate**<br/>为停用上下文登记输入释放等待。" }
+  n8@{ shape: hex, label: "**deactivate**<br/>为停用上下文登记输入释放等待。" }
   class n8 node_observer
-  n9@{ shape: hex, label: "**bevy​_​enhanced​_​input::context::reset​_​**<br/>**action**<br/>重置离开上下文的输入动作状态。" }
+  n9@{ shape: hex, label: "**reset​_​action**<br/>重置离开上下文的输入动作状态。" }
   class n9 node_observer
-  n10@{ shape: hex, label: "**bevy​_​enhanced​_​input::context::reset​_​**<br/>**action**<br/>重置离开上下文的输入动作状态。" }
+  n10@{ shape: hex, label: "**reset​_​action**<br/>重置离开上下文的输入动作状态。" }
   class n10 node_observer
   n11@{ shape: rounded, label: "**spawn​_​keyboard​_​controller · 创建模板**<br/>来自first​_​person ↗：承载单次拿取或放<br/>下的交互动作。" }
   class n11 node_entity
   class n11 external_node
-  n12@{ shape: hex, label: "**bevy​_​enhanced​_​input::context::reset​_​**<br/>**action**<br/>重置离开上下文的输入动作状态。" }
+  n12@{ shape: hex, label: "**reset​_​action**<br/>重置离开上下文的输入动作状态。" }
   class n12 node_observer
-  n13@{ shape: hex, label: "**bevy​_​enhanced​_​input::context::reset​_​**<br/>**action**<br/>重置离开上下文的输入动作状态。" }
+  n13@{ shape: hex, label: "**reset​_​action**<br/>重置离开上下文的输入动作状态。" }
   class n13 node_observer
-  n14@{ shape: hex, label: "**bevy​_​enhanced​_​input::context::reset​_​**<br/>**action**<br/>重置离开上下文的输入动作状态。" }
+  n14@{ shape: hex, label: "**reset​_​action**<br/>重置离开上下文的输入动作状态。" }
   class n14 node_observer
   n15@{ shape: rounded, label: "**spawn​_​keyboard​_​controller · 创建模板**<br/>来自first​_​person ↗：承载第一人称鼠标<br/>转向动作。" }
   class n15 node_entity
   class n15 external_node
-  n16@{ shape: hex, label: "**bevy​_​enhanced​_​input::context::**<br/>**deactivate**<br/>为停用上下文登记输入释放等待。" }
+  n16@{ shape: hex, label: "**deactivate**<br/>为停用上下文登记输入释放等待。" }
   class n16 node_observer
-  n17@{ shape: hex, label: "**bevy​_​enhanced​_​input::context::**<br/>**deactivate**<br/>为停用上下文登记输入释放等待。" }
+  n17@{ shape: hex, label: "**deactivate**<br/>为停用上下文登记输入释放等待。" }
   class n17 node_observer
   n18@{ shape: rounded, label: "**spawn​_​menu​_​controller · 创建模板**<br/>来自ui ↗：承载“增大当前设置值”菜单动<br/>作。" }
   class n18 node_entity
@@ -90,9 +93,9 @@ flowchart LR
   n19@{ shape: rounded, label: "**spawn​_​keyboard​_​controller · 创建模板**<br/>来自first​_​person ↗：把一次有效按下转<br/>换为跳跃动作。" }
   class n19 node_entity
   class n19 external_node
-  n20@{ shape: hex, label: "**bevy​_​enhanced​_​input::context::**<br/>**deactivate**<br/>为停用上下文登记输入释放等待。" }
+  n20@{ shape: hex, label: "**deactivate**<br/>为停用上下文登记输入释放等待。" }
   class n20 node_observer
-  n21@{ shape: hex, label: "**bevy​_​enhanced​_​input::context::**<br/>**deactivate**<br/>为停用上下文登记输入释放等待。" }
+  n21@{ shape: hex, label: "**deactivate**<br/>为停用上下文登记输入释放等待。" }
   class n21 node_observer
   n1 e0@-->|"可能包含"| n0
   class e0 edge_reference

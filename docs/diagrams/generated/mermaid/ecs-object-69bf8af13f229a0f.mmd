@@ -43,34 +43,34 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**demo::first​_​person::camera::sync​_​**<br/>**character​_​visibility**<br/>第一人称只隐藏自身视觉子树，保留业务根与<br/>独立木箱。" }
+  n0@{ shape: rounded, label: "**sync​_​character​_​visibility**<br/>第一人称只隐藏自身视觉子树，保留业务根与<br/>独立木箱。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**first​_​person::actions::**<br/>**GameplayContext**<br/>控制者的步行输入上下文；角色实体不直接持<br/>有设备绑定。" }
+  n1@{ shape: rounded, label: "**GameplayContext**<br/>控制者的步行输入上下文；角色实体不直接持<br/>有设备绑定。" }
   class n1 node_component
-  n2@{ shape: rounded, label: "**bevy​_​camera::visibility::Visibility**<br/>来自crate:bevy​_​camera ↗：声明实体可见<br/>意图及层级继承方式。" }
+  n2@{ shape: rounded, label: "**Visibility**<br/>来自crate:bevy​_​camera ↗：声明实体可见<br/>意图及层级继承方式。" }
   class n2 node_component
   class n2 external_node
   n3@{ shape: lin-rect, label: "**AnonymousSet(0)**<br/>来自crate:bevy​_​ecs ↗：保存一组系统的<br/>共同配置。" }
   class n3 node_system_set
   class n3 external_node
-  n4@{ shape: rounded, label: "**first​_​person::ControlsCharacter**<br/>控制者当前关联的角色，设备和角色状态分别<br/>保存。" }
+  n4@{ shape: rounded, label: "**ControlsCharacter**<br/>控制者当前关联的角色，设备和角色状态分别<br/>保存。" }
   class n4 node_component
-  n5@{ shape: rounded, label: "**first​_​person::ControlsCamera**<br/>控制者当前关联的第一人称相机。" }
+  n5@{ shape: rounded, label: "**ControlsCamera**<br/>控制者当前关联的第一人称相机。" }
   class n5 node_component
-  n6@{ shape: rounded, label: "**character::components::Character**<br/>来自character ↗：具有移动和跳跃能力的<br/>角色。" }
+  n6@{ shape: rounded, label: "**Character**<br/>来自character ↗：具有移动和跳跃能力的<br/>角色。" }
   class n6 node_component
   class n6 external_node
-  n7@{ shape: rounded, label: "**first​_​person::FirstPersonCamera**<br/>观察角度的唯一来源；有向转角保留到下一次<br/>安全朝向同步。" }
+  n7@{ shape: rounded, label: "**FirstPersonCamera**<br/>观察角度的唯一来源；有向转角保留到下一次<br/>安全朝向同步。" }
   class n7 node_component
-  n8@{ shape: rounded, label: "**bevy​_​ecs::hierarchy::ChildOf**<br/>来自crate:bevy​_​ecs ↗：保存当前实体的<br/>父实体身份" }
+  n8@{ shape: rounded, label: "**ChildOf**<br/>来自crate:bevy​_​ecs ↗：保存当前实体的<br/>父实体身份" }
   class n8 node_component
   class n8 external_node
   n9@{ shape: lin-rect, label: "**Visibility**<br/>来自game​_​flow ↗：固定循环后的呈现阶<br/>段，零固定步的帧也执行同一顺序。" }
   class n9 node_system_set
   class n9 external_node
-  n10@{ shape: fr-rect, label: "**first​_​person::FirstPersonPlugin**<br/>注册第一人称动作、捕获、朝向与镜头，不安<br/>装输入基础设施或物理插件。" }
+  n10@{ shape: fr-rect, label: "**FirstPersonPlugin**<br/>注册第一人称动作、捕获、朝向与镜头，不安<br/>装输入基础设施或物理插件。" }
   class n10 node_plugin
-  n11@{ shape: rounded, label: "**first​_​person::CharacterVisual**<br/>相机仅隐藏受控角色的视觉子树。" }
+  n11@{ shape: rounded, label: "**CharacterVisual**<br/>相机仅隐藏受控角色的视觉子树。" }
   class n11 node_component
   n1 e0@-->|"存在性约束"| n0
   class e0 edge_reference

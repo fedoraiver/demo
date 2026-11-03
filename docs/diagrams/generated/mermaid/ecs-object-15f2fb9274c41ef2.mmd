@@ -43,65 +43,62 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  subgraph layout_card_n0[" "]
-  n0@{ shape: rounded, label: "**bevy​_​core​_​pipeline::core​_​3d::main​_​**<br/>**opaque​_​pass​_​3d​_​node::main​_​opaque​_​**<br/>**pass​_​3d**<br/>绘制三维不透明、AlphaMask 与天空盒。" }
+  n0@{ shape: rounded, label: "**main​_​opaque​_​pass​_​3d**<br/>绘制三维不透明、AlphaMask 与天空盒。" }
   class n0 node_system
-  end
-  style layout_card_n0 fill:none,stroke:none
-  n1@{ shape: rounded, label: "**bevy​_​pbr::deferred::deferred​_​**<br/>**lighting**<br/>来自crate:bevy​_​pbr ↗：绑定网格视图、<br/>延迟光照管线及通道深度标识参数，在延迟光<br/>照深度附件约束下执行全屏光照计算，将结果<br/>写入视图颜色。" }
+  n1@{ shape: rounded, label: "**deferred​_​lighting**<br/>来自crate:bevy​_​pbr ↗：绑定网格视图、<br/>延迟光照管线及通道深度标识参数，在延迟光<br/>照深度附件约束下执行全屏光照计算，将结果<br/>写入视图颜色。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**camera::MainPassResolutionOverride**<br/>来自crate:bevy​_​camera ↗：覆盖三维主通<br/>道的渲染分辨率。" }
+  n2@{ shape: rounded, label: "**MainPassResolutionOverride**<br/>来自crate:bevy​_​camera ↗：覆盖三维主通<br/>道的渲染分辨率。" }
   class n2 node_component
   class n2 external_node
-  n3@{ shape: fr-rect, label: "**core​_​3d::Core3dPlugin**<br/>建立三维相机的渲染流程。" }
+  n3@{ shape: fr-rect, label: "**Core3dPlugin**<br/>建立三维相机的渲染流程。" }
   class n3 node_plugin
-  n4@{ shape: cyl, label: "**bevy​_​render::render​_​resource::**<br/>**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
+  n4@{ shape: cyl, label: "**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
   class n4 node_resource
   class n4 external_node
-  n5@{ shape: rounded, label: "**bevy​_​pbr::ssr::screen​_​space​_​**<br/>**reflections**<br/>来自crate:bevy​_​pbr ↗：采样场景颜色、<br/>深度与蓝噪声绘制屏幕空间反射。" }
+  n5@{ shape: rounded, label: "**screen​_​space​_​reflections**<br/>来自crate:bevy​_​pbr ↗：采样场景颜色、<br/>深度与蓝噪声绘制屏幕空间反射。" }
   class n5 node_system
   class n5 external_node
-  n6@{ shape: cyl, label: "**bevy​_​render::renderer::RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
+  n6@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
   class n6 node_resource
   class n6 external_node
-  n7@{ shape: rounded, label: "**bevy​_​render::view::**<br/>**ViewDepthStencilTexture**<br/>来自crate:bevy​_​render ↗：提供视图绘制<br/>的深度模板附件。" }
+  n7@{ shape: rounded, label: "**ViewDepthStencilTexture**<br/>来自crate:bevy​_​render ↗：提供视图绘制<br/>的深度模板附件。" }
   class n7 node_component
   class n7 external_node
-  n8@{ shape: cyl, label: "**bevy​_​render::render​_​phase::**<br/>**ViewBinnedRenderPhases#lt;core​_​3d::**<br/>**Opaque3d#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图按<br/>分桶组织的绘制指令。" }
+  n8@{ shape: cyl, label: "**ViewBinnedRenderPhases#lt;Opaque3d#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图按<br/>分桶组织的绘制指令。" }
   class n8 node_resource
   class n8 external_node
-  n9@{ shape: rounded, label: "**bevy​_​pbr::atmosphere::node::render​_​**<br/>**sky**<br/>来自crate:bevy​_​pbr ↗：绑定大气查找表<br/>及视图、光照参数，按相机视口和可选分辨率<br/>覆盖设置绘制全屏天空，将结果写入视图颜色<br/>附件。" }
+  n9@{ shape: rounded, label: "**render​_​sky**<br/>来自crate:bevy​_​pbr ↗：绑定大气查找表<br/>及视图、光照参数，按相机视口和可选分辨率<br/>覆盖设置绘制全屏天空，将结果写入视图颜色<br/>附件。" }
   class n9 node_system
   class n9 external_node
-  n10@{ shape: rounded, label: "**bevy​_​render::view::ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
+  n10@{ shape: rounded, label: "**ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
   class n10 node_component
   class n10 external_node
-  n11@{ shape: rounded, label: "**bevy​_​render::camera::ExtractedCamera**<br/>来自crate:bevy​_​render ↗：保存渲染世界<br/>相机的目标和绘制配置。" }
+  n11@{ shape: rounded, label: "**ExtractedCamera**<br/>来自crate:bevy​_​render ↗：保存渲染世界<br/>相机的目标和绘制配置。" }
   class n11 node_component
   class n11 external_node
-  n12@{ shape: cyl, label: "**bevy​_​render::diagnostic::**<br/>**DiagnosticsRecorder**<br/>来自crate:bevy​_​render ↗：记录渲染诊断<br/>区间与 GPU 查询索引的对应。" }
+  n12@{ shape: cyl, label: "**DiagnosticsRecorder**<br/>来自crate:bevy​_​render ↗：记录渲染诊断<br/>区间与 GPU 查询索引的对应。" }
   class n12 node_resource
   class n12 external_node
-  n13@{ shape: rounded, label: "**bevy​_​pbr::transmission::node::main​_​**<br/>**transmissive​_​pass​_​3d**<br/>来自crate:bevy​_​pbr ↗：分层复制场景颜<br/>色并绘制三维透射物体。" }
+  n13@{ shape: rounded, label: "**main​_​transmissive​_​pass​_​3d**<br/>来自crate:bevy​_​pbr ↗：分层复制场景颜<br/>色并绘制三维透射物体。" }
   class n13 node_system
   class n13 external_node
   n14@{ shape: lin-rect, label: "**MainPass**<br/>划分三维相机绘制与后处理阶段。" }
   class n14 node_system_set
-  n15@{ shape: cyl, label: "**bevy​_​render::render​_​phase::**<br/>**ViewBinnedRenderPhases#lt;core​_​3d::**<br/>**AlphaMask3d#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图按<br/>分桶组织的绘制指令。" }
+  n15@{ shape: cyl, label: "**ViewBinnedRenderPhases#lt;AlphaMask3d#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图按<br/>分桶组织的绘制指令。" }
   class n15 node_resource
   class n15 external_node
-  n16@{ shape: rounded, label: "**bevy​_​render::view::ViewTarget**<br/>来自crate:bevy​_​render ↗：管理视图主颜<br/>色纹理及最终输出附件。" }
+  n16@{ shape: rounded, label: "**ViewTarget**<br/>来自crate:bevy​_​render ↗：管理视图主颜<br/>色纹理及最终输出附件。" }
   class n16 node_component
   class n16 external_node
-  n17@{ shape: rounded, label: "**bevy​_​render::view::ViewUniformOffset**<br/>来自crate:bevy​_​render ↗：定位当前视图<br/>在共享 Uniform 缓冲中的参数。" }
+  n17@{ shape: rounded, label: "**ViewUniformOffset**<br/>来自crate:bevy​_​render ↗：定位当前视图<br/>在共享 Uniform 缓冲中的参数。" }
   class n17 node_component
   class n17 external_node
-  n18@{ shape: rounded, label: "**skybox::SkyboxPipelineId**<br/>保存当前视图的天空盒管线标识。" }
+  n18@{ shape: rounded, label: "**SkyboxPipelineId**<br/>保存当前视图的天空盒管线标识。" }
   class n18 node_component
-  n19@{ shape: rounded, label: "**bevy​_​core​_​pipeline::core​_​3d::main​_​**<br/>**transparent​_​pass​_​3d​_​node::main​_​**<br/>**transparent​_​pass​_​3d**<br/>绘制三维透明物体并保护 OIT 链表状态。" }
+  n19@{ shape: rounded, label: "**main​_​transparent​_​pass​_​3d**<br/>绘制三维透明物体并保护 OIT 链表状态。" }
   class n19 node_system
-  n20@{ shape: rounded, label: "**skybox::SkyboxBindGroup**<br/>绑定天空盒纹理与视图参数。" }
+  n20@{ shape: rounded, label: "**SkyboxBindGroup**<br/>绑定天空盒纹理与视图参数。" }
   class n20 node_component
   n1 e0@-->|"先于"| n0
   class e0 edge_order
@@ -154,7 +151,7 @@ flowchart LR
   e8@{ curve: basis }
   e10@{ curve: basis }
   e11@{ curve: basis }
-  e12@{ curve: basis }
+  e12@{ curve: bumpX }
   e13@{ curve: basis }
   e14@{ curve: basis }
   e15@{ curve: basis }

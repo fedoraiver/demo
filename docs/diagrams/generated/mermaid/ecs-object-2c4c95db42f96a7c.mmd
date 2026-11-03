@@ -40,13 +40,13 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: lin-rect, label: "**InstanceCleanup**<br/>组织音频实例清理与通道播放。" }
   class n0 node_system_set
-  n1@{ shape: rounded, label: "**bevy​_​kira​_​audio::audio​_​output::**<br/>**cleanup​_​stopped​_​instances**<br/>释放已停止播放实例的内部引用。" }
+  n1@{ shape: rounded, label: "**cleanup​_​stopped​_​instances**<br/>释放已停止播放实例的内部引用。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​kira​_​audio::audio​_​output::**<br/>**update​_​instance​_​states#lt;bevy​_​kira​_​**<br/>**audio::MainTrack#gt;**<br/>把实际播放状态回写到类型通道。" }
+  n2@{ shape: rounded, label: "**update​_​instance​_​states**<br/>把实际播放状态回写到类型通道。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​kira​_​audio::audio​_​output::**<br/>**update​_​instance​_​states#lt;demo::audio::**<br/>**SfxTrack#gt;**<br/>把实际播放状态回写到类型通道。" }
+  n3@{ shape: rounded, label: "**update​_​instance​_​states**<br/>把实际播放状态回写到类型通道。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**bevy​_​kira​_​audio::audio​_​output::**<br/>**update​_​instance​_​states#lt;demo::audio::**<br/>**UiTrack#gt;**<br/>把实际播放状态回写到类型通道。" }
+  n4@{ shape: rounded, label: "**update​_​instance​_​states**<br/>把实际播放状态回写到类型通道。" }
   class n4 node_system
   n0 e0@-->|"集合成员"| n1
   class e0 edge_set_membership

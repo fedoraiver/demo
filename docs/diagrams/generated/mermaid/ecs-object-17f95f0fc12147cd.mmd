@@ -39,7 +39,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: cyl, label: "**LineGizmoUniformBindgroup**<br/>绑定 Gizmo 线条的共享 GPU 参数缓冲。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​gizmos​_​render::prepare​_​line​_​**<br/>**gizmo​_​bind​_​group**<br/>为 Gizmo 绘制绑定已上传的线条参数。" }
+  n1@{ shape: rounded, label: "**prepare​_​line​_​gizmo​_​bind​_​group**<br/>为 Gizmo 绘制绑定已上传的线条参数。" }
   class n1 node_system
   n1 e0@-->|"插入"| n0
   class e0 edge_write

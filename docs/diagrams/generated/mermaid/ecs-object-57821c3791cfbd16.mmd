@@ -43,43 +43,43 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​anti​_​alias::smaa::smaa**<br/>通过三个阶段完成 SMAA 抗锯齿。" }
+  n0@{ shape: rounded, label: "**smaa**<br/>通过三个阶段完成 SMAA 抗锯齿。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**smaa::ViewSmaaPipelines**<br/>记录当前视图三个 SMAA 管线的标识。" }
+  n1@{ shape: rounded, label: "**ViewSmaaPipelines**<br/>记录当前视图三个 SMAA 管线的标识。" }
   class n1 node_component
-  n2@{ shape: cyl, label: "**bevy​_​render::diagnostic::**<br/>**DiagnosticsRecorder**<br/>来自crate:bevy​_​render ↗：记录渲染诊断<br/>区间与 GPU 查询索引的对应。" }
+  n2@{ shape: cyl, label: "**DiagnosticsRecorder**<br/>来自crate:bevy​_​render ↗：记录渲染诊断<br/>区间与 GPU 查询索引的对应。" }
   class n2 node_resource
   class n2 external_node
-  n3@{ shape: rounded, label: "**smaa::SmaaTextures**<br/>保存 SMAA 的边缘、模板与混合中间纹理。" }
+  n3@{ shape: rounded, label: "**SmaaTextures**<br/>保存 SMAA 的边缘、模板与混合中间纹理。" }
   class n3 node_component
-  n4@{ shape: cyl, label: "**bevy​_​render::render​_​resource::**<br/>**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
+  n4@{ shape: cyl, label: "**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
   class n4 node_resource
   class n4 external_node
-  n5@{ shape: rounded, label: "**bevy​_​anti​_​alias::contrast​_​adaptive​_​**<br/>**sharpening::node::cas**<br/>对视图颜色执行 CAS 锐化后处理。" }
+  n5@{ shape: rounded, label: "**cas**<br/>对视图颜色执行 CAS 锐化后处理。" }
   class n5 node_system
   n6@{ shape: lin-rect, label: "**PostProcess**<br/>来自crate:bevy​_​core​_​pipeline ↗：划分<br/>二维相机绘制与后处理阶段。" }
   class n6 node_system_set
   class n6 external_node
-  n7@{ shape: fr-rect, label: "**smaa::SmaaPlugin**<br/>提供亚像素形态抗锯齿。" }
+  n7@{ shape: fr-rect, label: "**SmaaPlugin**<br/>提供亚像素形态抗锯齿。" }
   class n7 node_plugin
-  n8@{ shape: cyl, label: "**bevy​_​render::renderer::CurrentView**<br/>来自crate:bevy​_​render ↗：指定当前正在<br/>渲染的视图实体。" }
+  n8@{ shape: cyl, label: "**CurrentView**<br/>来自crate:bevy​_​render ↗：指定当前正在<br/>渲染的视图实体。" }
   class n8 node_resource
   class n8 external_node
-  n9@{ shape: rounded, label: "**smaa::SmaaBindGroups**<br/>保存视图三个 SMAA 阶段的资源绑定。" }
+  n9@{ shape: rounded, label: "**SmaaBindGroups**<br/>保存视图三个 SMAA 阶段的资源绑定。" }
   class n9 node_component
-  n10@{ shape: rounded, label: "**bevy​_​render::view::ViewTarget**<br/>来自crate:bevy​_​render ↗：管理视图主颜<br/>色纹理及最终输出附件。" }
+  n10@{ shape: rounded, label: "**ViewTarget**<br/>来自crate:bevy​_​render ↗：管理视图主颜<br/>色纹理及最终输出附件。" }
   class n10 node_component
   class n10 external_node
-  n11@{ shape: cyl, label: "**bevy​_​render::renderer::RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
+  n11@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
   class n11 node_resource
   class n11 external_node
-  n12@{ shape: rounded, label: "**smaa::SmaaInfoUniformOffset**<br/>定位视图在 SMAA 参数缓冲中的位置。" }
+  n12@{ shape: rounded, label: "**SmaaInfoUniformOffset**<br/>定位视图在 SMAA 参数缓冲中的位置。" }
   class n12 node_component
-  n13@{ shape: cyl, label: "**smaa::SmaaPipelines**<br/>保存 SMAA 三个阶段的基础管线。" }
+  n13@{ shape: cyl, label: "**SmaaPipelines**<br/>保存 SMAA 三个阶段的基础管线。" }
   class n13 node_resource
-  n14@{ shape: cyl, label: "**smaa::SmaaInfoUniformBuffer**<br/>保存全部视图的 SMAA GPU 参数。" }
+  n14@{ shape: cyl, label: "**SmaaInfoUniformBuffer**<br/>保存全部视图的 SMAA GPU 参数。" }
   class n14 node_resource
-  n15@{ shape: rounded, label: "**bevy​_​core​_​pipeline::tonemapping::**<br/>**node::tonemapping**<br/>来自crate:bevy​_​core​_​pipeline ↗：为启<br/>用的 HDR 视图执行色调映射。" }
+  n15@{ shape: rounded, label: "**tonemapping**<br/>来自crate:bevy​_​core​_​pipeline ↗：为启<br/>用的 HDR 视图执行色调映射。" }
   class n15 node_system
   class n15 external_node
   n1 e0@--> n0

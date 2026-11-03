@@ -38,15 +38,15 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**bevy​_​ecs::message::**<br/>**Messages#lt;gamepad::**<br/>**GamepadConnectionEvent#gt;**<br/>保存最近两次轮换期间产生的指定类型消息" }
+  n0@{ shape: cyl, label: "**Messages#lt;GamepadConnectionEvent#gt;**<br/>保存最近两次轮换期间产生的指定类型消息" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​input::gamepad::gamepad​_​**<br/>**connection​_​system**<br/>来自crate:bevy​_​input ↗：按连接消息添<br/>加或移除手柄组件。" }
+  n1@{ shape: rounded, label: "**gamepad​_​connection​_​system**<br/>来自crate:bevy​_​input ↗：按连接消息添<br/>加或移除手柄组件。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​gilrs::gilrs​_​system::gilrs​_​**<br/>**event​_​startup​_​system**<br/>来自crate:bevy​_​gilrs ↗：登记启动时已<br/>经连接的手柄。" }
+  n2@{ shape: rounded, label: "**gilrs​_​event​_​startup​_​system**<br/>来自crate:bevy​_​gilrs ↗：登记启动时已<br/>经连接的手柄。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​gilrs::gilrs​_​system::gilrs​_​**<br/>**event​_​system**<br/>来自crate:bevy​_​gilrs ↗：把 gilrs 原<br/>始手柄事件转换为 Bevy 消息。" }
+  n3@{ shape: rounded, label: "**gilrs​_​event​_​system**<br/>来自crate:bevy​_​gilrs ↗：把 gilrs 原<br/>始手柄事件转换为 Bevy 消息。" }
   class n3 node_system
   class n3 external_node
   n0 e0@--> n1

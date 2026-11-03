@@ -44,47 +44,47 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​pbr::render::light::queue​_​**<br/>**shadows**<br/>按材质与光源资格更新阴影绘制分桶。" }
+  n0@{ shape: rounded, label: "**queue​_​shadows**<br/>按材质与光源资格更新阴影绘制分桶。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**camera::DirtySpecializations**<br/>来自crate:bevy​_​render ↗：记录需刷新或<br/>移除管线专用化的对象与视图。" }
+  n1@{ shape: cyl, label: "**DirtySpecializations**<br/>来自crate:bevy​_​render ↗：记录需刷新或<br/>移除管线专用化的对象与视图。" }
   class n1 node_resource
   class n1 external_node
-  n2@{ shape: cyl, label: "**bevy​_​render::batching::gpu​_​**<br/>**preprocessing::**<br/>**GpuPreprocessingSupport**<br/>来自crate:bevy​_​render ↗：记录设备可采<br/>用的 GPU 预处理级别。" }
+  n2@{ shape: cyl, label: "**GpuPreprocessingSupport**<br/>来自crate:bevy​_​render ↗：记录设备可采<br/>用的 GPU 预处理级别。" }
   class n2 node_resource
   class n2 external_node
-  n3@{ shape: cyl, label: "**render::light::**<br/>**SpecializedShadowMaterialPipelineCac**<br/>**he**<br/>按光源视图缓存材质阴影专用管线。" }
+  n3@{ shape: cyl, label: "**SpecializedShadowMaterialPipelineCac**<br/>**he**<br/>按光源视图缓存材质阴影专用管线。" }
   class n3 node_resource
-  n4@{ shape: rounded, label: "**render::light::LightEntity**<br/>标识阴影视图对应的光源面或级联。" }
+  n4@{ shape: rounded, label: "**LightEntity**<br/>标识阴影视图对应的光源面或级联。" }
   class n4 node_component
-  n5@{ shape: cyl, label: "**mesh::allocator::MeshAllocator**<br/>来自crate:bevy​_​render ↗：分配并管理网<br/>格顶点和索引 GPU 缓冲。" }
+  n5@{ shape: cyl, label: "**MeshAllocator**<br/>来自crate:bevy​_​render ↗：分配并管理网<br/>格顶点和索引 GPU 缓冲。" }
   class n5 node_resource
   class n5 external_node
-  n6@{ shape: cyl, label: "**bevy​_​render::render​_​phase::**<br/>**ViewBinnedRenderPhases#lt;render::**<br/>**light::Shadow#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图按<br/>分桶组织的绘制指令。" }
+  n6@{ shape: cyl, label: "**ViewBinnedRenderPhases#lt;Shadow#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图按<br/>分桶组织的绘制指令。" }
   class n6 node_resource
   class n6 external_node
   n7@{ shape: lin-rect, label: "**QueueMeshes**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
   class n7 node_system_set
   class n7 external_node
-  n8@{ shape: cyl, label: "**render::light::PendingShadowQueues**<br/>暂存因材质未就绪而无法排队的阴影网格。" }
+  n8@{ shape: cyl, label: "**PendingShadowQueues**<br/>暂存因材质未就绪而无法排队的阴影网格。" }
   class n8 node_resource
-  n9@{ shape: cyl, label: "**bevy​_​render::erased​_​render​_​asset::**<br/>**ErasedRenderAssets#lt;material::**<br/>**PreparedMaterial#gt;**<br/>来自crate:bevy​_​render ↗：存储源资产对<br/>应的类型擦除 GPU 表示。" }
+  n9@{ shape: cyl, label: "**ErasedRenderAssets#lt;PreparedMaterial#gt;**<br/>来自crate:bevy​_​render ↗：存储源资产对<br/>应的类型擦除 GPU 表示。" }
   class n9 node_resource
   class n9 external_node
-  n10@{ shape: cyl, label: "**render::mesh::RenderMeshInstances**<br/>保存 CPU 或 GPU 构建所需的网格实例。" }
+  n10@{ shape: cyl, label: "**RenderMeshInstances**<br/>保存 CPU 或 GPU 构建所需的网格实例。" }
   class n10 node_resource
   n11@{ shape: notch-rect, label: "**Local · mesh​_​instances​_​queued​_​this​_​**<br/>**iteration​_​scratch​_​space**<br/>去重阴影阶段本轮需要排队的网格实例。" }
   class n11 node_local
-  n12@{ shape: rounded, label: "**bevy​_​camera::visibility::**<br/>**RenderLayers**<br/>来自crate:bevy​_​camera ↗：限定相机与实<br/>体可相交的渲染层。" }
+  n12@{ shape: rounded, label: "**RenderLayers**<br/>来自crate:bevy​_​camera ↗：限定相机与实<br/>体可相交的渲染层。" }
   class n12 node_component
   class n12 external_node
-  n13@{ shape: rounded, label: "**bevy​_​render::view::ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
+  n13@{ shape: rounded, label: "**ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
   class n13 node_component
   class n13 external_node
-  n14@{ shape: fr-rect, label: "**material::MaterialsPlugin**<br/>组织材质实例、管线及绘制队列。" }
+  n14@{ shape: fr-rect, label: "**MaterialsPlugin**<br/>组织材质实例、管线及绘制队列。" }
   class n14 node_plugin
-  n15@{ shape: cyl, label: "**material::RenderMaterialInstances**<br/>保存提取后的实体材质实例。" }
+  n15@{ shape: cyl, label: "**RenderMaterialInstances**<br/>保存提取后的实体材质实例。" }
   class n15 node_resource
-  n16@{ shape: rounded, label: "**view::visibility::**<br/>**RenderShadowMapVisibleEntities**<br/>来自crate:bevy​_​render ↗：保存每个阴影<br/>子视图最终收集的可见实体。" }
+  n16@{ shape: rounded, label: "**RenderShadowMapVisibleEntities**<br/>来自crate:bevy​_​render ↗：保存每个阴影<br/>子视图最终收集的可见实体。" }
   class n16 node_component
   class n16 external_node
   n1 e0@--> n0
@@ -126,7 +126,7 @@ flowchart LR
   e4@{ curve: basis }
   e5@{ curve: basis }
   e6@{ curve: basis }
-  e7@{ curve: basis }
+  e7@{ curve: bumpX }
   e9@{ curve: basis }
   e10@{ curve: basis }
   e11@{ curve: basis }

@@ -44,21 +44,21 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: hex, label: "**bevy​_​ui​_​widgets::dialog::bring​_​to​_​**<br/>**front**<br/>将被操作的浮动对话框提到前方。" }
+  n0@{ shape: hex, label: "**bring​_​to​_​front**<br/>将被操作的浮动对话框提到前方。" }
   class n0 node_observer
-  n1@{ shape: stadium, label: "**bevy​_​picking::events::PointerPress**<br/>来自crate:bevy​_​picking ↗：通知目标上<br/>的指针按钮按下及连按次数。" }
+  n1@{ shape: stadium, label: "**PointerPress**<br/>来自crate:bevy​_​picking ↗：通知目标上<br/>的指针按钮按下及连按次数。" }
   class n1 node_event
   class n1 external_node
-  n2@{ shape: rounded, label: "**modal::ModalDialog**<br/>启用对话框模态行为。" }
+  n2@{ shape: rounded, label: "**ModalDialog**<br/>启用对话框模态行为。" }
   class n2 node_component
-  n3@{ shape: rounded, label: "**bevy​_​ecs::hierarchy::ChildOf**<br/>来自crate:bevy​_​ecs ↗：保存当前实体的<br/>父实体身份" }
+  n3@{ shape: rounded, label: "**ChildOf**<br/>来自crate:bevy​_​ecs ↗：保存当前实体的<br/>父实体身份" }
   class n3 node_component
   class n3 external_node
-  n4@{ shape: cyl, label: "**dialog::DialogStack**<br/>按从底到顶的顺序保存已打开浮动对话框" }
+  n4@{ shape: cyl, label: "**DialogStack**<br/>按从底到顶的顺序保存已打开浮动对话框" }
   class n4 node_resource
-  n5@{ shape: fr-rect, label: "**dialog::DialogPlugin**<br/>管理对话框层次与拖动。" }
+  n5@{ shape: fr-rect, label: "**DialogPlugin**<br/>管理对话框层次与拖动。" }
   class n5 node_plugin
-  n6@{ shape: rounded, label: "**dialog::Dialog**<br/>标识浮动或模态对话框。" }
+  n6@{ shape: rounded, label: "**Dialog**<br/>标识浮动或模态对话框。" }
   class n6 node_component
   n1 e0@-->|"接收事件"| n0
   class e0 edge_observe

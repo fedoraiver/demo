@@ -43,13 +43,13 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​time::time​_​system**<br/>按时间更新策略推进真实与虚拟时钟。" }
+  n0@{ shape: rounded, label: "**time​_​system**<br/>按时间更新策略推进真实与虚拟时钟。" }
   class n0 node_system
   n1@{ shape: lin-rect, label: "**TimeSystems**<br/>更新真实、虚拟及当前通用时钟。" }
   class n1 node_system_set
-  n2@{ shape: cyl, label: "**time::Time#lt;virt::Virtual#gt;**<br/>保存时钟上下文、帧间隔及累计时间" }
+  n2@{ shape: cyl, label: "**Time#lt;Virtual#gt;**<br/>保存时钟上下文、帧间隔及累计时间" }
   class n2 node_resource
-  n3@{ shape: cyl, label: "**time::Time**<br/>保存时钟上下文、帧间隔及累计时间" }
+  n3@{ shape: cyl, label: "**Time**<br/>保存时钟上下文、帧间隔及累计时间" }
   class n3 node_resource
   n4@{ shape: fr-rect, label: "**TimePlugin**<br/>维护应用时间与步长。" }
   class n4 node_plugin
@@ -57,9 +57,9 @@ flowchart LR
   class n5 node_resource
   n6@{ shape: notch-rect, label: "**Local · has​_​received​_​time**<br/>区分渲染时钟尚未开始与后续漏帧。" }
   class n6 node_local
-  n7@{ shape: cyl, label: "**bevy​_​time::Time#lt;bevy​_​time::Real#gt;**<br/>保存时钟上下文、帧间隔及累计时间" }
+  n7@{ shape: cyl, label: "**Time#lt;Real#gt;**<br/>保存时钟上下文、帧间隔及累计时间" }
   class n7 node_resource
-  n8@{ shape: cyl, label: "**time::Time#lt;fixed::Fixed#gt;**<br/>保存时钟上下文、帧间隔及累计时间" }
+  n8@{ shape: cyl, label: "**Time#lt;Fixed#gt;**<br/>保存时钟上下文、帧间隔及累计时间" }
   class n8 node_resource
   n9@{ shape: cyl, label: "**TimeUpdateStrategy**<br/>配置时间更新来源" }
   class n9 node_resource

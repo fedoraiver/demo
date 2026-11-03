@@ -43,29 +43,29 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​pbr::render::skin::extract​_​**<br/>**skins**<br/>按蒙皮可见性和资产变化分配或回收骨骼缓冲<br/>区域，提取关节全局变换与逆绑定姿势到暂存<br/>数据，并清理移除的蒙皮记录。" }
+  n0@{ shape: rounded, label: "**extract​_​skins**<br/>按蒙皮可见性和资产变化分配或回收骨骼缓冲<br/>区域，提取关节全局变换与逆绑定姿势到暂存<br/>数据，并清理移除的蒙皮记录。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**extract​_​plugin::MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
+  n1@{ shape: cyl, label: "**MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
   class n1 node_resource
   class n1 external_node
-  n2@{ shape: cyl, label: "**render::skin::SkinUniforms**<br/>以双缓冲保存蒙皮前后帧关节矩阵。" }
+  n2@{ shape: cyl, label: "**SkinUniforms**<br/>以双缓冲保存蒙皮前后帧关节矩阵。" }
   class n2 node_resource
-  n3@{ shape: rounded, label: "**bevy​_​camera::visibility::**<br/>**ViewVisibility**<br/>来自crate:bevy​_​camera ↗：记录实体是否<br/>应被提取用于渲染。" }
+  n3@{ shape: rounded, label: "**ViewVisibility**<br/>来自crate:bevy​_​camera ↗：记录实体是否<br/>应被提取用于渲染。" }
   class n3 node_component
   class n3 external_node
-  n4@{ shape: rounded, label: "**bevy​_​mesh::skinning::SkinnedMesh**<br/>来自crate:bevy​_​mesh ↗：关联蒙皮网格的<br/>关节与逆绑定姿态。" }
+  n4@{ shape: rounded, label: "**SkinnedMesh**<br/>来自crate:bevy​_​mesh ↗：关联蒙皮网格的<br/>关节与逆绑定姿态。" }
   class n4 node_component
   class n4 external_node
   n5@{ shape: notch-rect, label: "**Local · removed​_​skinned​_​meshes​_​**<br/>**query.0.0.0.0.0**<br/>保存 SkinnedMesh 移除参数的组件 ID。" }
   class n5 node_local
-  n6@{ shape: rounded, label: "**components::global​_​transform::**<br/>**GlobalTransform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>合并祖先变换后的世界空间仿射变换" }
+  n6@{ shape: rounded, label: "**GlobalTransform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>合并祖先变换后的世界空间仿射变换" }
   class n6 node_component
   class n6 external_node
-  n7@{ shape: fr-rect, label: "**render::mesh::MeshRenderPlugin**<br/>建立三维网格绘制支持。" }
+  n7@{ shape: fr-rect, label: "**MeshRenderPlugin**<br/>建立三维网格绘制支持。" }
   class n7 node_plugin
   n8@{ shape: notch-rect, label: "**Local · removed​_​skinned​_​meshes​_​**<br/>**query.0.0.1**<br/>跟踪 SkinnedMesh 移除记录的读取进度。" }
   class n8 node_local
-  n9@{ shape: cyl, label: "**bevy​_​asset::Assets#lt;bevy​_​mesh::**<br/>**skinning::**<br/>**SkinnedMeshInverseBindposes#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
+  n9@{ shape: cyl, label: "**Assets#lt;SkinnedMeshInverseBindposes#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
   class n9 node_resource
   class n9 external_node
   n1 e0@--> n0

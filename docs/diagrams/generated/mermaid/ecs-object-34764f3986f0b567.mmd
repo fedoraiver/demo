@@ -43,31 +43,31 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: hex, label: "**bevy​_​ui​_​widgets::radio::radio​_​**<br/>**button​_​on​_​click**<br/>通过点击请求选中单选按钮。" }
+  n0@{ shape: hex, label: "**radio​_​button​_​on​_​click**<br/>通过点击请求选中单选按钮。" }
   class n0 node_observer
-  n1@{ shape: fr-rect, label: "**radio::RadioGroupPlugin**<br/>处理单选组的导航与选择交互。" }
+  n1@{ shape: fr-rect, label: "**RadioGroupPlugin**<br/>处理单选组的导航与选择交互。" }
   class n1 node_plugin
-  n2@{ shape: rounded, label: "**radio::RadioGroup**<br/>组织单选按钮的导航与互斥选择。" }
+  n2@{ shape: rounded, label: "**RadioGroup**<br/>组织单选按钮的导航与互斥选择。" }
   class n2 node_component
-  n3@{ shape: rounded, label: "**button::ActivateOnPress**<br/>让按钮在指针按下时激活。" }
+  n3@{ shape: rounded, label: "**ActivateOnPress**<br/>让按钮在指针按下时激活。" }
   class n3 node_component
-  n4@{ shape: stadium, label: "**events::PointerClick**<br/>来自crate:bevy​_​picking ↗：通知同一目<br/>标的成对按压和释放点击。" }
+  n4@{ shape: stadium, label: "**PointerClick**<br/>来自crate:bevy​_​picking ↗：通知同一目<br/>标的成对按压和释放点击。" }
   class n4 node_event
   class n4 external_node
-  n5@{ shape: rounded, label: "**bevy​_​ecs::hierarchy::ChildOf**<br/>来自crate:bevy​_​ecs ↗：保存当前实体的<br/>父实体身份" }
+  n5@{ shape: rounded, label: "**ChildOf**<br/>来自crate:bevy​_​ecs ↗：保存当前实体的<br/>父实体身份" }
   class n5 node_component
   class n5 external_node
-  n6@{ shape: rounded, label: "**bevy​_​ui::Checked**<br/>来自crate:bevy​_​ui ↗：记录控件当前勾选<br/>状态。" }
+  n6@{ shape: rounded, label: "**Checked**<br/>来自crate:bevy​_​ui ↗：记录控件当前勾选<br/>状态。" }
   class n6 node_component
   class n6 external_node
   n7@{ shape: stadium, label: "**ValueChange#lt;bool#gt;**<br/>传递控件提出的新值。" }
   class n7 node_event
-  n8@{ shape: stadium, label: "**ValueChange#lt;bevy​_​ecs::entity::**<br/>**Entity#gt;**<br/>传递控件提出的新值。" }
+  n8@{ shape: stadium, label: "**ValueChange#lt;Entity#gt;**<br/>传递控件提出的新值。" }
   class n8 node_event
-  n9@{ shape: rounded, label: "**bevy​_​ui::InteractionDisabled**<br/>来自crate:bevy​_​ui ↗：标记禁止交互的<br/>UI 控件。" }
+  n9@{ shape: rounded, label: "**InteractionDisabled**<br/>来自crate:bevy​_​ui ↗：标记禁止交互的<br/>UI 控件。" }
   class n9 node_component
   class n9 external_node
-  n10@{ shape: rounded, label: "**radio::RadioButton**<br/>标识参与互斥选择的单选按钮。" }
+  n10@{ shape: rounded, label: "**RadioButton**<br/>标识参与互斥选择的单选按钮。" }
   class n10 node_component
   n1 e0@-->|"调用"| n0
   class e0 edge_registration

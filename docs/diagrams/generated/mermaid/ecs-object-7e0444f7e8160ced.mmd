@@ -43,28 +43,28 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​animation::trigger​_​untargeted​_​**<br/>**animation​_​events**<br/>派发动画片段的根目标事件。" }
+  n0@{ shape: rounded, label: "**trigger​_​untargeted​_​animation​_​events**<br/>派发动画片段的根目标事件。" }
   class n0 node_system
   n1@{ shape: lin-rect, label: "**AnimationSystems**<br/>来自crate:bevy​_​app ↗：更新动画图、播<br/>放时间和目标姿态。" }
   class n1 node_system_set
   class n1 external_node
-  n2@{ shape: cyl, label: "**bevy​_​asset::Assets#lt;graph::**<br/>**AnimationGraph#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
+  n2@{ shape: cyl, label: "**Assets#lt;AnimationGraph#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
   class n2 node_resource
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​animation::transition::expire​_​**<br/>**completed​_​transitions**<br/>结束已完全淡出的动画过渡。" }
+  n3@{ shape: rounded, label: "**expire​_​completed​_​transitions**<br/>结束已完全淡出的动画过渡。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**bevy​_​animation::animate​_​targets**<br/>评估动画图并把结果应用到动画目标。" }
+  n4@{ shape: rounded, label: "**animate​_​targets**<br/>评估动画图并把结果应用到动画目标。" }
   class n4 node_system
-  n5@{ shape: rounded, label: "**graph::AnimationGraphHandle**<br/>选择播放器使用的动画图资产。" }
+  n5@{ shape: rounded, label: "**AnimationGraphHandle**<br/>选择播放器使用的动画图资产。" }
   class n5 node_component
-  n6@{ shape: fr-rect, label: "**bevy​_​animation::AnimationPlugin**<br/>安装动画播放与更新支持。" }
+  n6@{ shape: fr-rect, label: "**AnimationPlugin**<br/>安装动画播放与更新支持。" }
   class n6 node_plugin
   n7@{ shape: rounded, label: "**AnimationPlayer**<br/>保存当前激活动画及其播放控制状态" }
   class n7 node_component
   n8@{ shape: lin-rect, label: "**Propagate**<br/>来自crate:bevy​_​transform ↗：组织实体<br/>层级变换传播。" }
   class n8 node_system_set
   class n8 external_node
-  n9@{ shape: cyl, label: "**bevy​_​asset::Assets#lt;AnimationClip#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
+  n9@{ shape: cyl, label: "**Assets#lt;AnimationClip#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
   class n9 node_resource
   class n9 external_node
   n1 e0@-->|"集合成员"| n0

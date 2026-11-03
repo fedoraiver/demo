@@ -45,23 +45,23 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​ui​_​widgets::tabs::update​_​**<br/>**tablist​_​derived​_​state**<br/>从标签选择和焦点派生每个标签的状态。" }
+  n0@{ shape: rounded, label: "**update​_​tablist​_​derived​_​state**<br/>从标签选择和焦点派生每个标签的状态。" }
   class n0 node_system
   n1@{ shape: notch-rect, label: "**Local · removed​_​disabled.0.1**<br/>跟踪 InteractionDisabled 移除记录的读<br/>取进度。" }
   class n1 node_local
-  n2@{ shape: rounded, label: "**bevy​_​ui::Selected**<br/>来自crate:bevy​_​ui ↗：记录控件的<br/>ARIA 选中状态。" }
+  n2@{ shape: rounded, label: "**Selected**<br/>来自crate:bevy​_​ui ↗：记录控件的<br/>ARIA 选中状态。" }
   class n2 node_component
   class n2 external_node
-  n3@{ shape: rounded, label: "**tab​_​navigation::TabIndex**<br/>来自crate:bevy​_​input​_​focus ↗：声明实<br/>体参与 Tab 导航及其排序值" }
+  n3@{ shape: rounded, label: "**TabIndex**<br/>来自crate:bevy​_​input​_​focus ↗：声明实<br/>体参与 Tab 导航及其排序值" }
   class n3 node_component
   class n3 external_node
   n4@{ shape: notch-rect, label: "**Local · removed​_​disabled.0.0.0.0**<br/>保存 InteractionDisabled 移除参数的组<br/>件 ID。" }
   class n4 node_local
-  n5@{ shape: rounded, label: "**tabs::TabList**<br/>定义标签栏的导航轴及自动激活策略" }
+  n5@{ shape: rounded, label: "**TabList**<br/>定义标签栏的导航轴及自动激活策略" }
   class n5 node_component
-  n6@{ shape: rounded, label: "**tabs::Tab**<br/>标识可聚焦的标签标题" }
+  n6@{ shape: rounded, label: "**Tab**<br/>标识可聚焦的标签标题" }
   class n6 node_component
-  n7@{ shape: rounded, label: "**bevy​_​ui::InteractionDisabled**<br/>来自crate:bevy​_​ui ↗：标记禁止交互的<br/>UI 控件。" }
+  n7@{ shape: rounded, label: "**InteractionDisabled**<br/>来自crate:bevy​_​ui ↗：标记禁止交互的<br/>UI 控件。" }
   class n7 node_component
   class n7 external_node
   n8@{ shape: cyl, label: "**InputFocus**<br/>来自crate:bevy​_​input​_​focus ↗：保存当<br/>前输入焦点实体、待派发的焦点变化及原焦点" }
@@ -72,11 +72,11 @@ flowchart LR
   n10@{ shape: lin-rect, label: "**FocusChangeEvents**<br/>来自crate:bevy​_​input​_​focus ↗：组织焦<br/>点输入派发与变化通知。" }
   class n10 node_system_set
   class n10 external_node
-  n11@{ shape: fr-rect, label: "**tabs::TabPlugin**<br/>处理标签页选择并更新派生状态。" }
+  n11@{ shape: fr-rect, label: "**TabPlugin**<br/>处理标签页选择并更新派生状态。" }
   class n11 node_plugin
-  n12@{ shape: rounded, label: "**tabs::SelectedTab**<br/>保存标签列表当前选中的直接子标签实体" }
+  n12@{ shape: rounded, label: "**SelectedTab**<br/>保存标签列表当前选中的直接子标签实体" }
   class n12 node_component
-  n13@{ shape: rounded, label: "**bevy​_​ecs::hierarchy::Children**<br/>来自crate:bevy​_​ecs ↗：保存以<br/>ChildOf 指向当前父实体的子实体集合" }
+  n13@{ shape: rounded, label: "**Children**<br/>来自crate:bevy​_​ecs ↗：保存以<br/>ChildOf 指向当前父实体的子实体集合" }
   class n13 node_component
   class n13 external_node
   n0 e0@-->|"可变访问"| n1

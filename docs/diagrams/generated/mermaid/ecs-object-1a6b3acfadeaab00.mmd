@@ -37,12 +37,12 @@ flowchart LR
   classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**mip​_​generation::**<br/>**MipGenerationPipelines**<br/>按图像保存 mipmap 任务的管线与绑定。" }
+  n0@{ shape: cyl, label: "**MipGenerationPipelines**<br/>按图像保存 mipmap 任务的管线与绑定。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​render::init​_​gpu​_​resource#lt;bevy​_​**<br/>**core​_​pipeline::mip​_​generation::**<br/>**MipGenerationPipelines#gt;**<br/>来自crate:bevy​_​render ↗：构造并插入渲<br/>染所需资源。" }
+  n1@{ shape: rounded, label: "**init​_​gpu​_​resource**<br/>来自crate:bevy​_​render ↗：构造并插入渲<br/>染所需资源。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​core​_​pipeline::mip​_​generation::**<br/>**prepare​_​mip​_​generator​_​pipelines**<br/>为本帧 mip 生成任务准备并复用 GPU 资<br/>源。" }
+  n2@{ shape: rounded, label: "**prepare​_​mip​_​generator​_​pipelines**<br/>为本帧 mip 生成任务准备并复用 GPU 资<br/>源。" }
   class n2 node_system
   n1 e0@-->|"插入"| n0
   class e0 edge_write

@@ -37,38 +37,38 @@ flowchart LR
   classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**collision::collider::collider​_​**<br/>**hierarchy::RigidBodyColliders**<br/>维护刚体附着的碰撞体集合。" }
+  n0@{ shape: rounded, label: "**RigidBodyColliders**<br/>维护刚体附着的碰撞体集合。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**avian3d::dynamics::solver::islands::**<br/>**split​_​island**<br/>根据接触与关节连接重新拆分物理岛。" }
+  n1@{ shape: rounded, label: "**split​_​island**<br/>根据接触与关节连接重新拆分物理岛。" }
   class n1 node_system
-  n2@{ shape: hex, label: "**avian3d::collision::narrow​_​phase::**<br/>**remove​_​body​_​on**<br/>清理已移除刚体的接触图记录。" }
+  n2@{ shape: hex, label: "**remove​_​body​_​on**<br/>清理已移除刚体的接触图记录。" }
   class n2 node_observer
-  n3@{ shape: rounded, label: "**avian3d::dynamics::ccd::solve​_​**<br/>**continuous**<br/>通过连续扫掠限制快速刚体穿透。" }
+  n3@{ shape: rounded, label: "**solve​_​continuous**<br/>通过连续扫掠限制快速刚体穿透。" }
   class n3 node_system
-  n4@{ shape: hex, label: "**avian3d::collision::collider::**<br/>**collider​_​hierarchy::plugin::on​_​body​_​**<br/>**removed**<br/>清理已移除刚体的碰撞体归属。" }
+  n4@{ shape: hex, label: "**on​_​body​_​removed**<br/>清理已移除刚体的碰撞体归属。" }
   class n4 node_observer
-  n5@{ shape: rounded, label: "**avian3d::collider​_​tree::update::**<br/>**update​_​solver​_​body​_​aabbs#lt;avian3d::**<br/>**collision::collider::parry::**<br/>**Collider#gt;**<br/>按物理结果更新活跃刚体的碰撞边界。" }
+  n5@{ shape: rounded, label: "**update​_​solver​_​body​_​aabbs**<br/>按物理结果更新活跃刚体的碰撞边界。" }
   class n5 node_system
-  n6@{ shape: hex, label: "**avian3d::dynamics::joints::joint​_​**<br/>**graph::plugin::on​_​disable​_​joint​_​**<br/>**collision**<br/>清理关节两端被禁止的碰撞接触。" }
+  n6@{ shape: hex, label: "**on​_​disable​_​joint​_​collision**<br/>清理关节两端被禁止的碰撞接触。" }
   class n6 node_observer
-  n7@{ shape: rounded, label: "**avian3d::dynamics::rigid​_​body::body​_​**<br/>**size​_​metrics::update​_​body​_​size​_​**<br/>**metrics#lt;avian3d::collision::**<br/>**collider::parry::Collider#gt;**<br/>重算刚体的 CCD 厚度和最大扫掠半径。" }
+  n7@{ shape: rounded, label: "**update​_​body​_​size​_​metrics**<br/>重算刚体的 CCD 厚度和最大扫掠半径。" }
   class n7 node_system
-  n8@{ shape: hex, label: "**avian3d::collision::narrow​_​phase::**<br/>**remove​_​body​_​on**<br/>清理已移除刚体的接触图记录。" }
+  n8@{ shape: hex, label: "**remove​_​body​_​on**<br/>清理已移除刚体的接触图记录。" }
   class n8 node_observer
-  n9@{ shape: hex, label: "**avian3d::collision::collider::**<br/>**collider​_​hierarchy::plugin::on​_​body​_​**<br/>**removed**<br/>清理已移除刚体的碰撞体归属。" }
+  n9@{ shape: hex, label: "**on​_​body​_​removed**<br/>清理已移除刚体的碰撞体归属。" }
   class n9 node_observer
-  n10@{ shape: hex, label: "**avian3d::collider​_​tree::update::**<br/>**{impl#35;1}::build::{closure#35;2}**<br/>按刚体类型迁移碰撞体空间树。" }
+  n10@{ shape: hex, label: "**build::{closure#35;2}**<br/>按刚体类型迁移碰撞体空间树。" }
   class n10 node_observer
-  n11@{ shape: hex, label: "**avian3d::collider​_​tree::update::**<br/>**{impl#35;1}::build::{closure#35;7}**<br/>同步碰撞代理的刚体禁用标志。" }
+  n11@{ shape: hex, label: "**build::{closure#35;7}**<br/>同步碰撞代理的刚体禁用标志。" }
   class n11 node_observer
-  n12@{ shape: hex, label: "**avian3d::collision::narrow​_​phase::**<br/>**on​_​body​_​remove​_​rigid​_​body​_​disabled**<br/>清除刚体重新启用时的旧接触。" }
+  n12@{ shape: hex, label: "**on​_​body​_​remove​_​rigid​_​body​_​disabled**<br/>清除刚体重新启用时的旧接触。" }
   class n12 node_observer
-  n13@{ shape: hex, label: "**avian3d::collision::collider::**<br/>**collider​_​hierarchy::plugin::on​_​body​_​**<br/>**removed**<br/>清理已移除刚体的碰撞体归属。" }
+  n13@{ shape: hex, label: "**on​_​body​_​removed**<br/>清理已移除刚体的碰撞体归属。" }
   class n13 node_observer
-  n14@{ shape: rounded, label: "**demo::item​_​interaction::attachment::**<br/>**align​_​attachments**<br/>来自item​_​interaction ↗：有限的小步对<br/>齐不会积分箱体力；受阻保留安全姿态，持续<br/>受阻则解除持握。" }
+  n14@{ shape: rounded, label: "**align​_​attachments**<br/>来自item​_​interaction ↗：有限的小步对<br/>齐不会积分箱体力；受阻保留安全姿态，持续<br/>受阻则解除持握。" }
   class n14 node_system
   class n14 external_node
-  n15@{ shape: hex, label: "**avian3d::collision::narrow​_​phase::**<br/>**on​_​disable​_​body**<br/>清理被禁用刚体的接触。" }
+  n15@{ shape: hex, label: "**on​_​disable​_​body**<br/>清理被禁用刚体的接触。" }
   class n15 node_observer
   n0 e0@--> n1
   class e0 edge_read

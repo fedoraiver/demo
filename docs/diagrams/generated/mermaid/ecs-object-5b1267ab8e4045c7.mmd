@@ -41,12 +41,12 @@ flowchart LR
   classDef edge_observe stroke:#B66B2D,stroke-width:1.8px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: hex, label: "**bevy​_​ui::interaction​_​states::on​_​add​_​**<br/>**disabled**<br/>向无障碍节点同步禁用状态。" }
+  n0@{ shape: hex, label: "**on​_​add​_​disabled**<br/>向无障碍节点同步禁用状态。" }
   class n0 node_observer
-  n1@{ shape: stadium, label: "**bevy​_​ecs::lifecycle::AddEvent**<br/>来自crate:bevy​_​ecs ↗：通知组件首次加<br/>入实体。" }
+  n1@{ shape: stadium, label: "**AddEvent**<br/>来自crate:bevy​_​ecs ↗：通知组件首次加<br/>入实体。" }
   class n1 node_event
   class n1 external_node
-  n2@{ shape: fr-rect, label: "**bevy​_​ui::UiPlugin**<br/>建立界面布局与内容更新基础。" }
+  n2@{ shape: fr-rect, label: "**UiPlugin**<br/>建立界面布局与内容更新基础。" }
   class n2 node_plugin
   n3@{ shape: rounded, label: "**AccessibilityNode**<br/>来自crate:bevy​_​a11y ↗：把实体转换为<br/>AccessKit 可访问性节点" }
   class n3 node_component

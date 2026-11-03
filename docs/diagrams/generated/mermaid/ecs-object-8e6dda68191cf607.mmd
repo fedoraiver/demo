@@ -42,7 +42,7 @@ flowchart LR
   n1@{ shape: lin-rect, label: "**Queue**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
   class n1 node_system_set
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​gizmos​_​render::pipeline​_​2d::**<br/>**queue​_​line​_​and​_​joint​_​gizmos​_​2d**<br/>将二维 Gizmo 线段与接头加入透明阶段。" }
+  n2@{ shape: rounded, label: "**queue​_​line​_​and​_​joint​_​gizmos​_​2d**<br/>将二维 Gizmo 线段与接头加入透明阶段。" }
   class n2 node_system
   n1 e0@-->|"集合成员"| n0
   class e0 edge_set_membership

@@ -45,31 +45,31 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​picking::backend::ray::RayMap::**<br/>**repopulate**<br/>重建指针与相机组合的拾取射线。" }
+  n0@{ shape: rounded, label: "**repopulate**<br/>重建指针与相机组合的拾取射线。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**components::global​_​transform::**<br/>**GlobalTransform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>合并祖先变换后的世界空间仿射变换" }
+  n1@{ shape: rounded, label: "**GlobalTransform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>合并祖先变换后的世界空间仿射变换" }
   class n1 node_component
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​camera::Camera**<br/>来自crate:bevy​_​camera ↗：配置相机视<br/>口、输出目标和渲染顺序。" }
+  n2@{ shape: rounded, label: "**Camera**<br/>来自crate:bevy​_​camera ↗：配置相机视<br/>口、输出目标和渲染顺序。" }
   class n2 node_component
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​camera::RenderTarget**<br/>来自crate:bevy​_​camera ↗：指定相机输出<br/>的窗口、图像或纹理。" }
+  n3@{ shape: rounded, label: "**RenderTarget**<br/>来自crate:bevy​_​camera ↗：指定相机输出<br/>的窗口、图像或纹理。" }
   class n3 node_component
   class n3 external_node
-  n4@{ shape: cyl, label: "**bevy​_​picking::backend::prelude::**<br/>**RayMap**<br/>按指针和相机组合保存拾取射线" }
+  n4@{ shape: cyl, label: "**RayMap**<br/>按指针和相机组合保存拾取射线" }
   class n4 node_resource
   n5@{ shape: fr-rect, label: "**PickingPlugin**<br/>建立指针拾取的公共基础。" }
   class n5 node_plugin
-  n6@{ shape: rounded, label: "**window::PrimaryWindow**<br/>来自crate:bevy​_​window ↗：标识唯一的主<br/>窗口" }
+  n6@{ shape: rounded, label: "**PrimaryWindow**<br/>来自crate:bevy​_​window ↗：标识唯一的主<br/>窗口" }
   class n6 node_component
   class n6 external_node
   n7@{ shape: lin-rect, label: "**ProcessInput**<br/>组织指针拾取和悬停处理阶段。" }
   class n7 node_system_set
-  n8@{ shape: rounded, label: "**bevy​_​picking::pointer::**<br/>**PointerLocation**<br/>保存指针当前目标及该目标上的位置" }
+  n8@{ shape: rounded, label: "**PointerLocation**<br/>保存指针当前目标及该目标上的位置" }
   class n8 node_component
-  n9@{ shape: rounded, label: "**bevy​_​picking::pointer::PointerId**<br/>以鼠标、触摸编号或自定义 UUID 提供稳定<br/>指针身份" }
+  n9@{ shape: rounded, label: "**PointerId**<br/>以鼠标、触摸编号或自定义 UUID 提供稳定<br/>指针身份" }
   class n9 node_component
-  n10@{ shape: rounded, label: "**bevy​_​picking::pointer::**<br/>**PointerInput::receive**<br/>按输入消息更新拾取指针状态。" }
+  n10@{ shape: rounded, label: "**receive**<br/>按输入消息更新拾取指针状态。" }
   class n10 node_system
   n1 e0@--> n0
   class e0 edge_read

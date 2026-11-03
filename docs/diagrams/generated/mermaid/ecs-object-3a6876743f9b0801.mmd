@@ -44,7 +44,7 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​transform​_​interpolation::reset​_​**<br/>**easing​_​states​_​on​_​transform​_​change**<br/>在外部直接改变变换时取消失效的平滑区间。" }
+  n0@{ shape: rounded, label: "**reset​_​easing​_​states​_​on​_​transform​_​**<br/>**change**<br/>在外部直接改变变换时取消失效的平滑区间。" }
   class n0 node_system
   n1@{ shape: rounded, label: "**ScaleEasingState**<br/>保存固定步缩放插值的起点与终点" }
   class n1 node_component
@@ -54,7 +54,7 @@ flowchart LR
   class n3 node_system_set
   n4@{ shape: rounded, label: "**RotationEasingState**<br/>保存固定步旋转插值的起点与终点" }
   class n4 node_component
-  n5@{ shape: rounded, label: "**components::transform::Transform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>相对父实体的平移、旋转和缩放" }
+  n5@{ shape: rounded, label: "**Transform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>相对父实体的平移、旋转和缩放" }
   class n5 node_component
   class n5 external_node
   n6@{ shape: cyl, label: "**LastEasingTick**<br/>记录最近一次变换平滑的系统刻度。" }

@@ -44,25 +44,25 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: hex, label: "**bevy​_​ui​_​widgets::scrollarea::**<br/>**scrollarea​_​on​_​scroll**<br/>将指针滚动应用于滚动区域。" }
+  n0@{ shape: hex, label: "**scrollarea​_​on​_​scroll**<br/>将指针滚动应用于滚动区域。" }
   class n0 node_observer
-  n1@{ shape: fr-rect, label: "**scrollarea::ScrollAreaPlugin**<br/>处理滚动区域输入与目标定位请求。" }
+  n1@{ shape: fr-rect, label: "**ScrollAreaPlugin**<br/>处理滚动区域输入与目标定位请求。" }
   class n1 node_plugin
-  n2@{ shape: rounded, label: "**scrollarea::ScrollArea**<br/>启用界面区域的滚轮滚动。" }
+  n2@{ shape: rounded, label: "**ScrollArea**<br/>启用界面区域的滚轮滚动。" }
   class n2 node_component
-  n3@{ shape: cyl, label: "**mouse::MouseScrollPixelsPerLine**<br/>来自crate:bevy​_​input ↗：设置滚轮像素<br/>与行数的换算比例。" }
+  n3@{ shape: cyl, label: "**MouseScrollPixelsPerLine**<br/>来自crate:bevy​_​input ↗：设置滚轮像素<br/>与行数的换算比例。" }
   class n3 node_resource
   class n3 external_node
-  n4@{ shape: rounded, label: "**bevy​_​ui::ScrollPosition**<br/>来自crate:bevy​_​ui ↗：指定 UI 内容的逻<br/>辑像素滚动位置。" }
+  n4@{ shape: rounded, label: "**ScrollPosition**<br/>来自crate:bevy​_​ui ↗：指定 UI 内容的逻<br/>辑像素滚动位置。" }
   class n4 node_component
   class n4 external_node
-  n5@{ shape: rounded, label: "**bevy​_​ui::ComputedNode**<br/>来自crate:bevy​_​ui ↗：保存 UI 布局计算<br/>后的物理尺寸。" }
+  n5@{ shape: rounded, label: "**ComputedNode**<br/>来自crate:bevy​_​ui ↗：保存 UI 布局计算<br/>后的物理尺寸。" }
   class n5 node_component
   class n5 external_node
-  n6@{ shape: stadium, label: "**events::PointerScroll**<br/>来自crate:bevy​_​picking ↗：通知目标上<br/>的横向和纵向滚动输入。" }
+  n6@{ shape: stadium, label: "**PointerScroll**<br/>来自crate:bevy​_​picking ↗：通知目标上<br/>的横向和纵向滚动输入。" }
   class n6 node_event
   class n6 external_node
-  n7@{ shape: rounded, label: "**bevy​_​ui::Node**<br/>来自crate:bevy​_​ui ↗：声明 UI 节点的布<br/>局规则。" }
+  n7@{ shape: rounded, label: "**Node**<br/>来自crate:bevy​_​ui ↗：声明 UI 节点的布<br/>局规则。" }
   class n7 node_component
   class n7 external_node
   n1 e0@-->|"调用"| n0

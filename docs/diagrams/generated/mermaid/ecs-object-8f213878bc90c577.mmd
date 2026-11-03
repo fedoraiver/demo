@@ -48,7 +48,7 @@ flowchart LR
   class n3 node_system_set
   n4@{ shape: lin-rect, label: "**UpdateComputedMassProperties**<br/>组织质量属性重算与写回。" }
   class n4 node_system_set
-  n5@{ shape: rounded, label: "**avian3d::collision::collider::**<br/>**backend::update​_​collider​_​**<br/>**scale#lt;avian3d::collision::collider::**<br/>**parry::Collider#gt;**<br/>把根节点和附属碰撞体的缩放传给形状。" }
+  n5@{ shape: rounded, label: "**update​_​collider​_​scale**<br/>把根节点和附属碰撞体的缩放传给形状。" }
   class n5 node_system
   n6@{ shape: lin-rect, label: "**Propagate**<br/>来自crate:bevy​_​transform ↗：组织实体<br/>层级变换传播。" }
   class n6 node_system_set
@@ -57,7 +57,7 @@ flowchart LR
   class n7 node_system_set
   n8@{ shape: lin-rect, label: "**UpdateColliderMassProperties**<br/>组织质量属性重算与写回。" }
   class n8 node_system_set
-  n9@{ shape: rounded, label: "**demo::physics::wake​_​changed​_​bodies**<br/>来自physics ↗：Avian 的自动唤醒在求解<br/>之后；外部冲量和施力应在本步准备求解器之<br/>前生效。" }
+  n9@{ shape: rounded, label: "**wake​_​changed​_​bodies**<br/>来自physics ↗：Avian 的自动唤醒在求解<br/>之后；外部冲量和施力应在本步准备求解器之<br/>前生效。" }
   class n9 node_system
   class n9 external_node
   n10@{ shape: lin-rect, label: "**TransformToPosition**<br/>组织实体变换与物理姿态同步。" }

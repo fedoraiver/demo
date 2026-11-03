@@ -37,9 +37,9 @@ flowchart LR
   classDef node_query_data fill:#F1F4F1,stroke:#567A51,stroke-width:1.6px,color:#1F3340
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: notch-rect, label: "**sync​_​world::MainEntity**<br/>在子世界中关联原始主世界实体。" }
+  n0@{ shape: notch-rect, label: "**MainEntity**<br/>在子世界中关联原始主世界实体。" }
   class n0 node_query_data
-  n1@{ shape: rounded, label: "**bevy​_​pbr::render::light::extract​_​**<br/>**lights**<br/>来自crate:bevy​_​pbr ↗：提取各类可见光<br/>源及阴影渲染状态。" }
+  n1@{ shape: rounded, label: "**extract​_​lights**<br/>来自crate:bevy​_​pbr ↗：提取各类可见光<br/>源及阴影渲染状态。" }
   class n1 node_system
   class n1 external_node
   n1 e0@-->|"插入"| n0

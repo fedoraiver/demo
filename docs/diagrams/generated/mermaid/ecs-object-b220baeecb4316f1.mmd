@@ -44,28 +44,28 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​anti​_​alias::smaa::prepare​_​smaa​_​**<br/>**pipelines**<br/>按质量预设准备视图的三条 SMAA 管线。" }
+  n0@{ shape: rounded, label: "**prepare​_​smaa​_​pipelines**<br/>按质量预设准备视图的三条 SMAA 管线。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**smaa::ViewSmaaPipelines**<br/>记录当前视图三个 SMAA 管线的标识。" }
+  n1@{ shape: rounded, label: "**ViewSmaaPipelines**<br/>记录当前视图三个 SMAA 管线的标识。" }
   class n1 node_component
-  n2@{ shape: rounded, label: "**bevy​_​render::camera::ExtractedCamera**<br/>来自crate:bevy​_​render ↗：保存渲染世界<br/>相机的目标和绘制配置。" }
+  n2@{ shape: rounded, label: "**ExtractedCamera**<br/>来自crate:bevy​_​render ↗：保存渲染世界<br/>相机的目标和绘制配置。" }
   class n2 node_component
   class n2 external_node
-  n3@{ shape: fr-rect, label: "**smaa::SmaaPlugin**<br/>提供亚像素形态抗锯齿。" }
+  n3@{ shape: fr-rect, label: "**SmaaPlugin**<br/>提供亚像素形态抗锯齿。" }
   class n3 node_plugin
-  n4@{ shape: rounded, label: "**bevy​_​render::view::ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
+  n4@{ shape: rounded, label: "**ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
   class n4 node_component
   class n4 external_node
   n5@{ shape: lin-rect, label: "**Prepare**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
   class n5 node_system_set
   class n5 external_node
-  n6@{ shape: cyl, label: "**smaa::SmaaSpecializedRenderPipelines**<br/>缓存 SMAA 各阶段的专用管线。" }
+  n6@{ shape: cyl, label: "**SmaaSpecializedRenderPipelines**<br/>缓存 SMAA 各阶段的专用管线。" }
   class n6 node_resource
-  n7@{ shape: rounded, label: "**smaa::Smaa**<br/>为视图选择 SMAA 质量预设。" }
+  n7@{ shape: rounded, label: "**Smaa**<br/>为视图选择 SMAA 质量预设。" }
   class n7 node_component
-  n8@{ shape: cyl, label: "**smaa::SmaaPipelines**<br/>保存 SMAA 三个阶段的基础管线。" }
+  n8@{ shape: cyl, label: "**SmaaPipelines**<br/>保存 SMAA 三个阶段的基础管线。" }
   class n8 node_resource
-  n9@{ shape: cyl, label: "**bevy​_​render::render​_​resource::**<br/>**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
+  n9@{ shape: cyl, label: "**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
   class n9 node_resource
   class n9 external_node
   n0 e0@-->|"插入"| n1

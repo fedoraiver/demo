@@ -37,31 +37,31 @@ flowchart LR
   classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**radio::RadioGroup**<br/>组织单选按钮的导航与互斥选择。" }
+  n0@{ shape: rounded, label: "**RadioGroup**<br/>组织单选按钮的导航与互斥选择。" }
   class n0 node_component
-  n1@{ shape: hex, label: "**bevy​_​ui​_​widgets::radio::radio​_​**<br/>**button​_​on​_​click**<br/>通过点击请求选中单选按钮。" }
+  n1@{ shape: hex, label: "**radio​_​button​_​on​_​click**<br/>通过点击请求选中单选按钮。" }
   class n1 node_observer
-  n2@{ shape: hex, label: "**bevy​_​ui​_​widgets::radio::radio​_​**<br/>**button​_​on​_​pointer​_​down**<br/>记录单选按钮按压并按配置请求选中。" }
+  n2@{ shape: hex, label: "**radio​_​button​_​on​_​pointer​_​down**<br/>记录单选按钮按压并按配置请求选中。" }
   class n2 node_observer
-  n3@{ shape: hex, label: "**bevy​_​ui​_​widgets::radio::radio​_​**<br/>**button​_​on​_​click**<br/>通过点击请求选中单选按钮。" }
+  n3@{ shape: hex, label: "**radio​_​button​_​on​_​click**<br/>通过点击请求选中单选按钮。" }
   class n3 node_observer
-  n4@{ shape: hex, label: "**bevy​_​ui​_​widgets::radio::radio​_​**<br/>**button​_​on​_​click**<br/>通过点击请求选中单选按钮。" }
+  n4@{ shape: hex, label: "**radio​_​button​_​on​_​click**<br/>通过点击请求选中单选按钮。" }
   class n4 node_observer
-  n5@{ shape: hex, label: "**bevy​_​ui​_​widgets::radio::radio​_​**<br/>**button​_​on​_​pointer​_​down**<br/>记录单选按钮按压并按配置请求选中。" }
+  n5@{ shape: hex, label: "**radio​_​button​_​on​_​pointer​_​down**<br/>记录单选按钮按压并按配置请求选中。" }
   class n5 node_observer
-  n6@{ shape: hex, label: "**bevy​_​ui​_​widgets::radio::radio​_​group​_​**<br/>**on​_​key​_​input**<br/>通过键盘请求更改单选组选项。" }
+  n6@{ shape: hex, label: "**radio​_​group​_​on​_​key​_​input**<br/>通过键盘请求更改单选组选项。" }
   class n6 node_observer
-  n7@{ shape: hex, label: "**bevy​_​ui​_​widgets::radio::radio​_​**<br/>**button​_​on​_​key​_​input**<br/>通过确认键请求选中单选按钮。" }
+  n7@{ shape: hex, label: "**radio​_​button​_​on​_​key​_​input**<br/>通过确认键请求选中单选按钮。" }
   class n7 node_observer
-  n8@{ shape: hex, label: "**bevy​_​ui​_​widgets::radio::radio​_​group​_​**<br/>**on​_​key​_​input**<br/>通过键盘请求更改单选组选项。" }
+  n8@{ shape: hex, label: "**radio​_​group​_​on​_​key​_​input**<br/>通过键盘请求更改单选组选项。" }
   class n8 node_observer
-  n9@{ shape: hex, label: "**bevy​_​ui​_​widgets::radio::radio​_​**<br/>**button​_​on​_​pointer​_​down**<br/>记录单选按钮按压并按配置请求选中。" }
+  n9@{ shape: hex, label: "**radio​_​button​_​on​_​pointer​_​down**<br/>记录单选按钮按压并按配置请求选中。" }
   class n9 node_observer
-  n10@{ shape: hex, label: "**bevy​_​ui​_​widgets::radio::radio​_​**<br/>**button​_​on​_​key​_​input**<br/>通过确认键请求选中单选按钮。" }
+  n10@{ shape: hex, label: "**radio​_​button​_​on​_​key​_​input**<br/>通过确认键请求选中单选按钮。" }
   class n10 node_observer
-  n11@{ shape: hex, label: "**bevy​_​ui​_​widgets::radio::radio​_​group​_​**<br/>**on​_​key​_​input**<br/>通过键盘请求更改单选组选项。" }
+  n11@{ shape: hex, label: "**radio​_​group​_​on​_​key​_​input**<br/>通过键盘请求更改单选组选项。" }
   class n11 node_observer
-  n12@{ shape: hex, label: "**bevy​_​ui​_​widgets::radio::radio​_​**<br/>**button​_​on​_​key​_​input**<br/>通过确认键请求选中单选按钮。" }
+  n12@{ shape: hex, label: "**radio​_​button​_​on​_​key​_​input**<br/>通过确认键请求选中单选按钮。" }
   class n12 node_observer
   n0 e0@-->|"存在性约束"| n1
   class e0 edge_reference

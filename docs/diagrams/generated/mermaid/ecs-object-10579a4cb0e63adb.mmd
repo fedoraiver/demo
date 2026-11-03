@@ -39,9 +39,9 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​ecs::message::update::signal​_​**<br/>**message​_​update​_​system**<br/>在固定更新后允许轮换消息缓冲。" }
+  n0@{ shape: rounded, label: "**signal​_​message​_​update​_​system**<br/>在固定更新后允许轮换消息缓冲。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**bevy​_​ecs::message::MessageRegistry**<br/>登记 World 中各消息缓冲的更新函数及是否<br/>需要轮换的状态" }
+  n1@{ shape: cyl, label: "**MessageRegistry**<br/>登记 World 中各消息缓冲的更新函数及是否<br/>需要轮换的状态" }
   class n1 node_resource
   n2@{ shape: fr-rect, label: "**TimePlugin**<br/>来自crate:bevy​_​time ↗：维护应用时间与<br/>步长。" }
   class n2 node_plugin

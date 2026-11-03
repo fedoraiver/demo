@@ -39,7 +39,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: notch-rect, label: "**Local · text​_​reader.0.0**<br/>复用 UI 文字测量的文本树遍历空间。" }
   class n0 node_local
-  n1@{ shape: rounded, label: "**bevy​_​ui::widget::text::measure​_​text​_​**<br/>**system**<br/>在文本变化后更新内容测量并安排文字重排。" }
+  n1@{ shape: rounded, label: "**measure​_​text​_​system**<br/>在文本变化后更新内容测量并安排文字重排。" }
   class n1 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

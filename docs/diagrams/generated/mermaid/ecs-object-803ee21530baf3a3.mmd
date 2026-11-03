@@ -39,9 +39,9 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​ecs::system::system​_​registry::**<br/>**despawn​_​unused​_​registered​_​systems**<br/>安全清理已无句柄引用的注册系统实体。" }
+  n0@{ shape: rounded, label: "**despawn​_​unused​_​registered​_​systems**<br/>安全清理已无句柄引用的注册系统实体。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**bevy​_​ecs::system::**<br/>**RegisteredSystemDespawner**<br/>传递未使用注册系统的清理请求。" }
+  n1@{ shape: cyl, label: "**RegisteredSystemDespawner**<br/>传递未使用注册系统的清理请求。" }
   class n1 node_resource
   n2@{ shape: fr-rect, label: "**main / App**<br/>来自应用 ↗：装配应用并导出真实调度。" }
   class n2 node_app

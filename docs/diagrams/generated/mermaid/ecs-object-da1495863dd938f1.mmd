@@ -49,12 +49,12 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​input​_​focus::dispatch​_​focused​_​**<br/>**input#lt;bevy​_​input::gamepad::**<br/>**GamepadButtonChangedEvent#gt;**<br/>向有效焦点或主窗口派发输入。" }
+  n0@{ shape: rounded, label: "**dispatch​_​focused​_​input**<br/>向有效焦点或主窗口派发输入。" }
   class n0 node_system
-  n1@{ shape: lean-r, label: "**gamepad::GamepadButtonChangedEvent**<br/>来自crate:bevy​_​input ↗：通知手柄按钮<br/>模拟值变化。" }
+  n1@{ shape: lean-r, label: "**GamepadButtonChangedEvent**<br/>来自crate:bevy​_​input ↗：通知手柄按钮<br/>模拟值变化。" }
   class n1 node_message
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​input​_​focus::dispatch​_​focused​_​**<br/>**input#lt;bevy​_​input::keyboard::**<br/>**KeyboardInput#gt;**<br/>向有效焦点或主窗口派发输入。" }
+  n2@{ shape: rounded, label: "**dispatch​_​focused​_​input**<br/>向有效焦点或主窗口派发输入。" }
   class n2 node_system
   n3@{ shape: cyl, label: "**InputFocus**<br/>保存当前输入焦点实体、待派发的焦点变化及<br/>原焦点" }
   class n3 node_resource
@@ -63,17 +63,17 @@ flowchart LR
   n5@{ shape: lin-rect, label: "**InputSystems**<br/>来自crate:bevy​_​input ↗：把原始设备消<br/>息汇总为本帧输入状态。" }
   class n5 node_system_set
   class n5 external_node
-  n6@{ shape: stadium, label: "**FocusedInput#lt;bevy​_​input::gamepad::**<br/>**GamepadButtonChangedEvent#gt;**<br/>把输入消息路由到焦点实体并向窗口冒泡。" }
+  n6@{ shape: stadium, label: "**FocusedInput#lt;GamepadButtonChangedEve**<br/>**nt#gt;**<br/>把输入消息路由到焦点实体并向窗口冒泡。" }
   class n6 node_event
-  n7@{ shape: rounded, label: "**window::PrimaryWindow**<br/>来自crate:bevy​_​window ↗：标识唯一的主<br/>窗口" }
+  n7@{ shape: rounded, label: "**PrimaryWindow**<br/>来自crate:bevy​_​window ↗：标识唯一的主<br/>窗口" }
   class n7 node_component
   class n7 external_node
   n8@{ shape: lin-rect, label: "**Dispatch**<br/>组织焦点输入派发与变化通知。" }
   class n8 node_system_set
-  n9@{ shape: cyl, label: "**bevy​_​ecs::message::**<br/>**Messages#lt;gamepad::**<br/>**GamepadButtonChangedEvent#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n9@{ shape: cyl, label: "**Messages#lt;GamepadButtonChangedEvent#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n9 node_resource
   class n9 external_node
-  n10@{ shape: rounded, label: "**bevy​_​input​_​focus::dispatch​_​focused​_​**<br/>**input#lt;bevy​_​input::mouse::MouseWheel#gt;**<br/>向有效焦点或主窗口派发输入。" }
+  n10@{ shape: rounded, label: "**dispatch​_​focused​_​input**<br/>向有效焦点或主窗口派发输入。" }
   class n10 node_system
   n1 e0@--> n0
   class e0 edge_consume

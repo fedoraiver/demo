@@ -36,15 +36,15 @@ flowchart LR
   classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​render::extract​_​component::**<br/>**DynamicUniformIndex#lt;atmosphere::**<br/>**resources::GpuAtmosphere#gt;**<br/>定位组件参数在共享 Uniform 缓冲中的位<br/>置。" }
+  n0@{ shape: rounded, label: "**DynamicUniformIndex#lt;GpuAtmosphere#gt;**<br/>定位组件参数在共享 Uniform 缓冲中的位<br/>置。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​pbr::atmosphere::node::render​_​**<br/>**sky**<br/>来自crate:bevy​_​pbr ↗：绑定大气查找表<br/>及视图、光照参数，按相机视口和可选分辨率<br/>覆盖设置绘制全屏天空，将结果写入视图颜色<br/>附件。" }
+  n1@{ shape: rounded, label: "**render​_​sky**<br/>来自crate:bevy​_​pbr ↗：绑定大气查找表<br/>及视图、光照参数，按相机视口和可选分辨率<br/>覆盖设置绘制全屏天空，将结果写入视图颜色<br/>附件。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​pbr::atmosphere::environment::**<br/>**atmosphere​_​environment**<br/>来自crate:bevy​_​pbr ↗：使用当前视图的<br/>大气和光照参数，为每个大气环境贴图的六个<br/>立方体面调度计算着色器，更新环境光源纹<br/>理。" }
+  n2@{ shape: rounded, label: "**atmosphere​_​environment**<br/>来自crate:bevy​_​pbr ↗：使用当前视图的<br/>大气和光照参数，为每个大气环境贴图的六个<br/>立方体面调度计算着色器，更新环境光源纹<br/>理。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​pbr::atmosphere::node::**<br/>**atmosphere​_​luts**<br/>来自crate:bevy​_​pbr ↗：根据当前大气、<br/>视图和光照参数调度计算管线，生成透射、多<br/>重散射、天空视图及空气透视查找表，供天空<br/>和大气渲染使用。" }
+  n3@{ shape: rounded, label: "**atmosphere​_​luts**<br/>来自crate:bevy​_​pbr ↗：根据当前大气、<br/>视图和光照参数调度计算管线，生成透射、多<br/>重散射、天空视图及空气透视查找表，供天空<br/>和大气渲染使用。" }
   class n3 node_system
   class n3 external_node
   n0 e0@--> n1

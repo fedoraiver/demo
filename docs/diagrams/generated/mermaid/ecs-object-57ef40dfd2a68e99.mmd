@@ -39,7 +39,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: notch-rect, label: "**Local · arg6.6.0.0.1**<br/>跟踪 ImageNode 移除记录的读取进度。" }
   class n0 node_local
-  n1@{ shape: rounded, label: "**bevy​_​ui​_​render::ui​_​texture​_​slice​_​**<br/>**pipeline::extract​_​ui​_​texture​_​slices**<br/>增量提取九宫格或平铺 UI 图像切片。" }
+  n1@{ shape: rounded, label: "**extract​_​ui​_​texture​_​slices**<br/>增量提取九宫格或平铺 UI 图像切片。" }
   class n1 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

@@ -39,7 +39,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: notch-rect, label: "**Local · cache**<br/>按主颜色纹理复用最终缩放输出绑定组。" }
   class n0 node_local
-  n1@{ shape: rounded, label: "**bevy​_​core​_​pipeline::upscaling::**<br/>**node::upscaling**<br/>将主颜色纹理缩放写入最终输出附件。" }
+  n1@{ shape: rounded, label: "**upscaling**<br/>将主颜色纹理缩放写入最终输出附件。" }
   class n1 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

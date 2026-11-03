@@ -39,7 +39,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: notch-rect, label: "**Local · cached​_​bind​_​group**<br/>按源颜色纹理复用 FXAA 绑定组。" }
   class n0 node_local
-  n1@{ shape: rounded, label: "**bevy​_​anti​_​alias::fxaa::node::fxaa**<br/>对启用的相机视图执行 FXAA 抗锯齿。" }
+  n1@{ shape: rounded, label: "**fxaa**<br/>对启用的相机视图执行 FXAA 抗锯齿。" }
   class n1 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

@@ -39,11 +39,11 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​ecs::schedule::condition::**<br/>**common​_​conditions::resource​_​**<br/>**exists#lt;avian3d::dynamics::solver::**<br/>**islands::PhysicsIslands#gt;**<br/>判断指定资源是否存在。" }
+  n0@{ shape: rounded, label: "**resource​_​exists**<br/>判断指定资源是否存在。" }
   class n0 node_system
   n1@{ shape: lin-rect, label: "**AnonymousSet(0)**<br/>保存一组系统的共同配置。" }
   class n1 node_system_set
-  n2@{ shape: cyl, label: "**dynamics::solver::islands::**<br/>**PhysicsIslands**<br/>来自crate:avian3d ↗：管理模拟岛及接触<br/>和关节连接。" }
+  n2@{ shape: cyl, label: "**PhysicsIslands**<br/>来自crate:avian3d ↗：管理模拟岛及接触<br/>和关节连接。" }
   class n2 node_resource
   class n2 external_node
   n0 e0@-->|"运行条件"| n1

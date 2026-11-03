@@ -38,13 +38,13 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**motion​_​blur::pipeline::**<br/>**MotionBlurPipeline**<br/>提供运动模糊的采样器、布局和着色器。" }
+  n0@{ shape: cyl, label: "**MotionBlurPipeline**<br/>提供运动模糊的采样器、布局和着色器。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​post​_​process::motion​_​blur::**<br/>**pipeline::init​_​motion​_​blur​_​pipeline**<br/>加载运动模糊着色器并构造管线资源。" }
+  n1@{ shape: rounded, label: "**init​_​motion​_​blur​_​pipeline**<br/>加载运动模糊着色器并构造管线资源。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​post​_​process::motion​_​blur::**<br/>**pipeline::prepare​_​motion​_​blur​_​**<br/>**pipelines**<br/>按颜色格式与采样数准备运动模糊管线。" }
+  n2@{ shape: rounded, label: "**prepare​_​motion​_​blur​_​pipelines**<br/>按颜色格式与采样数准备运动模糊管线。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​post​_​process::motion​_​blur::**<br/>**motion​_​blur**<br/>读取当前视图颜色、预通道运动矢量和深度，<br/>按快门角度及采样数执行运动模糊；采样关<br/>闭、所需纹理或管线不可用时跳过。" }
+  n3@{ shape: rounded, label: "**motion​_​blur**<br/>读取当前视图颜色、预通道运动矢量和深度，<br/>按快门角度及采样数执行运动模糊；采样关<br/>闭、所需纹理或管线不可用时跳过。" }
   class n3 node_system
   n1 e0@-->|"插入"| n0
   class e0 edge_write

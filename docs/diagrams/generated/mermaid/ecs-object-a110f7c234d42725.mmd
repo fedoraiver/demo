@@ -38,25 +38,25 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**batching::gpu​_​preprocessing::**<br/>**BuildIndirectParametersMetadata**<br/>描述间接绘制参数构建的 GPU 调度。" }
+  n0@{ shape: cyl, label: "**BuildIndirectParametersMetadata**<br/>描述间接绘制参数构建的 GPU 调度。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​pbr::render::light::per​_​view​_​**<br/>**shadow​_​pass#lt;false#gt;**<br/>来自crate:bevy​_​pbr ↗：绘制相机相关的<br/>平行光级联阴影。" }
+  n1@{ shape: rounded, label: "**per​_​view​_​shadow​_​pass**<br/>来自crate:bevy​_​pbr ↗：绘制相机相关的<br/>平行光级联阴影。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​pbr::render::gpu​_​preprocess::**<br/>**main​_​build​_​indirect​_​parameters**<br/>来自crate:bevy​_​pbr ↗：为主不透明及透<br/>明通道构建间接绘制参数。" }
+  n2@{ shape: rounded, label: "**main​_​build​_​indirect​_​parameters**<br/>来自crate:bevy​_​pbr ↗：为主不透明及透<br/>明通道构建间接绘制参数。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​render::batching::gpu​_​**<br/>**preprocessing::prepare​_​indirect​_​**<br/>**parameters​_​build​_​jobs**<br/>按视图阶段的批范围登记间接参数构建任务。" }
+  n3@{ shape: rounded, label: "**prepare​_​indirect​_​parameters​_​build​_​**<br/>**jobs**<br/>按视图阶段的批范围登记间接参数构建任务。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**bevy​_​render::init​_​gpu​_​resource#lt;bevy​_​**<br/>**render::batching::gpu​_​**<br/>**preprocessing::**<br/>**BuildIndirectParametersMetadata#gt;**<br/>构造并插入渲染所需资源。" }
+  n4@{ shape: rounded, label: "**init​_​gpu​_​resource**<br/>构造并插入渲染所需资源。" }
   class n4 node_system
-  n5@{ shape: rounded, label: "**bevy​_​pbr::render::gpu​_​preprocess::**<br/>**early​_​prepass​_​build​_​indirect​_​**<br/>**parameters**<br/>来自crate:bevy​_​pbr ↗：构建早期预通道<br/>使用的多重间接绘制参数。" }
+  n5@{ shape: rounded, label: "**early​_​prepass​_​build​_​indirect​_​**<br/>**parameters**<br/>来自crate:bevy​_​pbr ↗：构建早期预通道<br/>使用的多重间接绘制参数。" }
   class n5 node_system
   class n5 external_node
-  n6@{ shape: rounded, label: "**bevy​_​pbr::render::light::per​_​view​_​**<br/>**shadow​_​pass#lt;true#gt;**<br/>来自crate:bevy​_​pbr ↗：绘制相机相关的<br/>平行光级联阴影。" }
+  n6@{ shape: rounded, label: "**per​_​view​_​shadow​_​pass**<br/>来自crate:bevy​_​pbr ↗：绘制相机相关的<br/>平行光级联阴影。" }
   class n6 node_system
   class n6 external_node
-  n7@{ shape: rounded, label: "**bevy​_​pbr::render::gpu​_​preprocess::**<br/>**late​_​prepass​_​build​_​indirect​_​**<br/>**parameters**<br/>来自crate:bevy​_​pbr ↗：为本帧新显露对<br/>象构建后期预通道间接参数。" }
+  n7@{ shape: rounded, label: "**late​_​prepass​_​build​_​indirect​_​**<br/>**parameters**<br/>来自crate:bevy​_​pbr ↗：为本帧新显露对<br/>象构建后期预通道间接参数。" }
   class n7 node_system
   class n7 external_node
   n0 e0@--> n1

@@ -42,19 +42,19 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: hex, label: "**bevy​_​ui​_​widgets::checkbox::checkbox​_​**<br/>**on​_​pointer​_​drag​_​end**<br/>在拖动结束时清除复选框按压。" }
+  n0@{ shape: hex, label: "**checkbox​_​on​_​pointer​_​drag​_​end**<br/>在拖动结束时清除复选框按压。" }
   class n0 node_observer
-  n1@{ shape: rounded, label: "**checkbox::Checkbox**<br/>响应复选框交互并提出勾选变化。" }
+  n1@{ shape: rounded, label: "**Checkbox**<br/>响应复选框交互并提出勾选变化。" }
   class n1 node_component
-  n2@{ shape: fr-rect, label: "**checkbox::CheckboxPlugin**<br/>处理复选框交互与勾选请求。" }
+  n2@{ shape: fr-rect, label: "**CheckboxPlugin**<br/>处理复选框交互与勾选请求。" }
   class n2 node_plugin
-  n3@{ shape: stadium, label: "**events::PointerDragEnd**<br/>来自crate:bevy​_​picking ↗：通知拖拽按<br/>钮释放及最终累计位移。" }
+  n3@{ shape: stadium, label: "**PointerDragEnd**<br/>来自crate:bevy​_​picking ↗：通知拖拽按<br/>钮释放及最终累计位移。" }
   class n3 node_event
   class n3 external_node
-  n4@{ shape: rounded, label: "**bevy​_​ui::InteractionDisabled**<br/>来自crate:bevy​_​ui ↗：标记禁止交互的<br/>UI 控件。" }
+  n4@{ shape: rounded, label: "**InteractionDisabled**<br/>来自crate:bevy​_​ui ↗：标记禁止交互的<br/>UI 控件。" }
   class n4 node_component
   class n4 external_node
-  n5@{ shape: rounded, label: "**bevy​_​ui::Pressed**<br/>来自crate:bevy​_​ui ↗：标记按钮或控件当<br/>前处于按住状态。" }
+  n5@{ shape: rounded, label: "**Pressed**<br/>来自crate:bevy​_​ui ↗：标记按钮或控件当<br/>前处于按住状态。" }
   class n5 node_component
   class n5 external_node
   n1 e0@-->|"存在性约束"| n0

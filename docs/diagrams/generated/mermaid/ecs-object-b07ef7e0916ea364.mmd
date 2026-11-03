@@ -42,18 +42,18 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​transform​_​interpolation::reset​_​**<br/>**rotation​_​easing**<br/>清除旧旋转平滑的起点和终点。" }
+  n0@{ shape: rounded, label: "**reset​_​rotation​_​easing**<br/>清除旧旋转平滑的起点和终点。" }
   class n0 node_system
   n1@{ shape: lin-rect, label: "**Reset**<br/>组织变换缓动端点与帧间应用。" }
   class n1 node_system_set
   subgraph layout_card_n2[" "]
-  n2@{ shape: rounded, label: "**bevy​_​transform​_​interpolation::reset​_​**<br/>**translation​_​easing**<br/>清除旧位置平滑的起点和终点。" }
+  n2@{ shape: rounded, label: "**reset​_​translation​_​easing**<br/>清除旧位置平滑的起点和终点。" }
   class n2 node_system
   end
   style layout_card_n2 fill:none,stroke:none
   n3@{ shape: rounded, label: "**RotationEasingState**<br/>保存固定步旋转插值的起点与终点" }
   class n3 node_component
-  n4@{ shape: rounded, label: "**bevy​_​transform​_​interpolation::reset​_​**<br/>**scale​_​easing**<br/>清除旧缩放平滑的起点和终点。" }
+  n4@{ shape: rounded, label: "**reset​_​scale​_​easing**<br/>清除旧缩放平滑的起点和终点。" }
   class n4 node_system
   n5@{ shape: fr-rect, label: "**TransformEasingPlugin**<br/>在变换端点之间应用显示缓动。" }
   class n5 node_plugin

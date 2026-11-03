@@ -37,17 +37,17 @@ flowchart LR
   classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**collision::narrow​_​phase::**<br/>**NarrowPhaseConfig**<br/>配置窄相的接触容差。" }
+  n0@{ shape: cyl, label: "**NarrowPhaseConfig**<br/>配置窄相的接触容差。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**avian3d::collider​_​tree::update::**<br/>**update​_​solver​_​body​_​aabbs#lt;avian3d::**<br/>**collision::collider::parry::**<br/>**Collider#gt;**<br/>按物理结果更新活跃刚体的碰撞边界。" }
+  n1@{ shape: rounded, label: "**update​_​solver​_​body​_​aabbs**<br/>按物理结果更新活跃刚体的碰撞边界。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**avian3d::collider​_​tree::update::**<br/>**update​_​moved​_​collider​_​**<br/>**aabbs#lt;avian3d::collision::collider::**<br/>**parry::Collider#gt;**<br/>重算物理步后被手动改变的碰撞边界。" }
+  n2@{ shape: rounded, label: "**update​_​moved​_​collider​_​aabbs**<br/>重算物理步后被手动改变的碰撞边界。" }
   class n2 node_system
-  n3@{ shape: hex, label: "**avian3d::collider​_​tree::update::**<br/>**{impl#35;1}::build::{closure#35;0}**<br/>初始化碰撞体包围盒与边距缓存。" }
+  n3@{ shape: hex, label: "**build::{closure#35;0}**<br/>初始化碰撞体包围盒与边距缓存。" }
   class n3 node_observer
-  n4@{ shape: rounded, label: "**avian3d::dynamics::solver::plugin::**<br/>**prepare​_​contact​_​constraints**<br/>从有效接触流形生成本轮求解约束。" }
+  n4@{ shape: rounded, label: "**prepare​_​contact​_​constraints**<br/>从有效接触流形生成本轮求解约束。" }
   class n4 node_system
-  n5@{ shape: rounded, label: "**avian3d::collision::narrow​_​phase::**<br/>**update​_​narrow​_​phase#lt;avian3d::**<br/>**collision::collider::parry::**<br/>**Collider, ()#gt;**<br/>更新窄相接触并输出碰撞变化消息。" }
+  n5@{ shape: rounded, label: "**update​_​narrow​_​phase**<br/>更新窄相接触并输出碰撞变化消息。" }
   class n5 node_system
   n0 e0@--> n1
   class e0 edge_read

@@ -38,18 +38,18 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**ssao::SsaoPipelines**<br/>汇集 SSAO 管线、纹理接口和采样器。" }
+  n0@{ shape: cyl, label: "**SsaoPipelines**<br/>汇集 SSAO 管线、纹理接口和采样器。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​pbr::ssao::prepare​_​ssao​_​**<br/>**pipelines**<br/>按遮蔽质量和时间抖动配置选择计算管线。" }
+  n1@{ shape: rounded, label: "**prepare​_​ssao​_​pipelines**<br/>按遮蔽质量和时间抖动配置选择计算管线。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​pbr::ssao::ssao**<br/>依次计算深度预处理、环境遮蔽和空间去噪。" }
+  n2@{ shape: rounded, label: "**ssao**<br/>依次计算深度预处理、环境遮蔽和空间去噪。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​pbr::ssao::prepare​_​ssao​_​**<br/>**textures**<br/>为环境光遮蔽分配中间纹理及参数缓冲。" }
+  n3@{ shape: rounded, label: "**prepare​_​ssao​_​textures**<br/>为环境光遮蔽分配中间纹理及参数缓冲。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**bevy​_​render::init​_​gpu​_​resource#lt;bevy​_​**<br/>**pbr::ssao::SsaoPipelines#gt;**<br/>来自crate:bevy​_​render ↗：构造并插入渲<br/>染所需资源。" }
+  n4@{ shape: rounded, label: "**init​_​gpu​_​resource**<br/>来自crate:bevy​_​render ↗：构造并插入渲<br/>染所需资源。" }
   class n4 node_system
   class n4 external_node
-  n5@{ shape: rounded, label: "**bevy​_​pbr::ssao::prepare​_​ssao​_​bind​_​**<br/>**groups**<br/>准备深度预处理、遮蔽与空间降噪的资源绑<br/>定。" }
+  n5@{ shape: rounded, label: "**prepare​_​ssao​_​bind​_​groups**<br/>准备深度预处理、遮蔽与空间降噪的资源绑<br/>定。" }
   class n5 node_system
   n0 e0@--> n1
   class e0 edge_read

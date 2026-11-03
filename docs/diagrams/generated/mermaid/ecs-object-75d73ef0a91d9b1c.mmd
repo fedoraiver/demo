@@ -41,21 +41,21 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​render::batching::gpu​_​**<br/>**preprocessing::collect​_​buffers​_​for​_​**<br/>**phase#lt;bevy​_​core​_​pipeline::core​_​3d::**<br/>**Transparent3d, bevy​_​pbr::render::**<br/>**mesh::MeshPipeline#gt;**<br/>把并行准备的逐阶段缓冲汇入全局表。" }
+  n0@{ shape: rounded, label: "**collect​_​buffers​_​for​_​phase**<br/>把并行准备的逐阶段缓冲汇入全局表。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**bevy​_​render::batching::gpu​_​**<br/>**preprocessing::**<br/>**PhaseIndirectParametersBuffers#lt;bevy​_​**<br/>**core​_​pipeline::core​_​3d::**<br/>**Transparent3d#gt;**<br/>为单个绘制阶段保存间接绘制参数。" }
+  n1@{ shape: cyl, label: "**PhaseIndirectParametersBuffers#lt;Trans**<br/>**parent3d#gt;**<br/>为单个绘制阶段保存间接绘制参数。" }
   class n1 node_resource
-  n2@{ shape: cyl, label: "**bevy​_​render::batching::gpu​_​**<br/>**preprocessing::**<br/>**PhaseBatchedInstanceBuffers#lt;bevy​_​**<br/>**core​_​pipeline::core​_​3d::**<br/>**Transparent3d, render::mesh::**<br/>**MeshUniform#gt;**<br/>为单个绘制阶段保存 GPU 批次实例缓冲。" }
+  n2@{ shape: cyl, label: "**PhaseBatchedInstanceBuffers#lt;Transpar**<br/>**ent3d, MeshUniform#gt;**<br/>为单个绘制阶段保存 GPU 批次实例缓冲。" }
   class n2 node_resource
-  n3@{ shape: cyl, label: "**batching::gpu​_​preprocessing::**<br/>**IndirectParametersBuffersSettings**<br/>控制间接绘制参数是否允许复制回读。" }
+  n3@{ shape: cyl, label: "**IndirectParametersBuffersSettings**<br/>控制间接绘制参数是否允许复制回读。" }
   class n3 node_resource
   n4@{ shape: lin-rect, label: "**PrepareResourcesCollectPhaseBuffers**<br/>组织渲染数据准备与绘制排队。" }
   class n4 node_system_set
-  n5@{ shape: cyl, label: "**batching::gpu​_​preprocessing::**<br/>**IndirectParametersBuffers**<br/>保存间接绘制命令与裁剪计数缓冲。" }
+  n5@{ shape: cyl, label: "**IndirectParametersBuffers**<br/>保存间接绘制命令与裁剪计数缓冲。" }
   class n5 node_resource
-  n6@{ shape: cyl, label: "**bevy​_​render::batching::gpu​_​**<br/>**preprocessing::**<br/>**BatchedInstanceBuffers#lt;render::**<br/>**mesh::MeshUniform, render::mesh::**<br/>**MeshInputUniform#gt;**<br/>保存批次绘制的 GPU 输入与实例缓冲。" }
+  n6@{ shape: cyl, label: "**BatchedInstanceBuffers#lt;MeshUniform,**<br/>**MeshInputUniform#gt;**<br/>保存批次绘制的 GPU 输入与实例缓冲。" }
   class n6 node_resource
-  n7@{ shape: rounded, label: "**bevy​_​ecs::schedule::condition::**<br/>**common​_​conditions::resource​_​**<br/>**exists#lt;bevy​_​render::batching::gpu​_​**<br/>**preprocessing::**<br/>**BatchedInstanceBuffers#lt;bevy​_​pbr::**<br/>**render::mesh::MeshUniform, bevy​_​**<br/>**pbr::render::mesh::**<br/>**MeshInputUniform#gt;#gt;**<br/>来自crate:bevy​_​ecs ↗：判断指定资源是<br/>否存在。" }
+  n7@{ shape: rounded, label: "**resource​_​exists**<br/>来自crate:bevy​_​ecs ↗：判断指定资源是<br/>否存在。" }
   class n7 node_system
   class n7 external_node
   n0 e0@-->|"可变访问"| n1
@@ -80,7 +80,7 @@ flowchart LR
   e1@{ curve: basis }
   e2@{ curve: basis }
   e3@{ curve: basis }
-  e4@{ curve: bumpX }
+  e4@{ curve: basis }
   e5@{ curve: basis }
   e6@{ curve: basis }
   e7@{ curve: basis }

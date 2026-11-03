@@ -40,12 +40,12 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: lin-rect, label: "**AnonymousSet(0)**<br/>保存一组系统的共同配置。" }
   class n0 node_system_set
-  n1@{ shape: rounded, label: "**bevy​_​ecs::schedule::condition::**<br/>**common​_​conditions::resource​_​**<br/>**exists#lt;bevy​_​core​_​pipeline::mip​_​**<br/>**generation::experimental::depth::**<br/>**DownsampleDepthPipelines#gt;**<br/>判断指定资源是否存在。" }
+  n1@{ shape: rounded, label: "**resource​_​exists**<br/>判断指定资源是否存在。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​core​_​pipeline::mip​_​generation::**<br/>**experimental::depth::prepare​_​view​_​**<br/>**depth​_​pyramids**<br/>来自crate:bevy​_​core​_​pipeline ↗：为遮<br/>挡剔除视图维护深度金字塔。" }
+  n2@{ shape: rounded, label: "**prepare​_​view​_​depth​_​pyramids**<br/>来自crate:bevy​_​core​_​pipeline ↗：为遮<br/>挡剔除视图维护深度金字塔。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​core​_​pipeline::mip​_​generation::**<br/>**experimental::depth::prepare​_​**<br/>**downsample​_​depth​_​view​_​bind​_​groups**<br/>来自crate:bevy​_​core​_​pipeline ↗：将主<br/>视图或阴影深度绑定到降采样管线。" }
+  n3@{ shape: rounded, label: "**prepare​_​downsample​_​depth​_​view​_​bind​_​**<br/>**groups**<br/>来自crate:bevy​_​core​_​pipeline ↗：将主<br/>视图或阴影深度绑定到降采样管线。" }
   class n3 node_system
   class n3 external_node
   n1 e0@-->|"运行条件"| n0

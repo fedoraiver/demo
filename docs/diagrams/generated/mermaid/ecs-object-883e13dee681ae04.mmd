@@ -39,15 +39,15 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: lin-rect, label: "**AssetExtractionSystems**<br/>提取各 RenderAsset 类型的资产变化。" }
   class n0 node_system_set
-  n1@{ shape: rounded, label: "**bevy​_​render::render​_​asset::extract​_​**<br/>**render​_​asset#lt;bevy​_​render::texture::**<br/>**gpu​_​image::GpuImage#gt;**<br/>按资产变化和设备恢复请求提取渲染资产。" }
+  n1@{ shape: rounded, label: "**extract​_​render​_​asset**<br/>按资产变化和设备恢复请求提取渲染资产。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​render::render​_​asset::extract​_​**<br/>**render​_​asset#lt;bevy​_​render::storage::**<br/>**GpuShaderBuffer#gt;**<br/>按资产变化和设备恢复请求提取渲染资产。" }
+  n2@{ shape: rounded, label: "**extract​_​render​_​asset**<br/>按资产变化和设备恢复请求提取渲染资产。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​render::render​_​asset::extract​_​**<br/>**render​_​asset#lt;bevy​_​pbr::medium::**<br/>**GpuScatteringMedium#gt;**<br/>按资产变化和设备恢复请求提取渲染资产。" }
+  n3@{ shape: rounded, label: "**extract​_​render​_​asset**<br/>按资产变化和设备恢复请求提取渲染资产。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**bevy​_​render::render​_​asset::extract​_​**<br/>**render​_​asset#lt;bevy​_​gizmos​_​render::**<br/>**GpuLineGizmo#gt;**<br/>按资产变化和设备恢复请求提取渲染资产。" }
+  n4@{ shape: rounded, label: "**extract​_​render​_​asset**<br/>按资产变化和设备恢复请求提取渲染资产。" }
   class n4 node_system
-  n5@{ shape: rounded, label: "**bevy​_​render::render​_​asset::extract​_​**<br/>**render​_​asset#lt;bevy​_​render::mesh::**<br/>**RenderMesh#gt;**<br/>按资产变化和设备恢复请求提取渲染资产。" }
+  n5@{ shape: rounded, label: "**extract​_​render​_​asset**<br/>按资产变化和设备恢复请求提取渲染资产。" }
   class n5 node_system
   n0 e0@-->|"集合成员"| n1
   class e0 edge_set_membership

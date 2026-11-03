@@ -44,78 +44,78 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**avian3d::collision::narrow​_​phase::**<br/>**update​_​narrow​_​phase#lt;avian3d::**<br/>**collision::collider::parry::**<br/>**Collider, ()#gt;**<br/>更新窄相接触并输出碰撞变化消息。" }
+  n0@{ shape: rounded, label: "**update​_​narrow​_​phase**<br/>更新窄相接触并输出碰撞变化消息。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**dynamics::rigid​_​body::physics​_​**<br/>**material::DefaultFriction**<br/>提供未单独配置时的默认摩擦。" }
+  n1@{ shape: cyl, label: "**DefaultFriction**<br/>提供未单独配置时的默认摩擦。" }
   class n1 node_resource
-  n2@{ shape: cyl, label: "**bevy::bevy​_​ecs::message::**<br/>**Messages#lt;collision::collision​_​**<br/>**events::CollisionStart#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n2@{ shape: cyl, label: "**Messages#lt;CollisionStart#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n2 node_resource
   class n2 external_node
-  n3@{ shape: rounded, label: "**collision::collider::CollisionMargin**<br/>为碰撞形状添加接触外皮。" }
+  n3@{ shape: rounded, label: "**CollisionMargin**<br/>为碰撞形状添加接触外皮。" }
   class n3 node_component
-  n4@{ shape: rounded, label: "**collision::collider::collider​_​**<br/>**transform::ColliderTransform**<br/>缓存碰撞体相对于刚体的变换。" }
+  n4@{ shape: rounded, label: "**ColliderTransform**<br/>缓存碰撞体相对于刚体的变换。" }
   class n4 node_component
-  n5@{ shape: rounded, label: "**dynamics::rigid​_​body::LinearVelocity**<br/>保存刚体的世界线速度。" }
+  n5@{ shape: rounded, label: "**LinearVelocity**<br/>保存刚体的世界线速度。" }
   class n5 node_component
-  n6@{ shape: cyl, label: "**dynamics::solver::plugin::**<br/>**PhysicsLengthUnit**<br/>设置物理世界的长度尺度。" }
+  n6@{ shape: cyl, label: "**PhysicsLengthUnit**<br/>设置物理世界的长度尺度。" }
   class n6 node_resource
-  n7@{ shape: lean-r, label: "**collision::collision​_​events::**<br/>**CollisionStart**<br/>报告一对碰撞体开始接触及其所属刚体。" }
+  n7@{ shape: lean-r, label: "**CollisionStart**<br/>报告一对碰撞体开始接触及其所属刚体。" }
   class n7 node_message
-  n8@{ shape: cyl, label: "**bevy::bevy​_​ecs::message::**<br/>**Messages#lt;collision::collision​_​**<br/>**events::CollisionEnd#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n8@{ shape: cyl, label: "**Messages#lt;CollisionEnd#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n8 node_resource
   class n8 external_node
-  n9@{ shape: cyl, label: "**dynamics::rigid​_​body::physics​_​**<br/>**material::DefaultRestitution**<br/>提供未单独配置时的默认恢复系数。" }
+  n9@{ shape: cyl, label: "**DefaultRestitution**<br/>提供未单独配置时的默认恢复系数。" }
   class n9 node_resource
-  n10@{ shape: cyl, label: "**collision::narrow​_​phase::system​_​**<br/>**param::ContactStatusBits**<br/>标记接触对新增或移除的状态。" }
+  n10@{ shape: cyl, label: "**ContactStatusBits**<br/>标记接触对新增或移除的状态。" }
   class n10 node_resource
-  n11@{ shape: rounded, label: "**collision::collider::**<br/>**CollidingEntities**<br/>记录当前与碰撞体相交的实体。" }
+  n11@{ shape: rounded, label: "**CollidingEntities**<br/>记录当前与碰撞体相交的实体。" }
   class n11 node_component
-  n12@{ shape: rounded, label: "**collision::collider::EnlargedAabb**<br/>保存用于树更新的扩大包围盒。" }
+  n12@{ shape: rounded, label: "**EnlargedAabb**<br/>保存用于树更新的扩大包围盒。" }
   class n12 node_component
-  n13@{ shape: cyl, label: "**time::Time**<br/>来自crate:bevy​_​time ↗：保存时钟上下<br/>文、帧间隔及累计时间" }
+  n13@{ shape: cyl, label: "**Time**<br/>来自crate:bevy​_​time ↗：保存时钟上下<br/>文、帧间隔及累计时间" }
   class n13 node_resource
   class n13 external_node
-  n14@{ shape: rounded, label: "**dynamics::rigid​_​body::physics​_​**<br/>**material::Friction**<br/>配置碰撞对象的静摩擦和动摩擦。" }
+  n14@{ shape: rounded, label: "**Friction**<br/>配置碰撞对象的静摩擦和动摩擦。" }
   class n14 node_component
-  n15@{ shape: lean-r, label: "**collision::collision​_​events::**<br/>**CollisionEnd**<br/>报告一对碰撞体结束接触及其所属刚体。" }
+  n15@{ shape: lean-r, label: "**CollisionEnd**<br/>报告一对碰撞体结束接触及其所属刚体。" }
   class n15 node_message
-  n16@{ shape: rounded, label: "**collision::collider::Sensor**<br/>将碰撞体设为不阻挡运动的触发器。" }
+  n16@{ shape: rounded, label: "**Sensor**<br/>将碰撞体设为不阻挡运动的触发器。" }
   class n16 node_component
-  n17@{ shape: cyl, label: "**collision::diagnostics::**<br/>**CollisionDiagnostics**<br/>汇总碰撞检测耗时与接触数量。" }
+  n17@{ shape: cyl, label: "**CollisionDiagnostics**<br/>汇总碰撞检测耗时与接触数量。" }
   class n17 node_resource
-  n18@{ shape: rounded, label: "**dynamics::rigid​_​body::body​_​size​_​**<br/>**metrics::BodySizeMetrics**<br/>缓存刚体及碰撞体的尺寸指标。" }
+  n18@{ shape: rounded, label: "**BodySizeMetrics**<br/>缓存刚体及碰撞体的尺寸指标。" }
   class n18 node_component
-  n19@{ shape: rounded, label: "**physics​_​transform::transform::**<br/>**Rotation**<br/>保存刚体或碰撞体的世界旋转。" }
+  n19@{ shape: rounded, label: "**Rotation**<br/>保存刚体或碰撞体的世界旋转。" }
   class n19 node_component
   n20@{ shape: lin-rect, label: "**Update**<br/>组织窄阶段接触更新。" }
   class n20 node_system_set
-  n21@{ shape: rounded, label: "**dynamics::rigid​_​body::physics​_​**<br/>**material::Restitution**<br/>配置碰撞后的弹跳恢复程度。" }
+  n21@{ shape: rounded, label: "**Restitution**<br/>配置碰撞后的弹跳恢复程度。" }
   class n21 node_component
-  n22@{ shape: rounded, label: "**dynamics::rigid​_​body::**<br/>**AngularVelocity**<br/>保存刚体的世界角速度。" }
+  n22@{ shape: rounded, label: "**AngularVelocity**<br/>保存刚体的世界角速度。" }
   class n22 node_component
-  n23@{ shape: rounded, label: "**collision::collider::**<br/>**ColliderDisabled**<br/>暂停碰撞体检测和空间查询。" }
+  n23@{ shape: rounded, label: "**ColliderDisabled**<br/>暂停碰撞体检测和空间查询。" }
   class n23 node_component
-  n24@{ shape: rounded, label: "**collision::collider::layers::**<br/>**CollisionLayers**<br/>声明碰撞体所属层和可交互层。" }
+  n24@{ shape: rounded, label: "**CollisionLayers**<br/>声明碰撞体所属层和可交互层。" }
   class n24 node_component
-  n25@{ shape: rounded, label: "**physics​_​transform::transform::**<br/>**Position**<br/>保存刚体或碰撞体的世界位置。" }
+  n25@{ shape: rounded, label: "**Position**<br/>保存刚体或碰撞体的世界位置。" }
   class n25 node_component
-  n26@{ shape: rounded, label: "**collision::collider::collider​_​**<br/>**hierarchy::ColliderOf**<br/>指定碰撞体附着的刚体。" }
+  n26@{ shape: rounded, label: "**ColliderOf**<br/>指定碰撞体附着的刚体。" }
   class n26 node_component
-  n27@{ shape: rounded, label: "**dynamics::rigid​_​body::RigidBody**<br/>选择动态、静态或运动学刚体行为。" }
+  n27@{ shape: rounded, label: "**RigidBody**<br/>选择动态、静态或运动学刚体行为。" }
   class n27 node_component
-  n28@{ shape: cyl, label: "**collision::narrow​_​phase::system​_​**<br/>**param::ContactStatusChangeQueue**<br/>暂存窄相产生的接触状态变化。" }
+  n28@{ shape: cyl, label: "**ContactStatusChangeQueue**<br/>暂存窄相产生的接触状态变化。" }
   class n28 node_resource
-  n29@{ shape: cyl, label: "**collision::contact​_​types::contact​_​**<br/>**graph::ContactGraph**<br/>维护碰撞体接触对及其碰撞数据。" }
+  n29@{ shape: cyl, label: "**ContactGraph**<br/>维护碰撞体接触对及其碰撞数据。" }
   class n29 node_resource
-  n30@{ shape: cyl, label: "**collision::narrow​_​phase::**<br/>**NarrowPhaseConfig**<br/>配置窄相的接触容差。" }
+  n30@{ shape: cyl, label: "**NarrowPhaseConfig**<br/>配置窄相的接触容差。" }
   class n30 node_resource
-  n31@{ shape: rounded, label: "**dynamics::rigid​_​body::**<br/>**RigidBodyDisabled**<br/>暂停刚体求解和附着关节。" }
+  n31@{ shape: rounded, label: "**RigidBodyDisabled**<br/>暂停刚体求解和附着关节。" }
   class n31 node_component
-  n32@{ shape: rounded, label: "**dynamics::rigid​_​body::mass​_​**<br/>**properties::components::computed::**<br/>**ComputedCenterOfMass**<br/>保存汇总后的刚体局部质心。" }
+  n32@{ shape: rounded, label: "**ComputedCenterOfMass**<br/>保存汇总后的刚体局部质心。" }
   class n32 node_component
-  n33@{ shape: rounded, label: "**dynamics::ccd::SpeculativeCcd**<br/>配置基于速度的预测接触范围。" }
+  n33@{ shape: rounded, label: "**SpeculativeCcd**<br/>配置基于速度的预测接触范围。" }
   class n33 node_component
-  n34@{ shape: rounded, label: "**collision::collider::parry::Collider**<br/>保存 Parry 碰撞后端的几何形状。" }
+  n34@{ shape: rounded, label: "**Collider**<br/>保存 Parry 碰撞后端的几何形状。" }
   class n34 node_component
   n1 e0@--> n0
   class e0 edge_read
@@ -206,7 +206,7 @@ flowchart LR
   e8@{ curve: basis }
   e9@{ curve: basis }
   e10@{ curve: basis }
-  e11@{ curve: basis }
+  e11@{ curve: bumpX }
   e12@{ curve: basis }
   e13@{ curve: basis }
   e14@{ curve: basis }

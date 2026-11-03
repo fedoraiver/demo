@@ -36,9 +36,9 @@ flowchart LR
   classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**render​_​asset::**<br/>**RenderAssetBytesPerFrame**<br/>配置每帧 CPU 到 GPU 的资产传输预算。" }
+  n0@{ shape: cyl, label: "**RenderAssetBytesPerFrame**<br/>配置每帧 CPU 到 GPU 的资产传输预算。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​render::render​_​asset::extract​_​**<br/>**render​_​asset​_​bytes​_​per​_​frame**<br/>同步主世界设定的每帧渲染资产上传上限。" }
+  n1@{ shape: rounded, label: "**extract​_​render​_​asset​_​bytes​_​per​_​frame**<br/>同步主世界设定的每帧渲染资产上传上限。" }
   class n1 node_system
   n0 e0@--> n1
   class e0 edge_read

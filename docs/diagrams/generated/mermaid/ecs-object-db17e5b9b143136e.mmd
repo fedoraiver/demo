@@ -45,27 +45,27 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​ui::layout::sync​_​font​_​size​_​to​_​**<br/>**em​_​size**<br/>把文本字号解析为节点的 EmSize。" }
+  n0@{ shape: rounded, label: "**sync​_​font​_​size​_​to​_​em​_​size**<br/>把文本字号解析为节点的 EmSize。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**bevy​_​text::RemSize**<br/>来自crate:bevy​_​text ↗：保存全局根字号" }
+  n1@{ shape: cyl, label: "**RemSize**<br/>来自crate:bevy​_​text ↗：保存全局根字号" }
   class n1 node_resource
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​text::TextFont**<br/>来自crate:bevy​_​text ↗：保存文字段的字<br/>体来源、字号及抗锯齿方式等字体样式" }
+  n2@{ shape: rounded, label: "**TextFont**<br/>来自crate:bevy​_​text ↗：保存文字段的字<br/>体来源、字号及抗锯齿方式等字体样式" }
   class n2 node_component
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​text::font::load​_​font​_​assets​_​**<br/>**into​_​font​_​collection**<br/>来自crate:bevy​_​text ↗：把字体资产注册<br/>到排版字体数据库。" }
+  n3@{ shape: rounded, label: "**load​_​font​_​assets​_​into​_​font​_​**<br/>**collection**<br/>来自crate:bevy​_​text ↗：把字体资产注册<br/>到排版字体数据库。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**text::EmSize**<br/>来自crate:bevy​_​text ↗：保存当前 UI<br/>节点用于解析 Em 单位的实际字体大小" }
+  n4@{ shape: rounded, label: "**EmSize**<br/>来自crate:bevy​_​text ↗：保存当前 UI<br/>节点用于解析 Em 单位的实际字体大小" }
   class n4 node_component
   class n4 external_node
-  n5@{ shape: fr-rect, label: "**bevy​_​ui::UiPlugin**<br/>建立界面布局与内容更新基础。" }
+  n5@{ shape: fr-rect, label: "**UiPlugin**<br/>建立界面布局与内容更新基础。" }
   class n5 node_plugin
   n6@{ shape: lin-rect, label: "**Content**<br/>组织界面交互、布局与堆叠更新。" }
   class n6 node_system_set
-  n7@{ shape: rounded, label: "**bevy​_​ui::Node**<br/>声明 UI 节点的布局规则。" }
+  n7@{ shape: rounded, label: "**Node**<br/>声明 UI 节点的布局规则。" }
   class n7 node_component
-  n8@{ shape: rounded, label: "**bevy​_​ui::ComputedUiRenderTargetInfo**<br/>缓存 UI 目标的尺寸与缩放。" }
+  n8@{ shape: rounded, label: "**ComputedUiRenderTargetInfo**<br/>缓存 UI 目标的尺寸与缩放。" }
   class n8 node_component
   n1 e0@--> n0
   class e0 edge_read

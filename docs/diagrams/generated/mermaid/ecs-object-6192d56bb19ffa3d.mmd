@@ -36,17 +36,17 @@ flowchart LR
   classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**dynamics::joints::JointDamping**<br/>衰减关节两端的相对速度。" }
+  n0@{ shape: rounded, label: "**JointDamping**<br/>衰减关节两端的相对速度。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**avian3d::dynamics::solver::plugin::**<br/>**joint​_​damping#lt;avian3d::dynamics::**<br/>**joints::prismatic::PrismaticJoint#gt;**<br/>衰减关节两端刚体的相对速度。" }
+  n1@{ shape: rounded, label: "**joint​_​damping**<br/>衰减关节两端刚体的相对速度。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**avian3d::dynamics::solver::plugin::**<br/>**joint​_​damping#lt;avian3d::dynamics::**<br/>**joints::fixed::FixedJoint#gt;**<br/>衰减关节两端刚体的相对速度。" }
+  n2@{ shape: rounded, label: "**joint​_​damping**<br/>衰减关节两端刚体的相对速度。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**avian3d::dynamics::solver::plugin::**<br/>**joint​_​damping#lt;avian3d::dynamics::**<br/>**joints::revolute::RevoluteJoint#gt;**<br/>衰减关节两端刚体的相对速度。" }
+  n3@{ shape: rounded, label: "**joint​_​damping**<br/>衰减关节两端刚体的相对速度。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**avian3d::dynamics::solver::plugin::**<br/>**joint​_​damping#lt;avian3d::dynamics::**<br/>**joints::distance::DistanceJoint#gt;**<br/>衰减关节两端刚体的相对速度。" }
+  n4@{ shape: rounded, label: "**joint​_​damping**<br/>衰减关节两端刚体的相对速度。" }
   class n4 node_system
-  n5@{ shape: rounded, label: "**avian3d::dynamics::solver::plugin::**<br/>**joint​_​damping#lt;avian3d::dynamics::**<br/>**joints::spherical::SphericalJoint#gt;**<br/>衰减关节两端刚体的相对速度。" }
+  n5@{ shape: rounded, label: "**joint​_​damping**<br/>衰减关节两端刚体的相对速度。" }
   class n5 node_system
   n0 e0@--> n1
   class e0 edge_read

@@ -39,7 +39,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: notch-rect, label: "**Local · next​_​log​_​at**<br/>限制连续鼠标视角日志的输出频率。" }
   class n0 node_local
-  n1@{ shape: hex, label: "**demo::first​_​person::camera::on​_​**<br/>**camera​_​look**<br/>Fire 已携带本帧汇总位移，直接更新角度；<br/>有向水平转角留给下一次碰撞检查消费。" }
+  n1@{ shape: hex, label: "**on​_​camera​_​look**<br/>Fire 已携带本帧汇总位移，直接更新角度；<br/>有向水平转角留给下一次碰撞检查消费。" }
   class n1 node_observer
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

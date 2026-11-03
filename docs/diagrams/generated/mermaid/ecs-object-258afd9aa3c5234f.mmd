@@ -39,11 +39,11 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: lin-rect, label: "**UpdateBounds**<br/>组织灯光聚簇与可见性准备。" }
   class n0 node_system_set
-  n1@{ shape: rounded, label: "**bevy​_​light::spot​_​light::update​_​spot​_​**<br/>**light​_​bounding​_​spheres**<br/>按聚光灯位置和范围更新剔除包围球。" }
+  n1@{ shape: rounded, label: "**update​_​spot​_​light​_​bounding​_​spheres**<br/>按聚光灯位置和范围更新剔除包围球。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​light::point​_​light::update​_​**<br/>**point​_​light​_​bounding​_​spheres**<br/>按点光位置和范围更新剔除包围球。" }
+  n2@{ shape: rounded, label: "**update​_​point​_​light​_​bounding​_​spheres**<br/>按点光位置和范围更新剔除包围球。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​light::cluster::add​_​light​_​**<br/>**probe​_​and​_​decal​_​aabbs**<br/>为光照探针和聚簇贴花补齐包围盒。" }
+  n3@{ shape: rounded, label: "**add​_​light​_​probe​_​and​_​decal​_​aabbs**<br/>为光照探针和聚簇贴花补齐包围盒。" }
   class n3 node_system
   n0 e0@-->|"集合成员"| n1
   class e0 edge_set_membership

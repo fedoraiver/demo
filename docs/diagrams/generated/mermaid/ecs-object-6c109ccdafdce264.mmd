@@ -44,15 +44,15 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​input::mouse::mouse​_​button​_​**<br/>**input​_​system**<br/>把鼠标按钮事件汇总为按钮状态。" }
+  n0@{ shape: rounded, label: "**mouse​_​button​_​input​_​system**<br/>把鼠标按钮事件汇总为按钮状态。" }
   class n0 node_system
   n1@{ shape: fr-rect, label: "**InputPlugin**<br/>汇集设备输入并维护输入状态。" }
   class n1 node_plugin
-  n2@{ shape: lean-r, label: "**mouse::MouseButtonInput**<br/>传递鼠标按钮按放输入。" }
+  n2@{ shape: lean-r, label: "**MouseButtonInput**<br/>传递鼠标按钮按放输入。" }
   class n2 node_message
-  n3@{ shape: cyl, label: "**button​_​input::ButtonInput#lt;mouse::**<br/>**MouseButton#gt;**<br/>保存指定按钮类型当前按下、本帧刚按下和刚<br/>释放的集合" }
+  n3@{ shape: cyl, label: "**ButtonInput#lt;MouseButton#gt;**<br/>保存指定按钮类型当前按下、本帧刚按下和刚<br/>释放的集合" }
   class n3 node_resource
-  n4@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;mouse::**<br/>**MouseButtonInput#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n4@{ shape: cyl, label: "**Messages#lt;MouseButtonInput#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n4 node_resource
   class n4 external_node
   n5@{ shape: lin-rect, label: "**InputSystems**<br/>把原始设备消息汇总为本帧输入状态。" }

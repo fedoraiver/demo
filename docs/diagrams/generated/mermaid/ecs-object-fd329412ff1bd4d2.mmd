@@ -43,31 +43,31 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​pbr::prepass::check​_​prepass​_​**<br/>**views​_​need​_​specialization**<br/>检测采样和预通道配置变化并标记视图待刷<br/>新。" }
+  n0@{ shape: rounded, label: "**check​_​prepass​_​views​_​need​_​**<br/>**specialization**<br/>检测采样和预通道配置变化并标记视图待刷<br/>新。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**camera::DirtySpecializations**<br/>来自crate:bevy​_​render ↗：记录需刷新或<br/>移除管线专用化的对象与视图。" }
+  n1@{ shape: cyl, label: "**DirtySpecializations**<br/>来自crate:bevy​_​render ↗：记录需刷新或<br/>移除管线专用化的对象与视图。" }
   class n1 node_resource
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​render::view::Msaa**<br/>来自crate:bevy​_​render ↗：选择视图的多<br/>重采样抗锯齿样本数。" }
+  n2@{ shape: rounded, label: "**Msaa**<br/>来自crate:bevy​_​render ↗：选择视图的多<br/>重采样抗锯齿样本数。" }
   class n2 node_component
   class n2 external_node
-  n3@{ shape: cyl, label: "**prepass::ViewKeyPrepassCache**<br/>缓存预通道视图的管线配置键。" }
+  n3@{ shape: cyl, label: "**ViewKeyPrepassCache**<br/>缓存预通道视图的管线配置键。" }
   class n3 node_resource
-  n4@{ shape: rounded, label: "**bevy​_​render::view::ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
+  n4@{ shape: rounded, label: "**ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
   class n4 node_component
   class n4 external_node
-  n5@{ shape: rounded, label: "**bevy​_​core​_​pipeline::prepass::**<br/>**DepthPrepass**<br/>来自crate:bevy​_​core​_​pipeline ↗：为三<br/>维相机生成独立的深度纹理。" }
+  n5@{ shape: rounded, label: "**DepthPrepass**<br/>来自crate:bevy​_​core​_​pipeline ↗：为三<br/>维相机生成独立的深度纹理。" }
   class n5 node_component
   class n5 external_node
-  n6@{ shape: fr-rect, label: "**prepass::PrepassPlugin**<br/>安装材质预通道处理。" }
+  n6@{ shape: fr-rect, label: "**PrepassPlugin**<br/>安装材质预通道处理。" }
   class n6 node_plugin
   n7@{ shape: lin-rect, label: "**PrepareAssets**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
   class n7 node_system_set
   class n7 external_node
-  n8@{ shape: rounded, label: "**prepass::NormalPrepass**<br/>来自crate:bevy​_​core​_​pipeline ↗：输出<br/>已应用法线贴图的世界空间法线。" }
+  n8@{ shape: rounded, label: "**NormalPrepass**<br/>来自crate:bevy​_​core​_​pipeline ↗：输出<br/>已应用法线贴图的世界空间法线。" }
   class n8 node_component
   class n8 external_node
-  n9@{ shape: rounded, label: "**bevy​_​core​_​pipeline::prepass::**<br/>**MotionVectorPrepass**<br/>来自crate:bevy​_​core​_​pipeline ↗：为相<br/>机输出屏幕空间运动矢量。" }
+  n9@{ shape: rounded, label: "**MotionVectorPrepass**<br/>来自crate:bevy​_​core​_​pipeline ↗：为相<br/>机输出屏幕空间运动矢量。" }
   class n9 node_component
   class n9 external_node
   n0 e0@-->|"可变访问"| n1

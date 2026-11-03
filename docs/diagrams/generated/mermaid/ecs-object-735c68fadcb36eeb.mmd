@@ -46,47 +46,47 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**demo::scene​_​assembly::loading::**<br/>**prepare​_​island**<br/>在资源 CPU 几何可用时构建碰撞；全部成功<br/>后才提交，失败时不创建动态玩家。" }
+  n0@{ shape: rounded, label: "**prepare​_​island**<br/>在资源 CPU 几何可用时构建碰撞；全部成功<br/>后才提交，失败时不创建动态玩家。" }
   class n0 node_system
   n1@{ shape: lin-rect, label: "**AnonymousSet(1)**<br/>来自crate:bevy​_​ecs ↗：保存一组系统的<br/>共同配置。" }
   class n1 node_system_set
   class n1 external_node
-  n2@{ shape: rounded, label: "**components::transform::Transform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>相对父实体的平移、旋转和缩放" }
+  n2@{ shape: rounded, label: "**Transform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>相对父实体的平移、旋转和缩放" }
   class n2 node_component
   class n2 external_node
-  n3@{ shape: cyl, label: "**settings::prototype::PrototypeConfig**<br/>来自settings ↗：原型的运动、平地和持箱<br/>参数。" }
+  n3@{ shape: cyl, label: "**PrototypeConfig**<br/>来自settings ↗：原型的运动、平地和持箱<br/>参数。" }
   class n3 node_resource
   class n3 external_node
-  n4@{ shape: rounded, label: "**scene​_​assembly::IslandPending**<br/>标记等待构建碰撞的海岛实例。" }
+  n4@{ shape: rounded, label: "**IslandPending**<br/>标记等待构建碰撞的海岛实例。" }
   class n4 node_component
   n5@{ shape: rounded, label: "**prepare​_​island · 创建模板**<br/>为海岛导入几何创建静态碰撞子体。" }
   class n5 node_entity
-  n6@{ shape: cyl, label: "**scene​_​assembly::assets::ArtLoadState**<br/>资源就绪与地图碰撞就绪是两个门槛，不能仅<br/>凭模板已生成就推进物理。" }
+  n6@{ shape: cyl, label: "**ArtLoadState**<br/>资源就绪与地图碰撞就绪是两个门槛，不能仅<br/>凭模板已生成就推进物理。" }
   class n6 node_resource
-  n7@{ shape: rounded, label: "**scene​_​assembly::DisplayNpc**<br/>展示 NPC 保留在地图内，不挂玩家运动和输<br/>入组件。" }
+  n7@{ shape: rounded, label: "**DisplayNpc**<br/>展示 NPC 保留在地图内，不挂玩家运动和输<br/>入组件。" }
   class n7 node_component
-  n8@{ shape: rounded, label: "**demo::scene​_​assembly::loading::**<br/>**begin​_​island**<br/>请求创建已加载海岛的运行实例。" }
+  n8@{ shape: rounded, label: "**begin​_​island**<br/>请求创建已加载海岛的运行实例。" }
   class n8 node_system
-  n9@{ shape: cyl, label: "**bevy​_​asset::Assets#lt;bevy​_​mesh::Mesh#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
+  n9@{ shape: cyl, label: "**Assets#lt;Mesh#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
   class n9 node_resource
   class n9 external_node
-  n10@{ shape: rounded, label: "**bevy​_​ecs::hierarchy::Children**<br/>来自crate:bevy​_​ecs ↗：保存以<br/>ChildOf 指向当前父实体的子实体集合" }
+  n10@{ shape: rounded, label: "**Children**<br/>来自crate:bevy​_​ecs ↗：保存以<br/>ChildOf 指向当前父实体的子实体集合" }
   class n10 node_component
   class n10 external_node
-  n11@{ shape: rounded, label: "**assets::GltfExtras**<br/>来自crate:bevy​_​gltf ↗：保存 glTF 基<br/>元附加数据。" }
+  n11@{ shape: rounded, label: "**GltfExtras**<br/>来自crate:bevy​_​gltf ↗：保存 glTF 基<br/>元附加数据。" }
   class n11 node_component
   class n11 external_node
-  n12@{ shape: rounded, label: "**demo::scene​_​assembly::actors::spawn​_​**<br/>**actors**<br/>为就绪海岛创建玩法实体并复用加载相机。" }
+  n12@{ shape: rounded, label: "**spawn​_​actors**<br/>为就绪海岛创建玩法实体并复用加载相机。" }
   class n12 node_system
-  n13@{ shape: rounded, label: "**bevy​_​mesh::Mesh3d**<br/>来自crate:bevy​_​mesh ↗：为三维可绘制实<br/>体指定网格资产。" }
+  n13@{ shape: rounded, label: "**Mesh3d**<br/>来自crate:bevy​_​mesh ↗：为三维可绘制实<br/>体指定网格资产。" }
   class n13 node_component
   class n13 external_node
-  n14@{ shape: fr-rect, label: "**scene​_​assembly::SceneAssemblyPlugin**<br/>加载当前场景资源并装配地图、碰撞与业务实<br/>体。" }
+  n14@{ shape: fr-rect, label: "**SceneAssemblyPlugin**<br/>加载当前场景资源并装配地图、碰撞与业务实<br/>体。" }
   class n14 node_plugin
-  n15@{ shape: rounded, label: "**bevy​_​ecs::name::Name**<br/>来自crate:bevy​_​ecs ↗：保存供调试和界<br/>面展示的实体名称及缓存哈希" }
+  n15@{ shape: rounded, label: "**Name**<br/>来自crate:bevy​_​ecs ↗：保存供调试和界<br/>面展示的实体名称及缓存哈希" }
   class n15 node_component
   class n15 external_node
-  n16@{ shape: rounded, label: "**scene​_​assembly::IslandReady**<br/>保存就绪海岛的玩家与物品装配位置。" }
+  n16@{ shape: rounded, label: "**IslandReady**<br/>保存就绪海岛的玩家与物品装配位置。" }
   class n16 node_component
   n17@{ shape: rounded, label: "**prepare​_​island · 创建模板**<br/>为地图展示 NPC 添加静态碰撞子体。" }
   class n17 node_entity
@@ -134,7 +134,7 @@ flowchart LR
   e3@{ curve: basis }
   e4@{ curve: basis }
   e5@{ curve: basis }
-  e6@{ curve: basis }
+  e6@{ curve: bumpY }
   e7@{ curve: basis }
   e8@{ curve: basis }
   e9@{ curve: basis }

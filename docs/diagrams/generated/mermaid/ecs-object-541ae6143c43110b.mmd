@@ -42,19 +42,16 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​egui::input::write​_​egui​_​wants​_​**<br/>**input​_​system**<br/>汇总所有 Egui 上下文的输入占用。" }
+  n0@{ shape: rounded, label: "**write​_​egui​_​wants​_​input​_​system**<br/>汇总所有 Egui 上下文的输入占用。" }
   class n0 node_system
   n1@{ shape: rounded, label: "**EguiContext**<br/>包装一个 egui::Context" }
   class n1 node_component
   n2@{ shape: lin-rect, label: "**ProcessOutput**<br/>组织 Egui 轮次结束与输出处理。" }
   class n2 node_system_set
-  n3@{ shape: cyl, label: "**input::EguiWantsInput**<br/>汇总 Egui 是否正在使用指针、需要键盘输<br/>入或打开弹出层" }
+  n3@{ shape: cyl, label: "**EguiWantsInput**<br/>汇总 Egui 是否正在使用指针、需要键盘输<br/>入或打开弹出层" }
   class n3 node_resource
-  subgraph layout_card_n4[" "]
   n4@{ shape: fr-rect, label: "**EguiPlugin**<br/>装配 Egui 输入、上下文与渲染。" }
   class n4 node_plugin
-  end
-  style layout_card_n4 fill:none,stroke:none
   n0 e0@-->|"可变访问"| n1
   class e0 edge_write
   n2 e1@-->|"集合成员"| n0
@@ -67,4 +64,6 @@ flowchart LR
   class e4 edge_registration
   e0@{ curve: basis }
   e1@{ curve: basis }
+  e2@{ curve: basis }
   e3@{ curve: basis }
+  e4@{ curve: basis }

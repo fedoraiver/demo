@@ -40,26 +40,26 @@ flowchart LR
   classDef edge_order stroke:#334155,stroke-width:2px
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​pbr::light​_​probe::generate::**<br/>**filtering​_​system**<br/>对环境贴图执行镜面辐射卷积和漫反射辐照卷<br/>积，按不同粗糙度生成镜面 mip，并计算六<br/>个面的漫反射环境纹理。" }
+  n0@{ shape: rounded, label: "**filtering​_​system**<br/>对环境贴图执行镜面辐射卷积和漫反射辐照卷<br/>积，按不同粗糙度生成镜面 mip，并计算六<br/>个面的漫反射环境纹理。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**bevy​_​render::renderer::RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
+  n1@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
   class n1 node_resource
   class n1 external_node
-  n2@{ shape: rounded, label: "**light​_​probe::generate::**<br/>**RenderEnvironmentMap**<br/>保存渲染侧环境光纹理及方向设置。" }
+  n2@{ shape: rounded, label: "**RenderEnvironmentMap**<br/>保存渲染侧环境光纹理及方向设置。" }
   class n2 node_component
-  n3@{ shape: cyl, label: "**light​_​probe::generate::**<br/>**GeneratorPipelines**<br/>保存环境贴图降采样和卷积计算管线。" }
+  n3@{ shape: cyl, label: "**GeneratorPipelines**<br/>保存环境贴图降采样和卷积计算管线。" }
   class n3 node_resource
-  n4@{ shape: cyl, label: "**bevy​_​render::render​_​resource::**<br/>**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
+  n4@{ shape: cyl, label: "**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
   class n4 node_resource
   class n4 external_node
-  n5@{ shape: rounded, label: "**light​_​probe::generate::**<br/>**GeneratorBindGroups**<br/>保存环境贴图生成所需的纹理绑定。" }
+  n5@{ shape: rounded, label: "**GeneratorBindGroups**<br/>保存环境贴图生成所需的纹理绑定。" }
   class n5 node_component
   n6@{ shape: lin-rect, label: "**Render**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
   class n6 node_system_set
   class n6 external_node
-  n7@{ shape: rounded, label: "**bevy​_​pbr::light​_​probe::generate::**<br/>**downsampling​_​system**<br/>把环境立方体贴图的基础 mip 复制到生成目<br/>标，再分阶段运行降采样计算，构造环境光卷<br/>积所需的多级纹理。" }
+  n7@{ shape: rounded, label: "**downsampling​_​system**<br/>把环境立方体贴图的基础 mip 复制到生成目<br/>标，再分阶段运行降采样计算，构造环境光卷<br/>积所需的多级纹理。" }
   class n7 node_system
-  n8@{ shape: cyl, label: "**bevy​_​render::diagnostic::**<br/>**DiagnosticsRecorder**<br/>来自crate:bevy​_​render ↗：记录渲染诊断<br/>区间与 GPU 查询索引的对应。" }
+  n8@{ shape: cyl, label: "**DiagnosticsRecorder**<br/>来自crate:bevy​_​render ↗：记录渲染诊断<br/>区间与 GPU 查询索引的对应。" }
   class n8 node_resource
   class n8 external_node
   n9@{ shape: lin-rect, label: "**PrepareBindGroups**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }

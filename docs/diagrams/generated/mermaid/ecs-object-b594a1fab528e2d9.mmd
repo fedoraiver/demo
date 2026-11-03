@@ -37,35 +37,35 @@ flowchart LR
   classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**material​_​bind​_​groups::**<br/>**MaterialBindGroupAllocators**<br/>为材质分配绑定组并追踪引用资源。" }
+  n0@{ shape: cyl, label: "**MaterialBindGroupAllocators**<br/>为材质分配绑定组并追踪引用资源。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​render::erased​_​render​_​asset::**<br/>**prepare​_​erased​_​assets#lt;bevy​_​sprite​_​**<br/>**render::mesh2d::material::**<br/>**MeshMaterial2d#lt;bevy​_​sprite​_​render::**<br/>**mesh2d::color​_​material::**<br/>**ColorMaterial#gt;#gt;**<br/>在上传预算内准备擦除资产并管理重试卸载。" }
+  n1@{ shape: rounded, label: "**prepare​_​erased​_​assets**<br/>在上传预算内准备擦除资产并管理重试卸载。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​pbr::material::add​_​material​_​**<br/>**bind​_​group​_​allocator#lt;bevy​_​pbr::pbr​_​**<br/>**material::StandardMaterial#gt;**<br/>来自crate:bevy​_​pbr ↗：为具体材质类型<br/>注册 GPU 绑定分配器。" }
+  n2@{ shape: rounded, label: "**add​_​material​_​bind​_​group​_​allocator**<br/>来自crate:bevy​_​pbr ↗：为具体材质类型<br/>注册 GPU 绑定分配器。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::**<br/>**material::add​_​material2d​_​bind​_​group​_​**<br/>**allocator#lt;bevy​_​sprite​_​render::**<br/>**sprite​_​mesh::sprite​_​mesh​_​material::**<br/>**SpriteMeshMaterial#gt;**<br/>来自crate:bevy​_​sprite​_​render ↗：为二<br/>维材质类型注册 GPU 绑定组分配器。" }
+  n3@{ shape: rounded, label: "**add​_​material2d​_​bind​_​group​_​allocator**<br/>来自crate:bevy​_​sprite​_​render ↗：为二<br/>维材质类型注册 GPU 绑定组分配器。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::**<br/>**material::add​_​material2d​_​bind​_​group​_​**<br/>**allocator#lt;bevy​_​sprite​_​render::**<br/>**tilemap​_​chunk::tilemap​_​chunk​_​**<br/>**material::TilemapChunkMaterial#gt;**<br/>来自crate:bevy​_​sprite​_​render ↗：为二<br/>维材质类型注册 GPU 绑定组分配器。" }
+  n4@{ shape: rounded, label: "**add​_​material2d​_​bind​_​group​_​allocator**<br/>来自crate:bevy​_​sprite​_​render ↗：为二<br/>维材质类型注册 GPU 绑定组分配器。" }
   class n4 node_system
   class n4 external_node
-  n5@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::**<br/>**material::add​_​material2d​_​bind​_​group​_​**<br/>**allocator#lt;bevy​_​sprite​_​render::**<br/>**mesh2d::color​_​material::**<br/>**ColorMaterial#gt;**<br/>来自crate:bevy​_​sprite​_​render ↗：为二<br/>维材质类型注册 GPU 绑定组分配器。" }
+  n5@{ shape: rounded, label: "**add​_​material2d​_​bind​_​group​_​allocator**<br/>来自crate:bevy​_​sprite​_​render ↗：为二<br/>维材质类型注册 GPU 绑定组分配器。" }
   class n5 node_system
   class n5 external_node
-  n6@{ shape: rounded, label: "**bevy​_​render::material​_​bind​_​groups::**<br/>**prepare​_​material​_​bind​_​groups**<br/>重建本帧变化材质所需的 GPU 绑定组。" }
+  n6@{ shape: rounded, label: "**prepare​_​material​_​bind​_​groups**<br/>重建本帧变化材质所需的 GPU 绑定组。" }
   class n6 node_system
-  n7@{ shape: rounded, label: "**bevy​_​render::erased​_​render​_​asset::**<br/>**prepare​_​erased​_​assets#lt;bevy​_​sprite​_​**<br/>**render::mesh2d::material::**<br/>**MeshMaterial2d#lt;bevy​_​sprite​_​render::**<br/>**sprite​_​mesh::sprite​_​mesh​_​material::**<br/>**SpriteMeshMaterial#gt;#gt;**<br/>在上传预算内准备擦除资产并管理重试卸载。" }
+  n7@{ shape: rounded, label: "**prepare​_​erased​_​assets**<br/>在上传预算内准备擦除资产并管理重试卸载。" }
   class n7 node_system
-  n8@{ shape: rounded, label: "**bevy​_​render::erased​_​render​_​asset::**<br/>**prepare​_​erased​_​assets#lt;bevy​_​sprite​_​**<br/>**render::mesh2d::material::**<br/>**MeshMaterial2d#lt;bevy​_​sprite​_​render::**<br/>**tilemap​_​chunk::tilemap​_​chunk​_​**<br/>**material::TilemapChunkMaterial#gt;#gt;**<br/>在上传预算内准备擦除资产并管理重试卸载。" }
+  n8@{ shape: rounded, label: "**prepare​_​erased​_​assets**<br/>在上传预算内准备擦除资产并管理重试卸载。" }
   class n8 node_system
-  n9@{ shape: rounded, label: "**bevy​_​render::erased​_​render​_​asset::**<br/>**prepare​_​erased​_​assets#lt;bevy​_​pbr::**<br/>**mesh​_​material::MeshMaterial3d#lt;bevy​_​**<br/>**pbr::extended​_​material::**<br/>**ExtendedMaterial#lt;bevy​_​pbr::pbr​_​**<br/>**material::StandardMaterial, bevy​_​**<br/>**pbr::decal::forward::**<br/>**ForwardDecalMaterialExt#gt;#gt;#gt;**<br/>在上传预算内准备擦除资产并管理重试卸载。" }
+  n9@{ shape: rounded, label: "**prepare​_​erased​_​assets**<br/>在上传预算内准备擦除资产并管理重试卸载。" }
   class n9 node_system
-  n10@{ shape: rounded, label: "**bevy​_​render::material​_​bind​_​groups::**<br/>**write​_​material​_​bind​_​group​_​buffers**<br/>上传材质分配器管理的无绑定缓冲内容。" }
+  n10@{ shape: rounded, label: "**write​_​material​_​bind​_​group​_​buffers**<br/>上传材质分配器管理的无绑定缓冲内容。" }
   class n10 node_system
-  n11@{ shape: rounded, label: "**bevy​_​render::erased​_​render​_​asset::**<br/>**prepare​_​erased​_​assets#lt;bevy​_​pbr::**<br/>**mesh​_​material::MeshMaterial3d#lt;bevy​_​**<br/>**pbr::pbr​_​material::**<br/>**StandardMaterial#gt;#gt;**<br/>在上传预算内准备擦除资产并管理重试卸载。" }
+  n11@{ shape: rounded, label: "**prepare​_​erased​_​assets**<br/>在上传预算内准备擦除资产并管理重试卸载。" }
   class n11 node_system
-  n12@{ shape: rounded, label: "**bevy​_​pbr::material::add​_​material​_​**<br/>**bind​_​group​_​allocator#lt;bevy​_​pbr::**<br/>**extended​_​material::**<br/>**ExtendedMaterial#lt;bevy​_​pbr::pbr​_​**<br/>**material::StandardMaterial, bevy​_​**<br/>**pbr::decal::forward::**<br/>**ForwardDecalMaterialExt#gt;#gt;**<br/>来自crate:bevy​_​pbr ↗：为具体材质类型<br/>注册 GPU 绑定分配器。" }
+  n12@{ shape: rounded, label: "**add​_​material​_​bind​_​group​_​allocator**<br/>来自crate:bevy​_​pbr ↗：为具体材质类型<br/>注册 GPU 绑定分配器。" }
   class n12 node_system
   class n12 external_node
   n1 e0@-->|"可变访问"| n0

@@ -42,13 +42,13 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​camera::visibility::mark​_​newly​_​**<br/>**hidden​_​entities​_​invisible**<br/>提交本帧已不再可见的对象状态。" }
+  n0@{ shape: rounded, label: "**mark​_​newly​_​hidden​_​entities​_​invisible**<br/>提交本帧已不再可见的对象状态。" }
   class n0 node_system
-  n1@{ shape: fr-rect, label: "**visibility::VisibilityPlugin**<br/>维护包围盒、层级可见性与视锥检查。" }
+  n1@{ shape: fr-rect, label: "**VisibilityPlugin**<br/>维护包围盒、层级可见性与视锥检查。" }
   class n1 node_plugin
-  n2@{ shape: rounded, label: "**visibility::NoCpuCulling**<br/>退出内置的 CPU 视锥裁剪。" }
+  n2@{ shape: rounded, label: "**NoCpuCulling**<br/>退出内置的 CPU 视锥裁剪。" }
   class n2 node_component
-  n3@{ shape: rounded, label: "**bevy​_​camera::visibility::**<br/>**ViewVisibility**<br/>记录实体是否应被提取用于渲染。" }
+  n3@{ shape: rounded, label: "**ViewVisibility**<br/>记录实体是否应被提取用于渲染。" }
   class n3 node_component
   n4@{ shape: lin-rect, label: "**MarkNewlyHiddenEntitiesInvisible**<br/>组织相机与实体可见性更新。" }
   class n4 node_system_set

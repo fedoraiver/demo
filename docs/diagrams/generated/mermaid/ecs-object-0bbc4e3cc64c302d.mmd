@@ -43,28 +43,28 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​render::view::window::**<br/>**screenshot::extract​_​screenshots**<br/>收集并去重本帧尚未捕获的截图请求。" }
+  n0@{ shape: rounded, label: "**extract​_​screenshots**<br/>收集并去重本帧尚未捕获的截图请求。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**extract​_​plugin::MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
+  n1@{ shape: cyl, label: "**MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
   class n1 node_resource
   class n1 external_node
   n2@{ shape: notch-rect, label: "**Local · seen​_​targets**<br/>去重本帧指向相同渲染目标的截图请求。" }
   class n2 node_local
-  n3@{ shape: cyl, label: "**bevy​_​ecs::entity​_​disabling::**<br/>**DefaultQueryFilters**<br/>来自crate:bevy​_​ecs ↗：保存默认禁用实<br/>体查询过滤规则。" }
+  n3@{ shape: cyl, label: "**DefaultQueryFilters**<br/>来自crate:bevy​_​ecs ↗：保存默认禁用实<br/>体查询过滤规则。" }
   class n3 node_resource
   class n3 external_node
-  n4@{ shape: rounded, label: "**view::window::screenshot::Screenshot**<br/>提交异步截图请求。" }
+  n4@{ shape: rounded, label: "**Screenshot**<br/>提交异步截图请求。" }
   class n4 node_component
-  n5@{ shape: rounded, label: "**window::PrimaryWindow**<br/>来自crate:bevy​_​window ↗：标识唯一的主<br/>窗口" }
+  n5@{ shape: rounded, label: "**PrimaryWindow**<br/>来自crate:bevy​_​window ↗：标识唯一的主<br/>窗口" }
   class n5 node_component
   class n5 external_node
-  n6@{ shape: cyl, label: "**view::window::screenshot::**<br/>**RenderScreenshotTargets**<br/>按截图请求实体保存本帧的规范化渲染目标。" }
+  n6@{ shape: cyl, label: "**RenderScreenshotTargets**<br/>按截图请求实体保存本帧的规范化渲染目标。" }
   class n6 node_resource
-  n7@{ shape: rounded, label: "**view::window::screenshot::Capturing**<br/>标记截图请求正在异步捕获。" }
+  n7@{ shape: rounded, label: "**Capturing**<br/>标记截图请求正在异步捕获。" }
   class n7 node_component
   n8@{ shape: notch-rect, label: "**Local · system​_​state**<br/>缓存主世界截图提取使用的系统参数状态。" }
   class n8 node_local
-  n9@{ shape: fr-rect, label: "**view::window::screenshot::**<br/>**ScreenshotPlugin**<br/>处理截图请求与图像回传。" }
+  n9@{ shape: fr-rect, label: "**ScreenshotPlugin**<br/>处理截图请求与图像回传。" }
   class n9 node_plugin
   n0 e0@-->|"可变访问"| n1
   class e0 edge_write

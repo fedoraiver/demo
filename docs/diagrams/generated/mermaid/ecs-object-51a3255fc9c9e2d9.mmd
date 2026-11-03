@@ -46,28 +46,28 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**demo::ui::pointer::clear​_​cancelled​_​**<br/>**primary​_​presses**<br/>Bevy 先从 HoverMap 排除取消的指针，随<br/>后可能无法为它发出 PointerCancel。" }
+  n0@{ shape: rounded, label: "**clear​_​cancelled​_​primary​_​presses**<br/>Bevy 先从 HoverMap 排除取消的指针，随<br/>后可能无法为它发出 PointerCancel。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**ui::pointer::PrimaryPress**<br/>原生 Button 对任意指针键维护 Pressed；<br/>菜单单独保留主键来源以筛选动作和样式。" }
+  n1@{ shape: rounded, label: "**PrimaryPress**<br/>原生 Button 对任意指针键维护 Pressed；<br/>菜单单独保留主键来源以筛选动作和样式。" }
   class n1 node_component
-  n2@{ shape: rounded, label: "**window::PrimaryWindow**<br/>来自crate:bevy​_​window ↗：标识唯一的主<br/>窗口" }
+  n2@{ shape: rounded, label: "**PrimaryWindow**<br/>来自crate:bevy​_​window ↗：标识唯一的主<br/>窗口" }
   class n2 node_component
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​ui::Pressed**<br/>来自crate:bevy​_​ui ↗：标记按钮或控件当<br/>前处于按住状态。" }
+  n3@{ shape: rounded, label: "**Pressed**<br/>来自crate:bevy​_​ui ↗：标记按钮或控件当<br/>前处于按住状态。" }
   class n3 node_component
   class n3 external_node
-  n4@{ shape: rounded, label: "**window::Window**<br/>来自crate:bevy​_​window ↗：保存窗口的呈<br/>现模式、位置、分辨率、标题、全屏及平台行<br/>为配置" }
+  n4@{ shape: rounded, label: "**Window**<br/>来自crate:bevy​_​window ↗：保存窗口的呈<br/>现模式、位置、分辨率、标题、全屏及平台行<br/>为配置" }
   class n4 node_component
   class n4 external_node
   n5@{ shape: lin-rect, label: "**Last**<br/>来自crate:bevy​_​picking ↗：组织指针拾<br/>取和悬停处理阶段。" }
   class n5 node_system_set
   class n5 external_node
-  n6@{ shape: fr-rect, label: "**ui::GameUiPlugin**<br/>组装菜单功能，不安装窗口或重复初始化会话<br/>日志。" }
+  n6@{ shape: fr-rect, label: "**GameUiPlugin**<br/>组装菜单功能，不安装窗口或重复初始化会话<br/>日志。" }
   class n6 node_plugin
-  n7@{ shape: lean-r, label: "**pointer::PointerInput**<br/>来自crate:bevy​_​picking ↗：传递拾取指<br/>针输入动作。" }
+  n7@{ shape: lean-r, label: "**PointerInput**<br/>来自crate:bevy​_​picking ↗：传递拾取指<br/>针输入动作。" }
   class n7 node_message
   class n7 external_node
-  n8@{ shape: cyl, label: "**bevy​_​ecs::message::**<br/>**Messages#lt;pointer::PointerInput#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n8@{ shape: cyl, label: "**Messages#lt;PointerInput#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n8 node_resource
   class n8 external_node
   n1 e0@--> n0

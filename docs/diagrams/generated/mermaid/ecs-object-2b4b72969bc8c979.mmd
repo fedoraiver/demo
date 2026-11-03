@@ -42,15 +42,15 @@ flowchart LR
   class n0 node_system_set
   n1@{ shape: lin-rect, label: "**Prepare**<br/>划分物理准备、模拟与回写边界。" }
   class n1 node_system_set
-  n2@{ shape: rounded, label: "**avian3d::schedule::run​_​physics​_​**<br/>**schedule**<br/>使用物理时钟推进 PhysicsSchedule 并恢<br/>复原时钟。" }
+  n2@{ shape: rounded, label: "**run​_​physics​_​schedule**<br/>使用物理时钟推进 PhysicsSchedule 并恢<br/>复原时钟。" }
   class n2 node_system
   n3@{ shape: lin-rect, label: "**Propagate**<br/>来自crate:bevy​_​transform ↗：组织实体<br/>层级变换传播。" }
   class n3 node_system_set
   class n3 external_node
-  n4@{ shape: rounded, label: "**demo::physics::collision::log​_​**<br/>**collisions**<br/>来自physics ↗：接触开始和结束属于离散<br/>变化，通过现有文件日志设施记录碰撞双方。" }
+  n4@{ shape: rounded, label: "**log​_​collisions**<br/>来自physics ↗：接触开始和结束属于离散<br/>变化，通过现有文件日志设施记录碰撞双方。" }
   class n4 node_system
   class n4 external_node
-  n5@{ shape: rounded, label: "**demo::item​_​interaction::audio​_​**<br/>**events::emit​_​parcel​_​land**<br/>来自item​_​interaction ↗：识别自由物品<br/>落地并发出声音请求。" }
+  n5@{ shape: rounded, label: "**emit​_​parcel​_​land**<br/>来自item​_​interaction ↗：识别自由物品<br/>落地并发出声音请求。" }
   class n5 node_system
   class n5 external_node
   n6@{ shape: lin-rect, label: "**Writeback**<br/>划分物理准备、模拟与回写边界。" }

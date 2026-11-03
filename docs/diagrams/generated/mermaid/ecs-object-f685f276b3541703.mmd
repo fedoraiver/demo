@@ -44,86 +44,44 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  subgraph layout_card_n0[" "]
-  n0@{ shape: rounded, label: "**bevy​_​transform::systems::propagate​_​**<br/>**transforms​_​for#lt;bevy​_​ecs::query::**<br/>**filter::Or#lt;(bevy​_​ecs::query::**<br/>**filter::With#lt;bevy​_​gizmos::transform​_​**<br/>**gizmo::TransformGizmoRoot#gt;, bevy​_​**<br/>**ecs::query::filter::With#lt;bevy​_​**<br/>**gizmos​_​render::transform​_​gizmo​_​**<br/>**render::GizmoOverlayCamera#gt;, bevy​_​**<br/>**ecs::query::filter::With#lt;bevy​_​**<br/>**gizmos::transform​_​gizmo::**<br/>**TransformGizmoMeshMarker#gt;)#gt;#gt;**<br/>按指定查询过滤器即时计算世界变换。" }
+  n0@{ shape: rounded, label: "**propagate​_​transforms​_​for**<br/>按指定查询过滤器即时计算世界变换。" }
   class n0 node_system
-  end
-  style layout_card_n0 fill:none,stroke:none
-  subgraph layout_card_n1[" "]
-  n1@{ shape: rounded, label: "**components::transform::Transform**<br/>保存实体相对父实体的平移、旋转和缩放" }
+  n1@{ shape: rounded, label: "**Transform**<br/>保存实体相对父实体的平移、旋转和缩放" }
   class n1 node_component
-  end
-  style layout_card_n1 fill:none,stroke:none
-  subgraph layout_card_n2[" "]
-  n2@{ shape: rounded, label: "**bevy​_​ecs::hierarchy::ChildOf**<br/>来自crate:bevy​_​ecs ↗：保存当前实体的<br/>父实体身份" }
+  n2@{ shape: rounded, label: "**ChildOf**<br/>来自crate:bevy​_​ecs ↗：保存当前实体的<br/>父实体身份" }
   class n2 node_component
   class n2 external_node
-  end
-  style layout_card_n2 fill:none,stroke:none
-  subgraph layout_card_n3[" "]
-  n3@{ shape: rounded, label: "**bevy​_​gizmos​_​render::transform​_​gizmo​_​**<br/>**render::update​_​gizmo​_​meshes**<br/>来自crate:bevy​_​gizmos​_​render ↗：将变<br/>换操作器对齐焦点并更新模式与高亮。" }
+  n3@{ shape: rounded, label: "**update​_​gizmo​_​meshes**<br/>来自crate:bevy​_​gizmos​_​render ↗：将变<br/>换操作器对齐焦点并更新模式与高亮。" }
   class n3 node_system
   class n3 external_node
-  end
-  style layout_card_n3 fill:none,stroke:none
-  subgraph layout_card_n4[" "]
   n4@{ shape: lin-rect, label: "**Propagate**<br/>组织实体层级变换传播。" }
   class n4 node_system_set
-  end
-  style layout_card_n4 fill:none,stroke:none
-  subgraph layout_card_n5[" "]
-  n5@{ shape: rounded, label: "**components::global​_​transform::**<br/>**GlobalTransform**<br/>保存实体合并祖先变换后的世界空间仿射变换" }
+  n5@{ shape: rounded, label: "**GlobalTransform**<br/>保存实体合并祖先变换后的世界空间仿射变换" }
   class n5 node_component
-  end
-  style layout_card_n5 fill:none,stroke:none
-  subgraph layout_card_n6[" "]
-  n6@{ shape: rounded, label: "**bevy​_​render::camera::camera​_​system**<br/>来自crate:bevy​_​render ↗：响应目标尺寸<br/>变化并更新相机投影。" }
+  n6@{ shape: rounded, label: "**camera​_​system**<br/>来自crate:bevy​_​render ↗：响应目标尺寸<br/>变化并更新相机投影。" }
   class n6 node_system
   class n6 external_node
-  end
-  style layout_card_n6 fill:none,stroke:none
-  subgraph layout_card_n7[" "]
-  n7@{ shape: rounded, label: "**transform​_​gizmo::TransformGizmoRoot**<br/>来自crate:bevy​_​gizmos ↗：标记变换操纵<br/>器网格层级的根实体。" }
+  n7@{ shape: rounded, label: "**TransformGizmoRoot**<br/>来自crate:bevy​_​gizmos ↗：标记变换操纵<br/>器网格层级的根实体。" }
   class n7 node_component
   class n7 external_node
-  end
-  style layout_card_n7 fill:none,stroke:none
-  subgraph layout_card_n8[" "]
-  n8@{ shape: rounded, label: "**transform​_​gizmo​_​render::**<br/>**GizmoOverlayCamera**<br/>来自crate:bevy​_​gizmos​_​render ↗：标记<br/>绘制变换操纵器的内部叠加相机。" }
+  n8@{ shape: rounded, label: "**GizmoOverlayCamera**<br/>来自crate:bevy​_​gizmos​_​render ↗：标记<br/>绘制变换操纵器的内部叠加相机。" }
   class n8 node_component
   class n8 external_node
-  end
-  style layout_card_n8 fill:none,stroke:none
-  subgraph layout_card_n9[" "]
-  n9@{ shape: fr-rect, label: "**transform​_​gizmo​_​render::**<br/>**TransformGizmoRenderPlugin**<br/>来自crate:bevy​_​gizmos​_​render ↗：绘制<br/>变换操纵器网格。" }
+  n9@{ shape: fr-rect, label: "**TransformGizmoRenderPlugin**<br/>来自crate:bevy​_​gizmos​_​render ↗：绘制<br/>变换操纵器网格。" }
   class n9 node_plugin
   class n9 external_node
-  end
-  style layout_card_n9 fill:none,stroke:none
-  subgraph layout_card_n10[" "]
-  n10@{ shape: rounded, label: "**bevy​_​camera::visibility::check​_​**<br/>**visibility​_​cpu​_​culling**<br/>来自crate:bevy​_​camera ↗：按层、距离和<br/>视锥收集各相机可见实体。" }
+  n10@{ shape: rounded, label: "**check​_​visibility​_​cpu​_​culling**<br/>来自crate:bevy​_​camera ↗：按层、距离和<br/>视锥收集各相机可见实体。" }
   class n10 node_system
   class n10 external_node
-  end
-  style layout_card_n10 fill:none,stroke:none
-  subgraph layout_card_n11[" "]
   n11@{ shape: lin-rect, label: "**VisibilityPropagate**<br/>来自crate:bevy​_​camera ↗：组织相机与实<br/>体可见性更新。" }
   class n11 node_system_set
   class n11 external_node
-  end
-  style layout_card_n11 fill:none,stroke:none
-  subgraph layout_card_n12[" "]
   n12@{ shape: lin-rect, label: "**TransformGizmoRenderStep**<br/>来自crate:bevy​_​app ↗：准备变换操纵器<br/>的网格和显示变换。" }
   class n12 node_system_set
   class n12 external_node
-  end
-  style layout_card_n12 fill:none,stroke:none
-  subgraph layout_card_n13[" "]
-  n13@{ shape: rounded, label: "**transform​_​gizmo::**<br/>**TransformGizmoMeshMarker**<br/>来自crate:bevy​_​gizmos ↗：记录操纵器网<br/>格部件的轴和操作模式。" }
+  n13@{ shape: rounded, label: "**TransformGizmoMeshMarker**<br/>来自crate:bevy​_​gizmos ↗：记录操纵器网<br/>格部件的轴和操作模式。" }
   class n13 node_component
   class n13 external_node
-  end
-  style layout_card_n13 fill:none,stroke:none
   n1 e0@--> n0
   class e0 edge_read
   n2 e1@--> n0

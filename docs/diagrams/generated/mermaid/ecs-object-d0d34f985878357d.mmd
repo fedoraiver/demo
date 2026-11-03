@@ -40,11 +40,11 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: lin-rect, label: "**UpdateComputedMassProperties**<br/>组织质量属性重算与写回。" }
   class n0 node_system_set
-  n1@{ shape: rounded, label: "**avian3d::dynamics::rigid​_​body::mass​_​**<br/>**properties::warn​_​invalid​_​mass**<br/>报告动态刚体无效的总质量或总惯量。" }
+  n1@{ shape: rounded, label: "**warn​_​invalid​_​mass**<br/>报告动态刚体无效的总质量或总惯量。" }
   class n1 node_system
   n2@{ shape: lin-rect, label: "**Prepare**<br/>划分物理准备、模拟与回写边界。" }
   class n2 node_system_set
-  n3@{ shape: rounded, label: "**avian3d::dynamics::rigid​_​body::mass​_​**<br/>**properties::update​_​mass​_​properties**<br/>重算已标记实体的质量属性并清除标记。" }
+  n3@{ shape: rounded, label: "**update​_​mass​_​properties**<br/>重算已标记实体的质量属性并清除标记。" }
   class n3 node_system
   n4@{ shape: lin-rect, label: "**QueueRecomputation**<br/>组织质量属性重算与写回。" }
   class n4 node_system_set

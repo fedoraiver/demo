@@ -43,26 +43,26 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: hex, label: "**avian3d::collision::collider::**<br/>**collider​_​hierarchy::plugin::on​_​**<br/>**collider​_​body​_​changed**<br/>随层级变化更新碰撞体刚体归属。" }
+  n0@{ shape: hex, label: "**on​_​collider​_​body​_​changed**<br/>随层级变化更新碰撞体刚体归属。" }
   class n0 node_observer
-  n1@{ shape: rounded, label: "**dynamics::rigid​_​body::RigidBody**<br/>选择动态、静态或运动学刚体行为。" }
+  n1@{ shape: rounded, label: "**RigidBody**<br/>选择动态、静态或运动学刚体行为。" }
   class n1 node_component
-  n2@{ shape: rounded, label: "**collision::collider::collider​_​**<br/>**hierarchy::ColliderOf**<br/>指定碰撞体附着的刚体。" }
+  n2@{ shape: rounded, label: "**ColliderOf**<br/>指定碰撞体附着的刚体。" }
   class n2 node_component
-  n3@{ shape: rounded, label: "**ancestor​_​marker::**<br/>**AncestorMarker#lt;collision::collider::**<br/>**backend::ColliderMarker#gt;**<br/>标记含指定组件的实体祖先。" }
+  n3@{ shape: rounded, label: "**AncestorMarker#lt;ColliderMarker#gt;**<br/>标记含指定组件的实体祖先。" }
   class n3 node_component
-  n4@{ shape: rounded, label: "**bevy​_​ecs::hierarchy::ChildOf**<br/>来自crate:bevy​_​ecs ↗：保存当前实体的<br/>父实体身份" }
+  n4@{ shape: rounded, label: "**ChildOf**<br/>来自crate:bevy​_​ecs ↗：保存当前实体的<br/>父实体身份" }
   class n4 node_component
   class n4 external_node
-  n5@{ shape: rounded, label: "**bevy​_​ecs::hierarchy::Children**<br/>来自crate:bevy​_​ecs ↗：保存以<br/>ChildOf 指向当前父实体的子实体集合" }
+  n5@{ shape: rounded, label: "**Children**<br/>来自crate:bevy​_​ecs ↗：保存以<br/>ChildOf 指向当前父实体的子实体集合" }
   class n5 node_component
   class n5 external_node
-  n6@{ shape: rounded, label: "**collision::collider::backend::**<br/>**ColliderMarker**<br/>标识各后端的碰撞体实体。" }
+  n6@{ shape: rounded, label: "**ColliderMarker**<br/>标识各后端的碰撞体实体。" }
   class n6 node_component
-  n7@{ shape: stadium, label: "**bevy​_​ecs::lifecycle::InsertEvent**<br/>来自crate:bevy​_​ecs ↗：通知组件值插入<br/>实体。" }
+  n7@{ shape: stadium, label: "**InsertEvent**<br/>来自crate:bevy​_​ecs ↗：通知组件值插入<br/>实体。" }
   class n7 node_event
   class n7 external_node
-  n8@{ shape: fr-rect, label: "**collision::collider::collider​_​**<br/>**hierarchy::plugin::**<br/>**ColliderHierarchyPlugin**<br/>维护碰撞体与祖先刚体的归属。" }
+  n8@{ shape: fr-rect, label: "**ColliderHierarchyPlugin**<br/>维护碰撞体与祖先刚体的归属。" }
   class n8 node_plugin
   n1 e0@-->|"存在性约束"| n0
   class e0 edge_reference

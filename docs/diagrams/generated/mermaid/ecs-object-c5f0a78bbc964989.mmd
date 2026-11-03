@@ -38,13 +38,13 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**ui​_​texture​_​slice​_​pipeline::**<br/>**ExtractedUiTextureSlices**<br/>按节点保存提取后的 UI 纹理切片。" }
+  n0@{ shape: cyl, label: "**ExtractedUiTextureSlices**<br/>按节点保存提取后的 UI 纹理切片。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​ui​_​render::ui​_​texture​_​slice​_​**<br/>**pipeline::queue​_​ui​_​slices**<br/>将 UI 图像切片排入对应相机透明阶段。" }
+  n1@{ shape: rounded, label: "**queue​_​ui​_​slices**<br/>将 UI 图像切片排入对应相机透明阶段。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​ui​_​render::ui​_​texture​_​slice​_​**<br/>**pipeline::extract​_​ui​_​texture​_​slices**<br/>增量提取九宫格或平铺 UI 图像切片。" }
+  n2@{ shape: rounded, label: "**extract​_​ui​_​texture​_​slices**<br/>增量提取九宫格或平铺 UI 图像切片。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​ui​_​render::ui​_​texture​_​slice​_​**<br/>**pipeline::prepare​_​ui​_​slices**<br/>为 UI 切片生成裁剪几何并合并图像批次。" }
+  n3@{ shape: rounded, label: "**prepare​_​ui​_​slices**<br/>为 UI 切片生成裁剪几何并合并图像批次。" }
   class n3 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

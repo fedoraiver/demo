@@ -36,18 +36,18 @@ flowchart LR
   classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**bevy​_​render::render​_​phase::**<br/>**DrawFunctions#lt;render​_​pass::**<br/>**TransparentUi#gt;**<br/>注册并查询指定绘制项的绘制函数。" }
+  n0@{ shape: cyl, label: "**DrawFunctions#lt;TransparentUi#gt;**<br/>注册并查询指定绘制项的绘制函数。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​ui​_​render::box​_​shadow::queue​_​**<br/>**shadows**<br/>来自crate:bevy​_​ui​_​render ↗：为提取<br/>的 UI 阴影选择匹配目标格式和阴影采样数<br/>的管线，按节点堆叠顺序及阴影层偏移加入透<br/>明 UI 绘制阶段。" }
+  n1@{ shape: rounded, label: "**queue​_​shadows**<br/>来自crate:bevy​_​ui​_​render ↗：为提取<br/>的 UI 阴影选择匹配目标格式和阴影采样数<br/>的管线，按节点堆叠顺序及阴影层偏移加入透<br/>明 UI 绘制阶段。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​ui​_​render::gradient::queue​_​**<br/>**gradient**<br/>来自crate:bevy​_​ui​_​render ↗：按目标视<br/>图与堆叠顺序排队 UI 渐变。" }
+  n2@{ shape: rounded, label: "**queue​_​gradient**<br/>来自crate:bevy​_​ui​_​render ↗：按目标视<br/>图与堆叠顺序排队 UI 渐变。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​ui​_​render::queue​_​uinodes**<br/>来自crate:bevy​_​ui​_​render ↗：按目标相<br/>机和堆叠顺序排队 UI 节点。" }
+  n3@{ shape: rounded, label: "**queue​_​uinodes**<br/>来自crate:bevy​_​ui​_​render ↗：按目标相<br/>机和堆叠顺序排队 UI 节点。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**bevy​_​ui​_​render::ui​_​texture​_​slice​_​**<br/>**pipeline::queue​_​ui​_​slices**<br/>来自crate:bevy​_​ui​_​render ↗：将 UI 图<br/>像切片排入对应相机透明阶段。" }
+  n4@{ shape: rounded, label: "**queue​_​ui​_​slices**<br/>来自crate:bevy​_​ui​_​render ↗：将 UI 图<br/>像切片排入对应相机透明阶段。" }
   class n4 node_system
   class n4 external_node
   n0 e0@--> n1

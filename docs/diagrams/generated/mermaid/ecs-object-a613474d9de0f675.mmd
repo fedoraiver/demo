@@ -42,39 +42,39 @@ flowchart LR
   class n0 node_system_set
   n1@{ shape: lin-rect, label: "**ExtractCommands**<br/>组织渲染数据准备与绘制排队。" }
   class n1 node_system_set
-  n2@{ shape: rounded, label: "**bevy​_​render::erased​_​render​_​asset::**<br/>**prepare​_​erased​_​assets#lt;bevy​_​sprite​_​**<br/>**render::mesh2d::material::**<br/>**MeshMaterial2d#lt;bevy​_​sprite​_​render::**<br/>**mesh2d::color​_​material::**<br/>**ColorMaterial#gt;#gt;**<br/>在上传预算内准备擦除资产并管理重试卸载。" }
+  n2@{ shape: rounded, label: "**prepare​_​erased​_​assets**<br/>在上传预算内准备擦除资产并管理重试卸载。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​render::erased​_​render​_​asset::**<br/>**prepare​_​erased​_​assets#lt;bevy​_​sprite​_​**<br/>**render::mesh2d::material::**<br/>**MeshMaterial2d#lt;bevy​_​sprite​_​render::**<br/>**sprite​_​mesh::sprite​_​mesh​_​material::**<br/>**SpriteMeshMaterial#gt;#gt;**<br/>在上传预算内准备擦除资产并管理重试卸载。" }
+  n3@{ shape: rounded, label: "**prepare​_​erased​_​assets**<br/>在上传预算内准备擦除资产并管理重试卸载。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**bevy​_​pbr::render::mesh::check​_​views​_​**<br/>**need​_​specialization**<br/>来自crate:bevy​_​pbr ↗：汇总视图渲染特<br/>性并检测管线配置变化。" }
+  n4@{ shape: rounded, label: "**check​_​views​_​need​_​specialization**<br/>来自crate:bevy​_​pbr ↗：汇总视图渲染特<br/>性并检测管线配置变化。" }
   class n4 node_system
   class n4 external_node
-  n5@{ shape: rounded, label: "**bevy​_​render::render​_​asset::prepare​_​**<br/>**assets#lt;bevy​_​pbr::medium::**<br/>**GpuScatteringMedium#gt;**<br/>在上传预算内准备资产并保留重试项。" }
+  n5@{ shape: rounded, label: "**prepare​_​assets**<br/>在上传预算内准备资产并保留重试项。" }
   class n5 node_system
-  n6@{ shape: rounded, label: "**bevy​_​render::render​_​asset::prepare​_​**<br/>**assets#lt;bevy​_​render::texture::gpu​_​**<br/>**image::GpuImage#gt;**<br/>在上传预算内准备资产并保留重试项。" }
+  n6@{ shape: rounded, label: "**prepare​_​assets**<br/>在上传预算内准备资产并保留重试项。" }
   class n6 node_system
   n7@{ shape: lin-rect, label: "**PrepareMeshes**<br/>组织渲染数据准备与绘制排队。" }
   class n7 node_system_set
-  n8@{ shape: rounded, label: "**bevy​_​render::render​_​asset::prepare​_​**<br/>**assets#lt;bevy​_​render::storage::**<br/>**GpuShaderBuffer#gt;**<br/>在上传预算内准备资产并保留重试项。" }
+  n8@{ shape: rounded, label: "**prepare​_​assets**<br/>在上传预算内准备资产并保留重试项。" }
   class n8 node_system
-  n9@{ shape: rounded, label: "**bevy​_​render::mesh::allocator::**<br/>**allocate​_​and​_​free​_​meshes**<br/>为新增变化网格分配 GPU 存储并释放旧分<br/>配。" }
+  n9@{ shape: rounded, label: "**allocate​_​and​_​free​_​meshes**<br/>为新增变化网格分配 GPU 存储并释放旧分<br/>配。" }
   class n9 node_system
-  n10@{ shape: rounded, label: "**bevy​_​render::erased​_​render​_​asset::**<br/>**prepare​_​erased​_​assets#lt;bevy​_​pbr::**<br/>**mesh​_​material::MeshMaterial3d#lt;bevy​_​**<br/>**pbr::extended​_​material::**<br/>**ExtendedMaterial#lt;bevy​_​pbr::pbr​_​**<br/>**material::StandardMaterial, bevy​_​**<br/>**pbr::decal::forward::**<br/>**ForwardDecalMaterialExt#gt;#gt;#gt;**<br/>在上传预算内准备擦除资产并管理重试卸载。" }
+  n10@{ shape: rounded, label: "**prepare​_​erased​_​assets**<br/>在上传预算内准备擦除资产并管理重试卸载。" }
   class n10 node_system
-  n11@{ shape: rounded, label: "**bevy​_​render::erased​_​render​_​asset::**<br/>**prepare​_​erased​_​assets#lt;bevy​_​pbr::**<br/>**mesh​_​material::MeshMaterial3d#lt;bevy​_​**<br/>**pbr::pbr​_​material::**<br/>**StandardMaterial#gt;#gt;**<br/>在上传预算内准备擦除资产并管理重试卸载。" }
+  n11@{ shape: rounded, label: "**prepare​_​erased​_​assets**<br/>在上传预算内准备擦除资产并管理重试卸载。" }
   class n11 node_system
-  n12@{ shape: rounded, label: "**bevy​_​pbr::prepass::check​_​prepass​_​**<br/>**views​_​need​_​specialization**<br/>来自crate:bevy​_​pbr ↗：检测采样和预通<br/>道配置变化并标记视图待刷新。" }
+  n12@{ shape: rounded, label: "**check​_​prepass​_​views​_​need​_​**<br/>**specialization**<br/>来自crate:bevy​_​pbr ↗：检测采样和预通<br/>道配置变化并标记视图待刷新。" }
   class n12 node_system
   class n12 external_node
-  n13@{ shape: rounded, label: "**bevy​_​render::view::visibility::**<br/>**collect​_​visible​_​cpu​_​culled​_​entities**<br/>汇总相机与阴影子视图的 CPU 剔除可见实<br/>体。" }
+  n13@{ shape: rounded, label: "**collect​_​visible​_​cpu​_​culled​_​entities**<br/>汇总相机与阴影子视图的 CPU 剔除可见实<br/>体。" }
   class n13 node_system
-  n14@{ shape: rounded, label: "**bevy​_​render::erased​_​render​_​asset::**<br/>**prepare​_​erased​_​assets#lt;bevy​_​sprite​_​**<br/>**render::mesh2d::material::**<br/>**MeshMaterial2d#lt;bevy​_​sprite​_​render::**<br/>**tilemap​_​chunk::tilemap​_​chunk​_​**<br/>**material::TilemapChunkMaterial#gt;#gt;**<br/>在上传预算内准备擦除资产并管理重试卸载。" }
+  n14@{ shape: rounded, label: "**prepare​_​erased​_​assets**<br/>在上传预算内准备擦除资产并管理重试卸载。" }
   class n14 node_system
-  n15@{ shape: rounded, label: "**bevy​_​render::render​_​asset::prepare​_​**<br/>**assets#lt;bevy​_​render::mesh::**<br/>**RenderMesh#gt;**<br/>在上传预算内准备资产并保留重试项。" }
+  n15@{ shape: rounded, label: "**prepare​_​assets**<br/>在上传预算内准备资产并保留重试项。" }
   class n15 node_system
-  n16@{ shape: rounded, label: "**bevy​_​render::render​_​asset::prepare​_​**<br/>**assets#lt;bevy​_​gizmos​_​render::**<br/>**GpuLineGizmo#gt;**<br/>在上传预算内准备资产并保留重试项。" }
+  n16@{ shape: rounded, label: "**prepare​_​assets**<br/>在上传预算内准备资产并保留重试项。" }
   class n16 node_system
-  n17@{ shape: rounded, label: "**bevy​_​render::mesh::prepare​_​mesh​_​**<br/>**metadata​_​fallback​_​buffer**<br/>取得回退网格所在的元数据 GPU 缓冲。" }
+  n17@{ shape: rounded, label: "**prepare​_​mesh​_​metadata​_​fallback​_​**<br/>**buffer**<br/>取得回退网格所在的元数据 GPU 缓冲。" }
   class n17 node_system
   n1 e0@-->|"先于"| n0
   class e0 edge_order

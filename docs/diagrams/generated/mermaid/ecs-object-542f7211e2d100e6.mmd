@@ -44,51 +44,51 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​sprite​_​render::render::queue​_​**<br/>**sprites**<br/>按视图可见性将精灵加入透明二维阶段。" }
+  n0@{ shape: rounded, label: "**queue​_​sprites**<br/>按视图可见性将精灵加入透明二维阶段。" }
   class n0 node_system
   n1@{ shape: lin-rect, label: "**Queue**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
   class n1 node_system_set
   class n1 external_node
-  n2@{ shape: rounded, label: "**view::visibility::**<br/>**RenderVisibleEntities**<br/>来自crate:bevy​_​render ↗：按类别保存视<br/>图的可见实体及变化列表。" }
+  n2@{ shape: rounded, label: "**RenderVisibleEntities**<br/>来自crate:bevy​_​render ↗：按类别保存视<br/>图的可见实体及变化列表。" }
   class n2 node_component
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​render::view::Tonemapping**<br/>来自crate:bevy​_​render ↗：选择 HDR 颜<br/>色到显示颜色的映射方式。" }
+  n3@{ shape: rounded, label: "**Tonemapping**<br/>来自crate:bevy​_​render ↗：选择 HDR 颜<br/>色到显示颜色的映射方式。" }
   class n3 node_component
   class n3 external_node
   n4@{ shape: notch-rect, label: "**Local · view​_​entities**<br/>用位集快速检查当前相机可见的精灵实体。" }
   class n4 node_local
-  n5@{ shape: cyl, label: "**bevy​_​render::render​_​resource::**<br/>**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
+  n5@{ shape: cyl, label: "**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
   class n5 node_resource
   class n5 external_node
-  n6@{ shape: rounded, label: "**bevy​_​render::view::ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
+  n6@{ shape: rounded, label: "**ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
   class n6 node_component
   class n6 external_node
-  n7@{ shape: cyl, label: "**bevy​_​render::render​_​phase::**<br/>**ViewSortedRenderPhases#lt;bevy​_​core​_​**<br/>**pipeline::core​_​2d::Transparent2d#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图需<br/>要排序的绘制指令。" }
+  n7@{ shape: cyl, label: "**ViewSortedRenderPhases#lt;Transparent2d**<br/>**#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图需<br/>要排序的绘制指令。" }
   class n7 node_resource
   class n7 external_node
-  n8@{ shape: cyl, label: "**bevy​_​render::render​_​phase::**<br/>**DrawFunctions#lt;bevy​_​core​_​pipeline::**<br/>**core​_​2d::Transparent2d#gt;**<br/>来自crate:bevy​_​render ↗：注册并查询指<br/>定绘制项的绘制函数。" }
+  n8@{ shape: cyl, label: "**DrawFunctions#lt;Transparent2d#gt;**<br/>来自crate:bevy​_​render ↗：注册并查询指<br/>定绘制项的绘制函数。" }
   class n8 node_resource
   class n8 external_node
-  n9@{ shape: cyl, label: "**render::SpritePipeline**<br/>提供精灵视图、材质布局及着色器。" }
+  n9@{ shape: cyl, label: "**SpritePipeline**<br/>提供精灵视图、材质布局及着色器。" }
   class n9 node_resource
-  n10@{ shape: rounded, label: "**bevy​_​render::view::Msaa**<br/>来自crate:bevy​_​render ↗：选择视图的多<br/>重采样抗锯齿样本数。" }
+  n10@{ shape: rounded, label: "**Msaa**<br/>来自crate:bevy​_​render ↗：选择视图的多<br/>重采样抗锯齿样本数。" }
   class n10 node_component
   class n10 external_node
-  n11@{ shape: rounded, label: "**bevy​_​render::view::**<br/>**ResolvedCompositingSpace**<br/>来自crate:bevy​_​render ↗：记录本帧相机<br/>堆栈实际采用的合成空间。" }
+  n11@{ shape: rounded, label: "**ResolvedCompositingSpace**<br/>来自crate:bevy​_​render ↗：记录本帧相机<br/>堆栈实际采用的合成空间。" }
   class n11 node_component
   class n11 external_node
-  n12@{ shape: cyl, label: "**bevy​_​render::render​_​resource::**<br/>**SpecializedRenderPipelines#lt;render::**<br/>**SpritePipeline#gt;**<br/>来自crate:bevy​_​render ↗：按配置键缓存<br/>渲染管线变体。" }
+  n12@{ shape: cyl, label: "**SpecializedRenderPipelines#lt;SpritePip**<br/>**eline#gt;**<br/>来自crate:bevy​_​render ↗：按配置键缓存<br/>渲染管线变体。" }
   class n12 node_resource
   class n12 external_node
-  n13@{ shape: rounded, label: "**bevy​_​render::view::DebandDither**<br/>来自crate:bevy​_​render ↗：控制颜色输出<br/>的去色带抖动。" }
+  n13@{ shape: rounded, label: "**DebandDither**<br/>来自crate:bevy​_​render ↗：控制颜色输出<br/>的去色带抖动。" }
   class n13 node_component
   class n13 external_node
-  n14@{ shape: rounded, label: "**bevy​_​render::camera::ExtractedCamera**<br/>来自crate:bevy​_​render ↗：保存渲染世界<br/>相机的目标和绘制配置。" }
+  n14@{ shape: rounded, label: "**ExtractedCamera**<br/>来自crate:bevy​_​render ↗：保存渲染世界<br/>相机的目标和绘制配置。" }
   class n14 node_component
   class n14 external_node
-  n15@{ shape: cyl, label: "**render::ExtractedSprites**<br/>保存本帧提取的精灵绘制实例。" }
+  n15@{ shape: cyl, label: "**ExtractedSprites**<br/>保存本帧提取的精灵绘制实例。" }
   class n15 node_resource
-  n16@{ shape: fr-rect, label: "**bevy​_​sprite​_​render::**<br/>**SpriteRenderPlugin**<br/>准备并渲染二维精灵。" }
+  n16@{ shape: fr-rect, label: "**SpriteRenderPlugin**<br/>准备并渲染二维精灵。" }
   class n16 node_plugin
   n1 e0@-->|"集合成员"| n0
   class e0 edge_set_membership

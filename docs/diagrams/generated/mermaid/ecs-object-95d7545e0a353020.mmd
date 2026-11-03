@@ -43,19 +43,19 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**avian3d::dynamics::rigid​_​body::**<br/>**forces::plugin::apply​_​constant​_​**<br/>**linear​_​acceleration**<br/>把恒定世界线加速度加入待积分增量。" }
+  n0@{ shape: rounded, label: "**apply​_​constant​_​linear​_​acceleration**<br/>把恒定世界线加速度加入待积分增量。" }
   class n0 node_system
   n1@{ shape: lin-rect, label: "**ApplyConstantForces**<br/>组织外力应用与累积量清理。" }
   class n1 node_system_set
-  n2@{ shape: rounded, label: "**avian3d::dynamics::rigid​_​body::**<br/>**forces::plugin::apply​_​constant​_​**<br/>**torques**<br/>按求解器有效惯量换算世界恒定扭矩。" }
+  n2@{ shape: rounded, label: "**apply​_​constant​_​torques**<br/>按求解器有效惯量换算世界恒定扭矩。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**dynamics::integrator::**<br/>**VelocityIntegrationData**<br/>缓存子步速度增量和阻尼系数。" }
+  n3@{ shape: rounded, label: "**VelocityIntegrationData**<br/>缓存子步速度增量和阻尼系数。" }
   class n3 node_component
-  n4@{ shape: rounded, label: "**avian3d::dynamics::rigid​_​body::**<br/>**forces::plugin::apply​_​constant​_​**<br/>**angular​_​acceleration**<br/>把恒定世界角加速度加入待积分增量。" }
+  n4@{ shape: rounded, label: "**apply​_​constant​_​angular​_​acceleration**<br/>把恒定世界角加速度加入待积分增量。" }
   class n4 node_system
-  n5@{ shape: rounded, label: "**dynamics::rigid​_​body::forces::**<br/>**ConstantLinearAcceleration**<br/>持续施加世界空间线性加速度。" }
+  n5@{ shape: rounded, label: "**ConstantLinearAcceleration**<br/>持续施加世界空间线性加速度。" }
   class n5 node_component
-  n6@{ shape: fr-rect, label: "**dynamics::rigid​_​body::forces::**<br/>**plugin::ForcePlugin**<br/>管理并施加刚体外力和力矩。" }
+  n6@{ shape: fr-rect, label: "**ForcePlugin**<br/>管理并施加刚体外力和力矩。" }
   class n6 node_plugin
   n1 e0@-->|"集合成员"| n0
   class e0 edge_set_membership

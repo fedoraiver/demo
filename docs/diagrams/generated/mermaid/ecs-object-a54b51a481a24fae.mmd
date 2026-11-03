@@ -38,29 +38,29 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**frame​_​count::FrameCount**<br/>记录应用启动以来的帧计数" }
+  n0@{ shape: cyl, label: "**FrameCount**<br/>记录应用启动以来的帧计数" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​diagnostic::frame​_​count::**<br/>**update​_​frame​_​count**<br/>递增应用帧计数。" }
+  n1@{ shape: rounded, label: "**update​_​frame​_​count**<br/>递增应用帧计数。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​anti​_​alias::taa::prepare​_​taa​_​**<br/>**history​_​textures**<br/>来自crate:bevy​_​anti​_​alias ↗：按帧奇<br/>偶为 TAA 轮换读写历史纹理。" }
+  n2@{ shape: rounded, label: "**prepare​_​taa​_​history​_​textures**<br/>来自crate:bevy​_​anti​_​alias ↗：按帧奇<br/>偶为 TAA 轮换读写历史纹理。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​render::globals::prepare​_​**<br/>**globals​_​buffer**<br/>来自crate:bevy​_​render ↗：更新并上传着<br/>色器全局时间与帧号。" }
+  n3@{ shape: rounded, label: "**prepare​_​globals​_​buffer**<br/>来自crate:bevy​_​render ↗：更新并上传着<br/>色器全局时间与帧号。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**bevy​_​core​_​pipeline::core​_​3d::**<br/>**prepare​_​prepass​_​textures**<br/>来自crate:bevy​_​core​_​pipeline ↗：按三<br/>维预通道配置分配各类输出纹理。" }
+  n4@{ shape: rounded, label: "**prepare​_​prepass​_​textures**<br/>来自crate:bevy​_​core​_​pipeline ↗：按三<br/>维预通道配置分配各类输出纹理。" }
   class n4 node_system
   class n4 external_node
-  n5@{ shape: rounded, label: "**bevy​_​pbr::render::mesh::collect​_​**<br/>**meshes​_​for​_​gpu​_​building**<br/>来自crate:bevy​_​pbr ↗：把线程提取队列<br/>整理为 GPU 网格实例和输入缓冲。" }
+  n5@{ shape: rounded, label: "**collect​_​meshes​_​for​_​gpu​_​building**<br/>来自crate:bevy​_​pbr ↗：把线程提取队列<br/>整理为 GPU 网格实例和输入缓冲。" }
   class n5 node_system
   class n5 external_node
-  n6@{ shape: rounded, label: "**bevy​_​render::globals::extract​_​frame​_​**<br/>**count**<br/>来自crate:bevy​_​render ↗：将主世界帧计<br/>数同步到渲染世界。" }
+  n6@{ shape: rounded, label: "**extract​_​frame​_​count**<br/>来自crate:bevy​_​render ↗：将主世界帧计<br/>数同步到渲染世界。" }
   class n6 node_system
   class n6 external_node
-  n7@{ shape: rounded, label: "**bevy​_​render::view::prepare​_​view​_​**<br/>**uniforms**<br/>来自crate:bevy​_​render ↗：生成视图投<br/>影、抖动、裁剪及 LOD 的 GPU 参数。" }
+  n7@{ shape: rounded, label: "**prepare​_​view​_​uniforms**<br/>来自crate:bevy​_​render ↗：生成视图投<br/>影、抖动、裁剪及 LOD 的 GPU 参数。" }
   class n7 node_system
   class n7 external_node
-  n8@{ shape: rounded, label: "**bevy​_​anti​_​alias::taa::prepare​_​taa​_​**<br/>**jitter**<br/>来自crate:bevy​_​anti​_​alias ↗：为 TAA<br/>相机逐帧设置 Halton 投影抖动。" }
+  n8@{ shape: rounded, label: "**prepare​_​taa​_​jitter**<br/>来自crate:bevy​_​anti​_​alias ↗：为 TAA<br/>相机逐帧设置 Halton 投影抖动。" }
   class n8 node_system
   class n8 external_node
   n1 e0@-->|"赋值"| n0

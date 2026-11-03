@@ -44,17 +44,17 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​input::mouse::accumulate​_​mouse​_​**<br/>**motion​_​system**<br/>累计本帧鼠标位移。" }
+  n0@{ shape: rounded, label: "**accumulate​_​mouse​_​motion​_​system**<br/>累计本帧鼠标位移。" }
   class n0 node_system
   n1@{ shape: lin-rect, label: "**InputSystems**<br/>把原始设备消息汇总为本帧输入状态。" }
   class n1 node_system_set
   n2@{ shape: fr-rect, label: "**InputPlugin**<br/>汇集设备输入并维护输入状态。" }
   class n2 node_plugin
-  n3@{ shape: cyl, label: "**mouse::AccumulatedMouseMotion**<br/>累计当前帧鼠标移动位移。" }
+  n3@{ shape: cyl, label: "**AccumulatedMouseMotion**<br/>累计当前帧鼠标移动位移。" }
   class n3 node_resource
-  n4@{ shape: lean-r, label: "**mouse::MouseMotion**<br/>传递鼠标原始移动增量。" }
+  n4@{ shape: lean-r, label: "**MouseMotion**<br/>传递鼠标原始移动增量。" }
   class n4 node_message
-  n5@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;mouse::**<br/>**MouseMotion#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n5@{ shape: cyl, label: "**Messages#lt;MouseMotion#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n5 node_resource
   class n5 external_node
   n1 e0@-->|"集合成员"| n0

@@ -36,15 +36,15 @@ flowchart LR
   classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**physics​_​transform::**<br/>**PhysicsTransformConfig**<br/>配置物理位姿与显示变换的同步。" }
+  n0@{ shape: cyl, label: "**PhysicsTransformConfig**<br/>配置物理位姿与显示变换的同步。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**#lt;avian3d::physics​_​transform::**<br/>**PhysicsTransformPlugin as bevy​_​app::**<br/>**plugin::Plugin#gt;::build::{{closure}}**<br/>判断是否从实体变换更新物理姿态。" }
+  n1@{ shape: rounded, label: "**build::{{closure}}**<br/>判断是否从实体变换更新物理姿态。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**#lt;avian3d::physics​_​transform::**<br/>**PhysicsTransformPlugin as bevy​_​app::**<br/>**plugin::Plugin#gt;::build::{{closure}}**<br/>判断是否执行物理前变换传播。" }
+  n2@{ shape: rounded, label: "**build::{{closure}}**<br/>判断是否执行物理前变换传播。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**avian3d::collision::collider::**<br/>**backend::update​_​collider​_​**<br/>**scale#lt;avian3d::collision::collider::**<br/>**parry::Collider#gt;**<br/>把根节点和附属碰撞体的缩放传给形状。" }
+  n3@{ shape: rounded, label: "**update​_​collider​_​scale**<br/>把根节点和附属碰撞体的缩放传给形状。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**#lt;avian3d::physics​_​transform::**<br/>**PhysicsTransformPlugin as bevy​_​app::**<br/>**plugin::Plugin#gt;::build::{{closure}}**<br/>判断是否把物理姿态写回实体变换。" }
+  n4@{ shape: rounded, label: "**build::{{closure}}**<br/>判断是否把物理姿态写回实体变换。" }
   class n4 node_system
   n0 e0@--> n1
   class e0 edge_read

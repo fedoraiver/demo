@@ -41,22 +41,22 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​gizmos​_​render::transform​_​gizmo​_​**<br/>**render::spawn​_​gizmo​_​meshes**<br/>创建变换操作器各轴网格、材质和覆盖相机。" }
+  n0@{ shape: rounded, label: "**spawn​_​gizmo​_​meshes**<br/>创建变换操作器各轴网格、材质和覆盖相机。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**transform​_​gizmo​_​render::**<br/>**TransformGizmoMaterials**<br/>保存操纵器各轴的普通、高亮和停用颜色。" }
+  n1@{ shape: cyl, label: "**TransformGizmoMaterials**<br/>保存操纵器各轴的普通、高亮和停用颜色。" }
   class n1 node_resource
-  n2@{ shape: cyl, label: "**bevy​_​asset::Assets#lt;bevy​_​mesh::Mesh#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
+  n2@{ shape: cyl, label: "**Assets#lt;Mesh#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
   class n2 node_resource
   class n2 external_node
-  n3@{ shape: fr-rect, label: "**transform​_​gizmo​_​render::**<br/>**TransformGizmoRenderPlugin**<br/>绘制变换操纵器网格。" }
+  n3@{ shape: fr-rect, label: "**TransformGizmoRenderPlugin**<br/>绘制变换操纵器网格。" }
   class n3 node_plugin
-  n4@{ shape: cyl, label: "**bevy​_​asset::Assets#lt;bevy​_​pbr::**<br/>**StandardMaterial#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
+  n4@{ shape: cyl, label: "**Assets#lt;StandardMaterial#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
   class n4 node_resource
   class n4 external_node
-  n5@{ shape: rounded, label: "**bevy​_​ecs::schedule::condition::**<br/>**common​_​conditions::resource​_​**<br/>**exists#lt;bevy​_​gizmos::transform​_​**<br/>**gizmo::TransformGizmoSettings#gt;**<br/>来自crate:bevy​_​ecs ↗：判断指定资源是<br/>否存在。" }
+  n5@{ shape: rounded, label: "**resource​_​exists**<br/>来自crate:bevy​_​ecs ↗：判断指定资源是<br/>否存在。" }
   class n5 node_system
   class n5 external_node
-  n6@{ shape: rounded, label: "**bevy​_​ecs::hierarchy::ChildOf**<br/>来自crate:bevy​_​ecs ↗：保存当前实体的<br/>父实体身份" }
+  n6@{ shape: rounded, label: "**ChildOf**<br/>来自crate:bevy​_​ecs ↗：保存当前实体的<br/>父实体身份" }
   class n6 node_component
   class n6 external_node
   n0 e0@-->|"插入"| n1

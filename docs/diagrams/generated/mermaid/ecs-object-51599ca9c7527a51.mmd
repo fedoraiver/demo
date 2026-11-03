@@ -41,7 +41,7 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​pbr::material::early​_​sweep​_​**<br/>**material​_​instances#lt;bevy​_​pbr::pbr​_​**<br/>**material::StandardMaterial#gt;**<br/>按材质移除消息清扫未被本帧替换的实例。" }
+  n0@{ shape: rounded, label: "**early​_​sweep​_​material​_​instances**<br/>按材质移除消息清扫未被本帧替换的实例。" }
   class n0 node_system
   n1@{ shape: notch-rect, label: "**Local · removed​_​materials​_​**<br/>**query.0.0.0.0.0**<br/>保存 MeshMaterial3d#lt;M#gt; 移除参数的组<br/>件 ID。" }
   class n1 node_local
@@ -49,12 +49,12 @@ flowchart LR
   class n2 node_system_set
   n3@{ shape: notch-rect, label: "**Local · removed​_​materials​_​**<br/>**query.0.0.1**<br/>跟踪 MeshMaterial3d#lt;M#gt; 移除记录的读取<br/>进度。" }
   class n3 node_local
-  n4@{ shape: cyl, label: "**extract​_​plugin::MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
+  n4@{ shape: cyl, label: "**MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
   class n4 node_resource
   class n4 external_node
-  n5@{ shape: rounded, label: "**bevy​_​pbr::material::late​_​sweep​_​**<br/>**material​_​instances**<br/>清扫失效网格材质实例并推进本帧刻度。" }
+  n5@{ shape: rounded, label: "**late​_​sweep​_​material​_​instances**<br/>清扫失效网格材质实例并推进本帧刻度。" }
   class n5 node_system
-  n6@{ shape: cyl, label: "**material::RenderMaterialInstances**<br/>保存提取后的实体材质实例。" }
+  n6@{ shape: cyl, label: "**RenderMaterialInstances**<br/>保存提取后的实体材质实例。" }
   class n6 node_resource
   n0 e0@-->|"可变访问"| n1
   class e0 edge_write

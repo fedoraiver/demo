@@ -39,42 +39,42 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: cyl, label: "**InputFocusVisible**<br/>控制界面输入焦点提示是否可见。" }
   class n0 node_resource
-  n1@{ shape: hex, label: "**bevy​_​ui​_​widgets::checkbox::checkbox​_​**<br/>**on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：处理复<br/>选框按压、焦点与即时勾选请求。" }
+  n1@{ shape: hex, label: "**checkbox​_​on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：处理复<br/>选框按压、焦点与即时勾选请求。" }
   class n1 node_observer
   class n1 external_node
-  n2@{ shape: hex, label: "**bevy​_​ui​_​widgets::tabs::tab​_​on​_​key​_​**<br/>**input**<br/>来自crate:bevy​_​ui​_​widgets ↗：用键盘<br/>导航并激活标签页。" }
+  n2@{ shape: hex, label: "**tab​_​on​_​key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：用键盘<br/>导航并激活标签页。" }
   class n2 node_observer
   class n2 external_node
-  n3@{ shape: hex, label: "**bevy​_​input​_​focus::pointer​_​focus::**<br/>**click​_​to​_​focus**<br/>根据指针按下请求获取输入焦点。" }
+  n3@{ shape: hex, label: "**click​_​to​_​focus**<br/>根据指针按下请求获取输入焦点。" }
   class n3 node_observer
-  n4@{ shape: hex, label: "**bevy​_​ui​_​widgets::checkbox::checkbox​_​**<br/>**on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：处理复<br/>选框按压、焦点与即时勾选请求。" }
+  n4@{ shape: hex, label: "**checkbox​_​on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：处理复<br/>选框按压、焦点与即时勾选请求。" }
   class n4 node_observer
   class n4 external_node
-  n5@{ shape: hex, label: "**bevy​_​ui​_​widgets::list::listbox​_​on​_​**<br/>**key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：处理列<br/>表键盘导航与行确认。" }
+  n5@{ shape: hex, label: "**listbox​_​on​_​key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：处理列<br/>表键盘导航与行确认。" }
   class n5 node_observer
   class n5 external_node
-  n6@{ shape: hex, label: "**bevy​_​input​_​focus::pointer​_​focus::**<br/>**click​_​to​_​focus**<br/>根据指针按下请求获取输入焦点。" }
+  n6@{ shape: hex, label: "**click​_​to​_​focus**<br/>根据指针按下请求获取输入焦点。" }
   class n6 node_observer
-  n7@{ shape: hex, label: "**bevy​_​ui​_​widgets::tabs::tab​_​on​_​key​_​**<br/>**input**<br/>来自crate:bevy​_​ui​_​widgets ↗：用键盘<br/>导航并激活标签页。" }
+  n7@{ shape: hex, label: "**tab​_​on​_​key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：用键盘<br/>导航并激活标签页。" }
   class n7 node_observer
   class n7 external_node
-  n8@{ shape: hex, label: "**bevy​_​ui​_​widgets::list::listbox​_​on​_​**<br/>**key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：处理列<br/>表键盘导航与行确认。" }
+  n8@{ shape: hex, label: "**listbox​_​on​_​key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：处理列<br/>表键盘导航与行确认。" }
   class n8 node_observer
   class n8 external_node
-  n9@{ shape: hex, label: "**bevy​_​ui​_​widgets::list::listbox​_​on​_​**<br/>**key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：处理列<br/>表键盘导航与行确认。" }
+  n9@{ shape: hex, label: "**listbox​_​on​_​key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：处理列<br/>表键盘导航与行确认。" }
   class n9 node_observer
   class n9 external_node
-  n10@{ shape: hex, label: "**bevy​_​ui​_​widgets::tabs::tab​_​on​_​key​_​**<br/>**input**<br/>来自crate:bevy​_​ui​_​widgets ↗：用键盘<br/>导航并激活标签页。" }
+  n10@{ shape: hex, label: "**tab​_​on​_​key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：用键盘<br/>导航并激活标签页。" }
   class n10 node_observer
   class n10 external_node
-  n11@{ shape: hex, label: "**bevy​_​input​_​focus::tab​_​navigation::**<br/>**handle​_​tab​_​navigation**<br/>处理正向和反向键盘焦点遍历。" }
+  n11@{ shape: hex, label: "**handle​_​tab​_​navigation**<br/>处理正向和反向键盘焦点遍历。" }
   class n11 node_observer
-  n12@{ shape: hex, label: "**bevy​_​input​_​focus::pointer​_​focus::**<br/>**click​_​to​_​focus**<br/>根据指针按下请求获取输入焦点。" }
+  n12@{ shape: hex, label: "**click​_​to​_​focus**<br/>根据指针按下请求获取输入焦点。" }
   class n12 node_observer
-  n13@{ shape: hex, label: "**bevy​_​ui​_​widgets::checkbox::checkbox​_​**<br/>**on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：处理复<br/>选框按压、焦点与即时勾选请求。" }
+  n13@{ shape: hex, label: "**checkbox​_​on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：处理复<br/>选框按压、焦点与即时勾选请求。" }
   class n13 node_observer
   class n13 external_node
-  n14@{ shape: hex, label: "**bevy​_​input​_​focus::tab​_​navigation::**<br/>**handle​_​tab​_​navigation**<br/>处理正向和反向键盘焦点遍历。" }
+  n14@{ shape: hex, label: "**handle​_​tab​_​navigation**<br/>处理正向和反向键盘焦点遍历。" }
   class n14 node_observer
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

@@ -46,25 +46,25 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**demo::scene​_​assembly::loading::**<br/>**begin​_​island**<br/>请求创建已加载海岛的运行实例。" }
+  n0@{ shape: rounded, label: "**begin​_​island**<br/>请求创建已加载海岛的运行实例。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**demo::scene​_​assembly::loading::**<br/>**prepare​_​island**<br/>在资源 CPU 几何可用时构建碰撞；全部成功<br/>后才提交，失败时不创建动态玩家。" }
+  n1@{ shape: rounded, label: "**prepare​_​island**<br/>在资源 CPU 几何可用时构建碰撞；全部成功<br/>后才提交，失败时不创建动态玩家。" }
   class n1 node_system
-  n2@{ shape: cyl, label: "**scene​_​assembly::assets::ArtLoadState**<br/>资源就绪与地图碰撞就绪是两个门槛，不能仅<br/>凭模板已生成就推进物理。" }
+  n2@{ shape: cyl, label: "**ArtLoadState**<br/>资源就绪与地图碰撞就绪是两个门槛，不能仅<br/>凭模板已生成就推进物理。" }
   class n2 node_resource
-  n3@{ shape: rounded, label: "**scene​_​assembly::IslandMap**<br/>标识岛屿地图场景。" }
+  n3@{ shape: rounded, label: "**IslandMap**<br/>标识岛屿地图场景。" }
   class n3 node_component
   n4@{ shape: rounded, label: "**begin​_​island · 创建模板**<br/>请求当前会话的海岛世界资产实例。" }
   class n4 node_entity
   n5@{ shape: lin-rect, label: "**AnonymousSet(1)**<br/>来自crate:bevy​_​ecs ↗：保存一组系统的<br/>共同配置。" }
   class n5 node_system_set
   class n5 external_node
-  n6@{ shape: cyl, label: "**bevy​_​asset::Assets#lt;assets::Gltf#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
+  n6@{ shape: cyl, label: "**Assets#lt;Gltf#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
   class n6 node_resource
   class n6 external_node
-  n7@{ shape: cyl, label: "**scene​_​assembly::assets::ArtAssets**<br/>强句柄覆盖海岛、主角和动态道具的生命周<br/>期，NPC 与环境由组合地图提供。" }
+  n7@{ shape: cyl, label: "**ArtAssets**<br/>强句柄覆盖海岛、主角和动态道具的生命周<br/>期，NPC 与环境由组合地图提供。" }
   class n7 node_resource
-  n8@{ shape: fr-rect, label: "**scene​_​assembly::SceneAssemblyPlugin**<br/>加载当前场景资源并装配地图、碰撞与业务实<br/>体。" }
+  n8@{ shape: fr-rect, label: "**SceneAssemblyPlugin**<br/>加载当前场景资源并装配地图、碰撞与业务实<br/>体。" }
   class n8 node_plugin
   n0 e0@-->|"先于"| n1
   class e0 edge_order

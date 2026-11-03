@@ -38,13 +38,13 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**contrast​_​adaptive​_​sharpening::**<br/>**ViewCasPipeline**<br/>保存当前视图的锐化管线标识。" }
+  n0@{ shape: rounded, label: "**ViewCasPipeline**<br/>保存当前视图的锐化管线标识。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​anti​_​alias::contrast​_​adaptive​_​**<br/>**sharpening::prepare​_​cas​_​pipelines**<br/>按去噪与目标格式准备视图锐化管线。" }
+  n1@{ shape: rounded, label: "**prepare​_​cas​_​pipelines**<br/>按去噪与目标格式准备视图锐化管线。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​anti​_​alias::contrast​_​adaptive​_​**<br/>**sharpening::node::cas**<br/>对视图颜色执行 CAS 锐化后处理。" }
+  n2@{ shape: rounded, label: "**cas**<br/>对视图颜色执行 CAS 锐化后处理。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​anti​_​alias::contrast​_​adaptive​_​**<br/>**sharpening::node::cas**<br/>对视图颜色执行 CAS 锐化后处理。" }
+  n3@{ shape: rounded, label: "**cas**<br/>对视图颜色执行 CAS 锐化后处理。" }
   class n3 node_system
   n1 e0@-->|"插入"| n0
   class e0 edge_write

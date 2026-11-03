@@ -45,21 +45,21 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​transform::systems::sync​_​**<br/>**simple​_​transforms**<br/>同步没有父子层级的独立实体世界变换。" }
+  n0@{ shape: rounded, label: "**sync​_​simple​_​transforms**<br/>同步没有父子层级的独立实体世界变换。" }
   class n0 node_system
-  n1@{ shape: fr-rect, label: "**physics​_​transform::**<br/>**PhysicsTransformPlugin**<br/>来自crate:avian3d ↗：同步物理姿态与实<br/>体变换。" }
+  n1@{ shape: fr-rect, label: "**PhysicsTransformPlugin**<br/>来自crate:avian3d ↗：同步物理姿态与实<br/>体变换。" }
   class n1 node_plugin
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​ecs::hierarchy::ChildOf**<br/>来自crate:bevy​_​ecs ↗：保存当前实体的<br/>父实体身份" }
+  n2@{ shape: rounded, label: "**ChildOf**<br/>来自crate:bevy​_​ecs ↗：保存当前实体的<br/>父实体身份" }
   class n2 node_component
   class n2 external_node
-  n3@{ shape: rounded, label: "**components::global​_​transform::**<br/>**GlobalTransform**<br/>保存实体合并祖先变换后的世界空间仿射变换" }
+  n3@{ shape: rounded, label: "**GlobalTransform**<br/>保存实体合并祖先变换后的世界空间仿射变换" }
   class n3 node_component
-  n4@{ shape: rounded, label: "**components::transform::Transform**<br/>保存实体相对父实体的平移、旋转和缩放" }
+  n4@{ shape: rounded, label: "**Transform**<br/>保存实体相对父实体的平移、旋转和缩放" }
   class n4 node_component
-  n5@{ shape: rounded, label: "**bevy​_​transform::systems::parallel::**<br/>**propagate​_​parent​_​transforms**<br/>沿父子层级并行合成世界变换。" }
+  n5@{ shape: rounded, label: "**propagate​_​parent​_​transforms**<br/>沿父子层级并行合成世界变换。" }
   class n5 node_system
-  n6@{ shape: fr-rect, label: "**plugins::TransformPlugin**<br/>更新并传播实体变换。" }
+  n6@{ shape: fr-rect, label: "**TransformPlugin**<br/>更新并传播实体变换。" }
   class n6 node_plugin
   n7@{ shape: notch-rect, label: "**Local · arg1.0.1**<br/>跟踪 ChildOf 移除记录的读取进度。" }
   class n7 node_local
@@ -75,7 +75,7 @@ flowchart LR
   class n11 node_local
   n12@{ shape: notch-rect, label: "**Local · arg1.0.0.0.0**<br/>保存 ChildOf 移除参数的组件 ID。" }
   class n12 node_local
-  n13@{ shape: rounded, label: "**bevy​_​ecs::hierarchy::Children**<br/>来自crate:bevy​_​ecs ↗：保存以<br/>ChildOf 指向当前父实体的子实体集合" }
+  n13@{ shape: rounded, label: "**Children**<br/>来自crate:bevy​_​ecs ↗：保存以<br/>ChildOf 指向当前父实体的子实体集合" }
   class n13 node_component
   class n13 external_node
   n1 e0@-->|"调用"| n0

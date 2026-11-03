@@ -36,11 +36,11 @@ flowchart LR
   classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**pointer::PointerMap**<br/>索引稳定指针编号对应的指针实体。" }
+  n0@{ shape: cyl, label: "**PointerMap**<br/>索引稳定指针编号对应的指针实体。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​picking::events::pointer​_​events**<br/>根据悬停与按钮状态派发指针交互事件。" }
+  n1@{ shape: rounded, label: "**pointer​_​events**<br/>根据悬停与按钮状态派发指针交互事件。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​picking::window::update​_​window​_​**<br/>**hits**<br/>把所在窗口作为拾取的最底层命中。" }
+  n2@{ shape: rounded, label: "**update​_​window​_​hits**<br/>把所在窗口作为拾取的最底层命中。" }
   class n2 node_system
   n0 e0@--> n1
   class e0 edge_read

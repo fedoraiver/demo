@@ -40,51 +40,51 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​ui::Selected**<br/>记录控件的 ARIA 选中状态。" }
+  n0@{ shape: rounded, label: "**Selected**<br/>记录控件的 ARIA 选中状态。" }
   class n0 node_component
-  n1@{ shape: hex, label: "**bevy​_​ui​_​widgets::list::listbox​_​on​_​**<br/>**row​_​click**<br/>来自crate:bevy​_​ui​_​widgets ↗：将列表<br/>行点击转为选择或重选请求。" }
+  n1@{ shape: hex, label: "**listbox​_​on​_​row​_​click**<br/>来自crate:bevy​_​ui​_​widgets ↗：将列表<br/>行点击转为选择或重选请求。" }
   class n1 node_observer
   class n1 external_node
-  n2@{ shape: hex, label: "**bevy​_​ui::interaction​_​states::on​_​add​_​**<br/>**selectable**<br/>初始化可选择控件的无障碍状态。" }
+  n2@{ shape: hex, label: "**on​_​add​_​selectable**<br/>初始化可选择控件的无障碍状态。" }
   class n2 node_observer
-  n3@{ shape: rounded, label: "**bevy​_​ui​_​widgets::tabs::update​_​**<br/>**tablist​_​derived​_​state**<br/>来自crate:bevy​_​ui​_​widgets ↗：从标签<br/>选择和焦点派生每个标签的状态。" }
+  n3@{ shape: rounded, label: "**update​_​tablist​_​derived​_​state**<br/>来自crate:bevy​_​ui​_​widgets ↗：从标签<br/>选择和焦点派生每个标签的状态。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: hex, label: "**bevy​_​ui::interaction​_​states::on​_​add​_​**<br/>**selectable**<br/>初始化可选择控件的无障碍状态。" }
+  n4@{ shape: hex, label: "**on​_​add​_​selectable**<br/>初始化可选择控件的无障碍状态。" }
   class n4 node_observer
-  n5@{ shape: hex, label: "**bevy​_​ui​_​widgets::list::listbox​_​**<br/>**focus​_​gained**<br/>来自crate:bevy​_​ui​_​widgets ↗：在列表<br/>获焦时初始化活动行。" }
+  n5@{ shape: hex, label: "**listbox​_​focus​_​gained**<br/>来自crate:bevy​_​ui​_​widgets ↗：在列表<br/>获焦时初始化活动行。" }
   class n5 node_observer
   class n5 external_node
-  n6@{ shape: hex, label: "**bevy​_​ui::interaction​_​states::on​_​add​_​**<br/>**selectable**<br/>初始化可选择控件的无障碍状态。" }
+  n6@{ shape: hex, label: "**on​_​add​_​selectable**<br/>初始化可选择控件的无障碍状态。" }
   class n6 node_observer
-  n7@{ shape: hex, label: "**bevy​_​ui​_​widgets::list::listbox​_​**<br/>**focus​_​gained**<br/>来自crate:bevy​_​ui​_​widgets ↗：在列表<br/>获焦时初始化活动行。" }
+  n7@{ shape: hex, label: "**listbox​_​focus​_​gained**<br/>来自crate:bevy​_​ui​_​widgets ↗：在列表<br/>获焦时初始化活动行。" }
   class n7 node_observer
   class n7 external_node
-  n8@{ shape: hex, label: "**bevy​_​ui​_​widgets::list::listbox​_​on​_​**<br/>**row​_​click**<br/>来自crate:bevy​_​ui​_​widgets ↗：将列表<br/>行点击转为选择或重选请求。" }
+  n8@{ shape: hex, label: "**listbox​_​on​_​row​_​click**<br/>来自crate:bevy​_​ui​_​widgets ↗：将列表<br/>行点击转为选择或重选请求。" }
   class n8 node_observer
   class n8 external_node
-  n9@{ shape: hex, label: "**bevy​_​ui​_​widgets::list::listbox​_​on​_​**<br/>**key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：处理列<br/>表键盘导航与行确认。" }
+  n9@{ shape: hex, label: "**listbox​_​on​_​key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：处理列<br/>表键盘导航与行确认。" }
   class n9 node_observer
   class n9 external_node
-  n10@{ shape: hex, label: "**bevy​_​ui​_​widgets::list::listbox​_​on​_​**<br/>**key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：处理列<br/>表键盘导航与行确认。" }
+  n10@{ shape: hex, label: "**listbox​_​on​_​key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：处理列<br/>表键盘导航与行确认。" }
   class n10 node_observer
   class n10 external_node
-  n11@{ shape: hex, label: "**bevy​_​ui​_​widgets::list::listbox​_​**<br/>**focus​_​gained**<br/>来自crate:bevy​_​ui​_​widgets ↗：在列表<br/>获焦时初始化活动行。" }
+  n11@{ shape: hex, label: "**listbox​_​focus​_​gained**<br/>来自crate:bevy​_​ui​_​widgets ↗：在列表<br/>获焦时初始化活动行。" }
   class n11 node_observer
   class n11 external_node
-  n12@{ shape: hex, label: "**bevy​_​ui​_​widgets::list::listbox​_​on​_​**<br/>**set​_​selected**<br/>来自crate:bevy​_​ui​_​widgets ↗：处理列<br/>表程序化选行与重选。" }
+  n12@{ shape: hex, label: "**listbox​_​on​_​set​_​selected**<br/>来自crate:bevy​_​ui​_​widgets ↗：处理列<br/>表程序化选行与重选。" }
   class n12 node_observer
   class n12 external_node
-  n13@{ shape: hex, label: "**bevy​_​ui​_​widgets::list::listbox​_​on​_​**<br/>**set​_​selected**<br/>来自crate:bevy​_​ui​_​widgets ↗：处理列<br/>表程序化选行与重选。" }
+  n13@{ shape: hex, label: "**listbox​_​on​_​set​_​selected**<br/>来自crate:bevy​_​ui​_​widgets ↗：处理列<br/>表程序化选行与重选。" }
   class n13 node_observer
   class n13 external_node
-  n14@{ shape: hex, label: "**bevy​_​ui​_​widgets::list::listbox​_​on​_​**<br/>**row​_​click**<br/>来自crate:bevy​_​ui​_​widgets ↗：将列表<br/>行点击转为选择或重选请求。" }
+  n14@{ shape: hex, label: "**listbox​_​on​_​row​_​click**<br/>来自crate:bevy​_​ui​_​widgets ↗：将列表<br/>行点击转为选择或重选请求。" }
   class n14 node_observer
   class n14 external_node
-  n15@{ shape: hex, label: "**bevy​_​ui​_​widgets::list::listbox​_​on​_​**<br/>**key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：处理列<br/>表键盘导航与行确认。" }
+  n15@{ shape: hex, label: "**listbox​_​on​_​key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：处理列<br/>表键盘导航与行确认。" }
   class n15 node_observer
   class n15 external_node
-  n16@{ shape: hex, label: "**bevy​_​ui​_​widgets::list::listbox​_​on​_​**<br/>**set​_​selected**<br/>来自crate:bevy​_​ui​_​widgets ↗：处理列<br/>表程序化选行与重选。" }
+  n16@{ shape: hex, label: "**listbox​_​on​_​set​_​selected**<br/>来自crate:bevy​_​ui​_​widgets ↗：处理列<br/>表程序化选行与重选。" }
   class n16 node_observer
   class n16 external_node
   n0 e0@-->|"存在性约束"| n1

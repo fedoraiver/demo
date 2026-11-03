@@ -39,7 +39,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: notch-rect, label: "**Local · previous​_​len**<br/>根据上次天空盒提取数量预留输出容量。" }
   class n0 node_local
-  n1@{ shape: rounded, label: "**bevy​_​core​_​pipeline::skybox::extract​_​**<br/>**skybox**<br/>提取天空盒并计算曝光及旋转参数。" }
+  n1@{ shape: rounded, label: "**extract​_​skybox**<br/>提取天空盒并计算曝光及旋转参数。" }
   class n1 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

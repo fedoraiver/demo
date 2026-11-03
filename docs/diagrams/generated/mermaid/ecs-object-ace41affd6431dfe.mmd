@@ -44,26 +44,26 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​pbr::light​_​probe::upload​_​light​_​**<br/>**probes**<br/>上传各视图的环境图、反射与辐照探针参数。" }
+  n0@{ shape: rounded, label: "**upload​_​light​_​probes**<br/>上传各视图的环境图、反射与辐照探针参数。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**bevy​_​render::renderer::RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
+  n1@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
   class n1 node_resource
   class n1 external_node
-  n2@{ shape: rounded, label: "**light​_​probe::**<br/>**ViewLightProbesUniformOffset**<br/>定位相机在光照探针缓冲中的参数。" }
+  n2@{ shape: rounded, label: "**ViewLightProbesUniformOffset**<br/>定位相机在光照探针缓冲中的参数。" }
   class n2 node_component
-  n3@{ shape: rounded, label: "**bevy​_​render::view::ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
+  n3@{ shape: rounded, label: "**ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
   class n3 node_component
   class n3 external_node
-  n4@{ shape: rounded, label: "**light​_​probe::**<br/>**RenderViewLightProbes#lt;bevy​_​light::**<br/>**EnvironmentMapLight#gt;**<br/>维护视图光照探针及纹理绑定索引。" }
+  n4@{ shape: rounded, label: "**RenderViewLightProbes#lt;EnvironmentMap**<br/>**Light#gt;**<br/>维护视图光照探针及纹理绑定索引。" }
   class n4 node_component
-  n5@{ shape: fr-rect, label: "**light​_​probe::LightProbePlugin**<br/>提供光照探针与环境贴图光照。" }
+  n5@{ shape: fr-rect, label: "**LightProbePlugin**<br/>提供光照探针与环境贴图光照。" }
   class n5 node_plugin
-  n6@{ shape: cyl, label: "**bevy​_​render::renderer::RenderQueue**<br/>来自crate:bevy​_​render ↗：将资源写入和<br/>命令异步提交给 GPU。" }
+  n6@{ shape: cyl, label: "**RenderQueue**<br/>来自crate:bevy​_​render ↗：将资源写入和<br/>命令异步提交给 GPU。" }
   class n6 node_resource
   class n6 external_node
-  n7@{ shape: rounded, label: "**light​_​probe::**<br/>**RenderViewLightProbes#lt;bevy​_​light::**<br/>**IrradianceVolume#gt;**<br/>维护视图光照探针及纹理绑定索引。" }
+  n7@{ shape: rounded, label: "**RenderViewLightProbes#lt;IrradianceVolu**<br/>**me#gt;**<br/>维护视图光照探针及纹理绑定索引。" }
   class n7 node_component
-  n8@{ shape: cyl, label: "**light​_​probe::LightProbesBuffer**<br/>向 GPU 提供场景光照探针数据。" }
+  n8@{ shape: cyl, label: "**LightProbesBuffer**<br/>向 GPU 提供场景光照探针数据。" }
   class n8 node_resource
   n9@{ shape: lin-rect, label: "**PrepareResources**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
   class n9 node_system_set

@@ -42,17 +42,17 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​render::batching::gpu​_​**<br/>**preprocessing::write​_​indirect​_​**<br/>**parameters​_​buffers**<br/>并行准备间接绘制参数和上传批集合元数据。" }
+  n0@{ shape: rounded, label: "**write​_​indirect​_​parameters​_​buffers**<br/>并行准备间接绘制参数和上传批集合元数据。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**bevy​_​render::renderer::RenderDevice**<br/>创建渲染和计算所需的 GPU 资源。" }
+  n1@{ shape: cyl, label: "**RenderDevice**<br/>创建渲染和计算所需的 GPU 资源。" }
   class n1 node_resource
-  n2@{ shape: cyl, label: "**bevy​_​render::renderer::RenderQueue**<br/>将资源写入和命令异步提交给 GPU。" }
+  n2@{ shape: cyl, label: "**RenderQueue**<br/>将资源写入和命令异步提交给 GPU。" }
   class n2 node_resource
   n3@{ shape: lin-rect, label: "**PrepareResourcesFlush**<br/>组织渲染数据准备与绘制排队。" }
   class n3 node_system_set
-  n4@{ shape: cyl, label: "**batching::gpu​_​preprocessing::**<br/>**IndirectParametersBuffers**<br/>保存间接绘制命令与裁剪计数缓冲。" }
+  n4@{ shape: cyl, label: "**IndirectParametersBuffers**<br/>保存间接绘制命令与裁剪计数缓冲。" }
   class n4 node_resource
-  n5@{ shape: fr-rect, label: "**batching::gpu​_​preprocessing::**<br/>**BatchingPlugin**<br/>维护间接绘制参数和构建任务。" }
+  n5@{ shape: fr-rect, label: "**BatchingPlugin**<br/>维护间接绘制参数和构建任务。" }
   class n5 node_plugin
   n1 e0@--> n0
   class e0 edge_read

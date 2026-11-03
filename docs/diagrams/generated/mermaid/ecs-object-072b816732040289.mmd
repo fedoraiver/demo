@@ -44,15 +44,15 @@ flowchart LR
   class n1 node_system_set
   n2@{ shape: lin-rect, label: "**PrepareSolverBodies**<br/>组织约束求解的准备、子步与回写。" }
   class n2 node_system_set
-  n3@{ shape: rounded, label: "**avian3d::dynamics::joints::**<br/>**prismatic::update​_​local​_​frames**<br/>将滑动关节参考框架换算到局部空间。" }
+  n3@{ shape: rounded, label: "**update​_​local​_​frames**<br/>将滑动关节参考框架换算到局部空间。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**avian3d::dynamics::joints::**<br/>**spherical::update​_​local​_​frames**<br/>将球铰参考框架换算到局部空间。" }
+  n4@{ shape: rounded, label: "**update​_​local​_​frames**<br/>将球铰参考框架换算到局部空间。" }
   class n4 node_system
-  n5@{ shape: rounded, label: "**avian3d::dynamics::joints::**<br/>**distance::update​_​local​_​anchors**<br/>将距离关节的锚点换算到刚体局部空间。" }
+  n5@{ shape: rounded, label: "**update​_​local​_​anchors**<br/>将距离关节的锚点换算到刚体局部空间。" }
   class n5 node_system
-  n6@{ shape: rounded, label: "**avian3d::dynamics::joints::fixed::**<br/>**update​_​local​_​frames**<br/>将固定关节参考框架换算到两端局部空间。" }
+  n6@{ shape: rounded, label: "**update​_​local​_​frames**<br/>将固定关节参考框架换算到两端局部空间。" }
   class n6 node_system
-  n7@{ shape: rounded, label: "**avian3d::dynamics::joints::**<br/>**revolute::update​_​local​_​frames**<br/>将旋转关节参考框架换算到局部空间。" }
+  n7@{ shape: rounded, label: "**update​_​local​_​frames**<br/>将旋转关节参考框架换算到局部空间。" }
   class n7 node_system
   n0 e0@-->|"先于"| n1
   class e0 edge_order

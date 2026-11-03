@@ -44,47 +44,47 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​gizmos​_​render::pipeline​_​3d::**<br/>**queue​_​line​_​joint​_​gizmos​_​3d**<br/>将三维 Gizmo 折线接头加入透明阶段。" }
+  n0@{ shape: rounded, label: "**queue​_​line​_​joint​_​gizmos​_​3d**<br/>将三维 Gizmo 折线接头加入透明阶段。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**bevy​_​pbr::ViewKeyCache**<br/>来自crate:bevy​_​pbr ↗：缓存各视图预启<br/>用特性的网格管线键。" }
+  n1@{ shape: cyl, label: "**ViewKeyCache**<br/>来自crate:bevy​_​pbr ↗：缓存各视图预启<br/>用特性的网格管线键。" }
   class n1 node_resource
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​camera::visibility::**<br/>**RenderLayers**<br/>来自crate:bevy​_​camera ↗：限定相机与实<br/>体可相交的渲染层。" }
+  n2@{ shape: rounded, label: "**RenderLayers**<br/>来自crate:bevy​_​camera ↗：限定相机与实<br/>体可相交的渲染层。" }
   class n2 node_component
   class n2 external_node
-  n3@{ shape: cyl, label: "**pipeline​_​3d::LineJointGizmoPipeline**<br/>提供三维调试线接头的渲染管线资源。" }
+  n3@{ shape: cyl, label: "**LineJointGizmoPipeline**<br/>提供三维调试线接头的渲染管线资源。" }
   class n3 node_resource
-  n4@{ shape: cyl, label: "**bevy​_​render::render​_​resource::**<br/>**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
+  n4@{ shape: cyl, label: "**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
   class n4 node_resource
   class n4 external_node
-  n5@{ shape: fr-rect, label: "**pipeline​_​3d::LineGizmo3dPlugin**<br/>准备三维调试线条和接头绘制。" }
+  n5@{ shape: fr-rect, label: "**LineGizmo3dPlugin**<br/>准备三维调试线条和接头绘制。" }
   class n5 node_plugin
-  n6@{ shape: cyl, label: "**bevy​_​render::render​_​phase::**<br/>**DrawFunctions#lt;bevy​_​core​_​pipeline::**<br/>**core​_​3d::Transparent3d#gt;**<br/>来自crate:bevy​_​render ↗：注册并查询指<br/>定绘制项的绘制函数。" }
+  n6@{ shape: cyl, label: "**DrawFunctions#lt;Transparent3d#gt;**<br/>来自crate:bevy​_​render ↗：注册并查询指<br/>定绘制项的绘制函数。" }
   class n6 node_resource
   class n6 external_node
-  n7@{ shape: cyl, label: "**bevy​_​render::render​_​phase::**<br/>**ViewSortedRenderPhases#lt;bevy​_​core​_​**<br/>**pipeline::core​_​3d::Transparent3d#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图需<br/>要排序的绘制指令。" }
+  n7@{ shape: cyl, label: "**ViewSortedRenderPhases#lt;Transparent3d**<br/>**#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图需<br/>要排序的绘制指令。" }
   class n7 node_resource
   class n7 external_node
-  n8@{ shape: rounded, label: "**bevy​_​render::render​_​asset::prepare​_​**<br/>**assets#lt;bevy​_​gizmos​_​render::**<br/>**GpuLineGizmo#gt;**<br/>来自crate:bevy​_​render ↗：在上传预算内<br/>准备资产并保留重试项。" }
+  n8@{ shape: rounded, label: "**prepare​_​assets**<br/>来自crate:bevy​_​render ↗：在上传预算内<br/>准备资产并保留重试项。" }
   class n8 node_system
   class n8 external_node
-  n9@{ shape: cyl, label: "**bevy​_​render::render​_​asset::**<br/>**RenderAssets#lt;GpuLineGizmo#gt;**<br/>来自crate:bevy​_​render ↗：按源资产身份<br/>保存 GPU 渲染表示。" }
+  n9@{ shape: cyl, label: "**RenderAssets#lt;GpuLineGizmo#gt;**<br/>来自crate:bevy​_​render ↗：按源资产身份<br/>保存 GPU 渲染表示。" }
   class n9 node_resource
   class n9 external_node
   n10@{ shape: cyl, label: "**LineGizmoEntities**<br/>为即时调试线的渲染项提供主世界实体身份。" }
   class n10 node_resource
-  n11@{ shape: rounded, label: "**sync​_​world::MainEntity**<br/>来自crate:bevy​_​extract ↗：在子世界中<br/>关联原始主世界实体。" }
+  n11@{ shape: rounded, label: "**MainEntity**<br/>来自crate:bevy​_​extract ↗：在子世界中<br/>关联原始主世界实体。" }
   class n11 node_component
   class n11 external_node
-  n12@{ shape: cyl, label: "**bevy​_​render::render​_​resource::**<br/>**SpecializedRenderPipelines#lt;pipeline​_​**<br/>**3d::LineJointGizmoPipeline#gt;**<br/>来自crate:bevy​_​render ↗：按配置键缓存<br/>渲染管线变体。" }
+  n12@{ shape: cyl, label: "**SpecializedRenderPipelines#lt;LineJoint**<br/>**GizmoPipeline#gt;**<br/>来自crate:bevy​_​render ↗：按配置键缓存<br/>渲染管线变体。" }
   class n12 node_resource
   class n12 external_node
   n13@{ shape: lin-rect, label: "**QueueLineGizmos3d**<br/>组织二维和三维调试线条排队。" }
   class n13 node_system_set
-  n14@{ shape: rounded, label: "**bevy​_​render::view::ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
+  n14@{ shape: rounded, label: "**ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
   class n14 node_component
   class n14 external_node
-  n15@{ shape: rounded, label: "**config::GizmoMeshConfig**<br/>来自crate:bevy​_​gizmos ↗：配置调试线条<br/>的样式、接头和渲染层。" }
+  n15@{ shape: rounded, label: "**GizmoMeshConfig**<br/>来自crate:bevy​_​gizmos ↗：配置调试线条<br/>的样式、接头和渲染层。" }
   class n15 node_component
   class n15 external_node
   n1 e0@--> n0

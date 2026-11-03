@@ -39,51 +39,51 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**dynamics::rigid​_​body::sleeping::**<br/>**Sleeping**<br/>标记暂不参与模拟的休眠刚体。" }
+  n0@{ shape: rounded, label: "**Sleeping**<br/>标记暂不参与模拟的休眠刚体。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**avian3d::dynamics::solver::plugin::**<br/>**prepare​_​contact​_​constraints**<br/>从有效接触流形生成本轮求解约束。" }
+  n1@{ shape: rounded, label: "**prepare​_​contact​_​constraints**<br/>从有效接触流形生成本轮求解约束。" }
   class n1 node_system
-  n2@{ shape: hex, label: "**avian3d::dynamics::solver::islands::**<br/>**sleeping::wake​_​on​_​enable​_​rigid​_​body**<br/>重置启用刚体的休眠状态并请求唤醒。" }
+  n2@{ shape: hex, label: "**wake​_​on​_​enable​_​rigid​_​body**<br/>重置启用刚体的休眠状态并请求唤醒。" }
   class n2 node_observer
-  n3@{ shape: rounded, label: "**demo::physics::wake​_​changed​_​bodies**<br/>来自physics ↗：Avian 的自动唤醒在求解<br/>之后；外部冲量和施力应在本步准备求解器之<br/>前生效。" }
+  n3@{ shape: rounded, label: "**wake​_​changed​_​bodies**<br/>来自physics ↗：Avian 的自动唤醒在求解<br/>之后；外部冲量和施力应在本步准备求解器之<br/>前生效。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: hex, label: "**avian3d::dynamics::solver::solver​_​**<br/>**body::plugin::{impl#35;0}::build::**<br/>**{closure#35;0}**<br/>为重新启用刚体补建求解器体。" }
+  n4@{ shape: hex, label: "**build::{closure#35;0}**<br/>为重新启用刚体补建求解器体。" }
   class n4 node_observer
-  n5@{ shape: hex, label: "**avian3d::dynamics::solver::islands::**<br/>**sleeping::wake​_​on​_​enable​_​rigid​_​body**<br/>重置启用刚体的休眠状态并请求唤醒。" }
+  n5@{ shape: hex, label: "**wake​_​on​_​enable​_​rigid​_​body**<br/>重置启用刚体的休眠状态并请求唤醒。" }
   class n5 node_observer
-  n6@{ shape: hex, label: "**avian3d::dynamics::solver::islands::**<br/>**sleeping::wake​_​on​_​enable​_​rigid​_​body**<br/>重置启用刚体的休眠状态并请求唤醒。" }
+  n6@{ shape: hex, label: "**wake​_​on​_​enable​_​rigid​_​body**<br/>重置启用刚体的休眠状态并请求唤醒。" }
   class n6 node_observer
-  n7@{ shape: hex, label: "**avian3d::dynamics::solver::solver​_​**<br/>**body::plugin::on​_​insert​_​rigid​_​body**<br/>按刚体类型更新求解器体缓存。" }
+  n7@{ shape: hex, label: "**on​_​insert​_​rigid​_​body**<br/>按刚体类型更新求解器体缓存。" }
   class n7 node_observer
-  n8@{ shape: hex, label: "**avian3d::dynamics::solver::solver​_​**<br/>**body::plugin::on​_​insert​_​rigid​_​body**<br/>按刚体类型更新求解器体缓存。" }
+  n8@{ shape: hex, label: "**on​_​insert​_​rigid​_​body**<br/>按刚体类型更新求解器体缓存。" }
   class n8 node_observer
-  n9@{ shape: rounded, label: "**avian3d::dynamics::solver::islands::**<br/>**sleeping::wake​_​on​_​changed**<br/>因外部位姿、速度或受力变化标记物理岛唤<br/>醒。" }
+  n9@{ shape: rounded, label: "**wake​_​on​_​changed**<br/>因外部位姿、速度或受力变化标记物理岛唤<br/>醒。" }
   class n9 node_system
-  n10@{ shape: rounded, label: "**demo::character::motion::jump​_​**<br/>**characters**<br/>来自character ↗：跳跃只消费一次，通过<br/>冲量改变速度；重力和位置积分全部交给<br/>Avian。" }
+  n10@{ shape: rounded, label: "**jump​_​characters**<br/>来自character ↗：跳跃只消费一次，通过<br/>冲量改变速度；重力和位置积分全部交给<br/>Avian。" }
   class n10 node_system
   class n10 external_node
-  n11@{ shape: hex, label: "**avian3d::dynamics::solver::solver​_​**<br/>**body::plugin::{impl#35;0}::build::**<br/>**{closure#35;0}**<br/>为重新启用刚体补建求解器体。" }
+  n11@{ shape: hex, label: "**build::{closure#35;0}**<br/>为重新启用刚体补建求解器体。" }
   class n11 node_observer
-  n12@{ shape: rounded, label: "**demo::character::motion::move​_​**<br/>**characters**<br/>来自character ↗：用有上限的加速度趋近<br/>目标水平速度，保留碰撞和外部冲量造成的实<br/>际运动。" }
+  n12@{ shape: rounded, label: "**move​_​characters**<br/>来自character ↗：用有上限的加速度趋近<br/>目标水平速度，保留碰撞和外部冲量造成的实<br/>际运动。" }
   class n12 node_system
   class n12 external_node
-  n13@{ shape: rounded, label: "**avian3d::dynamics::solver::islands::**<br/>**sleeping::update​_​sleeping​_​states**<br/>按刚体静止时间判断物理岛的休眠资格。" }
+  n13@{ shape: rounded, label: "**update​_​sleeping​_​states**<br/>按刚体静止时间判断物理岛的休眠资格。" }
   class n13 node_system
-  n14@{ shape: hex, label: "**avian3d::dynamics::solver::solver​_​**<br/>**body::plugin::{impl#35;0}::build::**<br/>**{closure#35;1}**<br/>在实体启用时恢复刚体求解缓存。" }
+  n14@{ shape: hex, label: "**build::{closure#35;1}**<br/>在实体启用时恢复刚体求解缓存。" }
   class n14 node_observer
-  n15@{ shape: hex, label: "**avian3d::dynamics::solver::solver​_​**<br/>**body::plugin::on​_​insert​_​rigid​_​body**<br/>按刚体类型更新求解器体缓存。" }
+  n15@{ shape: hex, label: "**on​_​insert​_​rigid​_​body**<br/>按刚体类型更新求解器体缓存。" }
   class n15 node_observer
-  n16@{ shape: hex, label: "**avian3d::dynamics::solver::solver​_​**<br/>**body::plugin::{impl#35;0}::build::**<br/>**{closure#35;1}**<br/>在实体启用时恢复刚体求解缓存。" }
+  n16@{ shape: hex, label: "**build::{closure#35;1}**<br/>在实体启用时恢复刚体求解缓存。" }
   class n16 node_observer
-  n17@{ shape: hex, label: "**avian3d::dynamics::solver::solver​_​**<br/>**body::plugin::{impl#35;0}::build::**<br/>**{closure#35;0}**<br/>为重新启用刚体补建求解器体。" }
+  n17@{ shape: hex, label: "**build::{closure#35;0}**<br/>为重新启用刚体补建求解器体。" }
   class n17 node_observer
-  n18@{ shape: rounded, label: "**avian3d::dynamics::integrator::**<br/>**integrate​_​velocities**<br/>为活跃动态刚体积分速度与阻尼。" }
+  n18@{ shape: rounded, label: "**integrate​_​velocities**<br/>为活跃动态刚体积分速度与阻尼。" }
   class n18 node_system
-  n19@{ shape: rounded, label: "**demo::bounds​_​recovery::recovery::**<br/>**recover​_​from​_​water**<br/>来自bounds​_​recovery ↗：恢复实体自身的<br/>出生姿态；角色落水只释放手中物品，物品落<br/>水时再独立恢复。" }
+  n19@{ shape: rounded, label: "**recover​_​from​_​water**<br/>来自bounds​_​recovery ↗：恢复实体自身的<br/>出生姿态；角色落水只释放手中物品，物品落<br/>水时再独立恢复。" }
   class n19 node_system
   class n19 external_node
-  n20@{ shape: hex, label: "**avian3d::dynamics::solver::solver​_​**<br/>**body::plugin::{impl#35;0}::build::**<br/>**{closure#35;1}**<br/>在实体启用时恢复刚体求解缓存。" }
+  n20@{ shape: hex, label: "**build::{closure#35;1}**<br/>在实体启用时恢复刚体求解缓存。" }
   class n20 node_observer
   n0 e0@-->|"存在性约束"| n1
   class e0 edge_reference
@@ -146,7 +146,7 @@ flowchart LR
   e12@{ curve: basis }
   e13@{ curve: basis }
   e14@{ curve: basis }
-  e15@{ curve: basis }
+  e15@{ curve: bumpX }
   e16@{ curve: basis }
   e17@{ curve: basis }
   e18@{ curve: basis }

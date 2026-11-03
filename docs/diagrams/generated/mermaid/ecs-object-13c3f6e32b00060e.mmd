@@ -36,13 +36,13 @@ flowchart LR
   classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**oit::resolve::OitResolvePipeline**<br/>定义透明解析的视图与深度资源布局。" }
+  n0@{ shape: cyl, label: "**OitResolvePipeline**<br/>定义透明解析的视图与深度资源布局。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​core​_​pipeline::oit::resolve::**<br/>**queue​_​oit​_​resolve​_​pipeline**<br/>按 OIT 相机设置缓存透明解析管线。" }
+  n1@{ shape: rounded, label: "**queue​_​oit​_​resolve​_​pipeline**<br/>按 OIT 相机设置缓存透明解析管线。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​core​_​pipeline::oit::resolve::**<br/>**prepare​_​oit​_​resolve​_​bind​_​group**<br/>为 OIT 解析阶段绑定视图和片元链表。" }
+  n2@{ shape: rounded, label: "**prepare​_​oit​_​resolve​_​bind​_​group**<br/>为 OIT 解析阶段绑定视图和片元链表。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​core​_​pipeline::oit::resolve::**<br/>**node::oit​_​resolve**<br/>解析透明片元并重置 OIT 链表状态。" }
+  n3@{ shape: rounded, label: "**oit​_​resolve**<br/>解析透明片元并重置 OIT 链表状态。" }
   class n3 node_system
   n0 e0@--> n1
   class e0 edge_read

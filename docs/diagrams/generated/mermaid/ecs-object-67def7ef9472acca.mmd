@@ -49,11 +49,11 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​input​_​focus::dispatch​_​focused​_​**<br/>**input#lt;bevy​_​input::mouse::MouseWheel#gt;**<br/>向有效焦点或主窗口派发输入。" }
+  n0@{ shape: rounded, label: "**dispatch​_​focused​_​input**<br/>向有效焦点或主窗口派发输入。" }
   class n0 node_system
-  n1@{ shape: stadium, label: "**FocusedInput#lt;bevy​_​input::mouse::**<br/>**MouseWheel#gt;**<br/>把输入消息路由到焦点实体并向窗口冒泡。" }
+  n1@{ shape: stadium, label: "**FocusedInput#lt;MouseWheel#gt;**<br/>把输入消息路由到焦点实体并向窗口冒泡。" }
   class n1 node_event
-  n2@{ shape: rounded, label: "**window::PrimaryWindow**<br/>来自crate:bevy​_​window ↗：标识唯一的主<br/>窗口" }
+  n2@{ shape: rounded, label: "**PrimaryWindow**<br/>来自crate:bevy​_​window ↗：标识唯一的主<br/>窗口" }
   class n2 node_component
   class n2 external_node
   n3@{ shape: fr-rect, label: "**InputDispatchPlugin**<br/>向当前焦点派发键盘和手柄输入。" }
@@ -65,13 +65,13 @@ flowchart LR
   class n5 node_resource
   n6@{ shape: lin-rect, label: "**Dispatch**<br/>组织焦点输入派发与变化通知。" }
   class n6 node_system_set
-  n7@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;mouse::**<br/>**MouseWheel#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n7@{ shape: cyl, label: "**Messages#lt;MouseWheel#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n7 node_resource
   class n7 external_node
-  n8@{ shape: lean-r, label: "**mouse::MouseWheel**<br/>来自crate:bevy​_​input ↗：传递鼠标滚轮<br/>位移。" }
+  n8@{ shape: lean-r, label: "**MouseWheel**<br/>来自crate:bevy​_​input ↗：传递鼠标滚轮<br/>位移。" }
   class n8 node_message
   class n8 external_node
-  n9@{ shape: rounded, label: "**bevy​_​input​_​focus::dispatch​_​focused​_​**<br/>**input#lt;bevy​_​input::gamepad::**<br/>**GamepadButtonChangedEvent#gt;**<br/>向有效焦点或主窗口派发输入。" }
+  n9@{ shape: rounded, label: "**dispatch​_​focused​_​input**<br/>向有效焦点或主窗口派发输入。" }
   class n9 node_system
   n0 e0@-->|"触发事件"| n1
   class e0 edge_emit

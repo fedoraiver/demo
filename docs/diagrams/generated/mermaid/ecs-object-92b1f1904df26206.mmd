@@ -40,14 +40,14 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: lin-rect, label: "**AssignLightsToClusters**<br/>组织灯光聚簇与可见性准备。" }
   class n0 node_system_set
-  n1@{ shape: rounded, label: "**bevy​_​light::point​_​light::update​_​**<br/>**point​_​light​_​frusta**<br/>更新可见点光的六面阴影视锥。" }
+  n1@{ shape: rounded, label: "**update​_​point​_​light​_​frusta**<br/>更新可见点光的六面阴影视锥。" }
   class n1 node_system
   n2@{ shape: lin-rect, label: "**TransformGizmoRenderStep**<br/>来自crate:bevy​_​app ↗：准备变换操纵器<br/>的网格和显示变换。" }
   class n2 node_system_set
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​light::spot​_​light::update​_​spot​_​**<br/>**light​_​frusta**<br/>更新可见聚光灯的阴影视锥。" }
+  n3@{ shape: rounded, label: "**update​_​spot​_​light​_​frusta**<br/>更新可见聚光灯的阴影视锥。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**bevy​_​light::cluster::assign::assign​_​**<br/>**objects​_​to​_​clusters**<br/>将灯光、探针及贴花分配到视图分簇。" }
+  n4@{ shape: rounded, label: "**assign​_​objects​_​to​_​clusters**<br/>将灯光、探针及贴花分配到视图分簇。" }
   class n4 node_system
   n0 e0@-->|"先于"| n1
   class e0 edge_order

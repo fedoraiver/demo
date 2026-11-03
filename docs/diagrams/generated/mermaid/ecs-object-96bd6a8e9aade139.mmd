@@ -39,130 +39,61 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  subgraph layout_card_n0[" "]
-  n0@{ shape: rounded, label: "**collision::collider::**<br/>**ColliderDisabled**<br/>暂停碰撞体检测和空间查询。" }
+  n0@{ shape: rounded, label: "**ColliderDisabled**<br/>暂停碰撞体检测和空间查询。" }
   class n0 node_component
-  end
-  style layout_card_n0 fill:none,stroke:none
-  subgraph layout_card_n1[" "]
-  n1@{ shape: hex, label: "**avian3d::collider​_​tree::update::**<br/>**remove​_​from​_​tree​_​on**<br/>从空间树移除碰撞体代理。" }
+  n1@{ shape: hex, label: "**remove​_​from​_​tree​_​on**<br/>从空间树移除碰撞体代理。" }
   class n1 node_observer
-  end
-  style layout_card_n1 fill:none,stroke:none
-  subgraph layout_card_n2[" "]
-  n2@{ shape: rounded, label: "**demo::item​_​interaction::**<br/>**interaction::handle​_​interaction**<br/>来自item​_​interaction ↗：拾取建立物理<br/>持握关系；释放只解除控制，保留刚体姿态、<br/>线速度和角速度。" }
+  n2@{ shape: rounded, label: "**handle​_​interaction**<br/>来自item​_​interaction ↗：拾取建立物理<br/>持握关系；释放只解除控制，保留刚体姿态、<br/>线速度和角速度。" }
   class n2 node_system
   class n2 external_node
-  end
-  style layout_card_n2 fill:none,stroke:none
-  subgraph layout_card_n3[" "]
-  n3@{ shape: hex, label: "**avian3d::collider​_​tree::update::add​_​**<br/>**to​_​tree​_​on**<br/>将可用碰撞体加入空间树。" }
+  n3@{ shape: hex, label: "**add​_​to​_​tree​_​on**<br/>将可用碰撞体加入空间树。" }
   class n3 node_observer
-  end
-  style layout_card_n3 fill:none,stroke:none
-  subgraph layout_card_n4[" "]
-  n4@{ shape: hex, label: "**avian3d::collider​_​tree::update::add​_​**<br/>**to​_​tree​_​on**<br/>将可用碰撞体加入空间树。" }
+  n4@{ shape: hex, label: "**add​_​to​_​tree​_​on**<br/>将可用碰撞体加入空间树。" }
   class n4 node_observer
-  end
-  style layout_card_n4 fill:none,stroke:none
-  subgraph layout_card_n5[" "]
-  n5@{ shape: hex, label: "**avian3d::collider​_​tree::update::**<br/>**{impl#35;1}::build::{closure#35;4}**<br/>清除碰撞代理的传感器标志。" }
+  n5@{ shape: hex, label: "**build::{closure#35;4}**<br/>清除碰撞代理的传感器标志。" }
   class n5 node_observer
-  end
-  style layout_card_n5 fill:none,stroke:none
-  subgraph layout_card_n6[" "]
-  n6@{ shape: hex, label: "**avian3d::collider​_​tree::update::**<br/>**{impl#35;1}::build::{closure#35;7}**<br/>同步碰撞代理的刚体禁用标志。" }
+  n6@{ shape: hex, label: "**build::{closure#35;7}**<br/>同步碰撞代理的刚体禁用标志。" }
   class n6 node_observer
-  end
-  style layout_card_n6 fill:none,stroke:none
-  subgraph layout_card_n7[" "]
-  n7@{ shape: rounded, label: "**demo::first​_​person::facing::sync​_​**<br/>**character​_​facing**<br/>来自first​_​person ↗：在固定模拟前及逐<br/>帧持握目标同步前设置水平朝向，站立、横移<br/>和后退时也跟随视角。" }
+  n7@{ shape: rounded, label: "**sync​_​character​_​facing**<br/>来自first​_​person ↗：在固定模拟前及逐<br/>帧持握目标同步前设置水平朝向，站立、横移<br/>和后退时也跟随视角。" }
   class n7 node_system
   class n7 external_node
-  end
-  style layout_card_n7 fill:none,stroke:none
-  subgraph layout_card_n8[" "]
-  n8@{ shape: rounded, label: "**avian3d::collider​_​tree::update::**<br/>**update​_​solver​_​body​_​aabbs#lt;avian3d::**<br/>**collision::collider::parry::**<br/>**Collider#gt;**<br/>按物理结果更新活跃刚体的碰撞边界。" }
+  n8@{ shape: rounded, label: "**update​_​solver​_​body​_​aabbs**<br/>按物理结果更新活跃刚体的碰撞边界。" }
   class n8 node_system
-  end
-  style layout_card_n8 fill:none,stroke:none
-  subgraph layout_card_n9[" "]
-  n9@{ shape: hex, label: "**avian3d::collider​_​tree::update::**<br/>**{impl#35;1}::build::{closure#35;3}**<br/>同步碰撞代理的传感器启用标志。" }
+  n9@{ shape: hex, label: "**build::{closure#35;3}**<br/>同步碰撞代理的传感器启用标志。" }
   class n9 node_observer
-  end
-  style layout_card_n9 fill:none,stroke:none
-  subgraph layout_card_n10[" "]
-  n10@{ shape: hex, label: "**demo::item​_​interaction::lifecycle::**<br/>**prepare​_​holder​_​despawn**<br/>来自item​_​interaction ↗：Despawn 观察<br/>先排队停用代理，再让 Avian 的刚体卸载<br/>与 linked​_​spawn 清理运行。" }
+  n10@{ shape: hex, label: "**prepare​_​holder​_​despawn**<br/>来自item​_​interaction ↗：Despawn 观察<br/>先排队停用代理，再让 Avian 的刚体卸载<br/>与 linked​_​spawn 清理运行。" }
   class n10 node_observer
   class n10 external_node
-  end
-  style layout_card_n10 fill:none,stroke:none
-  subgraph layout_card_n11[" "]
-  n11@{ shape: rounded, label: "**avian3d::collider​_​tree::update::**<br/>**update​_​moved​_​collider​_​**<br/>**aabbs#lt;avian3d::collision::collider::**<br/>**parry::Collider#gt;**<br/>重算物理步后被手动改变的碰撞边界。" }
+  n11@{ shape: rounded, label: "**update​_​moved​_​collider​_​aabbs**<br/>重算物理步后被手动改变的碰撞边界。" }
   class n11 node_system
-  end
-  style layout_card_n11 fill:none,stroke:none
-  subgraph layout_card_n12[" "]
-  n12@{ shape: hex, label: "**demo::item​_​interaction::lifecycle::**<br/>**prepare​_​holder​_​despawn**<br/>来自item​_​interaction ↗：Despawn 观察<br/>先排队停用代理，再让 Avian 的刚体卸载<br/>与 linked​_​spawn 清理运行。" }
+  n12@{ shape: hex, label: "**prepare​_​holder​_​despawn**<br/>来自item​_​interaction ↗：Despawn 观察<br/>先排队停用代理，再让 Avian 的刚体卸载<br/>与 linked​_​spawn 清理运行。" }
   class n12 node_observer
   class n12 external_node
-  end
-  style layout_card_n12 fill:none,stroke:none
-  subgraph layout_card_n13[" "]
-  n13@{ shape: hex, label: "**avian3d::collider​_​tree::update::**<br/>**{impl#35;1}::build::{closure#35;6}**<br/>同步碰撞代理的自定义过滤标志。" }
+  n13@{ shape: hex, label: "**build::{closure#35;6}**<br/>同步碰撞代理的自定义过滤标志。" }
   class n13 node_observer
-  end
-  style layout_card_n13 fill:none,stroke:none
-  subgraph layout_card_n14[" "]
-  n14@{ shape: rounded, label: "**avian3d::collision::narrow​_​phase::**<br/>**update​_​narrow​_​phase#lt;avian3d::**<br/>**collision::collider::parry::**<br/>**Collider, ()#gt;**<br/>更新窄相接触并输出碰撞变化消息。" }
+  n14@{ shape: rounded, label: "**update​_​narrow​_​phase**<br/>更新窄相接触并输出碰撞变化消息。" }
   class n14 node_system
-  end
-  style layout_card_n14 fill:none,stroke:none
-  subgraph layout_card_n15[" "]
-  n15@{ shape: hex, label: "**avian3d::collider​_​tree::update::**<br/>**{impl#35;1}::build::{closure#35;2}**<br/>按刚体类型迁移碰撞体空间树。" }
+  n15@{ shape: hex, label: "**build::{closure#35;2}**<br/>按刚体类型迁移碰撞体空间树。" }
   class n15 node_observer
-  end
-  style layout_card_n15 fill:none,stroke:none
-  subgraph layout_card_n16[" "]
-  n16@{ shape: hex, label: "**demo::item​_​interaction::lifecycle::**<br/>**prepare​_​holder​_​despawn**<br/>来自item​_​interaction ↗：Despawn 观察<br/>先排队停用代理，再让 Avian 的刚体卸载<br/>与 linked​_​spawn 清理运行。" }
+  n16@{ shape: hex, label: "**prepare​_​holder​_​despawn**<br/>来自item​_​interaction ↗：Despawn 观察<br/>先排队停用代理，再让 Avian 的刚体卸载<br/>与 linked​_​spawn 清理运行。" }
   class n16 node_observer
   class n16 external_node
-  end
-  style layout_card_n16 fill:none,stroke:none
-  subgraph layout_card_n17[" "]
-  n17@{ shape: rounded, label: "**demo::item​_​interaction::attachment::**<br/>**finish​_​attachments**<br/>来自item​_​interaction ↗：持握期间只保<br/>留人物的 Dynamic，碰到箱子即对同一刚体<br/>求解，内部形状自动互不碰撞。" }
+  n17@{ shape: rounded, label: "**finish​_​attachments**<br/>来自item​_​interaction ↗：持握期间只保<br/>留人物的 Dynamic，碰到箱子即对同一刚体<br/>求解，内部形状自动互不碰撞。" }
   class n17 node_system
   class n17 external_node
-  end
-  style layout_card_n17 fill:none,stroke:none
-  subgraph layout_card_n18[" "]
-  n18@{ shape: hex, label: "**avian3d::collider​_​tree::update::**<br/>**{impl#35;1}::build::{closure#35;5}**<br/>同步碰撞代理的碰撞层配置。" }
+  n18@{ shape: hex, label: "**build::{closure#35;5}**<br/>同步碰撞代理的碰撞层配置。" }
   class n18 node_observer
-  end
-  style layout_card_n18 fill:none,stroke:none
-  subgraph layout_card_n19[" "]
-  n19@{ shape: rounded, label: "**demo::item​_​interaction::lifecycle::**<br/>**cleanup​_​orphaned​_​colliders**<br/>来自item​_​interaction ↗：业务箱本身被<br/>销毁后清理代理，防止人物带着不可见的附属<br/>碰撞继续运动。" }
+  n19@{ shape: rounded, label: "**cleanup​_​orphaned​_​colliders**<br/>来自item​_​interaction ↗：业务箱本身被<br/>销毁后清理代理，防止人物带着不可见的附属<br/>碰撞继续运动。" }
   class n19 node_system
   class n19 external_node
-  end
-  style layout_card_n19 fill:none,stroke:none
-  subgraph layout_card_n20[" "]
-  n20@{ shape: rounded, label: "**demo::item​_​interaction::attachment::**<br/>**align​_​attachments**<br/>来自item​_​interaction ↗：有限的小步对<br/>齐不会积分箱体力；受阻保留安全姿态，持续<br/>受阻则解除持握。" }
+  n20@{ shape: rounded, label: "**align​_​attachments**<br/>来自item​_​interaction ↗：有限的小步对<br/>齐不会积分箱体力；受阻保留安全姿态，持续<br/>受阻则解除持握。" }
   class n20 node_system
   class n20 external_node
-  end
-  style layout_card_n20 fill:none,stroke:none
-  subgraph layout_card_n21[" "]
-  n21@{ shape: rounded, label: "**demo::first​_​person::facing::sync​_​**<br/>**character​_​facing**<br/>来自first​_​person ↗：在固定模拟前及逐<br/>帧持握目标同步前设置水平朝向，站立、横移<br/>和后退时也跟随视角。" }
+  n21@{ shape: rounded, label: "**sync​_​character​_​facing**<br/>来自first​_​person ↗：在固定模拟前及逐<br/>帧持握目标同步前设置水平朝向，站立、横移<br/>和后退时也跟随视角。" }
   class n21 node_system
   class n21 external_node
-  end
-  style layout_card_n21 fill:none,stroke:none
-  subgraph layout_card_n22[" "]
-  n22@{ shape: hex, label: "**avian3d::collider​_​tree::update::**<br/>**{impl#35;1}::build::{closure#35;1}**<br/>把失去刚体归属的碰撞体迁到独立树。" }
+  n22@{ shape: hex, label: "**build::{closure#35;1}**<br/>把失去刚体归属的碰撞体迁到独立树。" }
   class n22 node_observer
-  end
-  style layout_card_n22 fill:none,stroke:none
   n0 e0@-->|"存在性约束"| n1
   class e0 edge_reference
   n2 e1@-->|"插入"| n0

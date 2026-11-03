@@ -39,7 +39,7 @@ flowchart LR
   classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**collision::collider::backend::**<br/>**ColliderMarker**<br/>标识各后端的碰撞体实体。" }
+  n0@{ shape: rounded, label: "**ColliderMarker**<br/>标识各后端的碰撞体实体。" }
   class n0 node_component
   n1@{ shape: rounded, label: "**prepare​_​island · 创建模板**<br/>来自scene​_​assembly ↗：为海岛导入几何<br/>创建静态碰撞子体。" }
   class n1 node_entity
@@ -47,25 +47,25 @@ flowchart LR
   n2@{ shape: rounded, label: "**prepare​_​island · 创建模板**<br/>来自scene​_​assembly ↗：为地图展示<br/>NPC 添加静态碰撞子体。" }
   class n2 node_entity
   class n2 external_node
-  n3@{ shape: rounded, label: "**avian3d::collision::collider::**<br/>**collider​_​transform::plugin::**<br/>**propagate​_​collider​_​transforms**<br/>沿实体层级计算碰撞体相对刚体的变换。" }
+  n3@{ shape: rounded, label: "**propagate​_​collider​_​transforms**<br/>沿实体层级计算碰撞体相对刚体的变换。" }
   class n3 node_system
-  n4@{ shape: hex, label: "**avian3d::collision::collider::**<br/>**collider​_​hierarchy::plugin::**<br/>**{impl#35;0}::build::{closure#35;1}**<br/>清除同实体碰撞体的失效归属。" }
+  n4@{ shape: hex, label: "**build::{closure#35;1}**<br/>清除同实体碰撞体的失效归属。" }
   class n4 node_observer
-  n5@{ shape: hex, label: "**avian3d::collision::collider::**<br/>**collider​_​hierarchy::plugin::**<br/>**{impl#35;0}::build::{closure#35;0}**<br/>为新增碰撞体建立刚体归属。" }
+  n5@{ shape: hex, label: "**build::{closure#35;0}**<br/>为新增碰撞体建立刚体归属。" }
   class n5 node_observer
-  n6@{ shape: hex, label: "**avian3d::collision::collider::**<br/>**collider​_​hierarchy::plugin::**<br/>**{impl#35;0}::build::{closure#35;0}**<br/>为新增碰撞体建立刚体归属。" }
+  n6@{ shape: hex, label: "**build::{closure#35;0}**<br/>为新增碰撞体建立刚体归属。" }
   class n6 node_observer
-  n7@{ shape: hex, label: "**avian3d::collision::collider::**<br/>**collider​_​hierarchy::plugin::**<br/>**{impl#35;0}::build::{closure#35;1}**<br/>清除同实体碰撞体的失效归属。" }
+  n7@{ shape: hex, label: "**build::{closure#35;1}**<br/>清除同实体碰撞体的失效归属。" }
   class n7 node_observer
-  n8@{ shape: hex, label: "**avian3d::collision::collider::**<br/>**collider​_​hierarchy::plugin::on​_​**<br/>**collider​_​body​_​changed**<br/>随层级变化更新碰撞体刚体归属。" }
+  n8@{ shape: hex, label: "**on​_​collider​_​body​_​changed**<br/>随层级变化更新碰撞体刚体归属。" }
   class n8 node_observer
-  n9@{ shape: hex, label: "**avian3d::collision::collider::**<br/>**collider​_​hierarchy::plugin::on​_​**<br/>**collider​_​body​_​changed**<br/>随层级变化更新碰撞体刚体归属。" }
+  n9@{ shape: hex, label: "**on​_​collider​_​body​_​changed**<br/>随层级变化更新碰撞体刚体归属。" }
   class n9 node_observer
-  n10@{ shape: hex, label: "**avian3d::collision::collider::**<br/>**collider​_​hierarchy::plugin::on​_​**<br/>**collider​_​body​_​changed**<br/>随层级变化更新碰撞体刚体归属。" }
+  n10@{ shape: hex, label: "**on​_​collider​_​body​_​changed**<br/>随层级变化更新碰撞体刚体归属。" }
   class n10 node_observer
-  n11@{ shape: hex, label: "**avian3d::collision::collider::**<br/>**collider​_​hierarchy::plugin::**<br/>**{impl#35;0}::build::{closure#35;1}**<br/>清除同实体碰撞体的失效归属。" }
+  n11@{ shape: hex, label: "**build::{closure#35;1}**<br/>清除同实体碰撞体的失效归属。" }
   class n11 node_observer
-  n12@{ shape: hex, label: "**avian3d::collision::collider::**<br/>**collider​_​hierarchy::plugin::**<br/>**{impl#35;0}::build::{closure#35;0}**<br/>为新增碰撞体建立刚体归属。" }
+  n12@{ shape: hex, label: "**build::{closure#35;0}**<br/>为新增碰撞体建立刚体归属。" }
   class n12 node_observer
   n1 e0@-->|"可能包含"| n0
   class e0 edge_reference

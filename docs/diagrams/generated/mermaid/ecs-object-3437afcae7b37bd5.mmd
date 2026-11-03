@@ -36,9 +36,9 @@ flowchart LR
   classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**window::OnMonitor**<br/>保存窗口当前所在显示器的关系目标" }
+  n0@{ shape: rounded, label: "**OnMonitor**<br/>保存窗口当前所在显示器的关系目标" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​winit::system::changed​_​windows**<br/>来自crate:bevy​_​winit ↗：把窗口组件变<br/>化同步到 winit 后端。" }
+  n1@{ shape: rounded, label: "**changed​_​windows**<br/>来自crate:bevy​_​winit ↗：把窗口组件变<br/>化同步到 winit 后端。" }
   class n1 node_system
   class n1 external_node
   n0 e0@--> n1

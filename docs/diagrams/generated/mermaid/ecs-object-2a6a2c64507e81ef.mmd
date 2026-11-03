@@ -38,7 +38,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: cyl, label: "**TimeSender**<br/>从渲染世界向主世界发送帧时刻" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​render::send​_​time**<br/>来自crate:bevy​_​render ↗：通过渲染到主<br/>应用的时间通道发送当前时刻，无论本帧是否<br/>实际绘制；通道断开时忽略，通道意外仍满时<br/>报告执行顺序错误。" }
+  n1@{ shape: rounded, label: "**send​_​time**<br/>来自crate:bevy​_​render ↗：通过渲染到主<br/>应用的时间通道发送当前时刻，无论本帧是否<br/>实际绘制；通道断开时忽略，通道意外仍满时<br/>报告执行顺序错误。" }
   class n1 node_system
   class n1 external_node
   n0 e0@--> n1

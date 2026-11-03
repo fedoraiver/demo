@@ -37,9 +37,9 @@ flowchart LR
   classDef node_non_send fill:#F8F3EF,stroke:#A5633A,stroke-width:1.6px,color:#1F3340
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: tag-rect, label: "**window​_​policy::NativePolicies**<br/>原生句柄守护对象必须与窗口线程绑定，实体<br/>退出时释放对应约束。" }
+  n0@{ shape: tag-rect, label: "**NativePolicies**<br/>原生句柄守护对象必须与窗口线程绑定，实体<br/>退出时释放对应约束。" }
   class n0 node_non_send
-  n1@{ shape: rounded, label: "**demo::window​_​policy::install​_​native​_​**<br/>**policy**<br/>安装并维护原生窗口比例与尺寸策略。" }
+  n1@{ shape: rounded, label: "**install​_​native​_​policy**<br/>安装并维护原生窗口比例与尺寸策略。" }
   class n1 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

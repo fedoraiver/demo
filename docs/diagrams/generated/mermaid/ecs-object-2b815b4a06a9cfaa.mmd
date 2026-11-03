@@ -44,18 +44,18 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​input::mouse::accumulate​_​mouse​_​**<br/>**scroll​_​system**<br/>累计本帧滚轮位移和单位。" }
+  n0@{ shape: rounded, label: "**accumulate​_​mouse​_​scroll​_​system**<br/>累计本帧滚轮位移和单位。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**mouse::AccumulatedMouseScroll**<br/>汇总本帧滚轮事件的位移与单位" }
+  n1@{ shape: cyl, label: "**AccumulatedMouseScroll**<br/>汇总本帧滚轮事件的位移与单位" }
   class n1 node_resource
   n2@{ shape: lin-rect, label: "**InputSystems**<br/>把原始设备消息汇总为本帧输入状态。" }
   class n2 node_system_set
-  n3@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;mouse::**<br/>**MouseWheel#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n3@{ shape: cyl, label: "**Messages#lt;MouseWheel#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n3 node_resource
   class n3 external_node
   n4@{ shape: fr-rect, label: "**InputPlugin**<br/>汇集设备输入并维护输入状态。" }
   class n4 node_plugin
-  n5@{ shape: lean-r, label: "**mouse::MouseWheel**<br/>传递鼠标滚轮位移。" }
+  n5@{ shape: lean-r, label: "**MouseWheel**<br/>传递鼠标滚轮位移。" }
   class n5 node_message
   n0 e0@-->|"赋值"| n1
   class e0 edge_write

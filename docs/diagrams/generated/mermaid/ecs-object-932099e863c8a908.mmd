@@ -42,21 +42,21 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**avian3d::dynamics::solver::plugin::**<br/>**apply​_​contact​_​status​_​changes**<br/>把接触增删同步到约束图和物理岛。" }
+  n0@{ shape: rounded, label: "**apply​_​contact​_​status​_​changes**<br/>把接触增删同步到约束图和物理岛。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**dynamics::solver::constraint​_​graph::**<br/>**ConstraintGraph**<br/>为并行接触求解维护约束着色图。" }
+  n1@{ shape: cyl, label: "**ConstraintGraph**<br/>为并行接触求解维护约束着色图。" }
   class n1 node_resource
   n2@{ shape: lin-rect, label: "**First**<br/>组织一次物理模拟步的主要阶段。" }
   class n2 node_system_set
-  n3@{ shape: rounded, label: "**dynamics::solver::islands::**<br/>**BodyIslandNode**<br/>记录刚体在物理岛中的连接位置。" }
+  n3@{ shape: rounded, label: "**BodyIslandNode**<br/>记录刚体在物理岛中的连接位置。" }
   class n3 node_component
-  n4@{ shape: cyl, label: "**dynamics::solver::islands::**<br/>**PhysicsIslands**<br/>管理模拟岛及接触和关节连接。" }
+  n4@{ shape: cyl, label: "**PhysicsIslands**<br/>管理模拟岛及接触和关节连接。" }
   class n4 node_resource
-  n5@{ shape: cyl, label: "**collision::contact​_​types::contact​_​**<br/>**graph::ContactGraph**<br/>维护碰撞体接触对及其碰撞数据。" }
+  n5@{ shape: cyl, label: "**ContactGraph**<br/>维护碰撞体接触对及其碰撞数据。" }
   class n5 node_resource
-  n6@{ shape: cyl, label: "**collision::narrow​_​phase::system​_​**<br/>**param::ContactStatusChangeQueue**<br/>暂存窄相产生的接触状态变化。" }
+  n6@{ shape: cyl, label: "**ContactStatusChangeQueue**<br/>暂存窄相产生的接触状态变化。" }
   class n6 node_resource
-  n7@{ shape: rounded, label: "**entity​_​disabling::Disabled**<br/>来自crate:bevy​_​ecs ↗：标记被禁用的实<br/>体" }
+  n7@{ shape: rounded, label: "**Disabled**<br/>来自crate:bevy​_​ecs ↗：标记被禁用的实<br/>体" }
   class n7 node_component
   class n7 external_node
   n0 e0@-->|"可变访问"| n1

@@ -10,6 +10,17 @@ const endpoint = id => card(id, `<rect PART x="${id === 'a' ? 0 : 180}" y="40" w
 const marker = '<defs><marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerUnits="userSpaceOnUse" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 0L10 5L0 10Z"/></marker></defs>';
 const label = (x, y, width = 20, height = 10) => `<g class="edgeLabel" transform="translate(${x} ${y})"><g class="label" data-mermaid-native-id="e0"><g><rect class="background" x="0" y="0" width="${width}" height="${height}"/><text>Contract</text></g></g></g>`;
 
+test('bound edge labels cannot replace the real path when they precede it in native SVG order', () => {
+  const boundLabel = '<g class="edgeLabel edge-label" data-link-id="edge"><g class="label" data-mermaid-native-id="e0"><rect class="background" x="80" y="5" width="20" height="10"/><text>Contract</text></g></g>';
+  const content = boundLabel + endpoint('a') + endpoint('b');
+  const fixture = view(content + edge('M20 50H180'), ['a', 'b']);
+  const result = inspectViewRoutes(fixture);
+  assert.equal(result.edges.length, 1);
+  assert.equal(result.edges[0].id, 'edge');
+  assert.deepEqual(result.collisions, []);
+  assert.throws(() => inspectViewRoutes(view(content, ['a', 'b'])), /Missing native routing path/);
+});
+
 test('native stylesheet properties preserve marker URLs, context stroke and actual cascade priority', () => {
   const elements = svgElements('<svg id="v"><style>#v .edge{marker-start:none}#v #v-e0{marker-start:url("#pointStart")!important}#v #pointStart path{fill:context-stroke!important;stroke:context-stroke!important}</style><marker id="pointStart"><path fill="#000"/></marker><path id="v-e0" class="edge" style="marker-start:none;stroke:#3567A6"/></svg>');
   const edge = elements.find(element => element.attrs.id === 'v-e0'), path = elements.find(element => element.parent?.tag === 'marker');

@@ -40,18 +40,18 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: lin-rect, label: "**MainPass**<br/>划分二维相机绘制与后处理阶段。" }
   class n0 node_system_set
-  n1@{ shape: rounded, label: "**bevy​_​core​_​pipeline::core​_​2d::main​_​**<br/>**opaque​_​pass​_​2d​_​node::main​_​opaque​_​**<br/>**pass​_​2d**<br/>绘制二维不透明和 AlphaMask 阶段。" }
+  n1@{ shape: rounded, label: "**main​_​opaque​_​pass​_​2d**<br/>绘制二维不透明和 AlphaMask 阶段。" }
   class n1 node_system
   n2@{ shape: lin-rect, label: "**Prepass**<br/>划分二维相机绘制与后处理阶段。" }
   class n2 node_system_set
-  n3@{ shape: rounded, label: "**bevy​_​core​_​pipeline::core​_​2d::main​_​**<br/>**transparent​_​pass​_​2d​_​node::main​_​**<br/>**transparent​_​pass​_​2d**<br/>使用已有深度绘制二维透明阶段。" }
+  n3@{ shape: rounded, label: "**main​_​transparent​_​pass​_​2d**<br/>使用已有深度绘制二维透明阶段。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**bevy​_​egui::render::render​_​pass::**<br/>**egui​_​pass**<br/>来自crate:bevy​_​egui ↗：把准备好的<br/>Egui 绘制项渲染到视图目标。" }
+  n4@{ shape: rounded, label: "**egui​_​pass**<br/>来自crate:bevy​_​egui ↗：把准备好的<br/>Egui 绘制项渲染到视图目标。" }
   class n4 node_system
   class n4 external_node
   n5@{ shape: lin-rect, label: "**EarlyPostProcess**<br/>划分二维相机绘制与后处理阶段。" }
   class n5 node_system_set
-  n6@{ shape: rounded, label: "**bevy​_​post​_​process::msaa​_​writeback::**<br/>**msaa​_​writeback**<br/>来自crate:bevy​_​post​_​process ↗：将后<br/>处理颜色回写多采样目标。" }
+  n6@{ shape: rounded, label: "**msaa​_​writeback**<br/>来自crate:bevy​_​post​_​process ↗：将后<br/>处理颜色回写多采样目标。" }
   class n6 node_system
   class n6 external_node
   n0 e0@-->|"集合成员"| n1

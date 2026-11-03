@@ -45,60 +45,60 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​ui::widget::text​_​input​_​layout::**<br/>**update​_​editable​_​text​_​layout**<br/>刷新可编辑文本的字形布局和编辑反馈。" }
+  n0@{ shape: rounded, label: "**update​_​editable​_​text​_​layout**<br/>刷新可编辑文本的字形布局和编辑反馈。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**bevy​_​ui::ComputedUiRenderTargetInfo**<br/>缓存 UI 目标的尺寸与缩放。" }
+  n1@{ shape: rounded, label: "**ComputedUiRenderTargetInfo**<br/>缓存 UI 目标的尺寸与缩放。" }
   class n1 node_component
-  n2@{ shape: fr-rect, label: "**bevy​_​ui::UiPlugin**<br/>建立界面布局与内容更新基础。" }
+  n2@{ shape: fr-rect, label: "**UiPlugin**<br/>建立界面布局与内容更新基础。" }
   class n2 node_plugin
-  n3@{ shape: rounded, label: "**bevy​_​text::TextLayoutInfo**<br/>来自crate:bevy​_​text ↗：保存文字块完成<br/>排版后的缩放、字形位置、文字运行几何及尺<br/>寸" }
+  n3@{ shape: rounded, label: "**TextLayoutInfo**<br/>来自crate:bevy​_​text ↗：保存文字块完成<br/>排版后的缩放、字形位置、文字运行几何及尺<br/>寸" }
   class n3 node_component
   class n3 external_node
-  n4@{ shape: cyl, label: "**bevy​_​text::FontAtlasSet**<br/>来自crate:bevy​_​text ↗：保存字体光栅化<br/>结果所在的 FontAtlas 集合" }
+  n4@{ shape: cyl, label: "**FontAtlasSet**<br/>来自crate:bevy​_​text ↗：保存字体光栅化<br/>结果所在的 FontAtlas 集合" }
   class n4 node_resource
   class n4 external_node
-  n5@{ shape: rounded, label: "**bevy​_​text::TextLayout**<br/>来自crate:bevy​_​text ↗：保存文字块的内<br/>部对齐与换行策略" }
+  n5@{ shape: rounded, label: "**TextLayout**<br/>来自crate:bevy​_​text ↗：保存文字块的内<br/>部对齐与换行策略" }
   class n5 node_component
   class n5 external_node
-  n6@{ shape: rounded, label: "**bevy​_​text::FontHinting**<br/>来自crate:bevy​_​text ↗：选择字形光栅化<br/>时是否启用字体 hinting" }
+  n6@{ shape: rounded, label: "**FontHinting**<br/>来自crate:bevy​_​text ↗：选择字形光栅化<br/>时是否启用字体 hinting" }
   class n6 node_component
   class n6 external_node
-  n7@{ shape: cyl, label: "**bevy​_​time::Time#lt;bevy​_​time::Real#gt;**<br/>来自crate:bevy​_​time ↗：保存时钟上下<br/>文、帧间隔及累计时间" }
+  n7@{ shape: cyl, label: "**Time#lt;Real#gt;**<br/>来自crate:bevy​_​time ↗：保存时钟上下<br/>文、帧间隔及累计时间" }
   class n7 node_resource
   class n7 external_node
   n8@{ shape: notch-rect, label: "**Local · cursor​_​timer**<br/>累计可编辑文本光标的闪烁时间。" }
   class n8 node_local
-  n9@{ shape: rounded, label: "**bevy​_​text::TextFont**<br/>来自crate:bevy​_​text ↗：保存文字段的字<br/>体来源、字号及抗锯齿方式等字体样式" }
+  n9@{ shape: rounded, label: "**TextFont**<br/>来自crate:bevy​_​text ↗：保存文字段的字<br/>体来源、字号及抗锯齿方式等字体样式" }
   class n9 node_component
   class n9 external_node
   n10@{ shape: lin-rect, label: "**FocusChangeEvents**<br/>来自crate:bevy​_​input​_​focus ↗：组织焦<br/>点输入派发与变化通知。" }
   class n10 node_system_set
   class n10 external_node
-  n11@{ shape: rounded, label: "**editing::EditableTextGeneration**<br/>来自crate:bevy​_​text ↗：保存 Parley<br/>排版代数" }
+  n11@{ shape: rounded, label: "**EditableTextGeneration**<br/>来自crate:bevy​_​text ↗：保存 Parley<br/>排版代数" }
   class n11 node_component
   class n11 external_node
-  n12@{ shape: rounded, label: "**editing::EditableText**<br/>来自crate:bevy​_​text ↗：持有 Parley<br/>编辑器、文本、光标及待应用编辑操作" }
+  n12@{ shape: rounded, label: "**EditableText**<br/>来自crate:bevy​_​text ↗：持有 Parley<br/>编辑器、文本、光标及待应用编辑操作" }
   class n12 node_component
   class n12 external_node
-  n13@{ shape: rounded, label: "**bevy​_​ui​_​widgets::text​_​input::apply​_​**<br/>**queued​_​select​_​all**<br/>来自crate:bevy​_​ui​_​widgets ↗：在指针<br/>释放时应用延后的文本全选。" }
+  n13@{ shape: rounded, label: "**apply​_​queued​_​select​_​all**<br/>来自crate:bevy​_​ui​_​widgets ↗：在指针<br/>释放时应用延后的文本全选。" }
   class n13 node_system
   class n13 external_node
   n14@{ shape: lin-rect, label: "**AssetEventSystems**<br/>来自crate:bevy​_​asset ↗：发布资产容器<br/>积累的变更消息。" }
   class n14 node_system_set
   class n14 external_node
-  n15@{ shape: cyl, label: "**bevy​_​text::FontCx**<br/>来自crate:bevy​_​text ↗：维护字体数据<br/>库、家族解析与字体缓存" }
+  n15@{ shape: cyl, label: "**FontCx**<br/>来自crate:bevy​_​text ↗：维护字体数据<br/>库、家族解析与字体缓存" }
   class n15 node_resource
   class n15 external_node
-  n16@{ shape: cyl, label: "**bevy​_​text::LayoutCx**<br/>来自crate:bevy​_​text ↗：持有 Parley<br/>文字布局上下文" }
+  n16@{ shape: cyl, label: "**LayoutCx**<br/>来自crate:bevy​_​text ↗：持有 Parley<br/>文字布局上下文" }
   class n16 node_resource
   class n16 external_node
-  n17@{ shape: cyl, label: "**bevy​_​text::ScaleCx**<br/>来自crate:bevy​_​text ↗：持有字形缩放上<br/>下文" }
+  n17@{ shape: cyl, label: "**ScaleCx**<br/>来自crate:bevy​_​text ↗：持有字形缩放上<br/>下文" }
   class n17 node_resource
   class n17 external_node
-  n18@{ shape: cyl, label: "**bevy​_​asset::Assets#lt;image::Image#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
+  n18@{ shape: cyl, label: "**Assets#lt;Image#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
   class n18 node_resource
   class n18 external_node
-  n19@{ shape: cyl, label: "**bevy​_​text::RemSize**<br/>来自crate:bevy​_​text ↗：保存全局根字号" }
+  n19@{ shape: cyl, label: "**RemSize**<br/>来自crate:bevy​_​text ↗：保存全局根字号" }
   class n19 node_resource
   class n19 external_node
   n20@{ shape: cyl, label: "**InputFocus**<br/>来自crate:bevy​_​input​_​focus ↗：保存当<br/>前输入焦点实体、待派发的焦点变化及原焦点" }
@@ -106,7 +106,7 @@ flowchart LR
   class n20 external_node
   n21@{ shape: lin-rect, label: "**PostLayout**<br/>组织界面交互、布局与堆叠更新。" }
   class n21 node_system_set
-  n22@{ shape: rounded, label: "**bevy​_​ui​_​widgets::text​_​input::update​_​**<br/>**ime​_​position**<br/>来自crate:bevy​_​ui​_​widgets ↗：把输入<br/>法候选窗口放到当前文字光标下方。" }
+  n22@{ shape: rounded, label: "**update​_​ime​_​position**<br/>来自crate:bevy​_​ui​_​widgets ↗：把输入<br/>法候选窗口放到当前文字光标下方。" }
   class n22 node_system
   class n22 external_node
   n23@{ shape: notch-rect, label: "**Local · previous​_​focus**<br/>记录上一轮可编辑文本的焦点实体。" }

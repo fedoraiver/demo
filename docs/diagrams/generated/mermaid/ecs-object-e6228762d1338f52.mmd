@@ -44,29 +44,29 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**demo::physics::wake​_​changed​_​bodies**<br/>Avian 的自动唤醒在求解之后；外部冲量和<br/>施力应在本步准备求解器之前生效。" }
+  n0@{ shape: rounded, label: "**wake​_​changed​_​bodies**<br/>Avian 的自动唤醒在求解之后；外部冲量和<br/>施力应在本步准备求解器之前生效。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**physics​_​transform::transform::**<br/>**Position**<br/>来自crate:avian3d ↗：保存刚体或碰撞体<br/>的世界位置。" }
+  n1@{ shape: rounded, label: "**Position**<br/>来自crate:avian3d ↗：保存刚体或碰撞体<br/>的世界位置。" }
   class n1 node_component
   class n1 external_node
-  n2@{ shape: rounded, label: "**physics​_​transform::transform::**<br/>**Rotation**<br/>来自crate:avian3d ↗：保存刚体或碰撞体<br/>的世界旋转。" }
+  n2@{ shape: rounded, label: "**Rotation**<br/>来自crate:avian3d ↗：保存刚体或碰撞体<br/>的世界旋转。" }
   class n2 node_component
   class n2 external_node
-  n3@{ shape: cyl, label: "**schedule::LastPhysicsTick**<br/>来自crate:avian3d ↗：记录上一轮物理调<br/>度结束的变化刻度。" }
+  n3@{ shape: cyl, label: "**LastPhysicsTick**<br/>来自crate:avian3d ↗：记录上一轮物理调<br/>度结束的变化刻度。" }
   class n3 node_resource
   class n3 external_node
-  n4@{ shape: rounded, label: "**dynamics::rigid​_​body::sleeping::**<br/>**Sleeping**<br/>来自crate:avian3d ↗：标记暂不参与模拟<br/>的休眠刚体。" }
+  n4@{ shape: rounded, label: "**Sleeping**<br/>来自crate:avian3d ↗：标记暂不参与模拟<br/>的休眠刚体。" }
   class n4 node_component
   class n4 external_node
-  n5@{ shape: rounded, label: "**dynamics::rigid​_​body::LinearVelocity**<br/>来自crate:avian3d ↗：保存刚体的世界线<br/>速度。" }
+  n5@{ shape: rounded, label: "**LinearVelocity**<br/>来自crate:avian3d ↗：保存刚体的世界线<br/>速度。" }
   class n5 node_component
   class n5 external_node
-  n6@{ shape: rounded, label: "**dynamics::rigid​_​body::sleeping::**<br/>**SleepTimer**<br/>来自crate:avian3d ↗：累计刚体持续低速<br/>的时间。" }
+  n6@{ shape: rounded, label: "**SleepTimer**<br/>来自crate:avian3d ↗：累计刚体持续低速<br/>的时间。" }
   class n6 node_component
   class n6 external_node
-  n7@{ shape: fr-rect, label: "**physics::GamePhysicsPlugin**<br/>注册固定物理模拟与统一碰撞日志；不加载场<br/>景、窗口或音频设备。" }
+  n7@{ shape: fr-rect, label: "**GamePhysicsPlugin**<br/>注册固定物理模拟与统一碰撞日志；不加载场<br/>景、窗口或音频设备。" }
   class n7 node_plugin
-  n8@{ shape: rounded, label: "**dynamics::rigid​_​body::**<br/>**AngularVelocity**<br/>来自crate:avian3d ↗：保存刚体的世界角<br/>速度。" }
+  n8@{ shape: rounded, label: "**AngularVelocity**<br/>来自crate:avian3d ↗：保存刚体的世界角<br/>速度。" }
   class n8 node_component
   class n8 external_node
   n9@{ shape: lin-rect, label: "**First**<br/>来自crate:avian3d ↗：划分物理准备、模<br/>拟与回写边界。" }

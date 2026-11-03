@@ -39,18 +39,18 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​render::occlusion​_​culling::**<br/>**OcclusionCullingSubview**<br/>为非相机视图保存遮挡裁剪深度资源。" }
+  n0@{ shape: rounded, label: "**OcclusionCullingSubview**<br/>为非相机视图保存遮挡裁剪深度资源。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​core​_​pipeline::mip​_​generation::**<br/>**experimental::depth::late​_​**<br/>**downsample​_​depth**<br/>来自crate:bevy​_​core​_​pipeline ↗：更新<br/>供下一帧早期遮挡测试使用的深度金字塔。" }
+  n1@{ shape: rounded, label: "**late​_​downsample​_​depth**<br/>来自crate:bevy​_​core​_​pipeline ↗：更新<br/>供下一帧早期遮挡测试使用的深度金字塔。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​pbr::render::light::prepare​_​**<br/>**lights**<br/>来自crate:bevy​_​pbr ↗：准备视图光照参<br/>数、阴影视图和阴影贴图。" }
+  n2@{ shape: rounded, label: "**prepare​_​lights**<br/>来自crate:bevy​_​pbr ↗：准备视图光照参<br/>数、阴影视图和阴影贴图。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​core​_​pipeline::mip​_​generation::**<br/>**experimental::depth::prepare​_​**<br/>**downsample​_​depth​_​view​_​bind​_​groups**<br/>来自crate:bevy​_​core​_​pipeline ↗：将主<br/>视图或阴影深度绑定到降采样管线。" }
+  n3@{ shape: rounded, label: "**prepare​_​downsample​_​depth​_​view​_​bind​_​**<br/>**groups**<br/>来自crate:bevy​_​core​_​pipeline ↗：将主<br/>视图或阴影深度绑定到降采样管线。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**bevy​_​core​_​pipeline::mip​_​generation::**<br/>**experimental::depth::early​_​**<br/>**downsample​_​depth**<br/>来自crate:bevy​_​core​_​pipeline ↗：生成<br/>供本帧晚期遮挡测试使用的深度金字塔。" }
+  n4@{ shape: rounded, label: "**early​_​downsample​_​depth**<br/>来自crate:bevy​_​core​_​pipeline ↗：生成<br/>供本帧晚期遮挡测试使用的深度金字塔。" }
   class n4 node_system
   class n4 external_node
   n0 e0@--> n1

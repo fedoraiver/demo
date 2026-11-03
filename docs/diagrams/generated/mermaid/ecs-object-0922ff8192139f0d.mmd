@@ -40,15 +40,15 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​pbr::material::extract​_​**<br/>**entities​_​needs​_​specialization#lt;bevy​_​**<br/>**pbr::pbr​_​material::StandardMaterial#gt;**<br/>把主世界待刷新材质管线的实体身份提取到渲<br/>染侧。" }
+  n0@{ shape: rounded, label: "**extract​_​entities​_​needs​_​**<br/>**specialization**<br/>把主世界待刷新材质管线的实体身份提取到渲<br/>染侧。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**camera::DirtySpecializations**<br/>来自crate:bevy​_​render ↗：记录需刷新或<br/>移除管线专用化的对象与视图。" }
+  n1@{ shape: cyl, label: "**DirtySpecializations**<br/>来自crate:bevy​_​render ↗：记录需刷新或<br/>移除管线专用化的对象与视图。" }
   class n1 node_resource
   class n1 external_node
-  n2@{ shape: cyl, label: "**extract​_​plugin::MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
+  n2@{ shape: cyl, label: "**MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
   class n2 node_resource
   class n2 external_node
-  n3@{ shape: cyl, label: "**material::**<br/>**EntitiesNeedingSpecialization#lt;pbr​_​**<br/>**material::StandardMaterial#gt;**<br/>暂存需要更新或移除专用管线的实体。" }
+  n3@{ shape: cyl, label: "**EntitiesNeedingSpecialization#lt;Standa**<br/>**rdMaterial#gt;**<br/>暂存需要更新或移除专用管线的实体。" }
   class n3 node_resource
   n4@{ shape: lin-rect, label: "**CheckForChanges**<br/>来自crate:bevy​_​render ↗：组织绘制管线<br/>失效检测。" }
   class n4 node_system_set

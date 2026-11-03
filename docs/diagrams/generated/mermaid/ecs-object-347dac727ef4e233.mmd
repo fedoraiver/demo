@@ -38,13 +38,13 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**box​_​shadow::BoxShadowPipeline**<br/>提供 UI 方框阴影的视图布局和着色器。" }
+  n0@{ shape: cyl, label: "**BoxShadowPipeline**<br/>提供 UI 方框阴影的视图布局和着色器。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​ui​_​render::box​_​shadow::init​_​**<br/>**box​_​shadow​_​pipeline**<br/>建立 UI 盒阴影的视图布局和着色器资源。" }
+  n1@{ shape: rounded, label: "**init​_​box​_​shadow​_​pipeline**<br/>建立 UI 盒阴影的视图布局和着色器资源。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​ui​_​render::box​_​shadow::queue​_​**<br/>**shadows**<br/>为提取的 UI 阴影选择匹配目标格式和阴影<br/>采样数的管线，按节点堆叠顺序及阴影层偏移<br/>加入透明 UI 绘制阶段。" }
+  n2@{ shape: rounded, label: "**queue​_​shadows**<br/>为提取的 UI 阴影选择匹配目标格式和阴影<br/>采样数的管线，按节点堆叠顺序及阴影层偏移<br/>加入透明 UI 绘制阶段。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​ui​_​render::box​_​shadow::prepare​_​**<br/>**shadows**<br/>生成并上传 UI 阴影的裁剪几何。" }
+  n3@{ shape: rounded, label: "**prepare​_​shadows**<br/>生成并上传 UI 阴影的裁剪几何。" }
   class n3 node_system
   n1 e0@-->|"插入"| n0
   class e0 edge_write

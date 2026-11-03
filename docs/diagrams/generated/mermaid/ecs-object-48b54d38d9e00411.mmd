@@ -42,18 +42,18 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​pbr::render::light::extract​_​**<br/>**ambient​_​light**<br/>批量复制主世界实体的环境光设置。" }
+  n0@{ shape: rounded, label: "**extract​_​ambient​_​light**<br/>批量复制主世界实体的环境光设置。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**bevy​_​extract::SubEntity#lt;bevy​_​**<br/>**render::RenderApp#gt;**<br/>来自crate:bevy​_​extract ↗：记录主实体<br/>对应的子世界实体。" }
+  n1@{ shape: rounded, label: "**SubEntity#lt;RenderApp#gt;**<br/>来自crate:bevy​_​extract ↗：记录主实体<br/>对应的子世界实体。" }
   class n1 node_component
   class n1 external_node
-  n2@{ shape: rounded, label: "**ambient​_​light::AmbientLight**<br/>来自crate:bevy​_​light ↗：为单台相机配<br/>置均匀环境光。" }
+  n2@{ shape: rounded, label: "**AmbientLight**<br/>来自crate:bevy​_​light ↗：为单台相机配<br/>置均匀环境光。" }
   class n2 node_component
   class n2 external_node
-  n3@{ shape: cyl, label: "**extract​_​plugin::MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
+  n3@{ shape: cyl, label: "**MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
   class n3 node_resource
   class n3 external_node
-  n4@{ shape: fr-rect, label: "**bevy​_​pbr::PbrPlugin**<br/>装配物理材质与三维光照渲染。" }
+  n4@{ shape: fr-rect, label: "**PbrPlugin**<br/>装配物理材质与三维光照渲染。" }
   class n4 node_plugin
   n5@{ shape: notch-rect, label: "**Local · previous​_​len**<br/>根据上次环境光组件数量预留提取容量。" }
   class n5 node_local

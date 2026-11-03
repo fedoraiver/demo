@@ -48,56 +48,56 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**demo::ui::volume::sample​_​slider​_​**<br/>**pointer**<br/>Enhanced Input 负责菜单语义动作，但无<br/>法表示 UI 命中后的局部绝对横坐标。" }
+  n0@{ shape: rounded, label: "**sample​_​slider​_​pointer**<br/>Enhanced Input 负责菜单语义动作，但无<br/>法表示 UI 命中后的局部绝对横坐标。" }
   class n0 node_system
-  n1@{ shape: lean-r, label: "**ui::UiRequest**<br/>输入系统只产生请求，集中处理系统修改状态<br/>或保存设置。" }
+  n1@{ shape: lean-r, label: "**UiRequest**<br/>输入系统只产生请求，集中处理系统修改状态<br/>或保存设置。" }
   class n1 node_message
-  n2@{ shape: cyl, label: "**ui::MenuInputSource**<br/>输入来源单独决定焦点是否可见；鼠标离开后<br/>仍保留序号供后续导航使用。" }
+  n2@{ shape: cyl, label: "**MenuInputSource**<br/>输入来源单独决定焦点是否可见；鼠标离开后<br/>仍保留序号供后续导航使用。" }
   class n2 node_resource
-  n3@{ shape: rounded, label: "**ui::volume::VolumeSlider**<br/>滑条仍是普通菜单按钮，左右导航共用字段，<br/>鼠标数值由局部坐标决定。" }
+  n3@{ shape: rounded, label: "**VolumeSlider**<br/>滑条仍是普通菜单按钮，左右导航共用字段，<br/>鼠标数值由局部坐标决定。" }
   class n3 node_component
-  n4@{ shape: lean-r, label: "**bevy​_​picking::events::PointerPress**<br/>来自crate:bevy​_​picking ↗：通知目标上<br/>的指针按钮按下及连按次数。" }
+  n4@{ shape: lean-r, label: "**PointerPress**<br/>来自crate:bevy​_​picking ↗：通知目标上<br/>的指针按钮按下及连按次数。" }
   class n4 node_message
   class n4 external_node
-  n5@{ shape: rounded, label: "**bevy​_​ecs::hierarchy::ChildOf**<br/>来自crate:bevy​_​ecs ↗：保存当前实体的<br/>父实体身份" }
+  n5@{ shape: rounded, label: "**ChildOf**<br/>来自crate:bevy​_​ecs ↗：保存当前实体的<br/>父实体身份" }
   class n5 node_component
   class n5 external_node
-  n6@{ shape: cyl, label: "**button​_​input::ButtonInput#lt;mouse::**<br/>**MouseButton#gt;**<br/>来自crate:bevy​_​input ↗：保存指定按钮<br/>类型当前按下、本帧刚按下和刚释放的集合" }
+  n6@{ shape: cyl, label: "**ButtonInput#lt;MouseButton#gt;**<br/>来自crate:bevy​_​input ↗：保存指定按钮<br/>类型当前按下、本帧刚按下和刚释放的集合" }
   class n6 node_resource
   class n6 external_node
-  n7@{ shape: cyl, label: "**ui::MenuFocus**<br/>当前可操作按钮的序号，由键盘导航和鼠标悬<br/>停共同维护。" }
+  n7@{ shape: cyl, label: "**MenuFocus**<br/>当前可操作按钮的序号，由键盘导航和鼠标悬<br/>停共同维护。" }
   class n7 node_resource
-  n8@{ shape: fr-rect, label: "**ui::GameUiPlugin**<br/>组装菜单功能，不安装窗口或重复初始化会话<br/>日志。" }
+  n8@{ shape: fr-rect, label: "**GameUiPlugin**<br/>组装菜单功能，不安装窗口或重复初始化会话<br/>日志。" }
   class n8 node_plugin
-  n9@{ shape: cyl, label: "**bevy::bevy​_​ecs::message::**<br/>**Messages#lt;ui::UiRequest#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n9@{ shape: cyl, label: "**Messages#lt;UiRequest#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n9 node_resource
   class n9 external_node
   n10@{ shape: lin-rect, label: "**Build**<br/>请求在 PreUpdate 消费后，Update 依次生<br/>成 BSN 页面并更新视觉焦点。" }
   class n10 node_system_set
-  n11@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;events::**<br/>**PointerPress#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n11@{ shape: cyl, label: "**Messages#lt;PointerPress#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n11 node_resource
   class n11 external_node
-  n12@{ shape: rounded, label: "**window::PrimaryWindow**<br/>来自crate:bevy​_​window ↗：标识唯一的主<br/>窗口" }
+  n12@{ shape: rounded, label: "**PrimaryWindow**<br/>来自crate:bevy​_​window ↗：标识唯一的主<br/>窗口" }
   class n12 node_component
   class n12 external_node
-  n13@{ shape: rounded, label: "**ui::MenuButton**<br/>菜单实体保存动作与导航序号，系统不依赖显<br/>示文字或实体名称。" }
+  n13@{ shape: rounded, label: "**MenuButton**<br/>菜单实体保存动作与导航序号，系统不依赖显<br/>示文字或实体名称。" }
   class n13 node_component
-  n14@{ shape: rounded, label: "**bevy​_​ui::UiGlobalTransform**<br/>来自crate:bevy​_​ui ↗：保存 UI 节点的绝<br/>对二维变换。" }
+  n14@{ shape: rounded, label: "**UiGlobalTransform**<br/>来自crate:bevy​_​ui ↗：保存 UI 节点的绝<br/>对二维变换。" }
   class n14 node_component
   class n14 external_node
-  n15@{ shape: rounded, label: "**window::Window**<br/>来自crate:bevy​_​window ↗：保存窗口的呈<br/>现模式、位置、分辨率、标题、全屏及平台行<br/>为配置" }
+  n15@{ shape: rounded, label: "**Window**<br/>来自crate:bevy​_​window ↗：保存窗口的呈<br/>现模式、位置、分辨率、标题、全屏及平台行<br/>为配置" }
   class n15 node_component
   class n15 external_node
   n16@{ shape: lin-rect, label: "**Style**<br/>请求在 PreUpdate 消费后，Update 依次生<br/>成 BSN 页面并更新视觉焦点。" }
   class n16 node_system_set
   n17@{ shape: notch-rect, label: "**Local · drag**<br/>保持滑条拖动捕获并去重音量请求。" }
   class n17 node_local
-  n18@{ shape: rounded, label: "**bevy​_​ui::ComputedNode**<br/>来自crate:bevy​_​ui ↗：保存 UI 布局计算<br/>后的物理尺寸。" }
+  n18@{ shape: rounded, label: "**ComputedNode**<br/>来自crate:bevy​_​ui ↗：保存 UI 布局计算<br/>后的物理尺寸。" }
   class n18 node_component
   class n18 external_node
   n19@{ shape: lin-rect, label: "**Pointer**<br/>请求在 PreUpdate 消费后，Update 依次生<br/>成 BSN 页面并更新视觉焦点。" }
   class n19 node_system_set
-  n20@{ shape: cyl, label: "**ui::MenuState**<br/>页面数据与返回来源；焦点单独保存，避免导<br/>航时重建整个页面。" }
+  n20@{ shape: cyl, label: "**MenuState**<br/>页面数据与返回来源；焦点单独保存，避免导<br/>航时重建整个页面。" }
   class n20 node_resource
   n0 e0@-->|"消息"| n1
   class e0 edge_publish

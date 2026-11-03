@@ -38,11 +38,11 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​ecs::message::update::message​_​**<br/>**update​_​condition**<br/>判断本次是否允许轮换消息缓冲。" }
+  n0@{ shape: rounded, label: "**message​_​update​_​condition**<br/>判断本次是否允许轮换消息缓冲。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**bevy​_​ecs::message::update::message​_​**<br/>**update​_​system**<br/>轮换世界中已注册的消息缓冲。" }
+  n1@{ shape: rounded, label: "**message​_​update​_​system**<br/>轮换世界中已注册的消息缓冲。" }
   class n1 node_system
-  n2@{ shape: cyl, label: "**bevy​_​ecs::message::MessageRegistry**<br/>登记 World 中各消息缓冲的更新函数及是否<br/>需要轮换的状态" }
+  n2@{ shape: cyl, label: "**MessageRegistry**<br/>登记 World 中各消息缓冲的更新函数及是否<br/>需要轮换的状态" }
   class n2 node_resource
   n0 e0@-->|"运行条件"| n1
   class e0 edge_reference

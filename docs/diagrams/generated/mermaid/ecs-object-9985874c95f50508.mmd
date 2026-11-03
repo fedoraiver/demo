@@ -38,20 +38,20 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bloom::settings::Bloom**<br/>为 HDR 相机配置亮部扩散光晕。" }
+  n0@{ shape: rounded, label: "**Bloom**<br/>为 HDR 相机配置亮部扩散光晕。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​post​_​process::bloom::**<br/>**upsampling​_​pipeline::prepare​_​**<br/>**upsampling​_​pipeline**<br/>为 Bloom 中间合成和最终目标准备升采样管<br/>线。" }
+  n1@{ shape: rounded, label: "**prepare​_​upsampling​_​pipeline**<br/>为 Bloom 中间合成和最终目标准备升采样管<br/>线。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​post​_​process::bloom::prepare​_​**<br/>**bloom​_​textures**<br/>按视口比例分配 Bloom 多级纹理。" }
+  n2@{ shape: rounded, label: "**prepare​_​bloom​_​textures**<br/>按视口比例分配 Bloom 多级纹理。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​post​_​process::bloom::bloom**<br/>通过降采样和上采样合成 HDR 光晕。" }
+  n3@{ shape: rounded, label: "**bloom**<br/>通过降采样和上采样合成 HDR 光晕。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**bevy​_​extract::extract​_​component::**<br/>**extract​_​components#lt;bevy​_​post​_​**<br/>**process::bloom::settings::Bloom,**<br/>**bevy​_​render::RenderApp, ()#gt;**<br/>来自crate:bevy​_​extract ↗：批量同步或<br/>移除子世界的目标组件。" }
+  n4@{ shape: rounded, label: "**extract​_​components**<br/>来自crate:bevy​_​extract ↗：批量同步或<br/>移除子世界的目标组件。" }
   class n4 node_system
   class n4 external_node
-  n5@{ shape: rounded, label: "**bevy​_​post​_​process::bloom::**<br/>**downsampling​_​pipeline::prepare​_​**<br/>**downsampling​_​pipeline**<br/>按预过滤和缩放设置准备 Bloom 降采样变<br/>体。" }
+  n5@{ shape: rounded, label: "**prepare​_​downsampling​_​pipeline**<br/>按预过滤和缩放设置准备 Bloom 降采样变<br/>体。" }
   class n5 node_system
-  n6@{ shape: rounded, label: "**bevy​_​post​_​process::bloom::bloom**<br/>通过降采样和上采样合成 HDR 光晕。" }
+  n6@{ shape: rounded, label: "**bloom**<br/>通过降采样和上采样合成 HDR 光晕。" }
   class n6 node_system
   n0 e0@--> n1
   class e0 edge_read

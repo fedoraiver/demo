@@ -49,29 +49,26 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  subgraph layout_card_n0[" "]
-  n0@{ shape: rounded, label: "**bevy​_​input​_​focus::dispatch​_​focused​_​**<br/>**input#lt;bevy​_​input::keyboard::**<br/>**KeyboardInput#gt;**<br/>向有效焦点或主窗口派发输入。" }
+  n0@{ shape: rounded, label: "**dispatch​_​focused​_​input**<br/>向有效焦点或主窗口派发输入。" }
   class n0 node_system
-  end
-  style layout_card_n0 fill:none,stroke:none
-  n1@{ shape: rounded, label: "**bevy​_​input​_​focus::dispatch​_​focused​_​**<br/>**input#lt;bevy​_​input::gamepad::**<br/>**GamepadButtonChangedEvent#gt;**<br/>向有效焦点或主窗口派发输入。" }
+  n1@{ shape: rounded, label: "**dispatch​_​focused​_​input**<br/>向有效焦点或主窗口派发输入。" }
   class n1 node_system
   n2@{ shape: lin-rect, label: "**InputSystems**<br/>来自crate:bevy​_​input ↗：把原始设备消<br/>息汇总为本帧输入状态。" }
   class n2 node_system_set
   class n2 external_node
-  n3@{ shape: rounded, label: "**window::PrimaryWindow**<br/>来自crate:bevy​_​window ↗：标识唯一的主<br/>窗口" }
+  n3@{ shape: rounded, label: "**PrimaryWindow**<br/>来自crate:bevy​_​window ↗：标识唯一的主<br/>窗口" }
   class n3 node_component
   class n3 external_node
-  n4@{ shape: cyl, label: "**bevy​_​ecs::message::**<br/>**Messages#lt;keyboard::KeyboardInput#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n4@{ shape: cyl, label: "**Messages#lt;KeyboardInput#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n4 node_resource
   class n4 external_node
-  n5@{ shape: stadium, label: "**FocusedInput#lt;bevy​_​input::keyboard::**<br/>**KeyboardInput#gt;**<br/>把输入消息路由到焦点实体并向窗口冒泡。" }
+  n5@{ shape: stadium, label: "**FocusedInput#lt;KeyboardInput#gt;**<br/>把输入消息路由到焦点实体并向窗口冒泡。" }
   class n5 node_event
   n6@{ shape: cyl, label: "**InputFocus**<br/>保存当前输入焦点实体、待派发的焦点变化及<br/>原焦点" }
   class n6 node_resource
   n7@{ shape: lin-rect, label: "**Dispatch**<br/>组织焦点输入派发与变化通知。" }
   class n7 node_system_set
-  n8@{ shape: lean-r, label: "**keyboard::KeyboardInput**<br/>来自crate:bevy​_​input ↗：传递窗口键盘<br/>输入。" }
+  n8@{ shape: lean-r, label: "**KeyboardInput**<br/>来自crate:bevy​_​input ↗：传递窗口键盘<br/>输入。" }
   class n8 node_message
   class n8 external_node
   n9@{ shape: fr-rect, label: "**InputDispatchPlugin**<br/>向当前焦点派发键盘和手柄输入。" }
@@ -100,7 +97,7 @@ flowchart LR
   e1@{ curve: basis }
   e2@{ curve: basis }
   e3@{ curve: basis }
-  e4@{ curve: basis }
+  e4@{ curve: bumpX }
   e5@{ curve: basis }
   e6@{ curve: basis }
   e7@{ curve: basis }

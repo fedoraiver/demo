@@ -45,63 +45,63 @@ flowchart LR
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
   subgraph layout_card_n0[" "]
-  n0@{ shape: rounded, label: "**bevy​_​ui​_​widgets::popover::position​_​**<br/>**popover**<br/>定位弹出层并同步后代的 UI 变换。" }
+  n0@{ shape: rounded, label: "**position​_​popover**<br/>定位弹出层并同步后代的 UI 变换。" }
   class n0 node_system
   end
   style layout_card_n0 fill:none,stroke:none
   subgraph layout_card_n1[" "]
-  n1@{ shape: rounded, label: "**bevy​_​ui::ComputedNode**<br/>来自crate:bevy​_​ui ↗：保存 UI 布局计算<br/>后的物理尺寸。" }
+  n1@{ shape: rounded, label: "**ComputedNode**<br/>来自crate:bevy​_​ui ↗：保存 UI 布局计算<br/>后的物理尺寸。" }
   class n1 node_component
   class n1 external_node
   end
   style layout_card_n1 fill:none,stroke:none
   subgraph layout_card_n2[" "]
-  n2@{ shape: rounded, label: "**bevy​_​ui::Node**<br/>来自crate:bevy​_​ui ↗：声明 UI 节点的布<br/>局规则。" }
+  n2@{ shape: rounded, label: "**Node**<br/>来自crate:bevy​_​ui ↗：声明 UI 节点的布<br/>局规则。" }
   class n2 node_component
   class n2 external_node
   end
   style layout_card_n2 fill:none,stroke:none
   subgraph layout_card_n3[" "]
-  n3@{ shape: rounded, label: "**bevy​_​ui​_​widgets::scrollbar::update​_​**<br/>**scrollbar​_​thumb**<br/>按内容比例与滚动位置更新滚动条滑块。" }
+  n3@{ shape: rounded, label: "**update​_​scrollbar​_​thumb**<br/>按内容比例与滚动位置更新滚动条滑块。" }
   class n3 node_system
   end
   style layout_card_n3 fill:none,stroke:none
   subgraph layout_card_n4[" "]
-  n4@{ shape: rounded, label: "**bevy​_​ui::UiGlobalTransform**<br/>来自crate:bevy​_​ui ↗：保存 UI 节点的绝<br/>对二维变换。" }
+  n4@{ shape: rounded, label: "**UiGlobalTransform**<br/>来自crate:bevy​_​ui ↗：保存 UI 节点的绝<br/>对二维变换。" }
   class n4 node_component
   class n4 external_node
   end
   style layout_card_n4 fill:none,stroke:none
   subgraph layout_card_n5[" "]
-  n5@{ shape: rounded, label: "**popover::Popover**<br/>保存弹出层相对父元素的候选位置及窗口边缘<br/>留白" }
+  n5@{ shape: rounded, label: "**Popover**<br/>保存弹出层相对父元素的候选位置及窗口边缘<br/>留白" }
   class n5 node_component
   end
   style layout_card_n5 fill:none,stroke:none
   subgraph layout_card_n6[" "]
-  n6@{ shape: fr-rect, label: "**popover::PopoverPlugin**<br/>在布局后定位弹出内容。" }
+  n6@{ shape: fr-rect, label: "**PopoverPlugin**<br/>在布局后定位弹出内容。" }
   class n6 node_plugin
   end
   style layout_card_n6 fill:none,stroke:none
   subgraph layout_card_n7[" "]
-  n7@{ shape: rounded, label: "**bevy​_​ecs::hierarchy::ChildOf**<br/>来自crate:bevy​_​ecs ↗：保存当前实体的<br/>父实体身份" }
+  n7@{ shape: rounded, label: "**ChildOf**<br/>来自crate:bevy​_​ecs ↗：保存当前实体的<br/>父实体身份" }
   class n7 node_component
   class n7 external_node
   end
   style layout_card_n7 fill:none,stroke:none
   subgraph layout_card_n8[" "]
-  n8@{ shape: rounded, label: "**bevy​_​ui::ComputedUiRenderTargetInfo**<br/>来自crate:bevy​_​ui ↗：缓存 UI 目标的尺<br/>寸与缩放。" }
+  n8@{ shape: rounded, label: "**ComputedUiRenderTargetInfo**<br/>来自crate:bevy​_​ui ↗：缓存 UI 目标的尺<br/>寸与缩放。" }
   class n8 node_component
   class n8 external_node
   end
   style layout_card_n8 fill:none,stroke:none
   subgraph layout_card_n9[" "]
-  n9@{ shape: rounded, label: "**bevy​_​ui::layout::ui​_​layout​_​system**<br/>来自crate:bevy​_​ui ↗：求解 UI 布局并回<br/>写节点尺寸和二维变换。" }
+  n9@{ shape: rounded, label: "**ui​_​layout​_​system**<br/>来自crate:bevy​_​ui ↗：求解 UI 布局并回<br/>写节点尺寸和二维变换。" }
   class n9 node_system
   class n9 external_node
   end
   style layout_card_n9 fill:none,stroke:none
   subgraph layout_card_n10[" "]
-  n10@{ shape: rounded, label: "**bevy​_​ui::UiTransform**<br/>来自crate:bevy​_​ui ↗：配置 UI 节点的相<br/>对二维变换。" }
+  n10@{ shape: rounded, label: "**UiTransform**<br/>来自crate:bevy​_​ui ↗：配置 UI 节点的相<br/>对二维变换。" }
   class n10 node_component
   class n10 external_node
   end
@@ -113,7 +113,7 @@ flowchart LR
   end
   style layout_card_n11 fill:none,stroke:none
   subgraph layout_card_n12[" "]
-  n12@{ shape: rounded, label: "**bevy​_​ecs::hierarchy::Children**<br/>来自crate:bevy​_​ecs ↗：保存以<br/>ChildOf 指向当前父实体的子实体集合" }
+  n12@{ shape: rounded, label: "**Children**<br/>来自crate:bevy​_​ecs ↗：保存以<br/>ChildOf 指向当前父实体的子实体集合" }
   class n12 node_component
   class n12 external_node
   end

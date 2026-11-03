@@ -37,9 +37,9 @@ flowchart LR
   classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**physics​_​transform::**<br/>**ApplyPosToTransform**<br/>请求将物理姿态同步到实体变换。" }
+  n0@{ shape: rounded, label: "**ApplyPosToTransform**<br/>请求将物理姿态同步到实体变换。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**avian3d::physics​_​transform::**<br/>**position​_​to​_​transform**<br/>把物理世界位姿转换为显示用局部变换。" }
+  n1@{ shape: rounded, label: "**position​_​to​_​transform**<br/>把物理世界位姿转换为显示用局部变换。" }
   class n1 node_system
   n0 e0@-->|"存在性约束"| n1
   class e0 edge_reference

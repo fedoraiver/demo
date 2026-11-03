@@ -39,7 +39,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: notch-rect, label: "**Local · nodes​_​processed​_​this​_​frame**<br/>避免 UI 阴影节点在变化与移除路径重复处<br/>理。" }
   class n0 node_local
-  n1@{ shape: rounded, label: "**bevy​_​ui​_​render::box​_​shadow::extract​_​**<br/>**shadows**<br/>提取可见 UI 阴影并替换失效渲染项。" }
+  n1@{ shape: rounded, label: "**extract​_​shadows**<br/>提取可见 UI 阴影并替换失效渲染项。" }
   class n1 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

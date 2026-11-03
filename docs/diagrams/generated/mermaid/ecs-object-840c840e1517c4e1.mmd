@@ -39,17 +39,17 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**input::EguiContextImeState**<br/>保存各 Egui 上下文是否允许输入法以及活<br/>动编辑区域矩形" }
+  n0@{ shape: rounded, label: "**EguiContextImeState**<br/>保存各 Egui 上下文是否允许输入法以及活<br/>动编辑区域矩形" }
   class n0 node_component
   n1@{ shape: rounded, label: "**spawn​_​lighting · 创建模板**<br/>来自scene​_​assembly ↗：创建可复用为玩<br/>家镜头的加载相机。" }
   class n1 node_entity
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​egui::input::process​_​ime​_​system**<br/>同步 Egui 编辑区域的原生输入法状态。" }
+  n2@{ shape: rounded, label: "**process​_​ime​_​system**<br/>同步 Egui 编辑区域的原生输入法状态。" }
   class n2 node_system
   n3@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：提供主菜单展示与界面的三维相<br/>机。" }
   class n3 node_entity
   class n3 external_node
-  n4@{ shape: rounded, label: "**bevy​_​egui::input::write​_​ime​_​**<br/>**messages​_​system**<br/>向聚焦的 Egui 上下文传递输入法文本。" }
+  n4@{ shape: rounded, label: "**write​_​ime​_​messages​_​system**<br/>向聚焦的 Egui 上下文传递输入法文本。" }
   class n4 node_system
   n1 e0@-->|"可能包含"| n0
   class e0 edge_reference

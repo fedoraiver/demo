@@ -39,7 +39,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: notch-rect, label: "**Local · mesh​_​instances​_​queued​_​this​_​**<br/>**iteration​_​scratch​_​space**<br/>去重阴影阶段本轮需要排队的网格实例。" }
   class n0 node_local
-  n1@{ shape: rounded, label: "**bevy​_​pbr::render::light::queue​_​**<br/>**shadows**<br/>按材质与光源资格更新阴影绘制分桶。" }
+  n1@{ shape: rounded, label: "**queue​_​shadows**<br/>按材质与光源资格更新阴影绘制分桶。" }
   class n1 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

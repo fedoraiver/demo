@@ -39,23 +39,23 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**settings::config::GameSettings**<br/>全局玩家设置；非零类型保证帧率上限始终能<br/>够转换为等待间隔。" }
+  n0@{ shape: cyl, label: "**GameSettings**<br/>全局玩家设置；非零类型保证帧率上限始终能<br/>够转换为等待间隔。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**demo::ui::requests::handle​_​requests**<br/>来自ui ↗：每帧只消费一项语义请求，避免<br/>鼠标与确认键同时激活，或旧页面动作穿过页<br/>面切换。" }
+  n1@{ shape: rounded, label: "**handle​_​requests**<br/>来自ui ↗：每帧只消费一项语义请求，避免<br/>鼠标与确认键同时激活，或旧页面动作穿过页<br/>面切换。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**demo::settings::frame​_​pacing::apply​_​**<br/>**frame​_​rate​_​limit**<br/>只同步更新策略；计时与等待由 Winit 执<br/>行，Local 仅保存已应用值以去重和记录变<br/>更。" }
+  n2@{ shape: rounded, label: "**apply​_​frame​_​rate​_​limit**<br/>只同步更新策略；计时与等待由 Winit 执<br/>行，Local 仅保存已应用值以去重和记录变<br/>更。" }
   class n2 node_system
-  n3@{ shape: hex, label: "**demo::first​_​person::camera::on​_​**<br/>**camera​_​look**<br/>来自first​_​person ↗：Fire 已携带本帧汇<br/>总位移，直接更新角度；有向水平转角留给下<br/>一次碰撞检查消费。" }
+  n3@{ shape: hex, label: "**on​_​camera​_​look**<br/>来自first​_​person ↗：Fire 已携带本帧汇<br/>总位移，直接更新角度；有向水平转角留给下<br/>一次碰撞检查消费。" }
   class n3 node_observer
   class n3 external_node
-  n4@{ shape: hex, label: "**demo::first​_​person::camera::on​_​**<br/>**camera​_​look**<br/>来自first​_​person ↗：Fire 已携带本帧汇<br/>总位移，直接更新角度；有向水平转角留给下<br/>一次碰撞检查消费。" }
+  n4@{ shape: hex, label: "**on​_​camera​_​look**<br/>来自first​_​person ↗：Fire 已携带本帧汇<br/>总位移，直接更新角度；有向水平转角留给下<br/>一次碰撞检查消费。" }
   class n4 node_observer
   class n4 external_node
-  n5@{ shape: hex, label: "**demo::first​_​person::camera::on​_​**<br/>**camera​_​look**<br/>来自first​_​person ↗：Fire 已携带本帧汇<br/>总位移，直接更新角度；有向水平转角留给下<br/>一次碰撞检查消费。" }
+  n5@{ shape: hex, label: "**on​_​camera​_​look**<br/>来自first​_​person ↗：Fire 已携带本帧汇<br/>总位移，直接更新角度；有向水平转角留给下<br/>一次碰撞检查消费。" }
   class n5 node_observer
   class n5 external_node
-  n6@{ shape: rounded, label: "**demo::audio::mix::sync​_​audio​_​mix**<br/>来自audio ↗：合成设置预览或正式配置的<br/>有效音量。" }
+  n6@{ shape: rounded, label: "**sync​_​audio​_​mix**<br/>来自audio ↗：合成设置预览或正式配置的<br/>有效音量。" }
   class n6 node_system
   class n6 external_node
   n1 e0@-->|"赋值"| n0

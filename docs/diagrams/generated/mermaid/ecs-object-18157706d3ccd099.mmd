@@ -44,32 +44,32 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​ui​_​render::ui​_​texture​_​slice​_​**<br/>**pipeline::queue​_​ui​_​slices**<br/>将 UI 图像切片排入对应相机透明阶段。" }
+  n0@{ shape: rounded, label: "**queue​_​ui​_​slices**<br/>将 UI 图像切片排入对应相机透明阶段。" }
   class n0 node_system
   n1@{ shape: lin-rect, label: "**Queue**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
   class n1 node_system_set
   class n1 external_node
-  n2@{ shape: cyl, label: "**bevy​_​render::render​_​phase::**<br/>**ViewSortedRenderPhases#lt;render​_​pass::**<br/>**TransparentUi#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图需<br/>要排序的绘制指令。" }
+  n2@{ shape: cyl, label: "**ViewSortedRenderPhases#lt;TransparentUi**<br/>**#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图需<br/>要排序的绘制指令。" }
   class n2 node_resource
   class n2 external_node
-  n3@{ shape: cyl, label: "**bevy​_​render::render​_​resource::**<br/>**SpecializedRenderPipelines#lt;ui​_​**<br/>**texture​_​slice​_​pipeline::**<br/>**UiTextureSlicePipeline#gt;**<br/>来自crate:bevy​_​render ↗：按配置键缓存<br/>渲染管线变体。" }
+  n3@{ shape: cyl, label: "**SpecializedRenderPipelines#lt;UiTexture**<br/>**SlicePipeline#gt;**<br/>来自crate:bevy​_​render ↗：按配置键缓存<br/>渲染管线变体。" }
   class n3 node_resource
   class n3 external_node
-  n4@{ shape: cyl, label: "**ui​_​texture​_​slice​_​pipeline::**<br/>**UiTextureSlicePipeline**<br/>提供 UI 纹理切片的资源布局和着色器。" }
+  n4@{ shape: cyl, label: "**UiTextureSlicePipeline**<br/>提供 UI 纹理切片的资源布局和着色器。" }
   class n4 node_resource
   n5@{ shape: rounded, label: "**UiCameraView**<br/>从主渲染目标视图定位对应的 UI 视图。" }
   class n5 node_component
-  n6@{ shape: cyl, label: "**ui​_​texture​_​slice​_​pipeline::**<br/>**ExtractedUiTextureSlices**<br/>按节点保存提取后的 UI 纹理切片。" }
+  n6@{ shape: cyl, label: "**ExtractedUiTextureSlices**<br/>按节点保存提取后的 UI 纹理切片。" }
   class n6 node_resource
-  n7@{ shape: fr-rect, label: "**ui​_​texture​_​slice​_​pipeline::**<br/>**UiTextureSlicerPlugin**<br/>提取并绘制界面纹理切片。" }
+  n7@{ shape: fr-rect, label: "**UiTextureSlicerPlugin**<br/>提取并绘制界面纹理切片。" }
   class n7 node_plugin
-  n8@{ shape: cyl, label: "**bevy​_​render::render​_​resource::**<br/>**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
+  n8@{ shape: cyl, label: "**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
   class n8 node_resource
   class n8 external_node
-  n9@{ shape: rounded, label: "**bevy​_​render::view::ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
+  n9@{ shape: rounded, label: "**ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
   class n9 node_component
   class n9 external_node
-  n10@{ shape: cyl, label: "**bevy​_​render::render​_​phase::**<br/>**DrawFunctions#lt;render​_​pass::**<br/>**TransparentUi#gt;**<br/>来自crate:bevy​_​render ↗：注册并查询指<br/>定绘制项的绘制函数。" }
+  n10@{ shape: cyl, label: "**DrawFunctions#lt;TransparentUi#gt;**<br/>来自crate:bevy​_​render ↗：注册并查询指<br/>定绘制项的绘制函数。" }
   class n10 node_resource
   class n10 external_node
   n1 e0@-->|"集合成员"| n0

@@ -39,7 +39,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: notch-rect, label: "**Local · ended**<br/>暂存待触发的碰撞结束实体事件。" }
   class n0 node_local
-  n1@{ shape: rounded, label: "**avian3d::collision::narrow​_​phase::**<br/>**trigger​_​collision​_​events**<br/>把碰撞开始和结束消息触发为实体事件。" }
+  n1@{ shape: rounded, label: "**trigger​_​collision​_​events**<br/>把碰撞开始和结束消息触发为实体事件。" }
   class n1 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

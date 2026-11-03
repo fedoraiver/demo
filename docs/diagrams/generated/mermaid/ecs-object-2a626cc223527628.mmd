@@ -38,17 +38,17 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**render::systems::EguiRenderData**<br/>按主世界视图缓存 Egui 几何与绘制状态。" }
+  n0@{ shape: cyl, label: "**EguiRenderData**<br/>按主世界视图缓存 Egui 几何与绘制状态。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​egui::render::systems::prepare​_​**<br/>**egui​_​render​_​target​_​data​_​system**<br/>准备 Egui 顶点索引和裁剪绘制命令。" }
+  n1@{ shape: rounded, label: "**prepare​_​egui​_​render​_​target​_​data​_​**<br/>**system**<br/>准备 Egui 顶点索引和裁剪绘制命令。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​egui::render::render​_​pass::**<br/>**egui​_​pass**<br/>把准备好的 Egui 绘制项渲染到视图目标。" }
+  n2@{ shape: rounded, label: "**egui​_​pass**<br/>把准备好的 Egui 绘制项渲染到视图目标。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​egui::render::render​_​pass::**<br/>**egui​_​pass**<br/>把准备好的 Egui 绘制项渲染到视图目标。" }
+  n3@{ shape: rounded, label: "**egui​_​pass**<br/>把准备好的 Egui 绘制项渲染到视图目标。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**bevy​_​egui::render::render​_​pass::**<br/>**prepare​_​egui​_​pass**<br/>在渲染世界更新延期的 Egui 绘制回调。" }
+  n4@{ shape: rounded, label: "**prepare​_​egui​_​pass**<br/>在渲染世界更新延期的 Egui 绘制回调。" }
   class n4 node_system
-  n5@{ shape: rounded, label: "**bevy​_​egui::render::render​_​pass::**<br/>**prepare​_​egui​_​pass**<br/>在渲染世界更新延期的 Egui 绘制回调。" }
+  n5@{ shape: rounded, label: "**prepare​_​egui​_​pass**<br/>在渲染世界更新延期的 Egui 绘制回调。" }
   class n5 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

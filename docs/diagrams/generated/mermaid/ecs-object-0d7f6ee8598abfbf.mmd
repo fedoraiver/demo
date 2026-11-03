@@ -44,24 +44,24 @@ flowchart LR
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
   subgraph layout_card_n0[" "]
-  n0@{ shape: rounded, label: "**bevy​_​transform​_​interpolation::**<br/>**interpolation::complete​_​rotation​_​**<br/>**easing**<br/>在新一轮插值前完成上一段旋转。" }
+  n0@{ shape: rounded, label: "**complete​_​rotation​_​easing**<br/>在新一轮插值前完成上一段旋转。" }
   class n0 node_system
   end
   style layout_card_n0 fill:none,stroke:none
   n1@{ shape: rounded, label: "**NoRotationEasing**<br/>显式禁止当前实体的旋转插值和外推" }
   class n1 node_component
-  n2@{ shape: rounded, label: "**bevy​_​transform​_​interpolation::**<br/>**interpolation::complete​_​translation​_​**<br/>**easing**<br/>在新一轮插值前完成上一段平移。" }
+  n2@{ shape: rounded, label: "**complete​_​translation​_​easing**<br/>在新一轮插值前完成上一段平移。" }
   class n2 node_system
   n3@{ shape: rounded, label: "**RotationEasingState**<br/>保存固定步旋转插值的起点与终点" }
   class n3 node_component
-  n4@{ shape: rounded, label: "**components::transform::Transform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>相对父实体的平移、旋转和缩放" }
+  n4@{ shape: rounded, label: "**Transform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>相对父实体的平移、旋转和缩放" }
   class n4 node_component
   class n4 external_node
-  n5@{ shape: rounded, label: "**interpolation::RotationInterpolation**<br/>启用旋转插值" }
+  n5@{ shape: rounded, label: "**RotationInterpolation**<br/>启用旋转插值" }
   class n5 node_component
-  n6@{ shape: rounded, label: "**bevy​_​transform​_​interpolation::**<br/>**interpolation::complete​_​scale​_​easing**<br/>在新一轮插值前完成上一段缩放。" }
+  n6@{ shape: rounded, label: "**complete​_​scale​_​easing**<br/>在新一轮插值前完成上一段缩放。" }
   class n6 node_system
-  n7@{ shape: fr-rect, label: "**interpolation::**<br/>**TransformInterpolationPlugin**<br/>插值固定步之间的显示变换。" }
+  n7@{ shape: fr-rect, label: "**TransformInterpolationPlugin**<br/>插值固定步之间的显示变换。" }
   class n7 node_plugin
   n8@{ shape: lin-rect, label: "**Reset**<br/>组织变换缓动端点与帧间应用。" }
   class n8 node_system_set

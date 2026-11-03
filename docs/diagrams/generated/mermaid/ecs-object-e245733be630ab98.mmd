@@ -41,24 +41,24 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::mesh::**<br/>**init​_​mesh​_​2d​_​pipeline**<br/>建立二维网格的视图、实例及元数据输入布<br/>局。" }
+  n0@{ shape: rounded, label: "**init​_​mesh​_​2d​_​pipeline**<br/>建立二维网格的视图、实例及元数据输入布<br/>局。" }
   class n0 node_system
-  n1@{ shape: fr-rect, label: "**mesh2d::mesh::Mesh2dRenderPlugin**<br/>准备二维网格实例和批处理管线。" }
+  n1@{ shape: fr-rect, label: "**Mesh2dRenderPlugin**<br/>准备二维网格实例和批处理管线。" }
   class n1 node_plugin
   subgraph layout_card_n2[" "]
-  n2@{ shape: cyl, label: "**bevy​_​asset::AssetServer**<br/>来自crate:bevy​_​asset ↗：加载资产并追<br/>踪加载状态。" }
+  n2@{ shape: cyl, label: "**AssetServer**<br/>来自crate:bevy​_​asset ↗：加载资产并追<br/>踪加载状态。" }
   class n2 node_resource
   class n2 external_node
   end
   style layout_card_n2 fill:none,stroke:none
-  n3@{ shape: rounded, label: "**bevy​_​gizmos​_​render::pipeline​_​2d::**<br/>**init​_​line​_​gizmo​_​pipelines**<br/>来自crate:bevy​_​gizmos​_​render ↗：建立<br/>二维 Gizmo 线段和接头管线。" }
+  n3@{ shape: rounded, label: "**init​_​line​_​gizmo​_​pipelines**<br/>来自crate:bevy​_​gizmos​_​render ↗：建立<br/>二维 Gizmo 线段和接头管线。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: cyl, label: "**bevy​_​sprite​_​render::Mesh2dPipeline**<br/>提供二维网格的视图与实例资源布局。" }
+  n4@{ shape: cyl, label: "**Mesh2dPipeline**<br/>提供二维网格的视图与实例资源布局。" }
   class n4 node_resource
-  n5@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::**<br/>**material::init​_​material​_​2d​_​pipeline**<br/>以二维网格基础管线建立材质管线资源。" }
+  n5@{ shape: rounded, label: "**init​_​material​_​2d​_​pipeline**<br/>以二维网格基础管线建立材质管线资源。" }
   class n5 node_system
-  n6@{ shape: cyl, label: "**bevy​_​render::renderer::RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
+  n6@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
   class n6 node_resource
   class n6 external_node
   n1 e0@-->|"调用"| n0

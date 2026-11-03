@@ -41,14 +41,14 @@ flowchart LR
   classDef edge_publish stroke:#247B91,stroke-width:1.8px,stroke-dasharray:10 4 2 4
   classDef edge_observe stroke:#B66B2D,stroke-width:1.8px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: hex, label: "**avian3d::dynamics::joints::joint​_​**<br/>**graph::plugin::remove​_​joint​_​from​_​**<br/>**graph**<br/>移除关节连接并发布连接图变化。" }
+  n0@{ shape: hex, label: "**remove​_​joint​_​from​_​graph**<br/>移除关节连接并发布连接图变化。" }
   class n0 node_observer
-  n1@{ shape: stadium, label: "**bevy​_​ecs::lifecycle::RemoveEvent**<br/>来自crate:bevy​_​ecs ↗：在组件移除前发<br/>出通知。" }
+  n1@{ shape: stadium, label: "**RemoveEvent**<br/>来自crate:bevy​_​ecs ↗：在组件移除前发<br/>出通知。" }
   class n1 node_event
   class n1 external_node
-  n2@{ shape: cyl, label: "**dynamics::joints::joint​_​graph::**<br/>**JointGraph**<br/>保存刚体之间的关节连接图。" }
+  n2@{ shape: cyl, label: "**JointGraph**<br/>保存刚体之间的关节连接图。" }
   class n2 node_resource
-  n3@{ shape: lean-r, label: "**dynamics::joints::joint​_​graph::**<br/>**plugin::JointGraphChange**<br/>向求解器传递关节连接图变化。" }
+  n3@{ shape: lean-r, label: "**JointGraphChange**<br/>向求解器传递关节连接图变化。" }
   class n3 node_message
   n1 e0@-->|"接收事件"| n0
   class e0 edge_observe

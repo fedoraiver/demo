@@ -39,9 +39,9 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**scene​_​assembly::loading::**<br/>**LoadingCamera**<br/>标记等待转为玩家镜头的加载相机。" }
+  n0@{ shape: rounded, label: "**LoadingCamera**<br/>标记等待转为玩家镜头的加载相机。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**demo::scene​_​assembly::actors::spawn​_​**<br/>**actors**<br/>为就绪海岛创建玩法实体并复用加载相机。" }
+  n1@{ shape: rounded, label: "**spawn​_​actors**<br/>为就绪海岛创建玩法实体并复用加载相机。" }
   class n1 node_system
   n2@{ shape: rounded, label: "**spawn​_​lighting · 创建模板**<br/>创建可复用为玩家镜头的加载相机。" }
   class n2 node_entity

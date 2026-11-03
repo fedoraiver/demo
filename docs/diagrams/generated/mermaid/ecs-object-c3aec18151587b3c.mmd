@@ -38,27 +38,27 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**bevy​_​asset::Assets#lt;source::**<br/>**AudioSource#gt;**<br/>按资产身份存储对象并暂存变化消息。" }
+  n0@{ shape: cyl, label: "**Assets#lt;AudioSource#gt;**<br/>按资产身份存储对象并暂存变化消息。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​kira​_​audio::audio​_​output::play​_​**<br/>**audio​_​channel#lt;demo::audio::SfxTrack#gt;**<br/>来自crate:bevy​_​kira​_​audio ↗：执行指<br/>定类型音频通道的命令队列。" }
+  n1@{ shape: rounded, label: "**play​_​audio​_​channel**<br/>来自crate:bevy​_​kira​_​audio ↗：执行指<br/>定类型音频通道的命令队列。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​asset::assets::Assets#lt;bevy​_​**<br/>**kira​_​audio::source::AudioSource#gt;::**<br/>**asset​_​events​_​condition**<br/>判断是否有待发布的资产变化。" }
+  n2@{ shape: rounded, label: "**asset​_​events​_​condition**<br/>判断是否有待发布的资产变化。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​kira​_​audio::audio​_​output::play​_​**<br/>**audio​_​channel#lt;demo::audio::UiTrack#gt;**<br/>来自crate:bevy​_​kira​_​audio ↗：执行指<br/>定类型音频通道的命令队列。" }
+  n3@{ shape: rounded, label: "**play​_​audio​_​channel**<br/>来自crate:bevy​_​kira​_​audio ↗：执行指<br/>定类型音频通道的命令队列。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**bevy​_​asset::assets::Assets#lt;bevy​_​**<br/>**kira​_​audio::source::AudioSource#gt;::**<br/>**track​_​assets**<br/>同步资产存活状态并处理句柄释放。" }
+  n4@{ shape: rounded, label: "**track​_​assets**<br/>同步资产存活状态并处理句柄释放。" }
   class n4 node_system
-  n5@{ shape: rounded, label: "**bevy​_​asset::assets::Assets#lt;bevy​_​**<br/>**kira​_​audio::source::AudioSource#gt;::**<br/>**asset​_​events**<br/>发布累计的资产变化消息。" }
+  n5@{ shape: rounded, label: "**asset​_​events**<br/>发布累计的资产变化消息。" }
   class n5 node_system
-  n6@{ shape: rounded, label: "**demo::audio::playback::play​_​requests**<br/>来自audio ↗：按有效音量与播放策略处理<br/>短音请求。" }
+  n6@{ shape: rounded, label: "**play​_​requests**<br/>来自audio ↗：按有效音量与播放策略处理<br/>短音请求。" }
   class n6 node_system
   class n6 external_node
-  n7@{ shape: rounded, label: "**bevy​_​kira​_​audio::audio​_​output::play​_​**<br/>**dynamic​_​channels**<br/>来自crate:bevy​_​kira​_​audio ↗：执行按<br/>名称创建的动态音频通道命令。" }
+  n7@{ shape: rounded, label: "**play​_​dynamic​_​channels**<br/>来自crate:bevy​_​kira​_​audio ↗：执行按<br/>名称创建的动态音频通道命令。" }
   class n7 node_system
   class n7 external_node
-  n8@{ shape: rounded, label: "**bevy​_​kira​_​audio::audio​_​output::play​_​**<br/>**audio​_​channel#lt;bevy​_​kira​_​audio::**<br/>**MainTrack#gt;**<br/>来自crate:bevy​_​kira​_​audio ↗：执行指<br/>定类型音频通道的命令队列。" }
+  n8@{ shape: rounded, label: "**play​_​audio​_​channel**<br/>来自crate:bevy​_​kira​_​audio ↗：执行指<br/>定类型音频通道的命令队列。" }
   class n8 node_system
   class n8 external_node
   n0 e0@--> n1

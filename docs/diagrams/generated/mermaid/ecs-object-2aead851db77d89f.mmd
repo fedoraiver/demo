@@ -46,7 +46,7 @@ flowchart LR
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
   subgraph layout_card_n0[" "]
-  n0@{ shape: rounded, label: "**bevy​_​time::fixed::run​_​fixed​_​main​_​**<br/>**schedule**<br/>按累计时间推进固定主调度。" }
+  n0@{ shape: rounded, label: "**run​_​fixed​_​main​_​schedule**<br/>按累计时间推进固定主调度。" }
   class n0 node_system
   end
   style layout_card_n0 fill:none,stroke:none
@@ -62,40 +62,40 @@ flowchart LR
   end
   style layout_card_n2 fill:none,stroke:none
   subgraph layout_card_n3[" "]
-  n3@{ shape: rounded, label: "**bevy​_​ecs::schedule::Schedules**<br/>来自crate:bevy​_​ecs ↗：按标签保存可运<br/>行的调度实例。" }
+  n3@{ shape: rounded, label: "**Schedules**<br/>来自crate:bevy​_​ecs ↗：按标签保存可运<br/>行的调度实例。" }
   class n3 node_component
   class n3 external_node
   end
   style layout_card_n3 fill:none,stroke:none
   subgraph layout_card_n4[" "]
-  n4@{ shape: cyl, label: "**time::Time**<br/>保存时钟上下文、帧间隔及累计时间" }
+  n4@{ shape: cyl, label: "**Time**<br/>保存时钟上下文、帧间隔及累计时间" }
   class n4 node_resource
   end
   style layout_card_n4 fill:none,stroke:none
   subgraph layout_card_n5[" "]
-  n5@{ shape: cyl, label: "**time::Time#lt;fixed::Fixed#gt;**<br/>保存时钟上下文、帧间隔及累计时间" }
+  n5@{ shape: cyl, label: "**Time#lt;Fixed#gt;**<br/>保存时钟上下文、帧间隔及累计时间" }
   class n5 node_resource
   end
   style layout_card_n5 fill:none,stroke:none
   subgraph layout_card_n6[" "]
-  n6@{ shape: cyl, label: "**bevy​_​ecs::error::**<br/>**FallbackErrorHandler**<br/>来自crate:bevy​_​ecs ↗：处理未被接管的<br/>错误与 panic。" }
+  n6@{ shape: cyl, label: "**FallbackErrorHandler**<br/>来自crate:bevy​_​ecs ↗：处理未被接管的<br/>错误与 panic。" }
   class n6 node_resource
   class n6 external_node
   end
   style layout_card_n6 fill:none,stroke:none
   subgraph layout_card_n7[" "]
-  n7@{ shape: cyl, label: "**time::Time#lt;virt::Virtual#gt;**<br/>保存时钟上下文、帧间隔及累计时间" }
+  n7@{ shape: cyl, label: "**Time#lt;Virtual#gt;**<br/>保存时钟上下文、帧间隔及累计时间" }
   class n7 node_resource
   end
   style layout_card_n7 fill:none,stroke:none
   subgraph layout_card_n8[" "]
-  n8@{ shape: cyl, label: "**bevy​_​ecs::schedule::Schedules**<br/>来自crate:bevy​_​ecs ↗：按标签保存可运<br/>行的调度实例。" }
+  n8@{ shape: cyl, label: "**Schedules**<br/>来自crate:bevy​_​ecs ↗：按标签保存可运<br/>行的调度实例。" }
   class n8 node_resource
   class n8 external_node
   end
   style layout_card_n8 fill:none,stroke:none
   subgraph layout_card_n9[" "]
-  n9@{ shape: stadium, label: "**bevy​_​ecs::change​_​detection::**<br/>**CheckChangeTicks**<br/>来自crate:bevy​_​ecs ↗：请求维护变化检<br/>测 tick 范围。" }
+  n9@{ shape: stadium, label: "**CheckChangeTicks**<br/>来自crate:bevy​_​ecs ↗：请求维护变化检<br/>测 tick 范围。" }
   class n9 node_event
   class n9 external_node
   end

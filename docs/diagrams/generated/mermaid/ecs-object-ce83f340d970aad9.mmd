@@ -41,11 +41,11 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: lin-rect, label: "**ProcessInput**<br/>组织指针拾取和悬停处理阶段。" }
   class n0 node_system_set
-  n1@{ shape: rounded, label: "**bevy​_​picking::pointer::**<br/>**PointerInput::receive**<br/>按输入消息更新拾取指针状态。" }
+  n1@{ shape: rounded, label: "**receive**<br/>按输入消息更新拾取指针状态。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​picking::PickingSettings::**<br/>**input​_​should​_​run**<br/>判断是否收集拾取输入。" }
+  n2@{ shape: rounded, label: "**input​_​should​_​run**<br/>判断是否收集拾取输入。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​picking::backend::ray::RayMap::**<br/>**repopulate**<br/>重建指针与相机组合的拾取射线。" }
+  n3@{ shape: rounded, label: "**repopulate**<br/>重建指针与相机组合的拾取射线。" }
   class n3 node_system
   n4@{ shape: lin-rect, label: "**Backend**<br/>组织指针拾取和悬停处理阶段。" }
   class n4 node_system_set

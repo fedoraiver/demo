@@ -40,88 +40,43 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  subgraph layout_card_n0[" "]
-  n0@{ shape: rounded, label: "**bevy​_​pbr::render::gpu​_​preprocess::**<br/>**unpack​_​bins**<br/>解包 GPU 分桶数据并生成网格预处理任务。" }
+  n0@{ shape: rounded, label: "**unpack​_​bins**<br/>解包 GPU 分桶数据并生成网格预处理任务。" }
   class n0 node_system
-  end
-  style layout_card_n0 fill:none,stroke:none
-  subgraph layout_card_n1[" "]
-  n1@{ shape: cyl, label: "**render::gpu​_​preprocess::**<br/>**BinUnpackingBindGroups**<br/>按视图和绘制阶段绑定分桶解包资源。" }
+  n1@{ shape: cyl, label: "**BinUnpackingBindGroups**<br/>按视图和绘制阶段绑定分桶解包资源。" }
   class n1 node_resource
-  end
-  style layout_card_n1 fill:none,stroke:none
-  subgraph layout_card_n2[" "]
-  n2@{ shape: cyl, label: "**bevy​_​render::renderer::CurrentView**<br/>来自crate:bevy​_​render ↗：指定当前正在<br/>渲染的视图实体。" }
+  n2@{ shape: cyl, label: "**CurrentView**<br/>来自crate:bevy​_​render ↗：指定当前正在<br/>渲染的视图实体。" }
   class n2 node_resource
   class n2 external_node
-  end
-  style layout_card_n2 fill:none,stroke:none
-  subgraph layout_card_n3[" "]
-  n3@{ shape: cyl, label: "**bevy​_​render::diagnostic::**<br/>**DiagnosticsRecorder**<br/>来自crate:bevy​_​render ↗：记录渲染诊断<br/>区间与 GPU 查询索引的对应。" }
+  n3@{ shape: cyl, label: "**DiagnosticsRecorder**<br/>来自crate:bevy​_​render ↗：记录渲染诊断<br/>区间与 GPU 查询索引的对应。" }
   class n3 node_resource
   class n3 external_node
-  end
-  style layout_card_n3 fill:none,stroke:none
-  subgraph layout_card_n4[" "]
-  n4@{ shape: cyl, label: "**bevy​_​render::renderer::RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
+  n4@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
   class n4 node_resource
   class n4 external_node
-  end
-  style layout_card_n4 fill:none,stroke:none
-  subgraph layout_card_n5[" "]
-  n5@{ shape: rounded, label: "**bevy​_​pbr::render::gpu​_​preprocess::**<br/>**early​_​gpu​_​preprocess**<br/>为当前视图及阴影级联执行早期网格转换与裁<br/>剪。" }
+  n5@{ shape: rounded, label: "**early​_​gpu​_​preprocess**<br/>为当前视图及阴影级联执行早期网格转换与裁<br/>剪。" }
   class n5 node_system
-  end
-  style layout_card_n5 fill:none,stroke:none
-  subgraph layout_card_n6[" "]
-  n6@{ shape: rounded, label: "**bevy​_​pbr::render::gpu​_​preprocess::**<br/>**allocate​_​uniforms**<br/>在 GPU 上为可见批次分配网格参数存储。" }
+  n6@{ shape: rounded, label: "**allocate​_​uniforms**<br/>在 GPU 上为可见批次分配网格参数存储。" }
   class n6 node_system
-  end
-  style layout_card_n6 fill:none,stroke:none
-  subgraph layout_card_n7[" "]
-  n7@{ shape: rounded, label: "**render::light::ViewLightEntities**<br/>保存相机相关的全部级联阴影视图。" }
+  n7@{ shape: rounded, label: "**ViewLightEntities**<br/>保存相机相关的全部级联阴影视图。" }
   class n7 node_component
-  end
-  style layout_card_n7 fill:none,stroke:none
-  subgraph layout_card_n8[" "]
-  n8@{ shape: cyl, label: "**bevy​_​render::render​_​resource::**<br/>**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
+  n8@{ shape: cyl, label: "**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
   class n8 node_resource
   class n8 external_node
-  end
-  style layout_card_n8 fill:none,stroke:none
-  subgraph layout_card_n9[" "]
-  n9@{ shape: cyl, label: "**bevy​_​render::batching::gpu​_​**<br/>**preprocessing::**<br/>**BatchedInstanceBuffers#lt;render::**<br/>**mesh::MeshUniform, render::mesh::**<br/>**MeshInputUniform#gt;**<br/>来自crate:bevy​_​render ↗：保存批次绘制<br/>的 GPU 输入与实例缓冲。" }
+  n9@{ shape: cyl, label: "**BatchedInstanceBuffers#lt;MeshUniform,**<br/>**MeshInputUniform#gt;**<br/>来自crate:bevy​_​render ↗：保存批次绘制<br/>的 GPU 输入与实例缓冲。" }
   class n9 node_resource
   class n9 external_node
-  end
-  style layout_card_n9 fill:none,stroke:none
-  subgraph layout_card_n10[" "]
-  n10@{ shape: rounded, label: "**render::light::LightEntity**<br/>标识阴影视图对应的光源面或级联。" }
+  n10@{ shape: rounded, label: "**LightEntity**<br/>标识阴影视图对应的光源面或级联。" }
   class n10 node_component
-  end
-  style layout_card_n10 fill:none,stroke:none
-  subgraph layout_card_n11[" "]
-  n11@{ shape: rounded, label: "**render::gpu​_​preprocess::**<br/>**SkipGpuPreprocess**<br/>避免视图重复执行 GPU 网格预处理。" }
+  n11@{ shape: rounded, label: "**SkipGpuPreprocess**<br/>避免视图重复执行 GPU 网格预处理。" }
   class n11 node_component
-  end
-  style layout_card_n11 fill:none,stroke:none
-  subgraph layout_card_n12[" "]
-  n12@{ shape: rounded, label: "**bevy​_​core​_​pipeline::prepass::node::**<br/>**early​_​prepass**<br/>来自crate:bevy​_​core​_​pipeline ↗：绘制<br/>早期不透明与 AlphaMask 预通道。" }
+  n12@{ shape: rounded, label: "**early​_​prepass**<br/>来自crate:bevy​_​core​_​pipeline ↗：绘制<br/>早期不透明与 AlphaMask 预通道。" }
   class n12 node_system
   class n12 external_node
-  end
-  style layout_card_n12 fill:none,stroke:none
-  subgraph layout_card_n13[" "]
-  n13@{ shape: rounded, label: "**bevy​_​render::view::ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
+  n13@{ shape: rounded, label: "**ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
   class n13 node_component
   class n13 external_node
-  end
-  style layout_card_n13 fill:none,stroke:none
-  subgraph layout_card_n14[" "]
-  n14@{ shape: cyl, label: "**render::gpu​_​preprocess::**<br/>**PreprocessPipelines**<br/>汇集网格预处理与间接参数构建管线。" }
+  n14@{ shape: cyl, label: "**PreprocessPipelines**<br/>汇集网格预处理与间接参数构建管线。" }
   class n14 node_resource
-  end
-  style layout_card_n14 fill:none,stroke:none
   n1 e0@--> n0
   class e0 edge_read
   n2 e1@--> n0

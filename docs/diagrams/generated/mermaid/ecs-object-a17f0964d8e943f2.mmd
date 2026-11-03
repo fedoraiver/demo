@@ -36,9 +36,9 @@ flowchart LR
   classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**renderer::RenderInstance**<br/>提供 GPU 初始化与表面创建入口。" }
+  n0@{ shape: cyl, label: "**RenderInstance**<br/>提供 GPU 初始化与表面创建入口。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​render::view::window::create​_​**<br/>**surfaces**<br/>创建并配置提取窗口的 GPU 表面。" }
+  n1@{ shape: rounded, label: "**create​_​surfaces**<br/>创建并配置提取窗口的 GPU 表面。" }
   class n1 node_system
   n0 e0@--> n1
   class e0 edge_read

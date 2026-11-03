@@ -44,26 +44,26 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**avian3d::dynamics::rigid​_​body::**<br/>**forces::plugin::apply​_​local​_​**<br/>**acceleration**<br/>在子步中把局部加速度作用到世界速度。" }
+  n0@{ shape: rounded, label: "**apply​_​local​_​acceleration**<br/>在子步中把局部加速度作用到世界速度。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**physics​_​transform::transform::**<br/>**Rotation**<br/>保存刚体或碰撞体的世界旋转。" }
+  n1@{ shape: rounded, label: "**Rotation**<br/>保存刚体或碰撞体的世界旋转。" }
   class n1 node_component
-  n2@{ shape: rounded, label: "**dynamics::solver::solver​_​body::**<br/>**SolverBodyIndex**<br/>定位实体对应的求解器刚体。" }
+  n2@{ shape: rounded, label: "**SolverBodyIndex**<br/>定位实体对应的求解器刚体。" }
   class n2 node_component
-  n3@{ shape: fr-rect, label: "**dynamics::rigid​_​body::forces::**<br/>**plugin::ForcePlugin**<br/>管理并施加刚体外力和力矩。" }
+  n3@{ shape: fr-rect, label: "**ForcePlugin**<br/>管理并施加刚体外力和力矩。" }
   class n3 node_plugin
   n4@{ shape: lin-rect, label: "**ApplyLocalAcceleration**<br/>组织外力应用与累积量清理。" }
   class n4 node_system_set
-  n5@{ shape: cyl, label: "**dynamics::solver::diagnostics::**<br/>**SolverDiagnostics**<br/>记录物理求解各阶段耗时。" }
+  n5@{ shape: cyl, label: "**SolverDiagnostics**<br/>记录物理求解各阶段耗时。" }
   class n5 node_resource
-  n6@{ shape: rounded, label: "**dynamics::rigid​_​body::forces::**<br/>**AccumulatedLocalAcceleration**<br/>累积物理步前的局部加速度。" }
+  n6@{ shape: rounded, label: "**AccumulatedLocalAcceleration**<br/>累积物理步前的局部加速度。" }
   class n6 node_component
-  n7@{ shape: cyl, label: "**bevy::bevy​_​time::Time#lt;schedule::**<br/>**time::Substeps#gt;**<br/>来自crate:bevy​_​time ↗：保存时钟上下<br/>文、帧间隔及累计时间" }
+  n7@{ shape: cyl, label: "**Time#lt;Substeps#gt;**<br/>来自crate:bevy​_​time ↗：保存时钟上下<br/>文、帧间隔及累计时间" }
   class n7 node_resource
   class n7 external_node
-  n8@{ shape: rounded, label: "**dynamics::integrator::**<br/>**CustomVelocityIntegration**<br/>将速度积分交给自定义逻辑。" }
+  n8@{ shape: rounded, label: "**CustomVelocityIntegration**<br/>将速度积分交给自定义逻辑。" }
   class n8 node_component
-  n9@{ shape: cyl, label: "**dynamics::solver::solver​_​body::**<br/>**SolverBodies**<br/>连续存储活跃刚体的求解状态。" }
+  n9@{ shape: cyl, label: "**SolverBodies**<br/>连续存储活跃刚体的求解状态。" }
   class n9 node_resource
   n1 e0@--> n0
   class e0 edge_read

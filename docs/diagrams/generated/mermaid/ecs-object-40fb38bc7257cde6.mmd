@@ -38,15 +38,15 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**contrast​_​adaptive​_​sharpening::**<br/>**CasPipeline**<br/>保存对比度自适应锐化的管线资源。" }
+  n0@{ shape: cyl, label: "**CasPipeline**<br/>保存对比度自适应锐化的管线资源。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​anti​_​alias::contrast​_​adaptive​_​**<br/>**sharpening::init​_​cas​_​pipeline**<br/>建立 CAS 锐化的纹理、参数布局和管线变体<br/>资源。" }
+  n1@{ shape: rounded, label: "**init​_​cas​_​pipeline**<br/>建立 CAS 锐化的纹理、参数布局和管线变体<br/>资源。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​anti​_​alias::contrast​_​adaptive​_​**<br/>**sharpening::node::cas**<br/>对视图颜色执行 CAS 锐化后处理。" }
+  n2@{ shape: rounded, label: "**cas**<br/>对视图颜色执行 CAS 锐化后处理。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​anti​_​alias::contrast​_​adaptive​_​**<br/>**sharpening::prepare​_​cas​_​pipelines**<br/>按去噪与目标格式准备视图锐化管线。" }
+  n3@{ shape: rounded, label: "**prepare​_​cas​_​pipelines**<br/>按去噪与目标格式准备视图锐化管线。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**bevy​_​anti​_​alias::contrast​_​adaptive​_​**<br/>**sharpening::node::cas**<br/>对视图颜色执行 CAS 锐化后处理。" }
+  n4@{ shape: rounded, label: "**cas**<br/>对视图颜色执行 CAS 锐化后处理。" }
   class n4 node_system
   n1 e0@-->|"插入"| n0
   class e0 edge_write

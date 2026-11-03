@@ -43,19 +43,19 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**avian3d::dynamics::rigid​_​body::**<br/>**forces::plugin::apply​_​constant​_​**<br/>**local​_​linear​_​acceleration**<br/>累加刚体局部坐标中的恒定线加速度。" }
+  n0@{ shape: rounded, label: "**apply​_​constant​_​local​_​linear​_​**<br/>**acceleration**<br/>累加刚体局部坐标中的恒定线加速度。" }
   class n0 node_system
-  n1@{ shape: fr-rect, label: "**dynamics::rigid​_​body::forces::**<br/>**plugin::ForcePlugin**<br/>管理并施加刚体外力和力矩。" }
+  n1@{ shape: fr-rect, label: "**ForcePlugin**<br/>管理并施加刚体外力和力矩。" }
   class n1 node_plugin
   n2@{ shape: lin-rect, label: "**ApplyConstantForces**<br/>组织外力应用与累积量清理。" }
   class n2 node_system_set
-  n3@{ shape: rounded, label: "**dynamics::rigid​_​body::forces::**<br/>**AccumulatedLocalAcceleration**<br/>累积物理步前的局部加速度。" }
+  n3@{ shape: rounded, label: "**AccumulatedLocalAcceleration**<br/>累积物理步前的局部加速度。" }
   class n3 node_component
-  n4@{ shape: rounded, label: "**avian3d::dynamics::rigid​_​body::**<br/>**forces::plugin::apply​_​constant​_​**<br/>**local​_​angular​_​acceleration**<br/>累加刚体局部坐标中的恒定角加速度。" }
+  n4@{ shape: rounded, label: "**apply​_​constant​_​local​_​angular​_​**<br/>**acceleration**<br/>累加刚体局部坐标中的恒定角加速度。" }
   class n4 node_system
-  n5@{ shape: rounded, label: "**avian3d::dynamics::rigid​_​body::**<br/>**forces::plugin::apply​_​constant​_​**<br/>**local​_​torques**<br/>按局部惯量把恒定局部扭矩转成角加速度。" }
+  n5@{ shape: rounded, label: "**apply​_​constant​_​local​_​torques**<br/>按局部惯量把恒定局部扭矩转成角加速度。" }
   class n5 node_system
-  n6@{ shape: rounded, label: "**dynamics::rigid​_​body::forces::**<br/>**ConstantLocalLinearAcceleration**<br/>持续施加局部空间线性加速度。" }
+  n6@{ shape: rounded, label: "**ConstantLocalLinearAcceleration**<br/>持续施加局部空间线性加速度。" }
   class n6 node_component
   n1 e0@-->|"调用"| n0
   class e0 edge_registration

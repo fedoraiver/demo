@@ -40,11 +40,11 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**UiViewTarget**<br/>从 UI 视图定位对应的主渲染目标视图。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​ui​_​render::render​_​pass::ui​_​pass**<br/>把透明 UI 绘制项渲染到关联视图。" }
+  n1@{ shape: rounded, label: "**ui​_​pass**<br/>把透明 UI 绘制项渲染到关联视图。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​ui​_​render::extract​_​ui​_​camera​_​**<br/>**view**<br/>为活动二维或三维相机维护独立 UI 视图。" }
+  n2@{ shape: rounded, label: "**extract​_​ui​_​camera​_​view**<br/>为活动二维或三维相机维护独立 UI 视图。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​ui​_​render::render​_​pass::ui​_​pass**<br/>把透明 UI 绘制项渲染到关联视图。" }
+  n3@{ shape: rounded, label: "**ui​_​pass**<br/>把透明 UI 绘制项渲染到关联视图。" }
   class n3 node_system
   n0 e0@--> n1
   class e0 edge_read

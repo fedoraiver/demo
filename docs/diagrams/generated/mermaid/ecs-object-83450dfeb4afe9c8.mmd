@@ -44,7 +44,7 @@ flowchart LR
   class n1 node_system_set
   n2@{ shape: lin-rect, label: "**First**<br/>组织宽阶段碰撞候选收集。" }
   class n2 node_system_set
-  n3@{ shape: rounded, label: "**avian3d::collider​_​tree::update::**<br/>**update​_​moved​_​collider​_​**<br/>**aabbs#lt;avian3d::collision::collider::**<br/>**parry::Collider#gt;**<br/>重算物理步后被手动改变的碰撞边界。" }
+  n3@{ shape: rounded, label: "**update​_​moved​_​collider​_​aabbs**<br/>重算物理步后被手动改变的碰撞边界。" }
   class n3 node_system
   n4@{ shape: lin-rect, label: "**BroadPhase**<br/>组织一次物理模拟步的主要阶段。" }
   class n4 node_system_set

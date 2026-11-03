@@ -39,7 +39,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: notch-rect, label: "**Local · all​_​lights​_​found**<br/>记录本轮成功提取的渲染光源实体。" }
   class n0 node_local
-  n1@{ shape: rounded, label: "**bevy​_​pbr::render::light::extract​_​**<br/>**lights**<br/>提取各类可见光源及阴影渲染状态。" }
+  n1@{ shape: rounded, label: "**extract​_​lights**<br/>提取各类可见光源及阴影渲染状态。" }
   class n1 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

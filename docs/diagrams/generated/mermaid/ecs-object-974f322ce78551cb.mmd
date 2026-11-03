@@ -47,29 +47,29 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​ecs::message::update::message​_​**<br/>**update​_​system**<br/>轮换世界中已注册的消息缓冲。" }
+  n0@{ shape: rounded, label: "**message​_​update​_​system**<br/>轮换世界中已注册的消息缓冲。" }
   class n0 node_system
   n1@{ shape: lin-rect, label: "**MessageUpdateSystems**<br/>统一轮换已登记的消息缓冲。" }
   class n1 node_system_set
-  n2@{ shape: fr-rect, label: "**bevy​_​render::pipelined​_​rendering::**<br/>**PipelinedRenderingPlugin**<br/>来自crate:bevy​_​render ↗：在独立线程执<br/>行流水化渲染。" }
+  n2@{ shape: fr-rect, label: "**PipelinedRenderingPlugin**<br/>来自crate:bevy​_​render ↗：在独立线程执<br/>行流水化渲染。" }
   class n2 node_plugin
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​ecs::message::MessageRegistry**<br/>登记 World 中各消息缓冲的更新函数及是否<br/>需要轮换的状态" }
+  n3@{ shape: rounded, label: "**MessageRegistry**<br/>登记 World 中各消息缓冲的更新函数及是否<br/>需要轮换的状态" }
   class n3 node_component
   n4@{ shape: notch-rect, label: "**Local · last​_​change​_​tick**<br/>保存上次消息缓冲更新的变更刻度。" }
   class n4 node_local
-  n5@{ shape: cyl, label: "**bevy​_​ecs::message::MessageRegistry**<br/>登记 World 中各消息缓冲的更新函数及是否<br/>需要轮换的状态" }
+  n5@{ shape: cyl, label: "**MessageRegistry**<br/>登记 World 中各消息缓冲的更新函数及是否<br/>需要轮换的状态" }
   class n5 node_resource
   n6@{ shape: notch-rect, label: "**Local · arg1**<br/>保存消息缓冲轮换的上次变化刻度。" }
   class n6 node_local
-  n7@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;bevy​_​**<br/>**ecs::lifecycle::**<br/>**RemovedComponentEntity#gt;**<br/>保存最近两次轮换期间产生的指定类型消息" }
+  n7@{ shape: cyl, label: "**Messages#lt;RemovedComponentEntity#gt;**<br/>保存最近两次轮换期间产生的指定类型消息" }
   class n7 node_resource
-  n8@{ shape: rounded, label: "**bevy​_​ecs::message::update::message​_​**<br/>**update​_​condition**<br/>判断本次是否允许轮换消息缓冲。" }
+  n8@{ shape: rounded, label: "**message​_​update​_​condition**<br/>判断本次是否允许轮换消息缓冲。" }
   class n8 node_system
   n9@{ shape: fr-rect, label: "**main / App**<br/>来自应用 ↗：装配应用并导出真实调度。" }
   class n9 node_app
   class n9 external_node
-  n10@{ shape: lean-r, label: "**bevy​_​ecs::lifecycle::**<br/>**RemovedComponentEntity**<br/>记录发生组件移除的实体。" }
+  n10@{ shape: lean-r, label: "**RemovedComponentEntity**<br/>记录发生组件移除的实体。" }
   class n10 node_message
   n1 e0@-->|"集合成员"| n0
   class e0 edge_set_membership
@@ -94,6 +94,7 @@ flowchart LR
   n0 e10@-->|"消息"| n10
   class e10 edge_publish
   e0@{ curve: basis }
+  e1@{ curve: bumpX }
   e2@{ curve: basis }
   e3@{ curve: basis }
   e4@{ curve: basis }

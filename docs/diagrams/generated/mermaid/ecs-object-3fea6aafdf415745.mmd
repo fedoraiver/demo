@@ -42,19 +42,19 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: hex, label: "**bevy​_​ui​_​widgets::menu::menu​_​item​_​on​_​**<br/>**pointer​_​cancel**<br/>取消菜单项的指针按压状态。" }
+  n0@{ shape: hex, label: "**menu​_​item​_​on​_​pointer​_​cancel**<br/>取消菜单项的指针按压状态。" }
   class n0 node_observer
-  n1@{ shape: rounded, label: "**bevy​_​ui::Pressed**<br/>来自crate:bevy​_​ui ↗：标记按钮或控件当<br/>前处于按住状态。" }
+  n1@{ shape: rounded, label: "**Pressed**<br/>来自crate:bevy​_​ui ↗：标记按钮或控件当<br/>前处于按住状态。" }
   class n1 node_component
   class n1 external_node
-  n2@{ shape: fr-rect, label: "**menu::MenuPlugin**<br/>处理菜单焦点与菜单项交互。" }
+  n2@{ shape: fr-rect, label: "**MenuPlugin**<br/>处理菜单焦点与菜单项交互。" }
   class n2 node_plugin
-  n3@{ shape: rounded, label: "**bevy​_​ui::InteractionDisabled**<br/>来自crate:bevy​_​ui ↗：标记禁止交互的<br/>UI 控件。" }
+  n3@{ shape: rounded, label: "**InteractionDisabled**<br/>来自crate:bevy​_​ui ↗：标记禁止交互的<br/>UI 控件。" }
   class n3 node_component
   class n3 external_node
-  n4@{ shape: rounded, label: "**menu::MenuItem**<br/>标识可交互的菜单项。" }
+  n4@{ shape: rounded, label: "**MenuItem**<br/>标识可交互的菜单项。" }
   class n4 node_component
-  n5@{ shape: stadium, label: "**events::PointerCancel**<br/>来自crate:bevy​_​picking ↗：通知指针取<br/>消并丢弃当前交互状态。" }
+  n5@{ shape: stadium, label: "**PointerCancel**<br/>来自crate:bevy​_​picking ↗：通知指针取<br/>消并丢弃当前交互状态。" }
   class n5 node_event
   class n5 external_node
   n1 e0@-->|"存在性约束"| n0

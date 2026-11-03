@@ -42,22 +42,22 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: hex, label: "**bevy​_​ui​_​widgets::checkbox::checkbox​_​**<br/>**on​_​key​_​input**<br/>通过确认键请求切换复选框勾选。" }
+  n0@{ shape: hex, label: "**checkbox​_​on​_​key​_​input**<br/>通过确认键请求切换复选框勾选。" }
   class n0 node_observer
-  n1@{ shape: rounded, label: "**bevy​_​ui::InteractionDisabled**<br/>来自crate:bevy​_​ui ↗：标记禁止交互的<br/>UI 控件。" }
+  n1@{ shape: rounded, label: "**InteractionDisabled**<br/>来自crate:bevy​_​ui ↗：标记禁止交互的<br/>UI 控件。" }
   class n1 node_component
   class n1 external_node
-  n2@{ shape: stadium, label: "**FocusedInput#lt;bevy​_​input::keyboard::**<br/>**KeyboardInput#gt;**<br/>来自crate:bevy​_​input​_​focus ↗：把输入<br/>消息路由到焦点实体并向窗口冒泡。" }
+  n2@{ shape: stadium, label: "**FocusedInput#lt;KeyboardInput#gt;**<br/>来自crate:bevy​_​input​_​focus ↗：把输入<br/>消息路由到焦点实体并向窗口冒泡。" }
   class n2 node_event
   class n2 external_node
   n3@{ shape: stadium, label: "**ValueChange#lt;bool#gt;**<br/>传递控件提出的新值。" }
   class n3 node_event
-  n4@{ shape: rounded, label: "**checkbox::Checkbox**<br/>响应复选框交互并提出勾选变化。" }
+  n4@{ shape: rounded, label: "**Checkbox**<br/>响应复选框交互并提出勾选变化。" }
   class n4 node_component
-  n5@{ shape: rounded, label: "**bevy​_​ui::Checked**<br/>来自crate:bevy​_​ui ↗：记录控件当前勾选<br/>状态。" }
+  n5@{ shape: rounded, label: "**Checked**<br/>来自crate:bevy​_​ui ↗：记录控件当前勾选<br/>状态。" }
   class n5 node_component
   class n5 external_node
-  n6@{ shape: fr-rect, label: "**checkbox::CheckboxPlugin**<br/>处理复选框交互与勾选请求。" }
+  n6@{ shape: fr-rect, label: "**CheckboxPlugin**<br/>处理复选框交互与勾选请求。" }
   class n6 node_plugin
   n1 e0@-->|"存在性约束"| n0
   class e0 edge_reference

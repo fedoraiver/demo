@@ -38,25 +38,25 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**bevy​_​render::globals::GlobalsBuffer**<br/>向着色器提供全局时间等 Uniform 数据。" }
+  n0@{ shape: cyl, label: "**GlobalsBuffer**<br/>向着色器提供全局时间等 Uniform 数据。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​pbr::render::mesh​_​view​_​**<br/>**bindings::prepare​_​mesh​_​view​_​bind​_​**<br/>**groups**<br/>来自crate:bevy​_​pbr ↗：为视图绑定光<br/>照、阴影及各可选渲染效果资源。" }
+  n1@{ shape: rounded, label: "**prepare​_​mesh​_​view​_​bind​_​groups**<br/>来自crate:bevy​_​pbr ↗：为视图绑定光<br/>照、阴影及各可选渲染效果资源。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​render::init​_​gpu​_​resource#lt;bevy​_​**<br/>**render::globals::GlobalsBuffer#gt;**<br/>构造并插入渲染所需资源。" }
+  n2@{ shape: rounded, label: "**init​_​gpu​_​resource**<br/>构造并插入渲染所需资源。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​render::globals::prepare​_​**<br/>**globals​_​buffer**<br/>更新并上传着色器全局时间与帧号。" }
+  n3@{ shape: rounded, label: "**prepare​_​globals​_​buffer**<br/>更新并上传着色器全局时间与帧号。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**bevy​_​pbr::prepass::prepare​_​prepass​_​**<br/>**view​_​bind​_​group**<br/>来自crate:bevy​_​pbr ↗：绑定预通道的视<br/>图、全局和前帧缓冲。" }
+  n4@{ shape: rounded, label: "**prepare​_​prepass​_​view​_​bind​_​group**<br/>来自crate:bevy​_​pbr ↗：绑定预通道的视<br/>图、全局和前帧缓冲。" }
   class n4 node_system
   class n4 external_node
-  n5@{ shape: rounded, label: "**bevy​_​pbr::ssao::prepare​_​ssao​_​bind​_​**<br/>**groups**<br/>来自crate:bevy​_​pbr ↗：准备深度预处<br/>理、遮蔽与空间降噪的资源绑定。" }
+  n5@{ shape: rounded, label: "**prepare​_​ssao​_​bind​_​groups**<br/>来自crate:bevy​_​pbr ↗：准备深度预处<br/>理、遮蔽与空间降噪的资源绑定。" }
   class n5 node_system
   class n5 external_node
-  n6@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::mesh::**<br/>**prepare​_​mesh2d​_​view​_​bind​_​groups**<br/>来自crate:bevy​_​sprite​_​render ↗：为二<br/>维相机绑定视图、全局参数与色调 LUT。" }
+  n6@{ shape: rounded, label: "**prepare​_​mesh2d​_​view​_​bind​_​groups**<br/>来自crate:bevy​_​sprite​_​render ↗：为二<br/>维相机绑定视图、全局参数与色调 LUT。" }
   class n6 node_system
   class n6 external_node
-  n7@{ shape: rounded, label: "**bevy​_​post​_​process::motion​_​blur::**<br/>**motion​_​blur**<br/>来自crate:bevy​_​post​_​process ↗：读取<br/>当前视图颜色、预通道运动矢量和深度，按快<br/>门角度及采样数执行运动模糊；采样关闭、所<br/>需纹理或管线不可用时跳过。" }
+  n7@{ shape: rounded, label: "**motion​_​blur**<br/>来自crate:bevy​_​post​_​process ↗：读取<br/>当前视图颜色、预通道运动矢量和深度，按快<br/>门角度及采样数执行运动模糊；采样关闭、所<br/>需纹理或管线不可用时跳过。" }
   class n7 node_system
   class n7 external_node
   n0 e0@--> n1

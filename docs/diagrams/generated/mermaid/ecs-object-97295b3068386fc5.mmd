@@ -38,15 +38,15 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**bevy​_​asset::asset​_​changed::**<br/>**AssetChanges#lt;extended​_​material::**<br/>**ExtendedMaterial#lt;pbr​_​material::**<br/>**StandardMaterial, decal::forward::**<br/>**ForwardDecalMaterialExt#gt;#gt;**<br/>记录资产最近变化的系统刻度。" }
+  n0@{ shape: cyl, label: "**AssetChanges#lt;ExtendedMaterial#lt;Standa**<br/>**rdMaterial,**<br/>**ForwardDecalMaterialExt#gt;#gt;**<br/>记录资产最近变化的系统刻度。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​pbr::material::mark​_​meshes​_​as​_​**<br/>**changed​_​if​_​their​_​materials​_​**<br/>**changed#lt;bevy​_​pbr::extended​_​**<br/>**material::ExtendedMaterial#lt;bevy​_​**<br/>**pbr::pbr​_​material::**<br/>**StandardMaterial, bevy​_​pbr::decal::**<br/>**forward::ForwardDecalMaterialExt#gt;#gt;**<br/>来自crate:bevy​_​pbr ↗：材质组件或资产<br/>变化时请求网格重新提取。" }
+  n1@{ shape: rounded, label: "**mark​_​meshes​_​as​_​changed​_​if​_​their​_​**<br/>**materials​_​changed**<br/>来自crate:bevy​_​pbr ↗：材质组件或资产<br/>变化时请求网格重新提取。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​pbr::material::check​_​entities​_​**<br/>**needing​_​specialization#lt;bevy​_​pbr::**<br/>**extended​_​material::**<br/>**ExtendedMaterial#lt;bevy​_​pbr::pbr​_​**<br/>**material::StandardMaterial, bevy​_​**<br/>**pbr::decal::forward::**<br/>**ForwardDecalMaterialExt#gt;#gt;**<br/>来自crate:bevy​_​pbr ↗：收集几何或材质<br/>变化及移除的三维网格。" }
+  n2@{ shape: rounded, label: "**check​_​entities​_​needing​_​**<br/>**specialization**<br/>来自crate:bevy​_​pbr ↗：收集几何或材质<br/>变化及移除的三维网格。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​asset::assets::Assets#lt;bevy​_​**<br/>**pbr::extended​_​material::**<br/>**ExtendedMaterial#lt;bevy​_​pbr::pbr​_​**<br/>**material::StandardMaterial, bevy​_​**<br/>**pbr::decal::forward::**<br/>**ForwardDecalMaterialExt#gt;#gt;::asset​_​**<br/>**events**<br/>发布累计的资产变化消息。" }
+  n3@{ shape: rounded, label: "**asset​_​events**<br/>发布累计的资产变化消息。" }
   class n3 node_system
   n0 e0@--> n1
   class e0 edge_read

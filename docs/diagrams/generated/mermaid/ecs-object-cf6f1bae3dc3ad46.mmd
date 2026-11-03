@@ -38,29 +38,29 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​render::view::ExtractedWindow**<br/>保存渲染侧窗口尺寸、呈现模式和交换链状<br/>态。" }
+  n0@{ shape: rounded, label: "**ExtractedWindow**<br/>保存渲染侧窗口尺寸、呈现模式和交换链状<br/>态。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​render::renderer::render​_​system**<br/>运行渲染图调度并完成回读和窗口呈现。" }
+  n1@{ shape: rounded, label: "**render​_​system**<br/>运行渲染图调度并完成回读和窗口呈现。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​core​_​pipeline::schedule::**<br/>**handle​_​uncovered​_​swap​_​chains**<br/>来自crate:bevy​_​core​_​pipeline ↗：清除<br/>本帧没有相机覆盖的窗口交换链。" }
+  n2@{ shape: rounded, label: "**handle​_​uncovered​_​swap​_​chains**<br/>来自crate:bevy​_​core​_​pipeline ↗：清除<br/>本帧没有相机覆盖的窗口交换链。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​core​_​pipeline::schedule::**<br/>**camera​_​driver**<br/>来自crate:bevy​_​core​_​pipeline ↗：为辅<br/>助视图和活动相机运行专属渲染调度。" }
+  n3@{ shape: rounded, label: "**camera​_​driver**<br/>来自crate:bevy​_​core​_​pipeline ↗：为辅<br/>助视图和活动相机运行专属渲染调度。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**bevy​_​render::view::window::prepare​_​**<br/>**windows**<br/>为有相机输出或需要首次呈现的窗口取得交换<br/>链纹理，保留可复用的未呈现帧，并处理尺<br/>寸、模式变化及表面获取错误。" }
+  n4@{ shape: rounded, label: "**prepare​_​windows**<br/>为有相机输出或需要首次呈现的窗口取得交换<br/>链纹理，保留可复用的未呈现帧，并处理尺<br/>寸、模式变化及表面获取错误。" }
   class n4 node_system
-  n5@{ shape: rounded, label: "**bevy​_​render::view::window::extract​_​**<br/>**windows**<br/>向渲染世界同步窗口配置与原生句柄。" }
+  n5@{ shape: rounded, label: "**extract​_​windows**<br/>向渲染世界同步窗口配置与原生句柄。" }
   class n5 node_system
-  n6@{ shape: rounded, label: "**bevy​_​render::view::window::need​_​**<br/>**surface​_​configuration**<br/>判断窗口渲染表面是否需要重配。" }
+  n6@{ shape: rounded, label: "**need​_​surface​_​configuration**<br/>判断窗口渲染表面是否需要重配。" }
   class n6 node_system
-  n7@{ shape: rounded, label: "**bevy​_​render::view::prepare​_​view​_​**<br/>**attachments**<br/>按相机输出目标准备可共享的颜色附件。" }
+  n7@{ shape: rounded, label: "**prepare​_​view​_​attachments**<br/>按相机输出目标准备可共享的颜色附件。" }
   class n7 node_system
-  n8@{ shape: rounded, label: "**bevy​_​render::camera::extract​_​cameras**<br/>把活动相机及可见实体提取到渲染世界。" }
+  n8@{ shape: rounded, label: "**extract​_​cameras**<br/>把活动相机及可见实体提取到渲染世界。" }
   class n8 node_system
-  n9@{ shape: rounded, label: "**bevy​_​render::view::window::create​_​**<br/>**surfaces**<br/>创建并配置提取窗口的 GPU 表面。" }
+  n9@{ shape: rounded, label: "**create​_​surfaces**<br/>创建并配置提取窗口的 GPU 表面。" }
   class n9 node_system
-  n10@{ shape: rounded, label: "**bevy​_​render::view::cleanup​_​view​_​**<br/>**targets​_​for​_​resize**<br/>在窗口尺寸或呈现模式变化时撤销旧视图目<br/>标。" }
+  n10@{ shape: rounded, label: "**cleanup​_​view​_​targets​_​for​_​resize**<br/>在窗口尺寸或呈现模式变化时撤销旧视图目<br/>标。" }
   class n10 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

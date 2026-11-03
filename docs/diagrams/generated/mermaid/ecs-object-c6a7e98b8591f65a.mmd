@@ -43,11 +43,11 @@ flowchart LR
   n1@{ shape: lin-rect, label: "**Propagate**<br/>来自crate:bevy​_​transform ↗：组织实体<br/>层级变换传播。" }
   class n1 node_system_set
   class n1 external_node
-  n2@{ shape: rounded, label: "**avian3d::schedule::assert​_​**<br/>**components​_​finite**<br/>在调试构建检查物理位置和速度是否有限。" }
+  n2@{ shape: rounded, label: "**assert​_​components​_​finite**<br/>在调试构建检查物理位置和速度是否有限。" }
   class n2 node_system
   n3@{ shape: lin-rect, label: "**Prepare**<br/>划分物理准备、模拟与回写边界。" }
   class n3 node_system_set
-  n4@{ shape: rounded, label: "**demo::physics::wake​_​changed​_​bodies**<br/>来自physics ↗：Avian 的自动唤醒在求解<br/>之后；外部冲量和施力应在本步准备求解器之<br/>前生效。" }
+  n4@{ shape: rounded, label: "**wake​_​changed​_​bodies**<br/>来自physics ↗：Avian 的自动唤醒在求解<br/>之后；外部冲量和施力应在本步准备求解器之<br/>前生效。" }
   class n4 node_system
   class n4 external_node
   n0 e0@-->|"先于"| n1

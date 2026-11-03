@@ -43,24 +43,24 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: hex, label: "**bevy​_​ui​_​widgets::scrollbar::**<br/>**scrollbar​_​on​_​drag​_​start**<br/>记录滚动条拖动的起始位置。" }
+  n0@{ shape: hex, label: "**scrollbar​_​on​_​drag​_​start**<br/>记录滚动条拖动的起始位置。" }
   class n0 node_observer
-  n1@{ shape: rounded, label: "**scrollbar::ScrollbarThumb**<br/>标识滚动条可拖动滑块。" }
+  n1@{ shape: rounded, label: "**ScrollbarThumb**<br/>标识滚动条可拖动滑块。" }
   class n1 node_component
-  n2@{ shape: stadium, label: "**events::PointerDragStart**<br/>来自crate:bevy​_​picking ↗：通知按下后<br/>移动开始拖拽目标。" }
+  n2@{ shape: stadium, label: "**PointerDragStart**<br/>来自crate:bevy​_​picking ↗：通知按下后<br/>移动开始拖拽目标。" }
   class n2 node_event
   class n2 external_node
-  n3@{ shape: rounded, label: "**scrollbar::ScrollbarDragState**<br/>记录滚动条滑块拖动状态。" }
+  n3@{ shape: rounded, label: "**ScrollbarDragState**<br/>记录滚动条滑块拖动状态。" }
   class n3 node_component
-  n4@{ shape: rounded, label: "**bevy​_​ui::ScrollPosition**<br/>来自crate:bevy​_​ui ↗：指定 UI 内容的逻<br/>辑像素滚动位置。" }
+  n4@{ shape: rounded, label: "**ScrollPosition**<br/>来自crate:bevy​_​ui ↗：指定 UI 内容的逻<br/>辑像素滚动位置。" }
   class n4 node_component
   class n4 external_node
-  n5@{ shape: rounded, label: "**bevy​_​ecs::hierarchy::ChildOf**<br/>来自crate:bevy​_​ecs ↗：保存当前实体的<br/>父实体身份" }
+  n5@{ shape: rounded, label: "**ChildOf**<br/>来自crate:bevy​_​ecs ↗：保存当前实体的<br/>父实体身份" }
   class n5 node_component
   class n5 external_node
-  n6@{ shape: fr-rect, label: "**scrollbar::ScrollbarPlugin**<br/>处理滚动条拖动并更新滑块。" }
+  n6@{ shape: fr-rect, label: "**ScrollbarPlugin**<br/>处理滚动条拖动并更新滑块。" }
   class n6 node_plugin
-  n7@{ shape: rounded, label: "**scrollbar::Scrollbar**<br/>指定滚动条目标、方向和最小滑块长度。" }
+  n7@{ shape: rounded, label: "**Scrollbar**<br/>指定滚动条目标、方向和最小滑块长度。" }
   class n7 node_component
   n1 e0@-->|"存在性约束"| n0
   class e0 edge_reference

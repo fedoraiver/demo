@@ -39,7 +39,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: notch-rect, label: "**Local · queued**<br/>暂存从世界队列交换出的待生成场景。" }
   class n0 node_local
-  n1@{ shape: rounded, label: "**bevy​_​scene::spawn::spawn​_​queued**<br/>应用已就绪的场景补丁并推进排队装配。" }
+  n1@{ shape: rounded, label: "**spawn​_​queued**<br/>应用已就绪的场景补丁并推进排队装配。" }
   class n1 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

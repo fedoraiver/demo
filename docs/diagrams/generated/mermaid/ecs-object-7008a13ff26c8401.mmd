@@ -37,11 +37,11 @@ flowchart LR
   classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**bevy​_​render::erased​_​render​_​asset::**<br/>**ErasedRenderAssetsToReExtract#lt;mesh​_​**<br/>**material::MeshMaterial3d#lt;pbr​_​**<br/>**material::StandardMaterial#gt;#gt;**<br/>记录设备恢复后需重新提取的资产身份。" }
+  n0@{ shape: cyl, label: "**ErasedRenderAssetsToReExtract#lt;MeshMa**<br/>**terial3d#lt;StandardMaterial#gt;#gt;**<br/>记录设备恢复后需重新提取的资产身份。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​render::erased​_​render​_​asset::**<br/>**collect​_​erased​_​render​_​assets​_​to​_​**<br/>**reextract#lt;bevy​_​pbr::mesh​_​material::**<br/>**MeshMaterial3d#lt;bevy​_​pbr::pbr​_​**<br/>**material::StandardMaterial#gt;#gt;**<br/>按源材质类型排空擦除资产并请求重新提取。" }
+  n1@{ shape: rounded, label: "**collect​_​erased​_​render​_​assets​_​to​_​**<br/>**reextract**<br/>按源材质类型排空擦除资产并请求重新提取。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​render::erased​_​render​_​asset::**<br/>**extract​_​erased​_​render​_​asset#lt;bevy​_​**<br/>**pbr::mesh​_​material::**<br/>**MeshMaterial3d#lt;bevy​_​pbr::pbr​_​**<br/>**material::StandardMaterial#gt;#gt;**<br/>提取变化及设备恢复后失效的擦除渲染资产。" }
+  n2@{ shape: rounded, label: "**extract​_​erased​_​render​_​asset**<br/>提取变化及设备恢复后失效的擦除渲染资产。" }
   class n2 node_system
   n1 e0@-->|"插入"| n0
   class e0 edge_write

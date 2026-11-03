@@ -38,11 +38,11 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**mip​_​generation::MipGenerationJobs**<br/>记录渲染世界中待生成 mipmap 的图像。" }
+  n0@{ shape: cyl, label: "**MipGenerationJobs**<br/>记录渲染世界中待生成 mipmap 的图像。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​core​_​pipeline::mip​_​generation::**<br/>**reset​_​mip​_​generation​_​jobs**<br/>清空上一帧登记的 mip 生成任务。" }
+  n1@{ shape: rounded, label: "**reset​_​mip​_​generation​_​jobs**<br/>清空上一帧登记的 mip 生成任务。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​core​_​pipeline::mip​_​generation::**<br/>**prepare​_​mip​_​generator​_​pipelines**<br/>为本帧 mip 生成任务准备并复用 GPU 资<br/>源。" }
+  n2@{ shape: rounded, label: "**prepare​_​mip​_​generator​_​pipelines**<br/>为本帧 mip 生成任务准备并复用 GPU 资<br/>源。" }
   class n2 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

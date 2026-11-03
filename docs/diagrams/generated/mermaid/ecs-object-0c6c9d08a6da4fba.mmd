@@ -41,13 +41,13 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​render::render​_​asset::reset​_​**<br/>**render​_​asset​_​bytes​_​per​_​frame**<br/>重置新帧渲染资产上传的已用预算。" }
+  n0@{ shape: rounded, label: "**reset​_​render​_​asset​_​bytes​_​per​_​frame**<br/>重置新帧渲染资产上传的已用预算。" }
   class n0 node_system
   n1@{ shape: lin-rect, label: "**Cleanup**<br/>组织渲染数据准备与绘制排队。" }
   class n1 node_system_set
-  n2@{ shape: cyl, label: "**bevy​_​render::render​_​asset::**<br/>**RenderAssetBytesPerFrameLimiter**<br/>统计并限制本帧渲染资产传输字节数。" }
+  n2@{ shape: cyl, label: "**RenderAssetBytesPerFrameLimiter**<br/>统计并限制本帧渲染资产传输字节数。" }
   class n2 node_resource
-  n3@{ shape: fr-rect, label: "**bevy​_​render::RenderPlugin**<br/>建立渲染子应用与 GPU 后端。" }
+  n3@{ shape: fr-rect, label: "**RenderPlugin**<br/>建立渲染子应用与 GPU 后端。" }
   class n3 node_plugin
   n1 e0@-->|"集合成员"| n0
   class e0 edge_set_membership

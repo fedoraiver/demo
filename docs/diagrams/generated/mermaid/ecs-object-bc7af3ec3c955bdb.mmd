@@ -39,13 +39,13 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: lin-rect, label: "**Last**<br/>组织一次物理模拟步的主要阶段。" }
   class n0 node_system_set
-  n1@{ shape: rounded, label: "**avian3d::schedule::update​_​last​_​**<br/>**physics​_​tick**<br/>记录本次物理阶段结束的 ECS 变化刻度。" }
+  n1@{ shape: rounded, label: "**update​_​last​_​physics​_​tick**<br/>记录本次物理阶段结束的 ECS 变化刻度。" }
   class n1 node_system
   n2@{ shape: lin-rect, label: "**Finalize**<br/>组织一次物理模拟步的主要阶段。" }
   class n2 node_system_set
-  n3@{ shape: rounded, label: "**avian3d::collider​_​tree::update::**<br/>**clear​_​moved​_​proxies**<br/>清空本轮广相使用的移动代理目录。" }
+  n3@{ shape: rounded, label: "**clear​_​moved​_​proxies**<br/>清空本轮广相使用的移动代理目录。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**avian3d::collider​_​tree::update::**<br/>**update​_​solver​_​body​_​aabbs#lt;avian3d::**<br/>**collision::collider::parry::**<br/>**Collider#gt;**<br/>按物理结果更新活跃刚体的碰撞边界。" }
+  n4@{ shape: rounded, label: "**update​_​solver​_​body​_​aabbs**<br/>按物理结果更新活跃刚体的碰撞边界。" }
   class n4 node_system
   n0 e0@-->|"先于"| n1
   class e0 edge_order

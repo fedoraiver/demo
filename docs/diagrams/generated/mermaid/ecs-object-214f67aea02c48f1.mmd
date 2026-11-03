@@ -39,7 +39,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: notch-rect, label: "**Local · queue**<br/>保留等待自定义光标图像加载的窗口。" }
   class n0 node_local
-  n1@{ shape: rounded, label: "**bevy​_​winit::cursor::update​_​cursors**<br/>准备原生或自定义光标并保留资产重试。" }
+  n1@{ shape: rounded, label: "**update​_​cursors**<br/>准备原生或自定义光标并保留资产重试。" }
   class n1 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

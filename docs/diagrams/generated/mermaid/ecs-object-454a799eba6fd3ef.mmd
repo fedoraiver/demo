@@ -42,18 +42,18 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​pbr::volumetric​_​fog::render::**<br/>**init​_​volumetric​_​fog​_​pipeline**<br/>初始化体积雾管线的视图布局与着色器。" }
+  n0@{ shape: rounded, label: "**init​_​volumetric​_​fog​_​pipeline**<br/>初始化体积雾管线的视图布局与着色器。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**bevy​_​pbr::MeshPipelineViewLayouts**<br/>按网格管线配置提供视图绑定布局。" }
+  n1@{ shape: cyl, label: "**MeshPipelineViewLayouts**<br/>按网格管线配置提供视图绑定布局。" }
   class n1 node_resource
-  n2@{ shape: cyl, label: "**bevy​_​asset::AssetServer**<br/>来自crate:bevy​_​asset ↗：加载资产并追<br/>踪加载状态。" }
+  n2@{ shape: cyl, label: "**AssetServer**<br/>来自crate:bevy​_​asset ↗：加载资产并追<br/>踪加载状态。" }
   class n2 node_resource
   class n2 external_node
   n3@{ shape: lin-rect, label: "**MeshPipelineSystems**<br/>先初始化网格视图布局，再初始化三维网格管<br/>线。" }
   class n3 node_system_set
-  n4@{ shape: cyl, label: "**volumetric​_​fog::render::**<br/>**VolumetricFogPipeline**<br/>描述体积雾后处理的 GPU 绘制接口。" }
+  n4@{ shape: cyl, label: "**VolumetricFogPipeline**<br/>描述体积雾后处理的 GPU 绘制接口。" }
   class n4 node_resource
-  n5@{ shape: fr-rect, label: "**volumetric​_​fog::VolumetricFogPlugin**<br/>提供场景体积雾渲染。" }
+  n5@{ shape: fr-rect, label: "**VolumetricFogPlugin**<br/>提供场景体积雾渲染。" }
   class n5 node_plugin
   n1 e0@--> n0
   class e0 edge_read

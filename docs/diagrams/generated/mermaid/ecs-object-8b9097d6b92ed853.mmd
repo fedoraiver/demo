@@ -38,17 +38,17 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**prepass::PrepassPipeline**<br/>描述深度等预通道的网格渲染接口。" }
+  n0@{ shape: cyl, label: "**PrepassPipeline**<br/>描述深度等预通道的网格渲染接口。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​pbr::prepass::init​_​prepass​_​**<br/>**pipeline**<br/>初始化带运动矢量及普通预通道的资源布局。" }
+  n1@{ shape: rounded, label: "**init​_​prepass​_​pipeline**<br/>初始化带运动矢量及普通预通道的资源布局。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​pbr::prepass::specialize​_​**<br/>**prepass​_​material​_​meshes**<br/>按深度、材质和运动特性生成预通道专用管<br/>线。" }
+  n2@{ shape: rounded, label: "**specialize​_​prepass​_​material​_​meshes**<br/>按深度、材质和运动特性生成预通道专用管<br/>线。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​pbr::render::light::specialize​_​**<br/>**shadows**<br/>按阴影视图、网格及材质变化重新选择专用阴<br/>影渲染管线，清理失效缓存，并整理需要补齐<br/>或重新排队的阴影网格任务。" }
+  n3@{ shape: rounded, label: "**specialize​_​shadows**<br/>按阴影视图、网格及材质变化重新选择专用阴<br/>影渲染管线，清理失效缓存，并整理需要补齐<br/>或重新排队的阴影网格任务。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**bevy​_​pbr::prepass::init​_​prepass​_​**<br/>**view​_​bind​_​group**<br/>建立预通道的空绑定组及待准备状态。" }
+  n4@{ shape: rounded, label: "**init​_​prepass​_​view​_​bind​_​group**<br/>建立预通道的空绑定组及待准备状态。" }
   class n4 node_system
-  n5@{ shape: rounded, label: "**bevy​_​pbr::prepass::prepare​_​prepass​_​**<br/>**view​_​bind​_​group**<br/>绑定预通道的视图、全局和前帧缓冲。" }
+  n5@{ shape: rounded, label: "**prepare​_​prepass​_​view​_​bind​_​group**<br/>绑定预通道的视图、全局和前帧缓冲。" }
   class n5 node_system
   n1 e0@-->|"插入"| n0
   class e0 edge_write

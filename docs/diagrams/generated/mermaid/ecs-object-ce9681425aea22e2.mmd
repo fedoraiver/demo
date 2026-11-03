@@ -37,9 +37,9 @@ flowchart LR
   classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**mesh2d::material::Material2dPipeline**<br/>提供二维材质专用化使用的基础网格管线。" }
+  n0@{ shape: cyl, label: "**Material2dPipeline**<br/>提供二维材质专用化使用的基础网格管线。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::**<br/>**material::init​_​material​_​2d​_​pipeline**<br/>以二维网格基础管线建立材质管线资源。" }
+  n1@{ shape: rounded, label: "**init​_​material​_​2d​_​pipeline**<br/>以二维网格基础管线建立材质管线资源。" }
   class n1 node_system
   n1 e0@-->|"插入"| n0
   class e0 edge_write

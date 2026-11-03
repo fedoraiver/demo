@@ -39,56 +39,53 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  subgraph layout_card_n0[" "]
-  n0@{ shape: rounded, label: "**dynamics::solver::islands::**<br/>**BodyIslandNode**<br/>记录刚体在物理岛中的连接位置。" }
+  n0@{ shape: rounded, label: "**BodyIslandNode**<br/>记录刚体在物理岛中的连接位置。" }
   class n0 node_component
-  end
-  style layout_card_n0 fill:none,stroke:none
-  n1@{ shape: rounded, label: "**avian3d::dynamics::solver::plugin::**<br/>**apply​_​contact​_​status​_​changes**<br/>把接触增删同步到约束图和物理岛。" }
+  n1@{ shape: rounded, label: "**apply​_​contact​_​status​_​changes**<br/>把接触增删同步到约束图和物理岛。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**avian3d::dynamics::solver::plugin::**<br/>**apply​_​contact​_​status​_​changes**<br/>把接触增删同步到约束图和物理岛。" }
+  n2@{ shape: rounded, label: "**apply​_​contact​_​status​_​changes**<br/>把接触增删同步到约束图和物理岛。" }
   class n2 node_system
-  n3@{ shape: hex, label: "**avian3d::dynamics::solver::islands::**<br/>**{impl#35;0}::build::{closure#35;2}**<br/>移除失去刚体的实体物理岛节点。" }
+  n3@{ shape: hex, label: "**build::{closure#35;2}**<br/>移除失去刚体的实体物理岛节点。" }
   class n3 node_observer
-  n4@{ shape: hex, label: "**avian3d::dynamics::solver::islands::**<br/>**{impl#35;0}::build::{closure#35;1}**<br/>在实体启用时恢复刚体物理岛节点。" }
+  n4@{ shape: hex, label: "**build::{closure#35;1}**<br/>在实体启用时恢复刚体物理岛节点。" }
   class n4 node_observer
-  n5@{ shape: rounded, label: "**avian3d::dynamics::solver::islands::**<br/>**sleeping::wake​_​on​_​changed**<br/>因外部位姿、速度或受力变化标记物理岛唤<br/>醒。" }
+  n5@{ shape: rounded, label: "**wake​_​on​_​changed**<br/>因外部位姿、速度或受力变化标记物理岛唤<br/>醒。" }
   class n5 node_system
-  n6@{ shape: hex, label: "**avian3d::dynamics::solver::islands::**<br/>**{impl#35;0}::build::{closure#35;2}**<br/>移除失去刚体的实体物理岛节点。" }
+  n6@{ shape: hex, label: "**build::{closure#35;2}**<br/>移除失去刚体的实体物理岛节点。" }
   class n6 node_observer
-  n7@{ shape: rounded, label: "**avian3d::dynamics::solver::islands::**<br/>**split​_​island**<br/>根据接触与关节连接重新拆分物理岛。" }
+  n7@{ shape: rounded, label: "**split​_​island**<br/>根据接触与关节连接重新拆分物理岛。" }
   class n7 node_system
-  n8@{ shape: hex, label: "**avian3d::dynamics::solver::islands::**<br/>**{impl#35;0}::build::{closure#35;1}**<br/>在实体启用时恢复刚体物理岛节点。" }
+  n8@{ shape: hex, label: "**build::{closure#35;1}**<br/>在实体启用时恢复刚体物理岛节点。" }
   class n8 node_observer
-  n9@{ shape: hex, label: "**avian3d::dynamics::solver::islands::**<br/>**sleeping::wake​_​on​_​replace​_​rigid​_​body**<br/>在刚体替换前请求唤醒物理岛。" }
+  n9@{ shape: hex, label: "**wake​_​on​_​replace​_​rigid​_​body**<br/>在刚体替换前请求唤醒物理岛。" }
   class n9 node_observer
-  n10@{ shape: hex, label: "**avian3d::dynamics::solver::islands::**<br/>**sleeping::wake​_​on​_​enable​_​rigid​_​body**<br/>重置启用刚体的休眠状态并请求唤醒。" }
+  n10@{ shape: hex, label: "**wake​_​on​_​enable​_​rigid​_​body**<br/>重置启用刚体的休眠状态并请求唤醒。" }
   class n10 node_observer
-  n11@{ shape: rounded, label: "**avian3d::dynamics::solver::islands::**<br/>**sleeping::update​_​sleeping​_​states**<br/>按刚体静止时间判断物理岛的休眠资格。" }
+  n11@{ shape: rounded, label: "**update​_​sleeping​_​states**<br/>按刚体静止时间判断物理岛的休眠资格。" }
   class n11 node_system
-  n12@{ shape: hex, label: "**avian3d::dynamics::solver::islands::**<br/>**{impl#35;0}::build::{closure#35;0}**<br/>为重新启用的刚体补充物理岛节点。" }
+  n12@{ shape: hex, label: "**build::{closure#35;0}**<br/>为重新启用的刚体补充物理岛节点。" }
   class n12 node_observer
-  n13@{ shape: rounded, label: "**avian3d::dynamics::solver::plugin::**<br/>**apply​_​joint​_​graph​_​changes**<br/>把关节连接变化同步到模拟岛。" }
+  n13@{ shape: rounded, label: "**apply​_​joint​_​graph​_​changes**<br/>把关节连接变化同步到模拟岛。" }
   class n13 node_system
-  n14@{ shape: hex, label: "**avian3d::dynamics::solver::islands::**<br/>**{impl#35;0}::build::{closure#35;0}**<br/>为重新启用的刚体补充物理岛节点。" }
+  n14@{ shape: hex, label: "**build::{closure#35;0}**<br/>为重新启用的刚体补充物理岛节点。" }
   class n14 node_observer
-  n15@{ shape: hex, label: "**avian3d::dynamics::solver::islands::**<br/>**{impl#35;0}::build::{closure#35;3}**<br/>移除被禁用刚体的物理岛节点。" }
+  n15@{ shape: hex, label: "**build::{closure#35;3}**<br/>移除被禁用刚体的物理岛节点。" }
   class n15 node_observer
-  n16@{ shape: hex, label: "**avian3d::dynamics::solver::islands::**<br/>**sleeping::wake​_​on​_​enable​_​rigid​_​body**<br/>重置启用刚体的休眠状态并请求唤醒。" }
+  n16@{ shape: hex, label: "**wake​_​on​_​enable​_​rigid​_​body**<br/>重置启用刚体的休眠状态并请求唤醒。" }
   class n16 node_observer
-  n17@{ shape: hex, label: "**avian3d::dynamics::solver::islands::**<br/>**sleeping::wake​_​on​_​replace​_​rigid​_​body**<br/>在刚体替换前请求唤醒物理岛。" }
+  n17@{ shape: hex, label: "**wake​_​on​_​replace​_​rigid​_​body**<br/>在刚体替换前请求唤醒物理岛。" }
   class n17 node_observer
-  n18@{ shape: hex, label: "**avian3d::dynamics::solver::islands::**<br/>**sleeping::wake​_​on​_​enable​_​rigid​_​body**<br/>重置启用刚体的休眠状态并请求唤醒。" }
+  n18@{ shape: hex, label: "**wake​_​on​_​enable​_​rigid​_​body**<br/>重置启用刚体的休眠状态并请求唤醒。" }
   class n18 node_observer
-  n19@{ shape: hex, label: "**avian3d::dynamics::solver::islands::**<br/>**{impl#35;0}::build::{closure#35;3}**<br/>移除被禁用刚体的物理岛节点。" }
+  n19@{ shape: hex, label: "**build::{closure#35;3}**<br/>移除被禁用刚体的物理岛节点。" }
   class n19 node_observer
-  n20@{ shape: hex, label: "**avian3d::dynamics::solver::islands::**<br/>**{impl#35;0}::build::{closure#35;4}**<br/>移除静态刚体的物理岛节点。" }
+  n20@{ shape: hex, label: "**build::{closure#35;4}**<br/>移除静态刚体的物理岛节点。" }
   class n20 node_observer
-  n21@{ shape: hex, label: "**avian3d::dynamics::solver::islands::**<br/>**sleeping::wake​_​on​_​replace​_​rigid​_​body**<br/>在刚体替换前请求唤醒物理岛。" }
+  n21@{ shape: hex, label: "**wake​_​on​_​replace​_​rigid​_​body**<br/>在刚体替换前请求唤醒物理岛。" }
   class n21 node_observer
-  n22@{ shape: rounded, label: "**avian3d::dynamics::solver::islands::**<br/>**sleeping::wake​_​islands​_​with​_​**<br/>**sleeping​_​disabled**<br/>让禁止休眠或已禁用的刚体所属岛保持清醒。" }
+  n22@{ shape: rounded, label: "**wake​_​islands​_​with​_​sleeping​_​disabled**<br/>让禁止休眠或已禁用的刚体所属岛保持清醒。" }
   class n22 node_system
-  n23@{ shape: hex, label: "**avian3d::dynamics::solver::islands::**<br/>**{impl#35;0}::build::{closure#35;4}**<br/>移除静态刚体的物理岛节点。" }
+  n23@{ shape: hex, label: "**build::{closure#35;4}**<br/>移除静态刚体的物理岛节点。" }
   class n23 node_observer
   n1 e0@-->|"赋值"| n0
   class e0 edge_write

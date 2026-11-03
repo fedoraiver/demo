@@ -37,11 +37,11 @@ flowchart LR
   classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**bevy​_​render::erased​_​render​_​asset::**<br/>**ExtractedAssets#lt;mesh2d::material::**<br/>**MeshMaterial2d#lt;sprite​_​mesh::sprite​_​**<br/>**mesh​_​material::SpriteMeshMaterial#gt;#gt;**<br/>暂存本帧类型擦除资产的提取与增删记录。" }
+  n0@{ shape: cyl, label: "**ExtractedAssets#lt;MeshMaterial2d#lt;Sprit**<br/>**eMeshMaterial#gt;#gt;**<br/>暂存本帧类型擦除资产的提取与增删记录。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​render::erased​_​render​_​asset::**<br/>**prepare​_​erased​_​assets#lt;bevy​_​sprite​_​**<br/>**render::mesh2d::material::**<br/>**MeshMaterial2d#lt;bevy​_​sprite​_​render::**<br/>**sprite​_​mesh::sprite​_​mesh​_​material::**<br/>**SpriteMeshMaterial#gt;#gt;**<br/>在上传预算内准备擦除资产并管理重试卸载。" }
+  n1@{ shape: rounded, label: "**prepare​_​erased​_​assets**<br/>在上传预算内准备擦除资产并管理重试卸载。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​render::erased​_​render​_​asset::**<br/>**extract​_​erased​_​render​_​asset#lt;bevy​_​**<br/>**sprite​_​render::mesh2d::material::**<br/>**MeshMaterial2d#lt;bevy​_​sprite​_​render::**<br/>**sprite​_​mesh::sprite​_​mesh​_​material::**<br/>**SpriteMeshMaterial#gt;#gt;**<br/>提取变化及设备恢复后失效的擦除渲染资产。" }
+  n2@{ shape: rounded, label: "**extract​_​erased​_​render​_​asset**<br/>提取变化及设备恢复后失效的擦除渲染资产。" }
   class n2 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

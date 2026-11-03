@@ -44,25 +44,25 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​core​_​pipeline::deferred::copy​_​**<br/>**lighting​_​id::prepare​_​deferred​_​**<br/>**lighting​_​id​_​textures**<br/>为延迟预通道相机分配光照标识深度纹理。" }
+  n0@{ shape: rounded, label: "**prepare​_​deferred​_​lighting​_​id​_​**<br/>**textures**<br/>为延迟预通道相机分配光照标识深度纹理。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**prepass::DeferredPrepass**<br/>为三维相机启用延迟材质 G-buffer 预通<br/>道。" }
+  n1@{ shape: rounded, label: "**DeferredPrepass**<br/>为三维相机启用延迟材质 G-buffer 预通<br/>道。" }
   class n1 node_component
   n2@{ shape: lin-rect, label: "**PrepareResources**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
   class n2 node_system_set
   class n2 external_node
-  n3@{ shape: cyl, label: "**bevy​_​render::texture::TextureCache**<br/>来自crate:bevy​_​render ↗：复用渲染中反<br/>复创建的临时纹理。" }
+  n3@{ shape: cyl, label: "**TextureCache**<br/>来自crate:bevy​_​render ↗：复用渲染中反<br/>复创建的临时纹理。" }
   class n3 node_resource
   class n3 external_node
-  n4@{ shape: cyl, label: "**bevy​_​render::renderer::RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
+  n4@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
   class n4 node_resource
   class n4 external_node
-  n5@{ shape: fr-rect, label: "**deferred::copy​_​lighting​_​id::**<br/>**CopyDeferredLightingIdPlugin**<br/>准备延迟光照标识的复制资源。" }
+  n5@{ shape: fr-rect, label: "**CopyDeferredLightingIdPlugin**<br/>准备延迟光照标识的复制资源。" }
   class n5 node_plugin
-  n6@{ shape: rounded, label: "**bevy​_​render::camera::ExtractedCamera**<br/>来自crate:bevy​_​render ↗：保存渲染世界<br/>相机的目标和绘制配置。" }
+  n6@{ shape: rounded, label: "**ExtractedCamera**<br/>来自crate:bevy​_​render ↗：保存渲染世界<br/>相机的目标和绘制配置。" }
   class n6 node_component
   class n6 external_node
-  n7@{ shape: rounded, label: "**deferred::copy​_​lighting​_​id::**<br/>**DeferredLightingIdDepthTexture**<br/>保存延迟光照通道使用的标识深度纹理。" }
+  n7@{ shape: rounded, label: "**DeferredLightingIdDepthTexture**<br/>保存延迟光照通道使用的标识深度纹理。" }
   class n7 node_component
   n1 e0@-->|"存在性约束"| n0
   class e0 edge_reference

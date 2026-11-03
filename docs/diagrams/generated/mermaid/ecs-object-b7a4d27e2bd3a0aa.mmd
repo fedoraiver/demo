@@ -39,7 +39,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: notch-rect, label: "**Local · animation​_​target​_​graphs​_​**<br/>**rebuilt​_​this​_​frame**<br/>记录本帧已重建目标子图的动画图资产。" }
   class n0 node_local
-  n1@{ shape: rounded, label: "**bevy​_​animation::graph::thread​_​**<br/>**animation​_​graphs**<br/>维护动画图的快速求值结构。" }
+  n1@{ shape: rounded, label: "**thread​_​animation​_​graphs**<br/>维护动画图的快速求值结构。" }
   class n1 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

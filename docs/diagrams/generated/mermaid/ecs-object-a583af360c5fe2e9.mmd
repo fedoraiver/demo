@@ -39,9 +39,9 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: lin-rect, label: "**ValidateParentHasComponentSystems**<br/>复核父子层级是否满足组件要求。" }
   class n0 node_system_set
-  n1@{ shape: rounded, label: "**bevy​_​app::hierarchy::check​_​parent​_​**<br/>**has​_​component#lt;bevy​_​transform::**<br/>**components::global​_​transform::**<br/>**GlobalTransform#gt;**<br/>报告仍不满足组件层级要求的父子关系。" }
+  n1@{ shape: rounded, label: "**check​_​parent​_​has​_​component**<br/>报告仍不满足组件层级要求的父子关系。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​app::hierarchy::check​_​parent​_​**<br/>**has​_​component#lt;bevy​_​camera::**<br/>**visibility::InheritedVisibility#gt;**<br/>报告仍不满足组件层级要求的父子关系。" }
+  n2@{ shape: rounded, label: "**check​_​parent​_​has​_​component**<br/>报告仍不满足组件层级要求的父子关系。" }
   class n2 node_system
   n0 e0@-->|"集合成员"| n1
   class e0 edge_set_membership

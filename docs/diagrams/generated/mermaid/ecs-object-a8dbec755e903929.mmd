@@ -39,7 +39,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: notch-rect, label: "**Local · arg3**<br/>去重本轮待提取的类型擦除渲染资产。" }
   class n0 node_local
-  n1@{ shape: rounded, label: "**bevy​_​render::erased​_​render​_​asset::**<br/>**extract​_​erased​_​render​_​asset#lt;bevy​_​**<br/>**pbr::mesh​_​material::**<br/>**MeshMaterial3d#lt;bevy​_​pbr::pbr​_​**<br/>**material::StandardMaterial#gt;#gt;**<br/>提取变化及设备恢复后失效的擦除渲染资产。" }
+  n1@{ shape: rounded, label: "**extract​_​erased​_​render​_​asset**<br/>提取变化及设备恢复后失效的擦除渲染资产。" }
   class n1 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

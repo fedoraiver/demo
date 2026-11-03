@@ -43,72 +43,72 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​pbr::render::mesh::check​_​views​_​**<br/>**need​_​specialization**<br/>汇总视图渲染特性并检测管线配置变化。" }
+  n0@{ shape: rounded, label: "**check​_​views​_​need​_​specialization**<br/>汇总视图渲染特性并检测管线配置变化。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**bevy​_​pbr::ViewKeyCache**<br/>缓存各视图预启用特性的网格管线键。" }
+  n1@{ shape: cyl, label: "**ViewKeyCache**<br/>缓存各视图预启用特性的网格管线键。" }
   class n1 node_resource
-  n2@{ shape: rounded, label: "**bevy​_​render::view::Tonemapping**<br/>来自crate:bevy​_​render ↗：选择 HDR 颜<br/>色到显示颜色的映射方式。" }
+  n2@{ shape: rounded, label: "**Tonemapping**<br/>来自crate:bevy​_​render ↗：选择 HDR 颜<br/>色到显示颜色的映射方式。" }
   class n2 node_component
   class n2 external_node
-  n3@{ shape: rounded, label: "**prepass::DeferredPrepass**<br/>来自crate:bevy​_​core​_​pipeline ↗：为三<br/>维相机启用延迟材质 G-buffer 预通道。" }
+  n3@{ shape: rounded, label: "**DeferredPrepass**<br/>来自crate:bevy​_​core​_​pipeline ↗：为三<br/>维相机启用延迟材质 G-buffer 预通道。" }
   class n3 node_component
   class n3 external_node
-  n4@{ shape: rounded, label: "**bevy​_​core​_​pipeline::prepass::**<br/>**DepthPrepass**<br/>来自crate:bevy​_​core​_​pipeline ↗：为三<br/>维相机生成独立的深度纹理。" }
+  n4@{ shape: rounded, label: "**DepthPrepass**<br/>来自crate:bevy​_​core​_​pipeline ↗：为三<br/>维相机生成独立的深度纹理。" }
   class n4 node_component
   class n4 external_node
-  n5@{ shape: rounded, label: "**bevy​_​render::view::ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
+  n5@{ shape: rounded, label: "**ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
   class n5 node_component
   class n5 external_node
-  n6@{ shape: rounded, label: "**ssao::ScreenSpaceAmbientOcclusion**<br/>配置三维相机的屏幕空间环境光遮蔽。" }
+  n6@{ shape: rounded, label: "**ScreenSpaceAmbientOcclusion**<br/>配置三维相机的屏幕空间环境光遮蔽。" }
   class n6 node_component
   n7@{ shape: lin-rect, label: "**PrepareAssets**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
   class n7 node_system_set
   class n7 external_node
-  n8@{ shape: rounded, label: "**oit::**<br/>**OrderIndependentTransparencySettings**<br/>来自crate:bevy​_​core​_​pipeline ↗：配置<br/>透明片元排序容量和混合阈值。" }
+  n8@{ shape: rounded, label: "**OrderIndependentTransparencySettings**<br/>来自crate:bevy​_​core​_​pipeline ↗：配置<br/>透明片元排序容量和混合阈值。" }
   class n8 node_component
   class n8 external_node
-  n9@{ shape: rounded, label: "**light​_​probe::**<br/>**RenderViewLightProbes#lt;bevy​_​light::**<br/>**EnvironmentMapLight#gt;**<br/>维护视图光照探针及纹理绑定索引。" }
+  n9@{ shape: rounded, label: "**RenderViewLightProbes#lt;EnvironmentMap**<br/>**Light#gt;**<br/>维护视图光照探针及纹理绑定索引。" }
   class n9 node_component
-  n10@{ shape: rounded, label: "**bevy​_​render::view::DebandDither**<br/>来自crate:bevy​_​render ↗：控制颜色输出<br/>的去色带抖动。" }
+  n10@{ shape: rounded, label: "**DebandDither**<br/>来自crate:bevy​_​render ↗：控制颜色输出<br/>的去色带抖动。" }
   class n10 node_component
   class n10 external_node
-  n11@{ shape: rounded, label: "**bevy​_​render::view::Msaa**<br/>来自crate:bevy​_​render ↗：选择视图的多<br/>重采样抗锯齿样本数。" }
+  n11@{ shape: rounded, label: "**Msaa**<br/>来自crate:bevy​_​render ↗：选择视图的多<br/>重采样抗锯齿样本数。" }
   class n11 node_component
   class n11 external_node
-  n12@{ shape: rounded, label: "**bevy​_​camera::Projection**<br/>来自crate:bevy​_​camera ↗：定义相机从视<br/>图到裁剪空间的投影。" }
+  n12@{ shape: rounded, label: "**Projection**<br/>来自crate:bevy​_​camera ↗：定义相机从视<br/>图到裁剪空间的投影。" }
   class n12 node_component
   class n12 external_node
-  n13@{ shape: cyl, label: "**camera::DirtySpecializations**<br/>来自crate:bevy​_​render ↗：记录需刷新或<br/>移除管线专用化的对象与视图。" }
+  n13@{ shape: cyl, label: "**DirtySpecializations**<br/>来自crate:bevy​_​render ↗：记录需刷新或<br/>移除管线专用化的对象与视图。" }
   class n13 node_resource
   class n13 external_node
-  n14@{ shape: rounded, label: "**prepass::NormalPrepass**<br/>来自crate:bevy​_​core​_​pipeline ↗：输出<br/>已应用法线贴图的世界空间法线。" }
+  n14@{ shape: rounded, label: "**NormalPrepass**<br/>来自crate:bevy​_​core​_​pipeline ↗：输出<br/>已应用法线贴图的世界空间法线。" }
   class n14 node_component
   class n14 external_node
-  n15@{ shape: rounded, label: "**bevy​_​core​_​pipeline::prepass::**<br/>**MotionVectorPrepass**<br/>来自crate:bevy​_​core​_​pipeline ↗：为相<br/>机输出屏幕空间运动矢量。" }
+  n15@{ shape: rounded, label: "**MotionVectorPrepass**<br/>来自crate:bevy​_​core​_​pipeline ↗：为相<br/>机输出屏幕空间运动矢量。" }
   class n15 node_component
   class n15 external_node
-  n16@{ shape: rounded, label: "**contact​_​shadows::ContactShadows**<br/>配置相机的屏幕空间接触阴影。" }
+  n16@{ shape: rounded, label: "**ContactShadows**<br/>配置相机的屏幕空间接触阴影。" }
   class n16 node_component
-  n17@{ shape: rounded, label: "**ssr::ScreenSpaceReflectionsUniform**<br/>以 GPU 格式保存反射粗糙度和追踪设置。" }
+  n17@{ shape: rounded, label: "**ScreenSpaceReflectionsUniform**<br/>以 GPU 格式保存反射粗糙度和追踪设置。" }
   class n17 node_component
-  n18@{ shape: rounded, label: "**transmission::**<br/>**ScreenSpaceTransmission**<br/>配置屏幕空间透射的层数与质量。" }
+  n18@{ shape: rounded, label: "**ScreenSpaceTransmission**<br/>配置屏幕空间透射的层数与质量。" }
   class n18 node_component
   n19@{ shape: notch-rect, label: "**Local · seen​_​views**<br/>记录本轮仍存在的三维网格视图。" }
   class n19 node_local
-  n20@{ shape: rounded, label: "**bevy​_​render::camera::TemporalJitter**<br/>来自crate:bevy​_​render ↗：为透视相机视<br/>锥提供亚像素抖动。" }
+  n20@{ shape: rounded, label: "**TemporalJitter**<br/>来自crate:bevy​_​render ↗：为透视相机视<br/>锥提供亚像素抖动。" }
   class n20 node_component
   class n20 external_node
-  n21@{ shape: rounded, label: "**atmosphere::ExtractedAtmosphere**<br/>保存尚未转为 GPU 参数的大气数据。" }
+  n21@{ shape: rounded, label: "**ExtractedAtmosphere**<br/>保存尚未转为 GPU 参数的大气数据。" }
   class n21 node_component
-  n22@{ shape: rounded, label: "**bevy​_​render::camera::ExtractedCamera**<br/>来自crate:bevy​_​render ↗：保存渲染世界<br/>相机的目标和绘制配置。" }
+  n22@{ shape: rounded, label: "**ExtractedCamera**<br/>来自crate:bevy​_​render ↗：保存渲染世界<br/>相机的目标和绘制配置。" }
   class n22 node_component
   class n22 external_node
-  n23@{ shape: rounded, label: "**light​_​probe::**<br/>**RenderViewLightProbes#lt;bevy​_​light::**<br/>**IrradianceVolume#gt;**<br/>维护视图光照探针及纹理绑定索引。" }
+  n23@{ shape: rounded, label: "**RenderViewLightProbes#lt;IrradianceVolu**<br/>**me#gt;**<br/>维护视图光照探针及纹理绑定索引。" }
   class n23 node_component
   n24@{ shape: rounded, label: "**ShadowFilteringMethod**<br/>来自crate:bevy​_​light ↗：选择相机阴影<br/>边缘的滤波方式。" }
   class n24 node_component
   class n24 external_node
-  n25@{ shape: rounded, label: "**fog::DistanceFog**<br/>配置随距离增强的雾颜色和衰减。" }
+  n25@{ shape: rounded, label: "**DistanceFog**<br/>配置随距离增强的雾颜色和衰减。" }
   class n25 node_component
   n0 e0@-->|"可变访问"| n1
   class e0 edge_write

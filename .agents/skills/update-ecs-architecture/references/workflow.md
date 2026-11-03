@@ -56,4 +56,4 @@ npm run maintain --prefix docs/diagrams -- run --resume <run-id>
 npm run maintain --prefix docs/diagrams -- report --format markdown
 ```
 
-失败、中断和未知退出均不作为成功。自动检查稳定后进入[冻结与视觉验收](visual-validation.md)，交付时分别报告编译器事实、真实导出／导入、用途、模型与图形检查，以及实际 SVG、浏览器和协议观察。
+失败、中断和未知退出均不作为成功。自动检查稳定后按[验收与交付范围](visual-validation.md)记录结果；SVG 视觉验证默认关闭，浏览器和协议验收单独记录。

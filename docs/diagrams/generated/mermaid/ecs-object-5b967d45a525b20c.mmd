@@ -36,9 +36,9 @@ flowchart LR
   classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**text2d::Text2dShadow**<br/>为二维文字保存阴影的偏移与颜色" }
+  n0@{ shape: rounded, label: "**Text2dShadow**<br/>为二维文字保存阴影的偏移与颜色" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​sprite​_​render::text2d::extract​_​**<br/>**text2d​_​sprite**<br/>来自crate:bevy​_​sprite​_​render ↗：把可<br/>见二维文字及装饰提取为精灵切片。" }
+  n1@{ shape: rounded, label: "**extract​_​text2d​_​sprite**<br/>来自crate:bevy​_​sprite​_​render ↗：把可<br/>见二维文字及装饰提取为精灵切片。" }
   class n1 node_system
   class n1 external_node
   n0 e0@--> n1

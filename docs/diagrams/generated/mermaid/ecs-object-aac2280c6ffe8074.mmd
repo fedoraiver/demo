@@ -38,12 +38,12 @@ flowchart LR
   classDef edge_consume stroke:#247B91,stroke-width:1.8px,stroke-dasharray:2 4
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​ecs::schedule::condition::**<br/>**common​_​conditions::on​_​message#lt;bevy​_​**<br/>**app::hierarchy::**<br/>**CheckParentHasComponent#lt;bevy​_​**<br/>**transform::components::global​_​**<br/>**transform::GlobalTransform#gt;#gt;**<br/>判断是否收到指定类型的新消息。" }
+  n0@{ shape: rounded, label: "**on​_​message**<br/>判断是否收到指定类型的新消息。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**bevy​_​app::hierarchy::check​_​parent​_​**<br/>**has​_​component#lt;bevy​_​transform::**<br/>**components::global​_​transform::**<br/>**GlobalTransform#gt;**<br/>来自crate:bevy​_​app ↗：报告仍不满足组<br/>件层级要求的父子关系。" }
+  n1@{ shape: rounded, label: "**check​_​parent​_​has​_​component**<br/>来自crate:bevy​_​app ↗：报告仍不满足组<br/>件层级要求的父子关系。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: lean-r, label: "**bevy​_​app::hierarchy::**<br/>**CheckParentHasComponent#lt;components::**<br/>**global​_​transform::GlobalTransform#gt;**<br/>来自crate:bevy​_​app ↗：请求复查父实体<br/>组件约束。" }
+  n2@{ shape: lean-r, label: "**CheckParentHasComponent#lt;GlobalTransf**<br/>**orm#gt;**<br/>来自crate:bevy​_​app ↗：请求复查父实体<br/>组件约束。" }
   class n2 node_message
   class n2 external_node
   n0 e0@-->|"运行条件"| n1

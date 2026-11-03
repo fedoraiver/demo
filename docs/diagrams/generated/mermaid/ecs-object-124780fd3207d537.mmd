@@ -43,28 +43,28 @@ flowchart LR
   classDef edge_publish stroke:#247B91,stroke-width:1.8px,stroke-dasharray:10 4 2 4
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​render::erased​_​render​_​asset::**<br/>**extract​_​erased​_​render​_​asset#lt;bevy​_​**<br/>**sprite​_​render::mesh2d::material::**<br/>**MeshMaterial2d#lt;bevy​_​sprite​_​render::**<br/>**mesh2d::color​_​material::**<br/>**ColorMaterial#gt;#gt;**<br/>提取变化及设备恢复后失效的擦除渲染资产。" }
+  n0@{ shape: rounded, label: "**extract​_​erased​_​render​_​asset**<br/>提取变化及设备恢复后失效的擦除渲染资产。" }
   class n0 node_system
   n1@{ shape: notch-rect, label: "**Local · arg3**<br/>去重本轮待提取的类型擦除渲染资产。" }
   class n1 node_local
   n2@{ shape: lin-rect, label: "**AssetExtractionSystems**<br/>提取采用类型擦除渲染接口的资产变化。" }
   class n2 node_system_set
-  n3@{ shape: cyl, label: "**bevy​_​render::erased​_​render​_​asset::**<br/>**ExtractedAssets#lt;mesh2d::material::**<br/>**MeshMaterial2d#lt;mesh2d::color​_​**<br/>**material::ColorMaterial#gt;#gt;**<br/>暂存本帧类型擦除资产的提取与增删记录。" }
+  n3@{ shape: cyl, label: "**ExtractedAssets#lt;MeshMaterial2d#lt;Color**<br/>**Material#gt;#gt;**<br/>暂存本帧类型擦除资产的提取与增删记录。" }
   class n3 node_resource
-  n4@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;bevy​_​**<br/>**ecs::lifecycle::**<br/>**RemovedComponentEntity#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n4@{ shape: cyl, label: "**Messages#lt;RemovedComponentEntity#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n4 node_resource
   class n4 external_node
-  n5@{ shape: cyl, label: "**extract​_​plugin::MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
+  n5@{ shape: cyl, label: "**MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
   class n5 node_resource
   class n5 external_node
-  n6@{ shape: cyl, label: "**bevy​_​render::erased​_​render​_​asset::**<br/>**CachedExtractErasedRenderAssetSystem**<br/>**State#lt;mesh2d::material::**<br/>**MeshMaterial2d#lt;mesh2d::color​_​**<br/>**material::ColorMaterial#gt;#gt;**<br/>缓存类型擦除资产提取的参数状态。" }
+  n6@{ shape: cyl, label: "**CachedExtractErasedRenderAssetSystem**<br/>**State#lt;MeshMaterial2d#lt;ColorMaterial#gt;#gt;**<br/>缓存类型擦除资产提取的参数状态。" }
   class n6 node_resource
-  n7@{ shape: rounded, label: "**bevy​_​render::erased​_​render​_​asset::**<br/>**CachedExtractErasedRenderAssetSystem**<br/>**State#lt;mesh2d::material::**<br/>**MeshMaterial2d#lt;mesh2d::color​_​**<br/>**material::ColorMaterial#gt;#gt;**<br/>缓存类型擦除资产提取的参数状态。" }
+  n7@{ shape: rounded, label: "**CachedExtractErasedRenderAssetSystem**<br/>**State#lt;MeshMaterial2d#lt;ColorMaterial#gt;#gt;**<br/>缓存类型擦除资产提取的参数状态。" }
   class n7 node_component
-  n8@{ shape: lean-r, label: "**bevy​_​ecs::lifecycle::**<br/>**RemovedComponentEntity**<br/>来自crate:bevy​_​ecs ↗：记录发生组件移<br/>除的实体。" }
+  n8@{ shape: lean-r, label: "**RemovedComponentEntity**<br/>来自crate:bevy​_​ecs ↗：记录发生组件移<br/>除的实体。" }
   class n8 node_message
   class n8 external_node
-  n9@{ shape: cyl, label: "**bevy​_​render::erased​_​render​_​asset::**<br/>**ErasedRenderAssetsToReExtract#lt;mesh2d**<br/>**::material::MeshMaterial2d#lt;mesh2d::**<br/>**color​_​material::ColorMaterial#gt;#gt;**<br/>记录设备恢复后需重新提取的资产身份。" }
+  n9@{ shape: cyl, label: "**ErasedRenderAssetsToReExtract#lt;MeshMa**<br/>**terial2d#lt;ColorMaterial#gt;#gt;**<br/>记录设备恢复后需重新提取的资产身份。" }
   class n9 node_resource
   n0 e0@-->|"可变访问"| n1
   class e0 edge_write

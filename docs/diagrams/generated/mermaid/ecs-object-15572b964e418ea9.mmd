@@ -42,32 +42,32 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​core​_​pipeline::deferred::copy​_​**<br/>**lighting​_​id::copy​_​deferred​_​lighting​_​**<br/>**id**<br/>把延迟光照通道标识复制到深度目标。" }
+  n0@{ shape: rounded, label: "**copy​_​deferred​_​lighting​_​id**<br/>把延迟光照通道标识复制到深度目标。" }
   class n0 node_system
   n1@{ shape: lin-rect, label: "**Prepass**<br/>划分三维相机绘制与后处理阶段。" }
   class n1 node_system_set
-  n2@{ shape: rounded, label: "**bevy​_​core​_​pipeline::prepass::**<br/>**ViewPrepassTextures**<br/>汇集视图已启用的预通道输出纹理。" }
+  n2@{ shape: rounded, label: "**ViewPrepassTextures**<br/>汇集视图已启用的预通道输出纹理。" }
   class n2 node_component
-  n3@{ shape: cyl, label: "**deferred::copy​_​lighting​_​id::**<br/>**CopyDeferredLightingIdPipeline**<br/>把延迟光照标识复制为深度附件。" }
+  n3@{ shape: cyl, label: "**CopyDeferredLightingIdPipeline**<br/>把延迟光照标识复制为深度附件。" }
   class n3 node_resource
-  n4@{ shape: cyl, label: "**bevy​_​render::render​_​resource::**<br/>**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
+  n4@{ shape: cyl, label: "**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
   class n4 node_resource
   class n4 external_node
-  n5@{ shape: rounded, label: "**bevy​_​render::view::ViewTarget**<br/>来自crate:bevy​_​render ↗：管理视图主颜<br/>色纹理及最终输出附件。" }
+  n5@{ shape: rounded, label: "**ViewTarget**<br/>来自crate:bevy​_​render ↗：管理视图主颜<br/>色纹理及最终输出附件。" }
   class n5 node_component
   class n5 external_node
-  n6@{ shape: cyl, label: "**bevy​_​render::renderer::RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
+  n6@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
   class n6 node_resource
   class n6 external_node
-  n7@{ shape: rounded, label: "**deferred::copy​_​lighting​_​id::**<br/>**DeferredLightingIdDepthTexture**<br/>保存延迟光照通道使用的标识深度纹理。" }
+  n7@{ shape: rounded, label: "**DeferredLightingIdDepthTexture**<br/>保存延迟光照通道使用的标识深度纹理。" }
   class n7 node_component
-  n8@{ shape: cyl, label: "**bevy​_​render::renderer::CurrentView**<br/>来自crate:bevy​_​render ↗：指定当前正在<br/>渲染的视图实体。" }
+  n8@{ shape: cyl, label: "**CurrentView**<br/>来自crate:bevy​_​render ↗：指定当前正在<br/>渲染的视图实体。" }
   class n8 node_resource
   class n8 external_node
-  n9@{ shape: cyl, label: "**bevy​_​render::diagnostic::**<br/>**DiagnosticsRecorder**<br/>来自crate:bevy​_​render ↗：记录渲染诊断<br/>区间与 GPU 查询索引的对应。" }
+  n9@{ shape: cyl, label: "**DiagnosticsRecorder**<br/>来自crate:bevy​_​render ↗：记录渲染诊断<br/>区间与 GPU 查询索引的对应。" }
   class n9 node_resource
   class n9 external_node
-  n10@{ shape: fr-rect, label: "**core​_​3d::Core3dPlugin**<br/>建立三维相机的渲染流程。" }
+  n10@{ shape: fr-rect, label: "**Core3dPlugin**<br/>建立三维相机的渲染流程。" }
   class n10 node_plugin
   n11@{ shape: lin-rect, label: "**MainPass**<br/>划分三维相机绘制与后处理阶段。" }
   class n11 node_system_set

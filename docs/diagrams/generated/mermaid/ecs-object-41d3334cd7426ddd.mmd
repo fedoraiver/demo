@@ -38,31 +38,31 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**input::WindowToEguiContextMap**<br/>维护窗口实体与 Egui 上下文实体的双向索<br/>引" }
+  n0@{ shape: cyl, label: "**WindowToEguiContextMap**<br/>维护窗口实体与 Egui 上下文实体的双向索<br/>引" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​egui::input::write​_​egui​_​input​_​**<br/>**system**<br/>把界面输入和文件拖放写入 Egui 输入批<br/>次。" }
+  n1@{ shape: rounded, label: "**write​_​egui​_​input​_​system**<br/>把界面输入和文件拖放写入 Egui 输入批<br/>次。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​egui::input::write​_​pointer​_​**<br/>**moved​_​and​_​button​_​messages​_​system**<br/>按原生事件顺序转换 Egui 指针输入。" }
+  n2@{ shape: rounded, label: "**write​_​pointer​_​moved​_​and​_​button​_​**<br/>**messages​_​system**<br/>按原生事件顺序转换 Egui 指针输入。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​egui::input::**<br/>**WindowToEguiContextMap::on​_​egui​_​**<br/>**context​_​removed​_​system**<br/>移除失效的 Egui 上下文映射。" }
+  n3@{ shape: rounded, label: "**on​_​egui​_​context​_​removed​_​system**<br/>移除失效的 Egui 上下文映射。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**bevy​_​egui::input::write​_​pinch​_​**<br/>**gesture​_​messages​_​system**<br/>把捏合手势转换为 Egui 缩放。" }
+  n4@{ shape: rounded, label: "**write​_​pinch​_​gesture​_​messages​_​system**<br/>把捏合手势转换为 Egui 缩放。" }
   class n4 node_system
-  n5@{ shape: rounded, label: "**bevy​_​egui::output::process​_​output​_​**<br/>**system**<br/>拆分 Egui 绘制输出并执行平台命令。" }
+  n5@{ shape: rounded, label: "**process​_​output​_​system**<br/>拆分 Egui 绘制输出并执行平台命令。" }
   class n5 node_system
-  n6@{ shape: rounded, label: "**bevy​_​egui::input::**<br/>**WindowToEguiContextMap::on​_​egui​_​**<br/>**context​_​added​_​system**<br/>登记新建 Egui 上下文的窗口映射。" }
+  n6@{ shape: rounded, label: "**on​_​egui​_​context​_​added​_​system**<br/>登记新建 Egui 上下文的窗口映射。" }
   class n6 node_system
-  n7@{ shape: rounded, label: "**bevy​_​egui::input::write​_​ime​_​**<br/>**messages​_​system**<br/>向聚焦的 Egui 上下文传递输入法文本。" }
+  n7@{ shape: rounded, label: "**write​_​ime​_​messages​_​system**<br/>向聚焦的 Egui 上下文传递输入法文本。" }
   class n7 node_system
-  n8@{ shape: rounded, label: "**bevy​_​egui::input::write​_​mouse​_​wheel​_​**<br/>**messages​_​system**<br/>向悬停 Egui 上下文传递滚轮输入。" }
+  n8@{ shape: rounded, label: "**write​_​mouse​_​wheel​_​messages​_​system**<br/>向悬停 Egui 上下文传递滚轮输入。" }
   class n8 node_system
-  n9@{ shape: rounded, label: "**bevy​_​egui::input::write​_​keyboard​_​**<br/>**input​_​messages​_​system**<br/>把键盘文本与按键转换为 Egui 输入。" }
+  n9@{ shape: rounded, label: "**write​_​keyboard​_​input​_​messages​_​system**<br/>把键盘文本与按键转换为 Egui 输入。" }
   class n9 node_system
-  n10@{ shape: rounded, label: "**bevy​_​egui::input::write​_​file​_​dnd​_​**<br/>**messages​_​system**<br/>把文件拖放路由到对应 Egui 上下文。" }
+  n10@{ shape: rounded, label: "**write​_​file​_​dnd​_​messages​_​system**<br/>把文件拖放路由到对应 Egui 上下文。" }
   class n10 node_system
-  n11@{ shape: rounded, label: "**bevy​_​egui::input::process​_​ime​_​system**<br/>同步 Egui 编辑区域的原生输入法状态。" }
+  n11@{ shape: rounded, label: "**process​_​ime​_​system**<br/>同步 Egui 编辑区域的原生输入法状态。" }
   class n11 node_system
-  n12@{ shape: rounded, label: "**bevy​_​egui::input::write​_​window​_​**<br/>**touch​_​messages​_​system**<br/>把窗口触摸转换为 Egui 指针和触摸事件。" }
+  n12@{ shape: rounded, label: "**write​_​window​_​touch​_​messages​_​system**<br/>把窗口触摸转换为 Egui 指针和触摸事件。" }
   class n12 node_system
   n0 e0@--> n1
   class e0 edge_read

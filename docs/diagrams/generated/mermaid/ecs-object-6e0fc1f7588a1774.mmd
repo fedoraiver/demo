@@ -42,54 +42,54 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​pbr::atmosphere::resources::**<br/>**prepare​_​atmosphere​_​bind​_​groups**<br/>为大气查找表计算和天空绘制绑定视图资源。" }
+  n0@{ shape: rounded, label: "**prepare​_​atmosphere​_​bind​_​groups**<br/>为大气查找表计算和天空绘制绑定视图资源。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**atmosphere::resources::**<br/>**AtmosphereTextures**<br/>保存大气渲染的四类缓存查找纹理。" }
+  n1@{ shape: rounded, label: "**AtmosphereTextures**<br/>保存大气渲染的四类缓存查找纹理。" }
   class n1 node_component
-  n2@{ shape: rounded, label: "**bevy​_​render::view::**<br/>**ViewDepthStencilTexture**<br/>来自crate:bevy​_​render ↗：提供视图绘制<br/>的深度模板附件。" }
+  n2@{ shape: rounded, label: "**ViewDepthStencilTexture**<br/>来自crate:bevy​_​render ↗：提供视图绘制<br/>的深度模板附件。" }
   class n2 node_component
   class n2 external_node
-  n3@{ shape: cyl, label: "**bevy​_​render::extract​_​component::**<br/>**ComponentUniforms#lt;atmosphere::**<br/>**GpuAtmosphereSettings#gt;**<br/>来自crate:bevy​_​render ↗：汇集同类组件<br/>的动态 Uniform 数据。" }
+  n3@{ shape: cyl, label: "**ComponentUniforms#lt;GpuAtmosphereSetti**<br/>**ngs#gt;**<br/>来自crate:bevy​_​render ↗：汇集同类组件<br/>的动态 Uniform 数据。" }
   class n3 node_resource
   class n3 external_node
   n4@{ shape: lin-rect, label: "**PrepareBindGroups**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
   class n4 node_system_set
   class n4 external_node
-  n5@{ shape: cyl, label: "**bevy​_​render::view::ViewUniforms**<br/>来自crate:bevy​_​render ↗：汇集全部视图<br/>的动态 Uniform 数据。" }
+  n5@{ shape: cyl, label: "**ViewUniforms**<br/>来自crate:bevy​_​render ↗：汇集全部视图<br/>的动态 Uniform 数据。" }
   class n5 node_resource
   class n5 external_node
-  n6@{ shape: cyl, label: "**atmosphere::resources::**<br/>**AtmosphereSampler**<br/>为大气查找纹理提供采样器。" }
+  n6@{ shape: cyl, label: "**AtmosphereSampler**<br/>为大气查找纹理提供采样器。" }
   class n6 node_resource
-  n7@{ shape: cyl, label: "**bevy​_​render::extract​_​component::**<br/>**ComponentUniforms#lt;atmosphere::**<br/>**resources::GpuAtmosphere#gt;**<br/>来自crate:bevy​_​render ↗：汇集同类组件<br/>的动态 Uniform 数据。" }
+  n7@{ shape: cyl, label: "**ComponentUniforms#lt;GpuAtmosphere#gt;**<br/>来自crate:bevy​_​render ↗：汇集同类组件<br/>的动态 Uniform 数据。" }
   class n7 node_resource
   class n7 external_node
-  n8@{ shape: cyl, label: "**bevy​_​render::render​_​resource::**<br/>**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
+  n8@{ shape: cyl, label: "**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
   class n8 node_resource
   class n8 external_node
-  n9@{ shape: rounded, label: "**atmosphere::ExtractedAtmosphere**<br/>保存尚未转为 GPU 参数的大气数据。" }
+  n9@{ shape: rounded, label: "**ExtractedAtmosphere**<br/>保存尚未转为 GPU 参数的大气数据。" }
   class n9 node_component
-  n10@{ shape: rounded, label: "**atmosphere::resources::**<br/>**AtmosphereBindGroups**<br/>保存大气查找表及天空绘制的绑定组。" }
+  n10@{ shape: rounded, label: "**AtmosphereBindGroups**<br/>保存大气查找表及天空绘制的绑定组。" }
   class n10 node_component
-  n11@{ shape: cyl, label: "**bevy​_​render::render​_​asset::**<br/>**RenderAssets#lt;medium::**<br/>**GpuScatteringMedium#gt;**<br/>来自crate:bevy​_​render ↗：按源资产身份<br/>保存 GPU 渲染表示。" }
+  n11@{ shape: cyl, label: "**RenderAssets#lt;GpuScatteringMedium#gt;**<br/>来自crate:bevy​_​render ↗：按源资产身份<br/>保存 GPU 渲染表示。" }
   class n11 node_resource
   class n11 external_node
-  n12@{ shape: cyl, label: "**atmosphere::resources::**<br/>**AtmosphereBindGroupLayouts**<br/>描述四类大气查找表的资源布局。" }
+  n12@{ shape: cyl, label: "**AtmosphereBindGroupLayouts**<br/>描述四类大气查找表的资源布局。" }
   class n12 node_resource
-  n13@{ shape: cyl, label: "**render::light::LightMeta**<br/>汇集各视图的 GPU 光照 Uniform 数据。" }
+  n13@{ shape: cyl, label: "**LightMeta**<br/>汇集各视图的 GPU 光照 Uniform 数据。" }
   class n13 node_resource
-  n14@{ shape: cyl, label: "**atmosphere::resources::**<br/>**AtmosphereTransforms**<br/>存储按视图索引的大气变换参数。" }
+  n14@{ shape: cyl, label: "**AtmosphereTransforms**<br/>存储按视图索引的大气变换参数。" }
   class n14 node_resource
-  n15@{ shape: rounded, label: "**components::Camera3d**<br/>来自crate:bevy​_​camera ↗：启用三维相机<br/>主渲染流程。" }
+  n15@{ shape: rounded, label: "**Camera3d**<br/>来自crate:bevy​_​camera ↗：启用三维相机<br/>主渲染流程。" }
   class n15 node_component
   class n15 external_node
-  n16@{ shape: rounded, label: "**bevy​_​render::view::Msaa**<br/>来自crate:bevy​_​render ↗：选择视图的多<br/>重采样抗锯齿样本数。" }
+  n16@{ shape: rounded, label: "**Msaa**<br/>来自crate:bevy​_​render ↗：选择视图的多<br/>重采样抗锯齿样本数。" }
   class n16 node_component
   class n16 external_node
-  n17@{ shape: cyl, label: "**medium::ScatteringMediumSampler**<br/>为散射介质查找表提供双线性采样。" }
+  n17@{ shape: cyl, label: "**ScatteringMediumSampler**<br/>为散射介质查找表提供双线性采样。" }
   class n17 node_resource
-  n18@{ shape: cyl, label: "**atmosphere::resources::**<br/>**RenderSkyBindGroupLayouts**<br/>描述天空绘制的普通与多采样接口。" }
+  n18@{ shape: cyl, label: "**RenderSkyBindGroupLayouts**<br/>描述天空绘制的普通与多采样接口。" }
   class n18 node_resource
-  n19@{ shape: cyl, label: "**bevy​_​render::renderer::RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
+  n19@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
   class n19 node_resource
   class n19 external_node
   n1 e0@--> n0

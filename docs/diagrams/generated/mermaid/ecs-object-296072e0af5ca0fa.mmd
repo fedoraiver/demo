@@ -40,29 +40,29 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**item​_​interaction::components::**<br/>**HeldCollider**<br/>无视觉碰撞代理对应的快递身份；代理随组合<br/>体清理，业务箱根始终独立。" }
+  n0@{ shape: rounded, label: "**HeldCollider**<br/>无视觉碰撞代理对应的快递身份；代理随组合<br/>体清理，业务箱根始终独立。" }
   class n0 node_component
-  n1@{ shape: hex, label: "**demo::item​_​interaction::lifecycle::**<br/>**prepare​_​holder​_​despawn**<br/>Despawn 观察先排队停用代理，再让<br/>Avian 的刚体卸载与 linked​_​spawn 清理<br/>运行。" }
+  n1@{ shape: hex, label: "**prepare​_​holder​_​despawn**<br/>Despawn 观察先排队停用代理，再让<br/>Avian 的刚体卸载与 linked​_​spawn 清理<br/>运行。" }
   class n1 node_observer
-  n2@{ shape: rounded, label: "**demo::character::motion::update​_​**<br/>**grounded**<br/>来自character ↗：脚底附近的小球向下探<br/>测支撑面；墙面法线和上升中的角色不能算接<br/>地。" }
+  n2@{ shape: rounded, label: "**update​_​grounded**<br/>来自character ↗：脚底附近的小球向下探<br/>测支撑面；墙面法线和上升中的角色不能算接<br/>地。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: hex, label: "**demo::item​_​interaction::lifecycle::**<br/>**prepare​_​holder​_​despawn**<br/>Despawn 观察先排队停用代理，再让<br/>Avian 的刚体卸载与 linked​_​spawn 清理<br/>运行。" }
+  n3@{ shape: hex, label: "**prepare​_​holder​_​despawn**<br/>Despawn 观察先排队停用代理，再让<br/>Avian 的刚体卸载与 linked​_​spawn 清理<br/>运行。" }
   class n3 node_observer
-  n4@{ shape: rounded, label: "**demo::item​_​interaction::pose::sync​_​**<br/>**held​_​physics**<br/>同步组合体内箱子的真实世界姿态和速度，不<br/>依赖人物是否具有视觉 Children。" }
+  n4@{ shape: rounded, label: "**sync​_​held​_​physics**<br/>同步组合体内箱子的真实世界姿态和速度，不<br/>依赖人物是否具有视觉 Children。" }
   class n4 node_system
-  n5@{ shape: rounded, label: "**demo::item​_​interaction::pose::sync​_​**<br/>**held​_​physics**<br/>同步组合体内箱子的真实世界姿态和速度，不<br/>依赖人物是否具有视觉 Children。" }
+  n5@{ shape: rounded, label: "**sync​_​held​_​physics**<br/>同步组合体内箱子的真实世界姿态和速度，不<br/>依赖人物是否具有视觉 Children。" }
   class n5 node_system
-  n6@{ shape: rounded, label: "**demo::item​_​interaction::lifecycle::**<br/>**cleanup​_​orphaned​_​colliders**<br/>业务箱本身被销毁后清理代理，防止人物带着<br/>不可见的附属碰撞继续运动。" }
+  n6@{ shape: rounded, label: "**cleanup​_​orphaned​_​colliders**<br/>业务箱本身被销毁后清理代理，防止人物带着<br/>不可见的附属碰撞继续运动。" }
   class n6 node_system
-  n7@{ shape: rounded, label: "**demo::item​_​interaction::attachment::**<br/>**finish​_​attachments**<br/>持握期间只保留人物的 Dynamic，碰到箱子<br/>即对同一刚体求解，内部形状自动互不碰撞。" }
+  n7@{ shape: rounded, label: "**finish​_​attachments**<br/>持握期间只保留人物的 Dynamic，碰到箱子<br/>即对同一刚体求解，内部形状自动互不碰撞。" }
   class n7 node_system
-  n8@{ shape: hex, label: "**demo::item​_​interaction::lifecycle::**<br/>**prepare​_​holder​_​despawn**<br/>Despawn 观察先排队停用代理，再让<br/>Avian 的刚体卸载与 linked​_​spawn 清理<br/>运行。" }
+  n8@{ shape: hex, label: "**prepare​_​holder​_​despawn**<br/>Despawn 观察先排队停用代理，再让<br/>Avian 的刚体卸载与 linked​_​spawn 清理<br/>运行。" }
   class n8 node_observer
-  n9@{ shape: rounded, label: "**demo::character::motion::update​_​**<br/>**grounded**<br/>来自character ↗：脚底附近的小球向下探<br/>测支撑面；墙面法线和上升中的角色不能算接<br/>地。" }
+  n9@{ shape: rounded, label: "**update​_​grounded**<br/>来自character ↗：脚底附近的小球向下探<br/>测支撑面；墙面法线和上升中的角色不能算接<br/>地。" }
   class n9 node_system
   class n9 external_node
-  n10@{ shape: rounded, label: "**demo::item​_​interaction::pose::sync​_​**<br/>**held​_​physics**<br/>同步组合体内箱子的真实世界姿态和速度，不<br/>依赖人物是否具有视觉 Children。" }
+  n10@{ shape: rounded, label: "**sync​_​held​_​physics**<br/>同步组合体内箱子的真实世界姿态和速度，不<br/>依赖人物是否具有视觉 Children。" }
   class n10 node_system
   n0 e0@-->|"存在性约束"| n1
   class e0 edge_reference

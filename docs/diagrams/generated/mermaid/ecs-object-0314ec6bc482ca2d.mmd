@@ -43,21 +43,21 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: hex, label: "**demo::first​_​person::actions::record​_​**<br/>**movement**<br/>按事件所属的上下文查找角色，避免把一个玩<br/>家的动作写给其他角色。" }
+  n0@{ shape: hex, label: "**record​_​movement**<br/>按事件所属的上下文查找角色，避免把一个玩<br/>家的动作写给其他角色。" }
   class n0 node_observer
-  n1@{ shape: rounded, label: "**first​_​person::actions::**<br/>**GameplayContext**<br/>控制者的步行输入上下文；角色实体不直接持<br/>有设备绑定。" }
+  n1@{ shape: rounded, label: "**GameplayContext**<br/>控制者的步行输入上下文；角色实体不直接持<br/>有设备绑定。" }
   class n1 node_component
-  n2@{ shape: rounded, label: "**first​_​person::ControlsCharacter**<br/>控制者当前关联的角色，设备和角色状态分别<br/>保存。" }
+  n2@{ shape: rounded, label: "**ControlsCharacter**<br/>控制者当前关联的角色，设备和角色状态分别<br/>保存。" }
   class n2 node_component
-  n3@{ shape: rounded, label: "**character::components::**<br/>**CharacterIntent**<br/>来自character ↗：来自控制者的玩法意<br/>图；输入状态跨帧保留，供固定步模拟读取。" }
+  n3@{ shape: rounded, label: "**CharacterIntent**<br/>来自character ↗：来自控制者的玩法意<br/>图；输入状态跨帧保留，供固定步模拟读取。" }
   class n3 node_component
   class n3 external_node
-  n4@{ shape: fr-rect, label: "**first​_​person::FirstPersonPlugin**<br/>注册第一人称动作、捕获、朝向与镜头，不安<br/>装输入基础设施或物理插件。" }
+  n4@{ shape: fr-rect, label: "**FirstPersonPlugin**<br/>注册第一人称动作、捕获、朝向与镜头，不安<br/>装输入基础设施或物理插件。" }
   class n4 node_plugin
-  n5@{ shape: stadium, label: "**bevy​_​enhanced​_​input::prelude::**<br/>**Fire#lt;first​_​person::actions::**<br/>**MoveAction#gt;**<br/>来自crate:bevy​_​enhanced​_​input ↗：持<br/>续通知处于触发状态的动作。" }
+  n5@{ shape: stadium, label: "**Fire#lt;MoveAction#gt;**<br/>来自crate:bevy​_​enhanced​_​input ↗：持<br/>续通知处于触发状态的动作。" }
   class n5 node_event
   class n5 external_node
-  n6@{ shape: rounded, label: "**character::components::Character**<br/>来自character ↗：具有移动和跳跃能力的<br/>角色。" }
+  n6@{ shape: rounded, label: "**Character**<br/>来自character ↗：具有移动和跳跃能力的<br/>角色。" }
   class n6 node_component
   class n6 external_node
   n1 e0@-->|"存在性约束"| n0

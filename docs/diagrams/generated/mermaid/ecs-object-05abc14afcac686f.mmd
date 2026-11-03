@@ -40,14 +40,14 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: lin-rect, label: "**Mix**<br/>跨功能只约束混音与播放阶段，具体资源和实<br/>例处理顺序留在音频内部。" }
   class n0 node_system_set
-  n1@{ shape: rounded, label: "**demo::audio::mix::sync​_​voice​_​volumes**<br/>将有效混音与素材音量同步到播放实例。" }
+  n1@{ shape: rounded, label: "**sync​_​voice​_​volumes**<br/>将有效混音与素材音量同步到播放实例。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**demo::audio::playback::log​_​load​_​**<br/>**failures**<br/>记录声音资源加载失败的路径与错误。" }
+  n2@{ shape: rounded, label: "**log​_​load​_​failures**<br/>记录声音资源加载失败的路径与错误。" }
   class n2 node_system
   n3@{ shape: lin-rect, label: "**Style**<br/>来自ui ↗：请求在 PreUpdate 消费<br/>后，Update 依次生成 BSN 页面并更新视觉<br/>焦点。" }
   class n3 node_system_set
   class n3 external_node
-  n4@{ shape: rounded, label: "**demo::audio::mix::sync​_​audio​_​mix**<br/>合成设置预览或正式配置的有效音量。" }
+  n4@{ shape: rounded, label: "**sync​_​audio​_​mix**<br/>合成设置预览或正式配置的有效音量。" }
   class n4 node_system
   n5@{ shape: lin-rect, label: "**Playback**<br/>跨功能只约束混音与播放阶段，具体资源和实<br/>例处理顺序留在音频内部。" }
   class n5 node_system_set

@@ -42,20 +42,20 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​pbr::decal::clustered::extract​_​**<br/>**clustered​_​decal**<br/>批量复制主世界的聚簇贴花组件。" }
+  n0@{ shape: rounded, label: "**extract​_​clustered​_​decal**<br/>批量复制主世界的聚簇贴花组件。" }
   class n0 node_system
   n1@{ shape: notch-rect, label: "**Local · previous​_​len**<br/>根据上次聚簇贴花提取数量预留批量容量。" }
   class n1 node_local
-  n2@{ shape: rounded, label: "**bevy​_​extract::SubEntity#lt;bevy​_​**<br/>**render::RenderApp#gt;**<br/>来自crate:bevy​_​extract ↗：记录主实体<br/>对应的子世界实体。" }
+  n2@{ shape: rounded, label: "**SubEntity#lt;RenderApp#gt;**<br/>来自crate:bevy​_​extract ↗：记录主实体<br/>对应的子世界实体。" }
   class n2 node_component
   class n2 external_node
-  n3@{ shape: cyl, label: "**extract​_​plugin::MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
+  n3@{ shape: cyl, label: "**MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
   class n3 node_resource
   class n3 external_node
-  n4@{ shape: rounded, label: "**cluster::ClusteredDecal**<br/>来自crate:bevy​_​light ↗：在立方体范围<br/>内向表面投射材质贴花。" }
+  n4@{ shape: rounded, label: "**ClusteredDecal**<br/>来自crate:bevy​_​light ↗：在立方体范围<br/>内向表面投射材质贴花。" }
   class n4 node_component
   class n4 external_node
-  n5@{ shape: fr-rect, label: "**decal::clustered::**<br/>**ClusteredDecalPlugin**<br/>提供聚簇贴花投射。" }
+  n5@{ shape: fr-rect, label: "**ClusteredDecalPlugin**<br/>提供聚簇贴花投射。" }
   class n5 node_plugin
   n0 e0@-->|"可变访问"| n1
   class e0 edge_write

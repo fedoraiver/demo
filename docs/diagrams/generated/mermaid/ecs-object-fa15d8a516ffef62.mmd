@@ -39,12 +39,12 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**demo::settings::frame​_​pacing::log​_​**<br/>**simulation​_​timestep**<br/>记录模拟频率，直接读取应用配置的固定时间<br/>步，不初始化或覆盖它。" }
+  n0@{ shape: rounded, label: "**log​_​simulation​_​timestep**<br/>记录模拟频率，直接读取应用配置的固定时间<br/>步，不初始化或覆盖它。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**time::Time#lt;fixed::Fixed#gt;**<br/>来自crate:bevy​_​time ↗：保存时钟上下<br/>文、帧间隔及累计时间" }
+  n1@{ shape: cyl, label: "**Time#lt;Fixed#gt;**<br/>来自crate:bevy​_​time ↗：保存时钟上下<br/>文、帧间隔及累计时间" }
   class n1 node_resource
   class n1 external_node
-  n2@{ shape: fr-rect, label: "**settings::SettingsPlugin**<br/>注册设置资源、原型参数反射与渲染限帧，不<br/>覆盖调用方已提供的配置或固定时间步。" }
+  n2@{ shape: fr-rect, label: "**SettingsPlugin**<br/>注册设置资源、原型参数反射与渲染限帧，不<br/>覆盖调用方已提供的配置或固定时间步。" }
   class n2 node_plugin
   n1 e0@--> n0
   class e0 edge_read

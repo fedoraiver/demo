@@ -43,18 +43,18 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​state::state​_​scoped::disable​_​**<br/>**entities​_​on​_​exit​_​state#lt;demo::game​_​**<br/>**flow::AppState#gt;**<br/>离开指定状态时禁用实体子树。" }
+  n0@{ shape: rounded, label: "**disable​_​entities​_​on​_​exit​_​state**<br/>离开指定状态时禁用实体子树。" }
   class n0 node_system
-  n1@{ shape: lean-r, label: "**bevy::bevy​_​state::state::**<br/>**StateTransitionEvent#lt;game​_​flow::**<br/>**AppState#gt;**<br/>通知状态离开和进入的变化。" }
+  n1@{ shape: lean-r, label: "**StateTransitionEvent#lt;AppState#gt;**<br/>通知状态离开和进入的变化。" }
   class n1 node_message
-  n2@{ shape: cyl, label: "**bevy::bevy​_​ecs::message::**<br/>**Messages#lt;bevy::bevy​_​state::state::**<br/>**StateTransitionEvent#lt;game​_​flow::**<br/>**AppState#gt;#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n2@{ shape: cyl, label: "**Messages#lt;StateTransitionEvent#lt;AppSta**<br/>**te#gt;#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n2 node_resource
   class n2 external_node
   n3@{ shape: lin-rect, label: "**ExitSchedules**<br/>组织状态转换及进入退出调度。" }
   class n3 node_system_set
-  n4@{ shape: rounded, label: "**bevy::bevy​_​state::state​_​scoped::**<br/>**DisableOnExit#lt;game​_​flow::AppState#gt;**<br/>指定离开某一状态时禁用当前实体的生命周期<br/>规则" }
+  n4@{ shape: rounded, label: "**DisableOnExit#lt;AppState#gt;**<br/>指定离开某一状态时禁用当前实体的生命周期<br/>规则" }
   class n4 node_component
-  n5@{ shape: rounded, label: "**entity​_​disabling::Disabled**<br/>来自crate:bevy​_​ecs ↗：标记被禁用的实<br/>体" }
+  n5@{ shape: rounded, label: "**Disabled**<br/>来自crate:bevy​_​ecs ↗：标记被禁用的实<br/>体" }
   class n5 node_component
   class n5 external_node
   n1 e0@--> n0

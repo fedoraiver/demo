@@ -40,22 +40,22 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​extract::extract​_​component::**<br/>**extract​_​components#lt;bevy​_​pbr::ssr::**<br/>**ScreenSpaceReflections, bevy​_​**<br/>**render::RenderApp, ()#gt;**<br/>批量同步或移除子世界的目标组件。" }
+  n0@{ shape: rounded, label: "**extract​_​components**<br/>批量同步或移除子世界的目标组件。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**ssr::ScreenSpaceReflections**<br/>来自crate:bevy​_​pbr ↗：配置相机屏幕空<br/>间反射。" }
+  n1@{ shape: rounded, label: "**ScreenSpaceReflections**<br/>来自crate:bevy​_​pbr ↗：配置相机屏幕空<br/>间反射。" }
   class n1 node_component
   class n1 external_node
-  n2@{ shape: cyl, label: "**extract​_​plugin::MainWorld**<br/>在提取阶段临时提供主模拟世界。" }
+  n2@{ shape: cyl, label: "**MainWorld**<br/>在提取阶段临时提供主模拟世界。" }
   class n2 node_resource
-  n3@{ shape: rounded, label: "**bevy​_​extract::SubEntity#lt;bevy​_​**<br/>**render::RenderApp#gt;**<br/>记录主实体对应的子世界实体。" }
+  n3@{ shape: rounded, label: "**SubEntity#lt;RenderApp#gt;**<br/>记录主实体对应的子世界实体。" }
   class n3 node_component
-  n4@{ shape: rounded, label: "**ssr::**<br/>**ViewScreenSpaceReflectionsUniformOff**<br/>**set**<br/>来自crate:bevy​_​pbr ↗：定位视图在反射<br/>设置缓冲中的参数。" }
+  n4@{ shape: rounded, label: "**ViewScreenSpaceReflectionsUniformOff**<br/>**set**<br/>来自crate:bevy​_​pbr ↗：定位视图在反射<br/>设置缓冲中的参数。" }
   class n4 node_component
   class n4 external_node
-  n5@{ shape: rounded, label: "**ssr::ScreenSpaceReflectionsUniform**<br/>来自crate:bevy​_​pbr ↗：以 GPU 格式保<br/>存反射粗糙度和追踪设置。" }
+  n5@{ shape: rounded, label: "**ScreenSpaceReflectionsUniform**<br/>来自crate:bevy​_​pbr ↗：以 GPU 格式保<br/>存反射粗糙度和追踪设置。" }
   class n5 node_component
   class n5 external_node
-  n6@{ shape: rounded, label: "**ssr::**<br/>**ScreenSpaceReflectionsPipelineId**<br/>来自crate:bevy​_​pbr ↗：标识视图需要的<br/>屏幕空间反射管线。" }
+  n6@{ shape: rounded, label: "**ScreenSpaceReflectionsPipelineId**<br/>来自crate:bevy​_​pbr ↗：标识视图需要的<br/>屏幕空间反射管线。" }
   class n6 node_component
   class n6 external_node
   n7@{ shape: notch-rect, label: "**Local · arg1**<br/>按上次组件提取数量预留输出容量。" }

@@ -49,30 +49,30 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​picking::input::touch​_​pick​_​**<br/>**events**<br/>把触摸阶段转换为独立拾取指针。" }
+  n0@{ shape: rounded, label: "**touch​_​pick​_​events**<br/>把触摸阶段转换为独立拾取指针。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**window::PrimaryWindow**<br/>来自crate:bevy​_​window ↗：标识唯一的主<br/>窗口" }
+  n1@{ shape: rounded, label: "**PrimaryWindow**<br/>来自crate:bevy​_​window ↗：标识唯一的主<br/>窗口" }
   class n1 node_component
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​picking::input::**<br/>**PointerInputSettings::is​_​touch​_​**<br/>**enabled**<br/>判断触摸拾取输入是否启用。" }
+  n2@{ shape: rounded, label: "**is​_​touch​_​enabled**<br/>判断触摸拾取输入是否启用。" }
   class n2 node_system
-  n3@{ shape: lean-r, label: "**pointer::PointerInput**<br/>传递拾取指针输入动作。" }
+  n3@{ shape: lean-r, label: "**PointerInput**<br/>传递拾取指针输入动作。" }
   class n3 node_message
   n4@{ shape: lin-rect, label: "**Input**<br/>组织指针拾取和悬停处理阶段。" }
   class n4 node_system_set
-  n5@{ shape: lean-r, label: "**event::WindowEvent**<br/>来自crate:bevy​_​window ↗：按顺序汇集窗<br/>口与输入消息。" }
+  n5@{ shape: lean-r, label: "**WindowEvent**<br/>来自crate:bevy​_​window ↗：按顺序汇集窗<br/>口与输入消息。" }
   class n5 node_message
   class n5 external_node
   n6@{ shape: notch-rect, label: "**Local · touch​_​cache**<br/>按触点标识缓存上一次触摸输入。" }
   class n6 node_local
-  n7@{ shape: fr-rect, label: "**input::PointerInputPlugin**<br/>转换鼠标和触摸的拾取输入。" }
+  n7@{ shape: fr-rect, label: "**PointerInputPlugin**<br/>转换鼠标和触摸的拾取输入。" }
   class n7 node_plugin
-  n8@{ shape: cyl, label: "**bevy​_​ecs::message::**<br/>**Messages#lt;pointer::PointerInput#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n8@{ shape: cyl, label: "**Messages#lt;PointerInput#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n8 node_resource
   class n8 external_node
-  n9@{ shape: rounded, label: "**bevy​_​picking::input::mouse​_​pick​_​**<br/>**events**<br/>把窗口鼠标事件转换为拾取指针动作。" }
+  n9@{ shape: rounded, label: "**mouse​_​pick​_​events**<br/>把窗口鼠标事件转换为拾取指针动作。" }
   class n9 node_system
-  n10@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;event::**<br/>**WindowEvent#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n10@{ shape: cyl, label: "**Messages#lt;WindowEvent#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n10 node_resource
   class n10 external_node
   n1 e0@-->|"存在性约束"| n0

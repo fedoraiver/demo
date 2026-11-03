@@ -38,14 +38,14 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**bevy​_​render::extract​_​component::**<br/>**ComponentUniforms#lt;deferred::**<br/>**PbrDeferredLightingDepthId#gt;**<br/>汇集同类组件的动态 Uniform 数据。" }
+  n0@{ shape: cyl, label: "**ComponentUniforms#lt;PbrDeferredLightin**<br/>**gDepthId#gt;**<br/>汇集同类组件的动态 Uniform 数据。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​render::init​_​gpu​_​resource#lt;bevy​_​**<br/>**render::uniform::**<br/>**ComponentUniforms#lt;bevy​_​pbr::**<br/>**deferred::**<br/>**PbrDeferredLightingDepthId#gt;#gt;**<br/>构造并插入渲染所需资源。" }
+  n1@{ shape: rounded, label: "**init​_​gpu​_​resource**<br/>构造并插入渲染所需资源。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​pbr::deferred::deferred​_​**<br/>**lighting**<br/>来自crate:bevy​_​pbr ↗：绑定网格视图、<br/>延迟光照管线及通道深度标识参数，在延迟光<br/>照深度附件约束下执行全屏光照计算，将结果<br/>写入视图颜色。" }
+  n2@{ shape: rounded, label: "**deferred​_​lighting**<br/>来自crate:bevy​_​pbr ↗：绑定网格视图、<br/>延迟光照管线及通道深度标识参数，在延迟光<br/>照深度附件约束下执行全屏光照计算，将结果<br/>写入视图颜色。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​render::uniform::prepare​_​**<br/>**uniform​_​components#lt;bevy​_​pbr::**<br/>**deferred::**<br/>**PbrDeferredLightingDepthId#gt;**<br/>将组件值批量上传为动态着色器参数。" }
+  n3@{ shape: rounded, label: "**prepare​_​uniform​_​components**<br/>将组件值批量上传为动态着色器参数。" }
   class n3 node_system
   n1 e0@-->|"插入"| n0
   class e0 edge_write

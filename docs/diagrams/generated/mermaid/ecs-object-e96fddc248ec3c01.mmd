@@ -43,22 +43,22 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**key​_​input**<br/>用键盘步进或跳转滑条数值。" }
+  n0@{ shape: hex, label: "**slider​_​on​_​key​_​input**<br/>用键盘步进或跳转滑条数值。" }
   class n0 node_observer
-  n1@{ shape: fr-rect, label: "**slider::SliderPlugin**<br/>处理滑块交互、数值与范围变化。" }
+  n1@{ shape: fr-rect, label: "**SliderPlugin**<br/>处理滑块交互、数值与范围变化。" }
   class n1 node_plugin
-  n2@{ shape: rounded, label: "**slider::SliderRange**<br/>限定滑块数值允许范围。" }
+  n2@{ shape: rounded, label: "**SliderRange**<br/>限定滑块数值允许范围。" }
   class n2 node_component
-  n3@{ shape: rounded, label: "**slider::Slider**<br/>组织滑块的连续数值调节行为。" }
+  n3@{ shape: rounded, label: "**Slider**<br/>组织滑块的连续数值调节行为。" }
   class n3 node_component
-  n4@{ shape: rounded, label: "**slider::SliderValue**<br/>记录滑块当前数值。" }
+  n4@{ shape: rounded, label: "**SliderValue**<br/>记录滑块当前数值。" }
   class n4 node_component
-  n5@{ shape: stadium, label: "**FocusedInput#lt;bevy​_​input::keyboard::**<br/>**KeyboardInput#gt;**<br/>来自crate:bevy​_​input​_​focus ↗：把输入<br/>消息路由到焦点实体并向窗口冒泡。" }
+  n5@{ shape: stadium, label: "**FocusedInput#lt;KeyboardInput#gt;**<br/>来自crate:bevy​_​input​_​focus ↗：把输入<br/>消息路由到焦点实体并向窗口冒泡。" }
   class n5 node_event
   class n5 external_node
-  n6@{ shape: rounded, label: "**slider::SliderStep**<br/>设置滑块键盘调节步长。" }
+  n6@{ shape: rounded, label: "**SliderStep**<br/>设置滑块键盘调节步长。" }
   class n6 node_component
-  n7@{ shape: rounded, label: "**bevy​_​ui::InteractionDisabled**<br/>来自crate:bevy​_​ui ↗：标记禁止交互的<br/>UI 控件。" }
+  n7@{ shape: rounded, label: "**InteractionDisabled**<br/>来自crate:bevy​_​ui ↗：标记禁止交互的<br/>UI 控件。" }
   class n7 node_component
   class n7 external_node
   n8@{ shape: stadium, label: "**ValueChange#lt;f32#gt;**<br/>传递控件提出的新值。" }

@@ -41,13 +41,13 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**avian3d::dynamics::joints::fixed::**<br/>**update​_​local​_​frames**<br/>将固定关节参考框架换算到两端局部空间。" }
+  n0@{ shape: rounded, label: "**update​_​local​_​frames**<br/>将固定关节参考框架换算到两端局部空间。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**dynamics::joints::fixed::FixedJoint**<br/>锁定两刚体的相对位姿。" }
+  n1@{ shape: rounded, label: "**FixedJoint**<br/>锁定两刚体的相对位姿。" }
   class n1 node_component
-  n2@{ shape: rounded, label: "**physics​_​transform::transform::**<br/>**Position**<br/>保存刚体或碰撞体的世界位置。" }
+  n2@{ shape: rounded, label: "**Position**<br/>保存刚体或碰撞体的世界位置。" }
   class n2 node_component
-  n3@{ shape: rounded, label: "**physics​_​transform::transform::**<br/>**Rotation**<br/>保存刚体或碰撞体的世界旋转。" }
+  n3@{ shape: rounded, label: "**Rotation**<br/>保存刚体或碰撞体的世界旋转。" }
   class n3 node_component
   n4@{ shape: lin-rect, label: "**PrepareLocalFrames**<br/>组织关节局部框架准备。" }
   class n4 node_system_set

@@ -44,64 +44,67 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**demo::item​_​interaction::attachment::**<br/>**finish​_​attachments**<br/>持握期间只保留人物的 Dynamic，碰到箱子<br/>即对同一刚体求解，内部形状自动互不碰撞。" }
+  n0@{ shape: rounded, label: "**finish​_​attachments**<br/>持握期间只保留人物的 Dynamic，碰到箱子<br/>即对同一刚体求解，内部形状自动互不碰撞。" }
   class n0 node_system
   n1@{ shape: lin-rect, label: "**AnonymousSet(1)**<br/>来自crate:bevy​_​ecs ↗：保存一组系统的<br/>共同配置。" }
   class n1 node_system_set
   class n1 external_node
-  n2@{ shape: rounded, label: "**item​_​interaction::components::**<br/>**HeldAttachment**<br/>实际碰撞形状相对组合刚体的姿态；箱实体不<br/>成为人物的 ChildOf，避免异常销毁时连带<br/>消失。" }
+  n2@{ shape: rounded, label: "**HeldAttachment**<br/>实际碰撞形状相对组合刚体的姿态；箱实体不<br/>成为人物的 ChildOf，避免异常销毁时连带<br/>消失。" }
   class n2 node_component
-  n3@{ shape: rounded, label: "**collision::collision​_​events::**<br/>**CollisionEventsEnabled**<br/>来自crate:avian3d ↗：为此碰撞体开启接<br/>触开始与结束事件。" }
+  n3@{ shape: rounded, label: "**CollisionEventsEnabled**<br/>来自crate:avian3d ↗：为此碰撞体开启接<br/>触开始与结束事件。" }
   class n3 node_component
   class n3 external_node
-  n4@{ shape: rounded, label: "**collision::collider::layers::**<br/>**CollisionLayers**<br/>来自crate:avian3d ↗：声明碰撞体所属层<br/>和可交互层。" }
+  n4@{ shape: rounded, label: "**CollisionLayers**<br/>来自crate:avian3d ↗：声明碰撞体所属层<br/>和可交互层。" }
   class n4 node_component
   class n4 external_node
-  n5@{ shape: fr-rect, label: "**item​_​interaction::**<br/>**ItemInteractionPlugin**<br/>注册交互、持握生命周期、物理与呈现同步及<br/>物品反馈；物理插件由调用方显式安装。" }
+  n5@{ shape: fr-rect, label: "**ItemInteractionPlugin**<br/>注册交互、持握生命周期、物理与呈现同步及<br/>物品反馈；物理插件由调用方显式安装。" }
   class n5 node_plugin
   n6@{ shape: lin-rect, label: "**Attachment**<br/>来自game​_​flow ↗：固定模拟阶段；结构变<br/>更在依赖阶段之间提交。" }
   class n6 node_system_set
   class n6 external_node
-  n7@{ shape: rounded, label: "**collision::collider::parry::Collider**<br/>来自crate:avian3d ↗：保存 Parry 碰撞<br/>后端的几何形状。" }
+  n7@{ shape: rounded, label: "**Collider**<br/>来自crate:avian3d ↗：保存 Parry 碰撞<br/>后端的几何形状。" }
   class n7 node_component
   class n7 external_node
-  n8@{ shape: rounded, label: "**dynamics::rigid​_​body::physics​_​**<br/>**material::Friction**<br/>来自crate:avian3d ↗：配置碰撞对象的静<br/>摩擦和动摩擦。" }
+  n8@{ shape: rounded, label: "**Friction**<br/>来自crate:avian3d ↗：配置碰撞对象的静<br/>摩擦和动摩擦。" }
   class n8 node_component
   class n8 external_node
-  n9@{ shape: rounded, label: "**demo::item​_​interaction::attachment::**<br/>**align​_​attachments**<br/>有限的小步对齐不会积分箱体力；受阻保留安<br/>全姿态，持续受阻则解除持握。" }
+  n9@{ shape: rounded, label: "**align​_​attachments**<br/>有限的小步对齐不会积分箱体力；受阻保留安<br/>全姿态，持续受阻则解除持握。" }
   class n9 node_system
-  n10@{ shape: rounded, label: "**dynamics::rigid​_​body::physics​_​**<br/>**material::Restitution**<br/>来自crate:avian3d ↗：配置碰撞后的弹跳<br/>恢复程度。" }
+  n10@{ shape: rounded, label: "**Restitution**<br/>来自crate:avian3d ↗：配置碰撞后的弹跳<br/>恢复程度。" }
   class n10 node_component
   class n10 external_node
-  n11@{ shape: rounded, label: "**demo::item​_​interaction::lifecycle::**<br/>**restore​_​empty​_​holder​_​mass**<br/>箱实体被销毁时关系钩子会清空反向索引，人<br/>物仍存活则归还其原质量。" }
+  n11@{ shape: rounded, label: "**restore​_​empty​_​holder​_​mass**<br/>箱实体被销毁时关系钩子会清空反向索引，人<br/>物仍存活则归还其原质量。" }
   class n11 node_system
-  n12@{ shape: rounded, label: "**character::components::Character**<br/>来自character ↗：具有移动和跳跃能力的<br/>角色。" }
+  n12@{ shape: rounded, label: "**Character**<br/>来自character ↗：具有移动和跳跃能力的<br/>角色。" }
   class n12 node_component
   class n12 external_node
-  n13@{ shape: rounded, label: "**item​_​interaction::components::**<br/>**CarryBaseMass**<br/>独立箱根不属于人物的 Children，显式保存<br/>原质量供挂接和解除时恢复。" }
+  n13@{ shape: rounded, label: "**CarryBaseMass**<br/>独立箱根不属于人物的 Children，显式保存<br/>原质量供挂接和解除时恢复。" }
   class n13 node_component
-  n14@{ shape: rounded, label: "**dynamics::rigid​_​body::mass​_​**<br/>**properties::components::Mass**<br/>来自crate:avian3d ↗：指定实体自身的质<br/>量输入。" }
+  n14@{ shape: rounded, label: "**Mass**<br/>来自crate:avian3d ↗：指定实体自身的质<br/>量输入。" }
   class n14 node_component
   class n14 external_node
-  n15@{ shape: rounded, label: "**item​_​interaction::components::**<br/>**Pickable**<br/>允许被拾取的能力标签。" }
+  n15@{ shape: rounded, label: "**Pickable**<br/>允许被拾取的能力标签。" }
   class n15 node_component
-  n16@{ shape: rounded, label: "**collision::collider::collider​_​**<br/>**transform::ColliderTransform**<br/>来自crate:avian3d ↗：缓存碰撞体相对于<br/>刚体的变换。" }
+  n16@{ shape: rounded, label: "**ColliderTransform**<br/>来自crate:avian3d ↗：缓存碰撞体相对于<br/>刚体的变换。" }
   class n16 node_component
   class n16 external_node
-  n17@{ shape: rounded, label: "**collision::collider::collider​_​**<br/>**hierarchy::ColliderOf**<br/>来自crate:avian3d ↗：指定碰撞体附着的<br/>刚体。" }
+  subgraph layout_card_n17[" "]
+  n17@{ shape: rounded, label: "**ColliderOf**<br/>来自crate:avian3d ↗：指定碰撞体附着的<br/>刚体。" }
   class n17 node_component
   class n17 external_node
-  n18@{ shape: rounded, label: "**collision::collider::**<br/>**ColliderDisabled**<br/>来自crate:avian3d ↗：暂停碰撞体检测和<br/>空间查询。" }
+  end
+  style layout_card_n17 fill:none,stroke:none
+  n18@{ shape: rounded, label: "**ColliderDisabled**<br/>来自crate:avian3d ↗：暂停碰撞体检测和<br/>空间查询。" }
   class n18 node_component
   class n18 external_node
-  n19@{ shape: rounded, label: "**item​_​interaction::components::**<br/>**HeldCollider**<br/>无视觉碰撞代理对应的快递身份；代理随组合<br/>体清理，业务箱根始终独立。" }
+  n19@{ shape: rounded, label: "**HeldCollider**<br/>无视觉碰撞代理对应的快递身份；代理随组合<br/>体清理，业务箱根始终独立。" }
   class n19 node_component
-  n20@{ shape: rounded, label: "**item​_​interaction::components::HeldBy**<br/>物体的持有者；只由交互系统插入或移除。" }
+  n20@{ shape: rounded, label: "**HeldBy**<br/>物体的持有者；只由交互系统插入或移除。" }
   class n20 node_component
-  n21@{ shape: rounded, label: "**dynamics::rigid​_​body::RigidBody**<br/>来自crate:avian3d ↗：选择动态、静态或<br/>运动学刚体行为。" }
+  n21@{ shape: rounded, label: "**RigidBody**<br/>来自crate:avian3d ↗：选择动态、静态或<br/>运动学刚体行为。" }
   class n21 node_component
   class n21 external_node
-  n22@{ shape: rounded, label: "**components::transform::Transform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>相对父实体的平移、旋转和缩放" }
+  n22@{ shape: rounded, label: "**Transform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>相对父实体的平移、旋转和缩放" }
   class n22 node_component
   class n22 external_node
   n1 e0@-->|"集合成员"| n0
@@ -146,7 +149,7 @@ flowchart LR
   class e19 edge_read
   n13 e20@--> n0
   class e20 edge_read
-  n0 e21@-->|"插入"| n17
+  n0 e21@--->|"插入"| n17
   class e21 edge_write
   n0 e22@-->|"插入"| n18
   class e22 edge_write
@@ -183,7 +186,7 @@ flowchart LR
   e18@{ curve: basis }
   e19@{ curve: basis }
   e20@{ curve: basis }
-  e21@{ curve: bumpX }
+  e21@{ curve: basis }
   e22@{ curve: basis }
   e23@{ curve: basis }
   e24@{ curve: basis }

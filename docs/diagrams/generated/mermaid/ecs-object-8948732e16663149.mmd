@@ -37,11 +37,11 @@ flowchart LR
   classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**image::ImageNodeTextureAtlasLayout**<br/>缓存 UI 图像节点引用的纹理图集布局。" }
+  n0@{ shape: rounded, label: "**ImageNodeTextureAtlasLayout**<br/>缓存 UI 图像节点引用的纹理图集布局。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​ui​_​render::image::mark​_​images​_​**<br/>**as​_​changed​_​if​_​their​_​assets​_​changed**<br/>使图像或图集资产变化触发 UI 图像更新。" }
+  n1@{ shape: rounded, label: "**mark​_​images​_​as​_​changed​_​if​_​their​_​**<br/>**assets​_​changed**<br/>使图像或图集资产变化触发 UI 图像更新。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​ui​_​render::image::update​_​**<br/>**texture​_​atlas​_​layout​_​components**<br/>同步 UI 图像所引用的图集布局组件。" }
+  n2@{ shape: rounded, label: "**update​_​texture​_​atlas​_​layout​_​**<br/>**components**<br/>同步 UI 图像所引用的图集布局组件。" }
   class n2 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

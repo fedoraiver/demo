@@ -40,358 +40,358 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
   subgraph layout_card_n0[" "]
-  n0@{ shape: rounded, label: "**bevy​_​render::camera::ExtractedCamera**<br/>保存渲染世界相机的目标和绘制配置。" }
+  n0@{ shape: rounded, label: "**ExtractedCamera**<br/>保存渲染世界相机的目标和绘制配置。" }
   class n0 node_component
   end
   style layout_card_n0 fill:none,stroke:none
   subgraph layout_card_n1[" "]
-  n1@{ shape: rounded, label: "**bevy​_​core​_​pipeline::prepass::node::**<br/>**early​_​prepass**<br/>来自crate:bevy​_​core​_​pipeline ↗：绘制<br/>早期不透明与 AlphaMask 预通道。" }
+  n1@{ shape: rounded, label: "**early​_​prepass**<br/>来自crate:bevy​_​core​_​pipeline ↗：绘制<br/>早期不透明与 AlphaMask 预通道。" }
   class n1 node_system
   class n1 external_node
   end
   style layout_card_n1 fill:none,stroke:none
   subgraph layout_card_n2[" "]
-  n2@{ shape: rounded, label: "**bevy​_​anti​_​alias::fxaa::prepare​_​fxaa​_​**<br/>**pipelines**<br/>来自crate:bevy​_​anti​_​alias ↗：按相机<br/>边缘阈值与目标格式准备 FXAA 管线。" }
+  n2@{ shape: rounded, label: "**prepare​_​fxaa​_​pipelines**<br/>来自crate:bevy​_​anti​_​alias ↗：按相机<br/>边缘阈值与目标格式准备 FXAA 管线。" }
   class n2 node_system
   class n2 external_node
   end
   style layout_card_n2 fill:none,stroke:none
   subgraph layout_card_n3[" "]
-  n3@{ shape: rounded, label: "**bevy​_​pbr::transmission::node::main​_​**<br/>**transmissive​_​pass​_​3d**<br/>来自crate:bevy​_​pbr ↗：分层复制场景颜<br/>色并绘制三维透射物体。" }
+  n3@{ shape: rounded, label: "**main​_​transmissive​_​pass​_​3d**<br/>来自crate:bevy​_​pbr ↗：分层复制场景颜<br/>色并绘制三维透射物体。" }
   class n3 node_system
   class n3 external_node
   end
   style layout_card_n3 fill:none,stroke:none
   subgraph layout_card_n4[" "]
-  n4@{ shape: rounded, label: "**bevy​_​core​_​pipeline::deferred::node::**<br/>**early​_​deferred​_​prepass**<br/>来自crate:bevy​_​core​_​pipeline ↗：执行<br/>早期延迟预通道并保存深度结果。" }
+  n4@{ shape: rounded, label: "**early​_​deferred​_​prepass**<br/>来自crate:bevy​_​core​_​pipeline ↗：执行<br/>早期延迟预通道并保存深度结果。" }
   class n4 node_system
   class n4 external_node
   end
   style layout_card_n4 fill:none,stroke:none
   subgraph layout_card_n5[" "]
-  n5@{ shape: rounded, label: "**bevy​_​render::view::cleanup​_​view​_​**<br/>**targets​_​for​_​resize**<br/>在窗口尺寸或呈现模式变化时撤销旧视图目<br/>标。" }
+  n5@{ shape: rounded, label: "**cleanup​_​view​_​targets​_​for​_​resize**<br/>在窗口尺寸或呈现模式变化时撤销旧视图目<br/>标。" }
   class n5 node_system
   end
   style layout_card_n5 fill:none,stroke:none
   subgraph layout_card_n6[" "]
-  n6@{ shape: rounded, label: "**bevy​_​egui::render::systems::prepare​_​**<br/>**egui​_​transforms​_​system**<br/>来自crate:bevy​_​egui ↗：上传 Egui 屏<br/>幕变换缓冲。" }
+  n6@{ shape: rounded, label: "**prepare​_​egui​_​transforms​_​system**<br/>来自crate:bevy​_​egui ↗：上传 Egui 屏<br/>幕变换缓冲。" }
   class n6 node_system
   class n6 external_node
   end
   style layout_card_n6 fill:none,stroke:none
   subgraph layout_card_n7[" "]
-  n7@{ shape: rounded, label: "**bevy​_​egui::render::systems::queue​_​**<br/>**pipelines​_​system**<br/>来自crate:bevy​_​egui ↗：按目标格式选<br/>择 Egui 渲染管线。" }
+  n7@{ shape: rounded, label: "**queue​_​pipelines​_​system**<br/>来自crate:bevy​_​egui ↗：按目标格式选<br/>择 Egui 渲染管线。" }
   class n7 node_system
   class n7 external_node
   end
   style layout_card_n7 fill:none,stroke:none
   subgraph layout_card_n8[" "]
-  n8@{ shape: rounded, label: "**bevy​_​egui::render::render​_​pass::**<br/>**egui​_​pass**<br/>来自crate:bevy​_​egui ↗：把准备好的<br/>Egui 绘制项渲染到视图目标。" }
+  n8@{ shape: rounded, label: "**egui​_​pass**<br/>来自crate:bevy​_​egui ↗：把准备好的<br/>Egui 绘制项渲染到视图目标。" }
   class n8 node_system
   class n8 external_node
   end
   style layout_card_n8 fill:none,stroke:none
   subgraph layout_card_n9[" "]
-  n9@{ shape: rounded, label: "**bevy​_​render::view::prepare​_​view​_​**<br/>**attachments**<br/>按相机输出目标准备可共享的颜色附件。" }
+  n9@{ shape: rounded, label: "**prepare​_​view​_​attachments**<br/>按相机输出目标准备可共享的颜色附件。" }
   class n9 node_system
   end
   style layout_card_n9 fill:none,stroke:none
   subgraph layout_card_n10[" "]
-  n10@{ shape: rounded, label: "**bevy​_​anti​_​alias::smaa::prepare​_​smaa​_​**<br/>**textures**<br/>来自crate:bevy​_​anti​_​alias ↗：为<br/>SMAA 分配边缘、模板和混合权重纹理。" }
+  n10@{ shape: rounded, label: "**prepare​_​smaa​_​textures**<br/>来自crate:bevy​_​anti​_​alias ↗：为<br/>SMAA 分配边缘、模板和混合权重纹理。" }
   class n10 node_system
   class n10 external_node
   end
   style layout_card_n10 fill:none,stroke:none
   subgraph layout_card_n11[" "]
-  n11@{ shape: rounded, label: "**bevy​_​core​_​pipeline::tonemapping::**<br/>**node::tonemapping**<br/>来自crate:bevy​_​core​_​pipeline ↗：为启<br/>用的 HDR 视图执行色调映射。" }
+  n11@{ shape: rounded, label: "**tonemapping**<br/>来自crate:bevy​_​core​_​pipeline ↗：为启<br/>用的 HDR 视图执行色调映射。" }
   class n11 node_system
   class n11 external_node
   end
   style layout_card_n11 fill:none,stroke:none
   subgraph layout_card_n12[" "]
-  n12@{ shape: rounded, label: "**bevy​_​core​_​pipeline::oit::prepare​_​**<br/>**oit​_​buffers**<br/>来自crate:bevy​_​core​_​pipeline ↗：调整<br/>共享 OIT 存储并上传逐相机设置。" }
+  n12@{ shape: rounded, label: "**prepare​_​oit​_​buffers**<br/>来自crate:bevy​_​core​_​pipeline ↗：调整<br/>共享 OIT 存储并上传逐相机设置。" }
   class n12 node_system
   class n12 external_node
   end
   style layout_card_n12 fill:none,stroke:none
   subgraph layout_card_n13[" "]
-  n13@{ shape: rounded, label: "**bevy​_​anti​_​alias::smaa::prepare​_​smaa​_​**<br/>**pipelines**<br/>来自crate:bevy​_​anti​_​alias ↗：按质量<br/>预设准备视图的三条 SMAA 管线。" }
+  n13@{ shape: rounded, label: "**prepare​_​smaa​_​pipelines**<br/>来自crate:bevy​_​anti​_​alias ↗：按质量<br/>预设准备视图的三条 SMAA 管线。" }
   class n13 node_system
   class n13 external_node
   end
   style layout_card_n13 fill:none,stroke:none
   subgraph layout_card_n14[" "]
-  n14@{ shape: rounded, label: "**bevy​_​core​_​pipeline::tonemapping::**<br/>**node::tonemapping**<br/>来自crate:bevy​_​core​_​pipeline ↗：为启<br/>用的 HDR 视图执行色调映射。" }
+  n14@{ shape: rounded, label: "**tonemapping**<br/>来自crate:bevy​_​core​_​pipeline ↗：为启<br/>用的 HDR 视图执行色调映射。" }
   class n14 node_system
   class n14 external_node
   end
   style layout_card_n14 fill:none,stroke:none
   subgraph layout_card_n15[" "]
-  n15@{ shape: rounded, label: "**bevy​_​pbr::ssao::ssao**<br/>来自crate:bevy​_​pbr ↗：依次计算深度预<br/>处理、环境遮蔽和空间去噪。" }
+  n15@{ shape: rounded, label: "**ssao**<br/>来自crate:bevy​_​pbr ↗：依次计算深度预<br/>处理、环境遮蔽和空间去噪。" }
   class n15 node_system
   class n15 external_node
   end
   style layout_card_n15 fill:none,stroke:none
   subgraph layout_card_n16[" "]
-  n16@{ shape: rounded, label: "**bevy​_​render::camera::sort​_​cameras**<br/>为同一输出目标排序相机并分配合成次序。" }
+  n16@{ shape: rounded, label: "**sort​_​cameras**<br/>为同一输出目标排序相机并分配合成次序。" }
   class n16 node_system
   end
   style layout_card_n16 fill:none,stroke:none
   subgraph layout_card_n17[" "]
-  n17@{ shape: rounded, label: "**bevy​_​ui​_​render::render​_​pass::ui​_​pass**<br/>来自crate:bevy​_​ui​_​render ↗：把透明<br/>UI 绘制项渲染到关联视图。" }
+  n17@{ shape: rounded, label: "**ui​_​pass**<br/>来自crate:bevy​_​ui​_​render ↗：把透明<br/>UI 绘制项渲染到关联视图。" }
   class n17 node_system
   class n17 external_node
   end
   style layout_card_n17 fill:none,stroke:none
   subgraph layout_card_n18[" "]
-  n18@{ shape: rounded, label: "**bevy​_​anti​_​alias::taa::prepare​_​taa​_​**<br/>**pipelines**<br/>来自crate:bevy​_​anti​_​alias ↗：准备<br/>TAA 当前状态及下一帧恢复用管线。" }
+  n18@{ shape: rounded, label: "**prepare​_​taa​_​pipelines**<br/>来自crate:bevy​_​anti​_​alias ↗：准备<br/>TAA 当前状态及下一帧恢复用管线。" }
   class n18 node_system
   class n18 external_node
   end
   style layout_card_n18 fill:none,stroke:none
   subgraph layout_card_n19[" "]
-  n19@{ shape: rounded, label: "**bevy​_​core​_​pipeline::core​_​2d::main​_​**<br/>**transparent​_​pass​_​2d​_​node::main​_​**<br/>**transparent​_​pass​_​2d**<br/>来自crate:bevy​_​core​_​pipeline ↗：使用<br/>已有深度绘制二维透明阶段。" }
+  n19@{ shape: rounded, label: "**main​_​transparent​_​pass​_​2d**<br/>来自crate:bevy​_​core​_​pipeline ↗：使用<br/>已有深度绘制二维透明阶段。" }
   class n19 node_system
   class n19 external_node
   end
   style layout_card_n19 fill:none,stroke:none
   subgraph layout_card_n20[" "]
-  n20@{ shape: rounded, label: "**bevy​_​core​_​pipeline::prepass::node::**<br/>**late​_​prepass**<br/>来自crate:bevy​_​core​_​pipeline ↗：为遮<br/>挡剔除绘制晚期预通道。" }
+  n20@{ shape: rounded, label: "**late​_​prepass**<br/>来自crate:bevy​_​core​_​pipeline ↗：为遮<br/>挡剔除绘制晚期预通道。" }
   class n20 node_system
   class n20 external_node
   end
   style layout_card_n20 fill:none,stroke:none
   subgraph layout_card_n21[" "]
-  n21@{ shape: rounded, label: "**bevy​_​core​_​pipeline::core​_​3d::**<br/>**prepare​_​prepass​_​textures**<br/>来自crate:bevy​_​core​_​pipeline ↗：按三<br/>维预通道配置分配各类输出纹理。" }
+  n21@{ shape: rounded, label: "**prepare​_​prepass​_​textures**<br/>来自crate:bevy​_​core​_​pipeline ↗：按三<br/>维预通道配置分配各类输出纹理。" }
   class n21 node_system
   class n21 external_node
   end
   style layout_card_n21 fill:none,stroke:none
   subgraph layout_card_n22[" "]
-  n22@{ shape: rounded, label: "**bevy​_​render::camera::extract​_​cameras**<br/>把活动相机及可见实体提取到渲染世界。" }
+  n22@{ shape: rounded, label: "**extract​_​cameras**<br/>把活动相机及可见实体提取到渲染世界。" }
   class n22 node_system
   end
   style layout_card_n22 fill:none,stroke:none
   subgraph layout_card_n23[" "]
-  n23@{ shape: rounded, label: "**bevy​_​core​_​pipeline::upscaling::**<br/>**prepare​_​view​_​upscaling​_​pipelines**<br/>来自crate:bevy​_​core​_​pipeline ↗：按相<br/>机合成方式准备输出缩放管线。" }
+  n23@{ shape: rounded, label: "**prepare​_​view​_​upscaling​_​pipelines**<br/>来自crate:bevy​_​core​_​pipeline ↗：按相<br/>机合成方式准备输出缩放管线。" }
   class n23 node_system
   class n23 external_node
   end
   style layout_card_n23 fill:none,stroke:none
   subgraph layout_card_n24[" "]
-  n24@{ shape: rounded, label: "**bevy​_​render::renderer::render​_​system**<br/>运行渲染图调度并完成回读和窗口呈现。" }
+  n24@{ shape: rounded, label: "**render​_​system**<br/>运行渲染图调度并完成回读和窗口呈现。" }
   class n24 node_system
   end
   style layout_card_n24 fill:none,stroke:none
   subgraph layout_card_n25[" "]
-  n25@{ shape: rounded, label: "**bevy​_​core​_​pipeline::core​_​2d::**<br/>**prepare​_​core​_​2d​_​depth​_​textures**<br/>来自crate:bevy​_​core​_​pipeline ↗：为有<br/>效二维视图准备共享目标深度纹理。" }
+  n25@{ shape: rounded, label: "**prepare​_​core​_​2d​_​depth​_​textures**<br/>来自crate:bevy​_​core​_​pipeline ↗：为有<br/>效二维视图准备共享目标深度纹理。" }
   class n25 node_system
   class n25 external_node
   end
   style layout_card_n25 fill:none,stroke:none
   subgraph layout_card_n26[" "]
-  n26@{ shape: rounded, label: "**bevy​_​core​_​pipeline::upscaling::**<br/>**node::upscaling**<br/>来自crate:bevy​_​core​_​pipeline ↗：将主<br/>颜色纹理缩放写入最终输出附件。" }
+  n26@{ shape: rounded, label: "**upscaling**<br/>来自crate:bevy​_​core​_​pipeline ↗：将主<br/>颜色纹理缩放写入最终输出附件。" }
   class n26 node_system
   class n26 external_node
   end
   style layout_card_n26 fill:none,stroke:none
   subgraph layout_card_n27[" "]
-  n27@{ shape: rounded, label: "**bevy​_​post​_​process::dof::prepare​_​**<br/>**depth​_​of​_​field​_​pipelines**<br/>来自crate:bevy​_​post​_​process ↗：按景<br/>深模式和视图格式准备两阶段管线。" }
+  n27@{ shape: rounded, label: "**prepare​_​depth​_​of​_​field​_​pipelines**<br/>来自crate:bevy​_​post​_​process ↗：按景<br/>深模式和视图格式准备两阶段管线。" }
   class n27 node_system
   class n27 external_node
   end
   style layout_card_n27 fill:none,stroke:none
   subgraph layout_card_n28[" "]
-  n28@{ shape: rounded, label: "**bevy​_​egui::render::systems::prepare​_​**<br/>**egui​_​transforms​_​system**<br/>来自crate:bevy​_​egui ↗：上传 Egui 屏<br/>幕变换缓冲。" }
+  n28@{ shape: rounded, label: "**prepare​_​egui​_​transforms​_​system**<br/>来自crate:bevy​_​egui ↗：上传 Egui 屏<br/>幕变换缓冲。" }
   class n28 node_system
   class n28 external_node
   end
   style layout_card_n28 fill:none,stroke:none
   subgraph layout_card_n29[" "]
-  n29@{ shape: rounded, label: "**bevy​_​anti​_​alias::taa::prepare​_​taa​_​**<br/>**history​_​textures**<br/>来自crate:bevy​_​anti​_​alias ↗：按帧奇<br/>偶为 TAA 轮换读写历史纹理。" }
+  n29@{ shape: rounded, label: "**prepare​_​taa​_​history​_​textures**<br/>来自crate:bevy​_​anti​_​alias ↗：按帧奇<br/>偶为 TAA 轮换读写历史纹理。" }
   class n29 node_system
   class n29 external_node
   end
   style layout_card_n29 fill:none,stroke:none
   subgraph layout_card_n30[" "]
-  n30@{ shape: rounded, label: "**bevy​_​egui::render::systems::prepare​_​**<br/>**egui​_​render​_​target​_​data​_​system**<br/>来自crate:bevy​_​egui ↗：准备 Egui 顶<br/>点索引和裁剪绘制命令。" }
+  n30@{ shape: rounded, label: "**prepare​_​egui​_​render​_​target​_​data​_​**<br/>**system**<br/>来自crate:bevy​_​egui ↗：准备 Egui 顶<br/>点索引和裁剪绘制命令。" }
   class n30 node_system
   class n30 external_node
   end
   style layout_card_n30 fill:none,stroke:none
   subgraph layout_card_n31[" "]
-  n31@{ shape: rounded, label: "**bevy​_​post​_​process::effect​_​stack::**<br/>**prepare​_​post​_​processing​_​pipelines**<br/>来自crate:bevy​_​post​_​process ↗：按视<br/>图颜色格式准备内置后处理管线。" }
+  n31@{ shape: rounded, label: "**prepare​_​post​_​processing​_​pipelines**<br/>来自crate:bevy​_​post​_​process ↗：按视<br/>图颜色格式准备内置后处理管线。" }
   class n31 node_system
   class n31 external_node
   end
   style layout_card_n31 fill:none,stroke:none
   subgraph layout_card_n32[" "]
-  n32@{ shape: rounded, label: "**bevy​_​ui​_​render::render​_​pass::ui​_​pass**<br/>来自crate:bevy​_​ui​_​render ↗：把透明<br/>UI 绘制项渲染到关联视图。" }
+  n32@{ shape: rounded, label: "**ui​_​pass**<br/>来自crate:bevy​_​ui​_​render ↗：把透明<br/>UI 绘制项渲染到关联视图。" }
   class n32 node_system
   class n32 external_node
   end
   style layout_card_n32 fill:none,stroke:none
   subgraph layout_card_n33[" "]
-  n33@{ shape: rounded, label: "**bevy​_​egui::render::render​_​pass::**<br/>**egui​_​pass**<br/>来自crate:bevy​_​egui ↗：把准备好的<br/>Egui 绘制项渲染到视图目标。" }
+  n33@{ shape: rounded, label: "**egui​_​pass**<br/>来自crate:bevy​_​egui ↗：把准备好的<br/>Egui 绘制项渲染到视图目标。" }
   class n33 node_system
   class n33 external_node
   end
   style layout_card_n33 fill:none,stroke:none
   subgraph layout_card_n34[" "]
-  n34@{ shape: rounded, label: "**bevy​_​core​_​pipeline::core​_​2d::main​_​**<br/>**opaque​_​pass​_​2d​_​node::main​_​opaque​_​**<br/>**pass​_​2d**<br/>来自crate:bevy​_​core​_​pipeline ↗：绘制<br/>二维不透明和 AlphaMask 阶段。" }
+  n34@{ shape: rounded, label: "**main​_​opaque​_​pass​_​2d**<br/>来自crate:bevy​_​core​_​pipeline ↗：绘制<br/>二维不透明和 AlphaMask 阶段。" }
   class n34 node_system
   class n34 external_node
   end
   style layout_card_n34 fill:none,stroke:none
   subgraph layout_card_n35[" "]
-  n35@{ shape: rounded, label: "**bevy​_​pbr::ssao::prepare​_​ssao​_​**<br/>**textures**<br/>来自crate:bevy​_​pbr ↗：为环境光遮蔽分<br/>配中间纹理及参数缓冲。" }
+  n35@{ shape: rounded, label: "**prepare​_​ssao​_​textures**<br/>来自crate:bevy​_​pbr ↗：为环境光遮蔽分<br/>配中间纹理及参数缓冲。" }
   class n35 node_system
   class n35 external_node
   end
   style layout_card_n35 fill:none,stroke:none
   subgraph layout_card_n36[" "]
-  n36@{ shape: rounded, label: "**bevy​_​core​_​pipeline::oit::resolve::**<br/>**queue​_​oit​_​resolve​_​pipeline**<br/>来自crate:bevy​_​core​_​pipeline ↗：按<br/>OIT 相机设置缓存透明解析管线。" }
+  n36@{ shape: rounded, label: "**queue​_​oit​_​resolve​_​pipeline**<br/>来自crate:bevy​_​core​_​pipeline ↗：按<br/>OIT 相机设置缓存透明解析管线。" }
   class n36 node_system
   class n36 external_node
   end
   style layout_card_n36 fill:none,stroke:none
   subgraph layout_card_n37[" "]
-  n37@{ shape: rounded, label: "**bevy​_​core​_​pipeline::core​_​3d::main​_​**<br/>**transparent​_​pass​_​3d​_​node::main​_​**<br/>**transparent​_​pass​_​3d**<br/>来自crate:bevy​_​core​_​pipeline ↗：绘制<br/>三维透明物体并保护 OIT 链表状态。" }
+  n37@{ shape: rounded, label: "**main​_​transparent​_​pass​_​3d**<br/>来自crate:bevy​_​core​_​pipeline ↗：绘制<br/>三维透明物体并保护 OIT 链表状态。" }
   class n37 node_system
   class n37 external_node
   end
   style layout_card_n37 fill:none,stroke:none
   subgraph layout_card_n38[" "]
-  n38@{ shape: rounded, label: "**bevy​_​core​_​pipeline::core​_​3d::main​_​**<br/>**opaque​_​pass​_​3d​_​node::main​_​opaque​_​**<br/>**pass​_​3d**<br/>来自crate:bevy​_​core​_​pipeline ↗：绘制<br/>三维不透明、AlphaMask 与天空盒。" }
+  n38@{ shape: rounded, label: "**main​_​opaque​_​pass​_​3d**<br/>来自crate:bevy​_​core​_​pipeline ↗：绘制<br/>三维不透明、AlphaMask 与天空盒。" }
   class n38 node_system
   class n38 external_node
   end
   style layout_card_n38 fill:none,stroke:none
   subgraph layout_card_n39[" "]
-  n39@{ shape: rounded, label: "**bevy​_​render::view::composition::**<br/>**resolve​_​composition​_​spaces**<br/>协调共享纹理相机的合成色彩空间。" }
+  n39@{ shape: rounded, label: "**resolve​_​composition​_​spaces**<br/>协调共享纹理相机的合成色彩空间。" }
   class n39 node_system
   end
   style layout_card_n39 fill:none,stroke:none
   subgraph layout_card_n40[" "]
-  n40@{ shape: rounded, label: "**bevy​_​render::view::prepare​_​view​_​**<br/>**targets**<br/>为视图维护主颜色双缓冲及可选多采样目标。" }
+  n40@{ shape: rounded, label: "**prepare​_​view​_​targets**<br/>为视图维护主颜色双缓冲及可选多采样目标。" }
   class n40 node_system
   end
   style layout_card_n40 fill:none,stroke:none
   subgraph layout_card_n41[" "]
-  n41@{ shape: rounded, label: "**bevy​_​anti​_​alias::taa::temporal​_​anti​_​**<br/>**alias**<br/>来自crate:bevy​_​anti​_​alias ↗：混合当<br/>前颜色与历史帧并更新 TAA 历史目标。" }
+  n41@{ shape: rounded, label: "**temporal​_​anti​_​alias**<br/>来自crate:bevy​_​anti​_​alias ↗：混合当<br/>前颜色与历史帧并更新 TAA 历史目标。" }
   class n41 node_system
   class n41 external_node
   end
   style layout_card_n41 fill:none,stroke:none
   subgraph layout_card_n42[" "]
-  n42@{ shape: rounded, label: "**bevy​_​post​_​process::msaa​_​writeback::**<br/>**prepare​_​msaa​_​writeback​_​pipelines**<br/>来自crate:bevy​_​post​_​process ↗：为需<br/>要保留已有颜色的多采样相机准备回写管线。" }
+  n42@{ shape: rounded, label: "**prepare​_​msaa​_​writeback​_​pipelines**<br/>来自crate:bevy​_​post​_​process ↗：为需<br/>要保留已有颜色的多采样相机准备回写管线。" }
   class n42 node_system
   class n42 external_node
   end
   style layout_card_n42 fill:none,stroke:none
   subgraph layout_card_n43[" "]
-  n43@{ shape: rounded, label: "**bevy​_​core​_​pipeline::core​_​3d::**<br/>**prepare​_​core​_​3d​_​depth​_​textures**<br/>来自crate:bevy​_​core​_​pipeline ↗：按共<br/>享目标准备三维深度纹理与清除方式。" }
+  n43@{ shape: rounded, label: "**prepare​_​core​_​3d​_​depth​_​textures**<br/>来自crate:bevy​_​core​_​pipeline ↗：按共<br/>享目标准备三维深度纹理与清除方式。" }
   class n43 node_system
   class n43 external_node
   end
   style layout_card_n43 fill:none,stroke:none
   subgraph layout_card_n44[" "]
-  n44@{ shape: rounded, label: "**bevy​_​core​_​pipeline::oit::resolve::**<br/>**node::oit​_​resolve**<br/>来自crate:bevy​_​core​_​pipeline ↗：解析<br/>透明片元并重置 OIT 链表状态。" }
+  n44@{ shape: rounded, label: "**oit​_​resolve**<br/>来自crate:bevy​_​core​_​pipeline ↗：解析<br/>透明片元并重置 OIT 链表状态。" }
   class n44 node_system
   class n44 external_node
   end
   style layout_card_n44 fill:none,stroke:none
   subgraph layout_card_n45[" "]
-  n45@{ shape: rounded, label: "**bevy​_​core​_​pipeline::deferred::node::**<br/>**late​_​deferred​_​prepass**<br/>来自crate:bevy​_​core​_​pipeline ↗：为遮<br/>挡剔除执行晚期延迟预通道。" }
+  n45@{ shape: rounded, label: "**late​_​deferred​_​prepass**<br/>来自crate:bevy​_​core​_​pipeline ↗：为遮<br/>挡剔除执行晚期延迟预通道。" }
   class n45 node_system
   class n45 external_node
   end
   style layout_card_n45 fill:none,stroke:none
   subgraph layout_card_n46[" "]
-  n46@{ shape: rounded, label: "**bevy​_​pbr::deferred::prepare​_​**<br/>**deferred​_​lighting​_​pipelines**<br/>来自crate:bevy​_​pbr ↗：为有效延迟视图<br/>选择与前向一致的光照管线。" }
+  n46@{ shape: rounded, label: "**prepare​_​deferred​_​lighting​_​pipelines**<br/>来自crate:bevy​_​pbr ↗：为有效延迟视图<br/>选择与前向一致的光照管线。" }
   class n46 node_system
   class n46 external_node
   end
   style layout_card_n46 fill:none,stroke:none
   subgraph layout_card_n47[" "]
-  n47@{ shape: rounded, label: "**bevy​_​post​_​process::bloom::prepare​_​**<br/>**bloom​_​textures**<br/>来自crate:bevy​_​post​_​process ↗：按视<br/>口比例分配 Bloom 多级纹理。" }
+  n47@{ shape: rounded, label: "**prepare​_​bloom​_​textures**<br/>来自crate:bevy​_​post​_​process ↗：按视<br/>口比例分配 Bloom 多级纹理。" }
   class n47 node_system
   class n47 external_node
   end
   style layout_card_n47 fill:none,stroke:none
   subgraph layout_card_n48[" "]
-  n48@{ shape: rounded, label: "**bevy​_​pbr::transmission::texture::**<br/>**prepare​_​core​_​3d​_​transmission​_​**<br/>**textures**<br/>来自crate:bevy​_​pbr ↗：为需要多步透射<br/>的视图准备场景颜色拷贝纹理。" }
+  n48@{ shape: rounded, label: "**prepare​_​core​_​3d​_​transmission​_​**<br/>**textures**<br/>来自crate:bevy​_​pbr ↗：为需要多步透射<br/>的视图准备场景颜色拷贝纹理。" }
   class n48 node_system
   class n48 external_node
   end
   style layout_card_n48 fill:none,stroke:none
   subgraph layout_card_n49[" "]
-  n49@{ shape: rounded, label: "**bevy​_​core​_​pipeline::schedule::**<br/>**camera​_​driver**<br/>来自crate:bevy​_​core​_​pipeline ↗：为辅<br/>助视图和活动相机运行专属渲染调度。" }
+  n49@{ shape: rounded, label: "**camera​_​driver**<br/>来自crate:bevy​_​core​_​pipeline ↗：为辅<br/>助视图和活动相机运行专属渲染调度。" }
   class n49 node_system
   class n49 external_node
   end
   style layout_card_n49 fill:none,stroke:none
   subgraph layout_card_n50[" "]
-  n50@{ shape: rounded, label: "**bevy​_​post​_​process::bloom::bloom**<br/>来自crate:bevy​_​post​_​process ↗：通过<br/>降采样和上采样合成 HDR 光晕。" }
+  n50@{ shape: rounded, label: "**bloom**<br/>来自crate:bevy​_​post​_​process ↗：通过<br/>降采样和上采样合成 HDR 光晕。" }
   class n50 node_system
   class n50 external_node
   end
   style layout_card_n50 fill:none,stroke:none
   subgraph layout_card_n51[" "]
-  n51@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::mesh::**<br/>**check​_​views​_​need​_​specialization**<br/>来自crate:bevy​_​sprite​_​render ↗：检测<br/>二维视图管线配置变化并标记重建。" }
+  n51@{ shape: rounded, label: "**check​_​views​_​need​_​specialization**<br/>来自crate:bevy​_​sprite​_​render ↗：检测<br/>二维视图管线配置变化并标记重建。" }
   class n51 node_system
   class n51 external_node
   end
   style layout_card_n51 fill:none,stroke:none
   subgraph layout_card_n52[" "]
-  n52@{ shape: rounded, label: "**bevy​_​sprite​_​render::render::queue​_​**<br/>**sprites**<br/>来自crate:bevy​_​sprite​_​render ↗：按视<br/>图可见性将精灵加入透明二维阶段。" }
+  n52@{ shape: rounded, label: "**queue​_​sprites**<br/>来自crate:bevy​_​sprite​_​render ↗：按视<br/>图可见性将精灵加入透明二维阶段。" }
   class n52 node_system
   class n52 external_node
   end
   style layout_card_n52 fill:none,stroke:none
   subgraph layout_card_n53[" "]
-  n53@{ shape: rounded, label: "**bevy​_​pbr::render::mesh​_​view​_​**<br/>**bindings::prepare​_​mesh​_​view​_​bind​_​**<br/>**groups**<br/>来自crate:bevy​_​pbr ↗：为视图绑定光<br/>照、阴影及各可选渲染效果资源。" }
+  n53@{ shape: rounded, label: "**prepare​_​mesh​_​view​_​bind​_​groups**<br/>来自crate:bevy​_​pbr ↗：为视图绑定光<br/>照、阴影及各可选渲染效果资源。" }
   class n53 node_system
   class n53 external_node
   end
   style layout_card_n53 fill:none,stroke:none
   subgraph layout_card_n54[" "]
-  n54@{ shape: rounded, label: "**bevy​_​pbr::atmosphere::node::render​_​**<br/>**sky**<br/>来自crate:bevy​_​pbr ↗：绑定大气查找表<br/>及视图、光照参数，按相机视口和可选分辨率<br/>覆盖设置绘制全屏天空，将结果写入视图颜色<br/>附件。" }
+  n54@{ shape: rounded, label: "**render​_​sky**<br/>来自crate:bevy​_​pbr ↗：绑定大气查找表<br/>及视图、光照参数，按相机视口和可选分辨率<br/>覆盖设置绘制全屏天空，将结果写入视图颜色<br/>附件。" }
   class n54 node_system
   class n54 external_node
   end
   style layout_card_n54 fill:none,stroke:none
   subgraph layout_card_n55[" "]
-  n55@{ shape: rounded, label: "**bevy​_​render::view::prepare​_​view​_​**<br/>**uniforms**<br/>生成视图投影、抖动、裁剪及 LOD 的 GPU<br/>参数。" }
+  n55@{ shape: rounded, label: "**prepare​_​view​_​uniforms**<br/>生成视图投影、抖动、裁剪及 LOD 的 GPU<br/>参数。" }
   class n55 node_system
   end
   style layout_card_n55 fill:none,stroke:none
   subgraph layout_card_n56[" "]
-  n56@{ shape: rounded, label: "**bevy​_​pbr::render::mesh::check​_​views​_​**<br/>**need​_​specialization**<br/>来自crate:bevy​_​pbr ↗：汇总视图渲染特<br/>性并检测管线配置变化。" }
+  n56@{ shape: rounded, label: "**check​_​views​_​need​_​specialization**<br/>来自crate:bevy​_​pbr ↗：汇总视图渲染特<br/>性并检测管线配置变化。" }
   class n56 node_system
   class n56 external_node
   end
   style layout_card_n56 fill:none,stroke:none
   subgraph layout_card_n57[" "]
-  n57@{ shape: rounded, label: "**bevy​_​egui::render::systems::queue​_​**<br/>**pipelines​_​system**<br/>来自crate:bevy​_​egui ↗：按目标格式选<br/>择 Egui 渲染管线。" }
+  n57@{ shape: rounded, label: "**queue​_​pipelines​_​system**<br/>来自crate:bevy​_​egui ↗：按目标格式选<br/>择 Egui 渲染管线。" }
   class n57 node_system
   class n57 external_node
   end
   style layout_card_n57 fill:none,stroke:none
   subgraph layout_card_n58[" "]
-  n58@{ shape: rounded, label: "**bevy​_​core​_​pipeline::deferred::copy​_​**<br/>**lighting​_​id::prepare​_​deferred​_​**<br/>**lighting​_​id​_​textures**<br/>来自crate:bevy​_​core​_​pipeline ↗：为延<br/>迟预通道相机分配光照标识深度纹理。" }
+  n58@{ shape: rounded, label: "**prepare​_​deferred​_​lighting​_​id​_​**<br/>**textures**<br/>来自crate:bevy​_​core​_​pipeline ↗：为延<br/>迟预通道相机分配光照标识深度纹理。" }
   class n58 node_system
   class n58 external_node
   end
   style layout_card_n58 fill:none,stroke:none
   subgraph layout_card_n59[" "]
-  n59@{ shape: rounded, label: "**bevy​_​post​_​process::bloom::bloom**<br/>来自crate:bevy​_​post​_​process ↗：通过<br/>降采样和上采样合成 HDR 光晕。" }
+  n59@{ shape: rounded, label: "**bloom**<br/>来自crate:bevy​_​post​_​process ↗：通过<br/>降采样和上采样合成 HDR 光晕。" }
   class n59 node_system
   class n59 external_node
   end
   style layout_card_n59 fill:none,stroke:none
   subgraph layout_card_n60[" "]
-  n60@{ shape: rounded, label: "**bevy​_​core​_​pipeline::upscaling::**<br/>**node::upscaling**<br/>来自crate:bevy​_​core​_​pipeline ↗：将主<br/>颜色纹理缩放写入最终输出附件。" }
+  n60@{ shape: rounded, label: "**upscaling**<br/>来自crate:bevy​_​core​_​pipeline ↗：将主<br/>颜色纹理缩放写入最终输出附件。" }
   class n60 node_system
   class n60 external_node
   end

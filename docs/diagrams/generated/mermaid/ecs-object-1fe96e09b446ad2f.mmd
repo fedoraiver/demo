@@ -47,33 +47,33 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​egui::input::write​_​modifiers​_​**<br/>**keys​_​state​_​system**<br/>更新 Egui 修饰键并清除失焦残留。" }
+  n0@{ shape: rounded, label: "**write​_​modifiers​_​keys​_​state​_​system**<br/>更新 Egui 修饰键并清除失焦残留。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**input::ModifierKeysState**<br/>缓存 Shift、Control、Alt 和平台主修饰<br/>键的按下状态" }
+  n1@{ shape: cyl, label: "**ModifierKeysState**<br/>缓存 Shift、Control、Alt 和平台主修饰<br/>键的按下状态" }
   class n1 node_resource
   n2@{ shape: lin-rect, label: "**InitReading**<br/>组织 Egui 输入读取与事件写入。" }
   class n2 node_system_set
-  n3@{ shape: cyl, label: "**bevy​_​ecs::message::**<br/>**Messages#lt;keyboard::KeyboardInput#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n3@{ shape: cyl, label: "**Messages#lt;KeyboardInput#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n3 node_resource
   class n3 external_node
   n4@{ shape: lin-rect, label: "**ProcessInput**<br/>组织 Egui 上下文与输入准备。" }
   class n4 node_system_set
-  n5@{ shape: lean-r, label: "**keyboard::KeyboardFocusLost**<br/>来自crate:bevy​_​input ↗：请求清除失焦<br/>后的缓存按键状态。" }
+  n5@{ shape: lean-r, label: "**KeyboardFocusLost**<br/>来自crate:bevy​_​input ↗：请求清除失焦<br/>后的缓存按键状态。" }
   class n5 node_message
   class n5 external_node
-  n6@{ shape: rounded, label: "**bevy​_​egui::input::write​_​pointer​_​**<br/>**moved​_​and​_​button​_​messages​_​system**<br/>按原生事件顺序转换 Egui 指针输入。" }
+  n6@{ shape: rounded, label: "**write​_​pointer​_​moved​_​and​_​button​_​**<br/>**messages​_​system**<br/>按原生事件顺序转换 Egui 指针输入。" }
   class n6 node_system
-  n7@{ shape: lean-r, label: "**keyboard::KeyboardInput**<br/>来自crate:bevy​_​input ↗：传递窗口键盘<br/>输入。" }
+  n7@{ shape: lean-r, label: "**KeyboardInput**<br/>来自crate:bevy​_​input ↗：传递窗口键盘<br/>输入。" }
   class n7 node_message
   class n7 external_node
-  n8@{ shape: cyl, label: "**bevy​_​ecs::message::**<br/>**Messages#lt;keyboard::**<br/>**KeyboardFocusLost#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n8@{ shape: cyl, label: "**Messages#lt;KeyboardFocusLost#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n8 node_resource
   class n8 external_node
-  n9@{ shape: fr-rect, label: "**bevy​_​egui::input​_​system​_​is​_​**<br/>**enabled#lt;#lt;bevy​_​egui::EguiPlugin as**<br/>**bevy​_​app::plugin::Plugin#gt;::build::**<br/>**{{closure}}#gt;::{{closure}}**<br/>按 Egui 全局配置判断输入处理是否启<br/>用。；判断是否写入 Egui 修饰键状态。" }
+  n9@{ shape: fr-rect, label: "**input​_​system​_​is​_​enabled::{{closure}}**<br/>按 Egui 全局配置判断输入处理是否启<br/>用。；判断是否写入 Egui 修饰键状态。" }
   class n9 node_system_group
   n10@{ shape: fr-rect, label: "**EguiPlugin**<br/>装配 Egui 输入、上下文与渲染。" }
   class n10 node_plugin
-  n11@{ shape: rounded, label: "**bevy​_​egui::input::write​_​window​_​**<br/>**touch​_​messages​_​system**<br/>把窗口触摸转换为 Egui 指针和触摸事件。" }
+  n11@{ shape: rounded, label: "**write​_​window​_​touch​_​messages​_​system**<br/>把窗口触摸转换为 Egui 指针和触摸事件。" }
   class n11 node_system
   n0 e0@-->|"赋值"| n1
   class e0 edge_write

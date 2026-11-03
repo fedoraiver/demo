@@ -40,31 +40,31 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: lin-rect, label: "**AnimationSystems**<br/>更新动画图、播放时间和目标姿态。" }
   class n0 node_system_set
-  n1@{ shape: rounded, label: "**bevy​_​animation::trigger​_​untargeted​_​**<br/>**animation​_​events**<br/>来自crate:bevy​_​animation ↗：派发动画<br/>片段的根目标事件。" }
+  n1@{ shape: rounded, label: "**trigger​_​untargeted​_​animation​_​events**<br/>来自crate:bevy​_​animation ↗：派发动画<br/>片段的根目标事件。" }
   class n1 node_system
   class n1 external_node
   n2@{ shape: lin-rect, label: "**Prepare**<br/>来自crate:bevy​_​ui ↗：组织界面交互、布<br/>局与堆叠更新。" }
   class n2 node_system_set
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​animation::animate​_​targets**<br/>来自crate:bevy​_​animation ↗：评估动画<br/>图并把结果应用到动画目标。" }
+  n3@{ shape: rounded, label: "**animate​_​targets**<br/>来自crate:bevy​_​animation ↗：评估动画<br/>图并把结果应用到动画目标。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**bevy​_​animation::transition::expire​_​**<br/>**completed​_​transitions**<br/>来自crate:bevy​_​animation ↗：结束已完<br/>全淡出的动画过渡。" }
+  n4@{ shape: rounded, label: "**expire​_​completed​_​transitions**<br/>来自crate:bevy​_​animation ↗：结束已完<br/>全淡出的动画过渡。" }
   class n4 node_system
   class n4 external_node
-  n5@{ shape: rounded, label: "**demo::character​_​animation::**<br/>**grounding::compensate​_​courier​_​sole​_​**<br/>**penetration**<br/>来自character​_​animation ↗：方向混合<br/>可能把弯腿插值成更直的腿；逐帧按真实鞋底<br/>边界修正最终视觉高度。" }
+  n5@{ shape: rounded, label: "**compensate​_​courier​_​sole​_​penetration**<br/>来自character​_​animation ↗：方向混合<br/>可能把弯腿插值成更直的腿；逐帧按真实鞋底<br/>边界修正最终视觉高度。" }
   class n5 node_system
   class n5 external_node
-  n6@{ shape: rounded, label: "**bevy​_​sprite::text2d::update​_​text2d​_​**<br/>**layout**<br/>来自crate:bevy​_​sprite ↗：重新排版变化<br/>的二维文字并准备字形。" }
+  n6@{ shape: rounded, label: "**update​_​text2d​_​layout**<br/>来自crate:bevy​_​sprite ↗：重新排版变化<br/>的二维文字并准备字形。" }
   class n6 node_system
   class n6 external_node
-  n7@{ shape: rounded, label: "**bevy​_​animation::advance​_​animations**<br/>来自crate:bevy​_​animation ↗：推进动画<br/>播放器中活动动画的播放时间。" }
+  n7@{ shape: rounded, label: "**advance​_​animations**<br/>来自crate:bevy​_​animation ↗：推进动画<br/>播放器中活动动画的播放时间。" }
   class n7 node_system
   class n7 external_node
-  n8@{ shape: rounded, label: "**bevy​_​animation::transition::advance​_​**<br/>**transitions**<br/>来自crate:bevy​_​animation ↗：推进动画<br/>过渡并归一化混合权重。" }
+  n8@{ shape: rounded, label: "**advance​_​transitions**<br/>来自crate:bevy​_​animation ↗：推进动画<br/>过渡并归一化混合权重。" }
   class n8 node_system
   class n8 external_node
-  n9@{ shape: rounded, label: "**bevy​_​animation::graph::thread​_​**<br/>**animation​_​graphs**<br/>来自crate:bevy​_​animation ↗：维护动画<br/>图的快速求值结构。" }
+  n9@{ shape: rounded, label: "**thread​_​animation​_​graphs**<br/>来自crate:bevy​_​animation ↗：维护动画<br/>图的快速求值结构。" }
   class n9 node_system
   class n9 external_node
   n0 e0@-->|"集合成员"| n1

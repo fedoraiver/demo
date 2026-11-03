@@ -44,11 +44,11 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​light::cascade::build​_​**<br/>**directional​_​light​_​cascades**<br/>为投射阴影的方向光构建逐相机级联。" }
+  n0@{ shape: rounded, label: "**build​_​directional​_​light​_​cascades**<br/>为投射阴影的方向光构建逐相机级联。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**directional​_​light::**<br/>**DirectionalLightShadowMap**<br/>配置方向光与聚光灯阴影贴图分辨率。" }
+  n1@{ shape: cyl, label: "**DirectionalLightShadowMap**<br/>配置方向光与聚光灯阴影贴图分辨率。" }
   class n1 node_resource
-  n2@{ shape: rounded, label: "**bevy​_​camera::Projection**<br/>来自crate:bevy​_​camera ↗：定义相机从视<br/>图到裁剪空间的投影。" }
+  n2@{ shape: rounded, label: "**Projection**<br/>来自crate:bevy​_​camera ↗：定义相机从视<br/>图到裁剪空间的投影。" }
   class n2 node_component
   class n2 external_node
   n3@{ shape: lin-rect, label: "**UpdateDirectionalLightCascades**<br/>组织灯光聚簇与可见性准备。" }
@@ -56,27 +56,27 @@ flowchart LR
   n4@{ shape: lin-rect, label: "**Propagate**<br/>来自crate:bevy​_​transform ↗：组织实体<br/>层级变换传播。" }
   class n4 node_system_set
   class n4 external_node
-  n5@{ shape: rounded, label: "**bevy​_​light::directional​_​light::**<br/>**validate​_​shadow​_​map​_​size**<br/>将方向光阴影贴图尺寸纠正为二的幂。" }
+  n5@{ shape: rounded, label: "**validate​_​shadow​_​map​_​size**<br/>将方向光阴影贴图尺寸纠正为二的幂。" }
   class n5 node_system
-  n6@{ shape: rounded, label: "**bevy​_​camera::Camera**<br/>来自crate:bevy​_​camera ↗：配置相机视<br/>口、输出目标和渲染顺序。" }
+  n6@{ shape: rounded, label: "**Camera**<br/>来自crate:bevy​_​camera ↗：配置相机视<br/>口、输出目标和渲染顺序。" }
   class n6 node_component
   class n6 external_node
-  n7@{ shape: rounded, label: "**components::global​_​transform::**<br/>**GlobalTransform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>合并祖先变换后的世界空间仿射变换" }
+  n7@{ shape: rounded, label: "**GlobalTransform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>合并祖先变换后的世界空间仿射变换" }
   class n7 node_component
   class n7 external_node
-  n8@{ shape: rounded, label: "**cascade::CascadeShadowConfig**<br/>配置方向光阴影级联的距离与重叠。" }
+  n8@{ shape: rounded, label: "**CascadeShadowConfig**<br/>配置方向光阴影级联的距离与重叠。" }
   class n8 node_component
   n9@{ shape: lin-rect, label: "**CameraUpdateSystems**<br/>来自crate:bevy​_​camera ↗：统一更新相机<br/>目标、视口与投影计算结果。" }
   class n9 node_system_set
   class n9 external_node
-  n10@{ shape: rounded, label: "**cascade::Cascades**<br/>按视图保存方向光的阴影级联。" }
+  n10@{ shape: rounded, label: "**Cascades**<br/>按视图保存方向光的阴影级联。" }
   class n10 node_component
   n11@{ shape: lin-rect, label: "**TransformGizmoRenderStep**<br/>来自crate:bevy​_​app ↗：准备变换操纵器<br/>的网格和显示变换。" }
   class n11 node_system_set
   class n11 external_node
   n12@{ shape: fr-rect, label: "**LightPlugin**<br/>维护光源可见性与空间聚簇。" }
   class n12 node_plugin
-  n13@{ shape: rounded, label: "**directional​_​light::DirectionalLight**<br/>配置平行方向光的颜色、照度和阴影。" }
+  n13@{ shape: rounded, label: "**DirectionalLight**<br/>配置平行方向光的颜色、照度和阴影。" }
   class n13 node_component
   n1 e0@--> n0
   class e0 edge_read

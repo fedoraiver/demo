@@ -43,25 +43,25 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​render::gpu​_​readback::prepare​_​**<br/>**buffers**<br/>读取 GPU 回读请求，为纹理或存储缓冲的指<br/>定区段从缓冲池取得暂存空间并创建异步完成<br/>通道；越界缓冲区段会报错。" }
+  n0@{ shape: rounded, label: "**prepare​_​buffers**<br/>读取 GPU 回读请求，为纹理或存储缓冲的指<br/>定区段从缓冲池取得暂存空间并创建异步完成<br/>通道；越界缓冲区段会报错。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**gpu​_​readback::GpuReadbackBufferPool**<br/>按缓冲尺寸复用 GPU 回读暂存空间。" }
+  n1@{ shape: cyl, label: "**GpuReadbackBufferPool**<br/>按缓冲尺寸复用 GPU 回读暂存空间。" }
   class n1 node_resource
-  n2@{ shape: cyl, label: "**bevy​_​render::render​_​asset::**<br/>**RenderAssets#lt;bevy​_​render::storage::**<br/>**GpuShaderBuffer#gt;**<br/>按源资产身份保存 GPU 渲染表示。" }
+  n2@{ shape: cyl, label: "**RenderAssets#lt;GpuShaderBuffer#gt;**<br/>按源资产身份保存 GPU 渲染表示。" }
   class n2 node_resource
-  n3@{ shape: fr-rect, label: "**gpu​_​readback::GpuReadbackPlugin**<br/>将 GPU 缓冲与纹理回读到 CPU。" }
+  n3@{ shape: fr-rect, label: "**GpuReadbackPlugin**<br/>将 GPU 缓冲与纹理回读到 CPU。" }
   class n3 node_plugin
-  n4@{ shape: cyl, label: "**bevy​_​render::render​_​asset::**<br/>**RenderAssets#lt;bevy​_​render::texture::**<br/>**GpuImage#gt;**<br/>按源资产身份保存 GPU 渲染表示。" }
+  n4@{ shape: cyl, label: "**RenderAssets#lt;GpuImage#gt;**<br/>按源资产身份保存 GPU 渲染表示。" }
   class n4 node_resource
   n5@{ shape: lin-rect, label: "**PrepareResources**<br/>组织渲染数据准备与绘制排队。" }
   class n5 node_system_set
-  n6@{ shape: cyl, label: "**gpu​_​readback::GpuReadbacks**<br/>追踪已请求及已映射的 GPU 回读任务。" }
+  n6@{ shape: cyl, label: "**GpuReadbacks**<br/>追踪已请求及已映射的 GPU 回读任务。" }
   class n6 node_resource
-  n7@{ shape: cyl, label: "**bevy​_​render::renderer::RenderDevice**<br/>创建渲染和计算所需的 GPU 资源。" }
+  n7@{ shape: cyl, label: "**RenderDevice**<br/>创建渲染和计算所需的 GPU 资源。" }
   class n7 node_resource
-  n8@{ shape: rounded, label: "**gpu​_​readback::Readback**<br/>请求异步读取 GPU 纹理或缓冲内容。" }
+  n8@{ shape: rounded, label: "**Readback**<br/>请求异步读取 GPU 纹理或缓冲内容。" }
   class n8 node_component
-  n9@{ shape: rounded, label: "**sync​_​world::MainEntity**<br/>来自crate:bevy​_​extract ↗：在子世界中<br/>关联原始主世界实体。" }
+  n9@{ shape: rounded, label: "**MainEntity**<br/>来自crate:bevy​_​extract ↗：在子世界中<br/>关联原始主世界实体。" }
   class n9 node_component
   class n9 external_node
   n0 e0@-->|"可变访问"| n1

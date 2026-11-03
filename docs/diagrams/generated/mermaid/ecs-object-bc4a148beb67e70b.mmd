@@ -37,312 +37,312 @@ flowchart LR
   classDef node_event fill:#F9F3EE,stroke:#B66B2D,stroke-width:1.6px,color:#1F3340
   classDef edge_observe stroke:#B66B2D,stroke-width:1.8px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: stadium, label: "**bevy​_​ecs::lifecycle::AddEvent**<br/>通知组件首次加入实体。" }
+  n0@{ shape: stadium, label: "**AddEvent**<br/>通知组件首次加入实体。" }
   class n0 node_event
-  n1@{ shape: hex, label: "**bevy​_​enhanced​_​input::modifier::fns::**<br/>**register​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：登<br/>记新增输入修饰器的处理入口。" }
+  n1@{ shape: hex, label: "**register​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：登<br/>记新增输入修饰器的处理入口。" }
   class n1 node_observer
   class n1 external_node
-  n2@{ shape: hex, label: "**bevy​_​ui::interaction​_​states::on​_​add​_​**<br/>**disabled**<br/>来自crate:bevy​_​ui ↗：向无障碍节点同步<br/>禁用状态。" }
+  n2@{ shape: hex, label: "**on​_​add​_​disabled**<br/>来自crate:bevy​_​ui ↗：向无障碍节点同步<br/>禁用状态。" }
   class n2 node_observer
   class n2 external_node
-  n3@{ shape: hex, label: "**avian3d::dynamics::rigid​_​body::mass​_​**<br/>**properties::{impl#35;3}::build::**<br/>**{closure#35;0}**<br/>来自crate:avian3d ↗：初始化新刚体的质<br/>量属性。" }
+  n3@{ shape: hex, label: "**build::{closure#35;0}**<br/>来自crate:avian3d ↗：初始化新刚体的质<br/>量属性。" }
   class n3 node_observer
   class n3 external_node
-  n4@{ shape: hex, label: "**bevy​_​ui::interaction​_​states::on​_​add​_​**<br/>**checked**<br/>来自crate:bevy​_​ui ↗：同步无障碍节点的<br/>已勾选状态。" }
+  n4@{ shape: hex, label: "**on​_​add​_​checked**<br/>来自crate:bevy​_​ui ↗：同步无障碍节点的<br/>已勾选状态。" }
   class n4 node_observer
   class n4 external_node
-  n5@{ shape: hex, label: "**bevy​_​enhanced​_​input::condition::**<br/>**fns::register​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：登<br/>记新增输入条件的求值入口。" }
+  n5@{ shape: hex, label: "**register​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：登<br/>记新增输入条件的求值入口。" }
   class n5 node_observer
   class n5 external_node
-  n6@{ shape: hex, label: "**bevy​_​enhanced​_​input::condition::**<br/>**fns::register​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：登<br/>记新增输入条件的求值入口。" }
+  n6@{ shape: hex, label: "**register​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：登<br/>记新增输入条件的求值入口。" }
   class n6 node_observer
   class n6 external_node
-  n7@{ shape: hex, label: "**bevy​_​render::view::window::**<br/>**{impl#35;0}::build::{closure#35;0}**<br/>来自crate:bevy​_​render ↗：标记新窗口同<br/>步到渲染世界。" }
+  n7@{ shape: hex, label: "**build::{closure#35;0}**<br/>来自crate:bevy​_​render ↗：标记新窗口同<br/>步到渲染世界。" }
   class n7 node_observer
   class n7 external_node
-  n8@{ shape: hex, label: "**bevy​_​ui​_​widgets::modal::set​_​modal​_​**<br/>**dialog​_​tab​_​group​_​modal**<br/>来自crate:bevy​_​ui​_​widgets ↗：将模态<br/>框导航组设为模态。" }
+  n8@{ shape: hex, label: "**set​_​modal​_​dialog​_​tab​_​group​_​modal**<br/>来自crate:bevy​_​ui​_​widgets ↗：将模态<br/>框导航组设为模态。" }
   class n8 node_observer
   class n8 external_node
-  n9@{ shape: hex, label: "**bevy​_​enhanced​_​input::modifier::fns::**<br/>**register​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：登<br/>记新增输入修饰器的处理入口。" }
+  n9@{ shape: hex, label: "**register​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：登<br/>记新增输入修饰器的处理入口。" }
   class n9 node_observer
   class n9 external_node
-  n10@{ shape: hex, label: "**bevy​_​enhanced​_​input::modifier::fns::**<br/>**register​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：登<br/>记新增输入修饰器的处理入口。" }
+  n10@{ shape: hex, label: "**register​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：登<br/>记新增输入修饰器的处理入口。" }
   class n10 node_observer
   class n10 external_node
-  n11@{ shape: hex, label: "**bevy​_​enhanced​_​input::condition::**<br/>**fns::register​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：登<br/>记新增输入条件的求值入口。" }
+  n11@{ shape: hex, label: "**register​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：登<br/>记新增输入条件的求值入口。" }
   class n11 node_observer
   class n11 external_node
-  n12@{ shape: hex, label: "**bevy​_​ui::interaction​_​states::on​_​add​_​**<br/>**selected**<br/>来自crate:bevy​_​ui ↗：同步无障碍节点的<br/>已选中状态。" }
+  n12@{ shape: hex, label: "**on​_​add​_​selected**<br/>来自crate:bevy​_​ui ↗：同步无障碍节点的<br/>已选中状态。" }
   class n12 node_observer
   class n12 external_node
-  n13@{ shape: hex, label: "**bevy​_​enhanced​_​input::condition::**<br/>**fns::register​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：登<br/>记新增输入条件的求值入口。" }
+  n13@{ shape: hex, label: "**register​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：登<br/>记新增输入条件的求值入口。" }
   class n13 node_observer
   class n13 external_node
-  n14@{ shape: hex, label: "**bevy​_​enhanced​_​input::modifier::fns::**<br/>**register​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：登<br/>记新增输入修饰器的处理入口。" }
+  n14@{ shape: hex, label: "**register​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：登<br/>记新增输入修饰器的处理入口。" }
   class n14 node_observer
   class n14 external_node
-  n15@{ shape: hex, label: "**bevy​_​enhanced​_​input::condition::**<br/>**fns::register​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：登<br/>记新增输入条件的求值入口。" }
+  n15@{ shape: hex, label: "**register​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：登<br/>记新增输入条件的求值入口。" }
   class n15 node_observer
   class n15 external_node
-  n16@{ shape: hex, label: "**bevy​_​enhanced​_​input::condition::**<br/>**fns::register​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：登<br/>记新增输入条件的求值入口。" }
+  n16@{ shape: hex, label: "**register​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：登<br/>记新增输入条件的求值入口。" }
   class n16 node_observer
   class n16 external_node
-  n17@{ shape: hex, label: "**bevy​_​ui​_​widgets::dialog::register​_​**<br/>**dialog**<br/>来自crate:bevy​_​ui​_​widgets ↗：登记新<br/>建浮动对话框的层级。" }
+  n17@{ shape: hex, label: "**register​_​dialog**<br/>来自crate:bevy​_​ui​_​widgets ↗：登记新<br/>建浮动对话框的层级。" }
   class n17 node_observer
   class n17 external_node
-  n18@{ shape: hex, label: "**bevy​_​enhanced​_​input::condition::**<br/>**fns::register​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：登<br/>记新增输入条件的求值入口。" }
+  n18@{ shape: hex, label: "**register​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：登<br/>记新增输入条件的求值入口。" }
   class n18 node_observer
   class n18 external_node
-  n19@{ shape: hex, label: "**avian3d::collision::narrow​_​phase::**<br/>**on​_​disable​_​body**<br/>来自crate:avian3d ↗：清理被禁用刚体的<br/>接触。" }
+  n19@{ shape: hex, label: "**on​_​disable​_​body**<br/>来自crate:avian3d ↗：清理被禁用刚体的<br/>接触。" }
   class n19 node_observer
   class n19 external_node
-  n20@{ shape: hex, label: "**bevy​_​enhanced​_​input::condition::**<br/>**fns::register​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：登<br/>记新增输入条件的求值入口。" }
+  n20@{ shape: hex, label: "**register​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：登<br/>记新增输入条件的求值入口。" }
   class n20 node_observer
   class n20 external_node
-  n21@{ shape: hex, label: "**bevy​_​render::view::window::**<br/>**{impl#35;0}::build::{closure#35;0}**<br/>来自crate:bevy​_​render ↗：标记新窗口同<br/>步到渲染世界。" }
+  n21@{ shape: hex, label: "**build::{closure#35;0}**<br/>来自crate:bevy​_​render ↗：标记新窗口同<br/>步到渲染世界。" }
   class n21 node_observer
   class n21 external_node
-  n22@{ shape: hex, label: "**bevy​_​enhanced​_​input::modifier::fns::**<br/>**register​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：登<br/>记新增输入修饰器的处理入口。" }
+  n22@{ shape: hex, label: "**register​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：登<br/>记新增输入修饰器的处理入口。" }
   class n22 node_observer
   class n22 external_node
-  n23@{ shape: hex, label: "**bevy​_​enhanced​_​input::modifier::fns::**<br/>**register​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：登<br/>记新增输入修饰器的处理入口。" }
+  n23@{ shape: hex, label: "**register​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：登<br/>记新增输入修饰器的处理入口。" }
   class n23 node_observer
   class n23 external_node
-  n24@{ shape: hex, label: "**bevy​_​enhanced​_​input::modifier::fns::**<br/>**register​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：登<br/>记新增输入修饰器的处理入口。" }
+  n24@{ shape: hex, label: "**register​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：登<br/>记新增输入修饰器的处理入口。" }
   class n24 node_observer
   class n24 external_node
-  n25@{ shape: hex, label: "**bevy​_​enhanced​_​input::modifier::fns::**<br/>**register​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：登<br/>记新增输入修饰器的处理入口。" }
+  n25@{ shape: hex, label: "**register​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：登<br/>记新增输入修饰器的处理入口。" }
   class n25 node_observer
   class n25 external_node
-  n26@{ shape: hex, label: "**bevy​_​ui::interaction​_​states::on​_​add​_​**<br/>**selectable**<br/>来自crate:bevy​_​ui ↗：初始化可选择控件<br/>的无障碍状态。" }
+  n26@{ shape: hex, label: "**on​_​add​_​selectable**<br/>来自crate:bevy​_​ui ↗：初始化可选择控件<br/>的无障碍状态。" }
   class n26 node_observer
   class n26 external_node
-  n27@{ shape: hex, label: "**avian3d::dynamics::joints::joint​_​**<br/>**graph::plugin::remove​_​joint​_​from​_​**<br/>**graph**<br/>来自crate:avian3d ↗：移除关节连接并发<br/>布连接图变化。" }
+  n27@{ shape: hex, label: "**remove​_​joint​_​from​_​graph**<br/>来自crate:avian3d ↗：移除关节连接并发<br/>布连接图变化。" }
   class n27 node_observer
   class n27 external_node
-  n28@{ shape: hex, label: "**bevy​_​extract::sync​_​world::{impl#35;0}::**<br/>**build::{closure#35;0}**<br/>来自crate:bevy​_​extract ↗：登记新增实<br/>体的子世界同步请求。" }
+  n28@{ shape: hex, label: "**build::{closure#35;0}**<br/>来自crate:bevy​_​extract ↗：登记新增实<br/>体的子世界同步请求。" }
   class n28 node_observer
   class n28 external_node
-  n29@{ shape: hex, label: "**bevy​_​enhanced​_​input::modifier::fns::**<br/>**register​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：登<br/>记新增输入修饰器的处理入口。" }
+  n29@{ shape: hex, label: "**register​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：登<br/>记新增输入修饰器的处理入口。" }
   class n29 node_observer
   class n29 external_node
-  n30@{ shape: hex, label: "**bevy​_​enhanced​_​input::modifier::fns::**<br/>**register​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：登<br/>记新增输入修饰器的处理入口。" }
+  n30@{ shape: hex, label: "**register​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：登<br/>记新增输入修饰器的处理入口。" }
   class n30 node_observer
   class n30 external_node
-  n31@{ shape: hex, label: "**bevy​_​render::view::window::**<br/>**{impl#35;0}::build::{closure#35;0}**<br/>来自crate:bevy​_​render ↗：标记新窗口同<br/>步到渲染世界。" }
+  n31@{ shape: hex, label: "**build::{closure#35;0}**<br/>来自crate:bevy​_​render ↗：标记新窗口同<br/>步到渲染世界。" }
   class n31 node_observer
   class n31 external_node
-  n32@{ shape: hex, label: "**bevy​_​enhanced​_​input::condition::**<br/>**fns::register​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：登<br/>记新增输入条件的求值入口。" }
+  n32@{ shape: hex, label: "**register​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：登<br/>记新增输入条件的求值入口。" }
   class n32 node_observer
   class n32 external_node
-  n33@{ shape: hex, label: "**bevy​_​enhanced​_​input::modifier::fns::**<br/>**register​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：登<br/>记新增输入修饰器的处理入口。" }
+  n33@{ shape: hex, label: "**register​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：登<br/>记新增输入修饰器的处理入口。" }
   class n33 node_observer
   class n33 external_node
-  n34@{ shape: hex, label: "**bevy​_​winit::{impl#35;0}::build::**<br/>**{closure#35;2}**<br/>来自crate:bevy​_​winit ↗：通知原生事件<br/>循环有新窗口。" }
+  n34@{ shape: hex, label: "**build::{closure#35;2}**<br/>来自crate:bevy​_​winit ↗：通知原生事件<br/>循环有新窗口。" }
   class n34 node_observer
   class n34 external_node
-  n35@{ shape: hex, label: "**bevy​_​ui::interaction​_​states::on​_​add​_​**<br/>**checked**<br/>来自crate:bevy​_​ui ↗：同步无障碍节点的<br/>已勾选状态。" }
+  n35@{ shape: hex, label: "**on​_​add​_​checked**<br/>来自crate:bevy​_​ui ↗：同步无障碍节点的<br/>已勾选状态。" }
   class n35 node_observer
   class n35 external_node
-  n36@{ shape: hex, label: "**bevy​_​scene::spawn::on​_​add​_​scene​_​**<br/>**patch​_​instance**<br/>来自crate:bevy​_​scene ↗：排队处理新加<br/>入的场景补丁实例。" }
+  n36@{ shape: hex, label: "**on​_​add​_​scene​_​patch​_​instance**<br/>来自crate:bevy​_​scene ↗：排队处理新加<br/>入的场景补丁实例。" }
   class n36 node_observer
   class n36 external_node
-  n37@{ shape: hex, label: "**bevy​_​enhanced​_​input::modifier::fns::**<br/>**register​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：登<br/>记新增输入修饰器的处理入口。" }
+  n37@{ shape: hex, label: "**register​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：登<br/>记新增输入修饰器的处理入口。" }
   class n37 node_observer
   class n37 external_node
-  n38@{ shape: hex, label: "**bevy​_​scene::spawn::on​_​add​_​scene​_​**<br/>**patch​_​instance**<br/>来自crate:bevy​_​scene ↗：排队处理新加<br/>入的场景补丁实例。" }
+  n38@{ shape: hex, label: "**on​_​add​_​scene​_​patch​_​instance**<br/>来自crate:bevy​_​scene ↗：排队处理新加<br/>入的场景补丁实例。" }
   class n38 node_observer
   class n38 external_node
-  n39@{ shape: hex, label: "**avian3d::collider​_​tree::update::**<br/>**remove​_​from​_​tree​_​on**<br/>来自crate:avian3d ↗：从空间树移除碰撞<br/>体代理。" }
+  n39@{ shape: hex, label: "**remove​_​from​_​tree​_​on**<br/>来自crate:avian3d ↗：从空间树移除碰撞<br/>体代理。" }
   class n39 node_observer
   class n39 external_node
-  n40@{ shape: hex, label: "**bevy​_​enhanced​_​input::modifier::fns::**<br/>**register​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：登<br/>记新增输入修饰器的处理入口。" }
+  n40@{ shape: hex, label: "**register​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：登<br/>记新增输入修饰器的处理入口。" }
   class n40 node_observer
   class n40 external_node
-  n41@{ shape: hex, label: "**avian3d::collision::collider::**<br/>**collider​_​hierarchy::plugin::**<br/>**{impl#35;0}::build::{closure#35;0}**<br/>来自crate:avian3d ↗：为新增碰撞体建立<br/>刚体归属。" }
+  n41@{ shape: hex, label: "**build::{closure#35;0}**<br/>来自crate:avian3d ↗：为新增碰撞体建立<br/>刚体归属。" }
   class n41 node_observer
   class n41 external_node
-  n42@{ shape: hex, label: "**bevy​_​enhanced​_​input::modifier::fns::**<br/>**register​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：登<br/>记新增输入修饰器的处理入口。" }
+  n42@{ shape: hex, label: "**register​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：登<br/>记新增输入修饰器的处理入口。" }
   class n42 node_observer
   class n42 external_node
-  n43@{ shape: hex, label: "**bevy​_​ui​_​widgets::modal::modal​_​**<br/>**dialog​_​barrier​_​on​_​spawn**<br/>来自crate:bevy​_​ui​_​widgets ↗：延迟初<br/>始化模态对话框内的焦点。" }
+  n43@{ shape: hex, label: "**modal​_​dialog​_​barrier​_​on​_​spawn**<br/>来自crate:bevy​_​ui​_​widgets ↗：延迟初<br/>始化模态对话框内的焦点。" }
   class n43 node_observer
   class n43 external_node
-  n44@{ shape: hex, label: "**avian3d::collision::narrow​_​phase::**<br/>**remove​_​collider​_​on**<br/>来自crate:avian3d ↗：清理碰撞体接触与<br/>对端碰撞记录。" }
+  n44@{ shape: hex, label: "**remove​_​collider​_​on**<br/>来自crate:avian3d ↗：清理碰撞体接触与<br/>对端碰撞记录。" }
   class n44 node_observer
   class n44 external_node
-  n45@{ shape: hex, label: "**bevy​_​enhanced​_​input::condition::**<br/>**fns::register​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：登<br/>记新增输入条件的求值入口。" }
+  n45@{ shape: hex, label: "**register​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：登<br/>记新增输入条件的求值入口。" }
   class n45 node_observer
   class n45 external_node
-  n46@{ shape: hex, label: "**bevy​_​ui::interaction​_​states::on​_​add​_​**<br/>**checkable**<br/>来自crate:bevy​_​ui ↗：初始化可勾选控件<br/>的无障碍状态。" }
+  n46@{ shape: hex, label: "**on​_​add​_​checkable**<br/>来自crate:bevy​_​ui ↗：初始化可勾选控件<br/>的无障碍状态。" }
   class n46 node_observer
   class n46 external_node
-  n47@{ shape: hex, label: "**avian3d::collision::collider::**<br/>**collider​_​hierarchy::plugin::**<br/>**{impl#35;0}::build::{closure#35;0}**<br/>来自crate:avian3d ↗：为新增碰撞体建立<br/>刚体归属。" }
+  n47@{ shape: hex, label: "**build::{closure#35;0}**<br/>来自crate:avian3d ↗：为新增碰撞体建立<br/>刚体归属。" }
   class n47 node_observer
   class n47 external_node
-  n48@{ shape: hex, label: "**avian3d::collision::collider::**<br/>**collider​_​hierarchy::plugin::**<br/>**{impl#35;0}::build::{closure#35;0}**<br/>来自crate:avian3d ↗：为新增碰撞体建立<br/>刚体归属。" }
+  n48@{ shape: hex, label: "**build::{closure#35;0}**<br/>来自crate:avian3d ↗：为新增碰撞体建立<br/>刚体归属。" }
   class n48 node_observer
   class n48 external_node
-  n49@{ shape: hex, label: "**bevy​_​enhanced​_​input::condition::**<br/>**fns::register​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：登<br/>记新增输入条件的求值入口。" }
+  n49@{ shape: hex, label: "**register​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：登<br/>记新增输入条件的求值入口。" }
   class n49 node_observer
   class n49 external_node
-  n50@{ shape: hex, label: "**bevy​_​enhanced​_​input::modifier::fns::**<br/>**register​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：登<br/>记新增输入修饰器的处理入口。" }
+  n50@{ shape: hex, label: "**register​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：登<br/>记新增输入修饰器的处理入口。" }
   class n50 node_observer
   class n50 external_node
-  n51@{ shape: hex, label: "**avian3d::dynamics::solver::solver​_​**<br/>**body::plugin::{impl#35;0}::build::**<br/>**{closure#35;4}**<br/>来自crate:avian3d ↗：清除禁用或休眠刚<br/>体的求解缓存。" }
+  n51@{ shape: hex, label: "**build::{closure#35;4}**<br/>来自crate:avian3d ↗：清除禁用或休眠刚<br/>体的求解缓存。" }
   class n51 node_observer
   class n51 external_node
-  n52@{ shape: hex, label: "**bevy​_​ui::interaction​_​states::on​_​add​_​**<br/>**checked**<br/>来自crate:bevy​_​ui ↗：同步无障碍节点的<br/>已勾选状态。" }
+  n52@{ shape: hex, label: "**on​_​add​_​checked**<br/>来自crate:bevy​_​ui ↗：同步无障碍节点的<br/>已勾选状态。" }
   class n52 node_observer
   class n52 external_node
-  n53@{ shape: hex, label: "**bevy​_​ui::interaction​_​states::on​_​add​_​**<br/>**selectable**<br/>来自crate:bevy​_​ui ↗：初始化可选择控件<br/>的无障碍状态。" }
+  n53@{ shape: hex, label: "**on​_​add​_​selectable**<br/>来自crate:bevy​_​ui ↗：初始化可选择控件<br/>的无障碍状态。" }
   class n53 node_observer
   class n53 external_node
-  n54@{ shape: hex, label: "**bevy​_​ui::interaction​_​states::on​_​add​_​**<br/>**selected**<br/>来自crate:bevy​_​ui ↗：同步无障碍节点的<br/>已选中状态。" }
+  n54@{ shape: hex, label: "**on​_​add​_​selected**<br/>来自crate:bevy​_​ui ↗：同步无障碍节点的<br/>已选中状态。" }
   class n54 node_observer
   class n54 external_node
-  n55@{ shape: hex, label: "**avian3d::dynamics::solver::solver​_​**<br/>**body::plugin::{impl#35;0}::build::**<br/>**{closure#35;4}**<br/>来自crate:avian3d ↗：清除禁用或休眠刚<br/>体的求解缓存。" }
+  n55@{ shape: hex, label: "**build::{closure#35;4}**<br/>来自crate:avian3d ↗：清除禁用或休眠刚<br/>体的求解缓存。" }
   class n55 node_observer
   class n55 external_node
-  n56@{ shape: hex, label: "**bevy​_​enhanced​_​input::condition::**<br/>**fns::register​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：登<br/>记新增输入条件的求值入口。" }
+  n56@{ shape: hex, label: "**register​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：登<br/>记新增输入条件的求值入口。" }
   class n56 node_observer
   class n56 external_node
-  n57@{ shape: hex, label: "**bevy​_​enhanced​_​input::condition::**<br/>**fns::register​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：登<br/>记新增输入条件的求值入口。" }
+  n57@{ shape: hex, label: "**register​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：登<br/>记新增输入条件的求值入口。" }
   class n57 node_observer
   class n57 external_node
-  n58@{ shape: hex, label: "**bevy​_​ui::interaction​_​states::on​_​add​_​**<br/>**disabled**<br/>来自crate:bevy​_​ui ↗：向无障碍节点同步<br/>禁用状态。" }
+  n58@{ shape: hex, label: "**on​_​add​_​disabled**<br/>来自crate:bevy​_​ui ↗：向无障碍节点同步<br/>禁用状态。" }
   class n58 node_observer
   class n58 external_node
-  n59@{ shape: hex, label: "**bevy​_​ui::interaction​_​states::on​_​add​_​**<br/>**selectable**<br/>来自crate:bevy​_​ui ↗：初始化可选择控件<br/>的无障碍状态。" }
+  n59@{ shape: hex, label: "**on​_​add​_​selectable**<br/>来自crate:bevy​_​ui ↗：初始化可选择控件<br/>的无障碍状态。" }
   class n59 node_observer
   class n59 external_node
-  n60@{ shape: hex, label: "**bevy​_​ui​_​widgets::modal::modal​_​**<br/>**dialog​_​barrier​_​on​_​spawn**<br/>来自crate:bevy​_​ui​_​widgets ↗：延迟初<br/>始化模态对话框内的焦点。" }
+  n60@{ shape: hex, label: "**modal​_​dialog​_​barrier​_​on​_​spawn**<br/>来自crate:bevy​_​ui​_​widgets ↗：延迟初<br/>始化模态对话框内的焦点。" }
   class n60 node_observer
   class n60 external_node
-  n61@{ shape: hex, label: "**bevy​_​enhanced​_​input::condition::**<br/>**fns::register​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：登<br/>记新增输入条件的求值入口。" }
+  n61@{ shape: hex, label: "**register​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：登<br/>记新增输入条件的求值入口。" }
   class n61 node_observer
   class n61 external_node
-  n62@{ shape: hex, label: "**bevy​_​ui​_​widgets::modal::set​_​modal​_​**<br/>**dialog​_​tab​_​group​_​modal**<br/>来自crate:bevy​_​ui​_​widgets ↗：将模态<br/>框导航组设为模态。" }
+  n62@{ shape: hex, label: "**set​_​modal​_​dialog​_​tab​_​group​_​modal**<br/>来自crate:bevy​_​ui​_​widgets ↗：将模态<br/>框导航组设为模态。" }
   class n62 node_observer
   class n62 external_node
-  n63@{ shape: hex, label: "**bevy​_​enhanced​_​input::modifier::fns::**<br/>**register​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：登<br/>记新增输入修饰器的处理入口。" }
+  n63@{ shape: hex, label: "**register​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：登<br/>记新增输入修饰器的处理入口。" }
   class n63 node_observer
   class n63 external_node
-  n64@{ shape: hex, label: "**avian3d::dynamics::rigid​_​body::mass​_​**<br/>**properties::{impl#35;3}::build::**<br/>**{closure#35;0}**<br/>来自crate:avian3d ↗：初始化新刚体的质<br/>量属性。" }
+  n64@{ shape: hex, label: "**build::{closure#35;0}**<br/>来自crate:avian3d ↗：初始化新刚体的质<br/>量属性。" }
   class n64 node_observer
   class n64 external_node
-  n65@{ shape: hex, label: "**bevy​_​ui::interaction​_​states::on​_​add​_​**<br/>**disabled**<br/>来自crate:bevy​_​ui ↗：向无障碍节点同步<br/>禁用状态。" }
+  n65@{ shape: hex, label: "**on​_​add​_​disabled**<br/>来自crate:bevy​_​ui ↗：向无障碍节点同步<br/>禁用状态。" }
   class n65 node_observer
   class n65 external_node
-  n66@{ shape: hex, label: "**avian3d::collider​_​tree::update::**<br/>**{impl#35;1}::build::{closure#35;3}**<br/>来自crate:avian3d ↗：同步碰撞代理的传<br/>感器启用标志。" }
+  n66@{ shape: hex, label: "**build::{closure#35;3}**<br/>来自crate:avian3d ↗：同步碰撞代理的传<br/>感器启用标志。" }
   class n66 node_observer
   class n66 external_node
-  n67@{ shape: hex, label: "**bevy​_​enhanced​_​input::condition::**<br/>**fns::register​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：登<br/>记新增输入条件的求值入口。" }
+  n67@{ shape: hex, label: "**register​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：登<br/>记新增输入条件的求值入口。" }
   class n67 node_observer
   class n67 external_node
-  n68@{ shape: hex, label: "**bevy​_​enhanced​_​input::condition::**<br/>**fns::register​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：登<br/>记新增输入条件的求值入口。" }
+  n68@{ shape: hex, label: "**register​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：登<br/>记新增输入条件的求值入口。" }
   class n68 node_observer
   class n68 external_node
-  n69@{ shape: hex, label: "**avian3d::collision::narrow​_​phase::**<br/>**on​_​add​_​sensor**<br/>来自crate:avian3d ↗：清除转为传感器前<br/>的旧接触。" }
+  n69@{ shape: hex, label: "**on​_​add​_​sensor**<br/>来自crate:avian3d ↗：清除转为传感器前<br/>的旧接触。" }
   class n69 node_observer
   class n69 external_node
-  n70@{ shape: hex, label: "**bevy​_​enhanced​_​input::condition::**<br/>**fns::register​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：登<br/>记新增输入条件的求值入口。" }
+  n70@{ shape: hex, label: "**register​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：登<br/>记新增输入条件的求值入口。" }
   class n70 node_observer
   class n70 external_node
-  n71@{ shape: hex, label: "**avian3d::collision::collider::**<br/>**backend::{impl#35;2}::build::**<br/>**{closure#35;5}**<br/>来自crate:avian3d ↗：在碰撞体成为传感<br/>器后请求质量重算。" }
+  n71@{ shape: hex, label: "**build::{closure#35;5}**<br/>来自crate:avian3d ↗：在碰撞体成为传感<br/>器后请求质量重算。" }
   class n71 node_observer
   class n71 external_node
-  n72@{ shape: hex, label: "**bevy​_​enhanced​_​input::condition::**<br/>**fns::register​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：登<br/>记新增输入条件的求值入口。" }
+  n72@{ shape: hex, label: "**register​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：登<br/>记新增输入条件的求值入口。" }
   class n72 node_observer
   class n72 external_node
-  n73@{ shape: hex, label: "**bevy​_​enhanced​_​input::modifier::fns::**<br/>**register​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：登<br/>记新增输入修饰器的处理入口。" }
+  n73@{ shape: hex, label: "**register​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：登<br/>记新增输入修饰器的处理入口。" }
   class n73 node_observer
   class n73 external_node
-  n74@{ shape: hex, label: "**bevy​_​ui::interaction​_​states::on​_​add​_​**<br/>**selected**<br/>来自crate:bevy​_​ui ↗：同步无障碍节点的<br/>已选中状态。" }
+  n74@{ shape: hex, label: "**on​_​add​_​selected**<br/>来自crate:bevy​_​ui ↗：同步无障碍节点的<br/>已选中状态。" }
   class n74 node_observer
   class n74 external_node
-  n75@{ shape: hex, label: "**bevy​_​enhanced​_​input::modifier::fns::**<br/>**register​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：登<br/>记新增输入修饰器的处理入口。" }
+  n75@{ shape: hex, label: "**register​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：登<br/>记新增输入修饰器的处理入口。" }
   class n75 node_observer
   class n75 external_node
-  n76@{ shape: hex, label: "**bevy​_​scene::spawn::on​_​add​_​scene​_​**<br/>**patch​_​instance**<br/>来自crate:bevy​_​scene ↗：排队处理新加<br/>入的场景补丁实例。" }
+  n76@{ shape: hex, label: "**on​_​add​_​scene​_​patch​_​instance**<br/>来自crate:bevy​_​scene ↗：排队处理新加<br/>入的场景补丁实例。" }
   class n76 node_observer
   class n76 external_node
-  n77@{ shape: hex, label: "**avian3d::collider​_​tree::update::**<br/>**remove​_​from​_​tree​_​on**<br/>来自crate:avian3d ↗：从空间树移除碰撞<br/>体代理。" }
+  n77@{ shape: hex, label: "**remove​_​from​_​tree​_​on**<br/>来自crate:avian3d ↗：从空间树移除碰撞<br/>体代理。" }
   class n77 node_observer
   class n77 external_node
-  n78@{ shape: hex, label: "**bevy​_​ui​_​widgets::modal::modal​_​**<br/>**dialog​_​barrier​_​on​_​spawn**<br/>来自crate:bevy​_​ui​_​widgets ↗：延迟初<br/>始化模态对话框内的焦点。" }
+  n78@{ shape: hex, label: "**modal​_​dialog​_​barrier​_​on​_​spawn**<br/>来自crate:bevy​_​ui​_​widgets ↗：延迟初<br/>始化模态对话框内的焦点。" }
   class n78 node_observer
   class n78 external_node
-  n79@{ shape: hex, label: "**bevy​_​winit::{impl#35;0}::build::**<br/>**{closure#35;2}**<br/>来自crate:bevy​_​winit ↗：通知原生事件<br/>循环有新窗口。" }
+  n79@{ shape: hex, label: "**build::{closure#35;2}**<br/>来自crate:bevy​_​winit ↗：通知原生事件<br/>循环有新窗口。" }
   class n79 node_observer
   class n79 external_node
-  n80@{ shape: hex, label: "**bevy​_​ui​_​widgets::dialog::register​_​**<br/>**dialog**<br/>来自crate:bevy​_​ui​_​widgets ↗：登记新<br/>建浮动对话框的层级。" }
+  n80@{ shape: hex, label: "**register​_​dialog**<br/>来自crate:bevy​_​ui​_​widgets ↗：登记新<br/>建浮动对话框的层级。" }
   class n80 node_observer
   class n80 external_node
-  n81@{ shape: hex, label: "**bevy​_​enhanced​_​input::condition::**<br/>**fns::register​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：登<br/>记新增输入条件的求值入口。" }
+  n81@{ shape: hex, label: "**register​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：登<br/>记新增输入条件的求值入口。" }
   class n81 node_observer
   class n81 external_node
-  n82@{ shape: hex, label: "**bevy​_​enhanced​_​input::condition::**<br/>**fns::register​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：登<br/>记新增输入条件的求值入口。" }
+  n82@{ shape: hex, label: "**register​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：登<br/>记新增输入条件的求值入口。" }
   class n82 node_observer
   class n82 external_node
-  n83@{ shape: hex, label: "**bevy​_​enhanced​_​input::condition::**<br/>**fns::register​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：登<br/>记新增输入条件的求值入口。" }
+  n83@{ shape: hex, label: "**register​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：登<br/>记新增输入条件的求值入口。" }
   class n83 node_observer
   class n83 external_node
-  n84@{ shape: hex, label: "**bevy​_​enhanced​_​input::modifier::fns::**<br/>**register​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：登<br/>记新增输入修饰器的处理入口。" }
+  n84@{ shape: hex, label: "**register​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：登<br/>记新增输入修饰器的处理入口。" }
   class n84 node_observer
   class n84 external_node
-  n85@{ shape: hex, label: "**bevy​_​enhanced​_​input::modifier::fns::**<br/>**register​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：登<br/>记新增输入修饰器的处理入口。" }
+  n85@{ shape: hex, label: "**register​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：登<br/>记新增输入修饰器的处理入口。" }
   class n85 node_observer
   class n85 external_node
-  n86@{ shape: hex, label: "**bevy​_​enhanced​_​input::condition::**<br/>**fns::register​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：登<br/>记新增输入条件的求值入口。" }
+  n86@{ shape: hex, label: "**register​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：登<br/>记新增输入条件的求值入口。" }
   class n86 node_observer
   class n86 external_node
-  n87@{ shape: hex, label: "**bevy​_​ui​_​widgets::modal::set​_​modal​_​**<br/>**dialog​_​tab​_​group​_​modal**<br/>来自crate:bevy​_​ui​_​widgets ↗：将模态<br/>框导航组设为模态。" }
+  n87@{ shape: hex, label: "**set​_​modal​_​dialog​_​tab​_​group​_​modal**<br/>来自crate:bevy​_​ui​_​widgets ↗：将模态<br/>框导航组设为模态。" }
   class n87 node_observer
   class n87 external_node
-  n88@{ shape: hex, label: "**avian3d::dynamics::joints::joint​_​**<br/>**graph::plugin::on​_​disable​_​joint​_​**<br/>**collision**<br/>来自crate:avian3d ↗：清理关节两端被禁<br/>止的碰撞接触。" }
+  n88@{ shape: hex, label: "**on​_​disable​_​joint​_​collision**<br/>来自crate:avian3d ↗：清理关节两端被禁<br/>止的碰撞接触。" }
   class n88 node_observer
   class n88 external_node
-  n89@{ shape: hex, label: "**avian3d::dynamics::joints::joint​_​**<br/>**graph::plugin::add​_​joint​_​to​_​graph**<br/>来自crate:avian3d ↗：加入关节连接并发<br/>布连接图变化。" }
+  n89@{ shape: hex, label: "**add​_​joint​_​to​_​graph**<br/>来自crate:avian3d ↗：加入关节连接并发<br/>布连接图变化。" }
   class n89 node_observer
   class n89 external_node
-  n90@{ shape: hex, label: "**avian3d::dynamics::rigid​_​body::mass​_​**<br/>**properties::{impl#35;3}::build::**<br/>**{closure#35;0}**<br/>来自crate:avian3d ↗：初始化新刚体的质<br/>量属性。" }
+  n90@{ shape: hex, label: "**build::{closure#35;0}**<br/>来自crate:avian3d ↗：初始化新刚体的质<br/>量属性。" }
   class n90 node_observer
   class n90 external_node
-  n91@{ shape: hex, label: "**bevy​_​enhanced​_​input::modifier::fns::**<br/>**register​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：登<br/>记新增输入修饰器的处理入口。" }
+  n91@{ shape: hex, label: "**register​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：登<br/>记新增输入修饰器的处理入口。" }
   class n91 node_observer
   class n91 external_node
-  n92@{ shape: hex, label: "**bevy​_​ui::interaction​_​states::on​_​add​_​**<br/>**checkable**<br/>来自crate:bevy​_​ui ↗：初始化可勾选控件<br/>的无障碍状态。" }
+  n92@{ shape: hex, label: "**on​_​add​_​checkable**<br/>来自crate:bevy​_​ui ↗：初始化可勾选控件<br/>的无障碍状态。" }
   class n92 node_observer
   class n92 external_node
-  n93@{ shape: hex, label: "**bevy​_​enhanced​_​input::condition::**<br/>**fns::register​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：登<br/>记新增输入条件的求值入口。" }
+  n93@{ shape: hex, label: "**register​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：登<br/>记新增输入条件的求值入口。" }
   class n93 node_observer
   class n93 external_node
-  n94@{ shape: hex, label: "**bevy​_​winit::{impl#35;0}::build::**<br/>**{closure#35;2}**<br/>来自crate:bevy​_​winit ↗：通知原生事件<br/>循环有新窗口。" }
+  n94@{ shape: hex, label: "**build::{closure#35;2}**<br/>来自crate:bevy​_​winit ↗：通知原生事件<br/>循环有新窗口。" }
   class n94 node_observer
   class n94 external_node
-  n95@{ shape: hex, label: "**avian3d::dynamics::solver::solver​_​**<br/>**body::plugin::{impl#35;0}::build::**<br/>**{closure#35;4}**<br/>来自crate:avian3d ↗：清除禁用或休眠刚<br/>体的求解缓存。" }
+  n95@{ shape: hex, label: "**build::{closure#35;4}**<br/>来自crate:avian3d ↗：清除禁用或休眠刚<br/>体的求解缓存。" }
   class n95 node_observer
   class n95 external_node
-  n96@{ shape: hex, label: "**avian3d::collider​_​tree::update::**<br/>**{impl#35;1}::build::{closure#35;0}**<br/>来自crate:avian3d ↗：初始化碰撞体包围<br/>盒与边距缓存。" }
+  n96@{ shape: hex, label: "**build::{closure#35;0}**<br/>来自crate:avian3d ↗：初始化碰撞体包围<br/>盒与边距缓存。" }
   class n96 node_observer
   class n96 external_node
-  n97@{ shape: hex, label: "**bevy​_​enhanced​_​input::condition::**<br/>**fns::register​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：登<br/>记新增输入条件的求值入口。" }
+  n97@{ shape: hex, label: "**register​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：登<br/>记新增输入条件的求值入口。" }
   class n97 node_observer
   class n97 external_node
-  n98@{ shape: hex, label: "**bevy​_​ui​_​widgets::dialog::register​_​**<br/>**dialog**<br/>来自crate:bevy​_​ui​_​widgets ↗：登记新<br/>建浮动对话框的层级。" }
+  n98@{ shape: hex, label: "**register​_​dialog**<br/>来自crate:bevy​_​ui​_​widgets ↗：登记新<br/>建浮动对话框的层级。" }
   class n98 node_observer
   class n98 external_node
-  n99@{ shape: hex, label: "**bevy​_​enhanced​_​input::condition::**<br/>**fns::register​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：登<br/>记新增输入条件的求值入口。" }
+  n99@{ shape: hex, label: "**register​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：登<br/>记新增输入条件的求值入口。" }
   class n99 node_observer
   class n99 external_node
-  n100@{ shape: hex, label: "**bevy​_​ui::interaction​_​states::on​_​add​_​**<br/>**checkable**<br/>来自crate:bevy​_​ui ↗：初始化可勾选控件<br/>的无障碍状态。" }
+  n100@{ shape: hex, label: "**on​_​add​_​checkable**<br/>来自crate:bevy​_​ui ↗：初始化可勾选控件<br/>的无障碍状态。" }
   class n100 node_observer
   class n100 external_node
-  n101@{ shape: hex, label: "**bevy​_​enhanced​_​input::condition::**<br/>**fns::register​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：登<br/>记新增输入条件的求值入口。" }
+  n101@{ shape: hex, label: "**register​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：登<br/>记新增输入条件的求值入口。" }
   class n101 node_observer
   class n101 external_node
-  n102@{ shape: hex, label: "**bevy​_​enhanced​_​input::condition::**<br/>**fns::register​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：登<br/>记新增输入条件的求值入口。" }
+  n102@{ shape: hex, label: "**register​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：登<br/>记新增输入条件的求值入口。" }
   class n102 node_observer
   class n102 external_node
   n0 e0@-->|"接收事件"| n1

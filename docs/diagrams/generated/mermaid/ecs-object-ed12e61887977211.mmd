@@ -39,9 +39,9 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**input::EguiContextPointerTouchId**<br/>保存当前驱动 Egui 指针的活动触摸编号" }
+  n0@{ shape: rounded, label: "**EguiContextPointerTouchId**<br/>保存当前驱动 Egui 指针的活动触摸编号" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​egui::input::write​_​non​_​window​_​**<br/>**touch​_​messages​_​system**<br/>向聚焦的非窗口 Egui 界面传递触摸。" }
+  n1@{ shape: rounded, label: "**write​_​non​_​window​_​touch​_​messages​_​**<br/>**system**<br/>向聚焦的非窗口 Egui 界面传递触摸。" }
   class n1 node_system
   n2@{ shape: rounded, label: "**spawn​_​lighting · 创建模板**<br/>来自scene​_​assembly ↗：创建可复用为玩<br/>家镜头的加载相机。" }
   class n2 node_entity
@@ -49,7 +49,7 @@ flowchart LR
   n3@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：提供主菜单展示与界面的三维相<br/>机。" }
   class n3 node_entity
   class n3 external_node
-  n4@{ shape: rounded, label: "**bevy​_​egui::input::write​_​window​_​**<br/>**touch​_​messages​_​system**<br/>把窗口触摸转换为 Egui 指针和触摸事件。" }
+  n4@{ shape: rounded, label: "**write​_​window​_​touch​_​messages​_​system**<br/>把窗口触摸转换为 Egui 指针和触摸事件。" }
   class n4 node_system
   n1 e0@-->|"赋值"| n0
   class e0 edge_write

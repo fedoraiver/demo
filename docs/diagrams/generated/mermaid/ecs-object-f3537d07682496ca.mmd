@@ -38,15 +38,15 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**mesh::MeshMetadataFallbackBuffer**<br/>为无元数据网格提供可绑定的缺省缓冲。" }
+  n0@{ shape: cyl, label: "**MeshMetadataFallbackBuffer**<br/>为无元数据网格提供可绑定的缺省缓冲。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::mesh::**<br/>**prepare​_​mesh2d​_​bind​_​group**<br/>来自crate:bevy​_​sprite​_​render ↗：按网<br/>格元数据分配块建立二维网格绑定组。" }
+  n1@{ shape: rounded, label: "**prepare​_​mesh2d​_​bind​_​group**<br/>来自crate:bevy​_​sprite​_​render ↗：按网<br/>格元数据分配块建立二维网格绑定组。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​pbr::render::mesh::prepare​_​**<br/>**mesh​_​bind​_​groups**<br/>来自crate:bevy​_​pbr ↗：按预处理路径准<br/>备网格、蒙皮和形变资源绑定。" }
+  n2@{ shape: rounded, label: "**prepare​_​mesh​_​bind​_​groups**<br/>来自crate:bevy​_​pbr ↗：按预处理路径准<br/>备网格、蒙皮和形变资源绑定。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​render::mesh::prepare​_​mesh​_​**<br/>**metadata​_​fallback​_​buffer**<br/>取得回退网格所在的元数据 GPU 缓冲。" }
+  n3@{ shape: rounded, label: "**prepare​_​mesh​_​metadata​_​fallback​_​**<br/>**buffer**<br/>取得回退网格所在的元数据 GPU 缓冲。" }
   class n3 node_system
   n0 e0@--> n1
   class e0 edge_read

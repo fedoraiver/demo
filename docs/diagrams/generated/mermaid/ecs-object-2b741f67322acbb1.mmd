@@ -46,64 +46,64 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​sprite::picking​_​backend::**<br/>**sprite​_​picking**<br/>按精灵图像和拾取配置计算指针命中。" }
+  n0@{ shape: rounded, label: "**sprite​_​picking**<br/>按精灵图像和拾取配置计算指针命中。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**bevy​_​picking::Pickable**<br/>来自crate:bevy​_​picking ↗：配置实体是<br/>否可被拾取及是否阻挡深度更低的命中目标" }
+  n1@{ shape: rounded, label: "**Pickable**<br/>来自crate:bevy​_​picking ↗：配置实体是<br/>否可被拾取及是否阻挡深度更低的命中目标" }
   class n1 node_component
   class n1 external_node
-  n2@{ shape: fr-rect, label: "**picking​_​backend::SpritePickingPlugin**<br/>提供二维精灵拾取结果。" }
+  n2@{ shape: fr-rect, label: "**SpritePickingPlugin**<br/>提供二维精灵拾取结果。" }
   class n2 node_plugin
   n3@{ shape: lin-rect, label: "**Backend**<br/>来自crate:bevy​_​picking ↗：组织指针拾<br/>取和悬停处理阶段。" }
   class n3 node_system_set
   class n3 external_node
-  n4@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;bevy​_​**<br/>**picking::backend::PointerHits#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n4@{ shape: cyl, label: "**Messages#lt;PointerHits#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n4 node_resource
   class n4 external_node
-  n5@{ shape: rounded, label: "**bevy​_​camera::Projection**<br/>来自crate:bevy​_​camera ↗：定义相机从视<br/>图到裁剪空间的投影。" }
+  n5@{ shape: rounded, label: "**Projection**<br/>来自crate:bevy​_​camera ↗：定义相机从视<br/>图到裁剪空间的投影。" }
   class n5 node_component
   class n5 external_node
-  n6@{ shape: rounded, label: "**bevy​_​picking::pointer::PointerId**<br/>来自crate:bevy​_​picking ↗：以鼠标、触<br/>摸编号或自定义 UUID 提供稳定指针身份" }
+  n6@{ shape: rounded, label: "**PointerId**<br/>来自crate:bevy​_​picking ↗：以鼠标、触<br/>摸编号或自定义 UUID 提供稳定指针身份" }
   class n6 node_component
   class n6 external_node
-  n7@{ shape: rounded, label: "**sprite::Sprite**<br/>描述二维精灵的图像、图集、颜色、翻转、尺<br/>寸和裁剪区域" }
+  n7@{ shape: rounded, label: "**Sprite**<br/>描述二维精灵的图像、图集、颜色、翻转、尺<br/>寸和裁剪区域" }
   class n7 node_component
-  n8@{ shape: rounded, label: "**bevy​_​camera::RenderTarget**<br/>来自crate:bevy​_​camera ↗：指定相机输出<br/>的窗口、图像或纹理。" }
+  n8@{ shape: rounded, label: "**RenderTarget**<br/>来自crate:bevy​_​camera ↗：指定相机输出<br/>的窗口、图像或纹理。" }
   class n8 node_component
   class n8 external_node
-  n9@{ shape: cyl, label: "**bevy​_​asset::Assets#lt;texture​_​atlas::**<br/>**TextureAtlasLayout#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
+  n9@{ shape: cyl, label: "**Assets#lt;TextureAtlasLayout#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
   class n9 node_resource
   class n9 external_node
-  n10@{ shape: rounded, label: "**sprite::Anchor**<br/>保存二维可渲染实体相对自身尺寸的归一化锚<br/>点偏移" }
+  n10@{ shape: rounded, label: "**Anchor**<br/>保存二维可渲染实体相对自身尺寸的归一化锚<br/>点偏移" }
   class n10 node_component
-  n11@{ shape: cyl, label: "**bevy​_​picking::backend::prelude::**<br/>**RayMap**<br/>来自crate:bevy​_​picking ↗：按指针和相<br/>机组合保存拾取射线" }
+  n11@{ shape: cyl, label: "**RayMap**<br/>来自crate:bevy​_​picking ↗：按指针和相<br/>机组合保存拾取射线" }
   class n11 node_resource
   class n11 external_node
-  n12@{ shape: rounded, label: "**components::global​_​transform::**<br/>**GlobalTransform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>合并祖先变换后的世界空间仿射变换" }
+  n12@{ shape: rounded, label: "**GlobalTransform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>合并祖先变换后的世界空间仿射变换" }
   class n12 node_component
   class n12 external_node
-  n13@{ shape: lean-r, label: "**bevy​_​picking::backend::PointerHits**<br/>来自crate:bevy​_​picking ↗：传递拾取后<br/>端的实体命中结果。" }
+  n13@{ shape: lean-r, label: "**PointerHits**<br/>来自crate:bevy​_​picking ↗：传递拾取后<br/>端的实体命中结果。" }
   class n13 node_message
   class n13 external_node
-  n14@{ shape: rounded, label: "**bevy​_​camera::visibility::**<br/>**ViewVisibility**<br/>来自crate:bevy​_​camera ↗：记录实体是否<br/>应被提取用于渲染。" }
+  n14@{ shape: rounded, label: "**ViewVisibility**<br/>来自crate:bevy​_​camera ↗：记录实体是否<br/>应被提取用于渲染。" }
   class n14 node_component
   class n14 external_node
-  n15@{ shape: rounded, label: "**bevy​_​camera::Camera**<br/>来自crate:bevy​_​camera ↗：配置相机视<br/>口、输出目标和渲染顺序。" }
+  n15@{ shape: rounded, label: "**Camera**<br/>来自crate:bevy​_​camera ↗：配置相机视<br/>口、输出目标和渲染顺序。" }
   class n15 node_component
   class n15 external_node
-  n16@{ shape: rounded, label: "**picking​_​backend::SpritePickingCamera**<br/>在启用标记限制时指定精灵拾取相机。" }
+  n16@{ shape: rounded, label: "**SpritePickingCamera**<br/>在启用标记限制时指定精灵拾取相机。" }
   class n16 node_component
-  n17@{ shape: rounded, label: "**window::PrimaryWindow**<br/>来自crate:bevy​_​window ↗：标识唯一的主<br/>窗口" }
+  n17@{ shape: rounded, label: "**PrimaryWindow**<br/>来自crate:bevy​_​window ↗：标识唯一的主<br/>窗口" }
   class n17 node_component
   class n17 external_node
-  n18@{ shape: rounded, label: "**bevy​_​camera::visibility::**<br/>**RenderLayers**<br/>来自crate:bevy​_​camera ↗：限定相机与实<br/>体可相交的渲染层。" }
+  n18@{ shape: rounded, label: "**RenderLayers**<br/>来自crate:bevy​_​camera ↗：限定相机与实<br/>体可相交的渲染层。" }
   class n18 node_component
   class n18 external_node
-  n19@{ shape: cyl, label: "**bevy​_​asset::Assets#lt;image::Image#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
+  n19@{ shape: cyl, label: "**Assets#lt;Image#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
   class n19 node_resource
   class n19 external_node
-  n20@{ shape: cyl, label: "**picking​_​backend::**<br/>**SpritePickingSettings**<br/>配置精灵拾取的相机筛选与透明像素判定。" }
+  n20@{ shape: cyl, label: "**SpritePickingSettings**<br/>配置精灵拾取的相机筛选与透明像素判定。" }
   class n20 node_resource
-  n21@{ shape: rounded, label: "**bevy​_​picking::pointer::**<br/>**PointerLocation**<br/>来自crate:bevy​_​picking ↗：保存指针当<br/>前目标及该目标上的位置" }
+  n21@{ shape: rounded, label: "**PointerLocation**<br/>来自crate:bevy​_​picking ↗：保存指针当<br/>前目标及该目标上的位置" }
   class n21 node_component
   class n21 external_node
   n1 e0@--> n0

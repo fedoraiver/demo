@@ -43,43 +43,43 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​ui​_​render::prepare​_​uinodes**<br/>生成裁剪后的 UI 几何并合并图像批次。" }
+  n0@{ shape: rounded, label: "**prepare​_​uinodes**<br/>生成裁剪后的 UI 几何并合并图像批次。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**bevy​_​render::render​_​resource::**<br/>**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
+  n1@{ shape: cyl, label: "**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
   class n1 node_resource
   class n1 external_node
   n2@{ shape: cyl, label: "**ImageNodeBindGroups**<br/>按图像资产缓存 UI 图像纹理绑定。" }
   class n2 node_resource
-  n3@{ shape: cyl, label: "**bevy​_​render::render​_​asset::**<br/>**RenderAssets#lt;bevy​_​render::texture::**<br/>**GpuImage#gt;**<br/>来自crate:bevy​_​render ↗：按源资产身份<br/>保存 GPU 渲染表示。" }
+  n3@{ shape: cyl, label: "**RenderAssets#lt;GpuImage#gt;**<br/>来自crate:bevy​_​render ↗：按源资产身份<br/>保存 GPU 渲染表示。" }
   class n3 node_resource
   class n3 external_node
   n4@{ shape: cyl, label: "**UiMeta**<br/>保存普通 UI 节点的 GPU 几何与视图绑定。" }
   class n4 node_resource
-  n5@{ shape: cyl, label: "**bevy​_​render::render​_​phase::**<br/>**ViewSortedRenderPhases#lt;render​_​pass::**<br/>**TransparentUi#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图需<br/>要排序的绘制指令。" }
+  n5@{ shape: cyl, label: "**ViewSortedRenderPhases#lt;TransparentUi**<br/>**#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图需<br/>要排序的绘制指令。" }
   class n5 node_resource
   class n5 external_node
-  n6@{ shape: cyl, label: "**bevy​_​render::view::ViewUniforms**<br/>来自crate:bevy​_​render ↗：汇集全部视图<br/>的动态 Uniform 数据。" }
+  n6@{ shape: cyl, label: "**ViewUniforms**<br/>来自crate:bevy​_​render ↗：汇集全部视图<br/>的动态 Uniform 数据。" }
   class n6 node_resource
   class n6 external_node
   n7@{ shape: lin-rect, label: "**PrepareBindGroups**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
   class n7 node_system_set
   class n7 external_node
-  n8@{ shape: cyl, label: "**bevy​_​sprite​_​render::**<br/>**SpriteAssetEvents**<br/>来自crate:bevy​_​sprite​_​render ↗：传递<br/>影响精灵纹理的图像资产变化。" }
+  n8@{ shape: cyl, label: "**SpriteAssetEvents**<br/>来自crate:bevy​_​sprite​_​render ↗：传递<br/>影响精灵纹理的图像资产变化。" }
   class n8 node_resource
   class n8 external_node
   n9@{ shape: notch-rect, label: "**Local · previous​_​len**<br/>按上次普通 UI 批次数预留批量插入空间。" }
   class n9 node_local
-  n10@{ shape: cyl, label: "**bevy​_​render::renderer::RenderQueue**<br/>来自crate:bevy​_​render ↗：将资源写入和<br/>命令异步提交给 GPU。" }
+  n10@{ shape: cyl, label: "**RenderQueue**<br/>来自crate:bevy​_​render ↗：将资源写入和<br/>命令异步提交给 GPU。" }
   class n10 node_resource
   class n10 external_node
-  n11@{ shape: cyl, label: "**bevy​_​render::renderer::RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
+  n11@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
   class n11 node_resource
   class n11 external_node
-  n12@{ shape: cyl, label: "**pipeline::UiPipeline**<br/>提供普通 UI 节点的视图与图像布局。" }
+  n12@{ shape: cyl, label: "**UiPipeline**<br/>提供普通 UI 节点的视图与图像布局。" }
   class n12 node_resource
   n13@{ shape: cyl, label: "**ExtractedUiNodes**<br/>保存提取后的 UI 节点及本帧变化集合。" }
   class n13 node_resource
-  n14@{ shape: fr-rect, label: "**bevy​_​ui​_​render::UiRenderPlugin**<br/>提取并准备界面绘制数据。" }
+  n14@{ shape: fr-rect, label: "**UiRenderPlugin**<br/>提取并准备界面绘制数据。" }
   class n14 node_plugin
   n1 e0@--> n0
   class e0 edge_read

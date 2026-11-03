@@ -40,11 +40,11 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: lin-rect, label: "**Pointer**<br/>请求在 PreUpdate 消费后，Update 依次生<br/>成 BSN 页面并更新视觉焦点。" }
   class n0 node_system_set
-  n1@{ shape: rounded, label: "**demo::ui::volume::update​_​volume​_​**<br/>**visuals**<br/>草稿由请求系统在 PreUpdate 修改，随后<br/>同帧更新已有数字和轨道填充。" }
+  n1@{ shape: rounded, label: "**update​_​volume​_​visuals**<br/>草稿由请求系统在 PreUpdate 修改，随后<br/>同帧更新已有数字和轨道填充。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**demo::ui::pointer::pointer​_​**<br/>**interaction**<br/>Bevy 原生 UI 已完成按钮命中；这里只读取<br/>缓冲的按下事件，不另读 MouseButton。" }
+  n2@{ shape: rounded, label: "**pointer​_​interaction**<br/>Bevy 原生 UI 已完成按钮命中；这里只读取<br/>缓冲的按下事件，不另读 MouseButton。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**demo::ui::volume::sample​_​slider​_​**<br/>**pointer**<br/>Enhanced Input 负责菜单语义动作，但无<br/>法表示 UI 命中后的局部绝对横坐标。" }
+  n3@{ shape: rounded, label: "**sample​_​slider​_​pointer**<br/>Enhanced Input 负责菜单语义动作，但无<br/>法表示 UI 命中后的局部绝对横坐标。" }
   class n3 node_system
   n4@{ shape: lin-rect, label: "**Build**<br/>请求在 PreUpdate 消费后，Update 依次生<br/>成 BSN 页面并更新视觉焦点。" }
   class n4 node_system_set

@@ -39,7 +39,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: notch-rect, label: "**Local · touch​_​cache**<br/>按触点标识缓存上一次触摸输入。" }
   class n0 node_local
-  n1@{ shape: rounded, label: "**bevy​_​picking::input::touch​_​pick​_​**<br/>**events**<br/>把触摸阶段转换为独立拾取指针。" }
+  n1@{ shape: rounded, label: "**touch​_​pick​_​events**<br/>把触摸阶段转换为独立拾取指针。" }
   class n1 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

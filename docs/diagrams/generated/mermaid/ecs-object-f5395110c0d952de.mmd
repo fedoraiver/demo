@@ -38,14 +38,14 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**bevy​_​asset::asset​_​changed::**<br/>**AssetChanges#lt;sprite​_​mesh::sprite​_​**<br/>**mesh​_​material::SpriteMeshMaterial#gt;**<br/>记录资产最近变化的系统刻度。" }
+  n0@{ shape: cyl, label: "**AssetChanges#lt;SpriteMeshMaterial#gt;**<br/>记录资产最近变化的系统刻度。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​asset::assets::Assets#lt;bevy​_​**<br/>**sprite​_​render::sprite​_​mesh::sprite​_​**<br/>**mesh​_​material::SpriteMeshMaterial#gt;::**<br/>**asset​_​events**<br/>发布累计的资产变化消息。" }
+  n1@{ shape: rounded, label: "**asset​_​events**<br/>发布累计的资产变化消息。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::**<br/>**material::mark​_​2d​_​meshes​_​as​_​changed​_​**<br/>**if​_​their​_​materials​_​changed#lt;bevy​_​**<br/>**sprite​_​render::sprite​_​mesh::sprite​_​**<br/>**mesh​_​material::SpriteMeshMaterial#gt;**<br/>来自crate:bevy​_​sprite​_​render ↗：让材<br/>质变化触发二维网格重新提取。" }
+  n2@{ shape: rounded, label: "**mark​_​2d​_​meshes​_​as​_​changed​_​if​_​their​_​**<br/>**materials​_​changed**<br/>来自crate:bevy​_​sprite​_​render ↗：让材<br/>质变化触发二维网格重新提取。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::**<br/>**material::check​_​entities​_​needing​_​**<br/>**specialization#lt;bevy​_​sprite​_​render::**<br/>**sprite​_​mesh::sprite​_​mesh​_​material::**<br/>**SpriteMeshMaterial#gt;**<br/>来自crate:bevy​_​sprite​_​render ↗：收集<br/>二维网格材质需重建或移除专用化的实体。" }
+  n3@{ shape: rounded, label: "**check​_​entities​_​needing​_​**<br/>**specialization**<br/>来自crate:bevy​_​sprite​_​render ↗：收集<br/>二维网格材质需重建或移除专用化的实体。" }
   class n3 node_system
   class n3 external_node
   n1 e0@-->|"可变访问"| n0

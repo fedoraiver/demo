@@ -39,7 +39,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: notch-rect, label: "**Local · stack​_​roots**<br/>收集本轮参与排序的 UI 堆叠根。" }
   class n0 node_local
-  n1@{ shape: rounded, label: "**bevy​_​ui::stack::ui​_​stack​_​system**<br/>重建稳定的 UI 绘制和命中顺序。" }
+  n1@{ shape: rounded, label: "**ui​_​stack​_​system**<br/>重建稳定的 UI 绘制和命中顺序。" }
   class n1 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

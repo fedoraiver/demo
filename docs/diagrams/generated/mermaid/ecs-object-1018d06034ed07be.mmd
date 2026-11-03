@@ -40,31 +40,31 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**NoTranslationEasing**<br/>显式禁止当前实体的平移插值和外推" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**demo::item​_​interaction::**<br/>**interaction::handle​_​interaction**<br/>来自item​_​interaction ↗：拾取建立物理<br/>持握关系；释放只解除控制，保留刚体姿态、<br/>线速度和角速度。" }
+  n1@{ shape: rounded, label: "**handle​_​interaction**<br/>来自item​_​interaction ↗：拾取建立物理<br/>持握关系；释放只解除控制，保留刚体姿态、<br/>线速度和角速度。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​transform​_​interpolation::**<br/>**hermite::ease​_​translation​_​**<br/>**hermite#lt;avian3d::interpolation::**<br/>**LinVelSource#gt;**<br/>用两端线速度做 Hermite 位置平滑。" }
+  n2@{ shape: rounded, label: "**ease​_​translation​_​hermite**<br/>用两端线速度做 Hermite 位置平滑。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​transform​_​interpolation::ease​_​**<br/>**translation​_​lerp**<br/>按固定步剩余比例线性插值显示位置。" }
+  n3@{ shape: rounded, label: "**ease​_​translation​_​lerp**<br/>按固定步剩余比例线性插值显示位置。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**demo::bounds​_​recovery::recovery::**<br/>**recover​_​from​_​water**<br/>来自bounds​_​recovery ↗：恢复实体自身的<br/>出生姿态；角色落水只释放手中物品，物品落<br/>水时再独立恢复。" }
+  n4@{ shape: rounded, label: "**recover​_​from​_​water**<br/>来自bounds​_​recovery ↗：恢复实体自身的<br/>出生姿态；角色落水只释放手中物品，物品落<br/>水时再独立恢复。" }
   class n4 node_system
   class n4 external_node
-  n5@{ shape: rounded, label: "**demo::item​_​interaction::lifecycle::**<br/>**resume​_​carry​_​easing**<br/>来自item​_​interaction ↗：下一固定步在<br/>旧端点清除后恢复自由箱插值，保留原本由其<br/>他模块设置的暂停项。" }
+  n5@{ shape: rounded, label: "**resume​_​carry​_​easing**<br/>来自item​_​interaction ↗：下一固定步在<br/>旧端点清除后恢复自由箱插值，保留原本由其<br/>他模块设置的暂停项。" }
   class n5 node_system
   class n5 external_node
-  n6@{ shape: rounded, label: "**bevy​_​transform​_​interpolation::**<br/>**interpolation::update​_​translation​_​**<br/>**interpolation​_​end**<br/>把当前位置记录为插值终点。" }
+  n6@{ shape: rounded, label: "**update​_​translation​_​interpolation​_​end**<br/>把当前位置记录为插值终点。" }
   class n6 node_system
-  n7@{ shape: rounded, label: "**bevy​_​transform​_​interpolation::**<br/>**extrapolation::reset​_​translation​_​**<br/>**extrapolation**<br/>在固定步开始前还原真实位置。" }
+  n7@{ shape: rounded, label: "**reset​_​translation​_​extrapolation**<br/>在固定步开始前还原真实位置。" }
   class n7 node_system
-  n8@{ shape: rounded, label: "**bevy​_​transform​_​interpolation::**<br/>**interpolation::update​_​translation​_​**<br/>**interpolation​_​start**<br/>把当前位置记录为插值起点。" }
+  n8@{ shape: rounded, label: "**update​_​translation​_​interpolation​_​**<br/>**start**<br/>把当前位置记录为插值起点。" }
   class n8 node_system
-  n9@{ shape: rounded, label: "**demo::bounds​_​recovery::recovery::**<br/>**resume​_​interpolation**<br/>来自bounds​_​recovery ↗：下一固定步从恢<br/>复后的位置重新采样插值，只移除本模块临时<br/>添加的暂停项。" }
+  n9@{ shape: rounded, label: "**resume​_​interpolation**<br/>来自bounds​_​recovery ↗：下一固定步从恢<br/>复后的位置重新采样插值，只移除本模块临时<br/>添加的暂停项。" }
   class n9 node_system
   class n9 external_node
-  n10@{ shape: rounded, label: "**bevy​_​transform​_​interpolation::**<br/>**interpolation::complete​_​translation​_​**<br/>**easing**<br/>在新一轮插值前完成上一段平移。" }
+  n10@{ shape: rounded, label: "**complete​_​translation​_​easing**<br/>在新一轮插值前完成上一段平移。" }
   class n10 node_system
-  n11@{ shape: rounded, label: "**bevy​_​transform​_​interpolation::**<br/>**extrapolation::update​_​translation​_​**<br/>**extrapolation​_​states#lt;avian3d::**<br/>**interpolation::LinVelSource#gt;**<br/>依据当前线速度预测下一个位置端点。" }
+  n11@{ shape: rounded, label: "**update​_​translation​_​extrapolation​_​**<br/>**states**<br/>依据当前线速度预测下一个位置端点。" }
   class n11 node_system
   n1 e0@---|"存在性约束"| n0
   class e0 edge_reference
@@ -103,4 +103,4 @@ flowchart LR
   e9@{ curve: basis }
   e10@{ curve: basis }
   e11@{ curve: basis }
-  e12@{ curve: basis }
+  e12@{ curve: bumpX }

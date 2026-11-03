@@ -44,41 +44,41 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​ui::widget::text::text​_​system**<br/>重排变化的 UI 文本并更新字形图集。" }
+  n0@{ shape: rounded, label: "**text​_​system**<br/>重排变化的 UI 文本并更新字形图集。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**bevy​_​text::FontAtlasSet**<br/>来自crate:bevy​_​text ↗：保存字体光栅化<br/>结果所在的 FontAtlas 集合" }
+  n1@{ shape: cyl, label: "**FontAtlasSet**<br/>来自crate:bevy​_​text ↗：保存字体光栅化<br/>结果所在的 FontAtlas 集合" }
   class n1 node_resource
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​text::ComputedTextBlock**<br/>来自crate:bevy​_​text ↗：缓存文字块的<br/>Parley 布局、文本实体树和重绘标记" }
+  n2@{ shape: rounded, label: "**ComputedTextBlock**<br/>来自crate:bevy​_​text ↗：缓存文字块的<br/>Parley 布局、文本实体树和重绘标记" }
   class n2 node_component
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​text::FontHinting**<br/>来自crate:bevy​_​text ↗：选择字形光栅化<br/>时是否启用字体 hinting" }
+  n3@{ shape: rounded, label: "**FontHinting**<br/>来自crate:bevy​_​text ↗：选择字形光栅化<br/>时是否启用字体 hinting" }
   class n3 node_component
   class n3 external_node
   n4@{ shape: lin-rect, label: "**PostLayout**<br/>组织界面交互、布局与堆叠更新。" }
   class n4 node_system_set
-  n5@{ shape: cyl, label: "**bevy​_​asset::Assets#lt;image::Image#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
+  n5@{ shape: cyl, label: "**Assets#lt;Image#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
   class n5 node_resource
   class n5 external_node
-  n6@{ shape: rounded, label: "**bevy​_​text::TextLayout**<br/>来自crate:bevy​_​text ↗：保存文字块的内<br/>部对齐与换行策略" }
+  n6@{ shape: rounded, label: "**TextLayout**<br/>来自crate:bevy​_​text ↗：保存文字块的内<br/>部对齐与换行策略" }
   class n6 node_component
   class n6 external_node
-  n7@{ shape: fr-rect, label: "**bevy​_​ui::UiPlugin**<br/>建立界面布局与内容更新基础。" }
+  n7@{ shape: fr-rect, label: "**UiPlugin**<br/>建立界面布局与内容更新基础。" }
   class n7 node_plugin
-  n8@{ shape: rounded, label: "**bevy​_​text::TextLayoutInfo**<br/>来自crate:bevy​_​text ↗：保存文字块完成<br/>排版后的缩放、字形位置、文字运行几何及尺<br/>寸" }
+  n8@{ shape: rounded, label: "**TextLayoutInfo**<br/>来自crate:bevy​_​text ↗：保存文字块完成<br/>排版后的缩放、字形位置、文字运行几何及尺<br/>寸" }
   class n8 node_component
   class n8 external_node
-  n9@{ shape: rounded, label: "**bevy​_​ui::TextNodeFlags**<br/>追踪 UI 文本测量与重排状态。" }
+  n9@{ shape: rounded, label: "**TextNodeFlags**<br/>追踪 UI 文本测量与重排状态。" }
   class n9 node_component
-  n10@{ shape: rounded, label: "**bevy​_​ui::ComputedNode**<br/>保存 UI 布局计算后的物理尺寸。" }
+  n10@{ shape: rounded, label: "**ComputedNode**<br/>保存 UI 布局计算后的物理尺寸。" }
   class n10 node_component
-  n11@{ shape: cyl, label: "**bevy​_​text::TextPipeline**<br/>来自crate:bevy​_​text ↗：执行文字块布局<br/>与渲染数据生成" }
+  n11@{ shape: cyl, label: "**TextPipeline**<br/>来自crate:bevy​_​text ↗：执行文字块布局<br/>与渲染数据生成" }
   class n11 node_resource
   class n11 external_node
-  n12@{ shape: rounded, label: "**bevy​_​text::font::load​_​font​_​assets​_​**<br/>**into​_​font​_​collection**<br/>来自crate:bevy​_​text ↗：把字体资产注册<br/>到排版字体数据库。" }
+  n12@{ shape: rounded, label: "**load​_​font​_​assets​_​into​_​font​_​**<br/>**collection**<br/>来自crate:bevy​_​text ↗：把字体资产注册<br/>到排版字体数据库。" }
   class n12 node_system
   class n12 external_node
-  n13@{ shape: cyl, label: "**bevy​_​text::ScaleCx**<br/>来自crate:bevy​_​text ↗：持有字形缩放上<br/>下文" }
+  n13@{ shape: cyl, label: "**ScaleCx**<br/>来自crate:bevy​_​text ↗：持有字形缩放上<br/>下文" }
   class n13 node_resource
   class n13 external_node
   n14@{ shape: lin-rect, label: "**AssetEventSystems**<br/>来自crate:bevy​_​asset ↗：发布资产容器<br/>积累的变更消息。" }

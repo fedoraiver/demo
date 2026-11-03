@@ -47,54 +47,54 @@ flowchart LR
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
   subgraph layout_card_n0[" "]
-  n0@{ shape: rounded, label: "**bevy​_​ui::layout::ui​_​layout​_​system**<br/>求解 UI 布局并回写节点尺寸和二维变换。" }
+  n0@{ shape: rounded, label: "**ui​_​layout​_​system**<br/>求解 UI 布局并回写节点尺寸和二维变换。" }
   class n0 node_system
   end
   style layout_card_n0 fill:none,stroke:none
   subgraph layout_card_n1[" "]
-  n1@{ shape: rounded, label: "**bevy​_​ui::UiGlobalTransform**<br/>保存 UI 节点的绝对二维变换。" }
+  n1@{ shape: rounded, label: "**UiGlobalTransform**<br/>保存 UI 节点的绝对二维变换。" }
   class n1 node_component
   end
   style layout_card_n1 fill:none,stroke:none
   subgraph layout_card_n2[" "]
-  n2@{ shape: rounded, label: "**bevy​_​ui::ComputedUiRenderTargetInfo**<br/>缓存 UI 目标的尺寸与缩放。" }
+  n2@{ shape: rounded, label: "**ComputedUiRenderTargetInfo**<br/>缓存 UI 目标的尺寸与缩放。" }
   class n2 node_component
   end
   style layout_card_n2 fill:none,stroke:none
   subgraph layout_card_n3[" "]
-  n3@{ shape: rounded, label: "**bevy​_​ui::Node**<br/>声明 UI 节点的布局规则。" }
+  n3@{ shape: rounded, label: "**Node**<br/>声明 UI 节点的布局规则。" }
   class n3 node_component
   end
   style layout_card_n3 fill:none,stroke:none
   subgraph layout_card_n4[" "]
-  n4@{ shape: rounded, label: "**ui​_​node::FixedNode**<br/>将子 UI 节点按视口根节点布局。" }
+  n4@{ shape: rounded, label: "**FixedNode**<br/>将子 UI 节点按视口根节点布局。" }
   class n4 node_component
   end
   style layout_card_n4 fill:none,stroke:none
   subgraph layout_card_n5[" "]
-  n5@{ shape: rounded, label: "**bevy​_​ui::UiTransform**<br/>配置 UI 节点的相对二维变换。" }
+  n5@{ shape: rounded, label: "**UiTransform**<br/>配置 UI 节点的相对二维变换。" }
   class n5 node_component
   end
   style layout_card_n5 fill:none,stroke:none
   subgraph layout_card_n6[" "]
-  n6@{ shape: cyl, label: "**bevy​_​text::RemSize**<br/>来自crate:bevy​_​text ↗：保存全局根字号" }
+  n6@{ shape: cyl, label: "**RemSize**<br/>来自crate:bevy​_​text ↗：保存全局根字号" }
   class n6 node_resource
   class n6 external_node
   end
   style layout_card_n6 fill:none,stroke:none
   subgraph layout_card_n7[" "]
-  n7@{ shape: rounded, label: "**bevy​_​ui::ContentSize**<br/>提供内容驱动的固有尺寸测量。" }
+  n7@{ shape: rounded, label: "**ContentSize**<br/>提供内容驱动的固有尺寸测量。" }
   class n7 node_component
   end
   style layout_card_n7 fill:none,stroke:none
   subgraph layout_card_n8[" "]
-  n8@{ shape: rounded, label: "**bevy​_​ecs::hierarchy::Children**<br/>来自crate:bevy​_​ecs ↗：保存以<br/>ChildOf 指向当前父实体的子实体集合" }
+  n8@{ shape: rounded, label: "**Children**<br/>来自crate:bevy​_​ecs ↗：保存以<br/>ChildOf 指向当前父实体的子实体集合" }
   class n8 node_component
   class n8 external_node
   end
   style layout_card_n8 fill:none,stroke:none
   subgraph layout_card_n9[" "]
-  n9@{ shape: fr-rect, label: "**bevy​_​ui::UiPlugin**<br/>建立界面布局与内容更新基础。" }
+  n9@{ shape: fr-rect, label: "**UiPlugin**<br/>建立界面布局与内容更新基础。" }
   class n9 node_plugin
   end
   style layout_card_n9 fill:none,stroke:none
@@ -104,17 +104,17 @@ flowchart LR
   end
   style layout_card_n10 fill:none,stroke:none
   subgraph layout_card_n11[" "]
-  n11@{ shape: rounded, label: "**bevy​_​ui::ComputedNode**<br/>保存 UI 布局计算后的物理尺寸。" }
+  n11@{ shape: rounded, label: "**ComputedNode**<br/>保存 UI 布局计算后的物理尺寸。" }
   class n11 node_component
   end
   style layout_card_n11 fill:none,stroke:none
   subgraph layout_card_n12[" "]
-  n12@{ shape: rounded, label: "**bevy​_​ui::Outline**<br/>绘制不占布局空间的外轮廓。" }
+  n12@{ shape: rounded, label: "**Outline**<br/>绘制不占布局空间的外轮廓。" }
   class n12 node_component
   end
   style layout_card_n12 fill:none,stroke:none
   subgraph layout_card_n13[" "]
-  n13@{ shape: rounded, label: "**bevy​_​ui​_​widgets::scrollbar::update​_​**<br/>**scrollbar​_​thumb**<br/>来自crate:bevy​_​ui​_​widgets ↗：按内容<br/>比例与滚动位置更新滚动条滑块。" }
+  n13@{ shape: rounded, label: "**update​_​scrollbar​_​thumb**<br/>来自crate:bevy​_​ui​_​widgets ↗：按内容<br/>比例与滚动位置更新滚动条滑块。" }
   class n13 node_system
   class n13 external_node
   end
@@ -125,24 +125,24 @@ flowchart LR
   end
   style layout_card_n14 fill:none,stroke:none
   subgraph layout_card_n15[" "]
-  n15@{ shape: rounded, label: "**text::EmSize**<br/>来自crate:bevy​_​text ↗：保存当前 UI<br/>节点用于解析 Em 单位的实际字体大小" }
+  n15@{ shape: rounded, label: "**EmSize**<br/>来自crate:bevy​_​text ↗：保存当前 UI<br/>节点用于解析 Em 单位的实际字体大小" }
   class n15 node_component
   class n15 external_node
   end
   style layout_card_n15 fill:none,stroke:none
   subgraph layout_card_n16[" "]
-  n16@{ shape: cyl, label: "**bevy​_​text::FontCx**<br/>来自crate:bevy​_​text ↗：维护字体数据<br/>库、家族解析与字体缓存" }
+  n16@{ shape: cyl, label: "**FontCx**<br/>来自crate:bevy​_​text ↗：维护字体数据<br/>库、家族解析与字体缓存" }
   class n16 node_resource
   class n16 external_node
   end
   style layout_card_n16 fill:none,stroke:none
   subgraph layout_card_n17[" "]
-  n17@{ shape: rounded, label: "**ui​_​node::IgnoreScroll**<br/>按轴忽略父节点的滚动偏移。" }
+  n17@{ shape: rounded, label: "**IgnoreScroll**<br/>按轴忽略父节点的滚动偏移。" }
   class n17 node_component
   end
   style layout_card_n17 fill:none,stroke:none
   subgraph layout_card_n18[" "]
-  n18@{ shape: rounded, label: "**bevy​_​ui::ScrollPosition**<br/>指定 UI 内容的逻辑像素滚动位置。" }
+  n18@{ shape: rounded, label: "**ScrollPosition**<br/>指定 UI 内容的逻辑像素滚动位置。" }
   class n18 node_component
   end
   style layout_card_n18 fill:none,stroke:none
@@ -157,7 +157,7 @@ flowchart LR
   end
   style layout_card_n20 fill:none,stroke:none
   subgraph layout_card_n21[" "]
-  n21@{ shape: rounded, label: "**bevy​_​ecs::hierarchy::ChildOf**<br/>来自crate:bevy​_​ecs ↗：保存当前实体的<br/>父实体身份" }
+  n21@{ shape: rounded, label: "**ChildOf**<br/>来自crate:bevy​_​ecs ↗：保存当前实体的<br/>父实体身份" }
   class n21 node_component
   class n21 external_node
   end
@@ -168,12 +168,12 @@ flowchart LR
   end
   style layout_card_n22 fill:none,stroke:none
   subgraph layout_card_n23[" "]
-  n23@{ shape: cyl, label: "**layout::ui​_​surface::UiSurface**<br/>维护 ECS UI 与布局树之间的映射。" }
+  n23@{ shape: cyl, label: "**UiSurface**<br/>维护 ECS UI 与布局树之间的映射。" }
   class n23 node_resource
   end
   style layout_card_n23 fill:none,stroke:none
   subgraph layout_card_n24[" "]
-  n24@{ shape: rounded, label: "**bevy​_​ui​_​widgets::popover::position​_​**<br/>**popover**<br/>来自crate:bevy​_​ui​_​widgets ↗：定位弹<br/>出层并同步后代的 UI 变换。" }
+  n24@{ shape: rounded, label: "**position​_​popover**<br/>来自crate:bevy​_​ui​_​widgets ↗：定位弹<br/>出层并同步后代的 UI 变换。" }
   class n24 node_system
   class n24 external_node
   end
@@ -184,13 +184,13 @@ flowchart LR
   end
   style layout_card_n25 fill:none,stroke:none
   subgraph layout_card_n26[" "]
-  n26@{ shape: rounded, label: "**bevy​_​text::ComputedTextBlock**<br/>来自crate:bevy​_​text ↗：缓存文字块的<br/>Parley 布局、文本实体树和重绘标记" }
+  n26@{ shape: rounded, label: "**ComputedTextBlock**<br/>来自crate:bevy​_​text ↗：缓存文字块的<br/>Parley 布局、文本实体树和重绘标记" }
   class n26 node_component
   class n26 external_node
   end
   style layout_card_n26 fill:none,stroke:none
   subgraph layout_card_n27[" "]
-  n27@{ shape: rounded, label: "**ui​_​node::LayoutConfig**<br/>控制 UI 节点的像素舍入。" }
+  n27@{ shape: rounded, label: "**LayoutConfig**<br/>控制 UI 节点的像素舍入。" }
   class n27 node_component
   end
   style layout_card_n27 fill:none,stroke:none

@@ -43,31 +43,34 @@ flowchart LR
   classDef edge_emit stroke:#B66B2D,stroke-width:1.8px
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**avian3d::dynamics::solver::**<br/>**schedule::run​_​substep​_​schedule**<br/>按子步数划分物理时间并运行子步调度。" }
+  n0@{ shape: rounded, label: "**run​_​substep​_​schedule**<br/>按子步数划分物理时间并运行子步调度。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**time::Time**<br/>来自crate:bevy​_​time ↗：保存时钟上下<br/>文、帧间隔及累计时间" }
+  n1@{ shape: cyl, label: "**Time**<br/>来自crate:bevy​_​time ↗：保存时钟上下<br/>文、帧间隔及累计时间" }
   class n1 node_resource
   class n1 external_node
-  n2@{ shape: cyl, label: "**bevy::bevy​_​time::Time#lt;schedule::**<br/>**time::Physics#gt;**<br/>来自crate:bevy​_​time ↗：保存时钟上下<br/>文、帧间隔及累计时间" }
+  n2@{ shape: cyl, label: "**Time#lt;Physics#gt;**<br/>来自crate:bevy​_​time ↗：保存时钟上下<br/>文、帧间隔及累计时间" }
   class n2 node_resource
   class n2 external_node
-  n3@{ shape: cyl, label: "**bevy​_​ecs::schedule::Schedules**<br/>来自crate:bevy​_​ecs ↗：按标签保存可运<br/>行的调度实例。" }
+  n3@{ shape: cyl, label: "**Schedules**<br/>来自crate:bevy​_​ecs ↗：按标签保存可运<br/>行的调度实例。" }
   class n3 node_resource
   class n3 external_node
-  n4@{ shape: cyl, label: "**dynamics::solver::schedule::**<br/>**SubstepCount**<br/>把一次物理步分为指定数量的求解子步。" }
+  n4@{ shape: cyl, label: "**SubstepCount**<br/>把一次物理步分为指定数量的求解子步。" }
   class n4 node_resource
-  n5@{ shape: cyl, label: "**bevy​_​ecs::error::**<br/>**FallbackErrorHandler**<br/>来自crate:bevy​_​ecs ↗：处理未被接管的<br/>错误与 panic。" }
+  subgraph layout_card_n5[" "]
+  n5@{ shape: cyl, label: "**FallbackErrorHandler**<br/>来自crate:bevy​_​ecs ↗：处理未被接管的<br/>错误与 panic。" }
   class n5 node_resource
   class n5 external_node
-  n6@{ shape: rounded, label: "**bevy​_​ecs::schedule::Schedules**<br/>来自crate:bevy​_​ecs ↗：按标签保存可运<br/>行的调度实例。" }
+  end
+  style layout_card_n5 fill:none,stroke:none
+  n6@{ shape: rounded, label: "**Schedules**<br/>来自crate:bevy​_​ecs ↗：按标签保存可运<br/>行的调度实例。" }
   class n6 node_component
   class n6 external_node
   n7@{ shape: lin-rect, label: "**Substep**<br/>组织约束求解的准备、子步与回写。" }
   class n7 node_system_set
-  n8@{ shape: cyl, label: "**bevy::bevy​_​time::Time#lt;schedule::**<br/>**time::Substeps#gt;**<br/>来自crate:bevy​_​time ↗：保存时钟上下<br/>文、帧间隔及累计时间" }
+  n8@{ shape: cyl, label: "**Time#lt;Substeps#gt;**<br/>来自crate:bevy​_​time ↗：保存时钟上下<br/>文、帧间隔及累计时间" }
   class n8 node_resource
   class n8 external_node
-  n9@{ shape: stadium, label: "**bevy​_​ecs::change​_​detection::**<br/>**CheckChangeTicks**<br/>来自crate:bevy​_​ecs ↗：请求维护变化检<br/>测 tick 范围。" }
+  n9@{ shape: stadium, label: "**CheckChangeTicks**<br/>来自crate:bevy​_​ecs ↗：请求维护变化检<br/>测 tick 范围。" }
   class n9 node_event
   class n9 external_node
   n0 e0@-->|"可变访问"| n1

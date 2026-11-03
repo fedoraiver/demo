@@ -36,9 +36,9 @@ flowchart LR
   classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**text2d::Text2d**<br/>保存二维世界文字块的根文本内容" }
+  n0@{ shape: rounded, label: "**Text2d**<br/>保存二维世界文字块的根文本内容" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​sprite::text2d::update​_​text2d​_​**<br/>**layout**<br/>重新排版变化的二维文字并准备字形。" }
+  n1@{ shape: rounded, label: "**update​_​text2d​_​layout**<br/>重新排版变化的二维文字并准备字形。" }
   class n1 node_system
   n0 e0@--> n1
   class e0 edge_read

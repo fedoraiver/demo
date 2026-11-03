@@ -44,34 +44,34 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​core​_​pipeline::tonemapping::**<br/>**prepare​_​view​_​tonemapping​_​pipelines**<br/>按视图实际颜色分级需求专用化色调映射。" }
+  n0@{ shape: rounded, label: "**prepare​_​view​_​tonemapping​_​pipelines**<br/>按视图实际颜色分级需求专用化色调映射。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**bevy​_​render::view::DebandDither**<br/>来自crate:bevy​_​render ↗：控制颜色输出<br/>的去色带抖动。" }
+  n1@{ shape: rounded, label: "**DebandDither**<br/>来自crate:bevy​_​render ↗：控制颜色输出<br/>的去色带抖动。" }
   class n1 node_component
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​render::view::ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
+  n2@{ shape: rounded, label: "**ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
   class n2 node_component
   class n2 external_node
   n3@{ shape: lin-rect, label: "**Prepare**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
   class n3 node_system_set
   class n3 external_node
-  n4@{ shape: cyl, label: "**tonemapping::TonemappingPipeline**<br/>提供 HDR 色调映射的全屏管线资源。" }
+  n4@{ shape: cyl, label: "**TonemappingPipeline**<br/>提供 HDR 色调映射的全屏管线资源。" }
   class n4 node_resource
-  n5@{ shape: rounded, label: "**tonemapping::ViewTonemappingPipeline**<br/>记录当前视图的色调映射管线。" }
+  n5@{ shape: rounded, label: "**ViewTonemappingPipeline**<br/>记录当前视图的色调映射管线。" }
   class n5 node_component
-  n6@{ shape: rounded, label: "**bevy​_​render::view::Tonemapping**<br/>来自crate:bevy​_​render ↗：选择 HDR 颜<br/>色到显示颜色的映射方式。" }
+  n6@{ shape: rounded, label: "**Tonemapping**<br/>来自crate:bevy​_​render ↗：选择 HDR 颜<br/>色到显示颜色的映射方式。" }
   class n6 node_component
   class n6 external_node
-  n7@{ shape: rounded, label: "**bevy​_​render::view::ViewTarget**<br/>来自crate:bevy​_​render ↗：管理视图主颜<br/>色纹理及最终输出附件。" }
+  n7@{ shape: rounded, label: "**ViewTarget**<br/>来自crate:bevy​_​render ↗：管理视图主颜<br/>色纹理及最终输出附件。" }
   class n7 node_component
   class n7 external_node
-  n8@{ shape: cyl, label: "**bevy​_​render::render​_​resource::**<br/>**SpecializedRenderPipelines#lt;tonemappi**<br/>**ng::TonemappingPipeline#gt;**<br/>来自crate:bevy​_​render ↗：按配置键缓存<br/>渲染管线变体。" }
+  n8@{ shape: cyl, label: "**SpecializedRenderPipelines#lt;Tonemappi**<br/>**ngPipeline#gt;**<br/>来自crate:bevy​_​render ↗：按配置键缓存<br/>渲染管线变体。" }
   class n8 node_resource
   class n8 external_node
-  n9@{ shape: cyl, label: "**bevy​_​render::render​_​resource::**<br/>**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
+  n9@{ shape: cyl, label: "**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
   class n9 node_resource
   class n9 external_node
-  n10@{ shape: fr-rect, label: "**tonemapping::TonemappingPlugin**<br/>准备相机色调映射与查找表。" }
+  n10@{ shape: fr-rect, label: "**TonemappingPlugin**<br/>准备相机色调映射与查找表。" }
   class n10 node_plugin
   n1 e0@--> n0
   class e0 edge_read

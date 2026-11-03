@@ -40,27 +40,15 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  subgraph layout_card_n0[" "]
-  n0@{ shape: rounded, label: "**bevy​_​sprite​_​render::render::init​_​**<br/>**sprite​_​pipeline**<br/>建立精灵视图和图像材质管线资源。" }
+  n0@{ shape: rounded, label: "**init​_​sprite​_​pipeline**<br/>建立精灵视图和图像材质管线资源。" }
   class n0 node_system
-  end
-  style layout_card_n0 fill:none,stroke:none
-  subgraph layout_card_n1[" "]
-  n1@{ shape: cyl, label: "**bevy​_​asset::AssetServer**<br/>来自crate:bevy​_​asset ↗：加载资产并追<br/>踪加载状态。" }
+  n1@{ shape: cyl, label: "**AssetServer**<br/>来自crate:bevy​_​asset ↗：加载资产并追<br/>踪加载状态。" }
   class n1 node_resource
   class n1 external_node
-  end
-  style layout_card_n1 fill:none,stroke:none
-  subgraph layout_card_n2[" "]
-  n2@{ shape: cyl, label: "**render::SpritePipeline**<br/>提供精灵视图、材质布局及着色器。" }
+  n2@{ shape: cyl, label: "**SpritePipeline**<br/>提供精灵视图、材质布局及着色器。" }
   class n2 node_resource
-  end
-  style layout_card_n2 fill:none,stroke:none
-  subgraph layout_card_n3[" "]
-  n3@{ shape: fr-rect, label: "**bevy​_​sprite​_​render::**<br/>**SpriteRenderPlugin**<br/>准备并渲染二维精灵。" }
+  n3@{ shape: fr-rect, label: "**SpriteRenderPlugin**<br/>准备并渲染二维精灵。" }
   class n3 node_plugin
-  end
-  style layout_card_n3 fill:none,stroke:none
   n1 e0@--> n0
   class e0 edge_read
   n0 e1@-->|"插入"| n2

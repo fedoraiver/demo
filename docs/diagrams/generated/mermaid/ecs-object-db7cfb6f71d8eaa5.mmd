@@ -40,18 +40,18 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​core​_​pipeline::blit::init​_​blit​_​**<br/>**pipeline**<br/>建立全屏颜色复制与缩放的 Blit 资源。" }
+  n0@{ shape: rounded, label: "**init​_​blit​_​pipeline**<br/>建立全屏颜色复制与缩放的 Blit 资源。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**bevy​_​asset::AssetServer**<br/>来自crate:bevy​_​asset ↗：加载资产并追<br/>踪加载状态。" }
+  n1@{ shape: cyl, label: "**AssetServer**<br/>来自crate:bevy​_​asset ↗：加载资产并追<br/>踪加载状态。" }
   class n1 node_resource
   class n1 external_node
-  n2@{ shape: fr-rect, label: "**blit::BlitPlugin**<br/>提供纹理之间的绘制拷贝管线。" }
+  n2@{ shape: fr-rect, label: "**BlitPlugin**<br/>提供纹理之间的绘制拷贝管线。" }
   class n2 node_plugin
-  n3@{ shape: cyl, label: "**blit::BlitPipeline**<br/>提供全屏纹理复制与缩放管线。" }
+  n3@{ shape: cyl, label: "**BlitPipeline**<br/>提供全屏纹理复制与缩放管线。" }
   class n3 node_resource
-  n4@{ shape: cyl, label: "**bevy​_​core​_​pipeline::FullscreenShader**<br/>提供覆盖整个屏幕的顶点着色器。" }
+  n4@{ shape: cyl, label: "**FullscreenShader**<br/>提供覆盖整个屏幕的顶点着色器。" }
   class n4 node_resource
-  n5@{ shape: cyl, label: "**bevy​_​render::renderer::RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
+  n5@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
   class n5 node_resource
   class n5 external_node
   n1 e0@--> n0

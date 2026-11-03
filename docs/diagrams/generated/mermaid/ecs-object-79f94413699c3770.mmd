@@ -38,11 +38,11 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**atmosphere::environment::**<br/>**AtmosphereProbePipeline**<br/>保存大气环境贴图的计算管线标识。" }
+  n0@{ shape: cyl, label: "**AtmosphereProbePipeline**<br/>保存大气环境贴图的计算管线标识。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​pbr::atmosphere::environment::**<br/>**init​_​atmosphere​_​probe​_​pipeline**<br/>排队创建大气环境贴图生成计算管线。" }
+  n1@{ shape: rounded, label: "**init​_​atmosphere​_​probe​_​pipeline**<br/>排队创建大气环境贴图生成计算管线。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​pbr::atmosphere::environment::**<br/>**atmosphere​_​environment**<br/>使用当前视图的大气和光照参数，为每个大气<br/>环境贴图的六个立方体面调度计算着色器，更<br/>新环境光源纹理。" }
+  n2@{ shape: rounded, label: "**atmosphere​_​environment**<br/>使用当前视图的大气和光照参数，为每个大气<br/>环境贴图的六个立方体面调度计算着色器，更<br/>新环境光源纹理。" }
   class n2 node_system
   n1 e0@-->|"插入"| n0
   class e0 edge_write

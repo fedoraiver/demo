@@ -46,52 +46,55 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​render::renderer::render​_​system**<br/>运行渲染图调度并完成回读和窗口呈现。" }
+  subgraph layout_card_n0[" "]
+  n0@{ shape: rounded, label: "**render​_​system**<br/>运行渲染图调度并完成回读和窗口呈现。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**view::window::screenshot::**<br/>**RenderScreenshotTargets**<br/>按截图请求实体保存本帧的规范化渲染目标。" }
+  end
+  style layout_card_n0 fill:none,stroke:none
+  n1@{ shape: cyl, label: "**RenderScreenshotTargets**<br/>按截图请求实体保存本帧的规范化渲染目标。" }
   class n1 node_resource
-  n2@{ shape: cyl, label: "**bevy​_​render::renderer::RenderDevice**<br/>创建渲染和计算所需的 GPU 资源。" }
+  n2@{ shape: cyl, label: "**RenderDevice**<br/>创建渲染和计算所需的 GPU 资源。" }
   class n2 node_resource
-  n3@{ shape: rounded, label: "**bevy​_​render::view::ExtractedWindow**<br/>保存渲染侧窗口尺寸、呈现模式和交换链状<br/>态。" }
+  n3@{ shape: rounded, label: "**ExtractedWindow**<br/>保存渲染侧窗口尺寸、呈现模式和交换链状<br/>态。" }
   class n3 node_component
-  n4@{ shape: cyl, label: "**view::window::screenshot::**<br/>**RenderScreenshotsSender**<br/>将捕获截图传回主世界。" }
+  n4@{ shape: cyl, label: "**RenderScreenshotsSender**<br/>将捕获截图传回主世界。" }
   class n4 node_resource
-  n5@{ shape: cyl, label: "**view::window::screenshot::**<br/>**RenderScreenshotsPrepared**<br/>保存本帧已准备好的截图渲染资源。" }
+  n5@{ shape: cyl, label: "**RenderScreenshotsPrepared**<br/>保存本帧已准备好的截图渲染资源。" }
   class n5 node_resource
-  n6@{ shape: rounded, label: "**bevy​_​render::camera::ExtractedCamera**<br/>保存渲染世界相机的目标和绘制配置。" }
+  n6@{ shape: rounded, label: "**ExtractedCamera**<br/>保存渲染世界相机的目标和绘制配置。" }
   class n6 node_component
   n7@{ shape: lin-rect, label: "**Render**<br/>组织渲染数据准备与绘制排队。" }
   class n7 node_system_set
-  n8@{ shape: cyl, label: "**texture::manual​_​texture​_​view::**<br/>**ManualTextureViews**<br/>注册供相机输出的手动管理纹理视图。" }
+  n8@{ shape: cyl, label: "**ManualTextureViews**<br/>注册供相机输出的手动管理纹理视图。" }
   class n8 node_resource
-  n9@{ shape: rounded, label: "**bevy​_​render::render​_​resource::**<br/>**pipeline​_​cache::PipelineCache::**<br/>**process​_​pipeline​_​queue​_​system**<br/>处理等待准备的 GPU 管线队列。" }
+  n9@{ shape: rounded, label: "**process​_​pipeline​_​queue​_​system**<br/>处理等待准备的 GPU 管线队列。" }
   class n9 node_system
-  n10@{ shape: fr-rect, label: "**bevy​_​render::RenderPlugin**<br/>建立渲染子应用与 GPU 后端。" }
+  n10@{ shape: fr-rect, label: "**RenderPlugin**<br/>建立渲染子应用与 GPU 后端。" }
   class n10 node_plugin
-  n11@{ shape: rounded, label: "**bevy​_​ecs::schedule::Schedules**<br/>来自crate:bevy​_​ecs ↗：按标签保存可运<br/>行的调度实例。" }
+  n11@{ shape: rounded, label: "**Schedules**<br/>来自crate:bevy​_​ecs ↗：按标签保存可运<br/>行的调度实例。" }
   class n11 node_component
   class n11 external_node
-  n12@{ shape: rounded, label: "**bevy​_​render::view::ViewTarget**<br/>管理视图主颜色纹理及最终输出附件。" }
+  n12@{ shape: rounded, label: "**ViewTarget**<br/>管理视图主颜色纹理及最终输出附件。" }
   class n12 node_component
-  n13@{ shape: cyl, label: "**bevy​_​ecs::schedule::Schedules**<br/>来自crate:bevy​_​ecs ↗：按标签保存可运<br/>行的调度实例。" }
+  n13@{ shape: cyl, label: "**Schedules**<br/>来自crate:bevy​_​ecs ↗：按标签保存可运<br/>行的调度实例。" }
   class n13 node_resource
   class n13 external_node
-  n14@{ shape: stadium, label: "**bevy​_​ecs::change​_​detection::**<br/>**CheckChangeTicks**<br/>来自crate:bevy​_​ecs ↗：请求维护变化检<br/>测 tick 范围。" }
+  n14@{ shape: stadium, label: "**CheckChangeTicks**<br/>来自crate:bevy​_​ecs ↗：请求维护变化检<br/>测 tick 范围。" }
   class n14 node_event
   class n14 external_node
-  n15@{ shape: cyl, label: "**bevy​_​render::render​_​asset::**<br/>**RenderAssets#lt;bevy​_​render::texture::**<br/>**GpuImage#gt;**<br/>按源资产身份保存 GPU 渲染表示。" }
+  n15@{ shape: cyl, label: "**RenderAssets#lt;GpuImage#gt;**<br/>按源资产身份保存 GPU 渲染表示。" }
   class n15 node_resource
-  n16@{ shape: cyl, label: "**bevy​_​render::renderer::RenderQueue**<br/>将资源写入和命令异步提交给 GPU。" }
+  n16@{ shape: cyl, label: "**RenderQueue**<br/>将资源写入和命令异步提交给 GPU。" }
   class n16 node_resource
-  n17@{ shape: cyl, label: "**gpu​_​readback::GpuReadbacks**<br/>追踪已请求及已映射的 GPU 回读任务。" }
+  n17@{ shape: cyl, label: "**GpuReadbacks**<br/>追踪已请求及已映射的 GPU 回读任务。" }
   class n17 node_resource
-  n18@{ shape: rounded, label: "**sync​_​world::MainEntity**<br/>来自crate:bevy​_​extract ↗：在子世界中<br/>关联原始主世界实体。" }
+  n18@{ shape: rounded, label: "**MainEntity**<br/>来自crate:bevy​_​extract ↗：在子世界中<br/>关联原始主世界实体。" }
   class n18 node_component
   class n18 external_node
-  n19@{ shape: cyl, label: "**bevy​_​ecs::error::**<br/>**FallbackErrorHandler**<br/>来自crate:bevy​_​ecs ↗：处理未被接管的<br/>错误与 panic。" }
+  n19@{ shape: cyl, label: "**FallbackErrorHandler**<br/>来自crate:bevy​_​ecs ↗：处理未被接管的<br/>错误与 panic。" }
   class n19 node_resource
   class n19 external_node
-  n20@{ shape: cyl, label: "**bevy​_​render::render​_​resource::**<br/>**PipelineCache**<br/>缓存 GPU 渲染、计算管线与待创建队列。" }
+  n20@{ shape: cyl, label: "**PipelineCache**<br/>缓存 GPU 渲染、计算管线与待创建队列。" }
   class n20 node_resource
   n1 e0@--> n0
   class e0 edge_read
@@ -150,6 +153,7 @@ flowchart LR
   e11@{ curve: basis }
   e12@{ curve: basis }
   e13@{ curve: basis }
+  e14@{ curve: basis }
   e15@{ curve: basis }
   e16@{ curve: basis }
   e17@{ curve: basis }

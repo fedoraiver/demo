@@ -40,30 +40,30 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: lin-rect, label: "**CheckVisibility**<br/>组织相机与实体可见性更新。" }
   class n0 node_system_set
-  n1@{ shape: rounded, label: "**bevy​_​light::check​_​dir​_​light​_​mesh​_​**<br/>**visibility**<br/>来自crate:bevy​_​light ↗：计算方向光各<br/>相机级联可见的投影网格。" }
+  n1@{ shape: rounded, label: "**check​_​dir​_​light​_​mesh​_​visibility**<br/>来自crate:bevy​_​light ↗：计算方向光各<br/>相机级联可见的投影网格。" }
   class n1 node_system
   class n1 external_node
   n2@{ shape: lin-rect, label: "**CalculateBounds**<br/>组织相机与实体可见性更新。" }
   class n2 node_system_set
   n3@{ shape: lin-rect, label: "**MarkNewlyHiddenEntitiesInvisible**<br/>组织相机与实体可见性更新。" }
   class n3 node_system_set
-  n4@{ shape: rounded, label: "**bevy​_​camera::visibility::check​_​**<br/>**visibility​_​gpu​_​culling**<br/>同步退出 CPU 裁剪对象的层级可见状态。" }
+  n4@{ shape: rounded, label: "**check​_​visibility​_​gpu​_​culling**<br/>同步退出 CPU 裁剪对象的层级可见状态。" }
   class n4 node_system
-  n5@{ shape: rounded, label: "**bevy​_​camera::visibility::range::**<br/>**check​_​visibility​_​ranges**<br/>按视图距离计算实体可见范围位掩码。" }
+  n5@{ shape: rounded, label: "**check​_​visibility​_​ranges**<br/>按视图距离计算实体可见范围位掩码。" }
   class n5 node_system
-  n6@{ shape: rounded, label: "**bevy​_​camera::visibility::check​_​**<br/>**visibility​_​cpu​_​culling**<br/>按层、距离和视锥收集各相机可见实体。" }
+  n6@{ shape: rounded, label: "**check​_​visibility​_​cpu​_​culling**<br/>按层、距离和视锥收集各相机可见实体。" }
   class n6 node_system
   n7@{ shape: lin-rect, label: "**VisibilityPropagate**<br/>组织相机与实体可见性更新。" }
   class n7 node_system_set
   n8@{ shape: lin-rect, label: "**UpdateFrusta**<br/>组织相机与实体可见性更新。" }
   class n8 node_system_set
-  n9@{ shape: rounded, label: "**bevy​_​light::check​_​point​_​light​_​mesh​_​**<br/>**visibility**<br/>来自crate:bevy​_​light ↗：计算点光与聚<br/>光灯阴影可见的网格。" }
+  n9@{ shape: rounded, label: "**check​_​point​_​light​_​mesh​_​visibility**<br/>来自crate:bevy​_​light ↗：计算点光与聚<br/>光灯阴影可见的网格。" }
   class n9 node_system
   class n9 external_node
-  n10@{ shape: rounded, label: "**bevy​_​light::cluster::assign::assign​_​**<br/>**objects​_​to​_​clusters**<br/>来自crate:bevy​_​light ↗：将灯光、探针<br/>及贴花分配到视图分簇。" }
+  n10@{ shape: rounded, label: "**assign​_​objects​_​to​_​clusters**<br/>来自crate:bevy​_​light ↗：将灯光、探针<br/>及贴花分配到视图分簇。" }
   class n10 node_system
   class n10 external_node
-  n11@{ shape: rounded, label: "**bevy​_​light::directional​_​light::**<br/>**update​_​directional​_​light​_​frusta**<br/>来自crate:bevy​_​light ↗：从方向光级联<br/>投影更新阴影视锥。" }
+  n11@{ shape: rounded, label: "**update​_​directional​_​light​_​frusta**<br/>来自crate:bevy​_​light ↗：从方向光级联<br/>投影更新阴影视锥。" }
   class n11 node_system
   class n11 external_node
   n0 e0@-->|"先于"| n1

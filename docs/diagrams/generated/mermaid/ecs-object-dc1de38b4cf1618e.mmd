@@ -39,29 +39,29 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**atmosphere::ExtractedAtmosphere**<br/>保存尚未转为 GPU 参数的大气数据。" }
+  n0@{ shape: rounded, label: "**ExtractedAtmosphere**<br/>保存尚未转为 GPU 参数的大气数据。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​pbr::render::mesh​_​view​_​**<br/>**bindings::prepare​_​mesh​_​view​_​bind​_​**<br/>**groups**<br/>为视图绑定光照、阴影及各可选渲染效果资<br/>源。" }
+  n1@{ shape: rounded, label: "**prepare​_​mesh​_​view​_​bind​_​groups**<br/>为视图绑定光照、阴影及各可选渲染效果资<br/>源。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​pbr::atmosphere::resources::**<br/>**queue​_​render​_​sky​_​pipelines**<br/>按多重采样和混合能力选择天空管线。" }
+  n2@{ shape: rounded, label: "**queue​_​render​_​sky​_​pipelines**<br/>按多重采样和混合能力选择天空管线。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​pbr::atmosphere::resources::**<br/>**prepare​_​atmosphere​_​textures**<br/>按大气设置准备四类查找纹理。" }
+  n3@{ shape: rounded, label: "**prepare​_​atmosphere​_​textures**<br/>按大气设置准备四类查找纹理。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**bevy​_​pbr::atmosphere::resources::**<br/>**prepare​_​atmosphere​_​transforms**<br/>按相机位置构造大气局部坐标变换。" }
+  n4@{ shape: rounded, label: "**prepare​_​atmosphere​_​transforms**<br/>按相机位置构造大气局部坐标变换。" }
   class n4 node_system
-  n5@{ shape: rounded, label: "**bevy​_​pbr::atmosphere::resources::**<br/>**prepare​_​atmosphere​_​bind​_​groups**<br/>为大气查找表计算和天空绘制绑定视图资源。" }
+  n5@{ shape: rounded, label: "**prepare​_​atmosphere​_​bind​_​groups**<br/>为大气查找表计算和天空绘制绑定视图资源。" }
   class n5 node_system
-  n6@{ shape: rounded, label: "**bevy​_​pbr::atmosphere::extract​_​**<br/>**atmosphere**<br/>为三维相机选择并提取最近的大气。" }
+  n6@{ shape: rounded, label: "**extract​_​atmosphere**<br/>为三维相机选择并提取最近的大气。" }
   class n6 node_system
-  n7@{ shape: rounded, label: "**bevy​_​pbr::atmosphere::resources::**<br/>**prepare​_​atmosphere​_​uniforms**<br/>把提取的大气几何转换为 GPU Uniform 组<br/>件。" }
+  n7@{ shape: rounded, label: "**prepare​_​atmosphere​_​uniforms**<br/>把提取的大气几何转换为 GPU Uniform 组<br/>件。" }
   class n7 node_system
-  n8@{ shape: rounded, label: "**bevy​_​pbr::atmosphere::configure​_​**<br/>**camera​_​depth​_​usages**<br/>允许大气相机的深度纹理被着色器采样。" }
+  n8@{ shape: rounded, label: "**configure​_​camera​_​depth​_​usages**<br/>允许大气相机的深度纹理被着色器采样。" }
   class n8 node_system
-  n9@{ shape: rounded, label: "**bevy​_​pbr::render::mesh::check​_​views​_​**<br/>**need​_​specialization**<br/>汇总视图渲染特性并检测管线配置变化。" }
+  n9@{ shape: rounded, label: "**check​_​views​_​need​_​specialization**<br/>汇总视图渲染特性并检测管线配置变化。" }
   class n9 node_system
-  n10@{ shape: rounded, label: "**bevy​_​pbr::atmosphere::resources::**<br/>**prepare​_​atmosphere​_​buffers**<br/>上传各视图的大气和采样设置缓冲。" }
+  n10@{ shape: rounded, label: "**prepare​_​atmosphere​_​buffers**<br/>上传各视图的大气和采样设置缓冲。" }
   class n10 node_system
-  n11@{ shape: rounded, label: "**bevy​_​pbr::atmosphere::environment::**<br/>**prepare​_​probe​_​textures**<br/>为环境探针借用大气查找纹理并创建输出视<br/>图。" }
+  n11@{ shape: rounded, label: "**prepare​_​probe​_​textures**<br/>为环境探针借用大气查找纹理并创建输出视<br/>图。" }
   class n11 node_system
   n0 e0@-->|"存在性约束"| n1
   class e0 edge_reference

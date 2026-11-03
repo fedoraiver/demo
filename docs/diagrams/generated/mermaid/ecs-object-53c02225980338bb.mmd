@@ -37,11 +37,11 @@ flowchart LR
   classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**bevy​_​render::render​_​resource::**<br/>**SpecializedRenderPipelines#lt;pipeline​_​**<br/>**2d::LineGizmoPipeline#gt;**<br/>按配置键缓存渲染管线变体。" }
+  n0@{ shape: cyl, label: "**SpecializedRenderPipelines#lt;LineGizmo**<br/>**Pipeline#gt;**<br/>按配置键缓存渲染管线变体。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​render::init​_​gpu​_​resource#lt;bevy​_​**<br/>**render::render​_​resource::pipeline​_​**<br/>**specializer::**<br/>**SpecializedRenderPipelines#lt;bevy​_​**<br/>**gizmos​_​render::pipeline​_​2d::**<br/>**LineGizmoPipeline#gt;#gt;**<br/>构造并插入渲染所需资源。" }
+  n1@{ shape: rounded, label: "**init​_​gpu​_​resource**<br/>构造并插入渲染所需资源。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​gizmos​_​render::pipeline​_​2d::**<br/>**queue​_​line​_​and​_​joint​_​gizmos​_​2d**<br/>来自crate:bevy​_​gizmos​_​render ↗：将二<br/>维 Gizmo 线段与接头加入透明阶段。" }
+  n2@{ shape: rounded, label: "**queue​_​line​_​and​_​joint​_​gizmos​_​2d**<br/>来自crate:bevy​_​gizmos​_​render ↗：将二<br/>维 Gizmo 线段与接头加入透明阶段。" }
   class n2 node_system
   class n2 external_node
   n1 e0@-->|"插入"| n0

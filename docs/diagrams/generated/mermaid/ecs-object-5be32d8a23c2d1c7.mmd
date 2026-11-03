@@ -43,27 +43,54 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**demo::ui::scroll::bind​_​settings​_​**<br/>**scrollbars**<br/>将设置滚动条绑定到对应内容视口。" }
+  subgraph layout_card_n0[" "]
+  n0@{ shape: rounded, label: "**bind​_​settings​_​scrollbars**<br/>将设置滚动条绑定到对应内容视口。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**scrollbar::Scrollbar**<br/>来自crate:bevy​_​ui​_​widgets ↗：指定滚<br/>动条目标、方向和最小滑块长度。" }
+  end
+  style layout_card_n0 fill:none,stroke:none
+  subgraph layout_card_n1[" "]
+  n1@{ shape: rounded, label: "**Scrollbar**<br/>来自crate:bevy​_​ui​_​widgets ↗：指定滚<br/>动条目标、方向和最小滑块长度。" }
   class n1 node_component
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​ecs::hierarchy::Children**<br/>来自crate:bevy​_​ecs ↗：保存以<br/>ChildOf 指向当前父实体的子实体集合" }
+  end
+  style layout_card_n1 fill:none,stroke:none
+  subgraph layout_card_n2[" "]
+  n2@{ shape: rounded, label: "**Children**<br/>来自crate:bevy​_​ecs ↗：保存以<br/>ChildOf 指向当前父实体的子实体集合" }
   class n2 node_component
   class n2 external_node
+  end
+  style layout_card_n2 fill:none,stroke:none
+  subgraph layout_card_n3[" "]
   n3@{ shape: lin-rect, label: "**Build**<br/>请求在 PreUpdate 消费后，Update 依次生<br/>成 BSN 页面并更新视觉焦点。" }
   class n3 node_system_set
-  n4@{ shape: rounded, label: "**ui::scroll::MenuScroll**<br/>可滚动区域的标记；用于键盘导航时把当前按<br/>钮滚入视野。" }
+  end
+  style layout_card_n3 fill:none,stroke:none
+  subgraph layout_card_n4[" "]
+  n4@{ shape: rounded, label: "**MenuScroll**<br/>可滚动区域的标记；用于键盘导航时把当前按<br/>钮滚入视野。" }
   class n4 node_component
-  n5@{ shape: rounded, label: "**bevy​_​ecs::hierarchy::ChildOf**<br/>来自crate:bevy​_​ecs ↗：保存当前实体的<br/>父实体身份" }
+  end
+  style layout_card_n4 fill:none,stroke:none
+  subgraph layout_card_n5[" "]
+  n5@{ shape: rounded, label: "**ChildOf**<br/>来自crate:bevy​_​ecs ↗：保存当前实体的<br/>父实体身份" }
   class n5 node_component
   class n5 external_node
-  n6@{ shape: fr-rect, label: "**ui::GameUiPlugin**<br/>组装菜单功能，不安装窗口或重复初始化会话<br/>日志。" }
+  end
+  style layout_card_n5 fill:none,stroke:none
+  subgraph layout_card_n6[" "]
+  n6@{ shape: fr-rect, label: "**GameUiPlugin**<br/>组装菜单功能，不安装窗口或重复初始化会话<br/>日志。" }
   class n6 node_plugin
+  end
+  style layout_card_n6 fill:none,stroke:none
+  subgraph layout_card_n7[" "]
   n7@{ shape: lin-rect, label: "**Style**<br/>请求在 PreUpdate 消费后，Update 依次生<br/>成 BSN 页面并更新视觉焦点。" }
   class n7 node_system_set
-  n8@{ shape: rounded, label: "**ui::scroll::SettingsScrollbar**<br/>轨道和滚动区域为同一 BSN 容器的子实体，<br/>绑定系统只为设置控件建立原生 target。" }
+  end
+  style layout_card_n7 fill:none,stroke:none
+  subgraph layout_card_n8[" "]
+  n8@{ shape: rounded, label: "**SettingsScrollbar**<br/>轨道和滚动区域为同一 BSN 容器的子实体，<br/>绑定系统只为设置控件建立原生 target。" }
   class n8 node_component
+  end
+  style layout_card_n8 fill:none,stroke:none
   n1 e0@-->|"存在性约束"| n0
   class e0 edge_reference
   n2 e1@--> n0

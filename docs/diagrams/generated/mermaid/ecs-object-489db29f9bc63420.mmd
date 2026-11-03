@@ -39,11 +39,11 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​gizmos::clear​_​gizmo​_​**<br/>**context#lt;bevy​_​gizmos::skinned​_​mesh​_​**<br/>**bounds::**<br/>**SkinnedMeshBoundsGizmoConfigGroup,**<br/>**bevy​_​time::fixed::Fixed#gt;**<br/>清空指定 Gizmo 配置组及清理上下文的存<br/>储，丢弃该上下文上一轮保存的线段和颜色数<br/>据。" }
+  n0@{ shape: rounded, label: "**clear​_​gizmo​_​context**<br/>清空指定 Gizmo 配置组及清理上下文的存<br/>储，丢弃该上下文上一轮保存的线段和颜色数<br/>据。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**gizmos::GizmoStorage#lt;skinned​_​mesh​_​**<br/>**bounds::**<br/>**SkinnedMeshBoundsGizmoConfigGroup,**<br/>**bevy​_​time::Fixed#gt;**<br/>按配置组和清理上下文存储调试图元。" }
+  n1@{ shape: cyl, label: "**GizmoStorage#lt;SkinnedMeshBoundsGizmoC**<br/>**onfigGroup, Fixed#gt;**<br/>按配置组和清理上下文存储调试图元。" }
   class n1 node_resource
-  n2@{ shape: fr-rect, label: "**skinned​_​mesh​_​bounds::**<br/>**SkinnedMeshBoundsGizmoPlugin**<br/>绘制动态蒙皮网格包围盒。" }
+  n2@{ shape: fr-rect, label: "**SkinnedMeshBoundsGizmoPlugin**<br/>绘制动态蒙皮网格包围盒。" }
   class n2 node_plugin
   n0 e0@-->|"可变访问"| n1
   class e0 edge_write

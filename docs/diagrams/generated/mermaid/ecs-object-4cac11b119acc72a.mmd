@@ -47,17 +47,17 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​egui::output::process​_​output​_​**<br/>**system**<br/>拆分 Egui 绘制输出并执行平台命令。" }
+  n0@{ shape: rounded, label: "**process​_​output​_​system**<br/>拆分 Egui 绘制输出并执行平台命令。" }
   class n0 node_system
-  n1@{ shape: lean-r, label: "**event::RequestRedraw**<br/>来自crate:bevy​_​window ↗：请求应用窗口<br/>重新绘制。" }
+  n1@{ shape: lean-r, label: "**RequestRedraw**<br/>来自crate:bevy​_​window ↗：请求应用窗口<br/>重新绘制。" }
   class n1 node_message
   class n1 external_node
-  n2@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;event::**<br/>**RequestRedraw#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n2@{ shape: cyl, label: "**Messages#lt;RequestRedraw#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n2 node_resource
   class n2 external_node
   n3@{ shape: rounded, label: "**EguiFullOutput**<br/>暂存 Egui pass 结束时产生的完整输出" }
   class n3 node_component
-  n4@{ shape: cyl, label: "**input::WindowToEguiContextMap**<br/>维护窗口实体与 Egui 上下文实体的双向索<br/>引" }
+  n4@{ shape: cyl, label: "**WindowToEguiContextMap**<br/>维护窗口实体与 Egui 上下文实体的双向索<br/>引" }
   class n4 node_resource
   n5@{ shape: cyl, label: "**EguiGlobalSettings**<br/>配置 Egui 上下文创建和全局输入集成。" }
   class n5 node_resource
@@ -67,10 +67,10 @@ flowchart LR
   class n7 node_plugin
   n8@{ shape: rounded, label: "**EguiContext**<br/>包装一个 egui::Context" }
   class n8 node_component
-  n9@{ shape: rounded, label: "**cursor::CursorIcon**<br/>来自crate:bevy​_​window ↗：保存窗口光标<br/>的系统图标或自定义图像配置" }
+  n9@{ shape: rounded, label: "**CursorIcon**<br/>来自crate:bevy​_​window ↗：保存窗口光标<br/>的系统图标或自定义图像配置" }
   class n9 node_component
   class n9 external_node
-  n10@{ shape: rounded, label: "**bevy​_​egui::input::process​_​ime​_​system**<br/>同步 Egui 编辑区域的原生输入法状态。" }
+  n10@{ shape: rounded, label: "**process​_​ime​_​system**<br/>同步 Egui 编辑区域的原生输入法状态。" }
   class n10 node_system
   n11@{ shape: cyl, label: "**EguiClipboard**<br/>为 Egui 提供剪贴板集成" }
   class n11 node_resource

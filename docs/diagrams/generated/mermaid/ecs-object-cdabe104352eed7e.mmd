@@ -38,15 +38,15 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**render::light::LightKeyCache**<br/>缓存阴影光源视图的管线配置键。" }
+  n0@{ shape: cyl, label: "**LightKeyCache**<br/>缓存阴影光源视图的管线配置键。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​pbr::render::light::check​_​**<br/>**views​_​lights​_​need​_​specialization**<br/>检测阴影视图投影类型并标记管线待刷新。" }
+  n1@{ shape: rounded, label: "**check​_​views​_​lights​_​need​_​**<br/>**specialization**<br/>检测阴影视图投影类型并标记管线待刷新。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​pbr::render::light::specialize​_​**<br/>**shadows**<br/>按阴影视图、网格及材质变化重新选择专用阴<br/>影渲染管线，清理失效缓存，并整理需要补齐<br/>或重新排队的阴影网格任务。" }
+  n2@{ shape: rounded, label: "**specialize​_​shadows**<br/>按阴影视图、网格及材质变化重新选择专用阴<br/>影渲染管线，清理失效缓存，并整理需要补齐<br/>或重新排队的阴影网格任务。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​pbr::render::light::prepare​_​**<br/>**lights**<br/>准备视图光照参数、阴影视图和阴影贴图。" }
+  n3@{ shape: rounded, label: "**prepare​_​lights**<br/>准备视图光照参数、阴影视图和阴影贴图。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**bevy​_​render::init​_​gpu​_​resource#lt;bevy​_​**<br/>**pbr::render::light::LightKeyCache#gt;**<br/>来自crate:bevy​_​render ↗：构造并插入渲<br/>染所需资源。" }
+  n4@{ shape: rounded, label: "**init​_​gpu​_​resource**<br/>来自crate:bevy​_​render ↗：构造并插入渲<br/>染所需资源。" }
   class n4 node_system
   class n4 external_node
   n1 e0@-->|"可变访问"| n0

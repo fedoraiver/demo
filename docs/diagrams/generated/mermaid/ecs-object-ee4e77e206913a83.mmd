@@ -39,13 +39,13 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::**<br/>**material::initialize​_​material2d​_​**<br/>**shaders#lt;bevy​_​sprite​_​render::sprite​_​**<br/>**mesh::sprite​_​mesh​_​material::**<br/>**SpriteMeshMaterial#gt;**<br/>解析二维材质的自定义顶点与片元着色器。" }
+  n0@{ shape: rounded, label: "**initialize​_​material2d​_​shaders**<br/>解析二维材质的自定义顶点与片元着色器。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::mesh::**<br/>**load​_​mesh2d​_​bindings**<br/>按运行设备能力加载二维网格绑定着色器。" }
+  n1@{ shape: rounded, label: "**load​_​mesh2d​_​bindings**<br/>按运行设备能力加载二维网格绑定着色器。" }
   class n1 node_system
-  n2@{ shape: cyl, label: "**mesh2d::material::**<br/>**Material2dShaders#lt;sprite​_​mesh::**<br/>**sprite​_​mesh​_​material::**<br/>**SpriteMeshMaterial#gt;**<br/>缓存具体二维材质类型的自定义着色器句柄。" }
+  n2@{ shape: cyl, label: "**Material2dShaders#lt;SpriteMeshMaterial**<br/>**#gt;**<br/>缓存具体二维材质类型的自定义着色器句柄。" }
   class n2 node_resource
-  n3@{ shape: cyl, label: "**bevy​_​asset::AssetServer**<br/>来自crate:bevy​_​asset ↗：加载资产并追<br/>踪加载状态。" }
+  n3@{ shape: cyl, label: "**AssetServer**<br/>来自crate:bevy​_​asset ↗：加载资产并追<br/>踪加载状态。" }
   class n3 node_resource
   class n3 external_node
   n1 e0@-->|"先于"| n0

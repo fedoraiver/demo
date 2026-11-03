@@ -38,9 +38,9 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**gpu​_​readback::ReadbackOnce**<br/>将 GPU 回读请求限定为一次。" }
+  n0@{ shape: rounded, label: "**ReadbackOnce**<br/>将 GPU 回读请求限定为一次。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​render::gpu​_​readback::cleanup​_​**<br/>**readback​_​once**<br/>移除一次性 GPU 回读请求及其标记。" }
+  n1@{ shape: rounded, label: "**cleanup​_​readback​_​once**<br/>移除一次性 GPU 回读请求及其标记。" }
   class n1 node_system
   n1 e0@-->|"移除"| n0
   class e0 edge_write

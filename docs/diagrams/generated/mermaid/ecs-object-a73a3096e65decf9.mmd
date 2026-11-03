@@ -36,9 +36,9 @@ flowchart LR
   classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**winit​_​monitors::WinitMonitors**<br/>保存 Winit 显示器句柄与对应 Bevy 实体<br/>的映射" }
+  n0@{ shape: cyl, label: "**WinitMonitors**<br/>保存 Winit 显示器句柄与对应 Bevy 实体<br/>的映射" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​winit::system::changed​_​windows**<br/>把窗口组件变化同步到 winit 后端。" }
+  n1@{ shape: rounded, label: "**changed​_​windows**<br/>把窗口组件变化同步到 winit 后端。" }
   class n1 node_system
   n0 e0@--> n1
   class e0 edge_read

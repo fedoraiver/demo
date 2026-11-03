@@ -40,23 +40,23 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​render::render​_​asset::prepare​_​**<br/>**assets#lt;bevy​_​render::storage::**<br/>**GpuShaderBuffer#gt;**<br/>在上传预算内准备资产并保留重试项。" }
+  n0@{ shape: rounded, label: "**prepare​_​assets**<br/>在上传预算内准备资产并保留重试项。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**bevy​_​render::renderer::RenderDevice**<br/>创建渲染和计算所需的 GPU 资源。" }
+  n1@{ shape: cyl, label: "**RenderDevice**<br/>创建渲染和计算所需的 GPU 资源。" }
   class n1 node_resource
-  n2@{ shape: cyl, label: "**bevy​_​render::renderer::RenderQueue**<br/>将资源写入和命令异步提交给 GPU。" }
+  n2@{ shape: cyl, label: "**RenderQueue**<br/>将资源写入和命令异步提交给 GPU。" }
   class n2 node_resource
-  n3@{ shape: cyl, label: "**render​_​asset::**<br/>**PrepareNextFrameAssets#lt;storage::**<br/>**GpuShaderBuffer#gt;**<br/>保留下一帧待准备的渲染源资产。" }
+  n3@{ shape: cyl, label: "**PrepareNextFrameAssets#lt;GpuShaderBuff**<br/>**er#gt;**<br/>保留下一帧待准备的渲染源资产。" }
   class n3 node_resource
   n4@{ shape: lin-rect, label: "**PrepareAssets**<br/>组织渲染数据准备与绘制排队。" }
   class n4 node_system_set
-  n5@{ shape: cyl, label: "**storage::RenderChangedShaderBuffers**<br/>记录底层 GPU 缓冲身份已变化的着色器缓<br/>冲。" }
+  n5@{ shape: cyl, label: "**RenderChangedShaderBuffers**<br/>记录底层 GPU 缓冲身份已变化的着色器缓<br/>冲。" }
   class n5 node_resource
-  n6@{ shape: cyl, label: "**bevy​_​render::render​_​asset::**<br/>**RenderAssets#lt;bevy​_​render::storage::**<br/>**GpuShaderBuffer#gt;**<br/>按源资产身份保存 GPU 渲染表示。" }
+  n6@{ shape: cyl, label: "**RenderAssets#lt;GpuShaderBuffer#gt;**<br/>按源资产身份保存 GPU 渲染表示。" }
   class n6 node_resource
-  n7@{ shape: cyl, label: "**render​_​asset::**<br/>**ExtractedAssets#lt;storage::**<br/>**GpuShaderBuffer#gt;**<br/>暂存本帧渲染资产的提取与增删记录。" }
+  n7@{ shape: cyl, label: "**ExtractedAssets#lt;GpuShaderBuffer#gt;**<br/>暂存本帧渲染资产的提取与增删记录。" }
   class n7 node_resource
-  n8@{ shape: cyl, label: "**bevy​_​render::render​_​asset::**<br/>**RenderAssetBytesPerFrameLimiter**<br/>统计并限制本帧渲染资产传输字节数。" }
+  n8@{ shape: cyl, label: "**RenderAssetBytesPerFrameLimiter**<br/>统计并限制本帧渲染资产传输字节数。" }
   class n8 node_resource
   n1 e0@--> n0
   class e0 edge_read

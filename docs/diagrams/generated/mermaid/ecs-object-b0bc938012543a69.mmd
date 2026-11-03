@@ -39,7 +39,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: notch-rect, label: "**Local · main​_​texture​_​atomics**<br/>跨帧共享主颜色双缓冲的当前侧索引。" }
   class n0 node_local
-  n1@{ shape: rounded, label: "**bevy​_​render::view::prepare​_​view​_​**<br/>**targets**<br/>为视图维护主颜色双缓冲及可选多采样目标。" }
+  n1@{ shape: rounded, label: "**prepare​_​view​_​targets**<br/>为视图维护主颜色双缓冲及可选多采样目标。" }
   class n1 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

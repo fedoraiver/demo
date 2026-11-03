@@ -38,13 +38,13 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**bevy​_​render::render​_​asset::**<br/>**RenderAssets#lt;medium::**<br/>**GpuScatteringMedium#gt;**<br/>按源资产身份保存 GPU 渲染表示。" }
+  n0@{ shape: cyl, label: "**RenderAssets#lt;GpuScatteringMedium#gt;**<br/>按源资产身份保存 GPU 渲染表示。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​render::render​_​asset::prepare​_​**<br/>**assets#lt;bevy​_​pbr::medium::**<br/>**GpuScatteringMedium#gt;**<br/>在上传预算内准备资产并保留重试项。" }
+  n1@{ shape: rounded, label: "**prepare​_​assets**<br/>在上传预算内准备资产并保留重试项。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​render::render​_​asset::collect​_​**<br/>**render​_​assets​_​to​_​reextract#lt;bevy​_​**<br/>**pbr::medium::GpuScatteringMedium#gt;**<br/>排空渲染资产并登记设备恢复后的重新提取。" }
+  n2@{ shape: rounded, label: "**collect​_​render​_​assets​_​to​_​reextract**<br/>排空渲染资产并登记设备恢复后的重新提取。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​pbr::atmosphere::resources::**<br/>**prepare​_​atmosphere​_​bind​_​groups**<br/>来自crate:bevy​_​pbr ↗：为大气查找表计<br/>算和天空绘制绑定视图资源。" }
+  n3@{ shape: rounded, label: "**prepare​_​atmosphere​_​bind​_​groups**<br/>来自crate:bevy​_​pbr ↗：为大气查找表计<br/>算和天空绘制绑定视图资源。" }
   class n3 node_system
   class n3 external_node
   n1 e0@-->|"可变访问"| n0

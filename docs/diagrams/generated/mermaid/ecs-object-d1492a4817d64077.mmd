@@ -40,19 +40,19 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​post​_​process::effect​_​stack::**<br/>**init​_​post​_​processing​_​pipeline**<br/>建立色差、暗角和镜头畸变的共用后处理资<br/>源。" }
+  n0@{ shape: rounded, label: "**init​_​post​_​processing​_​pipeline**<br/>建立色差、暗角和镜头畸变的共用后处理资<br/>源。" }
   class n0 node_system
-  n1@{ shape: fr-rect, label: "**effect​_​stack::EffectStackPlugin**<br/>组合色差、镜头畸变与暗角效果。" }
+  n1@{ shape: fr-rect, label: "**EffectStackPlugin**<br/>组合色差、镜头畸变与暗角效果。" }
   class n1 node_plugin
-  n2@{ shape: cyl, label: "**effect​_​stack::PostProcessingPipeline**<br/>提供色差、暗角和镜头畸变的共享管线。" }
+  n2@{ shape: cyl, label: "**PostProcessingPipeline**<br/>提供色差、暗角和镜头畸变的共享管线。" }
   class n2 node_resource
-  n3@{ shape: cyl, label: "**bevy​_​asset::AssetServer**<br/>来自crate:bevy​_​asset ↗：加载资产并追<br/>踪加载状态。" }
+  n3@{ shape: cyl, label: "**AssetServer**<br/>来自crate:bevy​_​asset ↗：加载资产并追<br/>踪加载状态。" }
   class n3 node_resource
   class n3 external_node
-  n4@{ shape: cyl, label: "**bevy​_​core​_​pipeline::FullscreenShader**<br/>来自crate:bevy​_​core​_​pipeline ↗：提供<br/>覆盖整个屏幕的顶点着色器。" }
+  n4@{ shape: cyl, label: "**FullscreenShader**<br/>来自crate:bevy​_​core​_​pipeline ↗：提供<br/>覆盖整个屏幕的顶点着色器。" }
   class n4 node_resource
   class n4 external_node
-  n5@{ shape: cyl, label: "**bevy​_​render::renderer::RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
+  n5@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
   class n5 node_resource
   class n5 external_node
   n1 e0@-->|"调用"| n0

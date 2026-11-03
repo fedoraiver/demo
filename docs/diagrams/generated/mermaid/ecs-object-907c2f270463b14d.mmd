@@ -39,9 +39,9 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: lin-rect, label: "**AmbiguousWithUpdateText2dLayout**<br/>声明图像类 UI 更新可与二维文字布局无<br/>序。" }
   class n0 node_system_set
-  n1@{ shape: rounded, label: "**bevy​_​ui::widget::viewport::update​_​**<br/>**viewport​_​render​_​target​_​size**<br/>按 UI 视口节点尺寸调整相机图像目标。" }
+  n1@{ shape: rounded, label: "**update​_​viewport​_​render​_​target​_​size**<br/>按 UI 视口节点尺寸调整相机图像目标。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​ui::widget::image::update​_​**<br/>**image​_​content​_​size​_​system**<br/>按图像或图集区域更新 UI 的固有尺寸测<br/>量。" }
+  n2@{ shape: rounded, label: "**update​_​image​_​content​_​size​_​system**<br/>按图像或图集区域更新 UI 的固有尺寸测<br/>量。" }
   class n2 node_system
   n0 e0@-->|"集合成员"| n1
   class e0 edge_set_membership

@@ -38,18 +38,18 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**mip​_​generation::experimental::**<br/>**depth::DownsampleDepthPipelines**<br/>保存深度金字塔两阶段的下采样管线。" }
+  n0@{ shape: cyl, label: "**DownsampleDepthPipelines**<br/>保存深度金字塔两阶段的下采样管线。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​core​_​pipeline::mip​_​generation::**<br/>**experimental::depth::create​_​**<br/>**downsample​_​depth​_​pipelines**<br/>在支持 GPU 剔除时一次性建立深度降采样管<br/>线。" }
+  n1@{ shape: rounded, label: "**create​_​downsample​_​depth​_​pipelines**<br/>在支持 GPU 剔除时一次性建立深度降采样管<br/>线。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​core​_​pipeline::mip​_​generation::**<br/>**experimental::depth::prepare​_​**<br/>**downsample​_​depth​_​view​_​bind​_​groups**<br/>将主视图或阴影深度绑定到降采样管线。" }
+  n2@{ shape: rounded, label: "**prepare​_​downsample​_​depth​_​view​_​bind​_​**<br/>**groups**<br/>将主视图或阴影深度绑定到降采样管线。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​ecs::schedule::condition::**<br/>**common​_​conditions::resource​_​**<br/>**exists#lt;bevy​_​core​_​pipeline::mip​_​**<br/>**generation::experimental::depth::**<br/>**DownsampleDepthPipelines#gt;**<br/>来自crate:bevy​_​ecs ↗：判断指定资源是<br/>否存在。" }
+  n3@{ shape: rounded, label: "**resource​_​exists**<br/>来自crate:bevy​_​ecs ↗：判断指定资源是<br/>否存在。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**bevy​_​core​_​pipeline::mip​_​generation::**<br/>**experimental::depth::early​_​**<br/>**downsample​_​depth**<br/>生成供本帧晚期遮挡测试使用的深度金字塔。" }
+  n4@{ shape: rounded, label: "**early​_​downsample​_​depth**<br/>生成供本帧晚期遮挡测试使用的深度金字塔。" }
   class n4 node_system
-  n5@{ shape: rounded, label: "**bevy​_​core​_​pipeline::mip​_​generation::**<br/>**experimental::depth::late​_​**<br/>**downsample​_​depth**<br/>更新供下一帧早期遮挡测试使用的深度金字<br/>塔。" }
+  n5@{ shape: rounded, label: "**late​_​downsample​_​depth**<br/>更新供下一帧早期遮挡测试使用的深度金字<br/>塔。" }
   class n5 node_system
   n1 e0@-->|"插入"| n0
   class e0 edge_write

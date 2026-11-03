@@ -37,9 +37,9 @@ flowchart LR
   classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​ecs::message::Messages#lt;bevy​_​**<br/>**asset::AssetEvent#lt;scene​_​patch::**<br/>**ScenePatch#gt;#gt;**<br/>保存最近两次轮换期间产生的指定类型消息" }
+  n0@{ shape: rounded, label: "**Messages#lt;AssetEvent#lt;ScenePatch#gt;#gt;**<br/>保存最近两次轮换期间产生的指定类型消息" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​scene::spawn::spawn​_​queued**<br/>来自crate:bevy​_​scene ↗：应用已就绪的<br/>场景补丁并推进排队装配。" }
+  n1@{ shape: rounded, label: "**spawn​_​queued**<br/>来自crate:bevy​_​scene ↗：应用已就绪的<br/>场景补丁并推进排队装配。" }
   class n1 node_system
   class n1 external_node
   n1 e0@-->|"可变访问"| n0

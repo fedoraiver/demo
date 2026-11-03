@@ -39,7 +39,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: notch-rect, label: "**Local · all​_​views**<br/>记录仍有效的二维材质管线视图。" }
   class n0 node_local
-  n1@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::**<br/>**material::specialize​_​material2d​_​**<br/>**meshes**<br/>为可见二维网格重建失效的材质专用化。" }
+  n1@{ shape: rounded, label: "**specialize​_​material2d​_​meshes**<br/>为可见二维网格重建失效的材质专用化。" }
   class n1 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

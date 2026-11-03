@@ -49,43 +49,43 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​egui::input::write​_​file​_​dnd​_​**<br/>**messages​_​system**<br/>把文件拖放路由到对应 Egui 上下文。" }
+  n0@{ shape: rounded, label: "**write​_​file​_​dnd​_​messages​_​system**<br/>把文件拖放路由到对应 Egui 上下文。" }
   class n0 node_system
   n1@{ shape: rounded, label: "**EguiContextSettings**<br/>保存单个 Egui 上下文的运行、输入、指针<br/>捕获、光标和 IME 集成选项" }
   class n1 node_component
   n2@{ shape: rounded, label: "**EguiContext**<br/>包装一个 egui::Context" }
   class n2 node_component
-  n3@{ shape: cyl, label: "**input::WindowToEguiContextMap**<br/>维护窗口实体与 Egui 上下文实体的双向索<br/>引" }
+  n3@{ shape: cyl, label: "**WindowToEguiContextMap**<br/>维护窗口实体与 Egui 上下文实体的双向索<br/>引" }
   class n3 node_resource
-  n4@{ shape: lean-r, label: "**input::EguiFileDragAndDropMessage**<br/>传递 Egui 接收的文件拖放消息。" }
+  n4@{ shape: lean-r, label: "**EguiFileDragAndDropMessage**<br/>传递 Egui 接收的文件拖放消息。" }
   class n4 node_message
   n5@{ shape: lin-rect, label: "**ProcessInput**<br/>组织 Egui 上下文与输入准备。" }
   class n5 node_system_set
-  n6@{ shape: rounded, label: "**bevy​_​egui::input::write​_​egui​_​input​_​**<br/>**system**<br/>把界面输入和文件拖放写入 Egui 输入批<br/>次。" }
+  n6@{ shape: rounded, label: "**write​_​egui​_​input​_​system**<br/>把界面输入和文件拖放写入 Egui 输入批<br/>次。" }
   class n6 node_system
-  n7@{ shape: rounded, label: "**bevy​_​egui::input::write​_​window​_​**<br/>**touch​_​messages​_​system**<br/>把窗口触摸转换为 Egui 指针和触摸事件。" }
+  n7@{ shape: rounded, label: "**write​_​window​_​touch​_​messages​_​system**<br/>把窗口触摸转换为 Egui 指针和触摸事件。" }
   class n7 node_system
-  n8@{ shape: fr-rect, label: "**bevy​_​egui::input​_​system​_​is​_​**<br/>**enabled#lt;#lt;bevy​_​egui::EguiPlugin as**<br/>**bevy​_​app::plugin::Plugin#gt;::build::**<br/>**{{closure}}#gt;::{{closure}}**<br/>判断是否向 Egui 转换文件拖放。；按<br/>Egui 全局配置判断输入处理是否启用。" }
+  n8@{ shape: fr-rect, label: "**input​_​system​_​is​_​enabled::{{closure}}**<br/>判断是否向 Egui 转换文件拖放。；按<br/>Egui 全局配置判断输入处理是否启用。" }
   class n8 node_system_group
-  n9@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;input::**<br/>**EguiFileDragAndDropMessage#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n9@{ shape: cyl, label: "**Messages#lt;EguiFileDragAndDropMessage#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n9 node_resource
   class n9 external_node
-  n10@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;event::**<br/>**FileDragAndDrop#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n10@{ shape: cyl, label: "**Messages#lt;FileDragAndDrop#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n10 node_resource
   class n10 external_node
-  n11@{ shape: cyl, label: "**input::FocusedNonWindowEguiContext**<br/>保存当前获得键盘焦点的非窗口 Egui 上下<br/>文实体" }
+  n11@{ shape: cyl, label: "**FocusedNonWindowEguiContext**<br/>保存当前获得键盘焦点的非窗口 Egui 上下<br/>文实体" }
   class n11 node_resource
   n12@{ shape: lin-rect, label: "**ReadBevyMessages**<br/>组织 Egui 输入读取与事件写入。" }
   class n12 node_system_set
-  n13@{ shape: rounded, label: "**bevy​_​egui::input::write​_​pointer​_​**<br/>**moved​_​and​_​button​_​messages​_​system**<br/>按原生事件顺序转换 Egui 指针输入。" }
+  n13@{ shape: rounded, label: "**write​_​pointer​_​moved​_​and​_​button​_​**<br/>**messages​_​system**<br/>按原生事件顺序转换 Egui 指针输入。" }
   class n13 node_system
-  n14@{ shape: rounded, label: "**bevy​_​egui::input::absorb​_​bevy​_​input​_​**<br/>**system**<br/>在 Egui 使用输入时吸收对应 Bevy 输入。" }
+  n14@{ shape: rounded, label: "**absorb​_​bevy​_​input​_​system**<br/>在 Egui 使用输入时吸收对应 Bevy 输入。" }
   class n14 node_system
-  n15@{ shape: cyl, label: "**input::HoveredNonWindowEguiContext**<br/>保存指针当前悬停的非窗口 Egui 上下文实<br/>体" }
+  n15@{ shape: cyl, label: "**HoveredNonWindowEguiContext**<br/>保存指针当前悬停的非窗口 Egui 上下文实<br/>体" }
   class n15 node_resource
   n16@{ shape: fr-rect, label: "**EguiPlugin**<br/>装配 Egui 输入、上下文与渲染。" }
   class n16 node_plugin
-  n17@{ shape: lean-r, label: "**event::FileDragAndDrop**<br/>来自crate:bevy​_​window ↗：传递窗口文件<br/>拖放变化。" }
+  n17@{ shape: lean-r, label: "**FileDragAndDrop**<br/>来自crate:bevy​_​window ↗：传递窗口文件<br/>拖放变化。" }
   class n17 node_message
   class n17 external_node
   n1 e0@--> n0

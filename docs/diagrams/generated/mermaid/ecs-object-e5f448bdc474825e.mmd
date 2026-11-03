@@ -37,9 +37,9 @@ flowchart LR
   classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​app::PropagateOver#lt;ui​_​node::**<br/>**ComputedUiTargetCamera#gt;**<br/>阻止传播结果组件添加到当前实体" }
+  n0@{ shape: rounded, label: "**PropagateOver#lt;ComputedUiTargetCamera**<br/>**#gt;**<br/>阻止传播结果组件添加到当前实体" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​app::propagate::propagate​_​**<br/>**output#lt;bevy​_​ui::ui​_​node::**<br/>**ComputedUiTargetCamera, ()#gt;**<br/>把继承结果写入或移出实体实际组件。" }
+  n1@{ shape: rounded, label: "**propagate​_​output**<br/>把继承结果写入或移出实体实际组件。" }
   class n1 node_system
   n0 e0@-->|"存在性约束"| n1
   class e0 edge_reference

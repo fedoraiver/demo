@@ -45,19 +45,19 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​ui::accessibility::label​_​**<br/>**changed**<br/>把标签子树文字写入无障碍节点。" }
+  n0@{ shape: rounded, label: "**label​_​changed**<br/>把标签子树文字写入无障碍节点。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**bevy​_​text::LetterSpacing**<br/>来自crate:bevy​_​text ↗：配置相邻文字之<br/>间的额外间距" }
+  n1@{ shape: rounded, label: "**LetterSpacing**<br/>来自crate:bevy​_​text ↗：配置相邻文字之<br/>间的额外间距" }
   class n1 node_component
   class n1 external_node
-  n2@{ shape: fr-rect, label: "**accessibility::AccessibilityPlugin**<br/>把界面语义接入无障碍树。" }
+  n2@{ shape: fr-rect, label: "**AccessibilityPlugin**<br/>把界面语义接入无障碍树。" }
   class n2 node_plugin
-  n3@{ shape: rounded, label: "**bevy​_​ui::accessibility::sync​_​bounds​_​**<br/>**and​_​transforms**<br/>把 UI 几何同步到无障碍树。" }
+  n3@{ shape: rounded, label: "**sync​_​bounds​_​and​_​transforms**<br/>把 UI 几何同步到无障碍树。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**bevy​_​text::TextFont**<br/>来自crate:bevy​_​text ↗：保存文字段的字<br/>体来源、字号及抗锯齿方式等字体样式" }
+  n4@{ shape: rounded, label: "**TextFont**<br/>来自crate:bevy​_​text ↗：保存文字段的字<br/>体来源、字号及抗锯齿方式等字体样式" }
   class n4 node_component
   class n4 external_node
-  n5@{ shape: rounded, label: "**widget::label::Label**<br/>标记需要生成无障碍标签的文本。" }
+  n5@{ shape: rounded, label: "**Label**<br/>标记需要生成无障碍标签的文本。" }
   class n5 node_component
   n6@{ shape: rounded, label: "**AccessibilityNode**<br/>来自crate:bevy​_​a11y ↗：把实体转换为<br/>AccessKit 可访问性节点" }
   class n6 node_component
@@ -69,23 +69,23 @@ flowchart LR
   n9@{ shape: lin-rect, label: "**Update**<br/>来自crate:bevy​_​a11y ↗：组织无障碍信息<br/>更新。" }
   class n9 node_system_set
   class n9 external_node
-  n10@{ shape: rounded, label: "**bevy​_​ecs::hierarchy::Children**<br/>来自crate:bevy​_​ecs ↗：保存以<br/>ChildOf 指向当前父实体的子实体集合" }
+  n10@{ shape: rounded, label: "**Children**<br/>来自crate:bevy​_​ecs ↗：保存以<br/>ChildOf 指向当前父实体的子实体集合" }
   class n10 node_component
   class n10 external_node
-  n11@{ shape: rounded, label: "**bevy​_​text::TextSpan**<br/>来自crate:bevy​_​text ↗：保存附加到<br/>Text 或 Text2d 根文字块的子文本段内容" }
+  n11@{ shape: rounded, label: "**TextSpan**<br/>来自crate:bevy​_​text ↗：保存附加到<br/>Text 或 Text2d 根文字块的子文本段内容" }
   class n11 node_component
   class n11 external_node
-  n12@{ shape: rounded, label: "**bevy​_​text::InlineBox**<br/>来自crate:bevy​_​text ↗：描述与文字同行<br/>排版的盒子尺寸和流内、流外行为" }
+  n12@{ shape: rounded, label: "**InlineBox**<br/>来自crate:bevy​_​text ↗：描述与文字同行<br/>排版的盒子尺寸和流内、流外行为" }
   class n12 node_component
   class n12 external_node
-  n13@{ shape: rounded, label: "**bevy​_​ui::widget::Text**<br/>保存 UI 文本根的第一段内容。" }
+  n13@{ shape: rounded, label: "**Text**<br/>保存 UI 文本根的第一段内容。" }
   class n13 node_component
   n14@{ shape: lin-rect, label: "**PostLayout**<br/>组织界面交互、布局与堆叠更新。" }
   class n14 node_system_set
-  n15@{ shape: rounded, label: "**bevy​_​text::TextColor**<br/>来自crate:bevy​_​text ↗：保存当前文字段<br/>的前景色" }
+  n15@{ shape: rounded, label: "**TextColor**<br/>来自crate:bevy​_​text ↗：保存当前文字段<br/>的前景色" }
   class n15 node_component
   class n15 external_node
-  n16@{ shape: rounded, label: "**bevy​_​text::LineHeight**<br/>来自crate:bevy​_​text ↗：配置每行文字的<br/>高度" }
+  n16@{ shape: rounded, label: "**LineHeight**<br/>来自crate:bevy​_​text ↗：配置每行文字的<br/>高度" }
   class n16 node_component
   class n16 external_node
   n1 e0@--> n0

@@ -39,25 +39,25 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​ui::widget::ImageNode**<br/>描述 UI 图像及其绘制参数。" }
+  n0@{ shape: rounded, label: "**ImageNode**<br/>描述 UI 图像及其绘制参数。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​ui​_​render::extract​_​uinode​_​**<br/>**changes**<br/>来自crate:bevy​_​ui​_​render ↗：使变化或<br/>移除的 UI 数据失效并清理旧渲染实体。" }
+  n1@{ shape: rounded, label: "**extract​_​uinode​_​changes**<br/>来自crate:bevy​_​ui​_​render ↗：使变化或<br/>移除的 UI 数据失效并清理旧渲染实体。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​ui::widget::image::update​_​**<br/>**image​_​content​_​size​_​system**<br/>按图像或图集区域更新 UI 的固有尺寸测<br/>量。" }
+  n2@{ shape: rounded, label: "**update​_​image​_​content​_​size​_​system**<br/>按图像或图集区域更新 UI 的固有尺寸测<br/>量。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​ui​_​render::image::update​_​**<br/>**texture​_​atlas​_​layout​_​components**<br/>来自crate:bevy​_​ui​_​render ↗：同步 UI<br/>图像所引用的图集布局组件。" }
+  n3@{ shape: rounded, label: "**update​_​texture​_​atlas​_​layout​_​**<br/>**components**<br/>来自crate:bevy​_​ui​_​render ↗：同步 UI<br/>图像所引用的图集布局组件。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**bevy​_​ui::accessibility::image​_​**<br/>**changed**<br/>为非按钮图像生成或更新无障碍标签。" }
+  n4@{ shape: rounded, label: "**image​_​changed**<br/>为非按钮图像生成或更新无障碍标签。" }
   class n4 node_system
-  n5@{ shape: rounded, label: "**bevy​_​ui​_​render::ui​_​texture​_​slice​_​**<br/>**pipeline::extract​_​ui​_​texture​_​slices**<br/>来自crate:bevy​_​ui​_​render ↗：增量提取<br/>九宫格或平铺 UI 图像切片。" }
+  n5@{ shape: rounded, label: "**extract​_​ui​_​texture​_​slices**<br/>来自crate:bevy​_​ui​_​render ↗：增量提取<br/>九宫格或平铺 UI 图像切片。" }
   class n5 node_system
   class n5 external_node
-  n6@{ shape: rounded, label: "**bevy​_​ui​_​render::extract​_​uinode​_​**<br/>**images**<br/>来自crate:bevy​_​ui​_​render ↗：按节点视<br/>觉盒与图集区域提取普通 UI 图像。" }
+  n6@{ shape: rounded, label: "**extract​_​uinode​_​images**<br/>来自crate:bevy​_​ui​_​render ↗：按节点视<br/>觉盒与图集区域提取普通 UI 图像。" }
   class n6 node_system
   class n6 external_node
-  n7@{ shape: rounded, label: "**bevy​_​ui​_​render::image::mark​_​images​_​**<br/>**as​_​changed​_​if​_​their​_​assets​_​changed**<br/>来自crate:bevy​_​ui​_​render ↗：使图像或<br/>图集资产变化触发 UI 图像更新。" }
+  n7@{ shape: rounded, label: "**mark​_​images​_​as​_​changed​_​if​_​their​_​**<br/>**assets​_​changed**<br/>来自crate:bevy​_​ui​_​render ↗：使图像或<br/>图集资产变化触发 UI 图像更新。" }
   class n7 node_system
   class n7 external_node
   n0 e0@-->|"存在性约束"| n1

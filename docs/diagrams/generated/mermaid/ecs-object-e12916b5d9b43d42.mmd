@@ -38,27 +38,27 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**bevy​_​ecs::message::**<br/>**Messages#lt;pointer::PointerInput#gt;**<br/>保存最近两次轮换期间产生的指定类型消息" }
+  n0@{ shape: cyl, label: "**Messages#lt;PointerInput#gt;**<br/>保存最近两次轮换期间产生的指定类型消息" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​picking::events::pointer​_​events**<br/>来自crate:bevy​_​picking ↗：根据悬停与<br/>按钮状态派发指针交互事件。" }
+  n1@{ shape: rounded, label: "**pointer​_​events**<br/>来自crate:bevy​_​picking ↗：根据悬停与<br/>按钮状态派发指针交互事件。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​picking::input::mouse​_​pick​_​**<br/>**events**<br/>来自crate:bevy​_​picking ↗：把窗口鼠标<br/>事件转换为拾取指针动作。" }
+  n2@{ shape: rounded, label: "**mouse​_​pick​_​events**<br/>来自crate:bevy​_​picking ↗：把窗口鼠标<br/>事件转换为拾取指针动作。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​ui::widget::viewport::viewport​_​**<br/>**picking**<br/>来自crate:bevy​_​ui ↗：把外部指针转换并<br/>转发到 UI 内嵌视口。" }
+  n3@{ shape: rounded, label: "**viewport​_​picking**<br/>来自crate:bevy​_​ui ↗：把外部指针转换并<br/>转发到 UI 内嵌视口。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**bevy​_​picking::hover::generate​_​**<br/>**hovermap**<br/>来自crate:bevy​_​picking ↗：汇总拾取命<br/>中并应用指针捕获。" }
+  n4@{ shape: rounded, label: "**generate​_​hovermap**<br/>来自crate:bevy​_​picking ↗：汇总拾取命<br/>中并应用指针捕获。" }
   class n4 node_system
   class n4 external_node
-  n5@{ shape: rounded, label: "**bevy​_​picking::pointer::**<br/>**PointerInput::receive**<br/>来自crate:bevy​_​picking ↗：按输入消息<br/>更新拾取指针状态。" }
+  n5@{ shape: rounded, label: "**receive**<br/>来自crate:bevy​_​picking ↗：按输入消息<br/>更新拾取指针状态。" }
   class n5 node_system
   class n5 external_node
-  n6@{ shape: rounded, label: "**bevy​_​picking::input::touch​_​pick​_​**<br/>**events**<br/>来自crate:bevy​_​picking ↗：把触摸阶段<br/>转换为独立拾取指针。" }
+  n6@{ shape: rounded, label: "**touch​_​pick​_​events**<br/>来自crate:bevy​_​picking ↗：把触摸阶段<br/>转换为独立拾取指针。" }
   class n6 node_system
   class n6 external_node
-  n7@{ shape: rounded, label: "**demo::ui::pointer::clear​_​cancelled​_​**<br/>**primary​_​presses**<br/>来自ui ↗：Bevy 先从 HoverMap 排除取消<br/>的指针，随后可能无法为它发出<br/>PointerCancel。" }
+  n7@{ shape: rounded, label: "**clear​_​cancelled​_​primary​_​presses**<br/>来自ui ↗：Bevy 先从 HoverMap 排除取消<br/>的指针，随后可能无法为它发出<br/>PointerCancel。" }
   class n7 node_system
   class n7 external_node
   n0 e0@--> n1

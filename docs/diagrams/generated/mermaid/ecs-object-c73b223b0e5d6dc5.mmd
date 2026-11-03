@@ -37,11 +37,11 @@ flowchart LR
   classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**bevy​_​render::render​_​asset::**<br/>**PrepareNextFrameAssets#lt;medium::**<br/>**GpuScatteringMedium#gt;**<br/>保留下一帧待准备的渲染源资产。" }
+  n0@{ shape: cyl, label: "**PrepareNextFrameAssets#lt;GpuScattering**<br/>**Medium#gt;**<br/>保留下一帧待准备的渲染源资产。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​render::render​_​asset::prepare​_​**<br/>**assets#lt;bevy​_​pbr::medium::**<br/>**GpuScatteringMedium#gt;**<br/>在上传预算内准备资产并保留重试项。" }
+  n1@{ shape: rounded, label: "**prepare​_​assets**<br/>在上传预算内准备资产并保留重试项。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​render::render​_​asset::collect​_​**<br/>**render​_​assets​_​to​_​reextract#lt;bevy​_​**<br/>**pbr::medium::GpuScatteringMedium#gt;**<br/>排空渲染资产并登记设备恢复后的重新提取。" }
+  n2@{ shape: rounded, label: "**collect​_​render​_​assets​_​to​_​reextract**<br/>排空渲染资产并登记设备恢复后的重新提取。" }
   class n2 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

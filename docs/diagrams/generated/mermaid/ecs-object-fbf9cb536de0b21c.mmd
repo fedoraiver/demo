@@ -39,9 +39,9 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**ui::backdrop::CourierAnimation**<br/>持有 GLB 父资产，展示动作按名字绑定，不<br/>依赖导出后的动画排列顺序。" }
+  n0@{ shape: rounded, label: "**CourierAnimation**<br/>持有 GLB 父资产，展示动作按名字绑定，不<br/>依赖导出后的动画排列顺序。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**demo::ui::backdrop::play​_​courier​_​**<br/>**animation**<br/>仅遍历已展开的展示角色子树，命名资产尚未<br/>就绪时保留 pending 供下一帧重试。" }
+  n1@{ shape: rounded, label: "**play​_​courier​_​animation**<br/>仅遍历已展开的展示角色子树，命名资产尚未<br/>就绪时保留 pending 供下一帧重试。" }
   class n1 node_system
   n2@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>展示播放持箱动画的菜单快递员。" }
   class n2 node_entity

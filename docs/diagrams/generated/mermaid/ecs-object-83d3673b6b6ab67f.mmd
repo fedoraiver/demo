@@ -44,7 +44,7 @@ flowchart LR
   class n1 node_system_set
   n2@{ shape: lin-rect, label: "**Trigger**<br/>组织动作求值、值应用与事件触发。" }
   class n2 node_system_set
-  n3@{ shape: rounded, label: "**(bevy​_​ecs::change​_​detection::**<br/>**params::Res#lt;'​_​, bevy​_​enhanced​_​**<br/>**input::context::instance::**<br/>**ContextInstances#lt;bevy​_​app::main​_​**<br/>**schedule::PreUpdate#gt;#gt;, bevy​_​ecs::**<br/>**system::query::Query#lt;'​_​, '​_​, bevy​_​**<br/>**ecs::world::entity​_​access::**<br/>**filtered::FilteredEntityRef#lt;'​_​, '​_​**<br/>**#gt;, bevy​_​ecs::query::filter::**<br/>**Without#lt;bevy​_​enhanced​_​input::**<br/>**action::fns::ActionFns#gt;#gt;, bevy​_​ecs::**<br/>**system::query::Query#lt;'​_​, '​_​, bevy​_​**<br/>**ecs::world::entity​_​access::entity​_​**<br/>**mut::EntityMut#lt;'​_​#gt;, (bevy​_​ecs::**<br/>**query::filter::With#lt;bevy​_​enhanced​_​**<br/>**input::action::fns::ActionFns#gt;,**<br/>**bevy​_​ecs::query::filter::**<br/>**Without#lt;bevy​_​enhanced​_​input::**<br/>**context::instance::**<br/>**ContextInstances#lt;bevy​_​app::main​_​**<br/>**schedule::PreUpdate#gt;#gt;)#gt;)**<br/>把求值结果写入类型化输入动作。" }
+  n3@{ shape: rounded, label: "**(Res#lt;'​_​,**<br/>**ContextInstances#lt;PreUpdate#gt;#gt;,**<br/>**Query#lt;'​_​, '​_​, FilteredEntityRef#lt;'​_​,**<br/>**'​_​#gt;, Without#lt;ActionFns#gt;#gt;, Query#lt;'​_​,**<br/>**'​_​, EntityMut#lt;'​_​#gt;,**<br/>**(With#lt;ActionFns#gt;,**<br/>**Without#lt;ContextInstances#lt;PreUpdate#gt;#gt;**<br/>**)#gt;)**<br/>把求值结果写入类型化输入动作。" }
   class n3 node_system
   n1 e0@-->|"先于"| n0
   class e0 edge_order

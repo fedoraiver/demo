@@ -38,32 +38,32 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**render::gpu​_​preprocess::**<br/>**PreprocessPipelines**<br/>汇集网格预处理与间接参数构建管线。" }
+  n0@{ shape: cyl, label: "**PreprocessPipelines**<br/>汇集网格预处理与间接参数构建管线。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​pbr::render::light::per​_​view​_​**<br/>**shadow​_​pass#lt;true#gt;**<br/>绘制相机相关的平行光级联阴影。" }
+  n1@{ shape: rounded, label: "**per​_​view​_​shadow​_​pass**<br/>绘制相机相关的平行光级联阴影。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​pbr::render::gpu​_​preprocess::**<br/>**prepare​_​preprocess​_​bind​_​groups**<br/>绑定各视图网格预处理和间接参数构建资源。" }
+  n2@{ shape: rounded, label: "**prepare​_​preprocess​_​bind​_​groups**<br/>绑定各视图网格预处理和间接参数构建资源。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​pbr::render::gpu​_​preprocess::**<br/>**prepare​_​preprocess​_​pipelines**<br/>按设备裁剪能力准备网格预处理管线变体。" }
+  n3@{ shape: rounded, label: "**prepare​_​preprocess​_​pipelines**<br/>按设备裁剪能力准备网格预处理管线变体。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**bevy​_​pbr::render::gpu​_​preprocess::**<br/>**early​_​prepass​_​build​_​indirect​_​**<br/>**parameters**<br/>构建早期预通道使用的多重间接绘制参数。" }
+  n4@{ shape: rounded, label: "**early​_​prepass​_​build​_​indirect​_​**<br/>**parameters**<br/>构建早期预通道使用的多重间接绘制参数。" }
   class n4 node_system
-  n5@{ shape: rounded, label: "**bevy​_​render::init​_​gpu​_​resource#lt;bevy​_​**<br/>**pbr::render::gpu​_​preprocess::**<br/>**PreprocessPipelines#gt;**<br/>来自crate:bevy​_​render ↗：构造并插入渲<br/>染所需资源。" }
+  n5@{ shape: rounded, label: "**init​_​gpu​_​resource**<br/>来自crate:bevy​_​render ↗：构造并插入渲<br/>染所需资源。" }
   class n5 node_system
   class n5 external_node
-  n6@{ shape: rounded, label: "**bevy​_​pbr::render::gpu​_​preprocess::**<br/>**late​_​prepass​_​build​_​indirect​_​**<br/>**parameters**<br/>为本帧新显露对象构建后期预通道间接参数。" }
+  n6@{ shape: rounded, label: "**late​_​prepass​_​build​_​indirect​_​**<br/>**parameters**<br/>为本帧新显露对象构建后期预通道间接参数。" }
   class n6 node_system
-  n7@{ shape: rounded, label: "**bevy​_​pbr::render::gpu​_​preprocess::**<br/>**allocate​_​uniforms**<br/>在 GPU 上为可见批次分配网格参数存储。" }
+  n7@{ shape: rounded, label: "**allocate​_​uniforms**<br/>在 GPU 上为可见批次分配网格参数存储。" }
   class n7 node_system
-  n8@{ shape: rounded, label: "**bevy​_​pbr::render::gpu​_​preprocess::**<br/>**early​_​gpu​_​preprocess**<br/>为当前视图及阴影级联执行早期网格转换与裁<br/>剪。" }
+  n8@{ shape: rounded, label: "**early​_​gpu​_​preprocess**<br/>为当前视图及阴影级联执行早期网格转换与裁<br/>剪。" }
   class n8 node_system
-  n9@{ shape: rounded, label: "**bevy​_​pbr::render::gpu​_​preprocess::**<br/>**main​_​build​_​indirect​_​parameters**<br/>为主不透明及透明通道构建间接绘制参数。" }
+  n9@{ shape: rounded, label: "**main​_​build​_​indirect​_​parameters**<br/>为主不透明及透明通道构建间接绘制参数。" }
   class n9 node_system
-  n10@{ shape: rounded, label: "**bevy​_​pbr::render::gpu​_​preprocess::**<br/>**late​_​gpu​_​preprocess**<br/>对后期遮挡工作项执行间接网格预处理。" }
+  n10@{ shape: rounded, label: "**late​_​gpu​_​preprocess**<br/>对后期遮挡工作项执行间接网格预处理。" }
   class n10 node_system
-  n11@{ shape: rounded, label: "**bevy​_​pbr::render::light::per​_​view​_​**<br/>**shadow​_​pass#lt;false#gt;**<br/>绘制相机相关的平行光级联阴影。" }
+  n11@{ shape: rounded, label: "**per​_​view​_​shadow​_​pass**<br/>绘制相机相关的平行光级联阴影。" }
   class n11 node_system
-  n12@{ shape: rounded, label: "**bevy​_​pbr::render::gpu​_​preprocess::**<br/>**unpack​_​bins**<br/>解包 GPU 分桶数据并生成网格预处理任务。" }
+  n12@{ shape: rounded, label: "**unpack​_​bins**<br/>解包 GPU 分桶数据并生成网格预处理任务。" }
   class n12 node_system
   n0 e0@--> n1
   class e0 edge_read

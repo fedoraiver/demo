@@ -36,9 +36,9 @@ flowchart LR
   classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**view::window::screenshot::**<br/>**RenderScreenshotsSender**<br/>将捕获截图传回主世界。" }
+  n0@{ shape: cyl, label: "**RenderScreenshotsSender**<br/>将捕获截图传回主世界。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​render::renderer::render​_​system**<br/>运行渲染图调度并完成回读和窗口呈现。" }
+  n1@{ shape: rounded, label: "**render​_​system**<br/>运行渲染图调度并完成回读和窗口呈现。" }
   class n1 node_system
   n0 e0@--> n1
   class e0 edge_read

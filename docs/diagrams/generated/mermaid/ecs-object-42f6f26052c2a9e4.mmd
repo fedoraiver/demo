@@ -38,9 +38,9 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**hover::DirectlyHovered**<br/>标记实体是否被指针直接悬停" }
+  n0@{ shape: rounded, label: "**DirectlyHovered**<br/>标记实体是否被指针直接悬停" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​picking::hover::update​_​is​_​**<br/>**directly​_​hovered**<br/>更新鼠标直接悬停的实体标记。" }
+  n1@{ shape: rounded, label: "**update​_​is​_​directly​_​hovered**<br/>更新鼠标直接悬停的实体标记。" }
   class n1 node_system
   n1 e0@-->|"插入"| n0
   class e0 edge_write

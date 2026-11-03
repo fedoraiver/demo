@@ -36,9 +36,9 @@ flowchart LR
   classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**morph::MorphWeights**<br/>保存可由多个网格共享的形变权重。" }
+  n0@{ shape: rounded, label: "**MorphWeights**<br/>保存可由多个网格共享的形变权重。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​pbr::render::morph::extract​_​**<br/>**morphs**<br/>来自crate:bevy​_​pbr ↗：提取可见网格的<br/>当前与历史形变权重。" }
+  n1@{ shape: rounded, label: "**extract​_​morphs**<br/>来自crate:bevy​_​pbr ↗：提取可见网格的<br/>当前与历史形变权重。" }
   class n1 node_system
   class n1 external_node
   n0 e0@--> n1

@@ -42,31 +42,31 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**avian3d::dynamics::solver::plugin::**<br/>**prepare​_​contact​_​constraints**<br/>从有效接触流形生成本轮求解约束。" }
+  n0@{ shape: rounded, label: "**prepare​_​contact​_​constraints**<br/>从有效接触流形生成本轮求解约束。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**dynamics::rigid​_​body::**<br/>**RigidBodyDisabled**<br/>暂停刚体求解和附着关节。" }
+  n1@{ shape: rounded, label: "**RigidBodyDisabled**<br/>暂停刚体求解和附着关节。" }
   class n1 node_component
-  n2@{ shape: rounded, label: "**dynamics::rigid​_​body::sleeping::**<br/>**Sleeping**<br/>标记暂不参与模拟的休眠刚体。" }
+  n2@{ shape: rounded, label: "**Sleeping**<br/>标记暂不参与模拟的休眠刚体。" }
   class n2 node_component
   n3@{ shape: lin-rect, label: "**PrepareContactConstraints**<br/>组织约束求解的准备、子步与回写。" }
   class n3 node_system_set
-  n4@{ shape: cyl, label: "**dynamics::solver::solver​_​body::**<br/>**SolverBodies**<br/>连续存储活跃刚体的求解状态。" }
+  n4@{ shape: cyl, label: "**SolverBodies**<br/>连续存储活跃刚体的求解状态。" }
   class n4 node_resource
-  n5@{ shape: cyl, label: "**dynamics::solver::plugin::**<br/>**ContactSoftnessCoefficients**<br/>缓存动态与非动态接触的柔度系数。" }
+  n5@{ shape: cyl, label: "**ContactSoftnessCoefficients**<br/>缓存动态与非动态接触的柔度系数。" }
   class n5 node_resource
-  n6@{ shape: cyl, label: "**dynamics::solver::diagnostics::**<br/>**SolverDiagnostics**<br/>记录物理求解各阶段耗时。" }
+  n6@{ shape: cyl, label: "**SolverDiagnostics**<br/>记录物理求解各阶段耗时。" }
   class n6 node_resource
-  n7@{ shape: rounded, label: "**dynamics::rigid​_​body::RigidBody**<br/>选择动态、静态或运动学刚体行为。" }
+  n7@{ shape: rounded, label: "**RigidBody**<br/>选择动态、静态或运动学刚体行为。" }
   class n7 node_component
-  n8@{ shape: cyl, label: "**dynamics::solver::constraint​_​graph::**<br/>**ConstraintGraph**<br/>为并行接触求解维护约束着色图。" }
+  n8@{ shape: cyl, label: "**ConstraintGraph**<br/>为并行接触求解维护约束着色图。" }
   class n8 node_resource
-  n9@{ shape: cyl, label: "**collision::contact​_​types::contact​_​**<br/>**graph::ContactGraph**<br/>维护碰撞体接触对及其碰撞数据。" }
+  n9@{ shape: cyl, label: "**ContactGraph**<br/>维护碰撞体接触对及其碰撞数据。" }
   class n9 node_resource
-  n10@{ shape: cyl, label: "**collision::narrow​_​phase::**<br/>**NarrowPhaseConfig**<br/>配置窄相的接触容差。" }
+  n10@{ shape: cyl, label: "**NarrowPhaseConfig**<br/>配置窄相的接触容差。" }
   class n10 node_resource
-  n11@{ shape: rounded, label: "**dynamics::rigid​_​body::LinearVelocity**<br/>保存刚体的世界线速度。" }
+  n11@{ shape: rounded, label: "**LinearVelocity**<br/>保存刚体的世界线速度。" }
   class n11 node_component
-  n12@{ shape: rounded, label: "**dynamics::solver::solver​_​body::**<br/>**SolverBodyIndex**<br/>定位实体对应的求解器刚体。" }
+  n12@{ shape: rounded, label: "**SolverBodyIndex**<br/>定位实体对应的求解器刚体。" }
   class n12 node_component
   n1 e0@-->|"存在性约束"| n0
   class e0 edge_reference

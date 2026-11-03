@@ -38,9 +38,9 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​winit::accessibility::should​_​**<br/>**update​_​accessibility​_​nodes**<br/>判断是否需要更新无障碍节点。" }
+  n0@{ shape: rounded, label: "**should​_​update​_​accessibility​_​nodes**<br/>判断是否需要更新无障碍节点。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**bevy​_​winit::accessibility::update​_​**<br/>**accessibility​_​nodes**<br/>把变化的可访问性节点同步给原生适配器。" }
+  n1@{ shape: rounded, label: "**update​_​accessibility​_​nodes**<br/>把变化的可访问性节点同步给原生适配器。" }
   class n1 node_system
   n2@{ shape: cyl, label: "**AccessibilityRequested**<br/>来自crate:bevy​_​a11y ↗：记录辅助技术的<br/>信息请求状态。" }
   class n2 node_resource

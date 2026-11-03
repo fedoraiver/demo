@@ -43,22 +43,22 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**avian3d::dynamics::solver::islands::**<br/>**sleeping::sleep​_​islands**<br/>按物理岛活动状态提交休眠与唤醒。" }
+  n0@{ shape: rounded, label: "**sleep​_​islands**<br/>按物理岛活动状态提交休眠与唤醒。" }
   class n0 node_system
   n1@{ shape: lin-rect, label: "**AnonymousSet(0)**<br/>来自crate:bevy​_​ecs ↗：保存一组系统的<br/>共同配置。" }
   class n1 node_system_set
   class n1 external_node
-  n2@{ shape: rounded, label: "**avian3d::dynamics::solver::islands::**<br/>**sleeping::wake​_​all​_​islands**<br/>批量请求唤醒当前全部休眠物理岛。" }
+  n2@{ shape: rounded, label: "**wake​_​all​_​islands**<br/>批量请求唤醒当前全部休眠物理岛。" }
   class n2 node_system
   n3@{ shape: notch-rect, label: "**Local · sleep​_​buffer**<br/>收集本轮应进入休眠的物理岛。" }
   class n3 node_local
-  n4@{ shape: cyl, label: "**dynamics::solver::islands::**<br/>**sleeping::AwakeIslandBitVec**<br/>记录哪些物理岛必须保持唤醒。" }
+  n4@{ shape: cyl, label: "**AwakeIslandBitVec**<br/>记录哪些物理岛必须保持唤醒。" }
   class n4 node_resource
   n5@{ shape: notch-rect, label: "**Local · wake​_​buffer**<br/>收集本轮应从休眠中唤醒的物理岛。" }
   class n5 node_local
-  n6@{ shape: cyl, label: "**dynamics::solver::islands::**<br/>**PhysicsIslands**<br/>管理模拟岛及接触和关节连接。" }
+  n6@{ shape: cyl, label: "**PhysicsIslands**<br/>管理模拟岛及接触和关节连接。" }
   class n6 node_resource
-  n7@{ shape: fr-rect, label: "**dynamics::solver::islands::**<br/>**sleeping::IslandSleepingPlugin**<br/>管理物理岛休眠与唤醒。" }
+  n7@{ shape: fr-rect, label: "**IslandSleepingPlugin**<br/>管理物理岛休眠与唤醒。" }
   class n7 node_plugin
   n8@{ shape: lin-rect, label: "**Sleeping**<br/>组织一次物理模拟步的主要阶段。" }
   class n8 node_system_set

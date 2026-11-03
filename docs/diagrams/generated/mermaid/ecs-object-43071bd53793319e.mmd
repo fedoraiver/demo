@@ -39,7 +39,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: notch-rect, label: "**Local · windows​_​to​_​drop**<br/>把原生窗口包装器保留到下次主线程调用释<br/>放。" }
   class n0 node_local
-  n1@{ shape: rounded, label: "**bevy​_​winit::system::despawn​_​windows**<br/>处理原生窗口关闭并延后一轮释放包装器。" }
+  n1@{ shape: rounded, label: "**despawn​_​windows**<br/>处理原生窗口关闭并延后一轮释放包装器。" }
   class n1 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

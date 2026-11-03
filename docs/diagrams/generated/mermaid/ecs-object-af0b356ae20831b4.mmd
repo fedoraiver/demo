@@ -38,9 +38,9 @@ flowchart LR
   classDef edge_publish stroke:#247B91,stroke-width:1.8px,stroke-dasharray:10 4 2 4
   classDef edge_emit stroke:#B66B2D,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: lean-r, label: "**events::PointerDragDrop**<br/>通知被拖拽实体释放到接收目标。" }
+  n0@{ shape: lean-r, label: "**PointerDragDrop**<br/>通知被拖拽实体释放到接收目标。" }
   class n0 node_message
-  n1@{ shape: rounded, label: "**bevy​_​picking::events::pointer​_​events**<br/>根据悬停与按钮状态派发指针交互事件。" }
+  n1@{ shape: rounded, label: "**pointer​_​events**<br/>根据悬停与按钮状态派发指针交互事件。" }
   class n1 node_system
   n1 e0@-->|"消息"| n0
   class e0 edge_publish

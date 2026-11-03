@@ -39,15 +39,27 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**atmosphere::environment::**<br/>**AtmosphereProbeTextures**<br/>汇集大气环境目标与散射查找纹理。" }
+  subgraph layout_card_n0[" "]
+  n0@{ shape: rounded, label: "**AtmosphereProbeTextures**<br/>汇集大气环境目标与散射查找纹理。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​extract::extract​_​component::**<br/>**extract​_​components#lt;bevy​_​pbr::**<br/>**atmosphere::environment::**<br/>**AtmosphereEnvironmentMap, bevy​_​**<br/>**render::RenderApp, ()#gt;**<br/>来自crate:bevy​_​extract ↗：批量同步或<br/>移除子世界的目标组件。" }
+  end
+  style layout_card_n0 fill:none,stroke:none
+  subgraph layout_card_n1[" "]
+  n1@{ shape: rounded, label: "**extract​_​components**<br/>来自crate:bevy​_​extract ↗：批量同步或<br/>移除子世界的目标组件。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​pbr::atmosphere::environment::**<br/>**prepare​_​probe​_​textures**<br/>为环境探针借用大气查找纹理并创建输出视<br/>图。" }
+  end
+  style layout_card_n1 fill:none,stroke:none
+  subgraph layout_card_n2[" "]
+  n2@{ shape: rounded, label: "**prepare​_​probe​_​textures**<br/>为环境探针借用大气查找纹理并创建输出视<br/>图。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​pbr::atmosphere::environment::**<br/>**prepare​_​atmosphere​_​probe​_​bind​_​groups**<br/>为大气环境探针绑定光照、查找表和输出纹<br/>理。" }
+  end
+  style layout_card_n2 fill:none,stroke:none
+  subgraph layout_card_n3[" "]
+  n3@{ shape: rounded, label: "**prepare​_​atmosphere​_​probe​_​bind​_​groups**<br/>为大气环境探针绑定光照、查找表和输出纹<br/>理。" }
   class n3 node_system
+  end
+  style layout_card_n3 fill:none,stroke:none
   n1 e0@-->|"移除"| n0
   class e0 edge_write
   n2 e1@---|"存在性约束"| n0

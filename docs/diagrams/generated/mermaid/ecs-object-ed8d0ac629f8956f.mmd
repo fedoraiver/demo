@@ -45,21 +45,21 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​pbr::decal::clustered::prepare​_​**<br/>**decals**<br/>将已提取贴花的索引登记到全局聚簇元数据。" }
+  n0@{ shape: rounded, label: "**prepare​_​decals**<br/>将已提取贴花的索引登记到全局聚簇元数据。" }
   class n0 node_system
-  n1@{ shape: fr-rect, label: "**decal::clustered::**<br/>**ClusteredDecalPlugin**<br/>提供聚簇贴花投射。" }
+  n1@{ shape: fr-rect, label: "**ClusteredDecalPlugin**<br/>提供聚簇贴花投射。" }
   class n1 node_plugin
-  n2@{ shape: cyl, label: "**cluster::GlobalClusterableObjectMeta**<br/>维护跨视图的聚簇光源缓冲与对象索引。" }
+  n2@{ shape: cyl, label: "**GlobalClusterableObjectMeta**<br/>维护跨视图的聚簇光源缓冲与对象索引。" }
   class n2 node_resource
-  n3@{ shape: cyl, label: "**decal::clustered::**<br/>**RenderClusteredDecals**<br/>维护场景贴花数据与纹理绑定索引。" }
+  n3@{ shape: cyl, label: "**RenderClusteredDecals**<br/>维护场景贴花数据与纹理绑定索引。" }
   class n3 node_resource
-  n4@{ shape: rounded, label: "**cluster::ClusteredDecal**<br/>来自crate:bevy​_​light ↗：在立方体范围<br/>内向表面投射材质贴花。" }
+  n4@{ shape: rounded, label: "**ClusteredDecal**<br/>来自crate:bevy​_​light ↗：在立方体范围<br/>内向表面投射材质贴花。" }
   class n4 node_component
   class n4 external_node
   n5@{ shape: lin-rect, label: "**PrepareViews**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
   class n5 node_system_set
   class n5 external_node
-  n6@{ shape: rounded, label: "**bevy​_​pbr::render::light::prepare​_​**<br/>**lights**<br/>准备视图光照参数、阴影视图和阴影贴图。" }
+  n6@{ shape: rounded, label: "**prepare​_​lights**<br/>准备视图光照参数、阴影视图和阴影贴图。" }
   class n6 node_system
   n1 e0@-->|"调用"| n0
   class e0 edge_registration

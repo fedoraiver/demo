@@ -37,11 +37,11 @@ flowchart LR
   classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**gradient::GradientMeta**<br/>保存 UI 渐变的 GPU 顶点、索引与视图绑<br/>定。" }
+  n0@{ shape: cyl, label: "**GradientMeta**<br/>保存 UI 渐变的 GPU 顶点、索引与视图绑<br/>定。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​ui​_​render::gradient::prepare​_​**<br/>**gradient**<br/>将已排队的线性、径向和锥形渐变转换为<br/>GPU 顶点、索引与颜色停靠点数据，建立渐<br/>变绘制批次并上传相关缓冲。" }
+  n1@{ shape: rounded, label: "**prepare​_​gradient**<br/>将已排队的线性、径向和锥形渐变转换为<br/>GPU 顶点、索引与颜色停靠点数据，建立渐<br/>变绘制批次并上传相关缓冲。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​render::init​_​gpu​_​resource#lt;bevy​_​**<br/>**ui​_​render::gradient::GradientMeta#gt;**<br/>来自crate:bevy​_​render ↗：构造并插入渲<br/>染所需资源。" }
+  n2@{ shape: rounded, label: "**init​_​gpu​_​resource**<br/>来自crate:bevy​_​render ↗：构造并插入渲<br/>染所需资源。" }
   class n2 node_system
   class n2 external_node
   n1 e0@-->|"赋值"| n0

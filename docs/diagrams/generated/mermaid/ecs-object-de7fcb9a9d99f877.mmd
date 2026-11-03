@@ -43,17 +43,17 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**avian3d::dynamics::integrator::**<br/>**clear​_​velocity​_​increments**<br/>在子步循环后清零速度积分增量。" }
+  n0@{ shape: rounded, label: "**clear​_​velocity​_​increments**<br/>在子步循环后清零速度积分增量。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**dynamics::solver::solver​_​body::**<br/>**SolverBodyIndex**<br/>定位实体对应的求解器刚体。" }
+  n1@{ shape: rounded, label: "**SolverBodyIndex**<br/>定位实体对应的求解器刚体。" }
   class n1 node_component
   n2@{ shape: lin-rect, label: "**ClearVelocityIncrements**<br/>组织速度与位置积分阶段。" }
   class n2 node_system_set
-  n3@{ shape: rounded, label: "**dynamics::integrator::**<br/>**VelocityIntegrationData**<br/>缓存子步速度增量和阻尼系数。" }
+  n3@{ shape: rounded, label: "**VelocityIntegrationData**<br/>缓存子步速度增量和阻尼系数。" }
   class n3 node_component
-  n4@{ shape: cyl, label: "**dynamics::solver::diagnostics::**<br/>**SolverDiagnostics**<br/>记录物理求解各阶段耗时。" }
+  n4@{ shape: cyl, label: "**SolverDiagnostics**<br/>记录物理求解各阶段耗时。" }
   class n4 node_resource
-  n5@{ shape: fr-rect, label: "**dynamics::integrator::**<br/>**IntegratorPlugin**<br/>积分运动并预测刚体姿态。" }
+  n5@{ shape: fr-rect, label: "**IntegratorPlugin**<br/>积分运动并预测刚体姿态。" }
   class n5 node_plugin
   n1 e0@-->|"存在性约束"| n0
   class e0 edge_reference

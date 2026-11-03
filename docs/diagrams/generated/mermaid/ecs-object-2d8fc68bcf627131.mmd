@@ -39,13 +39,13 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**NoScaleEasing**<br/>显式禁止当前实体的缩放插值和外推" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​transform​_​interpolation::ease​_​**<br/>**scale​_​lerp**<br/>按固定步剩余比例线性插值显示缩放。" }
+  n1@{ shape: rounded, label: "**ease​_​scale​_​lerp**<br/>按固定步剩余比例线性插值显示缩放。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​transform​_​interpolation::**<br/>**interpolation::update​_​scale​_​**<br/>**interpolation​_​start**<br/>把当前缩放记录为插值起点。" }
+  n2@{ shape: rounded, label: "**update​_​scale​_​interpolation​_​start**<br/>把当前缩放记录为插值起点。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​transform​_​interpolation::**<br/>**interpolation::complete​_​scale​_​easing**<br/>在新一轮插值前完成上一段缩放。" }
+  n3@{ shape: rounded, label: "**complete​_​scale​_​easing**<br/>在新一轮插值前完成上一段缩放。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**bevy​_​transform​_​interpolation::**<br/>**interpolation::update​_​scale​_​**<br/>**interpolation​_​end**<br/>把当前缩放记录为插值终点。" }
+  n4@{ shape: rounded, label: "**update​_​scale​_​interpolation​_​end**<br/>把当前缩放记录为插值终点。" }
   class n4 node_system
   n0 e0@-->|"存在性约束"| n1
   class e0 edge_reference

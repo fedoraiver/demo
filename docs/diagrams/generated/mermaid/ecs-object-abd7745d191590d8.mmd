@@ -44,30 +44,30 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**demo::ui::style::style​_​buttons**<br/>按当前输入来源更新按钮背景与焦点边框。" }
+  n0@{ shape: rounded, label: "**style​_​buttons**<br/>按当前输入来源更新按钮背景与焦点边框。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**bevy​_​ui::Pressed**<br/>来自crate:bevy​_​ui ↗：标记按钮或控件当<br/>前处于按住状态。" }
+  n1@{ shape: rounded, label: "**Pressed**<br/>来自crate:bevy​_​ui ↗：标记按钮或控件当<br/>前处于按住状态。" }
   class n1 node_component
   class n1 external_node
   n2@{ shape: lin-rect, label: "**Style**<br/>请求在 PreUpdate 消费后，Update 依次生<br/>成 BSN 页面并更新视觉焦点。" }
   class n2 node_system_set
-  n3@{ shape: rounded, label: "**bevy​_​ui::BorderColor**<br/>来自crate:bevy​_​ui ↗：分别设置 UI 四边<br/>的边框颜色。" }
+  n3@{ shape: rounded, label: "**BorderColor**<br/>来自crate:bevy​_​ui ↗：分别设置 UI 四边<br/>的边框颜色。" }
   class n3 node_component
   class n3 external_node
-  n4@{ shape: cyl, label: "**ui::MenuFocus**<br/>当前可操作按钮的序号，由键盘导航和鼠标悬<br/>停共同维护。" }
+  n4@{ shape: cyl, label: "**MenuFocus**<br/>当前可操作按钮的序号，由键盘导航和鼠标悬<br/>停共同维护。" }
   class n4 node_resource
-  n5@{ shape: fr-rect, label: "**ui::GameUiPlugin**<br/>组装菜单功能，不安装窗口或重复初始化会话<br/>日志。" }
+  n5@{ shape: fr-rect, label: "**GameUiPlugin**<br/>组装菜单功能，不安装窗口或重复初始化会话<br/>日志。" }
   class n5 node_plugin
-  n6@{ shape: rounded, label: "**ui::MenuButton**<br/>菜单实体保存动作与导航序号，系统不依赖显<br/>示文字或实体名称。" }
+  n6@{ shape: rounded, label: "**MenuButton**<br/>菜单实体保存动作与导航序号，系统不依赖显<br/>示文字或实体名称。" }
   class n6 node_component
-  n7@{ shape: rounded, label: "**hover::Hovered**<br/>来自crate:bevy​_​picking ↗：记录实体当<br/>前是否被任一指针悬停。" }
+  n7@{ shape: rounded, label: "**Hovered**<br/>来自crate:bevy​_​picking ↗：记录实体当<br/>前是否被任一指针悬停。" }
   class n7 node_component
   class n7 external_node
-  n8@{ shape: cyl, label: "**ui::MenuInputSource**<br/>输入来源单独决定焦点是否可见；鼠标离开后<br/>仍保留序号供后续导航使用。" }
+  n8@{ shape: cyl, label: "**MenuInputSource**<br/>输入来源单独决定焦点是否可见；鼠标离开后<br/>仍保留序号供后续导航使用。" }
   class n8 node_resource
-  n9@{ shape: rounded, label: "**ui::pointer::PrimaryPress**<br/>原生 Button 对任意指针键维护 Pressed；<br/>菜单单独保留主键来源以筛选动作和样式。" }
+  n9@{ shape: rounded, label: "**PrimaryPress**<br/>原生 Button 对任意指针键维护 Pressed；<br/>菜单单独保留主键来源以筛选动作和样式。" }
   class n9 node_component
-  n10@{ shape: rounded, label: "**bevy​_​ui::BackgroundColor**<br/>来自crate:bevy​_​ui ↗：设置 UI 节点背景<br/>填充色。" }
+  n10@{ shape: rounded, label: "**BackgroundColor**<br/>来自crate:bevy​_​ui ↗：设置 UI 节点背景<br/>填充色。" }
   class n10 node_component
   class n10 external_node
   n1 e0@-->|"存在性约束"| n0

@@ -40,16 +40,16 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: lin-rect, label: "**AnonymousSet(1)**<br/>保存一组系统的共同配置。" }
   class n0 node_system_set
-  n1@{ shape: rounded, label: "**demo::scene​_​assembly::loading::**<br/>**prepare​_​island**<br/>来自scene​_​assembly ↗：在资源 CPU 几<br/>何可用时构建碰撞；全部成功后才提交，失败<br/>时不创建动态玩家。" }
+  n1@{ shape: rounded, label: "**prepare​_​island**<br/>来自scene​_​assembly ↗：在资源 CPU 几<br/>何可用时构建碰撞；全部成功后才提交，失败<br/>时不创建动态玩家。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**demo::game​_​flow::gameplay​_​running**<br/>来自game​_​flow ↗：独立功能测试没有应用<br/>状态；真实游戏只在 Running 推进玩法。" }
+  n2@{ shape: rounded, label: "**gameplay​_​running**<br/>来自game​_​flow ↗：独立功能测试没有应用<br/>状态；真实游戏只在 Running 推进玩法。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**demo::scene​_​assembly::loading::**<br/>**begin​_​island**<br/>来自scene​_​assembly ↗：请求创建已加载<br/>海岛的运行实例。" }
+  n3@{ shape: rounded, label: "**begin​_​island**<br/>来自scene​_​assembly ↗：请求创建已加载<br/>海岛的运行实例。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**demo::scene​_​assembly::actors::spawn​_​**<br/>**actors**<br/>来自scene​_​assembly ↗：为就绪海岛创建<br/>玩法实体并复用加载相机。" }
+  n4@{ shape: rounded, label: "**spawn​_​actors**<br/>来自scene​_​assembly ↗：为就绪海岛创建<br/>玩法实体并复用加载相机。" }
   class n4 node_system
   class n4 external_node
   n0 e0@-->|"集合成员"| n1

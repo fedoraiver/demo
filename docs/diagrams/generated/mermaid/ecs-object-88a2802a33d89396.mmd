@@ -39,7 +39,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: notch-rect, label: "**Local · local​_​from​_​world​_​matrices**<br/>为各雾体预计算世界到局部空间的逆变换。" }
   class n0 node_local
-  n1@{ shape: rounded, label: "**bevy​_​pbr::volumetric​_​fog::render::**<br/>**prepare​_​volumetric​_​fog​_​uniforms**<br/>把各视图和雾体积组合转换为体积雾<br/>Uniform。" }
+  n1@{ shape: rounded, label: "**prepare​_​volumetric​_​fog​_​uniforms**<br/>把各视图和雾体积组合转换为体积雾<br/>Uniform。" }
   class n1 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

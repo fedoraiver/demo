@@ -38,15 +38,15 @@ flowchart LR
   classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**ancestor​_​marker::**<br/>**AncestorMarker#lt;collision::collider::**<br/>**backend::ColliderMarker#gt;**<br/>标记含指定组件的实体祖先。" }
+  n0@{ shape: rounded, label: "**AncestorMarker#lt;ColliderMarker#gt;**<br/>标记含指定组件的实体祖先。" }
   class n0 node_component
-  n1@{ shape: hex, label: "**avian3d::collision::collider::**<br/>**collider​_​hierarchy::plugin::on​_​**<br/>**collider​_​body​_​changed**<br/>随层级变化更新碰撞体刚体归属。" }
+  n1@{ shape: hex, label: "**on​_​collider​_​body​_​changed**<br/>随层级变化更新碰撞体刚体归属。" }
   class n1 node_observer
-  n2@{ shape: hex, label: "**avian3d::collision::collider::**<br/>**collider​_​hierarchy::plugin::on​_​**<br/>**collider​_​body​_​changed**<br/>随层级变化更新碰撞体刚体归属。" }
+  n2@{ shape: hex, label: "**on​_​collider​_​body​_​changed**<br/>随层级变化更新碰撞体刚体归属。" }
   class n2 node_observer
-  n3@{ shape: hex, label: "**avian3d::collision::collider::**<br/>**collider​_​hierarchy::plugin::on​_​**<br/>**collider​_​body​_​changed**<br/>随层级变化更新碰撞体刚体归属。" }
+  n3@{ shape: hex, label: "**on​_​collider​_​body​_​changed**<br/>随层级变化更新碰撞体刚体归属。" }
   class n3 node_observer
-  n4@{ shape: rounded, label: "**avian3d::collision::collider::**<br/>**collider​_​transform::plugin::**<br/>**propagate​_​collider​_​transforms**<br/>沿实体层级计算碰撞体相对刚体的变换。" }
+  n4@{ shape: rounded, label: "**propagate​_​collider​_​transforms**<br/>沿实体层级计算碰撞体相对刚体的变换。" }
   class n4 node_system
   n0 e0@-->|"存在性约束"| n1
   class e0 edge_reference

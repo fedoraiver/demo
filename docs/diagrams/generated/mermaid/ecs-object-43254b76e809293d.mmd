@@ -38,15 +38,15 @@ flowchart LR
   classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**text​_​input::QueuedSelectAll**<br/>暂存由指针按下触发焦点的编辑实体" }
+  n0@{ shape: cyl, label: "**QueuedSelectAll**<br/>暂存由指针按下触发焦点的编辑实体" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​ui​_​widgets::text​_​input::apply​_​**<br/>**queued​_​select​_​all**<br/>在指针释放时应用延后的文本全选。" }
+  n1@{ shape: rounded, label: "**apply​_​queued​_​select​_​all**<br/>在指针释放时应用延后的文本全选。" }
   class n1 node_system
-  n2@{ shape: hex, label: "**bevy​_​ui​_​widgets::text​_​input::on​_​**<br/>**focus​_​select​_​all**<br/>按聚焦来源安排文本全选。" }
+  n2@{ shape: hex, label: "**on​_​focus​_​select​_​all**<br/>按聚焦来源安排文本全选。" }
   class n2 node_observer
-  n3@{ shape: hex, label: "**bevy​_​ui​_​widgets::text​_​input::on​_​**<br/>**focus​_​select​_​all**<br/>按聚焦来源安排文本全选。" }
+  n3@{ shape: hex, label: "**on​_​focus​_​select​_​all**<br/>按聚焦来源安排文本全选。" }
   class n3 node_observer
-  n4@{ shape: hex, label: "**bevy​_​ui​_​widgets::text​_​input::on​_​**<br/>**focus​_​select​_​all**<br/>按聚焦来源安排文本全选。" }
+  n4@{ shape: hex, label: "**on​_​focus​_​select​_​all**<br/>按聚焦来源安排文本全选。" }
   class n4 node_observer
   n1 e0@-->|"赋值"| n0
   class e0 edge_write

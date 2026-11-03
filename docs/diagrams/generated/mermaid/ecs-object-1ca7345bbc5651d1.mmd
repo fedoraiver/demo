@@ -43,14 +43,14 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​render::render​_​phase::sort​_​**<br/>**phase​_​system#lt;bevy​_​ui​_​render::render​_​**<br/>**pass::TransparentUi#gt;**<br/>按各视图重新计算并排序阶段绘制项。" }
+  n0@{ shape: rounded, label: "**sort​_​phase​_​system**<br/>按各视图重新计算并排序阶段绘制项。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**bevy​_​render::view::ExtractedView**<br/>描述渲染视图的身份、投影与空间状态。" }
+  n1@{ shape: rounded, label: "**ExtractedView**<br/>描述渲染视图的身份、投影与空间状态。" }
   class n1 node_component
-  n2@{ shape: fr-rect, label: "**bevy​_​ui​_​render::UiRenderPlugin**<br/>来自crate:bevy​_​ui​_​render ↗：提取并准<br/>备界面绘制数据。" }
+  n2@{ shape: fr-rect, label: "**UiRenderPlugin**<br/>来自crate:bevy​_​ui​_​render ↗：提取并准<br/>备界面绘制数据。" }
   class n2 node_plugin
   class n2 external_node
-  n3@{ shape: cyl, label: "**bevy​_​render::render​_​phase::**<br/>**ViewSortedRenderPhases#lt;render​_​pass::**<br/>**TransparentUi#gt;**<br/>汇集各视图需要排序的绘制指令。" }
+  n3@{ shape: cyl, label: "**ViewSortedRenderPhases#lt;TransparentUi**<br/>**#gt;**<br/>汇集各视图需要排序的绘制指令。" }
   class n3 node_resource
   n4@{ shape: lin-rect, label: "**PhaseSort**<br/>组织渲染数据准备与绘制排队。" }
   class n4 node_system_set

@@ -40,19 +40,19 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: lin-rect, label: "**Propagate**<br/>组织实体变换与物理姿态同步。" }
   class n0 node_system_set
-  n1@{ shape: rounded, label: "**avian3d::collision::collider::**<br/>**collider​_​transform::plugin::**<br/>**propagate​_​collider​_​transforms**<br/>沿实体层级计算碰撞体相对刚体的变换。" }
+  n1@{ shape: rounded, label: "**propagate​_​collider​_​transforms**<br/>沿实体层级计算碰撞体相对刚体的变换。" }
   class n1 node_system
   n2@{ shape: lin-rect, label: "**Prepare**<br/>划分物理准备、模拟与回写边界。" }
   class n2 node_system_set
-  n3@{ shape: rounded, label: "**bevy​_​transform::systems::mark​_​dirty​_​**<br/>**trees**<br/>来自crate:bevy​_​transform ↗：沿祖先链<br/>标记需要重算变换的子树。" }
+  n3@{ shape: rounded, label: "**mark​_​dirty​_​trees**<br/>来自crate:bevy​_​transform ↗：沿祖先链<br/>标记需要重算变换的子树。" }
   class n3 node_system
   class n3 external_node
   n4@{ shape: lin-rect, label: "**TransformToPosition**<br/>组织实体变换与物理姿态同步。" }
   class n4 node_system_set
-  n5@{ shape: rounded, label: "**bevy​_​transform::systems::sync​_​**<br/>**simple​_​transforms**<br/>来自crate:bevy​_​transform ↗：同步没有<br/>父子层级的独立实体世界变换。" }
+  n5@{ shape: rounded, label: "**sync​_​simple​_​transforms**<br/>来自crate:bevy​_​transform ↗：同步没有<br/>父子层级的独立实体世界变换。" }
   class n5 node_system
   class n5 external_node
-  n6@{ shape: rounded, label: "**bevy​_​transform::systems::parallel::**<br/>**propagate​_​parent​_​transforms**<br/>来自crate:bevy​_​transform ↗：沿父子层<br/>级并行合成世界变换。" }
+  n6@{ shape: rounded, label: "**propagate​_​parent​_​transforms**<br/>来自crate:bevy​_​transform ↗：沿父子层<br/>级并行合成世界变换。" }
   class n6 node_system
   class n6 external_node
   n0 e0@-->|"集合成员"| n1

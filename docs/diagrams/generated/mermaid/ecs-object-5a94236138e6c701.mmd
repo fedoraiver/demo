@@ -39,37 +39,37 @@ flowchart LR
   classDef edge_publish stroke:#247B91,stroke-width:1.8px,stroke-dasharray:10 4 2 4
   classDef edge_consume stroke:#247B91,stroke-width:1.8px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: lean-r, label: "**ui::UiRequest**<br/>输入系统只产生请求，集中处理系统修改状态<br/>或保存设置。" }
+  n0@{ shape: lean-r, label: "**UiRequest**<br/>输入系统只产生请求，集中处理系统修改状态<br/>或保存设置。" }
   class n0 node_message
-  n1@{ shape: rounded, label: "**demo::ui::volume::sample​_​slider​_​**<br/>**pointer**<br/>Enhanced Input 负责菜单语义动作，但无<br/>法表示 UI 命中后的局部绝对横坐标。" }
+  n1@{ shape: rounded, label: "**sample​_​slider​_​pointer**<br/>Enhanced Input 负责菜单语义动作，但无<br/>法表示 UI 命中后的局部绝对横坐标。" }
   class n1 node_system
-  n2@{ shape: hex, label: "**demo::ui::navigation::back**<br/>发出返回、暂停或恢复请求。" }
+  n2@{ shape: hex, label: "**back**<br/>发出返回、暂停或恢复请求。" }
   class n2 node_observer
-  n3@{ shape: hex, label: "**demo::ui::navigation::left**<br/>向左调整当前聚焦的真实设置字段。" }
+  n3@{ shape: hex, label: "**left**<br/>向左调整当前聚焦的真实设置字段。" }
   class n3 node_observer
-  n4@{ shape: hex, label: "**demo::ui::navigation::left**<br/>向左调整当前聚焦的真实设置字段。" }
+  n4@{ shape: hex, label: "**left**<br/>向左调整当前聚焦的真实设置字段。" }
   class n4 node_observer
-  n5@{ shape: hex, label: "**demo::ui::navigation::confirm**<br/>执行当前聚焦按钮的菜单动作。" }
+  n5@{ shape: hex, label: "**confirm**<br/>执行当前聚焦按钮的菜单动作。" }
   class n5 node_observer
-  n6@{ shape: rounded, label: "**demo::ui::pointer::pointer​_​**<br/>**interaction**<br/>Bevy 原生 UI 已完成按钮命中；这里只读取<br/>缓冲的按下事件，不另读 MouseButton。" }
+  n6@{ shape: rounded, label: "**pointer​_​interaction**<br/>Bevy 原生 UI 已完成按钮命中；这里只读取<br/>缓冲的按下事件，不另读 MouseButton。" }
   class n6 node_system
-  n7@{ shape: hex, label: "**demo::ui::navigation::back**<br/>发出返回、暂停或恢复请求。" }
+  n7@{ shape: hex, label: "**back**<br/>发出返回、暂停或恢复请求。" }
   class n7 node_observer
-  n8@{ shape: hex, label: "**demo::ui::navigation::confirm**<br/>执行当前聚焦按钮的菜单动作。" }
+  n8@{ shape: hex, label: "**confirm**<br/>执行当前聚焦按钮的菜单动作。" }
   class n8 node_observer
-  n9@{ shape: hex, label: "**demo::ui::navigation::right**<br/>向右调整当前聚焦的真实设置字段。" }
+  n9@{ shape: hex, label: "**right**<br/>向右调整当前聚焦的真实设置字段。" }
   class n9 node_observer
-  n10@{ shape: hex, label: "**demo::ui::navigation::confirm**<br/>执行当前聚焦按钮的菜单动作。" }
+  n10@{ shape: hex, label: "**confirm**<br/>执行当前聚焦按钮的菜单动作。" }
   class n10 node_observer
-  n11@{ shape: hex, label: "**demo::ui::navigation::right**<br/>向右调整当前聚焦的真实设置字段。" }
+  n11@{ shape: hex, label: "**right**<br/>向右调整当前聚焦的真实设置字段。" }
   class n11 node_observer
-  n12@{ shape: hex, label: "**demo::ui::navigation::left**<br/>向左调整当前聚焦的真实设置字段。" }
+  n12@{ shape: hex, label: "**left**<br/>向左调整当前聚焦的真实设置字段。" }
   class n12 node_observer
-  n13@{ shape: hex, label: "**demo::ui::navigation::back**<br/>发出返回、暂停或恢复请求。" }
+  n13@{ shape: hex, label: "**back**<br/>发出返回、暂停或恢复请求。" }
   class n13 node_observer
-  n14@{ shape: hex, label: "**demo::ui::navigation::right**<br/>向右调整当前聚焦的真实设置字段。" }
+  n14@{ shape: hex, label: "**right**<br/>向右调整当前聚焦的真实设置字段。" }
   class n14 node_observer
-  n15@{ shape: rounded, label: "**demo::ui::requests::handle​_​requests**<br/>每帧只消费一项语义请求，避免鼠标与确认键<br/>同时激活，或旧页面动作穿过页面切换。" }
+  n15@{ shape: rounded, label: "**handle​_​requests**<br/>每帧只消费一项语义请求，避免鼠标与确认键<br/>同时激活，或旧页面动作穿过页面切换。" }
   class n15 node_system
   n1 e0@-->|"消息"| n0
   class e0 edge_publish

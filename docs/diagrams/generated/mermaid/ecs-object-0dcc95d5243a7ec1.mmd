@@ -43,18 +43,18 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​pbr::material::check​_​entities​_​**<br/>**needing​_​specialization#lt;bevy​_​pbr::**<br/>**pbr​_​material::StandardMaterial#gt;**<br/>收集几何或材质变化及移除的三维网格。" }
+  n0@{ shape: rounded, label: "**check​_​entities​_​needing​_​**<br/>**specialization**<br/>收集几何或材质变化及移除的三维网格。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**bevy​_​mesh::Mesh3d**<br/>来自crate:bevy​_​mesh ↗：为三维可绘制实<br/>体指定网格资产。" }
+  n1@{ shape: rounded, label: "**Mesh3d**<br/>来自crate:bevy​_​mesh ↗：为三维可绘制实<br/>体指定网格资产。" }
   class n1 node_component
   class n1 external_node
   n2@{ shape: notch-rect, label: "**Local · removed​_​mesh​_​material​_​3d​_​**<br/>**components.0.0.0.0**<br/>保存 MeshMaterial3d#lt;M#gt; 移除参数的组<br/>件 ID。" }
   class n2 node_local
   n3@{ shape: notch-rect, label: "**Local · removed​_​mesh​_​material​_​3d​_​**<br/>**components.0.1**<br/>跟踪 MeshMaterial3d#lt;M#gt; 移除记录的读取<br/>进度。" }
   class n3 node_local
-  n4@{ shape: cyl, label: "**material::**<br/>**EntitiesNeedingSpecialization#lt;pbr​_​**<br/>**material::StandardMaterial#gt;**<br/>暂存需要更新或移除专用管线的实体。" }
+  n4@{ shape: cyl, label: "**EntitiesNeedingSpecialization#lt;Standa**<br/>**rdMaterial#gt;**<br/>暂存需要更新或移除专用管线的实体。" }
   class n4 node_resource
-  n5@{ shape: rounded, label: "**bevy​_​pbr::MeshMaterial3d#lt;bevy​_​pbr::**<br/>**StandardMaterial#gt;**<br/>为三维网格指定材质资产。" }
+  n5@{ shape: rounded, label: "**MeshMaterial3d#lt;StandardMaterial#gt;**<br/>为三维网格指定材质资产。" }
   class n5 node_component
   n6@{ shape: lin-rect, label: "**AssetEventSystems**<br/>来自crate:bevy​_​asset ↗：发布资产容器<br/>积累的变更消息。" }
   class n6 node_system_set
@@ -63,15 +63,15 @@ flowchart LR
   class n7 node_local
   n8@{ shape: notch-rect, label: "**Local · par​_​local**<br/>并行收集三维材质管线需要更新的实体。" }
   class n8 node_local
-  n9@{ shape: cyl, label: "**bevy​_​asset::asset​_​changed::**<br/>**AssetChanges#lt;mesh::Mesh#gt;**<br/>来自crate:bevy​_​asset ↗：记录资产最近<br/>变化的系统刻度。" }
+  n9@{ shape: cyl, label: "**AssetChanges#lt;Mesh#gt;**<br/>来自crate:bevy​_​asset ↗：记录资产最近<br/>变化的系统刻度。" }
   class n9 node_resource
   class n9 external_node
-  n10@{ shape: rounded, label: "**bevy​_​mesh::components::mark​_​3d​_​**<br/>**meshes​_​as​_​changed​_​if​_​their​_​assets​_​**<br/>**changed**<br/>来自crate:bevy​_​mesh ↗：资产内容变化时<br/>标记对应三维网格已变更。" }
+  n10@{ shape: rounded, label: "**mark​_​3d​_​meshes​_​as​_​changed​_​if​_​their​_​**<br/>**assets​_​changed**<br/>来自crate:bevy​_​mesh ↗：资产内容变化时<br/>标记对应三维网格已变更。" }
   class n10 node_system
   class n10 external_node
   n11@{ shape: notch-rect, label: "**Local · removed​_​mesh​_​3d​_​**<br/>**components.0.1**<br/>跟踪 Mesh3d 移除记录的读取进度。" }
   class n11 node_local
-  n12@{ shape: cyl, label: "**bevy​_​asset::asset​_​changed::**<br/>**AssetChanges#lt;pbr​_​material::**<br/>**StandardMaterial#gt;**<br/>来自crate:bevy​_​asset ↗：记录资产最近<br/>变化的系统刻度。" }
+  n12@{ shape: cyl, label: "**AssetChanges#lt;StandardMaterial#gt;**<br/>来自crate:bevy​_​asset ↗：记录资产最近<br/>变化的系统刻度。" }
   class n12 node_resource
   class n12 external_node
   n1 e0@--> n0
@@ -109,7 +109,7 @@ flowchart LR
   e4@{ curve: basis }
   e5@{ curve: basis }
   e6@{ curve: basis }
-  e7@{ curve: bumpX }
+  e7@{ curve: basis }
   e8@{ curve: basis }
   e9@{ curve: basis }
   e10@{ curve: basis }

@@ -42,19 +42,19 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​render::view::visibility::**<br/>**collect​_​visible​_​cpu​_​culled​_​entities**<br/>汇总相机与阴影子视图的 CPU 剔除可见实<br/>体。" }
+  n0@{ shape: rounded, label: "**collect​_​visible​_​cpu​_​culled​_​entities**<br/>汇总相机与阴影子视图的 CPU 剔除可见实<br/>体。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**view::visibility::**<br/>**RenderShadowMapVisibleEntities**<br/>保存每个阴影子视图最终收集的可见实体。" }
+  n1@{ shape: rounded, label: "**RenderShadowMapVisibleEntities**<br/>保存每个阴影子视图最终收集的可见实体。" }
   class n1 node_component
-  n2@{ shape: fr-rect, label: "**view::ViewPlugin**<br/>准备视图渲染目标与统一数据。" }
+  n2@{ shape: fr-rect, label: "**ViewPlugin**<br/>准备视图渲染目标与统一数据。" }
   class n2 node_plugin
-  n3@{ shape: rounded, label: "**view::visibility::**<br/>**RenderExtractedShadowMapVisibleEntit**<br/>**ies**<br/>暂存各阴影子视图经 CPU 判定可见的实体。" }
+  n3@{ shape: rounded, label: "**RenderExtractedShadowMapVisibleEntit**<br/>**ies**<br/>暂存各阴影子视图经 CPU 判定可见的实体。" }
   class n3 node_component
-  n4@{ shape: rounded, label: "**view::visibility::**<br/>**RenderVisibleEntities**<br/>按类别保存视图的可见实体及变化列表。" }
+  n4@{ shape: rounded, label: "**RenderVisibleEntities**<br/>按类别保存视图的可见实体及变化列表。" }
   class n4 node_component
   n5@{ shape: notch-rect, label: "**Local · visibility​_​classes**<br/>汇总当前视图已有和新提取的可见性类别。" }
   class n5 node_local
-  n6@{ shape: rounded, label: "**view::visibility::**<br/>**RenderExtractedVisibleEntities**<br/>按渲染类别暂存提取后的 CPU 可见实体。" }
+  n6@{ shape: rounded, label: "**RenderExtractedVisibleEntities**<br/>按渲染类别暂存提取后的 CPU 可见实体。" }
   class n6 node_component
   n7@{ shape: lin-rect, label: "**PrepareAssets**<br/>组织渲染数据准备与绘制排队。" }
   class n7 node_system_set

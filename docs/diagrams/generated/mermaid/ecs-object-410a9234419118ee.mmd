@@ -36,9 +36,9 @@ flowchart LR
   classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**mesh::MeshMetadataFallbackMesh**<br/>标识生成缺省网格元数据缓冲的网格。" }
+  n0@{ shape: cyl, label: "**MeshMetadataFallbackMesh**<br/>标识生成缺省网格元数据缓冲的网格。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​render::mesh::prepare​_​mesh​_​**<br/>**metadata​_​fallback​_​buffer**<br/>取得回退网格所在的元数据 GPU 缓冲。" }
+  n1@{ shape: rounded, label: "**prepare​_​mesh​_​metadata​_​fallback​_​**<br/>**buffer**<br/>取得回退网格所在的元数据 GPU 缓冲。" }
   class n1 node_system
   n0 e0@--> n1
   class e0 edge_read

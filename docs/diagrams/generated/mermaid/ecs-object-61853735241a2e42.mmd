@@ -36,9 +36,9 @@ flowchart LR
   classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;bevy​_​**<br/>**app::hierarchy::**<br/>**CheckParentHasComponent#lt;visibility::**<br/>**InheritedVisibility#gt;#gt;**<br/>保存最近两次轮换期间产生的指定类型消息" }
+  n0@{ shape: cyl, label: "**Messages#lt;CheckParentHasComponent#lt;Inh**<br/>**eritedVisibility#gt;#gt;**<br/>保存最近两次轮换期间产生的指定类型消息" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​app::hierarchy::check​_​parent​_​**<br/>**has​_​component#lt;bevy​_​camera::**<br/>**visibility::InheritedVisibility#gt;**<br/>来自crate:bevy​_​app ↗：报告仍不满足组<br/>件层级要求的父子关系。" }
+  n1@{ shape: rounded, label: "**check​_​parent​_​has​_​component**<br/>来自crate:bevy​_​app ↗：报告仍不满足组<br/>件层级要求的父子关系。" }
   class n1 node_system
   class n1 external_node
   n0 e0@--> n1

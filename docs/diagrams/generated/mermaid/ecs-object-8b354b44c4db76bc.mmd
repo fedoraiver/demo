@@ -44,31 +44,31 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​pbr::ssr::prepare​_​ssr​_​pipelines**<br/>为具备反射及深度、延迟预通道的视图选择管<br/>线。" }
+  n0@{ shape: rounded, label: "**prepare​_​ssr​_​pipelines**<br/>为具备反射及深度、延迟预通道的视图选择管<br/>线。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**prepass::DeferredPrepass**<br/>来自crate:bevy​_​core​_​pipeline ↗：为三<br/>维相机启用延迟材质 G-buffer 预通道。" }
+  n1@{ shape: rounded, label: "**DeferredPrepass**<br/>来自crate:bevy​_​core​_​pipeline ↗：为三<br/>维相机启用延迟材质 G-buffer 预通道。" }
   class n1 node_component
   class n1 external_node
-  n2@{ shape: rounded, label: "**ssr::ScreenSpaceReflectionsUniform**<br/>以 GPU 格式保存反射粗糙度和追踪设置。" }
+  n2@{ shape: rounded, label: "**ScreenSpaceReflectionsUniform**<br/>以 GPU 格式保存反射粗糙度和追踪设置。" }
   class n2 node_component
-  n3@{ shape: fr-rect, label: "**ssr::ScreenSpaceReflectionsPlugin**<br/>提供延迟相机的屏幕空间反射。" }
+  n3@{ shape: fr-rect, label: "**ScreenSpaceReflectionsPlugin**<br/>提供延迟相机的屏幕空间反射。" }
   class n3 node_plugin
-  n4@{ shape: cyl, label: "**bevy​_​render::render​_​resource::**<br/>**SpecializedRenderPipelines#lt;ssr::**<br/>**ScreenSpaceReflectionsPipeline#gt;**<br/>来自crate:bevy​_​render ↗：按配置键缓存<br/>渲染管线变体。" }
+  n4@{ shape: cyl, label: "**SpecializedRenderPipelines#lt;ScreenSpa**<br/>**ceReflectionsPipeline#gt;**<br/>来自crate:bevy​_​render ↗：按配置键缓存<br/>渲染管线变体。" }
   class n4 node_resource
   class n4 external_node
-  n5@{ shape: rounded, label: "**ssr::**<br/>**ScreenSpaceReflectionsPipelineId**<br/>标识视图需要的屏幕空间反射管线。" }
+  n5@{ shape: rounded, label: "**ScreenSpaceReflectionsPipelineId**<br/>标识视图需要的屏幕空间反射管线。" }
   class n5 node_component
-  n6@{ shape: cyl, label: "**bevy​_​pbr::ViewKeyCache**<br/>缓存各视图预启用特性的网格管线键。" }
+  n6@{ shape: cyl, label: "**ViewKeyCache**<br/>缓存各视图预启用特性的网格管线键。" }
   class n6 node_resource
-  n7@{ shape: cyl, label: "**ssr::ScreenSpaceReflectionsPipeline**<br/>描述屏幕空间反射绘制的着色接口。" }
+  n7@{ shape: cyl, label: "**ScreenSpaceReflectionsPipeline**<br/>描述屏幕空间反射绘制的着色接口。" }
   class n7 node_resource
-  n8@{ shape: cyl, label: "**bevy​_​render::render​_​resource::**<br/>**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
+  n8@{ shape: cyl, label: "**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
   class n8 node_resource
   class n8 external_node
-  n9@{ shape: rounded, label: "**bevy​_​core​_​pipeline::prepass::**<br/>**DepthPrepass**<br/>来自crate:bevy​_​core​_​pipeline ↗：为三<br/>维相机生成独立的深度纹理。" }
+  n9@{ shape: rounded, label: "**DepthPrepass**<br/>来自crate:bevy​_​core​_​pipeline ↗：为三<br/>维相机生成独立的深度纹理。" }
   class n9 node_component
   class n9 external_node
-  n10@{ shape: rounded, label: "**bevy​_​render::view::ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
+  n10@{ shape: rounded, label: "**ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
   class n10 node_component
   class n10 external_node
   n11@{ shape: lin-rect, label: "**Prepare**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }

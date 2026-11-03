@@ -40,29 +40,29 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: lin-rect, label: "**Prepass**<br/>划分三维相机绘制与后处理阶段。" }
   class n0 node_system_set
-  n1@{ shape: rounded, label: "**bevy​_​core​_​pipeline::deferred::copy​_​**<br/>**lighting​_​id::copy​_​deferred​_​lighting​_​**<br/>**id**<br/>把延迟光照通道标识复制到深度目标。" }
+  n1@{ shape: rounded, label: "**copy​_​deferred​_​lighting​_​id**<br/>把延迟光照通道标识复制到深度目标。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​core​_​pipeline::prepass::node::**<br/>**early​_​prepass**<br/>绘制早期不透明与 AlphaMask 预通道。" }
+  n2@{ shape: rounded, label: "**early​_​prepass**<br/>绘制早期不透明与 AlphaMask 预通道。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​pbr::cluster::gpu::cluster​_​on​_​**<br/>**gpu**<br/>来自crate:bevy​_​pbr ↗：执行深度切片、<br/>计数、分配和填充的 GPU 聚簇。" }
+  n3@{ shape: rounded, label: "**cluster​_​on​_​gpu**<br/>来自crate:bevy​_​pbr ↗：执行深度切片、<br/>计数、分配和填充的 GPU 聚簇。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**bevy​_​pbr::atmosphere::node::**<br/>**atmosphere​_​luts**<br/>来自crate:bevy​_​pbr ↗：根据当前大气、<br/>视图和光照参数调度计算管线，生成透射、多<br/>重散射、天空视图及空气透视查找表，供天空<br/>和大气渲染使用。" }
+  n4@{ shape: rounded, label: "**atmosphere​_​luts**<br/>来自crate:bevy​_​pbr ↗：根据当前大气、<br/>视图和光照参数调度计算管线，生成透射、多<br/>重散射、天空视图及空气透视查找表，供天空<br/>和大气渲染使用。" }
   class n4 node_system
   class n4 external_node
-  n5@{ shape: rounded, label: "**bevy​_​core​_​pipeline::deferred::node::**<br/>**early​_​deferred​_​prepass**<br/>执行早期延迟预通道并保存深度结果。" }
+  n5@{ shape: rounded, label: "**early​_​deferred​_​prepass**<br/>执行早期延迟预通道并保存深度结果。" }
   class n5 node_system
   n6@{ shape: lin-rect, label: "**MainPass**<br/>划分三维相机绘制与后处理阶段。" }
   class n6 node_system_set
-  n7@{ shape: rounded, label: "**bevy​_​pbr::ssao::ssao**<br/>来自crate:bevy​_​pbr ↗：依次计算深度预<br/>处理、环境遮蔽和空间去噪。" }
+  n7@{ shape: rounded, label: "**ssao**<br/>来自crate:bevy​_​pbr ↗：依次计算深度预<br/>处理、环境遮蔽和空间去噪。" }
   class n7 node_system
   class n7 external_node
-  n8@{ shape: rounded, label: "**bevy​_​pbr::atmosphere::environment::**<br/>**atmosphere​_​environment**<br/>来自crate:bevy​_​pbr ↗：使用当前视图的<br/>大气和光照参数，为每个大气环境贴图的六个<br/>立方体面调度计算着色器，更新环境光源纹<br/>理。" }
+  n8@{ shape: rounded, label: "**atmosphere​_​environment**<br/>来自crate:bevy​_​pbr ↗：使用当前视图的<br/>大气和光照参数，为每个大气环境贴图的六个<br/>立方体面调度计算着色器，更新环境光源纹<br/>理。" }
   class n8 node_system
   class n8 external_node
-  n9@{ shape: rounded, label: "**bevy​_​core​_​pipeline::prepass::node::**<br/>**late​_​prepass**<br/>为遮挡剔除绘制晚期预通道。" }
+  n9@{ shape: rounded, label: "**late​_​prepass**<br/>为遮挡剔除绘制晚期预通道。" }
   class n9 node_system
-  n10@{ shape: rounded, label: "**bevy​_​core​_​pipeline::deferred::node::**<br/>**late​_​deferred​_​prepass**<br/>为遮挡剔除执行晚期延迟预通道。" }
+  n10@{ shape: rounded, label: "**late​_​deferred​_​prepass**<br/>为遮挡剔除执行晚期延迟预通道。" }
   class n10 node_system
   n0 e0@-->|"先于"| n1
   class e0 edge_order

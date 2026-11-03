@@ -39,7 +39,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: notch-rect, label: "**Local · orphaned.0.1**<br/>跟踪 ChildOf 移除记录的读取进度。" }
   class n0 node_local
-  n1@{ shape: rounded, label: "**bevy​_​transform::systems::sync​_​**<br/>**simple​_​transforms**<br/>同步没有父子层级的独立实体世界变换。" }
+  n1@{ shape: rounded, label: "**sync​_​simple​_​transforms**<br/>同步没有父子层级的独立实体世界变换。" }
   class n1 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

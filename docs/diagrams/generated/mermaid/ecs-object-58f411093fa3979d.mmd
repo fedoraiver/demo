@@ -43,19 +43,19 @@ flowchart LR
   n1@{ shape: lin-rect, label: "**AssignLightsToClusters**<br/>来自crate:bevy​_​light ↗：组织灯光聚簇<br/>与可见性准备。" }
   class n1 node_system_set
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​gizmos​_​render::transform​_​gizmo​_​**<br/>**render::update​_​gizmo​_​meshes**<br/>来自crate:bevy​_​gizmos​_​render ↗：将变<br/>换操作器对齐焦点并更新模式与高亮。" }
+  n2@{ shape: rounded, label: "**update​_​gizmo​_​meshes**<br/>来自crate:bevy​_​gizmos​_​render ↗：将变<br/>换操作器对齐焦点并更新模式与高亮。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​light::cascade::build​_​**<br/>**directional​_​light​_​cascades**<br/>来自crate:bevy​_​light ↗：为投射阴影的<br/>方向光构建逐相机级联。" }
+  n3@{ shape: rounded, label: "**build​_​directional​_​light​_​cascades**<br/>来自crate:bevy​_​light ↗：为投射阴影的<br/>方向光构建逐相机级联。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**bevy​_​transform::systems::propagate​_​**<br/>**transforms​_​for#lt;bevy​_​ecs::query::**<br/>**filter::Or#lt;(bevy​_​ecs::query::**<br/>**filter::With#lt;bevy​_​gizmos::transform​_​**<br/>**gizmo::TransformGizmoRoot#gt;, bevy​_​**<br/>**ecs::query::filter::With#lt;bevy​_​**<br/>**gizmos​_​render::transform​_​gizmo​_​**<br/>**render::GizmoOverlayCamera#gt;, bevy​_​**<br/>**ecs::query::filter::With#lt;bevy​_​**<br/>**gizmos::transform​_​gizmo::**<br/>**TransformGizmoMeshMarker#gt;)#gt;#gt;**<br/>来自crate:bevy​_​transform ↗：按指定查<br/>询过滤器即时计算世界变换。" }
+  n4@{ shape: rounded, label: "**propagate​_​transforms​_​for**<br/>来自crate:bevy​_​transform ↗：按指定查<br/>询过滤器即时计算世界变换。" }
   class n4 node_system
   class n4 external_node
-  n5@{ shape: rounded, label: "**bevy​_​ui::update::propagate​_​ui​_​**<br/>**target​_​cameras**<br/>来自crate:bevy​_​ui ↗：为 UI 根配置目标<br/>相机和视口信息传播源。" }
+  n5@{ shape: rounded, label: "**propagate​_​ui​_​target​_​cameras**<br/>来自crate:bevy​_​ui ↗：为 UI 根配置目标<br/>相机和视口信息传播源。" }
   class n5 node_system
   class n5 external_node
-  n6@{ shape: rounded, label: "**bevy​_​sprite::text2d::update​_​text2d​_​**<br/>**layout**<br/>来自crate:bevy​_​sprite ↗：重新排版变化<br/>的二维文字并准备字形。" }
+  n6@{ shape: rounded, label: "**update​_​text2d​_​layout**<br/>来自crate:bevy​_​sprite ↗：重新排版变化<br/>的二维文字并准备字形。" }
   class n6 node_system
   class n6 external_node
   n1 e0@-->|"先于"| n0

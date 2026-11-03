@@ -37,11 +37,11 @@ flowchart LR
   classDef node_system_group fill:#F2F5F7,stroke:#607C96,stroke-width:1.6px,color:#1F3340
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: lin-rect, label: "**ExitSchedules(PhantomData#lt;demo::**<br/>**game​_​flow::AppState#gt;)**<br/>执行旧状态的退出调度和退出生命周期。" }
+  n0@{ shape: lin-rect, label: "**ExitSchedules(PhantomData#lt;AppState#gt;)**<br/>执行旧状态的退出调度和退出生命周期。" }
   class n0 node_system_set
   n1@{ shape: lin-rect, label: "**ExitSchedules**<br/>组织状态转换及进入退出调度。" }
   class n1 node_system_set
-  n2@{ shape: fr-rect, label: "**Pipe(bevy​_​state::state::**<br/>**transitions::last​_​transition#lt;demo::**<br/>**game​_​flow::AppState#gt;, bevy​_​state::**<br/>**state::transitions::run​_​exit#lt;demo::**<br/>**game​_​flow::AppState#gt;)**<br/>从当前消息批次取得最后一次状态转换。；执<br/>行旧状态的退出调度。" }
+  n2@{ shape: fr-rect, label: "**Pipe(last​_​transition#lt;AppState#gt;, run​_​**<br/>**exit#lt;AppState#gt;)**<br/>从当前消息批次取得最后一次状态转换。；执<br/>行旧状态的退出调度。" }
   class n2 node_system_group
   n1 e0@-->|"集合成员"| n0
   class e0 edge_set_membership

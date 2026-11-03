@@ -38,12 +38,12 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**components::MeshTag**<br/>向着色器提供网格实例的数据索引。" }
+  n0@{ shape: rounded, label: "**MeshTag**<br/>向着色器提供网格实例的数据索引。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​pbr::render::mesh::extract​_​**<br/>**meshes​_​for​_​gpu​_​building**<br/>来自crate:bevy​_​pbr ↗：增量提取变化或<br/>需重试网格到线程队列。" }
+  n1@{ shape: rounded, label: "**extract​_​meshes​_​for​_​gpu​_​building**<br/>来自crate:bevy​_​pbr ↗：增量提取变化或<br/>需重试网格到线程队列。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::mesh::**<br/>**extract​_​2d​_​meshes**<br/>来自crate:bevy​_​sprite​_​render ↗：增量<br/>同步二维网格变换和渲染实例信息。" }
+  n2@{ shape: rounded, label: "**extract​_​2d​_​meshes**<br/>来自crate:bevy​_​sprite​_​render ↗：增量<br/>同步二维网格变换和渲染实例信息。" }
   class n2 node_system
   class n2 external_node
   n0 e0@--> n1

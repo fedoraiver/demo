@@ -39,13 +39,13 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: lin-rect, label: "**AccessibilityUiSystems**<br/>更新 UI 控件的可访问性语义和几何。" }
   class n0 node_system_set
-  n1@{ shape: rounded, label: "**bevy​_​ui::accessibility::button​_​**<br/>**changed**<br/>为按钮生成或更新无障碍角色与文本标签。" }
+  n1@{ shape: rounded, label: "**button​_​changed**<br/>为按钮生成或更新无障碍角色与文本标签。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​ui::accessibility::label​_​**<br/>**changed**<br/>把标签子树文字写入无障碍节点。" }
+  n2@{ shape: rounded, label: "**label​_​changed**<br/>把标签子树文字写入无障碍节点。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​ui::accessibility::image​_​**<br/>**changed**<br/>为非按钮图像生成或更新无障碍标签。" }
+  n3@{ shape: rounded, label: "**image​_​changed**<br/>为非按钮图像生成或更新无障碍标签。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**bevy​_​ui::accessibility::sync​_​bounds​_​**<br/>**and​_​transforms**<br/>把 UI 几何同步到无障碍树。" }
+  n4@{ shape: rounded, label: "**sync​_​bounds​_​and​_​transforms**<br/>把 UI 几何同步到无障碍树。" }
   class n4 node_system
   n0 e0@-->|"集合成员"| n1
   class e0 edge_set_membership

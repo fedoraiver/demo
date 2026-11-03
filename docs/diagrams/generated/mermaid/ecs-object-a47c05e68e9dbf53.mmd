@@ -39,18 +39,18 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​pbr::atmosphere::environment::**<br/>**init​_​atmosphere​_​probe​_​pipeline**<br/>排队创建大气环境贴图生成计算管线。" }
+  n0@{ shape: rounded, label: "**init​_​atmosphere​_​probe​_​pipeline**<br/>排队创建大气环境贴图生成计算管线。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**atmosphere::environment::**<br/>**AtmosphereProbePipeline**<br/>保存大气环境贴图的计算管线标识。" }
+  n1@{ shape: cyl, label: "**AtmosphereProbePipeline**<br/>保存大气环境贴图的计算管线标识。" }
   class n1 node_resource
-  n2@{ shape: cyl, label: "**atmosphere::environment::**<br/>**AtmosphereProbeLayouts**<br/>描述大气环境贴图计算的资源布局。" }
+  n2@{ shape: cyl, label: "**AtmosphereProbeLayouts**<br/>描述大气环境贴图计算的资源布局。" }
   class n2 node_resource
-  n3@{ shape: rounded, label: "**bevy​_​pbr::atmosphere::environment::**<br/>**init​_​atmosphere​_​probe​_​layout**<br/>定义大气环境探针的计算资源接口。" }
+  n3@{ shape: rounded, label: "**init​_​atmosphere​_​probe​_​layout**<br/>定义大气环境探针的计算资源接口。" }
   class n3 node_system
-  n4@{ shape: cyl, label: "**bevy​_​render::render​_​resource::**<br/>**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
+  n4@{ shape: cyl, label: "**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
   class n4 node_resource
   class n4 external_node
-  n5@{ shape: cyl, label: "**bevy​_​asset::AssetServer**<br/>来自crate:bevy​_​asset ↗：加载资产并追<br/>踪加载状态。" }
+  n5@{ shape: cyl, label: "**AssetServer**<br/>来自crate:bevy​_​asset ↗：加载资产并追<br/>踪加载状态。" }
   class n5 node_resource
   class n5 external_node
   n0 e0@-->|"插入"| n1

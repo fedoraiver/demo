@@ -43,15 +43,15 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​render::camera::expire​_​**<br/>**wireframe​_​specializations​_​for​_​views**<br/>移除已失效视图的线框专用化脏标记。" }
+  n0@{ shape: rounded, label: "**expire​_​wireframe​_​specializations​_​**<br/>**for​_​views**<br/>移除已失效视图的线框专用化脏标记。" }
   class n0 node_system
-  n1@{ shape: fr-rect, label: "**camera::CameraPlugin**<br/>维护相机渲染状态与排序。" }
+  n1@{ shape: fr-rect, label: "**CameraPlugin**<br/>维护相机渲染状态与排序。" }
   class n1 node_plugin
-  n2@{ shape: rounded, label: "**bevy​_​render::view::ExtractedView**<br/>描述渲染视图的身份、投影与空间状态。" }
+  n2@{ shape: rounded, label: "**ExtractedView**<br/>描述渲染视图的身份、投影与空间状态。" }
   class n2 node_component
   n3@{ shape: lin-rect, label: "**Cleanup**<br/>组织渲染数据准备与绘制排队。" }
   class n3 node_system_set
-  n4@{ shape: cyl, label: "**camera::**<br/>**DirtyWireframeSpecializations**<br/>单独记录需要刷新管线的线框对象。" }
+  n4@{ shape: cyl, label: "**DirtyWireframeSpecializations**<br/>单独记录需要刷新管线的线框对象。" }
   class n4 node_resource
   n1 e0@-->|"调用"| n0
   class e0 edge_registration

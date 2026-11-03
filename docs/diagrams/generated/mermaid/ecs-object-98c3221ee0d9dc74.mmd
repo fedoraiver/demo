@@ -38,26 +38,26 @@ flowchart LR
   classDef edge_publish stroke:#247B91,stroke-width:1.8px,stroke-dasharray:10 4 2 4
   classDef edge_consume stroke:#247B91,stroke-width:1.8px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: lean-r, label: "**bevy​_​asset::AssetEvent#lt;image::Image#gt;**<br/>通知指定资产及依赖发生变化。" }
+  n0@{ shape: lean-r, label: "**AssetEvent#lt;Image#gt;**<br/>通知指定资产及依赖发生变化。" }
   class n0 node_message
-  n1@{ shape: rounded, label: "**bevy​_​render::camera::camera​_​system**<br/>来自crate:bevy​_​render ↗：响应目标尺寸<br/>变化并更新相机投影。" }
+  n1@{ shape: rounded, label: "**camera​_​system**<br/>来自crate:bevy​_​render ↗：响应目标尺寸<br/>变化并更新相机投影。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​asset::assets::Assets#lt;bevy​_​**<br/>**image::image::Image#gt;::asset​_​events**<br/>发布累计的资产变化消息。" }
+  n2@{ shape: rounded, label: "**asset​_​events**<br/>发布累计的资产变化消息。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​render::render​_​asset::extract​_​**<br/>**render​_​asset#lt;bevy​_​render::texture::**<br/>**gpu​_​image::GpuImage#gt;**<br/>来自crate:bevy​_​render ↗：按资产变化和<br/>设备恢复请求提取渲染资产。" }
+  n3@{ shape: rounded, label: "**extract​_​render​_​asset**<br/>来自crate:bevy​_​render ↗：按资产变化和<br/>设备恢复请求提取渲染资产。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**bevy​_​sprite​_​render::render::extract​_​**<br/>**sprite​_​events**<br/>来自crate:bevy​_​sprite​_​render ↗：把主<br/>世界图像资产事件复制给精灵渲染。" }
+  n4@{ shape: rounded, label: "**extract​_​sprite​_​events**<br/>来自crate:bevy​_​sprite​_​render ↗：把主<br/>世界图像资产事件复制给精灵渲染。" }
   class n4 node_system
   class n4 external_node
-  n5@{ shape: rounded, label: "**bevy​_​light::atmosphere::extract​_​**<br/>**chromatic​_​phase​_​textures**<br/>来自crate:bevy​_​light ↗：将已加载色度<br/>相函数纹理转换为散射曲线。" }
+  n5@{ shape: rounded, label: "**extract​_​chromatic​_​phase​_​textures**<br/>来自crate:bevy​_​light ↗：将已加载色度<br/>相函数纹理转换为散射曲线。" }
   class n5 node_system
   class n5 external_node
-  n6@{ shape: rounded, label: "**bevy​_​egui::free​_​egui​_​textures​_​system**<br/>来自crate:bevy​_​egui ↗：回收 Egui 已<br/>释放或失效的纹理引用。" }
+  n6@{ shape: rounded, label: "**free​_​egui​_​textures​_​system**<br/>来自crate:bevy​_​egui ↗：回收 Egui 已<br/>释放或失效的纹理引用。" }
   class n6 node_system
   class n6 external_node
-  n7@{ shape: rounded, label: "**bevy​_​render::camera::camera​_​system**<br/>来自crate:bevy​_​render ↗：响应目标尺寸<br/>变化并更新相机投影。" }
+  n7@{ shape: rounded, label: "**camera​_​system**<br/>来自crate:bevy​_​render ↗：响应目标尺寸<br/>变化并更新相机投影。" }
   class n7 node_system
   class n7 external_node
   n0 e0@--> n1

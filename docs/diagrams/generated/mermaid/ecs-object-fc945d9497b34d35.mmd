@@ -38,12 +38,12 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​ecs::schedule::condition::**<br/>**common​_​conditions::resource​_​**<br/>**exists#lt;bevy​_​diagnostic::diagnostic::**<br/>**DiagnosticsStore#gt;**<br/>判断指定资源是否存在。" }
+  n0@{ shape: rounded, label: "**resource​_​exists**<br/>判断指定资源是否存在。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**bevy​_​asset::server::publish​_​asset​_​**<br/>**server​_​diagnostics**<br/>来自crate:bevy​_​asset ↗：发布资产加载<br/>任务的启动计数。" }
+  n1@{ shape: rounded, label: "**publish​_​asset​_​server​_​diagnostics**<br/>来自crate:bevy​_​asset ↗：发布资产加载<br/>任务的启动计数。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: cyl, label: "**diagnostic::DiagnosticsStore**<br/>来自crate:bevy​_​diagnostic ↗：按<br/>DiagnosticPath 保存诊断项、测量历史和<br/>统计结果" }
+  n2@{ shape: cyl, label: "**DiagnosticsStore**<br/>来自crate:bevy​_​diagnostic ↗：按<br/>DiagnosticPath 保存诊断项、测量历史和<br/>统计结果" }
   class n2 node_resource
   class n2 external_node
   n0 e0@-->|"运行条件"| n1

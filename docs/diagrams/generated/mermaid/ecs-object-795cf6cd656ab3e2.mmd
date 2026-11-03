@@ -38,11 +38,11 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**accessibility::**<br/>**WinitActionRequestHandlers**<br/>把窗口实体映射到 AccessKit 动作请求处<br/>理入口" }
+  n0@{ shape: cyl, label: "**WinitActionRequestHandlers**<br/>把窗口实体映射到 AccessKit 动作请求处<br/>理入口" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​winit::accessibility::poll​_​**<br/>**receivers**<br/>将原生无障碍动作请求转为应用消息。" }
+  n1@{ shape: rounded, label: "**poll​_​receivers**<br/>将原生无障碍动作请求转为应用消息。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​winit::accessibility::window​_​**<br/>**closed**<br/>清理关闭窗口的无障碍后端状态。" }
+  n2@{ shape: rounded, label: "**window​_​closed**<br/>清理关闭窗口的无障碍后端状态。" }
   class n2 node_system
   n0 e0@--> n1
   class e0 edge_read

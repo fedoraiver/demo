@@ -40,13 +40,13 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: lin-rect, label: "**Queue**<br/>组织渲染数据准备与绘制排队。" }
   class n0 node_system_set
-  n1@{ shape: rounded, label: "**bevy​_​ui​_​render::gradient::queue​_​**<br/>**gradient**<br/>来自crate:bevy​_​ui​_​render ↗：按目标视<br/>图与堆叠顺序排队 UI 渐变。" }
+  n1@{ shape: rounded, label: "**queue​_​gradient**<br/>来自crate:bevy​_​ui​_​render ↗：按目标视<br/>图与堆叠顺序排队 UI 渐变。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​sprite​_​render::render::queue​_​**<br/>**sprites**<br/>来自crate:bevy​_​sprite​_​render ↗：按视<br/>图可见性将精灵加入透明二维阶段。" }
+  n2@{ shape: rounded, label: "**queue​_​sprites**<br/>来自crate:bevy​_​sprite​_​render ↗：按视<br/>图可见性将精灵加入透明二维阶段。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​ui​_​render::queue​_​uinodes**<br/>来自crate:bevy​_​ui​_​render ↗：按目标相<br/>机和堆叠顺序排队 UI 节点。" }
+  n3@{ shape: rounded, label: "**queue​_​uinodes**<br/>来自crate:bevy​_​ui​_​render ↗：按目标相<br/>机和堆叠顺序排队 UI 节点。" }
   class n3 node_system
   class n3 external_node
   n4@{ shape: lin-rect, label: "**PrepareViews**<br/>组织渲染数据准备与绘制排队。" }
@@ -54,27 +54,27 @@ flowchart LR
   n5@{ shape: lin-rect, label: "**QueueLineGizmos2d**<br/>来自crate:bevy​_​gizmos​_​render ↗：组织<br/>二维和三维调试线条排队。" }
   class n5 node_system_set
   class n5 external_node
-  n6@{ shape: rounded, label: "**bevy​_​ui​_​render::ui​_​texture​_​slice​_​**<br/>**pipeline::queue​_​ui​_​slices**<br/>来自crate:bevy​_​ui​_​render ↗：将 UI 图<br/>像切片排入对应相机透明阶段。" }
+  n6@{ shape: rounded, label: "**queue​_​ui​_​slices**<br/>来自crate:bevy​_​ui​_​render ↗：将 UI 图<br/>像切片排入对应相机透明阶段。" }
   class n6 node_system
   class n6 external_node
   n7@{ shape: lin-rect, label: "**QueueLineGizmos3d**<br/>来自crate:bevy​_​gizmos​_​render ↗：组织<br/>二维和三维调试线条排队。" }
   class n7 node_system_set
   class n7 external_node
-  n8@{ shape: rounded, label: "**bevy​_​egui::render::systems::queue​_​**<br/>**pipelines​_​system**<br/>来自crate:bevy​_​egui ↗：按目标格式选<br/>择 Egui 渲染管线。" }
+  n8@{ shape: rounded, label: "**queue​_​pipelines​_​system**<br/>来自crate:bevy​_​egui ↗：按目标格式选<br/>择 Egui 渲染管线。" }
   class n8 node_system
   class n8 external_node
-  n9@{ shape: rounded, label: "**bevy​_​ui​_​render::box​_​shadow::queue​_​**<br/>**shadows**<br/>来自crate:bevy​_​ui​_​render ↗：为提取<br/>的 UI 阴影选择匹配目标格式和阴影采样数<br/>的管线，按节点堆叠顺序及阴影层偏移加入透<br/>明 UI 绘制阶段。" }
+  n9@{ shape: rounded, label: "**queue​_​shadows**<br/>来自crate:bevy​_​ui​_​render ↗：为提取<br/>的 UI 阴影选择匹配目标格式和阴影采样数<br/>的管线，按节点堆叠顺序及阴影层偏移加入透<br/>明 UI 绘制阶段。" }
   class n9 node_system
   class n9 external_node
-  n10@{ shape: rounded, label: "**bevy​_​pbr::atmosphere::resources::**<br/>**queue​_​render​_​sky​_​pipelines**<br/>来自crate:bevy​_​pbr ↗：按多重采样和混<br/>合能力选择天空管线。" }
+  n10@{ shape: rounded, label: "**queue​_​render​_​sky​_​pipelines**<br/>来自crate:bevy​_​pbr ↗：按多重采样和混<br/>合能力选择天空管线。" }
   class n10 node_system
   class n10 external_node
-  n11@{ shape: rounded, label: "**bevy​_​egui::render::systems::queue​_​**<br/>**bind​_​groups​_​system**<br/>来自crate:bevy​_​egui ↗：建立 Egui 纹<br/>理与采样器绑定。" }
+  n11@{ shape: rounded, label: "**queue​_​bind​_​groups​_​system**<br/>来自crate:bevy​_​egui ↗：建立 Egui 纹<br/>理与采样器绑定。" }
   class n11 node_system
   class n11 external_node
   n12@{ shape: lin-rect, label: "**QueueMeshes**<br/>组织渲染数据准备与绘制排队。" }
   class n12 node_system_set
-  n13@{ shape: rounded, label: "**bevy​_​core​_​pipeline::oit::resolve::**<br/>**queue​_​oit​_​resolve​_​pipeline**<br/>来自crate:bevy​_​core​_​pipeline ↗：按<br/>OIT 相机设置缓存透明解析管线。" }
+  n13@{ shape: rounded, label: "**queue​_​oit​_​resolve​_​pipeline**<br/>来自crate:bevy​_​core​_​pipeline ↗：按<br/>OIT 相机设置缓存透明解析管线。" }
   class n13 node_system
   class n13 external_node
   n14@{ shape: lin-rect, label: "**PhaseSort**<br/>组织渲染数据准备与绘制排队。" }

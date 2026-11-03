@@ -44,51 +44,51 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​pbr::prepass::queue​_​prepass​_​**<br/>**material​_​meshes**<br/>把有效材质网格分入预通道或延迟几何阶段。" }
+  n0@{ shape: rounded, label: "**queue​_​prepass​_​material​_​meshes**<br/>把有效材质网格分入预通道或延迟几何阶段。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**prepass::**<br/>**SpecializedPrepassMaterialPipelineCa**<br/>**che**<br/>按视图缓存材质预通道的专用管线。" }
+  n1@{ shape: cyl, label: "**SpecializedPrepassMaterialPipelineCa**<br/>**che**<br/>按视图缓存材质预通道的专用管线。" }
   class n1 node_resource
   n2@{ shape: lin-rect, label: "**QueueMeshes**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
   class n2 node_system_set
   class n2 external_node
-  n3@{ shape: cyl, label: "**bevy​_​render::erased​_​render​_​asset::**<br/>**ErasedRenderAssets#lt;material::**<br/>**PreparedMaterial#gt;**<br/>来自crate:bevy​_​render ↗：存储源资产对<br/>应的类型擦除 GPU 表示。" }
+  n3@{ shape: cyl, label: "**ErasedRenderAssets#lt;PreparedMaterial#gt;**<br/>来自crate:bevy​_​render ↗：存储源资产对<br/>应的类型擦除 GPU 表示。" }
   class n3 node_resource
   class n3 external_node
-  n4@{ shape: cyl, label: "**render::mesh::RenderMeshInstances**<br/>保存 CPU 或 GPU 构建所需的网格实例。" }
+  n4@{ shape: cyl, label: "**RenderMeshInstances**<br/>保存 CPU 或 GPU 构建所需的网格实例。" }
   class n4 node_resource
-  n5@{ shape: fr-rect, label: "**prepass::PrepassPlugin**<br/>安装材质预通道处理。" }
+  n5@{ shape: fr-rect, label: "**PrepassPlugin**<br/>安装材质预通道处理。" }
   class n5 node_plugin
-  n6@{ shape: cyl, label: "**prepass::**<br/>**PendingPrepassMeshMaterialQueues**<br/>保留材质未就绪的预通道网格。" }
+  n6@{ shape: cyl, label: "**PendingPrepassMeshMaterialQueues**<br/>保留材质未就绪的预通道网格。" }
   class n6 node_resource
-  n7@{ shape: cyl, label: "**material::RenderMaterialInstances**<br/>保存提取后的实体材质实例。" }
+  n7@{ shape: cyl, label: "**RenderMaterialInstances**<br/>保存提取后的实体材质实例。" }
   class n7 node_resource
-  n8@{ shape: cyl, label: "**bevy​_​render::render​_​phase::**<br/>**ViewBinnedRenderPhases#lt;prepass::**<br/>**AlphaMask3dPrepass#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图按<br/>分桶组织的绘制指令。" }
+  n8@{ shape: cyl, label: "**ViewBinnedRenderPhases#lt;AlphaMask3dPr**<br/>**epass#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图按<br/>分桶组织的绘制指令。" }
   class n8 node_resource
   class n8 external_node
-  n9@{ shape: cyl, label: "**mesh::allocator::MeshAllocator**<br/>来自crate:bevy​_​render ↗：分配并管理网<br/>格顶点和索引 GPU 缓冲。" }
+  n9@{ shape: cyl, label: "**MeshAllocator**<br/>来自crate:bevy​_​render ↗：分配并管理网<br/>格顶点和索引 GPU 缓冲。" }
   class n9 node_resource
   class n9 external_node
-  n10@{ shape: rounded, label: "**view::visibility::**<br/>**RenderVisibleEntities**<br/>来自crate:bevy​_​render ↗：按类别保存视<br/>图的可见实体及变化列表。" }
+  n10@{ shape: rounded, label: "**RenderVisibleEntities**<br/>来自crate:bevy​_​render ↗：按类别保存视<br/>图的可见实体及变化列表。" }
   class n10 node_component
   class n10 external_node
-  n11@{ shape: cyl, label: "**bevy​_​render::batching::gpu​_​**<br/>**preprocessing::**<br/>**GpuPreprocessingSupport**<br/>来自crate:bevy​_​render ↗：记录设备可采<br/>用的 GPU 预处理级别。" }
+  n11@{ shape: cyl, label: "**GpuPreprocessingSupport**<br/>来自crate:bevy​_​render ↗：记录设备可采<br/>用的 GPU 预处理级别。" }
   class n11 node_resource
   class n11 external_node
-  n12@{ shape: cyl, label: "**bevy​_​render::render​_​phase::**<br/>**ViewBinnedRenderPhases#lt;prepass::**<br/>**Opaque3dPrepass#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图按<br/>分桶组织的绘制指令。" }
+  n12@{ shape: cyl, label: "**ViewBinnedRenderPhases#lt;Opaque3dPrepa**<br/>**ss#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图按<br/>分桶组织的绘制指令。" }
   class n12 node_resource
   class n12 external_node
-  n13@{ shape: cyl, label: "**bevy​_​render::render​_​phase::**<br/>**ViewBinnedRenderPhases#lt;deferred::**<br/>**Opaque3dDeferred#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图按<br/>分桶组织的绘制指令。" }
+  n13@{ shape: cyl, label: "**ViewBinnedRenderPhases#lt;Opaque3dDefer**<br/>**red#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图按<br/>分桶组织的绘制指令。" }
   class n13 node_resource
   class n13 external_node
-  n14@{ shape: rounded, label: "**bevy​_​render::view::ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
+  n14@{ shape: rounded, label: "**ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
   class n14 node_component
   class n14 external_node
-  n15@{ shape: cyl, label: "**bevy​_​render::render​_​phase::**<br/>**ViewBinnedRenderPhases#lt;deferred::**<br/>**AlphaMask3dDeferred#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图按<br/>分桶组织的绘制指令。" }
+  n15@{ shape: cyl, label: "**ViewBinnedRenderPhases#lt;AlphaMask3dDe**<br/>**ferred#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图按<br/>分桶组织的绘制指令。" }
   class n15 node_resource
   class n15 external_node
   n16@{ shape: notch-rect, label: "**Local · mesh​_​instances​_​queued​_​this​_​**<br/>**iteration​_​scratch​_​space**<br/>去重材质预通道本轮需要排队的网格实例。" }
   class n16 node_local
-  n17@{ shape: cyl, label: "**camera::DirtySpecializations**<br/>来自crate:bevy​_​render ↗：记录需刷新或<br/>移除管线专用化的对象与视图。" }
+  n17@{ shape: cyl, label: "**DirtySpecializations**<br/>来自crate:bevy​_​render ↗：记录需刷新或<br/>移除管线专用化的对象与视图。" }
   class n17 node_resource
   class n17 external_node
   n1 e0@--> n0

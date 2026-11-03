@@ -38,21 +38,21 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​render::init​_​gpu​_​resource#lt;bevy​_​**<br/>**pbr::ssao::SsaoPipelines#gt;**<br/>构造并插入渲染所需资源。" }
+  n0@{ shape: rounded, label: "**init​_​gpu​_​resource**<br/>构造并插入渲染所需资源。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**bevy​_​asset::AssetServer**<br/>来自crate:bevy​_​asset ↗：加载资产并追<br/>踪加载状态。" }
+  n1@{ shape: cyl, label: "**AssetServer**<br/>来自crate:bevy​_​asset ↗：加载资产并追<br/>踪加载状态。" }
   class n1 node_resource
   class n1 external_node
-  n2@{ shape: cyl, label: "**bevy​_​render::renderer::RenderDevice**<br/>创建渲染和计算所需的 GPU 资源。" }
+  n2@{ shape: cyl, label: "**RenderDevice**<br/>创建渲染和计算所需的 GPU 资源。" }
   class n2 node_resource
-  n3@{ shape: cyl, label: "**ssao::SsaoPipelines**<br/>来自crate:bevy​_​pbr ↗：汇集 SSAO 管<br/>线、纹理接口和采样器。" }
+  n3@{ shape: cyl, label: "**SsaoPipelines**<br/>来自crate:bevy​_​pbr ↗：汇集 SSAO 管<br/>线、纹理接口和采样器。" }
   class n3 node_resource
   class n3 external_node
-  n4@{ shape: cyl, label: "**bevy​_​render::renderer::RenderAdapter**<br/>标识渲染使用的物理 GPU 适配器。" }
+  n4@{ shape: cyl, label: "**RenderAdapter**<br/>标识渲染使用的物理 GPU 适配器。" }
   class n4 node_resource
-  n5@{ shape: cyl, label: "**bevy​_​render::renderer::RenderQueue**<br/>将资源写入和命令异步提交给 GPU。" }
+  n5@{ shape: cyl, label: "**RenderQueue**<br/>将资源写入和命令异步提交给 GPU。" }
   class n5 node_resource
-  n6@{ shape: cyl, label: "**bevy​_​render::render​_​resource::**<br/>**PipelineCache**<br/>缓存 GPU 渲染、计算管线与待创建队列。" }
+  n6@{ shape: cyl, label: "**PipelineCache**<br/>缓存 GPU 渲染、计算管线与待创建队列。" }
   class n6 node_resource
   n1 e0@--> n0
   class e0 edge_read

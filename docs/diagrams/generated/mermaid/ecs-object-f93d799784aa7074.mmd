@@ -38,13 +38,13 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**volumetric​_​fog::render::**<br/>**ViewVolumetricFogPipelines**<br/>保存有无密度纹理两种体积雾管线。" }
+  n0@{ shape: rounded, label: "**ViewVolumetricFogPipelines**<br/>保存有无密度纹理两种体积雾管线。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​pbr::volumetric​_​fog::render::**<br/>**volumetric​_​fog**<br/>结合深度与光照逐个绘制视图中的雾体。" }
+  n1@{ shape: rounded, label: "**volumetric​_​fog**<br/>结合深度与光照逐个绘制视图中的雾体。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​pbr::volumetric​_​fog::render::**<br/>**prepare​_​volumetric​_​fog​_​pipelines**<br/>为体积雾视图准备有密度纹理和无密度纹理两<br/>类管线。" }
+  n2@{ shape: rounded, label: "**prepare​_​volumetric​_​fog​_​pipelines**<br/>为体积雾视图准备有密度纹理和无密度纹理两<br/>类管线。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​pbr::volumetric​_​fog::render::**<br/>**extract​_​volumetric​_​fog**<br/>从主世界提取体积雾、雾体积及体积光配置。" }
+  n3@{ shape: rounded, label: "**extract​_​volumetric​_​fog**<br/>从主世界提取体积雾、雾体积及体积光配置。" }
   class n3 node_system
   n0 e0@--> n1
   class e0 edge_read

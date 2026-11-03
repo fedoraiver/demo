@@ -38,11 +38,11 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**#lt;bevy​_​gizmos::aabb::AabbGizmoPlugin**<br/>**as bevy​_​app::plugin::Plugin#gt;::**<br/>**build::{{closure}}**<br/>判断是否绘制全部包围盒。" }
+  n0@{ shape: rounded, label: "**build::{{closure}}**<br/>判断是否绘制全部包围盒。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**config::GizmoConfigStore**<br/>按配置组保存调试图元绘制设置。" }
+  n1@{ shape: cyl, label: "**GizmoConfigStore**<br/>按配置组保存调试图元绘制设置。" }
   class n1 node_resource
-  n2@{ shape: rounded, label: "**bevy​_​gizmos::aabb::draw​_​all​_​aabbs**<br/>绘制未单独标记实体的可见 AABB 调试线<br/>框。" }
+  n2@{ shape: rounded, label: "**draw​_​all​_​aabbs**<br/>绘制未单独标记实体的可见 AABB 调试线<br/>框。" }
   class n2 node_system
   n1 e0@--> n0
   class e0 edge_read

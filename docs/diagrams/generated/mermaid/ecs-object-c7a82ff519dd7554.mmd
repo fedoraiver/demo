@@ -38,13 +38,13 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**storage::RenderChangedShaderBuffers**<br/>记录底层 GPU 缓冲身份已变化的着色器缓<br/>冲。" }
+  n0@{ shape: cyl, label: "**RenderChangedShaderBuffers**<br/>记录底层 GPU 缓冲身份已变化的着色器缓<br/>冲。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​render::material​_​bind​_​groups::**<br/>**prepare​_​material​_​bind​_​groups**<br/>重建本帧变化材质所需的 GPU 绑定组。" }
+  n1@{ shape: rounded, label: "**prepare​_​material​_​bind​_​groups**<br/>重建本帧变化材质所需的 GPU 绑定组。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​render::storage::clear​_​changed​_​**<br/>**shader​_​buffers**<br/>清空新帧着色器缓冲的变化记录。" }
+  n2@{ shape: rounded, label: "**clear​_​changed​_​shader​_​buffers**<br/>清空新帧着色器缓冲的变化记录。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​render::render​_​asset::prepare​_​**<br/>**assets#lt;bevy​_​render::storage::**<br/>**GpuShaderBuffer#gt;**<br/>在上传预算内准备资产并保留重试项。" }
+  n3@{ shape: rounded, label: "**prepare​_​assets**<br/>在上传预算内准备资产并保留重试项。" }
   class n3 node_system
   n0 e0@--> n1
   class e0 edge_read

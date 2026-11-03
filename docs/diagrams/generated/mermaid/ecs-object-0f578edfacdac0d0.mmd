@@ -41,20 +41,20 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​pbr::prepass::init​_​prepass​_​**<br/>**view​_​bind​_​group**<br/>建立预通道的空绑定组及待准备状态。" }
+  n0@{ shape: rounded, label: "**init​_​prepass​_​view​_​bind​_​group**<br/>建立预通道的空绑定组及待准备状态。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**bevy​_​pbr::prepass::init​_​prepass​_​**<br/>**pipeline**<br/>初始化带运动矢量及普通预通道的资源布局。" }
+  n1@{ shape: rounded, label: "**init​_​prepass​_​pipeline**<br/>初始化带运动矢量及普通预通道的资源布局。" }
   class n1 node_system
-  n2@{ shape: fr-rect, label: "**prepass::PrepassPipelinePlugin**<br/>建立材质预通道管线基础。" }
+  n2@{ shape: fr-rect, label: "**PrepassPipelinePlugin**<br/>建立材质预通道管线基础。" }
   class n2 node_plugin
-  n3@{ shape: cyl, label: "**bevy​_​render::render​_​resource::**<br/>**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
+  n3@{ shape: cyl, label: "**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
   class n3 node_resource
   class n3 external_node
-  n4@{ shape: cyl, label: "**prepass::PrepassViewBindGroup**<br/>保存预通道视图的资源绑定。" }
+  n4@{ shape: cyl, label: "**PrepassViewBindGroup**<br/>保存预通道视图的资源绑定。" }
   class n4 node_resource
-  n5@{ shape: cyl, label: "**prepass::PrepassPipeline**<br/>描述深度等预通道的网格渲染接口。" }
+  n5@{ shape: cyl, label: "**PrepassPipeline**<br/>描述深度等预通道的网格渲染接口。" }
   class n5 node_resource
-  n6@{ shape: cyl, label: "**bevy​_​render::renderer::RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
+  n6@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
   class n6 node_resource
   class n6 external_node
   n1 e0@-->|"先于"| n0

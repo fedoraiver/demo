@@ -45,39 +45,39 @@ flowchart LR
   classDef edge_consume stroke:#247B91,stroke-width:1.8px,stroke-dasharray:2 4
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​render::render​_​asset::extract​_​**<br/>**render​_​asset#lt;bevy​_​render::texture::**<br/>**gpu​_​image::GpuImage#gt;**<br/>按资产变化和设备恢复请求提取渲染资产。" }
+  n0@{ shape: rounded, label: "**extract​_​render​_​asset**<br/>按资产变化和设备恢复请求提取渲染资产。" }
   class n0 node_system
   n1@{ shape: lin-rect, label: "**AssetExtractionSystems**<br/>提取各 RenderAsset 类型的资产变化。" }
   class n1 node_system_set
-  n2@{ shape: lean-r, label: "**bevy​_​asset::AssetEvent#lt;image::Image#gt;**<br/>来自crate:bevy​_​asset ↗：通知指定资产<br/>及依赖发生变化。" }
+  n2@{ shape: lean-r, label: "**AssetEvent#lt;Image#gt;**<br/>来自crate:bevy​_​asset ↗：通知指定资产<br/>及依赖发生变化。" }
   class n2 node_message
   class n2 external_node
-  n3@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;bevy​_​**<br/>**asset::AssetEvent#lt;image::Image#gt;#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n3@{ shape: cyl, label: "**Messages#lt;AssetEvent#lt;Image#gt;#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n3 node_resource
   class n3 external_node
   n4@{ shape: notch-rect, label: "**Local · needs​_​extracting**<br/>去重收集本轮需要提取的渲染资产标识。" }
   class n4 node_local
-  n5@{ shape: cyl, label: "**render​_​asset::**<br/>**CachedExtractRenderAssetSystemState#lt;**<br/>**texture::gpu​_​image::GpuImage#gt;**<br/>缓存渲染资产提取的参数状态。" }
+  n5@{ shape: cyl, label: "**CachedExtractRenderAssetSystemState#lt;**<br/>**GpuImage#gt;**<br/>缓存渲染资产提取的参数状态。" }
   class n5 node_resource
-  n6@{ shape: cyl, label: "**bevy​_​render::render​_​asset::**<br/>**RenderAssets#lt;bevy​_​render::texture::**<br/>**GpuImage#gt;**<br/>按源资产身份保存 GPU 渲染表示。" }
+  n6@{ shape: cyl, label: "**RenderAssets#lt;GpuImage#gt;**<br/>按源资产身份保存 GPU 渲染表示。" }
   class n6 node_resource
-  n7@{ shape: lean-r, label: "**bevy​_​ecs::lifecycle::**<br/>**RemovedComponentEntity**<br/>来自crate:bevy​_​ecs ↗：记录发生组件移<br/>除的实体。" }
+  n7@{ shape: lean-r, label: "**RemovedComponentEntity**<br/>来自crate:bevy​_​ecs ↗：记录发生组件移<br/>除的实体。" }
   class n7 node_message
   class n7 external_node
-  n8@{ shape: cyl, label: "**extract​_​plugin::MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
+  n8@{ shape: cyl, label: "**MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
   class n8 node_resource
   class n8 external_node
-  n9@{ shape: cyl, label: "**render​_​asset::**<br/>**RenderAssetsToReExtract#lt;texture::**<br/>**gpu​_​image::GpuImage#gt;**<br/>记录设备恢复后需重建的渲染资产。" }
+  n9@{ shape: cyl, label: "**RenderAssetsToReExtract#lt;GpuImage#gt;**<br/>记录设备恢复后需重建的渲染资产。" }
   class n9 node_resource
-  n10@{ shape: cyl, label: "**bevy​_​asset::Assets#lt;image::Image#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
+  n10@{ shape: cyl, label: "**Assets#lt;Image#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
   class n10 node_resource
   class n10 external_node
-  n11@{ shape: cyl, label: "**render​_​asset::**<br/>**ExtractedAssets#lt;texture::gpu​_​image::**<br/>**GpuImage#gt;**<br/>暂存本帧渲染资产的提取与增删记录。" }
+  n11@{ shape: cyl, label: "**ExtractedAssets#lt;GpuImage#gt;**<br/>暂存本帧渲染资产的提取与增删记录。" }
   class n11 node_resource
-  n12@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;bevy​_​**<br/>**ecs::lifecycle::**<br/>**RemovedComponentEntity#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n12@{ shape: cyl, label: "**Messages#lt;RemovedComponentEntity#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n12 node_resource
   class n12 external_node
-  n13@{ shape: rounded, label: "**render​_​asset::**<br/>**CachedExtractRenderAssetSystemState#lt;**<br/>**texture::gpu​_​image::GpuImage#gt;**<br/>缓存渲染资产提取的参数状态。" }
+  n13@{ shape: rounded, label: "**CachedExtractRenderAssetSystemState#lt;**<br/>**GpuImage#gt;**<br/>缓存渲染资产提取的参数状态。" }
   class n13 node_component
   n1 e0@-->|"集合成员"| n0
   class e0 edge_set_membership

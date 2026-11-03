@@ -39,15 +39,15 @@ flowchart LR
   classDef edge_consume stroke:#247B91,stroke-width:1.8px,stroke-dasharray:2 4
   classDef edge_emit stroke:#B66B2D,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: lean-r, label: "**bevy​_​picking::events::PointerPress**<br/>通知目标上的指针按钮按下及连按次数。" }
+  n0@{ shape: lean-r, label: "**PointerPress**<br/>通知目标上的指针按钮按下及连按次数。" }
   class n0 node_message
-  n1@{ shape: rounded, label: "**demo::ui::volume::sample​_​slider​_​**<br/>**pointer**<br/>来自ui ↗：Enhanced Input 负责菜单语义<br/>动作，但无法表示 UI 命中后的局部绝对横<br/>坐标。" }
+  n1@{ shape: rounded, label: "**sample​_​slider​_​pointer**<br/>来自ui ↗：Enhanced Input 负责菜单语义<br/>动作，但无法表示 UI 命中后的局部绝对横<br/>坐标。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**demo::ui::pointer::pointer​_​**<br/>**interaction**<br/>来自ui ↗：Bevy 原生 UI 已完成按钮命<br/>中；这里只读取缓冲的按下事件，不另读<br/>MouseButton。" }
+  n2@{ shape: rounded, label: "**pointer​_​interaction**<br/>来自ui ↗：Bevy 原生 UI 已完成按钮命<br/>中；这里只读取缓冲的按下事件，不另读<br/>MouseButton。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​picking::events::pointer​_​events**<br/>根据悬停与按钮状态派发指针交互事件。" }
+  n3@{ shape: rounded, label: "**pointer​_​events**<br/>根据悬停与按钮状态派发指针交互事件。" }
   class n3 node_system
   n0 e0@--> n1
   class e0 edge_consume

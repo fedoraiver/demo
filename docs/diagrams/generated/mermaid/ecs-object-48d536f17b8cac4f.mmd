@@ -38,11 +38,11 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**item​_​interaction::components::**<br/>**CarryBaseMass**<br/>独立箱根不属于人物的 Children，显式保存<br/>原质量供挂接和解除时恢复。" }
+  n0@{ shape: rounded, label: "**CarryBaseMass**<br/>独立箱根不属于人物的 Children，显式保存<br/>原质量供挂接和解除时恢复。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**demo::item​_​interaction::lifecycle::**<br/>**restore​_​empty​_​holder​_​mass**<br/>箱实体被销毁时关系钩子会清空反向索引，人<br/>物仍存活则归还其原质量。" }
+  n1@{ shape: rounded, label: "**restore​_​empty​_​holder​_​mass**<br/>箱实体被销毁时关系钩子会清空反向索引，人<br/>物仍存活则归还其原质量。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**demo::item​_​interaction::attachment::**<br/>**finish​_​attachments**<br/>持握期间只保留人物的 Dynamic，碰到箱子<br/>即对同一刚体求解，内部形状自动互不碰撞。" }
+  n2@{ shape: rounded, label: "**finish​_​attachments**<br/>持握期间只保留人物的 Dynamic，碰到箱子<br/>即对同一刚体求解，内部形状自动互不碰撞。" }
   class n2 node_system
   n1 e0@--- n0
   class e0 edge_read

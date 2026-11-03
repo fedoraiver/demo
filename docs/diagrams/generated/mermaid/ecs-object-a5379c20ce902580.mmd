@@ -38,11 +38,11 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**prepass::DepthPrepassDoubleBuffer**<br/>保留可查询的上一帧深度预通道结果。" }
+  n0@{ shape: rounded, label: "**DepthPrepassDoubleBuffer**<br/>保留可查询的上一帧深度预通道结果。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​core​_​pipeline::core​_​3d::**<br/>**extract​_​camera​_​prepass​_​phase**<br/>同步三维相机的预通道标记与渲染阶段。" }
+  n1@{ shape: rounded, label: "**extract​_​camera​_​prepass​_​phase**<br/>同步三维相机的预通道标记与渲染阶段。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​core​_​pipeline::core​_​3d::**<br/>**prepare​_​prepass​_​textures**<br/>按三维预通道配置分配各类输出纹理。" }
+  n2@{ shape: rounded, label: "**prepare​_​prepass​_​textures**<br/>按三维预通道配置分配各类输出纹理。" }
   class n2 node_system
   n1 e0@-->|"插入"| n0
   class e0 edge_write

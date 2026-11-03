@@ -39,15 +39,15 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​render::init​_​gpu​_​resource#lt;bevy​_​**<br/>**render::render​_​resource::texture::**<br/>**DefaultImageSampler#gt;**<br/>构造并插入渲染所需资源。" }
+  n0@{ shape: rounded, label: "**init​_​gpu​_​resource**<br/>构造并插入渲染所需资源。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**bevy​_​render::renderer::RenderDevice**<br/>创建渲染和计算所需的 GPU 资源。" }
+  n1@{ shape: cyl, label: "**RenderDevice**<br/>创建渲染和计算所需的 GPU 资源。" }
   class n1 node_resource
-  n2@{ shape: rounded, label: "**bevy​_​render::init​_​gpu​_​resource#lt;bevy​_​**<br/>**render::texture::fallback​_​image::**<br/>**FallbackImage#gt;**<br/>构造并插入渲染所需资源。" }
+  n2@{ shape: rounded, label: "**init​_​gpu​_​resource**<br/>构造并插入渲染所需资源。" }
   class n2 node_system
-  n3@{ shape: cyl, label: "**render​_​resource::texture::**<br/>**DefaultImageSamplerDescriptor**<br/>保存可供设备恢复的默认采样配置。" }
+  n3@{ shape: cyl, label: "**DefaultImageSamplerDescriptor**<br/>保存可供设备恢复的默认采样配置。" }
   class n3 node_resource
-  n4@{ shape: cyl, label: "**render​_​resource::texture::**<br/>**DefaultImageSampler**<br/>保存渲染器初始化时建立的默认图像采样器。" }
+  n4@{ shape: cyl, label: "**DefaultImageSampler**<br/>保存渲染器初始化时建立的默认图像采样器。" }
   class n4 node_resource
   n1 e0@--> n0
   class e0 edge_read

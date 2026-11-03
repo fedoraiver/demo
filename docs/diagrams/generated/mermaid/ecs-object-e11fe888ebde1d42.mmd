@@ -41,13 +41,13 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​time::delayed​_​commands::check​_​**<br/>**delayed​_​command​_​queues**<br/>提交到期的延迟命令并删除队列实体。" }
+  n0@{ shape: rounded, label: "**check​_​delayed​_​command​_​queues**<br/>提交到期的延迟命令并删除队列实体。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**delayed​_​commands::**<br/>**DelayedCommandQueue**<br/>保存到达指定启动后时间才提交的命令队列" }
+  n1@{ shape: rounded, label: "**DelayedCommandQueue**<br/>保存到达指定启动后时间才提交的命令队列" }
   class n1 node_component
   n2@{ shape: fr-rect, label: "**TimePlugin**<br/>维护应用时间与步长。" }
   class n2 node_plugin
-  n3@{ shape: cyl, label: "**time::Time**<br/>保存时钟上下文、帧间隔及累计时间" }
+  n3@{ shape: cyl, label: "**Time**<br/>保存时钟上下文、帧间隔及累计时间" }
   class n3 node_resource
   n0 e0@-->|"可变访问"| n1
   class e0 edge_write

@@ -91,6 +91,34 @@ test('cluster edge membership resolves Graphviz edge IDs independently of output
   assert.deepEqual(value.edges[value.subgraphs[0].edges[0]], { tail: 'a', head: 'b', attributes: {} });
 });
 
+test('themed default and filtered labels share short titles while original names, escapes and identities remain unchanged', async () => {
+  const full = 'bevy_asset::Assets<dep::First>::asset_events_condition';
+  const second = 'bevy_asset::Assets<dep::Second>::asset_events_condition';
+  const source = await model('digraph { subgraph cluster_set { label="ExitSchedules(PhantomData<demo::game_flow::AppState>)";'
+    + 'a[label="Assets<First>::asset_events_condition\\nIn multiple sets, demo::Sets",tooltip="' + full + '"];'
+    + 'b[label="Assets<Second>::asset_events_condition",tooltip="' + second + '"]; }'
+    + 'context[label="SystemTypeSet:bevy_pbr::generate::generate_environment_map_light<dep::T>"]; a -> b; }');
+  const before = structuredClone(source), plain = scheduleGraphInput(source), themed = scheduleGraphInput(source, SCHEDULE_THEME);
+  const a = themed.nodes.find(node => node.name === 'a');
+  assert.equal(a.attributes.label, 'asset_events_condition\nIn multiple sets, Sets');
+  assert.equal(a.attributes.tooltip, full);
+  assert.equal(themed.nodes.find(node => node.name === 'b').attributes.label, 'asset_events_condition');
+  assert.equal(themed.nodes.find(node => node.name === 'context').attributes.label, 'SystemTypeSet:generate_environment_map_light');
+  assert.match(themed.subgraphs[0].graphAttributes.label.html, /ExitSchedules\(PhantomData&lt;AppState&gt;\)/);
+  assert.doesNotMatch(themed.subgraphs[0].graphAttributes.label.html, /demo::/);
+  const shortPadding = Math.ceil(8 + 'ExitSchedules(PhantomData<AppState>)'.length * 14 * 0.025);
+  assert.ok(themed.subgraphs[0].graphAttributes.label.html.includes(`<TD WIDTH="${shortPadding}">`));
+  assert.equal(Number(a.attributes.margin.split(',')[0]), (8 + 'In multiple sets, Sets'.length * 14 * 0.025) / 72);
+  const filtered = scheduleGraphInput(filterScheduleGraph(source, { includeNames: [full] }), SCHEDULE_THEME);
+  assert.deepEqual(filtered.nodes.find(node => node.name === 'a'), a);
+  assert.equal(filtered.subgraphs[0].graphAttributes.label.html, themed.subgraphs[0].graphAttributes.label.html);
+  assert.deepEqual(plain.nodes.map(node => [node.name, node.attributes]), source.nodes.map(node => [node.name, node.attributes]));
+  assert.deepEqual(plain.subgraphs[0].graphAttributes, source.subgraphs[0].attributes);
+  const roundtrip = scheduleGraphFromJson(JSON.parse((await renderer).renderString(plain, { format: 'dot_json' })));
+  assert.equal(scheduleGraphFacts(roundtrip), scheduleGraphFacts(source));
+  assert.deepEqual(source, before);
+});
+
 test('theme is applied before layout to every visible node and cluster while preserving invisible markers', async () => {
   const source = await model('digraph { bgcolor=black; subgraph cluster_a { fontcolor=white; fillcolor=gray; m[style=invis,shape=point,label=""]; a[fontname=Times,tooltip="demo::a"]; } b[tooltip="demo::b"]; a -> b[color=yellow]; }');
   const input = scheduleGraphInput(source, SCHEDULE_THEME);
@@ -108,16 +136,23 @@ test('theme is applied before layout to every visible node and cluster while pre
   assert.match(scheduleGraphInput(escapedModel, SCHEDULE_THEME).subgraphs[0].graphAttributes.label.html, /State&lt;T &amp; &quot;Quoted&quot;&gt;/);
   assert.equal(escapedModel.subgraphs[0].attributes.label, 'State<T & "Quoted">');
   assert.equal(input.edges[0].attributes.color, EDGE_STYLES.order.stroke);
-  const long = { name: 'long', attributes: { tooltip: 'demo::long', label: 'generic<' + 'a'.repeat(480) + '>\\nshort' } };
+  const long = { name: 'long', attributes: { label: 'generic<' + 'a'.repeat(480) + '>\\nshort' } };
   assert.equal(scheduleLabelLongestLine(long), 489);
   const longModel = { ...source, nodes: [...source.nodes, long] };
   const longInput = scheduleGraphInput(longModel, SCHEDULE_THEME).nodes.find(node => node.name === 'long');
-  assert.equal(Number(longInput.attributes.margin.split(',')[0]), (8 + 489 * 14 * 0.02) / 72);
+  assert.equal(Number(longInput.attributes.margin.split(',')[0]), (8 + 489 * 14 * 0.025) / 72);
   assert.ok(Number(longInput.attributes.margin.split(',')[0]) > Number(input.nodes.find(node => node.name === 'a').attributes.margin.split(',')[0]));
   const viz = await renderer;
   const svg = normalizeScheduleSvg(viz.renderString(input, { format: 'svg' }), 'schedule-theme').svg;
   assert.match(svg, /fill="#F6F8FB"/i);
   assert.doesNotMatch(svg, /font-family="Times/);
+});
+
+test('explicitly empty presentation labels remain empty for unlabelled native guide samples', async () => {
+  const source = await model('digraph { subgraph cluster_empty { label=""; a[label="",tooltip="demo::system"]; } }');
+  const input = scheduleGraphInput(source, SCHEDULE_THEME);
+  assert.equal(input.nodes[0].attributes.label, '');
+  assert.doesNotMatch(input.subgraphs[0].graphAttributes.label.html, /cluster_empty|demo::system/);
 });
 
 test('the two real implicit contexts are preserved without inventing a filterable system name', async () => {

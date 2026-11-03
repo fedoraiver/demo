@@ -37,57 +37,57 @@ flowchart LR
   classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**bevy​_​render::texture::TextureCache**<br/>复用渲染中反复创建的临时纹理。" }
+  n0@{ shape: cyl, label: "**TextureCache**<br/>复用渲染中反复创建的临时纹理。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​render::init​_​gpu​_​resource#lt;bevy​_​**<br/>**render::texture::texture​_​cache::**<br/>**TextureCache#gt;**<br/>构造并插入渲染所需资源。" }
+  n1@{ shape: rounded, label: "**init​_​gpu​_​resource**<br/>构造并插入渲染所需资源。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​pbr::render::light::prepare​_​**<br/>**lights**<br/>来自crate:bevy​_​pbr ↗：准备视图光照参<br/>数、阴影视图和阴影贴图。" }
+  n2@{ shape: rounded, label: "**prepare​_​lights**<br/>来自crate:bevy​_​pbr ↗：准备视图光照参<br/>数、阴影视图和阴影贴图。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​core​_​pipeline::deferred::copy​_​**<br/>**lighting​_​id::prepare​_​deferred​_​**<br/>**lighting​_​id​_​textures**<br/>来自crate:bevy​_​core​_​pipeline ↗：为延<br/>迟预通道相机分配光照标识深度纹理。" }
+  n3@{ shape: rounded, label: "**prepare​_​deferred​_​lighting​_​id​_​**<br/>**textures**<br/>来自crate:bevy​_​core​_​pipeline ↗：为延<br/>迟预通道相机分配光照标识深度纹理。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**bevy​_​core​_​pipeline::core​_​2d::**<br/>**prepare​_​core​_​2d​_​depth​_​textures**<br/>来自crate:bevy​_​core​_​pipeline ↗：为有<br/>效二维视图准备共享目标深度纹理。" }
+  n4@{ shape: rounded, label: "**prepare​_​core​_​2d​_​depth​_​textures**<br/>来自crate:bevy​_​core​_​pipeline ↗：为有<br/>效二维视图准备共享目标深度纹理。" }
   class n4 node_system
   class n4 external_node
-  n5@{ shape: rounded, label: "**bevy​_​pbr::cluster::gpu::prepare​_​**<br/>**cluster​_​dummy​_​textures**<br/>来自crate:bevy​_​pbr ↗：为聚簇光栅通道<br/>准备视口占位纹理。" }
+  n5@{ shape: rounded, label: "**prepare​_​cluster​_​dummy​_​textures**<br/>来自crate:bevy​_​pbr ↗：为聚簇光栅通道<br/>准备视口占位纹理。" }
   class n5 node_system
   class n5 external_node
-  n6@{ shape: rounded, label: "**bevy​_​pbr::transmission::texture::**<br/>**prepare​_​core​_​3d​_​transmission​_​**<br/>**textures**<br/>来自crate:bevy​_​pbr ↗：为需要多步透射<br/>的视图准备场景颜色拷贝纹理。" }
+  n6@{ shape: rounded, label: "**prepare​_​core​_​3d​_​transmission​_​**<br/>**textures**<br/>来自crate:bevy​_​pbr ↗：为需要多步透射<br/>的视图准备场景颜色拷贝纹理。" }
   class n6 node_system
   class n6 external_node
-  n7@{ shape: rounded, label: "**bevy​_​render::texture::texture​_​**<br/>**cache::update​_​texture​_​cache​_​system**<br/>淘汰纹理缓存中长期未使用的纹理。" }
+  n7@{ shape: rounded, label: "**update​_​texture​_​cache​_​system**<br/>淘汰纹理缓存中长期未使用的纹理。" }
   class n7 node_system
-  n8@{ shape: rounded, label: "**bevy​_​core​_​pipeline::mip​_​generation::**<br/>**experimental::depth::prepare​_​view​_​**<br/>**depth​_​pyramids**<br/>来自crate:bevy​_​core​_​pipeline ↗：为遮<br/>挡剔除视图维护深度金字塔。" }
+  n8@{ shape: rounded, label: "**prepare​_​view​_​depth​_​pyramids**<br/>来自crate:bevy​_​core​_​pipeline ↗：为遮<br/>挡剔除视图维护深度金字塔。" }
   class n8 node_system
   class n8 external_node
-  n9@{ shape: rounded, label: "**bevy​_​anti​_​alias::taa::prepare​_​taa​_​**<br/>**history​_​textures**<br/>来自crate:bevy​_​anti​_​alias ↗：按帧奇<br/>偶为 TAA 轮换读写历史纹理。" }
+  n9@{ shape: rounded, label: "**prepare​_​taa​_​history​_​textures**<br/>来自crate:bevy​_​anti​_​alias ↗：按帧奇<br/>偶为 TAA 轮换读写历史纹理。" }
   class n9 node_system
   class n9 external_node
-  n10@{ shape: rounded, label: "**bevy​_​post​_​process::bloom::prepare​_​**<br/>**bloom​_​textures**<br/>来自crate:bevy​_​post​_​process ↗：按视<br/>口比例分配 Bloom 多级纹理。" }
+  n10@{ shape: rounded, label: "**prepare​_​bloom​_​textures**<br/>来自crate:bevy​_​post​_​process ↗：按视<br/>口比例分配 Bloom 多级纹理。" }
   class n10 node_system
   class n10 external_node
-  n11@{ shape: rounded, label: "**bevy​_​pbr::atmosphere::resources::**<br/>**prepare​_​atmosphere​_​textures**<br/>来自crate:bevy​_​pbr ↗：按大气设置准备<br/>四类查找纹理。" }
+  n11@{ shape: rounded, label: "**prepare​_​atmosphere​_​textures**<br/>来自crate:bevy​_​pbr ↗：按大气设置准备<br/>四类查找纹理。" }
   class n11 node_system
   class n11 external_node
-  n12@{ shape: rounded, label: "**bevy​_​render::view::prepare​_​view​_​**<br/>**targets**<br/>为视图维护主颜色双缓冲及可选多采样目标。" }
+  n12@{ shape: rounded, label: "**prepare​_​view​_​targets**<br/>为视图维护主颜色双缓冲及可选多采样目标。" }
   class n12 node_system
-  n13@{ shape: rounded, label: "**bevy​_​anti​_​alias::smaa::prepare​_​smaa​_​**<br/>**textures**<br/>来自crate:bevy​_​anti​_​alias ↗：为<br/>SMAA 分配边缘、模板和混合权重纹理。" }
+  n13@{ shape: rounded, label: "**prepare​_​smaa​_​textures**<br/>来自crate:bevy​_​anti​_​alias ↗：为<br/>SMAA 分配边缘、模板和混合权重纹理。" }
   class n13 node_system
   class n13 external_node
-  n14@{ shape: rounded, label: "**bevy​_​post​_​process::dof::prepare​_​**<br/>**auxiliary​_​depth​_​of​_​field​_​textures**<br/>来自crate:bevy​_​post​_​process ↗：为<br/>Bokeh 景深分配第二颜色输出。" }
+  n14@{ shape: rounded, label: "**prepare​_​auxiliary​_​depth​_​of​_​field​_​**<br/>**textures**<br/>来自crate:bevy​_​post​_​process ↗：为<br/>Bokeh 景深分配第二颜色输出。" }
   class n14 node_system
   class n14 external_node
-  n15@{ shape: rounded, label: "**bevy​_​pbr::ssao::prepare​_​ssao​_​**<br/>**textures**<br/>来自crate:bevy​_​pbr ↗：为环境光遮蔽分<br/>配中间纹理及参数缓冲。" }
+  n15@{ shape: rounded, label: "**prepare​_​ssao​_​textures**<br/>来自crate:bevy​_​pbr ↗：为环境光遮蔽分<br/>配中间纹理及参数缓冲。" }
   class n15 node_system
   class n15 external_node
-  n16@{ shape: rounded, label: "**bevy​_​core​_​pipeline::core​_​3d::**<br/>**prepare​_​prepass​_​textures**<br/>来自crate:bevy​_​core​_​pipeline ↗：按三<br/>维预通道配置分配各类输出纹理。" }
+  n16@{ shape: rounded, label: "**prepare​_​prepass​_​textures**<br/>来自crate:bevy​_​core​_​pipeline ↗：按三<br/>维预通道配置分配各类输出纹理。" }
   class n16 node_system
   class n16 external_node
-  n17@{ shape: rounded, label: "**bevy​_​core​_​pipeline::core​_​3d::**<br/>**prepare​_​core​_​3d​_​depth​_​textures**<br/>来自crate:bevy​_​core​_​pipeline ↗：按共<br/>享目标准备三维深度纹理与清除方式。" }
+  n17@{ shape: rounded, label: "**prepare​_​core​_​3d​_​depth​_​textures**<br/>来自crate:bevy​_​core​_​pipeline ↗：按共<br/>享目标准备三维深度纹理与清除方式。" }
   class n17 node_system
   class n17 external_node
-  n18@{ shape: rounded, label: "**bevy​_​pbr::light​_​probe::generate::**<br/>**prepare​_​generated​_​environment​_​map​_​**<br/>**intermediate​_​textures**<br/>来自crate:bevy​_​pbr ↗：按源立方图尺寸<br/>分配完整 mip 链中间纹理。" }
+  n18@{ shape: rounded, label: "**prepare​_​generated​_​environment​_​map​_​**<br/>**intermediate​_​textures**<br/>来自crate:bevy​_​pbr ↗：按源立方图尺寸<br/>分配完整 mip 链中间纹理。" }
   class n18 node_system
   class n18 external_node
   n1 e0@-->|"插入"| n0

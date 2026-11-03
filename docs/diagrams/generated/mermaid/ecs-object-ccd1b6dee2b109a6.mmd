@@ -45,54 +45,54 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**avian3d::dynamics::solver::islands::**<br/>**sleeping::wake​_​on​_​changed**<br/>因外部位姿、速度或受力变化标记物理岛唤<br/>醒。" }
+  n0@{ shape: rounded, label: "**wake​_​on​_​changed**<br/>因外部位姿、速度或受力变化标记物理岛唤<br/>醒。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**dynamics::rigid​_​body::sleeping::**<br/>**SleepTimer**<br/>累计刚体持续低速的时间。" }
+  n1@{ shape: rounded, label: "**SleepTimer**<br/>累计刚体持续低速的时间。" }
   class n1 node_component
-  n2@{ shape: rounded, label: "**dynamics::rigid​_​body::forces::**<br/>**ConstantForce**<br/>持续施加世界空间力。" }
+  n2@{ shape: rounded, label: "**ConstantForce**<br/>持续施加世界空间力。" }
   class n2 node_component
-  n3@{ shape: rounded, label: "**dynamics::rigid​_​body::LinearVelocity**<br/>保存刚体的世界线速度。" }
+  n3@{ shape: rounded, label: "**LinearVelocity**<br/>保存刚体的世界线速度。" }
   class n3 node_component
-  n4@{ shape: rounded, label: "**avian3d::dynamics::solver::islands::**<br/>**sleeping::wake​_​all​_​islands**<br/>批量请求唤醒当前全部休眠物理岛。" }
+  n4@{ shape: rounded, label: "**wake​_​all​_​islands**<br/>批量请求唤醒当前全部休眠物理岛。" }
   class n4 node_system
-  n5@{ shape: rounded, label: "**dynamics::rigid​_​body::**<br/>**AngularVelocity**<br/>保存刚体的世界角速度。" }
+  n5@{ shape: rounded, label: "**AngularVelocity**<br/>保存刚体的世界角速度。" }
   class n5 node_component
-  n6@{ shape: rounded, label: "**dynamics::rigid​_​body::forces::**<br/>**ConstantLocalLinearAcceleration**<br/>持续施加局部空间线性加速度。" }
+  n6@{ shape: rounded, label: "**ConstantLocalLinearAcceleration**<br/>持续施加局部空间线性加速度。" }
   class n6 node_component
-  n7@{ shape: rounded, label: "**dynamics::rigid​_​body::forces::**<br/>**ConstantTorque**<br/>持续施加世界空间扭矩。" }
+  n7@{ shape: rounded, label: "**ConstantTorque**<br/>持续施加世界空间扭矩。" }
   class n7 node_component
-  n8@{ shape: rounded, label: "**dynamics::rigid​_​body::forces::**<br/>**ConstantLocalTorque**<br/>持续施加局部空间扭矩。" }
+  n8@{ shape: rounded, label: "**ConstantLocalTorque**<br/>持续施加局部空间扭矩。" }
   class n8 node_component
-  n9@{ shape: rounded, label: "**dynamics::solver::islands::**<br/>**BodyIslandNode**<br/>记录刚体在物理岛中的连接位置。" }
+  n9@{ shape: rounded, label: "**BodyIslandNode**<br/>记录刚体在物理岛中的连接位置。" }
   class n9 node_component
   n10@{ shape: lin-rect, label: "**AnonymousSet(0)**<br/>来自crate:bevy​_​ecs ↗：保存一组系统的<br/>共同配置。" }
   class n10 node_system_set
   class n10 external_node
-  n11@{ shape: rounded, label: "**dynamics::rigid​_​body::forces::**<br/>**ConstantLinearAcceleration**<br/>持续施加世界空间线性加速度。" }
+  n11@{ shape: rounded, label: "**ConstantLinearAcceleration**<br/>持续施加世界空间线性加速度。" }
   class n11 node_component
   n12@{ shape: lin-rect, label: "**Sleeping**<br/>组织一次物理模拟步的主要阶段。" }
   class n12 node_system_set
-  n13@{ shape: rounded, label: "**dynamics::rigid​_​body::sleeping::**<br/>**Sleeping**<br/>标记暂不参与模拟的休眠刚体。" }
+  n13@{ shape: rounded, label: "**Sleeping**<br/>标记暂不参与模拟的休眠刚体。" }
   class n13 node_component
-  n14@{ shape: rounded, label: "**physics​_​transform::transform::**<br/>**Position**<br/>保存刚体或碰撞体的世界位置。" }
+  n14@{ shape: rounded, label: "**Position**<br/>保存刚体或碰撞体的世界位置。" }
   class n14 node_component
-  n15@{ shape: rounded, label: "**dynamics::rigid​_​body::GravityScale**<br/>缩放单个刚体受到的重力。" }
+  n15@{ shape: rounded, label: "**GravityScale**<br/>缩放单个刚体受到的重力。" }
   class n15 node_component
-  n16@{ shape: rounded, label: "**physics​_​transform::transform::**<br/>**Rotation**<br/>保存刚体或碰撞体的世界旋转。" }
+  n16@{ shape: rounded, label: "**Rotation**<br/>保存刚体或碰撞体的世界旋转。" }
   class n16 node_component
-  n17@{ shape: cyl, label: "**dynamics::solver::islands::**<br/>**sleeping::AwakeIslandBitVec**<br/>记录哪些物理岛必须保持唤醒。" }
+  n17@{ shape: cyl, label: "**AwakeIslandBitVec**<br/>记录哪些物理岛必须保持唤醒。" }
   class n17 node_resource
-  n18@{ shape: rounded, label: "**dynamics::rigid​_​body::forces::**<br/>**ConstantLocalForce**<br/>持续施加随刚体转动的局部力。" }
+  n18@{ shape: rounded, label: "**ConstantLocalForce**<br/>持续施加随刚体转动的局部力。" }
   class n18 node_component
-  n19@{ shape: rounded, label: "**dynamics::rigid​_​body::forces::**<br/>**ConstantAngularAcceleration**<br/>持续施加世界空间角加速度。" }
+  n19@{ shape: rounded, label: "**ConstantAngularAcceleration**<br/>持续施加世界空间角加速度。" }
   class n19 node_component
-  n20@{ shape: rounded, label: "**avian3d::dynamics::solver::islands::**<br/>**sleeping::wake​_​islands​_​with​_​**<br/>**sleeping​_​disabled**<br/>让禁止休眠或已禁用的刚体所属岛保持清醒。" }
+  n20@{ shape: rounded, label: "**wake​_​islands​_​with​_​sleeping​_​disabled**<br/>让禁止休眠或已禁用的刚体所属岛保持清醒。" }
   class n20 node_system
-  n21@{ shape: rounded, label: "**dynamics::rigid​_​body::forces::**<br/>**ConstantLocalAngularAcceleration**<br/>持续施加局部空间角加速度。" }
+  n21@{ shape: rounded, label: "**ConstantLocalAngularAcceleration**<br/>持续施加局部空间角加速度。" }
   class n21 node_component
-  n22@{ shape: cyl, label: "**schedule::LastPhysicsTick**<br/>记录上一轮物理调度结束的变化刻度。" }
+  n22@{ shape: cyl, label: "**LastPhysicsTick**<br/>记录上一轮物理调度结束的变化刻度。" }
   class n22 node_resource
-  n23@{ shape: fr-rect, label: "**dynamics::solver::islands::**<br/>**sleeping::IslandSleepingPlugin**<br/>管理物理岛休眠与唤醒。" }
+  n23@{ shape: fr-rect, label: "**IslandSleepingPlugin**<br/>管理物理岛休眠与唤醒。" }
   class n23 node_plugin
   n1 e0@-->|"存在性约束"| n0
   class e0 edge_reference

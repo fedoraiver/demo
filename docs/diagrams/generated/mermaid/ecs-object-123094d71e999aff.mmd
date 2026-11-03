@@ -43,18 +43,18 @@ flowchart LR
   n1@{ shape: lin-rect, label: "**Camera**<br/>来自game​_​flow ↗：固定循环后的呈现阶<br/>段，零固定步的帧也执行同一顺序。" }
   class n1 node_system_set
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​transform​_​interpolation::**<br/>**hermite::ease​_​translation​_​**<br/>**hermite#lt;avian3d::interpolation::**<br/>**LinVelSource#gt;**<br/>用两端线速度做 Hermite 位置平滑。" }
+  n2@{ shape: rounded, label: "**ease​_​translation​_​hermite**<br/>用两端线速度做 Hermite 位置平滑。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​transform​_​interpolation::reset​_​**<br/>**easing​_​states​_​on​_​transform​_​change**<br/>在外部直接改变变换时取消失效的平滑区间。" }
+  n3@{ shape: rounded, label: "**reset​_​easing​_​states​_​on​_​transform​_​**<br/>**change**<br/>在外部直接改变变换时取消失效的平滑区间。" }
   class n3 node_system
   n4@{ shape: lin-rect, label: "**HeldPhysics**<br/>来自game​_​flow ↗：固定循环后的呈现阶<br/>段，零固定步的帧也执行同一顺序。" }
   class n4 node_system_set
   class n4 external_node
-  n5@{ shape: rounded, label: "**bevy​_​transform​_​interpolation::ease​_​**<br/>**rotation​_​slerp**<br/>按固定步剩余比例球面插值显示旋转。" }
+  n5@{ shape: rounded, label: "**ease​_​rotation​_​slerp**<br/>按固定步剩余比例球面插值显示旋转。" }
   class n5 node_system
-  n6@{ shape: rounded, label: "**bevy​_​transform​_​interpolation::**<br/>**hermite::ease​_​rotation​_​**<br/>**hermite#lt;avian3d::interpolation::**<br/>**AngVelSource#gt;**<br/>用两端角速度做 Hermite 旋转平滑。" }
+  n6@{ shape: rounded, label: "**ease​_​rotation​_​hermite**<br/>用两端角速度做 Hermite 旋转平滑。" }
   class n6 node_system
-  n7@{ shape: rounded, label: "**bevy​_​transform​_​interpolation::ease​_​**<br/>**translation​_​lerp**<br/>按固定步剩余比例线性插值显示位置。" }
+  n7@{ shape: rounded, label: "**ease​_​translation​_​lerp**<br/>按固定步剩余比例线性插值显示位置。" }
   class n7 node_system
   n8@{ shape: lin-rect, label: "**Visibility**<br/>来自game​_​flow ↗：固定循环后的呈现阶<br/>段，零固定步的帧也执行同一顺序。" }
   class n8 node_system_set
@@ -70,7 +70,7 @@ flowchart LR
   n12@{ shape: lin-rect, label: "**Facing**<br/>来自game​_​flow ↗：固定循环后的呈现阶<br/>段，零固定步的帧也执行同一顺序。" }
   class n12 node_system_set
   class n12 external_node
-  n13@{ shape: rounded, label: "**bevy​_​transform​_​interpolation::ease​_​**<br/>**scale​_​lerp**<br/>按固定步剩余比例线性插值显示缩放。" }
+  n13@{ shape: rounded, label: "**ease​_​scale​_​lerp**<br/>按固定步剩余比例线性插值显示缩放。" }
   class n13 node_system
   n0 e0@-->|"先于"| n1
   class e0 edge_order

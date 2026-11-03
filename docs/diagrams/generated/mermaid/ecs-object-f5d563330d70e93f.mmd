@@ -36,11 +36,11 @@ flowchart LR
   classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​enhanced​_​input::prelude::**<br/>**ActionOf#lt;ui::navigation::**<br/>**MenuContext#gt;**<br/>关联动作与其输入上下文。" }
+  n0@{ shape: rounded, label: "**ActionOf#lt;MenuContext#gt;**<br/>关联动作与其输入上下文。" }
   class n0 node_component
-  n1@{ shape: hex, label: "**bevy​_​enhanced​_​input::context::reset​_​**<br/>**action**<br/>重置离开上下文的输入动作状态。" }
+  n1@{ shape: hex, label: "**reset​_​action**<br/>重置离开上下文的输入动作状态。" }
   class n1 node_observer
-  n2@{ shape: hex, label: "**bevy​_​enhanced​_​input::context::reset​_​**<br/>**action**<br/>重置离开上下文的输入动作状态。" }
+  n2@{ shape: hex, label: "**reset​_​action**<br/>重置离开上下文的输入动作状态。" }
   class n2 node_observer
   n0 e0@--> n1
   class e0 edge_read

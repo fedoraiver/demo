@@ -39,7 +39,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: notch-rect, label: "**Local · view​_​entities**<br/>用位集快速检查当前相机可见的精灵实体。" }
   class n0 node_local
-  n1@{ shape: rounded, label: "**bevy​_​sprite​_​render::render::queue​_​**<br/>**sprites**<br/>按视图可见性将精灵加入透明二维阶段。" }
+  n1@{ shape: rounded, label: "**queue​_​sprites**<br/>按视图可见性将精灵加入透明二维阶段。" }
   class n1 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

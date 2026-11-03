@@ -43,53 +43,53 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​core​_​pipeline::core​_​3d::**<br/>**extract​_​camera​_​prepass​_​phase**<br/>同步三维相机的预通道标记与渲染阶段。" }
+  n0@{ shape: rounded, label: "**extract​_​camera​_​prepass​_​phase**<br/>同步三维相机的预通道标记与渲染阶段。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**bevy​_​camera::Camera**<br/>来自crate:bevy​_​camera ↗：配置相机视<br/>口、输出目标和渲染顺序。" }
+  n1@{ shape: rounded, label: "**Camera**<br/>来自crate:bevy​_​camera ↗：配置相机视<br/>口、输出目标和渲染顺序。" }
   class n1 node_component
   class n1 external_node
-  n2@{ shape: cyl, label: "**bevy​_​render::render​_​phase::**<br/>**ViewBinnedRenderPhases#lt;prepass::**<br/>**Opaque3dPrepass#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图按<br/>分桶组织的绘制指令。" }
+  n2@{ shape: cyl, label: "**ViewBinnedRenderPhases#lt;Opaque3dPrepa**<br/>**ss#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图按<br/>分桶组织的绘制指令。" }
   class n2 node_resource
   class n2 external_node
-  n3@{ shape: rounded, label: "**prepass::NormalPrepass**<br/>输出已应用法线贴图的世界空间法线。" }
+  n3@{ shape: rounded, label: "**NormalPrepass**<br/>输出已应用法线贴图的世界空间法线。" }
   class n3 node_component
-  n4@{ shape: rounded, label: "**bevy​_​core​_​pipeline::prepass::**<br/>**DepthPrepass**<br/>为三维相机生成独立的深度纹理。" }
+  n4@{ shape: rounded, label: "**DepthPrepass**<br/>为三维相机生成独立的深度纹理。" }
   class n4 node_component
-  n5@{ shape: rounded, label: "**bevy​_​core​_​pipeline::prepass::**<br/>**MotionVectorPrepass**<br/>为相机输出屏幕空间运动矢量。" }
+  n5@{ shape: rounded, label: "**MotionVectorPrepass**<br/>为相机输出屏幕空间运动矢量。" }
   class n5 node_component
-  n6@{ shape: cyl, label: "**extract​_​plugin::MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
+  n6@{ shape: cyl, label: "**MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
   class n6 node_resource
   class n6 external_node
-  n7@{ shape: cyl, label: "**bevy​_​render::render​_​phase::**<br/>**ViewBinnedRenderPhases#lt;deferred::**<br/>**AlphaMask3dDeferred#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图按<br/>分桶组织的绘制指令。" }
+  n7@{ shape: cyl, label: "**ViewBinnedRenderPhases#lt;AlphaMask3dDe**<br/>**ferred#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图按<br/>分桶组织的绘制指令。" }
   class n7 node_resource
   class n7 external_node
   n8@{ shape: notch-rect, label: "**Local · live​_​entities**<br/>记录仍应保留预通道与延迟阶段的相机视图。" }
   class n8 node_local
-  n9@{ shape: rounded, label: "**bevy​_​render::view::NoIndirectDrawing**<br/>来自crate:bevy​_​render ↗：关闭相机的间<br/>接绘制模式。" }
+  n9@{ shape: rounded, label: "**NoIndirectDrawing**<br/>来自crate:bevy​_​render ↗：关闭相机的间<br/>接绘制模式。" }
   class n9 node_component
   class n9 external_node
-  n10@{ shape: cyl, label: "**bevy​_​render::render​_​phase::**<br/>**ViewBinnedRenderPhases#lt;deferred::**<br/>**Opaque3dDeferred#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图按<br/>分桶组织的绘制指令。" }
+  n10@{ shape: cyl, label: "**ViewBinnedRenderPhases#lt;Opaque3dDefer**<br/>**red#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图按<br/>分桶组织的绘制指令。" }
   class n10 node_resource
   class n10 external_node
-  n11@{ shape: rounded, label: "**prepass::DepthPrepassDoubleBuffer**<br/>保留可查询的上一帧深度预通道结果。" }
+  n11@{ shape: rounded, label: "**DepthPrepassDoubleBuffer**<br/>保留可查询的上一帧深度预通道结果。" }
   class n11 node_component
-  n12@{ shape: rounded, label: "**prepass::DeferredPrepassDoubleBuffer**<br/>保留可查询的上一帧延迟预通道结果。" }
+  n12@{ shape: rounded, label: "**DeferredPrepassDoubleBuffer**<br/>保留可查询的上一帧延迟预通道结果。" }
   class n12 node_component
-  n13@{ shape: cyl, label: "**bevy​_​render::batching::gpu​_​**<br/>**preprocessing::**<br/>**GpuPreprocessingSupport**<br/>来自crate:bevy​_​render ↗：记录设备可采<br/>用的 GPU 预处理级别。" }
+  n13@{ shape: cyl, label: "**GpuPreprocessingSupport**<br/>来自crate:bevy​_​render ↗：记录设备可采<br/>用的 GPU 预处理级别。" }
   class n13 node_resource
   class n13 external_node
-  n14@{ shape: rounded, label: "**prepass::DeferredPrepass**<br/>为三维相机启用延迟材质 G-buffer 预通<br/>道。" }
+  n14@{ shape: rounded, label: "**DeferredPrepass**<br/>为三维相机启用延迟材质 G-buffer 预通<br/>道。" }
   class n14 node_component
-  n15@{ shape: rounded, label: "**bevy​_​extract::SubEntity#lt;bevy​_​**<br/>**render::RenderApp#gt;**<br/>来自crate:bevy​_​extract ↗：记录主实体<br/>对应的子世界实体。" }
+  n15@{ shape: rounded, label: "**SubEntity#lt;RenderApp#gt;**<br/>来自crate:bevy​_​extract ↗：记录主实体<br/>对应的子世界实体。" }
   class n15 node_component
   class n15 external_node
-  n16@{ shape: cyl, label: "**bevy​_​render::render​_​phase::**<br/>**ViewBinnedRenderPhases#lt;prepass::**<br/>**AlphaMask3dPrepass#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图按<br/>分桶组织的绘制指令。" }
+  n16@{ shape: cyl, label: "**ViewBinnedRenderPhases#lt;AlphaMask3dPr**<br/>**epass#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图按<br/>分桶组织的绘制指令。" }
   class n16 node_resource
   class n16 external_node
-  n17@{ shape: rounded, label: "**components::Camera3d**<br/>来自crate:bevy​_​camera ↗：启用三维相机<br/>主渲染流程。" }
+  n17@{ shape: rounded, label: "**Camera3d**<br/>来自crate:bevy​_​camera ↗：启用三维相机<br/>主渲染流程。" }
   class n17 node_component
   class n17 external_node
-  n18@{ shape: fr-rect, label: "**core​_​3d::Core3dPlugin**<br/>建立三维相机的渲染流程。" }
+  n18@{ shape: fr-rect, label: "**Core3dPlugin**<br/>建立三维相机的渲染流程。" }
   class n18 node_plugin
   n1 e0@--> n0
   class e0 edge_read

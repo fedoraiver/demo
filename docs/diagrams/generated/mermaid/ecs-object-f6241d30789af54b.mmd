@@ -43,27 +43,27 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**avian3d::dynamics::solver::solver​_​**<br/>**body::plugin::writeback​_​solver​_​**<br/>**bodies**<br/>将求解后的位姿和速度回写 ECS。" }
+  n0@{ shape: rounded, label: "**writeback​_​solver​_​bodies**<br/>将求解后的位姿和速度回写 ECS。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**dynamics::solver::solver​_​body::**<br/>**SolverBodies**<br/>连续存储活跃刚体的求解状态。" }
+  n1@{ shape: cyl, label: "**SolverBodies**<br/>连续存储活跃刚体的求解状态。" }
   class n1 node_resource
-  n2@{ shape: rounded, label: "**dynamics::rigid​_​body::**<br/>**AngularVelocity**<br/>保存刚体的世界角速度。" }
+  n2@{ shape: rounded, label: "**AngularVelocity**<br/>保存刚体的世界角速度。" }
   class n2 node_component
-  n3@{ shape: fr-rect, label: "**dynamics::solver::solver​_​body::**<br/>**plugin::SolverBodyPlugin**<br/>维护约束求解使用的刚体缓存。" }
+  n3@{ shape: fr-rect, label: "**SolverBodyPlugin**<br/>维护约束求解使用的刚体缓存。" }
   class n3 node_plugin
-  n4@{ shape: cyl, label: "**dynamics::solver::diagnostics::**<br/>**SolverDiagnostics**<br/>记录物理求解各阶段耗时。" }
+  n4@{ shape: cyl, label: "**SolverDiagnostics**<br/>记录物理求解各阶段耗时。" }
   class n4 node_resource
-  n5@{ shape: rounded, label: "**dynamics::solver::solver​_​body::**<br/>**SolverBodyIndex**<br/>定位实体对应的求解器刚体。" }
+  n5@{ shape: rounded, label: "**SolverBodyIndex**<br/>定位实体对应的求解器刚体。" }
   class n5 node_component
-  n6@{ shape: rounded, label: "**dynamics::rigid​_​body::LinearVelocity**<br/>保存刚体的世界线速度。" }
+  n6@{ shape: rounded, label: "**LinearVelocity**<br/>保存刚体的世界线速度。" }
   class n6 node_component
-  n7@{ shape: rounded, label: "**physics​_​transform::transform::**<br/>**Position**<br/>保存刚体或碰撞体的世界位置。" }
+  n7@{ shape: rounded, label: "**Position**<br/>保存刚体或碰撞体的世界位置。" }
   class n7 node_component
-  n8@{ shape: rounded, label: "**dynamics::rigid​_​body::mass​_​**<br/>**properties::components::computed::**<br/>**ComputedCenterOfMass**<br/>保存汇总后的刚体局部质心。" }
+  n8@{ shape: rounded, label: "**ComputedCenterOfMass**<br/>保存汇总后的刚体局部质心。" }
   class n8 node_component
   n9@{ shape: lin-rect, label: "**Finalize**<br/>组织约束求解的准备、子步与回写。" }
   class n9 node_system_set
-  n10@{ shape: rounded, label: "**physics​_​transform::transform::**<br/>**Rotation**<br/>保存刚体或碰撞体的世界旋转。" }
+  n10@{ shape: rounded, label: "**Rotation**<br/>保存刚体或碰撞体的世界旋转。" }
   class n10 node_component
   n1 e0@--> n0
   class e0 edge_read

@@ -38,16 +38,16 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**smaa::SmaaInfoUniformBuffer**<br/>保存全部视图的 SMAA GPU 参数。" }
+  n0@{ shape: cyl, label: "**SmaaInfoUniformBuffer**<br/>保存全部视图的 SMAA GPU 参数。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​render::init​_​gpu​_​resource#lt;bevy​_​**<br/>**anti​_​alias::smaa::**<br/>**SmaaInfoUniformBuffer#gt;**<br/>来自crate:bevy​_​render ↗：构造并插入渲<br/>染所需资源。" }
+  n1@{ shape: rounded, label: "**init​_​gpu​_​resource**<br/>来自crate:bevy​_​render ↗：构造并插入渲<br/>染所需资源。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​anti​_​alias::smaa::smaa**<br/>通过三个阶段完成 SMAA 抗锯齿。" }
+  n2@{ shape: rounded, label: "**smaa**<br/>通过三个阶段完成 SMAA 抗锯齿。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​anti​_​alias::smaa::prepare​_​smaa​_​**<br/>**uniforms**<br/>上传各 SMAA 视图的尺寸及倒数参数。" }
+  n3@{ shape: rounded, label: "**prepare​_​smaa​_​uniforms**<br/>上传各 SMAA 视图的尺寸及倒数参数。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**bevy​_​anti​_​alias::smaa::smaa**<br/>通过三个阶段完成 SMAA 抗锯齿。" }
+  n4@{ shape: rounded, label: "**smaa**<br/>通过三个阶段完成 SMAA 抗锯齿。" }
   class n4 node_system
   n1 e0@-->|"插入"| n0
   class e0 edge_write

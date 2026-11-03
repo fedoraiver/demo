@@ -43,26 +43,26 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​post​_​process::bloom::prepare​_​**<br/>**bloom​_​bind​_​groups**<br/>为 Bloom 各 mip 层准备降采样与升采样绑<br/>定。" }
+  n0@{ shape: rounded, label: "**prepare​_​bloom​_​bind​_​groups**<br/>为 Bloom 各 mip 层准备降采样与升采样绑<br/>定。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**bloom::BloomBindGroups**<br/>缓存视图 Bloom 各级降采样和上采样绑定。" }
+  n1@{ shape: rounded, label: "**BloomBindGroups**<br/>缓存视图 Bloom 各级降采样和上采样绑定。" }
   class n1 node_component
-  n2@{ shape: cyl, label: "**bevy​_​render::renderer::RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
+  n2@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
   class n2 node_resource
   class n2 external_node
-  n3@{ shape: rounded, label: "**bloom::BloomTexture**<br/>保存 Bloom 逐级缩小的中间纹理。" }
+  n3@{ shape: rounded, label: "**BloomTexture**<br/>保存 Bloom 逐级缩小的中间纹理。" }
   class n3 node_component
-  n4@{ shape: cyl, label: "**bevy​_​render::extract​_​component::**<br/>**ComponentUniforms#lt;bloom::**<br/>**downsampling​_​pipeline::**<br/>**BloomUniforms#gt;**<br/>来自crate:bevy​_​render ↗：汇集同类组件<br/>的动态 Uniform 数据。" }
+  n4@{ shape: cyl, label: "**ComponentUniforms#lt;BloomUniforms#gt;**<br/>来自crate:bevy​_​render ↗：汇集同类组件<br/>的动态 Uniform 数据。" }
   class n4 node_resource
   class n4 external_node
-  n5@{ shape: fr-rect, label: "**bloom::BloomPlugin**<br/>准备并合成画面辉光。" }
+  n5@{ shape: fr-rect, label: "**BloomPlugin**<br/>准备并合成画面辉光。" }
   class n5 node_plugin
-  n6@{ shape: cyl, label: "**bloom::downsampling​_​pipeline::**<br/>**BloomDownsamplingPipeline**<br/>提供 Bloom 降采样的着色器和资源布局。" }
+  n6@{ shape: cyl, label: "**BloomDownsamplingPipeline**<br/>提供 Bloom 降采样的着色器和资源布局。" }
   class n6 node_resource
-  n7@{ shape: cyl, label: "**bevy​_​render::render​_​resource::**<br/>**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
+  n7@{ shape: cyl, label: "**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
   class n7 node_resource
   class n7 external_node
-  n8@{ shape: cyl, label: "**bloom::upsampling​_​pipeline::**<br/>**BloomUpsamplingPipeline**<br/>提供 Bloom 逐级上采样与合成管线。" }
+  n8@{ shape: cyl, label: "**BloomUpsamplingPipeline**<br/>提供 Bloom 逐级上采样与合成管线。" }
   class n8 node_resource
   n9@{ shape: lin-rect, label: "**PrepareBindGroups**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
   class n9 node_system_set

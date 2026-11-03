@@ -44,18 +44,18 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: hex, label: "**bevy​_​ui​_​widgets::dialog::register​_​**<br/>**dialog**<br/>登记新建浮动对话框的层级。" }
+  n0@{ shape: hex, label: "**register​_​dialog**<br/>登记新建浮动对话框的层级。" }
   class n0 node_observer
-  n1@{ shape: fr-rect, label: "**dialog::DialogPlugin**<br/>管理对话框层次与拖动。" }
+  n1@{ shape: fr-rect, label: "**DialogPlugin**<br/>管理对话框层次与拖动。" }
   class n1 node_plugin
-  n2@{ shape: stadium, label: "**bevy​_​ecs::lifecycle::AddEvent**<br/>来自crate:bevy​_​ecs ↗：通知组件首次加<br/>入实体。" }
+  n2@{ shape: stadium, label: "**AddEvent**<br/>来自crate:bevy​_​ecs ↗：通知组件首次加<br/>入实体。" }
   class n2 node_event
   class n2 external_node
-  n3@{ shape: rounded, label: "**modal::ModalDialog**<br/>启用对话框模态行为。" }
+  n3@{ shape: rounded, label: "**ModalDialog**<br/>启用对话框模态行为。" }
   class n3 node_component
-  n4@{ shape: rounded, label: "**dialog::Dialog**<br/>标识浮动或模态对话框。" }
+  n4@{ shape: rounded, label: "**Dialog**<br/>标识浮动或模态对话框。" }
   class n4 node_component
-  n5@{ shape: cyl, label: "**dialog::DialogStack**<br/>按从底到顶的顺序保存已打开浮动对话框" }
+  n5@{ shape: cyl, label: "**DialogStack**<br/>按从底到顶的顺序保存已打开浮动对话框" }
   class n5 node_resource
   n1 e0@-->|"调用"| n0
   class e0 edge_registration

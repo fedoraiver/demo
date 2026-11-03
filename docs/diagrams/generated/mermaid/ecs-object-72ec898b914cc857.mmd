@@ -39,47 +39,50 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​mesh::Mesh3d**<br/>为三维可绘制实体指定网格资产。" }
+  subgraph layout_card_n0[" "]
+  n0@{ shape: rounded, label: "**Mesh3d**<br/>为三维可绘制实体指定网格资产。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​pbr::material::check​_​entities​_​**<br/>**needing​_​specialization#lt;bevy​_​pbr::**<br/>**extended​_​material::**<br/>**ExtendedMaterial#lt;bevy​_​pbr::pbr​_​**<br/>**material::StandardMaterial, bevy​_​**<br/>**pbr::decal::forward::**<br/>**ForwardDecalMaterialExt#gt;#gt;**<br/>来自crate:bevy​_​pbr ↗：收集几何或材质<br/>变化及移除的三维网格。" }
+  end
+  style layout_card_n0 fill:none,stroke:none
+  n1@{ shape: rounded, label: "**check​_​entities​_​needing​_​**<br/>**specialization**<br/>来自crate:bevy​_​pbr ↗：收集几何或材质<br/>变化及移除的三维网格。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​pbr::material::check​_​entities​_​**<br/>**needing​_​specialization#lt;bevy​_​pbr::**<br/>**pbr​_​material::StandardMaterial#gt;**<br/>来自crate:bevy​_​pbr ↗：收集几何或材质<br/>变化及移除的三维网格。" }
+  n2@{ shape: rounded, label: "**check​_​entities​_​needing​_​**<br/>**specialization**<br/>来自crate:bevy​_​pbr ↗：收集几何或材质<br/>变化及移除的三维网格。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​pbr::render::mesh::extract​_​**<br/>**meshes​_​for​_​gpu​_​building**<br/>来自crate:bevy​_​pbr ↗：增量提取变化或<br/>需重试网格到线程队列。" }
+  n3@{ shape: rounded, label: "**extract​_​meshes​_​for​_​gpu​_​building**<br/>来自crate:bevy​_​pbr ↗：增量提取变化或<br/>需重试网格到线程队列。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**bevy​_​gizmos::skinned​_​mesh​_​bounds::**<br/>**draw​_​all​_​skinned​_​mesh​_​bounds**<br/>来自crate:bevy​_​gizmos ↗：绘制未单独标<br/>记的动态蒙皮网格包围区域。" }
+  n4@{ shape: rounded, label: "**draw​_​all​_​skinned​_​mesh​_​bounds**<br/>来自crate:bevy​_​gizmos ↗：绘制未单独标<br/>记的动态蒙皮网格包围区域。" }
   class n4 node_system
   class n4 external_node
-  n5@{ shape: rounded, label: "**bevy​_​pbr::material::mark​_​meshes​_​as​_​**<br/>**changed​_​if​_​their​_​materials​_​**<br/>**changed#lt;bevy​_​pbr::pbr​_​material::**<br/>**StandardMaterial#gt;**<br/>来自crate:bevy​_​pbr ↗：材质组件或资产<br/>变化时请求网格重新提取。" }
+  n5@{ shape: rounded, label: "**mark​_​meshes​_​as​_​changed​_​if​_​their​_​**<br/>**materials​_​changed**<br/>来自crate:bevy​_​pbr ↗：材质组件或资产<br/>变化时请求网格重新提取。" }
   class n5 node_system
   class n5 external_node
-  n6@{ shape: rounded, label: "**bevy​_​pbr::prepass::update​_​mesh​_​**<br/>**previous​_​global​_​transforms**<br/>来自crate:bevy​_​pbr ↗：为下帧保存网格<br/>的当前世界变换。" }
+  n6@{ shape: rounded, label: "**update​_​mesh​_​previous​_​global​_​**<br/>**transforms**<br/>来自crate:bevy​_​pbr ↗：为下帧保存网格<br/>的当前世界变换。" }
   class n6 node_system
   class n6 external_node
-  n7@{ shape: rounded, label: "**bevy​_​camera::visibility::calculate​_​**<br/>**bounds**<br/>来自crate:bevy​_​camera ↗：为允许自动计<br/>算的三维网格维护包围盒。" }
+  n7@{ shape: rounded, label: "**calculate​_​bounds**<br/>来自crate:bevy​_​camera ↗：为允许自动计<br/>算的三维网格维护包围盒。" }
   class n7 node_system
   class n7 external_node
-  n8@{ shape: rounded, label: "**demo::scene​_​assembly::loading::**<br/>**prepare​_​island**<br/>来自scene​_​assembly ↗：在资源 CPU 几<br/>何可用时构建碰撞；全部成功后才提交，失败<br/>时不创建动态玩家。" }
+  n8@{ shape: rounded, label: "**prepare​_​island**<br/>来自scene​_​assembly ↗：在资源 CPU 几<br/>何可用时构建碰撞；全部成功后才提交，失败<br/>时不创建动态玩家。" }
   class n8 node_system
   class n8 external_node
-  n9@{ shape: rounded, label: "**bevy​_​light::check​_​dir​_​light​_​mesh​_​**<br/>**visibility**<br/>来自crate:bevy​_​light ↗：计算方向光各<br/>相机级联可见的投影网格。" }
+  n9@{ shape: rounded, label: "**check​_​dir​_​light​_​mesh​_​visibility**<br/>来自crate:bevy​_​light ↗：计算方向光各<br/>相机级联可见的投影网格。" }
   class n9 node_system
   class n9 external_node
-  n10@{ shape: rounded, label: "**bevy​_​pbr::material::mark​_​meshes​_​as​_​**<br/>**changed​_​if​_​their​_​materials​_​**<br/>**changed#lt;bevy​_​pbr::extended​_​**<br/>**material::ExtendedMaterial#lt;bevy​_​**<br/>**pbr::pbr​_​material::**<br/>**StandardMaterial, bevy​_​pbr::decal::**<br/>**forward::ForwardDecalMaterialExt#gt;#gt;**<br/>来自crate:bevy​_​pbr ↗：材质组件或资产<br/>变化时请求网格重新提取。" }
+  n10@{ shape: rounded, label: "**mark​_​meshes​_​as​_​changed​_​if​_​their​_​**<br/>**materials​_​changed**<br/>来自crate:bevy​_​pbr ↗：材质组件或资产<br/>变化时请求网格重新提取。" }
   class n10 node_system
   class n10 external_node
-  n11@{ shape: rounded, label: "**bevy​_​light::check​_​point​_​light​_​mesh​_​**<br/>**visibility**<br/>来自crate:bevy​_​light ↗：计算点光与聚<br/>光灯阴影可见的网格。" }
+  n11@{ shape: rounded, label: "**check​_​point​_​light​_​mesh​_​visibility**<br/>来自crate:bevy​_​light ↗：计算点光与聚<br/>光灯阴影可见的网格。" }
   class n11 node_system
   class n11 external_node
-  n12@{ shape: rounded, label: "**bevy​_​camera::visibility::update​_​**<br/>**skinned​_​mesh​_​bounds**<br/>来自crate:bevy​_​camera ↗：依据当前关节<br/>姿态更新动态蒙皮包围盒。" }
+  n12@{ shape: rounded, label: "**update​_​skinned​_​mesh​_​bounds**<br/>来自crate:bevy​_​camera ↗：依据当前关节<br/>姿态更新动态蒙皮包围盒。" }
   class n12 node_system
   class n12 external_node
-  n13@{ shape: rounded, label: "**bevy​_​mesh::components::mark​_​3d​_​**<br/>**meshes​_​as​_​changed​_​if​_​their​_​assets​_​**<br/>**changed**<br/>资产内容变化时标记对应三维网格已变更。" }
+  n13@{ shape: rounded, label: "**mark​_​3d​_​meshes​_​as​_​changed​_​if​_​their​_​**<br/>**assets​_​changed**<br/>资产内容变化时标记对应三维网格已变更。" }
   class n13 node_system
-  n14@{ shape: rounded, label: "**bevy​_​gizmos::skinned​_​mesh​_​bounds::**<br/>**draw​_​skinned​_​mesh​_​bounds**<br/>来自crate:bevy​_​gizmos ↗：绘制带独立显<br/>示标记的动态蒙皮包围区域。" }
+  n14@{ shape: rounded, label: "**draw​_​skinned​_​mesh​_​bounds**<br/>来自crate:bevy​_​gizmos ↗：绘制带独立显<br/>示标记的动态蒙皮包围区域。" }
   class n14 node_system
   class n14 external_node
   n0 e0@-->|"存在性约束"| n1
@@ -128,7 +131,7 @@ flowchart LR
   e8@{ curve: basis }
   e9@{ curve: basis }
   e10@{ curve: basis }
-  e11@{ curve: bumpX }
+  e11@{ curve: basis }
   e12@{ curve: basis }
   e13@{ curve: basis }
   e14@{ curve: basis }

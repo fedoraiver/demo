@@ -46,55 +46,55 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​render::camera::camera​_​system**<br/>响应目标尺寸变化并更新相机投影。" }
+  n0@{ shape: rounded, label: "**camera​_​system**<br/>响应目标尺寸变化并更新相机投影。" }
   class n0 node_system
-  n1@{ shape: lean-r, label: "**bevy​_​asset::AssetEvent#lt;image::Image#gt;**<br/>来自crate:bevy​_​asset ↗：通知指定资产<br/>及依赖发生变化。" }
+  n1@{ shape: lean-r, label: "**AssetEvent#lt;Image#gt;**<br/>来自crate:bevy​_​asset ↗：通知指定资产<br/>及依赖发生变化。" }
   class n1 node_message
   class n1 external_node
-  n2@{ shape: cyl, label: "**texture::manual​_​texture​_​view::**<br/>**ManualTextureViews**<br/>注册供相机输出的手动管理纹理视图。" }
+  n2@{ shape: cyl, label: "**ManualTextureViews**<br/>注册供相机输出的手动管理纹理视图。" }
   class n2 node_resource
-  n3@{ shape: rounded, label: "**bevy​_​camera::Camera**<br/>来自crate:bevy​_​camera ↗：配置相机视<br/>口、输出目标和渲染顺序。" }
+  n3@{ shape: rounded, label: "**Camera**<br/>来自crate:bevy​_​camera ↗：配置相机视<br/>口、输出目标和渲染顺序。" }
   class n3 node_component
   class n3 external_node
-  n4@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;bevy​_​**<br/>**asset::AssetEvent#lt;image::Image#gt;#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n4@{ shape: cyl, label: "**Messages#lt;AssetEvent#lt;Image#gt;#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n4 node_resource
   class n4 external_node
-  n5@{ shape: fr-rect, label: "**camera::CameraPlugin**<br/>维护相机渲染状态与排序。" }
+  n5@{ shape: fr-rect, label: "**CameraPlugin**<br/>维护相机渲染状态与排序。" }
   class n5 node_plugin
-  n6@{ shape: rounded, label: "**bevy​_​camera::RenderTarget**<br/>来自crate:bevy​_​camera ↗：指定相机输出<br/>的窗口、图像或纹理。" }
+  n6@{ shape: rounded, label: "**RenderTarget**<br/>来自crate:bevy​_​camera ↗：指定相机输出<br/>的窗口、图像或纹理。" }
   class n6 node_component
   class n6 external_node
-  n7@{ shape: lean-r, label: "**event::WindowCreated**<br/>来自crate:bevy​_​window ↗：通知新窗口创<br/>建完成。" }
+  n7@{ shape: lean-r, label: "**WindowCreated**<br/>来自crate:bevy​_​window ↗：通知新窗口创<br/>建完成。" }
   class n7 node_message
   class n7 external_node
-  n8@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;event::**<br/>**WindowCreated#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n8@{ shape: cyl, label: "**Messages#lt;WindowCreated#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n8 node_resource
   class n8 external_node
-  n9@{ shape: cyl, label: "**bevy​_​asset::Assets#lt;image::Image#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
+  n9@{ shape: cyl, label: "**Assets#lt;Image#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
   class n9 node_resource
   class n9 external_node
   n10@{ shape: lin-rect, label: "**CameraUpdateSystems**<br/>来自crate:bevy​_​camera ↗：统一更新相机<br/>目标、视口与投影计算结果。" }
   class n10 node_system_set
   class n10 external_node
-  n11@{ shape: lean-r, label: "**event::WindowScaleFactorChanged**<br/>来自crate:bevy​_​window ↗：通知窗口显示<br/>缩放比例变化。" }
+  n11@{ shape: lean-r, label: "**WindowScaleFactorChanged**<br/>来自crate:bevy​_​window ↗：通知窗口显示<br/>缩放比例变化。" }
   class n11 node_message
   class n11 external_node
-  n12@{ shape: rounded, label: "**window::PrimaryWindow**<br/>来自crate:bevy​_​window ↗：标识唯一的主<br/>窗口" }
+  n12@{ shape: rounded, label: "**PrimaryWindow**<br/>来自crate:bevy​_​window ↗：标识唯一的主<br/>窗口" }
   class n12 node_component
   class n12 external_node
-  n13@{ shape: rounded, label: "**window::Window**<br/>来自crate:bevy​_​window ↗：保存窗口的呈<br/>现模式、位置、分辨率、标题、全屏及平台行<br/>为配置" }
+  n13@{ shape: rounded, label: "**Window**<br/>来自crate:bevy​_​window ↗：保存窗口的呈<br/>现模式、位置、分辨率、标题、全屏及平台行<br/>为配置" }
   class n13 node_component
   class n13 external_node
-  n14@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;event::**<br/>**WindowScaleFactorChanged#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n14@{ shape: cyl, label: "**Messages#lt;WindowScaleFactorChanged#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n14 node_resource
   class n14 external_node
-  n15@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;event::**<br/>**WindowResized#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n15@{ shape: cyl, label: "**Messages#lt;WindowResized#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n15 node_resource
   class n15 external_node
-  n16@{ shape: lean-r, label: "**event::WindowResized**<br/>来自crate:bevy​_​window ↗：通知窗口逻辑<br/>尺寸变化。" }
+  n16@{ shape: lean-r, label: "**WindowResized**<br/>来自crate:bevy​_​window ↗：通知窗口逻辑<br/>尺寸变化。" }
   class n16 node_message
   class n16 external_node
-  n17@{ shape: rounded, label: "**bevy​_​camera::Projection**<br/>来自crate:bevy​_​camera ↗：定义相机从视<br/>图到裁剪空间的投影。" }
+  n17@{ shape: rounded, label: "**Projection**<br/>来自crate:bevy​_​camera ↗：定义相机从视<br/>图到裁剪空间的投影。" }
   class n17 node_component
   class n17 external_node
   n1 e0@--> n0

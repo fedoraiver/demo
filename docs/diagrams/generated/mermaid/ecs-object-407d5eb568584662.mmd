@@ -38,41 +38,41 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**cluster::GlobalClusterSettings**<br/>描述设备支持的聚簇功能和索引上限。" }
+  n0@{ shape: cyl, label: "**GlobalClusterSettings**<br/>描述设备支持的聚簇功能和索引上限。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**#lt;bevy​_​pbr::PbrPlugin as bevy​_​app::**<br/>**plugin::Plugin#gt;::build::{{closure}}**<br/>来自crate:bevy​_​pbr ↗：判断是否使用<br/>CPU 聚簇准备。" }
+  n1@{ shape: rounded, label: "**build::{{closure}}**<br/>来自crate:bevy​_​pbr ↗：判断是否使用<br/>CPU 聚簇准备。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​extract::extract​_​resource::**<br/>**extract​_​resource#lt;bevy​_​light::**<br/>**cluster::GlobalClusterSettings,**<br/>**bevy​_​render::RenderApp, bevy​_​pbr::**<br/>**cluster::gpu::GpuClusteringPlugin#gt;**<br/>来自crate:bevy​_​extract ↗：把存在的主<br/>世界资源转换到子世界。" }
+  n2@{ shape: rounded, label: "**extract​_​resource**<br/>来自crate:bevy​_​extract ↗：把存在的主<br/>世界资源转换到子世界。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​pbr::cluster::gpu::extract​_​**<br/>**clusters​_​for​_​gpu​_​clustering**<br/>来自crate:bevy​_​pbr ↗：提取视图聚簇配<br/>置并回传上帧 GPU 统计。" }
+  n3@{ shape: rounded, label: "**extract​_​clusters​_​for​_​gpu​_​clustering**<br/>来自crate:bevy​_​pbr ↗：提取视图聚簇配<br/>置并回传上帧 GPU 统计。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**bevy​_​pbr::cluster::extract​_​clusters​_​**<br/>**for​_​cpu​_​clustering**<br/>来自crate:bevy​_​pbr ↗：把 CPU 聚簇结<br/>果转换为渲染侧对象列表。" }
+  n4@{ shape: rounded, label: "**extract​_​clusters​_​for​_​cpu​_​clustering**<br/>来自crate:bevy​_​pbr ↗：把 CPU 聚簇结<br/>果转换为渲染侧对象列表。" }
   class n4 node_system
   class n4 external_node
-  n5@{ shape: rounded, label: "**bevy​_​pbr::cluster::gpu::prepare​_​**<br/>**clusters​_​for​_​gpu​_​clustering**<br/>来自crate:bevy​_​pbr ↗：按视图规模和回<br/>读容量分配 GPU 聚簇缓冲。" }
+  n5@{ shape: rounded, label: "**prepare​_​clusters​_​for​_​gpu​_​clustering**<br/>来自crate:bevy​_​pbr ↗：按视图规模和回<br/>读容量分配 GPU 聚簇缓冲。" }
   class n5 node_system
   class n5 external_node
-  n6@{ shape: rounded, label: "**bevy​_​pbr::cluster::gpu​_​clustering​_​**<br/>**is​_​enabled​_​during​_​extraction**<br/>来自crate:bevy​_​pbr ↗：判断提取阶段是<br/>否使用 GPU 聚簇。" }
+  n6@{ shape: rounded, label: "**gpu​_​clustering​_​is​_​enabled​_​during​_​**<br/>**extraction**<br/>来自crate:bevy​_​pbr ↗：判断提取阶段是<br/>否使用 GPU 聚簇。" }
   class n6 node_system
   class n6 external_node
-  n7@{ shape: rounded, label: "**bevy​_​pbr::cluster::gpu​_​clustering​_​**<br/>**is​_​enabled**<br/>来自crate:bevy​_​pbr ↗：判断常规更新是<br/>否使用 GPU 聚簇。" }
+  n7@{ shape: rounded, label: "**gpu​_​clustering​_​is​_​enabled**<br/>来自crate:bevy​_​pbr ↗：判断常规更新是<br/>否使用 GPU 聚簇。" }
   class n7 node_system
   class n7 external_node
-  n8@{ shape: rounded, label: "**bevy​_​pbr::cluster::gpu​_​clustering​_​**<br/>**is​_​enabled**<br/>来自crate:bevy​_​pbr ↗：判断常规更新是<br/>否使用 GPU 聚簇。" }
+  n8@{ shape: rounded, label: "**gpu​_​clustering​_​is​_​enabled**<br/>来自crate:bevy​_​pbr ↗：判断常规更新是<br/>否使用 GPU 聚簇。" }
   class n8 node_system
   class n8 external_node
-  n9@{ shape: rounded, label: "**bevy​_​light::cluster::assign::assign​_​**<br/>**objects​_​to​_​clusters**<br/>将灯光、探针及贴花分配到视图分簇。" }
+  n9@{ shape: rounded, label: "**assign​_​objects​_​to​_​clusters**<br/>将灯光、探针及贴花分配到视图分簇。" }
   class n9 node_system
-  n10@{ shape: rounded, label: "**bevy​_​pbr::cluster::gpu​_​clustering​_​**<br/>**is​_​enabled**<br/>来自crate:bevy​_​pbr ↗：判断常规更新是<br/>否使用 GPU 聚簇。" }
+  n10@{ shape: rounded, label: "**gpu​_​clustering​_​is​_​enabled**<br/>来自crate:bevy​_​pbr ↗：判断常规更新是<br/>否使用 GPU 聚簇。" }
   class n10 node_system
   class n10 external_node
-  n11@{ shape: rounded, label: "**bevy​_​pbr::cluster::gpu​_​clustering​_​**<br/>**is​_​enabled**<br/>来自crate:bevy​_​pbr ↗：判断常规更新是<br/>否使用 GPU 聚簇。" }
+  n11@{ shape: rounded, label: "**gpu​_​clustering​_​is​_​enabled**<br/>来自crate:bevy​_​pbr ↗：判断常规更新是<br/>否使用 GPU 聚簇。" }
   class n11 node_system
   class n11 external_node
-  n12@{ shape: rounded, label: "**!bevy​_​pbr::cluster::gpu​_​clustering​_​**<br/>**is​_​enabled​_​during​_​extraction**<br/>来自crate:bevy​_​pbr ↗：判断提取阶段是<br/>否使用 GPU 聚簇。" }
+  n12@{ shape: rounded, label: "**gpu​_​clustering​_​is​_​enabled​_​during​_​**<br/>**extraction**<br/>来自crate:bevy​_​pbr ↗：判断提取阶段是<br/>否使用 GPU 聚簇。" }
   class n12 node_system
   class n12 external_node
   n0 e0@--> n1

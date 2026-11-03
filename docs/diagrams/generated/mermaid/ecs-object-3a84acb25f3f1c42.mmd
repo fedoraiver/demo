@@ -42,7 +42,7 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
   subgraph layout_card_n0[" "]
-  n0@{ shape: rounded, label: "**bevy​_​ui::ScrollPosition**<br/>指定 UI 内容的逻辑像素滚动位置。" }
+  n0@{ shape: rounded, label: "**ScrollPosition**<br/>指定 UI 内容的逻辑像素滚动位置。" }
   class n0 node_component
   end
   style layout_card_n0 fill:none,stroke:none
@@ -67,7 +67,7 @@ flowchart LR
   n7@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：组织随视口滚动的设置正文控<br/>件。" }
   class n7 node_entity
   class n7 external_node
-  n8@{ shape: hex, label: "**bevy​_​ui​_​widgets::scrollbar::**<br/>**scrollbar​_​on​_​drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：随滑块<br/>拖动更新目标滚动位置。" }
+  n8@{ shape: hex, label: "**scrollbar​_​on​_​drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：随滑块<br/>拖动更新目标滚动位置。" }
   class n8 node_observer
   class n8 external_node
   n9@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制纸箱标志的封口胶带。" }
@@ -88,7 +88,7 @@ flowchart LR
   n14@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：固定设置页底部操作。" }
   class n14 node_entity
   class n14 external_node
-  n15@{ shape: hex, label: "**bevy​_​ui​_​widgets::scrollbar::**<br/>**scrollbar​_​on​_​drag​_​start**<br/>来自crate:bevy​_​ui​_​widgets ↗：记录滚<br/>动条拖动的起始位置。" }
+  n15@{ shape: hex, label: "**scrollbar​_​on​_​drag​_​start**<br/>来自crate:bevy​_​ui​_​widgets ↗：记录滚<br/>动条拖动的起始位置。" }
   class n15 node_observer
   class n15 external_node
   n16@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示移动的 WASD 键位提示。" }
@@ -187,7 +187,7 @@ flowchart LR
   n47@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：展示窗口模式设置占位。" }
   class n47 node_entity
   class n47 external_node
-  n48@{ shape: hex, label: "**bevy​_​ui​_​widgets::scrollarea::on​_​**<br/>**scroll​_​into​_​view**<br/>来自crate:bevy​_​ui​_​widgets ↗：调整滚<br/>动区域以显示指定节点。" }
+  n48@{ shape: hex, label: "**on​_​scroll​_​into​_​view**<br/>来自crate:bevy​_​ui​_​widgets ↗：调整滚<br/>动区域以显示指定节点。" }
   class n48 node_observer
   class n48 external_node
   n49@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：容纳退出游戏按钮的图标。" }
@@ -271,7 +271,7 @@ flowchart LR
   n75@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列设置滚动视口与轨道。" }
   class n75 node_entity
   class n75 external_node
-  n76@{ shape: hex, label: "**bevy​_​ui​_​widgets::scrollarea::on​_​**<br/>**scroll​_​into​_​view**<br/>来自crate:bevy​_​ui​_​widgets ↗：调整滚<br/>动区域以显示指定节点。" }
+  n76@{ shape: hex, label: "**on​_​scroll​_​into​_​view**<br/>来自crate:bevy​_​ui​_​widgets ↗：调整滚<br/>动区域以显示指定节点。" }
   class n76 node_observer
   class n76 external_node
   n77@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：标明设置页面的返回入口。" }
@@ -286,7 +286,7 @@ flowchart LR
   n80@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示反转视角纵轴的右侧调整符<br/>号。" }
   class n80 node_entity
   class n80 external_node
-  n81@{ shape: hex, label: "**bevy​_​ui​_​widgets::scrollbar::**<br/>**scrollbar​_​on​_​drag​_​start**<br/>来自crate:bevy​_​ui​_​widgets ↗：记录滚<br/>动条拖动的起始位置。" }
+  n81@{ shape: hex, label: "**scrollbar​_​on​_​drag​_​start**<br/>来自crate:bevy​_​ui​_​widgets ↗：记录滚<br/>动条拖动的起始位置。" }
   class n81 node_observer
   class n81 external_node
   n82@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：描绘 Enter 菜单键帽。" }
@@ -313,7 +313,7 @@ flowchart LR
   n89@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单品牌的公司名称。" }
   class n89 node_entity
   class n89 external_node
-  n90@{ shape: hex, label: "**bevy​_​ui​_​widgets::scrollbar::**<br/>**scrollbar​_​on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：点击滚<br/>动条轨道时翻动一页。" }
+  n90@{ shape: hex, label: "**scrollbar​_​on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：点击滚<br/>动条轨道时翻动一页。" }
   class n90 node_observer
   class n90 external_node
   n91@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：居中承载对应音量的数值文字。" }
@@ -331,7 +331,7 @@ flowchart LR
   n95@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制纸箱标志的封口胶带。" }
   class n95 node_entity
   class n95 external_node
-  n96@{ shape: hex, label: "**bevy​_​ui​_​widgets::scrollarea::**<br/>**scrollarea​_​on​_​scroll**<br/>来自crate:bevy​_​ui​_​widgets ↗：将指针<br/>滚动应用于滚动区域。" }
+  n96@{ shape: hex, label: "**scrollarea​_​on​_​scroll**<br/>来自crate:bevy​_​ui​_​widgets ↗：将指针<br/>滚动应用于滚动区域。" }
   class n96 node_observer
   class n96 external_node
   n97@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示辅助功能后续扩展提示。" }
@@ -538,7 +538,7 @@ flowchart LR
   n164@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：组织反转视角纵轴的调节控件。" }
   class n164 node_entity
   class n164 external_node
-  n165@{ shape: hex, label: "**bevy​_​ui​_​widgets::scrollbar::**<br/>**scrollbar​_​on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：点击滚<br/>动条轨道时翻动一页。" }
+  n165@{ shape: hex, label: "**scrollbar​_​on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：点击滚<br/>动条轨道时翻动一页。" }
   class n165 node_observer
   class n165 external_node
   n166@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：标明设置页面的返回入口。" }
@@ -583,7 +583,7 @@ flowchart LR
   n179@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：按按钮方向步进调整对应音量。" }
   class n179 node_entity
   class n179 external_node
-  n180@{ shape: hex, label: "**bevy​_​ui​_​widgets::scrollbar::**<br/>**scrollbar​_​on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：点击滚<br/>动条轨道时翻动一页。" }
+  n180@{ shape: hex, label: "**scrollbar​_​on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：点击滚<br/>动条轨道时翻动一页。" }
   class n180 node_observer
   class n180 external_node
   n181@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示返回操作名称。" }
@@ -637,7 +637,7 @@ flowchart LR
   n197@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：固定设置分类导航与品牌提示。" }
   class n197 node_entity
   class n197 external_node
-  n198@{ shape: hex, label: "**bevy​_​ui​_​widgets::scrollarea::**<br/>**scrollarea​_​on​_​scroll**<br/>来自crate:bevy​_​ui​_​widgets ↗：将指针<br/>滚动应用于滚动区域。" }
+  n198@{ shape: hex, label: "**scrollarea​_​on​_​scroll**<br/>来自crate:bevy​_​ui​_​widgets ↗：将指针<br/>滚动应用于滚动区域。" }
   class n198 node_observer
   class n198 external_node
   n199@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：容纳音频设置按钮的图标。" }
@@ -835,7 +835,7 @@ flowchart LR
   n263@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示放下包裹的 E again 键位<br/>提示。" }
   class n263 node_entity
   class n263 external_node
-  n264@{ shape: hex, label: "**bevy​_​ui​_​widgets::scrollbar::**<br/>**scrollbar​_​on​_​drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：随滑块<br/>拖动更新目标滚动位置。" }
+  n264@{ shape: hex, label: "**scrollbar​_​on​_​drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：随滑块<br/>拖动更新目标滚动位置。" }
   class n264 node_observer
   class n264 external_node
   n265@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示观察操作说明。" }
@@ -847,13 +847,13 @@ flowchart LR
   n267@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示图形设置按钮的图标符号。" }
   class n267 node_entity
   class n267 external_node
-  n268@{ shape: rounded, label: "**demo::ui::scroll::scroll​_​focused​_​**<br/>**button**<br/>来自ui ↗：短窗口中键盘仍能访问所有按<br/>钮；新页面先等布局完成，再滚到焦点所在区<br/>域。" }
+  n268@{ shape: rounded, label: "**scroll​_​focused​_​button**<br/>来自ui ↗：短窗口中键盘仍能访问所有按<br/>钮；新页面先等布局完成，再滚到焦点所在区<br/>域。" }
   class n268 node_system
   class n268 external_node
   n269@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列携带与释放输入提示。" }
   class n269 node_entity
   class n269 external_node
-  n270@{ shape: hex, label: "**bevy​_​ui​_​widgets::scrollbar::**<br/>**scrollbar​_​on​_​drag​_​start**<br/>来自crate:bevy​_​ui​_​widgets ↗：记录滚<br/>动条拖动的起始位置。" }
+  n270@{ shape: hex, label: "**scrollbar​_​on​_​drag​_​start**<br/>来自crate:bevy​_​ui​_​widgets ↗：记录滚<br/>动条拖动的起始位置。" }
   class n270 node_observer
   class n270 external_node
   n271@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：描绘 Esc 菜单键帽。" }
@@ -883,7 +883,7 @@ flowchart LR
   n279@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示配送品牌与轻拿轻放标语。" }
   class n279 node_entity
   class n279 external_node
-  n280@{ shape: hex, label: "**bevy​_​ui​_​widgets::scrollarea::on​_​**<br/>**scroll​_​into​_​view**<br/>来自crate:bevy​_​ui​_​widgets ↗：调整滚<br/>动区域以显示指定节点。" }
+  n280@{ shape: hex, label: "**on​_​scroll​_​into​_​view**<br/>来自crate:bevy​_​ui​_​widgets ↗：调整滚<br/>动区域以显示指定节点。" }
   class n280 node_observer
   class n280 external_node
   n281@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：说明音乐音量尚未开放。" }
@@ -1003,7 +1003,7 @@ flowchart LR
   n319@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列镜头与暂停卡片编号与标<br/>题。" }
   class n319 node_entity
   class n319 external_node
-  n320@{ shape: rounded, label: "**demo::ui::scroll::sync​_​settings​_​**<br/>**scrollbars**<br/>来自ui ↗：同步滚动条显隐、拾取范围与高<br/>亮。" }
+  n320@{ shape: rounded, label: "**sync​_​settings​_​scrollbars**<br/>来自ui ↗：同步滚动条显隐、拾取范围与高<br/>亮。" }
   class n320 node_system
   class n320 external_node
   n321@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供打开帮助操作。" }
@@ -1018,7 +1018,7 @@ flowchart LR
   n324@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制设置按钮的入口箭头。" }
   class n324 node_entity
   class n324 external_node
-  n325@{ shape: rounded, label: "**bevy​_​ui::layout::ui​_​layout​_​system**<br/>求解 UI 布局并回写节点尺寸和二维变换。" }
+  n325@{ shape: rounded, label: "**ui​_​layout​_​system**<br/>求解 UI 布局并回写节点尺寸和二维变换。" }
   class n325 node_system
   n326@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：组织随视口滚动的设置正文控<br/>件。" }
   class n326 node_entity
@@ -1059,7 +1059,7 @@ flowchart LR
   n338@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制第 01 组帮助编号徽章。" }
   class n338 node_entity
   class n338 external_node
-  n339@{ shape: hex, label: "**bevy​_​ui​_​widgets::scrollarea::**<br/>**scrollarea​_​on​_​scroll**<br/>来自crate:bevy​_​ui​_​widgets ↗：将指针<br/>滚动应用于滚动区域。" }
+  n339@{ shape: hex, label: "**scrollarea​_​on​_​scroll**<br/>来自crate:bevy​_​ui​_​widgets ↗：将指针<br/>滚动应用于滚动区域。" }
   class n339 node_observer
   class n339 external_node
   n340@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示操作设置按钮的图标符号。" }
@@ -1155,7 +1155,7 @@ flowchart LR
   n370@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示草稿保存提示与处理结果。" }
   class n370 node_entity
   class n370 external_node
-  n371@{ shape: hex, label: "**bevy​_​ui​_​widgets::scrollbar::**<br/>**scrollbar​_​on​_​drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：随滑块<br/>拖动更新目标滚动位置。" }
+  n371@{ shape: hex, label: "**scrollbar​_​on​_​drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：随滑块<br/>拖动更新目标滚动位置。" }
   class n371 node_observer
   class n371 external_node
   n372@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供辅助功能设置分类入口。" }
@@ -1836,7 +1836,7 @@ flowchart LR
   n597@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制纸箱标志的正面记号。" }
   class n597 node_entity
   class n597 external_node
-  n598@{ shape: rounded, label: "**bevy​_​ui​_​widgets::scrollbar::update​_​**<br/>**scrollbar​_​thumb**<br/>来自crate:bevy​_​ui​_​widgets ↗：按内容<br/>比例与滚动位置更新滚动条滑块。" }
+  n598@{ shape: rounded, label: "**update​_​scrollbar​_​thumb**<br/>来自crate:bevy​_​ui​_​widgets ↗：按内容<br/>比例与滚动位置更新滚动条滑块。" }
   class n598 node_system
   class n598 external_node
   n599@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示固定品牌页脚与菜单操作提<br/>示。" }

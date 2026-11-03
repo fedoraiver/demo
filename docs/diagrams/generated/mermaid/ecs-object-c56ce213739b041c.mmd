@@ -38,24 +38,24 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**bevy​_​asset::Assets#lt;assets::Gltf#gt;**<br/>按资产身份存储对象并暂存变化消息。" }
+  n0@{ shape: cyl, label: "**Assets#lt;Gltf#gt;**<br/>按资产身份存储对象并暂存变化消息。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**demo::character​_​animation::binding::**<br/>**initialize​_​ready​_​couriers**<br/>来自character​_​animation ↗：场景就绪<br/>后只遍历该视觉根的子树，避免把 NPC 或其<br/>他模型的播放器接到主角上。" }
+  n1@{ shape: rounded, label: "**initialize​_​ready​_​couriers**<br/>来自character​_​animation ↗：场景就绪<br/>后只遍历该视觉根的子树，避免把 NPC 或其<br/>他模型的播放器接到主角上。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​asset::assets::Assets#lt;bevy​_​**<br/>**gltf::assets::Gltf#gt;::asset​_​events**<br/>发布累计的资产变化消息。" }
+  n2@{ shape: rounded, label: "**asset​_​events**<br/>发布累计的资产变化消息。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**demo::scene​_​assembly::actors::spawn​_​**<br/>**actors**<br/>来自scene​_​assembly ↗：为就绪海岛创建<br/>玩法实体并复用加载相机。" }
+  n3@{ shape: rounded, label: "**spawn​_​actors**<br/>来自scene​_​assembly ↗：为就绪海岛创建<br/>玩法实体并复用加载相机。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**bevy​_​asset::assets::Assets#lt;bevy​_​**<br/>**gltf::assets::Gltf#gt;::track​_​assets**<br/>同步资产存活状态并处理句柄释放。" }
+  n4@{ shape: rounded, label: "**track​_​assets**<br/>同步资产存活状态并处理句柄释放。" }
   class n4 node_system
-  n5@{ shape: rounded, label: "**bevy​_​asset::assets::Assets#lt;bevy​_​**<br/>**gltf::assets::Gltf#gt;::asset​_​events​_​**<br/>**condition**<br/>判断是否有待发布的资产变化。" }
+  n5@{ shape: rounded, label: "**asset​_​events​_​condition**<br/>判断是否有待发布的资产变化。" }
   class n5 node_system
-  n6@{ shape: rounded, label: "**demo::scene​_​assembly::loading::**<br/>**begin​_​island**<br/>来自scene​_​assembly ↗：请求创建已加载<br/>海岛的运行实例。" }
+  n6@{ shape: rounded, label: "**begin​_​island**<br/>来自scene​_​assembly ↗：请求创建已加载<br/>海岛的运行实例。" }
   class n6 node_system
   class n6 external_node
-  n7@{ shape: rounded, label: "**demo::ui::backdrop::play​_​courier​_​**<br/>**animation**<br/>来自ui ↗：仅遍历已展开的展示角色子树，<br/>命名资产尚未就绪时保留 pending 供下一帧<br/>重试。" }
+  n7@{ shape: rounded, label: "**play​_​courier​_​animation**<br/>来自ui ↗：仅遍历已展开的展示角色子树，<br/>命名资产尚未就绪时保留 pending 供下一帧<br/>重试。" }
   class n7 node_system
   class n7 external_node
   n0 e0@--> n1

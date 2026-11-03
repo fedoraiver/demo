@@ -39,14 +39,14 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**contrast​_​adaptive​_​sharpening::**<br/>**CasUniform**<br/>向锐化着色器传递相机锐度参数。" }
+  n0@{ shape: rounded, label: "**CasUniform**<br/>向锐化着色器传递相机锐度参数。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​anti​_​alias::contrast​_​adaptive​_​**<br/>**sharpening::prepare​_​cas​_​pipelines**<br/>按去噪与目标格式准备视图锐化管线。" }
+  n1@{ shape: rounded, label: "**prepare​_​cas​_​pipelines**<br/>按去噪与目标格式准备视图锐化管线。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​render::uniform::prepare​_​**<br/>**uniform​_​components#lt;bevy​_​anti​_​alias::**<br/>**contrast​_​adaptive​_​sharpening::**<br/>**CasUniform#gt;**<br/>来自crate:bevy​_​render ↗：将组件值批量<br/>上传为动态着色器参数。" }
+  n2@{ shape: rounded, label: "**prepare​_​uniform​_​components**<br/>来自crate:bevy​_​render ↗：将组件值批量<br/>上传为动态着色器参数。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​extract::extract​_​component::**<br/>**extract​_​components#lt;bevy​_​anti​_​alias::**<br/>**contrast​_​adaptive​_​sharpening::**<br/>**ContrastAdaptiveSharpening, bevy​_​**<br/>**render::RenderApp, ()#gt;**<br/>来自crate:bevy​_​extract ↗：批量同步或<br/>移除子世界的目标组件。" }
+  n3@{ shape: rounded, label: "**extract​_​components**<br/>来自crate:bevy​_​extract ↗：批量同步或<br/>移除子世界的目标组件。" }
   class n3 node_system
   class n3 external_node
   n0 e0@-->|"存在性约束"| n1

@@ -38,16 +38,16 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**render​_​resource::sparse​_​buffer​_​vec::**<br/>**SparseBufferUpdatePipelines**<br/>提供稀疏缓冲散射写入的计算接口。" }
+  n0@{ shape: cyl, label: "**SparseBufferUpdatePipelines**<br/>提供稀疏缓冲散射写入的计算接口。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​render::batching::gpu​_​**<br/>**preprocessing::write​_​batched​_​**<br/>**instance​_​buffers#lt;bevy​_​pbr::render::**<br/>**mesh::MeshPipeline#gt;**<br/>上传实例输入、预处理任务并准备稀疏更新。" }
+  n1@{ shape: rounded, label: "**write​_​batched​_​instance​_​buffers**<br/>上传实例输入、预处理任务并准备稀疏更新。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​pbr::render::gpu​_​preprocess::**<br/>**write​_​mesh​_​culling​_​data​_​buffer**<br/>来自crate:bevy​_​pbr ↗：上传网格裁剪数<br/>据并准备稀疏填充任务。" }
+  n2@{ shape: rounded, label: "**write​_​mesh​_​culling​_​data​_​buffer**<br/>来自crate:bevy​_​pbr ↗：上传网格裁剪数<br/>据并准备稀疏填充任务。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​render::render​_​resource::**<br/>**sparse​_​buffer​_​vec::init​_​sparse​_​**<br/>**buffer​_​update​_​pipelines**<br/>按设备存储绑定能力建立稀疏更新计算资源。" }
+  n3@{ shape: rounded, label: "**init​_​sparse​_​buffer​_​update​_​pipelines**<br/>按设备存储绑定能力建立稀疏更新计算资源。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**bevy​_​render::render​_​resource::**<br/>**sparse​_​buffer​_​vec::init​_​sparse​_​**<br/>**buffer​_​update​_​bind​_​groups**<br/>准备稀疏更新管线标识与弱键绑定缓存。" }
+  n4@{ shape: rounded, label: "**init​_​sparse​_​buffer​_​update​_​bind​_​**<br/>**groups**<br/>准备稀疏更新管线标识与弱键绑定缓存。" }
   class n4 node_system
   n0 e0@--> n1
   class e0 edge_read

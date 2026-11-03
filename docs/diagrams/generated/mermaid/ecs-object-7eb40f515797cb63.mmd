@@ -40,7 +40,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: lin-rect, label: "**Begin**<br/>组织绘制执行、提交与收尾。" }
   class n0 node_system_set
-  n1@{ shape: rounded, label: "**bevy​_​render::render​_​resource::**<br/>**sparse​_​buffer​_​vec::update​_​sparse​_​**<br/>**buffers**<br/>用计算通道把变化元素写入稀疏 GPU 缓冲。" }
+  n1@{ shape: rounded, label: "**update​_​sparse​_​buffers**<br/>用计算通道把变化元素写入稀疏 GPU 缓冲。" }
   class n1 node_system
   n2@{ shape: lin-rect, label: "**Render**<br/>组织绘制执行、提交与收尾。" }
   class n2 node_system_set

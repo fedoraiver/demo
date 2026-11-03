@@ -39,7 +39,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: notch-rect, label: "**Local · previous​_​len**<br/>根据上次阴影滤波配置数量预留提取容量。" }
   class n0 node_local
-  n1@{ shape: rounded, label: "**bevy​_​pbr::render::light::extract​_​**<br/>**shadow​_​filtering​_​method**<br/>批量同步实体的阴影过滤方式。" }
+  n1@{ shape: rounded, label: "**extract​_​shadow​_​filtering​_​method**<br/>批量同步实体的阴影过滤方式。" }
   class n1 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

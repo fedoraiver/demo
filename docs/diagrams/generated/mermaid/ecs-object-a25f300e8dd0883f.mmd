@@ -39,7 +39,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: notch-rect, label: "**Local · quad**<br/>复用所有默认精灵共用的单位四边形网格。" }
   class n0 node_local
-  n1@{ shape: rounded, label: "**bevy​_​sprite​_​render::sprite​_​mesh::**<br/>**add​_​mesh**<br/>为新增精灵安装共享单位矩形网格。" }
+  n1@{ shape: rounded, label: "**add​_​mesh**<br/>为新增精灵安装共享单位矩形网格。" }
   class n1 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

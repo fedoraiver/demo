@@ -43,31 +43,31 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​post​_​process::msaa​_​writeback::**<br/>**prepare​_​msaa​_​writeback​_​pipelines**<br/>为需要保留已有颜色的多采样相机准备回写管<br/>线。" }
+  n0@{ shape: rounded, label: "**prepare​_​msaa​_​writeback​_​pipelines**<br/>为需要保留已有颜色的多采样相机准备回写管<br/>线。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**bevy​_​render::view::ViewTarget**<br/>来自crate:bevy​_​render ↗：管理视图主颜<br/>色纹理及最终输出附件。" }
+  n1@{ shape: rounded, label: "**ViewTarget**<br/>来自crate:bevy​_​render ↗：管理视图主颜<br/>色纹理及最终输出附件。" }
   class n1 node_component
   class n1 external_node
-  n2@{ shape: rounded, label: "**msaa​_​writeback::**<br/>**MsaaWritebackBlitPipeline**<br/>记录把后处理颜色回写到 MSAA 目标的管<br/>线。" }
+  n2@{ shape: rounded, label: "**MsaaWritebackBlitPipeline**<br/>记录把后处理颜色回写到 MSAA 目标的管<br/>线。" }
   class n2 node_component
   n3@{ shape: lin-rect, label: "**Prepare**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
   class n3 node_system_set
   class n3 external_node
-  n4@{ shape: rounded, label: "**bevy​_​render::view::Msaa**<br/>来自crate:bevy​_​render ↗：选择视图的多<br/>重采样抗锯齿样本数。" }
+  n4@{ shape: rounded, label: "**Msaa**<br/>来自crate:bevy​_​render ↗：选择视图的多<br/>重采样抗锯齿样本数。" }
   class n4 node_component
   class n4 external_node
-  n5@{ shape: cyl, label: "**bevy​_​render::render​_​resource::**<br/>**SpecializedRenderPipelines#lt;blit::**<br/>**BlitPipeline#gt;**<br/>来自crate:bevy​_​render ↗：按配置键缓存<br/>渲染管线变体。" }
+  n5@{ shape: cyl, label: "**SpecializedRenderPipelines#lt;BlitPipel**<br/>**ine#gt;**<br/>来自crate:bevy​_​render ↗：按配置键缓存<br/>渲染管线变体。" }
   class n5 node_resource
   class n5 external_node
-  n6@{ shape: cyl, label: "**bevy​_​render::render​_​resource::**<br/>**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
+  n6@{ shape: cyl, label: "**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
   class n6 node_resource
   class n6 external_node
-  n7@{ shape: fr-rect, label: "**msaa​_​writeback::MsaaWritebackPlugin**<br/>提供相机多重采样写回支持。" }
+  n7@{ shape: fr-rect, label: "**MsaaWritebackPlugin**<br/>提供相机多重采样写回支持。" }
   class n7 node_plugin
-  n8@{ shape: rounded, label: "**bevy​_​render::camera::ExtractedCamera**<br/>来自crate:bevy​_​render ↗：保存渲染世界<br/>相机的目标和绘制配置。" }
+  n8@{ shape: rounded, label: "**ExtractedCamera**<br/>来自crate:bevy​_​render ↗：保存渲染世界<br/>相机的目标和绘制配置。" }
   class n8 node_component
   class n8 external_node
-  n9@{ shape: cyl, label: "**blit::BlitPipeline**<br/>来自crate:bevy​_​core​_​pipeline ↗：提供<br/>全屏纹理复制与缩放管线。" }
+  n9@{ shape: cyl, label: "**BlitPipeline**<br/>来自crate:bevy​_​core​_​pipeline ↗：提供<br/>全屏纹理复制与缩放管线。" }
   class n9 node_resource
   class n9 external_node
   n1 e0@--> n0

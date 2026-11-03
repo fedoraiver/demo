@@ -43,17 +43,17 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​render::batching::gpu​_​**<br/>**preprocessing::prepare​_​indirect​_​**<br/>**parameters​_​build​_​jobs**<br/>按视图阶段的批范围登记间接参数构建任务。" }
+  n0@{ shape: rounded, label: "**prepare​_​indirect​_​parameters​_​build​_​**<br/>**jobs**<br/>按视图阶段的批范围登记间接参数构建任务。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**batching::gpu​_​preprocessing::**<br/>**IndirectParametersBuffers**<br/>保存间接绘制命令与裁剪计数缓冲。" }
+  n1@{ shape: cyl, label: "**IndirectParametersBuffers**<br/>保存间接绘制命令与裁剪计数缓冲。" }
   class n1 node_resource
-  n2@{ shape: rounded, label: "**bevy​_​render::batching::gpu​_​**<br/>**preprocessing::write​_​indirect​_​**<br/>**parameters​_​build​_​jobs**<br/>上传间接参数构建任务的动态参数缓冲。" }
+  n2@{ shape: rounded, label: "**write​_​indirect​_​parameters​_​build​_​jobs**<br/>上传间接参数构建任务的动态参数缓冲。" }
   class n2 node_system
-  n3@{ shape: cyl, label: "**batching::gpu​_​preprocessing::**<br/>**IndirectParametersBuildJobs**<br/>按对齐要求存储间接绘制参数构建任务。" }
+  n3@{ shape: cyl, label: "**IndirectParametersBuildJobs**<br/>按对齐要求存储间接绘制参数构建任务。" }
   class n3 node_resource
-  n4@{ shape: cyl, label: "**batching::gpu​_​preprocessing::**<br/>**BuildIndirectParametersMetadata**<br/>描述间接绘制参数构建的 GPU 调度。" }
+  n4@{ shape: cyl, label: "**BuildIndirectParametersMetadata**<br/>描述间接绘制参数构建的 GPU 调度。" }
   class n4 node_resource
-  n5@{ shape: fr-rect, label: "**batching::gpu​_​preprocessing::**<br/>**BatchingPlugin**<br/>维护间接绘制参数和构建任务。" }
+  n5@{ shape: fr-rect, label: "**BatchingPlugin**<br/>维护间接绘制参数和构建任务。" }
   class n5 node_plugin
   n6@{ shape: lin-rect, label: "**PrepareResourcesFlush**<br/>组织渲染数据准备与绘制排队。" }
   class n6 node_system_set

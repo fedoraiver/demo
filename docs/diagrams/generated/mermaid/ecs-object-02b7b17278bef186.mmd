@@ -40,14 +40,14 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​core​_​pipeline::skybox::init​_​**<br/>**skybox​_​pipeline**<br/>加载天空盒着色器并建立管线资源。" }
+  n0@{ shape: rounded, label: "**init​_​skybox​_​pipeline**<br/>加载天空盒着色器并建立管线资源。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**bevy​_​asset::AssetServer**<br/>来自crate:bevy​_​asset ↗：加载资产并追<br/>踪加载状态。" }
+  n1@{ shape: cyl, label: "**AssetServer**<br/>来自crate:bevy​_​asset ↗：加载资产并追<br/>踪加载状态。" }
   class n1 node_resource
   class n1 external_node
-  n2@{ shape: cyl, label: "**skybox::SkyboxPipeline**<br/>提供天空盒绘制的资源布局和着色器。" }
+  n2@{ shape: cyl, label: "**SkyboxPipeline**<br/>提供天空盒绘制的资源布局和着色器。" }
   class n2 node_resource
-  n3@{ shape: fr-rect, label: "**skybox::SkyboxPlugin**<br/>准备天空盒的渲染数据与管线。" }
+  n3@{ shape: fr-rect, label: "**SkyboxPlugin**<br/>准备天空盒的渲染数据与管线。" }
   class n3 node_plugin
   n1 e0@--> n0
   class e0 edge_read

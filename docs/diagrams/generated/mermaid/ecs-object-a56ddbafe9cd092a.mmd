@@ -36,9 +36,9 @@ flowchart LR
   classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**bevy::bevy​_​ecs::message::**<br/>**Messages#lt;bevy::bevy​_​asset::**<br/>**AssetLoadFailedEvent#lt;bevy​_​kira​_​**<br/>**audio::AudioSource#gt;#gt;**<br/>保存最近两次轮换期间产生的指定类型消息" }
+  n0@{ shape: cyl, label: "**Messages#lt;AssetLoadFailedEvent#lt;AudioS**<br/>**ource#gt;#gt;**<br/>保存最近两次轮换期间产生的指定类型消息" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**demo::audio::playback::log​_​load​_​**<br/>**failures**<br/>来自audio ↗：记录声音资源加载失败的路<br/>径与错误。" }
+  n1@{ shape: rounded, label: "**log​_​load​_​failures**<br/>来自audio ↗：记录声音资源加载失败的路<br/>径与错误。" }
   class n1 node_system
   class n1 external_node
   n0 e0@--> n1

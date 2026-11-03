@@ -38,9 +38,9 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**prepass::PreviousTemporalJitter**<br/>记录上一帧实际采用的抖动与视口尺寸。" }
+  n0@{ shape: rounded, label: "**PreviousTemporalJitter**<br/>记录上一帧实际采用的抖动与视口尺寸。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​pbr::prepass::prepare​_​previous​_​**<br/>**view​_​uniforms**<br/>重建前帧抖动矩阵并上传视图历史参数。" }
+  n1@{ shape: rounded, label: "**prepare​_​previous​_​view​_​uniforms**<br/>重建前帧抖动矩阵并上传视图历史参数。" }
   class n1 node_system
   n1 e0@-->|"移除"| n0
   class e0 edge_write

@@ -42,19 +42,19 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**avian3d::collision::collider::**<br/>**backend::update​_​collider​_​mass​_​**<br/>**properties#lt;avian3d::collision::**<br/>**collider::parry::Collider#gt;**<br/>按变化的形状和密度重算碰撞体质量。" }
+  n0@{ shape: rounded, label: "**update​_​collider​_​mass​_​properties**<br/>按变化的形状和密度重算碰撞体质量。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**avian3d::collision::collider::**<br/>**backend::update​_​collider​_​**<br/>**scale#lt;avian3d::collision::collider::**<br/>**parry::Collider#gt;**<br/>把根节点和附属碰撞体的缩放传给形状。" }
+  n1@{ shape: rounded, label: "**update​_​collider​_​scale**<br/>把根节点和附属碰撞体的缩放传给形状。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**collision::collider::Sensor**<br/>将碰撞体设为不阻挡运动的触发器。" }
+  n2@{ shape: rounded, label: "**Sensor**<br/>将碰撞体设为不阻挡运动的触发器。" }
   class n2 node_component
-  n3@{ shape: rounded, label: "**collision::collider::parry::Collider**<br/>保存 Parry 碰撞后端的几何形状。" }
+  n3@{ shape: rounded, label: "**Collider**<br/>保存 Parry 碰撞后端的几何形状。" }
   class n3 node_component
   n4@{ shape: lin-rect, label: "**UpdateColliderMassProperties**<br/>组织质量属性重算与写回。" }
   class n4 node_system_set
-  n5@{ shape: rounded, label: "**dynamics::rigid​_​body::mass​_​**<br/>**properties::components::collider::**<br/>**ColliderMassProperties**<br/>缓存由碰撞形状计算的质量属性。" }
+  n5@{ shape: rounded, label: "**ColliderMassProperties**<br/>缓存由碰撞形状计算的质量属性。" }
   class n5 node_component
-  n6@{ shape: rounded, label: "**dynamics::rigid​_​body::mass​_​**<br/>**properties::components::collider::**<br/>**ColliderDensity**<br/>以密度参与碰撞体质量计算。" }
+  n6@{ shape: rounded, label: "**ColliderDensity**<br/>以密度参与碰撞体质量计算。" }
   class n6 node_component
   n1 e0@-->|"先于"| n0
   class e0 edge_order

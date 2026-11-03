@@ -41,19 +41,19 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**dynamics::rigid​_​body::mass​_​**<br/>**properties::components::collider::**<br/>**ColliderDensity**<br/>以密度参与碰撞体质量计算。" }
+  n0@{ shape: rounded, label: "**ColliderDensity**<br/>以密度参与碰撞体质量计算。" }
   class n0 node_component
   n1@{ shape: rounded, label: "**prepare​_​island · 创建模板**<br/>来自scene​_​assembly ↗：为地图展示<br/>NPC 添加静态碰撞子体。" }
   class n1 node_entity
   class n1 external_node
-  n2@{ shape: hex, label: "**avian3d::collision::collider::**<br/>**backend::{impl#35;2}::build::**<br/>**{closure#35;6}**<br/>恢复非传感器碰撞体的质量属性。" }
+  n2@{ shape: hex, label: "**build::{closure#35;6}**<br/>恢复非传感器碰撞体的质量属性。" }
   class n2 node_observer
-  n3@{ shape: rounded, label: "**avian3d::collision::collider::**<br/>**backend::update​_​collider​_​mass​_​**<br/>**properties#lt;avian3d::collision::**<br/>**collider::parry::Collider#gt;**<br/>按变化的形状和密度重算碰撞体质量。" }
+  n3@{ shape: rounded, label: "**update​_​collider​_​mass​_​properties**<br/>按变化的形状和密度重算碰撞体质量。" }
   class n3 node_system
   n4@{ shape: rounded, label: "**prepare​_​island · 创建模板**<br/>来自scene​_​assembly ↗：为海岛导入几何<br/>创建静态碰撞子体。" }
   class n4 node_entity
   class n4 external_node
-  n5@{ shape: rounded, label: "**avian3d::collision::collider::**<br/>**backend::init​_​collider​_​constructor​_​**<br/>**hierarchies**<br/>按层级构造配置为后代生成碰撞体。" }
+  n5@{ shape: rounded, label: "**init​_​collider​_​constructor​_​**<br/>**hierarchies**<br/>按层级构造配置为后代生成碰撞体。" }
   class n5 node_system
   n1 e0@-->|"可能包含"| n0
   class e0 edge_reference
@@ -69,7 +69,6 @@ flowchart LR
   class e5 edge_write
   e0@{ curve: basis }
   e1@{ curve: basis }
-  e2@{ curve: basis }
-  e3@{ curve: bumpX }
+  e2@{ curve: bumpX }
   e4@{ curve: basis }
   e5@{ curve: basis }

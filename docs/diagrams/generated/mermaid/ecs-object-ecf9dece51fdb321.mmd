@@ -45,43 +45,43 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​post​_​process::dof::prepare​_​**<br/>**depth​_​of​_​field​_​pipelines**<br/>按景深模式和视图格式准备两阶段管线。" }
+  n0@{ shape: rounded, label: "**prepare​_​depth​_​of​_​field​_​pipelines**<br/>按景深模式和视图格式准备两阶段管线。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**bevy​_​post​_​process::dof::prepare​_​**<br/>**depth​_​of​_​field​_​view​_​bind​_​group​_​**<br/>**layouts**<br/>为景深视图创建单输入与 Bokeh 双输入布<br/>局。" }
+  n1@{ shape: rounded, label: "**prepare​_​depth​_​of​_​field​_​view​_​bind​_​**<br/>**group​_​layouts**<br/>为景深视图创建单输入与 Bokeh 双输入布<br/>局。" }
   class n1 node_system
-  n2@{ shape: fr-rect, label: "**dof::DepthOfFieldPlugin**<br/>提供相机景深后处理。" }
+  n2@{ shape: fr-rect, label: "**DepthOfFieldPlugin**<br/>提供相机景深后处理。" }
   class n2 node_plugin
-  n3@{ shape: cyl, label: "**bevy​_​core​_​pipeline::FullscreenShader**<br/>来自crate:bevy​_​core​_​pipeline ↗：提供<br/>覆盖整个屏幕的顶点着色器。" }
+  n3@{ shape: cyl, label: "**FullscreenShader**<br/>来自crate:bevy​_​core​_​pipeline ↗：提供<br/>覆盖整个屏幕的顶点着色器。" }
   class n3 node_resource
   class n3 external_node
-  n4@{ shape: rounded, label: "**bevy​_​render::camera::ExtractedCamera**<br/>来自crate:bevy​_​render ↗：保存渲染世界<br/>相机的目标和绘制配置。" }
+  n4@{ shape: rounded, label: "**ExtractedCamera**<br/>来自crate:bevy​_​render ↗：保存渲染世界<br/>相机的目标和绘制配置。" }
   class n4 node_component
   class n4 external_node
-  n5@{ shape: rounded, label: "**bevy​_​render::view::Msaa**<br/>来自crate:bevy​_​render ↗：选择视图的多<br/>重采样抗锯齿样本数。" }
+  n5@{ shape: rounded, label: "**Msaa**<br/>来自crate:bevy​_​render ↗：选择视图的多<br/>重采样抗锯齿样本数。" }
   class n5 node_component
   class n5 external_node
   n6@{ shape: lin-rect, label: "**Prepare**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
   class n6 node_system_set
   class n6 external_node
-  n7@{ shape: cyl, label: "**bevy​_​render::render​_​resource::**<br/>**SpecializedRenderPipelines#lt;dof::**<br/>**DepthOfFieldPipeline#gt;**<br/>来自crate:bevy​_​render ↗：按配置键缓存<br/>渲染管线变体。" }
+  n7@{ shape: cyl, label: "**SpecializedRenderPipelines#lt;DepthOfFi**<br/>**eldPipeline#gt;**<br/>来自crate:bevy​_​render ↗：按配置键缓存<br/>渲染管线变体。" }
   class n7 node_resource
   class n7 external_node
-  n8@{ shape: cyl, label: "**bevy​_​render::render​_​resource::**<br/>**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
+  n8@{ shape: cyl, label: "**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
   class n8 node_resource
   class n8 external_node
-  n9@{ shape: cyl, label: "**bevy​_​asset::AssetServer**<br/>来自crate:bevy​_​asset ↗：加载资产并追<br/>踪加载状态。" }
+  n9@{ shape: cyl, label: "**AssetServer**<br/>来自crate:bevy​_​asset ↗：加载资产并追<br/>踪加载状态。" }
   class n9 node_resource
   class n9 external_node
-  n10@{ shape: rounded, label: "**dof::DepthOfField**<br/>配置相机焦点及离焦模糊。" }
+  n10@{ shape: rounded, label: "**DepthOfField**<br/>配置相机焦点及离焦模糊。" }
   class n10 node_component
-  n11@{ shape: rounded, label: "**dof::**<br/>**ViewDepthOfFieldBindGroupLayouts**<br/>定义当前视图景深的单输入与双输入布局。" }
+  n11@{ shape: rounded, label: "**ViewDepthOfFieldBindGroupLayouts**<br/>定义当前视图景深的单输入与双输入布局。" }
   class n11 node_component
-  n12@{ shape: cyl, label: "**dof::**<br/>**DepthOfFieldGlobalBindGroupLayout**<br/>定义景深共享参数布局与颜色采样器。" }
+  n12@{ shape: cyl, label: "**DepthOfFieldGlobalBindGroupLayout**<br/>定义景深共享参数布局与颜色采样器。" }
   class n12 node_resource
-  n13@{ shape: rounded, label: "**bevy​_​render::view::ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
+  n13@{ shape: rounded, label: "**ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
   class n13 node_component
   class n13 external_node
-  n14@{ shape: rounded, label: "**dof::DepthOfFieldPipelines**<br/>记录视图所选景深模式的两阶段管线。" }
+  n14@{ shape: rounded, label: "**DepthOfFieldPipelines**<br/>记录视图所选景深模式的两阶段管线。" }
   class n14 node_component
   n1 e0@-->|"先于"| n0
   class e0 edge_order

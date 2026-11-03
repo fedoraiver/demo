@@ -40,19 +40,19 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: lin-rect, label: "**CheckForRemovals**<br/>组织绘制管线失效检测。" }
   class n0 node_system_set
-  n1@{ shape: rounded, label: "**bevy​_​pbr::material::extract​_​**<br/>**entities​_​that​_​need​_​specializations​_​**<br/>**removed#lt;bevy​_​pbr::extended​_​**<br/>**material::ExtendedMaterial#lt;bevy​_​**<br/>**pbr::pbr​_​material::**<br/>**StandardMaterial, bevy​_​pbr::decal::**<br/>**forward::ForwardDecalMaterialExt#gt;#gt;**<br/>来自crate:bevy​_​pbr ↗：提取需要移除材<br/>质管线专用化的实体。" }
+  n1@{ shape: rounded, label: "**extract​_​entities​_​that​_​need​_​**<br/>**specializations​_​removed**<br/>来自crate:bevy​_​pbr ↗：提取需要移除材<br/>质管线专用化的实体。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::**<br/>**material::extract​_​entities​_​that​_​**<br/>**need​_​specializations​_​removed#lt;bevy​_​**<br/>**sprite​_​render::tilemap​_​chunk::**<br/>**tilemap​_​chunk​_​material::**<br/>**TilemapChunkMaterial#gt;**<br/>来自crate:bevy​_​sprite​_​render ↗：把二<br/>维材质移除实体登记到专用化清理表。" }
+  n2@{ shape: rounded, label: "**extract​_​entities​_​that​_​need​_​**<br/>**specializations​_​removed**<br/>来自crate:bevy​_​sprite​_​render ↗：把二<br/>维材质移除实体登记到专用化清理表。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::**<br/>**material::extract​_​entities​_​that​_​**<br/>**need​_​specializations​_​removed#lt;bevy​_​**<br/>**sprite​_​render::sprite​_​mesh::sprite​_​**<br/>**mesh​_​material::SpriteMeshMaterial#gt;**<br/>来自crate:bevy​_​sprite​_​render ↗：把二<br/>维材质移除实体登记到专用化清理表。" }
+  n3@{ shape: rounded, label: "**extract​_​entities​_​that​_​need​_​**<br/>**specializations​_​removed**<br/>来自crate:bevy​_​sprite​_​render ↗：把二<br/>维材质移除实体登记到专用化清理表。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::**<br/>**material::extract​_​entities​_​that​_​**<br/>**need​_​specializations​_​removed#lt;bevy​_​**<br/>**sprite​_​render::mesh2d::color​_​**<br/>**material::ColorMaterial#gt;**<br/>来自crate:bevy​_​sprite​_​render ↗：把二<br/>维材质移除实体登记到专用化清理表。" }
+  n4@{ shape: rounded, label: "**extract​_​entities​_​that​_​need​_​**<br/>**specializations​_​removed**<br/>来自crate:bevy​_​sprite​_​render ↗：把二<br/>维材质移除实体登记到专用化清理表。" }
   class n4 node_system
   class n4 external_node
-  n5@{ shape: rounded, label: "**bevy​_​pbr::material::extract​_​**<br/>**entities​_​that​_​need​_​specializations​_​**<br/>**removed#lt;bevy​_​pbr::pbr​_​material::**<br/>**StandardMaterial#gt;**<br/>来自crate:bevy​_​pbr ↗：提取需要移除材<br/>质管线专用化的实体。" }
+  n5@{ shape: rounded, label: "**extract​_​entities​_​that​_​need​_​**<br/>**specializations​_​removed**<br/>来自crate:bevy​_​pbr ↗：提取需要移除材<br/>质管线专用化的实体。" }
   class n5 node_system
   class n5 external_node
   n6@{ shape: lin-rect, label: "**CheckForChanges**<br/>组织绘制管线失效检测。" }

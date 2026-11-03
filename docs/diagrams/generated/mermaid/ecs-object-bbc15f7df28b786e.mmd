@@ -38,15 +38,15 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**cluster::gpu::**<br/>**ViewGpuClusteringBuffers**<br/>保存单个视图的 GPU 聚簇工作缓冲。" }
+  n0@{ shape: rounded, label: "**ViewGpuClusteringBuffers**<br/>保存单个视图的 GPU 聚簇工作缓冲。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​pbr::cluster::gpu::upload​_​view​_​**<br/>**gpu​_​clustering​_​buffers**<br/>上传聚簇深度切片、元数据和计数暂存。" }
+  n1@{ shape: rounded, label: "**upload​_​view​_​gpu​_​clustering​_​buffers**<br/>上传聚簇深度切片、元数据和计数暂存。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​pbr::cluster::gpu::prepare​_​**<br/>**clustering​_​bind​_​groups**<br/>为视图的聚簇计算与光栅阶段绑定工作缓冲。" }
+  n2@{ shape: rounded, label: "**prepare​_​clustering​_​bind​_​groups**<br/>为视图的聚簇计算与光栅阶段绑定工作缓冲。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​pbr::cluster::gpu::prepare​_​**<br/>**clusters​_​for​_​gpu​_​clustering**<br/>按视图规模和回读容量分配 GPU 聚簇缓冲。" }
+  n3@{ shape: rounded, label: "**prepare​_​clusters​_​for​_​gpu​_​clustering**<br/>按视图规模和回读容量分配 GPU 聚簇缓冲。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**bevy​_​pbr::cluster::gpu::cluster​_​on​_​**<br/>**gpu**<br/>执行深度切片、计数、分配和填充的 GPU 聚<br/>簇。" }
+  n4@{ shape: rounded, label: "**cluster​_​on​_​gpu**<br/>执行深度切片、计数、分配和填充的 GPU 聚<br/>簇。" }
   class n4 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

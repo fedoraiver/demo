@@ -38,18 +38,18 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;bevy​_​**<br/>**picking::backend::PointerHits#gt;**<br/>保存最近两次轮换期间产生的指定类型消息" }
+  n0@{ shape: cyl, label: "**Messages#lt;PointerHits#gt;**<br/>保存最近两次轮换期间产生的指定类型消息" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​sprite::picking​_​backend::**<br/>**sprite​_​picking**<br/>来自crate:bevy​_​sprite ↗：按精灵图像和<br/>拾取配置计算指针命中。" }
+  n1@{ shape: rounded, label: "**sprite​_​picking**<br/>来自crate:bevy​_​sprite ↗：按精灵图像和<br/>拾取配置计算指针命中。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​ui::picking​_​backend::ui​_​picking**<br/>来自crate:bevy​_​ui ↗：按 UI 堆叠与相机<br/>视口计算指针命中。" }
+  n2@{ shape: rounded, label: "**ui​_​picking**<br/>来自crate:bevy​_​ui ↗：按 UI 堆叠与相机<br/>视口计算指针命中。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​picking::window::update​_​window​_​**<br/>**hits**<br/>来自crate:bevy​_​picking ↗：把所在窗口<br/>作为拾取的最底层命中。" }
+  n3@{ shape: rounded, label: "**update​_​window​_​hits**<br/>来自crate:bevy​_​picking ↗：把所在窗口<br/>作为拾取的最底层命中。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**bevy​_​picking::hover::generate​_​**<br/>**hovermap**<br/>来自crate:bevy​_​picking ↗：汇总拾取命<br/>中并应用指针捕获。" }
+  n4@{ shape: rounded, label: "**generate​_​hovermap**<br/>来自crate:bevy​_​picking ↗：汇总拾取命<br/>中并应用指针捕获。" }
   class n4 node_system
   class n4 external_node
   n1 e0@-->|"可变访问"| n0

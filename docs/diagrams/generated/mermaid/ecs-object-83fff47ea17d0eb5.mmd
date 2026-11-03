@@ -41,14 +41,14 @@ flowchart LR
   classDef edge_publish stroke:#247B91,stroke-width:1.8px,stroke-dasharray:10 4 2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​app::terminal​_​ctrl​_​c​_​handler::**<br/>**TerminalCtrlCHandlerPlugin::exit​_​on​_​**<br/>**flag**<br/>把终端退出标志转为应用退出消息。" }
+  n0@{ shape: rounded, label: "**exit​_​on​_​flag**<br/>把终端退出标志转为应用退出消息。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;app::**<br/>**AppExit#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n1@{ shape: cyl, label: "**Messages#lt;AppExit#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n1 node_resource
   class n1 external_node
-  n2@{ shape: fr-rect, label: "**terminal​_​ctrl​_​c​_​handler::**<br/>**TerminalCtrlCHandlerPlugin**<br/>将终端 Ctrl+C 转为应用退出请求。" }
+  n2@{ shape: fr-rect, label: "**TerminalCtrlCHandlerPlugin**<br/>将终端 Ctrl+C 转为应用退出请求。" }
   class n2 node_plugin
-  n3@{ shape: lean-r, label: "**app::AppExit**<br/>请求应用结束并携带退出结果。" }
+  n3@{ shape: lean-r, label: "**AppExit**<br/>请求应用结束并携带退出结果。" }
   class n3 node_message
   n0 e0@-->|"可变访问"| n1
   class e0 edge_write

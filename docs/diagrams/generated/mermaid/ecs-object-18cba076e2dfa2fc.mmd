@@ -37,15 +37,15 @@ flowchart LR
   classDef node_event fill:#F9F3EE,stroke:#B66B2D,stroke-width:1.6px,color:#1F3340
   classDef edge_observe stroke:#B66B2D,stroke-width:1.8px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: stadium, label: "**events::PointerScroll**<br/>通知目标上的横向和纵向滚动输入。" }
+  n0@{ shape: stadium, label: "**PointerScroll**<br/>通知目标上的横向和纵向滚动输入。" }
   class n0 node_event
-  n1@{ shape: hex, label: "**bevy​_​ui​_​widgets::scrollarea::**<br/>**scrollarea​_​on​_​scroll**<br/>来自crate:bevy​_​ui​_​widgets ↗：将指针<br/>滚动应用于滚动区域。" }
+  n1@{ shape: hex, label: "**scrollarea​_​on​_​scroll**<br/>来自crate:bevy​_​ui​_​widgets ↗：将指针<br/>滚动应用于滚动区域。" }
   class n1 node_observer
   class n1 external_node
-  n2@{ shape: hex, label: "**bevy​_​ui​_​widgets::scrollarea::**<br/>**scrollarea​_​on​_​scroll**<br/>来自crate:bevy​_​ui​_​widgets ↗：将指针<br/>滚动应用于滚动区域。" }
+  n2@{ shape: hex, label: "**scrollarea​_​on​_​scroll**<br/>来自crate:bevy​_​ui​_​widgets ↗：将指针<br/>滚动应用于滚动区域。" }
   class n2 node_observer
   class n2 external_node
-  n3@{ shape: hex, label: "**bevy​_​ui​_​widgets::scrollarea::**<br/>**scrollarea​_​on​_​scroll**<br/>来自crate:bevy​_​ui​_​widgets ↗：将指针<br/>滚动应用于滚动区域。" }
+  n3@{ shape: hex, label: "**scrollarea​_​on​_​scroll**<br/>来自crate:bevy​_​ui​_​widgets ↗：将指针<br/>滚动应用于滚动区域。" }
   class n3 node_observer
   class n3 external_node
   n0 e0@-->|"接收事件"| n1

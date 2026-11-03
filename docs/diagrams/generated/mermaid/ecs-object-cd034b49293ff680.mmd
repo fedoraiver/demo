@@ -37,19 +37,19 @@ flowchart LR
   classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**modal::ModalDialogBarrier**<br/>标识模态对话框背景遮罩。" }
+  n0@{ shape: rounded, label: "**ModalDialogBarrier**<br/>标识模态对话框背景遮罩。" }
   class n0 node_component
-  n1@{ shape: hex, label: "**bevy​_​ui​_​widgets::modal::modal​_​**<br/>**dialog​_​barrier​_​on​_​keypress**<br/>把模态遮罩的 Esc 输入转为关闭请求。" }
+  n1@{ shape: hex, label: "**modal​_​dialog​_​barrier​_​on​_​keypress**<br/>把模态遮罩的 Esc 输入转为关闭请求。" }
   class n1 node_observer
-  n2@{ shape: hex, label: "**bevy​_​ui​_​widgets::modal::modal​_​**<br/>**dialog​_​barrier​_​on​_​click**<br/>把模态遮罩按压转为关闭请求。" }
+  n2@{ shape: hex, label: "**modal​_​dialog​_​barrier​_​on​_​click**<br/>把模态遮罩按压转为关闭请求。" }
   class n2 node_observer
-  n3@{ shape: hex, label: "**bevy​_​ui​_​widgets::modal::modal​_​**<br/>**dialog​_​barrier​_​on​_​keypress**<br/>把模态遮罩的 Esc 输入转为关闭请求。" }
+  n3@{ shape: hex, label: "**modal​_​dialog​_​barrier​_​on​_​keypress**<br/>把模态遮罩的 Esc 输入转为关闭请求。" }
   class n3 node_observer
-  n4@{ shape: hex, label: "**bevy​_​ui​_​widgets::modal::modal​_​**<br/>**dialog​_​barrier​_​on​_​click**<br/>把模态遮罩按压转为关闭请求。" }
+  n4@{ shape: hex, label: "**modal​_​dialog​_​barrier​_​on​_​click**<br/>把模态遮罩按压转为关闭请求。" }
   class n4 node_observer
-  n5@{ shape: hex, label: "**bevy​_​ui​_​widgets::modal::modal​_​**<br/>**dialog​_​barrier​_​on​_​click**<br/>把模态遮罩按压转为关闭请求。" }
+  n5@{ shape: hex, label: "**modal​_​dialog​_​barrier​_​on​_​click**<br/>把模态遮罩按压转为关闭请求。" }
   class n5 node_observer
-  n6@{ shape: hex, label: "**bevy​_​ui​_​widgets::modal::modal​_​**<br/>**dialog​_​barrier​_​on​_​keypress**<br/>把模态遮罩的 Esc 输入转为关闭请求。" }
+  n6@{ shape: hex, label: "**modal​_​dialog​_​barrier​_​on​_​keypress**<br/>把模态遮罩的 Esc 输入转为关闭请求。" }
   class n6 node_observer
   n0 e0@-->|"存在性约束"| n1
   class e0 edge_reference

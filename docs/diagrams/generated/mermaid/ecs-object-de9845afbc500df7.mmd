@@ -39,51 +39,51 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**bevy::bevy​_​ecs::message::**<br/>**Messages#lt;ui::UiRequest#gt;**<br/>保存最近两次轮换期间产生的指定类型消息" }
+  n0@{ shape: cyl, label: "**Messages#lt;UiRequest#gt;**<br/>保存最近两次轮换期间产生的指定类型消息" }
   class n0 node_resource
-  n1@{ shape: hex, label: "**demo::ui::navigation::left**<br/>来自ui ↗：向左调整当前聚焦的真实设置字<br/>段。" }
+  n1@{ shape: hex, label: "**left**<br/>来自ui ↗：向左调整当前聚焦的真实设置字<br/>段。" }
   class n1 node_observer
   class n1 external_node
-  n2@{ shape: hex, label: "**demo::ui::navigation::confirm**<br/>来自ui ↗：执行当前聚焦按钮的菜单动作。" }
+  n2@{ shape: hex, label: "**confirm**<br/>来自ui ↗：执行当前聚焦按钮的菜单动作。" }
   class n2 node_observer
   class n2 external_node
-  n3@{ shape: hex, label: "**demo::ui::navigation::left**<br/>来自ui ↗：向左调整当前聚焦的真实设置字<br/>段。" }
+  n3@{ shape: hex, label: "**left**<br/>来自ui ↗：向左调整当前聚焦的真实设置字<br/>段。" }
   class n3 node_observer
   class n3 external_node
-  n4@{ shape: rounded, label: "**demo::ui::volume::sample​_​slider​_​**<br/>**pointer**<br/>来自ui ↗：Enhanced Input 负责菜单语义<br/>动作，但无法表示 UI 命中后的局部绝对横<br/>坐标。" }
+  n4@{ shape: rounded, label: "**sample​_​slider​_​pointer**<br/>来自ui ↗：Enhanced Input 负责菜单语义<br/>动作，但无法表示 UI 命中后的局部绝对横<br/>坐标。" }
   class n4 node_system
   class n4 external_node
-  n5@{ shape: hex, label: "**demo::ui::navigation::right**<br/>来自ui ↗：向右调整当前聚焦的真实设置字<br/>段。" }
+  n5@{ shape: hex, label: "**right**<br/>来自ui ↗：向右调整当前聚焦的真实设置字<br/>段。" }
   class n5 node_observer
   class n5 external_node
-  n6@{ shape: rounded, label: "**demo::ui::pointer::pointer​_​**<br/>**interaction**<br/>来自ui ↗：Bevy 原生 UI 已完成按钮命<br/>中；这里只读取缓冲的按下事件，不另读<br/>MouseButton。" }
+  n6@{ shape: rounded, label: "**pointer​_​interaction**<br/>来自ui ↗：Bevy 原生 UI 已完成按钮命<br/>中；这里只读取缓冲的按下事件，不另读<br/>MouseButton。" }
   class n6 node_system
   class n6 external_node
-  n7@{ shape: hex, label: "**demo::ui::navigation::back**<br/>来自ui ↗：发出返回、暂停或恢复请求。" }
+  n7@{ shape: hex, label: "**back**<br/>来自ui ↗：发出返回、暂停或恢复请求。" }
   class n7 node_observer
   class n7 external_node
-  n8@{ shape: hex, label: "**demo::ui::navigation::left**<br/>来自ui ↗：向左调整当前聚焦的真实设置字<br/>段。" }
+  n8@{ shape: hex, label: "**left**<br/>来自ui ↗：向左调整当前聚焦的真实设置字<br/>段。" }
   class n8 node_observer
   class n8 external_node
-  n9@{ shape: hex, label: "**demo::ui::navigation::confirm**<br/>来自ui ↗：执行当前聚焦按钮的菜单动作。" }
+  n9@{ shape: hex, label: "**confirm**<br/>来自ui ↗：执行当前聚焦按钮的菜单动作。" }
   class n9 node_observer
   class n9 external_node
-  n10@{ shape: hex, label: "**demo::ui::navigation::right**<br/>来自ui ↗：向右调整当前聚焦的真实设置字<br/>段。" }
+  n10@{ shape: hex, label: "**right**<br/>来自ui ↗：向右调整当前聚焦的真实设置字<br/>段。" }
   class n10 node_observer
   class n10 external_node
-  n11@{ shape: rounded, label: "**demo::ui::requests::handle​_​requests**<br/>来自ui ↗：每帧只消费一项语义请求，避免<br/>鼠标与确认键同时激活，或旧页面动作穿过页<br/>面切换。" }
+  n11@{ shape: rounded, label: "**handle​_​requests**<br/>来自ui ↗：每帧只消费一项语义请求，避免<br/>鼠标与确认键同时激活，或旧页面动作穿过页<br/>面切换。" }
   class n11 node_system
   class n11 external_node
-  n12@{ shape: hex, label: "**demo::ui::navigation::right**<br/>来自ui ↗：向右调整当前聚焦的真实设置字<br/>段。" }
+  n12@{ shape: hex, label: "**right**<br/>来自ui ↗：向右调整当前聚焦的真实设置字<br/>段。" }
   class n12 node_observer
   class n12 external_node
-  n13@{ shape: hex, label: "**demo::ui::navigation::back**<br/>来自ui ↗：发出返回、暂停或恢复请求。" }
+  n13@{ shape: hex, label: "**back**<br/>来自ui ↗：发出返回、暂停或恢复请求。" }
   class n13 node_observer
   class n13 external_node
-  n14@{ shape: hex, label: "**demo::ui::navigation::confirm**<br/>来自ui ↗：执行当前聚焦按钮的菜单动作。" }
+  n14@{ shape: hex, label: "**confirm**<br/>来自ui ↗：执行当前聚焦按钮的菜单动作。" }
   class n14 node_observer
   class n14 external_node
-  n15@{ shape: hex, label: "**demo::ui::navigation::back**<br/>来自ui ↗：发出返回、暂停或恢复请求。" }
+  n15@{ shape: hex, label: "**back**<br/>来自ui ↗：发出返回、暂停或恢复请求。" }
   class n15 node_observer
   class n15 external_node
   n1 e0@-->|"赋值"| n0

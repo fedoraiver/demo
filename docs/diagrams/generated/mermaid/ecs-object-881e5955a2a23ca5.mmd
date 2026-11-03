@@ -39,7 +39,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: notch-rect, label: "**Local · arg10.1.0.0.0.0**<br/>保存 Node 移除参数的组件 ID。" }
   class n0 node_local
-  n1@{ shape: rounded, label: "**bevy​_​ui::layout::ui​_​layout​_​system**<br/>求解 UI 布局并回写节点尺寸和二维变换。" }
+  n1@{ shape: rounded, label: "**ui​_​layout​_​system**<br/>求解 UI 布局并回写节点尺寸和二维变换。" }
   class n1 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

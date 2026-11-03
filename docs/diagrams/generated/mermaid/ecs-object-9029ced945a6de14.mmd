@@ -38,16 +38,16 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**bevy​_​asset::Assets#lt;dynamic​_​world::**<br/>**DynamicWorld#gt;**<br/>按资产身份存储对象并暂存变化消息。" }
+  n0@{ shape: cyl, label: "**Assets#lt;DynamicWorld#gt;**<br/>按资产身份存储对象并暂存变化消息。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​asset::assets::Assets#lt;bevy​_​**<br/>**world​_​serialization::dynamic​_​world::**<br/>**DynamicWorld#gt;::track​_​assets**<br/>同步资产存活状态并处理句柄释放。" }
+  n1@{ shape: rounded, label: "**track​_​assets**<br/>同步资产存活状态并处理句柄释放。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​asset::assets::Assets#lt;bevy​_​**<br/>**world​_​serialization::dynamic​_​world::**<br/>**DynamicWorld#gt;::asset​_​events​_​**<br/>**condition**<br/>判断是否有待发布的资产变化。" }
+  n2@{ shape: rounded, label: "**asset​_​events​_​condition**<br/>判断是否有待发布的资产变化。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​world​_​serialization::world​_​**<br/>**asset​_​spawner::world​_​instance​_​**<br/>**spawner​_​system**<br/>来自crate:bevy​_​world​_​serialization<br/>↗：推进世界资产实例的生成、销毁及更新。" }
+  n3@{ shape: rounded, label: "**world​_​instance​_​spawner​_​system**<br/>来自crate:bevy​_​world​_​serialization<br/>↗：推进世界资产实例的生成、销毁及更新。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**bevy​_​asset::assets::Assets#lt;bevy​_​**<br/>**world​_​serialization::dynamic​_​world::**<br/>**DynamicWorld#gt;::asset​_​events**<br/>发布累计的资产变化消息。" }
+  n4@{ shape: rounded, label: "**asset​_​events**<br/>发布累计的资产变化消息。" }
   class n4 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

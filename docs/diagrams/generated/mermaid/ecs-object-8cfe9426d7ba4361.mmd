@@ -43,29 +43,29 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​render::material​_​bind​_​groups::**<br/>**prepare​_​material​_​bind​_​groups**<br/>重建本帧变化材质所需的 GPU 绑定组。" }
+  n0@{ shape: rounded, label: "**prepare​_​material​_​bind​_​groups**<br/>重建本帧变化材质所需的 GPU 绑定组。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**material​_​bind​_​groups::**<br/>**FallbackBindlessResources**<br/>填充绑定数组中未使用的资源槽位。" }
+  n1@{ shape: cyl, label: "**FallbackBindlessResources**<br/>填充绑定数组中未使用的资源槽位。" }
   class n1 node_resource
-  n2@{ shape: cyl, label: "**storage::RenderChangedShaderBuffers**<br/>记录底层 GPU 缓冲身份已变化的着色器缓<br/>冲。" }
+  n2@{ shape: cyl, label: "**RenderChangedShaderBuffers**<br/>记录底层 GPU 缓冲身份已变化的着色器缓<br/>冲。" }
   class n2 node_resource
-  n3@{ shape: rounded, label: "**bevy​_​render::material​_​bind​_​groups::**<br/>**write​_​material​_​bind​_​group​_​buffers**<br/>上传材质分配器管理的无绑定缓冲内容。" }
+  n3@{ shape: rounded, label: "**write​_​material​_​bind​_​group​_​buffers**<br/>上传材质分配器管理的无绑定缓冲内容。" }
   class n3 node_system
   n4@{ shape: lin-rect, label: "**PrepareBindGroups**<br/>组织渲染数据准备与绘制排队。" }
   class n4 node_system_set
-  n5@{ shape: cyl, label: "**material​_​bind​_​groups::**<br/>**MaterialBindGroupAllocators**<br/>为材质分配绑定组并追踪引用资源。" }
+  n5@{ shape: cyl, label: "**MaterialBindGroupAllocators**<br/>为材质分配绑定组并追踪引用资源。" }
   class n5 node_resource
-  n6@{ shape: fr-rect, label: "**material​_​bind​_​groups::**<br/>**MaterialBindGroupPlugin**<br/>分配并打包材质绑定组。" }
+  n6@{ shape: fr-rect, label: "**MaterialBindGroupPlugin**<br/>分配并打包材质绑定组。" }
   class n6 node_plugin
-  n7@{ shape: cyl, label: "**bevy​_​render::renderer::RenderDevice**<br/>创建渲染和计算所需的 GPU 资源。" }
+  n7@{ shape: cyl, label: "**RenderDevice**<br/>创建渲染和计算所需的 GPU 资源。" }
   class n7 node_resource
-  n8@{ shape: cyl, label: "**bevy​_​render::texture::FallbackImage**<br/>为未指定图像的绑定提供不透明白纹理。" }
+  n8@{ shape: cyl, label: "**FallbackImage**<br/>为未指定图像的绑定提供不透明白纹理。" }
   class n8 node_resource
-  n9@{ shape: cyl, label: "**bevy​_​render::render​_​asset::**<br/>**RenderAssets#lt;bevy​_​render::storage::**<br/>**GpuShaderBuffer#gt;**<br/>按源资产身份保存 GPU 渲染表示。" }
+  n9@{ shape: cyl, label: "**RenderAssets#lt;GpuShaderBuffer#gt;**<br/>按源资产身份保存 GPU 渲染表示。" }
   class n9 node_resource
-  n10@{ shape: cyl, label: "**bevy​_​render::material​_​bind​_​groups::**<br/>**FallbackBuffer**<br/>为无效着色器缓冲句柄提供占位缓冲。" }
+  n10@{ shape: cyl, label: "**FallbackBuffer**<br/>为无效着色器缓冲句柄提供占位缓冲。" }
   class n10 node_resource
-  n11@{ shape: cyl, label: "**bevy​_​render::render​_​resource::**<br/>**PipelineCache**<br/>缓存 GPU 渲染、计算管线与待创建队列。" }
+  n11@{ shape: cyl, label: "**PipelineCache**<br/>缓存 GPU 渲染、计算管线与待创建队列。" }
   class n11 node_resource
   n1 e0@--> n0
   class e0 edge_read

@@ -41,50 +41,50 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​pbr::render::mesh::collect​_​**<br/>**meshes​_​for​_​gpu​_​building**<br/>把线程提取队列整理为 GPU 网格实例和输入<br/>缓冲。" }
+  n0@{ shape: rounded, label: "**collect​_​meshes​_​for​_​gpu​_​building**<br/>把线程提取队列整理为 GPU 网格实例和输入<br/>缓冲。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**bevy​_​render::batching::gpu​_​**<br/>**preprocessing::**<br/>**BatchedInstanceBuffers#lt;render::**<br/>**mesh::MeshUniform, render::mesh::**<br/>**MeshInputUniform#gt;**<br/>来自crate:bevy​_​render ↗：保存批次绘制<br/>的 GPU 输入与实例缓冲。" }
+  n1@{ shape: cyl, label: "**BatchedInstanceBuffers#lt;MeshUniform,**<br/>**MeshInputUniform#gt;**<br/>来自crate:bevy​_​render ↗：保存批次绘制<br/>的 GPU 输入与实例缓冲。" }
   class n1 node_resource
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​pbr::material::specialize​_​**<br/>**material​_​meshes**<br/>为变化的可见网格生成并缓存材质专用管线。" }
+  n2@{ shape: rounded, label: "**specialize​_​material​_​meshes**<br/>为变化的可见网格生成并缓存材质专用管线。" }
   class n2 node_system
   n3@{ shape: lin-rect, label: "**PrepareMeshes**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
   class n3 node_system_set
   class n3 external_node
-  n4@{ shape: rounded, label: "**bevy​_​pbr::render::mesh::collect​_​gpu​_​**<br/>**culled​_​meshes**<br/>按渲染层把 GPU 裁剪对象分配到各视图列<br/>表。" }
+  n4@{ shape: rounded, label: "**collect​_​gpu​_​culled​_​meshes**<br/>按渲染层把 GPU 裁剪对象分配到各视图列<br/>表。" }
   class n4 node_system
-  n5@{ shape: cyl, label: "**material​_​bind​_​groups::**<br/>**RenderMaterialBindings**<br/>来自crate:bevy​_​render ↗：按无类型材质<br/>身份查找绑定位置。" }
+  n5@{ shape: cyl, label: "**RenderMaterialBindings**<br/>来自crate:bevy​_​render ↗：按无类型材质<br/>身份查找绑定位置。" }
   class n5 node_resource
   class n5 external_node
-  n6@{ shape: cyl, label: "**lightmap::RenderLightmaps**<br/>管理渲染侧光照贴图的槽位和纹理。" }
+  n6@{ shape: cyl, label: "**RenderLightmaps**<br/>管理渲染侧光照贴图的槽位和纹理。" }
   class n6 node_resource
-  n7@{ shape: cyl, label: "**mesh::allocator::MeshAllocator**<br/>来自crate:bevy​_​render ↗：分配并管理网<br/>格顶点和索引 GPU 缓冲。" }
+  n7@{ shape: cyl, label: "**MeshAllocator**<br/>来自crate:bevy​_​render ↗：分配并管理网<br/>格顶点和索引 GPU 缓冲。" }
   class n7 node_resource
   class n7 external_node
-  n8@{ shape: cyl, label: "**render::mesh::**<br/>**MeshesToReextractNextFrame**<br/>记录因材质未准备而需要再次提取的网格。" }
+  n8@{ shape: cyl, label: "**MeshesToReextractNextFrame**<br/>记录因材质未准备而需要再次提取的网格。" }
   class n8 node_resource
-  n9@{ shape: cyl, label: "**material::RenderMaterialInstances**<br/>保存提取后的实体材质实例。" }
+  n9@{ shape: cyl, label: "**RenderMaterialInstances**<br/>保存提取后的实体材质实例。" }
   class n9 node_resource
-  n10@{ shape: cyl, label: "**render::mesh::**<br/>**RenderMeshInstanceGpuQueues**<br/>暂存各线程提取的 GPU 网格实例。" }
+  n10@{ shape: cyl, label: "**RenderMeshInstanceGpuQueues**<br/>暂存各线程提取的 GPU 网格实例。" }
   class n10 node_resource
-  n11@{ shape: cyl, label: "**frame​_​count::FrameCount**<br/>来自crate:bevy​_​diagnostic ↗：记录应<br/>用启动以来的帧计数" }
+  n11@{ shape: cyl, label: "**FrameCount**<br/>来自crate:bevy​_​diagnostic ↗：记录应<br/>用启动以来的帧计数" }
   class n11 node_resource
   class n11 external_node
-  n12@{ shape: cyl, label: "**render::morph::MorphIndices**<br/>关联形变网格与当前及上一帧权重位置。" }
+  n12@{ shape: cyl, label: "**MorphIndices**<br/>关联形变网格与当前及上一帧权重位置。" }
   class n12 node_resource
-  n13@{ shape: rounded, label: "**bevy​_​pbr::render::morph::prepare​_​**<br/>**morph​_​descriptors**<br/>稳定分配形变描述符索引并回收失效项。" }
+  n13@{ shape: rounded, label: "**prepare​_​morph​_​descriptors**<br/>稳定分配形变描述符索引并回收失效项。" }
   class n13 node_system
-  n14@{ shape: cyl, label: "**render::mesh::**<br/>**RenderGpuCulledEntities**<br/>追踪需要 GPU 裁剪的潜在可见实体。" }
+  n14@{ shape: cyl, label: "**RenderGpuCulledEntities**<br/>追踪需要 GPU 裁剪的潜在可见实体。" }
   class n14 node_resource
-  n15@{ shape: rounded, label: "**bevy​_​pbr::prepass::specialize​_​**<br/>**prepass​_​material​_​meshes**<br/>按深度、材质和运动特性生成预通道专用管<br/>线。" }
+  n15@{ shape: rounded, label: "**specialize​_​prepass​_​material​_​meshes**<br/>按深度、材质和运动特性生成预通道专用管<br/>线。" }
   class n15 node_system
-  n16@{ shape: cyl, label: "**render::skin::SkinUniforms**<br/>以双缓冲保存蒙皮前后帧关节矩阵。" }
+  n16@{ shape: cyl, label: "**SkinUniforms**<br/>以双缓冲保存蒙皮前后帧关节矩阵。" }
   class n16 node_resource
-  n17@{ shape: cyl, label: "**render::mesh::RenderMeshInstances**<br/>保存 CPU 或 GPU 构建所需的网格实例。" }
+  n17@{ shape: cyl, label: "**RenderMeshInstances**<br/>保存 CPU 或 GPU 构建所需的网格实例。" }
   class n17 node_resource
-  n18@{ shape: rounded, label: "**bevy​_​pbr::render::mesh::set​_​mesh​_​**<br/>**motion​_​vector​_​flags**<br/>在提取完成后标记网格可用的前帧蒙皮和形<br/>变。" }
+  n18@{ shape: rounded, label: "**set​_​mesh​_​motion​_​vector​_​flags**<br/>在提取完成后标记网格可用的前帧蒙皮和形<br/>变。" }
   class n18 node_system
-  n19@{ shape: cyl, label: "**render::mesh::MeshCullingDataBuffer**<br/>为 GPU 网格裁剪保存包围盒数据。" }
+  n19@{ shape: cyl, label: "**MeshCullingDataBuffer**<br/>为 GPU 网格裁剪保存包围盒数据。" }
   class n19 node_resource
   n0 e0@-->|"可变访问"| n1
   class e0 edge_write

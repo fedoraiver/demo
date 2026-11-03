@@ -40,19 +40,19 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: lin-rect, label: "**MeshPipelineSystems**<br/>先初始化网格视图布局，再初始化三维网格管<br/>线。" }
   class n0 node_system_set
-  n1@{ shape: rounded, label: "**bevy​_​pbr::render::mesh::init​_​mesh​_​**<br/>**pipeline**<br/>初始化三维网格着色器及设备缓冲策略。" }
+  n1@{ shape: rounded, label: "**init​_​mesh​_​pipeline**<br/>初始化三维网格着色器及设备缓冲策略。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​pbr::render::mesh​_​view​_​**<br/>**bindings::init​_​mesh​_​pipeline​_​view​_​**<br/>**layouts**<br/>按设备能力汇集网格视图资源布局参数。" }
+  n2@{ shape: rounded, label: "**init​_​mesh​_​pipeline​_​view​_​layouts**<br/>按设备能力汇集网格视图资源布局参数。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​pbr::volumetric​_​fog::render::**<br/>**init​_​volumetric​_​fog​_​pipeline**<br/>初始化体积雾管线的视图布局与着色器。" }
+  n3@{ shape: rounded, label: "**init​_​volumetric​_​fog​_​pipeline**<br/>初始化体积雾管线的视图布局与着色器。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**bevy​_​pbr::ssr::init​_​screen​_​space​_​**<br/>**reflections​_​pipeline**<br/>初始化屏幕空间反射的全屏渲染管线资源。" }
+  n4@{ shape: rounded, label: "**init​_​screen​_​space​_​reflections​_​**<br/>**pipeline**<br/>初始化屏幕空间反射的全屏渲染管线资源。" }
   class n4 node_system
-  n5@{ shape: rounded, label: "**bevy​_​pbr::material::init​_​material​_​**<br/>**pipeline**<br/>初始化与网格管线共享接口的材质管线资源。" }
+  n5@{ shape: rounded, label: "**init​_​material​_​pipeline**<br/>初始化与网格管线共享接口的材质管线资源。" }
   class n5 node_system
-  n6@{ shape: rounded, label: "**bevy​_​pbr::deferred::init​_​deferred​_​**<br/>**lighting​_​layout**<br/>初始化延迟光照的深度标识绑定与着色器。" }
+  n6@{ shape: rounded, label: "**init​_​deferred​_​lighting​_​layout**<br/>初始化延迟光照的深度标识绑定与着色器。" }
   class n6 node_system
-  n7@{ shape: rounded, label: "**bevy​_​gizmos​_​render::pipeline​_​3d::**<br/>**init​_​line​_​gizmo​_​pipelines**<br/>来自crate:bevy​_​gizmos​_​render ↗：建立<br/>三维 Gizmo 线条深度管线和接头资源。" }
+  n7@{ shape: rounded, label: "**init​_​line​_​gizmo​_​pipelines**<br/>来自crate:bevy​_​gizmos​_​render ↗：建立<br/>三维 Gizmo 线条深度管线和接头资源。" }
   class n7 node_system
   class n7 external_node
   n0 e0@-->|"集合成员"| n1

@@ -38,19 +38,19 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**bevy​_​sprite​_​render::Mesh2dPipeline**<br/>提供二维网格的视图与实例资源布局。" }
+  n0@{ shape: cyl, label: "**Mesh2dPipeline**<br/>提供二维网格的视图与实例资源布局。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::mesh::**<br/>**prepare​_​mesh2d​_​view​_​bind​_​groups**<br/>为二维相机绑定视图、全局参数与色调<br/>LUT。" }
+  n1@{ shape: rounded, label: "**prepare​_​mesh2d​_​view​_​bind​_​groups**<br/>为二维相机绑定视图、全局参数与色调<br/>LUT。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::**<br/>**material::specialize​_​material2d​_​**<br/>**meshes**<br/>为可见二维网格重建失效的材质专用化。" }
+  n2@{ shape: rounded, label: "**specialize​_​material2d​_​meshes**<br/>为可见二维网格重建失效的材质专用化。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::**<br/>**material::init​_​material​_​2d​_​pipeline**<br/>以二维网格基础管线建立材质管线资源。" }
+  n3@{ shape: rounded, label: "**init​_​material​_​2d​_​pipeline**<br/>以二维网格基础管线建立材质管线资源。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::mesh::**<br/>**prepare​_​mesh2d​_​bind​_​group**<br/>按网格元数据分配块建立二维网格绑定组。" }
+  n4@{ shape: rounded, label: "**prepare​_​mesh2d​_​bind​_​group**<br/>按网格元数据分配块建立二维网格绑定组。" }
   class n4 node_system
-  n5@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::mesh::**<br/>**init​_​mesh​_​2d​_​pipeline**<br/>建立二维网格的视图、实例及元数据输入布<br/>局。" }
+  n5@{ shape: rounded, label: "**init​_​mesh​_​2d​_​pipeline**<br/>建立二维网格的视图、实例及元数据输入布<br/>局。" }
   class n5 node_system
-  n6@{ shape: rounded, label: "**bevy​_​gizmos​_​render::pipeline​_​2d::**<br/>**init​_​line​_​gizmo​_​pipelines**<br/>来自crate:bevy​_​gizmos​_​render ↗：建立<br/>二维 Gizmo 线段和接头管线。" }
+  n6@{ shape: rounded, label: "**init​_​line​_​gizmo​_​pipelines**<br/>来自crate:bevy​_​gizmos​_​render ↗：建立<br/>二维 Gizmo 线段和接头管线。" }
   class n6 node_system
   class n6 external_node
   n0 e0@--> n1

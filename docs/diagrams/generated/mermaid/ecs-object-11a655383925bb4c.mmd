@@ -43,17 +43,17 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​pbr::volumetric​_​fog::render::**<br/>**prepare​_​view​_​depth​_​textures​_​for​_​**<br/>**volumetric​_​fog**<br/>允许体积雾着色器读取三维相机深度纹理。" }
+  n0@{ shape: rounded, label: "**prepare​_​view​_​depth​_​textures​_​for​_​**<br/>**volumetric​_​fog**<br/>允许体积雾着色器读取三维相机深度纹理。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**volumetric::VolumetricFog**<br/>来自crate:bevy​_​light ↗：为三维相机启<br/>用体积雾和光束渲染。" }
+  n1@{ shape: rounded, label: "**VolumetricFog**<br/>来自crate:bevy​_​light ↗：为三维相机启<br/>用体积雾和光束渲染。" }
   class n1 node_component
   class n1 external_node
-  n2@{ shape: rounded, label: "**components::Camera3d**<br/>来自crate:bevy​_​camera ↗：启用三维相机<br/>主渲染流程。" }
+  n2@{ shape: rounded, label: "**Camera3d**<br/>来自crate:bevy​_​camera ↗：启用三维相机<br/>主渲染流程。" }
   class n2 node_component
   class n2 external_node
-  n3@{ shape: fr-rect, label: "**volumetric​_​fog::VolumetricFogPlugin**<br/>提供场景体积雾渲染。" }
+  n3@{ shape: fr-rect, label: "**VolumetricFogPlugin**<br/>提供场景体积雾渲染。" }
   class n3 node_plugin
-  n4@{ shape: rounded, label: "**bevy​_​core​_​pipeline::core​_​3d::**<br/>**prepare​_​core​_​3d​_​depth​_​textures**<br/>来自crate:bevy​_​core​_​pipeline ↗：按共<br/>享目标准备三维深度纹理与清除方式。" }
+  n4@{ shape: rounded, label: "**prepare​_​core​_​3d​_​depth​_​textures**<br/>来自crate:bevy​_​core​_​pipeline ↗：按共<br/>享目标准备三维深度纹理与清除方式。" }
   class n4 node_system
   class n4 external_node
   n5@{ shape: lin-rect, label: "**Prepare**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }

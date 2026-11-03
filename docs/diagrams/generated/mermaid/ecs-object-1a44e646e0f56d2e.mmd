@@ -37,13 +37,13 @@ flowchart LR
   classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**scene​_​assembly::assets::ArtLoadState**<br/>资源就绪与地图碰撞就绪是两个门槛，不能仅<br/>凭模板已生成就推进物理。" }
+  n0@{ shape: cyl, label: "**ArtLoadState**<br/>资源就绪与地图碰撞就绪是两个门槛，不能仅<br/>凭模板已生成就推进物理。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**demo::scene​_​assembly::loading::**<br/>**prepare​_​island**<br/>在资源 CPU 几何可用时构建碰撞；全部成功<br/>后才提交，失败时不创建动态玩家。" }
+  n1@{ shape: rounded, label: "**prepare​_​island**<br/>在资源 CPU 几何可用时构建碰撞；全部成功<br/>后才提交，失败时不创建动态玩家。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**demo::scene​_​assembly::loading::**<br/>**begin​_​island**<br/>请求创建已加载海岛的运行实例。" }
+  n2@{ shape: rounded, label: "**begin​_​island**<br/>请求创建已加载海岛的运行实例。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**demo::scene​_​assembly::assets::poll​_​**<br/>**art​_​assets**<br/>连同子资产检查失败；只记录状态切换，避免<br/>每帧刷写相同错误。" }
+  n3@{ shape: rounded, label: "**poll​_​art​_​assets**<br/>连同子资产检查失败；只记录状态切换，避免<br/>每帧刷写相同错误。" }
   class n3 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

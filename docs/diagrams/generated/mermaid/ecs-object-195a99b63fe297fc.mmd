@@ -40,12 +40,12 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: cyl, label: "**EguiManagedTextures**<br/>保存 Egui 分配并绘制的纹理及其 Bevy 图<br/>像句柄" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​egui::free​_​egui​_​textures​_​system**<br/>回收 Egui 已释放或失效的纹理引用。" }
+  n1@{ shape: rounded, label: "**free​_​egui​_​textures​_​system**<br/>回收 Egui 已释放或失效的纹理引用。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​extract::extract​_​resource::**<br/>**extract​_​resource#lt;bevy​_​egui::render::**<br/>**systems::**<br/>**ExtractedEguiManagedTextures, bevy​_​**<br/>**render::RenderApp, ()#gt;**<br/>来自crate:bevy​_​extract ↗：把存在的主<br/>世界资源转换到子世界。" }
+  n2@{ shape: rounded, label: "**extract​_​resource**<br/>来自crate:bevy​_​extract ↗：把存在的主<br/>世界资源转换到子世界。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​egui::update​_​egui​_​textures​_​**<br/>**system**<br/>应用 Egui 托管纹理的图像增量。" }
+  n3@{ shape: rounded, label: "**update​_​egui​_​textures​_​system**<br/>应用 Egui 托管纹理的图像增量。" }
   class n3 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

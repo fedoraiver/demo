@@ -40,35 +40,35 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: lin-rect, label: "**PhaseSort**<br/>组织渲染数据准备与绘制排队。" }
   class n0 node_system_set
-  n1@{ shape: rounded, label: "**bevy​_​render::batching::sort​_​binned​_​**<br/>**render​_​phase#lt;bevy​_​core​_​pipeline::**<br/>**deferred::AlphaMask3dDeferred#gt;**<br/>按分桶键对各视图阶段的多绘制、可批处理、<br/>不可批处理网格及非网格项分别排序，使后续<br/>批次准备使用确定的键顺序。" }
+  n1@{ shape: rounded, label: "**sort​_​binned​_​render​_​phase**<br/>按分桶键对各视图阶段的多绘制、可批处理、<br/>不可批处理网格及非网格项分别排序，使后续<br/>批次准备使用确定的键顺序。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​render::batching::sort​_​binned​_​**<br/>**render​_​phase#lt;bevy​_​core​_​pipeline::**<br/>**core​_​3d::Opaque3d#gt;**<br/>按分桶键对各视图阶段的多绘制、可批处理、<br/>不可批处理网格及非网格项分别排序，使后续<br/>批次准备使用确定的键顺序。" }
+  n2@{ shape: rounded, label: "**sort​_​binned​_​render​_​phase**<br/>按分桶键对各视图阶段的多绘制、可批处理、<br/>不可批处理网格及非网格项分别排序，使后续<br/>批次准备使用确定的键顺序。" }
   class n2 node_system
   n3@{ shape: lin-rect, label: "**Prepare**<br/>组织渲染数据准备与绘制排队。" }
   class n3 node_system_set
-  n4@{ shape: rounded, label: "**bevy​_​render::render​_​phase::sort​_​**<br/>**phase​_​system#lt;bevy​_​pbr::**<br/>**transmission::phase::Transmissive3d#gt;**<br/>按各视图重新计算并排序阶段绘制项。" }
+  n4@{ shape: rounded, label: "**sort​_​phase​_​system**<br/>按各视图重新计算并排序阶段绘制项。" }
   class n4 node_system
-  n5@{ shape: rounded, label: "**bevy​_​render::batching::sort​_​binned​_​**<br/>**render​_​phase#lt;bevy​_​core​_​pipeline::**<br/>**prepass::Opaque3dPrepass#gt;**<br/>按分桶键对各视图阶段的多绘制、可批处理、<br/>不可批处理网格及非网格项分别排序，使后续<br/>批次准备使用确定的键顺序。" }
+  n5@{ shape: rounded, label: "**sort​_​binned​_​render​_​phase**<br/>按分桶键对各视图阶段的多绘制、可批处理、<br/>不可批处理网格及非网格项分别排序，使后续<br/>批次准备使用确定的键顺序。" }
   class n5 node_system
-  n6@{ shape: rounded, label: "**bevy​_​render::render​_​phase::sort​_​**<br/>**phase​_​system#lt;bevy​_​core​_​pipeline::**<br/>**core​_​3d::Transparent3d#gt;**<br/>按各视图重新计算并排序阶段绘制项。" }
+  n6@{ shape: rounded, label: "**sort​_​phase​_​system**<br/>按各视图重新计算并排序阶段绘制项。" }
   class n6 node_system
-  n7@{ shape: rounded, label: "**bevy​_​render::batching::sort​_​binned​_​**<br/>**render​_​phase#lt;bevy​_​core​_​pipeline::**<br/>**prepass::AlphaMask3dPrepass#gt;**<br/>按分桶键对各视图阶段的多绘制、可批处理、<br/>不可批处理网格及非网格项分别排序，使后续<br/>批次准备使用确定的键顺序。" }
+  n7@{ shape: rounded, label: "**sort​_​binned​_​render​_​phase**<br/>按分桶键对各视图阶段的多绘制、可批处理、<br/>不可批处理网格及非网格项分别排序，使后续<br/>批次准备使用确定的键顺序。" }
   class n7 node_system
-  n8@{ shape: rounded, label: "**bevy​_​render::batching::sort​_​binned​_​**<br/>**render​_​phase#lt;bevy​_​pbr::render::**<br/>**light::Shadow#gt;**<br/>按分桶键对各视图阶段的多绘制、可批处理、<br/>不可批处理网格及非网格项分别排序，使后续<br/>批次准备使用确定的键顺序。" }
+  n8@{ shape: rounded, label: "**sort​_​binned​_​render​_​phase**<br/>按分桶键对各视图阶段的多绘制、可批处理、<br/>不可批处理网格及非网格项分别排序，使后续<br/>批次准备使用确定的键顺序。" }
   class n8 node_system
   n9@{ shape: lin-rect, label: "**Queue**<br/>组织渲染数据准备与绘制排队。" }
   class n9 node_system_set
-  n10@{ shape: rounded, label: "**bevy​_​render::batching::sort​_​binned​_​**<br/>**render​_​phase#lt;bevy​_​core​_​pipeline::**<br/>**core​_​2d::Opaque2d#gt;**<br/>按分桶键对各视图阶段的多绘制、可批处理、<br/>不可批处理网格及非网格项分别排序，使后续<br/>批次准备使用确定的键顺序。" }
+  n10@{ shape: rounded, label: "**sort​_​binned​_​render​_​phase**<br/>按分桶键对各视图阶段的多绘制、可批处理、<br/>不可批处理网格及非网格项分别排序，使后续<br/>批次准备使用确定的键顺序。" }
   class n10 node_system
-  n11@{ shape: rounded, label: "**bevy​_​render::render​_​phase::sort​_​**<br/>**phase​_​system#lt;bevy​_​ui​_​render::render​_​**<br/>**pass::TransparentUi#gt;**<br/>按各视图重新计算并排序阶段绘制项。" }
+  n11@{ shape: rounded, label: "**sort​_​phase​_​system**<br/>按各视图重新计算并排序阶段绘制项。" }
   class n11 node_system
-  n12@{ shape: rounded, label: "**bevy​_​render::batching::sort​_​binned​_​**<br/>**render​_​phase#lt;bevy​_​core​_​pipeline::**<br/>**core​_​2d::AlphaMask2d#gt;**<br/>按分桶键对各视图阶段的多绘制、可批处理、<br/>不可批处理网格及非网格项分别排序，使后续<br/>批次准备使用确定的键顺序。" }
+  n12@{ shape: rounded, label: "**sort​_​binned​_​render​_​phase**<br/>按分桶键对各视图阶段的多绘制、可批处理、<br/>不可批处理网格及非网格项分别排序，使后续<br/>批次准备使用确定的键顺序。" }
   class n12 node_system
-  n13@{ shape: rounded, label: "**bevy​_​render::render​_​phase::sort​_​**<br/>**phase​_​system#lt;bevy​_​core​_​pipeline::**<br/>**core​_​2d::Transparent2d#gt;**<br/>按各视图重新计算并排序阶段绘制项。" }
+  n13@{ shape: rounded, label: "**sort​_​phase​_​system**<br/>按各视图重新计算并排序阶段绘制项。" }
   class n13 node_system
-  n14@{ shape: rounded, label: "**bevy​_​render::batching::sort​_​binned​_​**<br/>**render​_​phase#lt;bevy​_​core​_​pipeline::**<br/>**core​_​3d::AlphaMask3d#gt;**<br/>按分桶键对各视图阶段的多绘制、可批处理、<br/>不可批处理网格及非网格项分别排序，使后续<br/>批次准备使用确定的键顺序。" }
+  n14@{ shape: rounded, label: "**sort​_​binned​_​render​_​phase**<br/>按分桶键对各视图阶段的多绘制、可批处理、<br/>不可批处理网格及非网格项分别排序，使后续<br/>批次准备使用确定的键顺序。" }
   class n14 node_system
-  n15@{ shape: rounded, label: "**bevy​_​render::batching::sort​_​binned​_​**<br/>**render​_​phase#lt;bevy​_​core​_​pipeline::**<br/>**deferred::Opaque3dDeferred#gt;**<br/>按分桶键对各视图阶段的多绘制、可批处理、<br/>不可批处理网格及非网格项分别排序，使后续<br/>批次准备使用确定的键顺序。" }
+  n15@{ shape: rounded, label: "**sort​_​binned​_​render​_​phase**<br/>按分桶键对各视图阶段的多绘制、可批处理、<br/>不可批处理网格及非网格项分别排序，使后续<br/>批次准备使用确定的键顺序。" }
   class n15 node_system
   n0 e0@-->|"集合成员"| n1
   class e0 edge_set_membership

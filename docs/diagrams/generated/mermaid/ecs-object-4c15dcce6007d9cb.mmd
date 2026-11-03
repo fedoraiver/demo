@@ -37,9 +37,9 @@ flowchart LR
   classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**collision::narrow​_​phase::system​_​**<br/>**param::ContactStatusBits**<br/>标记接触对新增或移除的状态。" }
+  n0@{ shape: cyl, label: "**ContactStatusBits**<br/>标记接触对新增或移除的状态。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**avian3d::collision::narrow​_​phase::**<br/>**update​_​narrow​_​phase#lt;avian3d::**<br/>**collision::collider::parry::**<br/>**Collider, ()#gt;**<br/>更新窄相接触并输出碰撞变化消息。" }
+  n1@{ shape: rounded, label: "**update​_​narrow​_​phase**<br/>更新窄相接触并输出碰撞变化消息。" }
   class n1 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

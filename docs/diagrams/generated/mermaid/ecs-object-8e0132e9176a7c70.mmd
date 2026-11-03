@@ -39,38 +39,38 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​pbr::light​_​probe::generate::**<br/>**initialize​_​generated​_​environment​_​**<br/>**map​_​resources**<br/>初始化环境图降采样、复制和卷积的 GPU 接<br/>口。" }
+  n0@{ shape: rounded, label: "**initialize​_​generated​_​environment​_​**<br/>**map​_​resources**<br/>初始化环境图降采样、复制和卷积的 GPU 接<br/>口。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**bevy​_​asset::AssetServer**<br/>来自crate:bevy​_​asset ↗：加载资产并追<br/>踪加载状态。" }
+  n1@{ shape: cyl, label: "**AssetServer**<br/>来自crate:bevy​_​asset ↗：加载资产并追<br/>踪加载状态。" }
   class n1 node_resource
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​render::init​_​gpu​_​resource#lt;bevy​_​**<br/>**core​_​pipeline::mip​_​generation::**<br/>**DownsamplePipeline#gt;**<br/>来自crate:bevy​_​render ↗：构造并插入渲<br/>染所需资源。" }
+  n2@{ shape: rounded, label: "**init​_​gpu​_​resource**<br/>来自crate:bevy​_​render ↗：构造并插入渲<br/>染所需资源。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: cyl, label: "**bevy​_​render::renderer::RenderAdapter**<br/>来自crate:bevy​_​render ↗：标识渲染使用<br/>的物理 GPU 适配器。" }
+  n3@{ shape: cyl, label: "**RenderAdapter**<br/>来自crate:bevy​_​render ↗：标识渲染使用<br/>的物理 GPU 适配器。" }
   class n3 node_resource
   class n3 external_node
-  n4@{ shape: cyl, label: "**mip​_​generation::DownsamplePipeline**<br/>来自crate:bevy​_​core​_​pipeline ↗：生成<br/>颜色纹理的下采样计算管线。" }
+  n4@{ shape: cyl, label: "**DownsamplePipeline**<br/>来自crate:bevy​_​core​_​pipeline ↗：生成<br/>颜色纹理的下采样计算管线。" }
   class n4 node_resource
   class n4 external_node
-  n5@{ shape: cyl, label: "**light​_​probe::generate::**<br/>**GeneratorSamplers**<br/>为环境贴图生成提供线性采样器。" }
+  n5@{ shape: cyl, label: "**GeneratorSamplers**<br/>为环境贴图生成提供线性采样器。" }
   class n5 node_resource
-  n6@{ shape: cyl, label: "**light​_​probe::generate::**<br/>**GeneratorBindGroupLayouts**<br/>描述环境贴图生成各计算阶段的接口。" }
+  n6@{ shape: cyl, label: "**GeneratorBindGroupLayouts**<br/>描述环境贴图生成各计算阶段的接口。" }
   class n6 node_resource
-  n7@{ shape: cyl, label: "**light​_​probe::generate::**<br/>**GeneratorPipelines**<br/>保存环境贴图降采样和卷积计算管线。" }
+  n7@{ shape: cyl, label: "**GeneratorPipelines**<br/>保存环境贴图降采样和卷积计算管线。" }
   class n7 node_resource
-  n8@{ shape: rounded, label: "**bevy​_​render::init​_​gpu​_​resource#lt;bevy​_​**<br/>**render::render​_​resource::pipeline​_​**<br/>**specializer::**<br/>**SpecializedComputePipelines#lt;bevy​_​**<br/>**core​_​pipeline::mip​_​generation::**<br/>**DownsamplePipeline#gt;#gt;**<br/>来自crate:bevy​_​render ↗：构造并插入渲<br/>染所需资源。" }
+  n8@{ shape: rounded, label: "**init​_​gpu​_​resource**<br/>来自crate:bevy​_​render ↗：构造并插入渲<br/>染所需资源。" }
   class n8 node_system
   class n8 external_node
-  n9@{ shape: cyl, label: "**bevy​_​render::render​_​resource::**<br/>**SpecializedComputePipelines#lt;mip​_​**<br/>**generation::DownsamplePipeline#gt;**<br/>来自crate:bevy​_​render ↗：按配置键缓存<br/>计算管线变体。" }
+  n9@{ shape: cyl, label: "**SpecializedComputePipelines#lt;Downsamp**<br/>**lePipeline#gt;**<br/>来自crate:bevy​_​render ↗：按配置键缓存<br/>计算管线变体。" }
   class n9 node_resource
   class n9 external_node
-  n10@{ shape: cyl, label: "**bevy​_​render::render​_​resource::**<br/>**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
+  n10@{ shape: cyl, label: "**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
   class n10 node_resource
   class n10 external_node
-  n11@{ shape: cyl, label: "**light​_​probe::generate::**<br/>**DownsamplingConfig**<br/>按设备能力选择环境贴图降采样策略。" }
+  n11@{ shape: cyl, label: "**DownsamplingConfig**<br/>按设备能力选择环境贴图降采样策略。" }
   class n11 node_resource
-  n12@{ shape: cyl, label: "**bevy​_​render::renderer::RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
+  n12@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
   class n12 node_resource
   class n12 external_node
   n1 e0@--> n0
@@ -102,7 +102,7 @@ flowchart LR
   e2@{ curve: basis }
   e4@{ curve: basis }
   e5@{ curve: basis }
-  e6@{ curve: bumpX }
+  e6@{ curve: basis }
   e7@{ curve: basis }
   e8@{ curve: basis }
   e9@{ curve: basis }

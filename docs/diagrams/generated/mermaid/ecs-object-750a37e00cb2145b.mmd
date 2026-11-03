@@ -38,12 +38,12 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bloom::downsampling​_​pipeline::**<br/>**BloomUniforms**<br/>上传 Bloom 阈值、视口及缩放参数。" }
+  n0@{ shape: rounded, label: "**BloomUniforms**<br/>上传 Bloom 阈值、视口及缩放参数。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​extract::extract​_​component::**<br/>**extract​_​components#lt;bevy​_​post​_​**<br/>**process::bloom::settings::Bloom,**<br/>**bevy​_​render::RenderApp, ()#gt;**<br/>来自crate:bevy​_​extract ↗：批量同步或<br/>移除子世界的目标组件。" }
+  n1@{ shape: rounded, label: "**extract​_​components**<br/>来自crate:bevy​_​extract ↗：批量同步或<br/>移除子世界的目标组件。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​render::uniform::prepare​_​**<br/>**uniform​_​components#lt;bevy​_​post​_​**<br/>**process::bloom::downsampling​_​**<br/>**pipeline::BloomUniforms#gt;**<br/>来自crate:bevy​_​render ↗：将组件值批量<br/>上传为动态着色器参数。" }
+  n2@{ shape: rounded, label: "**prepare​_​uniform​_​components**<br/>来自crate:bevy​_​render ↗：将组件值批量<br/>上传为动态着色器参数。" }
   class n2 node_system
   class n2 external_node
   n1 e0@-->|"移除"| n0

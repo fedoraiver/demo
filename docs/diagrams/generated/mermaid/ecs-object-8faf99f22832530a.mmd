@@ -39,15 +39,15 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**prepass::background​_​motion​_​vectors::**<br/>**BackgroundMotionVectorsPipelineId**<br/>保存相机背景运动矢量管线的标识。" }
+  n0@{ shape: rounded, label: "**BackgroundMotionVectorsPipelineId**<br/>保存相机背景运动矢量管线的标识。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​core​_​pipeline::prepass::**<br/>**background​_​motion​_​vectors::cleanup​_​**<br/>**background​_​motion​_​vectors**<br/>移除不再需要的背景运动矢量渲染状态。" }
+  n1@{ shape: rounded, label: "**cleanup​_​background​_​motion​_​vectors**<br/>移除不再需要的背景运动矢量渲染状态。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​core​_​pipeline::prepass::node::**<br/>**late​_​prepass**<br/>为遮挡剔除绘制晚期预通道。" }
+  n2@{ shape: rounded, label: "**late​_​prepass**<br/>为遮挡剔除绘制晚期预通道。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​core​_​pipeline::prepass::**<br/>**background​_​motion​_​vectors::prepare​_​**<br/>**background​_​motion​_​vectors​_​pipelines**<br/>按采样数和法线预通道准备背景运动管线。" }
+  n3@{ shape: rounded, label: "**prepare​_​background​_​motion​_​vectors​_​**<br/>**pipelines**<br/>按采样数和法线预通道准备背景运动管线。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**bevy​_​core​_​pipeline::prepass::node::**<br/>**early​_​prepass**<br/>绘制早期不透明与 AlphaMask 预通道。" }
+  n4@{ shape: rounded, label: "**early​_​prepass**<br/>绘制早期不透明与 AlphaMask 预通道。" }
   class n4 node_system
   n1 e0@-->|"移除"| n0
   class e0 edge_write

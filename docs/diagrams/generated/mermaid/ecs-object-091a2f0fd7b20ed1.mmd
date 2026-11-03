@@ -43,23 +43,23 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**avian3d::dynamics::rigid​_​body::mass​_​**<br/>**properties::queue​_​mass​_​**<br/>**recomputation​_​on​_​collider​_​mass​_​**<br/>**change**<br/>在附属碰撞体质量输入变化时请求刚体重算。" }
+  n0@{ shape: rounded, label: "**queue​_​mass​_​recomputation​_​on​_​**<br/>**collider​_​mass​_​change**<br/>在附属碰撞体质量输入变化时请求刚体重算。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**dynamics::rigid​_​body::mass​_​**<br/>**properties::components::CenterOfMass**<br/>指定实体自身的局部质心。" }
+  n1@{ shape: rounded, label: "**CenterOfMass**<br/>指定实体自身的局部质心。" }
   class n1 node_component
-  n2@{ shape: rounded, label: "**dynamics::rigid​_​body::mass​_​**<br/>**properties::components::Mass**<br/>指定实体自身的质量输入。" }
+  n2@{ shape: rounded, label: "**Mass**<br/>指定实体自身的质量输入。" }
   class n2 node_component
-  n3@{ shape: rounded, label: "**dynamics::rigid​_​body::mass​_​**<br/>**properties::components::**<br/>**RecomputeMassProperties**<br/>请求重新计算刚体质量属性。" }
+  n3@{ shape: rounded, label: "**RecomputeMassProperties**<br/>请求重新计算刚体质量属性。" }
   class n3 node_component
-  n4@{ shape: rounded, label: "**collision::collider::collider​_​**<br/>**transform::ColliderTransform**<br/>缓存碰撞体相对于刚体的变换。" }
+  n4@{ shape: rounded, label: "**ColliderTransform**<br/>缓存碰撞体相对于刚体的变换。" }
   class n4 node_component
-  n5@{ shape: rounded, label: "**dynamics::rigid​_​body::mass​_​**<br/>**properties::components::collider::**<br/>**ColliderMassProperties**<br/>缓存由碰撞形状计算的质量属性。" }
+  n5@{ shape: rounded, label: "**ColliderMassProperties**<br/>缓存由碰撞形状计算的质量属性。" }
   class n5 node_component
-  n6@{ shape: rounded, label: "**dynamics::rigid​_​body::mass​_​**<br/>**properties::components::**<br/>**AngularInertia**<br/>指定实体自身的局部角惯量。" }
+  n6@{ shape: rounded, label: "**AngularInertia**<br/>指定实体自身的局部角惯量。" }
   class n6 node_component
-  n7@{ shape: fr-rect, label: "**dynamics::rigid​_​body::mass​_​**<br/>**properties::MassPropertyPlugin**<br/>更新刚体质量、惯量和质心。" }
+  n7@{ shape: fr-rect, label: "**MassPropertyPlugin**<br/>更新刚体质量、惯量和质心。" }
   class n7 node_plugin
-  n8@{ shape: rounded, label: "**collision::collider::collider​_​**<br/>**hierarchy::ColliderOf**<br/>指定碰撞体附着的刚体。" }
+  n8@{ shape: rounded, label: "**ColliderOf**<br/>指定碰撞体附着的刚体。" }
   class n8 node_component
   n9@{ shape: lin-rect, label: "**QueueRecomputation**<br/>组织质量属性重算与写回。" }
   class n9 node_system_set

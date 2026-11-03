@@ -36,162 +36,162 @@ flowchart LR
   classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​extract::SubEntity#lt;bevy​_​**<br/>**render::RenderApp#gt;**<br/>记录主实体对应的子世界实体。" }
+  n0@{ shape: rounded, label: "**SubEntity#lt;RenderApp#gt;**<br/>记录主实体对应的子世界实体。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​extract::extract​_​component::**<br/>**extract​_​components#lt;bevy​_​post​_​**<br/>**process::effect​_​stack::vignette::**<br/>**Vignette, bevy​_​render::RenderApp,**<br/>**()#gt;**<br/>批量同步或移除子世界的目标组件。" }
+  n1@{ shape: rounded, label: "**extract​_​components**<br/>批量同步或移除子世界的目标组件。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​extract::extract​_​component::**<br/>**extract​_​components#lt;bevy​_​post​_​**<br/>**process::effect​_​stack::lens​_​**<br/>**distortion::LensDistortion, bevy​_​**<br/>**render::RenderApp, ()#gt;**<br/>批量同步或移除子世界的目标组件。" }
+  n2@{ shape: rounded, label: "**extract​_​components**<br/>批量同步或移除子世界的目标组件。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​extract::extract​_​component::**<br/>**extract​_​components#lt;bevy​_​pbr::fog::**<br/>**DistanceFog, bevy​_​render::**<br/>**RenderApp, ()#gt;**<br/>批量同步或移除子世界的目标组件。" }
+  n3@{ shape: rounded, label: "**extract​_​components**<br/>批量同步或移除子世界的目标组件。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**bevy​_​extract::extract​_​component::**<br/>**extract​_​components#lt;bevy​_​post​_​**<br/>**process::effect​_​stack::chromatic​_​**<br/>**aberration::ChromaticAberration,**<br/>**bevy​_​render::RenderApp, ()#gt;**<br/>批量同步或移除子世界的目标组件。" }
+  n4@{ shape: rounded, label: "**extract​_​components**<br/>批量同步或移除子世界的目标组件。" }
   class n4 node_system
-  n5@{ shape: rounded, label: "**bevy​_​extract::extract​_​component::**<br/>**extract​_​components#lt;bevy​_​render::**<br/>**view::Tonemapping, bevy​_​render::**<br/>**RenderApp, ()#gt;**<br/>批量同步或移除子世界的目标组件。" }
+  n5@{ shape: rounded, label: "**extract​_​components**<br/>批量同步或移除子世界的目标组件。" }
   class n5 node_system
-  n6@{ shape: rounded, label: "**bevy​_​ui​_​render::debug​_​overlay::**<br/>**extract​_​debug​_​overlay**<br/>来自crate:bevy​_​ui​_​render ↗：为变化<br/>的 UI 节点提取调试轮廓。" }
+  n6@{ shape: rounded, label: "**extract​_​debug​_​overlay**<br/>来自crate:bevy​_​ui​_​render ↗：为变化<br/>的 UI 节点提取调试轮廓。" }
   class n6 node_system
   class n6 external_node
-  n7@{ shape: rounded, label: "**bevy​_​extract::extract​_​component::**<br/>**extract​_​components#lt;bevy​_​core​_​**<br/>**pipeline::prepass::background​_​**<br/>**motion​_​vectors::**<br/>**NoBackgroundMotionVectors, bevy​_​**<br/>**render::RenderApp, ()#gt;**<br/>批量同步或移除子世界的目标组件。" }
+  n7@{ shape: rounded, label: "**extract​_​components**<br/>批量同步或移除子世界的目标组件。" }
   class n7 node_system
-  n8@{ shape: rounded, label: "**bevy​_​pbr::prepass::extract​_​camera​_​**<br/>**previous​_​view​_​data**<br/>来自crate:bevy​_​pbr ↗：把活动三维相机<br/>的前帧视图数据提取到渲染侧。" }
+  n8@{ shape: rounded, label: "**extract​_​camera​_​previous​_​view​_​data**<br/>来自crate:bevy​_​pbr ↗：把活动三维相机<br/>的前帧视图数据提取到渲染侧。" }
   class n8 node_system
   class n8 external_node
-  n9@{ shape: rounded, label: "**bevy​_​pbr::render::light::extract​_​**<br/>**ambient​_​light**<br/>来自crate:bevy​_​pbr ↗：批量复制主世界<br/>实体的环境光设置。" }
+  n9@{ shape: rounded, label: "**extract​_​ambient​_​light**<br/>来自crate:bevy​_​pbr ↗：批量复制主世界<br/>实体的环境光设置。" }
   class n9 node_system
   class n9 external_node
-  n10@{ shape: rounded, label: "**bevy​_​extract::extract​_​component::**<br/>**extract​_​components#lt;bevy​_​anti​_​alias::**<br/>**fxaa::Fxaa, bevy​_​render::RenderApp,**<br/>**()#gt;**<br/>批量同步或移除子世界的目标组件。" }
+  n10@{ shape: rounded, label: "**extract​_​components**<br/>批量同步或移除子世界的目标组件。" }
   class n10 node_system
-  n11@{ shape: rounded, label: "**bevy​_​pbr::decal::clustered::extract​_​**<br/>**decals**<br/>来自crate:bevy​_​pbr ↗：从主世界提取可<br/>见聚簇贴花及点光、聚光和平行光的光照纹<br/>理，重建渲染贴花缓冲，并记录真正参与聚簇<br/>计算的贴花数量。" }
+  n11@{ shape: rounded, label: "**extract​_​decals**<br/>来自crate:bevy​_​pbr ↗：从主世界提取可<br/>见聚簇贴花及点光、聚光和平行光的光照纹<br/>理，重建渲染贴花缓冲，并记录真正参与聚簇<br/>计算的贴花数量。" }
   class n11 node_system
   class n11 external_node
-  n12@{ shape: rounded, label: "**bevy​_​extract::extract​_​component::**<br/>**extract​_​components#lt;bevy​_​camera::**<br/>**components::Camera3d, bevy​_​render::**<br/>**RenderApp, ()#gt;**<br/>批量同步或移除子世界的目标组件。" }
+  n12@{ shape: rounded, label: "**extract​_​components**<br/>批量同步或移除子世界的目标组件。" }
   class n12 node_system
-  n13@{ shape: rounded, label: "**bevy​_​ui​_​render::gradient::extract​_​**<br/>**gradients**<br/>来自crate:bevy​_​ui​_​render ↗：提取可<br/>见 UI 渐变并替换失效渲染项。" }
+  n13@{ shape: rounded, label: "**extract​_​gradients**<br/>来自crate:bevy​_​ui​_​render ↗：提取可<br/>见 UI 渐变并替换失效渲染项。" }
   class n13 node_system
   class n13 external_node
-  n14@{ shape: rounded, label: "**bevy​_​extract::extract​_​component::**<br/>**extract​_​components#lt;bevy​_​render::**<br/>**view::DebandDither, bevy​_​render::**<br/>**RenderApp, ()#gt;**<br/>批量同步或移除子世界的目标组件。" }
+  n14@{ shape: rounded, label: "**extract​_​components**<br/>批量同步或移除子世界的目标组件。" }
   class n14 node_system
-  n15@{ shape: rounded, label: "**bevy​_​extract::extract​_​component::**<br/>**extract​_​components#lt;bevy​_​anti​_​alias::**<br/>**contrast​_​adaptive​_​sharpening::**<br/>**ContrastAdaptiveSharpening, bevy​_​**<br/>**render::RenderApp, ()#gt;**<br/>批量同步或移除子世界的目标组件。" }
+  n15@{ shape: rounded, label: "**extract​_​components**<br/>批量同步或移除子世界的目标组件。" }
   class n15 node_system
-  n16@{ shape: rounded, label: "**bevy​_​ui​_​render::text::extract​_​**<br/>**preedit​_​underlines**<br/>来自crate:bevy​_​ui​_​render ↗：把输入法<br/>预编辑下划线提取为 UI 矩形。" }
+  n16@{ shape: rounded, label: "**extract​_​preedit​_​underlines**<br/>来自crate:bevy​_​ui​_​render ↗：把输入法<br/>预编辑下划线提取为 UI 矩形。" }
   class n16 node_system
   class n16 external_node
-  n17@{ shape: rounded, label: "**bevy​_​extract::extract​_​component::**<br/>**extract​_​components#lt;bevy​_​pbr::ssr::**<br/>**ScreenSpaceReflections, bevy​_​**<br/>**render::RenderApp, ()#gt;**<br/>批量同步或移除子世界的目标组件。" }
+  n17@{ shape: rounded, label: "**extract​_​components**<br/>批量同步或移除子世界的目标组件。" }
   class n17 node_system
-  n18@{ shape: rounded, label: "**bevy​_​ui​_​render::ui​_​texture​_​slice​_​**<br/>**pipeline::extract​_​ui​_​texture​_​slices**<br/>来自crate:bevy​_​ui​_​render ↗：增量提取<br/>九宫格或平铺 UI 图像切片。" }
+  n18@{ shape: rounded, label: "**extract​_​ui​_​texture​_​slices**<br/>来自crate:bevy​_​ui​_​render ↗：增量提取<br/>九宫格或平铺 UI 图像切片。" }
   class n18 node_system
   class n18 external_node
-  n19@{ shape: rounded, label: "**bevy​_​extract::extract​_​component::**<br/>**extract​_​components#lt;bevy​_​core​_​**<br/>**pipeline::oit::**<br/>**OrderIndependentTransparencySettings**<br/>**, bevy​_​render::RenderApp, ()#gt;**<br/>批量同步或移除子世界的目标组件。" }
+  n19@{ shape: rounded, label: "**extract​_​components**<br/>批量同步或移除子世界的目标组件。" }
   class n19 node_system
-  n20@{ shape: rounded, label: "**bevy​_​ui​_​render::box​_​shadow::extract​_​**<br/>**shadows**<br/>来自crate:bevy​_​ui​_​render ↗：提取可<br/>见 UI 阴影并替换失效渲染项。" }
+  n20@{ shape: rounded, label: "**extract​_​shadows**<br/>来自crate:bevy​_​ui​_​render ↗：提取可<br/>见 UI 阴影并替换失效渲染项。" }
   class n20 node_system
   class n20 external_node
-  n21@{ shape: rounded, label: "**bevy​_​pbr::render::light::extract​_​**<br/>**shadow​_​filtering​_​method**<br/>来自crate:bevy​_​pbr ↗：批量同步实体的<br/>阴影过滤方式。" }
+  n21@{ shape: rounded, label: "**extract​_​shadow​_​filtering​_​method**<br/>来自crate:bevy​_​pbr ↗：批量同步实体的<br/>阴影过滤方式。" }
   class n21 node_system
   class n21 external_node
-  n22@{ shape: rounded, label: "**bevy​_​pbr::atmosphere::extract​_​**<br/>**atmosphere**<br/>来自crate:bevy​_​pbr ↗：为三维相机选择<br/>并提取最近的大气。" }
+  n22@{ shape: rounded, label: "**extract​_​atmosphere**<br/>来自crate:bevy​_​pbr ↗：为三维相机选择<br/>并提取最近的大气。" }
   class n22 node_system
   class n22 external_node
-  n23@{ shape: rounded, label: "**bevy​_​extract::extract​_​component::**<br/>**extract​_​components#lt;bevy​_​post​_​**<br/>**process::bloom::settings::Bloom,**<br/>**bevy​_​render::RenderApp, ()#gt;**<br/>批量同步或移除子世界的目标组件。" }
+  n23@{ shape: rounded, label: "**extract​_​components**<br/>批量同步或移除子世界的目标组件。" }
   class n23 node_system
-  n24@{ shape: rounded, label: "**bevy​_​post​_​process::dof::extract​_​**<br/>**depth​_​of​_​field​_​settings**<br/>来自crate:bevy​_​post​_​process ↗：把透<br/>视相机景深设置转换为 GPU 参数。" }
+  n24@{ shape: rounded, label: "**extract​_​depth​_​of​_​field​_​settings**<br/>来自crate:bevy​_​post​_​process ↗：把透<br/>视相机景深设置转换为 GPU 参数。" }
   class n24 node_system
   class n24 external_node
-  n25@{ shape: rounded, label: "**bevy​_​ui​_​render::extract​_​uinode​_​**<br/>**images**<br/>来自crate:bevy​_​ui​_​render ↗：按节点视<br/>觉盒与图集区域提取普通 UI 图像。" }
+  n25@{ shape: rounded, label: "**extract​_​uinode​_​images**<br/>来自crate:bevy​_​ui​_​render ↗：按节点视<br/>觉盒与图集区域提取普通 UI 图像。" }
   class n25 node_system
   class n25 external_node
-  n26@{ shape: rounded, label: "**bevy​_​extract::extract​_​component::**<br/>**extract​_​components#lt;bevy​_​camera::**<br/>**components::Camera2d, bevy​_​render::**<br/>**RenderApp, ()#gt;**<br/>批量同步或移除子世界的目标组件。" }
+  n26@{ shape: rounded, label: "**extract​_​components**<br/>批量同步或移除子世界的目标组件。" }
   class n26 node_system
-  n27@{ shape: rounded, label: "**bevy​_​extract::extract​_​component::**<br/>**extract​_​components#lt;bevy​_​pbr::**<br/>**transmission::**<br/>**ScreenSpaceTransmission, bevy​_​**<br/>**render::RenderApp, ()#gt;**<br/>批量同步或移除子世界的目标组件。" }
+  n27@{ shape: rounded, label: "**extract​_​components**<br/>批量同步或移除子世界的目标组件。" }
   class n27 node_system
-  n28@{ shape: rounded, label: "**bevy​_​ui​_​render::extract​_​text​_​shadows**<br/>来自crate:bevy​_​ui​_​render ↗：提取 UI<br/>文字及装饰线的偏移阴影。" }
+  n28@{ shape: rounded, label: "**extract​_​text​_​shadows**<br/>来自crate:bevy​_​ui​_​render ↗：提取 UI<br/>文字及装饰线的偏移阴影。" }
   class n28 node_system
   class n28 external_node
-  n29@{ shape: rounded, label: "**bevy​_​pbr::cluster::extract​_​clusters​_​**<br/>**for​_​cpu​_​clustering**<br/>来自crate:bevy​_​pbr ↗：把 CPU 聚簇结<br/>果转换为渲染侧对象列表。" }
+  n29@{ shape: rounded, label: "**extract​_​clusters​_​for​_​cpu​_​clustering**<br/>来自crate:bevy​_​pbr ↗：把 CPU 聚簇结<br/>果转换为渲染侧对象列表。" }
   class n29 node_system
   class n29 external_node
-  n30@{ shape: rounded, label: "**bevy​_​extract::extract​_​component::**<br/>**extract​_​components#lt;bevy​_​pbr::**<br/>**contact​_​shadows::ContactShadows,**<br/>**bevy​_​render::RenderApp, ()#gt;**<br/>批量同步或移除子世界的目标组件。" }
+  n30@{ shape: rounded, label: "**extract​_​components**<br/>批量同步或移除子世界的目标组件。" }
   class n30 node_system
-  n31@{ shape: rounded, label: "**bevy​_​pbr::decal::clustered::extract​_​**<br/>**clustered​_​decal**<br/>来自crate:bevy​_​pbr ↗：批量复制主世界<br/>的聚簇贴花组件。" }
+  n31@{ shape: rounded, label: "**extract​_​clustered​_​decal**<br/>来自crate:bevy​_​pbr ↗：批量复制主世界<br/>的聚簇贴花组件。" }
   class n31 node_system
   class n31 external_node
-  n32@{ shape: rounded, label: "**bevy​_​pbr::light​_​probe::gather​_​light​_​**<br/>**probes#lt;bevy​_​light::probe::**<br/>**EnvironmentMapLight#gt;**<br/>来自crate:bevy​_​pbr ↗：按相机可见集合<br/>和距离分配已就绪光照探针。" }
+  n32@{ shape: rounded, label: "**gather​_​light​_​probes**<br/>来自crate:bevy​_​pbr ↗：按相机可见集合<br/>和距离分配已就绪光照探针。" }
   class n32 node_system
   class n32 external_node
-  n33@{ shape: rounded, label: "**bevy​_​core​_​pipeline::skybox::extract​_​**<br/>**skybox**<br/>来自crate:bevy​_​core​_​pipeline ↗：提取<br/>天空盒并计算曝光及旋转参数。" }
+  n33@{ shape: rounded, label: "**extract​_​skybox**<br/>来自crate:bevy​_​core​_​pipeline ↗：提取<br/>天空盒并计算曝光及旋转参数。" }
   class n33 node_system
   class n33 external_node
-  n34@{ shape: rounded, label: "**bevy​_​core​_​pipeline::core​_​3d::**<br/>**extract​_​camera​_​prepass​_​phase**<br/>来自crate:bevy​_​core​_​pipeline ↗：同步<br/>三维相机的预通道标记与渲染阶段。" }
+  n34@{ shape: rounded, label: "**extract​_​camera​_​prepass​_​phase**<br/>来自crate:bevy​_​core​_​pipeline ↗：同步<br/>三维相机的预通道标记与渲染阶段。" }
   class n34 node_system
   class n34 external_node
-  n35@{ shape: rounded, label: "**bevy​_​extract::extract​_​component::**<br/>**extract​_​components#lt;bevy​_​render::**<br/>**view::Msaa, bevy​_​render::RenderApp,**<br/>**()#gt;**<br/>批量同步或移除子世界的目标组件。" }
+  n35@{ shape: rounded, label: "**extract​_​components**<br/>批量同步或移除子世界的目标组件。" }
   class n35 node_system
-  n36@{ shape: rounded, label: "**bevy​_​anti​_​alias::taa::extract​_​taa​_​**<br/>**settings**<br/>来自crate:bevy​_​anti​_​alias ↗：提取有<br/>效相机的 TAA 设置并消费历史重置信号。" }
+  n36@{ shape: rounded, label: "**extract​_​taa​_​settings**<br/>来自crate:bevy​_​anti​_​alias ↗：提取有<br/>效相机的 TAA 设置并消费历史重置信号。" }
   class n36 node_system
   class n36 external_node
-  n37@{ shape: rounded, label: "**bevy​_​pbr::light​_​probe::gather​_​light​_​**<br/>**probes#lt;bevy​_​light::probe::**<br/>**IrradianceVolume#gt;**<br/>来自crate:bevy​_​pbr ↗：按相机可见集合<br/>和距离分配已就绪光照探针。" }
+  n37@{ shape: rounded, label: "**gather​_​light​_​probes**<br/>来自crate:bevy​_​pbr ↗：按相机可见集合<br/>和距离分配已就绪光照探针。" }
   class n37 node_system
   class n37 external_node
-  n38@{ shape: rounded, label: "**bevy​_​ui​_​render::extract​_​viewport​_​**<br/>**nodes**<br/>来自crate:bevy​_​ui​_​render ↗：把视口节<br/>点所引用相机的输出图像嵌入 UI。" }
+  n38@{ shape: rounded, label: "**extract​_​viewport​_​nodes**<br/>来自crate:bevy​_​ui​_​render ↗：把视口节<br/>点所引用相机的输出图像嵌入 UI。" }
   class n38 node_system
   class n38 external_node
-  n39@{ shape: rounded, label: "**bevy​_​ui​_​render::extract​_​ui​_​camera​_​**<br/>**view**<br/>来自crate:bevy​_​ui​_​render ↗：为活动二<br/>维或三维相机维护独立 UI 视图。" }
+  n39@{ shape: rounded, label: "**extract​_​ui​_​camera​_​view**<br/>来自crate:bevy​_​ui​_​render ↗：为活动二<br/>维或三维相机维护独立 UI 视图。" }
   class n39 node_system
   class n39 external_node
-  n40@{ shape: rounded, label: "**bevy​_​extract::extract​_​component::**<br/>**extract​_​components#lt;bevy​_​pbr::**<br/>**atmosphere::environment::**<br/>**AtmosphereEnvironmentMap, bevy​_​**<br/>**render::RenderApp, ()#gt;**<br/>批量同步或移除子世界的目标组件。" }
+  n40@{ shape: rounded, label: "**extract​_​components**<br/>批量同步或移除子世界的目标组件。" }
   class n40 node_system
-  n41@{ shape: rounded, label: "**bevy​_​extract::extract​_​component::**<br/>**extract​_​components#lt;bevy​_​anti​_​alias::**<br/>**smaa::Smaa, bevy​_​render::RenderApp,**<br/>**()#gt;**<br/>批量同步或移除子世界的目标组件。" }
+  n41@{ shape: rounded, label: "**extract​_​components**<br/>批量同步或移除子世界的目标组件。" }
   class n41 node_system
-  n42@{ shape: rounded, label: "**bevy​_​extract::extract​_​component::**<br/>**extract​_​components#lt;bevy​_​render::**<br/>**occlusion​_​culling::**<br/>**OcclusionCulling, bevy​_​render::**<br/>**RenderApp, ()#gt;**<br/>批量同步或移除子世界的目标组件。" }
+  n42@{ shape: rounded, label: "**extract​_​components**<br/>批量同步或移除子世界的目标组件。" }
   class n42 node_system
-  n43@{ shape: rounded, label: "**bevy​_​egui::render::extract​_​egui​_​**<br/>**camera​_​view​_​system**<br/>来自crate:bevy​_​egui ↗：为活动相机提取<br/>独立 Egui 渲染视图。" }
+  n43@{ shape: rounded, label: "**extract​_​egui​_​camera​_​view​_​system**<br/>来自crate:bevy​_​egui ↗：为活动相机提取<br/>独立 Egui 渲染视图。" }
   class n43 node_system
   class n43 external_node
-  n44@{ shape: rounded, label: "**bevy​_​extract::extract​_​component::**<br/>**extract​_​components#lt;bevy​_​post​_​**<br/>**process::motion​_​blur::MotionBlur,**<br/>**bevy​_​render::RenderApp, ()#gt;**<br/>批量同步或移除子世界的目标组件。" }
+  n44@{ shape: rounded, label: "**extract​_​components**<br/>批量同步或移除子世界的目标组件。" }
   class n44 node_system
-  n45@{ shape: rounded, label: "**bevy​_​pbr::render::light::extract​_​**<br/>**lights**<br/>来自crate:bevy​_​pbr ↗：提取各类可见光<br/>源及阴影渲染状态。" }
+  n45@{ shape: rounded, label: "**extract​_​lights**<br/>来自crate:bevy​_​pbr ↗：提取各类可见光<br/>源及阴影渲染状态。" }
   class n45 node_system
   class n45 external_node
-  n46@{ shape: rounded, label: "**bevy​_​ui​_​render::extract​_​inline​_​**<br/>**images**<br/>来自crate:bevy​_​ui​_​render ↗：把文字行<br/>内图像提取为 UI 绘制项。" }
+  n46@{ shape: rounded, label: "**extract​_​inline​_​images**<br/>来自crate:bevy​_​ui​_​render ↗：把文字行<br/>内图像提取为 UI 绘制项。" }
   class n46 node_system
   class n46 external_node
-  n47@{ shape: rounded, label: "**bevy​_​pbr::light​_​probe::generate::**<br/>**extract​_​generated​_​environment​_​map​_​**<br/>**entities**<br/>来自crate:bevy​_​pbr ↗：提取环境图生成<br/>所需的三张 GPU 图像。" }
+  n47@{ shape: rounded, label: "**extract​_​generated​_​environment​_​map​_​**<br/>**entities**<br/>来自crate:bevy​_​pbr ↗：提取环境图生成<br/>所需的三张 GPU 图像。" }
   class n47 node_system
   class n47 external_node
-  n48@{ shape: rounded, label: "**bevy​_​render::camera::extract​_​cameras**<br/>来自crate:bevy​_​render ↗：把活动相机及<br/>可见实体提取到渲染世界。" }
+  n48@{ shape: rounded, label: "**extract​_​cameras**<br/>来自crate:bevy​_​render ↗：把活动相机及<br/>可见实体提取到渲染世界。" }
   class n48 node_system
   class n48 external_node
-  n49@{ shape: rounded, label: "**bevy​_​extract::extract​_​component::**<br/>**extract​_​components#lt;bevy​_​camera::**<br/>**camera::CameraMainTextureUsages,**<br/>**bevy​_​render::RenderApp, ()#gt;**<br/>批量同步或移除子世界的目标组件。" }
+  n49@{ shape: rounded, label: "**extract​_​components**<br/>批量同步或移除子世界的目标组件。" }
   class n49 node_system
-  n50@{ shape: rounded, label: "**bevy​_​ui​_​render::extract​_​uinode​_​**<br/>**background​_​colors**<br/>来自crate:bevy​_​ui​_​render ↗：提取 UI<br/>节点背景与外侧填充色。" }
+  n50@{ shape: rounded, label: "**extract​_​uinode​_​background​_​colors**<br/>来自crate:bevy​_​ui​_​render ↗：提取 UI<br/>节点背景与外侧填充色。" }
   class n50 node_system
   class n50 external_node
-  n51@{ shape: rounded, label: "**bevy​_​pbr::volumetric​_​fog::render::**<br/>**extract​_​volumetric​_​fog**<br/>来自crate:bevy​_​pbr ↗：从主世界提取体<br/>积雾、雾体积及体积光配置。" }
+  n51@{ shape: rounded, label: "**extract​_​volumetric​_​fog**<br/>来自crate:bevy​_​pbr ↗：从主世界提取体<br/>积雾、雾体积及体积光配置。" }
   class n51 node_system
   class n51 external_node
-  n52@{ shape: rounded, label: "**bevy​_​extract::extract​_​component::**<br/>**extract​_​components#lt;bevy​_​render::gpu​_​**<br/>**readback::Readback, bevy​_​render::**<br/>**RenderApp, ()#gt;**<br/>批量同步或移除子世界的目标组件。" }
+  n52@{ shape: rounded, label: "**extract​_​components**<br/>批量同步或移除子世界的目标组件。" }
   class n52 node_system
-  n53@{ shape: rounded, label: "**bevy​_​extract::extract​_​component::**<br/>**extract​_​components#lt;bevy​_​pbr::**<br/>**deferred::**<br/>**PbrDeferredLightingDepthId, bevy​_​**<br/>**render::RenderApp, ()#gt;**<br/>批量同步或移除子世界的目标组件。" }
+  n53@{ shape: rounded, label: "**extract​_​components**<br/>批量同步或移除子世界的目标组件。" }
   class n53 node_system
-  n54@{ shape: rounded, label: "**bevy​_​ui​_​render::extract​_​uinode​_​**<br/>**borders**<br/>来自crate:bevy​_​ui​_​render ↗：提取 UI<br/>各边颜色边框与外轮廓。" }
+  n54@{ shape: rounded, label: "**extract​_​uinode​_​borders**<br/>来自crate:bevy​_​ui​_​render ↗：提取 UI<br/>各边颜色边框与外轮廓。" }
   class n54 node_system
   class n54 external_node
-  n55@{ shape: rounded, label: "**bevy​_​ui​_​render::extract​_​text​_​**<br/>**decorations**<br/>来自crate:bevy​_​ui​_​render ↗：提取 UI<br/>文字背景、删除线和下划线。" }
+  n55@{ shape: rounded, label: "**extract​_​text​_​decorations**<br/>来自crate:bevy​_​ui​_​render ↗：提取 UI<br/>文字背景、删除线和下划线。" }
   class n55 node_system
   class n55 external_node
-  n56@{ shape: rounded, label: "**bevy​_​ui​_​render::text::extract​_​text​_​**<br/>**cursor**<br/>来自crate:bevy​_​ui​_​render ↗：提取文字<br/>光标和带圆角的选区背景。" }
+  n56@{ shape: rounded, label: "**extract​_​text​_​cursor**<br/>来自crate:bevy​_​ui​_​render ↗：提取文字<br/>光标和带圆角的选区背景。" }
   class n56 node_system
   class n56 external_node
-  n57@{ shape: rounded, label: "**bevy​_​render::view::window::extract​_​**<br/>**windows**<br/>来自crate:bevy​_​render ↗：向渲染世界同<br/>步窗口配置与原生句柄。" }
+  n57@{ shape: rounded, label: "**extract​_​windows**<br/>来自crate:bevy​_​render ↗：向渲染世界同<br/>步窗口配置与原生句柄。" }
   class n57 node_system
   class n57 external_node
-  n58@{ shape: rounded, label: "**bevy​_​ui​_​render::extract​_​text​_​**<br/>**sections**<br/>来自crate:bevy​_​ui​_​render ↗：按图集提<br/>取 UI 字形并处理选中文字颜色。" }
+  n58@{ shape: rounded, label: "**extract​_​text​_​sections**<br/>来自crate:bevy​_​ui​_​render ↗：按图集提<br/>取 UI 字形并处理选中文字颜色。" }
   class n58 node_system
   class n58 external_node
-  n59@{ shape: rounded, label: "**bevy​_​pbr::ssao::extract​_​ssao​_​**<br/>**settings**<br/>来自crate:bevy​_​pbr ↗：向渲染相机提取<br/>屏幕空间环境光遮蔽配置。" }
+  n59@{ shape: rounded, label: "**extract​_​ssao​_​settings**<br/>来自crate:bevy​_​pbr ↗：向渲染相机提取<br/>屏幕空间环境光遮蔽配置。" }
   class n59 node_system
   class n59 external_node
-  n60@{ shape: rounded, label: "**bevy​_​pbr::cluster::gpu::extract​_​**<br/>**clusters​_​for​_​gpu​_​clustering**<br/>来自crate:bevy​_​pbr ↗：提取视图聚簇配<br/>置并回传上帧 GPU 统计。" }
+  n60@{ shape: rounded, label: "**extract​_​clusters​_​for​_​gpu​_​clustering**<br/>来自crate:bevy​_​pbr ↗：提取视图聚簇配<br/>置并回传上帧 GPU 统计。" }
   class n60 node_system
   class n60 external_node
   n0 e0@--> n1

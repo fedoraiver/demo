@@ -42,20 +42,20 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**pointer​_​up**<br/>释放滑条的按下状态。" }
+  n0@{ shape: hex, label: "**slider​_​on​_​pointer​_​up**<br/>释放滑条的按下状态。" }
   class n0 node_observer
-  n1@{ shape: rounded, label: "**bevy​_​ui::Pressed**<br/>来自crate:bevy​_​ui ↗：标记按钮或控件当<br/>前处于按住状态。" }
+  n1@{ shape: rounded, label: "**Pressed**<br/>来自crate:bevy​_​ui ↗：标记按钮或控件当<br/>前处于按住状态。" }
   class n1 node_component
   class n1 external_node
-  n2@{ shape: rounded, label: "**slider::Slider**<br/>组织滑块的连续数值调节行为。" }
+  n2@{ shape: rounded, label: "**Slider**<br/>组织滑块的连续数值调节行为。" }
   class n2 node_component
-  n3@{ shape: stadium, label: "**events::PointerRelease**<br/>来自crate:bevy​_​picking ↗：通知目标上<br/>的指针按钮释放。" }
+  n3@{ shape: stadium, label: "**PointerRelease**<br/>来自crate:bevy​_​picking ↗：通知目标上<br/>的指针按钮释放。" }
   class n3 node_event
   class n3 external_node
-  n4@{ shape: rounded, label: "**bevy​_​ui::InteractionDisabled**<br/>来自crate:bevy​_​ui ↗：标记禁止交互的<br/>UI 控件。" }
+  n4@{ shape: rounded, label: "**InteractionDisabled**<br/>来自crate:bevy​_​ui ↗：标记禁止交互的<br/>UI 控件。" }
   class n4 node_component
   class n4 external_node
-  n5@{ shape: fr-rect, label: "**slider::SliderPlugin**<br/>处理滑块交互、数值与范围变化。" }
+  n5@{ shape: fr-rect, label: "**SliderPlugin**<br/>处理滑块交互、数值与范围变化。" }
   class n5 node_plugin
   n1 e0@---|"移除"| n0
   class e0 edge_write

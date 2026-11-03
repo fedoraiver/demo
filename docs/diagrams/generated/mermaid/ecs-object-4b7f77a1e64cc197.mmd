@@ -44,70 +44,70 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**demo::first​_​person::facing::sync​_​**<br/>**character​_​facing**<br/>在固定模拟前及逐帧持握目标同步前设置水平<br/>朝向，站立、横移和后退时也跟随视角。" }
+  n0@{ shape: rounded, label: "**sync​_​character​_​facing**<br/>在固定模拟前及逐帧持握目标同步前设置水平<br/>朝向，站立、横移和后退时也跟随视角。" }
   class n0 node_system
   n1@{ shape: lin-rect, label: "**AnonymousSet(0)**<br/>来自crate:bevy​_​ecs ↗：保存一组系统的<br/>共同配置。" }
   class n1 node_system_set
   class n1 external_node
-  n2@{ shape: rounded, label: "**collision::collider::layers::**<br/>**CollisionLayers**<br/>来自crate:avian3d ↗：声明碰撞体所属层<br/>和可交互层。" }
+  n2@{ shape: rounded, label: "**CollisionLayers**<br/>来自crate:avian3d ↗：声明碰撞体所属层<br/>和可交互层。" }
   class n2 node_component
   class n2 external_node
-  n3@{ shape: rounded, label: "**collision::collider::Sensor**<br/>来自crate:avian3d ↗：将碰撞体设为不阻<br/>挡运动的触发器。" }
+  n3@{ shape: rounded, label: "**Sensor**<br/>来自crate:avian3d ↗：将碰撞体设为不阻<br/>挡运动的触发器。" }
   class n3 node_component
   class n3 external_node
-  n4@{ shape: rounded, label: "**components::transform::Transform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>相对父实体的平移、旋转和缩放" }
+  n4@{ shape: rounded, label: "**Transform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>相对父实体的平移、旋转和缩放" }
   class n4 node_component
   class n4 external_node
   n5@{ shape: lin-rect, label: "**Facing**<br/>来自game​_​flow ↗：固定循环后的呈现阶<br/>段，零固定步的帧也执行同一顺序。" }
   class n5 node_system_set
   class n5 external_node
-  n6@{ shape: rounded, label: "**physics​_​transform::transform::**<br/>**Rotation**<br/>来自crate:avian3d ↗：保存刚体或碰撞体<br/>的世界旋转。" }
+  n6@{ shape: rounded, label: "**Rotation**<br/>来自crate:avian3d ↗：保存刚体或碰撞体<br/>的世界旋转。" }
   class n6 node_component
   class n6 external_node
-  n7@{ shape: rounded, label: "**collision::collider::collider​_​**<br/>**hierarchy::ColliderOf**<br/>来自crate:avian3d ↗：指定碰撞体附着的<br/>刚体。" }
+  n7@{ shape: rounded, label: "**ColliderOf**<br/>来自crate:avian3d ↗：指定碰撞体附着的<br/>刚体。" }
   class n7 node_component
   class n7 external_node
-  n8@{ shape: rounded, label: "**physics​_​transform::transform::**<br/>**Position**<br/>来自crate:avian3d ↗：保存刚体或碰撞体<br/>的世界位置。" }
+  n8@{ shape: rounded, label: "**Position**<br/>来自crate:avian3d ↗：保存刚体或碰撞体<br/>的世界位置。" }
   class n8 node_component
   class n8 external_node
-  n9@{ shape: rounded, label: "**collision::collider::ColliderAabb**<br/>来自crate:avian3d ↗：保存碰撞体的世界<br/>轴对齐包围盒。" }
+  n9@{ shape: rounded, label: "**ColliderAabb**<br/>来自crate:avian3d ↗：保存碰撞体的世界<br/>轴对齐包围盒。" }
   class n9 node_component
   class n9 external_node
-  n10@{ shape: rounded, label: "**dynamics::rigid​_​body::**<br/>**AngularVelocity**<br/>来自crate:avian3d ↗：保存刚体的世界角<br/>速度。" }
+  n10@{ shape: rounded, label: "**AngularVelocity**<br/>来自crate:avian3d ↗：保存刚体的世界角<br/>速度。" }
   class n10 node_component
   class n10 external_node
-  n11@{ shape: rounded, label: "**first​_​person::ControlsCharacter**<br/>控制者当前关联的角色，设备和角色状态分别<br/>保存。" }
+  n11@{ shape: rounded, label: "**ControlsCharacter**<br/>控制者当前关联的角色，设备和角色状态分别<br/>保存。" }
   class n11 node_component
-  n12@{ shape: rounded, label: "**item​_​interaction::components::**<br/>**HeldAttachment**<br/>来自item​_​interaction ↗：实际碰撞形状<br/>相对组合刚体的姿态；箱实体不成为人物的<br/>ChildOf，避免异常销毁时连带消失。" }
+  n12@{ shape: rounded, label: "**HeldAttachment**<br/>来自item​_​interaction ↗：实际碰撞形状<br/>相对组合刚体的姿态；箱实体不成为人物的<br/>ChildOf，避免异常销毁时连带消失。" }
   class n12 node_component
   class n12 external_node
-  n13@{ shape: rounded, label: "**dynamics::rigid​_​body::LinearVelocity**<br/>来自crate:avian3d ↗：保存刚体的世界线<br/>速度。" }
+  n13@{ shape: rounded, label: "**LinearVelocity**<br/>来自crate:avian3d ↗：保存刚体的世界线<br/>速度。" }
   class n13 node_component
   class n13 external_node
-  n14@{ shape: rounded, label: "**first​_​person::FirstPersonCamera**<br/>观察角度的唯一来源；有向转角保留到下一次<br/>安全朝向同步。" }
+  n14@{ shape: rounded, label: "**FirstPersonCamera**<br/>观察角度的唯一来源；有向转角保留到下一次<br/>安全朝向同步。" }
   class n14 node_component
-  n15@{ shape: rounded, label: "**collision::collider::parry::Collider**<br/>来自crate:avian3d ↗：保存 Parry 碰撞<br/>后端的几何形状。" }
+  n15@{ shape: rounded, label: "**Collider**<br/>来自crate:avian3d ↗：保存 Parry 碰撞<br/>后端的几何形状。" }
   class n15 node_component
   class n15 external_node
-  n16@{ shape: rounded, label: "**first​_​person::actions::**<br/>**GameplayContext**<br/>控制者的步行输入上下文；角色实体不直接持<br/>有设备绑定。" }
+  n16@{ shape: rounded, label: "**GameplayContext**<br/>控制者的步行输入上下文；角色实体不直接持<br/>有设备绑定。" }
   class n16 node_component
-  n17@{ shape: rounded, label: "**first​_​person::ControlsCamera**<br/>控制者当前关联的第一人称相机。" }
+  n17@{ shape: rounded, label: "**ControlsCamera**<br/>控制者当前关联的第一人称相机。" }
   class n17 node_component
-  n18@{ shape: rounded, label: "**character::components::Character**<br/>来自character ↗：具有移动和跳跃能力的<br/>角色。" }
+  n18@{ shape: rounded, label: "**Character**<br/>来自character ↗：具有移动和跳跃能力的<br/>角色。" }
   class n18 node_component
   class n18 external_node
-  n19@{ shape: cyl, label: "**collider​_​tree::ColliderTrees**<br/>来自crate:avian3d ↗：按运动类别组织碰<br/>撞体加速树。" }
+  n19@{ shape: cyl, label: "**ColliderTrees**<br/>来自crate:avian3d ↗：按运动类别组织碰<br/>撞体加速树。" }
   class n19 node_resource
   class n19 external_node
-  n20@{ shape: rounded, label: "**item​_​interaction::components::**<br/>**HoldingItems**<br/>来自item​_​interaction ↗：Bevy 根据<br/>HeldBy 自动维护的反向索引，业务代码只读<br/>取。" }
+  n20@{ shape: rounded, label: "**HoldingItems**<br/>来自item​_​interaction ↗：Bevy 根据<br/>HeldBy 自动维护的反向索引，业务代码只读<br/>取。" }
   class n20 node_component
   class n20 external_node
-  n21@{ shape: fr-rect, label: "**first​_​person::FirstPersonPlugin**<br/>注册第一人称动作、捕获、朝向与镜头，不安<br/>装输入基础设施或物理插件。" }
+  n21@{ shape: fr-rect, label: "**FirstPersonPlugin**<br/>注册第一人称动作、捕获、朝向与镜头，不安<br/>装输入基础设施或物理插件。" }
   class n21 node_plugin
-  n22@{ shape: rounded, label: "**collision::collider::**<br/>**ColliderDisabled**<br/>来自crate:avian3d ↗：暂停碰撞体检测和<br/>空间查询。" }
+  n22@{ shape: rounded, label: "**ColliderDisabled**<br/>来自crate:avian3d ↗：暂停碰撞体检测和<br/>空间查询。" }
   class n22 node_component
   class n22 external_node
-  n23@{ shape: rounded, label: "**bevy​_​ecs::name::Name**<br/>来自crate:bevy​_​ecs ↗：保存供调试和界<br/>面展示的实体名称及缓存哈希" }
+  n23@{ shape: rounded, label: "**Name**<br/>来自crate:bevy​_​ecs ↗：保存供调试和界<br/>面展示的实体名称及缓存哈希" }
   class n23 node_component
   class n23 external_node
   n1 e0@-->|"集合成员"| n0

@@ -43,28 +43,25 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  subgraph layout_card_n0[" "]
-  n0@{ shape: rounded, label: "**bevy​_​render::mesh::allocator::**<br/>**allocate​_​and​_​free​_​meshes**<br/>为新增变化网格分配 GPU 存储并释放旧分<br/>配。" }
+  n0@{ shape: rounded, label: "**allocate​_​and​_​free​_​meshes**<br/>为新增变化网格分配 GPU 存储并释放旧分<br/>配。" }
   class n0 node_system
-  end
-  style layout_card_n0 fill:none,stroke:none
-  n1@{ shape: fr-rect, label: "**mesh::allocator::MeshAllocatorPlugin**<br/>管理 GPU 网格内存。" }
+  n1@{ shape: fr-rect, label: "**MeshAllocatorPlugin**<br/>管理 GPU 网格内存。" }
   class n1 node_plugin
-  n2@{ shape: cyl, label: "**bevy​_​render::renderer::RenderQueue**<br/>将资源写入和命令异步提交给 GPU。" }
+  n2@{ shape: cyl, label: "**RenderQueue**<br/>将资源写入和命令异步提交给 GPU。" }
   class n2 node_resource
-  n3@{ shape: cyl, label: "**render​_​asset::ExtractedAssets#lt;mesh::**<br/>**RenderMesh#gt;**<br/>暂存本帧渲染资产的提取与增删记录。" }
+  n3@{ shape: cyl, label: "**ExtractedAssets#lt;RenderMesh#gt;**<br/>暂存本帧渲染资产的提取与增删记录。" }
   class n3 node_resource
-  n4@{ shape: cyl, label: "**bevy​_​render::renderer::RenderDevice**<br/>创建渲染和计算所需的 GPU 资源。" }
+  n4@{ shape: cyl, label: "**RenderDevice**<br/>创建渲染和计算所需的 GPU 资源。" }
   class n4 node_resource
-  n5@{ shape: rounded, label: "**bevy​_​render::render​_​asset::prepare​_​**<br/>**assets#lt;bevy​_​render::mesh::**<br/>**RenderMesh#gt;**<br/>在上传预算内准备资产并保留重试项。" }
+  n5@{ shape: rounded, label: "**prepare​_​assets**<br/>在上传预算内准备资产并保留重试项。" }
   class n5 node_system
-  n6@{ shape: cyl, label: "**mesh::allocator::**<br/>**MeshAllocatorSettings**<br/>调整网格缓冲分配策略与额外使用标志。" }
+  n6@{ shape: cyl, label: "**MeshAllocatorSettings**<br/>调整网格缓冲分配策略与额外使用标志。" }
   class n6 node_resource
   n7@{ shape: lin-rect, label: "**PrepareAssets**<br/>组织渲染数据准备与绘制排队。" }
   class n7 node_system_set
-  n8@{ shape: cyl, label: "**mesh::allocator::MeshAllocator**<br/>分配并管理网格顶点和索引 GPU 缓冲。" }
+  n8@{ shape: cyl, label: "**MeshAllocator**<br/>分配并管理网格顶点和索引 GPU 缓冲。" }
   class n8 node_resource
-  n9@{ shape: cyl, label: "**vertex::MeshVertexBufferLayouts**<br/>来自crate:bevy​_​mesh ↗：共享网格顶点缓<br/>冲布局。" }
+  n9@{ shape: cyl, label: "**MeshVertexBufferLayouts**<br/>来自crate:bevy​_​mesh ↗：共享网格顶点缓<br/>冲布局。" }
   class n9 node_resource
   class n9 external_node
   n1 e0@-->|"调用"| n0
@@ -92,4 +89,5 @@ flowchart LR
   e4@{ curve: basis }
   e5@{ curve: basis }
   e6@{ curve: basis }
+  e7@{ curve: bumpX }
   e8@{ curve: basis }

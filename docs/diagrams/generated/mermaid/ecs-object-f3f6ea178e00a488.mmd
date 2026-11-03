@@ -44,38 +44,38 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​render::view::window::**<br/>**screenshot::prepare​_​screenshots**<br/>为有效截图目标准备捕获资源和输出附件。" }
+  n0@{ shape: rounded, label: "**prepare​_​screenshots**<br/>为有效截图目标准备捕获资源和输出附件。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**view::window::SurfaceData**<br/>保存窗口 GPU 表面及其呈现配置。" }
+  n1@{ shape: rounded, label: "**SurfaceData**<br/>保存窗口 GPU 表面及其呈现配置。" }
   class n1 node_component
-  n2@{ shape: cyl, label: "**view::window::screenshot::**<br/>**RenderScreenshotTargets**<br/>按截图请求实体保存本帧的规范化渲染目标。" }
+  n2@{ shape: cyl, label: "**RenderScreenshotTargets**<br/>按截图请求实体保存本帧的规范化渲染目标。" }
   class n2 node_resource
-  n3@{ shape: cyl, label: "**render​_​resource::pipeline​_​**<br/>**specializer::**<br/>**SpecializedRenderPipelines#lt;view::**<br/>**window::screenshot::**<br/>**ScreenshotToScreenPipeline#gt;**<br/>按配置键缓存渲染管线变体。" }
+  n3@{ shape: cyl, label: "**SpecializedRenderPipelines#lt;Screensho**<br/>**tToScreenPipeline#gt;**<br/>按配置键缓存渲染管线变体。" }
   class n3 node_resource
-  n4@{ shape: cyl, label: "**view::window::screenshot::**<br/>**RenderScreenshotsPrepared**<br/>保存本帧已准备好的截图渲染资源。" }
+  n4@{ shape: cyl, label: "**RenderScreenshotsPrepared**<br/>保存本帧已准备好的截图渲染资源。" }
   class n4 node_resource
-  n5@{ shape: cyl, label: "**texture::manual​_​texture​_​view::**<br/>**ManualTextureViews**<br/>注册供相机输出的手动管理纹理视图。" }
+  n5@{ shape: cyl, label: "**ManualTextureViews**<br/>注册供相机输出的手动管理纹理视图。" }
   class n5 node_resource
-  n6@{ shape: cyl, label: "**bevy​_​render::render​_​asset::**<br/>**RenderAssets#lt;bevy​_​render::texture::**<br/>**GpuImage#gt;**<br/>按源资产身份保存 GPU 渲染表示。" }
+  n6@{ shape: cyl, label: "**RenderAssets#lt;GpuImage#gt;**<br/>按源资产身份保存 GPU 渲染表示。" }
   class n6 node_resource
-  n7@{ shape: cyl, label: "**view::window::screenshot::**<br/>**ScreenshotToScreenPipeline**<br/>提供截图结果回写屏幕的着色接口。" }
+  n7@{ shape: cyl, label: "**ScreenshotToScreenPipeline**<br/>提供截图结果回写屏幕的着色接口。" }
   class n7 node_resource
-  n8@{ shape: cyl, label: "**bevy​_​render::render​_​resource::**<br/>**PipelineCache**<br/>缓存 GPU 渲染、计算管线与待创建队列。" }
+  n8@{ shape: cyl, label: "**PipelineCache**<br/>缓存 GPU 渲染、计算管线与待创建队列。" }
   class n8 node_resource
-  n9@{ shape: rounded, label: "**bevy​_​render::view::prepare​_​view​_​**<br/>**attachments**<br/>按相机输出目标准备可共享的颜色附件。" }
+  n9@{ shape: rounded, label: "**prepare​_​view​_​attachments**<br/>按相机输出目标准备可共享的颜色附件。" }
   class n9 node_system
-  n10@{ shape: cyl, label: "**view::ViewTargetAttachments**<br/>按输出目标保存本帧颜色附件。" }
+  n10@{ shape: cyl, label: "**ViewTargetAttachments**<br/>按输出目标保存本帧颜色附件。" }
   class n10 node_resource
   n11@{ shape: lin-rect, label: "**PrepareViews**<br/>组织渲染数据准备与绘制排队。" }
   class n11 node_system_set
-  n12@{ shape: fr-rect, label: "**view::window::screenshot::**<br/>**ScreenshotPlugin**<br/>处理截图请求与图像回传。" }
+  n12@{ shape: fr-rect, label: "**ScreenshotPlugin**<br/>处理截图请求与图像回传。" }
   class n12 node_plugin
-  n13@{ shape: rounded, label: "**bevy​_​render::view::prepare​_​view​_​**<br/>**targets**<br/>为视图维护主颜色双缓冲及可选多采样目标。" }
+  n13@{ shape: rounded, label: "**prepare​_​view​_​targets**<br/>为视图维护主颜色双缓冲及可选多采样目标。" }
   class n13 node_system
-  n14@{ shape: rounded, label: "**sync​_​world::MainEntity**<br/>来自crate:bevy​_​extract ↗：在子世界中<br/>关联原始主世界实体。" }
+  n14@{ shape: rounded, label: "**MainEntity**<br/>来自crate:bevy​_​extract ↗：在子世界中<br/>关联原始主世界实体。" }
   class n14 node_component
   class n14 external_node
-  n15@{ shape: cyl, label: "**bevy​_​render::renderer::RenderDevice**<br/>创建渲染和计算所需的 GPU 资源。" }
+  n15@{ shape: cyl, label: "**RenderDevice**<br/>创建渲染和计算所需的 GPU 资源。" }
   class n15 node_resource
   n1 e0@--> n0
   class e0 edge_read

@@ -38,12 +38,12 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;event::**<br/>**UntypedAssetLoadFailedEvent#gt;**<br/>保存最近两次轮换期间产生的指定类型消息" }
+  n0@{ shape: cyl, label: "**Messages#lt;UntypedAssetLoadFailedEvent**<br/>**#gt;**<br/>保存最近两次轮换期间产生的指定类型消息" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​asset::server::handle​_​internal​_​**<br/>**asset​_​events**<br/>来自crate:bevy​_​asset ↗：处理资产加<br/>载、依赖就绪及失败通知。" }
+  n1@{ shape: rounded, label: "**handle​_​internal​_​asset​_​events**<br/>来自crate:bevy​_​asset ↗：处理资产加<br/>载、依赖就绪及失败通知。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**demo::ui::backdrop::log​_​asset​_​**<br/>**failures**<br/>来自ui ↗：记录菜单模型与界面资源加载失<br/>败。" }
+  n2@{ shape: rounded, label: "**log​_​asset​_​failures**<br/>来自ui ↗：记录菜单模型与界面资源加载失<br/>败。" }
   class n2 node_system
   class n2 external_node
   n1 e0@-->|"赋值"| n0

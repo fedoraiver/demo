@@ -38,43 +38,43 @@ flowchart LR
   classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**text​_​input::TextInput**<br/>标识可编辑文本控件" }
+  n0@{ shape: rounded, label: "**TextInput**<br/>标识可编辑文本控件" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​ui​_​widgets::text​_​input::on​_​ime​_​**<br/>**input**<br/>把输入法组合和提交转换为文字编辑操作。" }
+  n1@{ shape: rounded, label: "**on​_​ime​_​input**<br/>把输入法组合和提交转换为文字编辑操作。" }
   class n1 node_system
-  n2@{ shape: hex, label: "**bevy​_​ui​_​widgets::text​_​input::on​_​**<br/>**focus​_​lost**<br/>失焦时清理输入法组合和选择。" }
+  n2@{ shape: hex, label: "**on​_​focus​_​lost**<br/>失焦时清理输入法组合和选择。" }
   class n2 node_observer
-  n3@{ shape: hex, label: "**bevy​_​ui​_​widgets::text​_​input::on​_​**<br/>**focus​_​select​_​all**<br/>按聚焦来源安排文本全选。" }
+  n3@{ shape: hex, label: "**on​_​focus​_​select​_​all**<br/>按聚焦来源安排文本全选。" }
   class n3 node_observer
-  n4@{ shape: rounded, label: "**bevy​_​ui​_​widgets::text​_​input::listen​_​**<br/>**for​_​ime​_​input​_​when​_​text​_​input​_​**<br/>**focused**<br/>按可编辑焦点控制主窗口输入法。" }
+  n4@{ shape: rounded, label: "**listen​_​for​_​ime​_​input​_​when​_​text​_​**<br/>**input​_​focused**<br/>按可编辑焦点控制主窗口输入法。" }
   class n4 node_system
-  n5@{ shape: hex, label: "**bevy​_​ui​_​widgets::text​_​input::on​_​**<br/>**pointer​_​drag**<br/>随指针拖动扩展文本选择。" }
+  n5@{ shape: hex, label: "**on​_​pointer​_​drag**<br/>随指针拖动扩展文本选择。" }
   class n5 node_observer
-  n6@{ shape: hex, label: "**bevy​_​ui​_​widgets::text​_​input::on​_​**<br/>**focus​_​select​_​all**<br/>按聚焦来源安排文本全选。" }
+  n6@{ shape: hex, label: "**on​_​focus​_​select​_​all**<br/>按聚焦来源安排文本全选。" }
   class n6 node_observer
-  n7@{ shape: hex, label: "**bevy​_​ui​_​widgets::text​_​input::on​_​**<br/>**focus​_​select​_​all**<br/>按聚焦来源安排文本全选。" }
+  n7@{ shape: hex, label: "**on​_​focus​_​select​_​all**<br/>按聚焦来源安排文本全选。" }
   class n7 node_observer
-  n8@{ shape: hex, label: "**bevy​_​ui​_​widgets::text​_​input::on​_​**<br/>**pointer​_​drag**<br/>随指针拖动扩展文本选择。" }
+  n8@{ shape: hex, label: "**on​_​pointer​_​drag**<br/>随指针拖动扩展文本选择。" }
   class n8 node_observer
-  n9@{ shape: hex, label: "**bevy​_​ui​_​widgets::text​_​input::on​_​**<br/>**pointer​_​drag**<br/>随指针拖动扩展文本选择。" }
+  n9@{ shape: hex, label: "**on​_​pointer​_​drag**<br/>随指针拖动扩展文本选择。" }
   class n9 node_observer
-  n10@{ shape: hex, label: "**bevy​_​ui​_​widgets::text​_​input::on​_​**<br/>**focused​_​keyboard​_​input**<br/>将聚焦文本框按键转为编辑操作。" }
+  n10@{ shape: hex, label: "**on​_​focused​_​keyboard​_​input**<br/>将聚焦文本框按键转为编辑操作。" }
   class n10 node_observer
-  n11@{ shape: hex, label: "**bevy​_​ui​_​widgets::text​_​input::on​_​**<br/>**pointer​_​press**<br/>将文本点击转为光标与选择操作。" }
+  n11@{ shape: hex, label: "**on​_​pointer​_​press**<br/>将文本点击转为光标与选择操作。" }
   class n11 node_observer
-  n12@{ shape: hex, label: "**bevy​_​ui​_​widgets::text​_​input::on​_​**<br/>**focus​_​lost**<br/>失焦时清理输入法组合和选择。" }
+  n12@{ shape: hex, label: "**on​_​focus​_​lost**<br/>失焦时清理输入法组合和选择。" }
   class n12 node_observer
-  n13@{ shape: hex, label: "**bevy​_​ui​_​widgets::text​_​input::on​_​**<br/>**focused​_​keyboard​_​input**<br/>将聚焦文本框按键转为编辑操作。" }
+  n13@{ shape: hex, label: "**on​_​focused​_​keyboard​_​input**<br/>将聚焦文本框按键转为编辑操作。" }
   class n13 node_observer
-  n14@{ shape: hex, label: "**bevy​_​ui​_​widgets::text​_​input::on​_​**<br/>**pointer​_​press**<br/>将文本点击转为光标与选择操作。" }
+  n14@{ shape: hex, label: "**on​_​pointer​_​press**<br/>将文本点击转为光标与选择操作。" }
   class n14 node_observer
-  n15@{ shape: hex, label: "**bevy​_​ui​_​widgets::text​_​input::on​_​**<br/>**focused​_​keyboard​_​input**<br/>将聚焦文本框按键转为编辑操作。" }
+  n15@{ shape: hex, label: "**on​_​focused​_​keyboard​_​input**<br/>将聚焦文本框按键转为编辑操作。" }
   class n15 node_observer
-  n16@{ shape: rounded, label: "**bevy​_​ui​_​widgets::text​_​input::update​_​**<br/>**ime​_​position**<br/>把输入法候选窗口放到当前文字光标下方。" }
+  n16@{ shape: rounded, label: "**update​_​ime​_​position**<br/>把输入法候选窗口放到当前文字光标下方。" }
   class n16 node_system
-  n17@{ shape: hex, label: "**bevy​_​ui​_​widgets::text​_​input::on​_​**<br/>**pointer​_​press**<br/>将文本点击转为光标与选择操作。" }
+  n17@{ shape: hex, label: "**on​_​pointer​_​press**<br/>将文本点击转为光标与选择操作。" }
   class n17 node_observer
-  n18@{ shape: hex, label: "**bevy​_​ui​_​widgets::text​_​input::on​_​**<br/>**focus​_​lost**<br/>失焦时清理输入法组合和选择。" }
+  n18@{ shape: hex, label: "**on​_​focus​_​lost**<br/>失焦时清理输入法组合和选择。" }
   class n18 node_observer
   n0 e0@-->|"存在性约束"| n1
   class e0 edge_reference

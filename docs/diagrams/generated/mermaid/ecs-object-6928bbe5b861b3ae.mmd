@@ -44,42 +44,42 @@ flowchart LR
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
   subgraph layout_card_n0[" "]
-  n0@{ shape: rounded, label: "**demo::bounds​_​recovery::recovery::**<br/>**recover​_​from​_​water**<br/>恢复实体自身的出生姿态；角色落水只释放手<br/>中物品，物品落水时再独立恢复。" }
+  n0@{ shape: rounded, label: "**recover​_​from​_​water**<br/>恢复实体自身的出生姿态；角色落水只释放手<br/>中物品，物品落水时再独立恢复。" }
   class n0 node_system
   end
   style layout_card_n0 fill:none,stroke:none
   subgraph layout_card_n1[" "]
-  n1@{ shape: rounded, label: "**physics​_​transform::transform::**<br/>**Position**<br/>来自crate:avian3d ↗：保存刚体或碰撞体<br/>的世界位置。" }
+  n1@{ shape: rounded, label: "**Position**<br/>来自crate:avian3d ↗：保存刚体或碰撞体<br/>的世界位置。" }
   class n1 node_component
   class n1 external_node
   end
   style layout_card_n1 fill:none,stroke:none
   subgraph layout_card_n2[" "]
-  n2@{ shape: rounded, label: "**character::components::**<br/>**CharacterIntent**<br/>来自character ↗：来自控制者的玩法意<br/>图；输入状态跨帧保留，供固定步模拟读取。" }
+  n2@{ shape: rounded, label: "**CharacterIntent**<br/>来自character ↗：来自控制者的玩法意<br/>图；输入状态跨帧保留，供固定步模拟读取。" }
   class n2 node_component
   class n2 external_node
   end
   style layout_card_n2 fill:none,stroke:none
   subgraph layout_card_n3[" "]
-  n3@{ shape: rounded, label: "**dynamics::rigid​_​body::LinearVelocity**<br/>来自crate:avian3d ↗：保存刚体的世界线<br/>速度。" }
+  n3@{ shape: rounded, label: "**LinearVelocity**<br/>来自crate:avian3d ↗：保存刚体的世界线<br/>速度。" }
   class n3 node_component
   class n3 external_node
   end
   style layout_card_n3 fill:none,stroke:none
   subgraph layout_card_n4[" "]
-  n4@{ shape: rounded, label: "**item​_​interaction::components::**<br/>**HeldTarget**<br/>来自item​_​interaction ↗：手前的目标姿<br/>态；对齐期间与真实局部挂接姿态分离，完成<br/>后由共享刚体保持相对位置。" }
+  n4@{ shape: rounded, label: "**HeldTarget**<br/>来自item​_​interaction ↗：手前的目标姿<br/>态；对齐期间与真实局部挂接姿态分离，完成<br/>后由共享刚体保持相对位置。" }
   class n4 node_component
   class n4 external_node
   end
   style layout_card_n4 fill:none,stroke:none
   subgraph layout_card_n5[" "]
-  n5@{ shape: rounded, label: "**components::transform::Transform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>相对父实体的平移、旋转和缩放" }
+  n5@{ shape: rounded, label: "**Transform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>相对父实体的平移、旋转和缩放" }
   class n5 node_component
   class n5 external_node
   end
   style layout_card_n5 fill:none,stroke:none
   subgraph layout_card_n6[" "]
-  n6@{ shape: fr-rect, label: "**bounds​_​recovery::**<br/>**BoundsRecoveryPlugin**<br/>注册越界恢复和插值重置，不创建窗口或额外<br/>推进模拟。" }
+  n6@{ shape: fr-rect, label: "**BoundsRecoveryPlugin**<br/>注册越界恢复和插值重置，不创建窗口或额外<br/>推进模拟。" }
   class n6 node_plugin
   end
   style layout_card_n6 fill:none,stroke:none
@@ -90,7 +90,7 @@ flowchart LR
   end
   style layout_card_n7 fill:none,stroke:none
   subgraph layout_card_n8[" "]
-  n8@{ shape: rounded, label: "**collision::collider::layers::**<br/>**CollisionLayers**<br/>来自crate:avian3d ↗：声明碰撞体所属层<br/>和可交互层。" }
+  n8@{ shape: rounded, label: "**CollisionLayers**<br/>来自crate:avian3d ↗：声明碰撞体所属层<br/>和可交互层。" }
   class n8 node_component
   class n8 external_node
   end
@@ -102,36 +102,36 @@ flowchart LR
   end
   style layout_card_n9 fill:none,stroke:none
   subgraph layout_card_n10[" "]
-  n10@{ shape: rounded, label: "**bounds​_​recovery::SpawnPoint**<br/>业务根实体的出生姿态；角色与物品分别保存<br/>自己的恢复位置。" }
+  n10@{ shape: rounded, label: "**SpawnPoint**<br/>业务根实体的出生姿态；角色与物品分别保存<br/>自己的恢复位置。" }
   class n10 node_component
   end
   style layout_card_n10 fill:none,stroke:none
   subgraph layout_card_n11[" "]
-  n11@{ shape: rounded, label: "**dynamics::rigid​_​body::**<br/>**AngularVelocity**<br/>来自crate:avian3d ↗：保存刚体的世界角<br/>速度。" }
+  n11@{ shape: rounded, label: "**AngularVelocity**<br/>来自crate:avian3d ↗：保存刚体的世界角<br/>速度。" }
   class n11 node_component
   class n11 external_node
   end
   style layout_card_n11 fill:none,stroke:none
   subgraph layout_card_n12[" "]
-  n12@{ shape: rounded, label: "**physics​_​transform::transform::**<br/>**Rotation**<br/>来自crate:avian3d ↗：保存刚体或碰撞体<br/>的世界旋转。" }
+  n12@{ shape: rounded, label: "**Rotation**<br/>来自crate:avian3d ↗：保存刚体或碰撞体<br/>的世界旋转。" }
   class n12 node_component
   class n12 external_node
   end
   style layout_card_n12 fill:none,stroke:none
   subgraph layout_card_n13[" "]
-  n13@{ shape: rounded, label: "**character::components::Character**<br/>来自character ↗：具有移动和跳跃能力的<br/>角色。" }
+  n13@{ shape: rounded, label: "**Character**<br/>来自character ↗：具有移动和跳跃能力的<br/>角色。" }
   class n13 node_component
   class n13 external_node
   end
   style layout_card_n13 fill:none,stroke:none
   subgraph layout_card_n14[" "]
-  n14@{ shape: rounded, label: "**item​_​interaction::components::HeldBy**<br/>来自item​_​interaction ↗：物体的持有<br/>者；只由交互系统插入或移除。" }
+  n14@{ shape: rounded, label: "**HeldBy**<br/>来自item​_​interaction ↗：物体的持有<br/>者；只由交互系统插入或移除。" }
   class n14 node_component
   class n14 external_node
   end
   style layout_card_n14 fill:none,stroke:none
   subgraph layout_card_n15[" "]
-  n15@{ shape: rounded, label: "**item​_​interaction::components::**<br/>**Pickable**<br/>来自item​_​interaction ↗：允许被拾取的<br/>能力标签。" }
+  n15@{ shape: rounded, label: "**Pickable**<br/>来自item​_​interaction ↗：允许被拾取的<br/>能力标签。" }
   class n15 node_component
   class n15 external_node
   end
@@ -143,24 +143,24 @@ flowchart LR
   end
   style layout_card_n16 fill:none,stroke:none
   subgraph layout_card_n17[" "]
-  n17@{ shape: rounded, label: "**demo::game​_​flow::gameplay​_​running**<br/>来自game​_​flow ↗：独立功能测试没有应用<br/>状态；真实游戏只在 Running 推进玩法。" }
+  n17@{ shape: rounded, label: "**gameplay​_​running**<br/>来自game​_​flow ↗：独立功能测试没有应用<br/>状态；真实游戏只在 Running 推进玩法。" }
   class n17 node_system
   class n17 external_node
   end
   style layout_card_n17 fill:none,stroke:none
   subgraph layout_card_n18[" "]
-  n18@{ shape: rounded, label: "**bounds​_​recovery::recovery::**<br/>**ResumeInterpolation**<br/>记录本次恢复临时添加的插值暂停项，不移除<br/>原先由其他功能设置的暂停组件。" }
+  n18@{ shape: rounded, label: "**ResumeInterpolation**<br/>记录本次恢复临时添加的插值暂停项，不移除<br/>原先由其他功能设置的暂停组件。" }
   class n18 node_component
   end
   style layout_card_n18 fill:none,stroke:none
   subgraph layout_card_n19[" "]
-  n19@{ shape: rounded, label: "**character::components::**<br/>**CharacterMotion**<br/>来自character ↗：接地状态由物理查询派<br/>生；实际速度直接读取 Avian 的<br/>LinearVelocity。" }
+  n19@{ shape: rounded, label: "**CharacterMotion**<br/>来自character ↗：接地状态由物理查询派<br/>生；实际速度直接读取 Avian 的<br/>LinearVelocity。" }
   class n19 node_component
   class n19 external_node
   end
   style layout_card_n19 fill:none,stroke:none
   subgraph layout_card_n20[" "]
-  n20@{ shape: rounded, label: "**dynamics::rigid​_​body::sleeping::**<br/>**Sleeping**<br/>来自crate:avian3d ↗：标记暂不参与模拟<br/>的休眠刚体。" }
+  n20@{ shape: rounded, label: "**Sleeping**<br/>来自crate:avian3d ↗：标记暂不参与模拟<br/>的休眠刚体。" }
   class n20 node_component
   class n20 external_node
   end

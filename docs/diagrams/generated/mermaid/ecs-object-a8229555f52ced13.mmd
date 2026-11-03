@@ -39,7 +39,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: notch-rect, label: "**Local · cursor​_​last**<br/>保存上一次鼠标位置以生成指针输入。" }
   class n0 node_local
-  n1@{ shape: rounded, label: "**bevy​_​picking::input::mouse​_​pick​_​**<br/>**events**<br/>把窗口鼠标事件转换为拾取指针动作。" }
+  n1@{ shape: rounded, label: "**mouse​_​pick​_​events**<br/>把窗口鼠标事件转换为拾取指针动作。" }
   class n1 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

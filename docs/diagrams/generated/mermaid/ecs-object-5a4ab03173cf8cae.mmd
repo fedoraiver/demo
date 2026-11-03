@@ -41,15 +41,15 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​kira​_​audio::audio​_​output::**<br/>**update​_​instance​_​states#lt;bevy​_​kira​_​**<br/>**audio::MainTrack#gt;**<br/>把实际播放状态回写到类型通道。" }
+  n0@{ shape: rounded, label: "**update​_​instance​_​states**<br/>把实际播放状态回写到类型通道。" }
   class n0 node_system
   n1@{ shape: lin-rect, label: "**InstanceCleanup**<br/>组织音频实例清理与通道播放。" }
   class n1 node_system_set
-  n2@{ shape: cyl, label: "**channel::typed::**<br/>**AudioChannel#lt;MainTrack#gt;**<br/>保存特定通道类型的音频命令队列及实例播放<br/>状态" }
+  n2@{ shape: cyl, label: "**AudioChannel#lt;MainTrack#gt;**<br/>保存特定通道类型的音频命令队列及实例播放<br/>状态" }
   class n2 node_resource
-  n3@{ shape: tag-rect, label: "**audio​_​output::AudioOutput**<br/>持有 Kira 音频管理器及实例、通道、轨道<br/>状态" }
+  n3@{ shape: tag-rect, label: "**AudioOutput**<br/>持有 Kira 音频管理器及实例、通道、轨道<br/>状态" }
   class n3 node_non_send
-  n4@{ shape: cyl, label: "**bevy​_​asset::Assets#lt;instance::**<br/>**AudioInstance#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
+  n4@{ shape: cyl, label: "**Assets#lt;AudioInstance#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
   class n4 node_resource
   class n4 external_node
   n1 e0@-->|"先于"| n0

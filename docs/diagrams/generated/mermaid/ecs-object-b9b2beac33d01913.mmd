@@ -40,12 +40,12 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: lin-rect, label: "**Target**<br/>固定模拟阶段；结构变更在依赖阶段之间提<br/>交。" }
   class n0 node_system_set
-  n1@{ shape: rounded, label: "**demo::item​_​interaction::audio​_​**<br/>**events::warn​_​hold​_​strain**<br/>来自item​_​interaction ↗：持续偏离实际<br/>握点时提示一次，误差恢复后允许下一次告<br/>警。" }
+  n1@{ shape: rounded, label: "**warn​_​hold​_​strain**<br/>来自item​_​interaction ↗：持续偏离实际<br/>握点时提示一次，误差恢复后允许下一次告<br/>警。" }
   class n1 node_system
   class n1 external_node
   n2@{ shape: lin-rect, label: "**Attachment**<br/>固定模拟阶段；结构变更在依赖阶段之间提<br/>交。" }
   class n2 node_system_set
-  n3@{ shape: rounded, label: "**demo::item​_​interaction::pose::sync​_​**<br/>**held​_​presentation**<br/>来自item​_​interaction ↗：帧末跟随同一<br/>份已呈现人物姿态，零固定步时也不在箱体上<br/>叠加第二份插值。" }
+  n3@{ shape: rounded, label: "**sync​_​held​_​presentation**<br/>来自item​_​interaction ↗：帧末跟随同一<br/>份已呈现人物姿态，零固定步时也不在箱体上<br/>叠加第二份插值。" }
   class n3 node_system
   class n3 external_node
   n4@{ shape: lin-rect, label: "**Interaction**<br/>固定模拟阶段；结构变更在依赖阶段之间提<br/>交。" }

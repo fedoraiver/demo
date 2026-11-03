@@ -40,13 +40,13 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: lin-rect, label: "**AnonymousSet(2)**<br/>保存一组系统的共同配置。" }
   class n0 node_system_set
-  n1@{ shape: rounded, label: "**bevy​_​pbr::cluster::gpu::prepare​_​**<br/>**clusters​_​for​_​gpu​_​clustering**<br/>来自crate:bevy​_​pbr ↗：按视图规模和回<br/>读容量分配 GPU 聚簇缓冲。" }
+  n1@{ shape: rounded, label: "**prepare​_​clusters​_​for​_​gpu​_​clustering**<br/>来自crate:bevy​_​pbr ↗：按视图规模和回<br/>读容量分配 GPU 聚簇缓冲。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​pbr::cluster::gpu::upload​_​view​_​**<br/>**gpu​_​clustering​_​buffers**<br/>来自crate:bevy​_​pbr ↗：上传聚簇深度切<br/>片、元数据和计数暂存。" }
+  n2@{ shape: rounded, label: "**upload​_​view​_​gpu​_​clustering​_​buffers**<br/>来自crate:bevy​_​pbr ↗：上传聚簇深度切<br/>片、元数据和计数暂存。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​pbr::cluster::gpu​_​clustering​_​**<br/>**is​_​enabled**<br/>来自crate:bevy​_​pbr ↗：判断常规更新是<br/>否使用 GPU 聚簇。" }
+  n3@{ shape: rounded, label: "**gpu​_​clustering​_​is​_​enabled**<br/>来自crate:bevy​_​pbr ↗：判断常规更新是<br/>否使用 GPU 聚簇。" }
   class n3 node_system
   class n3 external_node
   n0 e0@-->|"集合成员"| n1

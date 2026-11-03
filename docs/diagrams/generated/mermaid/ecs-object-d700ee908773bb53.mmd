@@ -42,43 +42,22 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  subgraph layout_card_n0[" "]
-  n0@{ shape: rounded, label: "**bevy​_​sprite​_​render::tilemap​_​chunk::**<br/>**update​_​tilemap​_​chunk​_​indices**<br/>将变化的瓦片块索引打包写入材质图像。" }
+  n0@{ shape: rounded, label: "**update​_​tilemap​_​chunk​_​indices**<br/>将变化的瓦片块索引打包写入材质图像。" }
   class n0 node_system
-  end
-  style layout_card_n0 fill:none,stroke:none
-  subgraph layout_card_n1[" "]
-  n1@{ shape: rounded, label: "**mesh2d::material::**<br/>**MeshMaterial2d#lt;tilemap​_​chunk::**<br/>**tilemap​_​chunk​_​material::**<br/>**TilemapChunkMaterial#gt;**<br/>为二维网格指定材质资产。" }
+  n1@{ shape: rounded, label: "**MeshMaterial2d#lt;TilemapChunkMaterial#gt;**<br/>为二维网格指定材质资产。" }
   class n1 node_component
-  end
-  style layout_card_n1 fill:none,stroke:none
-  subgraph layout_card_n2[" "]
-  n2@{ shape: cyl, label: "**bevy​_​asset::Assets#lt;tilemap​_​chunk::**<br/>**tilemap​_​chunk​_​material::**<br/>**TilemapChunkMaterial#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
+  n2@{ shape: cyl, label: "**Assets#lt;TilemapChunkMaterial#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
   class n2 node_resource
   class n2 external_node
-  end
-  style layout_card_n2 fill:none,stroke:none
-  subgraph layout_card_n3[" "]
-  n3@{ shape: rounded, label: "**tilemap​_​chunk::TilemapChunk**<br/>把矩形瓦片区域作为单个网格渲染。" }
+  n3@{ shape: rounded, label: "**TilemapChunk**<br/>把矩形瓦片区域作为单个网格渲染。" }
   class n3 node_component
-  end
-  style layout_card_n3 fill:none,stroke:none
-  subgraph layout_card_n4[" "]
-  n4@{ shape: fr-rect, label: "**tilemap​_​chunk::TilemapChunkPlugin**<br/>初始化瓦片地图块并更新索引。" }
+  n4@{ shape: fr-rect, label: "**TilemapChunkPlugin**<br/>初始化瓦片地图块并更新索引。" }
   class n4 node_plugin
-  end
-  style layout_card_n4 fill:none,stroke:none
-  subgraph layout_card_n5[" "]
-  n5@{ shape: rounded, label: "**tilemap​_​chunk::TilemapChunkTileData**<br/>保存瓦片块内各格的图集索引或空格状态。" }
+  n5@{ shape: rounded, label: "**TilemapChunkTileData**<br/>保存瓦片块内各格的图集索引或空格状态。" }
   class n5 node_component
-  end
-  style layout_card_n5 fill:none,stroke:none
-  subgraph layout_card_n6[" "]
-  n6@{ shape: cyl, label: "**bevy​_​asset::Assets#lt;image::Image#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
+  n6@{ shape: cyl, label: "**Assets#lt;Image#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
   class n6 node_resource
   class n6 external_node
-  end
-  style layout_card_n6 fill:none,stroke:none
   n1 e0@--> n0
   class e0 edge_read
   n0 e1@-->|"可变访问"| n2
@@ -94,7 +73,7 @@ flowchart LR
   n0 e6@-->|"可变访问"| n6
   class e6 edge_write
   e0@{ curve: basis }
-  e1@{ curve: bumpX }
+  e1@{ curve: basis }
   e2@{ curve: basis }
   e4@{ curve: basis }
   e5@{ curve: basis }

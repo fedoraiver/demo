@@ -38,13 +38,13 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**taa::**<br/>**TemporalAntiAliasHistoryTextures**<br/>保存 TAA 读写交替的历史纹理。" }
+  n0@{ shape: rounded, label: "**TemporalAntiAliasHistoryTextures**<br/>保存 TAA 读写交替的历史纹理。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​anti​_​alias::taa::temporal​_​anti​_​**<br/>**alias**<br/>混合当前颜色与历史帧并更新 TAA 历史目<br/>标。" }
+  n1@{ shape: rounded, label: "**temporal​_​anti​_​alias**<br/>混合当前颜色与历史帧并更新 TAA 历史目<br/>标。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​anti​_​alias::taa::extract​_​taa​_​**<br/>**settings**<br/>提取有效相机的 TAA 设置并消费历史重置信<br/>号。" }
+  n2@{ shape: rounded, label: "**extract​_​taa​_​settings**<br/>提取有效相机的 TAA 设置并消费历史重置信<br/>号。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​anti​_​alias::taa::prepare​_​taa​_​**<br/>**history​_​textures**<br/>按帧奇偶为 TAA 轮换读写历史纹理。" }
+  n3@{ shape: rounded, label: "**prepare​_​taa​_​history​_​textures**<br/>按帧奇偶为 TAA 轮换读写历史纹理。" }
   class n3 node_system
   n0 e0@--> n1
   class e0 edge_read

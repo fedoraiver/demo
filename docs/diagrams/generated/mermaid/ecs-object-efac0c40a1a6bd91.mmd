@@ -40,13 +40,13 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: lin-rect, label: "**AnonymousSet(1)**<br/>保存一组系统的共同配置。" }
   class n0 node_system_set
-  n1@{ shape: rounded, label: "**demo::character::motion::update​_​**<br/>**grounded**<br/>来自character ↗：脚底附近的小球向下探<br/>测支撑面；墙面法线和上升中的角色不能算接<br/>地。" }
+  n1@{ shape: rounded, label: "**update​_​grounded**<br/>来自character ↗：脚底附近的小球向下探<br/>测支撑面；墙面法线和上升中的角色不能算接<br/>地。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**demo::game​_​flow::gameplay​_​running**<br/>来自game​_​flow ↗：独立功能测试没有应用<br/>状态；真实游戏只在 Running 推进玩法。" }
+  n2@{ shape: rounded, label: "**gameplay​_​running**<br/>来自game​_​flow ↗：独立功能测试没有应用<br/>状态；真实游戏只在 Running 推进玩法。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**demo::character::motion::log​_​**<br/>**character​_​velocity**<br/>来自character ↗：采样物理解算后的实际<br/>速度，便于检查加速度、刹车和碰撞反馈。" }
+  n3@{ shape: rounded, label: "**log​_​character​_​velocity**<br/>来自character ↗：采样物理解算后的实际<br/>速度，便于检查加速度、刹车和碰撞反馈。" }
   class n3 node_system
   class n3 external_node
   n0 e0@-->|"集合成员"| n1

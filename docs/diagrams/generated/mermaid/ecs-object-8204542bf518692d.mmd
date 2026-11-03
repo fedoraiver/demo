@@ -44,21 +44,21 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​enhanced​_​input::context::input​_​**<br/>**reader::update​_​pending**<br/>更新输入读取器中等待重置的绑定。" }
+  n0@{ shape: rounded, label: "**update​_​pending**<br/>更新输入读取器中等待重置的绑定。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**context::input​_​reader::**<br/>**PendingBindings**<br/>等待已移除绑定的输入释放。" }
+  n1@{ shape: cyl, label: "**PendingBindings**<br/>等待已移除绑定的输入释放。" }
   class n1 node_resource
-  n2@{ shape: rounded, label: "**gamepad::Gamepad**<br/>来自crate:bevy​_​input ↗：保存一个手柄<br/>的数字按钮状态、模拟轴值及厂商产品信息" }
+  n2@{ shape: rounded, label: "**Gamepad**<br/>来自crate:bevy​_​input ↗：保存一个手柄<br/>的数字按钮状态、模拟轴值及厂商产品信息" }
   class n2 node_component
   class n2 external_node
-  n3@{ shape: cyl, label: "**mouse::MouseScrollPixelsPerLine**<br/>来自crate:bevy​_​input ↗：设置滚轮像素<br/>与行数的换算比例。" }
+  n3@{ shape: cyl, label: "**MouseScrollPixelsPerLine**<br/>来自crate:bevy​_​input ↗：设置滚轮像素<br/>与行数的换算比例。" }
   class n3 node_resource
   class n3 external_node
-  n4@{ shape: cyl, label: "**context::input​_​reader::ActionSources**<br/>配置动作可使用的输入设备来源。" }
+  n4@{ shape: cyl, label: "**ActionSources**<br/>配置动作可使用的输入设备来源。" }
   class n4 node_resource
-  n5@{ shape: cyl, label: "**context::input​_​reader::custom::**<br/>**CustomInputs**<br/>保存自定义输入编号到动作值的映射" }
+  n5@{ shape: cyl, label: "**CustomInputs**<br/>保存自定义输入编号到动作值的映射" }
   class n5 node_resource
-  n6@{ shape: cyl, label: "**button​_​input::ButtonInput#lt;mouse::**<br/>**MouseButton#gt;**<br/>来自crate:bevy​_​input ↗：保存指定按钮<br/>类型当前按下、本帧刚按下和刚释放的集合" }
+  n6@{ shape: cyl, label: "**ButtonInput#lt;MouseButton#gt;**<br/>来自crate:bevy​_​input ↗：保存指定按钮<br/>类型当前按下、本帧刚按下和刚释放的集合" }
   class n6 node_resource
   class n6 external_node
   n7@{ shape: notch-rect, label: "**Local · reader.0.11**<br/>在绑定重置检查期间暂时绕过输入忽略。" }
@@ -69,15 +69,15 @@ flowchart LR
   class n9 node_plugin
   n10@{ shape: notch-rect, label: "**Local · reader.0.10**<br/>为待重置绑定检查保留手柄选择。" }
   class n10 node_local
-  n11@{ shape: cyl, label: "**mouse::AccumulatedMouseMotion**<br/>来自crate:bevy​_​input ↗：累计当前帧鼠<br/>标移动位移。" }
+  n11@{ shape: cyl, label: "**AccumulatedMouseMotion**<br/>来自crate:bevy​_​input ↗：累计当前帧鼠<br/>标移动位移。" }
   class n11 node_resource
   class n11 external_node
-  n12@{ shape: cyl, label: "**context::input​_​reader::**<br/>**ConsumedInputs**<br/>逐调度记录动作已消费的输入。" }
+  n12@{ shape: cyl, label: "**ConsumedInputs**<br/>逐调度记录动作已消费的输入。" }
   class n12 node_resource
-  n13@{ shape: cyl, label: "**mouse::AccumulatedMouseScroll**<br/>来自crate:bevy​_​input ↗：汇总本帧滚轮<br/>事件的位移与单位" }
+  n13@{ shape: cyl, label: "**AccumulatedMouseScroll**<br/>来自crate:bevy​_​input ↗：汇总本帧滚轮<br/>事件的位移与单位" }
   class n13 node_resource
   class n13 external_node
-  n14@{ shape: cyl, label: "**button​_​input::ButtonInput#lt;keyboard::**<br/>**KeyCode#gt;**<br/>来自crate:bevy​_​input ↗：保存指定按钮<br/>类型当前按下、本帧刚按下和刚释放的集合" }
+  n14@{ shape: cyl, label: "**ButtonInput#lt;KeyCode#gt;**<br/>来自crate:bevy​_​input ↗：保存指定按钮<br/>类型当前按下、本帧刚按下和刚释放的集合" }
   class n14 node_resource
   class n14 external_node
   n0 e0@-->|"赋值"| n1

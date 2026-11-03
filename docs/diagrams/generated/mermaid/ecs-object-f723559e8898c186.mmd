@@ -40,7 +40,7 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​ui::ContentSize**<br/>提供内容驱动的固有尺寸测量。" }
+  n0@{ shape: rounded, label: "**ContentSize**<br/>提供内容驱动的固有尺寸测量。" }
   class n0 node_component
   n1@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列纸箱图标和公司名称。" }
   class n1 node_entity
@@ -246,7 +246,7 @@ flowchart LR
   n68@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供音频设置分类入口。" }
   class n68 node_entity
   class n68 external_node
-  n69@{ shape: rounded, label: "**bevy​_​ui::widget::text​_​input​_​layout::**<br/>**update​_​editable​_​text​_​content​_​size**<br/>按可见字符宽度和行数设置输入框固有尺寸。" }
+  n69@{ shape: rounded, label: "**update​_​editable​_​text​_​content​_​size**<br/>按可见字符宽度和行数设置输入框固有尺寸。" }
   class n69 node_system
   n70@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列镜头与暂停输入提示。" }
   class n70 node_entity
@@ -254,7 +254,7 @@ flowchart LR
   n71@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：按按钮方向步进调整对应音量。" }
   class n71 node_entity
   class n71 external_node
-  n72@{ shape: rounded, label: "**bevy​_​ui::widget::text::measure​_​text​_​**<br/>**system**<br/>在文本变化后更新内容测量并安排文字重排。" }
+  n72@{ shape: rounded, label: "**measure​_​text​_​system**<br/>在文本变化后更新内容测量并安排文字重排。" }
   class n72 node_system
   n73@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：居中承载对应音量的数值文字。" }
   class n73 node_entity
@@ -355,7 +355,7 @@ flowchart LR
   n105@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：标明应用当前设置的操作。" }
   class n105 node_entity
   class n105 external_node
-  n106@{ shape: rounded, label: "**bevy​_​ui::layout::ui​_​layout​_​system**<br/>求解 UI 布局并回写节点尺寸和二维变换。" }
+  n106@{ shape: rounded, label: "**ui​_​layout​_​system**<br/>求解 UI 布局并回写节点尺寸和二维变换。" }
   class n106 node_system
   n107@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列三张操作帮助卡片。" }
   class n107 node_entity
@@ -480,7 +480,7 @@ flowchart LR
   n147@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示开始游戏按钮的标题。" }
   class n147 node_entity
   class n147 external_node
-  n148@{ shape: rounded, label: "**bevy​_​ui::widget::image::update​_​**<br/>**image​_​content​_​size​_​system**<br/>按图像或图集区域更新 UI 的固有尺寸测<br/>量。" }
+  n148@{ shape: rounded, label: "**update​_​image​_​content​_​size​_​system**<br/>按图像或图集区域更新 UI 的固有尺寸测<br/>量。" }
   class n148 node_system
   n149@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：分组排列应用与返回按钮。" }
   class n149 node_entity

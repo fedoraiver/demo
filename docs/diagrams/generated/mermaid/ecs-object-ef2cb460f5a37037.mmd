@@ -45,80 +45,41 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  subgraph layout_card_n0[" "]
-  n0@{ shape: rounded, label: "**bevy​_​scene::spawn::resolve​_​scene​_​**<br/>**patches**<br/>解析已完成依赖加载的场景补丁。" }
+  n0@{ shape: rounded, label: "**resolve​_​scene​_​patches**<br/>解析已完成依赖加载的场景补丁。" }
   class n0 node_system
-  end
-  style layout_card_n0 fill:none,stroke:none
-  subgraph layout_card_n1[" "]
-  n1@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;bevy​_​**<br/>**asset::AssetEvent#lt;scene​_​patch::**<br/>**ScenePatch#gt;#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n1@{ shape: cyl, label: "**Messages#lt;AssetEvent#lt;ScenePatch#gt;#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n1 node_resource
   class n1 external_node
-  end
-  style layout_card_n1 fill:none,stroke:none
-  subgraph layout_card_n2[" "]
-  n2@{ shape: fr-rect, label: "**bevy​_​scene::ScenePlugin**<br/>实例化场景与声明式实体内容。" }
+  n2@{ shape: fr-rect, label: "**ScenePlugin**<br/>实例化场景与声明式实体内容。" }
   class n2 node_plugin
-  end
-  style layout_card_n2 fill:none,stroke:none
-  subgraph layout_card_n3[" "]
-  n3@{ shape: rounded, label: "**bevy​_​scene::spawn::spawn​_​queued**<br/>应用已就绪的场景补丁并推进排队装配。" }
+  n3@{ shape: rounded, label: "**spawn​_​queued**<br/>应用已就绪的场景补丁并推进排队装配。" }
   class n3 node_system
-  end
-  style layout_card_n3 fill:none,stroke:none
-  subgraph layout_card_n4[" "]
-  n4@{ shape: lean-r, label: "**bevy​_​asset::AssetEvent#lt;scene​_​patch::**<br/>**ScenePatch#gt;**<br/>来自crate:bevy​_​asset ↗：通知指定资产<br/>及依赖发生变化。" }
+  n4@{ shape: lean-r, label: "**AssetEvent#lt;ScenePatch#gt;**<br/>来自crate:bevy​_​asset ↗：通知指定资产<br/>及依赖发生变化。" }
   class n4 node_message
   class n4 external_node
-  end
-  style layout_card_n4 fill:none,stroke:none
-  subgraph layout_card_n5[" "]
-  n5@{ shape: cyl, label: "**spawn::WaitingScenes**<br/>保存等待场景资产加载的实体与场景列表生成<br/>请求" }
+  n5@{ shape: cyl, label: "**WaitingScenes**<br/>保存等待场景资产加载的实体与场景列表生成<br/>请求" }
   class n5 node_resource
-  end
-  style layout_card_n5 fill:none,stroke:none
-  subgraph layout_card_n6[" "]
   n6@{ shape: lin-rect, label: "**WorldInstanceSpawn**<br/>来自crate:bevy​_​app ↗：划分世界实例与<br/>场景生成阶段。" }
   class n6 node_system_set
   class n6 external_node
-  end
-  style layout_card_n6 fill:none,stroke:none
-  subgraph layout_card_n7[" "]
-  n7@{ shape: cyl, label: "**bevy​_​asset::Assets#lt;scene​_​patch::**<br/>**SceneListPatch#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
+  n7@{ shape: cyl, label: "**Assets#lt;SceneListPatch#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
   class n7 node_resource
   class n7 external_node
-  end
-  style layout_card_n7 fill:none,stroke:none
-  subgraph layout_card_n8[" "]
-  n8@{ shape: cyl, label: "**bevy​_​asset::AssetServer**<br/>来自crate:bevy​_​asset ↗：加载资产并追<br/>踪加载状态。" }
+  n8@{ shape: cyl, label: "**AssetServer**<br/>来自crate:bevy​_​asset ↗：加载资产并追<br/>踪加载状态。" }
   class n8 node_resource
   class n8 external_node
-  end
-  style layout_card_n8 fill:none,stroke:none
-  subgraph layout_card_n9[" "]
   n9@{ shape: lin-rect, label: "**SceneSpawn**<br/>来自crate:bevy​_​app ↗：划分世界实例与<br/>场景生成阶段。" }
   class n9 node_system_set
   class n9 external_node
-  end
-  style layout_card_n9 fill:none,stroke:none
-  subgraph layout_card_n10[" "]
-  n10@{ shape: lean-r, label: "**bevy​_​asset::AssetEvent#lt;scene​_​patch::**<br/>**SceneListPatch#gt;**<br/>来自crate:bevy​_​asset ↗：通知指定资产<br/>及依赖发生变化。" }
+  n10@{ shape: lean-r, label: "**AssetEvent#lt;SceneListPatch#gt;**<br/>来自crate:bevy​_​asset ↗：通知指定资产<br/>及依赖发生变化。" }
   class n10 node_message
   class n10 external_node
-  end
-  style layout_card_n10 fill:none,stroke:none
-  subgraph layout_card_n11[" "]
-  n11@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;bevy​_​**<br/>**asset::AssetEvent#lt;scene​_​patch::**<br/>**SceneListPatch#gt;#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n11@{ shape: cyl, label: "**Messages#lt;AssetEvent#lt;SceneListPatch#gt;#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n11 node_resource
   class n11 external_node
-  end
-  style layout_card_n11 fill:none,stroke:none
-  subgraph layout_card_n12[" "]
-  n12@{ shape: cyl, label: "**bevy​_​asset::Assets#lt;scene​_​patch::**<br/>**ScenePatch#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
+  n12@{ shape: cyl, label: "**Assets#lt;ScenePatch#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
   class n12 node_resource
   class n12 external_node
-  end
-  style layout_card_n12 fill:none,stroke:none
   n1 e0@--> n0
   class e0 edge_read
   n2 e1@-->|"调用"| n0

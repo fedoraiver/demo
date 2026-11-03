@@ -42,16 +42,16 @@ flowchart LR
   classDef edge_consume stroke:#247B91,stroke-width:1.8px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​sprite​_​render::render::extract​_​**<br/>**sprite​_​events**<br/>把主世界图像资产事件复制给精灵渲染。" }
+  n0@{ shape: rounded, label: "**extract​_​sprite​_​events**<br/>把主世界图像资产事件复制给精灵渲染。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**bevy​_​sprite​_​render::**<br/>**SpriteAssetEvents**<br/>传递影响精灵纹理的图像资产变化。" }
+  n1@{ shape: cyl, label: "**SpriteAssetEvents**<br/>传递影响精灵纹理的图像资产变化。" }
   class n1 node_resource
-  n2@{ shape: fr-rect, label: "**bevy​_​sprite​_​render::**<br/>**SpriteRenderPlugin**<br/>准备并渲染二维精灵。" }
+  n2@{ shape: fr-rect, label: "**SpriteRenderPlugin**<br/>准备并渲染二维精灵。" }
   class n2 node_plugin
-  n3@{ shape: lean-r, label: "**bevy​_​asset::AssetEvent#lt;image::Image#gt;**<br/>来自crate:bevy​_​asset ↗：通知指定资产<br/>及依赖发生变化。" }
+  n3@{ shape: lean-r, label: "**AssetEvent#lt;Image#gt;**<br/>来自crate:bevy​_​asset ↗：通知指定资产<br/>及依赖发生变化。" }
   class n3 node_message
   class n3 external_node
-  n4@{ shape: cyl, label: "**extract​_​plugin::MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
+  n4@{ shape: cyl, label: "**MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
   class n4 node_resource
   class n4 external_node
   n0 e0@-->|"可变访问"| n1

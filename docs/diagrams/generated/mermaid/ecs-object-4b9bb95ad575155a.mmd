@@ -39,7 +39,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: notch-rect, label: "**Local · live​_​entities**<br/>记录本轮成功提取的 Egui 相机视图身份。" }
   class n0 node_local
-  n1@{ shape: rounded, label: "**bevy​_​egui::render::extract​_​egui​_​**<br/>**camera​_​view​_​system**<br/>为活动相机提取独立 Egui 渲染视图。" }
+  n1@{ shape: rounded, label: "**extract​_​egui​_​camera​_​view​_​system**<br/>为活动相机提取独立 Egui 渲染视图。" }
   class n1 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

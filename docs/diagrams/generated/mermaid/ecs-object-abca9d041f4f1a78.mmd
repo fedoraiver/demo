@@ -36,9 +36,9 @@ flowchart LR
   classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**editing::EditableTextFilter**<br/>保存逐字符过滤规则" }
+  n0@{ shape: rounded, label: "**EditableTextFilter**<br/>保存逐字符过滤规则" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​text::editing::apply​_​text​_​edits**<br/>应用可编辑文字排队的编辑操作。" }
+  n1@{ shape: rounded, label: "**apply​_​text​_​edits**<br/>应用可编辑文字排队的编辑操作。" }
   class n1 node_system
   n0 e0@--> n1
   class e0 edge_read

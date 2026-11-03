@@ -37,363 +37,363 @@ flowchart LR
   classDef node_event fill:#F9F3EE,stroke:#B66B2D,stroke-width:1.6px,color:#1F3340
   classDef edge_observe stroke:#B66B2D,stroke-width:1.8px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: stadium, label: "**bevy​_​ecs::lifecycle::RemoveEvent**<br/>在组件移除前发出通知。" }
+  n0@{ shape: stadium, label: "**RemoveEvent**<br/>在组件移除前发出通知。" }
   class n0 node_event
-  n1@{ shape: hex, label: "**bevy​_​enhanced​_​input::modifier::fns::**<br/>**unregister​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入修饰器的处理入口。" }
+  n1@{ shape: hex, label: "**unregister​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入修饰器的处理入口。" }
   class n1 node_observer
   class n1 external_node
-  n2@{ shape: hex, label: "**bevy​_​extract::sync​_​world::{impl#35;0}::**<br/>**build::{closure#35;1}**<br/>来自crate:bevy​_​extract ↗：登记子世界<br/>对应实体的移除请求。" }
+  n2@{ shape: hex, label: "**build::{closure#35;1}**<br/>来自crate:bevy​_​extract ↗：登记子世界<br/>对应实体的移除请求。" }
   class n2 node_observer
   class n2 external_node
-  n3@{ shape: hex, label: "**bevy​_​enhanced​_​input::modifier::fns::**<br/>**unregister​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入修饰器的处理入口。" }
+  n3@{ shape: hex, label: "**unregister​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入修饰器的处理入口。" }
   class n3 node_observer
   class n3 external_node
-  n4@{ shape: hex, label: "**bevy​_​ui::interaction​_​states::on​_​**<br/>**remove​_​checkable**<br/>来自crate:bevy​_​ui ↗：清除已不可勾选控<br/>件的无障碍属性。" }
+  n4@{ shape: hex, label: "**on​_​remove​_​checkable**<br/>来自crate:bevy​_​ui ↗：清除已不可勾选控<br/>件的无障碍属性。" }
   class n4 node_observer
   class n4 external_node
-  n5@{ shape: hex, label: "**bevy​_​enhanced​_​input::condition::**<br/>**fns::unregister​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入条件的求值入口。" }
+  n5@{ shape: hex, label: "**unregister​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入条件的求值入口。" }
   class n5 node_observer
   class n5 external_node
-  n6@{ shape: hex, label: "**avian3d::dynamics::solver::solver​_​**<br/>**body::plugin::{impl#35;0}::build::**<br/>**{closure#35;0}**<br/>来自crate:avian3d ↗：为重新启用刚体补<br/>建求解器体。" }
+  n6@{ shape: hex, label: "**build::{closure#35;0}**<br/>来自crate:avian3d ↗：为重新启用刚体补<br/>建求解器体。" }
   class n6 node_observer
   class n6 external_node
-  n7@{ shape: hex, label: "**avian3d::dynamics::solver::islands::**<br/>**{impl#35;0}::build::{closure#35;2}**<br/>来自crate:avian3d ↗：移除失去刚体的实<br/>体物理岛节点。" }
+  n7@{ shape: hex, label: "**build::{closure#35;2}**<br/>来自crate:avian3d ↗：移除失去刚体的实<br/>体物理岛节点。" }
   class n7 node_observer
   class n7 external_node
-  n8@{ shape: hex, label: "**avian3d::collision::collider::**<br/>**collider​_​hierarchy::plugin::**<br/>**{impl#35;0}::build::{closure#35;1}**<br/>来自crate:avian3d ↗：清除同实体碰撞体<br/>的失效归属。" }
+  n8@{ shape: hex, label: "**build::{closure#35;1}**<br/>来自crate:avian3d ↗：清除同实体碰撞体<br/>的失效归属。" }
   class n8 node_observer
   class n8 external_node
-  n9@{ shape: hex, label: "**bevy​_​pbr::atmosphere::environment::**<br/>**on​_​remove​_​atmosphere​_​environment​_​**<br/>**map​_​light**<br/>来自crate:bevy​_​pbr ↗：清理已关闭的大<br/>气环境光组件。" }
+  n9@{ shape: hex, label: "**on​_​remove​_​atmosphere​_​environment​_​**<br/>**map​_​light**<br/>来自crate:bevy​_​pbr ↗：清理已关闭的大<br/>气环境光组件。" }
   class n9 node_observer
   class n9 external_node
-  n10@{ shape: hex, label: "**avian3d::dynamics::solver::islands::**<br/>**{impl#35;0}::build::{closure#35;2}**<br/>来自crate:avian3d ↗：移除失去刚体的实<br/>体物理岛节点。" }
+  n10@{ shape: hex, label: "**build::{closure#35;2}**<br/>来自crate:avian3d ↗：移除失去刚体的实<br/>体物理岛节点。" }
   class n10 node_observer
   class n10 external_node
-  n11@{ shape: hex, label: "**bevy​_​ui::interaction​_​states::on​_​**<br/>**remove​_​selected**<br/>来自crate:bevy​_​ui ↗：同步无障碍节点的<br/>未选中状态。" }
+  n11@{ shape: hex, label: "**on​_​remove​_​selected**<br/>来自crate:bevy​_​ui ↗：同步无障碍节点的<br/>未选中状态。" }
   class n11 node_observer
   class n11 external_node
-  n12@{ shape: hex, label: "**bevy​_​ui::interaction​_​states::on​_​**<br/>**remove​_​checked**<br/>来自crate:bevy​_​ui ↗：同步无障碍节点的<br/>未勾选状态。" }
+  n12@{ shape: hex, label: "**on​_​remove​_​checked**<br/>来自crate:bevy​_​ui ↗：同步无障碍节点的<br/>未勾选状态。" }
   class n12 node_observer
   class n12 external_node
-  n13@{ shape: hex, label: "**bevy​_​enhanced​_​input::condition::**<br/>**fns::unregister​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入条件的求值入口。" }
+  n13@{ shape: hex, label: "**unregister​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入条件的求值入口。" }
   class n13 node_observer
   class n13 external_node
-  n14@{ shape: hex, label: "**bevy​_​enhanced​_​input::context::reset​_​**<br/>**action**<br/>来自crate:bevy​_​enhanced​_​input ↗：重<br/>置离开上下文的输入动作状态。" }
+  n14@{ shape: hex, label: "**reset​_​action**<br/>来自crate:bevy​_​enhanced​_​input ↗：重<br/>置离开上下文的输入动作状态。" }
   class n14 node_observer
   class n14 external_node
-  n15@{ shape: hex, label: "**bevy​_​winit::cursor::on​_​remove​_​**<br/>**cursor​_​icon**<br/>来自crate:bevy​_​winit ↗：在图标设置移<br/>除后恢复默认光标。" }
+  n15@{ shape: hex, label: "**on​_​remove​_​cursor​_​icon**<br/>来自crate:bevy​_​winit ↗：在图标设置移<br/>除后恢复默认光标。" }
   class n15 node_observer
   class n15 external_node
-  n16@{ shape: hex, label: "**bevy​_​enhanced​_​input::condition::**<br/>**fns::unregister​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入条件的求值入口。" }
+  n16@{ shape: hex, label: "**unregister​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入条件的求值入口。" }
   class n16 node_observer
   class n16 external_node
-  n17@{ shape: hex, label: "**bevy​_​pbr::atmosphere::environment::**<br/>**on​_​remove​_​atmosphere​_​environment​_​**<br/>**map​_​light**<br/>来自crate:bevy​_​pbr ↗：清理已关闭的大<br/>气环境光组件。" }
+  n17@{ shape: hex, label: "**on​_​remove​_​atmosphere​_​environment​_​**<br/>**map​_​light**<br/>来自crate:bevy​_​pbr ↗：清理已关闭的大<br/>气环境光组件。" }
   class n17 node_observer
   class n17 external_node
-  n18@{ shape: hex, label: "**avian3d::dynamics::solver::solver​_​**<br/>**body::plugin::{impl#35;0}::build::**<br/>**{closure#35;1}**<br/>来自crate:avian3d ↗：在实体启用时恢复<br/>刚体求解缓存。" }
+  n18@{ shape: hex, label: "**build::{closure#35;1}**<br/>来自crate:avian3d ↗：在实体启用时恢复<br/>刚体求解缓存。" }
   class n18 node_observer
   class n18 external_node
-  n19@{ shape: hex, label: "**bevy​_​enhanced​_​input::condition::**<br/>**fns::unregister​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入条件的求值入口。" }
+  n19@{ shape: hex, label: "**unregister​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入条件的求值入口。" }
   class n19 node_observer
   class n19 external_node
-  n20@{ shape: hex, label: "**bevy​_​enhanced​_​input::condition::**<br/>**fns::unregister​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入条件的求值入口。" }
+  n20@{ shape: hex, label: "**unregister​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入条件的求值入口。" }
   class n20 node_observer
   class n20 external_node
-  n21@{ shape: hex, label: "**avian3d::dynamics::solver::solver​_​**<br/>**body::plugin::{impl#35;0}::build::**<br/>**{closure#35;0}**<br/>来自crate:avian3d ↗：为重新启用刚体补<br/>建求解器体。" }
+  n21@{ shape: hex, label: "**build::{closure#35;0}**<br/>来自crate:avian3d ↗：为重新启用刚体补<br/>建求解器体。" }
   class n21 node_observer
   class n21 external_node
-  n22@{ shape: hex, label: "**avian3d::collision::collider::**<br/>**collider​_​hierarchy::plugin::on​_​body​_​**<br/>**removed**<br/>来自crate:avian3d ↗：清理已移除刚体的<br/>碰撞体归属。" }
+  n22@{ shape: hex, label: "**on​_​body​_​removed**<br/>来自crate:avian3d ↗：清理已移除刚体的<br/>碰撞体归属。" }
   class n22 node_observer
   class n22 external_node
-  n23@{ shape: hex, label: "**bevy​_​enhanced​_​input::condition::**<br/>**fns::unregister​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入条件的求值入口。" }
+  n23@{ shape: hex, label: "**unregister​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入条件的求值入口。" }
   class n23 node_observer
   class n23 external_node
-  n24@{ shape: hex, label: "**avian3d::dynamics::joints::joint​_​**<br/>**graph::plugin::add​_​joint​_​to​_​graph**<br/>来自crate:avian3d ↗：加入关节连接并发<br/>布连接图变化。" }
+  n24@{ shape: hex, label: "**add​_​joint​_​to​_​graph**<br/>来自crate:avian3d ↗：加入关节连接并发<br/>布连接图变化。" }
   class n24 node_observer
   class n24 external_node
-  n25@{ shape: hex, label: "**bevy​_​enhanced​_​input::condition::**<br/>**fns::unregister​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入条件的求值入口。" }
+  n25@{ shape: hex, label: "**unregister​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入条件的求值入口。" }
   class n25 node_observer
   class n25 external_node
-  n26@{ shape: hex, label: "**avian3d::dynamics::solver::solver​_​**<br/>**body::plugin::{impl#35;0}::build::**<br/>**{closure#35;1}**<br/>来自crate:avian3d ↗：在实体启用时恢复<br/>刚体求解缓存。" }
+  n26@{ shape: hex, label: "**build::{closure#35;1}**<br/>来自crate:avian3d ↗：在实体启用时恢复<br/>刚体求解缓存。" }
   class n26 node_observer
   class n26 external_node
-  n27@{ shape: hex, label: "**bevy​_​enhanced​_​input::modifier::fns::**<br/>**unregister​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入修饰器的处理入口。" }
+  n27@{ shape: hex, label: "**unregister​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入修饰器的处理入口。" }
   class n27 node_observer
   class n27 external_node
-  n28@{ shape: hex, label: "**avian3d::collision::collider::**<br/>**collider​_​hierarchy::plugin::**<br/>**{impl#35;0}::build::{closure#35;1}**<br/>来自crate:avian3d ↗：清除同实体碰撞体<br/>的失效归属。" }
+  n28@{ shape: hex, label: "**build::{closure#35;1}**<br/>来自crate:avian3d ↗：清除同实体碰撞体<br/>的失效归属。" }
   class n28 node_observer
   class n28 external_node
-  n29@{ shape: hex, label: "**bevy​_​enhanced​_​input::context::reset​_​**<br/>**action**<br/>来自crate:bevy​_​enhanced​_​input ↗：重<br/>置离开上下文的输入动作状态。" }
+  n29@{ shape: hex, label: "**reset​_​action**<br/>来自crate:bevy​_​enhanced​_​input ↗：重<br/>置离开上下文的输入动作状态。" }
   class n29 node_observer
   class n29 external_node
-  n30@{ shape: hex, label: "**avian3d::collision::narrow​_​phase::**<br/>**on​_​remove​_​sensor**<br/>来自crate:avian3d ↗：清除传感器转回普<br/>通碰撞体的旧接触。" }
+  n30@{ shape: hex, label: "**on​_​remove​_​sensor**<br/>来自crate:avian3d ↗：清除传感器转回普<br/>通碰撞体的旧接触。" }
   class n30 node_observer
   class n30 external_node
-  n31@{ shape: hex, label: "**avian3d::dynamics::solver::solver​_​**<br/>**body::plugin::{impl#35;0}::build::**<br/>**{closure#35;3}**<br/>来自crate:avian3d ↗：清除已移除刚体的<br/>求解缓存。" }
+  n31@{ shape: hex, label: "**build::{closure#35;3}**<br/>来自crate:avian3d ↗：清除已移除刚体的<br/>求解缓存。" }
   class n31 node_observer
   class n31 external_node
-  n32@{ shape: hex, label: "**bevy​_​ui::interaction​_​states::on​_​**<br/>**remove​_​checkable**<br/>来自crate:bevy​_​ui ↗：清除已不可勾选控<br/>件的无障碍属性。" }
+  n32@{ shape: hex, label: "**on​_​remove​_​checkable**<br/>来自crate:bevy​_​ui ↗：清除已不可勾选控<br/>件的无障碍属性。" }
   class n32 node_observer
   class n32 external_node
-  n33@{ shape: hex, label: "**bevy​_​ui::interaction​_​states::on​_​**<br/>**remove​_​selected**<br/>来自crate:bevy​_​ui ↗：同步无障碍节点的<br/>未选中状态。" }
+  n33@{ shape: hex, label: "**on​_​remove​_​selected**<br/>来自crate:bevy​_​ui ↗：同步无障碍节点的<br/>未选中状态。" }
   class n33 node_observer
   class n33 external_node
-  n34@{ shape: hex, label: "**demo::ui::pointer::clear​_​primary​_​**<br/>**press**<br/>来自ui ↗：原生 Button 在释放、拖动结<br/>束或取消时移除 Pressed；同一生命周期清<br/>理主键来源。" }
+  n34@{ shape: hex, label: "**clear​_​primary​_​press**<br/>来自ui ↗：原生 Button 在释放、拖动结<br/>束或取消时移除 Pressed；同一生命周期清<br/>理主键来源。" }
   class n34 node_observer
   class n34 external_node
-  n35@{ shape: hex, label: "**bevy​_​enhanced​_​input::context::reset​_​**<br/>**action**<br/>来自crate:bevy​_​enhanced​_​input ↗：重<br/>置离开上下文的输入动作状态。" }
+  n35@{ shape: hex, label: "**reset​_​action**<br/>来自crate:bevy​_​enhanced​_​input ↗：重<br/>置离开上下文的输入动作状态。" }
   class n35 node_observer
   class n35 external_node
-  n36@{ shape: hex, label: "**bevy​_​enhanced​_​input::modifier::fns::**<br/>**unregister​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入修饰器的处理入口。" }
+  n36@{ shape: hex, label: "**unregister​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入修饰器的处理入口。" }
   class n36 node_observer
   class n36 external_node
-  n37@{ shape: hex, label: "**bevy​_​enhanced​_​input::condition::**<br/>**fns::unregister​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入条件的求值入口。" }
+  n37@{ shape: hex, label: "**unregister​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入条件的求值入口。" }
   class n37 node_observer
   class n37 external_node
-  n38@{ shape: hex, label: "**avian3d::dynamics::solver::islands::**<br/>**{impl#35;0}::build::{closure#35;2}**<br/>来自crate:avian3d ↗：移除失去刚体的实<br/>体物理岛节点。" }
+  n38@{ shape: hex, label: "**build::{closure#35;2}**<br/>来自crate:avian3d ↗：移除失去刚体的实<br/>体物理岛节点。" }
   class n38 node_observer
   class n38 external_node
-  n39@{ shape: hex, label: "**bevy​_​enhanced​_​input::condition::**<br/>**fns::unregister​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入条件的求值入口。" }
+  n39@{ shape: hex, label: "**unregister​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入条件的求值入口。" }
   class n39 node_observer
   class n39 external_node
-  n40@{ shape: hex, label: "**bevy​_​extract::sync​_​component::**<br/>**{impl#35;1}::build::{closure#35;0}**<br/>来自crate:bevy​_​extract ↗：排队同步已<br/>移除的主世界组件。" }
+  n40@{ shape: hex, label: "**build::{closure#35;0}**<br/>来自crate:bevy​_​extract ↗：排队同步已<br/>移除的主世界组件。" }
   class n40 node_observer
   class n40 external_node
-  n41@{ shape: hex, label: "**bevy​_​enhanced​_​input::modifier::fns::**<br/>**unregister​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入修饰器的处理入口。" }
+  n41@{ shape: hex, label: "**unregister​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入修饰器的处理入口。" }
   class n41 node_observer
   class n41 external_node
-  n42@{ shape: hex, label: "**bevy​_​enhanced​_​input::modifier::fns::**<br/>**unregister​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入修饰器的处理入口。" }
+  n42@{ shape: hex, label: "**unregister​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入修饰器的处理入口。" }
   class n42 node_observer
   class n42 external_node
-  n43@{ shape: hex, label: "**avian3d::dynamics::joints::joint​_​**<br/>**graph::plugin::remove​_​joint​_​from​_​**<br/>**graph**<br/>来自crate:avian3d ↗：移除关节连接并发<br/>布连接图变化。" }
+  n43@{ shape: hex, label: "**remove​_​joint​_​from​_​graph**<br/>来自crate:avian3d ↗：移除关节连接并发<br/>布连接图变化。" }
   class n43 node_observer
   class n43 external_node
-  n44@{ shape: hex, label: "**demo::ui::pointer::clear​_​primary​_​**<br/>**press**<br/>来自ui ↗：原生 Button 在释放、拖动结<br/>束或取消时移除 Pressed；同一生命周期清<br/>理主键来源。" }
+  n44@{ shape: hex, label: "**clear​_​primary​_​press**<br/>来自ui ↗：原生 Button 在释放、拖动结<br/>束或取消时移除 Pressed；同一生命周期清<br/>理主键来源。" }
   class n44 node_observer
   class n44 external_node
-  n45@{ shape: hex, label: "**bevy​_​enhanced​_​input::context::reset​_​**<br/>**action**<br/>来自crate:bevy​_​enhanced​_​input ↗：重<br/>置离开上下文的输入动作状态。" }
+  n45@{ shape: hex, label: "**reset​_​action**<br/>来自crate:bevy​_​enhanced​_​input ↗：重<br/>置离开上下文的输入动作状态。" }
   class n45 node_observer
   class n45 external_node
-  n46@{ shape: hex, label: "**bevy​_​pbr::render::light::remove​_​**<br/>**light​_​view​_​entities**<br/>来自crate:bevy​_​pbr ↗：清理平行光创建<br/>的渲染视图实体。" }
+  n46@{ shape: hex, label: "**remove​_​light​_​view​_​entities**<br/>来自crate:bevy​_​pbr ↗：清理平行光创建<br/>的渲染视图实体。" }
   class n46 node_observer
   class n46 external_node
-  n47@{ shape: hex, label: "**bevy​_​enhanced​_​input::modifier::fns::**<br/>**unregister​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入修饰器的处理入口。" }
+  n47@{ shape: hex, label: "**unregister​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入修饰器的处理入口。" }
   class n47 node_observer
   class n47 external_node
-  n48@{ shape: hex, label: "**bevy​_​winit::cursor::on​_​remove​_​**<br/>**cursor​_​icon**<br/>来自crate:bevy​_​winit ↗：在图标设置移<br/>除后恢复默认光标。" }
+  n48@{ shape: hex, label: "**on​_​remove​_​cursor​_​icon**<br/>来自crate:bevy​_​winit ↗：在图标设置移<br/>除后恢复默认光标。" }
   class n48 node_observer
   class n48 external_node
-  n49@{ shape: hex, label: "**avian3d::collision::collider::**<br/>**collider​_​hierarchy::plugin::**<br/>**{impl#35;0}::build::{closure#35;1}**<br/>来自crate:avian3d ↗：清除同实体碰撞体<br/>的失效归属。" }
+  n49@{ shape: hex, label: "**build::{closure#35;1}**<br/>来自crate:avian3d ↗：清除同实体碰撞体<br/>的失效归属。" }
   class n49 node_observer
   class n49 external_node
-  n50@{ shape: hex, label: "**bevy​_​enhanced​_​input::modifier::fns::**<br/>**unregister​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入修饰器的处理入口。" }
+  n50@{ shape: hex, label: "**unregister​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入修饰器的处理入口。" }
   class n50 node_observer
   class n50 external_node
-  n51@{ shape: hex, label: "**avian3d::collision::narrow​_​phase::**<br/>**remove​_​body​_​on**<br/>来自crate:avian3d ↗：清理已移除刚体的<br/>接触图记录。" }
+  n51@{ shape: hex, label: "**remove​_​body​_​on**<br/>来自crate:avian3d ↗：清理已移除刚体的<br/>接触图记录。" }
   class n51 node_observer
   class n51 external_node
-  n52@{ shape: hex, label: "**bevy​_​ui​_​widgets::dialog::deregister​_​**<br/>**dialog**<br/>来自crate:bevy​_​ui​_​widgets ↗：清理已<br/>销毁对话框的栈登记。" }
+  n52@{ shape: hex, label: "**deregister​_​dialog**<br/>来自crate:bevy​_​ui​_​widgets ↗：清理已<br/>销毁对话框的栈登记。" }
   class n52 node_observer
   class n52 external_node
-  n53@{ shape: hex, label: "**bevy​_​enhanced​_​input::modifier::fns::**<br/>**unregister​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入修饰器的处理入口。" }
+  n53@{ shape: hex, label: "**unregister​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入修饰器的处理入口。" }
   class n53 node_observer
   class n53 external_node
-  n54@{ shape: hex, label: "**avian3d::collider​_​tree::update::**<br/>**{impl#35;1}::build::{closure#35;1}**<br/>来自crate:avian3d ↗：把失去刚体归属的<br/>碰撞体迁到独立树。" }
+  n54@{ shape: hex, label: "**build::{closure#35;1}**<br/>来自crate:avian3d ↗：把失去刚体归属的<br/>碰撞体迁到独立树。" }
   class n54 node_observer
   class n54 external_node
-  n55@{ shape: hex, label: "**bevy​_​enhanced​_​input::modifier::fns::**<br/>**unregister​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入修饰器的处理入口。" }
+  n55@{ shape: hex, label: "**unregister​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入修饰器的处理入口。" }
   class n55 node_observer
   class n55 external_node
-  n56@{ shape: hex, label: "**bevy​_​enhanced​_​input::condition::**<br/>**fns::unregister​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入条件的求值入口。" }
+  n56@{ shape: hex, label: "**unregister​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入条件的求值入口。" }
   class n56 node_observer
   class n56 external_node
-  n57@{ shape: hex, label: "**bevy​_​enhanced​_​input::condition::**<br/>**fns::unregister​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入条件的求值入口。" }
+  n57@{ shape: hex, label: "**unregister​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入条件的求值入口。" }
   class n57 node_observer
   class n57 external_node
-  n58@{ shape: hex, label: "**bevy​_​enhanced​_​input::condition::**<br/>**fns::unregister​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入条件的求值入口。" }
+  n58@{ shape: hex, label: "**unregister​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入条件的求值入口。" }
   class n58 node_observer
   class n58 external_node
-  n59@{ shape: hex, label: "**avian3d::collision::collider::**<br/>**collider​_​hierarchy::plugin::on​_​body​_​**<br/>**removed**<br/>来自crate:avian3d ↗：清理已移除刚体的<br/>碰撞体归属。" }
+  n59@{ shape: hex, label: "**on​_​body​_​removed**<br/>来自crate:avian3d ↗：清理已移除刚体的<br/>碰撞体归属。" }
   class n59 node_observer
   class n59 external_node
-  n60@{ shape: hex, label: "**avian3d::dynamics::joints::joint​_​**<br/>**graph::plugin::add​_​joint​_​to​_​graph**<br/>来自crate:avian3d ↗：加入关节连接并发<br/>布连接图变化。" }
+  n60@{ shape: hex, label: "**add​_​joint​_​to​_​graph**<br/>来自crate:avian3d ↗：加入关节连接并发<br/>布连接图变化。" }
   class n60 node_observer
   class n60 external_node
-  n61@{ shape: hex, label: "**bevy​_​enhanced​_​input::condition::**<br/>**fns::unregister​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入条件的求值入口。" }
+  n61@{ shape: hex, label: "**unregister​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入条件的求值入口。" }
   class n61 node_observer
   class n61 external_node
-  n62@{ shape: hex, label: "**avian3d::collision::narrow​_​phase::**<br/>**remove​_​collider​_​on**<br/>来自crate:avian3d ↗：清理碰撞体接触与<br/>对端碰撞记录。" }
+  n62@{ shape: hex, label: "**remove​_​collider​_​on**<br/>来自crate:avian3d ↗：清理碰撞体接触与<br/>对端碰撞记录。" }
   class n62 node_observer
   class n62 external_node
-  n63@{ shape: hex, label: "**bevy​_​enhanced​_​input::condition::**<br/>**fns::unregister​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入条件的求值入口。" }
+  n63@{ shape: hex, label: "**unregister​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入条件的求值入口。" }
   class n63 node_observer
   class n63 external_node
-  n64@{ shape: hex, label: "**avian3d::dynamics::solver::solver​_​**<br/>**body::plugin::{impl#35;0}::build::**<br/>**{closure#35;2}**<br/>来自crate:avian3d ↗：在刚体唤醒时恢复<br/>求解器体。" }
+  n64@{ shape: hex, label: "**build::{closure#35;2}**<br/>来自crate:avian3d ↗：在刚体唤醒时恢复<br/>求解器体。" }
   class n64 node_observer
   class n64 external_node
-  n65@{ shape: hex, label: "**bevy​_​enhanced​_​input::condition::**<br/>**fns::unregister​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入条件的求值入口。" }
+  n65@{ shape: hex, label: "**unregister​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入条件的求值入口。" }
   class n65 node_observer
   class n65 external_node
-  n66@{ shape: hex, label: "**bevy​_​enhanced​_​input::modifier::fns::**<br/>**unregister​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入修饰器的处理入口。" }
+  n66@{ shape: hex, label: "**unregister​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入修饰器的处理入口。" }
   class n66 node_observer
   class n66 external_node
-  n67@{ shape: hex, label: "**bevy​_​pbr::render::light::remove​_​**<br/>**point​_​and​_​spot​_​light​_​view​_​entities**<br/>来自crate:bevy​_​pbr ↗：清理点光和聚光<br/>的渲染视图实体。" }
+  n67@{ shape: hex, label: "**remove​_​point​_​and​_​spot​_​light​_​view​_​**<br/>**entities**<br/>来自crate:bevy​_​pbr ↗：清理点光和聚光<br/>的渲染视图实体。" }
   class n67 node_observer
   class n67 external_node
-  n68@{ shape: hex, label: "**bevy​_​winit::cursor::on​_​remove​_​**<br/>**cursor​_​icon**<br/>来自crate:bevy​_​winit ↗：在图标设置移<br/>除后恢复默认光标。" }
+  n68@{ shape: hex, label: "**on​_​remove​_​cursor​_​icon**<br/>来自crate:bevy​_​winit ↗：在图标设置移<br/>除后恢复默认光标。" }
   class n68 node_observer
   class n68 external_node
-  n69@{ shape: hex, label: "**avian3d::dynamics::solver::solver​_​**<br/>**body::plugin::{impl#35;0}::build::**<br/>**{closure#35;0}**<br/>来自crate:avian3d ↗：为重新启用刚体补<br/>建求解器体。" }
+  n69@{ shape: hex, label: "**build::{closure#35;0}**<br/>来自crate:avian3d ↗：为重新启用刚体补<br/>建求解器体。" }
   class n69 node_observer
   class n69 external_node
-  n70@{ shape: hex, label: "**bevy​_​enhanced​_​input::condition::**<br/>**fns::unregister​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入条件的求值入口。" }
+  n70@{ shape: hex, label: "**unregister​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入条件的求值入口。" }
   class n70 node_observer
   class n70 external_node
-  n71@{ shape: hex, label: "**bevy​_​ui​_​widgets::dialog::deregister​_​**<br/>**dialog**<br/>来自crate:bevy​_​ui​_​widgets ↗：清理已<br/>销毁对话框的栈登记。" }
+  n71@{ shape: hex, label: "**deregister​_​dialog**<br/>来自crate:bevy​_​ui​_​widgets ↗：清理已<br/>销毁对话框的栈登记。" }
   class n71 node_observer
   class n71 external_node
-  n72@{ shape: hex, label: "**bevy​_​enhanced​_​input::modifier::fns::**<br/>**unregister​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入修饰器的处理入口。" }
+  n72@{ shape: hex, label: "**unregister​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入修饰器的处理入口。" }
   class n72 node_observer
   class n72 external_node
-  n73@{ shape: hex, label: "**bevy​_​enhanced​_​input::condition::**<br/>**fns::unregister​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入条件的求值入口。" }
+  n73@{ shape: hex, label: "**unregister​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入条件的求值入口。" }
   class n73 node_observer
   class n73 external_node
-  n74@{ shape: hex, label: "**bevy​_​ui::interaction​_​states::on​_​**<br/>**remove​_​selectable**<br/>来自crate:bevy​_​ui ↗：清除已不可选择控<br/>件的无障碍属性。" }
+  n74@{ shape: hex, label: "**on​_​remove​_​selectable**<br/>来自crate:bevy​_​ui ↗：清除已不可选择控<br/>件的无障碍属性。" }
   class n74 node_observer
   class n74 external_node
-  n75@{ shape: hex, label: "**bevy​_​enhanced​_​input::condition::**<br/>**fns::unregister​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入条件的求值入口。" }
+  n75@{ shape: hex, label: "**unregister​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入条件的求值入口。" }
   class n75 node_observer
   class n75 external_node
-  n76@{ shape: hex, label: "**bevy​_​enhanced​_​input::condition::**<br/>**fns::unregister​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入条件的求值入口。" }
+  n76@{ shape: hex, label: "**unregister​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入条件的求值入口。" }
   class n76 node_observer
   class n76 external_node
-  n77@{ shape: hex, label: "**demo::ui::pointer::clear​_​primary​_​**<br/>**press**<br/>来自ui ↗：原生 Button 在释放、拖动结<br/>束或取消时移除 Pressed；同一生命周期清<br/>理主键来源。" }
+  n77@{ shape: hex, label: "**clear​_​primary​_​press**<br/>来自ui ↗：原生 Button 在释放、拖动结<br/>束或取消时移除 Pressed；同一生命周期清<br/>理主键来源。" }
   class n77 node_observer
   class n77 external_node
-  n78@{ shape: hex, label: "**avian3d::dynamics::solver::solver​_​**<br/>**body::plugin::{impl#35;0}::build::**<br/>**{closure#35;2}**<br/>来自crate:avian3d ↗：在刚体唤醒时恢复<br/>求解器体。" }
+  n78@{ shape: hex, label: "**build::{closure#35;2}**<br/>来自crate:avian3d ↗：在刚体唤醒时恢复<br/>求解器体。" }
   class n78 node_observer
   class n78 external_node
-  n79@{ shape: hex, label: "**bevy​_​ui::interaction​_​states::on​_​**<br/>**remove​_​selectable**<br/>来自crate:bevy​_​ui ↗：清除已不可选择控<br/>件的无障碍属性。" }
+  n79@{ shape: hex, label: "**on​_​remove​_​selectable**<br/>来自crate:bevy​_​ui ↗：清除已不可选择控<br/>件的无障碍属性。" }
   class n79 node_observer
   class n79 external_node
-  n80@{ shape: hex, label: "**bevy​_​enhanced​_​input::condition::**<br/>**fns::unregister​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入条件的求值入口。" }
+  n80@{ shape: hex, label: "**unregister​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入条件的求值入口。" }
   class n80 node_observer
   class n80 external_node
-  n81@{ shape: hex, label: "**bevy​_​enhanced​_​input::modifier::fns::**<br/>**unregister​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入修饰器的处理入口。" }
+  n81@{ shape: hex, label: "**unregister​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入修饰器的处理入口。" }
   class n81 node_observer
   class n81 external_node
-  n82@{ shape: hex, label: "**bevy​_​ui::interaction​_​states::on​_​**<br/>**remove​_​checked**<br/>来自crate:bevy​_​ui ↗：同步无障碍节点的<br/>未勾选状态。" }
+  n82@{ shape: hex, label: "**on​_​remove​_​checked**<br/>来自crate:bevy​_​ui ↗：同步无障碍节点的<br/>未勾选状态。" }
   class n82 node_observer
   class n82 external_node
-  n83@{ shape: hex, label: "**bevy​_​pbr::render::light::remove​_​**<br/>**point​_​and​_​spot​_​light​_​view​_​entities**<br/>来自crate:bevy​_​pbr ↗：清理点光和聚光<br/>的渲染视图实体。" }
+  n83@{ shape: hex, label: "**remove​_​point​_​and​_​spot​_​light​_​view​_​**<br/>**entities**<br/>来自crate:bevy​_​pbr ↗：清理点光和聚光<br/>的渲染视图实体。" }
   class n83 node_observer
   class n83 external_node
-  n84@{ shape: hex, label: "**bevy​_​ui::interaction​_​states::on​_​**<br/>**remove​_​selected**<br/>来自crate:bevy​_​ui ↗：同步无障碍节点的<br/>未选中状态。" }
+  n84@{ shape: hex, label: "**on​_​remove​_​selected**<br/>来自crate:bevy​_​ui ↗：同步无障碍节点的<br/>未选中状态。" }
   class n84 node_observer
   class n84 external_node
-  n85@{ shape: hex, label: "**avian3d::dynamics::solver::solver​_​**<br/>**body::plugin::{impl#35;0}::build::**<br/>**{closure#35;2}**<br/>来自crate:avian3d ↗：在刚体唤醒时恢复<br/>求解器体。" }
+  n85@{ shape: hex, label: "**build::{closure#35;2}**<br/>来自crate:avian3d ↗：在刚体唤醒时恢复<br/>求解器体。" }
   class n85 node_observer
   class n85 external_node
-  n86@{ shape: hex, label: "**bevy​_​enhanced​_​input::modifier::fns::**<br/>**unregister​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入修饰器的处理入口。" }
+  n86@{ shape: hex, label: "**unregister​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入修饰器的处理入口。" }
   class n86 node_observer
   class n86 external_node
-  n87@{ shape: hex, label: "**bevy​_​ui::interaction​_​states::on​_​**<br/>**remove​_​checkable**<br/>来自crate:bevy​_​ui ↗：清除已不可勾选控<br/>件的无障碍属性。" }
+  n87@{ shape: hex, label: "**on​_​remove​_​checkable**<br/>来自crate:bevy​_​ui ↗：清除已不可勾选控<br/>件的无障碍属性。" }
   class n87 node_observer
   class n87 external_node
-  n88@{ shape: hex, label: "**bevy​_​enhanced​_​input::modifier::fns::**<br/>**unregister​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入修饰器的处理入口。" }
+  n88@{ shape: hex, label: "**unregister​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入修饰器的处理入口。" }
   class n88 node_observer
   class n88 external_node
-  n89@{ shape: hex, label: "**bevy​_​enhanced​_​input::modifier::fns::**<br/>**unregister​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入修饰器的处理入口。" }
+  n89@{ shape: hex, label: "**unregister​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入修饰器的处理入口。" }
   class n89 node_observer
   class n89 external_node
-  n90@{ shape: hex, label: "**bevy​_​pbr::atmosphere::environment::**<br/>**on​_​remove​_​atmosphere​_​environment​_​**<br/>**map​_​light**<br/>来自crate:bevy​_​pbr ↗：清理已关闭的大<br/>气环境光组件。" }
+  n90@{ shape: hex, label: "**on​_​remove​_​atmosphere​_​environment​_​**<br/>**map​_​light**<br/>来自crate:bevy​_​pbr ↗：清理已关闭的大<br/>气环境光组件。" }
   class n90 node_observer
   class n90 external_node
-  n91@{ shape: hex, label: "**bevy​_​enhanced​_​input::context::reset​_​**<br/>**action**<br/>来自crate:bevy​_​enhanced​_​input ↗：重<br/>置离开上下文的输入动作状态。" }
+  n91@{ shape: hex, label: "**reset​_​action**<br/>来自crate:bevy​_​enhanced​_​input ↗：重<br/>置离开上下文的输入动作状态。" }
   class n91 node_observer
   class n91 external_node
-  n92@{ shape: hex, label: "**bevy​_​enhanced​_​input::condition::**<br/>**fns::unregister​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入条件的求值入口。" }
+  n92@{ shape: hex, label: "**unregister​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入条件的求值入口。" }
   class n92 node_observer
   class n92 external_node
-  n93@{ shape: hex, label: "**bevy​_​app::propagate::on​_​r​_​removed**<br/>来自crate:bevy​_​app ↗：清除已断开关系<br/>的组件继承标记。" }
+  n93@{ shape: hex, label: "**on​_​r​_​removed**<br/>来自crate:bevy​_​app ↗：清除已断开关系<br/>的组件继承标记。" }
   class n93 node_observer
   class n93 external_node
-  n94@{ shape: hex, label: "**avian3d::dynamics::solver::solver​_​**<br/>**body::plugin::{impl#35;0}::build::**<br/>**{closure#35;3}**<br/>来自crate:avian3d ↗：清除已移除刚体的<br/>求解缓存。" }
+  n94@{ shape: hex, label: "**build::{closure#35;3}**<br/>来自crate:avian3d ↗：清除已移除刚体的<br/>求解缓存。" }
   class n94 node_observer
   class n94 external_node
-  n95@{ shape: hex, label: "**bevy​_​enhanced​_​input::condition::**<br/>**fns::unregister​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入条件的求值入口。" }
+  n95@{ shape: hex, label: "**unregister​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入条件的求值入口。" }
   class n95 node_observer
   class n95 external_node
-  n96@{ shape: hex, label: "**bevy​_​ui::interaction​_​states::on​_​**<br/>**remove​_​checked**<br/>来自crate:bevy​_​ui ↗：同步无障碍节点的<br/>未勾选状态。" }
+  n96@{ shape: hex, label: "**on​_​remove​_​checked**<br/>来自crate:bevy​_​ui ↗：同步无障碍节点的<br/>未勾选状态。" }
   class n96 node_observer
   class n96 external_node
-  n97@{ shape: hex, label: "**bevy​_​ui​_​widgets::dialog::deregister​_​**<br/>**dialog**<br/>来自crate:bevy​_​ui​_​widgets ↗：清理已<br/>销毁对话框的栈登记。" }
+  n97@{ shape: hex, label: "**deregister​_​dialog**<br/>来自crate:bevy​_​ui​_​widgets ↗：清理已<br/>销毁对话框的栈登记。" }
   class n97 node_observer
   class n97 external_node
-  n98@{ shape: hex, label: "**bevy​_​ui::interaction​_​states::on​_​**<br/>**remove​_​disabled**<br/>来自crate:bevy​_​ui ↗：向无障碍节点同步<br/>解除禁用。" }
+  n98@{ shape: hex, label: "**on​_​remove​_​disabled**<br/>来自crate:bevy​_​ui ↗：向无障碍节点同步<br/>解除禁用。" }
   class n98 node_observer
   class n98 external_node
-  n99@{ shape: hex, label: "**bevy​_​enhanced​_​input::modifier::fns::**<br/>**unregister​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入修饰器的处理入口。" }
+  n99@{ shape: hex, label: "**unregister​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入修饰器的处理入口。" }
   class n99 node_observer
   class n99 external_node
-  n100@{ shape: hex, label: "**bevy​_​enhanced​_​input::modifier::fns::**<br/>**unregister​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入修饰器的处理入口。" }
+  n100@{ shape: hex, label: "**unregister​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入修饰器的处理入口。" }
   class n100 node_observer
   class n100 external_node
-  n101@{ shape: hex, label: "**avian3d::dynamics::solver::solver​_​**<br/>**body::plugin::{impl#35;0}::build::**<br/>**{closure#35;3}**<br/>来自crate:avian3d ↗：清除已移除刚体的<br/>求解缓存。" }
+  n101@{ shape: hex, label: "**build::{closure#35;3}**<br/>来自crate:avian3d ↗：清除已移除刚体的<br/>求解缓存。" }
   class n101 node_observer
   class n101 external_node
-  n102@{ shape: hex, label: "**bevy​_​ui::interaction​_​states::on​_​**<br/>**remove​_​disabled**<br/>来自crate:bevy​_​ui ↗：向无障碍节点同步<br/>解除禁用。" }
+  n102@{ shape: hex, label: "**on​_​remove​_​disabled**<br/>来自crate:bevy​_​ui ↗：向无障碍节点同步<br/>解除禁用。" }
   class n102 node_observer
   class n102 external_node
-  n103@{ shape: hex, label: "**avian3d::collision::collider::**<br/>**collider​_​hierarchy::plugin::on​_​body​_​**<br/>**removed**<br/>来自crate:avian3d ↗：清理已移除刚体的<br/>碰撞体归属。" }
+  n103@{ shape: hex, label: "**on​_​body​_​removed**<br/>来自crate:avian3d ↗：清理已移除刚体的<br/>碰撞体归属。" }
   class n103 node_observer
   class n103 external_node
-  n104@{ shape: hex, label: "**bevy​_​enhanced​_​input::condition::**<br/>**fns::unregister​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入条件的求值入口。" }
+  n104@{ shape: hex, label: "**unregister​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入条件的求值入口。" }
   class n104 node_observer
   class n104 external_node
-  n105@{ shape: hex, label: "**bevy​_​enhanced​_​input::condition::**<br/>**fns::unregister​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入条件的求值入口。" }
+  n105@{ shape: hex, label: "**unregister​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入条件的求值入口。" }
   class n105 node_observer
   class n105 external_node
-  n106@{ shape: hex, label: "**bevy​_​enhanced​_​input::condition::**<br/>**fns::unregister​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入条件的求值入口。" }
+  n106@{ shape: hex, label: "**unregister​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入条件的求值入口。" }
   class n106 node_observer
   class n106 external_node
-  n107@{ shape: hex, label: "**avian3d::collision::narrow​_​phase::**<br/>**on​_​body​_​remove​_​rigid​_​body​_​disabled**<br/>来自crate:avian3d ↗：清除刚体重新启用<br/>时的旧接触。" }
+  n107@{ shape: hex, label: "**on​_​body​_​remove​_​rigid​_​body​_​disabled**<br/>来自crate:avian3d ↗：清除刚体重新启用<br/>时的旧接触。" }
   class n107 node_observer
   class n107 external_node
-  n108@{ shape: hex, label: "**avian3d::collider​_​tree::update::**<br/>**remove​_​from​_​tree​_​on**<br/>来自crate:avian3d ↗：从空间树移除碰撞<br/>体代理。" }
+  n108@{ shape: hex, label: "**remove​_​from​_​tree​_​on**<br/>来自crate:avian3d ↗：从空间树移除碰撞<br/>体代理。" }
   class n108 node_observer
   class n108 external_node
-  n109@{ shape: hex, label: "**bevy​_​enhanced​_​input::modifier::fns::**<br/>**unregister​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入修饰器的处理入口。" }
+  n109@{ shape: hex, label: "**unregister​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入修饰器的处理入口。" }
   class n109 node_observer
   class n109 external_node
-  n110@{ shape: hex, label: "**avian3d::collision::collider::**<br/>**backend::{impl#35;2}::build::**<br/>**{closure#35;6}**<br/>来自crate:avian3d ↗：恢复非传感器碰撞<br/>体的质量属性。" }
+  n110@{ shape: hex, label: "**build::{closure#35;6}**<br/>来自crate:avian3d ↗：恢复非传感器碰撞<br/>体的质量属性。" }
   class n110 node_observer
   class n110 external_node
-  n111@{ shape: hex, label: "**bevy​_​enhanced​_​input::modifier::fns::**<br/>**unregister​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入修饰器的处理入口。" }
+  n111@{ shape: hex, label: "**unregister​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入修饰器的处理入口。" }
   class n111 node_observer
   class n111 external_node
-  n112@{ shape: hex, label: "**bevy​_​enhanced​_​input::condition::**<br/>**fns::unregister​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入条件的求值入口。" }
+  n112@{ shape: hex, label: "**unregister​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入条件的求值入口。" }
   class n112 node_observer
   class n112 external_node
-  n113@{ shape: hex, label: "**bevy​_​pbr::render::light::remove​_​**<br/>**light​_​view​_​entities**<br/>来自crate:bevy​_​pbr ↗：清理平行光创建<br/>的渲染视图实体。" }
+  n113@{ shape: hex, label: "**remove​_​light​_​view​_​entities**<br/>来自crate:bevy​_​pbr ↗：清理平行光创建<br/>的渲染视图实体。" }
   class n113 node_observer
   class n113 external_node
-  n114@{ shape: hex, label: "**bevy​_​enhanced​_​input::modifier::fns::**<br/>**unregister​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入修饰器的处理入口。" }
+  n114@{ shape: hex, label: "**unregister​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入修饰器的处理入口。" }
   class n114 node_observer
   class n114 external_node
-  n115@{ shape: hex, label: "**bevy​_​ui::interaction​_​states::on​_​**<br/>**remove​_​selectable**<br/>来自crate:bevy​_​ui ↗：清除已不可选择控<br/>件的无障碍属性。" }
+  n115@{ shape: hex, label: "**on​_​remove​_​selectable**<br/>来自crate:bevy​_​ui ↗：清除已不可选择控<br/>件的无障碍属性。" }
   class n115 node_observer
   class n115 external_node
-  n116@{ shape: hex, label: "**bevy​_​ui::interaction​_​states::on​_​**<br/>**remove​_​disabled**<br/>来自crate:bevy​_​ui ↗：向无障碍节点同步<br/>解除禁用。" }
+  n116@{ shape: hex, label: "**on​_​remove​_​disabled**<br/>来自crate:bevy​_​ui ↗：向无障碍节点同步<br/>解除禁用。" }
   class n116 node_observer
   class n116 external_node
-  n117@{ shape: hex, label: "**avian3d::dynamics::solver::solver​_​**<br/>**body::plugin::{impl#35;0}::build::**<br/>**{closure#35;1}**<br/>来自crate:avian3d ↗：在实体启用时恢复<br/>刚体求解缓存。" }
+  n117@{ shape: hex, label: "**build::{closure#35;1}**<br/>来自crate:avian3d ↗：在实体启用时恢复<br/>刚体求解缓存。" }
   class n117 node_observer
   class n117 external_node
-  n118@{ shape: hex, label: "**bevy​_​enhanced​_​input::condition::**<br/>**fns::unregister​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入条件的求值入口。" }
+  n118@{ shape: hex, label: "**unregister​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入条件的求值入口。" }
   class n118 node_observer
   class n118 external_node
-  n119@{ shape: hex, label: "**avian3d::collider​_​tree::update::**<br/>**{impl#35;1}::build::{closure#35;4}**<br/>来自crate:avian3d ↗：清除碰撞代理的传<br/>感器标志。" }
+  n119@{ shape: hex, label: "**build::{closure#35;4}**<br/>来自crate:avian3d ↗：清除碰撞代理的传<br/>感器标志。" }
   class n119 node_observer
   class n119 external_node
   n0 e0@-->|"接收事件"| n1

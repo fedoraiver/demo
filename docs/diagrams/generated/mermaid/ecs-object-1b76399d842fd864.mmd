@@ -38,11 +38,11 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**render::ExtractedSlices**<br/>保存已提取的精灵与文字图像切片。" }
+  n0@{ shape: cyl, label: "**ExtractedSlices**<br/>保存已提取的精灵与文字图像切片。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​sprite​_​render::render::prepare​_​**<br/>**sprite​_​image​_​bind​_​groups**<br/>合并连续同图像精灵并上传实例与索引数据。" }
+  n1@{ shape: rounded, label: "**prepare​_​sprite​_​image​_​bind​_​groups**<br/>合并连续同图像精灵并上传实例与索引数据。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​sprite​_​render::text2d::extract​_​**<br/>**text2d​_​sprite**<br/>把可见二维文字及装饰提取为精灵切片。" }
+  n2@{ shape: rounded, label: "**extract​_​text2d​_​sprite**<br/>把可见二维文字及装饰提取为精灵切片。" }
   class n2 node_system
   n0 e0@--> n1
   class e0 edge_read

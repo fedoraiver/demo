@@ -38,12 +38,12 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**bevy​_​render::camera::**<br/>**CameraMainPassTextureFormats**<br/>按相机渲染实体记录主通道颜色格式。" }
+  n0@{ shape: cyl, label: "**CameraMainPassTextureFormats**<br/>按相机渲染实体记录主通道颜色格式。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​ui​_​render::extract​_​ui​_​camera​_​**<br/>**view**<br/>来自crate:bevy​_​ui​_​render ↗：为活动二<br/>维或三维相机维护独立 UI 视图。" }
+  n1@{ shape: rounded, label: "**extract​_​ui​_​camera​_​view**<br/>来自crate:bevy​_​ui​_​render ↗：为活动二<br/>维或三维相机维护独立 UI 视图。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​render::camera::extract​_​cameras**<br/>把活动相机及可见实体提取到渲染世界。" }
+  n2@{ shape: rounded, label: "**extract​_​cameras**<br/>把活动相机及可见实体提取到渲染世界。" }
   class n2 node_system
   n0 e0@--> n1
   class e0 edge_read

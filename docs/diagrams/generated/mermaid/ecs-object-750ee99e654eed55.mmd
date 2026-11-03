@@ -39,9 +39,9 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​pbr::cluster::gpu​_​clustering​_​**<br/>**is​_​enabled**<br/>判断常规更新是否使用 GPU 聚簇。" }
+  n0@{ shape: rounded, label: "**gpu​_​clustering​_​is​_​enabled**<br/>判断常规更新是否使用 GPU 聚簇。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**cluster::GlobalClusterSettings**<br/>来自crate:bevy​_​light ↗：描述设备支持<br/>的聚簇功能和索引上限。" }
+  n1@{ shape: cyl, label: "**GlobalClusterSettings**<br/>来自crate:bevy​_​light ↗：描述设备支持<br/>的聚簇功能和索引上限。" }
   class n1 node_resource
   class n1 external_node
   n2@{ shape: lin-rect, label: "**AnonymousSet(1)**<br/>来自crate:bevy​_​ecs ↗：保存一组系统的<br/>共同配置。" }

@@ -40,7 +40,7 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**action::fns::ActionFns**<br/>保存动作类型对应的函数指针" }
+  n0@{ shape: rounded, label: "**ActionFns**<br/>保存动作类型对应的函数指针" }
   class n0 node_component
   n1@{ shape: rounded, label: "**spawn​_​keyboard​_​controller · 创建模板**<br/>来自first​_​person ↗：合成角色二维移动<br/>动作。" }
   class n1 node_entity
@@ -48,11 +48,11 @@ flowchart LR
   n2@{ shape: rounded, label: "**spawn​_​keyboard​_​controller · 创建模板**<br/>来自first​_​person ↗：承载第一人称鼠标<br/>转向动作。" }
   class n2 node_entity
   class n2 external_node
-  n3@{ shape: rounded, label: "**(bevy​_​ecs::system::commands::**<br/>**Commands#lt;'​_​, '​_​#gt;, bevy​_​ecs::change​_​**<br/>**detection::params::Res#lt;'​_​, bevy​_​**<br/>**enhanced​_​input::context::instance::**<br/>**ContextInstances#lt;bevy​_​app::main​_​**<br/>**schedule::PreUpdate#gt;#gt;, bevy​_​ecs::**<br/>**system::query::Query#lt;'​_​, '​_​, bevy​_​**<br/>**ecs::world::entity​_​access::**<br/>**filtered::FilteredEntityRef#lt;'​_​, '​_​**<br/>**#gt;, bevy​_​ecs::query::filter::**<br/>**Without#lt;bevy​_​enhanced​_​input::**<br/>**action::fns::ActionFns#gt;#gt;, bevy​_​ecs::**<br/>**system::query::Query#lt;'​_​, '​_​, bevy​_​**<br/>**ecs::world::entity​_​access::entity​_​**<br/>**ref::EntityRef#lt;'​_​#gt;, (bevy​_​ecs::**<br/>**query::filter::With#lt;bevy​_​enhanced​_​**<br/>**input::action::fns::ActionFns#gt;,**<br/>**bevy​_​ecs::query::filter::**<br/>**Without#lt;bevy​_​enhanced​_​input::**<br/>**context::instance::**<br/>**ContextInstances#lt;bevy​_​app::main​_​**<br/>**schedule::PreUpdate#gt;#gt;)#gt;)**<br/>根据求值结果触发输入动作通知。" }
+  n3@{ shape: rounded, label: "**(Commands#lt;'​_​, '​_​#gt;, Res#lt;'​_​,**<br/>**ContextInstances#lt;PreUpdate#gt;#gt;,**<br/>**Query#lt;'​_​, '​_​, FilteredEntityRef#lt;'​_​,**<br/>**'​_​#gt;, Without#lt;ActionFns#gt;#gt;, Query#lt;'​_​,**<br/>**'​_​, EntityRef#lt;'​_​#gt;,**<br/>**(With#lt;ActionFns#gt;,**<br/>**Without#lt;ContextInstances#lt;PreUpdate#gt;#gt;**<br/>**)#gt;)**<br/>根据求值结果触发输入动作通知。" }
   class n3 node_system
-  n4@{ shape: hex, label: "**bevy​_​enhanced​_​input::context::reset​_​**<br/>**action**<br/>重置离开上下文的输入动作状态。" }
+  n4@{ shape: hex, label: "**reset​_​action**<br/>重置离开上下文的输入动作状态。" }
   class n4 node_observer
-  n5@{ shape: rounded, label: "**(bevy​_​ecs::change​_​detection::**<br/>**params::Res#lt;'​_​, bevy​_​enhanced​_​**<br/>**input::context::instance::**<br/>**ContextInstances#lt;bevy​_​app::main​_​**<br/>**schedule::PreUpdate#gt;#gt;, bevy​_​ecs::**<br/>**system::query::Query#lt;'​_​, '​_​, bevy​_​**<br/>**ecs::world::entity​_​access::**<br/>**filtered::FilteredEntityRef#lt;'​_​, '​_​**<br/>**#gt;, bevy​_​ecs::query::filter::**<br/>**Without#lt;bevy​_​enhanced​_​input::**<br/>**action::fns::ActionFns#gt;#gt;, bevy​_​ecs::**<br/>**system::query::Query#lt;'​_​, '​_​, bevy​_​**<br/>**ecs::world::entity​_​access::entity​_​**<br/>**mut::EntityMut#lt;'​_​#gt;, (bevy​_​ecs::**<br/>**query::filter::With#lt;bevy​_​enhanced​_​**<br/>**input::action::fns::ActionFns#gt;,**<br/>**bevy​_​ecs::query::filter::**<br/>**Without#lt;bevy​_​enhanced​_​input::**<br/>**context::instance::**<br/>**ContextInstances#lt;bevy​_​app::main​_​**<br/>**schedule::PreUpdate#gt;#gt;)#gt;)**<br/>把求值结果写入类型化输入动作。" }
+  n5@{ shape: rounded, label: "**(Res#lt;'​_​,**<br/>**ContextInstances#lt;PreUpdate#gt;#gt;,**<br/>**Query#lt;'​_​, '​_​, FilteredEntityRef#lt;'​_​,**<br/>**'​_​#gt;, Without#lt;ActionFns#gt;#gt;, Query#lt;'​_​,**<br/>**'​_​, EntityMut#lt;'​_​#gt;,**<br/>**(With#lt;ActionFns#gt;,**<br/>**Without#lt;ContextInstances#lt;PreUpdate#gt;#gt;**<br/>**)#gt;)**<br/>把求值结果写入类型化输入动作。" }
   class n5 node_system
   n6@{ shape: rounded, label: "**spawn​_​keyboard​_​controller · 创建模板**<br/>来自first​_​person ↗：承载单次拿取或放<br/>下的交互动作。" }
   class n6 node_entity
@@ -72,7 +72,7 @@ flowchart LR
   n11@{ shape: rounded, label: "**spawn​_​menu​_​controller · 创建模板**<br/>来自ui ↗：承载“返回、暂停或恢复”菜单<br/>动作。" }
   class n11 node_entity
   class n11 external_node
-  n12@{ shape: hex, label: "**bevy​_​enhanced​_​input::context::reset​_​**<br/>**action**<br/>重置离开上下文的输入动作状态。" }
+  n12@{ shape: hex, label: "**reset​_​action**<br/>重置离开上下文的输入动作状态。" }
   class n12 node_observer
   n13@{ shape: rounded, label: "**spawn​_​keyboard​_​controller · 创建模板**<br/>来自first​_​person ↗：把一次有效按下转<br/>换为跳跃动作。" }
   class n13 node_entity
@@ -80,11 +80,11 @@ flowchart LR
   n14@{ shape: rounded, label: "**spawn​_​menu​_​controller · 创建模板**<br/>来自ui ↗：承载“下一个菜单项”菜单动<br/>作。" }
   class n14 node_entity
   class n14 external_node
-  n15@{ shape: hex, label: "**bevy​_​enhanced​_​input::context::reset​_​**<br/>**action**<br/>重置离开上下文的输入动作状态。" }
+  n15@{ shape: hex, label: "**reset​_​action**<br/>重置离开上下文的输入动作状态。" }
   class n15 node_observer
-  n16@{ shape: hex, label: "**bevy​_​enhanced​_​input::context::reset​_​**<br/>**action**<br/>重置离开上下文的输入动作状态。" }
+  n16@{ shape: hex, label: "**reset​_​action**<br/>重置离开上下文的输入动作状态。" }
   class n16 node_observer
-  n17@{ shape: hex, label: "**bevy​_​enhanced​_​input::context::reset​_​**<br/>**action**<br/>重置离开上下文的输入动作状态。" }
+  n17@{ shape: hex, label: "**reset​_​action**<br/>重置离开上下文的输入动作状态。" }
   class n17 node_observer
   n1 e0@-->|"可能包含"| n0
   class e0 edge_reference
@@ -136,7 +136,7 @@ flowchart LR
   e9@{ curve: basis }
   e10@{ curve: basis }
   e11@{ curve: basis }
-  e12@{ curve: basis }
+  e12@{ curve: bumpX }
   e13@{ curve: basis }
   e14@{ curve: basis }
   e15@{ curve: basis }

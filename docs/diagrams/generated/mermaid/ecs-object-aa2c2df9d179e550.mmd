@@ -38,25 +38,25 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**slider::SliderDragState**<br/>记录滑块指针拖动状态。" }
+  n0@{ shape: rounded, label: "**SliderDragState**<br/>记录滑块指针拖动状态。" }
   class n0 node_component
-  n1@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**drag**<br/>拖动滑条时发布连续值变化。" }
+  n1@{ shape: hex, label: "**slider​_​on​_​drag**<br/>拖动滑条时发布连续值变化。" }
   class n1 node_observer
-  n2@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**drag**<br/>拖动滑条时发布连续值变化。" }
+  n2@{ shape: hex, label: "**slider​_​on​_​drag**<br/>拖动滑条时发布连续值变化。" }
   class n2 node_observer
-  n3@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**drag​_​end**<br/>提交滑条拖动结果并释放指针。" }
+  n3@{ shape: hex, label: "**slider​_​on​_​drag​_​end**<br/>提交滑条拖动结果并释放指针。" }
   class n3 node_observer
-  n4@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**drag​_​start**<br/>记录滑条拖动起点并捕获指针。" }
+  n4@{ shape: hex, label: "**slider​_​on​_​drag​_​start**<br/>记录滑条拖动起点并捕获指针。" }
   class n4 node_observer
-  n5@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**drag​_​end**<br/>提交滑条拖动结果并释放指针。" }
+  n5@{ shape: hex, label: "**slider​_​on​_​drag​_​end**<br/>提交滑条拖动结果并释放指针。" }
   class n5 node_observer
-  n6@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**drag​_​end**<br/>提交滑条拖动结果并释放指针。" }
+  n6@{ shape: hex, label: "**slider​_​on​_​drag​_​end**<br/>提交滑条拖动结果并释放指针。" }
   class n6 node_observer
-  n7@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**drag​_​start**<br/>记录滑条拖动起点并捕获指针。" }
+  n7@{ shape: hex, label: "**slider​_​on​_​drag​_​start**<br/>记录滑条拖动起点并捕获指针。" }
   class n7 node_observer
-  n8@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**drag​_​start**<br/>记录滑条拖动起点并捕获指针。" }
+  n8@{ shape: hex, label: "**slider​_​on​_​drag​_​start**<br/>记录滑条拖动起点并捕获指针。" }
   class n8 node_observer
-  n9@{ shape: hex, label: "**bevy​_​ui​_​widgets::slider::slider​_​on​_​**<br/>**drag**<br/>拖动滑条时发布连续值变化。" }
+  n9@{ shape: hex, label: "**slider​_​on​_​drag**<br/>拖动滑条时发布连续值变化。" }
   class n9 node_observer
   n0 e0@--> n1
   class e0 edge_read

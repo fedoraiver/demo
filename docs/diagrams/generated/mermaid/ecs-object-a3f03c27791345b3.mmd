@@ -45,41 +45,41 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​ui::widget::viewport::viewport​_​**<br/>**picking**<br/>把外部指针转换并转发到 UI 内嵌视口。" }
+  n0@{ shape: rounded, label: "**viewport​_​picking**<br/>把外部指针转换并转发到 UI 内嵌视口。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**bevy​_​camera::Camera**<br/>来自crate:bevy​_​camera ↗：配置相机视<br/>口、输出目标和渲染顺序。" }
+  n1@{ shape: rounded, label: "**Camera**<br/>来自crate:bevy​_​camera ↗：配置相机视<br/>口、输出目标和渲染顺序。" }
   class n1 node_component
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​ui::widget::ViewportNode**<br/>把相机渲染目标嵌入 UI 节点。" }
+  n2@{ shape: rounded, label: "**ViewportNode**<br/>把相机渲染目标嵌入 UI 节点。" }
   class n2 node_component
-  n3@{ shape: rounded, label: "**bevy​_​ui::UiGlobalTransform**<br/>保存 UI 节点的绝对二维变换。" }
+  n3@{ shape: rounded, label: "**UiGlobalTransform**<br/>保存 UI 节点的绝对二维变换。" }
   class n3 node_component
-  n4@{ shape: cyl, label: "**events::PointerState**<br/>来自crate:bevy​_​picking ↗：保存各指针<br/>按钮的按下和拖动状态。" }
+  n4@{ shape: cyl, label: "**PointerState**<br/>来自crate:bevy​_​picking ↗：保存各指针<br/>按钮的按下和拖动状态。" }
   class n4 node_resource
   class n4 external_node
-  n5@{ shape: rounded, label: "**bevy​_​picking::pointer::**<br/>**PointerLocation**<br/>来自crate:bevy​_​picking ↗：保存指针当<br/>前目标及该目标上的位置" }
+  n5@{ shape: rounded, label: "**PointerLocation**<br/>来自crate:bevy​_​picking ↗：保存指针当<br/>前目标及该目标上的位置" }
   class n5 node_component
   class n5 external_node
   n6@{ shape: lin-rect, label: "**PostInput**<br/>来自crate:bevy​_​picking ↗：组织指针拾<br/>取和悬停处理阶段。" }
   class n6 node_system_set
   class n6 external_node
-  n7@{ shape: cyl, label: "**bevy​_​ecs::message::**<br/>**Messages#lt;pointer::PointerInput#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n7@{ shape: cyl, label: "**Messages#lt;PointerInput#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n7 node_resource
   class n7 external_node
-  n8@{ shape: fr-rect, label: "**bevy​_​ui::UiPlugin**<br/>建立界面布局与内容更新基础。" }
+  n8@{ shape: fr-rect, label: "**UiPlugin**<br/>建立界面布局与内容更新基础。" }
   class n8 node_plugin
-  n9@{ shape: rounded, label: "**bevy​_​picking::pointer::PointerId**<br/>来自crate:bevy​_​picking ↗：以鼠标、触<br/>摸编号或自定义 UUID 提供稳定指针身份" }
+  n9@{ shape: rounded, label: "**PointerId**<br/>来自crate:bevy​_​picking ↗：以鼠标、触<br/>摸编号或自定义 UUID 提供稳定指针身份" }
   class n9 node_component
   class n9 external_node
-  n10@{ shape: rounded, label: "**bevy​_​ui::ComputedNode**<br/>保存 UI 布局计算后的物理尺寸。" }
+  n10@{ shape: rounded, label: "**ComputedNode**<br/>保存 UI 布局计算后的物理尺寸。" }
   class n10 node_component
-  n11@{ shape: rounded, label: "**bevy​_​camera::RenderTarget**<br/>来自crate:bevy​_​camera ↗：指定相机输出<br/>的窗口、图像或纹理。" }
+  n11@{ shape: rounded, label: "**RenderTarget**<br/>来自crate:bevy​_​camera ↗：指定相机输出<br/>的窗口、图像或纹理。" }
   class n11 node_component
   class n11 external_node
-  n12@{ shape: lean-r, label: "**pointer::PointerInput**<br/>来自crate:bevy​_​picking ↗：传递拾取指<br/>针输入动作。" }
+  n12@{ shape: lean-r, label: "**PointerInput**<br/>来自crate:bevy​_​picking ↗：传递拾取指<br/>针输入动作。" }
   class n12 node_message
   class n12 external_node
-  n13@{ shape: cyl, label: "**hover::HoverMap**<br/>来自crate:bevy​_​picking ↗：保存各指针<br/>当前可交互的悬停目标。" }
+  n13@{ shape: cyl, label: "**HoverMap**<br/>来自crate:bevy​_​picking ↗：保存各指针<br/>当前可交互的悬停目标。" }
   class n13 node_resource
   class n13 external_node
   n1 e0@--> n0

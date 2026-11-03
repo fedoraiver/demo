@@ -40,20 +40,20 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
   subgraph layout_card_n0[" "]
-  n0@{ shape: rounded, label: "**volumetric::VolumetricFog**<br/>为三维相机启用体积雾和光束渲染。" }
+  n0@{ shape: rounded, label: "**VolumetricFog**<br/>为三维相机启用体积雾和光束渲染。" }
   class n0 node_component
   end
   style layout_card_n0 fill:none,stroke:none
-  n1@{ shape: rounded, label: "**bevy​_​pbr::volumetric​_​fog::render::**<br/>**prepare​_​view​_​depth​_​textures​_​for​_​**<br/>**volumetric​_​fog**<br/>来自crate:bevy​_​pbr ↗：允许体积雾着色<br/>器读取三维相机深度纹理。" }
+  n1@{ shape: rounded, label: "**prepare​_​view​_​depth​_​textures​_​for​_​**<br/>**volumetric​_​fog**<br/>来自crate:bevy​_​pbr ↗：允许体积雾着色<br/>器读取三维相机深度纹理。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​pbr::volumetric​_​fog::render::**<br/>**prepare​_​volumetric​_​fog​_​uniforms**<br/>来自crate:bevy​_​pbr ↗：把各视图和雾体<br/>积组合转换为体积雾 Uniform。" }
+  n2@{ shape: rounded, label: "**prepare​_​volumetric​_​fog​_​uniforms**<br/>来自crate:bevy​_​pbr ↗：把各视图和雾体<br/>积组合转换为体积雾 Uniform。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​pbr::volumetric​_​fog::render::**<br/>**extract​_​volumetric​_​fog**<br/>来自crate:bevy​_​pbr ↗：从主世界提取体<br/>积雾、雾体积及体积光配置。" }
+  n3@{ shape: rounded, label: "**extract​_​volumetric​_​fog**<br/>来自crate:bevy​_​pbr ↗：从主世界提取体<br/>积雾、雾体积及体积光配置。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**bevy​_​pbr::volumetric​_​fog::render::**<br/>**prepare​_​volumetric​_​fog​_​pipelines**<br/>来自crate:bevy​_​pbr ↗：为体积雾视图准<br/>备有密度纹理和无密度纹理两类管线。" }
+  n4@{ shape: rounded, label: "**prepare​_​volumetric​_​fog​_​pipelines**<br/>来自crate:bevy​_​pbr ↗：为体积雾视图准<br/>备有密度纹理和无密度纹理两类管线。" }
   class n4 node_system
   class n4 external_node
   n0 e0@--> n1

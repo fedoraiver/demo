@@ -41,12 +41,12 @@ flowchart LR
   classDef edge_observe stroke:#B66B2D,stroke-width:1.8px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: hex, label: "**bevy​_​enhanced​_​input::condition::**<br/>**fns::unregister​_​condition**<br/>清除已移除输入条件的求值入口。" }
+  n0@{ shape: hex, label: "**unregister​_​condition**<br/>清除已移除输入条件的求值入口。" }
   class n0 node_observer
-  n1@{ shape: stadium, label: "**bevy​_​ecs::lifecycle::RemoveEvent**<br/>来自crate:bevy​_​ecs ↗：在组件移除前发<br/>出通知。" }
+  n1@{ shape: stadium, label: "**RemoveEvent**<br/>来自crate:bevy​_​ecs ↗：在组件移除前发<br/>出通知。" }
   class n1 node_event
   class n1 external_node
-  n2@{ shape: rounded, label: "**condition::fns::ConditionFns**<br/>保存动态获取条件组件的函数接口" }
+  n2@{ shape: rounded, label: "**ConditionFns**<br/>保存动态获取条件组件的函数接口" }
   class n2 node_component
   n3@{ shape: fr-rect, label: "**EnhancedInputPlugin**<br/>驱动输入上下文和动作状态更新。" }
   class n3 node_plugin

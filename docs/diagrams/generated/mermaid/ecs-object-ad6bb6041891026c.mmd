@@ -42,19 +42,19 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​pbr::decal::clustered::upload​_​**<br/>**decals**<br/>把本帧渲染贴花列表写入 GPU 缓冲；没有贴<br/>花时仍写入一个默认项，保证后续存在可绑定<br/>的缓冲。" }
+  n0@{ shape: rounded, label: "**upload​_​decals**<br/>把本帧渲染贴花列表写入 GPU 缓冲；没有贴<br/>花时仍写入一个默认项，保证后续存在可绑定<br/>的缓冲。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**bevy​_​render::renderer::RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
+  n1@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
   class n1 node_resource
   class n1 external_node
-  n2@{ shape: fr-rect, label: "**decal::clustered::**<br/>**ClusteredDecalPlugin**<br/>提供聚簇贴花投射。" }
+  n2@{ shape: fr-rect, label: "**ClusteredDecalPlugin**<br/>提供聚簇贴花投射。" }
   class n2 node_plugin
-  n3@{ shape: cyl, label: "**decal::clustered::**<br/>**RenderClusteredDecals**<br/>维护场景贴花数据与纹理绑定索引。" }
+  n3@{ shape: cyl, label: "**RenderClusteredDecals**<br/>维护场景贴花数据与纹理绑定索引。" }
   class n3 node_resource
-  n4@{ shape: cyl, label: "**bevy​_​render::renderer::RenderQueue**<br/>来自crate:bevy​_​render ↗：将资源写入和<br/>命令异步提交给 GPU。" }
+  n4@{ shape: cyl, label: "**RenderQueue**<br/>来自crate:bevy​_​render ↗：将资源写入和<br/>命令异步提交给 GPU。" }
   class n4 node_resource
   class n4 external_node
-  n5@{ shape: cyl, label: "**decal::clustered::DecalsBuffer**<br/>保存准备上传的聚簇贴花 GPU 数据。" }
+  n5@{ shape: cyl, label: "**DecalsBuffer**<br/>保存准备上传的聚簇贴花 GPU 数据。" }
   class n5 node_resource
   n6@{ shape: lin-rect, label: "**PrepareResources**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
   class n6 node_system_set

@@ -39,7 +39,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: notch-rect, label: "**Local · removed​_​materials​_​**<br/>**query.0.0.1**<br/>跟踪 MeshMaterial2d#lt;M#gt; 移除记录的读取<br/>进度。" }
   class n0 node_local
-  n1@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::**<br/>**material::extract​_​mesh​_​materials​_​**<br/>**2d#lt;bevy​_​sprite​_​render::mesh2d::**<br/>**color​_​material::ColorMaterial#gt;**<br/>同步可见二维网格使用的材质资产身份。" }
+  n1@{ shape: rounded, label: "**extract​_​mesh​_​materials​_​2d**<br/>同步可见二维网格使用的材质资产身份。" }
   class n1 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

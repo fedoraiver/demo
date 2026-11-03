@@ -37,12 +37,21 @@ flowchart LR
   classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**view::visibility::**<br/>**RenderExtractedVisibleEntities**<br/>按渲染类别暂存提取后的 CPU 可见实体。" }
+  subgraph layout_card_n0[" "]
+  n0@{ shape: rounded, label: "**RenderExtractedVisibleEntities**<br/>按渲染类别暂存提取后的 CPU 可见实体。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​render::camera::extract​_​cameras**<br/>把活动相机及可见实体提取到渲染世界。" }
+  end
+  style layout_card_n0 fill:none,stroke:none
+  subgraph layout_card_n1[" "]
+  n1@{ shape: rounded, label: "**extract​_​cameras**<br/>把活动相机及可见实体提取到渲染世界。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​render::view::visibility::**<br/>**collect​_​visible​_​cpu​_​culled​_​entities**<br/>汇总相机与阴影子视图的 CPU 剔除可见实<br/>体。" }
+  end
+  style layout_card_n1 fill:none,stroke:none
+  subgraph layout_card_n2[" "]
+  n2@{ shape: rounded, label: "**collect​_​visible​_​cpu​_​culled​_​entities**<br/>汇总相机与阴影子视图的 CPU 剔除可见实<br/>体。" }
   class n2 node_system
+  end
+  style layout_card_n2 fill:none,stroke:none
   n1 e0@-->|"插入"| n0
   class e0 edge_write
   n2 e1@-->|"可变访问"| n0

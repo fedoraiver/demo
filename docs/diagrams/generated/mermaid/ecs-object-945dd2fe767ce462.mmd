@@ -44,23 +44,23 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**avian3d::dynamics::rigid​_​body::**<br/>**forces::plugin::apply​_​constant​_​**<br/>**torques**<br/>按求解器有效惯量换算世界恒定扭矩。" }
+  n0@{ shape: rounded, label: "**apply​_​constant​_​torques**<br/>按求解器有效惯量换算世界恒定扭矩。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**avian3d::dynamics::rigid​_​body::**<br/>**forces::plugin::apply​_​constant​_​**<br/>**linear​_​acceleration**<br/>把恒定世界线加速度加入待积分增量。" }
+  n1@{ shape: rounded, label: "**apply​_​constant​_​linear​_​acceleration**<br/>把恒定世界线加速度加入待积分增量。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**dynamics::integrator::**<br/>**VelocityIntegrationData**<br/>缓存子步速度增量和阻尼系数。" }
+  n2@{ shape: rounded, label: "**VelocityIntegrationData**<br/>缓存子步速度增量和阻尼系数。" }
   class n2 node_component
-  n3@{ shape: fr-rect, label: "**dynamics::rigid​_​body::forces::**<br/>**plugin::ForcePlugin**<br/>管理并施加刚体外力和力矩。" }
+  n3@{ shape: fr-rect, label: "**ForcePlugin**<br/>管理并施加刚体外力和力矩。" }
   class n3 node_plugin
   n4@{ shape: lin-rect, label: "**ApplyConstantForces**<br/>组织外力应用与累积量清理。" }
   class n4 node_system_set
-  n5@{ shape: rounded, label: "**dynamics::rigid​_​body::forces::**<br/>**ConstantTorque**<br/>持续施加世界空间扭矩。" }
+  n5@{ shape: rounded, label: "**ConstantTorque**<br/>持续施加世界空间扭矩。" }
   class n5 node_component
-  n6@{ shape: rounded, label: "**dynamics::solver::solver​_​body::**<br/>**SolverBodyIndex**<br/>定位实体对应的求解器刚体。" }
+  n6@{ shape: rounded, label: "**SolverBodyIndex**<br/>定位实体对应的求解器刚体。" }
   class n6 node_component
-  n7@{ shape: cyl, label: "**dynamics::solver::solver​_​body::**<br/>**SolverBodies**<br/>连续存储活跃刚体的求解状态。" }
+  n7@{ shape: cyl, label: "**SolverBodies**<br/>连续存储活跃刚体的求解状态。" }
   class n7 node_resource
-  n8@{ shape: rounded, label: "**avian3d::dynamics::rigid​_​body::**<br/>**forces::plugin::apply​_​constant​_​**<br/>**forces**<br/>按总质量把恒力换成待积分线加速度。" }
+  n8@{ shape: rounded, label: "**apply​_​constant​_​forces**<br/>按总质量把恒力换成待积分线加速度。" }
   class n8 node_system
   n0 e0@-->|"先于"| n1
   class e0 edge_order

@@ -38,12 +38,12 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​extract::extract​_​resource::**<br/>**extract​_​resource#lt;bevy​_​gizmos​_​**<br/>**render::LineGizmoEntities, bevy​_​**<br/>**render::RenderApp, ()#gt;**<br/>把存在的主世界资源转换到子世界。" }
+  n0@{ shape: rounded, label: "**extract​_​resource**<br/>把存在的主世界资源转换到子世界。" }
   class n0 node_system
   n1@{ shape: cyl, label: "**LineGizmoEntities**<br/>来自crate:bevy​_​gizmos​_​render ↗：为即<br/>时调试线的渲染项提供主世界实体身份。" }
   class n1 node_resource
   class n1 external_node
-  n2@{ shape: cyl, label: "**extract​_​plugin::MainWorld**<br/>在提取阶段临时提供主模拟世界。" }
+  n2@{ shape: cyl, label: "**MainWorld**<br/>在提取阶段临时提供主模拟世界。" }
   class n2 node_resource
   n1 e0@---|"赋值"| n0
   class e0 edge_write

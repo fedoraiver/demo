@@ -44,29 +44,29 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​picking::hover::update​_​**<br/>**interactions**<br/>合并多个指针对目标实体的交互状态。" }
+  n0@{ shape: rounded, label: "**update​_​interactions**<br/>合并多个指针对目标实体的交互状态。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**pointer::PointerInteraction**<br/>保存当前指针命中的实体及 HitData" }
+  n1@{ shape: rounded, label: "**PointerInteraction**<br/>保存当前指针命中的实体及 HitData" }
   class n1 node_component
-  n2@{ shape: cyl, label: "**hover::HoverMap**<br/>保存各指针当前可交互的悬停目标。" }
+  n2@{ shape: cyl, label: "**HoverMap**<br/>保存各指针当前可交互的悬停目标。" }
   class n2 node_resource
-  n3@{ shape: rounded, label: "**pointer::PointerPressState**<br/>记录指针主键、次键及中键的按下状态" }
+  n3@{ shape: rounded, label: "**PointerPressState**<br/>记录指针主键、次键及中键的按下状态" }
   class n3 node_component
-  n4@{ shape: rounded, label: "**hover::PickingInteraction**<br/>汇总所有指针对实体的交互状态" }
+  n4@{ shape: rounded, label: "**PickingInteraction**<br/>汇总所有指针对实体的交互状态" }
   class n4 node_component
-  n5@{ shape: rounded, label: "**bevy​_​picking::hover::generate​_​**<br/>**hovermap**<br/>汇总拾取命中并应用指针捕获。" }
+  n5@{ shape: rounded, label: "**generate​_​hovermap**<br/>汇总拾取命中并应用指针捕获。" }
   class n5 node_system
   n6@{ shape: fr-rect, label: "**InteractionPlugin**<br/>生成并冒泡指针交互事件。" }
   class n6 node_plugin
   n7@{ shape: lin-rect, label: "**Hover**<br/>组织指针拾取和悬停处理阶段。" }
   class n7 node_system_set
-  n8@{ shape: rounded, label: "**bevy​_​picking::hover::update​_​is​_​**<br/>**hovered**<br/>把鼠标悬停传播到实体祖先。" }
+  n8@{ shape: rounded, label: "**update​_​is​_​hovered**<br/>把鼠标悬停传播到实体祖先。" }
   class n8 node_system
-  n9@{ shape: rounded, label: "**bevy​_​picking::hover::update​_​is​_​**<br/>**directly​_​hovered**<br/>更新鼠标直接悬停的实体标记。" }
+  n9@{ shape: rounded, label: "**update​_​is​_​directly​_​hovered**<br/>更新鼠标直接悬停的实体标记。" }
   class n9 node_system
-  n10@{ shape: cyl, label: "**hover::PreviousHoverMap**<br/>保留上一轮指针悬停目标。" }
+  n10@{ shape: cyl, label: "**PreviousHoverMap**<br/>保留上一轮指针悬停目标。" }
   class n10 node_resource
-  n11@{ shape: rounded, label: "**bevy​_​picking::pointer::PointerId**<br/>以鼠标、触摸编号或自定义 UUID 提供稳定<br/>指针身份" }
+  n11@{ shape: rounded, label: "**PointerId**<br/>以鼠标、触摸编号或自定义 UUID 提供稳定<br/>指针身份" }
   class n11 node_component
   n0 e0@-->|"赋值"| n1
   class e0 edge_write

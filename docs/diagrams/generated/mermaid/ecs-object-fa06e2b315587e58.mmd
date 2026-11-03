@@ -39,7 +39,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: notch-rect, label: "**Local · reprocess​_​queue**<br/>保留因字体或字形尚未就绪而待重排的二维文<br/>字。" }
   class n0 node_local
-  n1@{ shape: rounded, label: "**bevy​_​sprite::text2d::update​_​text2d​_​**<br/>**layout**<br/>重新排版变化的二维文字并准备字形。" }
+  n1@{ shape: rounded, label: "**update​_​text2d​_​layout**<br/>重新排版变化的二维文字并准备字形。" }
   class n1 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

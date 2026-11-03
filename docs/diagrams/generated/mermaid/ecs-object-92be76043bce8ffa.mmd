@@ -39,7 +39,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: notch-rect, label: "**Local · over​_​map**<br/>暂存各指针的后端命中结果以生成悬停映射。" }
   class n0 node_local
-  n1@{ shape: rounded, label: "**bevy​_​picking::hover::generate​_​**<br/>**hovermap**<br/>汇总拾取命中并应用指针捕获。" }
+  n1@{ shape: rounded, label: "**generate​_​hovermap**<br/>汇总拾取命中并应用指针捕获。" }
   class n1 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

@@ -39,11 +39,11 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**demo::character::lifecycle::clear​_​**<br/>**character​_​intents**<br/>在固定循环前丢弃旧移动轴和一次性请求，恢<br/>复后由当前设备输入重新建立意图。" }
+  n0@{ shape: rounded, label: "**clear​_​character​_​intents**<br/>在固定循环前丢弃旧移动轴和一次性请求，恢<br/>复后由当前设备输入重新建立意图。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**character::components::**<br/>**CharacterIntent**<br/>来自控制者的玩法意图；输入状态跨帧保留，<br/>供固定步模拟读取。" }
+  n1@{ shape: rounded, label: "**CharacterIntent**<br/>来自控制者的玩法意图；输入状态跨帧保留，<br/>供固定步模拟读取。" }
   class n1 node_component
-  n2@{ shape: fr-rect, label: "**character::CharacterPlugin**<br/>注册角色运动与反射元数据，不加载窗口、场<br/>景或其他项目插件。" }
+  n2@{ shape: fr-rect, label: "**CharacterPlugin**<br/>注册角色运动与反射元数据，不加载窗口、场<br/>景或其他项目插件。" }
   class n2 node_plugin
   n0 e0@-->|"赋值"| n1
   class e0 edge_write

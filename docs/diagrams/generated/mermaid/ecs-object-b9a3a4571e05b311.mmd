@@ -42,24 +42,24 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​transform​_​interpolation::**<br/>**hermite::ease​_​translation​_​**<br/>**hermite#lt;avian3d::interpolation::**<br/>**LinVelSource#gt;**<br/>用两端线速度做 Hermite 位置平滑。" }
+  n0@{ shape: rounded, label: "**ease​_​translation​_​hermite**<br/>用两端线速度做 Hermite 位置平滑。" }
   class n0 node_system
   n1@{ shape: lin-rect, label: "**Ease**<br/>组织变换缓动端点与帧间应用。" }
   class n1 node_system_set
   n2@{ shape: rounded, label: "**NoTranslationEasing**<br/>显式禁止当前实体的平移插值和外推" }
   class n2 node_component
-  n3@{ shape: rounded, label: "**interpolation::**<br/>**PreviousLinearVelocity**<br/>来自crate:avian3d ↗：保存上一帧的线速<br/>度快照。" }
+  n3@{ shape: rounded, label: "**PreviousLinearVelocity**<br/>来自crate:avian3d ↗：保存上一帧的线速<br/>度快照。" }
   class n3 node_component
   class n3 external_node
-  n4@{ shape: cyl, label: "**time::Time#lt;fixed::Fixed#gt;**<br/>来自crate:bevy​_​time ↗：保存时钟上下<br/>文、帧间隔及累计时间" }
+  n4@{ shape: cyl, label: "**Time#lt;Fixed#gt;**<br/>来自crate:bevy​_​time ↗：保存时钟上下<br/>文、帧间隔及累计时间" }
   class n4 node_resource
   class n4 external_node
-  n5@{ shape: rounded, label: "**components::transform::Transform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>相对父实体的平移、旋转和缩放" }
+  n5@{ shape: rounded, label: "**Transform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>相对父实体的平移、旋转和缩放" }
   class n5 node_component
   class n5 external_node
   n6@{ shape: rounded, label: "**TranslationEasingState**<br/>保存固定步平移插值的起点与终点" }
   class n6 node_component
-  n7@{ shape: rounded, label: "**dynamics::rigid​_​body::LinearVelocity**<br/>来自crate:avian3d ↗：保存刚体的世界线<br/>速度。" }
+  n7@{ shape: rounded, label: "**LinearVelocity**<br/>来自crate:avian3d ↗：保存刚体的世界线<br/>速度。" }
   class n7 node_component
   class n7 external_node
   n1 e0@-->|"集合成员"| n0

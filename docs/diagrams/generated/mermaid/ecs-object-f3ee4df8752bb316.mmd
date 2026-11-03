@@ -40,10 +40,10 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: lin-rect, label: "**Writeback**<br/>划分物理准备、模拟与回写边界。" }
   class n0 node_system_set
-  n1@{ shape: rounded, label: "**demo::character::motion::log​_​**<br/>**character​_​velocity**<br/>来自character ↗：采样物理解算后的实际<br/>速度，便于检查加速度、刹车和碰撞反馈。" }
+  n1@{ shape: rounded, label: "**log​_​character​_​velocity**<br/>来自character ↗：采样物理解算后的实际<br/>速度，便于检查加速度、刹车和碰撞反馈。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**demo::item​_​interaction::pose::sync​_​**<br/>**held​_​physics**<br/>来自item​_​interaction ↗：同步组合体内<br/>箱子的真实世界姿态和速度，不依赖人物是否<br/>具有视觉 Children。" }
+  n2@{ shape: rounded, label: "**sync​_​held​_​physics**<br/>来自item​_​interaction ↗：同步组合体内<br/>箱子的真实世界姿态和速度，不依赖人物是否<br/>具有视觉 Children。" }
   class n2 node_system
   class n2 external_node
   n3@{ shape: lin-rect, label: "**Propagate**<br/>来自crate:bevy​_​transform ↗：组织实体<br/>层级变换传播。" }
@@ -53,7 +53,7 @@ flowchart LR
   class n4 node_system_set
   n5@{ shape: lin-rect, label: "**StepSimulation**<br/>划分物理准备、模拟与回写边界。" }
   class n5 node_system_set
-  n6@{ shape: rounded, label: "**demo::character::motion::update​_​**<br/>**grounded**<br/>来自character ↗：脚底附近的小球向下探<br/>测支撑面；墙面法线和上升中的角色不能算接<br/>地。" }
+  n6@{ shape: rounded, label: "**update​_​grounded**<br/>来自character ↗：脚底附近的小球向下探<br/>测支撑面；墙面法线和上升中的角色不能算接<br/>地。" }
   class n6 node_system
   class n6 external_node
   n7@{ shape: lin-rect, label: "**Last**<br/>划分物理准备、模拟与回写边界。" }

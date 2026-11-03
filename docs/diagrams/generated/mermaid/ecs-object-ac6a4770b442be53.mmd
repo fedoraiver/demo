@@ -44,11 +44,11 @@ flowchart LR
   class n1 node_system_set
   n2@{ shape: lin-rect, label: "**PostProcessOutput**<br/>组织 Egui 轮次结束与输出处理。" }
   class n2 node_system_set
-  n3@{ shape: rounded, label: "**bevy​_​egui::input::write​_​egui​_​wants​_​**<br/>**input​_​system**<br/>汇总所有 Egui 上下文的输入占用。" }
+  n3@{ shape: rounded, label: "**write​_​egui​_​wants​_​input​_​system**<br/>汇总所有 Egui 上下文的输入占用。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**bevy​_​egui::input::process​_​ime​_​system**<br/>同步 Egui 编辑区域的原生输入法状态。" }
+  n4@{ shape: rounded, label: "**process​_​ime​_​system**<br/>同步 Egui 编辑区域的原生输入法状态。" }
   class n4 node_system
-  n5@{ shape: rounded, label: "**bevy​_​egui::output::process​_​output​_​**<br/>**system**<br/>拆分 Egui 绘制输出并执行平台命令。" }
+  n5@{ shape: rounded, label: "**process​_​output​_​system**<br/>拆分 Egui 绘制输出并执行平台命令。" }
   class n5 node_system
   n1 e0@-->|"先于"| n0
   class e0 edge_order

@@ -39,14 +39,14 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​extract::extract​_​instances::**<br/>**extract​_​all#lt;bevy​_​pbr::light​_​probe::**<br/>**environment​_​map::EnvironmentMapIds,**<br/>**bevy​_​render::RenderApp#gt;**<br/>重新提取并索引主世界的实例数据。" }
+  n0@{ shape: rounded, label: "**extract​_​all**<br/>重新提取并索引主世界的实例数据。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**probe::EnvironmentMapLight**<br/>来自crate:bevy​_​light ↗：用漫反射与镜<br/>面反射立方体贴图提供环境光。" }
+  n1@{ shape: rounded, label: "**EnvironmentMapLight**<br/>来自crate:bevy​_​light ↗：用漫反射与镜<br/>面反射立方体贴图提供环境光。" }
   class n1 node_component
   class n1 external_node
-  n2@{ shape: cyl, label: "**extract​_​plugin::MainWorld**<br/>在提取阶段临时提供主模拟世界。" }
+  n2@{ shape: cyl, label: "**MainWorld**<br/>在提取阶段临时提供主模拟世界。" }
   class n2 node_resource
-  n3@{ shape: cyl, label: "**bevy​_​extract::extract​_​instances::**<br/>**ExtractedInstances#lt;light​_​probe::**<br/>**environment​_​map::EnvironmentMapIds,**<br/>**bevy​_​render::RenderApp#gt;**<br/>按主实体身份保存子世界提取实例。" }
+  n3@{ shape: cyl, label: "**ExtractedInstances#lt;EnvironmentMapIds**<br/>**, RenderApp#gt;**<br/>按主实体身份保存子世界提取实例。" }
   class n3 node_resource
   n1 e0@--> n0
   class e0 edge_read

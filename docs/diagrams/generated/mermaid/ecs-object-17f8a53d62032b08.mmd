@@ -41,14 +41,14 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​pbr::atmosphere::resources::**<br/>**prepare​_​atmosphere​_​uniforms**<br/>把提取的大气几何转换为 GPU Uniform 组<br/>件。" }
+  n0@{ shape: rounded, label: "**prepare​_​atmosphere​_​uniforms**<br/>把提取的大气几何转换为 GPU Uniform 组<br/>件。" }
   class n0 node_system
   n1@{ shape: lin-rect, label: "**PrepareResources**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
   class n1 node_system_set
   class n1 external_node
-  n2@{ shape: rounded, label: "**atmosphere::resources::GpuAtmosphere**<br/>以 Uniform 格式描述大气几何与地面。" }
+  n2@{ shape: rounded, label: "**GpuAtmosphere**<br/>以 Uniform 格式描述大气几何与地面。" }
   class n2 node_component
-  n3@{ shape: rounded, label: "**atmosphere::ExtractedAtmosphere**<br/>保存尚未转为 GPU 参数的大气数据。" }
+  n3@{ shape: rounded, label: "**ExtractedAtmosphere**<br/>保存尚未转为 GPU 参数的大气数据。" }
   class n3 node_component
   n4@{ shape: lin-rect, label: "**Prepare**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
   class n4 node_system_set

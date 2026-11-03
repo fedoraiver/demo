@@ -38,11 +38,11 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**gizmos::ShowLightGizmo**<br/>显示实体光源的调试轮廓。" }
+  n0@{ shape: rounded, label: "**ShowLightGizmo**<br/>显示实体光源的调试轮廓。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​light::gizmos::draw​_​all​_​lights**<br/>按配置颜色模式绘制全部灯光调试图形。" }
+  n1@{ shape: rounded, label: "**draw​_​all​_​lights**<br/>按配置颜色模式绘制全部灯光调试图形。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​light::gizmos::draw​_​lights**<br/>为显式标记的各类光源绘制调试轮廓。" }
+  n2@{ shape: rounded, label: "**draw​_​lights**<br/>为显式标记的各类光源绘制调试轮廓。" }
   class n2 node_system
   n0 e0@-->|"存在性约束"| n1
   class e0 edge_reference

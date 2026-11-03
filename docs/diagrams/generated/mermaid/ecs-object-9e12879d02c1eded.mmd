@@ -44,19 +44,19 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**demo::audio::playback::log​_​load​_​**<br/>**failures**<br/>记录声音资源加载失败的路径与错误。" }
+  n0@{ shape: rounded, label: "**log​_​load​_​failures**<br/>记录声音资源加载失败的路径与错误。" }
   class n0 node_system
   n1@{ shape: lin-rect, label: "**Mix**<br/>跨功能只约束混音与播放阶段，具体资源和实<br/>例处理顺序留在音频内部。" }
   class n1 node_system_set
-  n2@{ shape: fr-rect, label: "**audio::GameAudioPlugin**<br/>安装 Kira 输出与音频生命周期；无设备测<br/>试直接使用内部纯数据夹具。" }
+  n2@{ shape: fr-rect, label: "**GameAudioPlugin**<br/>安装 Kira 输出与音频生命周期；无设备测<br/>试直接使用内部纯数据夹具。" }
   class n2 node_plugin
-  n3@{ shape: cyl, label: "**bevy::bevy​_​ecs::message::**<br/>**Messages#lt;bevy::bevy​_​asset::**<br/>**AssetLoadFailedEvent#lt;bevy​_​kira​_​**<br/>**audio::AudioSource#gt;#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n3@{ shape: cyl, label: "**Messages#lt;AssetLoadFailedEvent#lt;AudioS**<br/>**ource#gt;#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n3 node_resource
   class n3 external_node
-  n4@{ shape: lean-r, label: "**bevy::bevy​_​asset::**<br/>**AssetLoadFailedEvent#lt;bevy​_​kira​_​**<br/>**audio::AudioSource#gt;**<br/>来自crate:bevy​_​asset ↗：通知指定类型<br/>资产加载失败。" }
+  n4@{ shape: lean-r, label: "**AssetLoadFailedEvent#lt;AudioSource#gt;**<br/>来自crate:bevy​_​asset ↗：通知指定类型<br/>资产加载失败。" }
   class n4 node_message
   class n4 external_node
-  n5@{ shape: rounded, label: "**demo::audio::mix::sync​_​audio​_​mix**<br/>合成设置预览或正式配置的有效音量。" }
+  n5@{ shape: rounded, label: "**sync​_​audio​_​mix**<br/>合成设置预览或正式配置的有效音量。" }
   class n5 node_system
   n1 e0@-->|"集合成员"| n0
   class e0 edge_set_membership

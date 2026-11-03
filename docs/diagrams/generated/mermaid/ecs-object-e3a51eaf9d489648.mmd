@@ -39,7 +39,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: notch-rect, label: "**Local · run​_​at​_​least​_​once**<br/>确保启动调度只由主入口执行一次。" }
   class n0 node_local
-  n1@{ shape: rounded, label: "**bevy​_​app::main​_​schedule::Main::run​_​**<br/>**main**<br/>按主调度顺序驱动应用更新。" }
+  n1@{ shape: rounded, label: "**run​_​main**<br/>按主调度顺序驱动应用更新。" }
   class n1 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

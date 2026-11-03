@@ -43,7 +43,7 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**demo::bounds​_​recovery::recovery::**<br/>**resume​_​interpolation**<br/>下一固定步从恢复后的位置重新采样插值，只<br/>移除本模块临时添加的暂停项。" }
+  n0@{ shape: rounded, label: "**resume​_​interpolation**<br/>下一固定步从恢复后的位置重新采样插值，只<br/>移除本模块临时添加的暂停项。" }
   class n0 node_system
   n1@{ shape: rounded, label: "**NoRotationEasing**<br/>来自crate:bevy​_​transform​_​<br/>interpolation ↗：显式禁止当前实体的旋<br/>转插值和外推" }
   class n1 node_component
@@ -51,12 +51,12 @@ flowchart LR
   n2@{ shape: lin-rect, label: "**UpdateStart**<br/>来自crate:bevy​_​transform​_​<br/>interpolation ↗：组织变换缓动端点与帧<br/>间应用。" }
   class n2 node_system_set
   class n2 external_node
-  n3@{ shape: rounded, label: "**bounds​_​recovery::recovery::**<br/>**ResumeInterpolation**<br/>记录本次恢复临时添加的插值暂停项，不移除<br/>原先由其他功能设置的暂停组件。" }
+  n3@{ shape: rounded, label: "**ResumeInterpolation**<br/>记录本次恢复临时添加的插值暂停项，不移除<br/>原先由其他功能设置的暂停组件。" }
   class n3 node_component
-  n4@{ shape: rounded, label: "**demo::game​_​flow::gameplay​_​running**<br/>来自game​_​flow ↗：独立功能测试没有应用<br/>状态；真实游戏只在 Running 推进玩法。" }
+  n4@{ shape: rounded, label: "**gameplay​_​running**<br/>来自game​_​flow ↗：独立功能测试没有应用<br/>状态；真实游戏只在 Running 推进玩法。" }
   class n4 node_system
   class n4 external_node
-  n5@{ shape: fr-rect, label: "**bounds​_​recovery::**<br/>**BoundsRecoveryPlugin**<br/>注册越界恢复和插值重置，不创建窗口或额外<br/>推进模拟。" }
+  n5@{ shape: fr-rect, label: "**BoundsRecoveryPlugin**<br/>注册越界恢复和插值重置，不创建窗口或额外<br/>推进模拟。" }
   class n5 node_plugin
   n6@{ shape: rounded, label: "**NoTranslationEasing**<br/>来自crate:bevy​_​transform​_​<br/>interpolation ↗：显式禁止当前实体的平<br/>移插值和外推" }
   class n6 node_component

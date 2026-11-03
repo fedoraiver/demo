@@ -42,15 +42,15 @@ flowchart LR
   class n0 node_system_set
   n1@{ shape: lin-rect, label: "**EnterSchedules**<br/>组织状态转换及进入退出调度。" }
   class n1 node_system_set
-  n2@{ shape: lin-rect, label: "**TransitionSchedules(PhantomData#lt;demo**<br/>**::game​_​flow::AppState#gt;)**<br/>执行特定状态对的转换和谓词生命周期。" }
+  n2@{ shape: lin-rect, label: "**TransitionSchedules(PhantomData#lt;AppS**<br/>**tate#gt;)**<br/>执行特定状态对的转换和谓词生命周期。" }
   class n2 node_system_set
   n3@{ shape: lin-rect, label: "**ExitSchedules**<br/>组织状态转换及进入退出调度。" }
   class n3 node_system_set
-  n4@{ shape: rounded, label: "**bevy​_​state::state​_​scoped::despawn​_​**<br/>**entities​_​when​_​state#lt;demo::game​_​**<br/>**flow::AppState#gt;**<br/>按状态转换谓词销毁匹配实体。" }
+  n4@{ shape: rounded, label: "**despawn​_​entities​_​when​_​state**<br/>按状态转换谓词销毁匹配实体。" }
   class n4 node_system
-  n5@{ shape: rounded, label: "**bevy​_​state::state​_​scoped::enable​_​**<br/>**entities​_​when​_​state#lt;demo::game​_​**<br/>**flow::AppState#gt;**<br/>按状态转换谓词重新启用实体子树。" }
+  n5@{ shape: rounded, label: "**enable​_​entities​_​when​_​state**<br/>按状态转换谓词重新启用实体子树。" }
   class n5 node_system
-  n6@{ shape: rounded, label: "**bevy​_​state::state​_​scoped::disable​_​**<br/>**entities​_​when​_​state#lt;demo::game​_​**<br/>**flow::AppState#gt;**<br/>按状态转换谓词禁用实体子树。" }
+  n6@{ shape: rounded, label: "**disable​_​entities​_​when​_​state**<br/>按状态转换谓词禁用实体子树。" }
   class n6 node_system
   n0 e0@-->|"先于"| n1
   class e0 edge_order

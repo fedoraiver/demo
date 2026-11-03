@@ -40,23 +40,23 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_emit stroke:#B66B2D,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**avian3d::collision::collider::**<br/>**backend::init​_​collider​_​constructor​_​**<br/>**hierarchies**<br/>按层级构造配置为后代生成碰撞体。" }
+  n0@{ shape: rounded, label: "**init​_​collider​_​constructor​_​**<br/>**hierarchies**<br/>按层级构造配置为后代生成碰撞体。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**collision::collider::layers::**<br/>**CollisionLayers**<br/>声明碰撞体所属层和可交互层。" }
+  n1@{ shape: rounded, label: "**CollisionLayers**<br/>声明碰撞体所属层和可交互层。" }
   class n1 node_component
-  n2@{ shape: rounded, label: "**bevy​_​ecs::name::Name**<br/>来自crate:bevy​_​ecs ↗：保存供调试和界<br/>面展示的实体名称及缓存哈希" }
+  n2@{ shape: rounded, label: "**Name**<br/>来自crate:bevy​_​ecs ↗：保存供调试和界<br/>面展示的实体名称及缓存哈希" }
   class n2 node_component
   class n2 external_node
-  n3@{ shape: rounded, label: "**collision::collider::constructor::**<br/>**ColliderConstructorHierarchy**<br/>批量配置层级中的碰撞体构造。" }
+  n3@{ shape: rounded, label: "**ColliderConstructorHierarchy**<br/>批量配置层级中的碰撞体构造。" }
   class n3 node_component
-  n4@{ shape: rounded, label: "**collision::collider::parry::Collider**<br/>保存 Parry 碰撞后端的几何形状。" }
+  n4@{ shape: rounded, label: "**Collider**<br/>保存 Parry 碰撞后端的几何形状。" }
   class n4 node_component
-  n5@{ shape: rounded, label: "**bevy​_​ecs::hierarchy::Children**<br/>来自crate:bevy​_​ecs ↗：保存以<br/>ChildOf 指向当前父实体的子实体集合" }
+  n5@{ shape: rounded, label: "**Children**<br/>来自crate:bevy​_​ecs ↗：保存以<br/>ChildOf 指向当前父实体的子实体集合" }
   class n5 node_component
   class n5 external_node
-  n6@{ shape: stadium, label: "**collision::collider::constructor::**<br/>**ColliderConstructorHierarchyReady**<br/>通知层级碰撞体构造尝试已经结束。" }
+  n6@{ shape: stadium, label: "**ColliderConstructorHierarchyReady**<br/>通知层级碰撞体构造尝试已经结束。" }
   class n6 node_event
-  n7@{ shape: rounded, label: "**dynamics::rigid​_​body::mass​_​**<br/>**properties::components::collider::**<br/>**ColliderDensity**<br/>以密度参与碰撞体质量计算。" }
+  n7@{ shape: rounded, label: "**ColliderDensity**<br/>以密度参与碰撞体质量计算。" }
   class n7 node_component
   n0 e0@-->|"插入"| n1
   class e0 edge_write
@@ -82,6 +82,5 @@ flowchart LR
   e3@{ curve: bumpX }
   e4@{ curve: bumpX }
   e5@{ curve: basis }
-  e6@{ curve: bumpX }
   e7@{ curve: basis }
   e8@{ curve: basis }

@@ -40,9 +40,9 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: lin-rect, label: "**Clear**<br/>组织绘制管线失效检测。" }
   class n0 node_system_set
-  n1@{ shape: rounded, label: "**bevy​_​render::camera::clear​_​dirty​_​**<br/>**wireframe​_​specializations**<br/>清空新帧线框专用化的变化记录。" }
+  n1@{ shape: rounded, label: "**clear​_​dirty​_​wireframe​_​**<br/>**specializations**<br/>清空新帧线框专用化的变化记录。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​render::camera::clear​_​dirty​_​**<br/>**specializations**<br/>清空新帧材质专用化的变化记录。" }
+  n2@{ shape: rounded, label: "**clear​_​dirty​_​specializations**<br/>清空新帧材质专用化的变化记录。" }
   class n2 node_system
   n3@{ shape: lin-rect, label: "**CheckForChanges**<br/>组织绘制管线失效检测。" }
   class n3 node_system_set

@@ -39,7 +39,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: notch-rect, label: "**Local · cached​_​materials**<br/>按精灵与锚点配置复用默认网格材质。" }
   class n0 node_local
-  n1@{ shape: rounded, label: "**bevy​_​sprite​_​render::sprite​_​mesh::**<br/>**add​_​material**<br/>按精灵与锚点复用或创建默认网格材质。" }
+  n1@{ shape: rounded, label: "**add​_​material**<br/>按精灵与锚点复用或创建默认网格材质。" }
   class n1 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

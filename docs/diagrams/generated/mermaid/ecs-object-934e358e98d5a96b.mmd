@@ -42,18 +42,18 @@ flowchart LR
   classDef edge_observe stroke:#B66B2D,stroke-width:1.8px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: hex, label: "**avian3d::collision::collider::**<br/>**collider​_​hierarchy::plugin::on​_​body​_​**<br/>**removed**<br/>清理已移除刚体的碰撞体归属。" }
+  n0@{ shape: hex, label: "**on​_​body​_​removed**<br/>清理已移除刚体的碰撞体归属。" }
   class n0 node_observer
-  n1@{ shape: rounded, label: "**collision::collider::collider​_​**<br/>**hierarchy::ColliderOf**<br/>指定碰撞体附着的刚体。" }
+  n1@{ shape: rounded, label: "**ColliderOf**<br/>指定碰撞体附着的刚体。" }
   class n1 node_component
-  n2@{ shape: fr-rect, label: "**collision::collider::collider​_​**<br/>**hierarchy::plugin::**<br/>**ColliderHierarchyPlugin**<br/>维护碰撞体与祖先刚体的归属。" }
+  n2@{ shape: fr-rect, label: "**ColliderHierarchyPlugin**<br/>维护碰撞体与祖先刚体的归属。" }
   class n2 node_plugin
-  n3@{ shape: rounded, label: "**collision::collider::collider​_​**<br/>**hierarchy::RigidBodyColliders**<br/>维护刚体附着的碰撞体集合。" }
+  n3@{ shape: rounded, label: "**RigidBodyColliders**<br/>维护刚体附着的碰撞体集合。" }
   class n3 node_component
-  n4@{ shape: stadium, label: "**bevy​_​ecs::lifecycle::RemoveEvent**<br/>来自crate:bevy​_​ecs ↗：在组件移除前发<br/>出通知。" }
+  n4@{ shape: stadium, label: "**RemoveEvent**<br/>来自crate:bevy​_​ecs ↗：在组件移除前发<br/>出通知。" }
   class n4 node_event
   class n4 external_node
-  n5@{ shape: rounded, label: "**collision::collider::collider​_​**<br/>**transform::ColliderTransform**<br/>缓存碰撞体相对于刚体的变换。" }
+  n5@{ shape: rounded, label: "**ColliderTransform**<br/>缓存碰撞体相对于刚体的变换。" }
   class n5 node_component
   n0 e0@-->|"移除"| n1
   class e0 edge_write

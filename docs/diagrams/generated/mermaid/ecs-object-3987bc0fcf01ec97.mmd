@@ -40,16 +40,16 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**avian3d::dynamics::solver::plugin::**<br/>**update​_​contact​_​softness**<br/>按时间步和配置更新接触柔度系数。" }
+  n0@{ shape: rounded, label: "**update​_​contact​_​softness**<br/>按时间步和配置更新接触柔度系数。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**dynamics::solver::plugin::**<br/>**ContactSoftnessCoefficients**<br/>缓存动态与非动态接触的柔度系数。" }
+  n1@{ shape: cyl, label: "**ContactSoftnessCoefficients**<br/>缓存动态与非动态接触的柔度系数。" }
   class n1 node_resource
-  n2@{ shape: cyl, label: "**bevy::bevy​_​time::Time#lt;schedule::**<br/>**time::Physics#gt;**<br/>来自crate:bevy​_​time ↗：保存时钟上下<br/>文、帧间隔及累计时间" }
+  n2@{ shape: cyl, label: "**Time#lt;Physics#gt;**<br/>来自crate:bevy​_​time ↗：保存时钟上下<br/>文、帧间隔及累计时间" }
   class n2 node_resource
   class n2 external_node
-  n3@{ shape: cyl, label: "**dynamics::solver::plugin::**<br/>**SolverConfig**<br/>配置接触与关节约束求解参数。" }
+  n3@{ shape: cyl, label: "**SolverConfig**<br/>配置接触与关节约束求解参数。" }
   class n3 node_resource
-  n4@{ shape: cyl, label: "**bevy::bevy​_​time::Time#lt;schedule::**<br/>**time::Substeps#gt;**<br/>来自crate:bevy​_​time ↗：保存时钟上下<br/>文、帧间隔及累计时间" }
+  n4@{ shape: cyl, label: "**Time#lt;Substeps#gt;**<br/>来自crate:bevy​_​time ↗：保存时钟上下<br/>文、帧间隔及累计时间" }
   class n4 node_resource
   class n4 external_node
   n5@{ shape: lin-rect, label: "**NarrowPhase**<br/>组织一次物理模拟步的主要阶段。" }

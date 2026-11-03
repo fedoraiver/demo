@@ -36,9 +36,9 @@ flowchart LR
   classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy::bevy​_​state::state​_​scoped::**<br/>**EnableWhen#lt;game​_​flow::AppState#gt;**<br/>保存状态转换谓词" }
+  n0@{ shape: rounded, label: "**EnableWhen#lt;AppState#gt;**<br/>保存状态转换谓词" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​state::state​_​scoped::enable​_​**<br/>**entities​_​when​_​state#lt;demo::game​_​**<br/>**flow::AppState#gt;**<br/>按状态转换谓词重新启用实体子树。" }
+  n1@{ shape: rounded, label: "**enable​_​entities​_​when​_​state**<br/>按状态转换谓词重新启用实体子树。" }
   class n1 node_system
   n0 e0@--> n1
   class e0 edge_read

@@ -42,22 +42,22 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​pbr::cluster::gpu::prepare​_​**<br/>**clustering​_​pipelines**<br/>为视图取得 GPU 聚簇五阶段的管线标识。" }
+  n0@{ shape: rounded, label: "**prepare​_​clustering​_​pipelines**<br/>为视图取得 GPU 聚簇五阶段的管线标识。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**bevy​_​render::render​_​resource::**<br/>**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
+  n1@{ shape: cyl, label: "**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
   class n1 node_resource
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​render::view::ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
+  n2@{ shape: rounded, label: "**ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
   class n2 node_component
   class n2 external_node
-  n3@{ shape: cyl, label: "**bevy​_​render::render​_​resource::**<br/>**SpecializedComputePipelines#lt;cluster:**<br/>**:gpu::ClusteringZSlicingPipeline#gt;**<br/>来自crate:bevy​_​render ↗：按配置键缓存<br/>计算管线变体。" }
+  n3@{ shape: cyl, label: "**SpecializedComputePipelines#lt;Clusteri**<br/>**ngZSlicingPipeline#gt;**<br/>来自crate:bevy​_​render ↗：按配置键缓存<br/>计算管线变体。" }
   class n3 node_resource
   class n3 external_node
-  n4@{ shape: cyl, label: "**cluster::gpu::**<br/>**ClusteringZSlicingPipeline**<br/>描述聚簇深度切片计算的着色接口。" }
+  n4@{ shape: cyl, label: "**ClusteringZSlicingPipeline**<br/>描述聚簇深度切片计算的着色接口。" }
   class n4 node_resource
-  n5@{ shape: rounded, label: "**cluster::gpu::**<br/>**ViewGpuClusteringPipelineIds**<br/>记录视图 GPU 聚簇各阶段的管线。" }
+  n5@{ shape: rounded, label: "**ViewGpuClusteringPipelineIds**<br/>记录视图 GPU 聚簇各阶段的管线。" }
   class n5 node_component
-  n6@{ shape: cyl, label: "**cluster::gpu::**<br/>**ClusteringAllocationPipeline**<br/>描述聚簇列表分配计算的着色接口。" }
+  n6@{ shape: cyl, label: "**ClusteringAllocationPipeline**<br/>描述聚簇列表分配计算的着色接口。" }
   class n6 node_resource
   n7@{ shape: lin-rect, label: "**Prepare**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
   class n7 node_system_set
@@ -65,12 +65,12 @@ flowchart LR
   n8@{ shape: lin-rect, label: "**AnonymousSet(1)**<br/>来自crate:bevy​_​ecs ↗：保存一组系统的<br/>共同配置。" }
   class n8 node_system_set
   class n8 external_node
-  n9@{ shape: cyl, label: "**cluster::gpu::**<br/>**ClusteringRasterPipeline**<br/>描述聚簇光栅化的计数和填充接口。" }
+  n9@{ shape: cyl, label: "**ClusteringRasterPipeline**<br/>描述聚簇光栅化的计数和填充接口。" }
   class n9 node_resource
-  n10@{ shape: cyl, label: "**bevy​_​render::render​_​resource::**<br/>**SpecializedComputePipelines#lt;cluster:**<br/>**:gpu::ClusteringAllocationPipeline#gt;**<br/>来自crate:bevy​_​render ↗：按配置键缓存<br/>计算管线变体。" }
+  n10@{ shape: cyl, label: "**SpecializedComputePipelines#lt;Clusteri**<br/>**ngAllocationPipeline#gt;**<br/>来自crate:bevy​_​render ↗：按配置键缓存<br/>计算管线变体。" }
   class n10 node_resource
   class n10 external_node
-  n11@{ shape: cyl, label: "**bevy​_​render::render​_​resource::**<br/>**SpecializedRenderPipelines#lt;cluster::**<br/>**gpu::ClusteringRasterPipeline#gt;**<br/>来自crate:bevy​_​render ↗：按配置键缓存<br/>渲染管线变体。" }
+  n11@{ shape: cyl, label: "**SpecializedRenderPipelines#lt;Clusterin**<br/>**gRasterPipeline#gt;**<br/>来自crate:bevy​_​render ↗：按配置键缓存<br/>渲染管线变体。" }
   class n11 node_resource
   class n11 external_node
   n1 e0@--> n0

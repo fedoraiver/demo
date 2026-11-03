@@ -43,11 +43,11 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​gizmos::frustum::draw​_​frustum​_​**<br/>**gizmos**<br/>绘制带标记实体的视锥调试图形。" }
+  n0@{ shape: rounded, label: "**draw​_​frustum​_​gizmos**<br/>绘制带标记实体的视锥调试图形。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**config::GizmoConfigStore**<br/>按配置组保存调试图元绘制设置。" }
+  n1@{ shape: cyl, label: "**GizmoConfigStore**<br/>按配置组保存调试图元绘制设置。" }
   class n1 node_resource
-  n2@{ shape: rounded, label: "**bevy​_​camera::primitives::Frustum**<br/>来自crate:bevy​_​camera ↗：描述相机可见<br/>空间并参与视锥裁剪。" }
+  n2@{ shape: rounded, label: "**Frustum**<br/>来自crate:bevy​_​camera ↗：描述相机可见<br/>空间并参与视锥裁剪。" }
   class n2 node_component
   class n2 external_node
   n3@{ shape: lin-rect, label: "**FrustumGizmoSystems**<br/>收集并绘制相机视锥调试线。" }
@@ -55,9 +55,9 @@ flowchart LR
   n4@{ shape: lin-rect, label: "**UpdateFrusta**<br/>来自crate:bevy​_​camera ↗：组织相机与实<br/>体可见性更新。" }
   class n4 node_system_set
   class n4 external_node
-  n5@{ shape: rounded, label: "**frustum::ShowFrustumGizmo**<br/>为实体显示视锥调试线框。" }
+  n5@{ shape: rounded, label: "**ShowFrustumGizmo**<br/>为实体显示视锥调试线框。" }
   class n5 node_component
-  n6@{ shape: fr-rect, label: "**frustum::FrustumGizmoPlugin**<br/>绘制相机视锥调试形状。" }
+  n6@{ shape: fr-rect, label: "**FrustumGizmoPlugin**<br/>绘制相机视锥调试形状。" }
   class n6 node_plugin
   n1 e0@--> n0
   class e0 edge_read

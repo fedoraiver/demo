@@ -37,13 +37,13 @@ flowchart LR
   classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**dialog::DialogDragHandle**<br/>标识对话框拖动区域。" }
+  n0@{ shape: rounded, label: "**DialogDragHandle**<br/>标识对话框拖动区域。" }
   class n0 node_component
-  n1@{ shape: hex, label: "**bevy​_​ui​_​widgets::dialog::dialog​_​drag**<br/>按累计拖动距离移动对话框。" }
+  n1@{ shape: hex, label: "**dialog​_​drag**<br/>按累计拖动距离移动对话框。" }
   class n1 node_observer
-  n2@{ shape: hex, label: "**bevy​_​ui​_​widgets::dialog::dialog​_​drag**<br/>按累计拖动距离移动对话框。" }
+  n2@{ shape: hex, label: "**dialog​_​drag**<br/>按累计拖动距离移动对话框。" }
   class n2 node_observer
-  n3@{ shape: hex, label: "**bevy​_​ui​_​widgets::dialog::dialog​_​drag**<br/>按累计拖动距离移动对话框。" }
+  n3@{ shape: hex, label: "**dialog​_​drag**<br/>按累计拖动距离移动对话框。" }
   class n3 node_observer
   n0 e0@-->|"存在性约束"| n1
   class e0 edge_reference

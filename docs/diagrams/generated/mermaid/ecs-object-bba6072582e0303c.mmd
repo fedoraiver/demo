@@ -45,23 +45,23 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**avian3d::collision::narrow​_​phase::**<br/>**trigger​_​collision​_​events**<br/>把碰撞开始和结束消息触发为实体事件。" }
+  n0@{ shape: rounded, label: "**trigger​_​collision​_​events**<br/>把碰撞开始和结束消息触发为实体事件。" }
   class n0 node_system
-  n1@{ shape: lean-r, label: "**collision::collision​_​events::**<br/>**CollisionStart**<br/>报告一对碰撞体开始接触及其所属刚体。" }
+  n1@{ shape: lean-r, label: "**CollisionStart**<br/>报告一对碰撞体开始接触及其所属刚体。" }
   class n1 node_message
-  n2@{ shape: cyl, label: "**bevy::bevy​_​ecs::message::**<br/>**Messages#lt;collision::collision​_​**<br/>**events::CollisionEnd#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n2@{ shape: cyl, label: "**Messages#lt;CollisionEnd#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n2 node_resource
   class n2 external_node
   n3@{ shape: lin-rect, label: "**CollisionEventSystems**<br/>在求解完成后触发碰撞开始与结束事件。" }
   class n3 node_system_set
   n4@{ shape: notch-rect, label: "**Local · ended**<br/>暂存待触发的碰撞结束实体事件。" }
   class n4 node_local
-  n5@{ shape: cyl, label: "**bevy::bevy​_​ecs::message::**<br/>**Messages#lt;collision::collision​_​**<br/>**events::CollisionStart#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n5@{ shape: cyl, label: "**Messages#lt;CollisionStart#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n5 node_resource
   class n5 external_node
-  n6@{ shape: lean-r, label: "**collision::collision​_​events::**<br/>**CollisionEnd**<br/>报告一对碰撞体结束接触及其所属刚体。" }
+  n6@{ shape: lean-r, label: "**CollisionEnd**<br/>报告一对碰撞体结束接触及其所属刚体。" }
   class n6 node_message
-  n7@{ shape: rounded, label: "**collision::collision​_​events::**<br/>**CollisionEventsEnabled**<br/>为此碰撞体开启接触开始与结束事件。" }
+  n7@{ shape: rounded, label: "**CollisionEventsEnabled**<br/>为此碰撞体开启接触开始与结束事件。" }
   class n7 node_component
   n8@{ shape: notch-rect, label: "**Local · started**<br/>暂存待触发的碰撞开始实体事件。" }
   class n8 node_local

@@ -42,9 +42,9 @@ flowchart LR
   class n0 node_system_set
   n1@{ shape: lin-rect, label: "**ProcessOutput**<br/>组织 Egui 轮次结束与输出处理。" }
   class n1 node_system_set
-  n2@{ shape: rounded, label: "**bevy​_​egui::run​_​egui​_​context​_​pass​_​**<br/>**loop​_​system**<br/>运行每个自动 Egui 上下文的专属调度。" }
+  n2@{ shape: rounded, label: "**run​_​egui​_​context​_​pass​_​loop​_​system**<br/>运行每个自动 Egui 上下文的专属调度。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​egui::end​_​pass​_​system**<br/>结束 Egui 界面帧并保存完整输出。" }
+  n3@{ shape: rounded, label: "**end​_​pass​_​system**<br/>结束 Egui 界面帧并保存完整输出。" }
   class n3 node_system
   n0 e0@-->|"先于"| n1
   class e0 edge_order

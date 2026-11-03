@@ -36,9 +36,9 @@ flowchart LR
   classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**dynamics::rigid​_​body::physics​_​**<br/>**material::DefaultFriction**<br/>提供未单独配置时的默认摩擦。" }
+  n0@{ shape: cyl, label: "**DefaultFriction**<br/>提供未单独配置时的默认摩擦。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**avian3d::collision::narrow​_​phase::**<br/>**update​_​narrow​_​phase#lt;avian3d::**<br/>**collision::collider::parry::**<br/>**Collider, ()#gt;**<br/>更新窄相接触并输出碰撞变化消息。" }
+  n1@{ shape: rounded, label: "**update​_​narrow​_​phase**<br/>更新窄相接触并输出碰撞变化消息。" }
   class n1 node_system
   n0 e0@--> n1
   class e0 edge_read

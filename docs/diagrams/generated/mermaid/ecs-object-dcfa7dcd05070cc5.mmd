@@ -36,9 +36,9 @@ flowchart LR
   classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**point​_​light::PointLightTexture**<br/>用立方体纹理遮罩调制点光源强度。" }
+  n0@{ shape: rounded, label: "**PointLightTexture**<br/>用立方体纹理遮罩调制点光源强度。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​pbr::decal::clustered::extract​_​**<br/>**decals**<br/>来自crate:bevy​_​pbr ↗：从主世界提取可<br/>见聚簇贴花及点光、聚光和平行光的光照纹<br/>理，重建渲染贴花缓冲，并记录真正参与聚簇<br/>计算的贴花数量。" }
+  n1@{ shape: rounded, label: "**extract​_​decals**<br/>来自crate:bevy​_​pbr ↗：从主世界提取可<br/>见聚簇贴花及点光、聚光和平行光的光照纹<br/>理，重建渲染贴花缓冲，并记录真正参与聚簇<br/>计算的贴花数量。" }
   class n1 node_system
   class n1 external_node
   n0 e0@--> n1

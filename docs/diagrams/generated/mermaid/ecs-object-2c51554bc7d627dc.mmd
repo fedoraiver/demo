@@ -37,15 +37,15 @@ flowchart LR
   classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: lin-rect, label: "**PropagateSet { ​_​p: PhantomData#lt;fn()**<br/>**-#gt; bevy​_​ui::ui​_​node::**<br/>**ComputedUiTargetCamera#gt; }**<br/>沿关系层级传播指定组件值。" }
+  n0@{ shape: lin-rect, label: "**PropagateSet { ​_​p: PhantomData#lt;fn()**<br/>**-#gt; ComputedUiTargetCamera#gt; }**<br/>沿关系层级传播指定组件值。" }
   class n0 node_system_set
-  n1@{ shape: rounded, label: "**bevy​_​app::propagate::propagate​_​**<br/>**output#lt;bevy​_​ui::ui​_​node::**<br/>**ComputedUiTargetCamera, ()#gt;**<br/>把继承结果写入或移出实体实际组件。" }
+  n1@{ shape: rounded, label: "**propagate​_​output**<br/>把继承结果写入或移出实体实际组件。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​app::propagate::propagate​_​**<br/>**inherited#lt;bevy​_​ui::ui​_​node::**<br/>**ComputedUiTargetCamera, (), bevy​_​**<br/>**ecs::hierarchy::ChildOf#gt;**<br/>沿关系层级传播变化的继承组件值。" }
+  n2@{ shape: rounded, label: "**propagate​_​inherited**<br/>沿关系层级传播变化的继承组件值。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​app::propagate::update​_​removed​_​**<br/>**limit#lt;bevy​_​ui::ui​_​node::**<br/>**ComputedUiTargetCamera, (), bevy​_​**<br/>**ecs::hierarchy::ChildOf#gt;**<br/>在传播限制移除后重新标记继承链。" }
+  n3@{ shape: rounded, label: "**update​_​removed​_​limit**<br/>在传播限制移除后重新标记继承链。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**bevy​_​app::propagate::update​_​**<br/>**source#lt;bevy​_​ui::ui​_​node::**<br/>**ComputedUiTargetCamera, (), bevy​_​**<br/>**ecs::hierarchy::ChildOf#gt;**<br/>同步传播源并恢复移除来源后的继承状态。" }
+  n4@{ shape: rounded, label: "**update​_​source**<br/>同步传播源并恢复移除来源后的继承状态。" }
   class n4 node_system
   n5@{ shape: lin-rect, label: "**Propagate**<br/>来自crate:bevy​_​ui ↗：组织界面交互、布<br/>局与堆叠更新。" }
   class n5 node_system_set

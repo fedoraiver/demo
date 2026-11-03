@@ -41,13 +41,13 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​gizmos::global::flush​_​global​_​**<br/>**gizmos**<br/>将全局 Gizmo 缓冲转交本轮绘制。" }
+  n0@{ shape: rounded, label: "**flush​_​global​_​gizmos**<br/>将全局 Gizmo 缓冲转交本轮绘制。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**config::GizmoConfigStore**<br/>按配置组保存调试图元绘制设置。" }
+  n1@{ shape: cyl, label: "**GizmoConfigStore**<br/>按配置组保存调试图元绘制设置。" }
   class n1 node_resource
   n2@{ shape: lin-rect, label: "**GizmoMeshSystems**<br/>把调试绘制存储转换为渲染网格。" }
   class n2 node_system_set
-  n3@{ shape: fr-rect, label: "**global::GlobalGizmosPlugin**<br/>接入系统之外的全局调试绘制。" }
+  n3@{ shape: fr-rect, label: "**GlobalGizmosPlugin**<br/>接入系统之外的全局调试绘制。" }
   class n3 node_plugin
   n1 e0@--> n0
   class e0 edge_read

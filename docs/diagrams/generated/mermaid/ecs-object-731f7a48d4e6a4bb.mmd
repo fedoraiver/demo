@@ -37,49 +37,49 @@ flowchart LR
   classDef node_event fill:#F9F3EE,stroke:#B66B2D,stroke-width:1.6px,color:#1F3340
   classDef edge_emit stroke:#B66B2D,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: stadium, label: "**ValueChange#lt;bevy​_​ecs::entity::**<br/>**Entity#gt;**<br/>传递控件提出的新值。" }
+  n0@{ shape: stadium, label: "**ValueChange#lt;Entity#gt;**<br/>传递控件提出的新值。" }
   class n0 node_event
-  n1@{ shape: hex, label: "**bevy​_​ui​_​widgets::radio::radio​_​group​_​**<br/>**on​_​key​_​input**<br/>通过键盘请求更改单选组选项。" }
+  n1@{ shape: hex, label: "**radio​_​group​_​on​_​key​_​input**<br/>通过键盘请求更改单选组选项。" }
   class n1 node_observer
-  n2@{ shape: hex, label: "**bevy​_​ui​_​widgets::radio::radio​_​**<br/>**button​_​on​_​key​_​input**<br/>通过确认键请求选中单选按钮。" }
+  n2@{ shape: hex, label: "**radio​_​button​_​on​_​key​_​input**<br/>通过确认键请求选中单选按钮。" }
   class n2 node_observer
-  n3@{ shape: hex, label: "**bevy​_​ui​_​widgets::list::listbox​_​on​_​**<br/>**key​_​input**<br/>处理列表键盘导航与行确认。" }
+  n3@{ shape: hex, label: "**listbox​_​on​_​key​_​input**<br/>处理列表键盘导航与行确认。" }
   class n3 node_observer
-  n4@{ shape: hex, label: "**bevy​_​ui​_​widgets::radio::radio​_​**<br/>**button​_​on​_​click**<br/>通过点击请求选中单选按钮。" }
+  n4@{ shape: hex, label: "**radio​_​button​_​on​_​click**<br/>通过点击请求选中单选按钮。" }
   class n4 node_observer
-  n5@{ shape: hex, label: "**bevy​_​ui​_​widgets::radio::radio​_​group​_​**<br/>**on​_​key​_​input**<br/>通过键盘请求更改单选组选项。" }
+  n5@{ shape: hex, label: "**radio​_​group​_​on​_​key​_​input**<br/>通过键盘请求更改单选组选项。" }
   class n5 node_observer
-  n6@{ shape: hex, label: "**bevy​_​ui​_​widgets::list::listbox​_​on​_​**<br/>**row​_​click**<br/>将列表行点击转为选择或重选请求。" }
+  n6@{ shape: hex, label: "**listbox​_​on​_​row​_​click**<br/>将列表行点击转为选择或重选请求。" }
   class n6 node_observer
-  n7@{ shape: hex, label: "**bevy​_​ui​_​widgets::radio::radio​_​**<br/>**button​_​on​_​pointer​_​down**<br/>记录单选按钮按压并按配置请求选中。" }
+  n7@{ shape: hex, label: "**radio​_​button​_​on​_​pointer​_​down**<br/>记录单选按钮按压并按配置请求选中。" }
   class n7 node_observer
-  n8@{ shape: hex, label: "**bevy​_​ui​_​widgets::radio::radio​_​**<br/>**button​_​on​_​pointer​_​down**<br/>记录单选按钮按压并按配置请求选中。" }
+  n8@{ shape: hex, label: "**radio​_​button​_​on​_​pointer​_​down**<br/>记录单选按钮按压并按配置请求选中。" }
   class n8 node_observer
-  n9@{ shape: hex, label: "**bevy​_​ui​_​widgets::list::listbox​_​on​_​**<br/>**set​_​selected**<br/>处理列表程序化选行与重选。" }
+  n9@{ shape: hex, label: "**listbox​_​on​_​set​_​selected**<br/>处理列表程序化选行与重选。" }
   class n9 node_observer
-  n10@{ shape: hex, label: "**bevy​_​ui​_​widgets::radio::radio​_​**<br/>**button​_​on​_​click**<br/>通过点击请求选中单选按钮。" }
+  n10@{ shape: hex, label: "**radio​_​button​_​on​_​click**<br/>通过点击请求选中单选按钮。" }
   class n10 node_observer
-  n11@{ shape: hex, label: "**bevy​_​ui​_​widgets::radio::radio​_​group​_​**<br/>**on​_​key​_​input**<br/>通过键盘请求更改单选组选项。" }
+  n11@{ shape: hex, label: "**radio​_​group​_​on​_​key​_​input**<br/>通过键盘请求更改单选组选项。" }
   class n11 node_observer
-  n12@{ shape: hex, label: "**bevy​_​ui​_​widgets::list::listbox​_​on​_​**<br/>**row​_​click**<br/>将列表行点击转为选择或重选请求。" }
+  n12@{ shape: hex, label: "**listbox​_​on​_​row​_​click**<br/>将列表行点击转为选择或重选请求。" }
   class n12 node_observer
-  n13@{ shape: hex, label: "**bevy​_​ui​_​widgets::radio::radio​_​**<br/>**button​_​on​_​click**<br/>通过点击请求选中单选按钮。" }
+  n13@{ shape: hex, label: "**radio​_​button​_​on​_​click**<br/>通过点击请求选中单选按钮。" }
   class n13 node_observer
-  n14@{ shape: hex, label: "**bevy​_​ui​_​widgets::list::listbox​_​on​_​**<br/>**set​_​selected**<br/>处理列表程序化选行与重选。" }
+  n14@{ shape: hex, label: "**listbox​_​on​_​set​_​selected**<br/>处理列表程序化选行与重选。" }
   class n14 node_observer
-  n15@{ shape: hex, label: "**bevy​_​ui​_​widgets::list::listbox​_​on​_​**<br/>**key​_​input**<br/>处理列表键盘导航与行确认。" }
+  n15@{ shape: hex, label: "**listbox​_​on​_​key​_​input**<br/>处理列表键盘导航与行确认。" }
   class n15 node_observer
-  n16@{ shape: hex, label: "**bevy​_​ui​_​widgets::radio::radio​_​**<br/>**button​_​on​_​key​_​input**<br/>通过确认键请求选中单选按钮。" }
+  n16@{ shape: hex, label: "**radio​_​button​_​on​_​key​_​input**<br/>通过确认键请求选中单选按钮。" }
   class n16 node_observer
-  n17@{ shape: hex, label: "**bevy​_​ui​_​widgets::list::listbox​_​on​_​**<br/>**set​_​selected**<br/>处理列表程序化选行与重选。" }
+  n17@{ shape: hex, label: "**listbox​_​on​_​set​_​selected**<br/>处理列表程序化选行与重选。" }
   class n17 node_observer
-  n18@{ shape: hex, label: "**bevy​_​ui​_​widgets::radio::radio​_​**<br/>**button​_​on​_​pointer​_​down**<br/>记录单选按钮按压并按配置请求选中。" }
+  n18@{ shape: hex, label: "**radio​_​button​_​on​_​pointer​_​down**<br/>记录单选按钮按压并按配置请求选中。" }
   class n18 node_observer
-  n19@{ shape: hex, label: "**bevy​_​ui​_​widgets::list::listbox​_​on​_​**<br/>**key​_​input**<br/>处理列表键盘导航与行确认。" }
+  n19@{ shape: hex, label: "**listbox​_​on​_​key​_​input**<br/>处理列表键盘导航与行确认。" }
   class n19 node_observer
-  n20@{ shape: hex, label: "**bevy​_​ui​_​widgets::radio::radio​_​**<br/>**button​_​on​_​key​_​input**<br/>通过确认键请求选中单选按钮。" }
+  n20@{ shape: hex, label: "**radio​_​button​_​on​_​key​_​input**<br/>通过确认键请求选中单选按钮。" }
   class n20 node_observer
-  n21@{ shape: hex, label: "**bevy​_​ui​_​widgets::list::listbox​_​on​_​**<br/>**row​_​click**<br/>将列表行点击转为选择或重选请求。" }
+  n21@{ shape: hex, label: "**listbox​_​on​_​row​_​click**<br/>将列表行点击转为选择或重选请求。" }
   class n21 node_observer
   n1 e0@-->|"触发事件"| n0
   class e0 edge_emit

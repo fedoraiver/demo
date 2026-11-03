@@ -42,23 +42,23 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**demo::window​_​policy::install​_​native​_​**<br/>**policy**<br/>安装并维护原生窗口比例与尺寸策略。" }
+  n0@{ shape: rounded, label: "**install​_​native​_​policy**<br/>安装并维护原生窗口比例与尺寸策略。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**raw​_​handle::RawHandleWrapper**<br/>来自crate:bevy​_​window ↗：持有原始窗口<br/>及显示服务器句柄" }
+  n1@{ shape: rounded, label: "**RawHandleWrapper**<br/>来自crate:bevy​_​window ↗：持有原始窗口<br/>及显示服务器句柄" }
   class n1 node_component
   class n1 external_node
-  n2@{ shape: tag-rect, label: "**window​_​policy::NativePolicies**<br/>原生句柄守护对象必须与窗口线程绑定，实体<br/>退出时释放对应约束。" }
+  n2@{ shape: tag-rect, label: "**NativePolicies**<br/>原生句柄守护对象必须与窗口线程绑定，实体<br/>退出时释放对应约束。" }
   class n2 node_non_send
-  n3@{ shape: rounded, label: "**window::Window**<br/>来自crate:bevy​_​window ↗：保存窗口的呈<br/>现模式、位置、分辨率、标题、全屏及平台行<br/>为配置" }
+  n3@{ shape: rounded, label: "**Window**<br/>来自crate:bevy​_​window ↗：保存窗口的呈<br/>现模式、位置、分辨率、标题、全屏及平台行<br/>为配置" }
   class n3 node_component
   class n3 external_node
   subgraph layout_card_n4[" "]
-  n4@{ shape: rounded, label: "**window::PrimaryWindow**<br/>来自crate:bevy​_​window ↗：标识唯一的主<br/>窗口" }
+  n4@{ shape: rounded, label: "**PrimaryWindow**<br/>来自crate:bevy​_​window ↗：标识唯一的主<br/>窗口" }
   class n4 node_component
   class n4 external_node
   end
   style layout_card_n4 fill:none,stroke:none
-  n5@{ shape: fr-rect, label: "**window​_​policy::WindowPolicyPlugin**<br/>在现有会话日志和原生窗口创建之后安装比例<br/>策略。" }
+  n5@{ shape: fr-rect, label: "**WindowPolicyPlugin**<br/>在现有会话日志和原生窗口创建之后安装比例<br/>策略。" }
   class n5 node_plugin
   n1 e0@--> n0
   class e0 edge_read

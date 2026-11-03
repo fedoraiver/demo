@@ -40,11 +40,11 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: lin-rect, label: "**ApplyLocalAcceleration**<br/>组织外力应用与累积量清理。" }
   class n0 node_system_set
-  n1@{ shape: rounded, label: "**avian3d::dynamics::integrator::**<br/>**integrate​_​velocities**<br/>为活跃动态刚体积分速度与阻尼。" }
+  n1@{ shape: rounded, label: "**integrate​_​velocities**<br/>为活跃动态刚体积分速度与阻尼。" }
   class n1 node_system
   n2@{ shape: lin-rect, label: "**Velocity**<br/>组织速度与位置积分阶段。" }
   class n2 node_system_set
-  n3@{ shape: rounded, label: "**avian3d::dynamics::rigid​_​body::**<br/>**forces::plugin::apply​_​local​_​**<br/>**acceleration**<br/>在子步中把局部加速度作用到世界速度。" }
+  n3@{ shape: rounded, label: "**apply​_​local​_​acceleration**<br/>在子步中把局部加速度作用到世界速度。" }
   class n3 node_system
   n0 e0@-->|"先于"| n1
   class e0 edge_order

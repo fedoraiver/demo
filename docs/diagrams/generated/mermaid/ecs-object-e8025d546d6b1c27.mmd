@@ -40,25 +40,25 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: lin-rect, label: "**First**<br/>组织一次物理模拟步的主要阶段。" }
   class n0 node_system_set
-  n1@{ shape: rounded, label: "**avian3d::dynamics::solver::plugin::**<br/>**apply​_​contact​_​status​_​changes**<br/>把接触增删同步到约束图和物理岛。" }
+  n1@{ shape: rounded, label: "**apply​_​contact​_​status​_​changes**<br/>把接触增删同步到约束图和物理岛。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**avian3d::dynamics::joints::joint​_​**<br/>**graph::plugin::on​_​change​_​joint​_​**<br/>**entities#lt;avian3d::dynamics::joints::**<br/>**distance::DistanceJoint#gt;**<br/>在关节换端后重接刚体连接图。" }
+  n2@{ shape: rounded, label: "**on​_​change​_​joint​_​entities**<br/>在关节换端后重接刚体连接图。" }
   class n2 node_system
   n3@{ shape: lin-rect, label: "**BroadPhase**<br/>组织一次物理模拟步的主要阶段。" }
   class n3 node_system_set
-  n4@{ shape: rounded, label: "**avian3d::dynamics::joints::joint​_​**<br/>**graph::plugin::on​_​change​_​joint​_​**<br/>**entities#lt;avian3d::dynamics::joints::**<br/>**spherical::SphericalJoint#gt;**<br/>在关节换端后重接刚体连接图。" }
+  n4@{ shape: rounded, label: "**on​_​change​_​joint​_​entities**<br/>在关节换端后重接刚体连接图。" }
   class n4 node_system
-  n5@{ shape: rounded, label: "**avian3d::collision::collider::**<br/>**collider​_​transform::plugin::update​_​**<br/>**child​_​collider​_​position**<br/>由所属刚体位姿更新附属碰撞体的世界位姿。" }
+  n5@{ shape: rounded, label: "**update​_​child​_​collider​_​position**<br/>由所属刚体位姿更新附属碰撞体的世界位姿。" }
   class n5 node_system
-  n6@{ shape: rounded, label: "**avian3d::interpolation::update​_​**<br/>**previous​_​velocity**<br/>更新平滑显示所需的历史速度快照。" }
+  n6@{ shape: rounded, label: "**update​_​previous​_​velocity**<br/>更新平滑显示所需的历史速度快照。" }
   class n6 node_system
   n7@{ shape: lin-rect, label: "**Reset**<br/>划分物理诊断重置与写入。" }
   class n7 node_system_set
-  n8@{ shape: rounded, label: "**avian3d::dynamics::joints::joint​_​**<br/>**graph::plugin::on​_​change​_​joint​_​**<br/>**entities#lt;avian3d::dynamics::joints::**<br/>**prismatic::PrismaticJoint#gt;**<br/>在关节换端后重接刚体连接图。" }
+  n8@{ shape: rounded, label: "**on​_​change​_​joint​_​entities**<br/>在关节换端后重接刚体连接图。" }
   class n8 node_system
-  n9@{ shape: rounded, label: "**avian3d::dynamics::joints::joint​_​**<br/>**graph::plugin::on​_​change​_​joint​_​**<br/>**entities#lt;avian3d::dynamics::joints::**<br/>**revolute::RevoluteJoint#gt;**<br/>在关节换端后重接刚体连接图。" }
+  n9@{ shape: rounded, label: "**on​_​change​_​joint​_​entities**<br/>在关节换端后重接刚体连接图。" }
   class n9 node_system
-  n10@{ shape: rounded, label: "**avian3d::dynamics::joints::joint​_​**<br/>**graph::plugin::on​_​change​_​joint​_​**<br/>**entities#lt;avian3d::dynamics::joints::**<br/>**fixed::FixedJoint#gt;**<br/>在关节换端后重接刚体连接图。" }
+  n10@{ shape: rounded, label: "**on​_​change​_​joint​_​entities**<br/>在关节换端后重接刚体连接图。" }
   class n10 node_system
   n0 e0@-->|"集合成员"| n1
   class e0 edge_set_membership

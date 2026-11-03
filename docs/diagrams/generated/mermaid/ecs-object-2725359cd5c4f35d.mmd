@@ -36,9 +36,9 @@ flowchart LR
   classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**atmosphere::Atmosphere**<br/>描述行星半径、地表反照率与大气介质。" }
+  n0@{ shape: rounded, label: "**Atmosphere**<br/>描述行星半径、地表反照率与大气介质。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​pbr::atmosphere::extract​_​**<br/>**atmosphere**<br/>来自crate:bevy​_​pbr ↗：为三维相机选择<br/>并提取最近的大气。" }
+  n1@{ shape: rounded, label: "**extract​_​atmosphere**<br/>来自crate:bevy​_​pbr ↗：为三维相机选择<br/>并提取最近的大气。" }
   class n1 node_system
   class n1 external_node
   n0 e0@--> n1

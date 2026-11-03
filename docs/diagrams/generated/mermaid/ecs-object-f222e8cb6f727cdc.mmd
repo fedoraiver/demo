@@ -42,39 +42,39 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​pbr::atmosphere::environment::**<br/>**prepare​_​atmosphere​_​probe​_​bind​_​groups**<br/>为大气环境探针绑定光照、查找表和输出纹<br/>理。" }
+  n0@{ shape: rounded, label: "**prepare​_​atmosphere​_​probe​_​bind​_​groups**<br/>为大气环境探针绑定光照、查找表和输出纹<br/>理。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**render::light::LightMeta**<br/>汇集各视图的 GPU 光照 Uniform 数据。" }
+  n1@{ shape: cyl, label: "**LightMeta**<br/>汇集各视图的 GPU 光照 Uniform 数据。" }
   class n1 node_resource
-  n2@{ shape: rounded, label: "**atmosphere::environment::**<br/>**AtmosphereEnvironmentMap**<br/>保存由大气渲染更新的环境贴图。" }
+  n2@{ shape: rounded, label: "**AtmosphereEnvironmentMap**<br/>保存由大气渲染更新的环境贴图。" }
   class n2 node_component
   n3@{ shape: lin-rect, label: "**PrepareBindGroups**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
   class n3 node_system_set
   class n3 external_node
-  n4@{ shape: cyl, label: "**bevy​_​render::extract​_​component::**<br/>**ComponentUniforms#lt;atmosphere::**<br/>**GpuAtmosphereSettings#gt;**<br/>来自crate:bevy​_​render ↗：汇集同类组件<br/>的动态 Uniform 数据。" }
+  n4@{ shape: cyl, label: "**ComponentUniforms#lt;GpuAtmosphereSetti**<br/>**ngs#gt;**<br/>来自crate:bevy​_​render ↗：汇集同类组件<br/>的动态 Uniform 数据。" }
   class n4 node_resource
   class n4 external_node
-  n5@{ shape: cyl, label: "**atmosphere::resources::**<br/>**AtmosphereSampler**<br/>为大气查找纹理提供采样器。" }
+  n5@{ shape: cyl, label: "**AtmosphereSampler**<br/>为大气查找纹理提供采样器。" }
   class n5 node_resource
-  n6@{ shape: cyl, label: "**bevy​_​render::extract​_​component::**<br/>**ComponentUniforms#lt;atmosphere::**<br/>**resources::GpuAtmosphere#gt;**<br/>来自crate:bevy​_​render ↗：汇集同类组件<br/>的动态 Uniform 数据。" }
+  n6@{ shape: cyl, label: "**ComponentUniforms#lt;GpuAtmosphere#gt;**<br/>来自crate:bevy​_​render ↗：汇集同类组件<br/>的动态 Uniform 数据。" }
   class n6 node_resource
   class n6 external_node
-  n7@{ shape: cyl, label: "**bevy​_​render::view::ViewUniforms**<br/>来自crate:bevy​_​render ↗：汇集全部视图<br/>的动态 Uniform 数据。" }
+  n7@{ shape: cyl, label: "**ViewUniforms**<br/>来自crate:bevy​_​render ↗：汇集全部视图<br/>的动态 Uniform 数据。" }
   class n7 node_resource
   class n7 external_node
-  n8@{ shape: cyl, label: "**atmosphere::environment::**<br/>**AtmosphereProbeLayouts**<br/>描述大气环境贴图计算的资源布局。" }
+  n8@{ shape: cyl, label: "**AtmosphereProbeLayouts**<br/>描述大气环境贴图计算的资源布局。" }
   class n8 node_resource
-  n9@{ shape: cyl, label: "**bevy​_​render::renderer::RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
+  n9@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
   class n9 node_resource
   class n9 external_node
-  n10@{ shape: cyl, label: "**atmosphere::resources::**<br/>**AtmosphereTransforms**<br/>存储按视图索引的大气变换参数。" }
+  n10@{ shape: cyl, label: "**AtmosphereTransforms**<br/>存储按视图索引的大气变换参数。" }
   class n10 node_resource
-  n11@{ shape: rounded, label: "**atmosphere::environment::**<br/>**AtmosphereProbeBindGroups**<br/>绑定大气环境贴图计算所需的资源。" }
+  n11@{ shape: rounded, label: "**AtmosphereProbeBindGroups**<br/>绑定大气环境贴图计算所需的资源。" }
   class n11 node_component
-  n12@{ shape: cyl, label: "**bevy​_​render::render​_​resource::**<br/>**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
+  n12@{ shape: cyl, label: "**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
   class n12 node_resource
   class n12 external_node
-  n13@{ shape: rounded, label: "**atmosphere::environment::**<br/>**AtmosphereProbeTextures**<br/>汇集大气环境目标与散射查找纹理。" }
+  n13@{ shape: rounded, label: "**AtmosphereProbeTextures**<br/>汇集大气环境目标与散射查找纹理。" }
   class n13 node_component
   n1 e0@--> n0
   class e0 edge_read

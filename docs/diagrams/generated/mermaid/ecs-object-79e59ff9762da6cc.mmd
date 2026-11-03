@@ -38,13 +38,13 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**ssao::**<br/>**ScreenSpaceAmbientOcclusionResources**<br/>保存环境光遮蔽的中间纹理与设置缓冲。" }
+  n0@{ shape: rounded, label: "**ScreenSpaceAmbientOcclusionResources**<br/>保存环境光遮蔽的中间纹理与设置缓冲。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​pbr::ssao::prepare​_​ssao​_​**<br/>**textures**<br/>为环境光遮蔽分配中间纹理及参数缓冲。" }
+  n1@{ shape: rounded, label: "**prepare​_​ssao​_​textures**<br/>为环境光遮蔽分配中间纹理及参数缓冲。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​pbr::ssao::prepare​_​ssao​_​bind​_​**<br/>**groups**<br/>准备深度预处理、遮蔽与空间降噪的资源绑<br/>定。" }
+  n2@{ shape: rounded, label: "**prepare​_​ssao​_​bind​_​groups**<br/>准备深度预处理、遮蔽与空间降噪的资源绑<br/>定。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​pbr::render::mesh​_​view​_​**<br/>**bindings::prepare​_​mesh​_​view​_​bind​_​**<br/>**groups**<br/>为视图绑定光照、阴影及各可选渲染效果资<br/>源。" }
+  n3@{ shape: rounded, label: "**prepare​_​mesh​_​view​_​bind​_​groups**<br/>为视图绑定光照、阴影及各可选渲染效果资<br/>源。" }
   class n3 node_system
   n1 e0@-->|"插入"| n0
   class e0 edge_write

@@ -37,9 +37,9 @@ flowchart LR
   classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**main​_​schedule::**<br/>**FixedMainScheduleOrder**<br/>规定每次固定步内各子调度的顺序。" }
+  n0@{ shape: cyl, label: "**FixedMainScheduleOrder**<br/>规定每次固定步内各子调度的顺序。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​app::main​_​schedule::FixedMain::**<br/>**run​_​fixed​_​main**<br/>运行一个固定时间步的调度阶段。" }
+  n1@{ shape: rounded, label: "**run​_​fixed​_​main**<br/>运行一个固定时间步的调度阶段。" }
   class n1 node_system
   n1 e0@-->|"移除"| n0
   class e0 edge_write

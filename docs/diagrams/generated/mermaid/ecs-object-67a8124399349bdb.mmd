@@ -36,15 +36,15 @@ flowchart LR
   classDef node_message fill:#EDF4F6,stroke:#247B91,stroke-width:1.6px,color:#1F3340
   classDef edge_consume stroke:#247B91,stroke-width:1.8px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: lean-r, label: "**mouse::MouseWheel**<br/>传递鼠标滚轮位移。" }
+  n0@{ shape: lean-r, label: "**MouseWheel**<br/>传递鼠标滚轮位移。" }
   class n0 node_message
-  n1@{ shape: rounded, label: "**bevy​_​egui::input::write​_​mouse​_​wheel​_​**<br/>**messages​_​system**<br/>来自crate:bevy​_​egui ↗：向悬停 Egui<br/>上下文传递滚轮输入。" }
+  n1@{ shape: rounded, label: "**write​_​mouse​_​wheel​_​messages​_​system**<br/>来自crate:bevy​_​egui ↗：向悬停 Egui<br/>上下文传递滚轮输入。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​input​_​focus::dispatch​_​focused​_​**<br/>**input#lt;bevy​_​input::mouse::MouseWheel#gt;**<br/>来自crate:bevy​_​input​_​focus ↗：向有效<br/>焦点或主窗口派发输入。" }
+  n2@{ shape: rounded, label: "**dispatch​_​focused​_​input**<br/>来自crate:bevy​_​input​_​focus ↗：向有效<br/>焦点或主窗口派发输入。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​input::mouse::accumulate​_​mouse​_​**<br/>**scroll​_​system**<br/>累计本帧滚轮位移和单位。" }
+  n3@{ shape: rounded, label: "**accumulate​_​mouse​_​scroll​_​system**<br/>累计本帧滚轮位移和单位。" }
   class n3 node_system
   n0 e0@--> n1
   class e0 edge_consume

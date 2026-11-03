@@ -36,12 +36,12 @@ flowchart LR
   classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**mip​_​generation::DownsampleShaders**<br/>保存颜色和深度下采样着色器。" }
+  n0@{ shape: cyl, label: "**DownsampleShaders**<br/>保存颜色和深度下采样着色器。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​render::init​_​gpu​_​resource#lt;bevy​_​**<br/>**core​_​pipeline::mip​_​generation::**<br/>**DownsamplePipeline#gt;**<br/>来自crate:bevy​_​render ↗：构造并插入渲<br/>染所需资源。" }
+  n1@{ shape: rounded, label: "**init​_​gpu​_​resource**<br/>来自crate:bevy​_​render ↗：构造并插入渲<br/>染所需资源。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​core​_​pipeline::mip​_​generation::**<br/>**experimental::depth::create​_​**<br/>**downsample​_​depth​_​pipelines**<br/>在支持 GPU 剔除时一次性建立深度降采样管<br/>线。" }
+  n2@{ shape: rounded, label: "**create​_​downsample​_​depth​_​pipelines**<br/>在支持 GPU 剔除时一次性建立深度降采样管<br/>线。" }
   class n2 node_system
   n0 e0@--> n1
   class e0 edge_read

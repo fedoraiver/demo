@@ -43,30 +43,30 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​core​_​pipeline::mip​_​generation::**<br/>**experimental::depth::create​_​**<br/>**downsample​_​depth​_​pipelines**<br/>在支持 GPU 剔除时一次性建立深度降采样管<br/>线。" }
+  n0@{ shape: rounded, label: "**create​_​downsample​_​depth​_​pipelines**<br/>在支持 GPU 剔除时一次性建立深度降采样管<br/>线。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**mip​_​generation::experimental::**<br/>**depth::DownsampleDepthPipelines**<br/>保存深度金字塔两阶段的下采样管线。" }
+  n1@{ shape: cyl, label: "**DownsampleDepthPipelines**<br/>保存深度金字塔两阶段的下采样管线。" }
   class n1 node_resource
-  n2@{ shape: cyl, label: "**bevy​_​render::batching::gpu​_​**<br/>**preprocessing::**<br/>**GpuPreprocessingSupport**<br/>来自crate:bevy​_​render ↗：记录设备可采<br/>用的 GPU 预处理级别。" }
+  n2@{ shape: cyl, label: "**GpuPreprocessingSupport**<br/>来自crate:bevy​_​render ↗：记录设备可采<br/>用的 GPU 预处理级别。" }
   class n2 node_resource
   class n2 external_node
   n3@{ shape: lin-rect, label: "**Prepare**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
   class n3 node_system_set
   class n3 external_node
-  n4@{ shape: cyl, label: "**bevy​_​render::render​_​resource::**<br/>**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
+  n4@{ shape: cyl, label: "**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
   class n4 node_resource
   class n4 external_node
-  n5@{ shape: fr-rect, label: "**mip​_​generation::MipGenerationPlugin**<br/>在 GPU 上生成纹理 mip 层级。" }
+  n5@{ shape: fr-rect, label: "**MipGenerationPlugin**<br/>在 GPU 上生成纹理 mip 层级。" }
   class n5 node_plugin
-  n6@{ shape: cyl, label: "**bevy​_​render::render​_​resource::**<br/>**SpecializedComputePipelines#lt;mip​_​**<br/>**generation::experimental::depth::**<br/>**DownsampleDepthPipeline#gt;**<br/>来自crate:bevy​_​render ↗：按配置键缓存<br/>计算管线变体。" }
+  n6@{ shape: cyl, label: "**SpecializedComputePipelines#lt;Downsamp**<br/>**leDepthPipeline#gt;**<br/>来自crate:bevy​_​render ↗：按配置键缓存<br/>计算管线变体。" }
   class n6 node_resource
   class n6 external_node
   n7@{ shape: notch-rect, label: "**Local · has​_​run**<br/>确保深度下采样管线初始化只尝试一次。" }
   class n7 node_local
-  n8@{ shape: cyl, label: "**bevy​_​render::renderer::RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
+  n8@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
   class n8 node_resource
   class n8 external_node
-  n9@{ shape: cyl, label: "**mip​_​generation::DownsampleShaders**<br/>保存颜色和深度下采样着色器。" }
+  n9@{ shape: cyl, label: "**DownsampleShaders**<br/>保存颜色和深度下采样着色器。" }
   class n9 node_resource
   n0 e0@-->|"插入"| n1
   class e0 edge_write

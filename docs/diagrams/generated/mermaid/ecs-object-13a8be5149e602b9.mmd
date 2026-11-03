@@ -42,44 +42,44 @@ flowchart LR
   class n0 node_system_set
   n1@{ shape: lin-rect, label: "**Queue**<br/>组织渲染数据准备与绘制排队。" }
   class n1 node_system_set
-  n2@{ shape: rounded, label: "**bevy​_​core​_​pipeline::oit::configure​_​**<br/>**camera​_​depth​_​usages**<br/>来自crate:bevy​_​core​_​pipeline ↗：允<br/>许 OIT 相机采样自己的深度纹理。" }
+  n2@{ shape: rounded, label: "**configure​_​camera​_​depth​_​usages**<br/>来自crate:bevy​_​core​_​pipeline ↗：允<br/>许 OIT 相机采样自己的深度纹理。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​post​_​process::motion​_​blur::**<br/>**prepare​_​view​_​depth​_​texture​_​usages​_​**<br/>**for​_​motion​_​blur**<br/>来自crate:bevy​_​post​_​process ↗：让运<br/>动模糊相机的深度纹理可被采样。" }
+  n3@{ shape: rounded, label: "**prepare​_​view​_​depth​_​texture​_​usages​_​**<br/>**for​_​motion​_​blur**<br/>来自crate:bevy​_​post​_​process ↗：让运<br/>动模糊相机的深度纹理可被采样。" }
   class n3 node_system
   class n3 external_node
   n4@{ shape: lin-rect, label: "**Specialize**<br/>组织渲染数据准备与绘制排队。" }
   class n4 node_system_set
-  n5@{ shape: rounded, label: "**bevy​_​render::batching::gpu​_​**<br/>**preprocessing::clear​_​indirect​_​**<br/>**parameters​_​buffers**<br/>清空各渲染阶段上一轮间接绘制参数。" }
+  n5@{ shape: rounded, label: "**clear​_​indirect​_​parameters​_​buffers**<br/>清空各渲染阶段上一轮间接绘制参数。" }
   class n5 node_system
-  n6@{ shape: rounded, label: "**bevy​_​post​_​process::dof::prepare​_​**<br/>**auxiliary​_​depth​_​of​_​field​_​textures**<br/>来自crate:bevy​_​post​_​process ↗：为<br/>Bokeh 景深分配第二颜色输出。" }
+  n6@{ shape: rounded, label: "**prepare​_​auxiliary​_​depth​_​of​_​field​_​**<br/>**textures**<br/>来自crate:bevy​_​post​_​process ↗：为<br/>Bokeh 景深分配第二颜色输出。" }
   class n6 node_system
   class n6 external_node
-  n7@{ shape: rounded, label: "**bevy​_​render::view::prepare​_​view​_​**<br/>**attachments**<br/>按相机输出目标准备可共享的颜色附件。" }
+  n7@{ shape: rounded, label: "**prepare​_​view​_​attachments**<br/>按相机输出目标准备可共享的颜色附件。" }
   class n7 node_system
-  n8@{ shape: rounded, label: "**bevy​_​pbr::atmosphere::configure​_​**<br/>**camera​_​depth​_​usages**<br/>来自crate:bevy​_​pbr ↗：允许大气相机的<br/>深度纹理被着色器采样。" }
+  n8@{ shape: rounded, label: "**configure​_​camera​_​depth​_​usages**<br/>来自crate:bevy​_​pbr ↗：允许大气相机的<br/>深度纹理被着色器采样。" }
   class n8 node_system
   class n8 external_node
-  n9@{ shape: rounded, label: "**bevy​_​core​_​pipeline::core​_​3d::**<br/>**configure​_​occlusion​_​culling​_​view​_​**<br/>**targets**<br/>来自crate:bevy​_​core​_​pipeline ↗：让遮<br/>挡剔除相机的深度纹理可被采样。" }
+  n9@{ shape: rounded, label: "**configure​_​occlusion​_​culling​_​view​_​**<br/>**targets**<br/>来自crate:bevy​_​core​_​pipeline ↗：让遮<br/>挡剔除相机的深度纹理可被采样。" }
   class n9 node_system
   class n9 external_node
-  n10@{ shape: rounded, label: "**bevy​_​anti​_​alias::taa::prepare​_​taa​_​**<br/>**jitter**<br/>来自crate:bevy​_​anti​_​alias ↗：为 TAA<br/>相机逐帧设置 Halton 投影抖动。" }
+  n10@{ shape: rounded, label: "**prepare​_​taa​_​jitter**<br/>来自crate:bevy​_​anti​_​alias ↗：为 TAA<br/>相机逐帧设置 Halton 投影抖动。" }
   class n10 node_system
   class n10 external_node
-  n11@{ shape: rounded, label: "**bevy​_​render::view::cleanup​_​view​_​**<br/>**targets​_​for​_​resize**<br/>在窗口尺寸或呈现模式变化时撤销旧视图目<br/>标。" }
+  n11@{ shape: rounded, label: "**cleanup​_​view​_​targets​_​for​_​resize**<br/>在窗口尺寸或呈现模式变化时撤销旧视图目<br/>标。" }
   class n11 node_system
-  n12@{ shape: rounded, label: "**bevy​_​render::view::prepare​_​view​_​**<br/>**targets**<br/>为视图维护主颜色双缓冲及可选多采样目标。" }
+  n12@{ shape: rounded, label: "**prepare​_​view​_​targets**<br/>为视图维护主颜色双缓冲及可选多采样目标。" }
   class n12 node_system
-  n13@{ shape: rounded, label: "**bevy​_​render::view::clear​_​view​_​**<br/>**attachments**<br/>清空上一帧的视图输出附件表。" }
+  n13@{ shape: rounded, label: "**clear​_​view​_​attachments**<br/>清空上一帧的视图输出附件表。" }
   class n13 node_system
-  n14@{ shape: rounded, label: "**bevy​_​pbr::decal::clustered::prepare​_​**<br/>**decals**<br/>来自crate:bevy​_​pbr ↗：将已提取贴花的<br/>索引登记到全局聚簇元数据。" }
+  n14@{ shape: rounded, label: "**prepare​_​decals**<br/>来自crate:bevy​_​pbr ↗：将已提取贴花的<br/>索引登记到全局聚簇元数据。" }
   class n14 node_system
   class n14 external_node
-  n15@{ shape: rounded, label: "**bevy​_​render::view::window::**<br/>**screenshot::prepare​_​screenshots**<br/>为有效截图目标准备捕获资源和输出附件。" }
+  n15@{ shape: rounded, label: "**prepare​_​screenshots**<br/>为有效截图目标准备捕获资源和输出附件。" }
   class n15 node_system
-  n16@{ shape: rounded, label: "**bevy​_​render::view::window::prepare​_​**<br/>**windows**<br/>为有相机输出或需要首次呈现的窗口取得交换<br/>链纹理，保留可复用的未呈现帧，并处理尺<br/>寸、模式变化及表面获取错误。" }
+  n16@{ shape: rounded, label: "**prepare​_​windows**<br/>为有相机输出或需要首次呈现的窗口取得交换<br/>链纹理，保留可复用的未呈现帧，并处理尺<br/>寸、模式变化及表面获取错误。" }
   class n16 node_system
-  n17@{ shape: rounded, label: "**bevy​_​post​_​process::dof::configure​_​**<br/>**depth​_​of​_​field​_​view​_​targets**<br/>来自crate:bevy​_​post​_​process ↗：允许<br/>景深相机采样自己的深度纹理。" }
+  n17@{ shape: rounded, label: "**configure​_​depth​_​of​_​field​_​view​_​**<br/>**targets**<br/>来自crate:bevy​_​post​_​process ↗：允许<br/>景深相机采样自己的深度纹理。" }
   class n17 node_system
   class n17 external_node
   n0 e0@-->|"先于"| n1

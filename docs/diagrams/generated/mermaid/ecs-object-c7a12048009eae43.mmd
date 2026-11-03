@@ -39,7 +39,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: notch-rect, label: "**Local · seen​_​views**<br/>记录本轮仍存在的三维网格视图。" }
   class n0 node_local
-  n1@{ shape: rounded, label: "**bevy​_​pbr::render::mesh::check​_​views​_​**<br/>**need​_​specialization**<br/>汇总视图渲染特性并检测管线配置变化。" }
+  n1@{ shape: rounded, label: "**check​_​views​_​need​_​specialization**<br/>汇总视图渲染特性并检测管线配置变化。" }
   class n1 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

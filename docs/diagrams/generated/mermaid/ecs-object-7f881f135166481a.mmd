@@ -39,15 +39,15 @@ flowchart LR
   classDef edge_order stroke:#334155,stroke-width:2px
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​render::view::window::**<br/>**screenshot::clear​_​screenshots**<br/>通过延迟命令销毁已带 Captured 标记的截<br/>图实体，清理已经完成捕获的请求。" }
+  n0@{ shape: rounded, label: "**clear​_​screenshots**<br/>通过延迟命令销毁已带 Captured 标记的截<br/>图实体，清理已经完成捕获的请求。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**bevy​_​ecs::message::update::message​_​**<br/>**update​_​system**<br/>来自crate:bevy​_​ecs ↗：轮换世界中已注<br/>册的消息缓冲。" }
+  n1@{ shape: rounded, label: "**message​_​update​_​system**<br/>来自crate:bevy​_​ecs ↗：轮换世界中已注<br/>册的消息缓冲。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: lin-rect, label: "**SystemTypeSet:bevy​_​ecs::schedule::**<br/>**executor::ApplyDeferred**<br/>来自应用 ↗：保留未注册系统类型的依赖端<br/>点。" }
+  n2@{ shape: lin-rect, label: "**SystemTypeSet:ApplyDeferred**<br/>来自应用 ↗：保留未注册系统类型的依赖端<br/>点。" }
   class n2 node_system_set
   class n2 external_node
-  n3@{ shape: fr-rect, label: "**view::window::screenshot::**<br/>**ScreenshotPlugin**<br/>处理截图请求与图像回传。" }
+  n3@{ shape: fr-rect, label: "**ScreenshotPlugin**<br/>处理截图请求与图像回传。" }
   class n3 node_plugin
   n1 e0@-->|"先于"| n0
   class e0 edge_order

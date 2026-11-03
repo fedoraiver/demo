@@ -42,10 +42,10 @@ flowchart LR
   class n0 node_system_set
   n1@{ shape: lin-rect, label: "**Render**<br/>组织绘制执行、提交与收尾。" }
   class n1 node_system_set
-  n2@{ shape: rounded, label: "**bevy​_​core​_​pipeline::schedule::**<br/>**handle​_​uncovered​_​swap​_​chains**<br/>来自crate:bevy​_​core​_​pipeline ↗：清除<br/>本帧没有相机覆盖的窗口交换链。" }
+  n2@{ shape: rounded, label: "**handle​_​uncovered​_​swap​_​chains**<br/>来自crate:bevy​_​core​_​pipeline ↗：清除<br/>本帧没有相机覆盖的窗口交换链。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​core​_​pipeline::schedule::**<br/>**submit​_​pending​_​command​_​buffers**<br/>来自crate:bevy​_​core​_​pipeline ↗：将排<br/>队完成的渲染命令缓冲提交到 GPU。" }
+  n3@{ shape: rounded, label: "**submit​_​pending​_​command​_​buffers**<br/>来自crate:bevy​_​core​_​pipeline ↗：将排<br/>队完成的渲染命令缓冲提交到 GPU。" }
   class n3 node_system
   class n3 external_node
   n4@{ shape: lin-rect, label: "**Finish**<br/>组织绘制执行、提交与收尾。" }

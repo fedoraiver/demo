@@ -38,15 +38,15 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**probe::Skybox**<br/>为三维相机绘制立方体纹理天空盒。" }
+  n0@{ shape: rounded, label: "**Skybox**<br/>为三维相机绘制立方体纹理天空盒。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​core​_​pipeline::skybox::extract​_​**<br/>**skybox**<br/>来自crate:bevy​_​core​_​pipeline ↗：提取<br/>天空盒并计算曝光及旋转参数。" }
+  n1@{ shape: rounded, label: "**extract​_​skybox**<br/>来自crate:bevy​_​core​_​pipeline ↗：提取<br/>天空盒并计算曝光及旋转参数。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​core​_​pipeline::skybox::prepare​_​**<br/>**skybox​_​pipelines**<br/>来自crate:bevy​_​core​_​pipeline ↗：按目<br/>标格式与采样数准备天空盒管线。" }
+  n2@{ shape: rounded, label: "**prepare​_​skybox​_​pipelines**<br/>来自crate:bevy​_​core​_​pipeline ↗：按目<br/>标格式与采样数准备天空盒管线。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​core​_​pipeline::skybox::prepare​_​**<br/>**skybox​_​bind​_​groups**<br/>来自crate:bevy​_​core​_​pipeline ↗：为有<br/>效天空盒图像建立视图绑定组。" }
+  n3@{ shape: rounded, label: "**prepare​_​skybox​_​bind​_​groups**<br/>来自crate:bevy​_​core​_​pipeline ↗：为有<br/>效天空盒图像建立视图绑定组。" }
   class n3 node_system
   class n3 external_node
   n0 e0@--> n1

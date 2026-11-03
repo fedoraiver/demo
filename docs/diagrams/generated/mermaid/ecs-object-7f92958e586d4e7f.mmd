@@ -39,7 +39,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: notch-rect, label: "**Local · removals.0.1**<br/>跟踪 CasUniform 移除记录的读取进度。" }
   class n0 node_local
-  n1@{ shape: rounded, label: "**bevy​_​anti​_​alias::contrast​_​adaptive​_​**<br/>**sharpening::prepare​_​cas​_​pipelines**<br/>按去噪与目标格式准备视图锐化管线。" }
+  n1@{ shape: rounded, label: "**prepare​_​cas​_​pipelines**<br/>按去噪与目标格式准备视图锐化管线。" }
   class n1 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

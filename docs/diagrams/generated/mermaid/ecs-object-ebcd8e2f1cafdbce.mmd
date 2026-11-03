@@ -40,7 +40,7 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​ui::widget::Text**<br/>保存 UI 文本根的第一段内容。" }
+  n0@{ shape: rounded, label: "**Text**<br/>保存 UI 文本根的第一段内容。" }
   class n0 node_component
   n1@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示携带与释放卡片标题。" }
   class n1 node_entity
@@ -69,7 +69,7 @@ flowchart LR
   n9@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示导航操作名称。" }
   class n9 node_entity
   class n9 external_node
-  n10@{ shape: rounded, label: "**bevy​_​ui::widget::image::update​_​**<br/>**image​_​content​_​size​_​system**<br/>按图像或图集区域更新 UI 的固有尺寸测<br/>量。" }
+  n10@{ shape: rounded, label: "**update​_​image​_​content​_​size​_​system**<br/>按图像或图集区域更新 UI 的固有尺寸测<br/>量。" }
   class n10 node_system
   n11@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：标明设置页面的返回入口。" }
   class n11 node_entity
@@ -101,7 +101,7 @@ flowchart LR
   n20@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示音频设置按钮的标题。" }
   class n20 node_entity
   class n20 external_node
-  n21@{ shape: rounded, label: "**demo::ui::style::update​_​settings​_​**<br/>**text**<br/>来自ui ↗：原位更新设置草稿数值与保存提<br/>示。" }
+  n21@{ shape: rounded, label: "**update​_​settings​_​text**<br/>来自ui ↗：原位更新设置草稿数值与保存提<br/>示。" }
   class n21 node_system
   class n21 external_node
   n22@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示暂停包裹提示。" }
@@ -302,7 +302,7 @@ flowchart LR
   n87@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制辅助功能设置按钮的入口箭<br/>头。" }
   class n87 node_entity
   class n87 external_node
-  n88@{ shape: rounded, label: "**bevy​_​ui​_​render::extract​_​uinode​_​**<br/>**changes**<br/>来自crate:bevy​_​ui​_​render ↗：使变化或<br/>移除的 UI 数据失效并清理旧渲染实体。" }
+  n88@{ shape: rounded, label: "**extract​_​uinode​_​changes**<br/>来自crate:bevy​_​ui​_​render ↗：使变化或<br/>移除的 UI 数据失效并清理旧渲染实体。" }
   class n88 node_system
   class n88 external_node
   n89@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示导航操作名称。" }
@@ -353,7 +353,7 @@ flowchart LR
   n104@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：说明垂直同步尚未开放。" }
   class n104 node_entity
   class n104 external_node
-  n105@{ shape: rounded, label: "**bevy​_​ui::accessibility::image​_​**<br/>**changed**<br/>为非按钮图像生成或更新无障碍标签。" }
+  n105@{ shape: rounded, label: "**image​_​changed**<br/>为非按钮图像生成或更新无障碍标签。" }
   class n105 node_system
   n106@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示 ISLAND 品牌主标题。" }
   class n106 node_entity
@@ -370,7 +370,7 @@ flowchart LR
   n110@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制操作设置按钮的入口箭头。" }
   class n110 node_entity
   class n110 external_node
-  n111@{ shape: rounded, label: "**bevy​_​ui::accessibility::button​_​**<br/>**changed**<br/>为按钮生成或更新无障碍角色与文本标签。" }
+  n111@{ shape: rounded, label: "**button​_​changed**<br/>为按钮生成或更新无障碍角色与文本标签。" }
   class n111 node_system
   n112@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示辅助功能设置按钮的标题。" }
   class n112 node_entity
@@ -558,7 +558,7 @@ flowchart LR
   n173@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：标明设置页面的返回入口。" }
   class n173 node_entity
   class n173 external_node
-  n174@{ shape: rounded, label: "**demo::ui::style::update​_​description**<br/>来自ui ↗：更新当前聚焦设置的说明标题与<br/>正文。" }
+  n174@{ shape: rounded, label: "**update​_​description**<br/>来自ui ↗：更新当前聚焦设置的说明标题与<br/>正文。" }
   class n174 node_system
   class n174 external_node
   n175@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示 ISLAND 品牌主标题。" }
@@ -675,7 +675,7 @@ flowchart LR
   n212@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示返回操作名称。" }
   class n212 node_entity
   class n212 external_node
-  n213@{ shape: rounded, label: "**bevy​_​ui::widget::text::measure​_​text​_​**<br/>**system**<br/>在文本变化后更新内容测量并安排文字重排。" }
+  n213@{ shape: rounded, label: "**measure​_​text​_​system**<br/>在文本变化后更新内容测量并安排文字重排。" }
   class n213 node_system
   n214@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：标明帧率上限设置行。" }
   class n214 node_entity
@@ -695,13 +695,13 @@ flowchart LR
   n219@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：说明抗锯齿尚未开放。" }
   class n219 node_entity
   class n219 external_node
-  n220@{ shape: rounded, label: "**demo::ui::volume::update​_​volume​_​**<br/>**visuals**<br/>来自ui ↗：草稿由请求系统在 PreUpdate<br/>修改，随后同帧更新已有数字和轨道填充。" }
+  n220@{ shape: rounded, label: "**update​_​volume​_​visuals**<br/>来自ui ↗：草稿由请求系统在 PreUpdate<br/>修改，随后同帧更新已有数字和轨道填充。" }
   class n220 node_system
   class n220 external_node
   n221@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示 Enter 键帽文字。" }
   class n221 node_entity
   class n221 external_node
-  n222@{ shape: rounded, label: "**bevy​_​ui::accessibility::label​_​**<br/>**changed**<br/>把标签子树文字写入无障碍节点。" }
+  n222@{ shape: rounded, label: "**label​_​changed**<br/>把标签子树文字写入无障碍节点。" }
   class n222 node_system
   n223@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示 Esc 键帽文字。" }
   class n223 node_entity

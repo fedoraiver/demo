@@ -40,14 +40,14 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​pbr::medium::init​_​scattering​_​**<br/>**medium​_​sampler**<br/>初始化散射介质查找表的线性采样器。" }
+  n0@{ shape: rounded, label: "**init​_​scattering​_​medium​_​sampler**<br/>初始化散射介质查找表的线性采样器。" }
   class n0 node_system
-  n1@{ shape: fr-rect, label: "**medium::ScatteringMediumPlugin**<br/>准备散射介质 GPU 数据与采样器。" }
+  n1@{ shape: fr-rect, label: "**ScatteringMediumPlugin**<br/>准备散射介质 GPU 数据与采样器。" }
   class n1 node_plugin
-  n2@{ shape: cyl, label: "**bevy​_​render::renderer::RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
+  n2@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
   class n2 node_resource
   class n2 external_node
-  n3@{ shape: cyl, label: "**medium::ScatteringMediumSampler**<br/>为散射介质查找表提供双线性采样。" }
+  n3@{ shape: cyl, label: "**ScatteringMediumSampler**<br/>为散射介质查找表提供双线性采样。" }
   class n3 node_resource
   n1 e0@-->|"调用"| n0
   class e0 edge_registration

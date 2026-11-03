@@ -38,33 +38,33 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**bevy​_​asset::Assets#lt;texture​_​atlas::**<br/>**TextureAtlasLayout#gt;**<br/>按资产身份存储对象并暂存变化消息。" }
+  n0@{ shape: cyl, label: "**Assets#lt;TextureAtlasLayout#gt;**<br/>按资产身份存储对象并暂存变化消息。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​ui::widget::image::update​_​**<br/>**image​_​content​_​size​_​system**<br/>来自crate:bevy​_​ui ↗：按图像或图集区域<br/>更新 UI 的固有尺寸测量。" }
+  n1@{ shape: rounded, label: "**update​_​image​_​content​_​size​_​system**<br/>来自crate:bevy​_​ui ↗：按图像或图集区域<br/>更新 UI 的固有尺寸测量。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​sprite::calculate​_​bounds​_​2d**<br/>来自crate:bevy​_​sprite ↗：为二维网格和<br/>精灵计算局部包围盒。" }
+  n2@{ shape: rounded, label: "**calculate​_​bounds​_​2d**<br/>来自crate:bevy​_​sprite ↗：为二维网格和<br/>精灵计算局部包围盒。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​asset::assets::Assets#lt;bevy​_​**<br/>**image::texture​_​atlas::**<br/>**TextureAtlasLayout#gt;::asset​_​events​_​**<br/>**condition**<br/>判断是否有待发布的资产变化。" }
+  n3@{ shape: rounded, label: "**asset​_​events​_​condition**<br/>判断是否有待发布的资产变化。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**bevy​_​sprite::picking​_​backend::**<br/>**sprite​_​picking**<br/>来自crate:bevy​_​sprite ↗：按精灵图像和<br/>拾取配置计算指针命中。" }
+  n4@{ shape: rounded, label: "**sprite​_​picking**<br/>来自crate:bevy​_​sprite ↗：按精灵图像和<br/>拾取配置计算指针命中。" }
   class n4 node_system
   class n4 external_node
-  n5@{ shape: rounded, label: "**bevy​_​ui​_​render::ui​_​texture​_​slice​_​**<br/>**pipeline::extract​_​ui​_​texture​_​slices**<br/>来自crate:bevy​_​ui​_​render ↗：增量提取<br/>九宫格或平铺 UI 图像切片。" }
+  n5@{ shape: rounded, label: "**extract​_​ui​_​texture​_​slices**<br/>来自crate:bevy​_​ui​_​render ↗：增量提取<br/>九宫格或平铺 UI 图像切片。" }
   class n5 node_system
   class n5 external_node
-  n6@{ shape: rounded, label: "**bevy​_​asset::assets::Assets#lt;bevy​_​**<br/>**image::texture​_​atlas::**<br/>**TextureAtlasLayout#gt;::track​_​assets**<br/>同步资产存活状态并处理句柄释放。" }
+  n6@{ shape: rounded, label: "**track​_​assets**<br/>同步资产存活状态并处理句柄释放。" }
   class n6 node_system
-  n7@{ shape: rounded, label: "**bevy​_​asset::assets::Assets#lt;bevy​_​**<br/>**image::texture​_​atlas::**<br/>**TextureAtlasLayout#gt;::asset​_​events**<br/>发布累计的资产变化消息。" }
+  n7@{ shape: rounded, label: "**asset​_​events**<br/>发布累计的资产变化消息。" }
   class n7 node_system
-  n8@{ shape: rounded, label: "**bevy​_​winit::cursor::update​_​cursors**<br/>来自crate:bevy​_​winit ↗：准备原生或自<br/>定义光标并保留资产重试。" }
+  n8@{ shape: rounded, label: "**update​_​cursors**<br/>来自crate:bevy​_​winit ↗：准备原生或自<br/>定义光标并保留资产重试。" }
   class n8 node_system
   class n8 external_node
-  n9@{ shape: rounded, label: "**bevy​_​sprite​_​render::sprite​_​mesh::**<br/>**add​_​material**<br/>来自crate:bevy​_​sprite​_​render ↗：按精<br/>灵与锚点复用或创建默认网格材质。" }
+  n9@{ shape: rounded, label: "**add​_​material**<br/>来自crate:bevy​_​sprite​_​render ↗：按精<br/>灵与锚点复用或创建默认网格材质。" }
   class n9 node_system
   class n9 external_node
-  n10@{ shape: rounded, label: "**bevy​_​ui​_​render::extract​_​uinode​_​**<br/>**images**<br/>来自crate:bevy​_​ui​_​render ↗：按节点视<br/>觉盒与图集区域提取普通 UI 图像。" }
+  n10@{ shape: rounded, label: "**extract​_​uinode​_​images**<br/>来自crate:bevy​_​ui​_​render ↗：按节点视<br/>觉盒与图集区域提取普通 UI 图像。" }
   class n10 node_system
   class n10 external_node
   n0 e0@--> n1

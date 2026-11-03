@@ -37,12 +37,12 @@ flowchart LR
   classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**bevy​_​render::render​_​resource::**<br/>**SpecializedRenderPipelines#lt;ssr::**<br/>**ScreenSpaceReflectionsPipeline#gt;**<br/>按配置键缓存渲染管线变体。" }
+  n0@{ shape: cyl, label: "**SpecializedRenderPipelines#lt;ScreenSpa**<br/>**ceReflectionsPipeline#gt;**<br/>按配置键缓存渲染管线变体。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​pbr::ssr::prepare​_​ssr​_​pipelines**<br/>来自crate:bevy​_​pbr ↗：为具备反射及深<br/>度、延迟预通道的视图选择管线。" }
+  n1@{ shape: rounded, label: "**prepare​_​ssr​_​pipelines**<br/>来自crate:bevy​_​pbr ↗：为具备反射及深<br/>度、延迟预通道的视图选择管线。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​render::init​_​gpu​_​resource#lt;bevy​_​**<br/>**render::render​_​resource::pipeline​_​**<br/>**specializer::**<br/>**SpecializedRenderPipelines#lt;bevy​_​**<br/>**pbr::ssr::**<br/>**ScreenSpaceReflectionsPipeline#gt;#gt;**<br/>构造并插入渲染所需资源。" }
+  n2@{ shape: rounded, label: "**init​_​gpu​_​resource**<br/>构造并插入渲染所需资源。" }
   class n2 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

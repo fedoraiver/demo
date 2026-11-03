@@ -40,25 +40,25 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**character::components::**<br/>**CharacterMotion**<br/>接地状态由物理查询派生；实际速度直接读<br/>取 Avian 的 LinearVelocity。" }
+  n0@{ shape: rounded, label: "**CharacterMotion**<br/>接地状态由物理查询派生；实际速度直接读<br/>取 Avian 的 LinearVelocity。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**demo::character::motion::update​_​**<br/>**grounded**<br/>脚底附近的小球向下探测支撑面；墙面法线和<br/>上升中的角色不能算接地。" }
+  n1@{ shape: rounded, label: "**update​_​grounded**<br/>脚底附近的小球向下探测支撑面；墙面法线和<br/>上升中的角色不能算接地。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**demo::character::motion::update​_​**<br/>**grounded**<br/>脚底附近的小球向下探测支撑面；墙面法线和<br/>上升中的角色不能算接地。" }
+  n2@{ shape: rounded, label: "**update​_​grounded**<br/>脚底附近的小球向下探测支撑面；墙面法线和<br/>上升中的角色不能算接地。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**demo::character::motion::move​_​**<br/>**characters**<br/>用有上限的加速度趋近目标水平速度，保留碰<br/>撞和外部冲量造成的实际运动。" }
+  n3@{ shape: rounded, label: "**move​_​characters**<br/>用有上限的加速度趋近目标水平速度，保留碰<br/>撞和外部冲量造成的实际运动。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**demo::character::motion::jump​_​**<br/>**characters**<br/>跳跃只消费一次，通过冲量改变速度；重力和<br/>位置积分全部交给 Avian。" }
+  n4@{ shape: rounded, label: "**jump​_​characters**<br/>跳跃只消费一次，通过冲量改变速度；重力和<br/>位置积分全部交给 Avian。" }
   class n4 node_system
-  n5@{ shape: rounded, label: "**demo::character​_​animation::state::**<br/>**sync​_​courier​_​animation**<br/>来自character​_​animation ↗：Update 位<br/>于固定模拟与呈现同步之后；零固定步帧也使<br/>用本帧朝向和已有真实速度。" }
+  n5@{ shape: rounded, label: "**sync​_​courier​_​animation**<br/>来自character​_​animation ↗：Update 位<br/>于固定模拟与呈现同步之后；零固定步帧也使<br/>用本帧朝向和已有真实速度。" }
   class n5 node_system
   class n5 external_node
-  n6@{ shape: rounded, label: "**demo::character::motion::log​_​**<br/>**character​_​velocity**<br/>采样物理解算后的实际速度，便于检查加速<br/>度、刹车和碰撞反馈。" }
+  n6@{ shape: rounded, label: "**log​_​character​_​velocity**<br/>采样物理解算后的实际速度，便于检查加速<br/>度、刹车和碰撞反馈。" }
   class n6 node_system
-  n7@{ shape: rounded, label: "**demo::character​_​animation::binding::**<br/>**initialize​_​ready​_​couriers**<br/>来自character​_​animation ↗：场景就绪<br/>后只遍历该视觉根的子树，避免把 NPC 或其<br/>他模型的播放器接到主角上。" }
+  n7@{ shape: rounded, label: "**initialize​_​ready​_​couriers**<br/>来自character​_​animation ↗：场景就绪<br/>后只遍历该视觉根的子树，避免把 NPC 或其<br/>他模型的播放器接到主角上。" }
   class n7 node_system
   class n7 external_node
-  n8@{ shape: rounded, label: "**demo::bounds​_​recovery::recovery::**<br/>**recover​_​from​_​water**<br/>来自bounds​_​recovery ↗：恢复实体自身的<br/>出生姿态；角色落水只释放手中物品，物品落<br/>水时再独立恢复。" }
+  n8@{ shape: rounded, label: "**recover​_​from​_​water**<br/>来自bounds​_​recovery ↗：恢复实体自身的<br/>出生姿态；角色落水只释放手中物品，物品落<br/>水时再独立恢复。" }
   class n8 node_system
   class n8 external_node
   n9@{ shape: rounded, label: "**spawn​_​actors · 创建模板**<br/>来自scene​_​assembly ↗：创建海岛中的可<br/>控制快递员根实体。" }

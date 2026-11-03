@@ -38,14 +38,14 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​render::camera::MipBias**<br/>调整相机采样材质纹理时的 mip 偏置。" }
+  n0@{ shape: rounded, label: "**MipBias**<br/>调整相机采样材质纹理时的 mip 偏置。" }
   class n0 node_component
   subgraph layout_card_n1[" "]
-  n1@{ shape: rounded, label: "**bevy​_​render::camera::extract​_​cameras**<br/>把活动相机及可见实体提取到渲染世界。" }
+  n1@{ shape: rounded, label: "**extract​_​cameras**<br/>把活动相机及可见实体提取到渲染世界。" }
   class n1 node_system
   end
   style layout_card_n1 fill:none,stroke:none
-  n2@{ shape: rounded, label: "**bevy​_​render::view::prepare​_​view​_​**<br/>**uniforms**<br/>生成视图投影、抖动、裁剪及 LOD 的 GPU<br/>参数。" }
+  n2@{ shape: rounded, label: "**prepare​_​view​_​uniforms**<br/>生成视图投影、抖动、裁剪及 LOD 的 GPU<br/>参数。" }
   class n2 node_system
   n1 e0@-->|"插入"| n0
   class e0 edge_write

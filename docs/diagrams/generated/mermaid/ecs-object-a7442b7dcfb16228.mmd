@@ -37,55 +37,55 @@ flowchart LR
   classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**checkbox::Checkbox**<br/>响应复选框交互并提出勾选变化。" }
+  n0@{ shape: rounded, label: "**Checkbox**<br/>响应复选框交互并提出勾选变化。" }
   class n0 node_component
-  n1@{ shape: hex, label: "**bevy​_​ui​_​widgets::checkbox::checkbox​_​**<br/>**on​_​pointer​_​drag​_​end**<br/>在拖动结束时清除复选框按压。" }
+  n1@{ shape: hex, label: "**checkbox​_​on​_​pointer​_​drag​_​end**<br/>在拖动结束时清除复选框按压。" }
   class n1 node_observer
-  n2@{ shape: hex, label: "**bevy​_​ui​_​widgets::checkbox::checkbox​_​**<br/>**on​_​pointer​_​drag​_​end**<br/>在拖动结束时清除复选框按压。" }
+  n2@{ shape: hex, label: "**checkbox​_​on​_​pointer​_​drag​_​end**<br/>在拖动结束时清除复选框按压。" }
   class n2 node_observer
-  n3@{ shape: hex, label: "**bevy​_​ui​_​widgets::checkbox::checkbox​_​**<br/>**on​_​pointer​_​cancel**<br/>取消复选框的指针按压状态。" }
+  n3@{ shape: hex, label: "**checkbox​_​on​_​pointer​_​cancel**<br/>取消复选框的指针按压状态。" }
   class n3 node_observer
-  n4@{ shape: hex, label: "**bevy​_​ui​_​widgets::checkbox::checkbox​_​**<br/>**on​_​pointer​_​click**<br/>通过点击请求切换复选框勾选。" }
+  n4@{ shape: hex, label: "**checkbox​_​on​_​pointer​_​click**<br/>通过点击请求切换复选框勾选。" }
   class n4 node_observer
-  n5@{ shape: hex, label: "**bevy​_​ui​_​widgets::checkbox::checkbox​_​**<br/>**on​_​set​_​checked**<br/>将复选框设值请求转为勾选变化。" }
+  n5@{ shape: hex, label: "**checkbox​_​on​_​set​_​checked**<br/>将复选框设值请求转为勾选变化。" }
   class n5 node_observer
-  n6@{ shape: hex, label: "**bevy​_​ui​_​widgets::checkbox::checkbox​_​**<br/>**on​_​key​_​input**<br/>通过确认键请求切换复选框勾选。" }
+  n6@{ shape: hex, label: "**checkbox​_​on​_​key​_​input**<br/>通过确认键请求切换复选框勾选。" }
   class n6 node_observer
-  n7@{ shape: hex, label: "**bevy​_​ui​_​widgets::checkbox::checkbox​_​**<br/>**on​_​pointer​_​up**<br/>在指针释放时清除复选框按压。" }
+  n7@{ shape: hex, label: "**checkbox​_​on​_​pointer​_​up**<br/>在指针释放时清除复选框按压。" }
   class n7 node_observer
-  n8@{ shape: hex, label: "**bevy​_​ui​_​widgets::checkbox::checkbox​_​**<br/>**on​_​key​_​input**<br/>通过确认键请求切换复选框勾选。" }
+  n8@{ shape: hex, label: "**checkbox​_​on​_​key​_​input**<br/>通过确认键请求切换复选框勾选。" }
   class n8 node_observer
-  n9@{ shape: hex, label: "**bevy​_​ui​_​widgets::checkbox::checkbox​_​**<br/>**on​_​pointer​_​down**<br/>处理复选框按压、焦点与即时勾选请求。" }
+  n9@{ shape: hex, label: "**checkbox​_​on​_​pointer​_​down**<br/>处理复选框按压、焦点与即时勾选请求。" }
   class n9 node_observer
-  n10@{ shape: hex, label: "**bevy​_​ui​_​widgets::checkbox::checkbox​_​**<br/>**on​_​key​_​input**<br/>通过确认键请求切换复选框勾选。" }
+  n10@{ shape: hex, label: "**checkbox​_​on​_​key​_​input**<br/>通过确认键请求切换复选框勾选。" }
   class n10 node_observer
-  n11@{ shape: hex, label: "**bevy​_​ui​_​widgets::checkbox::checkbox​_​**<br/>**on​_​set​_​checked**<br/>将复选框设值请求转为勾选变化。" }
+  n11@{ shape: hex, label: "**checkbox​_​on​_​set​_​checked**<br/>将复选框设值请求转为勾选变化。" }
   class n11 node_observer
-  n12@{ shape: hex, label: "**bevy​_​ui​_​widgets::checkbox::checkbox​_​**<br/>**on​_​pointer​_​down**<br/>处理复选框按压、焦点与即时勾选请求。" }
+  n12@{ shape: hex, label: "**checkbox​_​on​_​pointer​_​down**<br/>处理复选框按压、焦点与即时勾选请求。" }
   class n12 node_observer
-  n13@{ shape: hex, label: "**bevy​_​ui​_​widgets::checkbox::checkbox​_​**<br/>**on​_​pointer​_​click**<br/>通过点击请求切换复选框勾选。" }
+  n13@{ shape: hex, label: "**checkbox​_​on​_​pointer​_​click**<br/>通过点击请求切换复选框勾选。" }
   class n13 node_observer
-  n14@{ shape: hex, label: "**bevy​_​ui​_​widgets::checkbox::checkbox​_​**<br/>**on​_​pointer​_​down**<br/>处理复选框按压、焦点与即时勾选请求。" }
+  n14@{ shape: hex, label: "**checkbox​_​on​_​pointer​_​down**<br/>处理复选框按压、焦点与即时勾选请求。" }
   class n14 node_observer
-  n15@{ shape: hex, label: "**bevy​_​ui​_​widgets::checkbox::checkbox​_​**<br/>**on​_​pointer​_​up**<br/>在指针释放时清除复选框按压。" }
+  n15@{ shape: hex, label: "**checkbox​_​on​_​pointer​_​up**<br/>在指针释放时清除复选框按压。" }
   class n15 node_observer
-  n16@{ shape: hex, label: "**bevy​_​ui​_​widgets::checkbox::checkbox​_​**<br/>**on​_​toggle​_​checked**<br/>将复选框切换请求转为勾选变化。" }
+  n16@{ shape: hex, label: "**checkbox​_​on​_​toggle​_​checked**<br/>将复选框切换请求转为勾选变化。" }
   class n16 node_observer
-  n17@{ shape: hex, label: "**bevy​_​ui​_​widgets::checkbox::checkbox​_​**<br/>**on​_​pointer​_​up**<br/>在指针释放时清除复选框按压。" }
+  n17@{ shape: hex, label: "**checkbox​_​on​_​pointer​_​up**<br/>在指针释放时清除复选框按压。" }
   class n17 node_observer
-  n18@{ shape: hex, label: "**bevy​_​ui​_​widgets::checkbox::checkbox​_​**<br/>**on​_​pointer​_​drag​_​end**<br/>在拖动结束时清除复选框按压。" }
+  n18@{ shape: hex, label: "**checkbox​_​on​_​pointer​_​drag​_​end**<br/>在拖动结束时清除复选框按压。" }
   class n18 node_observer
-  n19@{ shape: hex, label: "**bevy​_​ui​_​widgets::checkbox::checkbox​_​**<br/>**on​_​pointer​_​click**<br/>通过点击请求切换复选框勾选。" }
+  n19@{ shape: hex, label: "**checkbox​_​on​_​pointer​_​click**<br/>通过点击请求切换复选框勾选。" }
   class n19 node_observer
-  n20@{ shape: hex, label: "**bevy​_​ui​_​widgets::checkbox::checkbox​_​**<br/>**on​_​toggle​_​checked**<br/>将复选框切换请求转为勾选变化。" }
+  n20@{ shape: hex, label: "**checkbox​_​on​_​toggle​_​checked**<br/>将复选框切换请求转为勾选变化。" }
   class n20 node_observer
-  n21@{ shape: hex, label: "**bevy​_​ui​_​widgets::checkbox::checkbox​_​**<br/>**on​_​set​_​checked**<br/>将复选框设值请求转为勾选变化。" }
+  n21@{ shape: hex, label: "**checkbox​_​on​_​set​_​checked**<br/>将复选框设值请求转为勾选变化。" }
   class n21 node_observer
-  n22@{ shape: hex, label: "**bevy​_​ui​_​widgets::checkbox::checkbox​_​**<br/>**on​_​pointer​_​cancel**<br/>取消复选框的指针按压状态。" }
+  n22@{ shape: hex, label: "**checkbox​_​on​_​pointer​_​cancel**<br/>取消复选框的指针按压状态。" }
   class n22 node_observer
-  n23@{ shape: hex, label: "**bevy​_​ui​_​widgets::checkbox::checkbox​_​**<br/>**on​_​pointer​_​cancel**<br/>取消复选框的指针按压状态。" }
+  n23@{ shape: hex, label: "**checkbox​_​on​_​pointer​_​cancel**<br/>取消复选框的指针按压状态。" }
   class n23 node_observer
-  n24@{ shape: hex, label: "**bevy​_​ui​_​widgets::checkbox::checkbox​_​**<br/>**on​_​toggle​_​checked**<br/>将复选框切换请求转为勾选变化。" }
+  n24@{ shape: hex, label: "**checkbox​_​on​_​toggle​_​checked**<br/>将复选框切换请求转为勾选变化。" }
   class n24 node_observer
   n0 e0@-->|"存在性约束"| n1
   class e0 edge_reference

@@ -39,333 +39,333 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​render::view::ExtractedView**<br/>描述渲染视图的身份、投影与空间状态。" }
+  n0@{ shape: rounded, label: "**ExtractedView**<br/>描述渲染视图的身份、投影与空间状态。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​pbr::material::specialize​_​**<br/>**material​_​meshes**<br/>来自crate:bevy​_​pbr ↗：为变化的可见网<br/>格生成并缓存材质专用管线。" }
+  n1@{ shape: rounded, label: "**specialize​_​material​_​meshes**<br/>来自crate:bevy​_​pbr ↗：为变化的可见网<br/>格生成并缓存材质专用管线。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​render::batching::gpu​_​**<br/>**preprocessing::write​_​binned​_​**<br/>**instance​_​buffers#lt;bevy​_​pbr::render::**<br/>**light::Shadow, bevy​_​pbr::render::**<br/>**mesh::MeshPipeline#gt;**<br/>上传多重绘制分桶并生成 GPU 解包任务。" }
+  n2@{ shape: rounded, label: "**write​_​binned​_​instance​_​buffers**<br/>上传多重绘制分桶并生成 GPU 解包任务。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​pbr::prepass::specialize​_​**<br/>**prepass​_​material​_​meshes**<br/>来自crate:bevy​_​pbr ↗：按深度、材质和<br/>运动特性生成预通道专用管线。" }
+  n3@{ shape: rounded, label: "**specialize​_​prepass​_​material​_​meshes**<br/>来自crate:bevy​_​pbr ↗：按深度、材质和<br/>运动特性生成预通道专用管线。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**bevy​_​anti​_​alias::smaa::prepare​_​smaa​_​**<br/>**textures**<br/>来自crate:bevy​_​anti​_​alias ↗：为<br/>SMAA 分配边缘、模板和混合权重纹理。" }
+  n4@{ shape: rounded, label: "**prepare​_​smaa​_​textures**<br/>来自crate:bevy​_​anti​_​alias ↗：为<br/>SMAA 分配边缘、模板和混合权重纹理。" }
   class n4 node_system
   class n4 external_node
-  n5@{ shape: rounded, label: "**bevy​_​core​_​pipeline::deferred::node::**<br/>**early​_​deferred​_​prepass**<br/>来自crate:bevy​_​core​_​pipeline ↗：执行<br/>早期延迟预通道并保存深度结果。" }
+  n5@{ shape: rounded, label: "**early​_​deferred​_​prepass**<br/>来自crate:bevy​_​core​_​pipeline ↗：执行<br/>早期延迟预通道并保存深度结果。" }
   class n5 node_system
   class n5 external_node
-  n6@{ shape: rounded, label: "**bevy​_​anti​_​alias::taa::prepare​_​taa​_​**<br/>**pipelines**<br/>来自crate:bevy​_​anti​_​alias ↗：准备<br/>TAA 当前状态及下一帧恢复用管线。" }
+  n6@{ shape: rounded, label: "**prepare​_​taa​_​pipelines**<br/>来自crate:bevy​_​anti​_​alias ↗：准备<br/>TAA 当前状态及下一帧恢复用管线。" }
   class n6 node_system
   class n6 external_node
-  n7@{ shape: rounded, label: "**bevy​_​render::batching::gpu​_​**<br/>**preprocessing::delete​_​old​_​work​_​item​_​**<br/>**buffers#lt;bevy​_​pbr::render::mesh::**<br/>**MeshPipeline#gt;**<br/>释放已消失视图的 GPU 预处理任务缓冲。" }
+  n7@{ shape: rounded, label: "**delete​_​old​_​work​_​item​_​buffers**<br/>释放已消失视图的 GPU 预处理任务缓冲。" }
   class n7 node_system
-  n8@{ shape: rounded, label: "**bevy​_​pbr::material::queue​_​material​_​**<br/>**meshes**<br/>来自crate:bevy​_​pbr ↗：按材质模式把可<br/>见网格加入相应绘制阶段。" }
+  n8@{ shape: rounded, label: "**queue​_​material​_​meshes**<br/>来自crate:bevy​_​pbr ↗：按材质模式把可<br/>见网格加入相应绘制阶段。" }
   class n8 node_system
   class n8 external_node
-  n9@{ shape: rounded, label: "**bevy​_​render::batching::gpu​_​**<br/>**preprocessing::batch​_​and​_​prepare​_​**<br/>**binned​_​render​_​phase#lt;bevy​_​core​_​**<br/>**pipeline::deferred::**<br/>**AlphaMask3dDeferred, bevy​_​pbr::**<br/>**render::mesh::MeshPipeline#gt;**<br/>为分桶渲染阶段建立 GPU 预处理批次。" }
+  n9@{ shape: rounded, label: "**batch​_​and​_​prepare​_​binned​_​render​_​**<br/>**phase**<br/>为分桶渲染阶段建立 GPU 预处理批次。" }
   class n9 node_system
-  n10@{ shape: rounded, label: "**bevy​_​core​_​pipeline::tonemapping::**<br/>**prepare​_​view​_​tonemapping​_​pipelines**<br/>来自crate:bevy​_​core​_​pipeline ↗：按视<br/>图实际颜色分级需求专用化色调映射。" }
+  n10@{ shape: rounded, label: "**prepare​_​view​_​tonemapping​_​pipelines**<br/>来自crate:bevy​_​core​_​pipeline ↗：按视<br/>图实际颜色分级需求专用化色调映射。" }
   class n10 node_system
   class n10 external_node
-  n11@{ shape: rounded, label: "**bevy​_​pbr::render::light::specialize​_​**<br/>**shadows**<br/>来自crate:bevy​_​pbr ↗：按阴影视图、网<br/>格及材质变化重新选择专用阴影渲染管线，清<br/>理失效缓存，并整理需要补齐或重新排队的阴<br/>影网格任务。" }
+  n11@{ shape: rounded, label: "**specialize​_​shadows**<br/>来自crate:bevy​_​pbr ↗：按阴影视图、网<br/>格及材质变化重新选择专用阴影渲染管线，清<br/>理失效缓存，并整理需要补齐或重新排队的阴<br/>影网格任务。" }
   class n11 node_system
   class n11 external_node
-  n12@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::**<br/>**material::queue​_​material2d​_​meshes**<br/>来自crate:bevy​_​sprite​_​render ↗：按透<br/>明模式更新二维网格渲染批次。" }
+  n12@{ shape: rounded, label: "**queue​_​material2d​_​meshes**<br/>来自crate:bevy​_​sprite​_​render ↗：按透<br/>明模式更新二维网格渲染批次。" }
   class n12 node_system
   class n12 external_node
-  n13@{ shape: rounded, label: "**bevy​_​render::batching::gpu​_​**<br/>**preprocessing::write​_​binned​_​**<br/>**instance​_​buffers#lt;bevy​_​core​_​**<br/>**pipeline::core​_​3d::AlphaMask3d,**<br/>**bevy​_​pbr::render::mesh::**<br/>**MeshPipeline#gt;**<br/>上传多重绘制分桶并生成 GPU 解包任务。" }
+  n13@{ shape: rounded, label: "**write​_​binned​_​instance​_​buffers**<br/>上传多重绘制分桶并生成 GPU 解包任务。" }
   class n13 node_system
-  n14@{ shape: rounded, label: "**bevy​_​egui::render::systems::queue​_​**<br/>**pipelines​_​system**<br/>来自crate:bevy​_​egui ↗：按目标格式选<br/>择 Egui 渲染管线。" }
+  n14@{ shape: rounded, label: "**queue​_​pipelines​_​system**<br/>来自crate:bevy​_​egui ↗：按目标格式选<br/>择 Egui 渲染管线。" }
   class n14 node_system
   class n14 external_node
-  n15@{ shape: rounded, label: "**bevy​_​ui​_​render::queue​_​uinodes**<br/>来自crate:bevy​_​ui​_​render ↗：按目标相<br/>机和堆叠顺序排队 UI 节点。" }
+  n15@{ shape: rounded, label: "**queue​_​uinodes**<br/>来自crate:bevy​_​ui​_​render ↗：按目标相<br/>机和堆叠顺序排队 UI 节点。" }
   class n15 node_system
   class n15 external_node
-  n16@{ shape: rounded, label: "**bevy​_​render::render​_​phase::sort​_​**<br/>**phase​_​system#lt;bevy​_​ui​_​render::render​_​**<br/>**pass::TransparentUi#gt;**<br/>按各视图重新计算并排序阶段绘制项。" }
+  n16@{ shape: rounded, label: "**sort​_​phase​_​system**<br/>按各视图重新计算并排序阶段绘制项。" }
   class n16 node_system
-  n17@{ shape: rounded, label: "**bevy​_​core​_​pipeline::core​_​3d::main​_​**<br/>**transparent​_​pass​_​3d​_​node::main​_​**<br/>**transparent​_​pass​_​3d**<br/>来自crate:bevy​_​core​_​pipeline ↗：绘制<br/>三维透明物体并保护 OIT 链表状态。" }
+  n17@{ shape: rounded, label: "**main​_​transparent​_​pass​_​3d**<br/>来自crate:bevy​_​core​_​pipeline ↗：绘制<br/>三维透明物体并保护 OIT 链表状态。" }
   class n17 node_system
   class n17 external_node
-  n18@{ shape: rounded, label: "**bevy​_​render::batching::gpu​_​**<br/>**preprocessing::batch​_​and​_​prepare​_​**<br/>**binned​_​render​_​phase#lt;bevy​_​pbr::**<br/>**render::light::Shadow, bevy​_​pbr::**<br/>**render::mesh::MeshPipeline#gt;**<br/>为分桶渲染阶段建立 GPU 预处理批次。" }
+  n18@{ shape: rounded, label: "**batch​_​and​_​prepare​_​binned​_​render​_​**<br/>**phase**<br/>为分桶渲染阶段建立 GPU 预处理批次。" }
   class n18 node_system
-  n19@{ shape: rounded, label: "**bevy​_​core​_​pipeline::core​_​2d::main​_​**<br/>**opaque​_​pass​_​2d​_​node::main​_​opaque​_​**<br/>**pass​_​2d**<br/>来自crate:bevy​_​core​_​pipeline ↗：绘制<br/>二维不透明和 AlphaMask 阶段。" }
+  n19@{ shape: rounded, label: "**main​_​opaque​_​pass​_​2d**<br/>来自crate:bevy​_​core​_​pipeline ↗：绘制<br/>二维不透明和 AlphaMask 阶段。" }
   class n19 node_system
   class n19 external_node
-  n20@{ shape: rounded, label: "**bevy​_​core​_​pipeline::core​_​3d::**<br/>**prepare​_​prepass​_​textures**<br/>来自crate:bevy​_​core​_​pipeline ↗：按三<br/>维预通道配置分配各类输出纹理。" }
+  n20@{ shape: rounded, label: "**prepare​_​prepass​_​textures**<br/>来自crate:bevy​_​core​_​pipeline ↗：按三<br/>维预通道配置分配各类输出纹理。" }
   class n20 node_system
   class n20 external_node
-  n21@{ shape: rounded, label: "**bevy​_​pbr::render::light::check​_​**<br/>**views​_​lights​_​need​_​specialization**<br/>来自crate:bevy​_​pbr ↗：检测阴影视图投<br/>影类型并标记管线待刷新。" }
+  n21@{ shape: rounded, label: "**check​_​views​_​lights​_​need​_​**<br/>**specialization**<br/>来自crate:bevy​_​pbr ↗：检测阴影视图投<br/>影类型并标记管线待刷新。" }
   class n21 node_system
   class n21 external_node
-  n22@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::**<br/>**material::prepare​_​pending​_​mesh​_​**<br/>**material2d​_​queues**<br/>来自crate:bevy​_​sprite​_​render ↗：轮换<br/>二维材质待就绪队列并清理失效视图。" }
+  n22@{ shape: rounded, label: "**prepare​_​pending​_​mesh​_​material2d​_​**<br/>**queues**<br/>来自crate:bevy​_​sprite​_​render ↗：轮换<br/>二维材质待就绪队列并清理失效视图。" }
   class n22 node_system
   class n22 external_node
-  n23@{ shape: rounded, label: "**bevy​_​render::batching::gpu​_​**<br/>**preprocessing::batch​_​and​_​prepare​_​**<br/>**binned​_​render​_​phase#lt;bevy​_​core​_​**<br/>**pipeline::prepass::Opaque3dPrepass,**<br/>**bevy​_​pbr::render::mesh::**<br/>**MeshPipeline#gt;**<br/>为分桶渲染阶段建立 GPU 预处理批次。" }
+  n23@{ shape: rounded, label: "**batch​_​and​_​prepare​_​binned​_​render​_​**<br/>**phase**<br/>为分桶渲染阶段建立 GPU 预处理批次。" }
   class n23 node_system
-  n24@{ shape: rounded, label: "**bevy​_​pbr::transmission::node::main​_​**<br/>**transmissive​_​pass​_​3d**<br/>来自crate:bevy​_​pbr ↗：分层复制场景颜<br/>色并绘制三维透射物体。" }
+  n24@{ shape: rounded, label: "**main​_​transmissive​_​pass​_​3d**<br/>来自crate:bevy​_​pbr ↗：分层复制场景颜<br/>色并绘制三维透射物体。" }
   class n24 node_system
   class n24 external_node
-  n25@{ shape: rounded, label: "**bevy​_​pbr::render::light::per​_​view​_​**<br/>**shadow​_​pass#lt;false#gt;**<br/>来自crate:bevy​_​pbr ↗：绘制相机相关的<br/>平行光级联阴影。" }
+  n25@{ shape: rounded, label: "**per​_​view​_​shadow​_​pass**<br/>来自crate:bevy​_​pbr ↗：绘制相机相关的<br/>平行光级联阴影。" }
   class n25 node_system
   class n25 external_node
-  n26@{ shape: rounded, label: "**bevy​_​render::camera::extract​_​cameras**<br/>把活动相机及可见实体提取到渲染世界。" }
+  n26@{ shape: rounded, label: "**extract​_​cameras**<br/>把活动相机及可见实体提取到渲染世界。" }
   class n26 node_system
-  n27@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::mesh::**<br/>**check​_​views​_​need​_​specialization**<br/>来自crate:bevy​_​sprite​_​render ↗：检测<br/>二维视图管线配置变化并标记重建。" }
+  n27@{ shape: rounded, label: "**check​_​views​_​need​_​specialization**<br/>来自crate:bevy​_​sprite​_​render ↗：检测<br/>二维视图管线配置变化并标记重建。" }
   class n27 node_system
   class n27 external_node
-  n28@{ shape: rounded, label: "**bevy​_​render::render​_​phase::sort​_​**<br/>**phase​_​system#lt;bevy​_​pbr::**<br/>**transmission::phase::Transmissive3d#gt;**<br/>按各视图重新计算并排序阶段绘制项。" }
+  n28@{ shape: rounded, label: "**sort​_​phase​_​system**<br/>按各视图重新计算并排序阶段绘制项。" }
   class n28 node_system
-  n29@{ shape: rounded, label: "**bevy​_​pbr::render::gpu​_​preprocess::**<br/>**early​_​prepass​_​build​_​indirect​_​**<br/>**parameters**<br/>来自crate:bevy​_​pbr ↗：构建早期预通道<br/>使用的多重间接绘制参数。" }
+  n29@{ shape: rounded, label: "**early​_​prepass​_​build​_​indirect​_​**<br/>**parameters**<br/>来自crate:bevy​_​pbr ↗：构建早期预通道<br/>使用的多重间接绘制参数。" }
   class n29 node_system
   class n29 external_node
-  n30@{ shape: rounded, label: "**bevy​_​pbr::render::mesh::check​_​views​_​**<br/>**need​_​specialization**<br/>来自crate:bevy​_​pbr ↗：汇总视图渲染特<br/>性并检测管线配置变化。" }
+  n30@{ shape: rounded, label: "**check​_​views​_​need​_​specialization**<br/>来自crate:bevy​_​pbr ↗：汇总视图渲染特<br/>性并检测管线配置变化。" }
   class n30 node_system
   class n30 external_node
-  n31@{ shape: rounded, label: "**bevy​_​anti​_​alias::contrast​_​adaptive​_​**<br/>**sharpening::prepare​_​cas​_​pipelines**<br/>来自crate:bevy​_​anti​_​alias ↗：按去噪<br/>与目标格式准备视图锐化管线。" }
+  n31@{ shape: rounded, label: "**prepare​_​cas​_​pipelines**<br/>来自crate:bevy​_​anti​_​alias ↗：按去噪<br/>与目标格式准备视图锐化管线。" }
   class n31 node_system
   class n31 external_node
-  n32@{ shape: rounded, label: "**bevy​_​egui::render::systems::prepare​_​**<br/>**egui​_​render​_​target​_​data​_​system**<br/>来自crate:bevy​_​egui ↗：准备 Egui 顶<br/>点索引和裁剪绘制命令。" }
+  n32@{ shape: rounded, label: "**prepare​_​egui​_​render​_​target​_​data​_​**<br/>**system**<br/>来自crate:bevy​_​egui ↗：准备 Egui 顶<br/>点索引和裁剪绘制命令。" }
   class n32 node_system
   class n32 external_node
-  n33@{ shape: rounded, label: "**bevy​_​render::camera::expire​_​**<br/>**wireframe​_​specializations​_​for​_​views**<br/>移除已失效视图的线框专用化脏标记。" }
+  n33@{ shape: rounded, label: "**expire​_​wireframe​_​specializations​_​**<br/>**for​_​views**<br/>移除已失效视图的线框专用化脏标记。" }
   class n33 node_system
-  n34@{ shape: rounded, label: "**bevy​_​sprite​_​render::render::queue​_​**<br/>**sprites**<br/>来自crate:bevy​_​sprite​_​render ↗：按视<br/>图可见性将精灵加入透明二维阶段。" }
+  n34@{ shape: rounded, label: "**queue​_​sprites**<br/>来自crate:bevy​_​sprite​_​render ↗：按视<br/>图可见性将精灵加入透明二维阶段。" }
   class n34 node_system
   class n34 external_node
-  n35@{ shape: rounded, label: "**bevy​_​pbr::volumetric​_​fog::render::**<br/>**prepare​_​volumetric​_​fog​_​pipelines**<br/>来自crate:bevy​_​pbr ↗：为体积雾视图准<br/>备有密度纹理和无密度纹理两类管线。" }
+  n35@{ shape: rounded, label: "**prepare​_​volumetric​_​fog​_​pipelines**<br/>来自crate:bevy​_​pbr ↗：为体积雾视图准<br/>备有密度纹理和无密度纹理两类管线。" }
   class n35 node_system
   class n35 external_node
-  n36@{ shape: rounded, label: "**bevy​_​pbr::render::gpu​_​preprocess::**<br/>**late​_​prepass​_​build​_​indirect​_​**<br/>**parameters**<br/>来自crate:bevy​_​pbr ↗：为本帧新显露对<br/>象构建后期预通道间接参数。" }
+  n36@{ shape: rounded, label: "**late​_​prepass​_​build​_​indirect​_​**<br/>**parameters**<br/>来自crate:bevy​_​pbr ↗：为本帧新显露对<br/>象构建后期预通道间接参数。" }
   class n36 node_system
   class n36 external_node
-  n37@{ shape: rounded, label: "**bevy​_​render::camera::expire​_​**<br/>**specializations​_​for​_​views**<br/>移除已失效视图的材质专用化脏标记。" }
+  n37@{ shape: rounded, label: "**expire​_​specializations​_​for​_​views**<br/>移除已失效视图的材质专用化脏标记。" }
   class n37 node_system
-  n38@{ shape: rounded, label: "**bevy​_​pbr::cluster::gpu::prepare​_​**<br/>**clustering​_​pipelines**<br/>来自crate:bevy​_​pbr ↗：为视图取得<br/>GPU 聚簇五阶段的管线标识。" }
+  n38@{ shape: rounded, label: "**prepare​_​clustering​_​pipelines**<br/>来自crate:bevy​_​pbr ↗：为视图取得<br/>GPU 聚簇五阶段的管线标识。" }
   class n38 node_system
   class n38 external_node
-  n39@{ shape: rounded, label: "**bevy​_​pbr::render::gpu​_​preprocess::**<br/>**prepare​_​preprocess​_​bind​_​groups**<br/>来自crate:bevy​_​pbr ↗：绑定各视图网格<br/>预处理和间接参数构建资源。" }
+  n39@{ shape: rounded, label: "**prepare​_​preprocess​_​bind​_​groups**<br/>来自crate:bevy​_​pbr ↗：绑定各视图网格<br/>预处理和间接参数构建资源。" }
   class n39 node_system
   class n39 external_node
-  n40@{ shape: rounded, label: "**bevy​_​render::batching::gpu​_​**<br/>**preprocessing::batch​_​and​_​prepare​_​**<br/>**binned​_​render​_​phase#lt;bevy​_​core​_​**<br/>**pipeline::prepass::**<br/>**AlphaMask3dPrepass, bevy​_​pbr::**<br/>**render::mesh::MeshPipeline#gt;**<br/>为分桶渲染阶段建立 GPU 预处理批次。" }
+  n40@{ shape: rounded, label: "**batch​_​and​_​prepare​_​binned​_​render​_​**<br/>**phase**<br/>为分桶渲染阶段建立 GPU 预处理批次。" }
   class n40 node_system
-  n41@{ shape: rounded, label: "**bevy​_​anti​_​alias::contrast​_​adaptive​_​**<br/>**sharpening::node::cas**<br/>来自crate:bevy​_​anti​_​alias ↗：对视图<br/>颜色执行 CAS 锐化后处理。" }
+  n41@{ shape: rounded, label: "**cas**<br/>来自crate:bevy​_​anti​_​alias ↗：对视图<br/>颜色执行 CAS 锐化后处理。" }
   class n41 node_system
   class n41 external_node
-  n42@{ shape: rounded, label: "**bevy​_​render::batching::gpu​_​**<br/>**preprocessing::write​_​binned​_​**<br/>**instance​_​buffers#lt;bevy​_​core​_​**<br/>**pipeline::deferred::**<br/>**Opaque3dDeferred, bevy​_​pbr::render::**<br/>**mesh::MeshPipeline#gt;**<br/>上传多重绘制分桶并生成 GPU 解包任务。" }
+  n42@{ shape: rounded, label: "**write​_​binned​_​instance​_​buffers**<br/>上传多重绘制分桶并生成 GPU 解包任务。" }
   class n42 node_system
-  n43@{ shape: rounded, label: "**bevy​_​pbr::render::fog::prepare​_​fog**<br/>来自crate:bevy​_​pbr ↗：转换并上传各视<br/>图的距离雾参数。" }
+  n43@{ shape: rounded, label: "**prepare​_​fog**<br/>来自crate:bevy​_​pbr ↗：转换并上传各视<br/>图的距离雾参数。" }
   class n43 node_system
   class n43 external_node
-  n44@{ shape: rounded, label: "**bevy​_​anti​_​alias::smaa::prepare​_​smaa​_​**<br/>**bind​_​groups**<br/>来自crate:bevy​_​anti​_​alias ↗：为视图<br/>绑定 SMAA 中间纹理与查找表。" }
+  n44@{ shape: rounded, label: "**prepare​_​smaa​_​bind​_​groups**<br/>来自crate:bevy​_​anti​_​alias ↗：为视图<br/>绑定 SMAA 中间纹理与查找表。" }
   class n44 node_system
   class n44 external_node
-  n45@{ shape: rounded, label: "**bevy​_​pbr::atmosphere::resources::**<br/>**prepare​_​atmosphere​_​transforms**<br/>来自crate:bevy​_​pbr ↗：按相机位置构造<br/>大气局部坐标变换。" }
+  n45@{ shape: rounded, label: "**prepare​_​atmosphere​_​transforms**<br/>来自crate:bevy​_​pbr ↗：按相机位置构造<br/>大气局部坐标变换。" }
   class n45 node_system
   class n45 external_node
-  n46@{ shape: rounded, label: "**bevy​_​render::batching::gpu​_​**<br/>**preprocessing::batch​_​and​_​prepare​_​**<br/>**binned​_​render​_​phase#lt;bevy​_​core​_​**<br/>**pipeline::deferred::**<br/>**Opaque3dDeferred, bevy​_​pbr::render::**<br/>**mesh::MeshPipeline#gt;**<br/>为分桶渲染阶段建立 GPU 预处理批次。" }
+  n46@{ shape: rounded, label: "**batch​_​and​_​prepare​_​binned​_​render​_​**<br/>**phase**<br/>为分桶渲染阶段建立 GPU 预处理批次。" }
   class n46 node_system
-  n47@{ shape: rounded, label: "**bevy​_​pbr::render::gpu​_​preprocess::**<br/>**allocate​_​uniforms**<br/>来自crate:bevy​_​pbr ↗：在 GPU 上为可<br/>见批次分配网格参数存储。" }
+  n47@{ shape: rounded, label: "**allocate​_​uniforms**<br/>来自crate:bevy​_​pbr ↗：在 GPU 上为可<br/>见批次分配网格参数存储。" }
   class n47 node_system
   class n47 external_node
-  n48@{ shape: rounded, label: "**bevy​_​pbr::render::gpu​_​preprocess::**<br/>**late​_​gpu​_​preprocess**<br/>来自crate:bevy​_​pbr ↗：对后期遮挡工作<br/>项执行间接网格预处理。" }
+  n48@{ shape: rounded, label: "**late​_​gpu​_​preprocess**<br/>来自crate:bevy​_​pbr ↗：对后期遮挡工作<br/>项执行间接网格预处理。" }
   class n48 node_system
   class n48 external_node
-  n49@{ shape: rounded, label: "**bevy​_​core​_​pipeline::core​_​2d::**<br/>**prepare​_​core​_​2d​_​depth​_​textures**<br/>来自crate:bevy​_​core​_​pipeline ↗：为有<br/>效二维视图准备共享目标深度纹理。" }
+  n49@{ shape: rounded, label: "**prepare​_​core​_​2d​_​depth​_​textures**<br/>来自crate:bevy​_​core​_​pipeline ↗：为有<br/>效二维视图准备共享目标深度纹理。" }
   class n49 node_system
   class n49 external_node
-  n50@{ shape: rounded, label: "**bevy​_​render::batching::gpu​_​**<br/>**preprocessing::write​_​binned​_​**<br/>**instance​_​buffers#lt;bevy​_​core​_​**<br/>**pipeline::prepass::Opaque3dPrepass,**<br/>**bevy​_​pbr::render::mesh::**<br/>**MeshPipeline#gt;**<br/>上传多重绘制分桶并生成 GPU 解包任务。" }
+  n50@{ shape: rounded, label: "**write​_​binned​_​instance​_​buffers**<br/>上传多重绘制分桶并生成 GPU 解包任务。" }
   class n50 node_system
-  n51@{ shape: rounded, label: "**bevy​_​pbr::transmission::texture::**<br/>**prepare​_​core​_​3d​_​transmission​_​**<br/>**textures**<br/>来自crate:bevy​_​pbr ↗：为需要多步透射<br/>的视图准备场景颜色拷贝纹理。" }
+  n51@{ shape: rounded, label: "**prepare​_​core​_​3d​_​transmission​_​**<br/>**textures**<br/>来自crate:bevy​_​pbr ↗：为需要多步透射<br/>的视图准备场景颜色拷贝纹理。" }
   class n51 node_system
   class n51 external_node
-  n52@{ shape: rounded, label: "**bevy​_​anti​_​alias::smaa::prepare​_​smaa​_​**<br/>**pipelines**<br/>来自crate:bevy​_​anti​_​alias ↗：按质量<br/>预设准备视图的三条 SMAA 管线。" }
+  n52@{ shape: rounded, label: "**prepare​_​smaa​_​pipelines**<br/>来自crate:bevy​_​anti​_​alias ↗：按质量<br/>预设准备视图的三条 SMAA 管线。" }
   class n52 node_system
   class n52 external_node
-  n53@{ shape: rounded, label: "**bevy​_​pbr::render::light::shared​_​**<br/>**shadow​_​pass#lt;false#gt;**<br/>来自crate:bevy​_​pbr ↗：绘制跨相机共享<br/>的点光或聚光阴影。" }
+  n53@{ shape: rounded, label: "**shared​_​shadow​_​pass**<br/>来自crate:bevy​_​pbr ↗：绘制跨相机共享<br/>的点光或聚光阴影。" }
   class n53 node_system
   class n53 external_node
-  n54@{ shape: rounded, label: "**bevy​_​render::render​_​phase::sort​_​**<br/>**phase​_​system#lt;bevy​_​core​_​pipeline::**<br/>**core​_​3d::Transparent3d#gt;**<br/>按各视图重新计算并排序阶段绘制项。" }
+  n54@{ shape: rounded, label: "**sort​_​phase​_​system**<br/>按各视图重新计算并排序阶段绘制项。" }
   class n54 node_system
-  n55@{ shape: rounded, label: "**bevy​_​pbr::ssr::prepare​_​ssr​_​settings**<br/>来自crate:bevy​_​pbr ↗：上传各视图反射<br/>参数并记录动态缓冲偏移。" }
+  n55@{ shape: rounded, label: "**prepare​_​ssr​_​settings**<br/>来自crate:bevy​_​pbr ↗：上传各视图反射<br/>参数并记录动态缓冲偏移。" }
   class n55 node_system
   class n55 external_node
-  n56@{ shape: rounded, label: "**bevy​_​render::batching::gpu​_​**<br/>**preprocessing::batch​_​and​_​prepare​_​**<br/>**binned​_​render​_​phase#lt;bevy​_​core​_​**<br/>**pipeline::core​_​3d::Opaque3d, bevy​_​**<br/>**pbr::render::mesh::MeshPipeline#gt;**<br/>为分桶渲染阶段建立 GPU 预处理批次。" }
+  n56@{ shape: rounded, label: "**batch​_​and​_​prepare​_​binned​_​render​_​**<br/>**phase**<br/>为分桶渲染阶段建立 GPU 预处理批次。" }
   class n56 node_system
-  n57@{ shape: rounded, label: "**bevy​_​pbr::render::gpu​_​preprocess::**<br/>**main​_​build​_​indirect​_​parameters**<br/>来自crate:bevy​_​pbr ↗：为主不透明及透<br/>明通道构建间接绘制参数。" }
+  n57@{ shape: rounded, label: "**main​_​build​_​indirect​_​parameters**<br/>来自crate:bevy​_​pbr ↗：为主不透明及透<br/>明通道构建间接绘制参数。" }
   class n57 node_system
   class n57 external_node
-  n58@{ shape: rounded, label: "**bevy​_​egui::render::render​_​pass::**<br/>**egui​_​pass**<br/>来自crate:bevy​_​egui ↗：把准备好的<br/>Egui 绘制项渲染到视图目标。" }
+  n58@{ shape: rounded, label: "**egui​_​pass**<br/>来自crate:bevy​_​egui ↗：把准备好的<br/>Egui 绘制项渲染到视图目标。" }
   class n58 node_system
   class n58 external_node
-  n59@{ shape: rounded, label: "**bevy​_​ui​_​render::box​_​shadow::queue​_​**<br/>**shadows**<br/>来自crate:bevy​_​ui​_​render ↗：为提取<br/>的 UI 阴影选择匹配目标格式和阴影采样数<br/>的管线，按节点堆叠顺序及阴影层偏移加入透<br/>明 UI 绘制阶段。" }
+  n59@{ shape: rounded, label: "**queue​_​shadows**<br/>来自crate:bevy​_​ui​_​render ↗：为提取<br/>的 UI 阴影选择匹配目标格式和阴影采样数<br/>的管线，按节点堆叠顺序及阴影层偏移加入透<br/>明 UI 绘制阶段。" }
   class n59 node_system
   class n59 external_node
-  n60@{ shape: rounded, label: "**bevy​_​core​_​pipeline::core​_​3d::main​_​**<br/>**opaque​_​pass​_​3d​_​node::main​_​opaque​_​**<br/>**pass​_​3d**<br/>来自crate:bevy​_​core​_​pipeline ↗：绘制<br/>三维不透明、AlphaMask 与天空盒。" }
+  n60@{ shape: rounded, label: "**main​_​opaque​_​pass​_​3d**<br/>来自crate:bevy​_​core​_​pipeline ↗：绘制<br/>三维不透明、AlphaMask 与天空盒。" }
   class n60 node_system
   class n60 external_node
-  n61@{ shape: rounded, label: "**bevy​_​pbr::cluster::gpu::prepare​_​**<br/>**cluster​_​dummy​_​textures**<br/>来自crate:bevy​_​pbr ↗：为聚簇光栅通道<br/>准备视口占位纹理。" }
+  n61@{ shape: rounded, label: "**prepare​_​cluster​_​dummy​_​textures**<br/>来自crate:bevy​_​pbr ↗：为聚簇光栅通道<br/>准备视口占位纹理。" }
   class n61 node_system
   class n61 external_node
-  n62@{ shape: rounded, label: "**bevy​_​render::render​_​phase::sort​_​**<br/>**phase​_​system#lt;bevy​_​core​_​pipeline::**<br/>**core​_​2d::Transparent2d#gt;**<br/>按各视图重新计算并排序阶段绘制项。" }
+  n62@{ shape: rounded, label: "**sort​_​phase​_​system**<br/>按各视图重新计算并排序阶段绘制项。" }
   class n62 node_system
-  n63@{ shape: rounded, label: "**bevy​_​render::batching::gpu​_​**<br/>**preprocessing::write​_​binned​_​**<br/>**instance​_​buffers#lt;bevy​_​core​_​**<br/>**pipeline::core​_​3d::Opaque3d, bevy​_​**<br/>**pbr::render::mesh::MeshPipeline#gt;**<br/>上传多重绘制分桶并生成 GPU 解包任务。" }
+  n63@{ shape: rounded, label: "**write​_​binned​_​instance​_​buffers**<br/>上传多重绘制分桶并生成 GPU 解包任务。" }
   class n63 node_system
-  n64@{ shape: rounded, label: "**bevy​_​egui::render::systems::queue​_​**<br/>**pipelines​_​system**<br/>来自crate:bevy​_​egui ↗：按目标格式选<br/>择 Egui 渲染管线。" }
+  n64@{ shape: rounded, label: "**queue​_​pipelines​_​system**<br/>来自crate:bevy​_​egui ↗：按目标格式选<br/>择 Egui 渲染管线。" }
   class n64 node_system
   class n64 external_node
-  n65@{ shape: rounded, label: "**bevy​_​anti​_​alias::contrast​_​adaptive​_​**<br/>**sharpening::node::cas**<br/>来自crate:bevy​_​anti​_​alias ↗：对视图<br/>颜色执行 CAS 锐化后处理。" }
+  n65@{ shape: rounded, label: "**cas**<br/>来自crate:bevy​_​anti​_​alias ↗：对视图<br/>颜色执行 CAS 锐化后处理。" }
   class n65 node_system
   class n65 external_node
-  n66@{ shape: rounded, label: "**bevy​_​egui::render::systems::prepare​_​**<br/>**egui​_​transforms​_​system**<br/>来自crate:bevy​_​egui ↗：上传 Egui 屏<br/>幕变换缓冲。" }
+  n66@{ shape: rounded, label: "**prepare​_​egui​_​transforms​_​system**<br/>来自crate:bevy​_​egui ↗：上传 Egui 屏<br/>幕变换缓冲。" }
   class n66 node_system
   class n66 external_node
-  n67@{ shape: rounded, label: "**bevy​_​pbr::prepass::prepare​_​previous​_​**<br/>**view​_​uniforms**<br/>来自crate:bevy​_​pbr ↗：重建前帧抖动矩<br/>阵并上传视图历史参数。" }
+  n67@{ shape: rounded, label: "**prepare​_​previous​_​view​_​uniforms**<br/>来自crate:bevy​_​pbr ↗：重建前帧抖动矩<br/>阵并上传视图历史参数。" }
   class n67 node_system
   class n67 external_node
-  n68@{ shape: rounded, label: "**bevy​_​anti​_​alias::fxaa::prepare​_​fxaa​_​**<br/>**pipelines**<br/>来自crate:bevy​_​anti​_​alias ↗：按相机<br/>边缘阈值与目标格式准备 FXAA 管线。" }
+  n68@{ shape: rounded, label: "**prepare​_​fxaa​_​pipelines**<br/>来自crate:bevy​_​anti​_​alias ↗：按相机<br/>边缘阈值与目标格式准备 FXAA 管线。" }
   class n68 node_system
   class n68 external_node
-  n69@{ shape: rounded, label: "**bevy​_​render::view::prepare​_​view​_​**<br/>**uniforms**<br/>生成视图投影、抖动、裁剪及 LOD 的 GPU<br/>参数。" }
+  n69@{ shape: rounded, label: "**prepare​_​view​_​uniforms**<br/>生成视图投影、抖动、裁剪及 LOD 的 GPU<br/>参数。" }
   class n69 node_system
-  n70@{ shape: rounded, label: "**bevy​_​pbr::light​_​probe::upload​_​light​_​**<br/>**probes**<br/>来自crate:bevy​_​pbr ↗：上传各视图的环<br/>境图、反射与辐照探针参数。" }
+  n70@{ shape: rounded, label: "**upload​_​light​_​probes**<br/>来自crate:bevy​_​pbr ↗：上传各视图的环<br/>境图、反射与辐照探针参数。" }
   class n70 node_system
   class n70 external_node
-  n71@{ shape: rounded, label: "**bevy​_​pbr::prepass::check​_​prepass​_​**<br/>**views​_​need​_​specialization**<br/>来自crate:bevy​_​pbr ↗：检测采样和预通<br/>道配置变化并标记视图待刷新。" }
+  n71@{ shape: rounded, label: "**check​_​prepass​_​views​_​need​_​**<br/>**specialization**<br/>来自crate:bevy​_​pbr ↗：检测采样和预通<br/>道配置变化并标记视图待刷新。" }
   class n71 node_system
   class n71 external_node
-  n72@{ shape: rounded, label: "**bevy​_​gizmos​_​render::pipeline​_​2d::**<br/>**queue​_​line​_​and​_​joint​_​gizmos​_​2d**<br/>来自crate:bevy​_​gizmos​_​render ↗：将二<br/>维 Gizmo 线段与接头加入透明阶段。" }
+  n72@{ shape: rounded, label: "**queue​_​line​_​and​_​joint​_​gizmos​_​2d**<br/>来自crate:bevy​_​gizmos​_​render ↗：将二<br/>维 Gizmo 线段与接头加入透明阶段。" }
   class n72 node_system
   class n72 external_node
-  n73@{ shape: rounded, label: "**bevy​_​ui​_​render::render​_​pass::ui​_​pass**<br/>来自crate:bevy​_​ui​_​render ↗：把透明<br/>UI 绘制项渲染到关联视图。" }
+  n73@{ shape: rounded, label: "**ui​_​pass**<br/>来自crate:bevy​_​ui​_​render ↗：把透明<br/>UI 绘制项渲染到关联视图。" }
   class n73 node_system
   class n73 external_node
-  n74@{ shape: rounded, label: "**bevy​_​sprite​_​render::render::prepare​_​**<br/>**sprite​_​view​_​bind​_​groups**<br/>来自crate:bevy​_​sprite​_​render ↗：为精<br/>灵视图绑定参数和色调映射 LUT。" }
+  n74@{ shape: rounded, label: "**prepare​_​sprite​_​view​_​bind​_​groups**<br/>来自crate:bevy​_​sprite​_​render ↗：为精<br/>灵视图绑定参数和色调映射 LUT。" }
   class n74 node_system
   class n74 external_node
-  n75@{ shape: rounded, label: "**bevy​_​render::batching::gpu​_​**<br/>**preprocessing::write​_​binned​_​**<br/>**instance​_​buffers#lt;bevy​_​core​_​**<br/>**pipeline::deferred::**<br/>**AlphaMask3dDeferred, bevy​_​pbr::**<br/>**render::mesh::MeshPipeline#gt;**<br/>上传多重绘制分桶并生成 GPU 解包任务。" }
+  n75@{ shape: rounded, label: "**write​_​binned​_​instance​_​buffers**<br/>上传多重绘制分桶并生成 GPU 解包任务。" }
   class n75 node_system
   subgraph layout_card_n76[" "]
-  n76@{ shape: rounded, label: "**bevy​_​ui​_​render::extract​_​ui​_​camera​_​**<br/>**view**<br/>来自crate:bevy​_​ui​_​render ↗：为活动二<br/>维或三维相机维护独立 UI 视图。" }
+  n76@{ shape: rounded, label: "**extract​_​ui​_​camera​_​view**<br/>来自crate:bevy​_​ui​_​render ↗：为活动二<br/>维或三维相机维护独立 UI 视图。" }
   class n76 node_system
   class n76 external_node
   end
   style layout_card_n76 fill:none,stroke:none
-  n77@{ shape: rounded, label: "**bevy​_​post​_​process::effect​_​stack::**<br/>**prepare​_​post​_​processing​_​pipelines**<br/>来自crate:bevy​_​post​_​process ↗：按视<br/>图颜色格式准备内置后处理管线。" }
+  n77@{ shape: rounded, label: "**prepare​_​post​_​processing​_​pipelines**<br/>来自crate:bevy​_​post​_​process ↗：按视<br/>图颜色格式准备内置后处理管线。" }
   class n77 node_system
   class n77 external_node
-  n78@{ shape: rounded, label: "**bevy​_​pbr::render::light::shared​_​**<br/>**shadow​_​pass#lt;true#gt;**<br/>来自crate:bevy​_​pbr ↗：绘制跨相机共享<br/>的点光或聚光阴影。" }
+  n78@{ shape: rounded, label: "**shared​_​shadow​_​pass**<br/>来自crate:bevy​_​pbr ↗：绘制跨相机共享<br/>的点光或聚光阴影。" }
   class n78 node_system
   class n78 external_node
-  n79@{ shape: rounded, label: "**bevy​_​core​_​pipeline::deferred::node::**<br/>**late​_​deferred​_​prepass**<br/>来自crate:bevy​_​core​_​pipeline ↗：为遮<br/>挡剔除执行晚期延迟预通道。" }
+  n79@{ shape: rounded, label: "**late​_​deferred​_​prepass**<br/>来自crate:bevy​_​core​_​pipeline ↗：为遮<br/>挡剔除执行晚期延迟预通道。" }
   class n79 node_system
   class n79 external_node
-  n80@{ shape: rounded, label: "**bevy​_​render::batching::gpu​_​**<br/>**preprocessing::batch​_​and​_​prepare​_​**<br/>**binned​_​render​_​phase#lt;bevy​_​core​_​**<br/>**pipeline::core​_​3d::AlphaMask3d,**<br/>**bevy​_​pbr::render::mesh::**<br/>**MeshPipeline#gt;**<br/>为分桶渲染阶段建立 GPU 预处理批次。" }
+  n80@{ shape: rounded, label: "**batch​_​and​_​prepare​_​binned​_​render​_​**<br/>**phase**<br/>为分桶渲染阶段建立 GPU 预处理批次。" }
   class n80 node_system
-  n81@{ shape: rounded, label: "**bevy​_​render::view::prepare​_​view​_​**<br/>**targets**<br/>为视图维护主颜色双缓冲及可选多采样目标。" }
+  n81@{ shape: rounded, label: "**prepare​_​view​_​targets**<br/>为视图维护主颜色双缓冲及可选多采样目标。" }
   class n81 node_system
-  n82@{ shape: rounded, label: "**bevy​_​core​_​pipeline::skybox::prepare​_​**<br/>**skybox​_​pipelines**<br/>来自crate:bevy​_​core​_​pipeline ↗：按目<br/>标格式与采样数准备天空盒管线。" }
+  n82@{ shape: rounded, label: "**prepare​_​skybox​_​pipelines**<br/>来自crate:bevy​_​core​_​pipeline ↗：按目<br/>标格式与采样数准备天空盒管线。" }
   class n82 node_system
   class n82 external_node
-  n83@{ shape: rounded, label: "**bevy​_​gizmos​_​render::pipeline​_​3d::**<br/>**queue​_​line​_​gizmos​_​3d**<br/>来自crate:bevy​_​gizmos​_​render ↗：将三<br/>维 Gizmo 线列表和线条带加入透明阶段。" }
+  n83@{ shape: rounded, label: "**queue​_​line​_​gizmos​_​3d**<br/>来自crate:bevy​_​gizmos​_​render ↗：将三<br/>维 Gizmo 线列表和线条带加入透明阶段。" }
   class n83 node_system
   class n83 external_node
-  n84@{ shape: rounded, label: "**bevy​_​anti​_​alias::taa::prepare​_​taa​_​**<br/>**history​_​textures**<br/>来自crate:bevy​_​anti​_​alias ↗：按帧奇<br/>偶为 TAA 轮换读写历史纹理。" }
+  n84@{ shape: rounded, label: "**prepare​_​taa​_​history​_​textures**<br/>来自crate:bevy​_​anti​_​alias ↗：按帧奇<br/>偶为 TAA 轮换读写历史纹理。" }
   class n84 node_system
   class n84 external_node
-  n85@{ shape: rounded, label: "**bevy​_​pbr::render::light::queue​_​**<br/>**shadows**<br/>来自crate:bevy​_​pbr ↗：按材质与光源资<br/>格更新阴影绘制分桶。" }
+  n85@{ shape: rounded, label: "**queue​_​shadows**<br/>来自crate:bevy​_​pbr ↗：按材质与光源资<br/>格更新阴影绘制分桶。" }
   class n85 node_system
   class n85 external_node
-  n86@{ shape: rounded, label: "**bevy​_​post​_​process::bloom::**<br/>**upsampling​_​pipeline::prepare​_​**<br/>**upsampling​_​pipeline**<br/>来自crate:bevy​_​post​_​process ↗：为<br/>Bloom 中间合成和最终目标准备升采样管<br/>线。" }
+  n86@{ shape: rounded, label: "**prepare​_​upsampling​_​pipeline**<br/>来自crate:bevy​_​post​_​process ↗：为<br/>Bloom 中间合成和最终目标准备升采样管<br/>线。" }
   class n86 node_system
   class n86 external_node
-  n87@{ shape: rounded, label: "**bevy​_​ui​_​render::gradient::queue​_​**<br/>**gradient**<br/>来自crate:bevy​_​ui​_​render ↗：按目标视<br/>图与堆叠顺序排队 UI 渐变。" }
+  n87@{ shape: rounded, label: "**queue​_​gradient**<br/>来自crate:bevy​_​ui​_​render ↗：按目标视<br/>图与堆叠顺序排队 UI 渐变。" }
   class n87 node_system
   class n87 external_node
-  n88@{ shape: rounded, label: "**bevy​_​render::batching::gpu​_​**<br/>**preprocessing::batch​_​and​_​prepare​_​**<br/>**sorted​_​render​_​phase#lt;bevy​_​pbr::**<br/>**transmission::phase::**<br/>**Transmissive3d, bevy​_​pbr::render::**<br/>**mesh::MeshPipeline#gt;**<br/>按已有绘制顺序合并 GPU 预处理阶段批次。" }
+  n88@{ shape: rounded, label: "**batch​_​and​_​prepare​_​sorted​_​render​_​**<br/>**phase**<br/>按已有绘制顺序合并 GPU 预处理阶段批次。" }
   class n88 node_system
-  n89@{ shape: rounded, label: "**bevy​_​render::batching::gpu​_​**<br/>**preprocessing::batch​_​and​_​prepare​_​**<br/>**sorted​_​render​_​phase#lt;bevy​_​core​_​**<br/>**pipeline::core​_​3d::Transparent3d,**<br/>**bevy​_​pbr::render::mesh::**<br/>**MeshPipeline#gt;**<br/>按已有绘制顺序合并 GPU 预处理阶段批次。" }
+  n89@{ shape: rounded, label: "**batch​_​and​_​prepare​_​sorted​_​render​_​**<br/>**phase**<br/>按已有绘制顺序合并 GPU 预处理阶段批次。" }
   class n89 node_system
-  n90@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::mesh::**<br/>**prepare​_​mesh2d​_​view​_​bind​_​groups**<br/>来自crate:bevy​_​sprite​_​render ↗：为二<br/>维相机绑定视图、全局参数与色调 LUT。" }
+  n90@{ shape: rounded, label: "**prepare​_​mesh2d​_​view​_​bind​_​groups**<br/>来自crate:bevy​_​sprite​_​render ↗：为二<br/>维相机绑定视图、全局参数与色调 LUT。" }
   class n90 node_system
   class n90 external_node
-  n91@{ shape: rounded, label: "**bevy​_​post​_​process::motion​_​blur::**<br/>**pipeline::prepare​_​motion​_​blur​_​**<br/>**pipelines**<br/>来自crate:bevy​_​post​_​process ↗：按颜<br/>色格式与采样数准备运动模糊管线。" }
+  n91@{ shape: rounded, label: "**prepare​_​motion​_​blur​_​pipelines**<br/>来自crate:bevy​_​post​_​process ↗：按颜<br/>色格式与采样数准备运动模糊管线。" }
   class n91 node_system
   class n91 external_node
-  n92@{ shape: rounded, label: "**bevy​_​pbr::prepass::queue​_​prepass​_​**<br/>**material​_​meshes**<br/>来自crate:bevy​_​pbr ↗：把有效材质网格<br/>分入预通道或延迟几何阶段。" }
+  n92@{ shape: rounded, label: "**queue​_​prepass​_​material​_​meshes**<br/>来自crate:bevy​_​pbr ↗：把有效材质网格<br/>分入预通道或延迟几何阶段。" }
   class n92 node_system
   class n92 external_node
-  n93@{ shape: rounded, label: "**bevy​_​ui​_​render::ui​_​texture​_​slice​_​**<br/>**pipeline::queue​_​ui​_​slices**<br/>来自crate:bevy​_​ui​_​render ↗：将 UI 图<br/>像切片排入对应相机透明阶段。" }
+  n93@{ shape: rounded, label: "**queue​_​ui​_​slices**<br/>来自crate:bevy​_​ui​_​render ↗：将 UI 图<br/>像切片排入对应相机透明阶段。" }
   class n93 node_system
   class n93 external_node
-  n94@{ shape: rounded, label: "**bevy​_​pbr::render::light::prepare​_​**<br/>**lights**<br/>来自crate:bevy​_​pbr ↗：准备视图光照参<br/>数、阴影视图和阴影贴图。" }
+  n94@{ shape: rounded, label: "**prepare​_​lights**<br/>来自crate:bevy​_​pbr ↗：准备视图光照参<br/>数、阴影视图和阴影贴图。" }
   class n94 node_system
   class n94 external_node
-  n95@{ shape: rounded, label: "**bevy​_​core​_​pipeline::prepass::node::**<br/>**late​_​prepass**<br/>来自crate:bevy​_​core​_​pipeline ↗：为遮<br/>挡剔除绘制晚期预通道。" }
+  n95@{ shape: rounded, label: "**late​_​prepass**<br/>来自crate:bevy​_​core​_​pipeline ↗：为遮<br/>挡剔除绘制晚期预通道。" }
   class n95 node_system
   class n95 external_node
-  n96@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::**<br/>**material::specialize​_​material2d​_​**<br/>**meshes**<br/>来自crate:bevy​_​sprite​_​render ↗：为可<br/>见二维网格重建失效的材质专用化。" }
+  n96@{ shape: rounded, label: "**specialize​_​material2d​_​meshes**<br/>来自crate:bevy​_​sprite​_​render ↗：为可<br/>见二维网格重建失效的材质专用化。" }
   class n96 node_system
   class n96 external_node
-  n97@{ shape: rounded, label: "**bevy​_​gizmos​_​render::pipeline​_​3d::**<br/>**queue​_​line​_​joint​_​gizmos​_​3d**<br/>来自crate:bevy​_​gizmos​_​render ↗：将三<br/>维 Gizmo 折线接头加入透明阶段。" }
+  n97@{ shape: rounded, label: "**queue​_​line​_​joint​_​gizmos​_​3d**<br/>来自crate:bevy​_​gizmos​_​render ↗：将三<br/>维 Gizmo 折线接头加入透明阶段。" }
   class n97 node_system
   class n97 external_node
-  n98@{ shape: rounded, label: "**bevy​_​pbr::render::mesh::collect​_​gpu​_​**<br/>**culled​_​meshes**<br/>来自crate:bevy​_​pbr ↗：按渲染层把<br/>GPU 裁剪对象分配到各视图列表。" }
+  n98@{ shape: rounded, label: "**collect​_​gpu​_​culled​_​meshes**<br/>来自crate:bevy​_​pbr ↗：按渲染层把<br/>GPU 裁剪对象分配到各视图列表。" }
   class n98 node_system
   class n98 external_node
-  n99@{ shape: rounded, label: "**bevy​_​core​_​pipeline::oit::resolve::**<br/>**queue​_​oit​_​resolve​_​pipeline**<br/>来自crate:bevy​_​core​_​pipeline ↗：按<br/>OIT 相机设置缓存透明解析管线。" }
+  n99@{ shape: rounded, label: "**queue​_​oit​_​resolve​_​pipeline**<br/>来自crate:bevy​_​core​_​pipeline ↗：按<br/>OIT 相机设置缓存透明解析管线。" }
   class n99 node_system
   class n99 external_node
-  n100@{ shape: rounded, label: "**bevy​_​egui::render::systems::prepare​_​**<br/>**egui​_​transforms​_​system**<br/>来自crate:bevy​_​egui ↗：上传 Egui 屏<br/>幕变换缓冲。" }
+  n100@{ shape: rounded, label: "**prepare​_​egui​_​transforms​_​system**<br/>来自crate:bevy​_​egui ↗：上传 Egui 屏<br/>幕变换缓冲。" }
   class n100 node_system
   class n100 external_node
-  n101@{ shape: rounded, label: "**bevy​_​pbr::volumetric​_​fog::render::**<br/>**prepare​_​volumetric​_​fog​_​uniforms**<br/>来自crate:bevy​_​pbr ↗：把各视图和雾体<br/>积组合转换为体积雾 Uniform。" }
+  n101@{ shape: rounded, label: "**prepare​_​volumetric​_​fog​_​uniforms**<br/>来自crate:bevy​_​pbr ↗：把各视图和雾体<br/>积组合转换为体积雾 Uniform。" }
   class n101 node_system
   class n101 external_node
-  n102@{ shape: rounded, label: "**bevy​_​pbr::deferred::prepare​_​**<br/>**deferred​_​lighting​_​pipelines**<br/>来自crate:bevy​_​pbr ↗：为有效延迟视图<br/>选择与前向一致的光照管线。" }
+  n102@{ shape: rounded, label: "**prepare​_​deferred​_​lighting​_​pipelines**<br/>来自crate:bevy​_​pbr ↗：为有效延迟视图<br/>选择与前向一致的光照管线。" }
   class n102 node_system
   class n102 external_node
-  n103@{ shape: rounded, label: "**bevy​_​core​_​pipeline::core​_​2d::main​_​**<br/>**transparent​_​pass​_​2d​_​node::main​_​**<br/>**transparent​_​pass​_​2d**<br/>来自crate:bevy​_​core​_​pipeline ↗：使用<br/>已有深度绘制二维透明阶段。" }
+  n103@{ shape: rounded, label: "**main​_​transparent​_​pass​_​2d**<br/>来自crate:bevy​_​core​_​pipeline ↗：使用<br/>已有深度绘制二维透明阶段。" }
   class n103 node_system
   class n103 external_node
-  n104@{ shape: rounded, label: "**bevy​_​egui::render::render​_​pass::**<br/>**egui​_​pass**<br/>来自crate:bevy​_​egui ↗：把准备好的<br/>Egui 绘制项渲染到视图目标。" }
+  n104@{ shape: rounded, label: "**egui​_​pass**<br/>来自crate:bevy​_​egui ↗：把准备好的<br/>Egui 绘制项渲染到视图目标。" }
   class n104 node_system
   class n104 external_node
-  n105@{ shape: rounded, label: "**bevy​_​anti​_​alias::smaa::prepare​_​smaa​_​**<br/>**uniforms**<br/>来自crate:bevy​_​anti​_​alias ↗：上传各<br/>SMAA 视图的尺寸及倒数参数。" }
+  n105@{ shape: rounded, label: "**prepare​_​smaa​_​uniforms**<br/>来自crate:bevy​_​anti​_​alias ↗：上传各<br/>SMAA 视图的尺寸及倒数参数。" }
   class n105 node_system
   class n105 external_node
-  n106@{ shape: rounded, label: "**bevy​_​core​_​pipeline::mip​_​generation::**<br/>**experimental::depth::prepare​_​view​_​**<br/>**depth​_​pyramids**<br/>来自crate:bevy​_​core​_​pipeline ↗：为遮<br/>挡剔除视图维护深度金字塔。" }
+  n106@{ shape: rounded, label: "**prepare​_​view​_​depth​_​pyramids**<br/>来自crate:bevy​_​core​_​pipeline ↗：为遮<br/>挡剔除视图维护深度金字塔。" }
   class n106 node_system
   class n106 external_node
-  n107@{ shape: rounded, label: "**bevy​_​ui​_​render::render​_​pass::ui​_​pass**<br/>来自crate:bevy​_​ui​_​render ↗：把透明<br/>UI 绘制项渲染到关联视图。" }
+  n107@{ shape: rounded, label: "**ui​_​pass**<br/>来自crate:bevy​_​ui​_​render ↗：把透明<br/>UI 绘制项渲染到关联视图。" }
   class n107 node_system
   class n107 external_node
-  n108@{ shape: rounded, label: "**bevy​_​pbr::contact​_​shadows::prepare​_​**<br/>**contact​_​shadows​_​settings**<br/>来自crate:bevy​_​pbr ↗：上传各视图接触<br/>阴影设置并记录动态偏移。" }
+  n108@{ shape: rounded, label: "**prepare​_​contact​_​shadows​_​settings**<br/>来自crate:bevy​_​pbr ↗：上传各视图接触<br/>阴影设置并记录动态偏移。" }
   class n108 node_system
   class n108 external_node
-  n109@{ shape: rounded, label: "**bevy​_​render::view::composition::**<br/>**resolve​_​composition​_​spaces**<br/>协调共享纹理相机的合成色彩空间。" }
+  n109@{ shape: rounded, label: "**resolve​_​composition​_​spaces**<br/>协调共享纹理相机的合成色彩空间。" }
   class n109 node_system
-  n110@{ shape: rounded, label: "**bevy​_​pbr::ssr::prepare​_​ssr​_​pipelines**<br/>来自crate:bevy​_​pbr ↗：为具备反射及深<br/>度、延迟预通道的视图选择管线。" }
+  n110@{ shape: rounded, label: "**prepare​_​ssr​_​pipelines**<br/>来自crate:bevy​_​pbr ↗：为具备反射及深<br/>度、延迟预通道的视图选择管线。" }
   class n110 node_system
   class n110 external_node
-  n111@{ shape: rounded, label: "**bevy​_​render::batching::gpu​_​**<br/>**preprocessing::write​_​binned​_​**<br/>**instance​_​buffers#lt;bevy​_​core​_​**<br/>**pipeline::prepass::**<br/>**AlphaMask3dPrepass, bevy​_​pbr::**<br/>**render::mesh::MeshPipeline#gt;**<br/>上传多重绘制分桶并生成 GPU 解包任务。" }
+  n111@{ shape: rounded, label: "**write​_​binned​_​instance​_​buffers**<br/>上传多重绘制分桶并生成 GPU 解包任务。" }
   class n111 node_system
-  n112@{ shape: rounded, label: "**bevy​_​pbr::cluster::gpu::prepare​_​**<br/>**clustering​_​bind​_​groups**<br/>来自crate:bevy​_​pbr ↗：为视图的聚簇计<br/>算与光栅阶段绑定工作缓冲。" }
+  n112@{ shape: rounded, label: "**prepare​_​clustering​_​bind​_​groups**<br/>来自crate:bevy​_​pbr ↗：为视图的聚簇计<br/>算与光栅阶段绑定工作缓冲。" }
   class n112 node_system
   class n112 external_node
-  n113@{ shape: rounded, label: "**bevy​_​pbr::render::gpu​_​preprocess::**<br/>**unpack​_​bins**<br/>来自crate:bevy​_​pbr ↗：解包 GPU 分桶<br/>数据并生成网格预处理任务。" }
+  n113@{ shape: rounded, label: "**unpack​_​bins**<br/>来自crate:bevy​_​pbr ↗：解包 GPU 分桶<br/>数据并生成网格预处理任务。" }
   class n113 node_system
   class n113 external_node
-  n114@{ shape: rounded, label: "**bevy​_​pbr::render::gpu​_​preprocess::**<br/>**early​_​gpu​_​preprocess**<br/>来自crate:bevy​_​pbr ↗：为当前视图及阴<br/>影级联执行早期网格转换与裁剪。" }
+  n114@{ shape: rounded, label: "**early​_​gpu​_​preprocess**<br/>来自crate:bevy​_​pbr ↗：为当前视图及阴<br/>影级联执行早期网格转换与裁剪。" }
   class n114 node_system
   class n114 external_node
-  n115@{ shape: rounded, label: "**bevy​_​post​_​process::dof::prepare​_​**<br/>**depth​_​of​_​field​_​pipelines**<br/>来自crate:bevy​_​post​_​process ↗：按景<br/>深模式和视图格式准备两阶段管线。" }
+  n115@{ shape: rounded, label: "**prepare​_​depth​_​of​_​field​_​pipelines**<br/>来自crate:bevy​_​post​_​process ↗：按景<br/>深模式和视图格式准备两阶段管线。" }
   class n115 node_system
   class n115 external_node
-  n116@{ shape: rounded, label: "**bevy​_​core​_​pipeline::prepass::node::**<br/>**early​_​prepass**<br/>来自crate:bevy​_​core​_​pipeline ↗：绘制<br/>早期不透明与 AlphaMask 预通道。" }
+  n116@{ shape: rounded, label: "**early​_​prepass**<br/>来自crate:bevy​_​core​_​pipeline ↗：绘制<br/>早期不透明与 AlphaMask 预通道。" }
   class n116 node_system
   class n116 external_node
-  n117@{ shape: rounded, label: "**bevy​_​pbr::render::light::per​_​view​_​**<br/>**shadow​_​pass#lt;true#gt;**<br/>来自crate:bevy​_​pbr ↗：绘制相机相关的<br/>平行光级联阴影。" }
+  n117@{ shape: rounded, label: "**per​_​view​_​shadow​_​pass**<br/>来自crate:bevy​_​pbr ↗：绘制相机相关的<br/>平行光级联阴影。" }
   class n117 node_system
   class n117 external_node
   n0 e0@--> n1

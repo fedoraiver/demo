@@ -46,43 +46,46 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​animation::animate​_​targets**<br/>评估动画图并把结果应用到动画目标。" }
+  subgraph layout_card_n0[" "]
+  n0@{ shape: rounded, label: "**animate​_​targets**<br/>评估动画图并把结果应用到动画目标。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**graph::AnimationGraphHandle**<br/>选择播放器使用的动画图资产。" }
+  end
+  style layout_card_n0 fill:none,stroke:none
+  n1@{ shape: rounded, label: "**AnimationGraphHandle**<br/>选择播放器使用的动画图资产。" }
   class n1 node_component
   n2@{ shape: lin-rect, label: "**AnimationSystems**<br/>来自crate:bevy​_​app ↗：更新动画图、播<br/>放时间和目标姿态。" }
   class n2 node_system_set
   class n2 external_node
   n3@{ shape: rounded, label: "**AnimationPlayer**<br/>保存当前激活动画及其播放控制状态" }
   class n3 node_component
-  n4@{ shape: rounded, label: "**bevy​_​ecs::name::Name**<br/>来自crate:bevy​_​ecs ↗：保存供调试和界<br/>面展示的实体名称及缓存哈希" }
+  n4@{ shape: rounded, label: "**Name**<br/>来自crate:bevy​_​ecs ↗：保存供调试和界<br/>面展示的实体名称及缓存哈希" }
   class n4 node_component
   class n4 external_node
-  n5@{ shape: rounded, label: "**bevy​_​animation::trigger​_​untargeted​_​**<br/>**animation​_​events**<br/>派发动画片段的根目标事件。" }
+  n5@{ shape: rounded, label: "**trigger​_​untargeted​_​animation​_​events**<br/>派发动画片段的根目标事件。" }
   class n5 node_system
-  n6@{ shape: rounded, label: "**bevy​_​animation::AnimationTargetId**<br/>使用 UUID 标识动画曲线的目标路径" }
+  n6@{ shape: rounded, label: "**AnimationTargetId**<br/>使用 UUID 标识动画曲线的目标路径" }
   class n6 node_component
-  n7@{ shape: cyl, label: "**bevy​_​asset::Assets#lt;AnimationClip#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
+  n7@{ shape: cyl, label: "**Assets#lt;AnimationClip#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
   class n7 node_resource
   class n7 external_node
-  n8@{ shape: rounded, label: "**bevy​_​ecs::resource::IsResource**<br/>来自crate:bevy​_​ecs ↗：标记承载资源值<br/>的内部实体并保存实际资源组件的<br/>ComponentId" }
+  n8@{ shape: rounded, label: "**IsResource**<br/>来自crate:bevy​_​ecs ↗：标记承载资源值<br/>的内部实体并保存实际资源组件的<br/>ComponentId" }
   class n8 node_component
   class n8 external_node
-  n9@{ shape: cyl, label: "**graph::ThreadedAnimationGraphs**<br/>缓存动画图的线程化遍历加速结构" }
+  n9@{ shape: cyl, label: "**ThreadedAnimationGraphs**<br/>缓存动画图的线程化遍历加速结构" }
   class n9 node_resource
-  n10@{ shape: rounded, label: "**bevy​_​animation::AnimatedBy**<br/>把动画目标连接到驱动它的<br/>AnimationPlayer 实体" }
+  n10@{ shape: rounded, label: "**AnimatedBy**<br/>把动画目标连接到驱动它的<br/>AnimationPlayer 实体" }
   class n10 node_component
   n11@{ shape: lin-rect, label: "**Propagate**<br/>来自crate:bevy​_​transform ↗：组织实体<br/>层级变换传播。" }
   class n11 node_system_set
   class n11 external_node
-  n12@{ shape: cyl, label: "**bevy​_​asset::Assets#lt;graph::**<br/>**AnimationGraph#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
+  n12@{ shape: cyl, label: "**Assets#lt;AnimationGraph#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
   class n12 node_resource
   class n12 external_node
   n13@{ shape: notch-rect, label: "**Local · animation​_​evaluation​_​state**<br/>为并行动画求值复用各线程的求值工作状态。" }
   class n13 node_local
-  n14@{ shape: rounded, label: "**bevy​_​animation::advance​_​animations**<br/>推进动画播放器中活动动画的播放时间。" }
+  n14@{ shape: rounded, label: "**advance​_​animations**<br/>推进动画播放器中活动动画的播放时间。" }
   class n14 node_system
-  n15@{ shape: fr-rect, label: "**bevy​_​animation::AnimationPlugin**<br/>安装动画播放与更新支持。" }
+  n15@{ shape: fr-rect, label: "**AnimationPlugin**<br/>安装动画播放与更新支持。" }
   class n15 node_plugin
   n1 e0@--> n0
   class e0 edge_read
@@ -124,7 +127,7 @@ flowchart LR
   e7@{ curve: basis }
   e8@{ curve: basis }
   e9@{ curve: basis }
-  e10@{ curve: bumpX }
+  e10@{ curve: basis }
   e11@{ curve: basis }
   e12@{ curve: basis }
   e13@{ curve: basis }

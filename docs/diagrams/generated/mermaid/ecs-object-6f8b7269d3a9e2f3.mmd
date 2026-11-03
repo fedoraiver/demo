@@ -36,9 +36,9 @@ flowchart LR
   classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy::bevy​_​state::state​_​scoped::**<br/>**DisableOnEnter#lt;game​_​flow::AppState#gt;**<br/>指定进入某一状态时禁用当前实体的生命周期<br/>规则" }
+  n0@{ shape: rounded, label: "**DisableOnEnter#lt;AppState#gt;**<br/>指定进入某一状态时禁用当前实体的生命周期<br/>规则" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​state::state​_​scoped::disable​_​**<br/>**entities​_​on​_​enter​_​state#lt;demo::game​_​**<br/>**flow::AppState#gt;**<br/>进入指定状态时禁用实体子树。" }
+  n1@{ shape: rounded, label: "**disable​_​entities​_​on​_​enter​_​state**<br/>进入指定状态时禁用实体子树。" }
   class n1 node_system
   n0 e0@--> n1
   class e0 edge_read

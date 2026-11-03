@@ -38,11 +38,11 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**render::light::ExtractedRectLight**<br/>保存渲染侧矩形光源的尺寸与光照。" }
+  n0@{ shape: rounded, label: "**ExtractedRectLight**<br/>保存渲染侧矩形光源的尺寸与光照。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​pbr::render::light::extract​_​**<br/>**lights**<br/>提取各类可见光源及阴影渲染状态。" }
+  n1@{ shape: rounded, label: "**extract​_​lights**<br/>提取各类可见光源及阴影渲染状态。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​pbr::render::light::prepare​_​**<br/>**lights**<br/>准备视图光照参数、阴影视图和阴影贴图。" }
+  n2@{ shape: rounded, label: "**prepare​_​lights**<br/>准备视图光照参数、阴影视图和阴影贴图。" }
   class n2 node_system
   n1 e0@-->|"插入"| n0
   class e0 edge_write

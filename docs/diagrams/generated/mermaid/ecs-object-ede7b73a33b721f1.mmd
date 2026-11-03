@@ -38,11 +38,11 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**view::window::screenshot::**<br/>**ScreenshotToScreenPipeline**<br/>提供截图结果回写屏幕的着色接口。" }
+  n0@{ shape: cyl, label: "**ScreenshotToScreenPipeline**<br/>提供截图结果回写屏幕的着色接口。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​render::view::window::**<br/>**screenshot::init​_​screenshot​_​to​_​**<br/>**screen​_​pipeline**<br/>建立把截图纹理复制到屏幕的管线资源。" }
+  n1@{ shape: rounded, label: "**init​_​screenshot​_​to​_​screen​_​pipeline**<br/>建立把截图纹理复制到屏幕的管线资源。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​render::view::window::**<br/>**screenshot::prepare​_​screenshots**<br/>为有效截图目标准备捕获资源和输出附件。" }
+  n2@{ shape: rounded, label: "**prepare​_​screenshots**<br/>为有效截图目标准备捕获资源和输出附件。" }
   class n2 node_system
   n1 e0@-->|"插入"| n0
   class e0 edge_write

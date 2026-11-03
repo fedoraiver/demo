@@ -38,17 +38,17 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**bloom::downsampling​_​pipeline::**<br/>**BloomDownsamplingPipeline**<br/>提供 Bloom 降采样的着色器和资源布局。" }
+  n0@{ shape: cyl, label: "**BloomDownsamplingPipeline**<br/>提供 Bloom 降采样的着色器和资源布局。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​post​_​process::bloom::bloom**<br/>通过降采样和上采样合成 HDR 光晕。" }
+  n1@{ shape: rounded, label: "**bloom**<br/>通过降采样和上采样合成 HDR 光晕。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​post​_​process::bloom::**<br/>**downsampling​_​pipeline::init​_​bloom​_​**<br/>**downsampling​_​pipeline**<br/>建立 Bloom 降采样的纹理与参数管线。" }
+  n2@{ shape: rounded, label: "**init​_​bloom​_​downsampling​_​pipeline**<br/>建立 Bloom 降采样的纹理与参数管线。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​post​_​process::bloom::bloom**<br/>通过降采样和上采样合成 HDR 光晕。" }
+  n3@{ shape: rounded, label: "**bloom**<br/>通过降采样和上采样合成 HDR 光晕。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**bevy​_​post​_​process::bloom::prepare​_​**<br/>**bloom​_​bind​_​groups**<br/>为 Bloom 各 mip 层准备降采样与升采样绑<br/>定。" }
+  n4@{ shape: rounded, label: "**prepare​_​bloom​_​bind​_​groups**<br/>为 Bloom 各 mip 层准备降采样与升采样绑<br/>定。" }
   class n4 node_system
-  n5@{ shape: rounded, label: "**bevy​_​post​_​process::bloom::**<br/>**downsampling​_​pipeline::prepare​_​**<br/>**downsampling​_​pipeline**<br/>按预过滤和缩放设置准备 Bloom 降采样变<br/>体。" }
+  n5@{ shape: rounded, label: "**prepare​_​downsampling​_​pipeline**<br/>按预过滤和缩放设置准备 Bloom 降采样变<br/>体。" }
   class n5 node_system
   n0 e0@--> n1
   class e0 edge_read

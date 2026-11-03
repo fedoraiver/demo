@@ -40,13 +40,13 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​ui​_​render::ui​_​texture​_​slice​_​**<br/>**pipeline::init​_​ui​_​texture​_​slice​_​**<br/>**pipeline**<br/>建立 UI 图像切片的视图和纹理管线资源。" }
+  n0@{ shape: rounded, label: "**init​_​ui​_​texture​_​slice​_​pipeline**<br/>建立 UI 图像切片的视图和纹理管线资源。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**ui​_​texture​_​slice​_​pipeline::**<br/>**UiTextureSlicePipeline**<br/>提供 UI 纹理切片的资源布局和着色器。" }
+  n1@{ shape: cyl, label: "**UiTextureSlicePipeline**<br/>提供 UI 纹理切片的资源布局和着色器。" }
   class n1 node_resource
-  n2@{ shape: fr-rect, label: "**ui​_​texture​_​slice​_​pipeline::**<br/>**UiTextureSlicerPlugin**<br/>提取并绘制界面纹理切片。" }
+  n2@{ shape: fr-rect, label: "**UiTextureSlicerPlugin**<br/>提取并绘制界面纹理切片。" }
   class n2 node_plugin
-  n3@{ shape: cyl, label: "**bevy​_​asset::AssetServer**<br/>来自crate:bevy​_​asset ↗：加载资产并追<br/>踪加载状态。" }
+  n3@{ shape: cyl, label: "**AssetServer**<br/>来自crate:bevy​_​asset ↗：加载资产并追<br/>踪加载状态。" }
   class n3 node_resource
   class n3 external_node
   n0 e0@-->|"插入"| n1

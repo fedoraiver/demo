@@ -40,34 +40,34 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: lin-rect, label: "**PostProcess**<br/>划分三维相机绘制与后处理阶段。" }
   class n0 node_system_set
-  n1@{ shape: rounded, label: "**bevy​_​anti​_​alias::smaa::smaa**<br/>来自crate:bevy​_​anti​_​alias ↗：通过三<br/>个阶段完成 SMAA 抗锯齿。" }
+  n1@{ shape: rounded, label: "**smaa**<br/>来自crate:bevy​_​anti​_​alias ↗：通过三<br/>个阶段完成 SMAA 抗锯齿。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​core​_​pipeline::upscaling::**<br/>**node::upscaling**<br/>将主颜色纹理缩放写入最终输出附件。" }
+  n2@{ shape: rounded, label: "**upscaling**<br/>将主颜色纹理缩放写入最终输出附件。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​ui​_​render::render​_​pass::ui​_​pass**<br/>来自crate:bevy​_​ui​_​render ↗：把透明<br/>UI 绘制项渲染到关联视图。" }
+  n3@{ shape: rounded, label: "**ui​_​pass**<br/>来自crate:bevy​_​ui​_​render ↗：把透明<br/>UI 绘制项渲染到关联视图。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**bevy​_​egui::render::render​_​pass::**<br/>**egui​_​pass**<br/>来自crate:bevy​_​egui ↗：把准备好的<br/>Egui 绘制项渲染到视图目标。" }
+  n4@{ shape: rounded, label: "**egui​_​pass**<br/>来自crate:bevy​_​egui ↗：把准备好的<br/>Egui 绘制项渲染到视图目标。" }
   class n4 node_system
   class n4 external_node
-  n5@{ shape: rounded, label: "**bevy​_​post​_​process::motion​_​blur::**<br/>**motion​_​blur**<br/>来自crate:bevy​_​post​_​process ↗：读取<br/>当前视图颜色、预通道运动矢量和深度，按快<br/>门角度及采样数执行运动模糊；采样关闭、所<br/>需纹理或管线不可用时跳过。" }
+  n5@{ shape: rounded, label: "**motion​_​blur**<br/>来自crate:bevy​_​post​_​process ↗：读取<br/>当前视图颜色、预通道运动矢量和深度，按快<br/>门角度及采样数执行运动模糊；采样关闭、所<br/>需纹理或管线不可用时跳过。" }
   class n5 node_system
   class n5 external_node
-  n6@{ shape: rounded, label: "**bevy​_​anti​_​alias::fxaa::node::fxaa**<br/>来自crate:bevy​_​anti​_​alias ↗：对启用<br/>的相机视图执行 FXAA 抗锯齿。" }
+  n6@{ shape: rounded, label: "**fxaa**<br/>来自crate:bevy​_​anti​_​alias ↗：对启用<br/>的相机视图执行 FXAA 抗锯齿。" }
   class n6 node_system
   class n6 external_node
-  n7@{ shape: rounded, label: "**bevy​_​post​_​process::bloom::bloom**<br/>来自crate:bevy​_​post​_​process ↗：通过<br/>降采样和上采样合成 HDR 光晕。" }
+  n7@{ shape: rounded, label: "**bloom**<br/>来自crate:bevy​_​post​_​process ↗：通过<br/>降采样和上采样合成 HDR 光晕。" }
   class n7 node_system
   class n7 external_node
-  n8@{ shape: rounded, label: "**bevy​_​core​_​pipeline::mip​_​generation::**<br/>**experimental::depth::late​_​**<br/>**downsample​_​depth**<br/>更新供下一帧早期遮挡测试使用的深度金字<br/>塔。" }
+  n8@{ shape: rounded, label: "**late​_​downsample​_​depth**<br/>更新供下一帧早期遮挡测试使用的深度金字<br/>塔。" }
   class n8 node_system
   n9@{ shape: lin-rect, label: "**EarlyPostProcess**<br/>划分三维相机绘制与后处理阶段。" }
   class n9 node_system_set
-  n10@{ shape: rounded, label: "**bevy​_​anti​_​alias::contrast​_​adaptive​_​**<br/>**sharpening::node::cas**<br/>来自crate:bevy​_​anti​_​alias ↗：对视图<br/>颜色执行 CAS 锐化后处理。" }
+  n10@{ shape: rounded, label: "**cas**<br/>来自crate:bevy​_​anti​_​alias ↗：对视图<br/>颜色执行 CAS 锐化后处理。" }
   class n10 node_system
   class n10 external_node
-  n11@{ shape: rounded, label: "**bevy​_​core​_​pipeline::tonemapping::**<br/>**node::tonemapping**<br/>为启用的 HDR 视图执行色调映射。" }
+  n11@{ shape: rounded, label: "**tonemapping**<br/>为启用的 HDR 视图执行色调映射。" }
   class n11 node_system
   n0 e0@-->|"集合成员"| n1
   class e0 edge_set_membership

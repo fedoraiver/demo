@@ -38,15 +38,15 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**dof::**<br/>**ViewDepthOfFieldBindGroupLayouts**<br/>定义当前视图景深的单输入与双输入布局。" }
+  n0@{ shape: rounded, label: "**ViewDepthOfFieldBindGroupLayouts**<br/>定义当前视图景深的单输入与双输入布局。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​post​_​process::dof::depth​_​of​_​**<br/>**field**<br/>以两阶段全屏通道执行景深模糊。" }
+  n1@{ shape: rounded, label: "**depth​_​of​_​field**<br/>以两阶段全屏通道执行景深模糊。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​post​_​process::dof::prepare​_​**<br/>**depth​_​of​_​field​_​view​_​bind​_​group​_​**<br/>**layouts**<br/>为景深视图创建单输入与 Bokeh 双输入布<br/>局。" }
+  n2@{ shape: rounded, label: "**prepare​_​depth​_​of​_​field​_​view​_​bind​_​**<br/>**group​_​layouts**<br/>为景深视图创建单输入与 Bokeh 双输入布<br/>局。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​post​_​process::dof::extract​_​**<br/>**depth​_​of​_​field​_​settings**<br/>把透视相机景深设置转换为 GPU 参数。" }
+  n3@{ shape: rounded, label: "**extract​_​depth​_​of​_​field​_​settings**<br/>把透视相机景深设置转换为 GPU 参数。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**bevy​_​post​_​process::dof::prepare​_​**<br/>**depth​_​of​_​field​_​pipelines**<br/>按景深模式和视图格式准备两阶段管线。" }
+  n4@{ shape: rounded, label: "**prepare​_​depth​_​of​_​field​_​pipelines**<br/>按景深模式和视图格式准备两阶段管线。" }
   class n4 node_system
   n0 e0@--> n1
   class e0 edge_read

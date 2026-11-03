@@ -36,9 +36,9 @@ flowchart LR
   classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**smaa::SmaaLuts**<br/>提供 SMAA 面积与搜索查找纹理。" }
+  n0@{ shape: cyl, label: "**SmaaLuts**<br/>提供 SMAA 面积与搜索查找纹理。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​anti​_​alias::smaa::prepare​_​smaa​_​**<br/>**bind​_​groups**<br/>为视图绑定 SMAA 中间纹理与查找表。" }
+  n1@{ shape: rounded, label: "**prepare​_​smaa​_​bind​_​groups**<br/>为视图绑定 SMAA 中间纹理与查找表。" }
   class n1 node_system
   n0 e0@--> n1
   class e0 edge_read

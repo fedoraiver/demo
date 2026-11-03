@@ -43,20 +43,20 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: hex, label: "**bevy​_​input​_​focus::tab​_​navigation::**<br/>**acquire​_​focus​_​tab​_​index**<br/>让带导航索引的实体获得输入焦点。" }
+  n0@{ shape: hex, label: "**acquire​_​focus​_​tab​_​index**<br/>让带导航索引的实体获得输入焦点。" }
   class n0 node_observer
   n1@{ shape: stadium, label: "**AcquireFocus**<br/>沿层级请求可聚焦实体获得焦点。" }
   class n1 node_event
-  n2@{ shape: fr-rect, label: "**tab​_​navigation::TabNavigationPlugin**<br/>处理键盘焦点遍历。" }
+  n2@{ shape: fr-rect, label: "**TabNavigationPlugin**<br/>处理键盘焦点遍历。" }
   class n2 node_plugin
   n3@{ shape: cyl, label: "**InputFocus**<br/>保存当前输入焦点实体、待派发的焦点变化及<br/>原焦点" }
   class n3 node_resource
-  n4@{ shape: fr-rect, label: "**pointer​_​focus::PointerFocusPlugin**<br/>根据指针点击调整输入焦点。" }
+  n4@{ shape: fr-rect, label: "**PointerFocusPlugin**<br/>根据指针点击调整输入焦点。" }
   class n4 node_plugin
-  n5@{ shape: rounded, label: "**window::Window**<br/>来自crate:bevy​_​window ↗：保存窗口的呈<br/>现模式、位置、分辨率、标题、全屏及平台行<br/>为配置" }
+  n5@{ shape: rounded, label: "**Window**<br/>来自crate:bevy​_​window ↗：保存窗口的呈<br/>现模式、位置、分辨率、标题、全屏及平台行<br/>为配置" }
   class n5 node_component
   class n5 external_node
-  n6@{ shape: rounded, label: "**tab​_​navigation::TabIndex**<br/>声明实体参与 Tab 导航及其排序值" }
+  n6@{ shape: rounded, label: "**TabIndex**<br/>声明实体参与 Tab 导航及其排序值" }
   class n6 node_component
   n1 e0@-->|"接收事件"| n0
   class e0 edge_observe

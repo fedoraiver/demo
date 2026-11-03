@@ -40,21 +40,21 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: lin-rect, label: "**AnonymousSet(0)**<br/>保存一组系统的共同配置。" }
   class n0 node_system_set
-  n1@{ shape: rounded, label: "**avian3d::dynamics::solver::islands::**<br/>**sleeping::sleep​_​islands**<br/>来自crate:avian3d ↗：按物理岛活动状态<br/>提交休眠与唤醒。" }
+  n1@{ shape: rounded, label: "**sleep​_​islands**<br/>来自crate:avian3d ↗：按物理岛活动状态<br/>提交休眠与唤醒。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**avian3d::dynamics::solver::islands::**<br/>**sleeping::wake​_​all​_​islands**<br/>来自crate:avian3d ↗：批量请求唤醒当前<br/>全部休眠物理岛。" }
+  n2@{ shape: rounded, label: "**wake​_​all​_​islands**<br/>来自crate:avian3d ↗：批量请求唤醒当前<br/>全部休眠物理岛。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​ecs::schedule::condition::**<br/>**common​_​conditions::resource​_​**<br/>**exists#lt;avian3d::dynamics::solver::**<br/>**islands::PhysicsIslands#gt;**<br/>判断指定资源是否存在。" }
+  n3@{ shape: rounded, label: "**resource​_​exists**<br/>判断指定资源是否存在。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**avian3d::dynamics::solver::islands::**<br/>**sleeping::wake​_​on​_​changed**<br/>来自crate:avian3d ↗：因外部位姿、速度<br/>或受力变化标记物理岛唤醒。" }
+  n4@{ shape: rounded, label: "**wake​_​on​_​changed**<br/>来自crate:avian3d ↗：因外部位姿、速度<br/>或受力变化标记物理岛唤醒。" }
   class n4 node_system
   class n4 external_node
-  n5@{ shape: rounded, label: "**avian3d::dynamics::solver::islands::**<br/>**sleeping::wake​_​islands​_​with​_​**<br/>**sleeping​_​disabled**<br/>来自crate:avian3d ↗：让禁止休眠或已禁<br/>用的刚体所属岛保持清醒。" }
+  n5@{ shape: rounded, label: "**wake​_​islands​_​with​_​sleeping​_​disabled**<br/>来自crate:avian3d ↗：让禁止休眠或已禁<br/>用的刚体所属岛保持清醒。" }
   class n5 node_system
   class n5 external_node
-  n6@{ shape: rounded, label: "**avian3d::dynamics::solver::islands::**<br/>**sleeping::update​_​sleeping​_​states**<br/>来自crate:avian3d ↗：按刚体静止时间判<br/>断物理岛的休眠资格。" }
+  n6@{ shape: rounded, label: "**update​_​sleeping​_​states**<br/>来自crate:avian3d ↗：按刚体静止时间判<br/>断物理岛的休眠资格。" }
   class n6 node_system
   class n6 external_node
   n0 e0@-->|"集合成员"| n1

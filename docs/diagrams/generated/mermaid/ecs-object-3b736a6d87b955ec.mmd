@@ -39,17 +39,17 @@ flowchart LR
   classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**scene​_​assembly::IslandMap**<br/>标识岛屿地图场景。" }
+  n0@{ shape: rounded, label: "**IslandMap**<br/>标识岛屿地图场景。" }
   class n0 node_component
-  n1@{ shape: hex, label: "**demo::scene​_​assembly::loading::mark​_​**<br/>**island​_​ready**<br/>标记地图实例以进入碰撞准备。" }
+  n1@{ shape: hex, label: "**mark​_​island​_​ready**<br/>标记地图实例以进入碰撞准备。" }
   class n1 node_observer
-  n2@{ shape: hex, label: "**demo::scene​_​assembly::loading::mark​_​**<br/>**island​_​ready**<br/>标记地图实例以进入碰撞准备。" }
+  n2@{ shape: hex, label: "**mark​_​island​_​ready**<br/>标记地图实例以进入碰撞准备。" }
   class n2 node_observer
-  n3@{ shape: rounded, label: "**demo::scene​_​assembly::loading::**<br/>**begin​_​island**<br/>请求创建已加载海岛的运行实例。" }
+  n3@{ shape: rounded, label: "**begin​_​island**<br/>请求创建已加载海岛的运行实例。" }
   class n3 node_system
   n4@{ shape: rounded, label: "**begin​_​island · 创建模板**<br/>请求当前会话的海岛世界资产实例。" }
   class n4 node_entity
-  n5@{ shape: hex, label: "**demo::scene​_​assembly::loading::mark​_​**<br/>**island​_​ready**<br/>标记地图实例以进入碰撞准备。" }
+  n5@{ shape: hex, label: "**mark​_​island​_​ready**<br/>标记地图实例以进入碰撞准备。" }
   class n5 node_observer
   n0 e0@-->|"存在性约束"| n1
   class e0 edge_reference

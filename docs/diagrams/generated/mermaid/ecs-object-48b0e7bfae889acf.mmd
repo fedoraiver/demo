@@ -38,13 +38,13 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**skybox::SkyboxPipeline**<br/>提供天空盒绘制的资源布局和着色器。" }
+  n0@{ shape: cyl, label: "**SkyboxPipeline**<br/>提供天空盒绘制的资源布局和着色器。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​core​_​pipeline::skybox::prepare​_​**<br/>**skybox​_​pipelines**<br/>按目标格式与采样数准备天空盒管线。" }
+  n1@{ shape: rounded, label: "**prepare​_​skybox​_​pipelines**<br/>按目标格式与采样数准备天空盒管线。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​core​_​pipeline::skybox::prepare​_​**<br/>**skybox​_​bind​_​groups**<br/>为有效天空盒图像建立视图绑定组。" }
+  n2@{ shape: rounded, label: "**prepare​_​skybox​_​bind​_​groups**<br/>为有效天空盒图像建立视图绑定组。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​core​_​pipeline::skybox::init​_​**<br/>**skybox​_​pipeline**<br/>加载天空盒着色器并建立管线资源。" }
+  n3@{ shape: rounded, label: "**init​_​skybox​_​pipeline**<br/>加载天空盒着色器并建立管线资源。" }
   class n3 node_system
   n0 e0@--> n1
   class e0 edge_read

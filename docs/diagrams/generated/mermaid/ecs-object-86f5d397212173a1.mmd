@@ -37,9 +37,9 @@ flowchart LR
   classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;event::**<br/>**RequestRedraw#gt;**<br/>保存最近两次轮换期间产生的指定类型消息" }
+  n0@{ shape: cyl, label: "**Messages#lt;RequestRedraw#gt;**<br/>保存最近两次轮换期间产生的指定类型消息" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​egui::output::process​_​output​_​**<br/>**system**<br/>来自crate:bevy​_​egui ↗：拆分 Egui 绘<br/>制输出并执行平台命令。" }
+  n1@{ shape: rounded, label: "**process​_​output​_​system**<br/>来自crate:bevy​_​egui ↗：拆分 Egui 绘<br/>制输出并执行平台命令。" }
   class n1 node_system
   class n1 external_node
   n1 e0@-->|"可变访问"| n0

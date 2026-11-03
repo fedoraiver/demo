@@ -40,33 +40,33 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: cyl, label: "**ExtractedUiNodes**<br/>保存提取后的 UI 节点及本帧变化集合。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​ui​_​render::text::extract​_​text​_​**<br/>**cursor**<br/>提取文字光标和带圆角的选区背景。" }
+  n1@{ shape: rounded, label: "**extract​_​text​_​cursor**<br/>提取文字光标和带圆角的选区背景。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​ui​_​render::extract​_​text​_​shadows**<br/>提取 UI 文字及装饰线的偏移阴影。" }
+  n2@{ shape: rounded, label: "**extract​_​text​_​shadows**<br/>提取 UI 文字及装饰线的偏移阴影。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​ui​_​render::debug​_​overlay::**<br/>**extract​_​debug​_​overlay**<br/>为变化的 UI 节点提取调试轮廓。" }
+  n3@{ shape: rounded, label: "**extract​_​debug​_​overlay**<br/>为变化的 UI 节点提取调试轮廓。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**bevy​_​ui​_​render::queue​_​uinodes**<br/>按目标相机和堆叠顺序排队 UI 节点。" }
+  n4@{ shape: rounded, label: "**queue​_​uinodes**<br/>按目标相机和堆叠顺序排队 UI 节点。" }
   class n4 node_system
-  n5@{ shape: rounded, label: "**bevy​_​ui​_​render::extract​_​text​_​**<br/>**sections**<br/>按图集提取 UI 字形并处理选中文字颜色。" }
+  n5@{ shape: rounded, label: "**extract​_​text​_​sections**<br/>按图集提取 UI 字形并处理选中文字颜色。" }
   class n5 node_system
-  n6@{ shape: rounded, label: "**bevy​_​ui​_​render::extract​_​viewport​_​**<br/>**nodes**<br/>把视口节点所引用相机的输出图像嵌入 UI。" }
+  n6@{ shape: rounded, label: "**extract​_​viewport​_​nodes**<br/>把视口节点所引用相机的输出图像嵌入 UI。" }
   class n6 node_system
-  n7@{ shape: rounded, label: "**bevy​_​ui​_​render::extract​_​uinode​_​**<br/>**borders**<br/>提取 UI 各边颜色边框与外轮廓。" }
+  n7@{ shape: rounded, label: "**extract​_​uinode​_​borders**<br/>提取 UI 各边颜色边框与外轮廓。" }
   class n7 node_system
-  n8@{ shape: rounded, label: "**bevy​_​ui​_​render::extract​_​inline​_​**<br/>**images**<br/>把文字行内图像提取为 UI 绘制项。" }
+  n8@{ shape: rounded, label: "**extract​_​inline​_​images**<br/>把文字行内图像提取为 UI 绘制项。" }
   class n8 node_system
-  n9@{ shape: rounded, label: "**bevy​_​ui​_​render::extract​_​uinode​_​**<br/>**images**<br/>按节点视觉盒与图集区域提取普通 UI 图<br/>像。" }
+  n9@{ shape: rounded, label: "**extract​_​uinode​_​images**<br/>按节点视觉盒与图集区域提取普通 UI 图<br/>像。" }
   class n9 node_system
-  n10@{ shape: rounded, label: "**bevy​_​ui​_​render::extract​_​uinode​_​**<br/>**background​_​colors**<br/>提取 UI 节点背景与外侧填充色。" }
+  n10@{ shape: rounded, label: "**extract​_​uinode​_​background​_​colors**<br/>提取 UI 节点背景与外侧填充色。" }
   class n10 node_system
-  n11@{ shape: rounded, label: "**bevy​_​ui​_​render::prepare​_​uinodes**<br/>生成裁剪后的 UI 几何并合并图像批次。" }
+  n11@{ shape: rounded, label: "**prepare​_​uinodes**<br/>生成裁剪后的 UI 几何并合并图像批次。" }
   class n11 node_system
-  n12@{ shape: rounded, label: "**bevy​_​ui​_​render::extract​_​uinode​_​**<br/>**changes**<br/>使变化或移除的 UI 数据失效并清理旧渲染<br/>实体。" }
+  n12@{ shape: rounded, label: "**extract​_​uinode​_​changes**<br/>使变化或移除的 UI 数据失效并清理旧渲染<br/>实体。" }
   class n12 node_system
-  n13@{ shape: rounded, label: "**bevy​_​ui​_​render::extract​_​text​_​**<br/>**decorations**<br/>提取 UI 文字背景、删除线和下划线。" }
+  n13@{ shape: rounded, label: "**extract​_​text​_​decorations**<br/>提取 UI 文字背景、删除线和下划线。" }
   class n13 node_system
-  n14@{ shape: rounded, label: "**bevy​_​ui​_​render::text::extract​_​**<br/>**preedit​_​underlines**<br/>把输入法预编辑下划线提取为 UI 矩形。" }
+  n14@{ shape: rounded, label: "**extract​_​preedit​_​underlines**<br/>把输入法预编辑下划线提取为 UI 矩形。" }
   class n14 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

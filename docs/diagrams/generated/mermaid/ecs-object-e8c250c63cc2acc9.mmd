@@ -42,21 +42,24 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​pbr::material::late​_​sweep​_​**<br/>**material​_​instances**<br/>清扫失效网格材质实例并推进本帧刻度。" }
+  subgraph layout_card_n0[" "]
+  n0@{ shape: rounded, label: "**late​_​sweep​_​material​_​instances**<br/>清扫失效网格材质实例并推进本帧刻度。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**material::RenderMaterialInstances**<br/>保存提取后的实体材质实例。" }
+  end
+  style layout_card_n0 fill:none,stroke:none
+  n1@{ shape: cyl, label: "**RenderMaterialInstances**<br/>保存提取后的实体材质实例。" }
   class n1 node_resource
-  n2@{ shape: fr-rect, label: "**bevy​_​pbr::PbrPlugin**<br/>装配物理材质与三维光照渲染。" }
+  n2@{ shape: fr-rect, label: "**PbrPlugin**<br/>装配物理材质与三维光照渲染。" }
   class n2 node_plugin
   n3@{ shape: notch-rect, label: "**Local · removed​_​meshes​_​query.0.0.1**<br/>跟踪 Mesh3d 移除记录的读取进度。" }
   class n3 node_local
   n4@{ shape: notch-rect, label: "**Local · removed​_​meshes​_​**<br/>**query.0.0.0.0.0**<br/>保存 Mesh3d 移除参数的组件 ID。" }
   class n4 node_local
-  n5@{ shape: rounded, label: "**bevy​_​pbr::material::early​_​sweep​_​**<br/>**material​_​instances#lt;bevy​_​pbr::pbr​_​**<br/>**material::StandardMaterial#gt;**<br/>按材质移除消息清扫未被本帧替换的实例。" }
+  n5@{ shape: rounded, label: "**early​_​sweep​_​material​_​instances**<br/>按材质移除消息清扫未被本帧替换的实例。" }
   class n5 node_system
-  n6@{ shape: rounded, label: "**bevy​_​pbr::material::early​_​sweep​_​**<br/>**material​_​instances#lt;bevy​_​pbr::**<br/>**extended​_​material::**<br/>**ExtendedMaterial#lt;bevy​_​pbr::pbr​_​**<br/>**material::StandardMaterial, bevy​_​**<br/>**pbr::decal::forward::**<br/>**ForwardDecalMaterialExt#gt;#gt;**<br/>按材质移除消息清扫未被本帧替换的实例。" }
+  n6@{ shape: rounded, label: "**early​_​sweep​_​material​_​instances**<br/>按材质移除消息清扫未被本帧替换的实例。" }
   class n6 node_system
-  n7@{ shape: cyl, label: "**extract​_​plugin::MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
+  n7@{ shape: cyl, label: "**MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
   class n7 node_resource
   class n7 external_node
   n0 e0@-->|"可变访问"| n1

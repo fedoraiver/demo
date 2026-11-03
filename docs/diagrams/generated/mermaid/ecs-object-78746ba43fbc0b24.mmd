@@ -40,12 +40,9 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  subgraph layout_card_n0[" "]
-  n0@{ shape: rounded, label: "**bevy​_​picking::Pickable**<br/>配置实体是否可被拾取及是否阻挡深度更低的<br/>命中目标" }
+  n0@{ shape: rounded, label: "**Pickable**<br/>配置实体是否可被拾取及是否阻挡深度更低的<br/>命中目标" }
   class n0 node_component
-  end
-  style layout_card_n0 fill:none,stroke:none
-  n1@{ shape: rounded, label: "**bevy​_​sprite::picking​_​backend::**<br/>**sprite​_​picking**<br/>来自crate:bevy​_​sprite ↗：按精灵图像和<br/>拾取配置计算指针命中。" }
+  n1@{ shape: rounded, label: "**sprite​_​picking**<br/>来自crate:bevy​_​sprite ↗：按精灵图像和<br/>拾取配置计算指针命中。" }
   class n1 node_system
   class n1 external_node
   n2@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：在填充末端指示当前音量位置。" }
@@ -75,9 +72,9 @@ flowchart LR
   n10@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示滚动位置并提供拖动滑块。" }
   class n10 node_entity
   class n10 external_node
-  n11@{ shape: rounded, label: "**bevy​_​picking::hover::generate​_​**<br/>**hovermap**<br/>汇总拾取命中并应用指针捕获。" }
+  n11@{ shape: rounded, label: "**generate​_​hovermap**<br/>汇总拾取命中并应用指针捕获。" }
   class n11 node_system
-  n12@{ shape: rounded, label: "**demo::ui::scroll::sync​_​settings​_​**<br/>**scrollbars**<br/>来自ui ↗：同步滚动条显隐、拾取范围与高<br/>亮。" }
+  n12@{ shape: rounded, label: "**sync​_​settings​_​scrollbars**<br/>来自ui ↗：同步滚动条显隐、拾取范围与高<br/>亮。" }
   class n12 node_system
   class n12 external_node
   n13@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示滚动位置并提供拖动滑块。" }
@@ -95,7 +92,7 @@ flowchart LR
   n17@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：为设置正文提供垂直滚动条轨<br/>道。" }
   class n17 node_entity
   class n17 external_node
-  n18@{ shape: rounded, label: "**bevy​_​ui::picking​_​backend::ui​_​picking**<br/>来自crate:bevy​_​ui ↗：按 UI 堆叠与相机<br/>视口计算指针命中。" }
+  n18@{ shape: rounded, label: "**ui​_​picking**<br/>来自crate:bevy​_​ui ↗：按 UI 堆叠与相机<br/>视口计算指针命中。" }
   class n18 node_system
   class n18 external_node
   n19@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：在填充末端指示当前音量位置。" }
@@ -161,7 +158,6 @@ flowchart LR
   e7@{ curve: basis }
   e8@{ curve: basis }
   e9@{ curve: basis }
-  e10@{ curve: bumpX }
   e11@{ curve: basis }
   e12@{ curve: basis }
   e13@{ curve: basis }

@@ -38,11 +38,11 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bounds​_​recovery::recovery::**<br/>**ResumeInterpolation**<br/>记录本次恢复临时添加的插值暂停项，不移除<br/>原先由其他功能设置的暂停组件。" }
+  n0@{ shape: rounded, label: "**ResumeInterpolation**<br/>记录本次恢复临时添加的插值暂停项，不移除<br/>原先由其他功能设置的暂停组件。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**demo::bounds​_​recovery::recovery::**<br/>**resume​_​interpolation**<br/>下一固定步从恢复后的位置重新采样插值，只<br/>移除本模块临时添加的暂停项。" }
+  n1@{ shape: rounded, label: "**resume​_​interpolation**<br/>下一固定步从恢复后的位置重新采样插值，只<br/>移除本模块临时添加的暂停项。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**demo::bounds​_​recovery::recovery::**<br/>**recover​_​from​_​water**<br/>恢复实体自身的出生姿态；角色落水只释放手<br/>中物品，物品落水时再独立恢复。" }
+  n2@{ shape: rounded, label: "**recover​_​from​_​water**<br/>恢复实体自身的出生姿态；角色落水只释放手<br/>中物品，物品落水时再独立恢复。" }
   class n2 node_system
   n1 e0@--- n0
   class e0 edge_read

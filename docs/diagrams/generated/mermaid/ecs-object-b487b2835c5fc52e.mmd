@@ -40,7 +40,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: lin-rect, label: "**PostCleanup**<br/>组织渲染数据准备与绘制排队。" }
   class n0 node_system_set
-  n1@{ shape: rounded, label: "**bevy​_​extract::sync​_​world::despawn​_​**<br/>**temporary​_​entities#lt;bevy​_​render::**<br/>**RenderApp#gt;**<br/>来自crate:bevy​_​extract ↗：按实体索引<br/>逆序清理临时同步实体。" }
+  n1@{ shape: rounded, label: "**despawn​_​temporary​_​entities**<br/>来自crate:bevy​_​extract ↗：按实体索引<br/>逆序清理临时同步实体。" }
   class n1 node_system
   class n1 external_node
   n2@{ shape: lin-rect, label: "**Cleanup**<br/>组织渲染数据准备与绘制排队。" }

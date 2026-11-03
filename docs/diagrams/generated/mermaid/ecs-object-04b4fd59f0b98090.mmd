@@ -41,11 +41,11 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​render::camera::clear​_​dirty​_​**<br/>**specializations**<br/>清空新帧材质专用化的变化记录。" }
+  n0@{ shape: rounded, label: "**clear​_​dirty​_​specializations**<br/>清空新帧材质专用化的变化记录。" }
   class n0 node_system
-  n1@{ shape: fr-rect, label: "**camera::CameraPlugin**<br/>维护相机渲染状态与排序。" }
+  n1@{ shape: fr-rect, label: "**CameraPlugin**<br/>维护相机渲染状态与排序。" }
   class n1 node_plugin
-  n2@{ shape: cyl, label: "**camera::DirtySpecializations**<br/>记录需刷新或移除管线专用化的对象与视图。" }
+  n2@{ shape: cyl, label: "**DirtySpecializations**<br/>记录需刷新或移除管线专用化的对象与视图。" }
   class n2 node_resource
   n3@{ shape: lin-rect, label: "**Clear**<br/>组织绘制管线失效检测。" }
   class n3 node_system_set

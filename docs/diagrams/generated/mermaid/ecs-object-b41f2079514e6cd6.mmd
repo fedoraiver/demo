@@ -40,7 +40,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: lin-rect, label: "**FixedMainLoop**<br/>划分固定更新循环的前后边界。" }
   class n0 node_system_set
-  n1@{ shape: rounded, label: "**bevy​_​time::fixed::run​_​fixed​_​main​_​**<br/>**schedule**<br/>来自crate:bevy​_​time ↗：按累计时间推进<br/>固定主调度。" }
+  n1@{ shape: rounded, label: "**run​_​fixed​_​main​_​schedule**<br/>来自crate:bevy​_​time ↗：按累计时间推进<br/>固定主调度。" }
   class n1 node_system
   class n1 external_node
   n2@{ shape: lin-rect, label: "**AfterFixedMainLoop**<br/>划分固定更新循环的前后边界。" }

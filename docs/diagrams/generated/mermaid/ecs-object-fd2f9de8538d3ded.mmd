@@ -38,11 +38,11 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**light​_​probe::generate::**<br/>**GeneratorBindGroupLayouts**<br/>描述环境贴图生成各计算阶段的接口。" }
+  n0@{ shape: cyl, label: "**GeneratorBindGroupLayouts**<br/>描述环境贴图生成各计算阶段的接口。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​pbr::light​_​probe::generate::**<br/>**prepare​_​generated​_​environment​_​map​_​**<br/>**bind​_​groups**<br/>为环境图各 mip 的降采样和卷积建立绑定。" }
+  n1@{ shape: rounded, label: "**prepare​_​generated​_​environment​_​map​_​**<br/>**bind​_​groups**<br/>为环境图各 mip 的降采样和卷积建立绑定。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​pbr::light​_​probe::generate::**<br/>**initialize​_​generated​_​environment​_​**<br/>**map​_​resources**<br/>初始化环境图降采样、复制和卷积的 GPU 接<br/>口。" }
+  n2@{ shape: rounded, label: "**initialize​_​generated​_​environment​_​**<br/>**map​_​resources**<br/>初始化环境图降采样、复制和卷积的 GPU 接<br/>口。" }
   class n2 node_system
   n0 e0@--> n1
   class e0 edge_read

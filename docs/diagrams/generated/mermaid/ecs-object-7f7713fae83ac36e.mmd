@@ -41,28 +41,28 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​render::batching::gpu​_​**<br/>**preprocessing::write​_​batched​_​**<br/>**instance​_​buffers#lt;bevy​_​pbr::render::**<br/>**mesh::MeshPipeline#gt;**<br/>上传实例输入、预处理任务并准备稀疏更新。" }
+  n0@{ shape: rounded, label: "**write​_​batched​_​instance​_​buffers**<br/>上传实例输入、预处理任务并准备稀疏更新。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**bevy​_​render::renderer::RenderDevice**<br/>创建渲染和计算所需的 GPU 资源。" }
+  n1@{ shape: cyl, label: "**RenderDevice**<br/>创建渲染和计算所需的 GPU 资源。" }
   class n1 node_resource
-  n2@{ shape: cyl, label: "**render​_​resource::sparse​_​buffer​_​vec::**<br/>**SparseBufferUpdatePipelines**<br/>提供稀疏缓冲散射写入的计算接口。" }
+  n2@{ shape: cyl, label: "**SparseBufferUpdatePipelines**<br/>提供稀疏缓冲散射写入的计算接口。" }
   class n2 node_resource
-  n3@{ shape: cyl, label: "**render​_​resource::sparse​_​buffer​_​vec::**<br/>**SparseBufferUpdateJobs**<br/>暂存待执行的稀疏缓冲更新任务。" }
+  n3@{ shape: cyl, label: "**SparseBufferUpdateJobs**<br/>暂存待执行的稀疏缓冲更新任务。" }
   class n3 node_resource
-  n4@{ shape: cyl, label: "**render​_​resource::sparse​_​buffer​_​vec::**<br/>**SparseBufferUpdateBindGroups**<br/>追踪各稀疏缓冲更新的资源绑定。" }
+  n4@{ shape: cyl, label: "**SparseBufferUpdateBindGroups**<br/>追踪各稀疏缓冲更新的资源绑定。" }
   class n4 node_resource
-  n5@{ shape: cyl, label: "**bevy​_​render::batching::gpu​_​**<br/>**preprocessing::**<br/>**BatchedInstanceBuffers#lt;render::**<br/>**mesh::MeshUniform, render::mesh::**<br/>**MeshInputUniform#gt;**<br/>保存批次绘制的 GPU 输入与实例缓冲。" }
+  n5@{ shape: cyl, label: "**BatchedInstanceBuffers#lt;MeshUniform,**<br/>**MeshInputUniform#gt;**<br/>保存批次绘制的 GPU 输入与实例缓冲。" }
   class n5 node_resource
-  n6@{ shape: cyl, label: "**bevy​_​render::renderer::RenderQueue**<br/>将资源写入和命令异步提交给 GPU。" }
+  n6@{ shape: cyl, label: "**RenderQueue**<br/>将资源写入和命令异步提交给 GPU。" }
   class n6 node_resource
-  n7@{ shape: cyl, label: "**bevy​_​render::render​_​resource::**<br/>**PipelineCache**<br/>缓存 GPU 渲染、计算管线与待创建队列。" }
+  n7@{ shape: cyl, label: "**PipelineCache**<br/>缓存 GPU 渲染、计算管线与待创建队列。" }
   class n7 node_resource
   n8@{ shape: lin-rect, label: "**PrepareResourcesFlush**<br/>组织渲染数据准备与绘制排队。" }
   class n8 node_system_set
-  n9@{ shape: rounded, label: "**bevy​_​pbr::render::gpu​_​preprocess::**<br/>**write​_​mesh​_​culling​_​data​_​buffer**<br/>来自crate:bevy​_​pbr ↗：上传网格裁剪数<br/>据并准备稀疏填充任务。" }
+  n9@{ shape: rounded, label: "**write​_​mesh​_​culling​_​data​_​buffer**<br/>来自crate:bevy​_​pbr ↗：上传网格裁剪数<br/>据并准备稀疏填充任务。" }
   class n9 node_system
   class n9 external_node
-  n10@{ shape: cyl, label: "**batching::gpu​_​preprocessing::**<br/>**SceneUnpackingBuffers**<br/>汇集分桶解包与 Uniform 分配的工作缓冲。" }
+  n10@{ shape: cyl, label: "**SceneUnpackingBuffers**<br/>汇集分桶解包与 Uniform 分配的工作缓冲。" }
   class n10 node_resource
   n1 e0@--> n0
   class e0 edge_read

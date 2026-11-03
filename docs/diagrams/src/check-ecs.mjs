@@ -47,13 +47,6 @@ function attributeValues(svg, name) {
       ({ amp: '&', lt: '<', gt: '>', quot: '"', apos: "'", '#39': "'" })[entity]));
 }
 
-function elementAttributes(svg, required) {
-  return [...svg.matchAll(/<[A-Za-z][\w:-]*\b([^>]*?)>/g)].map(match => Object.fromEntries(
-    [...match[1].matchAll(/([\w:-]+)\s*=\s*(["'])(.*?)\2/g)].map(attribute => [attribute[1], attribute[3]
-      .replace(/&(amp|lt|gt|quot|apos|#39);/g, (_, entity) => ({ amp: '&', lt: '<', gt: '>', quot: '"', apos: "'", '#39': "'" })[entity])]),
-  )).filter(attributes => Object.hasOwn(attributes, required));
-}
-
 function decodeMermaidText(value) {
   return value.replace(/\*\*(.+?)\*\*/g, '$1').replace(/<br\s*\/?\s*>/gi, '\n').replace(/#(amp|lt|gt|quot|apos|\d+);/g, (_, entity) => ({ amp: '&', lt: '<', gt: '>', quot: '"', apos: "'" })[entity] ?? String.fromCodePoint(Number(entity)));
 }
@@ -235,12 +228,12 @@ export function checkMermaidStyles(view, registry) {
   }
   for (const link of view.links) {
     requireCondition(link.edgeSemantic === edgeSemanticOf(link, registry) && link.displayLabel === displayLabelOf(link, link.edgeSemantic, registry), `Visual edge semantic mismatch: ${link.id}`);
-    const element = elements.find(item => item.attrs['data-link-id'] === link.id);
+    const element = elements.find(item => item.tag === 'path' && item.attrs['data-link-id'] === link.id);
     requireCondition(element?.attrs['data-edge-semantic'] === link.edgeSemantic, `Visual edge semantic metadata mismatch: ${link.id}`);
     requireCondition((element?.attrs['data-native-reverse'] === 'true') === Boolean(link.nativeReverse), `Visual native edge direction mismatch: ${link.id}`);
     checkActualEdgeStyle(element, link.edgeSemantic, elements, link.id);
   }
-  for (const link of view.scheduleLinks || []) checkActualEdgeStyle(elements.find(item => item.attrs['data-schedule-link-id'] === link.id), link.edgeSemantic, elements, link.id);
+  for (const link of view.scheduleLinks || []) checkActualEdgeStyle(elements.find(item => item.tag === 'path' && item.attrs['data-schedule-link-id'] === link.id), link.edgeSemantic, elements, link.id);
 }
 
 export function checkDataSections(view) {
@@ -591,7 +584,9 @@ export function checkArchitecture(root) {
       && view.mermaidFilename === `ecs-${view.id}.mmd`, 'Invalid compiler object render descriptor: ' + view.id);
     requireCondition(fs.readFileSync(artifactFile(paths, view, 'mermaid'), 'utf8') === view.mermaid, 'Mermaid artifact mismatch: ' + view.id);
     mermaidFilenames.add(view.mermaidFilename);
-    const nodes = elementAttributes(view.svg, 'data-id'), links = elementAttributes(view.svg, 'data-link-id');
+    const renderedElements = svgElements(view.svg);
+    const nodes = renderedElements.filter(item => Object.hasOwn(item.attrs, 'data-id')).map(item => item.attrs);
+    const links = renderedElements.filter(item => item.tag === 'path' && Object.hasOwn(item.attrs, 'data-link-id')).map(item => item.attrs);
     requireCondition(nodes.length === view.nodes.length && links.length === view.links.length, 'Rendered graph element coverage mismatch: ' + view.id);
     for (const node of view.nodes) {
       const rendered = nodes.find(value => value['data-instance'] === node.instance);

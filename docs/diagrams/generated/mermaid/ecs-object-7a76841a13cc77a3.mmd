@@ -40,23 +40,20 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**cascade::Cascades**<br/>按视图保存方向光的阴影级联。" }
+  n0@{ shape: rounded, label: "**Cascades**<br/>按视图保存方向光的阴影级联。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​pbr::render::light::extract​_​**<br/>**lights**<br/>来自crate:bevy​_​pbr ↗：提取各类可见光<br/>源及阴影渲染状态。" }
+  n1@{ shape: rounded, label: "**extract​_​lights**<br/>来自crate:bevy​_​pbr ↗：提取各类可见光<br/>源及阴影渲染状态。" }
   class n1 node_system
   class n1 external_node
   n2@{ shape: rounded, label: "**spawn​_​lighting · 创建模板**<br/>来自scene​_​assembly ↗：为玩法海岛创建<br/>会话日光。" }
   class n2 node_entity
   class n2 external_node
-  subgraph layout_card_n3[" "]
-  n3@{ shape: rounded, label: "**bevy​_​light::cascade::build​_​**<br/>**directional​_​light​_​cascades**<br/>为投射阴影的方向光构建逐相机级联。" }
+  n3@{ shape: rounded, label: "**build​_​directional​_​light​_​cascades**<br/>为投射阴影的方向光构建逐相机级联。" }
   class n3 node_system
-  end
-  style layout_card_n3 fill:none,stroke:none
   n4@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：为菜单展示舞台提供带阴影的日<br/>光。" }
   class n4 node_entity
   class n4 external_node
-  n5@{ shape: rounded, label: "**bevy​_​light::directional​_​light::**<br/>**update​_​directional​_​light​_​frusta**<br/>从方向光级联投影更新阴影视锥。" }
+  n5@{ shape: rounded, label: "**update​_​directional​_​light​_​frusta**<br/>从方向光级联投影更新阴影视锥。" }
   class n5 node_system
   n0 e0@--> n1
   class e0 edge_read

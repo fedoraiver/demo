@@ -41,251 +41,107 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  subgraph layout_card_n0[" "]
-  n0@{ shape: rounded, label: "**dynamics::rigid​_​body::RigidBody**<br/>选择动态、静态或运动学刚体行为。" }
+  n0@{ shape: rounded, label: "**RigidBody**<br/>选择动态、静态或运动学刚体行为。" }
   class n0 node_component
-  end
-  style layout_card_n0 fill:none,stroke:none
-  subgraph layout_card_n1[" "]
-  n1@{ shape: hex, label: "**avian3d::collision::collider::**<br/>**collider​_​hierarchy::plugin::on​_​**<br/>**collider​_​body​_​changed**<br/>随层级变化更新碰撞体刚体归属。" }
+  n1@{ shape: hex, label: "**on​_​collider​_​body​_​changed**<br/>随层级变化更新碰撞体刚体归属。" }
   class n1 node_observer
-  end
-  style layout_card_n1 fill:none,stroke:none
-  subgraph layout_card_n2[" "]
-  n2@{ shape: hex, label: "**avian3d::dynamics::solver::solver​_​**<br/>**body::plugin::{impl#35;0}::build::**<br/>**{closure#35;0}**<br/>为重新启用刚体补建求解器体。" }
+  n2@{ shape: hex, label: "**build::{closure#35;0}**<br/>为重新启用刚体补建求解器体。" }
   class n2 node_observer
-  end
-  style layout_card_n2 fill:none,stroke:none
-  subgraph layout_card_n3[" "]
-  n3@{ shape: hex, label: "**avian3d::dynamics::solver::solver​_​**<br/>**body::plugin::{impl#35;0}::build::**<br/>**{closure#35;1}**<br/>在实体启用时恢复刚体求解缓存。" }
+  n3@{ shape: hex, label: "**build::{closure#35;1}**<br/>在实体启用时恢复刚体求解缓存。" }
   class n3 node_observer
-  end
-  style layout_card_n3 fill:none,stroke:none
-  subgraph layout_card_n4[" "]
-  n4@{ shape: hex, label: "**avian3d::dynamics::solver::solver​_​**<br/>**body::plugin::{impl#35;0}::build::**<br/>**{closure#35;1}**<br/>在实体启用时恢复刚体求解缓存。" }
+  n4@{ shape: hex, label: "**build::{closure#35;1}**<br/>在实体启用时恢复刚体求解缓存。" }
   class n4 node_observer
-  end
-  style layout_card_n4 fill:none,stroke:none
-  subgraph layout_card_n5[" "]
-  n5@{ shape: hex, label: "**avian3d::collision::collider::**<br/>**collider​_​hierarchy::plugin::**<br/>**{impl#35;0}::build::{closure#35;0}**<br/>为新增碰撞体建立刚体归属。" }
+  n5@{ shape: hex, label: "**build::{closure#35;0}**<br/>为新增碰撞体建立刚体归属。" }
   class n5 node_observer
-  end
-  style layout_card_n5 fill:none,stroke:none
-  subgraph layout_card_n6[" "]
-  n6@{ shape: rounded, label: "**demo::item​_​interaction::**<br/>**interaction::handle​_​interaction**<br/>来自item​_​interaction ↗：拾取建立物理<br/>持握关系；释放只解除控制，保留刚体姿态、<br/>线速度和角速度。" }
+  n6@{ shape: rounded, label: "**handle​_​interaction**<br/>来自item​_​interaction ↗：拾取建立物理<br/>持握关系；释放只解除控制，保留刚体姿态、<br/>线速度和角速度。" }
   class n6 node_system
   class n6 external_node
-  end
-  style layout_card_n6 fill:none,stroke:none
-  subgraph layout_card_n7[" "]
-  n7@{ shape: hex, label: "**avian3d::collider​_​tree::update::add​_​**<br/>**to​_​tree​_​on**<br/>将可用碰撞体加入空间树。" }
+  n7@{ shape: hex, label: "**add​_​to​_​tree​_​on**<br/>将可用碰撞体加入空间树。" }
   class n7 node_observer
-  end
-  style layout_card_n7 fill:none,stroke:none
-  subgraph layout_card_n8[" "]
-  n8@{ shape: hex, label: "**avian3d::dynamics::solver::islands::**<br/>**{impl#35;0}::build::{closure#35;3}**<br/>移除被禁用刚体的物理岛节点。" }
+  n8@{ shape: hex, label: "**build::{closure#35;3}**<br/>移除被禁用刚体的物理岛节点。" }
   class n8 node_observer
-  end
-  style layout_card_n8 fill:none,stroke:none
-  subgraph layout_card_n9[" "]
-  n9@{ shape: rounded, label: "**avian3d::dynamics::integrator::pre​_​**<br/>**process​_​velocity​_​increments**<br/>把加速度、重力和轴锁转成子步速度增量。" }
+  n9@{ shape: rounded, label: "**pre​_​process​_​velocity​_​increments**<br/>把加速度、重力和轴锁转成子步速度增量。" }
   class n9 node_system
-  end
-  style layout_card_n9 fill:none,stroke:none
-  subgraph layout_card_n10[" "]
-  n10@{ shape: rounded, label: "**avian3d::dynamics::solver::solver​_​**<br/>**body::plugin::prepare​_​solver​_​bodies**<br/>把 ECS 刚体状态准备成子步求解数据。" }
+  n10@{ shape: rounded, label: "**prepare​_​solver​_​bodies**<br/>把 ECS 刚体状态准备成子步求解数据。" }
   class n10 node_system
-  end
-  style layout_card_n10 fill:none,stroke:none
-  subgraph layout_card_n11[" "]
-  n11@{ shape: hex, label: "**avian3d::dynamics::solver::solver​_​**<br/>**body::plugin::{impl#35;0}::build::**<br/>**{closure#35;2}**<br/>在刚体唤醒时恢复求解器体。" }
+  n11@{ shape: hex, label: "**build::{closure#35;2}**<br/>在刚体唤醒时恢复求解器体。" }
   class n11 node_observer
-  end
-  style layout_card_n11 fill:none,stroke:none
-  subgraph layout_card_n12[" "]
-  n12@{ shape: hex, label: "**avian3d::collider​_​tree::update::**<br/>**{impl#35;1}::build::{closure#35;2}**<br/>按刚体类型迁移碰撞体空间树。" }
+  n12@{ shape: hex, label: "**build::{closure#35;2}**<br/>按刚体类型迁移碰撞体空间树。" }
   class n12 node_observer
-  end
-  style layout_card_n12 fill:none,stroke:none
-  subgraph layout_card_n13[" "]
-  n13@{ shape: hex, label: "**avian3d::collider​_​tree::update::add​_​**<br/>**to​_​tree​_​on**<br/>将可用碰撞体加入空间树。" }
+  n13@{ shape: hex, label: "**add​_​to​_​tree​_​on**<br/>将可用碰撞体加入空间树。" }
   class n13 node_observer
-  end
-  style layout_card_n13 fill:none,stroke:none
-  subgraph layout_card_n14[" "]
   n14@{ shape: rounded, label: "**prepare​_​island · 创建模板**<br/>来自scene​_​assembly ↗：为地图展示<br/>NPC 添加静态碰撞子体。" }
   class n14 node_entity
   class n14 external_node
-  end
-  style layout_card_n14 fill:none,stroke:none
-  subgraph layout_card_n15[" "]
-  n15@{ shape: hex, label: "**avian3d::collision::collider::**<br/>**collider​_​hierarchy::plugin::**<br/>**{impl#35;0}::build::{closure#35;0}**<br/>为新增碰撞体建立刚体归属。" }
+  n15@{ shape: hex, label: "**build::{closure#35;0}**<br/>为新增碰撞体建立刚体归属。" }
   class n15 node_observer
-  end
-  style layout_card_n15 fill:none,stroke:none
-  subgraph layout_card_n16[" "]
-  n16@{ shape: hex, label: "**avian3d::dynamics::solver::islands::**<br/>**{impl#35;0}::build::{closure#35;1}**<br/>在实体启用时恢复刚体物理岛节点。" }
+  n16@{ shape: hex, label: "**build::{closure#35;1}**<br/>在实体启用时恢复刚体物理岛节点。" }
   class n16 node_observer
-  end
-  style layout_card_n16 fill:none,stroke:none
-  subgraph layout_card_n17[" "]
-  n17@{ shape: hex, label: "**avian3d::dynamics::solver::islands::**<br/>**{impl#35;0}::build::{closure#35;0}**<br/>为重新启用的刚体补充物理岛节点。" }
+  n17@{ shape: hex, label: "**build::{closure#35;0}**<br/>为重新启用的刚体补充物理岛节点。" }
   class n17 node_observer
-  end
-  style layout_card_n17 fill:none,stroke:none
-  subgraph layout_card_n18[" "]
-  n18@{ shape: hex, label: "**avian3d::dynamics::solver::islands::**<br/>**{impl#35;0}::build::{closure#35;1}**<br/>在实体启用时恢复刚体物理岛节点。" }
+  n18@{ shape: hex, label: "**build::{closure#35;1}**<br/>在实体启用时恢复刚体物理岛节点。" }
   class n18 node_observer
-  end
-  style layout_card_n18 fill:none,stroke:none
-  subgraph layout_card_n19[" "]
-  n19@{ shape: hex, label: "**avian3d::dynamics::solver::islands::**<br/>**{impl#35;0}::build::{closure#35;3}**<br/>移除被禁用刚体的物理岛节点。" }
+  n19@{ shape: hex, label: "**build::{closure#35;3}**<br/>移除被禁用刚体的物理岛节点。" }
   class n19 node_observer
-  end
-  style layout_card_n19 fill:none,stroke:none
-  subgraph layout_card_n20[" "]
-  n20@{ shape: hex, label: "**avian3d::collision::collider::**<br/>**collider​_​hierarchy::plugin::on​_​**<br/>**collider​_​body​_​changed**<br/>随层级变化更新碰撞体刚体归属。" }
+  n20@{ shape: hex, label: "**on​_​collider​_​body​_​changed**<br/>随层级变化更新碰撞体刚体归属。" }
   class n20 node_observer
-  end
-  style layout_card_n20 fill:none,stroke:none
-  subgraph layout_card_n21[" "]
-  n21@{ shape: hex, label: "**avian3d::collider​_​tree::update::add​_​**<br/>**to​_​tree​_​on**<br/>将可用碰撞体加入空间树。" }
+  n21@{ shape: hex, label: "**add​_​to​_​tree​_​on**<br/>将可用碰撞体加入空间树。" }
   class n21 node_observer
-  end
-  style layout_card_n21 fill:none,stroke:none
-  subgraph layout_card_n22[" "]
-  n22@{ shape: rounded, label: "**demo::scene​_​assembly::actors::spawn​_​**<br/>**actors**<br/>来自scene​_​assembly ↗：为就绪海岛创建<br/>玩法实体并复用加载相机。" }
+  n22@{ shape: rounded, label: "**spawn​_​actors**<br/>来自scene​_​assembly ↗：为就绪海岛创建<br/>玩法实体并复用加载相机。" }
   class n22 node_system
   class n22 external_node
-  end
-  style layout_card_n22 fill:none,stroke:none
-  subgraph layout_card_n23[" "]
-  n23@{ shape: hex, label: "**avian3d::dynamics::solver::solver​_​**<br/>**body::plugin::on​_​insert​_​rigid​_​body**<br/>按刚体类型更新求解器体缓存。" }
+  n23@{ shape: hex, label: "**on​_​insert​_​rigid​_​body**<br/>按刚体类型更新求解器体缓存。" }
   class n23 node_observer
-  end
-  style layout_card_n23 fill:none,stroke:none
-  subgraph layout_card_n24[" "]
-  n24@{ shape: hex, label: "**avian3d::dynamics::solver::islands::**<br/>**{impl#35;0}::build::{closure#35;0}**<br/>为重新启用的刚体补充物理岛节点。" }
+  n24@{ shape: hex, label: "**build::{closure#35;0}**<br/>为重新启用的刚体补充物理岛节点。" }
   class n24 node_observer
-  end
-  style layout_card_n24 fill:none,stroke:none
-  subgraph layout_card_n25[" "]
-  n25@{ shape: hex, label: "**avian3d::collision::collider::**<br/>**collider​_​hierarchy::plugin::**<br/>**{impl#35;0}::build::{closure#35;0}**<br/>为新增碰撞体建立刚体归属。" }
+  n25@{ shape: hex, label: "**build::{closure#35;0}**<br/>为新增碰撞体建立刚体归属。" }
   class n25 node_observer
-  end
-  style layout_card_n25 fill:none,stroke:none
-  subgraph layout_card_n26[" "]
-  n26@{ shape: hex, label: "**avian3d::dynamics::solver::solver​_​**<br/>**body::plugin::on​_​insert​_​rigid​_​body**<br/>按刚体类型更新求解器体缓存。" }
+  n26@{ shape: hex, label: "**on​_​insert​_​rigid​_​body**<br/>按刚体类型更新求解器体缓存。" }
   class n26 node_observer
-  end
-  style layout_card_n26 fill:none,stroke:none
-  subgraph layout_card_n27[" "]
-  n27@{ shape: rounded, label: "**avian3d::collision::collider::**<br/>**collider​_​transform::plugin::update​_​**<br/>**child​_​collider​_​position**<br/>由所属刚体位姿更新附属碰撞体的世界位姿。" }
+  n27@{ shape: rounded, label: "**update​_​child​_​collider​_​position**<br/>由所属刚体位姿更新附属碰撞体的世界位姿。" }
   class n27 node_system
-  end
-  style layout_card_n27 fill:none,stroke:none
-  subgraph layout_card_n28[" "]
-  n28@{ shape: hex, label: "**avian3d::dynamics::solver::islands::**<br/>**{impl#35;0}::build::{closure#35;4}**<br/>移除静态刚体的物理岛节点。" }
+  n28@{ shape: hex, label: "**build::{closure#35;4}**<br/>移除静态刚体的物理岛节点。" }
   class n28 node_observer
-  end
-  style layout_card_n28 fill:none,stroke:none
-  subgraph layout_card_n29[" "]
-  n29@{ shape: rounded, label: "**avian3d::dynamics::rigid​_​body::mass​_​**<br/>**properties::warn​_​invalid​_​mass**<br/>报告动态刚体无效的总质量或总惯量。" }
+  n29@{ shape: rounded, label: "**warn​_​invalid​_​mass**<br/>报告动态刚体无效的总质量或总惯量。" }
   class n29 node_system
-  end
-  style layout_card_n29 fill:none,stroke:none
-  subgraph layout_card_n30[" "]
-  n30@{ shape: hex, label: "**avian3d::dynamics::solver::solver​_​**<br/>**body::plugin::{impl#35;0}::build::**<br/>**{closure#35;2}**<br/>在刚体唤醒时恢复求解器体。" }
+  n30@{ shape: hex, label: "**build::{closure#35;2}**<br/>在刚体唤醒时恢复求解器体。" }
   class n30 node_observer
-  end
-  style layout_card_n30 fill:none,stroke:none
-  subgraph layout_card_n31[" "]
-  n31@{ shape: hex, label: "**avian3d::dynamics::solver::solver​_​**<br/>**body::plugin::on​_​insert​_​rigid​_​body**<br/>按刚体类型更新求解器体缓存。" }
+  n31@{ shape: hex, label: "**on​_​insert​_​rigid​_​body**<br/>按刚体类型更新求解器体缓存。" }
   class n31 node_observer
-  end
-  style layout_card_n31 fill:none,stroke:none
-  subgraph layout_card_n32[" "]
-  n32@{ shape: rounded, label: "**avian3d::collision::collider::**<br/>**collider​_​transform::plugin::**<br/>**propagate​_​collider​_​transforms**<br/>沿实体层级计算碰撞体相对刚体的变换。" }
+  n32@{ shape: rounded, label: "**propagate​_​collider​_​transforms**<br/>沿实体层级计算碰撞体相对刚体的变换。" }
   class n32 node_system
-  end
-  style layout_card_n32 fill:none,stroke:none
-  subgraph layout_card_n33[" "]
-  n33@{ shape: hex, label: "**avian3d::collision::collider::**<br/>**collider​_​hierarchy::plugin::on​_​**<br/>**collider​_​body​_​changed**<br/>随层级变化更新碰撞体刚体归属。" }
+  n33@{ shape: hex, label: "**on​_​collider​_​body​_​changed**<br/>随层级变化更新碰撞体刚体归属。" }
   class n33 node_observer
-  end
-  style layout_card_n33 fill:none,stroke:none
-  subgraph layout_card_n34[" "]
-  n34@{ shape: hex, label: "**avian3d::dynamics::solver::solver​_​**<br/>**body::plugin::{impl#35;0}::build::**<br/>**{closure#35;0}**<br/>为重新启用刚体补建求解器体。" }
+  n34@{ shape: hex, label: "**build::{closure#35;0}**<br/>为重新启用刚体补建求解器体。" }
   class n34 node_observer
-  end
-  style layout_card_n34 fill:none,stroke:none
-  subgraph layout_card_n35[" "]
-  n35@{ shape: hex, label: "**avian3d::dynamics::solver::islands::**<br/>**{impl#35;0}::build::{closure#35;4}**<br/>移除静态刚体的物理岛节点。" }
+  n35@{ shape: hex, label: "**build::{closure#35;4}**<br/>移除静态刚体的物理岛节点。" }
   class n35 node_observer
-  end
-  style layout_card_n35 fill:none,stroke:none
-  subgraph layout_card_n36[" "]
-  n36@{ shape: hex, label: "**avian3d::dynamics::solver::islands::**<br/>**{impl#35;0}::build::{closure#35;0}**<br/>为重新启用的刚体补充物理岛节点。" }
+  n36@{ shape: hex, label: "**build::{closure#35;0}**<br/>为重新启用的刚体补充物理岛节点。" }
   class n36 node_observer
-  end
-  style layout_card_n36 fill:none,stroke:none
-  subgraph layout_card_n37[" "]
-  n37@{ shape: rounded, label: "**avian3d::dynamics::solver::plugin::**<br/>**prepare​_​contact​_​constraints**<br/>从有效接触流形生成本轮求解约束。" }
+  n37@{ shape: rounded, label: "**prepare​_​contact​_​constraints**<br/>从有效接触流形生成本轮求解约束。" }
   class n37 node_system
-  end
-  style layout_card_n37 fill:none,stroke:none
-  subgraph layout_card_n38[" "]
-  n38@{ shape: hex, label: "**avian3d::dynamics::solver::solver​_​**<br/>**body::plugin::{impl#35;0}::build::**<br/>**{closure#35;0}**<br/>为重新启用刚体补建求解器体。" }
+  n38@{ shape: hex, label: "**build::{closure#35;0}**<br/>为重新启用刚体补建求解器体。" }
   class n38 node_observer
-  end
-  style layout_card_n38 fill:none,stroke:none
-  subgraph layout_card_n39[" "]
-  n39@{ shape: rounded, label: "**avian3d::physics​_​transform::**<br/>**position​_​to​_​transform**<br/>把物理世界位姿转换为显示用局部变换。" }
+  n39@{ shape: rounded, label: "**position​_​to​_​transform**<br/>把物理世界位姿转换为显示用局部变换。" }
   class n39 node_system
-  end
-  style layout_card_n39 fill:none,stroke:none
-  subgraph layout_card_n40[" "]
   n40@{ shape: rounded, label: "**prepare​_​island · 创建模板**<br/>来自scene​_​assembly ↗：为海岛导入几何<br/>创建静态碰撞子体。" }
   class n40 node_entity
   class n40 external_node
-  end
-  style layout_card_n40 fill:none,stroke:none
-  subgraph layout_card_n41[" "]
-  n41@{ shape: hex, label: "**avian3d::dynamics::solver::solver​_​**<br/>**body::plugin::{impl#35;0}::build::**<br/>**{closure#35;1}**<br/>在实体启用时恢复刚体求解缓存。" }
+  n41@{ shape: hex, label: "**build::{closure#35;1}**<br/>在实体启用时恢复刚体求解缓存。" }
   class n41 node_observer
-  end
-  style layout_card_n41 fill:none,stroke:none
-  subgraph layout_card_n42[" "]
-  n42@{ shape: rounded, label: "**avian3d::collision::narrow​_​phase::**<br/>**update​_​narrow​_​phase#lt;avian3d::**<br/>**collision::collider::parry::**<br/>**Collider, ()#gt;**<br/>更新窄相接触并输出碰撞变化消息。" }
+  n42@{ shape: rounded, label: "**update​_​narrow​_​phase**<br/>更新窄相接触并输出碰撞变化消息。" }
   class n42 node_system
-  end
-  style layout_card_n42 fill:none,stroke:none
-  subgraph layout_card_n43[" "]
-  n43@{ shape: hex, label: "**avian3d::dynamics::solver::islands::**<br/>**{impl#35;0}::build::{closure#35;4}**<br/>移除静态刚体的物理岛节点。" }
+  n43@{ shape: hex, label: "**build::{closure#35;4}**<br/>移除静态刚体的物理岛节点。" }
   class n43 node_observer
-  end
-  style layout_card_n43 fill:none,stroke:none
-  subgraph layout_card_n44[" "]
-  n44@{ shape: hex, label: "**avian3d::dynamics::solver::solver​_​**<br/>**body::plugin::{impl#35;0}::build::**<br/>**{closure#35;2}**<br/>在刚体唤醒时恢复求解器体。" }
+  n44@{ shape: hex, label: "**build::{closure#35;2}**<br/>在刚体唤醒时恢复求解器体。" }
   class n44 node_observer
-  end
-  style layout_card_n44 fill:none,stroke:none
-  subgraph layout_card_n45[" "]
-  n45@{ shape: hex, label: "**avian3d::dynamics::solver::islands::**<br/>**{impl#35;0}::build::{closure#35;3}**<br/>移除被禁用刚体的物理岛节点。" }
+  n45@{ shape: hex, label: "**build::{closure#35;3}**<br/>移除被禁用刚体的物理岛节点。" }
   class n45 node_observer
-  end
-  style layout_card_n45 fill:none,stroke:none
-  subgraph layout_card_n46[" "]
-  n46@{ shape: hex, label: "**avian3d::dynamics::solver::islands::**<br/>**{impl#35;0}::build::{closure#35;1}**<br/>在实体启用时恢复刚体物理岛节点。" }
+  n46@{ shape: hex, label: "**build::{closure#35;1}**<br/>在实体启用时恢复刚体物理岛节点。" }
   class n46 node_observer
-  end
-  style layout_card_n46 fill:none,stroke:none
-  subgraph layout_card_n47[" "]
-  n47@{ shape: rounded, label: "**demo::item​_​interaction::attachment::**<br/>**finish​_​attachments**<br/>来自item​_​interaction ↗：持握期间只保<br/>留人物的 Dynamic，碰到箱子即对同一刚体<br/>求解，内部形状自动互不碰撞。" }
+  n47@{ shape: rounded, label: "**finish​_​attachments**<br/>来自item​_​interaction ↗：持握期间只保<br/>留人物的 Dynamic，碰到箱子即对同一刚体<br/>求解，内部形状自动互不碰撞。" }
   class n47 node_system
   class n47 external_node
-  end
-  style layout_card_n47 fill:none,stroke:none
   n0 e0@-->|"存在性约束"| n1
   class e0 edge_reference
   n0 e1@--> n2
@@ -388,6 +244,9 @@ flowchart LR
   class e49 edge_reference
   n0 e50@-->|"存在性约束"| n47
   class e50 edge_reference
+  n6 layout_input_0@~~~ n14
+  n14 layout_input_1@~~~ n22
+  n22 layout_input_2@~~~ n40
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
@@ -410,7 +269,6 @@ flowchart LR
   e19@{ curve: basis }
   e20@{ curve: basis }
   e21@{ curve: basis }
-  e22@{ curve: basis }
   e23@{ curve: basis }
   e24@{ curve: basis }
   e25@{ curve: basis }

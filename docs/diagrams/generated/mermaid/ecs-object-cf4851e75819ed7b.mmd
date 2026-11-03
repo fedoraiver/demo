@@ -41,16 +41,19 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​transform​_​interpolation::**<br/>**extrapolation::reset​_​translation​_​**<br/>**extrapolation**<br/>在固定步开始前还原真实位置。" }
+  n0@{ shape: rounded, label: "**reset​_​translation​_​extrapolation**<br/>在固定步开始前还原真实位置。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**components::transform::Transform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>相对父实体的平移、旋转和缩放" }
+  n1@{ shape: rounded, label: "**Transform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>相对父实体的平移、旋转和缩放" }
   class n1 node_component
   class n1 external_node
   n2@{ shape: rounded, label: "**NoTranslationEasing**<br/>显式禁止当前实体的平移插值和外推" }
   class n2 node_component
+  subgraph layout_card_n3[" "]
   n3@{ shape: rounded, label: "**TranslationEasingState**<br/>保存固定步平移插值的起点与终点" }
   class n3 node_component
-  n4@{ shape: rounded, label: "**extrapolation::**<br/>**TranslationExtrapolation**<br/>启用平移外推" }
+  end
+  style layout_card_n3 fill:none,stroke:none
+  n4@{ shape: rounded, label: "**TranslationExtrapolation**<br/>启用平移外推" }
   class n4 node_component
   n5@{ shape: lin-rect, label: "**Reset**<br/>组织变换缓动端点与帧间应用。" }
   class n5 node_system_set

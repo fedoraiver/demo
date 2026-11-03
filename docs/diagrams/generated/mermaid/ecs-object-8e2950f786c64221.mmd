@@ -40,11 +40,11 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: lin-rect, label: "**InitReading**<br/>组织 Egui 输入读取与事件写入。" }
   class n0 node_system_set
-  n1@{ shape: rounded, label: "**bevy​_​egui::input::write​_​modifiers​_​**<br/>**keys​_​state​_​system**<br/>更新 Egui 修饰键并清除失焦残留。" }
+  n1@{ shape: rounded, label: "**write​_​modifiers​_​keys​_​state​_​system**<br/>更新 Egui 修饰键并清除失焦残留。" }
   class n1 node_system
   n2@{ shape: lin-rect, label: "**FocusContext**<br/>组织 Egui 输入读取与事件写入。" }
   class n2 node_system_set
-  n3@{ shape: rounded, label: "**bevy​_​egui::input::read​_​egui​_​zoom​_​**<br/>**factor​_​system**<br/>记录 Egui 当前界面缩放因子。" }
+  n3@{ shape: rounded, label: "**read​_​egui​_​zoom​_​factor​_​system**<br/>记录 Egui 当前界面缩放因子。" }
   class n3 node_system
   n0 e0@-->|"集合成员"| n1
   class e0 edge_set_membership

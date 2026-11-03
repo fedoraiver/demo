@@ -42,64 +42,34 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  subgraph layout_card_n0[" "]
-  n0@{ shape: rounded, label: "**bevy​_​pbr::render::light::extract​_​**<br/>**shadow​_​lod​_​origin**<br/>解析点光与聚光阴影 LOD 的距离参考位置。" }
+  n0@{ shape: rounded, label: "**extract​_​shadow​_​lod​_​origin**<br/>解析点光与聚光阴影 LOD 的距离参考位置。" }
   class n0 node_system
-  end
-  style layout_card_n0 fill:none,stroke:none
-  subgraph layout_card_n1[" "]
-  n1@{ shape: rounded, label: "**spot​_​light::SpotLight**<br/>来自crate:bevy​_​light ↗：配置沿指定方<br/>向照射的聚光灯。" }
+  n1@{ shape: rounded, label: "**SpotLight**<br/>来自crate:bevy​_​light ↗：配置沿指定方<br/>向照射的聚光灯。" }
   class n1 node_component
   class n1 external_node
-  end
-  style layout_card_n1 fill:none,stroke:none
-  subgraph layout_card_n2[" "]
-  n2@{ shape: rounded, label: "**bevy​_​camera::RenderTarget**<br/>来自crate:bevy​_​camera ↗：指定相机输出<br/>的窗口、图像或纹理。" }
+  n2@{ shape: rounded, label: "**RenderTarget**<br/>来自crate:bevy​_​camera ↗：指定相机输出<br/>的窗口、图像或纹理。" }
   class n2 node_component
   class n2 external_node
-  end
-  style layout_card_n2 fill:none,stroke:none
-  subgraph layout_card_n3[" "]
-  n3@{ shape: cyl, label: "**view::RenderShadowLodOrigin**<br/>来自crate:bevy​_​render ↗：保存渲染侧点<br/>光与聚光阴影的 LOD 原点。" }
+  n3@{ shape: cyl, label: "**RenderShadowLodOrigin**<br/>来自crate:bevy​_​render ↗：保存渲染侧点<br/>光与聚光阴影的 LOD 原点。" }
   class n3 node_resource
   class n3 external_node
-  end
-  style layout_card_n3 fill:none,stroke:none
-  subgraph layout_card_n4[" "]
-  n4@{ shape: rounded, label: "**bevy​_​camera::Camera**<br/>来自crate:bevy​_​camera ↗：配置相机视<br/>口、输出目标和渲染顺序。" }
+  n4@{ shape: rounded, label: "**Camera**<br/>来自crate:bevy​_​camera ↗：配置相机视<br/>口、输出目标和渲染顺序。" }
   class n4 node_component
   class n4 external_node
-  end
-  style layout_card_n4 fill:none,stroke:none
-  subgraph layout_card_n5[" "]
-  n5@{ shape: rounded, label: "**point​_​light::PointLight**<br/>来自crate:bevy​_​light ↗：配置向四周发<br/>光的点光源。" }
+  n5@{ shape: rounded, label: "**PointLight**<br/>来自crate:bevy​_​light ↗：配置向四周发<br/>光的点光源。" }
   class n5 node_component
   class n5 external_node
-  end
-  style layout_card_n5 fill:none,stroke:none
-  subgraph layout_card_n6[" "]
-  n6@{ shape: cyl, label: "**extract​_​plugin::MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
+  n6@{ shape: cyl, label: "**MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
   class n6 node_resource
   class n6 external_node
-  end
-  style layout_card_n6 fill:none,stroke:none
-  subgraph layout_card_n7[" "]
-  n7@{ shape: fr-rect, label: "**bevy​_​pbr::PbrPlugin**<br/>装配物理材质与三维光照渲染。" }
+  n7@{ shape: fr-rect, label: "**PbrPlugin**<br/>装配物理材质与三维光照渲染。" }
   class n7 node_plugin
-  end
-  style layout_card_n7 fill:none,stroke:none
-  subgraph layout_card_n8[" "]
-  n8@{ shape: rounded, label: "**components::global​_​transform::**<br/>**GlobalTransform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>合并祖先变换后的世界空间仿射变换" }
+  n8@{ shape: rounded, label: "**GlobalTransform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>合并祖先变换后的世界空间仿射变换" }
   class n8 node_component
   class n8 external_node
-  end
-  style layout_card_n8 fill:none,stroke:none
-  subgraph layout_card_n9[" "]
-  n9@{ shape: rounded, label: "**camera::ShadowLodOrigin**<br/>来自crate:bevy​_​camera ↗：指定点光与聚<br/>光阴影的距离参考点。" }
+  n9@{ shape: rounded, label: "**ShadowLodOrigin**<br/>来自crate:bevy​_​camera ↗：指定点光与聚<br/>光阴影的距离参考点。" }
   class n9 node_component
   class n9 external_node
-  end
-  style layout_card_n9 fill:none,stroke:none
   n1 e0@-->|"存在性约束"| n0
   class e0 edge_reference
   n2 e1@--> n0

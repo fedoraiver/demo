@@ -42,54 +42,54 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​sprite​_​render::text2d::extract​_​**<br/>**text2d​_​sprite**<br/>把可见二维文字及装饰提取为精灵切片。" }
+  n0@{ shape: rounded, label: "**extract​_​text2d​_​sprite**<br/>把可见二维文字及装饰提取为精灵切片。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**text::StrikethroughColor**<br/>来自crate:bevy​_​text ↗：覆盖文字删除线<br/>颜色" }
+  n1@{ shape: rounded, label: "**StrikethroughColor**<br/>来自crate:bevy​_​text ↗：覆盖文字删除线<br/>颜色" }
   class n1 node_component
   class n1 external_node
-  n2@{ shape: rounded, label: "**text::UnderlineColor**<br/>来自crate:bevy​_​text ↗：覆盖文字下划线<br/>颜色" }
+  n2@{ shape: rounded, label: "**UnderlineColor**<br/>来自crate:bevy​_​text ↗：覆盖文字下划线<br/>颜色" }
   class n2 node_component
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​text::ComputedTextBlock**<br/>来自crate:bevy​_​text ↗：缓存文字块的<br/>Parley 布局、文本实体树和重绘标记" }
+  n3@{ shape: rounded, label: "**ComputedTextBlock**<br/>来自crate:bevy​_​text ↗：缓存文字块的<br/>Parley 布局、文本实体树和重绘标记" }
   class n3 node_component
   class n3 external_node
-  n4@{ shape: rounded, label: "**bevy​_​text::TextColor**<br/>来自crate:bevy​_​text ↗：保存当前文字段<br/>的前景色" }
+  n4@{ shape: rounded, label: "**TextColor**<br/>来自crate:bevy​_​text ↗：保存当前文字段<br/>的前景色" }
   class n4 node_component
   class n4 external_node
-  n5@{ shape: rounded, label: "**components::global​_​transform::**<br/>**GlobalTransform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>合并祖先变换后的世界空间仿射变换" }
+  n5@{ shape: rounded, label: "**GlobalTransform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>合并祖先变换后的世界空间仿射变换" }
   class n5 node_component
   class n5 external_node
-  n6@{ shape: cyl, label: "**render::ExtractedSlices**<br/>保存已提取的精灵与文字图像切片。" }
+  n6@{ shape: cyl, label: "**ExtractedSlices**<br/>保存已提取的精灵与文字图像切片。" }
   class n6 node_resource
-  n7@{ shape: rounded, label: "**text::Underline**<br/>来自crate:bevy​_​text ↗：标记文字实体需<br/>要绘制下划线" }
+  n7@{ shape: rounded, label: "**Underline**<br/>来自crate:bevy​_​text ↗：标记文字实体需<br/>要绘制下划线" }
   class n7 node_component
   class n7 external_node
-  n8@{ shape: rounded, label: "**bevy​_​text::TextLayoutInfo**<br/>来自crate:bevy​_​text ↗：保存文字块完成<br/>排版后的缩放、字形位置、文字运行几何及尺<br/>寸" }
+  n8@{ shape: rounded, label: "**TextLayoutInfo**<br/>来自crate:bevy​_​text ↗：保存文字块完成<br/>排版后的缩放、字形位置、文字运行几何及尺<br/>寸" }
   class n8 node_component
   class n8 external_node
-  n9@{ shape: rounded, label: "**text2d::Text2dShadow**<br/>来自crate:bevy​_​sprite ↗：为二维文字保<br/>存阴影的偏移与颜色" }
+  n9@{ shape: rounded, label: "**Text2dShadow**<br/>来自crate:bevy​_​sprite ↗：为二维文字保<br/>存阴影的偏移与颜色" }
   class n9 node_component
   class n9 external_node
-  n10@{ shape: rounded, label: "**sprite::Anchor**<br/>来自crate:bevy​_​sprite ↗：保存二维可渲<br/>染实体相对自身尺寸的归一化锚点偏移" }
+  n10@{ shape: rounded, label: "**Anchor**<br/>来自crate:bevy​_​sprite ↗：保存二维可渲<br/>染实体相对自身尺寸的归一化锚点偏移" }
   class n10 node_component
   class n10 external_node
-  n11@{ shape: rounded, label: "**text::TextBackgroundColor**<br/>来自crate:bevy​_​text ↗：保存当前文字段<br/>的背景色" }
+  n11@{ shape: rounded, label: "**TextBackgroundColor**<br/>来自crate:bevy​_​text ↗：保存当前文字段<br/>的背景色" }
   class n11 node_component
   class n11 external_node
-  n12@{ shape: rounded, label: "**bevy​_​text::TextBounds**<br/>来自crate:bevy​_​text ↗：保存文字逻辑像<br/>素宽高上限" }
+  n12@{ shape: rounded, label: "**TextBounds**<br/>来自crate:bevy​_​text ↗：保存文字逻辑像<br/>素宽高上限" }
   class n12 node_component
   class n12 external_node
-  n13@{ shape: rounded, label: "**bevy​_​camera::visibility::**<br/>**ViewVisibility**<br/>来自crate:bevy​_​camera ↗：记录实体是否<br/>应被提取用于渲染。" }
+  n13@{ shape: rounded, label: "**ViewVisibility**<br/>来自crate:bevy​_​camera ↗：记录实体是否<br/>应被提取用于渲染。" }
   class n13 node_component
   class n13 external_node
-  n14@{ shape: fr-rect, label: "**bevy​_​sprite​_​render::**<br/>**SpriteRenderPlugin**<br/>准备并渲染二维精灵。" }
+  n14@{ shape: fr-rect, label: "**SpriteRenderPlugin**<br/>准备并渲染二维精灵。" }
   class n14 node_plugin
-  n15@{ shape: rounded, label: "**text::Strikethrough**<br/>来自crate:bevy​_​text ↗：标记文字实体需<br/>要绘制删除线" }
+  n15@{ shape: rounded, label: "**Strikethrough**<br/>来自crate:bevy​_​text ↗：标记文字实体需<br/>要绘制删除线" }
   class n15 node_component
   class n15 external_node
-  n16@{ shape: cyl, label: "**render::ExtractedSprites**<br/>保存本帧提取的精灵绘制实例。" }
+  n16@{ shape: cyl, label: "**ExtractedSprites**<br/>保存本帧提取的精灵绘制实例。" }
   class n16 node_resource
-  n17@{ shape: cyl, label: "**extract​_​plugin::MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
+  n17@{ shape: cyl, label: "**MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
   class n17 node_resource
   class n17 external_node
   n1 e0@--> n0

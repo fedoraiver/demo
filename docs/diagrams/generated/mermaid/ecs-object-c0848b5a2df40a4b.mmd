@@ -45,27 +45,27 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: hex, label: "**demo::first​_​person::camera::on​_​**<br/>**camera​_​look**<br/>Fire 已携带本帧汇总位移，直接更新角度；<br/>有向水平转角留给下一次碰撞检查消费。" }
+  n0@{ shape: hex, label: "**on​_​camera​_​look**<br/>Fire 已携带本帧汇总位移，直接更新角度；<br/>有向水平转角留给下一次碰撞检查消费。" }
   class n0 node_observer
-  n1@{ shape: fr-rect, label: "**first​_​person::FirstPersonPlugin**<br/>注册第一人称动作、捕获、朝向与镜头，不安<br/>装输入基础设施或物理插件。" }
+  n1@{ shape: fr-rect, label: "**FirstPersonPlugin**<br/>注册第一人称动作、捕获、朝向与镜头，不安<br/>装输入基础设施或物理插件。" }
   class n1 node_plugin
-  n2@{ shape: cyl, label: "**settings::config::GameSettings**<br/>来自settings ↗：全局玩家设置；非零类型<br/>保证帧率上限始终能够转换为等待间隔。" }
+  n2@{ shape: cyl, label: "**GameSettings**<br/>来自settings ↗：全局玩家设置；非零类型<br/>保证帧率上限始终能够转换为等待间隔。" }
   class n2 node_resource
   class n2 external_node
-  n3@{ shape: rounded, label: "**first​_​person::FirstPersonCamera**<br/>观察角度的唯一来源；有向转角保留到下一次<br/>安全朝向同步。" }
+  n3@{ shape: rounded, label: "**FirstPersonCamera**<br/>观察角度的唯一来源；有向转角保留到下一次<br/>安全朝向同步。" }
   class n3 node_component
-  n4@{ shape: rounded, label: "**first​_​person::ControlsCamera**<br/>控制者当前关联的第一人称相机。" }
+  n4@{ shape: rounded, label: "**ControlsCamera**<br/>控制者当前关联的第一人称相机。" }
   class n4 node_component
-  n5@{ shape: rounded, label: "**first​_​person::actions::**<br/>**GameplayContext**<br/>控制者的步行输入上下文；角色实体不直接持<br/>有设备绑定。" }
+  n5@{ shape: rounded, label: "**GameplayContext**<br/>控制者的步行输入上下文；角色实体不直接持<br/>有设备绑定。" }
   class n5 node_component
-  n6@{ shape: rounded, label: "**first​_​person::MouseLookState**<br/>每个相机的捕获状态；恢复捕获的第一帧跳过<br/>自由光标位移。" }
+  n6@{ shape: rounded, label: "**MouseLookState**<br/>每个相机的捕获状态；恢复捕获的第一帧跳过<br/>自由光标位移。" }
   class n6 node_component
-  n7@{ shape: cyl, label: "**time::Time**<br/>来自crate:bevy​_​time ↗：保存时钟上下<br/>文、帧间隔及累计时间" }
+  n7@{ shape: cyl, label: "**Time**<br/>来自crate:bevy​_​time ↗：保存时钟上下<br/>文、帧间隔及累计时间" }
   class n7 node_resource
   class n7 external_node
   n8@{ shape: notch-rect, label: "**Local · next​_​log​_​at**<br/>限制连续鼠标视角日志的输出频率。" }
   class n8 node_local
-  n9@{ shape: stadium, label: "**bevy​_​enhanced​_​input::prelude::**<br/>**Fire#lt;first​_​person::actions::**<br/>**LookAction#gt;**<br/>来自crate:bevy​_​enhanced​_​input ↗：持<br/>续通知处于触发状态的动作。" }
+  n9@{ shape: stadium, label: "**Fire#lt;LookAction#gt;**<br/>来自crate:bevy​_​enhanced​_​input ↗：持<br/>续通知处于触发状态的动作。" }
   class n9 node_event
   class n9 external_node
   n1 e0@-->|"调用"| n0

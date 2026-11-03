@@ -42,15 +42,15 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​render::view::clear​_​view​_​**<br/>**attachments**<br/>清空上一帧的视图输出附件表。" }
+  n0@{ shape: rounded, label: "**clear​_​view​_​attachments**<br/>清空上一帧的视图输出附件表。" }
   class n0 node_system
-  n1@{ shape: fr-rect, label: "**view::ViewPlugin**<br/>准备视图渲染目标与统一数据。" }
+  n1@{ shape: fr-rect, label: "**ViewPlugin**<br/>准备视图渲染目标与统一数据。" }
   class n1 node_plugin
   n2@{ shape: lin-rect, label: "**PrepareViews**<br/>组织渲染数据准备与绘制排队。" }
   class n2 node_system_set
-  n3@{ shape: cyl, label: "**view::ViewTargetAttachments**<br/>按输出目标保存本帧颜色附件。" }
+  n3@{ shape: cyl, label: "**ViewTargetAttachments**<br/>按输出目标保存本帧颜色附件。" }
   class n3 node_resource
-  n4@{ shape: rounded, label: "**bevy​_​render::view::window::create​_​**<br/>**surfaces**<br/>创建并配置提取窗口的 GPU 表面。" }
+  n4@{ shape: rounded, label: "**create​_​surfaces**<br/>创建并配置提取窗口的 GPU 表面。" }
   class n4 node_system
   n1 e0@-->|"调用"| n0
   class e0 edge_registration

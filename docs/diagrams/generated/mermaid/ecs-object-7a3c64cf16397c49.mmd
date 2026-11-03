@@ -36,9 +36,9 @@ flowchart LR
   classDef node_message fill:#EDF4F6,stroke:#247B91,stroke-width:1.6px,color:#1F3340
   classDef edge_consume stroke:#247B91,stroke-width:1.8px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: lean-r, label: "**mouse::MouseMotion**<br/>传递鼠标原始移动增量。" }
+  n0@{ shape: lean-r, label: "**MouseMotion**<br/>传递鼠标原始移动增量。" }
   class n0 node_message
-  n1@{ shape: rounded, label: "**bevy​_​input::mouse::accumulate​_​mouse​_​**<br/>**motion​_​system**<br/>累计本帧鼠标位移。" }
+  n1@{ shape: rounded, label: "**accumulate​_​mouse​_​motion​_​system**<br/>累计本帧鼠标位移。" }
   class n1 node_system
   n0 e0@--> n1
   class e0 edge_consume

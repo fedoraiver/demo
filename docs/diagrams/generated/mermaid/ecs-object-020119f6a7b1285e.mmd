@@ -44,48 +44,48 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​core​_​pipeline::oit::resolve::**<br/>**node::oit​_​resolve**<br/>解析透明片元并重置 OIT 链表状态。" }
+  n0@{ shape: rounded, label: "**oit​_​resolve**<br/>解析透明片元并重置 OIT 链表状态。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**bevy​_​render::view::ViewUniformOffset**<br/>来自crate:bevy​_​render ↗：定位当前视图<br/>在共享 Uniform 缓冲中的参数。" }
+  n1@{ shape: rounded, label: "**ViewUniformOffset**<br/>来自crate:bevy​_​render ↗：定位当前视图<br/>在共享 Uniform 缓冲中的参数。" }
   class n1 node_component
   class n1 external_node
-  n2@{ shape: cyl, label: "**oit::resolve::OitResolveBindGroup**<br/>绑定透明片元解析所需的共享缓冲。" }
+  n2@{ shape: cyl, label: "**OitResolveBindGroup**<br/>绑定透明片元解析所需的共享缓冲。" }
   class n2 node_resource
-  n3@{ shape: cyl, label: "**bevy​_​render::render​_​resource::**<br/>**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
+  n3@{ shape: cyl, label: "**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
   class n3 node_resource
   class n3 external_node
-  n4@{ shape: rounded, label: "**camera::MainPassResolutionOverride**<br/>来自crate:bevy​_​camera ↗：覆盖三维主通<br/>道的渲染分辨率。" }
+  n4@{ shape: rounded, label: "**MainPassResolutionOverride**<br/>来自crate:bevy​_​camera ↗：覆盖三维主通<br/>道的渲染分辨率。" }
   class n4 node_component
   class n4 external_node
-  n5@{ shape: cyl, label: "**bevy​_​render::renderer::RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
+  n5@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
   class n5 node_resource
   class n5 external_node
-  n6@{ shape: cyl, label: "**bevy​_​render::diagnostic::**<br/>**DiagnosticsRecorder**<br/>来自crate:bevy​_​render ↗：记录渲染诊断<br/>区间与 GPU 查询索引的对应。" }
+  n6@{ shape: cyl, label: "**DiagnosticsRecorder**<br/>来自crate:bevy​_​render ↗：记录渲染诊断<br/>区间与 GPU 查询索引的对应。" }
   class n6 node_resource
   class n6 external_node
-  n7@{ shape: rounded, label: "**bevy​_​render::camera::ExtractedCamera**<br/>来自crate:bevy​_​render ↗：保存渲染世界<br/>相机的目标和绘制配置。" }
+  n7@{ shape: rounded, label: "**ExtractedCamera**<br/>来自crate:bevy​_​render ↗：保存渲染世界<br/>相机的目标和绘制配置。" }
   class n7 node_component
   class n7 external_node
   n8@{ shape: lin-rect, label: "**MainPass**<br/>划分三维相机绘制与后处理阶段。" }
   class n8 node_system_set
-  n9@{ shape: rounded, label: "**bevy​_​render::view::**<br/>**ViewDepthStencilTexture**<br/>来自crate:bevy​_​render ↗：提供视图绘制<br/>的深度模板附件。" }
+  n9@{ shape: rounded, label: "**ViewDepthStencilTexture**<br/>来自crate:bevy​_​render ↗：提供视图绘制<br/>的深度模板附件。" }
   class n9 node_component
   class n9 external_node
-  n10@{ shape: rounded, label: "**bevy​_​core​_​pipeline::prepass::**<br/>**DepthPrepass**<br/>为三维相机生成独立的深度纹理。" }
+  n10@{ shape: rounded, label: "**DepthPrepass**<br/>为三维相机生成独立的深度纹理。" }
   class n10 node_component
-  n11@{ shape: rounded, label: "**bevy​_​render::view::ViewTarget**<br/>来自crate:bevy​_​render ↗：管理视图主颜<br/>色纹理及最终输出附件。" }
+  n11@{ shape: rounded, label: "**ViewTarget**<br/>来自crate:bevy​_​render ↗：管理视图主颜<br/>色纹理及最终输出附件。" }
   class n11 node_component
   class n11 external_node
-  n12@{ shape: cyl, label: "**oit::resolve::OitResolvePipeline**<br/>定义透明解析的视图与深度资源布局。" }
+  n12@{ shape: cyl, label: "**OitResolvePipeline**<br/>定义透明解析的视图与深度资源布局。" }
   class n12 node_resource
-  n13@{ shape: fr-rect, label: "**oit::**<br/>**OrderIndependentTransparencyPlugin**<br/>提供顺序无关透明渲染。" }
+  n13@{ shape: fr-rect, label: "**OrderIndependentTransparencyPlugin**<br/>提供顺序无关透明渲染。" }
   class n13 node_plugin
-  n14@{ shape: cyl, label: "**bevy​_​render::renderer::CurrentView**<br/>来自crate:bevy​_​render ↗：指定当前正在<br/>渲染的视图实体。" }
+  n14@{ shape: cyl, label: "**CurrentView**<br/>来自crate:bevy​_​render ↗：指定当前正在<br/>渲染的视图实体。" }
   class n14 node_resource
   class n14 external_node
-  n15@{ shape: rounded, label: "**oit::resolve::OitResolvePipelineId**<br/>记录视图的透明解析管线标识。" }
+  n15@{ shape: rounded, label: "**OitResolvePipelineId**<br/>记录视图的透明解析管线标识。" }
   class n15 node_component
-  n16@{ shape: rounded, label: "**bevy​_​core​_​pipeline::core​_​3d::main​_​**<br/>**transparent​_​pass​_​3d​_​node::main​_​**<br/>**transparent​_​pass​_​3d**<br/>绘制三维透明物体并保护 OIT 链表状态。" }
+  n16@{ shape: rounded, label: "**main​_​transparent​_​pass​_​3d**<br/>绘制三维透明物体并保护 OIT 链表状态。" }
   class n16 node_system
   n1 e0@--> n0
   class e0 edge_read

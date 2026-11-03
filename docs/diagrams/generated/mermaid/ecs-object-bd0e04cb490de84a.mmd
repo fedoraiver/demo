@@ -36,17 +36,17 @@ flowchart LR
   classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**dynamics::solver::plugin::**<br/>**SolverConfig**<br/>配置接触与关节约束求解参数。" }
+  n0@{ shape: cyl, label: "**SolverConfig**<br/>配置接触与关节约束求解参数。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**avian3d::dynamics::solver::plugin::**<br/>**warm​_​start**<br/>用历史接触冲量初始化本轮约束求解。" }
+  n1@{ shape: rounded, label: "**warm​_​start**<br/>用历史接触冲量初始化本轮约束求解。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**avian3d::dynamics::solver::plugin::**<br/>**solve​_​contacts#lt;true#gt;**<br/>迭代接触冲量以处理穿透与相对速度。" }
+  n2@{ shape: rounded, label: "**solve​_​contacts**<br/>迭代接触冲量以处理穿透与相对速度。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**avian3d::dynamics::solver::plugin::**<br/>**solve​_​restitution**<br/>对接触刚体施加碰撞恢复冲量。" }
+  n3@{ shape: rounded, label: "**solve​_​restitution**<br/>对接触刚体施加碰撞恢复冲量。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**avian3d::dynamics::solver::plugin::**<br/>**update​_​contact​_​softness**<br/>按时间步和配置更新接触柔度系数。" }
+  n4@{ shape: rounded, label: "**update​_​contact​_​softness**<br/>按时间步和配置更新接触柔度系数。" }
   class n4 node_system
-  n5@{ shape: rounded, label: "**avian3d::dynamics::solver::plugin::**<br/>**solve​_​contacts#lt;false#gt;**<br/>迭代接触冲量以处理穿透与相对速度。" }
+  n5@{ shape: rounded, label: "**solve​_​contacts**<br/>迭代接触冲量以处理穿透与相对速度。" }
   class n5 node_system
   n0 e0@--> n1
   class e0 edge_read

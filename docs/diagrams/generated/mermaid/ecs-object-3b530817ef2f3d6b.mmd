@@ -38,13 +38,13 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**transmission::texture::**<br/>**ViewTransmissionTexture**<br/>保存透射通道读取的视图颜色纹理。" }
+  n0@{ shape: rounded, label: "**ViewTransmissionTexture**<br/>保存透射通道读取的视图颜色纹理。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​pbr::transmission::node::main​_​**<br/>**transmissive​_​pass​_​3d**<br/>分层复制场景颜色并绘制三维透射物体。" }
+  n1@{ shape: rounded, label: "**main​_​transmissive​_​pass​_​3d**<br/>分层复制场景颜色并绘制三维透射物体。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​pbr::render::mesh​_​view​_​**<br/>**bindings::prepare​_​mesh​_​view​_​bind​_​**<br/>**groups**<br/>为视图绑定光照、阴影及各可选渲染效果资<br/>源。" }
+  n2@{ shape: rounded, label: "**prepare​_​mesh​_​view​_​bind​_​groups**<br/>为视图绑定光照、阴影及各可选渲染效果资<br/>源。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​pbr::transmission::texture::**<br/>**prepare​_​core​_​3d​_​transmission​_​**<br/>**textures**<br/>为需要多步透射的视图准备场景颜色拷贝纹<br/>理。" }
+  n3@{ shape: rounded, label: "**prepare​_​core​_​3d​_​transmission​_​**<br/>**textures**<br/>为需要多步透射的视图准备场景颜色拷贝纹<br/>理。" }
   class n3 node_system
   n0 e0@--> n1
   class e0 edge_read

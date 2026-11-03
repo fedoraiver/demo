@@ -38,15 +38,15 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**prepass::PreviousViewData**<br/>保存上一帧的相机视图与投影矩阵。" }
+  n0@{ shape: rounded, label: "**PreviousViewData**<br/>保存上一帧的相机视图与投影矩阵。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​pbr::prepass::update​_​previous​_​**<br/>**view​_​data**<br/>来自crate:bevy​_​pbr ↗：记录三维及阴影<br/>视图未抖动的变换矩阵。" }
+  n1@{ shape: rounded, label: "**update​_​previous​_​view​_​data**<br/>来自crate:bevy​_​pbr ↗：记录三维及阴影<br/>视图未抖动的变换矩阵。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​pbr::prepass::extract​_​camera​_​**<br/>**previous​_​view​_​data**<br/>来自crate:bevy​_​pbr ↗：把活动三维相机<br/>的前帧视图数据提取到渲染侧。" }
+  n2@{ shape: rounded, label: "**extract​_​camera​_​previous​_​view​_​data**<br/>来自crate:bevy​_​pbr ↗：把活动三维相机<br/>的前帧视图数据提取到渲染侧。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​pbr::prepass::prepare​_​previous​_​**<br/>**view​_​uniforms**<br/>来自crate:bevy​_​pbr ↗：重建前帧抖动矩<br/>阵并上传视图历史参数。" }
+  n3@{ shape: rounded, label: "**prepare​_​previous​_​view​_​uniforms**<br/>来自crate:bevy​_​pbr ↗：重建前帧抖动矩<br/>阵并上传视图历史参数。" }
   class n3 node_system
   class n3 external_node
   n1 e0@-->|"插入"| n0
@@ -61,5 +61,4 @@ flowchart LR
   class e4 edge_write
   e0@{ curve: basis }
   e1@{ curve: basis }
-  e2@{ curve: bumpX }
   e4@{ curve: basis }

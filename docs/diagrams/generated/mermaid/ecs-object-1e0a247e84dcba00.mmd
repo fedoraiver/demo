@@ -37,11 +37,11 @@ flowchart LR
   classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**bevy​_​render::render​_​resource::**<br/>**SpecializedRenderPipelines#lt;effect​_​**<br/>**stack::PostProcessingPipeline#gt;**<br/>按配置键缓存渲染管线变体。" }
+  n0@{ shape: cyl, label: "**SpecializedRenderPipelines#lt;PostProce**<br/>**ssingPipeline#gt;**<br/>按配置键缓存渲染管线变体。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​render::init​_​gpu​_​resource#lt;bevy​_​**<br/>**render::render​_​resource::pipeline​_​**<br/>**specializer::**<br/>**SpecializedRenderPipelines#lt;bevy​_​**<br/>**post​_​process::effect​_​stack::**<br/>**PostProcessingPipeline#gt;#gt;**<br/>构造并插入渲染所需资源。" }
+  n1@{ shape: rounded, label: "**init​_​gpu​_​resource**<br/>构造并插入渲染所需资源。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​post​_​process::effect​_​stack::**<br/>**prepare​_​post​_​processing​_​pipelines**<br/>来自crate:bevy​_​post​_​process ↗：按视<br/>图颜色格式准备内置后处理管线。" }
+  n2@{ shape: rounded, label: "**prepare​_​post​_​processing​_​pipelines**<br/>来自crate:bevy​_​post​_​process ↗：按视<br/>图颜色格式准备内置后处理管线。" }
   class n2 node_system
   class n2 external_node
   n1 e0@-->|"插入"| n0

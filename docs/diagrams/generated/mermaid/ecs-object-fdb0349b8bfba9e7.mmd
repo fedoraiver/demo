@@ -39,14 +39,14 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: lin-rect, label: "**Propagate**<br/>组织界面交互、布局与堆叠更新。" }
   class n0 node_system_set
-  n1@{ shape: lin-rect, label: "**PropagateSet { ​_​p: PhantomData#lt;fn()**<br/>**-#gt; bevy​_​ui::ui​_​node::**<br/>**ComputedUiRenderTargetInfo#gt; }**<br/>来自crate:bevy​_​app ↗：沿关系层级传播<br/>指定组件值。" }
+  n1@{ shape: lin-rect, label: "**PropagateSet { ​_​p: PhantomData#lt;fn()**<br/>**-#gt; ComputedUiRenderTargetInfo#gt; }**<br/>来自crate:bevy​_​app ↗：沿关系层级传播<br/>指定组件值。" }
   class n1 node_system_set
   class n1 external_node
   n2@{ shape: lin-rect, label: "**Prepare**<br/>组织界面交互、布局与堆叠更新。" }
   class n2 node_system_set
   n3@{ shape: lin-rect, label: "**Content**<br/>组织界面交互、布局与堆叠更新。" }
   class n3 node_system_set
-  n4@{ shape: lin-rect, label: "**PropagateSet { ​_​p: PhantomData#lt;fn()**<br/>**-#gt; bevy​_​ui::ui​_​node::**<br/>**ComputedUiTargetCamera#gt; }**<br/>来自crate:bevy​_​app ↗：沿关系层级传播<br/>指定组件值。" }
+  n4@{ shape: lin-rect, label: "**PropagateSet { ​_​p: PhantomData#lt;fn()**<br/>**-#gt; ComputedUiTargetCamera#gt; }**<br/>来自crate:bevy​_​app ↗：沿关系层级传播<br/>指定组件值。" }
   class n4 node_system_set
   class n4 external_node
   n0 e0@-->|"集合成员"| n1

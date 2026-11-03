@@ -43,15 +43,15 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​input​_​focus::gained​_​and​_​lost::**<br/>**process​_​recorded​_​focus​_​changes**<br/>按记录顺序派发焦点获得和失去事件。" }
+  n0@{ shape: rounded, label: "**process​_​recorded​_​focus​_​changes**<br/>按记录顺序派发焦点获得和失去事件。" }
   class n0 node_system
   n1@{ shape: cyl, label: "**InputFocus**<br/>保存当前输入焦点实体、待派发的焦点变化及<br/>原焦点" }
   class n1 node_resource
-  n2@{ shape: stadium, label: "**gained​_​and​_​lost::FocusLost**<br/>通知实体及祖先已失去输入焦点。" }
+  n2@{ shape: stadium, label: "**FocusLost**<br/>通知实体及祖先已失去输入焦点。" }
   class n2 node_event
   n3@{ shape: fr-rect, label: "**InputFocusPlugin**<br/>建立并初始化界面输入焦点。" }
   class n3 node_plugin
-  n4@{ shape: stadium, label: "**gained​_​and​_​lost::FocusGained**<br/>通知实体及祖先已获得输入焦点。" }
+  n4@{ shape: stadium, label: "**FocusGained**<br/>通知实体及祖先已获得输入焦点。" }
   class n4 node_event
   n5@{ shape: lin-rect, label: "**FocusChangeEvents**<br/>组织焦点输入派发与变化通知。" }
   class n5 node_system_set

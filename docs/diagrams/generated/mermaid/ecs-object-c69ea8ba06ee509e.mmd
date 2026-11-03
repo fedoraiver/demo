@@ -45,24 +45,24 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​ui​_​widgets::text​_​input::listen​_​**<br/>**for​_​ime​_​input​_​when​_​text​_​input​_​**<br/>**focused**<br/>按可编辑焦点控制主窗口输入法。" }
+  n0@{ shape: rounded, label: "**listen​_​for​_​ime​_​input​_​when​_​text​_​**<br/>**input​_​focused**<br/>按可编辑焦点控制主窗口输入法。" }
   class n0 node_system
   n1@{ shape: lin-rect, label: "**ToggleWindowIMEInput**<br/>组织文本输入法状态与事件处理。" }
   class n1 node_system_set
-  n2@{ shape: rounded, label: "**editing::EditableText**<br/>来自crate:bevy​_​text ↗：持有 Parley<br/>编辑器、文本、光标及待应用编辑操作" }
+  n2@{ shape: rounded, label: "**EditableText**<br/>来自crate:bevy​_​text ↗：持有 Parley<br/>编辑器、文本、光标及待应用编辑操作" }
   class n2 node_component
   class n2 external_node
-  n3@{ shape: fr-rect, label: "**bevy​_​ui​_​widgets::TextInputPlugin**<br/>处理文本编辑、选择与输入法接入。" }
+  n3@{ shape: fr-rect, label: "**TextInputPlugin**<br/>处理文本编辑、选择与输入法接入。" }
   class n3 node_plugin
-  n4@{ shape: rounded, label: "**editing::TextReadWriteMode**<br/>来自crate:bevy​_​text ↗：控制文字输入的<br/>编辑模式" }
+  n4@{ shape: rounded, label: "**TextReadWriteMode**<br/>来自crate:bevy​_​text ↗：控制文字输入的<br/>编辑模式" }
   class n4 node_component
   class n4 external_node
-  n5@{ shape: rounded, label: "**text​_​input::TextInput**<br/>标识可编辑文本控件" }
+  n5@{ shape: rounded, label: "**TextInput**<br/>标识可编辑文本控件" }
   class n5 node_component
-  n6@{ shape: rounded, label: "**window::Window**<br/>来自crate:bevy​_​window ↗：保存窗口的呈<br/>现模式、位置、分辨率、标题、全屏及平台行<br/>为配置" }
+  n6@{ shape: rounded, label: "**Window**<br/>来自crate:bevy​_​window ↗：保存窗口的呈<br/>现模式、位置、分辨率、标题、全屏及平台行<br/>为配置" }
   class n6 node_component
   class n6 external_node
-  n7@{ shape: rounded, label: "**window::PrimaryWindow**<br/>来自crate:bevy​_​window ↗：标识唯一的主<br/>窗口" }
+  n7@{ shape: rounded, label: "**PrimaryWindow**<br/>来自crate:bevy​_​window ↗：标识唯一的主<br/>窗口" }
   class n7 node_component
   class n7 external_node
   n8@{ shape: lin-rect, label: "**Focus**<br/>来自crate:bevy​_​ui ↗：组织界面交互、布<br/>局与堆叠更新。" }

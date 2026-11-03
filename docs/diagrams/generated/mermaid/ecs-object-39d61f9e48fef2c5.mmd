@@ -38,11 +38,11 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**render::mesh::**<br/>**RenderGpuCulledEntities**<br/>追踪需要 GPU 裁剪的潜在可见实体。" }
+  n0@{ shape: cyl, label: "**RenderGpuCulledEntities**<br/>追踪需要 GPU 裁剪的潜在可见实体。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​pbr::render::mesh::collect​_​gpu​_​**<br/>**culled​_​meshes**<br/>按渲染层把 GPU 裁剪对象分配到各视图列<br/>表。" }
+  n1@{ shape: rounded, label: "**collect​_​gpu​_​culled​_​meshes**<br/>按渲染层把 GPU 裁剪对象分配到各视图列<br/>表。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​pbr::render::mesh::collect​_​**<br/>**meshes​_​for​_​gpu​_​building**<br/>把线程提取队列整理为 GPU 网格实例和输入<br/>缓冲。" }
+  n2@{ shape: rounded, label: "**collect​_​meshes​_​for​_​gpu​_​building**<br/>把线程提取队列整理为 GPU 网格实例和输入<br/>缓冲。" }
   class n2 node_system
   n0 e0@--> n1
   class e0 edge_read

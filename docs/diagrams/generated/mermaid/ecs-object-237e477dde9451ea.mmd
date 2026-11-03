@@ -38,15 +38,15 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**oit::OitBuffers**<br/>保存顺序无关透明的片元链表与参数。" }
+  n0@{ shape: cyl, label: "**OitBuffers**<br/>保存顺序无关透明的片元链表与参数。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​core​_​pipeline::oit::init​_​oit​_​**<br/>**buffers**<br/>创建可立即绑定的 OIT 初始缓冲。" }
+  n1@{ shape: rounded, label: "**init​_​oit​_​buffers**<br/>创建可立即绑定的 OIT 初始缓冲。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​core​_​pipeline::oit::resolve::**<br/>**prepare​_​oit​_​resolve​_​bind​_​group**<br/>为 OIT 解析阶段绑定视图和片元链表。" }
+  n2@{ shape: rounded, label: "**prepare​_​oit​_​resolve​_​bind​_​group**<br/>为 OIT 解析阶段绑定视图和片元链表。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​core​_​pipeline::oit::prepare​_​**<br/>**oit​_​buffers**<br/>调整共享 OIT 存储并上传逐相机设置。" }
+  n3@{ shape: rounded, label: "**prepare​_​oit​_​buffers**<br/>调整共享 OIT 存储并上传逐相机设置。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**bevy​_​pbr::render::mesh​_​view​_​**<br/>**bindings::prepare​_​mesh​_​view​_​bind​_​**<br/>**groups**<br/>来自crate:bevy​_​pbr ↗：为视图绑定光<br/>照、阴影及各可选渲染效果资源。" }
+  n4@{ shape: rounded, label: "**prepare​_​mesh​_​view​_​bind​_​groups**<br/>来自crate:bevy​_​pbr ↗：为视图绑定光<br/>照、阴影及各可选渲染效果资源。" }
   class n4 node_system
   class n4 external_node
   n1 e0@-->|"插入"| n0

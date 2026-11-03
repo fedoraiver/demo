@@ -37,11 +37,11 @@ flowchart LR
   classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**bevy​_​render::erased​_​render​_​asset::**<br/>**PrepareNextFrameAssets#lt;mesh​_​**<br/>**material::MeshMaterial3d#lt;extended​_​**<br/>**material::ExtendedMaterial#lt;pbr​_​**<br/>**material::StandardMaterial, decal::**<br/>**forward::ForwardDecalMaterialExt#gt;#gt;#gt;**<br/>保留下一帧需要继续准备的资产。" }
+  n0@{ shape: cyl, label: "**PrepareNextFrameAssets#lt;MeshMaterial3**<br/>**d#lt;ExtendedMaterial#lt;StandardMaterial,**<br/>**ForwardDecalMaterialExt#gt;#gt;#gt;**<br/>保留下一帧需要继续准备的资产。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​render::erased​_​render​_​asset::**<br/>**collect​_​erased​_​render​_​assets​_​to​_​**<br/>**reextract#lt;bevy​_​pbr::mesh​_​material::**<br/>**MeshMaterial3d#lt;bevy​_​pbr::extended​_​**<br/>**material::ExtendedMaterial#lt;bevy​_​**<br/>**pbr::pbr​_​material::**<br/>**StandardMaterial, bevy​_​pbr::decal::**<br/>**forward::ForwardDecalMaterialExt#gt;#gt;#gt;**<br/>按源材质类型排空擦除资产并请求重新提取。" }
+  n1@{ shape: rounded, label: "**collect​_​erased​_​render​_​assets​_​to​_​**<br/>**reextract**<br/>按源材质类型排空擦除资产并请求重新提取。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​render::erased​_​render​_​asset::**<br/>**prepare​_​erased​_​assets#lt;bevy​_​pbr::**<br/>**mesh​_​material::MeshMaterial3d#lt;bevy​_​**<br/>**pbr::extended​_​material::**<br/>**ExtendedMaterial#lt;bevy​_​pbr::pbr​_​**<br/>**material::StandardMaterial, bevy​_​**<br/>**pbr::decal::forward::**<br/>**ForwardDecalMaterialExt#gt;#gt;#gt;**<br/>在上传预算内准备擦除资产并管理重试卸载。" }
+  n2@{ shape: rounded, label: "**prepare​_​erased​_​assets**<br/>在上传预算内准备擦除资产并管理重试卸载。" }
   class n2 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

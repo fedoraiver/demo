@@ -40,15 +40,15 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**demo::scene​_​assembly::assets::poll​_​**<br/>**art​_​assets**<br/>连同子资产检查失败；只记录状态切换，避免<br/>每帧刷写相同错误。" }
+  n0@{ shape: rounded, label: "**poll​_​art​_​assets**<br/>连同子资产检查失败；只记录状态切换，避免<br/>每帧刷写相同错误。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**scene​_​assembly::assets::ArtAssets**<br/>强句柄覆盖海岛、主角和动态道具的生命周<br/>期，NPC 与环境由组合地图提供。" }
+  n1@{ shape: cyl, label: "**ArtAssets**<br/>强句柄覆盖海岛、主角和动态道具的生命周<br/>期，NPC 与环境由组合地图提供。" }
   class n1 node_resource
-  n2@{ shape: cyl, label: "**scene​_​assembly::assets::ArtLoadState**<br/>资源就绪与地图碰撞就绪是两个门槛，不能仅<br/>凭模板已生成就推进物理。" }
+  n2@{ shape: cyl, label: "**ArtLoadState**<br/>资源就绪与地图碰撞就绪是两个门槛，不能仅<br/>凭模板已生成就推进物理。" }
   class n2 node_resource
-  n3@{ shape: fr-rect, label: "**scene​_​assembly::SceneAssemblyPlugin**<br/>加载当前场景资源并装配地图、碰撞与业务实<br/>体。" }
+  n3@{ shape: fr-rect, label: "**SceneAssemblyPlugin**<br/>加载当前场景资源并装配地图、碰撞与业务实<br/>体。" }
   class n3 node_plugin
-  n4@{ shape: cyl, label: "**bevy​_​asset::AssetServer**<br/>来自crate:bevy​_​asset ↗：加载资产并追<br/>踪加载状态。" }
+  n4@{ shape: cyl, label: "**AssetServer**<br/>来自crate:bevy​_​asset ↗：加载资产并追<br/>踪加载状态。" }
   class n4 node_resource
   class n4 external_node
   n1 e0@--> n0

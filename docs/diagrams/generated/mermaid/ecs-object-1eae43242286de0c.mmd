@@ -36,9 +36,9 @@ flowchart LR
   classDef node_message fill:#EDF4F6,stroke:#247B91,stroke-width:1.6px,color:#1F3340
   classDef edge_consume stroke:#247B91,stroke-width:1.8px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: lean-r, label: "**event::CursorMoved**<br/>通知窗口内光标移动。" }
+  n0@{ shape: lean-r, label: "**CursorMoved**<br/>通知窗口内光标移动。" }
   class n0 node_message
-  n1@{ shape: rounded, label: "**bevy​_​egui::input::write​_​non​_​window​_​**<br/>**pointer​_​moved​_​messages​_​system**<br/>来自crate:bevy​_​egui ↗：刷新非窗口<br/>Egui 界面的指针位置。" }
+  n1@{ shape: rounded, label: "**write​_​non​_​window​_​pointer​_​moved​_​**<br/>**messages​_​system**<br/>来自crate:bevy​_​egui ↗：刷新非窗口<br/>Egui 界面的指针位置。" }
   class n1 node_system
   class n1 external_node
   n0 e0@--> n1

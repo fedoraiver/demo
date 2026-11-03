@@ -40,15 +40,15 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​render::material​_​bind​_​groups::**<br/>**init​_​fallback​_​resources**<br/>创建材质绑定的采样器及缓冲回退资源。" }
+  n0@{ shape: rounded, label: "**init​_​fallback​_​resources**<br/>创建材质绑定的采样器及缓冲回退资源。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**bevy​_​render::material​_​bind​_​groups::**<br/>**FallbackBuffer**<br/>为无效着色器缓冲句柄提供占位缓冲。" }
+  n1@{ shape: cyl, label: "**FallbackBuffer**<br/>为无效着色器缓冲句柄提供占位缓冲。" }
   class n1 node_resource
-  n2@{ shape: cyl, label: "**bevy​_​render::renderer::RenderDevice**<br/>创建渲染和计算所需的 GPU 资源。" }
+  n2@{ shape: cyl, label: "**RenderDevice**<br/>创建渲染和计算所需的 GPU 资源。" }
   class n2 node_resource
-  n3@{ shape: cyl, label: "**material​_​bind​_​groups::**<br/>**FallbackBindlessResources**<br/>填充绑定数组中未使用的资源槽位。" }
+  n3@{ shape: cyl, label: "**FallbackBindlessResources**<br/>填充绑定数组中未使用的资源槽位。" }
   class n3 node_resource
-  n4@{ shape: fr-rect, label: "**material​_​bind​_​groups::**<br/>**MaterialBindGroupPlugin**<br/>分配并打包材质绑定组。" }
+  n4@{ shape: fr-rect, label: "**MaterialBindGroupPlugin**<br/>分配并打包材质绑定组。" }
   class n4 node_plugin
   n0 e0@-->|"插入"| n1
   class e0 edge_write

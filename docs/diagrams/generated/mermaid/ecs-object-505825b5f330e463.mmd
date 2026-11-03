@@ -40,13 +40,13 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: lin-rect, label: "**AnonymousSet(1)**<br/>保存一组系统的共同配置。" }
   class n0 node_system_set
-  n1@{ shape: rounded, label: "**bevy​_​pbr::cluster::gpu::prepare​_​**<br/>**clustering​_​pipelines**<br/>来自crate:bevy​_​pbr ↗：为视图取得<br/>GPU 聚簇五阶段的管线标识。" }
+  n1@{ shape: rounded, label: "**prepare​_​clustering​_​pipelines**<br/>来自crate:bevy​_​pbr ↗：为视图取得<br/>GPU 聚簇五阶段的管线标识。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​pbr::cluster::gpu​_​clustering​_​**<br/>**is​_​enabled**<br/>来自crate:bevy​_​pbr ↗：判断常规更新是<br/>否使用 GPU 聚簇。" }
+  n2@{ shape: rounded, label: "**gpu​_​clustering​_​is​_​enabled**<br/>来自crate:bevy​_​pbr ↗：判断常规更新是<br/>否使用 GPU 聚簇。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​pbr::cluster::gpu::prepare​_​**<br/>**cluster​_​dummy​_​textures**<br/>来自crate:bevy​_​pbr ↗：为聚簇光栅通道<br/>准备视口占位纹理。" }
+  n3@{ shape: rounded, label: "**prepare​_​cluster​_​dummy​_​textures**<br/>来自crate:bevy​_​pbr ↗：为聚簇光栅通道<br/>准备视口占位纹理。" }
   class n3 node_system
   class n3 external_node
   n0 e0@-->|"集合成员"| n1

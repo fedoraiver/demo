@@ -46,34 +46,34 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  subgraph layout_card_n0[" "]
-  n0@{ shape: rounded, label: "**bevy​_​text::editing::apply​_​text​_​edits**<br/>应用可编辑文字排队的编辑操作。" }
+  n0@{ shape: rounded, label: "**apply​_​text​_​edits**<br/>应用可编辑文字排队的编辑操作。" }
   class n0 node_system
-  end
-  style layout_card_n0 fill:none,stroke:none
   n1@{ shape: cyl, label: "**Clipboard**<br/>来自crate:bevy​_​clipboard ↗：提供剪贴<br/>板文本读写接口" }
   class n1 node_resource
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​sprite::text2d::update​_​text2d​_​**<br/>**layout**<br/>来自crate:bevy​_​sprite ↗：重新排版变化<br/>的二维文字并准备字形。" }
+  n2@{ shape: rounded, label: "**update​_​text2d​_​layout**<br/>来自crate:bevy​_​sprite ↗：重新排版变化<br/>的二维文字并准备字形。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**editing::EditableTextFilter**<br/>保存逐字符过滤规则" }
+  n3@{ shape: rounded, label: "**EditableTextFilter**<br/>保存逐字符过滤规则" }
   class n3 node_component
-  n4@{ shape: rounded, label: "**bevy​_​text::font::load​_​font​_​assets​_​**<br/>**into​_​font​_​collection**<br/>把字体资产注册到排版字体数据库。" }
+  n4@{ shape: rounded, label: "**load​_​font​_​assets​_​into​_​font​_​**<br/>**collection**<br/>把字体资产注册到排版字体数据库。" }
   class n4 node_system
+  subgraph layout_card_n5[" "]
   n5@{ shape: fr-rect, label: "**TextPlugin**<br/>提供文本排版与渲染基础。" }
   class n5 node_plugin
+  end
+  style layout_card_n5 fill:none,stroke:none
   n6@{ shape: lin-rect, label: "**EditableTextSystems**<br/>统一应用可编辑文字的待处理操作。" }
   class n6 node_system_set
-  n7@{ shape: rounded, label: "**editing::EditableTextGeneration**<br/>保存 Parley 排版代数" }
+  n7@{ shape: rounded, label: "**EditableTextGeneration**<br/>保存 Parley 排版代数" }
   class n7 node_component
-  n8@{ shape: rounded, label: "**editing::EditableText**<br/>持有 Parley 编辑器、文本、光标及待应用<br/>编辑操作" }
+  n8@{ shape: rounded, label: "**EditableText**<br/>持有 Parley 编辑器、文本、光标及待应用<br/>编辑操作" }
   class n8 node_component
-  n9@{ shape: stadium, label: "**editing::TextEditChange**<br/>通知可编辑文本已应用待处理编辑。" }
+  n9@{ shape: stadium, label: "**TextEditChange**<br/>通知可编辑文本已应用待处理编辑。" }
   class n9 node_event
-  n10@{ shape: cyl, label: "**bevy​_​text::FontCx**<br/>维护字体数据库、家族解析与字体缓存" }
+  n10@{ shape: cyl, label: "**FontCx**<br/>维护字体数据库、家族解析与字体缓存" }
   class n10 node_resource
-  n11@{ shape: cyl, label: "**bevy​_​text::LayoutCx**<br/>持有 Parley 文字布局上下文" }
+  n11@{ shape: cyl, label: "**LayoutCx**<br/>持有 Parley 文字布局上下文" }
   class n11 node_resource
   n0 e0@-->|"可变访问"| n1
   class e0 edge_write
@@ -83,7 +83,7 @@ flowchart LR
   class e2 edge_read
   n4 e3@-->|"先于"| n0
   class e3 edge_order
-  n5 e4@-->|"调用"| n0
+  n5 e4@---->|"调用"| n0
   class e4 edge_registration
   n6 e5@-->|"集合成员"| n0
   class e5 edge_set_membership
@@ -101,6 +101,7 @@ flowchart LR
   e1@{ curve: basis }
   e2@{ curve: basis }
   e3@{ curve: basis }
+  e4@{ curve: basis }
   e5@{ curve: basis }
   e6@{ curve: basis }
   e7@{ curve: basis }

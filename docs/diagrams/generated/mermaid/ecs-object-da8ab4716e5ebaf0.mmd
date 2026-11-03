@@ -42,17 +42,17 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​ui​_​widgets::dialog::sync​_​**<br/>**dialog​_​z**<br/>按对话框栈顺序设置全局层级。" }
+  n0@{ shape: rounded, label: "**sync​_​dialog​_​z**<br/>按对话框栈顺序设置全局层级。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**dialog::DialogStack**<br/>按从底到顶的顺序保存已打开浮动对话框" }
+  n1@{ shape: cyl, label: "**DialogStack**<br/>按从底到顶的顺序保存已打开浮动对话框" }
   class n1 node_resource
-  n2@{ shape: rounded, label: "**bevy​_​ui::GlobalZIndex**<br/>来自crate:bevy​_​ui ↗：跨 UI 层级指定全<br/>局绘制层次。" }
+  n2@{ shape: rounded, label: "**GlobalZIndex**<br/>来自crate:bevy​_​ui ↗：跨 UI 层级指定全<br/>局绘制层次。" }
   class n2 node_component
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​ecs::schedule::condition::**<br/>**common​_​conditions::resource​_​**<br/>**changed#lt;bevy​_​ui​_​widgets::dialog::**<br/>**DialogStack#gt;**<br/>来自crate:bevy​_​ecs ↗：判断资源是否被<br/>标记为变化。" }
+  n3@{ shape: rounded, label: "**resource​_​changed**<br/>来自crate:bevy​_​ecs ↗：判断资源是否被<br/>标记为变化。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: fr-rect, label: "**dialog::DialogPlugin**<br/>管理对话框层次与拖动。" }
+  n4@{ shape: fr-rect, label: "**DialogPlugin**<br/>管理对话框层次与拖动。" }
   class n4 node_plugin
   n1 e0@--> n0
   class e0 edge_read

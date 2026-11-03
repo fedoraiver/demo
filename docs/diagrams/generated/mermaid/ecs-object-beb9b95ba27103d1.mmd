@@ -38,11 +38,11 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**render::light::ShadowSamplers**<br/>提供点光与平行光阴影的采样器。" }
+  n0@{ shape: cyl, label: "**ShadowSamplers**<br/>提供点光与平行光阴影的采样器。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​pbr::render::light::init​_​**<br/>**shadow​_​samplers**<br/>创建点光与平行光的深度比较采样器。" }
+  n1@{ shape: rounded, label: "**init​_​shadow​_​samplers**<br/>创建点光与平行光的深度比较采样器。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​pbr::render::mesh​_​view​_​**<br/>**bindings::prepare​_​mesh​_​view​_​bind​_​**<br/>**groups**<br/>为视图绑定光照、阴影及各可选渲染效果资<br/>源。" }
+  n2@{ shape: rounded, label: "**prepare​_​mesh​_​view​_​bind​_​groups**<br/>为视图绑定光照、阴影及各可选渲染效果资<br/>源。" }
   class n2 node_system
   n1 e0@-->|"插入"| n0
   class e0 edge_write

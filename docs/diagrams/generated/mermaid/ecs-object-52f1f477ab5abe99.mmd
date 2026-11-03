@@ -38,13 +38,13 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**light​_​probe::**<br/>**ViewLightProbesUniformOffset**<br/>定位相机在光照探针缓冲中的参数。" }
+  n0@{ shape: rounded, label: "**ViewLightProbesUniformOffset**<br/>定位相机在光照探针缓冲中的参数。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​pbr::cluster::gpu::cluster​_​on​_​**<br/>**gpu**<br/>执行深度切片、计数、分配和填充的 GPU 聚<br/>簇。" }
+  n1@{ shape: rounded, label: "**cluster​_​on​_​gpu**<br/>执行深度切片、计数、分配和填充的 GPU 聚<br/>簇。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​pbr::render::mesh​_​view​_​**<br/>**bindings::prepare​_​mesh​_​view​_​bind​_​**<br/>**groups**<br/>为视图绑定光照、阴影及各可选渲染效果资<br/>源。" }
+  n2@{ shape: rounded, label: "**prepare​_​mesh​_​view​_​bind​_​groups**<br/>为视图绑定光照、阴影及各可选渲染效果资<br/>源。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​pbr::light​_​probe::upload​_​light​_​**<br/>**probes**<br/>上传各视图的环境图、反射与辐照探针参数。" }
+  n3@{ shape: rounded, label: "**upload​_​light​_​probes**<br/>上传各视图的环境图、反射与辐照探针参数。" }
   class n3 node_system
   n0 e0@--> n1
   class e0 edge_read

@@ -43,24 +43,24 @@ flowchart LR
   classDef edge_observe stroke:#B66B2D,stroke-width:1.8px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: hex, label: "**bevy​_​enhanced​_​input::context::**<br/>**deactivate**<br/>为停用上下文登记输入释放等待。" }
+  n0@{ shape: hex, label: "**deactivate**<br/>为停用上下文登记输入释放等待。" }
   class n0 node_observer
-  n1@{ shape: rounded, label: "**binding::Binding**<br/>描述动作输入源" }
+  n1@{ shape: rounded, label: "**Binding**<br/>描述动作输入源" }
   class n1 node_component
-  n2@{ shape: cyl, label: "**context::input​_​reader::**<br/>**PendingBindings**<br/>等待已移除绑定的输入释放。" }
+  n2@{ shape: cyl, label: "**PendingBindings**<br/>等待已移除绑定的输入释放。" }
   class n2 node_resource
-  n3@{ shape: fr-rect, label: "**first​_​person::FirstPersonPlugin**<br/>来自first​_​person ↗：注册第一人称动<br/>作、捕获、朝向与镜头，不安装输入基础设施<br/>或物理插件。" }
+  n3@{ shape: fr-rect, label: "**FirstPersonPlugin**<br/>来自first​_​person ↗：注册第一人称动<br/>作、捕获、朝向与镜头，不安装输入基础设施<br/>或物理插件。" }
   class n3 node_plugin
   class n3 external_node
-  n4@{ shape: rounded, label: "**bevy​_​enhanced​_​input::context::**<br/>**ContextActivity#lt;first​_​person::**<br/>**actions::GameplayContext#gt;**<br/>控制保留绑定的输入上下文启停。" }
+  n4@{ shape: rounded, label: "**ContextActivity#lt;GameplayContext#gt;**<br/>控制保留绑定的输入上下文启停。" }
   class n4 node_component
-  n5@{ shape: rounded, label: "**binding::relationship::Bindings**<br/>保存属于当前动作实体的输入绑定实体集合" }
+  n5@{ shape: rounded, label: "**Bindings**<br/>保存属于当前动作实体的输入绑定实体集合" }
   class n5 node_component
-  n6@{ shape: rounded, label: "**action::ActionSettings**<br/>配置输入动作的值累积、首次激活重置及输入<br/>吞取消费策略" }
+  n6@{ shape: rounded, label: "**ActionSettings**<br/>配置输入动作的值累积、首次激活重置及输入<br/>吞取消费策略" }
   class n6 node_component
-  n7@{ shape: rounded, label: "**bevy​_​enhanced​_​input::prelude::**<br/>**Actions#lt;first​_​person::actions::**<br/>**GameplayContext#gt;**<br/>列出上下文关联的输入动作。" }
+  n7@{ shape: rounded, label: "**Actions#lt;GameplayContext#gt;**<br/>列出上下文关联的输入动作。" }
   class n7 node_component
-  n8@{ shape: stadium, label: "**bevy​_​ecs::lifecycle::InsertEvent**<br/>来自crate:bevy​_​ecs ↗：通知组件值插入<br/>实体。" }
+  n8@{ shape: stadium, label: "**InsertEvent**<br/>来自crate:bevy​_​ecs ↗：通知组件值插入<br/>实体。" }
   class n8 node_event
   class n8 external_node
   n1 e0@--> n0

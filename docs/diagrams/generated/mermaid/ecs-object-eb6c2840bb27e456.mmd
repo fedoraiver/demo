@@ -44,27 +44,27 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​pbr::ssr::prepare​_​ssr​_​settings**<br/>上传各视图反射参数并记录动态缓冲偏移。" }
+  n0@{ shape: rounded, label: "**prepare​_​ssr​_​settings**<br/>上传各视图反射参数并记录动态缓冲偏移。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**bevy​_​render::renderer::RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
+  n1@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
   class n1 node_resource
   class n1 external_node
-  n2@{ shape: rounded, label: "**ssr::ScreenSpaceReflectionsUniform**<br/>以 GPU 格式保存反射粗糙度和追踪设置。" }
+  n2@{ shape: rounded, label: "**ScreenSpaceReflectionsUniform**<br/>以 GPU 格式保存反射粗糙度和追踪设置。" }
   class n2 node_component
-  n3@{ shape: rounded, label: "**bevy​_​render::view::ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
+  n3@{ shape: rounded, label: "**ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
   class n3 node_component
   class n3 external_node
-  n4@{ shape: rounded, label: "**ssr::**<br/>**ViewScreenSpaceReflectionsUniformOff**<br/>**set**<br/>定位视图在反射设置缓冲中的参数。" }
+  n4@{ shape: rounded, label: "**ViewScreenSpaceReflectionsUniformOff**<br/>**set**<br/>定位视图在反射设置缓冲中的参数。" }
   class n4 node_component
-  n5@{ shape: cyl, label: "**bevy​_​render::renderer::RenderQueue**<br/>来自crate:bevy​_​render ↗：将资源写入和<br/>命令异步提交给 GPU。" }
+  n5@{ shape: cyl, label: "**RenderQueue**<br/>来自crate:bevy​_​render ↗：将资源写入和<br/>命令异步提交给 GPU。" }
   class n5 node_resource
   class n5 external_node
   n6@{ shape: lin-rect, label: "**PrepareResources**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
   class n6 node_system_set
   class n6 external_node
-  n7@{ shape: cyl, label: "**ssr::ScreenSpaceReflectionsBuffer**<br/>在 GPU 缓冲中保存各视图反射设置。" }
+  n7@{ shape: cyl, label: "**ScreenSpaceReflectionsBuffer**<br/>在 GPU 缓冲中保存各视图反射设置。" }
   class n7 node_resource
-  n8@{ shape: fr-rect, label: "**ssr::ScreenSpaceReflectionsPlugin**<br/>提供延迟相机的屏幕空间反射。" }
+  n8@{ shape: fr-rect, label: "**ScreenSpaceReflectionsPlugin**<br/>提供延迟相机的屏幕空间反射。" }
   class n8 node_plugin
   n1 e0@--> n0
   class e0 edge_read

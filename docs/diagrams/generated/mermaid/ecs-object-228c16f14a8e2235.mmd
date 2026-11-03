@@ -39,7 +39,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: notch-rect, label: "**Local · despawn​_​list**<br/>去重收集需要销毁的触摸指针实体。" }
   class n0 node_local
-  n1@{ shape: rounded, label: "**bevy​_​picking::input::deactivate​_​**<br/>**touch​_​pointers**<br/>销毁已经结束或取消的触摸指针。" }
+  n1@{ shape: rounded, label: "**deactivate​_​touch​_​pointers**<br/>销毁已经结束或取消的触摸指针。" }
   class n1 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

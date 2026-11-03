@@ -42,7 +42,7 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​transform​_​interpolation::**<br/>**extrapolation::update​_​rotation​_​**<br/>**extrapolation​_​states#lt;avian3d::**<br/>**interpolation::AngVelSource#gt;**<br/>依据当前角速度预测下一个旋转端点。" }
+  n0@{ shape: rounded, label: "**update​_​rotation​_​extrapolation​_​states**<br/>依据当前角速度预测下一个旋转端点。" }
   class n0 node_system
   n1@{ shape: lin-rect, label: "**UpdateEnd**<br/>组织变换缓动端点与帧间应用。" }
   class n1 node_system_set
@@ -50,15 +50,15 @@ flowchart LR
   class n2 node_component
   n3@{ shape: rounded, label: "**RotationEasingState**<br/>保存固定步旋转插值的起点与终点" }
   class n3 node_component
-  n4@{ shape: rounded, label: "**extrapolation::RotationExtrapolation**<br/>启用旋转外推" }
+  n4@{ shape: rounded, label: "**RotationExtrapolation**<br/>启用旋转外推" }
   class n4 node_component
-  n5@{ shape: rounded, label: "**components::transform::Transform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>相对父实体的平移、旋转和缩放" }
+  n5@{ shape: rounded, label: "**Transform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>相对父实体的平移、旋转和缩放" }
   class n5 node_component
   class n5 external_node
-  n6@{ shape: cyl, label: "**time::Time**<br/>来自crate:bevy​_​time ↗：保存时钟上下<br/>文、帧间隔及累计时间" }
+  n6@{ shape: cyl, label: "**Time**<br/>来自crate:bevy​_​time ↗：保存时钟上下<br/>文、帧间隔及累计时间" }
   class n6 node_resource
   class n6 external_node
-  n7@{ shape: rounded, label: "**dynamics::rigid​_​body::**<br/>**AngularVelocity**<br/>来自crate:avian3d ↗：保存刚体的世界角<br/>速度。" }
+  n7@{ shape: rounded, label: "**AngularVelocity**<br/>来自crate:avian3d ↗：保存刚体的世界角<br/>速度。" }
   class n7 node_component
   class n7 external_node
   n1 e0@-->|"集合成员"| n0

@@ -38,11 +38,11 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**dynamics::ccd::SweptCcd**<br/>配置快速动态刚体的连续扫掠。" }
+  n0@{ shape: rounded, label: "**SweptCcd**<br/>配置快速动态刚体的连续扫掠。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**avian3d::dynamics::ccd::solve​_​**<br/>**continuous**<br/>通过连续扫掠限制快速刚体穿透。" }
+  n1@{ shape: rounded, label: "**solve​_​continuous**<br/>通过连续扫掠限制快速刚体穿透。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**demo::scene​_​assembly::actors::spawn​_​**<br/>**actors**<br/>来自scene​_​assembly ↗：为就绪海岛创建<br/>玩法实体并复用加载相机。" }
+  n2@{ shape: rounded, label: "**spawn​_​actors**<br/>来自scene​_​assembly ↗：为就绪海岛创建<br/>玩法实体并复用加载相机。" }
   class n2 node_system
   class n2 external_node
   n0 e0@--> n1

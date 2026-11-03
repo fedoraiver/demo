@@ -42,21 +42,21 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​winit::system::changed​_​cursor​_​**<br/>**options**<br/>把光标配置变化同步到原生窗口。" }
+  n0@{ shape: rounded, label: "**changed​_​cursor​_​options**<br/>把光标配置变化同步到原生窗口。" }
   class n0 node_system
   n1@{ shape: fr-rect, label: "**WinitPlugin**<br/>接入原生窗口、输入事件与事件循环。" }
   class n1 node_plugin
-  n2@{ shape: rounded, label: "**window::CursorOptions**<br/>来自crate:bevy​_​window ↗：保存窗口光标<br/>的可见、捕获和命中测试等选项" }
+  n2@{ shape: rounded, label: "**CursorOptions**<br/>来自crate:bevy​_​window ↗：保存窗口光标<br/>的可见、捕获和命中测试等选项" }
   class n2 node_component
   class n2 external_node
-  n3@{ shape: rounded, label: "**window::Window**<br/>来自crate:bevy​_​window ↗：保存窗口的呈<br/>现模式、位置、分辨率、标题、全屏及平台行<br/>为配置" }
+  n3@{ shape: rounded, label: "**Window**<br/>来自crate:bevy​_​window ↗：保存窗口的呈<br/>现模式、位置、分辨率、标题、全屏及平台行<br/>为配置" }
   class n3 node_component
   class n3 external_node
-  n4@{ shape: rounded, label: "**system::CachedCursorOptions**<br/>缓存上次同步到原生窗口的光标选项" }
+  n4@{ shape: rounded, label: "**CachedCursorOptions**<br/>缓存上次同步到原生窗口的光标选项" }
   class n4 node_component
-  n5@{ shape: rounded, label: "**bevy​_​winit::system::despawn​_​windows**<br/>处理原生窗口关闭并延后一轮释放包装器。" }
+  n5@{ shape: rounded, label: "**despawn​_​windows**<br/>处理原生窗口关闭并延后一轮释放包装器。" }
   class n5 node_system
-  n6@{ shape: rounded, label: "**bevy​_​winit::system::changed​_​windows**<br/>把窗口组件变化同步到 winit 后端。" }
+  n6@{ shape: rounded, label: "**changed​_​windows**<br/>把窗口组件变化同步到 winit 后端。" }
   class n6 node_system
   n1 e0@-->|"调用"| n0
   class e0 edge_registration

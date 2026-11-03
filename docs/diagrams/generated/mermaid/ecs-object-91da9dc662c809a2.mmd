@@ -40,77 +40,77 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**dynamics::solver::solver​_​body::**<br/>**SolverBodyIndex**<br/>定位实体对应的求解器刚体。" }
+  n0@{ shape: rounded, label: "**SolverBodyIndex**<br/>定位实体对应的求解器刚体。" }
   class n0 node_component
-  n1@{ shape: hex, label: "**avian3d::dynamics::solver::solver​_​**<br/>**body::plugin::{impl#35;0}::build::**<br/>**{closure#35;3}**<br/>清除已移除刚体的求解缓存。" }
+  n1@{ shape: hex, label: "**build::{closure#35;3}**<br/>清除已移除刚体的求解缓存。" }
   class n1 node_observer
-  n2@{ shape: rounded, label: "**avian3d::dynamics::solver::solver​_​**<br/>**body::plugin::prepare​_​solver​_​bodies**<br/>把 ECS 刚体状态准备成子步求解数据。" }
+  n2@{ shape: rounded, label: "**prepare​_​solver​_​bodies**<br/>把 ECS 刚体状态准备成子步求解数据。" }
   class n2 node_system
-  n3@{ shape: hex, label: "**avian3d::dynamics::solver::solver​_​**<br/>**body::plugin::on​_​insert​_​rigid​_​body**<br/>按刚体类型更新求解器体缓存。" }
+  n3@{ shape: hex, label: "**on​_​insert​_​rigid​_​body**<br/>按刚体类型更新求解器体缓存。" }
   class n3 node_observer
-  n4@{ shape: hex, label: "**avian3d::dynamics::solver::solver​_​**<br/>**body::plugin::on​_​insert​_​rigid​_​body**<br/>按刚体类型更新求解器体缓存。" }
+  n4@{ shape: hex, label: "**on​_​insert​_​rigid​_​body**<br/>按刚体类型更新求解器体缓存。" }
   class n4 node_observer
-  n5@{ shape: rounded, label: "**avian3d::dynamics::solver::plugin::**<br/>**joint​_​damping#lt;avian3d::dynamics::**<br/>**joints::fixed::FixedJoint#gt;**<br/>衰减关节两端刚体的相对速度。" }
+  n5@{ shape: rounded, label: "**joint​_​damping**<br/>衰减关节两端刚体的相对速度。" }
   class n5 node_system
-  n6@{ shape: hex, label: "**avian3d::dynamics::solver::solver​_​**<br/>**body::plugin::{impl#35;0}::build::**<br/>**{closure#35;4}**<br/>清除禁用或休眠刚体的求解缓存。" }
+  n6@{ shape: hex, label: "**build::{closure#35;4}**<br/>清除禁用或休眠刚体的求解缓存。" }
   class n6 node_observer
-  n7@{ shape: rounded, label: "**avian3d::dynamics::solver::solver​_​**<br/>**body::plugin::update​_​solver​_​body​_​**<br/>**angular​_​inertia**<br/>按当前朝向刷新求解器的有效逆惯量。" }
+  n7@{ shape: rounded, label: "**update​_​solver​_​body​_​angular​_​inertia**<br/>按当前朝向刷新求解器的有效逆惯量。" }
   class n7 node_system
-  n8@{ shape: hex, label: "**avian3d::dynamics::solver::solver​_​**<br/>**body::plugin::{impl#35;0}::build::**<br/>**{closure#35;3}**<br/>清除已移除刚体的求解缓存。" }
+  n8@{ shape: hex, label: "**build::{closure#35;3}**<br/>清除已移除刚体的求解缓存。" }
   class n8 node_observer
-  n9@{ shape: hex, label: "**avian3d::dynamics::solver::solver​_​**<br/>**body::plugin::on​_​insert​_​rigid​_​body**<br/>按刚体类型更新求解器体缓存。" }
+  n9@{ shape: hex, label: "**on​_​insert​_​rigid​_​body**<br/>按刚体类型更新求解器体缓存。" }
   class n9 node_observer
-  n10@{ shape: rounded, label: "**avian3d::dynamics::ccd::solve​_​**<br/>**continuous**<br/>通过连续扫掠限制快速刚体穿透。" }
+  n10@{ shape: rounded, label: "**solve​_​continuous**<br/>通过连续扫掠限制快速刚体穿透。" }
   class n10 node_system
-  n11@{ shape: hex, label: "**avian3d::dynamics::solver::solver​_​**<br/>**body::plugin::{impl#35;0}::build::**<br/>**{closure#35;0}**<br/>为重新启用刚体补建求解器体。" }
+  n11@{ shape: hex, label: "**build::{closure#35;0}**<br/>为重新启用刚体补建求解器体。" }
   class n11 node_observer
-  n12@{ shape: rounded, label: "**avian3d::dynamics::rigid​_​body::**<br/>**forces::plugin::apply​_​local​_​**<br/>**acceleration**<br/>在子步中把局部加速度作用到世界速度。" }
+  n12@{ shape: rounded, label: "**apply​_​local​_​acceleration**<br/>在子步中把局部加速度作用到世界速度。" }
   class n12 node_system
-  n13@{ shape: hex, label: "**avian3d::dynamics::solver::solver​_​**<br/>**body::plugin::{impl#35;0}::build::**<br/>**{closure#35;4}**<br/>清除禁用或休眠刚体的求解缓存。" }
+  n13@{ shape: hex, label: "**build::{closure#35;4}**<br/>清除禁用或休眠刚体的求解缓存。" }
   class n13 node_observer
-  n14@{ shape: hex, label: "**avian3d::dynamics::solver::solver​_​**<br/>**body::plugin::{impl#35;0}::build::**<br/>**{closure#35;4}**<br/>清除禁用或休眠刚体的求解缓存。" }
+  n14@{ shape: hex, label: "**build::{closure#35;4}**<br/>清除禁用或休眠刚体的求解缓存。" }
   class n14 node_observer
-  n15@{ shape: hex, label: "**avian3d::dynamics::solver::solver​_​**<br/>**body::plugin::{impl#35;0}::build::**<br/>**{closure#35;3}**<br/>清除已移除刚体的求解缓存。" }
+  n15@{ shape: hex, label: "**build::{closure#35;3}**<br/>清除已移除刚体的求解缓存。" }
   class n15 node_observer
-  n16@{ shape: rounded, label: "**avian3d::dynamics::solver::plugin::**<br/>**joint​_​damping#lt;avian3d::dynamics::**<br/>**joints::distance::DistanceJoint#gt;**<br/>衰减关节两端刚体的相对速度。" }
+  n16@{ shape: rounded, label: "**joint​_​damping**<br/>衰减关节两端刚体的相对速度。" }
   class n16 node_system
-  n17@{ shape: hex, label: "**avian3d::dynamics::solver::solver​_​**<br/>**body::plugin::{impl#35;0}::build::**<br/>**{closure#35;0}**<br/>为重新启用刚体补建求解器体。" }
+  n17@{ shape: hex, label: "**build::{closure#35;0}**<br/>为重新启用刚体补建求解器体。" }
   class n17 node_observer
-  n18@{ shape: rounded, label: "**avian3d::dynamics::solver::plugin::**<br/>**joint​_​damping#lt;avian3d::dynamics::**<br/>**joints::prismatic::PrismaticJoint#gt;**<br/>衰减关节两端刚体的相对速度。" }
+  n18@{ shape: rounded, label: "**joint​_​damping**<br/>衰减关节两端刚体的相对速度。" }
   class n18 node_system
-  n19@{ shape: hex, label: "**avian3d::dynamics::solver::solver​_​**<br/>**body::plugin::{impl#35;0}::build::**<br/>**{closure#35;2}**<br/>在刚体唤醒时恢复求解器体。" }
+  n19@{ shape: hex, label: "**build::{closure#35;2}**<br/>在刚体唤醒时恢复求解器体。" }
   class n19 node_observer
-  n20@{ shape: rounded, label: "**avian3d::dynamics::solver::solver​_​**<br/>**body::plugin::writeback​_​solver​_​**<br/>**bodies**<br/>将求解后的位姿和速度回写 ECS。" }
+  n20@{ shape: rounded, label: "**writeback​_​solver​_​bodies**<br/>将求解后的位姿和速度回写 ECS。" }
   class n20 node_system
-  n21@{ shape: hex, label: "**avian3d::dynamics::solver::solver​_​**<br/>**body::plugin::{impl#35;0}::build::**<br/>**{closure#35;1}**<br/>在实体启用时恢复刚体求解缓存。" }
+  n21@{ shape: hex, label: "**build::{closure#35;1}**<br/>在实体启用时恢复刚体求解缓存。" }
   class n21 node_observer
-  n22@{ shape: hex, label: "**avian3d::dynamics::solver::solver​_​**<br/>**body::plugin::{impl#35;0}::build::**<br/>**{closure#35;1}**<br/>在实体启用时恢复刚体求解缓存。" }
+  n22@{ shape: hex, label: "**build::{closure#35;1}**<br/>在实体启用时恢复刚体求解缓存。" }
   class n22 node_observer
-  n23@{ shape: hex, label: "**avian3d::dynamics::solver::solver​_​**<br/>**body::plugin::{impl#35;0}::build::**<br/>**{closure#35;2}**<br/>在刚体唤醒时恢复求解器体。" }
+  n23@{ shape: hex, label: "**build::{closure#35;2}**<br/>在刚体唤醒时恢复求解器体。" }
   class n23 node_observer
-  n24@{ shape: rounded, label: "**avian3d::dynamics::integrator::**<br/>**clear​_​velocity​_​increments**<br/>在子步循环后清零速度积分增量。" }
+  n24@{ shape: rounded, label: "**clear​_​velocity​_​increments**<br/>在子步循环后清零速度积分增量。" }
   class n24 node_system
-  n25@{ shape: rounded, label: "**avian3d::dynamics::integrator::**<br/>**clamp​_​velocities**<br/>按线速度和角速度上限约束求解器刚体。" }
+  n25@{ shape: rounded, label: "**clamp​_​velocities**<br/>按线速度和角速度上限约束求解器刚体。" }
   class n25 node_system
-  n26@{ shape: hex, label: "**avian3d::dynamics::solver::solver​_​**<br/>**body::plugin::{impl#35;0}::build::**<br/>**{closure#35;2}**<br/>在刚体唤醒时恢复求解器体。" }
+  n26@{ shape: hex, label: "**build::{closure#35;2}**<br/>在刚体唤醒时恢复求解器体。" }
   class n26 node_observer
-  n27@{ shape: rounded, label: "**avian3d::dynamics::solver::islands::**<br/>**sleeping::update​_​sleeping​_​states**<br/>按刚体静止时间判断物理岛的休眠资格。" }
+  n27@{ shape: rounded, label: "**update​_​sleeping​_​states**<br/>按刚体静止时间判断物理岛的休眠资格。" }
   class n27 node_system
-  n28@{ shape: hex, label: "**avian3d::dynamics::solver::solver​_​**<br/>**body::plugin::{impl#35;0}::build::**<br/>**{closure#35;0}**<br/>为重新启用刚体补建求解器体。" }
+  n28@{ shape: hex, label: "**build::{closure#35;0}**<br/>为重新启用刚体补建求解器体。" }
   class n28 node_observer
-  n29@{ shape: hex, label: "**avian3d::dynamics::solver::solver​_​**<br/>**body::plugin::{impl#35;0}::build::**<br/>**{closure#35;1}**<br/>在实体启用时恢复刚体求解缓存。" }
+  n29@{ shape: hex, label: "**build::{closure#35;1}**<br/>在实体启用时恢复刚体求解缓存。" }
   class n29 node_observer
-  n30@{ shape: rounded, label: "**avian3d::collider​_​tree::update::**<br/>**update​_​solver​_​body​_​aabbs#lt;avian3d::**<br/>**collision::collider::parry::**<br/>**Collider#gt;**<br/>按物理结果更新活跃刚体的碰撞边界。" }
+  n30@{ shape: rounded, label: "**update​_​solver​_​body​_​aabbs**<br/>按物理结果更新活跃刚体的碰撞边界。" }
   class n30 node_system
-  n31@{ shape: rounded, label: "**avian3d::dynamics::solver::plugin::**<br/>**joint​_​damping#lt;avian3d::dynamics::**<br/>**joints::spherical::SphericalJoint#gt;**<br/>衰减关节两端刚体的相对速度。" }
+  n31@{ shape: rounded, label: "**joint​_​damping**<br/>衰减关节两端刚体的相对速度。" }
   class n31 node_system
-  n32@{ shape: rounded, label: "**avian3d::dynamics::solver::plugin::**<br/>**joint​_​damping#lt;avian3d::dynamics::**<br/>**joints::revolute::RevoluteJoint#gt;**<br/>衰减关节两端刚体的相对速度。" }
+  n32@{ shape: rounded, label: "**joint​_​damping**<br/>衰减关节两端刚体的相对速度。" }
   class n32 node_system
-  n33@{ shape: rounded, label: "**avian3d::dynamics::rigid​_​body::**<br/>**forces::plugin::apply​_​constant​_​**<br/>**torques**<br/>按求解器有效惯量换算世界恒定扭矩。" }
+  n33@{ shape: rounded, label: "**apply​_​constant​_​torques**<br/>按求解器有效惯量换算世界恒定扭矩。" }
   class n33 node_system
-  n34@{ shape: rounded, label: "**avian3d::dynamics::integrator::**<br/>**integrate​_​velocities**<br/>为活跃动态刚体积分速度与阻尼。" }
+  n34@{ shape: rounded, label: "**integrate​_​velocities**<br/>为活跃动态刚体积分速度与阻尼。" }
   class n34 node_system
-  n35@{ shape: rounded, label: "**avian3d::dynamics::solver::plugin::**<br/>**prepare​_​contact​_​constraints**<br/>从有效接触流形生成本轮求解约束。" }
+  n35@{ shape: rounded, label: "**prepare​_​contact​_​constraints**<br/>从有效接触流形生成本轮求解约束。" }
   class n35 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write
@@ -250,7 +250,7 @@ flowchart LR
   class e67 edge_read
   e0@{ curve: basis }
   e1@{ curve: basis }
-  e2@{ curve: basis }
+  e2@{ curve: bumpY }
   e3@{ curve: basis }
   e4@{ curve: basis }
   e5@{ curve: basis }
@@ -287,7 +287,7 @@ flowchart LR
   e36@{ curve: basis }
   e37@{ curve: basis }
   e38@{ curve: basis }
-  e39@{ curve: basis }
+  e39@{ curve: bumpX }
   e40@{ curve: basis }
   e41@{ curve: basis }
   e42@{ curve: basis }

@@ -37,9 +37,9 @@ flowchart LR
   classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**render::SpriteBatches**<br/>记录各视图精灵批次的纹理和实例范围。" }
+  n0@{ shape: cyl, label: "**SpriteBatches**<br/>记录各视图精灵批次的纹理和实例范围。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​sprite​_​render::render::prepare​_​**<br/>**sprite​_​image​_​bind​_​groups**<br/>合并连续同图像精灵并上传实例与索引数据。" }
+  n1@{ shape: rounded, label: "**prepare​_​sprite​_​image​_​bind​_​groups**<br/>合并连续同图像精灵并上传实例与索引数据。" }
   class n1 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

@@ -38,11 +38,11 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**#lt;avian3d::physics​_​transform::**<br/>**PhysicsTransformPlugin as bevy​_​app::**<br/>**plugin::Plugin#gt;::build::{{closure}}**<br/>判断是否从实体变换更新物理姿态。" }
+  n0@{ shape: rounded, label: "**build::{{closure}}**<br/>判断是否从实体变换更新物理姿态。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**physics​_​transform::**<br/>**PhysicsTransformConfig**<br/>配置物理位姿与显示变换的同步。" }
+  n1@{ shape: cyl, label: "**PhysicsTransformConfig**<br/>配置物理位姿与显示变换的同步。" }
   class n1 node_resource
-  n2@{ shape: rounded, label: "**avian3d::physics​_​transform::**<br/>**transform​_​to​_​position**<br/>把用户改变的世界变换同步到物理位姿。" }
+  n2@{ shape: rounded, label: "**transform​_​to​_​position**<br/>把用户改变的世界变换同步到物理位姿。" }
   class n2 node_system
   n1 e0@--> n0
   class e0 edge_read

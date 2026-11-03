@@ -39,7 +39,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: lin-rect, label: "**RumbleSystems**<br/>维护手柄振动效果的生命周期。" }
   class n0 node_system_set
-  n1@{ shape: rounded, label: "**bevy​_​gilrs::rumble::play​_​gilrs​_​**<br/>**rumble**<br/>执行手柄振动请求并清除过期效果。" }
+  n1@{ shape: rounded, label: "**play​_​gilrs​_​rumble**<br/>执行手柄振动请求并清除过期效果。" }
   class n1 node_system
   n0 e0@-->|"集合成员"| n1
   class e0 edge_set_membership

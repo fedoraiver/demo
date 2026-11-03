@@ -43,21 +43,21 @@ flowchart LR
   n1@{ shape: lin-rect, label: "**Layout**<br/>来自crate:bevy​_​ui ↗：组织界面交互、布<br/>局与堆叠更新。" }
   class n1 node_system_set
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​ui::widget::text​_​input​_​layout::**<br/>**update​_​editable​_​text​_​styles**<br/>来自crate:bevy​_​ui ↗：把字体和排版配置<br/>同步到可编辑文本引擎。" }
+  n2@{ shape: rounded, label: "**update​_​editable​_​text​_​styles**<br/>来自crate:bevy​_​ui ↗：把字体和排版配置<br/>同步到可编辑文本引擎。" }
   class n2 node_system
   class n2 external_node
   n3@{ shape: lin-rect, label: "**PostLayout**<br/>来自crate:bevy​_​ui ↗：组织界面交互、布<br/>局与堆叠更新。" }
   class n3 node_system_set
   class n3 external_node
-  n4@{ shape: rounded, label: "**bevy​_​ui::widget::text​_​input​_​layout::**<br/>**sync​_​editable​_​text​_​viewports**<br/>来自crate:bevy​_​ui ↗：在文本编辑前同步<br/>可编辑区域的视口。" }
+  n4@{ shape: rounded, label: "**sync​_​editable​_​text​_​viewports**<br/>来自crate:bevy​_​ui ↗：在文本编辑前同步<br/>可编辑区域的视口。" }
   class n4 node_system
   class n4 external_node
-  n5@{ shape: rounded, label: "**bevy​_​text::editing::apply​_​text​_​edits**<br/>应用可编辑文字排队的编辑操作。" }
+  n5@{ shape: rounded, label: "**apply​_​text​_​edits**<br/>应用可编辑文字排队的编辑操作。" }
   class n5 node_system
-  n6@{ shape: rounded, label: "**bevy​_​ui​_​widgets::text​_​input::text​_​**<br/>**input​_​autoscroll​_​system**<br/>来自crate:bevy​_​ui​_​widgets ↗：在拖选<br/>越出文字视口时自动滚动。" }
+  n6@{ shape: rounded, label: "**text​_​input​_​autoscroll​_​system**<br/>来自crate:bevy​_​ui​_​widgets ↗：在拖选<br/>越出文字视口时自动滚动。" }
   class n6 node_system
   class n6 external_node
-  n7@{ shape: rounded, label: "**bevy​_​ui::widget::text​_​input​_​layout::**<br/>**update​_​editable​_​text​_​content​_​size**<br/>来自crate:bevy​_​ui ↗：按可见字符宽度和<br/>行数设置输入框固有尺寸。" }
+  n7@{ shape: rounded, label: "**update​_​editable​_​text​_​content​_​size**<br/>来自crate:bevy​_​ui ↗：按可见字符宽度和<br/>行数设置输入框固有尺寸。" }
   class n7 node_system
   class n7 external_node
   n1 e0@-->|"先于"| n0

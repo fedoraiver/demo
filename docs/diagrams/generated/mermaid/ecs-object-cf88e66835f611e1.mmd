@@ -40,9 +40,9 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: lin-rect, label: "**ExtractCursor**<br/>组织各类界面绘制数据提取。" }
   class n0 node_system_set
-  n1@{ shape: rounded, label: "**bevy​_​ui​_​render::text::extract​_​text​_​**<br/>**cursor**<br/>提取文字光标和带圆角的选区背景。" }
+  n1@{ shape: rounded, label: "**extract​_​text​_​cursor**<br/>提取文字光标和带圆角的选区背景。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​ui​_​render::text::extract​_​**<br/>**preedit​_​underlines**<br/>把输入法预编辑下划线提取为 UI 矩形。" }
+  n2@{ shape: rounded, label: "**extract​_​preedit​_​underlines**<br/>把输入法预编辑下划线提取为 UI 矩形。" }
   class n2 node_system
   n3@{ shape: lin-rect, label: "**ExtractText**<br/>组织各类界面绘制数据提取。" }
   class n3 node_system_set

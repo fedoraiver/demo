@@ -37,9 +37,9 @@ flowchart LR
   classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​extract::TemporaryEntity#lt;bevy​_​**<br/>**render::RenderApp#gt;**<br/>标记子世界中帧末清理的临时实体。" }
+  n0@{ shape: rounded, label: "**TemporaryEntity#lt;RenderApp#gt;**<br/>标记子世界中帧末清理的临时实体。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​extract::sync​_​world::despawn​_​**<br/>**temporary​_​entities#lt;bevy​_​render::**<br/>**RenderApp#gt;**<br/>按实体索引逆序清理临时同步实体。" }
+  n1@{ shape: rounded, label: "**despawn​_​temporary​_​entities**<br/>按实体索引逆序清理临时同步实体。" }
   class n1 node_system
   n0 e0@-->|"存在性约束"| n1
   class e0 edge_reference

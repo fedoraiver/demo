@@ -36,9 +36,9 @@ flowchart LR
   classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**gamepad::GamepadSettings**<br/>保存手柄按钮、轴及按钮轴的默认阈值与逐输<br/>入覆盖设置" }
+  n0@{ shape: rounded, label: "**GamepadSettings**<br/>保存手柄按钮、轴及按钮轴的默认阈值与逐输<br/>入覆盖设置" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​input::gamepad::gamepad​_​event​_​**<br/>**processing​_​system**<br/>过滤原始手柄数值并更新设备状态。" }
+  n1@{ shape: rounded, label: "**gamepad​_​event​_​processing​_​system**<br/>过滤原始手柄数值并更新设备状态。" }
   class n1 node_system
   n0 e0@--> n1
   class e0 edge_read

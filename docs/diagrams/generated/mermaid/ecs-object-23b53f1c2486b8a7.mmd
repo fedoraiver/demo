@@ -45,31 +45,31 @@ flowchart LR
   classDef edge_consume stroke:#247B91,stroke-width:1.8px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​mesh::components::mark​_​3d​_​**<br/>**meshes​_​as​_​changed​_​if​_​their​_​assets​_​**<br/>**changed**<br/>资产内容变化时标记对应三维网格已变更。" }
+  n0@{ shape: rounded, label: "**mark​_​3d​_​meshes​_​as​_​changed​_​if​_​their​_​**<br/>**assets​_​changed**<br/>资产内容变化时标记对应三维网格已变更。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**bevy​_​pbr::material::mark​_​meshes​_​as​_​**<br/>**changed​_​if​_​their​_​materials​_​**<br/>**changed#lt;bevy​_​pbr::pbr​_​material::**<br/>**StandardMaterial#gt;**<br/>来自crate:bevy​_​pbr ↗：材质组件或资产<br/>变化时请求网格重新提取。" }
+  n1@{ shape: rounded, label: "**mark​_​meshes​_​as​_​changed​_​if​_​their​_​**<br/>**materials​_​changed**<br/>来自crate:bevy​_​pbr ↗：材质组件或资产<br/>变化时请求网格重新提取。" }
   class n1 node_system
   class n1 external_node
   n2@{ shape: fr-rect, label: "**MeshPlugin**<br/>注册网格资产类型。" }
   class n2 node_plugin
-  n3@{ shape: rounded, label: "**bevy​_​pbr::material::mark​_​meshes​_​as​_​**<br/>**changed​_​if​_​their​_​materials​_​**<br/>**changed#lt;bevy​_​pbr::extended​_​**<br/>**material::ExtendedMaterial#lt;bevy​_​**<br/>**pbr::pbr​_​material::**<br/>**StandardMaterial, bevy​_​pbr::decal::**<br/>**forward::ForwardDecalMaterialExt#gt;#gt;**<br/>来自crate:bevy​_​pbr ↗：材质组件或资产<br/>变化时请求网格重新提取。" }
+  n3@{ shape: rounded, label: "**mark​_​meshes​_​as​_​changed​_​if​_​their​_​**<br/>**materials​_​changed**<br/>来自crate:bevy​_​pbr ↗：材质组件或资产<br/>变化时请求网格重新提取。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;bevy​_​**<br/>**asset::AssetEvent#lt;mesh::Mesh#gt;#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n4@{ shape: cyl, label: "**Messages#lt;AssetEvent#lt;Mesh#gt;#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n4 node_resource
   class n4 external_node
-  n5@{ shape: lean-r, label: "**bevy​_​asset::AssetEvent#lt;bevy​_​mesh::**<br/>**Mesh#gt;**<br/>来自crate:bevy​_​asset ↗：通知指定资产<br/>及依赖发生变化。" }
+  n5@{ shape: lean-r, label: "**AssetEvent#lt;Mesh#gt;**<br/>来自crate:bevy​_​asset ↗：通知指定资产<br/>及依赖发生变化。" }
   class n5 node_message
   class n5 external_node
-  n6@{ shape: rounded, label: "**bevy​_​pbr::material::check​_​entities​_​**<br/>**needing​_​specialization#lt;bevy​_​pbr::**<br/>**extended​_​material::**<br/>**ExtendedMaterial#lt;bevy​_​pbr::pbr​_​**<br/>**material::StandardMaterial, bevy​_​**<br/>**pbr::decal::forward::**<br/>**ForwardDecalMaterialExt#gt;#gt;**<br/>来自crate:bevy​_​pbr ↗：收集几何或材质<br/>变化及移除的三维网格。" }
+  n6@{ shape: rounded, label: "**check​_​entities​_​needing​_​**<br/>**specialization**<br/>来自crate:bevy​_​pbr ↗：收集几何或材质<br/>变化及移除的三维网格。" }
   class n6 node_system
   class n6 external_node
   n7@{ shape: lin-rect, label: "**AssetEventSystems**<br/>来自crate:bevy​_​asset ↗：发布资产容器<br/>积累的变更消息。" }
   class n7 node_system_set
   class n7 external_node
-  n8@{ shape: rounded, label: "**bevy​_​mesh::Mesh3d**<br/>为三维可绘制实体指定网格资产。" }
+  n8@{ shape: rounded, label: "**Mesh3d**<br/>为三维可绘制实体指定网格资产。" }
   class n8 node_component
-  n9@{ shape: rounded, label: "**bevy​_​pbr::material::check​_​entities​_​**<br/>**needing​_​specialization#lt;bevy​_​pbr::**<br/>**pbr​_​material::StandardMaterial#gt;**<br/>来自crate:bevy​_​pbr ↗：收集几何或材质<br/>变化及移除的三维网格。" }
+  n9@{ shape: rounded, label: "**check​_​entities​_​needing​_​**<br/>**specialization**<br/>来自crate:bevy​_​pbr ↗：收集几何或材质<br/>变化及移除的三维网格。" }
   class n9 node_system
   class n9 external_node
   n0 e0@-->|"先于"| n1

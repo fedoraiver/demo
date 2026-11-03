@@ -41,17 +41,17 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**EguiSchedule**<br/>为额外 Egui 上下文指定执行 UI pass 的<br/>调度" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​egui::begin​_​pass​_​system**<br/>把本轮输入交给 Egui 并开始界面帧。" }
+  n1@{ shape: rounded, label: "**begin​_​pass​_​system**<br/>把本轮输入交给 Egui 并开始界面帧。" }
   class n1 node_system
   n2@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：提供主菜单展示与界面的三维相<br/>机。" }
   class n2 node_entity
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​egui::end​_​pass​_​system**<br/>结束 Egui 界面帧并保存完整输出。" }
+  n3@{ shape: rounded, label: "**end​_​pass​_​system**<br/>结束 Egui 界面帧并保存完整输出。" }
   class n3 node_system
   n4@{ shape: rounded, label: "**spawn​_​lighting · 创建模板**<br/>来自scene​_​assembly ↗：创建可复用为玩<br/>家镜头的加载相机。" }
   class n4 node_entity
   class n4 external_node
-  n5@{ shape: rounded, label: "**bevy​_​egui::run​_​egui​_​context​_​pass​_​**<br/>**loop​_​system**<br/>运行每个自动 Egui 上下文的专属调度。" }
+  n5@{ shape: rounded, label: "**run​_​egui​_​context​_​pass​_​loop​_​system**<br/>运行每个自动 Egui 上下文的专属调度。" }
   class n5 node_system
   n0 e0@-->|"存在性约束"| n1
   class e0 edge_reference

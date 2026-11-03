@@ -38,21 +38,21 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**clear​_​color::ClearColor**<br/>提供相机默认的清屏颜色。" }
+  n0@{ shape: cyl, label: "**ClearColor**<br/>提供相机默认的清屏颜色。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**bevy​_​core​_​pipeline::upscaling::**<br/>**node::upscaling**<br/>来自crate:bevy​_​core​_​pipeline ↗：将主<br/>颜色纹理缩放写入最终输出附件。" }
+  n1@{ shape: rounded, label: "**upscaling**<br/>来自crate:bevy​_​core​_​pipeline ↗：将主<br/>颜色纹理缩放写入最终输出附件。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​extract::extract​_​resource::**<br/>**extract​_​resource#lt;bevy​_​camera::clear​_​**<br/>**color::ClearColor, bevy​_​render::**<br/>**RenderApp, ()#gt;**<br/>来自crate:bevy​_​extract ↗：把存在的主<br/>世界资源转换到子世界。" }
+  n2@{ shape: rounded, label: "**extract​_​resource**<br/>来自crate:bevy​_​extract ↗：把存在的主<br/>世界资源转换到子世界。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​core​_​pipeline::upscaling::**<br/>**node::upscaling**<br/>来自crate:bevy​_​core​_​pipeline ↗：将主<br/>颜色纹理缩放写入最终输出附件。" }
+  n3@{ shape: rounded, label: "**upscaling**<br/>来自crate:bevy​_​core​_​pipeline ↗：将主<br/>颜色纹理缩放写入最终输出附件。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**bevy​_​render::view::prepare​_​view​_​**<br/>**targets**<br/>来自crate:bevy​_​render ↗：为视图维护主<br/>颜色双缓冲及可选多采样目标。" }
+  n4@{ shape: rounded, label: "**prepare​_​view​_​targets**<br/>来自crate:bevy​_​render ↗：为视图维护主<br/>颜色双缓冲及可选多采样目标。" }
   class n4 node_system
   class n4 external_node
-  n5@{ shape: rounded, label: "**bevy​_​core​_​pipeline::schedule::**<br/>**handle​_​uncovered​_​swap​_​chains**<br/>来自crate:bevy​_​core​_​pipeline ↗：清除<br/>本帧没有相机覆盖的窗口交换链。" }
+  n5@{ shape: rounded, label: "**handle​_​uncovered​_​swap​_​chains**<br/>来自crate:bevy​_​core​_​pipeline ↗：清除<br/>本帧没有相机覆盖的窗口交换链。" }
   class n5 node_system
   class n5 external_node
   n0 e0@--> n1

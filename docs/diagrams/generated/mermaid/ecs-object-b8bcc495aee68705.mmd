@@ -43,30 +43,30 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​core​_​pipeline::upscaling::**<br/>**prepare​_​view​_​upscaling​_​pipelines**<br/>按相机合成方式准备输出缩放管线。" }
+  n0@{ shape: rounded, label: "**prepare​_​view​_​upscaling​_​pipelines**<br/>按相机合成方式准备输出缩放管线。" }
   class n0 node_system
   n1@{ shape: lin-rect, label: "**Prepare**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
   class n1 node_system_set
   class n1 external_node
-  n2@{ shape: fr-rect, label: "**upscaling::UpscalingPlugin**<br/>准备视图输出放大与合成管线。" }
+  n2@{ shape: fr-rect, label: "**UpscalingPlugin**<br/>准备视图输出放大与合成管线。" }
   class n2 node_plugin
-  n3@{ shape: rounded, label: "**bevy​_​render::camera::ExtractedCamera**<br/>来自crate:bevy​_​render ↗：保存渲染世界<br/>相机的目标和绘制配置。" }
+  n3@{ shape: rounded, label: "**ExtractedCamera**<br/>来自crate:bevy​_​render ↗：保存渲染世界<br/>相机的目标和绘制配置。" }
   class n3 node_component
   class n3 external_node
-  n4@{ shape: rounded, label: "**bevy​_​render::view::**<br/>**ResolvedCompositingSpace**<br/>来自crate:bevy​_​render ↗：记录本帧相机<br/>堆栈实际采用的合成空间。" }
+  n4@{ shape: rounded, label: "**ResolvedCompositingSpace**<br/>来自crate:bevy​_​render ↗：记录本帧相机<br/>堆栈实际采用的合成空间。" }
   class n4 node_component
   class n4 external_node
-  n5@{ shape: cyl, label: "**bevy​_​render::render​_​resource::**<br/>**SpecializedRenderPipelines#lt;blit::**<br/>**BlitPipeline#gt;**<br/>来自crate:bevy​_​render ↗：按配置键缓存<br/>渲染管线变体。" }
+  n5@{ shape: cyl, label: "**SpecializedRenderPipelines#lt;BlitPipel**<br/>**ine#gt;**<br/>来自crate:bevy​_​render ↗：按配置键缓存<br/>渲染管线变体。" }
   class n5 node_resource
   class n5 external_node
-  n6@{ shape: rounded, label: "**upscaling::ViewUpscalingPipeline**<br/>记录视图颜色输出所用的缩放管线。" }
+  n6@{ shape: rounded, label: "**ViewUpscalingPipeline**<br/>记录视图颜色输出所用的缩放管线。" }
   class n6 node_component
-  n7@{ shape: cyl, label: "**blit::BlitPipeline**<br/>提供全屏纹理复制与缩放管线。" }
+  n7@{ shape: cyl, label: "**BlitPipeline**<br/>提供全屏纹理复制与缩放管线。" }
   class n7 node_resource
-  n8@{ shape: cyl, label: "**bevy​_​render::render​_​resource::**<br/>**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
+  n8@{ shape: cyl, label: "**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
   class n8 node_resource
   class n8 external_node
-  n9@{ shape: rounded, label: "**bevy​_​render::view::ViewTarget**<br/>来自crate:bevy​_​render ↗：管理视图主颜<br/>色纹理及最终输出附件。" }
+  n9@{ shape: rounded, label: "**ViewTarget**<br/>来自crate:bevy​_​render ↗：管理视图主颜<br/>色纹理及最终输出附件。" }
   class n9 node_component
   class n9 external_node
   n1 e0@-->|"集合成员"| n0

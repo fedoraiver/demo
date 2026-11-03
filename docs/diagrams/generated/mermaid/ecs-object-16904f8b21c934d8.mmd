@@ -41,7 +41,7 @@ flowchart LR
   class n0 node_system_set
   n1@{ shape: lin-rect, label: "**PostHover**<br/>组织指针拾取和悬停处理阶段。" }
   class n1 node_system_set
-  n2@{ shape: rounded, label: "**demo::ui::pointer::clear​_​cancelled​_​**<br/>**primary​_​presses**<br/>来自ui ↗：Bevy 先从 HoverMap 排除取消<br/>的指针，随后可能无法为它发出<br/>PointerCancel。" }
+  n2@{ shape: rounded, label: "**clear​_​cancelled​_​primary​_​presses**<br/>来自ui ↗：Bevy 先从 HoverMap 排除取消<br/>的指针，随后可能无法为它发出<br/>PointerCancel。" }
   class n2 node_system
   class n2 external_node
   n1 e0@-->|"先于"| n0

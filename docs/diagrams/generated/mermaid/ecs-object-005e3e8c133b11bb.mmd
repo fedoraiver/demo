@@ -41,21 +41,21 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**avian3d::dynamics::rigid​_​body::body​_​**<br/>**size​_​metrics::update​_​body​_​size​_​**<br/>**metrics#lt;avian3d::collision::**<br/>**collider::parry::Collider#gt;**<br/>重算刚体的 CCD 厚度和最大扫掠半径。" }
+  n0@{ shape: rounded, label: "**update​_​body​_​size​_​metrics**<br/>重算刚体的 CCD 厚度和最大扫掠半径。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**collision::collider::parry::Collider**<br/>保存 Parry 碰撞后端的几何形状。" }
+  n1@{ shape: rounded, label: "**Collider**<br/>保存 Parry 碰撞后端的几何形状。" }
   class n1 node_component
-  n2@{ shape: rounded, label: "**dynamics::rigid​_​body::mass​_​**<br/>**properties::components::computed::**<br/>**ComputedCenterOfMass**<br/>保存汇总后的刚体局部质心。" }
+  n2@{ shape: rounded, label: "**ComputedCenterOfMass**<br/>保存汇总后的刚体局部质心。" }
   class n2 node_component
-  n3@{ shape: rounded, label: "**collision::collider::collider​_​**<br/>**hierarchy::ColliderOf**<br/>指定碰撞体附着的刚体。" }
+  n3@{ shape: rounded, label: "**ColliderOf**<br/>指定碰撞体附着的刚体。" }
   class n3 node_component
-  n4@{ shape: rounded, label: "**collision::collider::collider​_​**<br/>**hierarchy::RigidBodyColliders**<br/>维护刚体附着的碰撞体集合。" }
+  n4@{ shape: rounded, label: "**RigidBodyColliders**<br/>维护刚体附着的碰撞体集合。" }
   class n4 node_component
-  n5@{ shape: rounded, label: "**dynamics::rigid​_​body::body​_​size​_​**<br/>**metrics::BodySizeMetrics**<br/>缓存刚体及碰撞体的尺寸指标。" }
+  n5@{ shape: rounded, label: "**BodySizeMetrics**<br/>缓存刚体及碰撞体的尺寸指标。" }
   class n5 node_component
   n6@{ shape: lin-rect, label: "**Solver**<br/>组织一次物理模拟步的主要阶段。" }
   class n6 node_system_set
-  n7@{ shape: rounded, label: "**collision::collider::collider​_​**<br/>**transform::ColliderTransform**<br/>缓存碰撞体相对于刚体的变换。" }
+  n7@{ shape: rounded, label: "**ColliderTransform**<br/>缓存碰撞体相对于刚体的变换。" }
   class n7 node_component
   n1 e0@--> n0
   class e0 edge_read

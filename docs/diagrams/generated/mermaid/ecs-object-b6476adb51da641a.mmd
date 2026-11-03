@@ -39,18 +39,18 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**effect​_​stack::vignette::Vignette**<br/>配置画面边缘渐暗的暗角效果。" }
+  n0@{ shape: rounded, label: "**Vignette**<br/>配置画面边缘渐暗的暗角效果。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​extract::extract​_​component::**<br/>**extract​_​components#lt;bevy​_​post​_​**<br/>**process::effect​_​stack::vignette::**<br/>**Vignette, bevy​_​render::RenderApp,**<br/>**()#gt;**<br/>来自crate:bevy​_​extract ↗：批量同步或<br/>移除子世界的目标组件。" }
+  n1@{ shape: rounded, label: "**extract​_​components**<br/>来自crate:bevy​_​extract ↗：批量同步或<br/>移除子世界的目标组件。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**bevy​_​post​_​process::effect​_​stack::**<br/>**post​_​processing**<br/>组合执行色差、暗角和镜头畸变。" }
+  n2@{ shape: rounded, label: "**post​_​processing**<br/>组合执行色差、暗角和镜头畸变。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​post​_​process::effect​_​stack::**<br/>**post​_​processing**<br/>组合执行色差、暗角和镜头畸变。" }
+  n3@{ shape: rounded, label: "**post​_​processing**<br/>组合执行色差、暗角和镜头畸变。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**bevy​_​post​_​process::effect​_​stack::**<br/>**prepare​_​post​_​processing​_​uniforms**<br/>收集并上传逐视图色差、暗角和畸变参数。" }
+  n4@{ shape: rounded, label: "**prepare​_​post​_​processing​_​uniforms**<br/>收集并上传逐视图色差、暗角和畸变参数。" }
   class n4 node_system
-  n5@{ shape: rounded, label: "**bevy​_​post​_​process::effect​_​stack::**<br/>**prepare​_​post​_​processing​_​pipelines**<br/>按视图颜色格式准备内置后处理管线。" }
+  n5@{ shape: rounded, label: "**prepare​_​post​_​processing​_​pipelines**<br/>按视图颜色格式准备内置后处理管线。" }
   class n5 node_system
   n1 e0@--- n0
   class e0 edge_read

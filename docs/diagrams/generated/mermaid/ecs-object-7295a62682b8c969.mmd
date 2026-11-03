@@ -44,24 +44,24 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**avian3d::dynamics::solver::islands::**<br/>**split​_​island**<br/>根据接触与关节连接重新拆分物理岛。" }
+  n0@{ shape: rounded, label: "**split​_​island**<br/>根据接触与关节连接重新拆分物理岛。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**entity​_​disabling::Disabled**<br/>来自crate:bevy​_​ecs ↗：标记被禁用的实<br/>体" }
+  n1@{ shape: rounded, label: "**Disabled**<br/>来自crate:bevy​_​ecs ↗：标记被禁用的实<br/>体" }
   class n1 node_component
   class n1 external_node
   n2@{ shape: lin-rect, label: "**Finalize**<br/>组织约束求解的准备、子步与回写。" }
   class n2 node_system_set
-  n3@{ shape: rounded, label: "**collision::collider::collider​_​**<br/>**hierarchy::RigidBodyColliders**<br/>维护刚体附着的碰撞体集合。" }
+  n3@{ shape: rounded, label: "**RigidBodyColliders**<br/>维护刚体附着的碰撞体集合。" }
   class n3 node_component
-  n4@{ shape: rounded, label: "**dynamics::solver::islands::**<br/>**BodyIslandNode**<br/>记录刚体在物理岛中的连接位置。" }
+  n4@{ shape: rounded, label: "**BodyIslandNode**<br/>记录刚体在物理岛中的连接位置。" }
   class n4 node_component
-  n5@{ shape: cyl, label: "**dynamics::solver::islands::**<br/>**PhysicsIslands**<br/>管理模拟岛及接触和关节连接。" }
+  n5@{ shape: cyl, label: "**PhysicsIslands**<br/>管理模拟岛及接触和关节连接。" }
   class n5 node_resource
-  n6@{ shape: fr-rect, label: "**dynamics::solver::islands::**<br/>**IslandPlugin**<br/>维护用于约束求解的物理岛。" }
+  n6@{ shape: fr-rect, label: "**IslandPlugin**<br/>维护用于约束求解的物理岛。" }
   class n6 node_plugin
-  n7@{ shape: cyl, label: "**dynamics::joints::joint​_​graph::**<br/>**JointGraph**<br/>保存刚体之间的关节连接图。" }
+  n7@{ shape: cyl, label: "**JointGraph**<br/>保存刚体之间的关节连接图。" }
   class n7 node_resource
-  n8@{ shape: cyl, label: "**collision::contact​_​types::contact​_​**<br/>**graph::ContactGraph**<br/>维护碰撞体接触对及其碰撞数据。" }
+  n8@{ shape: cyl, label: "**ContactGraph**<br/>维护碰撞体接触对及其碰撞数据。" }
   class n8 node_resource
   n1 e0@-->|"存在性约束"| n0
   class e0 edge_reference
@@ -87,7 +87,7 @@ flowchart LR
   e1@{ curve: basis }
   e2@{ curve: basis }
   e3@{ curve: basis }
-  e4@{ curve: basis }
+  e4@{ curve: bumpX }
   e5@{ curve: basis }
   e6@{ curve: basis }
   e7@{ curve: basis }

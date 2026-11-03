@@ -43,25 +43,25 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​app::hierarchy::check​_​parent​_​**<br/>**has​_​component#lt;bevy​_​camera::**<br/>**visibility::InheritedVisibility#gt;**<br/>报告仍不满足组件层级要求的父子关系。" }
+  n0@{ shape: rounded, label: "**check​_​parent​_​has​_​component**<br/>报告仍不满足组件层级要求的父子关系。" }
   class n0 node_system
-  n1@{ shape: lean-r, label: "**bevy​_​app::hierarchy::**<br/>**CheckParentHasComponent#lt;visibility::**<br/>**InheritedVisibility#gt;**<br/>请求复查父实体组件约束。" }
+  n1@{ shape: lean-r, label: "**CheckParentHasComponent#lt;InheritedVis**<br/>**ibility#gt;**<br/>请求复查父实体组件约束。" }
   class n1 node_message
-  n2@{ shape: rounded, label: "**bevy​_​ecs::schedule::condition::**<br/>**common​_​conditions::on​_​message#lt;bevy​_​**<br/>**app::hierarchy::**<br/>**CheckParentHasComponent#lt;bevy​_​**<br/>**camera::visibility::**<br/>**InheritedVisibility#gt;#gt;**<br/>来自crate:bevy​_​ecs ↗：判断是否收到指<br/>定类型的新消息。" }
+  n2@{ shape: rounded, label: "**on​_​message**<br/>来自crate:bevy​_​ecs ↗：判断是否收到指<br/>定类型的新消息。" }
   class n2 node_system
   class n2 external_node
   n3@{ shape: lin-rect, label: "**ValidateParentHasComponentSystems**<br/>复核父子层级是否满足组件要求。" }
   class n3 node_system_set
-  n4@{ shape: cyl, label: "**bevy​_​ecs::message::Messages#lt;bevy​_​**<br/>**app::hierarchy::**<br/>**CheckParentHasComponent#lt;visibility::**<br/>**InheritedVisibility#gt;#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n4@{ shape: cyl, label: "**Messages#lt;CheckParentHasComponent#lt;Inh**<br/>**eritedVisibility#gt;#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n4 node_resource
   class n4 external_node
-  n5@{ shape: rounded, label: "**bevy​_​ecs::hierarchy::ChildOf**<br/>来自crate:bevy​_​ecs ↗：保存当前实体的<br/>父实体身份" }
+  n5@{ shape: rounded, label: "**ChildOf**<br/>来自crate:bevy​_​ecs ↗：保存当前实体的<br/>父实体身份" }
   class n5 node_component
   class n5 external_node
-  n6@{ shape: rounded, label: "**bevy​_​ecs::name::Name**<br/>来自crate:bevy​_​ecs ↗：保存供调试和界<br/>面展示的实体名称及缓存哈希" }
+  n6@{ shape: rounded, label: "**Name**<br/>来自crate:bevy​_​ecs ↗：保存供调试和界<br/>面展示的实体名称及缓存哈希" }
   class n6 node_component
   class n6 external_node
-  n7@{ shape: rounded, label: "**bevy​_​camera::visibility::**<br/>**InheritedVisibility**<br/>来自crate:bevy​_​camera ↗：保存从实体层<br/>级计算出的可见性。" }
+  n7@{ shape: rounded, label: "**InheritedVisibility**<br/>来自crate:bevy​_​camera ↗：保存从实体层<br/>级计算出的可见性。" }
   class n7 node_component
   class n7 external_node
   n1 e0@--> n0

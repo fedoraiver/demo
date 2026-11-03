@@ -44,11 +44,11 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​egui::end​_​pass​_​system**<br/>结束 Egui 界面帧并保存完整输出。" }
+  n0@{ shape: rounded, label: "**end​_​pass​_​system**<br/>结束 Egui 界面帧并保存完整输出。" }
   class n0 node_system
   n1@{ shape: rounded, label: "**EguiContext**<br/>包装一个 egui::Context" }
   class n1 node_component
-  n2@{ shape: rounded, label: "**bevy​_​egui::run​_​egui​_​context​_​pass​_​**<br/>**loop​_​system**<br/>运行每个自动 Egui 上下文的专属调度。" }
+  n2@{ shape: rounded, label: "**run​_​egui​_​context​_​pass​_​loop​_​system**<br/>运行每个自动 Egui 上下文的专属调度。" }
   class n2 node_system
   n3@{ shape: rounded, label: "**EguiFullOutput**<br/>暂存 Egui pass 结束时产生的完整输出" }
   class n3 node_component

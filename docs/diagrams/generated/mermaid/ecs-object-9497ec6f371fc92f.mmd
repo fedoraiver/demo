@@ -42,13 +42,13 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​time::delayed​_​commands::**<br/>**silence​_​delayed​_​command​_​queues​_​on​_​**<br/>**exit**<br/>在退出时关闭未执行延迟队列的丢弃警告。" }
+  n0@{ shape: rounded, label: "**silence​_​delayed​_​command​_​queues​_​on​_​**<br/>**exit**<br/>在退出时关闭未执行延迟队列的丢弃警告。" }
   class n0 node_system
   n1@{ shape: fr-rect, label: "**TimePlugin**<br/>维护应用时间与步长。" }
   class n1 node_plugin
-  n2@{ shape: rounded, label: "**delayed​_​commands::**<br/>**DelayedCommandQueue**<br/>保存到达指定启动后时间才提交的命令队列" }
+  n2@{ shape: rounded, label: "**DelayedCommandQueue**<br/>保存到达指定启动后时间才提交的命令队列" }
   class n2 node_component
-  n3@{ shape: rounded, label: "**#lt;bevy​_​time::TimePlugin as bevy​_​app::**<br/>**plugin::Plugin#gt;::build::{{closure}}**<br/>判断是否进入退出队列收尾处理。" }
+  n3@{ shape: rounded, label: "**build::{{closure}}**<br/>判断是否进入退出队列收尾处理。" }
   class n3 node_system
   n4@{ shape: lin-rect, label: "**OnAppExitSystems**<br/>来自crate:bevy​_​app ↗：在退出消息发出<br/>后执行应用收尾。" }
   class n4 node_system_set

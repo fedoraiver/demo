@@ -42,57 +42,57 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​pbr::volumetric​_​fog::render::**<br/>**volumetric​_​fog**<br/>结合深度与光照逐个绘制视图中的雾体。" }
+  n0@{ shape: rounded, label: "**volumetric​_​fog**<br/>结合深度与光照逐个绘制视图中的雾体。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**bevy​_​render::view::ViewTarget**<br/>来自crate:bevy​_​render ↗：管理视图主颜<br/>色纹理及最终输出附件。" }
+  n1@{ shape: rounded, label: "**ViewTarget**<br/>来自crate:bevy​_​render ↗：管理视图主颜<br/>色纹理及最终输出附件。" }
   class n1 node_component
   class n1 external_node
-  n2@{ shape: cyl, label: "**mesh::allocator::MeshAllocator**<br/>来自crate:bevy​_​render ↗：分配并管理网<br/>格顶点和索引 GPU 缓冲。" }
+  n2@{ shape: cyl, label: "**MeshAllocator**<br/>来自crate:bevy​_​render ↗：分配并管理网<br/>格顶点和索引 GPU 缓冲。" }
   class n2 node_resource
   class n2 external_node
-  n3@{ shape: cyl, label: "**bevy​_​render::renderer::CurrentView**<br/>来自crate:bevy​_​render ↗：指定当前正在<br/>渲染的视图实体。" }
+  n3@{ shape: cyl, label: "**CurrentView**<br/>来自crate:bevy​_​render ↗：指定当前正在<br/>渲染的视图实体。" }
   class n3 node_resource
   class n3 external_node
   n4@{ shape: lin-rect, label: "**EarlyPostProcess**<br/>来自crate:bevy​_​core​_​pipeline ↗：划分<br/>三维相机绘制与后处理阶段。" }
   class n4 node_system_set
   class n4 external_node
-  n5@{ shape: cyl, label: "**bevy​_​render::render​_​resource::**<br/>**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
+  n5@{ shape: cyl, label: "**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
   class n5 node_resource
   class n5 external_node
-  n6@{ shape: rounded, label: "**bevy​_​render::view::**<br/>**ViewDepthStencilTexture**<br/>来自crate:bevy​_​render ↗：提供视图绘制<br/>的深度模板附件。" }
+  n6@{ shape: rounded, label: "**ViewDepthStencilTexture**<br/>来自crate:bevy​_​render ↗：提供视图绘制<br/>的深度模板附件。" }
   class n6 node_component
   class n6 external_node
-  n7@{ shape: cyl, label: "**bevy​_​render::diagnostic::**<br/>**DiagnosticsRecorder**<br/>来自crate:bevy​_​render ↗：记录渲染诊断<br/>区间与 GPU 查询索引的对应。" }
+  n7@{ shape: cyl, label: "**DiagnosticsRecorder**<br/>来自crate:bevy​_​render ↗：记录渲染诊断<br/>区间与 GPU 查询索引的对应。" }
   class n7 node_resource
   class n7 external_node
-  n8@{ shape: cyl, label: "**volumetric​_​fog::render::**<br/>**VolumetricFogPipeline**<br/>描述体积雾后处理的 GPU 绘制接口。" }
+  n8@{ shape: cyl, label: "**VolumetricFogPipeline**<br/>描述体积雾后处理的 GPU 绘制接口。" }
   class n8 node_resource
-  n9@{ shape: fr-rect, label: "**volumetric​_​fog::VolumetricFogPlugin**<br/>提供场景体积雾渲染。" }
+  n9@{ shape: fr-rect, label: "**VolumetricFogPlugin**<br/>提供场景体积雾渲染。" }
   class n9 node_plugin
-  n10@{ shape: cyl, label: "**volumetric​_​fog::render::**<br/>**VolumetricFogUniformBuffer**<br/>向 GPU 提供体积雾的视图参数。" }
+  n10@{ shape: cyl, label: "**VolumetricFogUniformBuffer**<br/>向 GPU 提供体积雾的视图参数。" }
   class n10 node_resource
-  n11@{ shape: rounded, label: "**render::mesh​_​view​_​bindings::**<br/>**MeshViewBindGroup**<br/>保存网格视图的主要及数组资源绑定。" }
+  n11@{ shape: rounded, label: "**MeshViewBindGroup**<br/>保存网格视图的主要及数组资源绑定。" }
   class n11 node_component
-  n12@{ shape: cyl, label: "**bevy​_​render::renderer::RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
+  n12@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
   class n12 node_resource
   class n12 external_node
   n13@{ shape: lin-rect, label: "**MainPass**<br/>来自crate:bevy​_​core​_​pipeline ↗：划分<br/>三维相机绘制与后处理阶段。" }
   class n13 node_system_set
   class n13 external_node
-  n14@{ shape: rounded, label: "**volumetric​_​fog::render::**<br/>**ViewVolumetricFogPipelines**<br/>保存有无密度纹理两种体积雾管线。" }
+  n14@{ shape: rounded, label: "**ViewVolumetricFogPipelines**<br/>保存有无密度纹理两种体积雾管线。" }
   class n14 node_component
-  n15@{ shape: cyl, label: "**bevy​_​render::render​_​asset::**<br/>**RenderAssets#lt;bevy​_​render::texture::**<br/>**GpuImage#gt;**<br/>来自crate:bevy​_​render ↗：按源资产身份<br/>保存 GPU 渲染表示。" }
+  n15@{ shape: cyl, label: "**RenderAssets#lt;GpuImage#gt;**<br/>来自crate:bevy​_​render ↗：按源资产身份<br/>保存 GPU 渲染表示。" }
   class n15 node_resource
   class n15 external_node
-  n16@{ shape: rounded, label: "**bevy​_​render::view::Msaa**<br/>来自crate:bevy​_​render ↗：选择视图的多<br/>重采样抗锯齿样本数。" }
+  n16@{ shape: rounded, label: "**Msaa**<br/>来自crate:bevy​_​render ↗：选择视图的多<br/>重采样抗锯齿样本数。" }
   class n16 node_component
   class n16 external_node
-  n17@{ shape: rounded, label: "**volumetric​_​fog::render::**<br/>**ViewVolumetricFog**<br/>保存视图中各雾体的参数位置与绘制状态。" }
+  n17@{ shape: rounded, label: "**ViewVolumetricFog**<br/>保存视图中各雾体的参数位置与绘制状态。" }
   class n17 node_component
-  n18@{ shape: cyl, label: "**render​_​asset::RenderAssets#lt;mesh::**<br/>**RenderMesh#gt;**<br/>来自crate:bevy​_​render ↗：按源资产身份<br/>保存 GPU 渲染表示。" }
+  n18@{ shape: cyl, label: "**RenderAssets#lt;RenderMesh#gt;**<br/>来自crate:bevy​_​render ↗：按源资产身份<br/>保存 GPU 渲染表示。" }
   class n18 node_resource
   class n18 external_node
-  n19@{ shape: cyl, label: "**volumetric​_​fog::FogAssets**<br/>提供体积雾绘制所需的平面和立方体网格。" }
+  n19@{ shape: cyl, label: "**FogAssets**<br/>提供体积雾绘制所需的平面和立方体网格。" }
   class n19 node_resource
   n1 e0@--> n0
   class e0 edge_read

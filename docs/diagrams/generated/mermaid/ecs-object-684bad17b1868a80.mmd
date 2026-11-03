@@ -39,7 +39,7 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​ui::BoxShadow**<br/>配置节点的多层阴影。" }
+  n0@{ shape: rounded, label: "**BoxShadow**<br/>配置节点的多层阴影。" }
   class n0 node_component
   n1@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供音效试听操作。" }
   class n1 node_entity
@@ -92,7 +92,7 @@ flowchart LR
   n17@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供应用设置草稿操作。" }
   class n17 node_entity
   class n17 external_node
-  n18@{ shape: rounded, label: "**bevy​_​ui​_​render::box​_​shadow::extract​_​**<br/>**shadows**<br/>来自crate:bevy​_​ui​_​render ↗：提取可<br/>见 UI 阴影并替换失效渲染项。" }
+  n18@{ shape: rounded, label: "**extract​_​shadows**<br/>来自crate:bevy​_​ui​_​render ↗：提取可<br/>见 UI 阴影并替换失效渲染项。" }
   class n18 node_system
   class n18 external_node
   n19@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：按按钮方向步进调整对应音量。" }
@@ -194,7 +194,7 @@ flowchart LR
   n51@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供应用设置草稿操作。" }
   class n51 node_entity
   class n51 external_node
-  n52@{ shape: rounded, label: "**bevy​_​ui​_​render::extract​_​uinode​_​**<br/>**changes**<br/>来自crate:bevy​_​ui​_​render ↗：使变化或<br/>移除的 UI 数据失效并清理旧渲染实体。" }
+  n52@{ shape: rounded, label: "**extract​_​uinode​_​changes**<br/>来自crate:bevy​_​ui​_​render ↗：使变化或<br/>移除的 UI 数据失效并清理旧渲染实体。" }
   class n52 node_system
   class n52 external_node
   n53@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：展示携带与释放帮助卡片。" }

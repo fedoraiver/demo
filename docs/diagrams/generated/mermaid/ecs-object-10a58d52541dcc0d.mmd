@@ -44,23 +44,23 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​transform​_​interpolation::**<br/>**interpolation::update​_​rotation​_​**<br/>**interpolation​_​start**<br/>把当前旋转记录为插值起点。" }
+  n0@{ shape: rounded, label: "**update​_​rotation​_​interpolation​_​start**<br/>把当前旋转记录为插值起点。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**bevy​_​transform​_​interpolation::**<br/>**interpolation::update​_​translation​_​**<br/>**interpolation​_​start**<br/>把当前位置记录为插值起点。" }
+  n1@{ shape: rounded, label: "**update​_​translation​_​interpolation​_​**<br/>**start**<br/>把当前位置记录为插值起点。" }
   class n1 node_system
   n2@{ shape: rounded, label: "**RotationEasingState**<br/>保存固定步旋转插值的起点与终点" }
   class n2 node_component
-  n3@{ shape: fr-rect, label: "**interpolation::**<br/>**TransformInterpolationPlugin**<br/>插值固定步之间的显示变换。" }
+  n3@{ shape: fr-rect, label: "**TransformInterpolationPlugin**<br/>插值固定步之间的显示变换。" }
   class n3 node_plugin
   n4@{ shape: rounded, label: "**NoRotationEasing**<br/>显式禁止当前实体的旋转插值和外推" }
   class n4 node_component
-  n5@{ shape: rounded, label: "**interpolation::RotationInterpolation**<br/>启用旋转插值" }
+  n5@{ shape: rounded, label: "**RotationInterpolation**<br/>启用旋转插值" }
   class n5 node_component
   n6@{ shape: lin-rect, label: "**UpdateStart**<br/>组织变换缓动端点与帧间应用。" }
   class n6 node_system_set
-  n7@{ shape: rounded, label: "**bevy​_​transform​_​interpolation::**<br/>**interpolation::update​_​scale​_​**<br/>**interpolation​_​start**<br/>把当前缩放记录为插值起点。" }
+  n7@{ shape: rounded, label: "**update​_​scale​_​interpolation​_​start**<br/>把当前缩放记录为插值起点。" }
   class n7 node_system
-  n8@{ shape: rounded, label: "**components::transform::Transform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>相对父实体的平移、旋转和缩放" }
+  n8@{ shape: rounded, label: "**Transform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>相对父实体的平移、旋转和缩放" }
   class n8 node_component
   class n8 external_node
   n1 e0@-->|"先于"| n0

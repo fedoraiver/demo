@@ -40,13 +40,13 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: lin-rect, label: "**TransformToPosition**<br/>组织实体变换与物理姿态同步。" }
   class n0 node_system_set
-  n1@{ shape: rounded, label: "**avian3d::physics​_​transform::**<br/>**transform​_​to​_​position**<br/>把用户改变的世界变换同步到物理位姿。" }
+  n1@{ shape: rounded, label: "**transform​_​to​_​position**<br/>把用户改变的世界变换同步到物理位姿。" }
   class n1 node_system
   n2@{ shape: lin-rect, label: "**QueueRecomputation**<br/>组织质量属性重算与写回。" }
   class n2 node_system_set
   n3@{ shape: lin-rect, label: "**Propagate**<br/>组织实体变换与物理姿态同步。" }
   class n3 node_system_set
-  n4@{ shape: rounded, label: "**avian3d::collision::collider::**<br/>**backend::update​_​collider​_​**<br/>**scale#lt;avian3d::collision::collider::**<br/>**parry::Collider#gt;**<br/>把根节点和附属碰撞体的缩放传给形状。" }
+  n4@{ shape: rounded, label: "**update​_​collider​_​scale**<br/>把根节点和附属碰撞体的缩放传给形状。" }
   class n4 node_system
   n5@{ shape: lin-rect, label: "**UpdateColliderMassProperties**<br/>组织质量属性重算与写回。" }
   class n5 node_system_set

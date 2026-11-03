@@ -42,21 +42,21 @@ flowchart LR
   class n0 node_system_set
   n1@{ shape: lin-rect, label: "**PrepareViews**<br/>组织渲染数据准备与绘制排队。" }
   class n1 node_system_set
-  n2@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::**<br/>**material::specialize​_​material2d​_​**<br/>**meshes**<br/>来自crate:bevy​_​sprite​_​render ↗：为可<br/>见二维网格重建失效的材质专用化。" }
+  n2@{ shape: rounded, label: "**specialize​_​material2d​_​meshes**<br/>来自crate:bevy​_​sprite​_​render ↗：为可<br/>见二维网格重建失效的材质专用化。" }
   class n2 node_system
   class n2 external_node
   n3@{ shape: lin-rect, label: "**CreateViews**<br/>组织渲染数据准备与绘制排队。" }
   class n3 node_system_set
-  n4@{ shape: rounded, label: "**bevy​_​pbr::render::light::check​_​**<br/>**views​_​lights​_​need​_​specialization**<br/>来自crate:bevy​_​pbr ↗：检测阴影视图投<br/>影类型并标记管线待刷新。" }
+  n4@{ shape: rounded, label: "**check​_​views​_​lights​_​need​_​**<br/>**specialization**<br/>来自crate:bevy​_​pbr ↗：检测阴影视图投<br/>影类型并标记管线待刷新。" }
   class n4 node_system
   class n4 external_node
-  n5@{ shape: rounded, label: "**bevy​_​pbr::render::light::specialize​_​**<br/>**shadows**<br/>来自crate:bevy​_​pbr ↗：按阴影视图、网<br/>格及材质变化重新选择专用阴影渲染管线，清<br/>理失效缓存，并整理需要补齐或重新排队的阴<br/>影网格任务。" }
+  n5@{ shape: rounded, label: "**specialize​_​shadows**<br/>来自crate:bevy​_​pbr ↗：按阴影视图、网<br/>格及材质变化重新选择专用阴影渲染管线，清<br/>理失效缓存，并整理需要补齐或重新排队的阴<br/>影网格任务。" }
   class n5 node_system
   class n5 external_node
-  n6@{ shape: rounded, label: "**bevy​_​sprite​_​render::mesh2d::**<br/>**material::prepare​_​pending​_​mesh​_​**<br/>**material2d​_​queues**<br/>来自crate:bevy​_​sprite​_​render ↗：轮换<br/>二维材质待就绪队列并清理失效视图。" }
+  n6@{ shape: rounded, label: "**prepare​_​pending​_​mesh​_​material2d​_​**<br/>**queues**<br/>来自crate:bevy​_​sprite​_​render ↗：轮换<br/>二维材质待就绪队列并清理失效视图。" }
   class n6 node_system
   class n6 external_node
-  n7@{ shape: rounded, label: "**bevy​_​pbr::material::specialize​_​**<br/>**material​_​meshes**<br/>来自crate:bevy​_​pbr ↗：为变化的可见网<br/>格生成并缓存材质专用管线。" }
+  n7@{ shape: rounded, label: "**specialize​_​material​_​meshes**<br/>来自crate:bevy​_​pbr ↗：为变化的可见网<br/>格生成并缓存材质专用管线。" }
   class n7 node_system
   class n7 external_node
   n0 e0@-->|"先于"| n1

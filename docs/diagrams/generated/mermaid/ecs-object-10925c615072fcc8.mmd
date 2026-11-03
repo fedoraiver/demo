@@ -39,23 +39,23 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**oit::**<br/>**OrderIndependentTransparencySettings**<br/>配置透明片元排序容量和混合阈值。" }
+  n0@{ shape: rounded, label: "**OrderIndependentTransparencySettings**<br/>配置透明片元排序容量和混合阈值。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**bevy​_​core​_​pipeline::oit::configure​_​**<br/>**camera​_​depth​_​usages**<br/>允许 OIT 相机采样自己的深度纹理。" }
+  n1@{ shape: rounded, label: "**configure​_​camera​_​depth​_​usages**<br/>允许 OIT 相机采样自己的深度纹理。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bevy​_​core​_​pipeline::oit::resolve::**<br/>**queue​_​oit​_​resolve​_​pipeline**<br/>按 OIT 相机设置缓存透明解析管线。" }
+  n2@{ shape: rounded, label: "**queue​_​oit​_​resolve​_​pipeline**<br/>按 OIT 相机设置缓存透明解析管线。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bevy​_​extract::extract​_​component::**<br/>**extract​_​components#lt;bevy​_​core​_​**<br/>**pipeline::oit::**<br/>**OrderIndependentTransparencySettings**<br/>**, bevy​_​render::RenderApp, ()#gt;**<br/>来自crate:bevy​_​extract ↗：批量同步或<br/>移除子世界的目标组件。" }
+  n3@{ shape: rounded, label: "**extract​_​components**<br/>来自crate:bevy​_​extract ↗：批量同步或<br/>移除子世界的目标组件。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**bevy​_​core​_​pipeline::core​_​3d::main​_​**<br/>**transparent​_​pass​_​3d​_​node::main​_​**<br/>**transparent​_​pass​_​3d**<br/>绘制三维透明物体并保护 OIT 链表状态。" }
+  n4@{ shape: rounded, label: "**main​_​transparent​_​pass​_​3d**<br/>绘制三维透明物体并保护 OIT 链表状态。" }
   class n4 node_system
-  n5@{ shape: rounded, label: "**bevy​_​pbr::render::mesh::check​_​views​_​**<br/>**need​_​specialization**<br/>来自crate:bevy​_​pbr ↗：汇总视图渲染特<br/>性并检测管线配置变化。" }
+  n5@{ shape: rounded, label: "**check​_​views​_​need​_​specialization**<br/>来自crate:bevy​_​pbr ↗：汇总视图渲染特<br/>性并检测管线配置变化。" }
   class n5 node_system
   class n5 external_node
-  n6@{ shape: rounded, label: "**bevy​_​core​_​pipeline::oit::check​_​msaa**<br/>阻止 OIT 与多重采样同时启用。" }
+  n6@{ shape: rounded, label: "**check​_​msaa**<br/>阻止 OIT 与多重采样同时启用。" }
   class n6 node_system
-  n7@{ shape: rounded, label: "**bevy​_​core​_​pipeline::oit::prepare​_​**<br/>**oit​_​buffers**<br/>调整共享 OIT 存储并上传逐相机设置。" }
+  n7@{ shape: rounded, label: "**prepare​_​oit​_​buffers**<br/>调整共享 OIT 存储并上传逐相机设置。" }
   class n7 node_system
   n0 e0@-->|"存在性约束"| n1
   class e0 edge_reference

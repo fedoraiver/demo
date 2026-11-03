@@ -44,20 +44,20 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: hex, label: "**avian3d::dynamics::solver::solver​_​**<br/>**body::plugin::{impl#35;0}::build::**<br/>**{closure#35;0}**<br/>为重新启用刚体补建求解器体。" }
+  n0@{ shape: hex, label: "**build::{closure#35;0}**<br/>为重新启用刚体补建求解器体。" }
   class n0 node_observer
-  n1@{ shape: stadium, label: "**bevy​_​ecs::lifecycle::RemoveEvent**<br/>来自crate:bevy​_​ecs ↗：在组件移除前发<br/>出通知。" }
+  n1@{ shape: stadium, label: "**RemoveEvent**<br/>来自crate:bevy​_​ecs ↗：在组件移除前发<br/>出通知。" }
   class n1 node_event
   class n1 external_node
-  n2@{ shape: rounded, label: "**dynamics::solver::solver​_​body::**<br/>**SolverBodyIndex**<br/>定位实体对应的求解器刚体。" }
+  n2@{ shape: rounded, label: "**SolverBodyIndex**<br/>定位实体对应的求解器刚体。" }
   class n2 node_component
-  n3@{ shape: rounded, label: "**dynamics::rigid​_​body::sleeping::**<br/>**Sleeping**<br/>标记暂不参与模拟的休眠刚体。" }
+  n3@{ shape: rounded, label: "**Sleeping**<br/>标记暂不参与模拟的休眠刚体。" }
   class n3 node_component
-  n4@{ shape: cyl, label: "**dynamics::solver::solver​_​body::**<br/>**SolverBodies**<br/>连续存储活跃刚体的求解状态。" }
+  n4@{ shape: cyl, label: "**SolverBodies**<br/>连续存储活跃刚体的求解状态。" }
   class n4 node_resource
-  n5@{ shape: rounded, label: "**dynamics::rigid​_​body::RigidBody**<br/>选择动态、静态或运动学刚体行为。" }
+  n5@{ shape: rounded, label: "**RigidBody**<br/>选择动态、静态或运动学刚体行为。" }
   class n5 node_component
-  n6@{ shape: fr-rect, label: "**dynamics::solver::solver​_​body::**<br/>**plugin::SolverBodyPlugin**<br/>维护约束求解使用的刚体缓存。" }
+  n6@{ shape: fr-rect, label: "**SolverBodyPlugin**<br/>维护约束求解使用的刚体缓存。" }
   class n6 node_plugin
   n1 e0@-->|"接收事件"| n0
   class e0 edge_observe

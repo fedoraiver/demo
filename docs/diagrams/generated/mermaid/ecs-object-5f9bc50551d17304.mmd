@@ -40,21 +40,24 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**bevy​_​extract::extract​_​component::**<br/>**extract​_​components#lt;bevy​_​core​_​**<br/>**pipeline::oit::**<br/>**OrderIndependentTransparencySettings**<br/>**, bevy​_​render::RenderApp, ()#gt;**<br/>批量同步或移除子世界的目标组件。" }
+  n0@{ shape: rounded, label: "**extract​_​components**<br/>批量同步或移除子世界的目标组件。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**extract​_​plugin::MainWorld**<br/>在提取阶段临时提供主模拟世界。" }
+  n1@{ shape: cyl, label: "**MainWorld**<br/>在提取阶段临时提供主模拟世界。" }
   class n1 node_resource
-  n2@{ shape: rounded, label: "**oit::**<br/>**OrderIndependentTransparencySettings**<br/>来自crate:bevy​_​core​_​pipeline ↗：配置<br/>透明片元排序容量和混合阈值。" }
+  n2@{ shape: rounded, label: "**OrderIndependentTransparencySettings**<br/>来自crate:bevy​_​core​_​pipeline ↗：配置<br/>透明片元排序容量和混合阈值。" }
   class n2 node_component
   class n2 external_node
-  n3@{ shape: rounded, label: "**bevy​_​extract::SubEntity#lt;bevy​_​**<br/>**render::RenderApp#gt;**<br/>记录主实体对应的子世界实体。" }
+  n3@{ shape: rounded, label: "**SubEntity#lt;RenderApp#gt;**<br/>记录主实体对应的子世界实体。" }
   class n3 node_component
-  n4@{ shape: rounded, label: "**oit::**<br/>**OrderIndependentTransparencySettings**<br/>**Offset**<br/>来自crate:bevy​_​core​_​pipeline ↗：定位<br/>视图的顺序无关透明参数。" }
+  n4@{ shape: rounded, label: "**OrderIndependentTransparencySettings**<br/>**Offset**<br/>来自crate:bevy​_​core​_​pipeline ↗：定位<br/>视图的顺序无关透明参数。" }
   class n4 node_component
   class n4 external_node
-  n5@{ shape: rounded, label: "**oit::resolve::OitResolvePipelineId**<br/>来自crate:bevy​_​core​_​pipeline ↗：记录<br/>视图的透明解析管线标识。" }
+  subgraph layout_card_n5[" "]
+  n5@{ shape: rounded, label: "**OitResolvePipelineId**<br/>来自crate:bevy​_​core​_​pipeline ↗：记录<br/>视图的透明解析管线标识。" }
   class n5 node_component
   class n5 external_node
+  end
+  style layout_card_n5 fill:none,stroke:none
   n6@{ shape: notch-rect, label: "**Local · arg1**<br/>按上次组件提取数量预留输出容量。" }
   class n6 node_local
   n1 e0@--> n0
@@ -75,6 +78,5 @@ flowchart LR
   e1@{ curve: basis }
   e2@{ curve: basis }
   e3@{ curve: basis }
-  e4@{ curve: basis }
-  e5@{ curve: bumpX }
+  e5@{ curve: basis }
   e6@{ curve: basis }
