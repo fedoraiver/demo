@@ -37,7 +37,7 @@ pub(super) fn register(app: &mut App) {
         .add_observer(right)
         .add_observer(confirm)
         .add_observer(back)
-        .add_systems(Startup, spawn_menu_controller)
+        .add_systems(Startup, spawn_menu_input_controller)
         .add_systems(
             PreUpdate,
             sync_context
@@ -47,7 +47,7 @@ pub(super) fn register(app: &mut App) {
 }
 
 /// 菜单上下文覆盖所有页面，Esc 在游戏运行时表达暂停，而不另读底层按键。
-fn spawn_menu_controller(mut commands: Commands) {
+fn spawn_menu_input_controller(mut commands: Commands) {
     let settings = || ActionSettings {
         require_reset: true,
         consume_input: true,
