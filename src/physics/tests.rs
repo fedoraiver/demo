@@ -1,7 +1,7 @@
 //! 通过真实无窗口物理调度验证拾取遮挡、同批次占用和外部冲量。
 
 use crate::character::character_body;
-use crate::item_interaction::parcel_body;
+use crate::item_interaction::item_body;
 use avian3d::prelude::*;
 use bevy::{
     ecs::relationship::{Relationship, RelationshipTarget},
@@ -14,7 +14,7 @@ use crate::{
     audio::{SoundCue, SoundRequest},
     character::{Character, CharacterIntent, CharacterMotion, CharacterPlugin},
     game_flow::{FixedGameplaySystems, configure_feature_order},
-    item_interaction::{HeldBy, HeldTarget, HoldingItems, ItemInteractionPlugin, Parcel, Pickable},
+    item_interaction::{HeldBy, HeldTarget, HoldingItems, Item, ItemInteractionPlugin, Pickable},
     physics::{GamePhysicsPlugin, world_collision_layers},
     settings::PrototypeConfig,
 };
@@ -43,37 +43,48 @@ fn take_sound_cues(app: &mut App) -> Vec<SoundCue> {
 
 #[test]
 fn accepted_pickup_and_release_emit_once_and_drop_emits_ground_impact() {
-    let mut app = test_app();
-    let character = spawn_character(&mut app, Vec3::ZERO);
-    spawn_box(&mut app, Vec3::new(0.0, 0.3, -1.3));
-    step(&mut app, 30);
-    take_sound_cues(&mut app);
-    request_pickup(&mut app, character);
-    step(&mut app, 1);
-    assert_eq!(take_sound_cues(&mut app), [SoundCue::ParcelPickup]);
-    step(&mut app, 30);
-    assert!(!take_sound_cues(&mut app).contains(&SoundCue::ParcelPickup));
-    request_pickup(&mut app, character);
-    step(&mut app, 1);
-    assert_eq!(take_sound_cues(&mut app), [SoundCue::ParcelRelease]);
-    let mut impacts = 0;
-    for _ in 0..120 {
-        app.update();
-        impacts += take_sound_cues(&mut app)
-            .into_iter()
-            .filter(|cue| *cue == SoundCue::ParcelLand)
-            .count();
-    }
-    assert!(
-        impacts >= 1,
-        "A released parcel must emit its actual landing impact"
-    );
-    for _ in 0..60 {
-        app.update();
-        assert!(
-            !take_sound_cues(&mut app).contains(&SoundCue::ParcelLand),
-            "A resting parcel must stay silent"
+    for kind in [Item::StandardParcel, Item::FragileParcel, Item::WoodenCrate] {
+        let mut app = test_app();
+        let character = spawn_character(&mut app, Vec3::ZERO);
+        let item = spawn_item(&mut app, Vec3::new(0.0, 0.3, -1.3));
+        app.world_mut().entity_mut(item).insert(kind);
+        step(&mut app, 30);
+        take_sound_cues(&mut app);
+        request_pickup(&mut app, character);
+        step(&mut app, 1);
+        assert_eq!(take_sound_cues(&mut app), [SoundCue::ItemPickup]);
+        assert_eq!(app.world().get::<Item>(item), Some(&kind));
+        assert_eq!(app.world().get::<HeldBy>(item).unwrap().get(), character);
+        step(&mut app, 30);
+        assert!(!take_sound_cues(&mut app).contains(&SoundCue::ItemPickup));
+        request_pickup(&mut app, character);
+        step(&mut app, 1);
+        assert_eq!(take_sound_cues(&mut app), [SoundCue::ItemRelease]);
+        assert_eq!(app.world().get::<Item>(item), Some(&kind));
+        assert!(app.world().get::<HeldBy>(item).is_none());
+        assert_eq!(
+            app.world().get::<RigidBody>(item),
+            Some(&RigidBody::Dynamic)
         );
+        let mut impacts = 0;
+        for _ in 0..120 {
+            app.update();
+            impacts += take_sound_cues(&mut app)
+                .into_iter()
+                .filter(|cue| *cue == SoundCue::ItemLand)
+                .count();
+        }
+        assert!(
+            impacts >= 1,
+            "A released item must emit its actual landing impact"
+        );
+        for _ in 0..60 {
+            app.update();
+            assert!(
+                !take_sound_cues(&mut app).contains(&SoundCue::ItemLand),
+                "A resting item must stay silent"
+            );
+        }
     }
 }
 
@@ -81,7 +92,7 @@ fn accepted_pickup_and_release_emit_once_and_drop_emits_ground_impact() {
 fn failed_pickup_and_side_wall_contact_do_not_emit_success_or_landing() {
     let mut app = test_app();
     let character = spawn_character(&mut app, Vec3::new(-10.0, 0.0, 0.0));
-    let item = spawn_box(&mut app, Vec3::new(0.0, 3.0, 0.0));
+    let item = spawn_item(&mut app, Vec3::new(0.0, 3.0, 0.0));
     app.world_mut().get_mut::<LinearVelocity>(item).unwrap().x = 3.0;
     app.world_mut().spawn((
         RigidBody::Static,
@@ -108,14 +119,14 @@ fn speculative_support_before_impact_does_not_lose_landing_cue() {
     // 接触预测可在真正落地前产生 TOUCHING；覆盖不同距离和较快的初始下落速度。
     for (height, vertical_speed) in [(0.349, -3.0), (0.4, -3.0), (1.0, 0.0), (2.17, -1.0)] {
         let mut app = test_app();
-        let item = spawn_box(&mut app, Vec3::new(0.0, height, 0.0));
+        let item = spawn_item(&mut app, Vec3::new(0.0, height, 0.0));
         app.world_mut().get_mut::<LinearVelocity>(item).unwrap().y = vertical_speed;
         let mut count = 0;
         for _ in 0..120 {
             app.update();
             count += take_sound_cues(&mut app)
                 .iter()
-                .filter(|cue| **cue == SoundCue::ParcelLand)
+                .filter(|cue| **cue == SoundCue::ItemLand)
                 .count();
         }
         assert!(
@@ -124,7 +135,7 @@ fn speculative_support_before_impact_does_not_lose_landing_cue() {
         );
         for _ in 0..30 {
             app.update();
-            assert!(!take_sound_cues(&mut app).contains(&SoundCue::ParcelLand));
+            assert!(!take_sound_cues(&mut app).contains(&SoundCue::ItemLand));
         }
     }
 }
@@ -173,13 +184,13 @@ fn spawn_character(app: &mut App, position: Vec3) -> Entity {
         .id()
 }
 
-fn spawn_box(app: &mut App, position: Vec3) -> Entity {
+fn spawn_item(app: &mut App, position: Vec3) -> Entity {
     let config = app.world().resource::<PrototypeConfig>().clone();
     app.world_mut()
         .spawn((
-            Parcel,
+            Item::StandardParcel,
             Pickable,
-            parcel_body(&config),
+            item_body(&config),
             Transform::from_translation(position),
         ))
         .id()
@@ -196,7 +207,7 @@ fn request_pickup(app: &mut App, character: Entity) {
 fn wall_blocks_pickup_in_range_and_removing_wall_restores_pickup() {
     let mut app = test_app();
     let character = spawn_character(&mut app, Vec3::ZERO);
-    let item = spawn_box(&mut app, Vec3::new(0.0, 0.3, -1.3));
+    let item = spawn_item(&mut app, Vec3::new(0.0, 0.3, -1.3));
     let wall = app
         .world_mut()
         .spawn((
@@ -242,8 +253,8 @@ fn simultaneous_pickups_reserve_nearest_box_and_use_available_alternative() {
         spawn_character(&mut app, Vec3::new(-0.7, 0.0, 0.0)),
         spawn_character(&mut app, Vec3::new(0.7, 0.0, 0.0)),
     ];
-    let nearest = spawn_box(&mut app, Vec3::new(0.0, 0.3, -0.8));
-    let alternative = spawn_box(&mut app, Vec3::new(0.0, 0.3, 0.9));
+    let nearest = spawn_item(&mut app, Vec3::new(0.0, 0.3, -0.8));
+    let alternative = spawn_item(&mut app, Vec3::new(0.0, 0.3, 0.9));
     step(&mut app, 30);
 
     // 两个请求在同一固定步消费，不能通过顺次帧请求绕开延迟命令的重复占用边界。
@@ -536,9 +547,9 @@ fn approaching_fast_dynamic_bodies_keep_their_order_with_predictive_neighbors() 
                     Vec3::new(-initial_offset, 4.0 - config.character_height * 0.5, 0.0),
                 )
             } else {
-                spawn_box(&mut app, Vec3::new(-initial_offset, 4.0, 0.0))
+                spawn_item(&mut app, Vec3::new(-initial_offset, 4.0, 0.0))
             };
-            let right = spawn_box(&mut app, Vec3::new(initial_offset, 4.0, 0.0));
+            let right = spawn_item(&mut app, Vec3::new(initial_offset, 4.0, 0.0));
             // 先初始化真实物理姿态；之后每次 app.update 返回即检查，不补跑求解器。
             step(&mut app, 1);
             if !predictive_neighbors {
@@ -555,9 +566,9 @@ fn approaching_fast_dynamic_bodies_keep_their_order_with_predictive_neighbors() 
             let left_extent = if character_first {
                 config.character_radius
             } else {
-                config.parcel_half_height
+                config.item_half_height
             };
-            let minimum_separation = left_extent + config.parcel_half_height;
+            let minimum_separation = left_extent + config.item_half_height;
             // Avian 在物理步结束时更新下一步的预测邻域；首个高速步尚未交会，仍立即核对其位姿。
             step(&mut app, 1);
             let left_position = app.world().get::<Position>(left).unwrap().0;

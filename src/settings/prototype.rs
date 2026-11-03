@@ -15,11 +15,11 @@ pub struct PrototypeConfig {
     pub pickup_radius: f32,
     pub hold_offset: Vec3,
     pub ground_y: f32,
-    pub parcel_half_height: f32,
+    pub item_half_height: f32,
     pub character_mass: f32,
     pub character_height: f32,
     pub character_radius: f32,
-    pub parcel_mass: f32,
+    pub item_mass: f32,
 }
 
 impl Default for PrototypeConfig {
@@ -34,11 +34,11 @@ impl Default for PrototypeConfig {
             pickup_radius: 1.8,
             hold_offset: Vec3::new(0.0, 1.0, -0.9),
             ground_y: 0.0,
-            parcel_half_height: 0.3,
+            item_half_height: 0.3,
             character_mass: 75.0,
             character_height: 1.9,
             character_radius: 0.32,
-            parcel_mass: 3.0,
+            item_mass: 3.0,
         }
     }
 }

@@ -182,7 +182,7 @@ fn handle_requests(
             *volume_edit = None;
             // 试听复用素材请求，来源为菜单控制者；不触发拿放系统或伪造玩法成功日志。
             if let Ok(source) = controllers.single() {
-                sounds.write(SoundRequest::new(SoundCue::ParcelPickup, source));
+                sounds.write(SoundRequest::new(SoundCue::ItemPickup, source));
                 info!(target: "demo::ui", event = "parcel_pickup", ?source,
                     reason = "settings_preview", "Audio sample requested");
             }

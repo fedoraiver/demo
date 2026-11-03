@@ -3,10 +3,26 @@
 use avian3d::prelude::RigidBody;
 use bevy::prelude::*;
 
-/// 可搬运快递身份；纸箱与木箱的美术种类由场景组件表达。
-#[derive(Component, Reflect, Default, Clone)]
+/// 物品身份与种类；拾取能力由 Pickable 单独表达。
+#[derive(Component, Reflect, Clone, Copy, Default, Debug, PartialEq, Eq)]
 #[reflect(Component)]
-pub struct Parcel;
+pub enum Item {
+    #[default]
+    StandardParcel,
+    FragileParcel,
+    WoodenCrate,
+}
+
+impl Item {
+    /// 用于实体名称与日志的稳定种类标识。
+    pub(crate) fn name(self) -> &'static str {
+        match self {
+            Self::StandardParcel => "standard_parcel",
+            Self::FragileParcel => "fragile_parcel",
+            Self::WoodenCrate => "wooden_crate",
+        }
+    }
+}
 
 /// 允许被拾取的能力标签。
 #[derive(Component, Reflect, Default, Clone)]
@@ -55,7 +71,7 @@ pub(crate) struct HeldAttachment {
     pub(super) blocked_seconds: f32,
 }
 
-/// 无视觉碰撞代理对应的快递身份；代理随组合体清理，业务箱根始终独立。
+/// 无视觉碰撞代理对应的物品身份；代理随组合体清理，业务根始终独立。
 #[derive(Component)]
 pub(crate) struct HeldCollider {
     pub(crate) item: Entity,

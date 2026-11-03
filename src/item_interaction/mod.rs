@@ -12,9 +12,9 @@ mod rotation_query;
 mod rotation_sweep;
 mod triangle_plane;
 
-pub(crate) use body::parcel_body;
+pub(crate) use body::item_body;
 pub(crate) use components::{
-    CarryGrip, HeldAttachment, HeldBy, HeldCollider, HeldTarget, HoldingItems, Parcel, Pickable,
+    CarryGrip, HeldAttachment, HeldBy, HeldCollider, HeldTarget, HoldingItems, Item, Pickable,
 };
 pub(crate) use lifecycle::release_item;
 pub(crate) use rotation_query::CarryRotationQuery;
@@ -35,7 +35,7 @@ pub(crate) struct ItemInteractionPlugin;
 
 impl Plugin for ItemInteractionPlugin {
     fn build(&self, app: &mut App) {
-        app.register_type::<Parcel>()
+        app.register_type::<Item>()
             .register_type::<Pickable>()
             .register_type::<CarryGrip>()
             .register_type::<HeldTarget>()

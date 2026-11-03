@@ -104,10 +104,10 @@ fn muted_requests_are_discarded_without_cooldown_and_unmute_does_not_replay() {
         let muted_cue = if muted_ui {
             SoundCue::MenuConfirm
         } else {
-            SoundCue::ParcelPickup
+            SoundCue::ItemPickup
         };
         let audible_cue = if muted_ui {
-            SoundCue::ParcelPickup
+            SoundCue::ItemPickup
         } else {
             SoundCue::MenuConfirm
         };
@@ -140,7 +140,7 @@ fn muted_requests_are_discarded_without_cooldown_and_unmute_does_not_replay() {
         .resource_mut::<GameSettings>()
         .audio
         .master_volume = 0;
-    for cue in [SoundCue::MenuConfirm, SoundCue::ParcelPickup] {
+    for cue in [SoundCue::MenuConfirm, SoundCue::ItemPickup] {
         app.world_mut()
             .write_message(SoundRequest::new(cue, source));
     }
@@ -170,11 +170,11 @@ fn queued_requests_obey_limits_without_audio_device() {
         .resource_mut::<Time<Real>>()
         .advance_by(std::time::Duration::from_secs(2));
     app.world_mut()
-        .write_message(SoundRequest::new(SoundCue::ParcelHandoff, source));
+        .write_message(SoundRequest::new(SoundCue::ItemHandoff, source));
     app.update();
     let bank = app.world().resource::<SoundBank>();
     assert_eq!(bank.voices.len(), MAX_VOICES);
-    assert!(!bank.last_played.contains_key(&SoundCue::ParcelHandoff));
+    assert!(!bank.last_played.contains_key(&SoundCue::ItemHandoff));
     for voice in &bank.voices {
         let state = if voice.ui {
             app.world()
@@ -237,10 +237,10 @@ fn gameplay_queue_reserves_menu_feedback_and_keeps_global_cap() {
     let mut app = queued_test_app();
     let source = app.world_mut().spawn_empty().id();
     for cue in [
-        SoundCue::ParcelPickup,
-        SoundCue::ParcelRelease,
-        SoundCue::ParcelHandoff,
-        SoundCue::ParcelLand,
+        SoundCue::ItemPickup,
+        SoundCue::ItemRelease,
+        SoundCue::ItemHandoff,
+        SoundCue::ItemLand,
     ] {
         app.world_mut()
             .write_message(SoundRequest::new(cue, source));
@@ -249,7 +249,7 @@ fn gameplay_queue_reserves_menu_feedback_and_keeps_global_cap() {
     let bank = app.world().resource::<SoundBank>();
     assert_eq!(bank.voices.len(), MAX_VOICES - RESERVED_UI_VOICES);
     assert!(bank.voices.iter().all(|voice| !voice.ui));
-    assert!(!bank.last_played.contains_key(&SoundCue::ParcelLand));
+    assert!(!bank.last_played.contains_key(&SoundCue::ItemLand));
     app.world_mut()
         .write_message(SoundRequest::new(SoundCue::MenuConfirm, source));
     app.update();
