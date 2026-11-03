@@ -238,6 +238,7 @@ function validMermaidPath(value, id) {
 
 /** 核对 Mermaid 的真实轮廓、列布局和路径；曲线不适用手工正交图的端口槽位规则。 */
 export function checkMermaidGeometry(svg, view) {
+  const nativeViewId = view.nativeRenderId ?? view.id;
   const elements = svgElements(svg), root = elements.find(element => element.tag === 'svg');
   const viewport = root?.attrs.viewBox?.trim().split(/[\s,]+/).map(Number);
   requireCondition(viewport?.length === 4 && viewport.every(Number.isFinite) && viewport[2] > 0 && viewport[3] > 0, 'Invalid Mermaid SVG viewBox');
@@ -287,8 +288,8 @@ export function checkMermaidGeometry(svg, view) {
       const declaration = new RegExp(`^\\s*${to?.mermaidId} ${link.mermaidId}@-{3,}(?:\\|[^\\n]*\\|)? ${from?.mermaidId}\\s*$`, 'm');
       const config = /^---\r?\n([\s\S]*?)\r?\n---/.exec(view.mermaid || '')?.[1];
       const themeCSS = config && JSON.parse(config).config?.themeCSS;
-      requireCondition(['component', 'object'].includes(view.aspect) && declaration.test(view.mermaid || '') && themeCSS?.includes(`#${view.id}-${link.mermaidId}{marker-start:url(#${view.id}_flowchart-v2-pointStart)!important}`)
-        && startMarker === `url(#${view.id}_flowchart-v2-pointStart)` && !present(endMarker), `Mermaid reverse arrow has no native source evidence: ${id}`);
+      requireCondition(['component', 'object'].includes(view.aspect) && declaration.test(view.mermaid || '') && themeCSS?.includes(`#${nativeViewId}-${link.mermaidId}{marker-start:url(#${nativeViewId}_flowchart-v2-pointStart)!important}`)
+        && startMarker === `url(#${nativeViewId}_flowchart-v2-pointStart)` && !present(endMarker), `Mermaid reverse arrow has no native source evidence: ${id}`);
     }
     const arrow = reverse ? startMarker : endMarker;
     if (present(arrow)) {

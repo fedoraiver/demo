@@ -1,0 +1,67 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: demo::scene_assembly::assets::poll_art_assets · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef node_plugin fill:#F1F3F6,stroke:#4A6389,stroke-width:2.2px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**poll​_​art​_​assets**<br/>连同子资产检查失败；只记录状态切换，避免<br/>每帧刷写相同错误。" }
+  class n0 node_system
+  n1@{ shape: cyl, label: "**ArtAssets**<br/>强句柄覆盖海岛、主角和动态道具的生命周<br/>期，NPC 与环境由组合地图提供。" }
+  class n1 node_resource
+  n2@{ shape: cyl, label: "**ArtLoadState**<br/>资源就绪与地图碰撞就绪是两个门槛，不能仅<br/>凭模板已生成就推进物理。" }
+  class n2 node_resource
+  n3@{ shape: cyl, label: "**AssetServer**<br/>来自crate:bevy​_​asset ↗：加载资产并追<br/>踪加载状态。" }
+  class n3 node_resource
+  class n3 external_node
+  n4@{ shape: fr-rect, label: "**SceneAssemblyPlugin**<br/>加载当前场景资源并装配地图、碰撞与业务实<br/>体。" }
+  class n4 node_plugin
+  n1 e0@--> n0
+  class e0 edge_read
+  n0 e1@-->|"赋值"| n2
+  class e1 edge_write
+  n0 e2@-->|"可变访问"| n2
+  class e2 edge_write
+  n3 e3@--> n0
+  class e3 edge_read
+  n4 e4@-->|"调用"| n0
+  class e4 edge_registration
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e4@{ curve: basis }

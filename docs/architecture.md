@@ -186,7 +186,7 @@ Avian 在默认固定调度中处理重力、速度积分与碰撞。接地通�
 
 纸箱和木箱采用相同半厚度门槛与完整过滤，保留动态接触与旋转扫掠。角色或箱体形状、旋转约束及运动速度变化后须重评门槛，并保留不同水平 yaw 的高速薄墙及无 CCD 穿透对照；检查见 [无窗口验证](testing/README.md#海岛资源与无窗口验证) 与 [游戏验收](testing/game-acceptance.md)。
 
-运动与尺寸参数以 [PrototypeConfig](../src/settings/prototype.rs) 的定义和默认值为准；重力每个固定步同步到物理资源，检查器编辑只影响当前会话。
+运动与尺寸参数以 [PrototypeConfig](../src/settings/prototype.rs) 的定义和默认值为准；固定步中在 `PrototypeConfig` 变化时将重力同步到物理资源，检查器编辑只影响当前会话。
 
 渲染限帧与固定 60 Hz 模拟分别管理。`SettingsPlugin` 将 `WinitSettings` 的前台与后台模式统一设为 `UpdateMode::Reactive`，以 `1 / max_fps` 为近似更新间隔，关闭设备、用户与窗口事件触发的提前更新；输入缓冲到下一次更新。计时、等待和超时处理由 Bevy 原生窗口循环负责，启动与生命周期切换可强制更新，不保证任意相邻帧的严格最小间隔。`AutoNoVsync` 独立控制呈现方式，仍可能被平台回退。
 

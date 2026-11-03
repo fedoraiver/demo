@@ -5,6 +5,11 @@ use bevy::{
     window::{EnabledButtons, PresentMode, PrimaryWindow, WindowResizeConstraints},
 };
 
+#[cfg(any(target_os = "windows", target_os = "macos", test))]
+const WIDTH_UNIT: i32 = 16;
+#[cfg(any(target_os = "windows", target_os = "macos", test))]
+const HEIGHT_UNIT: i32 = 9;
+
 #[cfg(any(target_os = "windows", test))]
 mod geometry;
 #[cfg(target_os = "macos")]

@@ -106,6 +106,9 @@ export function createArchitectureInteraction({ diagram, nodeStyles, selectionSt
         next.add(remember(node, parts, nodeStyles[node.dataset.visualType], nativeOutlineRoot(node, parts)));
       }
     }
+    if (!nativeOnly) for (const header of diagram.querySelectorAll('[data-entity-owner]')) {
+      header.classList.toggle('dim', dimNodes.has(header.dataset.entityOwner));
+    }
     if (!nativeOnly) for (const group of diagram.querySelectorAll('[data-schedule-id]')) {
       const selected = selectedSchedules.has(group.dataset.scheduleId);
       group.classList.toggle('selected', selected);
@@ -119,7 +122,7 @@ export function createArchitectureInteraction({ diagram, nodeStyles, selectionSt
     for (const state of active) if (!next.has(state)) restore(state);
     active = next;
     for (const state of active) update(state);
-    if (!nativeOnly) for (const edge of diagram.querySelectorAll('.edge')) {
+    if (!nativeOnly) for (const edge of [...diagram.querySelectorAll('.edge'), ...diagram.querySelectorAll('.edge-label')]) {
       const id = edge.dataset.linkId ?? edge.dataset.scheduleLinkId;
       edge.classList.toggle('focused', focusedEdges.has(id)); edge.classList.toggle('dim', dimEdges.has(id));
     }

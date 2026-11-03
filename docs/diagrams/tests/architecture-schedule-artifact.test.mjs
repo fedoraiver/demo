@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
+import path from 'node:path';
 import test from 'node:test';
 import { createArchitectureViewer } from '../src/architecture-viewer.mjs';
 import { createArchitectureNavigation } from '../src/architecture-navigation.mjs';
@@ -8,13 +9,19 @@ import { createArchitectureGestures } from '../src/architecture-gestures.mjs';
 import { createArchitectureSearch } from '../src/architecture-search.mjs';
 import { createArchitectureSplitter } from '../src/architecture-splitter.mjs';
 import { selectedFillColor } from '../src/architecture-style.mjs';
-import { readArchitectureData } from '../src/architecture-artifacts.mjs';
+import { embeddedArchitectureBootstrap, readArchitectureData } from '../src/architecture-artifacts.mjs';
 import { pathsForRepository, artifactFile } from '../src/paths.mjs';
 import { testDocument } from './test-dom.mjs';
 
 test('all exported Schedule cards paint and restore their own real Graphviz outlines on a left mouse click', t => {
   const paths = pathsForRepository(), html = fs.readFileSync(paths.pagesDirectory + '/ecs-architecture.html', 'utf8');
-  const data = readArchitectureData(paths.repositoryRoot);
+  const artifact = readArchitectureData(paths.repositoryRoot);
+  // 校验器恢复完整模型；交互页面实际读取清单所指的精简 runtime 模型。
+  const bootstrap = embeddedArchitectureBootstrap(html);
+  const manifest = JSON.parse(fs.readFileSync(path.join(paths.generatedDirectory, bootstrap.manifestUrl.slice(3)), 'utf8'));
+  const runtime = JSON.parse(fs.readFileSync(path.join(paths.generatedDirectory, manifest.runtime.path), 'utf8'));
+  const data = { ...artifact, model: runtime.model };
+  assert.deepEqual(Object.keys(data.model).sort(), ['entities', 'features']);
   const document = testDocument(html.slice(0, html.indexOf('<script id="architecture-data"')));
   const get = id => document.getElementById(id), canvas = get('canvas'), location = new URL('file:///D:/demo/docs/diagrams/ecs-architecture.html');
   const frames = [], history = { state: null, length: 1,

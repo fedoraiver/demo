@@ -1,0 +1,182 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#object-8aaac3b5824c56df-e2{marker-start:url(#object-8aaac3b5824c56df_flowchart-v2-pointStart)!important}\n#object-8aaac3b5824c56df-e3{marker-start:url(#object-8aaac3b5824c56df_flowchart-v2-pointStart)!important}\n#object-8aaac3b5824c56df-e4{marker-start:url(#object-8aaac3b5824c56df_flowchart-v2-pointStart)!important}\n#object-8aaac3b5824c56df-e5{marker-start:url(#object-8aaac3b5824c56df_flowchart-v2-pointStart)!important}\n#object-8aaac3b5824c56df-e12{marker-start:url(#object-8aaac3b5824c56df_flowchart-v2-pointStart)!important}\n#object-8aaac3b5824c56df-e13{marker-start:url(#object-8aaac3b5824c56df_flowchart-v2-pointStart)!important}\n#object-8aaac3b5824c56df-e14{marker-start:url(#object-8aaac3b5824c56df_flowchart-v2-pointStart)!important}\n#object-8aaac3b5824c56df-e19{marker-start:url(#object-8aaac3b5824c56df_flowchart-v2-pointStart)!important}\n#object-8aaac3b5824c56df-e21{marker-start:url(#object-8aaac3b5824c56df_flowchart-v2-pointStart)!important}\n#object-8aaac3b5824c56df-e23{marker-start:url(#object-8aaac3b5824c56df_flowchart-v2-pointStart)!important}\n#object-8aaac3b5824c56df-e24{marker-start:url(#object-8aaac3b5824c56df_flowchart-v2-pointStart)!important}\n#object-8aaac3b5824c56df-e25{marker-start:url(#object-8aaac3b5824c56df_flowchart-v2-pointStart)!important}\n#object-8aaac3b5824c56df_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: bevy_core_pipeline::core_3d::extract_camera_prepass_phase · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef node_local fill:#F8F5F1,stroke:#AA8752,stroke-width:1.6px,color:#1F3340
+  classDef node_plugin fill:#F1F3F6,stroke:#4A6389,stroke-width:2.2px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**extract​_​camera​_​prepass​_​phase**<br/>同步三维相机的预通道标记与渲染阶段。" }
+  class n0 node_system
+  n1@{ shape: rounded, label: "**Camera**<br/>来自crate:bevy​_​camera ↗：配置相机视<br/>口、输出目标和渲染顺序。" }
+  class n1 node_component
+  class n1 external_node
+  n2@{ shape: cyl, label: "**ViewBinnedRenderPhases#lt;Opaque3dPrepa**<br/>**ss#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图按<br/>分桶组织的绘制指令。" }
+  class n2 node_resource
+  class n2 external_node
+  n3@{ shape: rounded, label: "**NormalPrepass**<br/>输出已应用法线贴图的世界空间法线。" }
+  class n3 node_component
+  n4@{ shape: rounded, label: "**DepthPrepass**<br/>为三维相机生成独立的深度纹理。" }
+  class n4 node_component
+  n5@{ shape: rounded, label: "**MotionVectorPrepass**<br/>为相机输出屏幕空间运动矢量。" }
+  class n5 node_component
+  n6@{ shape: cyl, label: "**MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
+  class n6 node_resource
+  class n6 external_node
+  n7@{ shape: cyl, label: "**ViewBinnedRenderPhases#lt;AlphaMask3dDe**<br/>**ferred#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图按<br/>分桶组织的绘制指令。" }
+  class n7 node_resource
+  class n7 external_node
+  n8@{ shape: notch-rect, label: "**Local · live​_​entities**<br/>记录仍应保留预通道与延迟阶段的相机视图。" }
+  class n8 node_local
+  n9@{ shape: rounded, label: "**NoIndirectDrawing**<br/>来自crate:bevy​_​render ↗：关闭相机的间<br/>接绘制模式。" }
+  class n9 node_component
+  class n9 external_node
+  n10@{ shape: cyl, label: "**ViewBinnedRenderPhases#lt;Opaque3dDefer**<br/>**red#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图按<br/>分桶组织的绘制指令。" }
+  class n10 node_resource
+  class n10 external_node
+  n11@{ shape: rounded, label: "**DepthPrepassDoubleBuffer**<br/>保留可查询的上一帧深度预通道结果。" }
+  class n11 node_component
+  n12@{ shape: rounded, label: "**DeferredPrepassDoubleBuffer**<br/>保留可查询的上一帧延迟预通道结果。" }
+  class n12 node_component
+  n13@{ shape: cyl, label: "**GpuPreprocessingSupport**<br/>来自crate:bevy​_​render ↗：记录设备可采<br/>用的 GPU 预处理级别。" }
+  class n13 node_resource
+  class n13 external_node
+  n14@{ shape: rounded, label: "**DeferredPrepass**<br/>为三维相机启用延迟材质 G-buffer 预通<br/>道。" }
+  class n14 node_component
+  n15@{ shape: rounded, label: "**SubEntity#lt;RenderApp#gt;**<br/>来自crate:bevy​_​extract ↗：记录主实体<br/>对应的子世界实体。" }
+  class n15 node_component
+  class n15 external_node
+  n16@{ shape: cyl, label: "**ViewBinnedRenderPhases#lt;AlphaMask3dPr**<br/>**epass#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图按<br/>分桶组织的绘制指令。" }
+  class n16 node_resource
+  class n16 external_node
+  n17@{ shape: rounded, label: "**Camera3d**<br/>来自crate:bevy​_​camera ↗：启用三维相机<br/>主渲染流程。" }
+  class n17 node_component
+  class n17 external_node
+  n18@{ shape: fr-rect, label: "**Core3dPlugin**<br/>建立三维相机的渲染流程。" }
+  class n18 node_plugin
+  n1 e0@--> n0
+  class e0 edge_read
+  n0 e1@-->|"可变访问"| n2
+  class e1 edge_write
+  n3 e2@---|"插入"| n0
+  class e2 edge_write
+  n4 e3@---|"移除"| n0
+  class e3 edge_write
+  n5 e4@---|"插入"| n0
+  class e4 edge_write
+  n3 e5@---|"移除"| n0
+  class e5 edge_write
+  n6 e6@--> n0
+  class e6 edge_read
+  n0 e7@-->|"可变访问"| n7
+  class e7 edge_write
+  n0 e8@-->|"可变访问"| n8
+  class e8 edge_write
+  n5 e9@-->|"存在性约束"| n0
+  class e9 edge_reference
+  n9 e10@-->|"存在性约束"| n0
+  class e10 edge_reference
+  n0 e11@-->|"可变访问"| n10
+  class e11 edge_write
+  n11 e12@---|"插入"| n0
+  class e12 edge_write
+  n11 e13@---|"移除"| n0
+  class e13 edge_write
+  n5 e14@---|"移除"| n0
+  class e14 edge_write
+  n11 e15@-->|"存在性约束"| n0
+  class e15 edge_reference
+  n12 e16@-->|"存在性约束"| n0
+  class e16 edge_reference
+  n13 e17@--> n0
+  class e17 edge_read
+  n4 e18@-->|"存在性约束"| n0
+  class e18 edge_reference
+  n4 e19@---|"插入"| n0
+  class e19 edge_write
+  n14 e20@-->|"存在性约束"| n0
+  class e20 edge_reference
+  n12 e21@---|"移除"| n0
+  class e21 edge_write
+  n15 e22@--> n0
+  class e22 edge_read
+  n12 e23@---|"插入"| n0
+  class e23 edge_write
+  n14 e24@---|"移除"| n0
+  class e24 edge_write
+  n14 e25@---|"插入"| n0
+  class e25 edge_write
+  n3 e26@-->|"存在性约束"| n0
+  class e26 edge_reference
+  n0 e27@-->|"可变访问"| n16
+  class e27 edge_write
+  n17 e28@-->|"存在性约束"| n0
+  class e28 edge_reference
+  n18 e29@-->|"调用"| n0
+  class e29 edge_registration
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: bumpX }
+  e16@{ curve: basis }
+  e17@{ curve: basis }
+  e18@{ curve: basis }
+  e19@{ curve: basis }
+  e20@{ curve: basis }
+  e21@{ curve: basis }
+  e22@{ curve: basis }
+  e23@{ curve: basis }
+  e24@{ curve: basis }
+  e25@{ curve: basis }
+  e26@{ curve: basis }
+  e27@{ curve: basis }
+  e28@{ curve: basis }
+  e29@{ curve: basis }

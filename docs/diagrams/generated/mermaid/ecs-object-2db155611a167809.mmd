@@ -1,0 +1,133 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: bevy_anti_alias::contrast_adaptive_sharpening::node::cas · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef node_local fill:#F8F5F1,stroke:#AA8752,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_plugin fill:#F1F3F6,stroke:#4A6389,stroke-width:2.2px,color:#1F3340
+  classDef edge_order stroke:#334155,stroke-width:2px
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**cas**<br/>对视图颜色执行 CAS 锐化后处理。" }
+  class n0 node_system
+  n1@{ shape: rounded, label: "**ViewTarget**<br/>来自crate:bevy​_​render ↗：管理视图主颜<br/>色纹理及最终输出附件。" }
+  class n1 node_component
+  class n1 external_node
+  n2@{ shape: rounded, label: "**fxaa**<br/>对启用的相机视图执行 FXAA 抗锯齿。" }
+  class n2 node_system
+  n3@{ shape: fr-rect, label: "**CasPlugin**<br/>提供对比度自适应锐化。" }
+  class n3 node_plugin
+  n4@{ shape: cyl, label: "**DiagnosticsRecorder**<br/>来自crate:bevy​_​render ↗：记录渲染诊断<br/>区间与 GPU 查询索引的对应。" }
+  class n4 node_resource
+  class n4 external_node
+  n5@{ shape: rounded, label: "**DynamicUniformIndex#lt;CasUniform#gt;**<br/>来自crate:bevy​_​render ↗：定位组件参数<br/>在共享 Uniform 缓冲中的位置。" }
+  class n5 node_component
+  class n5 external_node
+  n6@{ shape: rounded, label: "**ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
+  class n6 node_component
+  class n6 external_node
+  n7@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
+  class n7 node_resource
+  class n7 external_node
+  n8@{ shape: notch-rect, label: "**Local · cached​_​bind​_​group**<br/>按参数缓冲和颜色纹理复用 CAS 绑定组。" }
+  class n8 node_local
+  n9@{ shape: cyl, label: "**ComponentUniforms#lt;CasUniform#gt;**<br/>来自crate:bevy​_​render ↗：汇集同类组件<br/>的动态 Uniform 数据。" }
+  class n9 node_resource
+  class n9 external_node
+  n10@{ shape: rounded, label: "**smaa**<br/>通过三个阶段完成 SMAA 抗锯齿。" }
+  class n10 node_system
+  n11@{ shape: cyl, label: "**CurrentView**<br/>来自crate:bevy​_​render ↗：指定当前正在<br/>渲染的视图实体。" }
+  class n11 node_resource
+  class n11 external_node
+  n12@{ shape: lin-rect, label: "**PostProcess**<br/>来自crate:bevy​_​core​_​pipeline ↗：划分<br/>三维相机绘制与后处理阶段。" }
+  class n12 node_system_set
+  class n12 external_node
+  n13@{ shape: cyl, label: "**CasPipeline**<br/>保存对比度自适应锐化的管线资源。" }
+  class n13 node_resource
+  n14@{ shape: rounded, label: "**ViewCasPipeline**<br/>保存当前视图的锐化管线标识。" }
+  class n14 node_component
+  n15@{ shape: cyl, label: "**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
+  class n15 node_resource
+  class n15 external_node
+  n1 e0@--> n0
+  class e0 edge_read
+  n2 e1@-->|"先于"| n0
+  class e1 edge_order
+  n3 e2@-->|"调用"| n0
+  class e2 edge_registration
+  n4 e3@--> n0
+  class e3 edge_read
+  n5 e4@--> n0
+  class e4 edge_read
+  n6 e5@-->|"存在性约束"| n0
+  class e5 edge_reference
+  n7 e6@--> n0
+  class e6 edge_read
+  n0 e7@-->|"可变访问"| n8
+  class e7 edge_write
+  n9 e8@--> n0
+  class e8 edge_read
+  n10 e9@-->|"先于"| n0
+  class e9 edge_order
+  n11 e10@--> n0
+  class e10 edge_read
+  n12 e11@-->|"集合成员"| n0
+  class e11 edge_set_membership
+  n13 e12@--> n0
+  class e12 edge_read
+  n14 e13@--> n0
+  class e13 edge_read
+  n15 e14@--> n0
+  class e14 edge_read
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }

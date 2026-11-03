@@ -1,0 +1,99 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: view::visibility::range::RenderVisibilityRanges · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: cyl, label: "**RenderVisibilityRanges**<br/>保存渲染侧距离范围及去重后的 GPU 数据。" }
+  class n0 node_resource
+  n1@{ shape: rounded, label: "**extract​_​visibility​_​ranges**<br/>在可见距离变化后重建渲染侧范围表。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**prepare​_​prepass​_​view​_​bind​_​group**<br/>来自crate:bevy​_​pbr ↗：绑定预通道的视<br/>图、全局和前帧缓冲。" }
+  class n2 node_system
+  class n2 external_node
+  n3@{ shape: rounded, label: "**write​_​render​_​visibility​_​ranges**<br/>按设备绑定要求上传可见距离范围表。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**specialize​_​prepass​_​material​_​meshes**<br/>来自crate:bevy​_​pbr ↗：按深度、材质和<br/>运动特性生成预通道专用管线。" }
+  class n4 node_system
+  class n4 external_node
+  n5@{ shape: rounded, label: "**init​_​gpu​_​resource**<br/>构造并插入渲染所需资源。" }
+  class n5 node_system
+  n6@{ shape: rounded, label: "**prepare​_​mesh​_​view​_​bind​_​groups**<br/>来自crate:bevy​_​pbr ↗：为视图绑定光<br/>照、阴影及各可选渲染效果资源。" }
+  class n6 node_system
+  class n6 external_node
+  n7@{ shape: rounded, label: "**extract​_​meshes​_​for​_​gpu​_​building**<br/>来自crate:bevy​_​pbr ↗：增量提取变化或<br/>需重试网格到线程队列。" }
+  class n7 node_system
+  class n7 external_node
+  n8@{ shape: rounded, label: "**prepare​_​preprocess​_​bind​_​groups**<br/>来自crate:bevy​_​pbr ↗：绑定各视图网格<br/>预处理和间接参数构建资源。" }
+  class n8 node_system
+  class n8 external_node
+  n9@{ shape: rounded, label: "**specialize​_​material​_​meshes**<br/>来自crate:bevy​_​pbr ↗：为变化的可见网<br/>格生成并缓存材质专用管线。" }
+  class n9 node_system
+  class n9 external_node
+  n1 e0@-->|"可变访问"| n0
+  class e0 edge_write
+  n0 e1@--> n2
+  class e1 edge_read
+  n1 e2@-->|"赋值"| n0
+  class e2 edge_write
+  n3 e3@-->|"可变访问"| n0
+  class e3 edge_write
+  n0 e4@--> n4
+  class e4 edge_read
+  n5 e5@-->|"插入"| n0
+  class e5 edge_write
+  n0 e6@--> n6
+  class e6 edge_read
+  n0 e7@--> n7
+  class e7 edge_read
+  n0 e8@--> n8
+  class e8 edge_read
+  n0 e9@--> n9
+  class e9 edge_read
+  n3 e10@-->|"赋值"| n0
+  class e10 edge_write
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }

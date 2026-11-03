@@ -1,0 +1,134 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: PrepareViews · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef edge_order stroke:#334155,stroke-width:2px
+  classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: lin-rect, label: "**PrepareViews**<br/>组织渲染数据准备与绘制排队。" }
+  class n0 node_system_set
+  n1@{ shape: lin-rect, label: "**Queue**<br/>组织渲染数据准备与绘制排队。" }
+  class n1 node_system_set
+  n2@{ shape: rounded, label: "**configure​_​camera​_​depth​_​usages**<br/>来自crate:bevy​_​core​_​pipeline ↗：允<br/>许 OIT 相机采样自己的深度纹理。" }
+  class n2 node_system
+  class n2 external_node
+  n3@{ shape: rounded, label: "**prepare​_​view​_​depth​_​texture​_​usages​_​**<br/>**for​_​motion​_​blur**<br/>来自crate:bevy​_​post​_​process ↗：让运<br/>动模糊相机的深度纹理可被采样。" }
+  class n3 node_system
+  class n3 external_node
+  n4@{ shape: lin-rect, label: "**Specialize**<br/>组织渲染数据准备与绘制排队。" }
+  class n4 node_system_set
+  n5@{ shape: rounded, label: "**clear​_​indirect​_​parameters​_​buffers**<br/>清空各渲染阶段上一轮间接绘制参数。" }
+  class n5 node_system
+  n6@{ shape: rounded, label: "**prepare​_​auxiliary​_​depth​_​of​_​field​_​**<br/>**textures**<br/>来自crate:bevy​_​post​_​process ↗：为<br/>Bokeh 景深分配第二颜色输出。" }
+  class n6 node_system
+  class n6 external_node
+  n7@{ shape: rounded, label: "**prepare​_​view​_​attachments**<br/>按相机输出目标准备可共享的颜色附件。" }
+  class n7 node_system
+  n8@{ shape: rounded, label: "**configure​_​camera​_​depth​_​usages**<br/>来自crate:bevy​_​pbr ↗：允许大气相机的<br/>深度纹理被着色器采样。" }
+  class n8 node_system
+  class n8 external_node
+  n9@{ shape: rounded, label: "**configure​_​occlusion​_​culling​_​view​_​**<br/>**targets**<br/>来自crate:bevy​_​core​_​pipeline ↗：让遮<br/>挡剔除相机的深度纹理可被采样。" }
+  class n9 node_system
+  class n9 external_node
+  n10@{ shape: rounded, label: "**prepare​_​taa​_​jitter**<br/>来自crate:bevy​_​anti​_​alias ↗：为 TAA<br/>相机逐帧设置 Halton 投影抖动。" }
+  class n10 node_system
+  class n10 external_node
+  n11@{ shape: rounded, label: "**cleanup​_​view​_​targets​_​for​_​resize**<br/>在窗口尺寸或呈现模式变化时撤销旧视图目<br/>标。" }
+  class n11 node_system
+  n12@{ shape: rounded, label: "**prepare​_​view​_​targets**<br/>为视图维护主颜色双缓冲及可选多采样目标。" }
+  class n12 node_system
+  n13@{ shape: rounded, label: "**clear​_​view​_​attachments**<br/>清空上一帧的视图输出附件表。" }
+  class n13 node_system
+  n14@{ shape: rounded, label: "**prepare​_​decals**<br/>来自crate:bevy​_​pbr ↗：将已提取贴花的<br/>索引登记到全局聚簇元数据。" }
+  class n14 node_system
+  class n14 external_node
+  n15@{ shape: rounded, label: "**prepare​_​screenshots**<br/>为有效截图目标准备捕获资源和输出附件。" }
+  class n15 node_system
+  n16@{ shape: rounded, label: "**prepare​_​windows**<br/>为有相机输出或需要首次呈现的窗口取得交换<br/>链纹理，保留可复用的未呈现帧，并处理尺<br/>寸、模式变化及表面获取错误。" }
+  class n16 node_system
+  n17@{ shape: rounded, label: "**configure​_​depth​_​of​_​field​_​view​_​**<br/>**targets**<br/>来自crate:bevy​_​post​_​process ↗：允许<br/>景深相机采样自己的深度纹理。" }
+  class n17 node_system
+  class n17 external_node
+  n0 e0@-->|"先于"| n1
+  class e0 edge_order
+  n0 e1@-->|"集合成员"| n2
+  class e1 edge_set_membership
+  n0 e2@-->|"集合成员"| n3
+  class e2 edge_set_membership
+  n4 e3@-->|"先于"| n0
+  class e3 edge_order
+  n0 e4@-->|"集合成员"| n5
+  class e4 edge_set_membership
+  n0 e5@-->|"集合成员"| n6
+  class e5 edge_set_membership
+  n0 e6@-->|"集合成员"| n7
+  class e6 edge_set_membership
+  n0 e7@-->|"集合成员"| n8
+  class e7 edge_set_membership
+  n0 e8@-->|"集合成员"| n9
+  class e8 edge_set_membership
+  n0 e9@-->|"集合成员"| n10
+  class e9 edge_set_membership
+  n0 e10@-->|"集合成员"| n11
+  class e10 edge_set_membership
+  n0 e11@-->|"集合成员"| n12
+  class e11 edge_set_membership
+  n0 e12@-->|"集合成员"| n13
+  class e12 edge_set_membership
+  n0 e13@-->|"集合成员"| n14
+  class e13 edge_set_membership
+  n0 e14@-->|"集合成员"| n15
+  class e14 edge_set_membership
+  n0 e15@-->|"集合成员"| n16
+  class e15 edge_set_membership
+  n0 e16@-->|"集合成员"| n17
+  class e16 edge_set_membership
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }

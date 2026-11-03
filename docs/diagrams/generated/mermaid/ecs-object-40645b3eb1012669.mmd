@@ -1,0 +1,105 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: camera::MainPassResolutionOverride · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**MainPassResolutionOverride**<br/>覆盖三维主通道的渲染分辨率。" }
+  class n0 node_component
+  n1@{ shape: rounded, label: "**render​_​sky**<br/>来自crate:bevy​_​pbr ↗：绑定大气查找表<br/>及视图、光照参数，按相机视口和可选分辨率<br/>覆盖设置绘制全屏天空，将结果写入视图颜色<br/>附件。" }
+  class n1 node_system
+  class n1 external_node
+  n2@{ shape: rounded, label: "**main​_​transmissive​_​pass​_​3d**<br/>来自crate:bevy​_​pbr ↗：分层复制场景颜<br/>色并绘制三维透射物体。" }
+  class n2 node_system
+  class n2 external_node
+  n3@{ shape: rounded, label: "**main​_​opaque​_​pass​_​3d**<br/>来自crate:bevy​_​core​_​pipeline ↗：绘制<br/>三维不透明、AlphaMask 与天空盒。" }
+  class n3 node_system
+  class n3 external_node
+  n4@{ shape: rounded, label: "**prepare​_​view​_​uniforms**<br/>来自crate:bevy​_​render ↗：生成视图投<br/>影、抖动、裁剪及 LOD 的 GPU 参数。" }
+  class n4 node_system
+  class n4 external_node
+  n5@{ shape: rounded, label: "**early​_​prepass**<br/>来自crate:bevy​_​core​_​pipeline ↗：绘制<br/>早期不透明与 AlphaMask 预通道。" }
+  class n5 node_system
+  class n5 external_node
+  n6@{ shape: rounded, label: "**oit​_​resolve**<br/>来自crate:bevy​_​core​_​pipeline ↗：解析<br/>透明片元并重置 OIT 链表状态。" }
+  class n6 node_system
+  class n6 external_node
+  n7@{ shape: rounded, label: "**late​_​prepass**<br/>来自crate:bevy​_​core​_​pipeline ↗：为遮<br/>挡剔除绘制晚期预通道。" }
+  class n7 node_system
+  class n7 external_node
+  n8@{ shape: rounded, label: "**late​_​deferred​_​prepass**<br/>来自crate:bevy​_​core​_​pipeline ↗：为遮<br/>挡剔除执行晚期延迟预通道。" }
+  class n8 node_system
+  class n8 external_node
+  n9@{ shape: rounded, label: "**early​_​deferred​_​prepass**<br/>来自crate:bevy​_​core​_​pipeline ↗：执行<br/>早期延迟预通道并保存深度结果。" }
+  class n9 node_system
+  class n9 external_node
+  n10@{ shape: rounded, label: "**prepare​_​previous​_​view​_​uniforms**<br/>来自crate:bevy​_​pbr ↗：重建前帧抖动矩<br/>阵并上传视图历史参数。" }
+  class n10 node_system
+  class n10 external_node
+  n11@{ shape: rounded, label: "**main​_​transparent​_​pass​_​3d**<br/>来自crate:bevy​_​core​_​pipeline ↗：绘制<br/>三维透明物体并保护 OIT 链表状态。" }
+  class n11 node_system
+  class n11 external_node
+  n0 e0@--> n1
+  class e0 edge_read
+  n0 e1@--> n2
+  class e1 edge_read
+  n0 e2@--> n3
+  class e2 edge_read
+  n0 e3@--> n4
+  class e3 edge_read
+  n0 e4@--> n5
+  class e4 edge_read
+  n0 e5@--> n6
+  class e5 edge_read
+  n0 e6@--> n7
+  class e6 edge_read
+  n0 e7@--> n8
+  class e7 edge_read
+  n0 e8@--> n9
+  class e8 edge_read
+  n0 e9@--> n10
+  class e9 edge_read
+  n0 e10@--> n11
+  class e10 edge_read
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }

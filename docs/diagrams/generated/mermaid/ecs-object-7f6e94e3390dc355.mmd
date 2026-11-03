@@ -1,0 +1,71 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: CameraUpdateSystems · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef edge_order stroke:#334155,stroke-width:2px
+  classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: lin-rect, label: "**CameraUpdateSystems**<br/>统一更新相机目标、视口与投影计算结果。" }
+  class n0 node_system_set
+  n1@{ shape: rounded, label: "**camera​_​system**<br/>来自crate:bevy​_​render ↗：响应目标尺寸<br/>变化并更新相机投影。" }
+  class n1 node_system
+  class n1 external_node
+  n2@{ shape: lin-rect, label: "**Prepare**<br/>来自crate:bevy​_​ui ↗：组织界面交互、布<br/>局与堆叠更新。" }
+  class n2 node_system_set
+  class n2 external_node
+  n3@{ shape: rounded, label: "**assign​_​objects​_​to​_​clusters**<br/>来自crate:bevy​_​light ↗：将灯光、探针<br/>及贴花分配到视图分簇。" }
+  class n3 node_system
+  class n3 external_node
+  n4@{ shape: rounded, label: "**build​_​directional​_​light​_​cascades**<br/>来自crate:bevy​_​light ↗：为投射阴影的<br/>方向光构建逐相机级联。" }
+  class n4 node_system
+  class n4 external_node
+  n5@{ shape: rounded, label: "**update​_​text2d​_​layout**<br/>来自crate:bevy​_​sprite ↗：重新排版变化<br/>的二维文字并准备字形。" }
+  class n5 node_system
+  class n5 external_node
+  n0 e0@-->|"集合成员"| n1
+  class e0 edge_set_membership
+  n0 e1@-->|"先于"| n2
+  class e1 edge_order
+  n0 e2@-->|"先于"| n3
+  class e2 edge_order
+  n0 e3@-->|"先于"| n4
+  class e3 edge_order
+  n0 e4@-->|"先于"| n5
+  class e4 edge_order
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }

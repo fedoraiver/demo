@@ -1,0 +1,123 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#object-d9b1acc678e76fd2-e5{marker-start:url(#object-d9b1acc678e76fd2_flowchart-v2-pointStart)!important}\n#object-d9b1acc678e76fd2_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: probe::EnvironmentMapLight · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_observer fill:#F4F1F9,stroke:#7B4DB2,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**EnvironmentMapLight**<br/>用漫反射与镜面反射立方体贴图提供环境光。" }
+  class n0 node_component
+  n1@{ shape: hex, label: "**on​_​insert​_​atmosphere​_​environment​_​**<br/>**map​_​light**<br/>来自crate:bevy​_​pbr ↗：为大气环境光补<br/>齐贴图生成组件。" }
+  class n1 node_observer
+  class n1 external_node
+  n2@{ shape: hex, label: "**on​_​remove​_​atmosphere​_​environment​_​**<br/>**map​_​light**<br/>来自crate:bevy​_​pbr ↗：清理已关闭的大<br/>气环境光组件。" }
+  class n2 node_observer
+  class n2 external_node
+  n3@{ shape: rounded, label: "**extract​_​all**<br/>来自crate:bevy​_​extract ↗：重新提取并<br/>索引主世界的实例数据。" }
+  class n3 node_system
+  class n3 external_node
+  n4@{ shape: hex, label: "**on​_​insert​_​atmosphere​_​environment​_​**<br/>**map​_​light**<br/>来自crate:bevy​_​pbr ↗：为大气环境光补<br/>齐贴图生成组件。" }
+  class n4 node_observer
+  class n4 external_node
+  n5@{ shape: rounded, label: "**extract​_​generated​_​environment​_​map​_​**<br/>**entities**<br/>来自crate:bevy​_​pbr ↗：提取环境图生成<br/>所需的三张 GPU 图像。" }
+  class n5 node_system
+  class n5 external_node
+  n6@{ shape: rounded, label: "**generate​_​environment​_​map​_​light**<br/>来自crate:bevy​_​pbr ↗：为环境光生成分<br/>配漫反射和镜面目标图像。" }
+  class n6 node_system
+  class n6 external_node
+  n7@{ shape: rounded, label: "**extract​_​clusters​_​for​_​cpu​_​clustering**<br/>来自crate:bevy​_​pbr ↗：把 CPU 聚簇结<br/>果转换为渲染侧对象列表。" }
+  class n7 node_system
+  class n7 external_node
+  n8@{ shape: rounded, label: "**assign​_​objects​_​to​_​clusters**<br/>将灯光、探针及贴花分配到视图分簇。" }
+  class n8 node_system
+  n9@{ shape: rounded, label: "**automatically​_​add​_​parallax​_​**<br/>**correction​_​components**<br/>为局部反射探针补入默认视差校正。" }
+  class n9 node_system
+  n10@{ shape: rounded, label: "**gather​_​light​_​probes**<br/>来自crate:bevy​_​pbr ↗：按相机可见集合<br/>和距离分配已就绪光照探针。" }
+  class n10 node_system
+  class n10 external_node
+  n11@{ shape: hex, label: "**on​_​insert​_​atmosphere​_​environment​_​**<br/>**map​_​light**<br/>来自crate:bevy​_​pbr ↗：为大气环境光补<br/>齐贴图生成组件。" }
+  class n11 node_observer
+  class n11 external_node
+  n12@{ shape: hex, label: "**on​_​remove​_​atmosphere​_​environment​_​**<br/>**map​_​light**<br/>来自crate:bevy​_​pbr ↗：清理已关闭的大<br/>气环境光组件。" }
+  class n12 node_observer
+  class n12 external_node
+  n13@{ shape: hex, label: "**on​_​remove​_​atmosphere​_​environment​_​**<br/>**map​_​light**<br/>来自crate:bevy​_​pbr ↗：清理已关闭的大<br/>气环境光组件。" }
+  class n13 node_observer
+  class n13 external_node
+  n1 e0@-->|"移除"| n0
+  class e0 edge_write
+  n2 e1@-->|"移除"| n0
+  class e1 edge_write
+  n0 e2@--> n3
+  class e2 edge_read
+  n4 e3@-->|"移除"| n0
+  class e3 edge_write
+  n0 e4@--> n5
+  class e4 edge_read
+  n6 e5@---|"存在性约束"| n0
+  class e5 edge_reference
+  n0 e6@-->|"存在性约束"| n7
+  class e6 edge_reference
+  n0 e7@-->|"存在性约束"| n8
+  class e7 edge_reference
+  n0 e8@-->|"存在性约束"| n9
+  class e8 edge_reference
+  n0 e9@--> n10
+  class e9 edge_read
+  n11 e10@-->|"移除"| n0
+  class e10 edge_write
+  n12 e11@-->|"移除"| n0
+  class e11 edge_write
+  n13 e12@-->|"移除"| n0
+  class e12 edge_write
+  n6 e13@-->|"插入"| n0
+  class e13 edge_write
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }

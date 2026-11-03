@@ -1,7 +1,119 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
+import { setImmediate as nextTurn } from 'node:timers/promises';
 import { DOMParser } from '@xmldom/xmldom';
-import { normalizeMermaidSvg, routedMermaid } from '../src/mermaid-compiler.mjs';
+import { normalizeMermaidSvg, routedMermaid, mermaidJobCount, compileMermaidViews, mermaidInitializeConfig, withMermaidContext, withMeasuredMermaidPage } from '../src/mermaid-compiler.mjs';
+
+test('Mermaid defaults reserve two available CPUs and explicit jobs permit bounded overrides', async () => {
+  for (const [parallelism, configured, expected] of [[1, undefined, 1], [2, undefined, 1], [4, undefined, 2], [16, undefined, 12], [64, undefined, 12], [1, '3', 3], [16, '32', 32]]) {
+    const jobs = mermaidJobCount({ environment: configured === undefined ? {} : { MERMAID_JOBS: configured }, parallelism });
+    assert.equal(jobs, expected);
+    let active = 0, peak = 0;
+    const views = Array.from({ length: expected + 2 }, (_, id) => ({ id }));
+    const results = await compileMermaidViews(views, async view => {
+      active++; peak = Math.max(peak, active);
+      await nextTurn(); active--; return view.id;
+    }, { jobs });
+    assert.equal(peak, expected, `Available CPUs ${parallelism}, override ${configured}`);
+    assert.deepEqual(results, views.map(view => view.id));
+  }
+});
+
+test('Mermaid job configuration rejects invalid, fractional and excessive values', async () => {
+  for (const MERMAID_JOBS of ['', '0', '-1', '+2', '01', '1.5', '2.0', '1e1', ' 2', '2 ', '33', '999999999999999999', 'NaN', 'Infinity', null, true, 2])
+    assert.throws(() => mermaidJobCount({ environment: { MERMAID_JOBS }, parallelism: 16 }), /MERMAID_JOBS must be an integer from 1 to 32/);
+  for (const jobs of [0, -1, 1.5, 33, '2', NaN]) await assert.rejects(compileMermaidViews([], () => {}, { jobs }), /Mermaid job count/);
+});
+
+test('bounded Mermaid workers keep input order when pages complete out of order and never skip a view', async t => {
+  const views = Array.from({ length: 6 }, (_, id) => ({ id })), before = structuredClone(views);
+  const started = [], finished = [], releases = new Map();
+  t.after(() => { for (const release of releases.values()) release(); });
+  let active = 0, peak = 0;
+  const pending = compileMermaidViews(views, async view => {
+    started.push(view.id); active++; peak = Math.max(peak, active);
+    await new Promise(resolve => releases.set(view.id, resolve));
+    active--; finished.push(view.id); return { viewId: view.id };
+  }, { jobs: 3 });
+  assert.deepEqual(started, [0, 1, 2]);
+  for (const [complete, next] of [[2, 3], [1, 4], [4, 5]]) {
+    releases.get(complete)();
+    await nextTurn(); await nextTurn();
+    assert.equal(started.at(-1), next);
+    assert.equal(active, 3);
+  }
+  for (const id of [5, 3, 0]) { releases.get(id)(); await nextTurn(); }
+  const compiled = await pending;
+  assert.deepEqual(finished, [2, 1, 4, 5, 3, 0]);
+  assert.deepEqual(compiled, views.map(view => ({ viewId: view.id })));
+  assert.equal(peak, 3); assert.equal(active, 0);
+  assert.deepEqual(views, before);
+  let calls = 0;
+  assert.deepEqual(await compileMermaidViews([], () => { calls++; }, { jobs: 32 }), []);
+  assert.equal(calls, 0);
+});
+
+test('a failed Mermaid worker stops taking new views and waits for in-flight pages before rejecting', async t => {
+  const failure = new Error('Fixture compilation failed'), started = [], finished = [];
+  let releasePage, settled = false;
+  t.after(() => releasePage?.());
+  const compiling = compileMermaidViews([0, 1, 2, 3], async id => {
+    started.push(id);
+    if (id === 0) throw failure;
+    await new Promise(resolve => { releasePage = resolve; });
+    finished.push(id); return id;
+  }, { jobs: 2 });
+  const result = compiling.finally(() => { settled = true; });
+  void result.catch(() => {});
+  await nextTurn();
+  assert.deepEqual(started, [0, 1]);
+  assert.equal(settled, false, 'The owner must keep the browser open while the other page is active');
+  releasePage();
+  await assert.rejects(result, error => error === failure);
+  assert.deepEqual(started, [0, 1]);
+  assert.deepEqual(finished, [1]);
+  assert.equal(settled, true);
+});
+
+test('Mermaid secure edge limits count current semantic, Schedule and fallback layout records', () => {
+  assert.deepEqual(mermaidInitializeConfig({ aspect: 'systems' }), { startOnLoad: false, maxTextSize: 200000, maxEdges: 500 });
+  const view = { aspect: 'object', mermaid: '5000 fake --> tokens must not affect the record count',
+    links: new Array(350).fill({}), scheduleLinks: new Array(100).fill({}), layoutLinks: new Array(60).fill({}) };
+  const before = structuredClone(view);
+  assert.equal(mermaidInitializeConfig(view).maxEdges, 510);
+  const fallback = { ...view, layoutLinks: [...view.layoutLinks, ...new Array(120).fill({})] };
+  assert.equal(mermaidInitializeConfig(fallback).maxEdges, 630);
+  assert.deepEqual(view, before);
+});
+
+test('Mermaid text limits grow only to the current candidate character count without changing its source', () => {
+  const short = { aspect: 'object', mermaid: 'flowchart LR\na-->b\n' };
+  assert.equal(mermaidInitializeConfig(short).maxTextSize, 200000);
+  const long = { ...short, mermaid: short.mermaid + '%% 额外源码字符\n'.repeat(30000) }, before = structuredClone(long);
+  assert.ok(long.mermaid.length > 200000);
+  assert.equal(mermaidInitializeConfig(long).maxTextSize, long.mermaid.length);
+  assert.notEqual(mermaidInitializeConfig(long).maxTextSize, Buffer.byteLength(long.mermaid));
+  assert.deepEqual(long, before);
+});
+
+test('Mermaid candidate pages stay in their view context and contexts close after success or failure', async () => {
+  const created = [], closed = [], failure = new Error('Candidate failed');
+  const browser = { createBrowserContext: async () => {
+    const id = created.length; created.push(id);
+    return { newPage: async () => ({ context: id }), close: async () => { closed.push(id); } };
+  } };
+  const result = await withMermaidContext(browser, async scoped => {
+    assert.deepEqual(Object.keys(scoped), ['newPage']);
+    const first = await scoped.newPage(), retry = await scoped.newPage();
+    assert.equal(first.context, retry.context); assert.deepEqual(closed, []);
+    return first.context;
+  });
+  assert.equal(result, 0); assert.deepEqual(closed, [0]);
+  await assert.rejects(withMermaidContext(browser, async scoped => {
+    assert.equal((await scoped.newPage()).context, 1); throw failure;
+  }), error => error === failure);
+  assert.deepEqual(created, [0, 1]); assert.deepEqual(closed, [0, 1]);
+});
 
 test('native routing exports edge curves and rank spans without changing semantic endpoints or IDs', () => {
   const original = { mermaid: '---\n{"config":{"layout":"dagre","flowchart":{"nodeSpacing":32,"rankSpacing":24,"curve":"linear"}}}\n---\nflowchart TB\nn0 e0@--> n1\nn1 e1@--> n2\n' };
@@ -303,4 +415,33 @@ test('native Schedule title measurements remain available independently of node 
   const label = [...doc.getElementById('schedule-fixture-sg0').childNodes].find(child => child.nodeType === 1 && child.getAttribute('class') === 'cluster-label');
   assert.deepEqual(JSON.parse(label.getAttribute('data-label-bounds')), labelBounds);
   assert.equal(normalizeMermaidSvg(view, source, registry).scheduleGroups[0].labelBounds, undefined, 'Old fixtures without native browser measurements remain readable');
+});
+
+
+test('native page closes on render and measurement failures while retaining the view and original cause', async () => {
+  for (const stage of ['render', 'measure', 'close', 'success']) {
+    const failure = new Error(`fixture ${stage}`), closed = [];
+    const browser = { newPage: async () => ({
+      evaluate: async () => { if (stage === 'measure') throw failure; return { header: { width: 2 } }; },
+      close: async () => { closed.push(true); if (stage === 'close' || stage === 'render') throw new Error('close failure'); },
+    }) };
+    const action = withMeasuredMermaidPage(browser, 'fixture-view', async scoped => {
+      const page = await scoped.newPage();
+      if (stage === 'render') throw failure;
+      await page.close();
+      assert.equal(closed.length, 0);
+      return 'rendered';
+    });
+    if (stage === 'success') assert.deepEqual(await action, { result: 'rendered', bounds: { header: { width: 2 } } });
+    else await assert.rejects(action, error => error.message.includes('fixture-view') && error.message.includes(stage === 'close' ? 'page close' : stage)
+      && (stage === 'close' ? error.cause.message === 'close failure' : error.cause === failure));
+    assert.deepEqual(closed, [true]);
+  }
+});
+
+test('context cleanup failure cannot hide the original compilation error', async () => {
+  const failure = new Error('original failure');
+  const browser = { createBrowserContext: async () => ({ close: async () => { throw new Error('context close failure'); } }) };
+  await assert.rejects(withMermaidContext(browser, async () => { throw failure; }), error => error === failure);
+  await assert.rejects(withMermaidContext(browser, async () => 'ok'), /context close failure/);
 });

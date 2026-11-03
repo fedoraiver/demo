@@ -1,0 +1,160 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: bevy_render::view::ViewDepthStencilTexture · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**ViewDepthStencilTexture**<br/>提供视图绘制的深度模板附件。" }
+  class n0 node_component
+  n1@{ shape: rounded, label: "**late​_​prepass**<br/>来自crate:bevy​_​core​_​pipeline ↗：为遮<br/>挡剔除绘制晚期预通道。" }
+  class n1 node_system
+  class n1 external_node
+  n2@{ shape: rounded, label: "**motion​_​blur**<br/>来自crate:bevy​_​post​_​process ↗：读取<br/>当前视图颜色、预通道运动矢量和深度，按快<br/>门角度及采样数执行运动模糊；采样关闭、所<br/>需纹理或管线不可用时跳过。" }
+  class n2 node_system
+  class n2 external_node
+  n3@{ shape: rounded, label: "**prepare​_​downsample​_​depth​_​view​_​bind​_​**<br/>**groups**<br/>来自crate:bevy​_​core​_​pipeline ↗：将主<br/>视图或阴影深度绑定到降采样管线。" }
+  class n3 node_system
+  class n3 external_node
+  n4@{ shape: rounded, label: "**prepare​_​atmosphere​_​bind​_​groups**<br/>来自crate:bevy​_​pbr ↗：为大气查找表计<br/>算和天空绘制绑定视图资源。" }
+  class n4 node_system
+  class n4 external_node
+  n5@{ shape: rounded, label: "**prepare​_​core​_​3d​_​depth​_​textures**<br/>来自crate:bevy​_​core​_​pipeline ↗：按共<br/>享目标准备三维深度纹理与清除方式。" }
+  class n5 node_system
+  class n5 external_node
+  n6@{ shape: rounded, label: "**main​_​transparent​_​pass​_​3d**<br/>来自crate:bevy​_​core​_​pipeline ↗：绘制<br/>三维透明物体并保护 OIT 链表状态。" }
+  class n6 node_system
+  class n6 external_node
+  n7@{ shape: rounded, label: "**late​_​downsample​_​depth**<br/>来自crate:bevy​_​core​_​pipeline ↗：更新<br/>供下一帧早期遮挡测试使用的深度金字塔。" }
+  class n7 node_system
+  class n7 external_node
+  n8@{ shape: rounded, label: "**late​_​deferred​_​prepass**<br/>来自crate:bevy​_​core​_​pipeline ↗：为遮<br/>挡剔除执行晚期延迟预通道。" }
+  class n8 node_system
+  class n8 external_node
+  n9@{ shape: rounded, label: "**main​_​opaque​_​pass​_​3d**<br/>来自crate:bevy​_​core​_​pipeline ↗：绘制<br/>三维不透明、AlphaMask 与天空盒。" }
+  class n9 node_system
+  class n9 external_node
+  n10@{ shape: rounded, label: "**volumetric​_​fog**<br/>来自crate:bevy​_​pbr ↗：结合深度与光照<br/>逐个绘制视图中的雾体。" }
+  class n10 node_system
+  class n10 external_node
+  n11@{ shape: rounded, label: "**main​_​transmissive​_​pass​_​3d**<br/>来自crate:bevy​_​pbr ↗：分层复制场景颜<br/>色并绘制三维透射物体。" }
+  class n11 node_system
+  class n11 external_node
+  n12@{ shape: rounded, label: "**depth​_​of​_​field**<br/>来自crate:bevy​_​post​_​process ↗：以两<br/>阶段全屏通道执行景深模糊。" }
+  class n12 node_system
+  class n12 external_node
+  n13@{ shape: rounded, label: "**main​_​opaque​_​pass​_​2d**<br/>来自crate:bevy​_​core​_​pipeline ↗：绘制<br/>二维不透明和 AlphaMask 阶段。" }
+  class n13 node_system
+  class n13 external_node
+  n14@{ shape: rounded, label: "**early​_​prepass**<br/>来自crate:bevy​_​core​_​pipeline ↗：绘制<br/>早期不透明与 AlphaMask 预通道。" }
+  class n14 node_system
+  class n14 external_node
+  n15@{ shape: rounded, label: "**oit​_​resolve**<br/>来自crate:bevy​_​core​_​pipeline ↗：解析<br/>透明片元并重置 OIT 链表状态。" }
+  class n15 node_system
+  class n15 external_node
+  n16@{ shape: rounded, label: "**early​_​downsample​_​depth**<br/>来自crate:bevy​_​core​_​pipeline ↗：生成<br/>供本帧晚期遮挡测试使用的深度金字塔。" }
+  class n16 node_system
+  class n16 external_node
+  n17@{ shape: rounded, label: "**early​_​deferred​_​prepass**<br/>来自crate:bevy​_​core​_​pipeline ↗：执行<br/>早期延迟预通道并保存深度结果。" }
+  class n17 node_system
+  class n17 external_node
+  n18@{ shape: rounded, label: "**main​_​transparent​_​pass​_​2d**<br/>来自crate:bevy​_​core​_​pipeline ↗：使用<br/>已有深度绘制二维透明阶段。" }
+  class n18 node_system
+  class n18 external_node
+  n19@{ shape: rounded, label: "**prepare​_​core​_​2d​_​depth​_​textures**<br/>来自crate:bevy​_​core​_​pipeline ↗：为有<br/>效二维视图准备共享目标深度纹理。" }
+  class n19 node_system
+  class n19 external_node
+  n0 e0@--> n1
+  class e0 edge_read
+  n0 e1@--> n2
+  class e1 edge_read
+  n0 e2@--> n3
+  class e2 edge_read
+  n0 e3@--> n4
+  class e3 edge_read
+  n5 e4@-->|"插入"| n0
+  class e4 edge_write
+  n0 e5@--> n6
+  class e5 edge_read
+  n0 e6@--> n7
+  class e6 edge_read
+  n0 e7@--> n8
+  class e7 edge_read
+  n0 e8@--> n9
+  class e8 edge_read
+  n0 e9@--> n10
+  class e9 edge_read
+  n0 e10@--> n11
+  class e10 edge_read
+  n0 e11@--> n12
+  class e11 edge_read
+  n0 e12@--> n13
+  class e12 edge_read
+  n0 e13@-->|"存在性约束"| n3
+  class e13 edge_reference
+  n0 e14@--> n14
+  class e14 edge_read
+  n0 e15@--> n15
+  class e15 edge_read
+  n0 e16@--> n16
+  class e16 edge_read
+  n0 e17@--> n17
+  class e17 edge_read
+  n0 e18@--> n18
+  class e18 edge_read
+  n19 e19@-->|"插入"| n0
+  class e19 edge_write
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e17@{ curve: basis }
+  e18@{ curve: basis }
+  e19@{ curve: basis }

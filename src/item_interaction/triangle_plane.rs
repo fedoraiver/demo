@@ -8,8 +8,12 @@ use avian3d::parry::{
 };
 use bevy::prelude::*;
 
-/// 这是接触数值余量，不代表允许跨过薄墙；薄墙路径仍按真实形状连续求交。
+/// 以米计的接触数值余量，不代表允许跨过薄墙；薄墙路径仍按真实形状连续求交。
 pub(super) const CONTACT_MARGIN: f32 = 0.001;
+// 单位法线点积距平行的无量纲误差，只用于辨认可共享余量的原接触平面。
+const CONTACT_PLANE_NORMAL_DOT_TOLERANCE: f32 = 1.0e-5;
+// 证明区间最多二分的层数；无法证明安全时仍回退完整连续求交。
+const MAX_PLANE_PROOF_SUBDIVISION_DEPTH: u8 = 12;
 
 /// 最大法向速度来自支撑映射，覆盖整个形状而非单个接触点。
 pub(super) fn maximum_rotation_closing(
@@ -68,7 +72,7 @@ pub(super) fn stays_outside_triangle_plane(
     }
     // 只有整个障碍的真实原接触平面可共享毫米余量；其他平面必须证明严格保持分离。
     let margin = if initial_plane.is_some_and(|plane| {
-        plane.normal.dot(normal).abs() >= 1.0 - 1.0e-5
+        plane.normal.dot(normal).abs() >= 1.0 - CONTACT_PLANE_NORMAL_DOT_TOLERANCE
             && (plane.point - plane_origin).dot(normal).abs() <= CONTACT_MARGIN
     }) {
         CONTACT_MARGIN
@@ -96,7 +100,7 @@ pub(super) fn stays_outside_triangle_plane(
                 margin,
                 start,
                 end,
-                12,
+                MAX_PLANE_PROOF_SUBDIVISION_DEPTH,
             )
         })
     } else {
@@ -108,7 +112,7 @@ pub(super) fn stays_outside_triangle_plane(
             margin,
             start,
             end,
-            12,
+            MAX_PLANE_PROOF_SUBDIVISION_DEPTH,
         )
     }
 }

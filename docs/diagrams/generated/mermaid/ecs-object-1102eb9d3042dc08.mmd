@@ -1,0 +1,316 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: PrepareResources · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef edge_order stroke:#334155,stroke-width:2px
+  classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: lin-rect, label: "**PrepareResources**<br/>组织渲染数据准备与绘制排队。" }
+  class n0 node_system_set
+  n1@{ shape: rounded, label: "**prepare​_​uniform​_​components**<br/>将组件值批量上传为动态着色器参数。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**prepare​_​uniform​_​components**<br/>将组件值批量上传为动态着色器参数。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**prepare​_​ssao​_​textures**<br/>来自crate:bevy​_​pbr ↗：为环境光遮蔽分<br/>配中间纹理及参数缓冲。" }
+  class n3 node_system
+  class n3 external_node
+  n4@{ shape: rounded, label: "**prepare​_​uniform​_​components**<br/>将组件值批量上传为动态着色器参数。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**prepare​_​core​_​2d​_​depth​_​textures**<br/>来自crate:bevy​_​core​_​pipeline ↗：为有<br/>效二维视图准备共享目标深度纹理。" }
+  class n5 node_system
+  class n5 external_node
+  n6@{ shape: lin-rect, label: "**PrepareResourcesBatchPhases**<br/>组织渲染数据准备与绘制排队。" }
+  class n6 node_system_set
+  n7@{ shape: rounded, label: "**clear​_​scene​_​unpacking​_​buffers**<br/>清空新帧场景解包的两类元数据。" }
+  class n7 node_system
+  n8@{ shape: rounded, label: "**batch​_​and​_​prepare​_​sorted​_​render​_​**<br/>**phase**<br/>按绘制顺序在 CPU 路径上合并兼容批次。" }
+  class n8 node_system
+  n9@{ shape: rounded, label: "**prepare​_​deferred​_​lighting​_​id​_​**<br/>**textures**<br/>来自crate:bevy​_​core​_​pipeline ↗：为延<br/>迟预通道相机分配光照标识深度纹理。" }
+  class n9 node_system
+  class n9 external_node
+  n10@{ shape: lin-rect, label: "**Prepare**<br/>组织渲染数据准备与绘制排队。" }
+  class n10 node_system_set
+  n11@{ shape: rounded, label: "**prepare​_​core​_​3d​_​depth​_​textures**<br/>来自crate:bevy​_​core​_​pipeline ↗：按共<br/>享目标准备三维深度纹理与清除方式。" }
+  class n11 node_system
+  class n11 external_node
+  n12@{ shape: rounded, label: "**prepare​_​taa​_​history​_​textures**<br/>来自crate:bevy​_​anti​_​alias ↗：按帧奇<br/>偶为 TAA 轮换读写历史纹理。" }
+  class n12 node_system
+  class n12 external_node
+  n13@{ shape: rounded, label: "**prepare​_​skins**<br/>来自crate:bevy​_​pbr ↗：交换本帧与上一<br/>帧的骨骼 GPU 缓冲，按暂存关节矩阵数量扩<br/>容并上传数据；新建上一帧缓冲时使用当前姿<br/>势填充。" }
+  class n13 node_system
+  class n13 external_node
+  n14@{ shape: rounded, label: "**prepare​_​atmosphere​_​uniforms**<br/>来自crate:bevy​_​pbr ↗：把提取的大气几<br/>何转换为 GPU Uniform 组件。" }
+  class n14 node_system
+  class n14 external_node
+  n15@{ shape: rounded, label: "**prepare​_​uniform​_​components**<br/>将组件值批量上传为动态着色器参数。" }
+  class n15 node_system
+  n16@{ shape: rounded, label: "**prepare​_​smaa​_​uniforms**<br/>来自crate:bevy​_​anti​_​alias ↗：上传各<br/>SMAA 视图的尺寸及倒数参数。" }
+  class n16 node_system
+  class n16 external_node
+  n17@{ shape: rounded, label: "**prepare​_​oit​_​buffers**<br/>来自crate:bevy​_​core​_​pipeline ↗：调整<br/>共享 OIT 存储并上传逐相机设置。" }
+  class n17 node_system
+  class n17 external_node
+  n18@{ shape: rounded, label: "**prepare​_​probe​_​textures**<br/>来自crate:bevy​_​pbr ↗：为环境探针借用<br/>大气查找纹理并创建输出视图。" }
+  class n18 node_system
+  class n18 external_node
+  n19@{ shape: rounded, label: "**prepare​_​core​_​3d​_​transmission​_​**<br/>**textures**<br/>来自crate:bevy​_​pbr ↗：为需要多步透射<br/>的视图准备场景颜色拷贝纹理。" }
+  class n19 node_system
+  class n19 external_node
+  n20@{ shape: rounded, label: "**prepare​_​fog**<br/>来自crate:bevy​_​pbr ↗：转换并上传各视<br/>图的距离雾参数。" }
+  class n20 node_system
+  class n20 external_node
+  n21@{ shape: rounded, label: "**prepare​_​uniform​_​components**<br/>将组件值批量上传为动态着色器参数。" }
+  class n21 node_system
+  n22@{ shape: rounded, label: "**upload​_​view​_​gpu​_​clustering​_​buffers**<br/>来自crate:bevy​_​pbr ↗：上传聚簇深度切<br/>片、元数据和计数暂存。" }
+  class n22 node_system
+  class n22 external_node
+  n23@{ shape: rounded, label: "**prepare​_​previous​_​view​_​uniforms**<br/>来自crate:bevy​_​pbr ↗：重建前帧抖动矩<br/>阵并上传视图历史参数。" }
+  class n23 node_system
+  class n23 external_node
+  n24@{ shape: rounded, label: "**batch​_​and​_​prepare​_​binned​_​render​_​**<br/>**phase**<br/>在 CPU 路径上准备分桶阶段的绘制批次。" }
+  class n24 node_system
+  n25@{ shape: rounded, label: "**prepare​_​bloom​_​textures**<br/>来自crate:bevy​_​post​_​process ↗：按视<br/>口比例分配 Bloom 多级纹理。" }
+  class n25 node_system
+  class n25 external_node
+  n26@{ shape: rounded, label: "**prepare​_​globals​_​buffer**<br/>更新并上传着色器全局时间与帧号。" }
+  class n26 node_system
+  n27@{ shape: rounded, label: "**prepare​_​generated​_​environment​_​map​_​**<br/>**intermediate​_​textures**<br/>来自crate:bevy​_​pbr ↗：按源立方图尺寸<br/>分配完整 mip 链中间纹理。" }
+  class n27 node_system
+  class n27 external_node
+  n28@{ shape: rounded, label: "**prepare​_​uniform​_​components**<br/>将组件值批量上传为动态着色器参数。" }
+  class n28 node_system
+  n29@{ shape: rounded, label: "**prepare​_​uniform​_​components**<br/>将组件值批量上传为动态着色器参数。" }
+  class n29 node_system
+  n30@{ shape: rounded, label: "**prepare​_​clusters​_​for​_​gpu​_​clustering**<br/>来自crate:bevy​_​pbr ↗：按视图规模和回<br/>读容量分配 GPU 聚簇缓冲。" }
+  class n30 node_system
+  class n30 external_node
+  n31@{ shape: rounded, label: "**prepare​_​view​_​depth​_​pyramids**<br/>来自crate:bevy​_​core​_​pipeline ↗：为遮<br/>挡剔除视图维护深度金字塔。" }
+  class n31 node_system
+  class n31 external_node
+  n32@{ shape: rounded, label: "**prepare​_​atmosphere​_​transforms**<br/>来自crate:bevy​_​pbr ↗：按相机位置构造<br/>大气局部坐标变换。" }
+  class n32 node_system
+  class n32 external_node
+  n33@{ shape: rounded, label: "**prepare​_​buffers**<br/>读取 GPU 回读请求，为纹理或存储缓冲的指<br/>定区段从缓冲池取得暂存空间并创建异步完成<br/>通道；越界缓冲区段会报错。" }
+  class n33 node_system
+  n34@{ shape: rounded, label: "**prepare​_​uniform​_​components**<br/>将组件值批量上传为动态着色器参数。" }
+  class n34 node_system
+  n35@{ shape: rounded, label: "**prepare​_​prepass​_​textures**<br/>来自crate:bevy​_​core​_​pipeline ↗：按三<br/>维预通道配置分配各类输出纹理。" }
+  class n35 node_system
+  class n35 external_node
+  n36@{ shape: rounded, label: "**prepare​_​contact​_​shadows​_​settings**<br/>来自crate:bevy​_​pbr ↗：上传各视图接触<br/>阴影设置并记录动态偏移。" }
+  class n36 node_system
+  class n36 external_node
+  n37@{ shape: rounded, label: "**prepare​_​atmosphere​_​buffers**<br/>来自crate:bevy​_​pbr ↗：上传各视图的大<br/>气和采样设置缓冲。" }
+  class n37 node_system
+  class n37 external_node
+  n38@{ shape: rounded, label: "**prepare​_​smaa​_​textures**<br/>来自crate:bevy​_​anti​_​alias ↗：为<br/>SMAA 分配边缘、模板和混合权重纹理。" }
+  class n38 node_system
+  class n38 external_node
+  n39@{ shape: rounded, label: "**prepare​_​uniform​_​components**<br/>将组件值批量上传为动态着色器参数。" }
+  class n39 node_system
+  n40@{ shape: rounded, label: "**prepare​_​downsample​_​depth​_​view​_​bind​_​**<br/>**groups**<br/>来自crate:bevy​_​core​_​pipeline ↗：将主<br/>视图或阴影深度绑定到降采样管线。" }
+  class n40 node_system
+  class n40 external_node
+  n41@{ shape: rounded, label: "**prepare​_​ssr​_​settings**<br/>来自crate:bevy​_​pbr ↗：上传各视图反射<br/>参数并记录动态缓冲偏移。" }
+  class n41 node_system
+  class n41 external_node
+  n42@{ shape: rounded, label: "**delete​_​old​_​work​_​item​_​buffers**<br/>释放已消失视图的 GPU 预处理任务缓冲。" }
+  class n42 node_system
+  n43@{ shape: rounded, label: "**batch​_​and​_​prepare​_​binned​_​render​_​**<br/>**phase**<br/>在 CPU 路径上准备分桶阶段的绘制批次。" }
+  class n43 node_system
+  n44@{ shape: rounded, label: "**prepare​_​clusters​_​for​_​cpu​_​clustering**<br/>来自crate:bevy​_​pbr ↗：把 CPU 聚簇列<br/>表转换并上传为 GPU 索引缓冲。" }
+  class n44 node_system
+  class n44 external_node
+  n45@{ shape: rounded, label: "**prepare​_​mip​_​generator​_​pipelines**<br/>来自crate:bevy​_​core​_​pipeline ↗：为本<br/>帧 mip 生成任务准备并复用 GPU 资源。" }
+  class n45 node_system
+  class n45 external_node
+  n46@{ shape: rounded, label: "**upload​_​light​_​probes**<br/>来自crate:bevy​_​pbr ↗：上传各视图的环<br/>境图、反射与辐照探针参数。" }
+  class n46 node_system
+  class n46 external_node
+  n47@{ shape: rounded, label: "**upload​_​decals**<br/>来自crate:bevy​_​pbr ↗：把本帧渲染贴花<br/>列表写入 GPU 缓冲；没有贴花时仍写入一个<br/>默认项，保证后续存在可绑定的缓冲。" }
+  class n47 node_system
+  class n47 external_node
+  n48@{ shape: rounded, label: "**prepare​_​atmosphere​_​textures**<br/>来自crate:bevy​_​pbr ↗：按大气设置准备<br/>四类查找纹理。" }
+  class n48 node_system
+  class n48 external_node
+  n49@{ shape: rounded, label: "**prepare​_​view​_​uniforms**<br/>生成视图投影、抖动、裁剪及 LOD 的 GPU<br/>参数。" }
+  class n49 node_system
+  n0 e0@-->|"集合成员"| n1
+  class e0 edge_set_membership
+  n0 e1@-->|"集合成员"| n2
+  class e1 edge_set_membership
+  n0 e2@-->|"集合成员"| n3
+  class e2 edge_set_membership
+  n0 e3@-->|"集合成员"| n4
+  class e3 edge_set_membership
+  n0 e4@-->|"集合成员"| n5
+  class e4 edge_set_membership
+  n0 e5@-->|"先于"| n6
+  class e5 edge_order
+  n0 e6@-->|"集合成员"| n7
+  class e6 edge_set_membership
+  n0 e7@-->|"集合成员"| n8
+  class e7 edge_set_membership
+  n0 e8@-->|"集合成员"| n9
+  class e8 edge_set_membership
+  n10 e9@-->|"集合成员"| n0
+  class e9 edge_set_membership
+  n0 e10@-->|"集合成员"| n11
+  class e10 edge_set_membership
+  n0 e11@-->|"集合成员"| n12
+  class e11 edge_set_membership
+  n0 e12@-->|"集合成员"| n13
+  class e12 edge_set_membership
+  n14 e13@-->|"先于"| n0
+  class e13 edge_order
+  n0 e14@-->|"集合成员"| n15
+  class e14 edge_set_membership
+  n0 e15@-->|"集合成员"| n16
+  class e15 edge_set_membership
+  n0 e16@-->|"集合成员"| n17
+  class e16 edge_set_membership
+  n0 e17@-->|"集合成员"| n18
+  class e17 edge_set_membership
+  n0 e18@-->|"集合成员"| n19
+  class e18 edge_set_membership
+  n0 e19@-->|"集合成员"| n20
+  class e19 edge_set_membership
+  n0 e20@-->|"集合成员"| n21
+  class e20 edge_set_membership
+  n0 e21@-->|"集合成员"| n22
+  class e21 edge_set_membership
+  n0 e22@-->|"集合成员"| n23
+  class e22 edge_set_membership
+  n0 e23@-->|"集合成员"| n24
+  class e23 edge_set_membership
+  n0 e24@-->|"集合成员"| n25
+  class e24 edge_set_membership
+  n0 e25@-->|"集合成员"| n26
+  class e25 edge_set_membership
+  n0 e26@-->|"集合成员"| n27
+  class e26 edge_set_membership
+  n0 e27@-->|"集合成员"| n28
+  class e27 edge_set_membership
+  n0 e28@-->|"集合成员"| n29
+  class e28 edge_set_membership
+  n0 e29@-->|"集合成员"| n30
+  class e29 edge_set_membership
+  n0 e30@-->|"集合成员"| n31
+  class e30 edge_set_membership
+  n0 e31@-->|"集合成员"| n32
+  class e31 edge_set_membership
+  n0 e32@-->|"集合成员"| n33
+  class e32 edge_set_membership
+  n0 e33@-->|"集合成员"| n34
+  class e33 edge_set_membership
+  n0 e34@-->|"集合成员"| n35
+  class e34 edge_set_membership
+  n0 e35@-->|"集合成员"| n36
+  class e35 edge_set_membership
+  n0 e36@-->|"集合成员"| n37
+  class e36 edge_set_membership
+  n0 e37@-->|"集合成员"| n38
+  class e37 edge_set_membership
+  n0 e38@-->|"集合成员"| n39
+  class e38 edge_set_membership
+  n0 e39@-->|"集合成员"| n40
+  class e39 edge_set_membership
+  n0 e40@-->|"集合成员"| n41
+  class e40 edge_set_membership
+  n0 e41@-->|"集合成员"| n42
+  class e41 edge_set_membership
+  n0 e42@-->|"集合成员"| n43
+  class e42 edge_set_membership
+  n0 e43@-->|"集合成员"| n44
+  class e43 edge_set_membership
+  n0 e44@-->|"集合成员"| n45
+  class e44 edge_set_membership
+  n0 e45@-->|"集合成员"| n46
+  class e45 edge_set_membership
+  n0 e46@-->|"集合成员"| n47
+  class e46 edge_set_membership
+  n0 e47@-->|"集合成员"| n48
+  class e47 edge_set_membership
+  n0 e48@-->|"集合成员"| n49
+  class e48 edge_set_membership
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e17@{ curve: basis }
+  e18@{ curve: basis }
+  e19@{ curve: basis }
+  e20@{ curve: basis }
+  e21@{ curve: basis }
+  e22@{ curve: basis }
+  e23@{ curve: basis }
+  e24@{ curve: basis }
+  e26@{ curve: basis }
+  e27@{ curve: basis }
+  e28@{ curve: basis }
+  e29@{ curve: basis }
+  e30@{ curve: basis }
+  e31@{ curve: basis }
+  e32@{ curve: basis }
+  e33@{ curve: basis }
+  e34@{ curve: basis }
+  e35@{ curve: basis }
+  e36@{ curve: basis }
+  e37@{ curve: basis }
+  e38@{ curve: basis }
+  e39@{ curve: basis }
+  e40@{ curve: basis }
+  e41@{ curve: basis }
+  e42@{ curve: basis }
+  e43@{ curve: basis }
+  e44@{ curve: basis }
+  e45@{ curve: basis }
+  e46@{ curve: basis }
+  e47@{ curve: basis }
+  e48@{ curve: basis }

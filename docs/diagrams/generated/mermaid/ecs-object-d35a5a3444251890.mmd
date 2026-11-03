@@ -1,0 +1,400 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#object-d35a5a3444251890-e3{marker-start:url(#object-d35a5a3444251890_flowchart-v2-pointStart)!important}\n#object-d35a5a3444251890-e27{marker-start:url(#object-d35a5a3444251890_flowchart-v2-pointStart)!important}\n#object-d35a5a3444251890-e35{marker-start:url(#object-d35a5a3444251890_flowchart-v2-pointStart)!important}\n#object-d35a5a3444251890-e45{marker-start:url(#object-d35a5a3444251890_flowchart-v2-pointStart)!important}\n#object-d35a5a3444251890-e48{marker-start:url(#object-d35a5a3444251890_flowchart-v2-pointStart)!important}\n#object-d35a5a3444251890_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: physics_transform::transform::Position · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_observer fill:#F4F1F9,stroke:#7B4DB2,stroke-width:1.6px,color:#1F3340
+  classDef node_entity fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  subgraph layout_card_n0[" "]
+  n0@{ shape: rounded, label: "**Position**<br/>保存刚体或碰撞体的世界位置。" }
+  class n0 node_component
+  end
+  style layout_card_n0 fill:none,stroke:none
+  subgraph layout_card_n1[" "]
+  n1@{ shape: rounded, label: "**update​_​moved​_​collider​_​aabbs**<br/>重算物理步后被手动改变的碰撞边界。" }
+  class n1 node_system
+  end
+  style layout_card_n1 fill:none,stroke:none
+  subgraph layout_card_n2[" "]
+  n2@{ shape: rounded, label: "**recover​_​from​_​water**<br/>来自bounds​_​recovery ↗：恢复实体自身的<br/>出生姿态；角色落水只释放手中物品，物品落<br/>水时再独立恢复。" }
+  class n2 node_system
+  class n2 external_node
+  end
+  style layout_card_n2 fill:none,stroke:none
+  subgraph layout_card_n3[" "]
+  n3@{ shape: rounded, label: "**wake​_​changed​_​bodies**<br/>来自physics ↗：Avian 的自动唤醒在求解<br/>之后；外部冲量和施力应在本步准备求解器之<br/>前生效。" }
+  class n3 node_system
+  class n3 external_node
+  end
+  style layout_card_n3 fill:none,stroke:none
+  subgraph layout_card_n4[" "]
+  n4@{ shape: rounded, label: "**sync​_​held​_​physics**<br/>来自item​_​interaction ↗：同步组合体内<br/>箱子的真实世界姿态和速度，不依赖人物是否<br/>具有视觉 Children。" }
+  class n4 node_system
+  class n4 external_node
+  end
+  style layout_card_n4 fill:none,stroke:none
+  subgraph layout_card_n5[" "]
+  n5@{ shape: rounded, label: "**sync​_​held​_​physics**<br/>来自item​_​interaction ↗：同步组合体内<br/>箱子的真实世界姿态和速度，不依赖人物是否<br/>具有视觉 Children。" }
+  class n5 node_system
+  class n5 external_node
+  end
+  style layout_card_n5 fill:none,stroke:none
+  subgraph layout_card_n6[" "]
+  n6@{ shape: rounded, label: "**sync​_​character​_​facing**<br/>来自first​_​person ↗：在固定模拟前及逐<br/>帧持握目标同步前设置水平朝向，站立、横移<br/>和后退时也跟随视角。" }
+  class n6 node_system
+  class n6 external_node
+  end
+  style layout_card_n6 fill:none,stroke:none
+  subgraph layout_card_n7[" "]
+  n7@{ shape: rounded, label: "**move​_​characters**<br/>来自character ↗：用有上限的加速度趋近<br/>目标水平速度，保留碰撞和外部冲量造成的实<br/>际运动。" }
+  class n7 node_system
+  class n7 external_node
+  end
+  style layout_card_n7 fill:none,stroke:none
+  subgraph layout_card_n8[" "]
+  n8@{ shape: rounded, label: "**prepare​_​island · 创建模板**<br/>来自scene​_​assembly ↗：把已准备的海岛<br/>几何接入世界静态碰撞。" }
+  class n8 node_entity
+  class n8 external_node
+  end
+  style layout_card_n8 fill:none,stroke:none
+  subgraph layout_card_n9[" "]
+  n9@{ shape: rounded, label: "**align​_​attachments**<br/>来自item​_​interaction ↗：有限的小步对<br/>齐不会积分箱体力；受阻保留安全姿态，持续<br/>受阻则解除持握。" }
+  class n9 node_system
+  class n9 external_node
+  end
+  style layout_card_n9 fill:none,stroke:none
+  subgraph layout_card_n10[" "]
+  n10@{ shape: rounded, label: "**update​_​local​_​frames**<br/>将球铰参考框架换算到局部空间。" }
+  class n10 node_system
+  end
+  style layout_card_n10 fill:none,stroke:none
+  subgraph layout_card_n11[" "]
+  n11@{ shape: rounded, label: "**sync​_​held​_​physics**<br/>来自item​_​interaction ↗：同步组合体内<br/>箱子的真实世界姿态和速度，不依赖人物是否<br/>具有视觉 Children。" }
+  class n11 node_system
+  class n11 external_node
+  end
+  style layout_card_n11 fill:none,stroke:none
+  subgraph layout_card_n12[" "]
+  n12@{ shape: rounded, label: "**solve​_​continuous**<br/>通过连续扫掠限制快速刚体穿透。" }
+  class n12 node_system
+  end
+  style layout_card_n12 fill:none,stroke:none
+  subgraph layout_card_n13[" "]
+  n13@{ shape: rounded, label: "**update​_​local​_​frames**<br/>将旋转关节参考框架换算到局部空间。" }
+  class n13 node_system
+  end
+  style layout_card_n13 fill:none,stroke:none
+  subgraph layout_card_n14[" "]
+  n14@{ shape: rounded, label: "**raycast**<br/>执行已启用的射线查询并更新命中列表。" }
+  class n14 node_system
+  end
+  style layout_card_n14 fill:none,stroke:none
+  subgraph layout_card_n15[" "]
+  n15@{ shape: rounded, label: "**update​_​local​_​frames**<br/>将滑动关节参考框架换算到局部空间。" }
+  class n15 node_system
+  end
+  style layout_card_n15 fill:none,stroke:none
+  subgraph layout_card_n16[" "]
+  n16@{ shape: rounded, label: "**update​_​local​_​frames**<br/>将固定关节参考框架换算到两端局部空间。" }
+  class n16 node_system
+  end
+  style layout_card_n16 fill:none,stroke:none
+  subgraph layout_card_n17[" "]
+  n17@{ shape: rounded, label: "**sync​_​character​_​facing**<br/>来自first​_​person ↗：在固定模拟前及逐<br/>帧持握目标同步前设置水平朝向，站立、横移<br/>和后退时也跟随视角。" }
+  class n17 node_system
+  class n17 external_node
+  end
+  style layout_card_n17 fill:none,stroke:none
+  subgraph layout_card_n18[" "]
+  n18@{ shape: rounded, label: "**wake​_​on​_​changed**<br/>因外部位姿、速度或受力变化标记物理岛唤<br/>醒。" }
+  class n18 node_system
+  end
+  style layout_card_n18 fill:none,stroke:none
+  subgraph layout_card_n19[" "]
+  n19@{ shape: rounded, label: "**update​_​solver​_​body​_​aabbs**<br/>按物理结果更新活跃刚体的碰撞边界。" }
+  class n19 node_system
+  end
+  style layout_card_n19 fill:none,stroke:none
+  subgraph layout_card_n20[" "]
+  n20@{ shape: rounded, label: "**shapecast**<br/>执行已启用的形状扫掠并更新命中列表。" }
+  class n20 node_system
+  end
+  style layout_card_n20 fill:none,stroke:none
+  subgraph layout_card_n21[" "]
+  n21@{ shape: rounded, label: "**handle​_​interaction**<br/>来自item​_​interaction ↗：拾取建立物理<br/>持握关系；释放只解除控制，保留刚体姿态、<br/>线速度和角速度。" }
+  class n21 node_system
+  class n21 external_node
+  end
+  style layout_card_n21 fill:none,stroke:none
+  subgraph layout_card_n22[" "]
+  n22@{ shape: rounded, label: "**jump​_​characters**<br/>来自character ↗：跳跃只消费一次，通过<br/>冲量改变速度；重力和位置积分全部交给<br/>Avian。" }
+  class n22 node_system
+  class n22 external_node
+  end
+  style layout_card_n22 fill:none,stroke:none
+  subgraph layout_card_n23[" "]
+  n23@{ shape: rounded, label: "**prepare​_​island · 创建模板**<br/>来自scene​_​assembly ↗：使固定站位的展<br/>示 NPC 阻挡人物与箱体。" }
+  class n23 node_entity
+  class n23 external_node
+  end
+  style layout_card_n23 fill:none,stroke:none
+  subgraph layout_card_n24[" "]
+  n24@{ shape: rounded, label: "**update​_​child​_​collider​_​position**<br/>由所属刚体位姿更新附属碰撞体的世界位姿。" }
+  class n24 node_system
+  end
+  style layout_card_n24 fill:none,stroke:none
+  subgraph layout_card_n25[" "]
+  n25@{ shape: rounded, label: "**writeback​_​solver​_​bodies**<br/>将求解后的位姿和速度回写 ECS。" }
+  class n25 node_system
+  end
+  style layout_card_n25 fill:none,stroke:none
+  subgraph layout_card_n26[" "]
+  n26@{ shape: rounded, label: "**position​_​to​_​transform**<br/>把物理世界位姿转换为显示用局部变换。" }
+  class n26 node_system
+  end
+  style layout_card_n26 fill:none,stroke:none
+  subgraph layout_card_n27[" "]
+  n27@{ shape: rounded, label: "**update​_​narrow​_​phase**<br/>更新窄相接触并输出碰撞变化消息。" }
+  class n27 node_system
+  end
+  style layout_card_n27 fill:none,stroke:none
+  subgraph layout_card_n28[" "]
+  n28@{ shape: rounded, label: "**update​_​ray​_​caster​_​positions**<br/>把射线发射器的局部原点和方向换到世界空<br/>间。" }
+  class n28 node_system
+  end
+  style layout_card_n28 fill:none,stroke:none
+  subgraph layout_card_n29[" "]
+  n29@{ shape: rounded, label: "**update​_​grounded**<br/>来自character ↗：脚底附近的小球向下探<br/>测支撑面；墙面法线和上升中的角色不能算接<br/>地。" }
+  class n29 node_system
+  class n29 external_node
+  end
+  style layout_card_n29 fill:none,stroke:none
+  subgraph layout_card_n30[" "]
+  n30@{ shape: hex, label: "**build::{closure#35;0}**<br/>初始化碰撞体包围盒与边距缓存。" }
+  class n30 node_observer
+  end
+  style layout_card_n30 fill:none,stroke:none
+  subgraph layout_card_n31[" "]
+  n31@{ shape: rounded, label: "**warn​_​hold​_​strain**<br/>来自item​_​interaction ↗：持续偏离实际<br/>握点时提示一次，误差恢复后允许下一次告<br/>警。" }
+  class n31 node_system
+  class n31 external_node
+  end
+  style layout_card_n31 fill:none,stroke:none
+  subgraph layout_card_n32[" "]
+  n32@{ shape: rounded, label: "**release​_​orphaned​_​items**<br/>来自item​_​interaction ↗：关系被外部解<br/>除或人物销毁时，独立箱实体仍能恢复自由刚<br/>体，不产生残留附属碰撞。" }
+  class n32 node_system
+  class n32 external_node
+  end
+  style layout_card_n32 fill:none,stroke:none
+  subgraph layout_card_n33[" "]
+  n33@{ shape: rounded, label: "**assert​_​components​_​finite**<br/>在调试构建检查物理位置和速度是否有限。" }
+  class n33 node_system
+  end
+  style layout_card_n33 fill:none,stroke:none
+  subgraph layout_card_n34[" "]
+  n34@{ shape: rounded, label: "**update​_​shape​_​caster​_​positions**<br/>把形状扫掠的原点、方向和形状朝向换到世界<br/>空间。" }
+  class n34 node_system
+  end
+  style layout_card_n34 fill:none,stroke:none
+  subgraph layout_card_n35[" "]
+  n35@{ shape: rounded, label: "**transform​_​to​_​position**<br/>把用户改变的世界变换同步到物理位姿。" }
+  class n35 node_system
+  end
+  style layout_card_n35 fill:none,stroke:none
+  subgraph layout_card_n36[" "]
+  n36@{ shape: rounded, label: "**update​_​local​_​anchors**<br/>将距离关节的锚点换算到刚体局部空间。" }
+  class n36 node_system
+  end
+  style layout_card_n36 fill:none,stroke:none
+  subgraph layout_card_n37[" "]
+  n37@{ shape: rounded, label: "**update​_​grounded**<br/>来自character ↗：脚底附近的小球向下探<br/>测支撑面；墙面法线和上升中的角色不能算接<br/>地。" }
+  class n37 node_system
+  class n37 external_node
+  end
+  style layout_card_n37 fill:none,stroke:none
+  n0 e0@--> n1
+  class e0 edge_read
+  n2 e1@-->|"赋值"| n0
+  class e1 edge_write
+  n0 e2@-->|"存在性约束"| n3
+  class e2 edge_reference
+  n4 e3@--- n0
+  class e3 edge_read
+  n5 e4@-->|"赋值"| n0
+  class e4 edge_write
+  n0 e5@--> n6
+  class e5 edge_read
+  n0 e6@--> n7
+  class e6 edge_read
+  n8 e7@-->|"可能包含"| n0
+  class e7 edge_reference
+  n4 e8@-->|"可变访问"| n0
+  class e8 edge_write
+  n0 e9@--> n9
+  class e9 edge_read
+  n0 e10@--> n10
+  class e10 edge_read
+  n11 e11@-->|"赋值"| n0
+  class e11 edge_write
+  n0 e12@--> n12
+  class e12 edge_read
+  n0 e13@--> n13
+  class e13 edge_read
+  n0 e14@--> n3
+  class e14 edge_read
+  n0 e15@--> n14
+  class e15 edge_read
+  n0 e16@--> n15
+  class e16 edge_read
+  n0 e17@--> n16
+  class e17 edge_read
+  n0 e18@--> n17
+  class e18 edge_read
+  n0 e19@-->|"存在性约束"| n18
+  class e19 edge_reference
+  n2 e20@-->|"可变访问"| n0
+  class e20 edge_write
+  n0 e21@--> n19
+  class e21 edge_read
+  n0 e22@--> n20
+  class e22 edge_read
+  n0 e23@--> n21
+  class e23 edge_read
+  n0 e24@--> n18
+  class e24 edge_read
+  n0 e25@--> n22
+  class e25 edge_read
+  n23 e26@-->|"可能包含"| n0
+  class e26 edge_reference
+  n24 e27@--- n0
+  class e27 edge_read
+  n5 e28@-->|"可变访问"| n0
+  class e28 edge_write
+  n24 e29@-->|"赋值"| n0
+  class e29 edge_write
+  n25 e30@-->|"可变访问"| n0
+  class e30 edge_write
+  n0 e31@-->|"存在性约束"| n26
+  class e31 edge_reference
+  n0 e32@--> n27
+  class e32 edge_read
+  n0 e33@--> n28
+  class e33 edge_read
+  n0 e34@--> n26
+  class e34 edge_read
+  n2 e35@--- n0
+  class e35 edge_read
+  n0 e36@--> n29
+  class e36 edge_read
+  n0 e37@--> n30
+  class e37 edge_read
+  n4 e38@-->|"赋值"| n0
+  class e38 edge_write
+  n0 e39@--> n31
+  class e39 edge_read
+  n0 e40@--> n32
+  class e40 edge_read
+  n0 e41@--> n33
+  class e41 edge_read
+  n11 e42@-->|"可变访问"| n0
+  class e42 edge_write
+  n0 e43@--> n34
+  class e43 edge_read
+  n35 e44@-->|"可变访问"| n0
+  class e44 edge_write
+  n5 e45@--- n0
+  class e45 edge_read
+  n24 e46@-->|"可变访问"| n0
+  class e46 edge_write
+  n0 e47@--> n36
+  class e47 edge_read
+  n11 e48@--- n0
+  class e48 edge_read
+  n0 e49@--> n37
+  class e49 edge_read
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e17@{ curve: basis }
+  e18@{ curve: basis }
+  e19@{ curve: basis }
+  e20@{ curve: basis }
+  e21@{ curve: basis }
+  e22@{ curve: basis }
+  e23@{ curve: basis }
+  e24@{ curve: basis }
+  e25@{ curve: basis }
+  e26@{ curve: basis }
+  e27@{ curve: basis }
+  e28@{ curve: basis }
+  e29@{ curve: basis }
+  e30@{ curve: basis }
+  e31@{ curve: basis }
+  e32@{ curve: basis }
+  e33@{ curve: basis }
+  e34@{ curve: basis }
+  e35@{ curve: basis }
+  e36@{ curve: basis }
+  e37@{ curve: basis }
+  e38@{ curve: basis }
+  e39@{ curve: basis }
+  e40@{ curve: basis }
+  e41@{ curve: basis }
+  e42@{ curve: basis }
+  e43@{ curve: basis }
+  e44@{ curve: basis }
+  e45@{ curve: basis }
+  e46@{ curve: basis }
+  e47@{ curve: basis }
+  e48@{ curve: basis }
+  e49@{ curve: basis }

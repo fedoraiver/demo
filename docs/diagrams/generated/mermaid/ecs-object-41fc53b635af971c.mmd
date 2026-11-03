@@ -1,0 +1,237 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#object-41fc53b635af971c-e6{marker-start:url(#object-41fc53b635af971c_flowchart-v2-pointStart)!important}\n#object-41fc53b635af971c-e13{marker-start:url(#object-41fc53b635af971c_flowchart-v2-pointStart)!important}\n#object-41fc53b635af971c-e21{marker-start:url(#object-41fc53b635af971c_flowchart-v2-pointStart)!important}\n#object-41fc53b635af971c-e24{marker-start:url(#object-41fc53b635af971c_flowchart-v2-pointStart)!important}\n#object-41fc53b635af971c_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: bevy_ui_render::extract_ui_camera_view · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef node_local fill:#F8F5F1,stroke:#AA8752,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_plugin fill:#F1F3F6,stroke:#4A6389,stroke-width:2.2px,color:#1F3340
+  classDef edge_order stroke:#334155,stroke-width:2px
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  subgraph layout_card_n0[" "]
+  n0@{ shape: rounded, label: "**extract​_​ui​_​camera​_​view**<br/>为活动二维或三维相机维护独立 UI 视图。" }
+  class n0 node_system
+  end
+  style layout_card_n0 fill:none,stroke:none
+  subgraph layout_card_n1[" "]
+  n1@{ shape: lin-rect, label: "**ExtractCameraViews**<br/>组织各类界面绘制数据提取。" }
+  class n1 node_system_set
+  end
+  style layout_card_n1 fill:none,stroke:none
+  subgraph layout_card_n2[" "]
+  n2@{ shape: cyl, label: "**CameraMainPassTextureFormats**<br/>来自crate:bevy​_​render ↗：按相机渲染实<br/>体记录主通道颜色格式。" }
+  class n2 node_resource
+  class n2 external_node
+  end
+  style layout_card_n2 fill:none,stroke:none
+  subgraph layout_card_n3[" "]
+  n3@{ shape: rounded, label: "**UiCameraView**<br/>从主渲染目标视图定位对应的 UI 视图。" }
+  class n3 node_component
+  end
+  style layout_card_n3 fill:none,stroke:none
+  subgraph layout_card_n4[" "]
+  n4@{ shape: rounded, label: "**Camera2d**<br/>来自crate:bevy​_​camera ↗：标记使用二维<br/>渲染流程的相机。" }
+  class n4 node_component
+  class n4 external_node
+  end
+  style layout_card_n4 fill:none,stroke:none
+  subgraph layout_card_n5[" "]
+  n5@{ shape: fr-rect, label: "**UiRenderPlugin**<br/>提取并准备界面绘制数据。" }
+  class n5 node_plugin
+  end
+  style layout_card_n5 fill:none,stroke:none
+  subgraph layout_card_n6[" "]
+  n6@{ shape: cyl, label: "**MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
+  class n6 node_resource
+  class n6 external_node
+  end
+  style layout_card_n6 fill:none,stroke:none
+  subgraph layout_card_n7[" "]
+  n7@{ shape: rounded, label: "**BoxShadowSamples**<br/>配置相机 UI 阴影的采样次数。" }
+  class n7 node_component
+  end
+  style layout_card_n7 fill:none,stroke:none
+  subgraph layout_card_n8[" "]
+  n8@{ shape: rounded, label: "**extract​_​cameras**<br/>来自crate:bevy​_​render ↗：把活动相机及<br/>可见实体提取到渲染世界。" }
+  class n8 node_system
+  class n8 external_node
+  end
+  style layout_card_n8 fill:none,stroke:none
+  subgraph layout_card_n9[" "]
+  n9@{ shape: notch-rect, label: "**Local · cached​_​ui​_​view​_​data**<br/>按主世界相机缓存已提取的 UI 子视图。" }
+  class n9 node_local
+  end
+  style layout_card_n9 fill:none,stroke:none
+  subgraph layout_card_n10[" "]
+  n10@{ shape: notch-rect, label: "**Local · removed​_​cameras​_​**<br/>**query.0.0.0.0.0**<br/>保存 Camera 移除参数的组件 ID。" }
+  class n10 node_local
+  end
+  style layout_card_n10 fill:none,stroke:none
+  subgraph layout_card_n11[" "]
+  n11@{ shape: notch-rect, label: "**Local · cameras​_​updated​_​this​_​frame**<br/>记录本轮成功更新的主世界 UI 相机。" }
+  class n11 node_local
+  end
+  style layout_card_n11 fill:none,stroke:none
+  subgraph layout_card_n12[" "]
+  n12@{ shape: notch-rect, label: "**Local · removed​_​cameras​_​query.0.0.1**<br/>跟踪 Camera 移除记录的读取进度。" }
+  class n12 node_local
+  end
+  style layout_card_n12 fill:none,stroke:none
+  subgraph layout_card_n13[" "]
+  n13@{ shape: rounded, label: "**UiAntiAlias**<br/>控制相机中的 UI 几何抗锯齿。" }
+  class n13 node_component
+  end
+  style layout_card_n13 fill:none,stroke:none
+  subgraph layout_card_n14[" "]
+  n14@{ shape: rounded, label: "**ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
+  class n14 node_component
+  class n14 external_node
+  end
+  style layout_card_n14 fill:none,stroke:none
+  subgraph layout_card_n15[" "]
+  n15@{ shape: rounded, label: "**SubEntity#lt;RenderApp#gt;**<br/>来自crate:bevy​_​extract ↗：记录主实体<br/>对应的子世界实体。" }
+  class n15 node_component
+  class n15 external_node
+  end
+  style layout_card_n15 fill:none,stroke:none
+  subgraph layout_card_n16[" "]
+  n16@{ shape: notch-rect, label: "**Local · live​_​entities**<br/>记录仍然有效的 UI 相机视图身份。" }
+  class n16 node_local
+  end
+  style layout_card_n16 fill:none,stroke:none
+  subgraph layout_card_n17[" "]
+  n17@{ shape: cyl, label: "**ViewSortedRenderPhases#lt;TransparentUi**<br/>**#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图需<br/>要排序的绘制指令。" }
+  class n17 node_resource
+  class n17 external_node
+  end
+  style layout_card_n17 fill:none,stroke:none
+  subgraph layout_card_n18[" "]
+  n18@{ shape: rounded, label: "**UiViewTarget**<br/>从 UI 视图定位对应的主渲染目标视图。" }
+  class n18 node_component
+  end
+  style layout_card_n18 fill:none,stroke:none
+  subgraph layout_card_n19[" "]
+  n19@{ shape: rounded, label: "**Camera3d**<br/>来自crate:bevy​_​camera ↗：启用三维相机<br/>主渲染流程。" }
+  class n19 node_component
+  class n19 external_node
+  end
+  style layout_card_n19 fill:none,stroke:none
+  subgraph layout_card_n20[" "]
+  n20@{ shape: rounded, label: "**Camera**<br/>来自crate:bevy​_​camera ↗：配置相机视<br/>口、输出目标和渲染顺序。" }
+  class n20 node_component
+  class n20 external_node
+  end
+  style layout_card_n20 fill:none,stroke:none
+  n1 e0@-->|"集合成员"| n0
+  class e0 edge_set_membership
+  n2 e1@--> n0
+  class e1 edge_read
+  n0 e2@-->|"移除"| n3
+  class e2 edge_write
+  n4 e3@-->|"存在性约束"| n0
+  class e3 edge_reference
+  n5 e4@-->|"调用"| n0
+  class e4 edge_registration
+  n6 e5@--> n0
+  class e5 edge_read
+  n7 e6@---|"移除"| n0
+  class e6 edge_write
+  n8 e7@-->|"先于"| n0
+  class e7 edge_order
+  n0 e8@-->|"可变访问"| n9
+  class e8 edge_write
+  n0 e9@-->|"可变访问"| n10
+  class e9 edge_write
+  n0 e10@-->|"可变访问"| n11
+  class e10 edge_write
+  n0 e11@-->|"可变访问"| n12
+  class e11 edge_write
+  n7 e12@--> n0
+  class e12 edge_read
+  n13 e13@---|"移除"| n0
+  class e13 edge_write
+  n0 e14@-->|"插入"| n14
+  class e14 edge_write
+  n15 e15@--> n0
+  class e15 edge_read
+  n0 e16@-->|"可变访问"| n16
+  class e16 edge_write
+  n0 e17@-->|"可变访问"| n17
+  class e17 edge_write
+  n0 e18@-->|"插入"| n18
+  class e18 edge_write
+  n19 e19@-->|"存在性约束"| n0
+  class e19 edge_reference
+  n13 e20@--> n0
+  class e20 edge_read
+  n7 e21@---|"插入"| n0
+  class e21 edge_write
+  n0 e22@-->|"插入"| n3
+  class e22 edge_write
+  n20 e23@--> n0
+  class e23 edge_read
+  n13 e24@---|"插入"| n0
+  class e24 edge_write
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e17@{ curve: basis }
+  e18@{ curve: basis }
+  e19@{ curve: basis }
+  e20@{ curve: basis }
+  e21@{ curve: basis }
+  e22@{ curve: basis }
+  e23@{ curve: basis }
+  e24@{ curve: basis }

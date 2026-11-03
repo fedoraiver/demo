@@ -1,0 +1,101 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: collider_tree::update::MovedProxies · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_observer fill:#F4F1F9,stroke:#7B4DB2,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: cyl, label: "**MovedProxies**<br/>收集需要重检碰撞对的移动代理。" }
+  class n0 node_resource
+  n1@{ shape: rounded, label: "**update​_​moved​_​collider​_​aabbs**<br/>重算物理步后被手动改变的碰撞边界。" }
+  class n1 node_system
+  n2@{ shape: hex, label: "**build::{closure#35;1}**<br/>把失去刚体归属的碰撞体迁到独立树。" }
+  class n2 node_observer
+  n3@{ shape: hex, label: "**remove​_​from​_​tree​_​on**<br/>从空间树移除碰撞体代理。" }
+  class n3 node_observer
+  n4@{ shape: hex, label: "**remove​_​from​_​tree​_​on**<br/>从空间树移除碰撞体代理。" }
+  class n4 node_observer
+  n5@{ shape: hex, label: "**add​_​to​_​tree​_​on**<br/>将可用碰撞体加入空间树。" }
+  class n5 node_observer
+  n6@{ shape: hex, label: "**build::{closure#35;2}**<br/>按刚体类型迁移碰撞体空间树。" }
+  class n6 node_observer
+  n7@{ shape: rounded, label: "**update​_​solver​_​body​_​aabbs**<br/>按物理结果更新活跃刚体的碰撞边界。" }
+  class n7 node_system
+  n8@{ shape: hex, label: "**remove​_​from​_​tree​_​on**<br/>从空间树移除碰撞体代理。" }
+  class n8 node_observer
+  n9@{ shape: rounded, label: "**collect​_​collision​_​pairs**<br/>为移动碰撞代理收集广相候选接触。" }
+  class n9 node_system
+  n10@{ shape: hex, label: "**add​_​to​_​tree​_​on**<br/>将可用碰撞体加入空间树。" }
+  class n10 node_observer
+  n11@{ shape: hex, label: "**add​_​to​_​tree​_​on**<br/>将可用碰撞体加入空间树。" }
+  class n11 node_observer
+  n12@{ shape: rounded, label: "**clear​_​moved​_​proxies**<br/>清空本轮广相使用的移动代理目录。" }
+  class n12 node_system
+  n1 e0@-->|"可变访问"| n0
+  class e0 edge_write
+  n2 e1@-->|"可变访问"| n0
+  class e1 edge_write
+  n3 e2@-->|"可变访问"| n0
+  class e2 edge_write
+  n4 e3@-->|"可变访问"| n0
+  class e3 edge_write
+  n5 e4@-->|"可变访问"| n0
+  class e4 edge_write
+  n6 e5@-->|"可变访问"| n0
+  class e5 edge_write
+  n7 e6@-->|"可变访问"| n0
+  class e6 edge_write
+  n8 e7@-->|"可变访问"| n0
+  class e7 edge_write
+  n0 e8@--> n9
+  class e8 edge_read
+  n10 e9@-->|"可变访问"| n0
+  class e9 edge_write
+  n11 e10@-->|"可变访问"| n0
+  class e10 edge_write
+  n12 e11@-->|"可变访问"| n0
+  class e11 edge_write
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }

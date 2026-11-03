@@ -1,0 +1,84 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: Layout · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef edge_order stroke:#334155,stroke-width:2px
+  classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: lin-rect, label: "**Layout**<br/>组织界面交互、布局与堆叠更新。" }
+  class n0 node_system_set
+  n1@{ shape: lin-rect, label: "**EditableTextSystems**<br/>来自crate:bevy​_​text ↗：统一应用可编辑<br/>文字的待处理操作。" }
+  class n1 node_system_set
+  class n1 external_node
+  n2@{ shape: rounded, label: "**ui​_​layout​_​system**<br/>求解 UI 布局并回写节点尺寸和二维变换。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**update​_​scrollbar​_​thumb**<br/>来自crate:bevy​_​ui​_​widgets ↗：按内容<br/>比例与滚动位置更新滚动条滑块。" }
+  class n3 node_system
+  class n3 external_node
+  n4@{ shape: lin-rect, label: "**PostLayout**<br/>组织界面交互、布局与堆叠更新。" }
+  class n4 node_system_set
+  n5@{ shape: lin-rect, label: "**Content**<br/>组织界面交互、布局与堆叠更新。" }
+  class n5 node_system_set
+  n6@{ shape: rounded, label: "**sync​_​editable​_​text​_​viewports**<br/>在文本编辑前同步可编辑区域的视口。" }
+  class n6 node_system
+  n7@{ shape: rounded, label: "**position​_​popover**<br/>来自crate:bevy​_​ui​_​widgets ↗：定位弹<br/>出层并同步后代的 UI 变换。" }
+  class n7 node_system
+  class n7 external_node
+  n8@{ shape: rounded, label: "**sync​_​settings​_​scrollbars**<br/>来自ui ↗：同步设置滚动条的有效范围和交<br/>互状态。" }
+  class n8 node_system
+  class n8 external_node
+  n0 e0@-->|"先于"| n1
+  class e0 edge_order
+  n0 e1@-->|"集合成员"| n2
+  class e1 edge_set_membership
+  n0 e2@-->|"集合成员"| n3
+  class e2 edge_set_membership
+  n0 e3@-->|"先于"| n4
+  class e3 edge_order
+  n5 e4@-->|"先于"| n0
+  class e4 edge_order
+  n0 e5@-->|"先于"| n6
+  class e5 edge_order
+  n0 e6@-->|"集合成员"| n7
+  class e6 edge_set_membership
+  n0 e7@-->|"先于"| n8
+  class e7 edge_order
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }

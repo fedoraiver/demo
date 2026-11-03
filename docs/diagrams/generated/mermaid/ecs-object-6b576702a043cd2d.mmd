@@ -1,0 +1,726 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#object-6b576702a043cd2d-e16{marker-start:url(#object-6b576702a043cd2d_flowchart-v2-pointStart)!important}\n#object-6b576702a043cd2d-e22{marker-start:url(#object-6b576702a043cd2d_flowchart-v2-pointStart)!important}\n#object-6b576702a043cd2d-e40{marker-start:url(#object-6b576702a043cd2d_flowchart-v2-pointStart)!important}\n#object-6b576702a043cd2d-e80{marker-start:url(#object-6b576702a043cd2d_flowchart-v2-pointStart)!important}\n#object-6b576702a043cd2d-e89{marker-start:url(#object-6b576702a043cd2d_flowchart-v2-pointStart)!important}\n#object-6b576702a043cd2d_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: components::transform::Transform · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_entity fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**Transform**<br/>保存实体相对父实体的平移、旋转和缩放" }
+  class n0 node_component
+  subgraph layout_card_n1[" "]
+  n1@{ shape: rounded, label: "**mark​_​dirty​_​trees**<br/>沿祖先链标记需要重算变换的子树。" }
+  class n1 node_system
+  end
+  style layout_card_n1 fill:none,stroke:none
+  subgraph layout_card_n2[" "]
+  n2@{ shape: rounded, label: "**compensate​_​courier​_​sole​_​penetration**<br/>来自character​_​animation ↗：方向混合<br/>可能把弯腿插值成更直的腿；逐帧按真实鞋底<br/>边界修正最终视觉高度。" }
+  class n2 node_system
+  class n2 external_node
+  end
+  style layout_card_n2 fill:none,stroke:none
+  subgraph layout_card_n3[" "]
+  n3@{ shape: rounded, label: "**sync​_​character​_​facing**<br/>来自first​_​person ↗：在固定模拟前及逐<br/>帧持握目标同步前设置水平朝向，站立、横移<br/>和后退时也跟随视角。" }
+  class n3 node_system
+  class n3 external_node
+  end
+  style layout_card_n3 fill:none,stroke:none
+  subgraph layout_card_n4[" "]
+  n4@{ shape: rounded, label: "**propagate​_​parent​_​transforms**<br/>沿父子层级并行合成世界变换。" }
+  class n4 node_system
+  end
+  style layout_card_n4 fill:none,stroke:none
+  n5@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：组织主菜单海岛展示舞台，并在<br/>退出主菜单时清理。" }
+  class n5 node_entity
+  class n5 external_node
+  subgraph layout_card_n6[" "]
+  n6@{ shape: rounded, label: "**update​_​collider​_​scale**<br/>来自crate:avian3d ↗：把根节点和附属碰<br/>撞体的缩放传给形状。" }
+  class n6 node_system
+  class n6 external_node
+  end
+  style layout_card_n6 fill:none,stroke:none
+  subgraph layout_card_n7[" "]
+  n7@{ shape: rounded, label: "**update​_​scale​_​interpolation​_​start**<br/>来自crate:bevy​_​transform​_​<br/>interpolation ↗：把当前缩放记录为插值<br/>起点。" }
+  class n7 node_system
+  class n7 external_node
+  end
+  style layout_card_n7 fill:none,stroke:none
+  subgraph layout_card_n8[" "]
+  n8@{ shape: rounded, label: "**sync​_​character​_​facing**<br/>来自first​_​person ↗：在固定模拟前及逐<br/>帧持握目标同步前设置水平朝向，站立、横移<br/>和后退时也跟随视角。" }
+  class n8 node_system
+  class n8 external_node
+  end
+  style layout_card_n8 fill:none,stroke:none
+  subgraph layout_card_n9[" "]
+  n9@{ shape: rounded, label: "**propagate​_​transforms​_​for**<br/>按指定查询过滤器即时计算世界变换。" }
+  class n9 node_system
+  end
+  style layout_card_n9 fill:none,stroke:none
+  subgraph layout_card_n10[" "]
+  n10@{ shape: rounded, label: "**prepare​_​island**<br/>来自scene​_​assembly ↗：在资源 CPU 几<br/>何可用时构建碰撞；全部成功后才提交，失败<br/>时不创建动态玩家。" }
+  class n10 node_system
+  class n10 external_node
+  end
+  style layout_card_n10 fill:none,stroke:none
+  subgraph layout_card_n11[" "]
+  n11@{ shape: rounded, label: "**complete​_​scale​_​easing**<br/>来自crate:bevy​_​transform​_​<br/>interpolation ↗：在新一轮插值前完成上<br/>一段缩放。" }
+  class n11 node_system
+  class n11 external_node
+  end
+  style layout_card_n11 fill:none,stroke:none
+  subgraph layout_card_n12[" "]
+  n12@{ shape: rounded, label: "**update​_​translation​_​extrapolation​_​**<br/>**states**<br/>来自crate:bevy​_​transform​_​<br/>interpolation ↗：依据当前线速度预测下<br/>一个位置端点。" }
+  class n12 node_system
+  class n12 external_node
+  end
+  style layout_card_n12 fill:none,stroke:none
+  subgraph layout_card_n13[" "]
+  n13@{ shape: rounded, label: "**sync​_​simple​_​transforms**<br/>同步没有父子层级的独立实体世界变换。" }
+  class n13 node_system
+  end
+  style layout_card_n13 fill:none,stroke:none
+  subgraph layout_card_n14[" "]
+  n14@{ shape: rounded, label: "**ease​_​rotation​_​slerp**<br/>来自crate:bevy​_​transform​_​<br/>interpolation ↗：按固定步剩余比例球面<br/>插值显示旋转。" }
+  class n14 node_system
+  class n14 external_node
+  end
+  style layout_card_n14 fill:none,stroke:none
+  subgraph layout_card_n15[" "]
+  n15@{ shape: rounded, label: "**update​_​rotation​_​interpolation​_​end**<br/>来自crate:bevy​_​transform​_​<br/>interpolation ↗：把当前旋转记录为插值<br/>终点。" }
+  class n15 node_system
+  class n15 external_node
+  end
+  style layout_card_n15 fill:none,stroke:none
+  subgraph layout_card_n16[" "]
+  n16@{ shape: rounded, label: "**recover​_​from​_​water**<br/>来自bounds​_​recovery ↗：恢复实体自身的<br/>出生姿态；角色落水只释放手中物品，物品落<br/>水时再独立恢复。" }
+  class n16 node_system
+  class n16 external_node
+  end
+  style layout_card_n16 fill:none,stroke:none
+  subgraph layout_card_n17[" "]
+  n17@{ shape: rounded, label: "**sync​_​held​_​presentation**<br/>来自item​_​interaction ↗：帧末跟随同一<br/>份已呈现人物姿态，零固定步时也不在箱体上<br/>叠加第二份插值。" }
+  class n17 node_system
+  class n17 external_node
+  end
+  style layout_card_n17 fill:none,stroke:none
+  n18@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：承载主菜单快递员模型、展示动<br/>画与持握附件。" }
+  class n18 node_entity
+  class n18 external_node
+  subgraph layout_card_n19[" "]
+  n19@{ shape: rounded, label: "**update​_​translation​_​interpolation​_​end**<br/>来自crate:bevy​_​transform​_​<br/>interpolation ↗：把当前位置记录为插值<br/>终点。" }
+  class n19 node_system
+  class n19 external_node
+  end
+  style layout_card_n19 fill:none,stroke:none
+  subgraph layout_card_n20[" "]
+  n20@{ shape: rounded, label: "**reset​_​rotation​_​extrapolation**<br/>来自crate:bevy​_​transform​_​<br/>interpolation ↗：在固定步开始前还原真<br/>实旋转。" }
+  class n20 node_system
+  class n20 external_node
+  end
+  style layout_card_n20 fill:none,stroke:none
+  subgraph layout_card_n21[" "]
+  n21@{ shape: rounded, label: "**propagate​_​parent​_​transforms**<br/>沿父子层级并行合成世界变换。" }
+  class n21 node_system
+  end
+  style layout_card_n21 fill:none,stroke:none
+  subgraph layout_card_n22[" "]
+  n22@{ shape: rounded, label: "**complete​_​rotation​_​easing**<br/>来自crate:bevy​_​transform​_​<br/>interpolation ↗：在新一轮插值前完成上<br/>一段旋转。" }
+  class n22 node_system
+  class n22 external_node
+  end
+  style layout_card_n22 fill:none,stroke:none
+  subgraph layout_card_n23[" "]
+  n23@{ shape: rounded, label: "**follow​_​first​_​person​_​camera**<br/>来自first​_​person ↗：镜头使用本帧插值<br/>后的人物位置与观察角度；互斥过滤避免<br/>Transform 查询读写冲突。" }
+  class n23 node_system
+  class n23 external_node
+  end
+  style layout_card_n23 fill:none,stroke:none
+  n24@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：把海岛环境与包裹道具布置到菜<br/>单展示舞台。" }
+  class n24 node_entity
+  class n24 external_node
+  subgraph layout_card_n25[" "]
+  n25@{ shape: rounded, label: "**propagate​_​collider​_​transforms**<br/>来自crate:avian3d ↗：沿实体层级计算碰<br/>撞体相对刚体的变换。" }
+  class n25 node_system
+  class n25 external_node
+  end
+  style layout_card_n25 fill:none,stroke:none
+  n26@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：把海岛环境与包裹道具布置到菜<br/>单展示舞台。" }
+  class n26 node_entity
+  class n26 external_node
+  subgraph layout_card_n27[" "]
+  n27@{ shape: rounded, label: "**release​_​orphaned​_​items**<br/>来自item​_​interaction ↗：关系被外部解<br/>除或人物销毁时，独立箱实体仍能恢复自由刚<br/>体，不产生残留附属碰撞。" }
+  class n27 node_system
+  class n27 external_node
+  end
+  style layout_card_n27 fill:none,stroke:none
+  n28@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：把海岛环境与包裹道具布置到菜<br/>单展示舞台。" }
+  class n28 node_entity
+  class n28 external_node
+  subgraph layout_card_n29[" "]
+  n29@{ shape: rounded, label: "**sync​_​simple​_​transforms**<br/>同步没有父子层级的独立实体世界变换。" }
+  class n29 node_system
+  end
+  style layout_card_n29 fill:none,stroke:none
+  n30@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：把海岛环境与包裹道具布置到菜<br/>单展示舞台。" }
+  class n30 node_entity
+  class n30 external_node
+  subgraph layout_card_n31[" "]
+  n31@{ shape: rounded, label: "**mark​_​dirty​_​trees**<br/>沿祖先链标记需要重算变换的子树。" }
+  class n31 node_system
+  end
+  style layout_card_n31 fill:none,stroke:none
+  subgraph layout_card_n32[" "]
+  n32@{ shape: rounded, label: "**sync​_​held​_​physics**<br/>来自item​_​interaction ↗：同步组合体内<br/>箱子的真实世界姿态和速度，不依赖人物是否<br/>具有视觉 Children。" }
+  class n32 node_system
+  class n32 external_node
+  end
+  style layout_card_n32 fill:none,stroke:none
+  subgraph layout_card_n33[" "]
+  n33@{ shape: rounded, label: "**ease​_​rotation​_​hermite**<br/>来自crate:bevy​_​transform​_​<br/>interpolation ↗：用两端角速度做<br/>Hermite 旋转平滑。" }
+  class n33 node_system
+  class n33 external_node
+  end
+  style layout_card_n33 fill:none,stroke:none
+  subgraph layout_card_n34[" "]
+  n34@{ shape: rounded, label: "**ease​_​scale​_​lerp**<br/>来自crate:bevy​_​transform​_​<br/>interpolation ↗：按固定步剩余比例线性<br/>插值显示缩放。" }
+  class n34 node_system
+  class n34 external_node
+  end
+  style layout_card_n34 fill:none,stroke:none
+  subgraph layout_card_n35[" "]
+  n35@{ shape: rounded, label: "**initialize​_​ready​_​couriers**<br/>来自character​_​animation ↗：场景就绪<br/>后只遍历该视觉根的子树，避免把 NPC 或其<br/>他模型的播放器接到主角上。" }
+  class n35 node_system
+  class n35 external_node
+  end
+  style layout_card_n35 fill:none,stroke:none
+  subgraph layout_card_n36[" "]
+  n36@{ shape: rounded, label: "**mark​_​dirty​_​trees**<br/>沿祖先链标记需要重算变换的子树。" }
+  class n36 node_system
+  end
+  style layout_card_n36 fill:none,stroke:none
+  subgraph layout_card_n37[" "]
+  n37@{ shape: rounded, label: "**sync​_​held​_​presentation**<br/>来自item​_​interaction ↗：帧末跟随同一<br/>份已呈现人物姿态，零固定步时也不在箱体上<br/>叠加第二份插值。" }
+  class n37 node_system
+  class n37 external_node
+  end
+  style layout_card_n37 fill:none,stroke:none
+  n38@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：照亮主菜单海岛展示舞台。" }
+  class n38 node_entity
+  class n38 external_node
+  n39@{ shape: rounded, label: "**spawn​_​lighting · 创建模板**<br/>来自scene​_​assembly ↗：为玩法海岛提供<br/>随会话清理的日光照明。" }
+  class n39 node_entity
+  class n39 external_node
+  n40@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：把海岛环境与包裹道具布置到菜<br/>单展示舞台。" }
+  class n40 node_entity
+  class n40 external_node
+  subgraph layout_card_n41[" "]
+  n41@{ shape: rounded, label: "**sync​_​held​_​physics**<br/>来自item​_​interaction ↗：同步组合体内<br/>箱子的真实世界姿态和速度，不依赖人物是否<br/>具有视觉 Children。" }
+  class n41 node_system
+  class n41 external_node
+  end
+  style layout_card_n41 fill:none,stroke:none
+  subgraph layout_card_n42[" "]
+  n42@{ shape: rounded, label: "**reset​_​easing​_​states​_​on​_​transform​_​**<br/>**change**<br/>来自crate:bevy​_​transform​_​<br/>interpolation ↗：在外部直接改变变换时<br/>取消失效的平滑区间。" }
+  class n42 node_system
+  class n42 external_node
+  end
+  style layout_card_n42 fill:none,stroke:none
+  n43@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：把海岛环境与包裹道具布置到菜<br/>单展示舞台。" }
+  class n43 node_entity
+  class n43 external_node
+  subgraph layout_card_n44[" "]
+  n44@{ shape: rounded, label: "**propagate​_​parent​_​transforms**<br/>沿父子层级并行合成世界变换。" }
+  class n44 node_system
+  end
+  style layout_card_n44 fill:none,stroke:none
+  n45@{ shape: rounded, label: "**prepare​_​island · 创建模板**<br/>来自scene​_​assembly ↗：使固定站位的展<br/>示 NPC 阻挡人物与箱体。" }
+  class n45 node_entity
+  class n45 external_node
+  subgraph layout_card_n46[" "]
+  n46@{ shape: rounded, label: "**handle​_​interaction**<br/>来自item​_​interaction ↗：拾取建立物理<br/>持握关系；释放只解除控制，保留刚体姿态、<br/>线速度和角速度。" }
+  class n46 node_system
+  class n46 external_node
+  end
+  style layout_card_n46 fill:none,stroke:none
+  n47@{ shape: rounded, label: "**spawn​_​actors · 创建模板**<br/>来自scene​_​assembly ↗：挂载主角模型，<br/>承接动画绑定和自身视觉隐藏。" }
+  class n47 node_entity
+  class n47 external_node
+  subgraph layout_card_n48[" "]
+  n48@{ shape: rounded, label: "**ease​_​translation​_​hermite**<br/>来自crate:bevy​_​transform​_​<br/>interpolation ↗：用两端线速度做<br/>Hermite 位置平滑。" }
+  class n48 node_system
+  class n48 external_node
+  end
+  style layout_card_n48 fill:none,stroke:none
+  n49@{ shape: rounded, label: "**spawn​_​actors · 创建模板**<br/>来自scene​_​assembly ↗：承载可控制快递<br/>员的玩法状态与角色层级。" }
+  class n49 node_entity
+  class n49 external_node
+  subgraph layout_card_n50[" "]
+  n50@{ shape: rounded, label: "**reset​_​translation​_​extrapolation**<br/>来自crate:bevy​_​transform​_​<br/>interpolation ↗：在固定步开始前还原真<br/>实位置。" }
+  class n50 node_system
+  class n50 external_node
+  end
+  style layout_card_n50 fill:none,stroke:none
+  subgraph layout_card_n51[" "]
+  n51@{ shape: rounded, label: "**sync​_​simple​_​transforms**<br/>同步没有父子层级的独立实体世界变换。" }
+  class n51 node_system
+  end
+  style layout_card_n51 fill:none,stroke:none
+  subgraph layout_card_n52[" "]
+  n52@{ shape: rounded, label: "**update​_​gizmo​_​meshes**<br/>来自crate:bevy​_​gizmos​_​render ↗：将变<br/>换操作器对齐焦点并更新模式与高亮。" }
+  class n52 node_system
+  class n52 external_node
+  end
+  style layout_card_n52 fill:none,stroke:none
+  n53@{ shape: rounded, label: "**begin​_​island · 创建模板**<br/>来自scene​_​assembly ↗：挂载玩法海岛场<br/>景，作为地图准备和会话清理入口。" }
+  class n53 node_entity
+  class n53 external_node
+  subgraph layout_card_n54[" "]
+  n54@{ shape: rounded, label: "**complete​_​translation​_​easing**<br/>来自crate:bevy​_​transform​_​<br/>interpolation ↗：在新一轮插值前完成上<br/>一段平移。" }
+  class n54 node_system
+  class n54 external_node
+  end
+  style layout_card_n54 fill:none,stroke:none
+  n55@{ shape: rounded, label: "**spawn​_​actors · 创建模板**<br/>来自scene​_​assembly ↗：承载海岛可搬运<br/>物品的拾取身份、握点和初始姿态。" }
+  class n55 node_entity
+  class n55 external_node
+  subgraph layout_card_n56[" "]
+  n56@{ shape: rounded, label: "**warn​_​hold​_​strain**<br/>来自item​_​interaction ↗：持续偏离实际<br/>握点时提示一次，误差恢复后允许下一次告<br/>警。" }
+  class n56 node_system
+  class n56 external_node
+  end
+  style layout_card_n56 fill:none,stroke:none
+  subgraph layout_card_n57[" "]
+  n57@{ shape: rounded, label: "**spawn​_​actors**<br/>来自scene​_​assembly ↗：为就绪海岛创建<br/>玩法实体并复用加载相机。" }
+  class n57 node_system
+  class n57 external_node
+  end
+  style layout_card_n57 fill:none,stroke:none
+  subgraph layout_card_n58[" "]
+  n58@{ shape: rounded, label: "**update​_​rotation​_​extrapolation​_​states**<br/>来自crate:bevy​_​transform​_​<br/>interpolation ↗：依据当前角速度预测下<br/>一个旋转端点。" }
+  class n58 node_system
+  class n58 external_node
+  end
+  style layout_card_n58 fill:none,stroke:none
+  subgraph layout_card_n59[" "]
+  n59@{ shape: rounded, label: "**sync​_​held​_​physics**<br/>来自item​_​interaction ↗：同步组合体内<br/>箱子的真实世界姿态和速度，不依赖人物是否<br/>具有视觉 Children。" }
+  class n59 node_system
+  class n59 external_node
+  end
+  style layout_card_n59 fill:none,stroke:none
+  n60@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：把海岛环境与包裹道具布置到菜<br/>单展示舞台。" }
+  class n60 node_entity
+  class n60 external_node
+  subgraph layout_card_n61[" "]
+  n61@{ shape: rounded, label: "**update​_​rotation​_​interpolation​_​start**<br/>来自crate:bevy​_​transform​_​<br/>interpolation ↗：把当前旋转记录为插值<br/>起点。" }
+  class n61 node_system
+  class n61 external_node
+  end
+  style layout_card_n61 fill:none,stroke:none
+  subgraph layout_card_n62[" "]
+  n62@{ shape: rounded, label: "**update​_​translation​_​interpolation​_​**<br/>**start**<br/>来自crate:bevy​_​transform​_​<br/>interpolation ↗：把当前位置记录为插值<br/>起点。" }
+  class n62 node_system
+  class n62 external_node
+  end
+  style layout_card_n62 fill:none,stroke:none
+  subgraph layout_card_n63[" "]
+  n63@{ shape: rounded, label: "**update​_​scale​_​interpolation​_​end**<br/>来自crate:bevy​_​transform​_​<br/>interpolation ↗：把当前缩放记录为插值<br/>终点。" }
+  class n63 node_system
+  class n63 external_node
+  end
+  style layout_card_n63 fill:none,stroke:none
+  subgraph layout_card_n64[" "]
+  n64@{ shape: rounded, label: "**move​_​characters**<br/>来自character ↗：用有上限的加速度趋近<br/>目标水平速度，保留碰撞和外部冲量造成的实<br/>际运动。" }
+  class n64 node_system
+  class n64 external_node
+  end
+  style layout_card_n64 fill:none,stroke:none
+  subgraph layout_card_n65[" "]
+  n65@{ shape: rounded, label: "**sync​_​courier​_​animation**<br/>来自character​_​animation ↗：Update 位<br/>于固定模拟与呈现同步之后；零固定步帧也使<br/>用本帧朝向和已有真实速度。" }
+  class n65 node_system
+  class n65 external_node
+  end
+  style layout_card_n65 fill:none,stroke:none
+  n66@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：把海岛环境与包裹道具布置到菜<br/>单展示舞台。" }
+  class n66 node_entity
+  class n66 external_node
+  subgraph layout_card_n67[" "]
+  n67@{ shape: rounded, label: "**ease​_​translation​_​lerp**<br/>来自crate:bevy​_​transform​_​<br/>interpolation ↗：按固定步剩余比例线性<br/>插值显示位置。" }
+  class n67 node_system
+  class n67 external_node
+  end
+  style layout_card_n67 fill:none,stroke:none
+  n68@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：把海岛环境与包裹道具布置到菜<br/>单展示舞台。" }
+  class n68 node_entity
+  class n68 external_node
+  n69@{ shape: rounded, label: "**spawn​_​lighting · 创建模板**<br/>来自scene​_​assembly ↗：加载海岛并复用<br/>为角色第一人称视角的相机。" }
+  class n69 node_entity
+  class n69 external_node
+  subgraph layout_card_n70[" "]
+  n70@{ shape: rounded, label: "**position​_​to​_​transform**<br/>来自crate:avian3d ↗：把物理世界位姿转<br/>换为显示用局部变换。" }
+  class n70 node_system
+  class n70 external_node
+  end
+  style layout_card_n70 fill:none,stroke:none
+  n71@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：把海岛环境与包裹道具布置到菜<br/>单展示舞台。" }
+  class n71 node_entity
+  class n71 external_node
+  n72@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：绘制主菜单展示舞台并承接菜<br/>单 UI。" }
+  class n72 node_entity
+  class n72 external_node
+  subgraph layout_card_n73[" "]
+  n73@{ shape: rounded, label: "**finish​_​attachments**<br/>来自item​_​interaction ↗：持握期间只保<br/>留人物的 Dynamic，碰到箱子即对同一刚体<br/>求解，内部形状自动互不碰撞。" }
+  class n73 node_system
+  class n73 external_node
+  end
+  style layout_card_n73 fill:none,stroke:none
+  n74@{ shape: rounded, label: "**spawn​_​actors · 创建模板**<br/>来自scene​_​assembly ↗：加载并承载可携<br/>带物品的模型外观。" }
+  class n74 node_entity
+  class n74 external_node
+  n0 e0@--> n1
+  class e0 edge_read
+  n2 e1@-->|"可变访问"| n0
+  class e1 edge_write
+  n3 e2@-->|"赋值"| n0
+  class e2 edge_write
+  n0 e3@--> n4
+  class e3 edge_read
+  n5 e4@-->|"可能包含"| n0
+  class e4 edge_reference
+  n0 e5@-->|"存在性约束"| n6
+  class e5 edge_reference
+  n0 e6@--> n7
+  class e6 edge_read
+  n8 e7@-->|"赋值"| n0
+  class e7 edge_write
+  n0 e8@--> n9
+  class e8 edge_read
+  n0 e9@--> n10
+  class e9 edge_read
+  n11 e10@-->|"赋值"| n0
+  class e10 edge_write
+  n0 e11@--> n12
+  class e11 edge_read
+  n0 e12@--> n13
+  class e12 edge_read
+  n14 e13@-->|"赋值"| n0
+  class e13 edge_write
+  n0 e14@--> n15
+  class e14 edge_read
+  n16 e15@-->|"可变访问"| n0
+  class e15 edge_write
+  n17 e16@--- n0
+  class e16 edge_read
+  n18 e17@-->|"可能包含"| n0
+  class e17 edge_reference
+  n0 e18@--> n19
+  class e18 edge_read
+  n20 e19@-->|"赋值"| n0
+  class e19 edge_write
+  n0 e20@--> n21
+  class e20 edge_read
+  n22 e21@-->|"可变访问"| n0
+  class e21 edge_write
+  n23 e22@--- n0
+  class e22 edge_read
+  n24 e23@-->|"可能包含"| n0
+  class e23 edge_reference
+  n0 e24@--> n25
+  class e24 edge_read
+  n26 e25@-->|"可能包含"| n0
+  class e25 edge_reference
+  n0 e26@--> n27
+  class e26 edge_read
+  n14 e27@-->|"可变访问"| n0
+  class e27 edge_write
+  n28 e28@-->|"可能包含"| n0
+  class e28 edge_reference
+  n0 e29@--> n29
+  class e29 edge_read
+  n30 e30@-->|"可能包含"| n0
+  class e30 edge_reference
+  n0 e31@-->|"存在性约束"| n31
+  class e31 edge_reference
+  n17 e32@-->|"可变访问"| n0
+  class e32 edge_write
+  n32 e33@-->|"可变访问"| n0
+  class e33 edge_write
+  n33 e34@-->|"可变访问"| n0
+  class e34 edge_write
+  n34 e35@-->|"可变访问"| n0
+  class e35 edge_write
+  n0 e36@--> n35
+  class e36 edge_read
+  n0 e37@--> n36
+  class e37 edge_read
+  n0 e38@-->|"存在性约束"| n1
+  class e38 edge_reference
+  n0 e39@-->|"存在性约束"| n29
+  class e39 edge_reference
+  n37 e40@--- n0
+  class e40 edge_read
+  n38 e41@-->|"可能包含"| n0
+  class e41 edge_reference
+  n39 e42@-->|"可能包含"| n0
+  class e42 edge_reference
+  n40 e43@-->|"可能包含"| n0
+  class e43 edge_reference
+  n17 e44@-->|"赋值"| n0
+  class e44 edge_write
+  n41 e45@-->|"可变访问"| n0
+  class e45 edge_write
+  n0 e46@-->|"存在性约束"| n42
+  class e46 edge_reference
+  n43 e47@-->|"可能包含"| n0
+  class e47 edge_reference
+  n0 e48@--> n44
+  class e48 edge_read
+  n45 e49@-->|"可能包含"| n0
+  class e49 edge_reference
+  n8 e50@-->|"可变访问"| n0
+  class e50 edge_write
+  n0 e51@--> n46
+  class e51 edge_read
+  n23 e52@-->|"赋值"| n0
+  class e52 edge_write
+  n47 e53@-->|"可能包含"| n0
+  class e53 edge_reference
+  n48 e54@-->|"可变访问"| n0
+  class e54 edge_write
+  n49 e55@-->|"可能包含"| n0
+  class e55 edge_reference
+  n50 e56@-->|"可变访问"| n0
+  class e56 edge_write
+  n37 e57@-->|"可变访问"| n0
+  class e57 edge_write
+  n0 e58@--> n42
+  class e58 edge_read
+  n0 e59@-->|"存在性约束"| n51
+  class e59 edge_reference
+  n37 e60@-->|"赋值"| n0
+  class e60 edge_write
+  n52 e61@-->|"赋值"| n0
+  class e61 edge_write
+  n53 e62@-->|"可能包含"| n0
+  class e62 edge_reference
+  n54 e63@-->|"赋值"| n0
+  class e63 edge_write
+  n55 e64@-->|"可能包含"| n0
+  class e64 edge_reference
+  n54 e65@-->|"可变访问"| n0
+  class e65 edge_write
+  n0 e66@--> n56
+  class e66 edge_read
+  n57 e67@-->|"插入"| n0
+  class e67 edge_write
+  n2 e68@-->|"赋值"| n0
+  class e68 edge_write
+  n3 e69@-->|"可变访问"| n0
+  class e69 edge_write
+  n20 e70@-->|"可变访问"| n0
+  class e70 edge_write
+  n11 e71@-->|"可变访问"| n0
+  class e71 edge_write
+  n0 e72@--> n58
+  class e72 edge_read
+  n59 e73@-->|"赋值"| n0
+  class e73 edge_write
+  n60 e74@-->|"可能包含"| n0
+  class e74 edge_reference
+  n50 e75@-->|"赋值"| n0
+  class e75 edge_write
+  n0 e76@--> n61
+  class e76 edge_read
+  n0 e77@--> n62
+  class e77 edge_read
+  n41 e78@-->|"赋值"| n0
+  class e78 edge_write
+  n0 e79@--> n63
+  class e79 edge_read
+  n2 e80@--- n0
+  class e80 edge_read
+  n23 e81@-->|"可变访问"| n0
+  class e81 edge_write
+  n0 e82@--> n64
+  class e82 edge_read
+  n0 e83@--> n65
+  class e83 edge_read
+  n66 e84@-->|"可能包含"| n0
+  class e84 edge_reference
+  n67 e85@-->|"可变访问"| n0
+  class e85 edge_write
+  n52 e86@-->|"可变访问"| n0
+  class e86 edge_write
+  n68 e87@-->|"可能包含"| n0
+  class e87 edge_reference
+  n69 e88@-->|"可能包含"| n0
+  class e88 edge_reference
+  n16 e89@--- n0
+  class e89 edge_read
+  n70 e90@-->|"赋值"| n0
+  class e90 edge_write
+  n0 e91@-->|"存在性约束"| n13
+  class e91 edge_reference
+  n0 e92@-->|"存在性约束"| n36
+  class e92 edge_reference
+  n71 e93@-->|"可能包含"| n0
+  class e93 edge_reference
+  n59 e94@-->|"可变访问"| n0
+  class e94 edge_write
+  n70 e95@-->|"可变访问"| n0
+  class e95 edge_write
+  n0 e96@--> n31
+  class e96 edge_read
+  n72 e97@-->|"可能包含"| n0
+  class e97 edge_reference
+  n22 e98@-->|"赋值"| n0
+  class e98 edge_write
+  n0 e99@--> n6
+  class e99 edge_read
+  n16 e100@-->|"赋值"| n0
+  class e100 edge_write
+  n73 e101@-->|"插入"| n0
+  class e101 edge_write
+  n32 e102@-->|"赋值"| n0
+  class e102 edge_write
+  n0 e103@--> n51
+  class e103 edge_read
+  n74 e104@-->|"可能包含"| n0
+  class e104 edge_reference
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e17@{ curve: basis }
+  e18@{ curve: basis }
+  e19@{ curve: basis }
+  e20@{ curve: basis }
+  e21@{ curve: basis }
+  e22@{ curve: basis }
+  e23@{ curve: basis }
+  e24@{ curve: basis }
+  e25@{ curve: basis }
+  e26@{ curve: basis }
+  e27@{ curve: basis }
+  e28@{ curve: basis }
+  e29@{ curve: basis }
+  e30@{ curve: basis }
+  e31@{ curve: basis }
+  e32@{ curve: basis }
+  e33@{ curve: basis }
+  e34@{ curve: basis }
+  e35@{ curve: basis }
+  e36@{ curve: basis }
+  e37@{ curve: basis }
+  e38@{ curve: basis }
+  e39@{ curve: basis }
+  e40@{ curve: basis }
+  e41@{ curve: basis }
+  e42@{ curve: basis }
+  e43@{ curve: basis }
+  e44@{ curve: basis }
+  e45@{ curve: basis }
+  e46@{ curve: basis }
+  e47@{ curve: basis }
+  e48@{ curve: basis }
+  e49@{ curve: basis }
+  e50@{ curve: basis }
+  e51@{ curve: basis }
+  e52@{ curve: basis }
+  e53@{ curve: basis }
+  e54@{ curve: basis }
+  e55@{ curve: basis }
+  e56@{ curve: basis }
+  e57@{ curve: basis }
+  e58@{ curve: basis }
+  e59@{ curve: basis }
+  e60@{ curve: basis }
+  e61@{ curve: basis }
+  e62@{ curve: basis }
+  e63@{ curve: basis }
+  e64@{ curve: basis }
+  e65@{ curve: basis }
+  e66@{ curve: basis }
+  e67@{ curve: basis }
+  e68@{ curve: basis }
+  e69@{ curve: basis }
+  e70@{ curve: basis }
+  e71@{ curve: basis }
+  e72@{ curve: basis }
+  e73@{ curve: basis }
+  e74@{ curve: basis }
+  e75@{ curve: basis }
+  e76@{ curve: basis }
+  e77@{ curve: basis }
+  e78@{ curve: basis }
+  e79@{ curve: basis }
+  e80@{ curve: basis }
+  e81@{ curve: basis }
+  e82@{ curve: basis }
+  e83@{ curve: basis }
+  e84@{ curve: basis }
+  e85@{ curve: basis }
+  e86@{ curve: basis }
+  e87@{ curve: basis }
+  e88@{ curve: basis }
+  e89@{ curve: basis }
+  e90@{ curve: basis }
+  e91@{ curve: basis }
+  e92@{ curve: basis }
+  e94@{ curve: basis }
+  e95@{ curve: basis }
+  e96@{ curve: basis }
+  e97@{ curve: basis }
+  e98@{ curve: basis }
+  e99@{ curve: basis }
+  e100@{ curve: basis }
+  e101@{ curve: basis }
+  e102@{ curve: basis }
+  e103@{ curve: basis }
+  e104@{ curve: basis }

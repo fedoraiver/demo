@@ -1,0 +1,87 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: dynamics::integrator::VelocityIntegrationData · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**VelocityIntegrationData**<br/>缓存子步速度增量和阻尼系数。" }
+  class n0 node_component
+  n1@{ shape: rounded, label: "**apply​_​constant​_​forces**<br/>按总质量把恒力换成待积分线加速度。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**integrate​_​velocities**<br/>为活跃动态刚体积分速度与阻尼。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**move​_​characters**<br/>来自character ↗：用有上限的加速度趋近<br/>目标水平速度，保留碰撞和外部冲量造成的实<br/>际运动。" }
+  class n3 node_system
+  class n3 external_node
+  n4@{ shape: rounded, label: "**apply​_​constant​_​linear​_​acceleration**<br/>把恒定世界线加速度加入待积分增量。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**apply​_​constant​_​torques**<br/>按求解器有效惯量换算世界恒定扭矩。" }
+  class n5 node_system
+  n6@{ shape: rounded, label: "**jump​_​characters**<br/>来自character ↗：跳跃只消费一次，通过<br/>冲量改变速度；重力和位置积分全部交给<br/>Avian。" }
+  class n6 node_system
+  class n6 external_node
+  n7@{ shape: rounded, label: "**clear​_​velocity​_​increments**<br/>在子步循环后清零速度积分增量。" }
+  class n7 node_system
+  n8@{ shape: rounded, label: "**pre​_​process​_​velocity​_​increments**<br/>把加速度、重力和轴锁转成子步速度增量。" }
+  class n8 node_system
+  n9@{ shape: rounded, label: "**apply​_​constant​_​angular​_​acceleration**<br/>把恒定世界角加速度加入待积分增量。" }
+  class n9 node_system
+  n1 e0@-->|"可变访问"| n0
+  class e0 edge_write
+  n2 e1@-->|"可变访问"| n0
+  class e1 edge_write
+  n3 e2@-->|"可变访问"| n0
+  class e2 edge_write
+  n4 e3@-->|"可变访问"| n0
+  class e3 edge_write
+  n5 e4@-->|"可变访问"| n0
+  class e4 edge_write
+  n6 e5@-->|"可变访问"| n0
+  class e5 edge_write
+  n7 e6@-->|"可变访问"| n0
+  class e6 edge_write
+  n8 e7@-->|"可变访问"| n0
+  class e7 edge_write
+  n9 e8@-->|"可变访问"| n0
+  class e8 edge_write
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
