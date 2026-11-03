@@ -13,19 +13,6 @@ window.AUDIO_MANIFEST = {
     "subjective_listening_status": "not_performed",
     "game_runtime_status": "not_performed"
   },
-  "reuse_audit": {
-    "checked_date": "2026-10-01",
-    "result": "no_reusable_audio_found_in_readable_asset_paths",
-    "paths": [
-      "D:/demo/assets",
-      "D:/demo/art",
-      "D:/.codex/worktrees/3775/demo/assets"
-    ],
-    "limitations": [
-      "Original worktree assets directory does not exist.",
-      "D:/demo/art/scripts, D:/demo/art/blender and D:/demo/art/previews could not be read (access denied). No files were changed in other worktrees."
-    ]
-  },
   "events": [
     {
       "id": "menu",
@@ -1446,7 +1433,7 @@ window.AUDIO_MANIFEST = {
     "python": "3.11.15",
     "dependencies": "Python standard library only",
     "platform": "Windows-10-10.0.26300-SP0",
-    "script_sha256": "12f2ba625b7e1db681c57ab99587d886712a3454de322764f3acac8111579d5c",
-    "config_sha256": "d6ec4aa9c16716a6440aa25c8fce9f5f6f8533aabe9d02be0dea0bea110a58d1"
+    "script_sha256": "c5121191e933efb9d0e001b811f6abe62b084184baf0e696151d6ee50602537d",
+    "config_sha256": "5b7d934237a9656d9762c97093be102ff3a82d3fa65c446739c8aa2d69d46f76"
   }
 };
