@@ -174,7 +174,7 @@ def generate(config):
                 "policy": {"budget": 0, "paid_generation_api": False, "external_license_allowlist": ["CC0-1.0"],
                            "preview_to_lossless_conversion": False, "ambience_default_enabled": False,
                            "subjective_listening_status": "not_performed", "game_runtime_status": "not_performed"},
-                "reuse_audit": config["reuse_audit"], "events": config["events"], "assets": assets,
+                "events": config["events"], "assets": assets,
                 "sources": receipts, "pending_sources": config["pending_sources"],
                 "generator_environment": {"version": VERSION, "python": platform.python_version(),
                                           "dependencies": "Python standard library only",

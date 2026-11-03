@@ -604,19 +604,6 @@
       "caveat": "Page metadata checked only. Original file, fidelity, noise floor and loop suitability not verified; preview must not be substituted."
     }
   ],
-  "reuse_audit": {
-    "checked_date": "2026-10-01",
-    "result": "no_reusable_audio_found_in_readable_asset_paths",
-    "paths": [
-      "D:/demo/assets",
-      "D:/demo/art",
-      "D:/.codex/worktrees/3775/demo/assets"
-    ],
-    "limitations": [
-      "Original worktree assets directory does not exist.",
-      "D:/demo/art/scripts, D:/demo/art/blender and D:/demo/art/previews could not be read (access denied). No files were changed in other worktrees."
-    ]
-  },
   "quality_limits": {
     "silence_amplitude": 0.001,
     "max_head_silence_seconds": 0.025,
