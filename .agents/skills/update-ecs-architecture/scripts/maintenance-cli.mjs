@@ -4,7 +4,6 @@ import { repositoryRoot } from './maintenance-paths.mjs';
 
 const help = `ECS architecture maintenance (local execution only)
   plan | preflight | run [--resume RUN_ID] | status | report
-  fix-source-lines [--apply]
   visual plan | render | record | bind | report
 
 Common: --workspace PATH
@@ -19,12 +18,11 @@ Visual record: --input OBSERVATIONS_JSON
 Visual bind: --commit COMMIT
 `;
 
-const commands = new Set(['plan', 'preflight', 'run', 'status', 'report', 'fix-source-lines']);
+const commands = new Set(['plan', 'preflight', 'run', 'status', 'report']);
 const visualCommands = new Set(['plan', 'render', 'record', 'bind', 'report']);
 const allowed = {
   plan: ['workspace'], preflight: ['workspace', 'debugdump'], run: ['workspace', 'debugdump', 'resume'],
   status: ['workspace', 'run-id'], report: ['workspace', 'run-id', 'format', 'plan', 'index'],
-  'fix-source-lines': ['workspace', 'apply'],
   'visual plan': ['workspace', 'index', 'batch', 'outdir', 'sample', 'seed', 'scope', 'force-object', 'force-view'],
   'visual render': ['workspace', 'plan', 'from', 'to', 'browser'],
   'visual record': ['workspace', 'plan', 'input', 'index'],
@@ -91,7 +89,6 @@ export function parseMaintenanceArgs(argv, defaultWorkspace = repositoryRoot) {
 export async function dispatchMaintenance({ command, options }) {
   if (command === 'help') return help;
   if (command === 'preflight') return (await import('./maintenance-preflight.mjs')).preflightArchitecture(options);
-  if (command === 'fix-source-lines') return (await import('./maintenance-source-lines.mjs')).fixSourceLines({ ...options, apply: options.apply === true });
   if (command.startsWith('visual ')) {
     const module = await import('./maintenance-visual.mjs');
     const name = { plan: 'planVisual', render: 'renderVisual', record: 'recordVisual', bind: 'bindVisual', report: 'visualReport' }[command.split(' ')[1]];
@@ -114,6 +111,7 @@ export async function main(argv = process.argv.slice(2)) {
   const result = await dispatchMaintenance(parseMaintenanceArgs(argv));
   console.log(typeof result === 'string' ? result : JSON.stringify(result, null, 2));
   if (result && typeof result === 'object' && ['failed', 'interrupted'].includes(result.automatic?.status ?? result.status)) process.exitCode = 1;
+  if (result && typeof result === 'object' && (result.automatic?.status ?? result.status) === 'needs-descriptions') process.exitCode = 3;
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {

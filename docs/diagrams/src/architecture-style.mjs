@@ -30,7 +30,7 @@ export const NODE_STYLES = {
   non_send: nodeStyle('主线程状态', 'NonSend<T>', 'tag-rect', '#A5633A'),
   message: nodeStyle('消息契约', 'Message', 'lean-r', '#247B91'),
   message_buffer: nodeStyle('消息缓冲', 'Messages<T>', 'cyl', '#247B91'),
-  event: nodeStyle('触发事件', 'EntityEvent', 'stadium', '#B66B2D'),
+  event: nodeStyle('触发事件', 'Event / EntityEvent', 'stadium', '#B66B2D'),
   system_set: nodeStyle('系统集合', 'SystemSet', 'lin-rect', '#6A778C'),
   system_param: nodeStyle('系统参数', 'SystemParam', 'notch-rect', '#3B8790'),
   query_data: nodeStyle('查询数据声明', 'QueryData', 'notch-rect', '#567A51'),
@@ -88,7 +88,7 @@ export function visualTypeOf(node) {
 }
 
 const messageTypes = new Set(['message', 'message_buffer']);
-const directSemantics = new Set(['order', 'transition', 'reference', 'relationship', 'dependency']);
+const directSemantics = new Set(['order', 'transition', 'reference', 'relationship', 'dependency', 'observe', 'emit']);
 
 export function edgeSemanticOf(link, registry) {
   if (directSemantics.has(link.kind)) return link.kind;

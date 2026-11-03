@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { compileRoutedView, normalizeMermaidSvg, nativeLabelMismatches } from '../src/mermaid-core.mjs';
+import { compileRoutedView, normalizeMermaidSvg, nativeLabelMismatches, routedMermaid } from '../src/mermaid-core.mjs';
 import { svgElements } from '../src/svg-shape-geometry.mjs';
 
 function clearanceFixture(layout, aspect) {
@@ -34,6 +34,32 @@ test('native label validation detects entities split across rows and ignores tit
     svg: '<svg><g data-id="message"><title>其他来源</title><g class="label"><text><tspan class="row">Messages&lt;AssetEvent&lt;AnimationGraph&amp;</tspan><tspan class="row">gt;&gt;</tspan><tspan class="row">说明</tspan></text></g></g></svg>' };
   assert.deepEqual(nativeLabelMismatches(view), ['message']);
   assert.deepEqual(nativeLabelMismatches({ ...view, svg: view.svg.replace('AnimationGraph&amp;</tspan><tspan class="row">gt;&gt;', 'AnimationGraph&gt;&gt;') }), []);
+});
+
+test('native short-title checks reject a full visible name even when hidden provenance is correct', () => {
+  const view = { nodes: [{ id: 'method', displayLabel: 'asset_events_condition\n用途' }],
+    svg: '<svg><g data-id="method"><title>bevy_asset::Assets&lt;dep::T&gt;::asset_events_condition</title><g class="label"><text><tspan class="row">asset_events_condition</tspan><tspan class="row">用途</tspan></text></g></g></svg>' };
+  assert.deepEqual(nativeLabelMismatches(view), []);
+  assert.deepEqual(nativeLabelMismatches({ ...view, svg: view.svg.replace('>asset_events_condition<', '>bevy_asset::Assets&lt;dep::T&gt;::asset_events_condition<') }), ['method']);
+  assert.deepEqual(nativeLabelMismatches({ ...view, svg: view.svg.replace('>用途<', '>错误用途<') }), ['method']);
+});
+
+test('native semantic label wrappers bind canonical edge identities without becoming geometry paths', () => {
+  const { view, registry } = clearanceFixture('dagre', 'object');
+  view.links = [{ id: 'canonical-read', mermaidId: 'e0', from: 'b', to: 'a', kind: 'read', edgeSemantic: 'read', nativeReverse: true }];
+  view.scheduleLinks = [{ id: 'canonical-schedule', mermaidId: 'sc0', from: 'a', to: 'b', edgeSemantic: 'schedule' }];
+  const source = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 250 150">'
+    + '<g class="node" id="flowchart-n0-0"><rect x="10" y="50" width="40" height="40"/></g>'
+    + '<g class="node" id="flowchart-n1-1"><rect x="200" y="50" width="40" height="40"/></g>'
+    + '<path data-id="e0" d="M50 70H200"/><path data-id="sc0" d="M50 80H200"/>'
+    + ['e0', 'sc0'].map(id => `<g class="edgeLabel"><rect class="outer-background"/><g class="label" data-id="${id}"><rect class="background"/><text>${id}</text></g></g>`).join('') + '</svg>';
+  const normalized = normalizeMermaidSvg(view, source, registry), all = svgElements(normalized.svg);
+  const wrappers = all.filter(item => (item.attrs.class || '').split(/\s+/).includes('edge-label'));
+  assert.deepEqual(wrappers.map(item => [item.attrs['data-link-id'], item.attrs['data-schedule-link-id']]), [['canonical-read', undefined], [undefined, 'canonical-schedule']]);
+  assert.ok(wrappers.every(item => !item.attrs.class.split(/\s+/).includes('edge') && item.children.some(child => child.tag === 'rect')));
+  assert.equal(all.filter(item => item.attrs['data-native-reverse'] === 'true').length, 1);
+  assert.match(normalized.svg, /\.edge\.dim,\.edge-label\.dim\{opacity:\.16\}/);
+  assert.deepEqual(normalized.links, view.links);
 });
 
 test('shared native compiler rejects residual overlap after every permitted layout profile', async () => {
@@ -85,6 +111,110 @@ test('Component fallback combines native card containers and increased spacing b
   assert.match(result.mermaid, /subgraph layout_card_/);
   assert.equal(view.mermaid, before);
   assert.equal(JSON.parse(/^---\n([\s\S]*?)\n---/.exec(result.mermaid)[1]).config.flowchart.rankSpacing, 72);
+});
+
+test('object native retries preserve default success and try selective system containers after general clearance', async () => {
+  const { view, registry, native } = clearanceFixture('dagre', 'object'), candidates = [];
+  view.nodes[0].visualType = 'system'; view.nodes[1].visualType = 'resource';
+  view.mermaid = view.mermaid.replace('class n0 node_component', 'class n0 node_system').replace('class n1 node_component', 'class n1 node_resource');
+  const before = structuredClone(view);
+  const result = await compileRoutedView(view, registry, async candidate => {
+    const wrapped = ['n0', 'n1'].map(id => candidate.mermaid.includes('subgraph layout_card_' + id));
+    candidates.push(wrapped);
+    return native(candidate, wrapped[0] && !wrapped[1]);
+  });
+  assert.deepEqual(candidates, [[false, false], [true, true], [true, false]]);
+  assert.match(result.mermaid, /subgraph layout_card_n0/);
+  assert.doesNotMatch(result.mermaid, /subgraph layout_card_n1/);
+  assert.deepEqual(view, before);
+  let calls = 0;
+  const direct = await compileRoutedView(view, registry, async candidate => { calls++; return native(candidate, true); });
+  assert.equal(calls, 1);
+  assert.doesNotMatch(direct.mermaid, /layout_card_/);
+});
+
+test('near-collinear resource edges try the exact source and target before repeating rank spans', async () => {
+  const { view, registry } = clearanceFixture('dagre', 'object'), rejected = [];
+  view.nodes[0].visualType = 'system'; view.nodes[1].visualType = 'resource';
+  view.mermaid = view.mermaid.replace('class n0 node_component', 'class n0 node_system').replace('class n1 node_component', 'class n1 node_resource');
+  view.links = [{ id: 'write', mermaidId: 'e0', from: 'a', to: 'b', kind: 'write', edgeSemantic: 'write' }];
+  view.mermaid += '  n0 e0@--> n1\n  class e0 edge_write\n';
+  const before = structuredClone(view);
+  const result = await compileRoutedView(view, registry, async candidate => {
+    const selected = !candidate.mermaid.includes('subgraph layout_card_n0') && candidate.mermaid.includes('subgraph layout_card_n1');
+    const curve = selected ? 'M80,75 C110,45 140,45 170,75.8' : 'M80,75 C110,75.267 140,75.533 170,75.8';
+    return normalizeMermaidSvg(candidate, '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 250 150">'
+      + '<g class="node" id="flowchart-n0-0"><rect x="20" y="60" width="60" height="30"/></g>'
+      + '<g class="node" id="flowchart-n1-1"><rect x="170" y="60.8" width="60" height="30"/></g>'
+      + `<path data-id="e0" d="${curve}"/></svg>`, registry);
+  }, { onAttempt: attempt => rejected.push(attempt) });
+  assert.equal(rejected.length, 2);
+  assert.ok(rejected.every(attempt => attempt.invalid[0].axis === null && !attempt.invalid[0].curved
+    && attempt.invalid[0].curveCommands && !attempt.invalid[0].collisions.length && !attempt.invalid[0].arrowIssues.length));
+  assert.deepEqual(result.links, view.links); assert.deepEqual(view, before);
+});
+
+test('endpoint card containers select exact native IDs even when cards share names and visual types', () => {
+  const { view } = clearanceFixture('dagre', 'object');
+  view.nodes.forEach(node => { node.name = 'same'; });
+  const before = structuredClone(view);
+  const source = routedMermaid(view, { cardContainers: ['n1'] });
+  assert.doesNotMatch(source, /subgraph layout_card_n0/);
+  assert.match(source, /subgraph layout_card_n1/);
+  assert.equal((source.match(/n[01]@\{/g) || []).length, 2);
+  assert.deepEqual(view, before);
+  assert.throws(() => routedMermaid(view, { cardContainers: ['missing'] }), /Missing native card container/);
+});
+
+function outputBranchFixture() {
+  const { view, registry } = clearanceFixture('dagre', 'object');
+  view.centerNodeId = 'a';
+  for (const id of ['c', 'd']) {
+    view.nodes.push({ ...view.nodes[1], id, instance: `clearance-${id}`, mermaidId: `n${view.nodes.length}` });
+    registry[id] = { ...registry.b };
+  }
+  view.links = [
+    { id: 'read-b', mermaidId: 'e0', from: 'a', to: 'b' },
+    { id: 'read-c', mermaidId: 'e1', from: 'a', to: 'c' },
+    { id: 'read-d', mermaidId: 'e2', from: 'a', to: 'd', nativeReverse: true },
+    { id: 'write-d', mermaidId: 'e3', from: 'd', to: 'a' },
+  ];
+  return { view, registry };
+}
+
+test('a near-collinear output branch retries one native output context and leaves reversed neighbors outside it', async () => {
+  const { view, registry } = outputBranchFixture(), before = structuredClone({ view, registry }), attempts = [];
+  const result = await compileRoutedView(view, registry, async candidate => candidate, {
+    onAttempt: attempt => attempts.push(attempt),
+    checks: {
+      labels: () => [], geometry: () => {},
+      routes: candidate => ({ edges: view.links.map(link => ({ id: link.id, mermaidId: link.mermaidId, axis: link.id === 'read-b' ? null : 'horizontal',
+        curved: link.id === 'read-b' && candidate.mermaid.includes('layout_output_'), collisions: [], arrowIssues: [] })) }),
+    },
+  });
+  assert.equal(attempts.length, 1);
+  assert.deepEqual(result.layoutLinks, [{ mermaidId: 'layout_output_0', from: 'n1', to: 'n2' }]);
+  assert.match(result.mermaid, /n1 layout_output_0@~~~ n2/);
+  assert.doesNotMatch(result.mermaid, /(?:n3 layout_output_|layout_output_\d+@~~~ n3)/);
+  assert.deepEqual(result.links, view.links);
+  assert.deepEqual({ view, registry }, before);
+});
+
+test('output context is bounded and never substitutes for failed labels, geometry, collisions or arrows', async () => {
+  for (const failure of ['straight', 'label', 'geometry', 'collision', 'arrow']) {
+    const { view, registry } = outputBranchFixture();
+    let outputAttempts = 0, latest;
+    await assert.rejects(compileRoutedView(view, registry, async candidate => { latest = candidate; return candidate; }, {
+      onAttempt: () => { if (latest.mermaid.includes('layout_output_')) outputAttempts++; },
+      checks: {
+        labels: () => failure === 'label' ? ['a'] : [],
+        geometry: () => { if (failure === 'geometry') throw new Error('overlap'); },
+        routes: () => ({ edges: [{ id: 'read-b', mermaidId: 'e0', axis: null, curved: false,
+          collisions: failure === 'collision' ? [{ id: 'unrelated', kind: 'node' }] : [], arrowIssues: failure === 'arrow' ? ['path-target'] : [] }] }),
+      },
+    }), /Mermaid routing failed/);
+    assert.equal(outputAttempts, failure === 'straight' ? 1 : 0, failure);
+  }
 });
 
 test('native retry eligibility follows the configured layout rather than the data aspect', async () => {

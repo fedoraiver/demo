@@ -2,6 +2,7 @@ import { readArchitectureData } from '../../../../docs/diagrams/src/architecture
 import fs from 'node:fs';
 import path from 'node:path';
 import { digest } from './maintenance-inputs.mjs';
+import { summarizeAnalysisGaps } from '../../../../docs/diagrams/src/rustc-model.mjs';
 
 const pick = (record, fields) => Object.fromEntries(fields.filter(key => record[key] !== undefined).map(key => [key, record[key]]));
 const sorted = entries => Object.fromEntries(entries.sort(([a], [b]) => a.localeCompare(b)));
@@ -12,12 +13,12 @@ export function summarizeModel({ model, registry, objects, links, views = [] }) 
   const ids = list ? new Set(list.map(item => item.id)) : null;
   const records = Object.entries(registry || {}).filter(([id, record]) => ids ? ids.has(id) : !record.alias_of);
   const relationships = new Map();
-  for (const link of [...(model?.system_links || []), ...(links || objects?.links || []), ...views.flatMap(view => view.links || [])]) {
+  for (const link of [...(model?.relations || model?.system_links || []), ...(links || objects?.links || []), ...views.flatMap(view => view.links || [])]) {
     if (link.id) relationships.set(link.id, pick(link, ['from', 'to', 'kind', 'operation', 'source', 'sourceEntries', 'projection', 'projectionIds', 'originalLinkIds']));
   }
   return { objects: sorted(records.map(([id, record]) => [id, pick(record, ['kind', 'name', 'componentRustType', 'componentTypeId',
     'rust_type', 'type_arguments', 'canonicalEntityId', 'entityId', 'projectionIds', 'ownerEntityIds', 'source', 'sourceEntries', 'registrations', 'scheduleEvidence'])])),
-    relationships: sorted([...relationships]) };
+    relationships: sorted([...relationships]), analysisGaps: model?.analysisGaps || [], analysisGapSummary: summarizeAnalysisGaps(model || {}) };
 }
 
 export function readModelSummary(workspace) {

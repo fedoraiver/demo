@@ -3,6 +3,7 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { maintenanceScripts } from './maintenance-paths.mjs';
+import { hashFile } from '../../../../docs/diagrams/src/stream-files.mjs';
 
 export const digest = value => crypto.createHash('sha256').update(typeof value === 'string' || Buffer.isBuffer(value) ? value : JSON.stringify(value)).digest('hex');
 export const slash = value => value.replaceAll('\\', '/');
@@ -22,7 +23,7 @@ export function fileSnapshot(workspace, names, { optional = true } = {}) {
     if (stat.isDirectory()) {
       result[slash(relative) + '/'] = 'directory';
       for (const name of fs.readdirSync(filename).sort()) visit(path.join(relative, name));
-    } else if (stat.isFile()) result[slash(relative)] = digest(fs.readFileSync(filename));
+    } else if (stat.isFile()) result[slash(relative)] = hashFile(filename).sha256;
     else throw new Error(`Unsupported input/output: ${filename}`);
   }
   for (const name of [...new Set(names)].sort()) visit(name);
@@ -31,7 +32,7 @@ export function fileSnapshot(workspace, names, { optional = true } = {}) {
 
 export function relevantInputNames(workspace) {
   const names = ['Cargo.toml', 'Cargo.lock', 'src', 'docs/diagrams/package.json', 'docs/diagrams/package-lock.json',
-    'docs/diagrams/src', 'docs/diagrams/catalog', 'docs/diagrams/tests', maintenanceScripts];
+    'docs/diagrams/src', 'docs/diagrams/catalog', 'docs/diagrams/tests', 'tools/rustc-analysis', 'scripts/rustc-analysis.ps1', maintenanceScripts];
   for (const name of ['build.rs', '.cargo/config.toml', 'rust-toolchain', 'rust-toolchain.toml']) if (fs.existsSync(path.join(workspace, name))) names.push(name);
   const root = path.join(workspace, 'docs/diagrams');
   if (fs.existsSync(root)) for (const name of fs.readdirSync(root)) if (name.endsWith('.mjs')) names.push(`docs/diagrams/${name}`);

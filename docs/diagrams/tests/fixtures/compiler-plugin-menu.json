@@ -1,0 +1,1138 @@
+{
+  "schemaVersion": 1,
+  "compiler": "92b5b8c87c61b20adc9001b41baf587634a74734",
+  "configuration": "fbc861b3f306a7587229cc7f3afaacaee9c6b773c7dc14ad607d6b49f30cab3f",
+  "sourceModelSha256": "2ee37268d72d5b3965bd8ed98beadb8d9a1de431982b79a55528e9dbc0f653d7",
+  "features": [
+    {
+      "id": "application",
+      "label": "应用",
+      "overviewNode": "app-main",
+      "plugin": "App"
+    },
+    {
+      "id": "audio",
+      "label": "audio",
+      "overviewNode": "type-fe229a335a2015d415bcde34",
+      "plugin": "GameAudioPlugin"
+    },
+    {
+      "id": "bounds_recovery",
+      "label": "bounds_recovery",
+      "overviewNode": "type-e220f6d8bbdc8e0b1d7ae14a",
+      "plugin": "BoundsRecoveryPlugin"
+    },
+    {
+      "id": "character",
+      "label": "character",
+      "overviewNode": "type-9f5e74b8983d1d371785d7d4",
+      "plugin": "CharacterPlugin"
+    },
+    {
+      "id": "character_animation",
+      "label": "character_animation",
+      "overviewNode": "type-e43174d6ec174b267c2337bf",
+      "plugin": "CharacterAnimationPlugin"
+    },
+    {
+      "id": "crate:avian3d",
+      "label": "crate:avian3d",
+      "overviewNode": "type-e1f78f7742625bcf6867b1f9",
+      "plugin": "ColliderMarker>"
+    },
+    {
+      "id": "crate:bevy_a11y",
+      "label": "crate:bevy_a11y",
+      "overviewNode": "type-22ee1e99c1ee816d24eb559a",
+      "plugin": "AccessibilityPlugin"
+    },
+    {
+      "id": "crate:bevy_animation",
+      "label": "crate:bevy_animation",
+      "overviewNode": "type-b2001902f869411ec71bb886",
+      "plugin": "AnimationPlugin"
+    },
+    {
+      "id": "crate:bevy_anti_alias",
+      "label": "crate:bevy_anti_alias",
+      "overviewNode": "type-f0db80cec426910a806c6453",
+      "plugin": "SmaaPlugin"
+    },
+    {
+      "id": "crate:bevy_app",
+      "label": "crate:bevy_app",
+      "overviewNode": "type-3c832dc62a28243b1b249584",
+      "plugin": "ComputedUiTargetCamera>"
+    },
+    {
+      "id": "crate:bevy_asset",
+      "label": "crate:bevy_asset",
+      "overviewNode": "type-e6f0dc60b6bc4a56a44b9159",
+      "plugin": "AssetPlugin"
+    },
+    {
+      "id": "crate:bevy_audio",
+      "label": "crate:bevy_audio",
+      "overviewNode": "type-8bdf1e09991c3ce42cf0fb0c",
+      "plugin": "AudioPlugin"
+    },
+    {
+      "id": "crate:bevy_camera",
+      "label": "crate:bevy_camera",
+      "overviewNode": "type-90bcc0c83535ea3d4c560608",
+      "plugin": "VisibilityRangePlugin"
+    },
+    {
+      "id": "crate:bevy_clipboard",
+      "label": "crate:bevy_clipboard",
+      "overviewNode": "type-e05fa32f80a2267a475d9bc4",
+      "plugin": "ClipboardPlugin"
+    },
+    {
+      "id": "crate:bevy_core_pipeline",
+      "label": "crate:bevy_core_pipeline",
+      "overviewNode": "type-9d8e3b8159fb4343abe80616",
+      "plugin": "BackgroundMotionVectorsPlugin"
+    },
+    {
+      "id": "crate:bevy_diagnostic",
+      "label": "crate:bevy_diagnostic",
+      "overviewNode": "type-e162c73e9cad776da185cda6",
+      "plugin": "FrameTimeDiagnosticsPlugin"
+    },
+    {
+      "id": "crate:bevy_ecs",
+      "label": "crate:bevy_ecs",
+      "plugin": "crate:bevy_ecs"
+    },
+    {
+      "id": "crate:bevy_egui",
+      "label": "crate:bevy_egui",
+      "overviewNode": "type-ab928111e76a303dd17c8389",
+      "plugin": "EguiPlugin"
+    },
+    {
+      "id": "crate:bevy_enhanced_input",
+      "label": "crate:bevy_enhanced_input",
+      "overviewNode": "type-62e22a92ceec500a5a4d2a72",
+      "plugin": "EnhancedInputPlugin"
+    },
+    {
+      "id": "crate:bevy_extract",
+      "label": "crate:bevy_extract",
+      "overviewNode": "type-e8ed9c4f64eb29b2745793df",
+      "plugin": "RenderApp>"
+    },
+    {
+      "id": "crate:bevy_gilrs",
+      "label": "crate:bevy_gilrs",
+      "overviewNode": "type-b687ccddb78f4a878d4cc87b",
+      "plugin": "GilrsPlugin"
+    },
+    {
+      "id": "crate:bevy_gizmos",
+      "label": "crate:bevy_gizmos",
+      "overviewNode": "type-3fe51096c146b1003d83a5b5",
+      "plugin": "GizmoPlugin"
+    },
+    {
+      "id": "crate:bevy_gizmos_render",
+      "label": "crate:bevy_gizmos_render",
+      "overviewNode": "type-8a75a7b64a54e8b89b045f34",
+      "plugin": "GizmoRenderPlugin"
+    },
+    {
+      "id": "crate:bevy_gltf",
+      "label": "crate:bevy_gltf",
+      "overviewNode": "type-94db0d79bb45ec2d3f6c0809",
+      "plugin": "GltfPlugin"
+    },
+    {
+      "id": "crate:bevy_image",
+      "label": "crate:bevy_image",
+      "overviewNode": "type-b75aba73cc0b95f64e544ab0",
+      "plugin": "ImagePlugin"
+    },
+    {
+      "id": "crate:bevy_input",
+      "label": "crate:bevy_input",
+      "overviewNode": "type-0f3cbe3071e81cb4b7fc88ac",
+      "plugin": "InputPlugin"
+    },
+    {
+      "id": "crate:bevy_input_focus",
+      "label": "crate:bevy_input_focus",
+      "overviewNode": "type-b07d192a12345efaa81d9f96",
+      "plugin": "InputDispatchPlugin"
+    },
+    {
+      "id": "crate:bevy_inspector_egui",
+      "label": "crate:bevy_inspector_egui",
+      "overviewNode": "type-5a62384792aace058b6ced15",
+      "plugin": "WorldInspectorPlugin"
+    },
+    {
+      "id": "crate:bevy_internal",
+      "label": "crate:bevy_internal",
+      "overviewNode": "type-837805a25d3cbae280841076",
+      "plugin": "DefaultPlugins"
+    },
+    {
+      "id": "crate:bevy_kira_audio",
+      "label": "crate:bevy_kira_audio",
+      "overviewNode": "type-3c62dedb30f4bdad4a66352d",
+      "plugin": "AudioPlugin"
+    },
+    {
+      "id": "crate:bevy_light",
+      "label": "crate:bevy_light",
+      "overviewNode": "type-41cefcf3937caa6117604f94",
+      "plugin": "LightPlugin"
+    },
+    {
+      "id": "crate:bevy_log",
+      "label": "crate:bevy_log",
+      "overviewNode": "type-4ff7bfbe87b12d4aa389d9fa",
+      "plugin": "LogPlugin"
+    },
+    {
+      "id": "crate:bevy_mesh",
+      "label": "crate:bevy_mesh",
+      "overviewNode": "type-8e1e18c2f6d00a474d464092",
+      "plugin": "MeshPlugin"
+    },
+    {
+      "id": "crate:bevy_pbr",
+      "label": "crate:bevy_pbr",
+      "overviewNode": "type-959b53082c7bc9a301fe4157",
+      "plugin": "StandardMaterial>"
+    },
+    {
+      "id": "crate:bevy_picking",
+      "label": "crate:bevy_picking",
+      "overviewNode": "type-2a3b2071f64752680be25438",
+      "plugin": "PointerInputPlugin"
+    },
+    {
+      "id": "crate:bevy_post_process",
+      "label": "crate:bevy_post_process",
+      "overviewNode": "type-68c453138f551e5cc16ef724",
+      "plugin": "BloomPlugin"
+    },
+    {
+      "id": "crate:bevy_render",
+      "label": "crate:bevy_render",
+      "overviewNode": "type-e81d73accac27d34c20515d5",
+      "plugin": "MeshPipeline>"
+    },
+    {
+      "id": "crate:bevy_scene",
+      "label": "crate:bevy_scene",
+      "overviewNode": "type-ab99562873650edff4f7a7ad",
+      "plugin": "ScenePlugin"
+    },
+    {
+      "id": "crate:bevy_sprite",
+      "label": "crate:bevy_sprite",
+      "overviewNode": "type-c6073d0b69d4c0131195f4ed",
+      "plugin": "SpritePickingPlugin"
+    },
+    {
+      "id": "crate:bevy_sprite_render",
+      "label": "crate:bevy_sprite_render",
+      "overviewNode": "type-817fca1c4fec38573a232b60",
+      "plugin": "TilemapChunkMaterial>"
+    },
+    {
+      "id": "crate:bevy_state",
+      "label": "crate:bevy_state",
+      "overviewNode": "type-c9143a45ad14f59f1668d79f",
+      "plugin": "StatesPlugin"
+    },
+    {
+      "id": "crate:bevy_text",
+      "label": "crate:bevy_text",
+      "overviewNode": "type-ee55c938b1ae5ae3e26f619b",
+      "plugin": "TextPlugin"
+    },
+    {
+      "id": "crate:bevy_time",
+      "label": "crate:bevy_time",
+      "overviewNode": "type-7ab246f00fc33293be63c1c6",
+      "plugin": "TimePlugin"
+    },
+    {
+      "id": "crate:bevy_transform",
+      "label": "crate:bevy_transform",
+      "overviewNode": "type-c79ba41df6e9f442672a3a82",
+      "plugin": "TransformPlugin"
+    },
+    {
+      "id": "crate:bevy_transform_interpolation",
+      "label": "crate:bevy_transform_interpolation",
+      "overviewNode": "type-ce443f3ee5a407a84023eecf",
+      "plugin": "AngVelSource>"
+    },
+    {
+      "id": "crate:bevy_ui",
+      "label": "crate:bevy_ui",
+      "overviewNode": "type-56b2dd3a1ec8e60d9354baf5",
+      "plugin": "UiPlugin"
+    },
+    {
+      "id": "crate:bevy_ui_render",
+      "label": "crate:bevy_ui_render",
+      "overviewNode": "type-b2f783f6f9e01edfa952fcb6",
+      "plugin": "BoxShadowPlugin"
+    },
+    {
+      "id": "crate:bevy_ui_widgets",
+      "label": "crate:bevy_ui_widgets",
+      "overviewNode": "type-1be226c39330b0b448161bc4",
+      "plugin": "SliderPlugin"
+    },
+    {
+      "id": "crate:bevy_window",
+      "label": "crate:bevy_window",
+      "overviewNode": "type-a12d9b629f9c1b38f75be7b3",
+      "plugin": "WindowPlugin"
+    },
+    {
+      "id": "crate:bevy_winit",
+      "label": "crate:bevy_winit",
+      "overviewNode": "type-e65f084be10a29e4bc0df422",
+      "plugin": "WinitCursorPlugin"
+    },
+    {
+      "id": "crate:bevy_world_serialization",
+      "label": "crate:bevy_world_serialization",
+      "overviewNode": "type-082d0046f2578e94b72ff4ba",
+      "plugin": "WorldSerializationPlugin"
+    },
+    {
+      "id": "first_person",
+      "label": "first_person",
+      "overviewNode": "type-964734928575643b82287fc0",
+      "plugin": "FirstPersonPlugin"
+    },
+    {
+      "id": "game_flow",
+      "label": "game_flow",
+      "overviewNode": "type-23e5447be5bafd77df069a32",
+      "plugin": "GameFlowPlugin"
+    },
+    {
+      "id": "inspector",
+      "label": "inspector",
+      "overviewNode": "type-10d9c47e7bc755be7d9f37ce",
+      "plugin": "InspectorPlugin"
+    },
+    {
+      "id": "item_interaction",
+      "label": "item_interaction",
+      "overviewNode": "type-10c230d9d29f3fcd30e1055e",
+      "plugin": "ItemInteractionPlugin"
+    },
+    {
+      "id": "physics",
+      "label": "physics",
+      "overviewNode": "type-dd8b0aace3f0f286a144a5b4",
+      "plugin": "GamePhysicsPlugin"
+    },
+    {
+      "id": "scene_assembly",
+      "label": "scene_assembly",
+      "overviewNode": "type-7091fb1f981c5f2146521243",
+      "plugin": "SceneAssemblyPlugin"
+    },
+    {
+      "id": "session_log",
+      "label": "session_log",
+      "overviewNode": "type-4cdfbe7d190589dd4fd10225",
+      "plugin": "SessionLogPlugin"
+    },
+    {
+      "id": "settings",
+      "label": "settings",
+      "overviewNode": "type-4c0d11e778a577e7c8b74571",
+      "plugin": "SettingsPlugin"
+    },
+    {
+      "id": "ui",
+      "label": "ui",
+      "overviewNode": "type-9fc51c6cece34beca8c15afe",
+      "plugin": "GameUiPlugin"
+    },
+    {
+      "id": "window_policy",
+      "label": "window_policy",
+      "overviewNode": "type-cb22dafa5d6af09497c5dd40",
+      "plugin": "WindowPolicyPlugin"
+    }
+  ],
+  "objects": [
+    {
+      "declarationId": "decl-a5380380b672a39fc98a66cc4d4aec738c09dd568914e05eb4512a3e465b2376",
+      "description": "注册交互、持握生命周期、物理与呈现同步及物品反馈；物理插件由调用方显式安装。",
+      "display_summary": "注册交互、持握生命周期、物理与呈现同步及物品反馈；物理插件由调用方显式安装。",
+      "feature": "item_interaction",
+      "fullName": "item_interaction::ItemInteractionPlugin",
+      "id": "type-10c230d9d29f3fcd30e1055e",
+      "kind": "Plugin",
+      "name": "item_interaction::ItemInteractionPlugin",
+      "rust_type": "item_interaction::ItemInteractionPlugin",
+      "sourceEntries": [
+        {
+          "column": 1,
+          "expansions": [],
+          "label": "定义位置",
+          "line": 34,
+          "path": "src/item_interaction/mod.rs",
+          "role": "definition",
+          "sha256": "19fd13bc0172a3a2b456a87f54e14142591204d5f215b03e1e056f893d15b9f4"
+        }
+      ],
+      "sourceGaps": [],
+      "typeIdentity": {
+        "crateName": "demo",
+        "declarationId": "decl-a5380380b672a39fc98a66cc4d4aec738c09dd568914e05eb4512a3e465b2376",
+        "defPath": "demo::item_interaction::ItemInteractionPlugin",
+        "local": true,
+        "roles": [
+          "Plugin"
+        ]
+      },
+      "typeInstanceId": "type-6de393bfb2864a7c1079e0ae6b3e58536ef06c6be4b648908787f6624db77e7a"
+    },
+    {
+      "declarationId": "decl-c679c3ee9de789463631a681bab9ecddd3ff5a339ca9c064c04f40d796453568",
+      "description": "注册检查器及其启动日志；面板只在游戏运行时显示。",
+      "display_summary": "注册检查器及其启动日志；面板只在游戏运行时显示。",
+      "feature": "inspector",
+      "fullName": "inspector::InspectorPlugin",
+      "id": "type-10d9c47e7bc755be7d9f37ce",
+      "kind": "Plugin",
+      "name": "inspector::InspectorPlugin",
+      "rust_type": "inspector::InspectorPlugin",
+      "sourceEntries": [
+        {
+          "column": 1,
+          "expansions": [],
+          "label": "定义位置",
+          "line": 19,
+          "path": "src/inspector/mod.rs",
+          "role": "definition",
+          "sha256": "d39c54f53ba0cd66aea16d17899c7c0bfaa7be01f4c1dea837dd507ac037b91f"
+        }
+      ],
+      "sourceGaps": [],
+      "typeIdentity": {
+        "crateName": "demo",
+        "declarationId": "decl-c679c3ee9de789463631a681bab9ecddd3ff5a339ca9c064c04f40d796453568",
+        "defPath": "demo::inspector::InspectorPlugin",
+        "local": true,
+        "roles": [
+          "Plugin"
+        ]
+      },
+      "typeInstanceId": "type-10eb6d84ed449b2fefa6ef007f4b8ab4c3528452dabd61802876e557b925a06a"
+    },
+    {
+      "declarationId": "decl-732742d2d4f6a8c8b678f8b11ea04a6cf918fd1556acbe7fcd3ebd74ad04a0d8",
+      "description": "管理游戏状态与时钟，连接各功能公开的调度阶段。",
+      "display_summary": "管理游戏状态与时钟，连接各功能公开的调度阶段。",
+      "feature": "game_flow",
+      "fullName": "game_flow::GameFlowPlugin",
+      "id": "type-23e5447be5bafd77df069a32",
+      "kind": "Plugin",
+      "name": "game_flow::GameFlowPlugin",
+      "rust_type": "game_flow::GameFlowPlugin",
+      "sourceEntries": [
+        {
+          "column": 1,
+          "expansions": [],
+          "label": "定义位置",
+          "line": 42,
+          "path": "src/game_flow/mod.rs",
+          "role": "definition",
+          "sha256": "22a7e05b9e3218e022aba41753cd53a3dc7d0216b541ad3dea705b9db72dea96"
+        }
+      ],
+      "sourceGaps": [],
+      "typeIdentity": {
+        "crateName": "demo",
+        "declarationId": "decl-732742d2d4f6a8c8b678f8b11ea04a6cf918fd1556acbe7fcd3ebd74ad04a0d8",
+        "defPath": "demo::game_flow::GameFlowPlugin",
+        "local": true,
+        "roles": [
+          "Plugin"
+        ]
+      },
+      "typeInstanceId": "type-8a362a58aba83458f22b39264c006716d2aca01d33993dfb51a6ac751d127383"
+    },
+    {
+      "declarationId": "decl-52291ddc100dc1e507ae6d8338f0e8e0639239b23beecc4a3fe76f020206e2cd",
+      "description": "将 Kira 音频后端及音频资源接入应用，支持通过音频接口控制声音播放。",
+      "display_summary": "接入 Kira 音频播放后端。",
+      "feature": "crate:bevy_kira_audio",
+      "fullName": "AudioPlugin",
+      "id": "type-3c62dedb30f4bdad4a66352d",
+      "kind": "Plugin",
+      "name": "AudioPlugin",
+      "rust_type": "AudioPlugin",
+      "sourceEntries": [
+        {
+          "column": 1,
+          "dependency": {
+            "name": "bevy_kira_audio",
+            "root": "//?/C:/Users/cck17/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/bevy_kira_audio-0.27.1",
+            "version": "0.27.1"
+          },
+          "expansions": [],
+          "label": "定义位置",
+          "line": 170,
+          "path": "src/lib.rs",
+          "role": "definition",
+          "sha256": "087491e9b2f7e3a89e107a3f3df21fa732997239101536f86da9a9c64ee58937"
+        }
+      ],
+      "sourceGaps": [],
+      "typeIdentity": {
+        "crateName": "bevy_kira_audio",
+        "declarationId": "decl-52291ddc100dc1e507ae6d8338f0e8e0639239b23beecc4a3fe76f020206e2cd",
+        "defPath": "bevy_kira_audio::AudioPlugin",
+        "local": true,
+        "package": {
+          "name": "bevy_kira_audio",
+          "version": "0.27.1"
+        },
+        "roles": [
+          "Plugin"
+        ]
+      },
+      "typeInstanceId": "type-586c84e7756a256c40862d76aeb766bc955fc24b18158aa24a8c07f59e9a2a92"
+    },
+    {
+      "declarationId": "decl-71c858f3e46c3a3a3a06ca48085f8135676c12fa9c44a1b56bd2d0a47e8e1ac9",
+      "description": "注册设置资源、原型参数反射与渲染限帧，不覆盖调用方已提供的配置或固定时间步。",
+      "display_summary": "注册设置资源、原型参数反射与渲染限帧，不覆盖调用方已提供的配置或固定时间步。",
+      "feature": "settings",
+      "fullName": "settings::SettingsPlugin",
+      "id": "type-4c0d11e778a577e7c8b74571",
+      "kind": "Plugin",
+      "name": "settings::SettingsPlugin",
+      "rust_type": "settings::SettingsPlugin",
+      "sourceEntries": [
+        {
+          "column": 1,
+          "expansions": [],
+          "label": "定义位置",
+          "line": 15,
+          "path": "src/settings/mod.rs",
+          "role": "definition",
+          "sha256": "a0ddd2d36cd7ddf92a1ef818fb453c66ca1c9aa8fa2b9548f0db25bd76691c8e"
+        }
+      ],
+      "sourceGaps": [],
+      "typeIdentity": {
+        "crateName": "demo",
+        "declarationId": "decl-71c858f3e46c3a3a3a06ca48085f8135676c12fa9c44a1b56bd2d0a47e8e1ac9",
+        "defPath": "demo::settings::SettingsPlugin",
+        "local": true,
+        "roles": [
+          "Plugin"
+        ]
+      },
+      "typeInstanceId": "type-1e493ac3603d31d15ac45578c9ff738ec4d4ba8fa97890839f825d7e4bdafe79"
+    },
+    {
+      "declarationId": "decl-cef087eb8b865d8ddea4d198c5d90e2302f277df8eacdfb3d871d006fdb96781",
+      "description": "提前准备可失败的文件与线程；插件构建后，守卫仍由主入口持有到退出刷新完成。",
+      "display_summary": "提前准备可失败的文件与线程；插件构建后，守卫仍由主入口持有到退出刷新完成。",
+      "feature": "session_log",
+      "fullName": "session_log::SessionLogPlugin",
+      "id": "type-4cdfbe7d190589dd4fd10225",
+      "kind": "Plugin",
+      "name": "session_log::SessionLogPlugin",
+      "rust_type": "session_log::SessionLogPlugin",
+      "sourceEntries": [
+        {
+          "column": 1,
+          "expansions": [],
+          "label": "定义位置",
+          "line": 16,
+          "path": "src/session_log/mod.rs",
+          "role": "definition",
+          "sha256": "95c59021aa7959e053aac5ca5ed0e9a51a82db2153b210f3ccb9a04d4a78b518"
+        }
+      ],
+      "sourceGaps": [],
+      "typeIdentity": {
+        "crateName": "demo",
+        "declarationId": "decl-cef087eb8b865d8ddea4d198c5d90e2302f277df8eacdfb3d871d006fdb96781",
+        "defPath": "demo::session_log::SessionLogPlugin",
+        "local": true,
+        "roles": [
+          "Plugin"
+        ]
+      },
+      "typeInstanceId": "type-c0da4cf42f90c7bb4adf126bb30b1d3865d1550de0a47eb60aeef6a51b838aa0"
+    },
+    {
+      "declarationId": "decl-35fed6461542c6f174568822c117d8e92b044b258958b7d6f6c570f86497364f",
+      "description": "显示世界实体、资源与资产的 Egui 检查界面，供开发时浏览和编辑世界状态。",
+      "display_summary": "显示世界实体、资源和资产检查器。",
+      "feature": "crate:bevy_inspector_egui",
+      "fullName": "quick::WorldInspectorPlugin",
+      "id": "type-5a62384792aace058b6ced15",
+      "kind": "Plugin",
+      "name": "quick::WorldInspectorPlugin",
+      "rust_type": "quick::WorldInspectorPlugin",
+      "sourceEntries": [
+        {
+          "column": 1,
+          "dependency": {
+            "name": "bevy-inspector-egui",
+            "root": "//?/C:/Users/cck17/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/bevy-inspector-egui-0.38.0",
+            "version": "0.38.0"
+          },
+          "expansions": [],
+          "label": "定义位置",
+          "line": 58,
+          "path": "src/quick.rs",
+          "role": "definition",
+          "sha256": "6b42a027b7444786f90b73a40cfd0ab19e5b4365e1b1897f74ed2362031d5526"
+        }
+      ],
+      "sourceGaps": [],
+      "typeIdentity": {
+        "crateName": "bevy_inspector_egui",
+        "declarationId": "decl-35fed6461542c6f174568822c117d8e92b044b258958b7d6f6c570f86497364f",
+        "defPath": "bevy_inspector_egui::quick::WorldInspectorPlugin",
+        "local": true,
+        "package": {
+          "name": "bevy-inspector-egui",
+          "version": "0.38.0"
+        },
+        "roles": [
+          "Plugin"
+        ]
+      },
+      "typeInstanceId": "type-8a4d81c5e741314220008d1dad1a9ed59892f8ae44673e65ce14d45bb3d95ea6"
+    },
+    {
+      "declarationId": "decl-c5ca508e49597a1245307b785a57830648b6c12f315f88661ed3bd5a48f1a2ff",
+      "description": "初始化输入上下文并向其输送输入，驱动动作绑定与触发状态的更新。",
+      "display_summary": "驱动输入上下文和动作状态更新。",
+      "feature": "crate:bevy_enhanced_input",
+      "fullName": "EnhancedInputPlugin",
+      "id": "type-62e22a92ceec500a5a4d2a72",
+      "kind": "Plugin",
+      "name": "EnhancedInputPlugin",
+      "rust_type": "EnhancedInputPlugin",
+      "sourceEntries": [
+        {
+          "column": 1,
+          "dependency": {
+            "name": "bevy_enhanced_input",
+            "root": "//?/C:/Users/cck17/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/bevy_enhanced_input-0.27.0",
+            "version": "0.27.0"
+          },
+          "expansions": [],
+          "label": "定义位置",
+          "line": 425,
+          "path": "src/lib.rs",
+          "role": "definition",
+          "sha256": "f33daf2d8d8c92f87b3e3044379442609e24af75fb11d4ab1543cb8376c51852"
+        }
+      ],
+      "sourceGaps": [],
+      "typeIdentity": {
+        "crateName": "bevy_enhanced_input",
+        "declarationId": "decl-c5ca508e49597a1245307b785a57830648b6c12f315f88661ed3bd5a48f1a2ff",
+        "defPath": "bevy_enhanced_input::EnhancedInputPlugin",
+        "local": true,
+        "package": {
+          "name": "bevy_enhanced_input",
+          "version": "0.27.0"
+        },
+        "roles": [
+          "Plugin"
+        ]
+      },
+      "typeInstanceId": "type-510f085cff873a21cd0d48fe55a076a80b26ff980c59be373d40f978f6b6053a"
+    },
+    {
+      "declarationId": "decl-1a43da1949fdc9954ab89f7ab4c3b8712f91e8af4ba95969d5b77889ee10b3ad",
+      "description": "加载当前场景资源并装配地图、碰撞与业务实体。",
+      "display_summary": "加载当前场景资源并装配地图、碰撞与业务实体。",
+      "feature": "scene_assembly",
+      "fullName": "scene_assembly::SceneAssemblyPlugin",
+      "id": "type-7091fb1f981c5f2146521243",
+      "kind": "Plugin",
+      "name": "scene_assembly::SceneAssemblyPlugin",
+      "rust_type": "scene_assembly::SceneAssemblyPlugin",
+      "sourceEntries": [
+        {
+          "column": 1,
+          "expansions": [],
+          "label": "定义位置",
+          "line": 71,
+          "path": "src/scene_assembly/mod.rs",
+          "role": "definition",
+          "sha256": "1294f6f83d5fb9346f83c9290adc2dbc2733bf72a4c864373e0b126780c86e11"
+        }
+      ],
+      "sourceGaps": [],
+      "typeIdentity": {
+        "crateName": "demo",
+        "declarationId": "decl-1a43da1949fdc9954ab89f7ab4c3b8712f91e8af4ba95969d5b77889ee10b3ad",
+        "defPath": "demo::scene_assembly::SceneAssemblyPlugin",
+        "local": true,
+        "roles": [
+          "Plugin"
+        ]
+      },
+      "typeInstanceId": "type-d1556019050e204f86c40f0205b8a5e14c0dba4fbbb37fe01b56d6cecb4e5bb2"
+    },
+    {
+      "declarationId": "decl-8684bf7eff540b23c1b892c3bdfcb9a1dd8313dc252f5d61a1ecc8e8ac4f9794",
+      "description": "根据启用的功能组合窗口、输入、资产、渲染及其他常用插件，建立完整 Bevy 应用基础。",
+      "display_summary": "按功能配置装配常用 Bevy 插件。",
+      "feature": "crate:bevy_internal",
+      "fullName": "default_plugins::DefaultPlugins",
+      "id": "type-837805a25d3cbae280841076",
+      "kind": "PluginGroup",
+      "name": "default_plugins::DefaultPlugins",
+      "rust_type": "default_plugins::DefaultPlugins",
+      "sourceEntries": [
+        {
+          "column": 1,
+          "dependency": {
+            "name": "bevy_internal",
+            "root": "//?/C:/Users/cck17/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/bevy_internal-0.20.0",
+            "version": "0.20.0"
+          },
+          "expansions": [
+            {
+              "column": 1,
+              "line": 3,
+              "name": "plugin_group!",
+              "path": "C:/Users/cck17/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/bevy_internal-0.20.0/src/default_plugins.rs"
+            }
+          ],
+          "label": "定义位置",
+          "line": 3,
+          "path": "src/default_plugins.rs",
+          "role": "definition",
+          "sha256": "00845bed334a569518664e3d5548b942858cf0c3a2f85d3e3f00c39de1cdc1d9"
+        }
+      ],
+      "sourceGaps": [],
+      "typeIdentity": {
+        "crateName": "bevy_internal",
+        "declarationId": "decl-8684bf7eff540b23c1b892c3bdfcb9a1dd8313dc252f5d61a1ecc8e8ac4f9794",
+        "defPath": "bevy_internal::default_plugins::DefaultPlugins",
+        "local": true,
+        "package": {
+          "name": "bevy_internal",
+          "version": "0.20.0"
+        },
+        "roles": [
+          "PluginGroup"
+        ]
+      },
+      "typeInstanceId": "type-6453e2ad292e90cbdbcee416bad4de57c682f903b75bbea678e064a2b6dd2251"
+    },
+    {
+      "declarationId": "decl-b978dc5eaae77e4355450865783232735bf6c7d0fa9b4ee7ec698171824adf9a",
+      "description": "安装 Bevy 音频播放支持，处理实体上的音频播放器及其播放输出。",
+      "display_summary": "提供实体音频播放支持。",
+      "feature": "crate:bevy_audio",
+      "fullName": "bevy_audio::AudioPlugin",
+      "id": "type-8bdf1e09991c3ce42cf0fb0c",
+      "kind": "Plugin",
+      "name": "bevy_audio::AudioPlugin",
+      "rust_type": "bevy_audio::AudioPlugin",
+      "sourceEntries": [
+        {
+          "column": 1,
+          "dependency": {
+            "name": "bevy_audio",
+            "root": "//?/C:/Users/cck17/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/bevy_audio-0.20.0",
+            "version": "0.20.0"
+          },
+          "expansions": [],
+          "label": "定义位置",
+          "line": 73,
+          "path": "src/lib.rs",
+          "role": "definition",
+          "sha256": "6ccd5c0a805ba52517e1cf4b20becefa06d9217fb887cd0ce2686e0bce182362"
+        }
+      ],
+      "sourceGaps": [],
+      "typeIdentity": {
+        "crateName": "bevy_audio",
+        "declarationId": "decl-b978dc5eaae77e4355450865783232735bf6c7d0fa9b4ee7ec698171824adf9a",
+        "defPath": "bevy_audio::AudioPlugin",
+        "local": true,
+        "package": {
+          "name": "bevy_audio",
+          "version": "0.20.0"
+        },
+        "roles": [
+          "Plugin"
+        ]
+      },
+      "typeInstanceId": "type-038f96588dcc828c3049d986ec07b798dff34b7a58fae0e179a72f1b521ef764"
+    },
+    {
+      "declarationId": "decl-b84e7ad7067fe8ebbea56840dd4dfd2bff2ebfb168d3b99733263413693661ea",
+      "description": "注册第一人称动作、捕获、朝向与镜头，不安装输入基础设施或物理插件。",
+      "display_summary": "注册第一人称动作、捕获、朝向与镜头，不安装输入基础设施或物理插件。",
+      "feature": "first_person",
+      "fullName": "first_person::FirstPersonPlugin",
+      "id": "type-964734928575643b82287fc0",
+      "kind": "Plugin",
+      "name": "first_person::FirstPersonPlugin",
+      "rust_type": "first_person::FirstPersonPlugin",
+      "sourceEntries": [
+        {
+          "column": 1,
+          "expansions": [],
+          "label": "定义位置",
+          "line": 114,
+          "path": "src/first_person/mod.rs",
+          "role": "definition",
+          "sha256": "a05b598eb2e3b72e135b314fd3d79ee3955ba76988c903a519afd214e4ef68bc"
+        }
+      ],
+      "sourceGaps": [],
+      "typeIdentity": {
+        "crateName": "demo",
+        "declarationId": "decl-b84e7ad7067fe8ebbea56840dd4dfd2bff2ebfb168d3b99733263413693661ea",
+        "defPath": "demo::first_person::FirstPersonPlugin",
+        "local": true,
+        "roles": [
+          "Plugin"
+        ]
+      },
+      "typeInstanceId": "type-83e3bc7c63ee5aa57c64818df9526c22f8b6bcc5041729dea60588897567695e"
+    },
+    {
+      "declarationId": "decl-a0905ae16f23a63e0e98462eef9e3fdb94d1c4ab3560f15b9c9de90f936f8eeb",
+      "description": "注册角色运动与反射元数据，不加载窗口、场景或其他项目插件。",
+      "display_summary": "注册角色运动与反射元数据，不加载窗口、场景或其他项目插件。",
+      "feature": "character",
+      "fullName": "character::CharacterPlugin",
+      "id": "type-9f5e74b8983d1d371785d7d4",
+      "kind": "Plugin",
+      "name": "character::CharacterPlugin",
+      "rust_type": "character::CharacterPlugin",
+      "sourceEntries": [
+        {
+          "column": 1,
+          "expansions": [],
+          "label": "定义位置",
+          "line": 24,
+          "path": "src/character/mod.rs",
+          "role": "definition",
+          "sha256": "58a179b0886946cb19e190c3da34eace9e34757516e29e8f140994917459e1cd"
+        }
+      ],
+      "sourceGaps": [],
+      "typeIdentity": {
+        "crateName": "demo",
+        "declarationId": "decl-a0905ae16f23a63e0e98462eef9e3fdb94d1c4ab3560f15b9c9de90f936f8eeb",
+        "defPath": "demo::character::CharacterPlugin",
+        "local": true,
+        "roles": [
+          "Plugin"
+        ]
+      },
+      "typeInstanceId": "type-bfb4fc4a60f5c6b827ba95189c3b61068d5f21d5810f91cdcf4314cc4ea63e13"
+    },
+    {
+      "declarationId": "decl-50aab3b8c4aa800c20ae8dbf955b2e72a1687a8b61ce3c874e349d23a0e6a73b",
+      "description": "组装菜单功能，不安装窗口或重复初始化会话日志。",
+      "display_summary": "组装菜单功能，不安装窗口或重复初始化会话日志。",
+      "feature": "ui",
+      "fullName": "ui::GameUiPlugin",
+      "id": "type-9fc51c6cece34beca8c15afe",
+      "kind": "Plugin",
+      "name": "ui::GameUiPlugin",
+      "rust_type": "ui::GameUiPlugin",
+      "sourceEntries": [
+        {
+          "column": 1,
+          "expansions": [],
+          "label": "定义位置",
+          "line": 117,
+          "path": "src/ui/mod.rs",
+          "role": "definition",
+          "sha256": "12d4cad3c7323f9d254d6f3f591b886a86e37da69e6454f2dee8d2b9318dcf77"
+        }
+      ],
+      "sourceGaps": [],
+      "typeIdentity": {
+        "crateName": "demo",
+        "declarationId": "decl-50aab3b8c4aa800c20ae8dbf955b2e72a1687a8b61ce3c874e349d23a0e6a73b",
+        "defPath": "demo::ui::GameUiPlugin",
+        "local": true,
+        "roles": [
+          "Plugin"
+        ]
+      },
+      "typeInstanceId": "type-08e672b45399f2d929bd7683801c54389899543cc88f1735231479c84272ebf4"
+    },
+    {
+      "declarationId": "decl-ad2aa0a4261fc4868ab02684c632758cbd211a14f3c7d4885199b589816f3fd6",
+      "description": "初始化 Egui 上下文、输入与渲染资源，并接入其绘制节点和界面处理流程。",
+      "display_summary": "装配 Egui 输入、上下文与渲染。",
+      "feature": "crate:bevy_egui",
+      "fullName": "EguiPlugin",
+      "id": "type-ab928111e76a303dd17c8389",
+      "kind": "Plugin",
+      "name": "EguiPlugin",
+      "rust_type": "EguiPlugin",
+      "sourceEntries": [
+        {
+          "column": 1,
+          "dependency": {
+            "name": "bevy_egui",
+            "root": "//?/C:/Users/cck17/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/bevy_egui-0.43.1",
+            "version": "0.43.1"
+          },
+          "expansions": [],
+          "label": "定义位置",
+          "line": 206,
+          "path": "src/lib.rs",
+          "role": "definition",
+          "sha256": "ebe840ab6dfb5b89693c17605693ccb3f3dae9a404e5e53e0529ce27a778e168"
+        }
+      ],
+      "sourceGaps": [],
+      "typeIdentity": {
+        "crateName": "bevy_egui",
+        "declarationId": "decl-ad2aa0a4261fc4868ab02684c632758cbd211a14f3c7d4885199b589816f3fd6",
+        "defPath": "bevy_egui::EguiPlugin",
+        "local": true,
+        "package": {
+          "name": "bevy_egui",
+          "version": "0.43.1"
+        },
+        "roles": [
+          "Plugin"
+        ]
+      },
+      "typeInstanceId": "type-24f1765251341c654a3a3c2781f895ee48b89264a6917dca978bd8dea01b7431"
+    },
+    {
+      "declarationId": "decl-27cb4e2beb23a7b36ba73f9cae97ddacdbc4d989d9dc82f8cf1fc9dcf062901c",
+      "description": "组合 Avian 的物理调度、碰撞检测、刚体运动、约束求解与空间查询等默认插件。",
+      "display_summary": "装配 Avian 物理模拟插件。",
+      "feature": "crate:avian3d",
+      "fullName": "PhysicsPlugins",
+      "id": "type-b3fd28e65c2a2bfa30533333",
+      "kind": "PluginGroup",
+      "name": "PhysicsPlugins",
+      "rust_type": "PhysicsPlugins",
+      "sourceEntries": [
+        {
+          "column": 1,
+          "dependency": {
+            "name": "avian3d",
+            "root": "//?/C:/Users/cck17/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/avian3d-0.8.0",
+            "version": "0.8.0"
+          },
+          "expansions": [],
+          "label": "定义位置",
+          "line": 706,
+          "path": "src/lib.rs",
+          "role": "definition",
+          "sha256": "5ae04c9e76945d8db2118eb99e0d66fed2c0ffb71591d2566418befbce612924"
+        }
+      ],
+      "sourceGaps": [],
+      "typeIdentity": {
+        "crateName": "avian3d",
+        "declarationId": "decl-27cb4e2beb23a7b36ba73f9cae97ddacdbc4d989d9dc82f8cf1fc9dcf062901c",
+        "defPath": "avian3d::PhysicsPlugins",
+        "local": true,
+        "package": {
+          "name": "avian3d",
+          "version": "0.8.0"
+        },
+        "roles": [
+          "PluginGroup"
+        ]
+      },
+      "typeInstanceId": "type-02c168430bcfeac76fc27f6098efd88510015d8738abfa8850325ec653106032"
+    },
+    {
+      "declarationId": "decl-fb08bf46ce69da4de305c53bc0e0c3e8526ab77ebb2c2f63e417461de763c256",
+      "description": "在现有会话日志和原生窗口创建之后安装比例策略。",
+      "display_summary": "在现有会话日志和原生窗口创建之后安装比例策略。",
+      "feature": "window_policy",
+      "fullName": "window_policy::WindowPolicyPlugin",
+      "id": "type-cb22dafa5d6af09497c5dd40",
+      "kind": "Plugin",
+      "name": "window_policy::WindowPolicyPlugin",
+      "rust_type": "window_policy::WindowPolicyPlugin",
+      "sourceEntries": [
+        {
+          "column": 1,
+          "expansions": [],
+          "label": "定义位置",
+          "line": 22,
+          "path": "src/window_policy/mod.rs",
+          "role": "definition",
+          "sha256": "28ac3689a3e58e02bc7f56eb9933ef87748777e325a013cae932d7df5026e0e5"
+        }
+      ],
+      "sourceGaps": [],
+      "typeIdentity": {
+        "crateName": "demo",
+        "declarationId": "decl-fb08bf46ce69da4de305c53bc0e0c3e8526ab77ebb2c2f63e417461de763c256",
+        "defPath": "demo::window_policy::WindowPolicyPlugin",
+        "local": true,
+        "roles": [
+          "Plugin"
+        ]
+      },
+      "typeInstanceId": "type-b16fa04ec9d2705686614b948e42ab2b421cdc98aaa59e3b5d2a01a8083d7678"
+    },
+    {
+      "declarationId": "decl-e223074e18a4565dfc074aeb4879cb7230b60b1f26808488b61426c1e4c9ab0a",
+      "description": "注册固定物理模拟与统一碰撞日志；不加载场景、窗口或音频设备。",
+      "display_summary": "注册固定物理模拟与统一碰撞日志；不加载场景、窗口或音频设备。",
+      "feature": "physics",
+      "fullName": "physics::GamePhysicsPlugin",
+      "id": "type-dd8b0aace3f0f286a144a5b4",
+      "kind": "Plugin",
+      "name": "physics::GamePhysicsPlugin",
+      "rust_type": "physics::GamePhysicsPlugin",
+      "sourceEntries": [
+        {
+          "column": 1,
+          "expansions": [],
+          "label": "定义位置",
+          "line": 18,
+          "path": "src/physics/mod.rs",
+          "role": "definition",
+          "sha256": "c9e060a69766436e19efed6afd80310b946f195e8247eb2f532ecf82f97181b1"
+        }
+      ],
+      "sourceGaps": [],
+      "typeIdentity": {
+        "crateName": "demo",
+        "declarationId": "decl-e223074e18a4565dfc074aeb4879cb7230b60b1f26808488b61426c1e4c9ab0a",
+        "defPath": "demo::physics::GamePhysicsPlugin",
+        "local": true,
+        "roles": [
+          "Plugin"
+        ]
+      },
+      "typeInstanceId": "type-d6d0e67b6db9604e6eec122b15f9ed37fc632b5ab4977ca3fccc3c65943b703a"
+    },
+    {
+      "declarationId": "decl-600d77a69d688fbeff96573b7145ab4f0b8e8a6778ea7bd87793692124049c53",
+      "description": "注册越界恢复和插值重置，不创建窗口或额外推进模拟。",
+      "display_summary": "注册越界恢复和插值重置，不创建窗口或额外推进模拟。",
+      "feature": "bounds_recovery",
+      "fullName": "bounds_recovery::BoundsRecoveryPlugin",
+      "id": "type-e220f6d8bbdc8e0b1d7ae14a",
+      "kind": "Plugin",
+      "name": "bounds_recovery::BoundsRecoveryPlugin",
+      "rust_type": "bounds_recovery::BoundsRecoveryPlugin",
+      "sourceEntries": [
+        {
+          "column": 1,
+          "expansions": [],
+          "label": "定义位置",
+          "line": 27,
+          "path": "src/bounds_recovery/mod.rs",
+          "role": "definition",
+          "sha256": "90f677e23c5b2dfe0d06b1aa1be4efa484338ad2b94c7eff306d67d3d2693538"
+        }
+      ],
+      "sourceGaps": [],
+      "typeIdentity": {
+        "crateName": "demo",
+        "declarationId": "decl-600d77a69d688fbeff96573b7145ab4f0b8e8a6778ea7bd87793692124049c53",
+        "defPath": "demo::bounds_recovery::BoundsRecoveryPlugin",
+        "local": true,
+        "roles": [
+          "Plugin"
+        ]
+      },
+      "typeInstanceId": "type-7e03b856774687851a9dcafad0288a5a9cc845ab608089118e1a4a308dcd87c6"
+    },
+    {
+      "declarationId": "decl-4cb2428336fcc91bd8138c5a62c1494b6824035b54c91748ae3b2e38cd98fb92",
+      "description": "注册场景就绪后的动画绑定，以及固定模拟和同帧呈现朝向同步后的动作混合。",
+      "display_summary": "注册场景就绪后的动画绑定，以及固定模拟和同帧呈现朝向同步后的动作混合。",
+      "feature": "character_animation",
+      "fullName": "character_animation::CharacterAnimationPlugin",
+      "id": "type-e43174d6ec174b267c2337bf",
+      "kind": "Plugin",
+      "name": "character_animation::CharacterAnimationPlugin",
+      "rust_type": "character_animation::CharacterAnimationPlugin",
+      "sourceEntries": [
+        {
+          "column": 1,
+          "expansions": [],
+          "label": "定义位置",
+          "line": 23,
+          "path": "src/character_animation/mod.rs",
+          "role": "definition",
+          "sha256": "fa06834ca761cdb88e5581afd45cee9132fe0a73eec9956ed1037d00bdb54793"
+        }
+      ],
+      "sourceGaps": [],
+      "typeIdentity": {
+        "crateName": "demo",
+        "declarationId": "decl-4cb2428336fcc91bd8138c5a62c1494b6824035b54c91748ae3b2e38cd98fb92",
+        "defPath": "demo::character_animation::CharacterAnimationPlugin",
+        "local": true,
+        "roles": [
+          "Plugin"
+        ]
+      },
+      "typeInstanceId": "type-85cdfc6af5c96bb329b55b49e02616699bc4e858127988f158ed54516e375aff"
+    },
+    {
+      "declarationId": "decl-3d4032e3c7a7a7db0ed9a327106d6ecb0aa86d6874ee8aa3d650bfd936f81553",
+      "description": "安装 Kira 输出与音频生命周期；无设备测试直接使用内部纯数据夹具。",
+      "display_summary": "安装 Kira 输出与音频生命周期；无设备测试直接使用内部纯数据夹具。",
+      "feature": "audio",
+      "fullName": "audio::GameAudioPlugin",
+      "id": "type-fe229a335a2015d415bcde34",
+      "kind": "Plugin",
+      "name": "audio::GameAudioPlugin",
+      "rust_type": "audio::GameAudioPlugin",
+      "sourceEntries": [
+        {
+          "column": 1,
+          "expansions": [],
+          "label": "定义位置",
+          "line": 45,
+          "path": "src/audio/mod.rs",
+          "role": "definition",
+          "sha256": "cf9597b8958cbcf2c52c18c0ca4471da6f2d96867369ced15a65bf5971787ab1"
+        }
+      ],
+      "sourceGaps": [],
+      "typeIdentity": {
+        "crateName": "demo",
+        "declarationId": "decl-3d4032e3c7a7a7db0ed9a327106d6ecb0aa86d6874ee8aa3d650bfd936f81553",
+        "defPath": "demo::audio::GameAudioPlugin",
+        "local": true,
+        "roles": [
+          "Plugin"
+        ]
+      },
+      "typeInstanceId": "type-e20341e83bdca56ce4257cabae680cf235c113c39d611da3d0933226d1eccda4"
+    }
+  ]
+}
